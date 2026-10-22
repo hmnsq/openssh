@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoul.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 #ifndef HAVE_STRTOUL
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdlib.h>
 
 /*
  * Convert a string to an unsigned long integer.
@@ -44,65 +44,65 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+अचिन्हित दीर्घ
+म_से_अदीर्घ(स्थिरांक अक्षर *nptr, अक्षर **endptr, पूर्णांक base)
 {
-	const char *s;
-	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	स्थिरांक अक्षर *s;
+	अचिन्हित दीर्घ acc, cutoff;
+	पूर्णांक c;
+	पूर्णांक neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	करा {
+		c = (अचिन्हित अक्षर) *s++;
+	} पर्यंत (है_खाली(c));
+	जर (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} अन्यथा {
 		neg = 0;
-		if (c == '+')
+		जर (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	जर ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	जर (base == 0)
 		base = c == '0' ? 8 : 10;
 
-	cutoff = ULONG_MAX / (unsigned long)base;
-	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	cutoff = अच_दीर्घ_उच्च / (अचिन्हित दीर्घ)base;
+	cutlim = अच_दीर्घ_उच्च % (अचिन्हित दीर्घ)base;
+	साठी (acc = 0, any = 0;; c = (अचिन्हित अक्षर) *s++) {
+		जर (है_अंक(c))
 			c -= '0';
-		else if (isalpha(c))
-			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		अन्यथा जर (है_अक्षर(c))
+			c -= है_बड़ा(c) ? 'A' - 10 : 'a' - 10;
+		अन्यथा
+			थांबा;
+		जर (c >= base)
+			थांबा;
+		जर (any < 0)
+			सुरूठेवा;
+		जर (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
-			acc = ULONG_MAX;
-			errno = ERANGE;
-		} else {
+			acc = अच_दीर्घ_उच्च;
+			त्रुटि_सं = दुस्फल;
+		} अन्यथा {
 			any = 1;
-			acc *= (unsigned long)base;
+			acc *= (अचिन्हित दीर्घ)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	जर (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	जर (endptr != 0)
+		*endptr = (अक्षर *) (any ? s - 1 : nptr);
+	परत (acc);
 }
 #endif /* !HAVE_STRTOUL */

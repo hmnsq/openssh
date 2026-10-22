@@ -15,170 +15,170 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#अन्तर्भाव "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/evp.h>
+#अन्तर्भाव <openssl/bn.h>
+#अन्तर्भाव <openssl/evp.h>
 
-#include <stdarg.h>
-#include <string.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <string.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "ssherr.h"
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
-#include "digest.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "digest.h"
 
-static u_int
-ssh_rsa_size(const struct sshkey *k)
+स्थिर u_int
+ssh_rsa_size(स्थिरांक संरचना sshkey *k)
 {
-	if (k->pkey == NULL)
-		return 0;
-	return EVP_PKEY_bits(k->pkey);
+	जर (k->pkey == रिक्त)
+		परत 0;
+	परत EVP_PKEY_bits(k->pkey);
 }
 
-static int
-ssh_rsa_alloc(struct sshkey *k)
+स्थिर पूर्णांक
+ssh_rsa_alloc(संरचना sshkey *k)
 {
-	if ((k->pkey = EVP_PKEY_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return 0;
+	जर ((k->pkey = EVP_PKEY_new()) == रिक्त)
+		परत SSH_ERR_ALLOC_FAIL;
+	परत 0;
 }
 
-static void
-ssh_rsa_cleanup(struct sshkey *k)
+स्थिर शून्य
+ssh_rsa_cleanup(संरचना sshkey *k)
 {
 	EVP_PKEY_free(k->pkey);
-	k->pkey = NULL;
+	k->pkey = रिक्त;
 }
 
-static int
-ssh_rsa_equal(const struct sshkey *a, const struct sshkey *b)
+स्थिर पूर्णांक
+ssh_rsa_equal(स्थिरांक संरचना sshkey *a, स्थिरांक संरचना sshkey *b)
 {
-	if (a->pkey == NULL || b->pkey == NULL)
-		return 0;
-	return EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
+	जर (a->pkey == रिक्त || b->pkey == रिक्त)
+		परत 0;
+	परत EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
 }
 
-static int
-ssh_rsa_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+स्थिर पूर्णांक
+ssh_rsa_serialize_public(स्थिरांक संरचना sshkey *किल्ली, संरचना sshbuf *b,
+    गणना sshkey_serialize_rep opts)
 {
-	int r;
-	const BIGNUM *rsa_n, *rsa_e;
-	const RSA *rsa;
+	पूर्णांक r;
+	स्थिरांक BIGNUM *rsa_n, *rsa_e;
+	स्थिरांक RSA *rsa;
 
-	if (key->pkey == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((rsa = EVP_PKEY_get0_RSA(key->pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	जर (किल्ली->pkey == रिक्त)
+		परत SSH_ERR_INVALID_ARGUMENT;
+	जर ((rsa = EVP_PKEY_get0_RSA(किल्ली->pkey)) == रिक्त)
+		परत SSH_ERR_LIBCRYPTO_ERROR;
 
-	RSA_get0_key(rsa, &rsa_n, &rsa_e, NULL);
-	if ((r = sshbuf_put_bignum2(b, rsa_e)) != 0 ||
+	RSA_get0_किल्ली(rsa, &rsa_n, &rsa_e, रिक्त);
+	जर ((r = sshbuf_put_bignum2(b, rsa_e)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_n)) != 0)
-		return r;
+		परत r;
 
-	return 0;
+	परत 0;
 }
 
-static int
-ssh_rsa_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+स्थिर पूर्णांक
+ssh_rsa_serialize_private(स्थिरांक संरचना sshkey *किल्ली, संरचना sshbuf *b,
+    गणना sshkey_serialize_rep opts)
 {
-	int r;
-	const BIGNUM *rsa_n, *rsa_e, *rsa_d, *rsa_iqmp, *rsa_p, *rsa_q;
-	const RSA *rsa;
+	पूर्णांक r;
+	स्थिरांक BIGNUM *rsa_n, *rsa_e, *rsa_d, *rsa_iqmp, *rsa_p, *rsa_q;
+	स्थिरांक RSA *rsa;
 
-	if ((rsa = EVP_PKEY_get0_RSA(key->pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	RSA_get0_key(rsa, &rsa_n, &rsa_e, &rsa_d);
+	जर ((rsa = EVP_PKEY_get0_RSA(किल्ली->pkey)) == रिक्त)
+		परत SSH_ERR_LIBCRYPTO_ERROR;
+	RSA_get0_किल्ली(rsa, &rsa_n, &rsa_e, &rsa_d);
 	RSA_get0_factors(rsa, &rsa_p, &rsa_q);
-	RSA_get0_crt_params(rsa, NULL, NULL, &rsa_iqmp);
+	RSA_get0_crt_params(rsa, रिक्त, रिक्त, &rsa_iqmp);
 
-	if (!sshkey_is_cert(key)) {
+	जर (!sshkey_is_cert(किल्ली)) {
 		/* Note: can't reuse ssh_rsa_serialize_public: e, n vs. n, e */
-		if ((r = sshbuf_put_bignum2(b, rsa_n)) != 0 ||
+		जर ((r = sshbuf_put_bignum2(b, rsa_n)) != 0 ||
 		    (r = sshbuf_put_bignum2(b, rsa_e)) != 0)
-			return r;
+			परत r;
 	}
-	if ((r = sshbuf_put_bignum2(b, rsa_d)) != 0 ||
+	जर ((r = sshbuf_put_bignum2(b, rsa_d)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_iqmp)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_p)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, rsa_q)) != 0)
-		return r;
+		परत r;
 
-	return 0;
+	परत 0;
 }
 
-static int
-ssh_rsa_generate(struct sshkey *k, int bits)
+स्थिर पूर्णांक
+ssh_rsa_generate(संरचना sshkey *k, पूर्णांक bits)
 {
-	EVP_PKEY_CTX *ctx = NULL;
-	EVP_PKEY *res = NULL;
+	EVP_PKEY_CTX *ctx = रिक्त;
+	EVP_PKEY *res = रिक्त;
 
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	पूर्णांक ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (bits < SSH_RSA_MINIMUM_MODULUS_SIZE ||
+	जर (bits < SSH_RSA_MINIMUM_MODULUS_SIZE ||
 	    bits > SSHBUF_MAX_BIGNUM * 8)
-		return SSH_ERR_KEY_LENGTH;
+		परत SSH_ERR_किल्ली_LENGTH;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL)) == NULL) {
+	जर ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, रिक्त)) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जा out;
 	}
-	if (EVP_PKEY_keygen_init(ctx) <= 0) {
+	जर (EVP_PKEY_keygen_init(ctx) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
-	if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, bits) <= 0) {
-		ret = SSH_ERR_KEY_LENGTH;
-		goto out;
+	जर (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, bits) <= 0) {
+		ret = SSH_ERR_किल्ली_LENGTH;
+		जा out;
 	}
-	if (EVP_PKEY_keygen(ctx, &res) <= 0 || res == NULL) {
+	जर (EVP_PKEY_keygen(ctx, &res) <= 0 || res == रिक्त) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
 	/* success */
 	k->pkey = res;
 	ret = 0;
  out:
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	परत ret;
 }
 
-static int
-ssh_rsa_copy_public(const struct sshkey *from, struct sshkey *to)
+स्थिर पूर्णांक
+ssh_rsa_copy_public(स्थिरांक संरचना sshkey *from, संरचना sshkey *to)
 {
-	const BIGNUM *rsa_n, *rsa_e;
-	BIGNUM *rsa_n_dup = NULL, *rsa_e_dup = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	const RSA *rsa_from;
-	RSA *rsa_to = NULL;
+	स्थिरांक BIGNUM *rsa_n, *rsa_e;
+	BIGNUM *rsa_n_dup = रिक्त, *rsa_e_dup = रिक्त;
+	पूर्णांक r = SSH_ERR_INTERNAL_ERROR;
+	स्थिरांक RSA *rsa_from;
+	RSA *rsa_to = रिक्त;
 
-	if ((rsa_from = EVP_PKEY_get0_RSA(from->pkey)) == NULL ||
-	    (rsa_to = RSA_new()) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	जर ((rsa_from = EVP_PKEY_get0_RSA(from->pkey)) == रिक्त ||
+	    (rsa_to = RSA_new()) == रिक्त)
+		परत SSH_ERR_LIBCRYPTO_ERROR;
 
-	RSA_get0_key(rsa_from, &rsa_n, &rsa_e, NULL);
-	if ((rsa_n_dup = BN_dup(rsa_n)) == NULL ||
-	    (rsa_e_dup = BN_dup(rsa_e)) == NULL) {
+	RSA_get0_किल्ली(rsa_from, &rsa_n, &rsa_e, रिक्त);
+	जर ((rsa_n_dup = BN_dup(rsa_n)) == रिक्त ||
+	    (rsa_e_dup = BN_dup(rsa_e)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जा out;
 	}
-	if (!RSA_set0_key(rsa_to, rsa_n_dup, rsa_e_dup, NULL)) {
+	जर (!RSA_set0_किल्ली(rsa_to, rsa_n_dup, rsa_e_dup, रिक्त)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
-	rsa_n_dup = rsa_e_dup = NULL; /* transferred */
+	rsa_n_dup = rsa_e_dup = रिक्त; /* transferred */
 
-	if (EVP_PKEY_set1_RSA(to->pkey, rsa_to) != 1) {
+	जर (EVP_PKEY_set1_RSA(to->pkey, rsa_to) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
 	/* success */
 	r = 0;
@@ -186,38 +186,38 @@ ssh_rsa_copy_public(const struct sshkey *from, struct sshkey *to)
 	RSA_free(rsa_to);
 	BN_clear_free(rsa_n_dup);
 	BN_clear_free(rsa_e_dup);
-	return r;
+	परत r;
 }
 
-static int
-ssh_rsa_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+स्थिर पूर्णांक
+ssh_rsa_deserialize_public(स्थिरांक अक्षर *ktype, संरचना sshbuf *b,
+    संरचना sshkey *किल्ली)
 {
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	BIGNUM *rsa_n = NULL, *rsa_e = NULL;
-	RSA *rsa = NULL;
+	पूर्णांक ret = SSH_ERR_INTERNAL_ERROR;
+	BIGNUM *rsa_n = रिक्त, *rsa_e = रिक्त;
+	RSA *rsa = रिक्त;
 
-	if ((rsa = RSA_new()) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	जर ((rsa = RSA_new()) == रिक्त)
+		परत SSH_ERR_LIBCRYPTO_ERROR;
 
-	if (sshbuf_get_bignum2(b, &rsa_e) != 0 ||
+	जर (sshbuf_get_bignum2(b, &rsa_e) != 0 ||
 	    sshbuf_get_bignum2(b, &rsa_n) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		जा out;
 	}
-	if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL)) {
+	जर (!RSA_set0_किल्ली(rsa, rsa_n, rsa_e, रिक्त)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
-	rsa_n = rsa_e = NULL; /* transferred */
-	if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1) {
+	rsa_n = rsa_e = रिक्त; /* transferred */
+	जर (EVP_PKEY_set1_RSA(किल्ली->pkey, rsa) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
-	if ((ret = sshkey_check_rsa_length(key, 0)) != 0)
-		goto out;
+	जर ((ret = sshkey_check_rsa_length(किल्ली, 0)) != 0)
+		जा out;
 #ifdef DEBUG_PK
-	RSA_print_fp(stderr, rsa, 8);
+	RSA_print_fp(मानक_त्रुटि, rsa, 8);
 #endif
 	/* success */
 	ret = 0;
@@ -225,73 +225,73 @@ ssh_rsa_deserialize_public(const char *ktype, struct sshbuf *b,
 	RSA_free(rsa);
 	BN_clear_free(rsa_n);
 	BN_clear_free(rsa_e);
-	return ret;
+	परत ret;
 }
 
-static int
-ssh_rsa_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+स्थिर पूर्णांक
+ssh_rsa_deserialize_private(स्थिरांक अक्षर *ktype, संरचना sshbuf *b,
+    संरचना sshkey *किल्ली)
 {
-	int r;
-	BIGNUM *rsa_n = NULL, *rsa_e = NULL, *rsa_d = NULL;
-	BIGNUM *rsa_iqmp = NULL, *rsa_p = NULL, *rsa_q = NULL;
-	BIGNUM *rsa_dmp1 = NULL, *rsa_dmq1 = NULL;
-	RSA *rsa = NULL;
+	पूर्णांक r;
+	BIGNUM *rsa_n = रिक्त, *rsa_e = रिक्त, *rsa_d = रिक्त;
+	BIGNUM *rsa_iqmp = रिक्त, *rsa_p = रिक्त, *rsa_q = रिक्त;
+	BIGNUM *rsa_dmp1 = रिक्त, *rsa_dmq1 = रिक्त;
+	RSA *rsa = रिक्त;
 
-	if (sshkey_is_cert(key)) {
+	जर (sshkey_is_cert(किल्ली)) {
 		/* sshkey_private_deserialize already has pubkey from cert */
-		if ((rsa = EVP_PKEY_get1_RSA(key->pkey)) == NULL) {
+		जर ((rsa = EVP_PKEY_get1_RSA(किल्ली->pkey)) == रिक्त) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			जा out;
 		}
-	} else {
-		if ((rsa = RSA_new()) == NULL) {
+	} अन्यथा {
+		जर ((rsa = RSA_new()) == रिक्त) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			जा out;
 		}
 		/* Note: can't reuse ssh_rsa_deserialize_public: e,n vs. n,e */
-		if ((r = sshbuf_get_bignum2(b, &rsa_n)) != 0 ||
+		जर ((r = sshbuf_get_bignum2(b, &rsa_n)) != 0 ||
 		    (r = sshbuf_get_bignum2(b, &rsa_e)) != 0)
-			goto out;
-		if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL)) {
+			जा out;
+		जर (!RSA_set0_किल्ली(rsa, rsa_n, rsa_e, रिक्त)) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			जा out;
 		}
-		rsa_n = rsa_e = NULL; /* transferred */
+		rsa_n = rsa_e = रिक्त; /* transferred */
 	}
-	if ((r = sshbuf_get_bignum2(b, &rsa_d)) != 0 ||
+	जर ((r = sshbuf_get_bignum2(b, &rsa_d)) != 0 ||
 	    (r = sshbuf_get_bignum2(b, &rsa_iqmp)) != 0 ||
 	    (r = sshbuf_get_bignum2(b, &rsa_p)) != 0 ||
 	    (r = sshbuf_get_bignum2(b, &rsa_q)) != 0)
-		goto out;
-	if ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
+		जा out;
+	जर ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
 	    rsa_iqmp, &rsa_dmp1, &rsa_dmq1)) != 0)
-		goto out;
-	if (!RSA_set0_key(rsa, NULL, NULL, rsa_d)) {
+		जा out;
+	जर (!RSA_set0_किल्ली(rsa, रिक्त, रिक्त, rsa_d)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
-	rsa_d = NULL; /* transferred */
-	if (!RSA_set0_factors(rsa, rsa_p, rsa_q)) {
+	rsa_d = रिक्त; /* transferred */
+	जर (!RSA_set0_factors(rsa, rsa_p, rsa_q)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
-	rsa_p = rsa_q = NULL; /* transferred */
-	if (!RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp)) {
+	rsa_p = rsa_q = रिक्त; /* transferred */
+	जर (!RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
-	rsa_dmp1 = rsa_dmq1 = rsa_iqmp = NULL;
-	if (RSA_blinding_on(rsa, NULL) != 1) {
+	rsa_dmp1 = rsa_dmq1 = rsa_iqmp = रिक्त;
+	जर (RSA_blinding_on(rsa, रिक्त) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
-	if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1) {
+	जर (EVP_PKEY_set1_RSA(किल्ली->pkey, rsa) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
-	if ((r = sshkey_check_rsa_length(key, 0)) != 0)
-		goto out;
+	जर ((r = sshkey_check_rsa_length(किल्ली, 0)) != 0)
+		जा out;
 	/* success */
 	r = 0;
  out:
@@ -304,37 +304,37 @@ ssh_rsa_deserialize_private(const char *ktype, struct sshbuf *b,
 	BN_clear_free(rsa_iqmp);
 	BN_clear_free(rsa_dmp1);
 	BN_clear_free(rsa_dmq1);
-	return r;
+	परत r;
 }
 
-const char *
-ssh_rsa_hash_alg_ident(int hash_alg)
+स्थिरांक अक्षर *
+ssh_rsa_hash_alg_ident(पूर्णांक hash_alg)
 {
-	switch (hash_alg) {
-	case SSH_DIGEST_SHA1:
-		return "ssh-rsa";
-	case SSH_DIGEST_SHA256:
-		return "rsa-sha2-256";
-	case SSH_DIGEST_SHA512:
-		return "rsa-sha2-512";
+	निवड (hash_alg) {
+	स्थिती SSH_DIGEST_SHA1:
+		परत "ssh-rsa";
+	स्थिती SSH_DIGEST_SHA256:
+		परत "rsa-sha2-256";
+	स्थिती SSH_DIGEST_SHA512:
+		परत "rsa-sha2-512";
 	}
-	return NULL;
+	परत रिक्त;
 }
 
 /*
  * Returns the hash algorithm ID for a given algorithm identifier as used
  * inside the signature blob,
  */
-static int
-rsa_hash_id_from_ident(const char *ident)
+स्थिर पूर्णांक
+rsa_hash_id_from_ident(स्थिरांक अक्षर *ident)
 {
-	if (strcmp(ident, "ssh-rsa") == 0)
-		return SSH_DIGEST_SHA1;
-	if (strcmp(ident, "rsa-sha2-256") == 0)
-		return SSH_DIGEST_SHA256;
-	if (strcmp(ident, "rsa-sha2-512") == 0)
-		return SSH_DIGEST_SHA512;
-	return -1;
+	जर (म_भेद(ident, "ssh-rsa") == 0)
+		परत SSH_DIGEST_SHA1;
+	जर (म_भेद(ident, "rsa-sha2-256") == 0)
+		परत SSH_DIGEST_SHA256;
+	जर (म_भेद(ident, "rsa-sha2-512") == 0)
+		परत SSH_DIGEST_SHA512;
+	परत -1;
 }
 
 /*
@@ -342,51 +342,51 @@ rsa_hash_id_from_ident(const char *ident)
  * all the cases of rsa_hash_id_from_ident() but also the certificate key
  * types.
  */
-int
-ssh_rsa_hash_id_from_keyname(const char *alg)
+पूर्णांक
+ssh_rsa_hash_id_from_keyname(स्थिरांक अक्षर *alg)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = rsa_hash_id_from_ident(alg)) != -1)
-		return r;
-	if (strcmp(alg, "ssh-rsa-cert-v01@openssh.com") == 0)
-		return SSH_DIGEST_SHA1;
-	if (strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
-		return SSH_DIGEST_SHA256;
-	if (strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
-		return SSH_DIGEST_SHA512;
-	return -1;
+	जर ((r = rsa_hash_id_from_ident(alg)) != -1)
+		परत r;
+	जर (म_भेद(alg, "ssh-rsa-cert-v01@openssh.com") == 0)
+		परत SSH_DIGEST_SHA1;
+	जर (म_भेद(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
+		परत SSH_DIGEST_SHA256;
+	जर (म_भेद(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
+		परत SSH_DIGEST_SHA512;
+	परत -1;
 }
 
-int
-ssh_rsa_complete_crt_parameters(const BIGNUM *rsa_d, const BIGNUM *rsa_p,
-    const BIGNUM *rsa_q, const BIGNUM *rsa_iqmp, BIGNUM **rsa_dmp1,
+पूर्णांक
+ssh_rsa_complete_crt_parameters(स्थिरांक BIGNUM *rsa_d, स्थिरांक BIGNUM *rsa_p,
+    स्थिरांक BIGNUM *rsa_q, स्थिरांक BIGNUM *rsa_iqmp, BIGNUM **rsa_dmp1,
     BIGNUM **rsa_dmq1)
 {
-	BIGNUM *aux = NULL, *d_consttime = NULL;
-	BN_CTX *ctx = NULL;
-	int r;
+	BIGNUM *aux = रिक्त, *d_consttime = रिक्त;
+	BN_CTX *ctx = रिक्त;
+	पूर्णांक r;
 
-	*rsa_dmq1 = *rsa_dmp1 = NULL;
-	if ((ctx = BN_CTX_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((aux = BN_new()) == NULL ||
-	    (*rsa_dmq1 = BN_new()) == NULL ||
-	    (*rsa_dmp1 = BN_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((d_consttime = BN_dup(rsa_d)) == NULL) {
+	*rsa_dmq1 = *rsa_dmp1 = रिक्त;
+	जर ((ctx = BN_CTX_new()) == रिक्त)
+		परत SSH_ERR_ALLOC_FAIL;
+	जर ((aux = BN_new()) == रिक्त ||
+	    (*rsa_dmq1 = BN_new()) == रिक्त ||
+	    (*rsa_dmp1 = BN_new()) == रिक्त)
+		परत SSH_ERR_ALLOC_FAIL;
+	जर ((d_consttime = BN_dup(rsa_d)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जा out;
 	}
 	BN_set_flags(aux, BN_FLG_CONSTTIME);
 	BN_set_flags(d_consttime, BN_FLG_CONSTTIME);
 
-	if ((BN_sub(aux, rsa_q, BN_value_one()) == 0) ||
+	जर ((BN_sub(aux, rsa_q, BN_मूल्य_one()) == 0) ||
 	    (BN_mod(*rsa_dmq1, d_consttime, aux, ctx) == 0) ||
-	    (BN_sub(aux, rsa_p, BN_value_one()) == 0) ||
+	    (BN_sub(aux, rsa_p, BN_मूल्य_one()) == 0) ||
 	    (BN_mod(*rsa_dmp1, d_consttime, aux, ctx) == 0)) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		जा out;
 	}
 	/* success */
 	r = 0;
@@ -394,189 +394,189 @@ ssh_rsa_complete_crt_parameters(const BIGNUM *rsa_d, const BIGNUM *rsa_p,
 	BN_clear_free(aux);
 	BN_clear_free(d_consttime);
 	BN_CTX_free(ctx);
-	return r;
+	परत r;
 }
 
 /* RSASSA-PKCS1-v1_5 (PKCS #1 v2.0 signature) with SHA1 */
-static int
-ssh_rsa_sign(struct sshkey *key,
-    u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+स्थिर पूर्णांक
+ssh_rsa_sign(संरचना sshkey *किल्ली,
+    u_char **sigp, माप_प्रकार *lenp,
+    स्थिरांक u_char *data, माप_प्रकार datalen,
+    स्थिरांक अक्षर *alg, स्थिरांक अक्षर *sk_provider, स्थिरांक अक्षर *sk_pin, u_int compat)
 {
-	u_char *sig = NULL;
-	size_t diff, len = 0;
-	int slen = 0;
-	int hash_alg, ret = SSH_ERR_INTERNAL_ERROR;
+	u_char *sig = रिक्त;
+	माप_प्रकार diff, len = 0;
+	पूर्णांक slen = 0;
+	पूर्णांक hash_alg, ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (lenp != NULL)
+	जर (lenp != रिक्त)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	जर (sigp != रिक्त)
+		*sigp = रिक्त;
 
-	if (alg == NULL || strlen(alg) == 0)
+	जर (alg == रिक्त || म_माप(alg) == 0)
 		hash_alg = SSH_DIGEST_SHA1;
-	else
+	अन्यथा
 		hash_alg = ssh_rsa_hash_id_from_keyname(alg);
 
-	if (key == NULL || key->pkey == NULL || hash_alg == -1 ||
-	    sshkey_type_plain(key->type) != KEY_RSA)
-		return SSH_ERR_INVALID_ARGUMENT;
-	slen = EVP_PKEY_size(key->pkey);
-	if (slen <= 0 || slen > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
-		return SSH_ERR_KEY_LENGTH;
+	जर (किल्ली == रिक्त || किल्ली->pkey == रिक्त || hash_alg == -1 ||
+	    sshkey_type_plain(किल्ली->type) != किल्ली_RSA)
+		परत SSH_ERR_INVALID_ARGUMENT;
+	slen = EVP_PKEY_size(किल्ली->pkey);
+	जर (slen <= 0 || slen > SSHBUF_MAX_BIGNUM)
+		परत SSH_ERR_INVALID_ARGUMENT;
+	जर (EVP_PKEY_bits(किल्ली->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
+		परत SSH_ERR_किल्ली_LENGTH;
 
-	if ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sig, &len,
+	जर ((ret = sshkey_pkey_digest_sign(किल्ली->pkey, hash_alg, &sig, &len,
 	    data, datalen)) < 0)
-		goto out;
-	if (len < (size_t)slen) {
+		जा out;
+	जर (len < (माप_प्रकार)slen) {
 		diff = slen - len;
-		memmove(sig + diff, sig, len);
+		स_हटाओ(sig + diff, sig, len);
 		explicit_bzero(sig, diff);
-	} else if (len > (size_t)slen) {
+	} अन्यथा जर (len > (माप_प्रकार)slen) {
 		ret = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		जा out;
 	}
-	if ((ret = ssh_rsa_encode_store_sig(hash_alg, sig, slen,
+	जर ((ret = ssh_rsa_encode_store_sig(hash_alg, sig, slen,
 	    sigp, lenp)) != 0)
-		goto out;
+		जा out;
 
 	/* success */
 	ret = 0;
  out:
 	freezero(sig, slen);
-	return ret;
+	परत ret;
 }
 
-int
-ssh_rsa_encode_store_sig(int hash_alg, const u_char *sig, size_t slen,
-    u_char **sigp, size_t *lenp)
+पूर्णांक
+ssh_rsa_encode_store_sig(पूर्णांक hash_alg, स्थिरांक u_char *sig, माप_प्रकार slen,
+    u_char **sigp, माप_प्रकार *lenp)
 {
-	struct sshbuf *b = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	size_t len;
+	संरचना sshbuf *b = रिक्त;
+	पूर्णांक ret = SSH_ERR_INTERNAL_ERROR;
+	माप_प्रकार len;
 
-	if (lenp != NULL)
+	जर (lenp != रिक्त)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	जर (sigp != रिक्त)
+		*sigp = रिक्त;
 
 	/* Encode signature */
-	if ((b = sshbuf_new()) == NULL) {
+	जर ((b = sshbuf_new()) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जा out;
 	}
-	if ((ret = sshbuf_put_cstring(b,
+	जर ((ret = sshbuf_put_cstring(b,
 	    ssh_rsa_hash_alg_ident(hash_alg))) != 0 ||
 	    (ret = sshbuf_put_string(b, sig, slen)) != 0)
-		goto out;
+		जा out;
 	len = sshbuf_len(b);
 
 	/* Store signature */
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	जर (sigp != रिक्त) {
+		जर ((*sigp = दो_स्मृति(len)) == रिक्त) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			जा out;
 		}
-		memcpy(*sigp, sshbuf_ptr(b), len);
+		स_नकल(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	जर (lenp != रिक्त)
 		*lenp = len;
 	ret = 0;
  out:
 	sshbuf_free(b);
-	return ret;
+	परत ret;
 }
 
-static int
-ssh_rsa_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+स्थिर पूर्णांक
+ssh_rsa_verify(स्थिरांक संरचना sshkey *किल्ली,
+    स्थिरांक u_char *sig, माप_प्रकार siglen,
+    स्थिरांक u_char *data, माप_प्रकार dlen, स्थिरांक अक्षर *alg, u_int compat,
+    संरचना sshkey_sig_details **detailsp)
 {
-	char *sigtype = NULL;
-	int hash_alg, want_alg, ret = SSH_ERR_INTERNAL_ERROR;
-	size_t len = 0, diff, modlen, rsasize;
-	struct sshbuf *b = NULL;
-	u_char digest[SSH_DIGEST_MAX_LENGTH], *osigblob, *sigblob = NULL;
+	अक्षर *sigtype = रिक्त;
+	पूर्णांक hash_alg, want_alg, ret = SSH_ERR_INTERNAL_ERROR;
+	माप_प्रकार len = 0, diff, modlen, rsasize;
+	संरचना sshbuf *b = रिक्त;
+	u_char digest[SSH_DIGEST_MAX_LENGTH], *osigblob, *sigblob = रिक्त;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_RSA ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
-		return SSH_ERR_KEY_LENGTH;
+	जर (किल्ली == रिक्त || किल्ली->pkey == रिक्त ||
+	    sshkey_type_plain(किल्ली->type) != किल्ली_RSA ||
+	    sig == रिक्त || siglen == 0)
+		परत SSH_ERR_INVALID_ARGUMENT;
+	जर (EVP_PKEY_bits(किल्ली->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE)
+		परत SSH_ERR_किल्ली_LENGTH;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &sigtype, NULL) != 0) {
+	जर ((b = sshbuf_from(sig, siglen)) == रिक्त)
+		परत SSH_ERR_ALLOC_FAIL;
+	जर (sshbuf_get_cstring(b, &sigtype, रिक्त) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		जा out;
 	}
-	if ((hash_alg = rsa_hash_id_from_ident(sigtype)) == -1) {
-		ret = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	जर ((hash_alg = rsa_hash_id_from_ident(sigtype)) == -1) {
+		ret = SSH_ERR_किल्ली_TYPE_MISMATCH;
+		जा out;
 	}
 	/*
 	 * Allow ssh-rsa-cert-v01 certs to generate SHA2 signatures for
 	 * legacy reasons, but otherwise the signature type should match.
 	 */
-	if (alg != NULL && strcmp(alg, "ssh-rsa-cert-v01@openssh.com") != 0) {
-		if ((want_alg = ssh_rsa_hash_id_from_keyname(alg)) == -1) {
+	जर (alg != रिक्त && म_भेद(alg, "ssh-rsa-cert-v01@openssh.com") != 0) {
+		जर ((want_alg = ssh_rsa_hash_id_from_keyname(alg)) == -1) {
 			ret = SSH_ERR_INVALID_ARGUMENT;
-			goto out;
+			जा out;
 		}
-		if (hash_alg != want_alg) {
+		जर (hash_alg != want_alg) {
 			ret = SSH_ERR_SIGNATURE_INVALID;
-			goto out;
+			जा out;
 		}
 	}
-	if (sshbuf_get_string(b, &sigblob, &len) != 0) {
+	जर (sshbuf_get_string(b, &sigblob, &len) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		जा out;
 	}
-	if (sshbuf_len(b) != 0) {
+	जर (sshbuf_len(b) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		जा out;
 	}
 	/* RSA_verify expects a signature of RSA_size */
-	modlen = EVP_PKEY_size(key->pkey);
-	if (len > modlen) {
-		ret = SSH_ERR_KEY_BITS_MISMATCH;
-		goto out;
-	} else if (len < modlen) {
+	modlen = EVP_PKEY_size(किल्ली->pkey);
+	जर (len > modlen) {
+		ret = SSH_ERR_किल्ली_BITS_MISMATCH;
+		जा out;
+	} अन्यथा जर (len < modlen) {
 		diff = modlen - len;
 		osigblob = sigblob;
-		if ((sigblob = realloc(sigblob, modlen)) == NULL) {
+		जर ((sigblob = पुनः_स्मृति(sigblob, modlen)) == रिक्त) {
 			sigblob = osigblob; /* put it back for clear/free */
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			जा out;
 		}
-		memmove(sigblob + diff, sigblob, len);
+		स_हटाओ(sigblob + diff, sigblob, len);
 		explicit_bzero(sigblob, diff);
 		len = modlen;
 	}
 
-	rsasize = EVP_PKEY_size(key->pkey);
-	if (rsasize <= 0 || rsasize > SSHBUF_MAX_BIGNUM ||
+	rsasize = EVP_PKEY_size(किल्ली->pkey);
+	जर (rsasize <= 0 || rsasize > SSHBUF_MAX_BIGNUM ||
 	    len == 0 || len > rsasize) {
 		ret = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		जा out;
 	}
-	ret = sshkey_pkey_digest_verify(key->pkey, hash_alg, data, dlen,
+	ret = sshkey_pkey_digest_verify(किल्ली->pkey, hash_alg, data, dlen,
 	    sigblob, len);
 
  out:
 	freezero(sigblob, len);
-	free(sigtype);
+	मुक्त(sigtype);
 	sshbuf_free(b);
-	explicit_bzero(digest, sizeof(digest));
-	return ret;
+	explicit_bzero(digest, आकार(digest));
+	परत ret;
 }
 
-static const struct sshkey_impl_funcs sshkey_rsa_funcs = {
+स्थिर स्थिरांक संरचना sshkey_impl_funcs sshkey_rsa_funcs = {
 	/* .size = */		ssh_rsa_size,
 	/* .alloc = */		ssh_rsa_alloc,
 	/* .cleanup = */	ssh_rsa_cleanup,
@@ -591,11 +591,11 @@ static const struct sshkey_impl_funcs sshkey_rsa_funcs = {
 	/* .verify = */		ssh_rsa_verify,
 };
 
-const struct sshkey_impl sshkey_rsa_impl = {
+स्थिरांक संरचना sshkey_impl sshkey_rsa_impl = {
 	/* .name = */		"ssh-rsa",
 	/* .shortname = */	"RSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		किल्ली_RSA,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -603,11 +603,11 @@ const struct sshkey_impl sshkey_rsa_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_cert_impl = {
+स्थिरांक संरचना sshkey_impl sshkey_rsa_cert_impl = {
 	/* .name = */		"ssh-rsa-cert-v01@openssh.com",
 	/* .shortname = */	"RSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA_CERT,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		किल्ली_RSA_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -617,11 +617,11 @@ const struct sshkey_impl sshkey_rsa_cert_impl = {
 
 /* SHA2 signature algorithms */
 
-const struct sshkey_impl sshkey_rsa_sha256_impl = {
+स्थिरांक संरचना sshkey_impl sshkey_rsa_sha256_impl = {
 	/* .name = */		"rsa-sha2-256",
 	/* .shortname = */	"RSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		किल्ली_RSA,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -629,11 +629,11 @@ const struct sshkey_impl sshkey_rsa_sha256_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_sha512_impl = {
+स्थिरांक संरचना sshkey_impl sshkey_rsa_sha512_impl = {
 	/* .name = */		"rsa-sha2-512",
 	/* .shortname = */	"RSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_RSA,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		किल्ली_RSA,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -641,11 +641,11 @@ const struct sshkey_impl sshkey_rsa_sha512_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_sha256_cert_impl = {
+स्थिरांक संरचना sshkey_impl sshkey_rsa_sha256_cert_impl = {
 	/* .name = */		"rsa-sha2-256-cert-v01@openssh.com",
 	/* .shortname = */	"RSA-CERT",
 	/* .sigalg = */		"rsa-sha2-256",
-	/* .type = */		KEY_RSA_CERT,
+	/* .type = */		किल्ली_RSA_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	1,
@@ -653,11 +653,11 @@ const struct sshkey_impl sshkey_rsa_sha256_cert_impl = {
 	/* .funcs = */		&sshkey_rsa_funcs,
 };
 
-const struct sshkey_impl sshkey_rsa_sha512_cert_impl = {
+स्थिरांक संरचना sshkey_impl sshkey_rsa_sha512_cert_impl = {
 	/* .name = */		"rsa-sha2-512-cert-v01@openssh.com",
 	/* .shortname = */	"RSA-CERT",
 	/* .sigalg = */		"rsa-sha2-512",
-	/* .type = */		KEY_RSA_CERT,
+	/* .type = */		किल्ली_RSA_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	1,

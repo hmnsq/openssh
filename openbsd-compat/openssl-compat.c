@@ -15,21 +15,21 @@
  */
 
 #define SSH_DONT_OVERLOAD_OPENSSL_FUNCS
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifdef WITH_OPENSSL
 
-#include <stdarg.h>
-#include <string.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <string.h>
 
 #ifdef USE_OPENSSL_ENGINE
 # include <openssl/engine.h>
 # include <openssl/conf.h>
 #endif
 
-#include "log.h"
+#अन्तर्भाव "log.h"
 
-#include "openssl-compat.h"
+#अन्तर्भाव "openssl-compat.h"
 
 /*
  * OpenSSL version numbers: MNNFFPPS: major minor fix patch status.
@@ -40,21 +40,21 @@
  * See https://www.openssl.org/policies/releasestrat.html
  */
 
-int
-ssh_compatible_openssl(long headerver, long libver)
+पूर्णांक
+ssh_compatible_openssl(दीर्घ headerver, दीर्घ libver)
 {
-	long mask, hfix, lfix;
+	दीर्घ mask, hfix, lfix;
 
 	/* exact match is always OK */
-	if (headerver == libver)
-		return 1;
+	जर (headerver == libver)
+		परत 1;
 
 	/*
 	 * For versions >= 3.0, only the major must match.
 	 */
-	if (headerver >= 0x30000000) {
+	जर (headerver >= 0x30000000) {
 		mask = 0xf0000000L; /* major only */
-		return (headerver & mask) == (libver & mask);
+		परत (headerver & mask) == (libver & mask);
 	}
 
 	/*
@@ -64,13 +64,13 @@ ssh_compatible_openssl(long headerver, long libver)
 	mask = 0xfff0000fL; /* major,minor,status */
 	hfix = (headerver & 0x000ff000) >> 12;
 	lfix = (libver & 0x000ff000) >> 12;
-	if ( (headerver & mask) == (libver & mask) && lfix >= hfix)
-		return 1;
-	return 0;
+	जर ( (headerver & mask) == (libver & mask) && lfix >= hfix)
+		परत 1;
+	परत 0;
 }
 
-int
-ssh_libcrypto_init(void)
+पूर्णांक
+ssh_libcrypto_init(शून्य)
 {
 	uint64_t opts = OPENSSL_INIT_ADD_ALL_CIPHERS |
 	    OPENSSL_INIT_ADD_ALL_DIGESTS;
@@ -84,32 +84,32 @@ ssh_libcrypto_init(void)
 	opts |= OPENSSL_INIT_LOAD_CONFIG;
 #endif /* USE_OPENSSL_ENGINE */
 
-	return OPENSSL_init_crypto(opts, NULL);
+	परत OPENSSL_init_crypto(opts, रिक्त);
 }
 
 #ifndef HAVE_EVP_DIGESTSIGN
-int
-EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sigret, size_t *siglen,
-    const unsigned char *tbs, size_t tbslen)
+पूर्णांक
+EVP_DigestSign(EVP_MD_CTX *ctx, अचिन्हित अक्षर *sigret, माप_प्रकार *siglen,
+    स्थिरांक अचिन्हित अक्षर *tbs, माप_प्रकार tbslen)
 {
-	if (sigret != NULL) {
-		if (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
-			return 0;
+	जर (sigret != रिक्त) {
+		जर (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
+			परत 0;
 	}
 
-	return EVP_DigestSignFinal(ctx, sigret, siglen);
+	परत EVP_DigestSignFinal(ctx, sigret, siglen);
 }
 #endif
 
 #ifndef HAVE_EVP_DIGESTVERIFY
-int
-EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned char *sigret, size_t siglen,
-    const unsigned char *tbs, size_t tbslen)
+पूर्णांक
+EVP_DigestVerify(EVP_MD_CTX *ctx, स्थिरांक अचिन्हित अक्षर *sigret, माप_प्रकार siglen,
+    स्थिरांक अचिन्हित अक्षर *tbs, माप_प्रकार tbslen)
 {
-	if (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
-		return -1;
+	जर (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
+		परत -1;
 
-	return EVP_DigestVerifyFinal(ctx, sigret, siglen);
+	परत EVP_DigestVerifyFinal(ctx, sigret, siglen);
 }
 #endif
 

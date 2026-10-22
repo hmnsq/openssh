@@ -29,9 +29,9 @@
 #ifdef GSSAPI
 
 #ifdef HAVE_GSSAPI_H
-#include <gssapi.h>
-#elif defined(HAVE_GSSAPI_GSSAPI_H)
-#include <gssapi/gssapi.h>
+#अन्तर्भाव <gssapi.h>
+#किंवाजर defined(HAVE_GSSAPI_GSSAPI_H)
+#अन्तर्भाव <gssapi/gssapi.h>
 #endif
 
 #ifdef KRB5
@@ -44,7 +44,7 @@
 
 /* Old MIT Kerberos doesn't seem to define GSS_NT_HOSTBASED_SERVICE */
 
-#  if !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
+#  जर !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
 #   define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
 #  endif /* !HAVE_DECL_GSS_C_NT_... */
 
@@ -52,42 +52,42 @@
 #endif /* KRB5 */
 
 /* draft-ietf-secsh-gsskeyex-06 */
-#define SSH2_MSG_USERAUTH_GSSAPI_RESPONSE		60
-#define SSH2_MSG_USERAUTH_GSSAPI_TOKEN			61
-#define SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
-#define SSH2_MSG_USERAUTH_GSSAPI_ERROR			64
-#define SSH2_MSG_USERAUTH_GSSAPI_ERRTOK			65
-#define SSH2_MSG_USERAUTH_GSSAPI_MIC			66
+#define SSH2_संदेश_USERAUTH_GSSAPI_RESPONSE		60
+#define SSH2_संदेश_USERAUTH_GSSAPI_TOKEN			61
+#define SSH2_संदेश_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
+#define SSH2_संदेश_USERAUTH_GSSAPI_ERROR			64
+#define SSH2_संदेश_USERAUTH_GSSAPI_ERRTOK			65
+#define SSH2_संदेश_USERAUTH_GSSAPI_MIC			66
 
 #define SSH_GSS_OIDTYPE 0x06
 
-typedef struct {
-	char *filename;
-	char *envvar;
-	char *envval;
-	void *data;
+प्रकारव्याख्या संरचना {
+	अक्षर *filename;
+	अक्षर *envvar;
+	अक्षर *envval;
+	शून्य *data;
 } ssh_gssapi_ccache;
 
-typedef struct {
+प्रकारव्याख्या संरचना {
 	gss_buffer_desc displayname;
 	gss_buffer_desc exportedname;
 	gss_cred_id_t creds;
-	struct ssh_gssapi_mech_struct *mech;
+	संरचना ssh_gssapi_mech_struct *mech;
 	ssh_gssapi_ccache store;
-	int userok;
+	पूर्णांक userok;
 } ssh_gssapi_client;
 
-typedef struct ssh_gssapi_mech_struct {
-	char *enc_name;
-	char *name;
+प्रकारव्याख्या संरचना ssh_gssapi_mech_struct {
+	अक्षर *enc_name;
+	अक्षर *name;
 	gss_OID_desc oid;
-	int (*dochild) (ssh_gssapi_client *);
-	int (*userok) (ssh_gssapi_client *, char *);
-	int (*localname) (ssh_gssapi_client *, char **);
-	void (*storecreds) (ssh_gssapi_client *);
+	पूर्णांक (*dochild) (ssh_gssapi_client *);
+	पूर्णांक (*userok) (ssh_gssapi_client *, अक्षर *);
+	पूर्णांक (*localname) (ssh_gssapi_client *, अक्षर **);
+	शून्य (*storecreds) (ssh_gssapi_client *);
 } ssh_gssapi_mech;
 
-typedef struct {
+प्रकारव्याख्या संरचना {
 	OM_uint32	major; /* both */
 	OM_uint32	minor; /* both */
 	gss_ctx_id_t	context; /* both */
@@ -98,42 +98,42 @@ typedef struct {
 	gss_cred_id_t	client_creds; /* server */
 } Gssctxt;
 
-extern ssh_gssapi_mech *supported_mechs[];
+बाह्य ssh_gssapi_mech *supported_mechs[];
 
-int  ssh_gssapi_check_oid(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid_data(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid(Gssctxt *, gss_OID);
-void ssh_gssapi_supported_oids(gss_OID_set *);
-void ssh_gssapi_prepare_supported_oids(void);
-OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, int *);
+पूर्णांक  ssh_gssapi_check_oid(Gssctxt *, शून्य *, माप_प्रकार);
+शून्य ssh_gssapi_set_oid_data(Gssctxt *, शून्य *, माप_प्रकार);
+शून्य ssh_gssapi_set_oid(Gssctxt *, gss_OID);
+शून्य ssh_gssapi_supported_oids(gss_OID_set *);
+शून्य ssh_gssapi_prepare_supported_oids(शून्य);
+OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, पूर्णांक *);
 
-struct sshbuf;
-int ssh_gssapi_get_buffer_desc(struct sshbuf *, gss_buffer_desc *);
+संरचना sshbuf;
+पूर्णांक ssh_gssapi_get_buffer_desc(संरचना sshbuf *, gss_buffer_desc *);
 
-OM_uint32 ssh_gssapi_import_name(Gssctxt *, const char *);
-OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, int,
+OM_uint32 ssh_gssapi_import_name(Gssctxt *, स्थिरांक अक्षर *);
+OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, पूर्णांक,
     gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_accept_ctx(Gssctxt *,
     gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_getclient(Gssctxt *, ssh_gssapi_client *);
-void ssh_gssapi_error(Gssctxt *);
-char *ssh_gssapi_last_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
-void ssh_gssapi_build_ctx(Gssctxt **);
-void ssh_gssapi_delete_ctx(Gssctxt **);
+शून्य ssh_gssapi_error(Gssctxt *);
+अक्षर *ssh_gssapi_last_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
+शून्य ssh_gssapi_build_ctx(Gssctxt **);
+शून्य ssh_gssapi_delete_ctx(Gssctxt **);
 OM_uint32 ssh_gssapi_sign(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_buildmic(struct sshbuf *, const char *,
-    const char *, const char *, const struct sshbuf *);
-int ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, const char *);
+शून्य ssh_gssapi_buildmic(संरचना sshbuf *, स्थिरांक अक्षर *,
+    स्थिरांक अक्षर *, स्थिरांक अक्षर *, स्थिरांक संरचना sshbuf *);
+पूर्णांक ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, स्थिरांक अक्षर *);
 
 /* In the server */
 OM_uint32 ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
-int ssh_gssapi_userok(char *name);
+पूर्णांक ssh_gssapi_userok(अक्षर *name);
 OM_uint32 ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_do_child(char ***, u_int *);
-void ssh_gssapi_cleanup_creds(void);
-void ssh_gssapi_storecreds(void);
-const char *ssh_gssapi_displayname(void);
-void ssh_gssapi_cleanup_global_client(void);
+शून्य ssh_gssapi_do_child(अक्षर ***, u_int *);
+शून्य ssh_gssapi_cleanup_creds(शून्य);
+शून्य ssh_gssapi_storecreds(शून्य);
+स्थिरांक अक्षर *ssh_gssapi_displayname(शून्य);
+शून्य ssh_gssapi_cleanup_global_client(शून्य);
 
 #endif /* GSSAPI */
 

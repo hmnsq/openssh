@@ -14,15 +14,15 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#जर !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
 #ifdef HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
 #endif
 
-#include <errno.h>
+#अन्तर्भाव <errno.h>
 
 #ifndef MNAMELEN
 # define MNAMELEN 32
@@ -33,8 +33,8 @@
 #endif
 
 #ifdef HAVE_STRUCT_STATFS
-static void
-copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
+स्थिर शून्य
+copy_statfs_to_statvfs(संरचना statvfs *to, संरचना statfs *from)
 {
 	to->f_bsize = from->f_bsize;
 	to->f_frsize = from->f_bsize;	/* no exact equivalent */
@@ -47,7 +47,7 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 	to->f_fsid = 0;			/* XXX fix me */
 #ifdef HAVE_STRUCT_STATFS_F_FLAGS
 	to->f_flag = from->f_flags;
-#else
+#अन्यथा
 	to->f_flag = 0;
 #endif
 	to->f_namemax = MNAMELEN;
@@ -55,37 +55,37 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 #endif
 
 # ifndef HAVE_STATVFS
-int statvfs(const char *path, struct statvfs *buf)
+पूर्णांक statvfs(स्थिरांक अक्षर *path, संरचना statvfs *buf)
 {
-#  if defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  जर defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
+	संरचना statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (statfs(path, &fs) == -1)
-		return -1;
+	स_रखो(&fs, 0, आकार(fs));
+	जर (statfs(path, &fs) == -1)
+		परत -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
-	errno = ENOSYS;
-	return -1;
+	परत 0;
+#  अन्यथा
+	त्रुटि_सं = ENOSYS;
+	परत -1;
 #  endif
 }
 # endif
 
 # ifndef HAVE_FSTATVFS
-int fstatvfs(int fd, struct statvfs *buf)
+पूर्णांक fstatvfs(पूर्णांक fd, संरचना statvfs *buf)
 {
-#  if defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  जर defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
+	संरचना statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (fstatfs(fd, &fs) == -1)
-		return -1;
+	स_रखो(&fs, 0, आकार(fs));
+	जर (fstatfs(fd, &fs) == -1)
+		परत -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
-	errno = ENOSYS;
-	return -1;
+	परत 0;
+#  अन्यथा
+	त्रुटि_सं = ENOSYS;
+	परत -1;
 #  endif
 }
 # endif

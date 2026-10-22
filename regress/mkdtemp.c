@@ -16,46 +16,46 @@
 
 /* Roughly equivalent to "mktemp -d -t TEMPLATE", but portable. */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <unistd.h>
 
-#include "log.h"
+#अन्तर्भाव "log.h"
 
-static void
-usage(void)
+स्थिर शून्य
+usage(शून्य)
 {
-	fprintf(stderr, "mkdtemp template\n");
-	exit(1);
+	ख_लिखो(मानक_त्रुटि, "mkdtemp template\n");
+	निकास(1);
 }
 
-int
-main(int argc, char **argv)
+पूर्णांक
+main(पूर्णांक argc, अक्षर **argv)
 {
-	const char *base;
-	const char *tmpdir;
-	char template[PATH_MAX];
-	int r;
-	char *dir;
+	स्थिरांक अक्षर *base;
+	स्थिरांक अक्षर *tmpdir;
+	अक्षर ढाँचा[PATH_MAX];
+	पूर्णांक r;
+	अक्षर *dir;
 
-	if (argc != 2)
+	जर (argc != 2)
 		usage();
 	base = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	जर ((tmpdir = दो_पर्या("TMPDIR")) == रिक्त)
 		tmpdir = "/tmp";
-	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	r = snprintf(ढाँचा, आकार(ढाँचा), "%s/%s", tmpdir, base);
+	जर (r < 0 || (माप_प्रकार)r >= आकार(ढाँचा))
 		fatal("template string too long");
-	dir = mkdtemp(template);
-	if (dir == NULL) {
-		perror("mkdtemp");
-		exit(1);
+	dir = mkdtemp(ढाँचा);
+	जर (dir == रिक्त) {
+		लिखो_त्रुटि("mkdtemp");
+		निकास(1);
 	}
-	puts(dir);
-	return 0;
+	माला_दो(dir);
+	परत 0;
 }

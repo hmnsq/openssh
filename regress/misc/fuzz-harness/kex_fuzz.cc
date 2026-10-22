@@ -1,148 +1,148 @@
 // libfuzzer driver for key exchange fuzzing.
 
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-extern "C" {
+बाह्य "C" {
 
-#include "includes.h"
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "log.h"
+#अन्तर्भाव "includes.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "ssh_api.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "myproposal.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "authfile.h"
+#अन्तर्भाव "log.h"
 
-#include "fixed-keys.h"
+#अन्तर्भाव "fixed-keys.h"
 
 // Define if you want to generate traces.
 /* #define STANDALONE 1 */
 
-static int prepare_key(struct shared_state *st, int keytype, int bits);
+स्थिर पूर्णांक prepare_किल्ली(संरचना shared_state *st, पूर्णांक keytype, पूर्णांक bits);
 
-struct shared_state {
-	size_t nkeys;
-	struct sshkey **privkeys, **pubkeys;
+संरचना shared_state {
+	माप_प्रकार nkeys;
+	संरचना sshkey **privkeys, **pubkeys;
 };
 
-struct test_state {
-	struct sshbuf *smsgs, *cmsgs; /* output, for standalone mode */
-	struct sshbuf *sin, *cin; /* input; setup per-test in do_kex_with_key */
-	struct sshbuf *s_template, *c_template; /* main copy of input */
+संरचना test_state {
+	संरचना sshbuf *smsgs, *cmsgs; /* output, for standalone mode */
+	संरचना sshbuf *sin, *cin; /* input; setup per-test in do_kex_with_key */
+	संरचना sshbuf *s_template, *c_template; /* main copy of input */
 };
 
 /*
  * Optional proposal overrides applied to both sides. Each field
  * replaces one KEXINIT slot when non-NULL.
  */
-struct kex_overrides {
-	const char *cipher;
-	const char *mac;
-	const char *comp;
+संरचना kex_overrides {
+	स्थिरांक अक्षर *cipher;
+	स्थिरांक अक्षर *mac;
+	स्थिरांक अक्षर *comp;
 };
 
-static int
-do_send_and_receive(struct ssh *from, struct ssh *to,
-    struct sshbuf *store, int clobber, size_t *n)
+स्थिर पूर्णांक
+do_send_and_receive(संरचना ssh *from, संरचना ssh *to,
+    संरचना sshbuf *store, पूर्णांक clobber, माप_प्रकार *n)
 {
 	u_char type;
-	size_t len;
-	const u_char *buf;
-	int r;
+	माप_प्रकार len;
+	स्थिरांक u_char *buf;
+	पूर्णांक r;
 
-	for (*n = 0;; (*n)++) {
-		if ((r = ssh_packet_next(from, &type)) != 0) {
+	साठी (*n = 0;; (*n)++) {
+		जर ((r = ssh_packet_next(from, &type)) != 0) {
 			debug_fr(r, "ssh_packet_next");
-			return r;
+			परत r;
 		}
-		if (type != 0)
-			return 0;
+		जर (type != 0)
+			परत 0;
 		buf = ssh_output_ptr(from, &len);
 		debug_f("%zu%s", len, clobber ? " ignore" : "");
-		if (len == 0)
-			return 0;
-		if ((r = ssh_output_consume(from, len)) != 0) {
+		जर (len == 0)
+			परत 0;
+		जर ((r = ssh_output_consume(from, len)) != 0) {
 			debug_fr(r, "ssh_output_consume");
-			return r;
+			परत r;
 		}
-		if (store != NULL && (r = sshbuf_put(store, buf, len)) != 0) {
+		जर (store != रिक्त && (r = sshbuf_put(store, buf, len)) != 0) {
 			debug_fr(r, "sshbuf_put");
-			return r;
+			परत r;
 		}
-		if (!clobber && (r = ssh_input_append(to, buf, len)) != 0) {
+		जर (!clobber && (r = ssh_आदान_append(to, buf, len)) != 0) {
 			debug_fr(r, "ssh_input_append");
-			return r;
+			परत r;
 		}
 	}
 }
 
-static int
-run_kex(struct test_state *ts, struct ssh *client, struct ssh *server)
+स्थिर पूर्णांक
+run_kex(संरचना test_state *ts, संरचना ssh *client, संरचना ssh *server)
 {
-	int r = 0;
-	size_t cn, sn;
+	पूर्णांक r = 0;
+	माप_प्रकार cn, sn;
 
 	/* If fuzzing, replace server/client input */
-	if (ts->sin != NULL) {
-		if ((r = ssh_input_append(server, sshbuf_ptr(ts->sin),
+	जर (ts->sin != रिक्त) {
+		जर ((r = ssh_आदान_append(server, sshbuf_ptr(ts->sin),
 		    sshbuf_len(ts->sin))) != 0) {
 			error_fr(r, "ssh_input_append");
-			return r;
+			परत r;
 		}
 		sshbuf_reset(ts->sin);
 	}
-	if (ts->cin != NULL) {
-		if ((r = ssh_input_append(client, sshbuf_ptr(ts->cin),
+	जर (ts->cin != रिक्त) {
+		जर ((r = ssh_आदान_append(client, sshbuf_ptr(ts->cin),
 		    sshbuf_len(ts->cin))) != 0) {
 			error_fr(r, "ssh_input_append");
-			return r;
+			परत r;
 		}
 		sshbuf_reset(ts->cin);
 	}
-	while (!server->kex->done || !client->kex->done) {
+	पर्यंत (!server->kex->done || !client->kex->done) {
 		cn = sn = 0;
 		debug_f("S:");
-		if ((r = do_send_and_receive(server, client,
-		    ts->smsgs, ts->cin != NULL, &sn)) != 0) {
+		जर ((r = do_send_and_receive(server, client,
+		    ts->smsgs, ts->cin != रिक्त, &sn)) != 0) {
 			debug_fr(r, "S->C");
-			break;
+			थांबा;
 		}
 		debug_f("C:");
-		if ((r = do_send_and_receive(client, server,
-		    ts->cmsgs, ts->sin != NULL, &cn)) != 0) {
+		जर ((r = do_send_and_receive(client, server,
+		    ts->cmsgs, ts->sin != रिक्त, &cn)) != 0) {
 			debug_fr(r, "C->S");
-			break;
+			थांबा;
 		}
-		if (cn == 0 && sn == 0) {
+		जर (cn == 0 && sn == 0) {
 			debug_f("kex stalled");
 			r = SSH_ERR_PROTOCOL_ERROR;
-			break;
+			थांबा;
 		}
 	}
 	debug_fr(r, "done");
-	return r;
+	परत r;
 }
 
-static void
-store_key(struct shared_state *st, struct sshkey *pubkey,
-    struct sshkey *privkey)
+स्थिर शून्य
+store_किल्ली(संरचना shared_state *st, संरचना sshkey *pubkey,
+    संरचना sshkey *privkey)
 {
-	if (st == NULL || pubkey->type < 0 || pubkey->type > INT_MAX ||
+	जर (st == रिक्त || pubkey->type < 0 || pubkey->type > पूर्णांक_उच्च ||
 	    privkey->type != pubkey->type ||
-	    ((size_t)pubkey->type < st->nkeys &&
-	     st->pubkeys[pubkey->type] != NULL))
-		abort();
-	if ((size_t)pubkey->type >= st->nkeys) {
-		st->pubkeys = (struct sshkey **)xrecallocarray(st->pubkeys,
-		    st->nkeys, pubkey->type + 1, sizeof(*st->pubkeys));
-		st->privkeys = (struct sshkey **)xrecallocarray(st->privkeys,
-		    st->nkeys, privkey->type + 1, sizeof(*st->privkeys));
+	    ((माप_प्रकार)pubkey->type < st->nkeys &&
+	     st->pubkeys[pubkey->type] != रिक्त))
+		पात();
+	जर ((माप_प्रकार)pubkey->type >= st->nkeys) {
+		st->pubkeys = (संरचना sshkey **)xrecallocarray(st->pubkeys,
+		    st->nkeys, pubkey->type + 1, आकार(*st->pubkeys));
+		st->privkeys = (संरचना sshkey **)xrecallocarray(st->privkeys,
+		    st->nkeys, privkey->type + 1, आकार(*st->privkeys));
 		st->nkeys = privkey->type + 1;
 	}
 	debug_f("store %s at %d", sshkey_ssh_name(pubkey), pubkey->type);
@@ -150,289 +150,289 @@ store_key(struct shared_state *st, struct sshkey *pubkey,
 	st->privkeys[privkey->type] = privkey;
 }
 
-static int
-prepare_keys(struct shared_state *st)
+स्थिर पूर्णांक
+prepare_किल्ल्या(संरचना shared_state *st)
 {
-	if (prepare_key(st, KEY_RSA, 2048) != 0 ||
-	    prepare_key(st, KEY_ECDSA, 256) != 0 ||
-	    prepare_key(st, KEY_ED25519, 256) != 0) {
+	जर (prepare_किल्ली(st, किल्ली_RSA, 2048) != 0 ||
+	    prepare_किल्ली(st, किल्ली_ECDSA, 256) != 0 ||
+	    prepare_किल्ली(st, किल्ली_ED25519, 256) != 0) {
 		error_f("key prepare failed");
-		return -1;
+		परत -1;
 	}
-	return 0;
+	परत 0;
 }
 
-static struct sshkey *
-get_pubkey(struct shared_state *st, int keytype)
+स्थिर संरचना sshkey *
+get_pubkey(संरचना shared_state *st, पूर्णांक keytype)
 {
-	if (st == NULL || keytype < 0 || (size_t)keytype >= st->nkeys ||
-	    st->pubkeys == NULL || st->pubkeys[keytype] == NULL)
-		abort();
-	return st->pubkeys[keytype];
+	जर (st == रिक्त || keytype < 0 || (माप_प्रकार)keytype >= st->nkeys ||
+	    st->pubkeys == रिक्त || st->pubkeys[keytype] == रिक्त)
+		पात();
+	परत st->pubkeys[keytype];
 }
 
-static struct sshkey *
-get_privkey(struct shared_state *st, int keytype)
+स्थिर संरचना sshkey *
+get_privkey(संरचना shared_state *st, पूर्णांक keytype)
 {
-	if (st == NULL || keytype < 0 || (size_t)keytype >= st->nkeys ||
-	    st->privkeys == NULL || st->privkeys[keytype] == NULL)
-		abort();
-	return st->privkeys[keytype];
+	जर (st == रिक्त || keytype < 0 || (माप_प्रकार)keytype >= st->nkeys ||
+	    st->privkeys == रिक्त || st->privkeys[keytype] == रिक्त)
+		पात();
+	परत st->privkeys[keytype];
 }
 
-static int
-build_proposal_side(char **out, const char *defaults[PROPOSAL_MAX],
-    const char *kex, const char *keyname,
-    const char *cipher, const char *mac, const char *comp)
+स्थिर पूर्णांक
+build_proposal_side(अक्षर **out, स्थिरांक अक्षर *defaults[PROPOSAL_MAX],
+    स्थिरांक अक्षर *kex, स्थिरांक अक्षर *keyname,
+    स्थिरांक अक्षर *cipher, स्थिरांक अक्षर *mac, स्थिरांक अक्षर *comp)
 {
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *ccp = defaults[i];
+	पूर्णांक i;
+	साठी (i = 0; i < PROPOSAL_MAX; i++) {
+		स्थिरांक अक्षर *ccp = defaults[i];
 #ifdef CIPHER_NONE_AVAIL
-		if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		जर (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			ccp = "none";
 #endif
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		जर (i == PROPOSAL_SERVER_HOST_किल्ली_ALGS)
 			ccp = keyname;
-		else if (i == PROPOSAL_KEX_ALGS && kex != NULL)
+		अन्यथा जर (i == PROPOSAL_KEX_ALGS && kex != रिक्त)
 			ccp = kex;
-		else if ((i == PROPOSAL_ENC_ALGS_CTOS ||
-		    i == PROPOSAL_ENC_ALGS_STOC) && cipher != NULL)
+		अन्यथा जर ((i == PROPOSAL_ENC_ALGS_CTOS ||
+		    i == PROPOSAL_ENC_ALGS_STOC) && cipher != रिक्त)
 			ccp = cipher;
-		else if ((i == PROPOSAL_MAC_ALGS_CTOS ||
-		    i == PROPOSAL_MAC_ALGS_STOC) && mac != NULL)
+		अन्यथा जर ((i == PROPOSAL_MAC_ALGS_CTOS ||
+		    i == PROPOSAL_MAC_ALGS_STOC) && mac != रिक्त)
 			ccp = mac;
-		else if ((i == PROPOSAL_COMP_ALGS_CTOS ||
-		    i == PROPOSAL_COMP_ALGS_STOC) && comp != NULL)
+		अन्यथा जर ((i == PROPOSAL_COMP_ALGS_CTOS ||
+		    i == PROPOSAL_COMP_ALGS_STOC) && comp != रिक्त)
 			ccp = comp;
-		if ((out[i] = strdup(ccp)) == NULL)
-			return -1;
+		जर ((out[i] = strdup(ccp)) == रिक्त)
+			परत -1;
 	}
-	return 0;
+	परत 0;
 }
 
-static int
-do_kex_with_key(struct shared_state *st, struct test_state *ts,
-    const char *kex, int keytype, const struct kex_overrides *ov)
+स्थिर पूर्णांक
+do_kex_with_किल्ली(संरचना shared_state *st, संरचना test_state *ts,
+    स्थिरांक अक्षर *kex, पूर्णांक keytype, स्थिरांक संरचना kex_overrides *ov)
 {
-	struct ssh *client = NULL, *server = NULL;
-	struct sshkey *privkey = NULL, *pubkey = NULL;
-	struct sshbuf *state = NULL;
-	struct kex_params kex_params;
-	const char *proposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *myproposal[PROPOSAL_MAX] = {0};
-	char *keyname = NULL;
-	int i, r;
+	संरचना ssh *client = रिक्त, *server = रिक्त;
+	संरचना sshkey *privkey = रिक्त, *pubkey = रिक्त;
+	संरचना sshbuf *state = रिक्त;
+	संरचना kex_params kex_params;
+	स्थिरांक अक्षर *proposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	अक्षर *myproposal[PROPOSAL_MAX] = {0};
+	अक्षर *keyname = रिक्त;
+	पूर्णांक i, r;
 
-	ts->cin = ts->sin = NULL;
-	if (ts->c_template != NULL &&
-	    (ts->cin = sshbuf_fromb(ts->c_template)) == NULL)
-		abort();
-	if (ts->s_template != NULL &&
-	    (ts->sin = sshbuf_fromb(ts->s_template)) == NULL)
-		abort();
+	ts->cin = ts->sin = रिक्त;
+	जर (ts->c_template != रिक्त &&
+	    (ts->cin = sshbuf_fromb(ts->c_template)) == रिक्त)
+		पात();
+	जर (ts->s_template != रिक्त &&
+	    (ts->sin = sshbuf_fromb(ts->s_template)) == रिक्त)
+		पात();
 
 	pubkey = get_pubkey(st, keytype);
 	privkey = get_privkey(st, keytype);
 	keyname = xstrdup(sshkey_ssh_name(privkey));
-	if (ts->cin != NULL) {
+	जर (ts->cin != रिक्त) {
 		debug_f("%s %s clobber client %zu", kex, keyname,
 		    sshbuf_len(ts->cin));
-	} else if (ts->sin != NULL) {
+	} अन्यथा जर (ts->sin != रिक्त) {
 		debug_f("%s %s clobber server %zu", kex, keyname,
 		    sshbuf_len(ts->sin));
-	} else
+	} अन्यथा
 		debug_f("%s %s noclobber", kex, keyname);
 
-	if (build_proposal_side(myproposal, proposal, kex, keyname,
-	    ov ? ov->cipher : NULL,
-	    ov ? ov->mac : NULL,
-	    ov ? ov->comp : NULL) != 0) {
+	जर (build_proposal_side(myproposal, proposal, kex, keyname,
+	    ov ? ov->cipher : रिक्त,
+	    ov ? ov->mac : रिक्त,
+	    ov ? ov->comp : रिक्त) != 0) {
 		error_f("build proposal");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto fail;
+		जा fail;
 	}
-	memcpy(kex_params.proposal, myproposal, sizeof(myproposal));
-	if ((r = ssh_init(&client, 0, &kex_params)) != 0) {
+	स_नकल(kex_params.proposal, myproposal, आकार(myproposal));
+	जर ((r = ssh_init(&client, 0, &kex_params)) != 0) {
 		error_fr(r, "init client");
-		goto fail;
+		जा fail;
 	}
-	if ((r = ssh_init(&server, 1, &kex_params)) != 0) {
+	जर ((r = ssh_init(&server, 1, &kex_params)) != 0) {
 		error_fr(r, "init server");
-		goto fail;
+		जा fail;
 	}
-	if ((r = ssh_add_hostkey(server, privkey)) != 0 ||
+	जर ((r = ssh_add_hostkey(server, privkey)) != 0 ||
 	    (r = ssh_add_hostkey(client, pubkey)) != 0) {
 		error_fr(r, "add hostkeys");
-		goto fail;
+		जा fail;
 	}
-	if ((r = run_kex(ts, client, server)) != 0) {
+	जर ((r = run_kex(ts, client, server)) != 0) {
 		error_fr(r, "kex");
-		goto fail;
+		जा fail;
 	}
 	/* XXX rekex, set_state, etc */
  fail:
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(myproposal[i]);
+	साठी (i = 0; i < PROPOSAL_MAX; i++)
+		मुक्त(myproposal[i]);
 	sshbuf_free(ts->sin);
 	sshbuf_free(ts->cin);
 	sshbuf_free(state);
 	ssh_free(client);
 	ssh_free(server);
-	free(keyname);
-	return r;
+	मुक्त(keyname);
+	परत r;
 }
 
-static int
-prepare_key(struct shared_state *st, int kt, int bits)
+स्थिर पूर्णांक
+prepare_किल्ली(संरचना shared_state *st, पूर्णांक kt, पूर्णांक bits)
 {
-	const char *pubstr = NULL;
-	const char *privstr = NULL;
-	char *tmp, *cp;
-	struct sshkey *privkey = NULL, *pubkey = NULL;
-	struct sshbuf *b = NULL;
-	int r;
+	स्थिरांक अक्षर *pubstr = रिक्त;
+	स्थिरांक अक्षर *privstr = रिक्त;
+	अक्षर *tmp, *cp;
+	संरचना sshkey *privkey = रिक्त, *pubkey = रिक्त;
+	संरचना sshbuf *b = रिक्त;
+	पूर्णांक r;
 
-	switch (kt) {
-	case KEY_RSA:
+	निवड (kt) {
+	स्थिती किल्ली_RSA:
 		pubstr = PUB_RSA;
 		privstr = PRIV_RSA;
-		break;
-	case KEY_ECDSA:
+		थांबा;
+	स्थिती किल्ली_ECDSA:
 		pubstr = PUB_ECDSA;
 		privstr = PRIV_ECDSA;
-		break;
-	case KEY_ED25519:
+		थांबा;
+	स्थिती किल्ली_ED25519:
 		pubstr = PUB_ED25519;
 		privstr = PRIV_ED25519;
-		break;
-	default:
-		abort();
+		थांबा;
+	पूर्वनिर्धारित:
+		पात();
 	}
-	if ((b = sshbuf_from(privstr, strlen(privstr))) == NULL)
-		abort();
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	जर ((b = sshbuf_from(privstr, म_माप(privstr))) == रिक्त)
+		पात();
+	जर ((r = sshkey_parse_private_fileblob(b, "", &privkey, रिक्त)) != 0) {
 		error_fr(r, "priv %d", kt);
-		abort();
+		पात();
 	}
 	sshbuf_free(b);
 	tmp = cp = xstrdup(pubstr);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
-		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	जर ((pubkey = sshkey_new(किल्ली_UNSPEC)) == रिक्त)
+		पात();
+	जर ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "pub %d", kt);
-		abort();
+		पात();
 	}
-	free(tmp);
+	मुक्त(tmp);
 
-	store_key(st, pubkey, privkey);
-	return 0;
+	store_किल्ली(st, pubkey, privkey);
+	परत 0;
 }
 
-#if defined(STANDALONE)
+#जर defined(STANDALONE)
 
-#if 0 /* use this if generating new keys to embed above */
-static int
-prepare_key(struct shared_state *st, int keytype, int bits)
+#जर 0 /* use this if generating new keys to embed above */
+स्थिर पूर्णांक
+prepare_किल्ली(संरचना shared_state *st, पूर्णांक keytype, पूर्णांक bits)
 {
-	struct sshkey *privkey = NULL, *pubkey = NULL;
-	int r;
+	संरचना sshkey *privkey = रिक्त, *pubkey = रिक्त;
+	पूर्णांक r;
 
-	if ((r = sshkey_generate(keytype, bits, &privkey)) != 0) {
+	जर ((r = sshkey_generate(keytype, bits, &privkey)) != 0) {
 		error_fr(r, "generate");
-		abort();
+		पात();
 	}
-	if ((r = sshkey_from_private(privkey, &pubkey)) != 0) {
+	जर ((r = sshkey_from_private(privkey, &pubkey)) != 0) {
 		error_fr(r, "make pubkey");
-		abort();
+		पात();
 	}
-	store_key(st, pubkey, privkey);
-	return 0;
+	store_किल्ली(st, pubkey, privkey);
+	परत 0;
 }
 #endif
 
-int main(void)
+पूर्णांक main(शून्य)
 {
-	static struct shared_state *st;
-	struct test_state *ts;
-	const int keytypes[] = { KEY_RSA, KEY_ECDSA, KEY_ED25519, -1 };
-	static const char * const kextypes[] = {
+	स्थिर संरचना shared_state *st;
+	संरचना test_state *ts;
+	स्थिरांक पूर्णांक keytypes[] = { किल्ली_RSA, किल्ली_ECDSA, किल्ली_ED25519, -1 };
+	स्थिर स्थिरांक अक्षर * स्थिरांक kextypes[] = {
 		"mlkem768x25519-sha256",
 		"sntrup761x25519-sha512@openssh.com",
 		"curve25519-sha256@libssh.org",
 		"ecdh-sha2-nistp256",
 		"diffie-hellman-group1-sha1",
 		"diffie-hellman-group-exchange-sha1",
-		NULL,
+		रिक्त,
 	};
-	int i, j;
-	char *path;
-	FILE *f;
+	पूर्णांक i, j;
+	अक्षर *path;
+	खाता *f;
 
 	log_init("kex_fuzz", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 1);
 
-	if (st == NULL) {
-		st = (struct shared_state *)xcalloc(1, sizeof(*st));
-		prepare_keys(st);
+	जर (st == रिक्त) {
+		st = (संरचना shared_state *)xcalloc(1, आकार(*st));
+		prepare_किल्ल्या(st);
 	}
 	/* Run each kex method for each key and save client/server packets */
-	for (i = 0; keytypes[i] != -1; i++) {
-		for (j = 0; kextypes[j] != NULL; j++) {
-			ts = (struct test_state *)xcalloc(1, sizeof(*ts));
+	साठी (i = 0; keytypes[i] != -1; i++) {
+		साठी (j = 0; kextypes[j] != रिक्त; j++) {
+			ts = (संरचना test_state *)xcalloc(1, आकार(*ts));
 			ts->smsgs = sshbuf_new();
 			ts->cmsgs = sshbuf_new();
-			do_kex_with_key(st, ts, kextypes[j], keytypes[i], NULL);
+			do_kex_with_किल्ली(st, ts, kextypes[j], keytypes[i], रिक्त);
 			xasprintf(&path, "S2C-%s-%s",
 			    kextypes[j], sshkey_type(st->pubkeys[keytypes[i]]));
 			debug_f("%s", path);
-			if ((f = fopen(path, "wb+")) == NULL)
-				abort();
-			if (fwrite(sshbuf_ptr(ts->smsgs), 1,
+			जर ((f = ख_खोलो(path, "wb+")) == रिक्त)
+				पात();
+			जर (ख_डालो(sshbuf_ptr(ts->smsgs), 1,
 			    sshbuf_len(ts->smsgs), f) != sshbuf_len(ts->smsgs))
-				abort();
-			fclose(f);
-			free(path);
+				पात();
+			ख_बंद(f);
+			मुक्त(path);
 			//sshbuf_dump(ts->smsgs, stderr);
 			xasprintf(&path, "C2S-%s-%s",
 			    kextypes[j], sshkey_type(st->pubkeys[keytypes[i]]));
 			debug_f("%s", path);
-			if ((f = fopen(path, "wb+")) == NULL)
-				abort();
-			if (fwrite(sshbuf_ptr(ts->cmsgs), 1,
+			जर ((f = ख_खोलो(path, "wb+")) == रिक्त)
+				पात();
+			जर (ख_डालो(sshbuf_ptr(ts->cmsgs), 1,
 			    sshbuf_len(ts->cmsgs), f) != sshbuf_len(ts->cmsgs))
-				abort();
-			fclose(f);
-			free(path);
+				पात();
+			ख_बंद(f);
+			मुक्त(path);
 			//sshbuf_dump(ts->cmsgs, stderr);
 			sshbuf_free(ts->smsgs);
 			sshbuf_free(ts->cmsgs);
-			free(ts);
+			मुक्त(ts);
 		}
 	}
-	for (i = 0; keytypes[i] != -1; i++) {
+	साठी (i = 0; keytypes[i] != -1; i++) {
 		xasprintf(&path, "%s.priv",
 		    sshkey_type(st->privkeys[keytypes[i]]));
 		debug_f("%s", path);
-		if (sshkey_save_private(st->privkeys[keytypes[i]], path,
-		    "", "", SSHKEY_PRIVATE_OPENSSH, NULL, 0) != 0)
-			abort();
-		free(path);
+		जर (sshkey_save_private(st->privkeys[keytypes[i]], path,
+		    "", "", SSHKEY_PRIVATE_OPENSSH, रिक्त, 0) != 0)
+			पात();
+		मुक्त(path);
 		xasprintf(&path, "%s.pub",
 		    sshkey_type(st->pubkeys[keytypes[i]]));
 		debug_f("%s", path);
-		if (sshkey_save_public(st->pubkeys[keytypes[i]], path, "") != 0)
-			abort();
-		free(path);
+		जर (sshkey_save_public(st->pubkeys[keytypes[i]], path, "") != 0)
+			पात();
+		मुक्त(path);
 	}
 }
-#else /* !STANDALONE */
-static void
-do_kex(struct shared_state *st, struct test_state *ts, const char *kex)
+#अन्यथा /* !STANDALONE */
+स्थिर शून्य
+do_kex(संरचना shared_state *st, संरचना test_state *ts, स्थिरांक अक्षर *kex)
 {
-	do_kex_with_key(st, ts, kex, KEY_RSA, NULL);
-	do_kex_with_key(st, ts, kex, KEY_ECDSA, NULL);
-	do_kex_with_key(st, ts, kex, KEY_ED25519, NULL);
+	do_kex_with_किल्ली(st, ts, kex, किल्ली_RSA, रिक्त);
+	do_kex_with_किल्ली(st, ts, kex, किल्ली_ECDSA, रिक्त);
+	do_kex_with_किल्ली(st, ts, kex, किल्ली_ED25519, रिक्त);
 }
 
 /*
@@ -440,50 +440,50 @@ do_kex(struct shared_state *st, struct test_state *ts, const char *kex)
  * (curve25519 + ed25519) so cipher/MAC/compression/mismatch paths get
  * exercised once per fuzz input without multiplying total attempts.
  */
-static void
-kex_extras(struct shared_state *st, struct test_state *ts)
+स्थिर शून्य
+kex_extras(संरचना shared_state *st, संरचना test_state *ts)
 {
-	static const char * const ciphers[] = {
+	स्थिर स्थिरांक अक्षर * स्थिरांक ciphers[] = {
 		"chacha20-poly1305@openssh.com",
 		"aes256-gcm@openssh.com",
 		"aes128-ctr",
 		"aes256-ctr",
-		NULL,
+		रिक्त,
 	};
-	static const char * const macs[] = {
+	स्थिर स्थिरांक अक्षर * स्थिरांक macs[] = {
 		"hmac-sha2-256-etm@openssh.com",
 		"hmac-sha2-512-etm@openssh.com",
 		"umac-128-etm@openssh.com",
-		NULL,
+		रिक्त,
 	};
-	static const char * const comps[] = {
+	स्थिर स्थिरांक अक्षर * स्थिरांक comps[] = {
 		"zlib@openssh.com",
 		"zlib",
-		NULL,
+		रिक्त,
 	};
-	const char *kex = "curve25519-sha256@libssh.org";
-	int i;
+	स्थिरांक अक्षर *kex = "curve25519-sha256@libssh.org";
+	पूर्णांक i;
 
-	for (i = 0; ciphers[i] != NULL; i++) {
-		struct kex_overrides ov = { 0 };
+	साठी (i = 0; ciphers[i] != रिक्त; i++) {
+		संरचना kex_overrides ov = { 0 };
 		ov.cipher = ciphers[i];
-		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
+		do_kex_with_किल्ली(st, ts, kex, किल्ली_ED25519, &ov);
 	}
-	for (i = 0; macs[i] != NULL; i++) {
-		struct kex_overrides ov = { 0 };
+	साठी (i = 0; macs[i] != रिक्त; i++) {
+		संरचना kex_overrides ov = { 0 };
 		ov.cipher = "aes128-ctr";
 		ov.mac = macs[i];
-		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
+		do_kex_with_किल्ली(st, ts, kex, किल्ली_ED25519, &ov);
 	}
-	for (i = 0; comps[i] != NULL; i++) {
-		struct kex_overrides ov = { 0 };
+	साठी (i = 0; comps[i] != रिक्त; i++) {
+		संरचना kex_overrides ov = { 0 };
 		ov.comp = comps[i];
-		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
+		do_kex_with_किल्ली(st, ts, kex, किल्ली_ED25519, &ov);
 	}
 }
 
-static void
-kex_tests(struct shared_state *st, struct test_state *ts)
+स्थिर शून्य
+kex_tests(संरचना shared_state *st, संरचना test_state *ts)
 {
 	do_kex(st, ts, "mlkem768x25519-sha256");
 	do_kex(st, ts, "sntrup761x25519-sha512@openssh.com");
@@ -494,47 +494,47 @@ kex_tests(struct shared_state *st, struct test_state *ts)
 	kex_extras(st, ts);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+पूर्णांक LLVMFuzzer_Test_One_आदान(स्थिरांक uint8_t* data, माप_प्रकार size)
 {
-	static struct shared_state *st;
-	struct test_state *ts;
-	u_char crbuf[SSH_MAX_PRE_BANNER_LINES * 4];
+	स्थिर संरचना shared_state *st;
+	संरचना test_state *ts;
+	u_char crbuf[SSH_MAX_PRE_BANNER_ओळी * 4];
 	u_char zbuf[4096] = {0};
-	static LogLevel loglevel = SYSLOG_LEVEL_INFO;
+	स्थिर LogLevel loglevel = SYSLOG_LEVEL_INFO;
 
-	if (st == NULL) {
-		if (getenv("DEBUG") != NULL || getenv("KEX_FUZZ_DEBUG") != NULL)
+	जर (st == रिक्त) {
+		जर (दो_पर्या("DEBUG") != रिक्त || दो_पर्या("KEX_FUZZ_DEBUG") != रिक्त)
 			loglevel = SYSLOG_LEVEL_DEBUG3;
 		log_init("kex_fuzz",
 		    loglevel, SYSLOG_FACILITY_AUTH, 1);
-		st = (struct shared_state *)xcalloc(1, sizeof(*st));
-		prepare_keys(st);
+		st = (संरचना shared_state *)xcalloc(1, आकार(*st));
+		prepare_किल्ल्या(st);
 	}
 
 	/* Ensure that we can complete (fail) banner exchange at least */
-	memset(crbuf, '\n', sizeof(crbuf));
+	स_रखो(crbuf, '\n', आकार(crbuf));
 
-	ts = (struct test_state *)xcalloc(1, sizeof(*ts));
-	if ((ts->s_template = sshbuf_new()) == NULL ||
+	ts = (संरचना test_state *)xcalloc(1, आकार(*ts));
+	जर ((ts->s_template = sshbuf_new()) == रिक्त ||
 	    sshbuf_put(ts->s_template, data, size) != 0 ||
-	    sshbuf_put(ts->s_template, crbuf, sizeof(crbuf)) != 0 ||
-	    sshbuf_put(ts->s_template, zbuf, sizeof(zbuf)) != 0)
-		abort();
+	    sshbuf_put(ts->s_template, crbuf, आकार(crbuf)) != 0 ||
+	    sshbuf_put(ts->s_template, zbuf, आकार(zbuf)) != 0)
+		पात();
 	kex_tests(st, ts);
 	sshbuf_free(ts->s_template);
-	free(ts);
+	मुक्त(ts);
 
-	ts = (struct test_state *)xcalloc(1, sizeof(*ts));
-	if ((ts->c_template = sshbuf_new()) == NULL ||
+	ts = (संरचना test_state *)xcalloc(1, आकार(*ts));
+	जर ((ts->c_template = sshbuf_new()) == रिक्त ||
 	    sshbuf_put(ts->c_template, data, size) != 0 ||
-	    sshbuf_put(ts->c_template, crbuf, sizeof(crbuf)) != 0 ||
-	    sshbuf_put(ts->c_template, zbuf, sizeof(zbuf)) != 0)
-		abort();
+	    sshbuf_put(ts->c_template, crbuf, आकार(crbuf)) != 0 ||
+	    sshbuf_put(ts->c_template, zbuf, आकार(zbuf)) != 0)
+		पात();
 	kex_tests(st, ts);
 	sshbuf_free(ts->c_template);
-	free(ts);
+	मुक्त(ts);
 
-	return 0;
+	परत 0;
 }
 #endif /* STANDALONE */
 } /* extern "C" */

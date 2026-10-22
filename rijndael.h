@@ -33,23 +33,23 @@
 /* for 256-bit keys, fewer for less */
 #define AES_MAXROUNDS	14
 
-typedef unsigned char	u8;
-typedef unsigned short	u16;
-typedef unsigned int	u32;
+प्रकारव्याख्या अचिन्हित अक्षर	u8;
+प्रकारव्याख्या अचिन्हित लघु	u16;
+प्रकारव्याख्या अचिन्हित पूर्णांक	u32;
 
-int	rijndaelKeySetupEnc(unsigned int [], const unsigned char [], int);
-void	rijndaelEncrypt(const unsigned int [], int, const u8 [16], u8 [16]);
+पूर्णांक	rijndael_किल्ली_Setup_Enc(अचिन्हित पूर्णांक [], स्थिरांक अचिन्हित अक्षर [], पूर्णांक);
+शून्य	rijndaelEncrypt(स्थिरांक अचिन्हित पूर्णांक [], पूर्णांक, स्थिरांक u8 [16], u8 [16]);
 
 /*  The structure for key information */
-typedef struct {
-	int	decrypt;
-	int	Nr;		/* key-length-dependent number of rounds */
+प्रकारव्याख्या संरचना {
+	पूर्णांक	decrypt;
+	पूर्णांक	Nr;		/* key-length-dependent number of rounds */
 	u32	ek[4*(AES_MAXROUNDS + 1)];	/* encrypt key schedule */
 	u32	dk[4*(AES_MAXROUNDS + 1)];	/* decrypt key schedule */
 } rijndael_ctx;
 
-void	 rijndael_set_key(rijndael_ctx *, u_char *, int, int);
-void	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
-void	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
+शून्य	 rijndael_set_किल्ली(rijndael_ctx *, u_char *, पूर्णांक, पूर्णांक);
+शून्य	 rijndael_decrypt(rijndael_ctx *, u_char *, u_char *);
+शून्य	 rijndael_encrypt(rijndael_ctx *, u_char *, u_char *);
 
 #endif /* _PRIVATE_RIJNDAEL_H */

@@ -17,242 +17,242 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #define SSHKEY_INTERNAL
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include "crypto_api.h"
+#अन्तर्भाव "crypto_api.h"
 
-#include <string.h>
-#include <stdarg.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdarg.h>
 
-#include "log.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "digest.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "digest.h"
 
 /* Reuse some ED25519 internals */
-extern struct sshkey_impl_funcs sshkey_ed25519_funcs;
+बाह्य संरचना sshkey_impl_funcs sshkey_ed25519_funcs;
 
-static void
-ssh_ed25519_sk_cleanup(struct sshkey *k)
+स्थिर शून्य
+ssh_ed25519_sk_cleanup(संरचना sshkey *k)
 {
 	sshkey_sk_cleanup(k);
 	sshkey_ed25519_funcs.cleanup(k);
 }
 
-static int
-ssh_ed25519_sk_equal(const struct sshkey *a, const struct sshkey *b)
+स्थिर पूर्णांक
+ssh_ed25519_sk_equal(स्थिरांक संरचना sshkey *a, स्थिरांक संरचना sshkey *b)
 {
-	if (!sshkey_sk_fields_equal(a, b))
-		return 0;
-	if (!sshkey_ed25519_funcs.equal(a, b))
-		return 0;
-	return 1;
+	जर (!sshkey_sk_fields_equal(a, b))
+		परत 0;
+	जर (!sshkey_ed25519_funcs.equal(a, b))
+		परत 0;
+	परत 1;
 }
 
-static int
-ssh_ed25519_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+स्थिर पूर्णांक
+ssh_ed25519_sk_serialize_public(स्थिरांक संरचना sshkey *किल्ली, संरचना sshbuf *b,
+    गणना sshkey_serialize_rep opts)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
-		return r;
+	जर ((r = sshkey_ed25519_funcs.serialize_public(किल्ली, b, opts)) != 0)
+		परत r;
+	जर ((r = sshkey_serialize_sk(किल्ली, b)) != 0)
+		परत r;
 
-	return 0;
+	परत 0;
 }
 
-static int
-ssh_ed25519_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+स्थिर पूर्णांक
+ssh_ed25519_sk_serialize_private(स्थिरांक संरचना sshkey *किल्ली, संरचना sshbuf *b,
+    गणना sshkey_serialize_rep opts)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
-		return r;
+	जर ((r = sshkey_ed25519_funcs.serialize_public(किल्ली, b, opts)) != 0)
+		परत r;
+	जर ((r = sshkey_serialize_private_sk(किल्ली, b)) != 0)
+		परत r;
 
-	return 0;
+	परत 0;
 }
 
-static int
-ssh_ed25519_sk_copy_public(const struct sshkey *from, struct sshkey *to)
+स्थिर पूर्णांक
+ssh_ed25519_sk_copy_public(स्थिरांक संरचना sshkey *from, संरचना sshkey *to)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshkey_ed25519_funcs.copy_public(from, to)) != 0)
-		return r;
-	if ((r = sshkey_copy_public_sk(from, to)) != 0)
-		return r;
-	return 0;
+	जर ((r = sshkey_ed25519_funcs.copy_public(from, to)) != 0)
+		परत r;
+	जर ((r = sshkey_copy_public_sk(from, to)) != 0)
+		परत r;
+	परत 0;
 }
 
-static int
-ssh_ed25519_sk_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+स्थिर पूर्णांक
+ssh_ed25519_sk_deserialize_public(स्थिरांक अक्षर *ktype, संरचना sshbuf *b,
+    संरचना sshkey *किल्ली)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	जर ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, किल्ली)) != 0)
+		परत r;
+	जर ((r = sshkey_deserialize_sk(b, किल्ली)) != 0)
+		परत r;
+	परत 0;
 }
 
-static int
-ssh_ed25519_sk_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+स्थिर पूर्णांक
+ssh_ed25519_sk_deserialize_private(स्थिरांक अक्षर *ktype, संरचना sshbuf *b,
+    संरचना sshkey *किल्ली)
 {
-	int r;
+	पूर्णांक r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	जर ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, किल्ली)) != 0)
+		परत r;
+	जर ((r = sshkey_private_deserialize_sk(b, किल्ली)) != 0)
+		परत r;
+	परत 0;
 }
 
-static int
-ssh_ed25519_sk_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+स्थिर पूर्णांक
+ssh_ed25519_sk_verify(स्थिरांक संरचना sshkey *किल्ली,
+    स्थिरांक u_char *sig, माप_प्रकार siglen,
+    स्थिरांक u_char *data, माप_प्रकार dlen, स्थिरांक अक्षर *alg, u_int compat,
+    संरचना sshkey_sig_details **detailsp)
 {
-	struct sshbuf *b = NULL;
-	struct sshbuf *encoded = NULL;
-	char *ktype = NULL;
-	const u_char *sigblob;
+	संरचना sshbuf *b = रिक्त;
+	संरचना sshbuf *encoded = रिक्त;
+	अक्षर *ktype = रिक्त;
+	स्थिरांक u_char *sigblob;
 	u_char apphash[32];
 	u_char msghash[32];
 	u_char sig_flags;
 	u_int sig_counter;
-	size_t len;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int ret;
-	struct sshkey_sig_details *details = NULL;
+	माप_प्रकार len;
+	पूर्णांक r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णांक ret;
+	संरचना sshkey_sig_details *details = रिक्त;
 
-	if (detailsp != NULL)
-		*detailsp = NULL;
+	जर (detailsp != रिक्त)
+		*detailsp = रिक्त;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ED25519_SK ||
-	    key->ed25519_pk == NULL ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	जर (किल्ली == रिक्त ||
+	    sshkey_type_plain(किल्ली->type) != किल्ली_ED25519_SK ||
+	    किल्ली->ed25519_pk == रिक्त ||
+	    sig == रिक्त || siglen == 0)
+		परत SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
+	जर ((b = sshbuf_from(sig, siglen)) == रिक्त)
+		परत SSH_ERR_ALLOC_FAIL;
+	जर (sshbuf_get_cstring(b, &ktype, रिक्त) != 0 ||
 	    sshbuf_get_string_direct(b, &sigblob, &len) != 0 ||
 	    sshbuf_get_u8(b, &sig_flags) != 0 ||
 	    sshbuf_get_u32(b, &sig_counter) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		जा out;
 	}
 #ifdef DEBUG_SK
-	fprintf(stderr, "%s: data:\n", __func__);
+	ख_लिखो(मानक_त्रुटि, "%s: data:\n", __func__);
 	/* sshbuf_dump_data(data, datalen, stderr); */
-	fprintf(stderr, "%s: sigblob:\n", __func__);
-	sshbuf_dump_data(sigblob, len, stderr);
-	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
+	ख_लिखो(मानक_त्रुटि, "%s: sigblob:\n", __func__);
+	sshbuf_dump_data(sigblob, len, मानक_त्रुटि);
+	ख_लिखो(मानक_त्रुटि, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, sig_flags, sig_counter);
 #endif
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	जर (म_भेद(sshkey_ssh_name_plain(किल्ली), ktype) != 0) {
+		r = SSH_ERR_किल्ली_TYPE_MISMATCH;
+		जा out;
 	}
-	if (sshbuf_len(b) != 0) {
+	जर (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		जा out;
 	}
-	if (len != crypto_sign_ed25519_BYTES) {
+	जर (len != crypto_sign_ed25519_BYTES) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		जा out;
 	}
-	if (ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
-	    strlen(key->sk_application), apphash, sizeof(apphash)) != 0 ||
+	जर (ssh_digest_memory(SSH_DIGEST_SHA256, किल्ली->sk_application,
+	    म_माप(किल्ली->sk_application), apphash, आकार(apphash)) != 0 ||
 	    ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
-	    msghash, sizeof(msghash)) != 0) {
+	    msghash, आकार(msghash)) != 0) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		जा out;
 	}
 #ifdef DEBUG_SK
-	fprintf(stderr, "%s: hashed application:\n", __func__);
-	sshbuf_dump_data(apphash, sizeof(apphash), stderr);
-	fprintf(stderr, "%s: hashed message:\n", __func__);
-	sshbuf_dump_data(msghash, sizeof(msghash), stderr);
+	ख_लिखो(मानक_त्रुटि, "%s: hashed application:\n", __func__);
+	sshbuf_dump_data(apphash, आकार(apphash), मानक_त्रुटि);
+	ख_लिखो(मानक_त्रुटि, "%s: hashed message:\n", __func__);
+	sshbuf_dump_data(msghash, आकार(msghash), मानक_त्रुटि);
 #endif
-	if ((details = calloc(1, sizeof(*details))) == NULL) {
+	जर ((details = सुस्मृति(1, आकार(*details))) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जा out;
 	}
 	details->sk_counter = sig_counter;
 	details->sk_flags = sig_flags;
-	if ((encoded = sshbuf_new()) == NULL) {
+	जर ((encoded = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जा out;
 	}
-	if (sshbuf_put(encoded, apphash, sizeof(apphash)) != 0 ||
+	जर (sshbuf_put(encoded, apphash, आकार(apphash)) != 0 ||
 	    sshbuf_put_u8(encoded, sig_flags) != 0 ||
 	    sshbuf_put_u32(encoded, sig_counter) != 0 ||
-	    sshbuf_put(encoded, msghash, sizeof(msghash)) != 0) {
+	    sshbuf_put(encoded, msghash, आकार(msghash)) != 0) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		जा out;
 	}
 #ifdef DEBUG_SK
-	fprintf(stderr, "%s: signed buf:\n", __func__);
-	sshbuf_dump(encoded, stderr);
+	ख_लिखो(मानक_त्रुटि, "%s: signed buf:\n", __func__);
+	sshbuf_dump(encoded, मानक_त्रुटि);
 #endif
-	if ((ret = crypto_sign_ed25519_verify_detached(sigblob,
+	जर ((ret = crypto_sign_ed25519_verify_detached(sigblob,
 	    sshbuf_ptr(encoded), sshbuf_len(encoded),
-	    key->ed25519_pk)) != 0) {
+	    किल्ली->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
-	if (ret != 0) {
+	जर (ret != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		जा out;
 	}
 	/* success */
 	r = 0;
-	if (detailsp != NULL) {
+	जर (detailsp != रिक्त) {
 		*detailsp = details;
-		details = NULL;
+		details = रिक्त;
 	}
  out:
 	sshkey_sig_details_free(details);
 	sshbuf_free(b);
 	sshbuf_free(encoded);
-	free(ktype);
-	return r;
+	मुक्त(ktype);
+	परत r;
 }
 
-static const struct sshkey_impl_funcs sshkey_ed25519_sk_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+स्थिर स्थिरांक संरचना sshkey_impl_funcs sshkey_ed25519_sk_funcs = {
+	/* .size = */		रिक्त,
+	/* .alloc = */		रिक्त,
 	/* .cleanup = */	ssh_ed25519_sk_cleanup,
 	/* .equal = */		ssh_ed25519_sk_equal,
 	/* .ssh_serialize_public = */ ssh_ed25519_sk_serialize_public,
 	/* .ssh_deserialize_public = */ ssh_ed25519_sk_deserialize_public,
 	/* .ssh_serialize_private = */ ssh_ed25519_sk_serialize_private,
 	/* .ssh_deserialize_private = */ ssh_ed25519_sk_deserialize_private,
-	/* .generate = */	NULL,
+	/* .generate = */	रिक्त,
 	/* .copy_public = */	ssh_ed25519_sk_copy_public,
-	/* .sign = */		NULL,
+	/* .sign = */		रिक्त,
 	/* .verify = */		ssh_ed25519_sk_verify,
 };
 
-const struct sshkey_impl sshkey_ed25519_sk_impl = {
+स्थिरांक संरचना sshkey_impl sshkey_ed25519_sk_impl = {
 	/* .name = */		"sk-ssh-ed25519@openssh.com",
 	/* .shortname = */	"ED25519-SK",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519_SK,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		किल्ली_ED25519_SK,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -260,11 +260,11 @@ const struct sshkey_impl sshkey_ed25519_sk_impl = {
 	/* .funcs = */		&sshkey_ed25519_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ed25519_sk_cert_impl = {
+स्थिरांक संरचना sshkey_impl sshkey_ed25519_sk_cert_impl = {
 	/* .name = */		"sk-ssh-ed25519-cert-v01@openssh.com",
 	/* .shortname = */	"ED25519-SK-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519_SK_CERT,
+	/* .sigalg = */		रिक्त,
+	/* .type = */		किल्ली_ED25519_SK_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

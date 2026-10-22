@@ -16,12 +16,12 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-void	*xmalloc(size_t);
-void	*xcalloc(size_t, size_t);
-void	*xreallocarray(void *, size_t, size_t);
-void	*xrecallocarray(void *, size_t, size_t, size_t);
-char	*xstrdup(const char *);
-int	 xasprintf(char **, const char *, ...)
-    __attribute__((__format__ (printf, 2, 3))) __attribute__((__nonnull__ (2)));
-int	 xvasprintf(char **, const char *, va_list)
+शून्य	*xmalloc(माप_प्रकार);
+शून्य	*xcalloc(माप_प्रकार, माप_प्रकार);
+शून्य	*xreallocarray(शून्य *, माप_प्रकार, माप_प्रकार);
+शून्य	*xrecallocarray(शून्य *, माप_प्रकार, माप_प्रकार, माप_प्रकार);
+अक्षर	*xstrdup(स्थिरांक अक्षर *);
+पूर्णांक	 xasprintf(अक्षर **, स्थिरांक अक्षर *, ...)
+    __attribute__((__format__ (म_लिखो, 2, 3))) __attribute__((__nonnull__ (2)));
+पूर्णांक	 xvasprintf(अक्षर **, स्थिरांक अक्षर *, बहु_सूची)
     __attribute__((__nonnull__ (2)));

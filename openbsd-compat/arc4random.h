@@ -24,68 +24,68 @@
  */
 
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
+#अन्तर्भाव <sys/mman.h>
 #endif
 
-#include <signal.h>
+#अन्तर्भाव <signal.h>
 
 /* OpenSSH isn't multithreaded */
 #define _ARC4_LOCK()
 #define _ARC4_UNLOCK()
 #define _ARC4_ATFORK(f)
 
-static inline void
-_getentropy_fail(void)
+स्थिर ओळीत शून्य
+_getentropy_fail(शून्य)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+स्थिर अस्थिर संक_पूर्ण_प्रकार _rs_forked;
 
-static inline void
-_rs_forkhandler(void)
+स्थिर ओळीत शून्य
+_rs_forkhandler(शून्य)
 {
 	_rs_forked = 1;
 }
 
-static inline void
-_rs_forkdetect(void)
+स्थिर ओळीत शून्य
+_rs_forkdetect(शून्य)
 {
-	static pid_t _rs_pid = 0;
+	स्थिर pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	जर (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		जर (rs)
+			स_रखो(rs, 0, आकार(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+स्थिर ओळीत पूर्णांक
+_rs_allocate(संरचना _rs **rsp, संरचना _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#जर defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	जर ((*rsp = mmap(रिक्त, आकार(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		परत (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	जर ((*rsxp = mmap(रिक्त, आकार(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
-		*rsp = NULL;
-		return (-1);
+		munmap(*rsp, आकार(**rsp));
+		*rsp = रिक्त;
+		परत (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
-		free(*rsp);
-		*rsp = NULL;
-		return (-1);
+#अन्यथा
+	जर ((*rsp = सुस्मृति(1, आकार(**rsp))) == रिक्त)
+		परत (-1);
+	जर ((*rsxp = सुस्मृति(1, आकार(**rsxp))) == रिक्त) {
+		मुक्त(*rsp);
+		*rsp = रिक्त;
+		परत (-1);
 	}
 #endif /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	परत (0);
 }

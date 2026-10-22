@@ -28,15 +28,15 @@
 #ifndef DNS_H
 #define DNS_H
 
-enum sshfp_types {
-	SSHFP_KEY_RESERVED = 0,
-	SSHFP_KEY_RSA = 1,
-	SSHFP_KEY_DSA = 2,
-	SSHFP_KEY_ECDSA = 3,
-	SSHFP_KEY_ED25519 = 4
+गणना sshfp_types {
+	SSHFP_किल्ली_RESERVED = 0,
+	SSHFP_किल्ली_RSA = 1,
+	SSHFP_किल्ली_DSA = 2,
+	SSHFP_किल्ली_ECDSA = 3,
+	SSHFP_किल्ली_ED25519 = 4
 };
 
-enum sshfp_hashes {
+गणना sshfp_hashes {
 	SSHFP_HASH_RESERVED = 0,
 	SSHFP_HASH_SHA1 = 1,
 	SSHFP_HASH_SHA256 = 2,
@@ -51,8 +51,8 @@ enum sshfp_hashes {
 #define DNS_VERIFY_SECURE	0x00000004
 #define DNS_VERIFY_FAILED	0x00000008
 
-int	verify_host_key_dns(const char *, struct sockaddr *,
-    struct sshkey *, int *);
-int	export_dns_rr(const char *, struct sshkey *, FILE *, int, int);
+पूर्णांक	verify_host_किल्ली_dns(स्थिरांक अक्षर *, संरचना sockaddr *,
+    संरचना sshkey *, पूर्णांक *);
+पूर्णांक	export_dns_rr(स्थिरांक अक्षर *, संरचना sshkey *, खाता *, पूर्णांक, पूर्णांक);
 
 #endif /* DNS_H */

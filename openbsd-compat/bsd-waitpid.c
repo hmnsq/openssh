@@ -22,32 +22,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifndef HAVE_WAITPID
-#include <errno.h>
-#include <sys/wait.h>
-#include "bsd-waitpid.h"
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <sys/wait.h>
+#अन्तर्भाव "bsd-waitpid.h"
 
 pid_t
-waitpid(int pid, int *stat_loc, int options)
+waitpid(पूर्णांक pid, पूर्णांक *stat_loc, पूर्णांक options)
 {
-	union wait statusp;
+	संघ रुको statusp;
 	pid_t wait_pid;
 
-	if (pid <= 0) {
-		if (pid != -1) {
-			errno = EINVAL;
-			return (-1);
+	जर (pid <= 0) {
+		जर (pid != -1) {
+			त्रुटि_सं = EINVAL;
+			परत (-1);
 		}
 		/* wait4() wants pid=0 for indiscriminate wait. */
 		pid = 0;
 	}
-	wait_pid = wait4(pid, &statusp, options, NULL);
-	if (stat_loc)
-		*stat_loc = (int) statusp.w_status;
+	wait_pid = wait4(pid, &statusp, options, रिक्त);
+	जर (stat_loc)
+		*stat_loc = (पूर्णांक) statusp.w_status;
 
-	return (wait_pid);
+	परत (wait_pid);
 }
 
 #endif /* !HAVE_WAITPID */

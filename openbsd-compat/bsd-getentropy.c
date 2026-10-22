@@ -16,72 +16,72 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifndef SSH_RANDOM_DEV
 # define SSH_RANDOM_DEV "/dev/urandom"
 #endif /* SSH_RANDOM_DEV */
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 #ifdef HAVE_SYS_RANDOM_H
 # include <sys/random.h>
 #endif
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 #ifdef WITH_OPENSSL
-#include <openssl/rand.h>
-#include <openssl/err.h>
+#अन्तर्भाव <openssl/rand.h>
+#अन्तर्भाव <openssl/err.h>
 #endif
 
-#include "log.h"
+#अन्तर्भाव "log.h"
 
-int
-_ssh_compat_getentropy(void *s, size_t len)
+पूर्णांक
+_ssh_compat_getentropy(शून्य *s, माप_प्रकार len)
 {
-#if defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
-	if (RAND_bytes(s, len) <= 0)
+#जर defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
+	जर (RAND_bytes(s, len) <= 0)
 		fatal("Couldn't obtain random bytes (error 0x%lx)",
-		    (unsigned long)ERR_get_error());
-#else
-	int fd, save_errno;
+		    (अचिन्हित दीर्घ)ERR_get_error());
+#अन्यथा
+	पूर्णांक fd, save_errno;
 	ssize_t r;
-	size_t o = 0;
+	माप_प्रकार o = 0;
 
 #ifdef WITH_OPENSSL
-	if (RAND_bytes(s, len) == 1)
-		return 0;
+	जर (RAND_bytes(s, len) == 1)
+		परत 0;
 #endif
 #ifdef HAVE_GETENTROPY
-	if ((r = getentropy(s, len)) == 0)
-		return 0;
+	जर ((r = getentropy(s, len)) == 0)
+		परत 0;
 #endif /* HAVE_GETENTROPY */
 #ifdef HAVE_GETRANDOM
-	if ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
-		return 0;
+	जर ((r = getrandom(s, len, 0)) > 0 && (माप_प्रकार)r == len)
+		परत 0;
 #endif /* HAVE_GETRANDOM */
 
-	if ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
-		save_errno = errno;
+	जर ((fd = खोलो(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
+		save_errno = त्रुटि_सं;
 		/* Try egd/prngd before giving up. */
-		if (seed_from_prngd(s, len) == 0)
-			return 0;
+		जर (seed_from_prngd(s, len) == 0)
+			परत 0;
 		fatal("Couldn't open %s: %s", SSH_RANDOM_DEV,
-		    strerror(save_errno));
+		    म_त्रुटि(save_errno));
 	}
-	while (o < len) {
-		r = read(fd, (u_char *)s + o, len - o);
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR ||
-			    errno == EWOULDBLOCK)
-				continue;
-			fatal("read %s: %s", SSH_RANDOM_DEV, strerror(errno));
+	पर्यंत (o < len) {
+		r = पठ(fd, (u_char *)s + o, len - o);
+		जर (r < 0) {
+			जर (त्रुटि_सं == EAGAIN || त्रुटि_सं == EINTR ||
+			    त्रुटि_सं == EWOULDBLOCK)
+				सुरूठेवा;
+			fatal("read %s: %s", SSH_RANDOM_DEV, म_त्रुटि(त्रुटि_सं));
 		}
 		o += r;
 	}
-	close(fd);
+	बंद(fd);
 #endif /* WITH_OPENSSL */
-	return 0;
+	परत 0;
 }

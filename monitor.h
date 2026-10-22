@@ -29,7 +29,7 @@
 #define _MONITOR_H_
 
 /* Please keep *_REQ_* values on even numbers and *_ANS_* on odd numbers */
-enum monitor_reqtype {
+गणना monitor_reqtype {
 	MONITOR_REQ_MODULI = 0, MONITOR_ANS_MODULI = 1,
 	MONITOR_REQ_FREE = 2,
 	MONITOR_REQ_AUTHSERV = 4,
@@ -67,40 +67,40 @@ enum monitor_reqtype {
 
 };
 
-struct ssh;
-struct sshbuf;
+संरचना ssh;
+संरचना sshbuf;
 
-struct monitor {
-	int			 m_recvfd;
-	int			 m_sendfd;
-	int			 m_log_recvfd;
-	int			 m_log_sendfd;
-	struct kex		**m_pkex;
+संरचना monitor {
+	पूर्णांक			 m_recvfd;
+	पूर्णांक			 m_sendfd;
+	पूर्णांक			 m_log_recvfd;
+	पूर्णांक			 m_log_sendfd;
+	संरचना kex		**m_pkex;
 	pid_t			 m_pid;
 };
 
-struct monitor *monitor_init(void);
-void monitor_reinit(struct monitor *);
+संरचना monitor *monitor_init(शून्य);
+शून्य monitor_reinit(संरचना monitor *);
 
-struct Authctxt;
-void monitor_child_preauth(struct ssh *, struct monitor *);
-void monitor_child_postauth(struct ssh *, struct monitor *);
+संरचना Authctxt;
+शून्य monitor_child_preauth(संरचना ssh *, संरचना monitor *);
+शून्य monitor_child_postauth(संरचना ssh *, संरचना monitor *);
 
-void monitor_clear_keystate(struct ssh *, struct monitor *);
-void monitor_apply_keystate(struct ssh *, struct monitor *);
+शून्य monitor_clear_keystate(संरचना ssh *, संरचना monitor *);
+शून्य monitor_apply_keystate(संरचना ssh *, संरचना monitor *);
 
-int  monitor_auth_attempted(void);
-int  monitor_invalid_user(void);
+पूर्णांक  monitor_auth_attempted(शून्य);
+पूर्णांक  monitor_invalid_user(शून्य);
 
 /* Prototypes for request sending and receiving */
-void mm_request_send(int, enum monitor_reqtype, struct sshbuf *);
-void mm_request_receive(int, struct sshbuf *);
-void mm_request_receive_expect(int, enum monitor_reqtype, struct sshbuf *);
-void mm_get_keystate(struct ssh *, struct monitor *);
+शून्य mm_request_send(पूर्णांक, गणना monitor_reqtype, संरचना sshbuf *);
+शून्य mm_request_receive(पूर्णांक, संरचना sshbuf *);
+शून्य mm_request_receive_expect(पूर्णांक, गणना monitor_reqtype, संरचना sshbuf *);
+शून्य mm_get_keystate(संरचना ssh *, संरचना monitor *);
 
 /* XXX: should be returned via a monitor call rather than config_fd */
-void mm_encode_server_options(struct sshbuf *);
+शून्य mm_encode_server_options(संरचना sshbuf *);
 
-struct sshbuf *pack_hostkeys(void);
+संरचना sshbuf *pack_hostkeys(शून्य);
 
 #endif /* _MONITOR_H_ */

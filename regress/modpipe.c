@@ -16,123 +16,123 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <errno.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <errno.h>
 #ifdef HAVE_ERR_H
 # include <err.h>
 #endif
-#include "openbsd-compat/getopt_long.c"
+#अन्तर्भाव "openbsd-compat/getopt_long.c"
 
-static void
-usage(void)
+स्थिर शून्य
+usage(शून्य)
 {
-	fprintf(stderr, "Usage: modpipe -w [-m modspec ...] < in > out\n");
-	fprintf(stderr, "modspec is one of:\n");
-	fprintf(stderr, "    xor:offset:value       - XOR \"value\" at \"offset\"\n");
-	fprintf(stderr, "    andor:offset:val1:val2 - AND \"val1\" then OR \"val2\" at \"offset\"\n");
-	exit(1);
+	ख_लिखो(मानक_त्रुटि, "Usage: modpipe -w [-m modspec ...] < in > out\n");
+	ख_लिखो(मानक_त्रुटि, "modspec is one of:\n");
+	ख_लिखो(मानक_त्रुटि, "    xor:offset:value       - XOR \"value\" at \"offset\"\n");
+	ख_लिखो(मानक_त्रुटि, "    andor:offset:val1:val2 - AND \"val1\" then OR \"val2\" at \"offset\"\n");
+	निकास(1);
 }
 
 #define MAX_MODIFICATIONS 256
-struct modification {
-	enum { MOD_XOR, MOD_AND_OR } what;
-	unsigned long long offset;
+संरचना modification {
+	गणना { MOD_XOR, MOD_AND_OR } what;
+	अचिन्हित दीर्घ दीर्घ offset;
 	uint8_t m1, m2;
 };
 
-static void
-parse_modification(const char *s, struct modification *m)
+स्थिर शून्य
+parse_modification(स्थिरांक अक्षर *s, संरचना modification *m)
 {
-	char what[16+1];
-	int n, m1, m2;
+	अक्षर what[16+1];
+	पूर्णांक n, m1, m2;
 
-	bzero(m, sizeof(*m));
-	if ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
+	bzero(m, आकार(*m));
+	जर ((n = माला_पूछो(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
 	    what, &m->offset, &m1, &m2)) < 3)
 		errx(1, "Invalid modification spec \"%s\"", s);
-	if (strcasecmp(what, "xor") == 0) {
-		if (n > 3)
+	जर (strcasecmp(what, "xor") == 0) {
+		जर (n > 3)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		जर (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid XOR modification value");
 		m->what = MOD_XOR;
 		m->m1 = m1;
-	} else if (strcasecmp(what, "andor") == 0) {
-		if (n != 4)
+	} अन्यथा जर (strcasecmp(what, "andor") == 0) {
+		जर (n != 4)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		जर (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid AND modification value");
-		if (m2 < 0 || m2 > 0xff)
+		जर (m2 < 0 || m2 > 0xff)
 			errx(1, "Invalid OR modification value");
 		m->what = MOD_AND_OR;
 		m->m1 = m1;
 		m->m2 = m2;
-	} else
+	} अन्यथा
 		errx(1, "Invalid modification type \"%s\"", what);
 }
 
-int
-main(int argc, char **argv)
+पूर्णांक
+main(पूर्णांक argc, अक्षर **argv)
 {
-	int ch;
+	पूर्णांक ch;
 	u_char buf[8192];
-	size_t total;
+	माप_प्रकार total;
 	ssize_t r, s, o;
-	struct modification mods[MAX_MODIFICATIONS];
-	u_int i, wflag = 0, num_mods = 0;
+	संरचना modification mods[MAX_MODIFICATIONS];
+	u_int i, wflag = 0, अंक_mods = 0;
 
-	while ((ch = getopt(argc, argv, "wm:")) != -1) {
-		switch (ch) {
-		case 'm':
-			if (num_mods >= MAX_MODIFICATIONS)
+	पर्यंत ((ch = getopt(argc, argv, "wm:")) != -1) {
+		निवड (ch) {
+		स्थिती 'm':
+			जर (अंक_mods >= MAX_MODIFICATIONS)
 				errx(1, "Too many modifications");
-			parse_modification(optarg, &(mods[num_mods++]));
-			break;
-		case 'w':
+			parse_modification(optarg, &(mods[अंक_mods++]));
+			थांबा;
+		स्थिती 'w':
 			wflag = 1;
-			break;
-		default:
+			थांबा;
+		पूर्वनिर्धारित:
 			usage();
 			/* NOTREACHED */
 		}
 	}
-	for (total = 0;;) {
-		r = s = read(STDIN_FILENO, buf, sizeof(buf));
-		if (r == 0)
-			break;
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR)
-				continue;
+	साठी (total = 0;;) {
+		r = s = पठ(STDIN_FILENO, buf, आकार(buf));
+		जर (r == 0)
+			थांबा;
+		जर (r < 0) {
+			जर (त्रुटि_सं == EAGAIN || त्रुटि_सं == EINTR)
+				सुरूठेवा;
 			err(1, "read");
 		}
-		for (i = 0; i < num_mods; i++) {
-			if (mods[i].offset < total ||
+		साठी (i = 0; i < अंक_mods; i++) {
+			जर (mods[i].offset < total ||
 			    mods[i].offset >= total + s)
-				continue;
-			switch (mods[i].what) {
-			case MOD_XOR:
+				सुरूठेवा;
+			निवड (mods[i].what) {
+			स्थिती MOD_XOR:
 				buf[mods[i].offset - total] ^= mods[i].m1;
-				break;
-			case MOD_AND_OR:
+				थांबा;
+			स्थिती MOD_AND_OR:
 				buf[mods[i].offset - total] &= mods[i].m1;
 				buf[mods[i].offset - total] |= mods[i].m2;
-				break;
+				थांबा;
 			}
 		}
-		for (o = 0; o < s; o += r) {
-			r = write(STDOUT_FILENO, buf + o, s - o);
-			if (r == 0)
-				break;
-			if (r < 0) {
-				if (errno == EAGAIN || errno == EINTR)
-					continue;
+		साठी (o = 0; o < s; o += r) {
+			r = लिख(STDOUT_FILENO, buf + o, s - o);
+			जर (r == 0)
+				थांबा;
+			जर (r < 0) {
+				जर (त्रुटि_सं == EAGAIN || त्रुटि_सं == EINTR)
+					सुरूठेवा;
 				err(1, "write");
 			}
 		}
@@ -140,11 +140,11 @@ main(int argc, char **argv)
 	}
 	/* Warn if modifications not reached in input stream */
 	r = 0;
-	for (i = 0; wflag && i < num_mods; i++) {
-		if (mods[i].offset < total)
-			continue;
+	साठी (i = 0; wflag && i < अंक_mods; i++) {
+		जर (mods[i].offset < total)
+			सुरूठेवा;
 		r = 1;
-		fprintf(stderr, "modpipe: warning - mod %u not reached\n", i);
+		ख_लिखो(मानक_त्रुटि, "modpipe: warning - mod %u not reached\n", i);
 	}
-	return r;
+	परत r;
 }

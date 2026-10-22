@@ -25,210 +25,210 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <sys/queue.h>
-#include <sys/wait.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/uio.h>
+#अन्तर्भाव <sys/queue.h>
+#अन्तर्भाव <sys/wait.h>
 
-#include <errno.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <pwd.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/dh.h>
-#include <openssl/evp.h>
+#अन्तर्भाव <openssl/bn.h>
+#अन्तर्भाव <openssl/dh.h>
+#अन्तर्भाव <openssl/evp.h>
 #endif
 
-#include "xmalloc.h"
-#include "ssh.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "ssh.h"
 #ifdef WITH_OPENSSL
-#include "dh.h"
+#अन्तर्भाव "dh.h"
 #endif
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "cipher.h"
-#include "kex.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "packet.h"
-#include "mac.h"
-#include "log.h"
-#include "auth-pam.h"
-#include "monitor.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "cipher.h"
+#अन्तर्भाव "kex.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
+#अन्तर्भाव "auth-options.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "mac.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "auth-pam.h"
+#अन्तर्भाव "monitor.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#अन्तर्भाव "ssh-gss.h"
 #endif
-#include "atomicio.h"
-#include "monitor_fdpass.h"
-#include "misc.h"
+#अन्तर्भाव "atomicio.h"
+#अन्तर्भाव "monitor_fdpass.h"
+#अन्तर्भाव "misc.h"
 
-#include "channels.h"
-#include "session.h"
-#include "servconf.h"
-#include "monitor_wrap.h"
-#include "srclimit.h"
+#अन्तर्भाव "channels.h"
+#अन्तर्भाव "session.h"
+#अन्तर्भाव "servconf.h"
+#अन्तर्भाव "monitor_wrap.h"
+#अन्तर्भाव "srclimit.h"
 
-#include "ssherr.h"
+#अन्तर्भाव "ssherr.h"
 
 /* Imports */
-extern struct monitor *pmonitor;
-extern struct sshbuf *loginmsg;
-extern ServerOptions options;
+बाह्य संरचना monitor *pmonitor;
+बाह्य संरचना sshbuf *loginmsg;
+बाह्य ServerOptions options;
 
-void
-mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx)
+शून्य
+mm_log_handler(LogLevel level, पूर्णांक forced, स्थिरांक अक्षर *संदेश, शून्य *ctx)
 {
-	struct sshbuf *log_msg;
-	struct monitor *mon = (struct monitor *)ctx;
-	int r;
-	size_t len;
+	संरचना sshbuf *log_संदेश;
+	संरचना monitor *mon = (संरचना monitor *)ctx;
+	पूर्णांक r;
+	माप_प्रकार len;
 
-	if (mon->m_log_sendfd == -1)
+	जर (mon->m_log_sendfd == -1)
 		fatal_f("no log channel");
 
-	if ((log_msg = sshbuf_new()) == NULL)
+	जर ((log_संदेश = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 
-	if ((r = sshbuf_put_u32(log_msg, 0)) != 0 || /* length; filled below */
-	    (r = sshbuf_put_u32(log_msg, level)) != 0 ||
-	    (r = sshbuf_put_u32(log_msg, forced)) != 0 ||
-	    (r = sshbuf_put_cstring(log_msg, msg)) != 0)
+	जर ((r = sshbuf_put_u32(log_संदेश, 0)) != 0 || /* length; filled below */
+	    (r = sshbuf_put_u32(log_संदेश, level)) != 0 ||
+	    (r = sshbuf_put_u32(log_संदेश, forced)) != 0 ||
+	    (r = sshbuf_put_cstring(log_संदेश, संदेश)) != 0)
 		fatal_fr(r, "assemble");
-	if ((len = sshbuf_len(log_msg)) < 4 || len > 0xffffffff)
+	जर ((len = sshbuf_len(log_संदेश)) < 4 || len > 0xffffffff)
 		fatal_f("bad length %zu", len);
-	POKE_U32(sshbuf_mutable_ptr(log_msg), len - 4);
-	if (atomicio(vwrite, mon->m_log_sendfd,
-	    sshbuf_mutable_ptr(log_msg), len) != len) {
-		if (errno == EPIPE) {
-			debug_f("write: %s", strerror(errno));
+	POKE_U32(sshbuf_mutable_ptr(log_संदेश), len - 4);
+	जर (atomicio(vwrite, mon->m_log_sendfd,
+	    sshbuf_mutable_ptr(log_संदेश), len) != len) {
+		जर (त्रुटि_सं == EPIPE) {
+			debug_f("write: %s", म_त्रुटि(त्रुटि_सं));
 			cleanup_exit(255);
 		}
-		fatal_f("write: %s", strerror(errno));
+		fatal_f("write: %s", म_त्रुटि(त्रुटि_सं));
 	}
-	sshbuf_free(log_msg);
+	sshbuf_free(log_संदेश);
 }
 
-static void
-mm_reap(void)
+स्थिर शून्य
+mm_reap(शून्य)
 {
-	int status = -1;
+	पूर्णांक status = -1;
 
-	if (!mm_is_monitor())
-		return;
-	while (waitpid(pmonitor->m_pid, &status, 0) == -1) {
-		if (errno == EINTR)
-			continue;
+	जर (!mm_is_monitor())
+		परत;
+	पर्यंत (waitpid(pmonitor->m_pid, &status, 0) == -1) {
+		जर (त्रुटि_सं == EINTR)
+			सुरूठेवा;
 		pmonitor->m_pid = -1;
-		fatal_f("waitpid: %s", strerror(errno));
+		fatal_f("waitpid: %s", म_त्रुटि(त्रुटि_सं));
 	}
-	if (WIFEXITED(status)) {
-		if (WEXITSTATUS(status) != 0) {
+	जर (WIFEXITED(status)) {
+		जर (WEXITSTATUS(status) != 0) {
 			debug_f("child exited with status %d",
 			    WEXITSTATUS(status));
 			cleanup_exit(255);
 		}
-	} else if (WIFSIGNALED(status)) {
+	} अन्यथा जर (WIFSIGNALED(status)) {
 		error_f("child terminated by signal %d",
 		    WTERMSIG(status));
 		cleanup_exit(signal_is_crash(WTERMSIG(status)) ?
 		    EXIT_CHILD_CRASH : 255);
-	} else {
+	} अन्यथा {
 		error_f("child terminated abnormally (status=0x%x)",
 		    status);
 		cleanup_exit(EXIT_CHILD_CRASH);
 	}
 }
 
-void
-mm_request_send(int sock, enum monitor_reqtype type, struct sshbuf *m)
+शून्य
+mm_request_send(पूर्णांक sock, गणना monitor_reqtype type, संरचना sshbuf *m)
 {
-	size_t mlen = sshbuf_len(m);
+	माप_प्रकार mlen = sshbuf_len(m);
 	u_char buf[5];
 
 	debug3_f("entering, type %d", type);
 
-	if (mlen >= MONITOR_MAX_MSGLEN)
+	जर (mlen >= MONITOR_MAX_MSGLEN)
 		fatal_f("bad length %zu", mlen);
 	POKE_U32(buf, mlen + 1);
 	buf[4] = (u_char) type;		/* 1st byte of payload is mesg-type */
-	if (atomicio(vwrite, sock, buf, sizeof(buf)) != sizeof(buf) ||
+	जर (atomicio(vwrite, sock, buf, आकार(buf)) != आकार(buf) ||
 	    atomicio(vwrite, sock, sshbuf_mutable_ptr(m), mlen) != mlen) {
-		if (errno == EPIPE) {
+		जर (त्रुटि_सं == EPIPE) {
 			debug3_f("monitor fd closed");
 			mm_reap();
 			cleanup_exit(255);
 		}
-		fatal_f("write: %s", strerror(errno));
+		fatal_f("write: %s", म_त्रुटि(त्रुटि_सं));
 	}
 }
 
-void
-mm_request_receive(int sock, struct sshbuf *m)
+शून्य
+mm_request_receive(पूर्णांक sock, संरचना sshbuf *m)
 {
-	u_char buf[4], *p = NULL;
-	u_int msg_len;
-	int oerrno, r;
+	u_char buf[4], *p = रिक्त;
+	u_int संदेश_len;
+	पूर्णांक oerrno, r;
 
 	debug3_f("entering");
 
-	if (atomicio(read, sock, buf, sizeof(buf)) != sizeof(buf)) {
-		if (errno == EPIPE) {
+	जर (atomicio(पठ, sock, buf, आकार(buf)) != आकार(buf)) {
+		जर (त्रुटि_सं == EPIPE) {
 			debug3_f("monitor fd closed");
 			mm_reap();
 			cleanup_exit(255);
 		}
-		fatal_f("read: %s", strerror(errno));
+		fatal_f("read: %s", म_त्रुटि(त्रुटि_सं));
 	}
-	msg_len = PEEK_U32(buf);
-	if (msg_len > MONITOR_MAX_MSGLEN)
-		fatal_f("read: bad msg_len %d", msg_len);
+	संदेश_len = PEEK_U32(buf);
+	जर (संदेश_len > MONITOR_MAX_MSGLEN)
+		fatal_f("read: bad msg_len %d", संदेश_len);
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
+	जर ((r = sshbuf_reserve(m, संदेश_len, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio(read, sock, p, msg_len) != msg_len) {
-		oerrno = errno;
-		error_f("read: %s", strerror(errno));
-		if (oerrno == EPIPE)
+	जर (atomicio(पठ, sock, p, संदेश_len) != संदेश_len) {
+		oerrno = त्रुटि_सं;
+		error_f("read: %s", म_त्रुटि(त्रुटि_सं));
+		जर (oerrno == EPIPE)
 			mm_reap();
 		cleanup_exit(255);
 	}
 }
 
-void
-mm_request_receive_expect(int sock, enum monitor_reqtype type, struct sshbuf *m)
+शून्य
+mm_request_receive_expect(पूर्णांक sock, गणना monitor_reqtype type, संरचना sshbuf *m)
 {
 	u_char rtype;
-	int r;
+	पूर्णांक r;
 
 	debug3_f("entering, type %d", type);
 
 	mm_request_receive(sock, m);
-	if ((r = sshbuf_get_u8(m, &rtype)) != 0)
+	जर ((r = sshbuf_get_u8(m, &rtype)) != 0)
 		fatal_fr(r, "parse");
-	if (rtype != type)
+	जर (rtype != type)
 		fatal_f("read: rtype %d != type %d", rtype, type);
 }
 
 #ifdef WITH_OPENSSL
 DH *
-mm_choose_dh(int min, int nbits, int max)
+mm_choose_dh(पूर्णांक min, पूर्णांक nbits, पूर्णांक max)
 {
 	BIGNUM *p, *g;
-	int r;
+	पूर्णांक r;
 	u_char success = 0;
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, min)) != 0 ||
+	जर ((r = sshbuf_put_u32(m, min)) != 0 ||
 	    (r = sshbuf_put_u32(m, nbits)) != 0 ||
 	    (r = sshbuf_put_u32(m, max)) != 0)
 		fatal_fr(r, "assemble");
@@ -238,49 +238,49 @@ mm_choose_dh(int min, int nbits, int max)
 	debug3_f("waiting for MONITOR_ANS_MODULI");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_MODULI, m);
 
-	if ((r = sshbuf_get_u8(m, &success)) != 0)
+	जर ((r = sshbuf_get_u8(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0)
+	जर (success == 0)
 		fatal_f("MONITOR_ANS_MODULI failed");
 
-	if ((r = sshbuf_get_bignum2(m, &p)) != 0 ||
+	जर ((r = sshbuf_get_bignum2(m, &p)) != 0 ||
 	    (r = sshbuf_get_bignum2(m, &g)) != 0)
 		fatal_fr(r, "parse group");
 
 	debug3_f("remaining %zu", sshbuf_len(m));
 	sshbuf_free(m);
 
-	return (dh_new_group(g, p));
+	परत (dh_new_group(g, p));
 }
 #endif
 
-void
-mm_sshkey_setcompat(struct ssh *ssh)
+शून्य
+mm_sshkey_setcompat(संरचना ssh *ssh)
 {
-	struct sshbuf *m;
-	int r;
+	संरचना sshbuf *m;
+	पूर्णांक r;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, ssh->compat)) != 0)
+	जर ((r = sshbuf_put_u32(m, ssh->compat)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_SETCOMPAT, m);
 }
 
-int
-mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen, const char *hostkey_alg,
-    const char *sk_provider, const char *sk_pin, u_int compat)
+पूर्णांक
+mm_sshkey_sign(संरचना ssh *ssh, संरचना sshkey *किल्ली, u_char **sigp, माप_प्रकार *lenp,
+    स्थिरांक u_char *data, माप_प्रकार datalen, स्थिरांक अक्षर *hostkey_alg,
+    स्थिरांक अक्षर *sk_provider, स्थिरांक अक्षर *sk_pin, u_int compat)
 {
-	struct sshbuf *m;
-	int r;
+	संरचना sshbuf *m;
+	पूर्णांक r;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	जर ((r = sshkey_puts(किल्ली, m)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
 	    (r = sshbuf_put_cstring(m, hostkey_alg)) != 0 ||
 	    (r = sshbuf_put_u32(m, compat)) != 0)
@@ -290,58 +290,58 @@ mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
 
 	debug3_f("waiting for MONITOR_ANS_SIGN");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_SIGN, m);
-	if ((r = sshbuf_get_string(m, sigp, lenp)) != 0)
+	जर ((r = sshbuf_get_string(m, sigp, lenp)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 	debug3_f("%s signature len=%zu", hostkey_alg ? hostkey_alg : "(null)",
 	    *lenp);
 
-	return (0);
+	परत (0);
 }
 
-void
-mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m)
+शून्य
+mm_decode_activate_server_options(संरचना ssh *ssh, संरचना sshbuf *m)
 {
-	struct sshbuf *config;
-	int r;
+	संरचना sshbuf *config;
+	पूर्णांक r;
 	u_int i;
 
-	if ((r = sshbuf_froms(m, &config)) != 0)
+	जर ((r = sshbuf_froms(m, &config)) != 0)
 		fatal_fr(r, "parse opts");
-	if ((r = deserialise_server_options(config, &options)) != 0)
+	जर ((r = deserialise_server_options(config, &options)) != 0)
 		fatal_fr(r, "deserialise_server_options");
 	sshbuf_free(config);
 
 	log_change_level(options.log_level);
 	log_verbose_reset();
-	for (i = 0; i < options.num_log_verbose; i++)
+	साठी (i = 0; i < options.अंक_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 }
 
 #define GETPW(b, id) \
-	do { \
-		if ((r = sshbuf_get_string_direct(b, &p, &len)) != 0) \
+	करा { \
+		जर ((r = sshbuf_get_string_direct(b, &p, &len)) != 0) \
 			fatal_fr(r, "parse pw %s", #id); \
-		if (len != sizeof(pw->id)) \
+		जर (len != आकार(pw->id)) \
 			fatal_fr(r, "bad length for %s", #id); \
-		memcpy(&pw->id, p, len); \
-	} while (0)
+		स_नकल(&pw->id, p, len); \
+	} पर्यंत (0)
 
-struct passwd *
-mm_getpwnamallow(struct ssh *ssh, const char *username)
+संरचना passwd *
+mm_getpwnamallow(संरचना ssh *ssh, स्थिरांक अक्षर *username)
 {
-	struct sshbuf *m;
-	struct passwd *pw;
-	size_t len;
-	int r;
+	संरचना sshbuf *m;
+	संरचना passwd *pw;
+	माप_प्रकार len;
+	पूर्णांक r;
 	u_char ok;
-	const u_char *p;
+	स्थिरांक u_char *p;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, username)) != 0)
+	जर ((r = sshbuf_put_cstring(m, username)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PWNAM, m);
@@ -349,15 +349,15 @@ mm_getpwnamallow(struct ssh *ssh, const char *username)
 	debug3_f("waiting for MONITOR_ANS_PWNAM");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PWNAM, m);
 
-	if ((r = sshbuf_get_u8(m, &ok)) != 0)
+	जर ((r = sshbuf_get_u8(m, &ok)) != 0)
 		fatal_fr(r, "parse success");
-	if (ok == 0) {
-		pw = NULL;
-		goto out;
+	जर (ok == 0) {
+		pw = रिक्त;
+		जा out;
 	}
 
 	/* XXX don't like passing struct passwd like this */
-	pw = xcalloc(sizeof(*pw), 1);
+	pw = xcalloc(आकार(*pw), 1);
 	GETPW(m, pw_uid);
 	GETPW(m, pw_gid);
 #ifdef HAVE_STRUCT_PASSWD_PW_CHANGE
@@ -366,16 +366,16 @@ mm_getpwnamallow(struct ssh *ssh, const char *username)
 #ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
 	GETPW(m, pw_expire);
 #endif
-	if ((r = sshbuf_get_cstring(m, &pw->pw_name, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &pw->pw_passwd, NULL)) != 0 ||
+	जर ((r = sshbuf_get_cstring(m, &pw->pw_name, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &pw->pw_passwd, रिक्त)) != 0 ||
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	    (r = sshbuf_get_cstring(m, &pw->pw_gecos, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &pw->pw_gecos, रिक्त)) != 0 ||
 #endif
 #ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	    (r = sshbuf_get_cstring(m, &pw->pw_class, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &pw->pw_class, रिक्त)) != 0 ||
 #endif
-	    (r = sshbuf_get_cstring(m, &pw->pw_dir, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &pw->pw_shell, NULL)) != 0)
+	    (r = sshbuf_get_cstring(m, &pw->pw_dir, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &pw->pw_shell, रिक्त)) != 0)
 		fatal_fr(r, "parse pw");
 
 out:
@@ -391,50 +391,50 @@ out:
 	    options.rekey_interval);
 	sshbuf_free(m);
 
-	return (pw);
+	परत (pw);
 }
 
-char *
-mm_auth2_read_banner(void)
+अक्षर *
+mm_auth2_read_banner(शून्य)
 {
-	struct sshbuf *m;
-	char *banner;
-	int r;
+	संरचना sshbuf *m;
+	अक्षर *banner;
+	पूर्णांक r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUTH2_READ_BANNER, m);
 	sshbuf_reset(m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_AUTH2_READ_BANNER, m);
-	if ((r = sshbuf_get_cstring(m, &banner, NULL)) != 0)
+	जर ((r = sshbuf_get_cstring(m, &banner, रिक्त)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
 	/* treat empty banner as missing banner */
-	if (strlen(banner) == 0) {
-		free(banner);
-		banner = NULL;
+	जर (म_माप(banner) == 0) {
+		मुक्त(banner);
+		banner = रिक्त;
 	}
-	return (banner);
+	परत (banner);
 }
 
 /* Inform the privileged process about service and style */
 
-void
-mm_inform_authserv(char *service, char *style)
+शून्य
+mm_inform_authserv(अक्षर *service, अक्षर *style)
 {
-	struct sshbuf *m;
-	int r;
+	संरचना sshbuf *m;
+	पूर्णांक r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, service)) != 0 ||
+	जर ((r = sshbuf_put_cstring(m, service)) != 0 ||
 	    (r = sshbuf_put_cstring(m, style ? style : "")) != 0)
 		fatal_fr(r, "assemble");
 
@@ -444,20 +444,20 @@ mm_inform_authserv(char *service, char *style)
 }
 
 /* Do the password authentication */
-int
-mm_auth_password(struct ssh *ssh, char *password)
+पूर्णांक
+mm_auth_password(संरचना ssh *ssh, अक्षर *password)
 {
-	struct sshbuf *m;
-	int r, authenticated = 0;
+	संरचना sshbuf *m;
+	पूर्णांक r, authenticated = 0;
 #ifdef USE_PAM
 	u_int maxtries = 0;
 #endif
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, password)) != 0)
+	जर ((r = sshbuf_put_cstring(m, password)) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUTHPASSWORD, m);
 
@@ -465,12 +465,12 @@ mm_auth_password(struct ssh *ssh, char *password)
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_AUTHPASSWORD, m);
 
-	if ((r = sshbuf_get_u32(m, &authenticated)) != 0)
+	जर ((r = sshbuf_get_u32(m, &authenticated)) != 0)
 		fatal_fr(r, "parse");
 #ifdef USE_PAM
-	if ((r = sshbuf_get_u32(m, &maxtries)) != 0)
+	जर ((r = sshbuf_get_u32(m, &maxtries)) != 0)
 		fatal_fr(r, "parse PAM");
-	if (maxtries > INT_MAX)
+	जर (maxtries > पूर्णांक_उच्च)
 		fatal_fr(r, "bad maxtries");
 	sshpam_set_maxtries_reached(maxtries);
 #endif
@@ -478,43 +478,43 @@ mm_auth_password(struct ssh *ssh, char *password)
 	sshbuf_free(m);
 
 	debug3_f("user %sauthenticated", authenticated ? "" : "not ");
-	return (authenticated);
+	परत (authenticated);
 }
 
-int
-mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int pubkey_auth_attempt, struct sshauthopt **authoptp)
+पूर्णांक
+mm_user_किल्ली_allowed(संरचना ssh *ssh, संरचना passwd *pw, संरचना sshkey *किल्ली,
+    पूर्णांक pubkey_auth_attempt, संरचना sshauthopt **authoptp)
 {
-	return (mm_key_allowed(MM_USERKEY, NULL, NULL, key,
+	परत (mm_किल्ली_allowed(MM_USERKEY, रिक्त, रिक्त, किल्ली,
 	    pubkey_auth_attempt, authoptp));
 }
 
-int
-mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
-    const char *user, const char *host, struct sshkey *key)
+पूर्णांक
+mm_hostbased_किल्ली_allowed(संरचना ssh *ssh, संरचना passwd *pw,
+    स्थिरांक अक्षर *user, स्थिरांक अक्षर *host, संरचना sshkey *किल्ली)
 {
-	return (mm_key_allowed(MM_HOSTKEY, user, host, key, 0, NULL));
+	परत (mm_किल्ली_allowed(MM_HOSTKEY, user, host, किल्ली, 0, रिक्त));
 }
 
-int
-mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
-    struct sshkey *key, int pubkey_auth_attempt, struct sshauthopt **authoptp)
+पूर्णांक
+mm_किल्ली_allowed(गणना mm_keytype type, स्थिरांक अक्षर *user, स्थिरांक अक्षर *host,
+    संरचना sshkey *किल्ली, पूर्णांक pubkey_auth_attempt, संरचना sshauthopt **authoptp)
 {
-	struct sshbuf *m;
-	int r, allowed = 0;
-	struct sshauthopt *opts = NULL;
+	संरचना sshbuf *m;
+	पूर्णांक r, allowed = 0;
+	संरचना sshauthopt *opts = रिक्त;
 
 	debug3_f("entering");
 
-	if (authoptp != NULL)
-		*authoptp = NULL;
+	जर (authoptp != रिक्त)
+		*authoptp = रिक्त;
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, type)) != 0 ||
+	जर ((r = sshbuf_put_u32(m, type)) != 0 ||
 	    (r = sshbuf_put_cstring(m, user ? user : "")) != 0 ||
 	    (r = sshbuf_put_cstring(m, host ? host : "")) != 0 ||
-	    (r = sshkey_puts(key, m)) != 0 ||
+	    (r = sshkey_puts(किल्ली, m)) != 0 ||
 	    (r = sshbuf_put_u32(m, pubkey_auth_attempt)) != 0)
 		fatal_fr(r, "assemble");
 
@@ -524,20 +524,20 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_KEYALLOWED, m);
 
-	if ((r = sshbuf_get_u32(m, &allowed)) != 0)
+	जर ((r = sshbuf_get_u32(m, &allowed)) != 0)
 		fatal_fr(r, "parse");
-	if (allowed && type == MM_USERKEY &&
+	जर (allowed && type == MM_USERKEY &&
 	    (r = sshauthopt_deserialise(m, &opts)) != 0)
 		fatal_fr(r, "sshauthopt_deserialise");
 	sshbuf_free(m);
 
-	if (authoptp != NULL) {
+	जर (authoptp != रिक्त) {
 		*authoptp = opts;
-		opts = NULL;
+		opts = रिक्त;
 	}
 	sshauthopt_free(opts);
 
-	return allowed;
+	परत allowed;
 }
 
 /*
@@ -546,27 +546,27 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
  * for authentication.
  */
 
-int
-mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
-    const u_char *data, size_t datalen, const char *sigalg, u_int compat,
-    struct sshkey_sig_details **sig_detailsp)
+पूर्णांक
+mm_sshkey_verify(स्थिरांक संरचना sshkey *किल्ली, स्थिरांक u_char *sig, माप_प्रकार siglen,
+    स्थिरांक u_char *data, माप_प्रकार datalen, स्थिरांक अक्षर *sigalg, u_int compat,
+    संरचना sshkey_sig_details **sig_detailsp)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 	u_int encoded_ret = 0;
-	int r;
+	पूर्णांक r;
 	u_char sig_details_present, flags;
 	u_int counter;
 
 	debug3_f("entering");
 
-	if (sig_detailsp != NULL)
-		*sig_detailsp = NULL;
-	if ((m = sshbuf_new()) == NULL)
+	जर (sig_detailsp != रिक्त)
+		*sig_detailsp = रिक्त;
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	जर ((r = sshkey_puts(किल्ली, m)) != 0 ||
 	    (r = sshbuf_put_string(m, sig, siglen)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
-	    (r = sshbuf_put_cstring(m, sigalg == NULL ? "" : sigalg)) != 0)
+	    (r = sshbuf_put_cstring(m, sigalg == रिक्त ? "" : sigalg)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_KEYVERIFY, m);
@@ -575,15 +575,15 @@ mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_KEYVERIFY, m);
 
-	if ((r = sshbuf_get_u32(m, &encoded_ret)) != 0 ||
+	जर ((r = sshbuf_get_u32(m, &encoded_ret)) != 0 ||
 	    (r = sshbuf_get_u8(m, &sig_details_present)) != 0)
 		fatal_fr(r, "parse");
-	if (sig_details_present && encoded_ret == 0) {
-		if ((r = sshbuf_get_u32(m, &counter)) != 0 ||
+	जर (sig_details_present && encoded_ret == 0) {
+		जर ((r = sshbuf_get_u32(m, &counter)) != 0 ||
 		    (r = sshbuf_get_u8(m, &flags)) != 0)
 			fatal_fr(r, "parse sig_details");
-		if (sig_detailsp != NULL) {
-			*sig_detailsp = xcalloc(1, sizeof(**sig_detailsp));
+		जर (sig_detailsp != रिक्त) {
+			*sig_detailsp = xcalloc(1, आकार(**sig_detailsp));
 			(*sig_detailsp)->sk_counter = counter;
 			(*sig_detailsp)->sk_flags = flags;
 		}
@@ -591,112 +591,112 @@ mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
 
 	sshbuf_free(m);
 
-	if (encoded_ret != 0)
-		return SSH_ERR_SIGNATURE_INVALID;
-	return 0;
+	जर (encoded_ret != 0)
+		परत SSH_ERR_SIGNATURE_INVALID;
+	परत 0;
 }
 
-void
-mm_send_keystate(struct ssh *ssh, struct monitor *monitor)
+शून्य
+mm_send_keystate(संरचना ssh *ssh, संरचना monitor *monitor)
 {
-	struct sshbuf *m;
-	int r;
+	संरचना sshbuf *m;
+	पूर्णांक r;
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = ssh_packet_get_state(ssh, m)) != 0)
+	जर ((r = ssh_packet_get_state(ssh, m)) != 0)
 		fatal_fr(r, "ssh_packet_get_state");
 	mm_request_send(monitor->m_recvfd, MONITOR_REQ_KEYEXPORT, m);
 	debug3_f("Finished sending state");
 	sshbuf_free(m);
 }
 
-int
-mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
+पूर्णांक
+mm_pty_allocate(पूर्णांक *ptyfd, पूर्णांक *ttyfd, अक्षर *namebuf, माप_प्रकार namebuflen)
 {
-	struct sshbuf *m;
-	char *p, *msg;
-	int success = 0, tmp1 = -1, tmp2 = -1, r;
+	संरचना sshbuf *m;
+	अक्षर *p, *संदेश;
+	पूर्णांक success = 0, tmp1 = -1, tmp2 = -1, r;
 
 	/* Kludge: ensure there are fds free to receive the pty/tty */
-	if ((tmp1 = dup(pmonitor->m_recvfd)) == -1 ||
+	जर ((tmp1 = dup(pmonitor->m_recvfd)) == -1 ||
 	    (tmp2 = dup(pmonitor->m_recvfd)) == -1) {
 		error_f("cannot allocate fds for pty");
-		if (tmp1 >= 0)
-			close(tmp1);
-		return 0;
+		जर (tmp1 >= 0)
+			बंद(tmp1);
+		परत 0;
 	}
-	close(tmp1);
-	close(tmp2);
+	बंद(tmp1);
+	बंद(tmp2);
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PTY, m);
 
 	debug3_f("waiting for MONITOR_ANS_PTY");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PTY, m);
 
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	जर ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0) {
+	जर (success == 0) {
 		debug3_f("pty alloc failed");
 		sshbuf_free(m);
-		return (0);
+		परत (0);
 	}
-	if ((r = sshbuf_get_cstring(m, &p, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &msg, NULL)) != 0)
+	जर ((r = sshbuf_get_cstring(m, &p, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &संदेश, रिक्त)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
 	strlcpy(namebuf, p, namebuflen); /* Possible truncation */
-	free(p);
+	मुक्त(p);
 
-	if ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
+	जर ((r = sshbuf_put(loginmsg, संदेश, म_माप(संदेश))) != 0)
 		fatal_fr(r, "put loginmsg");
-	free(msg);
+	मुक्त(संदेश);
 
-	if ((*ptyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1 ||
+	जर ((*ptyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1 ||
 	    (*ttyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1)
 		fatal_f("receive fds failed");
 
 	/* Success */
-	return (1);
+	परत (1);
 }
 
-void
+शून्य
 mm_session_pty_cleanup2(Session *s)
 {
-	struct sshbuf *m;
-	int r;
+	संरचना sshbuf *m;
+	पूर्णांक r;
 
-	if (s->ttyfd == -1)
-		return;
-	if ((m = sshbuf_new()) == NULL)
+	जर (s->ttyfd == -1)
+		परत;
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, s->tty)) != 0)
+	जर ((r = sshbuf_put_cstring(m, s->tty)) != 0)
 		fatal_fr(r, "assmble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PTYCLEANUP, m);
 	sshbuf_free(m);
 
 	/* closed dup'ed master */
-	if (s->ptymaster != -1 && close(s->ptymaster) == -1)
+	जर (s->ptymaster != -1 && बंद(s->ptymaster) == -1)
 		error("close(s->ptymaster/%d): %s",
-		    s->ptymaster, strerror(errno));
+		    s->ptymaster, म_त्रुटि(त्रुटि_सं));
 
 	/* unlink pty from session */
 	s->ttyfd = -1;
 }
 
 #ifdef USE_PAM
-void
-mm_start_pam(struct ssh *ssh)
+शून्य
+mm_start_pam(संरचना ssh *ssh)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 
 	debug3_f("entering");
-	if (!options.use_pam)
+	जर (!options.use_pam)
 		fatal_f("UsePAM=no, but ended up in %s anyway", __func__);
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_START, m);
 
@@ -704,132 +704,132 @@ mm_start_pam(struct ssh *ssh)
 }
 
 u_int
-mm_do_pam_account(void)
+mm_do_pam_account(शून्य)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 	u_int ret;
-	char *msg;
-	size_t msglen;
-	int r;
+	अक्षर *संदेश;
+	माप_प्रकार msglen;
+	पूर्णांक r;
 
 	debug3_f("entering");
-	if (!options.use_pam)
+	जर (!options.use_pam)
 		fatal_f("UsePAM=no, but ended up in %s anyway", __func__);
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_ACCOUNT, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_ACCOUNT, m);
-	if ((r = sshbuf_get_u32(m, &ret)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &msg, &msglen)) != 0 ||
-	    (r = sshbuf_put(loginmsg, msg, msglen)) != 0)
+	जर ((r = sshbuf_get_u32(m, &ret)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &संदेश, &msglen)) != 0 ||
+	    (r = sshbuf_put(loginmsg, संदेश, msglen)) != 0)
 		fatal_fr(r, "buffer error");
 
-	free(msg);
+	मुक्त(संदेश);
 	sshbuf_free(m);
 
 	debug3_f("returning %d", ret);
 
-	return (ret);
+	परत (ret);
 }
 
-void *
+शून्य *
 mm_sshpam_init_ctx(Authctxt *authctxt)
 {
-	struct sshbuf *m;
-	int r, success;
+	संरचना sshbuf *m;
+	पूर्णांक r, success;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_INIT_CTX, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_INIT_CTX");
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_INIT_CTX, m);
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	जर ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "buffer error");
-	if (success == 0) {
+	जर (success == 0) {
 		debug3_f("pam_init_ctx failed");
 		sshbuf_free(m);
-		return (NULL);
+		परत (रिक्त);
 	}
 	sshbuf_free(m);
-	return (authctxt);
+	परत (authctxt);
 }
 
-int
-mm_sshpam_query(void *ctx, char **name, char **info,
-    u_int *num, char ***prompts, u_int **echo_on)
+पूर्णांक
+mm_sshpam_query(शून्य *ctx, अक्षर **name, अक्षर **info,
+    u_int *अंक, अक्षर ***prompts, u_int **echo_on)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 	u_int i, n;
-	int r, ret;
+	पूर्णांक r, ret;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_QUERY, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_QUERY");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PAM_QUERY, m);
-	if ((r = sshbuf_get_u32(m, &ret)) != 0 ||
-	    (r = sshbuf_get_cstring(m, name, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, info, NULL)) != 0 ||
+	जर ((r = sshbuf_get_u32(m, &ret)) != 0 ||
+	    (r = sshbuf_get_cstring(m, name, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(m, info, रिक्त)) != 0 ||
 	    (r = sshbuf_get_u32(m, &n)) != 0 ||
-	    (r = sshbuf_get_u32(m, num)) != 0)
+	    (r = sshbuf_get_u32(m, अंक)) != 0)
 		fatal_fr(r, "buffer error");
 	debug3_f("pam_query returned %d", ret);
 	sshpam_set_maxtries_reached(n);
-	if (*num > PAM_MAX_NUM_MSG)
+	जर (*अंक > PAM_MAX_अंक_संदेश)
 		fatal("%s: received %u PAM messages, expected <= %u",
-		    __func__, *num, PAM_MAX_NUM_MSG);
-	*prompts = xcalloc((*num + 1), sizeof(char *));
-	*echo_on = xcalloc((*num + 1), sizeof(u_int));
-	for (i = 0; i < *num; ++i) {
-		if ((r = sshbuf_get_cstring(m, &((*prompts)[i]), NULL)) != 0 ||
+		    __func__, *अंक, PAM_MAX_अंक_संदेश);
+	*prompts = xcalloc((*अंक + 1), आकार(अक्षर *));
+	*echo_on = xcalloc((*अंक + 1), आकार(u_int));
+	साठी (i = 0; i < *अंक; ++i) {
+		जर ((r = sshbuf_get_cstring(m, &((*prompts)[i]), रिक्त)) != 0 ||
 		    (r = sshbuf_get_u32(m, &((*echo_on)[i]))) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	sshbuf_free(m);
-	return (ret);
+	परत (ret);
 }
 
-int
-mm_sshpam_respond(void *ctx, u_int num, char **resp)
+पूर्णांक
+mm_sshpam_respond(शून्य *ctx, u_int अंक, अक्षर **resp)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 	u_int n, i;
-	int r, ret;
+	पूर्णांक r, ret;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, num)) != 0)
+	जर ((r = sshbuf_put_u32(m, अंक)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; i < num; ++i) {
-		if ((r = sshbuf_put_cstring(m, resp[i])) != 0)
+	साठी (i = 0; i < अंक; ++i) {
+		जर ((r = sshbuf_put_cstring(m, resp[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_RESPOND, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_RESPOND");
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_RESPOND, m);
-	if ((r = sshbuf_get_u32(m, &n)) != 0)
+	जर ((r = sshbuf_get_u32(m, &n)) != 0)
 		fatal_fr(r, "buffer error");
-	ret = (int)n; /* XXX */
+	ret = (पूर्णांक)n; /* XXX */
 	debug3_f("pam_respond returned %d", ret);
 	sshbuf_free(m);
-	return (ret);
+	परत (ret);
 }
 
-void
-mm_sshpam_free_ctx(void *ctxtp)
+शून्य
+mm_sshpam_free_ctx(शून्य *ctxtp)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_FREE_CTX, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_FREE_CTX");
@@ -841,12 +841,12 @@ mm_sshpam_free_ctx(void *ctxtp)
 
 /* Request process termination */
 
-void
-mm_terminate(void)
+शून्य
+mm_terminate(शून्य)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_TERM, m);
 	sshbuf_free(m);
@@ -854,20 +854,20 @@ mm_terminate(void)
 
 /* Request state information */
 
-void
-mm_get_state(struct ssh *ssh,
-    ServerOptions *opts, struct sshbuf **confdatap,
+शून्य
+mm_get_state(संरचना ssh *ssh,
+    ServerOptions *opts, संरचना sshbuf **confdatap,
     uint64_t *timing_secretp,
-    struct sshbuf **hostkeysp, struct sshbuf **keystatep,
+    संरचना sshbuf **hostkeysp, संरचना sshbuf **keystatep,
     u_char **pw_namep,
-    struct sshbuf **authinfop, struct sshbuf **auth_optsp)
+    संरचना sshbuf **authinfop, संरचना sshbuf **auth_optsp)
 {
-	struct sshbuf *m, *config;
-	int r;
+	संरचना sshbuf *m, *config;
+	पूर्णांक r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL || (config = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त || (config = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_STATE, m);
@@ -876,7 +876,7 @@ mm_get_state(struct ssh *ssh,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_STATE, m);
 
-	if ((r = sshbuf_froms(m, &config)) != 0 ||
+	जर ((r = sshbuf_froms(m, &config)) != 0 ||
 	    (r = sshbuf_get_u64(m, timing_secretp)) != 0 ||
 	    (r = sshbuf_froms(m, hostkeysp)) != 0 ||
 	    (r = sshbuf_get_stringb(m, ssh->kex->server_version)) != 0 ||
@@ -884,15 +884,15 @@ mm_get_state(struct ssh *ssh,
 		fatal_fr(r, "parse config");
 
 	/* postauth */
-	if (confdatap) {
-		if ((r = sshbuf_froms(m, confdatap)) != 0 ||
+	जर (confdatap) {
+		जर ((r = sshbuf_froms(m, confdatap)) != 0 ||
 		    (r = sshbuf_froms(m, keystatep)) != 0 ||
-		    (r = sshbuf_get_string(m, pw_namep, NULL)) != 0 ||
+		    (r = sshbuf_get_string(m, pw_namep, रिक्त)) != 0 ||
 		    (r = sshbuf_froms(m, authinfop)) != 0 ||
 		    (r = sshbuf_froms(m, auth_optsp)) != 0)
 			fatal_fr(r, "parse config postauth");
 	}
-	if ((r = deserialise_server_options(config, opts)) != 0)
+	जर ((r = deserialise_server_options(config, opts)) != 0)
 		fatal_fr(r, "deserialise_server_options");
 
 	sshbuf_free(m);
@@ -901,45 +901,45 @@ mm_get_state(struct ssh *ssh,
 	debug3_f("done");
 }
 
-static void
-mm_chall_setup(char **name, char **infotxt, u_int *numprompts,
-    char ***prompts, u_int **echo_on)
+स्थिर शून्य
+mm_chall_setup(अक्षर **name, अक्षर **infotxt, u_int *numprompts,
+    अक्षर ***prompts, u_int **echo_on)
 {
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
 	*numprompts = 1;
-	*prompts = xcalloc(*numprompts, sizeof(char *));
-	*echo_on = xcalloc(*numprompts, sizeof(u_int));
+	*prompts = xcalloc(*numprompts, आकार(अक्षर *));
+	*echo_on = xcalloc(*numprompts, आकार(u_int));
 	(*echo_on)[0] = 0;
 }
 
-int
-mm_bsdauth_query(void *ctx, char **name, char **infotxt,
-   u_int *numprompts, char ***prompts, u_int **echo_on)
+पूर्णांक
+mm_bsdauth_query(शून्य *ctx, अक्षर **name, अक्षर **infotxt,
+   u_int *numprompts, अक्षर ***prompts, u_int **echo_on)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 	u_int success;
-	char *challenge;
-	int r;
+	अक्षर *challenge;
+	पूर्णांक r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_BSDAUTHQUERY, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_BSDAUTHQUERY, m);
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	जर ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0) {
+	जर (success == 0) {
 		debug3_f("no challenge");
 		sshbuf_free(m);
-		return (-1);
+		परत (-1);
 	}
 
 	/* Get the challenge, and format the response */
-	if ((r = sshbuf_get_cstring(m, &challenge, NULL)) != 0)
+	जर ((r = sshbuf_get_cstring(m, &challenge, रिक्त)) != 0)
 		fatal_fr(r, "parse challenge");
 	sshbuf_free(m);
 
@@ -948,64 +948,64 @@ mm_bsdauth_query(void *ctx, char **name, char **infotxt,
 
 	debug3_f("received challenge: %s", challenge);
 
-	return (0);
+	परत (0);
 }
 
-int
-mm_bsdauth_respond(void *ctx, u_int numresponses, char **responses)
+पूर्णांक
+mm_bsdauth_respond(शून्य *ctx, u_int numresponses, अक्षर **responses)
 {
-	struct sshbuf *m;
-	int r, authok;
+	संरचना sshbuf *m;
+	पूर्णांक r, authok;
 
 	debug3_f("entering");
-	if (numresponses != 1)
-		return (-1);
+	जर (numresponses != 1)
+		परत (-1);
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, responses[0])) != 0)
+	जर ((r = sshbuf_put_cstring(m, responses[0])) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_BSDAUTHRESPOND, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_BSDAUTHRESPOND, m);
 
-	if ((r = sshbuf_get_u32(m, &authok)) != 0)
+	जर ((r = sshbuf_get_u32(m, &authok)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
-	return ((authok == 0) ? -1 : 0);
+	परत ((authok == 0) ? -1 : 0);
 }
 
 #ifdef SSH_AUDIT_EVENTS
-void
-mm_audit_event(struct ssh *ssh, ssh_audit_event_t event)
+शून्य
+mm_audit_event(संरचना ssh *ssh, ssh_audit_event_t event)
 {
-	struct sshbuf *m;
-	int r;
+	संरचना sshbuf *m;
+	पूर्णांक r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, event)) != 0)
+	जर ((r = sshbuf_put_u32(m, event)) != 0)
 		fatal_fr(r, "buffer error");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUDIT_EVENT, m);
 	sshbuf_free(m);
 }
 
-void
-mm_audit_run_command(const char *command)
+शून्य
+mm_audit_run_command(स्थिरांक अक्षर *command)
 {
-	struct sshbuf *m;
-	int r;
+	संरचना sshbuf *m;
+	पूर्णांक r;
 
 	debug3_f("entering command %s", command);
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, command)) != 0)
+	जर ((r = sshbuf_put_cstring(m, command)) != 0)
 		fatal_fr(r, "buffer error");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUDIT_COMMAND, m);
@@ -1017,101 +1017,101 @@ mm_audit_run_command(const char *command)
 OM_uint32
 mm_ssh_gssapi_server_ctx(Gssctxt **ctx, gss_OID goid)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 	OM_uint32 major;
-	int r;
+	पूर्णांक r;
 
 	/* Client doesn't get to see the context */
-	*ctx = NULL;
+	*ctx = रिक्त;
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, goid->elements, goid->length)) != 0)
+	जर ((r = sshbuf_put_string(m, goid->elements, goid->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSSETUP, m);
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_GSSSETUP, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0)
+	जर ((r = sshbuf_get_u32(m, &major)) != 0)
 		fatal_fr(r, "parse");
 
 	sshbuf_free(m);
-	return (major);
+	परत (major);
 }
 
 OM_uint32
 mm_ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *in,
     gss_buffer_desc *out, OM_uint32 *flagsp)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 	OM_uint32 major;
 	u_int flags;
-	int r;
+	पूर्णांक r;
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, in->value, in->length)) != 0)
+	जर ((r = sshbuf_put_string(m, in->मूल्य, in->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSSTEP, m);
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_GSSSTEP, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0 ||
+	जर ((r = sshbuf_get_u32(m, &major)) != 0 ||
 	    (r = ssh_gssapi_get_buffer_desc(m, out)) != 0)
 		fatal_fr(r, "parse");
-	if (flagsp != NULL) {
-		if ((r = sshbuf_get_u32(m, &flags)) != 0)
+	जर (flagsp != रिक्त) {
+		जर ((r = sshbuf_get_u32(m, &flags)) != 0)
 			fatal_fr(r, "parse flags");
 		*flagsp = flags;
 	}
 
 	sshbuf_free(m);
 
-	return (major);
+	परत (major);
 }
 
 OM_uint32
 mm_ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 {
-	struct sshbuf *m;
+	संरचना sshbuf *m;
 	OM_uint32 major;
-	int r;
+	पूर्णांक r;
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, gssbuf->value, gssbuf->length)) != 0 ||
-	    (r = sshbuf_put_string(m, gssmic->value, gssmic->length)) != 0)
+	जर ((r = sshbuf_put_string(m, gssbuf->मूल्य, gssbuf->length)) != 0 ||
+	    (r = sshbuf_put_string(m, gssmic->मूल्य, gssmic->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSCHECKMIC, m);
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_GSSCHECKMIC, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0)
+	जर ((r = sshbuf_get_u32(m, &major)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
-	return(major);
+	परत(major);
 }
 
-int
-mm_ssh_gssapi_userok(char *user)
+पूर्णांक
+mm_ssh_gssapi_userok(अक्षर *user)
 {
-	struct sshbuf *m;
-	int r, authenticated = 0;
+	संरचना sshbuf *m;
+	पूर्णांक r, authenticated = 0;
 
-	if ((m = sshbuf_new()) == NULL)
+	जर ((m = sshbuf_new()) == रिक्त)
 		fatal_f("sshbuf_new failed");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSUSEROK, m);
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_GSSUSEROK, m);
 
-	if ((r = sshbuf_get_u32(m, &authenticated)) != 0)
+	जर ((r = sshbuf_get_u32(m, &authenticated)) != 0)
 		fatal_fr(r, "parse");
 
 	sshbuf_free(m);
 	debug3_f("user %sauthenticated", authenticated ? "" : "not ");
-	return (authenticated);
+	परत (authenticated);
 }
 #endif /* GSSAPI */
 
@@ -1119,87 +1119,87 @@ mm_ssh_gssapi_userok(char *user)
  * Inform channels layer of permitopen options for a single forwarding
  * direction (local/remote).
  */
-static void
-server_process_permitopen_list(struct ssh *ssh, int listen,
-    char **opens, u_int num_opens)
+स्थिर शून्य
+server_process_permitopen_list(संरचना ssh *ssh, पूर्णांक listen,
+    अक्षर **opens, u_int अंक_opens)
 {
 	u_int i;
-	int port;
-	char *host, *arg, *oarg;
-	int where = listen ? FORWARD_REMOTE : FORWARD_LOCAL;
-	const char *what = listen ? "permitlisten" : "permitopen";
+	पूर्णांक port;
+	अक्षर *host, *arg, *oarg;
+	पूर्णांक where = listen ? FORWARD_REMOTE : FORWARD_LOCAL;
+	स्थिरांक अक्षर *what = listen ? "permitlisten" : "permitopen";
 
 	channel_clear_permission(ssh, FORWARD_ADM, where);
-	if (num_opens == 0)
-		return; /* permit any */
+	जर (अंक_opens == 0)
+		परत; /* permit any */
 
 	/* handle keywords: "any" / "none" */
-	if (num_opens == 1 && strcmp(opens[0], "any") == 0)
-		return;
-	if (num_opens == 1 && strcmp(opens[0], "none") == 0) {
+	जर (अंक_opens == 1 && म_भेद(opens[0], "any") == 0)
+		परत;
+	जर (अंक_opens == 1 && म_भेद(opens[0], "none") == 0) {
 		channel_disable_admin(ssh, where);
-		return;
+		परत;
 	}
 	/* Otherwise treat it as a list of permitted host:port */
-	for (i = 0; i < num_opens; i++) {
+	साठी (i = 0; i < अंक_opens; i++) {
 		oarg = arg = xstrdup(opens[i]);
 		host = hpdelim(&arg);
-		if (host == NULL)
+		जर (host == रिक्त)
 			fatal_f("missing host in %s", what);
 		host = cleanhostname(host);
-		if (arg == NULL || ((port = permitopen_port(arg)) < 0))
+		जर (arg == रिक्त || ((port = permitopen_port(arg)) < 0))
 			fatal_f("bad port number in %s", what);
 		/* Send it to channels layer */
 		channel_add_permission(ssh, FORWARD_ADM,
 		    where, host, port);
-		free(oarg);
+		मुक्त(oarg);
 	}
 }
 
 /*
  * Inform channels layer of permitopen options from configuration.
  */
-void
-server_process_permitopen(struct ssh *ssh)
+शून्य
+server_process_permitopen(संरचना ssh *ssh)
 {
 	server_process_permitopen_list(ssh, 0,
-	    options.permitted_opens, options.num_permitted_opens);
+	    options.permitted_opens, options.अंक_permitted_opens);
 	server_process_permitopen_list(ssh, 1,
-	    options.permitted_listens, options.num_permitted_listens);
+	    options.permitted_listens, options.अंक_permitted_listens);
 }
 
-void
-server_process_channel_timeouts(struct ssh *ssh)
+शून्य
+server_process_channel_timeouts(संरचना ssh *ssh)
 {
 	u_int i;
-	double secs;
-	char *type;
+	द्विगुण secs;
+	अक्षर *type;
 
-	debug3_f("setting %u timeouts", options.num_channel_timeouts);
+	debug3_f("setting %u timeouts", options.अंक_channel_timeouts);
 	channel_clear_timeouts(ssh);
-	for (i = 0; i < options.num_channel_timeouts; i++) {
-		if (parse_pattern_interval(options.channel_timeouts[i],
+	साठी (i = 0; i < options.अंक_channel_timeouts; i++) {
+		जर (parse_pattern_interval(options.channel_timeouts[i],
 		    &type, &secs) != 0) {
 			fatal_f("internal error: bad timeout %s",
 			    options.channel_timeouts[i]);
 		}
 		channel_add_timeout(ssh, type, secs);
-		free(type);
+		मुक्त(type);
 	}
 }
 
-struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
+संरचना connection_info *
+server_get_connection_info(संरचना ssh *ssh, पूर्णांक populate, पूर्णांक use_dns)
 {
-	static struct connection_info ci;
+	स्थिर संरचना connection_info ci;
 
-	if (ssh == NULL || !populate)
-		return &ci;
+	जर (ssh == रिक्त || !populate)
+		परत &ci;
 	ci.host = use_dns ? ssh_remote_hostname(ssh) : ssh_remote_ipaddr(ssh);
 	ci.address = ssh_remote_ipaddr(ssh);
 	ci.laddress = ssh_local_ipaddr(ssh);
 	ci.lport = ssh_local_port(ssh);
 	ci.rdomain = ssh_packet_rdomain_in(ssh);
-	return &ci;
+	परत &ci;
 }
 

@@ -13,91 +13,91 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/wait.h>
+#अन्तर्भाव <sys/socket.h>
 
-#include <net/if.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#अन्तर्भाव <net/if.h>
+#अन्तर्भाव <netinet/in.h>
+#अन्तर्भाव <arpa/inet.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <ifaddrs.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <netdb.h>
+#अन्तर्भाव <paths.h>
+#अन्तर्भाव <pwd.h>
+#अन्तर्भाव <poll.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <ifaddrs.h>
 
-#include "xmalloc.h"
-#include "hostfile.h"
-#include "ssh.h"
-#include "compat.h"
-#include "packet.h"
-#include "sshkey.h"
-#include "sshconnect.h"
-#include "log.h"
-#include "match.h"
-#include "misc.h"
-#include "readconf.h"
-#include "dns.h"
-#include "monitor_fdpass.h"
-#include "authfile.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "kex.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "ssh.h"
+#अन्तर्भाव "compat.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "sshconnect.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "match.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "readconf.h"
+#अन्तर्भाव "dns.h"
+#अन्तर्भाव "monitor_fdpass.h"
+#अन्तर्भाव "authfile.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "authfd.h"
+#अन्तर्भाव "kex.h"
 
-struct sshkey *previous_host_key = NULL;
+संरचना sshkey *previous_host_किल्ली = रिक्त;
 
-static int matching_host_key_dns = 0;
+स्थिर पूर्णांक matching_host_किल्ली_dns = 0;
 
-static pid_t proxy_command_pid = 0;
+स्थिर pid_t proxy_command_pid = 0;
 
 /* import */
-extern int debug_flag;
-extern Options options;
-extern char *__progname;
+बाह्य पूर्णांक debug_flag;
+बाह्य Options options;
+बाह्य अक्षर *__progname;
 
-static int show_other_keys(struct hostkeys *, struct sshkey *);
-static void warn_changed_key(struct sshkey *);
+स्थिर पूर्णांक show_other_किल्ल्या(संरचना hostkeys *, संरचना sshkey *);
+स्थिर शून्य warn_changed_किल्ली(संरचना sshkey *);
 
-void
-ssh_conn_info_free(struct ssh_conn_info *cinfo)
+शून्य
+ssh_conn_info_free(संरचना ssh_conn_info *cinfo)
 {
-	if (cinfo == NULL)
-		return;
-	free(cinfo->conn_hash_hex);
-	free(cinfo->shorthost);
-	free(cinfo->uidstr);
-	free(cinfo->keyalias);
-	free(cinfo->thishost);
-	free(cinfo->host_arg);
-	free(cinfo->portstr);
-	free(cinfo->remhost);
-	free(cinfo->remuser);
-	free(cinfo->homedir);
-	free(cinfo->locuser);
-	free(cinfo->jmphost);
-	freezero(cinfo, sizeof(*cinfo));
+	जर (cinfo == रिक्त)
+		परत;
+	मुक्त(cinfo->conn_hash_hex);
+	मुक्त(cinfo->shorthost);
+	मुक्त(cinfo->uidstr);
+	मुक्त(cinfo->keyalias);
+	मुक्त(cinfo->thishost);
+	मुक्त(cinfo->host_arg);
+	मुक्त(cinfo->portstr);
+	मुक्त(cinfo->remhost);
+	मुक्त(cinfo->remuser);
+	मुक्त(cinfo->homedir);
+	मुक्त(cinfo->locuser);
+	मुक्त(cinfo->jmphost);
+	freezero(cinfo, आकार(*cinfo));
 }
 
-struct ssh_conn_info *
-ssh_conn_info_dup(const struct ssh_conn_info *cinfo)
+संरचना ssh_conn_info *
+ssh_conn_info_dup(स्थिरांक संरचना ssh_conn_info *cinfo)
 {
-	struct ssh_conn_info *ret;
+	संरचना ssh_conn_info *ret;
 
-	if (cinfo == NULL)
-		return NULL;
-	ret = xcalloc(1, sizeof(*ret));
+	जर (cinfo == रिक्त)
+		परत रिक्त;
+	ret = xcalloc(1, आकार(*ret));
 	ret->conn_hash_hex = xstrdup(cinfo->conn_hash_hex);
 	ret->shorthost = xstrdup(cinfo->shorthost);
 	ret->uidstr = xstrdup(cinfo->uidstr);
@@ -110,19 +110,19 @@ ssh_conn_info_dup(const struct ssh_conn_info *cinfo)
 	ret->homedir = xstrdup(cinfo->homedir);
 	ret->locuser = xstrdup(cinfo->locuser);
 	ret->jmphost = xstrdup(cinfo->jmphost);
-	return ret;
+	परत ret;
 }
 
 /* Expand a proxy command */
-static char *
-expand_proxy_command(const char *proxy_command, const char *user,
-    const char *host, const char *host_arg, int port)
+स्थिर अक्षर *
+expand_proxy_command(स्थिरांक अक्षर *proxy_command, स्थिरांक अक्षर *user,
+    स्थिरांक अक्षर *host, स्थिरांक अक्षर *host_arg, पूर्णांक port)
 {
-	char *tmp, *ret, strport[NI_MAXSERV];
-	const char *keyalias = options.host_key_alias ?
-	    options.host_key_alias : host_arg;
+	अक्षर *tmp, *ret, strport[NI_MAXSERV];
+	स्थिरांक अक्षर *keyalias = options.host_किल्ली_alias ?
+	    options.host_किल्ली_alias : host_arg;
 
-	snprintf(strport, sizeof strport, "%d", port);
+	snprintf(strport, आकार strport, "%d", port);
 	xasprintf(&tmp, "exec %s", proxy_command);
 	ret = percent_expand(tmp,
 	    "h", host,
@@ -130,186 +130,186 @@ expand_proxy_command(const char *proxy_command, const char *user,
 	    "n", host_arg,
 	    "p", strport,
 	    "r", options.user,
-	    (char *)NULL);
-	free(tmp);
-	return ret;
+	    (अक्षर *)रिक्त);
+	मुक्त(tmp);
+	परत ret;
 }
 
 /*
  * Connect to the given ssh server using a proxy command that passes a
  * a connected fd back to us.
  */
-static int
-ssh_proxy_fdpass_connect(struct ssh *ssh, const char *host,
-    const char *host_arg, u_short port, const char *proxy_command)
+स्थिर पूर्णांक
+ssh_proxy_fdpass_connect(संरचना ssh *ssh, स्थिरांक अक्षर *host,
+    स्थिरांक अक्षर *host_arg, u_short port, स्थिरांक अक्षर *proxy_command)
 {
-	char *command_string;
-	int sp[2], sock;
+	अक्षर *command_string;
+	पूर्णांक sp[2], sock;
 	pid_t pid;
-	char *shell;
+	अक्षर *shell;
 
-	if ((shell = getenv("SHELL")) == NULL)
+	जर ((shell = दो_पर्या("SHELL")) == रिक्त)
 		shell = _PATH_BSHELL;
 
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sp) == -1)
+	जर (socketpair(AF_UNIX, SOCK_STREAM, 0, sp) == -1)
 		fatal("Could not create socketpair to communicate with "
-		    "proxy dialer: %.100s", strerror(errno));
+		    "proxy dialer: %.100s", म_त्रुटि(त्रुटि_सं));
 
 	command_string = expand_proxy_command(proxy_command, options.user,
 	    host, host_arg, port);
 	debug("Executing proxy dialer command: %.500s", command_string);
 
 	/* Fork and execute the proxy command. */
-	if ((pid = fork()) == 0) {
-		char *argv[10];
+	जर ((pid = विभाजन()) == 0) {
+		अक्षर *argv[10];
 
-		close(sp[1]);
+		बंद(sp[1]);
 		/* Redirect stdin and stdout. */
-		if (sp[0] != 0) {
-			if (dup2(sp[0], 0) == -1)
-				perror("dup2 stdin");
+		जर (sp[0] != 0) {
+			जर (dup2(sp[0], 0) == -1)
+				लिखो_त्रुटि("dup2 stdin");
 		}
-		if (sp[0] != 1) {
-			if (dup2(sp[0], 1) == -1)
-				perror("dup2 stdout");
+		जर (sp[0] != 1) {
+			जर (dup2(sp[0], 1) == -1)
+				लिखो_त्रुटि("dup2 stdout");
 		}
-		if (sp[0] >= 2)
-			close(sp[0]);
+		जर (sp[0] >= 2)
+			बंद(sp[0]);
 
 		/*
 		 * Stderr is left for non-ControlPersist connections is so
 		 * error messages may be printed on the user's terminal.
 		 */
-		if (!debug_flag && options.control_path != NULL &&
+		जर (!debug_flag && options.control_path != रिक्त &&
 		    options.control_persist && stdfd_devnull(0, 0, 1) == -1)
 			error_f("stdfd_devnull failed");
 
 		argv[0] = shell;
 		argv[1] = "-c";
 		argv[2] = command_string;
-		argv[3] = NULL;
+		argv[3] = रिक्त;
 
 		/*
 		 * Execute the proxy command.
 		 * Note that we gave up any extra privileges above.
 		 */
 		execv(argv[0], argv);
-		perror(argv[0]);
-		exit(1);
+		लिखो_त्रुटि(argv[0]);
+		निकास(1);
 	}
 	/* Parent. */
-	if (pid == -1)
-		fatal("fork failed: %.100s", strerror(errno));
-	close(sp[0]);
-	free(command_string);
+	जर (pid == -1)
+		fatal("fork failed: %.100s", म_त्रुटि(त्रुटि_सं));
+	बंद(sp[0]);
+	मुक्त(command_string);
 
-	if ((sock = mm_receive_fd(sp[1])) == -1)
+	जर ((sock = mm_receive_fd(sp[1])) == -1)
 		fatal("proxy dialer did not pass back a connection");
-	close(sp[1]);
+	बंद(sp[1]);
 
-	while (waitpid(pid, NULL, 0) == -1)
-		if (errno != EINTR)
-			fatal("Couldn't wait for child: %s", strerror(errno));
+	पर्यंत (waitpid(pid, रिक्त, 0) == -1)
+		जर (त्रुटि_सं != EINTR)
+			fatal("Couldn't wait for child: %s", म_त्रुटि(त्रुटि_सं));
 
 	/* Set the connection file descriptors. */
-	if (ssh_packet_set_connection(ssh, sock, sock) == NULL)
-		return -1; /* ssh_packet_set_connection logs error */
+	जर (ssh_packet_set_connection(ssh, sock, sock) == रिक्त)
+		परत -1; /* ssh_packet_set_connection logs error */
 
-	return 0;
+	परत 0;
 }
 
 /*
  * Connect to the given ssh server using a proxy command.
  */
-static int
-ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
-    u_short port, const char *proxy_command)
+स्थिर पूर्णांक
+ssh_proxy_connect(संरचना ssh *ssh, स्थिरांक अक्षर *host, स्थिरांक अक्षर *host_arg,
+    u_short port, स्थिरांक अक्षर *proxy_command)
 {
-	char *command_string;
-	int pin[2], pout[2];
+	अक्षर *command_string;
+	पूर्णांक pin[2], pout[2];
 	pid_t pid;
-	char *shell;
+	अक्षर *shell;
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	जर ((shell = दो_पर्या("SHELL")) == रिक्त || *shell == '\0')
 		shell = _PATH_BSHELL;
 
 	/* Create pipes for communicating with the proxy. */
-	if (pipe(pin) == -1 || pipe(pout) == -1)
+	जर (pipe(pin) == -1 || pipe(pout) == -1)
 		fatal("Could not create pipes to communicate with the proxy: %.100s",
-		    strerror(errno));
+		    म_त्रुटि(त्रुटि_सं));
 
 	command_string = expand_proxy_command(proxy_command, options.user,
 	    host, host_arg, port);
 	debug("Executing proxy command: %.500s", command_string);
 
 	/* Fork and execute the proxy command. */
-	if ((pid = fork()) == 0) {
-		char *argv[10];
+	जर ((pid = विभाजन()) == 0) {
+		अक्षर *argv[10];
 
 		/* Redirect stdin and stdout. */
-		close(pin[1]);
-		if (pin[0] != 0) {
-			if (dup2(pin[0], 0) == -1)
-				perror("dup2 stdin");
-			close(pin[0]);
+		बंद(pin[1]);
+		जर (pin[0] != 0) {
+			जर (dup2(pin[0], 0) == -1)
+				लिखो_त्रुटि("dup2 stdin");
+			बंद(pin[0]);
 		}
-		close(pout[0]);
-		if (dup2(pout[1], 1) == -1)
-			perror("dup2 stdout");
+		बंद(pout[0]);
+		जर (dup2(pout[1], 1) == -1)
+			लिखो_त्रुटि("dup2 stdout");
 		/* Cannot be 1 because pin allocated two descriptors. */
-		close(pout[1]);
+		बंद(pout[1]);
 
 		/*
 		 * Stderr is left for non-ControlPersist connections is so
 		 * error messages may be printed on the user's terminal.
 		 */
-		if (!debug_flag && options.control_path != NULL &&
+		जर (!debug_flag && options.control_path != रिक्त &&
 		    options.control_persist && stdfd_devnull(0, 0, 1) == -1)
 			error_f("stdfd_devnull failed");
 
 		argv[0] = shell;
 		argv[1] = "-c";
 		argv[2] = command_string;
-		argv[3] = NULL;
+		argv[3] = रिक्त;
 
 		/*
 		 * Execute the proxy command.  Note that we gave up any
 		 * extra privileges above.
 		 */
-		ssh_signal(SIGPIPE, SIG_DFL);
+		ssh_signal(SIGPIPE, संक_पूर्व);
 		execv(argv[0], argv);
-		perror(argv[0]);
-		exit(1);
+		लिखो_त्रुटि(argv[0]);
+		निकास(1);
 	}
 	/* Parent. */
-	if (pid == -1)
-		fatal("fork failed: %.100s", strerror(errno));
-	else
+	जर (pid == -1)
+		fatal("fork failed: %.100s", म_त्रुटि(त्रुटि_सं));
+	अन्यथा
 		proxy_command_pid = pid; /* save pid to clean up later */
 
 	/* Close child side of the descriptors. */
-	close(pin[0]);
-	close(pout[1]);
+	बंद(pin[0]);
+	बंद(pout[1]);
 
 	/* Free the command name. */
-	free(command_string);
+	मुक्त(command_string);
 
 	/* Set the connection file descriptors. */
-	if (ssh_packet_set_connection(ssh, pout[0], pin[1]) == NULL)
-		return -1; /* ssh_packet_set_connection logs error */
+	जर (ssh_packet_set_connection(ssh, pout[0], pin[1]) == रिक्त)
+		परत -1; /* ssh_packet_set_connection logs error */
 
-	return 0;
+	परत 0;
 }
 
-void
-ssh_kill_proxy_command(void)
+शून्य
+ssh_kill_proxy_command(शून्य)
 {
 	/*
 	 * Send SIGHUP to proxy command if used. We don't wait() in
 	 * case it hangs and instead rely on init to reap the child
 	 */
-	if (proxy_command_pid > 1)
-		kill(proxy_command_pid, SIGHUP);
+	जर (proxy_command_pid > 1)
+		समाप्त(proxy_command_pid, SIGHUP);
 }
 
 #ifdef HAVE_IFADDRS_H
@@ -318,150 +318,150 @@ ssh_kill_proxy_command(void)
  * address that matches the desired address family on the specified interface.
  * Returns 0 and fills in *resultp and *rlenp on success. Returns -1 on failure.
  */
-static int
-check_ifaddrs(const char *ifname, int af, const struct ifaddrs *ifaddrs,
-    struct sockaddr_storage *resultp, socklen_t *rlenp)
+स्थिर पूर्णांक
+check_ifaddrs(स्थिरांक अक्षर *ifname, पूर्णांक af, स्थिरांक संरचना ifaddrs *ifaddrs,
+    संरचना sockaddr_storage *resultp, socklen_t *rlenp)
 {
-	struct sockaddr_in6 *sa6;
-	struct sockaddr_in *sa;
-	struct in6_addr *v6addr;
-	const struct ifaddrs *ifa;
-	int allow_local;
+	संरचना sockaddr_in6 *sa6;
+	संरचना sockaddr_in *sa;
+	संरचना in6_addr *v6addr;
+	स्थिरांक संरचना ifaddrs *ifa;
+	पूर्णांक allow_local;
 
 	/*
 	 * Prefer addresses that are not loopback or linklocal, but use them
 	 * if nothing else matches.
 	 */
-	for (allow_local = 0; allow_local < 2; allow_local++) {
-		for (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
-			if (ifa->ifa_addr == NULL || ifa->ifa_name == NULL ||
+	साठी (allow_local = 0; allow_local < 2; allow_local++) {
+		साठी (ifa = ifaddrs; ifa != रिक्त; ifa = ifa->ifa_next) {
+			जर (ifa->ifa_addr == रिक्त || ifa->ifa_name == रिक्त ||
 			    (ifa->ifa_flags & IFF_UP) == 0 ||
 			    ifa->ifa_addr->sa_family != af ||
-			    strcmp(ifa->ifa_name, options.bind_interface) != 0)
-				continue;
-			switch (ifa->ifa_addr->sa_family) {
-			case AF_INET:
-				sa = (struct sockaddr_in *)ifa->ifa_addr;
-				if (!allow_local && sa->sin_addr.s_addr ==
+			    म_भेद(ifa->ifa_name, options.bind_interface) != 0)
+				सुरूठेवा;
+			निवड (ifa->ifa_addr->sa_family) {
+			स्थिती AF_INET:
+				sa = (संरचना sockaddr_in *)ifa->ifa_addr;
+				जर (!allow_local && sa->sin_addr.s_addr ==
 				    htonl(INADDR_LOOPBACK))
-					continue;
-				if (*rlenp < sizeof(struct sockaddr_in)) {
+					सुरूठेवा;
+				जर (*rlenp < आकार(संरचना sockaddr_in)) {
 					error_f("v4 addr doesn't fit");
-					return -1;
+					परत -1;
 				}
-				*rlenp = sizeof(struct sockaddr_in);
-				memcpy(resultp, sa, *rlenp);
-				return 0;
-			case AF_INET6:
-				sa6 = (struct sockaddr_in6 *)ifa->ifa_addr;
+				*rlenp = आकार(संरचना sockaddr_in);
+				स_नकल(resultp, sa, *rlenp);
+				परत 0;
+			स्थिती AF_INET6:
+				sa6 = (संरचना sockaddr_in6 *)ifa->ifa_addr;
 				v6addr = &sa6->sin6_addr;
-				if (!allow_local &&
+				जर (!allow_local &&
 				    (IN6_IS_ADDR_LINKLOCAL(v6addr) ||
 				    IN6_IS_ADDR_LOOPBACK(v6addr)))
-					continue;
-				if (*rlenp < sizeof(struct sockaddr_in6)) {
+					सुरूठेवा;
+				जर (*rlenp < आकार(संरचना sockaddr_in6)) {
 					error_f("v6 addr doesn't fit");
-					return -1;
+					परत -1;
 				}
-				*rlenp = sizeof(struct sockaddr_in6);
-				memcpy(resultp, sa6, *rlenp);
-				return 0;
+				*rlenp = आकार(संरचना sockaddr_in6);
+				स_नकल(resultp, sa6, *rlenp);
+				परत 0;
 			}
 		}
 	}
-	return -1;
+	परत -1;
 }
 #endif
 
 /*
  * Creates a socket for use as the ssh connection.
  */
-static int
-ssh_create_socket(struct addrinfo *ai)
+स्थिर पूर्णांक
+ssh_create_socket(संरचना addrinfo *ai)
 {
-	int sock, r;
-	struct sockaddr_storage bindaddr;
+	पूर्णांक sock, r;
+	संरचना sockaddr_storage bindaddr;
 	socklen_t bindaddrlen = 0;
-	struct addrinfo hints, *res = NULL;
+	संरचना addrinfo hints, *res = रिक्त;
 #ifdef HAVE_IFADDRS_H
-	struct ifaddrs *ifaddrs = NULL;
+	संरचना ifaddrs *ifaddrs = रिक्त;
 #endif
-	char ntop[NI_MAXHOST];
+	अक्षर ntop[NI_MAXHOST];
 
 	sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-	if (sock == -1) {
-		error("socket: %s", strerror(errno));
-		return -1;
+	जर (sock == -1) {
+		error("socket: %s", म_त्रुटि(त्रुटि_सं));
+		परत -1;
 	}
-	(void)fcntl(sock, F_SETFD, FD_CLOEXEC);
+	(शून्य)fcntl(sock, F_SETFD, FD_CLOEXEC);
 
 	/* Use interactive QOS (if specified) until authentication completed */
-	if (options.ip_qos_interactive != INT_MAX)
+	जर (options.ip_qos_interactive != पूर्णांक_उच्च)
 		set_sock_tos(sock, options.ip_qos_interactive);
 
 	/* Bind the socket to an alternative local IP address */
-	if (options.bind_address == NULL && options.bind_interface == NULL)
-		return sock;
+	जर (options.bind_address == रिक्त && options.bind_interface == रिक्त)
+		परत sock;
 
-	if (options.bind_address != NULL) {
-		memset(&hints, 0, sizeof(hints));
+	जर (options.bind_address != रिक्त) {
+		स_रखो(&hints, 0, आकार(hints));
 		hints.ai_family = ai->ai_family;
 		hints.ai_socktype = ai->ai_socktype;
 		hints.ai_protocol = ai->ai_protocol;
 		hints.ai_flags = AI_PASSIVE;
-		if ((r = getaddrinfo(options.bind_address, NULL,
+		जर ((r = getaddrinfo(options.bind_address, रिक्त,
 		    &hints, &res)) != 0) {
 			error("getaddrinfo: %s: %s", options.bind_address,
 			    ssh_gai_strerror(r));
-			goto fail;
+			जा fail;
 		}
-		if (res == NULL) {
+		जर (res == रिक्त) {
 			error("getaddrinfo: no addrs");
-			goto fail;
+			जा fail;
 		}
-		memcpy(&bindaddr, res->ai_addr, res->ai_addrlen);
+		स_नकल(&bindaddr, res->ai_addr, res->ai_addrlen);
 		bindaddrlen = res->ai_addrlen;
-	} else if (options.bind_interface != NULL) {
+	} अन्यथा जर (options.bind_interface != रिक्त) {
 #ifdef HAVE_IFADDRS_H
-		if ((r = getifaddrs(&ifaddrs)) != 0) {
+		जर ((r = getifaddrs(&ifaddrs)) != 0) {
 			error("getifaddrs: %s: %s", options.bind_interface,
-			    strerror(errno));
-			goto fail;
+			    म_त्रुटि(त्रुटि_सं));
+			जा fail;
 		}
-		bindaddrlen = sizeof(bindaddr);
-		if (check_ifaddrs(options.bind_interface, ai->ai_family,
+		bindaddrlen = आकार(bindaddr);
+		जर (check_ifaddrs(options.bind_interface, ai->ai_family,
 		    ifaddrs, &bindaddr, &bindaddrlen) != 0) {
 			logit("getifaddrs: %s: no suitable addresses",
 			    options.bind_interface);
-			goto fail;
+			जा fail;
 		}
-#else
+#अन्यथा
 		error("BindInterface not supported on this platform.");
 #endif
 	}
-	if ((r = getnameinfo((struct sockaddr *)&bindaddr, bindaddrlen,
-	    ntop, sizeof(ntop), NULL, 0, NI_NUMERICHOST)) != 0) {
+	जर ((r = getnameinfo((संरचना sockaddr *)&bindaddr, bindaddrlen,
+	    ntop, आकार(ntop), रिक्त, 0, NI_NUMERICHOST)) != 0) {
 		error_f("getnameinfo failed: %s", ssh_gai_strerror(r));
-		goto fail;
+		जा fail;
 	}
-	if (bind(sock, (struct sockaddr *)&bindaddr, bindaddrlen) != 0) {
-		error("bind %s: %s", ntop, strerror(errno));
-		goto fail;
+	जर (bind(sock, (संरचना sockaddr *)&bindaddr, bindaddrlen) != 0) {
+		error("bind %s: %s", ntop, म_त्रुटि(त्रुटि_सं));
+		जा fail;
 	}
 	debug_f("bound to %s", ntop);
 	/* success */
-	goto out;
+	जा out;
 fail:
-	close(sock);
+	बंद(sock);
 	sock = -1;
  out:
-	if (res != NULL)
+	जर (res != रिक्त)
 		freeaddrinfo(res);
 #ifdef HAVE_IFADDRS_H
-	if (ifaddrs != NULL)
+	जर (ifaddrs != रिक्त)
 		freeifaddrs(ifaddrs);
 #endif
-	return sock;
+	परत sock;
 }
 
 /*
@@ -473,22 +473,22 @@ fail:
  * and %p substituted for host and port, respectively) to use to contact
  * the daemon.
  */
-static int
-ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
-    struct sockaddr_storage *hostaddr, u_short port, int connection_attempts,
-    int *timeout_ms, int want_keepalive)
+स्थिर पूर्णांक
+ssh_connect_direct(संरचना ssh *ssh, स्थिरांक अक्षर *host, संरचना addrinfo *aitop,
+    संरचना sockaddr_storage *hostaddr, u_short port, पूर्णांक connection_attempts,
+    पूर्णांक *timeout_ms, पूर्णांक want_keepalive)
 {
-	int saved_timeout_ms = *timeout_ms;
-	int oerrno, sock = -1, attempt;
-	char ntop[NI_MAXHOST], strport[NI_MAXSERV];
-	struct addrinfo *ai;
+	पूर्णांक saved_timeout_ms = *timeout_ms;
+	पूर्णांक oerrno, sock = -1, attempt;
+	अक्षर ntop[NI_MAXHOST], strport[NI_MAXSERV];
+	संरचना addrinfo *ai;
 
 	debug3_f("entering");
-	memset(ntop, 0, sizeof(ntop));
-	memset(strport, 0, sizeof(strport));
+	स_रखो(ntop, 0, आकार(ntop));
+	स_रखो(strport, 0, आकार(strport));
 
-	for (attempt = 0; attempt < connection_attempts; attempt++) {
-		if (attempt > 0) {
+	साठी (attempt = 0; attempt < connection_attempts; attempt++) {
+		जर (attempt > 0) {
 			/* Sleep a moment before retrying. */
 			sleep(1);
 			debug("Trying again...");
@@ -497,26 +497,26 @@ ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
 		 * Loop through addresses for this host, and try each one in
 		 * sequence until the connection succeeds.
 		 */
-		for (ai = aitop; ai; ai = ai->ai_next) {
-			if (ai->ai_family != AF_INET &&
+		साठी (ai = aitop; ai; ai = ai->ai_next) {
+			जर (ai->ai_family != AF_INET &&
 			    ai->ai_family != AF_INET6) {
-				errno = EAFNOSUPPORT;
-				continue;
+				त्रुटि_सं = EAFNOSUPPORT;
+				सुरूठेवा;
 			}
-			if (getnameinfo(ai->ai_addr, ai->ai_addrlen,
-			    ntop, sizeof(ntop), strport, sizeof(strport),
+			जर (getnameinfo(ai->ai_addr, ai->ai_addrlen,
+			    ntop, आकार(ntop), strport, आकार(strport),
 			    NI_NUMERICHOST|NI_NUMERICSERV) != 0) {
-				oerrno = errno;
+				oerrno = त्रुटि_सं;
 				error_f("getnameinfo failed");
-				errno = oerrno;
-				continue;
+				त्रुटि_सं = oerrno;
+				सुरूठेवा;
 			}
-			if (options.address_family != AF_UNSPEC &&
+			जर (options.address_family != AF_UNSPEC &&
 			    ai->ai_family != options.address_family) {
 				debug2_f("skipping address [%s]:%s: "
 				    "wrong address family", ntop, strport);
-				errno = EAFNOSUPPORT;
-				continue;
+				त्रुटि_सं = EAFNOSUPPORT;
+				सुरूठेवा;
 			}
 
 			debug("Connecting to %.200s [%.100s] port %s.",
@@ -524,120 +524,120 @@ ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
 
 			/* Create a socket for connecting. */
 			sock = ssh_create_socket(ai);
-			if (sock < 0) {
+			जर (sock < 0) {
 				/* Any error is already output */
-				errno = 0;
-				continue;
+				त्रुटि_सं = 0;
+				सुरूठेवा;
 			}
 
 			*timeout_ms = saved_timeout_ms;
-			if (timeout_connect(sock, ai->ai_addr, ai->ai_addrlen,
+			जर (timeout_connect(sock, ai->ai_addr, ai->ai_addrlen,
 			    timeout_ms) >= 0) {
 				/* Successful connection. */
-				memcpy(hostaddr, ai->ai_addr, ai->ai_addrlen);
-				break;
-			} else {
-				oerrno = errno;
+				स_नकल(hostaddr, ai->ai_addr, ai->ai_addrlen);
+				थांबा;
+			} अन्यथा {
+				oerrno = त्रुटि_सं;
 				debug("connect to address %s port %s: %s",
-				    ntop, strport, strerror(errno));
-				close(sock);
+				    ntop, strport, म_त्रुटि(त्रुटि_सं));
+				बंद(sock);
 				sock = -1;
-				errno = oerrno;
+				त्रुटि_सं = oerrno;
 			}
 		}
-		if (sock != -1)
-			break;	/* Successful connection. */
+		जर (sock != -1)
+			थांबा;	/* Successful connection. */
 	}
 
 	/* Return failure if we didn't get a successful connection. */
-	if (sock == -1) {
+	जर (sock == -1) {
 		error("ssh: connect to host %s port %s: %s",
-		    host, strport, errno == 0 ? "failure" : strerror(errno));
-		return -1;
+		    host, strport, त्रुटि_सं == 0 ? "failure" : म_त्रुटि(त्रुटि_सं));
+		परत -1;
 	}
 
 	debug("Connection established.");
 
 	/* Set SO_KEEPALIVE if requested. */
-	if (want_keepalive)
+	जर (want_keepalive)
 		set_keepalive(sock); /* logs errors */
 
 	/* Set the connection. */
-	if (ssh_packet_set_connection(ssh, sock, sock) == NULL)
-		return -1; /* ssh_packet_set_connection logs error */
+	जर (ssh_packet_set_connection(ssh, sock, sock) == रिक्त)
+		परत -1; /* ssh_packet_set_connection logs error */
 
-	return 0;
+	परत 0;
 }
 
-int
-ssh_connect(struct ssh *ssh, const char *host, const char *host_arg,
-    struct addrinfo *addrs, struct sockaddr_storage *hostaddr, u_short port,
-    int connection_attempts, int *timeout_ms, int want_keepalive)
+पूर्णांक
+ssh_connect(संरचना ssh *ssh, स्थिरांक अक्षर *host, स्थिरांक अक्षर *host_arg,
+    संरचना addrinfo *addrs, संरचना sockaddr_storage *hostaddr, u_short port,
+    पूर्णांक connection_attempts, पूर्णांक *timeout_ms, पूर्णांक want_keepalive)
 {
-	int in, out;
+	पूर्णांक in, out;
 
-	if (options.proxy_command == NULL) {
-		return ssh_connect_direct(ssh, host, addrs, hostaddr, port,
+	जर (options.proxy_command == रिक्त) {
+		परत ssh_connect_direct(ssh, host, addrs, hostaddr, port,
 		    connection_attempts, timeout_ms, want_keepalive);
-	} else if (strcmp(options.proxy_command, "-") == 0) {
-		if ((in = dup(STDIN_FILENO)) == -1 ||
+	} अन्यथा जर (म_भेद(options.proxy_command, "-") == 0) {
+		जर ((in = dup(STDIN_FILENO)) == -1 ||
 		    (out = dup(STDOUT_FILENO)) == -1) {
-			if (in >= 0)
-				close(in);
+			जर (in >= 0)
+				बंद(in);
 			error_f("dup() in/out failed");
-			return -1; /* ssh_packet_set_connection logs error */
+			परत -1; /* ssh_packet_set_connection logs error */
 		}
-		if ((ssh_packet_set_connection(ssh, in, out)) == NULL)
-			return -1; /* ssh_packet_set_connection logs error */
-		return 0;
-	} else if (options.proxy_use_fdpass) {
-		return ssh_proxy_fdpass_connect(ssh, host, host_arg, port,
+		जर ((ssh_packet_set_connection(ssh, in, out)) == रिक्त)
+			परत -1; /* ssh_packet_set_connection logs error */
+		परत 0;
+	} अन्यथा जर (options.proxy_use_fdpass) {
+		परत ssh_proxy_fdpass_connect(ssh, host, host_arg, port,
 		    options.proxy_command);
 	}
-	return ssh_proxy_connect(ssh, host, host_arg, port,
+	परत ssh_proxy_connect(ssh, host, host_arg, port,
 	    options.proxy_command);
 }
 
 /* defaults to 'no' */
-static int
-confirm(const char *prompt, const char *fingerprint)
+स्थिर पूर्णांक
+confirm(स्थिरांक अक्षर *prompt, स्थिरांक अक्षर *fingerprint)
 {
-	const char *msg, *again = "Please type 'yes' or 'no': ";
-	const char *again_fp = "Please type 'yes', 'no' or the fingerprint: ";
-	char *p, *cp;
-	int ret = -1;
+	स्थिरांक अक्षर *संदेश, *again = "Please type 'yes' or 'no': ";
+	स्थिरांक अक्षर *again_fp = "Please type 'yes', 'no' or the fingerprint: ";
+	अक्षर *p, *cp;
+	पूर्णांक ret = -1;
 
-	if (options.batch_mode)
-		return 0;
-	for (msg = prompt;;msg = fingerprint ? again_fp : again) {
-		cp = p = read_passphrase(msg, RP_ECHO);
-		if (p == NULL)
-			return 0;
-		p += strspn(p, " \t"); /* skip leading whitespace */
-		p[strcspn(p, " \t\n")] = '\0'; /* remove trailing whitespace */
-		if (p[0] == '\0' || strcasecmp(p, "no") == 0)
+	जर (options.batch_mode)
+		परत 0;
+	साठी (संदेश = prompt;;संदेश = fingerprint ? again_fp : again) {
+		cp = p = read_passphrase(संदेश, RP_ECHO);
+		जर (p == रिक्त)
+			परत 0;
+		p += म_अखोज(p, " \t"); /* skip leading whitespace */
+		p[म_खोज(p, " \t\n")] = '\0'; /* remove trailing whitespace */
+		जर (p[0] == '\0' || strcasecmp(p, "no") == 0)
 			ret = 0;
-		else if (strcasecmp(p, "yes") == 0 || (fingerprint != NULL &&
-		    strcmp(p, fingerprint) == 0))
+		अन्यथा जर (strcasecmp(p, "yes") == 0 || (fingerprint != रिक्त &&
+		    म_भेद(p, fingerprint) == 0))
 			ret = 1;
-		free(cp);
-		if (ret != -1)
-			return ret;
+		मुक्त(cp);
+		जर (ret != -1)
+			परत ret;
 	}
 }
 
-static int
-sockaddr_is_local(struct sockaddr *hostaddr)
+स्थिर पूर्णांक
+sockaddr_is_local(संरचना sockaddr *hostaddr)
 {
-	switch (hostaddr->sa_family) {
-	case AF_INET:
-		return (ntohl(((struct sockaddr_in *)hostaddr)->
+	निवड (hostaddr->sa_family) {
+	स्थिती AF_INET:
+		परत (ntohl(((संरचना sockaddr_in *)hostaddr)->
 		    sin_addr.s_addr) >> 24) == IN_LOOPBACKNET;
-	case AF_INET6:
-		return IN6_IS_ADDR_LOOPBACK(
-		    &(((struct sockaddr_in6 *)hostaddr)->sin6_addr));
-	default:
-		return 0;
+	स्थिती AF_INET6:
+		परत IN6_IS_ADDR_LOOPBACK(
+		    &(((संरचना sockaddr_in6 *)hostaddr)->sin6_addr));
+	पूर्वनिर्धारित:
+		परत 0;
 	}
 }
 
@@ -645,39 +645,39 @@ sockaddr_is_local(struct sockaddr *hostaddr)
  * Prepare the hostname and ip address strings that are used to lookup
  * host keys in known_hosts files. These may have a port number appended.
  */
-void
-get_hostfile_hostname_ipaddr(char *hostname, struct sockaddr *hostaddr,
-    u_short port, char **hostfile_hostname, char **hostfile_ipaddr)
+शून्य
+get_hostfile_hostname_ipaddr(अक्षर *hostname, संरचना sockaddr *hostaddr,
+    u_short port, अक्षर **hostfile_hostname, अक्षर **hostfile_ipaddr)
 {
-	char ntop[NI_MAXHOST];
+	अक्षर ntop[NI_MAXHOST];
 	socklen_t addrlen;
 
-	switch (hostaddr == NULL ? -1 : hostaddr->sa_family) {
-	case -1:
+	निवड (hostaddr == रिक्त ? -1 : hostaddr->sa_family) {
+	स्थिती -1:
 		addrlen = 0;
-		break;
-	case AF_INET:
-		addrlen = sizeof(struct sockaddr_in);
-		break;
-	case AF_INET6:
-		addrlen = sizeof(struct sockaddr_in6);
-		break;
-	default:
-		addrlen = sizeof(struct sockaddr);
-		break;
+		थांबा;
+	स्थिती AF_INET:
+		addrlen = आकार(संरचना sockaddr_in);
+		थांबा;
+	स्थिती AF_INET6:
+		addrlen = आकार(संरचना sockaddr_in6);
+		थांबा;
+	पूर्वनिर्धारित:
+		addrlen = आकार(संरचना sockaddr);
+		थांबा;
 	}
 
 	/*
 	 * We don't have the remote ip-address for connections
 	 * using a proxy command
 	 */
-	if (hostfile_ipaddr != NULL) {
-		if (options.proxy_command == NULL) {
-			if (getnameinfo(hostaddr, addrlen,
-			    ntop, sizeof(ntop), NULL, 0, NI_NUMERICHOST) != 0)
+	जर (hostfile_ipaddr != रिक्त) {
+		जर (options.proxy_command == रिक्त) {
+			जर (getnameinfo(hostaddr, addrlen,
+			    ntop, आकार(ntop), रिक्त, 0, NI_NUMERICHOST) != 0)
 				fatal_f("getnameinfo failed");
 			*hostfile_ipaddr = put_host_port(ntop, port);
-		} else {
+		} अन्यथा {
 			*hostfile_ipaddr = xstrdup("<no hostip for proxy "
 			    "command>");
 		}
@@ -689,288 +689,288 @@ get_hostfile_hostname_ipaddr(char *hostname, struct sockaddr *hostaddr,
 	 * tunneling over forwarded connections or if you run multiple
 	 * sshd's on different ports on the same machine.
 	 */
-	if (hostfile_hostname != NULL) {
-		if (options.host_key_alias != NULL) {
-			*hostfile_hostname = xstrdup(options.host_key_alias);
+	जर (hostfile_hostname != रिक्त) {
+		जर (options.host_किल्ली_alias != रिक्त) {
+			*hostfile_hostname = xstrdup(options.host_किल्ली_alias);
 			debug("using hostkeyalias: %s", *hostfile_hostname);
-		} else {
+		} अन्यथा {
 			*hostfile_hostname = put_host_port(hostname, port);
 		}
 	}
 }
 
 /* returns non-zero if path appears in hostfiles, or 0 if not. */
-static int
-path_in_hostfiles(const char *path, char **hostfiles, u_int num_hostfiles)
+स्थिर पूर्णांक
+path_in_hostfiles(स्थिरांक अक्षर *path, अक्षर **hostfiles, u_int अंक_hostfiles)
 {
 	u_int i;
 
-	for (i = 0; i < num_hostfiles; i++) {
-		if (strcmp(path, hostfiles[i]) == 0)
-			return 1;
+	साठी (i = 0; i < अंक_hostfiles; i++) {
+		जर (म_भेद(path, hostfiles[i]) == 0)
+			परत 1;
 	}
-	return 0;
+	परत 0;
 }
 
-struct find_by_key_ctx {
-	const char *host, *ip;
-	const struct sshkey *key;
-	char **names;
+संरचना find_by_किल्ली_ctx {
+	स्थिरांक अक्षर *host, *ip;
+	स्थिरांक संरचना sshkey *किल्ली;
+	अक्षर **names;
 	u_int nnames;
 };
 
 /* Try to replace home directory prefix (per $HOME) with a ~/ sequence */
-static char *
-try_tilde_unexpand(const char *path)
+स्थिर अक्षर *
+try_tilde_unexpand(स्थिरांक अक्षर *path)
 {
-	char *home, *ret = NULL;
-	size_t l;
+	अक्षर *home, *ret = रिक्त;
+	माप_प्रकार l;
 
-	if (*path != '/')
-		return xstrdup(path);
-	if ((home = getenv("HOME")) == NULL || (l = strlen(home)) == 0)
-		return xstrdup(path);
-	if (strncmp(path, home, l) != 0)
-		return xstrdup(path);
+	जर (*path != '/')
+		परत xstrdup(path);
+	जर ((home = दो_पर्या("HOME")) == रिक्त || (l = म_माप(home)) == 0)
+		परत xstrdup(path);
+	जर (म_भेदन(path, home, l) != 0)
+		परत xstrdup(path);
 	/*
 	 * ensure we have matched on a path boundary: either the $HOME that
 	 * we just compared ends with a '/' or the next character of the path
 	 * must be a '/'.
 	 */
-	if (home[l - 1] != '/' && path[l] != '/')
-		return xstrdup(path);
-	if (path[l] == '/')
+	जर (home[l - 1] != '/' && path[l] != '/')
+		परत xstrdup(path);
+	जर (path[l] == '/')
 		l++;
 	xasprintf(&ret, "~/%s", path + l);
-	return ret;
+	परत ret;
 }
 
 /*
  * Returns non-zero if the key is accepted by HostkeyAlgorithms.
  * Made slightly less trivial by the multiple RSA signature algorithm names.
  */
-int
-hostkey_accepted_by_hostkeyalgs(const struct sshkey *key)
+पूर्णांक
+hostkey_accepted_by_hostkeyalgs(स्थिरांक संरचना sshkey *किल्ली)
 {
-	const char *ktype = sshkey_ssh_name(key);
-	const char *hostkeyalgs = options.hostkeyalgorithms;
+	स्थिरांक अक्षर *ktype = sshkey_ssh_name(किल्ली);
+	स्थिरांक अक्षर *hostkeyalgs = options.hostkeyalgorithms;
 
-	if (key->type == KEY_UNSPEC)
-		return 0;
-	if (key->type == KEY_RSA &&
+	जर (किल्ली->type == किल्ली_UNSPEC)
+		परत 0;
+	जर (किल्ली->type == किल्ली_RSA &&
 	    (match_pattern_list("rsa-sha2-256", hostkeyalgs, 0) == 1 ||
 	    match_pattern_list("rsa-sha2-512", hostkeyalgs, 0) == 1))
-		return 1;
-	if (key->type == KEY_RSA_CERT &&
+		परत 1;
+	जर (किल्ली->type == किल्ली_RSA_CERT &&
 	    (match_pattern_list("rsa-sha2-512-cert-v01@openssh.com", hostkeyalgs, 0) == 1 ||
 	    match_pattern_list("rsa-sha2-256-cert-v01@openssh.com", hostkeyalgs, 0) == 1))
-		return 1;
-	return match_pattern_list(ktype, hostkeyalgs, 0) == 1;
+		परत 1;
+	परत match_pattern_list(ktype, hostkeyalgs, 0) == 1;
 }
 
-static int
-hostkeys_find_by_key_cb(struct hostkey_foreach_line *l, void *_ctx)
+स्थिर पूर्णांक
+hostkeys_find_by_किल्ली_cb(संरचना hostkey_foreach_ओळ *l, शून्य *_ctx)
 {
-	struct find_by_key_ctx *ctx = (struct find_by_key_ctx *)_ctx;
-	char *path;
+	संरचना find_by_किल्ली_ctx *ctx = (संरचना find_by_किल्ली_ctx *)_ctx;
+	अक्षर *path;
 
 	/* we are looking for keys with names that *do not* match */
-	if ((l->match & HKF_MATCH_HOST) != 0)
-		return 0;
+	जर ((l->match & HKF_MATCH_HOST) != 0)
+		परत 0;
 	/* not interested in marker lines */
-	if (l->marker != MRK_NONE)
-		return 0;
+	जर (l->marker != MRK_NONE)
+		परत 0;
 	/* we are only interested in exact key matches */
-	if (l->key == NULL || !sshkey_equal(ctx->key, l->key))
-		return 0;
+	जर (l->किल्ली == रिक्त || !sshkey_equal(ctx->किल्ली, l->किल्ली))
+		परत 0;
 	path = try_tilde_unexpand(l->path);
 	debug_f("found matching key in %s:%lu", path, l->linenum);
 	ctx->names = xrecallocarray(ctx->names,
-	    ctx->nnames, ctx->nnames + 1, sizeof(*ctx->names));
+	    ctx->nnames, ctx->nnames + 1, आकार(*ctx->names));
 	xasprintf(&ctx->names[ctx->nnames], "%s:%lu: %s", path, l->linenum,
-	    strncmp(l->hosts, HASH_MAGIC, strlen(HASH_MAGIC)) == 0 ?
+	    म_भेदन(l->hosts, HASH_MAGIC, म_माप(HASH_MAGIC)) == 0 ?
 	    "[hashed name]" : l->hosts);
 	ctx->nnames++;
-	free(path);
-	return 0;
+	मुक्त(path);
+	परत 0;
 }
 
-static int
-hostkeys_find_by_key_hostfile(const char *file, const char *which,
-    struct find_by_key_ctx *ctx)
+स्थिर पूर्णांक
+hostkeys_find_by_किल्ली_hostfile(स्थिरांक अक्षर *file, स्थिरांक अक्षर *which,
+    संरचना find_by_किल्ली_ctx *ctx)
 {
-	int r;
+	पूर्णांक r;
 
 	debug3_f("trying %s hostfile \"%s\"", which, file);
-	if ((r = hostkeys_foreach(file, hostkeys_find_by_key_cb, ctx,
-	    ctx->host, ctx->ip, HKF_WANT_PARSE_KEY, 0)) != 0) {
-		if (r == SSH_ERR_SYSTEM_ERROR && errno == ENOENT) {
+	जर ((r = hostkeys_foreach(file, hostkeys_find_by_किल्ली_cb, ctx,
+	    ctx->host, ctx->ip, HKF_WANT_PARSE_किल्ली, 0)) != 0) {
+		जर (r == SSH_ERR_SYSTEM_ERROR && त्रुटि_सं == ENOENT) {
 			debug_f("hostkeys file %s does not exist", file);
-			return 0;
+			परत 0;
 		}
 		error_fr(r, "hostkeys_foreach failed for %s", file);
-		return r;
+		परत r;
 	}
-	return 0;
+	परत 0;
 }
 
 /*
  * Find 'key' in known hosts file(s) that do not match host/ip.
  * Used to display also-known-as information for previously-unseen hostkeys.
  */
-static void
-hostkeys_find_by_key(const char *host, const char *ip, const struct sshkey *key,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles,
-    char ***names, u_int *nnames)
+स्थिर शून्य
+hostkeys_find_by_किल्ली(स्थिरांक अक्षर *host, स्थिरांक अक्षर *ip, स्थिरांक संरचना sshkey *किल्ली,
+    अक्षर **user_hostfiles, u_int अंक_user_hostfiles,
+    अक्षर **system_hostfiles, u_int अंक_system_hostfiles,
+    अक्षर ***names, u_int *nnames)
 {
-	struct find_by_key_ctx ctx = {NULL, NULL, NULL, NULL, 0};
+	संरचना find_by_किल्ली_ctx ctx = {रिक्त, रिक्त, रिक्त, रिक्त, 0};
 	u_int i;
 
-	*names = NULL;
+	*names = रिक्त;
 	*nnames = 0;
 
-	if (key == NULL || sshkey_is_cert(key))
-		return;
+	जर (किल्ली == रिक्त || sshkey_is_cert(किल्ली))
+		परत;
 
 	ctx.host = host;
 	ctx.ip = ip;
-	ctx.key = key;
+	ctx.किल्ली = किल्ली;
 
-	for (i = 0; i < num_user_hostfiles; i++) {
-		if (hostkeys_find_by_key_hostfile(user_hostfiles[i],
+	साठी (i = 0; i < अंक_user_hostfiles; i++) {
+		जर (hostkeys_find_by_किल्ली_hostfile(user_hostfiles[i],
 		    "user", &ctx) != 0)
-			goto fail;
+			जा fail;
 	}
-	for (i = 0; i < num_system_hostfiles; i++) {
-		if (hostkeys_find_by_key_hostfile(system_hostfiles[i],
+	साठी (i = 0; i < अंक_system_hostfiles; i++) {
+		जर (hostkeys_find_by_किल्ली_hostfile(system_hostfiles[i],
 		    "system", &ctx) != 0)
-			goto fail;
+			जा fail;
 	}
 	/* success */
 	*names = ctx.names;
 	*nnames = ctx.nnames;
-	ctx.names = NULL;
+	ctx.names = रिक्त;
 	ctx.nnames = 0;
-	return;
+	परत;
  fail:
-	for (i = 0; i < ctx.nnames; i++)
-		free(ctx.names[i]);
-	free(ctx.names);
+	साठी (i = 0; i < ctx.nnames; i++)
+		मुक्त(ctx.names[i]);
+	मुक्त(ctx.names);
 }
 
 #define MAX_OTHER_NAMES	8 /* Maximum number of names to list */
-static char *
-other_hostkeys_message(const char *host, const char *ip,
-    const struct sshkey *key,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles)
+स्थिर अक्षर *
+other_hostkeys_message(स्थिरांक अक्षर *host, स्थिरांक अक्षर *ip,
+    स्थिरांक संरचना sshkey *किल्ली,
+    अक्षर **user_hostfiles, u_int अंक_user_hostfiles,
+    अक्षर **system_hostfiles, u_int अंक_system_hostfiles)
 {
-	char *ret = NULL, **othernames = NULL;
-	u_int i, n, num_othernames = 0;
+	अक्षर *ret = रिक्त, **othernames = रिक्त;
+	u_int i, n, अंक_othernames = 0;
 
-	hostkeys_find_by_key(host, ip, key,
-	    user_hostfiles, num_user_hostfiles,
-	    system_hostfiles, num_system_hostfiles,
-	    &othernames, &num_othernames);
-	if (num_othernames == 0)
-		return xstrdup("This key is not known by any other names.");
+	hostkeys_find_by_किल्ली(host, ip, किल्ली,
+	    user_hostfiles, अंक_user_hostfiles,
+	    system_hostfiles, अंक_system_hostfiles,
+	    &othernames, &अंक_othernames);
+	जर (अंक_othernames == 0)
+		परत xstrdup("This key is not known by any other names.");
 
 	xasprintf(&ret, "This host key is known by the following other "
 	    "names/addresses:");
 
-	n = num_othernames;
-	if (n > MAX_OTHER_NAMES)
+	n = अंक_othernames;
+	जर (n > MAX_OTHER_NAMES)
 		n = MAX_OTHER_NAMES;
-	for (i = 0; i < n; i++) {
+	साठी (i = 0; i < n; i++) {
 		xextendf(&ret, "\n", "    %s", othernames[i]);
 	}
-	if (n < num_othernames) {
+	जर (n < अंक_othernames) {
 		xextendf(&ret, "\n", "    (%d additional names omitted)",
-		    num_othernames - n);
+		    अंक_othernames - n);
 	}
-	for (i = 0; i < num_othernames; i++)
-		free(othernames[i]);
-	free(othernames);
-	return ret;
+	साठी (i = 0; i < अंक_othernames; i++)
+		मुक्त(othernames[i]);
+	मुक्त(othernames);
+	परत ret;
 }
 
-void
-load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
-    const char *invocation, const struct ssh_conn_info *cinfo,
-    const struct sshkey *host_key, const char *hostfile_hostname)
+शून्य
+load_hostkeys_command(संरचना hostkeys *hostkeys, स्थिरांक अक्षर *command_template,
+    स्थिरांक अक्षर *invocation, स्थिरांक संरचना ssh_conn_info *cinfo,
+    स्थिरांक संरचना sshkey *host_किल्ली, स्थिरांक अक्षर *hostfile_hostname)
 {
-	int r, i, ac = 0;
-	char *key_fp = NULL, *keytext = NULL, *tmp;
-	char *command = NULL, *tag = NULL, **av = NULL;
-	FILE *f = NULL;
+	पूर्णांक r, i, ac = 0;
+	अक्षर *किल्ली_fp = रिक्त, *keytext = रिक्त, *tmp;
+	अक्षर *command = रिक्त, *tag = रिक्त, **av = रिक्त;
+	खाता *f = रिक्त;
 	pid_t pid;
-	void (*osigchld)(int);
+	शून्य (*osigchld)(पूर्णांक);
 
 	xasprintf(&tag, "KnownHostsCommand-%s", invocation);
 
-	if (host_key != NULL) {
-		if ((key_fp = sshkey_fingerprint(host_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+	जर (host_किल्ली != रिक्त) {
+		जर ((किल्ली_fp = sshkey_fingerprint(host_किल्ली,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == रिक्त)
 			fatal_f("sshkey_fingerprint failed");
-		if ((r = sshkey_to_base64(host_key, &keytext)) != 0)
+		जर ((r = sshkey_to_base64(host_किल्ली, &keytext)) != 0)
 			fatal_fr(r, "sshkey_to_base64 failed");
 	}
 	/*
 	 * NB. all returns later this function should go via "out" to
 	 * ensure the original SIGCHLD handler is restored properly.
 	 */
-	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
+	osigchld = ssh_signal(SIGCHLD, संक_पूर्व);
 
 	/* Turn the command into an argument vector */
-	if (argv_split(command_template, &ac, &av, 0) != 0) {
+	जर (argv_split(command_template, &ac, &av, 0) != 0) {
 		error("%s \"%s\" contains invalid quotes", tag,
 		    command_template);
-		goto out;
+		जा out;
 	}
-	if (ac == 0) {
+	जर (ac == 0) {
 		error("%s \"%s\" yielded no arguments", tag,
 		    command_template);
-		goto out;
+		जा out;
 	}
-	for (i = 1; i < ac; i++) {
+	साठी (i = 1; i < ac; i++) {
 		tmp = percent_dollar_expand(av[i],
 		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
 		    "H", hostfile_hostname,
 		    "I", invocation,
-		    "t", host_key == NULL ? "NONE" : sshkey_ssh_name(host_key),
-		    "f", key_fp == NULL ? "NONE" : key_fp,
-		    "K", keytext == NULL ? "NONE" : keytext,
-		    (char *)NULL);
-		if (tmp == NULL)
+		    "t", host_किल्ली == रिक्त ? "NONE" : sshkey_ssh_name(host_किल्ली),
+		    "f", किल्ली_fp == रिक्त ? "NONE" : किल्ली_fp,
+		    "K", keytext == रिक्त ? "NONE" : keytext,
+		    (अक्षर *)रिक्त);
+		जर (tmp == रिक्त)
 			fatal_f("percent_expand failed");
-		free(av[i]);
+		मुक्त(av[i]);
 		av[i] = tmp;
 	}
 	/* Prepare a printable command for logs, etc. */
 	command = argv_assemble(ac, av);
 
-	if ((pid = subprocess(tag, command, ac, av, &f,
+	जर ((pid = subprocess(tag, command, ac, av, &f,
 	    SSH_SUBPROCESS_STDOUT_CAPTURE|SSH_SUBPROCESS_UNSAFE_PATH|
-	    SSH_SUBPROCESS_PRESERVE_ENV, NULL, NULL, NULL)) == 0)
-		goto out;
+	    SSH_SUBPROCESS_PRESERVE_ENV, रिक्त, रिक्त, रिक्त)) == 0)
+		जा out;
 
 	load_hostkeys_file(hostkeys, hostfile_hostname, tag, f, 1);
 
-	if (exited_cleanly(pid, tag, command, 0) != 0)
+	जर (exited_cleanly(pid, tag, command, 0) != 0)
 		fatal("KnownHostsCommand failed");
 
  out:
-	if (f != NULL)
-		fclose(f);
+	जर (f != रिक्त)
+		ख_बंद(f);
 	ssh_signal(SIGCHLD, osigchld);
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
-	free(tag);
-	free(command);
-	free(key_fp);
-	free(keytext);
+	साठी (i = 0; i < ac; i++)
+		मुक्त(av[i]);
+	मुक्त(av);
+	मुक्त(tag);
+	मुक्त(command);
+	मुक्त(किल्ली_fp);
+	मुक्त(keytext);
 }
 
 /*
@@ -980,26 +980,26 @@ load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
 #define RDRW	0
 #define RDONLY	1
 #define ROQUIET	2
-static int
-check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
-    struct sockaddr *hostaddr, u_short port,
-    struct sshkey *host_key, int readonly, int clobber_port,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles,
-    const char *hostfile_command)
+स्थिर पूर्णांक
+check_host_किल्ली(अक्षर *hostname, स्थिरांक संरचना ssh_conn_info *cinfo,
+    संरचना sockaddr *hostaddr, u_short port,
+    संरचना sshkey *host_किल्ली, पूर्णांक readonly, पूर्णांक clobber_port,
+    अक्षर **user_hostfiles, u_int अंक_user_hostfiles,
+    अक्षर **system_hostfiles, u_int अंक_system_hostfiles,
+    स्थिरांक अक्षर *hostfile_command)
 {
 	HostStatus host_status = -1, ip_status = -1;
-	struct sshkey *raw_key = NULL;
-	char *ip = NULL, *host = NULL;
-	char hostline[1000], *hostp, *fp, *ra;
-	char msg[1024];
-	const char *type, *fail_reason = NULL;
-	const struct hostkey_entry *host_found = NULL, *ip_found = NULL;
-	int len, cancelled_forwarding = 0, confirmed;
-	int local = sockaddr_is_local(hostaddr);
-	int r, want_cert = sshkey_is_cert(host_key), host_ip_differ = 0;
-	int hostkey_trusted = 0; /* Known or explicitly accepted by user */
-	struct hostkeys *host_hostkeys, *ip_hostkeys;
+	संरचना sshkey *raw_किल्ली = रिक्त;
+	अक्षर *ip = रिक्त, *host = रिक्त;
+	अक्षर hostline[1000], *hostp, *fp, *ra;
+	अक्षर संदेश[1024];
+	स्थिरांक अक्षर *type, *fail_reason = रिक्त;
+	स्थिरांक संरचना hostkey_entry *host_found = रिक्त, *ip_found = रिक्त;
+	पूर्णांक len, cancelled_forwarding = 0, confirmed;
+	पूर्णांक local = sockaddr_is_local(hostaddr);
+	पूर्णांक r, want_cert = sshkey_is_cert(host_किल्ली), host_ip_differ = 0;
+	पूर्णांक hostkey_trusted = 0; /* Known or explicitly accepted by user */
+	संरचना hostkeys *host_hostkeys, *ip_hostkeys;
 	u_int i;
 
 	/*
@@ -1010,12 +1010,12 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * essentially disables host authentication for localhost; however,
 	 * this is probably not a real problem.
 	 */
-	if (options.no_host_authentication_for_localhost == 1 && local &&
-	    options.host_key_alias == NULL) {
+	जर (options.no_host_authentication_for_localhost == 1 && local &&
+	    options.host_किल्ली_alias == रिक्त) {
 		debug("Forcing accepting of host key for "
 		    "loopback/localhost.");
 		options.update_hostkeys = 0;
-		return 0;
+		परत 0;
 	}
 
 	/*
@@ -1023,7 +1023,7 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * Note: do this before get_hostfile_hostname_ipaddr() to catch
 	 * '[' or ']' in the name before they are added.
 	 */
-	if (strcspn(hostname, "@?*#[]|'\'\"\\") != strlen(hostname)) {
+	जर (म_खोज(hostname, "@?*#[]|'\'\"\\") != म_माप(hostname)) {
 		debug_f("invalid hostname \"%s\"; will not record: %s",
 		    hostname, fail_reason);
 		readonly = RDONLY;
@@ -1040,57 +1040,57 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * Turn off check_host_ip if the connection is to localhost, via proxy
 	 * command or if we don't have a hostname to compare with
 	 */
-	if (options.check_host_ip && (local ||
-	    strcmp(hostname, ip) == 0 || options.proxy_command != NULL))
+	जर (options.check_host_ip && (local ||
+	    म_भेद(hostname, ip) == 0 || options.proxy_command != रिक्त))
 		options.check_host_ip = 0;
 
 	host_hostkeys = init_hostkeys();
-	for (i = 0; i < num_user_hostfiles; i++)
+	साठी (i = 0; i < अंक_user_hostfiles; i++)
 		load_hostkeys(host_hostkeys, host, user_hostfiles[i], 0);
-	for (i = 0; i < num_system_hostfiles; i++)
+	साठी (i = 0; i < अंक_system_hostfiles; i++)
 		load_hostkeys(host_hostkeys, host, system_hostfiles[i], 0);
-	if (hostfile_command != NULL && !clobber_port) {
+	जर (hostfile_command != रिक्त && !clobber_port) {
 		load_hostkeys_command(host_hostkeys, hostfile_command,
-		    "HOSTNAME", cinfo, host_key, host);
+		    "HOSTNAME", cinfo, host_किल्ली, host);
 	}
 
-	ip_hostkeys = NULL;
-	if (!want_cert && options.check_host_ip) {
+	ip_hostkeys = रिक्त;
+	जर (!want_cert && options.check_host_ip) {
 		ip_hostkeys = init_hostkeys();
-		for (i = 0; i < num_user_hostfiles; i++)
+		साठी (i = 0; i < अंक_user_hostfiles; i++)
 			load_hostkeys(ip_hostkeys, ip, user_hostfiles[i], 0);
-		for (i = 0; i < num_system_hostfiles; i++)
+		साठी (i = 0; i < अंक_system_hostfiles; i++)
 			load_hostkeys(ip_hostkeys, ip, system_hostfiles[i], 0);
-		if (hostfile_command != NULL && !clobber_port) {
+		जर (hostfile_command != रिक्त && !clobber_port) {
 			load_hostkeys_command(ip_hostkeys, hostfile_command,
-			    "ADDRESS", cinfo, host_key, ip);
+			    "ADDRESS", cinfo, host_किल्ली, ip);
 		}
 	}
 
  retry:
-	if (!hostkey_accepted_by_hostkeyalgs(host_key)) {
+	जर (!hostkey_accepted_by_hostkeyalgs(host_किल्ली)) {
 		error("host key %s not permitted by HostkeyAlgorithms",
-		    sshkey_ssh_name(host_key));
-		goto fail;
+		    sshkey_ssh_name(host_किल्ली));
+		जा fail;
 	}
 
 	/* Reload these as they may have changed on cert->key downgrade */
-	want_cert = sshkey_is_cert(host_key);
-	type = sshkey_type(host_key);
+	want_cert = sshkey_is_cert(host_किल्ली);
+	type = sshkey_type(host_किल्ली);
 
 	/*
 	 * Check if the host key is present in the user's list of known
 	 * hosts or in the systemwide list.
 	 */
-	host_status = check_key_in_hostkeys(host_hostkeys, host_key,
+	host_status = check_किल्ली_in_hostkeys(host_hostkeys, host_किल्ली,
 	    &host_found);
 
 	/*
 	 * If there are no hostfiles, or if the hostkey was found via
 	 * KnownHostsCommand, then don't try to touch the disk.
 	 */
-	if (!readonly && (num_user_hostfiles == 0 ||
-	    (host_found != NULL && host_found->note != 0)))
+	जर (!readonly && (अंक_user_hostfiles == 0 ||
+	    (host_found != रिक्त && host_found->note != 0)))
 		readonly = RDONLY;
 
 	/*
@@ -1098,103 +1098,103 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * localhost, looking for a certificate, or the hostname was an ip
 	 * address to begin with.
 	 */
-	if (!want_cert && ip_hostkeys != NULL) {
-		ip_status = check_key_in_hostkeys(ip_hostkeys, host_key,
+	जर (!want_cert && ip_hostkeys != रिक्त) {
+		ip_status = check_किल्ली_in_hostkeys(ip_hostkeys, host_किल्ली,
 		    &ip_found);
-		if (host_status == HOST_CHANGED &&
+		जर (host_status == HOST_CHANGED &&
 		    (ip_status != HOST_CHANGED ||
-		    (ip_found != NULL &&
-		    !sshkey_equal(ip_found->key, host_found->key))))
+		    (ip_found != रिक्त &&
+		    !sshkey_equal(ip_found->किल्ली, host_found->किल्ली))))
 			host_ip_differ = 1;
-	} else
+	} अन्यथा
 		ip_status = host_status;
 
-	switch (host_status) {
-	case HOST_OK:
+	निवड (host_status) {
+	स्थिती HOST_OK:
 		/* The host is known and the key matches. */
 		debug("Host '%.200s' is known and matches the %s host %s.",
 		    host, type, want_cert ? "certificate" : "key");
 		debug("Found %s in %s:%lu", want_cert ? "CA key" : "key",
-		    host_found->file, host_found->line);
-		if (want_cert) {
-			if (sshkey_cert_check_host(host_key,
-			    options.host_key_alias == NULL ?
-			    hostname : options.host_key_alias,
+		    host_found->file, host_found->ओळ);
+		जर (want_cert) {
+			जर (sshkey_cert_check_host(host_किल्ली,
+			    options.host_किल्ली_alias == रिक्त ?
+			    hostname : options.host_किल्ली_alias,
 			    options.ca_sign_algorithms, &fail_reason) != 0) {
 				error("%s", fail_reason);
-				goto fail;
+				जा fail;
 			}
 			/*
 			 * Do not attempt hostkey update if a certificate was
 			 * successfully matched.
 			 */
-			if (options.update_hostkeys != 0) {
+			जर (options.update_hostkeys != 0) {
 				options.update_hostkeys = 0;
 				debug3_f("certificate host key in use; "
 				    "disabling UpdateHostkeys");
 			}
 		}
 		/* Turn off UpdateHostkeys if key was in system known_hosts */
-		if (options.update_hostkeys != 0 &&
+		जर (options.update_hostkeys != 0 &&
 		    (path_in_hostfiles(host_found->file,
-		    system_hostfiles, num_system_hostfiles) ||
-		    (ip_status == HOST_OK && ip_found != NULL &&
+		    system_hostfiles, अंक_system_hostfiles) ||
+		    (ip_status == HOST_OK && ip_found != रिक्त &&
 		    path_in_hostfiles(ip_found->file,
-		    system_hostfiles, num_system_hostfiles)))) {
+		    system_hostfiles, अंक_system_hostfiles)))) {
 			options.update_hostkeys = 0;
 			debug3_f("host key found in GlobalKnownHostsFile; "
 			    "disabling UpdateHostkeys");
 		}
-		if (options.update_hostkeys != 0 && host_found->note) {
+		जर (options.update_hostkeys != 0 && host_found->note) {
 			options.update_hostkeys = 0;
 			debug3_f("host key found via KnownHostsCommand; "
 			    "disabling UpdateHostkeys");
 		}
-		if (options.check_host_ip && ip_status == HOST_NEW) {
-			if (readonly || want_cert)
+		जर (options.check_host_ip && ip_status == HOST_NEW) {
+			जर (readonly || want_cert)
 				logit("%s host key for IP address "
 				    "'%.128s' not in list of known hosts.",
 				    type, ip);
-			else if (!add_host_to_hostfile(user_hostfiles[0], ip,
-			    host_key, options.hash_known_hosts))
+			अन्यथा जर (!add_host_to_hostfile(user_hostfiles[0], ip,
+			    host_किल्ली, options.hash_known_hosts))
 				logit("Failed to add the %s host key for IP "
 				    "address '%.128s' to the list of known "
 				    "hosts (%.500s).", type, ip,
 				    user_hostfiles[0]);
-			else
+			अन्यथा
 				logit("Warning: Permanently added the %s host "
 				    "key for IP address '%.128s' to the list "
 				    "of known hosts.", type, ip);
-		} else if (options.visual_host_key) {
-			fp = sshkey_fingerprint(host_key,
+		} अन्यथा जर (options.visual_host_किल्ली) {
+			fp = sshkey_fingerprint(host_किल्ली,
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
-			ra = sshkey_fingerprint(host_key,
+			ra = sshkey_fingerprint(host_किल्ली,
 			    options.fingerprint_hash, SSH_FP_RANDOMART);
-			if (fp == NULL || ra == NULL)
+			जर (fp == रिक्त || ra == रिक्त)
 				fatal_f("sshkey_fingerprint failed");
 			logit("Host key fingerprint is: %s\n%s", fp, ra);
-			free(ra);
-			free(fp);
+			मुक्त(ra);
+			मुक्त(fp);
 		}
 		hostkey_trusted = 1;
-		break;
-	case HOST_NEW:
-		if (options.host_key_alias == NULL && port != 0 &&
+		थांबा;
+	स्थिती HOST_NEW:
+		जर (options.host_किल्ली_alias == रिक्त && port != 0 &&
 		    port != SSH_DEFAULT_PORT && !clobber_port) {
 			debug("checking without port identifier");
-			if (check_host_key(hostname, cinfo, hostaddr, 0,
-			    host_key, ROQUIET, 1,
-			    user_hostfiles, num_user_hostfiles,
-			    system_hostfiles, num_system_hostfiles,
+			जर (check_host_किल्ली(hostname, cinfo, hostaddr, 0,
+			    host_किल्ली, ROQUIET, 1,
+			    user_hostfiles, अंक_user_hostfiles,
+			    system_hostfiles, अंक_system_hostfiles,
 			    hostfile_command) == 0) {
 				debug("found matching key w/out port");
-				break;
+				थांबा;
 			}
 		}
-		if (readonly || want_cert)
-			goto fail;
+		जर (readonly || want_cert)
+			जा fail;
 		/* The host is new. */
-		if (options.strict_host_key_checking ==
+		जर (options.strict_host_किल्ली_checking ==
 		    SSH_STRICT_HOSTKEY_YES) {
 			/*
 			 * User has requested strict host key checking.  We
@@ -1203,40 +1203,40 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			 */
 			error("No %s host key is known for %.200s and you "
 			    "have requested strict checking.", type, host);
-			goto fail;
-		} else if (options.strict_host_key_checking ==
+			जा fail;
+		} अन्यथा जर (options.strict_host_किल्ली_checking ==
 		    SSH_STRICT_HOSTKEY_ASK) {
-			char *msg1 = NULL, *msg2 = NULL;
+			अक्षर *msg1 = रिक्त, *msg2 = रिक्त;
 
 			xasprintf(&msg1, "The authenticity of host "
 			    "'%.200s (%s)' can't be established", host, ip);
 
-			if (show_other_keys(host_hostkeys, host_key)) {
+			जर (show_other_किल्ल्या(host_hostkeys, host_किल्ली)) {
 				xextendf(&msg1, "\n", "but keys of different "
 				    "type are already known for this host.");
-			} else
+			} अन्यथा
 				xextendf(&msg1, "", ".");
 
-			fp = sshkey_fingerprint(host_key,
+			fp = sshkey_fingerprint(host_किल्ली,
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
-			ra = sshkey_fingerprint(host_key,
+			ra = sshkey_fingerprint(host_किल्ली,
 			    options.fingerprint_hash, SSH_FP_RANDOMART);
-			if (fp == NULL || ra == NULL)
+			जर (fp == रिक्त || ra == रिक्त)
 				fatal_f("sshkey_fingerprint failed");
 			xextendf(&msg1, "\n", "%s key fingerprint is: %s",
 			    type, fp);
-			if (options.visual_host_key)
+			जर (options.visual_host_किल्ली)
 				xextendf(&msg1, "\n", "%s", ra);
-			if (options.verify_host_key_dns) {
+			जर (options.verify_host_किल्ली_dns) {
 				xextendf(&msg1, "\n",
 				    "%s host key fingerprint found in DNS.",
-				    matching_host_key_dns ?
+				    matching_host_किल्ली_dns ?
 				    "Matching" : "No matching");
 			}
 			/* msg2 informs for other names matching this key */
-			if ((msg2 = other_hostkeys_message(host, ip, host_key,
-			    user_hostfiles, num_user_hostfiles,
-			    system_hostfiles, num_system_hostfiles)) != NULL)
+			जर ((msg2 = other_hostkeys_message(host, ip, host_किल्ली,
+			    user_hostfiles, अंक_user_hostfiles,
+			    system_hostfiles, अंक_system_hostfiles)) != रिक्त)
 				xextendf(&msg1, "\n", "%s", msg2);
 
 			xextendf(&msg1, "\n",
@@ -1244,47 +1244,47 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			    "(yes/no/[fingerprint])? ");
 
 			confirmed = confirm(msg1, fp);
-			free(ra);
-			free(fp);
-			free(msg1);
-			free(msg2);
-			if (!confirmed)
-				goto fail;
+			मुक्त(ra);
+			मुक्त(fp);
+			मुक्त(msg1);
+			मुक्त(msg2);
+			जर (!confirmed)
+				जा fail;
 			hostkey_trusted = 1; /* user explicitly confirmed */
 		}
 		/*
 		 * If in "new" or "off" strict mode, add the key automatically
 		 * to the local known_hosts file.
 		 */
-		if (options.check_host_ip && ip_status == HOST_NEW) {
-			snprintf(hostline, sizeof(hostline), "%s,%s", host, ip);
+		जर (options.check_host_ip && ip_status == HOST_NEW) {
+			snprintf(hostline, आकार(hostline), "%s,%s", host, ip);
 			hostp = hostline;
-			if (options.hash_known_hosts) {
+			जर (options.hash_known_hosts) {
 				/* Add hash of host and IP separately */
 				r = add_host_to_hostfile(user_hostfiles[0],
-				    host, host_key, options.hash_known_hosts) &&
+				    host, host_किल्ली, options.hash_known_hosts) &&
 				    add_host_to_hostfile(user_hostfiles[0], ip,
-				    host_key, options.hash_known_hosts);
-			} else {
+				    host_किल्ली, options.hash_known_hosts);
+			} अन्यथा {
 				/* Add unhashed "host,ip" */
 				r = add_host_to_hostfile(user_hostfiles[0],
-				    hostline, host_key,
+				    hostline, host_किल्ली,
 				    options.hash_known_hosts);
 			}
-		} else {
+		} अन्यथा {
 			r = add_host_to_hostfile(user_hostfiles[0], host,
-			    host_key, options.hash_known_hosts);
+			    host_किल्ली, options.hash_known_hosts);
 			hostp = host;
 		}
 
-		if (!r)
+		जर (!r)
 			logit("Failed to add the host to the list of known "
 			    "hosts (%.500s).", user_hostfiles[0]);
-		else
+		अन्यथा
 			logit("Warning: Permanently added '%.200s' (%s) to the "
 			    "list of known hosts.", hostp, type);
-		break;
-	case HOST_REVOKED:
+		थांबा;
+	स्थिती HOST_REVOKED:
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@       WARNING: REVOKED HOST KEY DETECTED!               @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -1296,16 +1296,16 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * If strict host key checking is in use, the user will have
 		 * to edit the key manually and we can only abort.
 		 */
-		if (options.strict_host_key_checking !=
+		जर (options.strict_host_किल्ली_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
 			error("%s host key for %.200s was revoked and you have "
 			    "requested strict checking.", type, host);
-			goto fail;
+			जा fail;
 		}
-		goto continue_unsafe;
+		जा continue_unsafe;
 
-	case HOST_CHANGED:
-		if (want_cert) {
+	स्थिती HOST_CHANGED:
+		जर (want_cert) {
 			/*
 			 * This is only a debug() since it is valid to have
 			 * CAs with wildcard DNS matches that don't match
@@ -1313,51 +1313,51 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			 */
 			debug("Host certificate authority does not "
 			    "match %s in %s:%lu", CA_MARKER,
-			    host_found->file, host_found->line);
-			goto fail;
+			    host_found->file, host_found->ओळ);
+			जा fail;
 		}
-		if (readonly == ROQUIET)
-			goto fail;
-		if (options.check_host_ip && host_ip_differ) {
-			char *key_msg;
-			if (ip_status == HOST_NEW)
-				key_msg = "is unknown";
-			else if (ip_status == HOST_OK)
-				key_msg = "is unchanged";
-			else
-				key_msg = "has a different value";
+		जर (readonly == ROQUIET)
+			जा fail;
+		जर (options.check_host_ip && host_ip_differ) {
+			अक्षर *किल्ली_संदेश;
+			जर (ip_status == HOST_NEW)
+				किल्ली_संदेश = "is unknown";
+			अन्यथा जर (ip_status == HOST_OK)
+				किल्ली_संदेश = "is unchanged";
+			अन्यथा
+				किल्ली_संदेश = "has a different value";
 			error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			error("@       WARNING: POSSIBLE DNS SPOOFING DETECTED!          @");
 			error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			error("The %s host key for %s has changed,", type, host);
 			error("and the key for the corresponding IP address %s", ip);
-			error("%s. This could either mean that", key_msg);
+			error("%s. This could either mean that", किल्ली_संदेश);
 			error("DNS SPOOFING is happening or the IP address for the host");
 			error("and its host key have changed at the same time.");
-			if (ip_status != HOST_NEW)
+			जर (ip_status != HOST_NEW)
 				error("Offending key for IP in %s:%lu",
-				    ip_found->file, ip_found->line);
+				    ip_found->file, ip_found->ओळ);
 		}
 		/* The host key has changed. */
-		warn_changed_key(host_key);
-		if (num_user_hostfiles > 0 || num_system_hostfiles > 0) {
+		warn_changed_किल्ली(host_किल्ली);
+		जर (अंक_user_hostfiles > 0 || अंक_system_hostfiles > 0) {
 			error("Add correct host key in %.100s to get rid "
-			    "of this message.", num_user_hostfiles > 0 ?
+			    "of this message.", अंक_user_hostfiles > 0 ?
 			    user_hostfiles[0] : system_hostfiles[0]);
 		}
 		error("Offending %s key in %s:%lu",
-		    sshkey_type(host_found->key),
-		    host_found->file, host_found->line);
+		    sshkey_type(host_found->किल्ली),
+		    host_found->file, host_found->ओळ);
 
 		/*
 		 * If strict host key checking is in use, the user will have
 		 * to edit the key manually and we can only abort.
 		 */
-		if (options.strict_host_key_checking !=
+		जर (options.strict_host_किल्ली_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
 			error("Host key for %.200s has changed and you have "
 			    "requested strict checking.", host);
-			goto fail;
+			जा fail;
 		}
 
  continue_unsafe:
@@ -1366,50 +1366,50 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * the connection but without MITM-able authentication or
 		 * forwarding.
 		 */
-		if (options.password_authentication) {
+		जर (options.password_authentication) {
 			error("Password authentication is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.password_authentication = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.kbd_interactive_authentication) {
+		जर (options.kbd_interactive_authentication) {
 			error("Keyboard-interactive authentication is disabled"
 			    " to avoid man-in-the-middle attacks.");
 			options.kbd_interactive_authentication = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.forward_agent) {
+		जर (options.forward_agent) {
 			error("Agent forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.forward_agent = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.forward_x11) {
+		जर (options.forward_x11) {
 			error("X11 forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.forward_x11 = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.num_local_forwards > 0 ||
-		    options.num_remote_forwards > 0) {
+		जर (options.अंक_local_forwards > 0 ||
+		    options.अंक_remote_forwards > 0) {
 			error("Port forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
-			options.num_local_forwards =
-			    options.num_remote_forwards = 0;
+			options.अंक_local_forwards =
+			    options.अंक_remote_forwards = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.tun_open != SSH_TUNMODE_NO) {
+		जर (options.tun_open != SSH_TUNMODE_NO) {
 			error("Tunnel forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.tun_open = SSH_TUNMODE_NO;
 			cancelled_forwarding = 1;
 		}
-		if (options.update_hostkeys != 0) {
+		जर (options.update_hostkeys != 0) {
 			error("UpdateHostkeys is disabled because the host "
 			    "key is not trusted.");
 			options.update_hostkeys = 0;
 		}
-		if (options.exit_on_forward_failure && cancelled_forwarding)
+		जर (options.exit_on_forward_failure && cancelled_forwarding)
 			fatal("Error: forwarding disabled due to host key "
 			    "check failure");
 
@@ -1420,171 +1420,171 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * by that sentence, and ask the user if they wish to
 		 * accept the authentication.
 		 */
-		break;
-	case HOST_FOUND:
+		थांबा;
+	स्थिती HOST_FOUND:
 		fatal("internal error");
-		break;
+		थांबा;
 	}
 
-	if (options.check_host_ip && host_status != HOST_CHANGED &&
+	जर (options.check_host_ip && host_status != HOST_CHANGED &&
 	    ip_status == HOST_CHANGED) {
-		snprintf(msg, sizeof(msg),
+		snprintf(संदेश, आकार(संदेश),
 		    "Warning: the %s host key for '%.200s' "
 		    "differs from the key for the IP address '%.128s'"
 		    "\nOffending key for IP in %s:%lu",
-		    type, host, ip, ip_found->file, ip_found->line);
-		if (host_status == HOST_OK) {
-			len = strlen(msg);
-			snprintf(msg + len, sizeof(msg) - len,
+		    type, host, ip, ip_found->file, ip_found->ओळ);
+		जर (host_status == HOST_OK) {
+			len = म_माप(संदेश);
+			snprintf(संदेश + len, आकार(संदेश) - len,
 			    "\nMatching host key in %s:%lu",
-			    host_found->file, host_found->line);
+			    host_found->file, host_found->ओळ);
 		}
-		if (options.strict_host_key_checking ==
+		जर (options.strict_host_किल्ली_checking ==
 		    SSH_STRICT_HOSTKEY_ASK) {
-			strlcat(msg, "\nAre you sure you want "
-			    "to continue connecting (yes/no)? ", sizeof(msg));
-			if (!confirm(msg, NULL))
-				goto fail;
-		} else if (options.strict_host_key_checking !=
+			strlcat(संदेश, "\nAre you sure you want "
+			    "to continue connecting (yes/no)? ", आकार(संदेश));
+			जर (!confirm(संदेश, रिक्त))
+				जा fail;
+		} अन्यथा जर (options.strict_host_किल्ली_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
-			logit("%s", msg);
+			logit("%s", संदेश);
 			error("Exiting, you have requested strict checking.");
-			goto fail;
-		} else {
-			logit("%s", msg);
+			जा fail;
+		} अन्यथा {
+			logit("%s", संदेश);
 		}
 	}
 
-	if (!hostkey_trusted && options.update_hostkeys) {
+	जर (!hostkey_trusted && options.update_hostkeys) {
 		debug_f("hostkey not known or explicitly trusted: "
 		    "disabling UpdateHostkeys");
 		options.update_hostkeys = 0;
 	}
 
-	sshkey_free(raw_key);
-	free(ip);
-	free(host);
-	if (host_hostkeys != NULL)
+	sshkey_free(raw_किल्ली);
+	मुक्त(ip);
+	मुक्त(host);
+	जर (host_hostkeys != रिक्त)
 		free_hostkeys(host_hostkeys);
-	if (ip_hostkeys != NULL)
+	जर (ip_hostkeys != रिक्त)
 		free_hostkeys(ip_hostkeys);
-	return 0;
+	परत 0;
 
 fail:
-	if (want_cert && host_status != HOST_REVOKED) {
+	जर (want_cert && host_status != HOST_REVOKED) {
 		/*
 		 * No matching certificate. Downgrade cert to raw key and
 		 * search normally.
 		 */
 		debug("No matching CA found. Retry with plain key");
-		if ((r = sshkey_from_private(host_key, &raw_key)) != 0)
+		जर ((r = sshkey_from_private(host_किल्ली, &raw_किल्ली)) != 0)
 			fatal_fr(r, "decode key");
-		if ((r = sshkey_drop_cert(raw_key)) != 0)
+		जर ((r = sshkey_drop_cert(raw_किल्ली)) != 0)
 			fatal_r(r, "Couldn't drop certificate");
-		host_key = raw_key;
-		goto retry;
+		host_किल्ली = raw_किल्ली;
+		जा retry;
 	}
-	sshkey_free(raw_key);
-	free(ip);
-	free(host);
-	if (host_hostkeys != NULL)
+	sshkey_free(raw_किल्ली);
+	मुक्त(ip);
+	मुक्त(host);
+	जर (host_hostkeys != रिक्त)
 		free_hostkeys(host_hostkeys);
-	if (ip_hostkeys != NULL)
+	जर (ip_hostkeys != रिक्त)
 		free_hostkeys(ip_hostkeys);
-	return -1;
+	परत -1;
 }
 
 /* returns 0 if key verifies or -1 if key does NOT verify */
-int
-verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
-    const struct ssh_conn_info *cinfo)
+पूर्णांक
+verify_host_किल्ली(अक्षर *host, संरचना sockaddr *hostaddr, संरचना sshkey *host_किल्ली,
+    स्थिरांक संरचना ssh_conn_info *cinfo)
 {
 	u_int i;
-	int r = -1, flags = 0;
-	char valid[64], *fp = NULL, *cafp = NULL;
-	struct sshkey *plain = NULL;
+	पूर्णांक r = -1, flags = 0;
+	अक्षर valid[64], *fp = रिक्त, *cafp = रिक्त;
+	संरचना sshkey *plain = रिक्त;
 
-	if ((fp = sshkey_fingerprint(host_key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	जर ((fp = sshkey_fingerprint(host_किल्ली,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == रिक्त) {
 		error_fr(r, "fingerprint host key");
 		r = -1;
-		goto out;
+		जा out;
 	}
 
-	if (sshkey_is_cert(host_key)) {
-		if ((cafp = sshkey_fingerprint(host_key->cert->signature_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	जर (sshkey_is_cert(host_किल्ली)) {
+		जर ((cafp = sshkey_fingerprint(host_किल्ली->cert->signature_किल्ली,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == रिक्त) {
 			error_fr(r, "fingerprint CA key");
 			r = -1;
-			goto out;
+			जा out;
 		}
-		sshkey_format_cert_validity(host_key->cert,
-		    valid, sizeof(valid));
+		sshkey_format_cert_validity(host_किल्ली->cert,
+		    valid, आकार(valid));
 		debug("Server host certificate: %s %s, serial %llu "
 		    "ID \"%s\" CA %s %s valid %s",
-		    sshkey_ssh_name(host_key), fp,
-		    (unsigned long long)host_key->cert->serial,
-		    host_key->cert->key_id,
-		    sshkey_ssh_name(host_key->cert->signature_key), cafp,
+		    sshkey_ssh_name(host_किल्ली), fp,
+		    (अचिन्हित दीर्घ दीर्घ)host_किल्ली->cert->serial,
+		    host_किल्ली->cert->किल्ली_id,
+		    sshkey_ssh_name(host_किल्ली->cert->signature_किल्ली), cafp,
 		    valid);
-		for (i = 0; i < host_key->cert->nprincipals; i++) {
+		साठी (i = 0; i < host_किल्ली->cert->nprincipals; i++) {
 			debug2("Server host certificate hostname: %s",
-			    host_key->cert->principals[i]);
+			    host_किल्ली->cert->principals[i]);
 		}
-	} else {
-		debug("Server host key: %s %s", sshkey_ssh_name(host_key), fp);
+	} अन्यथा {
+		debug("Server host key: %s %s", sshkey_ssh_name(host_किल्ली), fp);
 	}
 
-	if (sshkey_equal(previous_host_key, host_key)) {
+	जर (sshkey_equal(previous_host_किल्ली, host_किल्ली)) {
 		debug2_f("server host key %s %s matches cached key",
-		    sshkey_type(host_key), fp);
+		    sshkey_type(host_किल्ली), fp);
 		r = 0;
-		goto out;
+		जा out;
 	}
 
 	/* Check in RevokedHostKeys files if specified */
-	for (i = 0; i < options.num_revoked_host_keys; i++) {
-		r = sshkey_check_revoked(host_key,
-		    options.revoked_host_keys[i]);
-		switch (r) {
-		case 0:
-			break; /* not revoked */
-		case SSH_ERR_KEY_REVOKED:
+	साठी (i = 0; i < options.अंक_revoked_host_किल्ल्या; i++) {
+		r = sshkey_check_revoked(host_किल्ली,
+		    options.revoked_host_किल्ल्या[i]);
+		निवड (r) {
+		स्थिती 0:
+			थांबा; /* not revoked */
+		स्थिती SSH_ERR_किल्ली_REVOKED:
 			error("Host key %s %s revoked by file %s",
-			    sshkey_type(host_key), fp,
-			    options.revoked_host_keys[i]);
+			    sshkey_type(host_किल्ली), fp,
+			    options.revoked_host_किल्ल्या[i]);
 			r = -1;
-			goto out;
-		default:
+			जा out;
+		पूर्वनिर्धारित:
 			error_r(r, "Error checking host key %s %s in "
-			    "revoked keys file %s", sshkey_type(host_key),
-			    fp, options.revoked_host_keys[i]);
+			    "revoked keys file %s", sshkey_type(host_किल्ली),
+			    fp, options.revoked_host_किल्ल्या[i]);
 			r = -1;
-			goto out;
+			जा out;
 		}
 	}
 
-	if (options.verify_host_key_dns) {
+	जर (options.verify_host_किल्ली_dns) {
 		/*
 		 * XXX certs are not yet supported for DNS, so downgrade
 		 * them and try the plain key.
 		 */
-		if ((r = sshkey_from_private(host_key, &plain)) != 0)
-			goto out;
-		if (sshkey_is_cert(plain))
+		जर ((r = sshkey_from_private(host_किल्ली, &plain)) != 0)
+			जा out;
+		जर (sshkey_is_cert(plain))
 			sshkey_drop_cert(plain);
-		if (verify_host_key_dns(host, hostaddr, plain, &flags) == 0) {
-			if (flags & DNS_VERIFY_FOUND) {
-				if (options.verify_host_key_dns == 1 &&
+		जर (verify_host_किल्ली_dns(host, hostaddr, plain, &flags) == 0) {
+			जर (flags & DNS_VERIFY_FOUND) {
+				जर (options.verify_host_किल्ली_dns == 1 &&
 				    flags & DNS_VERIFY_MATCH &&
 				    flags & DNS_VERIFY_SECURE) {
 					r = 0;
-					goto out;
+					जा out;
 				}
-				if (flags & DNS_VERIFY_MATCH) {
-					matching_host_key_dns = 1;
-				} else {
-					warn_changed_key(plain);
+				जर (flags & DNS_VERIFY_MATCH) {
+					matching_host_किल्ली_dns = 1;
+				} अन्यथा {
+					warn_changed_किल्ली(plain);
 					error("Update the SSHFP RR in DNS "
 					    "with the new host key to get rid "
 					    "of this message.");
@@ -1592,25 +1592,25 @@ verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
 			}
 		}
 	}
-	r = check_host_key(host, cinfo, hostaddr, options.port, host_key,
-	    RDRW, 0, options.user_hostfiles, options.num_user_hostfiles,
-	    options.system_hostfiles, options.num_system_hostfiles,
+	r = check_host_किल्ली(host, cinfo, hostaddr, options.port, host_किल्ली,
+	    RDRW, 0, options.user_hostfiles, options.अंक_user_hostfiles,
+	    options.system_hostfiles, options.अंक_system_hostfiles,
 	    options.known_hosts_command);
 
 out:
 	sshkey_free(plain);
-	free(fp);
-	free(cafp);
-	if (r == 0 && host_key != NULL) {
-		sshkey_free(previous_host_key);
-		r = sshkey_from_private(host_key, &previous_host_key);
+	मुक्त(fp);
+	मुक्त(cafp);
+	जर (r == 0 && host_किल्ली != रिक्त) {
+		sshkey_free(previous_host_किल्ली);
+		r = sshkey_from_private(host_किल्ली, &previous_host_किल्ली);
 	}
 
-	return r;
+	परत r;
 }
 
-static void
-warn_nonpq_kex(void)
+स्थिर शून्य
+warn_nonpq_kex(शून्य)
 {
 	logit("** WARNING: connection is not using a post-quantum key exchange algorithm.");
 	logit("** This session may be vulnerable to \"store now, decrypt later\" attacks.");
@@ -1624,14 +1624,14 @@ warn_nonpq_kex(void)
  * If login fails, this function prints an error and never returns.
  * This function does not require super-user privileges.
  */
-void
-ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
-    struct sockaddr_storage *hostaddr, u_short port, struct passwd *pw,
-    int timeout_ms, const struct ssh_conn_info *cinfo)
+शून्य
+ssh_login(संरचना ssh *ssh, Sensitive *sensitive, स्थिरांक अक्षर *orighost,
+    संरचना sockaddr_storage *hostaddr, u_short port, संरचना passwd *pw,
+    पूर्णांक timeout_ms, स्थिरांक संरचना ssh_conn_info *cinfo)
 {
-	char *host;
-	char *server_user, *local_user;
-	int r;
+	अक्षर *host;
+	अक्षर *server_user, *local_user;
+	पूर्णांक r;
 
 	local_user = xstrdup(pw->pw_name);
 	server_user = options.user ? options.user : local_user;
@@ -1641,11 +1641,11 @@ ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
 	lowercase(host);
 
 	/* Exchange protocol version identification strings with the server. */
-	if ((r = kex_exchange_identification(ssh, timeout_ms,
+	जर ((r = kex_exchange_identification(ssh, timeout_ms,
 	    options.version_addendum)) != 0)
 		sshpkt_fatal(ssh, r, "banner exchange");
 
-	if ((ssh->compat & SSH_BUG_NOREKEY)) {
+	जर ((ssh->compat & SSH_BUG_NOREKEY)) {
 		logit("Warning: this server does not support rekeying.");
 		logit("This session will eventually fail");
 	}
@@ -1659,67 +1659,67 @@ ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
 	ssh_kex2(ssh, host, hostaddr, port, cinfo);
 	kex_set_warn_weak_crypto(ssh, options.warn_weak_crypto &&
 	    !options.kex_algorithms_set);
-	if (!options.kex_algorithms_set && ssh->kex != NULL &&
-	    ssh->kex->name != NULL && options.warn_weak_crypto &&
+	जर (!options.kex_algorithms_set && ssh->kex != रिक्त &&
+	    ssh->kex->name != रिक्त && options.warn_weak_crypto &&
 	    !kex_is_pq_from_name(ssh->kex->name)) {
 		warn_nonpq_kex();
 		ssh->kex->non_pq_kex_warned = 1;
 	}
 	ssh_userauth2(ssh, local_user, server_user, host, sensitive);
-	free(local_user);
-	free(host);
+	मुक्त(local_user);
+	मुक्त(host);
 }
 
 /* print all known host keys for a given host, but skip keys of given type */
-static int
-show_other_keys(struct hostkeys *hostkeys, struct sshkey *key)
+स्थिर पूर्णांक
+show_other_किल्ल्या(संरचना hostkeys *hostkeys, संरचना sshkey *किल्ली)
 {
-	int type[] = {
-		KEY_RSA,
-		KEY_ECDSA,
-		KEY_ED25519,
-		KEY_MLDSA44_ED25519,
+	पूर्णांक type[] = {
+		किल्ली_RSA,
+		किल्ली_ECDSA,
+		किल्ली_ED25519,
+		किल्ली_MLDSA44_ED25519,
 		-1
 	};
-	int i, ret = 0;
-	char *fp, *ra;
-	const struct hostkey_entry *found;
+	पूर्णांक i, ret = 0;
+	अक्षर *fp, *ra;
+	स्थिरांक संरचना hostkey_entry *found;
 
-	for (i = 0; type[i] != -1; i++) {
-		if (type[i] == key->type)
-			continue;
-		if (!lookup_key_in_hostkeys_by_type(hostkeys, type[i],
+	साठी (i = 0; type[i] != -1; i++) {
+		जर (type[i] == किल्ली->type)
+			सुरूठेवा;
+		जर (!lookup_किल्ली_in_hostkeys_by_type(hostkeys, type[i],
 		    -1, &found))
-			continue;
-		fp = sshkey_fingerprint(found->key,
+			सुरूठेवा;
+		fp = sshkey_fingerprint(found->किल्ली,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
-		ra = sshkey_fingerprint(found->key,
+		ra = sshkey_fingerprint(found->किल्ली,
 		    options.fingerprint_hash, SSH_FP_RANDOMART);
-		if (fp == NULL || ra == NULL)
+		जर (fp == रिक्त || ra == रिक्त)
 			fatal_f("sshkey_fingerprint fail");
 		logit("WARNING: %s key found for host %s\n"
 		    "in %s:%lu\n"
 		    "%s key fingerprint %s.",
-		    sshkey_type(found->key),
-		    found->host, found->file, found->line,
-		    sshkey_type(found->key), fp);
-		if (options.visual_host_key)
+		    sshkey_type(found->किल्ली),
+		    found->host, found->file, found->ओळ,
+		    sshkey_type(found->किल्ली), fp);
+		जर (options.visual_host_किल्ली)
 			logit("%s", ra);
-		free(ra);
-		free(fp);
+		मुक्त(ra);
+		मुक्त(fp);
 		ret = 1;
 	}
-	return ret;
+	परत ret;
 }
 
-static void
-warn_changed_key(struct sshkey *host_key)
+स्थिर शून्य
+warn_changed_किल्ली(संरचना sshkey *host_किल्ली)
 {
-	char *fp;
+	अक्षर *fp;
 
-	fp = sshkey_fingerprint(host_key, options.fingerprint_hash,
+	fp = sshkey_fingerprint(host_किल्ली, options.fingerprint_hash,
 	    SSH_FP_DEFAULT);
-	if (fp == NULL)
+	जर (fp == रिक्त)
 		fatal_f("sshkey_fingerprint fail");
 
 	error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -1729,81 +1729,81 @@ warn_changed_key(struct sshkey *host_key)
 	error("Someone could be eavesdropping on you right now (man-in-the-middle attack)!");
 	error("It is also possible that a host key has just been changed.");
 	error("The fingerprint for the %s key sent by the remote host is\n%s.",
-	    sshkey_type(host_key), fp);
+	    sshkey_type(host_किल्ली), fp);
 	error("Please contact your system administrator.");
 
-	free(fp);
+	मुक्त(fp);
 }
 
 /*
  * Execute a local command
  */
-int
-ssh_local_cmd(const char *args)
+पूर्णांक
+ssh_local_cmd(स्थिरांक अक्षर *args)
 {
-	char *shell;
+	अक्षर *shell;
 	pid_t pid;
-	int status;
-	void (*osighand)(int);
+	पूर्णांक status;
+	शून्य (*osighand)(पूर्णांक);
 
-	if (!options.permit_local_command ||
-	    args == NULL || !*args)
-		return (1);
+	जर (!options.permit_local_command ||
+	    args == रिक्त || !*args)
+		परत (1);
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	जर ((shell = दो_पर्या("SHELL")) == रिक्त || *shell == '\0')
 		shell = _PATH_BSHELL;
 
-	osighand = ssh_signal(SIGCHLD, SIG_DFL);
-	pid = fork();
-	if (pid == 0) {
-		ssh_signal(SIGPIPE, SIG_DFL);
+	osighand = ssh_signal(SIGCHLD, संक_पूर्व);
+	pid = विभाजन();
+	जर (pid == 0) {
+		ssh_signal(SIGPIPE, संक_पूर्व);
 		debug3("Executing %s -c \"%s\"", shell, args);
-		execl(shell, shell, "-c", args, (char *)NULL);
+		execl(shell, shell, "-c", args, (अक्षर *)रिक्त);
 		error("Couldn't execute %s -c \"%s\": %s",
-		    shell, args, strerror(errno));
+		    shell, args, म_त्रुटि(त्रुटि_सं));
 		_exit(1);
-	} else if (pid == -1)
-		fatal("fork failed: %.100s", strerror(errno));
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
-			fatal("Couldn't wait for child: %s", strerror(errno));
+	} अन्यथा जर (pid == -1)
+		fatal("fork failed: %.100s", म_त्रुटि(त्रुटि_सं));
+	पर्यंत (waitpid(pid, &status, 0) == -1)
+		जर (त्रुटि_सं != EINTR)
+			fatal("Couldn't wait for child: %s", म_त्रुटि(त्रुटि_सं));
 	ssh_signal(SIGCHLD, osighand);
 
-	if (!WIFEXITED(status))
-		return (1);
+	जर (!WIFEXITED(status))
+		परत (1);
 
-	return (WEXITSTATUS(status));
+	परत (WEXITSTATUS(status));
 }
 
-void
-maybe_add_key_to_agent(const char *authfile, struct sshkey *private,
-    const char *comment, const char *passphrase)
+शून्य
+maybe_add_किल्ली_to_agent(स्थिरांक अक्षर *authfile, संरचना sshkey *खाजगी,
+    स्थिरांक अक्षर *comment, स्थिरांक अक्षर *passphrase)
 {
-	int auth_sock = -1, r;
-	const char *skprovider = NULL;
+	पूर्णांक auth_sock = -1, r;
+	स्थिरांक अक्षर *skprovider = रिक्त;
 
-	if (options.add_keys_to_agent == 0)
-		return;
+	जर (options.add_किल्ल्या_to_agent == 0)
+		परत;
 
-	if ((r = ssh_get_authentication_socket(&auth_sock)) != 0) {
+	जर ((r = ssh_get_authentication_socket(&auth_sock)) != 0) {
 		debug3("no authentication agent, not adding key");
-		return;
+		परत;
 	}
 
-	if (options.add_keys_to_agent == 2 &&
+	जर (options.add_किल्ल्या_to_agent == 2 &&
 	    !ask_permission("Add key %s (%s) to agent?", authfile, comment)) {
 		debug3("user denied adding this key");
-		close(auth_sock);
-		return;
+		बंद(auth_sock);
+		परत;
 	}
-	if (sshkey_is_sk(private))
+	जर (sshkey_is_sk(खाजगी))
 		skprovider = options.sk_provider;
-	if ((r = ssh_add_identity_constrained(auth_sock, private,
-	    comment == NULL ? authfile : comment,
-	    options.add_keys_to_agent_lifespan,
-	    (options.add_keys_to_agent == 3), skprovider, NULL, 0)) == 0)
+	जर ((r = ssh_add_identity_constrained(auth_sock, खाजगी,
+	    comment == रिक्त ? authfile : comment,
+	    options.add_किल्ल्या_to_agent_lifespan,
+	    (options.add_किल्ल्या_to_agent == 3), skprovider, रिक्त, 0)) == 0)
 		debug("identity added to agent: %s", authfile);
-	else
+	अन्यथा
 		debug("could not add identity to agent: %s (%d)", authfile, r);
-	close(auth_sock);
+	बंद(auth_sock);
 }

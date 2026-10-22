@@ -24,45 +24,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifdef _AIX
 
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "ssh.h"
-#include "ssh_api.h"
-#include "log.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
+#अन्तर्भाव "ssh.h"
+#अन्तर्भाव "ssh_api.h"
+#अन्तर्भाव "log.h"
 
-#include <errno.h>
-#if defined(HAVE_NETDB_H)
+#अन्तर्भाव <errno.h>
+#जर defined(HAVE_NETDB_H)
 # include <netdb.h>
 #endif
-#include <uinfo.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
+#अन्तर्भाव <uinfo.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <sys/socket.h>
 
 #ifdef WITH_AIXAUTHENTICATE
 # include <login.h>
 # include <userpw.h>
-# if defined(HAVE_SYS_AUDIT_H) && defined(AIX_LOGINFAILED_4ARG)
+# जर defined(HAVE_SYS_AUDIT_H) && defined(AIX_LOGINFAILED_4ARG)
 #  include <sys/audit.h>
 # endif
 # include <usersec.h>
 #endif
 
-#include "port-aix.h"
+#अन्तर्भाव "port-aix.h"
 
-static char *lastlogin_msg = NULL;
+स्थिर अक्षर *lastlogin_संदेश = रिक्त;
 
 # ifdef HAVE_SETAUTHDB
-static char old_registry[REGISTRY_SIZE] = "";
+स्थिर अक्षर old_registry[REGISTRY_SIZE] = "";
 # endif
 
 /*
@@ -72,23 +72,23 @@ static char old_registry[REGISTRY_SIZE] = "";
  * NOTE: TTY= should be set, but since no one uses it and it's hard to
  * acquire due to privsep code.  We will just drop support.
  */
-void
-aix_usrinfo(struct passwd *pw)
+शून्य
+aix_usrinfo(संरचना passwd *pw)
 {
 	u_int i;
-	size_t len;
-	char *cp;
+	माप_प्रकार len;
+	अक्षर *cp;
 
-	len = sizeof("LOGNAME= NAME= ") + (2 * strlen(pw->pw_name));
+	len = आकार("LOGNAME= NAME= ") + (2 * म_माप(pw->pw_name));
 	cp = xmalloc(len);
 
 	i = snprintf(cp, len, "LOGNAME=%s%cNAME=%s%c", pw->pw_name, '\0',
 	    pw->pw_name, '\0');
-	if (usrinfo(SETUINFO, cp, i) == -1)
-		fatal("Couldn't set usrinfo: %s", strerror(errno));
+	जर (usrinfo(SETUINFO, cp, i) == -1)
+		fatal("Couldn't set usrinfo: %s", म_त्रुटि(त्रुटि_सं));
 	debug3("AIX/UsrInfo: set len %d", i);
 
-	free(cp);
+	मुक्त(cp);
 }
 
 # ifdef WITH_AIXAUTHENTICATE
@@ -97,18 +97,18 @@ aix_usrinfo(struct passwd *pw)
  * Used before logging messages returned by AIX authentication functions
  * so the message is logged on one line.
  */
-void
-aix_remove_embedded_newlines(char *p)
+शून्य
+aix_remove_embedded_newlines(अक्षर *p)
 {
-	if (p == NULL)
-		return;
+	जर (p == रिक्त)
+		परत;
 
-	for (; *p; p++) {
-		if (*p == '\n')
+	साठी (; *p; p++) {
+		जर (*p == '\n')
 			*p = ' ';
 	}
 	/* Remove trailing whitespace */
-	if (*--p == ' ')
+	जर (*--p == ' ')
 		*p = '\0';
 }
 
@@ -128,41 +128,41 @@ aix_remove_embedded_newlines(char *p)
  *
  * Returns 0 if an unsupportable combination is found, 1 otherwise.
  */
-static int
-aix_valid_authentications(const char *user)
+स्थिर पूर्णांक
+aix_valid_authentications(स्थिरांक अक्षर *user)
 {
-	char *auth1, *sys, *p;
-	int valid = 1;
+	अक्षर *auth1, *sys, *p;
+	पूर्णांक valid = 1;
 
-	if (getuserattr((char *)user, S_AUTHSYSTEM, &sys, SEC_CHAR) != 0) {
+	जर (getuserattr((अक्षर *)user, S_AUTHSYSTEM, &sys, SEC_CHAR) != 0) {
 		logit("Can't retrieve attribute SYSTEM for %s: %.100s",
-		    user, strerror(errno));
-		return 0;
+		    user, म_त्रुटि(त्रुटि_सं));
+		परत 0;
 	}
 
 	debug3("AIX SYSTEM attribute %s", sys);
-	if (strcmp(sys, "NONE") != 0)
-		return 1;	/* not "NONE", so is OK */
+	जर (म_भेद(sys, "NONE") != 0)
+		परत 1;	/* not "NONE", so is OK */
 
-	if (getuserattr((char *)user, S_AUTH1, &auth1, SEC_LIST) != 0) {
+	जर (getuserattr((अक्षर *)user, S_AUTH1, &auth1, SEC_LIST) != 0) {
 		logit("Can't retrieve attribute auth1 for %s: %.100s",
-		    user, strerror(errno));
-		return 0;
+		    user, म_त्रुटि(त्रुटि_सं));
+		परत 0;
 	}
 
 	p = auth1;
 	/* A SEC_LIST is concatenated strings, ending with two NULs. */
-	while (p[0] != '\0' && p[1] != '\0') {
+	पर्यंत (p[0] != '\0' && p[1] != '\0') {
 		debug3("AIX auth1 attribute list member %s", p);
-		if (strcmp(p, "NONE") != 0 && strcmp(p, "SYSTEM")) {
+		जर (म_भेद(p, "NONE") != 0 && म_भेद(p, "SYSTEM")) {
 			logit("Account %s has unsupported auth1 value '%s'",
 			    user, p);
 			valid = 0;
 		}
-		p += strlen(p) + 1;
+		p += म_माप(p) + 1;
 	}
 
-	return (valid);
+	परत (valid);
 }
 
 /*
@@ -172,25 +172,25 @@ aix_valid_authentications(const char *user)
  * Note: this function returns 1 on success, whereas AIX's authenticate()
  * returns 0.
  */
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+पूर्णांक
+sys_auth_passwd(संरचना ssh *ssh, स्थिरांक अक्षर *password)
 {
 	Authctxt *ctxt = ssh->authctxt;
-	char *authmsg = NULL, *msg = NULL, *name = ctxt->pw->pw_name;
-	int r, authsuccess = 0, expired, reenter, result;
+	अक्षर *authmsg = रिक्त, *संदेश = रिक्त, *name = ctxt->pw->pw_name;
+	पूर्णांक r, authsuccess = 0, expired, reenter, result;
 
-	do {
-		result = authenticate((char *)name, (char *)password, &reenter,
+	करा {
+		result = authenticate((अक्षर *)name, (अक्षर *)password, &reenter,
 		    &authmsg);
 		aix_remove_embedded_newlines(authmsg);
 		debug3("AIX/authenticate result %d, authmsg %.100s", result,
 		    authmsg);
-	} while (reenter);
+	} पर्यंत (reenter);
 
-	if (!aix_valid_authentications(name))
+	जर (!aix_valid_authentications(name))
 		result = -1;
 
-	if (result == 0) {
+	जर (result == 0) {
 		authsuccess = 1;
 
 		/*
@@ -202,129 +202,129 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 		/*
 		 * Check if the user's password is expired.
 		 */
-		expired = passwdexpired(name, &msg);
-		if (msg && *msg) {
-			if ((r = sshbuf_put(ctxt->loginmsg,
-			    msg, strlen(msg))) != 0)
+		expired = passwdexpired(name, &संदेश);
+		जर (संदेश && *संदेश) {
+			जर ((r = sshbuf_put(ctxt->loginmsg,
+			    संदेश, म_माप(संदेश))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			aix_remove_embedded_newlines(msg);
+			aix_remove_embedded_newlines(संदेश);
 		}
-		debug3("AIX/passwdexpired returned %d msg %.100s", expired, msg);
+		debug3("AIX/passwdexpired returned %d msg %.100s", expired, संदेश);
 
-		switch (expired) {
-		case 0: /* password not expired */
-			break;
-		case 1: /* expired, password change required */
+		निवड (expired) {
+		स्थिती 0: /* password not expired */
+			थांबा;
+		स्थिती 1: /* expired, password change required */
 			ctxt->force_pwchange = 1;
-			break;
-		default: /* user can't change(2) or other error (-1) */
+			थांबा;
+		पूर्वनिर्धारित: /* user can't change(2) or other error (-1) */
 			logit("Password can't be changed for user %s: %.100s",
-			    name, msg);
-			free(msg);
+			    name, संदेश);
+			मुक्त(संदेश);
 			authsuccess = 0;
 		}
 
 		aix_restoreauthdb();
 	}
 
-	free(authmsg);
+	मुक्त(authmsg);
 
-	return authsuccess;
+	परत authsuccess;
 }
 
 /*
  * Check if specified account is permitted to log in.
  * Returns 1 if login is allowed, 0 if not allowed.
  */
-int
-sys_auth_allowed_user(struct passwd *pw, struct sshbuf *loginmsg)
+पूर्णांक
+sys_auth_allowed_user(संरचना passwd *pw, संरचना sshbuf *loginmsg)
 {
-	char *msg = NULL;
-	int r, result, permitted = 0;
-	struct stat st;
+	अक्षर *संदेश = रिक्त;
+	पूर्णांक r, result, permitted = 0;
+	संरचना stat st;
 
 	/*
 	 * Don't perform checks for root account (PermitRootLogin controls
 	 * logins via ssh) or if running as non-root user (since
 	 * loginrestrictions will always fail due to insufficient privilege).
 	 */
-	if (pw->pw_uid == 0 || geteuid() != 0) {
+	जर (pw->pw_uid == 0 || geteuid() != 0) {
 		debug3("%s: not checking", __func__);
-		return 1;
+		परत 1;
 	}
 
-	result = loginrestrictions(pw->pw_name, S_RLOGIN, NULL, &msg);
-	if (result == 0)
+	result = loginrestrictions(pw->pw_name, S_RLOGIN, रिक्त, &संदेश);
+	जर (result == 0)
 		permitted = 1;
 	/*
 	 * If restricted because /etc/nologin exists, the login will be denied
 	 * in session.c after the nologin message is sent, so allow for now
 	 * and do not append the returned message.
 	 */
-	if (result == -1 && errno == EPERM && stat(_PATH_NOLOGIN, &st) == 0)
+	जर (result == -1 && त्रुटि_सं == EPERM && stat(_PATH_NOLOGIN, &st) == 0)
 		permitted = 1;
-	else if (msg != NULL) {
-		if ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
+	अन्यथा जर (संदेश != रिक्त) {
+		जर ((r = sshbuf_put(loginmsg, संदेश, म_माप(संदेश))) != 0)
 			fatal("%s: buffer error: %s", __func__, ssh_err(r));
 	}
-	if (msg == NULL)
-		msg = xstrdup("(none)");
-	aix_remove_embedded_newlines(msg);
-	debug3("AIX/loginrestrictions returned %d msg %.100s", result, msg);
+	जर (संदेश == रिक्त)
+		संदेश = xstrdup("(none)");
+	aix_remove_embedded_newlines(संदेश);
+	debug3("AIX/loginrestrictions returned %d msg %.100s", result, संदेश);
 
-	if (!permitted)
-		logit("Login restricted for %s: %.100s", pw->pw_name, msg);
-	free(msg);
-	return permitted;
+	जर (!permitted)
+		logit("Login restricted for %s: %.100s", pw->pw_name, संदेश);
+	मुक्त(संदेश);
+	परत permitted;
 }
 
-int
-sys_auth_record_login(const char *user, const char *host, const char *ttynm,
-    struct sshbuf *loginmsg)
+पूर्णांक
+sys_auth_record_login(स्थिरांक अक्षर *user, स्थिरांक अक्षर *host, स्थिरांक अक्षर *ttynm,
+    संरचना sshbuf *loginmsg)
 {
-	char *msg = NULL;
-	int success = 0;
+	अक्षर *संदेश = रिक्त;
+	पूर्णांक success = 0;
 
 	aix_setauthdb(user);
-	if (loginsuccess((char *)user, (char *)host, (char *)ttynm, &msg) == 0) {
+	जर (loginsuccess((अक्षर *)user, (अक्षर *)host, (अक्षर *)ttynm, &संदेश) == 0) {
 		success = 1;
-		if (msg != NULL) {
-			debug("AIX/loginsuccess: msg %s", msg);
-			if (lastlogin_msg == NULL)
-				lastlogin_msg = msg;
+		जर (संदेश != रिक्त) {
+			debug("AIX/loginsuccess: msg %s", संदेश);
+			जर (lastlogin_संदेश == रिक्त)
+				lastlogin_संदेश = संदेश;
 		}
 	}
 	aix_restoreauthdb();
-	return (success);
+	परत (success);
 }
 
-char *
-sys_auth_get_lastlogin_msg(const char *user, uid_t uid)
+अक्षर *
+sys_auth_get_lastlogin_संदेश(स्थिरांक अक्षर *user, uid_t uid)
 {
-	char *msg = lastlogin_msg;
+	अक्षर *संदेश = lastlogin_संदेश;
 
-	lastlogin_msg = NULL;
-	return msg;
+	lastlogin_संदेश = रिक्त;
+	परत संदेश;
 }
 
 #  ifdef CUSTOM_FAILED_LOGIN
 /*
  * record_failed_login: generic "login failed" interface function
  */
-void
-record_failed_login(struct ssh *ssh, const char *user, const char *hostname,
-    const char *ttyname)
+शून्य
+record_failed_login(संरचना ssh *ssh, स्थिरांक अक्षर *user, स्थिरांक अक्षर *hostname,
+    स्थिरांक अक्षर *ttyname)
 {
-	if (geteuid() != 0)
-		return;
+	जर (geteuid() != 0)
+		परत;
 
 	aix_setauthdb(user);
 #   ifdef AIX_LOGINFAILED_4ARG
-	loginfailed((char *)user, (char *)hostname, (char *)ttyname,
+	loginfailed((अक्षर *)user, (अक्षर *)hostname, (अक्षर *)ttyname,
 	    AUDIT_FAIL_AUTH);
-#   else
-	loginfailed((char *)user, (char *)hostname, (char *)ttyname);
+#   अन्यथा
+	loginfailed((अक्षर *)user, (अक्षर *)hostname, (अक्षर *)ttyname);
 #   endif
 	aix_restoreauthdb();
 }
@@ -336,26 +336,26 @@ record_failed_login(struct ssh *ssh, const char *user, const char *hostname,
  * functions will only use the specified loadable module.  If we don't have
  * setauthdb this is a no-op.
  */
-void
-aix_setauthdb(const char *user)
+शून्य
+aix_setauthdb(स्थिरांक अक्षर *user)
 {
 #  ifdef HAVE_SETAUTHDB
-	char *registry;
+	अक्षर *registry;
 
-	if (setuserdb(S_READ) == -1) {
+	जर (setuserdb(S_READ) == -1) {
 		debug3("%s: Could not open userdb to read", __func__);
-		return;
+		परत;
 	}
 
-	if (getuserattr((char *)user, S_REGISTRY, &registry, SEC_CHAR) == 0) {
-		if (setauthdb(registry, old_registry) == 0)
+	जर (getuserattr((अक्षर *)user, S_REGISTRY, &registry, SEC_CHAR) == 0) {
+		जर (setauthdb(registry, old_registry) == 0)
 			debug3("AIX/setauthdb set registry '%s'", registry);
-		else
+		अन्यथा
 			debug3("AIX/setauthdb set registry '%s' failed: %s",
-			    registry, strerror(errno));
-	} else
+			    registry, म_त्रुटि(त्रुटि_सं));
+	} अन्यथा
 		debug3("%s: Could not read S_REGISTRY for user: %s", __func__,
-		    strerror(errno));
+		    म_त्रुटि(त्रुटि_सं));
 	enduserdb();
 #  endif /* HAVE_SETAUTHDB */
 }
@@ -366,14 +366,14 @@ aix_setauthdb(const char *user)
  * (it restores the system default behaviour).  If we don't have setauthdb,
  * this is a no-op.
  */
-void
-aix_restoreauthdb(void)
+शून्य
+aix_restoreauthdb(शून्य)
 {
 #  ifdef HAVE_SETAUTHDB
-	if (setauthdb(old_registry, NULL) == 0)
+	जर (setauthdb(old_registry, रिक्त) == 0)
 		debug3("%s: restoring old registry '%s'", __func__,
 		    old_registry);
-	else
+	अन्यथा
 		debug3("%s: failed to restore old registry %s", __func__,
 		    old_registry);
 #  endif /* HAVE_SETAUTHDB */
@@ -386,97 +386,97 @@ aix_restoreauthdb(void)
  * aix_krb5_get_principal_name: returns the user's kerberos client principal
  * name if configured, otherwise NULL.  Caller must free returned string.
  */
-char *
-aix_krb5_get_principal_name(const char *const_pw_name)
+अक्षर *
+aix_krb5_get_principal_name(स्थिरांक अक्षर *const_pw_name)
 {
-	char *pw_name = (char *)const_pw_name;
-	char *authname = NULL, *authdomain = NULL, *principal = NULL;
+	अक्षर *pw_name = (अक्षर *)const_pw_name;
+	अक्षर *authname = रिक्त, *authdomain = रिक्त, *principal = रिक्त;
 
 	setuserdb(S_READ);
-	if (getuserattr(pw_name, S_AUTHDOMAIN, &authdomain, SEC_CHAR) != 0)
-		debug("AIX getuserattr S_AUTHDOMAIN: %s", strerror(errno));
-	if (getuserattr(pw_name, S_AUTHNAME, &authname, SEC_CHAR) != 0)
-		debug("AIX getuserattr S_AUTHNAME: %s", strerror(errno));
+	जर (getuserattr(pw_name, S_AUTHDOMAIN, &authdomain, SEC_CHAR) != 0)
+		debug("AIX getuserattr S_AUTHDOMAIN: %s", म_त्रुटि(त्रुटि_सं));
+	जर (getuserattr(pw_name, S_AUTHNAME, &authname, SEC_CHAR) != 0)
+		debug("AIX getuserattr S_AUTHNAME: %s", म_त्रुटि(त्रुटि_सं));
 
-	if (authdomain != NULL)
+	जर (authdomain != रिक्त)
 		xasprintf(&principal, "%s@%s", authname ? authname : pw_name,
 		    authdomain);
-	else if (authname != NULL)
+	अन्यथा जर (authname != रिक्त)
 		principal = xstrdup(authname);
 	enduserdb();
-	return principal;
+	परत principal;
 }
 # endif /* USE_AIX_KRB_NAME */
 
-# if defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_ADDRINFO)
+# जर defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_ADDRINFO)
 # undef getnameinfo
 /*
  * For some reason, AIX's getnameinfo will refuse to resolve the all-zeros
  * IPv6 address into its textual representation ("::"), so we wrap it
  * with a function that will.
  */
-int
-sshaix_getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-    size_t hostlen, char *serv, size_t servlen, int flags)
+पूर्णांक
+sshaix_getnameinfo(स्थिरांक संरचना sockaddr *sa, माप_प्रकार salen, अक्षर *host,
+    माप_प्रकार hostlen, अक्षर *serv, माप_प्रकार servlen, पूर्णांक flags)
 {
-	struct sockaddr_in6 *sa6;
+	संरचना sockaddr_in6 *sa6;
 	u_int32_t *a6;
 
-	if (flags & (NI_NUMERICHOST|NI_NUMERICSERV) &&
+	जर (flags & (NI_NUMERICHOST|NI_NUMERICSERV) &&
 	    sa->sa_family == AF_INET6) {
-		sa6 = (struct sockaddr_in6 *)sa;
+		sa6 = (संरचना sockaddr_in6 *)sa;
 		a6 = sa6->sin6_addr.u6_addr.u6_addr32;
 
-		if (a6[0] == 0 && a6[1] == 0 && a6[2] == 0 && a6[3] == 0) {
+		जर (a6[0] == 0 && a6[1] == 0 && a6[2] == 0 && a6[3] == 0) {
 			strlcpy(host, "::", hostlen);
 			snprintf(serv, servlen, "%d", sa6->sin6_port);
-			return 0;
+			परत 0;
 		}
 	}
-	return getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);
+	परत getnameinfo(sa, salen, host, hostlen, serv, servlen, flags);
 }
 # endif /* AIX_GETNAMEINFO_HACK */
 
-# if defined(USE_GETGRSET)
+# जर defined(USE_GETGRSET)
 #  include <stdlib.h>
-int
-getgrouplist(const char *user, gid_t pgid, gid_t *groups, int *grpcnt)
+पूर्णांक
+getgrouplist(स्थिरांक अक्षर *user, gid_t pgid, gid_t *groups, पूर्णांक *grpcnt)
 {
-	char *cp, *grplist, *grp;
+	अक्षर *cp, *grplist, *grp;
 	gid_t gid;
-	int ret = 0, ngroups = 0, maxgroups;
-	long long ll;
+	पूर्णांक ret = 0, ngroups = 0, maxgroups;
+	दीर्घ दीर्घ ll;
 
 	maxgroups = *grpcnt;
 
-	if ((cp = grplist = getgrset(user)) == NULL)
-		return -1;
+	जर ((cp = grplist = getgrset(user)) == रिक्त)
+		परत -1;
 
 	/* handle zero-length case */
-	if (maxgroups <= 0) {
+	जर (maxgroups <= 0) {
 		*grpcnt = 0;
-		return -1;
+		परत -1;
 	}
 
 	/* copy primary group */
 	groups[ngroups++] = pgid;
 
 	/* copy each entry from getgrset into group list */
-	while ((grp = strsep(&grplist, ",")) != NULL) {
-		ll = strtoll(grp, NULL, 10);
-		if (ngroups >= maxgroups || ll < 0 || ll > UID_MAX) {
+	पर्यंत ((grp = strsep(&grplist, ",")) != रिक्त) {
+		ll = strtoll(grp, रिक्त, 10);
+		जर (ngroups >= maxgroups || ll < 0 || ll > UID_MAX) {
 			ret = -1;
-			goto out;
+			जा out;
 		}
 		gid = (gid_t)ll;
-		if (gid == pgid)
-			continue;	/* we have already added primary gid */
+		जर (gid == pgid)
+			सुरूठेवा;	/* we have already added primary gid */
 		groups[ngroups++] = gid;
 	}
 out:
-	free(cp);
+	मुक्त(cp);
 	*grpcnt = ngroups;
-	return ret;
+	परत ret;
 }
 # endif	/* USE_GETGRSET */
 

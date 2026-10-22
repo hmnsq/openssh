@@ -23,54 +23,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
+#अन्तर्भाव "packet.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "hostfile.h"
+#अन्तर्भाव "auth.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#अन्तर्भाव "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#अन्तर्भाव "monitor_wrap.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+बाह्य ServerOptions options;
+बाह्य संरचना authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+स्थिर पूर्णांक
+userauth_passwd(संरचना ssh *ssh, स्थिरांक अक्षर *method)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	अक्षर *password = रिक्त;
+	पूर्णांक authenticated = 0, r;
 	u_char change;
-	size_t len = 0;
+	माप_प्रकार len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	जर ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
+	    (change && (r = sshpkt_get_cstring(ssh, रिक्त, रिक्त)) != 0) ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	जर (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	अन्यथा जर (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	परत authenticated;
 }
 
 Authmethod method_passwd = {

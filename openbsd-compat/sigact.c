@@ -35,98 +35,98 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/base/sigaction.c */
 
-#include "includes.h"
-#include <errno.h>
-#include <signal.h>
-#include "sigact.h"
+#अन्तर्भाव "includes.h"
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव "sigact.h"
 
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#जर !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+पूर्णांक
+sigaction(पूर्णांक sig, संरचना sigaction *sigact, संरचना sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
-	    osigact ? &osigact->sv : NULL);
+	परत sigvec(sig, sigact ? &sigact->sv : रिक्त,
+	    osigact ? &osigact->sv : रिक्त);
 }
 
-int
+पूर्णांक
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
-		errno = EINVAL;
-		return -1;
+	जर (!mask) {
+		त्रुटि_सं = EINVAL;
+		परत -1;
 	}
 	*mask = 0;
-	return 0;
+	परत 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+पूर्णांक
+sigprocmask (पूर्णांक mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
-		errno = EINVAL;
-		return -1;
+	जर (!mask) {
+		त्रुटि_सं = EINVAL;
+		परत -1;
 	}
 
-	if (omask)
+	जर (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	जर (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	अन्यथा जर (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	अन्यथा जर (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	परत 0;
 }
 
-int
-sigsuspend (sigset_t *mask)
+पूर्णांक
+संक_रोको (sigset_t *mask)
 {
-	if (!mask) {
-		errno = EINVAL;
-		return -1;
+	जर (!mask) {
+		त्रुटि_सं = EINVAL;
+		परत -1;
 	}
-	return sigpause(*mask);
+	परत sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+पूर्णांक
+sigdelset (sigset_t *mask, पूर्णांक sig)
 {
-	if (!mask) {
-		errno = EINVAL;
-		return -1;
+	जर (!mask) {
+		त्रुटि_सं = EINVAL;
+		परत -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	परत 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+पूर्णांक
+sigaddset (sigset_t *mask, पूर्णांक sig)
 {
-	if (!mask) {
-		errno = EINVAL;
-		return -1;
+	जर (!mask) {
+		त्रुटि_सं = EINVAL;
+		परत -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	परत 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+पूर्णांक
+sigismember (sigset_t *mask, पूर्णांक sig)
 {
-	if (!mask) {
-		errno = EINVAL;
-		return -1;
+	जर (!mask) {
+		त्रुटि_सं = EINVAL;
+		परत -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	परत (*mask & sigmask(sig)) != 0;
 }
 
 #endif

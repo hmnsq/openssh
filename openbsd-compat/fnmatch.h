@@ -42,7 +42,7 @@
 #define	_FNMATCH_H_
 
 #ifdef HAVE_SYS_CDEFS_H
-#include <sys/cdefs.h>
+#अन्तर्भाव <sys/cdefs.h>
 #endif
 
 #define	FNM_NOMATCH	1	/* Match failed. */
@@ -51,7 +51,7 @@
 #define	FNM_NOESCAPE	0x01	/* Disable backslash escaping. */
 #define	FNM_PATHNAME	0x02	/* Slash must be matched by slash. */
 #define	FNM_PERIOD	0x04	/* Period must be matched by period. */
-#if __BSD_VISIBLE
+#जर __BSD_VISIBLE
 #define	FNM_LEADING_DIR	0x08	/* Ignore /<tail> after Imatch. */
 #define	FNM_CASEFOLD	0x10	/* Case insensitive search. */
 #define	FNM_IGNORECASE	FNM_CASEFOLD
@@ -59,7 +59,7 @@
 #endif
 
 /* __BEGIN_DECLS */
-int	 fnmatch(const char *, const char *, int);
+पूर्णांक	 fnmatch(स्थिरांक अक्षर *, स्थिरांक अक्षर *, पूर्णांक);
 /* __END_DECLS */
 
 #endif /* !_FNMATCH_H_ */

@@ -14,47 +14,47 @@
 #ifndef HOSTFILE_H
 #define HOSTFILE_H
 
-typedef enum {
+प्रकारव्याख्या गणना {
 	HOST_OK, HOST_NEW, HOST_CHANGED, HOST_REVOKED, HOST_FOUND
 }       HostStatus;
 
-typedef enum {
+प्रकारव्याख्या गणना {
 	MRK_ERROR, MRK_NONE, MRK_REVOKE, MRK_CA
 }	HostkeyMarker;
 
-struct hostkey_entry {
-	char *host;
-	char *file;
-	u_long line;
-	struct sshkey *key;
+संरचना hostkey_entry {
+	अक्षर *host;
+	अक्षर *file;
+	u_long ओळ;
+	संरचना sshkey *किल्ली;
 	HostkeyMarker marker;
 	u_int note; /* caller-specific note/flag */
 };
-struct hostkeys {
-	struct hostkey_entry *entries;
-	u_int num_entries;
+संरचना hostkeys {
+	संरचना hostkey_entry *entries;
+	u_int अंक_entries;
 };
 
-struct hostkeys *init_hostkeys(void);
-void	 load_hostkeys(struct hostkeys *, const char *,
-    const char *, u_int);
-void	 load_hostkeys_file(struct hostkeys *, const char *,
-    const char *, FILE *, u_int note);
-void	 free_hostkeys(struct hostkeys *);
+संरचना hostkeys *init_hostkeys(शून्य);
+शून्य	 load_hostkeys(संरचना hostkeys *, स्थिरांक अक्षर *,
+    स्थिरांक अक्षर *, u_int);
+शून्य	 load_hostkeys_file(संरचना hostkeys *, स्थिरांक अक्षर *,
+    स्थिरांक अक्षर *, खाता *, u_int note);
+शून्य	 free_hostkeys(संरचना hostkeys *);
 
-HostStatus check_key_in_hostkeys(struct hostkeys *, struct sshkey *,
-    const struct hostkey_entry **);
-int	 lookup_key_in_hostkeys_by_type(struct hostkeys *, int, int,
-    const struct hostkey_entry **);
-int	 lookup_marker_in_hostkeys(struct hostkeys *, int);
+HostStatus check_किल्ली_in_hostkeys(संरचना hostkeys *, संरचना sshkey *,
+    स्थिरांक संरचना hostkey_entry **);
+पूर्णांक	 lookup_किल्ली_in_hostkeys_by_type(संरचना hostkeys *, पूर्णांक, पूर्णांक,
+    स्थिरांक संरचना hostkey_entry **);
+पूर्णांक	 lookup_marker_in_hostkeys(संरचना hostkeys *, पूर्णांक);
 
-int	 hostfile_read_key(char **, u_int *, struct sshkey *);
-int	 add_host_to_hostfile(const char *, const char *,
-    const struct sshkey *, int);
+पूर्णांक	 hostfile_read_किल्ली(अक्षर **, u_int *, संरचना sshkey *);
+पूर्णांक	 add_host_to_hostfile(स्थिरांक अक्षर *, स्थिरांक अक्षर *,
+    स्थिरांक संरचना sshkey *, पूर्णांक);
 
-int	 hostfile_replace_entries(const char *filename,
-    const char *host, const char *ip, struct sshkey **keys, size_t nkeys,
-    int store_hash, int quiet, int hash_alg);
+पूर्णांक	 hostfile_replace_entries(स्थिरांक अक्षर *filename,
+    स्थिरांक अक्षर *host, स्थिरांक अक्षर *ip, संरचना sshkey **किल्ल्या, माप_प्रकार nkeys,
+    पूर्णांक store_hash, पूर्णांक quiet, पूर्णांक hash_alg);
 
 #define HASH_MAGIC	"|1|"
 #define HASH_DELIM	'|'
@@ -62,7 +62,7 @@ int	 hostfile_replace_entries(const char *filename,
 #define CA_MARKER	"@cert-authority"
 #define REVOKE_MARKER	"@revoked"
 
-char	*host_hash(const char *, const char *, u_int);
+अक्षर	*host_hash(स्थिरांक अक्षर *, स्थिरांक अक्षर *, u_int);
 
 /*
  * Iterate through a hostkeys file, optionally parsing keys and matching
@@ -70,7 +70,7 @@ char	*host_hash(const char *, const char *, u_int);
  * streaming edits to the file to take place.
  */
 #define HKF_WANT_MATCH		(1)	/* return only matching hosts/addrs */
-#define HKF_WANT_PARSE_KEY	(1<<1)	/* need key parsed */
+#define HKF_WANT_PARSE_किल्ली	(1<<1)	/* need key parsed */
 
 #define HKF_STATUS_OK		0	/* Line parsed, didn't match host */
 #define HKF_STATUS_INVALID	1	/* line had parse error */
@@ -88,18 +88,18 @@ char	*host_hash(const char *, const char *, u_int);
  * hostkey line. The callback may "steal" the 'key' field by setting it to NULL.
  * If a parse error occurred, then "hosts" and subsequent options may be NULL.
  */
-struct hostkey_foreach_line {
-	const char *path; /* Path of file */
+संरचना hostkey_foreach_ओळ {
+	स्थिरांक अक्षर *path; /* Path of file */
 	u_long linenum;	/* Line number */
 	u_int status;	/* One of HKF_STATUS_* */
 	u_int match;	/* Zero or more of HKF_MATCH_* OR'd together */
-	char *line;	/* Entire key line; mutable by callback */
-	int marker;	/* CA/revocation markers; indicated by MRK_* value */
-	const char *hosts; /* Raw hosts text, may be hashed or list multiple */
-	const char *rawkey; /* Text of key and any comment following it */
-	int keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
-	struct sshkey *key; /* Key, if parsed ok and HKF_WANT_MATCH_HOST set */
-	const char *comment; /* Any comment following the key */
+	अक्षर *ओळ;	/* Entire key line; mutable by callback */
+	पूर्णांक marker;	/* CA/revocation markers; indicated by MRK_* value */
+	स्थिरांक अक्षर *hosts; /* Raw hosts text, may be hashed or list multiple */
+	स्थिरांक अक्षर *rawkey; /* Text of key and any comment following it */
+	पूर्णांक keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
+	संरचना sshkey *किल्ली; /* Key, if parsed ok and HKF_WANT_MATCH_HOST set */
+	स्थिरांक अक्षर *comment; /* Any comment following the key */
 	u_int note;	/* caller-specified note copied from arguments */
 };
 
@@ -108,16 +108,16 @@ struct hostkey_foreach_line {
  * is set). The foreach loop will terminate if the callback returns a non-
  * zero exit status.
  */
-typedef int hostkeys_foreach_fn(struct hostkey_foreach_line *l, void *ctx);
+प्रकारव्याख्या पूर्णांक hostkeys_foreach_fn(संरचना hostkey_foreach_ओळ *l, शून्य *ctx);
 
 /* Iterate over a hostkeys file */
-int hostkeys_foreach(const char *path,
-    hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note);
-int hostkeys_foreach_file(const char *path, FILE *f,
-    hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note);
+पूर्णांक hostkeys_foreach(स्थिरांक अक्षर *path,
+    hostkeys_foreach_fn *callback, शून्य *ctx,
+    स्थिरांक अक्षर *host, स्थिरांक अक्षर *ip, u_int options, u_int note);
+पूर्णांक hostkeys_foreach_file(स्थिरांक अक्षर *path, खाता *f,
+    hostkeys_foreach_fn *callback, शून्य *ctx,
+    स्थिरांक अक्षर *host, स्थिरांक अक्षर *ip, u_int options, u_int note);
 
-void hostfile_create_user_ssh_dir(const char *, int);
+शून्य hostfile_create_user_ssh_dir(स्थिरांक अक्षर *, पूर्णांक);
 
 #endif

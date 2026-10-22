@@ -30,117 +30,117 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#अन्तर्भाव "includes.h"
+#जर !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
-#include <sys/types.h>
-#include <errno.h>
-#include <ctype.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <ctype.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdlib.h>
 
-#include "vis.h"
+#अन्तर्भाव "vis.h"
 
 #define	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
 #define	isvisible(c,flag)						\
 	(((c) == '\\' || (flag & VIS_ALL) == 0) &&			\
-	(((u_int)(c) <= UCHAR_MAX && isascii((u_char)(c)) &&		\
+	(((u_int)(c) <= अच_अक्षर_उच्च && isascii((u_char)(c)) &&		\
 	(((c) != '*' && (c) != '?' && (c) != '[' && (c) != '#') ||	\
-		(flag & VIS_GLOB) == 0) && isgraph((u_char)(c))) ||	\
+		(flag & VIS_GLOB) == 0) && है_चित्र((u_char)(c))) ||	\
 	((flag & VIS_SP) == 0 && (c) == ' ') ||				\
 	((flag & VIS_TAB) == 0 && (c) == '\t') ||			\
 	((flag & VIS_NL) == 0 && (c) == '\n') ||			\
 	((flag & VIS_SAFE) && ((c) == '\b' ||				\
 		(c) == '\007' || (c) == '\r' ||				\
-		isgraph((u_char)(c))))))
+		है_चित्र((u_char)(c))))))
 
 /*
  * vis - visually encode characters
  */
-char *
-vis(char *dst, int c, int flag, int nextc)
+अक्षर *
+vis(अक्षर *dst, पूर्णांक c, पूर्णांक flag, पूर्णांक nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	जर (isvisible(c, flag)) {
+		जर ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		परत (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
-		switch(c) {
-		case '\n':
+	जर (flag & VIS_CSTYLE) {
+		निवड(c) {
+		स्थिती '\n':
 			*dst++ = '\\';
 			*dst++ = 'n';
-			goto done;
-		case '\r':
+			जा done;
+		स्थिती '\r':
 			*dst++ = '\\';
 			*dst++ = 'r';
-			goto done;
-		case '\b':
+			जा done;
+		स्थिती '\b':
 			*dst++ = '\\';
 			*dst++ = 'b';
-			goto done;
-		case '\a':
+			जा done;
+		स्थिती '\a':
 			*dst++ = '\\';
 			*dst++ = 'a';
-			goto done;
-		case '\v':
+			जा done;
+		स्थिती '\v':
 			*dst++ = '\\';
 			*dst++ = 'v';
-			goto done;
-		case '\t':
+			जा done;
+		स्थिती '\t':
 			*dst++ = '\\';
 			*dst++ = 't';
-			goto done;
-		case '\f':
+			जा done;
+		स्थिती '\f':
 			*dst++ = '\\';
 			*dst++ = 'f';
-			goto done;
-		case ' ':
+			जा done;
+		स्थिती ' ':
 			*dst++ = '\\';
 			*dst++ = 's';
-			goto done;
-		case '\0':
+			जा done;
+		स्थिती '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			जर (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
-			goto done;
+			जा done;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	जर (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
 		*dst++ = ((u_char)c >> 3 & 07) + '0';
 		*dst++ = ((u_char)c & 07) + '0';
-		goto done;
+		जा done;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	जर ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	जर (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	जर (है_नियंत्रण((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		जर (c == 0177)
 			*dst++ = '?';
-		else
+		अन्यथा
 			*dst++ = c + '@';
-	} else {
+	} अन्यथा {
 		*dst++ = '-';
 		*dst++ = c;
 	}
 done:
 	*dst = '\0';
-	return (dst);
+	परत (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,96 +157,96 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+पूर्णांक
+strvis(अक्षर *dst, स्थिरांक अक्षर *src, पूर्णांक flag)
 {
-	char c;
-	char *start;
+	अक्षर c;
+	अक्षर *start;
 
-	for (start = dst; (c = *src);)
+	साठी (start = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	परत (dst - start);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+पूर्णांक
+strnvis(अक्षर *dst, स्थिरांक अक्षर *src, माप_प्रकार siz, पूर्णांक flag)
 {
-	char *start, *end;
-	char tbuf[5];
-	int c, i;
+	अक्षर *start, *end;
+	अक्षर tbuf[5];
+	पूर्णांक c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	साठी (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
+		जर (isvisible(c, flag)) {
+			जर ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				जर (dst + 1 >= end) {
 					i = 2;
-					break;
+					थांबा;
 				}
 				*dst++ = '\\';
 			}
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} अन्यथा {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
-				memcpy(dst, tbuf, i);
+			जर (dst + i <= end) {
+				स_नकल(dst, tbuf, i);
 				dst += i;
-			} else {
+			} अन्यथा {
 				src--;
-				break;
+				थांबा;
 			}
 		}
 	}
-	if (siz > 0)
+	जर (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	जर (dst + i > end) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		पर्यंत ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	परत (dst - start);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#जर 0 /* unused in OpenSSH */
+पूर्णांक
+stravis(अक्षर **outp, स्थिरांक अक्षर *src, पूर्णांक flag)
 {
-	char *buf;
-	int len, serrno;
+	अक्षर *buf;
+	पूर्णांक len, serrno;
 
-	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	buf = reallocarray(रिक्त, 4, म_माप(src) + 1);
+	जर (buf == रिक्त)
+		परत -1;
 	len = strvis(buf, src, flag);
-	serrno = errno;
-	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	serrno = त्रुटि_सं;
+	*outp = पुनः_स्मृति(buf, len + 1);
+	जर (*outp == रिक्त) {
 		*outp = buf;
-		errno = serrno;
+		त्रुटि_सं = serrno;
 	}
-	return (len);
+	परत (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+पूर्णांक
+strvisx(अक्षर *dst, स्थिरांक अक्षर *src, माप_प्रकार len, पूर्णांक flag)
 {
-	char c;
-	char *start;
+	अक्षर c;
+	अक्षर *start;
 
-	for (start = dst; len > 1; len--) {
+	साठी (start = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	जर (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	परत (dst - start);
 }
 #endif /* unused */
 

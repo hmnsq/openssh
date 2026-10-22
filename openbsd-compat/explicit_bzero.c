@@ -5,9 +5,9 @@
  * Written by Ted Unangst
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <string.h>
+#अन्तर्भाव <string.h>
 
 /*
  * explicit_bzero - don't let the compiler optimize away bzero
@@ -17,43 +17,43 @@
 
 #ifdef HAVE_EXPLICIT_MEMSET
 
-void
-explicit_bzero(void *p, size_t n)
+शून्य
+explicit_bzero(शून्य *p, माप_प्रकार n)
 {
-	(void)explicit_memset(p, 0, n);
+	(शून्य)explicit_memset(p, 0, n);
 }
 
-#elif defined(HAVE_MEMSET_S)
+#किंवाजर defined(HAVE_MEMSET_S)
 
-void
-explicit_bzero(void *p, size_t n)
+शून्य
+explicit_bzero(शून्य *p, माप_प्रकार n)
 {
-	if (n == 0)
-		return;
-	(void)memset_s(p, n, 0, n);
+	जर (n == 0)
+		परत;
+	(शून्य)memset_s(p, n, 0, n);
 }
 
-#else /* HAVE_MEMSET_S */
+#अन्यथा /* HAVE_MEMSET_S */
 
 /*
  * Indirect bzero through a volatile pointer to hopefully avoid
  * dead-store optimisation eliminating the call.
  */
-static void (* volatile ssh_bzero)(void *, size_t) = bzero;
+स्थिर शून्य (* अस्थिर ssh_bzero)(शून्य *, माप_प्रकार) = bzero;
 
-void
-explicit_bzero(void *p, size_t n)
+शून्य
+explicit_bzero(शून्य *p, माप_प्रकार n)
 {
-	if (n == 0)
-		return;
+	जर (n == 0)
+		परत;
 	/*
 	 * clang -fsanitize=memory needs to intercept memset-like functions
 	 * to correctly detect memory initialisation. Make sure one is called
 	 * directly since our indirection trick above successfully confuses it.
 	 */
-#if defined(__has_feature)
-# if __has_feature(memory_sanitizer)
-	memset(p, 0, n);
+#जर defined(__has_feature)
+# जर __has_feature(memory_sanitizer)
+	स_रखो(p, 0, n);
 # endif
 #endif
 

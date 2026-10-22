@@ -26,28 +26,28 @@
 #ifndef SSHMAC_H
 #define SSHMAC_H
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-struct sshmac {
-	char	*name;
-	int	enabled;
+संरचना sshmac {
+	अक्षर	*name;
+	पूर्णांक	enabled;
 	u_int	mac_len;
-	u_char	*key;
-	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
-	struct ssh_hmac_ctx	*hmac_ctx;
-	struct umac_ctx		*umac_ctx;
+	u_char	*किल्ली;
+	u_int	किल्ली_len;
+	पूर्णांक	type;
+	पूर्णांक	etm;		/* Encrypt-then-MAC */
+	संरचना ssh_hmac_ctx	*hmac_ctx;
+	संरचना umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
-char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
-    u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
-    const u_char *, size_t);
-void	 mac_clear(struct sshmac *);
+पूर्णांक	 mac_valid(स्थिरांक अक्षर *);
+अक्षर	*mac_alg_list(अक्षर);
+पूर्णांक	 mac_setup(संरचना sshmac *, अक्षर *);
+पूर्णांक	 mac_init(संरचना sshmac *);
+पूर्णांक	 mac_compute(संरचना sshmac *, uint32_t, स्थिरांक u_char *, पूर्णांक,
+    u_char *, माप_प्रकार);
+पूर्णांक	 mac_check(संरचना sshmac *, uint32_t, स्थिरांक u_char *, माप_प्रकार,
+    स्थिरांक u_char *, माप_प्रकार);
+शून्य	 mac_clear(संरचना sshmac *);
 
 #endif /* SSHMAC_H */

@@ -33,54 +33,54 @@
 
 /* NETBSD ORIGINAL: external/bsd/file/dist/src/getline.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#if 0
-#include "file.h"
+#जर 0
+#अन्तर्भाव "file.h"
 #endif
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
+#जर !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <string.h>
 
-static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+स्थिर ssize_t
+getdelim(अक्षर **buf, माप_प्रकार *bufsiz, पूर्णांक delimiter, खाता *fp)
 {
-	char *ptr, *eptr;
+	अक्षर *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
-		*bufsiz = BUFSIZ;
+	जर (*buf == रिक्त || *bufsiz == 0) {
+		जर ((*buf = दो_स्मृति(बफ_मान)) == रिक्त)
+			परत -1;
+		*bufsiz = बफ_मान;
 	}
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+	साठी (ptr = *buf, eptr = *buf + *bufsiz;;) {
+		पूर्णांक c = ख_अक्षर_लो(fp);
+		जर (c == -1) {
+			जर (ख_पूर्ण(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				जर (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					परत diff;
 				}
 			}
-			return -1;
+			परत -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		जर (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			परत ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
-			char *nbuf;
-			size_t nbufsiz = *bufsiz * 2;
+		जर (ptr + 2 >= eptr) {
+			अक्षर *nbuf;
+			माप_प्रकार nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			जर ((nbuf = पुनः_स्मृति(*buf, nbufsiz)) == रिक्त)
+				परत -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -90,24 +90,24 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 }
 
 ssize_t
-getline(char **buf, size_t *bufsiz, FILE *fp)
+getline(अक्षर **buf, माप_प्रकार *bufsiz, खाता *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	परत getdelim(buf, bufsiz, '\n', fp);
 }
 
 #endif
 
 #ifdef TEST
-int
-main(int argc, char *argv[])
+पूर्णांक
+main(पूर्णांक argc, अक्षर *argv[])
 {
-	char *p = NULL;
+	अक्षर *p = रिक्त;
 	ssize_t len;
-	size_t n = 0;
+	माप_प्रकार n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
-		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
-	free(p);
-	return 0;
+	पर्यंत ((len = getline(&p, &n, मानक_निवेश)) != -1)
+		(शून्य)म_लिखो("%" SIZE_T_FORMAT "d %s", len, p);
+	मुक्त(p);
+	परत 0;
 }
 #endif

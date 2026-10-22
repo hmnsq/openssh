@@ -25,80 +25,80 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/memmem.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifndef HAVE_MEMMEM
 
-#include <string.h>
-#include <stdint.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdint.h>
 
-static char *
-twobyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+स्थिर अक्षर *
+twobyte_memmem(स्थिरांक अचिन्हित अक्षर *h, माप_प्रकार k, स्थिरांक अचिन्हित अक्षर *n)
 {
 	uint16_t nw = n[0]<<8 | n[1], hw = h[0]<<8 | h[1];
-	for (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-2;
-	return hw == nw ? (char *)h-2 : 0;
+	साठी (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
+		जर (hw == nw) परत (अक्षर *)h-2;
+	परत hw == nw ? (अक्षर *)h-2 : 0;
 }
 
-static char *
-threebyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+स्थिर अक्षर *
+threebyte_memmem(स्थिरांक अचिन्हित अक्षर *h, माप_प्रकार k, स्थिरांक अचिन्हित अक्षर *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8;
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8;
-	for (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
-		if (hw == nw) return (char *)h-3;
-	return hw == nw ? (char *)h-3 : 0;
+	साठी (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
+		जर (hw == nw) परत (अक्षर *)h-3;
+	परत hw == nw ? (अक्षर *)h-3 : 0;
 }
 
-static char *
-fourbyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+स्थिर अक्षर *
+fourbyte_memmem(स्थिरांक अचिन्हित अक्षर *h, माप_प्रकार k, स्थिरांक अचिन्हित अक्षर *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8 | n[3];
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8 | h[3];
-	for (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-4;
-	return hw == nw ? (char *)h-4 : 0;
+	साठी (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
+		जर (hw == nw) परत (अक्षर *)h-4;
+	परत hw == nw ? (अक्षर *)h-4 : 0;
 }
 
-#if 0
+#जर 0
 /* In -portable, defines.h ensures that these are already defined. */
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #endif
 
 #define BITOP(a,b,op) \
- ((a)[(size_t)(b)/(8*sizeof *(a))] op (size_t)1<<((size_t)(b)%(8*sizeof *(a))))
+ ((a)[(माप_प्रकार)(b)/(8*आकार *(a))] op (माप_प्रकार)1<<((माप_प्रकार)(b)%(8*आकार *(a))))
 
 /*
  * Maxime Crochemore and Dominique Perrin, Two-way string-matching,
  * Journal of the ACM, 38(3):651-675, July 1991.
  */
-static char *
-twoway_memmem(const unsigned char *h, const unsigned char *z,
-    const unsigned char *n, size_t l)
+स्थिर अक्षर *
+twoway_memmem(स्थिरांक अचिन्हित अक्षर *h, स्थिरांक अचिन्हित अक्षर *z,
+    स्थिरांक अचिन्हित अक्षर *n, माप_प्रकार l)
 {
-	size_t i, ip, jp, k, p, ms, p0, mem, mem0;
-	size_t byteset[32 / sizeof(size_t)] = { 0 };
-	size_t shift[256];
+	माप_प्रकार i, ip, jp, k, p, ms, p0, mem, mem0;
+	माप_प्रकार byteset[32 / आकार(माप_प्रकार)] = { 0 };
+	माप_प्रकार shift[256];
 
 	/* Computing length of needle and fill shift table */
-	for (i=0; i<l; i++)
+	साठी (i=0; i<l; i++)
 		BITOP(byteset, n[i], |=), shift[n[i]] = i+1;
 
 	/* Compute maximal suffix */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	पर्यंत (jp+k<l) {
+		जर (n[ip+k] == n[jp+k]) {
+			जर (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] > n[jp+k]) {
+			} अन्यथा k++;
+		} अन्यथा जर (n[ip+k] > n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} अन्यथा {
 			ip = jp++;
 			k = p = 1;
 		}
@@ -108,87 +108,87 @@ twoway_memmem(const unsigned char *h, const unsigned char *z,
 
 	/* And with the opposite comparison */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	पर्यंत (jp+k<l) {
+		जर (n[ip+k] == n[jp+k]) {
+			जर (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] < n[jp+k]) {
+			} अन्यथा k++;
+		} अन्यथा जर (n[ip+k] < n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} अन्यथा {
 			ip = jp++;
 			k = p = 1;
 		}
 	}
-	if (ip+1 > ms+1) ms = ip;
-	else p = p0;
+	जर (ip+1 > ms+1) ms = ip;
+	अन्यथा p = p0;
 
 	/* Periodic needle? */
-	if (memcmp(n, n+p, ms+1)) {
+	जर (स_भेद(n, n+p, ms+1)) {
 		mem0 = 0;
 		p = MAX(ms, l-ms-1) + 1;
-	} else mem0 = l-p;
+	} अन्यथा mem0 = l-p;
 	mem = 0;
 
 	/* Search loop */
-	for (;;) {
+	साठी (;;) {
 		/* If remainder of haystack is shorter than needle, done */
-		if (z-h < l) return 0;
+		जर (z-h < l) परत 0;
 
 		/* Check last byte first; advance by shift on mismatch */
-		if (BITOP(byteset, h[l-1], &)) {
+		जर (BITOP(byteset, h[l-1], &)) {
 			k = l-shift[h[l-1]];
-			if (k) {
-				if (k < mem) k = mem;
+			जर (k) {
+				जर (k < mem) k = mem;
 				h += k;
 				mem = 0;
-				continue;
+				सुरूठेवा;
 			}
-		} else {
+		} अन्यथा {
 			h += l;
 			mem = 0;
-			continue;
+			सुरूठेवा;
 		}
 
 		/* Compare right half */
-		for (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
-		if (k < l) {
+		साठी (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
+		जर (k < l) {
 			h += k-ms;
 			mem = 0;
-			continue;
+			सुरूठेवा;
 		}
 		/* Compare left half */
-		for (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
-		if (k <= mem) return (char *)h;
+		साठी (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
+		जर (k <= mem) परत (अक्षर *)h;
 		h += p;
 		mem = mem0;
 	}
 }
 
-void *
-memmem(const void *h0, size_t k, const void *n0, size_t l)
+शून्य *
+memmem(स्थिरांक शून्य *h0, माप_प्रकार k, स्थिरांक शून्य *n0, माप_प्रकार l)
 {
-	const unsigned char *h = h0, *n = n0;
+	स्थिरांक अचिन्हित अक्षर *h = h0, *n = n0;
 
 	/* Return immediately on empty needle */
-	if (!l) return (void *)h;
+	जर (!l) परत (शून्य *)h;
 
 	/* Return immediately when needle is longer than haystack */
-	if (k<l) return 0;
+	जर (k<l) परत 0;
 
 	/* Use faster algorithms for short needles */
-	h = memchr(h0, *n, k);
-	if (!h || l==1) return (void *)h;
-	k -= h - (const unsigned char *)h0;
-	if (k<l) return 0;
-	if (l==2) return twobyte_memmem(h, k, n);
-	if (l==3) return threebyte_memmem(h, k, n);
-	if (l==4) return fourbyte_memmem(h, k, n);
+	h = स_प्रथम(h0, *n, k);
+	जर (!h || l==1) परत (शून्य *)h;
+	k -= h - (स्थिरांक अचिन्हित अक्षर *)h0;
+	जर (k<l) परत 0;
+	जर (l==2) परत twobyte_memmem(h, k, n);
+	जर (l==3) परत threebyte_memmem(h, k, n);
+	जर (l==4) परत fourbyte_memmem(h, k, n);
 
-	return twoway_memmem(h, h+k, n, l);
+	परत twoway_memmem(h, h+k, n, l);
 }
 DEF_WEAK(memmem);
 #endif /* HAVE_MEMMEM */

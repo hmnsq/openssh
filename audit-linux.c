@@ -25,102 +25,102 @@
  * Red Hat author: Jan F. Chadima <jchadima@redhat.com>
  */
 
-#include "includes.h"
-#if defined(USE_LINUX_AUDIT)
-#include <libaudit.h>
-#include <unistd.h>
-#include <string.h>
+#अन्तर्भाव "includes.h"
+#जर defined(USE_LINUX_AUDIT)
+#अन्तर्भाव <libaudit.h>
+#अन्तर्भाव <unistd.h>
+#अन्तर्भाव <string.h>
 
-#include "log.h"
-#include "audit.h"
-#include "canohost.h"
-#include "packet.h"
+#अन्तर्भाव "log.h"
+#अन्तर्भाव "audit.h"
+#अन्तर्भाव "canohost.h"
+#अन्तर्भाव "packet.h"
 
-const char *audit_username(void);
+स्थिरांक अक्षर *audit_username(शून्य);
 
-int
-linux_audit_record_event(int uid, const char *username, const char *hostname,
-    const char *ip, const char *ttyn, int success)
+पूर्णांक
+linux_audit_record_event(पूर्णांक uid, स्थिरांक अक्षर *username, स्थिरांक अक्षर *hostname,
+    स्थिरांक अक्षर *ip, स्थिरांक अक्षर *ttyn, पूर्णांक success)
 {
-	int audit_fd, rc, saved_errno;
+	पूर्णांक audit_fd, rc, saved_errno;
 
-	if ((audit_fd = audit_open()) < 0) {
-		if (errno == EINVAL || errno == EPROTONOSUPPORT ||
-		    errno == EAFNOSUPPORT)
-			return 1; /* No audit support in kernel */
-		else
-			return 0; /* Must prevent login */
+	जर ((audit_fd = audit_open()) < 0) {
+		जर (त्रुटि_सं == EINVAL || त्रुटि_सं == EPROTONOSUPPORT ||
+		    त्रुटि_सं == EAFNOSUPPORT)
+			परत 1; /* No audit support in kernel */
+		अन्यथा
+			परत 0; /* Must prevent login */
 	}
-        if (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
-                hostname = NULL;
+        जर (hostname != रिक्त && म_भेद(hostname, "UNKNOWN") == 0)
+                hostname = रिक्त;
 	rc = audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
-	    NULL, "login", username ? username : "(unknown)",
-	    username == NULL ? uid : -1, hostname, ip, ttyn, success);
-	saved_errno = errno;
-	close(audit_fd);
+	    रिक्त, "login", username ? username : "(unknown)",
+	    username == रिक्त ? uid : -1, hostname, ip, ttyn, success);
+	saved_errno = त्रुटि_सं;
+	बंद(audit_fd);
 
 	/*
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	जर ((rc == -EPERM) && (geteuid() != 0))
 		rc = 0;
-	errno = saved_errno;
+	त्रुटि_सं = saved_errno;
 
-	return rc >= 0;
+	परत rc >= 0;
 }
 
 /* Below is the sshd audit API code */
 
-void
-audit_connection_from(const char *host, int port)
+शून्य
+audit_connection_from(स्थिरांक अक्षर *host, पूर्णांक port)
 {
 	/* not implemented */
 }
 
-void
-audit_run_command(const char *command)
+शून्य
+audit_run_command(स्थिरांक अक्षर *command)
 {
 	/* not implemented */
 }
 
-void
-audit_session_open(struct logininfo *li)
+शून्य
+audit_session_open(संरचना logininfo *li)
 {
-	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
-	    li->line, 1) == 0)
-		fatal("linux_audit_write_entry failed: %s", strerror(errno));
+	जर (linux_audit_record_event(li->uid, रिक्त, li->hostname, रिक्त,
+	    li->ओळ, 1) == 0)
+		fatal("linux_audit_write_entry failed: %s", म_त्रुटि(त्रुटि_सं));
 }
 
-void
-audit_session_close(struct logininfo *li)
+शून्य
+audit_session_close(संरचना logininfo *li)
 {
 	/* not implemented */
 }
 
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+शून्य
+audit_event(संरचना ssh *ssh, ssh_audit_event_t event)
 {
-	switch(event) {
-	case SSH_AUTH_SUCCESS:
-	case SSH_CONNECTION_CLOSE:
-	case SSH_NOLOGIN:
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
-		break;
-	case SSH_AUTH_FAIL_NONE:
-	case SSH_AUTH_FAIL_PASSWD:
-	case SSH_AUTH_FAIL_KBDINT:
-	case SSH_AUTH_FAIL_PUBKEY:
-	case SSH_AUTH_FAIL_HOSTBASED:
-	case SSH_AUTH_FAIL_GSSAPI:
-	case SSH_INVALID_USER:
-		linux_audit_record_event(-1, audit_username(), NULL,
+	निवड(event) {
+	स्थिती SSH_AUTH_SUCCESS:
+	स्थिती SSH_CONNECTION_CLOSE:
+	स्थिती SSH_NOLOGIN:
+	स्थिती SSH_LOGIN_EXCEED_MAXTRIES:
+	स्थिती SSH_LOGIN_मूळ_DENIED:
+		थांबा;
+	स्थिती SSH_AUTH_FAIL_NONE:
+	स्थिती SSH_AUTH_FAIL_PASSWD:
+	स्थिती SSH_AUTH_FAIL_KBDINT:
+	स्थिती SSH_AUTH_FAIL_PUBKEY:
+	स्थिती SSH_AUTH_FAIL_HOSTBASED:
+	स्थिती SSH_AUTH_FAIL_GSSAPI:
+	स्थिती SSH_INVALID_USER:
+		linux_audit_record_event(-1, audit_username(), रिक्त,
 		    ssh_remote_ipaddr(ssh), "sshd", 0);
-		break;
-	default:
+		थांबा;
+	पूर्वनिर्धारित:
 		debug_f("unhandled event %d", event);
-		break;
+		थांबा;
 	}
 }
 #endif /* USE_LINUX_AUDIT */

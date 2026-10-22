@@ -17,40 +17,40 @@
 
 /* Utility functions/framework for regress tests */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <sys/time.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/uio.h>
+#अन्तर्भाव <sys/time.h>
 
-#include <assert.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <math.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <math.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/err.h>
+#अन्तर्भाव <openssl/bn.h>
+#अन्तर्भाव <openssl/err.h>
 #endif
 
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#जर defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 
-#include "entropy.h"
-#include "test_helper.h"
-#include "atomicio.h"
-#include "match.h"
-#include "misc.h"
-#include "xmalloc.h"
+#अन्तर्भाव "entropy.h"
+#अन्तर्भाव "test_helper.h"
+#अन्तर्भाव "atomicio.h"
+#अन्तर्भाव "match.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "xmalloc.h"
 
 #define BENCH_FAST_DEADLINE	1
 #define BENCH_NORMAL_DEADLINE	10
@@ -60,741 +60,741 @@
 
 #define MINIMUM(a, b)    (((a) < (b)) ? (a) : (b))
 
-#define TEST_CHECK_INT(r, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (r == 0)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (r != 0)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (r < 0)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (r <= 0)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (r > 0)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (r >= 0)		\
-				return;		\
-			break;			\
-		default:			\
-			abort();		\
+#define TEST_CHECK_INT(r, pred) करा {		\
+		निवड (pred) {			\
+		स्थिती TEST_EQ:			\
+			जर (r == 0)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_NE:			\
+			जर (r != 0)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_LT:			\
+			जर (r < 0)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_LE:			\
+			जर (r <= 0)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_GT:			\
+			जर (r > 0)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_GE:			\
+			जर (r >= 0)		\
+				परत;		\
+			थांबा;			\
+		पूर्वनिर्धारित:			\
+			पात();		\
 		}				\
-	} while (0)
+	} पर्यंत (0)
 
-#define TEST_CHECK(x1, x2, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (x1 == x2)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (x1 != x2)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (x1 < x2)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (x1 <= x2)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (x1 > x2)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (x1 >= x2)		\
-				return;		\
-			break;			\
-		default:			\
-			abort();		\
+#define TEST_CHECK(x1, x2, pred) करा {		\
+		निवड (pred) {			\
+		स्थिती TEST_EQ:			\
+			जर (x1 == x2)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_NE:			\
+			जर (x1 != x2)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_LT:			\
+			जर (x1 < x2)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_LE:			\
+			जर (x1 <= x2)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_GT:			\
+			जर (x1 > x2)		\
+				परत;		\
+			थांबा;			\
+		स्थिती TEST_GE:			\
+			जर (x1 >= x2)		\
+				परत;		\
+			थांबा;			\
+		पूर्वनिर्धारित:			\
+			पात();		\
 		}				\
-	} while (0)
+	} पर्यंत (0)
 
-extern char *__progname;
+बाह्य अक्षर *__progname;
 
-static int verbose_mode = 0;
-static int quiet_mode = 0;
-static char *active_test_name = NULL;
-static u_int test_number = 0;
-static test_onerror_func_t *test_onerror = NULL;
-static void *onerror_ctx = NULL;
-static const char *data_dir = NULL;
-static char subtest_info[512];
-static int fast = 0;
-static int slow = 0;
-static int benchmark_detail_statistics = 0;
+स्थिर पूर्णांक verbose_mode = 0;
+स्थिर पूर्णांक quiet_mode = 0;
+स्थिर अक्षर *active_test_name = रिक्त;
+स्थिर u_int test_संख्या = 0;
+स्थिर test_onerror_func_t *test_onerror = रिक्त;
+स्थिर शून्य *onerror_ctx = रिक्त;
+स्थिर स्थिरांक अक्षर *data_dir = रिक्त;
+स्थिर अक्षर subtest_info[512];
+स्थिर पूर्णांक fast = 0;
+स्थिर पूर्णांक slow = 0;
+स्थिर पूर्णांक benchmark_detail_statistics = 0;
 
-static int benchmark = 0;
-static const char *bench_name = NULL;
-static char *benchmark_pattern = NULL;
-static struct timespec bench_start_time, bench_finish_time;
-static struct timespec *bench_samples;
-static int bench_skip, bench_nruns, bench_nalloc;
-double bench_accum_secs;
+स्थिर पूर्णांक benchmark = 0;
+स्थिर स्थिरांक अक्षर *bench_name = रिक्त;
+स्थिर अक्षर *benchmark_pattern = रिक्त;
+स्थिर संरचना timespec bench_start_time, bench_finish_time;
+स्थिर संरचना timespec *bench_samples;
+स्थिर पूर्णांक bench_skip, bench_nruns, bench_nalloc;
+द्विगुण bench_accum_secs;
 
-int
-main(int argc, char **argv)
+पूर्णांक
+main(पूर्णांक argc, अक्षर **argv)
 {
-	int ch;
+	पूर्णांक ch;
 
 	seed_rng();
 #ifdef WITH_OPENSSL
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, रिक्त);
 #endif
 
 	/* Handle systems without __progname */
-	if (__progname == NULL) {
-		__progname = strrchr(argv[0], '/');
-		if (__progname == NULL || __progname[1] == '\0')
+	जर (__progname == रिक्त) {
+		__progname = म_खोजप(argv[0], '/');
+		जर (__progname == रिक्त || __progname[1] == '\0')
 			__progname = argv[0];	
-		else
+		अन्यथा
 			__progname++;
-		if ((__progname = strdup(__progname)) == NULL) {
-			fprintf(stderr, "strdup failed\n");
-			exit(1);
+		जर ((__progname = strdup(__progname)) == रिक्त) {
+			ख_लिखो(मानक_त्रुटि, "strdup failed\n");
+			निकास(1);
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
-		switch (ch) {
-		case 'b':
+	पर्यंत ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
+		निवड (ch) {
+		स्थिती 'b':
 			benchmark = 1;
-			break;
-		case 'B':
+			थांबा;
+		स्थिती 'B':
 			benchmark = benchmark_detail_statistics = 1;
-			break;
-		case 'O':
+			थांबा;
+		स्थिती 'O':
 			benchmark_pattern = xstrdup(optarg);
-			break;
-		case 'F':
+			थांबा;
+		स्थिती 'F':
 			slow = 1;
-			break;
-		case 'f':
+			थांबा;
+		स्थिती 'f':
 			fast = 1;
-			break;
-		case 'd':
+			थांबा;
+		स्थिती 'd':
 			data_dir = optarg;
-			break;
-		case 'q':
+			थांबा;
+		स्थिती 'q':
 			verbose_mode = 0;
 			quiet_mode = 1;
-			break;
-		case 'v':
+			थांबा;
+		स्थिती 'v':
 			verbose_mode = 1;
 			quiet_mode = 0;
-			break;
-		default:
-			fprintf(stderr, "Unrecognised command line option\n");
-			fprintf(stderr, "Usage: %s [-vqfFbB] [-d data_dir] "
+			थांबा;
+		पूर्वनिर्धारित:
+			ख_लिखो(मानक_त्रुटि, "Unrecognised command line option\n");
+			ख_लिखो(मानक_त्रुटि, "Usage: %s [-vqfFbB] [-d data_dir] "
 			    "[-O pattern]\n", __progname);
-			exit(1);
+			निकास(1);
 		}
 	}
-	setvbuf(stdout, NULL, _IONBF, 0);
-	if (!quiet_mode)
-		printf("%s: ", __progname);
-	if (verbose_mode)
-		printf("\n");
+	रखो_भबफ(मानक_निकास, रिक्त, _IONBF, 0);
+	जर (!quiet_mode)
+		म_लिखो("%s: ", __progname);
+	जर (verbose_mode)
+		म_लिखो("\n");
 
-	if (benchmark)
+	जर (benchmark)
 		benchmarks();
-	else
+	अन्यथा
 		tests();
 
-	if (!quiet_mode && !benchmark)
-		printf(" %u tests ok\n", test_number);
-	return 0;
+	जर (!quiet_mode && !benchmark)
+		म_लिखो(" %u tests ok\n", test_संख्या);
+	परत 0;
 }
 
-int
-test_is_verbose(void)
+पूर्णांक
+test_is_verbose(शून्य)
 {
-	return verbose_mode;
+	परत verbose_mode;
 }
 
-int
-test_is_quiet(void)
+पूर्णांक
+test_is_quiet(शून्य)
 {
-	return quiet_mode;
+	परत quiet_mode;
 }
 
-int
-test_is_fast(void)
+पूर्णांक
+test_is_fast(शून्य)
 {
-	return fast;
+	परत fast;
 }
 
-int
-test_is_slow(void)
+पूर्णांक
+test_is_slow(शून्य)
 {
-	return slow;
+	परत slow;
 }
 
-const char *
-test_data_file(const char *name)
+स्थिरांक अक्षर *
+test_data_file(स्थिरांक अक्षर *name)
 {
-	static char ret[PATH_MAX];
+	स्थिर अक्षर ret[PATH_MAX];
 
-	if (data_dir != NULL)
-		snprintf(ret, sizeof(ret), "%s/%s", data_dir, name);
-	else
-		strlcpy(ret, name, sizeof(ret));
-	if (access(ret, F_OK) != 0) {
-		fprintf(stderr, "Cannot access data file %s: %s\n",
-		    ret, strerror(errno));
-		exit(1);
+	जर (data_dir != रिक्त)
+		snprintf(ret, आकार(ret), "%s/%s", data_dir, name);
+	अन्यथा
+		strlcpy(ret, name, आकार(ret));
+	जर (access(ret, F_OK) != 0) {
+		ख_लिखो(मानक_त्रुटि, "Cannot access data file %s: %s\n",
+		    ret, म_त्रुटि(त्रुटि_सं));
+		निकास(1);
 	}
-	return ret;
+	परत ret;
 }
 
-void
-test_info(char *s, size_t len)
+शून्य
+test_info(अक्षर *s, माप_प्रकार len)
 {
-	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_number,
-	    active_test_name == NULL ? "<none>" : active_test_name,
+	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_संख्या,
+	    active_test_name == रिक्त ? "<none>" : active_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 }
 
-static void
-siginfo(int unused __attribute__((__unused__)))
+स्थिर शून्य
+siginfo(पूर्णांक unused __attribute__((__unused__)))
 {
-	char buf[256];
+	अक्षर buf[256];
 
-	test_info(buf, sizeof(buf));
-	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
+	test_info(buf, आकार(buf));
+	atomicio(vwrite, STDERR_FILENO, buf, म_माप(buf));
 }
 
-void
-test_start(const char *n)
+शून्य
+test_start(स्थिरांक अक्षर *n)
 {
-	assert(active_test_name == NULL);
-	assert((active_test_name = strdup(n)) != NULL);
+	प्रतिज्ञा(active_test_name == रिक्त);
+	प्रतिज्ञा((active_test_name = strdup(n)) != रिक्त);
 	*subtest_info = '\0';
-	if (verbose_mode)
-		printf("test %u - \"%s\": ", test_number, active_test_name);
-	test_number++;
+	जर (verbose_mode)
+		म_लिखो("test %u - \"%s\": ", test_संख्या, active_test_name);
+	test_संख्या++;
 #ifdef SIGINFO
-	signal(SIGINFO, siginfo);
+	संकेत(SIGINFO, siginfo);
 #endif
-	signal(SIGUSR1, siginfo);
+	संकेत(SIGUSR1, siginfo);
 }
 
-void
-set_onerror_func(test_onerror_func_t *f, void *ctx)
+शून्य
+set_onerror_func(test_onerror_func_t *f, शून्य *ctx)
 {
 	test_onerror = f;
 	onerror_ctx = ctx;
 }
 
-void
-test_done(void)
+शून्य
+test_done(शून्य)
 {
 	*subtest_info = '\0';
-	assert(active_test_name != NULL);
-	free(active_test_name);
-	active_test_name = NULL;
-	if (verbose_mode)
-		printf("OK\n");
-	else if (!quiet_mode && !benchmark) {
-		printf(".");
-		fflush(stdout);
+	प्रतिज्ञा(active_test_name != रिक्त);
+	मुक्त(active_test_name);
+	active_test_name = रिक्त;
+	जर (verbose_mode)
+		म_लिखो("OK\n");
+	अन्यथा जर (!quiet_mode && !benchmark) {
+		म_लिखो(".");
+		ख_साफ(मानक_निकास);
 	}
 }
 
-void
-test_subtest_info(const char *fmt, ...)
+शून्य
+test_subtest_info(स्थिरांक अक्षर *fmt, ...)
 {
-	va_list ap;
+	बहु_सूची ap;
 
-	va_start(ap, fmt);
-	vsnprintf(subtest_info, sizeof(subtest_info), fmt, ap);
-	va_end(ap);
+	बहु_शुरू(ap, fmt);
+	vsnprintf(subtest_info, आकार(subtest_info), fmt, ap);
+	बहु_पूर्ण(ap);
 }
 
-int
-test_is_benchmark(void)
+पूर्णांक
+test_is_benchmark(शून्य)
 {
-	return benchmark;
+	परत benchmark;
 }
 
-void
-ssl_err_check(const char *file, int line)
+शून्य
+ssl_err_check(स्थिरांक अक्षर *file, पूर्णांक ओळ)
 {
 #ifdef WITH_OPENSSL
-	long openssl_error = ERR_get_error();
+	दीर्घ openssl_error = ERR_get_error();
 
-	if (openssl_error == 0)
-		return;
+	जर (openssl_error == 0)
+		परत;
 
-	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error: %s",
-	    file, line, ERR_error_string(openssl_error, NULL));
-#else /* WITH_OPENSSL */
-	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error ",
-	    file, line);
+	ख_लिखो(मानक_त्रुटि, "\n%s:%d: uncaught OpenSSL error: %s",
+	    file, ओळ, ERR_error_string(openssl_error, रिक्त));
+#अन्यथा /* WITH_OPENSSL */
+	ख_लिखो(मानक_त्रुटि, "\n%s:%d: uncaught OpenSSL error ",
+	    file, ओळ);
 #endif /* WITH_OPENSSL */
-	abort();
+	पात();
 }
 
-static const char *
-pred_name(enum test_predicate p)
+स्थिर स्थिरांक अक्षर *
+pred_name(गणना test_predicate p)
 {
-	switch (p) {
-	case TEST_EQ:
-		return "EQ";
-	case TEST_NE:
-		return "NE";
-	case TEST_LT:
-		return "LT";
-	case TEST_LE:
-		return "LE";
-	case TEST_GT:
-		return "GT";
-	case TEST_GE:
-		return "GE";
-	default:
-		return "UNKNOWN";
+	निवड (p) {
+	स्थिती TEST_EQ:
+		परत "EQ";
+	स्थिती TEST_NE:
+		परत "NE";
+	स्थिती TEST_LT:
+		परत "LT";
+	स्थिती TEST_LE:
+		परत "LE";
+	स्थिती TEST_GT:
+		परत "GT";
+	स्थिती TEST_GE:
+		परत "GE";
+	पूर्वनिर्धारित:
+		परत "UNKNOWN";
 	}
 }
 
-static void
-test_die(void)
+स्थिर शून्य
+test_die(शून्य)
 {
-	if (test_onerror != NULL)
+	जर (test_onerror != रिक्त)
 		test_onerror(onerror_ctx);
-	abort();
+	पात();
 }
 
-static void
-test_header(const char *file, int line, const char *a1, const char *a2,
-    const char *name, enum test_predicate pred)
+स्थिर शून्य
+test_header(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    स्थिरांक अक्षर *name, गणना test_predicate pred)
 {
-	fprintf(stderr, "\n%s:%d test #%u \"%s\"%s%s\n", 
-	    file, line, test_number, active_test_name,
+	ख_लिखो(मानक_त्रुटि, "\n%s:%d test #%u \"%s\"%s%s\n", 
+	    file, ओळ, test_संख्या, active_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
-	fprintf(stderr, "ASSERT_%s_%s(%s%s%s) failed:\n",
+	ख_लिखो(मानक_त्रुटि, "ASSERT_%s_%s(%s%s%s) failed:\n",
 	    name, pred_name(pred), a1,
-	    a2 != NULL ? ", " : "", a2 != NULL ? a2 : "");
+	    a2 != रिक्त ? ", " : "", a2 != रिक्त ? a2 : "");
 }
 
 #ifdef WITH_OPENSSL
-void
-assert_bignum(const char *file, int line, const char *a1, const char *a2,
-    const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred)
+शून्य
+assert_bignum(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    स्थिरांक BIGNUM *aa1, स्थिरांक BIGNUM *aa2, गणना test_predicate pred)
 {
-	int r = BN_cmp(aa1, aa2);
+	पूर्णांक r = BN_cmp(aa1, aa2);
 
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "BIGNUM", pred);
-	fprintf(stderr, "%12s = 0x%s\n", a1, BN_bn2hex(aa1));
-	fprintf(stderr, "%12s = 0x%s\n", a2, BN_bn2hex(aa2));
+	test_header(file, ओळ, a1, a2, "BIGNUM", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%s\n", a1, BN_bn2hex(aa1));
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%s\n", a2, BN_bn2hex(aa2));
 	test_die();
 }
 #endif
 
-void
-assert_string(const char *file, int line, const char *a1, const char *a2,
-    const char *aa1, const char *aa2, enum test_predicate pred)
+शून्य
+assert_string(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    स्थिरांक अक्षर *aa1, स्थिरांक अक्षर *aa2, गणना test_predicate pred)
 {
-	int r;
+	पूर्णांक r;
 
 	/* Verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, ओळ, a1, "NULL", aa1, रिक्त, TEST_NE);
+	assert_ptr(file, ओळ, a2, "NULL", aa2, रिक्त, TEST_NE);
 
-	r = strcmp(aa1, aa2);
+	r = म_भेद(aa1, aa2);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
-	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1, strlen(aa1));
-	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2, strlen(aa2));
+	test_header(file, ओळ, a1, a2, "STRING", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = %s (len %zu)\n", a1, aa1, म_माप(aa1));
+	ख_लिखो(मानक_त्रुटि, "%12s = %s (len %zu)\n", a2, aa2, म_माप(aa2));
 	test_die();
 }
 
-void
-assert_mem(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, size_t l, enum test_predicate pred)
+शून्य
+assert_mem(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    स्थिरांक शून्य *aa1, स्थिरांक शून्य *aa2, माप_प्रकार l, गणना test_predicate pred)
 {
-	int r;
-	char *aa1_tohex = NULL;
-	char *aa2_tohex = NULL;
+	पूर्णांक r;
+	अक्षर *aa1_tohex = रिक्त;
+	अक्षर *aa2_tohex = रिक्त;
 
-	if (l == 0)
-		return;
+	जर (l == 0)
+		परत;
 	/* If length is >0, then verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, ओळ, a1, "NULL", aa1, रिक्त, TEST_NE);
+	assert_ptr(file, ओळ, a2, "NULL", aa2, रिक्त, TEST_NE);
 
-	r = memcmp(aa1, aa2, l);
+	r = स_भेद(aa1, aa2, l);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
+	test_header(file, ओळ, a1, a2, "STRING", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 256));
 	aa2_tohex = tohex(aa2, MINIMUM(l, 256));
-	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1_tohex, l);
-	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2_tohex, l);
-	free(aa1_tohex);
-	free(aa2_tohex);
+	ख_लिखो(मानक_त्रुटि, "%12s = %s (len %zu)\n", a1, aa1_tohex, l);
+	ख_लिखो(मानक_त्रुटि, "%12s = %s (len %zu)\n", a2, aa2_tohex, l);
+	मुक्त(aa1_tohex);
+	मुक्त(aa2_tohex);
 	test_die();
 }
 
-static int
-memvalcmp(const uint8_t *s, u_char v, size_t l, size_t *where)
+स्थिर पूर्णांक
+memvalcmp(स्थिरांक uint8_t *s, u_char v, माप_प्रकार l, माप_प्रकार *where)
 {
-	size_t i;
+	माप_प्रकार i;
 
-	for (i = 0; i < l; i++) {
-		if (s[i] != v) {
+	साठी (i = 0; i < l; i++) {
+		जर (s[i] != v) {
 			*where = i;
-			return 1;
+			परत 1;
 		}
 	}
-	return 0;
+	परत 0;
 }
 
-void
-assert_mem_filled(const char *file, int line, const char *a1,
-    const void *aa1, u_char v, size_t l, enum test_predicate pred)
+शून्य
+assert_mem_filled(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1,
+    स्थिरांक शून्य *aa1, u_char v, माप_प्रकार l, गणना test_predicate pred)
 {
-	size_t where = -1;
-	int r;
-	char tmp[64];
-	char *aa1_tohex = NULL;
+	माप_प्रकार where = -1;
+	पूर्णांक r;
+	अक्षर tmp[64];
+	अक्षर *aa1_tohex = रिक्त;
 
-	if (l == 0)
-		return;
+	जर (l == 0)
+		परत;
 	/* If length is >0, then verify the pointer is not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
+	assert_ptr(file, ओळ, a1, "NULL", aa1, रिक्त, TEST_NE);
 
 	r = memvalcmp(aa1, v, l, &where);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, NULL, "MEM_ZERO", pred);
+	test_header(file, ओळ, a1, रिक्त, "MEM_ZERO", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 20));
-	fprintf(stderr, "%20s = %s%s (len %zu)\n", a1,
+	ख_लिखो(मानक_त्रुटि, "%20s = %s%s (len %zu)\n", a1,
 	    aa1_tohex, l > 20 ? "..." : "", l);
-	free(aa1_tohex);
-	snprintf(tmp, sizeof(tmp), "(%s)[%zu]", a1, where);
-	fprintf(stderr, "%20s = 0x%02x (expected 0x%02x)\n", tmp,
+	मुक्त(aa1_tohex);
+	snprintf(tmp, आकार(tmp), "(%s)[%zu]", a1, where);
+	ख_लिखो(मानक_त्रुटि, "%20s = 0x%02x (expected 0x%02x)\n", tmp,
 	    ((u_char *)aa1)[where], v);
 	test_die();
 }
 
-void
-assert_int(const char *file, int line, const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred)
+शून्य
+assert_int(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    पूर्णांक aa1, पूर्णांक aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "INT", pred);
-	fprintf(stderr, "%12s = %d\n", a1, aa1);
-	fprintf(stderr, "%12s = %d\n", a2, aa2);
+	test_header(file, ओळ, a1, a2, "INT", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = %d\n", a1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = %d\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_size_t(const char *file, int line, const char *a1, const char *a2,
-    size_t aa1, size_t aa2, enum test_predicate pred)
+शून्य
+assert_size_t(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    माप_प्रकार aa1, माप_प्रकार aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "SIZE_T", pred);
-	fprintf(stderr, "%12s = %zu\n", a1, aa1);
-	fprintf(stderr, "%12s = %zu\n", a2, aa2);
+	test_header(file, ओळ, a1, a2, "SIZE_T", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = %zu\n", a1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = %zu\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_u_int(const char *file, int line, const char *a1, const char *a2,
-    u_int aa1, u_int aa2, enum test_predicate pred)
+शून्य
+assert_u_int(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    u_int aa1, u_int aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U_INT", pred);
-	fprintf(stderr, "%12s = %u / 0x%x\n", a1, aa1, aa1);
-	fprintf(stderr, "%12s = %u / 0x%x\n", a2, aa2, aa2);
+	test_header(file, ओळ, a1, a2, "U_INT", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = %u / 0x%x\n", a1, aa1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = %u / 0x%x\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long(const char *file, int line, const char *a1, const char *a2,
-    long aa1, long aa2, enum test_predicate pred)
+शून्य
+assert_long(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    दीर्घ aa1, दीर्घ aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG", pred);
-	fprintf(stderr, "%12s = %ld / 0x%lx\n", a1, aa1, aa1);
-	fprintf(stderr, "%12s = %ld / 0x%lx\n", a2, aa2, aa2);
+	test_header(file, ओळ, a1, a2, "LONG", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = %ld / 0x%lx\n", a1, aa1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = %ld / 0x%lx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long_long(const char *file, int line, const char *a1, const char *a2,
-    long long aa1, long long aa2, enum test_predicate pred)
+शून्य
+assert_long_long(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    दीर्घ दीर्घ aa1, दीर्घ दीर्घ aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG LONG", pred);
-	fprintf(stderr, "%12s = %lld / 0x%llx\n", a1, aa1, aa1);
-	fprintf(stderr, "%12s = %lld / 0x%llx\n", a2, aa2, aa2);
+	test_header(file, ओळ, a1, a2, "LONG LONG", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = %lld / 0x%llx\n", a1, aa1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = %lld / 0x%llx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_char(const char *file, int line, const char *a1, const char *a2,
-    char aa1, char aa2, enum test_predicate pred)
+शून्य
+assert_char(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    अक्षर aa1, अक्षर aa2, गणना test_predicate pred)
 {
-	char buf[8];
+	अक्षर buf[8];
 
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "CHAR", pred);
-	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
+	test_header(file, ओळ, a1, a2, "CHAR", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = '%s' / 0x02%x\n", a1,
 	    vis(buf, aa1, VIS_SAFE|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa1);
-	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
+	ख_लिखो(मानक_त्रुटि, "%12s = '%s' / 0x02%x\n", a1,
 	    vis(buf, aa2, VIS_SAFE|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa2);
 	test_die();
 }
 
-void
-assert_u8(const char *file, int line, const char *a1, const char *a2,
-    uint8_t aa1, uint8_t aa2, enum test_predicate pred)
+शून्य
+assert_u8(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    uint8_t aa1, uint8_t aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U8", pred);
-	fprintf(stderr, "%12s = 0x%02x %u\n", a1, aa1, aa1);
-	fprintf(stderr, "%12s = 0x%02x %u\n", a2, aa2, aa2);
+	test_header(file, ओळ, a1, a2, "U8", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%02x %u\n", a1, aa1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%02x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u16(const char *file, int line, const char *a1, const char *a2,
-    uint16_t aa1, uint16_t aa2, enum test_predicate pred)
+शून्य
+assert_u16(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    uint16_t aa1, uint16_t aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U16", pred);
-	fprintf(stderr, "%12s = 0x%04x %u\n", a1, aa1, aa1);
-	fprintf(stderr, "%12s = 0x%04x %u\n", a2, aa2, aa2);
+	test_header(file, ओळ, a1, a2, "U16", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%04x %u\n", a1, aa1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%04x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u32(const char *file, int line, const char *a1, const char *a2,
-    uint32_t aa1, uint32_t aa2, enum test_predicate pred)
+शून्य
+assert_u32(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    uint32_t aa1, uint32_t aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U32", pred);
-	fprintf(stderr, "%12s = 0x%08x %u\n", a1, aa1, aa1);
-	fprintf(stderr, "%12s = 0x%08x %u\n", a2, aa2, aa2);
+	test_header(file, ओळ, a1, a2, "U32", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%08x %u\n", a1, aa1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%08x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u64(const char *file, int line, const char *a1, const char *a2,
-    uint64_t aa1, uint64_t aa2, enum test_predicate pred)
+शून्य
+assert_u64(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    uint64_t aa1, uint64_t aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U64", pred);
-	fprintf(stderr, "%12s = 0x%016llx %llu\n", a1,
-	    (unsigned long long)aa1, (unsigned long long)aa1);
-	fprintf(stderr, "%12s = 0x%016llx %llu\n", a2,
-	    (unsigned long long)aa2, (unsigned long long)aa2);
+	test_header(file, ओळ, a1, a2, "U64", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%016llx %llu\n", a1,
+	    (अचिन्हित दीर्घ दीर्घ)aa1, (अचिन्हित दीर्घ दीर्घ)aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = 0x%016llx %llu\n", a2,
+	    (अचिन्हित दीर्घ दीर्घ)aa2, (अचिन्हित दीर्घ दीर्घ)aa2);
 	test_die();
 }
 
-void
-assert_double(const char *file, int line, const char *a1, const char *a2,
-    double aa1, double aa2, enum test_predicate pred)
+शून्य
+assert_double(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    द्विगुण aa1, द्विगुण aa2, गणना test_predicate pred)
 {
-	const double epsilon = 0.000000001;
+	स्थिरांक द्विगुण epsilon = 0.000000001;
 
-	switch (pred) {
-	case TEST_EQ:
-		if (fabs(aa1 - aa2) < epsilon)
-			return;
-		break;
-	case TEST_NE:
-		if (fabs(aa1 - aa2) >= epsilon)
-			return;
-		break;
-	case TEST_LT:
-		if (aa1 < aa2)
-			return;
-		break;
-	case TEST_LE:
-		if (aa1 <= aa2)
-			return;
-		break;
-	case TEST_GT:
-		if (aa1 > aa2)
-			return;
-		break;
-	case TEST_GE:
-		if (aa1 >= aa2)
-			return;
-		break;
-	default:
-		abort();
+	निवड (pred) {
+	स्थिती TEST_EQ:
+		जर (भ_असल(aa1 - aa2) < epsilon)
+			परत;
+		थांबा;
+	स्थिती TEST_NE:
+		जर (भ_असल(aa1 - aa2) >= epsilon)
+			परत;
+		थांबा;
+	स्थिती TEST_LT:
+		जर (aa1 < aa2)
+			परत;
+		थांबा;
+	स्थिती TEST_LE:
+		जर (aa1 <= aa2)
+			परत;
+		थांबा;
+	स्थिती TEST_GT:
+		जर (aa1 > aa2)
+			परत;
+		थांबा;
+	स्थिती TEST_GE:
+		जर (aa1 >= aa2)
+			परत;
+		थांबा;
+	पूर्वनिर्धारित:
+		पात();
 	}
 
-	test_header(file, line, a1, a2, "DOUBLE", pred);
-	fprintf(stderr, "%12s = %f\n", a1, aa1);
-	fprintf(stderr, "%12s = %f\n", a2, aa2);
+	test_header(file, ओळ, a1, a2, "DOUBLE", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = %f\n", a1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = %f\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_ptr(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, enum test_predicate pred)
+शून्य
+assert_ptr(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *a1, स्थिरांक अक्षर *a2,
+    स्थिरांक शून्य *aa1, स्थिरांक शून्य *aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "PTR", pred);
-	fprintf(stderr, "%12s = %p\n", a1, aa1);
-	fprintf(stderr, "%12s = %p\n", a2, aa2);
+	test_header(file, ओळ, a1, a2, "PTR", pred);
+	ख_लिखो(मानक_त्रुटि, "%12s = %p\n", a1, aa1);
+	ख_लिखो(मानक_त्रुटि, "%12s = %p\n", a2, aa2);
 	test_die();
 }
 
-static double
-tstod(const struct timespec *ts)
+स्थिर द्विगुण
+tstod(स्थिरांक संरचना timespec *ts)
 {
-	return (double)ts->tv_sec + ((double)ts->tv_nsec / 1000000000.0);
+	परत (द्विगुण)ts->tv_sec + ((द्विगुण)ts->tv_nsec / 1000000000.0);
 }
 
-void
-hex2bin(uint8_t *bin, const char *hex, size_t len)
+शून्य
+hex2bin(uint8_t *bin, स्थिरांक अक्षर *hex, माप_प्रकार len)
 {
-	size_t i;
-	unsigned int v;
+	माप_प्रकार i;
+	अचिन्हित पूर्णांक v;
 
 	/* Don't use %hhx since it's C99 and older platforms don't have it. */
-	for (i = 0; i < len; i++) {
-		ASSERT_INT_EQ(sscanf(hex + i * 2, "%02x", &v), 1);
+	साठी (i = 0; i < len; i++) {
+		ASSERT_INT_EQ(माला_पूछो(hex + i * 2, "%02x", &v), 1);
 		ASSERT_U_INT_LE(v, 256);
 		bin[i] = (uint8_t)v;
 	}
 }
 
-void
-bench_start(const char *file, int line, const char *name)
+शून्य
+bench_start(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *name)
 {
-	char *cp;
+	अक्षर *cp;
 
-	if (bench_name != NULL) {
-		fprintf(stderr, "\n%s:%d internal error: BENCH_START() called "
+	जर (bench_name != रिक्त) {
+		ख_लिखो(मानक_त्रुटि, "\n%s:%d internal error: BENCH_START() called "
 		    "while previous benchmark \"%s\" incomplete",
-		    file, line, bench_name);
-		abort();
+		    file, ओळ, bench_name);
+		पात();
 	}
 	cp = xstrdup(name);
 	lowercase(cp);
-	bench_skip = benchmark_pattern != NULL &&
+	bench_skip = benchmark_pattern != रिक्त &&
 	    match_pattern_list(cp, benchmark_pattern, 1) != 1;
-	free(cp);
+	मुक्त(cp);
 
 	bench_name = name;
 	bench_nruns = 0;
-	if (bench_skip)
-		return;
-	free(bench_samples);
+	जर (bench_skip)
+		परत;
+	मुक्त(bench_samples);
 	bench_nalloc = BENCH_SAMPLES_ALLOC;
-	bench_samples = xcalloc(sizeof(*bench_samples), bench_nalloc);
+	bench_samples = xcalloc(आकार(*bench_samples), bench_nalloc);
 	bench_accum_secs = 0;
 }
 
-int
-bench_done(void)
+पूर्णांक
+bench_done(शून्य)
 {
-	return bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
+	परत bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
 	    (slow ? BENCH_SLOW_DEADLINE : BENCH_NORMAL_DEADLINE));
 }
 
-void
-bench_case_start(const char *file, int line)
+शून्य
+bench_case_start(स्थिरांक अक्षर *file, पूर्णांक ओळ)
 {
 	clock_gettime(CLOCK_REALTIME, &bench_start_time);
 }
 
-void
-bench_case_finish(const char *file, int line)
+शून्य
+bench_case_finish(स्थिरांक अक्षर *file, पूर्णांक ओळ)
 {
-	struct timespec ts;
+	संरचना timespec ts;
 
 	clock_gettime(CLOCK_REALTIME, &bench_finish_time);
 	timespecsub(&bench_finish_time, &bench_start_time, &ts);
-	if (bench_nruns >= bench_nalloc) {
-		if (bench_nalloc >= INT_MAX / 2) {
-			fprintf(stderr, "\n%s:%d benchmark %s too many samples",
+	जर (bench_nruns >= bench_nalloc) {
+		जर (bench_nalloc >= पूर्णांक_उच्च / 2) {
+			ख_लिखो(मानक_त्रुटि, "\n%s:%d benchmark %s too many samples",
 			    __FILE__, __LINE__, bench_name);
-			abort();
+			पात();
 		}
 		bench_samples = xrecallocarray(bench_samples, bench_nalloc,
-		    bench_nalloc * 2, sizeof(*bench_samples));
+		    bench_nalloc * 2, आकार(*bench_samples));
 		bench_nalloc *= 2;
 	}
 	bench_samples[bench_nruns++] = ts;
 	bench_accum_secs += tstod(&ts);
 }
 
-static int
-tscmp(const void *aa, const void *bb)
+स्थिर पूर्णांक
+tscmp(स्थिरांक शून्य *aa, स्थिरांक शून्य *bb)
 {
-	const struct timespec *a = (const struct timespec *)aa;
-	const struct timespec *b = (const struct timespec *)bb;
+	स्थिरांक संरचना timespec *a = (स्थिरांक संरचना timespec *)aa;
+	स्थिरांक संरचना timespec *b = (स्थिरांक संरचना timespec *)bb;
 
-	if (timespeccmp(a, b, ==))
-		return 0;
-	return timespeccmp(a, b, <) ? -1 : 1;
+	जर (timespeccmp(a, b, ==))
+		परत 0;
+	परत timespeccmp(a, b, <) ? -1 : 1;
 }
 
-void
-bench_finish(const char *file, int line, const char *unit)
+शून्य
+bench_finish(स्थिरांक अक्षर *file, पूर्णांक ओळ, स्थिरांक अक्षर *unit)
 {
-	double std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
-	int i;
+	द्विगुण std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
+	पूर्णांक i;
 
-	if (bench_skip)
-		goto done;
+	जर (bench_skip)
+		जा done;
 
-	if (bench_nruns < 1) {
-		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, line,
+	जर (bench_nruns < 1) {
+		ख_लिखो(मानक_त्रुटि, "\n%s:%d benchmark %s never ran", file, ओळ,
 		    bench_name);
-		abort();
+		पात();
 	}
 	/* median */
-	qsort(bench_samples, bench_nruns, sizeof(*bench_samples), tscmp);
+	क्विक(bench_samples, bench_nruns, आकार(*bench_samples), tscmp);
 	i = bench_nruns / 2;
 	med_spr = tstod(&bench_samples[i]);
-	if (bench_nruns > 1 && bench_nruns & 1)
+	जर (bench_nruns > 1 && bench_nruns & 1)
 		med_spr = (med_spr + tstod(&bench_samples[i - 1])) / 2.0;
-	med_rps = (med_spr == 0.0) ? INFINITY : 1.0/med_spr;
+	med_rps = (med_spr == 0.0) ? अनन्त : 1.0/med_spr;
 	/* mean */
-	mean_spr = bench_accum_secs / (double)bench_nruns;
-	mean_rps = (mean_spr == 0.0) ? INFINITY : 1.0/mean_spr;
+	mean_spr = bench_accum_secs / (द्विगुण)bench_nruns;
+	mean_rps = (mean_spr == 0.0) ? अनन्त : 1.0/mean_spr;
 	/* std. dev */
 	std_dev = 0;
-	for (i = 0; i < bench_nruns; i++) {
+	साठी (i = 0; i < bench_nruns; i++) {
 		std_dev = tstod(&bench_samples[i]) - mean_spr;
 		std_dev *= std_dev;
 	}
-	std_dev /= (double)bench_nruns;
-	std_dev = sqrt(std_dev);
-	if (benchmark_detail_statistics) {
-		printf("%s: %d runs in %0.3fs, %0.03f/%0.03f ms/%s "
+	std_dev /= (द्विगुण)bench_nruns;
+	std_dev = वर्ग_मूल(std_dev);
+	जर (benchmark_detail_statistics) {
+		म_लिखो("%s: %d runs in %0.3fs, %0.03f/%0.03f ms/%s "
 		    "(mean/median), std.dev %0.03f ms, "
 		    "%0.2f/%0.2f %s/s (mean/median)\n",
 		    bench_name, bench_nruns, bench_accum_secs,
 		    mean_spr * 1000, med_spr * 1000, unit, std_dev * 1000,
 		    mean_rps, med_rps, unit);
-	} else {
-		printf("%-*s %0.2f %s/s\n", BENCH_COLUMN_WIDTH,
+	} अन्यथा {
+		म_लिखो("%-*s %0.2f %s/s\n", BENCH_COLUMN_WIDTH,
 		    bench_name, med_rps, unit);
 	}
  done:
-	bench_name = NULL;
+	bench_name = रिक्त;
 	bench_nruns = 0;
-	free(bench_samples);
-	bench_samples = NULL;
+	मुक्त(bench_samples);
+	bench_samples = रिक्त;
 	bench_skip = 0;
 }

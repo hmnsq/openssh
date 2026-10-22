@@ -5,29 +5,29 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifdef USE_MLKEM768X25519
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
+#अन्तर्भाव "../test_helper/test_helper.h"
+#अन्तर्भाव "crypto_api.h"
 
-struct mlkem768_kat {
-	const char *seed;
-	const char *pk_hash;
-	const char *sk_hash;
-	const char *enc_seed;
-	const char *ct_hash;
-	const char *shared_secret;
+संरचना mlkem768_kat {
+	स्थिरांक अक्षर *seed;
+	स्थिरांक अक्षर *pk_hash;
+	स्थिरांक अक्षर *sk_hash;
+	स्थिरांक अक्षर *enc_seed;
+	स्थिरांक अक्षर *ct_hash;
+	स्थिरांक अक्षर *shared_secret;
 };
 
-static const struct mlkem768_kat mlkem768_kats[] = {
+स्थिर स्थिरांक संरचना mlkem768_kat mlkem768_kats[] = {
 	{
 		"7c9935a0b07694aa0c6d10e4db6b1add2fd81a25"
 		"ccb148032dcd739936737f2d"
@@ -110,10 +110,10 @@ static const struct mlkem768_kat mlkem768_kats[] = {
 	}
 };
 
-void mlkem_tests(void);
+शून्य mlkem_tests(शून्य);
 
-void
-mlkem_tests(void)
+शून्य
+mlkem_tests(शून्य)
 {
 	uint8_t pk[MLKEM768_PUBLICKEYBYTES];
 	uint8_t sk[MLKEM768_SECRETKEYBYTES];
@@ -123,10 +123,10 @@ mlkem_tests(void)
 	uint8_t expected_pk_hash[32], expected_sk_hash[32];
 	uint8_t expected_ct_hash[32], expected_shared_secret[32];
 	uint8_t seed[64], enc_seed[32];
-	size_t i;
+	माप_प्रकार i;
 
 	TEST_START("ML-KEM 768 KATs");
-	for (i = 0; i < sizeof(mlkem768_kats) / sizeof(mlkem768_kats[0]); i++) {
+	साठी (i = 0; i < आकार(mlkem768_kats) / आकार(mlkem768_kats[0]); i++) {
 		test_subtest_info("vector %zu", i);
 
 		hex2bin(seed, mlkem768_kats[i].seed, 64);
@@ -136,8 +136,8 @@ mlkem_tests(void)
 		/* Keypair generation */
 		ASSERT_INT_EQ(crypto_kem_mlkem768_keypair_seeded(pk, sk, seed), 0);
 
-		sha3_256(pk_hash, pk, sizeof(pk));
-		sha3_256(sk_hash, sk, sizeof(sk));
+		sha3_256(pk_hash, pk, आकार(pk));
+		sha3_256(sk_hash, sk, आकार(sk));
 
 		ASSERT_MEM_EQ(pk_hash, expected_pk_hash, 32);
 		ASSERT_MEM_EQ(sk_hash, expected_sk_hash, 32);
@@ -151,7 +151,7 @@ mlkem_tests(void)
 		ASSERT_INT_EQ(crypto_kem_mlkem768_enc_seeded(ct, shared_secret,
 		    pk, enc_seed), 0);
 
-		sha3_256(ct_hash, ct, sizeof(ct));
+		sha3_256(ct_hash, ct, आकार(ct));
 		ASSERT_MEM_EQ(ct_hash, expected_ct_hash, 32);
 		ASSERT_MEM_EQ(shared_secret, expected_shared_secret, 32);
 
