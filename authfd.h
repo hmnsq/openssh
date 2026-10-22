@@ -16,58 +16,58 @@
 #ifndef AUTHFD_H
 #define AUTHFD_H
 
-struct sshbuf;
-struct sshkey;
+ഘടന sshbuf;
+ഘടന sshkey;
 
 /* List of identities returned by ssh_fetch_identitylist() */
-struct ssh_identitylist {
+ഘടന ssh_identitylist {
 	size_t nkeys;
-	struct sshkey **keys;
-	char **comments;
+	ഘടന sshkey **താക്കോലുകൾ;
+	അക്ഷരം **comments;
 };
 
 /* Key destination restrictions */
-struct dest_constraint_hop {
-	char *user;	/* wildcards allowed */
-	char *hostname; /* used to matching cert principals and for display */
-	int is_ca;
+ഘടന dest_constraint_hop {
+	അക്ഷരം *user;	/* wildcards allowed */
+	അക്ഷരം *hostname; /* used to matching cert principals and for display */
+	പൂർണ്ണസംഖ്യ is_ca;
 	u_int nkeys;	/* number of entries in *both* 'keys' and 'key_is_ca' */
-	struct sshkey **keys;
-	int *key_is_ca;
+	ഘടന sshkey **താക്കോലുകൾ;
+	പൂർണ്ണസംഖ്യ *താക്കോൽ_is_ca;
 };
-struct dest_constraint {
-	struct dest_constraint_hop from;
-	struct dest_constraint_hop to;
+ഘടന dest_constraint {
+	ഘടന dest_constraint_hop from;
+	ഘടന dest_constraint_hop to;
 };
 
-int	ssh_get_authentication_socket(int *fdp);
-int	ssh_get_authentication_socket_path(const char *authsocket, int *fdp);
-void	ssh_close_authentication_socket(int sock);
+പൂർണ്ണസംഖ്യ	ssh_get_authentication_socket(പൂർണ്ണസംഖ്യ *fdp);
+പൂർണ്ണസംഖ്യ	ssh_get_authentication_socket_path(സ്ഥിരം അക്ഷരം *authsocket, പൂർണ്ണസംഖ്യ *fdp);
+ശൂന്യം	ssh_close_authentication_socket(പൂർണ്ണസംഖ്യ sock);
 
-int	ssh_lock_agent(int sock, int lock, const char *password);
-int	ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp);
-void	ssh_free_identitylist(struct ssh_identitylist *idl);
-int	ssh_add_identity_constrained(int sock, struct sshkey *key,
-    const char *comment, u_int life, u_int confirm, const char *provider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints);
-int	ssh_agent_has_key(int sock, const struct sshkey *key);
-int	ssh_remove_identity(int sock, const struct sshkey *key);
-int	ssh_update_card(int sock, int add, const char *reader_id,
-	    const char *pin, u_int life, u_int confirm,
-	    struct dest_constraint **dest_constraints,
+പൂർണ്ണസംഖ്യ	ssh_lock_agent(പൂർണ്ണസംഖ്യ sock, പൂർണ്ണസംഖ്യ lock, സ്ഥിരം അക്ഷരം *password);
+പൂർണ്ണസംഖ്യ	ssh_fetch_identitylist(പൂർണ്ണസംഖ്യ sock, ഘടന ssh_identitylist **idlp);
+ശൂന്യം	ssh_free_identitylist(ഘടന ssh_identitylist *idl);
+പൂർണ്ണസംഖ്യ	ssh_add_identity_constrained(പൂർണ്ണസംഖ്യ sock, ഘടന sshkey *താക്കോൽ,
+    സ്ഥിരം അക്ഷരം *comment, u_int life, u_int confirm, സ്ഥിരം അക്ഷരം *provider,
+    ഘടന dest_constraint **dest_constraints, size_t ndest_constraints);
+പൂർണ്ണസംഖ്യ	ssh_agent_has_താക്കോൽ(പൂർണ്ണസംഖ്യ sock, സ്ഥിരം ഘടന sshkey *താക്കോൽ);
+പൂർണ്ണസംഖ്യ	ssh_remove_identity(പൂർണ്ണസംഖ്യ sock, സ്ഥിരം ഘടന sshkey *താക്കോൽ);
+പൂർണ്ണസംഖ്യ	ssh_update_card(പൂർണ്ണസംഖ്യ sock, പൂർണ്ണസംഖ്യ add, സ്ഥിരം അക്ഷരം *reader_id,
+	    സ്ഥിരം അക്ഷരം *pin, u_int life, u_int confirm,
+	    ഘടന dest_constraint **dest_constraints,
 	    size_t ndest_constraints,
-	    int cert_only, struct sshkey **certs, size_t ncerts);
-int	ssh_remove_all_identities(int sock, int version);
+	    പൂർണ്ണസംഖ്യ cert_only, ഘടന sshkey **certs, size_t ncerts);
+പൂർണ്ണസംഖ്യ	ssh_remove_all_identities(പൂർണ്ണസംഖ്യ sock, പൂർണ്ണസംഖ്യ version);
 
-int	ssh_agent_sign(int sock, const struct sshkey *key,
+പൂർണ്ണസംഖ്യ	ssh_agent_sign(പൂർണ്ണസംഖ്യ sock, സ്ഥിരം ഘടന sshkey *താക്കോൽ,
 	    u_char **sigp, size_t *lenp,
-	    const u_char *data, size_t datalen, const char *alg, u_int compat);
+	    സ്ഥിരം u_char *data, size_t datalen, സ്ഥിരം അക്ഷരം *alg, u_int compat);
 
-int	ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
-    const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding);
+പൂർണ്ണസംഖ്യ	ssh_agent_bind_hostkey(പൂർണ്ണസംഖ്യ sock, സ്ഥിരം ഘടന sshkey *താക്കോൽ,
+    സ്ഥിരം ഘടന sshbuf *session_id, സ്ഥിരം ഘടന sshbuf *signature,
+    പൂർണ്ണസംഖ്യ forwarding);
 
-int	ssh_agent_query_extensions(int sock, char ***exts);
+പൂർണ്ണസംഖ്യ	ssh_agent_query_extensions(പൂർണ്ണസംഖ്യ sock, അക്ഷരം ***exts);
 
 /* Messages for the authentication agent connection. */
 #define SSH_AGENTC_REQUEST_RSA_IDENTITIES	1
@@ -90,8 +90,8 @@ int	ssh_agent_query_extensions(int sock, char ***exts);
 #define SSH2_AGENTC_REMOVE_ALL_IDENTITIES	19
 
 /* smartcard */
-#define SSH_AGENTC_ADD_SMARTCARD_KEY		20
-#define SSH_AGENTC_REMOVE_SMARTCARD_KEY		21
+#define SSH_AGENTC_ADD_SMARTCARD_താക്കോൽ		20
+#define SSH_AGENTC_REMOVE_SMARTCARD_താക്കോൽ		21
 
 /* lock/unlock the agent */
 #define SSH_AGENTC_LOCK				22
@@ -100,7 +100,7 @@ int	ssh_agent_query_extensions(int sock, char ***exts);
 /* add key with constraints */
 #define SSH_AGENTC_ADD_RSA_ID_CONSTRAINED	24
 #define SSH2_AGENTC_ADD_ID_CONSTRAINED		25
-#define SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED 26
+#define SSH_AGENTC_ADD_SMARTCARD_താക്കോൽ_CONSTRAINED 26
 
 /* generic extension mechanism */
 #define SSH_AGENTC_EXTENSION			27

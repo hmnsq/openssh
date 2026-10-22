@@ -34,14 +34,14 @@
 
 /* OPENBSD ORIGINAL: include/vis.h */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#അന്തര്ഭാവ "includes.h"
+#എങ്കിൽ !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #ifndef _VIS_H_
 #define	_VIS_H_
 
-#include <sys/types.h>
-#include <limits.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <limits.h>
 
 /*
  * to select alternate encoding format
@@ -81,16 +81,16 @@
  */
 #define	UNVIS_END	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+അക്ഷരം	*vis(അക്ഷരം *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	strvis(അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	stravis(അക്ഷരം **, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	strnvis(അക്ഷരം *, സ്ഥിരം അക്ഷരം *, size_t, പൂർണ്ണസംഖ്യ)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+പൂർണ്ണസംഖ്യ	strvisx(അക്ഷരം *, സ്ഥിരം അക്ഷരം *, size_t, പൂർണ്ണസംഖ്യ)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
-ssize_t strnunvis(char *, const char *, size_t)
+പൂർണ്ണസംഖ്യ	strunvis(അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	unvis(അക്ഷരം *, അക്ഷരം, പൂർണ്ണസംഖ്യ *, പൂർണ്ണസംഖ്യ);
+ssize_t strnunvis(അക്ഷരം *, സ്ഥിരം അക്ഷരം *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 
 #endif /* !_VIS_H_ */

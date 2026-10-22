@@ -13,14 +13,14 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-struct xaddr;
+ഘടന xaddr;
 
-struct per_source_penalty;
+ഘടന per_source_penalty;
 
-void	srclimit_init(int, int, int, int,
-    struct per_source_penalty *, const char *);
-int	srclimit_check_allow(int, int);
-void	srclimit_done(int);
+ശൂന്യം	srclimit_init(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+    ഘടന per_source_penalty *, സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	srclimit_check_allow(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	srclimit_done(പൂർണ്ണസംഖ്യ);
 
 #define SRCLIMIT_PENALTY_NONE			0
 #define SRCLIMIT_PENALTY_CRASH			1
@@ -37,6 +37,6 @@ void	srclimit_done(int);
 #define EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
 #define EXIT_INVALID_USER	7	/* invalid user supplied */
 
-void	srclimit_penalise(struct xaddr *, int);
-int	srclimit_penalty_check_allow(int, const char **);
-void	srclimit_penalty_info(void);
+ശൂന്യം	srclimit_penalise(ഘടന xaddr *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	srclimit_penalty_check_allow(പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം **);
+ശൂന്യം	srclimit_penalty_info(ശൂന്യം);

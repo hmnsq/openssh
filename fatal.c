@@ -23,24 +23,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <stdarg.h>
+#അന്തര്ഭാവ <stdarg.h>
 
-#include "log.h"
+#അന്തര്ഭാവ "log.h"
 
 /* Fatal messages.  This function never returns. */
 
-void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+ശൂന്യം
+sshfatal(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം അക്ഷരം *func, പൂർണ്ണസംഖ്യ വരി, പൂർണ്ണസംഖ്യ showfunc,
+    LogLevel level, സ്ഥിരം അക്ഷരം *suffix, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
+	sshlogv(file, func, വരി, showfunc, level, suffix, fmt, args);
 	va_end(args);
 	cleanup_exit(255);
 }

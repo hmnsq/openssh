@@ -15,200 +15,200 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <string.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "bitmap.h"
+#അന്തര്ഭാവ "bitmap.h"
 
 #define BITMAP_WTYPE	u_int
 #define BITMAP_MAX	(1<<24)
-#define BITMAP_BYTES	(sizeof(BITMAP_WTYPE))
-#define BITMAP_BITS	(sizeof(BITMAP_WTYPE) * 8)
+#define BITMAP_BYTES	(വലുപ്പം(BITMAP_WTYPE))
+#define BITMAP_BITS	(വലുപ്പം(BITMAP_WTYPE) * 8)
 #define BITMAP_WMASK	((BITMAP_WTYPE)BITMAP_BITS - 1)
-struct bitmap {
+ഘടന bitmap {
 	BITMAP_WTYPE *d;
 	size_t len; /* number of words allocated */
-	size_t top; /* index of top word allocated */
+	size_t മുകൾ; /* index of top word allocated */
 };
 
-struct bitmap *
-bitmap_new(void)
+ഘടന bitmap *
+bitmap_new(ശൂന്യം)
 {
-	struct bitmap *ret;
+	ഘടന bitmap *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if ((ret->d = calloc(1, BITMAP_BYTES)) == NULL) {
-		free(ret);
-		return NULL;
+	എങ്കിൽ ((ret = calloc(1, വലുപ്പം(*ret))) == ശൂന്യ)
+		തിരികെ ശൂന്യ;
+	എങ്കിൽ ((ret->d = calloc(1, BITMAP_BYTES)) == ശൂന്യ) {
+		സ്വതന്ത്രം(ret);
+		തിരികെ ശൂന്യ;
 	}
 	ret->len = 1;
-	ret->top = 0;
-	return ret;
+	ret->മുകൾ = 0;
+	തിരികെ ret;
 }
 
-void
-bitmap_free(struct bitmap *b)
+ശൂന്യം
+bitmap_free(ഘടന bitmap *b)
 {
-	if (b != NULL && b->d != NULL) {
+	എങ്കിൽ (b != ശൂന്യ && b->d != ശൂന്യ) {
 		bitmap_zero(b);
-		free(b->d);
-		b->d = NULL;
+		സ്വതന്ത്രം(b->d);
+		b->d = ശൂന്യ;
 	}
-	free(b);
+	സ്വതന്ത്രം(b);
 }
 
-void
-bitmap_zero(struct bitmap *b)
+ശൂന്യം
+bitmap_zero(ഘടന bitmap *b)
 {
 	memset(b->d, 0, b->len * BITMAP_BYTES);
-	b->top = 0;
+	b->മുകൾ = 0;
 }
 
-int
-bitmap_test_bit(struct bitmap *b, u_int n)
+പൂർണ്ണസംഖ്യ
+bitmap_test_bit(ഘടന bitmap *b, u_int n)
 {
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (n / BITMAP_BITS) > b->top)
-		return 0;
-	return (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
+	എങ്കിൽ (b->മുകൾ >= b->len)
+		തിരികെ 0; /* invalid */
+	എങ്കിൽ (b->len == 0 || (n / BITMAP_BITS) > b->മുകൾ)
+		തിരികെ 0;
+	തിരികെ (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
 }
 
-static int
-reserve(struct bitmap *b, u_int n)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+reserve(ഘടന bitmap *b, u_int n)
 {
 	BITMAP_WTYPE *tmp;
 	size_t nlen;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return -1; /* invalid */
+	എങ്കിൽ (b->മുകൾ >= b->len || n > BITMAP_MAX)
+		തിരികെ -1; /* invalid */
 	nlen = (n / BITMAP_BITS) + 1;
-	if (b->len < nlen) {
-		if ((tmp = recallocarray(b->d, b->len,
-		    nlen, BITMAP_BYTES)) == NULL)
-			return -1;
+	എങ്കിൽ (b->len < nlen) {
+		എങ്കിൽ ((tmp = recallocarray(b->d, b->len,
+		    nlen, BITMAP_BYTES)) == ശൂന്യ)
+			തിരികെ -1;
 		b->d = tmp;
 		b->len = nlen;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-int
-bitmap_set_bit(struct bitmap *b, u_int n)
+പൂർണ്ണസംഖ്യ
+bitmap_set_bit(ഘടന bitmap *b, u_int n)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	size_t offset;
 
-	if ((r = reserve(b, n)) != 0)
-		return r;
+	എങ്കിൽ ((r = reserve(b, n)) != 0)
+		തിരികെ r;
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
-		b->top = offset;
+	എങ്കിൽ (offset > b->മുകൾ)
+		b->മുകൾ = offset;
 	b->d[offset] |= (BITMAP_WTYPE)1 << (n & BITMAP_WMASK);
-	return 0;
+	തിരികെ 0;
 }
 
 /* Resets b->top to point to the most significant bit set in b->d */
-static void
-retop(struct bitmap *b)
+സ്ഥിതം ശൂന്യം
+retop(ഘടന bitmap *b)
 {
-	if (b->top >= b->len)
-		return;
-	while (b->top > 0 && b->d[b->top] == 0)
-		b->top--;
+	എങ്കിൽ (b->മുകൾ >= b->len)
+		തിരികെ;
+	ആകുമ്പോൾ (b->മുകൾ > 0 && b->d[b->മുകൾ] == 0)
+		b->മുകൾ--;
 }
 
-void
-bitmap_clear_bit(struct bitmap *b, u_int n)
+ശൂന്യം
+bitmap_clear_bit(ഘടന bitmap *b, u_int n)
 {
 	size_t offset;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return; /* invalid */
+	എങ്കിൽ (b->മുകൾ >= b->len || n > BITMAP_MAX)
+		തിരികെ; /* invalid */
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
-		return;
+	എങ്കിൽ (offset > b->മുകൾ)
+		തിരികെ;
 	b->d[offset] &= ~((BITMAP_WTYPE)1 << (n & BITMAP_WMASK));
 	/* The top may have changed as a result of the clear */
 	retop(b);
 }
 
 size_t
-bitmap_nbits(struct bitmap *b)
+bitmap_nbits(ഘടന bitmap *b)
 {
 	size_t bits;
 	BITMAP_WTYPE w;
 
 	retop(b);
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (b->top == 0 && b->d[0] == 0))
-		return 0;
+	എങ്കിൽ (b->മുകൾ >= b->len)
+		തിരികെ 0; /* invalid */
+	എങ്കിൽ (b->len == 0 || (b->മുകൾ == 0 && b->d[0] == 0))
+		തിരികെ 0;
 	/* Find MSB set */
-	w = b->d[b->top];
-	bits = (b->top + 1) * BITMAP_BITS;
-	while (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
+	w = b->d[b->മുകൾ];
+	bits = (b->മുകൾ + 1) * BITMAP_BITS;
+	ആകുമ്പോൾ (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
 		w <<= 1;
 		bits--;
 	}
-	return bits;
+	തിരികെ bits;
 }
 
 size_t
-bitmap_nbytes(struct bitmap *b)
+bitmap_nbytes(ഘടന bitmap *b)
 {
-	return (bitmap_nbits(b) + 7) / 8;
+	തിരികെ (bitmap_nbits(b) + 7) / 8;
 }
 
-int
-bitmap_to_string(struct bitmap *b, void *p, size_t l)
+പൂർണ്ണസംഖ്യ
+bitmap_to_string(ഘടന bitmap *b, ശൂന്യം *p, size_t l)
 {
 	u_char *s = (u_char *)p;
 	size_t i, j, k, need = bitmap_nbytes(b);
 
-	if (l < need || b->top >= b->len)
-		return -1;
-	if (l > need)
+	എങ്കിൽ (l < need || b->മുകൾ >= b->len)
+		തിരികെ -1;
+	എങ്കിൽ (l > need)
 		l = need;
 	/* Put the bytes from LSB backwards */
-	for (i = k = 0; i < b->top + 1; i++) {
-		for (j = 0; j < BITMAP_BYTES; j++) {
-			if (k >= l)
-				break;
+	വേണ്ടി (i = k = 0; i < b->മുകൾ + 1; i++) {
+		വേണ്ടി (j = 0; j < BITMAP_BYTES; j++) {
+			എങ്കിൽ (k >= l)
+				നിർത്തുക;
 			s[need - 1 - k++] = (b->d[i] >> (j * 8)) & 0xff;
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-int
-bitmap_from_string(struct bitmap *b, const void *p, size_t l)
+പൂർണ്ണസംഖ്യ
+bitmap_from_string(ഘടന bitmap *b, സ്ഥിരം ശൂന്യം *p, size_t l)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	size_t i, offset, shift;
-	const u_char *s = (const u_char *)p;
+	സ്ഥിരം u_char *s = (സ്ഥിരം u_char *)p;
 
-	if (l > BITMAP_MAX / 8)
-		return -1;
-	if ((r = reserve(b, l * 8)) != 0)
-		return r;
+	എങ്കിൽ (l > BITMAP_MAX / 8)
+		തിരികെ -1;
+	എങ്കിൽ ((r = reserve(b, l * 8)) != 0)
+		തിരികെ r;
 	bitmap_zero(b);
-	if (l == 0)
-		return 0;
-	b->top = offset = ((l + (BITMAP_BYTES - 1)) / BITMAP_BYTES) - 1;
+	എങ്കിൽ (l == 0)
+		തിരികെ 0;
+	b->മുകൾ = offset = ((l + (BITMAP_BYTES - 1)) / BITMAP_BYTES) - 1;
 	shift = ((l + (BITMAP_BYTES - 1)) % BITMAP_BYTES) * 8;
-	for (i = 0; i < l; i++) {
+	വേണ്ടി (i = 0; i < l; i++) {
 		b->d[offset] |= (BITMAP_WTYPE)s[i] << shift;
-		if (shift == 0) {
+		എങ്കിൽ (shift == 0) {
 			offset--;
 			shift = BITMAP_BITS - 8;
-		} else
+		} അല്ലെങ്കിൽ
 			shift -= 8;
 	}
 	retop(b);
-	return 0;
+	തിരികെ 0;
 }

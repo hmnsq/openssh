@@ -24,153 +24,153 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <sys/un.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/uio.h>
+#അന്തര്ഭാവ <sys/un.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <string.h>
-#include <stdarg.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <poll.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
 
-#include "log.h"
-#include "monitor_fdpass.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "monitor_fdpass.h"
 
-int
-mm_send_fd(int sock, int fd)
+പൂർണ്ണസംഖ്യ
+mm_send_fd(പൂർണ്ണസംഖ്യ sock, പൂർണ്ണസംഖ്യ fd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+#എങ്കിൽ defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	ഘടന msghdr സന്ദേശം;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+	സംഘം {
+		ഘടന cmsghdr hdr;
+		അക്ഷരം buf[CMSG_SPACE(വലുപ്പം(പൂർണ്ണസംഖ്യ))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
+	ഘടന cmsghdr *cmsg;
 #endif
-	struct iovec vec;
-	char ch = '\0';
+	ഘടന iovec vec;
+	അക്ഷരം ch = '\0';
 	ssize_t n;
-	struct pollfd pfd;
+	ഘടന pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&സന്ദേശം, 0, വലുപ്പം(സന്ദേശം));
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	സന്ദേശം.സന്ദേശം_accrights = (caddr_t)&fd;
+	സന്ദേശം.സന്ദേശം_accrightslen = വലുപ്പം(fd);
+#അല്ലെങ്കിൽ
+	memset(&cmsgbuf, 0, വലുപ്പം(cmsgbuf));
+	സന്ദേശം.msg_control = (caddr_t)&cmsgbuf.buf;
+	സന്ദേശം.msg_controllen = വലുപ്പം(cmsgbuf.buf);
+	cmsg = CMSG_FIRSTHDR(&സന്ദേശം);
+	cmsg->cmsg_len = CMSG_LEN(വലുപ്പം(പൂർണ്ണസംഖ്യ));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = fd;
+	*(പൂർണ്ണസംഖ്യ *)CMSG_DATA(cmsg) = fd;
 #endif
 
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	സന്ദേശം.msg_iov = &vec;
+	സന്ദേശം.msg_iovlen = 1;
 
 	pfd.fd = sock;
 	pfd.events = POLLOUT;
-	while ((n = sendmsg(sock, &msg, 0)) == -1 &&
+	ആകുമ്പോൾ ((n = sendmsg(sock, &സന്ദേശം, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("sendmsg(%d): %s", fd, strerror(errno));
-		(void)poll(&pfd, 1, -1);
+		(ശൂന്യം)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	എങ്കിൽ (n == -1) {
 		error_f("sendmsg(%d): %s", fd, strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
 
-	if (n != 1) {
+	എങ്കിൽ (n != 1) {
 		error_f("sendmsg: expected sent 1 got %zd", n);
-		return -1;
+		തിരികെ -1;
 	}
-	return 0;
-#else
+	തിരികെ 0;
+#അല്ലെങ്കിൽ
 	error_f("file descriptor passing not supported");
-	return -1;
+	തിരികെ -1;
 #endif
 }
 
-int
-mm_receive_fd(int sock)
+പൂർണ്ണസംഖ്യ
+mm_receive_fd(പൂർണ്ണസംഖ്യ sock)
 {
-#if defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+#എങ്കിൽ defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	ഘടന msghdr സന്ദേശം;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+	സംഘം {
+		ഘടന cmsghdr hdr;
+		അക്ഷരം buf[CMSG_SPACE(വലുപ്പം(പൂർണ്ണസംഖ്യ))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
+	ഘടന cmsghdr *cmsg;
 #endif
-	struct iovec vec;
+	ഘടന iovec vec;
 	ssize_t n;
-	char ch;
-	int fd;
-	struct pollfd pfd;
+	അക്ഷരം ch;
+	പൂർണ്ണസംഖ്യ fd;
+	ഘടന pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&സന്ദേശം, 0, വലുപ്പം(സന്ദേശം));
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	സന്ദേശം.msg_iov = &vec;
+	സന്ദേശം.msg_iovlen = 1;
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = &cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
+	സന്ദേശം.സന്ദേശം_accrights = (caddr_t)&fd;
+	സന്ദേശം.സന്ദേശം_accrightslen = വലുപ്പം(fd);
+#അല്ലെങ്കിൽ
+	memset(&cmsgbuf, 0, വലുപ്പം(cmsgbuf));
+	സന്ദേശം.msg_control = &cmsgbuf.buf;
+	സന്ദേശം.msg_controllen = വലുപ്പം(cmsgbuf.buf);
 #endif
 
 	pfd.fd = sock;
 	pfd.events = POLLIN;
-	while ((n = recvmsg(sock, &msg, 0)) == -1 &&
+	ആകുമ്പോൾ ((n = recvmsg(sock, &സന്ദേശം, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("recvmsg: %s", strerror(errno));
-		(void)poll(&pfd, 1, -1);
+		(ശൂന്യം)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	എങ്കിൽ (n == -1) {
 		error_f("recvmsg: %s", strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
 
-	if (n != 1) {
+	എങ്കിൽ (n != 1) {
 		error_f("recvmsg: expected received 1 got %zd", n);
-		return -1;
+		തിരികെ -1;
 	}
 
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	if (msg.msg_accrightslen != sizeof(fd)) {
+	എങ്കിൽ (സന്ദേശം.സന്ദേശം_accrightslen != വലുപ്പം(fd)) {
 		error_f("no fd");
-		return -1;
+		തിരികെ -1;
 	}
-#else
-	cmsg = CMSG_FIRSTHDR(&msg);
-	if (cmsg == NULL) {
+#അല്ലെങ്കിൽ
+	cmsg = CMSG_FIRSTHDR(&സന്ദേശം);
+	എങ്കിൽ (cmsg == ശൂന്യ) {
 		error_f("no message header");
-		return -1;
+		തിരികെ -1;
 	}
 
 #ifndef BROKEN_CMSG_TYPE
-	if (cmsg->cmsg_type != SCM_RIGHTS) {
+	എങ്കിൽ (cmsg->cmsg_type != SCM_RIGHTS) {
 		error_f("expected %d got %d", SCM_RIGHTS, cmsg->cmsg_type);
-		return -1;
+		തിരികെ -1;
 	}
 #endif
-	fd = (*(int *)CMSG_DATA(cmsg));
+	fd = (*(പൂർണ്ണസംഖ്യ *)CMSG_DATA(cmsg));
 #endif
-	return fd;
-#else
+	തിരികെ fd;
+#അല്ലെങ്കിൽ
 	error_f("file descriptor passing not supported");
-	return -1;
+	തിരികെ -1;
 #endif
 }

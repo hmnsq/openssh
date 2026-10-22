@@ -25,13 +25,13 @@
 #ifndef _SSH_AUDIT_H
 # define _SSH_AUDIT_H
 
-#include "loginrec.h"
+#അന്തര്ഭാവ "loginrec.h"
 
-struct ssh;
+ഘടന ssh;
 
-enum ssh_audit_event_type {
+എണ്ണൽ ssh_audit_event_type {
 	SSH_LOGIN_EXCEED_MAXTRIES,
-	SSH_LOGIN_ROOT_DENIED,
+	SSH_LOGIN_വേര്_DENIED,
 	SSH_AUTH_SUCCESS,
 	SSH_AUTH_FAIL_NONE,
 	SSH_AUTH_FAIL_PASSWD,
@@ -45,13 +45,13 @@ enum ssh_audit_event_type {
 	SSH_CONNECTION_ABANDON,	/* closed without completing auth */
 	SSH_AUDIT_UNKNOWN
 };
-typedef enum ssh_audit_event_type ssh_audit_event_t;
+തരനിർവചനം എണ്ണൽ ssh_audit_event_type ssh_audit_event_t;
 
-void	audit_connection_from(const char *, int);
-void	audit_event(struct ssh *, ssh_audit_event_t);
-void	audit_session_open(struct logininfo *);
-void	audit_session_close(struct logininfo *);
-void	audit_run_command(const char *);
-ssh_audit_event_t audit_classify_auth(const char *);
+ശൂന്യം	audit_connection_from(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	audit_event(ഘടന ssh *, ssh_audit_event_t);
+ശൂന്യം	audit_session_open(ഘടന logininfo *);
+ശൂന്യം	audit_session_close(ഘടന logininfo *);
+ശൂന്യം	audit_run_command(സ്ഥിരം അക്ഷരം *);
+ssh_audit_event_t audit_classify_auth(സ്ഥിരം അക്ഷരം *);
 
 #endif /* _SSH_AUDIT_H */

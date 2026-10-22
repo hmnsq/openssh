@@ -23,44 +23,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "packet.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssh2.h"
-#include "ssherr.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "auth.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "servconf.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "ssherr.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#അന്തര്ഭാവ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
+#അന്തര്ഭാവ "monitor_wrap.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_none;
+ബാഹ്യ ServerOptions options;
+ബാഹ്യ ഘടന authmethod_cfg methodcfg_none;
 
-extern int none_enabled;
+ബാഹ്യ പൂർണ്ണസംഖ്യ none_enabled;
 
-static int
-userauth_none(struct ssh *ssh, const char *method)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+userauth_none(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *method)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	none_enabled = 0;
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	എങ്കിൽ ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
-	if (options.permit_empty_passwd && options.password_authentication)
-		return mm_auth_password(ssh, "");
-	return (0);
+	എങ്കിൽ (options.permit_empty_passwd && options.password_authentication)
+		തിരികെ mm_auth_password(ssh, "");
+	തിരികെ (0);
 }
 
 Authmethod method_none = {

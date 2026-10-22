@@ -23,123 +23,123 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <grp.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#അന്തര്ഭാവ <grp.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <limits.h>
 
-#include "xmalloc.h"
-#include "groupaccess.h"
-#include "match.h"
-#include "log.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "groupaccess.h"
+#അന്തര്ഭാവ "match.h"
+#അന്തര്ഭാവ "log.h"
 
-static int ngroups;
-static char **groups_byname;
+സ്ഥിതം പൂർണ്ണസംഖ്യ ngroups;
+സ്ഥിതം അക്ഷരം **groups_byname;
 
 /*
  * Initialize group access list for user with primary (base) and
  * supplementary groups.  Return the number of groups in the list.
  */
-int
-ga_init(const char *user, gid_t base)
+പൂർണ്ണസംഖ്യ
+ga_init(സ്ഥിരം അക്ഷരം *user, gid_t base)
 {
 	gid_t *groups_bygid;
-	int ongroups, i, j, retry = 0;
-	struct group *gr;
+	പൂർണ്ണസംഖ്യ ongroups, i, j, retry = 0;
+	ഘടന group *gr;
 
-	if (ngroups > 0)
+	എങ്കിൽ (ngroups > 0)
 		ga_free();
 
 	ongroups = ngroups = NGROUPS_MAX;
-#if defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
+#എങ്കിൽ defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
 	ongroups = ngroups = MAX(NGROUPS_MAX, sysconf(_SC_NGROUPS_MAX));
 #endif
 
-	groups_bygid = xcalloc(ngroups, sizeof(*groups_bygid));
-	while (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
-		if (ngroups <= ongroups) {
+	groups_bygid = xcalloc(ngroups, വലുപ്പം(*groups_bygid));
+	ആകുമ്പോൾ (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
+		എങ്കിൽ (ngroups <= ongroups) {
 			error("getgrouplist(\"%s\", %ld): failed",
 			    user, (long)base);
-			free(groups_bygid);
-			groups_bygid = NULL;
+			സ്വതന്ത്രം(groups_bygid);
+			groups_bygid = ശൂന്യ;
 			ngroups = 0;
-			return 0;
+			തിരികെ 0;
 		}
-		if (retry++ > 0) {
+		എങ്കിൽ (retry++ > 0) {
 			fatal("getgrouplist(\"%s\", %ld): groups list too big "
 			    "(have %ld, need %ld)", user, (long)base,
 			    (long)ongroups, (long)ngroups);
 		}
 		groups_bygid = xreallocarray(groups_bygid, ngroups,
-		    sizeof(*groups_bygid));
+		    വലുപ്പം(*groups_bygid));
 	}
-	groups_byname = xcalloc(ngroups, sizeof(*groups_byname));
+	groups_byname = xcalloc(ngroups, വലുപ്പം(*groups_byname));
 
-	for (i = 0, j = 0; i < ngroups; i++)
-		if ((gr = getgrgid(groups_bygid[i])) != NULL)
+	വേണ്ടി (i = 0, j = 0; i < ngroups; i++)
+		എങ്കിൽ ((gr = getgrgid(groups_bygid[i])) != ശൂന്യ)
 			groups_byname[j++] = xstrdup(gr->gr_name);
-	free(groups_bygid);
-	return (ngroups = j);
+	സ്വതന്ത്രം(groups_bygid);
+	തിരികെ (ngroups = j);
 }
 
 /*
  * Return 1 if one of user's groups is contained in groups.
  * Return 0 otherwise.  Use match_pattern() for string comparison.
  */
-int
-ga_match(char * const *groups, int n)
+പൂർണ്ണസംഖ്യ
+ga_match(അക്ഷരം * സ്ഥിരം *groups, പൂർണ്ണസംഖ്യ n)
 {
-	int i, j;
+	പൂർണ്ണസംഖ്യ i, j;
 
-	for (i = 0; i < ngroups; i++)
-		for (j = 0; j < n; j++)
-			if (match_pattern(groups_byname[i], groups[j]))
-				return 1;
-	return 0;
+	വേണ്ടി (i = 0; i < ngroups; i++)
+		വേണ്ടി (j = 0; j < n; j++)
+			എങ്കിൽ (match_pattern(groups_byname[i], groups[j]))
+				തിരികെ 1;
+	തിരികെ 0;
 }
 
 /*
  * Return 1 if one of user's groups matches group_pattern list.
  * Return 0 on negated or no match.
  */
-int
-ga_match_pattern_list(const char *group_pattern)
+പൂർണ്ണസംഖ്യ
+ga_match_pattern_list(സ്ഥിരം അക്ഷരം *group_pattern)
 {
-	int i, found = 0;
+	പൂർണ്ണസംഖ്യ i, found = 0;
 
-	for (i = 0; i < ngroups; i++) {
-		switch (match_usergroup_pattern_list(groups_byname[i],
+	വേണ്ടി (i = 0; i < ngroups; i++) {
+		തിരഞ്ഞെടുപ്പ് (match_usergroup_pattern_list(groups_byname[i],
 		    group_pattern)) {
-		case -1:
-			return 0;	/* Negated match wins */
-		case 0:
-			continue;
-		case 1:
+		അവസ്ഥ -1:
+			തിരികെ 0;	/* Negated match wins */
+		അവസ്ഥ 0:
+			തുടരുക;
+		അവസ്ഥ 1:
 			found = 1;
 		}
 	}
-	return found;
+	തിരികെ found;
 }
 
 /*
  * Free memory allocated for group access list.
  */
-void
-ga_free(void)
+ശൂന്യം
+ga_free(ശൂന്യം)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
-	if (ngroups > 0) {
-		for (i = 0; i < ngroups; i++)
-			free(groups_byname[i]);
+	എങ്കിൽ (ngroups > 0) {
+		വേണ്ടി (i = 0; i < ngroups; i++)
+			സ്വതന്ത്രം(groups_byname[i]);
 		ngroups = 0;
-		free(groups_byname);
-		groups_byname = NULL;
+		സ്വതന്ത്രം(groups_byname);
+		groups_byname = ശൂന്യ;
 	}
 }

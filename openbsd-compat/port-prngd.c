@@ -22,27 +22,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/un.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#അന്തര്ഭാവ <netinet/in.h>
+#അന്തര്ഭാവ <arpa/inet.h>
 
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <stddef.h> /* for offsetof */
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <stddef.h> /* for offsetof */
 
-#include "atomicio.h"
-#include "misc.h"
-#include "log.h"
+#അന്തര്ഭാവ "atomicio.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "log.h"
 
-#if defined(PRNGD_PORT) || defined(PRNGD_SOCKET)
+#എങ്കിൽ defined(PRNGD_PORT) || defined(PRNGD_SOCKET)
 /*
  * EGD/PRNGD interface.
  *
@@ -53,38 +53,38 @@
  * supplied.
  * Returns 0 on success, -1 on error
  */
-static int
-get_random_bytes_prngd(unsigned char *buf, int len,
-    unsigned short tcp_port, char *socket_path)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+get_random_bytes_prngd(unsigned അക്ഷരം *buf, പൂർണ്ണസംഖ്യ len,
+    unsigned short tcp_port, അക്ഷരം *socket_path)
 {
-	int fd, addr_len, rval, errors;
-	u_char msg[2];
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addr_in = (struct sockaddr_in *)&addr;
-	struct sockaddr_un *addr_un = (struct sockaddr_un *)&addr;
+	പൂർണ്ണസംഖ്യ fd, addr_len, rval, errors;
+	u_char സന്ദേശം[2];
+	ഘടന sockaddr_storage addr;
+	ഘടന sockaddr_in *addr_in = (ഘടന sockaddr_in *)&addr;
+	ഘടന sockaddr_un *addr_un = (ഘടന sockaddr_un *)&addr;
 	sshsig_t old_sigpipe;
 
 	/* Sanity checks */
-	if (socket_path == NULL && tcp_port == 0)
+	എങ്കിൽ (socket_path == ശൂന്യ && tcp_port == 0)
 		fatal("You must specify a port or a socket");
-	if (socket_path != NULL &&
-	    strlen(socket_path) >= sizeof(addr_un->sun_path))
+	എങ്കിൽ (socket_path != ശൂന്യ &&
+	    strlen(socket_path) >= വലുപ്പം(addr_un->sun_path))
 		fatal("Random pool path is too long");
-	if (len <= 0 || len > 255)
+	എങ്കിൽ (len <= 0 || len > 255)
 		fatal("Too many bytes (%d) to read from PRNGD", len);
 
-	memset(&addr, '\0', sizeof(addr));
+	memset(&addr, '\0', വലുപ്പം(addr));
 
-	if (tcp_port != 0) {
+	എങ്കിൽ (tcp_port != 0) {
 		addr_in->sin_family = AF_INET;
 		addr_in->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 		addr_in->sin_port = htons(tcp_port);
-		addr_len = sizeof(*addr_in);
-	} else {
+		addr_len = വലുപ്പം(*addr_in);
+	} അല്ലെങ്കിൽ {
 		addr_un->sun_family = AF_UNIX;
 		strlcpy(addr_un->sun_path, socket_path,
-		    sizeof(addr_un->sun_path));
-		addr_len = offsetof(struct sockaddr_un, sun_path) +
+		    വലുപ്പം(addr_un->sun_path));
+		addr_len = offsetof(ഘടന sockaddr_un, sun_path) +
 		    strlen(socket_path) + 1;
 	}
 
@@ -94,69 +94,69 @@ get_random_bytes_prngd(unsigned char *buf, int len,
 	rval = -1;
 reopen:
 	fd = socket(addr.ss_family, SOCK_STREAM, 0);
-	if (fd == -1) {
+	എങ്കിൽ (fd == -1) {
 		error("Couldn't create socket: %s", strerror(errno));
-		goto done;
+		പോകുക done;
 	}
 
-	if (connect(fd, (struct sockaddr*)&addr, addr_len) == -1) {
-		if (tcp_port != 0) {
+	എങ്കിൽ (connect(fd, (ഘടന sockaddr*)&addr, addr_len) == -1) {
+		എങ്കിൽ (tcp_port != 0) {
 			error("Couldn't connect to PRNGD port %d: %s",
 			    tcp_port, strerror(errno));
-		} else {
+		} അല്ലെങ്കിൽ {
 			error("Couldn't connect to PRNGD socket \"%s\": %s",
 			    addr_un->sun_path, strerror(errno));
 		}
-		goto done;
+		പോകുക done;
 	}
 
 	/* Send blocking read request to PRNGD */
-	msg[0] = 0x02;
-	msg[1] = len;
+	സന്ദേശം[0] = 0x02;
+	സന്ദേശം[1] = len;
 
-	if (atomicio(vwrite, fd, msg, sizeof(msg)) != sizeof(msg)) {
-		if (errno == EPIPE && errors < 10) {
+	എങ്കിൽ (atomicio(vwrite, fd, സന്ദേശം, വലുപ്പം(സന്ദേശം)) != വലുപ്പം(സന്ദേശം)) {
+		എങ്കിൽ (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
-			goto reopen;
+			പോകുക reopen;
 		}
 		error("Couldn't write to PRNGD socket: %s",
 		    strerror(errno));
-		goto done;
+		പോകുക done;
 	}
 
-	if (atomicio(read, fd, buf, len) != (size_t)len) {
-		if (errno == EPIPE && errors < 10) {
+	എങ്കിൽ (atomicio(പഠ, fd, buf, len) != (size_t)len) {
+		എങ്കിൽ (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
-			goto reopen;
+			പോകുക reopen;
 		}
 		error("Couldn't read from PRNGD socket: %s",
 		    strerror(errno));
-		goto done;
+		പോകുക done;
 	}
 
 	rval = 0;
 done:
 	ssh_signal(SIGPIPE, old_sigpipe);
-	if (fd != -1)
+	എങ്കിൽ (fd != -1)
 		close(fd);
-	return rval;
+	തിരികെ rval;
 }
 #endif /* PRNGD_PORT || PRNGD_SOCKET */
 
-int
-seed_from_prngd(unsigned char *buf, size_t bytes)
+പൂർണ്ണസംഖ്യ
+seed_from_prngd(unsigned അക്ഷരം *buf, size_t bytes)
 {
 #ifdef PRNGD_PORT
 	debug("trying egd/prngd port %d", PRNGD_PORT);
-	if (get_random_bytes_prngd(buf, bytes, PRNGD_PORT, NULL) == 0)
-		return 0;
+	എങ്കിൽ (get_random_bytes_prngd(buf, bytes, PRNGD_PORT, ശൂന്യ) == 0)
+		തിരികെ 0;
 #endif
 #ifdef PRNGD_SOCKET
 	debug("trying egd/prngd socket %s", PRNGD_SOCKET);
-	if (get_random_bytes_prngd(buf, bytes, 0, PRNGD_SOCKET) == 0)
-		return 0;
+	എങ്കിൽ (get_random_bytes_prngd(buf, bytes, 0, PRNGD_SOCKET) == 0)
+		തിരികെ 0;
 #endif
-	return -1;
+	തിരികെ -1;
 }

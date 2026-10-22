@@ -34,163 +34,163 @@ limitations under the License.
  * - __wrap_read_passphrase (real one reads /dev/tty)
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <setjmp.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "log.h"
-#include "digest.h"
-#include "misc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "readconf.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "digest.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "ssh_api.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "myproposal.h"
+#അന്തര്ഭാവ "kex.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "authfile.h"
+#അന്തര്ഭാവ "readconf.h"
 
 Options options;
-int debug_flag = 0;
+പൂർണ്ണസംഖ്യ debug_flag = 0;
 
-struct ssh;
+ഘടന ssh;
 
-int
-__wrap_ssh_packet_write_wait(struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+__wrap_ssh_packet_write_wait(ഘടന ssh *ssh)
 {
-	(void)ssh;
-	return 0;
+	(ശൂന്യം)ssh;
+	തിരികെ 0;
 }
 
-char *
-__wrap_read_passphrase(const char *prompt, int flags)
+അക്ഷരം *
+__wrap_read_passphrase(സ്ഥിരം അക്ഷരം *prompt, പൂർണ്ണസംഖ്യ flags)
 {
-	(void)prompt;
-	(void)flags;
-	return strdup("fuzz");
+	(ശൂന്യം)prompt;
+	(ശൂന്യം)flags;
+	തിരികെ strdup("fuzz");
 }
 
-#include "../../../sshconnect2.c"
-#include "fixed-keys.h"
+#അന്തര്ഭാവ "../../../sshconnect2.c"
+#അന്തര്ഭാവ "fixed-keys.h"
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+സ്ഥിതം jmp_buf fuzz_env;
+സ്ഥിതം അസ്ഥിര പൂർണ്ണസംഖ്യ in_fuzz = 0;
 
-void
-cleanup_exit(int code)
+ശൂന്യം
+cleanup_exit(പൂർണ്ണസംഖ്യ code)
 {
-	if (in_fuzz)
+	എങ്കിൽ (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-static struct sshkey *
-load_private(const char *str)
+സ്ഥിതം ഘടന sshkey *
+load_private(സ്ഥിരം അക്ഷരം *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	ഘടന sshbuf *b = sshbuf_from(str, strlen(str));
+	ഘടന sshkey *k = ശൂന്യ;
+	എങ്കിൽ (b == ശൂന്യ || sshkey_parse_private_fileblob(b, "", &k, ശൂന്യ) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	തിരികെ k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+സ്ഥിതം ഘടന sshkey *
+load_public(സ്ഥിരം അക്ഷരം *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	അക്ഷരം *tmp, *cp;
+	ഘടന sshkey *k = sshkey_new(താക്കോൽ_UNSPEC);
+	എങ്കിൽ (k == ശൂന്യ)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	എങ്കിൽ (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	സ്വതന്ത്രം(tmp);
+	തിരികെ k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+pump(ഘടന ssh *from, ഘടന ssh *to, size_t *transferred)
 {
-	const u_char *buf;
+	സ്ഥിരം u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	എങ്കിൽ ((r = ssh_packet_next(from, &type)) != 0)
+		തിരികെ r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	എങ്കിൽ (len == 0)
+		തിരികെ 0;
+	എങ്കിൽ ((r = ssh_നിവേശം_append(to, buf, len)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = ssh_output_consume(from, len)) != 0)
+		തിരികെ r;
 	*transferred = len;
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+run_kex(ഘടന ssh *client, ഘടന ssh *server)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	വേണ്ടി (പൂർണ്ണസംഖ്യ i = 0; i < 100; i++) {
+		എങ്കിൽ ((r = pump(server, client, &sn)) != 0) തിരികെ r;
+		എങ്കിൽ ((r = pump(client, server, &cn)) != 0) തിരികെ r;
+		എങ്കിൽ (server->kex->done && client->kex->done)
+			തിരികെ 0;
+		എങ്കിൽ (cn == 0 && sn == 0)
+			തിരികെ SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	തിരികെ SSH_ERR_PROTOCOL_ERROR;
 }
 
-static Sensitive g_sensitive = { NULL, 0 };
-static Authctxt g_authctxt;
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
+സ്ഥിതം Sensitive g_sensitive = { ശൂന്യ, 0 };
+സ്ഥിതം Authctxt g_authctxt;
+സ്ഥിതം ഘടന ssh *g_client = ശൂന്യ;
+സ്ഥിതം ഘടന ssh *g_server = ശൂന്യ;
+സ്ഥിതം പൂർണ്ണസംഖ്യ g_init = 0;
 
-static void
-fuzz_reset_authctxt(struct ssh *ssh)
+സ്ഥിതം ശൂന്യം
+fuzz_reset_authctxt(ഘടന ssh *ssh)
 {
-	free(g_authctxt.authlist);
-	g_authctxt.authlist = NULL;
-	if (ssh->authctxt == &g_authctxt)
+	സ്വതന്ത്രം(g_authctxt.authlist);
+	g_authctxt.authlist = ശൂന്യ;
+	എങ്കിൽ (ssh->authctxt == &g_authctxt)
 		pubkey_cleanup(ssh);
 
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
-	g_authctxt.server_user = (char *)"fuzz";
-	g_authctxt.local_user = (char *)"fuzz";
-	g_authctxt.host = (char *)"127.0.0.1";
-	g_authctxt.service = (char *)"ssh-connection";
+	memset(&g_authctxt, 0, വലുപ്പം(g_authctxt));
+	g_authctxt.server_user = (അക്ഷരം *)"fuzz";
+	g_authctxt.local_user = (അക്ഷരം *)"fuzz";
+	g_authctxt.host = (അക്ഷരം *)"127.0.0.1";
+	g_authctxt.service = (അക്ഷരം *)"ssh-connection";
 	g_authctxt.success = 0;
 	g_authctxt.method = authmethod_lookup("none");
-	g_authctxt.authlist = NULL;
-	g_authctxt.methoddata = NULL;
+	g_authctxt.authlist = ശൂന്യ;
+	g_authctxt.methoddata = ശൂന്യ;
 	g_authctxt.sensitive = &g_sensitive;
-	g_authctxt.active_ktype = NULL;
-	g_authctxt.oktypes = NULL;
-	g_authctxt.ktypes = NULL;
+	g_authctxt.active_ktype = ശൂന്യ;
+	g_authctxt.oktypes = ശൂന്യ;
+	g_authctxt.ktypes = ശൂന്യ;
 	g_authctxt.info_req_seen = 0;
 	g_authctxt.attempt_kbdint = 0;
 	g_authctxt.attempt_passwd = 0;
 	g_authctxt.agent_fd = -1;
-	TAILQ_INIT(&g_authctxt.keys);
+	TAILQ_INIT(&g_authctxt.താക്കോലുകൾ);
 	ssh->authctxt = &g_authctxt;
 }
 
-static void
-fuzz_setup(struct ssh *ssh)
+സ്ഥിതം ശൂന്യം
+fuzz_setup(ഘടന ssh *ssh)
 {
 	initialize_options(&options);
 	options.batch_mode = 1;
@@ -201,109 +201,109 @@ fuzz_setup(struct ssh *ssh)
 	options.gss_authentication = 0;
 	options.preferred_authentications = strdup("none");
 	options.user = strdup("fuzz");
-	options.number_of_password_prompts = 0;
+	options.സംഖ്യ_of_password_prompts = 0;
 	options.log_level = SYSLOG_LEVEL_ERROR;
 	options.fingerprint_hash = SSH_DIGEST_SHA256;
-	(void)fill_default_options(&options);
+	(ശൂന്യം)fill_default_options(&options);
 
 	fuzz_reset_authctxt(ssh);
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_ignore);
 
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_ACCEPT, &input_userauth_service_accept);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_SUCCESS, &input_userauth_success);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_FAILURE, &input_userauth_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_BANNER, &input_userauth_banner);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, &input_userauth_info_req);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PK_OK, &input_userauth_pk_ok);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ, &input_userauth_passwd_changereq);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_EXT_INFO, kex_നിവേശം_ext_info);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_SERVICE_ACCEPT, &നിവേശം_userauth_service_accept);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_SUCCESS, &നിവേശം_userauth_success);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_FAILURE, &നിവേശം_userauth_failure);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_BANNER, &നിവേശം_userauth_banner);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_INFO_REQUEST, &നിവേശം_userauth_info_req);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_PK_OK, &നിവേശം_userauth_pk_ok);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_PASSWD_CHANGEREQ, &നിവേശം_userauth_passwd_changereq);
 }
 
-static int
-init_once(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+init_once(ശൂന്യം)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	എങ്കിൽ (g_init)
+		തിരികെ 0;
+	സൂചന(SIGPIPE, SIG_IGN);
 	log_init("ssh_client_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	ഘടന sshkey *priv = load_private(PRIV_ED25519);
+	ഘടന sshkey *pub = load_public(PUB_ED25519);
+	അക്ഷരം *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	സ്ഥിരം അക്ഷരം *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	അക്ഷരം *proposal[PROPOSAL_MAX] = { 0 };
+	പൂർണ്ണസംഖ്യ i;
+	വേണ്ടി (i = 0; i < PROPOSAL_MAX; i++) {
+		സ്ഥിരം അക്ഷരം *p = defaults[i];
+		എങ്കിൽ (i == PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		അല്ലെങ്കിൽ എങ്കിൽ (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		അല്ലെങ്കിൽ എങ്കിൽ (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		അല്ലെങ്കിൽ എങ്കിൽ (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	ഘടന kex_params kp;
+	memcpy(kp.proposal, proposal, വലുപ്പം(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	എങ്കിൽ (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		തിരികെ -1;
+	എങ്കിൽ (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		തിരികെ -1;
+	എങ്കിൽ (run_kex(g_client, g_server) != 0)
+		തിരികെ -1;
 
 	fuzz_setup(g_client);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	സ്വതന്ത്രം(keyname);
+	വേണ്ടി (i = 0; i < PROPOSAL_MAX; i++)
+		സ്വതന്ത്രം(proposal[i]);
 	g_init = 1;
-	return 0;
+	തിരികെ 0;
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_DISCONNECT, SSH2_MSG_IGNORE, SSH2_MSG_UNIMPLEMENTED,
-	SSH2_MSG_DEBUG, SSH2_MSG_SERVICE_ACCEPT, SSH2_MSG_EXT_INFO,
-	SSH2_MSG_USERAUTH_FAILURE, SSH2_MSG_USERAUTH_SUCCESS,
-	SSH2_MSG_USERAUTH_BANNER, SSH2_MSG_USERAUTH_INFO_REQUEST,
-	SSH2_MSG_USERAUTH_PK_OK, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
+സ്ഥിതം സ്ഥിരം uint8_t k_സന്ദേശം_types[] = {
+	SSH2_സന്ദേശം_DISCONNECT, SSH2_സന്ദേശം_IGNORE, SSH2_സന്ദേശം_UNIMPLEMENTED,
+	SSH2_സന്ദേശം_DEBUG, SSH2_സന്ദേശം_SERVICE_ACCEPT, SSH2_സന്ദേശം_EXT_INFO,
+	SSH2_സന്ദേശം_USERAUTH_FAILURE, SSH2_സന്ദേശം_USERAUTH_SUCCESS,
+	SSH2_സന്ദേശം_USERAUTH_BANNER, SSH2_സന്ദേശം_USERAUTH_INFO_REQUEST,
+	SSH2_സന്ദേശം_USERAUTH_PK_OK, SSH2_സന്ദേശം_USERAUTH_PASSWD_CHANGEREQ,
 };
 
-void
-fuzz_one_message(const uint8_t *data, size_t size)
+ശൂന്യം
+fuzz_one_message(സ്ഥിരം uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	എങ്കിൽ (init_once() != 0)
+		തിരികെ;
+	എങ്കിൽ (size > 65000)
+		തിരികെ;
 
 	uint8_t selector = size > 0 ? data[0] : 0;
-	const uint8_t *payload = size > 0 ? data + 1 : NULL;
+	സ്ഥിരം uint8_t *payload = size > 0 ? data + 1 : ശൂന്യ;
 	size_t plen = size > 0 ? size - 1 : 0;
 
-	uint8_t msg_type = k_msg_types[selector %
-	    (sizeof(k_msg_types) / sizeof(k_msg_types[0]))];
+	uint8_t സന്ദേശം_type = k_സന്ദേശം_types[selector %
+	    (വലുപ്പം(k_സന്ദേശം_types) / വലുപ്പം(k_സന്ദേശം_types[0]))];
 
 	fuzz_reset_authctxt(g_client);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	എങ്കിൽ (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_server, msg_type, payload, plen) != 0)
-			goto done;
-		if (pump(g_server, g_client, &transferred) != 0)
-			goto done;
-		(void)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, NULL);
+		എങ്കിൽ (ssh_packet_put(g_server, സന്ദേശം_type, payload, plen) != 0)
+			പോകുക done;
+		എങ്കിൽ (pump(g_server, g_client, &transferred) != 0)
+			പോകുക done;
+		(ശൂന്യം)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, ശൂന്യ);
 	done:
 		;
 	}

@@ -35,98 +35,98 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/base/sigaction.c */
 
-#include "includes.h"
-#include <errno.h>
-#include <signal.h>
-#include "sigact.h"
+#അന്തര്ഭാവ "includes.h"
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ "sigact.h"
 
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#എങ്കിൽ !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+പൂർണ്ണസംഖ്യ
+sigaction(പൂർണ്ണസംഖ്യ sig, ഘടന sigaction *sigact, ഘടന sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
-	    osigact ? &osigact->sv : NULL);
+	തിരികെ sigvec(sig, sigact ? &sigact->sv : ശൂന്യ,
+	    osigact ? &osigact->sv : ശൂന്യ);
 }
 
-int
+പൂർണ്ണസംഖ്യ
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	എങ്കിൽ (!mask) {
 		errno = EINVAL;
-		return -1;
+		തിരികെ -1;
 	}
 	*mask = 0;
-	return 0;
+	തിരികെ 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+പൂർണ്ണസംഖ്യ
+sigprocmask (പൂർണ്ണസംഖ്യ mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	എങ്കിൽ (!mask) {
 		errno = EINVAL;
-		return -1;
+		തിരികെ -1;
 	}
 
-	if (omask)
+	എങ്കിൽ (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	എങ്കിൽ (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	അല്ലെങ്കിൽ എങ്കിൽ (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	അല്ലെങ്കിൽ എങ്കിൽ (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	തിരികെ 0;
 }
 
-int
+പൂർണ്ണസംഖ്യ
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	എങ്കിൽ (!mask) {
 		errno = EINVAL;
-		return -1;
+		തിരികെ -1;
 	}
-	return sigpause(*mask);
+	തിരികെ sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+പൂർണ്ണസംഖ്യ
+sigdelset (sigset_t *mask, പൂർണ്ണസംഖ്യ sig)
 {
-	if (!mask) {
+	എങ്കിൽ (!mask) {
 		errno = EINVAL;
-		return -1;
+		തിരികെ -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	തിരികെ 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+പൂർണ്ണസംഖ്യ
+sigaddset (sigset_t *mask, പൂർണ്ണസംഖ്യ sig)
 {
-	if (!mask) {
+	എങ്കിൽ (!mask) {
 		errno = EINVAL;
-		return -1;
+		തിരികെ -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	തിരികെ 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+പൂർണ്ണസംഖ്യ
+sigismember (sigset_t *mask, പൂർണ്ണസംഖ്യ sig)
 {
-	if (!mask) {
+	എങ്കിൽ (!mask) {
 		errno = EINVAL;
-		return -1;
+		തിരികെ -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	തിരികെ (*mask & sigmask(sig)) != 0;
 }
 
 #endif

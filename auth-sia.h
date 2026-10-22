@@ -22,10 +22,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifdef HAVE_OSF_SIA
 
-void	session_setup_sia(struct passwd *, char *);
+ശൂന്യം	session_setup_sia(ഘടന passwd *, അക്ഷരം *);
 
 #endif /* HAVE_OSF_SIA */

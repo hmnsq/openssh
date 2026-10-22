@@ -27,117 +27,117 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ <openssl/bn.h>
+#അന്തര്ഭാവ <openssl/ec.h>
+#അന്തര്ഭാവ <openssl/ecdsa.h>
+#അന്തര്ഭാവ <openssl/evp.h>
 
-#include <string.h>
-#include <stdio.h> /* needed for DEBUG_SK only */
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdio.h> /* needed for DEBUG_SK only */
 
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "digest.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "digest.h"
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
+#അന്തര്ഭാവ "sshkey.h"
 
 /* Reuse some ECDSA internals */
-extern struct sshkey_impl_funcs sshkey_ecdsa_funcs;
+ബാഹ്യ ഘടന sshkey_impl_funcs sshkey_ecdsa_funcs;
 
-static void
-ssh_ecdsa_sk_cleanup(struct sshkey *k)
+സ്ഥിതം ശൂന്യം
+ssh_ecdsa_sk_cleanup(ഘടന sshkey *k)
 {
 	sshkey_sk_cleanup(k);
 	sshkey_ecdsa_funcs.cleanup(k);
 }
 
-static int
-ssh_ecdsa_sk_equal(const struct sshkey *a, const struct sshkey *b)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ecdsa_sk_equal(സ്ഥിരം ഘടന sshkey *a, സ്ഥിരം ഘടന sshkey *b)
 {
-	if (!sshkey_sk_fields_equal(a, b))
-		return 0;
-	if (!sshkey_ecdsa_funcs.equal(a, b))
-		return 0;
-	return 1;
+	എങ്കിൽ (!sshkey_sk_fields_equal(a, b))
+		തിരികെ 0;
+	എങ്കിൽ (!sshkey_ecdsa_funcs.equal(a, b))
+		തിരികെ 0;
+	തിരികെ 1;
 }
 
-static int
-ssh_ecdsa_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ecdsa_sk_serialize_public(സ്ഥിരം ഘടന sshkey *താക്കോൽ, ഘടന sshbuf *b,
+    എണ്ണൽ sshkey_serialize_rep opts)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshkey_ecdsa_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
-		return r;
+	എങ്കിൽ ((r = sshkey_ecdsa_funcs.serialize_public(താക്കോൽ, b, opts)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshkey_serialize_sk(താക്കോൽ, b)) != 0)
+		തിരികെ r;
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-ssh_ecdsa_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ecdsa_sk_serialize_private(സ്ഥിരം ഘടന sshkey *താക്കോൽ, ഘടന sshbuf *b,
+    എണ്ണൽ sshkey_serialize_rep opts)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.serialize_public(key,
+	എങ്കിൽ (!sshkey_is_cert(താക്കോൽ)) {
+		എങ്കിൽ ((r = sshkey_ecdsa_funcs.serialize_public(താക്കോൽ,
 		    b, opts)) != 0)
-			return r;
+			തിരികെ r;
 	}
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
-		return r;
+	എങ്കിൽ ((r = sshkey_serialize_private_sk(താക്കോൽ, b)) != 0)
+		തിരികെ r;
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-ssh_ecdsa_sk_copy_public(const struct sshkey *from, struct sshkey *to)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ecdsa_sk_copy_public(സ്ഥിരം ഘടന sshkey *from, ഘടന sshkey *to)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshkey_ecdsa_funcs.copy_public(from, to)) != 0)
-		return r;
-	if ((r = sshkey_copy_public_sk(from, to)) != 0)
-		return r;
-	return 0;
+	എങ്കിൽ ((r = sshkey_ecdsa_funcs.copy_public(from, to)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshkey_copy_public_sk(from, to)) != 0)
+		തിരികെ r;
+	തിരികെ 0;
 }
 
-static int
-ssh_ecdsa_sk_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ecdsa_sk_deserialize_public(സ്ഥിരം അക്ഷരം *ktype, ഘടന sshbuf *b,
+    ഘടന sshkey *താക്കോൽ)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	എങ്കിൽ ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, താക്കോൽ)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshkey_deserialize_sk(b, താക്കോൽ)) != 0)
+		തിരികെ r;
+	തിരികെ 0;
 }
 
-static int
-ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ecdsa_sk_deserialize_private(സ്ഥിരം അക്ഷരം *ktype, ഘടന sshbuf *b,
+    ഘടന sshkey *താക്കോൽ)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype,
-		    b, key)) != 0)
-			return r;
+	എങ്കിൽ (!sshkey_is_cert(താക്കോൽ)) {
+		എങ്കിൽ ((r = sshkey_ecdsa_funcs.deserialize_public(ktype,
+		    b, താക്കോൽ)) != 0)
+			തിരികെ r;
 	}
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
-		return r;
+	എങ്കിൽ ((r = sshkey_private_deserialize_sk(b, താക്കോൽ)) != 0)
+		തിരികെ r;
 
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -152,29 +152,29 @@ ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
  * that the hash of the signed message is present within the clientData
  * structure without needing to implement any JSON parsing.
  */
-static int
-webauthn_check_prepare_hash(const u_char *data, size_t datalen,
-    const char *origin, const struct sshbuf *wrapper,
-    uint8_t flags, const struct sshbuf *extensions,
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+webauthn_check_prepare_hash(സ്ഥിരം u_char *data, size_t datalen,
+    സ്ഥിരം അക്ഷരം *origin, സ്ഥിരം ഘടന sshbuf *wrapper,
+    uint8_t flags, സ്ഥിരം ഘടന sshbuf *extensions,
     u_char *msghash, size_t msghashlen)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *chall = NULL, *m = NULL;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *chall = ശൂന്യ, *m = ശൂന്യ;
 
-	if ((m = sshbuf_new()) == NULL ||
-	    (chall = sshbuf_from(data, datalen)) == NULL) {
+	എങ്കിൽ ((m = sshbuf_new()) == ശൂന്യ ||
+	    (chall = sshbuf_from(data, datalen)) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 	/*
 	 * Ensure origin contains no quote character and that the flags are
 	 * consistent with what we received
 	 */
-	if (strchr(origin, '\"') != NULL ||
+	എങ്കിൽ (strchr(origin, '\"') != ശൂന്യ ||
 	    (flags & 0x40) != 0 /* AD */ ||
 	    ((flags & 0x80) == 0 /* ED */) != (sshbuf_len(extensions) == 0)) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
 
 	/*
@@ -186,12 +186,12 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 #define WEBAUTHN_0	"{\"type\":\"webauthn.get\",\"challenge\":\""
 #define WEBAUTHN_1	"\",\"origin\":\""
 #define WEBAUTHN_2	"\""
-	if ((r = sshbuf_put(m, WEBAUTHN_0, sizeof(WEBAUTHN_0) - 1)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_put(m, WEBAUTHN_0, വലുപ്പം(WEBAUTHN_0) - 1)) != 0 ||
 	    (r = sshbuf_dtourlb64(chall, m, 0)) != 0 ||
-	    (r = sshbuf_put(m, WEBAUTHN_1, sizeof(WEBAUTHN_1) - 1)) != 0 ||
+	    (r = sshbuf_put(m, WEBAUTHN_1, വലുപ്പം(WEBAUTHN_1) - 1)) != 0 ||
 	    (r = sshbuf_put(m, origin, strlen(origin))) != 0 ||
-	    (r = sshbuf_put(m, WEBAUTHN_2, sizeof(WEBAUTHN_2) - 1)) != 0)
-		goto out;
+	    (r = sshbuf_put(m, WEBAUTHN_2, വലുപ്പം(WEBAUTHN_2) - 1)) != 0)
+		പോകുക out;
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: received origin: %s\n", __func__, origin);
 	fprintf(stderr, "%s: received clientData:\n", __func__);
@@ -200,159 +200,159 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 	sshbuf_dump(m, stderr);
 #endif
 	/* Check that the supplied clientData has the preamble we expect */
-	if ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
-		goto out;
+	എങ്കിൽ ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
+		പോകുക out;
 
 	/* Prepare hash of clientData */
-	if ((r = ssh_digest_buffer(SSH_DIGEST_SHA256, wrapper,
+	എങ്കിൽ ((r = ssh_digest_buffer(SSH_DIGEST_SHA256, wrapper,
 	    msghash, msghashlen)) != 0)
-		goto out;
+		പോകുക out;
 
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(chall);
 	sshbuf_free(m);
-	return r;
+	തിരികെ r;
 }
 
-static int
-ssh_ecdsa_sk_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ecdsa_sk_verify(സ്ഥിരം ഘടന sshkey *താക്കോൽ,
+    സ്ഥിരം u_char *sig, size_t siglen,
+    സ്ഥിരം u_char *data, size_t dlen, സ്ഥിരം അക്ഷരം *alg, u_int compat,
+    ഘടന sshkey_sig_details **detailsp)
 {
-	ECDSA_SIG *esig = NULL;
-	EVP_MD_CTX *md_ctx = NULL;
-	BIGNUM *sig_r = NULL, *sig_s = NULL;
+	ECDSA_SIG *esig = ശൂന്യ;
+	EVP_MD_CTX *md_ctx = ശൂന്യ;
+	BIGNUM *sig_r = ശൂന്യ, *sig_s = ശൂന്യ;
 	u_char sig_flags;
 	u_char msghash[32], apphash[32];
 	u_int sig_counter;
-	u_char *sigb = NULL, *cp;
-	int is_webauthn = 0, ret = SSH_ERR_INTERNAL_ERROR, len = 0;
-	struct sshbuf *b = NULL, *sigbuf = NULL, *original_signed = NULL;
-	struct sshbuf *webauthn_wrapper = NULL, *webauthn_exts = NULL;
-	char *ktype = NULL, *webauthn_origin = NULL;
-	struct sshkey_sig_details *details = NULL;
+	u_char *sigb = ശൂന്യ, *cp;
+	പൂർണ്ണസംഖ്യ is_webauthn = 0, ret = SSH_ERR_INTERNAL_ERROR, len = 0;
+	ഘടന sshbuf *b = ശൂന്യ, *sigbuf = ശൂന്യ, *original_signed = ശൂന്യ;
+	ഘടന sshbuf *webauthn_wrapper = ശൂന്യ, *webauthn_exts = ശൂന്യ;
+	അക്ഷരം *ktype = ശൂന്യ, *webauthn_origin = ശൂന്യ;
+	ഘടന sshkey_sig_details *details = ശൂന്യ;
 #ifdef DEBUG_SK
-	char *tmp = NULL;
+	അക്ഷരം *tmp = ശൂന്യ;
 #endif
 
-	if (detailsp != NULL)
-		*detailsp = NULL;
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA_SK ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (detailsp != ശൂന്യ)
+		*detailsp = ശൂന്യ;
+	എങ്കിൽ (താക്കോൽ == ശൂന്യ || താക്കോൽ->pkey == ശൂന്യ ||
+	    sshkey_type_plain(താക്കോൽ->type) != താക്കോൽ_ECDSA_SK ||
+	    sig == ശൂന്യ || siglen == 0)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 
-	if (key->ecdsa_nid != NID_X9_62_prime256v1)
-		return SSH_ERR_INTERNAL_ERROR;
+	എങ്കിൽ (താക്കോൽ->ecdsa_nid != NID_X9_62_prime256v1)
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((details = calloc(1, sizeof(*details))) == NULL) {
+	എങ്കിൽ ((b = sshbuf_from(sig, siglen)) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((details = calloc(1, വലുപ്പം(*details))) == ശൂന്യ) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0) {
+	എങ്കിൽ (sshbuf_get_cstring(b, &ktype, ശൂന്യ) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if (strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
+	എങ്കിൽ (strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
 	    strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com")
 	      == 0)
 		is_webauthn = 1;
-	else if (strcmp(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
+	അല്ലെങ്കിൽ എങ്കിൽ (strcmp(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if (sshbuf_froms(b, &sigbuf) != 0 ||
+	എങ്കിൽ (sshbuf_froms(b, &sigbuf) != 0 ||
 	    sshbuf_get_u8(b, &sig_flags) != 0 ||
 	    sshbuf_get_u32(b, &sig_counter) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if (is_webauthn) {
-		if (sshbuf_get_cstring(b, &webauthn_origin, NULL) != 0 ||
+	എങ്കിൽ (is_webauthn) {
+		എങ്കിൽ (sshbuf_get_cstring(b, &webauthn_origin, ശൂന്യ) != 0 ||
 		    sshbuf_froms(b, &webauthn_wrapper) != 0 ||
 		    sshbuf_froms(b, &webauthn_exts) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			പോകുക out;
 		}
 	}
-	if (sshbuf_len(b) != 0) {
+	എങ്കിൽ (sshbuf_len(b) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		പോകുക out;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	എങ്കിൽ (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
+	എങ്കിൽ (sshbuf_len(sigbuf) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		പോകുക out;
 	}
 
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: data: (len %zu)\n", __func__, dlen);
 	/* sshbuf_dump_data(data, datalen, stderr); */
 	fprintf(stderr, "%s: sig_r: %s\n", __func__, (tmp = BN_bn2hex(sig_r)));
-	free(tmp);
+	സ്വതന്ത്രം(tmp);
 	fprintf(stderr, "%s: sig_s: %s\n", __func__, (tmp = BN_bn2hex(sig_s)));
-	free(tmp);
+	സ്വതന്ത്രം(tmp);
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, sig_flags, sig_counter);
-	if (is_webauthn) {
+	എങ്കിൽ (is_webauthn) {
 		fprintf(stderr, "%s: webauthn origin: %s\n", __func__,
 		    webauthn_origin);
 		fprintf(stderr, "%s: webauthn_wrapper:\n", __func__);
 		sshbuf_dump(webauthn_wrapper, stderr);
 	}
 #endif
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+	എങ്കിൽ ((esig = ECDSA_SIG_new()) == ശൂന്യ) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	എങ്കിൽ (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		പോകുക out;
 	}
-	sig_r = sig_s = NULL; /* transferred */
+	sig_r = sig_s = ശൂന്യ; /* transferred */
 
 	/* Reconstruct data that was supposedly signed */
-	if ((original_signed = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((original_signed = sshbuf_new()) == ശൂന്യ) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if (is_webauthn) {
-		if ((ret = webauthn_check_prepare_hash(data, dlen,
+	എങ്കിൽ (is_webauthn) {
+		എങ്കിൽ ((ret = webauthn_check_prepare_hash(data, dlen,
 		    webauthn_origin, webauthn_wrapper, sig_flags, webauthn_exts,
-		    msghash, sizeof(msghash))) != 0)
-			goto out;
-	} else if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
-	    msghash, sizeof(msghash))) != 0)
-		goto out;
+		    msghash, വലുപ്പം(msghash))) != 0)
+			പോകുക out;
+	} അല്ലെങ്കിൽ എങ്കിൽ ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
+	    msghash, വലുപ്പം(msghash))) != 0)
+		പോകുക out;
 	/* Application value is hashed before signature */
-	if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
-	    strlen(key->sk_application), apphash, sizeof(apphash))) != 0)
-		goto out;
+	എങ്കിൽ ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, താക്കോൽ->sk_application,
+	    strlen(താക്കോൽ->sk_application), apphash, വലുപ്പം(apphash))) != 0)
+		പോകുക out;
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: hashed application:\n", __func__);
-	sshbuf_dump_data(apphash, sizeof(apphash), stderr);
+	sshbuf_dump_data(apphash, വലുപ്പം(apphash), stderr);
 	fprintf(stderr, "%s: hashed message:\n", __func__);
-	sshbuf_dump_data(msghash, sizeof(msghash), stderr);
+	sshbuf_dump_data(msghash, വലുപ്പം(msghash), stderr);
 #endif
-	if ((ret = sshbuf_put(original_signed,
-	    apphash, sizeof(apphash))) != 0 ||
+	എങ്കിൽ ((ret = sshbuf_put(original_signed,
+	    apphash, വലുപ്പം(apphash))) != 0 ||
 	    (ret = sshbuf_put_u8(original_signed, sig_flags)) != 0 ||
 	    (ret = sshbuf_put_u32(original_signed, sig_counter)) != 0 ||
 	    (ret = sshbuf_putb(original_signed, webauthn_exts)) != 0 ||
-	    (ret = sshbuf_put(original_signed, msghash, sizeof(msghash))) != 0)
-		goto out;
+	    (ret = sshbuf_put(original_signed, msghash, വലുപ്പം(msghash))) != 0)
+		പോകുക out;
 	details->sk_counter = sig_counter;
 	details->sk_flags = sig_flags;
 #ifdef DEBUG_SK
@@ -360,92 +360,92 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	sshbuf_dump(original_signed, stderr);
 #endif
 
-	if ((md_ctx = EVP_MD_CTX_new()) == NULL) {
+	എങ്കിൽ ((md_ctx = EVP_MD_CTX_new()) == ശൂന്യ) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	എങ്കിൽ ((len = i2d_ECDSA_SIG(esig, ശൂന്യ)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		പോകുക out;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	എങ്കിൽ ((sigb = calloc(1, len)) == ശൂന്യ) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	എങ്കിൽ (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		പോകുക out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: signed hash:\n", __func__);
 	sshbuf_dump_data(sigb, len, stderr);
 #endif
 	/* Verify it */
-	if (EVP_DigestVerifyInit(md_ctx, NULL, EVP_sha256(), NULL,
-	    key->pkey) != 1) {
+	എങ്കിൽ (EVP_DigestVerifyInit(md_ctx, ശൂന്യ, EVP_sha256(), ശൂന്യ,
+	    താക്കോൽ->pkey) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		പോകുക out;
 	}
-	switch (EVP_DigestVerify(md_ctx, sigb, len,
+	തിരഞ്ഞെടുപ്പ് (EVP_DigestVerify(md_ctx, sigb, len,
 	    sshbuf_ptr(original_signed), sshbuf_len(original_signed))) {
-	case 1:
+	അവസ്ഥ 1:
 		ret = 0;
-		break;
-	case 0:
+		നിർത്തുക;
+	അവസ്ഥ 0:
 		ret = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
-	default:
+		പോകുക out;
+	സ്ഥിരസ്ഥിതി:
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		പോകുക out;
 	}
 	/* success */
-	if (detailsp != NULL) {
+	എങ്കിൽ (detailsp != ശൂന്യ) {
 		*detailsp = details;
-		details = NULL;
+		details = ശൂന്യ;
 	}
  out:
-	explicit_bzero(&sig_flags, sizeof(sig_flags));
-	explicit_bzero(&sig_counter, sizeof(sig_counter));
-	explicit_bzero(msghash, sizeof(msghash));
-	explicit_bzero(apphash, sizeof(apphash));
+	explicit_bzero(&sig_flags, വലുപ്പം(sig_flags));
+	explicit_bzero(&sig_counter, വലുപ്പം(sig_counter));
+	explicit_bzero(msghash, വലുപ്പം(msghash));
+	explicit_bzero(apphash, വലുപ്പം(apphash));
 	sshkey_sig_details_free(details);
 	sshbuf_free(webauthn_wrapper);
 	sshbuf_free(webauthn_exts);
-	free(webauthn_origin);
+	സ്വതന്ത്രം(webauthn_origin);
 	sshbuf_free(original_signed);
 	sshbuf_free(sigbuf);
 	sshbuf_free(b);
 	ECDSA_SIG_free(esig);
 	BN_clear_free(sig_r);
 	BN_clear_free(sig_s);
-	free(ktype);
+	സ്വതന്ത്രം(ktype);
 	freezero(sigb, len);
 	EVP_MD_CTX_free(md_ctx);
-	return ret;
+	തിരികെ ret;
 }
 
-static const struct sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+സ്ഥിതം സ്ഥിരം ഘടന sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {
+	/* .size = */		ശൂന്യ,
+	/* .alloc = */		ശൂന്യ,
 	/* .cleanup = */	ssh_ecdsa_sk_cleanup,
 	/* .equal = */		ssh_ecdsa_sk_equal,
 	/* .ssh_serialize_public = */ ssh_ecdsa_sk_serialize_public,
 	/* .ssh_deserialize_public = */ ssh_ecdsa_sk_deserialize_public,
 	/* .ssh_serialize_private = */ ssh_ecdsa_sk_serialize_private,
 	/* .ssh_deserialize_private = */ ssh_ecdsa_sk_deserialize_private,
-	/* .generate = */	NULL,
+	/* .generate = */	ശൂന്യ,
 	/* .copy_public = */	ssh_ecdsa_sk_copy_public,
-	/* .sign = */		NULL,
+	/* .sign = */		ശൂന്യ,
 	/* .verify = */		ssh_ecdsa_sk_verify,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_impl = {
+സ്ഥിരം ഘടന sshkey_impl sshkey_ecdsa_sk_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK,
+	/* .sigalg = */		ശൂന്യ,
+	/* .type = */		താക്കോൽ_ECDSA_SK,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -453,11 +453,11 @@ const struct sshkey_impl sshkey_ecdsa_sk_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_cert_impl = {
+സ്ഥിരം ഘടന sshkey_impl sshkey_ecdsa_sk_cert_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK_CERT,
+	/* .sigalg = */		ശൂന്യ,
+	/* .type = */		താക്കോൽ_ECDSA_SK_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -465,11 +465,11 @@ const struct sshkey_impl sshkey_ecdsa_sk_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
+സ്ഥിരം ഘടന sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK,
+	/* .sigalg = */		ശൂന്യ,
+	/* .type = */		താക്കോൽ_ECDSA_SK,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -477,11 +477,11 @@ const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
 	/* .funcs = */		&sshkey_ecdsa_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl = {
+സ്ഥിരം ഘടന sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK_CERT,
+	/* .sigalg = */		ശൂന്യ,
+	/* .type = */		താക്കോൽ_ECDSA_SK_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	1,

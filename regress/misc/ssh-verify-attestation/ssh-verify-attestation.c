@@ -45,66 +45,66 @@
  * working.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdarg.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <inttypes.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <stdarg.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfile.h"
-#include "ssherr.h"
-#include "misc.h"
-#include "digest.h"
-#include "crypto_api.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "authfile.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "digest.h"
+#അന്തര്ഭാവ "crypto_api.h"
 
-#include <fido.h>
-#include <openssl/x509.h>
-#include <openssl/x509v3.h>
-#include <openssl/bio.h>
-#include <openssl/err.h>
-#include <openssl/pem.h>
-#include "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ <fido.h>
+#അന്തര്ഭാവ <openssl/x509.h>
+#അന്തര്ഭാവ <openssl/x509v3.h>
+#അന്തര്ഭാവ <openssl/bio.h>
+#അന്തര്ഭാവ <openssl/err.h>
+#അന്തര്ഭാവ <openssl/pem.h>
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
 
-extern char *__progname;
+ബാഹ്യ അക്ഷരം *__progname;
 
 #define ATTEST_MAGIC	"ssh-sk-attest-v01"
 
-static int
-prepare_fido_cred(fido_cred_t *cred, int credtype, const char *attfmt,
-    const char *rp_id, struct sshbuf *b, const struct sshbuf *challenge,
-    struct sshbuf **attestation_certp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+prepare_fido_cred(fido_cred_t *cred, പൂർണ്ണസംഖ്യ credtype, സ്ഥിരം അക്ഷരം *attfmt,
+    സ്ഥിരം അക്ഷരം *rp_id, ഘടന sshbuf *b, സ്ഥിരം ഘടന sshbuf *challenge,
+    ഘടന sshbuf **attestation_certp)
 {
-	struct sshbuf *attestation_cert = NULL, *sig = NULL, *authdata = NULL;
-	char *magic = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *attestation_cert = ശൂന്യ, *sig = ശൂന്യ, *authdata = ശൂന്യ;
+	അക്ഷരം *magic = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
-	*attestation_certp = NULL;
+	*attestation_certp = ശൂന്യ;
 
 	/* Make sure it's the format we're expecting */
-	if ((r = sshbuf_get_cstring(b, &magic, NULL)) != 0) {
+	എങ്കിൽ ((r = sshbuf_get_cstring(b, &magic, ശൂന്യ)) != 0) {
 		error_fr(r, "parse header");
-		goto out;
+		പോകുക out;
 	}
-	if (strcmp(magic, ATTEST_MAGIC) != 0) {
+	എങ്കിൽ (strcmp(magic, ATTEST_MAGIC) != 0) {
 		error_f("unsupported format");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
 	/* Parse the remaining fields */
-	if ((r = sshbuf_froms(b, &attestation_cert)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_froms(b, &attestation_cert)) != 0 ||
 	    (r = sshbuf_froms(b, &sig)) != 0 ||
 	    (r = sshbuf_froms(b, &authdata)) != 0 ||
-	    (r = sshbuf_get_u32(b, NULL)) != 0 || /* reserved flags */
-	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0) { /* reserved */
+	    (r = sshbuf_get_u32(b, ശൂന്യ)) != 0 || /* reserved flags */
+	    (r = sshbuf_get_string_direct(b, ശൂന്യ, ശൂന്യ)) != 0) { /* reserved */
 		error_fr(r, "parse body");
-		goto out;
+		പോകുക out;
 	}
 	debug3_f("attestation cert len=%zu, sig len=%zu, "
 	    "authdata len=%zu challenge len=%zu", sshbuf_len(attestation_cert),
@@ -114,7 +114,7 @@ prepare_fido_cred(fido_cred_t *cred, int credtype, const char *attfmt,
 	fido_cred_set_fmt(cred, attfmt);
 	fido_cred_set_clientdata(cred, sshbuf_ptr(challenge),
 	    sshbuf_len(challenge));
-	fido_cred_set_rp(cred, rp_id, NULL);
+	fido_cred_set_rp(cred, rp_id, ശൂന്യ);
 	fido_cred_set_authdata(cred, sshbuf_ptr(authdata),
 	    sshbuf_len(authdata));
 	/* XXX set_extensions, set_rk, set_uv */
@@ -124,311 +124,311 @@ prepare_fido_cred(fido_cred_t *cred, int credtype, const char *attfmt,
 
 	/* success */
 	*attestation_certp = attestation_cert;
-	attestation_cert = NULL;
+	attestation_cert = ശൂന്യ;
 	r = 0;
  out:
-	free(magic);
+	സ്വതന്ത്രം(magic);
 	sshbuf_free(attestation_cert);
 	sshbuf_free(sig);
 	sshbuf_free(authdata);
-	return r;
+	തിരികെ r;
 }
 
-static uint8_t *
-get_pubkey_from_cred_ecdsa(const fido_cred_t *cred, size_t *pubkey_len)
+സ്ഥിതം uint8_t *
+get_pubkey_from_cred_ecdsa(സ്ഥിരം fido_cred_t *cred, size_t *pubkey_len)
 {
-	const uint8_t *ptr;
-	uint8_t *pubkey = NULL, *ret = NULL;
-	BIGNUM *x = NULL, *y = NULL;
-	EC_POINT *q = NULL;
-	EC_GROUP *g = NULL;
+	സ്ഥിരം uint8_t *ptr;
+	uint8_t *pubkey = ശൂന്യ, *ret = ശൂന്യ;
+	BIGNUM *x = ശൂന്യ, *y = ശൂന്യ;
+	EC_POINT *q = ശൂന്യ;
+	EC_GROUP *g = ശൂന്യ;
 
-	if ((x = BN_new()) == NULL ||
-	    (y = BN_new()) == NULL ||
-	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == NULL ||
-	    (q = EC_POINT_new(g)) == NULL) {
+	എങ്കിൽ ((x = BN_new()) == ശൂന്യ ||
+	    (y = BN_new()) == ശൂന്യ ||
+	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == ശൂന്യ ||
+	    (q = EC_POINT_new(g)) == ശൂന്യ) {
 		error_f("libcrypto setup failed");
-		goto out;
+		പോകുക out;
 	}
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	എങ്കിൽ ((ptr = fido_cred_pubkey_ptr(cred)) == ശൂന്യ) {
 		error_f("fido_cred_pubkey_ptr failed");
-		goto out;
+		പോകുക out;
 	}
-	if (fido_cred_pubkey_len(cred) != 64) {
+	എങ്കിൽ (fido_cred_pubkey_len(cred) != 64) {
 		error_f("bad fido_cred_pubkey_len %zu",
 		    fido_cred_pubkey_len(cred));
-		goto out;
+		പോകുക out;
 	}
 
-	if (BN_bin2bn(ptr, 32, x) == NULL ||
-	    BN_bin2bn(ptr + 32, 32, y) == NULL) {
+	എങ്കിൽ (BN_bin2bn(ptr, 32, x) == ശൂന്യ ||
+	    BN_bin2bn(ptr + 32, 32, y) == ശൂന്യ) {
 		error_f("BN_bin2bn failed");
-		goto out;
+		പോകുക out;
 	}
-	if (EC_POINT_set_affine_coordinates(g, q, x, y, NULL) != 1) {
+	എങ്കിൽ (EC_POINT_set_affine_coordinates(g, q, x, y, ശൂന്യ) != 1) {
 		error_f("EC_POINT_set_affine_coordinates failed");
-		goto out;
+		പോകുക out;
 	}
 	*pubkey_len = EC_POINT_point2oct(g, q,
-	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (*pubkey_len == 0 || *pubkey_len > 2048) {
+	    POINT_CONVERSION_UNCOMPRESSED, ശൂന്യ, 0, ശൂന്യ);
+	എങ്കിൽ (*pubkey_len == 0 || *pubkey_len > 2048) {
 		error_f("bad pubkey length %zu", *pubkey_len);
-		goto out;
+		പോകുക out;
 	}
-	if ((pubkey = malloc(*pubkey_len)) == NULL) {
+	എങ്കിൽ ((pubkey = malloc(*pubkey_len)) == ശൂന്യ) {
 		error_f("malloc pubkey failed");
-		goto out;
+		പോകുക out;
 	}
-	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
-	    pubkey, *pubkey_len, NULL) == 0) {
+	എങ്കിൽ (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
+	    pubkey, *pubkey_len, ശൂന്യ) == 0) {
 		error_f("EC_POINT_point2oct failed");
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	ret = pubkey;
-	pubkey = NULL;
+	pubkey = ശൂന്യ;
  out:
-	free(pubkey);
+	സ്വതന്ത്രം(pubkey);
 	EC_POINT_free(q);
 	EC_GROUP_free(g);
 	BN_clear_free(x);
 	BN_clear_free(y);
-	return ret;
+	തിരികെ ret;
 }
 
 /* copied from sshsk_ecdsa_assemble() */
-static int
-cred_matches_key_ecdsa(const fido_cred_t *cred, const struct sshkey *k)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+cred_matches_താക്കോൽ_ecdsa(സ്ഥിരം fido_cred_t *cred, സ്ഥിരം ഘടന sshkey *k)
 {
-	struct sshkey *key = NULL;
-	struct sshbuf *b = NULL;
-	EC_KEY *ec = NULL;
-	uint8_t *pubkey = NULL;
+	ഘടന sshkey *താക്കോൽ = ശൂന്യ;
+	ഘടന sshbuf *b = ശൂന്യ;
+	EC_താക്കോൽ *ec = ശൂന്യ;
+	uint8_t *pubkey = ശൂന്യ;
 	size_t pubkey_len;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((key = sshkey_new(KEY_ECDSA_SK)) == NULL) {
+	എങ്കിൽ ((താക്കോൽ = sshkey_new(താക്കോൽ_ECDSA_SK)) == ശൂന്യ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	key->ecdsa_nid = NID_X9_62_prime256v1;
-	if ((key->pkey = EVP_PKEY_new()) == NULL ||
-	    (ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL ||
-	    (b = sshbuf_new()) == NULL) {
+	താക്കോൽ->ecdsa_nid = NID_X9_62_prime256v1;
+	എങ്കിൽ ((താക്കോൽ->pkey = EVP_PKEY_new()) == ശൂന്യ ||
+	    (ec = EC_താക്കോൽ_new_by_curve_name(താക്കോൽ->ecdsa_nid)) == ശൂന്യ ||
+	    (b = sshbuf_new()) == ശൂന്യ) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if ((pubkey = get_pubkey_from_cred_ecdsa(cred, &pubkey_len)) == NULL) {
+	എങ്കിൽ ((pubkey = get_pubkey_from_cred_ecdsa(cred, &pubkey_len)) == ശൂന്യ) {
 		error_f("get_pubkey_from_cred_ecdsa failed");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_put_string(b, pubkey, pubkey_len)) != 0) {
+	എങ്കിൽ ((r = sshbuf_put_string(b, pubkey, pubkey_len)) != 0) {
 		error_fr(r, "sshbuf_put_string");
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_get_eckey(b, ec)) != 0) {
+	എങ്കിൽ ((r = sshbuf_get_eckey(b, ec)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec)) != 0) {
+	എങ്കിൽ (sshkey_ec_validate_public(EC_താക്കോൽ_get0_group(ec),
+	    EC_താക്കോൽ_get0_public_താക്കോൽ(ec)) != 0) {
 		error("Authenticator returned invalid ECDSA key");
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+		r = SSH_ERR_താക്കോൽ_INVALID_EC_മൂല്യം;
+		പോകുക out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	എങ്കിൽ (EVP_PKEY_set1_EC_താക്കോൽ(താക്കോൽ->pkey, ec) != 1) {
 		/* XXX assume it is a allocation error */
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	key->sk_application = xstrdup(k->sk_application); /* XXX */
-	if (!sshkey_equal_public(key, k)) {
+	താക്കോൽ->sk_application = xstrdup(k->sk_application); /* XXX */
+	എങ്കിൽ (!sshkey_equal_public(താക്കോൽ, k)) {
 		error("sshkey_equal_public failed");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		പോകുക out;
 	}
 	r = 0; /* success */
  out:
-	EC_KEY_free(ec);
-	free(pubkey);
-	sshkey_free(key);
+	EC_താക്കോൽ_free(ec);
+	സ്വതന്ത്രം(pubkey);
+	sshkey_free(താക്കോൽ);
 	sshbuf_free(b);
-	return r;
+	തിരികെ r;
 }
 
 
 /* copied from sshsk_ed25519_assemble() */
-static int
-cred_matches_key_ed25519(const fido_cred_t *cred, const struct sshkey *k)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+cred_matches_താക്കോൽ_ed25519(സ്ഥിരം fido_cred_t *cred, സ്ഥിരം ഘടന sshkey *k)
 {
-	struct sshkey *key = NULL;
-	const uint8_t *ptr;
-	int r = -1;
+	ഘടന sshkey *താക്കോൽ = ശൂന്യ;
+	സ്ഥിരം uint8_t *ptr;
+	പൂർണ്ണസംഖ്യ r = -1;
 
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	എങ്കിൽ ((ptr = fido_cred_pubkey_ptr(cred)) == ശൂന്യ) {
 		error_f("fido_cred_pubkey_ptr failed");
-		goto out;
+		പോകുക out;
 	}
-	if (fido_cred_pubkey_len(cred) != ED25519_PK_SZ) {
+	എങ്കിൽ (fido_cred_pubkey_len(cred) != ED25519_PK_SZ) {
 		error_f("bad fido_cred_pubkey_len %zu",
 		    fido_cred_pubkey_len(cred));
-		goto out;
+		പോകുക out;
 	}
 
-	if ((key = sshkey_new(KEY_ED25519_SK)) == NULL) {
+	എങ്കിൽ ((താക്കോൽ = sshkey_new(താക്കോൽ_ED25519_SK)) == ശൂന്യ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if ((key->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL) {
+	എങ്കിൽ ((താക്കോൽ->ed25519_pk = malloc(ED25519_PK_SZ)) == ശൂന്യ) {
 		error_f("malloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	memcpy(key->ed25519_pk, ptr, ED25519_PK_SZ);
-	key->sk_application = xstrdup(k->sk_application); /* XXX */
-	if (!sshkey_equal_public(key, k)) {
+	memcpy(താക്കോൽ->ed25519_pk, ptr, ED25519_PK_SZ);
+	താക്കോൽ->sk_application = xstrdup(k->sk_application); /* XXX */
+	എങ്കിൽ (!sshkey_equal_public(താക്കോൽ, k)) {
 		error("sshkey_equal_public failed");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		പോകുക out;
 	}
 	r = 0; /* success */
  out:
-	sshkey_free(key);
-	return r;
+	sshkey_free(താക്കോൽ);
+	തിരികെ r;
 }
 
-static int
-cred_matches_key(const fido_cred_t *cred, const struct sshkey *k)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+cred_matches_താക്കോൽ(സ്ഥിരം fido_cred_t *cred, സ്ഥിരം ഘടന sshkey *k)
 {
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
-		switch (k->ecdsa_nid) {
-		case NID_X9_62_prime256v1:
-			return cred_matches_key_ecdsa(cred, k);
-			break;
-		default:
+	തിരഞ്ഞെടുപ്പ് (sshkey_type_plain(k->type)) {
+	അവസ്ഥ താക്കോൽ_ECDSA_SK:
+		തിരഞ്ഞെടുപ്പ് (k->ecdsa_nid) {
+		അവസ്ഥ NID_X9_62_prime256v1:
+			തിരികെ cred_matches_താക്കോൽ_ecdsa(cred, k);
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			fatal("Unsupported ECDSA key size");
 		}
-		break;
-	case KEY_ED25519_SK:
-		return cred_matches_key_ed25519(cred, k);
-	default:
+		നിർത്തുക;
+	അവസ്ഥ താക്കോൽ_ED25519_SK:
+		തിരികെ cred_matches_താക്കോൽ_ed25519(cred, k);
+	സ്ഥിരസ്ഥിതി:
 		error_f("key type %s not supported", sshkey_type(k));
-		return -1;
+		തിരികെ -1;
 	}
 }
 
-int
-main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
-	int r, ch, credtype = -1;
-	struct sshkey *k = NULL;
-	struct sshbuf *attestation = NULL, *challenge = NULL;
-	struct sshbuf *attestation_cert = NULL;
-	char *fp;
-	const char *attfmt = "packed", *style = NULL;
-	fido_cred_t *cred = NULL;
-	int write_attestation_cert = 0;
-	extern int optind;
+	പൂർണ്ണസംഖ്യ r, ch, credtype = -1;
+	ഘടന sshkey *k = ശൂന്യ;
+	ഘടന sshbuf *attestation = ശൂന്യ, *challenge = ശൂന്യ;
+	ഘടന sshbuf *attestation_cert = ശൂന്യ;
+	അക്ഷരം *fp;
+	സ്ഥിരം അക്ഷരം *attfmt = "packed", *style = ശൂന്യ;
+	fido_cred_t *cred = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ write_attestation_cert = 0;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ optind;
 	/* extern char *optarg; */
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, ശൂന്യ);
 
 	sanitise_stdfd();
 	log_init(__progname, log_level, SYSLOG_FACILITY_AUTH, 1);
 
-	while ((ch = getopt(argc, argv, "UAv")) != -1) {
-		switch (ch) {
-		case 'U':
+	ആകുമ്പോൾ ((ch = getopt(argc, argv, "UAv")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
+		അവസ്ഥ 'U':
 			attfmt = "fido-u2f";
-			break;
-		case 'A':
+			നിർത്തുക;
+		അവസ്ഥ 'A':
 			write_attestation_cert = 1;
-			break;
-		case 'v':
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			നിർത്തുക;
+		അവസ്ഥ 'v':
+			എങ്കിൽ (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			അല്ലെങ്കിൽ എങ്കിൽ (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
-			goto usage;
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
+			പോകുക usage;
 		}
 	}
 	log_init(__progname, log_level, SYSLOG_FACILITY_AUTH, 1);
 	argv += optind;
 	argc -= optind;
 
-	if (argc < 3) {
+	എങ്കിൽ (argc < 3) {
  usage:
 		fprintf(stderr, "usage: %s [-vAU] "
 		   "pubkey challenge attestation-blob\n", __progname);
 		exit(1);
 	}
-	if ((r = sshkey_load_public(argv[0], &k, NULL)) != 0)
+	എങ്കിൽ ((r = sshkey_load_public(argv[0], &k, ശൂന്യ)) != 0)
 		fatal_r(r, "load key %s", argv[0]);
-	if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	എങ്കിൽ ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == ശൂന്യ)
 		fatal("sshkey_fingerprint failed");
 	debug2("key %s: %s %s", argv[2], sshkey_type(k), fp);
-	free(fp);
-	if ((r = sshbuf_load_file(argv[1], &challenge)) != 0)
+	സ്വതന്ത്രം(fp);
+	എങ്കിൽ ((r = sshbuf_load_file(argv[1], &challenge)) != 0)
 		fatal_r(r, "load challenge %s", argv[1]);
-	if ((r = sshbuf_load_file(argv[2], &attestation)) != 0)
+	എങ്കിൽ ((r = sshbuf_load_file(argv[2], &attestation)) != 0)
 		fatal_r(r, "load attestation %s", argv[2]);
-	if ((cred = fido_cred_new()) == NULL)
+	എങ്കിൽ ((cred = fido_cred_new()) == ശൂന്യ)
 		fatal("fido_cred_new failed");
 
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
-		switch (k->ecdsa_nid) {
-		case NID_X9_62_prime256v1:
+	തിരഞ്ഞെടുപ്പ് (sshkey_type_plain(k->type)) {
+	അവസ്ഥ താക്കോൽ_ECDSA_SK:
+		തിരഞ്ഞെടുപ്പ് (k->ecdsa_nid) {
+		അവസ്ഥ NID_X9_62_prime256v1:
 			credtype = COSE_ES256;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			fatal("Unsupported ECDSA key size");
 		}
-		break;
-	case KEY_ED25519_SK:
+		നിർത്തുക;
+	അവസ്ഥ താക്കോൽ_ED25519_SK:
 		credtype = COSE_EDDSA;
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		fatal("unsupported key type %s", sshkey_type(k));
 	}
 
-	if ((r = prepare_fido_cred(cred, credtype, attfmt, k->sk_application,
+	എങ്കിൽ ((r = prepare_fido_cred(cred, credtype, attfmt, k->sk_application,
 	    attestation, challenge, &attestation_cert)) != 0)
 		fatal_r(r, "prepare_fido_cred %s", argv[2]);
-	if (fido_cred_x5c_ptr(cred) != NULL) {
+	എങ്കിൽ (fido_cred_x5c_ptr(cred) != ശൂന്യ) {
 		debug("basic attestation");
-		if ((r = fido_cred_verify(cred)) != FIDO_OK)
+		എങ്കിൽ ((r = fido_cred_verify(cred)) != FIDO_OK)
 			fatal("basic attestation failed");
 		style = "basic";
-	} else {
+	} അല്ലെങ്കിൽ {
 		debug("self attestation");
-		if ((r = fido_cred_verify_self(cred)) != FIDO_OK)
+		എങ്കിൽ ((r = fido_cred_verify_self(cred)) != FIDO_OK)
 			fatal("self attestation failed");
 		style = "self";
 	}
-	if (cred_matches_key(cred, k) != 0)
+	എങ്കിൽ (cred_matches_താക്കോൽ(cred, k) != 0)
 		fatal("cred authdata does not match key");
 
 	fido_cred_free(&cred);
 
-	if (write_attestation_cert) {
-		PEM_write(stdout, "CERTIFICATE", NULL,
+	എങ്കിൽ (write_attestation_cert) {
+		PEM_write(stdout, "CERTIFICATE", ശൂന്യ,
 		    sshbuf_ptr(attestation_cert), sshbuf_len(attestation_cert));
 	}
 	sshbuf_free(attestation_cert);
 
 	logit("%s: verified %s attestation", argv[2], style);
 
-	return (0);
+	തിരികെ (0);
 }

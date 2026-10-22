@@ -35,28 +35,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/un.h>
-#include <sys/socket.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/un.h>
+#അന്തര്ഭാവ <sys/socket.h>
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <errno.h>
 
-#include "ssh.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "log.h"
-#include "misc.h"
-#include "atomicio.h"
-#include "ssherr.h"
-#include "xmalloc.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "authfd.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "atomicio.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "xmalloc.h"
 
 #define MAX_AGENT_IDENTITIES	2048		/* Max keys in agent reply */
 #define MAX_AGENT_REPLY_LEN	(256 * 1024)	/* Max bytes in agent reply */
@@ -69,132 +69,132 @@
     (x == SSH2_AGENT_FAILURE))
 
 /* Convert success/failure response from agent to a err.h status */
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 decode_reply(u_char type)
 {
-	if (agent_failed(type))
-		return SSH_ERR_AGENT_FAILURE;
-	else if (type == SSH_AGENT_SUCCESS)
-		return 0;
-	else
-		return SSH_ERR_INVALID_FORMAT;
+	എങ്കിൽ (agent_failed(type))
+		തിരികെ SSH_ERR_AGENT_FAILURE;
+	അല്ലെങ്കിൽ എങ്കിൽ (type == SSH_AGENT_SUCCESS)
+		തിരികെ 0;
+	അല്ലെങ്കിൽ
+		തിരികെ SSH_ERR_INVALID_FORMAT;
 }
 
 /*
  * Opens an authentication socket at the provided path and stores the file
  * descriptor in fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket_path(const char *authsocket, int *fdp)
+പൂർണ്ണസംഖ്യ
+ssh_get_authentication_socket_path(സ്ഥിരം അക്ഷരം *authsocket, പൂർണ്ണസംഖ്യ *fdp)
 {
-	int sock, oerrno;
-	struct sockaddr_un sunaddr;
+	പൂർണ്ണസംഖ്യ sock, oerrno;
+	ഘടന sockaddr_un sunaddr;
 
 	debug3_f("path '%s'", authsocket);
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	memset(&sunaddr, 0, വലുപ്പം(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	strlcpy(sunaddr.sun_path, authsocket, sizeof(sunaddr.sun_path));
+	strlcpy(sunaddr.sun_path, authsocket, വലുപ്പം(sunaddr.sun_path));
 
-	if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	എങ്കിൽ ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 
 	/* close on exec */
-	if (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
-	    connect(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
+	എങ്കിൽ (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
+	    connect(sock, (ഘടന sockaddr *)&sunaddr, വലുപ്പം(sunaddr)) == -1) {
 		oerrno = errno;
 		close(sock);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	}
-	if (fdp != NULL)
+	എങ്കിൽ (fdp != ശൂന്യ)
 		*fdp = sock;
-	else
+	അല്ലെങ്കിൽ
 		close(sock);
-	return 0;
+	തിരികെ 0;
 }
 
 /*
  * Opens the default authentication socket and stores the file descriptor in
  * fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket(int *fdp)
+പൂർണ്ണസംഖ്യ
+ssh_get_authentication_socket(പൂർണ്ണസംഖ്യ *fdp)
 {
-	const char *authsocket;
+	സ്ഥിരം അക്ഷരം *authsocket;
 
-	if (fdp != NULL)
+	എങ്കിൽ (fdp != ശൂന്യ)
 		*fdp = -1;
 
 	authsocket = getenv(SSH_AUTHSOCKET_ENV_NAME);
-	if (authsocket == NULL || *authsocket == '\0')
-		return SSH_ERR_AGENT_NOT_PRESENT;
+	എങ്കിൽ (authsocket == ശൂന്യ || *authsocket == '\0')
+		തിരികെ SSH_ERR_AGENT_NOT_PRESENT;
 
-	return ssh_get_authentication_socket_path(authsocket, fdp);
+	തിരികെ ssh_get_authentication_socket_path(authsocket, fdp);
 }
 
 /* Communicate with agent: send request and read reply */
-static int
-ssh_request_reply(int sock, struct sshbuf *request, struct sshbuf *reply)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_request_reply(പൂർണ്ണസംഖ്യ sock, ഘടന sshbuf *request, ഘടന sshbuf *reply)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	size_t l, len;
-	char buf[1024];
+	അക്ഷരം buf[1024];
 
 	/* Get the length of the message, and format it in the buffer. */
 	len = sshbuf_len(request);
 	POKE_U32(buf, len);
 
 	/* Send the length and then the packet to the agent. */
-	if (atomicio(vwrite, sock, buf, 4) != 4 ||
+	എങ്കിൽ (atomicio(vwrite, sock, buf, 4) != 4 ||
 	    atomicio(vwrite, sock, sshbuf_mutable_ptr(request),
 	    sshbuf_len(request)) != sshbuf_len(request))
-		return SSH_ERR_AGENT_COMMUNICATION;
+		തിരികെ SSH_ERR_AGENT_COMMUNICATION;
 	/*
 	 * Wait for response from the agent.  First read the length of the
 	 * response packet.
 	 */
-	if (atomicio(read, sock, buf, 4) != 4)
-	    return SSH_ERR_AGENT_COMMUNICATION;
+	എങ്കിൽ (atomicio(പഠ, sock, buf, 4) != 4)
+	    തിരികെ SSH_ERR_AGENT_COMMUNICATION;
 
 	/* Extract the length, and check it for sanity. */
 	len = PEEK_U32(buf);
-	if (len > MAX_AGENT_REPLY_LEN)
-		return SSH_ERR_INVALID_FORMAT;
+	എങ്കിൽ (len > MAX_AGENT_REPLY_LEN)
+		തിരികെ SSH_ERR_INVALID_FORMAT;
 
 	/* Read the rest of the response in to the buffer. */
 	sshbuf_reset(reply);
-	while (len > 0) {
+	ആകുമ്പോൾ (len > 0) {
 		l = len;
-		if (l > sizeof(buf))
-			l = sizeof(buf);
-		if (atomicio(read, sock, buf, l) != l)
-			return SSH_ERR_AGENT_COMMUNICATION;
-		if ((r = sshbuf_put(reply, buf, l)) != 0)
-			return r;
+		എങ്കിൽ (l > വലുപ്പം(buf))
+			l = വലുപ്പം(buf);
+		എങ്കിൽ (atomicio(പഠ, sock, buf, l) != l)
+			തിരികെ SSH_ERR_AGENT_COMMUNICATION;
+		എങ്കിൽ ((r = sshbuf_put(reply, buf, l)) != 0)
+			തിരികെ r;
 		len -= l;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /* Communicate with agent: sent request, read and decode status reply */
-static int
-ssh_request_reply_decode(int sock, struct sshbuf *request)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_request_reply_decode(പൂർണ്ണസംഖ്യ sock, ഘടന sshbuf *request)
 {
-	struct sshbuf *reply;
-	int r;
+	ഘടന sshbuf *reply;
+	പൂർണ്ണസംഖ്യ r;
 	u_char type;
 
-	if ((reply = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = ssh_request_reply(sock, request, reply)) != 0 ||
+	എങ്കിൽ ((reply = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = ssh_request_reply(sock, request, reply)) != 0 ||
 	    (r = sshbuf_get_u8(reply, &type)) != 0 ||
 	    (r = decode_reply(type)) != 0)
-		goto out;
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(reply);
-	return r;
+	തിരികെ r;
 }
 
 /*
@@ -202,177 +202,177 @@ ssh_request_reply_decode(int sock, struct sshbuf *request)
  * obtained).  The argument must have been returned by
  * ssh_get_authentication_socket().
  */
-void
-ssh_close_authentication_socket(int sock)
+ശൂന്യം
+ssh_close_authentication_socket(പൂർണ്ണസംഖ്യ sock)
 {
-	if (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != NULL)
+	എങ്കിൽ (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != ശൂന്യ)
 		close(sock);
 }
 
 /* Lock/unlock agent */
-int
-ssh_lock_agent(int sock, int lock, const char *password)
+പൂർണ്ണസംഖ്യ
+ssh_lock_agent(പൂർണ്ണസംഖ്യ sock, പൂർണ്ണസംഖ്യ lock, സ്ഥിരം അക്ഷരം *password)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	u_char type = lock ? SSH_AGENTC_LOCK : SSH_AGENTC_UNLOCK;
-	struct sshbuf *msg;
+	ഘടന sshbuf *സന്ദേശം;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, password)) != 0 ||
-	    (r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	എങ്കിൽ ((സന്ദേശം = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_put_u8(സന്ദേശം, type)) != 0 ||
+	    (r = sshbuf_put_cstring(സന്ദേശം, password)) != 0 ||
+	    (r = ssh_request_reply_decode(sock, സന്ദേശം)) != 0)
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(സന്ദേശം);
+	തിരികെ r;
 }
 
 
-static int
-deserialise_identity2(struct sshbuf *ids, struct sshkey **keyp, char **commentp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+deserialise_identity2(ഘടന sshbuf *ids, ഘടന sshkey **keyp, അക്ഷരം **commentp)
 {
-	int r;
-	char *comment = NULL;
-	const u_char *blob;
+	പൂർണ്ണസംഖ്യ r;
+	അക്ഷരം *comment = ശൂന്യ;
+	സ്ഥിരം u_char *blob;
 	size_t blen;
 
-	if ((r = sshbuf_get_string_direct(ids, &blob, &blen)) != 0 ||
-	    (r = sshbuf_get_cstring(ids, &comment, NULL)) != 0)
-		goto out;
-	if ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
-		goto out;
-	if (commentp != NULL) {
+	എങ്കിൽ ((r = sshbuf_get_string_direct(ids, &blob, &blen)) != 0 ||
+	    (r = sshbuf_get_cstring(ids, &comment, ശൂന്യ)) != 0)
+		പോകുക out;
+	എങ്കിൽ ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
+		പോകുക out;
+	എങ്കിൽ (commentp != ശൂന്യ) {
 		*commentp = comment;
-		comment = NULL;
+		comment = ശൂന്യ;
 	}
 	r = 0;
  out:
-	free(comment);
-	return r;
+	സ്വതന്ത്രം(comment);
+	തിരികെ r;
 }
 
 /*
  * Fetch list of identities held by the agent.
  */
-int
-ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp)
+പൂർണ്ണസംഖ്യ
+ssh_fetch_identitylist(പൂർണ്ണസംഖ്യ sock, ഘടന ssh_identitylist **idlp)
 {
 	u_char type;
-	uint32_t num, i;
-	struct sshbuf *msg;
-	struct ssh_identitylist *idl = NULL;
-	int r;
+	uint32_t അക്കം, i;
+	ഘടന sshbuf *സന്ദേശം;
+	ഘടന ssh_identitylist *idl = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r;
 
 	/*
 	 * Send a message to the agent requesting for a list of the
 	 * identities it can represent.
 	 */
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
-		goto out;
+	എങ്കിൽ ((സന്ദേശം = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_put_u8(സന്ദേശം, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
+		പോകുക out;
 
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
+	എങ്കിൽ ((r = ssh_request_reply(sock, സന്ദേശം, സന്ദേശം)) != 0)
+		പോകുക out;
 
 	/* Get message type, and verify that we got a proper answer. */
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	എങ്കിൽ ((r = sshbuf_get_u8(സന്ദേശം, &type)) != 0)
+		പോകുക out;
+	എങ്കിൽ (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
-	} else if (type != SSH2_AGENT_IDENTITIES_ANSWER) {
+		പോകുക out;
+	} അല്ലെങ്കിൽ എങ്കിൽ (type != SSH2_AGENT_IDENTITIES_ANSWER) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
 
 	/* Get the number of entries in the response and check it for sanity. */
-	if ((r = sshbuf_get_u32(msg, &num)) != 0)
-		goto out;
-	if (num > MAX_AGENT_IDENTITIES) {
+	എങ്കിൽ ((r = sshbuf_get_u32(സന്ദേശം, &അക്കം)) != 0)
+		പോകുക out;
+	എങ്കിൽ (അക്കം > MAX_AGENT_IDENTITIES) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if (num == 0) {
+	എങ്കിൽ (അക്കം == 0) {
 		r = SSH_ERR_AGENT_NO_IDENTITIES;
-		goto out;
+		പോകുക out;
 	}
 
 	/* Deserialise the response into a list of keys/comments */
-	if ((idl = calloc(1, sizeof(*idl))) == NULL ||
-	    (idl->keys = calloc(num, sizeof(*idl->keys))) == NULL ||
-	    (idl->comments = calloc(num, sizeof(*idl->comments))) == NULL) {
+	എങ്കിൽ ((idl = calloc(1, വലുപ്പം(*idl))) == ശൂന്യ ||
+	    (idl->താക്കോലുകൾ = calloc(അക്കം, വലുപ്പം(*idl->താക്കോലുകൾ))) == ശൂന്യ ||
+	    (idl->comments = calloc(അക്കം, വലുപ്പം(*idl->comments))) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	for (i = 0; i < num;) {
-		if ((r = deserialise_identity2(msg, &(idl->keys[i]),
+	വേണ്ടി (i = 0; i < അക്കം;) {
+		എങ്കിൽ ((r = deserialise_identity2(സന്ദേശം, &(idl->താക്കോലുകൾ[i]),
 		    &(idl->comments[i]))) != 0) {
-			if (r == SSH_ERR_KEY_TYPE_UNKNOWN) {
+			എങ്കിൽ (r == SSH_ERR_താക്കോൽ_TYPE_UNKNOWN) {
 				/* Gracefully skip unknown key types */
-				num--;
-				continue;
-			} else
-				goto out;
+				അക്കം--;
+				തുടരുക;
+			} അല്ലെങ്കിൽ
+				പോകുക out;
 		}
 		i++;
 	}
-	idl->nkeys = num;
+	idl->nkeys = അക്കം;
 	*idlp = idl;
-	idl = NULL;
+	idl = ശൂന്യ;
 	r = 0;
  out:
-	sshbuf_free(msg);
-	if (idl != NULL)
+	sshbuf_free(സന്ദേശം);
+	എങ്കിൽ (idl != ശൂന്യ)
 		ssh_free_identitylist(idl);
-	return r;
+	തിരികെ r;
 }
 
-void
-ssh_free_identitylist(struct ssh_identitylist *idl)
+ശൂന്യം
+ssh_free_identitylist(ഘടന ssh_identitylist *idl)
 {
 	size_t i;
 
-	if (idl == NULL)
-		return;
-	for (i = 0; i < idl->nkeys; i++) {
-		if (idl->keys != NULL)
-			sshkey_free(idl->keys[i]);
-		if (idl->comments != NULL)
-			free(idl->comments[i]);
+	എങ്കിൽ (idl == ശൂന്യ)
+		തിരികെ;
+	വേണ്ടി (i = 0; i < idl->nkeys; i++) {
+		എങ്കിൽ (idl->താക്കോലുകൾ != ശൂന്യ)
+			sshkey_free(idl->താക്കോലുകൾ[i]);
+		എങ്കിൽ (idl->comments != ശൂന്യ)
+			സ്വതന്ത്രം(idl->comments[i]);
 	}
-	free(idl->keys);
-	free(idl->comments);
-	free(idl);
+	സ്വതന്ത്രം(idl->താക്കോലുകൾ);
+	സ്വതന്ത്രം(idl->comments);
+	സ്വതന്ത്രം(idl);
 }
 
 /*
  * Check if the ssh agent has a given key.
  * Returns 0 if found, or a negative SSH_ERR_* error code on failure.
  */
-int
-ssh_agent_has_key(int sock, const struct sshkey *key)
+പൂർണ്ണസംഖ്യ
+ssh_agent_has_താക്കോൽ(പൂർണ്ണസംഖ്യ sock, സ്ഥിരം ഘടന sshkey *താക്കോൽ)
 {
-	int r, ret = SSH_ERR_KEY_NOT_FOUND;
+	പൂർണ്ണസംഖ്യ r, ret = SSH_ERR_താക്കോൽ_NOT_FOUND;
 	size_t i;
-	struct ssh_identitylist *idlist = NULL;
+	ഘടന ssh_identitylist *idlist = ശൂന്യ;
 
-	if ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
-		return r;
+	എങ്കിൽ ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
+		തിരികെ r;
 	}
 
-	for (i = 0; i < idlist->nkeys; i++) {
-		if (sshkey_equal_public(idlist->keys[i], key)) {
+	വേണ്ടി (i = 0; i < idlist->nkeys; i++) {
+		എങ്കിൽ (sshkey_equal_public(idlist->താക്കോലുകൾ[i], താക്കോൽ)) {
 			ret = 0;
-			break;
+			നിർത്തുക;
 		}
 	}
 
 	ssh_free_identitylist(idlist);
-	return ret;
+	തിരികെ ret;
 }
 
 /*
@@ -384,58 +384,58 @@ ssh_agent_has_key(int sock, const struct sshkey *key)
 
 
 /* encode signature algorithm in flag bits, so we can keep the msg format */
-static u_int
-agent_encode_alg(const struct sshkey *key, const char *alg)
+സ്ഥിതം u_int
+agent_encode_alg(സ്ഥിരം ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *alg)
 {
-	if (alg != NULL && sshkey_type_plain(key->type) == KEY_RSA) {
-		if (strcmp(alg, "rsa-sha2-256") == 0 ||
+	എങ്കിൽ (alg != ശൂന്യ && sshkey_type_plain(താക്കോൽ->type) == താക്കോൽ_RSA) {
+		എങ്കിൽ (strcmp(alg, "rsa-sha2-256") == 0 ||
 		    strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_256;
-		if (strcmp(alg, "rsa-sha2-512") == 0 ||
+			തിരികെ SSH_AGENT_RSA_SHA2_256;
+		എങ്കിൽ (strcmp(alg, "rsa-sha2-512") == 0 ||
 		    strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_512;
+			തിരികെ SSH_AGENT_RSA_SHA2_512;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /* ask agent to sign data, returns err.h code on error, 0 on success */
-int
-ssh_agent_sign(int sock, const struct sshkey *key,
+പൂർണ്ണസംഖ്യ
+ssh_agent_sign(പൂർണ്ണസംഖ്യ sock, സ്ഥിരം ഘടന sshkey *താക്കോൽ,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen, const char *alg, u_int compat)
+    സ്ഥിരം u_char *data, size_t datalen, സ്ഥിരം അക്ഷരം *alg, u_int compat)
 {
-	struct sshbuf *msg;
-	u_char *sig = NULL, type = 0;
+	ഘടന sshbuf *സന്ദേശം;
+	u_char *sig = ശൂന്യ, type = 0;
 	size_t len = 0;
 	u_int flags = 0;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
-	*sigp = NULL;
+	*sigp = ശൂന്യ;
 	*lenp = 0;
 
-	if (datalen > SSH_KEY_MAX_SIGN_DATA_SIZE)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	flags |= agent_encode_alg(key, alg);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_string(msg, data, datalen)) != 0 ||
-	    (r = sshbuf_put_u32(msg, flags)) != 0)
-		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	എങ്കിൽ (datalen > SSH_താക്കോൽ_MAX_SIGN_DATA_SIZE)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ ((സന്ദേശം = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	flags |= agent_encode_alg(താക്കോൽ, alg);
+	എങ്കിൽ ((r = sshbuf_put_u8(സന്ദേശം, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
+	    (r = sshkey_puts(താക്കോൽ, സന്ദേശം)) != 0 ||
+	    (r = sshbuf_put_string(സന്ദേശം, data, datalen)) != 0 ||
+	    (r = sshbuf_put_u32(സന്ദേശം, flags)) != 0)
+		പോകുക out;
+	എങ്കിൽ ((r = ssh_request_reply(sock, സന്ദേശം, സന്ദേശം)) != 0)
+		പോകുക out;
+	എങ്കിൽ ((r = sshbuf_get_u8(സന്ദേശം, &type)) != 0)
+		പോകുക out;
+	എങ്കിൽ (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
-	} else if (type != SSH2_AGENT_SIGN_RESPONSE) {
+		പോകുക out;
+	} അല്ലെങ്കിൽ എങ്കിൽ (type != SSH2_AGENT_SIGN_RESPONSE) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_get_string(msg, &sig, &len)) != 0)
-		goto out;
+	എങ്കിൽ ((r = sshbuf_get_string(സന്ദേശം, &sig, &len)) != 0)
+		പോകുക out;
 	/*
 	 * Check what we actually got back from the agent, in case it returned
 	 * an incorrect RSA signature algorithm (e.g. "ssh-rsa" (RSA/SHA1) vs.
@@ -443,276 +443,276 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 	 * We don't do this for FIDO signatures as webauthn vs plain are just
 	 * different signature formats and not entirely different algorithms.
 	 */
-	if (!sshkey_is_sk(key) &&
+	എങ്കിൽ (!sshkey_is_sk(താക്കോൽ) &&
 	    (r = sshkey_check_sigtype(sig, len, alg)) != 0)
-		goto out;
+		പോകുക out;
 	/* success */
 	*sigp = sig;
 	*lenp = len;
-	sig = NULL;
+	sig = ശൂന്യ;
 	len = 0;
 	r = 0;
  out:
 	freezero(sig, len);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(സന്ദേശം);
+	തിരികെ r;
 }
 
 /* Encode key for a message to the agent. */
 
-static int
-encode_dest_constraint_hop(struct sshbuf *m,
-    const struct dest_constraint_hop *dch)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+encode_dest_constraint_hop(ഘടന sshbuf *m,
+    സ്ഥിരം ഘടന dest_constraint_hop *dch)
 {
-	struct sshbuf *b;
+	ഘടന sshbuf *b;
 	u_int i;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
+	എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, dch->hostname)) != 0 ||
-	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
-		goto out;
-	for (i = 0; i < dch->nkeys; i++) {
-		if ((r = sshkey_puts(dch->keys[i], b)) != 0 ||
-		    (r = sshbuf_put_u8(b, dch->key_is_ca[i] != 0)) != 0)
-			goto out;
+	    (r = sshbuf_put_string(b, ശൂന്യ, 0)) != 0) /* reserved */
+		പോകുക out;
+	വേണ്ടി (i = 0; i < dch->nkeys; i++) {
+		എങ്കിൽ ((r = sshkey_puts(dch->താക്കോലുകൾ[i], b)) != 0 ||
+		    (r = sshbuf_put_u8(b, dch->താക്കോൽ_is_ca[i] != 0)) != 0)
+			പോകുക out;
 	}
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+	എങ്കിൽ ((r = sshbuf_put_stringb(m, b)) != 0)
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	തിരികെ r;
 }
 
-static int
-encode_dest_constraint(struct sshbuf *m, const struct dest_constraint *dc)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+encode_dest_constraint(ഘടന sshbuf *m, സ്ഥിരം ഘടന dest_constraint *dc)
 {
-	struct sshbuf *b;
-	int r;
+	ഘടന sshbuf *b;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
+	എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
 	    (r = encode_dest_constraint_hop(b, &dc->to)) != 0 ||
-	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
-		goto out;
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
-		goto out;
+	    (r = sshbuf_put_string(b, ശൂന്യ, 0)) != 0) /* reserved */
+		പോകുക out;
+	എങ്കിൽ ((r = sshbuf_put_stringb(m, b)) != 0)
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	തിരികെ r;
 }
 
-static int
-encode_constraints(struct sshbuf *m, u_int life, u_int confirm,
-    const char *provider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+encode_constraints(ഘടന sshbuf *m, u_int life, u_int confirm,
+    സ്ഥിരം അക്ഷരം *provider,
+    ഘടന dest_constraint **dest_constraints, size_t ndest_constraints,
+    പൂർണ്ണസംഖ്യ cert_only, ഘടന sshkey **certs, size_t ncerts)
 {
-	int r;
-	struct sshbuf *b = NULL;
+	പൂർണ്ണസംഖ്യ r;
+	ഘടന sshbuf *b = ശൂന്യ;
 	size_t i;
 
-	if (life != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
+	എങ്കിൽ (life != 0) {
+		എങ്കിൽ ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
 		    (r = sshbuf_put_u32(m, life)) != 0)
-			goto out;
+			പോകുക out;
 	}
-	if (confirm != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
-			goto out;
+	എങ്കിൽ (confirm != 0) {
+		എങ്കിൽ ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
+			പോകുക out;
 	}
-	if (provider != NULL) {
-		if ((r = sshbuf_put_u8(m,
+	എങ്കിൽ (provider != ശൂന്യ) {
+		എങ്കിൽ ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "sk-provider@openssh.com")) != 0 ||
 		    (r = sshbuf_put_cstring(m, provider)) != 0)
-			goto out;
+			പോകുക out;
 	}
-	if (dest_constraints != NULL && ndest_constraints > 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	എങ്കിൽ (dest_constraints != ശൂന്യ && ndest_constraints > 0) {
+		എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			പോകുക out;
 		}
-		for (i = 0; i < ndest_constraints; i++) {
-			if ((r = encode_dest_constraint(b,
+		വേണ്ടി (i = 0; i < ndest_constraints; i++) {
+			എങ്കിൽ ((r = encode_dest_constraint(b,
 			    dest_constraints[i])) != 0)
-				goto out;
+				പോകുക out;
 		}
-		if ((r = sshbuf_put_u8(m,
+		എങ്കിൽ ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "restrict-destination-v00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_stringb(m, b)) != 0)
-			goto out;
+			പോകുക out;
 		sshbuf_free(b);
-		b = NULL;
+		b = ശൂന്യ;
 	}
-	if (ncerts != 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	എങ്കിൽ (ncerts != 0) {
+		എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			പോകുക out;
 		}
-		for (i = 0; i < ncerts; i++) {
-			if ((r = sshkey_puts(certs[i], b)) != 0)
-				goto out;
+		വേണ്ടി (i = 0; i < ncerts; i++) {
+			എങ്കിൽ ((r = sshkey_puts(certs[i], b)) != 0)
+				പോകുക out;
 		}
-		if ((r = sshbuf_put_u8(m,
+		എങ്കിൽ ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "associated-certs-v00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_u8(m, cert_only != 0)) != 0 ||
 		    (r = sshbuf_put_stringb(m, b)) != 0)
-			goto out;
+			പോകുക out;
 		sshbuf_free(b);
-		b = NULL;
+		b = ശൂന്യ;
 	}
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	തിരികെ r;
 }
 
 /*
  * Adds an identity to the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_add_identity_constrained(int sock, struct sshkey *key,
-    const char *comment, u_int life, u_int confirm,
-    const char *provider, struct dest_constraint **dest_constraints,
+പൂർണ്ണസംഖ്യ
+ssh_add_identity_constrained(പൂർണ്ണസംഖ്യ sock, ഘടന sshkey *താക്കോൽ,
+    സ്ഥിരം അക്ഷരം *comment, u_int life, u_int confirm,
+    സ്ഥിരം അക്ഷരം *provider, ഘടന dest_constraint **dest_constraints,
     size_t ndest_constraints)
 {
-	struct sshbuf *msg;
-	int r, constrained = (life || confirm || provider || dest_constraints);
+	ഘടന sshbuf *സന്ദേശം;
+	പൂർണ്ണസംഖ്യ r, constrained = (life || confirm || provider || dest_constraints);
 	u_char type;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((സന്ദേശം = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
 
-	switch (key->type) {
+	തിരഞ്ഞെടുപ്പ് (താക്കോൽ->type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_RSA_CERT:
-	case KEY_ECDSA:
-	case KEY_ECDSA_CERT:
-	case KEY_ECDSA_SK:
-	case KEY_ECDSA_SK_CERT:
+	അവസ്ഥ താക്കോൽ_RSA:
+	അവസ്ഥ താക്കോൽ_RSA_CERT:
+	അവസ്ഥ താക്കോൽ_ECDSA:
+	അവസ്ഥ താക്കോൽ_ECDSA_CERT:
+	അവസ്ഥ താക്കോൽ_ECDSA_SK:
+	അവസ്ഥ താക്കോൽ_ECDSA_SK_CERT:
 #endif
-	case KEY_ED25519:
-	case KEY_ED25519_CERT:
-	case KEY_MLDSA44_ED25519:
-	case KEY_MLDSA44_ED25519_CERT:
-	case KEY_ED25519_SK:
-	case KEY_ED25519_SK_CERT:
+	അവസ്ഥ താക്കോൽ_ED25519:
+	അവസ്ഥ താക്കോൽ_ED25519_CERT:
+	അവസ്ഥ താക്കോൽ_MLDSA44_ED25519:
+	അവസ്ഥ താക്കോൽ_MLDSA44_ED25519_CERT:
+	അവസ്ഥ താക്കോൽ_ED25519_SK:
+	അവസ്ഥ താക്കോൽ_ED25519_SK_CERT:
 		type = constrained ?
 		    SSH2_AGENTC_ADD_ID_CONSTRAINED :
 		    SSH2_AGENTC_ADD_IDENTITY;
-		if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-		    (r = sshkey_private_serialize(key, msg)) != 0 ||
-		    (r = sshbuf_put_cstring(msg, comment)) != 0)
-			goto out;
-		break;
-	default:
+		എങ്കിൽ ((r = sshbuf_put_u8(സന്ദേശം, type)) != 0 ||
+		    (r = sshkey_private_serialize(താക്കോൽ, സന്ദേശം)) != 0 ||
+		    (r = sshbuf_put_cstring(സന്ദേശം, comment)) != 0)
+			പോകുക out;
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		പോകുക out;
 	}
-	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, provider,
-	    dest_constraints, ndest_constraints, 0, NULL, 0)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	എങ്കിൽ (constrained &&
+	    (r = encode_constraints(സന്ദേശം, life, confirm, provider,
+	    dest_constraints, ndest_constraints, 0, ശൂന്യ, 0)) != 0)
+		പോകുക out;
+	എങ്കിൽ ((r = ssh_request_reply_decode(sock, സന്ദേശം)) != 0)
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(സന്ദേശം);
+	തിരികെ r;
 }
 
 /*
  * Removes an identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_remove_identity(int sock, const struct sshkey *key)
+പൂർണ്ണസംഖ്യ
+ssh_remove_identity(പൂർണ്ണസംഖ്യ sock, സ്ഥിരം ഘടന sshkey *താക്കോൽ)
 {
-	struct sshbuf *msg;
-	int r;
-	u_char *blob = NULL;
+	ഘടന sshbuf *സന്ദേശം;
+	പൂർണ്ണസംഖ്യ r;
+	u_char *blob = ശൂന്യ;
 	size_t blen;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((സന്ദേശം = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
 
-	if (key->type != KEY_UNSPEC) {
-		if ((r = sshkey_to_blob(key, &blob, &blen)) != 0)
-			goto out;
-		if ((r = sshbuf_put_u8(msg,
+	എങ്കിൽ (താക്കോൽ->type != താക്കോൽ_UNSPEC) {
+		എങ്കിൽ ((r = sshkey_to_blob(താക്കോൽ, &blob, &blen)) != 0)
+			പോകുക out;
+		എങ്കിൽ ((r = sshbuf_put_u8(സന്ദേശം,
 		    SSH2_AGENTC_REMOVE_IDENTITY)) != 0 ||
-		    (r = sshbuf_put_string(msg, blob, blen)) != 0)
-			goto out;
-	} else {
+		    (r = sshbuf_put_string(സന്ദേശം, blob, blen)) != 0)
+			പോകുക out;
+	} അല്ലെങ്കിൽ {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		പോകുക out;
 	}
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	എങ്കിൽ ((r = ssh_request_reply_decode(sock, സന്ദേശം)) != 0)
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
-	if (blob != NULL)
+	എങ്കിൽ (blob != ശൂന്യ)
 		freezero(blob, blen);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(സന്ദേശം);
+	തിരികെ r;
 }
 
 /*
  * Add/remove an token-based identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
+പൂർണ്ണസംഖ്യ
+ssh_update_card(പൂർണ്ണസംഖ്യ sock, പൂർണ്ണസംഖ്യ add, സ്ഥിരം അക്ഷരം *reader_id, സ്ഥിരം അക്ഷരം *pin,
     u_int life, u_int confirm,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+    ഘടന dest_constraint **dest_constraints, size_t ndest_constraints,
+    പൂർണ്ണസംഖ്യ cert_only, ഘടന sshkey **certs, size_t ncerts)
 {
-	struct sshbuf *msg;
-	int r, constrained = (life || confirm || dest_constraints || certs);
+	ഘടന sshbuf *സന്ദേശം;
+	പൂർണ്ണസംഖ്യ r, constrained = (life || confirm || dest_constraints || certs);
 	u_char type;
 
-	if (add) {
+	എങ്കിൽ (add) {
 		type = constrained ?
-		    SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED :
-		    SSH_AGENTC_ADD_SMARTCARD_KEY;
-	} else
-		type = SSH_AGENTC_REMOVE_SMARTCARD_KEY;
+		    SSH_AGENTC_ADD_SMARTCARD_താക്കോൽ_CONSTRAINED :
+		    SSH_AGENTC_ADD_SMARTCARD_താക്കോൽ;
+	} അല്ലെങ്കിൽ
+		type = SSH_AGENTC_REMOVE_SMARTCARD_താക്കോൽ;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, reader_id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, pin)) != 0)
-		goto out;
-	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, NULL,
+	എങ്കിൽ ((സന്ദേശം = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_put_u8(സന്ദേശം, type)) != 0 ||
+	    (r = sshbuf_put_cstring(സന്ദേശം, reader_id)) != 0 ||
+	    (r = sshbuf_put_cstring(സന്ദേശം, pin)) != 0)
+		പോകുക out;
+	എങ്കിൽ (constrained &&
+	    (r = encode_constraints(സന്ദേശം, life, confirm, ശൂന്യ,
 	    dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+		പോകുക out;
+	എങ്കിൽ ((r = ssh_request_reply_decode(sock, സന്ദേശം)) != 0)
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(സന്ദേശം);
+	തിരികെ r;
 }
 
 /*
@@ -723,104 +723,104 @@ ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
  * keys from an agent, we generally want to clear both protocol v1 and v2
  * keys.
  */
-int
-ssh_remove_all_identities(int sock, int version)
+പൂർണ്ണസംഖ്യ
+ssh_remove_all_identities(പൂർണ്ണസംഖ്യ sock, പൂർണ്ണസംഖ്യ version)
 {
-	struct sshbuf *msg;
+	ഘടന sshbuf *സന്ദേശം;
 	u_char type = (version == 1) ?
 	    SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES :
 	    SSH2_AGENTC_REMOVE_ALL_IDENTITIES;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	എങ്കിൽ ((സന്ദേശം = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_put_u8(സന്ദേശം, type)) != 0)
+		പോകുക out;
+	എങ്കിൽ ((r = ssh_request_reply_decode(sock, സന്ദേശം)) != 0)
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(സന്ദേശം);
+	തിരികെ r;
 }
 
 /* Binds a session ID to a hostkey via the initial KEX signature. */
-int
-ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
-    const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding)
+പൂർണ്ണസംഖ്യ
+ssh_agent_bind_hostkey(പൂർണ്ണസംഖ്യ sock, സ്ഥിരം ഘടന sshkey *താക്കോൽ,
+    സ്ഥിരം ഘടന sshbuf *session_id, സ്ഥിരം ഘടന sshbuf *signature,
+    പൂർണ്ണസംഖ്യ forwarding)
 {
-	struct sshbuf *msg;
-	int r;
+	ഘടന sshbuf *സന്ദേശം;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (key == NULL || session_id == NULL || signature == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, session_id)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, signature)) != 0 ||
-	    (r = sshbuf_put_u8(msg, forwarding ? 1 : 0)) != 0)
-		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
-		goto out;
+	എങ്കിൽ (താക്കോൽ == ശൂന്യ || session_id == ശൂന്യ || signature == ശൂന്യ)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ ((സന്ദേശം = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_put_u8(സന്ദേശം, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(സന്ദേശം, "session-bind@openssh.com")) != 0 ||
+	    (r = sshkey_puts(താക്കോൽ, സന്ദേശം)) != 0 ||
+	    (r = sshbuf_put_stringb(സന്ദേശം, session_id)) != 0 ||
+	    (r = sshbuf_put_stringb(സന്ദേശം, signature)) != 0 ||
+	    (r = sshbuf_put_u8(സന്ദേശം, forwarding ? 1 : 0)) != 0)
+		പോകുക out;
+	എങ്കിൽ ((r = ssh_request_reply_decode(sock, സന്ദേശം)) != 0)
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(സന്ദേശം);
+	തിരികെ r;
 }
 
 /* Queries supported extension request types */
-int
-ssh_agent_query_extensions(int sock, char ***exts)
+പൂർണ്ണസംഖ്യ
+ssh_agent_query_extensions(പൂർണ്ണസംഖ്യ sock, അക്ഷരം ***exts)
 {
-	struct sshbuf *msg;
-	int r;
+	ഘടന sshbuf *സന്ദേശം;
+	പൂർണ്ണസംഖ്യ r;
 	u_char type;
-	char *cp = NULL, **ret = NULL;
+	അക്ഷരം *cp = ശൂന്യ, **ret = ശൂന്യ;
 	size_t i = 0;
 
-	*exts = NULL;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "query")) != 0)
-		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
-		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
-		goto out;
-	if (agent_failed(type)) {
+	*exts = ശൂന്യ;
+	എങ്കിൽ ((സന്ദേശം = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_put_u8(സന്ദേശം, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(സന്ദേശം, "query")) != 0)
+		പോകുക out;
+	എങ്കിൽ ((r = ssh_request_reply(sock, സന്ദേശം, സന്ദേശം)) != 0)
+		പോകുക out;
+	എങ്കിൽ ((r = sshbuf_get_u8(സന്ദേശം, &type)) != 0)
+		പോകുക out;
+	എങ്കിൽ (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
-		goto out;
+		പോകുക out;
 	}
 	/* Reply should start with "query" */
-	if (type != SSH_AGENT_EXTENSION_RESPONSE ||
-	   (r = sshbuf_get_cstring(msg, &cp, NULL)) != 0 ||
+	എങ്കിൽ (type != SSH_AGENT_EXTENSION_RESPONSE ||
+	   (r = sshbuf_get_cstring(സന്ദേശം, &cp, ശൂന്യ)) != 0 ||
 	   strcmp(cp, "query") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	ret = xcalloc(1, sizeof(*ret));
-	while (sshbuf_len(msg)) {
-		ret = xrecallocarray(ret, i + 1, i + 2, sizeof(*ret));
-		if ((r = sshbuf_get_cstring(msg, ret + i, NULL)) != 0) {
+	ret = xcalloc(1, വലുപ്പം(*ret));
+	ആകുമ്പോൾ (sshbuf_len(സന്ദേശം)) {
+		ret = xrecallocarray(ret, i + 1, i + 2, വലുപ്പം(*ret));
+		എങ്കിൽ ((r = sshbuf_get_cstring(സന്ദേശം, ret + i, ശൂന്യ)) != 0) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			പോകുക out;
 		}
 		i++;
 	}
 	/* success */
 	r = 0;
 	*exts = ret;
-	ret = NULL; /* transferred */
+	ret = ശൂന്യ; /* transferred */
  out:
-	free(cp);
+	സ്വതന്ത്രം(cp);
 	stringlist_free(ret);
-	sshbuf_free(msg);
-	return r;
+	sshbuf_free(സന്ദേശം);
+	തിരികെ r;
 }

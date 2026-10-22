@@ -24,32 +24,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/stat.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-#include <util.h>
+#അന്തര്ഭാവ <grp.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <time.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <util.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "misc.h"
 
-#include "sftp.h"
-#include "sftp-common.h"
+#അന്തര്ഭാവ "sftp.h"
+#അന്തര്ഭാവ "sftp-common.h"
 
 /* Clear contents of attributes structure */
-void
+ശൂന്യം
 attrib_clear(Attrib *a)
 {
 	a->flags = 0;
@@ -62,8 +62,8 @@ attrib_clear(Attrib *a)
 }
 
 /* Convert from struct stat to filexfer attribs */
-void
-stat_to_attrib(const struct stat *st, Attrib *a)
+ശൂന്യം
+stat_to_attrib(സ്ഥിരം ഘടന stat *st, Attrib *a)
 {
 	attrib_clear(a);
 	a->flags = 0;
@@ -80,130 +80,130 @@ stat_to_attrib(const struct stat *st, Attrib *a)
 }
 
 /* Convert from filexfer attribs to struct stat */
-void
-attrib_to_stat(const Attrib *a, struct stat *st)
+ശൂന്യം
+attrib_to_stat(സ്ഥിരം Attrib *a, ഘടന stat *st)
 {
-	memset(st, 0, sizeof(*st));
+	memset(st, 0, വലുപ്പം(*st));
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_SIZE)
 		st->st_size = a->size;
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		st->st_uid = a->uid;
 		st->st_gid = a->gid;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
 		st->st_mode = a->perm;
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
 		st->st_atime = a->atime;
 		st->st_mtime = a->mtime;
 	}
 }
 
 /* Decode attributes in buffer */
-int
-decode_attrib(struct sshbuf *b, Attrib *a)
+പൂർണ്ണസംഖ്യ
+decode_attrib(ഘടന sshbuf *b, Attrib *a)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	attrib_clear(a);
-	if ((r = sshbuf_get_u32(b, &a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_get_u64(b, &a->size)) != 0)
-			return r;
+	എങ്കിൽ ((r = sshbuf_get_u32(b, &a->flags)) != 0)
+		തിരികെ r;
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		എങ്കിൽ ((r = sshbuf_get_u64(b, &a->size)) != 0)
+			തിരികെ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		എങ്കിൽ ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->gid)) != 0)
-			return r;
+			തിരികെ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_get_u32(b, &a->perm)) != 0)
-			return r;
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		എങ്കിൽ ((r = sshbuf_get_u32(b, &a->perm)) != 0)
+			തിരികെ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		എങ്കിൽ ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->mtime)) != 0)
-			return r;
+			തിരികെ r;
 	}
 	/* vendor-specific extensions */
-	if (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
-		char *type;
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
+		അക്ഷരം *type;
 		u_char *data;
 		size_t dlen;
-		u_int i, count;
+		u_int i, എണ്ണം;
 
-		if ((r = sshbuf_get_u32(b, &count)) != 0)
-			return r;
-		if (count > 0x100000)
-			return SSH_ERR_INVALID_FORMAT;
-		for (i = 0; i < count; i++) {
-			if ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
+		എങ്കിൽ ((r = sshbuf_get_u32(b, &എണ്ണം)) != 0)
+			തിരികെ r;
+		എങ്കിൽ (എണ്ണം > 0x100000)
+			തിരികെ SSH_ERR_INVALID_FORMAT;
+		വേണ്ടി (i = 0; i < എണ്ണം; i++) {
+			എങ്കിൽ ((r = sshbuf_get_cstring(b, &type, ശൂന്യ)) != 0 ||
 			    (r = sshbuf_get_string(b, &data, &dlen)) != 0)
-				return r;
+				തിരികെ r;
 			debug3("Got file attribute \"%.100s\" len %zu",
 			    type, dlen);
-			free(type);
-			free(data);
+			സ്വതന്ത്രം(type);
+			സ്വതന്ത്രം(data);
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /* Encode attributes to buffer */
-int
-encode_attrib(struct sshbuf *b, const Attrib *a)
+പൂർണ്ണസംഖ്യ
+encode_attrib(ഘടന sshbuf *b, സ്ഥിരം Attrib *a)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshbuf_put_u32(b, a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_put_u64(b, a->size)) != 0)
-			return r;
+	എങ്കിൽ ((r = sshbuf_put_u32(b, a->flags)) != 0)
+		തിരികെ r;
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		എങ്കിൽ ((r = sshbuf_put_u64(b, a->size)) != 0)
+			തിരികെ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		എങ്കിൽ ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->gid)) != 0)
-			return r;
+			തിരികെ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_put_u32(b, a->perm)) != 0)
-			return r;
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		എങ്കിൽ ((r = sshbuf_put_u32(b, a->perm)) != 0)
+			തിരികെ r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
+	എങ്കിൽ (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		എങ്കിൽ ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->mtime)) != 0)
-			return r;
+			തിരികെ r;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /* Convert from SSH2_FX_ status to text error message */
-const char *
-fx2txt(int status)
+സ്ഥിരം അക്ഷരം *
+fx2txt(പൂർണ്ണസംഖ്യ status)
 {
-	switch (status) {
-	case SSH2_FX_OK:
-		return("No error");
-	case SSH2_FX_EOF:
-		return("End of file");
-	case SSH2_FX_NO_SUCH_FILE:
-		return("No such file or directory");
-	case SSH2_FX_PERMISSION_DENIED:
-		return("Permission denied");
-	case SSH2_FX_FAILURE:
-		return("Failure");
-	case SSH2_FX_BAD_MESSAGE:
-		return("Bad message");
-	case SSH2_FX_NO_CONNECTION:
-		return("No connection");
-	case SSH2_FX_CONNECTION_LOST:
-		return("Connection lost");
-	case SSH2_FX_OP_UNSUPPORTED:
-		return("Operation unsupported");
-	default:
-		return("Unknown status");
+	തിരഞ്ഞെടുപ്പ് (status) {
+	അവസ്ഥ SSH2_FX_OK:
+		തിരികെ("No error");
+	അവസ്ഥ SSH2_FX_EOF:
+		തിരികെ("End of file");
+	അവസ്ഥ SSH2_FX_NO_SUCH_FILE:
+		തിരികെ("No such file or directory");
+	അവസ്ഥ SSH2_FX_PERMISSION_DENIED:
+		തിരികെ("Permission denied");
+	അവസ്ഥ SSH2_FX_FAILURE:
+		തിരികെ("Failure");
+	അവസ്ഥ SSH2_FX_BAD_MESSAGE:
+		തിരികെ("Bad message");
+	അവസ്ഥ SSH2_FX_NO_CONNECTION:
+		തിരികെ("No connection");
+	അവസ്ഥ SSH2_FX_CONNECTION_LOST:
+		തിരികെ("Connection lost");
+	അവസ്ഥ SSH2_FX_OP_UNSUPPORTED:
+		തിരികെ("Operation unsupported");
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ("Unknown status");
 	}
 	/* NOTREACHED */
 }
@@ -211,53 +211,53 @@ fx2txt(int status)
 /*
  * drwxr-xr-x    5 markus   markus       1024 Jan 13 18:39 .ssh
  */
-char *
-ls_file(const char *name, const struct stat *st, int remote, int si_units,
-    const char *user, const char *group)
+അക്ഷരം *
+ls_file(സ്ഥിരം അക്ഷരം *name, സ്ഥിരം ഘടന stat *st, പൂർണ്ണസംഖ്യ remote, പൂർണ്ണസംഖ്യ si_units,
+    സ്ഥിരം അക്ഷരം *user, സ്ഥിരം അക്ഷരം *group)
 {
-	int ulen, glen, sz = 0;
-	struct tm *ltime = localtime(&st->st_mtime);
-	char buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
-	char sbuf[FMT_SCALED_STRSIZE];
+	പൂർണ്ണസംഖ്യ ulen, glen, sz = 0;
+	ഘടന tm *ltime = localtime(&st->st_mtime);
+	അക്ഷരം buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
+	അക്ഷരം sbuf[FMT_SCALED_STRSIZE];
 	time_t now;
 
 	strmode(st->st_mode, mode);
-	if (remote) {
-		if (user == NULL) {
-			snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
+	എങ്കിൽ (remote) {
+		എങ്കിൽ (user == ശൂന്യ) {
+			snprintf(ubuf, വലുപ്പം ubuf, "%u", (u_int)st->st_uid);
 			user = ubuf;
 		}
-		if (group == NULL) {
-			snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
+		എങ്കിൽ (group == ശൂന്യ) {
+			snprintf(gbuf, വലുപ്പം gbuf, "%u", (u_int)st->st_gid);
 			group = gbuf;
 		}
-		strlcpy(lc, "?", sizeof(lc));
-	} else {
+		strlcpy(lc, "?", വലുപ്പം(lc));
+	} അല്ലെങ്കിൽ {
 		user = user_from_uid(st->st_uid, 0);
 		group = group_from_gid(st->st_gid, 0);
-		snprintf(lc, sizeof(lc), "%u", (u_int)st->st_nlink);
+		snprintf(lc, വലുപ്പം(lc), "%u", (u_int)st->st_nlink);
 	}
-	if (ltime != NULL) {
-		now = time(NULL);
-		if (now - (365*24*60*60)/2 < st->st_mtime &&
+	എങ്കിൽ (ltime != ശൂന്യ) {
+		now = time(ശൂന്യ);
+		എങ്കിൽ (now - (365*24*60*60)/2 < st->st_mtime &&
 		    now >= st->st_mtime)
-			sz = strftime(tbuf, sizeof tbuf, "%b %e %H:%M", ltime);
-		else
-			sz = strftime(tbuf, sizeof tbuf, "%b %e  %Y", ltime);
+			sz = strftime(tbuf, വലുപ്പം tbuf, "%b %e %H:%M", ltime);
+		അല്ലെങ്കിൽ
+			sz = strftime(tbuf, വലുപ്പം tbuf, "%b %e  %Y", ltime);
 	}
-	if (sz == 0)
+	എങ്കിൽ (sz == 0)
 		tbuf[0] = '\0';
 	ulen = MAXIMUM(strlen(user), 8);
 	glen = MAXIMUM(strlen(group), 8);
-	if (si_units) {
+	എങ്കിൽ (si_units) {
 		fmt_scaled((long long)st->st_size, sbuf);
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8s %s %s",
+		snprintf(buf, വലുപ്പം buf, "%s %3s %-*s %-*s %8s %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    sbuf, tbuf, name);
-	} else {
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8llu %s %s",
+	} അല്ലെങ്കിൽ {
+		snprintf(buf, വലുപ്പം buf, "%s %3s %-*s %-*s %8llu %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    (unsigned long long)st->st_size, tbuf, name);
 	}
-	return xstrdup(buf);
+	തിരികെ xstrdup(buf);
 }

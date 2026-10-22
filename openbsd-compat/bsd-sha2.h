@@ -39,9 +39,9 @@
 #ifndef _SSHSHA2_H
 #define _SSHSHA2_H
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#if !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
+#എങ്കിൽ !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
     !defined(HAVE_SHA512UPDATE)
 
 /*** SHA-256/384/512 Various Length Definitions ***********************/
@@ -63,8 +63,8 @@
 
 
 /*** SHA-224/256/384/512 Context Structure *******************************/
-typedef struct _SHA2_CTX {
-	union {
+തരനിർവചനം ഘടന _SHA2_CTX {
+	സംഘം {
 		u_int32_t	st32[8];
 		u_int64_t	st64[8];
 	} state;
@@ -72,98 +72,98 @@ typedef struct _SHA2_CTX {
 	u_int8_t	buffer[SHA512_BLOCK_LENGTH];
 } SHA2_CTX;
 
-#if 0
+#എങ്കിൽ 0
 __BEGIN_DECLS
-void SHA224Init(SHA2_CTX *);
-void SHA224Transform(u_int32_t state[8], const u_int8_t [SHA224_BLOCK_LENGTH]);
-void SHA224Update(SHA2_CTX *, const u_int8_t *, size_t)
+ശൂന്യം SHA224Init(SHA2_CTX *);
+ശൂന്യം SHA224Transform(u_int32_t state[8], സ്ഥിരം u_int8_t [SHA224_BLOCK_LENGTH]);
+ശൂന്യം SHA224Update(SHA2_CTX *, സ്ഥിരം u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA224Pad(SHA2_CTX *);
-void SHA224Final(u_int8_t [SHA224_DIGEST_LENGTH], SHA2_CTX *)
+ശൂന്യം SHA224Pad(SHA2_CTX *);
+ശൂന്യം SHA224Final(u_int8_t [SHA224_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA224_DIGEST_LENGTH)));
-char *SHA224End(SHA2_CTX *, char *)
+അക്ഷരം *SHA224End(SHA2_CTX *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_LENGTH)));
-char *SHA224File(const char *, char *)
+അക്ഷരം *SHA224File(സ്ഥിരം അക്ഷരം *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_LENGTH)));
-char *SHA224FileChunk(const char *, char *, off_t, off_t)
+അക്ഷരം *SHA224FileChunk(സ്ഥിരം അക്ഷരം *, അക്ഷരം *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_LENGTH)));
-char *SHA224Data(const u_int8_t *, size_t, char *)
+അക്ഷരം *SHA224Data(സ്ഥിരം u_int8_t *, size_t, അക്ഷരം *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA224_DIGEST_STRING_LENGTH)));
 #endif /* 0 */
 
 #ifndef HAVE_SHA256UPDATE
-void SHA256Init(SHA2_CTX *);
-void SHA256Transform(u_int32_t state[8], const u_int8_t [SHA256_BLOCK_LENGTH]);
-void SHA256Update(SHA2_CTX *, const u_int8_t *, size_t)
+ശൂന്യം SHA256Init(SHA2_CTX *);
+ശൂന്യം SHA256Transform(u_int32_t state[8], സ്ഥിരം u_int8_t [SHA256_BLOCK_LENGTH]);
+ശൂന്യം SHA256Update(SHA2_CTX *, സ്ഥിരം u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA256Pad(SHA2_CTX *);
-void SHA256Final(u_int8_t [SHA256_DIGEST_LENGTH], SHA2_CTX *)
+ശൂന്യം SHA256Pad(SHA2_CTX *);
+ശൂന്യം SHA256Final(u_int8_t [SHA256_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA256_DIGEST_LENGTH)));
-char *SHA256End(SHA2_CTX *, char *)
+അക്ഷരം *SHA256End(SHA2_CTX *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_LENGTH)));
-char *SHA256File(const char *, char *)
+അക്ഷരം *SHA256File(സ്ഥിരം അക്ഷരം *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_LENGTH)));
-char *SHA256FileChunk(const char *, char *, off_t, off_t)
+അക്ഷരം *SHA256FileChunk(സ്ഥിരം അക്ഷരം *, അക്ഷരം *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_LENGTH)));
-char *SHA256Data(const u_int8_t *, size_t, char *)
+അക്ഷരം *SHA256Data(സ്ഥിരം u_int8_t *, size_t, അക്ഷരം *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA256_DIGEST_STRING_LENGTH)));
 #endif /* HAVE_SHA256UPDATE */
 
 #ifndef HAVE_SHA384UPDATE
-void SHA384Init(SHA2_CTX *);
-void SHA384Transform(u_int64_t state[8], const u_int8_t [SHA384_BLOCK_LENGTH]);
-void SHA384Update(SHA2_CTX *, const u_int8_t *, size_t)
+ശൂന്യം SHA384Init(SHA2_CTX *);
+ശൂന്യം SHA384Transform(u_int64_t state[8], സ്ഥിരം u_int8_t [SHA384_BLOCK_LENGTH]);
+ശൂന്യം SHA384Update(SHA2_CTX *, സ്ഥിരം u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA384Pad(SHA2_CTX *);
-void SHA384Final(u_int8_t [SHA384_DIGEST_LENGTH], SHA2_CTX *)
+ശൂന്യം SHA384Pad(SHA2_CTX *);
+ശൂന്യം SHA384Final(u_int8_t [SHA384_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA384_DIGEST_LENGTH)));
-char *SHA384End(SHA2_CTX *, char *)
+അക്ഷരം *SHA384End(SHA2_CTX *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_LENGTH)));
-char *SHA384File(const char *, char *)
+അക്ഷരം *SHA384File(സ്ഥിരം അക്ഷരം *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_LENGTH)));
-char *SHA384FileChunk(const char *, char *, off_t, off_t)
+അക്ഷരം *SHA384FileChunk(സ്ഥിരം അക്ഷരം *, അക്ഷരം *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_LENGTH)));
-char *SHA384Data(const u_int8_t *, size_t, char *)
+അക്ഷരം *SHA384Data(സ്ഥിരം u_int8_t *, size_t, അക്ഷരം *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA384_DIGEST_STRING_LENGTH)));
 #endif /* HAVE_SHA384UPDATE */
 
 #ifndef HAVE_SHA512UPDATE
-void SHA512Init(SHA2_CTX *);
-void SHA512Transform(u_int64_t state[8], const u_int8_t [SHA512_BLOCK_LENGTH]);
-void SHA512Update(SHA2_CTX *, const u_int8_t *, size_t)
+ശൂന്യം SHA512Init(SHA2_CTX *);
+ശൂന്യം SHA512Transform(u_int64_t state[8], സ്ഥിരം u_int8_t [SHA512_BLOCK_LENGTH]);
+ശൂന്യം SHA512Update(SHA2_CTX *, സ്ഥിരം u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA512Pad(SHA2_CTX *);
-void SHA512Final(u_int8_t [SHA512_DIGEST_LENGTH], SHA2_CTX *)
+ശൂന്യം SHA512Pad(SHA2_CTX *);
+ശൂന്യം SHA512Final(u_int8_t [SHA512_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA512_DIGEST_LENGTH)));
-char *SHA512End(SHA2_CTX *, char *)
+അക്ഷരം *SHA512End(SHA2_CTX *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_LENGTH)));
-char *SHA512File(const char *, char *)
+അക്ഷരം *SHA512File(സ്ഥിരം അക്ഷരം *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_LENGTH)));
-char *SHA512FileChunk(const char *, char *, off_t, off_t)
+അക്ഷരം *SHA512FileChunk(സ്ഥിരം അക്ഷരം *, അക്ഷരം *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_LENGTH)));
-char *SHA512Data(const u_int8_t *, size_t, char *)
+അക്ഷരം *SHA512Data(സ്ഥിരം u_int8_t *, size_t, അക്ഷരം *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA512_DIGEST_STRING_LENGTH)));
 #endif /* HAVE_SHA512UPDATE */
 
-#if 0
-void SHA512_256Init(SHA2_CTX *);
-void SHA512_256Transform(u_int64_t state[8], const u_int8_t [SHA512_256_BLOCK_LENGTH]);
-void SHA512_256Update(SHA2_CTX *, const u_int8_t *, size_t)
+#എങ്കിൽ 0
+ശൂന്യം SHA512_256Init(SHA2_CTX *);
+ശൂന്യം SHA512_256Transform(u_int64_t state[8], സ്ഥിരം u_int8_t [SHA512_256_BLOCK_LENGTH]);
+ശൂന്യം SHA512_256Update(SHA2_CTX *, സ്ഥിരം u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA512_256Pad(SHA2_CTX *);
-void SHA512_256Final(u_int8_t [SHA512_256_DIGEST_LENGTH], SHA2_CTX *)
+ശൂന്യം SHA512_256Pad(SHA2_CTX *);
+ശൂന്യം SHA512_256Final(u_int8_t [SHA512_256_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA512_256_DIGEST_LENGTH)));
-char *SHA512_256End(SHA2_CTX *, char *)
+അക്ഷരം *SHA512_256End(SHA2_CTX *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_LENGTH)));
-char *SHA512_256File(const char *, char *)
+അക്ഷരം *SHA512_256File(സ്ഥിരം അക്ഷരം *, അക്ഷരം *)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_LENGTH)));
-char *SHA512_256FileChunk(const char *, char *, off_t, off_t)
+അക്ഷരം *SHA512_256FileChunk(സ്ഥിരം അക്ഷരം *, അക്ഷരം *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_LENGTH)));
-char *SHA512_256Data(const u_int8_t *, size_t, char *)
+അക്ഷരം *SHA512_256Data(സ്ഥിരം u_int8_t *, size_t, അക്ഷരം *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA512_256_DIGEST_STRING_LENGTH)));
 __END_DECLS

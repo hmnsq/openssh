@@ -22,82 +22,82 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifdef HAVE_NEXT
-#include <errno.h>
-#include <sys/wait.h>
-#include "bsd-nextstep.h"
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <sys/wait.h>
+#അന്തര്ഭാവ "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(പൂർണ്ണസംഖ്യ *status)
 {
-	union wait statusp;
+	സംഘം wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	എങ്കിൽ (status)
+		*status = (പൂർണ്ണസംഖ്യ) statusp.w_status;
 
-	return (wait_pid);
+	തിരികെ (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+പൂർണ്ണസംഖ്യ
+tcgetattr(പൂർണ്ണസംഖ്യ fd, ഘടന termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	തിരികെ (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+പൂർണ്ണസംഖ്യ
+tcsetattr(പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ opt, സ്ഥിരം ഘടന termios *t)
 {
-	struct termios localterm;
+	ഘടന termios localterm;
 
-	if (opt & TCSASOFT) {
+	എങ്കിൽ (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
-	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
-	default:
+	തിരഞ്ഞെടുപ്പ് (opt & ~TCSASOFT) {
+	അവസ്ഥ TCSANOW:
+		തിരികെ (ioctl(fd, TIOCSETA, t));
+	അവസ്ഥ TCSADRAIN:
+		തിരികെ (ioctl(fd, TIOCSETAW, t));
+	അവസ്ഥ TCSAFLUSH:
+		തിരികെ (ioctl(fd, TIOCSETAF, t));
+	സ്ഥിരസ്ഥിതി:
 		errno = EINVAL;
-		return (-1);
+		തിരികെ (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+പൂർണ്ണസംഖ്യ tcsetpgrp(പൂർണ്ണസംഖ്യ fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	തിരികെ (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(സ്ഥിരം ഘടന termios *t)
 {
-	return (t->c_ospeed);
+	തിരികെ (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(സ്ഥിരം ഘടന termios *t)
 {
-	return (t->c_ispeed);
+	തിരികെ (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+പൂർണ്ണസംഖ്യ
+cfsetospeed(ഘടന termios *t,പൂർണ്ണസംഖ്യ speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	തിരികെ (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+പൂർണ്ണസംഖ്യ
+cfsetispeed(ഘടന termios *t, പൂർണ്ണസംഖ്യ speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	തിരികെ (0);
 }
 #endif /* HAVE_NEXT */

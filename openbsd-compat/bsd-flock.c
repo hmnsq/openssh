@@ -34,48 +34,48 @@
  * Otherwise, don't do locking; just pretend success.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifndef HAVE_FLOCK
-#include <errno.h>
-#include <fcntl.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
 
-int
-flock(int fd, int op)
+പൂർണ്ണസംഖ്യ
+flock(പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ op)
 {
-	int rc = 0;
+	പൂർണ്ണസംഖ്യ rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
-	struct flock fl = {0};
+#എങ്കിൽ defined(F_SETLK) && defined(F_SETLKW)
+	ഘടന flock fl = {0};
 
-	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
-	case LOCK_EX:
+	തിരഞ്ഞെടുപ്പ് (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
+	അവസ്ഥ LOCK_EX:
 		fl.l_type = F_WRLCK;
-		break;
+		നിർത്തുക;
 
-	case LOCK_SH:
+	അവസ്ഥ LOCK_SH:
 		fl.l_type = F_RDLCK;
-		break;
+		നിർത്തുക;
 
-	case LOCK_UN:
+	അവസ്ഥ LOCK_UN:
 		fl.l_type = F_UNLCK;
-		break;
+		നിർത്തുക;
 
-	default:
+	സ്ഥിരസ്ഥിതി:
 		errno = EINVAL;
-		return -1;
+		തിരികെ -1;
 	}
 
 	fl.l_whence = SEEK_SET;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
+	എങ്കിൽ (rc && (errno == EAGAIN))
 		errno = EWOULDBLOCK;
-#else
+#അല്ലെങ്കിൽ
 	rc = -1;
 	errno = ENOSYS;
 #endif
 
-	return rc;
+	തിരികെ rc;
 }
 #endif

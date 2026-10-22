@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/daemon.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifndef HAVE_DAEMON
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <sys/stat.h>
+#അന്തര്ഭാവ <sys/stat.h>
 
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
@@ -46,34 +46,34 @@
 # include <unistd.h>
 #endif
 
-int
-daemon(int nochdir, int noclose)
+പൂർണ്ണസംഖ്യ
+daemon(പൂർണ്ണസംഖ്യ nochdir, പൂർണ്ണസംഖ്യ noclose)
 {
-	int fd;
+	പൂർണ്ണസംഖ്യ fd;
 
-	switch (fork()) {
-	case -1:
-		return (-1);
-	case 0:
-		break;
-	default:
+	തിരഞ്ഞെടുപ്പ് (fork()) {
+	അവസ്ഥ -1:
+		തിരികെ (-1);
+	അവസ്ഥ 0:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		_exit(0);
 	}
 
-	if (setsid() == -1)
-		return (-1);
+	എങ്കിൽ (setsid() == -1)
+		തിരികെ (-1);
 
-	if (!nochdir)
-		(void)chdir("/");
+	എങ്കിൽ (!nochdir)
+		(ശൂന്യം)chdir("/");
 
-	if (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
-		(void)dup2(fd, STDIN_FILENO);
-		(void)dup2(fd, STDOUT_FILENO);
-		(void)dup2(fd, STDERR_FILENO);
-		if (fd > 2)
-			(void)close (fd);
+	എങ്കിൽ (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
+		(ശൂന്യം)dup2(fd, STDIN_FILENO);
+		(ശൂന്യം)dup2(fd, STDOUT_FILENO);
+		(ശൂന്യം)dup2(fd, STDERR_FILENO);
+		എങ്കിൽ (fd > 2)
+			(ശൂന്യം)close (fd);
 	}
-	return (0);
+	തിരികെ (0);
 }
 
 #endif /* !HAVE_DAEMON */

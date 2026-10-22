@@ -22,26 +22,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 #ifdef USE_PAM
 
-struct ssh;
+ഘടന ssh;
 
-void start_pam(struct ssh *);
-void finish_pam(void);
-u_int do_pam_account(void);
-void do_pam_session(struct ssh *);
-void do_pam_setcred(void);
-int do_pam_putenv(char *, char *);
-char ** fetch_pam_environment(void);
-char ** fetch_pam_child_environment(void);
-void free_pam_environment(char **);
-void sshpam_thread_cleanup(void);
-void sshpam_cleanup(void);
-int sshpam_auth_passwd(Authctxt *, const char *);
-int sshpam_get_maxtries_reached(void);
-void sshpam_set_maxtries_reached(int);
-int is_pam_session_open(void);
-int sshpam_priv_kbdint_authdone(void *ctxtp);
+ശൂന്യം start_pam(ഘടന ssh *);
+ശൂന്യം finish_pam(ശൂന്യം);
+u_int do_pam_account(ശൂന്യം);
+ശൂന്യം do_pam_session(ഘടന ssh *);
+ശൂന്യം do_pam_setcred(ശൂന്യം);
+പൂർണ്ണസംഖ്യ do_pam_putenv(അക്ഷരം *, അക്ഷരം *);
+അക്ഷരം ** fetch_pam_environment(ശൂന്യം);
+അക്ഷരം ** fetch_pam_child_environment(ശൂന്യം);
+ശൂന്യം free_pam_environment(അക്ഷരം **);
+ശൂന്യം sshpam_thread_cleanup(ശൂന്യം);
+ശൂന്യം sshpam_cleanup(ശൂന്യം);
+പൂർണ്ണസംഖ്യ sshpam_auth_passwd(Authctxt *, സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ sshpam_get_maxtries_reached(ശൂന്യം);
+ശൂന്യം sshpam_set_maxtries_reached(പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ is_pam_session_open(ശൂന്യം);
+പൂർണ്ണസംഖ്യ sshpam_priv_kbdint_authdone(ശൂന്യം *ctxtp);
 
 #endif /* USE_PAM */

@@ -17,52 +17,52 @@
 
 /* Utility functions/framework for fuzz tests */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/uio.h>
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <assert.h>
+#അന്തര്ഭാവ <ctype.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "test_helper.h"
-#include "atomicio.h"
+#അന്തര്ഭാവ "test_helper.h"
+#അന്തര്ഭാവ "atomicio.h"
 
 /* #define FUZZ_DEBUG */
 
 #ifdef FUZZ_DEBUG
-# define FUZZ_DBG(x) do { \
+# define FUZZ_DBG(x) ചെയ്യുക { \
 		printf("%s:%d %s: ", __FILE__, __LINE__, __func__); \
 		printf x; \
 		printf("\n"); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} ആകുമ്പോൾ (0)
+#അല്ലെങ്കിൽ
 # define FUZZ_DBG(x)
 #endif
 
 /* For brevity later */
-typedef unsigned long long fuzz_ullong;
+തരനിർവചനം unsigned long long fuzz_ullong;
 
 /* For base-64 fuzzing */
-static const char fuzz_b64chars[] =
+സ്ഥിതം സ്ഥിരം അക്ഷരം fuzz_b64chars[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-struct fuzz {
+ഘടന fuzz {
 	/* Fuzz method currently in use */
-	int strategy;
+	പൂർണ്ണസംഖ്യ strategy;
 
 	/* Fuzz methods remaining */
-	int strategies;
+	പൂർണ്ണസംഖ്യ strategies;
 
 	/* Original seed data blob */
-	void *seed;
+	ശൂന്യം *seed;
 	size_t slen;
 
 	/* Current working copy of seed with fuzz mutations applied */
@@ -72,104 +72,104 @@ struct fuzz {
 	size_t o1, o2;
 };
 
-static const char *
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
 fuzz_ntop(u_int n)
 {
-	switch (n) {
-	case 0:
-		return "NONE";
-	case FUZZ_1_BIT_FLIP:
-		return "FUZZ_1_BIT_FLIP";
-	case FUZZ_2_BIT_FLIP:
-		return "FUZZ_2_BIT_FLIP";
-	case FUZZ_1_BYTE_FLIP:
-		return "FUZZ_1_BYTE_FLIP";
-	case FUZZ_2_BYTE_FLIP:
-		return "FUZZ_2_BYTE_FLIP";
-	case FUZZ_TRUNCATE_START:
-		return "FUZZ_TRUNCATE_START";
-	case FUZZ_TRUNCATE_END:
-		return "FUZZ_TRUNCATE_END";
-	case FUZZ_BASE64:
-		return "FUZZ_BASE64";
-	default:
+	തിരഞ്ഞെടുപ്പ് (n) {
+	അവസ്ഥ 0:
+		തിരികെ "NONE";
+	അവസ്ഥ FUZZ_1_BIT_FLIP:
+		തിരികെ "FUZZ_1_BIT_FLIP";
+	അവസ്ഥ FUZZ_2_BIT_FLIP:
+		തിരികെ "FUZZ_2_BIT_FLIP";
+	അവസ്ഥ FUZZ_1_BYTE_FLIP:
+		തിരികെ "FUZZ_1_BYTE_FLIP";
+	അവസ്ഥ FUZZ_2_BYTE_FLIP:
+		തിരികെ "FUZZ_2_BYTE_FLIP";
+	അവസ്ഥ FUZZ_TRUNCATE_START:
+		തിരികെ "FUZZ_TRUNCATE_START";
+	അവസ്ഥ FUZZ_TRUNCATE_END:
+		തിരികെ "FUZZ_TRUNCATE_END";
+	അവസ്ഥ FUZZ_BASE64:
+		തിരികെ "FUZZ_BASE64";
+	സ്ഥിരസ്ഥിതി:
 		abort();
 	}
 }
 
-static int
-fuzz_fmt(struct fuzz *fuzz, char *s, size_t n)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+fuzz_fmt(ഘടന fuzz *fuzz, അക്ഷരം *s, size_t n)
 {
-	if (fuzz == NULL)
-		return -1;
+	എങ്കിൽ (fuzz == ശൂന്യ)
+		തിരികെ -1;
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
+	തിരഞ്ഞെടുപ്പ് (fuzz->strategy) {
+	അവസ്ഥ FUZZ_1_BIT_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (bit: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen * 8, fuzz->o1);
-		return 0;
-	case FUZZ_2_BIT_FLIP:
+		തിരികെ 0;
+	അവസ്ഥ FUZZ_2_BIT_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bits: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen * 8) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen * 8) * fuzz->slen * 8,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_1_BYTE_FLIP:
+		തിരികെ 0;
+	അവസ്ഥ FUZZ_1_BYTE_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (byte: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_2_BYTE_FLIP:
+		തിരികെ 0;
+	അവസ്ഥ FUZZ_2_BYTE_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bytes: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen) * fuzz->slen,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_TRUNCATE_START:
+		തിരികെ 0;
+	അവസ്ഥ FUZZ_TRUNCATE_START:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_TRUNCATE_END:
+		തിരികെ 0;
+	അവസ്ഥ FUZZ_TRUNCATE_END:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_BASE64:
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
+		തിരികെ 0;
+	അവസ്ഥ FUZZ_BASE64:
+		പ്രതിജ്ഞാ(fuzz->o2 < വലുപ്പം(fuzz_b64chars) - 1);
 		snprintf(s, n, "%s case %llu of %llu (offset: %zu char: %c)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (fuzz->o1 * (fuzz_ullong)64) + fuzz->o2,
 		    fuzz->slen * (fuzz_ullong)64, fuzz->o1,
 		    fuzz_b64chars[fuzz->o2]);
-		return 0;
-	default:
-		return -1;
+		തിരികെ 0;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ -1;
 	}
 }
 
-static void
+സ്ഥിതം ശൂന്യം
 dump(u_char *p, size_t len)
 {
 	size_t i, j;
 
-	for (i = 0; i < len; i += 16) {
+	വേണ്ടി (i = 0; i < len; i += 16) {
 		fprintf(stderr, "%.4zd: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
+		വേണ്ടി (j = i; j < i + 16; j++) {
+			എങ്കിൽ (j < len)
 				fprintf(stderr, "%02x ", p[j]);
-			else
+			അല്ലെങ്കിൽ
 				fprintf(stderr, "   ");
 		}
 		fprintf(stderr, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+		വേണ്ടി (j = i; j < i + 16; j++) {
+			എങ്കിൽ (j < len) {
+				എങ്കിൽ  (isascii(p[j]) && isprint(p[j]))
 					fprintf(stderr, "%c", p[j]);
-				else
+				അല്ലെങ്കിൽ
 					fprintf(stderr, ".");
 			}
 		}
@@ -177,12 +177,12 @@ dump(u_char *p, size_t len)
 	}
 }
 
-void
-fuzz_dump(struct fuzz *fuzz)
+ശൂന്യം
+fuzz_dump(ഘടന fuzz *fuzz)
 {
-	char buf[256];
+	അക്ഷരം buf[256];
 
-	if (fuzz_fmt(fuzz, buf, sizeof(buf)) != 0) {
+	എങ്കിൽ (fuzz_fmt(fuzz, buf, വലുപ്പം(buf)) != 0) {
 		fprintf(stderr, "%s: fuzz invalid\n", __func__);
 		abort();
 	}
@@ -193,36 +193,36 @@ fuzz_dump(struct fuzz *fuzz)
 	dump(fuzz_ptr(fuzz), fuzz_len(fuzz));
 }
 
-static struct fuzz *last_fuzz;
+സ്ഥിതം ഘടന fuzz *last_fuzz;
 
-static void
-siginfo(int unused __attribute__((__unused__)))
+സ്ഥിതം ശൂന്യം
+siginfo(പൂർണ്ണസംഖ്യ unused __attribute__((__unused__)))
 {
-	char buf[256];
+	അക്ഷരം buf[256];
 
-	test_info(buf, sizeof(buf));
+	test_info(buf, വലുപ്പം(buf));
 	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
-	if (last_fuzz != NULL) {
-		fuzz_fmt(last_fuzz, buf, sizeof(buf));
+	എങ്കിൽ (last_fuzz != ശൂന്യ) {
+		fuzz_fmt(last_fuzz, buf, വലുപ്പം(buf));
 		atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
 	}
 }
 
-struct fuzz *
-fuzz_begin(u_int strategies, const void *p, size_t l)
+ഘടന fuzz *
+fuzz_begin(u_int strategies, സ്ഥിരം ശൂന്യം *p, size_t l)
 {
-	struct fuzz *ret = calloc(1, sizeof(*ret));
+	ഘടന fuzz *ret = calloc(1, വലുപ്പം(*ret));
 
-	assert(p != NULL);
-	assert(ret != NULL);
+	പ്രതിജ്ഞാ(p != ശൂന്യ);
+	പ്രതിജ്ഞാ(ret != ശൂന്യ);
 	ret->seed = malloc(l);
-	assert(ret->seed != NULL);
+	പ്രതിജ്ഞാ(ret->seed != ശൂന്യ);
 	memcpy(ret->seed, p, l);
 	ret->slen = l;
 	ret->strategies = strategies;
 
-	assert(ret->slen < SIZE_MAX / 8);
-	assert(ret->strategies <= (FUZZ_MAX|(FUZZ_MAX-1)));
+	പ്രതിജ്ഞാ(ret->slen < SIZE_MAX / 8);
+	പ്രതിജ്ഞാ(ret->strategies <= (FUZZ_MAX|(FUZZ_MAX-1)));
 
 	FUZZ_DBG(("begin, ret = %p", ret));
 
@@ -230,55 +230,55 @@ fuzz_begin(u_int strategies, const void *p, size_t l)
 
 	last_fuzz = ret;
 #ifdef SIGINFO
-	signal(SIGINFO, siginfo);
+	സൂചന(SIGINFO, siginfo);
 #endif
-	signal(SIGUSR1, siginfo);
+	സൂചന(SIGUSR1, siginfo);
 
-	return ret;
+	തിരികെ ret;
 }
 
-void
-fuzz_cleanup(struct fuzz *fuzz)
+ശൂന്യം
+fuzz_cleanup(ഘടന fuzz *fuzz)
 {
 	FUZZ_DBG(("cleanup, fuzz = %p", fuzz));
-	last_fuzz = NULL;
+	last_fuzz = ശൂന്യ;
 #ifdef SIGINFO
-	signal(SIGINFO, SIG_DFL);
+	സൂചന(SIGINFO, SIG_DFL);
 #endif
-	signal(SIGUSR1, SIG_DFL);
-	assert(fuzz != NULL);
-	assert(fuzz->seed != NULL);
-	assert(fuzz->fuzzed != NULL);
-	free(fuzz->seed);
-	free(fuzz->fuzzed);
-	free(fuzz);
+	സൂചന(SIGUSR1, SIG_DFL);
+	പ്രതിജ്ഞാ(fuzz != ശൂന്യ);
+	പ്രതിജ്ഞാ(fuzz->seed != ശൂന്യ);
+	പ്രതിജ്ഞാ(fuzz->fuzzed != ശൂന്യ);
+	സ്വതന്ത്രം(fuzz->seed);
+	സ്വതന്ത്രം(fuzz->fuzzed);
+	സ്വതന്ത്രം(fuzz);
 }
 
-static int
-fuzz_strategy_done(struct fuzz *fuzz)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+fuzz_strategy_done(ഘടന fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategy = %s, o1 = %zu, o2 = %zu, slen = %zu",
 	    fuzz, fuzz_ntop(fuzz->strategy), fuzz->o1, fuzz->o2, fuzz->slen));
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-		return fuzz->o1 >= fuzz->slen * 8;
-	case FUZZ_2_BIT_FLIP:
-		return fuzz->o2 >= fuzz->slen * 8;
-	case FUZZ_2_BYTE_FLIP:
-		return fuzz->o2 >= fuzz->slen;
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-	case FUZZ_BASE64:
-		return fuzz->o1 >= fuzz->slen;
-	default:
+	തിരഞ്ഞെടുപ്പ് (fuzz->strategy) {
+	അവസ്ഥ FUZZ_1_BIT_FLIP:
+		തിരികെ fuzz->o1 >= fuzz->slen * 8;
+	അവസ്ഥ FUZZ_2_BIT_FLIP:
+		തിരികെ fuzz->o2 >= fuzz->slen * 8;
+	അവസ്ഥ FUZZ_2_BYTE_FLIP:
+		തിരികെ fuzz->o2 >= fuzz->slen;
+	അവസ്ഥ FUZZ_1_BYTE_FLIP:
+	അവസ്ഥ FUZZ_TRUNCATE_START:
+	അവസ്ഥ FUZZ_TRUNCATE_END:
+	അവസ്ഥ FUZZ_BASE64:
+		തിരികെ fuzz->o1 >= fuzz->slen;
+	സ്ഥിരസ്ഥിതി:
 		abort();
 	}
 }
 
-void
-fuzz_next(struct fuzz *fuzz)
+ശൂന്യം
+fuzz_next(ഘടന fuzz *fuzz)
 {
 	u_int i;
 
@@ -286,86 +286,86 @@ fuzz_next(struct fuzz *fuzz)
 	    "o1 = %zu, o2 = %zu, slen = %zu", fuzz, fuzz_ntop(fuzz->strategy),
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 
-	if (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
+	എങ്കിൽ (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
 		/* If we are just starting out, we need to allocate too */
-		if (fuzz->fuzzed == NULL) {
+		എങ്കിൽ (fuzz->fuzzed == ശൂന്യ) {
 			FUZZ_DBG(("alloc"));
 			fuzz->fuzzed = calloc(fuzz->slen, 1);
 		}
 		/* Pick next strategy */
 		FUZZ_DBG(("advance"));
-		for (i = 1; i <= FUZZ_MAX; i <<= 1) {
-			if ((fuzz->strategies & i) != 0) {
+		വേണ്ടി (i = 1; i <= FUZZ_MAX; i <<= 1) {
+			എങ്കിൽ ((fuzz->strategies & i) != 0) {
 				fuzz->strategy = i;
-				break;
+				നിർത്തുക;
 			}
 		}
 		FUZZ_DBG(("selected = %u", fuzz->strategy));
-		if (fuzz->strategy == 0) {
+		എങ്കിൽ (fuzz->strategy == 0) {
 			FUZZ_DBG(("done, no more strategies"));
-			return;
+			തിരികെ;
 		}
 		fuzz->strategies &= ~(fuzz->strategy);
 		fuzz->o1 = fuzz->o2 = 0;
 	}
 
-	assert(fuzz->fuzzed != NULL);
+	പ്രതിജ്ഞാ(fuzz->fuzzed != ശൂന്യ);
 
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-		assert(fuzz->o1 / 8 < fuzz->slen);
+	തിരഞ്ഞെടുപ്പ് (fuzz->strategy) {
+	അവസ്ഥ FUZZ_1_BIT_FLIP:
+		പ്രതിജ്ഞാ(fuzz->o1 / 8 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BIT_FLIP:
-		assert(fuzz->o1 / 8 < fuzz->slen);
-		assert(fuzz->o2 / 8 < fuzz->slen);
+		നിർത്തുക;
+	അവസ്ഥ FUZZ_2_BIT_FLIP:
+		പ്രതിജ്ഞാ(fuzz->o1 / 8 < fuzz->slen);
+		പ്രതിജ്ഞാ(fuzz->o2 / 8 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->fuzzed[fuzz->o2 / 8] ^= 1 << (fuzz->o2 % 8);
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen * 8) {
+		എങ്കിൽ (fuzz->o1 >= fuzz->slen * 8) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_1_BYTE_FLIP:
-		assert(fuzz->o1 < fuzz->slen);
+		നിർത്തുക;
+	അവസ്ഥ FUZZ_1_BYTE_FLIP:
+		പ്രതിജ്ഞാ(fuzz->o1 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BYTE_FLIP:
-		assert(fuzz->o1 < fuzz->slen);
-		assert(fuzz->o2 < fuzz->slen);
+		നിർത്തുക;
+	അവസ്ഥ FUZZ_2_BYTE_FLIP:
+		പ്രതിജ്ഞാ(fuzz->o1 < fuzz->slen);
+		പ്രതിജ്ഞാ(fuzz->o2 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->fuzzed[fuzz->o2] ^= 0xff;
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen) {
+		എങ്കിൽ (fuzz->o1 >= fuzz->slen) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 < fuzz->slen);
+		നിർത്തുക;
+	അവസ്ഥ FUZZ_TRUNCATE_START:
+	അവസ്ഥ FUZZ_TRUNCATE_END:
+		പ്രതിജ്ഞാ(fuzz->o1 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->o1++;
-		break;
-	case FUZZ_BASE64:
-		assert(fuzz->o1 < fuzz->slen);
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
+		നിർത്തുക;
+	അവസ്ഥ FUZZ_BASE64:
+		പ്രതിജ്ഞാ(fuzz->o1 < fuzz->slen);
+		പ്രതിജ്ഞാ(fuzz->o2 < വലുപ്പം(fuzz_b64chars) - 1);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] = fuzz_b64chars[fuzz->o2];
 		fuzz->o2++;
-		if (fuzz->o2 >= sizeof(fuzz_b64chars) - 1) {
+		എങ്കിൽ (fuzz->o2 >= വലുപ്പം(fuzz_b64chars) - 1) {
 			fuzz->o2 = 0;
 			fuzz->o1++;
 		}
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		abort();
 	}
 
@@ -374,61 +374,61 @@ fuzz_next(struct fuzz *fuzz)
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 }
 
-int
-fuzz_matches_original(struct fuzz *fuzz)
+പൂർണ്ണസംഖ്യ
+fuzz_matches_original(ഘടന fuzz *fuzz)
 {
-	if (fuzz_len(fuzz) != fuzz->slen)
-		return 0;
-	return memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
+	എങ്കിൽ (fuzz_len(fuzz) != fuzz->slen)
+		തിരികെ 0;
+	തിരികെ memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
 }
 
-int
-fuzz_done(struct fuzz *fuzz)
+പൂർണ്ണസംഖ്യ
+fuzz_done(ഘടന fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategies = 0x%lx", fuzz,
 	    (u_long)fuzz->strategies));
 
-	return fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
+	തിരികെ fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
 }
 
 size_t
-fuzz_len(struct fuzz *fuzz)
+fuzz_len(ഘടന fuzz *fuzz)
 {
-	assert(fuzz->fuzzed != NULL);
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->slen;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->slen - fuzz->o1;
-	default:
+	പ്രതിജ്ഞാ(fuzz->fuzzed != ശൂന്യ);
+	തിരഞ്ഞെടുപ്പ് (fuzz->strategy) {
+	അവസ്ഥ FUZZ_1_BIT_FLIP:
+	അവസ്ഥ FUZZ_2_BIT_FLIP:
+	അവസ്ഥ FUZZ_1_BYTE_FLIP:
+	അവസ്ഥ FUZZ_2_BYTE_FLIP:
+	അവസ്ഥ FUZZ_BASE64:
+		തിരികെ fuzz->slen;
+	അവസ്ഥ FUZZ_TRUNCATE_START:
+	അവസ്ഥ FUZZ_TRUNCATE_END:
+		പ്രതിജ്ഞാ(fuzz->o1 <= fuzz->slen);
+		തിരികെ fuzz->slen - fuzz->o1;
+	സ്ഥിരസ്ഥിതി:
 		abort();
 	}
 }
 
 u_char *
-fuzz_ptr(struct fuzz *fuzz)
+fuzz_ptr(ഘടന fuzz *fuzz)
 {
-	assert(fuzz->fuzzed != NULL);
-	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->fuzzed;
-	case FUZZ_TRUNCATE_START:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed + fuzz->o1;
-	case FUZZ_TRUNCATE_END:
-		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed;
-	default:
+	പ്രതിജ്ഞാ(fuzz->fuzzed != ശൂന്യ);
+	തിരഞ്ഞെടുപ്പ് (fuzz->strategy) {
+	അവസ്ഥ FUZZ_1_BIT_FLIP:
+	അവസ്ഥ FUZZ_2_BIT_FLIP:
+	അവസ്ഥ FUZZ_1_BYTE_FLIP:
+	അവസ്ഥ FUZZ_2_BYTE_FLIP:
+	അവസ്ഥ FUZZ_BASE64:
+		തിരികെ fuzz->fuzzed;
+	അവസ്ഥ FUZZ_TRUNCATE_START:
+		പ്രതിജ്ഞാ(fuzz->o1 <= fuzz->slen);
+		തിരികെ fuzz->fuzzed + fuzz->o1;
+	അവസ്ഥ FUZZ_TRUNCATE_END:
+		പ്രതിജ്ഞാ(fuzz->o1 <= fuzz->slen);
+		തിരികെ fuzz->fuzzed;
+	സ്ഥിരസ്ഥിതി:
 		abort();
 	}
 }

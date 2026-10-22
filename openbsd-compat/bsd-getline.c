@@ -33,54 +33,54 @@
 
 /* NETBSD ORIGINAL: external/bsd/file/dist/src/getline.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#if 0
-#include "file.h"
+#എങ്കിൽ 0
+#അന്തര്ഭാവ "file.h"
 #endif
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
+#എങ്കിൽ !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <string.h>
 
-static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+സ്ഥിതം ssize_t
+getdelim(അക്ഷരം **buf, size_t *bufsiz, പൂർണ്ണസംഖ്യ delimiter, FILE *fp)
 {
-	char *ptr, *eptr;
+	അക്ഷരം *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
+	എങ്കിൽ (*buf == ശൂന്യ || *bufsiz == 0) {
+		എങ്കിൽ ((*buf = malloc(BUFSIZ)) == ശൂന്യ)
+			തിരികെ -1;
 		*bufsiz = BUFSIZ;
 	}
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+	വേണ്ടി (ptr = *buf, eptr = *buf + *bufsiz;;) {
+		പൂർണ്ണസംഖ്യ c = fgetc(fp);
+		എങ്കിൽ (c == -1) {
+			എങ്കിൽ (feof(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				എങ്കിൽ (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					തിരികെ diff;
 				}
 			}
-			return -1;
+			തിരികെ -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		എങ്കിൽ (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			തിരികെ ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
-			char *nbuf;
+		എങ്കിൽ (ptr + 2 >= eptr) {
+			അക്ഷരം *nbuf;
 			size_t nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			എങ്കിൽ ((nbuf = realloc(*buf, nbufsiz)) == ശൂന്യ)
+				തിരികെ -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -90,24 +90,24 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 }
 
 ssize_t
-getline(char **buf, size_t *bufsiz, FILE *fp)
+getline(അക്ഷരം **buf, size_t *bufsiz, FILE *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	തിരികെ getdelim(buf, bufsiz, '\n', fp);
 }
 
 #endif
 
 #ifdef TEST
-int
-main(int argc, char *argv[])
+പൂർണ്ണസംഖ്യ
+പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം *argv[])
 {
-	char *p = NULL;
+	അക്ഷരം *p = ശൂന്യ;
 	ssize_t len;
 	size_t n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
-		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
-	free(p);
-	return 0;
+	ആകുമ്പോൾ ((len = getline(&p, &n, stdin)) != -1)
+		(ശൂന്യം)printf("%" SIZE_T_FORMAT "d %s", len, p);
+	സ്വതന്ത്രം(p);
+	തിരികെ 0;
 }
 #endif

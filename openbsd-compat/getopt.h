@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# എങ്കിൽ defined __cplusplus
 #  define __THROW throw()
-# else
+# അല്ലെങ്കിൽ
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#എങ്കിൽ 0
+ഘടന option {
 	/* name of long option */
-	const char *name;
+	സ്ഥിരം അക്ഷരം *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	പൂർണ്ണസംഖ്യ has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	പൂർണ്ണസംഖ്യ *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	പൂർണ്ണസംഖ്യ val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+പൂർണ്ണസംഖ്യ	 getopt_long(പൂർണ്ണസംഖ്യ, അക്ഷരം * സ്ഥിരം *, സ്ഥിരം അക്ഷരം *,
+	    സ്ഥിരം ഘടന option *, പൂർണ്ണസംഖ്യ *);
+പൂർണ്ണസംഖ്യ	 getopt_long_only(പൂർണ്ണസംഖ്യ, അക്ഷരം * സ്ഥിരം *, സ്ഥിരം അക്ഷരം *,
+	    സ്ഥിരം ഘടന option *, പൂർണ്ണസംഖ്യ *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+പൂർണ്ണസംഖ്യ	 getopt(പൂർണ്ണസംഖ്യ, അക്ഷരം * സ്ഥിരം *, സ്ഥിരം അക്ഷരം *) __THROW;
+പൂർണ്ണസംഖ്യ	 getsubopt(അക്ഷരം **, അക്ഷരം * സ്ഥിരം *, അക്ഷരം **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+ബാഹ്യ   അക്ഷരം *optarg;                  /* getopt(3) external variables */
+ബാഹ്യ   പൂർണ്ണസംഖ്യ opterr;
+ബാഹ്യ   പൂർണ്ണസംഖ്യ optind;
+ബാഹ്യ   പൂർണ്ണസംഖ്യ optopt;
+ബാഹ്യ   പൂർണ്ണസംഖ്യ optreset;
+ബാഹ്യ   അക്ഷരം *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

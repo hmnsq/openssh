@@ -24,81 +24,81 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifdef WITH_OPENSSL
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <openssl/evp.h>
-#include <signal.h>
+#അന്തര്ഭാവ <openssl/evp.h>
+#അന്തര്ഭാവ <signal.h>
 
-#include "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
 
-#include "sshkey.h"
-#include "cipher.h"
-#include "kex.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "cipher.h"
+#അന്തര്ഭാവ "kex.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "digest.h"
 
-int
+പൂർണ്ണസംഖ്യ
 kexgex_hash(
-    int hash_alg,
-    const struct sshbuf *client_version,
-    const struct sshbuf *server_version,
-    const struct sshbuf *client_kexinit,
-    const struct sshbuf *server_kexinit,
-    const struct sshbuf *server_host_key_blob,
-    int min, int wantbits, int max,
-    const BIGNUM *prime,
-    const BIGNUM *gen,
-    const BIGNUM *client_dh_pub,
-    const BIGNUM *server_dh_pub,
-    const u_char *shared_secret, size_t secretlen,
+    പൂർണ്ണസംഖ്യ hash_alg,
+    സ്ഥിരം ഘടന sshbuf *client_version,
+    സ്ഥിരം ഘടന sshbuf *server_version,
+    സ്ഥിരം ഘടന sshbuf *client_kexinit,
+    സ്ഥിരം ഘടന sshbuf *server_kexinit,
+    സ്ഥിരം ഘടന sshbuf *server_host_താക്കോൽ_blob,
+    പൂർണ്ണസംഖ്യ min, പൂർണ്ണസംഖ്യ wantbits, പൂർണ്ണസംഖ്യ max,
+    സ്ഥിരം BIGNUM *അഭാജ്യം,
+    സ്ഥിരം BIGNUM *gen,
+    സ്ഥിരം BIGNUM *client_dh_pub,
+    സ്ഥിരം BIGNUM *server_dh_pub,
+    സ്ഥിരം u_char *shared_secret, size_t secretlen,
     u_char *hash, size_t *hashlen)
 {
-	struct sshbuf *b;
-	int r;
+	ഘടന sshbuf *b;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (*hashlen < ssh_digest_bytes(SSH_DIGEST_SHA1))
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_stringb(b, client_version)) < 0 ||
+	എങ്കിൽ (*hashlen < ssh_digest_bytes(SSH_DIGEST_SHA1))
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_put_stringb(b, client_version)) < 0 ||
 	    (r = sshbuf_put_stringb(b, server_version)) < 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_സന്ദേശം_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, client_kexinit)) != 0 ||
 	    (r = sshbuf_put_u32(b, sshbuf_len(server_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_സന്ദേശം_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, server_kexinit)) != 0 ||
-	    (r = sshbuf_put_stringb(b, server_host_key_blob)) != 0 ||
+	    (r = sshbuf_put_stringb(b, server_host_താക്കോൽ_blob)) != 0 ||
 	    (min != -1 && (r = sshbuf_put_u32(b, min)) != 0) ||
 	    (r = sshbuf_put_u32(b, wantbits)) != 0 ||
 	    (max != -1 && (r = sshbuf_put_u32(b, max)) != 0) ||
-	    (r = sshbuf_put_bignum2(b, prime)) != 0 ||
+	    (r = sshbuf_put_bignum2(b, അഭാജ്യം)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, gen)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, client_dh_pub)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, server_dh_pub)) != 0 ||
 	    (r = sshbuf_put(b, shared_secret, secretlen)) != 0) {
 		sshbuf_free(b);
-		return r;
+		തിരികെ r;
 	}
 #ifdef DEBUG_KEXDH
 	sshbuf_dump(b, stderr);
 #endif
-	if (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
+	എങ്കിൽ (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
 		sshbuf_free(b);
-		return SSH_ERR_LIBCRYPTO_ERROR;
+		തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
 	}
 	sshbuf_free(b);
 	*hashlen = ssh_digest_bytes(hash_alg);
 #ifdef DEBUG_KEXDH
 	dump_digest("hash", hash, *hashlen);
 #endif
-	return 0;
+	തിരികെ 0;
 }
 #endif /* WITH_OPENSSL */

@@ -5,85 +5,85 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "../test_helper/test_helper.h"
+#അന്തര്ഭാവ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "xmalloc.h"
 
-void test_xextendf(void);
+ശൂന്യം test_xextendf(ശൂന്യം);
 
-void
-test_xextendf(void)
+ശൂന്യം
+test_xextendf(ശൂന്യം)
 {
-	char *s = NULL;
+	അക്ഷരം *s = ശൂന്യ;
 
 	TEST_START("xextendf NULL string");
 	xextendf(&s, ",", "hello");
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
-	s = NULL;
+	സ്വതന്ത്രം(s);
+	s = ശൂന്യ;
 	TEST_DONE();
 
 	TEST_START("xextendf empty string");
 	s = xstrdup("");
 	xextendf(&s, ",", "world");
 	ASSERT_STRING_EQ(s, "world");
-	free(s);
-	s = NULL;
+	സ്വതന്ത്രം(s);
+	s = ശൂന്യ;
 	TEST_DONE();
 
 	TEST_START("xextendf append to string");
 	s = xstrdup("foo");
 	xextendf(&s, ",", "bar");
 	ASSERT_STRING_EQ(s, "foo,bar");
-	free(s);
-	s = NULL;
+	സ്വതന്ത്രം(s);
+	s = ശൂന്യ;
 	TEST_DONE();
 
 	TEST_START("xextendf append with NULL separator");
 	s = xstrdup("foo");
-	xextendf(&s, NULL, "bar");
+	xextendf(&s, ശൂന്യ, "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
+	സ്വതന്ത്രം(s);
+	s = ശൂന്യ;
 	TEST_DONE();
 
 	TEST_START("xextendf append with empty separator");
 	s = xstrdup("foo");
 	xextendf(&s, "", "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
+	സ്വതന്ത്രം(s);
+	s = ശൂന്യ;
 	TEST_DONE();
 
 	TEST_START("xextendf with format string");
 	s = xstrdup("start");
 	xextendf(&s, ":", "s=%s,d=%d", "string", 123);
 	ASSERT_STRING_EQ(s, "start:s=string,d=123");
-	free(s);
-	s = NULL;
+	സ്വതന്ത്രം(s);
+	s = ശൂന്യ;
 	TEST_DONE();
 
 	TEST_START("xextendf multiple appends");
-	s = NULL;
+	s = ശൂന്യ;
 	xextendf(&s, ",", "one");
 	ASSERT_STRING_EQ(s, "one");
 	xextendf(&s, ",", "two");
 	ASSERT_STRING_EQ(s, "one,two");
 	xextendf(&s, ":", "three=%d", 3);
 	ASSERT_STRING_EQ(s, "one,two:three=3");
-	xextendf(&s, NULL, "four");
+	xextendf(&s, ശൂന്യ, "four");
 	ASSERT_STRING_EQ(s, "one,two:three=3four");
-	free(s);
-	s = NULL;
+	സ്വതന്ത്രം(s);
+	s = ശൂന്യ;
 	TEST_DONE();
 }

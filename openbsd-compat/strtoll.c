@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoll.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 #ifndef HAVE_STRTOLL
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <ctype.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <stdlib.h>
 
 /*
  * Convert a string to a long long.
@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(സ്ഥിരം അക്ഷരം *nptr, അക്ഷരം **endptr, പൂർണ്ണസംഖ്യ base)
 {
-	const char *s;
+	സ്ഥിരം അക്ഷരം *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	പൂർണ്ണസംഖ്യ c;
+	പൂർണ്ണസംഖ്യ neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -60,24 +60,24 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	ചെയ്യുക {
+		c = (unsigned അക്ഷരം) *s++;
+	} ആകുമ്പോൾ (isspace(c));
+	എങ്കിൽ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} അല്ലെങ്കിൽ {
 		neg = 0;
-		if (c == '+')
+		എങ്കിൽ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	എങ്കിൽ ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	എങ്കിൽ (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	എങ്കിൽ (neg) {
+		എങ്കിൽ (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	വേണ്ടി (acc = 0, any = 0;; c = (unsigned അക്ഷരം) *s++) {
+		എങ്കിൽ (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		അല്ലെങ്കിൽ എങ്കിൽ (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		അല്ലെങ്കിൽ
+			നിർത്തുക;
+		എങ്കിൽ (c >= base)
+			നിർത്തുക;
+		എങ്കിൽ (any < 0)
+			തുടരുക;
+		എങ്കിൽ (neg) {
+			എങ്കിൽ (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} അല്ലെങ്കിൽ {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} അല്ലെങ്കിൽ {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	എങ്കിൽ (endptr != 0)
+		*endptr = (അക്ഷരം *) (any ? s - 1 : nptr);
+	തിരികെ (acc);
 }
 #endif /* HAVE_STRTOLL */

@@ -21,28 +21,28 @@
 #define	MD5_DIGEST_LENGTH		16
 #define	MD5_DIGEST_STRING_LENGTH	(MD5_DIGEST_LENGTH * 2 + 1)
 
-typedef struct MD5Context {
+തരനിർവചനം ഘടന MD5Context {
 	u_int32_t state[4];			/* state */
-	u_int64_t count;			/* number of bits, mod 2^64 */
+	u_int64_t എണ്ണം;			/* number of bits, mod 2^64 */
 	u_int8_t buffer[MD5_BLOCK_LENGTH];	/* input buffer */
 } MD5_CTX;
 
-void	 MD5Init(MD5_CTX *);
-void	 MD5Update(MD5_CTX *, const u_int8_t *, size_t)
+ശൂന്യം	 MD5Init(MD5_CTX *);
+ശൂന്യം	 MD5Update(MD5_CTX *, സ്ഥിരം u_int8_t *, size_t)
 		__attribute__((__bounded__(__string__,2,3)));
-void	 MD5Pad(MD5_CTX *);
-void	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
+ശൂന്യം	 MD5Pad(MD5_CTX *);
+ശൂന്യം	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
 		__attribute__((__bounded__(__minbytes__,1,MD5_DIGEST_LENGTH)));
-void	 MD5Transform(u_int32_t [4], const u_int8_t [MD5_BLOCK_LENGTH])
+ശൂന്യം	 MD5Transform(u_int32_t [4], സ്ഥിരം u_int8_t [MD5_BLOCK_LENGTH])
 		__attribute__((__bounded__(__minbytes__,1,4)))
 		__attribute__((__bounded__(__minbytes__,2,MD5_BLOCK_LENGTH)));
-char	*MD5End(MD5_CTX *, char *)
+അക്ഷരം	*MD5End(MD5_CTX *, അക്ഷരം *)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5File(const char *, char *)
+അക്ഷരം	*MD5File(സ്ഥിരം അക്ഷരം *, അക്ഷരം *)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5FileChunk(const char *, char *, off_t, off_t)
+അക്ഷരം	*MD5FileChunk(സ്ഥിരം അക്ഷരം *, അക്ഷരം *, off_t, off_t)
 		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5Data(const u_int8_t *, size_t, char *)
+അക്ഷരം	*MD5Data(സ്ഥിരം u_int8_t *, size_t, അക്ഷരം *)
 		__attribute__((__bounded__(__string__,1,2)))
 		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_LENGTH)));
 

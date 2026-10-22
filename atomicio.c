@@ -26,144 +26,144 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/uio.h>
+#അന്തര്ഭാവ <sys/uio.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <poll.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <limits.h>
 
-#include "atomicio.h"
+#അന്തര്ഭാവ "atomicio.h"
 
 /*
  * ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomicio6(ssize_t (*f) (പൂർണ്ണസംഖ്യ, ശൂന്യം *, size_t), പൂർണ്ണസംഖ്യ fd, ശൂന്യം *_s, size_t n,
+    പൂർണ്ണസംഖ്യ (*cb)(ശൂന്യം *, size_t), ശൂന്യം *cb_arg)
 {
-	char *s = _s;
+	അക്ഷരം *s = _s;
 	size_t pos = 0;
 	ssize_t res;
-	struct pollfd pfd;
+	ഘടന pollfd pfd;
 
 	pfd.fd = fd;
-	pfd.events = f == read ? POLLIN : POLLOUT;
-	while (n > pos) {
+	pfd.events = f == പഠ ? POLLIN : POLLOUT;
+	ആകുമ്പോൾ (n > pos) {
 		res = (f) (fd, s + pos, n - pos);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		തിരഞ്ഞെടുപ്പ് (res) {
+		അവസ്ഥ -1:
+			എങ്കിൽ (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				എങ്കിൽ (cb != ശൂന്യ && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					തിരികെ pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				തുടരുക;
+			} അല്ലെങ്കിൽ എങ്കിൽ (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(ശൂന്യം)poll(&pfd, 1, -1);
+				തുടരുക;
 			}
-			return 0;
-		case 0:
+			തിരികെ 0;
+		അവസ്ഥ 0:
 			errno = EPIPE;
-			return pos;
-		default:
+			തിരികെ pos;
+		സ്ഥിരസ്ഥിതി:
 			pos += (size_t)res;
-			if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+			എങ്കിൽ (cb != ശൂന്യ && cb(cb_arg, (size_t)res) == -1) {
 				errno = EINTR;
-				return pos;
+				തിരികെ pos;
 			}
 		}
 	}
-	return pos;
+	തിരികെ pos;
 }
 
 size_t
-atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+atomicio(ssize_t (*f) (പൂർണ്ണസംഖ്യ, ശൂന്യം *, size_t), പൂർണ്ണസംഖ്യ fd, ശൂന്യം *_s, size_t n)
 {
-	return atomicio6(f, fd, _s, n, NULL, NULL);
+	തിരികെ atomicio6(f, fd, _s, n, ശൂന്യ, ശൂന്യ);
 }
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomiciov6(ssize_t (*f) (പൂർണ്ണസംഖ്യ, സ്ഥിരം ഘടന iovec *, പൂർണ്ണസംഖ്യ), പൂർണ്ണസംഖ്യ fd,
+    സ്ഥിരം ഘടന iovec *_iov, പൂർണ്ണസംഖ്യ iovcnt,
+    പൂർണ്ണസംഖ്യ (*cb)(ശൂന്യം *, size_t), ശൂന്യം *cb_arg)
 {
 	size_t pos = 0, rem;
 	ssize_t res;
-	struct iovec iov_array[IOV_MAX], *iov = iov_array;
-	struct pollfd pfd;
+	ഘടന iovec iov_array[IOV_MAX], *iov = iov_array;
+	ഘടന pollfd pfd;
 
-	if (iovcnt < 0 || iovcnt > IOV_MAX) {
+	എങ്കിൽ (iovcnt < 0 || iovcnt > IOV_MAX) {
 		errno = EINVAL;
-		return 0;
+		തിരികെ 0;
 	}
 	/* Make a copy of the iov array because we may modify it below */
-	memcpy(iov, _iov, (size_t)iovcnt * sizeof(*_iov));
+	memcpy(iov, _iov, (size_t)iovcnt * വലുപ്പം(*_iov));
 
 	pfd.fd = fd;
 #ifndef BROKEN_READV_COMPARISON
 	pfd.events = f == readv ? POLLIN : POLLOUT;
-#else
+#അല്ലെങ്കിൽ
 	pfd.events = POLLIN|POLLOUT;
 #endif
-	for (; iovcnt > 0 && iov[0].iov_len > 0;) {
+	വേണ്ടി (; iovcnt > 0 && iov[0].iov_len > 0;) {
 		res = (f) (fd, iov, iovcnt);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		തിരഞ്ഞെടുപ്പ് (res) {
+		അവസ്ഥ -1:
+			എങ്കിൽ (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				എങ്കിൽ (cb != ശൂന്യ && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					തിരികെ pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				തുടരുക;
+			} അല്ലെങ്കിൽ എങ്കിൽ (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(ശൂന്യം)poll(&pfd, 1, -1);
+				തുടരുക;
 			}
-			return 0;
-		case 0:
+			തിരികെ 0;
+		അവസ്ഥ 0:
 			errno = EPIPE;
-			return pos;
-		default:
+			തിരികെ pos;
+		സ്ഥിരസ്ഥിതി:
 			rem = (size_t)res;
 			pos += rem;
 			/* skip completed iov entries */
-			while (iovcnt > 0 && rem >= iov[0].iov_len) {
+			ആകുമ്പോൾ (iovcnt > 0 && rem >= iov[0].iov_len) {
 				rem -= iov[0].iov_len;
 				iov++;
 				iovcnt--;
 			}
 			/* This shouldn't happen... */
-			if (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
+			എങ്കിൽ (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
 				errno = EFAULT;
-				return 0;
+				തിരികെ 0;
 			}
-			if (iovcnt == 0)
-				break;
+			എങ്കിൽ (iovcnt == 0)
+				നിർത്തുക;
 			/* update pointer in partially complete iov */
-			iov[0].iov_base = ((char *)iov[0].iov_base) + rem;
+			iov[0].iov_base = ((അക്ഷരം *)iov[0].iov_base) + rem;
 			iov[0].iov_len -= rem;
 		}
-		if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+		എങ്കിൽ (cb != ശൂന്യ && cb(cb_arg, (size_t)res) == -1) {
 			errno = EINTR;
-			return pos;
+			തിരികെ pos;
 		}
 	}
-	return pos;
+	തിരികെ pos;
 }
 
 size_t
-atomiciov(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt)
+atomiciov(ssize_t (*f) (പൂർണ്ണസംഖ്യ, സ്ഥിരം ഘടന iovec *, പൂർണ്ണസംഖ്യ), പൂർണ്ണസംഖ്യ fd,
+    സ്ഥിരം ഘടന iovec *_iov, പൂർണ്ണസംഖ്യ iovcnt)
 {
-	return atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
+	തിരികെ atomiciov6(f, fd, _iov, iovcnt, ശൂന്യ, ശൂന്യ);
 }

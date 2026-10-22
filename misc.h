@@ -15,11 +15,11 @@
 #ifndef _MISC_H
 #define _MISC_H
 
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <stdio.h>
-#include <signal.h>
+#അന്തര്ഭാവ <sys/time.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <signal.h>
 
 /* special-case port number meaning allow any port */
 #define FWD_PERMIT_ANY_PORT	0
@@ -28,124 +28,124 @@
 #define FWD_PERMIT_ANY_HOST	"*"
 
 /* Data structure for representing a forwarding request. */
-struct Forward {
-	char	 *listen_host;		/* Host (address) to listen on. */
-	int	  listen_port;		/* Port to forward. */
-	char	 *listen_path;		/* Path to bind domain socket. */
-	char	 *connect_host;		/* Host to connect. */
-	int	  connect_port;		/* Port to connect on connect_host. */
-	char	 *connect_path;		/* Path to connect domain socket. */
-	int	  allocated_port;	/* Dynamically allocated listen port */
-	int	  handle;		/* Handle for dynamic listen ports */
+ഘടന Forward {
+	അക്ഷരം	 *listen_host;		/* Host (address) to listen on. */
+	പൂർണ്ണസംഖ്യ	  listen_port;		/* Port to forward. */
+	അക്ഷരം	 *listen_path;		/* Path to bind domain socket. */
+	അക്ഷരം	 *connect_host;		/* Host to connect. */
+	പൂർണ്ണസംഖ്യ	  connect_port;		/* Port to connect on connect_host. */
+	അക്ഷരം	 *connect_path;		/* Path to connect domain socket. */
+	പൂർണ്ണസംഖ്യ	  allocated_port;	/* Dynamically allocated listen port */
+	പൂർണ്ണസംഖ്യ	  handle;		/* Handle for dynamic listen ports */
 };
 
-int forward_equals(const struct Forward *, const struct Forward *);
-int permitopen_port(const char *p);
+പൂർണ്ണസംഖ്യ forward_equals(സ്ഥിരം ഘടന Forward *, സ്ഥിരം ഘടന Forward *);
+പൂർണ്ണസംഖ്യ permitopen_port(സ്ഥിരം അക്ഷരം *p);
 
-int daemonized(void);
+പൂർണ്ണസംഖ്യ daemonized(ശൂന്യം);
 
 /* Common server and client forwarding options. */
-struct ForwardOptions {
-	int	 gateway_ports; /* Allow remote connects to forwarded ports. */
+ഘടന ForwardOptions {
+	പൂർണ്ണസംഖ്യ	 gateway_ports; /* Allow remote connects to forwarded ports. */
 	mode_t	 streamlocal_bind_mask; /* umask for streamlocal binds */
-	int	 streamlocal_bind_unlink; /* unlink socket before bind */
+	പൂർണ്ണസംഖ്യ	 streamlocal_bind_unlink; /* unlink socket before bind */
 };
 
 /* misc.c */
 
-char	*chop(char *);
-void	 rtrim(char *);
-void	skip_space(char **);
-const char *strprefix(const char *, const char *, int);
-char	*strdelim(char **);
-char	*strdelimw(char **);
-void	 stringlist_append(char ***listp, const char *s);
-void	 stringlist_free(char **list);
-int	 set_nonblock(int);
-int	 unset_nonblock(int);
-void	 set_nodelay(int);
-int	 set_reuseaddr(int);
-int	 set_keepalive(int);
-char	*get_rdomain(int);
-int	 set_rdomain(int, const char *);
-int	 get_sock_af(int);
-void	 set_sock_tos(int, int);
-int	 waitrfd(int, int *, volatile sig_atomic_t *);
-int	 timeout_connect(int, const struct sockaddr *, socklen_t, int *);
-int	 a2port(const char *);
-int	 a2tun(const char *, int *);
-char	*put_host_port(const char *, u_short);
-char	*hpdelim2(char **, char *);
-char	*hpdelim(char **);
-char	*cleanhostname(char *);
-char	*colon(char *);
-int	 parse_user_host_path(const char *, char **, char **, char **);
-int	 parse_user_host_port(const char *, char **, char **, int *);
-int	 parse_uri(const char *, const char *, char **, char **, int *, char **);
-double	 convtime_double(const char *);
-int	 convtime(const char *);
-double	 convtime_double(const char *);
-const char *fmt_timeframe(time_t t);
-int	 tilde_expand(const char *, uid_t, char **);
-char	*tilde_expand_filename(const char *, uid_t);
+അക്ഷരം	*chop(അക്ഷരം *);
+ശൂന്യം	 rtrim(അക്ഷരം *);
+ശൂന്യം	skip_space(അക്ഷരം **);
+സ്ഥിരം അക്ഷരം *strprefix(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+അക്ഷരം	*strdelim(അക്ഷരം **);
+അക്ഷരം	*strdelimw(അക്ഷരം **);
+ശൂന്യം	 stringlist_append(അക്ഷരം ***listp, സ്ഥിരം അക്ഷരം *s);
+ശൂന്യം	 stringlist_free(അക്ഷരം **list);
+പൂർണ്ണസംഖ്യ	 set_nonblock(പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 unset_nonblock(പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 set_nodelay(പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 set_reuseaddr(പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 set_keepalive(പൂർണ്ണസംഖ്യ);
+അക്ഷരം	*get_rdomain(പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 set_rdomain(പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 get_sock_af(പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 set_sock_tos(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 waitrfd(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ *, അസ്ഥിര sig_atomic_t *);
+പൂർണ്ണസംഖ്യ	 timeout_connect(പൂർണ്ണസംഖ്യ, സ്ഥിരം ഘടന sockaddr *, socklen_t, പൂർണ്ണസംഖ്യ *);
+പൂർണ്ണസംഖ്യ	 a2port(സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 a2tun(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ *);
+അക്ഷരം	*put_host_port(സ്ഥിരം അക്ഷരം *, u_short);
+അക്ഷരം	*hpdelim2(അക്ഷരം **, അക്ഷരം *);
+അക്ഷരം	*hpdelim(അക്ഷരം **);
+അക്ഷരം	*cleanhostname(അക്ഷരം *);
+അക്ഷരം	*colon(അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 parse_user_host_path(സ്ഥിരം അക്ഷരം *, അക്ഷരം **, അക്ഷരം **, അക്ഷരം **);
+പൂർണ്ണസംഖ്യ	 parse_user_host_port(സ്ഥിരം അക്ഷരം *, അക്ഷരം **, അക്ഷരം **, പൂർണ്ണസംഖ്യ *);
+പൂർണ്ണസംഖ്യ	 parse_uri(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, അക്ഷരം **, അക്ഷരം **, പൂർണ്ണസംഖ്യ *, അക്ഷരം **);
+ഇരട്ട	 convtime_double(സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 convtime(സ്ഥിരം അക്ഷരം *);
+ഇരട്ട	 convtime_double(സ്ഥിരം അക്ഷരം *);
+സ്ഥിരം അക്ഷരം *fmt_timeframe(time_t t);
+പൂർണ്ണസംഖ്യ	 tilde_expand(സ്ഥിരം അക്ഷരം *, uid_t, അക്ഷരം **);
+അക്ഷരം	*tilde_expand_filename(സ്ഥിരം അക്ഷരം *, uid_t);
 
-char	*dollar_expand(int *, const char *string, ...);
-char	*percent_expand(const char *, ...) __attribute__((__sentinel__));
-char	*percent_dollar_expand(const char *, ...) __attribute__((__sentinel__));
-char	*tohex(const void *, size_t);
-void	 xextendf(char **s, const char *sep, const char *fmt, ...)
+അക്ഷരം	*dollar_expand(പൂർണ്ണസംഖ്യ *, സ്ഥിരം അക്ഷരം *string, ...);
+അക്ഷരം	*percent_expand(സ്ഥിരം അക്ഷരം *, ...) __attribute__((__sentinel__));
+അക്ഷരം	*percent_dollar_expand(സ്ഥിരം അക്ഷരം *, ...) __attribute__((__sentinel__));
+അക്ഷരം	*tohex(സ്ഥിരം ശൂന്യം *, size_t);
+ശൂന്യം	 xextendf(അക്ഷരം **s, സ്ഥിരം അക്ഷരം *sep, സ്ഥിരം അക്ഷരം *fmt, ...)
     __attribute__((__format__ (printf, 3, 4))) __attribute__((__nonnull__ (3)));
-void	 sanitise_stdfd(void);
-void	 ms_subtract_diff(struct timeval *, int *);
-void	 ms_to_timespec(struct timespec *, int);
-void	 monotime_ts(struct timespec *);
-void	 monotime_tv(struct timeval *);
-time_t	 monotime(void);
-double	 monotime_double(void);
-void	 lowercase(char *s);
-int	 unix_listener(const char *, int, int);
-int	 valid_domain(char *, int, const char **);
-int	 valid_env_name(const char *);
-const char *atoi_err(const char *, int *);
-int	 parse_absolute_time(const char *, uint64_t *);
-void	 format_absolute_time(uint64_t, char *, size_t);
-int	 parse_pattern_interval(const char *, char **, double *);
-int	 path_absolute(const char *);
-int	 stdfd_devnull(int, int, int);
-int	 lib_contains_symbol(const char *, const char *);
-char	*get_homedir(void);
-int	 mkdir_path(const char *, mode_t);
+ശൂന്യം	 sanitise_stdfd(ശൂന്യം);
+ശൂന്യം	 ms_subtract_diff(ഘടന timeval *, പൂർണ്ണസംഖ്യ *);
+ശൂന്യം	 ms_to_timespec(ഘടന timespec *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 monotime_ts(ഘടന timespec *);
+ശൂന്യം	 monotime_tv(ഘടന timeval *);
+time_t	 monotime(ശൂന്യം);
+ഇരട്ട	 monotime_double(ശൂന്യം);
+ശൂന്യം	 lowercase(അക്ഷരം *s);
+പൂർണ്ണസംഖ്യ	 unix_listener(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 valid_domain(അക്ഷരം *, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം **);
+പൂർണ്ണസംഖ്യ	 valid_env_name(സ്ഥിരം അക്ഷരം *);
+സ്ഥിരം അക്ഷരം *atoi_err(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ *);
+പൂർണ്ണസംഖ്യ	 parse_absolute_time(സ്ഥിരം അക്ഷരം *, uint64_t *);
+ശൂന്യം	 format_absolute_time(uint64_t, അക്ഷരം *, size_t);
+പൂർണ്ണസംഖ്യ	 parse_pattern_interval(സ്ഥിരം അക്ഷരം *, അക്ഷരം **, ഇരട്ട *);
+പൂർണ്ണസംഖ്യ	 path_absolute(സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 stdfd_devnull(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 lib_contains_ചിഹ്നം(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
+അക്ഷരം	*get_homedir(ശൂന്യം);
+പൂർണ്ണസംഖ്യ	 mkdir_path(സ്ഥിരം അക്ഷരം *, mode_t);
 
-void	 sock_set_v6only(int);
+ശൂന്യം	 sock_set_v6only(പൂർണ്ണസംഖ്യ);
 
-struct passwd *pwcopy(struct passwd *);
-void	 pwfree(struct passwd *); /* NB. only use with pwcopy */
+ഘടന passwd *pwcopy(ഘടന passwd *);
+ശൂന്യം	 pwfree(ഘടന passwd *); /* NB. only use with pwcopy */
 
-const char *ssh_gai_strerror(int);
+സ്ഥിരം അക്ഷരം *ssh_gai_strerror(പൂർണ്ണസംഖ്യ);
 
-typedef void privdrop_fn(struct passwd *);
-typedef void privrestore_fn(void);
+തരനിർവചനം ശൂന്യം privdrop_fn(ഘടന passwd *);
+തരനിർവചനം ശൂന്യം privrestore_fn(ശൂന്യം);
 #define	SSH_SUBPROCESS_STDOUT_DISCARD	(1)     /* Discard stdout */
 #define	SSH_SUBPROCESS_STDOUT_CAPTURE	(1<<1)  /* Redirect stdout */
 #define	SSH_SUBPROCESS_STDERR_DISCARD	(1<<2)  /* Discard stderr */
 #define	SSH_SUBPROCESS_UNSAFE_PATH	(1<<3)	/* Don't check for safe cmd */
 #define	SSH_SUBPROCESS_PRESERVE_ENV	(1<<4)	/* Keep parent environment */
-pid_t subprocess(const char *, const char *, int, char **, FILE **, u_int,
-    struct passwd *, privdrop_fn *, privrestore_fn *);
+pid_t subprocess(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ, അക്ഷരം **, FILE **, u_int,
+    ഘടന passwd *, privdrop_fn *, privrestore_fn *);
 
-typedef struct arglist arglist;
-struct arglist {
-	char    **list;
-	u_int   num;
+തരനിർവചനം ഘടന arglist arglist;
+ഘടന arglist {
+	അക്ഷരം    **list;
+	u_int   അക്കം;
 	u_int   nalloc;
 };
-void	 addargs(arglist *, char *, ...)
+ശൂന്യം	 addargs(arglist *, അക്ഷരം *, ...)
 	    __attribute__((format(printf, 2, 3)));
-void	 replacearg(arglist *, u_int, char *, ...)
+ശൂന്യം	 replacearg(arglist *, u_int, അക്ഷരം *, ...)
 	    __attribute__((format(printf, 3, 4)));
-void	 freeargs(arglist *);
+ശൂന്യം	 freeargs(arglist *);
 
-int	 tun_open(int, int, char **);
+പൂർണ്ണസംഖ്യ	 tun_open(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, അക്ഷരം **);
 
 /* Common definitions for ssh tunnel device forwarding */
 #define SSH_TUNMODE_NO		0x00
@@ -162,92 +162,92 @@ int	 tun_open(int, int, char **);
 #define PORT_STREAMLOCAL	-2
 
 /* Functions to extract or store big-endian words of various sizes */
-uint64_t	get_u64(const void *)
+uint64_t	get_u64(സ്ഥിരം ശൂന്യം *)
     __attribute__((__bounded__( __minbytes__, 1, 8)));
-uint32_t	get_u32(const void *)
+uint32_t	get_u32(സ്ഥിരം ശൂന്യം *)
     __attribute__((__bounded__( __minbytes__, 1, 4)));
-uint16_t	get_u16(const void *)
+uint16_t	get_u16(സ്ഥിരം ശൂന്യം *)
     __attribute__((__bounded__( __minbytes__, 1, 2)));
-void		put_u64(void *, uint64_t)
+ശൂന്യം		put_u64(ശൂന്യം *, uint64_t)
     __attribute__((__bounded__( __minbytes__, 1, 8)));
-void		put_u32(void *, uint32_t)
+ശൂന്യം		put_u32(ശൂന്യം *, uint32_t)
     __attribute__((__bounded__( __minbytes__, 1, 4)));
-void		put_u16(void *, uint16_t)
+ശൂന്യം		put_u16(ശൂന്യം *, uint16_t)
     __attribute__((__bounded__( __minbytes__, 1, 2)));
 
 /* Little-endian store/load, used by umac.c */
-uint32_t	get_u32_le(const void *)
+uint32_t	get_u32_le(സ്ഥിരം ശൂന്യം *)
     __attribute__((__bounded__(__minbytes__, 1, 4)));
-void		put_u32_le(void *, uint32_t)
+ശൂന്യം		put_u32_le(ശൂന്യം *, uint32_t)
     __attribute__((__bounded__(__minbytes__, 1, 4)));
 
-struct bwlimit {
+ഘടന bwlimit {
 	size_t buflen;
 	uint64_t rate;		/* desired rate in kbit/s */
 	uint64_t thresh;	/* threshold after which we'll check timers */
 	uint64_t lamt;		/* amount written in last timer interval */
-	struct timeval bwstart, bwend;
+	ഘടന timeval bwstart, bwend;
 };
 
-void bandwidth_limit_init(struct bwlimit *, uint64_t, size_t);
-void bandwidth_limit(struct bwlimit *, size_t);
+ശൂന്യം bandwidth_limit_init(ഘടന bwlimit *, uint64_t, size_t);
+ശൂന്യം bandwidth_limit(ഘടന bwlimit *, size_t);
 
-int parse_ipqos(const char *);
-const char *iptos2str(int);
-void mktemp_proto(char *, size_t);
+പൂർണ്ണസംഖ്യ parse_ipqos(സ്ഥിരം അക്ഷരം *);
+സ്ഥിരം അക്ഷരം *iptos2str(പൂർണ്ണസംഖ്യ);
+ശൂന്യം mktemp_proto(അക്ഷരം *, size_t);
 
-void	 child_set_env(char ***envp, u_int *envsizep, const char *name,
-	    const char *value);
-const char *lookup_env_in_list(const char *env,
-	    char * const *envs, size_t nenvs);
-const char *lookup_setenv_in_list(const char *env,
-	    char * const *envs, size_t nenvs);
+ശൂന്യം	 child_set_env(അക്ഷരം ***envp, u_int *envsizep, സ്ഥിരം അക്ഷരം *name,
+	    സ്ഥിരം അക്ഷരം *മൂല്യം);
+സ്ഥിരം അക്ഷരം *lookup_env_in_list(സ്ഥിരം അക്ഷരം *env,
+	    അക്ഷരം * സ്ഥിരം *envs, size_t nenvs);
+സ്ഥിരം അക്ഷരം *lookup_setenv_in_list(സ്ഥിരം അക്ഷരം *env,
+	    അക്ഷരം * സ്ഥിരം *envs, size_t nenvs);
 
-int	 argv_split(const char *, int *, char ***, int);
-char	*argv_assemble(int, char **argv);
-char	*argv_next(int *, char ***);
-void	 argv_consume(int *);
-void	 argv_free(char **, int);
+പൂർണ്ണസംഖ്യ	 argv_split(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ *, അക്ഷരം ***, പൂർണ്ണസംഖ്യ);
+അക്ഷരം	*argv_assemble(പൂർണ്ണസംഖ്യ, അക്ഷരം **argv);
+അക്ഷരം	*argv_next(പൂർണ്ണസംഖ്യ *, അക്ഷരം ***);
+ശൂന്യം	 argv_consume(പൂർണ്ണസംഖ്യ *);
+ശൂന്യം	 argv_free(അക്ഷരം **, പൂർണ്ണസംഖ്യ);
 
-int	 exited_cleanly(pid_t, const char *, const char *, int);
+പൂർണ്ണസംഖ്യ	 exited_cleanly(pid_t, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
 
-struct stat;
-int	 safe_path(const char *, struct stat *, const char *, uid_t,
-	    char *, size_t);
-int	 safe_path_fd(int, const char *, struct passwd *,
-	    char *err, size_t errlen);
+ഘടന stat;
+പൂർണ്ണസംഖ്യ	 safe_path(സ്ഥിരം അക്ഷരം *, ഘടന stat *, സ്ഥിരം അക്ഷരം *, uid_t,
+	    അക്ഷരം *, size_t);
+പൂർണ്ണസംഖ്യ	 safe_path_fd(പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *, ഘടന passwd *,
+	    അക്ഷരം *err, size_t errlen);
 
 /* authorized_key-style options parsing helpers */
-int	opt_flag(const char *opt, int allow_negate, const char **optsp);
-char	*opt_dequote(const char **sp, const char **errstrp);
-int	opt_match(const char **opts, const char *term);
+പൂർണ്ണസംഖ്യ	opt_flag(സ്ഥിരം അക്ഷരം *opt, പൂർണ്ണസംഖ്യ allow_negate, സ്ഥിരം അക്ഷരം **optsp);
+അക്ഷരം	*opt_dequote(സ്ഥിരം അക്ഷരം **sp, സ്ഥിരം അക്ഷരം **errstrp);
+പൂർണ്ണസംഖ്യ	opt_match(സ്ഥിരം അക്ഷരം **opts, സ്ഥിരം അക്ഷരം *term);
 
 /* readconf/servconf option lists */
-void	opt_array_append(const char *file, const int line,
-	    const char *directive, char ***array, u_int *lp, const char *s);
-void	opt_array_append2(const char *file, const int line,
-	    const char *directive, char ***array, int **iarray, u_int *lp,
-	    const char *s, int i);
-void	opt_array_free2(char **array, int **iarray, u_int l);
+ശൂന്യം	opt_array_append(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം പൂർണ്ണസംഖ്യ വരി,
+	    സ്ഥിരം അക്ഷരം *directive, അക്ഷരം ***array, u_int *lp, സ്ഥിരം അക്ഷരം *s);
+ശൂന്യം	opt_array_append2(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം പൂർണ്ണസംഖ്യ വരി,
+	    സ്ഥിരം അക്ഷരം *directive, അക്ഷരം ***array, പൂർണ്ണസംഖ്യ **iarray, u_int *lp,
+	    സ്ഥിരം അക്ഷരം *s, പൂർണ്ണസംഖ്യ i);
+ശൂന്യം	opt_array_free2(അക്ഷരം **array, പൂർണ്ണസംഖ്യ **iarray, u_int l);
 
-struct timespec;
-void ptimeout_init(struct timespec *pt);
-void ptimeout_deadline_sec(struct timespec *pt, long sec);
-void ptimeout_deadline_ms(struct timespec *pt, long ms);
-void ptimeout_deadline_sec_double(struct timespec *pt, double sec);
-void ptimeout_deadline_monotime_tsp(struct timespec *pt, struct timespec *when);
-void ptimeout_deadline_monotime(struct timespec *pt, time_t when);
-void ptimeout_deadline_monotime_double(struct timespec *pt, double when);
-int ptimeout_get_ms(struct timespec *pt);
-struct timespec *ptimeout_get_tsp(struct timespec *pt);
-int ptimeout_isset(struct timespec *pt);
+ഘടന timespec;
+ശൂന്യം ptimeout_init(ഘടന timespec *pt);
+ശൂന്യം ptimeout_deadline_sec(ഘടന timespec *pt, long sec);
+ശൂന്യം ptimeout_deadline_ms(ഘടന timespec *pt, long ms);
+ശൂന്യം ptimeout_deadline_sec_double(ഘടന timespec *pt, ഇരട്ട sec);
+ശൂന്യം ptimeout_deadline_monotime_tsp(ഘടന timespec *pt, ഘടന timespec *when);
+ശൂന്യം ptimeout_deadline_monotime(ഘടന timespec *pt, time_t when);
+ശൂന്യം ptimeout_deadline_monotime_double(ഘടന timespec *pt, ഇരട്ട when);
+പൂർണ്ണസംഖ്യ ptimeout_get_ms(ഘടന timespec *pt);
+ഘടന timespec *ptimeout_get_tsp(ഘടന timespec *pt);
+പൂർണ്ണസംഖ്യ ptimeout_isset(ഘടന timespec *pt);
 
 /* misc-agent.c */
-int	 agent_listener(const char *, const char *, uid_t, const char *,
-	    pid_t, const char *, int *, char **, char **);
-void	 agent_cleanup_stale(const char *, const char *, uid_t,
-	    const char *, int);
-int	 agent_listener_cleanup(const char *, const char *, const char *);
+പൂർണ്ണസംഖ്യ	 agent_listener(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, uid_t, സ്ഥിരം അക്ഷരം *,
+	    pid_t, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ *, അക്ഷരം **, അക്ഷരം **);
+ശൂന്യം	 agent_cleanup_stale(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, uid_t,
+	    സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 agent_listener_cleanup(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 
 /* readpass.c */
 
@@ -256,30 +256,30 @@ int	 agent_listener_cleanup(const char *, const char *, const char *);
 #define RP_ALLOW_EOF		0x0004
 #define RP_USE_ASKPASS		0x0008
 
-struct notifier_ctx;
+ഘടന notifier_ctx;
 
-char	*read_passphrase(const char *, int);
-int	 ask_permission(const char *, ...) __attribute__((format(printf, 1, 2)));
-struct notifier_ctx *notify_start(int, const char *, ...)
+അക്ഷരം	*read_passphrase(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 ask_permission(സ്ഥിരം അക്ഷരം *, ...) __attribute__((format(printf, 1, 2)));
+ഘടന notifier_ctx *notify_start(പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *, ...)
 	__attribute__((format(printf, 2, 3)));
-void	notify_complete(struct notifier_ctx *, const char *, ...)
+ശൂന്യം	notify_complete(ഘടന notifier_ctx *, സ്ഥിരം അക്ഷരം *, ...)
 	__attribute__((format(printf, 2, 3)));
 
 #define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 #define MAXIMUM(a, b)	(((a) > (b)) ? (a) : (b))
 #define ROUNDUP(x, y)   ((((x)+((y)-1))/(y))*(y))
 
-typedef void (*sshsig_t)(int);
-sshsig_t ssh_signal(int, sshsig_t);
-int signal_is_crash(int);
+തരനിർവചനം ശൂന്യം (*sshsig_t)(പൂർണ്ണസംഖ്യ);
+sshsig_t ssh_signal(പൂർണ്ണസംഖ്യ, sshsig_t);
+പൂർണ്ണസംഖ്യ signal_is_crash(പൂർണ്ണസംഖ്യ);
 
 /* On OpenBSD time_t is int64_t which is long long. */
 /* #define SSH_TIME_T_MAX LLONG_MAX */
 
-#define FD_CLOSEONEXEC(x) do { \
-	if (fcntl(x, F_SETFD, FD_CLOEXEC) == -1) \
+#define FD_CLOSEONEXEC(x) ചെയ്യുക { \
+	എങ്കിൽ (fcntl(x, F_SETFD, FD_CLOEXEC) == -1) \
 		fatal_f("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", x, \
 		    strerror(errno)); \
-} while (0)
+} ആകുമ്പോൾ (0)
 
 #endif /* _MISC_H */

@@ -19,25 +19,25 @@
  * Linux-specific portability code
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#if defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
-#include <sys/socket.h>
-#include <sys/un.h>
+#എങ്കിൽ defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/un.h>
 
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <inttypes.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <time.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "port-linux.h"
+#അന്തര്ഭാവ "misc.h"
 
 #ifdef LINUX_OOM_ADJUST
 /*
@@ -46,163 +46,163 @@
  * http://lxr.linux.no/#linux+v2.6.36/Documentation/filesystems/proc.txt
  */
 
-static int oom_adj_save = INT_MIN;
-static char *oom_adj_path = NULL;
-struct {
-	char *path;
-	int value;
+സ്ഥിതം പൂർണ്ണസംഖ്യ oom_adj_save = INT_MIN;
+സ്ഥിതം അക്ഷരം *oom_adj_path = ശൂന്യ;
+ഘടന {
+	അക്ഷരം *path;
+	പൂർണ്ണസംഖ്യ മൂല്യം;
 } oom_adjust[] = {
 	{"/proc/self/oom_score_adj", -1000},	/* kernels >= 2.6.36 */
 	{"/proc/self/oom_adj", -17},		/* kernels <= 2.6.35 */
-	{NULL, 0},
+	{ശൂന്യ, 0},
 };
 
 /*
  * Tell the kernel's out-of-memory killer to avoid sshd.
  * Returns the previous oom_adj value or zero.
  */
-void
-oom_adjust_setup(void)
+ശൂന്യം
+oom_adjust_setup(ശൂന്യം)
 {
-	int i, value;
+	പൂർണ്ണസംഖ്യ i, മൂല്യം;
 	FILE *fp;
 
 	debug3("%s", __func__);
-	 for (i = 0; oom_adjust[i].path != NULL; i++) {
+	 വേണ്ടി (i = 0; oom_adjust[i].path != ശൂന്യ; i++) {
 		oom_adj_path = oom_adjust[i].path;
-		value = oom_adjust[i].value;
-		if ((fp = fopen(oom_adj_path, "r+")) != NULL) {
-			if (fscanf(fp, "%d", &oom_adj_save) != 1)
+		മൂല്യം = oom_adjust[i].മൂല്യം;
+		എങ്കിൽ ((fp = fopen(oom_adj_path, "r+")) != ശൂന്യ) {
+			എങ്കിൽ (fscanf(fp, "%d", &oom_adj_save) != 1)
 				verbose("error reading %s: %s", oom_adj_path,
 				    strerror(errno));
-			else {
+			അല്ലെങ്കിൽ {
 				rewind(fp);
-				if (fprintf(fp, "%d\n", value) <= 0)
+				എങ്കിൽ (fprintf(fp, "%d\n", മൂല്യം) <= 0)
 					verbose("error writing %s: %s",
 					   oom_adj_path, strerror(errno));
-				else
+				അല്ലെങ്കിൽ
 					debug("Set %s from %d to %d",
-					   oom_adj_path, oom_adj_save, value);
+					   oom_adj_path, oom_adj_save, മൂല്യം);
 			}
 			fclose(fp);
-			return;
+			തിരികെ;
 		}
 	}
-	oom_adj_path = NULL;
+	oom_adj_path = ശൂന്യ;
 }
 
 /* Restore the saved OOM adjustment */
-void
-oom_adjust_restore(void)
+ശൂന്യം
+oom_adjust_restore(ശൂന്യം)
 {
 	FILE *fp;
 
 	debug3("%s", __func__);
-	if (oom_adj_save == INT_MIN || oom_adj_path == NULL ||
-	    (fp = fopen(oom_adj_path, "w")) == NULL)
-		return;
+	എങ്കിൽ (oom_adj_save == INT_MIN || oom_adj_path == ശൂന്യ ||
+	    (fp = fopen(oom_adj_path, "w")) == ശൂന്യ)
+		തിരികെ;
 
-	if (fprintf(fp, "%d\n", oom_adj_save) <= 0)
+	എങ്കിൽ (fprintf(fp, "%d\n", oom_adj_save) <= 0)
 		verbose("error writing %s: %s", oom_adj_path, strerror(errno));
-	else
+	അല്ലെങ്കിൽ
 		debug("Set %s to %d", oom_adj_path, oom_adj_save);
 
 	fclose(fp);
-	return;
+	തിരികെ;
 }
 #endif /* LINUX_OOM_ADJUST */
 
 #ifdef LINUX_MEMLOCK_ONFAULT
-#include <sys/mman.h>
+#അന്തര്ഭാവ <sys/mman.h>
 
-void
-memlock_onfault_setup(void)
+ശൂന്യം
+memlock_onfault_setup(ശൂന്യം)
 {
-	if (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
+	എങ്കിൽ (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
 		verbose("unable to lock memory: %s", strerror(errno));
-	else
+	അല്ലെങ്കിൽ
 		debug("memory locked");
 }
 #endif /* LINUX_MEMLOCK_ONFAULT */
 
 #ifdef SYSTEMD_NOTIFY
 
-static void ssh_systemd_notify(const char *, ...)
+സ്ഥിതം ശൂന്യം ssh_systemd_notify(സ്ഥിരം അക്ഷരം *, ...)
     __attribute__((__format__ (printf, 1, 2))) __attribute__((__nonnull__ (1)));
 
-static void
-ssh_systemd_notify(const char *fmt, ...)
+സ്ഥിതം ശൂന്യം
+ssh_systemd_notify(സ്ഥിരം അക്ഷരം *fmt, ...)
 {
-	char *s = NULL;
-	const char *path;
-	struct stat sb;
-	struct sockaddr_un addr;
-	int fd = -1;
+	അക്ഷരം *s = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *path;
+	ഘടന stat sb;
+	ഘടന sockaddr_un addr;
+	പൂർണ്ണസംഖ്യ fd = -1;
 	va_list ap;
 
-	if ((path = getenv("NOTIFY_SOCKET")) == NULL || strlen(path) == 0)
-		return;
+	എങ്കിൽ ((path = getenv("NOTIFY_SOCKET")) == ശൂന്യ || strlen(path) == 0)
+		തിരികെ;
 
 	va_start(ap, fmt);
 	xvasprintf(&s, fmt, ap);
 	va_end(ap);
 
 	/* Only AF_UNIX is supported, with path or abstract sockets */
-	if (path[0] != '/' && path[0] != '@') {
+	എങ്കിൽ (path[0] != '/' && path[0] != '@') {
 		error_f("socket \"%s\" is not compatible with AF_UNIX", path);
-		goto out;
+		പോകുക out;
 	}
 
-	if (path[0] == '/' && stat(path, &sb) != 0) {
+	എങ്കിൽ (path[0] == '/' && stat(path, &sb) != 0) {
 		error_f("socket \"%s\" stat: %s", path, strerror(errno));
-		goto out;
+		പോകുക out;
 	}
 
-	memset(&addr, 0, sizeof(addr));
+	memset(&addr, 0, വലുപ്പം(addr));
 	addr.sun_family = AF_UNIX;
-	if (strlcpy(addr.sun_path, path,
-	    sizeof(addr.sun_path)) >= sizeof(addr.sun_path)) {
+	എങ്കിൽ (strlcpy(addr.sun_path, path,
+	    വലുപ്പം(addr.sun_path)) >= വലുപ്പം(addr.sun_path)) {
 		error_f("socket path \"%s\" too long", path);
-		goto out;
+		പോകുക out;
 	}
 	/* Support for abstract socket */
-	if (addr.sun_path[0] == '@')
+	എങ്കിൽ (addr.sun_path[0] == '@')
 		addr.sun_path[0] = 0;
-	if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
+	എങ്കിൽ ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
 		error_f("socket \"%s\": %s", path, strerror(errno));
-		goto out;
+		പോകുക out;
 	}
-	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
+	എങ്കിൽ (connect(fd, (ഘടന sockaddr *)&addr, വലുപ്പം(addr)) != 0) {
 		error_f("socket \"%s\" connect: %s", path, strerror(errno));
-		goto out;
+		പോകുക out;
 	}
-	if (write(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
+	എങ്കിൽ (ലിഖ(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
 		error_f("socket \"%s\" write: %s", path, strerror(errno));
-		goto out;
+		പോകുക out;
 	}
 	debug_f("socket \"%s\" notified %s", path, s);
  out:
-	if (fd != -1)
+	എങ്കിൽ (fd != -1)
 		close(fd);
-	free(s);
+	സ്വതന്ത്രം(s);
 }
 
-void
-ssh_systemd_notify_ready(void)
+ശൂന്യം
+ssh_systemd_notify_ready(ശൂന്യം)
 {
 	ssh_systemd_notify("READY=1");
 }
 
-void
-ssh_systemd_notify_reload(void)
+ശൂന്യം
+ssh_systemd_notify_reload(ശൂന്യം)
 {
-	struct timespec now;
+	ഘടന timespec now;
 
 	monotime_ts(&now);
-	if (now.tv_sec < 0 || now.tv_nsec < 0) {
+	എങ്കിൽ (now.tv_sec < 0 || now.tv_nsec < 0) {
 		error_f("monotime returned negative value");
 		ssh_systemd_notify("RELOADING=1");
-	} else {
+	} അല്ലെങ്കിൽ {
 		ssh_systemd_notify("RELOADING=1\nMONOTONIC_USEC=%llu",
 		    ((uint64_t)now.tv_sec * 1000000ULL) +
 		    ((uint64_t)now.tv_nsec / 1000ULL));

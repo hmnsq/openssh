@@ -29,25 +29,25 @@
 #ifndef _ATOMICIO_H
 #define _ATOMICIO_H
 
-struct iovec;
+ഘടന iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+atomicio6(ssize_t (*f) (പൂർണ്ണസംഖ്യ, ശൂന്യം *, size_t), പൂർണ്ണസംഖ്യ fd, ശൂന്യം *_s, size_t n,
+    പൂർണ്ണസംഖ്യ (*cb)(ശൂന്യം *, size_t), ശൂന്യം *);
+size_t	atomicio(ssize_t (*)(പൂർണ്ണസംഖ്യ, ശൂന്യം *, size_t), പൂർണ്ണസംഖ്യ, ശൂന്യം *, size_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#define vwrite (ssize_t (*)(പൂർണ്ണസംഖ്യ, ശൂന്യം *, size_t))ലിഖ
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+atomiciov6(ssize_t (*f) (പൂർണ്ണസംഖ്യ, സ്ഥിരം ഘടന iovec *, പൂർണ്ണസംഖ്യ), പൂർണ്ണസംഖ്യ fd,
+    സ്ഥിരം ഘടന iovec *_iov, പൂർണ്ണസംഖ്യ iovcnt, പൂർണ്ണസംഖ്യ (*cb)(ശൂന്യം *, size_t), ശൂന്യം *);
+size_t	atomiciov(ssize_t (*)(പൂർണ്ണസംഖ്യ, സ്ഥിരം ഘടന iovec *, പൂർണ്ണസംഖ്യ),
+    പൂർണ്ണസംഖ്യ, സ്ഥിരം ഘടന iovec *, പൂർണ്ണസംഖ്യ);
 
 #endif /* _ATOMICIO_H */

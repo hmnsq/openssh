@@ -23,48 +23,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/crypto.h>
-#include <openssl/dh.h>
+#അന്തര്ഭാവ <openssl/crypto.h>
+#അന്തര്ഭാവ <openssl/dh.h>
 #endif
 
-#include "ssh.h"
-#include "ssh2.h"
-#include "atomicio.h"
-#include "version.h"
-#include "packet.h"
-#include "compat.h"
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "log.h"
-#include "mac.h"
-#include "match.h"
-#include "misc.h"
-#include "dispatch.h"
-#include "myproposal.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "atomicio.h"
+#അന്തര്ഭാവ "version.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "compat.h"
+#അന്തര്ഭാവ "cipher.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "kex.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "mac.h"
+#അന്തര്ഭാവ "match.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "dispatch.h"
+#അന്തര്ഭാവ "myproposal.h"
 
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "xmalloc.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "digest.h"
+#അന്തര്ഭാവ "xmalloc.h"
 
 /* prototype */
-static int kex_choose_conf(struct ssh *, uint32_t seq);
-static int kex_input_newkeys(int, uint32_t, struct ssh *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ kex_choose_conf(ഘടന ssh *, uint32_t seq);
+സ്ഥിതം പൂർണ്ണസംഖ്യ kex_നിവേശം_newkeys(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
 
-static const char * const proposal_names[PROPOSAL_MAX] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം * സ്ഥിരം proposal_names[PROPOSAL_MAX] = {
 	"KEX algorithms",
 	"host key algorithms",
 	"ciphers ctos",
@@ -83,70 +83,70 @@ static const char * const proposal_names[PROPOSAL_MAX] = {
  * Any of the options may be NULL, in which case the default is used.
  * Array contents must be freed by calling kex_proposal_free_entries.
  */
-void
-kex_proposal_populate_entries(struct ssh *ssh, char *prop[PROPOSAL_MAX],
-    const char *kexalgos, const char *ciphers, const char *macs,
-    const char *comp, const char *hkalgs)
+ശൂന്യം
+kex_proposal_populate_entries(ഘടന ssh *ssh, അക്ഷരം *prop[PROPOSAL_MAX],
+    സ്ഥിരം അക്ഷരം *kexalgos, സ്ഥിരം അക്ഷരം *ciphers, സ്ഥിരം അക്ഷരം *macs,
+    സ്ഥിരം അക്ഷരം *comp, സ്ഥിരം അക്ഷരം *hkalgs)
 {
-	const char *defpropserver[PROPOSAL_MAX] = { KEX_SERVER };
-	const char *defpropclient[PROPOSAL_MAX] = { KEX_CLIENT };
-	const char **defprop = ssh->kex->server ? defpropserver : defpropclient;
+	സ്ഥിരം അക്ഷരം *defpropserver[PROPOSAL_MAX] = { KEX_SERVER };
+	സ്ഥിരം അക്ഷരം *defpropclient[PROPOSAL_MAX] = { KEX_CLIENT };
+	സ്ഥിരം അക്ഷരം **defprop = ssh->kex->server ? defpropserver : defpropclient;
 	u_int i;
-	char *cp;
+	അക്ഷരം *cp;
 
-	if (prop == NULL)
+	എങ്കിൽ (prop == ശൂന്യ)
 		fatal_f("proposal missing");
 
 	/* Append EXT_INFO signalling to KexAlgorithms */
-	if (kexalgos == NULL)
+	എങ്കിൽ (kexalgos == ശൂന്യ)
 		kexalgos = defprop[PROPOSAL_KEX_ALGS];
-	if ((cp = kex_names_cat(kexalgos, ssh->kex->server ?
+	എങ്കിൽ ((cp = kex_names_cat(kexalgos, ssh->kex->server ?
 	    "ext-info-s,kex-strict-s-v00@openssh.com" :
-	    "ext-info-c,kex-strict-c-v00@openssh.com")) == NULL)
+	    "ext-info-c,kex-strict-c-v00@openssh.com")) == ശൂന്യ)
 		fatal_f("kex_names_cat");
 
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		switch(i) {
-		case PROPOSAL_KEX_ALGS:
+	വേണ്ടി (i = 0; i < PROPOSAL_MAX; i++) {
+		തിരഞ്ഞെടുപ്പ്(i) {
+		അവസ്ഥ PROPOSAL_KEX_ALGS:
 			prop[i] = compat_kex_proposal(ssh, cp);
-			break;
-		case PROPOSAL_ENC_ALGS_CTOS:
-		case PROPOSAL_ENC_ALGS_STOC:
+			നിർത്തുക;
+		അവസ്ഥ PROPOSAL_ENC_ALGS_CTOS:
+		അവസ്ഥ PROPOSAL_ENC_ALGS_STOC:
 			prop[i] = xstrdup(ciphers ? ciphers : defprop[i]);
-			break;
-		case PROPOSAL_MAC_ALGS_CTOS:
-		case PROPOSAL_MAC_ALGS_STOC:
+			നിർത്തുക;
+		അവസ്ഥ PROPOSAL_MAC_ALGS_CTOS:
+		അവസ്ഥ PROPOSAL_MAC_ALGS_STOC:
 			prop[i]  = xstrdup(macs ? macs : defprop[i]);
-			break;
-		case PROPOSAL_COMP_ALGS_CTOS:
-		case PROPOSAL_COMP_ALGS_STOC:
+			നിർത്തുക;
+		അവസ്ഥ PROPOSAL_COMP_ALGS_CTOS:
+		അവസ്ഥ PROPOSAL_COMP_ALGS_STOC:
 			prop[i] = xstrdup(comp ? comp : defprop[i]);
-			break;
-		case PROPOSAL_SERVER_HOST_KEY_ALGS:
+			നിർത്തുക;
+		അവസ്ഥ PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS:
 			prop[i] = xstrdup(hkalgs ? hkalgs : defprop[i]);
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			prop[i] = xstrdup(defprop[i]);
 		}
 	}
-	free(cp);
+	സ്വതന്ത്രം(cp);
 }
 
-void
-kex_proposal_free_entries(char *prop[PROPOSAL_MAX])
+ശൂന്യം
+kex_proposal_free_entries(അക്ഷരം *prop[PROPOSAL_MAX])
 {
 	u_int i;
 
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(prop[i]);
+	വേണ്ടി (i = 0; i < PROPOSAL_MAX; i++)
+		സ്വതന്ത്രം(prop[i]);
 }
 
 /* put algorithm proposal into buffer */
-int
-kex_prop2buf(struct sshbuf *b, char *proposal[PROPOSAL_MAX])
+പൂർണ്ണസംഖ്യ
+kex_prop2buf(ഘടന sshbuf *b, അക്ഷരം *proposal[PROPOSAL_MAX])
 {
 	u_int i;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	sshbuf_reset(b);
 
@@ -154,110 +154,110 @@ kex_prop2buf(struct sshbuf *b, char *proposal[PROPOSAL_MAX])
 	 * add a dummy cookie, the cookie will be overwritten by
 	 * kex_send_kexinit(), each time a kexinit is set
 	 */
-	for (i = 0; i < KEX_COOKIE_LEN; i++) {
-		if ((r = sshbuf_put_u8(b, 0)) != 0)
-			return r;
+	വേണ്ടി (i = 0; i < KEX_COOKIE_LEN; i++) {
+		എങ്കിൽ ((r = sshbuf_put_u8(b, 0)) != 0)
+			തിരികെ r;
 	}
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		if ((r = sshbuf_put_cstring(b, proposal[i])) != 0)
-			return r;
+	വേണ്ടി (i = 0; i < PROPOSAL_MAX; i++) {
+		എങ്കിൽ ((r = sshbuf_put_cstring(b, proposal[i])) != 0)
+			തിരികെ r;
 	}
-	if ((r = sshbuf_put_u8(b, 0)) != 0 ||	/* first_kex_packet_follows */
+	എങ്കിൽ ((r = sshbuf_put_u8(b, 0)) != 0 ||	/* first_kex_packet_follows */
 	    (r = sshbuf_put_u32(b, 0)) != 0)	/* uint32 reserved */
-		return r;
-	return 0;
+		തിരികെ r;
+	തിരികെ 0;
 }
 
 /* parse buffer and return algorithm proposal */
-int
-kex_buf2prop(struct sshbuf *raw, int *first_kex_follows, char ***propp)
+പൂർണ്ണസംഖ്യ
+kex_buf2prop(ഘടന sshbuf *raw, പൂർണ്ണസംഖ്യ *first_kex_follows, അക്ഷരം ***propp)
 {
-	struct sshbuf *b = NULL;
+	ഘടന sshbuf *b = ശൂന്യ;
 	u_char v;
 	u_int i;
-	char **proposal = NULL;
-	int r;
+	അക്ഷരം **proposal = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r;
 
-	*propp = NULL;
-	if ((proposal = calloc(PROPOSAL_MAX, sizeof(char *))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((b = sshbuf_fromb(raw)) == NULL) {
+	*propp = ശൂന്യ;
+	എങ്കിൽ ((proposal = calloc(PROPOSAL_MAX, വലുപ്പം(അക്ഷരം *))) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((b = sshbuf_fromb(raw)) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_consume(b, KEX_COOKIE_LEN)) != 0) { /* skip cookie */
+	എങ്കിൽ ((r = sshbuf_consume(b, KEX_COOKIE_LEN)) != 0) { /* skip cookie */
 		error_fr(r, "consume cookie");
-		goto out;
+		പോകുക out;
 	}
 	/* extract kex init proposal strings */
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		if ((r = sshbuf_get_cstring(b, &(proposal[i]), NULL)) != 0) {
+	വേണ്ടി (i = 0; i < PROPOSAL_MAX; i++) {
+		എങ്കിൽ ((r = sshbuf_get_cstring(b, &(proposal[i]), ശൂന്യ)) != 0) {
 			error_fr(r, "parse proposal %u", i);
-			goto out;
+			പോകുക out;
 		}
 		debug2("%s: %s", proposal_names[i], proposal[i]);
 	}
 	/* first kex follows / reserved */
-	if ((r = sshbuf_get_u8(b, &v)) != 0 ||	/* first_kex_follows */
+	എങ്കിൽ ((r = sshbuf_get_u8(b, &v)) != 0 ||	/* first_kex_follows */
 	    (r = sshbuf_get_u32(b, &i)) != 0) {	/* reserved */
 		error_fr(r, "parse");
-		goto out;
+		പോകുക out;
 	}
-	if (first_kex_follows != NULL)
+	എങ്കിൽ (first_kex_follows != ശൂന്യ)
 		*first_kex_follows = v;
 	debug2("first_kex_follows %d ", v);
 	debug2("reserved %u ", i);
 	r = 0;
 	*propp = proposal;
  out:
-	if (r != 0 && proposal != NULL)
+	എങ്കിൽ (r != 0 && proposal != ശൂന്യ)
 		kex_prop_free(proposal);
 	sshbuf_free(b);
-	return r;
+	തിരികെ r;
 }
 
-void
-kex_prop_free(char **proposal)
+ശൂന്യം
+kex_prop_free(അക്ഷരം **proposal)
 {
 	u_int i;
 
-	if (proposal == NULL)
-		return;
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
-	free(proposal);
+	എങ്കിൽ (proposal == ശൂന്യ)
+		തിരികെ;
+	വേണ്ടി (i = 0; i < PROPOSAL_MAX; i++)
+		സ്വതന്ത്രം(proposal[i]);
+	സ്വതന്ത്രം(proposal);
 }
 
-int
-kex_protocol_error(int type, uint32_t seq, struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+kex_protocol_error(പൂർണ്ണസംഖ്യ type, uint32_t seq, ഘടന ssh *ssh)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	/* If in strict mode, any unexpected message is an error */
-	if ((ssh->kex->flags & KEX_INITIAL) && ssh->kex->kex_strict) {
+	എങ്കിൽ ((ssh->kex->flags & KEX_INITIAL) && ssh->kex->kex_strict) {
 		ssh_packet_disconnect(ssh, "strict KEX violation: "
 		    "unexpected packet type %u (seqnr %u)", type, seq);
 	}
 	error_f("type %u seq %u", type, seq);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_UNIMPLEMENTED)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, seq)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
-	return 0;
+		തിരികെ r;
+	തിരികെ 0;
 }
 
-static void
-kex_reset_dispatch(struct ssh *ssh)
+സ്ഥിതം ശൂന്യം
+kex_reset_dispatch(ഘടന ssh *ssh)
 {
-	ssh_dispatch_range(ssh, SSH2_MSG_TRANSPORT_MIN,
-	    SSH2_MSG_TRANSPORT_MAX, &kex_protocol_error);
+	ssh_dispatch_range(ssh, SSH2_സന്ദേശം_TRANSPORT_MIN,
+	    SSH2_സന്ദേശം_TRANSPORT_MAX, &kex_protocol_error);
 }
 
-void
-kex_set_server_sig_algs(struct ssh *ssh, const char *allowed_algs)
+ശൂന്യം
+kex_set_server_sig_algs(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *allowed_algs)
 {
-	char *alg, *oalgs, *algs, *sigalgs;
-	const char *sigalg;
+	അക്ഷരം *alg, *oalgs, *algs, *sigalgs;
+	സ്ഥിരം അക്ഷരം *sigalg;
 
 	/*
 	 * NB. allowed algorithms may contain certificate algorithms that
@@ -266,56 +266,56 @@ kex_set_server_sig_algs(struct ssh *ssh, const char *allowed_algs)
 	 * We need to be careful here to match these, retain the mapping
 	 * and only add each signature algorithm once.
 	 */
-	if ((sigalgs = sshkey_alg_list(0, 1, 1, ',')) == NULL)
+	എങ്കിൽ ((sigalgs = sshkey_alg_list(0, 1, 1, ',')) == ശൂന്യ)
 		fatal_f("sshkey_alg_list failed");
 	oalgs = algs = xstrdup(allowed_algs);
-	free(ssh->kex->server_sig_algs);
-	ssh->kex->server_sig_algs = NULL;
-	for ((alg = strsep(&algs, ",")); alg != NULL && *alg != '\0';
+	സ്വതന്ത്രം(ssh->kex->server_sig_algs);
+	ssh->kex->server_sig_algs = ശൂന്യ;
+	വേണ്ടി ((alg = strsep(&algs, ",")); alg != ശൂന്യ && *alg != '\0';
 	    (alg = strsep(&algs, ","))) {
-		if ((sigalg = sshkey_sigalg_by_name(alg)) == NULL)
-			continue;
-		if (!kex_has_any_alg(sigalg, sigalgs))
-			continue;
+		എങ്കിൽ ((sigalg = sshkey_sigalg_by_name(alg)) == ശൂന്യ)
+			തുടരുക;
+		എങ്കിൽ (!kex_has_any_alg(sigalg, sigalgs))
+			തുടരുക;
 		/* Don't add an algorithm twice. */
-		if (ssh->kex->server_sig_algs != NULL &&
+		എങ്കിൽ (ssh->kex->server_sig_algs != ശൂന്യ &&
 		    kex_has_any_alg(sigalg, ssh->kex->server_sig_algs))
-			continue;
+			തുടരുക;
 		xextendf(&ssh->kex->server_sig_algs, ",", "%s", sigalg);
 	}
-	free(oalgs);
-	free(sigalgs);
-	if (ssh->kex->server_sig_algs == NULL)
+	സ്വതന്ത്രം(oalgs);
+	സ്വതന്ത്രം(sigalgs);
+	എങ്കിൽ (ssh->kex->server_sig_algs == ശൂന്യ)
 		ssh->kex->server_sig_algs = xstrdup("");
 }
 
-void
-kex_set_warn_weak_crypto(struct ssh *ssh, int warn_weak_crypto)
+ശൂന്യം
+kex_set_warn_weak_crypto(ഘടന ssh *ssh, പൂർണ്ണസംഖ്യ warn_weak_crypto)
 {
-	if (ssh != NULL && ssh->kex != NULL)
+	എങ്കിൽ (ssh != ശൂന്യ && ssh->kex != ശൂന്യ)
 		ssh->kex->warn_weak_crypto = warn_weak_crypto != 0;
 }
 
-void
-kex_check_warn_weak_crypto(struct ssh *ssh)
+ശൂന്യം
+kex_check_warn_weak_crypto(ഘടന ssh *ssh)
 {
-	char remote_id[512];
-	int rekeyed = 0;
+	അക്ഷരം remote_id[512];
+	പൂർണ്ണസംഖ്യ rekeyed = 0;
 
-	if (ssh == NULL || ssh->kex == NULL || ssh->kex->name == NULL ||
+	എങ്കിൽ (ssh == ശൂന്യ || ssh->kex == ശൂന്യ || ssh->kex->name == ശൂന്യ ||
 	    !ssh->kex->warn_weak_crypto || ssh->kex->non_pq_kex_warned)
-		return;
-	if (kex_is_pq_from_name(ssh->kex->name)) {
+		തിരികെ;
+	എങ്കിൽ (kex_is_pq_from_name(ssh->kex->name)) {
 		ssh->kex->pq_kex_negotiated = 1;
-		return;
+		തിരികെ;
 	}
 
-	if (ssh->kex->pq_kex_negotiated)
+	എങ്കിൽ (ssh->kex->pq_kex_negotiated)
 		rekeyed = 1;
-	if (!rekeyed && !ssh->kex->server)
-		return; /* client logs initial KEX warning separately */
+	എങ്കിൽ (!rekeyed && !ssh->kex->server)
+		തിരികെ; /* client logs initial KEX warning separately */
 
-	sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
+	sshpkt_fmt_connection_id(ssh, remote_id, വലുപ്പം(remote_id));
 	logit("WARNING: %sconnection%s%s is not using a post-quantum "
 	    "key exchange algorithm: \"%s\"", rekeyed ? "rekeyed " : "",
 	    ssh->kex->server ? " from " : "",
@@ -323,15 +323,15 @@ kex_check_warn_weak_crypto(struct ssh *ssh)
 	ssh->kex->non_pq_kex_warned = 1;
 }
 
-static int
-kex_compose_ext_info_server(struct ssh *ssh, struct sshbuf *m)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+kex_compose_ext_info_server(ഘടന ssh *ssh, ഘടന sshbuf *m)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (ssh->kex->server_sig_algs == NULL &&
-	    (ssh->kex->server_sig_algs = sshkey_alg_list(0, 1, 1, ',')) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u32(m, 4)) != 0 ||
+	എങ്കിൽ (ssh->kex->server_sig_algs == ശൂന്യ &&
+	    (ssh->kex->server_sig_algs = sshkey_alg_list(0, 1, 1, ',')) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_put_u32(m, 4)) != 0 ||
 	    (r = sshbuf_put_cstring(m, "server-sig-algs")) != 0 ||
 	    (r = sshbuf_put_cstring(m, ssh->kex->server_sig_algs)) != 0 ||
 	    (r = sshbuf_put_cstring(m,
@@ -342,344 +342,344 @@ kex_compose_ext_info_server(struct ssh *ssh, struct sshbuf *m)
 	    (r = sshbuf_put_cstring(m, "agent-forward")) != 0 ||
 	    (r = sshbuf_put_cstring(m, "0")) != 0) {
 		error_fr(r, "compose");
-		return r;
+		തിരികെ r;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-kex_compose_ext_info_client(struct ssh *ssh, struct sshbuf *m)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+kex_compose_ext_info_client(ഘടന ssh *ssh, ഘടന sshbuf *m)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshbuf_put_u32(m, 1)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_put_u32(m, 1)) != 0 ||
 	    (r = sshbuf_put_cstring(m, "ext-info-in-auth@openssh.com")) != 0 ||
 	    (r = sshbuf_put_cstring(m, "0")) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	r = 0;
  out:
-	return r;
+	തിരികെ r;
 }
 
-static int
-kex_maybe_send_ext_info(struct ssh *ssh)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+kex_maybe_send_ext_info(ഘടന ssh *ssh)
 {
-	int r;
-	struct sshbuf *m = NULL;
+	പൂർണ്ണസംഖ്യ r;
+	ഘടന sshbuf *m = ശൂന്യ;
 
-	if ((ssh->kex->flags & KEX_INITIAL) == 0)
-		return 0;
-	if (!ssh->kex->ext_info_c && !ssh->kex->ext_info_s)
-		return 0;
+	എങ്കിൽ ((ssh->kex->flags & KEX_INITIAL) == 0)
+		തിരികെ 0;
+	എങ്കിൽ (!ssh->kex->ext_info_c && !ssh->kex->ext_info_s)
+		തിരികെ 0;
 
 	/* Compose EXT_INFO packet. */
-	if ((m = sshbuf_new()) == NULL)
+	എങ്കിൽ ((m = sshbuf_new()) == ശൂന്യ)
 		fatal_f("sshbuf_new failed");
-	if (ssh->kex->ext_info_c &&
+	എങ്കിൽ (ssh->kex->ext_info_c &&
 	    (r = kex_compose_ext_info_server(ssh, m)) != 0)
-		goto fail;
-	if (ssh->kex->ext_info_s &&
+		പോകുക fail;
+	എങ്കിൽ (ssh->kex->ext_info_s &&
 	    (r = kex_compose_ext_info_client(ssh, m)) != 0)
-		goto fail;
+		പോകുക fail;
 
 	/* Send the actual KEX_INFO packet */
 	debug("Sending SSH2_MSG_EXT_INFO");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_EXT_INFO)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_EXT_INFO)) != 0 ||
 	    (r = sshpkt_putb(ssh, m)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_f("send EXT_INFO");
-		goto fail;
+		പോകുക fail;
 	}
 
 	r = 0;
 
  fail:
 	sshbuf_free(m);
-	return r;
+	തിരികെ r;
 }
 
-int
-kex_server_update_ext_info(struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+kex_server_update_ext_info(ഘടന ssh *ssh)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((ssh->kex->flags & KEX_HAS_EXT_INFO_IN_AUTH) == 0)
-		return 0;
+	എങ്കിൽ ((ssh->kex->flags & KEX_HAS_EXT_INFO_IN_AUTH) == 0)
+		തിരികെ 0;
 
 	debug_f("Sending SSH2_MSG_EXT_INFO");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_EXT_INFO)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_EXT_INFO)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, 1)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "server-sig-algs")) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, ssh->kex->server_sig_algs)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_f("send EXT_INFO");
-		return r;
+		തിരികെ r;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-int
-kex_send_newkeys(struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+kex_send_newkeys(ഘടന ssh *ssh)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	kex_reset_dispatch(ssh);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_NEWKEYS)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_NEWKEYS)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
+		തിരികെ r;
 	debug("SSH2_MSG_NEWKEYS sent");
-	ssh_dispatch_set(ssh, SSH2_MSG_NEWKEYS, &kex_input_newkeys);
-	if ((r = kex_maybe_send_ext_info(ssh)) != 0)
-		return r;
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_NEWKEYS, &kex_നിവേശം_newkeys);
+	എങ്കിൽ ((r = kex_maybe_send_ext_info(ssh)) != 0)
+		തിരികെ r;
 	debug("expecting SSH2_MSG_NEWKEYS");
-	return 0;
+	തിരികെ 0;
 }
 
 /* Check whether an ext_info value contains the expected version string */
-static int
-kex_ext_info_check_ver(struct kex *kex, const char *name,
-    const u_char *val, size_t len, const char *want_ver, u_int flag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+kex_ext_info_check_ver(ഘടന kex *kex, സ്ഥിരം അക്ഷരം *name,
+    സ്ഥിരം u_char *val, size_t len, സ്ഥിരം അക്ഷരം *want_ver, u_int flag)
 {
-	if (memchr(val, '\0', len) != NULL) {
+	എങ്കിൽ (memchr(val, '\0', len) != ശൂന്യ) {
 		error("SSH2_MSG_EXT_INFO: %s value contains nul byte", name);
-		return SSH_ERR_INVALID_FORMAT;
+		തിരികെ SSH_ERR_INVALID_FORMAT;
 	}
 	debug_f("%s=<%s>", name, val);
-	if (strcmp(val, want_ver) == 0)
+	എങ്കിൽ (strcmp(val, want_ver) == 0)
 		kex->flags |= flag;
-	else
+	അല്ലെങ്കിൽ
 		debug_f("unsupported version of %s extension", name);
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-kex_ext_info_client_parse(struct ssh *ssh, const char *name,
-    const u_char *value, size_t vlen)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+kex_ext_info_client_parse(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *name,
+    സ്ഥിരം u_char *മൂല്യം, size_t vlen)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	/* NB. some messages are only accepted in the initial EXT_INFO */
-	if (strcmp(name, "server-sig-algs") == 0) {
+	എങ്കിൽ (strcmp(name, "server-sig-algs") == 0) {
 		/* Ensure no \0 lurking in value */
-		if (memchr(value, '\0', vlen) != NULL) {
+		എങ്കിൽ (memchr(മൂല്യം, '\0', vlen) != ശൂന്യ) {
 			error_f("nul byte in %s", name);
-			return SSH_ERR_INVALID_FORMAT;
+			തിരികെ SSH_ERR_INVALID_FORMAT;
 		}
-		debug_f("%s=<%s>", name, value);
-		free(ssh->kex->server_sig_algs);
-		ssh->kex->server_sig_algs = xstrdup((const char *)value);
-	} else if (ssh->kex->ext_info_received == 1 &&
+		debug_f("%s=<%s>", name, മൂല്യം);
+		സ്വതന്ത്രം(ssh->kex->server_sig_algs);
+		ssh->kex->server_sig_algs = xstrdup((സ്ഥിരം അക്ഷരം *)മൂല്യം);
+	} അല്ലെങ്കിൽ എങ്കിൽ (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "publickey-hostbound@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		എങ്കിൽ ((r = kex_ext_info_check_ver(ssh->kex, name, മൂല്യം, vlen,
 		    "0", KEX_HAS_PUBKEY_HOSTBOUND)) != 0) {
-			return r;
+			തിരികെ r;
 		}
-	} else if (ssh->kex->ext_info_received == 1 &&
+	} അല്ലെങ്കിൽ എങ്കിൽ (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "ping@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		എങ്കിൽ ((r = kex_ext_info_check_ver(ssh->kex, name, മൂല്യം, vlen,
 		    "0", KEX_HAS_PING)) != 0) {
-			return r;
+			തിരികെ r;
 		}
-	} else if (ssh->kex->ext_info_received == 1 &&
+	} അല്ലെങ്കിൽ എങ്കിൽ (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "agent-forward") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		എങ്കിൽ ((r = kex_ext_info_check_ver(ssh->kex, name, മൂല്യം, vlen,
 		    "0", KEX_HAS_NEWAGENT)) != 0) {
-			return r;
+			തിരികെ r;
 		}
-	} else
+	} അല്ലെങ്കിൽ
 		debug_f("%s (unrecognised)", name);
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-kex_ext_info_server_parse(struct ssh *ssh, const char *name,
-    const u_char *value, size_t vlen)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+kex_ext_info_server_parse(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *name,
+    സ്ഥിരം u_char *മൂല്യം, size_t vlen)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (strcmp(name, "ext-info-in-auth@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+	എങ്കിൽ (strcmp(name, "ext-info-in-auth@openssh.com") == 0) {
+		എങ്കിൽ ((r = kex_ext_info_check_ver(ssh->kex, name, മൂല്യം, vlen,
 		    "0", KEX_HAS_EXT_INFO_IN_AUTH)) != 0) {
-			return r;
+			തിരികെ r;
 		}
-	} else
+	} അല്ലെങ്കിൽ
 		debug_f("%s (unrecognised)", name);
-	return 0;
+	തിരികെ 0;
 }
 
-int
-kex_input_ext_info(int type, uint32_t seq, struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+kex_നിവേശം_ext_info(പൂർണ്ണസംഖ്യ type, uint32_t seq, ഘടന ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	const int max_ext_info = kex->server ? 1 : 2;
+	ഘടന kex *kex = ssh->kex;
+	സ്ഥിരം പൂർണ്ണസംഖ്യ max_ext_info = kex->server ? 1 : 2;
 	uint32_t i, ninfo;
-	char *name;
+	അക്ഷരം *name;
 	u_char *val;
 	size_t vlen;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	debug("SSH2_MSG_EXT_INFO received");
-	if (++kex->ext_info_received > max_ext_info) {
+	എങ്കിൽ (++kex->ext_info_received > max_ext_info) {
 		error("too many SSH2_MSG_EXT_INFO messages sent by peer");
-		return dispatch_protocol_error(type, seq, ssh);
+		തിരികെ dispatch_protocol_error(type, seq, ssh);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_protocol_error);
-	if ((r = sshpkt_get_u32(ssh, &ninfo)) != 0)
-		return r;
-	if (ninfo >= 1024) {
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_EXT_INFO, &kex_protocol_error);
+	എങ്കിൽ ((r = sshpkt_get_u32(ssh, &ninfo)) != 0)
+		തിരികെ r;
+	എങ്കിൽ (ninfo >= 1024) {
 		error("SSH2_MSG_EXT_INFO with too many entries, expected "
 		    "<=1024, received %u", ninfo);
-		return dispatch_protocol_error(type, seq, ssh);
+		തിരികെ dispatch_protocol_error(type, seq, ssh);
 	}
-	for (i = 0; i < ninfo; i++) {
-		if ((r = sshpkt_get_cstring(ssh, &name, NULL)) != 0)
-			return r;
-		if ((r = sshpkt_get_string(ssh, &val, &vlen)) != 0) {
-			free(name);
-			return r;
+	വേണ്ടി (i = 0; i < ninfo; i++) {
+		എങ്കിൽ ((r = sshpkt_get_cstring(ssh, &name, ശൂന്യ)) != 0)
+			തിരികെ r;
+		എങ്കിൽ ((r = sshpkt_get_string(ssh, &val, &vlen)) != 0) {
+			സ്വതന്ത്രം(name);
+			തിരികെ r;
 		}
 		debug3_f("extension %s", name);
-		if (kex->server) {
-			if ((r = kex_ext_info_server_parse(ssh, name,
+		എങ്കിൽ (kex->server) {
+			എങ്കിൽ ((r = kex_ext_info_server_parse(ssh, name,
 			    val, vlen)) != 0)
-				return r;
-		} else {
-			if ((r = kex_ext_info_client_parse(ssh, name,
+				തിരികെ r;
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ ((r = kex_ext_info_client_parse(ssh, name,
 			    val, vlen)) != 0)
-				return r;
+				തിരികെ r;
 		}
-		free(name);
-		free(val);
+		സ്വതന്ത്രം(name);
+		സ്വതന്ത്രം(val);
 	}
-	return sshpkt_get_end(ssh);
+	തിരികെ sshpkt_get_end(ssh);
 }
 
-static int
-kex_input_newkeys(int type, uint32_t seq, struct ssh *ssh)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+kex_നിവേശം_newkeys(പൂർണ്ണസംഖ്യ type, uint32_t seq, ഘടന ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r, initial = (kex->flags & KEX_INITIAL) != 0;
-	char *cp, **prop;
+	ഘടന kex *kex = ssh->kex;
+	പൂർണ്ണസംഖ്യ r, initial = (kex->flags & KEX_INITIAL) != 0;
+	അക്ഷരം *cp, **prop;
 
 	debug("SSH2_MSG_NEWKEYS received");
-	if (kex->ext_info_c && initial)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_NEWKEYS, &kex_protocol_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
-	if ((r = sshpkt_get_end(ssh)) != 0)
-		return r;
-	if ((r = ssh_set_newkeys(ssh, MODE_IN)) != 0)
-		return r;
-	if (initial) {
+	എങ്കിൽ (kex->ext_info_c && initial)
+		ssh_dispatch_set(ssh, SSH2_സന്ദേശം_EXT_INFO, &kex_നിവേശം_ext_info);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_NEWKEYS, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_KEXINIT, &kex_നിവേശം_kexinit);
+	എങ്കിൽ ((r = sshpkt_get_end(ssh)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = ssh_set_newkeys(ssh, MODE_IN)) != 0)
+		തിരികെ r;
+	എങ്കിൽ (initial) {
 		/* Remove initial KEX signalling from proposal for rekeying */
-		if ((r = kex_buf2prop(kex->my, NULL, &prop)) != 0)
-			return r;
-		if ((cp = match_filter_denylist(prop[PROPOSAL_KEX_ALGS],
+		എങ്കിൽ ((r = kex_buf2prop(kex->my, ശൂന്യ, &prop)) != 0)
+			തിരികെ r;
+		എങ്കിൽ ((cp = match_filter_denylist(prop[PROPOSAL_KEX_ALGS],
 		    kex->server ?
 		    "ext-info-s,kex-strict-s-v00@openssh.com" :
-		    "ext-info-c,kex-strict-c-v00@openssh.com")) == NULL) {
+		    "ext-info-c,kex-strict-c-v00@openssh.com")) == ശൂന്യ) {
 			error_f("match_filter_denylist failed");
-			goto fail;
+			പോകുക fail;
 		}
-		free(prop[PROPOSAL_KEX_ALGS]);
+		സ്വതന്ത്രം(prop[PROPOSAL_KEX_ALGS]);
 		prop[PROPOSAL_KEX_ALGS] = cp;
-		if ((r = kex_prop2buf(ssh->kex->my, prop)) != 0) {
+		എങ്കിൽ ((r = kex_prop2buf(ssh->kex->my, prop)) != 0) {
 			error_f("kex_prop2buf failed");
  fail:
 			kex_proposal_free_entries(prop);
-			free(prop);
-			return SSH_ERR_INTERNAL_ERROR;
+			സ്വതന്ത്രം(prop);
+			തിരികെ SSH_ERR_INTERNAL_ERROR;
 		}
 		kex_proposal_free_entries(prop);
-		free(prop);
+		സ്വതന്ത്രം(prop);
 	}
 	kex->done = 1;
 	kex->flags &= ~KEX_INITIAL;
 	sshbuf_reset(kex->peer);
 	kex->flags &= ~(KEX_INIT_SENT|KEX_INIT_RECVD);
 	kex_check_warn_weak_crypto(ssh);
-	return 0;
+	തിരികെ 0;
 }
 
-int
-kex_send_kexinit(struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+kex_send_kexinit(ഘടന ssh *ssh)
 {
 	u_char *cookie;
-	struct kex *kex = ssh->kex;
-	int r;
+	ഘടന kex *kex = ssh->kex;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (kex == NULL) {
+	എങ്കിൽ (kex == ശൂന്യ) {
 		error_f("no kex");
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
-	if (kex->flags & KEX_INIT_SENT)
-		return 0;
+	എങ്കിൽ (kex->flags & KEX_INIT_SENT)
+		തിരികെ 0;
 	kex->done = 0;
 
 	/* generate a random cookie */
-	if (sshbuf_len(kex->my) < KEX_COOKIE_LEN) {
+	എങ്കിൽ (sshbuf_len(kex->my) < KEX_COOKIE_LEN) {
 		error_f("bad kex length: %zu < %d",
 		    sshbuf_len(kex->my), KEX_COOKIE_LEN);
-		return SSH_ERR_INVALID_FORMAT;
+		തിരികെ SSH_ERR_INVALID_FORMAT;
 	}
-	if ((cookie = sshbuf_mutable_ptr(kex->my)) == NULL) {
+	എങ്കിൽ ((cookie = sshbuf_mutable_ptr(kex->my)) == ശൂന്യ) {
 		error_f("buffer error");
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
 	arc4random_buf(cookie, KEX_COOKIE_LEN);
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEXINIT)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_KEXINIT)) != 0 ||
 	    (r = sshpkt_putb(ssh, kex->my)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_fr(r, "compose reply");
-		return r;
+		തിരികെ r;
 	}
 	debug("SSH2_MSG_KEXINIT sent");
 	kex->flags |= KEX_INIT_SENT;
-	return 0;
+	തിരികെ 0;
 }
 
-int
-kex_input_kexinit(int type, uint32_t seq, struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+kex_നിവേശം_kexinit(പൂർണ്ണസംഖ്യ type, uint32_t seq, ഘടന ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	const u_char *ptr;
+	ഘടന kex *kex = ssh->kex;
+	സ്ഥിരം u_char *ptr;
 	u_int i;
 	size_t dlen;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	debug("SSH2_MSG_KEXINIT received");
-	if (kex == NULL) {
+	എങ്കിൽ (kex == ശൂന്യ) {
 		error_f("no kex");
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
-	free(kex->name);
-	kex->name = NULL;
-	if ((kex->flags & KEX_INIT_RECVD) != 0) {
+	സ്വതന്ത്രം(kex->name);
+	kex->name = ശൂന്യ;
+	എങ്കിൽ ((kex->flags & KEX_INIT_RECVD) != 0) {
 		ssh_packet_disconnect(ssh,
 		    "multiple KEXINIT received from peer");
 	}
 	kex->flags |= KEX_INIT_RECVD;
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_KEXINIT, &kex_protocol_error);
 	ptr = sshpkt_ptr(ssh, &dlen);
-	if ((r = sshbuf_put(kex->peer, ptr, dlen)) != 0)
-		return r;
+	എങ്കിൽ ((r = sshbuf_put(kex->peer, ptr, dlen)) != 0)
+		തിരികെ r;
 
 	/* discard packet */
-	for (i = 0; i < KEX_COOKIE_LEN; i++) {
-		if ((r = sshpkt_get_u8(ssh, NULL)) != 0) {
+	വേണ്ടി (i = 0; i < KEX_COOKIE_LEN; i++) {
+		എങ്കിൽ ((r = sshpkt_get_u8(ssh, ശൂന്യ)) != 0) {
 			error_fr(r, "discard cookie");
-			return r;
+			തിരികെ r;
 		}
 	}
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		if ((r = sshpkt_get_string(ssh, NULL, NULL)) != 0) {
+	വേണ്ടി (i = 0; i < PROPOSAL_MAX; i++) {
+		എങ്കിൽ ((r = sshpkt_get_string(ssh, ശൂന്യ, ശൂന്യ)) != 0) {
 			error_fr(r, "discard proposal");
-			return r;
+			തിരികെ r;
 		}
 	}
 	/*
@@ -692,86 +692,86 @@ kex_input_kexinit(int type, uint32_t seq, struct ssh *ssh)
 	 * for cases where the server *doesn't* go first. I guess we should
 	 * ignore it when it is set for these cases, which is what we do now.
 	 */
-	if ((r = sshpkt_get_u8(ssh, NULL)) != 0 ||	/* first_kex_follows */
-	    (r = sshpkt_get_u32(ssh, NULL)) != 0 ||	/* reserved */
+	എങ്കിൽ ((r = sshpkt_get_u8(ssh, ശൂന്യ)) != 0 ||	/* first_kex_follows */
+	    (r = sshpkt_get_u32(ssh, ശൂന്യ)) != 0 ||	/* reserved */
 	    (r = sshpkt_get_end(ssh)) != 0)
-			return r;
+			തിരികെ r;
 
-	if (!(kex->flags & KEX_INIT_SENT))
-		if ((r = kex_send_kexinit(ssh)) != 0)
-			return r;
-	if ((r = kex_choose_conf(ssh, seq)) != 0)
-		return r;
+	എങ്കിൽ (!(kex->flags & KEX_INIT_SENT))
+		എങ്കിൽ ((r = kex_send_kexinit(ssh)) != 0)
+			തിരികെ r;
+	എങ്കിൽ ((r = kex_choose_conf(ssh, seq)) != 0)
+		തിരികെ r;
 
-	if (kex->kex_type < KEX_MAX && kex->kex[kex->kex_type] != NULL)
-		return (kex->kex[kex->kex_type])(ssh);
+	എങ്കിൽ (kex->kex_type < KEX_MAX && kex->kex[kex->kex_type] != ശൂന്യ)
+		തിരികെ (kex->kex[kex->kex_type])(ssh);
 
 	error_f("unknown kex type %u", kex->kex_type);
-	return SSH_ERR_INTERNAL_ERROR;
+	തിരികെ SSH_ERR_INTERNAL_ERROR;
 }
 
-struct kex *
-kex_new(void)
+ഘടന kex *
+kex_new(ശൂന്യം)
 {
-	struct kex *kex;
+	ഘടന kex *kex;
 
-	if ((kex = calloc(1, sizeof(*kex))) == NULL ||
-	    (kex->peer = sshbuf_new()) == NULL ||
-	    (kex->my = sshbuf_new()) == NULL ||
-	    (kex->client_version = sshbuf_new()) == NULL ||
-	    (kex->server_version = sshbuf_new()) == NULL ||
-	    (kex->session_id = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((kex = calloc(1, വലുപ്പം(*kex))) == ശൂന്യ ||
+	    (kex->peer = sshbuf_new()) == ശൂന്യ ||
+	    (kex->my = sshbuf_new()) == ശൂന്യ ||
+	    (kex->client_version = sshbuf_new()) == ശൂന്യ ||
+	    (kex->server_version = sshbuf_new()) == ശൂന്യ ||
+	    (kex->session_id = sshbuf_new()) == ശൂന്യ) {
 		kex_free(kex);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
-	return kex;
+	തിരികെ kex;
 }
 
-void
-kex_free_newkeys(struct newkeys *newkeys)
+ശൂന്യം
+kex_free_newkeys(ഘടന newkeys *newkeys)
 {
-	if (newkeys == NULL)
-		return;
-	if (newkeys->enc.key) {
-		explicit_bzero(newkeys->enc.key, newkeys->enc.key_len);
-		free(newkeys->enc.key);
-		newkeys->enc.key = NULL;
+	എങ്കിൽ (newkeys == ശൂന്യ)
+		തിരികെ;
+	എങ്കിൽ (newkeys->enc.താക്കോൽ) {
+		explicit_bzero(newkeys->enc.താക്കോൽ, newkeys->enc.താക്കോൽ_len);
+		സ്വതന്ത്രം(newkeys->enc.താക്കോൽ);
+		newkeys->enc.താക്കോൽ = ശൂന്യ;
 	}
-	if (newkeys->enc.iv) {
+	എങ്കിൽ (newkeys->enc.iv) {
 		explicit_bzero(newkeys->enc.iv, newkeys->enc.iv_len);
-		free(newkeys->enc.iv);
-		newkeys->enc.iv = NULL;
+		സ്വതന്ത്രം(newkeys->enc.iv);
+		newkeys->enc.iv = ശൂന്യ;
 	}
-	free(newkeys->enc.name);
-	explicit_bzero(&newkeys->enc, sizeof(newkeys->enc));
-	free(newkeys->comp.name);
-	explicit_bzero(&newkeys->comp, sizeof(newkeys->comp));
+	സ്വതന്ത്രം(newkeys->enc.name);
+	explicit_bzero(&newkeys->enc, വലുപ്പം(newkeys->enc));
+	സ്വതന്ത്രം(newkeys->comp.name);
+	explicit_bzero(&newkeys->comp, വലുപ്പം(newkeys->comp));
 	mac_clear(&newkeys->mac);
-	if (newkeys->mac.key) {
-		explicit_bzero(newkeys->mac.key, newkeys->mac.key_len);
-		free(newkeys->mac.key);
-		newkeys->mac.key = NULL;
+	എങ്കിൽ (newkeys->mac.താക്കോൽ) {
+		explicit_bzero(newkeys->mac.താക്കോൽ, newkeys->mac.താക്കോൽ_len);
+		സ്വതന്ത്രം(newkeys->mac.താക്കോൽ);
+		newkeys->mac.താക്കോൽ = ശൂന്യ;
 	}
-	free(newkeys->mac.name);
-	explicit_bzero(&newkeys->mac, sizeof(newkeys->mac));
-	freezero(newkeys, sizeof(*newkeys));
+	സ്വതന്ത്രം(newkeys->mac.name);
+	explicit_bzero(&newkeys->mac, വലുപ്പം(newkeys->mac));
+	freezero(newkeys, വലുപ്പം(*newkeys));
 }
 
-void
-kex_free(struct kex *kex)
+ശൂന്യം
+kex_free(ഘടന kex *kex)
 {
 	u_int mode;
 
-	if (kex == NULL)
-		return;
+	എങ്കിൽ (kex == ശൂന്യ)
+		തിരികെ;
 
 #ifdef WITH_OPENSSL
 	DH_free(kex->dh);
-	EC_KEY_free(kex->ec_client_key);
+	EC_താക്കോൽ_free(kex->ec_client_താക്കോൽ);
 #endif /* WITH_OPENSSL */
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	വേണ്ടി (mode = 0; mode < MODE_MAX; mode++) {
 		kex_free_newkeys(kex->newkeys[mode]);
-		kex->newkeys[mode] = NULL;
+		kex->newkeys[mode] = ശൂന്യ;
 	}
 	sshbuf_free(kex->peer);
 	sshbuf_free(kex->my);
@@ -781,230 +781,230 @@ kex_free(struct kex *kex)
 	sshbuf_free(kex->session_id);
 	sshbuf_free(kex->initial_sig);
 	sshkey_free(kex->initial_hostkey);
-	free(kex->failed_choice);
-	free(kex->hostkey_alg);
-	free(kex->name);
-	free(kex->server_sig_algs);
-	free(kex);
+	സ്വതന്ത്രം(kex->failed_choice);
+	സ്വതന്ത്രം(kex->hostkey_alg);
+	സ്വതന്ത്രം(kex->name);
+	സ്വതന്ത്രം(kex->server_sig_algs);
+	സ്വതന്ത്രം(kex);
 }
 
-int
-kex_ready(struct ssh *ssh, char *proposal[PROPOSAL_MAX])
+പൂർണ്ണസംഖ്യ
+kex_ready(ഘടന ssh *ssh, അക്ഷരം *proposal[PROPOSAL_MAX])
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = kex_prop2buf(ssh->kex->my, proposal)) != 0)
-		return r;
+	എങ്കിൽ ((r = kex_prop2buf(ssh->kex->my, proposal)) != 0)
+		തിരികെ r;
 	ssh->kex->flags = KEX_INITIAL;
 	kex_reset_dispatch(ssh);
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_KEXINIT, &kex_നിവേശം_kexinit);
+	തിരികെ 0;
 }
 
-int
-kex_setup(struct ssh *ssh, char *proposal[PROPOSAL_MAX])
+പൂർണ്ണസംഖ്യ
+kex_setup(ഘടന ssh *ssh, അക്ഷരം *proposal[PROPOSAL_MAX])
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = kex_ready(ssh, proposal)) != 0)
-		return r;
-	if ((r = kex_send_kexinit(ssh)) != 0) {		/* we start */
+	എങ്കിൽ ((r = kex_ready(ssh, proposal)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = kex_send_kexinit(ssh)) != 0) {		/* we start */
 		kex_free(ssh->kex);
-		ssh->kex = NULL;
-		return r;
+		ssh->kex = ശൂന്യ;
+		തിരികെ r;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /*
  * Request key re-exchange, returns 0 on success or a ssherr.h error
  * code otherwise. Must not be called if KEX is incomplete or in-progress.
  */
-int
-kex_start_rekex(struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+kex_start_rekex(ഘടന ssh *ssh)
 {
-	if (ssh->kex == NULL) {
+	എങ്കിൽ (ssh->kex == ശൂന്യ) {
 		error_f("no kex");
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
-	if (ssh->kex->done == 0) {
+	എങ്കിൽ (ssh->kex->done == 0) {
 		error_f("requested twice");
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
 	ssh->kex->done = 0;
-	return kex_send_kexinit(ssh);
+	തിരികെ kex_send_kexinit(ssh);
 }
 
-static int
-choose_enc(struct sshenc *enc, char *client, char *server)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+choose_enc(ഘടന sshenc *enc, അക്ഷരം *client, അക്ഷരം *server)
 {
-	char *name = match_list(client, server, NULL);
+	അക്ഷരം *name = match_list(client, server, ശൂന്യ);
 
-	if (name == NULL)
-		return SSH_ERR_NO_CIPHER_ALG_MATCH;
-	if ((enc->cipher = cipher_by_name(name)) == NULL) {
+	എങ്കിൽ (name == ശൂന്യ)
+		തിരികെ SSH_ERR_NO_CIPHER_ALG_MATCH;
+	എങ്കിൽ ((enc->cipher = cipher_by_name(name)) == ശൂന്യ) {
 		error_f("unsupported cipher %s", name);
-		free(name);
-		return SSH_ERR_INTERNAL_ERROR;
+		സ്വതന്ത്രം(name);
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
 	enc->name = name;
 	enc->enabled = 0;
-	enc->iv = NULL;
+	enc->iv = ശൂന്യ;
 	enc->iv_len = cipher_ivlen(enc->cipher);
-	enc->key = NULL;
-	enc->key_len = cipher_keylen(enc->cipher);
+	enc->താക്കോൽ = ശൂന്യ;
+	enc->താക്കോൽ_len = cipher_keylen(enc->cipher);
 	enc->block_size = cipher_blocksize(enc->cipher);
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-choose_mac(struct ssh *ssh, struct sshmac *mac, char *client, char *server)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+choose_mac(ഘടന ssh *ssh, ഘടന sshmac *mac, അക്ഷരം *client, അക്ഷരം *server)
 {
-	char *name = match_list(client, server, NULL);
+	അക്ഷരം *name = match_list(client, server, ശൂന്യ);
 
-	if (name == NULL)
-		return SSH_ERR_NO_MAC_ALG_MATCH;
-	if (mac_setup(mac, name) < 0) {
+	എങ്കിൽ (name == ശൂന്യ)
+		തിരികെ SSH_ERR_NO_MAC_ALG_MATCH;
+	എങ്കിൽ (mac_setup(mac, name) < 0) {
 		error_f("unsupported MAC %s", name);
-		free(name);
-		return SSH_ERR_INTERNAL_ERROR;
+		സ്വതന്ത്രം(name);
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
 	mac->name = name;
-	mac->key = NULL;
+	mac->താക്കോൽ = ശൂന്യ;
 	mac->enabled = 0;
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-choose_comp(struct sshcomp *comp, char *client, char *server)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+choose_comp(ഘടന sshcomp *comp, അക്ഷരം *client, അക്ഷരം *server)
 {
-	char *name = match_list(client, server, NULL);
+	അക്ഷരം *name = match_list(client, server, ശൂന്യ);
 
-	if (name == NULL)
-		return SSH_ERR_NO_COMPRESS_ALG_MATCH;
+	എങ്കിൽ (name == ശൂന്യ)
+		തിരികെ SSH_ERR_NO_COMPRESS_ALG_MATCH;
 #ifdef WITH_ZLIB
-	if (strcmp(name, "zlib@openssh.com") == 0) {
+	എങ്കിൽ (strcmp(name, "zlib@openssh.com") == 0) {
 		comp->type = COMP_DELAYED;
-	} else
+	} അല്ലെങ്കിൽ
 #endif	/* WITH_ZLIB */
-	if (strcmp(name, "none") == 0) {
+	എങ്കിൽ (strcmp(name, "none") == 0) {
 		comp->type = COMP_NONE;
-	} else {
+	} അല്ലെങ്കിൽ {
 		error_f("unsupported compression scheme %s", name);
-		free(name);
-		return SSH_ERR_INTERNAL_ERROR;
+		സ്വതന്ത്രം(name);
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
 	comp->name = name;
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-choose_kex(struct kex *k, char *client, char *server)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+choose_kex(ഘടന kex *k, അക്ഷരം *client, അക്ഷരം *server)
 {
-	k->name = match_list(client, server, NULL);
+	k->name = match_list(client, server, ശൂന്യ);
 
 	debug("kex: algorithm: %s", k->name ? k->name : "(no match)");
-	if (k->name == NULL)
-		return SSH_ERR_NO_KEX_ALG_MATCH;
-	if (!kex_name_valid(k->name)) {
+	എങ്കിൽ (k->name == ശൂന്യ)
+		തിരികെ SSH_ERR_NO_KEX_ALG_MATCH;
+	എങ്കിൽ (!kex_name_valid(k->name)) {
 		error_f("unsupported KEX method %s", k->name);
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
 	k->kex_type = kex_type_from_name(k->name);
 	k->hash_alg = kex_hash_from_name(k->name);
 	k->ec_nid = kex_nid_from_name(k->name);
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-choose_hostkeyalg(struct kex *k, char *client, char *server)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+choose_hostkeyalg(ഘടന kex *k, അക്ഷരം *client, അക്ഷരം *server)
 {
-	free(k->hostkey_alg);
-	k->hostkey_alg = match_list(client, server, NULL);
+	സ്വതന്ത്രം(k->hostkey_alg);
+	k->hostkey_alg = match_list(client, server, ശൂന്യ);
 
 	debug("kex: host key algorithm: %s",
 	    k->hostkey_alg ? k->hostkey_alg : "(no match)");
-	if (k->hostkey_alg == NULL)
-		return SSH_ERR_NO_HOSTKEY_ALG_MATCH;
+	എങ്കിൽ (k->hostkey_alg == ശൂന്യ)
+		തിരികെ SSH_ERR_NO_HOSTKEY_ALG_MATCH;
 	k->hostkey_type = sshkey_type_from_name(k->hostkey_alg);
-	if (k->hostkey_type == KEY_UNSPEC) {
+	എങ്കിൽ (k->hostkey_type == താക്കോൽ_UNSPEC) {
 		error_f("unsupported hostkey algorithm %s", k->hostkey_alg);
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
 	k->hostkey_nid = sshkey_ecdsa_nid_from_name(k->hostkey_alg);
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-proposals_match(char *my[PROPOSAL_MAX], char *peer[PROPOSAL_MAX])
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+proposals_match(അക്ഷരം *my[PROPOSAL_MAX], അക്ഷരം *peer[PROPOSAL_MAX])
 {
-	static int check[] = {
-		PROPOSAL_KEX_ALGS, PROPOSAL_SERVER_HOST_KEY_ALGS, -1
+	സ്ഥിതം പൂർണ്ണസംഖ്യ check[] = {
+		PROPOSAL_KEX_ALGS, PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS, -1
 	};
-	int *idx;
-	char *p;
+	പൂർണ്ണസംഖ്യ *idx;
+	അക്ഷരം *p;
 
-	for (idx = &check[0]; *idx != -1; idx++) {
-		if ((p = strchr(my[*idx], ',')) != NULL)
+	വേണ്ടി (idx = &check[0]; *idx != -1; idx++) {
+		എങ്കിൽ ((p = strchr(my[*idx], ',')) != ശൂന്യ)
 			*p = '\0';
-		if ((p = strchr(peer[*idx], ',')) != NULL)
+		എങ്കിൽ ((p = strchr(peer[*idx], ',')) != ശൂന്യ)
 			*p = '\0';
-		if (strcmp(my[*idx], peer[*idx]) != 0) {
+		എങ്കിൽ (strcmp(my[*idx], peer[*idx]) != 0) {
 			debug2("proposal mismatch: my %s peer %s",
 			    my[*idx], peer[*idx]);
-			return (0);
+			തിരികെ (0);
 		}
 	}
 	debug2("proposals match");
-	return (1);
+	തിരികെ (1);
 }
 
-static int
-kexalgs_contains(char **peer, const char *ext)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+kexalgs_contains(അക്ഷരം **peer, സ്ഥിരം അക്ഷരം *ext)
 {
-	return kex_has_any_alg(peer[PROPOSAL_KEX_ALGS], ext);
+	തിരികെ kex_has_any_alg(peer[PROPOSAL_KEX_ALGS], ext);
 }
 
-static int
-kex_choose_conf(struct ssh *ssh, uint32_t seq)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+kex_choose_conf(ഘടന ssh *ssh, uint32_t seq)
 {
-	struct kex *kex = ssh->kex;
-	struct newkeys *newkeys;
-	char **my = NULL, **peer = NULL;
-	char **cprop, **sprop;
-	int nenc, nmac, ncomp;
+	ഘടന kex *kex = ssh->kex;
+	ഘടന newkeys *newkeys;
+	അക്ഷരം **my = ശൂന്യ, **peer = ശൂന്യ;
+	അക്ഷരം **cprop, **sprop;
+	പൂർണ്ണസംഖ്യ nenc, nmac, ncomp;
 	u_int mode, ctos, need, dh_need, authlen;
-	int r, first_kex_follows;
+	പൂർണ്ണസംഖ്യ r, first_kex_follows;
 
 	debug2("local %s KEXINIT proposal", kex->server ? "server" : "client");
-	if ((r = kex_buf2prop(kex->my, NULL, &my)) != 0)
-		goto out;
+	എങ്കിൽ ((r = kex_buf2prop(kex->my, ശൂന്യ, &my)) != 0)
+		പോകുക out;
 	debug2("peer %s KEXINIT proposal", kex->server ? "client" : "server");
-	if ((r = kex_buf2prop(kex->peer, &first_kex_follows, &peer)) != 0)
-		goto out;
+	എങ്കിൽ ((r = kex_buf2prop(kex->peer, &first_kex_follows, &peer)) != 0)
+		പോകുക out;
 
-	if (kex->server) {
+	എങ്കിൽ (kex->server) {
 		cprop=peer;
 		sprop=my;
-	} else {
+	} അല്ലെങ്കിൽ {
 		cprop=my;
 		sprop=peer;
 	}
 
 	/* Check whether peer supports ext_info/kex_strict */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->server) {
+	എങ്കിൽ ((kex->flags & KEX_INITIAL) != 0) {
+		എങ്കിൽ (kex->server) {
 			kex->ext_info_c = kexalgs_contains(peer, "ext-info-c");
 			kex->kex_strict = kexalgs_contains(peer,
 			    "kex-strict-c-v00@openssh.com");
-		} else {
+		} അല്ലെങ്കിൽ {
 			kex->ext_info_s = kexalgs_contains(peer, "ext-info-s");
 			kex->kex_strict = kexalgs_contains(peer,
 			    "kex-strict-s-v00@openssh.com");
 		}
-		if (kex->kex_strict) {
+		എങ്കിൽ (kex->kex_strict) {
 			debug3_f("will use strict KEX ordering");
-			if (seq != 0)
+			എങ്കിൽ (seq != 0)
 				ssh_packet_disconnect(ssh,
 				    "strict KEX violation: "
 				    "KEXINIT was not the first packet");
@@ -1012,32 +1012,32 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 	}
 
 	/* Check whether client supports rsa-sha2 algorithms */
-	if (kex->server && (kex->flags & KEX_INITIAL)) {
-		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_KEY_ALGS],
+	എങ്കിൽ (kex->server && (kex->flags & KEX_INITIAL)) {
+		എങ്കിൽ (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS],
 		    "rsa-sha2-256,rsa-sha2-256-cert-v01@openssh.com"))
 			kex->flags |= KEX_RSA_SHA2_256_SUPPORTED;
-		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_KEY_ALGS],
+		എങ്കിൽ (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS],
 		    "rsa-sha2-512,rsa-sha2-512-cert-v01@openssh.com"))
 			kex->flags |= KEX_RSA_SHA2_512_SUPPORTED;
 	}
 
 	/* Algorithm Negotiation */
-	if ((r = choose_kex(kex, cprop[PROPOSAL_KEX_ALGS],
+	എങ്കിൽ ((r = choose_kex(kex, cprop[PROPOSAL_KEX_ALGS],
 	    sprop[PROPOSAL_KEX_ALGS])) != 0) {
 		kex->failed_choice = peer[PROPOSAL_KEX_ALGS];
-		peer[PROPOSAL_KEX_ALGS] = NULL;
-		goto out;
+		peer[PROPOSAL_KEX_ALGS] = ശൂന്യ;
+		പോകുക out;
 	}
-	if ((r = choose_hostkeyalg(kex, cprop[PROPOSAL_SERVER_HOST_KEY_ALGS],
-	    sprop[PROPOSAL_SERVER_HOST_KEY_ALGS])) != 0) {
-		kex->failed_choice = peer[PROPOSAL_SERVER_HOST_KEY_ALGS];
-		peer[PROPOSAL_SERVER_HOST_KEY_ALGS] = NULL;
-		goto out;
+	എങ്കിൽ ((r = choose_hostkeyalg(kex, cprop[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS],
+	    sprop[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS])) != 0) {
+		kex->failed_choice = peer[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS];
+		peer[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS] = ശൂന്യ;
+		പോകുക out;
 	}
-	for (mode = 0; mode < MODE_MAX; mode++) {
-		if ((newkeys = calloc(1, sizeof(*newkeys))) == NULL) {
+	വേണ്ടി (mode = 0; mode < MODE_MAX; mode++) {
+		എങ്കിൽ ((newkeys = calloc(1, വലുപ്പം(*newkeys))) == ശൂന്യ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			പോകുക out;
 		}
 		kex->newkeys[mode] = newkeys;
 		ctos = (!kex->server && mode == MODE_OUT) ||
@@ -1045,26 +1045,26 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 		nenc  = ctos ? PROPOSAL_ENC_ALGS_CTOS  : PROPOSAL_ENC_ALGS_STOC;
 		nmac  = ctos ? PROPOSAL_MAC_ALGS_CTOS  : PROPOSAL_MAC_ALGS_STOC;
 		ncomp = ctos ? PROPOSAL_COMP_ALGS_CTOS : PROPOSAL_COMP_ALGS_STOC;
-		if ((r = choose_enc(&newkeys->enc, cprop[nenc],
+		എങ്കിൽ ((r = choose_enc(&newkeys->enc, cprop[nenc],
 		    sprop[nenc])) != 0) {
 			kex->failed_choice = peer[nenc];
-			peer[nenc] = NULL;
-			goto out;
+			peer[nenc] = ശൂന്യ;
+			പോകുക out;
 		}
 		authlen = cipher_authlen(newkeys->enc.cipher);
 		/* ignore mac for authenticated encryption */
-		if (authlen == 0 &&
+		എങ്കിൽ (authlen == 0 &&
 		    (r = choose_mac(ssh, &newkeys->mac, cprop[nmac],
 		    sprop[nmac])) != 0) {
 			kex->failed_choice = peer[nmac];
-			peer[nmac] = NULL;
-			goto out;
+			peer[nmac] = ശൂന്യ;
+			പോകുക out;
 		}
-		if ((r = choose_comp(&newkeys->comp, cprop[ncomp],
+		എങ്കിൽ ((r = choose_comp(&newkeys->comp, cprop[ncomp],
 		    sprop[ncomp])) != 0) {
 			kex->failed_choice = peer[ncomp];
-			peer[ncomp] = NULL;
-			goto out;
+			peer[ncomp] = ശൂന്യ;
+			പോകുക out;
 		}
 		debug("kex: %s cipher: %s MAC: %s compression: %s",
 		    ctos ? "client->server" : "server->client",
@@ -1073,52 +1073,52 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 		    newkeys->comp.name);
 	}
 	need = dh_need = 0;
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	വേണ്ടി (mode = 0; mode < MODE_MAX; mode++) {
 		newkeys = kex->newkeys[mode];
-		need = MAXIMUM(need, newkeys->enc.key_len);
+		need = MAXIMUM(need, newkeys->enc.താക്കോൽ_len);
 		need = MAXIMUM(need, newkeys->enc.block_size);
 		need = MAXIMUM(need, newkeys->enc.iv_len);
-		need = MAXIMUM(need, newkeys->mac.key_len);
+		need = MAXIMUM(need, newkeys->mac.താക്കോൽ_len);
 		dh_need = MAXIMUM(dh_need, cipher_seclen(newkeys->enc.cipher));
 		dh_need = MAXIMUM(dh_need, newkeys->enc.block_size);
 		dh_need = MAXIMUM(dh_need, newkeys->enc.iv_len);
-		dh_need = MAXIMUM(dh_need, newkeys->mac.key_len);
+		dh_need = MAXIMUM(dh_need, newkeys->mac.താക്കോൽ_len);
 	}
 	/* XXX need runden? */
 	kex->we_need = need;
 	kex->dh_need = dh_need;
 
 	/* ignore the next message if the proposals do not match */
-	if (first_kex_follows && !proposals_match(my, peer))
+	എങ്കിൽ (first_kex_follows && !proposals_match(my, peer))
 		ssh->dispatch_skip_packets = 1;
 	r = 0;
  out:
 	kex_prop_free(my);
 	kex_prop_free(peer);
-	return r;
+	തിരികെ r;
 }
 
-static int
-derive_key(struct ssh *ssh, int id, u_int need, u_char *hash, u_int hashlen,
-    const struct sshbuf *shared_secret, u_char **keyp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+derive_താക്കോൽ(ഘടന ssh *ssh, പൂർണ്ണസംഖ്യ id, u_int need, u_char *hash, u_int hashlen,
+    സ്ഥിരം ഘടന sshbuf *shared_secret, u_char **keyp)
 {
-	struct kex *kex = ssh->kex;
-	struct ssh_digest_ctx *hashctx = NULL;
-	char c = id;
+	ഘടന kex *kex = ssh->kex;
+	ഘടന ssh_digest_ctx *hashctx = ശൂന്യ;
+	അക്ഷരം c = id;
 	u_int have;
 	size_t mdsz;
 	u_char *digest;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((mdsz = ssh_digest_bytes(kex->hash_alg)) == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((digest = calloc(1, ROUNDUP(need, mdsz))) == NULL) {
+	എങ്കിൽ ((mdsz = ssh_digest_bytes(kex->hash_alg)) == 0)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ ((digest = calloc(1, ROUNDUP(need, mdsz))) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 
 	/* K1 = HASH(K || H || "A" || session_id) */
-	if ((hashctx = ssh_digest_start(kex->hash_alg)) == NULL ||
+	എങ്കിൽ ((hashctx = ssh_digest_start(kex->hash_alg)) == ശൂന്യ ||
 	    ssh_digest_update_buffer(hashctx, shared_secret) != 0 ||
 	    ssh_digest_update(hashctx, hash, hashlen) != 0 ||
 	    ssh_digest_update(hashctx, &c, 1) != 0 ||
@@ -1126,126 +1126,126 @@ derive_key(struct ssh *ssh, int id, u_int need, u_char *hash, u_int hashlen,
 	    ssh_digest_final(hashctx, digest, mdsz) != 0) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		error_f("KEX hash failed");
-		goto out;
+		പോകുക out;
 	}
 	ssh_digest_free(hashctx);
-	hashctx = NULL;
+	hashctx = ശൂന്യ;
 
 	/*
 	 * expand key:
 	 * Kn = HASH(K || H || K1 || K2 || ... || Kn-1)
 	 * Key = K1 || K2 || ... || Kn
 	 */
-	for (have = mdsz; need > have; have += mdsz) {
-		if ((hashctx = ssh_digest_start(kex->hash_alg)) == NULL ||
+	വേണ്ടി (have = mdsz; need > have; have += mdsz) {
+		എങ്കിൽ ((hashctx = ssh_digest_start(kex->hash_alg)) == ശൂന്യ ||
 		    ssh_digest_update_buffer(hashctx, shared_secret) != 0 ||
 		    ssh_digest_update(hashctx, hash, hashlen) != 0 ||
 		    ssh_digest_update(hashctx, digest, have) != 0 ||
 		    ssh_digest_final(hashctx, digest + have, mdsz) != 0) {
 			error_f("KDF failed");
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			പോകുക out;
 		}
 		ssh_digest_free(hashctx);
-		hashctx = NULL;
+		hashctx = ശൂന്യ;
 	}
 #ifdef DEBUG_KEX
 	fprintf(stderr, "key '%c'== ", c);
 	dump_digest("key", digest, need);
 #endif
 	*keyp = digest;
-	digest = NULL;
+	digest = ശൂന്യ;
 	r = 0;
  out:
-	free(digest);
+	സ്വതന്ത്രം(digest);
 	ssh_digest_free(hashctx);
-	return r;
+	തിരികെ r;
 }
 
 #define NKEYS	6
-int
-kex_derive_keys(struct ssh *ssh, u_char *hash, u_int hashlen,
-    const struct sshbuf *shared_secret)
+പൂർണ്ണസംഖ്യ
+kex_derive_താക്കോലുകൾ(ഘടന ssh *ssh, u_char *hash, u_int hashlen,
+    സ്ഥിരം ഘടന sshbuf *shared_secret)
 {
-	struct kex *kex = ssh->kex;
-	u_char *keys[NKEYS];
+	ഘടന kex *kex = ssh->kex;
+	u_char *താക്കോലുകൾ[NKEYS];
 	u_int i, j, mode, ctos;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	/* save initial hash as session id */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (sshbuf_len(kex->session_id) != 0) {
+	എങ്കിൽ ((kex->flags & KEX_INITIAL) != 0) {
+		എങ്കിൽ (sshbuf_len(kex->session_id) != 0) {
 			error_f("already have session ID at kex");
-			return SSH_ERR_INTERNAL_ERROR;
+			തിരികെ SSH_ERR_INTERNAL_ERROR;
 		}
-		if ((r = sshbuf_put(kex->session_id, hash, hashlen)) != 0)
-			return r;
-	} else if (sshbuf_len(kex->session_id) == 0) {
+		എങ്കിൽ ((r = sshbuf_put(kex->session_id, hash, hashlen)) != 0)
+			തിരികെ r;
+	} അല്ലെങ്കിൽ എങ്കിൽ (sshbuf_len(kex->session_id) == 0) {
 		error_f("no session ID in rekex");
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
-	for (i = 0; i < NKEYS; i++) {
-		if ((r = derive_key(ssh, 'A'+i, kex->we_need, hash, hashlen,
-		    shared_secret, &keys[i])) != 0) {
-			for (j = 0; j < i; j++)
-				free(keys[j]);
-			return r;
+	വേണ്ടി (i = 0; i < NKEYS; i++) {
+		എങ്കിൽ ((r = derive_താക്കോൽ(ssh, 'A'+i, kex->we_need, hash, hashlen,
+		    shared_secret, &താക്കോലുകൾ[i])) != 0) {
+			വേണ്ടി (j = 0; j < i; j++)
+				സ്വതന്ത്രം(താക്കോലുകൾ[j]);
+			തിരികെ r;
 		}
 	}
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	വേണ്ടി (mode = 0; mode < MODE_MAX; mode++) {
 		ctos = (!kex->server && mode == MODE_OUT) ||
 		    (kex->server && mode == MODE_IN);
-		kex->newkeys[mode]->enc.iv  = keys[ctos ? 0 : 1];
-		kex->newkeys[mode]->enc.key = keys[ctos ? 2 : 3];
-		kex->newkeys[mode]->mac.key = keys[ctos ? 4 : 5];
+		kex->newkeys[mode]->enc.iv  = താക്കോലുകൾ[ctos ? 0 : 1];
+		kex->newkeys[mode]->enc.താക്കോൽ = താക്കോലുകൾ[ctos ? 2 : 3];
+		kex->newkeys[mode]->mac.താക്കോൽ = താക്കോലുകൾ[ctos ? 4 : 5];
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-int
-kex_load_hostkey(struct ssh *ssh, struct sshkey **prvp, struct sshkey **pubp)
+പൂർണ്ണസംഖ്യ
+kex_load_hostkey(ഘടന ssh *ssh, ഘടന sshkey **prvp, ഘടന sshkey **pubp)
 {
-	struct kex *kex = ssh->kex;
+	ഘടന kex *kex = ssh->kex;
 
-	*pubp = NULL;
-	*prvp = NULL;
-	if (kex->load_host_public_key == NULL ||
-	    kex->load_host_private_key == NULL) {
+	*pubp = ശൂന്യ;
+	*prvp = ശൂന്യ;
+	എങ്കിൽ (kex->load_host_public_താക്കോൽ == ശൂന്യ ||
+	    kex->load_host_private_താക്കോൽ == ശൂന്യ) {
 		error_f("missing hostkey loader");
-		return SSH_ERR_INVALID_ARGUMENT;
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 	}
-	*pubp = kex->load_host_public_key(kex->hostkey_type,
+	*pubp = kex->load_host_public_താക്കോൽ(kex->hostkey_type,
 	    kex->hostkey_nid, ssh);
-	*prvp = kex->load_host_private_key(kex->hostkey_type,
+	*prvp = kex->load_host_private_താക്കോൽ(kex->hostkey_type,
 	    kex->hostkey_nid, ssh);
-	if (*pubp == NULL)
-		return SSH_ERR_NO_HOSTKEY_LOADED;
-	return 0;
+	എങ്കിൽ (*pubp == ശൂന്യ)
+		തിരികെ SSH_ERR_NO_HOSTKEY_LOADED;
+	തിരികെ 0;
 }
 
-int
-kex_verify_host_key(struct ssh *ssh, struct sshkey *server_host_key)
+പൂർണ്ണസംഖ്യ
+kex_verify_host_താക്കോൽ(ഘടന ssh *ssh, ഘടന sshkey *server_host_താക്കോൽ)
 {
-	struct kex *kex = ssh->kex;
+	ഘടന kex *kex = ssh->kex;
 
-	if (kex->verify_host_key == NULL) {
+	എങ്കിൽ (kex->verify_host_താക്കോൽ == ശൂന്യ) {
 		error_f("missing hostkey verifier");
-		return SSH_ERR_INVALID_ARGUMENT;
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (server_host_key->type != kex->hostkey_type ||
-	    (kex->hostkey_type == KEY_ECDSA &&
-	    server_host_key->ecdsa_nid != kex->hostkey_nid))
-		return SSH_ERR_KEY_TYPE_MISMATCH;
-	if (kex->verify_host_key(server_host_key, ssh) == -1)
-		return  SSH_ERR_SIGNATURE_INVALID;
-	return 0;
+	എങ്കിൽ (server_host_താക്കോൽ->type != kex->hostkey_type ||
+	    (kex->hostkey_type == താക്കോൽ_ECDSA &&
+	    server_host_താക്കോൽ->ecdsa_nid != kex->hostkey_nid))
+		തിരികെ SSH_ERR_താക്കോൽ_TYPE_MISMATCH;
+	എങ്കിൽ (kex->verify_host_താക്കോൽ(server_host_താക്കോൽ, ssh) == -1)
+		തിരികെ  SSH_ERR_SIGNATURE_INVALID;
+	തിരികെ 0;
 }
 
-#if defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
-void
-dump_digest(const char *msg, const u_char *digest, int len)
+#എങ്കിൽ defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
+ശൂന്യം
+dump_digest(സ്ഥിരം അക്ഷരം *സന്ദേശം, സ്ഥിരം u_char *digest, പൂർണ്ണസംഖ്യ len)
 {
-	fprintf(stderr, "%s\n", msg);
+	fprintf(stderr, "%s\n", സന്ദേശം);
 	sshbuf_dump_data(digest, len, stderr);
 }
 #endif
@@ -1254,16 +1254,16 @@ dump_digest(const char *msg, const u_char *digest, int len)
  * Send a plaintext error message to the peer, suffixed by \r\n.
  * Only used during banner exchange, and there only for the server.
  */
-static void
-send_error(struct ssh *ssh, char *msg)
+സ്ഥിതം ശൂന്യം
+send_error(ഘടന ssh *ssh, അക്ഷരം *സന്ദേശം)
 {
-	char *crnl = "\r\n";
+	അക്ഷരം *crnl = "\r\n";
 
-	if (!ssh->kex->server)
-		return;
+	എങ്കിൽ (!ssh->kex->server)
+		തിരികെ;
 
-	if (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
-	    msg, strlen(msg)) != strlen(msg) ||
+	എങ്കിൽ (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
+	    സന്ദേശം, strlen(സന്ദേശം)) != strlen(സന്ദേശം) ||
 	    atomicio(vwrite, ssh_packet_get_connection_out(ssh),
 	    crnl, strlen(crnl)) != strlen(crnl))
 		error_f("write: %.100s", strerror(errno));
@@ -1274,208 +1274,208 @@ send_error(struct ssh *ssh, char *msg)
  * up to timeout_ms (or indefinitely if timeout_ms <= 0).
  * Returns on 0 success or a ssherr.h code on failure.
  */
-int
-kex_exchange_identification(struct ssh *ssh, int timeout_ms,
-    const char *version_addendum)
+പൂർണ്ണസംഖ്യ
+kex_exchange_identification(ഘടന ssh *ssh, പൂർണ്ണസംഖ്യ timeout_ms,
+    സ്ഥിരം അക്ഷരം *version_addendum)
 {
-	int remote_major, remote_minor, mismatch, oerrno = 0;
+	പൂർണ്ണസംഖ്യ remote_major, remote_minor, mismatch, oerrno = 0;
 	size_t len, n;
-	int r, expect_nl;
+	പൂർണ്ണസംഖ്യ r, expect_nl;
 	u_char c;
-	struct sshbuf *our_version = ssh->kex->server ?
+	ഘടന sshbuf *our_version = ssh->kex->server ?
 	    ssh->kex->server_version : ssh->kex->client_version;
-	struct sshbuf *peer_version = ssh->kex->server ?
+	ഘടന sshbuf *peer_version = ssh->kex->server ?
 	    ssh->kex->client_version : ssh->kex->server_version;
-	char *our_version_string = NULL, *peer_version_string = NULL;
-	char *cp, *remote_version = NULL;
+	അക്ഷരം *our_version_string = ശൂന്യ, *peer_version_string = ശൂന്യ;
+	അക്ഷരം *cp, *remote_version = ശൂന്യ;
 
 	/* Prepare and send our banner */
 	sshbuf_reset(our_version);
-	if (version_addendum != NULL && *version_addendum == '\0')
-		version_addendum = NULL;
-	if ((r = sshbuf_putf(our_version, "SSH-%d.%d-%s%s%s\r\n",
+	എങ്കിൽ (version_addendum != ശൂന്യ && *version_addendum == '\0')
+		version_addendum = ശൂന്യ;
+	എങ്കിൽ ((r = sshbuf_putf(our_version, "SSH-%d.%d-%s%s%s\r\n",
 	    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2, SSH_VERSION,
-	    version_addendum == NULL ? "" : " ",
-	    version_addendum == NULL ? "" : version_addendum)) != 0) {
+	    version_addendum == ശൂന്യ ? "" : " ",
+	    version_addendum == ശൂന്യ ? "" : version_addendum)) != 0) {
 		oerrno = errno;
 		error_fr(r, "sshbuf_putf");
-		goto out;
+		പോകുക out;
 	}
 
-	if (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
+	എങ്കിൽ (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
 	    sshbuf_mutable_ptr(our_version),
 	    sshbuf_len(our_version)) != sshbuf_len(our_version)) {
 		oerrno = errno;
 		debug_f("write: %.100s", strerror(errno));
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_consume_end(our_version, 2)) != 0) { /* trim \r\n */
+	എങ്കിൽ ((r = sshbuf_consume_end(our_version, 2)) != 0) { /* trim \r\n */
 		oerrno = errno;
 		error_fr(r, "sshbuf_consume_end");
-		goto out;
+		പോകുക out;
 	}
 	our_version_string = sshbuf_dup_string(our_version);
-	if (our_version_string == NULL) {
+	എങ്കിൽ (our_version_string == ശൂന്യ) {
 		error_f("sshbuf_dup_string failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 	debug("Local version string %.100s", our_version_string);
 
 	/* Read other side's version identification. */
-	for (n = 0; ; n++) {
-		if (n >= SSH_MAX_PRE_BANNER_LINES) {
+	വേണ്ടി (n = 0; ; n++) {
+		എങ്കിൽ (n >= SSH_MAX_PRE_BANNER_വരികൾ) {
 			send_error(ssh, "No SSH identification string "
 			    "received.");
 			error_f("No SSH version received in first %u lines "
-			    "from server", SSH_MAX_PRE_BANNER_LINES);
+			    "from server", SSH_MAX_PRE_BANNER_വരികൾ);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			പോകുക out;
 		}
 		sshbuf_reset(peer_version);
 		expect_nl = 0;
-		for (;;) {
-			if (timeout_ms > 0) {
+		വേണ്ടി (;;) {
+			എങ്കിൽ (timeout_ms > 0) {
 				r = waitrfd(ssh_packet_get_connection_in(ssh),
-				    &timeout_ms, NULL);
-				if (r == -1 && errno == ETIMEDOUT) {
+				    &timeout_ms, ശൂന്യ);
+				എങ്കിൽ (r == -1 && errno == ETIMEDOUT) {
 					send_error(ssh, "Timed out waiting "
 					    "for SSH identification string.");
 					error("Connection timed out during "
 					    "banner exchange");
 					r = SSH_ERR_CONN_TIMEOUT;
-					goto out;
-				} else if (r == -1) {
+					പോകുക out;
+				} അല്ലെങ്കിൽ എങ്കിൽ (r == -1) {
 					oerrno = errno;
 					error_f("%s", strerror(errno));
 					r = SSH_ERR_SYSTEM_ERROR;
-					goto out;
+					പോകുക out;
 				}
 			}
 
-			len = atomicio(read, ssh_packet_get_connection_in(ssh),
+			len = atomicio(പഠ, ssh_packet_get_connection_in(ssh),
 			    &c, 1);
-			if (len != 1 && errno == EPIPE) {
+			എങ്കിൽ (len != 1 && errno == EPIPE) {
 				verbose_f("Connection closed by remote host");
 				r = SSH_ERR_CONN_CLOSED;
-				goto out;
-			} else if (len != 1) {
+				പോകുക out;
+			} അല്ലെങ്കിൽ എങ്കിൽ (len != 1) {
 				oerrno = errno;
 				error_f("read: %.100s", strerror(errno));
 				r = SSH_ERR_SYSTEM_ERROR;
-				goto out;
+				പോകുക out;
 			}
-			if (c == '\r') {
+			എങ്കിൽ (c == '\r') {
 				expect_nl = 1;
-				continue;
+				തുടരുക;
 			}
-			if (c == '\n')
-				break;
-			if (c == '\0' || expect_nl) {
+			എങ്കിൽ (c == '\n')
+				നിർത്തുക;
+			എങ്കിൽ (c == '\0' || expect_nl) {
 				verbose_f("banner line contains invalid "
 				    "characters");
-				goto invalid;
+				പോകുക invalid;
 			}
-			if ((r = sshbuf_put_u8(peer_version, c)) != 0) {
+			എങ്കിൽ ((r = sshbuf_put_u8(peer_version, c)) != 0) {
 				oerrno = errno;
 				error_fr(r, "sshbuf_put");
-				goto out;
+				പോകുക out;
 			}
-			if (sshbuf_len(peer_version) > SSH_MAX_BANNER_LEN) {
+			എങ്കിൽ (sshbuf_len(peer_version) > SSH_MAX_BANNER_LEN) {
 				verbose_f("banner line too long");
-				goto invalid;
+				പോകുക invalid;
 			}
 		}
 		/* Is this an actual protocol banner? */
-		if (sshbuf_len(peer_version) > 4 &&
+		എങ്കിൽ (sshbuf_len(peer_version) > 4 &&
 		    memcmp(sshbuf_ptr(peer_version), "SSH-", 4) == 0)
-			break;
+			നിർത്തുക;
 		/* If not, then just log the line and continue */
-		if ((cp = sshbuf_dup_string(peer_version)) == NULL) {
+		എങ്കിൽ ((cp = sshbuf_dup_string(peer_version)) == ശൂന്യ) {
 			error_f("sshbuf_dup_string failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			പോകുക out;
 		}
 		/* Do not accept lines before the SSH ident from a client */
-		if (ssh->kex->server) {
+		എങ്കിൽ (ssh->kex->server) {
 			verbose_f("client sent invalid protocol identifier "
 			    "\"%.256s\"", cp);
-			free(cp);
-			goto invalid;
+			സ്വതന്ത്രം(cp);
+			പോകുക invalid;
 		}
 		debug_f("banner line %zu: %s", n, cp);
-		free(cp);
+		സ്വതന്ത്രം(cp);
 	}
 	peer_version_string = sshbuf_dup_string(peer_version);
-	if (peer_version_string == NULL)
+	എങ്കിൽ (peer_version_string == ശൂന്യ)
 		fatal_f("sshbuf_dup_string failed");
 	/* XXX must be same size for sscanf */
-	if ((remote_version = calloc(1, sshbuf_len(peer_version))) == NULL) {
+	എങ്കിൽ ((remote_version = calloc(1, sshbuf_len(peer_version))) == ശൂന്യ) {
 		error_f("calloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 
 	/*
 	 * Check that the versions match.  In future this might accept
 	 * several versions and set appropriate flags to handle them.
 	 */
-	if (sscanf(peer_version_string, "SSH-%d.%d-%[^\n]\n",
+	എങ്കിൽ (sscanf(peer_version_string, "SSH-%d.%d-%[^\n]\n",
 	    &remote_major, &remote_minor, remote_version) != 3) {
 		error("Bad remote protocol version identification: '%.100s'",
 		    peer_version_string);
  invalid:
 		send_error(ssh, "Invalid SSH identification string.");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
 	debug("Remote protocol version %d.%d, remote software version %.100s",
 	    remote_major, remote_minor, remote_version);
 	compat_banner(ssh, remote_version);
 
 	mismatch = 0;
-	switch (remote_major) {
-	case 2:
-		break;
-	case 1:
-		if (remote_minor != 99)
+	തിരഞ്ഞെടുപ്പ് (remote_major) {
+	അവസ്ഥ 2:
+		നിർത്തുക;
+	അവസ്ഥ 1:
+		എങ്കിൽ (remote_minor != 99)
 			mismatch = 1;
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		mismatch = 1;
-		break;
+		നിർത്തുക;
 	}
-	if (mismatch) {
+	എങ്കിൽ (mismatch) {
 		error("Protocol major versions differ: %d vs. %d",
 		    PROTOCOL_MAJOR_2, remote_major);
 		send_error(ssh, "Protocol major versions differ.");
 		r = SSH_ERR_NO_PROTOCOL_VERSION;
-		goto out;
+		പോകുക out;
 	}
 
-	if (ssh->kex->server && (ssh->compat & SSH_BUG_PROBE) != 0) {
+	എങ്കിൽ (ssh->kex->server && (ssh->compat & SSH_BUG_PROBE) != 0) {
 		logit("probed from %s port %d with %s.  Don't panic.",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    peer_version_string);
 		r = SSH_ERR_CONN_CLOSED; /* XXX */
-		goto out;
+		പോകുക out;
 	}
-	if (ssh->kex->server && (ssh->compat & SSH_BUG_SCANNER) != 0) {
+	എങ്കിൽ (ssh->kex->server && (ssh->compat & SSH_BUG_SCANNER) != 0) {
 		logit("scanned from %s port %d with %s.  Don't panic.",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    peer_version_string);
 		r = SSH_ERR_CONN_CLOSED; /* XXX */
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(our_version_string);
-	free(peer_version_string);
+	സ്വതന്ത്രം(our_version_string);
+	സ്വതന്ത്രം(peer_version_string);
 	ssh->remote_version = remote_version;  /* transferred */
-	if (r == SSH_ERR_SYSTEM_ERROR)
+	എങ്കിൽ (r == SSH_ERR_SYSTEM_ERROR)
 		errno = oerrno;
-	return r;
+	തിരികെ r;
 }
 

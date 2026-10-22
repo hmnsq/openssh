@@ -15,38 +15,38 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-extern "C" {
+ബാഹ്യ "C" {
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include "ssherr.h"
-#include "ssh-sk.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "ssh-sk.h"
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+പൂർണ്ണസംഖ്യ
+sshsk_enroll(പൂർണ്ണസംഖ്യ type, സ്ഥിരം അക്ഷരം *provider_path, സ്ഥിരം അക്ഷരം *device,
+    സ്ഥിരം അക്ഷരം *application, സ്ഥിരം അക്ഷരം *userid, uint8_t flags,
+    സ്ഥിരം അക്ഷരം *pin, ഘടന sshbuf *challenge_buf,
+    ഘടന sshkey **keyp, ഘടന sshbuf *attest)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	തിരികെ SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+പൂർണ്ണസംഖ്യ
+sshsk_sign(സ്ഥിരം അക്ഷരം *provider_path, ഘടന sshkey *താക്കോൽ,
+    u_char **sigp, size_t *lenp, സ്ഥിരം u_char *data, size_t datalen,
+    u_int compat, സ്ഥിരം അക്ഷരം *pin)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	തിരികെ SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+പൂർണ്ണസംഖ്യ
+sshsk_load_resident(സ്ഥിരം അക്ഷരം *provider_path, സ്ഥിരം അക്ഷരം *device,
+    സ്ഥിരം അക്ഷരം *pin, u_int flags, ഘടന sshsk_resident_താക്കോൽ ***srksp,
     size_t *nsrksp)
 {
-	return SSH_ERR_FEATURE_UNSUPPORTED;
+	തിരികെ SSH_ERR_FEATURE_UNSUPPORTED;
 }
 
 };

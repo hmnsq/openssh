@@ -13,91 +13,91 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/wait.h>
+#അന്തര്ഭാവ <sys/socket.h>
 
-#include <net/if.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#അന്തര്ഭാവ <net/if.h>
+#അന്തര്ഭാവ <netinet/in.h>
+#അന്തര്ഭാവ <arpa/inet.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <ifaddrs.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <netdb.h>
+#അന്തര്ഭാവ <paths.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <poll.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <ifaddrs.h>
 
-#include "xmalloc.h"
-#include "hostfile.h"
-#include "ssh.h"
-#include "compat.h"
-#include "packet.h"
-#include "sshkey.h"
-#include "sshconnect.h"
-#include "log.h"
-#include "match.h"
-#include "misc.h"
-#include "readconf.h"
-#include "dns.h"
-#include "monitor_fdpass.h"
-#include "authfile.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "kex.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "compat.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "sshconnect.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "match.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "readconf.h"
+#അന്തര്ഭാവ "dns.h"
+#അന്തര്ഭാവ "monitor_fdpass.h"
+#അന്തര്ഭാവ "authfile.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "authfd.h"
+#അന്തര്ഭാവ "kex.h"
 
-struct sshkey *previous_host_key = NULL;
+ഘടന sshkey *previous_host_താക്കോൽ = ശൂന്യ;
 
-static int matching_host_key_dns = 0;
+സ്ഥിതം പൂർണ്ണസംഖ്യ matching_host_താക്കോൽ_dns = 0;
 
-static pid_t proxy_command_pid = 0;
+സ്ഥിതം pid_t proxy_command_pid = 0;
 
 /* import */
-extern int debug_flag;
-extern Options options;
-extern char *__progname;
+ബാഹ്യ പൂർണ്ണസംഖ്യ debug_flag;
+ബാഹ്യ Options options;
+ബാഹ്യ അക്ഷരം *__progname;
 
-static int show_other_keys(struct hostkeys *, struct sshkey *);
-static void warn_changed_key(struct sshkey *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ show_other_താക്കോലുകൾ(ഘടന hostkeys *, ഘടന sshkey *);
+സ്ഥിതം ശൂന്യം warn_changed_താക്കോൽ(ഘടന sshkey *);
 
-void
-ssh_conn_info_free(struct ssh_conn_info *cinfo)
+ശൂന്യം
+ssh_conn_info_free(ഘടന ssh_conn_info *cinfo)
 {
-	if (cinfo == NULL)
-		return;
-	free(cinfo->conn_hash_hex);
-	free(cinfo->shorthost);
-	free(cinfo->uidstr);
-	free(cinfo->keyalias);
-	free(cinfo->thishost);
-	free(cinfo->host_arg);
-	free(cinfo->portstr);
-	free(cinfo->remhost);
-	free(cinfo->remuser);
-	free(cinfo->homedir);
-	free(cinfo->locuser);
-	free(cinfo->jmphost);
-	freezero(cinfo, sizeof(*cinfo));
+	എങ്കിൽ (cinfo == ശൂന്യ)
+		തിരികെ;
+	സ്വതന്ത്രം(cinfo->conn_hash_hex);
+	സ്വതന്ത്രം(cinfo->shorthost);
+	സ്വതന്ത്രം(cinfo->uidstr);
+	സ്വതന്ത്രം(cinfo->keyalias);
+	സ്വതന്ത്രം(cinfo->thishost);
+	സ്വതന്ത്രം(cinfo->host_arg);
+	സ്വതന്ത്രം(cinfo->portstr);
+	സ്വതന്ത്രം(cinfo->remhost);
+	സ്വതന്ത്രം(cinfo->remuser);
+	സ്വതന്ത്രം(cinfo->homedir);
+	സ്വതന്ത്രം(cinfo->locuser);
+	സ്വതന്ത്രം(cinfo->jmphost);
+	freezero(cinfo, വലുപ്പം(*cinfo));
 }
 
-struct ssh_conn_info *
-ssh_conn_info_dup(const struct ssh_conn_info *cinfo)
+ഘടന ssh_conn_info *
+ssh_conn_info_dup(സ്ഥിരം ഘടന ssh_conn_info *cinfo)
 {
-	struct ssh_conn_info *ret;
+	ഘടന ssh_conn_info *ret;
 
-	if (cinfo == NULL)
-		return NULL;
-	ret = xcalloc(1, sizeof(*ret));
+	എങ്കിൽ (cinfo == ശൂന്യ)
+		തിരികെ ശൂന്യ;
+	ret = xcalloc(1, വലുപ്പം(*ret));
 	ret->conn_hash_hex = xstrdup(cinfo->conn_hash_hex);
 	ret->shorthost = xstrdup(cinfo->shorthost);
 	ret->uidstr = xstrdup(cinfo->uidstr);
@@ -110,19 +110,19 @@ ssh_conn_info_dup(const struct ssh_conn_info *cinfo)
 	ret->homedir = xstrdup(cinfo->homedir);
 	ret->locuser = xstrdup(cinfo->locuser);
 	ret->jmphost = xstrdup(cinfo->jmphost);
-	return ret;
+	തിരികെ ret;
 }
 
 /* Expand a proxy command */
-static char *
-expand_proxy_command(const char *proxy_command, const char *user,
-    const char *host, const char *host_arg, int port)
+സ്ഥിതം അക്ഷരം *
+expand_proxy_command(സ്ഥിരം അക്ഷരം *proxy_command, സ്ഥിരം അക്ഷരം *user,
+    സ്ഥിരം അക്ഷരം *host, സ്ഥിരം അക്ഷരം *host_arg, പൂർണ്ണസംഖ്യ port)
 {
-	char *tmp, *ret, strport[NI_MAXSERV];
-	const char *keyalias = options.host_key_alias ?
-	    options.host_key_alias : host_arg;
+	അക്ഷരം *tmp, *ret, strport[NI_MAXSERV];
+	സ്ഥിരം അക്ഷരം *keyalias = options.host_താക്കോൽ_alias ?
+	    options.host_താക്കോൽ_alias : host_arg;
 
-	snprintf(strport, sizeof strport, "%d", port);
+	snprintf(strport, വലുപ്പം strport, "%d", port);
 	xasprintf(&tmp, "exec %s", proxy_command);
 	ret = percent_expand(tmp,
 	    "h", host,
@@ -130,28 +130,28 @@ expand_proxy_command(const char *proxy_command, const char *user,
 	    "n", host_arg,
 	    "p", strport,
 	    "r", options.user,
-	    (char *)NULL);
-	free(tmp);
-	return ret;
+	    (അക്ഷരം *)ശൂന്യ);
+	സ്വതന്ത്രം(tmp);
+	തിരികെ ret;
 }
 
 /*
  * Connect to the given ssh server using a proxy command that passes a
  * a connected fd back to us.
  */
-static int
-ssh_proxy_fdpass_connect(struct ssh *ssh, const char *host,
-    const char *host_arg, u_short port, const char *proxy_command)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_proxy_fdpass_connect(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *host,
+    സ്ഥിരം അക്ഷരം *host_arg, u_short port, സ്ഥിരം അക്ഷരം *proxy_command)
 {
-	char *command_string;
-	int sp[2], sock;
+	അക്ഷരം *command_string;
+	പൂർണ്ണസംഖ്യ sp[2], sock;
 	pid_t pid;
-	char *shell;
+	അക്ഷരം *shell;
 
-	if ((shell = getenv("SHELL")) == NULL)
+	എങ്കിൽ ((shell = getenv("SHELL")) == ശൂന്യ)
 		shell = _PATH_BSHELL;
 
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sp) == -1)
+	എങ്കിൽ (socketpair(AF_UNIX, SOCK_STREAM, 0, sp) == -1)
 		fatal("Could not create socketpair to communicate with "
 		    "proxy dialer: %.100s", strerror(errno));
 
@@ -160,34 +160,34 @@ ssh_proxy_fdpass_connect(struct ssh *ssh, const char *host,
 	debug("Executing proxy dialer command: %.500s", command_string);
 
 	/* Fork and execute the proxy command. */
-	if ((pid = fork()) == 0) {
-		char *argv[10];
+	എങ്കിൽ ((pid = fork()) == 0) {
+		അക്ഷരം *argv[10];
 
 		close(sp[1]);
 		/* Redirect stdin and stdout. */
-		if (sp[0] != 0) {
-			if (dup2(sp[0], 0) == -1)
+		എങ്കിൽ (sp[0] != 0) {
+			എങ്കിൽ (dup2(sp[0], 0) == -1)
 				perror("dup2 stdin");
 		}
-		if (sp[0] != 1) {
-			if (dup2(sp[0], 1) == -1)
+		എങ്കിൽ (sp[0] != 1) {
+			എങ്കിൽ (dup2(sp[0], 1) == -1)
 				perror("dup2 stdout");
 		}
-		if (sp[0] >= 2)
+		എങ്കിൽ (sp[0] >= 2)
 			close(sp[0]);
 
 		/*
 		 * Stderr is left for non-ControlPersist connections is so
 		 * error messages may be printed on the user's terminal.
 		 */
-		if (!debug_flag && options.control_path != NULL &&
+		എങ്കിൽ (!debug_flag && options.control_path != ശൂന്യ &&
 		    options.control_persist && stdfd_devnull(0, 0, 1) == -1)
 			error_f("stdfd_devnull failed");
 
 		argv[0] = shell;
 		argv[1] = "-c";
 		argv[2] = command_string;
-		argv[3] = NULL;
+		argv[3] = ശൂന്യ;
 
 		/*
 		 * Execute the proxy command.
@@ -198,43 +198,43 @@ ssh_proxy_fdpass_connect(struct ssh *ssh, const char *host,
 		exit(1);
 	}
 	/* Parent. */
-	if (pid == -1)
+	എങ്കിൽ (pid == -1)
 		fatal("fork failed: %.100s", strerror(errno));
 	close(sp[0]);
-	free(command_string);
+	സ്വതന്ത്രം(command_string);
 
-	if ((sock = mm_receive_fd(sp[1])) == -1)
+	എങ്കിൽ ((sock = mm_receive_fd(sp[1])) == -1)
 		fatal("proxy dialer did not pass back a connection");
 	close(sp[1]);
 
-	while (waitpid(pid, NULL, 0) == -1)
-		if (errno != EINTR)
+	ആകുമ്പോൾ (waitpid(pid, ശൂന്യ, 0) == -1)
+		എങ്കിൽ (errno != EINTR)
 			fatal("Couldn't wait for child: %s", strerror(errno));
 
 	/* Set the connection file descriptors. */
-	if (ssh_packet_set_connection(ssh, sock, sock) == NULL)
-		return -1; /* ssh_packet_set_connection logs error */
+	എങ്കിൽ (ssh_packet_set_connection(ssh, sock, sock) == ശൂന്യ)
+		തിരികെ -1; /* ssh_packet_set_connection logs error */
 
-	return 0;
+	തിരികെ 0;
 }
 
 /*
  * Connect to the given ssh server using a proxy command.
  */
-static int
-ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
-    u_short port, const char *proxy_command)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_proxy_connect(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *host, സ്ഥിരം അക്ഷരം *host_arg,
+    u_short port, സ്ഥിരം അക്ഷരം *proxy_command)
 {
-	char *command_string;
-	int pin[2], pout[2];
+	അക്ഷരം *command_string;
+	പൂർണ്ണസംഖ്യ pin[2], pout[2];
 	pid_t pid;
-	char *shell;
+	അക്ഷരം *shell;
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	എങ്കിൽ ((shell = getenv("SHELL")) == ശൂന്യ || *shell == '\0')
 		shell = _PATH_BSHELL;
 
 	/* Create pipes for communicating with the proxy. */
-	if (pipe(pin) == -1 || pipe(pout) == -1)
+	എങ്കിൽ (pipe(pin) == -1 || pipe(pout) == -1)
 		fatal("Could not create pipes to communicate with the proxy: %.100s",
 		    strerror(errno));
 
@@ -243,18 +243,18 @@ ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
 	debug("Executing proxy command: %.500s", command_string);
 
 	/* Fork and execute the proxy command. */
-	if ((pid = fork()) == 0) {
-		char *argv[10];
+	എങ്കിൽ ((pid = fork()) == 0) {
+		അക്ഷരം *argv[10];
 
 		/* Redirect stdin and stdout. */
 		close(pin[1]);
-		if (pin[0] != 0) {
-			if (dup2(pin[0], 0) == -1)
+		എങ്കിൽ (pin[0] != 0) {
+			എങ്കിൽ (dup2(pin[0], 0) == -1)
 				perror("dup2 stdin");
 			close(pin[0]);
 		}
 		close(pout[0]);
-		if (dup2(pout[1], 1) == -1)
+		എങ്കിൽ (dup2(pout[1], 1) == -1)
 			perror("dup2 stdout");
 		/* Cannot be 1 because pin allocated two descriptors. */
 		close(pout[1]);
@@ -263,14 +263,14 @@ ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
 		 * Stderr is left for non-ControlPersist connections is so
 		 * error messages may be printed on the user's terminal.
 		 */
-		if (!debug_flag && options.control_path != NULL &&
+		എങ്കിൽ (!debug_flag && options.control_path != ശൂന്യ &&
 		    options.control_persist && stdfd_devnull(0, 0, 1) == -1)
 			error_f("stdfd_devnull failed");
 
 		argv[0] = shell;
 		argv[1] = "-c";
 		argv[2] = command_string;
-		argv[3] = NULL;
+		argv[3] = ശൂന്യ;
 
 		/*
 		 * Execute the proxy command.  Note that we gave up any
@@ -282,9 +282,9 @@ ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
 		exit(1);
 	}
 	/* Parent. */
-	if (pid == -1)
+	എങ്കിൽ (pid == -1)
 		fatal("fork failed: %.100s", strerror(errno));
-	else
+	അല്ലെങ്കിൽ
 		proxy_command_pid = pid; /* save pid to clean up later */
 
 	/* Close child side of the descriptors. */
@@ -292,23 +292,23 @@ ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
 	close(pout[1]);
 
 	/* Free the command name. */
-	free(command_string);
+	സ്വതന്ത്രം(command_string);
 
 	/* Set the connection file descriptors. */
-	if (ssh_packet_set_connection(ssh, pout[0], pin[1]) == NULL)
-		return -1; /* ssh_packet_set_connection logs error */
+	എങ്കിൽ (ssh_packet_set_connection(ssh, pout[0], pin[1]) == ശൂന്യ)
+		തിരികെ -1; /* ssh_packet_set_connection logs error */
 
-	return 0;
+	തിരികെ 0;
 }
 
-void
-ssh_kill_proxy_command(void)
+ശൂന്യം
+ssh_kill_proxy_command(ശൂന്യം)
 {
 	/*
 	 * Send SIGHUP to proxy command if used. We don't wait() in
 	 * case it hangs and instead rely on init to reap the child
 	 */
-	if (proxy_command_pid > 1)
+	എങ്കിൽ (proxy_command_pid > 1)
 		kill(proxy_command_pid, SIGHUP);
 }
 
@@ -318,150 +318,150 @@ ssh_kill_proxy_command(void)
  * address that matches the desired address family on the specified interface.
  * Returns 0 and fills in *resultp and *rlenp on success. Returns -1 on failure.
  */
-static int
-check_ifaddrs(const char *ifname, int af, const struct ifaddrs *ifaddrs,
-    struct sockaddr_storage *resultp, socklen_t *rlenp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+check_ifaddrs(സ്ഥിരം അക്ഷരം *ifname, പൂർണ്ണസംഖ്യ af, സ്ഥിരം ഘടന ifaddrs *ifaddrs,
+    ഘടന sockaddr_storage *resultp, socklen_t *rlenp)
 {
-	struct sockaddr_in6 *sa6;
-	struct sockaddr_in *sa;
-	struct in6_addr *v6addr;
-	const struct ifaddrs *ifa;
-	int allow_local;
+	ഘടന sockaddr_in6 *sa6;
+	ഘടന sockaddr_in *sa;
+	ഘടന in6_addr *v6addr;
+	സ്ഥിരം ഘടന ifaddrs *ifa;
+	പൂർണ്ണസംഖ്യ allow_local;
 
 	/*
 	 * Prefer addresses that are not loopback or linklocal, but use them
 	 * if nothing else matches.
 	 */
-	for (allow_local = 0; allow_local < 2; allow_local++) {
-		for (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
-			if (ifa->ifa_addr == NULL || ifa->ifa_name == NULL ||
+	വേണ്ടി (allow_local = 0; allow_local < 2; allow_local++) {
+		വേണ്ടി (ifa = ifaddrs; ifa != ശൂന്യ; ifa = ifa->ifa_next) {
+			എങ്കിൽ (ifa->ifa_addr == ശൂന്യ || ifa->ifa_name == ശൂന്യ ||
 			    (ifa->ifa_flags & IFF_UP) == 0 ||
 			    ifa->ifa_addr->sa_family != af ||
 			    strcmp(ifa->ifa_name, options.bind_interface) != 0)
-				continue;
-			switch (ifa->ifa_addr->sa_family) {
-			case AF_INET:
-				sa = (struct sockaddr_in *)ifa->ifa_addr;
-				if (!allow_local && sa->sin_addr.s_addr ==
+				തുടരുക;
+			തിരഞ്ഞെടുപ്പ് (ifa->ifa_addr->sa_family) {
+			അവസ്ഥ AF_INET:
+				sa = (ഘടന sockaddr_in *)ifa->ifa_addr;
+				എങ്കിൽ (!allow_local && sa->sin_addr.s_addr ==
 				    htonl(INADDR_LOOPBACK))
-					continue;
-				if (*rlenp < sizeof(struct sockaddr_in)) {
+					തുടരുക;
+				എങ്കിൽ (*rlenp < വലുപ്പം(ഘടന sockaddr_in)) {
 					error_f("v4 addr doesn't fit");
-					return -1;
+					തിരികെ -1;
 				}
-				*rlenp = sizeof(struct sockaddr_in);
+				*rlenp = വലുപ്പം(ഘടന sockaddr_in);
 				memcpy(resultp, sa, *rlenp);
-				return 0;
-			case AF_INET6:
-				sa6 = (struct sockaddr_in6 *)ifa->ifa_addr;
+				തിരികെ 0;
+			അവസ്ഥ AF_INET6:
+				sa6 = (ഘടന sockaddr_in6 *)ifa->ifa_addr;
 				v6addr = &sa6->sin6_addr;
-				if (!allow_local &&
+				എങ്കിൽ (!allow_local &&
 				    (IN6_IS_ADDR_LINKLOCAL(v6addr) ||
 				    IN6_IS_ADDR_LOOPBACK(v6addr)))
-					continue;
-				if (*rlenp < sizeof(struct sockaddr_in6)) {
+					തുടരുക;
+				എങ്കിൽ (*rlenp < വലുപ്പം(ഘടന sockaddr_in6)) {
 					error_f("v6 addr doesn't fit");
-					return -1;
+					തിരികെ -1;
 				}
-				*rlenp = sizeof(struct sockaddr_in6);
+				*rlenp = വലുപ്പം(ഘടന sockaddr_in6);
 				memcpy(resultp, sa6, *rlenp);
-				return 0;
+				തിരികെ 0;
 			}
 		}
 	}
-	return -1;
+	തിരികെ -1;
 }
 #endif
 
 /*
  * Creates a socket for use as the ssh connection.
  */
-static int
-ssh_create_socket(struct addrinfo *ai)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_create_socket(ഘടന addrinfo *ai)
 {
-	int sock, r;
-	struct sockaddr_storage bindaddr;
+	പൂർണ്ണസംഖ്യ sock, r;
+	ഘടന sockaddr_storage bindaddr;
 	socklen_t bindaddrlen = 0;
-	struct addrinfo hints, *res = NULL;
+	ഘടന addrinfo hints, *res = ശൂന്യ;
 #ifdef HAVE_IFADDRS_H
-	struct ifaddrs *ifaddrs = NULL;
+	ഘടന ifaddrs *ifaddrs = ശൂന്യ;
 #endif
-	char ntop[NI_MAXHOST];
+	അക്ഷരം ntop[NI_MAXHOST];
 
 	sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-	if (sock == -1) {
+	എങ്കിൽ (sock == -1) {
 		error("socket: %s", strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
-	(void)fcntl(sock, F_SETFD, FD_CLOEXEC);
+	(ശൂന്യം)fcntl(sock, F_SETFD, FD_CLOEXEC);
 
 	/* Use interactive QOS (if specified) until authentication completed */
-	if (options.ip_qos_interactive != INT_MAX)
+	എങ്കിൽ (options.ip_qos_interactive != INT_MAX)
 		set_sock_tos(sock, options.ip_qos_interactive);
 
 	/* Bind the socket to an alternative local IP address */
-	if (options.bind_address == NULL && options.bind_interface == NULL)
-		return sock;
+	എങ്കിൽ (options.bind_address == ശൂന്യ && options.bind_interface == ശൂന്യ)
+		തിരികെ sock;
 
-	if (options.bind_address != NULL) {
-		memset(&hints, 0, sizeof(hints));
+	എങ്കിൽ (options.bind_address != ശൂന്യ) {
+		memset(&hints, 0, വലുപ്പം(hints));
 		hints.ai_family = ai->ai_family;
 		hints.ai_socktype = ai->ai_socktype;
 		hints.ai_protocol = ai->ai_protocol;
 		hints.ai_flags = AI_PASSIVE;
-		if ((r = getaddrinfo(options.bind_address, NULL,
+		എങ്കിൽ ((r = getaddrinfo(options.bind_address, ശൂന്യ,
 		    &hints, &res)) != 0) {
 			error("getaddrinfo: %s: %s", options.bind_address,
 			    ssh_gai_strerror(r));
-			goto fail;
+			പോകുക fail;
 		}
-		if (res == NULL) {
+		എങ്കിൽ (res == ശൂന്യ) {
 			error("getaddrinfo: no addrs");
-			goto fail;
+			പോകുക fail;
 		}
 		memcpy(&bindaddr, res->ai_addr, res->ai_addrlen);
 		bindaddrlen = res->ai_addrlen;
-	} else if (options.bind_interface != NULL) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (options.bind_interface != ശൂന്യ) {
 #ifdef HAVE_IFADDRS_H
-		if ((r = getifaddrs(&ifaddrs)) != 0) {
+		എങ്കിൽ ((r = getifaddrs(&ifaddrs)) != 0) {
 			error("getifaddrs: %s: %s", options.bind_interface,
 			    strerror(errno));
-			goto fail;
+			പോകുക fail;
 		}
-		bindaddrlen = sizeof(bindaddr);
-		if (check_ifaddrs(options.bind_interface, ai->ai_family,
+		bindaddrlen = വലുപ്പം(bindaddr);
+		എങ്കിൽ (check_ifaddrs(options.bind_interface, ai->ai_family,
 		    ifaddrs, &bindaddr, &bindaddrlen) != 0) {
 			logit("getifaddrs: %s: no suitable addresses",
 			    options.bind_interface);
-			goto fail;
+			പോകുക fail;
 		}
-#else
+#അല്ലെങ്കിൽ
 		error("BindInterface not supported on this platform.");
 #endif
 	}
-	if ((r = getnameinfo((struct sockaddr *)&bindaddr, bindaddrlen,
-	    ntop, sizeof(ntop), NULL, 0, NI_NUMERICHOST)) != 0) {
+	എങ്കിൽ ((r = getnameinfo((ഘടന sockaddr *)&bindaddr, bindaddrlen,
+	    ntop, വലുപ്പം(ntop), ശൂന്യ, 0, NI_NUMERICHOST)) != 0) {
 		error_f("getnameinfo failed: %s", ssh_gai_strerror(r));
-		goto fail;
+		പോകുക fail;
 	}
-	if (bind(sock, (struct sockaddr *)&bindaddr, bindaddrlen) != 0) {
+	എങ്കിൽ (bind(sock, (ഘടന sockaddr *)&bindaddr, bindaddrlen) != 0) {
 		error("bind %s: %s", ntop, strerror(errno));
-		goto fail;
+		പോകുക fail;
 	}
 	debug_f("bound to %s", ntop);
 	/* success */
-	goto out;
+	പോകുക out;
 fail:
 	close(sock);
 	sock = -1;
  out:
-	if (res != NULL)
+	എങ്കിൽ (res != ശൂന്യ)
 		freeaddrinfo(res);
 #ifdef HAVE_IFADDRS_H
-	if (ifaddrs != NULL)
+	എങ്കിൽ (ifaddrs != ശൂന്യ)
 		freeifaddrs(ifaddrs);
 #endif
-	return sock;
+	തിരികെ sock;
 }
 
 /*
@@ -473,22 +473,22 @@ fail:
  * and %p substituted for host and port, respectively) to use to contact
  * the daemon.
  */
-static int
-ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
-    struct sockaddr_storage *hostaddr, u_short port, int connection_attempts,
-    int *timeout_ms, int want_keepalive)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_connect_direct(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *host, ഘടന addrinfo *aitop,
+    ഘടന sockaddr_storage *hostaddr, u_short port, പൂർണ്ണസംഖ്യ connection_attempts,
+    പൂർണ്ണസംഖ്യ *timeout_ms, പൂർണ്ണസംഖ്യ want_keepalive)
 {
-	int saved_timeout_ms = *timeout_ms;
-	int oerrno, sock = -1, attempt;
-	char ntop[NI_MAXHOST], strport[NI_MAXSERV];
-	struct addrinfo *ai;
+	പൂർണ്ണസംഖ്യ saved_timeout_ms = *timeout_ms;
+	പൂർണ്ണസംഖ്യ oerrno, sock = -1, attempt;
+	അക്ഷരം ntop[NI_MAXHOST], strport[NI_MAXSERV];
+	ഘടന addrinfo *ai;
 
 	debug3_f("entering");
-	memset(ntop, 0, sizeof(ntop));
-	memset(strport, 0, sizeof(strport));
+	memset(ntop, 0, വലുപ്പം(ntop));
+	memset(strport, 0, വലുപ്പം(strport));
 
-	for (attempt = 0; attempt < connection_attempts; attempt++) {
-		if (attempt > 0) {
+	വേണ്ടി (attempt = 0; attempt < connection_attempts; attempt++) {
+		എങ്കിൽ (attempt > 0) {
 			/* Sleep a moment before retrying. */
 			sleep(1);
 			debug("Trying again...");
@@ -497,26 +497,26 @@ ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
 		 * Loop through addresses for this host, and try each one in
 		 * sequence until the connection succeeds.
 		 */
-		for (ai = aitop; ai; ai = ai->ai_next) {
-			if (ai->ai_family != AF_INET &&
+		വേണ്ടി (ai = aitop; ai; ai = ai->ai_next) {
+			എങ്കിൽ (ai->ai_family != AF_INET &&
 			    ai->ai_family != AF_INET6) {
 				errno = EAFNOSUPPORT;
-				continue;
+				തുടരുക;
 			}
-			if (getnameinfo(ai->ai_addr, ai->ai_addrlen,
-			    ntop, sizeof(ntop), strport, sizeof(strport),
+			എങ്കിൽ (getnameinfo(ai->ai_addr, ai->ai_addrlen,
+			    ntop, വലുപ്പം(ntop), strport, വലുപ്പം(strport),
 			    NI_NUMERICHOST|NI_NUMERICSERV) != 0) {
 				oerrno = errno;
 				error_f("getnameinfo failed");
 				errno = oerrno;
-				continue;
+				തുടരുക;
 			}
-			if (options.address_family != AF_UNSPEC &&
+			എങ്കിൽ (options.address_family != AF_UNSPEC &&
 			    ai->ai_family != options.address_family) {
 				debug2_f("skipping address [%s]:%s: "
 				    "wrong address family", ntop, strport);
 				errno = EAFNOSUPPORT;
-				continue;
+				തുടരുക;
 			}
 
 			debug("Connecting to %.200s [%.100s] port %s.",
@@ -524,19 +524,19 @@ ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
 
 			/* Create a socket for connecting. */
 			sock = ssh_create_socket(ai);
-			if (sock < 0) {
+			എങ്കിൽ (sock < 0) {
 				/* Any error is already output */
 				errno = 0;
-				continue;
+				തുടരുക;
 			}
 
 			*timeout_ms = saved_timeout_ms;
-			if (timeout_connect(sock, ai->ai_addr, ai->ai_addrlen,
+			എങ്കിൽ (timeout_connect(sock, ai->ai_addr, ai->ai_addrlen,
 			    timeout_ms) >= 0) {
 				/* Successful connection. */
 				memcpy(hostaddr, ai->ai_addr, ai->ai_addrlen);
-				break;
-			} else {
+				നിർത്തുക;
+			} അല്ലെങ്കിൽ {
 				oerrno = errno;
 				debug("connect to address %s port %s: %s",
 				    ntop, strport, strerror(errno));
@@ -545,99 +545,99 @@ ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
 				errno = oerrno;
 			}
 		}
-		if (sock != -1)
-			break;	/* Successful connection. */
+		എങ്കിൽ (sock != -1)
+			നിർത്തുക;	/* Successful connection. */
 	}
 
 	/* Return failure if we didn't get a successful connection. */
-	if (sock == -1) {
+	എങ്കിൽ (sock == -1) {
 		error("ssh: connect to host %s port %s: %s",
 		    host, strport, errno == 0 ? "failure" : strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
 
 	debug("Connection established.");
 
 	/* Set SO_KEEPALIVE if requested. */
-	if (want_keepalive)
+	എങ്കിൽ (want_keepalive)
 		set_keepalive(sock); /* logs errors */
 
 	/* Set the connection. */
-	if (ssh_packet_set_connection(ssh, sock, sock) == NULL)
-		return -1; /* ssh_packet_set_connection logs error */
+	എങ്കിൽ (ssh_packet_set_connection(ssh, sock, sock) == ശൂന്യ)
+		തിരികെ -1; /* ssh_packet_set_connection logs error */
 
-	return 0;
+	തിരികെ 0;
 }
 
-int
-ssh_connect(struct ssh *ssh, const char *host, const char *host_arg,
-    struct addrinfo *addrs, struct sockaddr_storage *hostaddr, u_short port,
-    int connection_attempts, int *timeout_ms, int want_keepalive)
+പൂർണ്ണസംഖ്യ
+ssh_connect(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *host, സ്ഥിരം അക്ഷരം *host_arg,
+    ഘടന addrinfo *addrs, ഘടന sockaddr_storage *hostaddr, u_short port,
+    പൂർണ്ണസംഖ്യ connection_attempts, പൂർണ്ണസംഖ്യ *timeout_ms, പൂർണ്ണസംഖ്യ want_keepalive)
 {
-	int in, out;
+	പൂർണ്ണസംഖ്യ in, out;
 
-	if (options.proxy_command == NULL) {
-		return ssh_connect_direct(ssh, host, addrs, hostaddr, port,
+	എങ്കിൽ (options.proxy_command == ശൂന്യ) {
+		തിരികെ ssh_connect_direct(ssh, host, addrs, hostaddr, port,
 		    connection_attempts, timeout_ms, want_keepalive);
-	} else if (strcmp(options.proxy_command, "-") == 0) {
-		if ((in = dup(STDIN_FILENO)) == -1 ||
+	} അല്ലെങ്കിൽ എങ്കിൽ (strcmp(options.proxy_command, "-") == 0) {
+		എങ്കിൽ ((in = dup(STDIN_FILENO)) == -1 ||
 		    (out = dup(STDOUT_FILENO)) == -1) {
-			if (in >= 0)
+			എങ്കിൽ (in >= 0)
 				close(in);
 			error_f("dup() in/out failed");
-			return -1; /* ssh_packet_set_connection logs error */
+			തിരികെ -1; /* ssh_packet_set_connection logs error */
 		}
-		if ((ssh_packet_set_connection(ssh, in, out)) == NULL)
-			return -1; /* ssh_packet_set_connection logs error */
-		return 0;
-	} else if (options.proxy_use_fdpass) {
-		return ssh_proxy_fdpass_connect(ssh, host, host_arg, port,
+		എങ്കിൽ ((ssh_packet_set_connection(ssh, in, out)) == ശൂന്യ)
+			തിരികെ -1; /* ssh_packet_set_connection logs error */
+		തിരികെ 0;
+	} അല്ലെങ്കിൽ എങ്കിൽ (options.proxy_use_fdpass) {
+		തിരികെ ssh_proxy_fdpass_connect(ssh, host, host_arg, port,
 		    options.proxy_command);
 	}
-	return ssh_proxy_connect(ssh, host, host_arg, port,
+	തിരികെ ssh_proxy_connect(ssh, host, host_arg, port,
 	    options.proxy_command);
 }
 
 /* defaults to 'no' */
-static int
-confirm(const char *prompt, const char *fingerprint)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+confirm(സ്ഥിരം അക്ഷരം *prompt, സ്ഥിരം അക്ഷരം *fingerprint)
 {
-	const char *msg, *again = "Please type 'yes' or 'no': ";
-	const char *again_fp = "Please type 'yes', 'no' or the fingerprint: ";
-	char *p, *cp;
-	int ret = -1;
+	സ്ഥിരം അക്ഷരം *സന്ദേശം, *again = "Please type 'yes' or 'no': ";
+	സ്ഥിരം അക്ഷരം *again_fp = "Please type 'yes', 'no' or the fingerprint: ";
+	അക്ഷരം *p, *cp;
+	പൂർണ്ണസംഖ്യ ret = -1;
 
-	if (options.batch_mode)
-		return 0;
-	for (msg = prompt;;msg = fingerprint ? again_fp : again) {
-		cp = p = read_passphrase(msg, RP_ECHO);
-		if (p == NULL)
-			return 0;
+	എങ്കിൽ (options.batch_mode)
+		തിരികെ 0;
+	വേണ്ടി (സന്ദേശം = prompt;;സന്ദേശം = fingerprint ? again_fp : again) {
+		cp = p = read_passphrase(സന്ദേശം, RP_ECHO);
+		എങ്കിൽ (p == ശൂന്യ)
+			തിരികെ 0;
 		p += strspn(p, " \t"); /* skip leading whitespace */
 		p[strcspn(p, " \t\n")] = '\0'; /* remove trailing whitespace */
-		if (p[0] == '\0' || strcasecmp(p, "no") == 0)
+		എങ്കിൽ (p[0] == '\0' || strcasecmp(p, "no") == 0)
 			ret = 0;
-		else if (strcasecmp(p, "yes") == 0 || (fingerprint != NULL &&
+		അല്ലെങ്കിൽ എങ്കിൽ (strcasecmp(p, "yes") == 0 || (fingerprint != ശൂന്യ &&
 		    strcmp(p, fingerprint) == 0))
 			ret = 1;
-		free(cp);
-		if (ret != -1)
-			return ret;
+		സ്വതന്ത്രം(cp);
+		എങ്കിൽ (ret != -1)
+			തിരികെ ret;
 	}
 }
 
-static int
-sockaddr_is_local(struct sockaddr *hostaddr)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sockaddr_is_local(ഘടന sockaddr *hostaddr)
 {
-	switch (hostaddr->sa_family) {
-	case AF_INET:
-		return (ntohl(((struct sockaddr_in *)hostaddr)->
+	തിരഞ്ഞെടുപ്പ് (hostaddr->sa_family) {
+	അവസ്ഥ AF_INET:
+		തിരികെ (ntohl(((ഘടന sockaddr_in *)hostaddr)->
 		    sin_addr.s_addr) >> 24) == IN_LOOPBACKNET;
-	case AF_INET6:
-		return IN6_IS_ADDR_LOOPBACK(
-		    &(((struct sockaddr_in6 *)hostaddr)->sin6_addr));
-	default:
-		return 0;
+	അവസ്ഥ AF_INET6:
+		തിരികെ IN6_IS_ADDR_LOOPBACK(
+		    &(((ഘടന sockaddr_in6 *)hostaddr)->sin6_addr));
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ 0;
 	}
 }
 
@@ -645,39 +645,39 @@ sockaddr_is_local(struct sockaddr *hostaddr)
  * Prepare the hostname and ip address strings that are used to lookup
  * host keys in known_hosts files. These may have a port number appended.
  */
-void
-get_hostfile_hostname_ipaddr(char *hostname, struct sockaddr *hostaddr,
-    u_short port, char **hostfile_hostname, char **hostfile_ipaddr)
+ശൂന്യം
+get_hostfile_hostname_ipaddr(അക്ഷരം *hostname, ഘടന sockaddr *hostaddr,
+    u_short port, അക്ഷരം **hostfile_hostname, അക്ഷരം **hostfile_ipaddr)
 {
-	char ntop[NI_MAXHOST];
+	അക്ഷരം ntop[NI_MAXHOST];
 	socklen_t addrlen;
 
-	switch (hostaddr == NULL ? -1 : hostaddr->sa_family) {
-	case -1:
+	തിരഞ്ഞെടുപ്പ് (hostaddr == ശൂന്യ ? -1 : hostaddr->sa_family) {
+	അവസ്ഥ -1:
 		addrlen = 0;
-		break;
-	case AF_INET:
-		addrlen = sizeof(struct sockaddr_in);
-		break;
-	case AF_INET6:
-		addrlen = sizeof(struct sockaddr_in6);
-		break;
-	default:
-		addrlen = sizeof(struct sockaddr);
-		break;
+		നിർത്തുക;
+	അവസ്ഥ AF_INET:
+		addrlen = വലുപ്പം(ഘടന sockaddr_in);
+		നിർത്തുക;
+	അവസ്ഥ AF_INET6:
+		addrlen = വലുപ്പം(ഘടന sockaddr_in6);
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		addrlen = വലുപ്പം(ഘടന sockaddr);
+		നിർത്തുക;
 	}
 
 	/*
 	 * We don't have the remote ip-address for connections
 	 * using a proxy command
 	 */
-	if (hostfile_ipaddr != NULL) {
-		if (options.proxy_command == NULL) {
-			if (getnameinfo(hostaddr, addrlen,
-			    ntop, sizeof(ntop), NULL, 0, NI_NUMERICHOST) != 0)
+	എങ്കിൽ (hostfile_ipaddr != ശൂന്യ) {
+		എങ്കിൽ (options.proxy_command == ശൂന്യ) {
+			എങ്കിൽ (getnameinfo(hostaddr, addrlen,
+			    ntop, വലുപ്പം(ntop), ശൂന്യ, 0, NI_NUMERICHOST) != 0)
 				fatal_f("getnameinfo failed");
 			*hostfile_ipaddr = put_host_port(ntop, port);
-		} else {
+		} അല്ലെങ്കിൽ {
 			*hostfile_ipaddr = xstrdup("<no hostip for proxy "
 			    "command>");
 		}
@@ -689,231 +689,231 @@ get_hostfile_hostname_ipaddr(char *hostname, struct sockaddr *hostaddr,
 	 * tunneling over forwarded connections or if you run multiple
 	 * sshd's on different ports on the same machine.
 	 */
-	if (hostfile_hostname != NULL) {
-		if (options.host_key_alias != NULL) {
-			*hostfile_hostname = xstrdup(options.host_key_alias);
+	എങ്കിൽ (hostfile_hostname != ശൂന്യ) {
+		എങ്കിൽ (options.host_താക്കോൽ_alias != ശൂന്യ) {
+			*hostfile_hostname = xstrdup(options.host_താക്കോൽ_alias);
 			debug("using hostkeyalias: %s", *hostfile_hostname);
-		} else {
+		} അല്ലെങ്കിൽ {
 			*hostfile_hostname = put_host_port(hostname, port);
 		}
 	}
 }
 
 /* returns non-zero if path appears in hostfiles, or 0 if not. */
-static int
-path_in_hostfiles(const char *path, char **hostfiles, u_int num_hostfiles)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+path_in_hostfiles(സ്ഥിരം അക്ഷരം *path, അക്ഷരം **hostfiles, u_int അക്കം_hostfiles)
 {
 	u_int i;
 
-	for (i = 0; i < num_hostfiles; i++) {
-		if (strcmp(path, hostfiles[i]) == 0)
-			return 1;
+	വേണ്ടി (i = 0; i < അക്കം_hostfiles; i++) {
+		എങ്കിൽ (strcmp(path, hostfiles[i]) == 0)
+			തിരികെ 1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-struct find_by_key_ctx {
-	const char *host, *ip;
-	const struct sshkey *key;
-	char **names;
+ഘടന find_by_താക്കോൽ_ctx {
+	സ്ഥിരം അക്ഷരം *host, *ip;
+	സ്ഥിരം ഘടന sshkey *താക്കോൽ;
+	അക്ഷരം **names;
 	u_int nnames;
 };
 
 /* Try to replace home directory prefix (per $HOME) with a ~/ sequence */
-static char *
-try_tilde_unexpand(const char *path)
+സ്ഥിതം അക്ഷരം *
+try_tilde_unexpand(സ്ഥിരം അക്ഷരം *path)
 {
-	char *home, *ret = NULL;
+	അക്ഷരം *home, *ret = ശൂന്യ;
 	size_t l;
 
-	if (*path != '/')
-		return xstrdup(path);
-	if ((home = getenv("HOME")) == NULL || (l = strlen(home)) == 0)
-		return xstrdup(path);
-	if (strncmp(path, home, l) != 0)
-		return xstrdup(path);
+	എങ്കിൽ (*path != '/')
+		തിരികെ xstrdup(path);
+	എങ്കിൽ ((home = getenv("HOME")) == ശൂന്യ || (l = strlen(home)) == 0)
+		തിരികെ xstrdup(path);
+	എങ്കിൽ (strncmp(path, home, l) != 0)
+		തിരികെ xstrdup(path);
 	/*
 	 * ensure we have matched on a path boundary: either the $HOME that
 	 * we just compared ends with a '/' or the next character of the path
 	 * must be a '/'.
 	 */
-	if (home[l - 1] != '/' && path[l] != '/')
-		return xstrdup(path);
-	if (path[l] == '/')
+	എങ്കിൽ (home[l - 1] != '/' && path[l] != '/')
+		തിരികെ xstrdup(path);
+	എങ്കിൽ (path[l] == '/')
 		l++;
 	xasprintf(&ret, "~/%s", path + l);
-	return ret;
+	തിരികെ ret;
 }
 
 /*
  * Returns non-zero if the key is accepted by HostkeyAlgorithms.
  * Made slightly less trivial by the multiple RSA signature algorithm names.
  */
-int
-hostkey_accepted_by_hostkeyalgs(const struct sshkey *key)
+പൂർണ്ണസംഖ്യ
+hostkey_accepted_by_hostkeyalgs(സ്ഥിരം ഘടന sshkey *താക്കോൽ)
 {
-	const char *ktype = sshkey_ssh_name(key);
-	const char *hostkeyalgs = options.hostkeyalgorithms;
+	സ്ഥിരം അക്ഷരം *ktype = sshkey_ssh_name(താക്കോൽ);
+	സ്ഥിരം അക്ഷരം *hostkeyalgs = options.hostkeyalgorithms;
 
-	if (key->type == KEY_UNSPEC)
-		return 0;
-	if (key->type == KEY_RSA &&
+	എങ്കിൽ (താക്കോൽ->type == താക്കോൽ_UNSPEC)
+		തിരികെ 0;
+	എങ്കിൽ (താക്കോൽ->type == താക്കോൽ_RSA &&
 	    (match_pattern_list("rsa-sha2-256", hostkeyalgs, 0) == 1 ||
 	    match_pattern_list("rsa-sha2-512", hostkeyalgs, 0) == 1))
-		return 1;
-	if (key->type == KEY_RSA_CERT &&
+		തിരികെ 1;
+	എങ്കിൽ (താക്കോൽ->type == താക്കോൽ_RSA_CERT &&
 	    (match_pattern_list("rsa-sha2-512-cert-v01@openssh.com", hostkeyalgs, 0) == 1 ||
 	    match_pattern_list("rsa-sha2-256-cert-v01@openssh.com", hostkeyalgs, 0) == 1))
-		return 1;
-	return match_pattern_list(ktype, hostkeyalgs, 0) == 1;
+		തിരികെ 1;
+	തിരികെ match_pattern_list(ktype, hostkeyalgs, 0) == 1;
 }
 
-static int
-hostkeys_find_by_key_cb(struct hostkey_foreach_line *l, void *_ctx)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+hostkeys_find_by_താക്കോൽ_cb(ഘടന hostkey_foreach_വരി *l, ശൂന്യം *_ctx)
 {
-	struct find_by_key_ctx *ctx = (struct find_by_key_ctx *)_ctx;
-	char *path;
+	ഘടന find_by_താക്കോൽ_ctx *ctx = (ഘടന find_by_താക്കോൽ_ctx *)_ctx;
+	അക്ഷരം *path;
 
 	/* we are looking for keys with names that *do not* match */
-	if ((l->match & HKF_MATCH_HOST) != 0)
-		return 0;
+	എങ്കിൽ ((l->match & HKF_MATCH_HOST) != 0)
+		തിരികെ 0;
 	/* not interested in marker lines */
-	if (l->marker != MRK_NONE)
-		return 0;
+	എങ്കിൽ (l->marker != MRK_NONE)
+		തിരികെ 0;
 	/* we are only interested in exact key matches */
-	if (l->key == NULL || !sshkey_equal(ctx->key, l->key))
-		return 0;
+	എങ്കിൽ (l->താക്കോൽ == ശൂന്യ || !sshkey_equal(ctx->താക്കോൽ, l->താക്കോൽ))
+		തിരികെ 0;
 	path = try_tilde_unexpand(l->path);
 	debug_f("found matching key in %s:%lu", path, l->linenum);
 	ctx->names = xrecallocarray(ctx->names,
-	    ctx->nnames, ctx->nnames + 1, sizeof(*ctx->names));
+	    ctx->nnames, ctx->nnames + 1, വലുപ്പം(*ctx->names));
 	xasprintf(&ctx->names[ctx->nnames], "%s:%lu: %s", path, l->linenum,
 	    strncmp(l->hosts, HASH_MAGIC, strlen(HASH_MAGIC)) == 0 ?
 	    "[hashed name]" : l->hosts);
 	ctx->nnames++;
-	free(path);
-	return 0;
+	സ്വതന്ത്രം(path);
+	തിരികെ 0;
 }
 
-static int
-hostkeys_find_by_key_hostfile(const char *file, const char *which,
-    struct find_by_key_ctx *ctx)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+hostkeys_find_by_താക്കോൽ_hostfile(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം അക്ഷരം *which,
+    ഘടന find_by_താക്കോൽ_ctx *ctx)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	debug3_f("trying %s hostfile \"%s\"", which, file);
-	if ((r = hostkeys_foreach(file, hostkeys_find_by_key_cb, ctx,
-	    ctx->host, ctx->ip, HKF_WANT_PARSE_KEY, 0)) != 0) {
-		if (r == SSH_ERR_SYSTEM_ERROR && errno == ENOENT) {
+	എങ്കിൽ ((r = hostkeys_foreach(file, hostkeys_find_by_താക്കോൽ_cb, ctx,
+	    ctx->host, ctx->ip, HKF_WANT_PARSE_താക്കോൽ, 0)) != 0) {
+		എങ്കിൽ (r == SSH_ERR_SYSTEM_ERROR && errno == ENOENT) {
 			debug_f("hostkeys file %s does not exist", file);
-			return 0;
+			തിരികെ 0;
 		}
 		error_fr(r, "hostkeys_foreach failed for %s", file);
-		return r;
+		തിരികെ r;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /*
  * Find 'key' in known hosts file(s) that do not match host/ip.
  * Used to display also-known-as information for previously-unseen hostkeys.
  */
-static void
-hostkeys_find_by_key(const char *host, const char *ip, const struct sshkey *key,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles,
-    char ***names, u_int *nnames)
+സ്ഥിതം ശൂന്യം
+hostkeys_find_by_താക്കോൽ(സ്ഥിരം അക്ഷരം *host, സ്ഥിരം അക്ഷരം *ip, സ്ഥിരം ഘടന sshkey *താക്കോൽ,
+    അക്ഷരം **user_hostfiles, u_int അക്കം_user_hostfiles,
+    അക്ഷരം **system_hostfiles, u_int അക്കം_system_hostfiles,
+    അക്ഷരം ***names, u_int *nnames)
 {
-	struct find_by_key_ctx ctx = {NULL, NULL, NULL, NULL, 0};
+	ഘടന find_by_താക്കോൽ_ctx ctx = {ശൂന്യ, ശൂന്യ, ശൂന്യ, ശൂന്യ, 0};
 	u_int i;
 
-	*names = NULL;
+	*names = ശൂന്യ;
 	*nnames = 0;
 
-	if (key == NULL || sshkey_is_cert(key))
-		return;
+	എങ്കിൽ (താക്കോൽ == ശൂന്യ || sshkey_is_cert(താക്കോൽ))
+		തിരികെ;
 
 	ctx.host = host;
 	ctx.ip = ip;
-	ctx.key = key;
+	ctx.താക്കോൽ = താക്കോൽ;
 
-	for (i = 0; i < num_user_hostfiles; i++) {
-		if (hostkeys_find_by_key_hostfile(user_hostfiles[i],
+	വേണ്ടി (i = 0; i < അക്കം_user_hostfiles; i++) {
+		എങ്കിൽ (hostkeys_find_by_താക്കോൽ_hostfile(user_hostfiles[i],
 		    "user", &ctx) != 0)
-			goto fail;
+			പോകുക fail;
 	}
-	for (i = 0; i < num_system_hostfiles; i++) {
-		if (hostkeys_find_by_key_hostfile(system_hostfiles[i],
+	വേണ്ടി (i = 0; i < അക്കം_system_hostfiles; i++) {
+		എങ്കിൽ (hostkeys_find_by_താക്കോൽ_hostfile(system_hostfiles[i],
 		    "system", &ctx) != 0)
-			goto fail;
+			പോകുക fail;
 	}
 	/* success */
 	*names = ctx.names;
 	*nnames = ctx.nnames;
-	ctx.names = NULL;
+	ctx.names = ശൂന്യ;
 	ctx.nnames = 0;
-	return;
+	തിരികെ;
  fail:
-	for (i = 0; i < ctx.nnames; i++)
-		free(ctx.names[i]);
-	free(ctx.names);
+	വേണ്ടി (i = 0; i < ctx.nnames; i++)
+		സ്വതന്ത്രം(ctx.names[i]);
+	സ്വതന്ത്രം(ctx.names);
 }
 
 #define MAX_OTHER_NAMES	8 /* Maximum number of names to list */
-static char *
-other_hostkeys_message(const char *host, const char *ip,
-    const struct sshkey *key,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles)
+സ്ഥിതം അക്ഷരം *
+other_hostkeys_message(സ്ഥിരം അക്ഷരം *host, സ്ഥിരം അക്ഷരം *ip,
+    സ്ഥിരം ഘടന sshkey *താക്കോൽ,
+    അക്ഷരം **user_hostfiles, u_int അക്കം_user_hostfiles,
+    അക്ഷരം **system_hostfiles, u_int അക്കം_system_hostfiles)
 {
-	char *ret = NULL, **othernames = NULL;
-	u_int i, n, num_othernames = 0;
+	അക്ഷരം *ret = ശൂന്യ, **othernames = ശൂന്യ;
+	u_int i, n, അക്കം_othernames = 0;
 
-	hostkeys_find_by_key(host, ip, key,
-	    user_hostfiles, num_user_hostfiles,
-	    system_hostfiles, num_system_hostfiles,
-	    &othernames, &num_othernames);
-	if (num_othernames == 0)
-		return xstrdup("This key is not known by any other names.");
+	hostkeys_find_by_താക്കോൽ(host, ip, താക്കോൽ,
+	    user_hostfiles, അക്കം_user_hostfiles,
+	    system_hostfiles, അക്കം_system_hostfiles,
+	    &othernames, &അക്കം_othernames);
+	എങ്കിൽ (അക്കം_othernames == 0)
+		തിരികെ xstrdup("This key is not known by any other names.");
 
 	xasprintf(&ret, "This host key is known by the following other "
 	    "names/addresses:");
 
-	n = num_othernames;
-	if (n > MAX_OTHER_NAMES)
+	n = അക്കം_othernames;
+	എങ്കിൽ (n > MAX_OTHER_NAMES)
 		n = MAX_OTHER_NAMES;
-	for (i = 0; i < n; i++) {
+	വേണ്ടി (i = 0; i < n; i++) {
 		xextendf(&ret, "\n", "    %s", othernames[i]);
 	}
-	if (n < num_othernames) {
+	എങ്കിൽ (n < അക്കം_othernames) {
 		xextendf(&ret, "\n", "    (%d additional names omitted)",
-		    num_othernames - n);
+		    അക്കം_othernames - n);
 	}
-	for (i = 0; i < num_othernames; i++)
-		free(othernames[i]);
-	free(othernames);
-	return ret;
+	വേണ്ടി (i = 0; i < അക്കം_othernames; i++)
+		സ്വതന്ത്രം(othernames[i]);
+	സ്വതന്ത്രം(othernames);
+	തിരികെ ret;
 }
 
-void
-load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
-    const char *invocation, const struct ssh_conn_info *cinfo,
-    const struct sshkey *host_key, const char *hostfile_hostname)
+ശൂന്യം
+load_hostkeys_command(ഘടന hostkeys *hostkeys, സ്ഥിരം അക്ഷരം *command_template,
+    സ്ഥിരം അക്ഷരം *invocation, സ്ഥിരം ഘടന ssh_conn_info *cinfo,
+    സ്ഥിരം ഘടന sshkey *host_താക്കോൽ, സ്ഥിരം അക്ഷരം *hostfile_hostname)
 {
-	int r, i, ac = 0;
-	char *key_fp = NULL, *keytext = NULL, *tmp;
-	char *command = NULL, *tag = NULL, **av = NULL;
-	FILE *f = NULL;
+	പൂർണ്ണസംഖ്യ r, i, ac = 0;
+	അക്ഷരം *താക്കോൽ_fp = ശൂന്യ, *keytext = ശൂന്യ, *tmp;
+	അക്ഷരം *command = ശൂന്യ, *tag = ശൂന്യ, **av = ശൂന്യ;
+	FILE *f = ശൂന്യ;
 	pid_t pid;
-	void (*osigchld)(int);
+	ശൂന്യം (*osigchld)(പൂർണ്ണസംഖ്യ);
 
 	xasprintf(&tag, "KnownHostsCommand-%s", invocation);
 
-	if (host_key != NULL) {
-		if ((key_fp = sshkey_fingerprint(host_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+	എങ്കിൽ (host_താക്കോൽ != ശൂന്യ) {
+		എങ്കിൽ ((താക്കോൽ_fp = sshkey_fingerprint(host_താക്കോൽ,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == ശൂന്യ)
 			fatal_f("sshkey_fingerprint failed");
-		if ((r = sshkey_to_base64(host_key, &keytext)) != 0)
+		എങ്കിൽ ((r = sshkey_to_base64(host_താക്കോൽ, &keytext)) != 0)
 			fatal_fr(r, "sshkey_to_base64 failed");
 	}
 	/*
@@ -923,54 +923,54 @@ load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
 
 	/* Turn the command into an argument vector */
-	if (argv_split(command_template, &ac, &av, 0) != 0) {
+	എങ്കിൽ (argv_split(command_template, &ac, &av, 0) != 0) {
 		error("%s \"%s\" contains invalid quotes", tag,
 		    command_template);
-		goto out;
+		പോകുക out;
 	}
-	if (ac == 0) {
+	എങ്കിൽ (ac == 0) {
 		error("%s \"%s\" yielded no arguments", tag,
 		    command_template);
-		goto out;
+		പോകുക out;
 	}
-	for (i = 1; i < ac; i++) {
+	വേണ്ടി (i = 1; i < ac; i++) {
 		tmp = percent_dollar_expand(av[i],
 		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
 		    "H", hostfile_hostname,
 		    "I", invocation,
-		    "t", host_key == NULL ? "NONE" : sshkey_ssh_name(host_key),
-		    "f", key_fp == NULL ? "NONE" : key_fp,
-		    "K", keytext == NULL ? "NONE" : keytext,
-		    (char *)NULL);
-		if (tmp == NULL)
+		    "t", host_താക്കോൽ == ശൂന്യ ? "NONE" : sshkey_ssh_name(host_താക്കോൽ),
+		    "f", താക്കോൽ_fp == ശൂന്യ ? "NONE" : താക്കോൽ_fp,
+		    "K", keytext == ശൂന്യ ? "NONE" : keytext,
+		    (അക്ഷരം *)ശൂന്യ);
+		എങ്കിൽ (tmp == ശൂന്യ)
 			fatal_f("percent_expand failed");
-		free(av[i]);
+		സ്വതന്ത്രം(av[i]);
 		av[i] = tmp;
 	}
 	/* Prepare a printable command for logs, etc. */
 	command = argv_assemble(ac, av);
 
-	if ((pid = subprocess(tag, command, ac, av, &f,
+	എങ്കിൽ ((pid = subprocess(tag, command, ac, av, &f,
 	    SSH_SUBPROCESS_STDOUT_CAPTURE|SSH_SUBPROCESS_UNSAFE_PATH|
-	    SSH_SUBPROCESS_PRESERVE_ENV, NULL, NULL, NULL)) == 0)
-		goto out;
+	    SSH_SUBPROCESS_PRESERVE_ENV, ശൂന്യ, ശൂന്യ, ശൂന്യ)) == 0)
+		പോകുക out;
 
 	load_hostkeys_file(hostkeys, hostfile_hostname, tag, f, 1);
 
-	if (exited_cleanly(pid, tag, command, 0) != 0)
+	എങ്കിൽ (exited_cleanly(pid, tag, command, 0) != 0)
 		fatal("KnownHostsCommand failed");
 
  out:
-	if (f != NULL)
+	എങ്കിൽ (f != ശൂന്യ)
 		fclose(f);
 	ssh_signal(SIGCHLD, osigchld);
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
-	free(tag);
-	free(command);
-	free(key_fp);
-	free(keytext);
+	വേണ്ടി (i = 0; i < ac; i++)
+		സ്വതന്ത്രം(av[i]);
+	സ്വതന്ത്രം(av);
+	സ്വതന്ത്രം(tag);
+	സ്വതന്ത്രം(command);
+	സ്വതന്ത്രം(താക്കോൽ_fp);
+	സ്വതന്ത്രം(keytext);
 }
 
 /*
@@ -980,26 +980,26 @@ load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
 #define RDRW	0
 #define RDONLY	1
 #define ROQUIET	2
-static int
-check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
-    struct sockaddr *hostaddr, u_short port,
-    struct sshkey *host_key, int readonly, int clobber_port,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles,
-    const char *hostfile_command)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+check_host_താക്കോൽ(അക്ഷരം *hostname, സ്ഥിരം ഘടന ssh_conn_info *cinfo,
+    ഘടന sockaddr *hostaddr, u_short port,
+    ഘടന sshkey *host_താക്കോൽ, പൂർണ്ണസംഖ്യ readonly, പൂർണ്ണസംഖ്യ clobber_port,
+    അക്ഷരം **user_hostfiles, u_int അക്കം_user_hostfiles,
+    അക്ഷരം **system_hostfiles, u_int അക്കം_system_hostfiles,
+    സ്ഥിരം അക്ഷരം *hostfile_command)
 {
 	HostStatus host_status = -1, ip_status = -1;
-	struct sshkey *raw_key = NULL;
-	char *ip = NULL, *host = NULL;
-	char hostline[1000], *hostp, *fp, *ra;
-	char msg[1024];
-	const char *type, *fail_reason = NULL;
-	const struct hostkey_entry *host_found = NULL, *ip_found = NULL;
-	int len, cancelled_forwarding = 0, confirmed;
-	int local = sockaddr_is_local(hostaddr);
-	int r, want_cert = sshkey_is_cert(host_key), host_ip_differ = 0;
-	int hostkey_trusted = 0; /* Known or explicitly accepted by user */
-	struct hostkeys *host_hostkeys, *ip_hostkeys;
+	ഘടന sshkey *raw_താക്കോൽ = ശൂന്യ;
+	അക്ഷരം *ip = ശൂന്യ, *host = ശൂന്യ;
+	അക്ഷരം hostline[1000], *hostp, *fp, *ra;
+	അക്ഷരം സന്ദേശം[1024];
+	സ്ഥിരം അക്ഷരം *type, *fail_reason = ശൂന്യ;
+	സ്ഥിരം ഘടന hostkey_entry *host_found = ശൂന്യ, *ip_found = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ len, cancelled_forwarding = 0, confirmed;
+	പൂർണ്ണസംഖ്യ local = sockaddr_is_local(hostaddr);
+	പൂർണ്ണസംഖ്യ r, want_cert = sshkey_is_cert(host_താക്കോൽ), host_ip_differ = 0;
+	പൂർണ്ണസംഖ്യ hostkey_trusted = 0; /* Known or explicitly accepted by user */
+	ഘടന hostkeys *host_hostkeys, *ip_hostkeys;
 	u_int i;
 
 	/*
@@ -1010,12 +1010,12 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * essentially disables host authentication for localhost; however,
 	 * this is probably not a real problem.
 	 */
-	if (options.no_host_authentication_for_localhost == 1 && local &&
-	    options.host_key_alias == NULL) {
+	എങ്കിൽ (options.no_host_authentication_for_localhost == 1 && local &&
+	    options.host_താക്കോൽ_alias == ശൂന്യ) {
 		debug("Forcing accepting of host key for "
 		    "loopback/localhost.");
 		options.update_hostkeys = 0;
-		return 0;
+		തിരികെ 0;
 	}
 
 	/*
@@ -1023,7 +1023,7 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * Note: do this before get_hostfile_hostname_ipaddr() to catch
 	 * '[' or ']' in the name before they are added.
 	 */
-	if (strcspn(hostname, "@?*#[]|'\'\"\\") != strlen(hostname)) {
+	എങ്കിൽ (strcspn(hostname, "@?*#[]|'\'\"\\") != strlen(hostname)) {
 		debug_f("invalid hostname \"%s\"; will not record: %s",
 		    hostname, fail_reason);
 		readonly = RDONLY;
@@ -1040,57 +1040,57 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * Turn off check_host_ip if the connection is to localhost, via proxy
 	 * command or if we don't have a hostname to compare with
 	 */
-	if (options.check_host_ip && (local ||
-	    strcmp(hostname, ip) == 0 || options.proxy_command != NULL))
+	എങ്കിൽ (options.check_host_ip && (local ||
+	    strcmp(hostname, ip) == 0 || options.proxy_command != ശൂന്യ))
 		options.check_host_ip = 0;
 
 	host_hostkeys = init_hostkeys();
-	for (i = 0; i < num_user_hostfiles; i++)
+	വേണ്ടി (i = 0; i < അക്കം_user_hostfiles; i++)
 		load_hostkeys(host_hostkeys, host, user_hostfiles[i], 0);
-	for (i = 0; i < num_system_hostfiles; i++)
+	വേണ്ടി (i = 0; i < അക്കം_system_hostfiles; i++)
 		load_hostkeys(host_hostkeys, host, system_hostfiles[i], 0);
-	if (hostfile_command != NULL && !clobber_port) {
+	എങ്കിൽ (hostfile_command != ശൂന്യ && !clobber_port) {
 		load_hostkeys_command(host_hostkeys, hostfile_command,
-		    "HOSTNAME", cinfo, host_key, host);
+		    "HOSTNAME", cinfo, host_താക്കോൽ, host);
 	}
 
-	ip_hostkeys = NULL;
-	if (!want_cert && options.check_host_ip) {
+	ip_hostkeys = ശൂന്യ;
+	എങ്കിൽ (!want_cert && options.check_host_ip) {
 		ip_hostkeys = init_hostkeys();
-		for (i = 0; i < num_user_hostfiles; i++)
+		വേണ്ടി (i = 0; i < അക്കം_user_hostfiles; i++)
 			load_hostkeys(ip_hostkeys, ip, user_hostfiles[i], 0);
-		for (i = 0; i < num_system_hostfiles; i++)
+		വേണ്ടി (i = 0; i < അക്കം_system_hostfiles; i++)
 			load_hostkeys(ip_hostkeys, ip, system_hostfiles[i], 0);
-		if (hostfile_command != NULL && !clobber_port) {
+		എങ്കിൽ (hostfile_command != ശൂന്യ && !clobber_port) {
 			load_hostkeys_command(ip_hostkeys, hostfile_command,
-			    "ADDRESS", cinfo, host_key, ip);
+			    "ADDRESS", cinfo, host_താക്കോൽ, ip);
 		}
 	}
 
  retry:
-	if (!hostkey_accepted_by_hostkeyalgs(host_key)) {
+	എങ്കിൽ (!hostkey_accepted_by_hostkeyalgs(host_താക്കോൽ)) {
 		error("host key %s not permitted by HostkeyAlgorithms",
-		    sshkey_ssh_name(host_key));
-		goto fail;
+		    sshkey_ssh_name(host_താക്കോൽ));
+		പോകുക fail;
 	}
 
 	/* Reload these as they may have changed on cert->key downgrade */
-	want_cert = sshkey_is_cert(host_key);
-	type = sshkey_type(host_key);
+	want_cert = sshkey_is_cert(host_താക്കോൽ);
+	type = sshkey_type(host_താക്കോൽ);
 
 	/*
 	 * Check if the host key is present in the user's list of known
 	 * hosts or in the systemwide list.
 	 */
-	host_status = check_key_in_hostkeys(host_hostkeys, host_key,
+	host_status = check_താക്കോൽ_in_hostkeys(host_hostkeys, host_താക്കോൽ,
 	    &host_found);
 
 	/*
 	 * If there are no hostfiles, or if the hostkey was found via
 	 * KnownHostsCommand, then don't try to touch the disk.
 	 */
-	if (!readonly && (num_user_hostfiles == 0 ||
-	    (host_found != NULL && host_found->note != 0)))
+	എങ്കിൽ (!readonly && (അക്കം_user_hostfiles == 0 ||
+	    (host_found != ശൂന്യ && host_found->note != 0)))
 		readonly = RDONLY;
 
 	/*
@@ -1098,103 +1098,103 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * localhost, looking for a certificate, or the hostname was an ip
 	 * address to begin with.
 	 */
-	if (!want_cert && ip_hostkeys != NULL) {
-		ip_status = check_key_in_hostkeys(ip_hostkeys, host_key,
+	എങ്കിൽ (!want_cert && ip_hostkeys != ശൂന്യ) {
+		ip_status = check_താക്കോൽ_in_hostkeys(ip_hostkeys, host_താക്കോൽ,
 		    &ip_found);
-		if (host_status == HOST_CHANGED &&
+		എങ്കിൽ (host_status == HOST_CHANGED &&
 		    (ip_status != HOST_CHANGED ||
-		    (ip_found != NULL &&
-		    !sshkey_equal(ip_found->key, host_found->key))))
+		    (ip_found != ശൂന്യ &&
+		    !sshkey_equal(ip_found->താക്കോൽ, host_found->താക്കോൽ))))
 			host_ip_differ = 1;
-	} else
+	} അല്ലെങ്കിൽ
 		ip_status = host_status;
 
-	switch (host_status) {
-	case HOST_OK:
+	തിരഞ്ഞെടുപ്പ് (host_status) {
+	അവസ്ഥ HOST_OK:
 		/* The host is known and the key matches. */
 		debug("Host '%.200s' is known and matches the %s host %s.",
 		    host, type, want_cert ? "certificate" : "key");
 		debug("Found %s in %s:%lu", want_cert ? "CA key" : "key",
-		    host_found->file, host_found->line);
-		if (want_cert) {
-			if (sshkey_cert_check_host(host_key,
-			    options.host_key_alias == NULL ?
-			    hostname : options.host_key_alias,
+		    host_found->file, host_found->വരി);
+		എങ്കിൽ (want_cert) {
+			എങ്കിൽ (sshkey_cert_check_host(host_താക്കോൽ,
+			    options.host_താക്കോൽ_alias == ശൂന്യ ?
+			    hostname : options.host_താക്കോൽ_alias,
 			    options.ca_sign_algorithms, &fail_reason) != 0) {
 				error("%s", fail_reason);
-				goto fail;
+				പോകുക fail;
 			}
 			/*
 			 * Do not attempt hostkey update if a certificate was
 			 * successfully matched.
 			 */
-			if (options.update_hostkeys != 0) {
+			എങ്കിൽ (options.update_hostkeys != 0) {
 				options.update_hostkeys = 0;
 				debug3_f("certificate host key in use; "
 				    "disabling UpdateHostkeys");
 			}
 		}
 		/* Turn off UpdateHostkeys if key was in system known_hosts */
-		if (options.update_hostkeys != 0 &&
+		എങ്കിൽ (options.update_hostkeys != 0 &&
 		    (path_in_hostfiles(host_found->file,
-		    system_hostfiles, num_system_hostfiles) ||
-		    (ip_status == HOST_OK && ip_found != NULL &&
+		    system_hostfiles, അക്കം_system_hostfiles) ||
+		    (ip_status == HOST_OK && ip_found != ശൂന്യ &&
 		    path_in_hostfiles(ip_found->file,
-		    system_hostfiles, num_system_hostfiles)))) {
+		    system_hostfiles, അക്കം_system_hostfiles)))) {
 			options.update_hostkeys = 0;
 			debug3_f("host key found in GlobalKnownHostsFile; "
 			    "disabling UpdateHostkeys");
 		}
-		if (options.update_hostkeys != 0 && host_found->note) {
+		എങ്കിൽ (options.update_hostkeys != 0 && host_found->note) {
 			options.update_hostkeys = 0;
 			debug3_f("host key found via KnownHostsCommand; "
 			    "disabling UpdateHostkeys");
 		}
-		if (options.check_host_ip && ip_status == HOST_NEW) {
-			if (readonly || want_cert)
+		എങ്കിൽ (options.check_host_ip && ip_status == HOST_NEW) {
+			എങ്കിൽ (readonly || want_cert)
 				logit("%s host key for IP address "
 				    "'%.128s' not in list of known hosts.",
 				    type, ip);
-			else if (!add_host_to_hostfile(user_hostfiles[0], ip,
-			    host_key, options.hash_known_hosts))
+			അല്ലെങ്കിൽ എങ്കിൽ (!add_host_to_hostfile(user_hostfiles[0], ip,
+			    host_താക്കോൽ, options.hash_known_hosts))
 				logit("Failed to add the %s host key for IP "
 				    "address '%.128s' to the list of known "
 				    "hosts (%.500s).", type, ip,
 				    user_hostfiles[0]);
-			else
+			അല്ലെങ്കിൽ
 				logit("Warning: Permanently added the %s host "
 				    "key for IP address '%.128s' to the list "
 				    "of known hosts.", type, ip);
-		} else if (options.visual_host_key) {
-			fp = sshkey_fingerprint(host_key,
+		} അല്ലെങ്കിൽ എങ്കിൽ (options.visual_host_താക്കോൽ) {
+			fp = sshkey_fingerprint(host_താക്കോൽ,
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
-			ra = sshkey_fingerprint(host_key,
+			ra = sshkey_fingerprint(host_താക്കോൽ,
 			    options.fingerprint_hash, SSH_FP_RANDOMART);
-			if (fp == NULL || ra == NULL)
+			എങ്കിൽ (fp == ശൂന്യ || ra == ശൂന്യ)
 				fatal_f("sshkey_fingerprint failed");
 			logit("Host key fingerprint is: %s\n%s", fp, ra);
-			free(ra);
-			free(fp);
+			സ്വതന്ത്രം(ra);
+			സ്വതന്ത്രം(fp);
 		}
 		hostkey_trusted = 1;
-		break;
-	case HOST_NEW:
-		if (options.host_key_alias == NULL && port != 0 &&
+		നിർത്തുക;
+	അവസ്ഥ HOST_NEW:
+		എങ്കിൽ (options.host_താക്കോൽ_alias == ശൂന്യ && port != 0 &&
 		    port != SSH_DEFAULT_PORT && !clobber_port) {
 			debug("checking without port identifier");
-			if (check_host_key(hostname, cinfo, hostaddr, 0,
-			    host_key, ROQUIET, 1,
-			    user_hostfiles, num_user_hostfiles,
-			    system_hostfiles, num_system_hostfiles,
+			എങ്കിൽ (check_host_താക്കോൽ(hostname, cinfo, hostaddr, 0,
+			    host_താക്കോൽ, ROQUIET, 1,
+			    user_hostfiles, അക്കം_user_hostfiles,
+			    system_hostfiles, അക്കം_system_hostfiles,
 			    hostfile_command) == 0) {
 				debug("found matching key w/out port");
-				break;
+				നിർത്തുക;
 			}
 		}
-		if (readonly || want_cert)
-			goto fail;
+		എങ്കിൽ (readonly || want_cert)
+			പോകുക fail;
 		/* The host is new. */
-		if (options.strict_host_key_checking ==
+		എങ്കിൽ (options.strict_host_താക്കോൽ_checking ==
 		    SSH_STRICT_HOSTKEY_YES) {
 			/*
 			 * User has requested strict host key checking.  We
@@ -1203,40 +1203,40 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			 */
 			error("No %s host key is known for %.200s and you "
 			    "have requested strict checking.", type, host);
-			goto fail;
-		} else if (options.strict_host_key_checking ==
+			പോകുക fail;
+		} അല്ലെങ്കിൽ എങ്കിൽ (options.strict_host_താക്കോൽ_checking ==
 		    SSH_STRICT_HOSTKEY_ASK) {
-			char *msg1 = NULL, *msg2 = NULL;
+			അക്ഷരം *msg1 = ശൂന്യ, *msg2 = ശൂന്യ;
 
 			xasprintf(&msg1, "The authenticity of host "
 			    "'%.200s (%s)' can't be established", host, ip);
 
-			if (show_other_keys(host_hostkeys, host_key)) {
+			എങ്കിൽ (show_other_താക്കോലുകൾ(host_hostkeys, host_താക്കോൽ)) {
 				xextendf(&msg1, "\n", "but keys of different "
 				    "type are already known for this host.");
-			} else
+			} അല്ലെങ്കിൽ
 				xextendf(&msg1, "", ".");
 
-			fp = sshkey_fingerprint(host_key,
+			fp = sshkey_fingerprint(host_താക്കോൽ,
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
-			ra = sshkey_fingerprint(host_key,
+			ra = sshkey_fingerprint(host_താക്കോൽ,
 			    options.fingerprint_hash, SSH_FP_RANDOMART);
-			if (fp == NULL || ra == NULL)
+			എങ്കിൽ (fp == ശൂന്യ || ra == ശൂന്യ)
 				fatal_f("sshkey_fingerprint failed");
 			xextendf(&msg1, "\n", "%s key fingerprint is: %s",
 			    type, fp);
-			if (options.visual_host_key)
+			എങ്കിൽ (options.visual_host_താക്കോൽ)
 				xextendf(&msg1, "\n", "%s", ra);
-			if (options.verify_host_key_dns) {
+			എങ്കിൽ (options.verify_host_താക്കോൽ_dns) {
 				xextendf(&msg1, "\n",
 				    "%s host key fingerprint found in DNS.",
-				    matching_host_key_dns ?
+				    matching_host_താക്കോൽ_dns ?
 				    "Matching" : "No matching");
 			}
 			/* msg2 informs for other names matching this key */
-			if ((msg2 = other_hostkeys_message(host, ip, host_key,
-			    user_hostfiles, num_user_hostfiles,
-			    system_hostfiles, num_system_hostfiles)) != NULL)
+			എങ്കിൽ ((msg2 = other_hostkeys_message(host, ip, host_താക്കോൽ,
+			    user_hostfiles, അക്കം_user_hostfiles,
+			    system_hostfiles, അക്കം_system_hostfiles)) != ശൂന്യ)
 				xextendf(&msg1, "\n", "%s", msg2);
 
 			xextendf(&msg1, "\n",
@@ -1244,47 +1244,47 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			    "(yes/no/[fingerprint])? ");
 
 			confirmed = confirm(msg1, fp);
-			free(ra);
-			free(fp);
-			free(msg1);
-			free(msg2);
-			if (!confirmed)
-				goto fail;
+			സ്വതന്ത്രം(ra);
+			സ്വതന്ത്രം(fp);
+			സ്വതന്ത്രം(msg1);
+			സ്വതന്ത്രം(msg2);
+			എങ്കിൽ (!confirmed)
+				പോകുക fail;
 			hostkey_trusted = 1; /* user explicitly confirmed */
 		}
 		/*
 		 * If in "new" or "off" strict mode, add the key automatically
 		 * to the local known_hosts file.
 		 */
-		if (options.check_host_ip && ip_status == HOST_NEW) {
-			snprintf(hostline, sizeof(hostline), "%s,%s", host, ip);
+		എങ്കിൽ (options.check_host_ip && ip_status == HOST_NEW) {
+			snprintf(hostline, വലുപ്പം(hostline), "%s,%s", host, ip);
 			hostp = hostline;
-			if (options.hash_known_hosts) {
+			എങ്കിൽ (options.hash_known_hosts) {
 				/* Add hash of host and IP separately */
 				r = add_host_to_hostfile(user_hostfiles[0],
-				    host, host_key, options.hash_known_hosts) &&
+				    host, host_താക്കോൽ, options.hash_known_hosts) &&
 				    add_host_to_hostfile(user_hostfiles[0], ip,
-				    host_key, options.hash_known_hosts);
-			} else {
+				    host_താക്കോൽ, options.hash_known_hosts);
+			} അല്ലെങ്കിൽ {
 				/* Add unhashed "host,ip" */
 				r = add_host_to_hostfile(user_hostfiles[0],
-				    hostline, host_key,
+				    hostline, host_താക്കോൽ,
 				    options.hash_known_hosts);
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			r = add_host_to_hostfile(user_hostfiles[0], host,
-			    host_key, options.hash_known_hosts);
+			    host_താക്കോൽ, options.hash_known_hosts);
 			hostp = host;
 		}
 
-		if (!r)
+		എങ്കിൽ (!r)
 			logit("Failed to add the host to the list of known "
 			    "hosts (%.500s).", user_hostfiles[0]);
-		else
+		അല്ലെങ്കിൽ
 			logit("Warning: Permanently added '%.200s' (%s) to the "
 			    "list of known hosts.", hostp, type);
-		break;
-	case HOST_REVOKED:
+		നിർത്തുക;
+	അവസ്ഥ HOST_REVOKED:
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@       WARNING: REVOKED HOST KEY DETECTED!               @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -1296,16 +1296,16 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * If strict host key checking is in use, the user will have
 		 * to edit the key manually and we can only abort.
 		 */
-		if (options.strict_host_key_checking !=
+		എങ്കിൽ (options.strict_host_താക്കോൽ_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
 			error("%s host key for %.200s was revoked and you have "
 			    "requested strict checking.", type, host);
-			goto fail;
+			പോകുക fail;
 		}
-		goto continue_unsafe;
+		പോകുക continue_unsafe;
 
-	case HOST_CHANGED:
-		if (want_cert) {
+	അവസ്ഥ HOST_CHANGED:
+		എങ്കിൽ (want_cert) {
 			/*
 			 * This is only a debug() since it is valid to have
 			 * CAs with wildcard DNS matches that don't match
@@ -1313,51 +1313,51 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			 */
 			debug("Host certificate authority does not "
 			    "match %s in %s:%lu", CA_MARKER,
-			    host_found->file, host_found->line);
-			goto fail;
+			    host_found->file, host_found->വരി);
+			പോകുക fail;
 		}
-		if (readonly == ROQUIET)
-			goto fail;
-		if (options.check_host_ip && host_ip_differ) {
-			char *key_msg;
-			if (ip_status == HOST_NEW)
-				key_msg = "is unknown";
-			else if (ip_status == HOST_OK)
-				key_msg = "is unchanged";
-			else
-				key_msg = "has a different value";
+		എങ്കിൽ (readonly == ROQUIET)
+			പോകുക fail;
+		എങ്കിൽ (options.check_host_ip && host_ip_differ) {
+			അക്ഷരം *താക്കോൽ_സന്ദേശം;
+			എങ്കിൽ (ip_status == HOST_NEW)
+				താക്കോൽ_സന്ദേശം = "is unknown";
+			അല്ലെങ്കിൽ എങ്കിൽ (ip_status == HOST_OK)
+				താക്കോൽ_സന്ദേശം = "is unchanged";
+			അല്ലെങ്കിൽ
+				താക്കോൽ_സന്ദേശം = "has a different value";
 			error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			error("@       WARNING: POSSIBLE DNS SPOOFING DETECTED!          @");
 			error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			error("The %s host key for %s has changed,", type, host);
 			error("and the key for the corresponding IP address %s", ip);
-			error("%s. This could either mean that", key_msg);
+			error("%s. This could either mean that", താക്കോൽ_സന്ദേശം);
 			error("DNS SPOOFING is happening or the IP address for the host");
 			error("and its host key have changed at the same time.");
-			if (ip_status != HOST_NEW)
+			എങ്കിൽ (ip_status != HOST_NEW)
 				error("Offending key for IP in %s:%lu",
-				    ip_found->file, ip_found->line);
+				    ip_found->file, ip_found->വരി);
 		}
 		/* The host key has changed. */
-		warn_changed_key(host_key);
-		if (num_user_hostfiles > 0 || num_system_hostfiles > 0) {
+		warn_changed_താക്കോൽ(host_താക്കോൽ);
+		എങ്കിൽ (അക്കം_user_hostfiles > 0 || അക്കം_system_hostfiles > 0) {
 			error("Add correct host key in %.100s to get rid "
-			    "of this message.", num_user_hostfiles > 0 ?
+			    "of this message.", അക്കം_user_hostfiles > 0 ?
 			    user_hostfiles[0] : system_hostfiles[0]);
 		}
 		error("Offending %s key in %s:%lu",
-		    sshkey_type(host_found->key),
-		    host_found->file, host_found->line);
+		    sshkey_type(host_found->താക്കോൽ),
+		    host_found->file, host_found->വരി);
 
 		/*
 		 * If strict host key checking is in use, the user will have
 		 * to edit the key manually and we can only abort.
 		 */
-		if (options.strict_host_key_checking !=
+		എങ്കിൽ (options.strict_host_താക്കോൽ_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
 			error("Host key for %.200s has changed and you have "
 			    "requested strict checking.", host);
-			goto fail;
+			പോകുക fail;
 		}
 
  continue_unsafe:
@@ -1366,50 +1366,50 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * the connection but without MITM-able authentication or
 		 * forwarding.
 		 */
-		if (options.password_authentication) {
+		എങ്കിൽ (options.password_authentication) {
 			error("Password authentication is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.password_authentication = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.kbd_interactive_authentication) {
+		എങ്കിൽ (options.kbd_interactive_authentication) {
 			error("Keyboard-interactive authentication is disabled"
 			    " to avoid man-in-the-middle attacks.");
 			options.kbd_interactive_authentication = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.forward_agent) {
+		എങ്കിൽ (options.forward_agent) {
 			error("Agent forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.forward_agent = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.forward_x11) {
+		എങ്കിൽ (options.forward_x11) {
 			error("X11 forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.forward_x11 = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.num_local_forwards > 0 ||
-		    options.num_remote_forwards > 0) {
+		എങ്കിൽ (options.അക്കം_local_forwards > 0 ||
+		    options.അക്കം_remote_forwards > 0) {
 			error("Port forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
-			options.num_local_forwards =
-			    options.num_remote_forwards = 0;
+			options.അക്കം_local_forwards =
+			    options.അക്കം_remote_forwards = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.tun_open != SSH_TUNMODE_NO) {
+		എങ്കിൽ (options.tun_open != SSH_TUNMODE_NO) {
 			error("Tunnel forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.tun_open = SSH_TUNMODE_NO;
 			cancelled_forwarding = 1;
 		}
-		if (options.update_hostkeys != 0) {
+		എങ്കിൽ (options.update_hostkeys != 0) {
 			error("UpdateHostkeys is disabled because the host "
 			    "key is not trusted.");
 			options.update_hostkeys = 0;
 		}
-		if (options.exit_on_forward_failure && cancelled_forwarding)
+		എങ്കിൽ (options.exit_on_forward_failure && cancelled_forwarding)
 			fatal("Error: forwarding disabled due to host key "
 			    "check failure");
 
@@ -1420,171 +1420,171 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * by that sentence, and ask the user if they wish to
 		 * accept the authentication.
 		 */
-		break;
-	case HOST_FOUND:
+		നിർത്തുക;
+	അവസ്ഥ HOST_FOUND:
 		fatal("internal error");
-		break;
+		നിർത്തുക;
 	}
 
-	if (options.check_host_ip && host_status != HOST_CHANGED &&
+	എങ്കിൽ (options.check_host_ip && host_status != HOST_CHANGED &&
 	    ip_status == HOST_CHANGED) {
-		snprintf(msg, sizeof(msg),
+		snprintf(സന്ദേശം, വലുപ്പം(സന്ദേശം),
 		    "Warning: the %s host key for '%.200s' "
 		    "differs from the key for the IP address '%.128s'"
 		    "\nOffending key for IP in %s:%lu",
-		    type, host, ip, ip_found->file, ip_found->line);
-		if (host_status == HOST_OK) {
-			len = strlen(msg);
-			snprintf(msg + len, sizeof(msg) - len,
+		    type, host, ip, ip_found->file, ip_found->വരി);
+		എങ്കിൽ (host_status == HOST_OK) {
+			len = strlen(സന്ദേശം);
+			snprintf(സന്ദേശം + len, വലുപ്പം(സന്ദേശം) - len,
 			    "\nMatching host key in %s:%lu",
-			    host_found->file, host_found->line);
+			    host_found->file, host_found->വരി);
 		}
-		if (options.strict_host_key_checking ==
+		എങ്കിൽ (options.strict_host_താക്കോൽ_checking ==
 		    SSH_STRICT_HOSTKEY_ASK) {
-			strlcat(msg, "\nAre you sure you want "
-			    "to continue connecting (yes/no)? ", sizeof(msg));
-			if (!confirm(msg, NULL))
-				goto fail;
-		} else if (options.strict_host_key_checking !=
+			strlcat(സന്ദേശം, "\nAre you sure you want "
+			    "to continue connecting (yes/no)? ", വലുപ്പം(സന്ദേശം));
+			എങ്കിൽ (!confirm(സന്ദേശം, ശൂന്യ))
+				പോകുക fail;
+		} അല്ലെങ്കിൽ എങ്കിൽ (options.strict_host_താക്കോൽ_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
-			logit("%s", msg);
+			logit("%s", സന്ദേശം);
 			error("Exiting, you have requested strict checking.");
-			goto fail;
-		} else {
-			logit("%s", msg);
+			പോകുക fail;
+		} അല്ലെങ്കിൽ {
+			logit("%s", സന്ദേശം);
 		}
 	}
 
-	if (!hostkey_trusted && options.update_hostkeys) {
+	എങ്കിൽ (!hostkey_trusted && options.update_hostkeys) {
 		debug_f("hostkey not known or explicitly trusted: "
 		    "disabling UpdateHostkeys");
 		options.update_hostkeys = 0;
 	}
 
-	sshkey_free(raw_key);
-	free(ip);
-	free(host);
-	if (host_hostkeys != NULL)
+	sshkey_free(raw_താക്കോൽ);
+	സ്വതന്ത്രം(ip);
+	സ്വതന്ത്രം(host);
+	എങ്കിൽ (host_hostkeys != ശൂന്യ)
 		free_hostkeys(host_hostkeys);
-	if (ip_hostkeys != NULL)
+	എങ്കിൽ (ip_hostkeys != ശൂന്യ)
 		free_hostkeys(ip_hostkeys);
-	return 0;
+	തിരികെ 0;
 
 fail:
-	if (want_cert && host_status != HOST_REVOKED) {
+	എങ്കിൽ (want_cert && host_status != HOST_REVOKED) {
 		/*
 		 * No matching certificate. Downgrade cert to raw key and
 		 * search normally.
 		 */
 		debug("No matching CA found. Retry with plain key");
-		if ((r = sshkey_from_private(host_key, &raw_key)) != 0)
+		എങ്കിൽ ((r = sshkey_from_private(host_താക്കോൽ, &raw_താക്കോൽ)) != 0)
 			fatal_fr(r, "decode key");
-		if ((r = sshkey_drop_cert(raw_key)) != 0)
+		എങ്കിൽ ((r = sshkey_drop_cert(raw_താക്കോൽ)) != 0)
 			fatal_r(r, "Couldn't drop certificate");
-		host_key = raw_key;
-		goto retry;
+		host_താക്കോൽ = raw_താക്കോൽ;
+		പോകുക retry;
 	}
-	sshkey_free(raw_key);
-	free(ip);
-	free(host);
-	if (host_hostkeys != NULL)
+	sshkey_free(raw_താക്കോൽ);
+	സ്വതന്ത്രം(ip);
+	സ്വതന്ത്രം(host);
+	എങ്കിൽ (host_hostkeys != ശൂന്യ)
 		free_hostkeys(host_hostkeys);
-	if (ip_hostkeys != NULL)
+	എങ്കിൽ (ip_hostkeys != ശൂന്യ)
 		free_hostkeys(ip_hostkeys);
-	return -1;
+	തിരികെ -1;
 }
 
 /* returns 0 if key verifies or -1 if key does NOT verify */
-int
-verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
-    const struct ssh_conn_info *cinfo)
+പൂർണ്ണസംഖ്യ
+verify_host_താക്കോൽ(അക്ഷരം *host, ഘടന sockaddr *hostaddr, ഘടന sshkey *host_താക്കോൽ,
+    സ്ഥിരം ഘടന ssh_conn_info *cinfo)
 {
 	u_int i;
-	int r = -1, flags = 0;
-	char valid[64], *fp = NULL, *cafp = NULL;
-	struct sshkey *plain = NULL;
+	പൂർണ്ണസംഖ്യ r = -1, flags = 0;
+	അക്ഷരം valid[64], *fp = ശൂന്യ, *cafp = ശൂന്യ;
+	ഘടന sshkey *plain = ശൂന്യ;
 
-	if ((fp = sshkey_fingerprint(host_key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	എങ്കിൽ ((fp = sshkey_fingerprint(host_താക്കോൽ,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ശൂന്യ) {
 		error_fr(r, "fingerprint host key");
 		r = -1;
-		goto out;
+		പോകുക out;
 	}
 
-	if (sshkey_is_cert(host_key)) {
-		if ((cafp = sshkey_fingerprint(host_key->cert->signature_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	എങ്കിൽ (sshkey_is_cert(host_താക്കോൽ)) {
+		എങ്കിൽ ((cafp = sshkey_fingerprint(host_താക്കോൽ->cert->signature_താക്കോൽ,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == ശൂന്യ) {
 			error_fr(r, "fingerprint CA key");
 			r = -1;
-			goto out;
+			പോകുക out;
 		}
-		sshkey_format_cert_validity(host_key->cert,
-		    valid, sizeof(valid));
+		sshkey_format_cert_validity(host_താക്കോൽ->cert,
+		    valid, വലുപ്പം(valid));
 		debug("Server host certificate: %s %s, serial %llu "
 		    "ID \"%s\" CA %s %s valid %s",
-		    sshkey_ssh_name(host_key), fp,
-		    (unsigned long long)host_key->cert->serial,
-		    host_key->cert->key_id,
-		    sshkey_ssh_name(host_key->cert->signature_key), cafp,
+		    sshkey_ssh_name(host_താക്കോൽ), fp,
+		    (unsigned long long)host_താക്കോൽ->cert->serial,
+		    host_താക്കോൽ->cert->താക്കോൽ_id,
+		    sshkey_ssh_name(host_താക്കോൽ->cert->signature_താക്കോൽ), cafp,
 		    valid);
-		for (i = 0; i < host_key->cert->nprincipals; i++) {
+		വേണ്ടി (i = 0; i < host_താക്കോൽ->cert->nprincipals; i++) {
 			debug2("Server host certificate hostname: %s",
-			    host_key->cert->principals[i]);
+			    host_താക്കോൽ->cert->principals[i]);
 		}
-	} else {
-		debug("Server host key: %s %s", sshkey_ssh_name(host_key), fp);
+	} അല്ലെങ്കിൽ {
+		debug("Server host key: %s %s", sshkey_ssh_name(host_താക്കോൽ), fp);
 	}
 
-	if (sshkey_equal(previous_host_key, host_key)) {
+	എങ്കിൽ (sshkey_equal(previous_host_താക്കോൽ, host_താക്കോൽ)) {
 		debug2_f("server host key %s %s matches cached key",
-		    sshkey_type(host_key), fp);
+		    sshkey_type(host_താക്കോൽ), fp);
 		r = 0;
-		goto out;
+		പോകുക out;
 	}
 
 	/* Check in RevokedHostKeys files if specified */
-	for (i = 0; i < options.num_revoked_host_keys; i++) {
-		r = sshkey_check_revoked(host_key,
-		    options.revoked_host_keys[i]);
-		switch (r) {
-		case 0:
-			break; /* not revoked */
-		case SSH_ERR_KEY_REVOKED:
+	വേണ്ടി (i = 0; i < options.അക്കം_revoked_host_താക്കോലുകൾ; i++) {
+		r = sshkey_check_revoked(host_താക്കോൽ,
+		    options.revoked_host_താക്കോലുകൾ[i]);
+		തിരഞ്ഞെടുപ്പ് (r) {
+		അവസ്ഥ 0:
+			നിർത്തുക; /* not revoked */
+		അവസ്ഥ SSH_ERR_താക്കോൽ_REVOKED:
 			error("Host key %s %s revoked by file %s",
-			    sshkey_type(host_key), fp,
-			    options.revoked_host_keys[i]);
+			    sshkey_type(host_താക്കോൽ), fp,
+			    options.revoked_host_താക്കോലുകൾ[i]);
 			r = -1;
-			goto out;
-		default:
+			പോകുക out;
+		സ്ഥിരസ്ഥിതി:
 			error_r(r, "Error checking host key %s %s in "
-			    "revoked keys file %s", sshkey_type(host_key),
-			    fp, options.revoked_host_keys[i]);
+			    "revoked keys file %s", sshkey_type(host_താക്കോൽ),
+			    fp, options.revoked_host_താക്കോലുകൾ[i]);
 			r = -1;
-			goto out;
+			പോകുക out;
 		}
 	}
 
-	if (options.verify_host_key_dns) {
+	എങ്കിൽ (options.verify_host_താക്കോൽ_dns) {
 		/*
 		 * XXX certs are not yet supported for DNS, so downgrade
 		 * them and try the plain key.
 		 */
-		if ((r = sshkey_from_private(host_key, &plain)) != 0)
-			goto out;
-		if (sshkey_is_cert(plain))
+		എങ്കിൽ ((r = sshkey_from_private(host_താക്കോൽ, &plain)) != 0)
+			പോകുക out;
+		എങ്കിൽ (sshkey_is_cert(plain))
 			sshkey_drop_cert(plain);
-		if (verify_host_key_dns(host, hostaddr, plain, &flags) == 0) {
-			if (flags & DNS_VERIFY_FOUND) {
-				if (options.verify_host_key_dns == 1 &&
+		എങ്കിൽ (verify_host_താക്കോൽ_dns(host, hostaddr, plain, &flags) == 0) {
+			എങ്കിൽ (flags & DNS_VERIFY_FOUND) {
+				എങ്കിൽ (options.verify_host_താക്കോൽ_dns == 1 &&
 				    flags & DNS_VERIFY_MATCH &&
 				    flags & DNS_VERIFY_SECURE) {
 					r = 0;
-					goto out;
+					പോകുക out;
 				}
-				if (flags & DNS_VERIFY_MATCH) {
-					matching_host_key_dns = 1;
-				} else {
-					warn_changed_key(plain);
+				എങ്കിൽ (flags & DNS_VERIFY_MATCH) {
+					matching_host_താക്കോൽ_dns = 1;
+				} അല്ലെങ്കിൽ {
+					warn_changed_താക്കോൽ(plain);
 					error("Update the SSHFP RR in DNS "
 					    "with the new host key to get rid "
 					    "of this message.");
@@ -1592,25 +1592,25 @@ verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
 			}
 		}
 	}
-	r = check_host_key(host, cinfo, hostaddr, options.port, host_key,
-	    RDRW, 0, options.user_hostfiles, options.num_user_hostfiles,
-	    options.system_hostfiles, options.num_system_hostfiles,
+	r = check_host_താക്കോൽ(host, cinfo, hostaddr, options.port, host_താക്കോൽ,
+	    RDRW, 0, options.user_hostfiles, options.അക്കം_user_hostfiles,
+	    options.system_hostfiles, options.അക്കം_system_hostfiles,
 	    options.known_hosts_command);
 
 out:
 	sshkey_free(plain);
-	free(fp);
-	free(cafp);
-	if (r == 0 && host_key != NULL) {
-		sshkey_free(previous_host_key);
-		r = sshkey_from_private(host_key, &previous_host_key);
+	സ്വതന്ത്രം(fp);
+	സ്വതന്ത്രം(cafp);
+	എങ്കിൽ (r == 0 && host_താക്കോൽ != ശൂന്യ) {
+		sshkey_free(previous_host_താക്കോൽ);
+		r = sshkey_from_private(host_താക്കോൽ, &previous_host_താക്കോൽ);
 	}
 
-	return r;
+	തിരികെ r;
 }
 
-static void
-warn_nonpq_kex(void)
+സ്ഥിതം ശൂന്യം
+warn_nonpq_kex(ശൂന്യം)
 {
 	logit("** WARNING: connection is not using a post-quantum key exchange algorithm.");
 	logit("** This session may be vulnerable to \"store now, decrypt later\" attacks.");
@@ -1624,14 +1624,14 @@ warn_nonpq_kex(void)
  * If login fails, this function prints an error and never returns.
  * This function does not require super-user privileges.
  */
-void
-ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
-    struct sockaddr_storage *hostaddr, u_short port, struct passwd *pw,
-    int timeout_ms, const struct ssh_conn_info *cinfo)
+ശൂന്യം
+ssh_login(ഘടന ssh *ssh, Sensitive *sensitive, സ്ഥിരം അക്ഷരം *orighost,
+    ഘടന sockaddr_storage *hostaddr, u_short port, ഘടന passwd *pw,
+    പൂർണ്ണസംഖ്യ timeout_ms, സ്ഥിരം ഘടന ssh_conn_info *cinfo)
 {
-	char *host;
-	char *server_user, *local_user;
-	int r;
+	അക്ഷരം *host;
+	അക്ഷരം *server_user, *local_user;
+	പൂർണ്ണസംഖ്യ r;
 
 	local_user = xstrdup(pw->pw_name);
 	server_user = options.user ? options.user : local_user;
@@ -1641,11 +1641,11 @@ ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
 	lowercase(host);
 
 	/* Exchange protocol version identification strings with the server. */
-	if ((r = kex_exchange_identification(ssh, timeout_ms,
+	എങ്കിൽ ((r = kex_exchange_identification(ssh, timeout_ms,
 	    options.version_addendum)) != 0)
 		sshpkt_fatal(ssh, r, "banner exchange");
 
-	if ((ssh->compat & SSH_BUG_NOREKEY)) {
+	എങ്കിൽ ((ssh->compat & SSH_BUG_NOREKEY)) {
 		logit("Warning: this server does not support rekeying.");
 		logit("This session will eventually fail");
 	}
@@ -1659,67 +1659,67 @@ ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
 	ssh_kex2(ssh, host, hostaddr, port, cinfo);
 	kex_set_warn_weak_crypto(ssh, options.warn_weak_crypto &&
 	    !options.kex_algorithms_set);
-	if (!options.kex_algorithms_set && ssh->kex != NULL &&
-	    ssh->kex->name != NULL && options.warn_weak_crypto &&
+	എങ്കിൽ (!options.kex_algorithms_set && ssh->kex != ശൂന്യ &&
+	    ssh->kex->name != ശൂന്യ && options.warn_weak_crypto &&
 	    !kex_is_pq_from_name(ssh->kex->name)) {
 		warn_nonpq_kex();
 		ssh->kex->non_pq_kex_warned = 1;
 	}
 	ssh_userauth2(ssh, local_user, server_user, host, sensitive);
-	free(local_user);
-	free(host);
+	സ്വതന്ത്രം(local_user);
+	സ്വതന്ത്രം(host);
 }
 
 /* print all known host keys for a given host, but skip keys of given type */
-static int
-show_other_keys(struct hostkeys *hostkeys, struct sshkey *key)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+show_other_താക്കോലുകൾ(ഘടന hostkeys *hostkeys, ഘടന sshkey *താക്കോൽ)
 {
-	int type[] = {
-		KEY_RSA,
-		KEY_ECDSA,
-		KEY_ED25519,
-		KEY_MLDSA44_ED25519,
+	പൂർണ്ണസംഖ്യ type[] = {
+		താക്കോൽ_RSA,
+		താക്കോൽ_ECDSA,
+		താക്കോൽ_ED25519,
+		താക്കോൽ_MLDSA44_ED25519,
 		-1
 	};
-	int i, ret = 0;
-	char *fp, *ra;
-	const struct hostkey_entry *found;
+	പൂർണ്ണസംഖ്യ i, ret = 0;
+	അക്ഷരം *fp, *ra;
+	സ്ഥിരം ഘടന hostkey_entry *found;
 
-	for (i = 0; type[i] != -1; i++) {
-		if (type[i] == key->type)
-			continue;
-		if (!lookup_key_in_hostkeys_by_type(hostkeys, type[i],
+	വേണ്ടി (i = 0; type[i] != -1; i++) {
+		എങ്കിൽ (type[i] == താക്കോൽ->type)
+			തുടരുക;
+		എങ്കിൽ (!lookup_താക്കോൽ_in_hostkeys_by_type(hostkeys, type[i],
 		    -1, &found))
-			continue;
-		fp = sshkey_fingerprint(found->key,
+			തുടരുക;
+		fp = sshkey_fingerprint(found->താക്കോൽ,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
-		ra = sshkey_fingerprint(found->key,
+		ra = sshkey_fingerprint(found->താക്കോൽ,
 		    options.fingerprint_hash, SSH_FP_RANDOMART);
-		if (fp == NULL || ra == NULL)
+		എങ്കിൽ (fp == ശൂന്യ || ra == ശൂന്യ)
 			fatal_f("sshkey_fingerprint fail");
 		logit("WARNING: %s key found for host %s\n"
 		    "in %s:%lu\n"
 		    "%s key fingerprint %s.",
-		    sshkey_type(found->key),
-		    found->host, found->file, found->line,
-		    sshkey_type(found->key), fp);
-		if (options.visual_host_key)
+		    sshkey_type(found->താക്കോൽ),
+		    found->host, found->file, found->വരി,
+		    sshkey_type(found->താക്കോൽ), fp);
+		എങ്കിൽ (options.visual_host_താക്കോൽ)
 			logit("%s", ra);
-		free(ra);
-		free(fp);
+		സ്വതന്ത്രം(ra);
+		സ്വതന്ത്രം(fp);
 		ret = 1;
 	}
-	return ret;
+	തിരികെ ret;
 }
 
-static void
-warn_changed_key(struct sshkey *host_key)
+സ്ഥിതം ശൂന്യം
+warn_changed_താക്കോൽ(ഘടന sshkey *host_താക്കോൽ)
 {
-	char *fp;
+	അക്ഷരം *fp;
 
-	fp = sshkey_fingerprint(host_key, options.fingerprint_hash,
+	fp = sshkey_fingerprint(host_താക്കോൽ, options.fingerprint_hash,
 	    SSH_FP_DEFAULT);
-	if (fp == NULL)
+	എങ്കിൽ (fp == ശൂന്യ)
 		fatal_f("sshkey_fingerprint fail");
 
 	error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -1729,81 +1729,81 @@ warn_changed_key(struct sshkey *host_key)
 	error("Someone could be eavesdropping on you right now (man-in-the-middle attack)!");
 	error("It is also possible that a host key has just been changed.");
 	error("The fingerprint for the %s key sent by the remote host is\n%s.",
-	    sshkey_type(host_key), fp);
+	    sshkey_type(host_താക്കോൽ), fp);
 	error("Please contact your system administrator.");
 
-	free(fp);
+	സ്വതന്ത്രം(fp);
 }
 
 /*
  * Execute a local command
  */
-int
-ssh_local_cmd(const char *args)
+പൂർണ്ണസംഖ്യ
+ssh_local_cmd(സ്ഥിരം അക്ഷരം *args)
 {
-	char *shell;
+	അക്ഷരം *shell;
 	pid_t pid;
-	int status;
-	void (*osighand)(int);
+	പൂർണ്ണസംഖ്യ status;
+	ശൂന്യം (*osighand)(പൂർണ്ണസംഖ്യ);
 
-	if (!options.permit_local_command ||
-	    args == NULL || !*args)
-		return (1);
+	എങ്കിൽ (!options.permit_local_command ||
+	    args == ശൂന്യ || !*args)
+		തിരികെ (1);
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	എങ്കിൽ ((shell = getenv("SHELL")) == ശൂന്യ || *shell == '\0')
 		shell = _PATH_BSHELL;
 
 	osighand = ssh_signal(SIGCHLD, SIG_DFL);
 	pid = fork();
-	if (pid == 0) {
+	എങ്കിൽ (pid == 0) {
 		ssh_signal(SIGPIPE, SIG_DFL);
 		debug3("Executing %s -c \"%s\"", shell, args);
-		execl(shell, shell, "-c", args, (char *)NULL);
+		execl(shell, shell, "-c", args, (അക്ഷരം *)ശൂന്യ);
 		error("Couldn't execute %s -c \"%s\": %s",
 		    shell, args, strerror(errno));
 		_exit(1);
-	} else if (pid == -1)
+	} അല്ലെങ്കിൽ എങ്കിൽ (pid == -1)
 		fatal("fork failed: %.100s", strerror(errno));
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	ആകുമ്പോൾ (waitpid(pid, &status, 0) == -1)
+		എങ്കിൽ (errno != EINTR)
 			fatal("Couldn't wait for child: %s", strerror(errno));
 	ssh_signal(SIGCHLD, osighand);
 
-	if (!WIFEXITED(status))
-		return (1);
+	എങ്കിൽ (!WIFEXITED(status))
+		തിരികെ (1);
 
-	return (WEXITSTATUS(status));
+	തിരികെ (WEXITSTATUS(status));
 }
 
-void
-maybe_add_key_to_agent(const char *authfile, struct sshkey *private,
-    const char *comment, const char *passphrase)
+ശൂന്യം
+maybe_add_താക്കോൽ_to_agent(സ്ഥിരം അക്ഷരം *authfile, ഘടന sshkey *സ്വകാര്യ,
+    സ്ഥിരം അക്ഷരം *comment, സ്ഥിരം അക്ഷരം *passphrase)
 {
-	int auth_sock = -1, r;
-	const char *skprovider = NULL;
+	പൂർണ്ണസംഖ്യ auth_sock = -1, r;
+	സ്ഥിരം അക്ഷരം *skprovider = ശൂന്യ;
 
-	if (options.add_keys_to_agent == 0)
-		return;
+	എങ്കിൽ (options.add_താക്കോലുകൾ_to_agent == 0)
+		തിരികെ;
 
-	if ((r = ssh_get_authentication_socket(&auth_sock)) != 0) {
+	എങ്കിൽ ((r = ssh_get_authentication_socket(&auth_sock)) != 0) {
 		debug3("no authentication agent, not adding key");
-		return;
+		തിരികെ;
 	}
 
-	if (options.add_keys_to_agent == 2 &&
+	എങ്കിൽ (options.add_താക്കോലുകൾ_to_agent == 2 &&
 	    !ask_permission("Add key %s (%s) to agent?", authfile, comment)) {
 		debug3("user denied adding this key");
 		close(auth_sock);
-		return;
+		തിരികെ;
 	}
-	if (sshkey_is_sk(private))
+	എങ്കിൽ (sshkey_is_sk(സ്വകാര്യ))
 		skprovider = options.sk_provider;
-	if ((r = ssh_add_identity_constrained(auth_sock, private,
-	    comment == NULL ? authfile : comment,
-	    options.add_keys_to_agent_lifespan,
-	    (options.add_keys_to_agent == 3), skprovider, NULL, 0)) == 0)
+	എങ്കിൽ ((r = ssh_add_identity_constrained(auth_sock, സ്വകാര്യ,
+	    comment == ശൂന്യ ? authfile : comment,
+	    options.add_താക്കോലുകൾ_to_agent_lifespan,
+	    (options.add_താക്കോലുകൾ_to_agent == 3), skprovider, ശൂന്യ, 0)) == 0)
 		debug("identity added to agent: %s", authfile);
-	else
+	അല്ലെങ്കിൽ
 		debug("could not add identity to agent: %s (%d)", authfile, r);
 	close(auth_sock);
 }

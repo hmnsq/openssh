@@ -25,24 +25,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/socket.h>
 
-#include <netdb.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <netdb.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "dns.h"
-#include "log.h"
-#include "digest.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "dns.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "digest.h"
 
-static const char * const errset_text[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം * സ്ഥിരം errset_text[] = {
 	"success",		/* 0 ERRSET_SUCCESS */
 	"out of memory",	/* 1 ERRSET_NOMEMORY */
 	"general failure",	/* 2 ERRSET_FAIL */
@@ -51,24 +51,24 @@ static const char * const errset_text[] = {
 	"data does not exist",	/* 5 ERRSET_NODATA */
 };
 
-static const char *
-dns_result_totext(unsigned int res)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
+dns_result_totext(unsigned പൂർണ്ണസംഖ്യ res)
 {
-	switch (res) {
-	case ERRSET_SUCCESS:
-		return errset_text[ERRSET_SUCCESS];
-	case ERRSET_NOMEMORY:
-		return errset_text[ERRSET_NOMEMORY];
-	case ERRSET_FAIL:
-		return errset_text[ERRSET_FAIL];
-	case ERRSET_INVAL:
-		return errset_text[ERRSET_INVAL];
-	case ERRSET_NONAME:
-		return errset_text[ERRSET_NONAME];
-	case ERRSET_NODATA:
-		return errset_text[ERRSET_NODATA];
-	default:
-		return "unknown error";
+	തിരഞ്ഞെടുപ്പ് (res) {
+	അവസ്ഥ ERRSET_SUCCESS:
+		തിരികെ errset_text[ERRSET_SUCCESS];
+	അവസ്ഥ ERRSET_NOMEMORY:
+		തിരികെ errset_text[ERRSET_NOMEMORY];
+	അവസ്ഥ ERRSET_FAIL:
+		തിരികെ errset_text[ERRSET_FAIL];
+	അവസ്ഥ ERRSET_INVAL:
+		തിരികെ errset_text[ERRSET_INVAL];
+	അവസ്ഥ ERRSET_NONAME:
+		തിരികെ errset_text[ERRSET_NONAME];
+	അവസ്ഥ ERRSET_NODATA:
+		തിരികെ errset_text[ERRSET_NODATA];
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ "unknown error";
 	}
 }
 
@@ -76,122 +76,122 @@ dns_result_totext(unsigned int res)
  * Read SSHFP parameters from key buffer.
  * Caller must free digest which is allocated by sshkey_fingerprint_raw().
  */
-static int
-dns_read_key(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, struct sshkey *key)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+dns_read_താക്കോൽ(uint8_t *algorithm, uint8_t *digest_type,
+    u_char **digest, size_t *digest_len, ഘടന sshkey *താക്കോൽ)
 {
-	int r, success = 0;
-	int fp_alg = -1;
+	പൂർണ്ണസംഖ്യ r, success = 0;
+	പൂർണ്ണസംഖ്യ fp_alg = -1;
 
-	switch (key->type) {
-	case KEY_RSA:
-		*algorithm = SSHFP_KEY_RSA;
-		break;
-	case KEY_ECDSA:
-		*algorithm = SSHFP_KEY_ECDSA;
-		break;
-	case KEY_ED25519:
-		*algorithm = SSHFP_KEY_ED25519;
-		break;
-	default:
-		*algorithm = SSHFP_KEY_RESERVED; /* 0 */
+	തിരഞ്ഞെടുപ്പ് (താക്കോൽ->type) {
+	അവസ്ഥ താക്കോൽ_RSA:
+		*algorithm = SSHFP_താക്കോൽ_RSA;
+		നിർത്തുക;
+	അവസ്ഥ താക്കോൽ_ECDSA:
+		*algorithm = SSHFP_താക്കോൽ_ECDSA;
+		നിർത്തുക;
+	അവസ്ഥ താക്കോൽ_ED25519:
+		*algorithm = SSHFP_താക്കോൽ_ED25519;
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		*algorithm = SSHFP_താക്കോൽ_RESERVED; /* 0 */
 	}
 
-	switch (*digest_type) {
-	case SSHFP_HASH_SHA1:
+	തിരഞ്ഞെടുപ്പ് (*digest_type) {
+	അവസ്ഥ SSHFP_HASH_SHA1:
 		fp_alg = SSH_DIGEST_SHA1;
-		break;
-	case SSHFP_HASH_SHA256:
+		നിർത്തുക;
+	അവസ്ഥ SSHFP_HASH_SHA256:
 		fp_alg = SSH_DIGEST_SHA256;
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		*digest_type = SSHFP_HASH_RESERVED; /* 0 */
 	}
 
-	if (*algorithm && *digest_type) {
-		if ((r = sshkey_fingerprint_raw(key, fp_alg, digest,
+	എങ്കിൽ (*algorithm && *digest_type) {
+		എങ്കിൽ ((r = sshkey_fingerprint_raw(താക്കോൽ, fp_alg, digest,
 		    digest_len)) != 0)
 			fatal_fr(r, "sshkey_fingerprint_raw");
 		success = 1;
-	} else {
-		*digest = NULL;
+	} അല്ലെങ്കിൽ {
+		*digest = ശൂന്യ;
 		*digest_len = 0;
 	}
 
-	return success;
+	തിരികെ success;
 }
 
 /*
  * Read SSHFP parameters from rdata buffer.
  */
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 dns_read_rdata(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, u_char *rdata, int rdata_len)
+    u_char **digest, size_t *digest_len, u_char *rdata, പൂർണ്ണസംഖ്യ rdata_len)
 {
-	int success = 0;
+	പൂർണ്ണസംഖ്യ success = 0;
 
-	*algorithm = SSHFP_KEY_RESERVED;
+	*algorithm = SSHFP_താക്കോൽ_RESERVED;
 	*digest_type = SSHFP_HASH_RESERVED;
 
-	if (rdata_len >= 2) {
+	എങ്കിൽ (rdata_len >= 2) {
 		*algorithm = rdata[0];
 		*digest_type = rdata[1];
 		*digest_len = rdata_len - 2;
 
-		if (*digest_len > 0) {
+		എങ്കിൽ (*digest_len > 0) {
 			*digest = xmalloc(*digest_len);
 			memcpy(*digest, rdata + 2, *digest_len);
-		} else {
+		} അല്ലെങ്കിൽ {
 			*digest = (u_char *)xstrdup("");
 		}
 
 		success = 1;
 	}
 
-	return success;
+	തിരികെ success;
 }
 
 /*
  * Check if hostname is numerical.
  * Returns -1 if hostname is numeric, 0 otherwise
  */
-static int
-is_numeric_hostname(const char *hostname)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+is_numeric_hostname(സ്ഥിരം അക്ഷരം *hostname)
 {
-	struct addrinfo hints, *ai;
+	ഘടന addrinfo hints, *ai;
 
 	/*
 	 * We shouldn't ever get a null host but if we do then log an error
 	 * and return -1 which stops DNS key fingerprint processing.
 	 */
-	if (hostname == NULL) {
+	എങ്കിൽ (hostname == ശൂന്യ) {
 		error("is_numeric_hostname called with NULL hostname");
-		return -1;
+		തിരികെ -1;
 	}
 
-	memset(&hints, 0, sizeof(hints));
+	memset(&hints, 0, വലുപ്പം(hints));
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (getaddrinfo(hostname, NULL, &hints, &ai) == 0) {
+	എങ്കിൽ (getaddrinfo(hostname, ശൂന്യ, &hints, &ai) == 0) {
 		freeaddrinfo(ai);
-		return -1;
+		തിരികെ -1;
 	}
 
-	return 0;
+	തിരികെ 0;
 }
 
 /*
  * Verify the given hostname, address and host key using DNS.
  * Returns 0 if lookup succeeds, -1 otherwise
  */
-int
-verify_host_key_dns(const char *hostname, struct sockaddr *address,
-    struct sshkey *hostkey, int *flags)
+പൂർണ്ണസംഖ്യ
+verify_host_താക്കോൽ_dns(സ്ഥിരം അക്ഷരം *hostname, ഘടന sockaddr *address,
+    ഘടന sshkey *hostkey, പൂർണ്ണസംഖ്യ *flags)
 {
 	u_int counter;
-	int result;
-	struct rrsetinfo *fingerprints = NULL;
+	പൂർണ്ണസംഖ്യ result;
+	ഘടന rrsetinfo *fingerprints = ശൂന്യ;
 
 	uint8_t hostkey_algorithm;
 	u_char *hostkey_digest;
@@ -205,133 +205,133 @@ verify_host_key_dns(const char *hostname, struct sockaddr *address,
 	*flags = 0;
 
 	debug3("verify_host_key_dns");
-	if (hostkey == NULL)
+	എങ്കിൽ (hostkey == ശൂന്യ)
 		fatal("No key to look up!");
 
-	if (is_numeric_hostname(hostname)) {
+	എങ്കിൽ (is_numeric_hostname(hostname)) {
 		debug("skipped DNS lookup for numerical hostname");
-		return -1;
+		തിരികെ -1;
 	}
 
 	result = getrrsetbyname(hostname, DNS_RDATACLASS_IN,
 	    DNS_RDATATYPE_SSHFP, 0, &fingerprints);
-	if (result) {
+	എങ്കിൽ (result) {
 		verbose("DNS lookup error: %s", dns_result_totext(result));
-		return -1;
+		തിരികെ -1;
 	}
 
-	if (fingerprints->rri_flags & RRSET_VALIDATED) {
+	എങ്കിൽ (fingerprints->rri_flags & RRSET_VALIDATED) {
 		*flags |= DNS_VERIFY_SECURE;
 		debug("found %d secure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
-	} else {
+	} അല്ലെങ്കിൽ {
 		debug("found %d insecure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
 	}
 
-	if (fingerprints->rri_nrdatas)
+	എങ്കിൽ (fingerprints->rri_nrdatas)
 		*flags |= DNS_VERIFY_FOUND;
 
-	for (counter = 0; counter < fingerprints->rri_nrdatas; counter++) {
+	വേണ്ടി (counter = 0; counter < fingerprints->rri_nrdatas; counter++) {
 		/*
 		 * Extract the key from the answer. Ignore any badly
 		 * formatted fingerprints.
 		 */
-		if (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
+		എങ്കിൽ (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
 		    &dnskey_digest, &dnskey_digest_len,
 		    fingerprints->rri_rdatas[counter].rdi_data,
 		    fingerprints->rri_rdatas[counter].rdi_length)) {
 			verbose("Error parsing fingerprint from DNS.");
-			continue;
+			തുടരുക;
 		}
 		debug3_f("checking SSHFP type %d fptype %d", dnskey_algorithm,
 		    dnskey_digest_type);
 
 		/* Calculate host key fingerprint. */
-		if (!dns_read_key(&hostkey_algorithm, &dnskey_digest_type,
+		എങ്കിൽ (!dns_read_താക്കോൽ(&hostkey_algorithm, &dnskey_digest_type,
 		    &hostkey_digest, &hostkey_digest_len, hostkey)) {
 			error("Error calculating key fingerprint.");
-			free(dnskey_digest);
+			സ്വതന്ത്രം(dnskey_digest);
 			freerrset(fingerprints);
-			return -1;
+			തിരികെ -1;
 		}
 
 		/* Check if the current key is the same as the given key */
-		if (hostkey_algorithm == dnskey_algorithm &&
+		എങ്കിൽ (hostkey_algorithm == dnskey_algorithm &&
 		    hostkey_digest_len == dnskey_digest_len) {
-			if (timingsafe_bcmp(hostkey_digest, dnskey_digest,
+			എങ്കിൽ (timingsafe_bcmp(hostkey_digest, dnskey_digest,
 			    hostkey_digest_len) == 0) {
 				debug_f("matched SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
 				*flags |= DNS_VERIFY_MATCH;
-			} else {
+			} അല്ലെങ്കിൽ {
 				debug_f("failed SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
 				*flags |= DNS_VERIFY_FAILED;
 			}
 		}
-		free(dnskey_digest);
-		free(hostkey_digest); /* from sshkey_fingerprint_raw() */
+		സ്വതന്ത്രം(dnskey_digest);
+		സ്വതന്ത്രം(hostkey_digest); /* from sshkey_fingerprint_raw() */
 	}
 
 	freerrset(fingerprints);
 
 	/* If any fingerprint failed to validate, return failure. */
-	if (*flags & DNS_VERIFY_FAILED)
+	എങ്കിൽ (*flags & DNS_VERIFY_FAILED)
 		*flags &= ~DNS_VERIFY_MATCH;
 
-	if (*flags & DNS_VERIFY_FOUND)
-		if (*flags & DNS_VERIFY_MATCH)
+	എങ്കിൽ (*flags & DNS_VERIFY_FOUND)
+		എങ്കിൽ (*flags & DNS_VERIFY_MATCH)
 			debug("matching host key fingerprint found in DNS");
-		else
+		അല്ലെങ്കിൽ
 			debug("mismatching host key fingerprint found in DNS");
-	else
+	അല്ലെങ്കിൽ
 		debug("no host key fingerprint found in DNS");
 
-	return 0;
+	തിരികെ 0;
 }
 
 /*
  * Export the fingerprint of a key as a DNS resource record
  */
-int
-export_dns_rr(const char *hostname, struct sshkey *key, FILE *f, int generic,
-    int alg)
+പൂർണ്ണസംഖ്യ
+export_dns_rr(സ്ഥിരം അക്ഷരം *hostname, ഘടന sshkey *താക്കോൽ, FILE *f, പൂർണ്ണസംഖ്യ generic,
+    പൂർണ്ണസംഖ്യ alg)
 {
 	uint8_t rdata_pubkey_algorithm = 0;
 	uint8_t rdata_digest_type = SSHFP_HASH_RESERVED;
 	uint8_t dtype;
 	u_char *rdata_digest;
 	size_t i, rdata_digest_len;
-	int success = 0;
+	പൂർണ്ണസംഖ്യ success = 0;
 
-	for (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
-		if (alg != -1 && dtype != alg)
-			continue;
+	വേണ്ടി (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
+		എങ്കിൽ (alg != -1 && dtype != alg)
+			തുടരുക;
 		rdata_digest_type = dtype;
-		if (dns_read_key(&rdata_pubkey_algorithm, &rdata_digest_type,
-		    &rdata_digest, &rdata_digest_len, key)) {
-			if (generic) {
+		എങ്കിൽ (dns_read_താക്കോൽ(&rdata_pubkey_algorithm, &rdata_digest_type,
+		    &rdata_digest, &rdata_digest_len, താക്കോൽ)) {
+			എങ്കിൽ (generic) {
 				fprintf(f, "%s IN TYPE%d \\# %zu %02x %02x ",
 				    hostname, DNS_RDATATYPE_SSHFP,
 				    2 + rdata_digest_len,
 				    rdata_pubkey_algorithm, rdata_digest_type);
-			} else {
+			} അല്ലെങ്കിൽ {
 				fprintf(f, "%s IN SSHFP %d %d ", hostname,
 				    rdata_pubkey_algorithm, rdata_digest_type);
 			}
-			for (i = 0; i < rdata_digest_len; i++)
+			വേണ്ടി (i = 0; i < rdata_digest_len; i++)
 				fprintf(f, "%02x", rdata_digest[i]);
 			fprintf(f, "\n");
-			free(rdata_digest); /* from sshkey_fingerprint_raw() */
+			സ്വതന്ത്രം(rdata_digest); /* from sshkey_fingerprint_raw() */
 			success = 1;
 		}
 	}
 
 	/* No SSHFP record was generated at all */
-	if (success == 0) {
+	എങ്കിൽ (success == 0) {
 		error_f("unsupported algorithm and/or digest_type");
 	}
 
-	return success;
+	തിരികെ success;
 }

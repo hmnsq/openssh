@@ -14,54 +14,54 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifdef SANDBOX_DARWIN
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <sandbox.h>
+#അന്തര്ഭാവ <sandbox.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "monitor.h"
-#include "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "ssh-sandbox.h"
+#അന്തര്ഭാവ "monitor.h"
+#അന്തര്ഭാവ "xmalloc.h"
 
 /* Darwin/OS X sandbox */
 
-struct ssh_sandbox {
-	int junk;
+ഘടന ssh_sandbox {
+	പൂർണ്ണസംഖ്യ junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+ഘടന ssh_sandbox *
+ssh_sandbox_init(ഘടന monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	ഘടന ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
 	debug3_f("preparing Darwin sandbox");
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, വലുപ്പം(*box));
+	തിരികെ box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+ശൂന്യം
+ssh_sandbox_child(ഘടന ssh_sandbox *box)
 {
-	char *errmsg;
-	struct rlimit rl_zero;
+	അക്ഷരം *errmsg;
+	ഘടന rlimit rl_zero;
 
 	debug3_f("starting Darwin sandbox");
-	if (sandbox_init(kSBXProfilePureComputation, SANDBOX_NAMED,
+	എങ്കിൽ (sandbox_init(kSBXProfilePureComputation, SANDBOX_NAMED,
 	    &errmsg) == -1)
 		fatal_f("sandbox_init: %s", errmsg);
 
@@ -70,13 +70,13 @@ ssh_sandbox_child(struct ssh_sandbox *box)
 	 * we must disable these using rlimit.
 	 */
 	rl_zero.rlim_cur = rl_zero.rlim_max = 0;
-	if (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
+	എങ്കിൽ (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_FSIZE, { 0, 0 }): %s",
 			__func__, strerror(errno));
-	if (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
+	എങ്കിൽ (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_NOFILE, { 0, 0 }): %s",
 			__func__, strerror(errno));
-	if (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
+	എങ്കിൽ (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_NPROC, { 0, 0 }): %s",
 			__func__, strerror(errno));
 }

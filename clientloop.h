@@ -35,33 +35,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <termios.h>
+#അന്തര്ഭാവ <termios.h>
 
-struct ssh;
+ഘടന ssh;
 
 /* Client side main loop for the interactive session. */
-int	 client_loop(struct ssh *, int, int, int);
-int	 client_x11_get_proto(struct ssh *, const char *, const char *,
-	    u_int, u_int, char **, char **);
-void	 client_session2_setup(struct ssh *, int, int, int,
-	    const char *, struct termios *, int, struct sshbuf *, char **);
-char	 *client_request_tun_fwd(struct ssh *, int, int, int,
-    channel_open_fn *, void *);
-void	 client_stop_mux(void);
+പൂർണ്ണസംഖ്യ	 client_loop(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 client_x11_get_proto(ഘടന ssh *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *,
+	    u_int, u_int, അക്ഷരം **, അക്ഷരം **);
+ശൂന്യം	 client_session2_setup(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+	    സ്ഥിരം അക്ഷരം *, ഘടന termios *, പൂർണ്ണസംഖ്യ, ഘടന sshbuf *, അക്ഷരം **);
+അക്ഷരം	 *client_request_tun_fwd(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+    channel_open_fn *, ശൂന്യം *);
+ശൂന്യം	 client_stop_mux(ശൂന്യം);
 
 /* Escape filter for protocol 2 sessions */
-void	*client_new_escape_filter_ctx(int);
-void	 client_filter_cleanup(struct ssh *, int, void *);
-int	 client_simple_escape_filter(struct ssh *, Channel *, char *, int);
+ശൂന്യം	*client_new_escape_filter_ctx(പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 client_filter_cleanup(ഘടന ssh *, പൂർണ്ണസംഖ്യ, ശൂന്യം *);
+പൂർണ്ണസംഖ്യ	 client_simple_escape_filter(ഘടന ssh *, Channel *, അക്ഷരം *, പൂർണ്ണസംഖ്യ);
 
 /* Global request confirmation callbacks */
-typedef void global_confirm_cb(struct ssh *, int, uint32_t, void *);
-void	 client_register_global_confirm(global_confirm_cb *, void *);
+തരനിർവചനം ശൂന്യം global_confirm_cb(ഘടന ssh *, പൂർണ്ണസംഖ്യ, uint32_t, ശൂന്യം *);
+ശൂന്യം	 client_register_global_confirm(global_confirm_cb *, ശൂന്യം *);
 
 /* Channel request confirmation callbacks */
-enum confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
-void client_expect_confirm(struct ssh *, int, const char *,
-    enum confirm_action);
+എണ്ണൽ confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
+ശൂന്യം client_expect_confirm(ഘടന ssh *, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *,
+    എണ്ണൽ confirm_action);
 
 /* Multiplexing protocol version */
 #define SSHMUX_VER			4
@@ -78,8 +78,8 @@ void client_expect_confirm(struct ssh *, int, const char *,
 #define SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
 #define SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
 
-void	muxserver_listen(struct ssh *);
-int	muxclient(const char *);
-void	mux_exit_message(struct ssh *, Channel *, int);
-void	mux_tty_alloc_failed(struct ssh *ssh, Channel *);
+ശൂന്യം	muxserver_listen(ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	muxclient(സ്ഥിരം അക്ഷരം *);
+ശൂന്യം	mux_exit_message(ഘടന ssh *, Channel *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	mux_tty_alloc_failed(ഘടന ssh *ssh, Channel *);
 

@@ -58,28 +58,28 @@
  *	Number of matches in the current invocation of glob.
  */
 
-#include "includes.h"
-#include "glob.h"
+#അന്തര്ഭാവ "includes.h"
+#അന്തര്ഭാവ "glob.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/stat.h>
 
-#include <dirent.h>
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <dirent.h>
+#അന്തര്ഭാവ <ctype.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#if !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#എങ്കിൽ !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
 
-#include "charclass.h"
+#അന്തര്ഭാവ "charclass.h"
 
 #ifdef TILDE
 # undef TILDE
@@ -110,16 +110,16 @@
 #define	M_MASK		0xffff
 #define	M_ASCII		0x00ff
 
-typedef u_short Char;
+തരനിർവചനം u_short Char;
 
-#else
+#അല്ലെങ്കിൽ
 
 #define	M_QUOTE		0x80
 #define	M_PROTECT	0x40
 #define	M_MASK		0xff
 #define	M_ASCII		0x7f
 
-typedef char Char;
+തരനിർവചനം അക്ഷരം Char;
 
 #endif
 
@@ -139,94 +139,94 @@ typedef char Char;
 #define	GLOB_LIMIT_STAT		2048
 #define	GLOB_LIMIT_READDIR	16384
 
-struct glob_lim {
+ഘടന glob_lim {
 	size_t	glim_malloc;
 	size_t	glim_stat;
 	size_t	glim_readdir;
 };
 
-struct glob_path_stat {
-	char		*gps_path;
-	struct stat	*gps_stat;
+ഘടന glob_path_stat {
+	അക്ഷരം		*gps_path;
+	ഘടന stat	*gps_stat;
 };
 
-static int	 compare(const void *, const void *);
-static int	 compare_gps(const void *, const void *);
-static int	 g_Ctoc(const Char *, char *, size_t);
-static int	 g_lstat(Char *, struct stat *, glob_t *);
-static DIR	*g_opendir(Char *, glob_t *);
-static Char	*g_strchr(const Char *, int);
-static int	 g_strncmp(const Char *, const char *, size_t);
-static int	 g_stat(Char *, struct stat *, glob_t *);
-static int	 glob0(const Char *, glob_t *, struct glob_lim *);
-static int	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
-static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
-		    glob_t *, struct glob_lim *);
-static int	 glob3(Char *, Char *, Char *, Char *, Char *,
-		    Char *, Char *, glob_t *, struct glob_lim *);
-static int	 globextend(const Char *, glob_t *, struct glob_lim *,
-		    struct stat *);
-static const Char *
-		 globtilde(const Char *, Char *, size_t, glob_t *);
-static int	 globexp1(const Char *, glob_t *, struct glob_lim *);
-static int	 globexp2(const Char *, const Char *, glob_t *,
-		    struct glob_lim *);
-static int	 match(Char *, Char *, Char *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 compare(സ്ഥിരം ശൂന്യം *, സ്ഥിരം ശൂന്യം *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 compare_gps(സ്ഥിരം ശൂന്യം *, സ്ഥിരം ശൂന്യം *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 g_Ctoc(സ്ഥിരം Char *, അക്ഷരം *, size_t);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 g_lstat(Char *, ഘടന stat *, glob_t *);
+സ്ഥിതം DIR	*g_opendir(Char *, glob_t *);
+സ്ഥിതം Char	*g_strchr(സ്ഥിരം Char *, പൂർണ്ണസംഖ്യ);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 g_strncmp(സ്ഥിരം Char *, സ്ഥിരം അക്ഷരം *, size_t);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 g_stat(Char *, ഘടന stat *, glob_t *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 glob0(സ്ഥിരം Char *, glob_t *, ഘടന glob_lim *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 glob1(Char *, Char *, glob_t *, ഘടന glob_lim *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
+		    glob_t *, ഘടന glob_lim *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 glob3(Char *, Char *, Char *, Char *, Char *,
+		    Char *, Char *, glob_t *, ഘടന glob_lim *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 globextend(സ്ഥിരം Char *, glob_t *, ഘടന glob_lim *,
+		    ഘടന stat *);
+സ്ഥിതം സ്ഥിരം Char *
+		 globtilde(സ്ഥിരം Char *, Char *, size_t, glob_t *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 globexp1(സ്ഥിരം Char *, glob_t *, ഘടന glob_lim *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 globexp2(സ്ഥിരം Char *, സ്ഥിരം Char *, glob_t *,
+		    ഘടന glob_lim *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ	 match(Char *, Char *, Char *);
 #ifdef DEBUG
-static void	 qprintf(const char *, Char *);
+സ്ഥിതം ശൂന്യം	 qprintf(സ്ഥിരം അക്ഷരം *, Char *);
 #endif
 
-int
-glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
+പൂർണ്ണസംഖ്യ
+glob(സ്ഥിരം അക്ഷരം *pattern, പൂർണ്ണസംഖ്യ flags, പൂർണ്ണസംഖ്യ (*errfunc)(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ),
     glob_t *pglob)
 {
-	const u_char *patnext;
-	int c;
+	സ്ഥിരം u_char *patnext;
+	പൂർണ്ണസംഖ്യ c;
 	Char *bufnext, *bufend, patbuf[PATH_MAX];
-	struct glob_lim limit = { 0, 0, 0 };
+	ഘടന glob_lim limit = { 0, 0, 0 };
 
 	patnext = (u_char *) pattern;
-	if (!(flags & GLOB_APPEND)) {
+	എങ്കിൽ (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathc = 0;
-		pglob->gl_pathv = NULL;
-		pglob->gl_statv = NULL;
-		if (!(flags & GLOB_DOOFFS))
+		pglob->gl_pathv = ശൂന്യ;
+		pglob->gl_statv = ശൂന്യ;
+		എങ്കിൽ (!(flags & GLOB_DOOFFS))
 			pglob->gl_offs = 0;
 	}
 	pglob->gl_flags = flags & ~GLOB_MAGCHAR;
 	pglob->gl_errfunc = errfunc;
 	pglob->gl_matchc = 0;
 
-	if (strnlen(pattern, PATH_MAX) == PATH_MAX)
-		return(GLOB_NOMATCH);
+	എങ്കിൽ (strnlen(pattern, PATH_MAX) == PATH_MAX)
+		തിരികെ(GLOB_NOMATCH);
 
-	if (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
+	എങ്കിൽ (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX - pglob->gl_offs - 1)
-		return GLOB_NOSPACE;
+		തിരികെ GLOB_NOSPACE;
 
 	bufnext = patbuf;
 	bufend = bufnext + PATH_MAX - 1;
-	if (flags & GLOB_NOESCAPE)
-		while (bufnext < bufend && (c = *patnext++) != EOS)
+	എങ്കിൽ (flags & GLOB_NOESCAPE)
+		ആകുമ്പോൾ (bufnext < bufend && (c = *patnext++) != EOS)
 			*bufnext++ = c;
-	else {
+	അല്ലെങ്കിൽ {
 		/* Protect the quoted characters. */
-		while (bufnext < bufend && (c = *patnext++) != EOS)
-			if (c == QUOTE) {
-				if ((c = *patnext++) == EOS) {
+		ആകുമ്പോൾ (bufnext < bufend && (c = *patnext++) != EOS)
+			എങ്കിൽ (c == QUOTE) {
+				എങ്കിൽ ((c = *patnext++) == EOS) {
 					c = QUOTE;
 					--patnext;
 				}
 				*bufnext++ = c | M_PROTECT;
-			} else
+			} അല്ലെങ്കിൽ
 				*bufnext++ = c;
 	}
 	*bufnext = EOS;
 
-	if (flags & GLOB_BRACE)
-		return globexp1(patbuf, pglob, &limit);
-	else
-		return glob0(patbuf, pglob, &limit);
+	എങ്കിൽ (flags & GLOB_BRACE)
+		തിരികെ globexp1(patbuf, pglob, &limit);
+	അല്ലെങ്കിൽ
+		തിരികെ glob0(patbuf, pglob, &limit);
 }
 
 /*
@@ -234,19 +234,19 @@ glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
  * invoke the standard globbing routine to glob the rest of the magic
  * characters
  */
-static int
-globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+globexp1(സ്ഥിരം Char *pattern, glob_t *pglob, ഘടന glob_lim *limitp)
 {
-	const Char* ptr = pattern;
+	സ്ഥിരം Char* ptr = pattern;
 
 	/* Protect a single {}, for find(1), like csh */
-	if (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
-		return glob0(pattern, pglob, limitp);
+	എങ്കിൽ (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
+		തിരികെ glob0(pattern, pglob, limitp);
 
-	if ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
-		return globexp2(ptr, pattern, pglob, limitp);
+	എങ്കിൽ ((ptr = (സ്ഥിരം Char *) g_strchr(ptr, LBRACE)) != ശൂന്യ)
+		തിരികെ globexp2(ptr, pattern, pglob, limitp);
 
-	return glob0(pattern, pglob, limitp);
+	തിരികെ glob0(pattern, pglob, limitp);
 }
 
 
@@ -255,84 +255,84 @@ globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
  * If it succeeds then it invokes globexp1 with the new pattern.
  * If it fails then it tries to glob the rest of the pattern and returns.
  */
-static int
-globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
-    struct glob_lim *limitp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+globexp2(സ്ഥിരം Char *ptr, സ്ഥിരം Char *pattern, glob_t *pglob,
+    ഘടന glob_lim *limitp)
 {
-	int     i, rv;
+	പൂർണ്ണസംഖ്യ     i, rv;
 	Char   *lm, *ls;
-	const Char *pe, *pm, *pl;
+	സ്ഥിരം Char *pe, *pm, *pl;
 	Char    patbuf[PATH_MAX];
 
 	/* copy part up to the brace */
-	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+	വേണ്ടി (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
 		;
 	*lm = EOS;
 	ls = lm;
 
 	/* Find the balanced brace */
-	for (i = 0, pe = ++ptr; *pe; pe++)
-		if (*pe == LBRACKET) {
+	വേണ്ടി (i = 0, pe = ++ptr; *pe; pe++)
+		എങ്കിൽ (*pe == LBRACKET) {
 			/* Ignore everything between [] */
-			for (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
+			വേണ്ടി (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
 				;
-			if (*pe == EOS) {
+			എങ്കിൽ (*pe == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pe = pm;
 			}
-		} else if (*pe == LBRACE)
+		} അല്ലെങ്കിൽ എങ്കിൽ (*pe == LBRACE)
 			i++;
-		else if (*pe == RBRACE) {
-			if (i == 0)
-				break;
+		അല്ലെങ്കിൽ എങ്കിൽ (*pe == RBRACE) {
+			എങ്കിൽ (i == 0)
+				നിർത്തുക;
 			i--;
 		}
 
 	/* Non matching braces; just glob the pattern */
-	if (i != 0 || *pe == EOS)
-		return glob0(patbuf, pglob, limitp);
+	എങ്കിൽ (i != 0 || *pe == EOS)
+		തിരികെ glob0(patbuf, pglob, limitp);
 
-	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
-		switch (*pm) {
-		case LBRACKET:
+	വേണ്ടി (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+		തിരഞ്ഞെടുപ്പ് (*pm) {
+		അവസ്ഥ LBRACKET:
 			/* Ignore everything between [] */
-			for (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
+			വേണ്ടി (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
 				;
-			if (*pm == EOS) {
+			എങ്കിൽ (*pm == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pm = pl;
 			}
-			break;
+			നിർത്തുക;
 
-		case LBRACE:
+		അവസ്ഥ LBRACE:
 			i++;
-			break;
+			നിർത്തുക;
 
-		case RBRACE:
-			if (i) {
+		അവസ്ഥ RBRACE:
+			എങ്കിൽ (i) {
 				i--;
-				break;
+				നിർത്തുക;
 			}
 			/* FALLTHROUGH */
-		case COMMA:
-			if (i && *pm == COMMA)
-				break;
-			else {
+		അവസ്ഥ COMMA:
+			എങ്കിൽ (i && *pm == COMMA)
+				നിർത്തുക;
+			അല്ലെങ്കിൽ {
 				/* Append the current string */
-				for (lm = ls; (pl < pm); *lm++ = *pl++)
+				വേണ്ടി (lm = ls; (pl < pm); *lm++ = *pl++)
 					;
 
 				/*
 				 * Append the rest of the pattern after the
 				 * closing brace
 				 */
-				for (pl = pe + 1; (*lm++ = *pl++) != EOS; )
+				വേണ്ടി (pl = pe + 1; (*lm++ = *pl++) != EOS; )
 					;
 
 				/* Expand the current pattern */
@@ -340,19 +340,19 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 				qprintf("globexp2:", patbuf);
 #endif
 				rv = globexp1(patbuf, pglob, limitp);
-				if (rv && rv != GLOB_NOMATCH)
-					return rv;
+				എങ്കിൽ (rv && rv != GLOB_NOMATCH)
+					തിരികെ rv;
 
 				/* move after the comma, to the next string */
 				pl = pm + 1;
 			}
-			break;
+			നിർത്തുക;
 
-		default:
-			break;
+		സ്ഥിരസ്ഥിതി:
+			നിർത്തുക;
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 
@@ -360,106 +360,106 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 /*
  * expand tilde from the passwd file.
  */
-static const Char *
-globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
+സ്ഥിതം സ്ഥിരം Char *
+globtilde(സ്ഥിരം Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
 {
-	struct passwd *pwd;
-	char *h;
-	const Char *p;
+	ഘടന passwd *pwd;
+	അക്ഷരം *h;
+	സ്ഥിരം Char *p;
 	Char *b, *eb;
 
-	if (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
-		return pattern;
+	എങ്കിൽ (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
+		തിരികെ pattern;
 
 	/* Copy up to the end of the string or / */
 	eb = &patbuf[patbuf_len - 1];
-	for (p = pattern + 1, h = (char *) patbuf;
-	    h < (char *)eb && *p && *p != SLASH; *h++ = *p++)
+	വേണ്ടി (p = pattern + 1, h = (അക്ഷരം *) patbuf;
+	    h < (അക്ഷരം *)eb && *p && *p != SLASH; *h++ = *p++)
 		;
 
 	*h = EOS;
 
-#if 0
-	if (h == (char *)eb)
-		return what;
+#എങ്കിൽ 0
+	എങ്കിൽ (h == (അക്ഷരം *)eb)
+		തിരികെ what;
 #endif
 
-	if (((char *) patbuf)[0] == EOS) {
+	എങ്കിൽ (((അക്ഷരം *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-#if 0
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
+#എങ്കിൽ 0
+		എങ്കിൽ (issetugid() != 0 || (h = getenv("HOME")) == ശൂന്യ) {
 #endif
-		if ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
-			if ((pwd = getpwuid(getuid())) == NULL)
-				return pattern;
-			else
+		എങ്കിൽ ((getuid() != geteuid()) || (h = getenv("HOME")) == ശൂന്യ) {
+			എങ്കിൽ ((pwd = getpwuid(getuid())) == ശൂന്യ)
+				തിരികെ pattern;
+			അല്ലെങ്കിൽ
 				h = pwd->pw_dir;
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		/*
 		 * Expand a ~user
 		 */
-		if ((pwd = getpwnam((char*) patbuf)) == NULL)
-			return pattern;
-		else
+		എങ്കിൽ ((pwd = getpwnam((അക്ഷരം*) patbuf)) == ശൂന്യ)
+			തിരികെ pattern;
+		അല്ലെങ്കിൽ
 			h = pwd->pw_dir;
 	}
 
 	/* Copy the home directory */
-	for (b = patbuf; b < eb && *h; *b++ = *h++)
+	വേണ്ടി (b = patbuf; b < eb && *h; *b++ = *h++)
 		;
 
 	/* Append the rest of the pattern */
-	while (b < eb && (*b++ = *p++) != EOS)
+	ആകുമ്പോൾ (b < eb && (*b++ = *p++) != EOS)
 		;
 	*b = EOS;
 
-	return patbuf;
+	തിരികെ patbuf;
 }
 
-static int
-g_strncmp(const Char *s1, const char *s2, size_t n)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+g_strncmp(സ്ഥിരം Char *s1, സ്ഥിരം അക്ഷരം *s2, size_t n)
 {
-	int rv = 0;
+	പൂർണ്ണസംഖ്യ rv = 0;
 
-	while (n--) {
-		rv = *(Char *)s1 - *(const unsigned char *)s2++;
-		if (rv)
-			break;
-		if (*s1++ == '\0')
-			break;
+	ആകുമ്പോൾ (n--) {
+		rv = *(Char *)s1 - *(സ്ഥിരം unsigned അക്ഷരം *)s2++;
+		എങ്കിൽ (rv)
+			നിർത്തുക;
+		എങ്കിൽ (*s1++ == '\0')
+			നിർത്തുക;
 	}
-	return rv;
+	തിരികെ rv;
 }
 
-static int
-g_charclass(const Char **patternp, Char **bufnextp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+g_charclass(സ്ഥിരം Char **patternp, Char **bufnextp)
 {
-	const Char *pattern = *patternp + 1;
+	സ്ഥിരം Char *pattern = *patternp + 1;
 	Char *bufnext = *bufnextp;
-	const Char *colon;
-	struct cclass *cc;
+	സ്ഥിരം Char *colon;
+	ഘടന cclass *cc;
 	size_t len;
 
-	if ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
-		return 1;	/* not a character class */
+	എങ്കിൽ ((colon = g_strchr(pattern, ':')) == ശൂന്യ || colon[1] != ']')
+		തിരികെ 1;	/* not a character class */
 
 	len = (size_t)(colon - pattern);
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
-			break;
+	വേണ്ടി (cc = cclasses; cc->name != ശൂന്യ; cc++) {
+		എങ്കിൽ (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
+			നിർത്തുക;
 	}
-	if (cc->name == NULL)
-		return -1;	/* invalid character class */
+	എങ്കിൽ (cc->name == ശൂന്യ)
+		തിരികെ -1;	/* invalid character class */
 	*bufnext++ = M_CLASS;
 	*bufnext++ = (Char)(cc - &cclasses[0]);
 	*bufnextp = bufnext;
 	*patternp += len + 3;
 
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -469,11 +469,11 @@ g_charclass(const Char **patternp, Char **bufnextp)
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
-static int
-glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+glob0(സ്ഥിരം Char *pattern, glob_t *pglob, ഘടന glob_lim *limitp)
 {
-	const Char *qpatnext;
-	int c, err;
+	സ്ഥിരം Char *qpatnext;
+	പൂർണ്ണസംഖ്യ c, err;
 	size_t oldpathc;
 	Char *bufnext, patbuf[PATH_MAX];
 
@@ -482,64 +482,64 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	bufnext = patbuf;
 
 	/* We don't need to check for buffer overflow any more. */
-	while ((c = *qpatnext++) != EOS) {
-		switch (c) {
-		case LBRACKET:
+	ആകുമ്പോൾ ((c = *qpatnext++) != EOS) {
+		തിരഞ്ഞെടുപ്പ് (c) {
+		അവസ്ഥ LBRACKET:
 			c = *qpatnext;
-			if (c == NOT)
+			എങ്കിൽ (c == NOT)
 				++qpatnext;
-			if (*qpatnext == EOS ||
-			    g_strchr(qpatnext+1, RBRACKET) == NULL) {
+			എങ്കിൽ (*qpatnext == EOS ||
+			    g_strchr(qpatnext+1, RBRACKET) == ശൂന്യ) {
 				*bufnext++ = LBRACKET;
-				if (c == NOT)
+				എങ്കിൽ (c == NOT)
 					--qpatnext;
-				break;
+				നിർത്തുക;
 			}
 			*bufnext++ = M_SET;
-			if (c == NOT)
+			എങ്കിൽ (c == NOT)
 				*bufnext++ = M_NOT;
 			c = *qpatnext++;
-			do {
-				if (c == LBRACKET && *qpatnext == ':') {
-					do {
+			ചെയ്യുക {
+				എങ്കിൽ (c == LBRACKET && *qpatnext == ':') {
+					ചെയ്യുക {
 						err = g_charclass(&qpatnext,
 						    &bufnext);
-						if (err)
-							break;
+						എങ്കിൽ (err)
+							നിർത്തുക;
 						c = *qpatnext++;
-					} while (c == LBRACKET && *qpatnext == ':');
-					if (err == -1 &&
+					} ആകുമ്പോൾ (c == LBRACKET && *qpatnext == ':');
+					എങ്കിൽ (err == -1 &&
 					    !(pglob->gl_flags & GLOB_NOCHECK))
-						return GLOB_NOMATCH;
-					if (c == RBRACKET)
-						break;
+						തിരികെ GLOB_NOMATCH;
+					എങ്കിൽ (c == RBRACKET)
+						നിർത്തുക;
 				}
 				*bufnext++ = CHAR(c);
-				if (*qpatnext == RANGE &&
+				എങ്കിൽ (*qpatnext == RANGE &&
 				    (c = qpatnext[1]) != RBRACKET) {
 					*bufnext++ = M_RNG;
 					*bufnext++ = CHAR(c);
 					qpatnext += 2;
 				}
-			} while ((c = *qpatnext++) != RBRACKET);
+			} ആകുമ്പോൾ ((c = *qpatnext++) != RBRACKET);
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_END;
-			break;
-		case QUESTION:
+			നിർത്തുക;
+		അവസ്ഥ QUESTION:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_ONE;
-			break;
-		case STAR:
+			നിർത്തുക;
+		അവസ്ഥ STAR:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			/* collapse adjacent stars to one,
 			 * to avoid exponential behavior
 			 */
-			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+			എങ്കിൽ (bufnext == patbuf || bufnext[-1] != M_ALL)
 				*bufnext++ = M_ALL;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			*bufnext++ = CHAR(c);
-			break;
+			നിർത്തുക;
 		}
 	}
 	*bufnext = EOS;
@@ -547,8 +547,8 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	qprintf("glob0:", patbuf);
 #endif
 
-	if ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
-		return(err);
+	എങ്കിൽ ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
+		തിരികെ(err);
 
 	/*
 	 * If there was no match we are going to append the pattern
@@ -556,67 +556,67 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	 * and the pattern did not contain any magic characters
 	 * GLOB_NOMAGIC is there just for compatibility with csh.
 	 */
-	if (pglob->gl_pathc == oldpathc) {
-		if ((pglob->gl_flags & GLOB_NOCHECK) ||
+	എങ്കിൽ (pglob->gl_pathc == oldpathc) {
+		എങ്കിൽ ((pglob->gl_flags & GLOB_NOCHECK) ||
 		    ((pglob->gl_flags & GLOB_NOMAGIC) &&
 		    !(pglob->gl_flags & GLOB_MAGCHAR)))
-			return(globextend(pattern, pglob, limitp, NULL));
-		else
-			return(GLOB_NOMATCH);
+			തിരികെ(globextend(pattern, pglob, limitp, ശൂന്യ));
+		അല്ലെങ്കിൽ
+			തിരികെ(GLOB_NOMATCH);
 	}
-	if (!(pglob->gl_flags & GLOB_NOSORT)) {
-		if ((pglob->gl_flags & GLOB_KEEPSTAT)) {
+	എങ്കിൽ (!(pglob->gl_flags & GLOB_NOSORT)) {
+		എങ്കിൽ ((pglob->gl_flags & GLOB_KEEPSTAT)) {
 			/* Keep the paths and stat info synced during sort */
-			struct glob_path_stat *path_stat;
+			ഘടന glob_path_stat *path_stat;
 			size_t i;
 			size_t n = pglob->gl_pathc - oldpathc;
 			size_t o = pglob->gl_offs + oldpathc;
 
-			if ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
-				return GLOB_NOSPACE;
-			for (i = 0; i < n; i++) {
+			എങ്കിൽ ((path_stat = calloc(n, വലുപ്പം(*path_stat))) == ശൂന്യ)
+				തിരികെ GLOB_NOSPACE;
+			വേണ്ടി (i = 0; i < n; i++) {
 				path_stat[i].gps_path = pglob->gl_pathv[o + i];
 				path_stat[i].gps_stat = pglob->gl_statv[o + i];
 			}
-			qsort(path_stat, n, sizeof(*path_stat), compare_gps);
-			for (i = 0; i < n; i++) {
+			qsort(path_stat, n, വലുപ്പം(*path_stat), compare_gps);
+			വേണ്ടി (i = 0; i < n; i++) {
 				pglob->gl_pathv[o + i] = path_stat[i].gps_path;
 				pglob->gl_statv[o + i] = path_stat[i].gps_stat;
 			}
-			free(path_stat);
-		} else {
+			സ്വതന്ത്രം(path_stat);
+		} അല്ലെങ്കിൽ {
 			qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
-			    pglob->gl_pathc - oldpathc, sizeof(char *),
+			    pglob->gl_pathc - oldpathc, വലുപ്പം(അക്ഷരം *),
 			    compare);
 		}
 	}
-	return(0);
+	തിരികെ(0);
 }
 
-static int
-compare(const void *p, const void *q)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+compare(സ്ഥിരം ശൂന്യം *p, സ്ഥിരം ശൂന്യം *q)
 {
-	return(strcmp(*(char **)p, *(char **)q));
+	തിരികെ(strcmp(*(അക്ഷരം **)p, *(അക്ഷരം **)q));
 }
 
-static int
-compare_gps(const void *_p, const void *_q)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+compare_gps(സ്ഥിരം ശൂന്യം *_p, സ്ഥിരം ശൂന്യം *_q)
 {
-	const struct glob_path_stat *p = (const struct glob_path_stat *)_p;
-	const struct glob_path_stat *q = (const struct glob_path_stat *)_q;
+	സ്ഥിരം ഘടന glob_path_stat *p = (സ്ഥിരം ഘടന glob_path_stat *)_p;
+	സ്ഥിരം ഘടന glob_path_stat *q = (സ്ഥിരം ഘടന glob_path_stat *)_q;
 
-	return(strcmp(p->gps_path, q->gps_path));
+	തിരികെ(strcmp(p->gps_path, q->gps_path));
 }
 
-static int
-glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+glob1(Char *pattern, Char *pattern_last, glob_t *pglob, ഘടന glob_lim *limitp)
 {
 	Char pathbuf[PATH_MAX];
 
 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
-	if (*pattern == EOS)
-		return(0);
-	return(glob2(pathbuf, pathbuf+PATH_MAX-1,
+	എങ്കിൽ (*pattern == EOS)
+		തിരികെ(0);
+	തിരികെ(glob2(pathbuf, pathbuf+PATH_MAX-1,
 	    pathbuf, pathbuf+PATH_MAX-1,
 	    pattern, pattern_last, pglob, limitp));
 }
@@ -626,83 +626,83 @@ glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
-    Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+    Char *pattern, Char *pattern_last, glob_t *pglob, ഘടന glob_lim *limitp)
 {
-	struct stat sb;
+	ഘടന stat sb;
 	Char *p, *q;
-	int anymeta;
+	പൂർണ്ണസംഖ്യ anymeta;
 
 	/*
 	 * Loop over pattern segments until end of pattern or until
 	 * segment with meta character found.
 	 */
-	for (anymeta = 0;;) {
-		if (*pattern == EOS) {		/* End of pattern? */
+	വേണ്ടി (anymeta = 0;;) {
+		എങ്കിൽ (*pattern == EOS) {		/* End of pattern? */
 			*pathend = EOS;
 
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+			എങ്കിൽ ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_stat++ >= GLOB_LIMIT_STAT) {
 				errno = 0;
 				*pathend++ = SEP;
 				*pathend = EOS;
-				return(GLOB_NOSPACE);
+				തിരികെ(GLOB_NOSPACE);
 			}
-			if (g_lstat(pathbuf, &sb, pglob))
-				return(0);
+			എങ്കിൽ (g_lstat(pathbuf, &sb, pglob))
+				തിരികെ(0);
 
-			if (((pglob->gl_flags & GLOB_MARK) &&
+			എങ്കിൽ (((pglob->gl_flags & GLOB_MARK) &&
 			    pathend[-1] != SEP) && (S_ISDIR(sb.st_mode) ||
 			    (S_ISLNK(sb.st_mode) &&
 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
 			    S_ISDIR(sb.st_mode)))) {
-				if (pathend+1 > pathend_last)
-					return (1);
+				എങ്കിൽ (pathend+1 > pathend_last)
+					തിരികെ (1);
 				*pathend++ = SEP;
 				*pathend = EOS;
 			}
 			++pglob->gl_matchc;
-			return(globextend(pathbuf, pglob, limitp, &sb));
+			തിരികെ(globextend(pathbuf, pglob, limitp, &sb));
 		}
 
 		/* Find end of next segment, copy tentatively to pathend. */
 		q = pathend;
 		p = pattern;
-		while (*p != EOS && *p != SEP) {
-			if (ismeta(*p))
+		ആകുമ്പോൾ (*p != EOS && *p != SEP) {
+			എങ്കിൽ (ismeta(*p))
 				anymeta = 1;
-			if (q+1 > pathend_last)
-				return (1);
+			എങ്കിൽ (q+1 > pathend_last)
+				തിരികെ (1);
 			*q++ = *p++;
 		}
 
-		if (!anymeta) {		/* No expansion, do next segment. */
+		എങ്കിൽ (!anymeta) {		/* No expansion, do next segment. */
 			pathend = q;
 			pattern = p;
-			while (*pattern == SEP) {
-				if (pathend+1 > pathend_last)
-					return (1);
+			ആകുമ്പോൾ (*pattern == SEP) {
+				എങ്കിൽ (pathend+1 > pathend_last)
+					തിരികെ (1);
 				*pathend++ = *pattern++;
 			}
-		} else
+		} അല്ലെങ്കിൽ
 			/* Need expansion, recurse. */
-			return(glob3(pathbuf, pathbuf_last, pathend,
+			തിരികെ(glob3(pathbuf, pathbuf_last, pathend,
 			    pathend_last, pattern, p, pattern_last,
 			    pglob, limitp));
 	}
 	/* NOTREACHED */
 }
 
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
     Char *pattern, Char *restpattern, Char *restpattern_last, glob_t *pglob,
-    struct glob_lim *limitp)
+    ഘടന glob_lim *limitp)
 {
-	struct dirent *dp;
+	ഘടന dirent *dp;
 	DIR *dirp;
-	int err;
-	char buf[PATH_MAX];
+	പൂർണ്ണസംഖ്യ err;
+	അക്ഷരം buf[PATH_MAX];
 
 	/*
 	 * The readdirfunc declaration can't be prototyped, because it is
@@ -710,73 +710,73 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 	 * and dirent.h as taking pointers to differently typed opaque
 	 * structures.
 	 */
-	struct dirent *(*readdirfunc)(void *);
+	ഘടന dirent *(*readdirfunc)(ശൂന്യം *);
 
-	if (pathend > pathend_last)
-		return (1);
+	എങ്കിൽ (pathend > pathend_last)
+		തിരികെ (1);
 	*pathend = EOS;
 	errno = 0;
 
-	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+	എങ്കിൽ ((dirp = g_opendir(pathbuf, pglob)) == ശൂന്യ) {
 		/* TODO: don't call for ENOENT or ENOTDIR? */
-		if (pglob->gl_errfunc) {
-			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
-				return(GLOB_ABORTED);
-			if (pglob->gl_errfunc(buf, errno) ||
+		എങ്കിൽ (pglob->gl_errfunc) {
+			എങ്കിൽ (g_Ctoc(pathbuf, buf, വലുപ്പം(buf)))
+				തിരികെ(GLOB_ABORTED);
+			എങ്കിൽ (pglob->gl_errfunc(buf, errno) ||
 			    pglob->gl_flags & GLOB_ERR)
-				return(GLOB_ABORTED);
+				തിരികെ(GLOB_ABORTED);
 		}
-		return(0);
+		തിരികെ(0);
 	}
 
 	err = 0;
 
 	/* Search directory for matching names. */
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	എങ്കിൽ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		readdirfunc = pglob->gl_readdir;
-	else
-		readdirfunc = (struct dirent *(*)(void *))readdir;
-	while ((dp = (*readdirfunc)(dirp))) {
+	അല്ലെങ്കിൽ
+		readdirfunc = (ഘടന dirent *(*)(ശൂന്യം *))readdir;
+	ആകുമ്പോൾ ((dp = (*readdirfunc)(dirp))) {
 		u_char *sc;
 		Char *dc;
 
-		if ((pglob->gl_flags & GLOB_LIMIT) &&
+		എങ്കിൽ ((pglob->gl_flags & GLOB_LIMIT) &&
 		    limitp->glim_readdir++ >= GLOB_LIMIT_READDIR) {
 			errno = 0;
 			*pathend++ = SEP;
 			*pathend = EOS;
 			err = GLOB_NOSPACE;
-			break;
+			നിർത്തുക;
 		}
 
 		/* Initial DOT must be matched literally. */
-		if (dp->d_name[0] == DOT && *pattern != DOT)
-			continue;
+		എങ്കിൽ (dp->d_name[0] == DOT && *pattern != DOT)
+			തുടരുക;
 		dc = pathend;
 		sc = (u_char *) dp->d_name;
-		while (dc < pathend_last && (*dc++ = *sc++) != EOS)
+		ആകുമ്പോൾ (dc < pathend_last && (*dc++ = *sc++) != EOS)
 			;
-		if (dc >= pathend_last) {
+		എങ്കിൽ (dc >= pathend_last) {
 			*dc = EOS;
 			err = 1;
-			break;
+			നിർത്തുക;
 		}
 
-		if (!match(pathend, pattern, restpattern)) {
+		എങ്കിൽ (!match(pathend, pattern, restpattern)) {
 			*pathend = EOS;
-			continue;
+			തുടരുക;
 		}
 		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
 		    restpattern, restpattern_last, pglob, limitp);
-		if (err)
-			break;
+		എങ്കിൽ (err)
+			നിർത്തുക;
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	എങ്കിൽ (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		(*pglob->gl_closedir)(dirp);
-	else
+	അല്ലെങ്കിൽ
 		closedir(dirp);
-	return(err);
+	തിരികെ(err);
 }
 
 
@@ -794,98 +794,98 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
  *	Either gl_pathc is zero and gl_pathv is NULL; or gl_pathc > 0 and
  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
  */
-static int
-globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
-    struct stat *sb)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+globextend(സ്ഥിരം Char *path, glob_t *pglob, ഘടന glob_lim *limitp,
+    ഘടന stat *sb)
 {
-	char **pathv;
+	അക്ഷരം **pathv;
 	size_t i, newn, len;
-	char *copy = NULL;
-	const Char *p;
-	struct stat **statv;
+	അക്ഷരം *copy = ശൂന്യ;
+	സ്ഥിരം Char *p;
+	ഘടന stat **statv;
 
 	newn = 2 + pglob->gl_pathc + pglob->gl_offs;
-	if (pglob->gl_offs >= SSIZE_MAX ||
+	എങ്കിൽ (pglob->gl_offs >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX ||
 	    newn >= SSIZE_MAX ||
-	    SIZE_MAX / sizeof(*pathv) <= newn ||
-	    SIZE_MAX / sizeof(*statv) <= newn) {
+	    SIZE_MAX / വലുപ്പം(*pathv) <= newn ||
+	    SIZE_MAX / വലുപ്പം(*statv) <= newn) {
  nospace:
-		for (i = pglob->gl_offs; i < newn - 2; i++) {
-			if (pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_pathv[i]);
-			if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
+		വേണ്ടി (i = pglob->gl_offs; i < newn - 2; i++) {
+			എങ്കിൽ (pglob->gl_pathv && pglob->gl_pathv[i])
+				സ്വതന്ത്രം(pglob->gl_pathv[i]);
+			എങ്കിൽ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
 			    pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_statv[i]);
+				സ്വതന്ത്രം(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
-		return(GLOB_NOSPACE);
+		സ്വതന്ത്രം(pglob->gl_pathv);
+		pglob->gl_pathv = ശൂന്യ;
+		സ്വതന്ത്രം(pglob->gl_statv);
+		pglob->gl_statv = ശൂന്യ;
+		തിരികെ(GLOB_NOSPACE);
 	}
 
-	pathv = reallocarray(pglob->gl_pathv, newn, sizeof(*pathv));
-	if (pathv == NULL)
-		goto nospace;
-	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+	pathv = reallocarray(pglob->gl_pathv, newn, വലുപ്പം(*pathv));
+	എങ്കിൽ (pathv == ശൂന്യ)
+		പോകുക nospace;
+	എങ്കിൽ (pglob->gl_pathv == ശൂന്യ && pglob->gl_offs > 0) {
 		/* first time around -- clear initial gl_offs items */
 		pathv += pglob->gl_offs;
-		for (i = pglob->gl_offs; i > 0; i--)
-			*--pathv = NULL;
+		വേണ്ടി (i = pglob->gl_offs; i > 0; i--)
+			*--pathv = ശൂന്യ;
 	}
 	pglob->gl_pathv = pathv;
 
-	if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
-		statv = reallocarray(pglob->gl_statv, newn, sizeof(*statv));
-		if (statv == NULL)
-			goto nospace;
-		if (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
+	എങ്കിൽ ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
+		statv = reallocarray(pglob->gl_statv, newn, വലുപ്പം(*statv));
+		എങ്കിൽ (statv == ശൂന്യ)
+			പോകുക nospace;
+		എങ്കിൽ (pglob->gl_statv == ശൂന്യ && pglob->gl_offs > 0) {
 			/* first time around -- clear initial gl_offs items */
 			statv += pglob->gl_offs;
-			for (i = pglob->gl_offs; i > 0; i--)
-				*--statv = NULL;
+			വേണ്ടി (i = pglob->gl_offs; i > 0; i--)
+				*--statv = ശൂന്യ;
 		}
 		pglob->gl_statv = statv;
-		if (sb == NULL)
-			statv[pglob->gl_offs + pglob->gl_pathc] = NULL;
-		else {
-			limitp->glim_malloc += sizeof(**statv);
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+		എങ്കിൽ (sb == ശൂന്യ)
+			statv[pglob->gl_offs + pglob->gl_pathc] = ശൂന്യ;
+		അല്ലെങ്കിൽ {
+			limitp->glim_malloc += വലുപ്പം(**statv);
+			എങ്കിൽ ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_malloc >= GLOB_LIMIT_MALLOC) {
 				errno = 0;
-				return(GLOB_NOSPACE);
+				തിരികെ(GLOB_NOSPACE);
 			}
-			if ((statv[pglob->gl_offs + pglob->gl_pathc] =
-			    malloc(sizeof(**statv))) == NULL)
-				goto copy_error;
+			എങ്കിൽ ((statv[pglob->gl_offs + pglob->gl_pathc] =
+			    malloc(വലുപ്പം(**statv))) == ശൂന്യ)
+				പോകുക copy_error;
 			memcpy(statv[pglob->gl_offs + pglob->gl_pathc], sb,
-			    sizeof(*sb));
+			    വലുപ്പം(*sb));
 		}
-		statv[pglob->gl_offs + pglob->gl_pathc + 1] = NULL;
+		statv[pglob->gl_offs + pglob->gl_pathc + 1] = ശൂന്യ;
 	}
 
-	for (p = path; *p++;)
+	വേണ്ടി (p = path; *p++;)
 		;
 	len = (size_t)(p - path);
 	limitp->glim_malloc += len;
-	if ((copy = malloc(len)) != NULL) {
-		if (g_Ctoc(path, copy, len)) {
-			free(copy);
-			return(GLOB_NOSPACE);
+	എങ്കിൽ ((copy = malloc(len)) != ശൂന്യ) {
+		എങ്കിൽ (g_Ctoc(path, copy, len)) {
+			സ്വതന്ത്രം(copy);
+			തിരികെ(GLOB_NOSPACE);
 		}
 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
 	}
-	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
+	pathv[pglob->gl_offs + pglob->gl_pathc] = ശൂന്യ;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
-	    (newn * sizeof(*pathv)) + limitp->glim_malloc >
+	എങ്കിൽ ((pglob->gl_flags & GLOB_LIMIT) &&
+	    (newn * വലുപ്പം(*pathv)) + limitp->glim_malloc >
 	    GLOB_LIMIT_MALLOC) {
 		errno = 0;
-		return(GLOB_NOSPACE);
+		തിരികെ(GLOB_NOSPACE);
 	}
  copy_error:
-	return(copy == NULL ? GLOB_NOSPACE : 0);
+	തിരികെ(copy == ശൂന്യ ? GLOB_NOSPACE : 0);
 }
 
 
@@ -900,176 +900,176 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
  * from Russ Cox to not go quadratic on cases like a file called
  * ("a" x 100) . "x" matched against a pattern like "a*a*a*a*a*a*a*y".
  */
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 match(Char *name, Char *pat, Char *patend)
 {
-	int ok, negate_range;
+	പൂർണ്ണസംഖ്യ ok, negate_range;
 	Char c, k;
-	Char *nextp = NULL;
-	Char *nextn = NULL;
+	Char *nextp = ശൂന്യ;
+	Char *nextn = ശൂന്യ;
 
 loop:
-	while (pat < patend) {
+	ആകുമ്പോൾ (pat < patend) {
 		c = *pat++;
-		switch (c & M_MASK) {
-		case M_ALL:
-			while (pat < patend && (*pat & M_MASK) == M_ALL)
+		തിരഞ്ഞെടുപ്പ് (c & M_MASK) {
+		അവസ്ഥ M_ALL:
+			ആകുമ്പോൾ (pat < patend && (*pat & M_MASK) == M_ALL)
 				pat++;	/* eat consecutive '*' */
-			if (pat == patend)
-				return(1);
-			if (*name == EOS)
-				return(0);
+			എങ്കിൽ (pat == patend)
+				തിരികെ(1);
+			എങ്കിൽ (*name == EOS)
+				തിരികെ(0);
 			nextn = name + 1;
 			nextp = pat - 1;
-			break;
-		case M_ONE:
-			if (*name++ == EOS)
-				goto fail;
-			break;
-		case M_SET:
+			നിർത്തുക;
+		അവസ്ഥ M_ONE:
+			എങ്കിൽ (*name++ == EOS)
+				പോകുക fail;
+			നിർത്തുക;
+		അവസ്ഥ M_SET:
 			ok = 0;
-			if ((k = *name++) == EOS)
-				goto fail;
-			if ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
+			എങ്കിൽ ((k = *name++) == EOS)
+				പോകുക fail;
+			എങ്കിൽ ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
 				++pat;
-			while (((c = *pat++) & M_MASK) != M_END) {
-				if ((c & M_MASK) == M_CLASS) {
+			ആകുമ്പോൾ (((c = *pat++) & M_MASK) != M_END) {
+				എങ്കിൽ ((c & M_MASK) == M_CLASS) {
 					Char idx = *pat & M_MASK;
-					if (idx < NCCLASSES &&
+					എങ്കിൽ (idx < NCCLASSES &&
 					    cclasses[idx].isctype(k))
 						ok = 1;
 					++pat;
 				}
-				if ((*pat & M_MASK) == M_RNG) {
-					if (c <= k && k <= pat[1])
+				എങ്കിൽ ((*pat & M_MASK) == M_RNG) {
+					എങ്കിൽ (c <= k && k <= pat[1])
 						ok = 1;
 					pat += 2;
-				} else if (c == k)
+				} അല്ലെങ്കിൽ എങ്കിൽ (c == k)
 					ok = 1;
 			}
-			if (ok == negate_range)
-				goto fail;
-			break;
-		default:
-			if (*name++ != c)
-				goto fail;
-			break;
+			എങ്കിൽ (ok == negate_range)
+				പോകുക fail;
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
+			എങ്കിൽ (*name++ != c)
+				പോകുക fail;
+			നിർത്തുക;
 		}
 	}
-	if (*name == EOS)
-		return(1);
+	എങ്കിൽ (*name == EOS)
+		തിരികെ(1);
 
 fail:
-	if (nextn) {
+	എങ്കിൽ (nextn) {
 		pat = nextp;
 		name = nextn;
-		goto loop;
+		പോകുക loop;
 	}
-	return(0);
+	തിരികെ(0);
 }
 
 /* Free allocated data belonging to a glob_t structure. */
-void
+ശൂന്യം
 globfree(glob_t *pglob)
 {
 	size_t i;
-	char **pp;
+	അക്ഷരം **pp;
 
-	if (pglob->gl_pathv != NULL) {
+	എങ്കിൽ (pglob->gl_pathv != ശൂന്യ) {
 		pp = pglob->gl_pathv + pglob->gl_offs;
-		for (i = pglob->gl_pathc; i--; ++pp)
-			free(*pp);
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
+		വേണ്ടി (i = pglob->gl_pathc; i--; ++pp)
+			സ്വതന്ത്രം(*pp);
+		സ്വതന്ത്രം(pglob->gl_pathv);
+		pglob->gl_pathv = ശൂന്യ;
 	}
-	if (pglob->gl_statv != NULL) {
-		for (i = 0; i < pglob->gl_pathc; i++) {
-			free(pglob->gl_statv[i]);
+	എങ്കിൽ (pglob->gl_statv != ശൂന്യ) {
+		വേണ്ടി (i = 0; i < pglob->gl_pathc; i++) {
+			സ്വതന്ത്രം(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
+		സ്വതന്ത്രം(pglob->gl_statv);
+		pglob->gl_statv = ശൂന്യ;
 	}
 }
 
-static DIR *
+സ്ഥിതം DIR *
 g_opendir(Char *str, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	അക്ഷരം buf[PATH_MAX];
 
-	if (!*str)
-		strlcpy(buf, ".", sizeof buf);
-	else {
-		if (g_Ctoc(str, buf, sizeof(buf)))
-			return(NULL);
+	എങ്കിൽ (!*str)
+		strlcpy(buf, ".", വലുപ്പം buf);
+	അല്ലെങ്കിൽ {
+		എങ്കിൽ (g_Ctoc(str, buf, വലുപ്പം(buf)))
+			തിരികെ(ശൂന്യ);
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_opendir)(buf));
+	എങ്കിൽ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		തിരികെ((*pglob->gl_opendir)(buf));
 
-	return(opendir(buf));
+	തിരികെ(opendir(buf));
 }
 
-static int
-g_lstat(Char *fn, struct stat *sb, glob_t *pglob)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+g_lstat(Char *fn, ഘടന stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	അക്ഷരം buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_lstat)(buf, sb));
-	return(lstat(buf, sb));
+	എങ്കിൽ (g_Ctoc(fn, buf, വലുപ്പം(buf)))
+		തിരികെ(-1);
+	എങ്കിൽ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		തിരികെ((*pglob->gl_lstat)(buf, sb));
+	തിരികെ(lstat(buf, sb));
 }
 
-static int
-g_stat(Char *fn, struct stat *sb, glob_t *pglob)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+g_stat(Char *fn, ഘടന stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	അക്ഷരം buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_stat)(buf, sb));
-	return(stat(buf, sb));
+	എങ്കിൽ (g_Ctoc(fn, buf, വലുപ്പം(buf)))
+		തിരികെ(-1);
+	എങ്കിൽ (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		തിരികെ((*pglob->gl_stat)(buf, sb));
+	തിരികെ(stat(buf, sb));
 }
 
-static Char *
-g_strchr(const Char *str, int ch)
+സ്ഥിതം Char *
+g_strchr(സ്ഥിരം Char *str, പൂർണ്ണസംഖ്യ ch)
 {
-	do {
-		if (*str == ch)
-			return ((Char *)str);
-	} while (*str++);
-	return (NULL);
+	ചെയ്യുക {
+		എങ്കിൽ (*str == ch)
+			തിരികെ ((Char *)str);
+	} ആകുമ്പോൾ (*str++);
+	തിരികെ (ശൂന്യ);
 }
 
-static int
-g_Ctoc(const Char *str, char *buf, size_t len)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+g_Ctoc(സ്ഥിരം Char *str, അക്ഷരം *buf, size_t len)
 {
 
-	while (len--) {
-		if ((*buf++ = *str++) == EOS)
-			return (0);
+	ആകുമ്പോൾ (len--) {
+		എങ്കിൽ ((*buf++ = *str++) == EOS)
+			തിരികെ (0);
 	}
-	return (1);
+	തിരികെ (1);
 }
 
 #ifdef DEBUG
-static void
-qprintf(const char *str, Char *s)
+സ്ഥിതം ശൂന്യം
+qprintf(സ്ഥിരം അക്ഷരം *str, Char *s)
 {
 	Char *p;
 
-	(void)printf("%s:\n", str);
-	for (p = s; *p; p++)
-		(void)printf("%c", CHAR(*p));
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", *p & M_PROTECT ? '"' : ' ');
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", ismeta(*p) ? '_' : ' ');
-	(void)printf("\n");
+	(ശൂന്യം)printf("%s:\n", str);
+	വേണ്ടി (p = s; *p; p++)
+		(ശൂന്യം)printf("%c", CHAR(*p));
+	(ശൂന്യം)printf("\n");
+	വേണ്ടി (p = s; *p; p++)
+		(ശൂന്യം)printf("%c", *p & M_PROTECT ? '"' : ' ');
+	(ശൂന്യം)printf("\n");
+	വേണ്ടി (p = s; *p; p++)
+		(ശൂന്യം)printf("%c", ismeta(*p) ? '_' : ' ');
+	(ശൂന്യം)printf("\n");
 }
 #endif
 

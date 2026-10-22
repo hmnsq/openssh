@@ -17,32 +17,32 @@
 #ifndef _PORT_TUN_H
 #define _PORT_TUN_H
 
-struct Channel;
-struct ssh;
+ഘടന Channel;
+ഘടന ssh;
 
-#if defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
+#എങ്കിൽ defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
 # define CUSTOM_SYS_TUN_OPEN
-int	  sys_tun_open(int, int, char **);
+പൂർണ്ണസംഖ്യ	  sys_tun_open(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, അക്ഷരം **);
 #endif
 
-#if defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
+#എങ്കിൽ defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
 # define SSH_TUN_FILTER
-int	 sys_tun_infilter(struct ssh *, struct Channel *, char *, int);
-u_char	*sys_tun_outfilter(struct ssh *, struct Channel *, u_char **, size_t *);
+പൂർണ്ണസംഖ്യ	 sys_tun_infilter(ഘടന ssh *, ഘടന Channel *, അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+u_char	*sys_tun_outfilter(ഘടന ssh *, ഘടന Channel *, u_char **, size_t *);
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
+#എങ്കിൽ defined(SYS_RDOMAIN_LINUX)
 # define HAVE_SYS_GET_RDOMAIN
 # define HAVE_SYS_SET_RDOMAIN
 # define HAVE_SYS_VALID_RDOMAIN
-char *sys_get_rdomain(int fd);
-int sys_set_rdomain(int fd, const char *name);
-int sys_valid_rdomain(const char *name);
+അക്ഷരം *sys_get_rdomain(പൂർണ്ണസംഖ്യ fd);
+പൂർണ്ണസംഖ്യ sys_set_rdomain(പൂർണ്ണസംഖ്യ fd, സ്ഥിരം അക്ഷരം *name);
+പൂർണ്ണസംഖ്യ sys_valid_rdomain(സ്ഥിരം അക്ഷരം *name);
 #endif
 
-#if defined(SYS_RDOMAIN_XXX)
+#എങ്കിൽ defined(SYS_RDOMAIN_XXX)
 # define HAVE_SYS_SET_PROCESS_RDOMAIN
-void sys_set_process_rdomain(const char *name);
+ശൂന്യം sys_set_process_rdomain(സ്ഥിരം അക്ഷരം *name);
 #endif
 
 #endif

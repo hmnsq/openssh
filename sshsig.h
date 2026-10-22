@@ -18,14 +18,14 @@
 #ifndef SSHSIG_H
 #define SSHSIG_H
 
-struct sshbuf;
-struct sshkey;
-struct sshsigopt;
-struct sshkey_sig_details;
+ഘടന sshbuf;
+ഘടന sshkey;
+ഘടന sshsigopt;
+ഘടന sshkey_sig_details;
 
-typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *,
-    u_int, void *);
+തരനിർവചനം പൂർണ്ണസംഖ്യ sshsig_signer(ഘടന sshkey *, u_char **, size_t *,
+    സ്ഥിരം u_char *, size_t, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *,
+    u_int, ശൂന്യം *);
 
 /* Buffer-oriented API */
 
@@ -34,19 +34,19 @@ typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *message,
-    const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx);
+പൂർണ്ണസംഖ്യ sshsig_signb(ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *hashalg,
+    സ്ഥിരം അക്ഷരം *sk_provider, സ്ഥിരം അക്ഷരം *sk_pin, സ്ഥിരം ഘടന sshbuf *message,
+    സ്ഥിരം അക്ഷരം *sig_namespace, ഘടന sshbuf **out,
+    sshsig_signer *signer, ശൂന്യം *signer_ctx);
 
 /*
  * Verifies that a detached signature is valid and optionally returns key
  * used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verifyb(struct sshbuf *signature,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details);
+പൂർണ്ണസംഖ്യ sshsig_verifyb(ഘടന sshbuf *signature,
+    സ്ഥിരം ഘടന sshbuf *message, സ്ഥിരം അക്ഷരം *sig_namespace,
+    ഘടന sshkey **sign_keyp, ഘടന sshkey_sig_details **sig_details);
 
 /* File/FD-oriented API */
 
@@ -55,57 +55,57 @@ int sshsig_verifyb(struct sshbuf *signature,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx);
+പൂർണ്ണസംഖ്യ sshsig_sign_fd(ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *hashalg,
+    സ്ഥിരം അക്ഷരം *sk_provider, സ്ഥിരം അക്ഷരം *sk_pin,
+    പൂർണ്ണസംഖ്യ fd, സ്ഥിരം അക്ഷരം *sig_namespace,
+    ഘടന sshbuf **out, sshsig_signer *signer, ശൂന്യം *signer_ctx);
 
 /*
  * Verifies that a detached signature over a file is valid and optionally
  * returns key used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *sig_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details);
+പൂർണ്ണസംഖ്യ sshsig_verify_fd(ഘടന sshbuf *signature, പൂർണ്ണസംഖ്യ fd,
+    സ്ഥിരം അക്ഷരം *sig_namespace, ഘടന sshkey **sign_keyp,
+    ഘടന sshkey_sig_details **sig_details);
 
 /* Utility functions */
 
 /*
  * Return a base64 encoded "ASCII armoured" version of a raw signature.
  */
-int sshsig_armor(const struct sshbuf *blob, struct sshbuf **out);
+പൂർണ്ണസംഖ്യ sshsig_armor(സ്ഥിരം ഘടന sshbuf *blob, ഘടന sshbuf **out);
 
 /*
  * Decode a base64 encoded armoured signature to a raw signature.
  */
-int sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out);
+പൂർണ്ണസംഖ്യ sshsig_dearmor(ഘടന sshbuf *sig, ഘടന sshbuf **out);
 
 /*
  * Checks whether a particular key/principal/namespace is permitted by
  * an allowed_keys file. Returns 0 on success.
  */
-int sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *ns, uint64_t verify_time);
+പൂർണ്ണസംഖ്യ sshsig_check_allowed_താക്കോലുകൾ(സ്ഥിരം അക്ഷരം *path, സ്ഥിരം ഘടന sshkey *sign_താക്കോൽ,
+    സ്ഥിരം അക്ഷരം *principal, സ്ഥിരം അക്ഷരം *ns, uint64_t verify_time);
 
 /* Parse zero or more allowed_keys signature options */
-struct sshsigopt *sshsigopt_parse(const char *opts,
-    const char *path, u_long linenum, const char **errstrp);
+ഘടന sshsigopt *sshsigopt_parse(സ്ഥിരം അക്ഷരം *opts,
+    സ്ഥിരം അക്ഷരം *path, u_long linenum, സ്ഥിരം അക്ഷരം **errstrp);
 
 /* Free signature options */
-void sshsigopt_free(struct sshsigopt *opts);
+ശൂന്യം sshsigopt_free(ഘടന sshsigopt *opts);
 
 /* Get public key from signature */
-int sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey);
+പൂർണ്ണസംഖ്യ sshsig_get_pubkey(ഘടന sshbuf *signature, ഘടന sshkey **pubkey);
 
 /* Find principal in allowed_keys file, given a sshkey. Returns
  * 0 on success.
  */
-int sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principal);
+പൂർണ്ണസംഖ്യ sshsig_find_principals(സ്ഥിരം അക്ഷരം *path, സ്ഥിരം ഘടന sshkey *sign_താക്കോൽ,
+    uint64_t verify_time, അക്ഷരം **principal);
 
 /* Find all principals in allowed_keys file matching *principal */
-int sshsig_match_principals(const char *path,
-	const char *principal, char ***principalsp, size_t *nprincipalsp);
+പൂർണ്ണസംഖ്യ sshsig_match_principals(സ്ഥിരം അക്ഷരം *path,
+	സ്ഥിരം അക്ഷരം *principal, അക്ഷരം ***principalsp, size_t *nprincipalsp);
 
 #endif /* SSHSIG_H */

@@ -29,7 +29,7 @@
 #define _MONITOR_H_
 
 /* Please keep *_REQ_* values on even numbers and *_ANS_* on odd numbers */
-enum monitor_reqtype {
+എണ്ണൽ monitor_reqtype {
 	MONITOR_REQ_MODULI = 0, MONITOR_ANS_MODULI = 1,
 	MONITOR_REQ_FREE = 2,
 	MONITOR_REQ_AUTHSERV = 4,
@@ -67,40 +67,40 @@ enum monitor_reqtype {
 
 };
 
-struct ssh;
-struct sshbuf;
+ഘടന ssh;
+ഘടന sshbuf;
 
-struct monitor {
-	int			 m_recvfd;
-	int			 m_sendfd;
-	int			 m_log_recvfd;
-	int			 m_log_sendfd;
-	struct kex		**m_pkex;
+ഘടന monitor {
+	പൂർണ്ണസംഖ്യ			 m_recvfd;
+	പൂർണ്ണസംഖ്യ			 m_sendfd;
+	പൂർണ്ണസംഖ്യ			 m_log_recvfd;
+	പൂർണ്ണസംഖ്യ			 m_log_sendfd;
+	ഘടന kex		**m_pkex;
 	pid_t			 m_pid;
 };
 
-struct monitor *monitor_init(void);
-void monitor_reinit(struct monitor *);
+ഘടന monitor *monitor_init(ശൂന്യം);
+ശൂന്യം monitor_reinit(ഘടന monitor *);
 
-struct Authctxt;
-void monitor_child_preauth(struct ssh *, struct monitor *);
-void monitor_child_postauth(struct ssh *, struct monitor *);
+ഘടന Authctxt;
+ശൂന്യം monitor_child_preauth(ഘടന ssh *, ഘടന monitor *);
+ശൂന്യം monitor_child_postauth(ഘടന ssh *, ഘടന monitor *);
 
-void monitor_clear_keystate(struct ssh *, struct monitor *);
-void monitor_apply_keystate(struct ssh *, struct monitor *);
+ശൂന്യം monitor_clear_keystate(ഘടന ssh *, ഘടന monitor *);
+ശൂന്യം monitor_apply_keystate(ഘടന ssh *, ഘടന monitor *);
 
-int  monitor_auth_attempted(void);
-int  monitor_invalid_user(void);
+പൂർണ്ണസംഖ്യ  monitor_auth_attempted(ശൂന്യം);
+പൂർണ്ണസംഖ്യ  monitor_invalid_user(ശൂന്യം);
 
 /* Prototypes for request sending and receiving */
-void mm_request_send(int, enum monitor_reqtype, struct sshbuf *);
-void mm_request_receive(int, struct sshbuf *);
-void mm_request_receive_expect(int, enum monitor_reqtype, struct sshbuf *);
-void mm_get_keystate(struct ssh *, struct monitor *);
+ശൂന്യം mm_request_send(പൂർണ്ണസംഖ്യ, എണ്ണൽ monitor_reqtype, ഘടന sshbuf *);
+ശൂന്യം mm_request_receive(പൂർണ്ണസംഖ്യ, ഘടന sshbuf *);
+ശൂന്യം mm_request_receive_expect(പൂർണ്ണസംഖ്യ, എണ്ണൽ monitor_reqtype, ഘടന sshbuf *);
+ശൂന്യം mm_get_keystate(ഘടന ssh *, ഘടന monitor *);
 
 /* XXX: should be returned via a monitor call rather than config_fd */
-void mm_encode_server_options(struct sshbuf *);
+ശൂന്യം mm_encode_server_options(ഘടന sshbuf *);
 
-struct sshbuf *pack_hostkeys(void);
+ഘടന sshbuf *pack_hostkeys(ശൂന്യം);
 
 #endif /* _MONITOR_H_ */

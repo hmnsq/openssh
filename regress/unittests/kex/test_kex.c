@@ -5,123 +5,123 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/time.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "../test_helper/test_helper.h"
+#അന്തര്ഭാവ "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "log.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "ssh_api.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "myproposal.h"
+#അന്തര്ഭാവ "log.h"
 
-void kex_tests(void);
-static int do_debug = 0;
+ശൂന്യം kex_tests(ശൂന്യം);
+സ്ഥിതം പൂർണ്ണസംഖ്യ do_debug = 0;
 
-static int
-do_send_and_receive(struct ssh *from, struct ssh *to)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+do_send_and_receive(ഘടന ssh *from, ഘടന ssh *to)
 {
 	u_char type;
 	size_t len;
-	const u_char *buf;
-	int r;
+	സ്ഥിരം u_char *buf;
+	പൂർണ്ണസംഖ്യ r;
 
-	for (;;) {
-		if ((r = ssh_packet_next(from, &type)) != 0) {
+	വേണ്ടി (;;) {
+		എങ്കിൽ ((r = ssh_packet_next(from, &type)) != 0) {
 			fprintf(stderr, "ssh_packet_next: %s\n", ssh_err(r));
-			return r;
+			തിരികെ r;
 		}
-		if (type != 0)
-			return 0;
+		എങ്കിൽ (type != 0)
+			തിരികെ 0;
 		buf = ssh_output_ptr(from, &len);
-		if (do_debug)
+		എങ്കിൽ (do_debug)
 			printf("%zu", len);
-		if (len == 0)
-			return 0;
-		if ((r = ssh_output_consume(from, len)) != 0 ||
-		    (r = ssh_input_append(to, buf, len)) != 0)
-			return r;
+		എങ്കിൽ (len == 0)
+			തിരികെ 0;
+		എങ്കിൽ ((r = ssh_output_consume(from, len)) != 0 ||
+		    (r = ssh_നിവേശം_append(to, buf, len)) != 0)
+			തിരികെ r;
 	}
 }
 
-static void
-run_kex(struct ssh *client, struct ssh *server)
+സ്ഥിതം ശൂന്യം
+run_kex(ഘടന ssh *client, ഘടന ssh *server)
 {
-	int r = 0;
+	പൂർണ്ണസംഖ്യ r = 0;
 
-	while (!server->kex->done || !client->kex->done) {
-		if (do_debug)
+	ആകുമ്പോൾ (!server->kex->done || !client->kex->done) {
+		എങ്കിൽ (do_debug)
 			printf(" S:");
-		if ((r = do_send_and_receive(server, client)))
-			break;
-		if (do_debug)
+		എങ്കിൽ ((r = do_send_and_receive(server, client)))
+			നിർത്തുക;
+		എങ്കിൽ (do_debug)
 			printf(" C:");
-		if ((r = do_send_and_receive(client, server)))
-			break;
+		എങ്കിൽ ((r = do_send_and_receive(client, server)))
+			നിർത്തുക;
 	}
-	if (do_debug)
+	എങ്കിൽ (do_debug)
 		printf("done: %s\n", ssh_err(r));
 	ASSERT_INT_EQ(r, 0);
 	ASSERT_INT_EQ(server->kex->done, 1);
 	ASSERT_INT_EQ(client->kex->done, 1);
 }
 
-static void
-do_kex_with_key(char *kex, char *cipher, char *mac,
-    struct sshkey *key, int keytype, int bits)
+സ്ഥിതം ശൂന്യം
+do_kex_with_താക്കോൽ(അക്ഷരം *kex, അക്ഷരം *cipher, അക്ഷരം *mac,
+    ഘടന sshkey *താക്കോൽ, പൂർണ്ണസംഖ്യ keytype, പൂർണ്ണസംഖ്യ bits)
 {
-	struct ssh *client = NULL, *server = NULL, *server2 = NULL;
-	struct sshkey *private, *public;
-	struct sshbuf *state;
-	struct kex_params kex_params;
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *keyname = NULL;
+	ഘടന ssh *client = ശൂന്യ, *server = ശൂന്യ, *server2 = ശൂന്യ;
+	ഘടന sshkey *സ്വകാര്യ, *പൊതു;
+	ഘടന sshbuf *state;
+	ഘടന kex_params kex_params;
+	അക്ഷരം *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	അക്ഷരം *keyname = ശൂന്യ;
 
-	if (key != NULL) {
-		private = key;
-		keytype = key->type;
-	} else {
+	എങ്കിൽ (താക്കോൽ != ശൂന്യ) {
+		സ്വകാര്യ = താക്കോൽ;
+		keytype = താക്കോൽ->type;
+	} അല്ലെങ്കിൽ {
 		TEST_START("sshkey_generate");
-		ASSERT_INT_EQ(sshkey_generate(keytype, bits, &private), 0);
+		ASSERT_INT_EQ(sshkey_generate(keytype, bits, &സ്വകാര്യ), 0);
 		TEST_DONE();
 	}
 
 	TEST_START("sshkey_from_private");
-	ASSERT_INT_EQ(sshkey_from_private(private, &public), 0);
+	ASSERT_INT_EQ(sshkey_from_private(സ്വകാര്യ, &പൊതു), 0);
 	TEST_DONE();
 
 	TEST_START("ssh_init");
-	memcpy(kex_params.proposal, myproposal, sizeof(myproposal));
-	if (kex != NULL)
+	memcpy(kex_params.proposal, myproposal, വലുപ്പം(myproposal));
+	എങ്കിൽ (kex != ശൂന്യ)
 		kex_params.proposal[PROPOSAL_KEX_ALGS] = kex;
-	if (cipher != NULL) {
+	എങ്കിൽ (cipher != ശൂന്യ) {
 		kex_params.proposal[PROPOSAL_ENC_ALGS_CTOS] = cipher;
 		kex_params.proposal[PROPOSAL_ENC_ALGS_STOC] = cipher;
 	}
-	if (mac != NULL) {
+	എങ്കിൽ (mac != ശൂന്യ) {
 		kex_params.proposal[PROPOSAL_MAC_ALGS_CTOS] = mac;
 		kex_params.proposal[PROPOSAL_MAC_ALGS_STOC] = mac;
 	}
-	keyname = strdup(sshkey_ssh_name(private));
-	ASSERT_PTR_NE(keyname, NULL);
-	kex_params.proposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = keyname;
+	keyname = strdup(sshkey_ssh_name(സ്വകാര്യ));
+	ASSERT_PTR_NE(keyname, ശൂന്യ);
+	kex_params.proposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS] = keyname;
 	ASSERT_INT_EQ(ssh_init(&client, 0, &kex_params), 0);
 	ASSERT_INT_EQ(ssh_init(&server, 1, &kex_params), 0);
-	ASSERT_PTR_NE(client, NULL);
-	ASSERT_PTR_NE(server, NULL);
+	ASSERT_PTR_NE(client, ശൂന്യ);
+	ASSERT_PTR_NE(server, ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("ssh_add_hostkey");
-	ASSERT_INT_EQ(ssh_add_hostkey(server, private), 0);
-	ASSERT_INT_EQ(ssh_add_hostkey(client, public), 0);
+	ASSERT_INT_EQ(ssh_add_hostkey(server, സ്വകാര്യ), 0);
+	ASSERT_INT_EQ(ssh_add_hostkey(client, പൊതു), 0);
 	TEST_DONE();
 
 	TEST_START("kex");
@@ -140,20 +140,20 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 
 	TEST_START("ssh_packet_get_state");
 	state = sshbuf_new();
-	ASSERT_PTR_NE(state, NULL);
+	ASSERT_PTR_NE(state, ശൂന്യ);
 	ASSERT_INT_EQ(ssh_packet_get_state(server, state), 0);
 	ASSERT_INT_GE(sshbuf_len(state), 1);
 	TEST_DONE();
 
 	TEST_START("ssh_packet_set_state");
-	server2 = NULL;
-	ASSERT_INT_EQ(ssh_init(&server2, 1, NULL), 0);
-	ASSERT_PTR_NE(server2, NULL);
-	ASSERT_INT_EQ(ssh_add_hostkey(server2, private), 0);
+	server2 = ശൂന്യ;
+	ASSERT_INT_EQ(ssh_init(&server2, 1, ശൂന്യ), 0);
+	ASSERT_PTR_NE(server2, ശൂന്യ);
+	ASSERT_INT_EQ(ssh_add_hostkey(server2, സ്വകാര്യ), 0);
 	ASSERT_INT_EQ(ssh_packet_set_state(server2, state), 0);
 	ASSERT_INT_EQ(sshbuf_len(state), 0);
 	sshbuf_free(state);
-	ASSERT_PTR_NE(server2->kex, NULL);
+	ASSERT_PTR_NE(server2->kex, ശൂന്യ);
 	/* XXX we need to set the callbacks */
 #ifdef WITH_OPENSSL
 	server2->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_server;
@@ -168,8 +168,8 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 	server2->kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 	server2->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 	server2->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
-	server2->kex->load_host_public_key = server->kex->load_host_public_key;
-	server2->kex->load_host_private_key = server->kex->load_host_private_key;
+	server2->kex->load_host_public_താക്കോൽ = server->kex->load_host_public_താക്കോൽ;
+	server2->kex->load_host_private_താക്കോൽ = server->kex->load_host_private_താക്കോൽ;
 	server2->kex->sign = server->kex->sign;
 	TEST_DONE();
 
@@ -181,49 +181,49 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 	TEST_DONE();
 
 	TEST_START("cleanup");
-	sshkey_free(public);
-	if (key == NULL)
-		sshkey_free(private);
+	sshkey_free(പൊതു);
+	എങ്കിൽ (താക്കോൽ == ശൂന്യ)
+		sshkey_free(സ്വകാര്യ);
 	ssh_free(client);
 	ssh_free(server);
 	ssh_free(server2);
-	free(keyname);
+	സ്വതന്ത്രം(keyname);
 	TEST_DONE();
 }
 
-static void
-do_kex(char *kex)
+സ്ഥിതം ശൂന്യം
+do_kex(അക്ഷരം *kex)
 {
-	struct sshkey *key = NULL;
-	char name[256];
+	ഘടന sshkey *താക്കോൽ = ശൂന്യ;
+	അക്ഷരം name[256];
 
-	if (test_is_benchmark()) {
-		snprintf(name, sizeof(name), "generate %s", kex);
+	എങ്കിൽ (test_is_benchmark()) {
+		snprintf(name, വലുപ്പം(name), "generate %s", kex);
 		TEST_START(name);
-		ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 0, &key), 0);
+		ASSERT_INT_EQ(sshkey_generate(താക്കോൽ_ED25519, 0, &താക്കോൽ), 0);
 		TEST_DONE();
-		snprintf(name, sizeof(name), "KEX %s", kex);
+		snprintf(name, വലുപ്പം(name), "KEX %s", kex);
 		BENCH_START(name);
 		/*
 		 * NB. use a cipher/MAC here that requires minimal bits from
 		 * the KEX to avoid DH-GEX taking forever.
 		 */
-		do_kex_with_key(kex, "aes128-ctr", "hmac-sha2-256", key,
-		    KEY_ED25519, 256);
+		do_kex_with_താക്കോൽ(kex, "aes128-ctr", "hmac-sha2-256", താക്കോൽ,
+		    താക്കോൽ_ED25519, 256);
 		BENCH_FINISH("kex");
-		sshkey_free(key);
-		return;
+		sshkey_free(താക്കോൽ);
+		തിരികെ;
 	}
 
 #ifdef WITH_OPENSSL
-	do_kex_with_key(kex, NULL, NULL, NULL, KEY_RSA, 2048);
-	do_kex_with_key(kex, NULL, NULL, NULL, KEY_ECDSA, 256);
+	do_kex_with_താക്കോൽ(kex, ശൂന്യ, ശൂന്യ, ശൂന്യ, താക്കോൽ_RSA, 2048);
+	do_kex_with_താക്കോൽ(kex, ശൂന്യ, ശൂന്യ, ശൂന്യ, താക്കോൽ_ECDSA, 256);
 #endif /* WITH_OPENSSL */
-	do_kex_with_key(kex, NULL, NULL, NULL, KEY_ED25519, 256);
+	do_kex_with_താക്കോൽ(kex, ശൂന്യ, ശൂന്യ, ശൂന്യ, താക്കോൽ_ED25519, 256);
 }
 
-void
-kex_tests(void)
+ശൂന്യം
+kex_tests(ശൂന്യം)
 {
 	do_kex("curve25519-sha256");
 #ifdef WITH_OPENSSL
@@ -234,7 +234,7 @@ kex_tests(void)
 	do_kex("diffie-hellman-group-exchange-sha1");
 	do_kex("diffie-hellman-group14-sha1");
 	do_kex("diffie-hellman-group1-sha1");
-	if (test_is_benchmark()) {
+	എങ്കിൽ (test_is_benchmark()) {
 		do_kex("diffie-hellman-group14-sha256");
 		do_kex("diffie-hellman-group16-sha512");
 		do_kex("diffie-hellman-group18-sha512");

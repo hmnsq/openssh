@@ -23,77 +23,77 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "log.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "krl.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "authfile.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "krl.h"
 
 /* Save a key blob to a file */
-static int
-sshkey_save_private_blob(struct sshbuf *keybuf, const char *filename)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sshkey_save_private_blob(ഘടന sshbuf *keybuf, സ്ഥിരം അക്ഷരം *filename)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	mode_t omask;
 
 	omask = umask(077);
 	r = sshbuf_write_file(filename, keybuf);
 	umask(omask);
-	return r;
+	തിരികെ r;
 }
 
-int
-sshkey_save_private(struct sshkey *key, const char *filename,
-    const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds)
+പൂർണ്ണസംഖ്യ
+sshkey_save_private(ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *filename,
+    സ്ഥിരം അക്ഷരം *passphrase, സ്ഥിരം അക്ഷരം *comment,
+    പൂർണ്ണസംഖ്യ format, സ്ഥിരം അക്ഷരം *openssh_format_cipher, പൂർണ്ണസംഖ്യ openssh_format_rounds)
 {
-	struct sshbuf *keyblob = NULL;
-	int r;
+	ഘടന sshbuf *keyblob = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((keyblob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
+	എങ്കിൽ ((keyblob = sshbuf_new()) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshkey_private_to_fileblob(താക്കോൽ, keyblob, passphrase, comment,
 	    format, openssh_format_cipher, openssh_format_rounds)) != 0)
-		goto out;
-	if ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
-		goto out;
+		പോകുക out;
+	എങ്കിൽ ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
+		പോകുക out;
 	r = 0;
  out:
 	sshbuf_free(keyblob);
-	return r;
+	തിരികെ r;
 }
 
 /* XXX remove error() calls from here? */
-int
-sshkey_perm_ok(int fd, const char *filename)
+പൂർണ്ണസംഖ്യ
+sshkey_perm_ok(പൂർണ്ണസംഖ്യ fd, സ്ഥിരം അക്ഷരം *filename)
 {
-	struct stat st;
+	ഘടന stat st;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	എങ്കിൽ (fstat(fd, &st) == -1)
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	/*
 	 * if a key owned by the user is accessed, then we check the
 	 * permissions of the file. if the key owned by a different user,
 	 * then we don't care.
 	 */
 #ifdef HAVE_CYGWIN
-	if (check_ntsec(filename))
+	എങ്കിൽ (check_ntsec(filename))
 #endif
-	if ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
+	എങ്കിൽ ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -101,183 +101,183 @@ sshkey_perm_ok(int fd, const char *filename)
 		    (u_int)st.st_mode & 0777, filename);
 		error("It is required that your private key files are NOT accessible by others.");
 		error("This private key will be ignored.");
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
+		തിരികെ SSH_ERR_താക്കോൽ_BAD_PERMISSIONS;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-int
-sshkey_load_private_type(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+പൂർണ്ണസംഖ്യ
+sshkey_load_private_type(പൂർണ്ണസംഖ്യ type, സ്ഥിരം അക്ഷരം *filename, സ്ഥിരം അക്ഷരം *passphrase,
+    ഘടന sshkey **keyp, അക്ഷരം **commentp)
 {
-	int fd, r;
+	പൂർണ്ണസംഖ്യ fd, r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	എങ്കിൽ (keyp != ശൂന്യ)
+		*keyp = ശൂന്യ;
+	എങ്കിൽ (commentp != ശൂന്യ)
+		*commentp = ശൂന്യ;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	എങ്കിൽ ((fd = open(filename, O_RDONLY)) == -1)
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 
 	r = sshkey_perm_ok(fd, filename);
-	if (r != 0)
-		goto out;
+	എങ്കിൽ (r != 0)
+		പോകുക out;
 
 	r = sshkey_load_private_type_fd(fd, type, passphrase, keyp, commentp);
  out:
 	close(fd);
-	return r;
+	തിരികെ r;
 }
 
-int
-sshkey_load_private(const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+പൂർണ്ണസംഖ്യ
+sshkey_load_private(സ്ഥിരം അക്ഷരം *filename, സ്ഥിരം അക്ഷരം *passphrase,
+    ഘടന sshkey **keyp, അക്ഷരം **commentp)
 {
-	return sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
+	തിരികെ sshkey_load_private_type(താക്കോൽ_UNSPEC, filename, passphrase,
 	    keyp, commentp);
 }
 
-int
-sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+പൂർണ്ണസംഖ്യ
+sshkey_load_private_type_fd(പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ type, സ്ഥിരം അക്ഷരം *passphrase,
+    ഘടന sshkey **keyp, അക്ഷരം **commentp)
 {
-	struct sshbuf *buffer = NULL;
-	int r;
+	ഘടന sshbuf *buffer = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	എങ്കിൽ (keyp != ശൂന്യ)
+		*keyp = ശൂന്യ;
+	എങ്കിൽ ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_private_fileblob_type(buffer, type,
 	    passphrase, keyp, commentp)) != 0)
-		goto out;
+		പോകുക out;
 
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(buffer);
-	return r;
+	തിരികെ r;
 }
 
 /* Load a pubkey from the unencrypted envelope of a new-format private key */
-static int
-sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sshkey_load_pubkey_from_private(സ്ഥിരം അക്ഷരം *filename, ഘടന sshkey **pubkeyp)
 {
-	struct sshbuf *buffer = NULL;
-	struct sshkey *pubkey = NULL;
-	int r, fd;
+	ഘടന sshbuf *buffer = ശൂന്യ;
+	ഘടന sshkey *pubkey = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r, fd;
 
-	if (pubkeyp != NULL)
-		*pubkeyp = NULL;
+	എങ്കിൽ (pubkeyp != ശൂന്യ)
+		*pubkeyp = ശൂന്യ;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	എങ്കിൽ ((fd = open(filename, O_RDONLY)) == -1)
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
+	എങ്കിൽ ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_pubkey_from_private_fileblob_type(buffer,
-	    KEY_UNSPEC, &pubkey)) != 0)
-		goto out;
+	    താക്കോൽ_UNSPEC, &pubkey)) != 0)
+		പോകുക out;
 	/* success */
-	if (pubkeyp != NULL) {
+	എങ്കിൽ (pubkeyp != ശൂന്യ) {
 		*pubkeyp = pubkey;
-		pubkey = NULL;
+		pubkey = ശൂന്യ;
 	}
 	r = 0;
  out:
 	close(fd);
 	sshbuf_free(buffer);
 	sshkey_free(pubkey);
-	return r;
+	തിരികെ r;
 }
 
-static int
-sshkey_try_load_public(struct sshkey **kp, const char *filename,
-    char **commentp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sshkey_try_load_public(ഘടന sshkey **kp, സ്ഥിരം അക്ഷരം *filename,
+    അക്ഷരം **commentp)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	അക്ഷരം *വരി = ശൂന്യ, *cp;
 	size_t linesize = 0;
-	int r;
-	struct stat st;
-	struct sshkey *k = NULL;
+	പൂർണ്ണസംഖ്യ r;
+	ഘടന stat st;
+	ഘടന sshkey *k = ശൂന്യ;
 
-	if (kp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*kp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
+	എങ്കിൽ (kp == ശൂന്യ)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	*kp = ശൂന്യ;
+	എങ്കിൽ (commentp != ശൂന്യ)
+		*commentp = ശൂന്യ;
+	എങ്കിൽ ((f = fopen(filename, "r")) == ശൂന്യ)
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
+	എങ്കിൽ (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
 	    st.st_size > SSHBUF_SIZE_MAX) {
 		fclose(f);
-		return SSH_ERR_INVALID_FORMAT;
+		തിരികെ SSH_ERR_INVALID_FORMAT;
 	}
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
+	എങ്കിൽ ((k = sshkey_new(താക്കോൽ_UNSPEC)) == ശൂന്യ) {
 		fclose(f);
-		return SSH_ERR_ALLOC_FAIL;
+		തിരികെ SSH_ERR_ALLOC_FAIL;
 	}
-	while (getline(&line, &linesize, f) != -1) {
-		cp = line;
-		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
-			continue;
+	ആകുമ്പോൾ (getline(&വരി, &linesize, f) != -1) {
+		cp = വരി;
+		തിരഞ്ഞെടുപ്പ് (*cp) {
+		അവസ്ഥ '#':
+		അവസ്ഥ '\n':
+		അവസ്ഥ '\0':
+			തുടരുക;
 		}
 		/* Abort loading if this looks like a private key */
-		if (strncmp(cp, "-----BEGIN", 10) == 0 ||
+		എങ്കിൽ (strncmp(cp, "-----BEGIN", 10) == 0 ||
 		    strcmp(cp, "SSH PRIVATE KEY FILE") == 0)
-			break;
+			നിർത്തുക;
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		വേണ്ടി (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
-		if (*cp) {
-			if ((r = sshkey_read(k, &cp)) == 0) {
+		എങ്കിൽ (*cp) {
+			എങ്കിൽ ((r = sshkey_read(k, &cp)) == 0) {
 				cp[strcspn(cp, "\r\n")] = '\0';
-				if (commentp) {
+				എങ്കിൽ (commentp) {
 					*commentp = strdup(*cp ?
 					    cp : filename);
-					if (*commentp == NULL)
+					എങ്കിൽ (*commentp == ശൂന്യ)
 						r = SSH_ERR_ALLOC_FAIL;
 				}
 				/* success */
 				*kp = k;
-				free(line);
+				സ്വതന്ത്രം(വരി);
 				fclose(f);
-				return r;
+				തിരികെ r;
 			}
 		}
 	}
-	free(k);
-	free(line);
+	സ്വതന്ത്രം(k);
+	സ്വതന്ത്രം(വരി);
 	fclose(f);
-	return SSH_ERR_INVALID_FORMAT;
+	തിരികെ SSH_ERR_INVALID_FORMAT;
 }
 
 /* load public key from any pubkey file */
-int
-sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
+പൂർണ്ണസംഖ്യ
+sshkey_load_public(സ്ഥിരം അക്ഷരം *filename, ഘടന sshkey **keyp, അക്ഷരം **commentp)
 {
-	char *pubfile = NULL;
-	int r, oerrno;
+	അക്ഷരം *pubfile = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r, oerrno;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	എങ്കിൽ (keyp != ശൂന്യ)
+		*keyp = ശൂന്യ;
+	എങ്കിൽ (commentp != ശൂന്യ)
+		*commentp = ശൂന്യ;
 
-	if ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
-		goto out;
+	എങ്കിൽ ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
+		പോകുക out;
 
 	/* try .pub suffix */
-	if (asprintf(&pubfile, "%s.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
-		goto out;
+	എങ്കിൽ (asprintf(&pubfile, "%s.pub", filename) == -1)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
+		പോകുക out;
 
 	/* finally, try to extract public key from private key file */
-	if ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
-		goto out;
+	എങ്കിൽ ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
+		പോകുക out;
 
 	/* Pretend we couldn't find the key */
 	r = SSH_ERR_SYSTEM_ERROR;
@@ -285,78 +285,78 @@ sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
 
  out:
 	oerrno = errno;
-	free(pubfile);
+	സ്വതന്ത്രം(pubfile);
 	errno = oerrno;
-	return r;
+	തിരികെ r;
 }
 
 /* Load the certificate associated with the named private key */
-int
-sshkey_load_cert(const char *filename, struct sshkey **keyp)
+പൂർണ്ണസംഖ്യ
+sshkey_load_cert(സ്ഥിരം അക്ഷരം *filename, ഘടന sshkey **keyp)
 {
-	struct sshkey *pub = NULL;
-	char *file = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshkey *pub = ശൂന്യ;
+	അക്ഷരം *file = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	എങ്കിൽ (keyp != ശൂന്യ)
+		*keyp = ശൂന്യ;
 
-	if (asprintf(&file, "%s-cert.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ (asprintf(&file, "%s-cert.pub", filename) == -1)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
 
-	r = sshkey_try_load_public(keyp, file, NULL);
-	free(file);
+	r = sshkey_try_load_public(keyp, file, ശൂന്യ);
+	സ്വതന്ത്രം(file);
 	sshkey_free(pub);
-	return r;
+	തിരികെ r;
 }
 
 /* Load private key and certificate */
-int
-sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp)
+പൂർണ്ണസംഖ്യ
+sshkey_load_private_cert(പൂർണ്ണസംഖ്യ type, സ്ഥിരം അക്ഷരം *filename, സ്ഥിരം അക്ഷരം *passphrase,
+    ഘടന sshkey **keyp)
 {
-	struct sshkey *key = NULL, *cert = NULL;
-	int r;
+	ഘടന sshkey *താക്കോൽ = ശൂന്യ, *cert = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	എങ്കിൽ (keyp != ശൂന്യ)
+		*keyp = ശൂന്യ;
 
-	switch (type) {
+	തിരഞ്ഞെടുപ്പ് (type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_ECDSA:
+	അവസ്ഥ താക്കോൽ_RSA:
+	അവസ്ഥ താക്കോൽ_ECDSA:
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519:
-	case KEY_MLDSA44_ED25519:
-	case KEY_UNSPEC:
-		break;
-	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+	അവസ്ഥ താക്കോൽ_ED25519:
+	അവസ്ഥ താക്കോൽ_MLDSA44_ED25519:
+	അവസ്ഥ താക്കോൽ_UNSPEC:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ SSH_ERR_താക്കോൽ_TYPE_UNKNOWN;
 	}
 
-	if ((r = sshkey_load_private_type(type, filename,
-	    passphrase, &key, NULL)) != 0 ||
+	എങ്കിൽ ((r = sshkey_load_private_type(type, filename,
+	    passphrase, &താക്കോൽ, ശൂന്യ)) != 0 ||
 	    (r = sshkey_load_cert(filename, &cert)) != 0)
-		goto out;
+		പോകുക out;
 
 	/* Make sure the private key matches the certificate */
-	if (sshkey_equal_public(key, cert) == 0) {
-		r = SSH_ERR_KEY_CERT_MISMATCH;
-		goto out;
+	എങ്കിൽ (sshkey_equal_public(താക്കോൽ, cert) == 0) {
+		r = SSH_ERR_താക്കോൽ_CERT_MISMATCH;
+		പോകുക out;
 	}
 
-	if ((r = sshkey_to_certified(key)) != 0 ||
-	    (r = sshkey_cert_copy(cert, key)) != 0)
-		goto out;
+	എങ്കിൽ ((r = sshkey_to_certified(താക്കോൽ)) != 0 ||
+	    (r = sshkey_cert_copy(cert, താക്കോൽ)) != 0)
+		പോകുക out;
 	r = 0;
-	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL;
+	എങ്കിൽ (keyp != ശൂന്യ) {
+		*keyp = താക്കോൽ;
+		താക്കോൽ = ശൂന്യ;
 	}
  out:
-	sshkey_free(key);
+	sshkey_free(താക്കോൽ);
 	sshkey_free(cert);
-	return r;
+	തിരികെ r;
 }
 
 /*
@@ -367,64 +367,64 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
  * If "check_ca" is set and "key" is a certificate, then its CA key is
  * also checked and sshkey_in_file() will return success if either is found.
  */
-int
-sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
-    int check_ca)
+പൂർണ്ണസംഖ്യ
+sshkey_in_file(ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *filename, പൂർണ്ണസംഖ്യ strict_type,
+    പൂർണ്ണസംഖ്യ check_ca)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	അക്ഷരം *വരി = ശൂന്യ, *cp;
 	size_t linesize = 0;
-	int r = 0;
-	struct sshkey *pub = NULL;
+	പൂർണ്ണസംഖ്യ r = 0;
+	ഘടന sshkey *pub = ശൂന്യ;
 
-	int (*sshkey_compare)(const struct sshkey *, const struct sshkey *) =
+	പൂർണ്ണസംഖ്യ (*sshkey_compare)(സ്ഥിരം ഘടന sshkey *, സ്ഥിരം ഘടന sshkey *) =
 	    strict_type ?  sshkey_equal : sshkey_equal_public;
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	എങ്കിൽ ((f = fopen(filename, "r")) == ശൂന്യ)
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 
-	while (getline(&line, &linesize, f) != -1) {
+	ആകുമ്പോൾ (getline(&വരി, &linesize, f) != -1) {
 		sshkey_free(pub);
-		pub = NULL;
-		cp = line;
+		pub = ശൂന്യ;
+		cp = വരി;
 
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		വേണ്ടി (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
 
 		/* Skip comments and empty lines */
-		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
-			continue;
+		തിരഞ്ഞെടുപ്പ് (*cp) {
+		അവസ്ഥ '#':
+		അവസ്ഥ '\n':
+		അവസ്ഥ '\0':
+			തുടരുക;
 		}
 
-		if ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
+		എങ്കിൽ ((pub = sshkey_new(താക്കോൽ_UNSPEC)) == ശൂന്യ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			പോകുക out;
 		}
-		switch (r = sshkey_read(pub, &cp)) {
-		case 0:
-			break;
-		case SSH_ERR_KEY_LENGTH:
-			continue;
-		default:
-			goto out;
+		തിരഞ്ഞെടുപ്പ് (r = sshkey_read(pub, &cp)) {
+		അവസ്ഥ 0:
+			നിർത്തുക;
+		അവസ്ഥ SSH_ERR_താക്കോൽ_LENGTH:
+			തുടരുക;
+		സ്ഥിരസ്ഥിതി:
+			പോകുക out;
 		}
-		if (sshkey_compare(key, pub) ||
-		    (check_ca && sshkey_is_cert(key) &&
-		    sshkey_compare(key->cert->signature_key, pub))) {
+		എങ്കിൽ (sshkey_compare(താക്കോൽ, pub) ||
+		    (check_ca && sshkey_is_cert(താക്കോൽ) &&
+		    sshkey_compare(താക്കോൽ->cert->signature_താക്കോൽ, pub))) {
 			r = 0;
-			goto out;
+			പോകുക out;
 		}
 	}
-	r = SSH_ERR_KEY_NOT_FOUND;
+	r = SSH_ERR_താക്കോൽ_NOT_FOUND;
  out:
-	free(line);
+	സ്വതന്ത്രം(വരി);
 	sshkey_free(pub);
 	fclose(f);
-	return r;
+	തിരികെ r;
 }
 
 /*
@@ -434,30 +434,30 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
  * This will check both the key and, if it is a certificate, its CA key too.
  * "revoked_keys_file" may be a KRL or a one-per-line list of public keys.
  */
-int
-sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
+പൂർണ്ണസംഖ്യ
+sshkey_check_revoked(ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *revoked_താക്കോലുകൾ_file)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	r = ssh_krl_file_contains_key(revoked_keys_file, key);
+	r = ssh_krl_file_contains_താക്കോൽ(revoked_താക്കോലുകൾ_file, താക്കോൽ);
 	/* If this was not a KRL to begin with then continue below */
-	if (r != SSH_ERR_KRL_BAD_MAGIC)
-		return r;
+	എങ്കിൽ (r != SSH_ERR_KRL_BAD_MAGIC)
+		തിരികെ r;
 
 	/*
 	 * If the file is not a KRL or we can't handle KRLs then attempt to
 	 * parse the file as a flat list of keys.
 	 */
-	switch ((r = sshkey_in_file(key, revoked_keys_file, 0, 1))) {
-	case 0:
+	തിരഞ്ഞെടുപ്പ് ((r = sshkey_in_file(താക്കോൽ, revoked_താക്കോലുകൾ_file, 0, 1))) {
+	അവസ്ഥ 0:
 		/* Key found => revoked */
-		return SSH_ERR_KEY_REVOKED;
-	case SSH_ERR_KEY_NOT_FOUND:
+		തിരികെ SSH_ERR_താക്കോൽ_REVOKED;
+	അവസ്ഥ SSH_ERR_താക്കോൽ_NOT_FOUND:
 		/* Key not found => not revoked */
-		return 0;
-	default:
+		തിരികെ 0;
+	സ്ഥിരസ്ഥിതി:
 		/* Some other error occurred */
-		return r;
+		തിരികെ r;
 	}
 }
 
@@ -466,56 +466,56 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
  * whitespace character. Returns 0 on success or -1 on failure (e.g.
  * unterminated quotes).
  */
-int
-sshkey_advance_past_options(char **cpp)
+പൂർണ്ണസംഖ്യ
+sshkey_advance_past_options(അക്ഷരം **cpp)
 {
-	char *cp = *cpp;
-	int quoted = 0;
+	അക്ഷരം *cp = *cpp;
+	പൂർണ്ണസംഖ്യ quoted = 0;
 
-	for (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
-		if (*cp == '\\' && cp[1] == '"')
+	വേണ്ടി (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
+		എങ്കിൽ (*cp == '\\' && cp[1] == '"')
 			cp++;	/* Skip both */
-		else if (*cp == '"')
+		അല്ലെങ്കിൽ എങ്കിൽ (*cp == '"')
 			quoted = !quoted;
 	}
 	*cpp = cp;
 	/* return failure for unterminated quotes */
-	return (*cp == '\0' && quoted) ? -1 : 0;
+	തിരികെ (*cp == '\0' && quoted) ? -1 : 0;
 }
 
 /* Save a public key */
-int
-sshkey_save_public(const struct sshkey *key, const char *path,
-    const char *comment)
+പൂർണ്ണസംഖ്യ
+sshkey_save_public(സ്ഥിരം ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *path,
+    സ്ഥിരം അക്ഷരം *comment)
 {
-	int fd, oerrno;
-	FILE *f = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	പൂർണ്ണസംഖ്യ fd, oerrno;
+	FILE *f = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((f = fdopen(fd, "w")) == NULL) {
+	എങ്കിൽ ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
+	എങ്കിൽ ((f = fdopen(fd, "w")) == ശൂന്യ) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		close(fd);
-		goto fail;
+		പോകുക fail;
 	}
-	if ((r = sshkey_write(key, f)) != 0)
-		goto fail;
+	എങ്കിൽ ((r = sshkey_write(താക്കോൽ, f)) != 0)
+		പോകുക fail;
 	fprintf(f, " %s\n", comment);
-	if (ferror(f)) {
+	എങ്കിൽ (ferror(f)) {
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto fail;
+		പോകുക fail;
 	}
-	if (fclose(f) != 0) {
+	എങ്കിൽ (fclose(f) != 0) {
 		r = SSH_ERR_SYSTEM_ERROR;
-		f = NULL;
+		f = ശൂന്യ;
  fail:
-		if (f != NULL) {
+		എങ്കിൽ (f != ശൂന്യ) {
 			oerrno = errno;
 			fclose(f);
 			errno = oerrno;
 		}
-		return r;
+		തിരികെ r;
 	}
-	return 0;
+	തിരികെ 0;
 }

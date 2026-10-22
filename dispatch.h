@@ -29,21 +29,21 @@
 
 #define DISPATCH_MAX	255
 
-enum {
+എണ്ണൽ {
 	DISPATCH_BLOCK,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+ഘടന ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+തരനിർവചനം പൂർണ്ണസംഖ്യ dispatch_fn(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+പൂർണ്ണസംഖ്യ	dispatch_protocol_error(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	dispatch_protocol_ignore(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+ശൂന്യം	ssh_dispatch_init(ഘടന ssh *, dispatch_fn *);
+ശൂന്യം	ssh_dispatch_set(ഘടന ssh *, പൂർണ്ണസംഖ്യ, dispatch_fn *);
+ശൂന്യം	ssh_dispatch_range(ഘടന ssh *, u_int, u_int, dispatch_fn *);
+പൂർണ്ണസംഖ്യ	ssh_dispatch_run(ഘടന ssh *, പൂർണ്ണസംഖ്യ, അസ്ഥിര sig_atomic_t *);
+ശൂന്യം	ssh_dispatch_run_fatal(ഘടന ssh *, പൂർണ്ണസംഖ്യ, അസ്ഥിര sig_atomic_t *);
 
 #endif

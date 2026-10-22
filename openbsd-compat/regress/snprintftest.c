@@ -17,62 +17,62 @@
 
 #define BUFSZ 2048
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
 
-static int failed = 0;
+സ്ഥിതം പൂർണ്ണസംഖ്യ failed = 0;
 
-static void
-fail(const char *m)
+സ്ഥിതം ശൂന്യം
+fail(സ്ഥിരം അക്ഷരം *m)
 {
 	fprintf(stderr, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+പൂർണ്ണസംഖ്യ x_snprintf(അക്ഷരം *str, size_t എണ്ണം, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, എണ്ണം, fmt, ap);
 	va_end(ap);
-	return ret;
+	തിരികെ ret;
 }
 
-int
-main(void)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(ശൂന്യം)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	അക്ഷരം b[5];
+	അക്ഷരം *src = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ ret;
 
-	memset(b, 'X', sizeof(b));
+	memset(b, 'X', വലുപ്പം(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	എങ്കിൽ (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	എങ്കിൽ ((src = malloc(BUFSZ)) == ശൂന്യ) {
 		fail("malloc failed");
-	} else {
+	} അല്ലെങ്കിൽ {
 		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+		snprintf(b, വലുപ്പം(b), "%.*s", 1, src);
+		എങ്കിൽ (strcmp(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	എങ്കിൽ (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	എങ്കിൽ (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
-	free(src);
-	return failed;
+	സ്വതന്ത്രം(src);
+	തിരികെ failed;
 }

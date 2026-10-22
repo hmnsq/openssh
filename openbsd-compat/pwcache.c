@@ -30,85 +30,85 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/pwcache.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <grp.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
 #define	NCACHE	64			/* power of 2 */
 #define	MASK	(NCACHE - 1)		/* bits to store with */
 
 #ifndef HAVE_USER_FROM_UID
-char *
-user_from_uid(uid_t uid, int nouser)
+അക്ഷരം *
+user_from_uid(uid_t uid, പൂർണ്ണസംഖ്യ nouser)
 {
-	static struct ncache {
+	സ്ഥിതം ഘടന ncache {
 		uid_t	uid;
-		char	*name;
+		അക്ഷരം	*name;
 	} c_uid[NCACHE];
-	static int pwopen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct passwd *pw;
-	struct ncache *cp;
+	സ്ഥിതം പൂർണ്ണസംഖ്യ pwopen;
+	സ്ഥിതം അക്ഷരം nbuf[15];		/* 32 bits == 10 digits */
+	ഘടന passwd *pw;
+	ഘടന ncache *cp;
 
 	cp = c_uid + (uid & MASK);
-	if (cp->uid != uid || cp->name == NULL) {
-		if (pwopen == 0) {
+	എങ്കിൽ (cp->uid != uid || cp->name == ശൂന്യ) {
+		എങ്കിൽ (pwopen == 0) {
 #ifdef HAVE_SETPASSENT
 			setpassent(1);
 #endif
 			pwopen = 1;
 		}
-		if ((pw = getpwuid(uid)) == NULL) {
-			if (nouser)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)uid);
+		എങ്കിൽ ((pw = getpwuid(uid)) == ശൂന്യ) {
+			എങ്കിൽ (nouser)
+				തിരികെ (ശൂന്യ);
+			(ശൂന്യം)snprintf(nbuf, വലുപ്പം(nbuf), "%lu", (u_long)uid);
 		}
 		cp->uid = uid;
-		if (cp->name != NULL)
-			free(cp->name);
+		എങ്കിൽ (cp->name != ശൂന്യ)
+			സ്വതന്ത്രം(cp->name);
 		cp->name = strdup(pw ? pw->pw_name : nbuf);
 	}
-	return (cp->name);
+	തിരികെ (cp->name);
 }
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *
-group_from_gid(gid_t gid, int nogroup)
+അക്ഷരം *
+group_from_gid(gid_t gid, പൂർണ്ണസംഖ്യ nogroup)
 {
-	static struct ncache {
+	സ്ഥിതം ഘടന ncache {
 		gid_t	gid;
-		char	*name;
+		അക്ഷരം	*name;
 	} c_gid[NCACHE];
-	static int gropen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct group *gr;
-	struct ncache *cp;
+	സ്ഥിതം പൂർണ്ണസംഖ്യ gropen;
+	സ്ഥിതം അക്ഷരം nbuf[15];		/* 32 bits == 10 digits */
+	ഘടന group *gr;
+	ഘടന ncache *cp;
 
 	cp = c_gid + (gid & MASK);
-	if (cp->gid != gid || cp->name == NULL) {
-		if (gropen == 0) {
+	എങ്കിൽ (cp->gid != gid || cp->name == ശൂന്യ) {
+		എങ്കിൽ (gropen == 0) {
 #ifdef HAVE_SETGROUPENT
 			setgroupent(1);
 #endif
 			gropen = 1;
 		}
-		if ((gr = getgrgid(gid)) == NULL) {
-			if (nogroup)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)gid);
+		എങ്കിൽ ((gr = getgrgid(gid)) == ശൂന്യ) {
+			എങ്കിൽ (nogroup)
+				തിരികെ (ശൂന്യ);
+			(ശൂന്യം)snprintf(nbuf, വലുപ്പം(nbuf), "%lu", (u_long)gid);
 		}
 		cp->gid = gid;
-		if (cp->name != NULL)
-			free(cp->name);
+		എങ്കിൽ (cp->name != ശൂന്യ)
+			സ്വതന്ത്രം(cp->name);
 		cp->name = strdup(gr ? gr->gr_name : nbuf);
 	}
-	return (cp->name);
+	തിരികെ (cp->name);
 }
 #endif

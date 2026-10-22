@@ -45,20 +45,20 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/getrrsetbyname.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
+#എങ്കിൽ !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
 
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#അന്തര്ഭാവ <netinet/in.h>
+#അന്തര്ഭാവ <arpa/inet.h>
 
-#include "getrrsetbyname.h"
+#അന്തര്ഭാവ "getrrsetbyname.h"
 
-#if defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
-extern int h_errno;
+#എങ്കിൽ defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
+ബാഹ്യ പൂർണ്ണസംഖ്യ h_errno;
 #endif
 
 /* We don't need multithread support here */
@@ -68,7 +68,7 @@ extern int h_errno;
 #define _THREAD_PRIVATE(a,b,c) (c)
 
 #ifndef HAVE__RES_EXTERN
-struct __res_state _res;
+ഘടന __res_state _res;
 #endif
 
 /* Necessary functions and macros */
@@ -113,7 +113,7 @@ struct __res_state _res;
  * If the system doesn't have _getshort/_getlong or that are not exactly what
  * we need then use local replacements, avoiding name collisions.
  */
-#if !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
+#എങ്കിൽ !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
     !defined(HAVE_DECL__GETSHORT) || HAVE_DECL__GETSHORT == 0 || \
     !defined(HAVE_DECL__GETLONG) || HAVE_DECL__GETLONG == 0
 # ifdef _getshort
@@ -127,22 +127,22 @@ struct __res_state _res;
 /*
  * Routines to insert/extract short/long's.
  */
-static u_int16_t
-_getshort(const u_char *msgp)
+സ്ഥിതം u_int16_t
+_getshort(സ്ഥിരം u_char *msgp)
 {
 	u_int16_t u;
 
 	GETSHORT(u, msgp);
-	return (u);
+	തിരികെ (u);
 }
 
-static u_int32_t
-_getlong(const u_char *msgp)
+സ്ഥിതം u_int32_t
+_getlong(സ്ഥിരം u_char *msgp)
 {
 	u_int32_t u;
 
 	GETLONG(u, msgp);
-	return (u);
+	തിരികെ (u);
 }
 #endif /* missing _getshort/_getlong */
 
@@ -150,80 +150,80 @@ _getlong(const u_char *msgp)
 
 #define ANSWER_BUFFER_SIZE 0xffff
 
-struct dns_query {
-	char			*name;
+ഘടന dns_query {
+	അക്ഷരം			*name;
 	u_int16_t		type;
 	u_int16_t		class;
-	struct dns_query	*next;
+	ഘടന dns_query	*next;
 };
 
-struct dns_rr {
-	char			*name;
+ഘടന dns_rr {
+	അക്ഷരം			*name;
 	u_int16_t		type;
 	u_int16_t		class;
 	u_int16_t		ttl;
 	u_int16_t		size;
-	void			*rdata;
-	struct dns_rr		*next;
+	ശൂന്യം			*rdata;
+	ഘടന dns_rr		*next;
 };
 
-struct dns_response {
+ഘടന dns_response {
 	HEADER			header;
-	struct dns_query	*query;
-	struct dns_rr		*answer;
-	struct dns_rr		*authority;
-	struct dns_rr		*additional;
+	ഘടന dns_query	*query;
+	ഘടന dns_rr		*answer;
+	ഘടന dns_rr		*authority;
+	ഘടന dns_rr		*additional;
 };
 
-static struct dns_response *parse_dns_response(const u_char *, int);
-static struct dns_query *parse_dns_qsection(const u_char *, int,
-    const u_char **, int);
-static struct dns_rr *parse_dns_rrsection(const u_char *, int, const u_char **,
-    int);
+സ്ഥിതം ഘടന dns_response *parse_dns_response(സ്ഥിരം u_char *, പൂർണ്ണസംഖ്യ);
+സ്ഥിതം ഘടന dns_query *parse_dns_qsection(സ്ഥിരം u_char *, പൂർണ്ണസംഖ്യ,
+    സ്ഥിരം u_char **, പൂർണ്ണസംഖ്യ);
+സ്ഥിതം ഘടന dns_rr *parse_dns_rrsection(സ്ഥിരം u_char *, പൂർണ്ണസംഖ്യ, സ്ഥിരം u_char **,
+    പൂർണ്ണസംഖ്യ);
 
-static void free_dns_query(struct dns_query *);
-static void free_dns_rr(struct dns_rr *);
-static void free_dns_response(struct dns_response *);
+സ്ഥിതം ശൂന്യം free_dns_query(ഘടന dns_query *);
+സ്ഥിതം ശൂന്യം free_dns_rr(ഘടന dns_rr *);
+സ്ഥിതം ശൂന്യം free_dns_response(ഘടന dns_response *);
 
-static int count_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
+സ്ഥിതം പൂർണ്ണസംഖ്യ എണ്ണം_dns_rr(ഘടന dns_rr *, u_int16_t, u_int16_t);
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-    unsigned int rdtype, unsigned int flags,
-    struct rrsetinfo **res)
+പൂർണ്ണസംഖ്യ
+getrrsetbyname(സ്ഥിരം അക്ഷരം *hostname, unsigned പൂർണ്ണസംഖ്യ rdclass,
+    unsigned പൂർണ്ണസംഖ്യ rdtype, unsigned പൂർണ്ണസംഖ്യ flags,
+    ഘടന rrsetinfo **res)
 {
-	struct __res_state *_resp = _THREAD_PRIVATE(_res, _res, &_res);
-	int result;
-	struct rrsetinfo *rrset = NULL;
-	struct dns_response *response = NULL;
-	struct dns_rr *rr;
-	struct rdatainfo *rdata;
-	int length;
-	unsigned int index_ans, index_sig;
+	ഘടന __res_state *_resp = _THREAD_PRIVATE(_res, _res, &_res);
+	പൂർണ്ണസംഖ്യ result;
+	ഘടന rrsetinfo *rrset = ശൂന്യ;
+	ഘടന dns_response *response = ശൂന്യ;
+	ഘടന dns_rr *rr;
+	ഘടന rdatainfo *rdata;
+	പൂർണ്ണസംഖ്യ length;
+	unsigned പൂർണ്ണസംഖ്യ index_ans, index_sig;
 	u_char answer[ANSWER_BUFFER_SIZE];
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
+	എങ്കിൽ (rdclass > 0xffff || rdtype > 0xffff) {
 		result = ERRSET_INVAL;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
+	എങ്കിൽ (rdclass == 0xff || rdtype == 0xff) {
 		result = ERRSET_INVAL;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
+	എങ്കിൽ (flags) {
 		result = ERRSET_INVAL;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* initialize resolver */
-	if ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
+	എങ്കിൽ ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
 		result = ERRSET_FAIL;
-		goto fail;
+		പോകുക fail;
 	}
 
 #ifdef DEBUG
@@ -232,44 +232,44 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef RES_USE_DNSSEC
 	/* turn on DNSSEC if EDNS0 is configured */
-	if (_resp->options & RES_USE_EDNS0)
+	എങ്കിൽ (_resp->options & RES_USE_EDNS0)
 		_resp->options |= RES_USE_DNSSEC;
 #endif /* RES_USE_DNSEC */
 
 	/* make query */
-	length = res_query(hostname, (signed int) rdclass, (signed int) rdtype,
-	    answer, sizeof(answer));
-	if (length < 0) {
-		switch(h_errno) {
-		case HOST_NOT_FOUND:
+	length = res_query(hostname, (signed പൂർണ്ണസംഖ്യ) rdclass, (signed പൂർണ്ണസംഖ്യ) rdtype,
+	    answer, വലുപ്പം(answer));
+	എങ്കിൽ (length < 0) {
+		തിരഞ്ഞെടുപ്പ്(h_errno) {
+		അവസ്ഥ HOST_NOT_FOUND:
 			result = ERRSET_NONAME;
-			goto fail;
-		case NO_DATA:
+			പോകുക fail;
+		അവസ്ഥ NO_DATA:
 			result = ERRSET_NODATA;
-			goto fail;
-		default:
+			പോകുക fail;
+		സ്ഥിരസ്ഥിതി:
 			result = ERRSET_FAIL;
-			goto fail;
+			പോകുക fail;
 		}
 	}
 
 	/* parse result */
 	response = parse_dns_response(answer, length);
-	if (response == NULL) {
+	എങ്കിൽ (response == ശൂന്യ) {
 		result = ERRSET_FAIL;
-		goto fail;
+		പോകുക fail;
 	}
 
-	if (response->header.qdcount != 1) {
+	എങ്കിൽ (response->header.qdcount != 1) {
 		result = ERRSET_FAIL;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* initialize rrset */
-	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
+	rrset = calloc(1, വലുപ്പം(ഘടന rrsetinfo));
+	എങ്കിൽ (rrset == ശൂന്യ) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		പോകുക fail;
 	}
 	rrset->rri_rdclass = response->query->class;
 	rrset->rri_rdtype = response->query->type;
@@ -278,61 +278,61 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef HAVE_HEADER_AD
 	/* check for authenticated data */
-	if (response->header.ad == 1)
+	എങ്കിൽ (response->header.ad == 1)
 		rrset->rri_flags |= RRSET_VALIDATED;
 #endif
 
 	/* copy name from answer section */
 	rrset->rri_name = strdup(response->answer->name);
-	if (rrset->rri_name == NULL) {
+	എങ്കിൽ (rrset->rri_name == ശൂന്യ) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* count answers */
-	rrset->rri_nrdatas = count_dns_rr(response->answer, rrset->rri_rdclass,
+	rrset->rri_nrdatas = എണ്ണം_dns_rr(response->answer, rrset->rri_rdclass,
 	    rrset->rri_rdtype);
-	rrset->rri_nsigs = count_dns_rr(response->answer, rrset->rri_rdclass,
+	rrset->rri_nsigs = എണ്ണം_dns_rr(response->answer, rrset->rri_rdclass,
 	    T_RRSIG);
 
 	/* allocate memory for answers */
 	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
-	    sizeof(struct rdatainfo));
-	if (rrset->rri_rdatas == NULL) {
+	    വലുപ്പം(ഘടന rdatainfo));
+	എങ്കിൽ (rrset->rri_rdatas == ശൂന്യ) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
-		rrset->rri_sigs = calloc(rrset->rri_nsigs, sizeof(struct rdatainfo));
-		if (rrset->rri_sigs == NULL) {
+	എങ്കിൽ (rrset->rri_nsigs > 0) {
+		rrset->rri_sigs = calloc(rrset->rri_nsigs, വലുപ്പം(ഘടന rdatainfo));
+		എങ്കിൽ (rrset->rri_sigs == ശൂന്യ) {
 			result = ERRSET_NOMEMORY;
-			goto fail;
+			പോകുക fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (rr = response->answer, index_ans = 0, index_sig = 0;
+	വേണ്ടി (rr = response->answer, index_ans = 0, index_sig = 0;
 	    rr; rr = rr->next) {
 
-		rdata = NULL;
+		rdata = ശൂന്യ;
 
-		if (rr->class == rrset->rri_rdclass &&
+		എങ്കിൽ (rr->class == rrset->rri_rdclass &&
 		    rr->type  == rrset->rri_rdtype)
 			rdata = &rrset->rri_rdatas[index_ans++];
 
-		if (rr->class == rrset->rri_rdclass &&
+		എങ്കിൽ (rr->class == rrset->rri_rdclass &&
 		    rr->type  == T_RRSIG)
 			rdata = &rrset->rri_sigs[index_sig++];
 
-		if (rdata) {
+		എങ്കിൽ (rdata) {
 			rdata->rdi_length = rr->size;
-			if (rr->size != 0) {
+			എങ്കിൽ (rr->size != 0) {
 				rdata->rdi_data   = malloc(rr->size);
-				if (rdata->rdi_data == NULL) {
+				എങ്കിൽ (rdata->rdi_data == ശൂന്യ) {
 					result = ERRSET_NOMEMORY;
-					goto fail;
+					പോകുക fail;
 				}
 				memcpy(rdata->rdi_data, rr->rdata, rr->size);
 			}
@@ -341,63 +341,63 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	free_dns_response(response);
 
 	*res = rrset;
-	return (ERRSET_SUCCESS);
+	തിരികെ (ERRSET_SUCCESS);
 
 fail:
-	if (rrset != NULL)
+	എങ്കിൽ (rrset != ശൂന്യ)
 		freerrset(rrset);
-	if (response != NULL)
+	എങ്കിൽ (response != ശൂന്യ)
 		free_dns_response(response);
-	return (result);
+	തിരികെ (result);
 }
 
-void
-freerrset(struct rrsetinfo *rrset)
+ശൂന്യം
+freerrset(ഘടന rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	എങ്കിൽ (rrset == ശൂന്യ)
+		തിരികെ;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_rdatas[i].rdi_data);
+	എങ്കിൽ (rrset->rri_rdatas) {
+		വേണ്ടി (i = 0; i < rrset->rri_nrdatas; i++) {
+			എങ്കിൽ (rrset->rri_rdatas[i].rdi_data == ശൂന്യ)
+				നിർത്തുക;
+			സ്വതന്ത്രം(rrset->rri_rdatas[i].rdi_data);
 		}
-		free(rrset->rri_rdatas);
+		സ്വതന്ത്രം(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_sigs[i].rdi_data);
+	എങ്കിൽ (rrset->rri_sigs) {
+		വേണ്ടി (i = 0; i < rrset->rri_nsigs; i++) {
+			എങ്കിൽ (rrset->rri_sigs[i].rdi_data == ശൂന്യ)
+				നിർത്തുക;
+			സ്വതന്ത്രം(rrset->rri_sigs[i].rdi_data);
 		}
-		free(rrset->rri_sigs);
+		സ്വതന്ത്രം(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
-		free(rrset->rri_name);
-	free(rrset);
+	എങ്കിൽ (rrset->rri_name)
+		സ്വതന്ത്രം(rrset->rri_name);
+	സ്വതന്ത്രം(rrset);
 }
 
 /*
  * DNS response parsing routines
  */
-static struct dns_response *
-parse_dns_response(const u_char *answer, int size)
+സ്ഥിതം ഘടന dns_response *
+parse_dns_response(സ്ഥിരം u_char *answer, പൂർണ്ണസംഖ്യ size)
 {
-	struct dns_response *resp;
-	const u_char *cp;
+	ഘടന dns_response *resp;
+	സ്ഥിരം u_char *cp;
 
-	if (size < HFIXEDSZ)
-		return (NULL);
+	എങ്കിൽ (size < HFIXEDSZ)
+		തിരികെ (ശൂന്യ);
 
 	/* allocate memory for the response */
-	resp = calloc(1, sizeof(*resp));
-	if (resp == NULL)
-		return (NULL);
+	resp = calloc(1, വലുപ്പം(*resp));
+	എങ്കിൽ (resp == ശൂന്യ)
+		തിരികെ (ശൂന്യ);
 
 	/* initialize current pointer */
 	cp = answer;
@@ -413,85 +413,85 @@ parse_dns_response(const u_char *answer, int size)
 	resp->header.arcount = ntohs(resp->header.arcount);
 
 	/* there must be at least one query */
-	if (resp->header.qdcount < 1) {
+	എങ്കിൽ (resp->header.qdcount < 1) {
 		free_dns_response(resp);
-		return (NULL);
+		തിരികെ (ശൂന്യ);
 	}
 
 	/* parse query section */
 	resp->query = parse_dns_qsection(answer, size, &cp,
 	    resp->header.qdcount);
-	if (resp->header.qdcount && resp->query == NULL) {
+	എങ്കിൽ (resp->header.qdcount && resp->query == ശൂന്യ) {
 		free_dns_response(resp);
-		return (NULL);
+		തിരികെ (ശൂന്യ);
 	}
 
 	/* parse answer section */
 	resp->answer = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.ancount);
-	if (resp->header.ancount && resp->answer == NULL) {
+	എങ്കിൽ (resp->header.ancount && resp->answer == ശൂന്യ) {
 		free_dns_response(resp);
-		return (NULL);
+		തിരികെ (ശൂന്യ);
 	}
 
 	/* parse authority section */
 	resp->authority = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.nscount);
-	if (resp->header.nscount && resp->authority == NULL) {
+	എങ്കിൽ (resp->header.nscount && resp->authority == ശൂന്യ) {
 		free_dns_response(resp);
-		return (NULL);
+		തിരികെ (ശൂന്യ);
 	}
 
 	/* parse additional section */
 	resp->additional = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.arcount);
-	if (resp->header.arcount && resp->additional == NULL) {
+	എങ്കിൽ (resp->header.arcount && resp->additional == ശൂന്യ) {
 		free_dns_response(resp);
-		return (NULL);
+		തിരികെ (ശൂന്യ);
 	}
 
-	return (resp);
+	തിരികെ (resp);
 }
 
-static struct dns_query *
-parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
+സ്ഥിതം ഘടന dns_query *
+parse_dns_qsection(സ്ഥിരം u_char *answer, പൂർണ്ണസംഖ്യ size, സ്ഥിരം u_char **cp, പൂർണ്ണസംഖ്യ എണ്ണം)
 {
-	struct dns_query *head, *curr, *prev;
-	int i, length;
-	char name[MAXDNAME];
+	ഘടന dns_query *head, *curr, *prev;
+	പൂർണ്ണസംഖ്യ i, length;
+	അക്ഷരം name[MAXDNAME];
 
 #define NEED(need) \
-	do { \
-		if (*cp + need > answer + size) \
-			goto fail; \
-	} while (0)
+	ചെയ്യുക { \
+		എങ്കിൽ (*cp + need > answer + size) \
+			പോകുക fail; \
+	} ആകുമ്പോൾ (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	വേണ്ടി (i = 1, head = ശൂന്യ, prev = ശൂന്യ; i <= എണ്ണം; i++, prev = curr) {
+		എങ്കിൽ (*cp >= answer + size) {
  fail:
 			free_dns_query(head);
-			return (NULL);
+			തിരികെ (ശൂന്യ);
 		}
 		/* allocate and initialize struct */
-		curr = calloc(1, sizeof(struct dns_query));
-		if (curr == NULL)
-			goto fail;
-		if (head == NULL)
+		curr = calloc(1, വലുപ്പം(ഘടന dns_query));
+		എങ്കിൽ (curr == ശൂന്യ)
+			പോകുക fail;
+		എങ്കിൽ (head == ശൂന്യ)
 			head = curr;
-		if (prev != NULL)
+		എങ്കിൽ (prev != ശൂന്യ)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
-		    sizeof(name));
-		if (length < 0) {
+		    വലുപ്പം(name));
+		എങ്കിൽ (length < 0) {
 			free_dns_query(head);
-			return (NULL);
+			തിരികെ (ശൂന്യ);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		എങ്കിൽ (curr->name == ശൂന്യ) {
 			free_dns_query(head);
-			return (NULL);
+			തിരികെ (ശൂന്യ);
 		}
 		NEED(length);
 		*cp += length;
@@ -508,50 +508,50 @@ parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
 	}
 #undef NEED
 
-	return (head);
+	തിരികെ (head);
 }
 
-static struct dns_rr *
-parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
-    int count)
+സ്ഥിതം ഘടന dns_rr *
+parse_dns_rrsection(സ്ഥിരം u_char *answer, പൂർണ്ണസംഖ്യ size, സ്ഥിരം u_char **cp,
+    പൂർണ്ണസംഖ്യ എണ്ണം)
 {
-	struct dns_rr *head, *curr, *prev;
-	int i, length;
-	char name[MAXDNAME];
+	ഘടന dns_rr *head, *curr, *prev;
+	പൂർണ്ണസംഖ്യ i, length;
+	അക്ഷരം name[MAXDNAME];
 
 #define NEED(need) \
-	do { \
-		if (*cp + need > answer + size) \
-			goto fail; \
-	} while (0)
+	ചെയ്യുക { \
+		എങ്കിൽ (*cp + need > answer + size) \
+			പോകുക fail; \
+	} ആകുമ്പോൾ (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	വേണ്ടി (i = 1, head = ശൂന്യ, prev = ശൂന്യ; i <= എണ്ണം; i++, prev = curr) {
+		എങ്കിൽ (*cp >= answer + size) {
  fail:
 			free_dns_rr(head);
-			return (NULL);
+			തിരികെ (ശൂന്യ);
 		}
 
 		/* allocate and initialize struct */
-		curr = calloc(1, sizeof(struct dns_rr));
-		if (curr == NULL)
-			goto fail;
-		if (head == NULL)
+		curr = calloc(1, വലുപ്പം(ഘടന dns_rr));
+		എങ്കിൽ (curr == ശൂന്യ)
+			പോകുക fail;
+		എങ്കിൽ (head == ശൂന്യ)
 			head = curr;
-		if (prev != NULL)
+		എങ്കിൽ (prev != ശൂന്യ)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
-		    sizeof(name));
-		if (length < 0) {
+		    വലുപ്പം(name));
+		എങ്കിൽ (length < 0) {
 			free_dns_rr(head);
-			return (NULL);
+			തിരികെ (ശൂന്യ);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		എങ്കിൽ (curr->name == ശൂന്യ) {
 			free_dns_rr(head);
-			return (NULL);
+			തിരികെ (ശൂന്യ);
 		}
 		NEED(length);
 		*cp += length;
@@ -578,10 +578,10 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 
 		/* rdata itself */
 		NEED(curr->size);
-		if (curr->size != 0) {
-			if ((curr->rdata = malloc(curr->size)) == NULL) {
+		എങ്കിൽ (curr->size != 0) {
+			എങ്കിൽ ((curr->rdata = malloc(curr->size)) == ശൂന്യ) {
 				free_dns_rr(head);
-				return (NULL);
+				തിരികെ (ശൂന്യ);
 			}
 			memcpy(curr->rdata, *cp, curr->size);
 		}
@@ -589,61 +589,61 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 	}
 #undef NEED
 
-	return (head);
+	തിരികെ (head);
 }
 
-static void
-free_dns_query(struct dns_query *p)
+സ്ഥിതം ശൂന്യം
+free_dns_query(ഘടന dns_query *p)
 {
-	struct dns_query *next;
+	ഘടന dns_query *next;
 
-	while (p != NULL) {
+	ആകുമ്പോൾ (p != ശൂന്യ) {
 		next = p->next;
-		free(p->name);
-		free(p);
+		സ്വതന്ത്രം(p->name);
+		സ്വതന്ത്രം(p);
 		p = next;
 	}
 }
 
-static void
-free_dns_rr(struct dns_rr *p)
+സ്ഥിതം ശൂന്യം
+free_dns_rr(ഘടന dns_rr *p)
 {
-	struct dns_rr *next;
+	ഘടന dns_rr *next;
 
-	while (p != NULL) {
+	ആകുമ്പോൾ (p != ശൂന്യ) {
 		next = p->next;
-		free(p->name);
-		free(p->rdata);
-		free(p);
+		സ്വതന്ത്രം(p->name);
+		സ്വതന്ത്രം(p->rdata);
+		സ്വതന്ത്രം(p);
 		p = next;
 	}
 }
 
-static void
-free_dns_response(struct dns_response *p)
+സ്ഥിതം ശൂന്യം
+free_dns_response(ഘടന dns_response *p)
 {
-	if (p == NULL)
-		return;
+	എങ്കിൽ (p == ശൂന്യ)
+		തിരികെ;
 
 	free_dns_query(p->query);
 	free_dns_rr(p->answer);
 	free_dns_rr(p->authority);
 	free_dns_rr(p->additional);
-	free(p);
+	സ്വതന്ത്രം(p);
 }
 
-static int
-count_dns_rr(struct dns_rr *p, u_int16_t class, u_int16_t type)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+എണ്ണം_dns_rr(ഘടന dns_rr *p, u_int16_t class, u_int16_t type)
 {
-	int n = 0;
+	പൂർണ്ണസംഖ്യ n = 0;
 
-	while(p) {
-		if (p->class == class && p->type == type)
+	ആകുമ്പോൾ(p) {
+		എങ്കിൽ (p->class == class && p->type == type)
 			n++;
 		p = p->next;
 	}
 
-	return (n);
+	തിരികെ (n);
 }
 
 #endif /*  !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS) */

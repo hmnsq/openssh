@@ -15,67 +15,67 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/wait.h>
 
-#include <limits.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <fcntl.h>
 
-#include "log.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "ssh-sk.h"
-#include "misc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "msg.h"
+#അന്തര്ഭാവ "pathnames.h"
+#അന്തര്ഭാവ "ssh-sk.h"
+#അന്തര്ഭാവ "misc.h"
 
 /* #define DEBUG_SK 1 */
 
-static int
-start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+start_helper(പൂർണ്ണസംഖ്യ *fdp, pid_t *pidp, ശൂന്യം (**osigchldp)(പൂർണ്ണസംഖ്യ))
 {
-	void (*osigchld)(int);
-	int oerrno, pair[2], execpipe[2];
+	ശൂന്യം (*osigchld)(പൂർണ്ണസംഖ്യ);
+	പൂർണ്ണസംഖ്യ oerrno, pair[2], execpipe[2];
 	ssize_t n;
 	pid_t pid;
-	char execbuf[100], *helper, *verbosity = NULL;
+	അക്ഷരം execbuf[100], *helper, *verbosity = ശൂന്യ;
 
 	*fdp = -1;
 	*pidp = 0;
 	*osigchldp = SIG_DFL;
 
 	helper = getenv("SSH_SK_HELPER");
-	if (helper == NULL || strlen(helper) == 0)
+	എങ്കിൽ (helper == ശൂന്യ || strlen(helper) == 0)
 		helper = _PATH_SSH_SK_HELPER;
 #ifdef DEBUG_SK
 	verbosity = "-vvv";
 #endif
 
 	/* Create a O_CLOEXEC pipe to capture the execve() failure */
-	if (pipe(execpipe) == -1) {
+	എങ്കിൽ (pipe(execpipe) == -1) {
 		error("pipe:  %s", strerror(errno));
-		return SSH_ERR_SYSTEM_ERROR;
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	}
 	/* Start helper */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
+	എങ്കിൽ (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
 		error("socketpair: %s", strerror(errno));
 		close(execpipe[0]);
 		close(execpipe[1]);
-		return SSH_ERR_SYSTEM_ERROR;
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	എങ്കിൽ ((pid = fork()) == -1) {
 		oerrno = errno;
 		error("fork: %s", strerror(errno));
 		close(pair[0]);
@@ -84,38 +84,38 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 		close(execpipe[1]);
 		ssh_signal(SIGCHLD, osigchld);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	}
-	if (pid == 0) {
+	എങ്കിൽ (pid == 0) {
 		close(execpipe[0]);
 		FD_CLOSEONEXEC(execpipe[1]);
-		if ((dup2(pair[1], STDIN_FILENO) == -1) ||
+		എങ്കിൽ ((dup2(pair[1], STDIN_FILENO) == -1) ||
 		    (dup2(pair[1], STDOUT_FILENO) == -1)) {
-			snprintf(execbuf, sizeof execbuf,
+			snprintf(execbuf, വലുപ്പം execbuf,
 			    "dup2: %s", strerror(errno));
-			write(execpipe[1], execbuf, strlen(execbuf)+1);
+			ലിഖ(execpipe[1], execbuf, strlen(execbuf)+1);
 			_exit(1);
 		}
 		close(pair[0]);
 		close(pair[1]);
 		closefrom(STDERR_FILENO + 1);
 		debug_f("starting %s %s", helper,
-		    verbosity == NULL ? "" : verbosity);
-		execlp(helper, helper, verbosity, (char *)NULL);
-		snprintf(execbuf, sizeof execbuf,
+		    verbosity == ശൂന്യ ? "" : verbosity);
+		execlp(helper, helper, verbosity, (അക്ഷരം *)ശൂന്യ);
+		snprintf(execbuf, വലുപ്പം execbuf,
 		    "execlp: %s", strerror(errno));
-		write(execpipe[1], execbuf, strlen(execbuf)+1);
+		ലിഖ(execpipe[1], execbuf, strlen(execbuf)+1);
 		_exit(1);
 	}
 	close(pair[1]);
 
 	close(execpipe[1]);
-	n = read(execpipe[0], execbuf, sizeof execbuf);
+	n = പഠ(execpipe[0], execbuf, വലുപ്പം execbuf);
 	close(execpipe[0]);
-	if (n > 0) {
+	എങ്കിൽ (n > 0) {
 		execbuf[n - 1] = '\0';
 		error_f("%s", execbuf);
-		return SSH_ERR_AGENT_FAILURE;
+		തിരികെ SSH_ERR_AGENT_FAILURE;
 	}
 
 	/* success */
@@ -123,220 +123,220 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 	*fdp = pair[0];
 	*pidp = pid;
 	*osigchldp = osigchld;
-	return 0;
+	തിരികെ 0;
 }
 
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 reap_helper(pid_t pid)
 {
-	int status, oerrno;
+	പൂർണ്ണസംഖ്യ status, oerrno;
 
 	debug3_f("pid=%ld", (long)pid);
 
 	errno = 0;
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno == EINTR) {
+	ആകുമ്പോൾ (waitpid(pid, &status, 0) == -1) {
+		എങ്കിൽ (errno == EINTR) {
 			errno = 0;
-			continue;
+			തുടരുക;
 		}
 		oerrno = errno;
 		error_f("waitpid: %s", strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	}
-	if (!WIFEXITED(status)) {
+	എങ്കിൽ (!WIFEXITED(status)) {
 		error_f("helper exited abnormally");
-		return SSH_ERR_AGENT_FAILURE;
-	} else if (WEXITSTATUS(status) != 0) {
+		തിരികെ SSH_ERR_AGENT_FAILURE;
+	} അല്ലെങ്കിൽ എങ്കിൽ (WEXITSTATUS(status) != 0) {
 		error_f("helper exited with non-zero exit status");
-		return SSH_ERR_AGENT_FAILURE;
+		തിരികെ SSH_ERR_AGENT_FAILURE;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+client_converse(ഘടന sshbuf *സന്ദേശം, ഘടന sshbuf **respp, u_int type)
 {
-	int oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
+	പൂർണ്ണസംഖ്യ oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
 	u_int rtype, rerr;
 	pid_t pid;
 	u_char version;
-	void (*osigchld)(int);
-	struct sshbuf *req = NULL, *resp = NULL;
-	*respp = NULL;
+	ശൂന്യം (*osigchld)(പൂർണ്ണസംഖ്യ);
+	ഘടന sshbuf *req = ശൂന്യ, *resp = ശൂന്യ;
+	*respp = ശൂന്യ;
 
-	if ((r = start_helper(&fd, &pid, &osigchld)) != 0)
-		return r;
+	എങ്കിൽ ((r = start_helper(&fd, &pid, &osigchld)) != 0)
+		തിരികെ r;
 
-	if ((req = sshbuf_new()) == NULL || (resp = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((req = sshbuf_new()) == ശൂന്യ || (resp = sshbuf_new()) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 	/* Request preamble: type, log_on_stderr, log_level */
 	ll = log_level_get();
-	if ((r = sshbuf_put_u32(req, type)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_put_u32(req, type)) != 0 ||
 	    (r = sshbuf_put_u8(req, log_is_on_stderr() != 0)) != 0 ||
 	    (r = sshbuf_put_u32(req, ll < 0 ? 0 : ll)) != 0 ||
-	    (r = sshbuf_putb(req, msg)) != 0) {
+	    (r = sshbuf_putb(req, സന്ദേശം)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		പോകുക out;
 	}
-	if ((r = ssh_msg_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
+	എങ്കിൽ ((r = ssh_സന്ദേശം_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
 		error_fr(r, "send");
-		goto out;
+		പോകുക out;
 	}
-	if ((r = ssh_msg_recv(fd, resp)) != 0) {
+	എങ്കിൽ ((r = ssh_സന്ദേശം_recv(fd, resp)) != 0) {
 		error_fr(r, "receive");
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_get_u8(resp, &version)) != 0) {
+	എങ്കിൽ ((r = sshbuf_get_u8(resp, &version)) != 0) {
 		error_fr(r, "parse version");
-		goto out;
+		പോകുക out;
 	}
-	if (version != SSH_SK_HELPER_VERSION) {
+	എങ്കിൽ (version != SSH_SK_HELPER_VERSION) {
 		error_f("unsupported version: got %u, expected %u",
 		    version, SSH_SK_HELPER_VERSION);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
+	എങ്കിൽ ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
 		error_fr(r, "parse message type");
-		goto out;
+		പോകുക out;
 	}
-	if (rtype == SSH_SK_HELPER_ERROR) {
-		if ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
+	എങ്കിൽ (rtype == SSH_SK_HELPER_ERROR) {
+		എങ്കിൽ ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
 			error_fr(r, "parse");
-			goto out;
+			പോകുക out;
 		}
 		debug_f("helper returned error -%u", rerr);
 		/* OpenSSH error values are negative; encoded as -err on wire */
-		if (rerr == 0 || rerr >= INT_MAX)
+		എങ്കിൽ (rerr == 0 || rerr >= INT_MAX)
 			r = SSH_ERR_INTERNAL_ERROR;
-		else
-			r = -(int)rerr;
-		goto out;
-	} else if (rtype != type) {
+		അല്ലെങ്കിൽ
+			r = -(പൂർണ്ണസംഖ്യ)rerr;
+		പോകുക out;
+	} അല്ലെങ്കിൽ എങ്കിൽ (rtype != type) {
 		error_f("helper returned incorrect message type %u, "
 		    "expecting %u", rtype, type);
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	close(fd);
-	if ((r2 = reap_helper(pid)) != 0) {
-		if (r == 0) {
+	എങ്കിൽ ((r2 = reap_helper(pid)) != 0) {
+		എങ്കിൽ (r == 0) {
 			r = r2;
 			oerrno = errno;
 		}
 	}
-	if (r == 0) {
+	എങ്കിൽ (r == 0) {
 		*respp = resp;
-		resp = NULL;
+		resp = ശൂന്യ;
 	}
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	ssh_signal(SIGCHLD, osigchld);
 	errno = oerrno;
-	return r;
+	തിരികെ r;
 
 }
 
-int
-sshsk_sign(const char *provider, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+പൂർണ്ണസംഖ്യ
+sshsk_sign(സ്ഥിരം അക്ഷരം *provider, ഘടന sshkey *താക്കോൽ,
+    u_char **sigp, size_t *lenp, സ്ഥിരം u_char *data, size_t datalen,
+    u_int compat, സ്ഥിരം അക്ഷരം *pin)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
+	പൂർണ്ണസംഖ്യ oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *kbuf = ശൂന്യ, *req = ശൂന്യ, *resp = ശൂന്യ;
 
-	*sigp = NULL;
+	*sigp = ശൂന്യ;
 	*lenp = 0;
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	തിരികെ SSH_ERR_താക്കോൽ_TYPE_UNKNOWN;
 #endif
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((kbuf = sshbuf_new()) == ശൂന്യ ||
+	    (req = sshbuf_new()) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0) {
+	എങ്കിൽ ((r = sshkey_private_serialize(താക്കോൽ, kbuf)) != 0) {
 		error_fr(r, "encode key");
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider)) != 0 ||
 	    (r = sshbuf_put_string(req, data, datalen)) != 0 ||
-	    (r = sshbuf_put_cstring(req, NULL)) != 0 || /* alg */
+	    (r = sshbuf_put_cstring(req, ശൂന്യ)) != 0 || /* alg */
 	    (r = sshbuf_put_u32(req, compat)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		പോകുക out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
-		goto out;
+	എങ്കിൽ ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
+		പോകുക out;
 
-	if ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
+	എങ്കിൽ ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
 		error_fr(r, "parse signature");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	എങ്കിൽ (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
-	if (r != 0) {
+	എങ്കിൽ (r != 0) {
 		freezero(*sigp, *lenp);
-		*sigp = NULL;
+		*sigp = ശൂന്യ;
 		*lenp = 0;
 	}
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	തിരികെ r;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+പൂർണ്ണസംഖ്യ
+sshsk_enroll(പൂർണ്ണസംഖ്യ type, സ്ഥിരം അക്ഷരം *provider_path, സ്ഥിരം അക്ഷരം *device,
+    സ്ഥിരം അക്ഷരം *application, സ്ഥിരം അക്ഷരം *userid, uint8_t flags,
+    സ്ഥിരം അക്ഷരം *pin, ഘടന sshbuf *challenge_buf,
+    ഘടന sshkey **keyp, ഘടന sshbuf *attest)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *abuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
+	പൂർണ്ണസംഖ്യ oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *kbuf = ശൂന്യ, *abuf = ശൂന്യ, *req = ശൂന്യ, *resp = ശൂന്യ;
+	ഘടന sshkey *താക്കോൽ = ശൂന്യ;
 
-	*keyp = NULL;
-	if (attest != NULL)
+	*keyp = ശൂന്യ;
+	എങ്കിൽ (attest != ശൂന്യ)
 		sshbuf_reset(attest);
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	തിരികെ SSH_ERR_താക്കോൽ_TYPE_UNKNOWN;
 #endif
 
-	if (type < 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (type < 0)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 
-	if ((abuf = sshbuf_new()) == NULL ||
-	    (kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((abuf = sshbuf_new()) == ശൂന്യ ||
+	    (kbuf = sshbuf_new()) == ശൂന്യ ||
+	    (req = sshbuf_new()) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 
-	if ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, application)) != 0 ||
@@ -345,156 +345,156 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_stringb(req, challenge_buf)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		പോകുക out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
-		goto out;
+	എങ്കിൽ ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
+		പോകുക out;
 
-	if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_get_stringb(resp, abuf)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	എങ്കിൽ (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+	എങ്കിൽ ((r = sshkey_private_deserialize(kbuf, &താക്കോൽ)) != 0) {
 		error_fr(r, "encode");
-		goto out;
+		പോകുക out;
 	}
-	if (attest != NULL && (r = sshbuf_putb(attest, abuf)) != 0) {
+	എങ്കിൽ (attest != ശൂന്യ && (r = sshbuf_putb(attest, abuf)) != 0) {
 		error_fr(r, "encode attestation information");
-		goto out;
+		പോകുക out;
 	}
 
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
+	*keyp = താക്കോൽ;
+	താക്കോൽ = ശൂന്യ;
  out:
 	oerrno = errno;
-	sshkey_free(key);
+	sshkey_free(താക്കോൽ);
 	sshbuf_free(kbuf);
 	sshbuf_free(abuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	തിരികെ r;
 }
 
-static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+സ്ഥിതം ശൂന്യം
+sshsk_free_resident_താക്കോൽ(ഘടന sshsk_resident_താക്കോൽ *srk)
 {
-	if (srk == NULL)
-		return;
-	sshkey_free(srk->key);
+	എങ്കിൽ (srk == ശൂന്യ)
+		തിരികെ;
+	sshkey_free(srk->താക്കോൽ);
 	freezero(srk->user_id, srk->user_id_len);
-	free(srk);
+	സ്വതന്ത്രം(srk);
 }
 
 
-void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+ശൂന്യം
+sshsk_free_resident_താക്കോലുകൾ(ഘടന sshsk_resident_താക്കോൽ **srks, size_t nsrks)
 {
 	size_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	എങ്കിൽ (srks == ശൂന്യ || nsrks == 0)
+		തിരികെ;
 
-	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
-	free(srks);
+	വേണ്ടി (i = 0; i < nsrks; i++)
+		sshsk_free_resident_താക്കോൽ(srks[i]);
+	സ്വതന്ത്രം(srks);
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+പൂർണ്ണസംഖ്യ
+sshsk_load_resident(സ്ഥിരം അക്ഷരം *provider_path, സ്ഥിരം അക്ഷരം *device,
+    സ്ഥിരം അക്ഷരം *pin, u_int flags, ഘടന sshsk_resident_താക്കോൽ ***srksp,
     size_t *nsrksp)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
-	u_char *userid = NULL;
+	പൂർണ്ണസംഖ്യ oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *kbuf = ശൂന്യ, *req = ശൂന്യ, *resp = ശൂന്യ;
+	ഘടന sshkey *താക്കോൽ = ശൂന്യ;
+	ഘടന sshsk_resident_താക്കോൽ *srk = ശൂന്യ, **srks = ശൂന്യ, **tmp;
+	u_char *userid = ശൂന്യ;
 	size_t userid_len = 0, nsrks = 0;
 
-	*srksp = NULL;
+	*srksp = ശൂന്യ;
 	*nsrksp = 0;
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((kbuf = sshbuf_new()) == ശൂന്യ ||
+	    (req = sshbuf_new()) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 
-	if ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_u32(req, flags)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		പോകുക out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
-		goto out;
+	എങ്കിൽ ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+		പോകുക out;
 
-	while (sshbuf_len(resp) != 0) {
+	ആകുമ്പോൾ (sshbuf_len(resp) != 0) {
 		/* key, comment, user_id */
-		if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
-		    (r = sshbuf_get_cstring(resp, NULL, NULL)) != 0 ||
+		എങ്കിൽ ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+		    (r = sshbuf_get_cstring(resp, ശൂന്യ, ശൂന്യ)) != 0 ||
 		    (r = sshbuf_get_string(resp, &userid, &userid_len)) != 0) {
 			error_fr(r, "parse");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			പോകുക out;
 		}
-		if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+		എങ്കിൽ ((r = sshkey_private_deserialize(kbuf, &താക്കോൽ)) != 0) {
 			error_fr(r, "decode key");
-			goto out;
+			പോകുക out;
 		}
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		എങ്കിൽ ((srk = calloc(1, വലുപ്പം(*srk))) == ശൂന്യ) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			പോകുക out;
 		}
-		srk->key = key;
-		key = NULL;
+		srk->താക്കോൽ = താക്കോൽ;
+		താക്കോൽ = ശൂന്യ;
 		srk->user_id = userid;
 		srk->user_id_len = userid_len;
-		userid = NULL;
+		userid = ശൂന്യ;
 		userid_len = 0;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
-		    sizeof(*srks))) == NULL) {
+		എങ്കിൽ ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		    വലുപ്പം(*srks))) == ശൂന്യ) {
 			error_f("recallocarray keys failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			പോകുക out;
 		}
 		debug_f("srks[%zu]: %s %s uidlen %zu", nsrks,
-		    sshkey_type(srk->key), srk->key->sk_application,
+		    sshkey_type(srk->താക്കോൽ), srk->താക്കോൽ->sk_application,
 		    srk->user_id_len);
 		srks = tmp;
 		srks[nsrks++] = srk;
-		srk = NULL;
+		srk = ശൂന്യ;
 	}
 
 	/* success */
 	r = 0;
 	*srksp = srks;
 	*nsrksp = nsrks;
-	srks = NULL;
+	srks = ശൂന്യ;
 	nsrks = 0;
  out:
 	oerrno = errno;
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
+	sshsk_free_resident_താക്കോൽ(srk);
+	sshsk_free_resident_താക്കോലുകൾ(srks, nsrks);
 	freezero(userid, userid_len);
-	sshkey_free(key);
+	sshkey_free(താക്കോൽ);
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	തിരികെ r;
 }

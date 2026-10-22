@@ -17,41 +17,41 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/recallocarray.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 #ifndef HAVE_RECALLOCARRAY
 
-#include <errno.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
 /*
  * This is sqrt(SIZE_MAX+1), as s1*s2 <= SIZE_MAX
  * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW
  */
-#define MUL_NO_OVERFLOW ((size_t)1 << (sizeof(size_t) * 4))
+#define MUL_NO_OVERFLOW ((size_t)1 << (വലുപ്പം(size_t) * 4))
 
-void *
-recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
+ശൂന്യം *
+recallocarray(ശൂന്യം *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
 {
 	size_t oldsize, newsize;
-	void *newptr;
+	ശൂന്യം *newptr;
 
-	if (ptr == NULL)
-		return calloc(newnmemb, size);
+	എങ്കിൽ (ptr == ശൂന്യ)
+		തിരികെ calloc(newnmemb, size);
 
-	if ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+	എങ്കിൽ ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    newnmemb > 0 && SIZE_MAX / newnmemb < size) {
 		errno = ENOMEM;
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 	newsize = newnmemb * size;
 
-	if ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+	എങ്കിൽ ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    oldnmemb > 0 && SIZE_MAX / oldnmemb < size) {
 		errno = EINVAL;
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 	oldsize = oldnmemb * size;
 	
@@ -59,29 +59,29 @@ recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
 	 * Don't bother too much if we're shrinking just a bit,
 	 * we do not shrink for series of small steps, oh well.
 	 */
-	if (newsize <= oldsize) {
+	എങ്കിൽ (newsize <= oldsize) {
 		size_t d = oldsize - newsize;
 
-		if (d < oldsize / 2 && d < (size_t)getpagesize()) {
-			memset((char *)ptr + newsize, 0, d);
-			return ptr;
+		എങ്കിൽ (d < oldsize / 2 && d < (size_t)getpagesize()) {
+			memset((അക്ഷരം *)ptr + newsize, 0, d);
+			തിരികെ ptr;
 		}
 	}
 
 	newptr = malloc(newsize);
-	if (newptr == NULL)
-		return NULL;
+	എങ്കിൽ (newptr == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
-	if (newsize > oldsize) {
+	എങ്കിൽ (newsize > oldsize) {
 		memcpy(newptr, ptr, oldsize);
-		memset((char *)newptr + oldsize, 0, newsize - oldsize);
-	} else
+		memset((അക്ഷരം *)newptr + oldsize, 0, newsize - oldsize);
+	} അല്ലെങ്കിൽ
 		memcpy(newptr, ptr, newsize);
 
 	explicit_bzero(ptr, oldsize);
-	free(ptr);
+	സ്വതന്ത്രം(ptr);
 
-	return newptr;
+	തിരികെ newptr;
 }
 /* DEF_WEAK(recallocarray); */
 

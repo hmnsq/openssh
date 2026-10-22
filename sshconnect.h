@@ -24,32 +24,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+ഘടന sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+തരനിർവചനം ഘടന Sensitive Sensitive;
+ഘടന Sensitive {
+	ഘടന sshkey	**താക്കോലുകൾ;
+	പൂർണ്ണസംഖ്യ		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+ഘടന ssh_conn_info {
+	അക്ഷരം *conn_hash_hex;
+	അക്ഷരം *shorthost;
+	അക്ഷരം *uidstr;
+	അക്ഷരം *keyalias;
+	അക്ഷരം *thishost;
+	അക്ഷരം *host_arg;
+	അക്ഷരം *portstr;
+	അക്ഷരം *remhost;
+	അക്ഷരം *remuser;
+	അക്ഷരം *homedir;
+	അക്ഷരം *locuser;
+	അക്ഷരം *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+ഘടന addrinfo;
+ഘടന ssh;
+ഘടന hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
 #define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
@@ -70,39 +70,39 @@ struct hostkeys;
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
-void	 ssh_kill_proxy_command(void);
+പൂർണ്ണസംഖ്യ	 ssh_connect(ഘടന ssh *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *,
+	    ഘടന addrinfo *, ഘടന sockaddr_storage *, u_short,
+	    പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 ssh_kill_proxy_command(ശൂന്യം);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+ശൂന്യം	 ssh_login(ഘടന ssh *, Sensitive *, സ്ഥിരം അക്ഷരം *,
+    ഘടന sockaddr_storage *, u_short, ഘടന passwd *, പൂർണ്ണസംഖ്യ,
+    സ്ഥിരം ഘടന ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+പൂർണ്ണസംഖ്യ	 verify_host_താക്കോൽ(അക്ഷരം *, ഘടന sockaddr *, ഘടന sshkey *,
+    സ്ഥിരം ഘടന ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+ശൂന്യം	 get_hostfile_hostname_ipaddr(അക്ഷരം *, ഘടന sockaddr *, u_short,
+    അക്ഷരം **, അക്ഷരം **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+ശൂന്യം	 ssh_kex2(ഘടന ssh *ssh, അക്ഷരം *, ഘടന sockaddr_storage *, u_short,
+    സ്ഥിരം ഘടന ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+ശൂന്യം	 ssh_userauth2(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *,
+    അക്ഷരം *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+ശൂന്യം	 pubkey_dump(ഘടന ssh *);
 
-int	 ssh_local_cmd(const char *);
+പൂർണ്ണസംഖ്യ	 ssh_local_cmd(സ്ഥിരം അക്ഷരം *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+ശൂന്യം	 maybe_add_താക്കോൽ_to_agent(സ്ഥിരം അക്ഷരം *, ഘടന sshkey *,
+    സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+ശൂന്യം	 load_hostkeys_command(ഘടന hostkeys *, സ്ഥിരം അക്ഷരം *,
+    സ്ഥിരം അക്ഷരം *, സ്ഥിരം ഘടന ssh_conn_info *,
+    സ്ഥിരം ഘടന sshkey *, സ്ഥിരം അക്ഷരം *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+പൂർണ്ണസംഖ്യ hostkey_accepted_by_hostkeyalgs(സ്ഥിരം ഘടന sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+ശൂന്യം ssh_conn_info_free(ഘടന ssh_conn_info *);
+ഘടന ssh_conn_info *ssh_conn_info_dup(സ്ഥിരം ഘടന ssh_conn_info *);

@@ -16,114 +16,114 @@
 
 /* sftp client user/group lookup and caching */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/tree.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/tree.h>
 
-#include <glob.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
+#അന്തര്ഭാവ <glob.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "log.h"
-#include "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "xmalloc.h"
 
-#include "sftp-common.h"
-#include "sftp-client.h"
-#include "sftp-usergroup.h"
+#അന്തര്ഭാവ "sftp-common.h"
+#അന്തര്ഭാവ "sftp-client.h"
+#അന്തര്ഭാവ "sftp-usergroup.h"
 
 /* Tree of id, name */
-struct idname {
+ഘടന idname {
         u_int id;
-	char *name;
+	അക്ഷരം *name;
         RB_ENTRY(idname) entry;
 	/* XXX implement bounded cache as TAILQ */
 };
-static int
-idname_cmp(struct idname *a, struct idname *b)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+idname_cmp(ഘടന idname *a, ഘടന idname *b)
 {
-	if (a->id == b->id)
-		return 0;
-	return a->id > b->id ? 1 : -1;
+	എങ്കിൽ (a->id == b->id)
+		തിരികെ 0;
+	തിരികെ a->id > b->id ? 1 : -1;
 }
-RB_HEAD(idname_tree, idname);
-RB_GENERATE_STATIC(idname_tree, idname, entry, idname_cmp)
+RB_HEAD(idname_വൃക്ഷം, idname);
+RB_GENERATE_STATIC(idname_വൃക്ഷം, idname, entry, idname_cmp)
 
-static struct idname_tree user_idname = RB_INITIALIZER(&user_idname);
-static struct idname_tree group_idname = RB_INITIALIZER(&group_idname);
+സ്ഥിതം ഘടന idname_വൃക്ഷം user_idname = RB_INITIALIZER(&user_idname);
+സ്ഥിതം ഘടന idname_വൃക്ഷം group_idname = RB_INITIALIZER(&group_idname);
 
-static void
-idname_free(struct idname *idname)
+സ്ഥിതം ശൂന്യം
+idname_free(ഘടന idname *idname)
 {
-	if (idname == NULL)
-		return;
-	free(idname->name);
-	free(idname);
+	എങ്കിൽ (idname == ശൂന്യ)
+		തിരികെ;
+	സ്വതന്ത്രം(idname->name);
+	സ്വതന്ത്രം(idname);
 }
 
-static void
-idname_enter(struct idname_tree *tree, u_int id, const char *name)
+സ്ഥിതം ശൂന്യം
+idname_enter(ഘടന idname_വൃക്ഷം *വൃക്ഷം, u_int id, സ്ഥിരം അക്ഷരം *name)
 {
-	struct idname *idname;
+	ഘടന idname *idname;
 
-	if ((idname = xcalloc(1, sizeof(*idname))) == NULL)
+	എങ്കിൽ ((idname = xcalloc(1, വലുപ്പം(*idname))) == ശൂന്യ)
 		fatal_f("alloc");
 	idname->id = id;
 	idname->name = xstrdup(name);
-	if (RB_INSERT(idname_tree, tree, idname) != NULL)
+	എങ്കിൽ (RB_തിരുകുക(idname_വൃക്ഷം, വൃക്ഷം, idname) != ശൂന്യ)
 		idname_free(idname);
 }
 
-static const char *
-idname_lookup(struct idname_tree *tree, u_int id)
+സ്ഥിതം സ്ഥിരം അക്ഷരം *
+idname_lookup(ഘടന idname_വൃക്ഷം *വൃക്ഷം, u_int id)
 {
-	struct idname idname, *found;
+	ഘടന idname idname, *found;
 
-	memset(&idname, 0, sizeof(idname));
+	memset(&idname, 0, വലുപ്പം(idname));
 	idname.id = id;
-	if ((found = RB_FIND(idname_tree, tree, &idname)) != NULL)
-		return found->name;
-	return NULL;
+	എങ്കിൽ ((found = RB_FIND(idname_വൃക്ഷം, വൃക്ഷം, &idname)) != ശൂന്യ)
+		തിരികെ found->name;
+	തിരികെ ശൂന്യ;
 }
 
-static void
-freenames(char **names, u_int nnames)
+സ്ഥിതം ശൂന്യം
+freenames(അക്ഷരം **names, u_int nnames)
 {
 	u_int i;
 
-	if (names == NULL)
-		return;
-	for (i = 0; i < nnames; i++)
-		free(names[i]);
-	free(names);
+	എങ്കിൽ (names == ശൂന്യ)
+		തിരികെ;
+	വേണ്ടി (i = 0; i < nnames; i++)
+		സ്വതന്ത്രം(names[i]);
+	സ്വതന്ത്രം(names);
 }
 
-static void
-lookup_and_record(struct sftp_conn *conn,
+സ്ഥിതം ശൂന്യം
+lookup_and_record(ഘടന sftp_conn *conn,
     u_int *uids, u_int nuids, u_int *gids, u_int ngids)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	u_int i;
-	char **usernames = NULL, **groupnames = NULL;
+	അക്ഷരം **usernames = ശൂന്യ, **groupnames = ശൂന്യ;
 
-	if ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
+	എങ്കിൽ ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
 	    &usernames, &groupnames)) != 0) {
 		debug_fr(r, "sftp_get_users_groups_by_id");
-		return;
+		തിരികെ;
 	}
-	for (i = 0; i < nuids; i++) {
-		if (usernames[i] == NULL) {
+	വേണ്ടി (i = 0; i < nuids; i++) {
+		എങ്കിൽ (usernames[i] == ശൂന്യ) {
 			debug3_f("uid %u not resolved", uids[i]);
-			continue;
+			തുടരുക;
 		}
 		debug3_f("record uid %u => \"%s\"", uids[i], usernames[i]);
 		idname_enter(&user_idname, uids[i], usernames[i]);
 	}
-	for (i = 0; i < ngids; i++) {
-		if (groupnames[i] == NULL) {
+	വേണ്ടി (i = 0; i < ngids; i++) {
+		എങ്കിൽ (groupnames[i] == ശൂന്യ) {
 			debug3_f("gid %u not resolved", gids[i]);
-			continue;
+			തുടരുക;
 		}
 		debug3_f("record gid %u => \"%s\"", gids[i], groupnames[i]);
 		idname_enter(&group_idname, gids[i], groupnames[i]);
@@ -132,111 +132,111 @@ lookup_and_record(struct sftp_conn *conn,
 	freenames(groupnames, ngids);
 }
 
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 has_id(u_int id, u_int *ids, u_int nids)
 {
 	u_int i;
 
-	if (nids == 0)
-		return 0;
+	എങ്കിൽ (nids == 0)
+		തിരികെ 0;
 
 	/* XXX O(N^2) */
-	for (i = 0; i < nids; i++) {
-		if (ids[i] == id)
-			break;
+	വേണ്ടി (i = 0; i < nids; i++) {
+		എങ്കിൽ (ids[i] == id)
+			നിർത്തുക;
 	}
-	return i < nids;
+	തിരികെ i < nids;
 }
 
-static void
-collect_ids_from_glob(glob_t *g, int user, u_int **idsp, u_int *nidsp)
+സ്ഥിതം ശൂന്യം
+collect_ids_from_glob(glob_t *g, പൂർണ്ണസംഖ്യ user, u_int **idsp, u_int *nidsp)
 {
-	u_int id, i, n = 0, *ids = NULL;
+	u_int id, i, n = 0, *ids = ശൂന്യ;
 
-	for (i = 0; g->gl_pathv[i] != NULL; i++) {
-		if (g->gl_statv[i] == NULL) /* no stat information */
-			continue;
-		if (user) {
-			if (ruser_name(g->gl_statv[i]->st_uid) != NULL)
-				continue; /* Already seen */
+	വേണ്ടി (i = 0; g->gl_pathv[i] != ശൂന്യ; i++) {
+		എങ്കിൽ (g->gl_statv[i] == ശൂന്യ) /* no stat information */
+			തുടരുക;
+		എങ്കിൽ (user) {
+			എങ്കിൽ (ruser_name(g->gl_statv[i]->st_uid) != ശൂന്യ)
+				തുടരുക; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_uid;
-		} else {
-			if (rgroup_name(g->gl_statv[i]->st_gid) != NULL)
-				continue; /* Already seen */
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (rgroup_name(g->gl_statv[i]->st_gid) != ശൂന്യ)
+				തുടരുക; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_gid;
 		}
-		if (has_id(id, ids, n))
-			continue;
-		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
+		എങ്കിൽ (has_id(id, ids, n))
+			തുടരുക;
+		ids = xrecallocarray(ids, n, n + 1, വലുപ്പം(*ids));
 		ids[n++] = id;
 	}
 	*idsp = ids;
 	*nidsp = n;
 }
 
-void
-get_remote_user_groups_from_glob(struct sftp_conn *conn, glob_t *g)
+ശൂന്യം
+get_remote_user_groups_from_glob(ഘടന sftp_conn *conn, glob_t *g)
 {
-	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
+	u_int *uids = ശൂന്യ, nuids = 0, *gids = ശൂന്യ, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	എങ്കിൽ (!sftp_can_get_users_groups_by_id(conn))
+		തിരികെ;
 
 	collect_ids_from_glob(g, 1, &uids, &nuids);
 	collect_ids_from_glob(g, 0, &gids, &ngids);
 	lookup_and_record(conn, uids, nuids, gids, ngids);
-	free(uids);
-	free(gids);
+	സ്വതന്ത്രം(uids);
+	സ്വതന്ത്രം(gids);
 }
 
-static void
-collect_ids_from_dirents(SFTP_DIRENT **d, int user, u_int **idsp, u_int *nidsp)
+സ്ഥിതം ശൂന്യം
+collect_ids_from_dirents(SFTP_DIRENT **d, പൂർണ്ണസംഖ്യ user, u_int **idsp, u_int *nidsp)
 {
-	u_int id, i, n = 0, *ids = NULL;
+	u_int id, i, n = 0, *ids = ശൂന്യ;
 
-	for (i = 0; d[i] != NULL; i++) {
-		if (user) {
-			if (ruser_name((uid_t)(d[i]->a.uid)) != NULL)
-				continue; /* Already seen */
+	വേണ്ടി (i = 0; d[i] != ശൂന്യ; i++) {
+		എങ്കിൽ (user) {
+			എങ്കിൽ (ruser_name((uid_t)(d[i]->a.uid)) != ശൂന്യ)
+				തുടരുക; /* Already seen */
 			id = d[i]->a.uid;
-		} else {
-			if (rgroup_name((gid_t)(d[i]->a.gid)) != NULL)
-				continue; /* Already seen */
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (rgroup_name((gid_t)(d[i]->a.gid)) != ശൂന്യ)
+				തുടരുക; /* Already seen */
 			id = d[i]->a.gid;
 		}
-		if (has_id(id, ids, n))
-			continue;
-		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
+		എങ്കിൽ (has_id(id, ids, n))
+			തുടരുക;
+		ids = xrecallocarray(ids, n, n + 1, വലുപ്പം(*ids));
 		ids[n++] = id;
 	}
 	*idsp = ids;
 	*nidsp = n;
 }
 
-void
-get_remote_user_groups_from_dirents(struct sftp_conn *conn, SFTP_DIRENT **d)
+ശൂന്യം
+get_remote_user_groups_from_dirents(ഘടന sftp_conn *conn, SFTP_DIRENT **d)
 {
-	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
+	u_int *uids = ശൂന്യ, nuids = 0, *gids = ശൂന്യ, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	എങ്കിൽ (!sftp_can_get_users_groups_by_id(conn))
+		തിരികെ;
 
 	collect_ids_from_dirents(d, 1, &uids, &nuids);
 	collect_ids_from_dirents(d, 0, &gids, &ngids);
 	lookup_and_record(conn, uids, nuids, gids, ngids);
-	free(uids);
-	free(gids);
+	സ്വതന്ത്രം(uids);
+	സ്വതന്ത്രം(gids);
 }
 
-const char *
+സ്ഥിരം അക്ഷരം *
 ruser_name(uid_t uid)
 {
-	return idname_lookup(&user_idname, (u_int)uid);
+	തിരികെ idname_lookup(&user_idname, (u_int)uid);
 }
 
-const char *
+സ്ഥിരം അക്ഷരം *
 rgroup_name(uid_t gid)
 {
-	return idname_lookup(&group_idname, (u_int)gid);
+	തിരികെ idname_lookup(&group_idname, (u_int)gid);
 }
 

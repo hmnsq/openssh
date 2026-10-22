@@ -19,177 +19,177 @@
 /* Data structure for representing option data. */
 
 #define SSH_MAX_HOSTS_FILES	32
-#define PATH_MAX_SUN		(sizeof((struct sockaddr_un *)0)->sun_path)
+#define PATH_MAX_SUN		(വലുപ്പം((ഘടന sockaddr_un *)0)->sun_path)
 
-struct allowed_cname {
-	char *source_list;
-	char *target_list;
+ഘടന allowed_cname {
+	അക്ഷരം *source_list;
+	അക്ഷരം *target_list;
 };
 
-typedef struct {
-	char   *host_arg;	/* Host arg as specified on command line. */
-	int     forward_agent;	/* Forward authentication agent. */
-	char   *forward_agent_sock_path; /* Optional path of the agent. */
-	int     forward_x11;	/* Forward X11 display. */
-	int     forward_x11_timeout;	/* Expiration for Cookies */
-	int     forward_x11_trusted;	/* Trust Forward X11 display. */
-	int     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
-	char   *xauth_location;	/* Location for xauth program */
-	struct ForwardOptions fwd_opts;	/* forwarding options */
-	int     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
-	int     hostbased_authentication;	/* ssh2's rhosts_rsa */
-	int     gss_authentication;	/* Try GSS authentication */
-	int     gss_deleg_creds;	/* Delegate GSS credentials */
-	int     password_authentication;	/* Try password
+തരനിർവചനം ഘടന {
+	അക്ഷരം   *host_arg;	/* Host arg as specified on command line. */
+	പൂർണ്ണസംഖ്യ     forward_agent;	/* Forward authentication agent. */
+	അക്ഷരം   *forward_agent_sock_path; /* Optional path of the agent. */
+	പൂർണ്ണസംഖ്യ     forward_x11;	/* Forward X11 display. */
+	പൂർണ്ണസംഖ്യ     forward_x11_timeout;	/* Expiration for Cookies */
+	പൂർണ്ണസംഖ്യ     forward_x11_trusted;	/* Trust Forward X11 display. */
+	പൂർണ്ണസംഖ്യ     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
+	അക്ഷരം   *xauth_location;	/* Location for xauth program */
+	ഘടന ForwardOptions fwd_opts;	/* forwarding options */
+	പൂർണ്ണസംഖ്യ     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
+	പൂർണ്ണസംഖ്യ     hostbased_authentication;	/* ssh2's rhosts_rsa */
+	പൂർണ്ണസംഖ്യ     gss_authentication;	/* Try GSS authentication */
+	പൂർണ്ണസംഖ്യ     gss_deleg_creds;	/* Delegate GSS credentials */
+	പൂർണ്ണസംഖ്യ     password_authentication;	/* Try password
 						 * authentication. */
-	int     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
-	char	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
-	int     batch_mode;	/* Batch mode: do not ask for passwords. */
-	int     check_host_ip;	/* Also keep track of keys for IP address */
-	int     strict_host_key_checking;	/* Strict host key checking. */
-	int     compression;	/* Compress packets in both directions. */
-	int     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
-	int	ip_qos_interactive;	/* DSCP value for interactive */
-	int	ip_qos_bulk;		/* DSCP value for bulk traffic */
+	പൂർണ്ണസംഖ്യ     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
+	അക്ഷരം	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
+	പൂർണ്ണസംഖ്യ     batch_mode;	/* Batch mode: do not ask for passwords. */
+	പൂർണ്ണസംഖ്യ     check_host_ip;	/* Also keep track of keys for IP address */
+	പൂർണ്ണസംഖ്യ     strict_host_താക്കോൽ_checking;	/* Strict host key checking. */
+	പൂർണ്ണസംഖ്യ     compression;	/* Compress packets in both directions. */
+	പൂർണ്ണസംഖ്യ     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
+	പൂർണ്ണസംഖ്യ	ip_qos_interactive;	/* DSCP value for interactive */
+	പൂർണ്ണസംഖ്യ	ip_qos_bulk;		/* DSCP value for bulk traffic */
 	SyslogFacility log_facility;	/* Facility for system logging. */
 	LogLevel log_level;	/* Level for logging. */
-	u_int	num_log_verbose;	/* Verbose log overrides */
-	char   **log_verbose;
-	int     port;		/* Port to connect. */
-	int     address_family;
-	int     connection_attempts;	/* Max attempts (seconds) before
+	u_int	അക്കം_log_verbose;	/* Verbose log overrides */
+	അക്ഷരം   **log_verbose;
+	പൂർണ്ണസംഖ്യ     port;		/* Port to connect. */
+	പൂർണ്ണസംഖ്യ     address_family;
+	പൂർണ്ണസംഖ്യ     connection_attempts;	/* Max attempts (seconds) before
 					 * giving up */
-	int     connection_timeout;	/* Max time (seconds) before
+	പൂർണ്ണസംഖ്യ     connection_timeout;	/* Max time (seconds) before
 					 * aborting connection attempt */
-	int     number_of_password_prompts;	/* Max number of password
+	പൂർണ്ണസംഖ്യ     സംഖ്യ_of_password_prompts;	/* Max number of password
 						 * prompts. */
-	char   *ciphers;	/* SSH2 ciphers in order of preference. */
-	char   *macs;		/* SSH2 macs in order of preference. */
-	char   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
-	char   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
-	int	kex_algorithms_set; /* KexAlgorithms was set by the user */
-	char   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
-	char   *hostname;	/* Real host to connect. */
-	char   *tag;		/* Configuration tag name. */
-	char   *host_key_alias;	/* hostname alias for .ssh/known_hosts */
-	char   *proxy_command;	/* Proxy command for connecting the host. */
-	char   *user;		/* User to log in as. */
-	int     escape_char;	/* Escape character; -2 = none */
+	അക്ഷരം   *ciphers;	/* SSH2 ciphers in order of preference. */
+	അക്ഷരം   *macs;		/* SSH2 macs in order of preference. */
+	അക്ഷരം   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
+	അക്ഷരം   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
+	പൂർണ്ണസംഖ്യ	kex_algorithms_set; /* KexAlgorithms was set by the user */
+	അക്ഷരം   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
+	അക്ഷരം   *hostname;	/* Real host to connect. */
+	അക്ഷരം   *tag;		/* Configuration tag name. */
+	അക്ഷരം   *host_താക്കോൽ_alias;	/* hostname alias for .ssh/known_hosts */
+	അക്ഷരം   *proxy_command;	/* Proxy command for connecting the host. */
+	അക്ഷരം   *user;		/* User to log in as. */
+	പൂർണ്ണസംഖ്യ     escape_char;	/* Escape character; -2 = none */
 
-	u_int	num_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
-	char   *system_hostfiles[SSH_MAX_HOSTS_FILES];
-	u_int	num_user_hostfiles;	/* Path for $HOME/.ssh/known_hosts */
-	char   *user_hostfiles[SSH_MAX_HOSTS_FILES];
-	char   *preferred_authentications;
-	char   *bind_address;	/* local socket address for connection to sshd */
-	char   *bind_interface;	/* local interface for bind address */
-	char   *pkcs11_provider; /* PKCS#11 provider */
-	char   *sk_provider; /* Security key provider */
-	int	verify_host_key_dns;	/* Verify host key using DNS */
+	u_int	അക്കം_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
+	അക്ഷരം   *system_hostfiles[SSH_MAX_HOSTS_FILES];
+	u_int	അക്കം_user_hostfiles;	/* Path for $HOME/.ssh/known_hosts */
+	അക്ഷരം   *user_hostfiles[SSH_MAX_HOSTS_FILES];
+	അക്ഷരം   *preferred_authentications;
+	അക്ഷരം   *bind_address;	/* local socket address for connection to sshd */
+	അക്ഷരം   *bind_interface;	/* local interface for bind address */
+	അക്ഷരം   *pkcs11_provider; /* PKCS#11 provider */
+	അക്ഷരം   *sk_provider; /* Security key provider */
+	പൂർണ്ണസംഖ്യ	verify_host_താക്കോൽ_dns;	/* Verify host key using DNS */
 
-	int     num_identity_files;	/* Number of files for identities. */
-	char   *identity_files[SSH_MAX_IDENTITY_FILES];
-	int    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
-	struct sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
+	പൂർണ്ണസംഖ്യ     അക്കം_identity_files;	/* Number of files for identities. */
+	അക്ഷരം   *identity_files[SSH_MAX_IDENTITY_FILES];
+	പൂർണ്ണസംഖ്യ    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
+	ഘടന sshkey *identity_താക്കോലുകൾ[SSH_MAX_IDENTITY_FILES];
 
-	int	num_certificate_files; /* Number of extra certificates for ssh. */
-	char	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
-	int	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
-	struct sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
+	പൂർണ്ണസംഖ്യ	അക്കം_certificate_files; /* Number of extra certificates for ssh. */
+	അക്ഷരം	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
+	പൂർണ്ണസംഖ്യ	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
+	ഘടന sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
 
-	int	add_keys_to_agent;
-	int	add_keys_to_agent_lifespan;
-	char   *identity_agent;		/* Optional path to ssh-agent socket */
+	പൂർണ്ണസംഖ്യ	add_താക്കോലുകൾ_to_agent;
+	പൂർണ്ണസംഖ്യ	add_താക്കോലുകൾ_to_agent_lifespan;
+	അക്ഷരം   *identity_agent;		/* Optional path to ssh-agent socket */
 
 	/* Local TCP/IP forward requests. */
-	int     num_local_forwards;
-	struct Forward *local_forwards;
+	പൂർണ്ണസംഖ്യ     അക്കം_local_forwards;
+	ഘടന Forward *local_forwards;
 
 	/* Remote TCP/IP forward requests. */
-	int     num_remote_forwards;
-	struct Forward *remote_forwards;
-	int	clear_forwardings;
+	പൂർണ്ണസംഖ്യ     അക്കം_remote_forwards;
+	ഘടന Forward *remote_forwards;
+	പൂർണ്ണസംഖ്യ	clear_forwardings;
 
 	/* Restrict remote dynamic forwarding */
-	char  **permitted_remote_opens;
-	u_int	num_permitted_remote_opens;
+	അക്ഷരം  **permitted_remote_opens;
+	u_int	അക്കം_permitted_remote_opens;
 
 	/* stdio forwarding (-W) host and port */
-	char   *stdio_forward_host;
-	int	stdio_forward_port;
+	അക്ഷരം   *stdio_forward_host;
+	പൂർണ്ണസംഖ്യ	stdio_forward_port;
 
-	int	enable_ssh_keysign;
+	പൂർണ്ണസംഖ്യ	enable_ssh_keysign;
 	int64_t rekey_limit;
-	int	rekey_interval;
-	int	no_host_authentication_for_localhost;
-	int	identities_only;
-	int	server_alive_interval;
-	int	server_alive_count_max;
+	പൂർണ്ണസംഖ്യ	rekey_interval;
+	പൂർണ്ണസംഖ്യ	no_host_authentication_for_localhost;
+	പൂർണ്ണസംഖ്യ	identities_only;
+	പൂർണ്ണസംഖ്യ	server_alive_interval;
+	പൂർണ്ണസംഖ്യ	server_alive_എണ്ണം_max;
 
-	u_int	num_send_env;
-	char	**send_env;
-	u_int	num_setenv;
-	char	**setenv;
+	u_int	അക്കം_send_env;
+	അക്ഷരം	**send_env;
+	u_int	അക്കം_setenv;
+	അക്ഷരം	**setenv;
 
-	char	*control_path;
-	int	control_master;
-	int     control_persist; /* ControlPersist flag */
-	int     control_persist_timeout; /* ControlPersist timeout (seconds) */
+	അക്ഷരം	*control_path;
+	പൂർണ്ണസംഖ്യ	control_master;
+	പൂർണ്ണസംഖ്യ     control_persist; /* ControlPersist flag */
+	പൂർണ്ണസംഖ്യ     control_persist_timeout; /* ControlPersist timeout (seconds) */
 
-	int	hash_known_hosts;
+	പൂർണ്ണസംഖ്യ	hash_known_hosts;
 
-	int	tun_open;	/* tun(4) */
-	int     tun_local;	/* force tun device (optional) */
-	int     tun_remote;	/* force tun device (optional) */
+	പൂർണ്ണസംഖ്യ	tun_open;	/* tun(4) */
+	പൂർണ്ണസംഖ്യ     tun_local;	/* force tun device (optional) */
+	പൂർണ്ണസംഖ്യ     tun_remote;	/* force tun device (optional) */
 
-	char	*local_command;
-	int	permit_local_command;
-	char	*remote_command;
-	int	visual_host_key;
+	അക്ഷരം	*local_command;
+	പൂർണ്ണസംഖ്യ	permit_local_command;
+	അക്ഷരം	*remote_command;
+	പൂർണ്ണസംഖ്യ	visual_host_താക്കോൽ;
 
-	int	request_tty;
-	int	session_type;
-	int	stdin_null;
-	int	fork_after_authentication;
+	പൂർണ്ണസംഖ്യ	request_tty;
+	പൂർണ്ണസംഖ്യ	session_type;
+	പൂർണ്ണസംഖ്യ	stdin_null;
+	പൂർണ്ണസംഖ്യ	fork_after_authentication;
 
-	int	proxy_use_fdpass;
+	പൂർണ്ണസംഖ്യ	proxy_use_fdpass;
 
-	int	num_canonical_domains;
-	char	**canonical_domains;
-	int	canonicalize_hostname;
-	int	canonicalize_max_dots;
-	int	canonicalize_fallback_local;
-	int	num_permitted_cnames;
-	struct allowed_cname *permitted_cnames;
+	പൂർണ്ണസംഖ്യ	അക്കം_canonical_domains;
+	അക്ഷരം	**canonical_domains;
+	പൂർണ്ണസംഖ്യ	canonicalize_hostname;
+	പൂർണ്ണസംഖ്യ	canonicalize_max_dots;
+	പൂർണ്ണസംഖ്യ	canonicalize_fallback_local;
+	പൂർണ്ണസംഖ്യ	അക്കം_permitted_cnames;
+	ഘടന allowed_cname *permitted_cnames;
 
-	u_int	num_revoked_host_keys;
-	char	**revoked_host_keys;
+	u_int	അക്കം_revoked_host_താക്കോലുകൾ;
+	അക്ഷരം	**revoked_host_താക്കോലുകൾ;
 
-	int	 fingerprint_hash;
+	പൂർണ്ണസംഖ്യ	 fingerprint_hash;
 
-	int	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
+	പൂർണ്ണസംഖ്യ	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
 
-	char   *hostbased_accepted_algos;
-	char   *pubkey_accepted_algos;
+	അക്ഷരം   *hostbased_accepted_algos;
+	അക്ഷരം   *pubkey_accepted_algos;
 
-	char   *jump_user;
-	char   *jump_host;
-	int	jump_port;
-	char   *jump_extra;
+	അക്ഷരം   *jump_user;
+	അക്ഷരം   *jump_host;
+	പൂർണ്ണസംഖ്യ	jump_port;
+	അക്ഷരം   *jump_extra;
 
-	char   *known_hosts_command;
+	അക്ഷരം   *known_hosts_command;
 
-	int	required_rsa_size;	/* minimum size of RSA keys */
-	int	enable_escape_commandline;	/* ~C commandline */
-	int	obscure_keystroke_timing_interval;
-	int	warn_weak_crypto;
+	പൂർണ്ണസംഖ്യ	required_rsa_size;	/* minimum size of RSA keys */
+	പൂർണ്ണസംഖ്യ	enable_escape_commandline;	/* ~C commandline */
+	പൂർണ്ണസംഖ്യ	obscure_keystroke_timing_interval;
+	പൂർണ്ണസംഖ്യ	warn_weak_crypto;
 
-	char	**channel_timeouts;	/* inactivity timeout by channel type */
-	u_int	num_channel_timeouts;
+	അക്ഷരം	**channel_timeouts;	/* inactivity timeout by channel type */
+	u_int	അക്കം_channel_timeouts;
 
-	char	*version_addendum;
+	അക്ഷരം	*version_addendum;
 
-	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
+	അക്ഷരം	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 }       Options;
 
 #define SSH_PUBKEY_AUTH_NO	0x00
@@ -239,30 +239,30 @@ typedef struct {
 #define SSH_KEEPALIVES_TRANSPORT	1
 #define SSH_KEEPALIVES_ALL		2
 
-const char *kex_default_pk_alg(void);
-char	*ssh_connection_hash(const char *thishost, const char *host,
-    const char *portstr, const char *user, const char *jump_host);
-void     initialize_options(Options *);
-int      fill_default_options(Options *);
-void	 fill_default_options_for_canonicalization(Options *);
-void	 free_options(Options *o);
-int	 process_config_line(Options *, struct passwd *, const char *,
-    const char *, const char *, char *, const char *, int, int *, int);
-int	 read_config_file(const char *, struct passwd *, const char *,
-    const char *, const char *, Options *, int, int *);
-int	 parse_forward(struct Forward *, const char *, int, int);
-int	 ssh_valid_hostname(const char *);
-int	 ssh_valid_ruser(const char *);
-int	 parse_jump(const char *, Options *, int, int);
-int	 parse_ssh_uri(const char *, char **, char **, int *);
-int	 default_ssh_port(void);
-int	 option_clear_or_none(const char *);
-int	 config_has_permitted_cnames(Options *);
-void	 dump_client_config(Options *o, const char *host);
+സ്ഥിരം അക്ഷരം *kex_default_pk_alg(ശൂന്യം);
+അക്ഷരം	*ssh_connection_hash(സ്ഥിരം അക്ഷരം *thishost, സ്ഥിരം അക്ഷരം *host,
+    സ്ഥിരം അക്ഷരം *portstr, സ്ഥിരം അക്ഷരം *user, സ്ഥിരം അക്ഷരം *jump_host);
+ശൂന്യം     initialize_options(Options *);
+പൂർണ്ണസംഖ്യ      fill_default_options(Options *);
+ശൂന്യം	 fill_default_options_for_canonicalization(Options *);
+ശൂന്യം	 free_options(Options *o);
+പൂർണ്ണസംഖ്യ	 process_config_വരി(Options *, ഘടന passwd *, സ്ഥിരം അക്ഷരം *,
+    സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 read_config_file(സ്ഥിരം അക്ഷരം *, ഘടന passwd *, സ്ഥിരം അക്ഷരം *,
+    സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, Options *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ *);
+പൂർണ്ണസംഖ്യ	 parse_forward(ഘടന Forward *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 ssh_valid_hostname(സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 ssh_valid_ruser(സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 parse_jump(സ്ഥിരം അക്ഷരം *, Options *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 parse_ssh_uri(സ്ഥിരം അക്ഷരം *, അക്ഷരം **, അക്ഷരം **, പൂർണ്ണസംഖ്യ *);
+പൂർണ്ണസംഖ്യ	 default_ssh_port(ശൂന്യം);
+പൂർണ്ണസംഖ്യ	 option_clear_or_none(സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 config_has_permitted_cnames(Options *);
+ശൂന്യം	 dump_client_config(Options *o, സ്ഥിരം അക്ഷരം *host);
 
-void	 add_local_forward(Options *, const struct Forward *);
-void	 add_remote_forward(Options *, const struct Forward *);
-void	 add_identity_file(Options *, const char *, const char *, int);
-void	 add_certificate_file(Options *, const char *, int);
+ശൂന്യം	 add_local_forward(Options *, സ്ഥിരം ഘടന Forward *);
+ശൂന്യം	 add_remote_forward(Options *, സ്ഥിരം ഘടന Forward *);
+ശൂന്യം	 add_identity_file(Options *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 add_certificate_file(Options *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
 
 #endif				/* READCONF_H */

@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
+#അന്തര്ഭാവ "config.h"
 #undef malloc
 #undef calloc
 #undef realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
+#എങ്കിൽ defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+ശൂന്യം *
 rpl_malloc(size_t size)
 {
-	if (size == 0)
+	എങ്കിൽ (size == 0)
 		size = 1;
-	return malloc(size);
+	തിരികെ malloc(size);
 }
 #endif
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
+#എങ്കിൽ defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+ശൂന്യം *
 rpl_calloc(size_t nmemb, size_t size)
 {
-	if (nmemb == 0)
+	എങ്കിൽ (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
+	എങ്കിൽ (size == 0)
 		size = 1;
-	return calloc(nmemb, size);
+	തിരികെ calloc(nmemb, size);
 }
 #endif
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#എങ്കിൽ defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+ശൂന്യം *
+rpl_realloc(ശൂന്യം *ptr, size_t size)
 {
-	if (size == 0)
+	എങ്കിൽ (size == 0)
 		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	എങ്കിൽ (ptr == 0)
+		തിരികെ malloc(size);
+	തിരികെ realloc(ptr, size);
 }
 #endif

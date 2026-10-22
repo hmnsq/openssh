@@ -23,310 +23,310 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <limits.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#അന്തര്ഭാവ <openssl/bn.h>
+#അന്തര്ഭാവ <openssl/dh.h>
 
-#include "dh.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "ssherr.h"
+#അന്തര്ഭാവ "dh.h"
+#അന്തര്ഭാവ "pathnames.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "ssherr.h"
 
-static const char *moduli_filename;
+സ്ഥിതം സ്ഥിരം അക്ഷരം *moduli_filename;
 
-void dh_set_moduli_file(const char *filename)
+ശൂന്യം dh_set_moduli_file(സ്ഥിരം അക്ഷരം *filename)
 {
 	moduli_filename = filename;
 }
 
-static const char * get_moduli_filename(void)
+സ്ഥിതം സ്ഥിരം അക്ഷരം * get_moduli_filename(ശൂന്യം)
 {
-	return moduli_filename ? moduli_filename : _PATH_DH_MODULI;
+	തിരികെ moduli_filename ? moduli_filename : _PATH_DH_MODULI;
 }
 
-static int
-parse_prime(int linenum, char *line, struct dhgroup *dhg)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_അഭാജ്യം(പൂർണ്ണസംഖ്യ linenum, അക്ഷരം *വരി, ഘടന dhgroup *dhg)
 {
-	char *cp, *arg;
-	char *strsize, *gen, *prime;
-	const char *errstr = NULL;
+	അക്ഷരം *cp, *arg;
+	അക്ഷരം *strsize, *gen, *അഭാജ്യം;
+	സ്ഥിരം അക്ഷരം *errstr = ശൂന്യ;
 	long long n;
 
-	dhg->p = dhg->g = NULL;
-	cp = line;
-	if ((arg = strdelim(&cp)) == NULL)
-		return 0;
+	dhg->p = dhg->g = ശൂന്യ;
+	cp = വരി;
+	എങ്കിൽ ((arg = strdelim(&cp)) == ശൂന്യ)
+		തിരികെ 0;
 	/* Ignore leading whitespace */
-	if (*arg == '\0')
+	എങ്കിൽ (*arg == '\0')
 		arg = strdelim(&cp);
-	if (!arg || !*arg || *arg == '#')
-		return 0;
+	എങ്കിൽ (!arg || !*arg || *arg == '#')
+		തിരികെ 0;
 
 	/* time */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	എങ്കിൽ (cp == ശൂന്യ || *arg == '\0')
+		പോകുക truncated;
 	arg = strsep(&cp, " "); /* type */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	എങ്കിൽ (cp == ശൂന്യ || *arg == '\0')
+		പോകുക truncated;
 	/* Ensure this is a safe prime */
 	n = strtonum(arg, 0, 5, &errstr);
-	if (errstr != NULL || n != MODULI_TYPE_SAFE) {
+	എങ്കിൽ (errstr != ശൂന്യ || n != MODULI_TYPE_SAFE) {
 		error("moduli:%d: type is not %d", linenum, MODULI_TYPE_SAFE);
-		goto fail;
+		പോകുക fail;
 	}
 	arg = strsep(&cp, " "); /* tests */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	എങ്കിൽ (cp == ശൂന്യ || *arg == '\0')
+		പോകുക truncated;
 	/* Ensure prime has been tested and is not composite */
 	n = strtonum(arg, 0, 0x1f, &errstr);
-	if (errstr != NULL ||
+	എങ്കിൽ (errstr != ശൂന്യ ||
 	    (n & MODULI_TESTS_COMPOSITE) || !(n & ~MODULI_TESTS_COMPOSITE)) {
 		error("moduli:%d: invalid moduli tests flag", linenum);
-		goto fail;
+		പോകുക fail;
 	}
 	arg = strsep(&cp, " "); /* tries */
-	if (cp == NULL || *arg == '\0')
-		goto truncated;
+	എങ്കിൽ (cp == ശൂന്യ || *arg == '\0')
+		പോകുക truncated;
 	n = strtonum(arg, 0, 1<<30, &errstr);
-	if (errstr != NULL || n == 0) {
+	എങ്കിൽ (errstr != ശൂന്യ || n == 0) {
 		error("moduli:%d: invalid primality trial count", linenum);
-		goto fail;
+		പോകുക fail;
 	}
 	strsize = strsep(&cp, " "); /* size */
-	if (cp == NULL || *strsize == '\0' ||
-	    (dhg->size = (int)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
+	എങ്കിൽ (cp == ശൂന്യ || *strsize == '\0' ||
+	    (dhg->size = (പൂർണ്ണസംഖ്യ)strtonum(strsize, 0, 64*1024, &errstr)) == 0 ||
 	    errstr) {
 		error("moduli:%d: invalid prime length", linenum);
-		goto fail;
+		പോകുക fail;
 	}
 	/* The whole group is one bit larger */
 	dhg->size++;
 	gen = strsep(&cp, " "); /* gen */
-	if (cp == NULL || *gen == '\0')
-		goto truncated;
-	prime = strsep(&cp, " "); /* prime */
-	if (cp != NULL || *prime == '\0') {
+	എങ്കിൽ (cp == ശൂന്യ || *gen == '\0')
+		പോകുക truncated;
+	അഭാജ്യം = strsep(&cp, " "); /*അഭാജ്യം*/
+	എങ്കിൽ (cp != ശൂന്യ || *അഭാജ്യം == '\0') {
  truncated:
 		error("moduli:%d: truncated", linenum);
-		goto fail;
+		പോകുക fail;
 	}
 
-	if ((dhg->g = BN_new()) == NULL ||
-	    (dhg->p = BN_new()) == NULL) {
+	എങ്കിൽ ((dhg->g = BN_new()) == ശൂന്യ ||
+	    (dhg->p = BN_new()) == ശൂന്യ) {
 		error("parse_prime: BN_new failed");
-		goto fail;
+		പോകുക fail;
 	}
-	if (BN_hex2bn(&dhg->g, gen) == 0) {
+	എങ്കിൽ (BN_hex2bn(&dhg->g, gen) == 0) {
 		error("moduli:%d: could not parse generator value", linenum);
-		goto fail;
+		പോകുക fail;
 	}
-	if (BN_hex2bn(&dhg->p, prime) == 0) {
+	എങ്കിൽ (BN_hex2bn(&dhg->p, അഭാജ്യം) == 0) {
 		error("moduli:%d: could not parse prime value", linenum);
-		goto fail;
+		പോകുക fail;
 	}
-	if (BN_num_bits(dhg->p) != dhg->size) {
+	എങ്കിൽ (BN_അക്കം_bits(dhg->p) != dhg->size) {
 		error("moduli:%d: prime has wrong size: actual %d listed %d",
-		    linenum, BN_num_bits(dhg->p), dhg->size - 1);
-		goto fail;
+		    linenum, BN_അക്കം_bits(dhg->p), dhg->size - 1);
+		പോകുക fail;
 	}
-	if (BN_cmp(dhg->g, BN_value_one()) <= 0) {
+	എങ്കിൽ (BN_cmp(dhg->g, BN_മൂല്യം_one()) <= 0) {
 		error("moduli:%d: generator is invalid", linenum);
-		goto fail;
+		പോകുക fail;
 	}
-	return 1;
+	തിരികെ 1;
 
  fail:
 	BN_clear_free(dhg->g);
 	BN_clear_free(dhg->p);
-	dhg->g = dhg->p = NULL;
-	return 0;
+	dhg->g = dhg->p = ശൂന്യ;
+	തിരികെ 0;
 }
 
 DH *
-choose_dh(int min, int wantbits, int max)
+choose_dh(പൂർണ്ണസംഖ്യ min, പൂർണ്ണസംഖ്യ wantbits, പൂർണ്ണസംഖ്യ max)
 {
 	FILE *f;
-	char *line = NULL;
+	അക്ഷരം *വരി = ശൂന്യ;
 	size_t linesize = 0;
-	int best, bestcount, which, linenum;
-	struct dhgroup dhg;
+	പൂർണ്ണസംഖ്യ best, bestcount, which, linenum;
+	ഘടന dhgroup dhg;
 
-	if ((f = fopen(get_moduli_filename(), "r")) == NULL) {
+	എങ്കിൽ ((f = fopen(get_moduli_filename(), "r")) == ശൂന്യ) {
 		logit("WARNING: could not open %s (%s), using fixed modulus",
 		    get_moduli_filename(), strerror(errno));
-		return (dh_new_group_fallback(max));
+		തിരികെ (dh_new_group_fallback(max));
 	}
 
 	linenum = 0;
 	best = bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	ആകുമ്പോൾ (getline(&വരി, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
+		എങ്കിൽ (!parse_അഭാജ്യം(linenum, വരി, &dhg))
+			തുടരുക;
 		BN_clear_free(dhg.g);
 		BN_clear_free(dhg.p);
 
-		if (dhg.size > max || dhg.size < min)
-			continue;
+		എങ്കിൽ (dhg.size > max || dhg.size < min)
+			തുടരുക;
 
-		if ((dhg.size > wantbits && dhg.size < best) ||
+		എങ്കിൽ ((dhg.size > wantbits && dhg.size < best) ||
 		    (dhg.size > best && best < wantbits)) {
 			best = dhg.size;
 			bestcount = 0;
 		}
-		if (dhg.size == best)
+		എങ്കിൽ (dhg.size == best)
 			bestcount++;
 	}
-	free(line);
-	line = NULL;
+	സ്വതന്ത്രം(വരി);
+	വരി = ശൂന്യ;
 	linesize = 0;
 	rewind(f);
 
-	if (bestcount == 0) {
+	എങ്കിൽ (bestcount == 0) {
 		fclose(f);
 		logit("WARNING: no suitable primes (size %d/%d/%d) in %s",
 		    min, wantbits, max, get_moduli_filename());
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 	which = arc4random_uniform(bestcount);
 
 	linenum = 0;
 	bestcount = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	ആകുമ്പോൾ (getline(&വരി, &linesize, f) != -1) {
 		linenum++;
-		if (!parse_prime(linenum, line, &dhg))
-			continue;
-		if ((dhg.size > max || dhg.size < min) ||
+		എങ്കിൽ (!parse_അഭാജ്യം(linenum, വരി, &dhg))
+			തുടരുക;
+		എങ്കിൽ ((dhg.size > max || dhg.size < min) ||
 		    dhg.size != best ||
 		    bestcount++ != which) {
 			BN_clear_free(dhg.g);
 			BN_clear_free(dhg.p);
-			continue;
+			തുടരുക;
 		}
-		break;
+		നിർത്തുക;
 	}
-	free(line);
-	line = NULL;
+	സ്വതന്ത്രം(വരി);
+	വരി = ശൂന്യ;
 	fclose(f);
-	if (bestcount != which + 1) {
+	എങ്കിൽ (bestcount != which + 1) {
 		logit("WARNING: selected prime disappeared in %s, giving up",
 		    get_moduli_filename());
-		return (dh_new_group_fallback(max));
+		തിരികെ (dh_new_group_fallback(max));
 	}
 
-	return (dh_new_group(dhg.g, dhg.p));
+	തിരികെ (dh_new_group(dhg.g, dhg.p));
 }
 
 /* diffie-hellman-groupN-sha1 */
 
-int
-dh_pub_is_valid(const DH *dh, const BIGNUM *dh_pub)
+പൂർണ്ണസംഖ്യ
+dh_pub_is_valid(സ്ഥിരം DH *dh, സ്ഥിരം BIGNUM *dh_pub)
 {
-	int i;
-	int n = BN_num_bits(dh_pub);
-	int bits_set = 0;
+	പൂർണ്ണസംഖ്യ i;
+	പൂർണ്ണസംഖ്യ n = BN_അക്കം_bits(dh_pub);
+	പൂർണ്ണസംഖ്യ bits_set = 0;
 	BIGNUM *tmp;
-	const BIGNUM *dh_p;
+	സ്ഥിരം BIGNUM *dh_p;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, ശൂന്യ, ശൂന്യ);
 
-	if (BN_is_negative(dh_pub)) {
+	എങ്കിൽ (BN_is_negative(dh_pub)) {
 		logit("invalid public DH value: negative");
-		return 0;
+		തിരികെ 0;
 	}
-	if (BN_cmp(dh_pub, BN_value_one()) != 1) {	/* pub_exp <= 1 */
+	എങ്കിൽ (BN_cmp(dh_pub, BN_മൂല്യം_one()) != 1) {	/* pub_exp <= 1 */
 		logit("invalid public DH value: <= 1");
-		return 0;
+		തിരികെ 0;
 	}
 
-	if ((tmp = BN_new()) == NULL) {
+	എങ്കിൽ ((tmp = BN_new()) == ശൂന്യ) {
 		error_f("BN_new failed");
-		return 0;
+		തിരികെ 0;
 	}
-	if (!BN_sub(tmp, dh_p, BN_value_one()) ||
+	എങ്കിൽ (!BN_sub(tmp, dh_p, BN_മൂല്യം_one()) ||
 	    BN_cmp(dh_pub, tmp) != -1) {		/* pub_exp > p-2 */
 		BN_clear_free(tmp);
 		logit("invalid public DH value: >= p-1");
-		return 0;
+		തിരികെ 0;
 	}
 	BN_clear_free(tmp);
 
-	for (i = 0; i <= n; i++)
-		if (BN_is_bit_set(dh_pub, i))
+	വേണ്ടി (i = 0; i <= n; i++)
+		എങ്കിൽ (BN_is_bit_set(dh_pub, i))
 			bits_set++;
-	debug2("bits set: %d/%d", bits_set, BN_num_bits(dh_p));
+	debug2("bits set: %d/%d", bits_set, BN_അക്കം_bits(dh_p));
 
 	/*
 	 * if g==2 and bits_set==1 then computing log_g(dh_pub) is trivial
 	 */
-	if (bits_set < 4) {
+	എങ്കിൽ (bits_set < 4) {
 		logit("invalid public DH value (%d/%d)",
-		    bits_set, BN_num_bits(dh_p));
-		return 0;
+		    bits_set, BN_അക്കം_bits(dh_p));
+		തിരികെ 0;
 	}
-	return 1;
+	തിരികെ 1;
 }
 
-int
-dh_gen_key(DH *dh, int need)
+പൂർണ്ണസംഖ്യ
+dh_gen_താക്കോൽ(DH *dh, പൂർണ്ണസംഖ്യ need)
 {
-	int pbits;
-	const BIGNUM *dh_p, *pub_key;
+	പൂർണ്ണസംഖ്യ pbits;
+	സ്ഥിരം BIGNUM *dh_p, *pub_താക്കോൽ;
 
-	DH_get0_pqg(dh, &dh_p, NULL, NULL);
+	DH_get0_pqg(dh, &dh_p, ശൂന്യ, ശൂന്യ);
 
-	if (need < 0 || dh_p == NULL ||
-	    (pbits = BN_num_bits(dh_p)) <= 0 ||
+	എങ്കിൽ (need < 0 || dh_p == ശൂന്യ ||
+	    (pbits = BN_അക്കം_bits(dh_p)) <= 0 ||
 	    need > INT_MAX / 2 || 2 * need > pbits)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (need < 256)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (need < 256)
 		need = 256;
 	/*
 	 * Pollard Rho, Big step/Little Step attacks are O(sqrt(n)),
 	 * so double requested need here.
 	 */
-	if (!DH_set_length(dh, MINIMUM(need * 2, pbits - 1)))
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	എങ്കിൽ (!DH_set_length(dh, MINIMUM(need * 2, pbits - 1)))
+		തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
 
-	if (DH_generate_key(dh) == 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	DH_get0_key(dh, &pub_key, NULL);
-	if (!dh_pub_is_valid(dh, pub_key))
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	എങ്കിൽ (DH_generate_താക്കോൽ(dh) == 0)
+		തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
+	DH_get0_താക്കോൽ(dh, &pub_താക്കോൽ, ശൂന്യ);
+	എങ്കിൽ (!dh_pub_is_valid(dh, pub_താക്കോൽ))
+		തിരികെ SSH_ERR_INVALID_FORMAT;
+	തിരികെ 0;
 }
 
 DH *
-dh_new_group_asc(const char *gen, const char *modulus)
+dh_new_group_asc(സ്ഥിരം അക്ഷരം *gen, സ്ഥിരം അക്ഷരം *modulus)
 {
 	DH *dh;
-	BIGNUM *dh_p = NULL, *dh_g = NULL;
+	BIGNUM *dh_p = ശൂന്യ, *dh_g = ശൂന്യ;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (BN_hex2bn(&dh_p, modulus) == 0 ||
+	എങ്കിൽ ((dh = DH_new()) == ശൂന്യ)
+		തിരികെ ശൂന്യ;
+	എങ്കിൽ (BN_hex2bn(&dh_p, modulus) == 0 ||
 	    BN_hex2bn(&dh_g, gen) == 0)
-		goto fail;
-	if (!DH_set0_pqg(dh, dh_p, NULL, dh_g))
-		goto fail;
-	return dh;
+		പോകുക fail;
+	എങ്കിൽ (!DH_set0_pqg(dh, dh_p, ശൂന്യ, dh_g))
+		പോകുക fail;
+	തിരികെ dh;
  fail:
 	DH_free(dh);
 	BN_clear_free(dh_p);
 	BN_clear_free(dh_g);
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 /*
@@ -338,21 +338,21 @@ dh_new_group(BIGNUM *gen, BIGNUM *modulus)
 {
 	DH *dh;
 
-	if ((dh = DH_new()) == NULL)
-		return NULL;
-	if (!DH_set0_pqg(dh, modulus, NULL, gen)) {
+	എങ്കിൽ ((dh = DH_new()) == ശൂന്യ)
+		തിരികെ ശൂന്യ;
+	എങ്കിൽ (!DH_set0_pqg(dh, modulus, ശൂന്യ, gen)) {
 		DH_free(dh);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
-	return dh;
+	തിരികെ dh;
 }
 
 /* rfc2409 "Second Oakley Group" (1024 bits) */
 DH *
-dh_new_group1(void)
+dh_new_group1(ശൂന്യം)
 {
-	static char *gen = "2", *group1 =
+	സ്ഥിതം അക്ഷരം *gen = "2", *group1 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -360,14 +360,14 @@ dh_new_group1(void)
 	    "EE386BFB" "5A899FA5" "AE9F2411" "7C4B1FE6" "49286651" "ECE65381"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group1));
+	തിരികെ (dh_new_group_asc(gen, group1));
 }
 
 /* rfc3526 group 14 "2048-bit MODP Group" */
 DH *
-dh_new_group14(void)
+dh_new_group14(ശൂന്യം)
 {
-	static char *gen = "2", *group14 =
+	സ്ഥിതം അക്ഷരം *gen = "2", *group14 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -380,14 +380,14 @@ dh_new_group14(void)
 	    "DE2BCBF6" "95581718" "3995497C" "EA956AE5" "15D22618" "98FA0510"
 	    "15728E5A" "8AACAA68" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group14));
+	തിരികെ (dh_new_group_asc(gen, group14));
 }
 
 /* rfc3526 group 16 "4096-bit MODP Group" */
 DH *
-dh_new_group16(void)
+dh_new_group16(ശൂന്യം)
 {
-	static char *gen = "2", *group16 =
+	സ്ഥിതം അക്ഷരം *gen = "2", *group16 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -411,14 +411,14 @@ dh_new_group16(void)
 	    "93B4EA98" "8D8FDDC1" "86FFB7DC" "90A6C08F" "4DF435C9" "34063199"
 	    "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group16));
+	തിരികെ (dh_new_group_asc(gen, group16));
 }
 
 /* rfc3526 group 18 "8192-bit MODP Group" */
 DH *
-dh_new_group18(void)
+dh_new_group18(ശൂന്യം)
 {
-	static char *gen = "2", *group18 =
+	സ്ഥിതം അക്ഷരം *gen = "2", *group18 =
 	    "FFFFFFFF" "FFFFFFFF" "C90FDAA2" "2168C234" "C4C6628B" "80DC1CD1"
 	    "29024E08" "8A67CC74" "020BBEA6" "3B139B22" "514A0879" "8E3404DD"
 	    "EF9519B3" "CD3A431B" "302B0A6D" "F25F1437" "4FE1356D" "6D51C245"
@@ -463,23 +463,23 @@ dh_new_group18(void)
 	    "9558E447" "5677E9AA" "9E3050E2" "765694DF" "C81F56E8" "80B96E71"
 	    "60C980DD" "98EDD3DF" "FFFFFFFF" "FFFFFFFF";
 
-	return (dh_new_group_asc(gen, group18));
+	തിരികെ (dh_new_group_asc(gen, group18));
 }
 
 /* Select fallback group used by DH-GEX if moduli file cannot be read. */
 DH *
-dh_new_group_fallback(int max)
+dh_new_group_fallback(പൂർണ്ണസംഖ്യ max)
 {
 	debug3_f("requested max size %d", max);
-	if (max < 3072) {
+	എങ്കിൽ (max < 3072) {
 		debug3("using 2k bit group 14");
-		return dh_new_group14();
-	} else if (max < 6144) {
+		തിരികെ dh_new_group14();
+	} അല്ലെങ്കിൽ എങ്കിൽ (max < 6144) {
 		debug3("using 4k bit group 16");
-		return dh_new_group16();
+		തിരികെ dh_new_group16();
 	}
 	debug3("using 8k bit group 18");
-	return dh_new_group18();
+	തിരികെ dh_new_group18();
 }
 
 /*
@@ -490,15 +490,15 @@ dh_new_group_fallback(int max)
  * from RFC4419 section 3.
  */
 u_int
-dh_estimate(int bits)
+dh_estimate(പൂർണ്ണസംഖ്യ bits)
 {
-	if (bits <= 112)
-		return 2048;
-	if (bits <= 128)
-		return 3072;
-	if (bits <= 192)
-		return 7680;
-	return 8192;
+	എങ്കിൽ (bits <= 112)
+		തിരികെ 2048;
+	എങ്കിൽ (bits <= 128)
+		തിരികെ 3072;
+	എങ്കിൽ (bits <= 192)
+		തിരികെ 7680;
+	തിരികെ 8192;
 }
 
 #endif /* WITH_OPENSSL */

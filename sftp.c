@@ -15,95 +15,95 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/statvfs.h>
-#include <sys/wait.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/ioctl.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/statvfs.h>
+#അന്തര്ഭാവ <sys/wait.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <glob.h>
-#include <paths.h>
-#include <libgen.h>
+#അന്തര്ഭാവ <ctype.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <glob.h>
+#അന്തര്ഭാവ <paths.h>
+#അന്തര്ഭാവ <libgen.h>
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #endif
 #ifdef USE_LIBEDIT
-#include <histedit.h>
-#else
-typedef void EditLine;
+#അന്തര്ഭാവ <histedit.h>
+#അല്ലെങ്കിൽ
+തരനിർവചനം ശൂന്യം Edit_വരി;
 #endif
-#include <limits.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <util.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <util.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "pathnames.h"
-#include "misc.h"
-#include "utf8.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "pathnames.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "utf8.h"
 
-#include "sftp.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
-#include "sftp-usergroup.h"
+#അന്തര്ഭാവ "sftp.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "sftp-common.h"
+#അന്തര്ഭാവ "sftp-client.h"
+#അന്തര്ഭാവ "sftp-usergroup.h"
 
 /* File to read commands from */
 FILE* infile;
 
 /* Are we in batchfile mode? */
-int batchmode = 0;
+പൂർണ്ണസംഖ്യ batchmode = 0;
 
 /* PID of ssh transport process */
-static volatile pid_t sshpid = -1;
+സ്ഥിതം അസ്ഥിര pid_t sshpid = -1;
 
 /* Suppress diagnostic messages */
-int quiet = 0;
+പൂർണ്ണസംഖ്യ quiet = 0;
 
 /* This is set to 0 if the progressmeter is not desired. */
-int showprogress = 1;
+പൂർണ്ണസംഖ്യ showprogress = 1;
 
 /* When this option is set, we always recursively download/upload directories */
-int global_rflag = 0;
+പൂർണ്ണസംഖ്യ global_rflag = 0;
 
 /* When this option is set, we resume download or upload if possible */
-int global_aflag = 0;
+പൂർണ്ണസംഖ്യ global_aflag = 0;
 
 /* When this option is set, the file transfers will always preserve times */
-int global_pflag = 0;
+പൂർണ്ണസംഖ്യ global_pflag = 0;
 
 /* When this option is set, transfers will have fsync() called on each file */
-int global_fflag = 0;
+പൂർണ്ണസംഖ്യ global_fflag = 0;
 
 /* SIGINT received during command processing */
-volatile sig_atomic_t interrupted = 0;
+അസ്ഥിര sig_atomic_t interrupted = 0;
 
 /* I wish qsort() took a separate ctx for the comparison function...*/
-int sort_flag;
+പൂർണ്ണസംഖ്യ sort_flag;
 glob_t *sort_glob;
 
 /* Context used for commandline completion */
-struct complete_ctx {
-	struct sftp_conn *conn;
-	char **remote_pathp;
+ഘടന complete_ctx {
+	ഘടന sftp_conn *conn;
+	അക്ഷരം **remote_pathp;
 };
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *); /* proto for sftp-glob.c */
+പൂർണ്ണസംഖ്യ sftp_glob(ഘടന sftp_conn *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ,
+    പൂർണ്ണസംഖ്യ (*)(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ), glob_t *); /* proto for sftp-glob.c */
 
-extern char *__progname;
+ബാഹ്യ അക്ഷരം *__progname;
 
 /* Separators for interactive commands */
 #define WHITESPACE " \t\r\n"
@@ -123,7 +123,7 @@ extern char *__progname;
 #define SORT_FLAGS	(LS_NAME_SORT|LS_TIME_SORT|LS_SIZE_SORT)
 
 /* Commands for interactive mode */
-enum sftp_command {
+എണ്ണൽ sftp_command {
 	I_CHDIR = 1,
 	I_CHGRP,
 	I_CHMOD,
@@ -154,11 +154,11 @@ enum sftp_command {
 	I_PROGRESS,
 };
 
-struct CMD {
-	const char *c;
-	const int n;
-	const int t;	/* Completion type for the first argument */
-	const int t2;	/* completion type for the optional second argument */
+ഘടന CMD {
+	സ്ഥിരം അക്ഷരം *c;
+	സ്ഥിരം പൂർണ്ണസംഖ്യ n;
+	സ്ഥിരം പൂർണ്ണസംഖ്യ t;	/* Completion type for the first argument */
+	സ്ഥിരം പൂർണ്ണസംഖ്യ t2;	/* completion type for the optional second argument */
 };
 
 /* Type of completion */
@@ -166,7 +166,7 @@ struct CMD {
 #define REMOTE	1
 #define LOCAL	2
 
-static const struct CMD cmds[] = {
+സ്ഥിതം സ്ഥിരം ഘടന CMD cmds[] = {
 	{ "bye",	I_QUIT,		NOARGS,		NOARGS	},
 	{ "cd",		I_CHDIR,	REMOTE,		NOARGS	},
 	{ "chdir",	I_CHDIR,	REMOTE,		NOARGS	},
@@ -204,74 +204,74 @@ static const struct CMD cmds[] = {
 	{ "version",	I_VERSION,	NOARGS,		NOARGS	},
 	{ "!",		I_SHELL,	NOARGS,		NOARGS	},
 	{ "?",		I_HELP,		NOARGS,		NOARGS	},
-	{ NULL,		-1,		-1,		-1	}
+	{ ശൂന്യ,		-1,		-1,		-1	}
 };
 
-static void
-killchild(int signo)
+സ്ഥിതം ശൂന്യം
+killchild(പൂർണ്ണസംഖ്യ signo)
 {
 	pid_t pid;
 
 	pid = sshpid;
-	if (pid > 1) {
+	എങ്കിൽ (pid > 1) {
 		kill(pid, SIGTERM);
-		(void)waitpid(pid, NULL, 0);
+		(ശൂന്യം)waitpid(pid, ശൂന്യ, 0);
 	}
 
 	_exit(1);
 }
 
-static void
-suspchild(int signo)
+സ്ഥിതം ശൂന്യം
+suspchild(പൂർണ്ണസംഖ്യ signo)
 {
-	int save_errno = errno;
-	if (sshpid > 1) {
+	പൂർണ്ണസംഖ്യ save_errno = errno;
+	എങ്കിൽ (sshpid > 1) {
 		kill(sshpid, signo);
-		while (waitpid(sshpid, NULL, WUNTRACED) == -1 && errno == EINTR)
-			continue;
+		ആകുമ്പോൾ (waitpid(sshpid, ശൂന്യ, WUNTRACED) == -1 && errno == EINTR)
+			തുടരുക;
 	}
 	kill(getpid(), SIGSTOP);
 	errno = save_errno;
 }
 
-static void
-cmd_interrupt(int signo)
+സ്ഥിതം ശൂന്യം
+cmd_interrupt(പൂർണ്ണസംഖ്യ signo)
 {
-	const char msg[] = "\rInterrupt  \n";
-	int olderrno = errno;
+	സ്ഥിരം അക്ഷരം സന്ദേശം[] = "\rInterrupt  \n";
+	പൂർണ്ണസംഖ്യ olderrno = errno;
 
-	(void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
+	(ശൂന്യം)ലിഖ(STDERR_FILENO, സന്ദേശം, വലുപ്പം(സന്ദേശം) - 1);
 	interrupted = 1;
 	errno = olderrno;
 }
 
-static void
-read_interrupt(int signo)
+സ്ഥിതം ശൂന്യം
+read_interrupt(പൂർണ്ണസംഖ്യ signo)
 {
 	interrupted = 1;
 }
 
-static void
-sigchld_handler(int sig)
+സ്ഥിതം ശൂന്യം
+sigchld_handler(പൂർണ്ണസംഖ്യ sig)
 {
-	int save_errno = errno;
+	പൂർണ്ണസംഖ്യ save_errno = errno;
 	pid_t pid;
-	const char msg[] = "\rConnection closed.  \n";
+	സ്ഥിരം അക്ഷരം സന്ദേശം[] = "\rConnection closed.  \n";
 
 	/* Report if ssh transport process dies. */
-	while ((pid = waitpid(sshpid, NULL, WNOHANG)) == -1 && errno == EINTR)
-		continue;
-	if (pid == sshpid) {
-		if (!quiet)
-		    (void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
+	ആകുമ്പോൾ ((pid = waitpid(sshpid, ശൂന്യ, WNOHANG)) == -1 && errno == EINTR)
+		തുടരുക;
+	എങ്കിൽ (pid == sshpid) {
+		എങ്കിൽ (!quiet)
+		    (ശൂന്യം)ലിഖ(STDERR_FILENO, സന്ദേശം, വലുപ്പം(സന്ദേശം) - 1);
 		sshpid = -1;
 	}
 
 	errno = save_errno;
 }
 
-static void
-help(void)
+സ്ഥിതം ശൂന്യം
+help(ശൂന്യം)
 {
 	printf("Available commands:\n"
 	    "bye                                Quit sftp\n"
@@ -310,393 +310,393 @@ help(void)
 	    "?                                  Synonym for help\n");
 }
 
-static void
-local_do_shell(const char *args)
+സ്ഥിതം ശൂന്യം
+local_do_shell(സ്ഥിരം അക്ഷരം *args)
 {
-	int status;
-	char *shell;
+	പൂർണ്ണസംഖ്യ status;
+	അക്ഷരം *shell;
 	pid_t pid;
 
-	if (!*args)
-		args = NULL;
+	എങ്കിൽ (!*args)
+		args = ശൂന്യ;
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	എങ്കിൽ ((shell = getenv("SHELL")) == ശൂന്യ || *shell == '\0')
 		shell = _PATH_BSHELL;
 
-	if ((pid = fork()) == -1)
+	എങ്കിൽ ((pid = fork()) == -1)
 		fatal("Couldn't fork: %s", strerror(errno));
 
-	if (pid == 0) {
-		if (args) {
+	എങ്കിൽ (pid == 0) {
+		എങ്കിൽ (args) {
 			debug3("Executing %s -c \"%s\"", shell, args);
-			execl(shell, shell, "-c", args, (char *)NULL);
-		} else {
+			execl(shell, shell, "-c", args, (അക്ഷരം *)ശൂന്യ);
+		} അല്ലെങ്കിൽ {
 			debug3("Executing %s", shell);
-			execl(shell, shell, (char *)NULL);
+			execl(shell, shell, (അക്ഷരം *)ശൂന്യ);
 		}
 		fprintf(stderr, "Couldn't execute \"%s\": %s\n", shell,
 		    strerror(errno));
 		_exit(1);
 	}
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	ആകുമ്പോൾ (waitpid(pid, &status, 0) == -1)
+		എങ്കിൽ (errno != EINTR)
 			fatal("Couldn't wait for child: %s", strerror(errno));
-	if (!WIFEXITED(status))
+	എങ്കിൽ (!WIFEXITED(status))
 		error("Shell exited abnormally");
-	else if (WEXITSTATUS(status))
+	അല്ലെങ്കിൽ എങ്കിൽ (WEXITSTATUS(status))
 		error("Shell exited with status %d", WEXITSTATUS(status));
 }
 
-static void
-local_do_ls(const char *args)
+സ്ഥിതം ശൂന്യം
+local_do_ls(സ്ഥിരം അക്ഷരം *args)
 {
-	if (!args || !*args)
+	എങ്കിൽ (!args || !*args)
 		local_do_shell(_PATH_LS);
-	else {
-		int len = strlen(_PATH_LS " ") + strlen(args) + 1;
-		char *buf = xmalloc(len);
+	അല്ലെങ്കിൽ {
+		പൂർണ്ണസംഖ്യ len = strlen(_PATH_LS " ") + strlen(args) + 1;
+		അക്ഷരം *buf = xmalloc(len);
 
 		/* XXX: quoting - rip quoting code from ftp? */
 		snprintf(buf, len, _PATH_LS " %s", args);
 		local_do_shell(buf);
-		free(buf);
+		സ്വതന്ത്രം(buf);
 	}
 }
 
 /* Strip one path (usually the pwd) from the start of another */
-static char *
-path_strip(const char *path, const char *strip)
+സ്ഥിതം അക്ഷരം *
+path_strip(സ്ഥിരം അക്ഷരം *path, സ്ഥിരം അക്ഷരം *strip)
 {
 	size_t len;
 
-	if (strip == NULL || (len = strlen(strip)) == 0)
-		return (xstrdup(path));
+	എങ്കിൽ (strip == ശൂന്യ || (len = strlen(strip)) == 0)
+		തിരികെ (xstrdup(path));
 
-	if (strncmp(path, strip, len) == 0) {
-		if (strip[len - 1] != '/' && path[len] == '/')
+	എങ്കിൽ (strncmp(path, strip, len) == 0) {
+		എങ്കിൽ (strip[len - 1] != '/' && path[len] == '/')
 			len++;
-		return (xstrdup(path + len));
+		തിരികെ (xstrdup(path + len));
 	}
 
-	return (xstrdup(path));
+	തിരികെ (xstrdup(path));
 }
 
-static int
-parse_getput_flags(const char *cmd, char **argv, int argc,
-    int *aflag, int *fflag, int *pflag, int *rflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_getput_flags(സ്ഥിരം അക്ഷരം *cmd, അക്ഷരം **argv, പൂർണ്ണസംഖ്യ argc,
+    പൂർണ്ണസംഖ്യ *aflag, പൂർണ്ണസംഖ്യ *fflag, പൂർണ്ണസംഖ്യ *pflag, പൂർണ്ണസംഖ്യ *rflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ opterr, optind, optopt, optreset;
+	പൂർണ്ണസംഖ്യ ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*aflag = *fflag = *rflag = *pflag = 0;
-	while ((ch = getopt(argc, argv, "afPpRr")) != -1) {
-		switch (ch) {
-		case 'a':
+	ആകുമ്പോൾ ((ch = getopt(argc, argv, "afPpRr")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
+		അവസ്ഥ 'a':
 			*aflag = 1;
-			break;
-		case 'f':
+			നിർത്തുക;
+		അവസ്ഥ 'f':
 			*fflag = 1;
-			break;
-		case 'p':
-		case 'P':
+			നിർത്തുക;
+		അവസ്ഥ 'p':
+		അവസ്ഥ 'P':
 			*pflag = 1;
-			break;
-		case 'r':
-		case 'R':
+			നിർത്തുക;
+		അവസ്ഥ 'r':
+		അവസ്ഥ 'R':
 			*rflag = 1;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			തിരികെ -1;
 		}
 	}
 
-	return optind;
+	തിരികെ optind;
 }
 
-static int
-parse_mkdir_flags(const char *cmd, char **argv, int argc, int *pflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_mkdir_flags(സ്ഥിരം അക്ഷരം *cmd, അക്ഷരം **argv, പൂർണ്ണസംഖ്യ argc, പൂർണ്ണസംഖ്യ *pflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ opterr, optind, optopt, optreset;
+	പൂർണ്ണസംഖ്യ ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*pflag = 0;
-	while ((ch = getopt(argc, argv, "p")) != -1) {
-		switch (ch) {
-		case 'p':
+	ആകുമ്പോൾ ((ch = getopt(argc, argv, "p")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
+		അവസ്ഥ 'p':
 			*pflag = 1;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			തിരികെ -1;
 		}
 	}
 
-	return optind;
+	തിരികെ optind;
 }
 
-static int
-parse_link_flags(const char *cmd, char **argv, int argc, int *sflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_link_flags(സ്ഥിരം അക്ഷരം *cmd, അക്ഷരം **argv, പൂർണ്ണസംഖ്യ argc, പൂർണ്ണസംഖ്യ *sflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ opterr, optind, optopt, optreset;
+	പൂർണ്ണസംഖ്യ ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*sflag = 0;
-	while ((ch = getopt(argc, argv, "s")) != -1) {
-		switch (ch) {
-		case 's':
+	ആകുമ്പോൾ ((ch = getopt(argc, argv, "s")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
+		അവസ്ഥ 's':
 			*sflag = 1;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			തിരികെ -1;
 		}
 	}
 
-	return optind;
+	തിരികെ optind;
 }
 
-static int
-parse_rename_flags(const char *cmd, char **argv, int argc, int *lflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_rename_flags(സ്ഥിരം അക്ഷരം *cmd, അക്ഷരം **argv, പൂർണ്ണസംഖ്യ argc, പൂർണ്ണസംഖ്യ *lflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ opterr, optind, optopt, optreset;
+	പൂർണ്ണസംഖ്യ ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*lflag = 0;
-	while ((ch = getopt(argc, argv, "l")) != -1) {
-		switch (ch) {
-		case 'l':
+	ആകുമ്പോൾ ((ch = getopt(argc, argv, "l")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
+		അവസ്ഥ 'l':
 			*lflag = 1;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			തിരികെ -1;
 		}
 	}
 
-	return optind;
+	തിരികെ optind;
 }
 
-static int
-parse_ls_flags(char **argv, int argc, int *lflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_ls_flags(അക്ഷരം **argv, പൂർണ്ണസംഖ്യ argc, പൂർണ്ണസംഖ്യ *lflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ opterr, optind, optopt, optreset;
+	പൂർണ്ണസംഖ്യ ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*lflag = LS_NAME_SORT;
-	while ((ch = getopt(argc, argv, "1Safhlnrt")) != -1) {
-		switch (ch) {
-		case '1':
+	ആകുമ്പോൾ ((ch = getopt(argc, argv, "1Safhlnrt")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
+		അവസ്ഥ '1':
 			*lflag &= ~VIEW_FLAGS;
 			*lflag |= LS_SHORT_VIEW;
-			break;
-		case 'S':
+			നിർത്തുക;
+		അവസ്ഥ 'S':
 			*lflag &= ~SORT_FLAGS;
 			*lflag |= LS_SIZE_SORT;
-			break;
-		case 'a':
+			നിർത്തുക;
+		അവസ്ഥ 'a':
 			*lflag |= LS_SHOW_ALL;
-			break;
-		case 'f':
+			നിർത്തുക;
+		അവസ്ഥ 'f':
 			*lflag &= ~SORT_FLAGS;
-			break;
-		case 'h':
+			നിർത്തുക;
+		അവസ്ഥ 'h':
 			*lflag |= LS_SI_UNITS;
-			break;
-		case 'l':
+			നിർത്തുക;
+		അവസ്ഥ 'l':
 			*lflag &= ~LS_SHORT_VIEW;
 			*lflag |= LS_LONG_VIEW;
-			break;
-		case 'n':
+			നിർത്തുക;
+		അവസ്ഥ 'n':
 			*lflag &= ~LS_SHORT_VIEW;
 			*lflag |= LS_NUMERIC_VIEW|LS_LONG_VIEW;
-			break;
-		case 'r':
+			നിർത്തുക;
+		അവസ്ഥ 'r':
 			*lflag |= LS_REVERSE_SORT;
-			break;
-		case 't':
+			നിർത്തുക;
+		അവസ്ഥ 't':
 			*lflag &= ~SORT_FLAGS;
 			*lflag |= LS_TIME_SORT;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			error("ls: Invalid flag -%c", optopt);
-			return -1;
+			തിരികെ -1;
 		}
 	}
 
-	return optind;
+	തിരികെ optind;
 }
 
-static int
-parse_df_flags(const char *cmd, char **argv, int argc, int *hflag, int *iflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_df_flags(സ്ഥിരം അക്ഷരം *cmd, അക്ഷരം **argv, പൂർണ്ണസംഖ്യ argc, പൂർണ്ണസംഖ്യ *hflag, പൂർണ്ണസംഖ്യ *iflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ opterr, optind, optopt, optreset;
+	പൂർണ്ണസംഖ്യ ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*hflag = *iflag = 0;
-	while ((ch = getopt(argc, argv, "hi")) != -1) {
-		switch (ch) {
-		case 'h':
+	ആകുമ്പോൾ ((ch = getopt(argc, argv, "hi")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
+		അവസ്ഥ 'h':
 			*hflag = 1;
-			break;
-		case 'i':
+			നിർത്തുക;
+		അവസ്ഥ 'i':
 			*iflag = 1;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			തിരികെ -1;
 		}
 	}
 
-	return optind;
+	തിരികെ optind;
 }
 
-static int
-parse_ch_flags(const char *cmd, char **argv, int argc, int *hflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_ch_flags(സ്ഥിരം അക്ഷരം *cmd, അക്ഷരം **argv, പൂർണ്ണസംഖ്യ argc, പൂർണ്ണസംഖ്യ *hflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ opterr, optind, optopt, optreset;
+	പൂർണ്ണസംഖ്യ ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*hflag = 0;
-	while ((ch = getopt(argc, argv, "h")) != -1) {
-		switch (ch) {
-		case 'h':
+	ആകുമ്പോൾ ((ch = getopt(argc, argv, "h")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
+		അവസ്ഥ 'h':
 			*hflag = 1;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			തിരികെ -1;
 		}
 	}
 
-	return optind;
+	തിരികെ optind;
 }
 
-static int
-parse_no_flags(const char *cmd, char **argv, int argc)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_no_flags(സ്ഥിരം അക്ഷരം *cmd, അക്ഷരം **argv, പൂർണ്ണസംഖ്യ argc)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ opterr, optind, optopt, optreset;
+	പൂർണ്ണസംഖ്യ ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
-	while ((ch = getopt(argc, argv, "")) != -1) {
-		switch (ch) {
-		default:
+	ആകുമ്പോൾ ((ch = getopt(argc, argv, "")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
+		സ്ഥിരസ്ഥിതി:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			തിരികെ -1;
 		}
 	}
 
-	return optind;
+	തിരികെ optind;
 }
 
-static char *
-escape_glob(const char *s)
+സ്ഥിതം അക്ഷരം *
+escape_glob(സ്ഥിരം അക്ഷരം *s)
 {
 	size_t i, o, len;
-	char *ret;
+	അക്ഷരം *ret;
 
 	len = strlen(s);
 	ret = xcalloc(2, len + 1);
-	for (i = o = 0; i < len; i++) {
-		if (strchr("[]?*\\", s[i]) != NULL)
+	വേണ്ടി (i = o = 0; i < len; i++) {
+		എങ്കിൽ (strchr("[]?*\\", s[i]) != ശൂന്യ)
 			ret[o++] = '\\';
 		ret[o++] = s[i];
 	}
 	ret[o++] = '\0';
-	return ret;
+	തിരികെ ret;
 }
 
 /*
  * Arg p must be dynamically allocated.  make_absolute will either return it
  * or free it and allocate a new one.  Caller must free returned string.
  */
-static char *
-make_absolute_pwd_glob(char *p, const char *pwd)
+സ്ഥിതം അക്ഷരം *
+make_absolute_pwd_glob(അക്ഷരം *p, സ്ഥിരം അക്ഷരം *pwd)
 {
-	char *ret, *escpwd;
+	അക്ഷരം *ret, *escpwd;
 
 	escpwd = escape_glob(pwd);
-	if (p == NULL)
-		return escpwd;
+	എങ്കിൽ (p == ശൂന്യ)
+		തിരികെ escpwd;
 	ret = sftp_make_absolute(p, escpwd);
-	free(escpwd);
-	return ret;
+	സ്വതന്ത്രം(escpwd);
+	തിരികെ ret;
 }
 
-static int
-local_is_dir(const char *path)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+local_is_dir(സ്ഥിരം അക്ഷരം *path)
 {
-	struct stat sb;
+	ഘടന stat sb;
 
-	if (stat(path, &sb) == -1)
-		return 0;
-	return S_ISDIR(sb.st_mode);
+	എങ്കിൽ (stat(path, &sb) == -1)
+		തിരികെ 0;
+	തിരികെ S_ISDIR(sb.st_mode);
 }
 
-static int
-process_get(struct sftp_conn *conn, const char *src, const char *dst,
-    const char *pwd, int pflag, int rflag, int resume, int fflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+process_get(ഘടന sftp_conn *conn, സ്ഥിരം അക്ഷരം *src, സ്ഥിരം അക്ഷരം *dst,
+    സ്ഥിരം അക്ഷരം *pwd, പൂർണ്ണസംഖ്യ pflag, പൂർണ്ണസംഖ്യ rflag, പൂർണ്ണസംഖ്യ resume, പൂർണ്ണസംഖ്യ fflag)
 {
-	char *filename, *abs_src = NULL, *abs_dst = NULL, *tmp = NULL;
+	അക്ഷരം *filename, *abs_src = ശൂന്യ, *abs_dst = ശൂന്യ, *tmp = ശൂന്യ;
 	glob_t g;
-	int i, r, err = 0;
+	പൂർണ്ണസംഖ്യ i, r, err = 0;
 
 	abs_src = make_absolute_pwd_glob(xstrdup(src), pwd);
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, വലുപ്പം(g));
 
 	debug3("Looking up %s", abs_src);
-	if ((r = sftp_glob(conn, abs_src, GLOB_MARK, NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE) {
+	എങ്കിൽ ((r = sftp_glob(conn, abs_src, GLOB_MARK, ശൂന്യ, &g)) != 0) {
+		എങ്കിൽ (r == GLOB_NOSPACE) {
 			error("Too many matches for \"%s\".", abs_src);
-		} else {
+		} അല്ലെങ്കിൽ {
 			error("File \"%s\" not found.", abs_src);
 		}
 		err = -1;
-		goto out;
+		പോകുക out;
 	}
 
 	/*
 	 * If multiple matches then dst must be a directory or
 	 * unspecified.
 	 */
-	if (g.gl_matchc > 1 && dst != NULL && !local_is_dir(dst)) {
+	എങ്കിൽ (g.gl_matchc > 1 && dst != ശൂന്യ && !local_is_dir(dst)) {
 		error("Multiple source paths, but destination "
 		    "\"%s\" is not a directory", dst);
 		err = -1;
-		goto out;
+		പോകുക out;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	വേണ്ടി (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		എങ്കിൽ ((filename = basename(tmp)) == ശൂന്യ) {
 			error("basename %s: %s", tmp, strerror(errno));
-			free(tmp);
+			സ്വതന്ത്രം(tmp);
 			err = -1;
-			goto out;
+			പോകുക out;
 		}
 
 		/*
@@ -704,140 +704,140 @@ process_get(struct sftp_conn *conn, const char *src, const char *dst,
 		 * In particular, never select the local root as an implicit
 		 * destination for a remote root.
 		 */
-		if (strcmp(filename, "..") == 0 ||
+		എങ്കിൽ (strcmp(filename, "..") == 0 ||
 		    (filename[0] != '\0' &&
 		    filename[strspn(filename, "/")] == '\0'))
 			filename = ".";
 
-		if (g.gl_matchc == 1 && dst) {
-			if (local_is_dir(dst)) {
+		എങ്കിൽ (g.gl_matchc == 1 && dst) {
+			എങ്കിൽ (local_is_dir(dst)) {
 				abs_dst = sftp_path_append(dst, filename);
-			} else {
+			} അല്ലെങ്കിൽ {
 				abs_dst = xstrdup(dst);
 			}
-		} else if (dst) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (dst) {
 			abs_dst = sftp_path_append(dst, filename);
-		} else {
+		} അല്ലെങ്കിൽ {
 			abs_dst = xstrdup(filename);
 		}
-		free(tmp);
+		സ്വതന്ത്രം(tmp);
 
 		resume |= global_aflag;
-		if (!quiet && resume)
+		എങ്കിൽ (!quiet && resume)
 			mprintf("Resuming %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
-		else if (!quiet && !resume)
+		അല്ലെങ്കിൽ എങ്കിൽ (!quiet && !resume)
 			mprintf("Fetching %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
 		/* XXX follow link flag */
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) &&
+		എങ്കിൽ (sftp_globpath_is_dir(g.gl_pathv[i]) &&
 		    (rflag || global_rflag)) {
-			if (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
-			    NULL, pflag || global_pflag, 1, resume,
+			എങ്കിൽ (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
+			    ശൂന്യ, pflag || global_pflag, 1, resume,
 			    fflag || global_fflag, 0, 0) == -1)
 				err = -1;
-		} else {
-			if (sftp_download(conn, g.gl_pathv[i], abs_dst, NULL,
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (sftp_download(conn, g.gl_pathv[i], abs_dst, ശൂന്യ,
 			    pflag || global_pflag, resume,
 			    fflag || global_fflag, 0) == -1)
 				err = -1;
 		}
-		free(abs_dst);
-		abs_dst = NULL;
+		സ്വതന്ത്രം(abs_dst);
+		abs_dst = ശൂന്യ;
 	}
 
 out:
-	free(abs_src);
+	സ്വതന്ത്രം(abs_src);
 	globfree(&g);
-	return(err);
+	തിരികെ(err);
 }
 
-static int
-process_put(struct sftp_conn *conn, const char *src, const char *dst,
-    const char *pwd, int pflag, int rflag, int resume, int fflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+process_put(ഘടന sftp_conn *conn, സ്ഥിരം അക്ഷരം *src, സ്ഥിരം അക്ഷരം *dst,
+    സ്ഥിരം അക്ഷരം *pwd, പൂർണ്ണസംഖ്യ pflag, പൂർണ്ണസംഖ്യ rflag, പൂർണ്ണസംഖ്യ resume, പൂർണ്ണസംഖ്യ fflag)
 {
-	char *tmp_dst = NULL;
-	char *abs_dst = NULL;
-	char *tmp = NULL, *filename = NULL;
+	അക്ഷരം *tmp_dst = ശൂന്യ;
+	അക്ഷരം *abs_dst = ശൂന്യ;
+	അക്ഷരം *tmp = ശൂന്യ, *filename = ശൂന്യ;
 	glob_t g;
-	int err = 0;
-	int i, dst_is_dir = 1;
-	struct stat sb;
+	പൂർണ്ണസംഖ്യ err = 0;
+	പൂർണ്ണസംഖ്യ i, dst_is_dir = 1;
+	ഘടന stat sb;
 
-	if (dst) {
+	എങ്കിൽ (dst) {
 		tmp_dst = xstrdup(dst);
 		tmp_dst = sftp_make_absolute(tmp_dst, pwd);
 	}
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, വലുപ്പം(g));
 	debug3("Looking up %s", src);
-	if (glob(src, GLOB_NOCHECK | GLOB_MARK, NULL, &g)) {
+	എങ്കിൽ (glob(src, GLOB_NOCHECK | GLOB_MARK, ശൂന്യ, &g)) {
 		error("File \"%s\" not found.", src);
 		err = -1;
-		goto out;
+		പോകുക out;
 	}
 
 	/* If we aren't fetching to pwd then stash this status for later */
-	if (tmp_dst != NULL)
+	എങ്കിൽ (tmp_dst != ശൂന്യ)
 		dst_is_dir = sftp_remote_is_dir(conn, tmp_dst);
 
 	/* If multiple matches, dst may be directory or unspecified */
-	if (g.gl_matchc > 1 && tmp_dst && !dst_is_dir) {
+	എങ്കിൽ (g.gl_matchc > 1 && tmp_dst && !dst_is_dir) {
 		error("Multiple paths match, but destination "
 		    "\"%s\" is not a directory", tmp_dst);
 		err = -1;
-		goto out;
+		പോകുക out;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-		if (stat(g.gl_pathv[i], &sb) == -1) {
+	വേണ്ടി (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+		എങ്കിൽ (stat(g.gl_pathv[i], &sb) == -1) {
 			err = -1;
 			error("stat %s: %s", g.gl_pathv[i], strerror(errno));
-			continue;
+			തുടരുക;
 		}
 
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		എങ്കിൽ ((filename = basename(tmp)) == ശൂന്യ) {
 			error("basename %s: %s", tmp, strerror(errno));
-			free(tmp);
+			സ്വതന്ത്രം(tmp);
 			err = -1;
-			goto out;
+			പോകുക out;
 		}
 		/* Special handling for source of '..' */
-		if (strcmp(filename, "..") == 0)
+		എങ്കിൽ (strcmp(filename, "..") == 0)
 			filename = "."; /* Upload to dest, not dest/.. */
 
-		free(abs_dst);
-		abs_dst = NULL;
-		if (g.gl_matchc == 1 && tmp_dst) {
+		സ്വതന്ത്രം(abs_dst);
+		abs_dst = ശൂന്യ;
+		എങ്കിൽ (g.gl_matchc == 1 && tmp_dst) {
 			/* If directory specified, append filename */
-			if (dst_is_dir)
+			എങ്കിൽ (dst_is_dir)
 				abs_dst = sftp_path_append(tmp_dst, filename);
-			else
+			അല്ലെങ്കിൽ
 				abs_dst = xstrdup(tmp_dst);
-		} else if (tmp_dst) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (tmp_dst) {
 			abs_dst = sftp_path_append(tmp_dst, filename);
-		} else {
+		} അല്ലെങ്കിൽ {
 			abs_dst = sftp_make_absolute(xstrdup(filename), pwd);
 		}
-		free(tmp);
+		സ്വതന്ത്രം(tmp);
 
 		resume |= global_aflag;
-		if (!quiet && resume)
+		എങ്കിൽ (!quiet && resume)
 			mprintf("Resuming upload of %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
-		else if (!quiet && !resume)
+		അല്ലെങ്കിൽ എങ്കിൽ (!quiet && !resume)
 			mprintf("Uploading %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
 		/* XXX follow_link_flag */
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) &&
+		എങ്കിൽ (sftp_globpath_is_dir(g.gl_pathv[i]) &&
 		    (rflag || global_rflag)) {
-			if (sftp_upload_dir(conn, g.gl_pathv[i], abs_dst,
+			എങ്കിൽ (sftp_upload_dir(conn, g.gl_pathv[i], abs_dst,
 			    pflag || global_pflag, 1, resume,
 			    fflag || global_fflag, 0, 0) == -1)
 				err = -1;
-		} else {
-			if (sftp_upload(conn, g.gl_pathv[i], abs_dst,
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (sftp_upload(conn, g.gl_pathv[i], abs_dst,
 			    pflag || global_pflag, resume,
 			    fflag || global_fflag, 0) == -1)
 				err = -1;
@@ -845,59 +845,59 @@ process_put(struct sftp_conn *conn, const char *src, const char *dst,
 	}
 
 out:
-	free(abs_dst);
-	free(tmp_dst);
+	സ്വതന്ത്രം(abs_dst);
+	സ്വതന്ത്രം(tmp_dst);
 	globfree(&g);
-	return(err);
+	തിരികെ(err);
 }
 
-static int
-sdirent_comp(const void *aa, const void *bb)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sdirent_comp(സ്ഥിരം ശൂന്യം *aa, സ്ഥിരം ശൂന്യം *bb)
 {
 	SFTP_DIRENT *a = *(SFTP_DIRENT **)aa;
 	SFTP_DIRENT *b = *(SFTP_DIRENT **)bb;
-	int rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
+	പൂർണ്ണസംഖ്യ rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
 
 #define NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
-	if (sort_flag & LS_NAME_SORT)
-		return (rmul * strcmp(a->filename, b->filename));
-	else if (sort_flag & LS_TIME_SORT)
-		return (rmul * NCMP(a->a.mtime, b->a.mtime));
-	else if (sort_flag & LS_SIZE_SORT)
-		return (rmul * NCMP(a->a.size, b->a.size));
+	എങ്കിൽ (sort_flag & LS_NAME_SORT)
+		തിരികെ (rmul * strcmp(a->filename, b->filename));
+	അല്ലെങ്കിൽ എങ്കിൽ (sort_flag & LS_TIME_SORT)
+		തിരികെ (rmul * NCMP(a->a.mtime, b->a.mtime));
+	അല്ലെങ്കിൽ എങ്കിൽ (sort_flag & LS_SIZE_SORT)
+		തിരികെ (rmul * NCMP(a->a.size, b->a.size));
 
 	fatal("Unknown ls sort type");
 }
 
 /* sftp ls.1 replacement for directories */
-static int
-do_ls_dir(struct sftp_conn *conn, const char *path,
-    const char *strip_path, int lflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+do_ls_dir(ഘടന sftp_conn *conn, സ്ഥിരം അക്ഷരം *path,
+    സ്ഥിരം അക്ഷരം *strip_path, പൂർണ്ണസംഖ്യ lflag)
 {
-	int n;
+	പൂർണ്ണസംഖ്യ n;
 	u_int c = 1, colspace = 0, columns = 1;
 	SFTP_DIRENT **d;
 
-	if ((n = sftp_readdir(conn, path, &d)) != 0)
-		return (n);
+	എങ്കിൽ ((n = sftp_readdir(conn, path, &d)) != 0)
+		തിരികെ (n);
 
-	if (!(lflag & LS_SHORT_VIEW)) {
+	എങ്കിൽ (!(lflag & LS_SHORT_VIEW)) {
 		u_int m = 0, width = 80;
-		struct winsize ws;
-		char *tmp;
+		ഘടന winsize ws;
+		അക്ഷരം *tmp;
 
 		/* Count entries for sort and find longest filename */
-		for (n = 0; d[n] != NULL; n++) {
-			if (d[n]->filename[0] != '.' || (lflag & LS_SHOW_ALL))
+		വേണ്ടി (n = 0; d[n] != ശൂന്യ; n++) {
+			എങ്കിൽ (d[n]->filename[0] != '.' || (lflag & LS_SHOW_ALL))
 				m = MAXIMUM(m, strlen(d[n]->filename));
 		}
 
 		/* Add any subpath that also needs to be counted */
 		tmp = path_strip(path, strip_path);
 		m += strlen(tmp);
-		free(tmp);
+		സ്വതന്ത്രം(tmp);
 
-		if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+		എങ്കിൽ (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
 			width = ws.ws_col;
 
 		columns = width / (m + 2);
@@ -906,144 +906,144 @@ do_ls_dir(struct sftp_conn *conn, const char *path,
 		colspace = MINIMUM(colspace, width);
 	}
 
-	if (lflag & SORT_FLAGS) {
-		for (n = 0; d[n] != NULL; n++)
+	എങ്കിൽ (lflag & SORT_FLAGS) {
+		വേണ്ടി (n = 0; d[n] != ശൂന്യ; n++)
 			;	/* count entries */
 		sort_flag = lflag & (SORT_FLAGS|LS_REVERSE_SORT);
-		qsort(d, n, sizeof(*d), sdirent_comp);
+		qsort(d, n, വലുപ്പം(*d), sdirent_comp);
 	}
 
 	get_remote_user_groups_from_dirents(conn, d);
-	for (n = 0; d[n] != NULL && !interrupted; n++) {
-		char *tmp, *fname;
+	വേണ്ടി (n = 0; d[n] != ശൂന്യ && !interrupted; n++) {
+		അക്ഷരം *tmp, *fname;
 
-		if (d[n]->filename[0] == '.' && !(lflag & LS_SHOW_ALL))
-			continue;
+		എങ്കിൽ (d[n]->filename[0] == '.' && !(lflag & LS_SHOW_ALL))
+			തുടരുക;
 
 		tmp = sftp_path_append(path, d[n]->filename);
 		fname = path_strip(tmp, strip_path);
-		free(tmp);
+		സ്വതന്ത്രം(tmp);
 
-		if (lflag & LS_LONG_VIEW) {
-			if ((lflag & (LS_NUMERIC_VIEW|LS_SI_UNITS)) != 0 ||
+		എങ്കിൽ (lflag & LS_LONG_VIEW) {
+			എങ്കിൽ ((lflag & (LS_NUMERIC_VIEW|LS_SI_UNITS)) != 0 ||
 			    sftp_can_get_users_groups_by_id(conn)) {
-				char *lname;
-				struct stat sb;
-				const char *user = NULL, *group = NULL;
+				അക്ഷരം *lname;
+				ഘടന stat sb;
+				സ്ഥിരം അക്ഷരം *user = ശൂന്യ, *group = ശൂന്യ;
 
-				memset(&sb, 0, sizeof(sb));
+				memset(&sb, 0, വലുപ്പം(sb));
 				attrib_to_stat(&d[n]->a, &sb);
-				if ((lflag & LS_NUMERIC_VIEW) == 0) {
+				എങ്കിൽ ((lflag & LS_NUMERIC_VIEW) == 0) {
 					user = ruser_name(sb.st_uid);
 					group = rgroup_name(sb.st_gid);
 				}
 				lname = ls_file(fname, &sb, 1,
 				    (lflag & LS_SI_UNITS), user, group);
 				mprintf("%s\n", lname);
-				free(lname);
-			} else
+				സ്വതന്ത്രം(lname);
+			} അല്ലെങ്കിൽ
 				mprintf("%s\n", d[n]->longname);
-		} else {
+		} അല്ലെങ്കിൽ {
 			mprintf("%-*s", colspace, fname);
-			if (c >= columns) {
+			എങ്കിൽ (c >= columns) {
 				printf("\n");
 				c = 1;
-			} else
+			} അല്ലെങ്കിൽ
 				c++;
 		}
 
-		free(fname);
+		സ്വതന്ത്രം(fname);
 	}
 
-	if (!(lflag & LS_LONG_VIEW) && (c != 1))
+	എങ്കിൽ (!(lflag & LS_LONG_VIEW) && (c != 1))
 		printf("\n");
 
 	sftp_free_dirents(d);
-	return (0);
+	തിരികെ (0);
 }
 
-static int
-sglob_comp(const void *aa, const void *bb)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sglob_comp(സ്ഥിരം ശൂന്യം *aa, സ്ഥിരം ശൂന്യം *bb)
 {
-	u_int a = *(const u_int *)aa;
-	u_int b = *(const u_int *)bb;
-	const char *ap = sort_glob->gl_pathv[a];
-	const char *bp = sort_glob->gl_pathv[b];
-	const struct stat *as = sort_glob->gl_statv[a];
-	const struct stat *bs = sort_glob->gl_statv[b];
-	int rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
+	u_int a = *(സ്ഥിരം u_int *)aa;
+	u_int b = *(സ്ഥിരം u_int *)bb;
+	സ്ഥിരം അക്ഷരം *ap = sort_glob->gl_pathv[a];
+	സ്ഥിരം അക്ഷരം *bp = sort_glob->gl_pathv[b];
+	സ്ഥിരം ഘടന stat *as = sort_glob->gl_statv[a];
+	സ്ഥിരം ഘടന stat *bs = sort_glob->gl_statv[b];
+	പൂർണ്ണസംഖ്യ rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
 
 #define NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
 	/* order entries without stat information last */
-	if (as == NULL || bs == NULL)
-		return (as == bs) ? 0 : (as == NULL ? rmul : -rmul);
-	if (sort_flag & LS_NAME_SORT)
-		return (rmul * strcmp(ap, bp));
-	else if (sort_flag & LS_TIME_SORT) {
-#if defined(HAVE_STRUCT_STAT_ST_MTIM)
-		if (timespeccmp(&as->st_mtim, &bs->st_mtim, ==))
-			return 0;
-		return timespeccmp(&as->st_mtim, &bs->st_mtim, <) ?
+	എങ്കിൽ (as == ശൂന്യ || bs == ശൂന്യ)
+		തിരികെ (as == bs) ? 0 : (as == ശൂന്യ ? rmul : -rmul);
+	എങ്കിൽ (sort_flag & LS_NAME_SORT)
+		തിരികെ (rmul * strcmp(ap, bp));
+	അല്ലെങ്കിൽ എങ്കിൽ (sort_flag & LS_TIME_SORT) {
+#എങ്കിൽ defined(HAVE_STRUCT_STAT_ST_MTIM)
+		എങ്കിൽ (timespeccmp(&as->st_mtim, &bs->st_mtim, ==))
+			തിരികെ 0;
+		തിരികെ timespeccmp(&as->st_mtim, &bs->st_mtim, <) ?
 		    rmul : -rmul;
-#elif defined(HAVE_STRUCT_STAT_ST_MTIME)
-		return (rmul * NCMP(as->st_mtime, bs->st_mtime));
-#else
-	return rmul * 1;
+#അല്ലെങ്കിലെങ്കിൽ defined(HAVE_STRUCT_STAT_ST_MTIME)
+		തിരികെ (rmul * NCMP(as->st_mtime, bs->st_mtime));
+#അല്ലെങ്കിൽ
+	തിരികെ rmul * 1;
 #endif
-	} else if (sort_flag & LS_SIZE_SORT)
-		return (rmul * NCMP(as->st_size, bs->st_size));
+	} അല്ലെങ്കിൽ എങ്കിൽ (sort_flag & LS_SIZE_SORT)
+		തിരികെ (rmul * NCMP(as->st_size, bs->st_size));
 
 	fatal("Unknown ls sort type");
 }
 
 /* sftp ls.1 replacement which handles path globs */
-static int
-do_globbed_ls(struct sftp_conn *conn, const char *path,
-    const char *strip_path, int lflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+do_globbed_ls(ഘടന sftp_conn *conn, സ്ഥിരം അക്ഷരം *path,
+    സ്ഥിരം അക്ഷരം *strip_path, പൂർണ്ണസംഖ്യ lflag)
 {
-	char *fname, *lname;
+	അക്ഷരം *fname, *lname;
 	glob_t g;
-	int err, r;
-	struct winsize ws;
-	u_int i, j, nentries, *indices = NULL, c = 1;
+	പൂർണ്ണസംഖ്യ err, r;
+	ഘടന winsize ws;
+	u_int i, j, nentries, *indices = ശൂന്യ, c = 1;
 	u_int colspace = 0, columns = 1, m = 0, width = 80;
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, വലുപ്പം(g));
 
-	if ((r = sftp_glob(conn, path,
+	എങ്കിൽ ((r = sftp_glob(conn, path,
 	    GLOB_MARK|GLOB_NOCHECK|GLOB_BRACE|GLOB_KEEPSTAT|GLOB_NOSORT,
-	    NULL, &g)) != 0 ||
+	    ശൂന്യ, &g)) != 0 ||
 	    (g.gl_pathc && !g.gl_matchc)) {
-		if (g.gl_pathc)
+		എങ്കിൽ (g.gl_pathc)
 			globfree(&g);
-		if (r == GLOB_NOSPACE) {
+		എങ്കിൽ (r == GLOB_NOSPACE) {
 			error("Can't ls: Too many matches for \"%s\"", path);
-		} else {
+		} അല്ലെങ്കിൽ {
 			error("Can't ls: \"%s\" not found", path);
 		}
-		return -1;
+		തിരികെ -1;
 	}
 
-	if (interrupted)
-		goto out;
+	എങ്കിൽ (interrupted)
+		പോകുക out;
 
 	/*
 	 * If the glob returns a single match and it is a directory,
 	 * then just list its contents.
 	 */
-	if (g.gl_matchc == 1 && g.gl_statv[0] != NULL &&
+	എങ്കിൽ (g.gl_matchc == 1 && g.gl_statv[0] != ശൂന്യ &&
 	    S_ISDIR(g.gl_statv[0]->st_mode)) {
 		err = do_ls_dir(conn, g.gl_pathv[0], strip_path, lflag);
 		globfree(&g);
-		return err;
+		തിരികെ err;
 	}
 
-	if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+	എങ്കിൽ (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
 		width = ws.ws_col;
 
-	if (!(lflag & LS_SHORT_VIEW)) {
+	എങ്കിൽ (!(lflag & LS_SHORT_VIEW)) {
 		/* Count entries for sort and find longest filename */
-		for (i = 0; g.gl_pathv[i]; i++)
+		വേണ്ടി (i = 0; g.gl_pathv[i]; i++)
 			m = MAXIMUM(m, strlen(g.gl_pathv[i]));
 
 		columns = width / (m + 2);
@@ -1056,86 +1056,86 @@ do_globbed_ls(struct sftp_conn *conn, const char *path,
 	 * an array of indices into it and sort that. For the usual
 	 * unsorted case, the indices are just the identity 1=1, 2=2, etc.
 	 */
-	for (nentries = 0; g.gl_pathv[nentries] != NULL; nentries++)
+	വേണ്ടി (nentries = 0; g.gl_pathv[nentries] != ശൂന്യ; nentries++)
 		;	/* count entries */
-	indices = xcalloc(nentries, sizeof(*indices));
-	for (i = 0; i < nentries; i++)
+	indices = xcalloc(nentries, വലുപ്പം(*indices));
+	വേണ്ടി (i = 0; i < nentries; i++)
 		indices[i] = i;
 
-	if (lflag & SORT_FLAGS) {
+	എങ്കിൽ (lflag & SORT_FLAGS) {
 		sort_glob = &g;
 		sort_flag = lflag & (SORT_FLAGS|LS_REVERSE_SORT);
-		qsort(indices, nentries, sizeof(*indices), sglob_comp);
-		sort_glob = NULL;
+		qsort(indices, nentries, വലുപ്പം(*indices), sglob_comp);
+		sort_glob = ശൂന്യ;
 	}
 
 	get_remote_user_groups_from_glob(conn, &g);
-	for (j = 0; j < nentries && !interrupted; j++) {
+	വേണ്ടി (j = 0; j < nentries && !interrupted; j++) {
 		i = indices[j];
 		fname = path_strip(g.gl_pathv[i], strip_path);
-		if (lflag & LS_LONG_VIEW) {
-			const char *user = NULL, *group = NULL;
+		എങ്കിൽ (lflag & LS_LONG_VIEW) {
+			സ്ഥിരം അക്ഷരം *user = ശൂന്യ, *group = ശൂന്യ;
 
-			if (g.gl_statv[i] == NULL) {
+			എങ്കിൽ (g.gl_statv[i] == ശൂന്യ) {
 				error("no stat information for %s", fname);
-				free(fname);
-				continue;
+				സ്വതന്ത്രം(fname);
+				തുടരുക;
 			}
-			if ((lflag & LS_NUMERIC_VIEW) == 0) {
+			എങ്കിൽ ((lflag & LS_NUMERIC_VIEW) == 0) {
 				user = ruser_name(g.gl_statv[i]->st_uid);
 				group = rgroup_name(g.gl_statv[i]->st_gid);
 			}
 			lname = ls_file(fname, g.gl_statv[i], 1,
 			    (lflag & LS_SI_UNITS), user, group);
 			mprintf("%s\n", lname);
-			free(lname);
-		} else {
+			സ്വതന്ത്രം(lname);
+		} അല്ലെങ്കിൽ {
 			mprintf("%-*s", colspace, fname);
-			if (c >= columns) {
+			എങ്കിൽ (c >= columns) {
 				printf("\n");
 				c = 1;
-			} else
+			} അല്ലെങ്കിൽ
 				c++;
 		}
-		free(fname);
+		സ്വതന്ത്രം(fname);
 	}
 
-	if (!(lflag & LS_LONG_VIEW) && (c != 1))
+	എങ്കിൽ (!(lflag & LS_LONG_VIEW) && (c != 1))
 		printf("\n");
 
  out:
-	if (g.gl_pathc)
+	എങ്കിൽ (g.gl_pathc)
 		globfree(&g);
-	free(indices);
+	സ്വതന്ത്രം(indices);
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+do_df(ഘടന sftp_conn *conn, സ്ഥിരം അക്ഷരം *path, പൂർണ്ണസംഖ്യ hflag, പൂർണ്ണസംഖ്യ iflag)
 {
-	struct sftp_statvfs st;
-	char s_used[FMT_SCALED_STRSIZE], s_avail[FMT_SCALED_STRSIZE];
-	char s_root[FMT_SCALED_STRSIZE], s_total[FMT_SCALED_STRSIZE];
-	char s_icapacity[16], s_dcapacity[16];
+	ഘടന sftp_statvfs st;
+	അക്ഷരം s_used[FMT_SCALED_STRSIZE], s_avail[FMT_SCALED_STRSIZE];
+	അക്ഷരം s_വേര്[FMT_SCALED_STRSIZE], s_total[FMT_SCALED_STRSIZE];
+	അക്ഷരം s_icapacity[16], s_dcapacity[16];
 
-	if (sftp_statvfs(conn, path, &st, 1) == -1)
-		return -1;
-	if (st.f_files == 0)
-		strlcpy(s_icapacity, "ERR", sizeof(s_icapacity));
-	else {
-		snprintf(s_icapacity, sizeof(s_icapacity), "%3llu%%",
+	എങ്കിൽ (sftp_statvfs(conn, path, &st, 1) == -1)
+		തിരികെ -1;
+	എങ്കിൽ (st.f_files == 0)
+		strlcpy(s_icapacity, "ERR", വലുപ്പം(s_icapacity));
+	അല്ലെങ്കിൽ {
+		snprintf(s_icapacity, വലുപ്പം(s_icapacity), "%3llu%%",
 		    (unsigned long long)(100 * (st.f_files - st.f_ffree) /
 		    st.f_files));
 	}
-	if (st.f_blocks == 0)
-		strlcpy(s_dcapacity, "ERR", sizeof(s_dcapacity));
-	else {
-		snprintf(s_dcapacity, sizeof(s_dcapacity), "%3llu%%",
+	എങ്കിൽ (st.f_blocks == 0)
+		strlcpy(s_dcapacity, "ERR", വലുപ്പം(s_dcapacity));
+	അല്ലെങ്കിൽ {
+		snprintf(s_dcapacity, വലുപ്പം(s_dcapacity), "%3llu%%",
 		    (unsigned long long)(100 * (st.f_blocks - st.f_bfree) /
 		    st.f_blocks));
 	}
-	if (iflag) {
+	എങ്കിൽ (iflag) {
 		printf("     Inodes        Used       Avail      "
 		    "(root)    %%Capacity\n");
 		printf("%11llu %11llu %11llu %11llu         %s\n",
@@ -1143,19 +1143,19 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
 		    (unsigned long long)(st.f_files - st.f_ffree),
 		    (unsigned long long)st.f_favail,
 		    (unsigned long long)st.f_ffree, s_icapacity);
-	} else if (hflag) {
-		strlcpy(s_used, "error", sizeof(s_used));
-		strlcpy(s_avail, "error", sizeof(s_avail));
-		strlcpy(s_root, "error", sizeof(s_root));
-		strlcpy(s_total, "error", sizeof(s_total));
+	} അല്ലെങ്കിൽ എങ്കിൽ (hflag) {
+		strlcpy(s_used, "error", വലുപ്പം(s_used));
+		strlcpy(s_avail, "error", വലുപ്പം(s_avail));
+		strlcpy(s_വേര്, "error", വലുപ്പം(s_വേര്));
+		strlcpy(s_total, "error", വലുപ്പം(s_total));
 		fmt_scaled((st.f_blocks - st.f_bfree) * st.f_frsize, s_used);
 		fmt_scaled(st.f_bavail * st.f_frsize, s_avail);
-		fmt_scaled(st.f_bfree * st.f_frsize, s_root);
+		fmt_scaled(st.f_bfree * st.f_frsize, s_വേര്);
 		fmt_scaled(st.f_blocks * st.f_frsize, s_total);
 		printf("    Size     Used    Avail   (root)    %%Capacity\n");
 		printf("%7sB %7sB %7sB %7sB         %s\n",
-		    s_total, s_used, s_avail, s_root, s_dcapacity);
-	} else {
+		    s_total, s_used, s_avail, s_വേര്, s_dcapacity);
+	} അല്ലെങ്കിൽ {
 		printf("        Size         Used        Avail       "
 		    "(root)    %%Capacity\n");
 		printf("%12llu %12llu %12llu %12llu         %s\n",
@@ -1166,7 +1166,7 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
 		    (unsigned long long)(st.f_frsize * st.f_bfree / 1024),
 		    s_dcapacity);
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -1174,37 +1174,37 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
  * applied in makeargv() when the string is destined for a function that
  * does not glob it.
  */
-static void
-undo_glob_escape(char *s)
+സ്ഥിതം ശൂന്യം
+undo_glob_escape(അക്ഷരം *s)
 {
 	size_t i, j;
 
-	for (i = j = 0;;) {
-		if (s[i] == '\0') {
+	വേണ്ടി (i = j = 0;;) {
+		എങ്കിൽ (s[i] == '\0') {
 			s[j] = '\0';
-			return;
+			തിരികെ;
 		}
-		if (s[i] != '\\') {
+		എങ്കിൽ (s[i] != '\\') {
 			s[j++] = s[i++];
-			continue;
+			തുടരുക;
 		}
 		/* s[i] == '\\' */
 		++i;
-		switch (s[i]) {
-		case '?':
-		case '[':
-		case '*':
-		case '\\':
+		തിരഞ്ഞെടുപ്പ് (s[i]) {
+		അവസ്ഥ '?':
+		അവസ്ഥ '[':
+		അവസ്ഥ '*':
+		അവസ്ഥ '\\':
 			s[j++] = s[i++];
-			break;
-		case '\0':
+			നിർത്തുക;
+		അവസ്ഥ '\0':
 			s[j++] = '\\';
 			s[j] = '\0';
-			return;
-		default:
+			തിരികെ;
+		സ്ഥിരസ്ഥിതി:
 			s[j++] = '\\';
 			s[j++] = s[i++];
-			break;
+			നിർത്തുക;
 		}
 	}
 }
@@ -1227,63 +1227,63 @@ undo_glob_escape(char *s)
  */
 #define MAXARGS		128
 #define MAXARGLEN	8192
-static char **
-makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
+സ്ഥിതം അക്ഷരം **
+makeargv(സ്ഥിരം അക്ഷരം *arg, പൂർണ്ണസംഖ്യ *argcp, പൂർണ്ണസംഖ്യ sloppy, അക്ഷരം *lastquote,
     u_int *terminated)
 {
-	int argc, quot;
+	പൂർണ്ണസംഖ്യ argc, quot;
 	size_t i, j;
-	static char argvs[MAXARGLEN];
-	static char *argv[MAXARGS + 1];
-	enum { MA_START, MA_SQUOTE, MA_DQUOTE, MA_UNQUOTED } state, q;
+	സ്ഥിതം അക്ഷരം argvs[MAXARGLEN];
+	സ്ഥിതം അക്ഷരം *argv[MAXARGS + 1];
+	എണ്ണൽ { MA_START, MA_SQUOTE, MA_DQUOTE, MA_UNQUOTED } state, q;
 
 	*argcp = argc = 0;
-	if (strlen(arg) > sizeof(argvs) - 1) {
+	എങ്കിൽ (strlen(arg) > വലുപ്പം(argvs) - 1) {
  args_too_longs:
 		error("string too long");
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
-	if (terminated != NULL)
+	എങ്കിൽ (terminated != ശൂന്യ)
 		*terminated = 1;
-	if (lastquote != NULL)
+	എങ്കിൽ (lastquote != ശൂന്യ)
 		*lastquote = '\0';
 	state = MA_START;
 	i = j = 0;
-	for (;;) {
-		if ((size_t)argc >= sizeof(argv) / sizeof(*argv)){
+	വേണ്ടി (;;) {
+		എങ്കിൽ ((size_t)argc >= വലുപ്പം(argv) / വലുപ്പം(*argv)){
 			error("Too many arguments.");
-			return NULL;
+			തിരികെ ശൂന്യ;
 		}
-		if (isspace((unsigned char)arg[i])) {
-			if (state == MA_UNQUOTED) {
+		എങ്കിൽ (isspace((unsigned അക്ഷരം)arg[i])) {
+			എങ്കിൽ (state == MA_UNQUOTED) {
 				/* Terminate current argument */
 				argvs[j++] = '\0';
 				argc++;
 				state = MA_START;
-			} else if (state != MA_START)
+			} അല്ലെങ്കിൽ എങ്കിൽ (state != MA_START)
 				argvs[j++] = arg[i];
-		} else if (arg[i] == '"' || arg[i] == '\'') {
+		} അല്ലെങ്കിൽ എങ്കിൽ (arg[i] == '"' || arg[i] == '\'') {
 			q = arg[i] == '"' ? MA_DQUOTE : MA_SQUOTE;
-			if (state == MA_START) {
+			എങ്കിൽ (state == MA_START) {
 				argv[argc] = argvs + j;
 				state = q;
-				if (lastquote != NULL)
+				എങ്കിൽ (lastquote != ശൂന്യ)
 					*lastquote = arg[i];
-			} else if (state == MA_UNQUOTED)
+			} അല്ലെങ്കിൽ എങ്കിൽ (state == MA_UNQUOTED)
 				state = q;
-			else if (state == q)
+			അല്ലെങ്കിൽ എങ്കിൽ (state == q)
 				state = MA_UNQUOTED;
-			else
+			അല്ലെങ്കിൽ
 				argvs[j++] = arg[i];
-		} else if (arg[i] == '\\') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (arg[i] == '\\') {
+			എങ്കിൽ (state == MA_SQUOTE || state == MA_DQUOTE) {
 				quot = state == MA_SQUOTE ? '\'' : '"';
 				/* Unescape quote we are in */
 				/* XXX support \n and friends? */
-				if (arg[i + 1] == quot) {
+				എങ്കിൽ (arg[i + 1] == quot) {
 					i++;
 					argvs[j++] = arg[i];
-				} else if (arg[i + 1] == '?' ||
+				} അല്ലെങ്കിൽ എങ്കിൽ (arg[i + 1] == '?' ||
 				    arg[i + 1] == '[' || arg[i + 1] == '*') {
 					/*
 					 * Special case for sftp: append
@@ -1291,24 +1291,24 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 					 * glob will undo one level of
 					 * escaping. NB. string can grow here.
 					 */
-					if (j >= sizeof(argvs) - 5)
-						goto args_too_longs;
+					എങ്കിൽ (j >= വലുപ്പം(argvs) - 5)
+						പോകുക args_too_longs;
 					argvs[j++] = '\\';
 					argvs[j++] = arg[i++];
 					argvs[j++] = '\\';
 					argvs[j++] = arg[i];
-				} else {
+				} അല്ലെങ്കിൽ {
 					argvs[j++] = arg[i++];
 					argvs[j++] = arg[i];
 				}
-			} else {
-				if (state == MA_START) {
+			} അല്ലെങ്കിൽ {
+				എങ്കിൽ (state == MA_START) {
 					argv[argc] = argvs + j;
 					state = MA_UNQUOTED;
-					if (lastquote != NULL)
+					എങ്കിൽ (lastquote != ശൂന്യ)
 						*lastquote = '\0';
 				}
-				if (arg[i + 1] == '?' || arg[i + 1] == '[' ||
+				എങ്കിൽ (arg[i + 1] == '?' || arg[i + 1] == '[' ||
 				    arg[i + 1] == '*' || arg[i + 1] == '\\') {
 					/*
 					 * Special case for sftp: append
@@ -1318,76 +1318,76 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 					 */
 					argvs[j++] = arg[i++];
 					argvs[j++] = arg[i];
-				} else {
+				} അല്ലെങ്കിൽ {
 					/* Unescape everything */
 					/* XXX support \n and friends? */
 					i++;
-					if (arg[i] == '\0')
-						goto early_nul;
+					എങ്കിൽ (arg[i] == '\0')
+						പോകുക early_nul;
 					argvs[j++] = arg[i];
 				}
 			}
-		} else if (arg[i] == '#') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE)
+		} അല്ലെങ്കിൽ എങ്കിൽ (arg[i] == '#') {
+			എങ്കിൽ (state == MA_SQUOTE || state == MA_DQUOTE)
 				argvs[j++] = arg[i];
-			else
-				goto string_done;
-		} else if (arg[i] == '\0') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE) {
+			അല്ലെങ്കിൽ
+				പോകുക string_done;
+		} അല്ലെങ്കിൽ എങ്കിൽ (arg[i] == '\0') {
+			എങ്കിൽ (state == MA_SQUOTE || state == MA_DQUOTE) {
  early_nul:
-				if (sloppy) {
+				എങ്കിൽ (sloppy) {
 					state = MA_UNQUOTED;
-					if (terminated != NULL)
+					എങ്കിൽ (terminated != ശൂന്യ)
 						*terminated = 0;
-					goto string_done;
+					പോകുക string_done;
 				}
 				error("Unterminated quoted argument");
-				return NULL;
+				തിരികെ ശൂന്യ;
 			}
  string_done:
-			if (state == MA_UNQUOTED) {
+			എങ്കിൽ (state == MA_UNQUOTED) {
 				argvs[j++] = '\0';
 				argc++;
 			}
-			break;
-		} else {
-			if (state == MA_START) {
+			നിർത്തുക;
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (state == MA_START) {
 				argv[argc] = argvs + j;
 				state = MA_UNQUOTED;
-				if (lastquote != NULL)
+				എങ്കിൽ (lastquote != ശൂന്യ)
 					*lastquote = '\0';
 			}
-			if ((state == MA_SQUOTE || state == MA_DQUOTE) &&
+			എങ്കിൽ ((state == MA_SQUOTE || state == MA_DQUOTE) &&
 			    (arg[i] == '?' || arg[i] == '[' || arg[i] == '*')) {
 				/*
 				 * Special case for sftp: escape quoted
 				 * glob(3) wildcards. NB. string can grow
 				 * here.
 				 */
-				if (j >= sizeof(argvs) - 3)
-					goto args_too_longs;
+				എങ്കിൽ (j >= വലുപ്പം(argvs) - 3)
+					പോകുക args_too_longs;
 				argvs[j++] = '\\';
 				argvs[j++] = arg[i];
-			} else
+			} അല്ലെങ്കിൽ
 				argvs[j++] = arg[i];
 		}
 		i++;
 	}
 	*argcp = argc;
-	return argv;
+	തിരികെ argv;
 }
 
-static int
-parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
-	  int *fflag, int *hflag, int *iflag, int *lflag, int *pflag,
-	  int *rflag, int *sflag,
-    unsigned long *n_arg, char **path1, char **path2)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_args(സ്ഥിരം അക്ഷരം **cpp, പൂർണ്ണസംഖ്യ *ignore_errors, പൂർണ്ണസംഖ്യ *disable_echo, പൂർണ്ണസംഖ്യ *aflag,
+	  പൂർണ്ണസംഖ്യ *fflag, പൂർണ്ണസംഖ്യ *hflag, പൂർണ്ണസംഖ്യ *iflag, പൂർണ്ണസംഖ്യ *lflag, പൂർണ്ണസംഖ്യ *pflag,
+	  പൂർണ്ണസംഖ്യ *rflag, പൂർണ്ണസംഖ്യ *sflag,
+    unsigned long *n_arg, അക്ഷരം **path1, അക്ഷരം **path2)
 {
-	const char *cmd, *cp = *cpp;
-	char *cp2, **argv;
-	int base = 0;
+	സ്ഥിരം അക്ഷരം *cmd, *cp = *cpp;
+	അക്ഷരം *cp2, **argv;
+	പൂർണ്ണസംഖ്യ base = 0;
 	long long ll;
-	int path1_mandatory = 0, i, cmdnum, optidx, argc;
+	പൂർണ്ണസംഖ്യ path1_mandatory = 0, i, cmdnum, optidx, argc;
 
 	/* Skip leading whitespace */
 	cp = cp + strspn(cp, WHITESPACE);
@@ -1398,499 +1398,499 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 	 */
 	*ignore_errors = 0;
 	*disable_echo = 0;
-	for (;*cp != '\0'; cp++) {
-		if (*cp == '-') {
+	വേണ്ടി (;*cp != '\0'; cp++) {
+		എങ്കിൽ (*cp == '-') {
 			*ignore_errors = 1;
-		} else if (*cp == '@') {
+		} അല്ലെങ്കിൽ എങ്കിൽ (*cp == '@') {
 			*disable_echo = 1;
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* all other characters terminate prefix processing */
-			break;
+			നിർത്തുക;
 		}
 	}
 	cp = cp + strspn(cp, WHITESPACE);
 
 	/* Ignore blank lines and lines which begin with comment '#' char */
-	if (*cp == '\0' || *cp == '#')
-		return (0);
+	എങ്കിൽ (*cp == '\0' || *cp == '#')
+		തിരികെ (0);
 
-	if ((argv = makeargv(cp, &argc, 0, NULL, NULL)) == NULL)
-		return -1;
+	എങ്കിൽ ((argv = makeargv(cp, &argc, 0, ശൂന്യ, ശൂന്യ)) == ശൂന്യ)
+		തിരികെ -1;
 
 	/* Figure out which command we have */
-	for (i = 0; cmds[i].c != NULL; i++) {
-		if (argv[0] != NULL && strcasecmp(cmds[i].c, argv[0]) == 0)
-			break;
+	വേണ്ടി (i = 0; cmds[i].c != ശൂന്യ; i++) {
+		എങ്കിൽ (argv[0] != ശൂന്യ && strcasecmp(cmds[i].c, argv[0]) == 0)
+			നിർത്തുക;
 	}
 	cmdnum = cmds[i].n;
 	cmd = cmds[i].c;
 
 	/* Special case */
-	if (*cp == '!') {
+	എങ്കിൽ (*cp == '!') {
 		cp++;
 		cmdnum = I_SHELL;
-	} else if (cmdnum == -1) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (cmdnum == -1) {
 		error("Invalid command.");
-		return -1;
+		തിരികെ -1;
 	}
 
 	/* Get arguments and parse flags */
 	*aflag = *fflag = *hflag = *iflag = *lflag = *pflag = 0;
 	*rflag = *sflag = 0;
-	*path1 = *path2 = NULL;
+	*path1 = *path2 = ശൂന്യ;
 	optidx = 1;
-	switch (cmdnum) {
-	case I_GET:
-	case I_REGET:
-	case I_REPUT:
-	case I_PUT:
-		if ((optidx = parse_getput_flags(cmd, argv, argc,
+	തിരഞ്ഞെടുപ്പ് (cmdnum) {
+	അവസ്ഥ I_GET:
+	അവസ്ഥ I_REGET:
+	അവസ്ഥ I_REPUT:
+	അവസ്ഥ I_PUT:
+		എങ്കിൽ ((optidx = parse_getput_flags(cmd, argv, argc,
 		    aflag, fflag, pflag, rflag)) == -1)
-			return -1;
+			തിരികെ -1;
 		/* Get first pathname (mandatory) */
-		if (argc - optidx < 1) {
+		എങ്കിൽ (argc - optidx < 1) {
 			error("You must specify at least one path after a "
 			    "%s command.", cmd);
-			return -1;
+			തിരികെ -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		/* Get second pathname (optional) */
-		if (argc - optidx > 1) {
+		എങ്കിൽ (argc - optidx > 1) {
 			*path2 = xstrdup(argv[optidx + 1]);
 			/* Destination is not globbed */
 			undo_glob_escape(*path2);
 		}
-		break;
-	case I_LINK:
-		if ((optidx = parse_link_flags(cmd, argv, argc, sflag)) == -1)
-			return -1;
-		goto parse_two_paths;
-	case I_COPY:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
-		goto parse_two_paths;
-	case I_RENAME:
-		if ((optidx = parse_rename_flags(cmd, argv, argc, lflag)) == -1)
-			return -1;
-		goto parse_two_paths;
-	case I_SYMLINK:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
+		നിർത്തുക;
+	അവസ്ഥ I_LINK:
+		എങ്കിൽ ((optidx = parse_link_flags(cmd, argv, argc, sflag)) == -1)
+			തിരികെ -1;
+		പോകുക parse_two_paths;
+	അവസ്ഥ I_COPY:
+		എങ്കിൽ ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			തിരികെ -1;
+		പോകുക parse_two_paths;
+	അവസ്ഥ I_RENAME:
+		എങ്കിൽ ((optidx = parse_rename_flags(cmd, argv, argc, lflag)) == -1)
+			തിരികെ -1;
+		പോകുക parse_two_paths;
+	അവസ്ഥ I_SYMLINK:
+		എങ്കിൽ ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			തിരികെ -1;
  parse_two_paths:
-		if (argc - optidx < 2) {
+		എങ്കിൽ (argc - optidx < 2) {
 			error("You must specify two paths after a %s "
 			    "command.", cmd);
-			return -1;
+			തിരികെ -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		*path2 = xstrdup(argv[optidx + 1]);
 		/* Paths are not globbed */
 		undo_glob_escape(*path1);
 		undo_glob_escape(*path2);
-		break;
-	case I_MKDIR:
-	case I_LMKDIR:
-		if ((optidx = parse_mkdir_flags(cmd, argv, argc, pflag)) == -1)
-			return -1;
+		നിർത്തുക;
+	അവസ്ഥ I_MKDIR:
+	അവസ്ഥ I_LMKDIR:
+		എങ്കിൽ ((optidx = parse_mkdir_flags(cmd, argv, argc, pflag)) == -1)
+			തിരികെ -1;
 		path1_mandatory = 1;
-		goto parse_one_path;
-	case I_RM:
-	case I_RMDIR:
+		പോകുക parse_one_path;
+	അവസ്ഥ I_RM:
+	അവസ്ഥ I_RMDIR:
 		path1_mandatory = 1;
 		/* FALLTHROUGH */
-	case I_CHDIR:
-	case I_LCHDIR:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
+	അവസ്ഥ I_CHDIR:
+	അവസ്ഥ I_LCHDIR:
+		എങ്കിൽ ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			തിരികെ -1;
  parse_one_path:
 		/* Get pathname (mandatory) */
-		if (argc - optidx < 1) {
-			if (!path1_mandatory)
-				break; /* return a NULL path1 */
+		എങ്കിൽ (argc - optidx < 1) {
+			എങ്കിൽ (!path1_mandatory)
+				നിർത്തുക; /* return a NULL path1 */
 			error("You must specify a path after a %s command.",
 			    cmd);
-			return -1;
+			തിരികെ -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		/* Only "rm" globs */
-		if (cmdnum != I_RM)
+		എങ്കിൽ (cmdnum != I_RM)
 			undo_glob_escape(*path1);
-		break;
-	case I_DF:
-		if ((optidx = parse_df_flags(cmd, argv, argc, hflag,
+		നിർത്തുക;
+	അവസ്ഥ I_DF:
+		എങ്കിൽ ((optidx = parse_df_flags(cmd, argv, argc, hflag,
 		    iflag)) == -1)
-			return -1;
+			തിരികെ -1;
 		/* Default to current directory if no path specified */
-		if (argc - optidx < 1)
-			*path1 = NULL;
-		else {
+		എങ്കിൽ (argc - optidx < 1)
+			*path1 = ശൂന്യ;
+		അല്ലെങ്കിൽ {
 			*path1 = xstrdup(argv[optidx]);
 			undo_glob_escape(*path1);
 		}
-		break;
-	case I_LS:
-		if ((optidx = parse_ls_flags(argv, argc, lflag)) == -1)
-			return(-1);
+		നിർത്തുക;
+	അവസ്ഥ I_LS:
+		എങ്കിൽ ((optidx = parse_ls_flags(argv, argc, lflag)) == -1)
+			തിരികെ(-1);
 		/* Path is optional */
-		if (argc - optidx > 0)
+		എങ്കിൽ (argc - optidx > 0)
 			*path1 = xstrdup(argv[optidx]);
-		break;
-	case I_LLS:
+		നിർത്തുക;
+	അവസ്ഥ I_LLS:
 		/* Skip ls command and following whitespace */
 		cp = cp + strlen(cmd) + strspn(cp, WHITESPACE);
-	case I_SHELL:
+	അവസ്ഥ I_SHELL:
 		/* Uses the rest of the line */
-		break;
-	case I_LUMASK:
-	case I_CHMOD:
+		നിർത്തുക;
+	അവസ്ഥ I_LUMASK:
+	അവസ്ഥ I_CHMOD:
 		base = 8;
 		/* FALLTHROUGH */
-	case I_CHOWN:
-	case I_CHGRP:
-		if ((optidx = parse_ch_flags(cmd, argv, argc, hflag)) == -1)
-			return -1;
+	അവസ്ഥ I_CHOWN:
+	അവസ്ഥ I_CHGRP:
+		എങ്കിൽ ((optidx = parse_ch_flags(cmd, argv, argc, hflag)) == -1)
+			തിരികെ -1;
 		/* Get numeric arg (mandatory) */
-		if (argc - optidx < 1)
-			goto need_num_arg;
+		എങ്കിൽ (argc - optidx < 1)
+			പോകുക need_അക്കം_arg;
 		errno = 0;
 		ll = strtoll(argv[optidx], &cp2, base);
-		if (cp2 == argv[optidx] || *cp2 != '\0' ||
+		എങ്കിൽ (cp2 == argv[optidx] || *cp2 != '\0' ||
 		    ((ll == LLONG_MIN || ll == LLONG_MAX) && errno == ERANGE) ||
 		    ll < 0 || ll > UINT32_MAX) {
- need_num_arg:
+ need_അക്കം_arg:
 			error("You must supply a numeric argument "
 			    "to the %s command.", cmd);
-			return -1;
+			തിരികെ -1;
 		}
 		*n_arg = ll;
-		if (cmdnum == I_LUMASK)
-			break;
+		എങ്കിൽ (cmdnum == I_LUMASK)
+			നിർത്തുക;
 		/* Get pathname (mandatory) */
-		if (argc - optidx < 2) {
+		എങ്കിൽ (argc - optidx < 2) {
 			error("You must specify a path after a %s command.",
 			    cmd);
-			return -1;
+			തിരികെ -1;
 		}
 		*path1 = xstrdup(argv[optidx + 1]);
-		break;
-	case I_QUIT:
-	case I_PWD:
-	case I_LPWD:
-	case I_HELP:
-	case I_VERSION:
-	case I_PROGRESS:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
-		break;
-	default:
+		നിർത്തുക;
+	അവസ്ഥ I_QUIT:
+	അവസ്ഥ I_PWD:
+	അവസ്ഥ I_LPWD:
+	അവസ്ഥ I_HELP:
+	അവസ്ഥ I_VERSION:
+	അവസ്ഥ I_PROGRESS:
+		എങ്കിൽ ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			തിരികെ -1;
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		fatal("Command not implemented");
 	}
 
 	*cpp = cp;
-	return(cmdnum);
+	തിരികെ(cmdnum);
 }
 
-static int
-parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
-    const char *startdir, int err_abort, int echo_command)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_dispatch_command(ഘടന sftp_conn *conn, സ്ഥിരം അക്ഷരം *cmd, അക്ഷരം **pwd,
+    സ്ഥിരം അക്ഷരം *startdir, പൂർണ്ണസംഖ്യ err_abort, പൂർണ്ണസംഖ്യ echo_command)
 {
-	const char *ocmd = cmd;
-	char *path1, *path2, *tmp;
-	int ignore_errors = 0, disable_echo = 1;
-	int aflag = 0, fflag = 0, hflag = 0, iflag = 0;
-	int lflag = 0, pflag = 0, rflag = 0, sflag = 0;
-	int cmdnum, i;
+	സ്ഥിരം അക്ഷരം *ocmd = cmd;
+	അക്ഷരം *path1, *path2, *tmp;
+	പൂർണ്ണസംഖ്യ ignore_errors = 0, disable_echo = 1;
+	പൂർണ്ണസംഖ്യ aflag = 0, fflag = 0, hflag = 0, iflag = 0;
+	പൂർണ്ണസംഖ്യ lflag = 0, pflag = 0, rflag = 0, sflag = 0;
+	പൂർണ്ണസംഖ്യ cmdnum, i;
 	unsigned long n_arg = 0;
 	Attrib a, aa;
-	char path_buf[PATH_MAX];
-	int err = 0;
+	അക്ഷരം path_buf[PATH_MAX];
+	പൂർണ്ണസംഖ്യ err = 0;
 	glob_t g;
 
-	path1 = path2 = NULL;
+	path1 = path2 = ശൂന്യ;
 	cmdnum = parse_args(&cmd, &ignore_errors, &disable_echo, &aflag, &fflag,
 	    &hflag, &iflag, &lflag, &pflag, &rflag, &sflag, &n_arg,
 	    &path1, &path2);
-	if (ignore_errors != 0)
+	എങ്കിൽ (ignore_errors != 0)
 		err_abort = 0;
 
-	if (echo_command && !disable_echo)
+	എങ്കിൽ (echo_command && !disable_echo)
 		mprintf("sftp> %s\n", ocmd);
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, വലുപ്പം(g));
 
 	/* Perform command */
-	switch (cmdnum) {
-	case 0:
+	തിരഞ്ഞെടുപ്പ് (cmdnum) {
+	അവസ്ഥ 0:
 		/* Blank line */
-		break;
-	case -1:
+		നിർത്തുക;
+	അവസ്ഥ -1:
 		/* Unrecognized command */
 		err = -1;
-		break;
-	case I_REGET:
+		നിർത്തുക;
+	അവസ്ഥ I_REGET:
 		aflag = 1;
 		/* FALLTHROUGH */
-	case I_GET:
+	അവസ്ഥ I_GET:
 		err = process_get(conn, path1, path2, *pwd, pflag,
 		    rflag, aflag, fflag);
-		break;
-	case I_REPUT:
+		നിർത്തുക;
+	അവസ്ഥ I_REPUT:
 		aflag = 1;
 		/* FALLTHROUGH */
-	case I_PUT:
+	അവസ്ഥ I_PUT:
 		err = process_put(conn, path1, path2, *pwd, pflag,
 		    rflag, aflag, fflag);
-		break;
-	case I_COPY:
+		നിർത്തുക;
+	അവസ്ഥ I_COPY:
 		path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = sftp_copy(conn, path1, path2);
-		break;
-	case I_RENAME:
+		നിർത്തുക;
+	അവസ്ഥ I_RENAME:
 		path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = sftp_rename(conn, path1, path2, lflag);
-		break;
-	case I_SYMLINK:
+		നിർത്തുക;
+	അവസ്ഥ I_SYMLINK:
 		sflag = 1;
 		/* FALLTHROUGH */
-	case I_LINK:
-		if (!sflag)
+	അവസ്ഥ I_LINK:
+		എങ്കിൽ (!sflag)
 			path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = (sflag ? sftp_symlink : sftp_hardlink)(conn,
 		    path1, path2);
-		break;
-	case I_RM:
+		നിർത്തുക;
+	അവസ്ഥ I_RM:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
-		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if (!quiet)
+		sftp_glob(conn, path1, GLOB_NOCHECK, ശൂന്യ, &g);
+		വേണ്ടി (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			എങ്കിൽ (!quiet)
 				mprintf("Removing %s\n", g.gl_pathv[i]);
 			err = sftp_rm(conn, g.gl_pathv[i]);
-			if (err != 0 && err_abort)
-				break;
+			എങ്കിൽ (err != 0 && err_abort)
+				നിർത്തുക;
 		}
-		break;
-	case I_MKDIR:
+		നിർത്തുക;
+	അവസ്ഥ I_MKDIR:
 		path1 = sftp_make_absolute(path1, *pwd);
 		attrib_clear(&a);
 		a.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = 0777;
-		if (pflag)
+		എങ്കിൽ (pflag)
 			err = sftp_mkpath(conn, path1, &a, 1);
-		else
+		അല്ലെങ്കിൽ
 			err = sftp_mkdir(conn, path1, &a, 1);
-		break;
-	case I_RMDIR:
+		നിർത്തുക;
+	അവസ്ഥ I_RMDIR:
 		path1 = sftp_make_absolute(path1, *pwd);
 		err = sftp_rmdir(conn, path1);
-		break;
-	case I_CHDIR:
-		if (path1 == NULL || *path1 == '\0')
+		നിർത്തുക;
+	അവസ്ഥ I_CHDIR:
+		എങ്കിൽ (path1 == ശൂന്യ || *path1 == '\0')
 			path1 = xstrdup(startdir);
 		path1 = sftp_make_absolute(path1, *pwd);
-		if ((tmp = sftp_realpath(conn, path1)) == NULL) {
+		എങ്കിൽ ((tmp = sftp_realpath(conn, path1)) == ശൂന്യ) {
 			err = 1;
-			break;
+			നിർത്തുക;
 		}
-		if (sftp_stat(conn, tmp, 0, &aa) != 0) {
-			free(tmp);
+		എങ്കിൽ (sftp_stat(conn, tmp, 0, &aa) != 0) {
+			സ്വതന്ത്രം(tmp);
 			err = 1;
-			break;
+			നിർത്തുക;
 		}
-		if (!(aa.flags & SSH2_FILEXFER_ATTR_PERMISSIONS)) {
+		എങ്കിൽ (!(aa.flags & SSH2_FILEXFER_ATTR_PERMISSIONS)) {
 			error("Can't change directory: Can't check target");
-			free(tmp);
+			സ്വതന്ത്രം(tmp);
 			err = 1;
-			break;
+			നിർത്തുക;
 		}
-		if (!S_ISDIR(aa.perm)) {
+		എങ്കിൽ (!S_ISDIR(aa.perm)) {
 			error("Can't change directory: \"%s\" is not "
 			    "a directory", tmp);
-			free(tmp);
+			സ്വതന്ത്രം(tmp);
 			err = 1;
-			break;
+			നിർത്തുക;
 		}
-		free(*pwd);
+		സ്വതന്ത്രം(*pwd);
 		*pwd = tmp;
-		break;
-	case I_LS:
-		if (!path1) {
+		നിർത്തുക;
+	അവസ്ഥ I_LS:
+		എങ്കിൽ (!path1) {
 			do_ls_dir(conn, *pwd, *pwd, lflag);
-			break;
+			നിർത്തുക;
 		}
 
 		/* Strip pwd off beginning of non-absolute paths */
-		tmp = NULL;
-		if (!path_absolute(path1))
+		tmp = ശൂന്യ;
+		എങ്കിൽ (!path_absolute(path1))
 			tmp = *pwd;
 
 		path1 = make_absolute_pwd_glob(path1, *pwd);
 		err = do_globbed_ls(conn, path1, tmp, lflag);
-		break;
-	case I_DF:
+		നിർത്തുക;
+	അവസ്ഥ I_DF:
 		/* Default to current directory if no path specified */
-		if (path1 == NULL)
+		എങ്കിൽ (path1 == ശൂന്യ)
 			path1 = xstrdup(*pwd);
 		path1 = sftp_make_absolute(path1, *pwd);
 		err = do_df(conn, path1, hflag, iflag);
-		break;
-	case I_LCHDIR:
-		if (path1 == NULL || *path1 == '\0')
+		നിർത്തുക;
+	അവസ്ഥ I_LCHDIR:
+		എങ്കിൽ (path1 == ശൂന്യ || *path1 == '\0')
 			path1 = xstrdup("~");
 		tmp = tilde_expand_filename(path1, getuid());
-		free(path1);
+		സ്വതന്ത്രം(path1);
 		path1 = tmp;
-		if (chdir(path1) == -1) {
+		എങ്കിൽ (chdir(path1) == -1) {
 			error("Couldn't change local directory to "
 			    "\"%s\": %s", path1, strerror(errno));
 			err = 1;
 		}
-		break;
-	case I_LMKDIR:
-		if (pflag) {
-			if (mkdir_path(path1, 0777) != 0)
+		നിർത്തുക;
+	അവസ്ഥ I_LMKDIR:
+		എങ്കിൽ (pflag) {
+			എങ്കിൽ (mkdir_path(path1, 0777) != 0)
 				err = 1;
-			break;
+			നിർത്തുക;
 		}
-		if (mkdir(path1, 0777) == -1) {
+		എങ്കിൽ (mkdir(path1, 0777) == -1) {
 			error("Couldn't create local directory "
 			    "\"%s\": %s", path1, strerror(errno));
 			err = 1;
 		}
-		break;
-	case I_LLS:
+		നിർത്തുക;
+	അവസ്ഥ I_LLS:
 		local_do_ls(cmd);
-		break;
-	case I_SHELL:
+		നിർത്തുക;
+	അവസ്ഥ I_SHELL:
 		local_do_shell(cmd);
-		break;
-	case I_LUMASK:
+		നിർത്തുക;
+	അവസ്ഥ I_LUMASK:
 		umask(n_arg);
 		printf("Local umask: %03lo\n", n_arg);
-		break;
-	case I_CHMOD:
+		നിർത്തുക;
+	അവസ്ഥ I_CHMOD:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
 		attrib_clear(&a);
 		a.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = n_arg;
-		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if (!quiet)
+		sftp_glob(conn, path1, GLOB_NOCHECK, ശൂന്യ, &g);
+		വേണ്ടി (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			എങ്കിൽ (!quiet)
 				mprintf("Changing mode on %s\n",
 				    g.gl_pathv[i]);
 			err = (hflag ? sftp_lsetstat : sftp_setstat)(conn,
 			    g.gl_pathv[i], &a);
-			if (err != 0 && err_abort)
-				break;
+			എങ്കിൽ (err != 0 && err_abort)
+				നിർത്തുക;
 		}
-		break;
-	case I_CHOWN:
-	case I_CHGRP:
+		നിർത്തുക;
+	അവസ്ഥ I_CHOWN:
+	അവസ്ഥ I_CHGRP:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
-		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if ((hflag ? sftp_lstat : sftp_stat)(conn,
+		sftp_glob(conn, path1, GLOB_NOCHECK, ശൂന്യ, &g);
+		വേണ്ടി (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			എങ്കിൽ ((hflag ? sftp_lstat : sftp_stat)(conn,
 			    g.gl_pathv[i], 0, &aa) != 0) {
-				if (err_abort) {
+				എങ്കിൽ (err_abort) {
 					err = -1;
-					break;
-				} else
-					continue;
+					നിർത്തുക;
+				} അല്ലെങ്കിൽ
+					തുടരുക;
 			}
-			if (!(aa.flags & SSH2_FILEXFER_ATTR_UIDGID)) {
+			എങ്കിൽ (!(aa.flags & SSH2_FILEXFER_ATTR_UIDGID)) {
 				error("Can't get current ownership of "
 				    "remote file \"%s\"", g.gl_pathv[i]);
-				if (err_abort) {
+				എങ്കിൽ (err_abort) {
 					err = -1;
-					break;
-				} else
-					continue;
+					നിർത്തുക;
+				} അല്ലെങ്കിൽ
+					തുടരുക;
 			}
 			aa.flags &= SSH2_FILEXFER_ATTR_UIDGID;
-			if (cmdnum == I_CHOWN) {
-				if (!quiet)
+			എങ്കിൽ (cmdnum == I_CHOWN) {
+				എങ്കിൽ (!quiet)
 					mprintf("Changing owner on %s\n",
 					    g.gl_pathv[i]);
 				aa.uid = n_arg;
-			} else {
-				if (!quiet)
+			} അല്ലെങ്കിൽ {
+				എങ്കിൽ (!quiet)
 					mprintf("Changing group on %s\n",
 					    g.gl_pathv[i]);
 				aa.gid = n_arg;
 			}
 			err = (hflag ? sftp_lsetstat : sftp_setstat)(conn,
 			    g.gl_pathv[i], &aa);
-			if (err != 0 && err_abort)
-				break;
+			എങ്കിൽ (err != 0 && err_abort)
+				നിർത്തുക;
 		}
-		break;
-	case I_PWD:
+		നിർത്തുക;
+	അവസ്ഥ I_PWD:
 		mprintf("Remote working directory: %s\n", *pwd);
-		break;
-	case I_LPWD:
-		if (!getcwd(path_buf, sizeof(path_buf))) {
+		നിർത്തുക;
+	അവസ്ഥ I_LPWD:
+		എങ്കിൽ (!getcwd(path_buf, വലുപ്പം(path_buf))) {
 			error("Couldn't get local cwd: %s", strerror(errno));
 			err = -1;
-			break;
+			നിർത്തുക;
 		}
 		mprintf("Local working directory: %s\n", path_buf);
-		break;
-	case I_QUIT:
+		നിർത്തുക;
+	അവസ്ഥ I_QUIT:
 		/* Processed below */
-		break;
-	case I_HELP:
+		നിർത്തുക;
+	അവസ്ഥ I_HELP:
 		help();
-		break;
-	case I_VERSION:
+		നിർത്തുക;
+	അവസ്ഥ I_VERSION:
 		printf("SFTP protocol version %u\n", sftp_proto_version(conn));
-		break;
-	case I_PROGRESS:
+		നിർത്തുക;
+	അവസ്ഥ I_PROGRESS:
 		showprogress = !showprogress;
-		if (showprogress)
+		എങ്കിൽ (showprogress)
 			printf("Progress meter enabled\n");
-		else
+		അല്ലെങ്കിൽ
 			printf("Progress meter disabled\n");
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		fatal("%d is not implemented", cmdnum);
 	}
 
-	if (g.gl_pathc)
+	എങ്കിൽ (g.gl_pathc)
 		globfree(&g);
-	free(path1);
-	free(path2);
+	സ്വതന്ത്രം(path1);
+	സ്വതന്ത്രം(path2);
 
 	/* If an unignored error occurs in batch mode we should abort. */
-	if (err_abort && err != 0)
-		return (-1);
-	else if (cmdnum == I_QUIT)
-		return (1);
+	എങ്കിൽ (err_abort && err != 0)
+		തിരികെ (-1);
+	അല്ലെങ്കിൽ എങ്കിൽ (cmdnum == I_QUIT)
+		തിരികെ (1);
 
-	return (0);
+	തിരികെ (0);
 }
 
 #ifdef USE_LIBEDIT
-static char *
-prompt(EditLine *el)
+സ്ഥിതം അക്ഷരം *
+prompt(Edit_വരി *el)
 {
-	return ("sftp> ");
+	തിരികെ ("sftp> ");
 }
 
 /* Display entries in 'list' after skipping the first 'len' chars */
-static void
-complete_display(char **list, u_int len)
+സ്ഥിതം ശൂന്യം
+complete_display(അക്ഷരം **list, u_int len)
 {
 	u_int y, m = 0, width = 80, columns = 1, colspace = 0, llen;
-	struct winsize ws;
-	char *tmp;
+	ഘടന winsize ws;
+	അക്ഷരം *tmp;
 
 	/* Count entries for sort and find longest */
-	for (y = 0; list[y]; y++)
+	വേണ്ടി (y = 0; list[y]; y++)
 		m = MAXIMUM(m, strlen(list[y]));
 
-	if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+	എങ്കിൽ (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
 		width = ws.ws_col;
 
 	m = m > len ? m - len : 0;
@@ -1901,14 +1901,14 @@ complete_display(char **list, u_int len)
 
 	printf("\n");
 	m = 1;
-	for (y = 0; list[y]; y++) {
+	വേണ്ടി (y = 0; list[y]; y++) {
 		llen = strlen(list[y]);
 		tmp = llen > len ? list[y] + len : "";
 		mprintf("%-*s", colspace, tmp);
-		if (m >= columns) {
+		എങ്കിൽ (m >= columns) {
 			printf("\n");
 			m = 1;
-		} else
+		} അല്ലെങ്കിൽ
 			m++;
 	}
 	printf("\n");
@@ -1919,25 +1919,25 @@ complete_display(char **list, u_int len)
  * attempt to find an autocompletion that extends "word" by the next
  * characters common to all entries in "list".
  */
-static char *
-complete_ambiguous(const char *word, char **list, size_t count)
+സ്ഥിതം അക്ഷരം *
+complete_ambiguous(സ്ഥിരം അക്ഷരം *word, അക്ഷരം **list, size_t എണ്ണം)
 {
 	size_t i, j, matchlen;
-	char *tmp;
-	int len;
+	അക്ഷരം *tmp;
+	പൂർണ്ണസംഖ്യ len;
 
-	if (word == NULL)
-		return NULL;
+	എങ്കിൽ (word == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
-	if (count == 0)
-		return xstrdup(word); /* no options to complete */
+	എങ്കിൽ (എണ്ണം == 0)
+		തിരികെ xstrdup(word); /* no options to complete */
 
 	/* Find length of common stem across list */
 	matchlen = strlen(list[0]);
-	for (i = 1; i < count && list[i] != NULL; i++) {
-		for (j = 0; j < matchlen; j++)
-			if (list[0][j] != list[i][j])
-				break;
+	വേണ്ടി (i = 1; i < എണ്ണം && list[i] != ശൂന്യ; i++) {
+		വേണ്ടി (j = 0; j < matchlen; j++)
+			എങ്കിൽ (list[0][j] != list[i][j])
+				നിർത്തുക;
 		matchlen = j;
 	}
 
@@ -1945,96 +1945,96 @@ complete_ambiguous(const char *word, char **list, size_t count)
 	 * Now check that the common stem doesn't finish in the middle of
 	 * a multibyte character.
 	 */
-	mblen(NULL, 0);
-	for (i = 0; i < matchlen;) {
+	mblen(ശൂന്യ, 0);
+	വേണ്ടി (i = 0; i < matchlen;) {
 		len = mblen(list[0] + i, matchlen - i);
-		if (len <= 0 || i + (size_t)len > matchlen)
-			break;
+		എങ്കിൽ (len <= 0 || i + (size_t)len > matchlen)
+			നിർത്തുക;
 		i += (size_t)len;
 	}
 	/* If so, truncate */
-	if (i < matchlen)
+	എങ്കിൽ (i < matchlen)
 		matchlen = i;
 
-	if (matchlen > strlen(word)) {
+	എങ്കിൽ (matchlen > strlen(word)) {
 		tmp = xstrdup(list[0]);
 		tmp[matchlen] = '\0';
-		return tmp;
+		തിരികെ tmp;
 	}
 
-	return xstrdup(word);
+	തിരികെ xstrdup(word);
 }
 
 /* Autocomplete a sftp command */
-static int
-complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
-    int terminated)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+complete_cmd_parse(Edit_വരി *el, അക്ഷരം *cmd, പൂർണ്ണസംഖ്യ lastarg, അക്ഷരം quote,
+    പൂർണ്ണസംഖ്യ terminated)
 {
-	u_int y, count = 0, cmdlen, tmplen;
-	char *tmp, **list, argterm[3];
-	const LineInfo *lf;
+	u_int y, എണ്ണം = 0, cmdlen, tmplen;
+	അക്ഷരം *tmp, **list, argterm[3];
+	സ്ഥിരം വരി_Info *lf;
 
-	list = xcalloc((sizeof(cmds) / sizeof(*cmds)) + 1, sizeof(char *));
+	list = xcalloc((വലുപ്പം(cmds) / വലുപ്പം(*cmds)) + 1, വലുപ്പം(അക്ഷരം *));
 
 	/* No command specified: display all available commands */
-	if (cmd == NULL) {
-		for (y = 0; cmds[y].c; y++)
-			list[count++] = xstrdup(cmds[y].c);
+	എങ്കിൽ (cmd == ശൂന്യ) {
+		വേണ്ടി (y = 0; cmds[y].c; y++)
+			list[എണ്ണം++] = xstrdup(cmds[y].c);
 
-		list[count] = NULL;
+		list[എണ്ണം] = ശൂന്യ;
 		complete_display(list, 0);
 
-		for (y = 0; list[y] != NULL; y++)
-			free(list[y]);
-		free(list);
-		return count;
+		വേണ്ടി (y = 0; list[y] != ശൂന്യ; y++)
+			സ്വതന്ത്രം(list[y]);
+		സ്വതന്ത്രം(list);
+		തിരികെ എണ്ണം;
 	}
 
 	/* Prepare subset of commands that start with "cmd" */
 	cmdlen = strlen(cmd);
-	for (y = 0; cmds[y].c; y++)  {
-		if (!strncasecmp(cmd, cmds[y].c, cmdlen))
-			list[count++] = xstrdup(cmds[y].c);
+	വേണ്ടി (y = 0; cmds[y].c; y++)  {
+		എങ്കിൽ (!strncasecmp(cmd, cmds[y].c, cmdlen))
+			list[എണ്ണം++] = xstrdup(cmds[y].c);
 	}
-	list[count] = NULL;
+	list[എണ്ണം] = ശൂന്യ;
 
-	if (count == 0) {
-		free(list);
-		return 0;
+	എങ്കിൽ (എണ്ണം == 0) {
+		സ്വതന്ത്രം(list);
+		തിരികെ 0;
 	}
 
 	/* Complete ambiguous command */
-	tmp = complete_ambiguous(cmd, list, count);
-	if (count > 1)
+	tmp = complete_ambiguous(cmd, list, എണ്ണം);
+	എങ്കിൽ (എണ്ണം > 1)
 		complete_display(list, 0);
 
-	for (y = 0; list[y]; y++)
-		free(list[y]);
-	free(list);
+	വേണ്ടി (y = 0; list[y]; y++)
+		സ്വതന്ത്രം(list[y]);
+	സ്വതന്ത്രം(list);
 
-	if (tmp != NULL) {
+	എങ്കിൽ (tmp != ശൂന്യ) {
 		tmplen = strlen(tmp);
 		cmdlen = strlen(cmd);
 		/* If cmd may be extended then do so */
-		if (tmplen > cmdlen)
-			if (el_insertstr(el, tmp + cmdlen) == -1)
+		എങ്കിൽ (tmplen > cmdlen)
+			എങ്കിൽ (el_insertstr(el, tmp + cmdlen) == -1)
 				fatal("el_insertstr failed.");
-		lf = el_line(el);
+		lf = el_വരി(el);
 		/* Terminate argument cleanly */
-		if (count == 1) {
+		എങ്കിൽ (എണ്ണം == 1) {
 			y = 0;
-			if (!terminated)
+			എങ്കിൽ (!terminated)
 				argterm[y++] = quote;
-			if (lastarg || *(lf->cursor) != ' ')
+			എങ്കിൽ (lastarg || *(lf->cursor) != ' ')
 				argterm[y++] = ' ';
 			argterm[y] = '\0';
-			if (y > 0 && el_insertstr(el, argterm) == -1)
+			എങ്കിൽ (y > 0 && el_insertstr(el, argterm) == -1)
 				fatal("el_insertstr failed.");
 		}
-		free(tmp);
+		സ്വതന്ത്രം(tmp);
 	}
 
-	return count;
+	തിരികെ എണ്ണം;
 }
 
 /*
@@ -2042,211 +2042,211 @@ complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
  * local or remote files. The "cmdarg" argument specifies the actual argument
  * and accepts values 1 or 2.
  */
-static int
-complete_is_remote(char *cmd, int cmdarg) {
-	int i;
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+complete_is_remote(അക്ഷരം *cmd, പൂർണ്ണസംഖ്യ cmdarg) {
+	പൂർണ്ണസംഖ്യ i;
 
-	if (cmd == NULL)
-		return -1;
+	എങ്കിൽ (cmd == ശൂന്യ)
+		തിരികെ -1;
 
-	for (i = 0; cmds[i].c; i++) {
-		if (!strncasecmp(cmd, cmds[i].c, strlen(cmds[i].c))) {
-			if (cmdarg == 1)
-				return cmds[i].t;
-			else if (cmdarg == 2)
-				return cmds[i].t2;
-			break;
+	വേണ്ടി (i = 0; cmds[i].c; i++) {
+		എങ്കിൽ (!strncasecmp(cmd, cmds[i].c, strlen(cmds[i].c))) {
+			എങ്കിൽ (cmdarg == 1)
+				തിരികെ cmds[i].t;
+			അല്ലെങ്കിൽ എങ്കിൽ (cmdarg == 2)
+				തിരികെ cmds[i].t2;
+			നിർത്തുക;
 		}
 	}
 
-	return -1;
+	തിരികെ -1;
 }
 
 /* Autocomplete a filename "file" */
-static int
-complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
-    char *file, int remote, int lastarg, char quote, int terminated)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+complete_match(Edit_വരി *el, ഘടന sftp_conn *conn, അക്ഷരം *remote_path,
+    അക്ഷരം *file, പൂർണ്ണസംഖ്യ remote, പൂർണ്ണസംഖ്യ lastarg, അക്ഷരം quote, പൂർണ്ണസംഖ്യ terminated)
 {
 	glob_t g;
-	char *tmp, *tmp2, ins[8];
+	അക്ഷരം *tmp, *tmp2, ins[8];
 	u_int i, hadglob, pwdlen, len, tmplen, filelen, cesc, isesc, isabs;
-	int clen;
-	const LineInfo *lf;
+	പൂർണ്ണസംഖ്യ clen;
+	സ്ഥിരം വരി_Info *lf;
 
 	/* Glob from "file" location */
-	if (file == NULL)
+	എങ്കിൽ (file == ശൂന്യ)
 		tmp = xstrdup("*");
-	else
+	അല്ലെങ്കിൽ
 		xasprintf(&tmp, "%s*", file);
 
 	/* Check if the path is absolute. */
 	isabs = path_absolute(tmp);
 
-	memset(&g, 0, sizeof(g));
-	if (remote != LOCAL) {
+	memset(&g, 0, വലുപ്പം(g));
+	എങ്കിൽ (remote != LOCAL) {
 		tmp = make_absolute_pwd_glob(tmp, remote_path);
-		sftp_glob(conn, tmp, GLOB_DOOFFS|GLOB_MARK, NULL, &g);
-	} else
-		(void)glob(tmp, GLOB_DOOFFS|GLOB_MARK, NULL, &g);
+		sftp_glob(conn, tmp, GLOB_DOOFFS|GLOB_MARK, ശൂന്യ, &g);
+	} അല്ലെങ്കിൽ
+		(ശൂന്യം)glob(tmp, GLOB_DOOFFS|GLOB_MARK, ശൂന്യ, &g);
 
 	/* Determine length of pwd so we can trim completion display */
-	for (hadglob = tmplen = pwdlen = 0; tmp[tmplen] != 0; tmplen++) {
+	വേണ്ടി (hadglob = tmplen = pwdlen = 0; tmp[tmplen] != 0; tmplen++) {
 		/* Terminate counting on first unescaped glob metacharacter */
-		if (tmp[tmplen] == '*' || tmp[tmplen] == '?') {
-			if (tmp[tmplen] != '*' || tmp[tmplen + 1] != '\0')
+		എങ്കിൽ (tmp[tmplen] == '*' || tmp[tmplen] == '?') {
+			എങ്കിൽ (tmp[tmplen] != '*' || tmp[tmplen + 1] != '\0')
 				hadglob = 1;
-			break;
+			നിർത്തുക;
 		}
-		if (tmp[tmplen] == '\\' && tmp[tmplen + 1] != '\0')
+		എങ്കിൽ (tmp[tmplen] == '\\' && tmp[tmplen + 1] != '\0')
 			tmplen++;
-		if (tmp[tmplen] == '/')
+		എങ്കിൽ (tmp[tmplen] == '/')
 			pwdlen = tmplen + 1;	/* track last seen '/' */
 	}
-	free(tmp);
-	tmp = NULL;
+	സ്വതന്ത്രം(tmp);
+	tmp = ശൂന്യ;
 
-	if (g.gl_matchc == 0)
-		goto out;
+	എങ്കിൽ (g.gl_matchc == 0)
+		പോകുക out;
 
-	if (g.gl_matchc > 1)
+	എങ്കിൽ (g.gl_matchc > 1)
 		complete_display(g.gl_pathv, pwdlen);
 
 	/* Don't try to extend globs */
-	if (file == NULL || hadglob)
-		goto out;
+	എങ്കിൽ (file == ശൂന്യ || hadglob)
+		പോകുക out;
 
 	tmp2 = complete_ambiguous(file, g.gl_pathv, g.gl_matchc);
-	tmp = path_strip(tmp2, isabs ? NULL : remote_path);
-	free(tmp2);
+	tmp = path_strip(tmp2, isabs ? ശൂന്യ : remote_path);
+	സ്വതന്ത്രം(tmp2);
 
-	if (tmp == NULL)
-		goto out;
+	എങ്കിൽ (tmp == ശൂന്യ)
+		പോകുക out;
 
 	tmplen = strlen(tmp);
 	filelen = strlen(file);
 
 	/* Count the number of escaped characters in the input string. */
 	cesc = isesc = 0;
-	for (i = 0; i < filelen; i++) {
-		if (!isesc && file[i] == '\\' && i + 1 < filelen){
+	വേണ്ടി (i = 0; i < filelen; i++) {
+		എങ്കിൽ (!isesc && file[i] == '\\' && i + 1 < filelen){
 			isesc = 1;
 			cesc++;
-		} else
+		} അല്ലെങ്കിൽ
 			isesc = 0;
 	}
 
-	if (tmplen > (filelen - cesc)) {
+	എങ്കിൽ (tmplen > (filelen - cesc)) {
 		tmp2 = tmp + filelen - cesc;
 		len = strlen(tmp2);
 		/* quote argument on way out */
-		mblen(NULL, 0);
-		for (i = 0; i < len; i += clen) {
-			if ((clen = mblen(tmp2 + i, len - i)) < 0 ||
-			    (size_t)clen > sizeof(ins) - 2)
+		mblen(ശൂന്യ, 0);
+		വേണ്ടി (i = 0; i < len; i += clen) {
+			എങ്കിൽ ((clen = mblen(tmp2 + i, len - i)) < 0 ||
+			    (size_t)clen > വലുപ്പം(ins) - 2)
 				fatal("invalid multibyte character");
 			ins[0] = '\\';
 			memcpy(ins + 1, tmp2 + i, clen);
 			ins[clen + 1] = '\0';
-			switch (tmp2[i]) {
-			case '\'':
-			case '"':
-			case '\\':
-			case '\t':
-			case '[':
-			case ' ':
-			case '#':
-			case '*':
-				if (quote == '\0' || tmp2[i] == quote) {
-					if (el_insertstr(el, ins) == -1)
+			തിരഞ്ഞെടുപ്പ് (tmp2[i]) {
+			അവസ്ഥ '\'':
+			അവസ്ഥ '"':
+			അവസ്ഥ '\\':
+			അവസ്ഥ '\t':
+			അവസ്ഥ '[':
+			അവസ്ഥ ' ':
+			അവസ്ഥ '#':
+			അവസ്ഥ '*':
+				എങ്കിൽ (quote == '\0' || tmp2[i] == quote) {
+					എങ്കിൽ (el_insertstr(el, ins) == -1)
 						fatal("el_insertstr "
 						    "failed.");
-					break;
+					നിർത്തുക;
 				}
 				/* FALLTHROUGH */
-			default:
-				if (el_insertstr(el, ins + 1) == -1)
+			സ്ഥിരസ്ഥിതി:
+				എങ്കിൽ (el_insertstr(el, ins + 1) == -1)
 					fatal("el_insertstr failed.");
-				break;
+				നിർത്തുക;
 			}
 		}
 	}
 
-	lf = el_line(el);
-	if (g.gl_matchc == 1) {
+	lf = el_വരി(el);
+	എങ്കിൽ (g.gl_matchc == 1) {
 		i = 0;
-		if (!terminated && quote != '\0')
+		എങ്കിൽ (!terminated && quote != '\0')
 			ins[i++] = quote;
-		if (*(lf->cursor - 1) != '/' &&
+		എങ്കിൽ (*(lf->cursor - 1) != '/' &&
 		    (lastarg || *(lf->cursor) != ' '))
 			ins[i++] = ' ';
 		ins[i] = '\0';
-		if (i > 0 && el_insertstr(el, ins) == -1)
+		എങ്കിൽ (i > 0 && el_insertstr(el, ins) == -1)
 			fatal("el_insertstr failed.");
 	}
-	free(tmp);
+	സ്വതന്ത്രം(tmp);
 
  out:
 	globfree(&g);
-	return g.gl_matchc;
+	തിരികെ g.gl_matchc;
 }
 
 /* tab-completion hook function, called via libedit */
-static unsigned char
-complete(EditLine *el, int ch)
+സ്ഥിതം unsigned അക്ഷരം
+complete(Edit_വരി *el, പൂർണ്ണസംഖ്യ ch)
 {
-	char **argv, *line, quote;
-	int argc, carg;
+	അക്ഷരം **argv, *വരി, quote;
+	പൂർണ്ണസംഖ്യ argc, carg;
 	u_int cursor, len, terminated, ret = CC_ERROR;
-	const LineInfo *lf;
-	struct complete_ctx *complete_ctx;
+	സ്ഥിരം വരി_Info *lf;
+	ഘടന complete_ctx *complete_ctx;
 
-	lf = el_line(el);
-	if (el_get(el, EL_CLIENTDATA, (void**)&complete_ctx) != 0)
+	lf = el_വരി(el);
+	എങ്കിൽ (el_get(el, EL_CLIENTDATA, (ശൂന്യം**)&complete_ctx) != 0)
 		fatal_f("el_get failed");
 
 	/* Figure out which argument the cursor points to */
 	cursor = lf->cursor - lf->buffer;
-	line = xmalloc(cursor + 1);
-	memcpy(line, lf->buffer, cursor);
-	line[cursor] = '\0';
-	argv = makeargv(line, &carg, 1, &quote, &terminated);
-	free(line);
+	വരി = xmalloc(cursor + 1);
+	memcpy(വരി, lf->buffer, cursor);
+	വരി[cursor] = '\0';
+	argv = makeargv(വരി, &carg, 1, &quote, &terminated);
+	സ്വതന്ത്രം(വരി);
 
 	/* Get all the arguments on the line */
 	len = lf->lastchar - lf->buffer;
-	line = xmalloc(len + 1);
-	memcpy(line, lf->buffer, len);
-	line[len] = '\0';
-	argv = makeargv(line, &argc, 1, NULL, NULL);
+	വരി = xmalloc(len + 1);
+	memcpy(വരി, lf->buffer, len);
+	വരി[len] = '\0';
+	argv = makeargv(വരി, &argc, 1, ശൂന്യ, ശൂന്യ);
 
 	/* Ensure cursor is at EOL or a argument boundary */
-	if (line[cursor] != ' ' && line[cursor] != '\0' &&
-	    line[cursor] != '\n') {
-		free(line);
-		return ret;
+	എങ്കിൽ (വരി[cursor] != ' ' && വരി[cursor] != '\0' &&
+	    വരി[cursor] != '\n') {
+		സ്വതന്ത്രം(വരി);
+		തിരികെ ret;
 	}
 
-	if (carg == 0) {
+	എങ്കിൽ (carg == 0) {
 		/* Show all available commands */
-		complete_cmd_parse(el, NULL, argc == carg, '\0', 1);
+		complete_cmd_parse(el, ശൂന്യ, argc == carg, '\0', 1);
 		ret = CC_REDISPLAY;
-	} else if (carg == 1 && cursor > 0 && line[cursor - 1] != ' ')  {
+	} അല്ലെങ്കിൽ എങ്കിൽ (carg == 1 && cursor > 0 && വരി[cursor - 1] != ' ')  {
 		/* Handle the command parsing */
-		if (complete_cmd_parse(el, argv[0], argc == carg,
+		എങ്കിൽ (complete_cmd_parse(el, argv[0], argc == carg,
 		    quote, terminated) != 0)
 			ret = CC_REDISPLAY;
-	} else if (carg >= 1) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (carg >= 1) {
 		/* Handle file parsing */
-		int remote = 0;
-		int i = 0, cmdarg = 0;
-		char *filematch = NULL;
+		പൂർണ്ണസംഖ്യ remote = 0;
+		പൂർണ്ണസംഖ്യ i = 0, cmdarg = 0;
+		അക്ഷരം *filematch = ശൂന്യ;
 
-		if (carg > 1 && line[cursor-1] != ' ')
+		എങ്കിൽ (carg > 1 && വരി[cursor-1] != ' ')
 			filematch = argv[carg - 1];
 
-		for (i = 1; i < carg; i++) {
+		വേണ്ടി (i = 1; i < carg; i++) {
 			/* Skip flags */
-			if (argv[i][0] != '-')
+			എങ്കിൽ (argv[i][0] != '-')
 				cmdarg++;
 		}
 
@@ -2254,149 +2254,149 @@ complete(EditLine *el, int ch)
 		 * If previous argument is complete, then offer completion
 		 * on the next one.
 		 */
-		if (line[cursor - 1] == ' ')
+		എങ്കിൽ (വരി[cursor - 1] == ' ')
 			cmdarg++;
 
 		remote = complete_is_remote(argv[0], cmdarg);
 
-		if ((remote == REMOTE || remote == LOCAL) &&
+		എങ്കിൽ ((remote == REMOTE || remote == LOCAL) &&
 		    complete_match(el, complete_ctx->conn,
 		    *complete_ctx->remote_pathp, filematch,
 		    remote, carg == argc, quote, terminated) != 0)
 			ret = CC_REDISPLAY;
 	}
 
-	free(line);
-	return ret;
+	സ്വതന്ത്രം(വരി);
+	തിരികെ ret;
 }
 #endif /* USE_LIBEDIT */
 
-static int
-interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+interactive_loop(ഘടന sftp_conn *conn, അക്ഷരം *file1, അക്ഷരം *file2)
 {
-	char *remote_path;
-	char *dir = NULL, *startdir = NULL;
-	char cmd[2048];
-	int err, interactive;
-	EditLine *el = NULL;
+	അക്ഷരം *remote_path;
+	അക്ഷരം *dir = ശൂന്യ, *startdir = ശൂന്യ;
+	അക്ഷരം cmd[2048];
+	പൂർണ്ണസംഖ്യ err, interactive;
+	Edit_വരി *el = ശൂന്യ;
 #ifdef USE_LIBEDIT
-	const char *editor;
-	History *hl = NULL;
+	സ്ഥിരം അക്ഷരം *editor;
+	History *hl = ശൂന്യ;
 	HistEvent hev;
-	extern char *__progname;
-	struct complete_ctx complete_ctx;
+	ബാഹ്യ അക്ഷരം *__progname;
+	ഘടന complete_ctx complete_ctx;
 
-	if (!batchmode && isatty(STDIN_FILENO)) {
-		if ((el = el_init(__progname, stdin, stdout, stderr)) == NULL)
+	എങ്കിൽ (!batchmode && isatty(STDIN_FILENO)) {
+		എങ്കിൽ ((el = el_init(__progname, stdin, stdout, stderr)) == ശൂന്യ)
 			fatal("Couldn't initialise editline");
-		if ((hl = history_init()) == NULL)
+		എങ്കിൽ ((hl = history_init()) == ശൂന്യ)
 			fatal("Couldn't initialise editline history");
 		history(hl, &hev, H_SETSIZE, 100);
 		el_set(el, EL_HIST, history, hl);
 
 		el_set(el, EL_PROMPT, prompt);
 		el_set(el, EL_EDITOR, "emacs");
-		el_set(el, EL_TERMINAL, NULL);
+		el_set(el, EL_TERMINAL, ശൂന്യ);
 		el_set(el, EL_SIGNAL, 1);
-		el_source(el, NULL);
+		el_source(el, ശൂന്യ);
 
 		/* Tab Completion */
 		el_set(el, EL_ADDFN, "ftp-complete",
 		    "Context sensitive argument completion", complete);
 		complete_ctx.conn = conn;
 		complete_ctx.remote_pathp = &remote_path;
-		el_set(el, EL_CLIENTDATA, (void*)&complete_ctx);
-		el_set(el, EL_BIND, "^I", "ftp-complete", NULL);
+		el_set(el, EL_CLIENTDATA, (ശൂന്യം*)&complete_ctx);
+		el_set(el, EL_BIND, "^I", "ftp-complete", ശൂന്യ);
 		/* enable ctrl-left-arrow and ctrl-right-arrow */
-		el_set(el, EL_BIND, "\\e[1;5C", "em-next-word", NULL);
-		el_set(el, EL_BIND, "\\e\\e[C", "em-next-word", NULL);
-		el_set(el, EL_BIND, "\\e[1;5D", "ed-prev-word", NULL);
-		el_set(el, EL_BIND, "\\e\\e[D", "ed-prev-word", NULL);
+		el_set(el, EL_BIND, "\\e[1;5C", "em-next-word", ശൂന്യ);
+		el_set(el, EL_BIND, "\\e\\e[C", "em-next-word", ശൂന്യ);
+		el_set(el, EL_BIND, "\\e[1;5D", "ed-prev-word", ശൂന്യ);
+		el_set(el, EL_BIND, "\\e\\e[D", "ed-prev-word", ശൂന്യ);
 		/* make ^w match ksh behaviour */
-		el_set(el, EL_BIND, "^w", "ed-delete-prev-word", NULL);
+		el_set(el, EL_BIND, "^w", "ed-delete-prev-word", ശൂന്യ);
 
 		/* el_source() may have changed EL_EDITOR to vi */
-		if (el_get(el, EL_EDITOR, &editor) == 0 && editor[0] == 'v')
-			el_set(el, EL_BIND, "^[", "vi-command-mode", NULL);
+		എങ്കിൽ (el_get(el, EL_EDITOR, &editor) == 0 && editor[0] == 'v')
+			el_set(el, EL_BIND, "^[", "vi-command-mode", ശൂന്യ);
 	}
 #endif /* USE_LIBEDIT */
 
-	if ((remote_path = sftp_realpath(conn, ".")) == NULL)
+	എങ്കിൽ ((remote_path = sftp_realpath(conn, ".")) == ശൂന്യ)
 		fatal("Need cwd");
 	startdir = xstrdup(remote_path);
 
-	if (file1 != NULL) {
+	എങ്കിൽ (file1 != ശൂന്യ) {
 		dir = xstrdup(file1);
 		dir = sftp_make_absolute(dir, remote_path);
 
-		if (sftp_remote_is_dir(conn, dir) && file2 == NULL) {
-			if (!quiet)
+		എങ്കിൽ (sftp_remote_is_dir(conn, dir) && file2 == ശൂന്യ) {
+			എങ്കിൽ (!quiet)
 				mprintf("Changing to: %s\n", dir);
-			snprintf(cmd, sizeof cmd, "cd \"%s\"", dir);
-			if (parse_dispatch_command(conn, cmd,
+			snprintf(cmd, വലുപ്പം cmd, "cd \"%s\"", dir);
+			എങ്കിൽ (parse_dispatch_command(conn, cmd,
 			    &remote_path, startdir, 1, 0) != 0) {
-				free(dir);
-				free(startdir);
-				free(remote_path);
-				free(conn);
-				return (-1);
+				സ്വതന്ത്രം(dir);
+				സ്വതന്ത്രം(startdir);
+				സ്വതന്ത്രം(remote_path);
+				സ്വതന്ത്രം(conn);
+				തിരികെ (-1);
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 			err = process_get(conn, dir, file2, remote_path, 0, 0,
 			    global_aflag, 0);
-			free(dir);
-			free(startdir);
-			free(remote_path);
-			free(conn);
-			return (err);
+			സ്വതന്ത്രം(dir);
+			സ്വതന്ത്രം(startdir);
+			സ്വതന്ത്രം(remote_path);
+			സ്വതന്ത്രം(conn);
+			തിരികെ (err);
 		}
-		free(dir);
+		സ്വതന്ത്രം(dir);
 	}
 
-	setvbuf(stdout, NULL, _IOLBF, 0);
-	setvbuf(infile, NULL, _IOLBF, 0);
+	setvbuf(stdout, ശൂന്യ, _IOLBF, 0);
+	setvbuf(infile, ശൂന്യ, _IOLBF, 0);
 
 	interactive = !batchmode && isatty(STDIN_FILENO);
 	err = 0;
-	for (;;) {
-		struct sigaction sa;
+	വേണ്ടി (;;) {
+		ഘടന sigaction sa;
 
 		interrupted = 0;
-		memset(&sa, 0, sizeof(sa));
+		memset(&sa, 0, വലുപ്പം(sa));
 		sa.sa_handler = interactive ? read_interrupt : killchild;
-		if (sigaction(SIGINT, &sa, NULL) == -1) {
+		എങ്കിൽ (sigaction(SIGINT, &sa, ശൂന്യ) == -1) {
 			debug3("sigaction(%s): %s", strsignal(SIGINT),
 			    strerror(errno));
-			break;
+			നിർത്തുക;
 		}
-		if (el == NULL) {
-			if (interactive) {
+		എങ്കിൽ (el == ശൂന്യ) {
+			എങ്കിൽ (interactive) {
 				printf("sftp> ");
 				fflush(stdout);
 			}
-			if (fgets(cmd, sizeof(cmd), infile) == NULL) {
-				if (interactive)
+			എങ്കിൽ (fgets(cmd, വലുപ്പം(cmd), infile) == ശൂന്യ) {
+				എങ്കിൽ (interactive)
 					printf("\n");
-				if (interrupted)
-					continue;
-				break;
+				എങ്കിൽ (interrupted)
+					തുടരുക;
+				നിർത്തുക;
 			}
-		} else {
+		} അല്ലെങ്കിൽ {
 #ifdef USE_LIBEDIT
-			const char *line;
-			int count = 0;
+			സ്ഥിരം അക്ഷരം *വരി;
+			പൂർണ്ണസംഖ്യ എണ്ണം = 0;
 
-			if ((line = el_gets(el, &count)) == NULL ||
-			    count <= 0) {
+			എങ്കിൽ ((വരി = el_gets(el, &എണ്ണം)) == ശൂന്യ ||
+			    എണ്ണം <= 0) {
 				printf("\n");
-				if (interrupted)
-					continue;
-				break;
+				എങ്കിൽ (interrupted)
+					തുടരുക;
+				നിർത്തുക;
 			}
-			history(hl, &hev, H_ENTER, line);
-			if (strlcpy(cmd, line, sizeof(cmd)) >= sizeof(cmd)) {
+			history(hl, &hev, H_ENTER, വരി);
+			എങ്കിൽ (strlcpy(cmd, വരി, വലുപ്പം(cmd)) >= വലുപ്പം(cmd)) {
 				fprintf(stderr, "Error: input line too long\n");
-				continue;
+				തുടരുക;
 			}
 #endif /* USE_LIBEDIT */
 		}
@@ -2408,43 +2408,43 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 		ssh_signal(SIGINT, cmd_interrupt);
 
 		err = parse_dispatch_command(conn, cmd, &remote_path,
-		    startdir, batchmode, !interactive && el == NULL);
-		if (err != 0)
-			break;
+		    startdir, batchmode, !interactive && el == ശൂന്യ);
+		എങ്കിൽ (err != 0)
+			നിർത്തുക;
 	}
 	ssh_signal(SIGCHLD, SIG_DFL);
-	free(remote_path);
-	free(startdir);
-	free(conn);
+	സ്വതന്ത്രം(remote_path);
+	സ്വതന്ത്രം(startdir);
+	സ്വതന്ത്രം(conn);
 
 #ifdef USE_LIBEDIT
-	if (hl != NULL)
+	എങ്കിൽ (hl != ശൂന്യ)
 		history_end(hl);
-	if (el != NULL)
+	എങ്കിൽ (el != ശൂന്യ)
 		el_end(el);
 #endif /* USE_LIBEDIT */
 
 	/* err == 1 signifies normal "quit" exit */
-	return (err >= 0 ? 0 : -1);
+	തിരികെ (err >= 0 ? 0 : -1);
 }
 
-static void
-connect_to_server(char *path, char **args, int *in, int *out)
+സ്ഥിതം ശൂന്യം
+connect_to_server(അക്ഷരം *path, അക്ഷരം **args, പൂർണ്ണസംഖ്യ *in, പൂർണ്ണസംഖ്യ *out)
 {
-	int c_in, c_out;
+	പൂർണ്ണസംഖ്യ c_in, c_out;
 #ifdef USE_PIPES
-	int pin[2], pout[2];
+	പൂർണ്ണസംഖ്യ pin[2], pout[2];
 
-	if ((pipe(pin) == -1) || (pipe(pout) == -1))
+	എങ്കിൽ ((pipe(pin) == -1) || (pipe(pout) == -1))
 		fatal("pipe: %s", strerror(errno));
 	*in = pin[0];
 	*out = pout[1];
 	c_in = pout[0];
 	c_out = pin[1];
-#else /* USE_PIPES */
-	int inout[2];
+#അല്ലെങ്കിൽ /* USE_PIPES */
+	പൂർണ്ണസംഖ്യ inout[2];
 
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1)
+	എങ്കിൽ (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1)
 		fatal("socketpair: %s", strerror(errno));
 	*in = *out = inout[0];
 	c_in = c_out = inout[1];
@@ -2452,10 +2452,10 @@ connect_to_server(char *path, char **args, int *in, int *out)
 	FD_CLOSEONEXEC(*in);
 	FD_CLOSEONEXEC(*out);
 
-	if ((sshpid = fork()) == -1)
+	എങ്കിൽ ((sshpid = fork()) == -1)
 		fatal("fork: %s", strerror(errno));
-	else if (sshpid == 0) {
-		if ((dup2(c_in, STDIN_FILENO) == -1) ||
+	അല്ലെങ്കിൽ എങ്കിൽ (sshpid == 0) {
+		എങ്കിൽ ((dup2(c_in, STDIN_FILENO) == -1) ||
 		    (dup2(c_out, STDOUT_FILENO) == -1)) {
 			fprintf(stderr, "dup2: %s\n", strerror(errno));
 			_exit(1);
@@ -2490,10 +2490,10 @@ connect_to_server(char *path, char **args, int *in, int *out)
 	close(c_out);
 }
 
-static void
-usage(void)
+സ്ഥിതം ശൂന്യം
+usage(ശൂന്യം)
 {
-	extern char *__progname;
+	ബാഹ്യ അക്ഷരം *__progname;
 
 	fprintf(stderr,
 	    "usage: %s [-46AaCfNpqrv] [-B buffer_size] [-b batchfile] [-c cipher]\n"
@@ -2505,22 +2505,22 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	int r, in, out, ch, err, tmp, port = -1, noisy = 0;
-	char *host = NULL, *user, *cp, **cpp, *file2 = NULL;
-	int debug_level = 0;
-	char *file1 = NULL, *sftp_server = NULL;
-	char *ssh_program = _PATH_SSH_PROGRAM, *sftp_direct = NULL;
-	const char *errstr;
+	പൂർണ്ണസംഖ്യ r, in, out, ch, err, tmp, port = -1, noisy = 0;
+	അക്ഷരം *host = ശൂന്യ, *user, *cp, **cpp, *file2 = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ debug_level = 0;
+	അക്ഷരം *file1 = ശൂന്യ, *sftp_server = ശൂന്യ;
+	അക്ഷരം *ssh_program = _PATH_SSH_PROGRAM, *sftp_direct = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *errstr;
 	LogLevel ll = SYSLOG_LEVEL_INFO;
 	arglist args;
-	extern int optind;
-	extern char *optarg;
-	struct sftp_conn *conn;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ optind;
+	ബാഹ്യ അക്ഷരം *optarg;
+	ഘടന sftp_conn *conn;
 	size_t copy_buffer_len = 0;
-	size_t num_requests = 0;
+	size_t അക്കം_requests = 0;
 	long long llv, limit_kbps = 0;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -2528,8 +2528,8 @@ main(int argc, char **argv)
 	msetlocale();
 
 	__progname = ssh_get_progname(argv[0]);
-	memset(&args, '\0', sizeof(args));
-	args.list = NULL;
+	memset(&args, '\0', വലുപ്പം(args));
+	args.list = ശൂന്യ;
 	addargs(&args, "%s", ssh_program);
 	addargs(&args, "-oForwardX11 no");
 	addargs(&args, "-oPermitLocalCommand no");
@@ -2539,131 +2539,131 @@ main(int argc, char **argv)
 	ll = SYSLOG_LEVEL_INFO;
 	infile = stdin;
 
-	while ((ch = getopt(argc, argv,
+	ആകുമ്പോൾ ((ch = getopt(argc, argv,
 	    "1246AafhNpqrvCc:D:i:l:o:s:S:b:B:F:J:P:R:X:")) != -1) {
-		switch (ch) {
+		തിരഞ്ഞെടുപ്പ് (ch) {
 		/* Passed through to ssh(1) */
-		case 'A':
-		case '4':
-		case '6':
-		case 'C':
+		അവസ്ഥ 'A':
+		അവസ്ഥ '4':
+		അവസ്ഥ '6':
+		അവസ്ഥ 'C':
 			addargs(&args, "-%c", ch);
-			break;
+			നിർത്തുക;
 		/* Passed through to ssh(1) with argument */
-		case 'F':
-		case 'J':
-		case 'c':
-		case 'i':
-		case 'o':
+		അവസ്ഥ 'F':
+		അവസ്ഥ 'J':
+		അവസ്ഥ 'c':
+		അവസ്ഥ 'i':
+		അവസ്ഥ 'o':
 			addargs(&args, "-%c", ch);
 			addargs(&args, "%s", optarg);
-			break;
-		case 'q':
+			നിർത്തുക;
+		അവസ്ഥ 'q':
 			ll = SYSLOG_LEVEL_ERROR;
 			quiet = 1;
 			showprogress = 0;
 			addargs(&args, "-%c", ch);
-			break;
-		case 'P':
+			നിർത്തുക;
+		അവസ്ഥ 'P':
 			port = a2port(optarg);
-			if (port <= 0)
+			എങ്കിൽ (port <= 0)
 				fatal("Bad port \"%s\"\n", optarg);
-			break;
-		case 'v':
-			if (debug_level < 3) {
+			നിർത്തുക;
+		അവസ്ഥ 'v':
+			എങ്കിൽ (debug_level < 3) {
 				addargs(&args, "-v");
 				ll = SYSLOG_LEVEL_DEBUG1 + debug_level;
 			}
 			debug_level++;
-			break;
-		case '1':
+			നിർത്തുക;
+		അവസ്ഥ '1':
 			fatal("SSH protocol v.1 is no longer supported");
-			break;
-		case '2':
+			നിർത്തുക;
+		അവസ്ഥ '2':
 			/* accept silently */
-			break;
-		case 'a':
+			നിർത്തുക;
+		അവസ്ഥ 'a':
 			global_aflag = 1;
-			break;
-		case 'B':
+			നിർത്തുക;
+		അവസ്ഥ 'B':
 			copy_buffer_len = strtol(optarg, &cp, 10);
-			if (copy_buffer_len == 0 || *cp != '\0')
+			എങ്കിൽ (copy_buffer_len == 0 || *cp != '\0')
 				fatal("Invalid buffer size \"%s\"", optarg);
-			break;
-		case 'b':
-			if (batchmode)
+			നിർത്തുക;
+		അവസ്ഥ 'b':
+			എങ്കിൽ (batchmode)
 				fatal("Batch file already specified.");
 
 			/* Allow "-" as stdin */
-			if (strcmp(optarg, "-") != 0 &&
-			    (infile = fopen(optarg, "r")) == NULL)
+			എങ്കിൽ (strcmp(optarg, "-") != 0 &&
+			    (infile = fopen(optarg, "r")) == ശൂന്യ)
 				fatal("%s (%s).", strerror(errno), optarg);
 			showprogress = 0;
 			quiet = batchmode = 1;
 			addargs(&args, "-obatchmode yes");
-			break;
-		case 'f':
+			നിർത്തുക;
+		അവസ്ഥ 'f':
 			global_fflag = 1;
-			break;
-		case 'N':
+			നിർത്തുക;
+		അവസ്ഥ 'N':
 			noisy = 1; /* Used to clear quiet mode after getopt */
-			break;
-		case 'p':
+			നിർത്തുക;
+		അവസ്ഥ 'p':
 			global_pflag = 1;
-			break;
-		case 'D':
+			നിർത്തുക;
+		അവസ്ഥ 'D':
 			sftp_direct = optarg;
-			break;
-		case 'l':
+			നിർത്തുക;
+		അവസ്ഥ 'l':
 			limit_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
 			    &errstr);
-			if (errstr != NULL)
+			എങ്കിൽ (errstr != ശൂന്യ)
 				usage();
 			limit_kbps *= 1024; /* kbps */
-			break;
-		case 'r':
+			നിർത്തുക;
+		അവസ്ഥ 'r':
 			global_rflag = 1;
-			break;
-		case 'R':
-			num_requests = strtol(optarg, &cp, 10);
-			if (num_requests == 0 || *cp != '\0')
+			നിർത്തുക;
+		അവസ്ഥ 'R':
+			അക്കം_requests = strtol(optarg, &cp, 10);
+			എങ്കിൽ (അക്കം_requests == 0 || *cp != '\0')
 				fatal("Invalid number of requests \"%s\"",
 				    optarg);
-			break;
-		case 's':
+			നിർത്തുക;
+		അവസ്ഥ 's':
 			sftp_server = optarg;
-			break;
-		case 'S':
+			നിർത്തുക;
+		അവസ്ഥ 'S':
 			ssh_program = optarg;
 			replacearg(&args, 0, "%s", ssh_program);
-			break;
-		case 'X':
+			നിർത്തുക;
+		അവസ്ഥ 'X':
 			/* Please keep in sync with ssh.c -X */
-			if (strncmp(optarg, "buffer=", 7) == 0) {
+			എങ്കിൽ (strncmp(optarg, "buffer=", 7) == 0) {
 				r = scan_scaled(optarg + 7, &llv);
-				if (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
+				എങ്കിൽ (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
 					r = -1;
 					errno = EINVAL;
 				}
-				if (r == -1) {
+				എങ്കിൽ (r == -1) {
 					fatal("Invalid buffer size \"%s\": %s",
 					     optarg + 7, strerror(errno));
 				}
 				copy_buffer_len = (size_t)llv;
-			} else if (strncmp(optarg, "nrequests=", 10) == 0) {
+			} അല്ലെങ്കിൽ എങ്കിൽ (strncmp(optarg, "nrequests=", 10) == 0) {
 				llv = strtonum(optarg + 10, 1, 256 * 1024,
 				    &errstr);
-				if (errstr != NULL) {
+				എങ്കിൽ (errstr != ശൂന്യ) {
 					fatal("Invalid number of requests "
 					    "\"%s\": %s", optarg + 10, errstr);
 				}
-				num_requests = (size_t)llv;
-			} else {
+				അക്കം_requests = (size_t)llv;
+			} അല്ലെങ്കിൽ {
 				fatal("Invalid -X option");
 			}
-			break;
-		case 'h':
-		default:
+			നിർത്തുക;
+		അവസ്ഥ 'h':
+		സ്ഥിരസ്ഥിതി:
 			usage();
 		}
 	}
@@ -2671,100 +2671,100 @@ main(int argc, char **argv)
 	/* Do this last because we want the user to be able to override it */
 	addargs(&args, "-oForwardAgent no");
 
-	if (!isatty(STDERR_FILENO))
+	എങ്കിൽ (!isatty(STDERR_FILENO))
 		showprogress = 0;
 
-	if (noisy)
+	എങ്കിൽ (noisy)
 		quiet = 0;
 
 	log_init(argv[0], ll, SYSLOG_FACILITY_USER, 1);
 
-	if (sftp_direct == NULL) {
-		if (optind == argc || argc > (optind + 2))
+	എങ്കിൽ (sftp_direct == ശൂന്യ) {
+		എങ്കിൽ (optind == argc || argc > (optind + 2))
 			usage();
 		argv += optind;
 
-		switch (parse_uri("sftp", *argv, &user, &host, &tmp, &file1)) {
-		case -1:
+		തിരഞ്ഞെടുപ്പ് (parse_uri("sftp", *argv, &user, &host, &tmp, &file1)) {
+		അവസ്ഥ -1:
 			usage();
-			break;
-		case 0:
-			if (tmp != -1)
+			നിർത്തുക;
+		അവസ്ഥ 0:
+			എങ്കിൽ (tmp != -1)
 				port = tmp;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			/* Try with user, host and path. */
-			if (parse_user_host_path(*argv, &user, &host,
+			എങ്കിൽ (parse_user_host_path(*argv, &user, &host,
 			    &file1) == 0)
-				break;
+				നിർത്തുക;
 			/* Try with user and host. */
-			if (parse_user_host_port(*argv, &user, &host, NULL)
+			എങ്കിൽ (parse_user_host_port(*argv, &user, &host, ശൂന്യ)
 			    == 0)
-				break;
+				നിർത്തുക;
 			/* Treat as a plain hostname. */
 			host = xstrdup(*argv);
 			host = cleanhostname(host);
-			break;
+			നിർത്തുക;
 		}
 		file2 = *(argv + 1);
 
-		if (!*host) {
+		എങ്കിൽ (!*host) {
 			fprintf(stderr, "Missing hostname\n");
 			usage();
 		}
 
-		if (port != -1)
+		എങ്കിൽ (port != -1)
 			addargs(&args, "-oPort %d", port);
-		if (user != NULL) {
+		എങ്കിൽ (user != ശൂന്യ) {
 			addargs(&args, "-l");
 			addargs(&args, "%s", user);
 		}
 
 		/* no subsystem if the server-spec contains a '/' */
-		if (sftp_server == NULL || strchr(sftp_server, '/') == NULL)
+		എങ്കിൽ (sftp_server == ശൂന്യ || strchr(sftp_server, '/') == ശൂന്യ)
 			addargs(&args, "-s");
 
 		addargs(&args, "--");
 		addargs(&args, "%s", host);
-		addargs(&args, "%s", (sftp_server != NULL ?
+		addargs(&args, "%s", (sftp_server != ശൂന്യ ?
 		    sftp_server : "sftp"));
 
 		connect_to_server(ssh_program, args.list, &in, &out);
-	} else {
-		if ((r = argv_split(sftp_direct, &tmp, &cpp, 1)) != 0)
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ ((r = argv_split(sftp_direct, &tmp, &cpp, 1)) != 0)
 			fatal_r(r, "Parse -D arguments");
-		if (cpp[0] == NULL)
+		എങ്കിൽ (cpp[0] == ശൂന്യ)
 			fatal("No sftp server specified via -D");
 		connect_to_server(cpp[0], cpp, &in, &out);
 		argv_free(cpp, tmp);
 	}
 	freeargs(&args);
 
-	conn = sftp_init(in, out, copy_buffer_len, num_requests, limit_kbps);
-	if (conn == NULL)
+	conn = sftp_init(in, out, copy_buffer_len, അക്കം_requests, limit_kbps);
+	എങ്കിൽ (conn == ശൂന്യ)
 		fatal("Couldn't initialise connection to server");
 
-	if (!quiet) {
-		if (sftp_direct == NULL)
+	എങ്കിൽ (!quiet) {
+		എങ്കിൽ (sftp_direct == ശൂന്യ)
 			fprintf(stderr, "Connected to %s.\n", host);
-		else
+		അല്ലെങ്കിൽ
 			fprintf(stderr, "Attached to %s.\n", sftp_direct);
 	}
 
 	err = interactive_loop(conn, file1, file2);
 
-#if !defined(USE_PIPES)
+#എങ്കിൽ !defined(USE_PIPES)
 	shutdown(in, SHUT_RDWR);
 	shutdown(out, SHUT_RDWR);
 #endif
 
 	close(in);
 	close(out);
-	if (batchmode)
+	എങ്കിൽ (batchmode)
 		fclose(infile);
 
-	while (waitpid(sshpid, NULL, 0) == -1 && sshpid > 1)
-		if (errno != EINTR)
+	ആകുമ്പോൾ (waitpid(sshpid, ശൂന്യ, 0) == -1 && sshpid > 1)
+		എങ്കിൽ (errno != EINTR)
 			fatal("Couldn't wait for ssh process: %s",
 			    strerror(errno));
 

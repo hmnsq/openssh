@@ -28,53 +28,53 @@
 #ifndef AUTH_H
 #define AUTH_H
 
-#include <signal.h>
-#include <stdio.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <stdio.h>
 
 #ifdef HAVE_LOGIN_CAP
-#include <login_cap.h>
+#അന്തര്ഭാവ <login_cap.h>
 #endif
 #ifdef BSD_AUTH
-#include <bsd_auth.h>
+#അന്തര്ഭാവ <bsd_auth.h>
 #endif
 #ifdef KRB5
-#include <krb5.h>
+#അന്തര്ഭാവ <krb5.h>
 #endif
 
-struct passwd;
-struct ssh;
-struct sshbuf;
-struct sshkey;
-struct sshkey_cert;
-struct sshauthopt;
+ഘടന passwd;
+ഘടന ssh;
+ഘടന sshbuf;
+ഘടന sshkey;
+ഘടന sshkey_cert;
+ഘടന sshauthopt;
 
-typedef struct Authctxt Authctxt;
-typedef struct Authmethod Authmethod;
-typedef struct KbdintDevice KbdintDevice;
+തരനിർവചനം ഘടന Authctxt Authctxt;
+തരനിർവചനം ഘടന Authmethod Authmethod;
+തരനിർവചനം ഘടന KbdintDevice KbdintDevice;
 
-struct Authctxt {
+ഘടന Authctxt {
 	sig_atomic_t	 success;
-	int		 authenticated;	/* authenticated and alarms cancelled */
-	int		 postponed;	/* authentication needs another step */
-	int		 valid;		/* user exists and is allowed to login */
-	int		 attempt;
-	int		 failures;
-	int		 pk_ok_failures;
-	int		 auth_failure_already_counted;
-	int		 server_caused_failure;
-	int		 force_pwchange;
-	char		*user;		/* username sent by the client */
-	char		*service;
-	struct passwd	*pw;		/* set if 'valid' */
-	char		*style;
+	പൂർണ്ണസംഖ്യ		 authenticated;	/* authenticated and alarms cancelled */
+	പൂർണ്ണസംഖ്യ		 postponed;	/* authentication needs another step */
+	പൂർണ്ണസംഖ്യ		 valid;		/* user exists and is allowed to login */
+	പൂർണ്ണസംഖ്യ		 attempt;
+	പൂർണ്ണസംഖ്യ		 failures;
+	പൂർണ്ണസംഖ്യ		 pk_ok_failures;
+	പൂർണ്ണസംഖ്യ		 auth_failure_already_counted;
+	പൂർണ്ണസംഖ്യ		 server_caused_failure;
+	പൂർണ്ണസംഖ്യ		 force_pwchange;
+	അക്ഷരം		*user;		/* username sent by the client */
+	അക്ഷരം		*service;
+	ഘടന passwd	*pw;		/* set if 'valid' */
+	അക്ഷരം		*style;
 
 	/* Method lists for multiple authentication */
-	char		**auth_methods;	/* modified from server config */
-	u_int		 num_auth_methods;
+	അക്ഷരം		**auth_methods;	/* modified from server config */
+	u_int		 അക്കം_auth_methods;
 
 	/* Authentication method-specific data */
-	void		*methoddata;
-	void		*kbdintctxt;
+	ശൂന്യം		*methoddata;
+	ശൂന്യം		*kbdintctxt;
 #ifdef BSD_AUTH
 	auth_session_t	*as;
 #endif
@@ -82,21 +82,21 @@ struct Authctxt {
 	krb5_context	 krb5_ctx;
 	krb5_ccache	 krb5_fwd_ccache;
 	krb5_principal	 krb5_user;
-	char		*krb5_ticket_file;
-	char		*krb5_ccname;
+	അക്ഷരം		*krb5_ticket_file;
+	അക്ഷരം		*krb5_ccname;
 #endif
-	struct sshbuf	*loginmsg;
+	ഘടന sshbuf	*loginmsg;
 
 	/* Authentication keys already used; these will be refused henceforth */
-	struct sshkey	**prev_keys;
-	u_int		 nprev_keys;
+	ഘടന sshkey	**prev_താക്കോലുകൾ;
+	u_int		 nprev_താക്കോലുകൾ;
 
 	/* Last used key and ancillary information from active auth method */
-	struct sshkey	*auth_method_key;
-	char		*auth_method_info;
+	ഘടന sshkey	*auth_method_താക്കോൽ;
+	അക്ഷരം		*auth_method_info;
 
 	/* Information exposed to session */
-	struct sshbuf	*session_info;	/* Auth info for environment */
+	ഘടന sshbuf	*session_info;	/* Auth info for environment */
 };
 
 /*
@@ -106,15 +106,15 @@ struct Authctxt {
  * the client.
  */
 
-struct authmethod_cfg {
-	const char *name;
-	const char *synonym;
-	int *enabled;
+ഘടന authmethod_cfg {
+	സ്ഥിരം അക്ഷരം *name;
+	സ്ഥിരം അക്ഷരം *synonym;
+	പൂർണ്ണസംഖ്യ *enabled;
 };
 
-struct Authmethod {
-	struct authmethod_cfg *cfg;
-	int	(*userauth)(struct ssh *, const char *);
+ഘടന Authmethod {
+	ഘടന authmethod_cfg *cfg;
+	പൂർണ്ണസംഖ്യ	(*userauth)(ഘടന ssh *, സ്ഥിരം അക്ഷരം *);
 };
 
 /*
@@ -124,125 +124,125 @@ struct Authmethod {
  * respond	returns: 0 - success, 1 - need further interaction,
  *		otherwise - failure
  */
-struct KbdintDevice
+ഘടന KbdintDevice
 {
-	const char *name;
-	void*	(*init_ctx)(Authctxt*);
-	int	(*query)(void *ctx, char **name, char **infotxt,
-		    u_int *numprompts, char ***prompts, u_int **echo_on);
-	int	(*respond)(void *ctx, u_int numresp, char **responses);
-	void	(*free_ctx)(void *ctx);
+	സ്ഥിരം അക്ഷരം *name;
+	ശൂന്യം*	(*init_ctx)(Authctxt*);
+	പൂർണ്ണസംഖ്യ	(*query)(ശൂന്യം *ctx, അക്ഷരം **name, അക്ഷരം **infotxt,
+		    u_int *numprompts, അക്ഷരം ***prompts, u_int **echo_on);
+	പൂർണ്ണസംഖ്യ	(*respond)(ശൂന്യം *ctx, u_int numresp, അക്ഷരം **responses);
+	ശൂന്യം	(*free_ctx)(ശൂന്യം *ctx);
 };
 
-int
-auth_rhosts2(struct passwd *, const char *, const char *, const char *);
+പൂർണ്ണസംഖ്യ
+auth_rhosts2(ഘടന passwd *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 
-int      auth_password(struct ssh *, const char *);
+പൂർണ്ണസംഖ്യ      auth_password(ഘടന ssh *, സ്ഥിരം അക്ഷരം *);
 
-int	 hostbased_key_allowed(struct ssh *, struct passwd *,
-	    const char *, char *, struct sshkey *);
-int	 user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *,
-    int, struct sshauthopt **);
-int	 auth2_key_already_used(Authctxt *, const struct sshkey *);
+പൂർണ്ണസംഖ്യ	 hostbased_താക്കോൽ_allowed(ഘടന ssh *, ഘടന passwd *,
+	    സ്ഥിരം അക്ഷരം *, അക്ഷരം *, ഘടന sshkey *);
+പൂർണ്ണസംഖ്യ	 user_താക്കോൽ_allowed(ഘടന ssh *ssh, ഘടന passwd *, ഘടന sshkey *,
+    പൂർണ്ണസംഖ്യ, ഘടന sshauthopt **);
+പൂർണ്ണസംഖ്യ	 auth2_താക്കോൽ_already_used(Authctxt *, സ്ഥിരം ഘടന sshkey *);
 
 /*
  * Handling auth method-specific information for logging and prevention
  * of key reuse during multiple authentication.
  */
-void	 auth2_authctxt_reset_info(Authctxt *);
-void	 auth2_record_key(Authctxt *, int, const struct sshkey *);
-void	 auth2_record_info(Authctxt *authctxt, const char *, ...)
+ശൂന്യം	 auth2_authctxt_reset_info(Authctxt *);
+ശൂന്യം	 auth2_record_താക്കോൽ(Authctxt *, പൂർണ്ണസംഖ്യ, സ്ഥിരം ഘടന sshkey *);
+ശൂന്യം	 auth2_record_info(Authctxt *authctxt, സ്ഥിരം അക്ഷരം *, ...)
 	    __attribute__((__format__ (printf, 2, 3)))
 	    __attribute__((__nonnull__ (2)));
-void	 auth2_update_session_info(Authctxt *, const char *, const char *);
+ശൂന്യം	 auth2_update_session_info(Authctxt *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 
 #ifdef KRB5
-int	auth_krb5_password(Authctxt *authctxt, const char *password);
-void	krb5_cleanup_proc(Authctxt *authctxt);
+പൂർണ്ണസംഖ്യ	auth_krb5_password(Authctxt *authctxt, സ്ഥിരം അക്ഷരം *password);
+ശൂന്യം	krb5_cleanup_proc(Authctxt *authctxt);
 #endif /* KRB5 */
 
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-#include <shadow.h>
-int auth_shadow_acctexpired(struct spwd *);
-int auth_shadow_pwexpired(Authctxt *);
+#എങ്കിൽ defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+#അന്തര്ഭാവ <shadow.h>
+പൂർണ്ണസംഖ്യ auth_shadow_acctexpired(ഘടന spwd *);
+പൂർണ്ണസംഖ്യ auth_shadow_pwexpired(Authctxt *);
 #endif
 
-#include "auth-pam.h"
-#include "audit.h"
-void remove_kbdint_device(const char *);
+#അന്തര്ഭാവ "auth-pam.h"
+#അന്തര്ഭാവ "audit.h"
+ശൂന്യം remove_kbdint_device(സ്ഥിരം അക്ഷരം *);
 
-void	do_authentication2(struct ssh *);
+ശൂന്യം	do_authentication2(ഘടന ssh *);
 
-void	auth_log(struct ssh *, int, int, const char *, const char *);
-void	auth_maxtries_exceeded(struct ssh *) __attribute__((noreturn));
-void	userauth_finish(struct ssh *, int, const char *, const char *);
-int	auth_root_allowed(struct ssh *, const char *);
-void	auth_failure_delay(Authctxt *, double);
+ശൂന്യം	auth_log(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
+ശൂന്യം	auth_maxtries_exceeded(ഘടന ssh *) __attribute__((noreturn));
+ശൂന്യം	userauth_finish(ഘടന ssh *, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	auth_വേര്_allowed(ഘടന ssh *, സ്ഥിരം അക്ഷരം *);
+ശൂന്യം	auth_failure_delay(Authctxt *, ഇരട്ട);
 
-char	*auth2_read_banner(void);
-int	 auth2_methods_valid(const char *, int);
-int	 auth2_update_methods_lists(Authctxt *, const char *, const char *);
-int	 auth2_setup_methods_lists(Authctxt *);
-int	 auth2_method_allowed(Authctxt *, const char *, const char *);
+അക്ഷരം	*auth2_read_banner(ശൂന്യം);
+പൂർണ്ണസംഖ്യ	 auth2_methods_valid(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 auth2_update_methods_lists(Authctxt *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 auth2_setup_methods_lists(Authctxt *);
+പൂർണ്ണസംഖ്യ	 auth2_method_allowed(Authctxt *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 
-int	auth2_challenge(struct ssh *, char *);
-void	auth2_challenge_stop(struct ssh *);
-int	bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int	bsdauth_respond(void *, u_int, char **);
+പൂർണ്ണസംഖ്യ	auth2_challenge(ഘടന ssh *, അക്ഷരം *);
+ശൂന്യം	auth2_challenge_stop(ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	bsdauth_query(ശൂന്യം *, അക്ഷരം **, അക്ഷരം **, u_int *, അക്ഷരം ***, u_int **);
+പൂർണ്ണസംഖ്യ	bsdauth_respond(ശൂന്യം *, u_int, അക്ഷരം **);
 
-int	allowed_user(struct ssh *, struct passwd *);
-struct passwd * getpwnamallow(struct ssh *, const char *user);
+പൂർണ്ണസംഖ്യ	allowed_user(ഘടന ssh *, ഘടന passwd *);
+ഘടന passwd * getpwnamallow(ഘടന ssh *, സ്ഥിരം അക്ഷരം *user);
 
-char	*expand_authorized_keys(const char *, struct passwd *pw);
-char	*authorized_principals_file(struct passwd *);
+അക്ഷരം	*expand_authorized_താക്കോലുകൾ(സ്ഥിരം അക്ഷരം *, ഘടന passwd *pw);
+അക്ഷരം	*authorized_principals_file(ഘടന passwd *);
 
-int	 auth_key_is_revoked(struct sshkey *);
+പൂർണ്ണസംഖ്യ	 auth_താക്കോൽ_is_revoked(ഘടന sshkey *);
 
-const char	*auth_get_canonical_hostname(struct ssh *, int);
+സ്ഥിരം അക്ഷരം	*auth_get_canonical_hostname(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
 
 HostStatus
-check_key_in_hostfiles(struct passwd *, struct sshkey *, const char *,
-    const char *, const char *);
+check_താക്കോൽ_in_hostfiles(ഘടന passwd *, ഘടന sshkey *, സ്ഥിരം അക്ഷരം *,
+    സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 
 /* hostkey handling */
-struct sshkey	*get_hostkey_by_index(int);
-struct sshkey	*get_hostkey_public_by_index(int, struct ssh *);
-struct sshkey	*get_hostkey_public_by_type(int, int, struct ssh *);
-struct sshkey	*get_hostkey_private_by_type(int, int, struct ssh *);
-int	 get_hostkey_index(struct sshkey *, int, struct ssh *);
-int	 sshd_hostkey_sign(struct ssh *, struct sshkey *, struct sshkey *,
-    u_char **, size_t *, const u_char *, size_t, const char *);
+ഘടന sshkey	*get_hostkey_by_index(പൂർണ്ണസംഖ്യ);
+ഘടന sshkey	*get_hostkey_public_by_index(പൂർണ്ണസംഖ്യ, ഘടന ssh *);
+ഘടന sshkey	*get_hostkey_public_by_type(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, ഘടന ssh *);
+ഘടന sshkey	*get_hostkey_private_by_type(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 get_hostkey_index(ഘടന sshkey *, പൂർണ്ണസംഖ്യ, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 sshd_hostkey_sign(ഘടന ssh *, ഘടന sshkey *, ഘടന sshkey *,
+    u_char **, size_t *, സ്ഥിരം u_char *, size_t, സ്ഥിരം അക്ഷരം *);
 
 /* Key / cert options linkage to auth layer */
-int	 auth_activate_options(struct ssh *, struct sshauthopt *);
-void	 auth_restrict_session(struct ssh *);
-void	 auth_log_authopts(const char *, const struct sshauthopt *, int);
+പൂർണ്ണസംഖ്യ	 auth_activate_options(ഘടന ssh *, ഘടന sshauthopt *);
+ശൂന്യം	 auth_restrict_session(ഘടന ssh *);
+ശൂന്യം	 auth_log_authopts(സ്ഥിരം അക്ഷരം *, സ്ഥിരം ഘടന sshauthopt *, പൂർണ്ണസംഖ്യ);
 
 /* debug messages during authentication */
-void	 auth_debug_add(const char *fmt,...)
+ശൂന്യം	 auth_debug_add(സ്ഥിരം അക്ഷരം *fmt,...)
     __attribute__((format(printf, 1, 2)));
-void	 auth_debug_send(struct ssh *);
-void	 auth_debug_reset(void);
+ശൂന്യം	 auth_debug_send(ഘടന ssh *);
+ശൂന്യം	 auth_debug_reset(ശൂന്യം);
 
-struct passwd *fakepw(void);
+ഘടന passwd *fakepw(ശൂന്യം);
 
 /* auth2-pubkeyfile.c */
-int	 auth_authorise_keyopts(struct passwd *, struct sshauthopt *, int,
-    const char *, const char *, const char *);
-int	 auth_check_principals_line(char *, const struct sshkey_cert *,
-    const char *, struct sshauthopt **);
-int	 auth_process_principals(FILE *, const char *,
-    const struct sshkey_cert *, struct sshauthopt **);
-int	 auth_check_authkey_line(struct passwd *, struct sshkey *,
-    char *, const char *, const char *, const char *, struct sshauthopt **);
-int	 auth_check_authkeys_file(struct passwd *, FILE *, char *,
-    struct sshkey *, const char *, const char *, struct sshauthopt **);
-FILE	*auth_openkeyfile(const char *, struct passwd *, int);
-FILE	*auth_openprincipals(const char *, struct passwd *, int);
+പൂർണ്ണസംഖ്യ	 auth_authorise_keyopts(ഘടന passwd *, ഘടന sshauthopt *, പൂർണ്ണസംഖ്യ,
+    സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 auth_check_principals_വരി(അക്ഷരം *, സ്ഥിരം ഘടന sshkey_cert *,
+    സ്ഥിരം അക്ഷരം *, ഘടന sshauthopt **);
+പൂർണ്ണസംഖ്യ	 auth_process_principals(FILE *, സ്ഥിരം അക്ഷരം *,
+    സ്ഥിരം ഘടന sshkey_cert *, ഘടന sshauthopt **);
+പൂർണ്ണസംഖ്യ	 auth_check_authkey_വരി(ഘടന passwd *, ഘടന sshkey *,
+    അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, ഘടന sshauthopt **);
+പൂർണ്ണസംഖ്യ	 auth_check_authkeys_file(ഘടന passwd *, FILE *, അക്ഷരം *,
+    ഘടന sshkey *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, ഘടന sshauthopt **);
+FILE	*auth_openkeyfile(സ്ഥിരം അക്ഷരം *, ഘടന passwd *, പൂർണ്ണസംഖ്യ);
+FILE	*auth_openprincipals(സ്ഥിരം അക്ഷരം *, ഘടന passwd *, പൂർണ്ണസംഖ്യ);
 
-int	 sys_auth_passwd(struct ssh *, const char *);
+പൂർണ്ണസംഖ്യ	 sys_auth_passwd(ഘടന ssh *, സ്ഥിരം അക്ഷരം *);
 
-#if defined(KRB5) && !defined(HEIMDAL)
+#എങ്കിൽ defined(KRB5) && !defined(HEIMDAL)
 krb5_error_code ssh_krb5_cc_gen(krb5_context, krb5_ccache *);
 #endif
 

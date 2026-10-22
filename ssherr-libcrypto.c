@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "log.h"
+#അന്തര്ഭാവ "log.h"
 
 #ifdef WITH_OPENSSL
-#include <openssl/err.h>
+#അന്തര്ഭാവ <openssl/err.h>
 
-const char *
-ssherr_libcrypto(void)
+സ്ഥിരം അക്ഷരം *
+ssherr_libcrypto(ശൂന്യം)
 {
 	unsigned long e;
-	static char buf[512];
-	char msg[4096];
-	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	സ്ഥിതം അക്ഷരം buf[512];
+	അക്ഷരം സന്ദേശം[4096];
+	സ്ഥിരം അക്ഷരം *reason = ശൂന്യ, *file, *data;
+	പൂർണ്ണസംഖ്യ ln, fl;
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
-		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, ശൂന്യ);
+	ആകുമ്പോൾ ((e = ERR_get_error_വരി_data(&file, &ln, &data, &fl)) != 0) {
+		ERR_error_string_n(e, buf, വലുപ്പം(buf));
+		snprintf(സന്ദേശം, വലുപ്പം(സന്ദേശം), "%s:%s:%d:%s", buf, file, ln,
 		    (fl & ERR_TXT_STRING) ? data : "");
-		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
-			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
+		debug("libcrypto: '%s'", സന്ദേശം);
+		എങ്കിൽ ((reason = ERR_reason_error_string(e)) != ശൂന്യ)
+			snprintf(buf, വലുപ്പം(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	എങ്കിൽ (reason == ശൂന്യ)
+		തിരികെ ശൂന്യ;
+	തിരികെ buf;
 }
-#else
-const char *
-ssherr_libcrypto(void)
+#അല്ലെങ്കിൽ
+സ്ഥിരം അക്ഷരം *
+ssherr_libcrypto(ശൂന്യം)
 {
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 #endif

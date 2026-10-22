@@ -4,190 +4,190 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "../test_helper/test_helper.h"
+#അന്തര്ഭാവ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "xmalloc.h"
 
-void test_misc(void);
+ശൂന്യം test_misc(ശൂന്യം);
 
-static void
-test_chop(void)
+സ്ഥിതം ശൂന്യം
+test_chop(ശൂന്യം)
 {
-	char *s;
+	അക്ഷരം *s;
 
 	TEST_START("chop newline");
 	s = xstrdup("hello\n");
 	ASSERT_STRING_EQ(chop(s), "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("chop carriage return");
 	s = xstrdup("hello\r");
 	ASSERT_STRING_EQ(chop(s), "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("chop CRLF");
 	s = xstrdup("hello\r\n");
 	ASSERT_STRING_EQ(chop(s), "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("chop newline in middle");
 	s = xstrdup("he\nllo");
 	ASSERT_STRING_EQ(chop(s), "he");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("chop no newline");
 	s = xstrdup("hello");
 	ASSERT_STRING_EQ(chop(s), "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("chop empty string");
 	s = xstrdup("");
 	ASSERT_STRING_EQ(chop(s), "");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("chop only newline");
 	s = xstrdup("\n");
 	ASSERT_STRING_EQ(chop(s), "");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("chop only CR");
 	s = xstrdup("\r");
 	ASSERT_STRING_EQ(chop(s), "");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("chop only CRLF");
 	s = xstrdup("\r\n");
 	ASSERT_STRING_EQ(chop(s), "");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 }
 
-static void
-test_rtrim(void)
+സ്ഥിതം ശൂന്യം
+test_rtrim(ശൂന്യം)
 {
-	char *s;
+	അക്ഷരം *s;
 
 	TEST_START("rtrim trailing space");
 	s = xstrdup("hello  ");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("rtrim trailing tab");
 	s = xstrdup("hello\t\t");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("rtrim trailing mixed whitespace");
 	s = xstrdup("hello \t ");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("rtrim no trailing whitespace");
 	s = xstrdup("hello");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("rtrim whitespace in middle");
 	s = xstrdup("he llo");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "he llo");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("rtrim empty string");
 	s = xstrdup("");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("rtrim only whitespace");
 	s = xstrdup("   \t");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 }
 
-static void
-test_strprefix(void)
+സ്ഥിതം ശൂന്യം
+test_strprefix(ശൂന്യം)
 {
-	const char *s;
+	സ്ഥിരം അക്ഷരം *s;
 
 	TEST_START("strprefix basic match");
 	s = strprefix("hello world", "hello", 0);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, ശൂന്യ);
 	ASSERT_STRING_EQ(s, " world");
 	TEST_DONE();
 
 	TEST_START("strprefix no match");
 	s = strprefix("hello world", "world", 0);
-	ASSERT_PTR_EQ(s, NULL);
+	ASSERT_PTR_EQ(s, ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("strprefix full match");
 	s = strprefix("hello", "hello", 0);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, ശൂന്യ);
 	ASSERT_STRING_EQ(s, "");
 	TEST_DONE();
 
 	TEST_START("strprefix empty string");
 	s = strprefix("", "hello", 0);
-	ASSERT_PTR_EQ(s, NULL);
+	ASSERT_PTR_EQ(s, ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("strprefix empty prefix");
 	s = strprefix("hello", "", 0);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, ശൂന്യ);
 	ASSERT_STRING_EQ(s, "hello");
 	TEST_DONE();
 
 	TEST_START("strprefix case sensitive no match");
 	s = strprefix("Hello world", "hello", 0);
-	ASSERT_PTR_EQ(s, NULL);
+	ASSERT_PTR_EQ(s, ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("strprefix case insensitive match");
 	s = strprefix("Hello world", "hello", 1);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, ശൂന്യ);
 	ASSERT_STRING_EQ(s, " world");
 	TEST_DONE();
 
 	TEST_START("strprefix case insensitive full match");
 	s = strprefix("HELLO", "hello", 1);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, ശൂന്യ);
 	ASSERT_STRING_EQ(s, "");
 	TEST_DONE();
 }
 
-static void
-test_fmt_timeframe(void)
+സ്ഥിതം ശൂന്യം
+test_fmt_timeframe(ശൂന്യം)
 {
 	TEST_START("fmt_timeframe seconds");
 	ASSERT_STRING_EQ(fmt_timeframe(0), "00:00:00");
@@ -210,155 +210,155 @@ test_fmt_timeframe(void)
 	TEST_DONE();
 }
 
-static void
-test_arglist(void)
+സ്ഥിതം ശൂന്യം
+test_arglist(ശൂന്യം)
 {
 	arglist args;
 	u_int i;
 
-	memset(&args, 0, sizeof(args));
+	memset(&args, 0, വലുപ്പം(args));
 
 	TEST_START("addargs initial");
 	addargs(&args, "one");
-	ASSERT_U_INT_EQ(args.num, 1);
+	ASSERT_U_INT_EQ(args.അക്കം, 1);
 	ASSERT_U_INT_EQ(args.nalloc, 32);
-	ASSERT_PTR_NE(args.list, NULL);
+	ASSERT_PTR_NE(args.list, ശൂന്യ);
 	ASSERT_STRING_EQ(args.list[0], "one");
-	ASSERT_PTR_EQ(args.list[1], NULL);
+	ASSERT_PTR_EQ(args.list[1], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("addargs second");
 	addargs(&args, "two");
-	ASSERT_U_INT_EQ(args.num, 2);
+	ASSERT_U_INT_EQ(args.അക്കം, 2);
 	ASSERT_U_INT_EQ(args.nalloc, 32);
-	ASSERT_PTR_NE(args.list, NULL);
+	ASSERT_PTR_NE(args.list, ശൂന്യ);
 	ASSERT_STRING_EQ(args.list[0], "one");
 	ASSERT_STRING_EQ(args.list[1], "two");
-	ASSERT_PTR_EQ(args.list[2], NULL);
+	ASSERT_PTR_EQ(args.list[2], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("addargs with format");
 	addargs(&args, "three=%d", 3);
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.അക്കം, 3);
 	ASSERT_U_INT_EQ(args.nalloc, 32);
-	ASSERT_PTR_NE(args.list, NULL);
+	ASSERT_PTR_NE(args.list, ശൂന്യ);
 	ASSERT_STRING_EQ(args.list[0], "one");
 	ASSERT_STRING_EQ(args.list[1], "two");
 	ASSERT_STRING_EQ(args.list[2], "three=3");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("replacearg middle");
 	replacearg(&args, 1, "TWO!");
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.അക്കം, 3);
 	ASSERT_STRING_EQ(args.list[0], "one");
 	ASSERT_STRING_EQ(args.list[1], "TWO!");
 	ASSERT_STRING_EQ(args.list[2], "three=3");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("replacearg first");
 	replacearg(&args, 0, "ONE!");
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.അക്കം, 3);
 	ASSERT_STRING_EQ(args.list[0], "ONE!");
 	ASSERT_STRING_EQ(args.list[1], "TWO!");
 	ASSERT_STRING_EQ(args.list[2], "three=3");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("replacearg last");
 	replacearg(&args, 2, "THREE=3!");
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.അക്കം, 3);
 	ASSERT_STRING_EQ(args.list[0], "ONE!");
 	ASSERT_STRING_EQ(args.list[1], "TWO!");
 	ASSERT_STRING_EQ(args.list[2], "THREE=3!");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("replacearg with format");
 	replacearg(&args, 1, "two=%d", 2);
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.അക്കം, 3);
 	ASSERT_STRING_EQ(args.list[0], "ONE!");
 	ASSERT_STRING_EQ(args.list[1], "two=2");
 	ASSERT_STRING_EQ(args.list[2], "THREE=3!");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("addargs reallocation");
-	for (i = args.num; i < 33; i++)
+	വേണ്ടി (i = args.അക്കം; i < 33; i++)
 		addargs(&args, "pad-%d", i);
-	ASSERT_U_INT_EQ(args.num, 33);
+	ASSERT_U_INT_EQ(args.അക്കം, 33);
 	ASSERT_U_INT_GE(args.nalloc, 33);
 	ASSERT_STRING_EQ(args.list[32], "pad-32");
-	ASSERT_PTR_EQ(args.list[33], NULL);
+	ASSERT_PTR_EQ(args.list[33], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("freeargs");
 	freeargs(&args);
-	ASSERT_U_INT_EQ(args.num, 0);
+	ASSERT_U_INT_EQ(args.അക്കം, 0);
 	ASSERT_U_INT_EQ(args.nalloc, 0);
-	ASSERT_PTR_EQ(args.list, NULL);
+	ASSERT_PTR_EQ(args.list, ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("freeargs on NULL");
-	freeargs(NULL);
+	freeargs(ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("freeargs on empty");
-	memset(&args, 0, sizeof(args));
+	memset(&args, 0, വലുപ്പം(args));
 	freeargs(&args);
-	ASSERT_U_INT_EQ(args.num, 0);
+	ASSERT_U_INT_EQ(args.അക്കം, 0);
 	ASSERT_U_INT_EQ(args.nalloc, 0);
-	ASSERT_PTR_EQ(args.list, NULL);
+	ASSERT_PTR_EQ(args.list, ശൂന്യ);
 	TEST_DONE();
 }
 
-static void
-test_tohex(void)
+സ്ഥിതം ശൂന്യം
+test_tohex(ശൂന്യം)
 {
-	char *hex;
+	അക്ഷരം *hex;
 
 	TEST_START("tohex simple");
 	hex = tohex("foo", 3);
 	ASSERT_STRING_EQ(hex, "666f6f");
-	free(hex);
+	സ്വതന്ത്രം(hex);
 	TEST_DONE();
 
 	TEST_START("tohex with null");
 	hex = tohex("a\0b", 3);
 	ASSERT_STRING_EQ(hex, "610062");
-	free(hex);
+	സ്വതന്ത്രം(hex);
 	TEST_DONE();
 
 	TEST_START("tohex empty");
 	hex = tohex("", 0);
 	ASSERT_STRING_EQ(hex, "");
-	free(hex);
+	സ്വതന്ത്രം(hex);
 	TEST_DONE();
 }
 
-static void
-test_lowercase(void)
+സ്ഥിതം ശൂന്യം
+test_lowercase(ശൂന്യം)
 {
-	char *s;
+	അക്ഷരം *s;
 
 	TEST_START("lowercase mixed");
 	s = xstrdup("HeLlO WoRlD 123");
 	lowercase(s);
 	ASSERT_STRING_EQ(s, "hello world 123");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("lowercase empty");
 	s = xstrdup("");
 	lowercase(s);
 	ASSERT_STRING_EQ(s, "");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 }
 
-static void
-test_path_absolute(void)
+സ്ഥിതം ശൂന്യം
+test_path_absolute(ശൂന്യം)
 {
 	TEST_START("path_absolute absolute");
 	ASSERT_INT_EQ(path_absolute("/foo/bar"), 1);
@@ -373,33 +373,33 @@ test_path_absolute(void)
 	TEST_DONE();
 }
 
-static void
-test_stringlist(void)
+സ്ഥിതം ശൂന്യം
+test_stringlist(ശൂന്യം)
 {
-	char **list = NULL;
+	അക്ഷരം **list = ശൂന്യ;
 
 	TEST_START("stringlist_append initial");
 	stringlist_append(&list, "one");
-	ASSERT_PTR_NE(list, NULL);
+	ASSERT_PTR_NE(list, ശൂന്യ);
 	ASSERT_STRING_EQ(list[0], "one");
-	ASSERT_PTR_EQ(list[1], NULL);
+	ASSERT_PTR_EQ(list[1], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("stringlist_append second");
 	stringlist_append(&list, "two");
-	ASSERT_PTR_NE(list, NULL);
+	ASSERT_PTR_NE(list, ശൂന്യ);
 	ASSERT_STRING_EQ(list[0], "one");
 	ASSERT_STRING_EQ(list[1], "two");
-	ASSERT_PTR_EQ(list[2], NULL);
+	ASSERT_PTR_EQ(list[2], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("stringlist_append third");
 	stringlist_append(&list, "three");
-	ASSERT_PTR_NE(list, NULL);
+	ASSERT_PTR_NE(list, ശൂന്യ);
 	ASSERT_STRING_EQ(list[0], "one");
 	ASSERT_STRING_EQ(list[1], "two");
 	ASSERT_STRING_EQ(list[2], "three");
-	ASSERT_PTR_EQ(list[3], NULL);
+	ASSERT_PTR_EQ(list[3], ശൂന്യ);
 	TEST_DONE();
 
 	TEST_START("stringlist_free");
@@ -407,60 +407,60 @@ test_stringlist(void)
 	TEST_DONE();
 
 	TEST_START("stringlist_free NULL");
-	stringlist_free(NULL);
+	stringlist_free(ശൂന്യ);
 	TEST_DONE();
 }
 
-static void
-test_skip_space(void)
+സ്ഥിതം ശൂന്യം
+test_skip_space(ശൂന്യം)
 {
-	char *s, *p;
+	അക്ഷരം *s, *p;
 
 	TEST_START("skip_space leading spaces");
 	s = p = xstrdup("  hello");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("skip_space leading tabs");
 	s = p = xstrdup("\t\thello");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("skip_space leading mixed whitespace");
 	s = p = xstrdup(" \t hello");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("skip_space no leading whitespace");
 	s = p = xstrdup("hello");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "hello");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("skip_space empty string");
 	s = p = xstrdup("");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 
 	TEST_START("skip_space only whitespace");
 	s = p = xstrdup(" \t ");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "");
-	free(s);
+	സ്വതന്ത്രം(s);
 	TEST_DONE();
 }
 
-void
-test_misc(void)
+ശൂന്യം
+test_misc(ശൂന്യം)
 {
 	test_chop();
 	test_rtrim();

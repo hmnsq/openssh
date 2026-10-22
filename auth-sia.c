@@ -22,87 +22,87 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifdef HAVE_OSF_SIA
-#include <sia.h>
-#include <siad.h>
-#include <pwd.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <sys/resource.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <string.h>
+#അന്തര്ഭാവ <sia.h>
+#അന്തര്ഭാവ <siad.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <setjmp.h>
+#അന്തര്ഭാവ <sys/resource.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "ssh.h"
-#include "ssh_api.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-sia.h"
-#include "log.h"
-#include "servconf.h"
-#include "canohost.h"
-#include "uidswap.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "ssh_api.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "auth.h"
+#അന്തര്ഭാവ "auth-sia.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "servconf.h"
+#അന്തര്ഭാവ "canohost.h"
+#അന്തര്ഭാവ "uidswap.h"
 
-extern ServerOptions options;
-extern int saved_argc;
-extern char **saved_argv;
+ബാഹ്യ ServerOptions options;
+ബാഹ്യ പൂർണ്ണസംഖ്യ saved_argc;
+ബാഹ്യ അക്ഷരം **saved_argv;
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *pass)
+പൂർണ്ണസംഖ്യ
+sys_auth_passwd(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *pass)
 {
-	int ret;
-	SIAENTITY *ent = NULL;
-	const char *host;
+	പൂർണ്ണസംഖ്യ ret;
+	SIAENTITY *ent = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *host;
 	Authctxt *authctxt = ssh->authctxt;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (!authctxt->user || pass == NULL || pass[0] == '\0')
-		return (0);
+	എങ്കിൽ (!authctxt->user || pass == ശൂന്യ || pass[0] == '\0')
+		തിരികെ (0);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
-	    NULL, 0, NULL) != SIASUCCESS)
-		return (0);
+	എങ്കിൽ (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
+	    ശൂന്യ, 0, ശൂന്യ) != SIASUCCESS)
+		തിരികെ (0);
 
-	if ((ret = sia_ses_authent(NULL, pass, ent)) != SIASUCCESS) {
+	എങ്കിൽ ((ret = sia_ses_authent(ശൂന്യ, pass, ent)) != SIASUCCESS) {
 		error("Couldn't authenticate %s from %s",
 		    authctxt->user, host);
-		if (ret & SIASTOP)
+		എങ്കിൽ (ret & SIASTOP)
 			sia_ses_release(&ent);
 
-		return (0);
+		തിരികെ (0);
 	}
 
 	sia_ses_release(&ent);
 
-	return (1);
+	തിരികെ (1);
 }
 
-void
-session_setup_sia(struct passwd *pw, char *tty)
+ശൂന്യം
+session_setup_sia(ഘടന passwd *pw, അക്ഷരം *tty)
 {
-	SIAENTITY *ent = NULL;
-	const char *host;
+	SIAENTITY *ent = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *host;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
-	    tty, 0, NULL) != SIASUCCESS)
+	എങ്കിൽ (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
+	    tty, 0, ശൂന്യ) != SIASUCCESS)
 		fatal("sia_ses_init failed");
 
-	if (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
+	എങ്കിൽ (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
 		sia_ses_release(&ent);
 		fatal("sia_make_entity_pwd failed");
 	}
 
 	ent->authtype = SIA_A_NONE;
-	if (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
+	എങ്കിൽ (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't establish session for %s from %s",
 		    pw->pw_name, host);
 
-	if (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
+	എങ്കിൽ (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't launch session for %s from %s",
 		    pw->pw_name, host);
 

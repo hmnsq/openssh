@@ -14,50 +14,50 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/stat.h>
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#define NUM_OPENS 10
+#define അക്കം_OPENS 10
 
-void
-fail(char *msg)
+ശൂന്യം
+fail(അക്ഷരം *സന്ദേശം)
 {
-	fprintf(stderr, "closefrom: %s\n", msg);
+	fprintf(stderr, "closefrom: %s\n", സന്ദേശം);
 	exit(1);
 }
 
-int
-main(void)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(ശൂന്യം)
 {
-	int i, max, fds[NUM_OPENS];
-	char buf[512];
+	പൂർണ്ണസംഖ്യ i, max, fds[അക്കം_OPENS];
+	അക്ഷരം buf[512];
 
-	for (i = 0; i < NUM_OPENS; i++)
-		if ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
+	വേണ്ടി (i = 0; i < അക്കം_OPENS; i++)
+		എങ്കിൽ ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
 			exit(0);	/* can't test */
 	max = i - 1;
 
 	/* should close last fd only */
 	closefrom(fds[max]);
-	if (close(fds[max]) != -1)
+	എങ്കിൽ (close(fds[max]) != -1)
 		fail("failed to close highest fd");
 
 	/* make sure we can still use remaining descriptors */
-	for (i = 0; i < max; i++)
-		if (read(fds[i], buf, sizeof(buf)) == -1)
+	വേണ്ടി (i = 0; i < max; i++)
+		എങ്കിൽ (പഠ(fds[i], buf, വലുപ്പം(buf)) == -1)
 			fail("closed descriptors it should not have");
 
 	/* should close all fds */
 	closefrom(fds[0]);
-	for (i = 0; i < NUM_OPENS; i++)
-		if (close(fds[i]) != -1)
+	വേണ്ടി (i = 0; i < അക്കം_OPENS; i++)
+		എങ്കിൽ (close(fds[i]) != -1)
 			fail("failed to close from lowest fd");
-	return 0;
+	തിരികെ 0;
 }

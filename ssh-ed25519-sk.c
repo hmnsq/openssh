@@ -17,144 +17,144 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #define SSHKEY_INTERNAL
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include "crypto_api.h"
+#അന്തര്ഭാവ "crypto_api.h"
 
-#include <string.h>
-#include <stdarg.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
 
-#include "log.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "digest.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "digest.h"
 
 /* Reuse some ED25519 internals */
-extern struct sshkey_impl_funcs sshkey_ed25519_funcs;
+ബാഹ്യ ഘടന sshkey_impl_funcs sshkey_ed25519_funcs;
 
-static void
-ssh_ed25519_sk_cleanup(struct sshkey *k)
+സ്ഥിതം ശൂന്യം
+ssh_ed25519_sk_cleanup(ഘടന sshkey *k)
 {
 	sshkey_sk_cleanup(k);
 	sshkey_ed25519_funcs.cleanup(k);
 }
 
-static int
-ssh_ed25519_sk_equal(const struct sshkey *a, const struct sshkey *b)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ed25519_sk_equal(സ്ഥിരം ഘടന sshkey *a, സ്ഥിരം ഘടന sshkey *b)
 {
-	if (!sshkey_sk_fields_equal(a, b))
-		return 0;
-	if (!sshkey_ed25519_funcs.equal(a, b))
-		return 0;
-	return 1;
+	എങ്കിൽ (!sshkey_sk_fields_equal(a, b))
+		തിരികെ 0;
+	എങ്കിൽ (!sshkey_ed25519_funcs.equal(a, b))
+		തിരികെ 0;
+	തിരികെ 1;
 }
 
-static int
-ssh_ed25519_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ed25519_sk_serialize_public(സ്ഥിരം ഘടന sshkey *താക്കോൽ, ഘടന sshbuf *b,
+    എണ്ണൽ sshkey_serialize_rep opts)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
-		return r;
+	എങ്കിൽ ((r = sshkey_ed25519_funcs.serialize_public(താക്കോൽ, b, opts)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshkey_serialize_sk(താക്കോൽ, b)) != 0)
+		തിരികെ r;
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-ssh_ed25519_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ed25519_sk_serialize_private(സ്ഥിരം ഘടന sshkey *താക്കോൽ, ഘടന sshbuf *b,
+    എണ്ണൽ sshkey_serialize_rep opts)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
-		return r;
+	എങ്കിൽ ((r = sshkey_ed25519_funcs.serialize_public(താക്കോൽ, b, opts)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshkey_serialize_private_sk(താക്കോൽ, b)) != 0)
+		തിരികെ r;
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-ssh_ed25519_sk_copy_public(const struct sshkey *from, struct sshkey *to)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ed25519_sk_copy_public(സ്ഥിരം ഘടന sshkey *from, ഘടന sshkey *to)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshkey_ed25519_funcs.copy_public(from, to)) != 0)
-		return r;
-	if ((r = sshkey_copy_public_sk(from, to)) != 0)
-		return r;
-	return 0;
+	എങ്കിൽ ((r = sshkey_ed25519_funcs.copy_public(from, to)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshkey_copy_public_sk(from, to)) != 0)
+		തിരികെ r;
+	തിരികെ 0;
 }
 
-static int
-ssh_ed25519_sk_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ed25519_sk_deserialize_public(സ്ഥിരം അക്ഷരം *ktype, ഘടന sshbuf *b,
+    ഘടന sshkey *താക്കോൽ)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	എങ്കിൽ ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, താക്കോൽ)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshkey_deserialize_sk(b, താക്കോൽ)) != 0)
+		തിരികെ r;
+	തിരികെ 0;
 }
 
-static int
-ssh_ed25519_sk_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ed25519_sk_deserialize_private(സ്ഥിരം അക്ഷരം *ktype, ഘടന sshbuf *b,
+    ഘടന sshkey *താക്കോൽ)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	എങ്കിൽ ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, താക്കോൽ)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshkey_private_deserialize_sk(b, താക്കോൽ)) != 0)
+		തിരികെ r;
+	തിരികെ 0;
 }
 
-static int
-ssh_ed25519_sk_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_ed25519_sk_verify(സ്ഥിരം ഘടന sshkey *താക്കോൽ,
+    സ്ഥിരം u_char *sig, size_t siglen,
+    സ്ഥിരം u_char *data, size_t dlen, സ്ഥിരം അക്ഷരം *alg, u_int compat,
+    ഘടന sshkey_sig_details **detailsp)
 {
-	struct sshbuf *b = NULL;
-	struct sshbuf *encoded = NULL;
-	char *ktype = NULL;
-	const u_char *sigblob;
+	ഘടന sshbuf *b = ശൂന്യ;
+	ഘടന sshbuf *encoded = ശൂന്യ;
+	അക്ഷരം *ktype = ശൂന്യ;
+	സ്ഥിരം u_char *sigblob;
 	u_char apphash[32];
 	u_char msghash[32];
 	u_char sig_flags;
 	u_int sig_counter;
 	size_t len;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int ret;
-	struct sshkey_sig_details *details = NULL;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
+	പൂർണ്ണസംഖ്യ ret;
+	ഘടന sshkey_sig_details *details = ശൂന്യ;
 
-	if (detailsp != NULL)
-		*detailsp = NULL;
+	എങ്കിൽ (detailsp != ശൂന്യ)
+		*detailsp = ശൂന്യ;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ED25519_SK ||
-	    key->ed25519_pk == NULL ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (താക്കോൽ == ശൂന്യ ||
+	    sshkey_type_plain(താക്കോൽ->type) != താക്കോൽ_ED25519_SK ||
+	    താക്കോൽ->ed25519_pk == ശൂന്യ ||
+	    sig == ശൂന്യ || siglen == 0)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
+	എങ്കിൽ ((b = sshbuf_from(sig, siglen)) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ (sshbuf_get_cstring(b, &ktype, ശൂന്യ) != 0 ||
 	    sshbuf_get_string_direct(b, &sigblob, &len) != 0 ||
 	    sshbuf_get_u8(b, &sig_flags) != 0 ||
 	    sshbuf_get_u32(b, &sig_counter) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: data:\n", __func__);
@@ -164,95 +164,95 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, sig_flags, sig_counter);
 #endif
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	എങ്കിൽ (strcmp(sshkey_ssh_name_plain(താക്കോൽ), ktype) != 0) {
+		r = SSH_ERR_താക്കോൽ_TYPE_MISMATCH;
+		പോകുക out;
 	}
-	if (sshbuf_len(b) != 0) {
+	എങ്കിൽ (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		പോകുക out;
 	}
-	if (len != crypto_sign_ed25519_BYTES) {
+	എങ്കിൽ (len != crypto_sign_ed25519_BYTES) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if (ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
-	    strlen(key->sk_application), apphash, sizeof(apphash)) != 0 ||
+	എങ്കിൽ (ssh_digest_memory(SSH_DIGEST_SHA256, താക്കോൽ->sk_application,
+	    strlen(താക്കോൽ->sk_application), apphash, വലുപ്പം(apphash)) != 0 ||
 	    ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
-	    msghash, sizeof(msghash)) != 0) {
+	    msghash, വലുപ്പം(msghash)) != 0) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		പോകുക out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: hashed application:\n", __func__);
-	sshbuf_dump_data(apphash, sizeof(apphash), stderr);
+	sshbuf_dump_data(apphash, വലുപ്പം(apphash), stderr);
 	fprintf(stderr, "%s: hashed message:\n", __func__);
-	sshbuf_dump_data(msghash, sizeof(msghash), stderr);
+	sshbuf_dump_data(msghash, വലുപ്പം(msghash), stderr);
 #endif
-	if ((details = calloc(1, sizeof(*details))) == NULL) {
+	എങ്കിൽ ((details = calloc(1, വലുപ്പം(*details))) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 	details->sk_counter = sig_counter;
 	details->sk_flags = sig_flags;
-	if ((encoded = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((encoded = sshbuf_new()) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if (sshbuf_put(encoded, apphash, sizeof(apphash)) != 0 ||
+	എങ്കിൽ (sshbuf_put(encoded, apphash, വലുപ്പം(apphash)) != 0 ||
 	    sshbuf_put_u8(encoded, sig_flags) != 0 ||
 	    sshbuf_put_u32(encoded, sig_counter) != 0 ||
-	    sshbuf_put(encoded, msghash, sizeof(msghash)) != 0) {
+	    sshbuf_put(encoded, msghash, വലുപ്പം(msghash)) != 0) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: signed buf:\n", __func__);
 	sshbuf_dump(encoded, stderr);
 #endif
-	if ((ret = crypto_sign_ed25519_verify_detached(sigblob,
+	എങ്കിൽ ((ret = crypto_sign_ed25519_verify_detached(sigblob,
 	    sshbuf_ptr(encoded), sshbuf_len(encoded),
-	    key->ed25519_pk)) != 0) {
+	    താക്കോൽ->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
-	if (ret != 0) {
+	എങ്കിൽ (ret != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	r = 0;
-	if (detailsp != NULL) {
+	എങ്കിൽ (detailsp != ശൂന്യ) {
 		*detailsp = details;
-		details = NULL;
+		details = ശൂന്യ;
 	}
  out:
 	sshkey_sig_details_free(details);
 	sshbuf_free(b);
 	sshbuf_free(encoded);
-	free(ktype);
-	return r;
+	സ്വതന്ത്രം(ktype);
+	തിരികെ r;
 }
 
-static const struct sshkey_impl_funcs sshkey_ed25519_sk_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+സ്ഥിതം സ്ഥിരം ഘടന sshkey_impl_funcs sshkey_ed25519_sk_funcs = {
+	/* .size = */		ശൂന്യ,
+	/* .alloc = */		ശൂന്യ,
 	/* .cleanup = */	ssh_ed25519_sk_cleanup,
 	/* .equal = */		ssh_ed25519_sk_equal,
 	/* .ssh_serialize_public = */ ssh_ed25519_sk_serialize_public,
 	/* .ssh_deserialize_public = */ ssh_ed25519_sk_deserialize_public,
 	/* .ssh_serialize_private = */ ssh_ed25519_sk_serialize_private,
 	/* .ssh_deserialize_private = */ ssh_ed25519_sk_deserialize_private,
-	/* .generate = */	NULL,
+	/* .generate = */	ശൂന്യ,
 	/* .copy_public = */	ssh_ed25519_sk_copy_public,
-	/* .sign = */		NULL,
+	/* .sign = */		ശൂന്യ,
 	/* .verify = */		ssh_ed25519_sk_verify,
 };
 
-const struct sshkey_impl sshkey_ed25519_sk_impl = {
+സ്ഥിരം ഘടന sshkey_impl sshkey_ed25519_sk_impl = {
 	/* .name = */		"sk-ssh-ed25519@openssh.com",
 	/* .shortname = */	"ED25519-SK",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519_SK,
+	/* .sigalg = */		ശൂന്യ,
+	/* .type = */		താക്കോൽ_ED25519_SK,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -260,11 +260,11 @@ const struct sshkey_impl sshkey_ed25519_sk_impl = {
 	/* .funcs = */		&sshkey_ed25519_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ed25519_sk_cert_impl = {
+സ്ഥിരം ഘടന sshkey_impl sshkey_ed25519_sk_cert_impl = {
 	/* .name = */		"sk-ssh-ed25519-cert-v01@openssh.com",
 	/* .shortname = */	"ED25519-SK-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519_SK_CERT,
+	/* .sigalg = */		ശൂന്യ,
+	/* .type = */		താക്കോൽ_ED25519_SK_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

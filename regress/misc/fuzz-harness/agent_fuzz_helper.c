@@ -1,159 +1,159 @@
-#include "fixed-keys.h"
-#include <assert.h>
+#അന്തര്ഭാവ "fixed-keys.h"
+#അന്തര്ഭാവ <assert.h>
 
-#define main(ac, av) xxxmain(ac, av)
-#include "../../../ssh-agent.c"
+#define പ്രധാന(ac, av) xxxmain(ac, av)
+#അന്തര്ഭാവ "../../../ssh-agent.c"
 
-void test_one(const uint8_t* s, size_t slen);
+ശൂന്യം test_one(സ്ഥിരം uint8_t* s, size_t slen);
 
-static int
-devnull_or_die(void)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+devnull_or_die(ശൂന്യം)
 {
-	int fd;
+	പൂർണ്ണസംഖ്യ fd;
 
-	if ((fd = open("/dev/null", O_RDWR)) == -1) {
+	എങ്കിൽ ((fd = open("/dev/null", O_RDWR)) == -1) {
 		error_f("open /dev/null: %s", strerror(errno));
 		abort();
 	}
-	return fd;
+	തിരികെ fd;
 }
 
-static struct sshkey *
-pubkey_or_die(const char *s)
+സ്ഥിതം ഘടന sshkey *
+pubkey_or_die(സ്ഥിരം അക്ഷരം *s)
 {
-	char *tmp, *cp;
-	struct sshkey *pubkey;
-	int r;
+	അക്ഷരം *tmp, *cp;
+	ഘടന sshkey *pubkey;
+	പൂർണ്ണസംഖ്യ r;
 
 	tmp = cp = xstrdup(s);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	എങ്കിൽ ((pubkey = sshkey_new(താക്കോൽ_UNSPEC)) == ശൂന്യ)
 		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	എങ്കിൽ ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
-	free(tmp);
-	return pubkey;
+	സ്വതന്ത്രം(tmp);
+	തിരികെ pubkey;
 }
 
-static struct sshkey *
-privkey_or_die(const char *s)
+സ്ഥിതം ഘടന sshkey *
+privkey_or_die(സ്ഥിരം അക്ഷരം *s)
 {
-	int r;
-	struct sshbuf *b;
-	struct sshkey *privkey;
+	പൂർണ്ണസംഖ്യ r;
+	ഘടന sshbuf *b;
+	ഘടന sshkey *privkey;
 
-	if ((b = sshbuf_from(s, strlen(s))) == NULL) {
+	എങ്കിൽ ((b = sshbuf_from(s, strlen(s))) == ശൂന്യ) {
 		error_f("sshbuf_from failed");
 		abort();
 	}
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	എങ്കിൽ ((r = sshkey_parse_private_fileblob(b, "", &privkey, ശൂന്യ)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
 	sshbuf_free(b);
-	return privkey;
+	തിരികെ privkey;
 }
 
-static void
-add_key(const char *privkey, const char *certpath)
+സ്ഥിതം ശൂന്യം
+add_താക്കോൽ(സ്ഥിരം അക്ഷരം *privkey, സ്ഥിരം അക്ഷരം *certpath)
 {
 	Identity *id;
-	int r;
-	struct sshkey *cert;
+	പൂർണ്ണസംഖ്യ r;
+	ഘടന sshkey *cert;
 
-	id = xcalloc(1, sizeof(Identity));
+	id = xcalloc(1, വലുപ്പം(Identity));
 	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->താക്കോൽ = privkey_or_die(privkey);
 	id->comment = xstrdup("rhododaktulos Eos");
-	if (sshkey_is_sk(id->key))
+	എങ്കിൽ (sshkey_is_sk(id->താക്കോൽ))
 		id->sk_provider = xstrdup("internal");
 
 	/* Now the cert too */
-	id = xcalloc(1, sizeof(Identity));
+	id = xcalloc(1, വലുപ്പം(Identity));
 	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->താക്കോൽ = privkey_or_die(privkey);
 	cert = pubkey_or_die(certpath);
-	if ((r = sshkey_to_certified(id->key)) != 0) {
+	എങ്കിൽ ((r = sshkey_to_certified(id->താക്കോൽ)) != 0) {
 		error_fr(r, "sshkey_to_certified");
 		abort();
 	}
-	if ((r = sshkey_cert_copy(cert, id->key)) != 0) {
+	എങ്കിൽ ((r = sshkey_cert_copy(cert, id->താക്കോൽ)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
 		abort();
 	}
 	sshkey_free(cert);
 	id->comment = xstrdup("outis");
-	if (sshkey_is_sk(id->key))
+	എങ്കിൽ (sshkey_is_sk(id->താക്കോൽ))
 		id->sk_provider = xstrdup("internal");
 }
 
-static void
-cleanup_idtab(void)
+സ്ഥിതം ശൂന്യം
+cleanup_idtab(ശൂന്യം)
 {
 	Identity *id;
 
-	if (idtab == NULL) return;
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	എങ്കിൽ (idtab == ശൂന്യ) തിരികെ;
+	വേണ്ടി (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
 		TAILQ_REMOVE(&idtab->idlist, id, next);
 		free_identity(id);
 	}
-	free(idtab);
-	idtab = NULL;
+	സ്വതന്ത്രം(idtab);
+	idtab = ശൂന്യ;
 }
 
-static void
-reset_idtab(void)
+സ്ഥിതം ശൂന്യം
+reset_idtab(ശൂന്യം)
 {
 	cleanup_idtab();
 	idtab_init();
 	// Load keys.
-	add_key(PRIV_RSA, CERT_RSA);
-	add_key(PRIV_ECDSA, CERT_ECDSA);
-	add_key(PRIV_ED25519, CERT_ED25519);
-	add_key(PRIV_ECDSA_SK, CERT_ECDSA_SK);
-	add_key(PRIV_ED25519_SK, CERT_ED25519_SK);
+	add_താക്കോൽ(PRIV_RSA, CERT_RSA);
+	add_താക്കോൽ(PRIV_ECDSA, CERT_ECDSA);
+	add_താക്കോൽ(PRIV_ED25519, CERT_ED25519);
+	add_താക്കോൽ(PRIV_ECDSA_SK, CERT_ECDSA_SK);
+	add_താക്കോൽ(PRIV_ED25519_SK, CERT_ED25519_SK);
 }
 
-static void
-cleanup_sockettab(void)
+സ്ഥിതം ശൂന്യം
+cleanup_sockettab(ശൂന്യം)
 {
 	u_int i;
-	for (i = 0; i < sockets_alloc; i++) {
-		if (sockets[i].type != AUTH_UNUSED)
+	വേണ്ടി (i = 0; i < sockets_alloc; i++) {
+		എങ്കിൽ (sockets[i].type != AUTH_UNUSED)
 			close_socket(sockets + i);
 	}
-	free(sockets);
-	sockets = NULL;
+	സ്വതന്ത്രം(sockets);
+	sockets = ശൂന്യ;
 	sockets_alloc = 0;
 }
 
-static void
-reset_sockettab(int devnull)
+സ്ഥിതം ശൂന്യം
+reset_sockettab(പൂർണ്ണസംഖ്യ devnull)
 {
-	int fd;
+	പൂർണ്ണസംഖ്യ fd;
 
 	cleanup_sockettab();
-	if ((fd = dup(devnull)) == -1) {
+	എങ്കിൽ ((fd = dup(devnull)) == -1) {
 		error_f("dup: %s", strerror(errno));
 		abort();
 	}
 	new_socket(AUTH_CONNECTION, fd);
-	assert(sockets[0].type == AUTH_CONNECTION);
-	assert(sockets[0].fd == fd);
+	പ്രതിജ്ഞാ(sockets[0].type == AUTH_CONNECTION);
+	പ്രതിജ്ഞാ(sockets[0].fd == fd);
 }
 
 #define MAX_MESSAGES 256
-void
-test_one(const uint8_t* s, size_t slen)
+ശൂന്യം
+test_one(സ്ഥിരം uint8_t* s, size_t slen)
 {
-	static int devnull = -1;
+	സ്ഥിതം പൂർണ്ണസംഖ്യ devnull = -1;
 	size_t i, olen, nlen;
 
-	if (devnull == -1) {
+	എങ്കിൽ (devnull == -1) {
 		log_init(__progname, SYSLOG_LEVEL_DEBUG3,
 		    SYSLOG_FACILITY_AUTH, 1);
 		devnull = devnull_or_die();
@@ -164,13 +164,13 @@ test_one(const uint8_t* s, size_t slen)
 
 	reset_idtab();
 	reset_sockettab(devnull);
-	(void)sshbuf_put(sockets[0].input, s, slen);
-	for (i = 0; i < MAX_MESSAGES; i++) {
-		olen = sshbuf_len(sockets[0].input);
+	(ശൂന്യം)sshbuf_put(sockets[0].നിവേശം, s, slen);
+	വേണ്ടി (i = 0; i < MAX_MESSAGES; i++) {
+		olen = sshbuf_len(sockets[0].നിവേശം);
 		process_message(0);
-		nlen = sshbuf_len(sockets[0].input);
-		if (nlen == 0 || nlen == olen)
-			break;
+		nlen = sshbuf_len(sockets[0].നിവേശം);
+		എങ്കിൽ (nlen == 0 || nlen == olen)
+			നിർത്തുക;
 	}
 	cleanup_idtab();
 	cleanup_sockettab();

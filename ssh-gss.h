@@ -29,9 +29,9 @@
 #ifdef GSSAPI
 
 #ifdef HAVE_GSSAPI_H
-#include <gssapi.h>
-#elif defined(HAVE_GSSAPI_GSSAPI_H)
-#include <gssapi/gssapi.h>
+#അന്തര്ഭാവ <gssapi.h>
+#അല്ലെങ്കിലെങ്കിൽ defined(HAVE_GSSAPI_GSSAPI_H)
+#അന്തര്ഭാവ <gssapi/gssapi.h>
 #endif
 
 #ifdef KRB5
@@ -44,7 +44,7 @@
 
 /* Old MIT Kerberos doesn't seem to define GSS_NT_HOSTBASED_SERVICE */
 
-#  if !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
+#  എങ്കിൽ !HAVE_DECL_GSS_C_NT_HOSTBASED_SERVICE
 #   define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
 #  endif /* !HAVE_DECL_GSS_C_NT_... */
 
@@ -52,42 +52,42 @@
 #endif /* KRB5 */
 
 /* draft-ietf-secsh-gsskeyex-06 */
-#define SSH2_MSG_USERAUTH_GSSAPI_RESPONSE		60
-#define SSH2_MSG_USERAUTH_GSSAPI_TOKEN			61
-#define SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
-#define SSH2_MSG_USERAUTH_GSSAPI_ERROR			64
-#define SSH2_MSG_USERAUTH_GSSAPI_ERRTOK			65
-#define SSH2_MSG_USERAUTH_GSSAPI_MIC			66
+#define SSH2_സന്ദേശം_USERAUTH_GSSAPI_RESPONSE		60
+#define SSH2_സന്ദേശം_USERAUTH_GSSAPI_TOKEN			61
+#define SSH2_സന്ദേശം_USERAUTH_GSSAPI_EXCHANGE_COMPLETE	63
+#define SSH2_സന്ദേശം_USERAUTH_GSSAPI_ERROR			64
+#define SSH2_സന്ദേശം_USERAUTH_GSSAPI_ERRTOK			65
+#define SSH2_സന്ദേശം_USERAUTH_GSSAPI_MIC			66
 
 #define SSH_GSS_OIDTYPE 0x06
 
-typedef struct {
-	char *filename;
-	char *envvar;
-	char *envval;
-	void *data;
+തരനിർവചനം ഘടന {
+	അക്ഷരം *filename;
+	അക്ഷരം *envvar;
+	അക്ഷരം *envval;
+	ശൂന്യം *data;
 } ssh_gssapi_ccache;
 
-typedef struct {
+തരനിർവചനം ഘടന {
 	gss_buffer_desc displayname;
 	gss_buffer_desc exportedname;
 	gss_cred_id_t creds;
-	struct ssh_gssapi_mech_struct *mech;
+	ഘടന ssh_gssapi_mech_struct *mech;
 	ssh_gssapi_ccache store;
-	int userok;
+	പൂർണ്ണസംഖ്യ userok;
 } ssh_gssapi_client;
 
-typedef struct ssh_gssapi_mech_struct {
-	char *enc_name;
-	char *name;
+തരനിർവചനം ഘടന ssh_gssapi_mech_struct {
+	അക്ഷരം *enc_name;
+	അക്ഷരം *name;
 	gss_OID_desc oid;
-	int (*dochild) (ssh_gssapi_client *);
-	int (*userok) (ssh_gssapi_client *, char *);
-	int (*localname) (ssh_gssapi_client *, char **);
-	void (*storecreds) (ssh_gssapi_client *);
+	പൂർണ്ണസംഖ്യ (*dochild) (ssh_gssapi_client *);
+	പൂർണ്ണസംഖ്യ (*userok) (ssh_gssapi_client *, അക്ഷരം *);
+	പൂർണ്ണസംഖ്യ (*localname) (ssh_gssapi_client *, അക്ഷരം **);
+	ശൂന്യം (*storecreds) (ssh_gssapi_client *);
 } ssh_gssapi_mech;
 
-typedef struct {
+തരനിർവചനം ഘടന {
 	OM_uint32	major; /* both */
 	OM_uint32	minor; /* both */
 	gss_ctx_id_t	context; /* both */
@@ -98,42 +98,42 @@ typedef struct {
 	gss_cred_id_t	client_creds; /* server */
 } Gssctxt;
 
-extern ssh_gssapi_mech *supported_mechs[];
+ബാഹ്യ ssh_gssapi_mech *supported_mechs[];
 
-int  ssh_gssapi_check_oid(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid_data(Gssctxt *, void *, size_t);
-void ssh_gssapi_set_oid(Gssctxt *, gss_OID);
-void ssh_gssapi_supported_oids(gss_OID_set *);
-void ssh_gssapi_prepare_supported_oids(void);
-OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, int *);
+പൂർണ്ണസംഖ്യ  ssh_gssapi_check_oid(Gssctxt *, ശൂന്യം *, size_t);
+ശൂന്യം ssh_gssapi_set_oid_data(Gssctxt *, ശൂന്യം *, size_t);
+ശൂന്യം ssh_gssapi_set_oid(Gssctxt *, gss_OID);
+ശൂന്യം ssh_gssapi_supported_oids(gss_OID_set *);
+ശൂന്യം ssh_gssapi_prepare_supported_oids(ശൂന്യം);
+OM_uint32 ssh_gssapi_test_oid_supported(OM_uint32 *, gss_OID, പൂർണ്ണസംഖ്യ *);
 
-struct sshbuf;
-int ssh_gssapi_get_buffer_desc(struct sshbuf *, gss_buffer_desc *);
+ഘടന sshbuf;
+പൂർണ്ണസംഖ്യ ssh_gssapi_get_buffer_desc(ഘടന sshbuf *, gss_buffer_desc *);
 
-OM_uint32 ssh_gssapi_import_name(Gssctxt *, const char *);
-OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, int,
+OM_uint32 ssh_gssapi_import_name(Gssctxt *, സ്ഥിരം അക്ഷരം *);
+OM_uint32 ssh_gssapi_init_ctx(Gssctxt *, പൂർണ്ണസംഖ്യ,
     gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_accept_ctx(Gssctxt *,
     gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
 OM_uint32 ssh_gssapi_getclient(Gssctxt *, ssh_gssapi_client *);
-void ssh_gssapi_error(Gssctxt *);
-char *ssh_gssapi_last_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
-void ssh_gssapi_build_ctx(Gssctxt **);
-void ssh_gssapi_delete_ctx(Gssctxt **);
+ശൂന്യം ssh_gssapi_error(Gssctxt *);
+അക്ഷരം *ssh_gssapi_last_error(Gssctxt *, OM_uint32 *, OM_uint32 *);
+ശൂന്യം ssh_gssapi_build_ctx(Gssctxt **);
+ശൂന്യം ssh_gssapi_delete_ctx(Gssctxt **);
 OM_uint32 ssh_gssapi_sign(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_buildmic(struct sshbuf *, const char *,
-    const char *, const char *, const struct sshbuf *);
-int ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, const char *);
+ശൂന്യം ssh_gssapi_buildmic(ഘടന sshbuf *, സ്ഥിരം അക്ഷരം *,
+    സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം ഘടന sshbuf *);
+പൂർണ്ണസംഖ്യ ssh_gssapi_check_mechanism(Gssctxt **, gss_OID, സ്ഥിരം അക്ഷരം *);
 
 /* In the server */
 OM_uint32 ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
-int ssh_gssapi_userok(char *name);
+പൂർണ്ണസംഖ്യ ssh_gssapi_userok(അക്ഷരം *name);
 OM_uint32 ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
-void ssh_gssapi_do_child(char ***, u_int *);
-void ssh_gssapi_cleanup_creds(void);
-void ssh_gssapi_storecreds(void);
-const char *ssh_gssapi_displayname(void);
-void ssh_gssapi_cleanup_global_client(void);
+ശൂന്യം ssh_gssapi_do_child(അക്ഷരം ***, u_int *);
+ശൂന്യം ssh_gssapi_cleanup_creds(ശൂന്യം);
+ശൂന്യം ssh_gssapi_storecreds(ശൂന്യം);
+സ്ഥിരം അക്ഷരം *ssh_gssapi_displayname(ശൂന്യം);
+ശൂന്യം ssh_gssapi_cleanup_global_client(ശൂന്യം);
 
 #endif /* GSSAPI */
 

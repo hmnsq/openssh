@@ -1,33 +1,33 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-extern "C" {
+ബാഹ്യ "C" {
 
-#include "auth-options.h"
+#അന്തര്ഭാവ "auth-options.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+പൂർണ്ണസംഖ്യ LLVMFuzzer_Test_One_നിവേശം(സ്ഥിരം uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();
+	അക്ഷരം *cp = (അക്ഷരം *)malloc(size + 1);
+	ഘടന sshauthopt *opts = ശൂന്യ, *merge = ശൂന്യ, *add = sshauthopt_new();
 
-	if (cp == NULL || add == NULL)
-		goto out;
+	എങ്കിൽ (cp == ശൂന്യ || add == ശൂന്യ)
+		പോകുക out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshauthopt_parse(cp, NULL)) == NULL)
-		goto out;
-	if ((merge = sshauthopt_merge(opts, add, NULL)) == NULL)
-		goto out;
+	എങ്കിൽ ((opts = sshauthopt_parse(cp, ശൂന്യ)) == ശൂന്യ)
+		പോകുക out;
+	എങ്കിൽ ((merge = sshauthopt_merge(opts, add, ശൂന്യ)) == ശൂന്യ)
+		പോകുക out;
 
  out:
-	free(cp);
+	സ്വതന്ത്രം(cp);
 	sshauthopt_free(add);
 	sshauthopt_free(opts);
 	sshauthopt_free(merge);
-	return 0;
+	തിരികെ 0;
 }
 
 } // extern "C"

@@ -15,12 +15,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stddef.h>
+#അന്തര്ഭാവ <stddef.h>
 
-#include "ssherr.h"
+#അന്തര്ഭാവ "ssherr.h"
 
-const char *
-ssherr_libcrypto(void)
+സ്ഥിരം അക്ഷരം *
+ssherr_libcrypto(ശൂന്യം)
 {
-	return NULL;
+	തിരികെ ശൂന്യ;
 }

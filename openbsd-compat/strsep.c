@@ -31,12 +31,12 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strsep.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#if !defined(HAVE_STRSEP)
+#എങ്കിൽ !defined(HAVE_STRSEP)
 
-#include <string.h>
-#include <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdio.h>
 
 /*
  * Get next token from string *stringp, where tokens are possibly-empty
@@ -49,29 +49,29 @@
  *
  * If *stringp is NULL, strsep returns NULL.
  */
-char *
-strsep(char **stringp, const char *delim)
+അക്ഷരം *
+strsep(അക്ഷരം **stringp, സ്ഥിരം അക്ഷരം *delim)
 {
-	char *s;
-	const char *spanp;
-	int c, sc;
-	char *tok;
+	അക്ഷരം *s;
+	സ്ഥിരം അക്ഷരം *spanp;
+	പൂർണ്ണസംഖ്യ c, sc;
+	അക്ഷരം *tok;
 
-	if ((s = *stringp) == NULL)
-		return (NULL);
-	for (tok = s;;) {
+	എങ്കിൽ ((s = *stringp) == ശൂന്യ)
+		തിരികെ (ശൂന്യ);
+	വേണ്ടി (tok = s;;) {
 		c = *s++;
 		spanp = delim;
-		do {
-			if ((sc = *spanp++) == c) {
-				if (c == 0)
-					s = NULL;
-				else
+		ചെയ്യുക {
+			എങ്കിൽ ((sc = *spanp++) == c) {
+				എങ്കിൽ (c == 0)
+					s = ശൂന്യ;
+				അല്ലെങ്കിൽ
 					s[-1] = 0;
 				*stringp = s;
-				return (tok);
+				തിരികെ (tok);
 			}
-		} while (sc != 0);
+		} ആകുമ്പോൾ (sc != 0);
 	}
 	/* NOTREACHED */
 }

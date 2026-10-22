@@ -35,30 +35,30 @@
 #undef ERROR
 
 /* Avoid including windows headers. */
-typedef void *HANDLE;
-#define INVALID_HANDLE_VALUE ((HANDLE) -1)
+തരനിർവചനം ശൂന്യം *HANDLE;
+#define INVALID_HANDLE_മൂല്യം ((HANDLE) -1)
 #define DNLEN 16
 #define UNLEN 256
 
 /* Cygwin functions for which declarations are only available when including
    windows headers, so we have to define them here explicitly. */
-extern HANDLE cygwin_logon_user (const struct passwd *, const char *);
-extern void cygwin_set_impersonation_token (const HANDLE);
+ബാഹ്യ HANDLE cygwin_logon_user (സ്ഥിരം ഘടന passwd *, സ്ഥിരം അക്ഷരം *);
+ബാഹ്യ ശൂന്യം cygwin_set_impersonation_token (സ്ഥിരം HANDLE);
 
-#include <sys/cygwin.h>
-#include <io.h>
+#അന്തര്ഭാവ <sys/cygwin.h>
+#അന്തര്ഭാവ <io.h>
 
 #define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
-const char *cygwin_ssh_privsep_user();
+സ്ഥിരം അക്ഷരം *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
-char **fetch_windows_environment(void);
-void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+പൂർണ്ണസംഖ്യ ദ്വിമാന_open(സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ , ...);
+പൂർണ്ണസംഖ്യ check_ntsec(സ്ഥിരം അക്ഷരം *);
+അക്ഷരം **fetch_windows_environment(ശൂന്യം);
+ശൂന്യം free_windows_environment(അക്ഷരം **);
+പൂർണ്ണസംഖ്യ cygwin_ug_match_pattern_list(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 
-#ifndef NO_BINARY_OPEN
-#define open binary_open
+#ifndef NO_ദ്വിമാന_OPEN
+#define open ദ്വിമാന_open
 #endif
 
 #endif /* HAVE_CYGWIN */

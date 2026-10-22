@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoull.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 #ifndef HAVE_STRTOULL
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <ctype.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <stdlib.h>
 
 /*
  * Convert a string to an unsigned long long.
@@ -47,64 +47,64 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long long
-strtoull(const char *nptr, char **endptr, int base)
+strtoull(സ്ഥിരം അക്ഷരം *nptr, അക്ഷരം **endptr, പൂർണ്ണസംഖ്യ base)
 {
-	const char *s;
+	സ്ഥിരം അക്ഷരം *s;
 	unsigned long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	പൂർണ്ണസംഖ്യ c;
+	പൂർണ്ണസംഖ്യ neg, any, cutlim;
 
 	/*
 	 * See strtoq for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	ചെയ്യുക {
+		c = (unsigned അക്ഷരം) *s++;
+	} ആകുമ്പോൾ (isspace(c));
+	എങ്കിൽ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else { 
+	} അല്ലെങ്കിൽ { 
 		neg = 0;
-		if (c == '+')
+		എങ്കിൽ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	എങ്കിൽ ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	എങ്കിൽ (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULLONG_MAX / (unsigned long long)base;
 	cutlim = ULLONG_MAX % (unsigned long long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	വേണ്ടി (acc = 0, any = 0;; c = (unsigned അക്ഷരം) *s++) {
+		എങ്കിൽ (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		അല്ലെങ്കിൽ എങ്കിൽ (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		അല്ലെങ്കിൽ
+			നിർത്തുക;
+		എങ്കിൽ (c >= base)
+			നിർത്തുക;
+		എങ്കിൽ (any < 0)
+			തുടരുക;
+		എങ്കിൽ (acc > cutoff || (acc == cutoff && c > cutlim)) {
 			any = -1;
 			acc = ULLONG_MAX;
 			errno = ERANGE;
-		} else {
+		} അല്ലെങ്കിൽ {
 			any = 1;
 			acc *= (unsigned long long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	എങ്കിൽ (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	എങ്കിൽ (endptr != 0)
+		*endptr = (അക്ഷരം *) (any ? s - 1 : nptr);
+	തിരികെ (acc);
 }
 #endif /* !HAVE_STRTOULL */

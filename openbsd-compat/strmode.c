@@ -30,117 +30,117 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strmode.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 #ifndef HAVE_STRMODE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <string.h>
 
 /* XXX mode should be mode_t */
 
-void
-strmode(int mode, char *p)
+ശൂന്യം
+strmode(പൂർണ്ണസംഖ്യ mode, അക്ഷരം *p)
 {
 	 /* print type */
-	switch (mode & S_IFMT) {
-	case S_IFDIR:			/* directory */
+	തിരഞ്ഞെടുപ്പ് (mode & S_IFMT) {
+	അവസ്ഥ S_IFDIR:			/* directory */
 		*p++ = 'd';
-		break;
-	case S_IFCHR:			/* character special */
+		നിർത്തുക;
+	അവസ്ഥ S_IFCHR:			/* character special */
 		*p++ = 'c';
-		break;
-	case S_IFBLK:			/* block special */
+		നിർത്തുക;
+	അവസ്ഥ S_IFBLK:			/* block special */
 		*p++ = 'b';
-		break;
-	case S_IFREG:			/* regular */
+		നിർത്തുക;
+	അവസ്ഥ S_IFREG:			/* regular */
 		*p++ = '-';
-		break;
-	case S_IFLNK:			/* symbolic link */
+		നിർത്തുക;
+	അവസ്ഥ S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
-		break;
+		നിർത്തുക;
 #ifdef S_IFSOCK
-	case S_IFSOCK:			/* socket */
+	അവസ്ഥ S_IFSOCK:			/* socket */
 		*p++ = 's';
-		break;
+		നിർത്തുക;
 #endif
 #ifdef S_IFIFO
-	case S_IFIFO:			/* fifo */
+	അവസ്ഥ S_IFIFO:			/* fifo */
 		*p++ = 'p';
-		break;
+		നിർത്തുക;
 #endif
-	default:			/* unknown */
+	സ്ഥിരസ്ഥിതി:			/* unknown */
 		*p++ = '?';
-		break;
+		നിർത്തുക;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	എങ്കിൽ (mode & S_IRUSR)
 		*p++ = 'r';
-	else
+	അല്ലെങ്കിൽ
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	എങ്കിൽ (mode & S_IWUSR)
 		*p++ = 'w';
-	else
+	അല്ലെങ്കിൽ
 		*p++ = '-';
-	switch (mode & (S_IXUSR | S_ISUID)) {
-	case 0:
+	തിരഞ്ഞെടുപ്പ് (mode & (S_IXUSR | S_ISUID)) {
+	അവസ്ഥ 0:
 		*p++ = '-';
-		break;
-	case S_IXUSR:
+		നിർത്തുക;
+	അവസ്ഥ S_IXUSR:
 		*p++ = 'x';
-		break;
-	case S_ISUID:
+		നിർത്തുക;
+	അവസ്ഥ S_ISUID:
 		*p++ = 'S';
-		break;
-	case S_IXUSR | S_ISUID:
+		നിർത്തുക;
+	അവസ്ഥ S_IXUSR | S_ISUID:
 		*p++ = 's';
-		break;
+		നിർത്തുക;
 	}
 	/* group */
-	if (mode & S_IRGRP)
+	എങ്കിൽ (mode & S_IRGRP)
 		*p++ = 'r';
-	else
+	അല്ലെങ്കിൽ
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	എങ്കിൽ (mode & S_IWGRP)
 		*p++ = 'w';
-	else
+	അല്ലെങ്കിൽ
 		*p++ = '-';
-	switch (mode & (S_IXGRP | S_ISGID)) {
-	case 0:
+	തിരഞ്ഞെടുപ്പ് (mode & (S_IXGRP | S_ISGID)) {
+	അവസ്ഥ 0:
 		*p++ = '-';
-		break;
-	case S_IXGRP:
+		നിർത്തുക;
+	അവസ്ഥ S_IXGRP:
 		*p++ = 'x';
-		break;
-	case S_ISGID:
+		നിർത്തുക;
+	അവസ്ഥ S_ISGID:
 		*p++ = 'S';
-		break;
-	case S_IXGRP | S_ISGID:
+		നിർത്തുക;
+	അവസ്ഥ S_IXGRP | S_ISGID:
 		*p++ = 's';
-		break;
+		നിർത്തുക;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	എങ്കിൽ (mode & S_IROTH)
 		*p++ = 'r';
-	else
+	അല്ലെങ്കിൽ
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	എങ്കിൽ (mode & S_IWOTH)
 		*p++ = 'w';
-	else
+	അല്ലെങ്കിൽ
 		*p++ = '-';
-	switch (mode & (S_IXOTH | S_ISVTX)) {
-	case 0:
+	തിരഞ്ഞെടുപ്പ് (mode & (S_IXOTH | S_ISVTX)) {
+	അവസ്ഥ 0:
 		*p++ = '-';
-		break;
-	case S_IXOTH:
+		നിർത്തുക;
+	അവസ്ഥ S_IXOTH:
 		*p++ = 'x';
-		break;
-	case S_ISVTX:
+		നിർത്തുക;
+	അവസ്ഥ S_ISVTX:
 		*p++ = 'T';
-		break;
-	case S_IXOTH | S_ISVTX:
+		നിർത്തുക;
+	അവസ്ഥ S_IXOTH | S_ISVTX:
 		*p++ = 't';
-		break;
+		നിർത്തുക;
 	}
 	*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';

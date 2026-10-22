@@ -19,29 +19,29 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtonum.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifndef HAVE_STRTONUM
-#include <stdlib.h>
-#include <limits.h>
-#include <errno.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <errno.h>
 
 #define INVALID		1
 #define TOOSMALL	2
 #define TOOLARGE	3
 
 long long
-strtonum(const char *numstr, long long minval, long long maxval,
-    const char **errstrp)
+strtonum(സ്ഥിരം അക്ഷരം *numstr, long long minval, long long maxval,
+    സ്ഥിരം അക്ഷരം **errstrp)
 {
 	long long ll = 0;
-	char *ep;
-	int error = 0;
-	struct errval {
-		const char *errstr;
-		int err;
+	അക്ഷരം *ep;
+	പൂർണ്ണസംഖ്യ error = 0;
+	ഘടന errval {
+		സ്ഥിരം അക്ഷരം *errstr;
+		പൂർണ്ണസംഖ്യ err;
 	} ev[4] = {
-		{ NULL,		0 },
+		{ ശൂന്യ,		0 },
 		{ "invalid",	EINVAL },
 		{ "too small",	ERANGE },
 		{ "too large",	ERANGE },
@@ -49,24 +49,24 @@ strtonum(const char *numstr, long long minval, long long maxval,
 
 	ev[0].err = errno;
 	errno = 0;
-	if (minval > maxval)
+	എങ്കിൽ (minval > maxval)
 		error = INVALID;
-	else {
+	അല്ലെങ്കിൽ {
 		ll = strtoll(numstr, &ep, 10);
-		if (numstr == ep || *ep != '\0')
+		എങ്കിൽ (numstr == ep || *ep != '\0')
 			error = INVALID;
-		else if ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
+		അല്ലെങ്കിൽ എങ്കിൽ ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
 			error = TOOSMALL;
-		else if ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
+		അല്ലെങ്കിൽ എങ്കിൽ ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
 			error = TOOLARGE;
 	}
-	if (errstrp != NULL)
+	എങ്കിൽ (errstrp != ശൂന്യ)
 		*errstrp = ev[error].errstr;
 	errno = ev[error].err;
-	if (error)
+	എങ്കിൽ (error)
 		ll = 0;
 
-	return (ll);
+	തിരികെ (ll);
 }
 
 #endif /* HAVE_STRTONUM */

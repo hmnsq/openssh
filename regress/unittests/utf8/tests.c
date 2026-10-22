@@ -6,61 +6,61 @@
  * and placed in the public domain.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <locale.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
+#അന്തര്ഭാവ <locale.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#അന്തര്ഭാവ "../test_helper/test_helper.h"
 
-#include "utf8.h"
+#അന്തര്ഭാവ "utf8.h"
 
-static void
-badarg(void)
+സ്ഥിതം ശൂന്യം
+badarg(ശൂന്യം)
 {
-	char	 buf[16];
-	int	 len, width;
+	അക്ഷരം	 buf[16];
+	പൂർണ്ണസംഖ്യ	 len, width;
 
 	width = 1;
 	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	len = snmprintf(buf, വലുപ്പം(buf), &width, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
 	ASSERT_INT_EQ(width, 0);
 	TEST_DONE();
 }
 
-static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+സ്ഥിതം ശൂന്യം
+one(പൂർണ്ണസംഖ്യ utf8, സ്ഥിരം അക്ഷരം *name, സ്ഥിരം അക്ഷരം *mbs, പൂർണ്ണസംഖ്യ width,
+    പൂർണ്ണസംഖ്യ wantwidth, പൂർണ്ണസംഖ്യ wantlen, സ്ഥിരം അക്ഷരം *wants)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	അക്ഷരം	 buf[16];
+	പൂർണ്ണസംഖ്യ	*wp;
+	പൂർണ്ണസംഖ്യ	 len;
 
-	if (wantlen == -2)
+	എങ്കിൽ (wantlen == -2)
 		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
+	(ശൂന്യം)strlcpy(buf, utf8 ? "utf8_" : "c_", വലുപ്പം(buf));
+	(ശൂന്യം)strlcat(buf, name, വലുപ്പം(buf));
 	TEST_START(buf);
-	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	wp = wantwidth == -2 ? ശൂന്യ : &width;
+	len = snmprintf(buf, വലുപ്പം(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
 	ASSERT_STRING_EQ(buf, wants);
 	ASSERT_INT_EQ(width, wantwidth);
 	TEST_DONE();
 }
 
-void
-tests(void)
+ശൂന്യം
+tests(ശൂന്യം)
 {
-	char	*loc;
+	അക്ഷരം	*loc;
 
 	TEST_START("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, ശൂന്യ);
 	TEST_DONE();
 
 	badarg();
@@ -82,7 +82,7 @@ tests(void)
 
 	TEST_START("C_setlocale");
 	loc = setlocale(LC_CTYPE, "C");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, ശൂന്യ);
 	TEST_DONE();
 
 	badarg();
@@ -103,8 +103,8 @@ tests(void)
 	one(0, "double_spc", "a\343\201\201", 13, 13, 13, "a\\343\\201\\201");
 }
 
-void
-benchmarks(void)
+ശൂന്യം
+benchmarks(ശൂന്യം)
 {
 	printf("no benchmarks\n");
 }

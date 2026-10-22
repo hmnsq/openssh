@@ -87,56 +87,56 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/fnmatch.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 #ifndef HAVE_FNMATCH
 
-#include <fnmatch.h>
-#include <string.h>
-#include <ctype.h>
+#അന്തര്ഭാവ <fnmatch.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <ctype.h>
 
-#include "charclass.h"
+#അന്തര്ഭാവ "charclass.h"
 
 #define	RANGE_MATCH	1
 #define	RANGE_NOMATCH	0
 #define	RANGE_ERROR	(-1)
 
-static int
-classmatch(const char *pattern, char test, int foldcase, const char **ep)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+classmatch(സ്ഥിരം അക്ഷരം *pattern, അക്ഷരം test, പൂർണ്ണസംഖ്യ foldcase, സ്ഥിരം അക്ഷരം **ep)
 {
-	const char * const mismatch = pattern;
-	const char *colon;
-	struct cclass *cc;
-	int rval = RANGE_NOMATCH;
+	സ്ഥിരം അക്ഷരം * സ്ഥിരം mismatch = pattern;
+	സ്ഥിരം അക്ഷരം *colon;
+	ഘടന cclass *cc;
+	പൂർണ്ണസംഖ്യ rval = RANGE_NOMATCH;
 	size_t len;
 
-	if (pattern[0] != '[' || pattern[1] != ':') {
+	എങ്കിൽ (pattern[0] != '[' || pattern[1] != ':') {
 		*ep = mismatch;
-		return RANGE_ERROR;
+		തിരികെ RANGE_ERROR;
 	}
 	pattern += 2;
 
-	if ((colon = strchr(pattern, ':')) == NULL || colon[1] != ']') {
+	എങ്കിൽ ((colon = strchr(pattern, ':')) == ശൂന്യ || colon[1] != ']') {
 		*ep = mismatch;
-		return RANGE_ERROR;
+		തിരികെ RANGE_ERROR;
 	}
 	*ep = colon + 2;
 	len = (size_t)(colon - pattern);
 
-	if (foldcase && strncmp(pattern, "upper:]", 7) == 0)
+	എങ്കിൽ (foldcase && strncmp(pattern, "upper:]", 7) == 0)
 		pattern = "lower:]";
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!strncmp(pattern, cc->name, len) && cc->name[len] == '\0') {
-			if (cc->isctype((unsigned char)test))
+	വേണ്ടി (cc = cclasses; cc->name != ശൂന്യ; cc++) {
+		എങ്കിൽ (!strncmp(pattern, cc->name, len) && cc->name[len] == '\0') {
+			എങ്കിൽ (cc->isctype((unsigned അക്ഷരം)test))
 				rval = RANGE_MATCH;
-			break;
+			നിർത്തുക;
 		}
 	}
-	if (cc->name == NULL) {
+	എങ്കിൽ (cc->name == ശൂന്യ) {
 		/* invalid character class, treat as normal text */
 		*ep = mismatch;
 		rval = RANGE_ERROR;
 	}
-	return rval;
+	തിരികെ rval;
 }
 
 /* Most MBCS/collation/case issues handled here.  Wildcard '*' is not handled.
@@ -146,69 +146,69 @@ classmatch(const char *pattern, char test, int foldcase, const char **ep)
  * Both pattern and string are **char to support pointer increment of arbitrary
  * multibyte characters for the given locale, in a later iteration of this code
  */
-static int fnmatch_ch(const char **pattern, const char **string, int flags)
+സ്ഥിതം പൂർണ്ണസംഖ്യ fnmatch_ch(സ്ഥിരം അക്ഷരം **pattern, സ്ഥിരം അക്ഷരം **string, പൂർണ്ണസംഖ്യ flags)
 {
-	const char * const mismatch = *pattern;
-	const int nocase = !!(flags & FNM_CASEFOLD);
-	const int escape = !(flags & FNM_NOESCAPE);
-	const int slash = !!(flags & FNM_PATHNAME);
-	int result = FNM_NOMATCH;
-	const char *startch;
-	int negate;
+	സ്ഥിരം അക്ഷരം * സ്ഥിരം mismatch = *pattern;
+	സ്ഥിരം പൂർണ്ണസംഖ്യ nocase = !!(flags & FNM_CASEFOLD);
+	സ്ഥിരം പൂർണ്ണസംഖ്യ escape = !(flags & FNM_NOESCAPE);
+	സ്ഥിരം പൂർണ്ണസംഖ്യ slash = !!(flags & FNM_PATHNAME);
+	പൂർണ്ണസംഖ്യ result = FNM_NOMATCH;
+	സ്ഥിരം അക്ഷരം *startch;
+	പൂർണ്ണസംഖ്യ negate;
 
-	if (**pattern == '[') {
+	എങ്കിൽ (**pattern == '[') {
 		++*pattern;
 
 		/* Handle negation, either leading ! or ^ operators */
 		negate = (**pattern == '!') || (**pattern == '^');
-		if (negate)
+		എങ്കിൽ (negate)
 			++*pattern;
 
 		/* ']' is an ordinary char at the start of the range pattern */
-		if (**pattern == ']')
-			goto leadingclosebrace;
+		എങ്കിൽ (**pattern == ']')
+			പോകുക leadingclosebrace;
 
-		while (**pattern) {
-			if (**pattern == ']') {
+		ആകുമ്പോൾ (**pattern) {
+			എങ്കിൽ (**pattern == ']') {
 				++*pattern;
 				/* XXX: Fix for MBCS character width */
 				++*string;
-				return (result ^ negate);
+				തിരികെ (result ^ negate);
 			}
 
-			if (escape && (**pattern == '\\')) {
+			എങ്കിൽ (escape && (**pattern == '\\')) {
 				++*pattern;
 
 				/* Patterns must terminate with ']', not EOS */
-				if (!**pattern)
-					break;
+				എങ്കിൽ (!**pattern)
+					നിർത്തുക;
 			}
 
 			/* Patterns must terminate with ']' not '/' */
-			if (slash && (**pattern == '/'))
-				break;
+			എങ്കിൽ (slash && (**pattern == '/'))
+				നിർത്തുക;
 
 			/* Match character classes. */
-			switch (classmatch(*pattern, **string, nocase, pattern)) {
-			case RANGE_MATCH:
+			തിരഞ്ഞെടുപ്പ് (classmatch(*pattern, **string, nocase, pattern)) {
+			അവസ്ഥ RANGE_MATCH:
 				result = 0;
-				continue;
-			case RANGE_NOMATCH:
+				തുടരുക;
+			അവസ്ഥ RANGE_NOMATCH:
 				/* Valid character class but no match. */
-				continue;
-			default:
+				തുടരുക;
+			സ്ഥിരസ്ഥിതി:
 				/* Not a valid character class. */
-				break;
+				നിർത്തുക;
 			}
-			if (!**pattern)
-				break;
+			എങ്കിൽ (!**pattern)
+				നിർത്തുക;
 
 leadingclosebrace:
 			/* Look at only well-formed range patterns;
 			 * "x-]" is not allowed unless escaped ("x-\]")
 			 * XXX: Fix for locale/MBCS character width
 			 */
-			if (((*pattern)[1] == '-') && ((*pattern)[2] != ']')) {
+			എങ്കിൽ (((*pattern)[1] == '-') && ((*pattern)[2] != ']')) {
 				startch = *pattern;
 				*pattern += (escape && ((*pattern)[2] == '\\')) ? 3 : 2;
 
@@ -218,33 +218,33 @@ leadingclosebrace:
 				 * FNM_PATHNAME mode pattern fall out to to the
 				 * rewind and test '[' literal code path.
 				 */
-				if (!**pattern || (slash && (**pattern == '/')))
-					break;
+				എങ്കിൽ (!**pattern || (slash && (**pattern == '/')))
+					നിർത്തുക;
 
 				/* XXX: handle locale/MBCS comparison, advance by MBCS char width */
-				if ((**string >= *startch) && (**string <= **pattern))
+				എങ്കിൽ ((**string >= *startch) && (**string <= **pattern))
 					result = 0;
-				else if (nocase &&
-				    (isupper((unsigned char)**string) ||
-				     isupper((unsigned char)*startch) ||
-				     isupper((unsigned char)**pattern)) &&
-				    (tolower((unsigned char)**string) >=
-				     tolower((unsigned char)*startch)) &&
-				    (tolower((unsigned char)**string) <=
-				     tolower((unsigned char)**pattern)))
+				അല്ലെങ്കിൽ എങ്കിൽ (nocase &&
+				    (isupper((unsigned അക്ഷരം)**string) ||
+				     isupper((unsigned അക്ഷരം)*startch) ||
+				     isupper((unsigned അക്ഷരം)**pattern)) &&
+				    (tolower((unsigned അക്ഷരം)**string) >=
+				     tolower((unsigned അക്ഷരം)*startch)) &&
+				    (tolower((unsigned അക്ഷരം)**string) <=
+				     tolower((unsigned അക്ഷരം)**pattern)))
 					result = 0;
 
 				++*pattern;
-				continue;
+				തുടരുക;
 			}
 
 			/* XXX: handle locale/MBCS comparison, advance by MBCS char width */
-			if ((**string == **pattern))
+			എങ്കിൽ ((**string == **pattern))
 				result = 0;
-			else if (nocase && (isupper((unsigned char)**string) ||
-			    isupper((unsigned char)**pattern)) &&
-			    (tolower((unsigned char)**string) ==
-			    tolower((unsigned char)**pattern)))
+			അല്ലെങ്കിൽ എങ്കിൽ (nocase && (isupper((unsigned അക്ഷരം)**string) ||
+			    isupper((unsigned അക്ഷരം)**pattern)) &&
+			    (tolower((unsigned അക്ഷരം)**string) ==
+			    tolower((unsigned അക്ഷരം)**pattern)))
 				result = 0;
 
 			++*pattern;
@@ -255,63 +255,63 @@ leadingclosebrace:
 		 */
 		*pattern = mismatch;
 		result = FNM_NOMATCH;
-	} else if (**pattern == '?') {
+	} അല്ലെങ്കിൽ എങ്കിൽ (**pattern == '?') {
 		/* Optimize '?' match before unescaping **pattern */
-		if (!**string || (slash && (**string == '/')))
-			return FNM_NOMATCH;
+		എങ്കിൽ (!**string || (slash && (**string == '/')))
+			തിരികെ FNM_NOMATCH;
 		result = 0;
-		goto fnmatch_ch_success;
-	} else if (escape && (**pattern == '\\') && (*pattern)[1]) {
+		പോകുക fnmatch_ch_success;
+	} അല്ലെങ്കിൽ എങ്കിൽ (escape && (**pattern == '\\') && (*pattern)[1]) {
 		++*pattern;
 	}
 
 	/* XXX: handle locale/MBCS comparison, advance by the MBCS char width */
-	if (**string == **pattern)
+	എങ്കിൽ (**string == **pattern)
 		result = 0;
-	else if (nocase && (isupper((unsigned char)**string) ||
-	    isupper((unsigned char)**pattern)) &&
-	    (tolower((unsigned char)**string) ==
-	    tolower((unsigned char)**pattern)))
+	അല്ലെങ്കിൽ എങ്കിൽ (nocase && (isupper((unsigned അക്ഷരം)**string) ||
+	    isupper((unsigned അക്ഷരം)**pattern)) &&
+	    (tolower((unsigned അക്ഷരം)**string) ==
+	    tolower((unsigned അക്ഷരം)**pattern)))
 		result = 0;
 
 	/* Refuse to advance over trailing slash or NULs */
-	if (**string == '\0' || **pattern == '\0' ||
+	എങ്കിൽ (**string == '\0' || **pattern == '\0' ||
 	    (slash && ((**string == '/') || (**pattern == '/'))))
-		return result;
+		തിരികെ result;
 
 fnmatch_ch_success:
 	++*pattern;
 	++*string;
-	return result;
+	തിരികെ result;
 }
 
 
-int fnmatch(const char *pattern, const char *string, int flags)
+പൂർണ്ണസംഖ്യ fnmatch(സ്ഥിരം അക്ഷരം *pattern, സ്ഥിരം അക്ഷരം *string, പൂർണ്ണസംഖ്യ flags)
 {
-	static const char dummystring[2] = {' ', 0};
-	const int escape = !(flags & FNM_NOESCAPE);
-	const int slash = !!(flags & FNM_PATHNAME);
-	const int leading_dir = !!(flags & FNM_LEADING_DIR);
-	const char *dummyptr, *matchptr, *strendseg;
-	int wild;
+	സ്ഥിതം സ്ഥിരം അക്ഷരം dummystring[2] = {' ', 0};
+	സ്ഥിരം പൂർണ്ണസംഖ്യ escape = !(flags & FNM_NOESCAPE);
+	സ്ഥിരം പൂർണ്ണസംഖ്യ slash = !!(flags & FNM_PATHNAME);
+	സ്ഥിരം പൂർണ്ണസംഖ്യ leading_dir = !!(flags & FNM_LEADING_DIR);
+	സ്ഥിരം അക്ഷരം *dummyptr, *matchptr, *strendseg;
+	പൂർണ്ണസംഖ്യ wild;
 	/* For '*' wild processing only; suppress 'used before initialization'
 	 * warnings with dummy initialization values;
 	 */
-	const char *strstartseg = NULL;
-	const char *mismatch = NULL;
-	int matchlen = 0;
+	സ്ഥിരം അക്ഷരം *strstartseg = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *mismatch = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ matchlen = 0;
 
-	if (*pattern == '*')
-		goto firstsegment;
+	എങ്കിൽ (*pattern == '*')
+		പോകുക firstsegment;
 
-	while (*pattern && *string) {
+	ആകുമ്പോൾ (*pattern && *string) {
 		/*
 		 * Pre-decode "\/" which has no special significance, and
 		 * match balanced slashes, starting a new segment pattern.
 		 */
-		if (slash && escape && (*pattern == '\\') && (pattern[1] == '/'))
+		എങ്കിൽ (slash && escape && (*pattern == '\\') && (pattern[1] == '/'))
 			++pattern;
-		if (slash && (*pattern == '/') && (*string == '/')) {
+		എങ്കിൽ (slash && (*pattern == '/') && (*string == '/')) {
 			++pattern;
 			++string;
 		}
@@ -321,13 +321,13 @@ firstsegment:
 		 * At the beginning of each segment, validate leading period
 		 * behavior.
 		 */
-		if ((flags & FNM_PERIOD) && (*string == '.')) {
-		    if (*pattern == '.')
+		എങ്കിൽ ((flags & FNM_PERIOD) && (*string == '.')) {
+		    എങ്കിൽ (*pattern == '.')
 			    ++pattern;
-		    else if (escape && (*pattern == '\\') && (pattern[1] == '.'))
+		    അല്ലെങ്കിൽ എങ്കിൽ (escape && (*pattern == '\\') && (pattern[1] == '.'))
 			    pattern += 2;
-		    else
-			    return FNM_NOMATCH;
+		    അല്ലെങ്കിൽ
+			    തിരികെ FNM_NOMATCH;
 		    ++string;
 		}
 
@@ -335,11 +335,11 @@ firstsegment:
 		 * Determine the end of string segment.  Presumes '/'
 		 * character is unique, not composite in any MBCS encoding
 		 */
-		if (slash) {
+		എങ്കിൽ (slash) {
 			strendseg = strchr(string, '/');
-			if (!strendseg)
+			എങ്കിൽ (!strendseg)
 				strendseg = strchr(string, '\0');
-		} else {
+		} അല്ലെങ്കിൽ {
 			strendseg = strchr(string, '\0');
 		}
 
@@ -347,32 +347,32 @@ firstsegment:
 		 * Allow pattern '*' to be consumed even with no remaining
 		 * string to match.
 		 */
-		while (*pattern) {
-			if ((string > strendseg) ||
+		ആകുമ്പോൾ (*pattern) {
+			എങ്കിൽ ((string > strendseg) ||
 			    ((string == strendseg) && (*pattern != '*')))
-				break;
+				നിർത്തുക;
 
-			if (slash && ((*pattern == '/') ||
+			എങ്കിൽ (slash && ((*pattern == '/') ||
 			    (escape && (*pattern == '\\') && (pattern[1] == '/'))))
-				break;
+				നിർത്തുക;
 
 			/*
 			 * Reduce groups of '*' and '?' to n '?' matches
 			 * followed by one '*' test for simplicity.
 			 */
-			for (wild = 0; (*pattern == '*') || (*pattern == '?'); ++pattern) {
-				if (*pattern == '*') {
+			വേണ്ടി (wild = 0; (*pattern == '*') || (*pattern == '?'); ++pattern) {
+				എങ്കിൽ (*pattern == '*') {
 					wild = 1;
-				} else if (string < strendseg) {  /* && (*pattern == '?') */
+				} അല്ലെങ്കിൽ എങ്കിൽ (string < strendseg) {  /* && (*pattern == '?') */
 					/* XXX: Advance 1 char for MBCS locale */
 					++string;
 				}
-				else {  /* (string >= strendseg) && (*pattern == '?') */
-					return FNM_NOMATCH;
+				അല്ലെങ്കിൽ {  /* (string >= strendseg) && (*pattern == '?') */
+					തിരികെ FNM_NOMATCH;
 				}
 			}
 
-			if (wild) {
+			എങ്കിൽ (wild) {
 				strstartseg = string;
 				mismatch = pattern;
 
@@ -380,8 +380,8 @@ firstsegment:
 				 * Count fixed (non '*') char matches remaining
 				 * in pattern * excluding '/' (or "\/") and '*'.
 				 */
-				for (matchptr = pattern, matchlen = 0; 1; ++matchlen) {
-					if ((*matchptr == '\0') ||
+				വേണ്ടി (matchptr = pattern, matchlen = 0; 1; ++matchlen) {
+					എങ്കിൽ ((*matchptr == '\0') ||
 					    (slash && ((*matchptr == '/') ||
 					    (escape && (*matchptr == '\\') &&
 					    (matchptr[1] == '/'))))) {
@@ -391,29 +391,29 @@ firstsegment:
 						 * wildcard loop.
 						 */
 						/* XXX: Adjust for MBCS */
-						if (string + matchlen > strendseg)
-							return FNM_NOMATCH;
+						എങ്കിൽ (string + matchlen > strendseg)
+							തിരികെ FNM_NOMATCH;
 
 						string = strendseg - matchlen;
 						wild = 0;
-						break;
+						നിർത്തുക;
 					}
 
-					if (*matchptr == '*') {
+					എങ്കിൽ (*matchptr == '*') {
 						/*
 						 * Ensure at least this many
 						 * trailing string chars remain
 						 * for the first comparison.
 						 */
 						/* XXX: Adjust for MBCS */
-						if (string + matchlen > strendseg)
-							return FNM_NOMATCH;
+						എങ്കിൽ (string + matchlen > strendseg)
+							തിരികെ FNM_NOMATCH;
 
 						/*
 						 * Begin first wild comparison
 						 * at the current position.
 						 */
-						break;
+						നിർത്തുക;
 					}
 
 					/*
@@ -423,37 +423,37 @@ firstsegment:
 					 * "[range]" escape.
 					 */
 					/* XXX: Adjust for MBCS */
-					if (escape && (*matchptr == '\\') &&
+					എങ്കിൽ (escape && (*matchptr == '\\') &&
 					    matchptr[1]) {
 						matchptr += 2;
-					} else if (*matchptr == '[') {
+					} അല്ലെങ്കിൽ എങ്കിൽ (*matchptr == '[') {
 						dummyptr = dummystring;
 						fnmatch_ch(&matchptr, &dummyptr,
 						    flags);
-					} else {
+					} അല്ലെങ്കിൽ {
 						++matchptr;
 					}
 				}
 			}
 
 			/* Incrementally match string against the pattern. */
-			while (*pattern && (string < strendseg)) {
+			ആകുമ്പോൾ (*pattern && (string < strendseg)) {
 				/* Success; begin a new wild pattern search. */
-				if (*pattern == '*')
-					break;
+				എങ്കിൽ (*pattern == '*')
+					നിർത്തുക;
 
-				if (slash && ((*string == '/') ||
+				എങ്കിൽ (slash && ((*string == '/') ||
 				    (*pattern == '/') || (escape &&
 				    (*pattern == '\\') && (pattern[1] == '/'))))
-					break;
+					നിർത്തുക;
 
 				/*
 				 * Compare ch's (the pattern is advanced over
 				 * "\/" to the '/', but slashes will mismatch,
 				 * and are not consumed).
 				 */
-				if (!fnmatch_ch(&pattern, &string, flags))
-					continue;
+				എങ്കിൽ (!fnmatch_ch(&pattern, &string, flags))
+					തുടരുക;
 
 				/*
 				 * Failed to match, loop against next char
@@ -461,35 +461,35 @@ firstsegment:
 				 * string chars remain to match the fixed
 				 * pattern.
 				 */
-				if (wild) {
+				എങ്കിൽ (wild) {
 					/* XXX: Advance 1 char for MBCS locale */
 					string = ++strstartseg;
-					if (string + matchlen > strendseg)
-						return FNM_NOMATCH;
+					എങ്കിൽ (string + matchlen > strendseg)
+						തിരികെ FNM_NOMATCH;
 
 					pattern = mismatch;
-					continue;
-				} else
-					return FNM_NOMATCH;
+					തുടരുക;
+				} അല്ലെങ്കിൽ
+					തിരികെ FNM_NOMATCH;
 			}
 		}
 
-		if (*string && !((slash || leading_dir) && (*string == '/')))
-			return FNM_NOMATCH;
+		എങ്കിൽ (*string && !((slash || leading_dir) && (*string == '/')))
+			തിരികെ FNM_NOMATCH;
 
-		if (*pattern && !(slash && ((*pattern == '/') ||
+		എങ്കിൽ (*pattern && !(slash && ((*pattern == '/') ||
 		    (escape && (*pattern == '\\') && (pattern[1] == '/')))))
-			return FNM_NOMATCH;
+			തിരികെ FNM_NOMATCH;
 
-		if (leading_dir && !*pattern && *string == '/')
-			return 0;
+		എങ്കിൽ (leading_dir && !*pattern && *string == '/')
+			തിരികെ 0;
 	}
 
 	/* Where both pattern and string are at EOS, declare success.  */
-	if (!*string && !*pattern)
-		return 0;
+	എങ്കിൽ (!*string && !*pattern)
+		തിരികെ 0;
 
 	/* Pattern didn't match to the end of string. */
-	return FNM_NOMATCH;
+	തിരികെ FNM_NOMATCH;
 }
 #endif /* HAVE_FNMATCH */

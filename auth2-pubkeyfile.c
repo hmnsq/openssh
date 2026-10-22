@@ -24,113 +24,113 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/stat.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <time.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "ssh.h"
-#include "log.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "digest.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "authfile.h"
-#include "match.h"
-#include "ssherr.h"
-#include "xmalloc.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "digest.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "auth.h"
+#അന്തര്ഭാവ "auth-options.h"
+#അന്തര്ഭാവ "authfile.h"
+#അന്തര്ഭാവ "match.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "xmalloc.h"
 
-int
-auth_authorise_keyopts(struct passwd *pw, struct sshauthopt *opts,
-    int allow_cert_authority, const char *remote_ip, const char *remote_host,
-    const char *loc)
+പൂർണ്ണസംഖ്യ
+auth_authorise_keyopts(ഘടന passwd *pw, ഘടന sshauthopt *opts,
+    പൂർണ്ണസംഖ്യ allow_cert_authority, സ്ഥിരം അക്ഷരം *remote_ip, സ്ഥിരം അക്ഷരം *remote_host,
+    സ്ഥിരം അക്ഷരം *loc)
 {
-	time_t now = time(NULL);
-	char buf[64];
+	time_t now = time(ശൂന്യ);
+	അക്ഷരം buf[64];
 
 	/*
 	 * Check keys/principals file expiry time.
 	 * NB. validity interval in certificate is handled elsewhere.
 	 */
-	if (opts->valid_before && now > 0 &&
+	എങ്കിൽ (opts->valid_before && now > 0 &&
 	    opts->valid_before < (uint64_t)now) {
-		format_absolute_time(opts->valid_before, buf, sizeof(buf));
+		format_absolute_time(opts->valid_before, buf, വലുപ്പം(buf));
 		debug("%s: entry expired at %s", loc, buf);
 		auth_debug_add("%s: entry expired at %s", loc, buf);
-		return -1;
+		തിരികെ -1;
 	}
 	/* Consistency checks */
-	if (opts->cert_principals != NULL && !opts->cert_authority) {
+	എങ്കിൽ (opts->cert_principals != ശൂന്യ && !opts->cert_authority) {
 		debug("%s: principals on non-CA key", loc);
 		auth_debug_add("%s: principals on non-CA key", loc);
 		/* deny access */
-		return -1;
+		തിരികെ -1;
 	}
 	/* cert-authority flag isn't valid in authorized_principals files */
-	if (!allow_cert_authority && opts->cert_authority) {
+	എങ്കിൽ (!allow_cert_authority && opts->cert_authority) {
 		debug("%s: cert-authority flag invalid here", loc);
 		auth_debug_add("%s: cert-authority flag invalid here", loc);
 		/* deny access */
-		return -1;
+		തിരികെ -1;
 	}
 
 	/* Perform from= checks */
-	if (opts->required_from_host_keys != NULL) {
-		switch (match_host_and_ip(remote_host, remote_ip,
-		    opts->required_from_host_keys )) {
-		case 1:
+	എങ്കിൽ (opts->required_from_host_താക്കോലുകൾ != ശൂന്യ) {
+		തിരഞ്ഞെടുപ്പ് (match_host_and_ip(remote_host, remote_ip,
+		    opts->required_from_host_താക്കോലുകൾ )) {
+		അവസ്ഥ 1:
 			/* Host name matches. */
-			break;
-		case -1:
-		default:
+			നിർത്തുക;
+		അവസ്ഥ -1:
+		സ്ഥിരസ്ഥിതി:
 			debug("%s: invalid from criteria", loc);
 			auth_debug_add("%s: invalid from criteria", loc);
 			/* FALLTHROUGH */
-		case 0:
+		അവസ്ഥ 0:
 			logit("%s: Authentication tried for %.100s with "
 			    "correct key but not from a permitted "
 			    "host (host=%.200s, ip=%.200s, required=%.200s).",
 			    loc, pw->pw_name, remote_host, remote_ip,
-			    opts->required_from_host_keys);
+			    opts->required_from_host_താക്കോലുകൾ);
 			auth_debug_add("%s: Your host '%.200s' is not "
 			    "permitted to use this key for login.",
 			    loc, remote_host);
 			/* deny access */
-			return -1;
+			തിരികെ -1;
 		}
 	}
 	/* Check source-address restriction from certificate */
-	if (opts->required_from_host_cert != NULL) {
-		switch (addr_match_cidr_list(remote_ip,
+	എങ്കിൽ (opts->required_from_host_cert != ശൂന്യ) {
+		തിരഞ്ഞെടുപ്പ് (addr_match_cidr_list(remote_ip,
 		    opts->required_from_host_cert)) {
-		case 1:
+		അവസ്ഥ 1:
 			/* accepted */
-			break;
-		case -1:
-		default:
+			നിർത്തുക;
+		അവസ്ഥ -1:
+		സ്ഥിരസ്ഥിതി:
 			/* invalid */
 			error("%s: Certificate source-address invalid", loc);
 			/* FALLTHROUGH */
-		case 0:
+		അവസ്ഥ 0:
 			logit("%s: Authentication tried for %.100s with valid "
 			    "certificate but not from a permitted source "
 			    "address (%.200s).", loc, pw->pw_name, remote_ip);
 			auth_debug_add("%s: Your address '%.200s' is not "
 			    "permitted to use this certificate for login.",
 			    loc, remote_ip);
-			return -1;
+			തിരികെ -1;
 		}
 	}
 	/*
@@ -141,30 +141,30 @@ auth_authorise_keyopts(struct passwd *pw, struct sshauthopt *opts,
 	 */
 	auth_log_authopts(loc, opts, 1);
 
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-match_principals_option(const char *principal_list, struct sshkey_cert *cert)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+match_principals_option(സ്ഥിരം അക്ഷരം *principal_list, ഘടന sshkey_cert *cert)
 {
-	char *list, *olist, *entry;
+	അക്ഷരം *list, *olist, *entry;
 	u_int i;
 
 	olist = list = xstrdup(principal_list);
-	for (;;) {
-		if ((entry = strsep(&list, ",")) == NULL || *entry == '\0')
-			break;
-		for (i = 0; i < cert->nprincipals; i++) {
-			if (strcmp(entry, cert->principals[i]) == 0) {
+	വേണ്ടി (;;) {
+		എങ്കിൽ ((entry = strsep(&list, ",")) == ശൂന്യ || *entry == '\0')
+			നിർത്തുക;
+		വേണ്ടി (i = 0; i < cert->nprincipals; i++) {
+			എങ്കിൽ (strcmp(entry, cert->principals[i]) == 0) {
 				debug3("matched principal from key i"
 				    "options \"%.100s\"", entry);
-				free(olist);
-				return 1;
+				സ്വതന്ത്രം(olist);
+				തിരികെ 1;
 			}
 		}
 	}
-	free(olist);
-	return 0;
+	സ്വതന്ത്രം(olist);
+	തിരികെ 0;
 }
 
 /*
@@ -172,91 +172,91 @@ match_principals_option(const char *principal_list, struct sshkey_cert *cert)
  * authoptsp is principal is authorised, -1 otherwise. "loc" is used as a
  * log preamble for file/line information.
  */
-int
-auth_check_principals_line(char *cp, const struct sshkey_cert *cert,
-    const char *loc, struct sshauthopt **authoptsp)
+പൂർണ്ണസംഖ്യ
+auth_check_principals_വരി(അക്ഷരം *cp, സ്ഥിരം ഘടന sshkey_cert *cert,
+    സ്ഥിരം അക്ഷരം *loc, ഘടന sshauthopt **authoptsp)
 {
 	u_int i, found = 0;
-	char *ep, *line_opts;
-	const char *reason = NULL;
-	struct sshauthopt *opts = NULL;
+	അക്ഷരം *ep, *വരി_opts;
+	സ്ഥിരം അക്ഷരം *reason = ശൂന്യ;
+	ഘടന sshauthopt *opts = ശൂന്യ;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	എങ്കിൽ (authoptsp != ശൂന്യ)
+		*authoptsp = ശൂന്യ;
 
 	/* Trim trailing whitespace. */
 	ep = cp + strlen(cp) - 1;
-	while (ep > cp && (*ep == '\n' || *ep == ' ' || *ep == '\t'))
+	ആകുമ്പോൾ (ep > cp && (*ep == '\n' || *ep == ' ' || *ep == '\t'))
 		*ep-- = '\0';
 
 	/*
 	 * If the line has internal whitespace then assume it has
 	 * key options.
 	 */
-	line_opts = NULL;
-	if ((ep = strrchr(cp, ' ')) != NULL ||
-	    (ep = strrchr(cp, '\t')) != NULL) {
-		for (; *ep == ' ' || *ep == '\t'; ep++)
+	വരി_opts = ശൂന്യ;
+	എങ്കിൽ ((ep = strrchr(cp, ' ')) != ശൂന്യ ||
+	    (ep = strrchr(cp, '\t')) != ശൂന്യ) {
+		വേണ്ടി (; *ep == ' ' || *ep == '\t'; ep++)
 			;
-		line_opts = cp;
+		വരി_opts = cp;
 		cp = ep;
 	}
-	if ((opts = sshauthopt_parse(line_opts, &reason)) == NULL) {
+	എങ്കിൽ ((opts = sshauthopt_parse(വരി_opts, &reason)) == ശൂന്യ) {
 		debug("%s: bad principals options: %s", loc, reason);
 		auth_debug_add("%s: bad principals options: %s", loc, reason);
-		return -1;
+		തിരികെ -1;
 	}
 	/* Check principals in cert against those on line */
-	for (i = 0; i < cert->nprincipals; i++) {
-		if (strcmp(cp, cert->principals[i]) != 0)
-			continue;
+	വേണ്ടി (i = 0; i < cert->nprincipals; i++) {
+		എങ്കിൽ (strcmp(cp, cert->principals[i]) != 0)
+			തുടരുക;
 		debug3("%s: matched principal \"%.100s\"",
 		    loc, cert->principals[i]);
 		found = 1;
 	}
-	if (found && authoptsp != NULL) {
+	എങ്കിൽ (found && authoptsp != ശൂന്യ) {
 		*authoptsp = opts;
-		opts = NULL;
+		opts = ശൂന്യ;
 	}
 	sshauthopt_free(opts);
-	return found ? 0 : -1;
+	തിരികെ found ? 0 : -1;
 }
 
-int
-auth_process_principals(FILE *f, const char *file,
-    const struct sshkey_cert *cert, struct sshauthopt **authoptsp)
+പൂർണ്ണസംഖ്യ
+auth_process_principals(FILE *f, സ്ഥിരം അക്ഷരം *file,
+    സ്ഥിരം ഘടന sshkey_cert *cert, ഘടന sshauthopt **authoptsp)
 {
-	char loc[256], *line = NULL, *cp, *ep;
+	അക്ഷരം loc[256], *വരി = ശൂന്യ, *cp, *ep;
 	size_t linesize = 0;
 	u_long linenum = 0, nonblank = 0;
 	u_int found_principal = 0;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	എങ്കിൽ (authoptsp != ശൂന്യ)
+		*authoptsp = ശൂന്യ;
 
-	while (getline(&line, &linesize, f) != -1) {
+	ആകുമ്പോൾ (getline(&വരി, &linesize, f) != -1) {
 		linenum++;
 		/* Always consume entire input */
-		if (found_principal)
-			continue;
+		എങ്കിൽ (found_principal)
+			തുടരുക;
 
 		/* Skip leading whitespace. */
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		വേണ്ടി (cp = വരി; *cp == ' ' || *cp == '\t'; cp++)
 			;
 		/* Skip blank and comment lines. */
-		if ((ep = strchr(cp, '#')) != NULL)
+		എങ്കിൽ ((ep = strchr(cp, '#')) != ശൂന്യ)
 			*ep = '\0';
-		if (!*cp || *cp == '\n')
-			continue;
+		എങ്കിൽ (!*cp || *cp == '\n')
+			തുടരുക;
 
 		nonblank++;
-		snprintf(loc, sizeof(loc), "%.200s:%lu", file, linenum);
-		if (auth_check_principals_line(cp, cert, loc, authoptsp) == 0)
+		snprintf(loc, വലുപ്പം(loc), "%.200s:%lu", file, linenum);
+		എങ്കിൽ (auth_check_principals_വരി(cp, cert, loc, authoptsp) == 0)
 			found_principal = 1;
 	}
 	debug2_f("%s: processed %lu/%lu lines", file, nonblank, linenum);
-	free(line);
-	return found_principal;
+	സ്വതന്ത്രം(വരി);
+	തിരികെ found_principal;
 }
 
 /*
@@ -264,81 +264,81 @@ auth_process_principals(FILE *f, const char *file,
  * matches, -1 otherwise. Will return key/cert options via *authoptsp
  * on success. "loc" is used as file/line location in log messages.
  */
-int
-auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
-    char *cp, const char *remote_ip, const char *remote_host, const char *loc,
-    struct sshauthopt **authoptsp)
+പൂർണ്ണസംഖ്യ
+auth_check_authkey_വരി(ഘടന passwd *pw, ഘടന sshkey *താക്കോൽ,
+    അക്ഷരം *cp, സ്ഥിരം അക്ഷരം *remote_ip, സ്ഥിരം അക്ഷരം *remote_host, സ്ഥിരം അക്ഷരം *loc,
+    ഘടന sshauthopt **authoptsp)
 {
-	int want_keytype = sshkey_is_cert(key) ? KEY_UNSPEC : key->type;
-	struct sshkey *found = NULL;
-	struct sshauthopt *keyopts = NULL, *certopts = NULL, *finalopts = NULL;
-	char *key_options = NULL, *fp = NULL;
-	const char *reason = NULL;
-	int ret = -1;
+	പൂർണ്ണസംഖ്യ want_keytype = sshkey_is_cert(താക്കോൽ) ? താക്കോൽ_UNSPEC : താക്കോൽ->type;
+	ഘടന sshkey *found = ശൂന്യ;
+	ഘടന sshauthopt *keyopts = ശൂന്യ, *certopts = ശൂന്യ, *finalopts = ശൂന്യ;
+	അക്ഷരം *താക്കോൽ_options = ശൂന്യ, *fp = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *reason = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ ret = -1;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	എങ്കിൽ (authoptsp != ശൂന്യ)
+		*authoptsp = ശൂന്യ;
 
-	if ((found = sshkey_new(want_keytype)) == NULL) {
+	എങ്കിൽ ((found = sshkey_new(want_keytype)) == ശൂന്യ) {
 		debug3_f("keytype %d failed", want_keytype);
-		goto out;
+		പോകുക out;
 	}
 
 	/* XXX djm: peek at key type in line and skip if unwanted */
 
-	if (sshkey_read(found, &cp) != 0) {
+	എങ്കിൽ (sshkey_read(found, &cp) != 0) {
 		/* no key?  check for options */
 		debug2("%s: check options: '%s'", loc, cp);
-		key_options = cp;
-		if (sshkey_advance_past_options(&cp) != 0) {
+		താക്കോൽ_options = cp;
+		എങ്കിൽ (sshkey_advance_past_options(&cp) != 0) {
 			reason = "invalid key option string";
-			goto fail_reason;
+			പോകുക fail_reason;
 		}
 		skip_space(&cp);
-		if (sshkey_read(found, &cp) != 0) {
+		എങ്കിൽ (sshkey_read(found, &cp) != 0) {
 			/* still no key?  advance to next line*/
 			debug2("%s: advance: '%s'", loc, cp);
-			goto out;
+			പോകുക out;
 		}
 	}
 	/* Parse key options now; we need to know if this is a CA key */
-	if ((keyopts = sshauthopt_parse(key_options, &reason)) == NULL) {
+	എങ്കിൽ ((keyopts = sshauthopt_parse(താക്കോൽ_options, &reason)) == ശൂന്യ) {
 		debug("%s: bad key options: %s", loc, reason);
 		auth_debug_add("%s: bad key options: %s", loc, reason);
-		goto out;
+		പോകുക out;
 	}
 	/* Ignore keys that don't match or incorrectly marked as CAs */
-	if (sshkey_is_cert(key)) {
+	എങ്കിൽ (sshkey_is_cert(താക്കോൽ)) {
 		/* Certificate; check signature key against CA */
-		if (!sshkey_equal(found, key->cert->signature_key) ||
+		എങ്കിൽ (!sshkey_equal(found, താക്കോൽ->cert->signature_താക്കോൽ) ||
 		    !keyopts->cert_authority)
-			goto out;
-	} else {
+			പോകുക out;
+	} അല്ലെങ്കിൽ {
 		/* Plain key: check it against key found in file */
-		if (!sshkey_equal(found, key) || keyopts->cert_authority)
-			goto out;
+		എങ്കിൽ (!sshkey_equal(found, താക്കോൽ) || keyopts->cert_authority)
+			പോകുക out;
 	}
 
 	/* We have a candidate key, perform authorisation checks */
-	if ((fp = sshkey_fingerprint(found,
-	    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL)
+	എങ്കിൽ ((fp = sshkey_fingerprint(found,
+	    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == ശൂന്യ)
 		fatal_f("fingerprint failed");
 
 	debug("%s: matching %s found: %s %s", loc,
-	    sshkey_is_cert(key) ? "CA" : "key", sshkey_type(found), fp);
+	    sshkey_is_cert(താക്കോൽ) ? "CA" : "key", sshkey_type(found), fp);
 
-	if (auth_authorise_keyopts(pw, keyopts,
-	    sshkey_is_cert(key), remote_ip, remote_host, loc) != 0) {
+	എങ്കിൽ (auth_authorise_keyopts(pw, keyopts,
+	    sshkey_is_cert(താക്കോൽ), remote_ip, remote_host, loc) != 0) {
 		reason = "Refused by key options";
-		goto fail_reason;
+		പോകുക fail_reason;
 	}
 	/* That's all we need for plain keys. */
-	if (!sshkey_is_cert(key)) {
+	എങ്കിൽ (!sshkey_is_cert(താക്കോൽ)) {
 		verbose("Accepted key %s %s found at %s",
 		    sshkey_type(found), fp, loc);
 		finalopts = keyopts;
-		keyopts = NULL;
-		goto success;
+		keyopts = ശൂന്യ;
+		പോകുക success;
 	}
 
 	/*
@@ -346,168 +346,168 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
 	 */
 
 	/* Parse and check options present in certificate */
-	if ((certopts = sshauthopt_from_cert(key)) == NULL) {
+	എങ്കിൽ ((certopts = sshauthopt_from_cert(താക്കോൽ)) == ശൂന്യ) {
 		reason = "Invalid certificate options";
-		goto cert_fail_reason;
+		പോകുക cert_fail_reason;
 	}
-	if (auth_authorise_keyopts(pw, certopts, 0,
+	എങ്കിൽ (auth_authorise_keyopts(pw, certopts, 0,
 	    remote_ip, remote_host, loc) != 0) {
 		reason = "Refused by certificate options";
-		goto cert_fail_reason;
+		പോകുക cert_fail_reason;
 	}
-	if ((finalopts = sshauthopt_merge(keyopts, certopts, &reason)) == NULL)
-		goto cert_fail_reason;
+	എങ്കിൽ ((finalopts = sshauthopt_merge(keyopts, certopts, &reason)) == ശൂന്യ)
+		പോകുക cert_fail_reason;
 
 	/*
 	 * If the user has specified a list of principals as
 	 * a key option, then prefer that list to matching
 	 * their username in the certificate principals list.
 	 */
-	if (keyopts->cert_principals != NULL &&
-	    !match_principals_option(keyopts->cert_principals, key->cert)) {
+	എങ്കിൽ (keyopts->cert_principals != ശൂന്യ &&
+	    !match_principals_option(keyopts->cert_principals, താക്കോൽ->cert)) {
 		reason = "Certificate does not contain an authorized principal";
-		goto cert_fail_reason;
+		പോകുക cert_fail_reason;
 	}
-	if (sshkey_cert_check_authority_now(key, 0, 0,
-	    keyopts->cert_principals == NULL ? pw->pw_name : NULL,
+	എങ്കിൽ (sshkey_cert_check_authority_now(താക്കോൽ, 0, 0,
+	    keyopts->cert_principals == ശൂന്യ ? pw->pw_name : ശൂന്യ,
 	    &reason) != 0)
-		goto cert_fail_reason;
+		പോകുക cert_fail_reason;
 
 	verbose("Accepted certificate ID \"%s\" (serial %llu) "
 	    "signed by CA %s %s found at %s",
-	    key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
+	    താക്കോൽ->cert->താക്കോൽ_id,
+	    (unsigned long long)താക്കോൽ->cert->serial,
 	    sshkey_type(found), fp, loc);
 
  success:
-	if (finalopts == NULL)
+	എങ്കിൽ (finalopts == ശൂന്യ)
 		fatal_f("internal error: missing options");
-	if (authoptsp != NULL) {
+	എങ്കിൽ (authoptsp != ശൂന്യ) {
 		*authoptsp = finalopts;
-		finalopts = NULL;
+		finalopts = ശൂന്യ;
 	}
 	/* success */
 	ret = 0;
-	goto out;
+	പോകുക out;
 
  cert_fail_reason:
 	error("Refusing certificate ID \"%s\" serial=%llu "
-	    "signed by %s CA %s via %s: %s", key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
-	    sshkey_type(key->cert->signature_key), fp, loc, reason);
+	    "signed by %s CA %s via %s: %s", താക്കോൽ->cert->താക്കോൽ_id,
+	    (unsigned long long)താക്കോൽ->cert->serial,
+	    sshkey_type(താക്കോൽ->cert->signature_താക്കോൽ), fp, loc, reason);
 	auth_debug_add("Refused Certificate ID \"%s\" serial=%llu: %s",
-	    key->cert->key_id, (unsigned long long)key->cert->serial, reason);
-	goto out;
+	    താക്കോൽ->cert->താക്കോൽ_id, (unsigned long long)താക്കോൽ->cert->serial, reason);
+	പോകുക out;
 
  fail_reason:
 	error("%s at %s", reason, loc);
 	auth_debug_add("%s", reason);
  out:
-	free(fp);
+	സ്വതന്ത്രം(fp);
 	sshauthopt_free(keyopts);
 	sshauthopt_free(certopts);
 	sshauthopt_free(finalopts);
 	sshkey_free(found);
-	return ret;
+	തിരികെ ret;
 }
 
 /*
  * Checks whether key is allowed in authorized_keys-format file,
  * returns 1 if the key is allowed or 0 otherwise.
  */
-int
-auth_check_authkeys_file(struct passwd *pw, FILE *f, char *file,
-    struct sshkey *key, const char *remote_ip,
-    const char *remote_host, struct sshauthopt **authoptsp)
+പൂർണ്ണസംഖ്യ
+auth_check_authkeys_file(ഘടന passwd *pw, FILE *f, അക്ഷരം *file,
+    ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *remote_ip,
+    സ്ഥിരം അക്ഷരം *remote_host, ഘടന sshauthopt **authoptsp)
 {
-	char *cp, *line = NULL, loc[256];
+	അക്ഷരം *cp, *വരി = ശൂന്യ, loc[256];
 	size_t linesize = 0;
-	int found_key = 0;
+	പൂർണ്ണസംഖ്യ found_താക്കോൽ = 0;
 	u_long linenum = 0, nonblank = 0;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	എങ്കിൽ (authoptsp != ശൂന്യ)
+		*authoptsp = ശൂന്യ;
 
-	while (getline(&line, &linesize, f) != -1) {
+	ആകുമ്പോൾ (getline(&വരി, &linesize, f) != -1) {
 		linenum++;
 		/* Always consume entire file */
-		if (found_key)
-			continue;
+		എങ്കിൽ (found_താക്കോൽ)
+			തുടരുക;
 
 		/* Skip leading whitespace, empty and comment lines. */
-		cp = line;
+		cp = വരി;
 		skip_space(&cp);
-		if (!*cp || *cp == '\n' || *cp == '#')
-			continue;
+		എങ്കിൽ (!*cp || *cp == '\n' || *cp == '#')
+			തുടരുക;
 
 		nonblank++;
-		snprintf(loc, sizeof(loc), "%.200s:%lu", file, linenum);
-		if (auth_check_authkey_line(pw, key, cp,
+		snprintf(loc, വലുപ്പം(loc), "%.200s:%lu", file, linenum);
+		എങ്കിൽ (auth_check_authkey_വരി(pw, താക്കോൽ, cp,
 		    remote_ip, remote_host, loc, authoptsp) == 0)
-			found_key = 1;
+			found_താക്കോൽ = 1;
 	}
-	free(line);
+	സ്വതന്ത്രം(വരി);
 	debug2_f("%s: processed %lu/%lu lines", file, nonblank, linenum);
-	return found_key;
+	തിരികെ found_താക്കോൽ;
 }
 
-static FILE *
-auth_openfile(const char *file, struct passwd *pw, int strict_modes,
-    int log_missing, char *file_type)
+സ്ഥിതം FILE *
+auth_openfile(സ്ഥിരം അക്ഷരം *file, ഘടന passwd *pw, പൂർണ്ണസംഖ്യ strict_modes,
+    പൂർണ്ണസംഖ്യ log_missing, അക്ഷരം *file_type)
 {
-	char line[1024];
-	struct stat st;
-	int fd;
+	അക്ഷരം വരി[1024];
+	ഘടന stat st;
+	പൂർണ്ണസംഖ്യ fd;
 	FILE *f;
 
-	if ((fd = open(file, O_RDONLY|O_NONBLOCK)) == -1) {
-		if (errno != ENOENT) {
+	എങ്കിൽ ((fd = open(file, O_RDONLY|O_NONBLOCK)) == -1) {
+		എങ്കിൽ (errno != ENOENT) {
 			logit("Could not open user '%s' %s '%s': %s",
 			    pw->pw_name, file_type, file, strerror(errno));
-		} else if (log_missing) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (log_missing) {
 			debug("Could not open user '%s' %s '%s': %s",
 			    pw->pw_name, file_type, file, strerror(errno));
 		}
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 
-	if (fstat(fd, &st) == -1) {
+	എങ്കിൽ (fstat(fd, &st) == -1) {
 		close(fd);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	എങ്കിൽ (!S_ISREG(st.st_mode)) {
 		logit("User '%s' %s '%s' is not a regular file",
 		    pw->pw_name, file_type, file);
 		close(fd);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 	unset_nonblock(fd);
-	if ((f = fdopen(fd, "r")) == NULL) {
+	എങ്കിൽ ((f = fdopen(fd, "r")) == ശൂന്യ) {
 		close(fd);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
-	if (strict_modes &&
-	    safe_path_fd(fileno(f), file, pw, line, sizeof(line)) != 0) {
+	എങ്കിൽ (strict_modes &&
+	    safe_path_fd(fileno(f), file, pw, വരി, വലുപ്പം(വരി)) != 0) {
 		fclose(f);
-		logit("Authentication refused: %s", line);
-		auth_debug_add("Ignored %s: %s", file_type, line);
-		return NULL;
+		logit("Authentication refused: %s", വരി);
+		auth_debug_add("Ignored %s: %s", file_type, വരി);
+		തിരികെ ശൂന്യ;
 	}
 
-	return f;
+	തിരികെ f;
 }
 
 
 FILE *
-auth_openkeyfile(const char *file, struct passwd *pw, int strict_modes)
+auth_openkeyfile(സ്ഥിരം അക്ഷരം *file, ഘടന passwd *pw, പൂർണ്ണസംഖ്യ strict_modes)
 {
-	return auth_openfile(file, pw, strict_modes, 1, "authorized keys");
+	തിരികെ auth_openfile(file, pw, strict_modes, 1, "authorized keys");
 }
 
 FILE *
-auth_openprincipals(const char *file, struct passwd *pw, int strict_modes)
+auth_openprincipals(സ്ഥിരം അക്ഷരം *file, ഘടന passwd *pw, പൂർണ്ണസംഖ്യ strict_modes)
 {
-	return auth_openfile(file, pw, strict_modes, 0,
+	തിരികെ auth_openfile(file, pw, strict_modes, 0,
 	    "authorized principals");
 }
 

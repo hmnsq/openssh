@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
 #endif
 
-#if !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20)
+#എങ്കിൽ !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20)
 
-#include <sys/types.h>
-#include <stdarg.h> /* needed for log.h */
-#include <string.h>
-#include <stdio.h>  /* needed for misc.h */
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <stdarg.h> /* needed for log.h */
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdio.h>  /* needed for misc.h */
 
-#include "log.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "cipher-chachapoly.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "cipher-chachapoly.h"
 
-struct chachapoly_ctx {
-	struct chacha_ctx main_ctx, header_ctx;
+ഘടന chachapoly_ctx {
+	ഘടന chacha_ctx main_ctx, header_ctx;
 };
 
-struct chachapoly_ctx *
-chachapoly_new(const u_char *key, u_int keylen)
+ഘടന chachapoly_ctx *
+chachapoly_new(സ്ഥിരം u_char *താക്കോൽ, u_int keylen)
 {
-	struct chachapoly_ctx *ctx;
+	ഘടന chachapoly_ctx *ctx;
 
-	if (keylen != (32 + 32)) /* 2 x 256 bit keys */
-		return NULL;
-	if ((ctx = calloc(1, sizeof(*ctx))) == NULL)
-		return NULL;
-	chacha_keysetup(&ctx->main_ctx, key, 256);
-	chacha_keysetup(&ctx->header_ctx, key + 32, 256);
-	return ctx;
+	എങ്കിൽ (keylen != (32 + 32)) /* 2 x 256 bit keys */
+		തിരികെ ശൂന്യ;
+	എങ്കിൽ ((ctx = calloc(1, വലുപ്പം(*ctx))) == ശൂന്യ)
+		തിരികെ ശൂന്യ;
+	chacha_keysetup(&ctx->main_ctx, താക്കോൽ, 256);
+	chacha_keysetup(&ctx->header_ctx, താക്കോൽ + 32, 256);
+	തിരികെ ctx;
 }
 
-void
-chachapoly_free(struct chachapoly_ctx *cpctx)
+ശൂന്യം
+chachapoly_free(ഘടന chachapoly_ctx *cpctx)
 {
-	freezero(cpctx, sizeof(*cpctx));
+	freezero(cpctx, വലുപ്പം(*cpctx));
 }
 
 /*
@@ -65,39 +65,39 @@ chachapoly_free(struct chachapoly_ctx *cpctx)
  * POLY1305_TAGLEN bytes at offset 'len'+'aadlen' as the authentication
  * tag. This tag is written on encryption and verified on decryption.
  */
-int
-chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
-    const u_char *src, u_int len, u_int aadlen, u_int authlen, int do_encrypt)
+പൂർണ്ണസംഖ്യ
+chachapoly_crypt(ഘടന chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
+    സ്ഥിരം u_char *src, u_int len, u_int aadlen, u_int authlen, പൂർണ്ണസംഖ്യ do_encrypt)
 {
 	u_char seqbuf[8];
-	const u_char one[8] = { 1, 0, 0, 0, 0, 0, 0, 0 }; /* NB little-endian */
-	u_char expected_tag[POLY1305_TAGLEN], poly_key[POLY1305_KEYLEN];
-	int r = SSH_ERR_INTERNAL_ERROR;
+	സ്ഥിരം u_char one[8] = { 1, 0, 0, 0, 0, 0, 0, 0 }; /* NB little-endian */
+	u_char expected_tag[POLY1305_TAGLEN], poly_താക്കോൽ[POLY1305_KEYLEN];
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
 	/*
 	 * Run ChaCha20 once to generate the Poly1305 key. The IV is the
 	 * packet sequence number.
 	 */
-	memset(poly_key, 0, sizeof(poly_key));
+	memset(poly_താക്കോൽ, 0, വലുപ്പം(poly_താക്കോൽ));
 	POKE_U64(seqbuf, seqnr);
-	chacha_ivsetup(&ctx->main_ctx, seqbuf, NULL);
+	chacha_ivsetup(&ctx->main_ctx, seqbuf, ശൂന്യ);
 	chacha_encrypt_bytes(&ctx->main_ctx,
-	    poly_key, poly_key, sizeof(poly_key));
+	    poly_താക്കോൽ, poly_താക്കോൽ, വലുപ്പം(poly_താക്കോൽ));
 
 	/* If decrypting, check tag before anything else */
-	if (!do_encrypt) {
-		const u_char *tag = src + aadlen + len;
+	എങ്കിൽ (!do_encrypt) {
+		സ്ഥിരം u_char *tag = src + aadlen + len;
 
-		poly1305_auth(expected_tag, src, aadlen + len, poly_key);
-		if (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
+		poly1305_auth(expected_tag, src, aadlen + len, poly_താക്കോൽ);
+		എങ്കിൽ (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
 			r = SSH_ERR_MAC_INVALID;
-			goto out;
+			പോകുക out;
 		}
 	}
 
 	/* Crypt additional data */
-	if (aadlen) {
-		chacha_ivsetup(&ctx->header_ctx, seqbuf, NULL);
+	എങ്കിൽ (aadlen) {
+		chacha_ivsetup(&ctx->header_ctx, seqbuf, ശൂന്യ);
 		chacha_encrypt_bytes(&ctx->header_ctx, src, dest, aadlen);
 	}
 
@@ -107,32 +107,32 @@ chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
 	    dest + aadlen, len);
 
 	/* If encrypting, calculate and append tag */
-	if (do_encrypt) {
+	എങ്കിൽ (do_encrypt) {
 		poly1305_auth(dest + aadlen + len, dest, aadlen + len,
-		    poly_key);
+		    poly_താക്കോൽ);
 	}
 	r = 0;
  out:
-	explicit_bzero(expected_tag, sizeof(expected_tag));
-	explicit_bzero(seqbuf, sizeof(seqbuf));
-	explicit_bzero(poly_key, sizeof(poly_key));
-	return r;
+	explicit_bzero(expected_tag, വലുപ്പം(expected_tag));
+	explicit_bzero(seqbuf, വലുപ്പം(seqbuf));
+	explicit_bzero(poly_താക്കോൽ, വലുപ്പം(poly_താക്കോൽ));
+	തിരികെ r;
 }
 
 /* Decrypt and extract the encrypted packet length */
-int
-chachapoly_get_length(struct chachapoly_ctx *ctx,
-    u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
+പൂർണ്ണസംഖ്യ
+chachapoly_get_length(ഘടന chachapoly_ctx *ctx,
+    u_int *plenp, u_int seqnr, സ്ഥിരം u_char *cp, u_int len)
 {
 	u_char buf[4], seqbuf[8];
 
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	എങ്കിൽ (len < 4)
+		തിരികെ SSH_ERR_MESSAGE_INCOMPLETE;
 	POKE_U64(seqbuf, seqnr);
-	chacha_ivsetup(&ctx->header_ctx, seqbuf, NULL);
+	chacha_ivsetup(&ctx->header_ctx, seqbuf, ശൂന്യ);
 	chacha_encrypt_bytes(&ctx->header_ctx, cp, buf, 4);
 	*plenp = PEEK_U32(buf);
-	return 0;
+	തിരികെ 0;
 }
 
 #endif /* !defined(HAVE_EVP_CHACHA20) || defined(HAVE_BROKEN_CHACHA20) */

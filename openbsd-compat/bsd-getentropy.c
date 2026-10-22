@@ -16,72 +16,72 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifndef SSH_RANDOM_DEV
 # define SSH_RANDOM_DEV "/dev/urandom"
 #endif /* SSH_RANDOM_DEV */
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 #ifdef HAVE_SYS_RANDOM_H
 # include <sys/random.h>
 #endif
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 #ifdef WITH_OPENSSL
-#include <openssl/rand.h>
-#include <openssl/err.h>
+#അന്തര്ഭാവ <openssl/rand.h>
+#അന്തര്ഭാവ <openssl/err.h>
 #endif
 
-#include "log.h"
+#അന്തര്ഭാവ "log.h"
 
-int
-_ssh_compat_getentropy(void *s, size_t len)
+പൂർണ്ണസംഖ്യ
+_ssh_compat_getentropy(ശൂന്യം *s, size_t len)
 {
-#if defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
-	if (RAND_bytes(s, len) <= 0)
+#എങ്കിൽ defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
+	എങ്കിൽ (RAND_bytes(s, len) <= 0)
 		fatal("Couldn't obtain random bytes (error 0x%lx)",
 		    (unsigned long)ERR_get_error());
-#else
-	int fd, save_errno;
+#അല്ലെങ്കിൽ
+	പൂർണ്ണസംഖ്യ fd, save_errno;
 	ssize_t r;
 	size_t o = 0;
 
 #ifdef WITH_OPENSSL
-	if (RAND_bytes(s, len) == 1)
-		return 0;
+	എങ്കിൽ (RAND_bytes(s, len) == 1)
+		തിരികെ 0;
 #endif
 #ifdef HAVE_GETENTROPY
-	if ((r = getentropy(s, len)) == 0)
-		return 0;
+	എങ്കിൽ ((r = getentropy(s, len)) == 0)
+		തിരികെ 0;
 #endif /* HAVE_GETENTROPY */
 #ifdef HAVE_GETRANDOM
-	if ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
-		return 0;
+	എങ്കിൽ ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
+		തിരികെ 0;
 #endif /* HAVE_GETRANDOM */
 
-	if ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
+	എങ്കിൽ ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
 		save_errno = errno;
 		/* Try egd/prngd before giving up. */
-		if (seed_from_prngd(s, len) == 0)
-			return 0;
+		എങ്കിൽ (seed_from_prngd(s, len) == 0)
+			തിരികെ 0;
 		fatal("Couldn't open %s: %s", SSH_RANDOM_DEV,
 		    strerror(save_errno));
 	}
-	while (o < len) {
-		r = read(fd, (u_char *)s + o, len - o);
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR ||
+	ആകുമ്പോൾ (o < len) {
+		r = പഠ(fd, (u_char *)s + o, len - o);
+		എങ്കിൽ (r < 0) {
+			എങ്കിൽ (errno == EAGAIN || errno == EINTR ||
 			    errno == EWOULDBLOCK)
-				continue;
+				തുടരുക;
 			fatal("read %s: %s", SSH_RANDOM_DEV, strerror(errno));
 		}
 		o += r;
 	}
 	close(fd);
 #endif /* WITH_OPENSSL */
-	return 0;
+	തിരികെ 0;
 }

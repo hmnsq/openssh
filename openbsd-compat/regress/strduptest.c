@@ -14,34 +14,34 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-static int fail = 0;
+സ്ഥിതം പൂർണ്ണസംഖ്യ fail = 0;
 
-void
-test(const char *a)
+ശൂന്യം
+test(സ്ഥിരം അക്ഷരം *a)
 {
-	char *b;
+	അക്ഷരം *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	എങ്കിൽ (b == 0) {
 		fail = 1;
-		return;
+		തിരികെ;
 	}
-	if (strcmp(a, b) != 0)
+	എങ്കിൽ (strcmp(a, b) != 0)
 		fail = 1;
-	free(b);
+	സ്വതന്ത്രം(b);
 }
 
-int
-main(void)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(ശൂന്യം)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	തിരികെ fail;
 }

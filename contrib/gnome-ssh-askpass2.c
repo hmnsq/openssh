@@ -52,18 +52,18 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include <X11/Xlib.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkx.h>
-#include <gdk/gdkkeysyms.h>
+#അന്തര്ഭാവ <X11/Xlib.h>
+#അന്തര്ഭാവ <gtk/gtk.h>
+#അന്തര്ഭാവ <gdk/gdkx.h>
+#അന്തര്ഭാവ <gdk/gdkkeysyms.h>
 
-static void
-report_failed_grab (GtkWidget *parent_window, const char *what)
+സ്ഥിതം ശൂന്യം
+report_failed_grab (GtkWidget *parent_window, സ്ഥിരം അക്ഷരം *what)
 {
 	GtkWidget *err;
 
@@ -78,88 +78,88 @@ report_failed_grab (GtkWidget *parent_window, const char *what)
 	gtk_widget_destroy(err);
 }
 
-static void
+സ്ഥിതം ശൂന്യം
 ok_dialog(GtkWidget *entry, gpointer dialog)
 {
 	g_return_if_fail(GTK_IS_DIALOG(dialog));
 	gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_OK);
 }
 
-static gboolean
-check_none(GtkWidget *widget, GdkEventKey *event, gpointer dialog)
+സ്ഥിതം gboolean
+check_none(GtkWidget *widget, Gdk_Event_താക്കോൽ *event, gpointer dialog)
 {
-	switch (event->keyval) {
-	case GDK_KEY_Escape:
+	തിരഞ്ഞെടുപ്പ് (event->keyval) {
+	അവസ്ഥ GDK_താക്കോൽ_Escape:
 		/* esc -> close dialog */
 		gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
-		return TRUE;
-	case GDK_KEY_Tab:
+		തിരികെ TRUE;
+	അവസ്ഥ GDK_താക്കോൽ_Tab:
 		/* tab -> focus close button */
 		gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(
 		    dialog, GTK_RESPONSE_CLOSE));
-		return TRUE;
-	default:
+		തിരികെ TRUE;
+	സ്ഥിരസ്ഥിതി:
 		/* eat all other key events */
-		return TRUE;
+		തിരികെ TRUE;
 	}
 }
 
-static int
-parse_env_hex_color(const char *env, GdkColor *c)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_env_hex_color(സ്ഥിരം അക്ഷരം *env, GdkColor *c)
 {
-	const char *s;
+	സ്ഥിരം അക്ഷരം *s;
 	unsigned long ul;
-	char *ep;
+	അക്ഷരം *ep;
 	size_t n;
 
-	if ((s = getenv(env)) == NULL)
-		return 0;
+	എങ്കിൽ ((s = getenv(env)) == ശൂന്യ)
+		തിരികെ 0;
 
-	memset(c, 0, sizeof(*c));
+	memset(c, 0, വലുപ്പം(*c));
 
 	/* Permit hex rgb or rrggbb optionally prefixed by '#' or '0x' */
-	if (*s == '#')
+	എങ്കിൽ (*s == '#')
 		s++;
-	else if (strncmp(s, "0x", 2) == 0)
+	അല്ലെങ്കിൽ എങ്കിൽ (strncmp(s, "0x", 2) == 0)
 		s += 2;
 	n = strlen(s);
-	if (n != 3 && n != 6)
-		goto bad;
+	എങ്കിൽ (n != 3 && n != 6)
+		പോകുക bad;
 	ul = strtoul(s, &ep, 16);
-	if (*ep != '\0' || ul > 0xffffff) {
+	എങ്കിൽ (*ep != '\0' || ul > 0xffffff) {
  bad:
 		fprintf(stderr, "Invalid $%s - invalid hex color code\n", env);
-		return 0;
+		തിരികെ 0;
 	}
 	/* Valid hex sequence; expand into a GdkColor */
-	if (n == 3) {
+	എങ്കിൽ (n == 3) {
 		/* 4-bit RGB */
 		c->red = ((ul >> 8) & 0xf) << 12;
 		c->green = ((ul >> 4) & 0xf) << 12;
 		c->blue = (ul & 0xf) << 12;
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* 8-bit RGB */
 		c->red = ((ul >> 16) & 0xff) << 8;
 		c->green = ((ul >> 8) & 0xff) << 8;
 		c->blue = (ul & 0xff) << 8;
 	}
-	return 1;
+	തിരികെ 1;
 }
 
-static int
-passphrase_dialog(char *message, int prompt_type)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+passphrase_dialog(അക്ഷരം *message, പൂർണ്ണസംഖ്യ prompt_type)
 {
-	const char *failed;
-	char *passphrase, *local;
-	int result, grab_tries, grab_server, grab_pointer;
-	int buttons, default_response;
+	സ്ഥിരം അക്ഷരം *failed;
+	അക്ഷരം *passphrase, *local;
+	പൂർണ്ണസംഖ്യ result, grab_tries, grab_server, grab_pointer;
+	പൂർണ്ണസംഖ്യ buttons, default_response;
 	GtkWidget *parent_window, *dialog, *entry;
 	GdkGrabStatus status;
 	GdkColor fg, bg;
-	int fg_set = 0, bg_set = 0;
+	പൂർണ്ണസംഖ്യ fg_set = 0, bg_set = 0;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != ശൂന്യ);
+	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != ശൂന്യ);
 	grab_tries = 0;
 
 	fg_set = parse_env_hex_color("GNOME_SSH_ASKPASS_FG_COLOR", &fg);
@@ -169,19 +169,19 @@ passphrase_dialog(char *message, int prompt_type)
 	 * complain.  */
 	parent_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	switch (prompt_type) {
-	case PROMPT_CONFIRM:
+	തിരഞ്ഞെടുപ്പ് (prompt_type) {
+	അവസ്ഥ PROMPT_CONFIRM:
 		buttons = GTK_BUTTONS_YES_NO;
 		default_response = GTK_RESPONSE_YES;
-		break;
-	case PROMPT_NONE:
+		നിർത്തുക;
+	അവസ്ഥ PROMPT_NONE:
 		buttons = GTK_BUTTONS_CLOSE;
 		default_response = GTK_RESPONSE_CLOSE;
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		buttons = GTK_BUTTONS_OK_CANCEL;
 		default_response = GTK_RESPONSE_OK;
-		break;
+		നിർത്തുക;
 	}
 
 	dialog = gtk_message_dialog_new(GTK_WINDOW(parent_window), 0,
@@ -193,28 +193,28 @@ passphrase_dialog(char *message, int prompt_type)
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_response);
 	gtk_window_set_keep_above(GTK_WINDOW(dialog), TRUE);
 
-	if (fg_set)
+	എങ്കിൽ (fg_set)
 		gtk_widget_modify_fg(dialog, GTK_STATE_NORMAL, &fg);
-	if (bg_set)
+	എങ്കിൽ (bg_set)
 		gtk_widget_modify_bg(dialog, GTK_STATE_NORMAL, &bg);
 
-	if (prompt_type == PROMPT_ENTRY || prompt_type == PROMPT_NONE) {
+	എങ്കിൽ (prompt_type == PROMPT_ENTRY || prompt_type == PROMPT_NONE) {
 		entry = gtk_entry_new();
-		if (fg_set)
+		എങ്കിൽ (fg_set)
 			gtk_widget_modify_fg(entry, GTK_STATE_NORMAL, &fg);
-		if (bg_set)
+		എങ്കിൽ (bg_set)
 			gtk_widget_modify_bg(entry, GTK_STATE_NORMAL, &bg);
 		gtk_box_pack_start(
 		    GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog))),
 		    entry, FALSE, FALSE, 0);
 		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 		gtk_widget_grab_focus(entry);
-		if (prompt_type == PROMPT_ENTRY) {
+		എങ്കിൽ (prompt_type == PROMPT_ENTRY) {
 			gtk_widget_show(entry);
 			/* Make <enter> close dialog */
 			g_signal_connect(G_OBJECT(entry), "activate",
 					 G_CALLBACK(ok_dialog), dialog);
-		} else {
+		} അല്ലെങ്കിൽ {
 			/*
 			 * Ensure the 'close' button is not focused by default
 			 * but is still reachable via tab. This is a bit of a
@@ -229,57 +229,57 @@ passphrase_dialog(char *message, int prompt_type)
 
 	/* Grab focus */
 	gtk_widget_show_now(dialog);
-	if (grab_pointer) {
-		for(;;) {
+	എങ്കിൽ (grab_pointer) {
+		വേണ്ടി(;;) {
 			status = gdk_pointer_grab(
 			    (gtk_widget_get_window(GTK_WIDGET(dialog))), TRUE,
-			    0, NULL, NULL, GDK_CURRENT_TIME);
-			if (status == GDK_GRAB_SUCCESS)
-				break;
+			    0, ശൂന്യ, ശൂന്യ, GDK_CURRENT_TIME);
+			എങ്കിൽ (status == GDK_GRAB_SUCCESS)
+				നിർത്തുക;
 			usleep(GRAB_WAIT * 1000);
-			if (++grab_tries > GRAB_TRIES) {
+			എങ്കിൽ (++grab_tries > GRAB_TRIES) {
 				failed = "mouse";
-				goto nograb;
+				പോകുക nograb;
 			}
 		}
 	}
-	for(;;) {
+	വേണ്ടി(;;) {
 		status = gdk_keyboard_grab(
 		    gtk_widget_get_window(GTK_WIDGET(dialog)), FALSE,
 		    GDK_CURRENT_TIME);
-		if (status == GDK_GRAB_SUCCESS)
-			break;
+		എങ്കിൽ (status == GDK_GRAB_SUCCESS)
+			നിർത്തുക;
 		usleep(GRAB_WAIT * 1000);
-		if (++grab_tries > GRAB_TRIES) {
+		എങ്കിൽ (++grab_tries > GRAB_TRIES) {
 			failed = "keyboard";
-			goto nograbkb;
+			പോകുക nograbkb;
 		}
 	}
-	if (grab_server) {
+	എങ്കിൽ (grab_server) {
 		gdk_x11_grab_server();
 	}
 
 	result = gtk_dialog_run(GTK_DIALOG(dialog));
 
 	/* Ungrab */
-	if (grab_server)
+	എങ്കിൽ (grab_server)
 		XUngrabServer(gdk_x11_get_default_xdisplay());
-	if (grab_pointer)
+	എങ്കിൽ (grab_pointer)
 		gdk_pointer_ungrab(GDK_CURRENT_TIME);
 	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
 	gdk_flush();
 
 	/* Report passphrase if user selected OK */
-	if (prompt_type == PROMPT_ENTRY) {
+	എങ്കിൽ (prompt_type == PROMPT_ENTRY) {
 		passphrase = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
-		if (result == GTK_RESPONSE_OK) {
+		എങ്കിൽ (result == GTK_RESPONSE_OK) {
 			local = g_locale_from_utf8(passphrase,
-			    strlen(passphrase), NULL, NULL, NULL);
-			if (local != NULL) {
+			    strlen(passphrase), ശൂന്യ, ശൂന്യ, ശൂന്യ);
+			എങ്കിൽ (local != ശൂന്യ) {
 				puts(local);
 				memset(local, '\0', strlen(local));
 				g_free(local);
-			} else {
+			} അല്ലെങ്കിൽ {
 				puts(passphrase);
 			}
 		}
@@ -291,9 +291,9 @@ passphrase_dialog(char *message, int prompt_type)
 	}
 
 	gtk_widget_destroy(dialog);
-	if (result != GTK_RESPONSE_OK && result != GTK_RESPONSE_YES)
-		return -1;
-	return 0;
+	എങ്കിൽ (result != GTK_RESPONSE_OK && result != GTK_RESPONSE_YES)
+		തിരികെ -1;
+	തിരികെ 0;
 
  nograbkb:
 	/*
@@ -303,33 +303,33 @@ passphrase_dialog(char *message, int prompt_type)
 	 */
 	gdk_pointer_ungrab(GDK_CURRENT_TIME);
  nograb:
-	if (grab_server)
+	എങ്കിൽ (grab_server)
 		XUngrabServer(gdk_x11_get_default_xdisplay());
 	gtk_widget_destroy(dialog);
 	
 	report_failed_grab(parent_window, failed);
 
-	return (-1);
+	തിരികെ (-1);
 }
 
-int
-main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	char *message, *prompt_mode;
-	int result, prompt_type = PROMPT_ENTRY;
+	അക്ഷരം *message, *prompt_mode;
+	പൂർണ്ണസംഖ്യ result, prompt_type = PROMPT_ENTRY;
 
 	gtk_init(&argc, &argv);
 
-	if (argc > 1) {
+	എങ്കിൽ (argc > 1) {
 		message = g_strjoinv(" ", argv + 1);
-	} else {
+	} അല്ലെങ്കിൽ {
 		message = g_strdup("Enter your OpenSSH passphrase:");
 	}
 
-	if ((prompt_mode = getenv("SSH_ASKPASS_PROMPT")) != NULL) {
-		if (strcasecmp(prompt_mode, "confirm") == 0)
+	എങ്കിൽ ((prompt_mode = getenv("SSH_ASKPASS_PROMPT")) != ശൂന്യ) {
+		എങ്കിൽ (strcasecmp(prompt_mode, "confirm") == 0)
 			prompt_type = PROMPT_CONFIRM;
-		else if (strcasecmp(prompt_mode, "none") == 0)
+		അല്ലെങ്കിൽ എങ്കിൽ (strcasecmp(prompt_mode, "none") == 0)
 			prompt_type = PROMPT_NONE;
 	}
 
@@ -337,5 +337,5 @@ main(int argc, char **argv)
 	result = passphrase_dialog(message, prompt_type);
 	g_free(message);
 
-	return (result);
+	തിരികെ (result);
 }

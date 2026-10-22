@@ -5,23 +5,23 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "../test_helper/test_helper.h"
+#അന്തര്ഭാവ "../test_helper/test_helper.h"
 
-#include "misc.h"
+#അന്തര്ഭാവ "misc.h"
 
-void
-tests(void)
+ശൂന്യം
+tests(ശൂന്യം)
 {
-	char buf[1024];
+	അക്ഷരം buf[1024];
 
 	TEST_START("conversion_convtime");
 	ASSERT_INT_EQ(convtime("0"), 0);
@@ -38,20 +38,20 @@ tests(void)
 	ASSERT_INT_EQ(convtime("-9d"), -1);
 	
 	/* overflow */
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX);
+	snprintf(buf, വലുപ്പം buf, "%llu", (unsigned long long)INT_MAX);
 	ASSERT_INT_EQ(convtime(buf), INT_MAX);
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX + 1);
+	snprintf(buf, വലുപ്പം buf, "%llu", (unsigned long long)INT_MAX + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 
 	/* overflow with multiplier */
-	snprintf(buf, sizeof buf, "%lluM", (unsigned long long)INT_MAX/60 + 1);
+	snprintf(buf, വലുപ്പം buf, "%lluM", (unsigned long long)INT_MAX/60 + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 	ASSERT_INT_EQ(convtime("1000000000000000000000w"), -1);
 	TEST_DONE();
 }
 
-void
-benchmarks(void)
+ശൂന്യം
+benchmarks(ശൂന്യം)
 {
 	printf("no benchmarks\n");
 }

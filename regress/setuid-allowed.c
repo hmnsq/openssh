@@ -16,43 +16,43 @@
 
 /* $OpenBSD$ */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 #ifdef HAVE_SYS_STATVFS_H
 # include <sys/statvfs.h>
 #endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <errno.h>
 
-static void
-usage(void)
+സ്ഥിതം ശൂന്യം
+usage(ശൂന്യം)
 {
 	fprintf(stderr, "check-setuid [path]\n");
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	const char *path = ".";
-	struct statvfs sb;
+	സ്ഥിരം അക്ഷരം *path = ".";
+	ഘടന statvfs sb;
 
-	if (argc > 2)
+	എങ്കിൽ (argc > 2)
 		usage();
-	else if (argc == 2)
+	അല്ലെങ്കിൽ എങ്കിൽ (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	എങ്കിൽ (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		എങ്കിൽ (errno == ENOSYS)
+			തിരികെ 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
 		     path, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	തിരികെ (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

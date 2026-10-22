@@ -27,67 +27,67 @@
 #ifndef _OPENBSD_COMPAT_H
 #define _OPENBSD_COMPAT_H
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <pwd.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <pwd.h>
 
-#include <sys/socket.h>
+#അന്തര്ഭാവ <sys/socket.h>
 
-#include <stddef.h>  /* for wchar_t */
+#അന്തര്ഭാവ <stddef.h>  /* for wchar_t */
 
 /* OpenBSD function replacements */
-#include "base64.h"
-#include "sigact.h"
-#include "readpassphrase.h"
-#include "vis.h"
-#include "getrrsetbyname.h"
-#include "sha1.h"
-#include "bsd-sha2.h"
-#include "md5.h"
-#include "blf.h"
-#include "fnmatch.h"
+#അന്തര്ഭാവ "base64.h"
+#അന്തര്ഭാവ "sigact.h"
+#അന്തര്ഭാവ "readpassphrase.h"
+#അന്തര്ഭാവ "vis.h"
+#അന്തര്ഭാവ "getrrsetbyname.h"
+#അന്തര്ഭാവ "sha1.h"
+#അന്തര്ഭാവ "bsd-sha2.h"
+#അന്തര്ഭാവ "md5.h"
+#അന്തര്ഭാവ "blf.h"
+#അന്തര്ഭാവ "fnmatch.h"
 
 #ifndef __THROW
-# if defined __cplusplus
+# എങ്കിൽ defined __cplusplus
 #  define __THROW throw()
-# else
+# അല്ലെങ്കിൽ
 #  define __THROW
 # endif
 #endif
 
-#if defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
+#എങ്കിൽ defined(HAVE_LOGIN_CAP) && !defined(HAVE_LOGIN_GETPWCLASS)
 # include <login_cap.h>
 # define login_getpwclass(pw) login_getclass(pw->pw_class)
 #endif
 
 #ifndef HAVE_BASENAME
-char *basename(const char *path);
+അക്ഷരം *basename(സ്ഥിരം അക്ഷരം *path);
 #endif
 
 #ifndef HAVE_BINDRESVPORT_SA
-int bindresvport_sa(int sd, struct sockaddr *sa);
+പൂർണ്ണസംഖ്യ bindresvport_sa(പൂർണ്ണസംഖ്യ sd, ഘടന sockaddr *sa);
 #endif
 
 #ifndef HAVE_CLOSEFROM
-void closefrom(int);
+ശൂന്യം closefrom(പൂർണ്ണസംഖ്യ);
 #endif
 
-#if defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
-int ftruncate(int filedes, off_t length);
+#എങ്കിൽ defined(HAVE_DECL_FTRUNCATE) && HAVE_DECL_FTRUNCATE == 0
+പൂർണ്ണസംഖ്യ ftruncate(പൂർണ്ണസംഖ്യ filedes, off_t length);
 #endif
 
 #ifndef HAVE_GETLINE
-#include <stdio.h>
-ssize_t getline(char **, size_t *, FILE *);
+#അന്തര്ഭാവ <stdio.h>
+ssize_t getline(അക്ഷരം **, size_t *, FILE *);
 #endif
 
 #ifndef HAVE_GETPAGESIZE
-int getpagesize(void);
+പൂർണ്ണസംഖ്യ getpagesize(ശൂന്യം);
 #endif
 
 #ifndef HAVE_GETCWD
-char *getcwd(char *pt, size_t size);
+അക്ഷരം *getcwd(അക്ഷരം *pt, size_t size);
 #endif
 
 #ifndef HAVE_GETEXECPATH
@@ -96,146 +96,146 @@ char *getcwd(char *pt, size_t size);
 #endif
 
 #ifndef HAVE_KILLPG
-int killpg(pid_t, int);
+പൂർണ്ണസംഖ്യ killpg(pid_t, പൂർണ്ണസംഖ്യ);
 #endif
 
-#if defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
-void *memmem(const void *, size_t, const void *, size_t);
+#എങ്കിൽ defined(HAVE_DECL_MEMMEM) && HAVE_DECL_MEMMEM == 0
+ശൂന്യം *memmem(സ്ഥിരം ശൂന്യം *, size_t, സ്ഥിരം ശൂന്യം *, size_t);
 #endif
 
 #ifndef HAVE_REALLOCARRAY
-void *reallocarray(void *, size_t, size_t);
+ശൂന്യം *reallocarray(ശൂന്യം *, size_t, size_t);
 #endif
 
 #ifndef HAVE_RECALLOCARRAY
-void *recallocarray(void *, size_t, size_t, size_t);
+ശൂന്യം *recallocarray(ശൂന്യം *, size_t, size_t, size_t);
 #endif
 
 #ifndef HAVE_RRESVPORT_AF
-int rresvport_af(int *alport, sa_family_t af);
+പൂർണ്ണസംഖ്യ rresvport_af(പൂർണ്ണസംഖ്യ *alport, sa_family_t af);
 #endif
 
 #ifndef HAVE_STRLCPY
-size_t strlcpy(char *dst, const char *src, size_t siz);
+size_t strlcpy(അക്ഷരം *dst, സ്ഥിരം അക്ഷരം *src, size_t siz);
 #endif
 
 #ifndef HAVE_STRLCAT
-size_t strlcat(char *dst, const char *src, size_t siz);
+size_t strlcat(അക്ഷരം *dst, സ്ഥിരം അക്ഷരം *src, size_t siz);
 #endif
 
 #ifndef HAVE_STRCASESTR
-char *strcasestr(const char *, const char *);
+അക്ഷരം *strcasestr(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 #endif
 
 #ifndef HAVE_STRNLEN
-size_t strnlen(const char *, size_t);
+size_t strnlen(സ്ഥിരം അക്ഷരം *, size_t);
 #endif
 
 #ifndef HAVE_STRNDUP
-char *strndup(const char *s, size_t n);
+അക്ഷരം *strndup(സ്ഥിരം അക്ഷരം *s, size_t n);
 #endif
 
 #ifndef HAVE_SETENV
-int setenv(register const char *name, register const char *value, int rewrite);
+പൂർണ്ണസംഖ്യ setenv(രജിസ്റ്റർ സ്ഥിരം അക്ഷരം *name, രജിസ്റ്റർ സ്ഥിരം അക്ഷരം *മൂല്യം, പൂർണ്ണസംഖ്യ rewrite);
 #endif
 
 #ifndef HAVE_STRMODE
-void strmode(int mode, char *p);
+ശൂന്യം strmode(പൂർണ്ണസംഖ്യ mode, അക്ഷരം *p);
 #endif
 
 #ifndef HAVE_STRPTIME
-#include  <time.h>
-char *strptime(const char *buf, const char *fmt, struct tm *tm);
+#അന്തര്ഭാവ  <time.h>
+അക്ഷരം *strptime(സ്ഥിരം അക്ഷരം *buf, സ്ഥിരം അക്ഷരം *fmt, ഘടന tm *tm);
 #endif
 
-#if !defined(HAVE_MKDTEMP)
-int mkstemps(char *path, int slen);
-int mkstemp(char *path);
-char *mkdtemp(char *path);
+#എങ്കിൽ !defined(HAVE_MKDTEMP)
+പൂർണ്ണസംഖ്യ mkstemps(അക്ഷരം *path, പൂർണ്ണസംഖ്യ slen);
+പൂർണ്ണസംഖ്യ mkstemp(അക്ഷരം *path);
+അക്ഷരം *mkdtemp(അക്ഷരം *path);
 #endif
 
 #define mkstemp(x) _ssh_mkstemp(x)
-int _ssh_mkstemp(char *);
+പൂർണ്ണസംഖ്യ _ssh_mkstemp(അക്ഷരം *);
 
 #ifndef HAVE_DAEMON
-int daemon(int nochdir, int noclose);
+പൂർണ്ണസംഖ്യ daemon(പൂർണ്ണസംഖ്യ nochdir, പൂർണ്ണസംഖ്യ noclose);
 #endif
 
 #ifndef HAVE_DIRNAME
-char *dirname(const char *path);
+അക്ഷരം *dirname(സ്ഥിരം അക്ഷരം *path);
 #endif
 
 #ifndef HAVE_FMT_SCALED
 #define	FMT_SCALED_STRSIZE	7
-int	fmt_scaled(long long number, char *result);
+പൂർണ്ണസംഖ്യ	fmt_scaled(long long സംഖ്യ, അക്ഷരം *result);
 #endif
 
 #ifndef HAVE_SCAN_SCALED
-int	scan_scaled(char *, long long *);
+പൂർണ്ണസംഖ്യ	scan_scaled(അക്ഷരം *, long long *);
 #endif
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
-char *inet_ntoa(struct in_addr in);
+#എങ്കിൽ defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+അക്ഷരം *inet_ntoa(ഘടന in_addr in);
 #endif
 
 #ifndef HAVE_INET_NTOP
-const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
+സ്ഥിരം അക്ഷരം *inet_ntop(പൂർണ്ണസംഖ്യ af, സ്ഥിരം ശൂന്യം *src, അക്ഷരം *dst, socklen_t size);
 #endif
 
 #ifndef HAVE_INET_ATON
-int inet_aton(const char *cp, struct in_addr *addr);
+പൂർണ്ണസംഖ്യ inet_aton(സ്ഥിരം അക്ഷരം *cp, ഘടന in_addr *addr);
 #endif
 
 #ifndef HAVE_STRSEP
-char *strsep(char **stringp, const char *delim);
+അക്ഷരം *strsep(അക്ഷരം **stringp, സ്ഥിരം അക്ഷരം *delim);
 #endif
 
 #ifndef HAVE_SETPROCTITLE
-void setproctitle(const char *fmt, ...);
-void compat_init_setproctitle(int argc, char *argv[]);
+ശൂന്യം setproctitle(സ്ഥിരം അക്ഷരം *fmt, ...);
+ശൂന്യം compat_init_setproctitle(പൂർണ്ണസംഖ്യ argc, അക്ഷരം *argv[]);
 #endif
 
 #ifndef HAVE_GETGROUPLIST
-int getgrouplist(const char *, gid_t, gid_t *, int *);
+പൂർണ്ണസംഖ്യ getgrouplist(സ്ഥിരം അക്ഷരം *, gid_t, gid_t *, പൂർണ്ണസംഖ്യ *);
 #endif
 
-#if !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
-int BSDgetopt(int argc, char * const *argv, const char *opts) __THROW;
-#include "openbsd-compat/getopt.h"
+#എങ്കിൽ !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
+പൂർണ്ണസംഖ്യ BSDgetopt(പൂർണ്ണസംഖ്യ argc, അക്ഷരം * സ്ഥിരം *argv, സ്ഥിരം അക്ഷരം *opts) __THROW;
+#അന്തര്ഭാവ "openbsd-compat/getopt.h"
 #endif
 
-#if ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
+#എങ്കിൽ ((defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0) || \
     (defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0))
 # include <sys/types.h>
 # include <sys/uio.h>
 
-# if defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
-int readv(int, struct iovec *, int);
+# എങ്കിൽ defined(HAVE_DECL_READV) && HAVE_DECL_READV == 0
+പൂർണ്ണസംഖ്യ readv(പൂർണ്ണസംഖ്യ, ഘടന iovec *, പൂർണ്ണസംഖ്യ);
 # endif
 
-# if defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
-int writev(int, struct iovec *, int);
+# എങ്കിൽ defined(HAVE_DECL_WRITEV) && HAVE_DECL_WRITEV == 0
+പൂർണ്ണസംഖ്യ writev(പൂർണ്ണസംഖ്യ, ഘടന iovec *, പൂർണ്ണസംഖ്യ);
 # endif
 #endif
 
 /* Home grown routines */
-#include "bsd-signal.h"
-#include "bsd-misc.h"
-#include "bsd-setres_id.h"
-#include "bsd-statvfs.h"
-#include "bsd-waitpid.h"
-#include "bsd-poll.h"
+#അന്തര്ഭാവ "bsd-signal.h"
+#അന്തര്ഭാവ "bsd-misc.h"
+#അന്തര്ഭാവ "bsd-setres_id.h"
+#അന്തര്ഭാവ "bsd-statvfs.h"
+#അന്തര്ഭാവ "bsd-waitpid.h"
+#അന്തര്ഭാവ "bsd-poll.h"
 
-#if defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
-int getpeereid(int , uid_t *, gid_t *);
+#എങ്കിൽ defined(HAVE_DECL_GETPEEREID) && HAVE_DECL_GETPEEREID == 0
+പൂർണ്ണസംഖ്യ getpeereid(പൂർണ്ണസംഖ്യ , uid_t *, gid_t *);
 #endif
 
 #ifndef HAVE_ARC4RANDOM
-uint32_t arc4random(void);
+uint32_t arc4random(ശൂന്യം);
 #endif /* !HAVE_ARC4RANDOM */
 
 #ifndef HAVE_ARC4RANDOM_BUF
-void arc4random_buf(void *, size_t);
+ശൂന്യം arc4random_buf(ശൂന്യം *, size_t);
 #endif
 
 #ifndef HAVE_ARC4RANDOM_STIR
@@ -247,33 +247,33 @@ uint32_t arc4random_uniform(uint32_t);
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **, const char *, ...);
+പൂർണ്ണസംഖ്യ asprintf(അക്ഷരം **, സ്ഥിരം അക്ഷരം *, ...);
 #endif
 
 #ifndef HAVE_OPENPTY
 # include <sys/ioctl.h>	/* for struct winsize */
-int openpty(int *, int *, char *, const struct termios *,
-    const struct winsize *);
+പൂർണ്ണസംഖ്യ openpty(പൂർണ്ണസംഖ്യ *, പൂർണ്ണസംഖ്യ *, അക്ഷരം *, സ്ഥിരം ഘടന termios *,
+    സ്ഥിരം ഘടന winsize *);
 #endif /* HAVE_OPENPTY */
 
 #ifndef HAVE_SNPRINTF
-int snprintf(char *, size_t, SNPRINTF_CONST char *, ...);
+പൂർണ്ണസംഖ്യ snprintf(അക്ഷരം *, size_t, SNPRINTF_CONST അക്ഷരം *, ...);
 #endif
 
 #ifndef HAVE_STRTOLL
-long long strtoll(const char *, char **, int);
+long long strtoll(സ്ഥിരം അക്ഷരം *, അക്ഷരം **, പൂർണ്ണസംഖ്യ);
 #endif
 
 #ifndef HAVE_STRTOUL
-unsigned long strtoul(const char *, char **, int);
+unsigned long strtoul(സ്ഥിരം അക്ഷരം *, അക്ഷരം **, പൂർണ്ണസംഖ്യ);
 #endif
 
 #ifndef HAVE_STRTOULL
-unsigned long long strtoull(const char *, char **, int);
+unsigned long long strtoull(സ്ഥിരം അക്ഷരം *, അക്ഷരം **, പൂർണ്ണസംഖ്യ);
 #endif
 
 #ifndef HAVE_STRTONUM
-long long strtonum(const char *, long long, long long, const char **);
+long long strtonum(സ്ഥിരം അക്ഷരം *, long long, long long, സ്ഥിരം അക്ഷരം **);
 #endif
 
 /* multibyte character support */
@@ -294,10 +294,10 @@ long long strtonum(const char *, long long, long long, const char **);
 #endif
 
 #ifndef HAVE_MBTOWC
-int mbtowc(wchar_t *, const char*, size_t);
+പൂർണ്ണസംഖ്യ mbtowc(wchar_t *, സ്ഥിരം അക്ഷരം*, size_t);
 #endif
 
-#if !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
+#എങ്കിൽ !defined(HAVE_VASPRINTF) || !defined(HAVE_VSNPRINTF)
 # include <stdarg.h>
 #endif
 
@@ -309,85 +309,85 @@ int mbtowc(wchar_t *, const char*, size_t);
 #ifndef VA_COPY
 # ifdef HAVE_VA_COPY
 #  define VA_COPY(dest, src) va_copy(dest, src)
-# else
+# അല്ലെങ്കിൽ
 #  ifdef HAVE___VA_COPY
 #   define VA_COPY(dest, src) __va_copy(dest, src)
-#  else
+#  അല്ലെങ്കിൽ
 #   define VA_COPY(dest, src) (dest) = (src)
 #  endif
 # endif
 #endif
 
 #ifndef HAVE_VASPRINTF
-int vasprintf(char **, const char *, va_list);
+പൂർണ്ണസംഖ്യ vasprintf(അക്ഷരം **, സ്ഥിരം അക്ഷരം *, va_list);
 #endif
 
 #ifndef HAVE_VSNPRINTF
-int vsnprintf(char *, size_t, const char *, va_list);
+പൂർണ്ണസംഖ്യ vsnprintf(അക്ഷരം *, size_t, സ്ഥിരം അക്ഷരം *, va_list);
 #endif
 
 #ifndef HAVE_USER_FROM_UID
-char *user_from_uid(uid_t, int);
+അക്ഷരം *user_from_uid(uid_t, പൂർണ്ണസംഖ്യ);
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *group_from_gid(gid_t, int);
+അക്ഷരം *group_from_gid(gid_t, പൂർണ്ണസംഖ്യ);
 #endif
 
 #ifndef HAVE_TIMINGSAFE_BCMP
-int timingsafe_bcmp(const void *, const void *, size_t);
+പൂർണ്ണസംഖ്യ timingsafe_bcmp(സ്ഥിരം ശൂന്യം *, സ്ഥിരം ശൂന്യം *, size_t);
 #endif
 
 #ifndef HAVE_BCRYPT_PBKDF
-int	bcrypt_pbkdf(const char *, size_t, const uint8_t *, size_t,
-    uint8_t *, size_t, unsigned int);
+പൂർണ്ണസംഖ്യ	bcrypt_pbkdf(സ്ഥിരം അക്ഷരം *, size_t, സ്ഥിരം uint8_t *, size_t,
+    uint8_t *, size_t, unsigned പൂർണ്ണസംഖ്യ);
 #endif
 
 #ifndef HAVE_EXPLICIT_BZERO
-void explicit_bzero(void *p, size_t n);
+ശൂന്യം explicit_bzero(ശൂന്യം *p, size_t n);
 #endif
 
 #ifndef HAVE_FREEZERO
-void freezero(void *, size_t);
+ശൂന്യം freezero(ശൂന്യം *, size_t);
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
+ഘടന tm *localtime_r(സ്ഥിരം time_t *, ഘടന tm *);
 #endif
 
 #ifndef HAVE_TIMEGM
-#include <time.h>
-time_t timegm(struct tm *);
+#അന്തര്ഭാവ <time.h>
+time_t timegm(ഘടന tm *);
 #endif
 
-char *xcrypt(const char *password, const char *salt);
-char *shadow_pw(struct passwd *pw);
+അക്ഷരം *xcrypt(സ്ഥിരം അക്ഷരം *password, സ്ഥിരം അക്ഷരം *salt);
+അക്ഷരം *shadow_pw(ഘടന passwd *pw);
 
 /* rfc2553 socket API replacements */
-#include "fake-rfc2553.h"
+#അന്തര്ഭാവ "fake-rfc2553.h"
 
 /* Routines for a single OS platform */
-#include "bsd-cygwin_util.h"
+#അന്തര്ഭാവ "bsd-cygwin_util.h"
 
-#include "port-aix.h"
-#include "port-irix.h"
-#include "port-linux.h"
-#include "port-solaris.h"
-#include "port-net.h"
-#include "port-uw.h"
+#അന്തര്ഭാവ "port-aix.h"
+#അന്തര്ഭാവ "port-irix.h"
+#അന്തര്ഭാവ "port-linux.h"
+#അന്തര്ഭാവ "port-solaris.h"
+#അന്തര്ഭാവ "port-net.h"
+#അന്തര്ഭാവ "port-uw.h"
 
 /* _FORTIFY_SOURCE breaks FD_ISSET(n)/FD_SET(n) for n > FD_SETSIZE. Avoid. */
-#if defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
+#എങ്കിൽ defined(HAVE_FEATURES_H) && defined(_FORTIFY_SOURCE)
 # include <features.h>
-# if defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
-#  if __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
+# എങ്കിൽ defined(__GNU_LIBRARY__) && defined(__GLIBC_PREREQ)
+#  എങ്കിൽ __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0)
 #   include <sys/socket.h>  /* Ensure include guard is defined */
 #   undef FD_SET
 #   undef FD_ISSET
 #   define FD_SET(n, set)	kludge_FD_SET(n, set)
 #   define FD_ISSET(n, set)	kludge_FD_ISSET(n, set)
-void kludge_FD_SET(int, fd_set *);
-int kludge_FD_ISSET(int, fd_set *);
+ശൂന്യം kludge_FD_SET(പൂർണ്ണസംഖ്യ, fd_set *);
+പൂർണ്ണസംഖ്യ kludge_FD_ISSET(പൂർണ്ണസംഖ്യ, fd_set *);
 #  endif /* __GLIBC_PREREQ(2, 15) && (_FORTIFY_SOURCE > 0) */
 # endif /* __GNU_LIBRARY__ && __GLIBC_PREREQ */
 #endif /* HAVE_FEATURES_H && _FORTIFY_SOURCE */

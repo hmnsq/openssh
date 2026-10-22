@@ -23,189 +23,189 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <fcntl.h>
-#include <paths.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <paths.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <errno.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include <openssl/rand.h>
-#include <openssl/rsa.h>
-#include "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ <openssl/evp.h>
+#അന്തര്ഭാവ <openssl/rand.h>
+#അന്തര്ഭാവ <openssl/rsa.h>
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
 #endif
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "authfile.h"
-#include "msg.h"
-#include "canohost.h"
-#include "pathnames.h"
-#include "readconf.h"
-#include "uidswap.h"
-#include "ssherr.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "authfile.h"
+#അന്തര്ഭാവ "msg.h"
+#അന്തര്ഭാവ "canohost.h"
+#അന്തര്ഭാവ "pathnames.h"
+#അന്തര്ഭാവ "readconf.h"
+#അന്തര്ഭാവ "uidswap.h"
+#അന്തര്ഭാവ "ssherr.h"
 
-extern char *__progname;
+ബാഹ്യ അക്ഷരം *__progname;
 
-static int
-valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+valid_request(ഘടന passwd *pw, അക്ഷരം *host, ഘടന sshkey **ret, അക്ഷരം **pkalgp,
     u_char *data, size_t datalen)
 {
-	struct sshbuf *b;
-	struct sshkey *key = NULL;
+	ഘടന sshbuf *b;
+	ഘടന sshkey *താക്കോൽ = ശൂന്യ;
 	u_char type, *pkblob;
-	char *p;
+	അക്ഷരം *p;
 	size_t blen, len;
-	char *pkalg, *luser;
-	int r, pktype, fail;
+	അക്ഷരം *pkalg, *luser;
+	പൂർണ്ണസംഖ്യ r, pktype, fail;
 
-	if (ret != NULL)
-		*ret = NULL;
-	if (pkalgp != NULL)
-		*pkalgp = NULL;
+	എങ്കിൽ (ret != ശൂന്യ)
+		*ret = ശൂന്യ;
+	എങ്കിൽ (pkalgp != ശൂന്യ)
+		*pkalgp = ശൂന്യ;
 	fail = 0;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	എങ്കിൽ ((b = sshbuf_from(data, datalen)) == ശൂന്യ)
 		fatal_f("sshbuf_from failed");
 
 	/* session id */
-	if ((r = sshbuf_get_string(b, NULL, &len)) != 0)
+	എങ്കിൽ ((r = sshbuf_get_string(b, ശൂന്യ, &len)) != 0)
 		fatal_fr(r, "parse session ID");
-	if (len != 20 && /* SHA1 */
+	എങ്കിൽ (len != 20 && /* SHA1 */
 	    len != 32 && /* SHA256 */
 	    len != 48 && /* SHA384 */
 	    len != 64)   /* SHA512 */
 		fail++;
 
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	എങ്കിൽ ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	എങ്കിൽ (type != SSH2_സന്ദേശം_USERAUTH_REQUEST)
 		fail++;
 
 	/* server user */
-	if ((r = sshbuf_skip_string(b)) != 0)
+	എങ്കിൽ ((r = sshbuf_skip_string(b)) != 0)
 		fatal_fr(r, "parse user");
 
 	/* service */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	എങ്കിൽ ((r = sshbuf_get_cstring(b, &p, ശൂന്യ)) != 0)
 		fatal_fr(r, "parse service");
-	if (strcmp("ssh-connection", p) != 0)
+	എങ്കിൽ (strcmp("ssh-connection", p) != 0)
 		fail++;
-	free(p);
+	സ്വതന്ത്രം(p);
 
 	/* method */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	എങ്കിൽ ((r = sshbuf_get_cstring(b, &p, ശൂന്യ)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp("hostbased", p) != 0)
+	എങ്കിൽ (strcmp("hostbased", p) != 0)
 		fail++;
-	free(p);
+	സ്വതന്ത്രം(p);
 
 	/* pubkey */
-	if ((r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_get_cstring(b, &pkalg, ശൂന്യ)) != 0 ||
 	    (r = sshbuf_get_string(b, &pkblob, &blen)) != 0)
 		fatal_fr(r, "parse pk");
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC)
+	എങ്കിൽ (pktype == താക്കോൽ_UNSPEC)
 		fail++;
-	else if ((r = sshkey_from_blob(pkblob, blen, &key)) != 0) {
+	അല്ലെങ്കിൽ എങ്കിൽ ((r = sshkey_from_blob(pkblob, blen, &താക്കോൽ)) != 0) {
 		error_fr(r, "decode key");
 		fail++;
-	} else if (key->type != pktype)
+	} അല്ലെങ്കിൽ എങ്കിൽ (താക്കോൽ->type != pktype)
 		fail++;
 
 	/* client host name, handle trailing dot */
-	if ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
+	എങ്കിൽ ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
 		fatal_fr(r, "parse hostname");
 	debug2_f("check expect chost \"%s\" got \"%s\"", host, p);
-	if (len == 0)
+	എങ്കിൽ (len == 0)
 		fail++;
-	else if (strlen(host) != len - 1)
+	അല്ലെങ്കിൽ എങ്കിൽ (strlen(host) != len - 1)
 		fail++;
-	else if (p[len - 1] != '.')
+	അല്ലെങ്കിൽ എങ്കിൽ (p[len - 1] != '.')
 		fail++;
-	else if (strncasecmp(host, p, len - 1) != 0)
+	അല്ലെങ്കിൽ എങ്കിൽ (strncasecmp(host, p, len - 1) != 0)
 		fail++;
-	free(p);
+	സ്വതന്ത്രം(p);
 
 	/* local user */
-	if ((r = sshbuf_get_cstring(b, &luser, NULL)) != 0)
+	എങ്കിൽ ((r = sshbuf_get_cstring(b, &luser, ശൂന്യ)) != 0)
 		fatal_fr(r, "parse luser");
 
-	if (strcmp(pw->pw_name, luser) != 0)
+	എങ്കിൽ (strcmp(pw->pw_name, luser) != 0)
 		fail++;
-	free(luser);
+	സ്വതന്ത്രം(luser);
 
 	/* end of message */
-	if (sshbuf_len(b) != 0)
+	എങ്കിൽ (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
 
 	debug3_f("fail %d", fail);
 
-	if (!fail) {
-		if (ret != NULL) {
-			*ret = key;
-			key = NULL;
+	എങ്കിൽ (!fail) {
+		എങ്കിൽ (ret != ശൂന്യ) {
+			*ret = താക്കോൽ;
+			താക്കോൽ = ശൂന്യ;
 		}
-		if (pkalgp != NULL) {
+		എങ്കിൽ (pkalgp != ശൂന്യ) {
 			*pkalgp = pkalg;
-			pkalg = NULL;
+			pkalg = ശൂന്യ;
 		}
 	}
-	sshkey_free(key);
-	free(pkalg);
-	free(pkblob);
+	sshkey_free(താക്കോൽ);
+	സ്വതന്ത്രം(pkalg);
+	സ്വതന്ത്രം(pkblob);
 
-	return (fail ? -1 : 0);
+	തിരികെ (fail ? -1 : 0);
 }
 
-int
-main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	struct sshbuf *b;
+	ഘടന sshbuf *b;
 	Options options;
-#define NUM_KEYTYPES 5
-	struct sshkey *keys[NUM_KEYTYPES], *key = NULL;
-	struct passwd *pw;
-	int r, key_fd[NUM_KEYTYPES], i, found, version = 2, fd;
+#define അക്കം_KEYTYPES 5
+	ഘടന sshkey *താക്കോലുകൾ[അക്കം_KEYTYPES], *താക്കോൽ = ശൂന്യ;
+	ഘടന passwd *pw;
+	പൂർണ്ണസംഖ്യ r, താക്കോൽ_fd[അക്കം_KEYTYPES], i, found, version = 2, fd;
 	u_char *signature, *data, rver;
-	char *host, *fp, *pkalg;
+	അക്ഷരം *host, *fp, *pkalg;
 	size_t slen, dlen;
 
 	/* Ensure that stdin and stdout are connected */
-	if ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
+	എങ്കിൽ ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
 		exit(1);
 	/* Leave /dev/null fd iff it is attached to stderr */
-	if (fd > 2)
+	എങ്കിൽ (fd > 2)
 		close(fd);
 
-	if (pledge("stdio rpath getpw dns id", NULL) != 0)
+	എങ്കിൽ (pledge("stdio rpath getpw dns id", ശൂന്യ) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = 0; i < NUM_KEYTYPES; i++)
-		key_fd[i] = -1;
+	വേണ്ടി (i = 0; i < അക്കം_KEYTYPES; i++)
+		താക്കോൽ_fd[i] = -1;
 
 	i = 0;
 	/* XXX This really needs to read sshd_config for the paths */
-	key_fd[i++] = open(_PATH_HOST_ECDSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_ED25519_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_RSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, O_RDONLY);
+	താക്കോൽ_fd[i++] = open(PATH_HOST_ECDSA_താക്കോൽ_FILE, O_RDONLY);
+	താക്കോൽ_fd[i++] = open(PATH_HOST_ED25519_താക്കോൽ_FILE, O_RDONLY);
+	താക്കോൽ_fd[i++] = open(PATH_HOST_RSA_താക്കോൽ_FILE, O_RDONLY);
+	താക്കോൽ_fd[i++] = open(PATH_HOST_MLDSA44_ED25519_താക്കോൽ_FILE, O_RDONLY);
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	എങ്കിൽ ((pw = getpwuid(getuid())) == ശൂന്യ)
 		fatal("getpwuid failed");
 	pw = pwcopy(pw);
 
@@ -219,90 +219,90 @@ main(int argc, char **argv)
 
 	/* verify that ssh-keysign is enabled by the admin */
 	initialize_options(&options);
-	(void)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
-	    &options, 0, NULL);
-	(void)fill_default_options(&options);
-	if (options.enable_ssh_keysign != 1)
+	(ശൂന്യം)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
+	    &options, 0, ശൂന്യ);
+	(ശൂന്യം)fill_default_options(&options);
+	എങ്കിൽ (options.enable_ssh_keysign != 1)
 		fatal("ssh-keysign not enabled in %s",
 		    _PATH_HOST_CONFIG_FILE);
 
-	if (pledge("stdio dns", NULL) != 0)
+	എങ്കിൽ (pledge("stdio dns", ശൂന്യ) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = found = 0; i < NUM_KEYTYPES; i++) {
-		if (key_fd[i] != -1)
+	വേണ്ടി (i = found = 0; i < അക്കം_KEYTYPES; i++) {
+		എങ്കിൽ (താക്കോൽ_fd[i] != -1)
 			found = 1;
 	}
-	if (found == 0)
+	എങ്കിൽ (found == 0)
 		fatal("could not open any host key");
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		keys[i] = NULL;
-		if (key_fd[i] == -1)
-			continue;
-		r = sshkey_load_private_type_fd(key_fd[i], KEY_UNSPEC,
-		    NULL, &key, NULL);
-		close(key_fd[i]);
-		if (r != 0)
+	വേണ്ടി (i = 0; i < അക്കം_KEYTYPES; i++) {
+		താക്കോലുകൾ[i] = ശൂന്യ;
+		എങ്കിൽ (താക്കോൽ_fd[i] == -1)
+			തുടരുക;
+		r = sshkey_load_private_type_fd(താക്കോൽ_fd[i], താക്കോൽ_UNSPEC,
+		    ശൂന്യ, &താക്കോൽ, ശൂന്യ);
+		close(താക്കോൽ_fd[i]);
+		എങ്കിൽ (r != 0)
 			debug_r(r, "parse key %d", i);
-		else if (key != NULL) {
-			keys[i] = key;
+		അല്ലെങ്കിൽ എങ്കിൽ (താക്കോൽ != ശൂന്യ) {
+			താക്കോലുകൾ[i] = താക്കോൽ;
 			found = 1;
 		}
 	}
-	if (!found)
+	എങ്കിൽ (!found)
 		fatal("no hostkey found");
 
-	if ((b = sshbuf_new()) == NULL)
+	എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(STDIN_FILENO, b) < 0)
+	എങ്കിൽ (ssh_സന്ദേശം_recv(STDIN_FILENO, b) < 0)
 		fatal("%s: ssh_msg_recv failed", __progname);
-	if ((r = sshbuf_get_u8(b, &rver)) != 0)
+	എങ്കിൽ ((r = sshbuf_get_u8(b, &rver)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (rver != version)
+	എങ്കിൽ (rver != version)
 		fatal("%s: bad version: received %d, expected %d",
 		    __progname, rver, version);
-	if ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
+	എങ്കിൽ ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (fd <= STDERR_FILENO)
+	എങ്കിൽ (fd <= STDERR_FILENO)
 		fatal("%s: bad fd = %d", __progname, fd);
-	if ((host = get_local_name(fd)) == NULL)
+	എങ്കിൽ ((host = get_local_name(fd)) == ശൂന്യ)
 		fatal("%s: cannot get local name for fd", __progname);
 
-	if ((r = sshbuf_get_string(b, &data, &dlen)) != 0)
+	എങ്കിൽ ((r = sshbuf_get_string(b, &data, &dlen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (valid_request(pw, host, &key, &pkalg, data, dlen) < 0)
+	എങ്കിൽ (valid_request(pw, host, &താക്കോൽ, &pkalg, data, dlen) < 0)
 		fatal("%s: not a valid request", __progname);
-	free(host);
+	സ്വതന്ത്രം(host);
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		if (keys[i] != NULL &&
-		    sshkey_equal_public(key, keys[i])) {
+	വേണ്ടി (i = 0; i < അക്കം_KEYTYPES; i++) {
+		എങ്കിൽ (താക്കോലുകൾ[i] != ശൂന്യ &&
+		    sshkey_equal_public(താക്കോൽ, താക്കോലുകൾ[i])) {
 			found = 1;
-			break;
+			നിർത്തുക;
 		}
 	}
-	if (!found) {
-		if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+	എങ്കിൽ (!found) {
+		എങ്കിൽ ((fp = sshkey_fingerprint(താക്കോൽ, options.fingerprint_hash,
+		    SSH_FP_DEFAULT)) == ശൂന്യ)
 			fatal("%s: sshkey_fingerprint failed", __progname);
 		fatal("%s: no matching hostkey found for key %s %s", __progname,
-		    sshkey_type(key), fp ? fp : "");
+		    sshkey_type(താക്കോൽ), fp ? fp : "");
 	}
 
-	if ((r = sshkey_sign(keys[i], &signature, &slen, data, dlen,
-	    pkalg, NULL, NULL, 0)) != 0)
+	എങ്കിൽ ((r = sshkey_sign(താക്കോലുകൾ[i], &signature, &slen, data, dlen,
+	    pkalg, ശൂന്യ, ശൂന്യ, 0)) != 0)
 		fatal_r(r, "%s: sshkey_sign failed", __progname);
-	free(data);
+	സ്വതന്ത്രം(data);
 
 	/* send reply */
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
+	എങ്കിൽ ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (ssh_msg_send(STDOUT_FILENO, version, b) == -1)
+	എങ്കിൽ (ssh_സന്ദേശം_send(STDOUT_FILENO, version, b) == -1)
 		fatal("%s: ssh_msg_send failed", __progname);
 
-	return (0);
+	തിരികെ (0);
 }

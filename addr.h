@@ -19,14 +19,14 @@
 #ifndef _ADDR_H
 #define _ADDR_H
 
-#include <sys/socket.h>
-#include <netinet/in.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <netinet/in.h>
 
-struct xaddr {
+ഘടന xaddr {
 	sa_family_t	af;
-	union {
-		struct in_addr		v4;
-		struct in6_addr		v6;
+	സംഘം {
+		ഘടന in_addr		v4;
+		ഘടന in6_addr		v6;
 		uint8_t			addr8[16];
 		uint16_t		addr16[8];
 		uint32_t		addr32[4];
@@ -39,15 +39,15 @@ struct xaddr {
 #define addr32	xa.addr32
 };
 
-int addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
-int addr_netmask(int af, u_int l, struct xaddr *n);
-int addr_pton(const char *p, struct xaddr *n);
-int addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
-int addr_ntop(const struct xaddr *n, char *p, size_t len);
-int addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
-int addr_cmp(const struct xaddr *a, const struct xaddr *b);
-int addr_host_to_all1s(struct xaddr *a, u_int masklen);
-int addr_netmatch(const struct xaddr *host, const struct xaddr *net,
+പൂർണ്ണസംഖ്യ addr_sa_to_xaddr(ഘടന sockaddr *sa, socklen_t slen, ഘടന xaddr *xa);
+പൂർണ്ണസംഖ്യ addr_netmask(പൂർണ്ണസംഖ്യ af, u_int l, ഘടന xaddr *n);
+പൂർണ്ണസംഖ്യ addr_pton(സ്ഥിരം അക്ഷരം *p, ഘടന xaddr *n);
+പൂർണ്ണസംഖ്യ addr_pton_cidr(സ്ഥിരം അക്ഷരം *p, ഘടന xaddr *n, u_int *l);
+പൂർണ്ണസംഖ്യ addr_ntop(സ്ഥിരം ഘടന xaddr *n, അക്ഷരം *p, size_t len);
+പൂർണ്ണസംഖ്യ addr_and(ഘടന xaddr *dst, സ്ഥിരം ഘടന xaddr *a, സ്ഥിരം ഘടന xaddr *b);
+പൂർണ്ണസംഖ്യ addr_cmp(സ്ഥിരം ഘടന xaddr *a, സ്ഥിരം ഘടന xaddr *b);
+പൂർണ്ണസംഖ്യ addr_host_to_all1s(ഘടന xaddr *a, u_int masklen);
+പൂർണ്ണസംഖ്യ addr_netmatch(സ്ഥിരം ഘടന xaddr *host, സ്ഥിരം ഘടന xaddr *net,
     u_int masklen);
-void addr_increment(struct xaddr *a);
+ശൂന്യം addr_increment(ഘടന xaddr *a);
 #endif /* _ADDR_H */

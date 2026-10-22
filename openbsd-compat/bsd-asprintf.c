@@ -17,83 +17,83 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 /*
  * Don't let systems with broken printf(3) avoid our replacements
  * via asprintf(3)/vasprintf(3) calling libc internally.
  */
-#if defined(BROKEN_SNPRINTF)
+#എങ്കിൽ defined(BROKEN_SNPRINTF)
 # undef HAVE_VASPRINTF
 # undef HAVE_ASPRINTF
 #endif
 
 #ifndef HAVE_VASPRINTF
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
 
 #define INIT_SZ	128
 
-int
-vasprintf(char **str, const char *fmt, va_list ap)
+പൂർണ്ണസംഖ്യ
+vasprintf(അക്ഷരം **str, സ്ഥിരം അക്ഷരം *fmt, va_list ap)
 {
-	int ret = -1;
+	പൂർണ്ണസംഖ്യ ret = -1;
 	va_list ap2;
-	char *string, *newstr;
+	അക്ഷരം *string, *newstr;
 	size_t len;
 
 	VA_COPY(ap2, ap);
-	if ((string = malloc(INIT_SZ)) == NULL)
-		goto fail;
+	എങ്കിൽ ((string = malloc(INIT_SZ)) == ശൂന്യ)
+		പോകുക fail;
 
 	ret = vsnprintf(string, INIT_SZ, fmt, ap2);
-	if (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
+	എങ്കിൽ (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
 		*str = string;
-	} else if (ret == INT_MAX || ret < 0) { /* Bad length */
-		free(string);
-		goto fail;
-	} else {	/* bigger than initial, realloc allowing for nul */
+	} അല്ലെങ്കിൽ എങ്കിൽ (ret == INT_MAX || ret < 0) { /* Bad length */
+		സ്വതന്ത്രം(string);
+		പോകുക fail;
+	} അല്ലെങ്കിൽ {	/* bigger than initial, realloc allowing for nul */
 		len = (size_t)ret + 1;
-		if ((newstr = realloc(string, len)) == NULL) {
-			free(string);
-			goto fail;
-		} else {
+		എങ്കിൽ ((newstr = realloc(string, len)) == ശൂന്യ) {
+			സ്വതന്ത്രം(string);
+			പോകുക fail;
+		} അല്ലെങ്കിൽ {
 			va_end(ap2);
 			VA_COPY(ap2, ap);
 			ret = vsnprintf(newstr, len, fmt, ap2);
-			if (ret >= 0 && (size_t)ret < len) {
+			എങ്കിൽ (ret >= 0 && (size_t)ret < len) {
 				*str = newstr;
-			} else { /* failed with realloc'ed string, give up */
-				free(newstr);
-				goto fail;
+			} അല്ലെങ്കിൽ { /* failed with realloc'ed string, give up */
+				സ്വതന്ത്രം(newstr);
+				പോകുക fail;
 			}
 		}
 	}
 	va_end(ap2);
-	return (ret);
+	തിരികെ (ret);
 
 fail:
-	*str = NULL;
+	*str = ശൂന്യ;
 	errno = ENOMEM;
 	va_end(ap2);
-	return (-1);
+	തിരികെ (-1);
 }
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **str, const char *fmt, ...)
+പൂർണ്ണസംഖ്യ asprintf(അക്ഷരം **str, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list ap;
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
-	*str = NULL;
+	*str = ശൂന്യ;
 	va_start(ap, fmt);
 	ret = vasprintf(str, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	തിരികെ ret;
 }
 #endif

@@ -17,47 +17,47 @@
 
 /* OPENBSD ORIGINAL: regress/lib/libc/strtonum/strtonumtest.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
 
 /* LLONG_MAX is known as LONGLONG_MAX on AIX */
-#if defined(LONGLONG_MAX) && !defined(LLONG_MAX)
+#എങ്കിൽ defined(LONGLONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONGLONG_MAX
 # define LLONG_MIN LONGLONG_MIN
 #endif
 
 /* LLONG_MAX is known as LONG_LONG_MAX on HP-UX */
-#if defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
+#എങ്കിൽ defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONG_LONG_MAX
 # define LLONG_MIN LONG_LONG_MIN
 #endif
 
-long long strtonum(const char *, long long, long long, const char **);
+long long strtonum(സ്ഥിരം അക്ഷരം *, long long, long long, സ്ഥിരം അക്ഷരം **);
 
-int fail;
+പൂർണ്ണസംഖ്യ fail;
 
-void
-test(const char *p, long long lb, long long ub, int ok)
+ശൂന്യം
+test(സ്ഥിരം അക്ഷരം *p, long long lb, long long ub, പൂർണ്ണസംഖ്യ ok)
 {
 	long long val;
-	const char *q;
+	സ്ഥിരം അക്ഷരം *q;
 
 	val = strtonum(p, lb, ub, &q);
-	if (ok && q != NULL) {
+	എങ്കിൽ (ok && q != ശൂന്യ) {
 		fprintf(stderr, "%s [%lld-%lld] ", p, lb, ub);
 		fprintf(stderr, "NUMBER NOT ACCEPTED %s\n", q);
 		fail = 1;
-	} else if (!ok && q == NULL) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (!ok && q == ശൂന്യ) {
 		fprintf(stderr, "%s [%lld-%lld] %lld ", p, lb, ub, val);
 		fprintf(stderr, "NUMBER ACCEPTED\n");
 		fail = 1;
 	}
 }
 
-int main(void)
+പൂർണ്ണസംഖ്യ പ്രധാന(ശൂന്യം)
 {
 	test("1", 0, 10, 1);
 	test("0", -2, 5, 1);
@@ -77,6 +77,6 @@ int main(void)
 	test("-20", -10, -1, 0);
 	test("20", -10, -1, 0);
 
-	return (fail);
+	തിരികെ (fail);
 }
 

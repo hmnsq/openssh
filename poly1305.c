@@ -4,12 +4,12 @@
  * poly1305-donna-unrolled.c from https://github.com/floodyberry/poly1305-donna
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <stdint.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <stdint.h>
 
-#include "poly1305.h"
+#അന്തര്ഭാവ "poly1305.h"
 
 #define mul32x32_64(a,b) ((uint64_t)(a) * (b))
 
@@ -20,15 +20,15 @@
 	 ((uint32_t)((p)[3]) << 24))
 
 #define U32TO8_LE(p, v) \
-	do { \
+	ചെയ്യുക { \
 		(p)[0] = (uint8_t)((v)); \
 		(p)[1] = (uint8_t)((v) >>  8); \
 		(p)[2] = (uint8_t)((v) >> 16); \
 		(p)[3] = (uint8_t)((v) >> 24); \
-	} while (0)
+	} ആകുമ്പോൾ (0)
 
-void
-poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t inlen, const unsigned char key[POLY1305_KEYLEN]) {
+ശൂന്യം
+poly1305_auth(unsigned അക്ഷരം out[POLY1305_TAGLEN], സ്ഥിരം unsigned അക്ഷരം *m, size_t inlen, സ്ഥിരം unsigned അക്ഷരം താക്കോൽ[POLY1305_KEYLEN]) {
 	uint32_t t0,t1,t2,t3;
 	uint32_t h0,h1,h2,h3,h4;
 	uint32_t r0,r1,r2,r3,r4;
@@ -39,13 +39,13 @@ poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t
 	uint64_t f0,f1,f2,f3;
 	uint32_t g0,g1,g2,g3,g4;
 	uint64_t c;
-	unsigned char mp[16];
+	unsigned അക്ഷരം mp[16];
 
 	/* clamp key */
-	t0 = U8TO32_LE(key+0);
-	t1 = U8TO32_LE(key+4);
-	t2 = U8TO32_LE(key+8);
-	t3 = U8TO32_LE(key+12);
+	t0 = U8TO32_LE(താക്കോൽ+0);
+	t1 = U8TO32_LE(താക്കോൽ+4);
+	t2 = U8TO32_LE(താക്കോൽ+8);
+	t3 = U8TO32_LE(താക്കോൽ+12);
 
 	/* precompute multipliers */
 	r0 = t0 & 0x3ffffff; t0 >>= 26; t0 |= t1 << 6;
@@ -67,7 +67,7 @@ poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t
 	h4 = 0;
 
 	/* full blocks */
-	if (inlen < 16) goto poly1305_donna_atmost15bytes;
+	എങ്കിൽ (inlen < 16) പോകുക poly1305_donna_atmost15bytes;
 poly1305_donna_16bytes:
 	m += 16;
 	inlen -= 16;
@@ -98,15 +98,15 @@ poly1305_donna_mul:
 	t[4] += b;      h4 = (uint32_t)t[4] & 0x3ffffff; b = (uint32_t)(t[4] >> 26);
 	h0 += b * 5;
 
-	if (inlen >= 16) goto poly1305_donna_16bytes;
+	എങ്കിൽ (inlen >= 16) പോകുക poly1305_donna_16bytes;
 
 	/* final bytes */
 poly1305_donna_atmost15bytes:
-	if (!inlen) goto poly1305_donna_finish;
+	എങ്കിൽ (!inlen) പോകുക poly1305_donna_finish;
 
-	for (j = 0; j < inlen; j++) mp[j] = m[j];
+	വേണ്ടി (j = 0; j < inlen; j++) mp[j] = m[j];
 	mp[j++] = 1;
-	for (; j < 16; j++)	mp[j] = 0;
+	വേണ്ടി (; j < 16; j++)	mp[j] = 0;
 	inlen = 0;
 
 	t0 = U8TO32_LE(mp+0);
@@ -120,7 +120,7 @@ poly1305_donna_atmost15bytes:
 	h3 += ((((uint64_t)t3 << 32) | t2) >> 14) & 0x3ffffff;
 	h4 += (t3 >> 8);
 
-	goto poly1305_donna_mul;
+	പോകുക poly1305_donna_mul;
 
 poly1305_donna_finish:
 	             b = h0 >> 26; h0 = h0 & 0x3ffffff;
@@ -145,10 +145,10 @@ poly1305_donna_finish:
 	h3 = (h3 & nb) | (g3 & b);
 	h4 = (h4 & nb) | (g4 & b);
 
-	f0 = ((h0      ) | (h1 << 26)) + (uint64_t)U8TO32_LE(&key[16]);
-	f1 = ((h1 >>  6) | (h2 << 20)) + (uint64_t)U8TO32_LE(&key[20]);
-	f2 = ((h2 >> 12) | (h3 << 14)) + (uint64_t)U8TO32_LE(&key[24]);
-	f3 = ((h3 >> 18) | (h4 <<  8)) + (uint64_t)U8TO32_LE(&key[28]);
+	f0 = ((h0      ) | (h1 << 26)) + (uint64_t)U8TO32_LE(&താക്കോൽ[16]);
+	f1 = ((h1 >>  6) | (h2 << 20)) + (uint64_t)U8TO32_LE(&താക്കോൽ[20]);
+	f2 = ((h2 >> 12) | (h3 << 14)) + (uint64_t)U8TO32_LE(&താക്കോൽ[24]);
+	f3 = ((h3 >> 18) | (h4 <<  8)) + (uint64_t)U8TO32_LE(&താക്കോൽ[28]);
 
 	U32TO8_LE(&out[ 0], f0); f1 += (f0 >> 32);
 	U32TO8_LE(&out[ 4], f1); f2 += (f1 >> 32);

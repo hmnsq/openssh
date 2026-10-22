@@ -18,349 +18,349 @@
  */
 
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <sys/un.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/ioctl.h>
+#അന്തര്ഭാവ <sys/mman.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <sys/time.h>
+#അന്തര്ഭാവ <sys/wait.h>
+#അന്തര്ഭാവ <sys/un.h>
 
-#include <limits.h>
-#include <libgen.h>
-#include <poll.h>
-#include <nlist.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <libgen.h>
+#അന്തര്ഭാവ <poll.h>
+#അന്തര്ഭാവ <nlist.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <time.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
+#അന്തര്ഭാവ <netinet/in.h>
+#അന്തര്ഭാവ <netinet/ip.h>
+#അന്തര്ഭാവ <netinet/tcp.h>
+#അന്തര്ഭാവ <arpa/inet.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <grp.h>
+#അന്തര്ഭാവ <ctype.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <netdb.h>
+#അന്തര്ഭാവ <paths.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <grp.h>
 #ifdef SSH_TUN_OPENBSD
-#include <net/if.h>
+#അന്തര്ഭാവ <net/if.h>
 #endif
 
-#include "xmalloc.h"
-#include "misc.h"
-#include "log.h"
-#include "ssh.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "platform.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "platform.h"
 
 /* remove newline at end of string */
-char *
-chop(char *s)
+അക്ഷരം *
+chop(അക്ഷരം *s)
 {
-	char *t = s;
-	while (*t) {
-		if (*t == '\n' || *t == '\r') {
+	അക്ഷരം *t = s;
+	ആകുമ്പോൾ (*t) {
+		എങ്കിൽ (*t == '\n' || *t == '\r') {
 			*t = '\0';
-			return s;
+			തിരികെ s;
 		}
 		t++;
 	}
-	return s;
+	തിരികെ s;
 
 }
 
 /* remove whitespace from end of string */
-void
-rtrim(char *s)
+ശൂന്യം
+rtrim(അക്ഷരം *s)
 {
 	size_t i;
 
-	if ((i = strlen(s)) == 0)
-		return;
-	do {
+	എങ്കിൽ ((i = strlen(s)) == 0)
+		തിരികെ;
+	ചെയ്യുക {
 		i--;
-		if (isspace((unsigned char)s[i]))
+		എങ്കിൽ (isspace((unsigned അക്ഷരം)s[i]))
 			s[i] = '\0';
-		else
-			break;
-	} while (i > 0);
+		അല്ലെങ്കിൽ
+			നിർത്തുക;
+	} ആകുമ്പോൾ (i > 0);
 }
 
 /*
  * returns pointer to character after 'prefix' in 's' or otherwise NULL
  * if the prefix is not present.
  */
-const char *
-strprefix(const char *s, const char *prefix, int ignorecase)
+സ്ഥിരം അക്ഷരം *
+strprefix(സ്ഥിരം അക്ഷരം *s, സ്ഥിരം അക്ഷരം *prefix, പൂർണ്ണസംഖ്യ ignorecase)
 {
 	size_t prefixlen;
 
-	if ((prefixlen = strlen(prefix)) == 0)
-		return s;
-	if (ignorecase) {
-		if (strncasecmp(s, prefix, prefixlen) != 0)
-			return NULL;
-	} else {
-		if (strncmp(s, prefix, prefixlen) != 0)
-			return NULL;
+	എങ്കിൽ ((prefixlen = strlen(prefix)) == 0)
+		തിരികെ s;
+	എങ്കിൽ (ignorecase) {
+		എങ്കിൽ (strncasecmp(s, prefix, prefixlen) != 0)
+			തിരികെ ശൂന്യ;
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (strncmp(s, prefix, prefixlen) != 0)
+			തിരികെ ശൂന്യ;
 	}
-	return s + prefixlen;
+	തിരികെ s + prefixlen;
 }
 
 /* Append string 's' to a NULL-terminated array of strings */
-void
-stringlist_append(char ***listp, const char *s)
+ശൂന്യം
+stringlist_append(അക്ഷരം ***listp, സ്ഥിരം അക്ഷരം *s)
 {
 	size_t i = 0;
 
-	if (*listp == NULL)
-		*listp = xcalloc(2, sizeof(**listp));
-	else {
-		for (i = 0; (*listp)[i] != NULL; i++)
+	എങ്കിൽ (*listp == ശൂന്യ)
+		*listp = xcalloc(2, വലുപ്പം(**listp));
+	അല്ലെങ്കിൽ {
+		വേണ്ടി (i = 0; (*listp)[i] != ശൂന്യ; i++)
 			; /* count */
-		*listp = xrecallocarray(*listp, i + 1, i + 2, sizeof(**listp));
+		*listp = xrecallocarray(*listp, i + 1, i + 2, വലുപ്പം(**listp));
 	}
 	(*listp)[i] = xstrdup(s);
 }
 
-void
-stringlist_free(char **list)
+ശൂന്യം
+stringlist_free(അക്ഷരം **list)
 {
 	size_t i = 0;
 
-	if (list == NULL)
-		return;
-	for (i = 0; list[i] != NULL; i++)
-		free(list[i]);
-	free(list);
+	എങ്കിൽ (list == ശൂന്യ)
+		തിരികെ;
+	വേണ്ടി (i = 0; list[i] != ശൂന്യ; i++)
+		സ്വതന്ത്രം(list[i]);
+	സ്വതന്ത്രം(list);
 }
 
 /* set/unset filedescriptor to non-blocking */
-int
-set_nonblock(int fd)
+പൂർണ്ണസംഖ്യ
+set_nonblock(പൂർണ്ണസംഖ്യ fd)
 {
-	int val;
+	പൂർണ്ണസംഖ്യ val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
+	എങ്കിൽ (val == -1) {
 		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+		തിരികെ (-1);
 	}
-	if (val & O_NONBLOCK) {
+	എങ്കിൽ (val & O_NONBLOCK) {
 		debug3("fd %d is O_NONBLOCK", fd);
-		return (0);
+		തിരികെ (0);
 	}
 	debug2("fd %d setting O_NONBLOCK", fd);
 	val |= O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	എങ്കിൽ (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, O_NONBLOCK): %s", fd,
 		    strerror(errno));
-		return (-1);
+		തിരികെ (-1);
 	}
-	return (0);
+	തിരികെ (0);
 }
 
-int
-unset_nonblock(int fd)
+പൂർണ്ണസംഖ്യ
+unset_nonblock(പൂർണ്ണസംഖ്യ fd)
 {
-	int val;
+	പൂർണ്ണസംഖ്യ val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
+	എങ്കിൽ (val == -1) {
 		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+		തിരികെ (-1);
 	}
-	if (!(val & O_NONBLOCK)) {
+	എങ്കിൽ (!(val & O_NONBLOCK)) {
 		debug3("fd %d is not O_NONBLOCK", fd);
-		return (0);
+		തിരികെ (0);
 	}
 	debug("fd %d clearing O_NONBLOCK", fd);
 	val &= ~O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	എങ്കിൽ (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, ~O_NONBLOCK): %s",
 		    fd, strerror(errno));
-		return (-1);
+		തിരികെ (-1);
 	}
-	return (0);
+	തിരികെ (0);
 }
 
-const char *
-ssh_gai_strerror(int gaierr)
+സ്ഥിരം അക്ഷരം *
+ssh_gai_strerror(പൂർണ്ണസംഖ്യ gaierr)
 {
-	if (gaierr == EAI_SYSTEM && errno != 0)
-		return strerror(errno);
-	return gai_strerror(gaierr);
+	എങ്കിൽ (gaierr == EAI_SYSTEM && errno != 0)
+		തിരികെ strerror(errno);
+	തിരികെ gai_strerror(gaierr);
 }
 
 /* disable nagle on socket */
-void
-set_nodelay(int fd)
+ശൂന്യം
+set_nodelay(പൂർണ്ണസംഖ്യ fd)
 {
-	int opt;
+	പൂർണ്ണസംഖ്യ opt;
 	socklen_t optlen;
 
-	optlen = sizeof opt;
-	if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
+	optlen = വലുപ്പം opt;
+	എങ്കിൽ (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
 		debug("getsockopt TCP_NODELAY: %.100s", strerror(errno));
-		return;
+		തിരികെ;
 	}
-	if (opt == 1) {
+	എങ്കിൽ (opt == 1) {
 		debug2("fd %d is TCP_NODELAY", fd);
-		return;
+		തിരികെ;
 	}
 	opt = 1;
 	debug2("fd %d setting TCP_NODELAY", fd);
-	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof opt) == -1)
+	എങ്കിൽ (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, വലുപ്പം opt) == -1)
 		error("setsockopt TCP_NODELAY: %.100s", strerror(errno));
 }
 
 /* Allow local port reuse in TIME_WAIT */
-int
-set_reuseaddr(int fd)
+പൂർണ്ണസംഖ്യ
+set_reuseaddr(പൂർണ്ണസംഖ്യ fd)
 {
-	int on = 1;
+	പൂർണ്ണസംഖ്യ on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
+	എങ്കിൽ (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, വലുപ്പം(on)) == -1) {
 		error("setsockopt SO_REUSEADDR fd %d: %s", fd, strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /* Set TCP keepalives */
-int
-set_keepalive(int fd)
+പൂർണ്ണസംഖ്യ
+set_keepalive(പൂർണ്ണസംഖ്യ fd)
 {
-	int on = 1;
+	പൂർണ്ണസംഖ്യ on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on)) == -1) {
+	എങ്കിൽ (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, വലുപ്പം(on)) == -1) {
 		error("setsockopt SO_KEEPALIVE fd %d: %s", fd, strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /* Get/set routing domain */
-char *
-get_rdomain(int fd)
+അക്ഷരം *
+get_rdomain(പൂർണ്ണസംഖ്യ fd)
 {
-#if defined(HAVE_SYS_GET_RDOMAIN)
-	return sys_get_rdomain(fd);
-#elif defined(__OpenBSD__)
-	int rtable;
-	char *ret;
-	socklen_t len = sizeof(rtable);
+#എങ്കിൽ defined(HAVE_SYS_GET_RDOMAIN)
+	തിരികെ sys_get_rdomain(fd);
+#അല്ലെങ്കിലെങ്കിൽ defined(__OpenBSD__)
+	പൂർണ്ണസംഖ്യ rtable;
+	അക്ഷരം *ret;
+	socklen_t len = വലുപ്പം(rtable);
 
-	if (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
+	എങ്കിൽ (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
 		error("Failed to get routing domain for fd %d: %s",
 		    fd, strerror(errno));
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 	xasprintf(&ret, "%d", rtable);
-	return ret;
-#else /* defined(__OpenBSD__) */
-	return NULL;
+	തിരികെ ret;
+#അല്ലെങ്കിൽ /* defined(__OpenBSD__) */
+	തിരികെ ശൂന്യ;
 #endif
 }
 
-int
-set_rdomain(int fd, const char *name)
+പൂർണ്ണസംഖ്യ
+set_rdomain(പൂർണ്ണസംഖ്യ fd, സ്ഥിരം അക്ഷരം *name)
 {
-#if defined(HAVE_SYS_SET_RDOMAIN)
-	return sys_set_rdomain(fd, name);
-#elif defined(__OpenBSD__)
-	int rtable;
-	const char *errstr;
+#എങ്കിൽ defined(HAVE_SYS_SET_RDOMAIN)
+	തിരികെ sys_set_rdomain(fd, name);
+#അല്ലെങ്കിലെങ്കിൽ defined(__OpenBSD__)
+	പൂർണ്ണസംഖ്യ rtable;
+	സ്ഥിരം അക്ഷരം *errstr;
 
-	if (name == NULL)
-		return 0; /* default table */
+	എങ്കിൽ (name == ശൂന്യ)
+		തിരികെ 0; /* default table */
 
-	rtable = (int)strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL) {
+	rtable = (പൂർണ്ണസംഖ്യ)strtonum(name, 0, 255, &errstr);
+	എങ്കിൽ (errstr != ശൂന്യ) {
 		/* Shouldn't happen */
 		error("Invalid routing domain \"%s\": %s", name, errstr);
-		return -1;
+		തിരികെ -1;
 	}
-	if (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
-	    &rtable, sizeof(rtable)) == -1) {
+	എങ്കിൽ (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
+	    &rtable, വലുപ്പം(rtable)) == -1) {
 		error("Failed to set routing domain %d on fd %d: %s",
 		    rtable, fd, strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
-	return 0;
-#else /* defined(__OpenBSD__) */
+	തിരികെ 0;
+#അല്ലെങ്കിൽ /* defined(__OpenBSD__) */
 	error("Setting routing domain is not supported on this platform");
-	return -1;
+	തിരികെ -1;
 #endif
 }
 
-int
-get_sock_af(int fd)
+പൂർണ്ണസംഖ്യ
+get_sock_af(പൂർണ്ണസംഖ്യ fd)
 {
-	struct sockaddr_storage to;
-	socklen_t tolen = sizeof(to);
+	ഘടന sockaddr_storage to;
+	socklen_t tolen = വലുപ്പം(to);
 
-	memset(&to, 0, sizeof(to));
-	if (getsockname(fd, (struct sockaddr *)&to, &tolen) == -1)
-		return -1;
+	memset(&to, 0, വലുപ്പം(to));
+	എങ്കിൽ (getsockname(fd, (ഘടന sockaddr *)&to, &tolen) == -1)
+		തിരികെ -1;
 #ifdef IPV4_IN_IPV6
-	if (to.ss_family == AF_INET6 &&
-	    IN6_IS_ADDR_V4MAPPED(&((struct sockaddr_in6 *)&to)->sin6_addr))
-		return AF_INET;
+	എങ്കിൽ (to.ss_family == AF_INET6 &&
+	    IN6_IS_ADDR_V4MAPPED(&((ഘടന sockaddr_in6 *)&to)->sin6_addr))
+		തിരികെ AF_INET;
 #endif
-	return to.ss_family;
+	തിരികെ to.ss_family;
 }
 
-void
-set_sock_tos(int fd, int tos)
+ശൂന്യം
+set_sock_tos(പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ tos)
 {
 #ifndef IP_TOS_IS_BROKEN
-	int af;
+	പൂർണ്ണസംഖ്യ af;
 
-	if (tos < 0 || tos == INT_MAX) {
+	എങ്കിൽ (tos < 0 || tos == INT_MAX) {
 		debug_f("invalid TOS %d", tos);
-		return;
+		തിരികെ;
 	}
-	switch ((af = get_sock_af(fd))) {
-	case -1:
+	തിരഞ്ഞെടുപ്പ് ((af = get_sock_af(fd))) {
+	അവസ്ഥ -1:
 		/* assume not a socket */
-		break;
-	case AF_INET:
+		നിർത്തുക;
+	അവസ്ഥ AF_INET:
 # ifdef IP_TOS
 		debug3_f("set socket %d IP_TOS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IP, IP_TOS,
-		    &tos, sizeof(tos)) == -1) {
+		എങ്കിൽ (setsockopt(fd, IPPROTO_IP, IP_TOS,
+		    &tos, വലുപ്പം(tos)) == -1) {
 			error("setsockopt socket %d IP_TOS %d: %s",
 			    fd, tos, strerror(errno));
 		}
 # endif /* IP_TOS */
-		break;
-	case AF_INET6:
+		നിർത്തുക;
+	അവസ്ഥ AF_INET6:
 # ifdef IPV6_TCLASS
 		debug3_f("set socket %d IPV6_TCLASS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
-		    &tos, sizeof(tos)) == -1) {
+		എങ്കിൽ (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
+		    &tos, വലുപ്പം(tos)) == -1) {
 			error("setsockopt socket %d IPV6_TCLASS %d: %s",
 			    fd, tos, strerror(errno));
 		}
 # endif /* IPV6_TCLASS */
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		debug2_f("unsupported socket family %d", af);
-		break;
+		നിർത്തുക;
 	}
 #endif /* IP_TOS_IS_BROKEN */
 }
@@ -370,50 +370,50 @@ set_sock_tos(int fd, int tos)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-static int
-waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+waitfd(പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ *timeoutp, short events, അസ്ഥിര sig_atomic_t *stop)
 {
-	struct pollfd pfd;
-	struct timespec timeout;
-	int oerrno, r;
+	ഘടന pollfd pfd;
+	ഘടന timespec timeout;
+	പൂർണ്ണസംഖ്യ oerrno, r;
 	sigset_t nsigset, osigset;
 
-	if (timeoutp && *timeoutp == -1)
-		timeoutp = NULL;
+	എങ്കിൽ (timeoutp && *timeoutp == -1)
+		timeoutp = ശൂന്യ;
 	pfd.fd = fd;
 	pfd.events = events;
 	ptimeout_init(&timeout);
-	if (timeoutp != NULL)
+	എങ്കിൽ (timeoutp != ശൂന്യ)
 		ptimeout_deadline_ms(&timeout, *timeoutp);
-	if (stop != NULL)
+	എങ്കിൽ (stop != ശൂന്യ)
 		sigfillset(&nsigset);
-	for (; timeoutp == NULL || *timeoutp >= 0;) {
-		if (stop != NULL) {
+	വേണ്ടി (; timeoutp == ശൂന്യ || *timeoutp >= 0;) {
+		എങ്കിൽ (stop != ശൂന്യ) {
 			sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-			if (*stop) {
-				sigprocmask(SIG_SETMASK, &osigset, NULL);
+			എങ്കിൽ (*stop) {
+				sigprocmask(SIG_SETMASK, &osigset, ശൂന്യ);
 				errno = EINTR;
-				return -1;
+				തിരികെ -1;
 			}
 		}
 		r = ppoll(&pfd, 1, ptimeout_get_tsp(&timeout),
-		    stop != NULL ? &osigset : NULL);
+		    stop != ശൂന്യ ? &osigset : ശൂന്യ);
 		oerrno = errno;
-		if (stop != NULL)
-			sigprocmask(SIG_SETMASK, &osigset, NULL);
-		if (timeoutp)
+		എങ്കിൽ (stop != ശൂന്യ)
+			sigprocmask(SIG_SETMASK, &osigset, ശൂന്യ);
+		എങ്കിൽ (timeoutp)
 			*timeoutp = ptimeout_get_ms(&timeout);
 		errno = oerrno;
-		if (r > 0)
-			return 0;
-		else if (r == -1 && errno != EAGAIN && errno != EINTR)
-			return -1;
-		else if (r == 0)
-			break;
+		എങ്കിൽ (r > 0)
+			തിരികെ 0;
+		അല്ലെങ്കിൽ എങ്കിൽ (r == -1 && errno != EAGAIN && errno != EINTR)
+			തിരികെ -1;
+		അല്ലെങ്കിൽ എങ്കിൽ (r == 0)
+			നിർത്തുക;
 	}
 	/* timeout */
 	errno = ETIMEDOUT;
-	return -1;
+	തിരികെ -1;
 }
 
 /*
@@ -421,9 +421,9 @@ waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-int
-waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
-	return waitfd(fd, timeoutp, POLLIN, stop);
+പൂർണ്ണസംഖ്യ
+waitrfd(പൂർണ്ണസംഖ്യ fd, പൂർണ്ണസംഖ്യ *timeoutp, അസ്ഥിര sig_atomic_t *stop) {
+	തിരികെ waitfd(fd, timeoutp, POLLIN, stop);
 }
 
 /*
@@ -433,44 +433,44 @@ waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
  *
  * Returns 0 on success or -1 on failure.
  */
-int
-timeout_connect(int sockfd, const struct sockaddr *serv_addr,
-    socklen_t addrlen, int *timeoutp)
+പൂർണ്ണസംഖ്യ
+timeout_connect(പൂർണ്ണസംഖ്യ sockfd, സ്ഥിരം ഘടന sockaddr *serv_addr,
+    socklen_t addrlen, പൂർണ്ണസംഖ്യ *timeoutp)
 {
-	int optval = 0;
-	socklen_t optlen = sizeof(optval);
+	പൂർണ്ണസംഖ്യ optval = 0;
+	socklen_t optlen = വലുപ്പം(optval);
 
 	/* No timeout: just do a blocking connect() */
-	if (timeoutp == NULL || *timeoutp <= 0)
-		return connect(sockfd, serv_addr, addrlen);
+	എങ്കിൽ (timeoutp == ശൂന്യ || *timeoutp <= 0)
+		തിരികെ connect(sockfd, serv_addr, addrlen);
 
 	set_nonblock(sockfd);
-	for (;;) {
-		if (connect(sockfd, serv_addr, addrlen) == 0) {
+	വേണ്ടി (;;) {
+		എങ്കിൽ (connect(sockfd, serv_addr, addrlen) == 0) {
 			/* Succeeded already? */
 			unset_nonblock(sockfd);
-			return 0;
-		} else if (errno == EINTR)
-			continue;
-		else if (errno != EINPROGRESS)
-			return -1;
-		break;
+			തിരികെ 0;
+		} അല്ലെങ്കിൽ എങ്കിൽ (errno == EINTR)
+			തുടരുക;
+		അല്ലെങ്കിൽ എങ്കിൽ (errno != EINPROGRESS)
+			തിരികെ -1;
+		നിർത്തുക;
 	}
 
-	if (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, NULL) == -1)
-		return -1;
+	എങ്കിൽ (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, ശൂന്യ) == -1)
+		തിരികെ -1;
 
 	/* Completed or failed */
-	if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
+	എങ്കിൽ (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
 		debug("getsockopt: %s", strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
-	if (optval != 0) {
+	എങ്കിൽ (optval != 0) {
 		errno = optval;
-		return -1;
+		തിരികെ -1;
 	}
 	unset_nonblock(sockfd);
-	return 0;
+	തിരികെ 0;
 }
 
 /* Characters considered whitespace in strsep calls. */
@@ -478,75 +478,75 @@ timeout_connect(int sockfd, const struct sockaddr *serv_addr,
 #define QUOTE	"\""
 
 /* return next token in configuration line */
-static char *
-strdelim_internal(char **s, int split_equals)
+സ്ഥിതം അക്ഷരം *
+strdelim_internal(അക്ഷരം **s, പൂർണ്ണസംഖ്യ split_equals)
 {
-	char *old;
-	int wspace = 0;
+	അക്ഷരം *old;
+	പൂർണ്ണസംഖ്യ wspace = 0;
 
-	if (*s == NULL)
-		return NULL;
+	എങ്കിൽ (*s == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
 	old = *s;
 
 	*s = strpbrk(*s,
 	    split_equals ? WHITESPACE QUOTE "=" : WHITESPACE QUOTE);
-	if (*s == NULL)
-		return (old);
+	എങ്കിൽ (*s == ശൂന്യ)
+		തിരികെ (old);
 
-	if (*s[0] == '\"') {
+	എങ്കിൽ (*s[0] == '\"') {
 		memmove(*s, *s + 1, strlen(*s)); /* move nul too */
 		/* Find matching quote */
-		if ((*s = strpbrk(*s, QUOTE)) == NULL) {
-			return (NULL);		/* no matching quote */
-		} else {
+		എങ്കിൽ ((*s = strpbrk(*s, QUOTE)) == ശൂന്യ) {
+			തിരികെ (ശൂന്യ);		/* no matching quote */
+		} അല്ലെങ്കിൽ {
 			*s[0] = '\0';
 			*s += strspn(*s + 1, WHITESPACE) + 1;
-			return (old);
+			തിരികെ (old);
 		}
 	}
 
 	/* Allow only one '=' to be skipped */
-	if (split_equals && *s[0] == '=')
+	എങ്കിൽ (split_equals && *s[0] == '=')
 		wspace = 1;
 	*s[0] = '\0';
 
 	/* Skip any extra whitespace after first token */
 	*s += strspn(*s + 1, WHITESPACE) + 1;
-	if (split_equals && *s[0] == '=' && !wspace)
+	എങ്കിൽ (split_equals && *s[0] == '=' && !wspace)
 		*s += strspn(*s + 1, WHITESPACE) + 1;
 
-	return (old);
+	തിരികെ (old);
 }
 
 /*
  * Return next token in configuration line; splits on whitespace or a
  * single '=' character.
  */
-char *
-strdelim(char **s)
+അക്ഷരം *
+strdelim(അക്ഷരം **s)
 {
-	return strdelim_internal(s, 1);
+	തിരികെ strdelim_internal(s, 1);
 }
 
 /*
  * Return next token in configuration line; splits on whitespace only.
  */
-char *
-strdelimw(char **s)
+അക്ഷരം *
+strdelimw(അക്ഷരം **s)
 {
-	return strdelim_internal(s, 0);
+	തിരികെ strdelim_internal(s, 0);
 }
 
-struct passwd *
-pwcopy(struct passwd *pw)
+ഘടന passwd *
+pwcopy(ഘടന passwd *pw)
 {
-	struct passwd *copy = xcalloc(1, sizeof(*copy));
+	ഘടന passwd *copy = xcalloc(1, വലുപ്പം(*copy));
 
 	copy->pw_name = xstrdup(pw->pw_name);
-	copy->pw_passwd = xstrdup(pw->pw_passwd == NULL ? "*" : pw->pw_passwd);
+	copy->pw_passwd = xstrdup(pw->pw_passwd == ശൂന്യ ? "*" : pw->pw_passwd);
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	copy->pw_gecos = xstrdup(pw->pw_gecos == NULL ? "" : pw->pw_gecos);
+	copy->pw_gecos = xstrdup(pw->pw_gecos == ശൂന്യ ? "" : pw->pw_gecos);
 #endif
 	copy->pw_uid = pw->pw_uid;
 	copy->pw_gid = pw->pw_gid;
@@ -557,30 +557,30 @@ pwcopy(struct passwd *pw)
 	copy->pw_change = pw->pw_change;
 #endif
 #ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	copy->pw_class = xstrdup(pw->pw_class == NULL ? "" : pw->pw_class);
+	copy->pw_class = xstrdup(pw->pw_class == ശൂന്യ ? "" : pw->pw_class);
 #endif
-	copy->pw_dir = xstrdup(pw->pw_dir == NULL ? "" : pw->pw_dir);
-	copy->pw_shell = xstrdup(pw->pw_shell == NULL ? "" : pw->pw_shell);
-	return copy;
+	copy->pw_dir = xstrdup(pw->pw_dir == ശൂന്യ ? "" : pw->pw_dir);
+	copy->pw_shell = xstrdup(pw->pw_shell == ശൂന്യ ? "" : pw->pw_shell);
+	തിരികെ copy;
 }
 
-void
-pwfree(struct passwd *pw)
+ശൂന്യം
+pwfree(ഘടന passwd *pw)
 {
-	if (pw == NULL)
-		return;
-	free(pw->pw_name);
+	എങ്കിൽ (pw == ശൂന്യ)
+		തിരികെ;
+	സ്വതന്ത്രം(pw->pw_name);
 	freezero(pw->pw_passwd,
-	    pw->pw_passwd == NULL ? 0 : strlen(pw->pw_passwd));
+	    pw->pw_passwd == ശൂന്യ ? 0 : strlen(pw->pw_passwd));
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	free(pw->pw_gecos);
+	സ്വതന്ത്രം(pw->pw_gecos);
 #endif
 #ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	free(pw->pw_class);
+	സ്വതന്ത്രം(pw->pw_class);
 #endif
-	free(pw->pw_dir);
-	free(pw->pw_shell);
-	freezero(pw, sizeof(*pw));
+	സ്വതന്ത്രം(pw->pw_dir);
+	സ്വതന്ത്രം(pw->pw_shell);
+	freezero(pw, വലുപ്പം(*pw));
 }
 
 /*
@@ -588,50 +588,50 @@ pwfree(struct passwd *pw)
  * Port must be >=0 and <=65535.
  * Return -1 if invalid.
  */
-int
-a2port(const char *s)
+പൂർണ്ണസംഖ്യ
+a2port(സ്ഥിരം അക്ഷരം *s)
 {
-	struct servent *se;
+	ഘടന servent *se;
 	long long port;
-	const char *errstr;
+	സ്ഥിരം അക്ഷരം *errstr;
 
 	port = strtonum(s, 0, 65535, &errstr);
-	if (errstr == NULL)
-		return (int)port;
-	if ((se = getservbyname(s, "tcp")) != NULL)
-		return ntohs(se->s_port);
-	return -1;
+	എങ്കിൽ (errstr == ശൂന്യ)
+		തിരികെ (പൂർണ്ണസംഖ്യ)port;
+	എങ്കിൽ ((se = getservbyname(s, "tcp")) != ശൂന്യ)
+		തിരികെ ntohs(se->s_port);
+	തിരികെ -1;
 }
 
-int
-a2tun(const char *s, int *remote)
+പൂർണ്ണസംഖ്യ
+a2tun(സ്ഥിരം അക്ഷരം *s, പൂർണ്ണസംഖ്യ *remote)
 {
-	const char *errstr = NULL;
-	char *sp, *ep;
-	int tun;
+	സ്ഥിരം അക്ഷരം *errstr = ശൂന്യ;
+	അക്ഷരം *sp, *ep;
+	പൂർണ്ണസംഖ്യ tun;
 
-	if (remote != NULL) {
+	എങ്കിൽ (remote != ശൂന്യ) {
 		*remote = SSH_TUNID_ANY;
 		sp = xstrdup(s);
-		if ((ep = strchr(sp, ':')) == NULL) {
-			free(sp);
-			return (a2tun(s, NULL));
+		എങ്കിൽ ((ep = strchr(sp, ':')) == ശൂന്യ) {
+			സ്വതന്ത്രം(sp);
+			തിരികെ (a2tun(s, ശൂന്യ));
 		}
 		ep[0] = '\0'; ep++;
-		*remote = a2tun(ep, NULL);
-		tun = a2tun(sp, NULL);
-		free(sp);
-		return (*remote == SSH_TUNID_ERR ? *remote : tun);
+		*remote = a2tun(ep, ശൂന്യ);
+		tun = a2tun(sp, ശൂന്യ);
+		സ്വതന്ത്രം(sp);
+		തിരികെ (*remote == SSH_TUNID_ERR ? *remote : tun);
 	}
 
-	if (strcasecmp(s, "any") == 0)
-		return (SSH_TUNID_ANY);
+	എങ്കിൽ (strcasecmp(s, "any") == 0)
+		തിരികെ (SSH_TUNID_ANY);
 
 	tun = strtonum(s, 0, SSH_TUNID_MAX, &errstr);
-	if (errstr != NULL)
-		return (SSH_TUNID_ERR);
+	എങ്കിൽ (errstr != ശൂന്യ)
+		തിരികെ (SSH_TUNID_ERR);
 
-	return (tun);
+	തിരികെ (tun);
 }
 
 #define SECONDS		1.0
@@ -667,110 +667,110 @@ a2tun(const char *s, int *remote)
  *
  * Returns <0.0 if the time string is invalid.
  */
-double
-convtime_double(const char *s)
+ഇരട്ട
+convtime_double(സ്ഥിരം അക്ഷരം *s)
 {
-	double val, total_sec = 0.0, multiplier;
-	const char *p, *start_p;
-	char *endp;
-	int seen_seconds = 0;
+	ഇരട്ട val, total_sec = 0.0, multiplier;
+	സ്ഥിരം അക്ഷരം *p, *start_p;
+	അക്ഷരം *endp;
+	പൂർണ്ണസംഖ്യ seen_seconds = 0;
 
-	if (s == NULL || *s == '\0')
-		return -1.0;
+	എങ്കിൽ (s == ശൂന്യ || *s == '\0')
+		തിരികെ -1.0;
 
-	for (p = s; *p != '\0';) {
-		if (!isdigit((unsigned char)*p) && *p != '.')
-			return -1.0;
+	വേണ്ടി (p = s; *p != '\0';) {
+		എങ്കിൽ (!isdigit((unsigned അക്ഷരം)*p) && *p != '.')
+			തിരികെ -1.0;
 
 		errno = 0;
-		if ((val = strtod(p, &endp)) < 0 || errno != 0 || p == endp)
-			return -1.0;
+		എങ്കിൽ ((val = strtod(p, &endp)) < 0 || errno != 0 || p == endp)
+			തിരികെ -1.0;
 		/* Allow only decimal forms */
-		if (p + strspn(p, "0123456789.") != endp)
-			return -1.0;
+		എങ്കിൽ (p + strspn(p, "0123456789.") != endp)
+			തിരികെ -1.0;
 		start_p = p;
 		p = endp;
 
-		switch (*p) {
-		case '\0':
+		തിരഞ്ഞെടുപ്പ് (*p) {
+		അവസ്ഥ '\0':
 			/* FALLTHROUGH */
-		case 's':
-		case 'S':
-			if (seen_seconds++)
-				return -1.0;
+		അവസ്ഥ 's':
+		അവസ്ഥ 'S':
+			എങ്കിൽ (seen_seconds++)
+				തിരികെ -1.0;
 			multiplier = SECONDS;
-			break;
-		case 'm':
-		case 'M':
+			നിർത്തുക;
+		അവസ്ഥ 'm':
+		അവസ്ഥ 'M':
 			multiplier = MINUTES;
-			break;
-		case 'h':
-		case 'H':
+			നിർത്തുക;
+		അവസ്ഥ 'h':
+		അവസ്ഥ 'H':
 			multiplier = HOURS;
-			break;
-		case 'd':
-		case 'D':
+			നിർത്തുക;
+		അവസ്ഥ 'd':
+		അവസ്ഥ 'D':
 			multiplier = DAYS;
-			break;
-		case 'w':
-		case 'W':
+			നിർത്തുക;
+		അവസ്ഥ 'w':
+		അവസ്ഥ 'W':
 			multiplier = WEEKS;
-			break;
-		default:
-			return -1.0;
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
+			തിരികെ -1.0;
 		}
 
 		/* Special handling if this was a decimal */
-		if (memchr(start_p, '.', endp - start_p) != NULL) {
+		എങ്കിൽ (memchr(start_p, '.', endp - start_p) != ശൂന്യ) {
 			/* Decimal point present */
-			if (multiplier > 1.0)
-				return -1.0; /* No fractionals for non-seconds */
+			എങ്കിൽ (multiplier > 1.0)
+				തിരികെ -1.0; /* No fractionals for non-seconds */
 			/* For seconds, ensure digits follow */
-			if (!isdigit((unsigned char)*(endp - 1)))
-				return -1.0;
+			എങ്കിൽ (!isdigit((unsigned അക്ഷരം)*(endp - 1)))
+				തിരികെ -1.0;
 		}
 
 		total_sec += val * multiplier;
 
-		if (*p != '\0')
+		എങ്കിൽ (*p != '\0')
 			p++;
 	}
-	return total_sec;
+	തിരികെ total_sec;
 }
 
 /*
  * Same as convtime_double() above but fractional seconds are ignored.
  * Return -1 if time string is invalid.
  */
-int
-convtime(const char *s)
+പൂർണ്ണസംഖ്യ
+convtime(സ്ഥിരം അക്ഷരം *s)
 {
-	double sec_val;
+	ഇരട്ട sec_val;
 
-	if ((sec_val = convtime_double(s)) < 0.0)
-		return -1;
+	എങ്കിൽ ((sec_val = convtime_double(s)) < 0.0)
+		തിരികെ -1;
 
 	/* Check for overflow into int */
-	if (sec_val < 0 || sec_val > INT_MAX)
-		return -1;
+	എങ്കിൽ (sec_val < 0 || sec_val > INT_MAX)
+		തിരികെ -1;
 
-	return (int)sec_val;
+	തിരികെ (പൂർണ്ണസംഖ്യ)sec_val;
 }
 
 #define TF_BUFS	8
 #define TF_LEN	9
 
-const char *
+സ്ഥിരം അക്ഷരം *
 fmt_timeframe(time_t t)
 {
-	char		*buf;
-	static char	 tfbuf[TF_BUFS][TF_LEN];	/* ring buffer */
-	static int	 idx = 0;
-	unsigned int	 sec, min, hrs, day;
+	അക്ഷരം		*buf;
+	സ്ഥിതം അക്ഷരം	 tfbuf[TF_BUFS][TF_LEN];	/* ring buffer */
+	സ്ഥിതം പൂർണ്ണസംഖ്യ	 idx = 0;
+	unsigned പൂർണ്ണസംഖ്യ	 sec, min, hrs, day;
 	unsigned long long	week;
 
 	buf = tfbuf[idx++];
-	if (idx == TF_BUFS)
+	എങ്കിൽ (idx == TF_BUFS)
 		idx = 0;
 
 	week = t;
@@ -784,31 +784,31 @@ fmt_timeframe(time_t t)
 	day = week % 7;
 	week /= 7;
 
-	if (week > 0)
+	എങ്കിൽ (week > 0)
 		snprintf(buf, TF_LEN, "%02lluw%01ud%02uh", week, day, hrs);
-	else if (day > 0)
+	അല്ലെങ്കിൽ എങ്കിൽ (day > 0)
 		snprintf(buf, TF_LEN, "%01ud%02uh%02um", day, hrs, min);
-	else
+	അല്ലെങ്കിൽ
 		snprintf(buf, TF_LEN, "%02u:%02u:%02u", hrs, min, sec);
 
-	return (buf);
+	തിരികെ (buf);
 }
 
 /*
  * Returns a standardized host+port identifier string.
  * Caller must free returned string.
  */
-char *
-put_host_port(const char *host, u_short port)
+അക്ഷരം *
+put_host_port(സ്ഥിരം അക്ഷരം *host, u_short port)
 {
-	char *hoststr;
+	അക്ഷരം *hoststr;
 
-	if (port == 0 || port == SSH_DEFAULT_PORT)
-		return(xstrdup(host));
-	if (asprintf(&hoststr, "[%s]:%d", host, (int)port) == -1)
+	എങ്കിൽ (port == 0 || port == SSH_DEFAULT_PORT)
+		തിരികെ(xstrdup(host));
+	എങ്കിൽ (asprintf(&hoststr, "[%s]:%d", host, (പൂർണ്ണസംഖ്യ)port) == -1)
 		fatal("put_host_port: asprintf: %s", strerror(errno));
 	debug3("put_host_port: %s", hoststr);
-	return hoststr;
+	തിരികെ hoststr;
 }
 
 /*
@@ -819,86 +819,86 @@ put_host_port(const char *host, u_short port)
  * The delimiter char, if present, is stored in delim.
  * If this is the last field, *cp is set to NULL.
  */
-char *
-hpdelim2(char **cp, char *delim)
+അക്ഷരം *
+hpdelim2(അക്ഷരം **cp, അക്ഷരം *delim)
 {
-	char *s, *old;
+	അക്ഷരം *s, *old;
 
-	if (cp == NULL || *cp == NULL)
-		return NULL;
+	എങ്കിൽ (cp == ശൂന്യ || *cp == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
 	old = s = *cp;
-	if (*s == '[') {
-		if ((s = strchr(s, ']')) == NULL)
-			return NULL;
-		else
+	എങ്കിൽ (*s == '[') {
+		എങ്കിൽ ((s = strchr(s, ']')) == ശൂന്യ)
+			തിരികെ ശൂന്യ;
+		അല്ലെങ്കിൽ
 			s++;
-	} else if ((s = strpbrk(s, ":/")) == NULL)
+	} അല്ലെങ്കിൽ എങ്കിൽ ((s = strpbrk(s, ":/")) == ശൂന്യ)
 		s = *cp + strlen(*cp); /* skip to end (see first case below) */
 
-	switch (*s) {
-	case '\0':
-		*cp = NULL;	/* no more fields*/
-		break;
+	തിരഞ്ഞെടുപ്പ് (*s) {
+	അവസ്ഥ '\0':
+		*cp = ശൂന്യ;	/* no more fields*/
+		നിർത്തുക;
 
-	case ':':
-	case '/':
-		if (delim != NULL)
+	അവസ്ഥ ':':
+	അവസ്ഥ '/':
+		എങ്കിൽ (delim != ശൂന്യ)
 			*delim = *s;
 		*s = '\0';	/* terminate */
 		*cp = s + 1;
-		break;
+		നിർത്തുക;
 
-	default:
-		return NULL;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ ശൂന്യ;
 	}
 
-	return old;
+	തിരികെ old;
 }
 
 /* The common case: only accept colon as delimiter. */
-char *
-hpdelim(char **cp)
+അക്ഷരം *
+hpdelim(അക്ഷരം **cp)
 {
-	char *r, delim = '\0';
+	അക്ഷരം *r, delim = '\0';
 
 	r =  hpdelim2(cp, &delim);
-	if (delim == '/')
-		return NULL;
-	return r;
+	എങ്കിൽ (delim == '/')
+		തിരികെ ശൂന്യ;
+	തിരികെ r;
 }
 
-char *
-cleanhostname(char *host)
+അക്ഷരം *
+cleanhostname(അക്ഷരം *host)
 {
-	if (*host == '[' && host[strlen(host) - 1] == ']') {
+	എങ്കിൽ (*host == '[' && host[strlen(host) - 1] == ']') {
 		host[strlen(host) - 1] = '\0';
-		return (host + 1);
-	} else
-		return host;
+		തിരികെ (host + 1);
+	} അല്ലെങ്കിൽ
+		തിരികെ host;
 }
 
-char *
-colon(char *cp)
+അക്ഷരം *
+colon(അക്ഷരം *cp)
 {
-	int flag = 0;
+	പൂർണ്ണസംഖ്യ flag = 0;
 
-	if (*cp == ':')		/* Leading colon is part of file name. */
-		return NULL;
-	if (*cp == '[')
+	എങ്കിൽ (*cp == ':')		/* Leading colon is part of file name. */
+		തിരികെ ശൂന്യ;
+	എങ്കിൽ (*cp == '[')
 		flag = 1;
 
-	for (; *cp; ++cp) {
-		if (*cp == '@' && *(cp+1) == '[')
+	വേണ്ടി (; *cp; ++cp) {
+		എങ്കിൽ (*cp == '@' && *(cp+1) == '[')
 			flag = 1;
-		if (*cp == ']' && *(cp+1) == ':' && flag)
-			return (cp+1);
-		if (*cp == ':' && !flag)
-			return (cp);
-		if (*cp == '/')
-			return NULL;
+		എങ്കിൽ (*cp == ']' && *(cp+1) == ':' && flag)
+			തിരികെ (cp+1);
+		എങ്കിൽ (*cp == ':' && !flag)
+			തിരികെ (cp);
+		എങ്കിൽ (*cp == '/')
+			തിരികെ ശൂന്യ;
 	}
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 /*
@@ -910,64 +910,64 @@ colon(char *cp)
  * If path was not specified then *pathp will be set to ".".
  * Returns 0 on success, -1 on failure.
  */
-int
-parse_user_host_path(const char *s, char **userp, char **hostp, char **pathp)
+പൂർണ്ണസംഖ്യ
+parse_user_host_path(സ്ഥിരം അക്ഷരം *s, അക്ഷരം **userp, അക്ഷരം **hostp, അക്ഷരം **pathp)
 {
-	char *user = NULL, *host = NULL, *path = NULL;
-	char *sdup, *tmp;
-	int ret = -1;
+	അക്ഷരം *user = ശൂന്യ, *host = ശൂന്യ, *path = ശൂന്യ;
+	അക്ഷരം *sdup, *tmp;
+	പൂർണ്ണസംഖ്യ ret = -1;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (pathp != NULL)
-		*pathp = NULL;
+	എങ്കിൽ (userp != ശൂന്യ)
+		*userp = ശൂന്യ;
+	എങ്കിൽ (hostp != ശൂന്യ)
+		*hostp = ശൂന്യ;
+	എങ്കിൽ (pathp != ശൂന്യ)
+		*pathp = ശൂന്യ;
 
 	sdup = xstrdup(s);
 
 	/* Check for remote syntax: [user@]host:[path] */
-	if ((tmp = colon(sdup)) == NULL)
-		goto out;
+	എങ്കിൽ ((tmp = colon(sdup)) == ശൂന്യ)
+		പോകുക out;
 
 	/* Extract optional path */
 	*tmp++ = '\0';
-	if (*tmp == '\0')
+	എങ്കിൽ (*tmp == '\0')
 		tmp = ".";
 	path = xstrdup(tmp);
 
 	/* Extract optional user and mandatory host */
 	tmp = strrchr(sdup, '@');
-	if (tmp != NULL) {
+	എങ്കിൽ (tmp != ശൂന്യ) {
 		*tmp++ = '\0';
 		host = xstrdup(cleanhostname(tmp));
-		if (*sdup != '\0')
+		എങ്കിൽ (*sdup != '\0')
 			user = xstrdup(sdup);
-	} else {
+	} അല്ലെങ്കിൽ {
 		host = xstrdup(cleanhostname(sdup));
-		user = NULL;
+		user = ശൂന്യ;
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	എങ്കിൽ (userp != ശൂന്യ) {
 		*userp = user;
-		user = NULL;
+		user = ശൂന്യ;
 	}
-	if (hostp != NULL) {
+	എങ്കിൽ (hostp != ശൂന്യ) {
 		*hostp = host;
-		host = NULL;
+		host = ശൂന്യ;
 	}
-	if (pathp != NULL) {
+	എങ്കിൽ (pathp != ശൂന്യ) {
 		*pathp = path;
-		path = NULL;
+		path = ശൂന്യ;
 	}
 	ret = 0;
 out:
-	free(sdup);
-	free(user);
-	free(host);
-	free(path);
-	return ret;
+	സ്വതന്ത്രം(sdup);
+	സ്വതന്ത്രം(user);
+	സ്വതന്ത്രം(host);
+	സ്വതന്ത്രം(path);
+	തിരികെ ret;
 }
 
 /*
@@ -978,120 +978,120 @@ out:
  * If port was not specified then *portp will be -1.
  * Returns 0 on success, -1 on failure.
  */
-int
-parse_user_host_port(const char *s, char **userp, char **hostp, int *portp)
+പൂർണ്ണസംഖ്യ
+parse_user_host_port(സ്ഥിരം അക്ഷരം *s, അക്ഷരം **userp, അക്ഷരം **hostp, പൂർണ്ണസംഖ്യ *portp)
 {
-	char *sdup, *cp, *tmp;
-	char *user = NULL, *host = NULL;
-	int port = -1, ret = -1;
+	അക്ഷരം *sdup, *cp, *tmp;
+	അക്ഷരം *user = ശൂന്യ, *host = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ port = -1, ret = -1;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (portp != NULL)
+	എങ്കിൽ (userp != ശൂന്യ)
+		*userp = ശൂന്യ;
+	എങ്കിൽ (hostp != ശൂന്യ)
+		*hostp = ശൂന്യ;
+	എങ്കിൽ (portp != ശൂന്യ)
 		*portp = -1;
 
-	if ((sdup = tmp = strdup(s)) == NULL)
-		return -1;
+	എങ്കിൽ ((sdup = tmp = strdup(s)) == ശൂന്യ)
+		തിരികെ -1;
 	/* Extract optional username */
-	if ((cp = strrchr(tmp, '@')) != NULL) {
+	എങ്കിൽ ((cp = strrchr(tmp, '@')) != ശൂന്യ) {
 		*cp = '\0';
-		if (*tmp == '\0')
-			goto out;
-		if ((user = strdup(tmp)) == NULL)
-			goto out;
+		എങ്കിൽ (*tmp == '\0')
+			പോകുക out;
+		എങ്കിൽ ((user = strdup(tmp)) == ശൂന്യ)
+			പോകുക out;
 		tmp = cp + 1;
 	}
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim(&tmp)) == NULL || *cp == '\0')
-		goto out;
+	എങ്കിൽ ((cp = hpdelim(&tmp)) == ശൂന്യ || *cp == '\0')
+		പോകുക out;
 	host = xstrdup(cleanhostname(cp));
 	/* Convert and verify optional port */
-	if (tmp != NULL && *tmp != '\0') {
-		if ((port = a2port(tmp)) <= 0)
-			goto out;
+	എങ്കിൽ (tmp != ശൂന്യ && *tmp != '\0') {
+		എങ്കിൽ ((port = a2port(tmp)) <= 0)
+			പോകുക out;
 	}
 	/* Success */
-	if (userp != NULL) {
+	എങ്കിൽ (userp != ശൂന്യ) {
 		*userp = user;
-		user = NULL;
+		user = ശൂന്യ;
 	}
-	if (hostp != NULL) {
+	എങ്കിൽ (hostp != ശൂന്യ) {
 		*hostp = host;
-		host = NULL;
+		host = ശൂന്യ;
 	}
-	if (portp != NULL)
+	എങ്കിൽ (portp != ശൂന്യ)
 		*portp = port;
 	ret = 0;
  out:
-	free(sdup);
-	free(user);
-	free(host);
-	return ret;
+	സ്വതന്ത്രം(sdup);
+	സ്വതന്ത്രം(user);
+	സ്വതന്ത്രം(host);
+	തിരികെ ret;
 }
 
 /*
  * Converts a two-byte hex string to decimal.
  * Returns the decimal value or -1 for invalid input.
  */
-static int
-hexchar(const char *s)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+hexchar(സ്ഥിരം അക്ഷരം *s)
 {
-	unsigned char result[2];
-	int i;
+	unsigned അക്ഷരം result[2];
+	പൂർണ്ണസംഖ്യ i;
 
-	for (i = 0; i < 2; i++) {
-		if (s[i] >= '0' && s[i] <= '9')
-			result[i] = (unsigned char)(s[i] - '0');
-		else if (s[i] >= 'a' && s[i] <= 'f')
-			result[i] = (unsigned char)(s[i] - 'a') + 10;
-		else if (s[i] >= 'A' && s[i] <= 'F')
-			result[i] = (unsigned char)(s[i] - 'A') + 10;
-		else
-			return -1;
+	വേണ്ടി (i = 0; i < 2; i++) {
+		എങ്കിൽ (s[i] >= '0' && s[i] <= '9')
+			result[i] = (unsigned അക്ഷരം)(s[i] - '0');
+		അല്ലെങ്കിൽ എങ്കിൽ (s[i] >= 'a' && s[i] <= 'f')
+			result[i] = (unsigned അക്ഷരം)(s[i] - 'a') + 10;
+		അല്ലെങ്കിൽ എങ്കിൽ (s[i] >= 'A' && s[i] <= 'F')
+			result[i] = (unsigned അക്ഷരം)(s[i] - 'A') + 10;
+		അല്ലെങ്കിൽ
+			തിരികെ -1;
 	}
-	return (result[0] << 4) | result[1];
+	തിരികെ (result[0] << 4) | result[1];
 }
 
 /*
  * Decode an url-encoded string.
  * Returns a newly allocated string on success or NULL on failure.
  */
-static char *
-urldecode(const char *src)
+സ്ഥിതം അക്ഷരം *
+urldecode(സ്ഥിരം അക്ഷരം *src)
 {
-	char *ret, *dst;
-	int ch;
+	അക്ഷരം *ret, *dst;
+	പൂർണ്ണസംഖ്യ ch;
 	size_t srclen;
 
-	if ((srclen = strlen(src)) >= SIZE_MAX)
-		return NULL;
+	എങ്കിൽ ((srclen = strlen(src)) >= SIZE_MAX)
+		തിരികെ ശൂന്യ;
 	ret = xmalloc(srclen + 1);
-	for (dst = ret; *src != '\0'; src++) {
-		switch (*src) {
-		case '+':
+	വേണ്ടി (dst = ret; *src != '\0'; src++) {
+		തിരഞ്ഞെടുപ്പ് (*src) {
+		അവസ്ഥ '+':
 			*dst++ = ' ';
-			break;
-		case '%':
+			നിർത്തുക;
+		അവസ്ഥ '%':
 			/* note: don't allow \0 characters */
-			if (!isxdigit((unsigned char)src[1]) ||
-			    !isxdigit((unsigned char)src[2]) ||
+			എങ്കിൽ (!isxdigit((unsigned അക്ഷരം)src[1]) ||
+			    !isxdigit((unsigned അക്ഷരം)src[2]) ||
 			    (ch = hexchar(src + 1)) == -1 || ch == 0) {
-				free(ret);
-				return NULL;
+				സ്വതന്ത്രം(ret);
+				തിരികെ ശൂന്യ;
 			}
 			*dst++ = ch;
 			src += 2;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			*dst++ = *src;
-			break;
+			നിർത്തുക;
 		}
 	}
 	*dst = '\0';
 
-	return ret;
+	തിരികെ ret;
 }
 
 /*
@@ -1106,248 +1106,248 @@ urldecode(const char *src)
  * If path was not specified then *pathp will be set to NULL.
  * Returns 0 on success, 1 if non-uri/wrong scheme, -1 on error/invalid uri.
  */
-int
-parse_uri(const char *scheme, const char *uri, char **userp, char **hostp,
-    int *portp, char **pathp)
+പൂർണ്ണസംഖ്യ
+parse_uri(സ്ഥിരം അക്ഷരം *scheme, സ്ഥിരം അക്ഷരം *uri, അക്ഷരം **userp, അക്ഷരം **hostp,
+    പൂർണ്ണസംഖ്യ *portp, അക്ഷരം **pathp)
 {
-	char *uridup, *cp, *tmp, ch;
-	char *user = NULL, *host = NULL, *path = NULL;
-	int port = -1, ret = -1;
+	അക്ഷരം *uridup, *cp, *tmp, ch;
+	അക്ഷരം *user = ശൂന്യ, *host = ശൂന്യ, *path = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ port = -1, ret = -1;
 	size_t len;
 
 	len = strlen(scheme);
-	if (strncmp(uri, scheme, len) != 0 || strncmp(uri + len, "://", 3) != 0)
-		return 1;
+	എങ്കിൽ (strncmp(uri, scheme, len) != 0 || strncmp(uri + len, "://", 3) != 0)
+		തിരികെ 1;
 	uri += len + 3;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (portp != NULL)
+	എങ്കിൽ (userp != ശൂന്യ)
+		*userp = ശൂന്യ;
+	എങ്കിൽ (hostp != ശൂന്യ)
+		*hostp = ശൂന്യ;
+	എങ്കിൽ (portp != ശൂന്യ)
 		*portp = -1;
-	if (pathp != NULL)
-		*pathp = NULL;
+	എങ്കിൽ (pathp != ശൂന്യ)
+		*pathp = ശൂന്യ;
 
 	uridup = tmp = xstrdup(uri);
 
 	/* Extract optional ssh-info (username + connection params) */
-	if ((cp = strchr(tmp, '@')) != NULL) {
-		char *delim;
+	എങ്കിൽ ((cp = strchr(tmp, '@')) != ശൂന്യ) {
+		അക്ഷരം *delim;
 
 		*cp = '\0';
 		/* Extract username and connection params */
-		if ((delim = strchr(tmp, ';')) != NULL) {
+		എങ്കിൽ ((delim = strchr(tmp, ';')) != ശൂന്യ) {
 			/* Just ignore connection params for now */
 			*delim = '\0';
 		}
-		if (*tmp == '\0') {
+		എങ്കിൽ (*tmp == '\0') {
 			/* Empty username */
-			goto out;
+			പോകുക out;
 		}
-		if ((user = urldecode(tmp)) == NULL)
-			goto out;
+		എങ്കിൽ ((user = urldecode(tmp)) == ശൂന്യ)
+			പോകുക out;
 		tmp = cp + 1;
 	}
 
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim2(&tmp, &ch)) == NULL || *cp == '\0')
-		goto out;
+	എങ്കിൽ ((cp = hpdelim2(&tmp, &ch)) == ശൂന്യ || *cp == '\0')
+		പോകുക out;
 	host = xstrdup(cleanhostname(cp));
-	if (!valid_domain(host, 0, NULL))
-		goto out;
+	എങ്കിൽ (!valid_domain(host, 0, ശൂന്യ))
+		പോകുക out;
 
-	if (tmp != NULL && *tmp != '\0') {
-		if (ch == ':') {
+	എങ്കിൽ (tmp != ശൂന്യ && *tmp != '\0') {
+		എങ്കിൽ (ch == ':') {
 			/* Convert and verify port. */
-			if ((cp = strchr(tmp, '/')) != NULL)
+			എങ്കിൽ ((cp = strchr(tmp, '/')) != ശൂന്യ)
 				*cp = '\0';
-			if ((port = a2port(tmp)) <= 0)
-				goto out;
-			tmp = cp ? cp + 1 : NULL;
+			എങ്കിൽ ((port = a2port(tmp)) <= 0)
+				പോകുക out;
+			tmp = cp ? cp + 1 : ശൂന്യ;
 		}
-		if (tmp != NULL && *tmp != '\0') {
+		എങ്കിൽ (tmp != ശൂന്യ && *tmp != '\0') {
 			/* Extract optional path */
-			if ((path = urldecode(tmp)) == NULL)
-				goto out;
+			എങ്കിൽ ((path = urldecode(tmp)) == ശൂന്യ)
+				പോകുക out;
 		}
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	എങ്കിൽ (userp != ശൂന്യ) {
 		*userp = user;
-		user = NULL;
+		user = ശൂന്യ;
 	}
-	if (hostp != NULL) {
+	എങ്കിൽ (hostp != ശൂന്യ) {
 		*hostp = host;
-		host = NULL;
+		host = ശൂന്യ;
 	}
-	if (portp != NULL)
+	എങ്കിൽ (portp != ശൂന്യ)
 		*portp = port;
-	if (pathp != NULL) {
+	എങ്കിൽ (pathp != ശൂന്യ) {
 		*pathp = path;
-		path = NULL;
+		path = ശൂന്യ;
 	}
 	ret = 0;
  out:
-	free(uridup);
-	free(user);
-	free(host);
-	free(path);
-	return ret;
+	സ്വതന്ത്രം(uridup);
+	സ്വതന്ത്രം(user);
+	സ്വതന്ത്രം(host);
+	സ്വതന്ത്രം(path);
+	തിരികെ ret;
 }
 
 /* function to assist building execv() arguments */
-void
-addargs(arglist *args, char *fmt, ...)
+ശൂന്യം
+addargs(arglist *args, അക്ഷരം *fmt, ...)
 {
 	va_list ap;
-	char *cp;
+	അക്ഷരം *cp;
 	u_int nalloc;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	va_start(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
 	va_end(ap);
-	if (r == -1)
+	എങ്കിൽ (r == -1)
 		fatal_f("argument too long");
 
 	nalloc = args->nalloc;
-	if (args->list == NULL) {
+	എങ്കിൽ (args->list == ശൂന്യ) {
 		nalloc = 32;
-		args->num = 0;
-	} else if (args->num > (256 * 1024))
+		args->അക്കം = 0;
+	} അല്ലെങ്കിൽ എങ്കിൽ (args->അക്കം > (256 * 1024))
 		fatal_f("too many arguments");
-	else if (args->num >= args->nalloc)
+	അല്ലെങ്കിൽ എങ്കിൽ (args->അക്കം >= args->nalloc)
 		fatal_f("arglist corrupt");
-	else if (args->num+2 >= nalloc)
+	അല്ലെങ്കിൽ എങ്കിൽ (args->അക്കം+2 >= nalloc)
 		nalloc *= 2;
 
 	args->list = xrecallocarray(args->list, args->nalloc,
-	    nalloc, sizeof(char *));
+	    nalloc, വലുപ്പം(അക്ഷരം *));
 	args->nalloc = nalloc;
-	args->list[args->num++] = cp;
-	args->list[args->num] = NULL;
+	args->list[args->അക്കം++] = cp;
+	args->list[args->അക്കം] = ശൂന്യ;
 }
 
-void
-replacearg(arglist *args, u_int which, char *fmt, ...)
+ശൂന്യം
+replacearg(arglist *args, u_int which, അക്ഷരം *fmt, ...)
 {
 	va_list ap;
-	char *cp;
-	int r;
+	അക്ഷരം *cp;
+	പൂർണ്ണസംഖ്യ r;
 
 	va_start(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
 	va_end(ap);
-	if (r == -1)
+	എങ്കിൽ (r == -1)
 		fatal_f("argument too long");
-	if (args->list == NULL || args->num >= args->nalloc)
+	എങ്കിൽ (args->list == ശൂന്യ || args->അക്കം >= args->nalloc)
 		fatal_f("arglist corrupt");
 
-	if (which >= args->num)
+	എങ്കിൽ (which >= args->അക്കം)
 		fatal_f("tried to replace invalid arg %d >= %d",
-		    which, args->num);
-	free(args->list[which]);
+		    which, args->അക്കം);
+	സ്വതന്ത്രം(args->list[which]);
 	args->list[which] = cp;
 }
 
-void
+ശൂന്യം
 freeargs(arglist *args)
 {
 	u_int i;
 
-	if (args == NULL)
-		return;
-	if (args->list != NULL && args->num < args->nalloc) {
-		for (i = 0; i < args->num; i++)
-			free(args->list[i]);
-		free(args->list);
+	എങ്കിൽ (args == ശൂന്യ)
+		തിരികെ;
+	എങ്കിൽ (args->list != ശൂന്യ && args->അക്കം < args->nalloc) {
+		വേണ്ടി (i = 0; i < args->അക്കം; i++)
+			സ്വതന്ത്രം(args->list[i]);
+		സ്വതന്ത്രം(args->list);
 	}
-	args->nalloc = args->num = 0;
-	args->list = NULL;
+	args->nalloc = args->അക്കം = 0;
+	args->list = ശൂന്യ;
 }
 
 /*
  * Expands tildes in the file name.  Returns data allocated by xmalloc.
  * Warning: this calls getpw*.
  */
-int
-tilde_expand(const char *filename, uid_t uid, char **retp)
+പൂർണ്ണസംഖ്യ
+tilde_expand(സ്ഥിരം അക്ഷരം *filename, uid_t uid, അക്ഷരം **retp)
 {
-	char *ocopy = NULL, *copy, *s = NULL;
-	const char *path = NULL, *user = NULL;
-	struct passwd *pw;
+	അക്ഷരം *ocopy = ശൂന്യ, *copy, *s = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *path = ശൂന്യ, *user = ശൂന്യ;
+	ഘടന passwd *pw;
 	size_t len;
-	int ret = -1, r, slash;
+	പൂർണ്ണസംഖ്യ ret = -1, r, slash;
 
-	*retp = NULL;
-	if (*filename != '~') {
+	*retp = ശൂന്യ;
+	എങ്കിൽ (*filename != '~') {
 		*retp = xstrdup(filename);
-		return 0;
+		തിരികെ 0;
 	}
 	ocopy = copy = xstrdup(filename + 1);
 
-	if (*copy == '\0')				/* ~ */
-		path = NULL;
-	else if (*copy == '/') {
+	എങ്കിൽ (*copy == '\0')				/* ~ */
+		path = ശൂന്യ;
+	അല്ലെങ്കിൽ എങ്കിൽ (*copy == '/') {
 		copy += strspn(copy, "/");
-		if (*copy == '\0')
-			path = NULL;			/* ~/ */
-		else
+		എങ്കിൽ (*copy == '\0')
+			path = ശൂന്യ;			/* ~/ */
+		അല്ലെങ്കിൽ
 			path = copy;			/* ~/path */
-	} else {
+	} അല്ലെങ്കിൽ {
 		user = copy;
-		if ((path = strchr(copy, '/')) != NULL) {
+		എങ്കിൽ ((path = strchr(copy, '/')) != ശൂന്യ) {
 			copy[path - copy] = '\0';
 			path++;
 			path += strspn(path, "/");
-			if (*path == '\0')		/* ~user/ */
-				path = NULL;
+			എങ്കിൽ (*path == '\0')		/* ~user/ */
+				path = ശൂന്യ;
 			/* else				 ~user/path */
 		}
 		/* else					~user */
 	}
-	if (user != NULL) {
-		if ((pw = getpwnam(user)) == NULL) {
+	എങ്കിൽ (user != ശൂന്യ) {
+		എങ്കിൽ ((pw = getpwnam(user)) == ശൂന്യ) {
 			error_f("No such user %s", user);
-			goto out;
+			പോകുക out;
 		}
-	} else if ((pw = getpwuid(uid)) == NULL) {
+	} അല്ലെങ്കിൽ എങ്കിൽ ((pw = getpwuid(uid)) == ശൂന്യ) {
 		error_f("No such uid %ld", (long)uid);
-		goto out;
+		പോകുക out;
 	}
 
 	/* Make sure directory has a trailing '/' */
 	slash = (len = strlen(pw->pw_dir)) == 0 || pw->pw_dir[len - 1] != '/';
 
-	if ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
-	    slash ? "/" : "", path != NULL ? path : "")) <= 0) {
+	എങ്കിൽ ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
+	    slash ? "/" : "", path != ശൂന്യ ? path : "")) <= 0) {
 		error_f("xasprintf failed");
-		goto out;
+		പോകുക out;
 	}
-	if (r >= PATH_MAX) {
+	എങ്കിൽ (r >= PATH_MAX) {
 		error_f("Path too long");
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	ret = 0;
 	*retp = s;
-	s = NULL;
+	s = ശൂന്യ;
  out:
-	free(s);
-	free(ocopy);
-	return ret;
+	സ്വതന്ത്രം(s);
+	സ്വതന്ത്രം(ocopy);
+	തിരികെ ret;
 }
 
-char *
-tilde_expand_filename(const char *filename, uid_t uid)
+അക്ഷരം *
+tilde_expand_filename(സ്ഥിരം അക്ഷരം *filename, uid_t uid)
 {
-	char *ret;
+	അക്ഷരം *ret;
 
-	if (tilde_expand(filename, uid, &ret) != 0)
+	എങ്കിൽ (tilde_expand(filename, uid, &ret) != 0)
 		cleanup_exit(255);
-	return ret;
+	തിരികെ ret;
 }
 
 /*
@@ -1357,73 +1357,73 @@ tilde_expand_filename(const char *filename, uid_t uid)
  * by a NULL escape_char. Returns replaced string in memory allocated by
  * xmalloc which the caller must free.
  */
-static char *
-vdollar_percent_expand(int *parseerror, int dollar, int percent,
-    const char *string, va_list ap)
+സ്ഥിതം അക്ഷരം *
+vdollar_percent_expand(പൂർണ്ണസംഖ്യ *parseerror, പൂർണ്ണസംഖ്യ dollar, പൂർണ്ണസംഖ്യ percent,
+    സ്ഥിരം അക്ഷരം *string, va_list ap)
 {
-#define EXPAND_MAX_KEYS	64
-	u_int num_keys = 0, i;
-	struct {
-		const char *key;
-		const char *repl;
-	} keys[EXPAND_MAX_KEYS];
-	struct sshbuf *buf;
-	int r, missingvar = 0;
-	char *ret = NULL, *var, *varend, *val;
+#define EXPAND_MAX_താക്കോലുകൾ	64
+	u_int അക്കം_താക്കോലുകൾ = 0, i;
+	ഘടന {
+		സ്ഥിരം അക്ഷരം *താക്കോൽ;
+		സ്ഥിരം അക്ഷരം *repl;
+	} താക്കോലുകൾ[EXPAND_MAX_താക്കോലുകൾ];
+	ഘടന sshbuf *buf;
+	പൂർണ്ണസംഖ്യ r, missingvar = 0;
+	അക്ഷരം *ret = ശൂന്യ, *var, *varend, *val;
 	size_t len;
 
-	if ((buf = sshbuf_new()) == NULL)
+	എങ്കിൽ ((buf = sshbuf_new()) == ശൂന്യ)
 		fatal_f("sshbuf_new failed");
-	if (parseerror == NULL)
+	എങ്കിൽ (parseerror == ശൂന്യ)
 		fatal_f("null parseerror arg");
 	*parseerror = 1;
 
 	/* Gather keys if we're doing percent expansion. */
-	if (percent) {
-		for (num_keys = 0; num_keys < EXPAND_MAX_KEYS; num_keys++) {
-			keys[num_keys].key = va_arg(ap, char *);
-			if (keys[num_keys].key == NULL)
-				break;
-			keys[num_keys].repl = va_arg(ap, char *);
-			if (keys[num_keys].repl == NULL) {
+	എങ്കിൽ (percent) {
+		വേണ്ടി (അക്കം_താക്കോലുകൾ = 0; അക്കം_താക്കോലുകൾ < EXPAND_MAX_താക്കോലുകൾ; അക്കം_താക്കോലുകൾ++) {
+			താക്കോലുകൾ[അക്കം_താക്കോലുകൾ].താക്കോൽ = va_arg(ap, അക്ഷരം *);
+			എങ്കിൽ (താക്കോലുകൾ[അക്കം_താക്കോലുകൾ].താക്കോൽ == ശൂന്യ)
+				നിർത്തുക;
+			താക്കോലുകൾ[അക്കം_താക്കോലുകൾ].repl = va_arg(ap, അക്ഷരം *);
+			എങ്കിൽ (താക്കോലുകൾ[അക്കം_താക്കോലുകൾ].repl == ശൂന്യ) {
 				fatal_f("NULL replacement for token %s",
-				    keys[num_keys].key);
+				    താക്കോലുകൾ[അക്കം_താക്കോലുകൾ].താക്കോൽ);
 			}
 		}
-		if (num_keys == EXPAND_MAX_KEYS && va_arg(ap, char *) != NULL)
+		എങ്കിൽ (അക്കം_താക്കോലുകൾ == EXPAND_MAX_താക്കോലുകൾ && va_arg(ap, അക്ഷരം *) != ശൂന്യ)
 			fatal_f("too many keys");
-		if (num_keys == 0)
+		എങ്കിൽ (അക്കം_താക്കോലുകൾ == 0)
 			fatal_f("percent expansion without token list");
 	}
 
 	/* Expand string */
-	for (i = 0; *string != '\0'; string++) {
+	വേണ്ടി (i = 0; *string != '\0'; string++) {
 		/* Optionally process ${ENVIRONMENT} expansions. */
-		if (dollar && string[0] == '$' && string[1] == '{') {
+		എങ്കിൽ (dollar && string[0] == '$' && string[1] == '{') {
 			string += 2;  /* skip over '${' */
-			if ((varend = strchr(string, '}')) == NULL) {
+			എങ്കിൽ ((varend = strchr(string, '}')) == ശൂന്യ) {
 				error_f("environment variable '%s' missing "
 				    "closing '}'", string);
-				goto out;
+				പോകുക out;
 			}
 			len = varend - string;
-			if (len == 0) {
+			എങ്കിൽ (len == 0) {
 				error_f("zero-length environment variable");
-				goto out;
+				പോകുക out;
 			}
 			var = xmalloc(len + 1);
-			(void)strlcpy(var, string, len + 1);
-			if ((val = getenv(var)) == NULL) {
+			(ശൂന്യം)strlcpy(var, string, len + 1);
+			എങ്കിൽ ((val = getenv(var)) == ശൂന്യ) {
 				error_f("env var ${%s} has no value", var);
 				missingvar = 1;
-			} else {
+			} അല്ലെങ്കിൽ {
 				debug3_f("expand ${%s} -> '%s'", var, val);
-				if ((r = sshbuf_put(buf, val, strlen(val))) !=0)
+				എങ്കിൽ ((r = sshbuf_put(buf, val, strlen(val))) !=0)
 					fatal_fr(r, "sshbuf_put ${}");
 			}
-			free(var);
+			സ്വതന്ത്രം(var);
 			string += len;
-			continue;
+			തുടരുക;
 		}
 
 		/*
@@ -1431,40 +1431,40 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
 		 * If we're not doing percent expansion everything just gets
 		 * appended here.
 		 */
-		if (*string != '%' || !percent) {
+		എങ്കിൽ (*string != '%' || !percent) {
  append:
-			if ((r = sshbuf_put_u8(buf, *string)) != 0)
+			എങ്കിൽ ((r = sshbuf_put_u8(buf, *string)) != 0)
 				fatal_fr(r, "sshbuf_put_u8 %%");
-			continue;
+			തുടരുക;
 		}
 		string++;
 		/* %% case */
-		if (*string == '%')
-			goto append;
-		if (*string == '\0') {
+		എങ്കിൽ (*string == '%')
+			പോകുക append;
+		എങ്കിൽ (*string == '\0') {
 			error_f("invalid format");
-			goto out;
+			പോകുക out;
 		}
-		for (i = 0; i < num_keys; i++) {
-			if (strchr(keys[i].key, *string) != NULL) {
-				if ((r = sshbuf_put(buf, keys[i].repl,
-				    strlen(keys[i].repl))) != 0)
+		വേണ്ടി (i = 0; i < അക്കം_താക്കോലുകൾ; i++) {
+			എങ്കിൽ (strchr(താക്കോലുകൾ[i].താക്കോൽ, *string) != ശൂന്യ) {
+				എങ്കിൽ ((r = sshbuf_put(buf, താക്കോലുകൾ[i].repl,
+				    strlen(താക്കോലുകൾ[i].repl))) != 0)
 					fatal_fr(r, "sshbuf_put %%-repl");
-				break;
+				നിർത്തുക;
 			}
 		}
-		if (i >= num_keys) {
+		എങ്കിൽ (i >= അക്കം_താക്കോലുകൾ) {
 			error_f("unknown key %%%c", *string);
-			goto out;
+			പോകുക out;
 		}
 	}
-	if (!missingvar && (ret = sshbuf_dup_string(buf)) == NULL)
+	എങ്കിൽ (!missingvar && (ret = sshbuf_dup_string(buf)) == ശൂന്യ)
 		fatal_f("sshbuf_dup_string failed");
 	*parseerror = 0;
  out:
 	sshbuf_free(buf);
-	return *parseerror ? NULL : ret;
-#undef EXPAND_MAX_KEYS
+	തിരികെ *parseerror ? ശൂന്യ : ret;
+#undef EXPAND_MAX_താക്കോലുകൾ
 }
 
 /*
@@ -1473,177 +1473,177 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
  * functions, any such arguments will be unused.
  */
 
-char *
-dollar_expand(int *parseerr, const char *string, ...)
+അക്ഷരം *
+dollar_expand(പൂർണ്ണസംഖ്യ *parseerr, സ്ഥിരം അക്ഷരം *string, ...)
 {
-	char *ret;
-	int err;
+	അക്ഷരം *ret;
+	പൂർണ്ണസംഖ്യ err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 0, string, ap);
 	va_end(ap);
-	if (parseerr != NULL)
+	എങ്കിൽ (parseerr != ശൂന്യ)
 		*parseerr = err;
-	return ret;
+	തിരികെ ret;
 }
 
 /*
  * Returns expanded string or NULL if a specified environment variable is
  * not defined, or calls fatal if the string is invalid.
  */
-char *
-percent_expand(const char *string, ...)
+അക്ഷരം *
+percent_expand(സ്ഥിരം അക്ഷരം *string, ...)
 {
-	char *ret;
-	int err;
+	അക്ഷരം *ret;
+	പൂർണ്ണസംഖ്യ err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 0, 1, string, ap);
 	va_end(ap);
-	if (err)
+	എങ്കിൽ (err)
 		fatal_f("failed");
-	return ret;
+	തിരികെ ret;
 }
 
 /*
  * Returns expanded string or NULL if a specified environment variable is
  * not defined, or calls fatal if the string is invalid.
  */
-char *
-percent_dollar_expand(const char *string, ...)
+അക്ഷരം *
+percent_dollar_expand(സ്ഥിരം അക്ഷരം *string, ...)
 {
-	char *ret;
-	int err;
+	അക്ഷരം *ret;
+	പൂർണ്ണസംഖ്യ err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 1, string, ap);
 	va_end(ap);
-	if (err)
+	എങ്കിൽ (err)
 		fatal_f("failed");
-	return ret;
+	തിരികെ ret;
 }
 
-int
-tun_open(int tun, int mode, char **ifname)
+പൂർണ്ണസംഖ്യ
+tun_open(പൂർണ്ണസംഖ്യ tun, പൂർണ്ണസംഖ്യ mode, അക്ഷരം **ifname)
 {
-#if defined(CUSTOM_SYS_TUN_OPEN)
-	return (sys_tun_open(tun, mode, ifname));
-#elif defined(SSH_TUN_OPENBSD)
-	struct ifreq ifr;
-	char name[100];
-	int fd = -1, sock;
-	const char *tunbase = "tun";
+#എങ്കിൽ defined(CUSTOM_SYS_TUN_OPEN)
+	തിരികെ (sys_tun_open(tun, mode, ifname));
+#അല്ലെങ്കിലെങ്കിൽ defined(SSH_TUN_OPENBSD)
+	ഘടന ifreq ifr;
+	അക്ഷരം name[100];
+	പൂർണ്ണസംഖ്യ fd = -1, sock;
+	സ്ഥിരം അക്ഷരം *tunbase = "tun";
 
-	if (ifname != NULL)
-		*ifname = NULL;
+	എങ്കിൽ (ifname != ശൂന്യ)
+		*ifname = ശൂന്യ;
 
-	if (mode == SSH_TUNMODE_ETHERNET)
+	എങ്കിൽ (mode == SSH_TUNMODE_ETHERNET)
 		tunbase = "tap";
 
 	/* Open the tunnel device */
-	if (tun <= SSH_TUNID_MAX) {
-		snprintf(name, sizeof(name), "/dev/%s%d", tunbase, tun);
+	എങ്കിൽ (tun <= SSH_TUNID_MAX) {
+		snprintf(name, വലുപ്പം(name), "/dev/%s%d", tunbase, tun);
 		fd = open(name, O_RDWR);
-	} else if (tun == SSH_TUNID_ANY) {
-		for (tun = 100; tun >= 0; tun--) {
-			snprintf(name, sizeof(name), "/dev/%s%d",
+	} അല്ലെങ്കിൽ എങ്കിൽ (tun == SSH_TUNID_ANY) {
+		വേണ്ടി (tun = 100; tun >= 0; tun--) {
+			snprintf(name, വലുപ്പം(name), "/dev/%s%d",
 			    tunbase, tun);
-			if ((fd = open(name, O_RDWR)) >= 0)
-				break;
+			എങ്കിൽ ((fd = open(name, O_RDWR)) >= 0)
+				നിർത്തുക;
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		debug_f("invalid tunnel %u", tun);
-		return -1;
+		തിരികെ -1;
 	}
 
-	if (fd == -1) {
+	എങ്കിൽ (fd == -1) {
 		debug_f("%s open: %s", name, strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
 
 	debug_f("%s mode %d fd %d", name, mode, fd);
 
 	/* Bring interface up if it is not already */
-	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s%d", tunbase, tun);
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
-		goto failed;
+	snprintf(ifr.ifr_name, വലുപ്പം(ifr.ifr_name), "%s%d", tunbase, tun);
+	എങ്കിൽ ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+		പോകുക failed;
 
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
+	എങ്കിൽ (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
 		debug_f("get interface %s flags: %s", ifr.ifr_name,
 		    strerror(errno));
-		goto failed;
+		പോകുക failed;
 	}
 
-	if (!(ifr.ifr_flags & IFF_UP)) {
+	എങ്കിൽ (!(ifr.ifr_flags & IFF_UP)) {
 		ifr.ifr_flags |= IFF_UP;
-		if (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
+		എങ്കിൽ (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
 			debug_f("activate interface %s: %s", ifr.ifr_name,
 			    strerror(errno));
-			goto failed;
+			പോകുക failed;
 		}
 	}
 
-	if (ifname != NULL)
+	എങ്കിൽ (ifname != ശൂന്യ)
 		*ifname = xstrdup(ifr.ifr_name);
 
 	close(sock);
-	return fd;
+	തിരികെ fd;
 
  failed:
-	if (fd >= 0)
+	എങ്കിൽ (fd >= 0)
 		close(fd);
-	if (sock >= 0)
+	എങ്കിൽ (sock >= 0)
 		close(sock);
-	return -1;
-#else
+	തിരികെ -1;
+#അല്ലെങ്കിൽ
 	error("Tunnel interfaces are not supported on this platform");
-	return (-1);
+	തിരികെ (-1);
 #endif
 }
 
-void
-sanitise_stdfd(void)
+ശൂന്യം
+sanitise_stdfd(ശൂന്യം)
 {
-	int nullfd, dupfd;
+	പൂർണ്ണസംഖ്യ nullfd, dupfd;
 
-	if ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	എങ്കിൽ ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 		fprintf(stderr, "Couldn't open /dev/null: %s\n",
 		    strerror(errno));
 		exit(1);
 	}
-	while (++dupfd <= STDERR_FILENO) {
+	ആകുമ്പോൾ (++dupfd <= STDERR_FILENO) {
 		/* Only populate closed fds. */
-		if (fcntl(dupfd, F_GETFL) == -1 && errno == EBADF) {
-			if (dup2(nullfd, dupfd) == -1) {
+		എങ്കിൽ (fcntl(dupfd, F_GETFL) == -1 && errno == EBADF) {
+			എങ്കിൽ (dup2(nullfd, dupfd) == -1) {
 				fprintf(stderr, "dup2: %s\n", strerror(errno));
 				exit(1);
 			}
 		}
 	}
-	if (nullfd > STDERR_FILENO)
+	എങ്കിൽ (nullfd > STDERR_FILENO)
 		close(nullfd);
 }
 
-char *
-tohex(const void *vp, size_t l)
+അക്ഷരം *
+tohex(സ്ഥിരം ശൂന്യം *vp, size_t l)
 {
-	const u_char *p = (const u_char *)vp;
-	char b[3], *r;
+	സ്ഥിരം u_char *p = (സ്ഥിരം u_char *)vp;
+	അക്ഷരം b[3], *r;
 	size_t i, hl;
 
-	if (l > 65536)
-		return xstrdup("tohex: length > 65536");
+	എങ്കിൽ (l > 65536)
+		തിരികെ xstrdup("tohex: length > 65536");
 
 	hl = l * 2 + 1;
 	r = xcalloc(1, hl);
-	for (i = 0; i < l; i++) {
-		snprintf(b, sizeof(b), "%02x", p[i]);
+	വേണ്ടി (i = 0; i < l; i++) {
+		snprintf(b, വലുപ്പം(b), "%02x", p[i]);
 		strlcat(r, b, hl);
 	}
-	return (r);
+	തിരികെ (r);
 }
 
 /*
@@ -1651,32 +1651,32 @@ tohex(const void *vp, size_t l)
  * then the separator 'sep' will be prepended before the formatted arguments.
  * Extended strings are heap allocated.
  */
-void
-xextendf(char **sp, const char *sep, const char *fmt, ...)
+ശൂന്യം
+xextendf(അക്ഷരം **sp, സ്ഥിരം അക്ഷരം *sep, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list ap;
-	char *tmp1, *tmp2;
+	അക്ഷരം *tmp1, *tmp2;
 
 	va_start(ap, fmt);
 	xvasprintf(&tmp1, fmt, ap);
 	va_end(ap);
 
-	if (*sp == NULL || **sp == '\0') {
-		free(*sp);
+	എങ്കിൽ (*sp == ശൂന്യ || **sp == '\0') {
+		സ്വതന്ത്രം(*sp);
 		*sp = tmp1;
-		return;
+		തിരികെ;
 	}
-	xasprintf(&tmp2, "%s%s%s", *sp, sep == NULL ? "" : sep, tmp1);
-	free(tmp1);
-	free(*sp);
+	xasprintf(&tmp2, "%s%s%s", *sp, sep == ശൂന്യ ? "" : sep, tmp1);
+	സ്വതന്ത്രം(tmp1);
+	സ്വതന്ത്രം(*sp);
 	*sp = tmp2;
 }
 
 
 uint64_t
-get_u64(const void *vp)
+get_u64(സ്ഥിരം ശൂന്യം *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	സ്ഥിരം u_char *p = (സ്ഥിരം u_char *)vp;
 	uint64_t v;
 
 	v  = (uint64_t)p[0] << 56;
@@ -1688,13 +1688,13 @@ get_u64(const void *vp)
 	v |= (uint64_t)p[6] << 8;
 	v |= (uint64_t)p[7];
 
-	return (v);
+	തിരികെ (v);
 }
 
 uint32_t
-get_u32(const void *vp)
+get_u32(സ്ഥിരം ശൂന്യം *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	സ്ഥിരം u_char *p = (സ്ഥിരം u_char *)vp;
 	uint32_t v;
 
 	v  = (uint32_t)p[0] << 24;
@@ -1702,13 +1702,13 @@ get_u32(const void *vp)
 	v |= (uint32_t)p[2] << 8;
 	v |= (uint32_t)p[3];
 
-	return (v);
+	തിരികെ (v);
 }
 
 uint32_t
-get_u32_le(const void *vp)
+get_u32_le(സ്ഥിരം ശൂന്യം *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	സ്ഥിരം u_char *p = (സ്ഥിരം u_char *)vp;
 	uint32_t v;
 
 	v  = (uint32_t)p[0];
@@ -1716,23 +1716,23 @@ get_u32_le(const void *vp)
 	v |= (uint32_t)p[2] << 16;
 	v |= (uint32_t)p[3] << 24;
 
-	return (v);
+	തിരികെ (v);
 }
 
 uint16_t
-get_u16(const void *vp)
+get_u16(സ്ഥിരം ശൂന്യം *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	സ്ഥിരം u_char *p = (സ്ഥിരം u_char *)vp;
 	uint16_t v;
 
 	v  = (uint16_t)p[0] << 8;
 	v |= (uint16_t)p[1];
 
-	return (v);
+	തിരികെ (v);
 }
 
-void
-put_u64(void *vp, uint64_t v)
+ശൂന്യം
+put_u64(ശൂന്യം *vp, uint64_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1746,8 +1746,8 @@ put_u64(void *vp, uint64_t v)
 	p[7] = (u_char)v & 0xff;
 }
 
-void
-put_u32(void *vp, uint32_t v)
+ശൂന്യം
+put_u32(ശൂന്യം *vp, uint32_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1757,8 +1757,8 @@ put_u32(void *vp, uint32_t v)
 	p[3] = (u_char)v & 0xff;
 }
 
-void
-put_u32_le(void *vp, uint32_t v)
+ശൂന്യം
+put_u32_le(ശൂന്യം *vp, uint32_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1768,8 +1768,8 @@ put_u32_le(void *vp, uint32_t v)
 	p[3] = (u_char)(v >> 24) & 0xff;
 }
 
-void
-put_u16(void *vp, uint16_t v)
+ശൂന്യം
+put_u16(ശൂന്യം *vp, uint16_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1777,60 +1777,60 @@ put_u16(void *vp, uint16_t v)
 	p[1] = (u_char)v & 0xff;
 }
 
-void
-ms_subtract_diff(struct timeval *start, int *ms)
+ശൂന്യം
+ms_subtract_diff(ഘടന timeval *start, പൂർണ്ണസംഖ്യ *ms)
 {
-	struct timeval diff, finish;
+	ഘടന timeval diff, finish;
 
 	monotime_tv(&finish);
 	timersub(&finish, start, &diff);
 	*ms -= (diff.tv_sec * 1000) + (diff.tv_usec / 1000);
 }
 
-void
-ms_to_timespec(struct timespec *ts, int ms)
+ശൂന്യം
+ms_to_timespec(ഘടന timespec *ts, പൂർണ്ണസംഖ്യ ms)
 {
-	if (ms < 0)
+	എങ്കിൽ (ms < 0)
 		ms = 0;
 	ts->tv_sec = ms / 1000;
 	ts->tv_nsec = (ms % 1000) * 1000 * 1000;
 }
 
-void
-monotime_ts(struct timespec *ts)
+ശൂന്യം
+monotime_ts(ഘടന timespec *ts)
 {
-	struct timeval tv;
-#if defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
+	ഘടന timeval tv;
+#എങ്കിൽ defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
     defined(CLOCK_MONOTONIC) || defined(CLOCK_REALTIME))
-	static int gettime_failed = 0;
+	സ്ഥിതം പൂർണ്ണസംഖ്യ gettime_failed = 0;
 
-	if (!gettime_failed) {
+	എങ്കിൽ (!gettime_failed) {
 # ifdef CLOCK_BOOTTIME
-		if (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
-			return;
+		എങ്കിൽ (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
+			തിരികെ;
 # endif /* CLOCK_BOOTTIME */
 # ifdef CLOCK_MONOTONIC
-		if (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
-			return;
+		എങ്കിൽ (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
+			തിരികെ;
 # endif /* CLOCK_MONOTONIC */
 # ifdef CLOCK_REALTIME
 		/* Not monotonic, but we're almost out of options here. */
-		if (clock_gettime(CLOCK_REALTIME, ts) == 0)
-			return;
+		എങ്കിൽ (clock_gettime(CLOCK_REALTIME, ts) == 0)
+			തിരികെ;
 # endif /* CLOCK_REALTIME */
 		debug3("clock_gettime: %s", strerror(errno));
 		gettime_failed = 1;
 	}
 #endif /* HAVE_CLOCK_GETTIME && (BOOTTIME || MONOTONIC || REALTIME) */
-	gettimeofday(&tv, NULL);
+	gettimeofday(&tv, ശൂന്യ);
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
 }
 
-void
-monotime_tv(struct timeval *tv)
+ശൂന്യം
+monotime_tv(ഘടന timeval *tv)
 {
-	struct timespec ts;
+	ഘടന timespec ts;
 
 	monotime_ts(&ts);
 	tv->tv_sec = ts.tv_sec;
@@ -1838,25 +1838,25 @@ monotime_tv(struct timeval *tv)
 }
 
 time_t
-monotime(void)
+monotime(ശൂന്യം)
 {
-	struct timespec ts;
+	ഘടന timespec ts;
 
 	monotime_ts(&ts);
-	return (ts.tv_sec);
+	തിരികെ (ts.tv_sec);
 }
 
-double
-monotime_double(void)
+ഇരട്ട
+monotime_double(ശൂന്യം)
 {
-	struct timespec ts;
+	ഘടന timespec ts;
 
 	monotime_ts(&ts);
-	return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
+	തിരികെ (ഇരട്ട)ts.tv_sec + (ഇരട്ട)ts.tv_nsec / 1000000000.0;
 }
 
-void
-bandwidth_limit_init(struct bwlimit *bw, uint64_t kbps, size_t buflen)
+ശൂന്യം
+bandwidth_limit_init(ഘടന bwlimit *bw, uint64_t kbps, size_t buflen)
 {
 	bw->buflen = buflen;
 	bw->rate = kbps;
@@ -1867,49 +1867,49 @@ bandwidth_limit_init(struct bwlimit *bw, uint64_t kbps, size_t buflen)
 }
 
 /* Callback from read/write loop to insert bandwidth-limiting delays */
-void
-bandwidth_limit(struct bwlimit *bw, size_t read_len)
+ശൂന്യം
+bandwidth_limit(ഘടന bwlimit *bw, size_t read_len)
 {
 	uint64_t waitlen;
-	struct timespec ts, rm;
+	ഘടന timespec ts, rm;
 
 	bw->lamt += read_len;
-	if (!timerisset(&bw->bwstart)) {
+	എങ്കിൽ (!timerisset(&bw->bwstart)) {
 		monotime_tv(&bw->bwstart);
-		return;
+		തിരികെ;
 	}
-	if (bw->lamt < bw->thresh)
-		return;
+	എങ്കിൽ (bw->lamt < bw->thresh)
+		തിരികെ;
 
 	monotime_tv(&bw->bwend);
 	timersub(&bw->bwend, &bw->bwstart, &bw->bwend);
-	if (!timerisset(&bw->bwend))
-		return;
+	എങ്കിൽ (!timerisset(&bw->bwend))
+		തിരികെ;
 
 	bw->lamt *= 8;
-	waitlen = (double)1000000L * bw->lamt / bw->rate;
+	waitlen = (ഇരട്ട)1000000L * bw->lamt / bw->rate;
 
 	bw->bwstart.tv_sec = waitlen / 1000000L;
 	bw->bwstart.tv_usec = waitlen % 1000000L;
 
-	if (timercmp(&bw->bwstart, &bw->bwend, >)) {
+	എങ്കിൽ (timercmp(&bw->bwstart, &bw->bwend, >)) {
 		timersub(&bw->bwstart, &bw->bwend, &bw->bwend);
 
 		/* Adjust the wait time */
-		if (bw->bwend.tv_sec) {
+		എങ്കിൽ (bw->bwend.tv_sec) {
 			bw->thresh /= 2;
-			if (bw->thresh < bw->buflen / 4)
+			എങ്കിൽ (bw->thresh < bw->buflen / 4)
 				bw->thresh = bw->buflen / 4;
-		} else if (bw->bwend.tv_usec < 10000) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (bw->bwend.tv_usec < 10000) {
 			bw->thresh *= 2;
-			if (bw->thresh > bw->buflen * 8)
+			എങ്കിൽ (bw->thresh > bw->buflen * 8)
 				bw->thresh = bw->buflen * 8;
 		}
 
 		TIMEVAL_TO_TIMESPEC(&bw->bwend, &ts);
-		while (nanosleep(&ts, &rm) == -1) {
-			if (errno != EINTR)
-				break;
+		ആകുമ്പോൾ (nanosleep(&ts, &rm) == -1) {
+			എങ്കിൽ (errno != EINTR)
+				നിർത്തുക;
 			ts = rm;
 		}
 	}
@@ -1919,25 +1919,25 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
 }
 
 /* Make a template filename for mk[sd]temp() */
-void
-mktemp_proto(char *s, size_t len)
+ശൂന്യം
+mktemp_proto(അക്ഷരം *s, size_t len)
 {
-	const char *tmpdir;
-	int r;
+	സ്ഥിരം അക്ഷരം *tmpdir;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((tmpdir = getenv("TMPDIR")) != NULL) {
+	എങ്കിൽ ((tmpdir = getenv("TMPDIR")) != ശൂന്യ) {
 		r = snprintf(s, len, "%s/ssh-XXXXXXXXXXXX", tmpdir);
-		if (r > 0 && (size_t)r < len)
-			return;
+		എങ്കിൽ (r > 0 && (size_t)r < len)
+			തിരികെ;
 	}
 	r = snprintf(s, len, "/tmp/ssh-XXXXXXXXXXXX");
-	if (r < 0 || (size_t)r >= len)
+	എങ്കിൽ (r < 0 || (size_t)r >= len)
 		fatal_f("template string too short");
 }
 
-static const struct {
-	const char *name;
-	int value;
+സ്ഥിതം സ്ഥിരം ഘടന {
+	സ്ഥിരം അക്ഷരം *name;
+	പൂർണ്ണസംഖ്യ മൂല്യം;
 } ipqos[] = {
 	{ "none", INT_MAX },		/* can't use 0 here; that's CS0 */
 	{ "af11", IPTOS_DSCP_AF11 },
@@ -1966,102 +1966,102 @@ static const struct {
 	{ "lowdelay", INT_MIN },	/* deprecated */
 	{ "throughput", INT_MIN },	/* deprecated */
 	{ "reliability", INT_MIN },	/* deprecated */
-	{ NULL, -1 }
+	{ ശൂന്യ, -1 }
 };
 
-int
-parse_ipqos(const char *cp)
+പൂർണ്ണസംഖ്യ
+parse_ipqos(സ്ഥിരം അക്ഷരം *cp)
 {
-	const char *errstr;
+	സ്ഥിരം അക്ഷരം *errstr;
 	u_int i;
-	int val;
+	പൂർണ്ണസംഖ്യ val;
 
-	if (cp == NULL)
-		return -1;
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (strcasecmp(cp, ipqos[i].name) == 0)
-			return ipqos[i].value;
+	എങ്കിൽ (cp == ശൂന്യ)
+		തിരികെ -1;
+	വേണ്ടി (i = 0; ipqos[i].name != ശൂന്യ; i++) {
+		എങ്കിൽ (strcasecmp(cp, ipqos[i].name) == 0)
+			തിരികെ ipqos[i].മൂല്യം;
 	}
 	/* Try parsing as an integer */
-	val = (int)strtonum(cp, 0, 255, &errstr);
-	if (errstr)
-		return -1;
-	return val;
+	val = (പൂർണ്ണസംഖ്യ)strtonum(cp, 0, 255, &errstr);
+	എങ്കിൽ (errstr)
+		തിരികെ -1;
+	തിരികെ val;
 }
 
-const char *
-iptos2str(int iptos)
+സ്ഥിരം അക്ഷരം *
+iptos2str(പൂർണ്ണസംഖ്യ iptos)
 {
-	int i;
-	static char iptos_str[sizeof "0xff"];
+	പൂർണ്ണസംഖ്യ i;
+	സ്ഥിതം അക്ഷരം iptos_str[വലുപ്പം "0xff"];
 
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (ipqos[i].value == iptos)
-			return ipqos[i].name;
+	വേണ്ടി (i = 0; ipqos[i].name != ശൂന്യ; i++) {
+		എങ്കിൽ (ipqos[i].മൂല്യം == iptos)
+			തിരികെ ipqos[i].name;
 	}
-	snprintf(iptos_str, sizeof iptos_str, "0x%02x", iptos);
-	return iptos_str;
+	snprintf(iptos_str, വലുപ്പം iptos_str, "0x%02x", iptos);
+	തിരികെ iptos_str;
 }
 
-void
-lowercase(char *s)
+ശൂന്യം
+lowercase(അക്ഷരം *s)
 {
-	for (; *s; s++)
+	വേണ്ടി (; *s; s++)
 		*s = tolower((u_char)*s);
 }
 
-int
-unix_listener(const char *path, int backlog, int unlink_first)
+പൂർണ്ണസംഖ്യ
+unix_listener(സ്ഥിരം അക്ഷരം *path, പൂർണ്ണസംഖ്യ backlog, പൂർണ്ണസംഖ്യ unlink_first)
 {
-	struct sockaddr_un sunaddr;
-	int saved_errno, sock;
+	ഘടന sockaddr_un sunaddr;
+	പൂർണ്ണസംഖ്യ saved_errno, sock;
 
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	memset(&sunaddr, 0, വലുപ്പം(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	if (strlcpy(sunaddr.sun_path, path,
-	    sizeof(sunaddr.sun_path)) >= sizeof(sunaddr.sun_path)) {
+	എങ്കിൽ (strlcpy(sunaddr.sun_path, path,
+	    വലുപ്പം(sunaddr.sun_path)) >= വലുപ്പം(sunaddr.sun_path)) {
 		error_f("path \"%s\" too long for Unix domain socket", path);
 		errno = ENAMETOOLONG;
-		return -1;
+		തിരികെ -1;
 	}
 
 	sock = socket(PF_UNIX, SOCK_STREAM, 0);
-	if (sock == -1) {
+	എങ്കിൽ (sock == -1) {
 		saved_errno = errno;
 		error_f("socket: %.100s", strerror(errno));
 		errno = saved_errno;
-		return -1;
+		തിരികെ -1;
 	}
-	if (unlink_first == 1) {
-		if (unlink(path) != 0 && errno != ENOENT)
+	എങ്കിൽ (unlink_first == 1) {
+		എങ്കിൽ (unlink(path) != 0 && errno != ENOENT)
 			error("unlink(%s): %.100s", path, strerror(errno));
 	}
-	if (bind(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
+	എങ്കിൽ (bind(sock, (ഘടന sockaddr *)&sunaddr, വലുപ്പം(sunaddr)) == -1) {
 		saved_errno = errno;
 		error_f("cannot bind to path %s: %s", path, strerror(errno));
 		close(sock);
 		errno = saved_errno;
-		return -1;
+		തിരികെ -1;
 	}
-	if (listen(sock, backlog) == -1) {
+	എങ്കിൽ (listen(sock, backlog) == -1) {
 		saved_errno = errno;
 		error_f("cannot listen on path %s: %s", path, strerror(errno));
 		close(sock);
 		unlink(path);
 		errno = saved_errno;
-		return -1;
+		തിരികെ -1;
 	}
-	return sock;
+	തിരികെ sock;
 }
 
-void
-sock_set_v6only(int s)
+ശൂന്യം
+sock_set_v6only(പൂർണ്ണസംഖ്യ s)
 {
-#if defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
-	int on = 1;
+#എങ്കിൽ defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
+	പൂർണ്ണസംഖ്യ on = 1;
 
 	debug3_f("set socket %d IPV6_V6ONLY", s);
-	if (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) == -1)
+	എങ്കിൽ (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, വലുപ്പം(on)) == -1)
 		error("setsockopt IPV6_V6ONLY: %s", strerror(errno));
 #endif
 }
@@ -2070,68 +2070,68 @@ sock_set_v6only(int s)
  * Compares two strings that maybe be NULL. Returns non-zero if strings
  * are both NULL or are identical, returns zero otherwise.
  */
-static int
-strcmp_maybe_null(const char *a, const char *b)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+strcmp_maybe_null(സ്ഥിരം അക്ഷരം *a, സ്ഥിരം അക്ഷരം *b)
 {
-	if ((a == NULL && b != NULL) || (a != NULL && b == NULL))
-		return 0;
-	if (a != NULL && strcmp(a, b) != 0)
-		return 0;
-	return 1;
+	എങ്കിൽ ((a == ശൂന്യ && b != ശൂന്യ) || (a != ശൂന്യ && b == ശൂന്യ))
+		തിരികെ 0;
+	എങ്കിൽ (a != ശൂന്യ && strcmp(a, b) != 0)
+		തിരികെ 0;
+	തിരികെ 1;
 }
 
 /*
  * Compare two forwards, returning non-zero if they are identical or
  * zero otherwise.
  */
-int
-forward_equals(const struct Forward *a, const struct Forward *b)
+പൂർണ്ണസംഖ്യ
+forward_equals(സ്ഥിരം ഘടന Forward *a, സ്ഥിരം ഘടന Forward *b)
 {
-	if (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
-		return 0;
-	if (a->listen_port != b->listen_port)
-		return 0;
-	if (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
-		return 0;
-	if (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
-		return 0;
-	if (a->connect_port != b->connect_port)
-		return 0;
-	if (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
-		return 0;
+	എങ്കിൽ (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
+		തിരികെ 0;
+	എങ്കിൽ (a->listen_port != b->listen_port)
+		തിരികെ 0;
+	എങ്കിൽ (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
+		തിരികെ 0;
+	എങ്കിൽ (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
+		തിരികെ 0;
+	എങ്കിൽ (a->connect_port != b->connect_port)
+		തിരികെ 0;
+	എങ്കിൽ (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
+		തിരികെ 0;
 	/* allocated_port and handle are not checked */
-	return 1;
+	തിരികെ 1;
 }
 
 /* returns port number, FWD_PERMIT_ANY_PORT or -1 on error */
-int
-permitopen_port(const char *p)
+പൂർണ്ണസംഖ്യ
+permitopen_port(സ്ഥിരം അക്ഷരം *p)
 {
-	int port;
+	പൂർണ്ണസംഖ്യ port;
 
-	if (strcmp(p, "*") == 0)
-		return FWD_PERMIT_ANY_PORT;
-	if ((port = a2port(p)) > 0)
-		return port;
-	return -1;
+	എങ്കിൽ (strcmp(p, "*") == 0)
+		തിരികെ FWD_PERMIT_ANY_PORT;
+	എങ്കിൽ ((port = a2port(p)) > 0)
+		തിരികെ port;
+	തിരികെ -1;
 }
 
 /* returns 1 if process is already daemonized, 0 otherwise */
-int
-daemonized(void)
+പൂർണ്ണസംഖ്യ
+daemonized(ശൂന്യം)
 {
-	int fd;
+	പൂർണ്ണസംഖ്യ fd;
 
-	if ((fd = open(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
+	എങ്കിൽ ((fd = open(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
 		close(fd);
-		return 0;	/* have controlling terminal */
+		തിരികെ 0;	/* have controlling terminal */
 	}
-	if (getppid() != 1)
-		return 0;	/* parent is not init */
-	if (getsid(0) != getpid())
-		return 0;	/* not session leader */
+	എങ്കിൽ (getppid() != 1)
+		തിരികെ 0;	/* parent is not init */
+	എങ്കിൽ (getsid(0) != getpid())
+		തിരികെ 0;	/* not session leader */
 	debug3("already daemonized");
-	return 1;
+	തിരികെ 1;
 }
 
 /*
@@ -2139,180 +2139,180 @@ daemonized(void)
  * escape characters (\\, \", \'). Caller must free the argument vector
  * and its members.
  */
-int
-argv_split(const char *s, int *argcp, char ***argvp, int terminate_on_comment)
+പൂർണ്ണസംഖ്യ
+argv_split(സ്ഥിരം അക്ഷരം *s, പൂർണ്ണസംഖ്യ *argcp, അക്ഷരം ***argvp, പൂർണ്ണസംഖ്യ terminate_on_comment)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int argc = 0, quote, i, j;
-	char *arg, **argv = xcalloc(1, sizeof(*argv));
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
+	പൂർണ്ണസംഖ്യ argc = 0, quote, i, j;
+	അക്ഷരം *arg, **argv = xcalloc(1, വലുപ്പം(*argv));
 
-	*argvp = NULL;
+	*argvp = ശൂന്യ;
 	*argcp = 0;
 
-	for (i = 0; s[i] != '\0'; i++) {
+	വേണ്ടി (i = 0; s[i] != '\0'; i++) {
 		/* Skip leading whitespace */
-		if (s[i] == ' ' || s[i] == '\t')
-			continue;
-		if (terminate_on_comment && s[i] == '#')
-			break;
+		എങ്കിൽ (s[i] == ' ' || s[i] == '\t')
+			തുടരുക;
+		എങ്കിൽ (terminate_on_comment && s[i] == '#')
+			നിർത്തുക;
 		/* Start of a token */
 		quote = 0;
 
-		argv = xreallocarray(argv, (argc + 2), sizeof(*argv));
+		argv = xreallocarray(argv, (argc + 2), വലുപ്പം(*argv));
 		arg = argv[argc++] = xcalloc(1, strlen(s + i) + 1);
-		argv[argc] = NULL;
+		argv[argc] = ശൂന്യ;
 
 		/* Copy the token in, removing escapes */
-		for (j = 0; s[i] != '\0'; i++) {
-			if (s[i] == '\\') {
-				if (s[i + 1] == '\'' ||
+		വേണ്ടി (j = 0; s[i] != '\0'; i++) {
+			എങ്കിൽ (s[i] == '\\') {
+				എങ്കിൽ (s[i + 1] == '\'' ||
 				    s[i + 1] == '\"' ||
 				    s[i + 1] == '\\' ||
 				    (quote == 0 && s[i + 1] == ' ')) {
 					i++; /* Skip '\' */
 					arg[j++] = s[i];
-				} else {
+				} അല്ലെങ്കിൽ {
 					/* Unrecognised escape */
 					arg[j++] = s[i];
 				}
-			} else if (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
-				break; /* done */
-			else if (quote == 0 && (s[i] == '\"' || s[i] == '\''))
+			} അല്ലെങ്കിൽ എങ്കിൽ (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
+				നിർത്തുക; /* done */
+			അല്ലെങ്കിൽ എങ്കിൽ (quote == 0 && (s[i] == '\"' || s[i] == '\''))
 				quote = s[i]; /* quote start */
-			else if (quote != 0 && s[i] == quote)
+			അല്ലെങ്കിൽ എങ്കിൽ (quote != 0 && s[i] == quote)
 				quote = 0; /* quote end */
-			else
+			അല്ലെങ്കിൽ
 				arg[j++] = s[i];
 		}
-		if (s[i] == '\0') {
-			if (quote != 0) {
+		എങ്കിൽ (s[i] == '\0') {
+			എങ്കിൽ (quote != 0) {
 				/* Ran out of string looking for close quote */
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				പോകുക out;
 			}
-			break;
+			നിർത്തുക;
 		}
 	}
 	/* Success */
 	*argcp = argc;
 	*argvp = argv;
 	argc = 0;
-	argv = NULL;
+	argv = ശൂന്യ;
 	r = 0;
  out:
-	if (argc != 0 && argv != NULL) {
-		for (i = 0; i < argc; i++)
-			free(argv[i]);
-		free(argv);
+	എങ്കിൽ (argc != 0 && argv != ശൂന്യ) {
+		വേണ്ടി (i = 0; i < argc; i++)
+			സ്വതന്ത്രം(argv[i]);
+		സ്വതന്ത്രം(argv);
 	}
-	return r;
+	തിരികെ r;
 }
 
 /*
  * Reassemble an argument vector into a string, quoting and escaping as
  * necessary. Caller must free returned string.
  */
-char *
-argv_assemble(int argc, char **argv)
+അക്ഷരം *
+argv_assemble(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	int i, j, ws, r;
-	char c, *ret;
-	struct sshbuf *buf, *arg;
+	പൂർണ്ണസംഖ്യ i, j, ws, r;
+	അക്ഷരം c, *ret;
+	ഘടന sshbuf *buf, *arg;
 
-	if ((buf = sshbuf_new()) == NULL || (arg = sshbuf_new()) == NULL)
+	എങ്കിൽ ((buf = sshbuf_new()) == ശൂന്യ || (arg = sshbuf_new()) == ശൂന്യ)
 		fatal_f("sshbuf_new failed");
 
-	for (i = 0; i < argc; i++) {
+	വേണ്ടി (i = 0; i < argc; i++) {
 		ws = 0;
 		sshbuf_reset(arg);
-		for (j = 0; argv[i][j] != '\0'; j++) {
+		വേണ്ടി (j = 0; argv[i][j] != '\0'; j++) {
 			r = 0;
 			c = argv[i][j];
-			switch (c) {
-			case ' ':
-			case '\t':
+			തിരഞ്ഞെടുപ്പ് (c) {
+			അവസ്ഥ ' ':
+			അവസ്ഥ '\t':
 				ws = 1;
 				r = sshbuf_put_u8(arg, c);
-				break;
-			case '\\':
-			case '\'':
-			case '"':
-				if ((r = sshbuf_put_u8(arg, '\\')) != 0)
-					break;
+				നിർത്തുക;
+			അവസ്ഥ '\\':
+			അവസ്ഥ '\'':
+			അവസ്ഥ '"':
+				എങ്കിൽ ((r = sshbuf_put_u8(arg, '\\')) != 0)
+					നിർത്തുക;
 				/* FALLTHROUGH */
-			default:
+			സ്ഥിരസ്ഥിതി:
 				r = sshbuf_put_u8(arg, c);
-				break;
+				നിർത്തുക;
 			}
-			if (r != 0)
+			എങ്കിൽ (r != 0)
 				fatal_fr(r, "sshbuf_put_u8");
 		}
-		if ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
+		എങ്കിൽ ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0) ||
 		    (r = sshbuf_putb(buf, arg)) != 0 ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0))
 			fatal_fr(r, "assemble");
 	}
-	if ((ret = malloc(sshbuf_len(buf) + 1)) == NULL)
+	എങ്കിൽ ((ret = malloc(sshbuf_len(buf) + 1)) == ശൂന്യ)
 		fatal_f("malloc failed");
 	memcpy(ret, sshbuf_ptr(buf), sshbuf_len(buf));
 	ret[sshbuf_len(buf)] = '\0';
 	sshbuf_free(buf);
 	sshbuf_free(arg);
-	return ret;
+	തിരികെ ret;
 }
 
-char *
-argv_next(int *argcp, char ***argvp)
+അക്ഷരം *
+argv_next(പൂർണ്ണസംഖ്യ *argcp, അക്ഷരം ***argvp)
 {
-	char *ret = (*argvp)[0];
+	അക്ഷരം *ret = (*argvp)[0];
 
-	if (*argcp > 0 && ret != NULL) {
+	എങ്കിൽ (*argcp > 0 && ret != ശൂന്യ) {
 		(*argcp)--;
 		(*argvp)++;
 	}
-	return ret;
+	തിരികെ ret;
 }
 
-void
-argv_consume(int *argcp)
+ശൂന്യം
+argv_consume(പൂർണ്ണസംഖ്യ *argcp)
 {
 	*argcp = 0;
 }
 
-void
-argv_free(char **av, int ac)
+ശൂന്യം
+argv_free(അക്ഷരം **av, പൂർണ്ണസംഖ്യ ac)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
-	if (av == NULL)
-		return;
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
+	എങ്കിൽ (av == ശൂന്യ)
+		തിരികെ;
+	വേണ്ടി (i = 0; i < ac; i++)
+		സ്വതന്ത്രം(av[i]);
+	സ്വതന്ത്രം(av);
 }
 
 /* Returns 0 if pid exited cleanly, non-zero otherwise */
-int
-exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
+പൂർണ്ണസംഖ്യ
+exited_cleanly(pid_t pid, സ്ഥിരം അക്ഷരം *tag, സ്ഥിരം അക്ഷരം *cmd, പൂർണ്ണസംഖ്യ quiet)
 {
-	int status;
+	പൂർണ്ണസംഖ്യ status;
 
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR) {
+	ആകുമ്പോൾ (waitpid(pid, &status, 0) == -1) {
+		എങ്കിൽ (errno != EINTR) {
 			error("%s waitpid: %s", tag, strerror(errno));
-			return -1;
+			തിരികെ -1;
 		}
 	}
-	if (WIFSIGNALED(status)) {
+	എങ്കിൽ (WIFSIGNALED(status)) {
 		error("%s %s exited on signal %d", tag, cmd, WTERMSIG(status));
-		return -1;
-	} else if (WEXITSTATUS(status) != 0) {
+		തിരികെ -1;
+	} അല്ലെങ്കിൽ എങ്കിൽ (WEXITSTATUS(status) != 0) {
 		do_log2(quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_INFO,
 		    "%s %s failed, status %d", tag, cmd, WEXITSTATUS(status));
-		return -1;
+		തിരികെ -1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -2328,67 +2328,67 @@ exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
  *
  * Returns 0 on success and -1 on failure
  */
-int
-safe_path(const char *name, struct stat *stp, const char *pw_dir,
-    uid_t uid, char *err, size_t errlen)
+പൂർണ്ണസംഖ്യ
+safe_path(സ്ഥിരം അക്ഷരം *name, ഘടന stat *stp, സ്ഥിരം അക്ഷരം *pw_dir,
+    uid_t uid, അക്ഷരം *err, size_t errlen)
 {
-	char buf[PATH_MAX], buf2[PATH_MAX], homedir[PATH_MAX];
-	char *cp;
-	int comparehome = 0;
-	struct stat st;
+	അക്ഷരം buf[PATH_MAX], buf2[PATH_MAX], homedir[PATH_MAX];
+	അക്ഷരം *cp;
+	പൂർണ്ണസംഖ്യ comparehome = 0;
+	ഘടന stat st;
 
-	if (realpath(name, buf) == NULL) {
+	എങ്കിൽ (realpath(name, buf) == ശൂന്യ) {
 		snprintf(err, errlen, "realpath %s failed: %s", name,
 		    strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
-	if (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
+	എങ്കിൽ (pw_dir != ശൂന്യ && realpath(pw_dir, homedir) != ശൂന്യ)
 		comparehome = 1;
 
-	if (!S_ISREG(stp->st_mode)) {
+	എങ്കിൽ (!S_ISREG(stp->st_mode)) {
 		snprintf(err, errlen, "%s is not a regular file", buf);
-		return -1;
+		തിരികെ -1;
 	}
-	if ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
+	എങ്കിൽ ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
 	    (stp->st_mode & 022) != 0) {
 		snprintf(err, errlen, "bad ownership or modes for file %s",
 		    buf);
-		return -1;
+		തിരികെ -1;
 	}
 
 	/* for each component of the canonical path, walking upwards */
-	for (;;) {
+	വേണ്ടി (;;) {
 		/*
 		 * POSIX allows dirname to modify its argument and return a
 		 * pointer into it, so make a copy to avoid overlapping strlcpy.
 		 */
-		strlcpy(buf2, buf, sizeof(buf2));
-		if ((cp = dirname(buf2)) == NULL) {
+		strlcpy(buf2, buf, വലുപ്പം(buf2));
+		എങ്കിൽ ((cp = dirname(buf2)) == ശൂന്യ) {
 			snprintf(err, errlen, "dirname() failed");
-			return -1;
+			തിരികെ -1;
 		}
-		strlcpy(buf, cp, sizeof(buf));
+		strlcpy(buf, cp, വലുപ്പം(buf));
 
-		if (stat(buf, &st) == -1 ||
+		എങ്കിൽ (stat(buf, &st) == -1 ||
 		    (!platform_sys_dir_uid(st.st_uid) && st.st_uid != uid) ||
 		    (st.st_mode & 022) != 0) {
 			snprintf(err, errlen,
 			    "bad ownership or modes for directory %s", buf);
-			return -1;
+			തിരികെ -1;
 		}
 
 		/* If are past the homedir then we can stop */
-		if (comparehome && strcmp(homedir, buf) == 0)
-			break;
+		എങ്കിൽ (comparehome && strcmp(homedir, buf) == 0)
+			നിർത്തുക;
 
 		/*
 		 * dirname should always complete with a "/" path,
 		 * but we can be paranoid and check for "." too
 		 */
-		if ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
-			break;
+		എങ്കിൽ ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
+			നിർത്തുക;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -2397,47 +2397,47 @@ safe_path(const char *name, struct stat *stp, const char *pw_dir,
  *
  * Returns 0 on success and -1 on failure
  */
-int
-safe_path_fd(int fd, const char *file, struct passwd *pw,
-    char *err, size_t errlen)
+പൂർണ്ണസംഖ്യ
+safe_path_fd(പൂർണ്ണസംഖ്യ fd, സ്ഥിരം അക്ഷരം *file, ഘടന passwd *pw,
+    അക്ഷരം *err, size_t errlen)
 {
-	struct stat st;
+	ഘടന stat st;
 
 	/* check the open file to avoid races */
-	if (fstat(fd, &st) == -1) {
+	എങ്കിൽ (fstat(fd, &st) == -1) {
 		snprintf(err, errlen, "cannot stat file %s: %s",
 		    file, strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
-	return safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
+	തിരികെ safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
 }
 
 /*
  * Sets the value of the given variable in the environment.  If the variable
  * already exists, its value is overridden.
  */
-void
-child_set_env(char ***envp, u_int *envsizep, const char *name,
-	const char *value)
+ശൂന്യം
+child_set_env(അക്ഷരം ***envp, u_int *envsizep, സ്ഥിരം അക്ഷരം *name,
+	സ്ഥിരം അക്ഷരം *മൂല്യം)
 {
-	char **env;
+	അക്ഷരം **env;
 	u_int envsize;
 	u_int i, namelen;
 
-	if (strchr(name, '=') != NULL) {
+	എങ്കിൽ (strchr(name, '=') != ശൂന്യ) {
 		error("Invalid environment variable \"%.100s\"", name);
-		return;
+		തിരികെ;
 	}
 
 	/*
 	 * If we're passed an uninitialized list, allocate a single null
 	 * entry before continuing.
 	 */
-	if ((*envp == NULL) != (*envsizep == 0))
+	എങ്കിൽ ((*envp == ശൂന്യ) != (*envsizep == 0))
 		fatal_f("environment size mismatch");
-	if (*envp == NULL && *envsizep == 0) {
-		*envp = xmalloc(sizeof(char *));
-		*envp[0] = NULL;
+	എങ്കിൽ (*envp == ശൂന്യ && *envsizep == 0) {
+		*envp = xmalloc(വലുപ്പം(അക്ഷരം *));
+		*envp[0] = ശൂന്യ;
 		*envsizep = 1;
 	}
 
@@ -2448,79 +2448,79 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
 	 */
 	env = *envp;
 	namelen = strlen(name);
-	for (i = 0; env[i]; i++)
-		if (strncmp(env[i], name, namelen) == 0 && env[i][namelen] == '=')
-			break;
-	if (env[i]) {
+	വേണ്ടി (i = 0; env[i]; i++)
+		എങ്കിൽ (strncmp(env[i], name, namelen) == 0 && env[i][namelen] == '=')
+			നിർത്തുക;
+	എങ്കിൽ (env[i]) {
 		/* Reuse the slot. */
-		free(env[i]);
-	} else {
+		സ്വതന്ത്രം(env[i]);
+	} അല്ലെങ്കിൽ {
 		/* New variable.  Expand if necessary. */
 		envsize = *envsizep;
-		if (i >= envsize - 1) {
-			if (envsize >= 1000)
+		എങ്കിൽ (i >= envsize - 1) {
+			എങ്കിൽ (envsize >= 1000)
 				fatal("child_set_env: too many env vars");
 			envsize += 50;
-			env = (*envp) = xreallocarray(env, envsize, sizeof(char *));
+			env = (*envp) = xreallocarray(env, envsize, വലുപ്പം(അക്ഷരം *));
 			*envsizep = envsize;
 		}
 		/* Need to set the NULL pointer at end of array beyond the new slot. */
-		env[i + 1] = NULL;
+		env[i + 1] = ശൂന്യ;
 	}
 
 	/* Allocate space and format the variable in the appropriate slot. */
 	/* XXX xasprintf */
-	env[i] = xmalloc(strlen(name) + 1 + strlen(value) + 1);
-	snprintf(env[i], strlen(name) + 1 + strlen(value) + 1, "%s=%s", name, value);
+	env[i] = xmalloc(strlen(name) + 1 + strlen(മൂല്യം) + 1);
+	snprintf(env[i], strlen(name) + 1 + strlen(മൂല്യം) + 1, "%s=%s", name, മൂല്യം);
 }
 
 /*
  * Check and optionally lowercase a domain name, also removes trailing '.'
  * Returns 1 on success and 0 on failure, storing an error message in errstr.
  */
-int
-valid_domain(char *name, int makelower, const char **errstr)
+പൂർണ്ണസംഖ്യ
+valid_domain(അക്ഷരം *name, പൂർണ്ണസംഖ്യ makelower, സ്ഥിരം അക്ഷരം **errstr)
 {
 	size_t i, l = strlen(name);
 	u_char c, last = '\0';
-	static char errbuf[256];
+	സ്ഥിതം അക്ഷരം errbuf[256];
 
-	if (l == 0) {
-		strlcpy(errbuf, "empty domain name", sizeof(errbuf));
-		goto bad;
+	എങ്കിൽ (l == 0) {
+		strlcpy(errbuf, "empty domain name", വലുപ്പം(errbuf));
+		പോകുക bad;
 	}
-	if (!isalpha((u_char)name[0]) && !isdigit((u_char)name[0]) &&
+	എങ്കിൽ (!isalpha((u_char)name[0]) && !isdigit((u_char)name[0]) &&
 	   name[0] != '_' /* technically invalid, but common */) {
-		snprintf(errbuf, sizeof(errbuf), "domain name \"%.100s\" "
+		snprintf(errbuf, വലുപ്പം(errbuf), "domain name \"%.100s\" "
 		    "starts with invalid character", name);
-		goto bad;
+		പോകുക bad;
 	}
-	for (i = 0; i < l; i++) {
+	വേണ്ടി (i = 0; i < l; i++) {
 		c = tolower((u_char)name[i]);
-		if (makelower)
-			name[i] = (char)c;
-		if (last == '.' && c == '.') {
-			snprintf(errbuf, sizeof(errbuf), "domain name "
+		എങ്കിൽ (makelower)
+			name[i] = (അക്ഷരം)c;
+		എങ്കിൽ (last == '.' && c == '.') {
+			snprintf(errbuf, വലുപ്പം(errbuf), "domain name "
 			    "\"%.100s\" contains consecutive separators", name);
-			goto bad;
+			പോകുക bad;
 		}
-		if (c != '.' && c != '-' && !isalnum(c) &&
+		എങ്കിൽ (c != '.' && c != '-' && !isalnum(c) &&
 		    c != '_') /* technically invalid, but common */ {
-			snprintf(errbuf, sizeof(errbuf), "domain name "
+			snprintf(errbuf, വലുപ്പം(errbuf), "domain name "
 			    "\"%.100s\" contains invalid characters", name);
-			goto bad;
+			പോകുക bad;
 		}
 		last = c;
 	}
-	if (name[l - 1] == '.')
+	എങ്കിൽ (name[l - 1] == '.')
 		name[l - 1] = '\0';
-	if (errstr != NULL)
-		*errstr = NULL;
-	return 1;
+	എങ്കിൽ (errstr != ശൂന്യ)
+		*errstr = ശൂന്യ;
+	തിരികെ 1;
 bad:
-	if (errstr != NULL)
+	എങ്കിൽ (errstr != ശൂന്യ)
 		*errstr = errbuf;
-	return 0;
+	തിരികെ 0;
 }
 
 /*
@@ -2528,48 +2528,48 @@ bad:
  * valid; consisting of one or more alphanumeric or underscore characters only.
  * Returns 1 on valid, 0 otherwise.
  */
-int
-valid_env_name(const char *name)
+പൂർണ്ണസംഖ്യ
+valid_env_name(സ്ഥിരം അക്ഷരം *name)
 {
-	const char *cp;
+	സ്ഥിരം അക്ഷരം *cp;
 
-	if (name[0] == '\0')
-		return 0;
-	for (cp = name; *cp != '\0'; cp++) {
-		if (!isalnum((u_char)*cp) && *cp != '_')
-			return 0;
+	എങ്കിൽ (name[0] == '\0')
+		തിരികെ 0;
+	വേണ്ടി (cp = name; *cp != '\0'; cp++) {
+		എങ്കിൽ (!isalnum((u_char)*cp) && *cp != '_')
+			തിരികെ 0;
 	}
-	return 1;
+	തിരികെ 1;
 }
 
-const char *
-atoi_err(const char *nptr, int *val)
+സ്ഥിരം അക്ഷരം *
+atoi_err(സ്ഥിരം അക്ഷരം *nptr, പൂർണ്ണസംഖ്യ *val)
 {
-	const char *errstr = NULL;
+	സ്ഥിരം അക്ഷരം *errstr = ശൂന്യ;
 
-	if (nptr == NULL || *nptr == '\0')
-		return "missing";
+	എങ്കിൽ (nptr == ശൂന്യ || *nptr == '\0')
+		തിരികെ "missing";
 	*val = strtonum(nptr, 0, INT_MAX, &errstr);
-	return errstr;
+	തിരികെ errstr;
 }
 
-int
-parse_absolute_time(const char *s, uint64_t *tp)
+പൂർണ്ണസംഖ്യ
+parse_absolute_time(സ്ഥിരം അക്ഷരം *s, uint64_t *tp)
 {
-	struct tm tm;
+	ഘടന tm tm;
 	time_t tt;
-	char buf[32], *fmt;
-	const char *cp;
+	അക്ഷരം buf[32], *fmt;
+	സ്ഥിരം അക്ഷരം *cp;
 	size_t l;
-	int is_utc = 0;
+	പൂർണ്ണസംഖ്യ is_utc = 0;
 
 	*tp = 0;
 
 	l = strlen(s);
-	if (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
+	എങ്കിൽ (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
 		is_utc = 1;
 		l--;
-	} else if (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
 		is_utc = 1;
 		l -= 3;
 	}
@@ -2578,52 +2578,52 @@ parse_absolute_time(const char *s, uint64_t *tp)
 	 * is white-space or other non-alphanumeric characters between
 	 * any two conversion specifications" so arrange things this way.
 	 */
-	switch (l) {
-	case 8: /* YYYYMMDD */
+	തിരഞ്ഞെടുപ്പ് (l) {
+	അവസ്ഥ 8: /* YYYYMMDD */
 		fmt = "%Y-%m-%d";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2s", s, s + 4, s + 6);
-		break;
-	case 12: /* YYYYMMDDHHMM */
+		snprintf(buf, വലുപ്പം(buf), "%.4s-%.2s-%.2s", s, s + 4, s + 6);
+		നിർത്തുക;
+	അവസ്ഥ 12: /* YYYYMMDDHHMM */
 		fmt = "%Y-%m-%dT%H:%M";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2sT%.2s:%.2s",
+		snprintf(buf, വലുപ്പം(buf), "%.4s-%.2s-%.2sT%.2s:%.2s",
 		    s, s + 4, s + 6, s + 8, s + 10);
-		break;
-	case 14: /* YYYYMMDDHHMMSS */
+		നിർത്തുക;
+	അവസ്ഥ 14: /* YYYYMMDDHHMMSS */
 		fmt = "%Y-%m-%dT%H:%M:%S";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2sT%.2s:%.2s:%.2s",
+		snprintf(buf, വലുപ്പം(buf), "%.4s-%.2s-%.2sT%.2s:%.2s:%.2s",
 		    s, s + 4, s + 6, s + 8, s + 10, s + 12);
-		break;
-	default:
-		return SSH_ERR_INVALID_FORMAT;
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ SSH_ERR_INVALID_FORMAT;
 	}
 
-	memset(&tm, 0, sizeof(tm));
-	if ((cp = strptime(buf, fmt, &tm)) == NULL || *cp != '\0')
-		return SSH_ERR_INVALID_FORMAT;
-	if (is_utc) {
+	memset(&tm, 0, വലുപ്പം(tm));
+	എങ്കിൽ ((cp = strptime(buf, fmt, &tm)) == ശൂന്യ || *cp != '\0')
+		തിരികെ SSH_ERR_INVALID_FORMAT;
+	എങ്കിൽ (is_utc) {
 		tm.tm_wday = -1;	/* sentinel for error */
-		if ((tt = timegm(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
-	} else {
+		എങ്കിൽ ((tt = timegm(&tm)) == -1 && tm.tm_wday == -1)
+			തിരികെ SSH_ERR_INVALID_FORMAT;
+	} അല്ലെങ്കിൽ {
 		tm.tm_wday = -1;	/* sentinel for error */
 		tm.tm_isdst = -1;	/* mktime decides DST */
-		if ((tt = mktime(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
+		എങ്കിൽ ((tt = mktime(&tm)) == -1 && tm.tm_wday == -1)
+			തിരികെ SSH_ERR_INVALID_FORMAT;
 	}
 	/* success */
 	*tp = (uint64_t)tt;
-	return 0;
+	തിരികെ 0;
 }
 
-void
-format_absolute_time(uint64_t t, char *buf, size_t len)
+ശൂന്യം
+format_absolute_time(uint64_t t, അക്ഷരം *buf, size_t len)
 {
 	time_t tt = t > SSH_TIME_T_MAX ? SSH_TIME_T_MAX : t;
-	struct tm tm;
+	ഘടന tm tm;
 
-	if (localtime_r(&tt, &tm) == NULL)
+	എങ്കിൽ (localtime_r(&tt, &tm) == ശൂന്യ)
 		strlcpy(buf, "UNKNOWN-TIME", len);
-	else
+	അല്ലെങ്കിൽ
 		strftime(buf, len, "%Y-%m-%dT%H:%M:%S", &tm);
 }
 
@@ -2632,51 +2632,51 @@ format_absolute_time(uint64_t t, char *buf, size_t len)
  * Returns 0 on success or non-zero on failure.
  * Caller must free *typep.
  */
-int
-parse_pattern_interval(const char *s, char **typep, double *secsp)
+പൂർണ്ണസംഖ്യ
+parse_pattern_interval(സ്ഥിരം അക്ഷരം *s, അക്ഷരം **typep, ഇരട്ട *secsp)
 {
-	char *cp, *sdup;
-	double secs;
+	അക്ഷരം *cp, *sdup;
+	ഇരട്ട secs;
 
-	if (typep != NULL)
-		*typep = NULL;
-	if (secsp != NULL)
+	എങ്കിൽ (typep != ശൂന്യ)
+		*typep = ശൂന്യ;
+	എങ്കിൽ (secsp != ശൂന്യ)
 		*secsp = 0;
-	if (s == NULL)
-		return -1;
+	എങ്കിൽ (s == ശൂന്യ)
+		തിരികെ -1;
 	sdup = xstrdup(s);
 
-	if ((cp = strchr(sdup, '=')) == NULL || cp == sdup) {
-		free(sdup);
-		return -1;
+	എങ്കിൽ ((cp = strchr(sdup, '=')) == ശൂന്യ || cp == sdup) {
+		സ്വതന്ത്രം(sdup);
+		തിരികെ -1;
 	}
 	*cp++ = '\0';
-	if ((secs = convtime_double(cp)) < 0.0) {
-		free(sdup);
-		return -1;
+	എങ്കിൽ ((secs = convtime_double(cp)) < 0.0) {
+		സ്വതന്ത്രം(sdup);
+		തിരികെ -1;
 	}
 	/* success */
-	if (typep != NULL)
+	എങ്കിൽ (typep != ശൂന്യ)
 		*typep = xstrdup(sdup);
-	if (secsp != NULL)
+	എങ്കിൽ (secsp != ശൂന്യ)
 		*secsp = secs;
-	free(sdup);
-	return 0;
+	സ്വതന്ത്രം(sdup);
+	തിരികെ 0;
 }
 
 /* check if path is absolute */
-int
-path_absolute(const char *path)
+പൂർണ്ണസംഖ്യ
+path_absolute(സ്ഥിരം അക്ഷരം *path)
 {
-	return (*path == '/') ? 1 : 0;
+	തിരികെ (*path == '/') ? 1 : 0;
 }
 
-void
-skip_space(char **cpp)
+ശൂന്യം
+skip_space(അക്ഷരം **cpp)
 {
-	char *cp;
+	അക്ഷരം *cp;
 
-	for (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
+	വേണ്ടി (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
 		;
 	*cpp = cp;
 }
@@ -2690,146 +2690,146 @@ skip_space(char **cpp)
  * If the option or negated option matches, then *optsp is updated to
  * point to the first character after the option.
  */
-int
-opt_flag(const char *opt, int allow_negate, const char **optsp)
+പൂർണ്ണസംഖ്യ
+opt_flag(സ്ഥിരം അക്ഷരം *opt, പൂർണ്ണസംഖ്യ allow_negate, സ്ഥിരം അക്ഷരം **optsp)
 {
 	size_t opt_len = strlen(opt);
-	const char *opts = *optsp;
-	int negate = 0;
+	സ്ഥിരം അക്ഷരം *opts = *optsp;
+	പൂർണ്ണസംഖ്യ negate = 0;
 
-	if (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
+	എങ്കിൽ (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
 		opts += 3;
 		negate = 1;
 	}
-	if (strncasecmp(opts, opt, opt_len) == 0) {
+	എങ്കിൽ (strncasecmp(opts, opt, opt_len) == 0) {
 		*optsp = opts + opt_len;
-		return negate ? 0 : 1;
+		തിരികെ negate ? 0 : 1;
 	}
-	return -1;
+	തിരികെ -1;
 }
 
-char *
-opt_dequote(const char **sp, const char **errstrp)
+അക്ഷരം *
+opt_dequote(സ്ഥിരം അക്ഷരം **sp, സ്ഥിരം അക്ഷരം **errstrp)
 {
-	const char *s = *sp;
-	char *ret;
+	സ്ഥിരം അക്ഷരം *s = *sp;
+	അക്ഷരം *ret;
 	size_t i;
 
-	*errstrp = NULL;
-	if (*s != '"') {
+	*errstrp = ശൂന്യ;
+	എങ്കിൽ (*s != '"') {
 		*errstrp = "missing start quote";
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
 	s++;
-	if ((ret = malloc(strlen((s)) + 1)) == NULL) {
+	എങ്കിൽ ((ret = malloc(strlen((s)) + 1)) == ശൂന്യ) {
 		*errstrp = "memory allocation failed";
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
-	for (i = 0; *s != '\0' && *s != '"';) {
-		if (s[0] == '\\' && s[1] == '"')
+	വേണ്ടി (i = 0; *s != '\0' && *s != '"';) {
+		എങ്കിൽ (s[0] == '\\' && s[1] == '"')
 			s++;
 		ret[i++] = *s++;
 	}
-	if (*s == '\0') {
+	എങ്കിൽ (*s == '\0') {
 		*errstrp = "missing end quote";
-		free(ret);
-		return NULL;
+		സ്വതന്ത്രം(ret);
+		തിരികെ ശൂന്യ;
 	}
 	ret[i] = '\0';
 	s++;
 	*sp = s;
-	return ret;
+	തിരികെ ret;
 }
 
-int
-opt_match(const char **opts, const char *term)
+പൂർണ്ണസംഖ്യ
+opt_match(സ്ഥിരം അക്ഷരം **opts, സ്ഥിരം അക്ഷരം *term)
 {
-	if (strncasecmp((*opts), term, strlen(term)) == 0 &&
+	എങ്കിൽ (strncasecmp((*opts), term, strlen(term)) == 0 &&
 	    (*opts)[strlen(term)] == '=') {
 		*opts += strlen(term) + 1;
-		return 1;
+		തിരികെ 1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-void
-opt_array_append2(const char *file, const int line, const char *directive,
-    char ***array, int **iarray, u_int *lp, const char *s, int i)
+ശൂന്യം
+opt_array_append2(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം പൂർണ്ണസംഖ്യ വരി, സ്ഥിരം അക്ഷരം *directive,
+    അക്ഷരം ***array, പൂർണ്ണസംഖ്യ **iarray, u_int *lp, സ്ഥിരം അക്ഷരം *s, പൂർണ്ണസംഖ്യ i)
 {
 
-	if (*lp >= INT_MAX)
-		fatal("%s line %d: Too many %s entries", file, line, directive);
+	എങ്കിൽ (*lp >= INT_MAX)
+		fatal("%s line %d: Too many %s entries", file, വരി, directive);
 
-	if (iarray != NULL) {
+	എങ്കിൽ (iarray != ശൂന്യ) {
 		*iarray = xrecallocarray(*iarray, *lp, *lp + 1,
-		    sizeof(**iarray));
+		    വലുപ്പം(**iarray));
 		(*iarray)[*lp] = i;
 	}
 
-	*array = xrecallocarray(*array, *lp, *lp + 1, sizeof(**array));
+	*array = xrecallocarray(*array, *lp, *lp + 1, വലുപ്പം(**array));
 	(*array)[*lp] = xstrdup(s);
 	(*lp)++;
 }
 
-void
-opt_array_append(const char *file, const int line, const char *directive,
-    char ***array, u_int *lp, const char *s)
+ശൂന്യം
+opt_array_append(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം പൂർണ്ണസംഖ്യ വരി, സ്ഥിരം അക്ഷരം *directive,
+    അക്ഷരം ***array, u_int *lp, സ്ഥിരം അക്ഷരം *s)
 {
-	opt_array_append2(file, line, directive, array, NULL, lp, s, 0);
+	opt_array_append2(file, വരി, directive, array, ശൂന്യ, lp, s, 0);
 }
 
-void
-opt_array_free2(char **array, int **iarray, u_int l)
+ശൂന്യം
+opt_array_free2(അക്ഷരം **array, പൂർണ്ണസംഖ്യ **iarray, u_int l)
 {
 	u_int i;
 
-	if (array == NULL || l == 0)
-		return;
-	for (i = 0; i < l; i++)
-		free(array[i]);
-	free(array);
-	free(iarray);
+	എങ്കിൽ (array == ശൂന്യ || l == 0)
+		തിരികെ;
+	വേണ്ടി (i = 0; i < l; i++)
+		സ്വതന്ത്രം(array[i]);
+	സ്വതന്ത്രം(array);
+	സ്വതന്ത്രം(iarray);
 }
 
 sshsig_t
-ssh_signal(int signum, sshsig_t handler)
+ssh_signal(പൂർണ്ണസംഖ്യ signum, sshsig_t handler)
 {
-	struct sigaction sa, osa;
+	ഘടന sigaction sa, osa;
 
 	/* mask all other signals while in handler */
-	memset(&sa, 0, sizeof(sa));
+	memset(&sa, 0, വലുപ്പം(sa));
 	sa.sa_handler = handler;
 	sigfillset(&sa.sa_mask);
-#if defined(SA_RESTART) && !defined(NO_SA_RESTART)
-	if (signum != SIGALRM)
+#എങ്കിൽ defined(SA_RESTART) && !defined(NO_SA_RESTART)
+	എങ്കിൽ (signum != SIGALRM)
 		sa.sa_flags = SA_RESTART;
 #endif
-	if (sigaction(signum, &sa, &osa) == -1) {
+	എങ്കിൽ (sigaction(signum, &sa, &osa) == -1) {
 		debug3("sigaction(%s): %s", strsignal(signum), strerror(errno));
-		return SIG_ERR;
+		തിരികെ SIG_ERR;
 	}
-	return osa.sa_handler;
+	തിരികെ osa.sa_handler;
 }
 
-int
-stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
+പൂർണ്ണസംഖ്യ
+stdfd_devnull(പൂർണ്ണസംഖ്യ do_stdin, പൂർണ്ണസംഖ്യ do_stdout, പൂർണ്ണസംഖ്യ do_stderr)
 {
-	int devnull, ret = 0;
+	പൂർണ്ണസംഖ്യ devnull, ret = 0;
 
-	if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	എങ്കിൽ ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 		error_f("open %s: %s", _PATH_DEVNULL,
 		    strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
-	if ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
+	എങ്കിൽ ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
 	    (do_stdout && dup2(devnull, STDOUT_FILENO) == -1) ||
 	    (do_stderr && dup2(devnull, STDERR_FILENO) == -1)) {
 		error_f("dup2: %s", strerror(errno));
 		ret = -1;
 	}
-	if (devnull > STDERR_FILENO)
+	എങ്കിൽ (devnull > STDERR_FILENO)
 		close(devnull);
-	return ret;
+	തിരികെ ret;
 }
 
 /*
@@ -2842,201 +2842,201 @@ stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
  * av[0].
  */
 pid_t
-subprocess(const char *tag, const char *command,
-    int ac, char **av, FILE **child, u_int flags,
-    struct passwd *pw, privdrop_fn *drop_privs, privrestore_fn *restore_privs)
+subprocess(സ്ഥിരം അക്ഷരം *tag, സ്ഥിരം അക്ഷരം *command,
+    പൂർണ്ണസംഖ്യ ac, അക്ഷരം **av, FILE **child, u_int flags,
+    ഘടന passwd *pw, privdrop_fn *drop_privs, privrestore_fn *restore_privs)
 {
-	FILE *f = NULL;
-	struct stat st;
-	int fd, devnull, p[2], i;
+	FILE *f = ശൂന്യ;
+	ഘടന stat st;
+	പൂർണ്ണസംഖ്യ fd, devnull, p[2], i;
 	pid_t pid;
-	char *cp, errmsg[512];
+	അക്ഷരം *cp, errmsg[512];
 	u_int nenv = 0;
-	char **env = NULL;
+	അക്ഷരം **env = ശൂന്യ;
 
 	/* If dropping privs, then must specify user and restore function */
-	if (drop_privs != NULL && (pw == NULL || restore_privs == NULL)) {
+	എങ്കിൽ (drop_privs != ശൂന്യ && (pw == ശൂന്യ || restore_privs == ശൂന്യ)) {
 		error("%s: inconsistent arguments", tag); /* XXX fatal? */
-		return 0;
+		തിരികെ 0;
 	}
-	if (pw == NULL && (pw = getpwuid(getuid())) == NULL) {
+	എങ്കിൽ (pw == ശൂന്യ && (pw = getpwuid(getuid())) == ശൂന്യ) {
 		error("%s: no user for current uid", tag);
-		return 0;
+		തിരികെ 0;
 	}
-	if (child != NULL)
-		*child = NULL;
+	എങ്കിൽ (child != ശൂന്യ)
+		*child = ശൂന്യ;
 
 	debug3_f("%s command \"%s\" running as %s (flags 0x%x)",
 	    tag, command, pw->pw_name, flags);
 
 	/* Check consistency */
-	if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+	എങ്കിൽ ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 	    (flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0) {
 		error_f("inconsistent flags");
-		return 0;
+		തിരികെ 0;
 	}
-	if (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == NULL)) {
+	എങ്കിൽ (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == ശൂന്യ)) {
 		error_f("inconsistent flags/output");
-		return 0;
+		തിരികെ 0;
 	}
 
 	/*
 	 * If executing an explicit binary, then verify the it exists
 	 * and appears safe-ish to execute
 	 */
-	if (!path_absolute(av[0])) {
+	എങ്കിൽ (!path_absolute(av[0])) {
 		error("%s path is not absolute", tag);
-		return 0;
+		തിരികെ 0;
 	}
-	if (drop_privs != NULL)
+	എങ്കിൽ (drop_privs != ശൂന്യ)
 		drop_privs(pw);
-	if (stat(av[0], &st) == -1) {
+	എങ്കിൽ (stat(av[0], &st) == -1) {
 		error("Could not stat %s \"%s\": %s", tag,
 		    av[0], strerror(errno));
-		goto restore_return;
+		പോകുക restore_return;
 	}
-	if ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
-	    safe_path(av[0], &st, NULL, 0, errmsg, sizeof(errmsg)) != 0) {
+	എങ്കിൽ ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
+	    safe_path(av[0], &st, ശൂന്യ, 0, errmsg, വലുപ്പം(errmsg)) != 0) {
 		error("Unsafe %s \"%s\": %s", tag, av[0], errmsg);
-		goto restore_return;
+		പോകുക restore_return;
 	}
 	/* Prepare to keep the child's stdout if requested */
-	if (pipe(p) == -1) {
+	എങ്കിൽ (pipe(p) == -1) {
 		error("%s: pipe: %s", tag, strerror(errno));
  restore_return:
-		if (restore_privs != NULL)
+		എങ്കിൽ (restore_privs != ശൂന്യ)
 			restore_privs();
-		return 0;
+		തിരികെ 0;
 	}
-	if (restore_privs != NULL)
+	എങ്കിൽ (restore_privs != ശൂന്യ)
 		restore_privs();
 
-	switch ((pid = fork())) {
-	case -1: /* error */
+	തിരഞ്ഞെടുപ്പ് ((pid = fork())) {
+	അവസ്ഥ -1: /* error */
 		error("%s: fork: %s", tag, strerror(errno));
 		close(p[0]);
 		close(p[1]);
-		return 0;
-	case 0: /* child */
+		തിരികെ 0;
+	അവസ്ഥ 0: /* child */
 		/* Prepare a minimal environment for the child. */
-		if ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
+		എങ്കിൽ ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
 			nenv = 5;
-			env = xcalloc(sizeof(*env), nenv);
+			env = xcalloc(വലുപ്പം(*env), nenv);
 			child_set_env(&env, &nenv, "PATH", _PATH_STDPATH);
 			child_set_env(&env, &nenv, "USER", pw->pw_name);
 			child_set_env(&env, &nenv, "LOGNAME", pw->pw_name);
 			child_set_env(&env, &nenv, "HOME", pw->pw_dir);
-			if ((cp = getenv("LANG")) != NULL)
+			എങ്കിൽ ((cp = getenv("LANG")) != ശൂന്യ)
 				child_set_env(&env, &nenv, "LANG", cp);
 		}
 
-		for (i = 1; i < NSIG; i++)
+		വേണ്ടി (i = 1; i < NSIG; i++)
 			ssh_signal(i, SIG_DFL);
 
-		if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+		എങ്കിൽ ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 			error("%s: open %s: %s", tag, _PATH_DEVNULL,
 			    strerror(errno));
 			_exit(1);
 		}
-		if (dup2(devnull, STDIN_FILENO) == -1) {
+		എങ്കിൽ (dup2(devnull, STDIN_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
 
 		/* Set up stdout as requested; leave stderr in place for now. */
 		fd = -1;
-		if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
+		എങ്കിൽ ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
 			fd = p[1];
-		else if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
+		അല്ലെങ്കിൽ എങ്കിൽ ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
 			fd = devnull;
-		if (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
+		എങ്കിൽ (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
 		closefrom(STDERR_FILENO + 1);
 
-		if (geteuid() == 0 &&
+		എങ്കിൽ (geteuid() == 0 &&
 		    initgroups(pw->pw_name, pw->pw_gid) == -1) {
 			error("%s: initgroups(%s, %u): %s", tag,
 			    pw->pw_name, (u_int)pw->pw_gid, strerror(errno));
 			_exit(1);
 		}
-		if (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
+		എങ്കിൽ (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
 			error("%s: setresgid %u: %s", tag, (u_int)pw->pw_gid,
 			    strerror(errno));
 			_exit(1);
 		}
-		if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
+		എങ്കിൽ (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
 			error("%s: setresuid %u: %s", tag, (u_int)pw->pw_uid,
 			    strerror(errno));
 			_exit(1);
 		}
 		/* stdin is pointed to /dev/null at this point */
-		if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+		എങ്കിൽ ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 		    dup2(STDIN_FILENO, STDERR_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
-		if (env != NULL)
+		എങ്കിൽ (env != ശൂന്യ)
 			execve(av[0], av, env);
-		else
+		അല്ലെങ്കിൽ
 			execv(av[0], av);
-		error("%s %s \"%s\": %s", tag, env == NULL ? "execv" : "execve",
+		error("%s %s \"%s\": %s", tag, env == ശൂന്യ ? "execv" : "execve",
 		    command, strerror(errno));
 		_exit(127);
-	default: /* parent */
-		break;
+	സ്ഥിരസ്ഥിതി: /* parent */
+		നിർത്തുക;
 	}
 
 	close(p[1]);
-	if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
+	എങ്കിൽ ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
 		close(p[0]);
-	else if ((f = fdopen(p[0], "r")) == NULL) {
+	അല്ലെങ്കിൽ എങ്കിൽ ((f = fdopen(p[0], "r")) == ശൂന്യ) {
 		error("%s: fdopen: %s", tag, strerror(errno));
 		close(p[0]);
 		/* Don't leave zombie child */
 		kill(pid, SIGTERM);
-		while (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
+		ആകുമ്പോൾ (waitpid(pid, ശൂന്യ, 0) == -1 && errno == EINTR)
 			;
-		return 0;
+		തിരികെ 0;
 	}
 	/* Success */
 	debug3_f("%s pid %ld", tag, (long)pid);
-	if (child != NULL)
+	എങ്കിൽ (child != ശൂന്യ)
 		*child = f;
-	return pid;
+	തിരികെ pid;
 }
 
-const char *
-lookup_env_in_list(const char *env, char * const *envs, size_t nenvs)
+സ്ഥിരം അക്ഷരം *
+lookup_env_in_list(സ്ഥിരം അക്ഷരം *env, അക്ഷരം * സ്ഥിരം *envs, size_t nenvs)
 {
 	size_t i, envlen;
 
 	envlen = strlen(env);
-	for (i = 0; i < nenvs; i++) {
-		if (strncmp(envs[i], env, envlen) == 0 &&
+	വേണ്ടി (i = 0; i < nenvs; i++) {
+		എങ്കിൽ (strncmp(envs[i], env, envlen) == 0 &&
 		    envs[i][envlen] == '=') {
-			return envs[i] + envlen + 1;
+			തിരികെ envs[i] + envlen + 1;
 		}
 	}
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-const char *
-lookup_setenv_in_list(const char *env, char * const *envs, size_t nenvs)
+സ്ഥിരം അക്ഷരം *
+lookup_setenv_in_list(സ്ഥിരം അക്ഷരം *env, അക്ഷരം * സ്ഥിരം *envs, size_t nenvs)
 {
-	char *name, *cp;
-	const char *ret;
+	അക്ഷരം *name, *cp;
+	സ്ഥിരം അക്ഷരം *ret;
 
 	name = xstrdup(env);
-	if ((cp = strchr(name, '=')) == NULL) {
-		free(name);
-		return NULL; /* not env=val */
+	എങ്കിൽ ((cp = strchr(name, '=')) == ശൂന്യ) {
+		സ്വതന്ത്രം(name);
+		തിരികെ ശൂന്യ; /* not env=val */
 	}
 	*cp = '\0';
 	ret = lookup_env_in_list(name, envs, nenvs);
-	free(name);
-	return ret;
+	സ്വതന്ത്രം(name);
+	തിരികെ ret;
 }
 
 /*
@@ -3045,8 +3045,8 @@ lookup_setenv_in_list(const char *env, char * const *envs, size_t nenvs)
  */
 
 /* Initialise a poll/ppoll timeout with an indefinite deadline */
-void
-ptimeout_init(struct timespec *pt)
+ശൂന്യം
+ptimeout_init(ഘടന timespec *pt)
 {
 	/*
 	 * Deliberately invalid for ppoll(2).
@@ -3057,28 +3057,28 @@ ptimeout_init(struct timespec *pt)
 }
 
 /* Specify a poll/ppoll deadline of at most 'sec' seconds */
-void
-ptimeout_deadline_sec(struct timespec *pt, long sec)
+ശൂന്യം
+ptimeout_deadline_sec(ഘടന timespec *pt, long sec)
 {
-	if (pt->tv_sec == -1 || pt->tv_sec >= sec) {
+	എങ്കിൽ (pt->tv_sec == -1 || pt->tv_sec >= sec) {
 		pt->tv_sec = sec;
 		pt->tv_nsec = 0;
 	}
 }
 
 /* Specify a poll/ppoll deadline of at most 'p' (timespec) */
-static void
-ptimeout_deadline_tsp(struct timespec *pt, struct timespec *p)
+സ്ഥിതം ശൂന്യം
+ptimeout_deadline_tsp(ഘടന timespec *pt, ഘടന timespec *p)
 {
-	if (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
+	എങ്കിൽ (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
 		*pt = *p;
 }
 
 /* Specify a poll/ppoll deadline of at most 'ms' milliseconds */
-void
-ptimeout_deadline_ms(struct timespec *pt, long ms)
+ശൂന്യം
+ptimeout_deadline_ms(ഘടന timespec *pt, long ms)
 {
-	struct timespec p;
+	ഘടന timespec p;
 
 	p.tv_sec = ms / 1000;
 	p.tv_nsec = (ms % 1000) * 1000000;
@@ -3086,51 +3086,51 @@ ptimeout_deadline_ms(struct timespec *pt, long ms)
 }
 
 /* Specify a poll/ppoll deadline of at most 'sec' seconds (double) */
-void
-ptimeout_deadline_sec_double(struct timespec *pt, double sec)
+ശൂന്യം
+ptimeout_deadline_sec_double(ഘടന timespec *pt, ഇരട്ട sec)
 {
-	struct timespec t;
+	ഘടന timespec t;
 
-	memset(&t, 0, sizeof(t));
-	if ((int64_t)sec >= SSH_TIME_T_MAX)
+	memset(&t, 0, വലുപ്പം(t));
+	എങ്കിൽ ((int64_t)sec >= SSH_TIME_T_MAX)
 		t.tv_sec = SSH_TIME_T_MAX;
-	else if (sec > 0) {
+	അല്ലെങ്കിൽ എങ്കിൽ (sec > 0) {
 		t.tv_sec = sec;
-		t.tv_nsec = (sec - (double)t.tv_sec) * 1000000000.0;
+		t.tv_nsec = (sec - (ഇരട്ട)t.tv_sec) * 1000000000.0;
 	}
 	ptimeout_deadline_tsp(pt, &t);
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' (timespec) */
-void
-ptimeout_deadline_monotime_tsp(struct timespec *pt, struct timespec *when)
+ശൂന്യം
+ptimeout_deadline_monotime_tsp(ഘടന timespec *pt, ഘടന timespec *when)
 {
-	struct timespec now, t;
+	ഘടന timespec now, t;
 
 	monotime_ts(&now);
 
-	if (timespeccmp(&now, when, >=)) {
+	എങ്കിൽ (timespeccmp(&now, when, >=)) {
 		/* 'when' is now or in the past. Timeout ASAP */
 		pt->tv_sec = 0;
 		pt->tv_nsec = 0;
-	} else {
+	} അല്ലെങ്കിൽ {
 		timespecsub(when, &now, &t);
 		ptimeout_deadline_tsp(pt, &t);
 	}
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' (double) */
-void
-ptimeout_deadline_monotime_double(struct timespec *pt, double when)
+ശൂന്യം
+ptimeout_deadline_monotime_double(ഘടന timespec *pt, ഇരട്ട when)
 {
 	ptimeout_deadline_sec_double(pt, when - monotime_double());
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' */
-void
-ptimeout_deadline_monotime(struct timespec *pt, time_t when)
+ശൂന്യം
+ptimeout_deadline_monotime(ഘടന timespec *pt, time_t when)
 {
-	struct timespec t;
+	ഘടന timespec t;
 
 	t.tv_sec = when;
 	t.tv_nsec = 0;
@@ -3138,215 +3138,215 @@ ptimeout_deadline_monotime(struct timespec *pt, time_t when)
 }
 
 /* Get a poll(2) timeout value in milliseconds */
-int
-ptimeout_get_ms(struct timespec *pt)
+പൂർണ്ണസംഖ്യ
+ptimeout_get_ms(ഘടന timespec *pt)
 {
-	if (pt->tv_sec == -1)
-		return -1;
-	if (pt->tv_sec >= (INT_MAX - (pt->tv_nsec / 1000000)) / 1000)
-		return INT_MAX;
-	return (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
+	എങ്കിൽ (pt->tv_sec == -1)
+		തിരികെ -1;
+	എങ്കിൽ (pt->tv_sec >= (INT_MAX - (pt->tv_nsec / 1000000)) / 1000)
+		തിരികെ INT_MAX;
+	തിരികെ (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
 }
 
 /* Get a ppoll(2) timeout value as a timespec pointer */
-struct timespec *
-ptimeout_get_tsp(struct timespec *pt)
+ഘടന timespec *
+ptimeout_get_tsp(ഘടന timespec *pt)
 {
-	return pt->tv_sec == -1 ? NULL : pt;
+	തിരികെ pt->tv_sec == -1 ? ശൂന്യ : pt;
 }
 
 /* Returns non-zero if a timeout has been set (i.e. is not indefinite) */
-int
-ptimeout_isset(struct timespec *pt)
+പൂർണ്ണസംഖ്യ
+ptimeout_isset(ഘടന timespec *pt)
 {
-	return pt->tv_sec != -1;
+	തിരികെ pt->tv_sec != -1;
 }
 
 /*
  * Returns zero if the library at 'path' contains symbol 's', nonzero
  * otherwise.
  */
-int
-lib_contains_symbol(const char *path, const char *s)
+പൂർണ്ണസംഖ്യ
+lib_contains_ചിഹ്നം(സ്ഥിരം അക്ഷരം *path, സ്ഥിരം അക്ഷരം *s)
 {
 #ifdef HAVE_NLIST
-	struct nlist nl[2];
-	int ret = -1, r;
+	ഘടന nlist nl[2];
+	പൂർണ്ണസംഖ്യ ret = -1, r;
 
-	memset(nl, 0, sizeof(nl));
+	memset(nl, 0, വലുപ്പം(nl));
 	nl[0].n_name = xstrdup(s);
-	nl[1].n_name = NULL;
-	if ((r = nlist(path, nl)) == -1) {
+	nl[1].n_name = ശൂന്യ;
+	എങ്കിൽ ((r = nlist(path, nl)) == -1) {
 		error_f("nlist failed for %s", path);
-		goto out;
+		പോകുക out;
 	}
-	if (r != 0 || nl[0].n_value == 0 || nl[0].n_type == 0) {
+	എങ്കിൽ (r != 0 || nl[0].n_മൂല്യം == 0 || nl[0].n_type == 0) {
 		error_f("library %s does not contain symbol %s", path, s);
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	ret = 0;
  out:
-	free(nl[0].n_name);
-	return ret;
-#else /* HAVE_NLIST */
-	int fd, ret = -1;
-	struct stat st;
-	void *m = NULL;
+	സ്വതന്ത്രം(nl[0].n_name);
+	തിരികെ ret;
+#അല്ലെങ്കിൽ /* HAVE_NLIST */
+	പൂർണ്ണസംഖ്യ fd, ret = -1;
+	ഘടന stat st;
+	ശൂന്യം *m = ശൂന്യ;
 	size_t sz = 0;
 
-	memset(&st, 0, sizeof(st));
-	if ((fd = open(path, O_RDONLY)) < 0) {
+	memset(&st, 0, വലുപ്പം(st));
+	എങ്കിൽ ((fd = open(path, O_RDONLY)) < 0) {
 		error_f("open %s: %s", path, strerror(errno));
-		return -1;
+		തിരികെ -1;
 	}
-	if (fstat(fd, &st) != 0) {
+	എങ്കിൽ (fstat(fd, &st) != 0) {
 		error_f("fstat %s: %s", path, strerror(errno));
-		goto out;
+		പോകുക out;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	എങ്കിൽ (!S_ISREG(st.st_mode)) {
 		error_f("%s is not a regular file", path);
-		goto out;
+		പോകുക out;
 	}
-	if (st.st_size < 0 ||
+	എങ്കിൽ (st.st_size < 0 ||
 	    (size_t)st.st_size < strlen(s) ||
 	    st.st_size >= INT_MAX/2) {
 		error_f("%s bad size %lld", path, (long long)st.st_size);
-		goto out;
+		പോകുക out;
 	}
 	sz = (size_t)st.st_size;
-	if ((m = mmap(NULL, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
-	    m == NULL) {
+	എങ്കിൽ ((m = mmap(ശൂന്യ, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
+	    m == ശൂന്യ) {
 		error_f("mmap %s: %s", path, strerror(errno));
-		goto out;
+		പോകുക out;
 	}
-	if (memmem(m, sz, s, strlen(s)) == NULL) {
+	എങ്കിൽ (memmem(m, sz, s, strlen(s)) == ശൂന്യ) {
 		error_f("%s does not contain expected string %s", path, s);
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	ret = 0;
  out:
-	if (m != NULL && m != MAP_FAILED)
+	എങ്കിൽ (m != ശൂന്യ && m != MAP_FAILED)
 		munmap(m, sz);
 	close(fd);
-	return ret;
+	തിരികെ ret;
 #endif /* HAVE_NLIST */
 }
 
-int
-signal_is_crash(int sig)
+പൂർണ്ണസംഖ്യ
+signal_is_crash(പൂർണ്ണസംഖ്യ sig)
 {
-	switch (sig) {
-	case SIGSEGV:
-	case SIGBUS:
-	case SIGTRAP:
-	case SIGSYS:
-	case SIGFPE:
-	case SIGILL:
-	case SIGABRT:
-		return 1;
+	തിരഞ്ഞെടുപ്പ് (sig) {
+	അവസ്ഥ SIGSEGV:
+	അവസ്ഥ SIGBUS:
+	അവസ്ഥ SIGTRAP:
+	അവസ്ഥ SIGSYS:
+	അവസ്ഥ SIGFPE:
+	അവസ്ഥ SIGILL:
+	അവസ്ഥ SIGABRT:
+		തിരികെ 1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-char *
-get_homedir(void)
+അക്ഷരം *
+get_homedir(ശൂന്യം)
 {
-	char *cp;
-	struct passwd *pw;
+	അക്ഷരം *cp;
+	ഘടന passwd *pw;
 
-	if ((cp = getenv("HOME")) != NULL && *cp != '\0')
-		return xstrdup(cp);
+	എങ്കിൽ ((cp = getenv("HOME")) != ശൂന്യ && *cp != '\0')
+		തിരികെ xstrdup(cp);
 
-	if ((pw = getpwuid(getuid())) != NULL && *pw->pw_dir != '\0')
-		return xstrdup(pw->pw_dir);
+	എങ്കിൽ ((pw = getpwuid(getuid())) != ശൂന്യ && *pw->pw_dir != '\0')
+		തിരികെ xstrdup(pw->pw_dir);
 
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-int
-mkdir_path(const char *target, mode_t mode)
+പൂർണ്ണസംഖ്യ
+mkdir_path(സ്ഥിരം അക്ഷരം *target, mode_t mode)
 {
-#if defined(HAVE_OPENAT) && defined(O_DIRECTORY)
-	char *dir, *odir = NULL, *next;
-	int fd = AT_FDCWD, fd2, subpath_len, ret = -1;
+#എങ്കിൽ defined(HAVE_OPENAT) && defined(O_DIRECTORY)
+	അക്ഷരം *dir, *odir = ശൂന്യ, *next;
+	പൂർണ്ണസംഖ്യ fd = AT_FDCWD, fd2, subpath_len, ret = -1;
 
 	dir = odir = xstrdup(target);
 
-	if (*dir == '/' &&
+	എങ്കിൽ (*dir == '/' &&
 	    (fd = open("/", O_RDONLY|O_DIRECTORY)) == -1) {
 		error_f("open(\"/\"): %s", strerror(errno));
-		free(odir);
-		return -1;
+		സ്വതന്ത്രം(odir);
+		തിരികെ -1;
 	}
 	/* Work through the path, component-wise */
-	for (; dir != NULL && *dir != '\0'; dir = next) {
-		if ((next = strchr(dir, '/')) != NULL)
+	വേണ്ടി (; dir != ശൂന്യ && *dir != '\0'; dir = next) {
+		എങ്കിൽ ((next = strchr(dir, '/')) != ശൂന്യ)
 			*(next++) = '\0';
-		if (*dir == '\0')
-			continue;
-		subpath_len = (next == NULL) ? INT_MAX : next - odir - 1;
-		if (mkdirat(fd, dir, mode) == 0)
+		എങ്കിൽ (*dir == '\0')
+			തുടരുക;
+		subpath_len = (next == ശൂന്യ) ? INT_MAX : next - odir - 1;
+		എങ്കിൽ (mkdirat(fd, dir, mode) == 0)
 			debug_f("created directory %.*s", subpath_len, target);
-		else if (errno != EEXIST) {
+		അല്ലെങ്കിൽ എങ്കിൽ (errno != EEXIST) {
 			error_f("mkdir(\"%.*s\"): %s",
 			    subpath_len, target, strerror(errno));
-			goto out;
+			പോകുക out;
 		}
 
 		/* descend */
-		if ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
+		എങ്കിൽ ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
 			error_f("open(\"%.*s\"): %s",
 			    subpath_len, target, strerror(errno));
-			goto out;
+			പോകുക out;
 		}
-		if (fd != AT_FDCWD)
+		എങ്കിൽ (fd != AT_FDCWD)
 			close(fd);
 		fd = fd2;
 	}
 	/* success */
 	ret = 0;
  out:
-	free(odir);
-	if (fd != AT_FDCWD)
+	സ്വതന്ത്രം(odir);
+	എങ്കിൽ (fd != AT_FDCWD)
 		close(fd);
-	return ret;
-#else
+	തിരികെ ret;
+#അല്ലെങ്കിൽ
 	/*
 	 * If we don't have openat (which was added in POSIX.1-2008), fall back
 	 * to the possibly racy way.
 	 */
-	char *dir, *odir, *p, path[PATH_MAX] = "";
-	int ret = -1;
-	size_t plen = sizeof(path);
+	അക്ഷരം *dir, *odir, *p, path[PATH_MAX] = "";
+	പൂർണ്ണസംഖ്യ ret = -1;
+	size_t plen = വലുപ്പം(path);
 
 	dir = odir = xstrdup(target);
 
 	/* If the dir is relative, start with cwd. */
-	if (*dir != '/' && getcwd(path, plen) == NULL) {
+	എങ്കിൽ (*dir != '/' && getcwd(path, plen) == ശൂന്യ) {
 		error_f("getcwd: %s", strerror(errno));
-		goto out;
+		പോകുക out;
 	}
 
 	/* Work through the path, component-wise */
-	while ((p = strsep(&dir, "/"))) {
-		if (*p == '\0')
-			continue;
-		if (strlcat(path, "/", plen) >= plen ||
+	ആകുമ്പോൾ ((p = strsep(&dir, "/"))) {
+		എങ്കിൽ (*p == '\0')
+			തുടരുക;
+		എങ്കിൽ (strlcat(path, "/", plen) >= plen ||
 		    strlcat(path, p, plen) >= plen)
-			goto out;
-		if (mkdir(path, mode) == 0)
+			പോകുക out;
+		എങ്കിൽ (mkdir(path, mode) == 0)
 			debug_f("created directory %s", path);
-		else if (errno != EEXIST && errno != EISDIR) {
+		അല്ലെങ്കിൽ എങ്കിൽ (errno != EEXIST && errno != EISDIR) {
 			error_f("mkdir(\"%s\"): %s", path, strerror(errno));
-			goto out;
+			പോകുക out;
 		}
 	}
 	/* success */
 	ret = 0;
  out:
-	free(odir);
-	return ret;
+	സ്വതന്ത്രം(odir);
+	തിരികെ ret;
 #endif
 }

@@ -23,15 +23,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#if defined(WITH_IRIX_PROJECT) || \
+#എങ്കിൽ defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || \
     defined(WITH_IRIX_ARRAY)
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
 #ifdef WITH_IRIX_PROJECT
 # include <proj.h>
@@ -43,46 +43,46 @@
 # include <sat.h>
 #endif /* WITH_IRIX_AUDIT */
 
-#include "log.h"
+#അന്തര്ഭാവ "log.h"
 
-void
-irix_setusercontext(struct passwd *pw)
+ശൂന്യം
+irix_setusercontext(ഘടന passwd *pw)
 {
 #ifdef WITH_IRIX_PROJECT
 	prid_t projid;
 #endif
 #ifdef WITH_IRIX_JOBS
 	jid_t jid = 0;
-#elif defined(WITH_IRIX_ARRAY)
-	int jid = 0;
+#അല്ലെങ്കിലെങ്കിൽ defined(WITH_IRIX_ARRAY)
+	പൂർണ്ണസംഖ്യ jid = 0;
 #endif
 
 #ifdef WITH_IRIX_JOBS
 	jid = jlimit_startjob(pw->pw_name, pw->pw_uid, "interactive");
-	if (jid == -1)
+	എങ്കിൽ (jid == -1)
 		fatal("Failed to create job container: %.100s",
 		    strerror(errno));
 #endif /* WITH_IRIX_JOBS */
 #ifdef WITH_IRIX_ARRAY
 	/* initialize array session */
-	if (jid == 0  && newarraysess() != 0)
+	എങ്കിൽ (jid == 0  && newarraysess() != 0)
 		fatal("Failed to set up new array session: %.100s",
 		    strerror(errno));
 #endif /* WITH_IRIX_ARRAY */
 #ifdef WITH_IRIX_PROJECT
 	/* initialize irix project info */
-	if ((projid = getdfltprojuser(pw->pw_name)) == -1) {
+	എങ്കിൽ ((projid = getdfltprojuser(pw->pw_name)) == -1) {
 		debug("Failed to get project id, using projid 0");
 		projid = 0;
 	}
-	if (setprid(projid))
+	എങ്കിൽ (setprid(projid))
 		fatal("Failed to initialize project %d for %s: %.100s",
-		    (int)projid, pw->pw_name, strerror(errno));
+		    (പൂർണ്ണസംഖ്യ)projid, pw->pw_name, strerror(errno));
 #endif /* WITH_IRIX_PROJECT */
 #ifdef WITH_IRIX_AUDIT
-	if (sysconf(_SC_AUDIT)) {
-		debug("Setting sat id to %d", (int) pw->pw_uid);
-		if (satsetid(pw->pw_uid))
+	എങ്കിൽ (sysconf(_SC_AUDIT)) {
+		debug("Setting sat id to %d", (പൂർണ്ണസംഖ്യ) pw->pw_uid);
+		എങ്കിൽ (satsetid(pw->pw_uid))
 			debug("error setting satid: %.100s", strerror(errno));
 	}
 #endif /* WITH_IRIX_AUDIT */

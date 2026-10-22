@@ -23,39 +23,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "digest.h"
-#include "hmac.h"
-#include "umac.h"
-#include "mac.h"
-#include "misc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#അന്തര്ഭാവ "digest.h"
+#അന്തര്ഭാവ "hmac.h"
+#അന്തര്ഭാവ "umac.h"
+#അന്തര്ഭാവ "mac.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshbuf.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
 
 #define SSH_DIGEST	1	/* SSH_DIGEST_XXX */
 #define SSH_UMAC	2	/* UMAC (not integrated with OpenSSL) */
 #define SSH_UMAC128	3
 
-struct macalg {
-	char		*name;
-	int		type;
-	int		alg;
-	int		truncatebits;	/* truncate digest if != 0 */
-	int		key_len;	/* just for UMAC */
-	int		len;		/* just for UMAC */
-	int		etm;		/* Encrypt-then-MAC */
+ഘടന macalg {
+	അക്ഷരം		*name;
+	പൂർണ്ണസംഖ്യ		type;
+	പൂർണ്ണസംഖ്യ		alg;
+	പൂർണ്ണസംഖ്യ		truncatebits;	/* truncate digest if != 0 */
+	പൂർണ്ണസംഖ്യ		താക്കോൽ_len;	/* just for UMAC */
+	പൂർണ്ണസംഖ്യ		len;		/* just for UMAC */
+	പൂർണ്ണസംഖ്യ		etm;		/* Encrypt-then-MAC */
 };
 
-static const struct macalg macs[] = {
+സ്ഥിതം സ്ഥിരം ഘടന macalg macs[] = {
 	/* Encrypt-and-MAC (encrypt-and-authenticate) variants */
 	{ "hmac-sha1",				SSH_DIGEST, SSH_DIGEST_SHA1, 0, 0, 0, 0 },
 	{ "hmac-sha1-96",			SSH_DIGEST, SSH_DIGEST_SHA1, 96, 0, 0, 0 },
@@ -76,180 +76,180 @@ static const struct macalg macs[] = {
 	{ "umac-64-etm@openssh.com",		SSH_UMAC, 0, 0, 128, 64, 1 },
 	{ "umac-128-etm@openssh.com",		SSH_UMAC128, 0, 0, 128, 128, 1 },
 
-	{ NULL,					0, 0, 0, 0, 0, 0 }
+	{ ശൂന്യ,					0, 0, 0, 0, 0, 0 }
 };
 
 /* Returns a list of supported MACs separated by the specified char. */
-char *
-mac_alg_list(char sep)
+അക്ഷരം *
+mac_alg_list(അക്ഷരം sep)
 {
-	char *ret = NULL;
-	const struct macalg *m;
-	char sep_str[2] = {sep, '\0'};
+	അക്ഷരം *ret = ശൂന്യ;
+	സ്ഥിരം ഘടന macalg *m;
+	അക്ഷരം sep_str[2] = {sep, '\0'};
 
-	for (m = macs; m->name != NULL; m++)
+	വേണ്ടി (m = macs; m->name != ശൂന്യ; m++)
 		xextendf(&ret, sep_str, "%s", m->name);
 
-	return ret;
+	തിരികെ ret;
 }
 
-static int
-mac_setup_by_alg(struct sshmac *mac, const struct macalg *macalg)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+mac_setup_by_alg(ഘടന sshmac *mac, സ്ഥിരം ഘടന macalg *macalg)
 {
 	mac->type = macalg->type;
-	if (mac->type == SSH_DIGEST) {
-		if ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		mac->key_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
-	} else {
+	എങ്കിൽ (mac->type == SSH_DIGEST) {
+		എങ്കിൽ ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == ശൂന്യ)
+			തിരികെ SSH_ERR_ALLOC_FAIL;
+		mac->താക്കോൽ_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
+	} അല്ലെങ്കിൽ {
 		mac->mac_len = macalg->len / 8;
-		mac->key_len = macalg->key_len / 8;
-		mac->umac_ctx = NULL;
+		mac->താക്കോൽ_len = macalg->താക്കോൽ_len / 8;
+		mac->umac_ctx = ശൂന്യ;
 	}
-	if (macalg->truncatebits != 0)
+	എങ്കിൽ (macalg->truncatebits != 0)
 		mac->mac_len = macalg->truncatebits / 8;
 	mac->etm = macalg->etm;
-	return 0;
+	തിരികെ 0;
 }
 
-int
-mac_setup(struct sshmac *mac, char *name)
+പൂർണ്ണസംഖ്യ
+mac_setup(ഘടന sshmac *mac, അക്ഷരം *name)
 {
-	const struct macalg *m;
+	സ്ഥിരം ഘടന macalg *m;
 
-	for (m = macs; m->name != NULL; m++) {
-		if (strcmp(name, m->name) != 0)
-			continue;
-		if (mac != NULL)
-			return mac_setup_by_alg(mac, m);
-		return 0;
+	വേണ്ടി (m = macs; m->name != ശൂന്യ; m++) {
+		എങ്കിൽ (strcmp(name, m->name) != 0)
+			തുടരുക;
+		എങ്കിൽ (mac != ശൂന്യ)
+			തിരികെ mac_setup_by_alg(mac, m);
+		തിരികെ 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
+	തിരികെ SSH_ERR_INVALID_ARGUMENT;
 }
 
-int
-mac_init(struct sshmac *mac)
+പൂർണ്ണസംഖ്യ
+mac_init(ഘടന sshmac *mac)
 {
-	if (mac->key == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	switch (mac->type) {
-	case SSH_DIGEST:
-		if (mac->hmac_ctx == NULL ||
-		    ssh_hmac_init(mac->hmac_ctx, mac->key, mac->key_len) < 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
-	case SSH_UMAC:
-		if ((mac->umac_ctx = umac_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
-	case SSH_UMAC128:
-		if ((mac->umac_ctx = umac128_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (mac->താക്കോൽ == ശൂന്യ)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	തിരഞ്ഞെടുപ്പ് (mac->type) {
+	അവസ്ഥ SSH_DIGEST:
+		എങ്കിൽ (mac->hmac_ctx == ശൂന്യ ||
+		    ssh_hmac_init(mac->hmac_ctx, mac->താക്കോൽ, mac->താക്കോൽ_len) < 0)
+			തിരികെ SSH_ERR_INVALID_ARGUMENT;
+		തിരികെ 0;
+	അവസ്ഥ SSH_UMAC:
+		എങ്കിൽ ((mac->umac_ctx = umac_new(mac->താക്കോൽ)) == ശൂന്യ)
+			തിരികെ SSH_ERR_ALLOC_FAIL;
+		തിരികെ 0;
+	അവസ്ഥ SSH_UMAC128:
+		എങ്കിൽ ((mac->umac_ctx = umac128_new(mac->താക്കോൽ)) == ശൂന്യ)
+			തിരികെ SSH_ERR_ALLOC_FAIL;
+		തിരികെ 0;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 	}
 }
 
-int
-mac_compute(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, int datalen,
+പൂർണ്ണസംഖ്യ
+mac_compute(ഘടന sshmac *mac, uint32_t seqno,
+    സ്ഥിരം u_char *data, പൂർണ്ണസംഖ്യ datalen,
     u_char *digest, size_t dlen)
 {
-	static union {
+	സ്ഥിതം സംഘം {
 		u_char m[SSH_DIGEST_MAX_LENGTH];
 		uint64_t for_align;
 	} u;
 	u_char b[4];
 	u_char nonce[8];
 
-	if (mac->mac_len > sizeof(u))
-		return SSH_ERR_INTERNAL_ERROR;
+	എങ്കിൽ (mac->mac_len > വലുപ്പം(u))
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 
-	switch (mac->type) {
-	case SSH_DIGEST:
+	തിരഞ്ഞെടുപ്പ് (mac->type) {
+	അവസ്ഥ SSH_DIGEST:
 		put_u32(b, seqno);
 		/* reset HMAC context */
-		if (ssh_hmac_init(mac->hmac_ctx, NULL, 0) < 0 ||
-		    ssh_hmac_update(mac->hmac_ctx, b, sizeof(b)) < 0 ||
+		എങ്കിൽ (ssh_hmac_init(mac->hmac_ctx, ശൂന്യ, 0) < 0 ||
+		    ssh_hmac_update(mac->hmac_ctx, b, വലുപ്പം(b)) < 0 ||
 		    ssh_hmac_update(mac->hmac_ctx, data, datalen) < 0 ||
-		    ssh_hmac_final(mac->hmac_ctx, u.m, sizeof(u.m)) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-		break;
-	case SSH_UMAC:
+		    ssh_hmac_final(mac->hmac_ctx, u.m, വലുപ്പം(u.m)) < 0)
+			തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
+		നിർത്തുക;
+	അവസ്ഥ SSH_UMAC:
 		POKE_U64(nonce, seqno);
 		umac_update(mac->umac_ctx, data, datalen);
 		umac_final(mac->umac_ctx, u.m, nonce);
-		break;
-	case SSH_UMAC128:
+		നിർത്തുക;
+	അവസ്ഥ SSH_UMAC128:
 		put_u64(nonce, seqno);
 		umac128_update(mac->umac_ctx, data, datalen);
 		umac128_final(mac->umac_ctx, u.m, nonce);
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (digest != NULL) {
-		if (dlen > mac->mac_len)
+	എങ്കിൽ (digest != ശൂന്യ) {
+		എങ്കിൽ (dlen > mac->mac_len)
 			dlen = mac->mac_len;
 		memcpy(digest, u.m, dlen);
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-int
-mac_check(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, size_t dlen,
-    const u_char *theirmac, size_t mlen)
+പൂർണ്ണസംഖ്യ
+mac_check(ഘടന sshmac *mac, uint32_t seqno,
+    സ്ഥിരം u_char *data, size_t dlen,
+    സ്ഥിരം u_char *theirmac, size_t mlen)
 {
 	u_char ourmac[SSH_DIGEST_MAX_LENGTH];
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (mac->mac_len > mlen)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = mac_compute(mac, seqno, data, dlen,
-	    ourmac, sizeof(ourmac))) != 0)
-		return r;
-	if (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
-		return SSH_ERR_MAC_INVALID;
-	return 0;
+	എങ്കിൽ (mac->mac_len > mlen)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ ((r = mac_compute(mac, seqno, data, dlen,
+	    ourmac, വലുപ്പം(ourmac))) != 0)
+		തിരികെ r;
+	എങ്കിൽ (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
+		തിരികെ SSH_ERR_MAC_INVALID;
+	തിരികെ 0;
 }
 
-void
-mac_clear(struct sshmac *mac)
+ശൂന്യം
+mac_clear(ഘടന sshmac *mac)
 {
-	if (mac->type == SSH_UMAC) {
-		if (mac->umac_ctx != NULL)
+	എങ്കിൽ (mac->type == SSH_UMAC) {
+		എങ്കിൽ (mac->umac_ctx != ശൂന്യ)
 			umac_delete(mac->umac_ctx);
-	} else if (mac->type == SSH_UMAC128) {
-		if (mac->umac_ctx != NULL)
+	} അല്ലെങ്കിൽ എങ്കിൽ (mac->type == SSH_UMAC128) {
+		എങ്കിൽ (mac->umac_ctx != ശൂന്യ)
 			umac128_delete(mac->umac_ctx);
-	} else if (mac->hmac_ctx != NULL)
+	} അല്ലെങ്കിൽ എങ്കിൽ (mac->hmac_ctx != ശൂന്യ)
 		ssh_hmac_free(mac->hmac_ctx);
-	mac->hmac_ctx = NULL;
-	mac->umac_ctx = NULL;
+	mac->hmac_ctx = ശൂന്യ;
+	mac->umac_ctx = ശൂന്യ;
 }
 
 /* XXX copied from ciphers_valid */
 #define	MAC_SEP	","
-int
-mac_valid(const char *names)
+പൂർണ്ണസംഖ്യ
+mac_valid(സ്ഥിരം അക്ഷരം *names)
 {
-	char *maclist, *cp, *p;
-	int found = 0;
+	അക്ഷരം *maclist, *cp, *p;
+	പൂർണ്ണസംഖ്യ found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((maclist = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
+	എങ്കിൽ (names == ശൂന്യ || strcmp(names, "") == 0)
+		തിരികെ 0;
+	എങ്കിൽ ((maclist = cp = strdup(names)) == ശൂന്യ)
+		തിരികെ 0;
+	വേണ്ടി ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, MAC_SEP))) {
-		if (mac_setup(NULL, p) < 0) {
-			free(maclist);
-			return 0;
-		} else
+		എങ്കിൽ (mac_setup(ശൂന്യ, p) < 0) {
+			സ്വതന്ത്രം(maclist);
+			തിരികെ 0;
+		} അല്ലെങ്കിൽ
 			found = 1;
 	}
-	free(maclist);
-	return found;
+	സ്വതന്ത്രം(maclist);
+	തിരികെ found;
 }

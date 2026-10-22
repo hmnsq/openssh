@@ -16,51 +16,51 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifndef WITH_OPENSSL
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#if 0
-#include <md5.h>
+#എങ്കിൽ 0
+#അന്തര്ഭാവ <md5.h>
 #endif
 #ifdef HAVE_SHA1_H
-#include <sha1.h>
+#അന്തര്ഭാവ <sha1.h>
 #endif
 #ifdef HAVE_SHA2_H
-#include <sha2.h>
+#അന്തര്ഭാവ <sha2.h>
 #endif
 
-#if !defined(SHA256_BLOCK_LENGTH) && defined(SHA256_HMAC_BLOCK_SIZE)
+#എങ്കിൽ !defined(SHA256_BLOCK_LENGTH) && defined(SHA256_HMAC_BLOCK_SIZE)
 #define SHA256_BLOCK_LENGTH SHA256_HMAC_BLOCK_SIZE
 #endif
-#if !defined(SHA384_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
+#എങ്കിൽ !defined(SHA384_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
 #define SHA384_BLOCK_LENGTH SHA512_HMAC_BLOCK_SIZE
 #endif
-#if !defined(SHA512_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
+#എങ്കിൽ !defined(SHA512_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
 #define SHA512_BLOCK_LENGTH SHA512_HMAC_BLOCK_SIZE
 #endif
 
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "digest.h"
 
-typedef void md_init_fn(void *mdctx);
-typedef void md_update_fn(void *mdctx, const uint8_t *m, size_t mlen);
-typedef void md_final_fn(uint8_t[], void *mdctx);
+തരനിർവചനം ശൂന്യം md_init_fn(ശൂന്യം *mdctx);
+തരനിർവചനം ശൂന്യം md_update_fn(ശൂന്യം *mdctx, സ്ഥിരം uint8_t *m, size_t mlen);
+തരനിർവചനം ശൂന്യം md_final_fn(uint8_t[], ശൂന്യം *mdctx);
 
-struct ssh_digest_ctx {
-	int alg;
-	void *mdctx;
+ഘടന ssh_digest_ctx {
+	പൂർണ്ണസംഖ്യ alg;
+	ശൂന്യം *mdctx;
 };
 
-struct ssh_digest {
-	int id;
-	const char *name;
+ഘടന ssh_digest {
+	പൂർണ്ണസംഖ്യ id;
+	സ്ഥിരം അക്ഷരം *name;
 	size_t block_len;
 	size_t digest_len;
 	size_t ctx_len;
@@ -70,13 +70,13 @@ struct ssh_digest {
 };
 
 /* NB. Indexed directly by algorithm number */
-const struct ssh_digest digests[SSH_DIGEST_MAX] = {
+സ്ഥിരം ഘടന ssh_digest digests[SSH_DIGEST_MAX] = {
 	{
 		SSH_DIGEST_MD5,
 		"MD5",
 		MD5_BLOCK_LENGTH,
 		MD5_DIGEST_LENGTH,
-		sizeof(MD5_CTX),
+		വലുപ്പം(MD5_CTX),
 		(md_init_fn *) MD5Init,
 		(md_update_fn *) MD5Update,
 		(md_final_fn *) MD5Final
@@ -86,7 +86,7 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA1",
 		SHA1_BLOCK_LENGTH,
 		SHA1_DIGEST_LENGTH,
-		sizeof(SHA1_CTX),
+		വലുപ്പം(SHA1_CTX),
 		(md_init_fn *) SHA1Init,
 		(md_update_fn *) SHA1Update,
 		(md_final_fn *) SHA1Final
@@ -96,7 +96,7 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA256",
 		SHA256_BLOCK_LENGTH,
 		SHA256_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		വലുപ്പം(SHA2_CTX),
 		(md_init_fn *) SHA256Init,
 		(md_update_fn *) SHA256Update,
 		(md_final_fn *) SHA256Final
@@ -106,7 +106,7 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA384",
 		SHA384_BLOCK_LENGTH,
 		SHA384_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		വലുപ്പം(SHA2_CTX),
 		(md_init_fn *) SHA384Init,
 		(md_update_fn *) SHA384Update,
 		(md_final_fn *) SHA384Final
@@ -116,152 +116,152 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA512",
 		SHA512_BLOCK_LENGTH,
 		SHA512_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		വലുപ്പം(SHA2_CTX),
 		(md_init_fn *) SHA512Init,
 		(md_update_fn *) SHA512Update,
 		(md_final_fn *) SHA512Final
 	}
 };
 
-static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+സ്ഥിതം സ്ഥിരം ഘടന ssh_digest *
+ssh_digest_by_alg(പൂർണ്ണസംഖ്യ alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	return &(digests[alg]);
+	എങ്കിൽ (alg < 0 || alg >= SSH_DIGEST_MAX)
+		തിരികെ ശൂന്യ;
+	എങ്കിൽ (digests[alg].id != alg) /* sanity */
+		തിരികെ ശൂന്യ;
+	തിരികെ &(digests[alg]);
 }
 
-int
-ssh_digest_alg_by_name(const char *name)
+പൂർണ്ണസംഖ്യ
+ssh_digest_alg_by_name(സ്ഥിരം അക്ഷരം *name)
 {
-	int alg;
+	പൂർണ്ണസംഖ്യ alg;
 
-	for (alg = 0; alg < SSH_DIGEST_MAX; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	വേണ്ടി (alg = 0; alg < SSH_DIGEST_MAX; alg++) {
+		എങ്കിൽ (strcasecmp(name, digests[alg].name) == 0)
+			തിരികെ digests[alg].id;
 	}
-	return -1;
+	തിരികെ -1;
 }
 
-const char *
-ssh_digest_alg_name(int alg)
+സ്ഥിരം അക്ഷരം *
+ssh_digest_alg_name(പൂർണ്ണസംഖ്യ alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	സ്ഥിരം ഘടന ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
-}
-
-size_t
-ssh_digest_bytes(int alg)
-{
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-
-	return digest == NULL ? 0 : digest->digest_len;
+	തിരികെ digest == ശൂന്യ ? ശൂന്യ : digest->name;
 }
 
 size_t
-ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
+ssh_digest_bytes(പൂർണ്ണസംഖ്യ alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	സ്ഥിരം ഘടന ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? 0 : digest->block_len;
+	തിരികെ digest == ശൂന്യ ? 0 : digest->digest_len;
 }
 
-struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+size_t
+ssh_digest_blocksize(ഘടന ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-	struct ssh_digest_ctx *ret;
+	സ്ഥിരം ഘടന ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL || (ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if ((ret->mdctx = calloc(1, digest->ctx_len)) == NULL) {
-		free(ret);
-		return NULL;
+	തിരികെ digest == ശൂന്യ ? 0 : digest->block_len;
+}
+
+ഘടന ssh_digest_ctx *
+ssh_digest_start(പൂർണ്ണസംഖ്യ alg)
+{
+	സ്ഥിരം ഘടന ssh_digest *digest = ssh_digest_by_alg(alg);
+	ഘടന ssh_digest_ctx *ret;
+
+	എങ്കിൽ (digest == ശൂന്യ || (ret = calloc(1, വലുപ്പം(*ret))) == ശൂന്യ)
+		തിരികെ ശൂന്യ;
+	എങ്കിൽ ((ret->mdctx = calloc(1, digest->ctx_len)) == ശൂന്യ) {
+		സ്വതന്ത്രം(ret);
+		തിരികെ ശൂന്യ;
 	}
 	ret->alg = alg;
 	digest->md_init(ret->mdctx);
-	return ret;
+	തിരികെ ret;
 }
 
-int
-ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
+പൂർണ്ണസംഖ്യ
+ssh_digest_copy_state(ഘടന ssh_digest_ctx *from, ഘടന ssh_digest_ctx *to)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(from->alg);
+	സ്ഥിരം ഘടന ssh_digest *digest = ssh_digest_by_alg(from->alg);
 
-	if (digest == NULL || from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (digest == ശൂന്യ || from->alg != to->alg)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 	memcpy(to->mdctx, from->mdctx, digest->ctx_len);
-	return 0;
+	തിരികെ 0;
 }
 
-int
-ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+പൂർണ്ണസംഖ്യ
+ssh_digest_update(ഘടന ssh_digest_ctx *ctx, സ്ഥിരം ശൂന്യം *m, size_t mlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	സ്ഥിരം ഘടന ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (digest == ശൂന്യ)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 	digest->md_update(ctx->mdctx, m, mlen);
-	return 0;
+	തിരികെ 0;
 }
 
-int
-ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
+പൂർണ്ണസംഖ്യ
+ssh_digest_update_buffer(ഘടന ssh_digest_ctx *ctx, സ്ഥിരം ഘടന sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	തിരികെ ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
-ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+പൂർണ്ണസംഖ്യ
+ssh_digest_final(ഘടന ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	സ്ഥിരം ഘടന ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (digest == ശൂന്യ)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (dlen > UINT_MAX)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (dlen < digest->digest_len) /* No truncation allowed */
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 	digest->md_final(d, ctx->mdctx);
-	return 0;
+	തിരികെ 0;
 }
 
-void
-ssh_digest_free(struct ssh_digest_ctx *ctx)
+ശൂന്യം
+ssh_digest_free(ഘടന ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest;
+	സ്ഥിരം ഘടന ssh_digest *digest;
 
-	if (ctx != NULL) {
+	എങ്കിൽ (ctx != ശൂന്യ) {
 		digest = ssh_digest_by_alg(ctx->alg);
-		if (digest) {
+		എങ്കിൽ (digest) {
 			explicit_bzero(ctx->mdctx, digest->ctx_len);
-			free(ctx->mdctx);
-			freezero(ctx, sizeof(*ctx));
+			സ്വതന്ത്രം(ctx->mdctx);
+			freezero(ctx, വലുപ്പം(*ctx));
 		}
 	}
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+പൂർണ്ണസംഖ്യ
+ssh_digest_memory(പൂർണ്ണസംഖ്യ alg, സ്ഥിരം ശൂന്യം *m, size_t mlen, u_char *d, size_t dlen)
 {
-	struct ssh_digest_ctx *ctx = ssh_digest_start(alg);
-	int ret = 0;
+	ഘടന ssh_digest_ctx *ctx = ssh_digest_start(alg);
+	പൂർണ്ണസംഖ്യ ret = 0;
 
-	if (ctx == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (ssh_digest_update(ctx, m, mlen) != 0 ||
+	എങ്കിൽ (ctx == ശൂന്യ)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (ssh_digest_update(ctx, m, mlen) != 0 ||
 	    ssh_digest_final(ctx, d, dlen) != 0)
 		ret = SSH_ERR_INVALID_ARGUMENT;
 	ssh_digest_free(ctx);
-	return ret;
+	തിരികെ ret;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+പൂർണ്ണസംഖ്യ
+ssh_digest_buffer(പൂർണ്ണസംഖ്യ alg, സ്ഥിരം ഘടന sshbuf *b, u_char *d, size_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	തിരികെ ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* !WITH_OPENSSL */

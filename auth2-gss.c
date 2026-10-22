@@ -24,120 +24,120 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifdef GSSAPI
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <stdarg.h>
+#അന്തര്ഭാവ <stdarg.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "ssh2.h"
-#include "log.h"
-#include "dispatch.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "misc.h"
-#include "servconf.h"
-#include "packet.h"
-#include "kex.h"
-#include "ssh-gss.h"
-#include "monitor_wrap.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "auth.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "dispatch.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "servconf.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "kex.h"
+#അന്തര്ഭാവ "ssh-gss.h"
+#അന്തര്ഭാവ "monitor_wrap.h"
 
 #define SSH_GSSAPI_MAX_MECHS	2048
 
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_gssapi;
+ബാഹ്യ ServerOptions options;
+ബാഹ്യ ഘടന authmethod_cfg methodcfg_gssapi;
 
-static int input_gssapi_token(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_mic(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_errtok(int, uint32_t, struct ssh *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ നിവേശം_gssapi_token(പൂർണ്ണസംഖ്യ type, uint32_t plen, ഘടന ssh *ssh);
+സ്ഥിതം പൂർണ്ണസംഖ്യ നിവേശം_gssapi_mic(പൂർണ്ണസംഖ്യ type, uint32_t plen, ഘടന ssh *ssh);
+സ്ഥിതം പൂർണ്ണസംഖ്യ നിവേശം_gssapi_exchange_complete(പൂർണ്ണസംഖ്യ type, uint32_t plen, ഘടന ssh *ssh);
+സ്ഥിതം പൂർണ്ണസംഖ്യ നിവേശം_gssapi_errtok(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
 
 /*
  * We only support those mechanisms that we know about (ie ones that we know
  * how to check local user kuserok and the like)
  */
-static int
-userauth_gssapi(struct ssh *ssh, const char *method)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+userauth_gssapi(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	gss_OID_desc goid = {0, NULL};
-	Gssctxt *ctxt = NULL;
-	int r, present;
+	gss_OID_desc goid = {0, ശൂന്യ};
+	Gssctxt *ctxt = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r, present;
 	u_int mechs;
 	OM_uint32 ms;
 	size_t len;
-	u_char *doid = NULL;
+	u_char *doid = ശൂന്യ;
 
-	if ((r = sshpkt_get_u32(ssh, &mechs)) != 0)
+	എങ്കിൽ ((r = sshpkt_get_u32(ssh, &mechs)) != 0)
 		fatal_fr(r, "parse packet");
 
-	if (mechs == 0) {
+	എങ്കിൽ (mechs == 0) {
 		logit_f("mechanism negotiation is not supported");
-		return (0);
-	} else if (mechs > SSH_GSSAPI_MAX_MECHS) {
+		തിരികെ (0);
+	} അല്ലെങ്കിൽ എങ്കിൽ (mechs > SSH_GSSAPI_MAX_MECHS) {
 		logit_f("too many mechanisms requested %u > %u", mechs,
 		    SSH_GSSAPI_MAX_MECHS);
-		return (0);
+		തിരികെ (0);
 	}
 
-	do {
+	ചെയ്യുക {
 		mechs--;
 
-		free(doid);
+		സ്വതന്ത്രം(doid);
 
 		present = 0;
-		if ((r = sshpkt_get_string(ssh, &doid, &len)) != 0)
+		എങ്കിൽ ((r = sshpkt_get_string(ssh, &doid, &len)) != 0)
 			fatal_fr(r, "parse oid");
 
-		if (len > 2 && doid[0] == SSH_GSS_OIDTYPE &&
+		എങ്കിൽ (len > 2 && doid[0] == SSH_GSS_OIDTYPE &&
 		    doid[1] == len - 2) {
 			goid.elements = doid + 2;
 			goid.length   = len - 2;
 			ssh_gssapi_test_oid_supported(&ms, &goid, &present);
-		} else {
+		} അല്ലെങ്കിൽ {
 			logit_f("badly formed OID received");
 		}
-	} while (mechs > 0 && !present);
+	} ആകുമ്പോൾ (mechs > 0 && !present);
 
-	if (!present) {
-		free(doid);
+	എങ്കിൽ (!present) {
+		സ്വതന്ത്രം(doid);
 		authctxt->server_caused_failure = 1;
-		return (0);
+		തിരികെ (0);
 	}
 
-	if (GSS_ERROR(mm_ssh_gssapi_server_ctx(&ctxt, &goid))) {
-		if (ctxt != NULL)
+	എങ്കിൽ (GSS_ERROR(mm_ssh_gssapi_server_ctx(&ctxt, &goid))) {
+		എങ്കിൽ (ctxt != ശൂന്യ)
 			ssh_gssapi_delete_ctx(&ctxt);
-		free(doid);
+		സ്വതന്ത്രം(doid);
 		authctxt->server_caused_failure = 1;
-		return (0);
+		തിരികെ (0);
 	}
 
-	authctxt->methoddata = (void *)ctxt;
+	authctxt->methoddata = (ശൂന്യം *)ctxt;
 
 	/* Return the OID that we received */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_GSSAPI_RESPONSE)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_RESPONSE)) != 0 ||
 	    (r = sshpkt_put_string(ssh, doid, len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	free(doid);
+	സ്വതന്ത്രം(doid);
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, &input_gssapi_token);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, &input_gssapi_errtok);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_TOKEN, &നിവേശം_gssapi_token);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_ERRTOK, &നിവേശം_gssapi_errtok);
 	authctxt->postponed = 1;
 
-	return (0);
+	തിരികെ (0);
 }
 
-static int
-input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+നിവേശം_gssapi_token(പൂർണ്ണസംഖ്യ type, uint32_t plen, ഘടന ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
@@ -146,28 +146,28 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 	OM_uint32 maj_status, min_status, flags;
 	u_char *p;
 	size_t len;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (authctxt == NULL)
+	എങ്കിൽ (authctxt == ശൂന്യ)
 		fatal("No authentication or GSSAPI context");
 
 	gssctxt = authctxt->methoddata;
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
-	recv_tok.value = p;
+	recv_tok.മൂല്യം = p;
 	recv_tok.length = len;
 	maj_status = mm_ssh_gssapi_accept_ctx(gssctxt, &recv_tok,
 	    &send_tok, &flags);
 
-	free(p);
+	സ്വതന്ത്രം(p);
 
-	if (GSS_ERROR(maj_status)) {
-		if (send_tok.length != 0) {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_ERRTOK)) != 0 ||
-			    (r = sshpkt_put_string(ssh, send_tok.value,
+	എങ്കിൽ (GSS_ERROR(maj_status)) {
+		എങ്കിൽ (send_tok.length != 0) {
+			എങ്കിൽ ((r = sshpkt_start(ssh,
+			    SSH2_സന്ദേശം_USERAUTH_GSSAPI_ERRTOK)) != 0 ||
+			    (r = sshpkt_put_string(ssh, send_tok.മൂല്യം,
 			    send_tok.length)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send ERRTOK packet");
@@ -178,49 +178,49 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 		    authctxt->user,
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 		authctxt->postponed = 0;
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-		userauth_finish(ssh, 0, "gssapi-with-mic", NULL);
-	} else {
-		if (send_tok.length != 0) {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_TOKEN)) != 0 ||
-			    (r = sshpkt_put_string(ssh, send_tok.value,
+		ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_TOKEN, ശൂന്യ);
+		ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_ERRTOK, ശൂന്യ);
+		userauth_finish(ssh, 0, "gssapi-with-mic", ശൂന്യ);
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (send_tok.length != 0) {
+			എങ്കിൽ ((r = sshpkt_start(ssh,
+			    SSH2_സന്ദേശം_USERAUTH_GSSAPI_TOKEN)) != 0 ||
+			    (r = sshpkt_put_string(ssh, send_tok.മൂല്യം,
 			    send_tok.length)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send TOKEN packet");
 		}
-		if (maj_status == GSS_S_COMPLETE) {
+		എങ്കിൽ (maj_status == GSS_S_COMPLETE) {
 			ssh_dispatch_set(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
+			    SSH2_സന്ദേശം_USERAUTH_GSSAPI_TOKEN, ശൂന്യ);
 			/* note: keep ERRTOK handler as per RFC 4462 s3.4 */
-			if (flags & GSS_C_INTEG_FLAG) {
+			എങ്കിൽ (flags & GSS_C_INTEG_FLAG) {
 				ssh_dispatch_set(ssh,
-				    SSH2_MSG_USERAUTH_GSSAPI_MIC,
-				    &input_gssapi_mic);
-			} else {
+				    SSH2_സന്ദേശം_USERAUTH_GSSAPI_MIC,
+				    &നിവേശം_gssapi_mic);
+			} അല്ലെങ്കിൽ {
 				ssh_dispatch_set(ssh,
-				    SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE,
-				    &input_gssapi_exchange_complete);
+				    SSH2_സന്ദേശം_USERAUTH_GSSAPI_EXCHANGE_COMPLETE,
+				    &നിവേശം_gssapi_exchange_complete);
 			}
 		}
 	}
 
 	gss_release_buffer(&min_status, &send_tok);
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+നിവേശം_gssapi_errtok(പൂർണ്ണസംഖ്യ type, uint32_t plen, ഘടന ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (authctxt == NULL)
+	എങ്കിൽ (authctxt == ശൂന്യ)
 		fatal("No authentication or GSSAPI context");
 
 	/* Minimal error handling - just cancel auth and return FAILURE */
-	if ((r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_get_string_direct(ssh, ശൂന്യ, ശൂന്യ)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
@@ -229,12 +229,12 @@ input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
 	    authctxt->user,
 	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 	authctxt->postponed = 0;
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-	userauth_finish(ssh, 0, "gssapi-with-mic", NULL);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_TOKEN, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_ERRTOK, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_MIC, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ശൂന്യ);
+	userauth_finish(ssh, 0, "gssapi-with-mic", ശൂന്യ);
+	തിരികെ 0;
 }
 
 /*
@@ -243,14 +243,14 @@ input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
  * which only enables it once the GSSAPI exchange is complete.
  */
 
-static int
-input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+നിവേശം_gssapi_exchange_complete(പൂർണ്ണസംഖ്യ type, uint32_t plen, ഘടന ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	int r, authenticated;
-	double tstart = monotime_double();
+	പൂർണ്ണസംഖ്യ r, authenticated;
+	ഇരട്ട tstart = monotime_double();
 
-	if (authctxt == NULL)
+	എങ്കിൽ (authctxt == ശൂന്യ)
 		fatal("No authentication or GSSAPI context");
 
 	/*
@@ -258,70 +258,70 @@ input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh)
 	 * the dispatcher once the exchange is complete
 	 */
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	എങ്കിൽ ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	authenticated = mm_ssh_gssapi_userok(authctxt->user);
-	if (!authenticated)
+	എങ്കിൽ (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 
 	authctxt->postponed = 0;
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-	userauth_finish(ssh, authenticated, "gssapi-with-mic", NULL);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_TOKEN, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_ERRTOK, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_MIC, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ശൂന്യ);
+	userauth_finish(ssh, authenticated, "gssapi-with-mic", ശൂന്യ);
+	തിരികെ 0;
 }
 
-static int
-input_gssapi_mic(int type, uint32_t plen, struct ssh *ssh)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+നിവേശം_gssapi_mic(പൂർണ്ണസംഖ്യ type, uint32_t plen, ഘടന ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
-	int r, authenticated = 0;
-	struct sshbuf *b;
+	പൂർണ്ണസംഖ്യ r, authenticated = 0;
+	ഘടന sshbuf *b;
 	gss_buffer_desc mic, gssbuf;
 	u_char *p;
 	size_t len;
-	double tstart = monotime_double();
+	ഇരട്ട tstart = monotime_double();
 
-	if (authctxt == NULL)
+	എങ്കിൽ (authctxt == ശൂന്യ)
 		fatal("No authentication or GSSAPI context");
 
 	gssctxt = authctxt->methoddata;
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0)
+	എങ്കിൽ ((r = sshpkt_get_string(ssh, &p, &len)) != 0)
 		fatal_fr(r, "parse packet");
-	if ((b = sshbuf_new()) == NULL)
+	എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ)
 		fatal_f("sshbuf_new failed");
-	mic.value = p;
+	mic.മൂല്യം = p;
 	mic.length = len;
 	ssh_gssapi_buildmic(b, authctxt->user, authctxt->service,
 	    "gssapi-with-mic", ssh->kex->session_id);
 
-	if ((gssbuf.value = sshbuf_mutable_ptr(b)) == NULL)
+	എങ്കിൽ ((gssbuf.മൂല്യം = sshbuf_mutable_ptr(b)) == ശൂന്യ)
 		fatal_f("sshbuf_mutable_ptr failed");
 	gssbuf.length = sshbuf_len(b);
 
-	if (!GSS_ERROR(mm_ssh_gssapi_checkmic(gssctxt, &gssbuf, &mic)))
+	എങ്കിൽ (!GSS_ERROR(mm_ssh_gssapi_checkmic(gssctxt, &gssbuf, &mic)))
 		authenticated = mm_ssh_gssapi_userok(authctxt->user);
-	else
+	അല്ലെങ്കിൽ
 		logit("GSSAPI MIC check failed");
 
 	sshbuf_free(b);
-	free(mic.value);
+	സ്വതന്ത്രം(mic.മൂല്യം);
 
-	if (!authenticated)
+	എങ്കിൽ (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 
 	authctxt->postponed = 0;
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-	userauth_finish(ssh, authenticated, "gssapi-with-mic", NULL);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_TOKEN, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_ERRTOK, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_MIC, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ശൂന്യ);
+	userauth_finish(ssh, authenticated, "gssapi-with-mic", ശൂന്യ);
+	തിരികെ 0;
 }
 
 Authmethod method_gssapi = {

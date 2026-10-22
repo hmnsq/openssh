@@ -10,14 +10,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stddef.h>
-#include <stdint.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdint.h>
 
-extern "C" void fuzz_mux_one(const uint8_t *data, size_t size);
+ബാഹ്യ "C" ശൂന്യം fuzz_mux_one(സ്ഥിരം uint8_t *data, size_t size);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ബാഹ്യ "C" പൂർണ്ണസംഖ്യ
+LLVMFuzzer_Test_One_നിവേശം(സ്ഥിരം uint8_t *data, size_t size)
 {
 	fuzz_mux_one(data, size);
-	return 0;
+	തിരികെ 0;
 }

@@ -22,133 +22,133 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 /* compatibility with old or broken OpenSSL versions */
-#include "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
 
 #ifdef USE_BUILTIN_RIJNDAEL
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <openssl/evp.h>
+#അന്തര്ഭാവ <openssl/evp.h>
 
-#include <stdarg.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "rijndael.h"
-#include "xmalloc.h"
-#include "log.h"
+#അന്തര്ഭാവ "rijndael.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
 
 #define RIJNDAEL_BLOCKSIZE 16
-struct ssh_rijndael_ctx
+ഘടന ssh_rijndael_ctx
 {
 	rijndael_ctx	r_ctx;
 	u_char		r_iv[RIJNDAEL_BLOCKSIZE];
 };
 
-static int
-ssh_rijndael_init(EVP_CIPHER_CTX *ctx, const u_char *key, const u_char *iv,
-    int enc)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_rijndael_init(EVP_CIPHER_CTX *ctx, സ്ഥിരം u_char *താക്കോൽ, സ്ഥിരം u_char *iv,
+    പൂർണ്ണസംഖ്യ enc)
 {
-	struct ssh_rijndael_ctx *c;
+	ഘടന ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
-		c = xmalloc(sizeof(*c));
+	എങ്കിൽ ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == ശൂന്യ) {
+		c = xmalloc(വലുപ്പം(*c));
 		EVP_CIPHER_CTX_set_app_data(ctx, c);
 	}
-	if (key != NULL) {
-		if (enc == -1)
+	എങ്കിൽ (താക്കോൽ != ശൂന്യ) {
+		എങ്കിൽ (enc == -1)
 			enc = ctx->encrypt;
-		rijndael_set_key(&c->r_ctx, (u_char *)key,
-		    8*EVP_CIPHER_CTX_key_length(ctx), enc);
+		rijndael_set_താക്കോൽ(&c->r_ctx, (u_char *)താക്കോൽ,
+		    8*EVP_CIPHER_CTX_താക്കോൽ_length(ctx), enc);
 	}
-	if (iv != NULL)
+	എങ്കിൽ (iv != ശൂന്യ)
 		memcpy(c->r_iv, iv, RIJNDAEL_BLOCKSIZE);
-	return (1);
+	തിരികെ (1);
 }
 
-static int
-ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, const u_char *src,
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, സ്ഥിരം u_char *src,
     size_t len)
 {
-	struct ssh_rijndael_ctx *c;
+	ഘടന ssh_rijndael_ctx *c;
 	u_char buf[RIJNDAEL_BLOCKSIZE];
 	u_char *cprev, *cnow, *plain, *ivp;
-	int i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
+	പൂർണ്ണസംഖ്യ i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
 
-	if (len == 0)
-		return (1);
-	if (len % RIJNDAEL_BLOCKSIZE)
+	എങ്കിൽ (len == 0)
+		തിരികെ (1);
+	എങ്കിൽ (len % RIJNDAEL_BLOCKSIZE)
 		fatal("ssh_rijndael_cbc: bad len %d", len);
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
+	എങ്കിൽ ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == ശൂന്യ) {
 		error("ssh_rijndael_cbc: no context");
-		return (0);
+		തിരികെ (0);
 	}
-	if (ctx->encrypt) {
+	എങ്കിൽ (ctx->encrypt) {
 		cnow  = dest;
 		plain = (u_char *)src;
 		cprev = c->r_iv;
-		for (i = 0; i < blocks; i++, plain+=RIJNDAEL_BLOCKSIZE,
+		വേണ്ടി (i = 0; i < blocks; i++, plain+=RIJNDAEL_BLOCKSIZE,
 		    cnow+=RIJNDAEL_BLOCKSIZE) {
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			വേണ്ടി (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				buf[j] = plain[j] ^ cprev[j];
 			rijndael_encrypt(&c->r_ctx, buf, cnow);
 			cprev = cnow;
 		}
 		memcpy(c->r_iv, cprev, RIJNDAEL_BLOCKSIZE);
-	} else {
+	} അല്ലെങ്കിൽ {
 		cnow  = (u_char *) (src+len-RIJNDAEL_BLOCKSIZE);
 		plain = dest+len-RIJNDAEL_BLOCKSIZE;
 
 		memcpy(buf, cnow, RIJNDAEL_BLOCKSIZE);
-		for (i = blocks; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
+		വേണ്ടി (i = blocks; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
 		    plain-=RIJNDAEL_BLOCKSIZE) {
 			rijndael_decrypt(&c->r_ctx, cnow, plain);
 			ivp = (i == 1) ? c->r_iv : cnow-RIJNDAEL_BLOCKSIZE;
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			വേണ്ടി (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				plain[j] ^= ivp[j];
 		}
 		memcpy(c->r_iv, buf, RIJNDAEL_BLOCKSIZE);
 	}
-	return (1);
+	തിരികെ (1);
 }
 
-static int
+സ്ഥിതം പൂർണ്ണസംഖ്യ
 ssh_rijndael_cleanup(EVP_CIPHER_CTX *ctx)
 {
-	struct ssh_rijndael_ctx *c;
+	ഘടന ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != NULL) {
-		memset(c, 0, sizeof(*c));
-		free(c);
-		EVP_CIPHER_CTX_set_app_data(ctx, NULL);
+	എങ്കിൽ ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != ശൂന്യ) {
+		memset(c, 0, വലുപ്പം(*c));
+		സ്വതന്ത്രം(c);
+		EVP_CIPHER_CTX_set_app_data(ctx, ശൂന്യ);
 	}
-	return (1);
+	തിരികെ (1);
 }
 
-void
-ssh_rijndael_iv(EVP_CIPHER_CTX *evp, int doset, u_char * iv, u_int len)
+ശൂന്യം
+ssh_rijndael_iv(EVP_CIPHER_CTX *evp, പൂർണ്ണസംഖ്യ doset, u_char * iv, u_int len)
 {
-	struct ssh_rijndael_ctx *c;
+	ഘടന ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(evp)) == NULL)
+	എങ്കിൽ ((c = EVP_CIPHER_CTX_get_app_data(evp)) == ശൂന്യ)
 		fatal("ssh_rijndael_iv: no context");
-	if (doset)
+	എങ്കിൽ (doset)
 		memcpy(c->r_iv, iv, len);
-	else
+	അല്ലെങ്കിൽ
 		memcpy(iv, c->r_iv, len);
 }
 
-const EVP_CIPHER *
-evp_rijndael(void)
+സ്ഥിരം EVP_CIPHER *
+evp_rijndael(ശൂന്യം)
 {
-	static EVP_CIPHER rijndal_cbc;
+	സ്ഥിതം EVP_CIPHER rijndal_cbc;
 
-	memset(&rijndal_cbc, 0, sizeof(EVP_CIPHER));
+	memset(&rijndal_cbc, 0, വലുപ്പം(EVP_CIPHER));
 	rijndal_cbc.nid = NID_undef;
 	rijndal_cbc.block_size = RIJNDAEL_BLOCKSIZE;
 	rijndal_cbc.iv_len = RIJNDAEL_BLOCKSIZE;
-	rijndal_cbc.key_len = 16;
+	rijndal_cbc.താക്കോൽ_len = 16;
 	rijndal_cbc.init = ssh_rijndael_init;
 	rijndal_cbc.cleanup = ssh_rijndael_cleanup;
 	rijndal_cbc.do_cipher = ssh_rijndael_cbc;
@@ -156,6 +156,6 @@ evp_rijndael(void)
 	rijndal_cbc.flags = EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH |
 	    EVP_CIPH_ALWAYS_CALL_INIT | EVP_CIPH_CUSTOM_IV;
 #endif
-	return (&rijndal_cbc);
+	തിരികെ (&rijndal_cbc);
 }
 #endif /* USE_BUILTIN_RIJNDAEL */

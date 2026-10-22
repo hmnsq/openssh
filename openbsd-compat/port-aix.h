@@ -30,29 +30,29 @@
 # include <sys/socket.h>
 #endif
 
-struct ssh;
-struct sshbuf;
+ഘടന ssh;
+ഘടന sshbuf;
 
 /* These should be in the system headers but are not. */
-int usrinfo(int, char *, int);
-#if defined(HAVE_DECL_SETAUTHDB) && (HAVE_DECL_SETAUTHDB == 0)
-int setauthdb(const char *, char *);
+പൂർണ്ണസംഖ്യ usrinfo(പൂർണ്ണസംഖ്യ, അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+#എങ്കിൽ defined(HAVE_DECL_SETAUTHDB) && (HAVE_DECL_SETAUTHDB == 0)
+പൂർണ്ണസംഖ്യ setauthdb(സ്ഥിരം അക്ഷരം *, അക്ഷരം *);
 #endif
 /* these may or may not be in the headers depending on the version */
-#if defined(HAVE_DECL_AUTHENTICATE) && (HAVE_DECL_AUTHENTICATE == 0)
-int authenticate(char *, char *, int *, char **);
+#എങ്കിൽ defined(HAVE_DECL_AUTHENTICATE) && (HAVE_DECL_AUTHENTICATE == 0)
+പൂർണ്ണസംഖ്യ authenticate(അക്ഷരം *, അക്ഷരം *, പൂർണ്ണസംഖ്യ *, അക്ഷരം **);
 #endif
-#if defined(HAVE_DECL_LOGINFAILED) && (HAVE_DECL_LOGINFAILED == 0)
-int loginfailed(char *, char *, char *);
+#എങ്കിൽ defined(HAVE_DECL_LOGINFAILED) && (HAVE_DECL_LOGINFAILED == 0)
+പൂർണ്ണസംഖ്യ loginfailed(അക്ഷരം *, അക്ഷരം *, അക്ഷരം *);
 #endif
-#if defined(HAVE_DECL_LOGINRESTRICTIONS) && (HAVE_DECL_LOGINRESTRICTIONS == 0)
-int loginrestrictions(char *, int, char *, char **);
+#എങ്കിൽ defined(HAVE_DECL_LOGINRESTRICTIONS) && (HAVE_DECL_LOGINRESTRICTIONS == 0)
+പൂർണ്ണസംഖ്യ loginrestrictions(അക്ഷരം *, പൂർണ്ണസംഖ്യ, അക്ഷരം *, അക്ഷരം **);
 #endif
-#if defined(HAVE_DECL_LOGINSUCCESS) && (HAVE_DECL_LOGINSUCCESS == 0)
-int loginsuccess(char *, char *, char *, char **);
+#എങ്കിൽ defined(HAVE_DECL_LOGINSUCCESS) && (HAVE_DECL_LOGINSUCCESS == 0)
+പൂർണ്ണസംഖ്യ loginsuccess(അക്ഷരം *, അക്ഷരം *, അക്ഷരം *, അക്ഷരം **);
 #endif
-#if defined(HAVE_DECL_PASSWDEXPIRED) && (HAVE_DECL_PASSWDEXPIRED == 0)
-int passwdexpired(char *, char **);
+#എങ്കിൽ defined(HAVE_DECL_PASSWDEXPIRED) && (HAVE_DECL_PASSWDEXPIRED == 0)
+പൂർണ്ണസംഖ്യ passwdexpired(അക്ഷരം *, അക്ഷരം **);
 #endif
 
 /* Some versions define r_type in the above headers, which causes a conflict */
@@ -61,7 +61,7 @@ int passwdexpired(char *, char **);
 #endif
 
 /* AIX 4.2.x doesn't have nanosleep but does have nsleep which is equivalent */
-#if !defined(HAVE_NANOSLEEP) && defined(HAVE_NSLEEP)
+#എങ്കിൽ !defined(HAVE_NANOSLEEP) && defined(HAVE_NSLEEP)
 # define nanosleep(a,b) nsleep(a,b)
 #endif
 
@@ -83,34 +83,34 @@ int passwdexpired(char *, char **);
 # define REGISTRY_SIZE	16
 #endif
 
-void aix_usrinfo(struct passwd *);
+ശൂന്യം aix_usrinfo(ഘടന passwd *);
 
 #ifdef WITH_AIXAUTHENTICATE
 # define CUSTOM_SYS_AUTH_PASSWD 1
 # define CUSTOM_SYS_AUTH_ALLOWED_USER 1
-int sys_auth_allowed_user(struct passwd *, struct sshbuf *);
+പൂർണ്ണസംഖ്യ sys_auth_allowed_user(ഘടന passwd *, ഘടന sshbuf *);
 # define CUSTOM_SYS_AUTH_RECORD_LOGIN 1
-int sys_auth_record_login(const char *, const char *, const char *,
-    struct sshbuf *);
-# define CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-char *sys_auth_get_lastlogin_msg(const char *, uid_t);
+പൂർണ്ണസംഖ്യ sys_auth_record_login(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *,
+    ഘടന sshbuf *);
+# define CUSTOM_SYS_AUTH_GET_LASTLOGIN_സന്ദേശം
+അക്ഷരം *sys_auth_get_lastlogin_സന്ദേശം(സ്ഥിരം അക്ഷരം *, uid_t);
 # define CUSTOM_FAILED_LOGIN 1
-# if defined(S_AUTHDOMAIN)  && defined (S_AUTHNAME)
+# എങ്കിൽ defined(S_AUTHDOMAIN)  && defined (S_AUTHNAME)
 # define USE_AIX_KRB_NAME
-char *aix_krb5_get_principal_name(const char *);
+അക്ഷരം *aix_krb5_get_principal_name(സ്ഥിരം അക്ഷരം *);
 # endif
 #endif
 
-void aix_setauthdb(const char *);
-void aix_restoreauthdb(void);
-void aix_remove_embedded_newlines(char *);
+ശൂന്യം aix_setauthdb(സ്ഥിരം അക്ഷരം *);
+ശൂന്യം aix_restoreauthdb(ശൂന്യം);
+ശൂന്യം aix_remove_embedded_newlines(അക്ഷരം *);
 
-#if defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_GETADDRINFO)
+#എങ്കിൽ defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_GETADDRINFO)
 # ifdef getnameinfo
 #  undef getnameinfo
 # endif
-int sshaix_getnameinfo(const struct sockaddr *, size_t, char *, size_t,
-    char *, size_t, int);
+പൂർണ്ണസംഖ്യ sshaix_getnameinfo(സ്ഥിരം ഘടന sockaddr *, size_t, അക്ഷരം *, size_t,
+    അക്ഷരം *, size_t, പൂർണ്ണസംഖ്യ);
 # define getnameinfo(a,b,c,d,e,f,g) (sshaix_getnameinfo(a,b,c,d,e,f,g))
 #endif
 
@@ -118,10 +118,10 @@ int sshaix_getnameinfo(const struct sockaddr *, size_t, char *, size_t,
  * We use getgrset in preference to multiple getgrent calls for efficiency
  * plus it supports NIS and LDAP groups.
  */
-#if !defined(HAVE_GETGROUPLIST) && defined(HAVE_GETGRSET)
+#എങ്കിൽ !defined(HAVE_GETGROUPLIST) && defined(HAVE_GETGRSET)
 # define HAVE_GETGROUPLIST
 # define USE_GETGRSET
-int getgrouplist(const char *, gid_t, gid_t *, int *);
+പൂർണ്ണസംഖ്യ getgrouplist(സ്ഥിരം അക്ഷരം *, gid_t, gid_t *, പൂർണ്ണസംഖ്യ *);
 #endif
 
 #endif /* _AIX */

@@ -7,57 +7,57 @@
  * OpenBSD project by leaving this copyright notice intact.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
  
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/queue.h>
+#അന്തര്ഭാവ <sys/time.h>
+#അന്തര്ഭാവ <sys/resource.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#അന്തര്ഭാവ <netinet/in.h>
+#അന്തര്ഭാവ <arpa/inet.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
+#അന്തര്ഭാവ <openssl/bn.h>
 #endif
 
-#include <errno.h>
-#include <limits.h>
-#include <netdb.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <poll.h>
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <netdb.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <poll.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "cipher.h"
-#include "digest.h"
-#include "kex.h"
-#include "compat.h"
-#include "myproposal.h"
-#include "packet.h"
-#include "dispatch.h"
-#include "log.h"
-#include "atomicio.h"
-#include "misc.h"
-#include "hostfile.h"
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "dns.h"
-#include "addr.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "cipher.h"
+#അന്തര്ഭാവ "digest.h"
+#അന്തര്ഭാവ "kex.h"
+#അന്തര്ഭാവ "compat.h"
+#അന്തര്ഭാവ "myproposal.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "dispatch.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "atomicio.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "ssh_api.h"
+#അന്തര്ഭാവ "dns.h"
+#അന്തര്ഭാവ "addr.h"
 
 /* Flag indicating whether IPv4 or IPv6.  This can be set on the command line.
    Default value is AF_UNSPEC means both IPv4 and IPv6. */
-int IPv4or6 = AF_UNSPEC;
+പൂർണ്ണസംഖ്യ IPv4or6 = AF_UNSPEC;
 
-int ssh_port = SSH_DEFAULT_PORT;
+പൂർണ്ണസംഖ്യ ssh_port = SSH_DEFAULT_PORT;
 
 #define KT_RSA		(1)
 #define KT_ECDSA	(1<<1)
@@ -69,101 +69,101 @@ int ssh_port = SSH_DEFAULT_PORT;
 #define KT_MIN		KT_RSA
 #define KT_MAX		KT_MLDSA44_ED25519
 
-int get_cert = 0;
-int get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
+പൂർണ്ണസംഖ്യ get_cert = 0;
+പൂർണ്ണസംഖ്യ get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
 
-int hash_hosts = 0;		/* Hash hostname on output */
+പൂർണ്ണസംഖ്യ hash_hosts = 0;		/* Hash hostname on output */
 
-int print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
+പൂർണ്ണസംഖ്യ print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
 
-int found_one = 0;		/* Successfully found a key */
+പൂർണ്ണസംഖ്യ found_one = 0;		/* Successfully found a key */
 
-int hashalg = -1;		/* Hash for SSHFP records or -1 for all */
+പൂർണ്ണസംഖ്യ hashalg = -1;		/* Hash for SSHFP records or -1 for all */
 
-int quiet = 0;			/* Don't print key comment lines */
+പൂർണ്ണസംഖ്യ quiet = 0;			/* Don't print key comment lines */
 
 #define MAXMAXFD 256
 
 /* The number of seconds after which to give up on a TCP connection */
-int timeout = 5;
+പൂർണ്ണസംഖ്യ timeout = 5;
 
-int maxfd;
+പൂർണ്ണസംഖ്യ maxfd;
 #define MAXCON (maxfd - 10)
 
-extern char *__progname;
-struct pollfd *read_wait;
-int ncon;
+ബാഹ്യ അക്ഷരം *__progname;
+ഘടന pollfd *read_wait;
+പൂർണ്ണസംഖ്യ ncon;
 
 /*
  * Keep a connection structure for each file descriptor.  The state
  * associated with file descriptor n is held in fdcon[n].
  */
-typedef struct Connection {
+തരനിർവചനം ഘടന Connection {
 	u_char c_status;	/* State of connection on this file desc. */
 #define CS_UNUSED 0		/* File descriptor unused */
 #define CS_CON 1		/* Waiting to connect/read greeting */
-	int c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
-	int c_keytype;		/* Only one of KT_* */
+	പൂർണ്ണസംഖ്യ c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
+	പൂർണ്ണസംഖ്യ c_keytype;		/* Only one of KT_* */
 	sig_atomic_t c_done;	/* SSH2 done */
-	char *c_namebase;	/* Address to free for c_name and c_namelist */
-	char *c_name;		/* Hostname of connection for errors */
-	char *c_namelist;	/* Pointer to other possible addresses */
-	char *c_output_name;	/* Hostname of connection for output */
-	struct ssh *c_ssh;	/* SSH-connection */
-	char c_banner[256];	/* Partial server greeting */
+	അക്ഷരം *c_namebase;	/* Address to free for c_name and c_namelist */
+	അക്ഷരം *c_name;		/* Hostname of connection for errors */
+	അക്ഷരം *c_namelist;	/* Pointer to other possible addresses */
+	അക്ഷരം *c_output_name;	/* Hostname of connection for output */
+	ഘടന ssh *c_ssh;	/* SSH-connection */
+	അക്ഷരം c_banner[256];	/* Partial server greeting */
 	size_t c_banner_len;	/* Length of partial server greeting */
-	int c_banner_sent;	/* Client greeting has been sent */
-	struct timespec c_ts;	/* Time at which connection gets aborted */
+	പൂർണ്ണസംഖ്യ c_banner_sent;	/* Client greeting has been sent */
+	ഘടന timespec c_ts;	/* Time at which connection gets aborted */
 	TAILQ_ENTRY(Connection) c_link;	/* List of connections in timeout order. */
 } con;
 
 TAILQ_HEAD(conlist, Connection) tq;	/* Timeout Queue */
 con *fdcon;
 
-static void keyprint(con *c, struct sshkey *key);
+സ്ഥിതം ശൂന്യം keyprint(con *c, ഘടന sshkey *താക്കോൽ);
 
-static int
-fdlim_get(int hard)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+fdlim_get(പൂർണ്ണസംഖ്യ hard)
 {
-#if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
-	struct rlimit rlfd;
+#എങ്കിൽ defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+	ഘടന rlimit rlfd;
 	rlim_t lim;
 
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return -1;
+	എങ്കിൽ (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		തിരികെ -1;
 	lim = hard ? rlfd.rlim_max : rlfd.rlim_cur;
-	if (lim <= 0)
-		return -1;
-	if (lim == RLIM_INFINITY)
+	എങ്കിൽ (lim <= 0)
+		തിരികെ -1;
+	എങ്കിൽ (lim == RLIM_INFINITY)
 		lim = SSH_SYSFDMAX;
-	if (lim >= INT_MAX)
+	എങ്കിൽ (lim >= INT_MAX)
 		lim = INT_MAX;
-	return lim;
-#else
-	return (SSH_SYSFDMAX <= 0) ? -1 :
+	തിരികെ lim;
+#അല്ലെങ്കിൽ
+	തിരികെ (SSH_SYSFDMAX <= 0) ? -1 :
 	    ((SSH_SYSFDMAX >= INT_MAX) ? INT_MAX : SSH_SYSFDMAX);
 #endif
 }
 
-static int
-fdlim_set(int lim)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+fdlim_set(പൂർണ്ണസംഖ്യ lim)
 {
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
-	struct rlimit rlfd;
+#എങ്കിൽ defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+	ഘടന rlimit rlfd;
 #endif
 
-	if (lim <= 0)
-		return (-1);
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
+	എങ്കിൽ (lim <= 0)
+		തിരികെ (-1);
+#എങ്കിൽ defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+	എങ്കിൽ (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		തിരികെ (-1);
 	rlfd.rlim_cur = lim;
-	if (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
-#elif defined (HAVE_SETDTABLESIZE)
+	എങ്കിൽ (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		തിരികെ (-1);
+#അല്ലെങ്കിലെങ്കിൽ defined (HAVE_SETDTABLESIZE)
 	setdtablesize(lim);
 #endif
-	return (0);
+	തിരികെ (0);
 }
 
 /*
@@ -171,117 +171,117 @@ fdlim_set(int lim)
  * separators.  This is the same as the 4.4BSD strsep, but different from the
  * one in the GNU libc.
  */
-static char *
-xstrsep(char **str, const char *delim)
+സ്ഥിതം അക്ഷരം *
+xstrsep(അക്ഷരം **str, സ്ഥിരം അക്ഷരം *delim)
 {
-	char *s, *e;
+	അക്ഷരം *s, *e;
 
-	if (!**str)
-		return (NULL);
+	എങ്കിൽ (!**str)
+		തിരികെ (ശൂന്യ);
 
 	s = *str;
 	e = s + strcspn(s, delim);
 
-	if (*e != '\0')
+	എങ്കിൽ (*e != '\0')
 		*e++ = '\0';
 	*str = e;
 
-	return (s);
+	തിരികെ (s);
 }
 
 /*
  * Get the next non-null token (like GNU strsep).  Strsep() will return a
  * null token for two adjacent separators, so we may have to loop.
  */
-static char *
-strnnsep(char **stringp, char *delim)
+സ്ഥിതം അക്ഷരം *
+strnnsep(അക്ഷരം **stringp, അക്ഷരം *delim)
 {
-	char *tok;
+	അക്ഷരം *tok;
 
-	do {
+	ചെയ്യുക {
 		tok = xstrsep(stringp, delim);
-	} while (tok && *tok == '\0');
-	return (tok);
+	} ആകുമ്പോൾ (tok && *tok == '\0');
+	തിരികെ (tok);
 }
 
 
-static int
-key_print_wrapper(struct sshkey *hostkey, struct ssh *ssh)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+താക്കോൽ_print_wrapper(ഘടന sshkey *hostkey, ഘടന ssh *ssh)
 {
 	con *c;
 
-	if ((c = ssh_get_app_data(ssh)) != NULL)
+	എങ്കിൽ ((c = ssh_get_app_data(ssh)) != ശൂന്യ)
 		keyprint(c, hostkey);
 	/* always abort key exchange */
-	return -1;
+	തിരികെ -1;
 }
 
-static int
-ssh2_capable(int remote_major, int remote_minor)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+ssh2_capable(പൂർണ്ണസംഖ്യ remote_major, പൂർണ്ണസംഖ്യ remote_minor)
 {
-	switch (remote_major) {
-	case 1:
-		if (remote_minor == 99)
-			return 1;
-		break;
-	case 2:
-		return 1;
-	default:
-		break;
+	തിരഞ്ഞെടുപ്പ് (remote_major) {
+	അവസ്ഥ 1:
+		എങ്കിൽ (remote_minor == 99)
+			തിരികെ 1;
+		നിർത്തുക;
+	അവസ്ഥ 2:
+		തിരികെ 1;
+	സ്ഥിരസ്ഥിതി:
+		നിർത്തുക;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static void
+സ്ഥിതം ശൂന്യം
 keygrab_ssh2(con *c)
 {
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	int r;
+	അക്ഷരം *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	പൂർണ്ണസംഖ്യ r;
 
-	switch (c->c_keytype) {
-	case KT_RSA:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+	തിരഞ്ഞെടുപ്പ് (c->c_keytype) {
+	അവസ്ഥ KT_RSA:
+		myproposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS] = get_cert ?
 		    "rsa-sha2-512-cert-v01@openssh.com,"
 		    "rsa-sha2-256-cert-v01@openssh.com,"
 		    "ssh-rsa-cert-v01@openssh.com" :
 		    "rsa-sha2-512,"
 		    "rsa-sha2-256,"
 		    "ssh-rsa";
-		break;
-	case KT_ED25519:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		നിർത്തുക;
+	അവസ്ഥ KT_ED25519:
+		myproposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS] = get_cert ?
 		    "ssh-ed25519-cert-v01@openssh.com" : "ssh-ed25519";
-		break;
-	case KT_ECDSA:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		നിർത്തുക;
+	അവസ്ഥ KT_ECDSA:
+		myproposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS] = get_cert ?
 		    "ecdsa-sha2-nistp256-cert-v01@openssh.com,"
 		    "ecdsa-sha2-nistp384-cert-v01@openssh.com,"
 		    "ecdsa-sha2-nistp521-cert-v01@openssh.com" :
 		    "ecdsa-sha2-nistp256,"
 		    "ecdsa-sha2-nistp384,"
 		    "ecdsa-sha2-nistp521";
-		break;
-	case KT_MLDSA44_ED25519:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		നിർത്തുക;
+	അവസ്ഥ KT_MLDSA44_ED25519:
+		myproposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS] = get_cert ?
 		    "ssh-mldsa44-ed25519-cert" :
 		    "ssh-mldsa44-ed25519";
-		break;
-	case KT_ECDSA_SK:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		നിർത്തുക;
+	അവസ്ഥ KT_ECDSA_SK:
+		myproposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS] = get_cert ?
 		    "sk-ecdsa-sha2-nistp256-cert-v01@openssh.com" :
 		    "sk-ecdsa-sha2-nistp256@openssh.com";
-		break;
-	case KT_ED25519_SK:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		നിർത്തുക;
+	അവസ്ഥ KT_ED25519_SK:
+		myproposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS] = get_cert ?
 		    "sk-ssh-ed25519-cert-v01@openssh.com" :
 		    "sk-ssh-ed25519@openssh.com";
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		fatal("unknown key type %d", c->c_keytype);
-		break;
+		നിർത്തുക;
 	}
-	if ((r = kex_setup(c->c_ssh, myproposal)) != 0) {
-		free(c->c_ssh);
+	എങ്കിൽ ((r = kex_setup(c->c_ssh, myproposal)) != 0) {
+		സ്വതന്ത്രം(c->c_ssh);
 		fprintf(stderr, "kex_setup: %s\n", ssh_err(r));
 		exit(1);
 	}
@@ -299,7 +299,7 @@ keygrab_ssh2(con *c)
 	c->c_ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-	ssh_set_verify_host_key_callback(c->c_ssh, key_print_wrapper);
+	ssh_set_verify_host_താക്കോൽ_callback(c->c_ssh, താക്കോൽ_print_wrapper);
 	/*
 	 * do the key-exchange until an error occurs or until
 	 * the key_print_wrapper() callback sets c_done.
@@ -307,105 +307,105 @@ keygrab_ssh2(con *c)
 	ssh_dispatch_run(c->c_ssh, DISPATCH_BLOCK, &c->c_done);
 }
 
-static void
-keyprint_one(const char *host, struct sshkey *key)
+സ്ഥിതം ശൂന്യം
+keyprint_one(സ്ഥിരം അക്ഷരം *host, ഘടന sshkey *താക്കോൽ)
 {
-	char *hostport = NULL, *hashed = NULL;
-	const char *known_host;
-	int r = 0;
+	അക്ഷരം *hostport = ശൂന്യ, *hashed = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *known_host;
+	പൂർണ്ണസംഖ്യ r = 0;
 
 	found_one = 1;
 
-	if (print_sshfp) {
-		export_dns_rr(host, key, stdout, 0, hashalg);
-		return;
+	എങ്കിൽ (print_sshfp) {
+		export_dns_rr(host, താക്കോൽ, stdout, 0, hashalg);
+		തിരികെ;
 	}
 
 	hostport = put_host_port(host, ssh_port);
 	lowercase(hostport);
-	if (hash_hosts && (hashed = host_hash(hostport, NULL, 0)) == NULL)
+	എങ്കിൽ (hash_hosts && (hashed = host_hash(hostport, ശൂന്യ, 0)) == ശൂന്യ)
 		fatal("host_hash failed");
 	known_host = hash_hosts ? hashed : hostport;
-	if (!get_cert)
+	എങ്കിൽ (!get_cert)
 		r = fprintf(stdout, "%s ", known_host);
-	if (r >= 0 && sshkey_write(key, stdout) == 0)
-		(void)fputs("\n", stdout);
-	free(hashed);
-	free(hostport);
+	എങ്കിൽ (r >= 0 && sshkey_write(താക്കോൽ, stdout) == 0)
+		(ശൂന്യം)fputs("\n", stdout);
+	സ്വതന്ത്രം(hashed);
+	സ്വതന്ത്രം(hostport);
 }
 
-static void
-keyprint(con *c, struct sshkey *key)
+സ്ഥിതം ശൂന്യം
+keyprint(con *c, ഘടന sshkey *താക്കോൽ)
 {
-	char *hosts = c->c_output_name ? c->c_output_name : c->c_name;
-	char *host, *ohosts;
+	അക്ഷരം *hosts = c->c_output_name ? c->c_output_name : c->c_name;
+	അക്ഷരം *host, *ohosts;
 
-	if (key == NULL)
-		return;
-	if (get_cert || (!hash_hosts && ssh_port == SSH_DEFAULT_PORT)) {
-		keyprint_one(hosts, key);
-		return;
+	എങ്കിൽ (താക്കോൽ == ശൂന്യ)
+		തിരികെ;
+	എങ്കിൽ (get_cert || (!hash_hosts && ssh_port == SSH_DEFAULT_PORT)) {
+		keyprint_one(hosts, താക്കോൽ);
+		തിരികെ;
 	}
 	ohosts = hosts = xstrdup(hosts);
-	while ((host = strsep(&hosts, ",")) != NULL)
-		keyprint_one(host, key);
-	free(ohosts);
+	ആകുമ്പോൾ ((host = strsep(&hosts, ",")) != ശൂന്യ)
+		keyprint_one(host, താക്കോൽ);
+	സ്വതന്ത്രം(ohosts);
 }
 
-static int
-tcpconnect(char *host)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+tcpconnect(അക്ഷരം *host)
 {
-	struct addrinfo hints, *ai, *aitop;
-	char strport[NI_MAXSERV];
-	int gaierr, s = -1;
+	ഘടന addrinfo hints, *ai, *aitop;
+	അക്ഷരം strport[NI_MAXSERV];
+	പൂർണ്ണസംഖ്യ gaierr, s = -1;
 
-	snprintf(strport, sizeof strport, "%d", ssh_port);
-	memset(&hints, 0, sizeof(hints));
+	snprintf(strport, വലുപ്പം strport, "%d", ssh_port);
+	memset(&hints, 0, വലുപ്പം(hints));
 	hints.ai_family = IPv4or6;
 	hints.ai_socktype = SOCK_STREAM;
-	if ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
+	എങ്കിൽ ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
 		error("getaddrinfo %s: %s", host, ssh_gai_strerror(gaierr));
-		return -1;
+		തിരികെ -1;
 	}
-	for (ai = aitop; ai; ai = ai->ai_next) {
+	വേണ്ടി (ai = aitop; ai; ai = ai->ai_next) {
 		s = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-		if (s == -1) {
+		എങ്കിൽ (s == -1) {
 			error("socket: %s", strerror(errno));
-			continue;
+			തുടരുക;
 		}
-		if (set_nonblock(s) == -1)
+		എങ്കിൽ (set_nonblock(s) == -1)
 			fatal_f("set_nonblock(%d)", s);
-		if (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
+		എങ്കിൽ (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
 		    errno != EINPROGRESS)
 			error("connect (`%s'): %s", host, strerror(errno));
-		else
-			break;
+		അല്ലെങ്കിൽ
+			നിർത്തുക;
 		close(s);
 		s = -1;
 	}
 	freeaddrinfo(aitop);
-	return s;
+	തിരികെ s;
 }
 
-static int
-conalloc(const char *iname, const char *oname, int keytype)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+conalloc(സ്ഥിരം അക്ഷരം *iname, സ്ഥിരം അക്ഷരം *oname, പൂർണ്ണസംഖ്യ keytype)
 {
-	char *namebase, *name, *namelist;
-	int s;
+	അക്ഷരം *namebase, *name, *namelist;
+	പൂർണ്ണസംഖ്യ s;
 
 	namebase = namelist = xstrdup(iname);
 
-	do {
+	ചെയ്യുക {
 		name = xstrsep(&namelist, ",");
-		if (!name) {
-			free(namebase);
-			return (-1);
+		എങ്കിൽ (!name) {
+			സ്വതന്ത്രം(namebase);
+			തിരികെ (-1);
 		}
-	} while ((s = tcpconnect(name)) < 0);
+	} ആകുമ്പോൾ ((s = tcpconnect(name)) < 0);
 
-	if (s >= maxfd)
+	എങ്കിൽ (s >= maxfd)
 		fatal("conalloc: fdno %d too high", s);
-	if (fdcon[s].c_status)
+	എങ്കിൽ (fdcon[s].c_status)
 		fatal("conalloc: attempt to reuse fdno %d", s);
 
 	debug3_f("oname %s kt %d", oname, keytype);
@@ -424,23 +424,23 @@ conalloc(const char *iname, const char *oname, int keytype)
 	read_wait[s].fd = s;
 	read_wait[s].events = POLLIN;
 	ncon++;
-	return (s);
+	തിരികെ (s);
 }
 
-static void
-confree(int s)
+സ്ഥിതം ശൂന്യം
+confree(പൂർണ്ണസംഖ്യ s)
 {
-	if (s >= maxfd || fdcon[s].c_status == CS_UNUSED)
+	എങ്കിൽ (s >= maxfd || fdcon[s].c_status == CS_UNUSED)
 		fatal("confree: attempt to free bad fdno %d", s);
-	free(fdcon[s].c_namebase);
-	free(fdcon[s].c_output_name);
+	സ്വതന്ത്രം(fdcon[s].c_namebase);
+	സ്വതന്ത്രം(fdcon[s].c_output_name);
 	fdcon[s].c_status = CS_UNUSED;
 	fdcon[s].c_keytype = 0;
-	if (fdcon[s].c_ssh) {
+	എങ്കിൽ (fdcon[s].c_ssh) {
 		ssh_packet_close(fdcon[s].c_ssh);
-		free(fdcon[s].c_ssh);
-		fdcon[s].c_ssh = NULL;
-	} else
+		സ്വതന്ത്രം(fdcon[s].c_ssh);
+		fdcon[s].c_ssh = ശൂന്യ;
+	} അല്ലെങ്കിൽ
 		close(s);
 	TAILQ_REMOVE(&tq, &fdcon[s], c_link);
 	read_wait[s].fd = -1;
@@ -448,39 +448,39 @@ confree(int s)
 	ncon--;
 }
 
-static int
-conrecycle(int s)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+conrecycle(പൂർണ്ണസംഖ്യ s)
 {
 	con *c = &fdcon[s];
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
 	ret = conalloc(c->c_namelist, c->c_output_name, c->c_keytype);
 	confree(s);
-	return (ret);
+	തിരികെ (ret);
 }
 
-static void
-congreet(int s)
+സ്ഥിതം ശൂന്യം
+congreet(പൂർണ്ണസംഖ്യ s)
 {
-	int remote_major = 0, remote_minor = 0;
+	പൂർണ്ണസംഖ്യ remote_major = 0, remote_minor = 0;
 	ssize_t n;
-	char buf[256], ch;
-	char remote_version[sizeof buf];
+	അക്ഷരം buf[256], ch;
+	അക്ഷരം remote_version[വലുപ്പം buf];
 	con *c = &fdcon[s];
 
-	if (!c->c_banner_sent) {
+	എങ്കിൽ (!c->c_banner_sent) {
 		/* send client banner */
-		n = snprintf(buf, sizeof buf, "SSH-%d.%d-OpenSSH-keyscan\r\n",
+		n = snprintf(buf, വലുപ്പം buf, "SSH-%d.%d-OpenSSH-keyscan\r\n",
 		    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2);
-		if (n < 0 || (size_t)n >= sizeof(buf)) {
+		എങ്കിൽ (n < 0 || (size_t)n >= വലുപ്പം(buf)) {
 			error("snprintf: buffer too small");
 			confree(s);
-			return;
+			തിരികെ;
 		}
-		if (atomicio(vwrite, s, buf, n) != (size_t)n) {
+		എങ്കിൽ (atomicio(vwrite, s, buf, n) != (size_t)n) {
 			error("write (%s): %s", c->c_name, strerror(errno));
 			confree(s);
-			return;
+			തിരികെ;
 		}
 		c->c_banner_sent = 1;
 	}
@@ -493,63 +493,63 @@ congreet(int s)
 	 * timeouts.  Partial lines are retained in the connection state
 	 * between calls.
 	 */
-	n = read(s, &ch, sizeof(ch));
-	if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
+	n = പഠ(s, &ch, വലുപ്പം(ch));
+	എങ്കിൽ (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
 	    errno == EINTR))
-		return;
-	if (n != 1) {
-		if (n == 0)
+		തിരികെ;
+	എങ്കിൽ (n != 1) {
+		എങ്കിൽ (n == 0)
 			errno = EPIPE;
-		switch (errno) {
-		case EPIPE:
+		തിരഞ്ഞെടുപ്പ് (errno) {
+		അവസ്ഥ EPIPE:
 			error("%s: Connection closed by remote host",
 			    c->c_name);
-			break;
-		case ECONNREFUSED:
-			break;
-		default:
+			നിർത്തുക;
+		അവസ്ഥ ECONNREFUSED:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			error("read (%s): %s", c->c_name, strerror(errno));
-			break;
+			നിർത്തുക;
 		}
 		conrecycle(s);
-		return;
+		തിരികെ;
 	}
 	c->c_banner[c->c_banner_len++] = ch == '\r' ? '\n' : ch;
-	if (ch != '\n') {
-		if (c->c_banner_len < sizeof(c->c_banner) - 1)
-			return; /* incomplete line */
-		if (strncmp(c->c_banner, "SSH-", 4) == 0) {
+	എങ്കിൽ (ch != '\n') {
+		എങ്കിൽ (c->c_banner_len < വലുപ്പം(c->c_banner) - 1)
+			തിരികെ; /* incomplete line */
+		എങ്കിൽ (strncmp(c->c_banner, "SSH-", 4) == 0) {
 			/* banner exceeds RFC 4253 s4.2 length limit */
 			error("%s: greeting exceeds allowable length",
 			    c->c_name);
 			confree(s);
-			return;
+			തിരികെ;
 		}
 		/* Discard an oversized pre-identification banner chunk. */
 		c->c_banner_len = 0;
-		return;
+		തിരികെ;
 	}
-	if (strncmp(c->c_banner, "SSH-", 4) != 0) {
+	എങ്കിൽ (strncmp(c->c_banner, "SSH-", 4) != 0) {
 		/* Ignore non-banner lines */
 		c->c_banner_len = 0;
-		return;
+		തിരികെ;
 	}
 	c->c_banner[c->c_banner_len++] = '\0';
 	memcpy(buf, c->c_banner, c->c_banner_len);
-	if ((c->c_ssh = ssh_packet_set_connection(NULL, s, s)) == NULL)
+	എങ്കിൽ ((c->c_ssh = ssh_packet_set_connection(ശൂന്യ, s, s)) == ശൂന്യ)
 		fatal("ssh_packet_set_connection failed");
 	ssh_packet_set_timeout(c->c_ssh, timeout, 1);
 	ssh_set_app_data(c->c_ssh, c);	/* back link */
 	c->c_ssh->compat = 0;
-	if (sscanf(buf, "SSH-%d.%d-%[^\n]\n",
+	എങ്കിൽ (sscanf(buf, "SSH-%d.%d-%[^\n]\n",
 	    &remote_major, &remote_minor, remote_version) == 3)
 		compat_banner(c->c_ssh, remote_version);
-	if (!ssh2_capable(remote_major, remote_minor)) {
+	എങ്കിൽ (!ssh2_capable(remote_major, remote_minor)) {
 		debug("%s doesn't support ssh2", c->c_name);
 		confree(s);
-		return;
+		തിരികെ;
 	}
-	if (!quiet) {
+	എങ്കിൽ (!quiet) {
 		fprintf(stdout, "%c %s:%d %s\n", print_sshfp ? ';' : '#',
 		    c->c_name, ssh_port, chop(buf));
 	}
@@ -557,109 +557,109 @@ congreet(int s)
 	confree(s);
 }
 
-static void
-conread(int s)
+സ്ഥിതം ശൂന്യം
+conread(പൂർണ്ണസംഖ്യ s)
 {
 	con *c = &fdcon[s];
 
-	if (c->c_status != CS_CON)
+	എങ്കിൽ (c->c_status != CS_CON)
 		fatal("conread: invalid status %d", c->c_status);
 
 	congreet(s);
 }
 
-static void
-conloop(void)
+സ്ഥിതം ശൂന്യം
+conloop(ശൂന്യം)
 {
-	struct timespec seltime, now;
+	ഘടന timespec seltime, now;
 	con *c;
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
 	monotime_ts(&now);
 	c = TAILQ_FIRST(&tq);
 
-	if (c && timespeccmp(&c->c_ts, &now, >))
+	എങ്കിൽ (c && timespeccmp(&c->c_ts, &now, >))
 		timespecsub(&c->c_ts, &now, &seltime);
-	else
+	അല്ലെങ്കിൽ
 		timespecclear(&seltime);
 
-	while (ppoll(read_wait, maxfd, &seltime, NULL) == -1) {
-		if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
-			continue;
+	ആകുമ്പോൾ (ppoll(read_wait, maxfd, &seltime, ശൂന്യ) == -1) {
+		എങ്കിൽ (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
+			തുടരുക;
 		error("poll error");
 	}
 
-	for (i = 0; i < maxfd; i++) {
-		if (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
+	വേണ്ടി (i = 0; i < maxfd; i++) {
+		എങ്കിൽ (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
 			confree(i);
-		else if (read_wait[i].revents & (POLLIN))
+		അല്ലെങ്കിൽ എങ്കിൽ (read_wait[i].revents & (POLLIN))
 			conread(i);
 	}
 
 	c = TAILQ_FIRST(&tq);
-	while (c && timespeccmp(&c->c_ts, &now, <)) {
-		int s = c->c_fd;
+	ആകുമ്പോൾ (c && timespeccmp(&c->c_ts, &now, <)) {
+		പൂർണ്ണസംഖ്യ s = c->c_fd;
 
 		c = TAILQ_NEXT(c, c_link);
 		conrecycle(s);
 	}
 }
 
-static void
-do_one_host(char *host)
+സ്ഥിതം ശൂന്യം
+do_one_host(അക്ഷരം *host)
 {
-	char *name = strnnsep(&host, " \t\n");
-	int j;
+	അക്ഷരം *name = strnnsep(&host, " \t\n");
+	പൂർണ്ണസംഖ്യ j;
 
-	if (name == NULL)
-		return;
-	for (j = KT_MIN; j <= KT_MAX; j *= 2) {
-		if (get_keytypes & j) {
-			while (ncon >= MAXCON)
+	എങ്കിൽ (name == ശൂന്യ)
+		തിരികെ;
+	വേണ്ടി (j = KT_MIN; j <= KT_MAX; j *= 2) {
+		എങ്കിൽ (get_keytypes & j) {
+			ആകുമ്പോൾ (ncon >= MAXCON)
 				conloop();
 			conalloc(name, *host ? host : name, j);
 		}
 	}
 }
 
-static void
-do_host(char *host)
+സ്ഥിതം ശൂന്യം
+do_host(അക്ഷരം *host)
 {
-	char daddr[128];
-	struct xaddr addr, end_addr;
+	അക്ഷരം daddr[128];
+	ഘടന xaddr addr, end_addr;
 	u_int masklen;
 
-	if (host == NULL)
-		return;
-	if (addr_pton_cidr(host, &addr, &masklen) != 0) {
+	എങ്കിൽ (host == ശൂന്യ)
+		തിരികെ;
+	എങ്കിൽ (addr_pton_cidr(host, &addr, &masklen) != 0) {
 		/* Assume argument is a hostname */
 		do_one_host(host);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Argument is a CIDR range */
 		debug("CIDR range %s", host);
 		end_addr = addr;
-		if (addr_host_to_all1s(&end_addr, masklen) != 0)
-			goto badaddr;
+		എങ്കിൽ (addr_host_to_all1s(&end_addr, masklen) != 0)
+			പോകുക badaddr;
 		/*
 		 * Note: we deliberately include the all-zero/ones addresses.
 		 */
-		for (;;) {
-			if (addr_ntop(&addr, daddr, sizeof(daddr)) != 0) {
+		വേണ്ടി (;;) {
+			എങ്കിൽ (addr_ntop(&addr, daddr, വലുപ്പം(daddr)) != 0) {
  badaddr:
 				error("Invalid address %s", host);
-				return;
+				തിരികെ;
 			}
 			debug("CIDR expand: address %s", daddr);
 			do_one_host(daddr);
-			if (addr_cmp(&addr, &end_addr) == 0)
-				break;
+			എങ്കിൽ (addr_cmp(&addr, &end_addr) == 0)
+				നിർത്തുക;
 			addr_increment(&addr);
 		}
 	}
 }
 
-static void
-usage(void)
+സ്ഥിതം ശൂന്യം
+usage(ശൂന്യം)
 {
 	fprintf(stderr,
 	    "usage: ssh-keyscan [-46cDHqv] [-f file] [-O option] [-p port] [-T timeout]\n"
@@ -667,17 +667,17 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(പൂർണ്ണസംഖ്യ argc, അക്ഷരം **argv)
 {
-	int debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
-	int opt, fopt_count = 0, j;
-	char *tname, *cp, *line = NULL;
+	പൂർണ്ണസംഖ്യ debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
+	പൂർണ്ണസംഖ്യ opt, fopt_എണ്ണം = 0, j;
+	അക്ഷരം *tname, *cp, *വരി = ശൂന്യ;
 	size_t linesize = 0;
 	FILE *fp;
 
-	extern int optind;
-	extern char *optarg;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ optind;
+	ബാഹ്യ അക്ഷരം *optarg;
 
 	__progname = ssh_get_progname(argv[0]);
 	seed_rng();
@@ -686,162 +686,162 @@ main(int argc, char **argv)
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
-	if (argc <= 1)
+	എങ്കിൽ (argc <= 1)
 		usage();
 
-	while ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
-		switch (opt) {
-		case 'H':
+	ആകുമ്പോൾ ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
+		തിരഞ്ഞെടുപ്പ് (opt) {
+		അവസ്ഥ 'H':
 			hash_hosts = 1;
-			break;
-		case 'c':
+			നിർത്തുക;
+		അവസ്ഥ 'c':
 			get_cert = 1;
-			break;
-		case 'D':
+			നിർത്തുക;
+		അവസ്ഥ 'D':
 			print_sshfp = 1;
-			break;
-		case 'p':
+			നിർത്തുക;
+		അവസ്ഥ 'p':
 			ssh_port = a2port(optarg);
-			if (ssh_port <= 0) {
+			എങ്കിൽ (ssh_port <= 0) {
 				fprintf(stderr, "Bad port '%s'\n", optarg);
 				exit(1);
 			}
-			break;
-		case 'T':
+			നിർത്തുക;
+		അവസ്ഥ 'T':
 			timeout = convtime(optarg);
-			if (timeout == -1 || timeout == 0) {
+			എങ്കിൽ (timeout == -1 || timeout == 0) {
 				fprintf(stderr, "Bad timeout '%s'\n", optarg);
 				usage();
 			}
-			break;
-		case 'v':
-			if (!debug_flag) {
+			നിർത്തുക;
+		അവസ്ഥ 'v':
+			എങ്കിൽ (!debug_flag) {
 				debug_flag = 1;
 				log_level = SYSLOG_LEVEL_DEBUG1;
 			}
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			അല്ലെങ്കിൽ എങ്കിൽ (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			else
+			അല്ലെങ്കിൽ
 				fatal("Too high debugging level.");
-			break;
-		case 'q':
+			നിർത്തുക;
+		അവസ്ഥ 'q':
 			quiet = 1;
-			break;
-		case 'f':
-			if (strcmp(optarg, "-") == 0)
-				optarg = NULL;
-			argv[fopt_count++] = optarg;
-			break;
-		case 'O':
+			നിർത്തുക;
+		അവസ്ഥ 'f':
+			എങ്കിൽ (strcmp(optarg, "-") == 0)
+				optarg = ശൂന്യ;
+			argv[fopt_എണ്ണം++] = optarg;
+			നിർത്തുക;
+		അവസ്ഥ 'O':
 			/* Maybe other misc options in the future too */
-			if (strncmp(optarg, "hashalg=", 8) != 0)
+			എങ്കിൽ (strncmp(optarg, "hashalg=", 8) != 0)
 				fatal("Unsupported -O option");
-			if ((hashalg = ssh_digest_alg_by_name(
+			എങ്കിൽ ((hashalg = ssh_digest_alg_by_name(
 			    optarg + 8)) == -1)
 				fatal("Unsupported hash algorithm");
-			break;
-		case 't':
+			നിർത്തുക;
+		അവസ്ഥ 't':
 			get_keytypes = 0;
 			tname = strtok(optarg, ",");
-			while (tname) {
-				int type = sshkey_type_from_shortname(tname);
+			ആകുമ്പോൾ (tname) {
+				പൂർണ്ണസംഖ്യ type = sshkey_type_from_shortname(tname);
 
-				switch (type) {
-				case KEY_ECDSA:
+				തിരഞ്ഞെടുപ്പ് (type) {
+				അവസ്ഥ താക്കോൽ_ECDSA:
 					get_keytypes |= KT_ECDSA;
-					break;
-				case KEY_RSA:
+					നിർത്തുക;
+				അവസ്ഥ താക്കോൽ_RSA:
 					get_keytypes |= KT_RSA;
-					break;
-				case KEY_ED25519:
+					നിർത്തുക;
+				അവസ്ഥ താക്കോൽ_ED25519:
 					get_keytypes |= KT_ED25519;
-					break;
-				case KEY_ED25519_SK:
+					നിർത്തുക;
+				അവസ്ഥ താക്കോൽ_ED25519_SK:
 					get_keytypes |= KT_ED25519_SK;
-					break;
-				case KEY_ECDSA_SK:
+					നിർത്തുക;
+				അവസ്ഥ താക്കോൽ_ECDSA_SK:
 					get_keytypes |= KT_ECDSA_SK;
-					break;
-				case KEY_MLDSA44_ED25519:
+					നിർത്തുക;
+				അവസ്ഥ താക്കോൽ_MLDSA44_ED25519:
 					get_keytypes |= KT_MLDSA44_ED25519;
-					break;
-				case KEY_UNSPEC:
-				default:
+					നിർത്തുക;
+				അവസ്ഥ താക്കോൽ_UNSPEC:
+				സ്ഥിരസ്ഥിതി:
 					fatal("Unknown key type \"%s\"", tname);
 				}
-				tname = strtok(NULL, ",");
+				tname = strtok(ശൂന്യ, ",");
 			}
-			break;
-		case '4':
+			നിർത്തുക;
+		അവസ്ഥ '4':
 			IPv4or6 = AF_INET;
-			break;
-		case '6':
+			നിർത്തുക;
+		അവസ്ഥ '6':
 			IPv4or6 = AF_INET6;
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			usage();
 		}
 	}
-	if (optind == argc && !fopt_count)
+	എങ്കിൽ (optind == argc && !fopt_എണ്ണം)
 		usage();
 
 	log_init("ssh-keyscan", log_level, SYSLOG_FACILITY_USER, 1);
 
 	maxfd = fdlim_get(1);
-	if (maxfd < 0)
+	എങ്കിൽ (maxfd < 0)
 		fatal("%s: fdlim_get: bad value", __progname);
-	if (maxfd > MAXMAXFD)
+	എങ്കിൽ (maxfd > MAXMAXFD)
 		maxfd = MAXMAXFD;
-	if (MAXCON <= 0)
+	എങ്കിൽ (MAXCON <= 0)
 		fatal("%s: not enough file descriptors", __progname);
-	if (maxfd > fdlim_get(0))
+	എങ്കിൽ (maxfd > fdlim_get(0))
 		fdlim_set(maxfd);
-	fdcon = xcalloc(maxfd, sizeof(con));
-	read_wait = xcalloc(maxfd, sizeof(struct pollfd));
-	for (j = 0; j < maxfd; j++)
+	fdcon = xcalloc(maxfd, വലുപ്പം(con));
+	read_wait = xcalloc(maxfd, വലുപ്പം(ഘടന pollfd));
+	വേണ്ടി (j = 0; j < maxfd; j++)
 		read_wait[j].fd = -1;
 
 	ssh_signal(SIGPIPE, SIG_IGN);
-	for (j = 0; j < fopt_count; j++) {
-		if (argv[j] == NULL)
+	വേണ്ടി (j = 0; j < fopt_എണ്ണം; j++) {
+		എങ്കിൽ (argv[j] == ശൂന്യ)
 			fp = stdin;
-		else if ((fp = fopen(argv[j], "r")) == NULL)
+		അല്ലെങ്കിൽ എങ്കിൽ ((fp = fopen(argv[j], "r")) == ശൂന്യ)
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		while (getline(&line, &linesize, fp) != -1) {
+		ആകുമ്പോൾ (getline(&വരി, &linesize, fp) != -1) {
 			/* Chomp off trailing whitespace and comments */
-			if ((cp = strchr(line, '#')) == NULL)
-				cp = line + strlen(line) - 1;
-			while (cp >= line) {
-				if (*cp == ' ' || *cp == '\t' ||
+			എങ്കിൽ ((cp = strchr(വരി, '#')) == ശൂന്യ)
+				cp = വരി + strlen(വരി) - 1;
+			ആകുമ്പോൾ (cp >= വരി) {
+				എങ്കിൽ (*cp == ' ' || *cp == '\t' ||
 				    *cp == '\n' || *cp == '#')
 					*cp-- = '\0';
-				else
-					break;
+				അല്ലെങ്കിൽ
+					നിർത്തുക;
 			}
 
 			/* Skip empty lines */
-			if (*line == '\0')
-				continue;
+			എങ്കിൽ (*വരി == '\0')
+				തുടരുക;
 
-			do_host(line);
+			do_host(വരി);
 		}
 
-		if (ferror(fp))
+		എങ്കിൽ (ferror(fp))
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		if (fp != stdin)
+		എങ്കിൽ (fp != stdin)
 			fclose(fp);
 	}
-	free(line);
+	സ്വതന്ത്രം(വരി);
 
-	while (optind < argc)
+	ആകുമ്പോൾ (optind < argc)
 		do_host(argv[optind++]);
 
-	while (ncon > 0)
+	ആകുമ്പോൾ (ncon > 0)
 		conloop();
 
-	return found_one ? 0 : 1;
+	തിരികെ found_one ? 0 : 1;
 }

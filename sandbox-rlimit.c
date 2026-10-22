@@ -15,64 +15,64 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifdef SANDBOX_RLIMIT
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/time.h>
+#അന്തര്ഭാവ <sys/resource.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "ssh-sandbox.h"
+#അന്തര്ഭാവ "xmalloc.h"
 
 /* Minimal sandbox that sets zero nfiles, nprocs and filesize rlimits */
 
-struct ssh_sandbox {
-	int junk;
+ഘടന ssh_sandbox {
+	പൂർണ്ണസംഖ്യ junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+ഘടന ssh_sandbox *
+ssh_sandbox_init(ഘടന monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	ഘടന ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
 	debug3_f("preparing rlimit sandbox");
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, വലുപ്പം(*box));
+	തിരികെ box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+ശൂന്യം
+ssh_sandbox_child(ഘടന ssh_sandbox *box)
 {
-	struct rlimit rl_zero;
+	ഘടന rlimit rl_zero;
 
 	rl_zero.rlim_cur = rl_zero.rlim_max = 0;
 
 #ifndef SANDBOX_SKIP_RLIMIT_FSIZE
-	if (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
+	എങ്കിൽ (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_FSIZE, { 0, 0 }): %s",
 			strerror(errno));
 #endif
 #ifndef SANDBOX_SKIP_RLIMIT_NOFILE
-	if (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
+	എങ്കിൽ (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_NOFILE, { 0, 0 }): %s",
 			strerror(errno));
 #endif
 #ifdef HAVE_RLIMIT_NPROC
-	if (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
+	എങ്കിൽ (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
 		fatal_f("setrlimit(RLIMIT_NPROC, { 0, 0 }): %s",
 			strerror(errno));
 #endif

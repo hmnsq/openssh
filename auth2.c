@@ -23,55 +23,55 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/uio.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <sys/uio.h>
 
-#include <fcntl.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <limits.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <time.h>
 
-#include "stdlib.h"
-#include "atomicio.h"
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "dispatch.h"
-#include "pathnames.h"
-#include "ssherr.h"
+#അന്തര്ഭാവ "stdlib.h"
+#അന്തര്ഭാവ "atomicio.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "servconf.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "auth.h"
+#അന്തര്ഭാവ "dispatch.h"
+#അന്തര്ഭാവ "pathnames.h"
+#അന്തര്ഭാവ "ssherr.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#അന്തര്ഭാവ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "digest.h"
-#include "kex.h"
+#അന്തര്ഭാവ "monitor_wrap.h"
+#അന്തര്ഭാവ "digest.h"
+#അന്തര്ഭാവ "kex.h"
 
 /* import */
-extern ServerOptions options;
-extern struct sshbuf *loginmsg;
+ബാഹ്യ ServerOptions options;
+ബാഹ്യ ഘടന sshbuf *loginmsg;
 
 /* methods */
 
-extern Authmethod method_none;
-extern Authmethod method_pubkey;
-extern Authmethod method_passwd;
-extern Authmethod method_kbdint;
-extern Authmethod method_hostbased;
+ബാഹ്യ Authmethod method_none;
+ബാഹ്യ Authmethod method_pubkey;
+ബാഹ്യ Authmethod method_passwd;
+ബാഹ്യ Authmethod method_kbdint;
+ബാഹ്യ Authmethod method_hostbased;
 #ifdef GSSAPI
-extern Authmethod method_gssapi;
+ബാഹ്യ Authmethod method_gssapi;
 #endif
 
 Authmethod *authmethods[] = {
@@ -83,228 +83,228 @@ Authmethod *authmethods[] = {
 	&method_passwd,
 	&method_kbdint,
 	&method_hostbased,
-	NULL
+	ശൂന്യ
 };
 
 /* protocol */
 
-static int input_service_request(int, uint32_t, struct ssh *);
-static int input_userauth_request(int, uint32_t, struct ssh *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ നിവേശം_service_request(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ നിവേശം_userauth_request(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
 
 /* helper */
-static Authmethod *authmethod_byname(const char *);
-static Authmethod *authmethod_lookup(Authctxt *, const char *);
-static char *authmethods_get(Authctxt *authctxt);
+സ്ഥിതം Authmethod *authmethod_byname(സ്ഥിരം അക്ഷരം *);
+സ്ഥിതം Authmethod *authmethod_lookup(Authctxt *, സ്ഥിരം അക്ഷരം *);
+സ്ഥിതം അക്ഷരം *authmethods_get(Authctxt *authctxt);
 
 #define MATCH_NONE	0	/* method or submethod mismatch */
 #define MATCH_METHOD	1	/* method matches (no submethod specified) */
 #define MATCH_BOTH	2	/* method and submethod match */
 #define MATCH_PARTIAL	3	/* method matches, submethod can't be checked */
-static int list_starts_with(const char *, const char *, const char *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ list_starts_with(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 
-char *
-auth2_read_banner(void)
+അക്ഷരം *
+auth2_read_banner(ശൂന്യം)
 {
-	struct stat st;
-	char *banner = NULL;
+	ഘടന stat st;
+	അക്ഷരം *banner = ശൂന്യ;
 	size_t len, n;
-	int fd;
+	പൂർണ്ണസംഖ്യ fd;
 
-	if ((fd = open(options.banner, O_RDONLY)) == -1)
-		return (NULL);
-	if (fstat(fd, &st) == -1) {
+	എങ്കിൽ ((fd = open(options.banner, O_RDONLY)) == -1)
+		തിരികെ (ശൂന്യ);
+	എങ്കിൽ (fstat(fd, &st) == -1) {
 		close(fd);
-		return (NULL);
+		തിരികെ (ശൂന്യ);
 	}
-	if (st.st_size <= 0 || st.st_size > 1*1024*1024) {
+	എങ്കിൽ (st.st_size <= 0 || st.st_size > 1*1024*1024) {
 		close(fd);
-		return (NULL);
+		തിരികെ (ശൂന്യ);
 	}
 
 	len = (size_t)st.st_size;		/* truncate */
 	banner = xmalloc(len + 1);
-	n = atomicio(read, fd, banner, len);
+	n = atomicio(പഠ, fd, banner, len);
 	close(fd);
 
-	if (n != len) {
-		free(banner);
-		return (NULL);
+	എങ്കിൽ (n != len) {
+		സ്വതന്ത്രം(banner);
+		തിരികെ (ശൂന്യ);
 	}
 	banner[n] = '\0';
 
-	return (banner);
+	തിരികെ (banner);
 }
 
-static void
-userauth_send_banner(struct ssh *ssh, const char *msg)
+സ്ഥിതം ശൂന്യം
+userauth_send_banner(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *സന്ദേശം)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_BANNER)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, msg)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_USERAUTH_BANNER)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, സന്ദേശം)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language, unused */
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 	debug_f("sent");
 }
 
-static void
-userauth_banner(struct ssh *ssh)
+സ്ഥിതം ശൂന്യം
+userauth_banner(ഘടന ssh *ssh)
 {
-	char *banner = NULL;
+	അക്ഷരം *banner = ശൂന്യ;
 
-	if (options.banner == NULL)
-		return;
+	എങ്കിൽ (options.banner == ശൂന്യ)
+		തിരികെ;
 
-	if ((banner = mm_auth2_read_banner()) == NULL)
-		goto done;
+	എങ്കിൽ ((banner = mm_auth2_read_banner()) == ശൂന്യ)
+		പോകുക done;
 	userauth_send_banner(ssh, banner);
 
 done:
-	free(banner);
+	സ്വതന്ത്രം(banner);
 }
 
 /*
  * loop until authctxt->success == TRUE
  */
-void
-do_authentication2(struct ssh *ssh)
+ശൂന്യം
+do_authentication2(ഘടന ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_error);
-	if (ssh->kex->ext_info_c)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_REQUEST, &input_service_request);
+	എങ്കിൽ (ssh->kex->ext_info_c)
+		ssh_dispatch_set(ssh, SSH2_സന്ദേശം_EXT_INFO, &kex_നിവേശം_ext_info);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_SERVICE_REQUEST, &നിവേശം_service_request);
 	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &authctxt->success);
-	ssh->authctxt = NULL;
+	ssh->authctxt = ശൂന്യ;
 }
 
-static int
-input_service_request(int type, uint32_t seq, struct ssh *ssh)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+നിവേശം_service_request(പൂർണ്ണസംഖ്യ type, uint32_t seq, ഘടന ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *service = NULL;
-	int r, acceptit = 0;
+	അക്ഷരം *service = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r, acceptit = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_get_cstring(ssh, &service, ശൂന്യ)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+		പോകുക out;
 
-	if (authctxt == NULL)
+	എങ്കിൽ (authctxt == ശൂന്യ)
 		fatal("input_service_request: no authctxt");
 
-	if (strcmp(service, "ssh-userauth") == 0) {
-		if (!authctxt->success) {
+	എങ്കിൽ (strcmp(service, "ssh-userauth") == 0) {
+		എങ്കിൽ (!authctxt->success) {
 			acceptit = 1;
 			/* now we can handle user-auth requests */
-			ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
-			    &input_userauth_request);
+			ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_REQUEST,
+			    &നിവേശം_userauth_request);
 		}
 	}
 	/* XXX all other service requests are denied */
 
-	if (acceptit) {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_ACCEPT)) != 0 ||
+	എങ്കിൽ (acceptit) {
+		എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_SERVICE_ACCEPT)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, service)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
-			goto out;
-	} else {
+			പോകുക out;
+	} അല്ലെങ്കിൽ {
 		debug("bad service request %s", service);
 		ssh_packet_disconnect(ssh, "bad service request %s", service);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &dispatch_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_EXT_INFO, &dispatch_protocol_error);
 	r = 0;
  out:
-	free(service);
-	return r;
+	സ്വതന്ത്രം(service);
+	തിരികെ r;
 }
 
 #define MIN_FAIL_DELAY_SECONDS 0.005
 #define MAX_FAIL_DELAY_SECONDS 5.0
-static double
-user_specific_delay(const char *user)
+സ്ഥിതം ഇരട്ട
+user_specific_delay(സ്ഥിരം അക്ഷരം *user)
 {
-	char b[512];
+	അക്ഷരം b[512];
 	size_t len = ssh_digest_bytes(SSH_DIGEST_SHA512);
 	u_char *hash = xmalloc(len);
-	double delay;
+	ഇരട്ട delay;
 
-	(void)snprintf(b, sizeof b, "%llu%s",
+	(ശൂന്യം)snprintf(b, വലുപ്പം b, "%llu%s",
 	    (unsigned long long)options.timing_secret, user);
-	if (ssh_digest_memory(SSH_DIGEST_SHA512, b, strlen(b), hash, len) != 0)
+	എങ്കിൽ (ssh_digest_memory(SSH_DIGEST_SHA512, b, strlen(b), hash, len) != 0)
 		fatal_f("ssh_digest_memory");
 	/* 0-4.2 ms of delay */
-	delay = (double)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
+	delay = (ഇരട്ട)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
 	freezero(hash, len);
 	debug3_f("user specific delay %0.3lfms", delay*1000);
-	return MIN_FAIL_DELAY_SECONDS + delay;
+	തിരികെ MIN_FAIL_DELAY_SECONDS + delay;
 }
 
-static void
-ensure_minimum_time_since(double start, double seconds)
+സ്ഥിതം ശൂന്യം
+ensure_minimum_time_since(ഇരട്ട start, ഇരട്ട seconds)
 {
-	struct timespec ts;
-	double elapsed = monotime_double() - start, req = seconds, remain;
+	ഘടന timespec ts;
+	ഇരട്ട elapsed = monotime_double() - start, req = seconds, remain;
 
-	if (elapsed > MAX_FAIL_DELAY_SECONDS) {
+	എങ്കിൽ (elapsed > MAX_FAIL_DELAY_SECONDS) {
 		debug3_f("elapsed %0.3lfms exceeded the max delay "
 		    "requested %0.3lfms)", elapsed*1000, req*1000);
-		return;
+		തിരികെ;
 	}
 
 	/* if we've already passed the requested time, scale up */
-	while ((remain = seconds - elapsed) < 0.0)
+	ആകുമ്പോൾ ((remain = seconds - elapsed) < 0.0)
 		seconds *= 2;
 
 	ts.tv_sec = remain;
 	ts.tv_nsec = (remain - ts.tv_sec) * 1000000000;
 	debug3_f("elapsed %0.3lfms, delaying %0.3lfms (requested %0.3lfms)",
 	    elapsed*1000, remain*1000, req*1000);
-	nanosleep(&ts, NULL);
+	nanosleep(&ts, ശൂന്യ);
 }
 
-void
-auth_failure_delay(Authctxt *authctxt, double tstart)
+ശൂന്യം
+auth_failure_delay(Authctxt *authctxt, ഇരട്ട tstart)
 {
 	ensure_minimum_time_since(tstart, user_specific_delay(authctxt->user));
 }
 
-static int
-input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+നിവേശം_userauth_request(പൂർണ്ണസംഖ്യ type, uint32_t seq, ഘടന ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	char *user = NULL, *service = NULL, *method = NULL, *style = NULL;
-	int r, authenticated = 0;
-	double tstart = monotime_double();
+	Authmethod *m = ശൂന്യ;
+	അക്ഷരം *user = ശൂന്യ, *service = ശൂന്യ, *method = ശൂന്യ, *style = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r, authenticated = 0;
+	ഇരട്ട tstart = monotime_double();
 
-	if (authctxt == NULL)
+	എങ്കിൽ (authctxt == ശൂന്യ)
 		fatal("input_userauth_request: no authctxt");
 
-	if ((r = sshpkt_get_cstring(ssh, &user, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &method, NULL)) != 0)
-		goto out;
+	എങ്കിൽ ((r = sshpkt_get_cstring(ssh, &user, ശൂന്യ)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &service, ശൂന്യ)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &method, ശൂന്യ)) != 0)
+		പോകുക out;
 	debug("userauth-request for user %s service %s method %s", user, service, method);
 	debug("attempt %d failures %d", authctxt->attempt, authctxt->failures);
 
-	if ((style = strchr(user, ':')) != NULL)
+	എങ്കിൽ ((style = strchr(user, ':')) != ശൂന്യ)
 		*style++ = 0;
 
-	if (authctxt->attempt >= 1024)
+	എങ്കിൽ (authctxt->attempt >= 1024)
 		auth_maxtries_exceeded(ssh);
-	if (authctxt->attempt++ == 0) {
+	എങ്കിൽ (authctxt->attempt++ == 0) {
 		/* setup auth context */
 		authctxt->pw = mm_getpwnamallow(ssh, user);
 		authctxt->user = xstrdup(user);
 		authctxt->service = xstrdup(service);
-		authctxt->style = style ? xstrdup(style) : NULL;
-		if (authctxt->pw && strcmp(service, "ssh-connection")==0) {
+		authctxt->style = style ? xstrdup(style) : ശൂന്യ;
+		എങ്കിൽ (authctxt->pw && strcmp(service, "ssh-connection")==0) {
 			authctxt->valid = 1;
 			debug2_f("setting up authctxt for %s", user);
-		} else {
+		} അല്ലെങ്കിൽ {
 			authctxt->valid = 0;
 			/* Invalid user, fake password information */
 			authctxt->pw = fakepw();
@@ -313,7 +313,7 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 #endif
 		}
 #ifdef USE_PAM
-		if (options.use_pam)
+		എങ്കിൽ (options.use_pam)
 			mm_start_pam(ssh);
 #endif
 		ssh_packet_set_log_preamble(ssh, "%suser %s",
@@ -321,12 +321,12 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 		setproctitle("%s [net]", authctxt->valid ? user : "unknown");
 		mm_inform_authserv(service, style);
 		userauth_banner(ssh);
-		if ((r = kex_server_update_ext_info(ssh)) != 0)
+		എങ്കിൽ ((r = kex_server_update_ext_info(ssh)) != 0)
 			fatal_fr(r, "kex_server_update_ext_info failed");
-		if (auth2_setup_methods_lists(authctxt) != 0)
+		എങ്കിൽ (auth2_setup_methods_lists(authctxt) != 0)
 			ssh_packet_disconnect(ssh,
 			    "no authentication methods enabled");
-	} else if (strcmp(user, authctxt->user) != 0 ||
+	} അല്ലെങ്കിൽ എങ്കിൽ (strcmp(user, authctxt->user) != 0 ||
 	    strcmp(service, authctxt->service) != 0) {
 		ssh_packet_disconnect(ssh, "Change of username or service "
 		    "not allowed: (%s,%s) -> (%s,%s)",
@@ -338,8 +338,8 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 #ifdef GSSAPI
 	ssh_gssapi_cleanup_global_client();
 	/* XXX move to auth2_gssapi_stop() */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_TOKEN, ശൂന്യ);
+	ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ശൂന്യ);
 #endif
 
 	auth2_authctxt_reset_info(authctxt);
@@ -349,56 +349,56 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 
 	/* try to authenticate user */
 	m = authmethod_lookup(authctxt, method);
-	if (m != NULL && authctxt->failures < options.max_authtries) {
+	എങ്കിൽ (m != ശൂന്യ && authctxt->failures < options.max_authtries) {
 		debug2("input_userauth_request: try method %s", method);
 		authenticated =	m->userauth(ssh, method);
 	}
-	if (!authctxt->authenticated && strcmp(method, "none") != 0)
+	എങ്കിൽ (!authctxt->authenticated && strcmp(method, "none") != 0)
 		auth_failure_delay(authctxt, tstart);
 
-	userauth_finish(ssh, authenticated, method, NULL);
+	userauth_finish(ssh, authenticated, method, ശൂന്യ);
 	r = 0;
  out:
-	free(service);
-	free(user);
-	free(method);
-	return r;
+	സ്വതന്ത്രം(service);
+	സ്വതന്ത്രം(user);
+	സ്വതന്ത്രം(method);
+	തിരികെ r;
 }
 
-void
-userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
-    const char *submethod)
+ശൂന്യം
+userauth_finish(ഘടന ssh *ssh, പൂർണ്ണസംഖ്യ authenticated, സ്ഥിരം അക്ഷരം *packet_method,
+    സ്ഥിരം അക്ഷരം *submethod)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	const char *method = packet_method;
-	char *methods;
-	int r, partial = 0;
+	Authmethod *m = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *method = packet_method;
+	അക്ഷരം *methods;
+	പൂർണ്ണസംഖ്യ r, partial = 0;
 
-	if (authenticated) {
-		if (!authctxt->valid) {
+	എങ്കിൽ (authenticated) {
+		എങ്കിൽ (!authctxt->valid) {
 			fatal("INTERNAL ERROR: authenticated invalid user %s",
 			    authctxt->user);
 		}
-		if (authctxt->postponed)
+		എങ്കിൽ (authctxt->postponed)
 			fatal("INTERNAL ERROR: authenticated and postponed");
 		/* prefer primary authmethod name to possible synonym */
-		if ((m = authmethod_byname(method)) == NULL)
+		എങ്കിൽ ((m = authmethod_byname(method)) == ശൂന്യ)
 			fatal("INTERNAL ERROR: bad method %s", method);
 		method = m->cfg->name;
 	}
 
 	/* Special handling for root */
-	if (authenticated && authctxt->pw->pw_uid == 0 &&
-	    !auth_root_allowed(ssh, method)) {
+	എങ്കിൽ (authenticated && authctxt->pw->pw_uid == 0 &&
+	    !auth_വേര്_allowed(ssh, method)) {
 		authenticated = 0;
 #ifdef SSH_AUDIT_EVENTS
-		mm_audit_event(ssh, SSH_LOGIN_ROOT_DENIED);
+		mm_audit_event(ssh, SSH_LOGIN_വേര്_DENIED);
 #endif
 	}
 
-	if (authenticated && options.num_auth_methods != 0) {
-		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
+	എങ്കിൽ (authenticated && options.അക്കം_auth_methods != 0) {
+		എങ്കിൽ (!auth2_update_methods_lists(authctxt, method, submethod)) {
 			authenticated = 0;
 			partial = 1;
 		}
@@ -408,52 +408,52 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
 	auth_log(ssh, authenticated, partial, method, submethod);
 
 	/* Update information exposed to session */
-	if (authenticated || partial)
+	എങ്കിൽ (authenticated || partial)
 		auth2_update_session_info(authctxt, method, submethod);
 
-	if (authctxt->postponed)
-		return;
+	എങ്കിൽ (authctxt->postponed)
+		തിരികെ;
 
 #ifdef USE_PAM
-	if (options.use_pam && authenticated) {
-		int r, success = mm_do_pam_account();
+	എങ്കിൽ (options.use_pam && authenticated) {
+		പൂർണ്ണസംഖ്യ r, success = mm_do_pam_account();
 
 		/* If PAM returned a message, send it to the user. */
-		if (sshbuf_len(loginmsg) > 0) {
-			if ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
+		എങ്കിൽ (sshbuf_len(loginmsg) > 0) {
+			എങ്കിൽ ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
 			userauth_send_banner(ssh, sshbuf_ptr(loginmsg));
-			if ((r = ssh_packet_write_wait(ssh)) != 0) {
+			എങ്കിൽ ((r = ssh_packet_write_wait(ssh)) != 0) {
 				sshpkt_fatal(ssh, r,
 				    "%s: send PAM banner", __func__);
 			}
 		}
-		if (!success) {
+		എങ്കിൽ (!success) {
 			fatal("Access denied for user %s by PAM account "
 			    "configuration", authctxt->user);
 		}
 	}
 #endif
 
-	if (authenticated == 1) {
+	എങ്കിൽ (authenticated == 1) {
 		/* turn off userauth */
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
+		ssh_dispatch_set(ssh, SSH2_സന്ദേശം_USERAUTH_REQUEST,
 		    &dispatch_protocol_ignore);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_SUCCESS)) != 0 ||
+		എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_USERAUTH_SUCCESS)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send success packet");
 		/* now we can break out */
 		authctxt->success = 1;
 		ssh_packet_set_log_preamble(ssh, "user %s", authctxt->user);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Allow initial try of "none" auth without failure penalty */
-		if (!partial && !authctxt->server_caused_failure &&
+		എങ്കിൽ (!partial && !authctxt->server_caused_failure &&
 		    !authctxt->auth_failure_already_counted &&
 		    (authctxt->attempt > 1 || strcmp(method, "none") != 0))
 			authctxt->failures++;
-		if (authctxt->failures >= options.max_authtries) {
+		എങ്കിൽ (authctxt->failures >= options.max_authtries) {
 #ifdef SSH_AUDIT_EVENTS
 			mm_audit_event(ssh, SSH_LOGIN_EXCEED_MAXTRIES);
 #endif
@@ -462,13 +462,13 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
 		methods = authmethods_get(authctxt);
 		debug3_f("failure partial=%d next methods=\"%s\"",
 		    partial, methods);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_FAILURE)) != 0 ||
+		എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_USERAUTH_FAILURE)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, methods)) != 0 ||
 		    (r = sshpkt_put_u8(ssh, partial)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send failure packet");
-		free(methods);
+		സ്വതന്ത്രം(methods);
 	}
 }
 
@@ -477,9 +477,9 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  * methods list. Returns 1 if allowed, or no methods lists configured.
  * 0 otherwise.
  */
-int
-auth2_method_allowed(Authctxt *authctxt, const char *method,
-    const char *submethod)
+പൂർണ്ണസംഖ്യ
+auth2_method_allowed(Authctxt *authctxt, സ്ഥിരം അക്ഷരം *method,
+    സ്ഥിരം അക്ഷരം *submethod)
 {
 	u_int i;
 
@@ -487,79 +487,79 @@ auth2_method_allowed(Authctxt *authctxt, const char *method,
 	 * NB. authctxt->num_auth_methods might be zero as a result of
 	 * auth2_setup_methods_lists(), so check the configuration.
 	 */
-	if (options.num_auth_methods == 0)
-		return 1;
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (list_starts_with(authctxt->auth_methods[i], method,
+	എങ്കിൽ (options.അക്കം_auth_methods == 0)
+		തിരികെ 1;
+	വേണ്ടി (i = 0; i < authctxt->അക്കം_auth_methods; i++) {
+		എങ്കിൽ (list_starts_with(authctxt->auth_methods[i], method,
 		    submethod) != MATCH_NONE)
-			return 1;
+			തിരികെ 1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static char *
+സ്ഥിതം അക്ഷരം *
 authmethods_get(Authctxt *authctxt)
 {
-	struct sshbuf *b;
-	char *list;
-	int i, r;
+	ഘടന sshbuf *b;
+	അക്ഷരം *list;
+	പൂർണ്ണസംഖ്യ i, r;
 
-	if ((b = sshbuf_new()) == NULL)
+	എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(authmethods[i]->cfg->name, "none") == 0)
-			continue;
-		if (authmethods[i]->cfg->enabled == NULL ||
+	വേണ്ടി (i = 0; authmethods[i] != ശൂന്യ; i++) {
+		എങ്കിൽ (strcmp(authmethods[i]->cfg->name, "none") == 0)
+			തുടരുക;
+		എങ്കിൽ (authmethods[i]->cfg->enabled == ശൂന്യ ||
 		    *(authmethods[i]->cfg->enabled) == 0)
-			continue;
-		if (!auth2_method_allowed(authctxt, authmethods[i]->cfg->name,
-		    NULL))
-			continue;
-		if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
+			തുടരുക;
+		എങ്കിൽ (!auth2_method_allowed(authctxt, authmethods[i]->cfg->name,
+		    ശൂന്യ))
+			തുടരുക;
+		എങ്കിൽ ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
 		    authmethods[i]->cfg->name)) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if ((list = sshbuf_dup_string(b)) == NULL)
+	എങ്കിൽ ((list = sshbuf_dup_string(b)) == ശൂന്യ)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
-	return list;
+	തിരികെ list;
 }
 
-static Authmethod *
-authmethod_byname(const char *name)
+സ്ഥിതം Authmethod *
+authmethod_byname(സ്ഥിരം അക്ഷരം *name)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
-	if (name == NULL)
+	എങ്കിൽ (name == ശൂന്യ)
 		fatal_f("NULL authentication method name");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(name, authmethods[i]->cfg->name) == 0 ||
-		    (authmethods[i]->cfg->synonym != NULL &&
+	വേണ്ടി (i = 0; authmethods[i] != ശൂന്യ; i++) {
+		എങ്കിൽ (strcmp(name, authmethods[i]->cfg->name) == 0 ||
+		    (authmethods[i]->cfg->synonym != ശൂന്യ &&
 		    strcmp(name, authmethods[i]->cfg->synonym) == 0))
-			return authmethods[i];
+			തിരികെ authmethods[i];
 	}
 	debug_f("unrecognized authentication method name: %s", name);
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-static Authmethod *
-authmethod_lookup(Authctxt *authctxt, const char *name)
+സ്ഥിതം Authmethod *
+authmethod_lookup(Authctxt *authctxt, സ്ഥിരം അക്ഷരം *name)
 {
 	Authmethod *method;
 
-	if ((method = authmethod_byname(name)) == NULL)
-		return NULL;
+	എങ്കിൽ ((method = authmethod_byname(name)) == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 
-	if (method->cfg->enabled == NULL || *(method->cfg->enabled) == 0) {
+	എങ്കിൽ (method->cfg->enabled == ശൂന്യ || *(method->cfg->enabled) == 0) {
 		debug3_f("method %s not enabled", name);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
-	if (!auth2_method_allowed(authctxt, method->cfg->name, NULL)) {
+	എങ്കിൽ (!auth2_method_allowed(authctxt, method->cfg->name, ശൂന്യ)) {
 		debug3_f("method %s not allowed "
 		    "by AuthenticationMethods", name);
-		return NULL;
+		തിരികെ ശൂന്യ;
 	}
-	return method;
+	തിരികെ method;
 }
 
 /*
@@ -569,70 +569,70 @@ authmethod_lookup(Authctxt *authctxt, const char *name)
  * has been requested. For this reason, all tests for whether multiple is
  * enabled should consult options.num_auth_methods directly.
  */
-int
+പൂർണ്ണസംഖ്യ
 auth2_setup_methods_lists(Authctxt *authctxt)
 {
 	u_int i;
 
 	/* First, normalise away the "any" pseudo-method */
-	if (options.num_auth_methods == 1 &&
+	എങ്കിൽ (options.അക്കം_auth_methods == 1 &&
 	    strcmp(options.auth_methods[0], "any") == 0) {
-		free(options.auth_methods[0]);
-		options.auth_methods[0] = NULL;
-		options.num_auth_methods = 0;
+		സ്വതന്ത്രം(options.auth_methods[0]);
+		options.auth_methods[0] = ശൂന്യ;
+		options.അക്കം_auth_methods = 0;
 	}
 
-	if (options.num_auth_methods == 0)
-		return 0;
+	എങ്കിൽ (options.അക്കം_auth_methods == 0)
+		തിരികെ 0;
 	debug3_f("checking methods");
-	authctxt->auth_methods = xcalloc(options.num_auth_methods,
-	    sizeof(*authctxt->auth_methods));
-	authctxt->num_auth_methods = 0;
-	for (i = 0; i < options.num_auth_methods; i++) {
-		if (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
+	authctxt->auth_methods = xcalloc(options.അക്കം_auth_methods,
+	    വലുപ്പം(*authctxt->auth_methods));
+	authctxt->അക്കം_auth_methods = 0;
+	വേണ്ടി (i = 0; i < options.അക്കം_auth_methods; i++) {
+		എങ്കിൽ (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
 			logit("Authentication methods list \"%s\" contains "
 			    "disabled method, skipping",
 			    options.auth_methods[i]);
-			continue;
+			തുടരുക;
 		}
 		debug("authentication methods list %d: %s",
-		    authctxt->num_auth_methods, options.auth_methods[i]);
-		authctxt->auth_methods[authctxt->num_auth_methods++] =
+		    authctxt->അക്കം_auth_methods, options.auth_methods[i]);
+		authctxt->auth_methods[authctxt->അക്കം_auth_methods++] =
 		    xstrdup(options.auth_methods[i]);
 	}
-	if (authctxt->num_auth_methods == 0) {
+	എങ്കിൽ (authctxt->അക്കം_auth_methods == 0) {
 		error("No AuthenticationMethods left after eliminating "
 		    "disabled methods");
-		return -1;
+		തിരികെ -1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-list_starts_with(const char *methods, const char *method,
-    const char *submethod)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+list_starts_with(സ്ഥിരം അക്ഷരം *methods, സ്ഥിരം അക്ഷരം *method,
+    സ്ഥിരം അക്ഷരം *submethod)
 {
 	size_t l = strlen(method);
-	int match;
-	const char *p;
+	പൂർണ്ണസംഖ്യ match;
+	സ്ഥിരം അക്ഷരം *p;
 
-	if (strncmp(methods, method, l) != 0)
-		return MATCH_NONE;
+	എങ്കിൽ (strncmp(methods, method, l) != 0)
+		തിരികെ MATCH_NONE;
 	p = methods + l;
 	match = MATCH_METHOD;
-	if (*p == ':') {
-		if (!submethod)
-			return MATCH_PARTIAL;
+	എങ്കിൽ (*p == ':') {
+		എങ്കിൽ (!submethod)
+			തിരികെ MATCH_PARTIAL;
 		l = strlen(submethod);
 		p += 1;
-		if (strncmp(submethod, p, l))
-			return MATCH_NONE;
+		എങ്കിൽ (strncmp(submethod, p, l))
+			തിരികെ MATCH_NONE;
 		p += l;
 		match = MATCH_BOTH;
 	}
-	if (*p != ',' && *p != '\0')
-		return MATCH_NONE;
-	return match;
+	എങ്കിൽ (*p != ',' && *p != '\0')
+		തിരികെ MATCH_NONE;
+	തിരികെ match;
 }
 
 /*
@@ -640,24 +640,24 @@ list_starts_with(const char *methods, const char *method,
  * Returns 0 if the list of methods did not start with that method or 1
  * if it did.
  */
-static int
-remove_method(char **methods, const char *method, const char *submethod)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+remove_method(അക്ഷരം **methods, സ്ഥിരം അക്ഷരം *method, സ്ഥിരം അക്ഷരം *submethod)
 {
-	char *omethods = *methods, *p;
+	അക്ഷരം *omethods = *methods, *p;
 	size_t l = strlen(method);
-	int match;
+	പൂർണ്ണസംഖ്യ match;
 
 	match = list_starts_with(omethods, method, submethod);
-	if (match != MATCH_METHOD && match != MATCH_BOTH)
-		return 0;
+	എങ്കിൽ (match != MATCH_METHOD && match != MATCH_BOTH)
+		തിരികെ 0;
 	p = omethods + l;
-	if (submethod && match == MATCH_BOTH)
+	എങ്കിൽ (submethod && match == MATCH_BOTH)
 		p += 1 + strlen(submethod); /* include colon */
-	if (*p == ',')
+	എങ്കിൽ (*p == ',')
 		p++;
 	*methods = xstrdup(p);
-	free(omethods);
-	return 1;
+	സ്വതന്ത്രം(omethods);
+	തിരികെ 1;
 }
 
 /*
@@ -666,55 +666,55 @@ remove_method(char **methods, const char *method, const char *submethod)
  * in any list, then authentication is deemed successful.
  * Returns 1 if the method completed any authentication list or 0 otherwise.
  */
-int
-auth2_update_methods_lists(Authctxt *authctxt, const char *method,
-    const char *submethod)
+പൂർണ്ണസംഖ്യ
+auth2_update_methods_lists(Authctxt *authctxt, സ്ഥിരം അക്ഷരം *method,
+    സ്ഥിരം അക്ഷരം *submethod)
 {
 	u_int i, found = 0;
 
 	debug3_f("updating methods list after \"%s\"", method);
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (!remove_method(&(authctxt->auth_methods[i]), method,
+	വേണ്ടി (i = 0; i < authctxt->അക്കം_auth_methods; i++) {
+		എങ്കിൽ (!remove_method(&(authctxt->auth_methods[i]), method,
 		    submethod))
-			continue;
+			തുടരുക;
 		found = 1;
-		if (*authctxt->auth_methods[i] == '\0') {
+		എങ്കിൽ (*authctxt->auth_methods[i] == '\0') {
 			debug2("authentication methods list %d complete", i);
-			return 1;
+			തിരികെ 1;
 		}
 		debug3("authentication methods list %d remaining: \"%s\"",
 		    i, authctxt->auth_methods[i]);
 	}
 	/* This should not happen, but would be bad if it did */
-	if (!found)
+	എങ്കിൽ (!found)
 		fatal_f("method not in AuthenticationMethods");
-	return 0;
+	തിരികെ 0;
 }
 
 /* Reset method-specific information */
-void auth2_authctxt_reset_info(Authctxt *authctxt)
+ശൂന്യം auth2_authctxt_reset_info(Authctxt *authctxt)
 {
-	sshkey_free(authctxt->auth_method_key);
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_key = NULL;
-	authctxt->auth_method_info = NULL;
+	sshkey_free(authctxt->auth_method_താക്കോൽ);
+	സ്വതന്ത്രം(authctxt->auth_method_info);
+	authctxt->auth_method_താക്കോൽ = ശൂന്യ;
+	authctxt->auth_method_info = ശൂന്യ;
 }
 
 /* Record auth method-specific information for logs */
-void
-auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
+ശൂന്യം
+auth2_record_info(Authctxt *authctxt, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list ap;
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_info = NULL;
+	സ്വതന്ത്രം(authctxt->auth_method_info);
+	authctxt->auth_method_info = ശൂന്യ;
 
 	va_start(ap, fmt);
 	i = vasprintf(&authctxt->auth_method_info, fmt, ap);
 	va_end(ap);
 
-	if (i == -1)
+	എങ്കിൽ (i == -1)
 		fatal_f("vasprintf failed");
 }
 
@@ -723,95 +723,95 @@ auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
  * and to ensure that the same key is not subsequently accepted again for
  * multiple authentication.
  */
-void
-auth2_record_key(Authctxt *authctxt, int authenticated,
-    const struct sshkey *key)
+ശൂന്യം
+auth2_record_താക്കോൽ(Authctxt *authctxt, പൂർണ്ണസംഖ്യ authenticated,
+    സ്ഥിരം ഘടന sshkey *താക്കോൽ)
 {
-	struct sshkey **tmp, *dup;
-	int r;
+	ഘടന sshkey **tmp, *dup;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	എങ്കിൽ ((r = sshkey_from_private(താക്കോൽ, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	sshkey_free(authctxt->auth_method_key);
-	authctxt->auth_method_key = dup;
+	sshkey_free(authctxt->auth_method_താക്കോൽ);
+	authctxt->auth_method_താക്കോൽ = dup;
 
-	if (!authenticated)
-		return;
+	എങ്കിൽ (!authenticated)
+		തിരികെ;
 
 	/* If authenticated, make sure we don't accept this key again */
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	എങ്കിൽ ((r = sshkey_from_private(താക്കോൽ, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	if (authctxt->nprev_keys >= INT_MAX ||
-	    (tmp = recallocarray(authctxt->prev_keys, authctxt->nprev_keys,
-	    authctxt->nprev_keys + 1, sizeof(*authctxt->prev_keys))) == NULL)
+	എങ്കിൽ (authctxt->nprev_താക്കോലുകൾ >= INT_MAX ||
+	    (tmp = recallocarray(authctxt->prev_താക്കോലുകൾ, authctxt->nprev_താക്കോലുകൾ,
+	    authctxt->nprev_താക്കോലുകൾ + 1, വലുപ്പം(*authctxt->prev_താക്കോലുകൾ))) == ശൂന്യ)
 		fatal_f("reallocarray failed");
-	authctxt->prev_keys = tmp;
-	authctxt->prev_keys[authctxt->nprev_keys] = dup;
-	authctxt->nprev_keys++;
+	authctxt->prev_താക്കോലുകൾ = tmp;
+	authctxt->prev_താക്കോലുകൾ[authctxt->nprev_താക്കോലുകൾ] = dup;
+	authctxt->nprev_താക്കോലുകൾ++;
 
 }
 
 /* Checks whether a key has already been previously used for authentication */
-int
-auth2_key_already_used(Authctxt *authctxt, const struct sshkey *key)
+പൂർണ്ണസംഖ്യ
+auth2_താക്കോൽ_already_used(Authctxt *authctxt, സ്ഥിരം ഘടന sshkey *താക്കോൽ)
 {
 	u_int i;
-	char *fp;
+	അക്ഷരം *fp;
 
-	for (i = 0; i < authctxt->nprev_keys; i++) {
-		if (sshkey_equal_public(key, authctxt->prev_keys[i])) {
-			fp = sshkey_fingerprint(authctxt->prev_keys[i],
+	വേണ്ടി (i = 0; i < authctxt->nprev_താക്കോലുകൾ; i++) {
+		എങ്കിൽ (sshkey_equal_public(താക്കോൽ, authctxt->prev_താക്കോലുകൾ[i])) {
+			fp = sshkey_fingerprint(authctxt->prev_താക്കോലുകൾ[i],
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
 			debug3_f("key already used: %s %s",
-			    sshkey_type(authctxt->prev_keys[i]),
-			    fp == NULL ? "UNKNOWN" : fp);
-			free(fp);
-			return 1;
+			    sshkey_type(authctxt->prev_താക്കോലുകൾ[i]),
+			    fp == ശൂന്യ ? "UNKNOWN" : fp);
+			സ്വതന്ത്രം(fp);
+			തിരികെ 1;
 		}
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /*
  * Updates authctxt->session_info with details of authentication. Should be
  * whenever an authentication method succeeds.
  */
-void
-auth2_update_session_info(Authctxt *authctxt, const char *method,
-    const char *submethod)
+ശൂന്യം
+auth2_update_session_info(Authctxt *authctxt, സ്ഥിരം അക്ഷരം *method,
+    സ്ഥിരം അക്ഷരം *submethod)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (authctxt->session_info == NULL) {
-		if ((authctxt->session_info = sshbuf_new()) == NULL)
+	എങ്കിൽ (authctxt->session_info == ശൂന്യ) {
+		എങ്കിൽ ((authctxt->session_info = sshbuf_new()) == ശൂന്യ)
 			fatal_f("sshbuf_new");
 	}
 
 	/* Append method[/submethod] */
-	if ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
-	    method, submethod == NULL ? "" : "/",
-	    submethod == NULL ? "" : submethod)) != 0)
+	എങ്കിൽ ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
+	    method, submethod == ശൂന്യ ? "" : "/",
+	    submethod == ശൂന്യ ? "" : submethod)) != 0)
 		fatal_fr(r, "append method");
 
 	/* Append key if present */
-	if (authctxt->auth_method_key != NULL) {
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
-		    (r = sshkey_format_text(authctxt->auth_method_key,
+	എങ്കിൽ (authctxt->auth_method_താക്കോൽ != ശൂന്യ) {
+		എങ്കിൽ ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		    (r = sshkey_format_text(authctxt->auth_method_താക്കോൽ,
 		    authctxt->session_info)) != 0)
 			fatal_fr(r, "append key");
 	}
 
-	if (authctxt->auth_method_info != NULL) {
+	എങ്കിൽ (authctxt->auth_method_info != ശൂന്യ) {
 		/* Ensure no ambiguity here */
-		if (strchr(authctxt->auth_method_info, '\n') != NULL)
+		എങ്കിൽ (strchr(authctxt->auth_method_info, '\n') != ശൂന്യ)
 			fatal_f("auth_method_info contains \\n");
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		എങ്കിൽ ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
 		    (r = sshbuf_putf(authctxt->session_info, "%s",
 		    authctxt->auth_method_info)) != 0) {
 			fatal_fr(r, "append method info");
 		}
 	}
-	if ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
+	എങ്കിൽ ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
 		fatal_fr(r, "append");
 }
 

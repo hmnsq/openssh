@@ -15,92 +15,92 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <stdio.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "ssh_api.h"
-#include "compat.h"
-#include "log.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "dh.h"
-#include "misc.h"
-#include "ssh2.h"
-#include "version.h"
-#include "myproposal.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#അന്തര്ഭാവ "ssh_api.h"
+#അന്തര്ഭാവ "compat.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "authfile.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "dh.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "version.h"
+#അന്തര്ഭാവ "myproposal.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshbuf.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
 
-#include <string.h>
+#അന്തര്ഭാവ <string.h>
 
-int	_ssh_exchange_banner(struct ssh *);
-int	_ssh_send_banner(struct ssh *, struct sshbuf *);
-int	_ssh_read_banner(struct ssh *, struct sshbuf *);
-int	_ssh_order_hostkeyalgs(struct ssh *);
-int	_ssh_verify_host_key(struct sshkey *, struct ssh *);
-struct sshkey *_ssh_host_public_key(int, int, struct ssh *);
-struct sshkey *_ssh_host_private_key(int, int, struct ssh *);
-int	_ssh_host_key_sign(struct ssh *, struct sshkey *, struct sshkey *,
-    u_char **, size_t *, const u_char *, size_t, const char *);
+പൂർണ്ണസംഖ്യ	_ssh_exchange_banner(ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	_ssh_send_banner(ഘടന ssh *, ഘടന sshbuf *);
+പൂർണ്ണസംഖ്യ	_ssh_read_banner(ഘടന ssh *, ഘടന sshbuf *);
+പൂർണ്ണസംഖ്യ	_ssh_order_hostkeyalgs(ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	ssh_verify_host_താക്കോൽ(ഘടന sshkey *, ഘടന ssh *);
+ഘടന sshkey *ssh_host_public_താക്കോൽ(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, ഘടന ssh *);
+ഘടന sshkey *ssh_host_private_താക്കോൽ(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	ssh_host_താക്കോൽ_sign(ഘടന ssh *, ഘടന sshkey *, ഘടന sshkey *,
+    u_char **, size_t *, സ്ഥിരം u_char *, size_t, സ്ഥിരം അക്ഷരം *);
 
 /*
  * stubs for privsep calls in the server side implementation of kex.
  */
-int	mm_sshkey_sign(struct sshkey *, u_char **, u_int *,
-    const u_char *, u_int, const char *, const char *, const char *, u_int);
+പൂർണ്ണസംഖ്യ	mm_sshkey_sign(ഘടന sshkey *, u_char **, u_int *,
+    സ്ഥിരം u_char *, u_int, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, u_int);
 
 #ifdef WITH_OPENSSL
-DH	*mm_choose_dh(int, int, int);
+DH	*mm_choose_dh(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
 #endif
 
-int
-mm_sshkey_sign(struct sshkey *key, u_char **sigp, u_int *lenp,
-    const u_char *data, u_int datalen, const char *alg,
-    const char *sk_provider, const char *sk_pin, u_int compat)
+പൂർണ്ണസംഖ്യ
+mm_sshkey_sign(ഘടന sshkey *താക്കോൽ, u_char **sigp, u_int *lenp,
+    സ്ഥിരം u_char *data, u_int datalen, സ്ഥിരം അക്ഷരം *alg,
+    സ്ഥിരം അക്ഷരം *sk_provider, സ്ഥിരം അക്ഷരം *sk_pin, u_int compat)
 {
 	size_t slen = 0;
-	int ret;
+	പൂർണ്ണസംഖ്യ ret;
 
-	ret = sshkey_sign(key, sigp, &slen, data, datalen, alg,
+	ret = sshkey_sign(താക്കോൽ, sigp, &slen, data, datalen, alg,
 	    sk_provider, sk_pin, compat);
 	*lenp = slen;
-	return ret;
+	തിരികെ ret;
 }
 
 #ifdef WITH_OPENSSL
 DH *
-mm_choose_dh(int min, int nbits, int max)
+mm_choose_dh(പൂർണ്ണസംഖ്യ min, പൂർണ്ണസംഖ്യ nbits, പൂർണ്ണസംഖ്യ max)
 {
-	return choose_dh(min, nbits, max);
+	തിരികെ choose_dh(min, nbits, max);
 }
 #endif
 
 /* API */
 
-int
-ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
+പൂർണ്ണസംഖ്യ
+ssh_init(ഘടന ssh **sshp, പൂർണ്ണസംഖ്യ is_server, ഘടന kex_params *kex_params)
 {
-	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *populated[PROPOSAL_MAX];
-	struct ssh *ssh;
-	char **proposal;
-	static int called;
-	int r;
+	അക്ഷരം *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	അക്ഷരം *populated[PROPOSAL_MAX];
+	ഘടന ssh *ssh;
+	അക്ഷരം **proposal;
+	സ്ഥിതം പൂർണ്ണസംഖ്യ called;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (!called) {
+	എങ്കിൽ (!called) {
 		seed_rng();
 		called = 1;
 	}
 
-	if ((ssh = ssh_packet_set_connection(NULL, -1, -1)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (is_server)
+	എങ്കിൽ ((ssh = ssh_packet_set_connection(ശൂന്യ, -1, -1)) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ (is_server)
 		ssh_packet_set_server(ssh);
 
 	/* Initialize key exchange */
@@ -110,16 +110,16 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 	    proposal[PROPOSAL_ENC_ALGS_CTOS],
 	    proposal[PROPOSAL_MAC_ALGS_CTOS],
 	    proposal[PROPOSAL_COMP_ALGS_CTOS],
-	    proposal[PROPOSAL_SERVER_HOST_KEY_ALGS]);
+	    proposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS]);
 	r = kex_ready(ssh, populated);
 	kex_proposal_free_entries(populated);
-	if (r != 0) {
+	എങ്കിൽ (r != 0) {
 		ssh_free(ssh);
-		return r;
+		തിരികെ r;
 	}
 
 	ssh->kex->server = is_server;
-	if (is_server) {
+	എങ്കിൽ (is_server) {
 #ifdef WITH_OPENSSL
 		ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_server;
 		ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_server;
@@ -134,10 +134,10 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_server;
-		ssh->kex->load_host_public_key=&_ssh_host_public_key;
-		ssh->kex->load_host_private_key=&_ssh_host_private_key;
-		ssh->kex->sign=&_ssh_host_key_sign;
-	} else {
+		ssh->kex->load_host_public_താക്കോൽ=&ssh_host_public_താക്കോൽ;
+		ssh->kex->load_host_private_താക്കോൽ=&ssh_host_private_താക്കോൽ;
+		ssh->kex->sign=&ssh_host_താക്കോൽ_sign;
+	} അല്ലെങ്കിൽ {
 #ifdef WITH_OPENSSL
 		ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
 		ssh->kex->kex[KEX_DH_GRP14_SHA1] = kex_gen_client;
@@ -152,107 +152,107 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-		ssh->kex->verify_host_key =&_ssh_verify_host_key;
+		ssh->kex->verify_host_താക്കോൽ =&ssh_verify_host_താക്കോൽ;
 	}
 	*sshp = ssh;
-	return 0;
+	തിരികെ 0;
 }
 
-void
-ssh_free(struct ssh *ssh)
+ശൂന്യം
+ssh_free(ഘടന ssh *ssh)
 {
-	struct key_entry *k;
+	ഘടന താക്കോൽ_entry *k;
 
-	if (ssh == NULL)
-		return;
+	എങ്കിൽ (ssh == ശൂന്യ)
+		തിരികെ;
 
 	/*
 	 * we've only created the public keys variants in case we
 	 * are a acting as a server.
 	 */
-	while ((k = TAILQ_FIRST(&ssh->public_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->public_keys, k, next);
-		if (ssh->kex && ssh->kex->server)
-			sshkey_free(k->key);
-		free(k);
+	ആകുമ്പോൾ ((k = TAILQ_FIRST(&ssh->public_താക്കോലുകൾ)) != ശൂന്യ) {
+		TAILQ_REMOVE(&ssh->public_താക്കോലുകൾ, k, next);
+		എങ്കിൽ (ssh->kex && ssh->kex->server)
+			sshkey_free(k->താക്കോൽ);
+		സ്വതന്ത്രം(k);
 	}
-	while ((k = TAILQ_FIRST(&ssh->private_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->private_keys, k, next);
-		free(k);
+	ആകുമ്പോൾ ((k = TAILQ_FIRST(&ssh->private_താക്കോലുകൾ)) != ശൂന്യ) {
+		TAILQ_REMOVE(&ssh->private_താക്കോലുകൾ, k, next);
+		സ്വതന്ത്രം(k);
 	}
 	ssh_packet_close(ssh);
-	free(ssh);
+	സ്വതന്ത്രം(ssh);
 }
 
-void
-ssh_set_app_data(struct ssh *ssh, void *app_data)
+ശൂന്യം
+ssh_set_app_data(ഘടന ssh *ssh, ശൂന്യം *app_data)
 {
 	ssh->app_data = app_data;
 }
 
-void *
-ssh_get_app_data(struct ssh *ssh)
+ശൂന്യം *
+ssh_get_app_data(ഘടന ssh *ssh)
 {
-	return ssh->app_data;
+	തിരികെ ssh->app_data;
 }
 
 /* Returns < 0 on error, 0 otherwise */
-int
-ssh_add_hostkey(struct ssh *ssh, struct sshkey *key)
+പൂർണ്ണസംഖ്യ
+ssh_add_hostkey(ഘടന ssh *ssh, ഘടന sshkey *താക്കോൽ)
 {
-	struct sshkey *pubkey = NULL;
-	struct key_entry *k = NULL, *k_prv = NULL;
-	int r;
+	ഘടന sshkey *pubkey = ശൂന്യ;
+	ഘടന താക്കോൽ_entry *k = ശൂന്യ, *k_prv = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (ssh->kex->server) {
-		if ((r = sshkey_from_private(key, &pubkey)) != 0)
-			return r;
-		if ((k = malloc(sizeof(*k))) == NULL ||
-		    (k_prv = malloc(sizeof(*k_prv))) == NULL) {
-			free(k);
+	എങ്കിൽ (ssh->kex->server) {
+		എങ്കിൽ ((r = sshkey_from_private(താക്കോൽ, &pubkey)) != 0)
+			തിരികെ r;
+		എങ്കിൽ ((k = malloc(വലുപ്പം(*k))) == ശൂന്യ ||
+		    (k_prv = malloc(വലുപ്പം(*k_prv))) == ശൂന്യ) {
+			സ്വതന്ത്രം(k);
 			sshkey_free(pubkey);
-			return SSH_ERR_ALLOC_FAIL;
+			തിരികെ SSH_ERR_ALLOC_FAIL;
 		}
-		k_prv->key = key;
-		TAILQ_INSERT_TAIL(&ssh->private_keys, k_prv, next);
+		k_prv->താക്കോൽ = താക്കോൽ;
+		TAILQ_INSERT_TAIL(&ssh->private_താക്കോലുകൾ, k_prv, next);
 
 		/* add the public key, too */
-		k->key = pubkey;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+		k->താക്കോൽ = pubkey;
+		TAILQ_INSERT_TAIL(&ssh->public_താക്കോലുകൾ, k, next);
 		r = 0;
-	} else {
-		if ((k = malloc(sizeof(*k))) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		k->key = key;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ ((k = malloc(വലുപ്പം(*k))) == ശൂന്യ)
+			തിരികെ SSH_ERR_ALLOC_FAIL;
+		k->താക്കോൽ = താക്കോൽ;
+		TAILQ_INSERT_TAIL(&ssh->public_താക്കോലുകൾ, k, next);
 		r = 0;
 	}
 
-	return r;
+	തിരികെ r;
 }
 
-int
-ssh_set_verify_host_key_callback(struct ssh *ssh,
-    int (*cb)(struct sshkey *, struct ssh *))
+പൂർണ്ണസംഖ്യ
+ssh_set_verify_host_താക്കോൽ_callback(ഘടന ssh *ssh,
+    പൂർണ്ണസംഖ്യ (*cb)(ഘടന sshkey *, ഘടന ssh *))
 {
-	if (cb == NULL || ssh->kex == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (cb == ശൂന്യ || ssh->kex == ശൂന്യ)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
 
-	ssh->kex->verify_host_key = cb;
+	ssh->kex->verify_host_താക്കോൽ = cb;
 
-	return 0;
+	തിരികെ 0;
 }
 
-int
-ssh_input_append(struct ssh *ssh, const u_char *data, size_t len)
+പൂർണ്ണസംഖ്യ
+ssh_നിവേശം_append(ഘടന ssh *ssh, സ്ഥിരം u_char *data, size_t len)
 {
-	return sshbuf_put(ssh_packet_get_input(ssh), data, len);
+	തിരികെ sshbuf_put(ssh_packet_get_നിവേശം(ssh), data, len);
 }
 
-int
-ssh_packet_next(struct ssh *ssh, u_char *typep)
+പൂർണ്ണസംഖ്യ
+ssh_packet_next(ഘടന ssh *ssh, u_char *typep)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	uint32_t seqnr;
 	u_char type;
 
@@ -260,10 +260,10 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 	 * Try to read a packet. Return SSH_MSG_NONE if no packet or not
 	 * enough data.
 	 */
-	*typep = SSH_MSG_NONE;
-	if (sshbuf_len(ssh->kex->client_version) == 0 ||
+	*typep = SSH_സന്ദേശം_NONE;
+	എങ്കിൽ (sshbuf_len(ssh->kex->client_version) == 0 ||
 	    sshbuf_len(ssh->kex->server_version) == 0)
-		return _ssh_exchange_banner(ssh);
+		തിരികെ _ssh_exchange_banner(ssh);
 	/*
 	 * If we enough data and a dispatch function then
 	 * call the function and get the next packet.
@@ -275,175 +275,175 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 	 *     30-49    Key exchange method specific (numbers can be reused for
 	 *              different authentication methods)
 	 */
-	for (;;) {
-		if ((r = ssh_packet_read_poll2(ssh, &type, &seqnr)) != 0)
-			return r;
-		if (type > 0 && type < DISPATCH_MAX &&
-		    type >= SSH2_MSG_KEXINIT && type <= SSH2_MSG_TRANSPORT_MAX &&
-		    ssh->dispatch[type] != NULL) {
-			if ((r = (*ssh->dispatch[type])(type, seqnr, ssh)) != 0)
-				return r;
-		} else {
+	വേണ്ടി (;;) {
+		എങ്കിൽ ((r = ssh_packet_read_poll2(ssh, &type, &seqnr)) != 0)
+			തിരികെ r;
+		എങ്കിൽ (type > 0 && type < DISPATCH_MAX &&
+		    type >= SSH2_സന്ദേശം_KEXINIT && type <= SSH2_സന്ദേശം_TRANSPORT_MAX &&
+		    ssh->dispatch[type] != ശൂന്യ) {
+			എങ്കിൽ ((r = (*ssh->dispatch[type])(type, seqnr, ssh)) != 0)
+				തിരികെ r;
+		} അല്ലെങ്കിൽ {
 			*typep = type;
-			return 0;
+			തിരികെ 0;
 		}
 	}
 }
 
-const u_char *
-ssh_packet_payload(struct ssh *ssh, size_t *lenp)
+സ്ഥിരം u_char *
+ssh_packet_payload(ഘടന ssh *ssh, size_t *lenp)
 {
-	return sshpkt_ptr(ssh, lenp);
+	തിരികെ sshpkt_ptr(ssh, lenp);
 }
 
-int
-ssh_packet_put(struct ssh *ssh, int type, const u_char *data, size_t len)
+പൂർണ്ണസംഖ്യ
+ssh_packet_put(ഘടന ssh *ssh, പൂർണ്ണസംഖ്യ type, സ്ഥിരം u_char *data, size_t len)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshpkt_start(ssh, type)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, type)) != 0 ||
 	    (r = sshpkt_put(ssh, data, len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
-	return 0;
+		തിരികെ r;
+	തിരികെ 0;
 }
 
-const u_char *
-ssh_output_ptr(struct ssh *ssh, size_t *len)
+സ്ഥിരം u_char *
+ssh_output_ptr(ഘടന ssh *ssh, size_t *len)
 {
-	struct sshbuf *output = ssh_packet_get_output(ssh);
+	ഘടന sshbuf *output = ssh_packet_get_output(ssh);
 
 	*len = sshbuf_len(output);
-	return sshbuf_ptr(output);
+	തിരികെ sshbuf_ptr(output);
 }
 
-int
-ssh_output_consume(struct ssh *ssh, size_t len)
+പൂർണ്ണസംഖ്യ
+ssh_output_consume(ഘടന ssh *ssh, size_t len)
 {
-	return sshbuf_consume(ssh_packet_get_output(ssh), len);
+	തിരികെ sshbuf_consume(ssh_packet_get_output(ssh), len);
 }
 
-int
-ssh_output_space(struct ssh *ssh, size_t len)
+പൂർണ്ണസംഖ്യ
+ssh_output_space(ഘടന ssh *ssh, size_t len)
 {
-	return (0 == sshbuf_check_reserve(ssh_packet_get_output(ssh), len));
+	തിരികെ (0 == sshbuf_check_reserve(ssh_packet_get_output(ssh), len));
 }
 
-int
-ssh_input_space(struct ssh *ssh, size_t len)
+പൂർണ്ണസംഖ്യ
+ssh_നിവേശം_space(ഘടന ssh *ssh, size_t len)
 {
-	return (0 == sshbuf_check_reserve(ssh_packet_get_input(ssh), len));
+	തിരികെ (0 == sshbuf_check_reserve(ssh_packet_get_നിവേശം(ssh), len));
 }
 
 /* Read other side's version identification. */
-int
-_ssh_read_banner(struct ssh *ssh, struct sshbuf *banner)
+പൂർണ്ണസംഖ്യ
+_ssh_read_banner(ഘടന ssh *ssh, ഘടന sshbuf *banner)
 {
-	struct sshbuf *input = ssh_packet_get_input(ssh);
-	const char *mismatch = "Protocol mismatch.\r\n";
-	const u_char *s = sshbuf_ptr(input);
+	ഘടന sshbuf *നിവേശം = ssh_packet_get_നിവേശം(ssh);
+	സ്ഥിരം അക്ഷരം *mismatch = "Protocol mismatch.\r\n";
+	സ്ഥിരം u_char *s = sshbuf_ptr(നിവേശം);
 	u_char c;
-	char *cp = NULL, *remote_version = NULL;
-	int r = 0, remote_major, remote_minor, expect_nl;
+	അക്ഷരം *cp = ശൂന്യ, *remote_version = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = 0, remote_major, remote_minor, expect_nl;
 	size_t n, j;
 
-	for (j = n = 0;;) {
+	വേണ്ടി (j = n = 0;;) {
 		sshbuf_reset(banner);
 		expect_nl = 0;
-		for (;;) {
-			if (j >= sshbuf_len(input))
-				return 0; /* insufficient data in input buf */
+		വേണ്ടി (;;) {
+			എങ്കിൽ (j >= sshbuf_len(നിവേശം))
+				തിരികെ 0; /* insufficient data in input buf */
 			c = s[j++];
-			if (c == '\r') {
+			എങ്കിൽ (c == '\r') {
 				expect_nl = 1;
-				continue;
+				തുടരുക;
 			}
-			if (c == '\n')
-				break;
-			if (expect_nl)
-				goto bad;
-			if ((r = sshbuf_put_u8(banner, c)) != 0)
-				return r;
-			if (sshbuf_len(banner) > SSH_MAX_BANNER_LEN)
-				goto bad;
+			എങ്കിൽ (c == '\n')
+				നിർത്തുക;
+			എങ്കിൽ (expect_nl)
+				പോകുക bad;
+			എങ്കിൽ ((r = sshbuf_put_u8(banner, c)) != 0)
+				തിരികെ r;
+			എങ്കിൽ (sshbuf_len(banner) > SSH_MAX_BANNER_LEN)
+				പോകുക bad;
 		}
-		if (sshbuf_len(banner) >= 4 &&
+		എങ്കിൽ (sshbuf_len(banner) >= 4 &&
 		    memcmp(sshbuf_ptr(banner), "SSH-", 4) == 0)
-			break;
-		debug_f("%.*s", (int)sshbuf_len(banner),
+			നിർത്തുക;
+		debug_f("%.*s", (പൂർണ്ണസംഖ്യ)sshbuf_len(banner),
 		    sshbuf_ptr(banner));
 		/* Accept lines before banner only on client */
-		if (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_LINES) {
+		എങ്കിൽ (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_വരികൾ) {
   bad:
-			if ((r = sshbuf_put(ssh_packet_get_output(ssh),
+			എങ്കിൽ ((r = sshbuf_put(ssh_packet_get_output(ssh),
 			    mismatch, strlen(mismatch))) != 0)
-				return r;
-			return SSH_ERR_NO_PROTOCOL_VERSION;
+				തിരികെ r;
+			തിരികെ SSH_ERR_NO_PROTOCOL_VERSION;
 		}
 	}
-	if ((r = sshbuf_consume(input, j)) != 0)
-		return r;
+	എങ്കിൽ ((r = sshbuf_consume(നിവേശം, j)) != 0)
+		തിരികെ r;
 
 	/* XXX remote version must be the same size as banner for sscanf */
-	if ((cp = sshbuf_dup_string(banner)) == NULL ||
-	    (remote_version = calloc(1, sshbuf_len(banner))) == NULL) {
+	എങ്കിൽ ((cp = sshbuf_dup_string(banner)) == ശൂന്യ ||
+	    (remote_version = calloc(1, sshbuf_len(banner))) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 
 	/*
 	 * Check that the versions match.  In future this might accept
 	 * several versions and set appropriate flags to handle them.
 	 */
-	if (sscanf(cp, "SSH-%d.%d-%[^\n]\n",
+	എങ്കിൽ (sscanf(cp, "SSH-%d.%d-%[^\n]\n",
 	    &remote_major, &remote_minor, remote_version) != 3) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
 	debug("Remote protocol version %d.%d, remote software version %.100s",
 	    remote_major, remote_minor, remote_version);
 
 	compat_banner(ssh, remote_version);
-	if  (remote_major == 1 && remote_minor == 99) {
+	എങ്കിൽ  (remote_major == 1 && remote_minor == 99) {
 		remote_major = 2;
 		remote_minor = 0;
 	}
-	if (remote_major != 2)
+	എങ്കിൽ (remote_major != 2)
 		r = SSH_ERR_PROTOCOL_MISMATCH;
 
 	debug("Remote version string %.100s", cp);
  out:
-	free(cp);
-	free(remote_version);
-	return r;
+	സ്വതന്ത്രം(cp);
+	സ്വതന്ത്രം(remote_version);
+	തിരികെ r;
 }
 
 /* Send our own protocol version identification. */
-int
-_ssh_send_banner(struct ssh *ssh, struct sshbuf *banner)
+പൂർണ്ണസംഖ്യ
+_ssh_send_banner(ഘടന ssh *ssh, ഘടന sshbuf *banner)
 {
-	char *cp;
-	int r;
+	അക്ഷരം *cp;
+	പൂർണ്ണസംഖ്യ r;
 
-	if ((r = sshbuf_putf(banner, "SSH-2.0-%.100s\r\n", SSH_VERSION)) != 0)
-		return r;
-	if ((r = sshbuf_putb(ssh_packet_get_output(ssh), banner)) != 0)
-		return r;
+	എങ്കിൽ ((r = sshbuf_putf(banner, "SSH-2.0-%.100s\r\n", SSH_VERSION)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshbuf_putb(ssh_packet_get_output(ssh), banner)) != 0)
+		തിരികെ r;
 	/* Remove trailing \r\n */
-	if ((r = sshbuf_consume_end(banner, 2)) != 0)
-		return r;
-	if ((cp = sshbuf_dup_string(banner)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshbuf_consume_end(banner, 2)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((cp = sshbuf_dup_string(banner)) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
 	debug("Local version string %.100s", cp);
-	free(cp);
-	return 0;
+	സ്വതന്ത്രം(cp);
+	തിരികെ 0;
 }
 
-int
-_ssh_exchange_banner(struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+_ssh_exchange_banner(ഘടന ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	ഘടന kex *kex = ssh->kex;
+	പൂർണ്ണസംഖ്യ r;
 
 	/*
 	 * if _ssh_read_banner() cannot parse a full version string
@@ -451,140 +451,140 @@ _ssh_exchange_banner(struct ssh *ssh)
 	 */
 
 	r = 0;
-	if (kex->server) {
-		if (sshbuf_len(ssh->kex->server_version) == 0)
+	എങ്കിൽ (kex->server) {
+		എങ്കിൽ (sshbuf_len(ssh->kex->server_version) == 0)
 			r = _ssh_send_banner(ssh, ssh->kex->server_version);
-		if (r == 0 &&
+		എങ്കിൽ (r == 0 &&
 		    sshbuf_len(ssh->kex->server_version) != 0 &&
 		    sshbuf_len(ssh->kex->client_version) == 0)
 			r = _ssh_read_banner(ssh, ssh->kex->client_version);
-	} else {
-		if (sshbuf_len(ssh->kex->server_version) == 0)
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (sshbuf_len(ssh->kex->server_version) == 0)
 			r = _ssh_read_banner(ssh, ssh->kex->server_version);
-		if (r == 0 &&
+		എങ്കിൽ (r == 0 &&
 		    sshbuf_len(ssh->kex->server_version) != 0 &&
 		    sshbuf_len(ssh->kex->client_version) == 0)
 			r = _ssh_send_banner(ssh, ssh->kex->client_version);
 	}
-	if (r != 0)
-		return r;
+	എങ്കിൽ (r != 0)
+		തിരികെ r;
 	/* start initial kex as soon as we have exchanged the banners */
-	if (sshbuf_len(ssh->kex->server_version) != 0 &&
+	എങ്കിൽ (sshbuf_len(ssh->kex->server_version) != 0 &&
 	    sshbuf_len(ssh->kex->client_version) != 0) {
-		if ((r = _ssh_order_hostkeyalgs(ssh)) != 0 ||
+		എങ്കിൽ ((r = _ssh_order_hostkeyalgs(ssh)) != 0 ||
 		    (r = kex_send_kexinit(ssh)) != 0)
-			return r;
+			തിരികെ r;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-struct sshkey *
-_ssh_host_public_key(int type, int nid, struct ssh *ssh)
+ഘടന sshkey *
+ssh_host_public_താക്കോൽ(പൂർണ്ണസംഖ്യ type, പൂർണ്ണസംഖ്യ nid, ഘടന ssh *ssh)
 {
-	struct key_entry *k;
+	ഘടന താക്കോൽ_entry *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->public_താക്കോലുകൾ, next) {
+		debug3_f("check %s", sshkey_type(k->താക്കോൽ));
+		എങ്കിൽ (k->താക്കോൽ->type == type &&
+		    (type != താക്കോൽ_ECDSA || k->താക്കോൽ->ecdsa_nid == nid))
+			തിരികെ (k->താക്കോൽ);
 	}
-	return (NULL);
+	തിരികെ (ശൂന്യ);
 }
 
-struct sshkey *
-_ssh_host_private_key(int type, int nid, struct ssh *ssh)
+ഘടന sshkey *
+ssh_host_private_താക്കോൽ(പൂർണ്ണസംഖ്യ type, പൂർണ്ണസംഖ്യ nid, ഘടന ssh *ssh)
 {
-	struct key_entry *k;
+	ഘടന താക്കോൽ_entry *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->private_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->private_താക്കോലുകൾ, next) {
+		debug3_f("check %s", sshkey_type(k->താക്കോൽ));
+		എങ്കിൽ (k->താക്കോൽ->type == type &&
+		    (type != താക്കോൽ_ECDSA || k->താക്കോൽ->ecdsa_nid == nid))
+			തിരികെ (k->താക്കോൽ);
 	}
-	return (NULL);
+	തിരികെ (ശൂന്യ);
 }
 
-int
-_ssh_verify_host_key(struct sshkey *hostkey, struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+ssh_verify_host_താക്കോൽ(ഘടന sshkey *hostkey, ഘടന ssh *ssh)
 {
-	struct key_entry *k;
+	ഘടന താക്കോൽ_entry *k;
 
 	debug3_f("need %s", sshkey_type(hostkey));
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (sshkey_equal_public(hostkey, k->key))
-			return (0);	/* ok */
+	TAILQ_FOREACH(k, &ssh->public_താക്കോലുകൾ, next) {
+		debug3_f("check %s", sshkey_type(k->താക്കോൽ));
+		എങ്കിൽ (sshkey_equal_public(hostkey, k->താക്കോൽ))
+			തിരികെ (0);	/* ok */
 	}
-	return (-1);	/* failed */
+	തിരികെ (-1);	/* failed */
 }
 
 /* offer hostkey algorithms in kexinit depending on registered keys */
-int
-_ssh_order_hostkeyalgs(struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+_ssh_order_hostkeyalgs(ഘടന ssh *ssh)
 {
-	struct key_entry *k;
-	char *orig, *avail, *oavail = NULL, *alg, *replace = NULL;
-	char **proposal;
+	ഘടന താക്കോൽ_entry *k;
+	അക്ഷരം *orig, *avail, *oavail = ശൂന്യ, *alg, *replace = ശൂന്യ;
+	അക്ഷരം **proposal;
 	size_t maxlen;
-	int ktype, nid, r;
+	പൂർണ്ണസംഖ്യ ktype, nid, r;
 
 	/* XXX we de-serialize ssh->kex->my, modify it, and change it */
-	if ((r = kex_buf2prop(ssh->kex->my, NULL, &proposal)) != 0)
-		return r;
-	orig = proposal[PROPOSAL_SERVER_HOST_KEY_ALGS];
-	if ((oavail = avail = strdup(orig)) == NULL) {
+	എങ്കിൽ ((r = kex_buf2prop(ssh->kex->my, ശൂന്യ, &proposal)) != 0)
+		തിരികെ r;
+	orig = proposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS];
+	എങ്കിൽ ((oavail = avail = strdup(orig)) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 	maxlen = strlen(avail) + 1;
-	if ((replace = calloc(1, maxlen)) == NULL) {
+	എങ്കിൽ ((replace = calloc(1, maxlen)) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 	*replace = '\0';
-	while ((alg = strsep(&avail, ",")) && *alg != '\0') {
-		if ((ktype = sshkey_type_from_name(alg)) == KEY_UNSPEC)
-			continue;
+	ആകുമ്പോൾ ((alg = strsep(&avail, ",")) && *alg != '\0') {
+		എങ്കിൽ ((ktype = sshkey_type_from_name(alg)) == താക്കോൽ_UNSPEC)
+			തുടരുക;
 		nid = sshkey_ecdsa_nid_from_name(alg);
-		TAILQ_FOREACH(k, &ssh->public_keys, next) {
-			if (k->key->type != ktype &&
-			    (!sshkey_is_cert(k->key) ||
-			    k->key->type != sshkey_type_plain(ktype)))
-				continue;
-			if (sshkey_type_plain(k->key->type) == KEY_ECDSA &&
-			    k->key->ecdsa_nid != nid)
-				continue;
+		TAILQ_FOREACH(k, &ssh->public_താക്കോലുകൾ, next) {
+			എങ്കിൽ (k->താക്കോൽ->type != ktype &&
+			    (!sshkey_is_cert(k->താക്കോൽ) ||
+			    k->താക്കോൽ->type != sshkey_type_plain(ktype)))
+				തുടരുക;
+			എങ്കിൽ (sshkey_type_plain(k->താക്കോൽ->type) == താക്കോൽ_ECDSA &&
+			    k->താക്കോൽ->ecdsa_nid != nid)
+				തുടരുക;
 			/* Candidate */
-			if (*replace != '\0')
+			എങ്കിൽ (*replace != '\0')
 				strlcat(replace, ",", maxlen);
 			strlcat(replace, alg, maxlen);
-			break;
+			നിർത്തുക;
 		}
 	}
-	if (*replace != '\0') {
+	എങ്കിൽ (*replace != '\0') {
 		debug2_f("orig/%d    %s", ssh->kex->server, orig);
 		debug2_f("replace/%d %s", ssh->kex->server, replace);
-		free(orig);
-		proposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = replace;
-		replace = NULL;	/* owned by proposal */
+		സ്വതന്ത്രം(orig);
+		proposal[PROPOSAL_SERVER_HOST_താക്കോൽ_ALGS] = replace;
+		replace = ശൂന്യ;	/* owned by proposal */
 		r = kex_prop2buf(ssh->kex->my, proposal);
 	}
  out:
-	free(oavail);
-	free(replace);
+	സ്വതന്ത്രം(oavail);
+	സ്വതന്ത്രം(replace);
 	kex_prop_free(proposal);
-	return r;
+	തിരികെ r;
 }
 
-int
-_ssh_host_key_sign(struct ssh *ssh, struct sshkey *privkey,
-    struct sshkey *pubkey, u_char **signature, size_t *slen,
-    const u_char *data, size_t dlen, const char *alg)
+പൂർണ്ണസംഖ്യ
+ssh_host_താക്കോൽ_sign(ഘടന ssh *ssh, ഘടന sshkey *privkey,
+    ഘടന sshkey *pubkey, u_char **signature, size_t *slen,
+    സ്ഥിരം u_char *data, size_t dlen, സ്ഥിരം അക്ഷരം *alg)
 {
-	return sshkey_sign(privkey, signature, slen, data, dlen,
-	    alg, NULL, NULL, ssh->compat);
+	തിരികെ sshkey_sign(privkey, signature, slen, data, dlen,
+	    alg, ശൂന്യ, ശൂന്യ, ssh->compat);
 }

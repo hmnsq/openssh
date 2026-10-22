@@ -19,8 +19,8 @@
 #ifndef AUTH_OPTIONS_H
 #define AUTH_OPTIONS_H
 
-struct passwd;
-struct sshkey;
+ഘടന passwd;
+ഘടന sshkey;
 
 /* Maximum number of permitopen/permitlisten directives to accept */
 #define SSH_AUTHOPT_PERMIT_MAX	4096
@@ -32,75 +32,75 @@ struct sshkey;
  * sshauthopt represents key options parsed from authorized_keys or
  * from certificate extensions/options.
  */
-struct sshauthopt {
+ഘടന sshauthopt {
 	/* Feature flags */
-	int permit_port_forwarding_flag;
-	int permit_agent_forwarding_flag;
-	int permit_x11_forwarding_flag;
-	int permit_pty_flag;
-	int permit_user_rc;
+	പൂർണ്ണസംഖ്യ permit_port_forwarding_flag;
+	പൂർണ്ണസംഖ്യ permit_agent_forwarding_flag;
+	പൂർണ്ണസംഖ്യ permit_x11_forwarding_flag;
+	പൂർണ്ണസംഖ്യ permit_pty_flag;
+	പൂർണ്ണസംഖ്യ permit_user_rc;
 
 	/* "restrict" keyword was invoked */
-	int restricted;
+	പൂർണ്ണസംഖ്യ restricted;
 
 	/* key/principal expiry date */
 	uint64_t valid_before;
 
 	/* Certificate-related options */
-	int cert_authority;
-	char *cert_principals;
+	പൂർണ്ണസംഖ്യ cert_authority;
+	അക്ഷരം *cert_principals;
 
-	int force_tun_device;
-	char *force_command;
+	പൂർണ്ണസംഖ്യ force_tun_device;
+	അക്ഷരം *force_command;
 
 	/* Custom environment */
 	size_t nenv;
-	char **env;
+	അക്ഷരം **env;
 
 	/* Permitted port forwardings */
 	size_t npermitopen;
-	char **permitopen;
+	അക്ഷരം **permitopen;
 
 	/* Permitted listens (remote forwarding) */
 	size_t npermitlisten;
-	char **permitlisten;
+	അക്ഷരം **permitlisten;
 
 	/*
 	 * Permitted host/addresses (comma-separated)
 	 * Caller must check source address matches both lists (if present).
 	 */
-	char *required_from_host_cert;
-	char *required_from_host_keys;
+	അക്ഷരം *required_from_host_cert;
+	അക്ഷരം *required_from_host_താക്കോലുകൾ;
 
 	/* Key requires user presence asserted */
-	int no_require_user_presence;
+	പൂർണ്ണസംഖ്യ no_require_user_presence;
 	/* Key requires user verification (e.g. PIN) */
-	int require_verify;
+	പൂർണ്ണസംഖ്യ require_verify;
 };
 
-struct sshauthopt *sshauthopt_new(void);
-struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
-void sshauthopt_free(struct sshauthopt *opts);
-struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
-int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);
-int sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
+ഘടന sshauthopt *sshauthopt_new(ശൂന്യം);
+ഘടന sshauthopt *sshauthopt_new_with_താക്കോലുകൾ_defaults(ശൂന്യം);
+ശൂന്യം sshauthopt_free(ഘടന sshauthopt *opts);
+ഘടന sshauthopt *sshauthopt_copy(സ്ഥിരം ഘടന sshauthopt *orig);
+പൂർണ്ണസംഖ്യ sshauthopt_serialise(സ്ഥിരം ഘടന sshauthopt *opts, ഘടന sshbuf *m, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ sshauthopt_deserialise(ഘടന sshbuf *m, ഘടന sshauthopt **opts);
 
 /*
  * Parse authorized_keys options. Returns an options structure on success
  * or NULL on failure. Will set errstr on failure.
  */
-struct sshauthopt *sshauthopt_parse(const char *s, const char **errstr);
+ഘടന sshauthopt *sshauthopt_parse(സ്ഥിരം അക്ഷരം *s, സ്ഥിരം അക്ഷരം **errstr);
 
 /*
  * Parse certification options to a struct sshauthopt.
  * Returns options on success or NULL on failure.
  */
-struct sshauthopt *sshauthopt_from_cert(struct sshkey *k);
+ഘടന sshauthopt *sshauthopt_from_cert(ഘടന sshkey *k);
 
 /*
  * Merge key options.
  */
-struct sshauthopt *sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp);
+ഘടന sshauthopt *sshauthopt_merge(സ്ഥിരം ഘടന sshauthopt *primary,
+    സ്ഥിരം ഘടന sshauthopt *additional, സ്ഥിരം അക്ഷരം **errstrp);
 
 #endif

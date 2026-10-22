@@ -27,88 +27,88 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/wait.h>
-#include <sys/tree.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/queue.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/ioctl.h>
+#അന്തര്ഭാവ <sys/wait.h>
+#അന്തര്ഭാവ <sys/tree.h>
+#അന്തര്ഭാവ <sys/stat.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/time.h>
+#അന്തര്ഭാവ <sys/queue.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <grp.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <limits.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <fcntl.h>
+#അന്തര്ഭാവ <netdb.h>
+#അന്തര്ഭാവ <paths.h>
+#അന്തര്ഭാവ <pwd.h>
+#അന്തര്ഭാവ <grp.h>
+#അന്തര്ഭാവ <signal.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <limits.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/evp.h>
+#അന്തര്ഭാവ <openssl/bn.h>
+#അന്തര്ഭാവ <openssl/evp.h>
 #endif
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshpty.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "match.h"
-#include "servconf.h"
-#include "uidswap.h"
-#include "compat.h"
-#include "cipher.h"
-#include "digest.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "atomicio.h"
-#include "canohost.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "authfd.h"
-#include "msg.h"
-#include "dispatch.h"
-#include "channels.h"
-#include "session.h"
-#include "monitor.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "ssh.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "sshpty.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "match.h"
+#അന്തര്ഭാവ "servconf.h"
+#അന്തര്ഭാവ "uidswap.h"
+#അന്തര്ഭാവ "compat.h"
+#അന്തര്ഭാവ "cipher.h"
+#അന്തര്ഭാവ "digest.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "kex.h"
+#അന്തര്ഭാവ "authfile.h"
+#അന്തര്ഭാവ "pathnames.h"
+#അന്തര്ഭാവ "atomicio.h"
+#അന്തര്ഭാവ "canohost.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "auth.h"
+#അന്തര്ഭാവ "authfd.h"
+#അന്തര്ഭാവ "msg.h"
+#അന്തര്ഭാവ "dispatch.h"
+#അന്തര്ഭാവ "channels.h"
+#അന്തര്ഭാവ "session.h"
+#അന്തര്ഭാവ "monitor.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#അന്തര്ഭാവ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "auth-options.h"
-#include "version.h"
-#include "ssherr.h"
-#include "sk-api.h"
-#include "srclimit.h"
-#include "ssh-sandbox.h"
-#include "dh.h"
+#അന്തര്ഭാവ "monitor_wrap.h"
+#അന്തര്ഭാവ "auth-options.h"
+#അന്തര്ഭാവ "version.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sk-api.h"
+#അന്തര്ഭാവ "srclimit.h"
+#അന്തര്ഭാവ "ssh-sandbox.h"
+#അന്തര്ഭാവ "dh.h"
 
 /* Privsep fds */
 #define PRIVSEP_MONITOR_FD		(STDERR_FILENO + 1)
 #define PRIVSEP_LOG_FD			(STDERR_FILENO + 2)
 #define PRIVSEP_MIN_FREE_FD		(STDERR_FILENO + 3)
 
-extern char *__progname;
+ബാഹ്യ അക്ഷരം *__progname;
 
 /* Server configuration options. */
 ServerOptions options;
 
 /* Name of the server configuration file. */
-char *config_file_name = _PATH_SERVER_CONFIG_FILE;
+അക്ഷരം *config_file_name = _PATH_SERVER_CONFIG_FILE;
 
 /*
  * Debug mode flag.  This can be set on the command line.  If debug
@@ -116,81 +116,81 @@ char *config_file_name = _PATH_SERVER_CONFIG_FILE;
  * log, the daemon will not go to background, and will exit after processing
  * the first connection.
  */
-int debug_flag = 0;
+പൂർണ്ണസംഖ്യ debug_flag = 0;
 
 /* Flag indicating that the daemon is being started from inetd. */
-static int inetd_flag = 0;
+സ്ഥിതം പൂർണ്ണസംഖ്യ inetd_flag = 0;
 
 /* Saved arguments to main(). */
-static char **saved_argv;
-static int saved_argc;
+സ്ഥിതം അക്ഷരം **saved_argv;
+സ്ഥിതം പൂർണ്ണസംഖ്യ saved_argc;
 
 
 /* Daemon's agent connection */
-int auth_sock = -1;
-static int have_agent = 0;
+പൂർണ്ണസംഖ്യ auth_sock = -1;
+സ്ഥിതം പൂർണ്ണസംഖ്യ have_agent = 0;
 
-u_int		num_hostkeys;
-struct sshkey	**host_pubkeys;		/* all public host keys */
-struct sshkey	**host_certificates;	/* all public host certificates */
+u_int		അക്കം_hostkeys;
+ഘടന sshkey	**host_pubkeys;		/* all public host keys */
+ഘടന sshkey	**host_certificates;	/* all public host certificates */
 
 /* record remote hostname or ip */
 u_int utmp_len = HOST_NAME_MAX+1;
 
 /* variables used for privilege separation */
-struct monitor *pmonitor = NULL;
-int privsep_is_preauth = 1;
-static int privsep_chroot = 1;
+ഘടന monitor *pmonitor = ശൂന്യ;
+പൂർണ്ണസംഖ്യ privsep_is_preauth = 1;
+സ്ഥിതം പൂർണ്ണസംഖ്യ privsep_chroot = 1;
 
 /* global connection state and authentication contexts */
-Authctxt *the_authctxt = NULL;
-struct ssh *the_active_state;
+Authctxt *the_authctxt = ശൂന്യ;
+ഘടന ssh *the_active_state;
 
 /* global key/cert auth options. XXX move to permanent ssh->authctxt? */
-struct sshauthopt *auth_opts = NULL;
+ഘടന sshauthopt *auth_opts = ശൂന്യ;
 
 /* sshd_config buffer */
-struct sshbuf *cfg;
+ഘടന sshbuf *cfg;
 
 /* Included files from the configuration file */
-struct include_list includes = TAILQ_HEAD_INITIALIZER(includes);
+ഘടന include_list includes = TAILQ_HEAD_INITIALIZER(includes);
 
 /* message to be displayed after login */
-struct sshbuf *loginmsg;
+ഘടന sshbuf *loginmsg;
 
 /* Prototypes for various functions defined later in this file. */
-static void do_ssh2_kex(struct ssh *);
+സ്ഥിതം ശൂന്യം do_ssh2_kex(ഘടന ssh *);
 
 /* Unprivileged user */
-struct passwd *privsep_pw = NULL;
+ഘടന passwd *privsep_pw = ശൂന്യ;
 
 #ifndef HAVE_PLEDGE
-static struct ssh_sandbox *box;
+സ്ഥിതം ഘടന ssh_sandbox *box;
 #endif
 
 /* XXX stub */
-int
-mm_is_monitor(void)
+പൂർണ്ണസംഖ്യ
+mm_is_monitor(ശൂന്യം)
 {
-	return 0;
+	തിരികെ 0;
 }
 
-static void
-privsep_child_demote(void)
+സ്ഥിതം ശൂന്യം
+privsep_child_demote(ശൂന്യം)
 {
 	gid_t gidset[1];
 
 #ifndef HAVE_PLEDGE
-	if ((box = ssh_sandbox_init(pmonitor)) == NULL)
+	എങ്കിൽ ((box = ssh_sandbox_init(pmonitor)) == ശൂന്യ)
 		fatal_f("ssh_sandbox_init failed");
 #endif
 	/* Demote the child */
-	if (privsep_chroot) {
+	എങ്കിൽ (privsep_chroot) {
 		/* Change our root directory */
-		if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
+		എങ്കിൽ (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
 			fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,
 			    strerror(errno));
-		if (chdir("/") == -1)
+		എങ്കിൽ (chdir("/") == -1)
 			fatal("chdir(\"/\"): %s", strerror(errno));
 
 		/*
@@ -200,171 +200,171 @@ privsep_child_demote(void)
 		debug3("privsep user:group %u:%u", (u_int)privsep_pw->pw_uid,
 		    (u_int)privsep_pw->pw_gid);
 		gidset[0] = privsep_pw->pw_gid;
-		if (setgroups(1, gidset) == -1)
+		എങ്കിൽ (setgroups(1, gidset) == -1)
 			fatal("setgroups: %.100s", strerror(errno));
 		permanently_set_uid(privsep_pw);
 	}
 
 	/* sandbox ourselves */
 #ifdef HAVE_PLEDGE
-	if (pledge("stdio", NULL) == -1)
+	എങ്കിൽ (pledge("stdio", ശൂന്യ) == -1)
 		fatal_f("pledge()");
-#else
+#അല്ലെങ്കിൽ
 	ssh_sandbox_child(box);
 #endif
 }
 
-static void
-append_hostkey_type(struct sshbuf *b, const char *s)
+സ്ഥിതം ശൂന്യം
+append_hostkey_type(ഘടന sshbuf *b, സ്ഥിരം അക്ഷരം *s)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
-	if (match_pattern_list(s, options.hostkeyalgorithms, 0) != 1) {
+	എങ്കിൽ (match_pattern_list(s, options.hostkeyalgorithms, 0) != 1) {
 		debug3_f("%s key not permitted by HostkeyAlgorithms", s);
-		return;
+		തിരികെ;
 	}
-	if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
+	എങ്കിൽ ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
 		fatal_fr(r, "sshbuf_putf");
 }
 
-static char *
-list_hostkey_types(void)
+സ്ഥിതം അക്ഷരം *
+list_hostkey_types(ശൂന്യം)
 {
-	struct sshbuf *b;
-	struct sshkey *key;
-	char *ret;
+	ഘടന sshbuf *b;
+	ഘടന sshkey *താക്കോൽ;
+	അക്ഷരം *ret;
 	u_int i;
 
-	if ((b = sshbuf_new()) == NULL)
+	എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; i < options.num_host_key_files; i++) {
-		key = host_pubkeys[i];
-		if (key == NULL)
-			continue;
-		switch (key->type) {
-		case KEY_RSA:
+	വേണ്ടി (i = 0; i < options.അക്കം_host_താക്കോൽ_files; i++) {
+		താക്കോൽ = host_pubkeys[i];
+		എങ്കിൽ (താക്കോൽ == ശൂന്യ)
+			തുടരുക;
+		തിരഞ്ഞെടുപ്പ് (താക്കോൽ->type) {
+		അവസ്ഥ താക്കോൽ_RSA:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b, "rsa-sha2-512");
 			append_hostkey_type(b, "rsa-sha2-256");
 			/* FALLTHROUGH */
-		case KEY_ECDSA:
-		case KEY_ED25519:
-		case KEY_MLDSA44_ED25519:
-		case KEY_ECDSA_SK:
-		case KEY_ED25519_SK:
-			append_hostkey_type(b, sshkey_ssh_name(key));
-			break;
+		അവസ്ഥ താക്കോൽ_ECDSA:
+		അവസ്ഥ താക്കോൽ_ED25519:
+		അവസ്ഥ താക്കോൽ_MLDSA44_ED25519:
+		അവസ്ഥ താക്കോൽ_ECDSA_SK:
+		അവസ്ഥ താക്കോൽ_ED25519_SK:
+			append_hostkey_type(b, sshkey_ssh_name(താക്കോൽ));
+			നിർത്തുക;
 		}
 		/* If the private key has a cert peer, then list that too */
-		key = host_certificates[i];
-		if (key == NULL)
-			continue;
-		switch (key->type) {
-		case KEY_RSA_CERT:
+		താക്കോൽ = host_certificates[i];
+		എങ്കിൽ (താക്കോൽ == ശൂന്യ)
+			തുടരുക;
+		തിരഞ്ഞെടുപ്പ് (താക്കോൽ->type) {
+		അവസ്ഥ താക്കോൽ_RSA_CERT:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b,
 			    "rsa-sha2-512-cert-v01@openssh.com");
 			append_hostkey_type(b,
 			    "rsa-sha2-256-cert-v01@openssh.com");
 			/* FALLTHROUGH */
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-			append_hostkey_type(b, sshkey_ssh_name(key));
-			break;
+		അവസ്ഥ താക്കോൽ_ECDSA_CERT:
+		അവസ്ഥ താക്കോൽ_ED25519_CERT:
+		അവസ്ഥ താക്കോൽ_MLDSA44_ED25519_CERT:
+		അവസ്ഥ താക്കോൽ_ECDSA_SK_CERT:
+		അവസ്ഥ താക്കോൽ_ED25519_SK_CERT:
+			append_hostkey_type(b, sshkey_ssh_name(താക്കോൽ));
+			നിർത്തുക;
 		}
 	}
-	if ((ret = sshbuf_dup_string(b)) == NULL)
+	എങ്കിൽ ((ret = sshbuf_dup_string(b)) == ശൂന്യ)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
 	debug_f("%s", ret);
-	return ret;
+	തിരികെ ret;
 }
 
-struct sshkey *
-get_hostkey_public_by_type(int type, int nid, struct ssh *ssh)
+ഘടന sshkey *
+get_hostkey_public_by_type(പൂർണ്ണസംഖ്യ type, പൂർണ്ണസംഖ്യ nid, ഘടന ssh *ssh)
 {
 	u_int i;
-	struct sshkey *key;
+	ഘടന sshkey *താക്കോൽ;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		switch (type) {
-		case KEY_RSA_CERT:
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-			key = host_certificates[i];
-			break;
-		default:
-			key = host_pubkeys[i];
-			break;
+	വേണ്ടി (i = 0; i < options.അക്കം_host_താക്കോൽ_files; i++) {
+		തിരഞ്ഞെടുപ്പ് (type) {
+		അവസ്ഥ താക്കോൽ_RSA_CERT:
+		അവസ്ഥ താക്കോൽ_ECDSA_CERT:
+		അവസ്ഥ താക്കോൽ_ED25519_CERT:
+		അവസ്ഥ താക്കോൽ_MLDSA44_ED25519_CERT:
+		അവസ്ഥ താക്കോൽ_ECDSA_SK_CERT:
+		അവസ്ഥ താക്കോൽ_ED25519_SK_CERT:
+			താക്കോൽ = host_certificates[i];
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
+			താക്കോൽ = host_pubkeys[i];
+			നിർത്തുക;
 		}
-		if (key == NULL || key->type != type)
-			continue;
-		switch (type) {
-		case KEY_ECDSA:
-		case KEY_ECDSA_SK:
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA_SK_CERT:
-			if (key->ecdsa_nid != nid)
-				continue;
+		എങ്കിൽ (താക്കോൽ == ശൂന്യ || താക്കോൽ->type != type)
+			തുടരുക;
+		തിരഞ്ഞെടുപ്പ് (type) {
+		അവസ്ഥ താക്കോൽ_ECDSA:
+		അവസ്ഥ താക്കോൽ_ECDSA_SK:
+		അവസ്ഥ താക്കോൽ_ECDSA_CERT:
+		അവസ്ഥ താക്കോൽ_ECDSA_SK_CERT:
+			എങ്കിൽ (താക്കോൽ->ecdsa_nid != nid)
+				തുടരുക;
 			/* FALLTHROUGH */
-		default:
-			return key;
+		സ്ഥിരസ്ഥിതി:
+			തിരികെ താക്കോൽ;
 		}
 	}
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 /* XXX remove */
-struct sshkey *
-get_hostkey_private_by_type(int type, int nid, struct ssh *ssh)
+ഘടന sshkey *
+get_hostkey_private_by_type(പൂർണ്ണസംഖ്യ type, പൂർണ്ണസംഖ്യ nid, ഘടന ssh *ssh)
 {
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
 /* XXX remove */
-struct sshkey *
-get_hostkey_by_index(int ind)
+ഘടന sshkey *
+get_hostkey_by_index(പൂർണ്ണസംഖ്യ ind)
 {
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-struct sshkey *
-get_hostkey_public_by_index(int ind, struct ssh *ssh)
+ഘടന sshkey *
+get_hostkey_public_by_index(പൂർണ്ണസംഖ്യ ind, ഘടന ssh *ssh)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
-		return (NULL);
-	return host_pubkeys[ind];
+	എങ്കിൽ (ind < 0 || (u_int)ind >= options.അക്കം_host_താക്കോൽ_files)
+		തിരികെ (ശൂന്യ);
+	തിരികെ host_pubkeys[ind];
 }
 
-int
-get_hostkey_index(struct sshkey *key, int compare, struct ssh *ssh)
+പൂർണ്ണസംഖ്യ
+get_hostkey_index(ഘടന sshkey *താക്കോൽ, പൂർണ്ണസംഖ്യ compare, ഘടന ssh *ssh)
 {
 	u_int i;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sshkey_is_cert(key)) {
-			if (key == host_certificates[i] ||
+	വേണ്ടി (i = 0; i < options.അക്കം_host_താക്കോൽ_files; i++) {
+		എങ്കിൽ (sshkey_is_cert(താക്കോൽ)) {
+			എങ്കിൽ (താക്കോൽ == host_certificates[i] ||
 			    (compare && host_certificates[i] &&
-			    sshkey_equal(key, host_certificates[i])))
-				return (i);
-		} else {
-			if (key == host_pubkeys[i] ||
+			    sshkey_equal(താക്കോൽ, host_certificates[i])))
+				തിരികെ (i);
+		} അല്ലെങ്കിൽ {
+			എങ്കിൽ (താക്കോൽ == host_pubkeys[i] ||
 			    (compare && host_pubkeys[i] &&
-			    sshkey_equal(key, host_pubkeys[i])))
-				return (i);
+			    sshkey_equal(താക്കോൽ, host_pubkeys[i])))
+				തിരികെ (i);
 		}
 	}
-	return (-1);
+	തിരികെ (-1);
 }
 
-static void
-usage(void)
+സ്ഥിതം ശൂന്യം
+usage(ശൂന്യം)
 {
 	fprintf(stderr, "%s, %s\n", SSH_VERSION, SSH_OPENSSL_VERSION);
 	fprintf(stderr,
@@ -375,54 +375,54 @@ usage(void)
 	exit(1);
 }
 
-static void
-parse_hostkeys(struct sshbuf *hostkeys)
+സ്ഥിതം ശൂന്യം
+parse_hostkeys(ഘടന sshbuf *hostkeys)
 {
-	int r;
-	u_int num_keys = 0;
-	struct sshkey *k;
-	const u_char *cp;
+	പൂർണ്ണസംഖ്യ r;
+	u_int അക്കം_താക്കോലുകൾ = 0;
+	ഘടന sshkey *k;
+	സ്ഥിരം u_char *cp;
 	size_t len;
 
-	while (sshbuf_len(hostkeys) != 0) {
-		if (num_keys > 2048)
+	ആകുമ്പോൾ (sshbuf_len(hostkeys) != 0) {
+		എങ്കിൽ (അക്കം_താക്കോലുകൾ > 2048)
 			fatal_f("too many hostkeys");
 		host_pubkeys = xrecallocarray(host_pubkeys,
-		    num_keys, num_keys + 1, sizeof(*host_pubkeys));
+		    അക്കം_താക്കോലുകൾ, അക്കം_താക്കോലുകൾ + 1, വലുപ്പം(*host_pubkeys));
 		host_certificates = xrecallocarray(host_certificates,
-		    num_keys, num_keys + 1, sizeof(*host_certificates));
+		    അക്കം_താക്കോലുകൾ, അക്കം_താക്കോലുകൾ + 1, വലുപ്പം(*host_certificates));
 		/* public key */
-		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		k = ശൂന്യ;
+		എങ്കിൽ ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		എങ്കിൽ (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		host_pubkeys[num_keys] = k;
-		if (k)
-			debug2_f("key %u: %s", num_keys, sshkey_ssh_name(k));
+		host_pubkeys[അക്കം_താക്കോലുകൾ] = k;
+		എങ്കിൽ (k)
+			debug2_f("key %u: %s", അക്കം_താക്കോലുകൾ, sshkey_ssh_name(k));
 		/* certificate */
-		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		k = ശൂന്യ;
+		എങ്കിൽ ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		എങ്കിൽ (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		host_certificates[num_keys] = k;
-		if (k)
-			debug2_f("cert %u: %s", num_keys, sshkey_ssh_name(k));
-		num_keys++;
+		host_certificates[അക്കം_താക്കോലുകൾ] = k;
+		എങ്കിൽ (k)
+			debug2_f("cert %u: %s", അക്കം_താക്കോലുകൾ, sshkey_ssh_name(k));
+		അക്കം_താക്കോലുകൾ++;
 	}
-	num_hostkeys = num_keys;
+	അക്കം_hostkeys = അക്കം_താക്കോലുകൾ;
 }
 
-static void
-recv_privsep_state(struct ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
+സ്ഥിതം ശൂന്യം
+recv_privsep_state(ഘടന ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
 {
-	struct sshbuf *hostkeys;
+	ഘടന sshbuf *hostkeys;
 
 	debug3_f("begin");
 
-	mm_get_state(ssh, o, NULL, timing_secretp,
-	    &hostkeys, NULL, NULL, NULL, NULL);
+	mm_get_state(ssh, o, ശൂന്യ, timing_secretp,
+	    &hostkeys, ശൂന്യ, ശൂന്യ, ശൂന്യ, ശൂന്യ);
 	parse_hostkeys(hostkeys);
 
 	sshbuf_free(hostkeys);
@@ -433,14 +433,14 @@ recv_privsep_state(struct ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
 /*
  * Main program for the daemon.
  */
-int
-main(int ac, char **av)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(പൂർണ്ണസംഖ്യ ac, അക്ഷരം **av)
 {
-	struct ssh *ssh = NULL;
-	extern char *optarg;
-	extern int optind;
-	int r, opt, have_key = 0;
-	int sock_in = -1, sock_out = -1, rexeced_flag = 0;
+	ഘടന ssh *ssh = ശൂന്യ;
+	ബാഹ്യ അക്ഷരം *optarg;
+	ബാഹ്യ പൂർണ്ണസംഖ്യ optind;
+	പൂർണ്ണസംഖ്യ r, opt, have_താക്കോൽ = 0;
+	പൂർണ്ണസംഖ്യ sock_in = -1, sock_out = -1, rexeced_flag = 0;
 	u_int i;
 	mode_t new_umask;
 	Authctxt *authctxt;
@@ -449,19 +449,19 @@ main(int ac, char **av)
 
 	closefrom(PRIVSEP_MIN_FREE_FD);
 	sigemptyset(&sigmask);
-	sigprocmask(SIG_SETMASK, &sigmask, NULL);
+	sigprocmask(SIG_SETMASK, &sigmask, ശൂന്യ);
 
 #ifdef HAVE_SECUREWARE
-	(void)set_auth_parameters(ac, av);
+	(ശൂന്യം)set_auth_parameters(ac, av);
 #endif
 	__progname = ssh_get_progname(av[0]);
 
 	/* Save argv. Duplicate so setproctitle emulation doesn't clobber it */
 	saved_argc = ac;
-	saved_argv = xcalloc(ac + 1, sizeof(*saved_argv));
-	for (i = 0; (int)i < ac; i++)
+	saved_argv = xcalloc(ac + 1, വലുപ്പം(*saved_argv));
+	വേണ്ടി (i = 0; (പൂർണ്ണസംഖ്യ)i < ac; i++)
 		saved_argv[i] = xstrdup(av[i]);
-	saved_argv[i] = NULL;
+	saved_argv[i] = ശൂന്യ;
 
 	seed_rng();
 
@@ -478,90 +478,90 @@ main(int ac, char **av)
 	initialize_server_options(&options);
 
 	/* Parse command-line arguments. */
-	while ((opt = getopt(ac, av,
+	ആകുമ്പോൾ ((opt = getopt(ac, av,
 	    "C:E:b:c:f:g:h:k:o:p:u:46DGQRTdeiqrtV")) != -1) {
-		switch (opt) {
-		case '4':
+		തിരഞ്ഞെടുപ്പ് (opt) {
+		അവസ്ഥ '4':
 			/* ignore */
-			break;
-		case '6':
+			നിർത്തുക;
+		അവസ്ഥ '6':
 			/* ignore */
-			break;
-		case 'f':
+			നിർത്തുക;
+		അവസ്ഥ 'f':
 			/* ignore */
-			break;
-		case 'c':
+			നിർത്തുക;
+		അവസ്ഥ 'c':
 			/* ignore */
-			break;
-		case 'd':
-			if (debug_flag == 0) {
+			നിർത്തുക;
+		അവസ്ഥ 'd':
+			എങ്കിൽ (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else if (options.log_level < SYSLOG_LEVEL_DEBUG3)
+			} അല്ലെങ്കിൽ എങ്കിൽ (options.log_level < SYSLOG_LEVEL_DEBUG3)
 				options.log_level++;
-			break;
-		case 'D':
-		case 'E':
-		case 'e':
+			നിർത്തുക;
+		അവസ്ഥ 'D':
+		അവസ്ഥ 'E':
+		അവസ്ഥ 'e':
 			/* ignore */
-			break;
-		case 'i':
+			നിർത്തുക;
+		അവസ്ഥ 'i':
 			inetd_flag = 1;
-			break;
-		case 'r':
+			നിർത്തുക;
+		അവസ്ഥ 'r':
 			/* ignore */
-			break;
-		case 'R':
+			നിർത്തുക;
+		അവസ്ഥ 'R':
 			rexeced_flag = 1;
-			break;
-		case 'Q':
+			നിർത്തുക;
+		അവസ്ഥ 'Q':
 			/* ignored */
-			break;
-		case 'q':
+			നിർത്തുക;
+		അവസ്ഥ 'q':
 			/* ignored */
-			break;
-		case 'b':
+			നിർത്തുക;
+		അവസ്ഥ 'b':
 			/* protocol 1, ignored */
-			break;
-		case 'p':
+			നിർത്തുക;
+		അവസ്ഥ 'p':
 			/* ignored */
-			break;
-		case 'g':
+			നിർത്തുക;
+		അവസ്ഥ 'g':
 			/* ignored */
-			break;
-		case 'k':
+			നിർത്തുക;
+		അവസ്ഥ 'k':
 			/* protocol 1, ignored */
-			break;
-		case 'h':
+			നിർത്തുക;
+		അവസ്ഥ 'h':
 			/* ignored */
-			break;
-		case 't':
-		case 'T':
-		case 'G':
-		case 'C':
+			നിർത്തുക;
+		അവസ്ഥ 't':
+		അവസ്ഥ 'T':
+		അവസ്ഥ 'G':
+		അവസ്ഥ 'C':
 			fatal("test/dump modes not supported");
-			break;
-		case 'u':
-			utmp_len = (u_int)strtonum(optarg, 0, HOST_NAME_MAX+1+1, NULL);
-			if (utmp_len > HOST_NAME_MAX+1) {
+			നിർത്തുക;
+		അവസ്ഥ 'u':
+			utmp_len = (u_int)strtonum(optarg, 0, HOST_NAME_MAX+1+1, ശൂന്യ);
+			എങ്കിൽ (utmp_len > HOST_NAME_MAX+1) {
 				fprintf(stderr, "Invalid utmp length.\n");
 				exit(1);
 			}
-			break;
-		case 'o':
+			നിർത്തുക;
+		അവസ്ഥ 'o':
 			/* ignored */
-			break;
-		case 'V':
+			നിർത്തുക;
+		അവസ്ഥ 'V':
 			fprintf(stderr, "%s, %s\n",
 			    SSH_VERSION, SSH_OPENSSL_VERSION);
 			exit(0);
-		default:
+		സ്ഥിരസ്ഥിതി:
 			usage();
-			break;
+			നിർത്തുക;
 		}
 	}
 
-	if (!rexeced_flag)
+	എങ്കിൽ (!rexeced_flag)
 		fatal("sshd-auth should not be executed directly");
 
 	log_init(__progname,
@@ -571,32 +571,32 @@ main(int ac, char **av)
 	    SYSLOG_FACILITY_AUTH : options.log_facility, 1);
 
 	/* XXX can't use monitor_init(); it makes fds */
-	pmonitor = xcalloc(1, sizeof(*pmonitor));
+	pmonitor = xcalloc(1, വലുപ്പം(*pmonitor));
 	pmonitor->m_sendfd = pmonitor->m_log_recvfd = -1;
 	pmonitor->m_recvfd = PRIVSEP_MONITOR_FD;
 	pmonitor->m_log_sendfd = PRIVSEP_LOG_FD;
 	set_log_handler(mm_log_handler, pmonitor);
 
 	/* Check that there are no remaining arguments. */
-	if (optind < ac) {
+	എങ്കിൽ (optind < ac) {
 		fprintf(stderr, "Extra argument %s.\n", av[optind]);
 		exit(1);
 	}
 
 	/* Connection passed by stdin/out */
-	if (inetd_flag) {
+	എങ്കിൽ (inetd_flag) {
 		/*
 		 * NB. must be different fd numbers for the !socket case,
 		 * as packet_connection_is_on_socket() depends on this.
 		 */
 		sock_in = dup(STDIN_FILENO);
 		sock_out = dup(STDOUT_FILENO);
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* rexec case; accept()ed socket in ancestor listener */
 		sock_in = sock_out = dup(STDIN_FILENO);
 	}
 
-	if (stdfd_devnull(1, 1, 0) == -1)
+	എങ്കിൽ (stdfd_devnull(1, 1, 0) == -1)
 		error("stdfd_devnull failed");
 	debug("network sockets: %d, %d", sock_in, sock_out);
 
@@ -604,14 +604,14 @@ main(int ac, char **av)
 	 * Register our connection.  This turns encryption off because we do
 	 * not have a key.
 	 */
-	if ((ssh = ssh_packet_set_connection(NULL, sock_in, sock_out)) == NULL)
+	എങ്കിൽ ((ssh = ssh_packet_set_connection(ശൂന്യ, sock_in, sock_out)) == ശൂന്യ)
 		fatal("Unable to create connection");
 	the_active_state = ssh;
 	ssh_packet_set_server(ssh);
 	pmonitor->m_pkex = &ssh->kex;
 
 	/* Fetch our configuration */
-	if ((cfg = sshbuf_new()) == NULL)
+	എങ്കിൽ ((cfg = sshbuf_new()) == ശൂന്യ)
 		fatal("sshbuf_new config buf failed");
 	setproctitle("%s", "[session-auth early]");
 	recv_privsep_state(ssh, &options, &timing_secret);
@@ -627,11 +627,11 @@ main(int ac, char **av)
 
 	/* Store privilege separation user for later use if required. */
 	privsep_chroot = (getuid() == 0 || geteuid() == 0);
-	if ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
-		if (privsep_chroot || options.kerberos_authentication)
+	എങ്കിൽ ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == ശൂന്യ) {
+		എങ്കിൽ (privsep_chroot || options.kerberos_authentication)
 			fatal("Privilege separation user %s does not exist",
 			    SSH_PRIVSEP_USER);
-	} else {
+	} അല്ലെങ്കിൽ {
 		privsep_pw = pwcopy(privsep_pw);
 		freezero(privsep_pw->pw_passwd, strlen(privsep_pw->pw_passwd));
 		privsep_pw->pw_passwd = xstrdup("*");
@@ -639,50 +639,50 @@ main(int ac, char **av)
 	endpwent();
 
 #ifdef WITH_OPENSSL
-	if (options.moduli_file != NULL)
+	എങ്കിൽ (options.moduli_file != ശൂന്യ)
 		dh_set_moduli_file(options.moduli_file);
 #endif
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	എങ്കിൽ (options.host_താക്കോൽ_agent) {
+		എങ്കിൽ (strcmp(options.host_താക്കോൽ_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
-			    options.host_key_agent, 1);
-		if ((r = ssh_get_authentication_socket(NULL)) == 0)
+			    options.host_താക്കോൽ_agent, 1);
+		എങ്കിൽ ((r = ssh_get_authentication_socket(ശൂന്യ)) == 0)
 			have_agent = 1;
-		else
+		അല്ലെങ്കിൽ
 			error_r(r, "Could not connect to agent \"%s\"",
-			    options.host_key_agent);
+			    options.host_താക്കോൽ_agent);
 	}
 
-	if (options.num_host_key_files != num_hostkeys) {
+	എങ്കിൽ (options.അക്കം_host_താക്കോൽ_files != അക്കം_hostkeys) {
 		fatal("internal error: hostkeys confused (config %u recvd %u)",
-		    options.num_host_key_files, num_hostkeys);
+		    options.അക്കം_host_താക്കോൽ_files, അക്കം_hostkeys);
 	}
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (host_pubkeys[i] != NULL) {
-			have_key = 1;
-			break;
+	വേണ്ടി (i = 0; i < options.അക്കം_host_താക്കോൽ_files; i++) {
+		എങ്കിൽ (host_pubkeys[i] != ശൂന്യ) {
+			have_താക്കോൽ = 1;
+			നിർത്തുക;
 		}
 	}
-	if (!have_key)
+	എങ്കിൽ (!have_താക്കോൽ)
 		fatal("internal error: received no hostkeys");
 
 	/* Ensure that umask disallows at least group and world write */
 	new_umask = umask(0077) | 0022;
-	(void) umask(new_umask);
+	(ശൂന്യം) umask(new_umask);
 
 	/* Initialize the log (it is reinitialized below in case we forked). */
 	log_init(__progname, options.log_level, options.log_facility, 1);
 	set_log_handler(mm_log_handler, pmonitor);
-	for (i = 0; i < options.num_log_verbose; i++)
+	വേണ്ടി (i = 0; i < options.അക്കം_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 
 	/*
 	 * Chdir to the root directory so that the current disk can be
 	 * unmounted if desired.
 	 */
-	if (chdir("/") == -1)
+	എങ്കിൽ (chdir("/") == -1)
 		error("chdir(\"/\"): %s", strerror(errno));
 
 	/* This is the child authenticating a new connection. */
@@ -710,18 +710,18 @@ main(int ac, char **av)
 	ssh_packet_set_nonblocking(ssh);
 
 	/* allocate authentication context */
-	authctxt = xcalloc(1, sizeof(*authctxt));
+	authctxt = xcalloc(1, വലുപ്പം(*authctxt));
 	ssh->authctxt = authctxt;
 
 	/* XXX global for cleanup, access from other modules */
 	the_authctxt = authctxt;
 
 	/* Set default key authentication options */
-	if ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
+	എങ്കിൽ ((auth_opts = sshauthopt_new_with_താക്കോലുകൾ_defaults()) == ശൂന്യ)
 		fatal("allocation failed");
 
 	/* prepare buffer to collect messages to display to user after login */
-	if ((loginmsg = sshbuf_new()) == NULL)
+	എങ്കിൽ ((loginmsg = sshbuf_new()) == ശൂന്യ)
 		fatal("sshbuf_new loginmsg failed");
 	auth_debug_reset();
 
@@ -742,60 +742,60 @@ main(int ac, char **av)
 	 */
 	mm_send_keystate(ssh, pmonitor);
 	sshauthopt_free(auth_opts);
-	ssh_packet_clear_keys(ssh);
+	ssh_packet_clear_താക്കോലുകൾ(ssh);
 	exit(0);
 }
 
-int
-sshd_hostkey_sign(struct ssh *ssh, struct sshkey *privkey,
-    struct sshkey *pubkey, u_char **signature, size_t *slenp,
-    const u_char *data, size_t dlen, const char *alg)
+പൂർണ്ണസംഖ്യ
+sshd_hostkey_sign(ഘടന ssh *ssh, ഘടന sshkey *privkey,
+    ഘടന sshkey *pubkey, u_char **signature, size_t *slenp,
+    സ്ഥിരം u_char *data, size_t dlen, സ്ഥിരം അക്ഷരം *alg)
 {
-	if (privkey) {
-		if (mm_sshkey_sign(ssh, privkey, signature, slenp,
-		    data, dlen, alg, options.sk_provider, NULL,
+	എങ്കിൽ (privkey) {
+		എങ്കിൽ (mm_sshkey_sign(ssh, privkey, signature, slenp,
+		    data, dlen, alg, options.sk_provider, ശൂന്യ,
 		    ssh->compat) < 0)
 			fatal_f("privkey sign failed");
-	} else {
-		if (mm_sshkey_sign(ssh, pubkey, signature, slenp,
-		    data, dlen, alg, options.sk_provider, NULL,
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (mm_sshkey_sign(ssh, pubkey, signature, slenp,
+		    data, dlen, alg, options.sk_provider, ശൂന്യ,
 		    ssh->compat) < 0)
 			fatal_f("pubkey sign failed");
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /* SSH2 key exchange */
-static void
-do_ssh2_kex(struct ssh *ssh)
+സ്ഥിതം ശൂന്യം
+do_ssh2_kex(ഘടന ssh *ssh)
 {
-	char *hkalgs = NULL, *myproposal[PROPOSAL_MAX];
-	const char *compression = NULL;
-	struct kex *kex;
-	int r;
+	അക്ഷരം *hkalgs = ശൂന്യ, *myproposal[PROPOSAL_MAX];
+	സ്ഥിരം അക്ഷരം *compression = ശൂന്യ;
+	ഘടന kex *kex;
+	പൂർണ്ണസംഖ്യ r;
 
 	ssh_packet_set_rekey_limits(ssh, options.rekey_limit,
 	    options.rekey_interval);
 
-	if (options.compression == COMP_NONE)
+	എങ്കിൽ (options.compression == COMP_NONE)
 		compression = "none";
 	hkalgs = list_hostkey_types();
 
 	kex_proposal_populate_entries(ssh, myproposal, options.kex_algorithms,
 	    options.ciphers, options.macs, compression, hkalgs);
 
-	free(hkalgs);
+	സ്വതന്ത്രം(hkalgs);
 
-	if ((r = kex_exchange_identification(ssh, -1,
+	എങ്കിൽ ((r = kex_exchange_identification(ssh, -1,
 	    options.version_addendum)) != 0)
 		sshpkt_fatal(ssh, r, "banner exchange");
 	mm_sshkey_setcompat(ssh); /* tell monitor */
 
-	if ((ssh->compat & SSH_BUG_NOREKEY))
+	എങ്കിൽ ((ssh->compat & SSH_BUG_NOREKEY))
 		debug("client does not support rekeying");
 
 	/* start key exchange */
-	if ((r = kex_setup(ssh, myproposal)) != 0)
+	എങ്കിൽ ((r = kex_setup(ssh, myproposal)) != 0)
 		fatal_r(r, "kex_setup");
 	kex_set_server_sig_algs(ssh, options.pubkey_accepted_algos);
 	kex_set_warn_weak_crypto(ssh, options.warn_weak_crypto);
@@ -815,9 +815,9 @@ do_ssh2_kex(struct ssh *ssh)
 	kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 	kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 	kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
-	kex->load_host_public_key=&get_hostkey_public_by_type;
-	kex->load_host_private_key=&get_hostkey_private_by_type;
-	kex->host_key_index=&get_hostkey_index;
+	kex->load_host_public_താക്കോൽ=&get_hostkey_public_by_type;
+	kex->load_host_private_താക്കോൽ=&get_hostkey_private_by_type;
+	kex->host_താക്കോൽ_index=&get_hostkey_index;
 	kex->sign = sshd_hostkey_sign;
 
 	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &kex->done);
@@ -825,7 +825,7 @@ do_ssh2_kex(struct ssh *ssh)
 
 #ifdef DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_IGNORE)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
@@ -835,8 +835,8 @@ do_ssh2_kex(struct ssh *ssh)
 }
 
 /* server specific fatal cleanup */
-void
-cleanup_exit(int i)
+ശൂന്യം
+cleanup_exit(പൂർണ്ണസംഖ്യ i)
 {
 	_exit(i);
 }

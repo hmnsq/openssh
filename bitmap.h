@@ -18,40 +18,40 @@
 #ifndef _BITMAP_H
 #define _BITMAP_H
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
 /* Simple bit vector routines */
 
-struct bitmap;
+ഘടന bitmap;
 
 /* Allocate a new bitmap. Returns NULL on allocation failure. */
-struct bitmap *bitmap_new(void);
+ഘടന bitmap *bitmap_new(ശൂന്യം);
 
 /* Free a bitmap */
-void bitmap_free(struct bitmap *b);
+ശൂന്യം bitmap_free(ഘടന bitmap *b);
 
 /* Zero an existing bitmap */
-void bitmap_zero(struct bitmap *b);
+ശൂന്യം bitmap_zero(ഘടന bitmap *b);
 
 /* Test whether a bit is set in a bitmap. */
-int bitmap_test_bit(struct bitmap *b, u_int n);
+പൂർണ്ണസംഖ്യ bitmap_test_bit(ഘടന bitmap *b, u_int n);
 
 /* Set a bit in a bitmap. Returns 0 on success or -1 on error */
-int bitmap_set_bit(struct bitmap *b, u_int n);
+പൂർണ്ണസംഖ്യ bitmap_set_bit(ഘടന bitmap *b, u_int n);
 
 /* Clear a bit in a bitmap */
-void bitmap_clear_bit(struct bitmap *b, u_int n);
+ശൂന്യം bitmap_clear_bit(ഘടന bitmap *b, u_int n);
 
 /* Return the number of bits in a bitmap (i.e. the position of the MSB) */
-size_t bitmap_nbits(struct bitmap *b);
+size_t bitmap_nbits(ഘടന bitmap *b);
 
 /* Return the number of bytes needed to represent a bitmap */
-size_t bitmap_nbytes(struct bitmap *b);
+size_t bitmap_nbytes(ഘടന bitmap *b);
 
 /* Convert a bitmap to a big endian byte string */
-int bitmap_to_string(struct bitmap *b, void *p, size_t l);
+പൂർണ്ണസംഖ്യ bitmap_to_string(ഘടന bitmap *b, ശൂന്യം *p, size_t l);
 
 /* Convert a big endian byte string to a bitmap */
-int bitmap_from_string(struct bitmap *b, const void *p, size_t l);
+പൂർണ്ണസംഖ്യ bitmap_from_string(ഘടന bitmap *b, സ്ഥിരം ശൂന്യം *p, size_t l);
 
 #endif /* _BITMAP_H */

@@ -32,83 +32,83 @@
 /* The configuration has to fit in a monitor message along with other state */
 #define MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
 
-enum mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
+എണ്ണൽ mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
 
-struct ssh;
-struct monitor;
-struct Authctxt;
-struct sshkey;
-struct sshauthopt;
-struct sshkey_sig_details;
+ഘടന ssh;
+ഘടന monitor;
+ഘടന Authctxt;
+ഘടന sshkey;
+ഘടന sshauthopt;
+ഘടന sshkey_sig_details;
 
-void mm_log_handler(LogLevel, int, const char *, void *);
-int mm_is_monitor(void);
+ശൂന്യം mm_log_handler(LogLevel, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *, ശൂന്യം *);
+പൂർണ്ണസംഖ്യ mm_is_monitor(ശൂന്യം);
 #ifdef WITH_OPENSSL
-DH *mm_choose_dh(int, int, int);
+DH *mm_choose_dh(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
 #endif
-void mm_sshkey_setcompat(struct ssh *);
-int mm_sshkey_sign(struct ssh *, struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *,
-    const char *, u_int compat);
-void mm_inform_authserv(char *, char *);
-struct passwd *mm_getpwnamallow(struct ssh *, const char *);
-char *mm_auth2_read_banner(void);
-int mm_auth_password(struct ssh *, char *);
-int mm_key_allowed(enum mm_keytype, const char *, const char *, struct sshkey *,
-    int, struct sshauthopt **);
-int mm_user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *, int,
-    struct sshauthopt **);
-int mm_hostbased_key_allowed(struct ssh *, struct passwd *, const char *,
-    const char *, struct sshkey *);
-int mm_sshkey_verify(const struct sshkey *, const u_char *, size_t,
-    const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
+ശൂന്യം mm_sshkey_setcompat(ഘടന ssh *);
+പൂർണ്ണസംഖ്യ mm_sshkey_sign(ഘടന ssh *, ഘടന sshkey *, u_char **, size_t *,
+    സ്ഥിരം u_char *, size_t, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *,
+    സ്ഥിരം അക്ഷരം *, u_int compat);
+ശൂന്യം mm_inform_authserv(അക്ഷരം *, അക്ഷരം *);
+ഘടന passwd *mm_getpwnamallow(ഘടന ssh *, സ്ഥിരം അക്ഷരം *);
+അക്ഷരം *mm_auth2_read_banner(ശൂന്യം);
+പൂർണ്ണസംഖ്യ mm_auth_password(ഘടന ssh *, അക്ഷരം *);
+പൂർണ്ണസംഖ്യ mm_താക്കോൽ_allowed(എണ്ണൽ mm_keytype, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, ഘടന sshkey *,
+    പൂർണ്ണസംഖ്യ, ഘടന sshauthopt **);
+പൂർണ്ണസംഖ്യ mm_user_താക്കോൽ_allowed(ഘടന ssh *ssh, ഘടന passwd *, ഘടന sshkey *, പൂർണ്ണസംഖ്യ,
+    ഘടന sshauthopt **);
+പൂർണ്ണസംഖ്യ mm_hostbased_താക്കോൽ_allowed(ഘടന ssh *, ഘടന passwd *, സ്ഥിരം അക്ഷരം *,
+    സ്ഥിരം അക്ഷരം *, ഘടന sshkey *);
+പൂർണ്ണസംഖ്യ mm_sshkey_verify(സ്ഥിരം ഘടന sshkey *, സ്ഥിരം u_char *, size_t,
+    സ്ഥിരം u_char *, size_t, സ്ഥിരം അക്ഷരം *, u_int, ഘടന sshkey_sig_details **);
 
-void mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m);
+ശൂന്യം mm_decode_activate_server_options(ഘടന ssh *ssh, ഘടന sshbuf *m);
 
 #ifdef GSSAPI
 OM_uint32 mm_ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
 OM_uint32 mm_ssh_gssapi_accept_ctx(Gssctxt *,
    gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
-int mm_ssh_gssapi_userok(char *user);
+പൂർണ്ണസംഖ്യ mm_ssh_gssapi_userok(അക്ഷരം *user);
 OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
 #endif
 
 #ifdef USE_PAM
-void mm_start_pam(struct ssh *ssh);
-u_int mm_do_pam_account(void);
-void *mm_sshpam_init_ctx(struct Authctxt *);
-int mm_sshpam_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_sshpam_respond(void *, u_int, char **);
-void mm_sshpam_free_ctx(void *);
+ശൂന്യം mm_start_pam(ഘടന ssh *ssh);
+u_int mm_do_pam_account(ശൂന്യം);
+ശൂന്യം *mm_sshpam_init_ctx(ഘടന Authctxt *);
+പൂർണ്ണസംഖ്യ mm_sshpam_query(ശൂന്യം *, അക്ഷരം **, അക്ഷരം **, u_int *, അക്ഷരം ***, u_int **);
+പൂർണ്ണസംഖ്യ mm_sshpam_respond(ശൂന്യം *, u_int, അക്ഷരം **);
+ശൂന്യം mm_sshpam_free_ctx(ശൂന്യം *);
 #endif
 
 #ifdef SSH_AUDIT_EVENTS
-#include "audit.h"
-void mm_audit_event(struct ssh *, ssh_audit_event_t);
-void mm_audit_run_command(const char *);
+#അന്തര്ഭാവ "audit.h"
+ശൂന്യം mm_audit_event(ഘടന ssh *, ssh_audit_event_t);
+ശൂന്യം mm_audit_run_command(സ്ഥിരം അക്ഷരം *);
 #endif
 
-struct Session;
-void mm_terminate(void);
-int mm_pty_allocate(int *, int *, char *, size_t);
-void mm_session_pty_cleanup2(struct Session *);
+ഘടന Session;
+ശൂന്യം mm_terminate(ശൂന്യം);
+പൂർണ്ണസംഖ്യ mm_pty_allocate(പൂർണ്ണസംഖ്യ *, പൂർണ്ണസംഖ്യ *, അക്ഷരം *, size_t);
+ശൂന്യം mm_session_pty_cleanup2(ഘടന Session *);
 
-void mm_send_keystate(struct ssh *, struct monitor*);
+ശൂന്യം mm_send_keystate(ഘടന ssh *, ഘടന monitor*);
 
 /* state */
-struct ServerOptions;
-void mm_get_state(struct ssh *, struct ServerOptions *,
-    struct sshbuf **, uint64_t *, struct sshbuf **, struct sshbuf **,
-    u_char **, struct sshbuf **, struct sshbuf **);
+ഘടന ServerOptions;
+ശൂന്യം mm_get_state(ഘടന ssh *, ഘടന ServerOptions *,
+    ഘടന sshbuf **, uint64_t *, ഘടന sshbuf **, ഘടന sshbuf **,
+    u_char **, ഘടന sshbuf **, ഘടന sshbuf **);
 
 /* bsdauth */
-int mm_bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_bsdauth_respond(void *, u_int, char **);
+പൂർണ്ണസംഖ്യ mm_bsdauth_query(ശൂന്യം *, അക്ഷരം **, അക്ഷരം **, u_int *, അക്ഷരം ***, u_int **);
+പൂർണ്ണസംഖ്യ mm_bsdauth_respond(ശൂന്യം *, u_int, അക്ഷരം **);
 
 /* config / channels glue */
-void	 server_process_permitopen(struct ssh *);
-void	 server_process_channel_timeouts(struct ssh *ssh);
-struct connection_info *
-	 server_get_connection_info(struct ssh *, int, int);
+ശൂന്യം	 server_process_permitopen(ഘടന ssh *);
+ശൂന്യം	 server_process_channel_timeouts(ഘടന ssh *ssh);
+ഘടന connection_info *
+	 server_get_connection_info(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
 
 #endif /* _MM_WRAP_H_ */

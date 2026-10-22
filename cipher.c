@@ -35,38 +35,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
 
-#include "cipher.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#അന്തര്ഭാവ "cipher.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "ssherr.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#അന്തര്ഭാവ "openbsd-compat/openssl-compat.h"
 
 #ifndef WITH_OPENSSL
-#define EVP_CIPHER_CTX void
+#define EVP_CIPHER_CTX ശൂന്യം
 #endif
 
-struct sshcipher_ctx {
-	int	plaintext;
-	int	encrypt;
+ഘടന sshcipher_ctx {
+	പൂർണ്ണസംഖ്യ	plaintext;
+	പൂർണ്ണസംഖ്യ	encrypt;
 	EVP_CIPHER_CTX *evp;
-	struct chachapoly_ctx *cp_ctx;
-	struct aesctr_ctx ac_ctx; /* XXX union with evp? */
-	const struct sshcipher *cipher;
+	ഘടന chachapoly_ctx *cp_ctx;
+	ഘടന aesctr_ctx ac_ctx; /* XXX union with evp? */
+	സ്ഥിരം ഘടന sshcipher *cipher;
 };
 
-struct sshcipher {
-	char	*name;
+ഘടന sshcipher {
+	അക്ഷരം	*name;
 	u_int	block_size;
-	u_int	key_len;
+	u_int	താക്കോൽ_len;
 	u_int	iv_len;		/* defaults to block_size */
 	u_int	auth_len;
 	u_int	flags;
@@ -76,13 +76,13 @@ struct sshcipher {
 #define CFLAG_NONE		(1<<3)
 #define CFLAG_INTERNAL		CFLAG_NONE /* Don't use "none" for packets */
 #ifdef WITH_OPENSSL
-	const EVP_CIPHER	*(*evptype)(void);
-#else
-	void	*ignored;
+	സ്ഥിരം EVP_CIPHER	*(*evptype)(ശൂന്യം);
+#അല്ലെങ്കിൽ
+	ശൂന്യം	*ignored;
 #endif
 };
 
-static const struct sshcipher ciphers[] = {
+സ്ഥിതം സ്ഥിരം ഘടന sshcipher ciphers[] = {
 #ifdef WITH_OPENSSL
 #ifndef OPENSSL_NO_DES
 	{ "3des-cbc",		8, 24, 0, 0, CFLAG_CBC, EVP_des_ede3_cbc },
@@ -97,236 +97,236 @@ static const struct sshcipher ciphers[] = {
 				16, 16, 12, 16, 0, EVP_aes_128_gcm },
 	{ "aes256-gcm@openssh.com",
 				16, 32, 12, 16, 0, EVP_aes_256_gcm },
-#else
-	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, NULL },
-	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, NULL },
-	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, NULL },
+#അല്ലെങ്കിൽ
+	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, ശൂന്യ },
+	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, ശൂന്യ },
+	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, ശൂന്യ },
 #endif
 	{ "chacha20-poly1305@openssh.com",
-				8, 64, 0, 16, CFLAG_CHACHAPOLY, NULL },
-	{ "none",		8, 0, 0, 0, CFLAG_NONE, NULL },
+				8, 64, 0, 16, CFLAG_CHACHAPOLY, ശൂന്യ },
+	{ "none",		8, 0, 0, 0, CFLAG_NONE, ശൂന്യ },
 
-	{ NULL,			0, 0, 0, 0, 0, NULL }
+	{ ശൂന്യ,			0, 0, 0, 0, 0, ശൂന്യ }
 };
 
 /*--*/
 
 /* Returns a comma-separated list of supported ciphers. */
-char *
-cipher_alg_list(char sep, int auth_only)
+അക്ഷരം *
+cipher_alg_list(അക്ഷരം sep, പൂർണ്ണസംഖ്യ auth_only)
 {
-	char *ret = NULL;
-	const struct sshcipher *c;
-	char sep_str[2] = {sep, '\0'};
+	അക്ഷരം *ret = ശൂന്യ;
+	സ്ഥിരം ഘടന sshcipher *c;
+	അക്ഷരം sep_str[2] = {sep, '\0'};
 
-	for (c = ciphers; c->name != NULL; c++) {
-		if ((c->flags & CFLAG_INTERNAL) != 0)
-			continue;
-		if (auth_only && c->auth_len == 0)
-			continue;
+	വേണ്ടി (c = ciphers; c->name != ശൂന്യ; c++) {
+		എങ്കിൽ ((c->flags & CFLAG_INTERNAL) != 0)
+			തുടരുക;
+		എങ്കിൽ (auth_only && c->auth_len == 0)
+			തുടരുക;
 		xextendf(&ret, sep_str, "%s", c->name);
 	}
-	return ret;
+	തിരികെ ret;
 }
 
-const char *
-compression_alg_list(int compression)
+സ്ഥിരം അക്ഷരം *
+compression_alg_list(പൂർണ്ണസംഖ്യ compression)
 {
 #ifdef WITH_ZLIB
-	return compression ? "zlib@openssh.com,none" :
+	തിരികെ compression ? "zlib@openssh.com,none" :
 	    "none,zlib@openssh.com";
-#else
-	return "none";
+#അല്ലെങ്കിൽ
+	തിരികെ "none";
 #endif
 }
 
 u_int
-cipher_blocksize(const struct sshcipher *c)
+cipher_blocksize(സ്ഥിരം ഘടന sshcipher *c)
 {
-	return (c->block_size);
+	തിരികെ (c->block_size);
 }
 
 u_int
-cipher_keylen(const struct sshcipher *c)
+cipher_keylen(സ്ഥിരം ഘടന sshcipher *c)
 {
-	return (c->key_len);
+	തിരികെ (c->താക്കോൽ_len);
 }
 
 u_int
-cipher_seclen(const struct sshcipher *c)
+cipher_seclen(സ്ഥിരം ഘടന sshcipher *c)
 {
-	if (strcmp("3des-cbc", c->name) == 0)
-		return 14;
-	return cipher_keylen(c);
+	എങ്കിൽ (strcmp("3des-cbc", c->name) == 0)
+		തിരികെ 14;
+	തിരികെ cipher_keylen(c);
 }
 
 u_int
-cipher_authlen(const struct sshcipher *c)
+cipher_authlen(സ്ഥിരം ഘടന sshcipher *c)
 {
-	return (c->auth_len);
+	തിരികെ (c->auth_len);
 }
 
 u_int
-cipher_ivlen(const struct sshcipher *c)
+cipher_ivlen(സ്ഥിരം ഘടന sshcipher *c)
 {
 	/*
 	 * Default is cipher block size, except for chacha20+poly1305 that
 	 * needs no IV. XXX make iv_len == -1 default?
 	 */
-	return (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
+	തിരികെ (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
 	    c->iv_len : c->block_size;
 }
 
 u_int
-cipher_is_cbc(const struct sshcipher *c)
+cipher_is_cbc(സ്ഥിരം ഘടന sshcipher *c)
 {
-	return (c->flags & CFLAG_CBC) != 0;
+	തിരികെ (c->flags & CFLAG_CBC) != 0;
 }
 
 u_int
-cipher_is_internal(const struct sshcipher *c)
+cipher_is_internal(സ്ഥിരം ഘടന sshcipher *c)
 {
-	return (c->flags & CFLAG_INTERNAL) != 0;
+	തിരികെ (c->flags & CFLAG_INTERNAL) != 0;
 }
 
 u_int
-cipher_ctx_is_plaintext(struct sshcipher_ctx *cc)
+cipher_ctx_is_plaintext(ഘടന sshcipher_ctx *cc)
 {
-	return cc->plaintext;
+	തിരികെ cc->plaintext;
 }
 
-const struct sshcipher *
-cipher_by_name(const char *name)
+സ്ഥിരം ഘടന sshcipher *
+cipher_by_name(സ്ഥിരം അക്ഷരം *name)
 {
-	const struct sshcipher *c;
-	for (c = ciphers; c->name != NULL; c++)
-		if (strcmp(c->name, name) == 0)
-			return c;
-	return NULL;
+	സ്ഥിരം ഘടന sshcipher *c;
+	വേണ്ടി (c = ciphers; c->name != ശൂന്യ; c++)
+		എങ്കിൽ (strcmp(c->name, name) == 0)
+			തിരികെ c;
+	തിരികെ ശൂന്യ;
 }
 
 #define	CIPHER_SEP	","
-int
-ciphers_valid(const char *names)
+പൂർണ്ണസംഖ്യ
+ciphers_valid(സ്ഥിരം അക്ഷരം *names)
 {
-	const struct sshcipher *c;
-	char *cipher_list, *cp;
-	char *p;
-	int found = 0;
+	സ്ഥിരം ഘടന sshcipher *c;
+	അക്ഷരം *cipher_list, *cp;
+	അക്ഷരം *p;
+	പൂർണ്ണസംഖ്യ found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((cipher_list = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
+	എങ്കിൽ (names == ശൂന്യ || strcmp(names, "") == 0)
+		തിരികെ 0;
+	എങ്കിൽ ((cipher_list = cp = strdup(names)) == ശൂന്യ)
+		തിരികെ 0;
+	വേണ്ടി ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, CIPHER_SEP))) {
 		c = cipher_by_name(p);
-		if (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
-			free(cipher_list);
-			return 0;
-		} else
+		എങ്കിൽ (c == ശൂന്യ || (c->flags & CFLAG_INTERNAL) != 0) {
+			സ്വതന്ത്രം(cipher_list);
+			തിരികെ 0;
+		} അല്ലെങ്കിൽ
 			found = 1;
 	}
-	free(cipher_list);
-	return found;
+	സ്വതന്ത്രം(cipher_list);
+	തിരികെ found;
 }
 
-const char *
-cipher_warning_message(const struct sshcipher_ctx *cc)
+സ്ഥിരം അക്ഷരം *
+cipher_warning_message(സ്ഥിരം ഘടന sshcipher_ctx *cc)
 {
-	if (cc == NULL || cc->cipher == NULL)
-		return NULL;
+	എങ്കിൽ (cc == ശൂന്യ || cc->cipher == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 	/* XXX repurpose for CBC warning */
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-int
-cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
-    const u_char *key, u_int keylen, const u_char *iv, u_int ivlen,
-    int do_encrypt)
+പൂർണ്ണസംഖ്യ
+cipher_init(ഘടന sshcipher_ctx **ccp, സ്ഥിരം ഘടന sshcipher *cipher,
+    സ്ഥിരം u_char *താക്കോൽ, u_int keylen, സ്ഥിരം u_char *iv, u_int ivlen,
+    പൂർണ്ണസംഖ്യ do_encrypt)
 {
-	struct sshcipher_ctx *cc = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshcipher_ctx *cc = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ ret = SSH_ERR_INTERNAL_ERROR;
 #ifdef WITH_OPENSSL
-	const EVP_CIPHER *type;
-	int klen;
+	സ്ഥിരം EVP_CIPHER *type;
+	പൂർണ്ണസംഖ്യ klen;
 #endif
 
-	*ccp = NULL;
-	if ((cc = calloc(1, sizeof(*cc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	*ccp = ശൂന്യ;
+	എങ്കിൽ ((cc = calloc(1, വലുപ്പം(*cc))) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
 
 	cc->plaintext = (cipher->flags & CFLAG_NONE) != 0;
 	cc->encrypt = do_encrypt;
 
-	if (keylen < cipher->key_len ||
-	    (iv != NULL && ivlen < cipher_ivlen(cipher))) {
+	എങ്കിൽ (keylen < cipher->താക്കോൽ_len ||
+	    (iv != ശൂന്യ && ivlen < cipher_ivlen(cipher))) {
 		ret = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		പോകുക out;
 	}
 
 	cc->cipher = cipher;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		cc->cp_ctx = chachapoly_new(key, keylen);
-		ret = cc->cp_ctx != NULL ? 0 : SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		cc->cp_ctx = chachapoly_new(താക്കോൽ, keylen);
+		ret = cc->cp_ctx != ശൂന്യ ? 0 : SSH_ERR_INVALID_ARGUMENT;
+		പോകുക out;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		ret = 0;
-		goto out;
+		പോകുക out;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		aesctr_keysetup(&cc->ac_ctx, key, 8 * keylen, 8 * ivlen);
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		aesctr_keysetup(&cc->ac_ctx, താക്കോൽ, 8 * keylen, 8 * ivlen);
 		aesctr_ivsetup(&cc->ac_ctx, iv);
 		ret = 0;
-		goto out;
+		പോകുക out;
 	}
 	ret = SSH_ERR_INVALID_ARGUMENT;
-	goto out;
-#else /* WITH_OPENSSL */
+	പോകുക out;
+#അല്ലെങ്കിൽ /* WITH_OPENSSL */
 	type = (*cipher->evptype)();
-	if ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
+	എങ്കിൽ ((cc->evp = EVP_CIPHER_CTX_new()) == ശൂന്യ) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
+	എങ്കിൽ (EVP_CipherInit(cc->evp, type, ശൂന്യ, (u_char *)iv,
 	    (do_encrypt == CIPHER_ENCRYPT)) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		പോകുക out;
 	}
-	if (cipher_authlen(cipher) &&
+	എങ്കിൽ (cipher_authlen(cipher) &&
 	    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_IV_FIXED,
 	    -1, (u_char *)iv) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		പോകുക out;
 	}
-	klen = EVP_CIPHER_CTX_key_length(cc->evp);
-	if (klen > 0 && keylen != (u_int)klen) {
-		if (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
+	klen = EVP_CIPHER_CTX_താക്കോൽ_length(cc->evp);
+	എങ്കിൽ (klen > 0 && keylen != (u_int)klen) {
+		എങ്കിൽ (EVP_CIPHER_CTX_set_താക്കോൽ_length(cc->evp, keylen) == 0) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			പോകുക out;
 		}
 	}
-	if (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
+	എങ്കിൽ (EVP_CipherInit(cc->evp, ശൂന്യ, (u_char *)താക്കോൽ, ശൂന്യ, -1) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		പോകുക out;
 	}
 	ret = 0;
 #endif /* WITH_OPENSSL */
  out:
-	if (ret == 0) {
+	എങ്കിൽ (ret == 0) {
 		/* success */
 		*ccp = cc;
-	} else {
-		if (cc != NULL) {
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (cc != ശൂന്യ) {
 #ifdef WITH_OPENSSL
 			EVP_CIPHER_CTX_free(cc->evp);
 #endif /* WITH_OPENSSL */
-			freezero(cc, sizeof(*cc));
+			freezero(cc, വലുപ്പം(*cc));
 		}
 	}
-	return ret;
+	തിരികെ ret;
 }
 
 /*
@@ -339,135 +339,135 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
  * This tag is written on encryption and verified on decryption.
  * Both 'aadlen' and 'authlen' can be set to 0.
  */
-int
-cipher_crypt(struct sshcipher_ctx *cc, u_int seqnr, u_char *dest,
-   const u_char *src, u_int len, u_int aadlen, u_int authlen)
+പൂർണ്ണസംഖ്യ
+cipher_crypt(ഘടന sshcipher_ctx *cc, u_int seqnr, u_char *dest,
+   സ്ഥിരം u_char *src, u_int len, u_int aadlen, u_int authlen)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		return chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		തിരികെ chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
 		    len, aadlen, authlen, cc->encrypt);
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		memcpy(dest, src, aadlen + len);
-		return 0;
+		തിരികെ 0;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (aadlen)
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		എങ്കിൽ (aadlen)
 			memcpy(dest, src, aadlen);
 		aesctr_encrypt_bytes(&cc->ac_ctx, src + aadlen,
 		    dest + aadlen, len);
-		return 0;
+		തിരികെ 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
-#else
-	if (authlen) {
+	തിരികെ SSH_ERR_INVALID_ARGUMENT;
+#അല്ലെങ്കിൽ
+	എങ്കിൽ (authlen) {
 		u_char lastiv[1];
 
-		if (authlen != cipher_authlen(cc->cipher))
-			return SSH_ERR_INVALID_ARGUMENT;
+		എങ്കിൽ (authlen != cipher_authlen(cc->cipher))
+			തിരികെ SSH_ERR_INVALID_ARGUMENT;
 		/* increment IV */
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
+		എങ്കിൽ (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
 		    1, lastiv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
 		/* set tag on decryption */
-		if (!cc->encrypt &&
+		എങ്കിൽ (!cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_TAG,
 		    authlen, (u_char *)src + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	if (aadlen) {
-		if (authlen &&
-		    EVP_Cipher(cc->evp, NULL, (u_char *)src, aadlen) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+	എങ്കിൽ (aadlen) {
+		എങ്കിൽ (authlen &&
+		    EVP_Cipher(cc->evp, ശൂന്യ, (u_char *)src, aadlen) < 0)
+			തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
 		memcpy(dest, src, aadlen);
 	}
-	if (len % cc->cipher->block_size)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
+	എങ്കിൽ (len % cc->cipher->block_size)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
 	    len) < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (authlen) {
+		തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
+	എങ്കിൽ (authlen) {
 		/* compute tag (on encrypt) or verify tag (on decrypt) */
-		if (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
-			return cc->encrypt ?
+		എങ്കിൽ (EVP_Cipher(cc->evp, ശൂന്യ, ശൂന്യ, 0) < 0)
+			തിരികെ cc->encrypt ?
 			    SSH_ERR_LIBCRYPTO_ERROR : SSH_ERR_MAC_INVALID;
-		if (cc->encrypt &&
+		എങ്കിൽ (cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_GET_TAG,
 		    authlen, dest + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	return 0;
+	തിരികെ 0;
 #endif
 }
 
 /* Extract the packet length, including any decryption necessary beforehand */
-int
-cipher_get_length(struct sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
-    const u_char *cp, u_int len)
+പൂർണ്ണസംഖ്യ
+cipher_get_length(ഘടന sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
+    സ്ഥിരം u_char *cp, u_int len)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
-		return chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
+		തിരികെ chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
 		    cp, len);
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	എങ്കിൽ (len < 4)
+		തിരികെ SSH_ERR_MESSAGE_INCOMPLETE;
 	*plenp = PEEK_U32(cp);
-	return 0;
+	തിരികെ 0;
 }
 
-void
-cipher_free(struct sshcipher_ctx *cc)
+ശൂന്യം
+cipher_free(ഘടന sshcipher_ctx *cc)
 {
-	if (cc == NULL)
-		return;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	എങ്കിൽ (cc == ശൂന്യ)
+		തിരികെ;
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		chachapoly_free(cc->cp_ctx);
-		cc->cp_ctx = NULL;
-	} else if ((cc->cipher->flags & CFLAG_AESCTR) != 0)
-		explicit_bzero(&cc->ac_ctx, sizeof(cc->ac_ctx));
+		cc->cp_ctx = ശൂന്യ;
+	} അല്ലെങ്കിൽ എങ്കിൽ ((cc->cipher->flags & CFLAG_AESCTR) != 0)
+		explicit_bzero(&cc->ac_ctx, വലുപ്പം(cc->ac_ctx));
 #ifdef WITH_OPENSSL
 	EVP_CIPHER_CTX_free(cc->evp);
-	cc->evp = NULL;
+	cc->evp = ശൂന്യ;
 #endif
-	freezero(cc, sizeof(*cc));
+	freezero(cc, വലുപ്പം(*cc));
 }
 
-int
-cipher_get_keyiv(struct sshcipher_ctx *cc, u_char *iv, size_t len)
+പൂർണ്ണസംഖ്യ
+cipher_get_keyiv(ഘടന sshcipher_ctx *cc, u_char *iv, size_t len)
 {
 #ifdef WITH_OPENSSL
-	const struct sshcipher *c = cc->cipher;
-	int evplen;
+	സ്ഥിരം ഘടന sshcipher *c = cc->cipher;
+	പൂർണ്ണസംഖ്യ evplen;
 #endif
 
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		if (len != 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		എങ്കിൽ (len != 0)
+			തിരികെ SSH_ERR_INVALID_ARGUMENT;
+		തിരികെ 0;
 	}
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (len != sizeof(cc->ac_ctx.ctr))
-			return SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		എങ്കിൽ (len != വലുപ്പം(cc->ac_ctx.ctr))
+			തിരികെ SSH_ERR_INVALID_ARGUMENT;
 		memcpy(iv, cc->ac_ctx.ctr, len);
-		return 0;
+		തിരികെ 0;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0)
-		return 0;
+	എങ്കിൽ ((cc->cipher->flags & CFLAG_NONE) != 0)
+		തിരികെ 0;
 
 #ifdef WITH_OPENSSL
 	evplen = EVP_CIPHER_CTX_iv_length(cc->evp);
-	if (evplen == 0)
-		return 0;
-	else if (evplen < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if ((size_t)evplen != len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (cipher_authlen(c)) {
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
+	എങ്കിൽ (evplen == 0)
+		തിരികെ 0;
+	അല്ലെങ്കിൽ എങ്കിൽ (evplen < 0)
+		തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
+	എങ്കിൽ ((size_t)evplen != len)
+		തിരികെ SSH_ERR_INVALID_ARGUMENT;
+	എങ്കിൽ (cipher_authlen(c)) {
+		എങ്കിൽ (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
 		    iv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-	} else if (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+			തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
+	} അല്ലെങ്കിൽ എങ്കിൽ (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
+		തിരികെ SSH_ERR_LIBCRYPTO_ERROR;
 #endif
-	return 0;
+	തിരികെ 0;
 }

@@ -43,63 +43,63 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
+#എങ്കിൽ !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
 
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#include <ldns/ldns.h>
+#അന്തര്ഭാവ <ldns/ldns.h>
 
-#include "getrrsetbyname.h"
-#include "log.h"
-#include "xmalloc.h"
+#അന്തര്ഭാവ "getrrsetbyname.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "xmalloc.h"
 
 #define malloc(x)	(xmalloc(x))
 #define calloc(x, y)	(xcalloc((x),(y)))
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-	       unsigned int rdtype, unsigned int flags,
-	       struct rrsetinfo **res)
+പൂർണ്ണസംഖ്യ
+getrrsetbyname(സ്ഥിരം അക്ഷരം *hostname, unsigned പൂർണ്ണസംഖ്യ rdclass,
+	       unsigned പൂർണ്ണസംഖ്യ rdtype, unsigned പൂർണ്ണസംഖ്യ flags,
+	       ഘടന rrsetinfo **res)
 {
-	int result;
-	unsigned int i, j, index_ans, index_sig;
-	struct rrsetinfo *rrset = NULL;
-	struct rdatainfo *rdata;
+	പൂർണ്ണസംഖ്യ result;
+	unsigned പൂർണ്ണസംഖ്യ i, j, index_ans, index_sig;
+	ഘടന rrsetinfo *rrset = ശൂന്യ;
+	ഘടന rdatainfo *rdata;
 	size_t len;
-	ldns_resolver *ldns_res = NULL;
-	ldns_rdf *domain = NULL;
-	ldns_pkt *pkt = NULL;
-	ldns_rr_list *rrsigs = NULL, *rrdata = NULL;
+	ldns_resolver *ldns_res = ശൂന്യ;
+	ldns_rdf *domain = ശൂന്യ;
+	ldns_pkt *pkt = ശൂന്യ;
+	ldns_rr_list *rrsigs = ശൂന്യ, *rrdata = ശൂന്യ;
 	ldns_status err;
 	ldns_rr *rr;
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
+	എങ്കിൽ (rdclass > 0xffff || rdtype > 0xffff) {
 		result = ERRSET_INVAL;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
+	എങ്കിൽ (rdclass == 0xff || rdtype == 0xff) {
 		result = ERRSET_INVAL;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
+	എങ്കിൽ (flags) {
 		result = ERRSET_INVAL;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* Initialize resolver from resolv.conf */
 	domain = ldns_dname_new_frm_str(hostname);
-	if ((err = ldns_resolver_new_frm_file(&ldns_res, NULL)) != \
+	എങ്കിൽ ((err = ldns_resolver_new_frm_file(&ldns_res, ശൂന്യ)) != \
 	    LDNS_STATUS_OK) {
 		result = ERRSET_FAIL;
-		goto fail;
+		പോകുക fail;
 	}
 
 #ifdef LDNS_DEBUG
@@ -112,30 +112,30 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	pkt = ldns_resolver_query(ldns_res, domain, rdtype, rdclass, LDNS_RD);
 
 	/*** TODO: finer errcodes -- see original **/
-	if (!pkt || ldns_pkt_ancount(pkt) < 1) {
+	എങ്കിൽ (!pkt || ldns_pkt_ancount(pkt) < 1) {
 		result = ERRSET_FAIL;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* initialize rrset */
-	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
+	rrset = calloc(1, വലുപ്പം(ഘടന rrsetinfo));
+	എങ്കിൽ (rrset == ശൂന്യ) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		പോകുക fail;
 	}
 
 	rrdata = ldns_pkt_rr_list_by_type(pkt, rdtype, LDNS_SECTION_ANSWER);
-	rrset->rri_nrdatas = ldns_rr_list_rr_count(rrdata);
-	if (!rrset->rri_nrdatas) {
+	rrset->rri_nrdatas = ldns_rr_list_rr_എണ്ണം(rrdata);
+	എങ്കിൽ (!rrset->rri_nrdatas) {
 		result = ERRSET_NODATA;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* copy name from answer section */
 	len = ldns_rdf_size(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0)));
-	if ((rrset->rri_name = malloc(len)) == NULL) {
+	എങ്കിൽ ((rrset->rri_name = malloc(len)) == ശൂന്യ) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		പോകുക fail;
 	}
 	memcpy(rrset->rri_name,
 	    ldns_rdf_data(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0))), len);
@@ -147,85 +147,85 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	debug2("ldns: got %u answers from DNS", rrset->rri_nrdatas);
 
 	/* Check for authenticated data */
-	if (ldns_pkt_ad(pkt)) {
+	എങ്കിൽ (ldns_pkt_ad(pkt)) {
 		rrset->rri_flags |= RRSET_VALIDATED;
-	} else { /* AD is not set, try autonomous validation */
-		ldns_rr_list * trusted_keys = ldns_rr_list_new();
+	} അല്ലെങ്കിൽ { /* AD is not set, try autonomous validation */
+		ldns_rr_list * trusted_താക്കോലുകൾ = ldns_rr_list_new();
 
 		debug2("ldns: trying to validate RRset");
 		/* Get eventual sigs */
 		rrsigs = ldns_pkt_rr_list_by_type(pkt, LDNS_RR_TYPE_RRSIG,
 		    LDNS_SECTION_ANSWER);
 
-		rrset->rri_nsigs = ldns_rr_list_rr_count(rrsigs);
+		rrset->rri_nsigs = ldns_rr_list_rr_എണ്ണം(rrsigs);
 		debug2("ldns: got %u signature(s) (RRTYPE %u) from DNS",
 		       rrset->rri_nsigs, LDNS_RR_TYPE_RRSIG);
 
-		if ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
-		     trusted_keys)) == LDNS_STATUS_OK) {
+		എങ്കിൽ ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
+		     trusted_താക്കോലുകൾ)) == LDNS_STATUS_OK) {
 			rrset->rri_flags |= RRSET_VALIDATED;
 			debug2("ldns: RRset is signed with a valid key");
-		} else {
+		} അല്ലെങ്കിൽ {
 			debug2("ldns: RRset validation failed: %s",
 			    ldns_get_errorstr_by_id(err));
 		}
 
-		ldns_rr_list_deep_free(trusted_keys);
+		ldns_rr_list_deep_free(trusted_താക്കോലുകൾ);
 	}
 
 	/* allocate memory for answers */
 	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
-	   sizeof(struct rdatainfo));
+	   വലുപ്പം(ഘടന rdatainfo));
 
-	if (rrset->rri_rdatas == NULL) {
+	എങ്കിൽ (rrset->rri_rdatas == ശൂന്യ) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		പോകുക fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
+	എങ്കിൽ (rrset->rri_nsigs > 0) {
 		rrset->rri_sigs = calloc(rrset->rri_nsigs,
-		    sizeof(struct rdatainfo));
+		    വലുപ്പം(ഘടന rdatainfo));
 
-		if (rrset->rri_sigs == NULL) {
+		എങ്കിൽ (rrset->rri_sigs == ശൂന്യ) {
 			result = ERRSET_NOMEMORY;
-			goto fail;
+			പോകുക fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (i=0, index_ans=0, index_sig=0; i< pkt->_header->_ancount; i++) {
-		rdata = NULL;
+	വേണ്ടി (i=0, index_ans=0, index_sig=0; i< pkt->_header->_ancount; i++) {
+		rdata = ശൂന്യ;
 		rr = ldns_rr_list_rr(ldns_pkt_answer(pkt), i);
 
-		if (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
+		എങ്കിൽ (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
 		    ldns_rr_get_type(rr) == rrset->rri_rdtype) {
 			rdata = &rrset->rri_rdatas[index_ans++];
 		}
 
-		if (rr->_rr_class == rrset->rri_rdclass &&
+		എങ്കിൽ (rr->_rr_class == rrset->rri_rdclass &&
 		    rr->_rr_type == LDNS_RR_TYPE_RRSIG &&
 		    rrset->rri_sigs) {
 			rdata = &rrset->rri_sigs[index_sig++];
 		}
 
-		if (rdata) {
+		എങ്കിൽ (rdata) {
 			size_t rdata_offset = 0;
 
 			rdata->rdi_length = 0;
-			for (j=0; j< rr->_rd_count; j++) {
+			വേണ്ടി (j=0; j< rr->rd_എണ്ണം; j++) {
 				rdata->rdi_length +=
 				    ldns_rdf_size(ldns_rr_rdf(rr, j));
 			}
 
 			rdata->rdi_data = malloc(rdata->rdi_length);
-			if (rdata->rdi_data == NULL) {
+			എങ്കിൽ (rdata->rdi_data == ശൂന്യ) {
 				result = ERRSET_NOMEMORY;
-				goto fail;
+				പോകുക fail;
 			}
 
 			/* Re-create the raw DNS RDATA */
-			for (j=0; j< rr->_rd_count; j++) {
+			വേണ്ടി (j=0; j< rr->rd_എണ്ണം; j++) {
 				len = ldns_rdf_size(ldns_rr_rdf(rr, j));
 				memcpy(rdata->rdi_data + rdata_offset,
 				       ldns_rdf_data(ldns_rr_rdf(rr, j)), len);
@@ -235,7 +235,7 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	}
 
 	*res = rrset;
-	rrset = NULL; /* transferred */
+	rrset = ശൂന്യ; /* transferred */
 	result = ERRSET_SUCCESS;
 
 fail:
@@ -246,39 +246,39 @@ fail:
 	ldns_rr_list_deep_free(rrdata);
 	ldns_resolver_deep_free(ldns_res);
 
-	return result;
+	തിരികെ result;
 }
 
 
-void
-freerrset(struct rrsetinfo *rrset)
+ശൂന്യം
+freerrset(ഘടന rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	എങ്കിൽ (rrset == ശൂന്യ)
+		തിരികെ;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_rdatas[i].rdi_data);
+	എങ്കിൽ (rrset->rri_rdatas) {
+		വേണ്ടി (i = 0; i < rrset->rri_nrdatas; i++) {
+			എങ്കിൽ (rrset->rri_rdatas[i].rdi_data == ശൂന്യ)
+				നിർത്തുക;
+			സ്വതന്ത്രം(rrset->rri_rdatas[i].rdi_data);
 		}
-		free(rrset->rri_rdatas);
+		സ്വതന്ത്രം(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_sigs[i].rdi_data);
+	എങ്കിൽ (rrset->rri_sigs) {
+		വേണ്ടി (i = 0; i < rrset->rri_nsigs; i++) {
+			എങ്കിൽ (rrset->rri_sigs[i].rdi_data == ശൂന്യ)
+				നിർത്തുക;
+			സ്വതന്ത്രം(rrset->rri_sigs[i].rdi_data);
 		}
-		free(rrset->rri_sigs);
+		സ്വതന്ത്രം(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
-		free(rrset->rri_name);
-	free(rrset);
+	എങ്കിൽ (rrset->rri_name)
+		സ്വതന്ത്രം(rrset->rri_name);
+	സ്വതന്ത്രം(rrset);
 }
 
 

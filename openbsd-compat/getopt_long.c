@@ -50,9 +50,9 @@
  */
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/getopt_long.c */
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#if !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
+#എങ്കിൽ !defined(HAVE_GETOPT) || !defined(HAVE_GETOPT_OPTRESET)
 
 /*
  * Some defines to make it easier to keep the code in sync with upstream.
@@ -61,36 +61,36 @@
  */
 #define warnx		logit
 
-#if 0
-#include <err.h>
-#include <getopt.h>
+#എങ്കിൽ 0
+#അന്തര്ഭാവ <err.h>
+#അന്തര്ഭാവ <getopt.h>
 #endif
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
 
-#include "log.h"
+#അന്തര്ഭാവ "log.h"
 
-struct option {
+ഘടന option {
 	/* name of long option */
-	const char *name;
+	സ്ഥിരം അക്ഷരം *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	പൂർണ്ണസംഖ്യ has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	പൂർണ്ണസംഖ്യ *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	പൂർണ്ണസംഖ്യ val;
 };
 
-int	opterr = 1;		/* if error message should be printed */
-int	optind = 1;		/* index into parent argv vector */
-int	optopt = '?';		/* character checked for validity */
-int	optreset;		/* reset getopt */
-char    *optarg;		/* argument associated with option */
+പൂർണ്ണസംഖ്യ	opterr = 1;		/* if error message should be printed */
+പൂർണ്ണസംഖ്യ	optind = 1;		/* index into parent argv vector */
+പൂർണ്ണസംഖ്യ	optopt = '?';		/* character checked for validity */
+പൂർണ്ണസംഖ്യ	optreset;		/* reset getopt */
+അക്ഷരം    *optarg;		/* argument associated with option */
 
 #define PRINT_ERROR	((opterr) && (*options != ':'))
 
@@ -99,49 +99,49 @@ char    *optarg;		/* argument associated with option */
 #define FLAG_LONGONLY	0x04	/* operate as getopt_long_only */
 
 /* return values */
-#define	BADCH		(int)'?'
-#define	BADARG		((*options == ':') ? (int)':' : (int)'?')
-#define	INORDER		(int)1
+#define	BADCH		(പൂർണ്ണസംഖ്യ)'?'
+#define	BADARG		((*options == ':') ? (പൂർണ്ണസംഖ്യ)':' : (പൂർണ്ണസംഖ്യ)'?')
+#define	മധ്യക്രമം		(പൂർണ്ണസംഖ്യ)1
 
 #define	EMSG		""
 
-static int getopt_internal(int, char * const *, const char *,
-			   const struct option *, int *, int);
-static int parse_long_options(char * const *, const char *,
-			      const struct option *, int *, int);
-static int gcd(int, int);
-static void permute_args(int, int, int, char * const *);
+സ്ഥിതം പൂർണ്ണസംഖ്യ getopt_internal(പൂർണ്ണസംഖ്യ, അക്ഷരം * സ്ഥിരം *, സ്ഥിരം അക്ഷരം *,
+			   സ്ഥിരം ഘടന option *, പൂർണ്ണസംഖ്യ *, പൂർണ്ണസംഖ്യ);
+സ്ഥിതം പൂർണ്ണസംഖ്യ parse_long_options(അക്ഷരം * സ്ഥിരം *, സ്ഥിരം അക്ഷരം *,
+			      സ്ഥിരം ഘടന option *, പൂർണ്ണസംഖ്യ *, പൂർണ്ണസംഖ്യ);
+സ്ഥിതം പൂർണ്ണസംഖ്യ gcd(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+സ്ഥിതം ശൂന്യം permute_args(പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, അക്ഷരം * സ്ഥിരം *);
 
-static char *place = EMSG; /* option letter processing */
+സ്ഥിതം അക്ഷരം *place = EMSG; /* option letter processing */
 
 /* XXX: set optreset to 1 rather than these two */
-static int nonopt_start = -1; /* first non option argument (for permute) */
-static int nonopt_end = -1;   /* first option after non options (for permute) */
+സ്ഥിതം പൂർണ്ണസംഖ്യ nonopt_start = -1; /* first non option argument (for permute) */
+സ്ഥിതം പൂർണ്ണസംഖ്യ nonopt_end = -1;   /* first option after non options (for permute) */
 
 /* Error messages */
-static const char recargchar[] = "option requires an argument -- %c";
-static const char recargstring[] = "option requires an argument -- %s";
-static const char ambig[] = "ambiguous option -- %.*s";
-static const char noarg[] = "option doesn't take an argument -- %.*s";
-static const char illoptchar[] = "unknown option -- %c";
-static const char illoptstring[] = "unknown option -- %s";
+സ്ഥിതം സ്ഥിരം അക്ഷരം recargchar[] = "option requires an argument -- %c";
+സ്ഥിതം സ്ഥിരം അക്ഷരം recargstring[] = "option requires an argument -- %s";
+സ്ഥിതം സ്ഥിരം അക്ഷരം ambig[] = "ambiguous option -- %.*s";
+സ്ഥിതം സ്ഥിരം അക്ഷരം noarg[] = "option doesn't take an argument -- %.*s";
+സ്ഥിതം സ്ഥിരം അക്ഷരം illoptchar[] = "unknown option -- %c";
+സ്ഥിതം സ്ഥിരം അക്ഷരം illoptstring[] = "unknown option -- %s";
 
 /*
  * Compute the greatest common divisor of a and b.
  */
-static int
-gcd(int a, int b)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+gcd(പൂർണ്ണസംഖ്യ a, പൂർണ്ണസംഖ്യ b)
 {
-	int c;
+	പൂർണ്ണസംഖ്യ c;
 
 	c = a % b;
-	while (c != 0) {
+	ആകുമ്പോൾ (c != 0) {
 		a = b;
 		b = c;
 		c = a % b;
 	}
 
-	return (b);
+	തിരികെ (b);
 }
 
 /*
@@ -149,12 +149,12 @@ gcd(int a, int b)
  * from nonopt_end to opt_end (keeping the same order of arguments
  * in each block).
  */
-static void
-permute_args(int panonopt_start, int panonopt_end, int opt_end,
-	char * const *nargv)
+സ്ഥിതം ശൂന്യം
+permute_args(പൂർണ്ണസംഖ്യ panonopt_start, പൂർണ്ണസംഖ്യ panonopt_end, പൂർണ്ണസംഖ്യ opt_end,
+	അക്ഷരം * സ്ഥിരം *nargv)
 {
-	int cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
-	char *swap;
+	പൂർണ്ണസംഖ്യ cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
+	അക്ഷരം *swap;
 
 	/*
 	 * compute lengths of blocks and number and size of cycles
@@ -164,19 +164,19 @@ permute_args(int panonopt_start, int panonopt_end, int opt_end,
 	ncycle = gcd(nnonopts, nopts);
 	cyclelen = (opt_end - panonopt_start) / ncycle;
 
-	for (i = 0; i < ncycle; i++) {
+	വേണ്ടി (i = 0; i < ncycle; i++) {
 		cstart = panonopt_end+i;
 		pos = cstart;
-		for (j = 0; j < cyclelen; j++) {
-			if (pos >= panonopt_end)
+		വേണ്ടി (j = 0; j < cyclelen; j++) {
+			എങ്കിൽ (pos >= panonopt_end)
 				pos -= nnonopts;
-			else
+			അല്ലെങ്കിൽ
 				pos += nopts;
 			swap = nargv[pos];
 			/* LINTED const cast */
-			((char **) nargv)[pos] = nargv[cstart];
+			((അക്ഷരം **) nargv)[pos] = nargv[cstart];
 			/* LINTED const cast */
-			((char **)nargv)[cstart] = swap;
+			((അക്ഷരം **)nargv)[cstart] = swap;
 		}
 	}
 }
@@ -186,75 +186,75 @@ permute_args(int panonopt_start, int panonopt_end, int opt_end,
  *	Parse long options in argc/argv argument vector.
  * Returns -1 if short_too is set and the option does not match long_options.
  */
-static int
-parse_long_options(char * const *nargv, const char *options,
-	const struct option *long_options, int *idx, int short_too)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_long_options(അക്ഷരം * സ്ഥിരം *nargv, സ്ഥിരം അക്ഷരം *options,
+	സ്ഥിരം ഘടന option *long_options, പൂർണ്ണസംഖ്യ *idx, പൂർണ്ണസംഖ്യ short_too)
 {
-	char *current_argv, *has_equal;
+	അക്ഷരം *current_argv, *has_equal;
 	size_t current_argv_len;
-	int i, match;
+	പൂർണ്ണസംഖ്യ i, match;
 
 	current_argv = place;
 	match = -1;
 
 	optind++;
 
-	if ((has_equal = strchr(current_argv, '=')) != NULL) {
+	എങ്കിൽ ((has_equal = strchr(current_argv, '=')) != ശൂന്യ) {
 		/* argument found (--option=arg) */
 		current_argv_len = has_equal - current_argv;
 		has_equal++;
-	} else
+	} അല്ലെങ്കിൽ
 		current_argv_len = strlen(current_argv);
 
-	for (i = 0; long_options[i].name; i++) {
+	വേണ്ടി (i = 0; long_options[i].name; i++) {
 		/* find matching long option */
-		if (strncmp(current_argv, long_options[i].name,
+		എങ്കിൽ (strncmp(current_argv, long_options[i].name,
 		    current_argv_len))
-			continue;
+			തുടരുക;
 
-		if (strlen(long_options[i].name) == current_argv_len) {
+		എങ്കിൽ (strlen(long_options[i].name) == current_argv_len) {
 			/* exact match */
 			match = i;
-			break;
+			നിർത്തുക;
 		}
 		/*
 		 * If this is a known short option, don't allow
 		 * a partial match of a single character.
 		 */
-		if (short_too && current_argv_len == 1)
-			continue;
+		എങ്കിൽ (short_too && current_argv_len == 1)
+			തുടരുക;
 
-		if (match == -1)	/* partial match */
+		എങ്കിൽ (match == -1)	/* partial match */
 			match = i;
-		else {
+		അല്ലെങ്കിൽ {
 			/* ambiguous abbreviation */
-			if (PRINT_ERROR)
-				warnx(ambig, (int)current_argv_len,
+			എങ്കിൽ (PRINT_ERROR)
+				warnx(ambig, (പൂർണ്ണസംഖ്യ)current_argv_len,
 				     current_argv);
 			optopt = 0;
-			return (BADCH);
+			തിരികെ (BADCH);
 		}
 	}
-	if (match != -1) {		/* option found */
-		if (long_options[match].has_arg == no_argument
+	എങ്കിൽ (match != -1) {		/* option found */
+		എങ്കിൽ (long_options[match].has_arg == no_argument
 		    && has_equal) {
-			if (PRINT_ERROR)
-				warnx(noarg, (int)current_argv_len,
+			എങ്കിൽ (PRINT_ERROR)
+				warnx(noarg, (പൂർണ്ണസംഖ്യ)current_argv_len,
 				     current_argv);
 			/*
 			 * XXX: GNU sets optopt to val regardless of flag
 			 */
-			if (long_options[match].flag == NULL)
+			എങ്കിൽ (long_options[match].flag == ശൂന്യ)
 				optopt = long_options[match].val;
-			else
+			അല്ലെങ്കിൽ
 				optopt = 0;
-			return (BADARG);
+			തിരികെ (BADARG);
 		}
-		if (long_options[match].has_arg == required_argument ||
+		എങ്കിൽ (long_options[match].has_arg == required_argument ||
 		    long_options[match].has_arg == optional_argument) {
-			if (has_equal)
+			എങ്കിൽ (has_equal)
 				optarg = has_equal;
-			else if (long_options[match].has_arg ==
+			അല്ലെങ്കിൽ എങ്കിൽ (long_options[match].has_arg ==
 			    required_argument) {
 				/*
 				 * optional argument doesn't use next nargv
@@ -262,94 +262,94 @@ parse_long_options(char * const *nargv, const char *options,
 				optarg = nargv[optind++];
 			}
 		}
-		if ((long_options[match].has_arg == required_argument)
-		    && (optarg == NULL)) {
+		എങ്കിൽ ((long_options[match].has_arg == required_argument)
+		    && (optarg == ശൂന്യ)) {
 			/*
 			 * Missing argument; leading ':' indicates no error
 			 * should be generated.
 			 */
-			if (PRINT_ERROR)
+			എങ്കിൽ (PRINT_ERROR)
 				warnx(recargstring,
 				    current_argv);
 			/*
 			 * XXX: GNU sets optopt to val regardless of flag
 			 */
-			if (long_options[match].flag == NULL)
+			എങ്കിൽ (long_options[match].flag == ശൂന്യ)
 				optopt = long_options[match].val;
-			else
+			അല്ലെങ്കിൽ
 				optopt = 0;
 			--optind;
-			return (BADARG);
+			തിരികെ (BADARG);
 		}
-	} else {			/* unknown option */
-		if (short_too) {
+	} അല്ലെങ്കിൽ {			/* unknown option */
+		എങ്കിൽ (short_too) {
 			--optind;
-			return (-1);
+			തിരികെ (-1);
 		}
-		if (PRINT_ERROR)
+		എങ്കിൽ (PRINT_ERROR)
 			warnx(illoptstring, current_argv);
 		optopt = 0;
-		return (BADCH);
+		തിരികെ (BADCH);
 	}
-	if (idx)
+	എങ്കിൽ (idx)
 		*idx = match;
-	if (long_options[match].flag) {
+	എങ്കിൽ (long_options[match].flag) {
 		*long_options[match].flag = long_options[match].val;
-		return (0);
-	} else
-		return (long_options[match].val);
+		തിരികെ (0);
+	} അല്ലെങ്കിൽ
+		തിരികെ (long_options[match].val);
 }
 
 /*
  * getopt_internal --
  *	Parse argc/argv argument vector.  Called by user level routines.
  */
-static int
-getopt_internal(int nargc, char * const *nargv, const char *options,
-	const struct option *long_options, int *idx, int flags)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+getopt_internal(പൂർണ്ണസംഖ്യ nargc, അക്ഷരം * സ്ഥിരം *nargv, സ്ഥിരം അക്ഷരം *options,
+	സ്ഥിരം ഘടന option *long_options, പൂർണ്ണസംഖ്യ *idx, പൂർണ്ണസംഖ്യ flags)
 {
-	char *oli;				/* option letter list index */
-	int optchar, short_too;
-	static int posixly_correct = -1;
+	അക്ഷരം *oli;				/* option letter list index */
+	പൂർണ്ണസംഖ്യ optchar, short_too;
+	സ്ഥിതം പൂർണ്ണസംഖ്യ posixly_correct = -1;
 
-	if (options == NULL)
-		return (-1);
+	എങ്കിൽ (options == ശൂന്യ)
+		തിരികെ (-1);
 
 	/*
 	 * XXX Some GNU programs (like cvs) set optind to 0 instead of
 	 * XXX using optreset.  Work around this braindamage.
 	 */
-	if (optind == 0)
+	എങ്കിൽ (optind == 0)
 		optind = optreset = 1;
 
 	/*
 	 * Disable GNU extensions if POSIXLY_CORRECT is set or options
 	 * string begins with a '+'.
 	 */
-	if (posixly_correct == -1 || optreset)
-		posixly_correct = (getenv("POSIXLY_CORRECT") != NULL);
-	if (*options == '-')
+	എങ്കിൽ (posixly_correct == -1 || optreset)
+		posixly_correct = (getenv("POSIXLY_CORRECT") != ശൂന്യ);
+	എങ്കിൽ (*options == '-')
 		flags |= FLAG_ALLARGS;
-	else if (posixly_correct || *options == '+')
+	അല്ലെങ്കിൽ എങ്കിൽ (posixly_correct || *options == '+')
 		flags &= ~FLAG_PERMUTE;
-	if (*options == '+' || *options == '-')
+	എങ്കിൽ (*options == '+' || *options == '-')
 		options++;
 
-	optarg = NULL;
-	if (optreset)
+	optarg = ശൂന്യ;
+	എങ്കിൽ (optreset)
 		nonopt_start = nonopt_end = -1;
 start:
-	if (optreset || !*place) {		/* update scanning pointer */
+	എങ്കിൽ (optreset || !*place) {		/* update scanning pointer */
 		optreset = 0;
-		if (optind >= nargc) {          /* end of argument vector */
+		എങ്കിൽ (optind >= nargc) {          /* end of argument vector */
 			place = EMSG;
-			if (nonopt_end != -1) {
+			എങ്കിൽ (nonopt_end != -1) {
 				/* do permutation, if we have to */
 				permute_args(nonopt_start, nonopt_end,
 				    optind, nargv);
 				optind -= nonopt_end - nonopt_start;
 			}
-			else if (nonopt_start != -1) {
+			അല്ലെങ്കിൽ എങ്കിൽ (nonopt_start != -1) {
 				/*
 				 * If we skipped non-options, set optind
 				 * to the first of them.
@@ -357,30 +357,30 @@ start:
 				optind = nonopt_start;
 			}
 			nonopt_start = nonopt_end = -1;
-			return (-1);
+			തിരികെ (-1);
 		}
-		if (*(place = nargv[optind]) != '-' ||
-		    (place[1] == '\0' && strchr(options, '-') == NULL)) {
+		എങ്കിൽ (*(place = nargv[optind]) != '-' ||
+		    (place[1] == '\0' && strchr(options, '-') == ശൂന്യ)) {
 			place = EMSG;		/* found non-option */
-			if (flags & FLAG_ALLARGS) {
+			എങ്കിൽ (flags & FLAG_ALLARGS) {
 				/*
 				 * GNU extension:
 				 * return non-option as argument to option 1
 				 */
 				optarg = nargv[optind++];
-				return (INORDER);
+				തിരികെ (മധ്യക്രമം);
 			}
-			if (!(flags & FLAG_PERMUTE)) {
+			എങ്കിൽ (!(flags & FLAG_PERMUTE)) {
 				/*
 				 * If no permutation wanted, stop parsing
 				 * at first non-option.
 				 */
-				return (-1);
+				തിരികെ (-1);
 			}
 			/* do permutation */
-			if (nonopt_start == -1)
+			എങ്കിൽ (nonopt_start == -1)
 				nonopt_start = optind;
-			else if (nonopt_end != -1) {
+			അല്ലെങ്കിൽ എങ്കിൽ (nonopt_end != -1) {
 				permute_args(nonopt_start, nonopt_end,
 				    optind, nargv);
 				nonopt_start = optind -
@@ -389,28 +389,28 @@ start:
 			}
 			optind++;
 			/* process next argument */
-			goto start;
+			പോകുക start;
 		}
-		if (nonopt_start != -1 && nonopt_end == -1)
+		എങ്കിൽ (nonopt_start != -1 && nonopt_end == -1)
 			nonopt_end = optind;
 
 		/*
 		 * If we have "-" do nothing, if "--" we are done.
 		 */
-		if (place[1] != '\0' && *++place == '-' && place[1] == '\0') {
+		എങ്കിൽ (place[1] != '\0' && *++place == '-' && place[1] == '\0') {
 			optind++;
 			place = EMSG;
 			/*
 			 * We found an option (--), so if we skipped
 			 * non-options, we have to permute.
 			 */
-			if (nonopt_end != -1) {
+			എങ്കിൽ (nonopt_end != -1) {
 				permute_args(nonopt_start, nonopt_end,
 				    optind, nargv);
 				optind -= nonopt_end - nonopt_start;
 			}
 			nonopt_start = nonopt_end = -1;
-			return (-1);
+			തിരികെ (-1);
 		}
 	}
 
@@ -420,78 +420,78 @@ start:
 	 *  2) the arg is not just "-"
 	 *  3) either the arg starts with -- we are getopt_long_only()
 	 */
-	if (long_options != NULL && place != nargv[optind] &&
+	എങ്കിൽ (long_options != ശൂന്യ && place != nargv[optind] &&
 	    (*place == '-' || (flags & FLAG_LONGONLY))) {
 		short_too = 0;
-		if (*place == '-')
+		എങ്കിൽ (*place == '-')
 			place++;		/* --foo long option */
-		else if (*place != ':' && strchr(options, *place) != NULL)
+		അല്ലെങ്കിൽ എങ്കിൽ (*place != ':' && strchr(options, *place) != ശൂന്യ)
 			short_too = 1;		/* could be short option too */
 
 		optchar = parse_long_options(nargv, options, long_options,
 		    idx, short_too);
-		if (optchar != -1) {
+		എങ്കിൽ (optchar != -1) {
 			place = EMSG;
-			return (optchar);
+			തിരികെ (optchar);
 		}
 	}
 
-	if ((optchar = (int)*place++) == (int)':' ||
-	    (optchar == (int)'-' && *place != '\0') ||
-	    (oli = strchr(options, optchar)) == NULL) {
+	എങ്കിൽ ((optchar = (പൂർണ്ണസംഖ്യ)*place++) == (പൂർണ്ണസംഖ്യ)':' ||
+	    (optchar == (പൂർണ്ണസംഖ്യ)'-' && *place != '\0') ||
+	    (oli = strchr(options, optchar)) == ശൂന്യ) {
 		/*
 		 * If the user specified "-" and  '-' isn't listed in
 		 * options, return -1 (non-option) as per POSIX.
 		 * Otherwise, it is an unknown option character (or ':').
 		 */
-		if (optchar == (int)'-' && *place == '\0')
-			return (-1);
-		if (!*place)
+		എങ്കിൽ (optchar == (പൂർണ്ണസംഖ്യ)'-' && *place == '\0')
+			തിരികെ (-1);
+		എങ്കിൽ (!*place)
 			++optind;
-		if (PRINT_ERROR)
+		എങ്കിൽ (PRINT_ERROR)
 			warnx(illoptchar, optchar);
 		optopt = optchar;
-		return (BADCH);
+		തിരികെ (BADCH);
 	}
-	if (long_options != NULL && optchar == 'W' && oli[1] == ';') {
+	എങ്കിൽ (long_options != ശൂന്യ && optchar == 'W' && oli[1] == ';') {
 		/* -W long-option */
-		if (*place)			/* no space */
+		എങ്കിൽ (*place)			/* no space */
 			/* NOTHING */;
-		else if (++optind >= nargc) {	/* no arg */
+		അല്ലെങ്കിൽ എങ്കിൽ (++optind >= nargc) {	/* no arg */
 			place = EMSG;
-			if (PRINT_ERROR)
+			എങ്കിൽ (PRINT_ERROR)
 				warnx(recargchar, optchar);
 			optopt = optchar;
-			return (BADARG);
-		} else				/* white space */
+			തിരികെ (BADARG);
+		} അല്ലെങ്കിൽ				/* white space */
 			place = nargv[optind];
 		optchar = parse_long_options(nargv, options, long_options,
 		    idx, 0);
 		place = EMSG;
-		return (optchar);
+		തിരികെ (optchar);
 	}
-	if (*++oli != ':') {			/* doesn't take argument */
-		if (!*place)
+	എങ്കിൽ (*++oli != ':') {			/* doesn't take argument */
+		എങ്കിൽ (!*place)
 			++optind;
-	} else {				/* takes (optional) argument */
-		optarg = NULL;
-		if (*place)			/* no white space */
+	} അല്ലെങ്കിൽ {				/* takes (optional) argument */
+		optarg = ശൂന്യ;
+		എങ്കിൽ (*place)			/* no white space */
 			optarg = place;
-		else if (oli[1] != ':') {	/* arg not optional */
-			if (++optind >= nargc) {	/* no arg */
+		അല്ലെങ്കിൽ എങ്കിൽ (oli[1] != ':') {	/* arg not optional */
+			എങ്കിൽ (++optind >= nargc) {	/* no arg */
 				place = EMSG;
-				if (PRINT_ERROR)
+				എങ്കിൽ (PRINT_ERROR)
 					warnx(recargchar, optchar);
 				optopt = optchar;
-				return (BADARG);
-			} else
+				തിരികെ (BADARG);
+			} അല്ലെങ്കിൽ
 				optarg = nargv[optind];
 		}
 		place = EMSG;
 		++optind;
 	}
 	/* dump back option letter */
-	return (optchar);
+	തിരികെ (optchar);
 }
 
 /*
@@ -500,8 +500,8 @@ start:
  *
  * [eventually this will replace the BSD getopt]
  */
-int
-getopt(int nargc, char * const *nargv, const char *options)
+പൂർണ്ണസംഖ്യ
+getopt(പൂർണ്ണസംഖ്യ nargc, അക്ഷരം * സ്ഥിരം *nargv, സ്ഥിരം അക്ഷരം *options)
 {
 
 	/*
@@ -512,20 +512,20 @@ getopt(int nargc, char * const *nargv, const char *options)
 	 * before dropping privileges it makes sense to keep things
 	 * as simple (and bug-free) as possible.
 	 */
-	return (getopt_internal(nargc, nargv, options, NULL, NULL, 0));
+	തിരികെ (getopt_internal(nargc, nargv, options, ശൂന്യ, ശൂന്യ, 0));
 }
 
-#if 0
+#എങ്കിൽ 0
 /*
  * getopt_long --
  *	Parse argc/argv argument vector.
  */
-int
-getopt_long(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx)
+പൂർണ്ണസംഖ്യ
+getopt_long(പൂർണ്ണസംഖ്യ nargc, അക്ഷരം * സ്ഥിരം *nargv, സ്ഥിരം അക്ഷരം *options,
+    സ്ഥിരം ഘടന option *long_options, പൂർണ്ണസംഖ്യ *idx)
 {
 
-	return (getopt_internal(nargc, nargv, options, long_options, idx,
+	തിരികെ (getopt_internal(nargc, nargv, options, long_options, idx,
 	    FLAG_PERMUTE));
 }
 
@@ -533,12 +533,12 @@ getopt_long(int nargc, char * const *nargv, const char *options,
  * getopt_long_only --
  *	Parse argc/argv argument vector.
  */
-int
-getopt_long_only(int nargc, char * const *nargv, const char *options,
-    const struct option *long_options, int *idx)
+പൂർണ്ണസംഖ്യ
+getopt_long_only(പൂർണ്ണസംഖ്യ nargc, അക്ഷരം * സ്ഥിരം *nargv, സ്ഥിരം അക്ഷരം *options,
+    സ്ഥിരം ഘടന option *long_options, പൂർണ്ണസംഖ്യ *idx)
 {
 
-	return (getopt_internal(nargc, nargv, options, long_options, idx,
+	തിരികെ (getopt_internal(nargc, nargv, options, long_options, idx,
 	    FLAG_PERMUTE|FLAG_LONGONLY));
 }
 #endif

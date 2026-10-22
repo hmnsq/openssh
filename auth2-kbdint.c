@@ -23,46 +23,46 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdarg.h>
 
-#include "xmalloc.h"
-#include "packet.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssherr.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "auth.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "servconf.h"
+#അന്തര്ഭാവ "ssherr.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_kbdint;
+ബാഹ്യ ServerOptions options;
+ബാഹ്യ ഘടന authmethod_cfg methodcfg_kbdint;
 
-static int
-userauth_kbdint(struct ssh *ssh, const char *method)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+userauth_kbdint(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *method)
 {
-	int r, authenticated = 0;
-	char *lang, *devs;
+	പൂർണ്ണസംഖ്യ r, authenticated = 0;
+	അക്ഷരം *lang, *devs;
 
-	if ((r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &devs, NULL)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_get_cstring(ssh, &lang, ശൂന്യ)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &devs, ശൂന്യ)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	debug("keyboard-interactive devs %s", devs);
 
-	if (options.kbd_interactive_authentication)
+	എങ്കിൽ (options.kbd_interactive_authentication)
 		authenticated = auth2_challenge(ssh, devs);
 
-	free(devs);
-	free(lang);
-	return authenticated;
+	സ്വതന്ത്രം(devs);
+	സ്വതന്ത്രം(lang);
+	തിരികെ authenticated;
 }
 
 Authmethod method_kbdint = {

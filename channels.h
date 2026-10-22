@@ -87,31 +87,31 @@
 #define CHANNEL_BULK_NOTTY	"direct-*,forwarded-*,dynamic-*," \
 				"tun-*,x11-*,session*,stdio-forward"
 
-struct ssh;
-struct Channel;
-typedef struct Channel Channel;
-struct channel_connect;
+ഘടന ssh;
+ഘടന Channel;
+തരനിർവചനം ഘടന Channel Channel;
+ഘടന channel_connect;
 
-typedef void channel_open_fn(struct ssh *, int, int, void *);
-typedef void channel_callback_fn(struct ssh *, int, int, void *);
-typedef int channel_infilter_fn(struct ssh *, struct Channel *, char *, int);
-typedef void channel_filter_cleanup_fn(struct ssh *, int, void *);
-typedef u_char *channel_outfilter_fn(struct ssh *, struct Channel *,
+തരനിർവചനം ശൂന്യം channel_open_fn(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, ശൂന്യം *);
+തരനിർവചനം ശൂന്യം channel_callback_fn(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, ശൂന്യം *);
+തരനിർവചനം പൂർണ്ണസംഖ്യ channel_infilter_fn(ഘടന ssh *, ഘടന Channel *, അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+തരനിർവചനം ശൂന്യം channel_filter_cleanup_fn(ഘടന ssh *, പൂർണ്ണസംഖ്യ, ശൂന്യം *);
+തരനിർവചനം u_char *channel_outfilter_fn(ഘടന ssh *, ഘടന Channel *,
     u_char **, size_t *);
 
 /* Channel success/failure callbacks */
-typedef void channel_confirm_cb(struct ssh *, int, struct Channel *, void *);
-typedef void channel_confirm_abandon_cb(struct ssh *, struct Channel *, void *);
-struct channel_confirm {
+തരനിർവചനം ശൂന്യം channel_confirm_cb(ഘടന ssh *, പൂർണ്ണസംഖ്യ, ഘടന Channel *, ശൂന്യം *);
+തരനിർവചനം ശൂന്യം channel_confirm_abandon_cb(ഘടന ssh *, ഘടന Channel *, ശൂന്യം *);
+ഘടന channel_confirm {
 	TAILQ_ENTRY(channel_confirm) entry;
 	channel_confirm_cb *cb;
 	channel_confirm_abandon_cb *abandon_cb;
-	void *ctx;
+	ശൂന്യം *ctx;
 };
 TAILQ_HEAD(channel_confirms, channel_confirm);
 
 /* Callbacks for mux channels back into client-specific code */
-typedef int mux_callback_fn(struct ssh *, struct Channel *);
+തരനിർവചനം പൂർണ്ണസംഖ്യ mux_callback_fn(ഘടന ssh *, ഘടന Channel *);
 
 /*
  * NB. channel IDs on the wire and in c->remote_id are uint32, but local
@@ -120,53 +120,53 @@ typedef int mux_callback_fn(struct ssh *, struct Channel *);
  * a dedicated "have_remote_id" flag to indicate their validity.
  */
 
-struct Channel {
-	int     type;		/* channel type/state */
+ഘടന Channel {
+	പൂർണ്ണസംഖ്യ     type;		/* channel type/state */
 
-	int     self;		/* my own channel identifier */
+	പൂർണ്ണസംഖ്യ     self;		/* my own channel identifier */
 	uint32_t remote_id;	/* channel identifier for remote peer */
-	int	have_remote_id;	/* non-zero if remote_id is valid */
+	പൂർണ്ണസംഖ്യ	have_remote_id;	/* non-zero if remote_id is valid */
 
 	u_int   istate;		/* input from channel (state of receive half) */
 	u_int   ostate;		/* output to channel  (state of transmit half) */
-	int     flags;		/* close sent/rcvd */
-	int     rfd;		/* read fd */
-	int     wfd;		/* write fd */
-	int     efd;		/* extended fd */
-	int     sock;		/* sock fd */
+	പൂർണ്ണസംഖ്യ     flags;		/* close sent/rcvd */
+	പൂർണ്ണസംഖ്യ     rfd;		/* read fd */
+	പൂർണ്ണസംഖ്യ     wfd;		/* write fd */
+	പൂർണ്ണസംഖ്യ     efd;		/* extended fd */
+	പൂർണ്ണസംഖ്യ     sock;		/* sock fd */
 	u_int	io_want;	/* bitmask of SSH_CHAN_IO_* */
 	u_int	io_ready;	/* bitmask of SSH_CHAN_IO_* */
-	int	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
-	int     ctl_chan;	/* control channel (multiplexed connections) */
+	പൂർണ്ണസംഖ്യ	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
+	പൂർണ്ണസംഖ്യ     ctl_chan;	/* control channel (multiplexed connections) */
 	uint32_t ctl_child_id;	/* child session for mux controllers */
-	int	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
-	int     remote_has_tty;	/* remote side has a tty */
-	int     isatty;		/* rfd is a tty */
+	പൂർണ്ണസംഖ്യ	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
+	പൂർണ്ണസംഖ്യ     remote_has_tty;	/* remote side has a tty */
+	പൂർണ്ണസംഖ്യ     isatty;		/* rfd is a tty */
 #ifdef _AIX
-	int     wfd_isatty;	/* wfd is a tty */
+	പൂർണ്ണസംഖ്യ     wfd_isatty;	/* wfd is a tty */
 #endif
-	int	client_tty;	/* (client) TTY has been requested */
-	int     force_drain;	/* force close on iEOF */
-	double	notbefore;	/* Pause IO until deadline (time_t) */
-	int     delayed;	/* post-IO handlers for newly created
+	പൂർണ്ണസംഖ്യ	client_tty;	/* (client) TTY has been requested */
+	പൂർണ്ണസംഖ്യ     force_drain;	/* force close on iEOF */
+	ഇരട്ട	notbefore;	/* Pause IO until deadline (time_t) */
+	പൂർണ്ണസംഖ്യ     delayed;	/* post-IO handlers for newly created
 				 * channels are delayed until the first call
 				 * to a matching pre-IO handler.
 				 * this way post-IO handlers are not
 				 * accidentally called if a FD gets reused */
-	int	restore_block;	/* fd mask to restore blocking status */
-	int	restore_flags[3];/* flags to restore */
-	struct sshbuf *input;	/* data read from socket, to be sent over
+	പൂർണ്ണസംഖ്യ	restore_block;	/* fd mask to restore blocking status */
+	പൂർണ്ണസംഖ്യ	restore_flags[3];/* flags to restore */
+	ഘടന sshbuf *നിവേശം;	/* data read from socket, to be sent over
 				 * encrypted connection */
-	struct sshbuf *output;	/* data received over encrypted connection for
+	ഘടന sshbuf *output;	/* data received over encrypted connection for
 				 * send on socket */
-	struct sshbuf *extended;
+	ഘടന sshbuf *extended;
 
-	char    *path;
+	അക്ഷരം    *path;
 		/* path for unix domain sockets, or host name for forwards */
-	int     listening_port;	/* port being listened for forwards */
-	char   *listening_addr;	/* addr being listened for forwards */
-	int     host_port;	/* remote port to connect for forwards */
-	char   *remote_name;	/* remote hostname */
+	പൂർണ്ണസംഖ്യ     listening_port;	/* port being listened for forwards */
+	അക്ഷരം   *listening_addr;	/* addr being listened for forwards */
+	പൂർണ്ണസംഖ്യ     host_port;	/* remote port to connect for forwards */
+	അക്ഷരം   *remote_name;	/* remote hostname */
 
 	u_int	remote_window;
 	u_int	remote_maxpacket;
@@ -175,45 +175,45 @@ struct Channel {
 	u_int	local_window_max;
 	u_int	local_consumed;
 	u_int	local_maxpacket;
-	int     extended_usage;
-	int	agent_new;	/* For agent listeners, use RFC 9987 requests */
-	int	single_connection;
+	പൂർണ്ണസംഖ്യ     extended_usage;
+	പൂർണ്ണസംഖ്യ	agent_new;	/* For agent listeners, use RFC 9987 requests */
+	പൂർണ്ണസംഖ്യ	single_connection;
 
-	char   *ctype;		/* const type - NB. not freed on channel_free */
-	char   *xctype;		/* extended type */
-	int	bulk;		/* channel is non-interactive */
+	അക്ഷരം   *ctype;		/* const type - NB. not freed on channel_free */
+	അക്ഷരം   *xctype;		/* extended type */
+	പൂർണ്ണസംഖ്യ	bulk;		/* channel is non-interactive */
 
 	/* callback */
 	channel_open_fn		*open_confirm;
-	void			*open_confirm_ctx;
+	ശൂന്യം			*open_confirm_ctx;
 	channel_callback_fn	*detach_user;
-	int			detach_close;
-	struct channel_confirms	status_confirms;
+	പൂർണ്ണസംഖ്യ			detach_close;
+	ഘടന channel_confirms	status_confirms;
 
 	/* filter */
-	channel_infilter_fn	*input_filter;
+	channel_infilter_fn	*നിവേശം_filter;
 	channel_outfilter_fn	*output_filter;
-	void			*filter_ctx;
+	ശൂന്യം			*filter_ctx;
 	channel_filter_cleanup_fn *filter_cleanup;
 
 	/* keep boundaries */
-	int			datagram;
+	പൂർണ്ണസംഖ്യ			datagram;
 
 	/* non-blocking connect */
-	struct channel_connect	*connect_ctx;
+	ഘടന channel_connect	*connect_ctx;
 
 	/* multiplexing protocol hook, called for each packet received */
 	mux_callback_fn		*mux_rcb;
-	void			*mux_ctx;
-	int			mux_pause;
-	int			mux_downstream_id;
+	ശൂന്യം			*mux_ctx;
+	പൂർണ്ണസംഖ്യ			mux_pause;
+	പൂർണ്ണസംഖ്യ			mux_downstream_id;
 
 	/* Inactivity timeouts */
 
 	/* Last traffic seen for OPEN channels */
-	double			lastused;
+	ഇരട്ട			lastused;
 	/* Inactivity timeout deadline in seconds (0 = no timeout) */
-	double			inactive_deadline;
+	ഇരട്ട			inactive_deadline;
 };
 
 #define CHAN_EXTENDED_IGNORE		0
@@ -229,10 +229,10 @@ struct Channel {
 #define CHAN_X11_WINDOW_DEFAULT	(4*CHAN_X11_PACKET_DEFAULT)
 
 /* possible input states */
-#define CHAN_INPUT_OPEN			0
-#define CHAN_INPUT_WAIT_DRAIN		1
-#define CHAN_INPUT_WAIT_OCLOSE		2
-#define CHAN_INPUT_CLOSED		3
+#define CHAN_നിവേശം_OPEN			0
+#define CHAN_നിവേശം_WAIT_DRAIN		1
+#define CHAN_നിവേശം_WAIT_OCLOSE		2
+#define CHAN_നിവേശം_CLOSED		3
 
 /* possible output states */
 #define CHAN_OUTPUT_OPEN		0
@@ -263,13 +263,13 @@ struct Channel {
 #define CHANNEL_MAX_READ	CHAN_SES_PACKET_DEFAULT
 
 /* Maximum channel input buffer size */
-#define CHAN_INPUT_MAX	(16*1024*1024)
+#define CHAN_നിവേശം_MAX	(16*1024*1024)
 
 /* Hard limit on number of channels */
 #define CHANNELS_MAX_CHANNELS	(16*1024)
 
 /* check whether 'efd' is still in use */
-#define CHANNEL_EFD_INPUT_ACTIVE(c) \
+#define CHANNEL_EFD_നിവേശം_ACTIVE(c) \
 	(c->extended_usage == CHAN_EXTENDED_READ && \
 	(c->efd != -1 || \
 	sshbuf_len(c->extended) > 0))
@@ -279,133 +279,133 @@ struct Channel {
 	sshbuf_len(c->extended) > 0))
 
 /* Add/remove channel management structures to/from SSH transport instance */
-void channel_init_channels(struct ssh *ssh);
-void channel_free_channels(struct ssh *ssh);
+ശൂന്യം channel_init_channels(ഘടന ssh *ssh);
+ശൂന്യം channel_free_channels(ഘടന ssh *ssh);
 
 /* channel management */
 
-Channel	*channel_by_id(struct ssh *, int);
-Channel	*channel_by_remote_id(struct ssh *, u_int);
-Channel	*channel_lookup(struct ssh *, int);
-Channel *channel_new(struct ssh *, char *, int, int, int, int,
-	    u_int, u_int, int, const char *, int);
-void	 channel_set_fds(struct ssh *, int, int, int, int, int,
-	    int, int, u_int);
-void	 channel_set_tty(struct ssh *, Channel *);
-void	 channel_free(struct ssh *, Channel *);
-void	 channel_free_all(struct ssh *);
-void	 channel_stop_listening(struct ssh *);
-void	 channel_force_close(struct ssh *, Channel *, int);
-void	 channel_set_xtype(struct ssh *, int, const char *);
+Channel	*channel_by_id(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
+Channel	*channel_by_remote_id(ഘടന ssh *, u_int);
+Channel	*channel_lookup(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
+Channel *channel_new(ഘടന ssh *, അക്ഷരം *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+	    u_int, u_int, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 channel_set_fds(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+	    പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, u_int);
+ശൂന്യം	 channel_set_tty(ഘടന ssh *, Channel *);
+ശൂന്യം	 channel_free(ഘടന ssh *, Channel *);
+ശൂന്യം	 channel_free_all(ഘടന ssh *);
+ശൂന്യം	 channel_stop_listening(ഘടന ssh *);
+ശൂന്യം	 channel_force_close(ഘടന ssh *, Channel *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 channel_set_xtype(ഘടന ssh *, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *);
 
-void	 channel_send_open(struct ssh *, int);
-void	 channel_request_start(struct ssh *, int, const char *, int);
-void	 channel_register_cleanup(struct ssh *, int,
-	    channel_callback_fn *, int);
-void	 channel_register_open_confirm(struct ssh *, int,
-	    channel_open_fn *, void *);
-void	 channel_register_filter(struct ssh *, int, channel_infilter_fn *,
-	    channel_outfilter_fn *, channel_filter_cleanup_fn *, void *);
-void	 channel_register_status_confirm(struct ssh *, int,
-	    channel_confirm_cb *, channel_confirm_abandon_cb *, void *);
-void	 channel_cancel_cleanup(struct ssh *, int);
-int	 channel_close_fd(struct ssh *, Channel *, int *);
-void	 channel_send_window_changes(struct ssh *);
-int	 channel_has_bulk(struct ssh *);
-void	 channel_set_tcp_keepalives(struct ssh *, int);
+ശൂന്യം	 channel_send_open(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 channel_request_start(ഘടന ssh *, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 channel_register_cleanup(ഘടന ssh *, പൂർണ്ണസംഖ്യ,
+	    channel_callback_fn *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 channel_register_open_confirm(ഘടന ssh *, പൂർണ്ണസംഖ്യ,
+	    channel_open_fn *, ശൂന്യം *);
+ശൂന്യം	 channel_register_filter(ഘടന ssh *, പൂർണ്ണസംഖ്യ, channel_infilter_fn *,
+	    channel_outfilter_fn *, channel_filter_cleanup_fn *, ശൂന്യം *);
+ശൂന്യം	 channel_register_status_confirm(ഘടന ssh *, പൂർണ്ണസംഖ്യ,
+	    channel_confirm_cb *, channel_confirm_abandon_cb *, ശൂന്യം *);
+ശൂന്യം	 channel_cancel_cleanup(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 channel_close_fd(ഘടന ssh *, Channel *, പൂർണ്ണസംഖ്യ *);
+ശൂന്യം	 channel_send_window_changes(ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 channel_has_bulk(ഘടന ssh *);
+ശൂന്യം	 channel_set_tcp_keepalives(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
 
 /* channel inactivity timeouts */
-void channel_add_timeout(struct ssh *, const char *, double);
-void channel_clear_timeouts(struct ssh *);
+ശൂന്യം channel_add_timeout(ഘടന ssh *, സ്ഥിരം അക്ഷരം *, ഇരട്ട);
+ശൂന്യം channel_clear_timeouts(ഘടന ssh *);
 
 /* mux proxy support */
 
-int	 channel_proxy_downstream(struct ssh *, Channel *mc);
-int	 channel_proxy_upstream(Channel *, int, uint32_t, struct ssh *);
+പൂർണ്ണസംഖ്യ	 channel_proxy_downstream(ഘടന ssh *, Channel *mc);
+പൂർണ്ണസംഖ്യ	 channel_proxy_upstream(Channel *, പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
 
 /* protocol handler */
 
-int	 channel_input_data(int, uint32_t, struct ssh *);
-int	 channel_input_extended_data(int, uint32_t, struct ssh *);
-int	 channel_input_ieof(int, uint32_t, struct ssh *);
-int	 channel_input_oclose(int, uint32_t, struct ssh *);
-int	 channel_input_open_confirmation(int, uint32_t, struct ssh *);
-int	 channel_input_open_failure(int, uint32_t, struct ssh *);
-int	 channel_input_window_adjust(int, uint32_t, struct ssh *);
-int	 channel_input_status_confirm(int, uint32_t, struct ssh *);
+പൂർണ്ണസംഖ്യ	 channel_നിവേശം_data(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 channel_നിവേശം_extended_data(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 channel_നിവേശം_ieof(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 channel_നിവേശം_oclose(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 channel_നിവേശം_open_confirmation(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 channel_നിവേശം_open_failure(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 channel_നിവേശം_window_adjust(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 channel_നിവേശം_status_confirm(പൂർണ്ണസംഖ്യ, uint32_t, ഘടന ssh *);
 
 /* file descriptor handling (read/write) */
-struct pollfd;
-struct timespec;
+ഘടന pollfd;
+ഘടന timespec;
 
-void	 channel_prepare_poll(struct ssh *, struct pollfd **,
-	    u_int *, u_int *, u_int, struct timespec *);
-void	 channel_after_poll(struct ssh *, struct pollfd *, u_int);
-int	 channel_output_poll(struct ssh *);
+ശൂന്യം	 channel_prepare_poll(ഘടന ssh *, ഘടന pollfd **,
+	    u_int *, u_int *, u_int, ഘടന timespec *);
+ശൂന്യം	 channel_after_poll(ഘടന ssh *, ഘടന pollfd *, u_int);
+പൂർണ്ണസംഖ്യ	 channel_output_poll(ഘടന ssh *);
 
-int      channel_not_very_much_buffered_data(struct ssh *);
-void     channel_close_all(struct ssh *);
-int      channel_still_open(struct ssh *);
-int	 channel_tty_open(struct ssh *);
-const char *channel_format_extended_usage(const Channel *);
-char	*channel_open_message(struct ssh *);
-void	 channel_report_open(struct ssh *, int);
-int	 channel_find_open(struct ssh *);
+പൂർണ്ണസംഖ്യ      channel_not_very_much_buffered_data(ഘടന ssh *);
+ശൂന്യം     channel_close_all(ഘടന ssh *);
+പൂർണ്ണസംഖ്യ      channel_still_open(ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 channel_tty_open(ഘടന ssh *);
+സ്ഥിരം അക്ഷരം *channel_format_extended_usage(സ്ഥിരം Channel *);
+അക്ഷരം	*channel_open_message(ഘടന ssh *);
+ശൂന്യം	 channel_report_open(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 channel_find_open(ഘടന ssh *);
 
 /* tcp forwarding */
-struct Forward;
-struct ForwardOptions;
-void	 channel_set_af(struct ssh *, int af);
-void     channel_permit_all(struct ssh *, int);
-void	 channel_add_permission(struct ssh *, int, int, char *, int);
-void	 channel_clear_permission(struct ssh *, int, int);
-void	 channel_disable_admin(struct ssh *, int);
-void	 channel_update_permission(struct ssh *, int, int);
-Channel	*channel_connect_to_port(struct ssh *, const char *, u_short,
-	    char *, char *, int *, const char **);
-Channel *channel_connect_to_path(struct ssh *, const char *, char *, char *);
-Channel	*channel_connect_stdio_fwd(struct ssh *, const char*,
-	    int, int, int, int);
-Channel	*channel_connect_by_listen_address(struct ssh *, const char *,
-	    u_short, char *, char *);
-Channel	*channel_connect_by_listen_path(struct ssh *, const char *,
-	    char *, char *);
-int	 channel_request_remote_forwarding(struct ssh *, struct Forward *);
-int	 channel_setup_local_fwd_listener(struct ssh *, struct Forward *,
-	    struct ForwardOptions *);
-int	 channel_request_rforward_cancel(struct ssh *, struct Forward *);
-int	 channel_setup_remote_fwd_listener(struct ssh *, struct Forward *,
-	    int *, struct ForwardOptions *);
-int	 channel_cancel_rport_listener(struct ssh *, struct Forward *);
-int	 channel_cancel_lport_listener(struct ssh *, struct Forward *,
-	    int, struct ForwardOptions *);
-int	 permitopen_port(const char *);
+ഘടന Forward;
+ഘടന ForwardOptions;
+ശൂന്യം	 channel_set_af(ഘടന ssh *, പൂർണ്ണസംഖ്യ af);
+ശൂന്യം     channel_permit_all(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 channel_add_permission(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 channel_clear_permission(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 channel_disable_admin(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 channel_update_permission(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+Channel	*channel_connect_to_port(ഘടന ssh *, സ്ഥിരം അക്ഷരം *, u_short,
+	    അക്ഷരം *, അക്ഷരം *, പൂർണ്ണസംഖ്യ *, സ്ഥിരം അക്ഷരം **);
+Channel *channel_connect_to_path(ഘടന ssh *, സ്ഥിരം അക്ഷരം *, അക്ഷരം *, അക്ഷരം *);
+Channel	*channel_connect_stdio_fwd(ഘടന ssh *, സ്ഥിരം അക്ഷരം*,
+	    പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ);
+Channel	*channel_connect_by_listen_address(ഘടന ssh *, സ്ഥിരം അക്ഷരം *,
+	    u_short, അക്ഷരം *, അക്ഷരം *);
+Channel	*channel_connect_by_listen_path(ഘടന ssh *, സ്ഥിരം അക്ഷരം *,
+	    അക്ഷരം *, അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	 channel_request_remote_forwarding(ഘടന ssh *, ഘടന Forward *);
+പൂർണ്ണസംഖ്യ	 channel_setup_local_fwd_listener(ഘടന ssh *, ഘടന Forward *,
+	    ഘടന ForwardOptions *);
+പൂർണ്ണസംഖ്യ	 channel_request_rforward_cancel(ഘടന ssh *, ഘടന Forward *);
+പൂർണ്ണസംഖ്യ	 channel_setup_remote_fwd_listener(ഘടന ssh *, ഘടന Forward *,
+	    പൂർണ്ണസംഖ്യ *, ഘടന ForwardOptions *);
+പൂർണ്ണസംഖ്യ	 channel_cancel_rport_listener(ഘടന ssh *, ഘടന Forward *);
+പൂർണ്ണസംഖ്യ	 channel_cancel_lport_listener(ഘടന ssh *, ഘടന Forward *,
+	    പൂർണ്ണസംഖ്യ, ഘടന ForwardOptions *);
+പൂർണ്ണസംഖ്യ	 permitopen_port(സ്ഥിരം അക്ഷരം *);
 
 /* x11 forwarding */
 
-void	 channel_set_x11_refuse_time(struct ssh *, double);
-int	 x11_connect_display(struct ssh *);
-int	 x11_create_display_inet(struct ssh *, int, int, int, u_int *, int **);
-void	 x11_request_forwarding_with_spoofing(struct ssh *, int,
-	    const char *, const char *, const char *, int);
-int      x11_channel_used_recently(struct ssh *ssh);
+ശൂന്യം	 channel_set_x11_refuse_time(ഘടന ssh *, ഇരട്ട);
+പൂർണ്ണസംഖ്യ	 x11_connect_display(ഘടന ssh *);
+പൂർണ്ണസംഖ്യ	 x11_create_display_inet(ഘടന ssh *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ, u_int *, പൂർണ്ണസംഖ്യ **);
+ശൂന്യം	 x11_request_forwarding_with_spoofing(ഘടന ssh *, പൂർണ്ണസംഖ്യ,
+	    സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ      x11_channel_used_recently(ഘടന ssh *ssh);
 
 /* channel close */
 
-int	 chan_is_dead(struct ssh *, Channel *, int);
-void	 chan_mark_dead(struct ssh *, Channel *);
+പൂർണ്ണസംഖ്യ	 chan_is_dead(ഘടന ssh *, Channel *, പൂർണ്ണസംഖ്യ);
+ശൂന്യം	 chan_mark_dead(ഘടന ssh *, Channel *);
 
 /* agent forwarding */
-void	 client_channel_request_agent_forwarding(struct ssh *, int);
+ശൂന്യം	 client_channel_request_agent_forwarding(ഘടന ssh *, പൂർണ്ണസംഖ്യ);
 
 /* channel events */
 
-void	 chan_rcvd_oclose(struct ssh *, Channel *);
-void	 chan_rcvd_eow(struct ssh *, Channel *);
-void	 chan_read_failed(struct ssh *, Channel *);
-void	 chan_ibuf_empty(struct ssh *, Channel *);
-void	 chan_rcvd_ieof(struct ssh *, Channel *);
-void	 chan_write_failed(struct ssh *, Channel *);
-void	 chan_obuf_empty(struct ssh *, Channel *);
+ശൂന്യം	 chan_rcvd_oclose(ഘടന ssh *, Channel *);
+ശൂന്യം	 chan_rcvd_eow(ഘടന ssh *, Channel *);
+ശൂന്യം	 chan_read_failed(ഘടന ssh *, Channel *);
+ശൂന്യം	 chan_ibuf_empty(ഘടന ssh *, Channel *);
+ശൂന്യം	 chan_rcvd_ieof(ഘടന ssh *, Channel *);
+ശൂന്യം	 chan_write_failed(ഘടന ssh *, Channel *);
+ശൂന്യം	 chan_obuf_empty(ഘടന ssh *, Channel *);
 
 #endif

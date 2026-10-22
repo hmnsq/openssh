@@ -16,20 +16,20 @@
 
 #ifndef _PORT_SOLARIS_H
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <pwd.h>
+#അന്തര്ഭാവ <pwd.h>
 
-void solaris_contract_pre_fork(void);
-void solaris_contract_post_fork_child(void);
-void solaris_contract_post_fork_parent(pid_t pid);
-void solaris_set_default_project(struct passwd *);
+ശൂന്യം solaris_contract_pre_fork(ശൂന്യം);
+ശൂന്യം solaris_contract_post_fork_child(ശൂന്യം);
+ശൂന്യം solaris_contract_post_fork_parent(pid_t pid);
+ശൂന്യം solaris_set_default_project(ഘടന passwd *);
 # ifdef USE_SOLARIS_PRIVS
-#include <priv.h>
-priv_set_t *solaris_basic_privset(void);
-void solaris_drop_privs_pinfo_net_fork_exec(void);
-void solaris_drop_privs_root_pinfo_net(void);
-void solaris_drop_privs_root_pinfo_net_exec(void);
+#അന്തര്ഭാവ <priv.h>
+priv_set_t *solaris_basic_privset(ശൂന്യം);
+ശൂന്യം solaris_drop_privs_pinfo_net_fork_exec(ശൂന്യം);
+ശൂന്യം solaris_drop_privs_വേര്_pinfo_net(ശൂന്യം);
+ശൂന്യം solaris_drop_privs_വേര്_pinfo_net_exec(ശൂന്യം);
 # endif /* USE_SOLARIS_PRIVS */
 
 #endif

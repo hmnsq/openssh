@@ -26,13 +26,13 @@
  */
 
 /* Maximum packet that we are willing to send/accept */
-#define SFTP_MAX_MSG_LENGTH	(256 * 1024)
+#define SFTP_MAX_സന്ദേശം_LENGTH	(256 * 1024)
 
-struct sshbuf;
-typedef struct Attrib Attrib;
+ഘടന sshbuf;
+തരനിർവചനം ഘടന Attrib Attrib;
 
 /* File attributes */
-struct Attrib {
+ഘടന Attrib {
 	uint32_t	flags;
 	uint64_t	size;
 	uint32_t	uid;
@@ -42,12 +42,12 @@ struct Attrib {
 	uint32_t	mtime;
 };
 
-void	 attrib_clear(Attrib *);
-void	 stat_to_attrib(const struct stat *, Attrib *);
-void	 attrib_to_stat(const Attrib *, struct stat *);
-int	 decode_attrib(struct sshbuf *, Attrib *);
-int	 encode_attrib(struct sshbuf *, const Attrib *);
-char	*ls_file(const char *, const struct stat *, int, int,
-    const char *, const char *);
+ശൂന്യം	 attrib_clear(Attrib *);
+ശൂന്യം	 stat_to_attrib(സ്ഥിരം ഘടന stat *, Attrib *);
+ശൂന്യം	 attrib_to_stat(സ്ഥിരം Attrib *, ഘടന stat *);
+പൂർണ്ണസംഖ്യ	 decode_attrib(ഘടന sshbuf *, Attrib *);
+പൂർണ്ണസംഖ്യ	 encode_attrib(ഘടന sshbuf *, സ്ഥിരം Attrib *);
+അക്ഷരം	*ls_file(സ്ഥിരം അക്ഷരം *, സ്ഥിരം ഘടന stat *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+    സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *);
 
-const char *fx2txt(int);
+സ്ഥിരം അക്ഷരം *fx2txt(പൂർണ്ണസംഖ്യ);

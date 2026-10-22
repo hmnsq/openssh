@@ -1,20 +1,20 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdint.h>
 
-extern "C" {
+ബാഹ്യ "C" {
 
-#include "sshkey.h"
-#include "sshbuf.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "sshbuf.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+പൂർണ്ണസംഖ്യ LLVMFuzzer_Test_One_നിവേശം(സ്ഥിരം uint8_t* data, size_t size)
 {
-	struct sshkey *k = NULL;
-	struct sshbuf *b = sshbuf_from(data, size);
-	(void)sshkey_private_deserialize(b, &k);
+	ഘടന sshkey *k = ശൂന്യ;
+	ഘടന sshbuf *b = sshbuf_from(data, size);
+	(ശൂന്യം)sshkey_private_deserialize(b, &k);
 	sshkey_free(k);
 	sshbuf_free(b);
-	return 0;
+	തിരികെ 0;
 }
 
 } // extern

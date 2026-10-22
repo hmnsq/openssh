@@ -14,17 +14,17 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-int ssh_compatible_openssl(long, long);
+പൂർണ്ണസംഖ്യ ssh_compatible_openssl(long, long);
 
-struct version_test {
+ഘടന version_test {
 	long headerver;
 	long libver;
-	int result;
+	പൂർണ്ണസംഖ്യ result;
 } version_tests[] = {
 	/* built with 1.0.1b release headers */
 	{ 0x1000101fL, 0x1000101fL, 1},/* exact match */
@@ -57,26 +57,26 @@ struct version_test {
 	{ 0x3010101fL, 0x4010101fL, 0},	/* newer library major version: NO */
 };
 
-void
-fail(long hver, long lver, int result)
+ശൂന്യം
+fail(long hver, long lver, പൂർണ്ണസംഖ്യ result)
 {
 	fprintf(stderr, "opensslver: header %lx library %lx != %d \n", hver, lver, result);
 	exit(1);
 }
 
-int
-main(void)
+പൂർണ്ണസംഖ്യ
+പ്രധാന(ശൂന്യം)
 {
 #ifdef WITH_OPENSSL
-	unsigned int i;
-	int res;
+	unsigned പൂർണ്ണസംഖ്യ i;
+	പൂർണ്ണസംഖ്യ res;
 	long hver, lver;
 
-	for (i = 0; i < sizeof(version_tests) / sizeof(version_tests[0]); i++) {
+	വേണ്ടി (i = 0; i < വലുപ്പം(version_tests) / വലുപ്പം(version_tests[0]); i++) {
 		hver = version_tests[i].headerver;
 		lver = version_tests[i].libver;
 		res = version_tests[i].result;
-		if (ssh_compatible_openssl(hver, lver) != res)
+		എങ്കിൽ (ssh_compatible_openssl(hver, lver) != res)
 			fail(hver, lver, res);
 	}
 #endif

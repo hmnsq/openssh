@@ -15,11 +15,11 @@
 #ifndef SSH_LOG_H
 #define SSH_LOG_H
 
-#include <stdarg.h> /* va_list */
-#include "ssherr.h" /* ssh_err() */
+#അന്തര്ഭാവ <stdarg.h> /* va_list */
+#അന്തര്ഭാവ "ssherr.h" /* ssh_err() */
 
 /* Supported syslog facilities and levels. */
-typedef enum {
+തരനിർവചനം എണ്ണൽ {
 	SYSLOG_FACILITY_DAEMON,
 	SYSLOG_FACILITY_USER,
 	SYSLOG_FACILITY_AUTH,
@@ -37,7 +37,7 @@ typedef enum {
 	SYSLOG_FACILITY_NOT_SET = -1
 }       SyslogFacility;
 
-typedef enum {
+തരനിർവചനം എണ്ണൽ {
 	SYSLOG_LEVEL_QUIET,
 	SYSLOG_LEVEL_FATAL,
 	SYSLOG_LEVEL_ERROR,
@@ -49,39 +49,39 @@ typedef enum {
 	SYSLOG_LEVEL_NOT_SET = -1
 }       LogLevel;
 
-typedef void (log_handler_fn)(LogLevel, int, const char *, void *);
+തരനിർവചനം ശൂന്യം (log_handler_fn)(LogLevel, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *, ശൂന്യം *);
 
-void     log_init(const char *, LogLevel, SyslogFacility, int);
-LogLevel log_level_get(void);
-int      log_change_level(LogLevel);
-int      log_is_on_stderr(void);
-void     log_redirect_stderr_to(const char *);
-void	 log_verbose_add(const char *);
-void	 log_verbose_reset(void);
+ശൂന്യം     log_init(സ്ഥിരം അക്ഷരം *, LogLevel, SyslogFacility, പൂർണ്ണസംഖ്യ);
+LogLevel log_level_get(ശൂന്യം);
+പൂർണ്ണസംഖ്യ      log_change_level(LogLevel);
+പൂർണ്ണസംഖ്യ      log_is_on_stderr(ശൂന്യം);
+ശൂന്യം     log_redirect_stderr_to(സ്ഥിരം അക്ഷരം *);
+ശൂന്യം	 log_verbose_add(സ്ഥിരം അക്ഷരം *);
+ശൂന്യം	 log_verbose_reset(ശൂന്യം);
 
-SyslogFacility	log_facility_number(char *);
-const char *	log_facility_name(SyslogFacility);
-LogLevel	log_level_number(char *);
-const char *	log_level_name(LogLevel);
+SyslogFacility	log_facility_സംഖ്യ(അക്ഷരം *);
+സ്ഥിരം അക്ഷരം *	log_facility_name(SyslogFacility);
+LogLevel	log_level_സംഖ്യ(അക്ഷരം *);
+സ്ഥിരം അക്ഷരം *	log_level_name(LogLevel);
 
-void	 set_log_handler(log_handler_fn *, void *);
-void	 cleanup_exit(int) __attribute__((noreturn));
+ശൂന്യം	 set_log_handler(log_handler_fn *, ശൂന്യം *);
+ശൂന്യം	 cleanup_exit(പൂർണ്ണസംഖ്യ) __attribute__((noreturn));
 
-void	 sshlog(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...)
+ശൂന്യം	 sshlog(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+    LogLevel, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, ...)
     __attribute__((format(printf, 7, 8)));
-void	 sshlogv(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, va_list);
-void	 sshlogdie(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
+ശൂന്യം	 sshlogv(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+    LogLevel, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, va_list);
+ശൂന്യം	 sshlogdie(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+    LogLevel, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, ...) __attribute__((noreturn))
     __attribute__((format(printf, 7, 8)));
-void	 sshfatal(const char *, const char *, int, int,
-    LogLevel, const char *, const char *, ...) __attribute__((noreturn))
+ശൂന്യം	 sshfatal(സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, പൂർണ്ണസംഖ്യ, പൂർണ്ണസംഖ്യ,
+    LogLevel, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *, ...) __attribute__((noreturn))
     __attribute__((format(printf, 7, 8)));
-void	 sshlogdirect(LogLevel, int, const char *, ...)
+ശൂന്യം	 sshlogdirect(LogLevel, പൂർണ്ണസംഖ്യ, സ്ഥിരം അക്ഷരം *, ...)
     __attribute__((format(printf, 3, 4)));
 
-struct log_ratelimit_ctx {
+ഘടന log_ratelimit_ctx {
 	/* configuration */
 	u_int threshold;	/* events per second */
 	u_int max_accum;	/* max events to accumulate */
@@ -93,38 +93,38 @@ struct log_ratelimit_ctx {
 	u_int accumulated_events; /* used for threshold comparisons */
 
 	/* state while actively rate-limiting */
-	int ratelimit_active;
+	പൂർണ്ണസംഖ്യ ratelimit_active;
 	time_t ratelimit_start;
 	time_t last_log;
 	time_t hysteresis_start;
 	u_int ratelimited_events;
 };
 
-void log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
+ശൂന്യം log_ratelimit_init(ഘടന log_ratelimit_ctx *rl, u_int threshold,
     u_int max_accum, u_int hysteresis, u_int log_every);
-int log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
+പൂർണ്ണസംഖ്യ log_ratelimit(ഘടന log_ratelimit_ctx *rl, time_t now, പൂർണ്ണസംഖ്യ *active,
     u_int *events_dropped);
 
-#define do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, NULL, __VA_ARGS__)
-#define debug3(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, NULL, __VA_ARGS__)
-#define debug2(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, NULL, __VA_ARGS__)
-#define debug(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, NULL, __VA_ARGS__)
-#define verbose(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, NULL, __VA_ARGS__)
-#define logit(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, NULL, __VA_ARGS__)
-#define error(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
-#define fatal(...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, NULL, __VA_ARGS__)
-#define logdie(...)		sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
+#define do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, ശൂന്യ, __VA_ARGS__)
+#define debug3(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG3, ശൂന്യ, __VA_ARGS__)
+#define debug2(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG2, ശൂന്യ, __VA_ARGS__)
+#define debug(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_DEBUG1, ശൂന്യ, __VA_ARGS__)
+#define verbose(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_VERBOSE, ശൂന്യ, __VA_ARGS__)
+#define logit(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_INFO, ശൂന്യ, __VA_ARGS__)
+#define error(...)		sshlog(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ശൂന്യ, __VA_ARGS__)
+#define fatal(...)		sshfatal(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_FATAL, ശൂന്യ, __VA_ARGS__)
+#define logdie(...)		sshlogdie(__FILE__, __func__, __LINE__, 0, SYSLOG_LEVEL_ERROR, ശൂന്യ, __VA_ARGS__)
 
 /* Variants that prepend the caller's function */
-#define do_log2_f(level, ...)	sshlog(__FILE__, __func__, __LINE__, 1, level, NULL, __VA_ARGS__)
-#define debug3_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, NULL, __VA_ARGS__)
-#define debug2_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, NULL, __VA_ARGS__)
-#define debug_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, NULL, __VA_ARGS__)
-#define verbose_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, NULL, __VA_ARGS__)
-#define logit_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, NULL, __VA_ARGS__)
-#define error_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
-#define fatal_f(...)		sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, NULL, __VA_ARGS__)
-#define logdie_f(...)		sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, NULL, __VA_ARGS__)
+#define do_log2_f(level, ...)	sshlog(__FILE__, __func__, __LINE__, 1, level, ശൂന്യ, __VA_ARGS__)
+#define debug3_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG3, ശൂന്യ, __VA_ARGS__)
+#define debug2_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG2, ശൂന്യ, __VA_ARGS__)
+#define debug_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_DEBUG1, ശൂന്യ, __VA_ARGS__)
+#define verbose_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_VERBOSE, ശൂന്യ, __VA_ARGS__)
+#define logit_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_INFO, ശൂന്യ, __VA_ARGS__)
+#define error_f(...)		sshlog(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ശൂന്യ, __VA_ARGS__)
+#define fatal_f(...)		sshfatal(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_FATAL, ശൂന്യ, __VA_ARGS__)
+#define logdie_f(...)		sshlogdie(__FILE__, __func__, __LINE__, 1, SYSLOG_LEVEL_ERROR, ശൂന്യ, __VA_ARGS__)
 
 /* Variants that appends a ssh_err message */
 #define do_log2_r(r, level, ...) sshlog(__FILE__, __func__, __LINE__, 0, level, ssh_err(r), __VA_ARGS__)

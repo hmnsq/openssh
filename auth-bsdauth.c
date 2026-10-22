@@ -23,105 +23,105 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
 
 #ifdef BSD_AUTH
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "auth.h"
+#അന്തര്ഭാവ "log.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#അന്തര്ഭാവ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
+#അന്തര്ഭാവ "monitor_wrap.h"
 
-static void *
+സ്ഥിതം ശൂന്യം *
 bsdauth_init_ctx(Authctxt *authctxt)
 {
-	return authctxt;
+	തിരികെ authctxt;
 }
 
-int
-bsdauth_query(void *ctx, char **name, char **infotxt,
-   u_int *numprompts, char ***prompts, u_int **echo_on)
+പൂർണ്ണസംഖ്യ
+bsdauth_query(ശൂന്യം *ctx, അക്ഷരം **name, അക്ഷരം **infotxt,
+   u_int *numprompts, അക്ഷരം ***prompts, u_int **echo_on)
 {
 	Authctxt *authctxt = ctx;
-	char *challenge = NULL;
+	അക്ഷരം *challenge = ശൂന്യ;
 
-	*infotxt = NULL;
+	*infotxt = ശൂന്യ;
 	*numprompts = 0;
-	*prompts = NULL;
-	*echo_on = NULL;
+	*prompts = ശൂന്യ;
+	*echo_on = ശൂന്യ;
 
-	if (authctxt->as != NULL) {
+	എങ്കിൽ (authctxt->as != ശൂന്യ) {
 		debug2("bsdauth_query: try reuse session");
 		challenge = auth_getitem(authctxt->as, AUTHV_CHALLENGE);
-		if (challenge == NULL) {
+		എങ്കിൽ (challenge == ശൂന്യ) {
 			auth_close(authctxt->as);
-			authctxt->as = NULL;
+			authctxt->as = ശൂന്യ;
 		}
 	}
 
-	if (challenge == NULL) {
+	എങ്കിൽ (challenge == ശൂന്യ) {
 		debug2("bsdauth_query: new bsd auth session");
 		debug3("bsdauth_query: style %s",
 		    authctxt->style ? authctxt->style : "<default>");
 		authctxt->as = auth_userchallenge(authctxt->user,
 		    authctxt->style, "auth-ssh", &challenge);
-		if (authctxt->as == NULL)
-			challenge = NULL;
+		എങ്കിൽ (authctxt->as == ശൂന്യ)
+			challenge = ശൂന്യ;
 		debug2("bsdauth_query: <%s>", challenge ? challenge : "empty");
 	}
 
-	if (challenge == NULL)
-		return -1;
+	എങ്കിൽ (challenge == ശൂന്യ)
+		തിരികെ -1;
 
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
 	*numprompts = 1;
-	*prompts = xcalloc(*numprompts, sizeof(char *));
-	*echo_on = xcalloc(*numprompts, sizeof(u_int));
+	*prompts = xcalloc(*numprompts, വലുപ്പം(അക്ഷരം *));
+	*echo_on = xcalloc(*numprompts, വലുപ്പം(u_int));
 	(*prompts)[0] = xstrdup(challenge);
 
-	return 0;
+	തിരികെ 0;
 }
 
-int
-bsdauth_respond(void *ctx, u_int numresponses, char **responses)
+പൂർണ്ണസംഖ്യ
+bsdauth_respond(ശൂന്യം *ctx, u_int numresponses, അക്ഷരം **responses)
 {
 	Authctxt *authctxt = ctx;
-	int authok;
+	പൂർണ്ണസംഖ്യ authok;
 
-	if (!authctxt->valid)
-		return -1;
+	എങ്കിൽ (!authctxt->valid)
+		തിരികെ -1;
 
-	if (authctxt->as == NULL)
+	എങ്കിൽ (authctxt->as == ശൂന്യ)
 		error("bsdauth_respond: no bsd auth session");
 
-	if (numresponses != 1)
-		return -1;
+	എങ്കിൽ (numresponses != 1)
+		തിരികെ -1;
 
 	authok = auth_userresponse(authctxt->as, responses[0], 0);
-	authctxt->as = NULL;
+	authctxt->as = ശൂന്യ;
 	debug3("bsdauth_respond: <%s> = <%d>", responses[0], authok);
 
-	return (authok == 0) ? -1 : 0;
+	തിരികെ (authok == 0) ? -1 : 0;
 }
 
-static void
-bsdauth_free_ctx(void *ctx)
+സ്ഥിതം ശൂന്യം
+bsdauth_free_ctx(ശൂന്യം *ctx)
 {
 	Authctxt *authctxt = ctx;
 
-	if (authctxt && authctxt->as) {
+	എങ്കിൽ (authctxt && authctxt->as) {
 		auth_close(authctxt->as);
-		authctxt->as = NULL;
+		authctxt->as = ശൂന്യ;
 	}
 }
 

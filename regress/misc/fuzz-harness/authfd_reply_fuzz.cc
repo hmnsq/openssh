@@ -38,120 +38,120 @@ limitations under the License.
  * reclaimed before the next call.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "log.h"
+ബാഹ്യ "C" {
+#അന്തര്ഭാവ "includes.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "authfd.h"
+#അന്തര്ഭാവ "log.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+ശൂന്യം fuzz_arena_begin(ശൂന്യം);
+ശൂന്യം fuzz_arena_cleanup(ശൂന്യം);
 }
 
-#include "fixed-keys.h"
+#അന്തര്ഭാവ "fixed-keys.h"
 
-static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
-static int initialized = 0;
+സ്ഥിതം ഘടന sshkey *test_താക്കോലുകൾ[3] = { ശൂന്യ, ശൂന്യ, ശൂന്യ };
+സ്ഥിതം പൂർണ്ണസംഖ്യ initialized = 0;
 
-static struct sshkey *
-load_pubkey_or_die(const char *txt)
+സ്ഥിതം ഘടന sshkey *
+load_pubkey_or_die(സ്ഥിരം അക്ഷരം *txt)
 {
-	char *tmp, *cp;
-	struct sshkey *k;
+	അക്ഷരം *tmp, *cp;
+	ഘടന sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	എങ്കിൽ ((k = sshkey_new(താക്കോൽ_UNSPEC)) == ശൂന്യ)
 		abort();
-	if ((tmp = cp = strdup(txt)) == NULL)
+	എങ്കിൽ ((tmp = cp = strdup(txt)) == ശൂന്യ)
 		abort();
-	if (sshkey_read(k, &cp) != 0)
+	എങ്കിൽ (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	സ്വതന്ത്രം(tmp);
+	തിരികെ k;
 }
 
-static void
-setup(void)
+സ്ഥിതം ശൂന്യം
+setup(ശൂന്യം)
 {
-	if (initialized)
-		return;
+	എങ്കിൽ (initialized)
+		തിരികെ;
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
-	test_keys[0] = load_pubkey_or_die(PUB_RSA);
-	test_keys[1] = load_pubkey_or_die(PUB_ECDSA);
-	test_keys[2] = load_pubkey_or_die(PUB_ED25519);
+	test_താക്കോലുകൾ[0] = load_pubkey_or_die(PUB_RSA);
+	test_താക്കോലുകൾ[1] = load_pubkey_or_die(PUB_ECDSA);
+	test_താക്കോലുകൾ[2] = load_pubkey_or_die(PUB_ED25519);
 }
 
-enum {
+എണ്ണൽ {
 	API_FETCH_IDENTITYLIST,
 	API_AGENT_SIGN,
-	API_AGENT_HAS_KEY,
+	API_AGENT_HAS_താക്കോൽ,
 	API_QUERY_EXTENSIONS,
 	API_LOCK_AGENT,
 };
 
-static void
-run_one(int api, struct sshkey *k, int lock_arg,
-    const uint8_t *body, size_t bsize)
+സ്ഥിതം ശൂന്യം
+run_one(പൂർണ്ണസംഖ്യ api, ഘടന sshkey *k, പൂർണ്ണസംഖ്യ lock_arg,
+    സ്ഥിരം uint8_t *body, size_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	പൂർണ്ണസംഖ്യ sv[2] = { -1, -1 };
+	എങ്കിൽ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		തിരികെ;
 
 	uint32_t blen = (uint32_t)bsize;
 	uint8_t hdr[4] = {
 	    (uint8_t)(blen >> 24), (uint8_t)(blen >> 16),
 	    (uint8_t)(blen >> 8), (uint8_t)(blen)
 	};
-	(void)write(sv[0], hdr, sizeof(hdr));
-	if (bsize > 0)
-		(void)write(sv[0], body, bsize);
+	(ശൂന്യം)ലിഖ(sv[0], hdr, വലുപ്പം(hdr));
+	എങ്കിൽ (bsize > 0)
+		(ശൂന്യം)ലിഖ(sv[0], body, bsize);
 
 	fuzz_arena_begin();
 
-	switch (api) {
-	case API_FETCH_IDENTITYLIST: {
-		struct ssh_identitylist *idl = NULL;
-		(void)ssh_fetch_identitylist(sv[1], &idl);
+	തിരഞ്ഞെടുപ്പ് (api) {
+	അവസ്ഥ API_FETCH_IDENTITYLIST: {
+		ഘടന ssh_identitylist *idl = ശൂന്യ;
+		(ശൂന്യം)ssh_fetch_identitylist(sv[1], &idl);
 		ssh_free_identitylist(idl);
-		break;
+		നിർത്തുക;
 	}
-	case API_AGENT_SIGN: {
-		const u_char msg[16] = { 0 };
-		u_char *sig = NULL;
+	അവസ്ഥ API_AGENT_SIGN: {
+		സ്ഥിരം u_char സന്ദേശം[16] = { 0 };
+		u_char *sig = ശൂന്യ;
 		size_t siglen = 0;
-		(void)ssh_agent_sign(sv[1], k, &sig, &siglen,
-		    msg, sizeof(msg), NULL, 0);
-		free(sig);
-		break;
+		(ശൂന്യം)ssh_agent_sign(sv[1], k, &sig, &siglen,
+		    സന്ദേശം, വലുപ്പം(സന്ദേശം), ശൂന്യ, 0);
+		സ്വതന്ത്രം(sig);
+		നിർത്തുക;
 	}
-	case API_AGENT_HAS_KEY:
-		(void)ssh_agent_has_key(sv[1], k);
-		break;
-	case API_QUERY_EXTENSIONS: {
-		char **exts = NULL;
-		int n = ssh_agent_query_extensions(sv[1], &exts);
-		if (n == 0 && exts != NULL) {
-			for (int i = 0; exts[i] != NULL; i++)
-				free(exts[i]);
-			free(exts);
+	അവസ്ഥ API_AGENT_HAS_താക്കോൽ:
+		(ശൂന്യം)ssh_agent_has_താക്കോൽ(sv[1], k);
+		നിർത്തുക;
+	അവസ്ഥ API_QUERY_EXTENSIONS: {
+		അക്ഷരം **exts = ശൂന്യ;
+		പൂർണ്ണസംഖ്യ n = ssh_agent_query_extensions(sv[1], &exts);
+		എങ്കിൽ (n == 0 && exts != ശൂന്യ) {
+			വേണ്ടി (പൂർണ്ണസംഖ്യ i = 0; exts[i] != ശൂന്യ; i++)
+				സ്വതന്ത്രം(exts[i]);
+			സ്വതന്ത്രം(exts);
 		}
-		break;
+		നിർത്തുക;
 	}
-	case API_LOCK_AGENT:
-		(void)ssh_lock_agent(sv[1], lock_arg, "fuzz");
-		break;
+	അവസ്ഥ API_LOCK_AGENT:
+		(ശൂന്യം)ssh_lock_agent(sv[1], lock_arg, "fuzz");
+		നിർത്തുക;
 	}
 
 	fuzz_arena_cleanup();
@@ -160,21 +160,21 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ബാഹ്യ "C" പൂർണ്ണസംഖ്യ
+LLVMFuzzer_Test_One_നിവേശം(സ്ഥിരം uint8_t *data, size_t size)
 {
 	setup();
 
-	if (size > 65536)
-		return 0;
+	എങ്കിൽ (size > 65536)
+		തിരികെ 0;
 
-	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[1],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[2],   0, data, size);
-	run_one(API_AGENT_HAS_KEY,      test_keys[2],   0, data, size);
-	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
-	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
+	run_one(API_FETCH_IDENTITYLIST, ശൂന്യ,           0, data, size);
+	run_one(API_AGENT_SIGN,         test_താക്കോലുകൾ[0],   0, data, size);
+	run_one(API_AGENT_SIGN,         test_താക്കോലുകൾ[1],   0, data, size);
+	run_one(API_AGENT_SIGN,         test_താക്കോലുകൾ[2],   0, data, size);
+	run_one(API_AGENT_HAS_താക്കോൽ,      test_താക്കോലുകൾ[2],   0, data, size);
+	run_one(API_QUERY_EXTENSIONS,   ശൂന്യ,           0, data, size);
+	run_one(API_LOCK_AGENT,         ശൂന്യ,           1, data, size);
 
-	return 0;
+	തിരികെ 0;
 }

@@ -29,127 +29,127 @@ limitations under the License.
  * implementation is single-threaded.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-extern void *__real_malloc(size_t);
-extern void *__real_calloc(size_t, size_t);
-extern void *__real_realloc(void *, size_t);
-extern void __real_free(void *);
-extern char *__real_strdup(const char *);
+ബാഹ്യ ശൂന്യം *__real_malloc(size_t);
+ബാഹ്യ ശൂന്യം *__real_calloc(size_t, size_t);
+ബാഹ്യ ശൂന്യം *__real_realloc(ശൂന്യം *, size_t);
+ബാഹ്യ ശൂന്യം __real_free(ശൂന്യം *);
+ബാഹ്യ അക്ഷരം *__real_strdup(സ്ഥിരം അക്ഷരം *);
 
-struct arena_node {
-	void *ptr;
-	struct arena_node *next;
+ഘടന arena_കണ്ണി {
+	ശൂന്യം *ptr;
+	ഘടന arena_കണ്ണി *next;
 };
 
-static struct arena_node *arena_head;
-static int tracking;
+സ്ഥിതം ഘടന arena_കണ്ണി *arena_head;
+സ്ഥിതം പൂർണ്ണസംഖ്യ tracking;
 
-static inline void
-arena_track(void *p)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+arena_track(ശൂന്യം *p)
 {
-	struct arena_node *n;
-	if (!tracking || p == NULL)
-		return;
-	n = (struct arena_node *)__real_malloc(sizeof(*n));
-	if (n == NULL)
-		return;
+	ഘടന arena_കണ്ണി *n;
+	എങ്കിൽ (!tracking || p == ശൂന്യ)
+		തിരികെ;
+	n = (ഘടന arena_കണ്ണി *)__real_malloc(വലുപ്പം(*n));
+	എങ്കിൽ (n == ശൂന്യ)
+		തിരികെ;
 	n->ptr = p;
 	n->next = arena_head;
 	arena_head = n;
 }
 
-static inline void
-arena_untrack(void *p)
+സ്ഥിതം വരിയിൽ ശൂന്യം
+arena_untrack(ശൂന്യം *p)
 {
-	struct arena_node **pp;
-	if (p == NULL)
-		return;
-	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
-		if ((*pp)->ptr == p) {
-			struct arena_node *n = *pp;
+	ഘടന arena_കണ്ണി **pp;
+	എങ്കിൽ (p == ശൂന്യ)
+		തിരികെ;
+	വേണ്ടി (pp = &arena_head; *pp != ശൂന്യ; pp = &(*pp)->next) {
+		എങ്കിൽ ((*pp)->ptr == p) {
+			ഘടന arena_കണ്ണി *n = *pp;
 			*pp = n->next;
 			__real_free(n);
-			return;
+			തിരികെ;
 		}
 	}
 }
 
-void *
+ശൂന്യം *
 __wrap_malloc(size_t size)
 {
-	void *p = __real_malloc(size);
+	ശൂന്യം *p = __real_malloc(size);
 	arena_track(p);
-	return p;
+	തിരികെ p;
 }
 
-void *
+ശൂന്യം *
 __wrap_calloc(size_t nmemb, size_t size)
 {
-	void *p = __real_calloc(nmemb, size);
+	ശൂന്യം *p = __real_calloc(nmemb, size);
 	arena_track(p);
-	return p;
+	തിരികെ p;
 }
 
-void *
-__wrap_realloc(void *ptr, size_t size)
+ശൂന്യം *
+__wrap_realloc(ശൂന്യം *ptr, size_t size)
 {
 	arena_untrack(ptr);
-	void *p = __real_realloc(ptr, size);
+	ശൂന്യം *p = __real_realloc(ptr, size);
 	arena_track(p);
-	return p;
+	തിരികെ p;
 }
 
-void
-__wrap_free(void *ptr)
+ശൂന്യം
+__wrap_free(ശൂന്യം *ptr)
 {
 	arena_untrack(ptr);
 	__real_free(ptr);
 }
 
-char *
-__wrap_strdup(const char *s)
+അക്ഷരം *
+__wrap_strdup(സ്ഥിരം അക്ഷരം *s)
 {
 	size_t len;
-	char *p;
-	if (s == NULL)
-		return NULL;
+	അക്ഷരം *p;
+	എങ്കിൽ (s == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 	len = strlen(s) + 1;
-	p = (char *)__real_malloc(len);
-	if (p == NULL)
-		return NULL;
+	p = (അക്ഷരം *)__real_malloc(len);
+	എങ്കിൽ (p == ശൂന്യ)
+		തിരികെ ശൂന്യ;
 	memcpy(p, s, len);
 	arena_track(p);
-	return p;
+	തിരികെ p;
 }
 
-void
-fuzz_arena_begin(void)
+ശൂന്യം
+fuzz_arena_begin(ശൂന്യം)
 {
 	tracking = 1;
 }
 
-void
-fuzz_arena_release(void)
+ശൂന്യം
+fuzz_arena_release(ശൂന്യം)
 {
-	struct arena_node *n;
+	ഘടന arena_കണ്ണി *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	ആകുമ്പോൾ (arena_head != ശൂന്യ) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n);
 	}
 }
 
-void
-fuzz_arena_cleanup(void)
+ശൂന്യം
+fuzz_arena_cleanup(ശൂന്യം)
 {
-	struct arena_node *n;
+	ഘടന arena_കണ്ണി *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	ആകുമ്പോൾ (arena_head != ശൂന്യ) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n->ptr);

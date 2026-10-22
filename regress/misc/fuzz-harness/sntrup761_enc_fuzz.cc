@@ -1,57 +1,57 @@
 // Basic fuzz test for encapsulate operation.
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <err.h>
+#അന്തര്ഭാവ <stddef.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <err.h>
 
-extern "C" {
+ബാഹ്യ "C" {
 
-#include "crypto_api.h"
-#include "hash.c"
+#അന്തര്ഭാവ "crypto_api.h"
+#അന്തര്ഭാവ "hash.c"
 
 #undef randombytes
 #define USE_SNTRUP761X25519 1
 #ifdef SNTRUP761_NO_ASM
 # undef __GNUC__
 #endif
-void randombytes(unsigned char *ptr, size_t l);
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
-#include "sntrup761.c"
+ശൂന്യം randombytes(unsigned അക്ഷരം *ptr, size_t l);
+അസ്ഥിര crypto_int16 crypto_int16_optblocker = 0;
+അസ്ഥിര crypto_int32 crypto_int32_optblocker = 0;
+അസ്ഥിര crypto_int64 crypto_int64_optblocker = 0;
+#അന്തര്ഭാവ "sntrup761.c"
 
-static int real_random;
+സ്ഥിതം പൂർണ്ണസംഖ്യ real_random;
 
-void
-randombytes(unsigned char *ptr, size_t l)
+ശൂന്യം
+randombytes(unsigned അക്ഷരം *ptr, size_t l)
 {
-	if (real_random)
+	എങ്കിൽ (real_random)
 		arc4random_buf(ptr, l);
-	else
+	അല്ലെങ്കിൽ
 		memset(ptr, 0, l);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
+പൂർണ്ണസംഖ്യ LLVMFuzzer_Test_One_നിവേശം(സ്ഥിരം uint8_t* നിവേശം, size_t len)
 {
-	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
-	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
-	unsigned char secret[crypto_kem_sntrup761_BYTES];
+	unsigned അക്ഷരം pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
+	unsigned അക്ഷരം ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
+	unsigned അക്ഷരം secret[crypto_kem_sntrup761_BYTES];
 
-	memset(&pk, 0, sizeof(pk));
-	if (len > sizeof(pk)) {
-		len = sizeof(pk);
+	memset(&pk, 0, വലുപ്പം(pk));
+	എങ്കിൽ (len > വലുപ്പം(pk)) {
+		len = വലുപ്പം(pk);
 	}
-	memcpy(pk, input, len);
+	memcpy(pk, നിവേശം, len);
 
 	real_random = 0;
-	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
+	(ശൂന്യം)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
 	real_random = 1;
-	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
-	return 0;
+	(ശൂന്യം)crypto_kem_sntrup761_enc(ciphertext, secret, pk);
+	തിരികെ 0;
 }
 
 } // extern

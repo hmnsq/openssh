@@ -37,41 +37,41 @@
 #ifndef CIPHER_H
 #define CIPHER_H
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
+#അന്തര്ഭാവ <openssl/evp.h>
 #endif
-#include "cipher-chachapoly.h"
-#include "cipher-aesctr.h"
+#അന്തര്ഭാവ "cipher-chachapoly.h"
+#അന്തര്ഭാവ "cipher-aesctr.h"
 
 #define CIPHER_ENCRYPT		1
 #define CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+ഘടന sshcipher;
+ഘടന sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+സ്ഥിരം ഘടന sshcipher *cipher_by_name(സ്ഥിരം അക്ഷരം *);
+സ്ഥിരം അക്ഷരം *cipher_warning_message(സ്ഥിരം ഘടന sshcipher_ctx *);
+പൂർണ്ണസംഖ്യ	 ciphers_valid(സ്ഥിരം അക്ഷരം *);
+അക്ഷരം	*cipher_alg_list(അക്ഷരം, പൂർണ്ണസംഖ്യ);
+സ്ഥിരം അക്ഷരം *compression_alg_list(പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 cipher_init(ഘടന sshcipher_ctx **, സ്ഥിരം ഘടന sshcipher *,
+    സ്ഥിരം u_char *, u_int, സ്ഥിരം u_char *, u_int, പൂർണ്ണസംഖ്യ);
+പൂർണ്ണസംഖ്യ	 cipher_crypt(ഘടന sshcipher_ctx *, u_int, u_char *, സ്ഥിരം u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
-    const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+പൂർണ്ണസംഖ്യ	 cipher_get_length(ഘടന sshcipher_ctx *, u_int *, u_int,
+    സ്ഥിരം u_char *, u_int);
+ശൂന്യം	 cipher_free(ഘടന sshcipher_ctx *);
+u_int	 cipher_blocksize(സ്ഥിരം ഘടന sshcipher *);
+u_int	 cipher_keylen(സ്ഥിരം ഘടന sshcipher *);
+u_int	 cipher_seclen(സ്ഥിരം ഘടന sshcipher *);
+u_int	 cipher_authlen(സ്ഥിരം ഘടന sshcipher *);
+u_int	 cipher_ivlen(സ്ഥിരം ഘടന sshcipher *);
+u_int	 cipher_is_cbc(സ്ഥിരം ഘടന sshcipher *);
+u_int	 cipher_is_internal(സ്ഥിരം ഘടന sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(ഘടന sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+പൂർണ്ണസംഖ്യ	 cipher_get_keyiv(ഘടന sshcipher_ctx *, u_char *, size_t);
 
 #endif				/* CIPHER_H */

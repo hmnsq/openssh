@@ -13,104 +13,104 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdint.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
-#include "xmalloc.h"
-#include "log.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "log.h"
 
-#if defined(__OpenBSD__)
-const char * const malloc_options = "S";
+#എങ്കിൽ defined(__OpenBSD__)
+സ്ഥിരം അക്ഷരം * സ്ഥിരം malloc_options = "S";
 #endif /* __OpenBSD__ */
 
-void *
+ശൂന്യം *
 xmalloc(size_t size)
 {
-	void *ptr;
+	ശൂന്യം *ptr;
 
-	if (size == 0)
+	എങ്കിൽ (size == 0)
 		fatal("xmalloc: zero size");
 	ptr = malloc(size);
-	if (ptr == NULL)
+	എങ്കിൽ (ptr == ശൂന്യ)
 		fatal("xmalloc: out of memory (allocating %zu bytes)", size);
-	return ptr;
+	തിരികെ ptr;
 }
 
-void *
+ശൂന്യം *
 xcalloc(size_t nmemb, size_t size)
 {
-	void *ptr;
+	ശൂന്യം *ptr;
 
-	if (size == 0 || nmemb == 0)
+	എങ്കിൽ (size == 0 || nmemb == 0)
 		fatal("xcalloc: zero size");
-	if (SIZE_MAX / nmemb < size)
+	എങ്കിൽ (SIZE_MAX / nmemb < size)
 		fatal("xcalloc: nmemb * size > SIZE_MAX");
 	ptr = calloc(nmemb, size);
-	if (ptr == NULL)
+	എങ്കിൽ (ptr == ശൂന്യ)
 		fatal("xcalloc: out of memory (allocating %zu bytes)",
 		    size * nmemb);
-	return ptr;
+	തിരികെ ptr;
 }
 
-void *
-xreallocarray(void *ptr, size_t nmemb, size_t size)
+ശൂന്യം *
+xreallocarray(ശൂന്യം *ptr, size_t nmemb, size_t size)
 {
-	void *new_ptr;
+	ശൂന്യം *new_ptr;
 
 	new_ptr = reallocarray(ptr, nmemb, size);
-	if (new_ptr == NULL)
+	എങ്കിൽ (new_ptr == ശൂന്യ)
 		fatal("xreallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	തിരികെ new_ptr;
 }
 
-void *
-xrecallocarray(void *ptr, size_t onmemb, size_t nmemb, size_t size)
+ശൂന്യം *
+xrecallocarray(ശൂന്യം *ptr, size_t onmemb, size_t nmemb, size_t size)
 {
-	void *new_ptr;
+	ശൂന്യം *new_ptr;
 
 	new_ptr = recallocarray(ptr, onmemb, nmemb, size);
-	if (new_ptr == NULL)
+	എങ്കിൽ (new_ptr == ശൂന്യ)
 		fatal("xrecallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	തിരികെ new_ptr;
 }
 
-char *
-xstrdup(const char *str)
+അക്ഷരം *
+xstrdup(സ്ഥിരം അക്ഷരം *str)
 {
 	size_t len;
-	char *cp;
+	അക്ഷരം *cp;
 
 	len = strlen(str) + 1;
 	cp = xmalloc(len);
-	return memcpy(cp, str, len);
+	തിരികെ memcpy(cp, str, len);
 }
 
-int
-xvasprintf(char **ret, const char *fmt, va_list ap)
+പൂർണ്ണസംഖ്യ
+xvasprintf(അക്ഷരം **ret, സ്ഥിരം അക്ഷരം *fmt, va_list ap)
 {
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
 	i = vasprintf(ret, fmt, ap);
-	if (i < 0 || *ret == NULL)
+	എങ്കിൽ (i < 0 || *ret == ശൂന്യ)
 		fatal("xvasprintf: could not allocate memory");
-	return i;
+	തിരികെ i;
 }
 
-int
-xasprintf(char **ret, const char *fmt, ...)
+പൂർണ്ണസംഖ്യ
+xasprintf(അക്ഷരം **ret, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list ap;
-	int i;
+	പൂർണ്ണസംഖ്യ i;
 
 	va_start(ap, fmt);
 	i = xvasprintf(ret, fmt, ap);
 	va_end(ap);
-	return i;
+	തിരികെ i;
 }

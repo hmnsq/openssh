@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifndef HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
+#അന്തര്ഭാവ <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+പൂർണ്ണസംഖ്യ
+getgrouplist(സ്ഥിരം അക്ഷരം *uname, gid_t agroup, gid_t *groups, പൂർണ്ണസംഖ്യ *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	ഘടന group *grp;
+	പൂർണ്ണസംഖ്യ i, ngroups;
+	പൂർണ്ണസംഖ്യ ret, maxgroups;
+	പൂർണ്ണസംഖ്യ bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	എങ്കിൽ (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		തിരികെ (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	ആകുമ്പോൾ ((grp = getgrent())) {
+		എങ്കിൽ (grp->gr_gid == agroup)
+			തുടരുക;
+		വേണ്ടി (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			എങ്കിൽ (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		എങ്കിൽ (bail)
+			തുടരുക;
+		വേണ്ടി (i = 0; grp->gr_mem[i]; i++) {
+			എങ്കിൽ (!strcmp(grp->gr_mem[i], uname)) {
+				എങ്കിൽ (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					പോകുക out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				നിർത്തുക;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	തിരികെ (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

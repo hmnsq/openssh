@@ -23,54 +23,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
+#അന്തര്ഭാവ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "hostfile.h"
+#അന്തര്ഭാവ "auth.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#അന്തര്ഭാവ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#അന്തര്ഭാവ "monitor_wrap.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+ബാഹ്യ ServerOptions options;
+ബാഹ്യ ഘടന authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+userauth_passwd(ഘടന ssh *ssh, സ്ഥിരം അക്ഷരം *method)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	അക്ഷരം *password = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ authenticated = 0, r;
 	u_char change;
 	size_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
+	    (change && (r = sshpkt_get_cstring(ssh, ശൂന്യ, ശൂന്യ)) != 0) ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	എങ്കിൽ (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	അല്ലെങ്കിൽ എങ്കിൽ (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	തിരികെ authenticated;
 }
 
 Authmethod method_passwd = {

@@ -23,21 +23,21 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#അന്തര്ഭാവ <sys/types.h>
+#അന്തര്ഭാവ <sys/socket.h>
 
-#include <errno.h>
-#include <string.h>
-#include <stdarg.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdarg.h>
 
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "channels.h"
-#include "compat.h"
-#include "log.h"
+#അന്തര്ഭാവ "ssh2.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "packet.h"
+#അന്തര്ഭാവ "channels.h"
+#അന്തര്ഭാവ "compat.h"
+#അന്തര്ഭാവ "log.h"
 
 /*
  * SSH Protocol 1.5 aka New Channel Protocol
@@ -72,153 +72,153 @@
 /*
  * ACTIONS: should never update the channel states
  */
-static void	chan_send_eof2(struct ssh *, Channel *);
-static void	chan_send_eow2(struct ssh *, Channel *);
+സ്ഥിതം ശൂന്യം	chan_send_eof2(ഘടന ssh *, Channel *);
+സ്ഥിതം ശൂന്യം	chan_send_eow2(ഘടന ssh *, Channel *);
 
 /* helper */
-static void	chan_shutdown_write(struct ssh *, Channel *);
-static void	chan_shutdown_read(struct ssh *, Channel *);
-static void	chan_shutdown_extended_read(struct ssh *, Channel *);
+സ്ഥിതം ശൂന്യം	chan_shutdown_write(ഘടന ssh *, Channel *);
+സ്ഥിതം ശൂന്യം	chan_shutdown_read(ഘടന ssh *, Channel *);
+സ്ഥിതം ശൂന്യം	chan_shutdown_extended_read(ഘടന ssh *, Channel *);
 
-static const char * const ostates[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം * സ്ഥിരം ostates[] = {
 	"open", "drain", "wait_ieof", "closed",
 };
-static const char * const istates[] = {
+സ്ഥിതം സ്ഥിരം അക്ഷരം * സ്ഥിരം istates[] = {
 	"open", "drain", "wait_oclose", "closed",
 };
 
-static void
+സ്ഥിതം ശൂന്യം
 chan_set_istate(Channel *c, u_int next)
 {
-	if (c->istate > CHAN_INPUT_CLOSED || next > CHAN_INPUT_CLOSED)
+	എങ്കിൽ (c->istate > CHAN_നിവേശം_CLOSED || next > CHAN_നിവേശം_CLOSED)
 		fatal("chan_set_istate: bad state %d -> %d", c->istate, next);
 	debug2("channel %d: input %s -> %s", c->self, istates[c->istate],
 	    istates[next]);
 	c->istate = next;
 }
 
-static void
+സ്ഥിതം ശൂന്യം
 chan_set_ostate(Channel *c, u_int next)
 {
-	if (c->ostate > CHAN_OUTPUT_CLOSED || next > CHAN_OUTPUT_CLOSED)
+	എങ്കിൽ (c->ostate > CHAN_OUTPUT_CLOSED || next > CHAN_OUTPUT_CLOSED)
 		fatal("chan_set_ostate: bad state %d -> %d", c->ostate, next);
 	debug2("channel %d: output %s -> %s", c->self, ostates[c->ostate],
 	    ostates[next]);
 	c->ostate = next;
 }
 
-void
-chan_read_failed(struct ssh *ssh, Channel *c)
+ശൂന്യം
+chan_read_failed(ഘടന ssh *ssh, Channel *c)
 {
 	debug2("channel %d: read failed", c->self);
-	switch (c->istate) {
-	case CHAN_INPUT_OPEN:
+	തിരഞ്ഞെടുപ്പ് (c->istate) {
+	അവസ്ഥ CHAN_നിവേശം_OPEN:
 		chan_shutdown_read(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_WAIT_DRAIN);
-		break;
-	default:
+		chan_set_istate(c, CHAN_നിവേശം_WAIT_DRAIN);
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		error("channel %d: chan_read_failed for istate %d",
 		    c->self, c->istate);
-		break;
+		നിർത്തുക;
 	}
 }
 
-void
-chan_ibuf_empty(struct ssh *ssh, Channel *c)
+ശൂന്യം
+chan_ibuf_empty(ഘടന ssh *ssh, Channel *c)
 {
 	debug2("channel %d: ibuf empty", c->self);
-	if (sshbuf_len(c->input)) {
+	എങ്കിൽ (sshbuf_len(c->നിവേശം)) {
 		error("channel %d: chan_ibuf_empty for non empty buffer",
 		    c->self);
-		return;
+		തിരികെ;
 	}
-	switch (c->istate) {
-	case CHAN_INPUT_WAIT_DRAIN:
-		if (!(c->flags & (CHAN_CLOSE_SENT|CHAN_LOCAL)))
+	തിരഞ്ഞെടുപ്പ് (c->istate) {
+	അവസ്ഥ CHAN_നിവേശം_WAIT_DRAIN:
+		എങ്കിൽ (!(c->flags & (CHAN_CLOSE_SENT|CHAN_LOCAL)))
 			chan_send_eof2(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		break;
-	default:
+		chan_set_istate(c, CHAN_നിവേശം_CLOSED);
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		error("channel %d: chan_ibuf_empty for istate %d",
 		    c->self, c->istate);
-		break;
+		നിർത്തുക;
 	}
 }
 
-void
-chan_obuf_empty(struct ssh *ssh, Channel *c)
+ശൂന്യം
+chan_obuf_empty(ഘടന ssh *ssh, Channel *c)
 {
 	debug2("channel %d: obuf empty", c->self);
-	if (sshbuf_len(c->output)) {
+	എങ്കിൽ (sshbuf_len(c->output)) {
 		error("channel %d: chan_obuf_empty for non empty buffer",
 		    c->self);
-		return;
+		തിരികെ;
 	}
-	switch (c->ostate) {
-	case CHAN_OUTPUT_WAIT_DRAIN:
+	തിരഞ്ഞെടുപ്പ് (c->ostate) {
+	അവസ്ഥ CHAN_OUTPUT_WAIT_DRAIN:
 		chan_shutdown_write(ssh, c);
 		chan_set_ostate(c, CHAN_OUTPUT_CLOSED);
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		error("channel %d: internal error: obuf_empty for ostate %d",
 		    c->self, c->ostate);
-		break;
+		നിർത്തുക;
 	}
 }
 
-void
-chan_rcvd_eow(struct ssh *ssh, Channel *c)
+ശൂന്യം
+chan_rcvd_eow(ഘടന ssh *ssh, Channel *c)
 {
 	debug2("channel %d: rcvd eow", c->self);
-	switch (c->istate) {
-	case CHAN_INPUT_OPEN:
+	തിരഞ്ഞെടുപ്പ് (c->istate) {
+	അവസ്ഥ CHAN_നിവേശം_OPEN:
 		chan_shutdown_read(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		break;
+		chan_set_istate(c, CHAN_നിവേശം_CLOSED);
+		നിർത്തുക;
 	}
 }
 
-static void
-chan_send_eof2(struct ssh *ssh, Channel *c)
+സ്ഥിതം ശൂന്യം
+chan_send_eof2(ഘടന ssh *ssh, Channel *c)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	debug2("channel %d: send eof", c->self);
-	switch (c->istate) {
-	case CHAN_INPUT_WAIT_DRAIN:
-		if (!c->have_remote_id)
+	തിരഞ്ഞെടുപ്പ് (c->istate) {
+	അവസ്ഥ CHAN_നിവേശം_WAIT_DRAIN:
+		എങ്കിൽ (!c->have_remote_id)
 			fatal_f("channel %d: no remote_id", c->self);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_EOF)) != 0 ||
+		എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_CHANNEL_EOF)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			fatal_fr(r, "send CHANNEL_EOF");
 		c->flags |= CHAN_EOF_SENT;
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		error("channel %d: cannot send eof for istate %d",
 		    c->self, c->istate);
-		break;
+		നിർത്തുക;
 	}
 }
 
-static void
-chan_send_close2(struct ssh *ssh, Channel *c)
+സ്ഥിതം ശൂന്യം
+chan_send_close2(ഘടന ssh *ssh, Channel *c)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	debug2("channel %d: send_close2", c->self);
-	if (c->ostate != CHAN_OUTPUT_CLOSED ||
-	    c->istate != CHAN_INPUT_CLOSED) {
+	എങ്കിൽ (c->ostate != CHAN_OUTPUT_CLOSED ||
+	    c->istate != CHAN_നിവേശം_CLOSED) {
 		error("channel %d: cannot send close for istate/ostate %d/%d",
 		    c->self, c->istate, c->ostate);
-	} else if (c->flags & CHAN_CLOSE_SENT) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (c->flags & CHAN_CLOSE_SENT) {
 		error("channel %d: already sent close", c->self);
-	} else {
-		if (!c->have_remote_id)
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (!c->have_remote_id)
 			fatal_f("channel %d: no remote_id", c->self);
 		debug2("channel %d: send close for remote id %u", c->self,
 		    c->remote_id);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_CLOSE)) != 0 ||
+		എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_CHANNEL_CLOSE)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			fatal_fr(r, "send CHANNEL_EOF");
@@ -226,22 +226,22 @@ chan_send_close2(struct ssh *ssh, Channel *c)
 	}
 }
 
-static void
-chan_send_eow2(struct ssh *ssh, Channel *c)
+സ്ഥിതം ശൂന്യം
+chan_send_eow2(ഘടന ssh *ssh, Channel *c)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 
 	debug2("channel %d: send eow", c->self);
-	if (c->ostate == CHAN_OUTPUT_CLOSED) {
+	എങ്കിൽ (c->ostate == CHAN_OUTPUT_CLOSED) {
 		error("channel %d: must not sent eow on closed output",
 		    c->self);
-		return;
+		തിരികെ;
 	}
-	if (!(ssh->compat & SSH_NEW_OPENSSH))
-		return;
-	if (!c->have_remote_id)
+	എങ്കിൽ (!(ssh->compat & SSH_NEW_OPENSSH))
+		തിരികെ;
+	എങ്കിൽ (!c->have_remote_id)
 		fatal_f("channel %d: no remote_id", c->self);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_REQUEST)) != 0 ||
+	എങ്കിൽ ((r = sshpkt_start(ssh, SSH2_സന്ദേശം_CHANNEL_REQUEST)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "eow@openssh.com")) != 0 ||
 	    (r = sshpkt_put_u8(ssh, 0)) != 0 ||
@@ -251,144 +251,144 @@ chan_send_eow2(struct ssh *ssh, Channel *c)
 
 /* shared */
 
-void
-chan_rcvd_ieof(struct ssh *ssh, Channel *c)
+ശൂന്യം
+chan_rcvd_ieof(ഘടന ssh *ssh, Channel *c)
 {
 	debug2("channel %d: rcvd eof", c->self);
 	c->flags |= CHAN_EOF_RCVD;
-	if (c->ostate == CHAN_OUTPUT_OPEN)
+	എങ്കിൽ (c->ostate == CHAN_OUTPUT_OPEN)
 		chan_set_ostate(c, CHAN_OUTPUT_WAIT_DRAIN);
-	if (c->ostate == CHAN_OUTPUT_WAIT_DRAIN &&
+	എങ്കിൽ (c->ostate == CHAN_OUTPUT_WAIT_DRAIN &&
 	    sshbuf_len(c->output) == 0 &&
 	    !CHANNEL_EFD_OUTPUT_ACTIVE(c))
 		chan_obuf_empty(ssh, c);
 }
 
-void
-chan_rcvd_oclose(struct ssh *ssh, Channel *c)
+ശൂന്യം
+chan_rcvd_oclose(ഘടന ssh *ssh, Channel *c)
 {
 	debug2("channel %d: rcvd close", c->self);
-	if (!(c->flags & CHAN_LOCAL)) {
-		if (c->flags & CHAN_CLOSE_RCVD)
+	എങ്കിൽ (!(c->flags & CHAN_LOCAL)) {
+		എങ്കിൽ (c->flags & CHAN_CLOSE_RCVD)
 			error("channel %d: protocol error: close rcvd twice",
 			    c->self);
 		c->flags |= CHAN_CLOSE_RCVD;
 	}
-	if (c->type == SSH_CHANNEL_LARVAL) {
+	എങ്കിൽ (c->type == SSH_CHANNEL_LARVAL) {
 		/* tear down larval channels immediately */
 		chan_set_ostate(c, CHAN_OUTPUT_CLOSED);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		return;
+		chan_set_istate(c, CHAN_നിവേശം_CLOSED);
+		തിരികെ;
 	}
-	switch (c->ostate) {
-	case CHAN_OUTPUT_OPEN:
+	തിരഞ്ഞെടുപ്പ് (c->ostate) {
+	അവസ്ഥ CHAN_OUTPUT_OPEN:
 		/*
 		 * wait until a data from the channel is consumed if a CLOSE
 		 * is received
 		 */
 		chan_set_ostate(c, CHAN_OUTPUT_WAIT_DRAIN);
-		break;
+		നിർത്തുക;
 	}
-	switch (c->istate) {
-	case CHAN_INPUT_OPEN:
+	തിരഞ്ഞെടുപ്പ് (c->istate) {
+	അവസ്ഥ CHAN_നിവേശം_OPEN:
 		chan_shutdown_read(ssh, c);
 		chan_shutdown_extended_read(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		break;
-	case CHAN_INPUT_WAIT_DRAIN:
-		if (!(c->flags & CHAN_LOCAL))
+		chan_set_istate(c, CHAN_നിവേശം_CLOSED);
+		നിർത്തുക;
+	അവസ്ഥ CHAN_നിവേശം_WAIT_DRAIN:
+		എങ്കിൽ (!(c->flags & CHAN_LOCAL))
 			chan_send_eof2(ssh, c);
 		chan_shutdown_extended_read(ssh, c);
-		chan_set_istate(c, CHAN_INPUT_CLOSED);
-		break;
+		chan_set_istate(c, CHAN_നിവേശം_CLOSED);
+		നിർത്തുക;
 	}
 }
 
-void
-chan_write_failed(struct ssh *ssh, Channel *c)
+ശൂന്യം
+chan_write_failed(ഘടന ssh *ssh, Channel *c)
 {
 	debug2("channel %d: write failed", c->self);
-	switch (c->ostate) {
-	case CHAN_OUTPUT_OPEN:
-	case CHAN_OUTPUT_WAIT_DRAIN:
+	തിരഞ്ഞെടുപ്പ് (c->ostate) {
+	അവസ്ഥ CHAN_OUTPUT_OPEN:
+	അവസ്ഥ CHAN_OUTPUT_WAIT_DRAIN:
 		chan_shutdown_write(ssh, c);
-		if (strcmp(c->ctype, "session") == 0)
+		എങ്കിൽ (strcmp(c->ctype, "session") == 0)
 			chan_send_eow2(ssh, c);
 		chan_set_ostate(c, CHAN_OUTPUT_CLOSED);
-		break;
-	default:
+		നിർത്തുക;
+	സ്ഥിരസ്ഥിതി:
 		error("channel %d: chan_write_failed for ostate %d",
 		    c->self, c->ostate);
-		break;
+		നിർത്തുക;
 	}
 }
 
-void
-chan_mark_dead(struct ssh *ssh, Channel *c)
+ശൂന്യം
+chan_mark_dead(ഘടന ssh *ssh, Channel *c)
 {
 	c->type = SSH_CHANNEL_ZOMBIE;
 }
 
-int
-chan_is_dead(struct ssh *ssh, Channel *c, int do_send)
+പൂർണ്ണസംഖ്യ
+chan_is_dead(ഘടന ssh *ssh, Channel *c, പൂർണ്ണസംഖ്യ do_send)
 {
-	if (c->type == SSH_CHANNEL_ZOMBIE) {
+	എങ്കിൽ (c->type == SSH_CHANNEL_ZOMBIE) {
 		debug2("channel %d: zombie", c->self);
-		return 1;
+		തിരികെ 1;
 	}
-	if (c->istate != CHAN_INPUT_CLOSED || c->ostate != CHAN_OUTPUT_CLOSED)
-		return 0;
-	if ((ssh->compat & SSH_BUG_EXTEOF) &&
+	എങ്കിൽ (c->istate != CHAN_നിവേശം_CLOSED || c->ostate != CHAN_OUTPUT_CLOSED)
+		തിരികെ 0;
+	എങ്കിൽ ((ssh->compat & SSH_BUG_EXTEOF) &&
 	    c->extended_usage == CHAN_EXTENDED_WRITE &&
 	    c->efd != -1 &&
 	    sshbuf_len(c->extended) > 0) {
 		debug2("channel %d: active efd: %d len %zu",
 		    c->self, c->efd, sshbuf_len(c->extended));
-		return 0;
+		തിരികെ 0;
 	}
-	if (c->flags & CHAN_LOCAL) {
+	എങ്കിൽ (c->flags & CHAN_LOCAL) {
 		debug2("channel %d: is dead (local)", c->self);
-		return 1;
+		തിരികെ 1;
 	}
-	if (!(c->flags & CHAN_CLOSE_SENT)) {
-		if (do_send) {
+	എങ്കിൽ (!(c->flags & CHAN_CLOSE_SENT)) {
+		എങ്കിൽ (do_send) {
 			chan_send_close2(ssh, c);
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* channel would be dead if we sent a close */
-			if (c->flags & CHAN_CLOSE_RCVD) {
+			എങ്കിൽ (c->flags & CHAN_CLOSE_RCVD) {
 				debug2("channel %d: almost dead",
 				    c->self);
-				return 1;
+				തിരികെ 1;
 			}
 		}
 	}
-	if ((c->flags & CHAN_CLOSE_SENT) &&
+	എങ്കിൽ ((c->flags & CHAN_CLOSE_SENT) &&
 	    (c->flags & CHAN_CLOSE_RCVD)) {
 		debug2("channel %d: is dead", c->self);
-		return 1;
+		തിരികെ 1;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
 /* helper */
-static void
-chan_shutdown_write(struct ssh *ssh, Channel *c)
+സ്ഥിതം ശൂന്യം
+chan_shutdown_write(ഘടന ssh *ssh, Channel *c)
 {
 	sshbuf_reset(c->output);
-	if (c->type == SSH_CHANNEL_LARVAL)
-		return;
+	എങ്കിൽ (c->type == SSH_CHANNEL_LARVAL)
+		തിരികെ;
 	/* shutdown failure is allowed if write failed already */
 	debug2_f("channel %d: (i%d o%d sock %d wfd %d efd %d [%s])",
 	    c->self, c->istate, c->ostate, c->sock, c->wfd, c->efd,
 	    channel_format_extended_usage(c));
-	if (c->sock != -1) {
-		if (shutdown(c->sock, SHUT_WR) == -1) {
+	എങ്കിൽ (c->sock != -1) {
+		എങ്കിൽ (shutdown(c->sock, SHUT_WR) == -1) {
 			debug2_f("channel %d: shutdown() failed for "
 			    "fd %d [i%d o%d]: %.100s", c->self, c->sock,
 			    c->istate, c->ostate, strerror(errno));
 		}
-	} else {
-		if (channel_close_fd(ssh, c, &c->wfd) < 0) {
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (channel_close_fd(ssh, c, &c->wfd) < 0) {
 			logit_f("channel %d: close() failed for "
 			    "fd %d [i%d o%d]: %.100s", c->self, c->wfd,
 			    c->istate, c->ostate, strerror(errno));
@@ -396,27 +396,27 @@ chan_shutdown_write(struct ssh *ssh, Channel *c)
 	}
 }
 
-static void
-chan_shutdown_read(struct ssh *ssh, Channel *c)
+സ്ഥിതം ശൂന്യം
+chan_shutdown_read(ഘടന ssh *ssh, Channel *c)
 {
-	if (c->type == SSH_CHANNEL_LARVAL)
-		return;
+	എങ്കിൽ (c->type == SSH_CHANNEL_LARVAL)
+		തിരികെ;
 	debug2_f("channel %d: (i%d o%d sock %d wfd %d efd %d [%s])",
 	    c->self, c->istate, c->ostate, c->sock, c->rfd, c->efd,
 	    channel_format_extended_usage(c));
-	if (c->sock != -1) {
+	എങ്കിൽ (c->sock != -1) {
 		/*
 		 * shutdown(sock, SHUT_READ) may return ENOTCONN if the
 		 * write side has been closed already. (bug on Linux)
 		 * HP-UX may return ENOTCONN also.
 		 */
-		if (shutdown(c->sock, SHUT_RD) == -1 && errno != ENOTCONN) {
+		എങ്കിൽ (shutdown(c->sock, SHUT_RD) == -1 && errno != ENOTCONN) {
 			error_f("channel %d: shutdown() failed for "
 			    "fd %d [i%d o%d]: %.100s", c->self, c->sock,
 			    c->istate, c->ostate, strerror(errno));
 		}
-	} else {
-		if (channel_close_fd(ssh, c, &c->rfd) < 0) {
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ (channel_close_fd(ssh, c, &c->rfd) < 0) {
 			logit_f("channel %d: close() failed for "
 			    "fd %d [i%d o%d]: %.100s", c->self, c->rfd,
 			    c->istate, c->ostate, strerror(errno));
@@ -424,18 +424,18 @@ chan_shutdown_read(struct ssh *ssh, Channel *c)
 	}
 }
 
-static void
-chan_shutdown_extended_read(struct ssh *ssh, Channel *c)
+സ്ഥിതം ശൂന്യം
+chan_shutdown_extended_read(ഘടന ssh *ssh, Channel *c)
 {
-	if (c->type == SSH_CHANNEL_LARVAL || c->efd == -1)
-		return;
-	if (c->extended_usage != CHAN_EXTENDED_READ &&
+	എങ്കിൽ (c->type == SSH_CHANNEL_LARVAL || c->efd == -1)
+		തിരികെ;
+	എങ്കിൽ (c->extended_usage != CHAN_EXTENDED_READ &&
 	    c->extended_usage != CHAN_EXTENDED_IGNORE)
-		return;
+		തിരികെ;
 	debug_f("channel %d: (i%d o%d sock %d wfd %d efd %d [%s])",
 	    c->self, c->istate, c->ostate, c->sock, c->rfd, c->efd,
 	    channel_format_extended_usage(c));
-	if (channel_close_fd(ssh, c, &c->efd) < 0) {
+	എങ്കിൽ (channel_close_fd(ssh, c, &c->efd) < 0) {
 		logit_f("channel %d: close() failed for "
 		    "extended fd %d [i%d o%d]: %.100s", c->self, c->efd,
 		    c->istate, c->ostate, strerror(errno));

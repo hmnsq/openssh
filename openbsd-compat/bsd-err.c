@@ -25,17 +25,17 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <string.h>
 
 #ifndef HAVE_ERR
-void
-err(int r, const char *fmt, ...)
+ശൂന്യം
+err(പൂർണ്ണസംഖ്യ r, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list args;
 
@@ -49,8 +49,8 @@ err(int r, const char *fmt, ...)
 #endif
 
 #ifndef HAVE_ERRX
-void
-errx(int r, const char *fmt, ...)
+ശൂന്യം
+errx(പൂർണ്ണസംഖ്യ r, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list args;
 
@@ -63,8 +63,8 @@ errx(int r, const char *fmt, ...)
 #endif
 
 #ifndef HAVE_WARN
-void
-warn(const char *fmt, ...)
+ശൂന്യം
+warn(സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list args;
 

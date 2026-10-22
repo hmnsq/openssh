@@ -1,45 +1,45 @@
 /* public domain */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "log.h"
+#അന്തര്ഭാവ "log.h"
 
-void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+ശൂന്യം
+sshlogv(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം അക്ഷരം *func, പൂർണ്ണസംഖ്യ വരി, പൂർണ്ണസംഖ്യ showfunc,
+    LogLevel level, സ്ഥിരം അക്ഷരം *suffix, സ്ഥിരം അക്ഷരം *fmt, va_list args)
 {
-	if (showfunc)
+	എങ്കിൽ (showfunc)
 		fprintf(stderr, "%s: ", func);
 	vfprintf(stderr, fmt, args);
-	if (suffix != NULL)
+	എങ്കിൽ (suffix != ശൂന്യ)
 		fprintf(stderr, ": %s", suffix);
 	fputc('\n', stderr);
 }
 
-void
-sshlog(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+ശൂന്യം
+sshlog(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം അക്ഷരം *func, പൂർണ്ണസംഖ്യ വരി, പൂർണ്ണസംഖ്യ showfunc,
+    LogLevel level, സ്ഥിരം അക്ഷരം *suffix, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
+	sshlogv(file, func, വരി, showfunc, level, suffix, fmt, args);
 	va_end(args);
 }
 
-void
-sshfatal(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, ...)
+ശൂന്യം
+sshfatal(സ്ഥിരം അക്ഷരം *file, സ്ഥിരം അക്ഷരം *func, പൂർണ്ണസംഖ്യ വരി, പൂർണ്ണസംഖ്യ showfunc,
+    LogLevel level, സ്ഥിരം അക്ഷരം *suffix, സ്ഥിരം അക്ഷരം *fmt, ...)
 {
 	va_list args;
 
 	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
+	sshlogv(file, func, വരി, showfunc, level, suffix, fmt, args);
 	va_end(args);
 	_exit(1);
 }

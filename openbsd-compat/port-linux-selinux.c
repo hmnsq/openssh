@@ -19,78 +19,78 @@
  * Linux-specific portability code: SELinux support
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
 #ifdef WITH_SELINUX
 
-#include <sys/socket.h>
-#include <sys/un.h>
+#അന്തര്ഭാവ <sys/socket.h>
+#അന്തര്ഭാവ <sys/un.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "xmalloc.h"
+#അന്തര്ഭാവ "port-linux.h"
+#അന്തര്ഭാവ "misc.h"
 
-#include <selinux/selinux.h>
-#include <selinux/label.h>
-#include <selinux/get_context_list.h>
+#അന്തര്ഭാവ <selinux/selinux.h>
+#അന്തര്ഭാവ <selinux/label.h>
+#അന്തര്ഭാവ <selinux/get_context_list.h>
 
 #ifndef SSH_SELINUX_UNCONFINED_TYPE
 # define SSH_SELINUX_UNCONFINED_TYPE ":unconfined_t:"
 #endif
 
 /* Wrapper around is_selinux_enabled() to log its return value once only */
-int
-ssh_selinux_enabled(void)
+പൂർണ്ണസംഖ്യ
+ssh_selinux_enabled(ശൂന്യം)
 {
-	static int enabled = -1;
+	സ്ഥിതം പൂർണ്ണസംഖ്യ enabled = -1;
 
-	if (enabled == -1) {
+	എങ്കിൽ (enabled == -1) {
 		enabled = (is_selinux_enabled() == 1);
 		debug("SELinux support %s", enabled ? "enabled" : "disabled");
 	}
 
-	return (enabled);
+	തിരികെ (enabled);
 }
 
 /* Return the default security context for the given username */
-static char *
-ssh_selinux_getctxbyname(char *pwname)
+സ്ഥിതം അക്ഷരം *
+ssh_selinux_getctxbyname(അക്ഷരം *pwname)
 {
-	char *sc = NULL, *sename = NULL, *lvl = NULL;
-	int r;
+	അക്ഷരം *sc = ശൂന്യ, *sename = ശൂന്യ, *lvl = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r;
 
 #ifdef HAVE_GETSEUSERBYNAME
-	if (getseuserbyname(pwname, &sename, &lvl) != 0)
-		return NULL;
-#else
+	എങ്കിൽ (getseuserbyname(pwname, &sename, &lvl) != 0)
+		തിരികെ ശൂന്യ;
+#അല്ലെങ്കിൽ
 	sename = pwname;
-	lvl = NULL;
+	lvl = ശൂന്യ;
 #endif
 
 #ifdef HAVE_GET_DEFAULT_CONTEXT_WITH_LEVEL
-	r = get_default_context_with_level(sename, lvl, NULL, &sc);
-#else
-	r = get_default_context(sename, NULL, &sc);
+	r = get_default_context_with_level(sename, lvl, ശൂന്യ, &sc);
+#അല്ലെങ്കിൽ
+	r = get_default_context(sename, ശൂന്യ, &sc);
 #endif
 
-	if (r != 0) {
-		switch (security_getenforce()) {
-		case -1:
+	എങ്കിൽ (r != 0) {
+		തിരഞ്ഞെടുപ്പ് (security_getenforce()) {
+		അവസ്ഥ -1:
 			fatal("%s: ssh_selinux_getctxbyname: "
 			    "security_getenforce() failed", __func__);
-		case 0:
+		അവസ്ഥ 0:
 			error("%s: Failed to get default SELinux security "
 			    "context for %s", __func__, pwname);
-			sc = NULL;
-			break;
-		default:
+			sc = ശൂന്യ;
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			fatal("%s: Failed to get default SELinux security "
 			    "context for %s (in enforcing mode)",
 			    __func__, pwname);
@@ -98,53 +98,53 @@ ssh_selinux_getctxbyname(char *pwname)
 	}
 
 #ifdef HAVE_GETSEUSERBYNAME
-	free(sename);
-	free(lvl);
+	സ്വതന്ത്രം(sename);
+	സ്വതന്ത്രം(lvl);
 #endif
 
-	return sc;
+	തിരികെ sc;
 }
 
 /* Set the execution context to the default for the specified user */
-void
-ssh_selinux_setup_exec_context(char *pwname)
+ശൂന്യം
+ssh_selinux_setup_exec_context(അക്ഷരം *pwname)
 {
-	char *user_ctx = NULL;
+	അക്ഷരം *user_ctx = ശൂന്യ;
 
-	if (!ssh_selinux_enabled())
-		return;
+	എങ്കിൽ (!ssh_selinux_enabled())
+		തിരികെ;
 
 	debug3("%s: setting execution context", __func__);
 
 	user_ctx = ssh_selinux_getctxbyname(pwname);
-	if (setexeccon(user_ctx) != 0) {
-		switch (security_getenforce()) {
-		case -1:
+	എങ്കിൽ (setexeccon(user_ctx) != 0) {
+		തിരഞ്ഞെടുപ്പ് (security_getenforce()) {
+		അവസ്ഥ -1:
 			fatal("%s: security_getenforce() failed", __func__);
-		case 0:
+		അവസ്ഥ 0:
 			error("%s: Failed to set SELinux execution "
 			    "context for %s", __func__, pwname);
-			break;
-		default:
+			നിർത്തുക;
+		സ്ഥിരസ്ഥിതി:
 			fatal("%s: Failed to set SELinux execution context "
 			    "for %s (in enforcing mode)", __func__, pwname);
 		}
 	}
-	if (user_ctx != NULL)
+	എങ്കിൽ (user_ctx != ശൂന്യ)
 		freecon(user_ctx);
 
 	debug3("%s: done", __func__);
 }
 
 /* Set the TTY context for the specified user */
-void
-ssh_selinux_setup_pty(char *pwname, const char *tty)
+ശൂന്യം
+ssh_selinux_setup_pty(അക്ഷരം *pwname, സ്ഥിരം അക്ഷരം *tty)
 {
-	char *new_tty_ctx = NULL, *user_ctx = NULL, *old_tty_ctx = NULL;
+	അക്ഷരം *new_tty_ctx = ശൂന്യ, *user_ctx = ശൂന്യ, *old_tty_ctx = ശൂന്യ;
 	security_class_t chrclass;
 
-	if (!ssh_selinux_enabled())
-		return;
+	എങ്കിൽ (!ssh_selinux_enabled())
+		തിരികെ;
 
 	debug3("%s: setting TTY context on %s", __func__, tty);
 
@@ -152,90 +152,90 @@ ssh_selinux_setup_pty(char *pwname, const char *tty)
 
 	/* XXX: should these calls fatal() upon failure in enforcing mode? */
 
-	if (getfilecon(tty, &old_tty_ctx) == -1) {
+	എങ്കിൽ (getfilecon(tty, &old_tty_ctx) == -1) {
 		error("%s: getfilecon: %s", __func__, strerror(errno));
-		goto out;
+		പോകുക out;
 	}
-	if ((chrclass = string_to_security_class("chr_file")) == 0) {
+	എങ്കിൽ ((chrclass = string_to_security_class("chr_file")) == 0) {
 		error("%s: couldn't get security class for chr_file", __func__);
-		goto out;
+		പോകുക out;
 	}
-	if (security_compute_relabel(user_ctx, old_tty_ctx,
+	എങ്കിൽ (security_compute_relabel(user_ctx, old_tty_ctx,
 	    chrclass, &new_tty_ctx) != 0) {
 		error("%s: security_compute_relabel: %s",
 		    __func__, strerror(errno));
-		goto out;
+		പോകുക out;
 	}
 
-	if (setfilecon(tty, new_tty_ctx) != 0)
+	എങ്കിൽ (setfilecon(tty, new_tty_ctx) != 0)
 		error("%s: setfilecon: %s", __func__, strerror(errno));
  out:
-	if (new_tty_ctx != NULL)
+	എങ്കിൽ (new_tty_ctx != ശൂന്യ)
 		freecon(new_tty_ctx);
-	if (old_tty_ctx != NULL)
+	എങ്കിൽ (old_tty_ctx != ശൂന്യ)
 		freecon(old_tty_ctx);
-	if (user_ctx != NULL)
+	എങ്കിൽ (user_ctx != ശൂന്യ)
 		freecon(user_ctx);
 	debug3("%s: done", __func__);
 }
 
-void
-ssh_selinux_change_context(const char *newname)
+ശൂന്യം
+ssh_selinux_change_context(സ്ഥിരം അക്ഷരം *newname)
 {
-	char *oldctx, *newctx, *cx, *cx2;
+	അക്ഷരം *oldctx, *newctx, *cx, *cx2;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
 
-	if (!ssh_selinux_enabled())
-		return;
+	എങ്കിൽ (!ssh_selinux_enabled())
+		തിരികെ;
 
-	if (getcon(&oldctx) < 0) {
+	എങ്കിൽ (getcon(&oldctx) < 0) {
 		logit_f("getcon failed with %s", strerror(errno));
-		return;
+		തിരികെ;
 	}
-	if ((cx = strchr(oldctx, ':')) == NULL ||
-	    (cx = strchr(cx + 1, ':')) == NULL ||
+	എങ്കിൽ ((cx = strchr(oldctx, ':')) == ശൂന്യ ||
+	    (cx = strchr(cx + 1, ':')) == ശൂന്യ ||
 	    (cx - oldctx) >= INT_MAX) {
 		logit_f("unparsable context %s", oldctx);
-		return;
+		തിരികെ;
 	}
 
 	/*
 	 * Check whether we are attempting to switch away from an unconfined
 	 * security context.
 	 */
-	if (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
-	    sizeof(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
+	എങ്കിൽ (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
+	    വലുപ്പം(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
 		log_level = SYSLOG_LEVEL_DEBUG3;
 
 	cx2 = strchr(cx + 1, ':');
-	xasprintf(&newctx, "%.*s%s%s", (int)(cx - oldctx + 1), oldctx,
-	    newname, cx2 == NULL ? "" : cx2);
+	xasprintf(&newctx, "%.*s%s%s", (പൂർണ്ണസംഖ്യ)(cx - oldctx + 1), oldctx,
+	    newname, cx2 == ശൂന്യ ? "" : cx2);
 
 	debug3_f("setting context from '%s' to '%s'", oldctx, newctx);
-	if (setcon(newctx) < 0)
+	എങ്കിൽ (setcon(newctx) < 0)
 		do_log2_f(log_level, "setcon %s from %s failed with %s",
 		    newctx, oldctx, strerror(errno));
-	free(oldctx);
-	free(newctx);
+	സ്വതന്ത്രം(oldctx);
+	സ്വതന്ത്രം(newctx);
 }
 
-void
-ssh_selinux_setfscreatecon(const char *path)
+ശൂന്യം
+ssh_selinux_setfscreatecon(സ്ഥിരം അക്ഷരം *path)
 {
-	char *context;
-	struct selabel_handle *shandle = NULL;
+	അക്ഷരം *context;
+	ഘടന selabel_handle *shandle = ശൂന്യ;
 
-	if (!ssh_selinux_enabled())
-		return;
-	if (path == NULL) {
-		setfscreatecon(NULL);
-		return;
+	എങ്കിൽ (!ssh_selinux_enabled())
+		തിരികെ;
+	എങ്കിൽ (path == ശൂന്യ) {
+		setfscreatecon(ശൂന്യ);
+		തിരികെ;
 	}
-	if ((shandle = selabel_open(SELABEL_CTX_FILE, NULL, 0)) == NULL) {
+	എങ്കിൽ ((shandle = selabel_open(SELABEL_CTX_FILE, ശൂന്യ, 0)) == ശൂന്യ) {
 		debug_f("selabel_open failed");
-		return;
+		തിരികെ;
 	}
-	if (selabel_lookup(shandle, &context, path, 0700) == 0)
+	എങ്കിൽ (selabel_lookup(shandle, &context, path, 0700) == 0)
 		setfscreatecon(context);
 	selabel_close(shandle);
 }

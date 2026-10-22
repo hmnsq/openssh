@@ -15,29 +15,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#അന്തര്ഭാവ "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#അന്തര്ഭാവ <stdio.h>
+#അന്തര്ഭാവ <stdlib.h>
+#അന്തര്ഭാവ <stdarg.h>
+#അന്തര്ഭാവ <errno.h>
+#അന്തര്ഭാവ <string.h>
+#അന്തര്ഭാവ <unistd.h>
 
-#include "authfd.h"
-#include "authfile.h"
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "ssherr.h"
-#include "sshkey.h"
-#include "match.h"
-#include "digest.h"
+#അന്തര്ഭാവ "authfd.h"
+#അന്തര്ഭാവ "authfile.h"
+#അന്തര്ഭാവ "log.h"
+#അന്തര്ഭാവ "misc.h"
+#അന്തര്ഭാവ "sshbuf.h"
+#അന്തര്ഭാവ "sshsig.h"
+#അന്തര്ഭാവ "ssherr.h"
+#അന്തര്ഭാവ "sshkey.h"
+#അന്തര്ഭാവ "match.h"
+#അന്തര്ഭാവ "digest.h"
 
 #define SIG_VERSION		0x01
 #define MAGIC_PREAMBLE		"SSHSIG"
-#define MAGIC_PREAMBLE_LEN	(sizeof(MAGIC_PREAMBLE) - 1)
+#define MAGIC_PREAMBLE_LEN	(വലുപ്പം(MAGIC_PREAMBLE) - 1)
 #define BEGIN_SIGNATURE		"-----BEGIN SSH SIGNATURE-----"
 #define END_SIGNATURE		"-----END SSH SIGNATURE-----"
 #define RSA_SIGN_ALG		"rsa-sha2-512"
@@ -45,1120 +45,1120 @@
 #define HASHALG_DEFAULT		"sha512"
 #define HASHALG_ALLOWED		"sha256,sha512"
 
-int
-sshsig_armor(const struct sshbuf *blob, struct sshbuf **out)
+പൂർണ്ണസംഖ്യ
+sshsig_armor(സ്ഥിരം ഘടന sshbuf *blob, ഘടന sshbuf **out)
 {
-	struct sshbuf *buf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *buf = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
-	*out = NULL;
+	*out = ശൂന്യ;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((buf = sshbuf_new()) == ശൂന്യ) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 
-	if ((r = sshbuf_putf(buf, "%s\n", BEGIN_SIGNATURE)) != 0) {
+	എങ്കിൽ ((r = sshbuf_putf(buf, "%s\n", BEGIN_SIGNATURE)) != 0) {
 		error_fr(r, "sshbuf_putf");
-		goto out;
+		പോകുക out;
 	}
 
-	if ((r = sshbuf_dtob64(blob, buf, 1)) != 0) {
+	എങ്കിൽ ((r = sshbuf_dtob64(blob, buf, 1)) != 0) {
 		error_fr(r, "base64 encode signature");
-		goto out;
+		പോകുക out;
 	}
 
-	if ((r = sshbuf_put(buf, END_SIGNATURE,
-	    sizeof(END_SIGNATURE)-1)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_put(buf, END_SIGNATURE,
+	    വലുപ്പം(END_SIGNATURE)-1)) != 0 ||
 	    (r = sshbuf_put_u8(buf, '\n')) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	*out = buf;
-	buf = NULL; /* transferred */
+	buf = ശൂന്യ; /* transferred */
 	r = 0;
  out:
 	sshbuf_free(buf);
-	return r;
+	തിരികെ r;
 }
 
-int
-sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out)
+പൂർണ്ണസംഖ്യ
+sshsig_dearmor(ഘടന sshbuf *sig, ഘടന sshbuf **out)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	size_t eoffset = 0;
-	struct sshbuf *buf = NULL;
-	struct sshbuf *sbuf = NULL;
-	char *b64 = NULL;
+	ഘടന sshbuf *buf = ശൂന്യ;
+	ഘടന sshbuf *sbuf = ശൂന്യ;
+	അക്ഷരം *b64 = ശൂന്യ;
 
-	if ((sbuf = sshbuf_fromb(sig)) == NULL) {
+	എങ്കിൽ ((sbuf = sshbuf_fromb(sig)) == ശൂന്യ) {
 		error_f("sshbuf_fromb failed");
-		return SSH_ERR_ALLOC_FAIL;
+		തിരികെ SSH_ERR_ALLOC_FAIL;
 	}
 
 	/* Expect and consume preamble + lf/crlf */
-	if ((r = sshbuf_cmp(sbuf, 0,
-	    BEGIN_SIGNATURE, sizeof(BEGIN_SIGNATURE)-1)) != 0) {
+	എങ്കിൽ ((r = sshbuf_cmp(sbuf, 0,
+	    BEGIN_SIGNATURE, വലുപ്പം(BEGIN_SIGNATURE)-1)) != 0) {
 		error("Couldn't parse signature: missing header");
-		goto done;
+		പോകുക done;
 	}
-	if ((r = sshbuf_consume(sbuf, sizeof(BEGIN_SIGNATURE)-1)) != 0) {
+	എങ്കിൽ ((r = sshbuf_consume(sbuf, വലുപ്പം(BEGIN_SIGNATURE)-1)) != 0) {
 		error_fr(r, "consume");
-		goto done;
+		പോകുക done;
 	}
-	if ((r = sshbuf_cmp(sbuf, 0, "\r\n", 2)) == 0)
+	എങ്കിൽ ((r = sshbuf_cmp(sbuf, 0, "\r\n", 2)) == 0)
 		eoffset = 2;
-	else if ((r = sshbuf_cmp(sbuf, 0, "\n", 1)) == 0)
+	അല്ലെങ്കിൽ എങ്കിൽ ((r = sshbuf_cmp(sbuf, 0, "\n", 1)) == 0)
 		eoffset = 1;
-	else {
+	അല്ലെങ്കിൽ {
 		r = SSH_ERR_INVALID_FORMAT;
 		error_f("no header eol");
-		goto done;
+		പോകുക done;
 	}
-	if ((r = sshbuf_consume(sbuf, eoffset)) != 0) {
+	എങ്കിൽ ((r = sshbuf_consume(sbuf, eoffset)) != 0) {
 		error_fr(r, "consume eol");
-		goto done;
+		പോകുക done;
 	}
 	/* Find and consume lf + suffix (any prior cr would be ignored) */
-	if ((r = sshbuf_find(sbuf, 0, "\n" END_SIGNATURE,
-	    sizeof(END_SIGNATURE), &eoffset)) != 0) {
+	എങ്കിൽ ((r = sshbuf_find(sbuf, 0, "\n" END_SIGNATURE,
+	    വലുപ്പം(END_SIGNATURE), &eoffset)) != 0) {
 		error("Couldn't parse signature: missing footer");
-		goto done;
+		പോകുക done;
 	}
-	if ((r = sshbuf_consume_end(sbuf, sshbuf_len(sbuf)-eoffset)) != 0) {
+	എങ്കിൽ ((r = sshbuf_consume_end(sbuf, sshbuf_len(sbuf)-eoffset)) != 0) {
 		error_fr(r, "consume");
-		goto done;
+		പോകുക done;
 	}
 
-	if ((b64 = sshbuf_dup_string(sbuf)) == NULL) {
+	എങ്കിൽ ((b64 = sshbuf_dup_string(sbuf)) == ശൂന്യ) {
 		error_f("sshbuf_dup_string failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		പോകുക done;
 	}
 
-	if ((buf = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((buf = sshbuf_new()) == ശൂന്യ) {
 		error_f("sshbuf_new() failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		പോകുക done;
 	}
 
-	if ((r = sshbuf_b64tod(buf, b64)) != 0) {
+	എങ്കിൽ ((r = sshbuf_b64tod(buf, b64)) != 0) {
 		error_fr(r, "decode base64");
-		goto done;
+		പോകുക done;
 	}
 
 	/* success */
 	*out = buf;
 	r = 0;
-	buf = NULL; /* transferred */
+	buf = ശൂന്യ; /* transferred */
 done:
 	sshbuf_free(buf);
 	sshbuf_free(sbuf);
-	free(b64);
-	return r;
+	സ്വതന്ത്രം(b64);
+	തിരികെ r;
 }
 
-static int
-sshsig_wrap_sign(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *h_message,
-    const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sshsig_wrap_sign(ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *hashalg,
+    സ്ഥിരം അക്ഷരം *sk_provider, സ്ഥിരം അക്ഷരം *sk_pin, സ്ഥിരം ഘടന sshbuf *h_message,
+    സ്ഥിരം അക്ഷരം *sig_namespace, ഘടന sshbuf **out,
+    sshsig_signer *signer, ശൂന്യം *signer_ctx)
 {
-	int r;
+	പൂർണ്ണസംഖ്യ r;
 	size_t slen = 0;
-	u_char *sig = NULL;
-	struct sshbuf *blob = NULL;
-	struct sshbuf *tosign = NULL;
-	const char *sign_alg = NULL;
+	u_char *sig = ശൂന്യ;
+	ഘടന sshbuf *blob = ശൂന്യ;
+	ഘടന sshbuf *tosign = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *sign_alg = ശൂന്യ;
 
-	if ((tosign = sshbuf_new()) == NULL ||
-	    (blob = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((tosign = sshbuf_new()) == ശൂന്യ ||
+	    (blob = sshbuf_new()) == ശൂന്യ) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		പോകുക done;
 	}
 
-	if ((r = sshbuf_put(tosign, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_put(tosign, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_cstring(tosign, sig_namespace)) != 0 ||
-	    (r = sshbuf_put_string(tosign, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(tosign, ശൂന്യ, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(tosign, hashalg)) != 0 ||
 	    (r = sshbuf_put_stringb(tosign, h_message)) != 0) {
 		error_fr(r, "assemble message to sign");
-		goto done;
+		പോകുക done;
 	}
 
 	/* If using RSA keys then default to a good signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
+	എങ്കിൽ (sshkey_type_plain(താക്കോൽ->type) == താക്കോൽ_RSA) {
 		sign_alg = RSA_SIGN_ALG;
-		if (strcmp(hashalg, "sha256") == 0)
+		എങ്കിൽ (strcmp(hashalg, "sha256") == 0)
 			sign_alg = "rsa-sha2-256";
-		else if (strcmp(hashalg, "sha512") == 0)
+		അല്ലെങ്കിൽ എങ്കിൽ (strcmp(hashalg, "sha512") == 0)
 			sign_alg = "rsa-sha2-512";
 	}
 
-	if (signer != NULL) {
-		if ((r = signer(key, &sig, &slen,
+	എങ്കിൽ (signer != ശൂന്യ) {
+		എങ്കിൽ ((r = signer(താക്കോൽ, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0, signer_ctx)) != 0) {
 			error_r(r, "Couldn't sign message (signer)");
-			goto done;
+			പോകുക done;
 		}
-	} else {
-		if ((r = sshkey_sign(key, &sig, &slen,
+	} അല്ലെങ്കിൽ {
+		എങ്കിൽ ((r = sshkey_sign(താക്കോൽ, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0)) != 0) {
 			error_r(r, "Couldn't sign message");
-			goto done;
+			പോകുക done;
 		}
 	}
 
-	if ((r = sshbuf_put(blob, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	എങ്കിൽ ((r = sshbuf_put(blob, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_u32(blob, SIG_VERSION)) != 0 ||
-	    (r = sshkey_puts(key, blob)) != 0 ||
+	    (r = sshkey_puts(താക്കോൽ, blob)) != 0 ||
 	    (r = sshbuf_put_cstring(blob, sig_namespace)) != 0 ||
-	    (r = sshbuf_put_string(blob, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(blob, ശൂന്യ, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(blob, hashalg)) != 0 ||
 	    (r = sshbuf_put_string(blob, sig, slen)) != 0) {
 		error_fr(r, "assemble signature object");
-		goto done;
+		പോകുക done;
 	}
 
-	if (out != NULL) {
+	എങ്കിൽ (out != ശൂന്യ) {
 		*out = blob;
-		blob = NULL;
+		blob = ശൂന്യ;
 	}
 	r = 0;
 done:
-	free(sig);
+	സ്വതന്ത്രം(sig);
 	sshbuf_free(blob);
 	sshbuf_free(tosign);
-	return r;
+	തിരികെ r;
 }
 
 /* Check preamble and version. */
-static int
-sshsig_parse_preamble(struct sshbuf *buf)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sshsig_parse_preamble(ഘടന sshbuf *buf)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 	uint32_t sversion;
 
-	if ((r = sshbuf_cmp(buf, 0, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
-	    (r = sshbuf_consume(buf, (sizeof(MAGIC_PREAMBLE)-1))) != 0 ||
+	എങ്കിൽ ((r = sshbuf_cmp(buf, 0, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
+	    (r = sshbuf_consume(buf, (വലുപ്പം(MAGIC_PREAMBLE)-1))) != 0 ||
 	    (r = sshbuf_get_u32(buf, &sversion)) != 0) {
 		error("Couldn't verify signature: invalid format");
-		return r;
+		തിരികെ r;
 	}
 
-	if (sversion > SIG_VERSION) {
+	എങ്കിൽ (sversion > SIG_VERSION) {
 		error("Signature version %lu is larger than supported "
 		    "version %u", (unsigned long)sversion, SIG_VERSION);
-		return SSH_ERR_INVALID_FORMAT;
+		തിരികെ SSH_ERR_INVALID_FORMAT;
 	}
-	return 0;
+	തിരികെ 0;
 }
 
-static int
-sshsig_check_hashalg(const char *hashalg)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sshsig_check_hashalg(സ്ഥിരം അക്ഷരം *hashalg)
 {
-	if (hashalg == NULL ||
+	എങ്കിൽ (hashalg == ശൂന്യ ||
 	    match_pattern_list(hashalg, HASHALG_ALLOWED, 0) == 1)
-		return 0;
+		തിരികെ 0;
 	error_f("unsupported hash algorithm \"%.100s\"", hashalg);
-	return SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	തിരികെ SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-static int
-sshsig_peek_hashalg(struct sshbuf *signature, char **hashalgp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sshsig_peek_hashalg(ഘടന sshbuf *signature, അക്ഷരം **hashalgp)
 {
-	struct sshbuf *buf = NULL;
-	char *hashalg = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *buf = ശൂന്യ;
+	അക്ഷരം *hashalg = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
-	if (hashalgp != NULL)
-		*hashalgp = NULL;
-	if ((buf = sshbuf_fromb(signature)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshsig_parse_preamble(buf)) != 0)
-		goto done;
-	if ((r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_string(buf, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(buf, &hashalg, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(buf, NULL, NULL)) != 0) {
+	എങ്കിൽ (hashalgp != ശൂന്യ)
+		*hashalgp = ശൂന്യ;
+	എങ്കിൽ ((buf = sshbuf_fromb(signature)) == ശൂന്യ)
+		തിരികെ SSH_ERR_ALLOC_FAIL;
+	എങ്കിൽ ((r = sshsig_parse_preamble(buf)) != 0)
+		പോകുക done;
+	എങ്കിൽ ((r = sshbuf_get_string_direct(buf, ശൂന്യ, ശൂന്യ)) != 0 ||
+	    (r = sshbuf_get_string_direct(buf, ശൂന്യ, ശൂന്യ)) != 0 ||
+	    (r = sshbuf_get_string(buf, ശൂന്യ, ശൂന്യ)) != 0 ||
+	    (r = sshbuf_get_cstring(buf, &hashalg, ശൂന്യ)) != 0 ||
+	    (r = sshbuf_get_string_direct(buf, ശൂന്യ, ശൂന്യ)) != 0) {
 		error_fr(r, "parse signature object");
-		goto done;
+		പോകുക done;
 	}
 
 	/* success */
 	r = 0;
 	*hashalgp = hashalg;
-	hashalg = NULL;
+	hashalg = ശൂന്യ;
  done:
-	free(hashalg);
+	സ്വതന്ത്രം(hashalg);
 	sshbuf_free(buf);
-	return r;
+	തിരികെ r;
 }
 
-static int
-sshsig_wrap_verify(struct sshbuf *signature, const char *hashalg,
-    const struct sshbuf *h_message, const char *expect_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+sshsig_wrap_verify(ഘടന sshbuf *signature, സ്ഥിരം അക്ഷരം *hashalg,
+    സ്ഥിരം ഘടന sshbuf *h_message, സ്ഥിരം അക്ഷരം *expect_namespace,
+    ഘടന sshkey **sign_keyp, ഘടന sshkey_sig_details **sig_details)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *buf = NULL, *toverify = NULL;
-	struct sshkey *key = NULL;
-	const u_char *sig;
-	char *got_namespace = NULL, *sigtype = NULL, *sig_hashalg = NULL;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *buf = ശൂന്യ, *toverify = ശൂന്യ;
+	ഘടന sshkey *താക്കോൽ = ശൂന്യ;
+	സ്ഥിരം u_char *sig;
+	അക്ഷരം *got_namespace = ശൂന്യ, *sigtype = ശൂന്യ, *sig_hashalg = ശൂന്യ;
 	size_t siglen;
 
 	debug_f("verify message length %zu", sshbuf_len(h_message));
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
+	എങ്കിൽ (sig_details != ശൂന്യ)
+		*sig_details = ശൂന്യ;
+	എങ്കിൽ (sign_keyp != ശൂന്യ)
+		*sign_keyp = ശൂന്യ;
 
-	if ((toverify = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((toverify = sshbuf_new()) == ശൂന്യ) {
 		error_f("sshbuf_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto done;
+		പോകുക done;
 	}
-	if ((r = sshbuf_put(toverify, MAGIC_PREAMBLE,
+	എങ്കിൽ ((r = sshbuf_put(toverify, MAGIC_PREAMBLE,
 	    MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_cstring(toverify, expect_namespace)) != 0 ||
-	    (r = sshbuf_put_string(toverify, NULL, 0)) != 0 || /* reserved */
+	    (r = sshbuf_put_string(toverify, ശൂന്യ, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(toverify, hashalg)) != 0 ||
 	    (r = sshbuf_put_stringb(toverify, h_message)) != 0) {
 		error_fr(r, "assemble message to verify");
-		goto done;
+		പോകുക done;
 	}
 
-	if ((r = sshsig_parse_preamble(signature)) != 0)
-		goto done;
+	എങ്കിൽ ((r = sshsig_parse_preamble(signature)) != 0)
+		പോകുക done;
 
-	if ((r = sshkey_froms(signature, &key)) != 0 ||
-	    (r = sshbuf_get_cstring(signature, &got_namespace, NULL)) != 0 ||
-	    (r = sshbuf_get_string(signature, NULL, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(signature, &sig_hashalg, NULL)) != 0 ||
+	എങ്കിൽ ((r = sshkey_froms(signature, &താക്കോൽ)) != 0 ||
+	    (r = sshbuf_get_cstring(signature, &got_namespace, ശൂന്യ)) != 0 ||
+	    (r = sshbuf_get_string(signature, ശൂന്യ, ശൂന്യ)) != 0 ||
+	    (r = sshbuf_get_cstring(signature, &sig_hashalg, ശൂന്യ)) != 0 ||
 	    (r = sshbuf_get_string_direct(signature, &sig, &siglen)) != 0) {
 		error_fr(r, "parse signature object");
-		goto done;
+		പോകുക done;
 	}
 
-	if (sshbuf_len(signature) != 0) {
+	എങ്കിൽ (sshbuf_len(signature) != 0) {
 		error("Signature contains trailing data");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto done;
+		പോകുക done;
 	}
 
-	if (strcmp(expect_namespace, got_namespace) != 0) {
+	എങ്കിൽ (strcmp(expect_namespace, got_namespace) != 0) {
 		error("Couldn't verify signature: namespace does not match");
 		debug_f("expected namespace \"%s\" received \"%s\"",
 		    expect_namespace, got_namespace);
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto done;
+		പോകുക done;
 	}
-	if (strcmp(hashalg, sig_hashalg) != 0) {
+	എങ്കിൽ (strcmp(hashalg, sig_hashalg) != 0) {
 		error("Couldn't verify signature: hash algorithm mismatch");
 		debug_f("expected algorithm \"%s\" received \"%s\"",
 		    hashalg, sig_hashalg);
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto done;
+		പോകുക done;
 	}
 	/* Ensure that RSA keys use an acceptable signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
-		if ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0) {
+	എങ്കിൽ (sshkey_type_plain(താക്കോൽ->type) == താക്കോൽ_RSA) {
+		എങ്കിൽ ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0) {
 			error_r(r, "Couldn't verify signature: unable to get "
 			    "signature type");
-			goto done;
+			പോകുക done;
 		}
-		if (match_pattern_list(sigtype, RSA_SIGN_ALLOWED, 0) != 1) {
+		എങ്കിൽ (match_pattern_list(sigtype, RSA_SIGN_ALLOWED, 0) != 1) {
 			error("Couldn't verify signature: unsupported RSA "
 			    "signature algorithm %s", sigtype);
 			r = SSH_ERR_SIGN_ALG_UNSUPPORTED;
-			goto done;
+			പോകുക done;
 		}
 	}
-	if ((r = sshkey_verify(key, sig, siglen, sshbuf_ptr(toverify),
-	    sshbuf_len(toverify), NULL, 0, sig_details)) != 0) {
+	എങ്കിൽ ((r = sshkey_verify(താക്കോൽ, sig, siglen, sshbuf_ptr(toverify),
+	    sshbuf_len(toverify), ശൂന്യ, 0, sig_details)) != 0) {
 		error_r(r, "Signature verification failed");
-		goto done;
+		പോകുക done;
 	}
 
 	/* success */
 	r = 0;
-	if (sign_keyp != NULL) {
-		*sign_keyp = key;
-		key = NULL; /* transferred */
+	എങ്കിൽ (sign_keyp != ശൂന്യ) {
+		*sign_keyp = താക്കോൽ;
+		താക്കോൽ = ശൂന്യ; /* transferred */
 	}
 done:
-	free(got_namespace);
-	free(sigtype);
-	free(sig_hashalg);
+	സ്വതന്ത്രം(got_namespace);
+	സ്വതന്ത്രം(sigtype);
+	സ്വതന്ത്രം(sig_hashalg);
 	sshbuf_free(buf);
 	sshbuf_free(toverify);
-	sshkey_free(key);
-	return r;
+	sshkey_free(താക്കോൽ);
+	തിരികെ r;
 }
 
-static int
-hash_buffer(const struct sshbuf *m, const char *hashalg, struct sshbuf **bp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+hash_buffer(സ്ഥിരം ഘടന sshbuf *m, സ്ഥിരം അക്ഷരം *hashalg, ഘടന sshbuf **bp)
 {
-	char *hex, hash[SSH_DIGEST_MAX_LENGTH];
-	int alg, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL;
+	അക്ഷരം *hex, hash[SSH_DIGEST_MAX_LENGTH];
+	പൂർണ്ണസംഖ്യ alg, r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *b = ശൂന്യ;
 
-	*bp = NULL;
-	memset(hash, 0, sizeof(hash));
+	*bp = ശൂന്യ;
+	memset(hash, 0, വലുപ്പം(hash));
 
-	if ((r = sshsig_check_hashalg(hashalg)) != 0)
-		return r;
-	if ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
+	എങ്കിൽ ((r = sshsig_check_hashalg(hashalg)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
 		error_f("can't look up hash algorithm %s", hashalg);
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
-	if ((r = ssh_digest_buffer(alg, m, hash, sizeof(hash))) != 0) {
+	എങ്കിൽ ((r = ssh_digest_buffer(alg, m, hash, വലുപ്പം(hash))) != 0) {
 		error_fr(r, "ssh_digest_buffer");
-		return r;
+		തിരികെ r;
 	}
-	if ((hex = tohex(hash, ssh_digest_bytes(alg))) != NULL) {
+	എങ്കിൽ ((hex = tohex(hash, ssh_digest_bytes(alg))) != ശൂന്യ) {
 		debug3_f("final hash: %s", hex);
 		freezero(hex, strlen(hex));
 	}
-	if ((b = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
+	എങ്കിൽ ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		പോകുക out;
 	}
 	*bp = b;
-	b = NULL; /* transferred */
+	b = ശൂന്യ; /* transferred */
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	explicit_bzero(hash, sizeof(hash));
-	return r;
+	explicit_bzero(hash, വലുപ്പം(hash));
+	തിരികെ r;
 }
 
-int
-sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx)
+പൂർണ്ണസംഖ്യ
+sshsig_signb(ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *hashalg,
+    സ്ഥിരം അക്ഷരം *sk_provider, സ്ഥിരം അക്ഷരം *sk_pin,
+    സ്ഥിരം ഘടന sshbuf *message, സ്ഥിരം അക്ഷരം *sig_namespace,
+    ഘടന sshbuf **out, sshsig_signer *signer, ശൂന്യം *signer_ctx)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *b = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
-	if (hashalg == NULL)
+	എങ്കിൽ (hashalg == ശൂന്യ)
 		hashalg = HASHALG_DEFAULT;
-	if (out != NULL)
-		*out = NULL;
-	if ((r = hash_buffer(message, hashalg, &b)) != 0) {
+	എങ്കിൽ (out != ശൂന്യ)
+		*out = ശൂന്യ;
+	എങ്കിൽ ((r = hash_buffer(message, hashalg, &b)) != 0) {
 		error_fr(r, "hash buffer");
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
+	എങ്കിൽ ((r = sshsig_wrap_sign(താക്കോൽ, hashalg, sk_provider, sk_pin, b,
 	    sig_namespace, out, signer, signer_ctx)) != 0)
-		goto out;
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	തിരികെ r;
 }
 
-int
-sshsig_verifyb(struct sshbuf *signature, const struct sshbuf *message,
-    const char *expect_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details)
+പൂർണ്ണസംഖ്യ
+sshsig_verifyb(ഘടന sshbuf *signature, സ്ഥിരം ഘടന sshbuf *message,
+    സ്ഥിരം അക്ഷരം *expect_namespace, ഘടന sshkey **sign_keyp,
+    ഘടന sshkey_sig_details **sig_details)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	char *hashalg = NULL;
+	ഘടന sshbuf *b = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
+	അക്ഷരം *hashalg = ശൂന്യ;
 
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
-	if ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
-		return r;
+	എങ്കിൽ (sig_details != ശൂന്യ)
+		*sig_details = ശൂന്യ;
+	എങ്കിൽ (sign_keyp != ശൂന്യ)
+		*sign_keyp = ശൂന്യ;
+	എങ്കിൽ ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
+		തിരികെ r;
 	debug_f("signature made with hash \"%s\"", hashalg);
-	if ((r = hash_buffer(message, hashalg, &b)) != 0) {
+	എങ്കിൽ ((r = hash_buffer(message, hashalg, &b)) != 0) {
 		error_fr(r, "hash buffer");
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
+	എങ്കിൽ ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
 	    sign_keyp, sig_details)) != 0)
-		goto out;
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	free(hashalg);
-	return r;
+	സ്വതന്ത്രം(hashalg);
+	തിരികെ r;
 }
 
-static int
-hash_file(int fd, const char *hashalg, struct sshbuf **bp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+hash_file(പൂർണ്ണസംഖ്യ fd, സ്ഥിരം അക്ഷരം *hashalg, ഘടന sshbuf **bp)
 {
-	char *hex, rbuf[8192], hash[SSH_DIGEST_MAX_LENGTH];
+	അക്ഷരം *hex, rbuf[8192], hash[SSH_DIGEST_MAX_LENGTH];
 	ssize_t n, total = 0;
-	struct ssh_digest_ctx *ctx = NULL;
-	int alg, oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL;
+	ഘടന ssh_digest_ctx *ctx = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ alg, oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *b = ശൂന്യ;
 
-	*bp = NULL;
-	memset(hash, 0, sizeof(hash));
+	*bp = ശൂന്യ;
+	memset(hash, 0, വലുപ്പം(hash));
 
-	if ((r = sshsig_check_hashalg(hashalg)) != 0)
-		return r;
-	if ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
+	എങ്കിൽ ((r = sshsig_check_hashalg(hashalg)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((alg = ssh_digest_alg_by_name(hashalg)) == -1) {
 		error_f("can't look up hash algorithm %s", hashalg);
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
-	if ((ctx = ssh_digest_start(alg)) == NULL) {
+	എങ്കിൽ ((ctx = ssh_digest_start(alg)) == ശൂന്യ) {
 		error_f("ssh_digest_start failed");
-		return SSH_ERR_INTERNAL_ERROR;
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
 	}
-	for (;;) {
-		if ((n = read(fd, rbuf, sizeof(rbuf))) == -1) {
-			if (errno == EINTR || errno == EAGAIN)
-				continue;
+	വേണ്ടി (;;) {
+		എങ്കിൽ ((n = പഠ(fd, rbuf, വലുപ്പം(rbuf))) == -1) {
+			എങ്കിൽ (errno == EINTR || errno == EAGAIN)
+				തുടരുക;
 			oerrno = errno;
 			error_f("read: %s", strerror(errno));
 			errno = oerrno;
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto out;
-		} else if (n == 0) {
+			പോകുക out;
+		} അല്ലെങ്കിൽ എങ്കിൽ (n == 0) {
 			debug2_f("hashed %zu bytes", total);
-			break; /* EOF */
+			നിർത്തുക; /* EOF */
 		}
 		total += (size_t)n;
-		if ((r = ssh_digest_update(ctx, rbuf, (size_t)n)) != 0) {
+		എങ്കിൽ ((r = ssh_digest_update(ctx, rbuf, (size_t)n)) != 0) {
 			error_fr(r, "ssh_digest_update");
-			goto out;
+			പോകുക out;
 		}
 	}
-	if ((r = ssh_digest_final(ctx, hash, sizeof(hash))) != 0) {
+	എങ്കിൽ ((r = ssh_digest_final(ctx, hash, വലുപ്പം(hash))) != 0) {
 		error_fr(r, "ssh_digest_final");
-		goto out;
+		പോകുക out;
 	}
-	if ((hex = tohex(hash, ssh_digest_bytes(alg))) != NULL) {
+	എങ്കിൽ ((hex = tohex(hash, ssh_digest_bytes(alg))) != ശൂന്യ) {
 		debug3_f("final hash: %s", hex);
 		freezero(hex, strlen(hex));
 	}
-	if ((b = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((b = sshbuf_new()) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
+	എങ്കിൽ ((r = sshbuf_put(b, hash, ssh_digest_bytes(alg))) != 0) {
 		error_fr(r, "sshbuf_put");
-		goto out;
+		പോകുക out;
 	}
 	*bp = b;
-	b = NULL; /* transferred */
+	b = ശൂന്യ; /* transferred */
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	sshbuf_free(b);
 	ssh_digest_free(ctx);
-	explicit_bzero(hash, sizeof(hash));
+	explicit_bzero(hash, വലുപ്പം(hash));
 	errno = oerrno;
-	return r;
+	തിരികെ r;
 }
 
-int
-sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx)
+പൂർണ്ണസംഖ്യ
+sshsig_sign_fd(ഘടന sshkey *താക്കോൽ, സ്ഥിരം അക്ഷരം *hashalg,
+    സ്ഥിരം അക്ഷരം *sk_provider, സ്ഥിരം അക്ഷരം *sk_pin,
+    പൂർണ്ണസംഖ്യ fd, സ്ഥിരം അക്ഷരം *sig_namespace, ഘടന sshbuf **out,
+    sshsig_signer *signer, ശൂന്യം *signer_ctx)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ഘടന sshbuf *b = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
-	if (hashalg == NULL)
+	എങ്കിൽ (hashalg == ശൂന്യ)
 		hashalg = HASHALG_DEFAULT;
-	if (out != NULL)
-		*out = NULL;
-	if ((r = hash_file(fd, hashalg, &b)) != 0) {
+	എങ്കിൽ (out != ശൂന്യ)
+		*out = ശൂന്യ;
+	എങ്കിൽ ((r = hash_file(fd, hashalg, &b)) != 0) {
 		error_fr(r, "hash_file");
-		return r;
+		തിരികെ r;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
+	എങ്കിൽ ((r = sshsig_wrap_sign(താക്കോൽ, hashalg, sk_provider, sk_pin, b,
 	    sig_namespace, out, signer, signer_ctx)) != 0)
-		goto out;
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	തിരികെ r;
 }
 
-int
-sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *expect_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details)
+പൂർണ്ണസംഖ്യ
+sshsig_verify_fd(ഘടന sshbuf *signature, പൂർണ്ണസംഖ്യ fd,
+    സ്ഥിരം അക്ഷരം *expect_namespace, ഘടന sshkey **sign_keyp,
+    ഘടന sshkey_sig_details **sig_details)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	char *hashalg = NULL;
+	ഘടന sshbuf *b = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
+	അക്ഷരം *hashalg = ശൂന്യ;
 
-	if (sig_details != NULL)
-		*sig_details = NULL;
-	if (sign_keyp != NULL)
-		*sign_keyp = NULL;
-	if ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
-		return r;
+	എങ്കിൽ (sig_details != ശൂന്യ)
+		*sig_details = ശൂന്യ;
+	എങ്കിൽ (sign_keyp != ശൂന്യ)
+		*sign_keyp = ശൂന്യ;
+	എങ്കിൽ ((r = sshsig_peek_hashalg(signature, &hashalg)) != 0)
+		തിരികെ r;
 	debug_f("signature made with hash \"%s\"", hashalg);
-	if ((r = hash_file(fd, hashalg, &b)) != 0) {
+	എങ്കിൽ ((r = hash_file(fd, hashalg, &b)) != 0) {
 		error_fr(r, "hash_file");
-		goto out;
+		പോകുക out;
 	}
-	if ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
+	എങ്കിൽ ((r = sshsig_wrap_verify(signature, hashalg, b, expect_namespace,
 	    sign_keyp, sig_details)) != 0)
-		goto out;
+		പോകുക out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	free(hashalg);
-	return r;
+	സ്വതന്ത്രം(hashalg);
+	തിരികെ r;
 }
 
-struct sshsigopt {
-	int ca;
-	char *namespaces;
+ഘടന sshsigopt {
+	പൂർണ്ണസംഖ്യ ca;
+	അക്ഷരം *namespaces;
 	uint64_t valid_after, valid_before;
 };
 
-struct sshsigopt *
-sshsigopt_parse(const char *opts, const char *path, u_long linenum,
-    const char **errstrp)
+ഘടന sshsigopt *
+sshsigopt_parse(സ്ഥിരം അക്ഷരം *opts, സ്ഥിരം അക്ഷരം *path, u_long linenum,
+    സ്ഥിരം അക്ഷരം **errstrp)
 {
-	struct sshsigopt *ret;
-	int r;
-	char *opt;
-	const char *errstr = NULL;
+	ഘടന sshsigopt *ret;
+	പൂർണ്ണസംഖ്യ r;
+	അക്ഷരം *opt;
+	സ്ഥിരം അക്ഷരം *errstr = ശൂന്യ;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if (opts == NULL || *opts == '\0')
-		return ret; /* Empty options yields empty options :) */
+	എങ്കിൽ ((ret = calloc(1, വലുപ്പം(*ret))) == ശൂന്യ)
+		തിരികെ ശൂന്യ;
+	എങ്കിൽ (opts == ശൂന്യ || *opts == '\0')
+		തിരികെ ret; /* Empty options yields empty options :) */
 
-	while (*opts && *opts != ' ' && *opts != '\t') {
+	ആകുമ്പോൾ (*opts && *opts != ' ' && *opts != '\t') {
 		/* flag options */
-		if ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
+		എങ്കിൽ ((r = opt_flag("cert-authority", 0, &opts)) != -1) {
 			ret->ca = 1;
-		} else if (opt_match(&opts, "namespaces")) {
-			if (ret->namespaces != NULL) {
+		} അല്ലെങ്കിൽ എങ്കിൽ (opt_match(&opts, "namespaces")) {
+			എങ്കിൽ (ret->namespaces != ശൂന്യ) {
 				errstr = "multiple \"namespaces\" clauses";
-				goto fail;
+				പോകുക fail;
 			}
 			ret->namespaces = opt_dequote(&opts, &errstr);
-			if (ret->namespaces == NULL)
-				goto fail;
-		} else if (opt_match(&opts, "valid-after")) {
-			if (ret->valid_after != 0) {
+			എങ്കിൽ (ret->namespaces == ശൂന്യ)
+				പോകുക fail;
+		} അല്ലെങ്കിൽ എങ്കിൽ (opt_match(&opts, "valid-after")) {
+			എങ്കിൽ (ret->valid_after != 0) {
 				errstr = "multiple \"valid-after\" clauses";
-				goto fail;
+				പോകുക fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &ret->valid_after) != 0 ||
+			എങ്കിൽ ((opt = opt_dequote(&opts, &errstr)) == ശൂന്യ)
+				പോകുക fail;
+			എങ്കിൽ (parse_absolute_time(opt, &ret->valid_after) != 0 ||
 			    ret->valid_after == 0) {
-				free(opt);
+				സ്വതന്ത്രം(opt);
 				errstr = "invalid \"valid-after\" time";
-				goto fail;
+				പോകുക fail;
 			}
-			free(opt);
-		} else if (opt_match(&opts, "valid-before")) {
-			if (ret->valid_before != 0) {
+			സ്വതന്ത്രം(opt);
+		} അല്ലെങ്കിൽ എങ്കിൽ (opt_match(&opts, "valid-before")) {
+			എങ്കിൽ (ret->valid_before != 0) {
 				errstr = "multiple \"valid-before\" clauses";
-				goto fail;
+				പോകുക fail;
 			}
-			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
-				goto fail;
-			if (parse_absolute_time(opt, &ret->valid_before) != 0 ||
+			എങ്കിൽ ((opt = opt_dequote(&opts, &errstr)) == ശൂന്യ)
+				പോകുക fail;
+			എങ്കിൽ (parse_absolute_time(opt, &ret->valid_before) != 0 ||
 			    ret->valid_before == 0) {
-				free(opt);
+				സ്വതന്ത്രം(opt);
 				errstr = "invalid \"valid-before\" time";
-				goto fail;
+				പോകുക fail;
 			}
-			free(opt);
+			സ്വതന്ത്രം(opt);
 		}
 		/*
 		 * Skip the comma, and move to the next option
 		 * (or break out if there are no more).
 		 */
-		if (*opts == '\0' || *opts == ' ' || *opts == '\t')
-			break;		/* End of options. */
+		എങ്കിൽ (*opts == '\0' || *opts == ' ' || *opts == '\t')
+			നിർത്തുക;		/* End of options. */
 		/* Anything other than a comma is an unknown option */
-		if (*opts != ',') {
+		എങ്കിൽ (*opts != ',') {
 			errstr = "unknown key option";
-			goto fail;
+			പോകുക fail;
 		}
 		opts++;
-		if (*opts == '\0') {
+		എങ്കിൽ (*opts == '\0') {
 			errstr = "unexpected end-of-options";
-			goto fail;
+			പോകുക fail;
 		}
 	}
 	/* final consistency check */
-	if (ret->valid_after != 0 && ret->valid_before != 0 &&
+	എങ്കിൽ (ret->valid_after != 0 && ret->valid_before != 0 &&
 	    ret->valid_before <= ret->valid_after) {
 		errstr = "\"valid-before\" time is before \"valid-after\"";
-		goto fail;
+		പോകുക fail;
 	}
 	/* success */
-	return ret;
+	തിരികെ ret;
  fail:
-	if (errstrp != NULL)
+	എങ്കിൽ (errstrp != ശൂന്യ)
 		*errstrp = errstr;
 	sshsigopt_free(ret);
-	return NULL;
+	തിരികെ ശൂന്യ;
 }
 
-void
-sshsigopt_free(struct sshsigopt *opts)
+ശൂന്യം
+sshsigopt_free(ഘടന sshsigopt *opts)
 {
-	if (opts == NULL)
-		return;
-	free(opts->namespaces);
-	free(opts);
+	എങ്കിൽ (opts == ശൂന്യ)
+		തിരികെ;
+	സ്വതന്ത്രം(opts->namespaces);
+	സ്വതന്ത്രം(opts);
 }
 
-static int
-parse_principals_key_and_options(const char *path, u_long linenum, char *line,
-    const char *required_principal, char **principalsp, struct sshkey **keyp,
-    struct sshsigopt **sigoptsp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+parse_principals_താക്കോൽ_and_options(സ്ഥിരം അക്ഷരം *path, u_long linenum, അക്ഷരം *വരി,
+    സ്ഥിരം അക്ഷരം *required_principal, അക്ഷരം **principalsp, ഘടന sshkey **keyp,
+    ഘടന sshsigopt **sigoptsp)
 {
-	char *opts = NULL, *tmp, *cp, *principals = NULL;
-	const char *reason = NULL;
-	struct sshsigopt *sigopts = NULL;
-	struct sshkey *key = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	അക്ഷരം *opts = ശൂന്യ, *tmp, *cp, *principals = ശൂന്യ;
+	സ്ഥിരം അക്ഷരം *reason = ശൂന്യ;
+	ഘടന sshsigopt *sigopts = ശൂന്യ;
+	ഘടന sshkey *താക്കോൽ = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR;
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
-	if (sigoptsp != NULL)
-		*sigoptsp = NULL;
-	if (keyp != NULL)
-		*keyp = NULL;
+	എങ്കിൽ (principalsp != ശൂന്യ)
+		*principalsp = ശൂന്യ;
+	എങ്കിൽ (sigoptsp != ശൂന്യ)
+		*sigoptsp = ശൂന്യ;
+	എങ്കിൽ (keyp != ശൂന്യ)
+		*keyp = ശൂന്യ;
 
-	cp = line;
+	cp = വരി;
 	cp = cp + strspn(cp, " \t\n\r"); /* skip leading whitespace */
-	if (*cp == '#' || *cp == '\0')
-		return SSH_ERR_KEY_NOT_FOUND; /* blank or all-comment line */
+	എങ്കിൽ (*cp == '#' || *cp == '\0')
+		തിരികെ SSH_ERR_താക്കോൽ_NOT_FOUND; /* blank or all-comment line */
 
 	/* format: identity[,identity...] [option[,option...]] key */
-	if ((tmp = strdelimw(&cp)) == NULL || cp == NULL) {
+	എങ്കിൽ ((tmp = strdelimw(&cp)) == ശൂന്യ || cp == ശൂന്യ) {
 		error("%s:%lu: invalid line", path, linenum);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
-	if ((principals = strdup(tmp)) == NULL) {
+	എങ്കിൽ ((principals = strdup(tmp)) == ശൂന്യ) {
 		error_f("strdup failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 	/*
 	 * Bail out early if we're looking for a particular principal and this
 	 * line does not list it.
 	 */
-	if (required_principal != NULL) {
-		if (match_pattern_list(required_principal,
+	എങ്കിൽ (required_principal != ശൂന്യ) {
+		എങ്കിൽ (match_pattern_list(required_principal,
 		    principals, 0) != 1) {
 			/* principal didn't match */
-			r = SSH_ERR_KEY_NOT_FOUND;
-			goto out;
+			r = SSH_ERR_താക്കോൽ_NOT_FOUND;
+			പോകുക out;
 		}
 		debug_f("%s:%lu: matched principal \"%s\"",
 		    path, linenum, required_principal);
 	}
 
-	if ((key = sshkey_new(KEY_UNSPEC)) == NULL) {
+	എങ്കിൽ ((താക്കോൽ = sshkey_new(താക്കോൽ_UNSPEC)) == ശൂന്യ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
-	if (sshkey_read(key, &cp) != 0) {
+	എങ്കിൽ (sshkey_read(താക്കോൽ, &cp) != 0) {
 		/* no key? Check for options */
 		opts = cp;
-		if (sshkey_advance_past_options(&cp) != 0) {
+		എങ്കിൽ (sshkey_advance_past_options(&cp) != 0) {
 			error("%s:%lu: invalid options", path, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			പോകുക out;
 		}
-		if (cp == NULL || *cp == '\0') {
+		എങ്കിൽ (cp == ശൂന്യ || *cp == '\0') {
 			error("%s:%lu: missing key", path, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			പോകുക out;
 		}
 		*cp++ = '\0';
 		skip_space(&cp);
-		if (sshkey_read(key, &cp) != 0) {
+		എങ്കിൽ (sshkey_read(താക്കോൽ, &cp) != 0) {
 			error("%s:%lu: invalid key", path, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			പോകുക out;
 		}
 	}
-	debug3("%s:%lu: options %s", path, linenum, opts == NULL ? "" : opts);
-	if ((sigopts = sshsigopt_parse(opts, path, linenum, &reason)) == NULL) {
+	debug3("%s:%lu: options %s", path, linenum, opts == ശൂന്യ ? "" : opts);
+	എങ്കിൽ ((sigopts = sshsigopt_parse(opts, path, linenum, &reason)) == ശൂന്യ) {
 		error("%s:%lu: bad options: %s", path, linenum, reason);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		പോകുക out;
 	}
 	/* success */
-	if (principalsp != NULL) {
+	എങ്കിൽ (principalsp != ശൂന്യ) {
 		*principalsp = principals;
-		principals = NULL; /* transferred */
+		principals = ശൂന്യ; /* transferred */
 	}
-	if (sigoptsp != NULL) {
+	എങ്കിൽ (sigoptsp != ശൂന്യ) {
 		*sigoptsp = sigopts;
-		sigopts = NULL; /* transferred */
+		sigopts = ശൂന്യ; /* transferred */
 	}
-	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL; /* transferred */
+	എങ്കിൽ (keyp != ശൂന്യ) {
+		*keyp = താക്കോൽ;
+		താക്കോൽ = ശൂന്യ; /* transferred */
 	}
 	r = 0;
  out:
-	free(principals);
+	സ്വതന്ത്രം(principals);
 	sshsigopt_free(sigopts);
-	sshkey_free(key);
-	return r;
+	sshkey_free(താക്കോൽ);
+	തിരികെ r;
 }
 
-static int
-cert_filter_principals(const char *path, u_long linenum,
-    char **principalsp, const struct sshkey *cert, uint64_t verify_time)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+cert_filter_principals(സ്ഥിരം അക്ഷരം *path, u_long linenum,
+    അക്ഷരം **principalsp, സ്ഥിരം ഘടന sshkey *cert, uint64_t verify_time)
 {
-	char *cp, *oprincipals, *principals;
-	const char *reason;
-	struct sshbuf *nprincipals;
-	int r = SSH_ERR_INTERNAL_ERROR, success = 0;
+	അക്ഷരം *cp, *oprincipals, *principals;
+	സ്ഥിരം അക്ഷരം *reason;
+	ഘടന sshbuf *nprincipals;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_INTERNAL_ERROR, success = 0;
 	u_int i;
 
 	oprincipals = principals = *principalsp;
-	*principalsp = NULL;
+	*principalsp = ശൂന്യ;
 
-	if ((nprincipals = sshbuf_new()) == NULL) {
+	എങ്കിൽ ((nprincipals = sshbuf_new()) == ശൂന്യ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 
-	while ((cp = strsep(&principals, ",")) != NULL && *cp != '\0') {
+	ആകുമ്പോൾ ((cp = strsep(&principals, ",")) != ശൂന്യ && *cp != '\0') {
 		/* Check certificate validity */
-		if ((r = sshkey_cert_check_authority(cert, 0, 0, verify_time,
-		    NULL, &reason)) != 0) {
+		എങ്കിൽ ((r = sshkey_cert_check_authority(cert, 0, 0, verify_time,
+		    ശൂന്യ, &reason)) != 0) {
 			debug("%s:%lu: principal \"%s\" not authorized: %s",
 			    path, linenum, cp, reason);
-			continue;
+			തുടരുക;
 		}
 		/* Return all matching principal names from the cert */
-		for (i = 0; i < cert->cert->nprincipals; i++) {
-			if (match_pattern(cert->cert->principals[i], cp)) {
-				if ((r = sshbuf_putf(nprincipals, "%s%s",
+		വേണ്ടി (i = 0; i < cert->cert->nprincipals; i++) {
+			എങ്കിൽ (match_pattern(cert->cert->principals[i], cp)) {
+				എങ്കിൽ ((r = sshbuf_putf(nprincipals, "%s%s",
 					sshbuf_len(nprincipals) != 0 ? "," : "",
 						cert->cert->principals[i])) != 0) {
 					error_f("buffer error");
-					goto out;
+					പോകുക out;
 				}
 			}
 		}
 	}
-	if (sshbuf_len(nprincipals) == 0) {
+	എങ്കിൽ (sshbuf_len(nprincipals) == 0) {
 		error("%s:%lu: no valid principals found", path, linenum);
-		r = SSH_ERR_KEY_CERT_INVALID;
-		goto out;
+		r = SSH_ERR_താക്കോൽ_CERT_INVALID;
+		പോകുക out;
 	}
-	if ((principals = sshbuf_dup_string(nprincipals)) == NULL) {
+	എങ്കിൽ ((principals = sshbuf_dup_string(nprincipals)) == ശൂന്യ) {
 		error_f("buffer error");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		പോകുക out;
 	}
 	/* success */
 	success = 1;
 	*principalsp = principals;
  out:
 	sshbuf_free(nprincipals);
-	free(oprincipals);
-	return success ? 0 : r;
+	സ്വതന്ത്രം(oprincipals);
+	തിരികെ success ? 0 : r;
 }
 
-static int
-check_allowed_keys_line(const char *path, u_long linenum, char *line,
-    const struct sshkey *sign_key, const char *principal,
-    const char *sig_namespace, uint64_t verify_time, char **principalsp)
+സ്ഥിതം പൂർണ്ണസംഖ്യ
+check_allowed_താക്കോലുകൾ_വരി(സ്ഥിരം അക്ഷരം *path, u_long linenum, അക്ഷരം *വരി,
+    സ്ഥിരം ഘടന sshkey *sign_താക്കോൽ, സ്ഥിരം അക്ഷരം *principal,
+    സ്ഥിരം അക്ഷരം *sig_namespace, uint64_t verify_time, അക്ഷരം **principalsp)
 {
-	struct sshkey *found_key = NULL;
-	char *principals = NULL;
-	int r, success = 0;
-	const char *reason = NULL;
-	struct sshsigopt *sigopts = NULL;
-	char tvalid[64], tverify[64];
+	ഘടന sshkey *found_താക്കോൽ = ശൂന്യ;
+	അക്ഷരം *principals = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r, success = 0;
+	സ്ഥിരം അക്ഷരം *reason = ശൂന്യ;
+	ഘടന sshsigopt *sigopts = ശൂന്യ;
+	അക്ഷരം tvalid[64], tverify[64];
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
+	എങ്കിൽ (principalsp != ശൂന്യ)
+		*principalsp = ശൂന്യ;
 
 	/* Parse the line */
-	if ((r = parse_principals_key_and_options(path, linenum, line,
-	    principal, &principals, &found_key, &sigopts)) != 0) {
+	എങ്കിൽ ((r = parse_principals_താക്കോൽ_and_options(path, linenum, വരി,
+	    principal, &principals, &found_താക്കോൽ, &sigopts)) != 0) {
 		/* error already logged */
-		goto done;
+		പോകുക done;
 	}
 
-	if (!sigopts->ca && sshkey_equal(found_key, sign_key)) {
+	എങ്കിൽ (!sigopts->ca && sshkey_equal(found_താക്കോൽ, sign_താക്കോൽ)) {
 		/* Exact match of key */
 		debug("%s:%lu: matched key", path, linenum);
-	} else if (sigopts->ca && sshkey_is_cert(sign_key) &&
-	    sshkey_equal_public(sign_key->cert->signature_key, found_key)) {
-		if (principal) {
+	} അല്ലെങ്കിൽ എങ്കിൽ (sigopts->ca && sshkey_is_cert(sign_താക്കോൽ) &&
+	    sshkey_equal_public(sign_താക്കോൽ->cert->signature_താക്കോൽ, found_താക്കോൽ)) {
+		എങ്കിൽ (principal) {
 			/* Match certificate CA key with specified principal */
-			if ((r = sshkey_cert_check_authority(sign_key, 0, 0,
+			എങ്കിൽ ((r = sshkey_cert_check_authority(sign_താക്കോൽ, 0, 0,
 			    verify_time, principal, &reason)) != 0) {
 				error("%s:%lu: certificate not authorized: %s",
 				    path, linenum, reason);
-				goto done;
+				പോകുക done;
 			}
 			debug("%s:%lu: matched certificate CA key",
 			    path, linenum);
-		} else {
+		} അല്ലെങ്കിൽ {
 			/* No principal specified - find all matching ones */
-			if ((r = cert_filter_principals(path, linenum,
-			    &principals, sign_key, verify_time)) != 0) {
+			എങ്കിൽ ((r = cert_filter_principals(path, linenum,
+			    &principals, sign_താക്കോൽ, verify_time)) != 0) {
 				/* error already displayed */
 				debug_r(r, "%s:%lu: cert_filter_principals",
 				    path, linenum);
-				goto done;
+				പോകുക done;
 			}
 			debug("%s:%lu: matched certificate CA key",
 			    path, linenum);
 		}
-	} else {
+	} അല്ലെങ്കിൽ {
 		/* Didn't match key */
-		goto done;
+		പോകുക done;
 	}
 
 	/* Check whether options preclude the use of this key */
-	if (sigopts->namespaces != NULL && sig_namespace != NULL &&
+	എങ്കിൽ (sigopts->namespaces != ശൂന്യ && sig_namespace != ശൂന്യ &&
 	    match_pattern_list(sig_namespace, sigopts->namespaces, 0) != 1) {
 		error("%s:%lu: key is not permitted for use in signature "
 		    "namespace \"%s\"", path, linenum, sig_namespace);
-		goto done;
+		പോകുക done;
 	}
 
 	/* check key time validity */
-	format_absolute_time((uint64_t)verify_time, tverify, sizeof(tverify));
-	if (sigopts->valid_after != 0 &&
+	format_absolute_time((uint64_t)verify_time, tverify, വലുപ്പം(tverify));
+	എങ്കിൽ (sigopts->valid_after != 0 &&
 	    (uint64_t)verify_time < sigopts->valid_after) {
 		format_absolute_time(sigopts->valid_after,
-		    tvalid, sizeof(tvalid));
+		    tvalid, വലുപ്പം(tvalid));
 		error("%s:%lu: key is not yet valid: "
 		    "verify time %s < valid-after %s", path, linenum,
 		    tverify, tvalid);
-		goto done;
+		പോകുക done;
 	}
-	if (sigopts->valid_before != 0 &&
+	എങ്കിൽ (sigopts->valid_before != 0 &&
 	    (uint64_t)verify_time > sigopts->valid_before) {
 		format_absolute_time(sigopts->valid_before,
-		    tvalid, sizeof(tvalid));
+		    tvalid, വലുപ്പം(tvalid));
 		error("%s:%lu: key has expired: "
 		    "verify time %s > valid-before %s", path, linenum,
 		    tverify, tvalid);
-		goto done;
+		പോകുക done;
 	}
 	success = 1;
 
  done:
-	if (success && principalsp != NULL) {
+	എങ്കിൽ (success && principalsp != ശൂന്യ) {
 		*principalsp = principals;
-		principals = NULL; /* transferred */
+		principals = ശൂന്യ; /* transferred */
 	}
-	free(principals);
-	sshkey_free(found_key);
+	സ്വതന്ത്രം(principals);
+	sshkey_free(found_താക്കോൽ);
 	sshsigopt_free(sigopts);
-	return success ? 0 : SSH_ERR_KEY_NOT_FOUND;
+	തിരികെ success ? 0 : SSH_ERR_താക്കോൽ_NOT_FOUND;
 }
 
-int
-sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *sig_namespace, uint64_t verify_time)
+പൂർണ്ണസംഖ്യ
+sshsig_check_allowed_താക്കോലുകൾ(സ്ഥിരം അക്ഷരം *path, സ്ഥിരം ഘടന sshkey *sign_താക്കോൽ,
+    സ്ഥിരം അക്ഷരം *principal, സ്ഥിരം അക്ഷരം *sig_namespace, uint64_t verify_time)
 {
-	FILE *f = NULL;
-	char *line = NULL;
+	FILE *f = ശൂന്യ;
+	അക്ഷരം *വരി = ശൂന്യ;
 	size_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_താക്കോൽ_NOT_FOUND, oerrno;
 
 	/* Check key and principal against file */
-	if ((f = fopen(path, "r")) == NULL) {
+	എങ്കിൽ ((f = fopen(path, "r")) == ശൂന്യ) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
 		    path, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	ആകുമ്പോൾ (getline(&വരി, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line, sign_key,
-		    principal, sig_namespace, verify_time, NULL);
-		free(line);
-		line = NULL;
+		r = check_allowed_താക്കോലുകൾ_വരി(path, linenum, വരി, sign_താക്കോൽ,
+		    principal, sig_namespace, verify_time, ശൂന്യ);
+		സ്വതന്ത്രം(വരി);
+		വരി = ശൂന്യ;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
-			continue;
-		else if (r == 0) {
+		എങ്കിൽ (r == SSH_ERR_താക്കോൽ_NOT_FOUND)
+			തുടരുക;
+		അല്ലെങ്കിൽ എങ്കിൽ (r == 0) {
 			/* success */
 			fclose(f);
-			return 0;
-		} else
-			break;
+			തിരികെ 0;
+		} അല്ലെങ്കിൽ
+			നിർത്തുക;
 	}
 	/* Either we hit an error parsing or we simply didn't find the key */
 	fclose(f);
-	free(line);
-	return r;
+	സ്വതന്ത്രം(വരി);
+	തിരികെ r;
 }
 
-int
-sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principals)
+പൂർണ്ണസംഖ്യ
+sshsig_find_principals(സ്ഥിരം അക്ഷരം *path, സ്ഥിരം ഘടന sshkey *sign_താക്കോൽ,
+    uint64_t verify_time, അക്ഷരം **principals)
 {
-	FILE *f = NULL;
-	char *line = NULL;
+	FILE *f = ശൂന്യ;
+	അക്ഷരം *വരി = ശൂന്യ;
 	size_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_താക്കോൽ_NOT_FOUND, oerrno;
 
-	if ((f = fopen(path, "r")) == NULL) {
+	എങ്കിൽ ((f = fopen(path, "r")) == ശൂന്യ) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
 		    path, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	ആകുമ്പോൾ (getline(&വരി, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line,
-		    sign_key, NULL, NULL, verify_time, principals);
-		free(line);
-		line = NULL;
+		r = check_allowed_താക്കോലുകൾ_വരി(path, linenum, വരി,
+		    sign_താക്കോൽ, ശൂന്യ, ശൂന്യ, verify_time, principals);
+		സ്വതന്ത്രം(വരി);
+		വരി = ശൂന്യ;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
-			continue;
-		else if (r == 0) {
+		എങ്കിൽ (r == SSH_ERR_താക്കോൽ_NOT_FOUND)
+			തുടരുക;
+		അല്ലെങ്കിൽ എങ്കിൽ (r == 0) {
 			/* success */
 			fclose(f);
-			return 0;
-		} else
-			break;
+			തിരികെ 0;
+		} അല്ലെങ്കിൽ
+			നിർത്തുക;
 	}
-	free(line);
+	സ്വതന്ത്രം(വരി);
 	/* Either we hit an error parsing or we simply didn't find the key */
-	if (ferror(f) != 0) {
+	എങ്കിൽ (ferror(f) != 0) {
 		oerrno = errno;
 		fclose(f);
 		error("Unable to read allowed keys file \"%s\": %s",
 		    path, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	}
 	fclose(f);
-	return r;
+	തിരികെ r;
 }
 
-int
-sshsig_match_principals(const char *path, const char *principal,
-    char ***principalsp, size_t *nprincipalsp)
+പൂർണ്ണസംഖ്യ
+sshsig_match_principals(സ്ഥിരം അക്ഷരം *path, സ്ഥിരം അക്ഷരം *principal,
+    അക്ഷരം ***principalsp, size_t *nprincipalsp)
 {
-	FILE *f = NULL;
-	char *found, *line = NULL, **principals = NULL, **tmp;
+	FILE *f = ശൂന്യ;
+	അക്ഷരം *found, *വരി = ശൂന്യ, **principals = ശൂന്യ, **tmp;
 	size_t i, nprincipals = 0, linesize = 0;
 	u_long linenum = 0;
-	int oerrno = 0, r, ret = 0;
+	പൂർണ്ണസംഖ്യ oerrno = 0, r, ret = 0;
 
-	if (principalsp != NULL)
-		*principalsp = NULL;
-	if (nprincipalsp != NULL)
+	എങ്കിൽ (principalsp != ശൂന്യ)
+		*principalsp = ശൂന്യ;
+	എങ്കിൽ (nprincipalsp != ശൂന്യ)
 		*nprincipalsp = 0;
 
 	/* Check key and principal against file */
-	if ((f = fopen(path, "r")) == NULL) {
+	എങ്കിൽ ((f = fopen(path, "r")) == ശൂന്യ) {
 		oerrno = errno;
 		error("Unable to open allowed keys file \"%s\": %s",
 		    path, strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		തിരികെ SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	ആകുമ്പോൾ (getline(&വരി, &linesize, f) != -1) {
 		linenum++;
 		/* Parse the line */
-		if ((r = parse_principals_key_and_options(path, linenum, line,
-		    principal, &found, NULL, NULL)) != 0) {
-			if (r == SSH_ERR_KEY_NOT_FOUND)
-				continue;
+		എങ്കിൽ ((r = parse_principals_താക്കോൽ_and_options(path, linenum, വരി,
+		    principal, &found, ശൂന്യ, ശൂന്യ)) != 0) {
+			എങ്കിൽ (r == SSH_ERR_താക്കോൽ_NOT_FOUND)
+				തുടരുക;
 			ret = r;
 			oerrno = errno;
-			break; /* unexpected error */
+			നിർത്തുക; /* unexpected error */
 		}
-		if ((tmp = recallocarray(principals, nprincipals,
-		    nprincipals + 1, sizeof(*principals))) == NULL) {
+		എങ്കിൽ ((tmp = recallocarray(principals, nprincipals,
+		    nprincipals + 1, വലുപ്പം(*principals))) == ശൂന്യ) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			free(found);
-			break;
+			സ്വതന്ത്രം(found);
+			നിർത്തുക;
 		}
 		principals = tmp;
 		principals[nprincipals++] = found; /* transferred */
-		free(line);
-		line = NULL;
+		സ്വതന്ത്രം(വരി);
+		വരി = ശൂന്യ;
 		linesize = 0;
 	}
 	fclose(f);
-	free(line);
+	സ്വതന്ത്രം(വരി);
 
-	if (ret == 0) {
-		if (nprincipals == 0)
-			ret = SSH_ERR_KEY_NOT_FOUND;
-		if (nprincipalsp != NULL)
+	എങ്കിൽ (ret == 0) {
+		എങ്കിൽ (nprincipals == 0)
+			ret = SSH_ERR_താക്കോൽ_NOT_FOUND;
+		എങ്കിൽ (nprincipalsp != ശൂന്യ)
 			*nprincipalsp = nprincipals;
-		if (principalsp != NULL) {
+		എങ്കിൽ (principalsp != ശൂന്യ) {
 			*principalsp = principals;
-			principals = NULL; /* transferred */
+			principals = ശൂന്യ; /* transferred */
 			nprincipals = 0;
 		}
 	}
 
-	for (i = 0; i < nprincipals; i++)
-		free(principals[i]);
-	free(principals);
+	വേണ്ടി (i = 0; i < nprincipals; i++)
+		സ്വതന്ത്രം(principals[i]);
+	സ്വതന്ത്രം(principals);
 
 	errno = oerrno;
-	return ret;
+	തിരികെ ret;
 }
 
-int
-sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey)
+പൂർണ്ണസംഖ്യ
+sshsig_get_pubkey(ഘടന sshbuf *signature, ഘടന sshkey **pubkey)
 {
-	struct sshkey *pk = NULL;
-	int r = SSH_ERR_SIGNATURE_INVALID;
+	ഘടന sshkey *pk = ശൂന്യ;
+	പൂർണ്ണസംഖ്യ r = SSH_ERR_SIGNATURE_INVALID;
 
-	if (pubkey == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if ((r = sshsig_parse_preamble(signature)) != 0)
-		return r;
-	if ((r = sshkey_froms(signature, &pk)) != 0)
-		return r;
+	എങ്കിൽ (pubkey == ശൂന്യ)
+		തിരികെ SSH_ERR_INTERNAL_ERROR;
+	എങ്കിൽ ((r = sshsig_parse_preamble(signature)) != 0)
+		തിരികെ r;
+	എങ്കിൽ ((r = sshkey_froms(signature, &pk)) != 0)
+		തിരികെ r;
 
 	*pubkey = pk;
-	pk = NULL;
-	return 0;
+	pk = ശൂന്യ;
+	തിരികെ 0;
 }

@@ -24,26 +24,26 @@
 #define	SSH_PKCS11_ERR_PIN_REQUIRED		4
 #define	SSH_PKCS11_ERR_PIN_LOCKED		5
 
-struct sshkey;
+ഘടന sshkey;
 
-int	pkcs11_init(int);
-void	pkcs11_terminate(void);
-int	pkcs11_add_provider(char *, char *, struct sshkey ***, char ***);
-int	pkcs11_del_provider(char *);
-int	pkcs11_sign(struct sshkey *, u_char **, size_t *,
-	    const u_char *, size_t, const char *, const char *,
-	    const char *, u_int);
-void	pkcs11_key_free(struct sshkey *);
+പൂർണ്ണസംഖ്യ	pkcs11_init(പൂർണ്ണസംഖ്യ);
+ശൂന്യം	pkcs11_terminate(ശൂന്യം);
+പൂർണ്ണസംഖ്യ	pkcs11_add_provider(അക്ഷരം *, അക്ഷരം *, ഘടന sshkey ***, അക്ഷരം ***);
+പൂർണ്ണസംഖ്യ	pkcs11_del_provider(അക്ഷരം *);
+പൂർണ്ണസംഖ്യ	pkcs11_sign(ഘടന sshkey *, u_char **, size_t *,
+	    സ്ഥിരം u_char *, size_t, സ്ഥിരം അക്ഷരം *, സ്ഥിരം അക്ഷരം *,
+	    സ്ഥിരം അക്ഷരം *, u_int);
+ശൂന്യം	pkcs11_താക്കോൽ_free(ഘടന sshkey *);
 
 #ifdef WITH_PKCS11_KEYGEN
-struct sshkey *
-	pkcs11_gakp(char *, char *, unsigned int, char *, unsigned int,
-	    unsigned int, unsigned char, uint32_t *);
-struct sshkey *
-	pkcs11_destroy_keypair(char *, char *, unsigned long, unsigned char,
+ഘടന sshkey *
+	pkcs11_gakp(അക്ഷരം *, അക്ഷരം *, unsigned പൂർണ്ണസംഖ്യ, അക്ഷരം *, unsigned പൂർണ്ണസംഖ്യ,
+	    unsigned പൂർണ്ണസംഖ്യ, unsigned അക്ഷരം, uint32_t *);
+ഘടന sshkey *
+	pkcs11_destroy_keypair(അക്ഷരം *, അക്ഷരം *, unsigned long, unsigned അക്ഷരം,
 	    uint32_t *);
 #endif
 
 /* Only available in ssh-pkcs11-client.c */
-int pkcs11_make_cert(const struct sshkey *,
-    const struct sshkey *, struct sshkey **);
+പൂർണ്ണസംഖ്യ pkcs11_make_cert(സ്ഥിരം ഘടന sshkey *,
+    സ്ഥിരം ഘടന sshkey *, ഘടന sshkey **);
