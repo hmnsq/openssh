@@ -13,91 +13,91 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
+#ضمن <sys/types.h>
+#ضمن <sys/wait.h>
+#ضمن <sys/socket.h>
 
-#include <net/if.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ضمن <net/if.h>
+#ضمن <netinet/in.h>
+#ضمن <arpa/inet.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <ifaddrs.h>
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <limits.h>
+#ضمن <netdb.h>
+#ضمن <paths.h>
+#ضمن <pwd.h>
+#ضمن <poll.h>
+#ضمن <signal.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <ifaddrs.h>
 
-#include "xmalloc.h"
-#include "hostfile.h"
-#include "ssh.h"
-#include "compat.h"
-#include "packet.h"
-#include "sshkey.h"
-#include "sshconnect.h"
-#include "log.h"
-#include "match.h"
-#include "misc.h"
-#include "readconf.h"
-#include "dns.h"
-#include "monitor_fdpass.h"
-#include "authfile.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "kex.h"
+#ضمن "xmalloc.h"
+#ضمن "hostfile.h"
+#ضمن "ssh.h"
+#ضمن "compat.h"
+#ضمن "packet.h"
+#ضمن "sshkey.h"
+#ضمن "sshconnect.h"
+#ضمن "log.h"
+#ضمن "match.h"
+#ضمن "misc.h"
+#ضمن "readconf.h"
+#ضمن "dns.h"
+#ضمن "monitor_fdpass.h"
+#ضمن "authfile.h"
+#ضمن "ssherr.h"
+#ضمن "authfd.h"
+#ضمن "kex.h"
 
-struct sshkey *previous_host_key = NULL;
+بنية sshkey *previous_host_key = عدم;
 
-static int matching_host_key_dns = 0;
+ساكن صحيح matching_host_key_dns = 0;
 
-static pid_t proxy_command_pid = 0;
+ساكن pid_t proxy_command_pid = 0;
 
 /* import */
-extern int debug_flag;
-extern Options options;
-extern char *__progname;
+خارجي صحيح debug_flag;
+خارجي Options options;
+خارجي حرف *__progname;
 
-static int show_other_keys(struct hostkeys *, struct sshkey *);
-static void warn_changed_key(struct sshkey *);
+ساكن صحيح show_other_keys(بنية hostkeys *, بنية sshkey *);
+ساكن فراغ warn_changed_key(بنية sshkey *);
 
-void
-ssh_conn_info_free(struct ssh_conn_info *cinfo)
+فراغ
+ssh_conn_info_free(بنية ssh_conn_info *cinfo)
 {
-	if (cinfo == NULL)
-		return;
-	free(cinfo->conn_hash_hex);
-	free(cinfo->shorthost);
-	free(cinfo->uidstr);
-	free(cinfo->keyalias);
-	free(cinfo->thishost);
-	free(cinfo->host_arg);
-	free(cinfo->portstr);
-	free(cinfo->remhost);
-	free(cinfo->remuser);
-	free(cinfo->homedir);
-	free(cinfo->locuser);
-	free(cinfo->jmphost);
-	freezero(cinfo, sizeof(*cinfo));
+	אם (cinfo == عدم)
+		החזר;
+	حرر(cinfo->conn_hash_hex);
+	حرر(cinfo->shorthost);
+	حرر(cinfo->uidstr);
+	حرر(cinfo->keyalias);
+	حرر(cinfo->thishost);
+	حرر(cinfo->host_arg);
+	حرر(cinfo->portstr);
+	حرر(cinfo->remhost);
+	حرر(cinfo->remuser);
+	حرر(cinfo->homedir);
+	حرر(cinfo->locuser);
+	حرر(cinfo->jmphost);
+	freezero(cinfo, حجم(*cinfo));
 }
 
-struct ssh_conn_info *
-ssh_conn_info_dup(const struct ssh_conn_info *cinfo)
+بنية ssh_conn_info *
+ssh_conn_info_dup(ثابت بنية ssh_conn_info *cinfo)
 {
-	struct ssh_conn_info *ret;
+	بنية ssh_conn_info *ret;
 
-	if (cinfo == NULL)
-		return NULL;
-	ret = xcalloc(1, sizeof(*ret));
+	אם (cinfo == عدم)
+		החזר عدم;
+	ret = xcalloc(1, حجم(*ret));
 	ret->conn_hash_hex = xstrdup(cinfo->conn_hash_hex);
 	ret->shorthost = xstrdup(cinfo->shorthost);
 	ret->uidstr = xstrdup(cinfo->uidstr);
@@ -110,19 +110,19 @@ ssh_conn_info_dup(const struct ssh_conn_info *cinfo)
 	ret->homedir = xstrdup(cinfo->homedir);
 	ret->locuser = xstrdup(cinfo->locuser);
 	ret->jmphost = xstrdup(cinfo->jmphost);
-	return ret;
+	החזר ret;
 }
 
 /* Expand a proxy command */
-static char *
-expand_proxy_command(const char *proxy_command, const char *user,
-    const char *host, const char *host_arg, int port)
+ساكن حرف *
+expand_proxy_command(ثابت حرف *proxy_command, ثابت حرف *user,
+    ثابت حرف *host, ثابت حرف *host_arg, صحيح port)
 {
-	char *tmp, *ret, strport[NI_MAXSERV];
-	const char *keyalias = options.host_key_alias ?
+	حرف *tmp, *ret, strport[NI_MAXSERV];
+	ثابت حرف *keyalias = options.host_key_alias ?
 	    options.host_key_alias : host_arg;
 
-	snprintf(strport, sizeof strport, "%d", port);
+	snprintf(strport, حجم strport, "%d", port);
 	xasprintf(&tmp, "exec %s", proxy_command);
 	ret = percent_expand(tmp,
 	    "h", host,
@@ -130,28 +130,28 @@ expand_proxy_command(const char *proxy_command, const char *user,
 	    "n", host_arg,
 	    "p", strport,
 	    "r", options.user,
-	    (char *)NULL);
-	free(tmp);
-	return ret;
+	    (حرف *)عدم);
+	حرر(tmp);
+	החזר ret;
 }
 
 /*
  * Connect to the given ssh server using a proxy command that passes a
  * a connected fd back to us.
  */
-static int
-ssh_proxy_fdpass_connect(struct ssh *ssh, const char *host,
-    const char *host_arg, u_short port, const char *proxy_command)
+ساكن صحيح
+ssh_proxy_fdpass_connect(بنية ssh *ssh, ثابت حرف *host,
+    ثابت حرف *host_arg, u_short port, ثابت حرف *proxy_command)
 {
-	char *command_string;
-	int sp[2], sock;
+	حرف *command_string;
+	صحيح sp[2], sock;
 	pid_t pid;
-	char *shell;
+	حرف *shell;
 
-	if ((shell = getenv("SHELL")) == NULL)
+	אם ((shell = getenv("SHELL")) == عدم)
 		shell = _PATH_BSHELL;
 
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sp) == -1)
+	אם (socketpair(AF_UNIX, SOCK_STREAM, 0, sp) == -1)
 		fatal("Could not create socketpair to communicate with "
 		    "proxy dialer: %.100s", strerror(errno));
 
@@ -160,34 +160,34 @@ ssh_proxy_fdpass_connect(struct ssh *ssh, const char *host,
 	debug("Executing proxy dialer command: %.500s", command_string);
 
 	/* Fork and execute the proxy command. */
-	if ((pid = fork()) == 0) {
-		char *argv[10];
+	אם ((pid = fork()) == 0) {
+		حرف *argv[10];
 
 		close(sp[1]);
 		/* Redirect stdin and stdout. */
-		if (sp[0] != 0) {
-			if (dup2(sp[0], 0) == -1)
+		אם (sp[0] != 0) {
+			אם (dup2(sp[0], 0) == -1)
 				perror("dup2 stdin");
 		}
-		if (sp[0] != 1) {
-			if (dup2(sp[0], 1) == -1)
+		אם (sp[0] != 1) {
+			אם (dup2(sp[0], 1) == -1)
 				perror("dup2 stdout");
 		}
-		if (sp[0] >= 2)
+		אם (sp[0] >= 2)
 			close(sp[0]);
 
 		/*
 		 * Stderr is left for non-ControlPersist connections is so
 		 * error messages may be printed on the user's terminal.
 		 */
-		if (!debug_flag && options.control_path != NULL &&
+		אם (!debug_flag && options.control_path != عدم &&
 		    options.control_persist && stdfd_devnull(0, 0, 1) == -1)
 			error_f("stdfd_devnull failed");
 
 		argv[0] = shell;
 		argv[1] = "-c";
 		argv[2] = command_string;
-		argv[3] = NULL;
+		argv[3] = عدم;
 
 		/*
 		 * Execute the proxy command.
@@ -198,43 +198,43 @@ ssh_proxy_fdpass_connect(struct ssh *ssh, const char *host,
 		exit(1);
 	}
 	/* Parent. */
-	if (pid == -1)
+	אם (pid == -1)
 		fatal("fork failed: %.100s", strerror(errno));
 	close(sp[0]);
-	free(command_string);
+	حرر(command_string);
 
-	if ((sock = mm_receive_fd(sp[1])) == -1)
+	אם ((sock = mm_receive_fd(sp[1])) == -1)
 		fatal("proxy dialer did not pass back a connection");
 	close(sp[1]);
 
-	while (waitpid(pid, NULL, 0) == -1)
-		if (errno != EINTR)
+	כלעוד (waitpid(pid, عدم, 0) == -1)
+		אם (errno != EINTR)
 			fatal("Couldn't wait for child: %s", strerror(errno));
 
 	/* Set the connection file descriptors. */
-	if (ssh_packet_set_connection(ssh, sock, sock) == NULL)
-		return -1; /* ssh_packet_set_connection logs error */
+	אם (ssh_packet_set_connection(ssh, sock, sock) == عدم)
+		החזר -1; /* ssh_packet_set_connection logs error */
 
-	return 0;
+	החזר 0;
 }
 
 /*
  * Connect to the given ssh server using a proxy command.
  */
-static int
-ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
-    u_short port, const char *proxy_command)
+ساكن صحيح
+ssh_proxy_connect(بنية ssh *ssh, ثابت حرف *host, ثابت حرف *host_arg,
+    u_short port, ثابت حرف *proxy_command)
 {
-	char *command_string;
-	int pin[2], pout[2];
+	حرف *command_string;
+	صحيح pin[2], pout[2];
 	pid_t pid;
-	char *shell;
+	حرف *shell;
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	אם ((shell = getenv("SHELL")) == عدم || *shell == '\0')
 		shell = _PATH_BSHELL;
 
 	/* Create pipes for communicating with the proxy. */
-	if (pipe(pin) == -1 || pipe(pout) == -1)
+	אם (pipe(pin) == -1 || pipe(pout) == -1)
 		fatal("Could not create pipes to communicate with the proxy: %.100s",
 		    strerror(errno));
 
@@ -243,18 +243,18 @@ ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
 	debug("Executing proxy command: %.500s", command_string);
 
 	/* Fork and execute the proxy command. */
-	if ((pid = fork()) == 0) {
-		char *argv[10];
+	אם ((pid = fork()) == 0) {
+		حرف *argv[10];
 
 		/* Redirect stdin and stdout. */
 		close(pin[1]);
-		if (pin[0] != 0) {
-			if (dup2(pin[0], 0) == -1)
+		אם (pin[0] != 0) {
+			אם (dup2(pin[0], 0) == -1)
 				perror("dup2 stdin");
 			close(pin[0]);
 		}
 		close(pout[0]);
-		if (dup2(pout[1], 1) == -1)
+		אם (dup2(pout[1], 1) == -1)
 			perror("dup2 stdout");
 		/* Cannot be 1 because pin allocated two descriptors. */
 		close(pout[1]);
@@ -263,14 +263,14 @@ ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
 		 * Stderr is left for non-ControlPersist connections is so
 		 * error messages may be printed on the user's terminal.
 		 */
-		if (!debug_flag && options.control_path != NULL &&
+		אם (!debug_flag && options.control_path != عدم &&
 		    options.control_persist && stdfd_devnull(0, 0, 1) == -1)
 			error_f("stdfd_devnull failed");
 
 		argv[0] = shell;
 		argv[1] = "-c";
 		argv[2] = command_string;
-		argv[3] = NULL;
+		argv[3] = عدم;
 
 		/*
 		 * Execute the proxy command.  Note that we gave up any
@@ -282,9 +282,9 @@ ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
 		exit(1);
 	}
 	/* Parent. */
-	if (pid == -1)
+	אם (pid == -1)
 		fatal("fork failed: %.100s", strerror(errno));
-	else
+	אחרת
 		proxy_command_pid = pid; /* save pid to clean up later */
 
 	/* Close child side of the descriptors. */
@@ -292,23 +292,23 @@ ssh_proxy_connect(struct ssh *ssh, const char *host, const char *host_arg,
 	close(pout[1]);
 
 	/* Free the command name. */
-	free(command_string);
+	حرر(command_string);
 
 	/* Set the connection file descriptors. */
-	if (ssh_packet_set_connection(ssh, pout[0], pin[1]) == NULL)
-		return -1; /* ssh_packet_set_connection logs error */
+	אם (ssh_packet_set_connection(ssh, pout[0], pin[1]) == عدم)
+		החזר -1; /* ssh_packet_set_connection logs error */
 
-	return 0;
+	החזר 0;
 }
 
-void
-ssh_kill_proxy_command(void)
+فراغ
+ssh_kill_proxy_command(فراغ)
 {
 	/*
 	 * Send SIGHUP to proxy command if used. We don't wait() in
 	 * case it hangs and instead rely on init to reap the child
 	 */
-	if (proxy_command_pid > 1)
+	אם (proxy_command_pid > 1)
 		kill(proxy_command_pid, SIGHUP);
 }
 
@@ -318,150 +318,150 @@ ssh_kill_proxy_command(void)
  * address that matches the desired address family on the specified interface.
  * Returns 0 and fills in *resultp and *rlenp on success. Returns -1 on failure.
  */
-static int
-check_ifaddrs(const char *ifname, int af, const struct ifaddrs *ifaddrs,
-    struct sockaddr_storage *resultp, socklen_t *rlenp)
+ساكن صحيح
+check_ifaddrs(ثابت حرف *ifname, صحيح af, ثابت بنية ifaddrs *ifaddrs,
+    بنية sockaddr_storage *resultp, socklen_t *rlenp)
 {
-	struct sockaddr_in6 *sa6;
-	struct sockaddr_in *sa;
-	struct in6_addr *v6addr;
-	const struct ifaddrs *ifa;
-	int allow_local;
+	بنية sockaddr_in6 *sa6;
+	بنية sockaddr_in *sa;
+	بنية in6_addr *v6addr;
+	ثابت بنية ifaddrs *ifa;
+	صحيح allow_local;
 
 	/*
 	 * Prefer addresses that are not loopback or linklocal, but use them
 	 * if nothing else matches.
 	 */
-	for (allow_local = 0; allow_local < 2; allow_local++) {
-		for (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
-			if (ifa->ifa_addr == NULL || ifa->ifa_name == NULL ||
+	עבור (allow_local = 0; allow_local < 2; allow_local++) {
+		עבור (ifa = ifaddrs; ifa != عدم; ifa = ifa->ifa_next) {
+			אם (ifa->ifa_addr == عدم || ifa->ifa_name == عدم ||
 			    (ifa->ifa_flags & IFF_UP) == 0 ||
 			    ifa->ifa_addr->sa_family != af ||
 			    strcmp(ifa->ifa_name, options.bind_interface) != 0)
-				continue;
-			switch (ifa->ifa_addr->sa_family) {
-			case AF_INET:
-				sa = (struct sockaddr_in *)ifa->ifa_addr;
-				if (!allow_local && sa->sin_addr.s_addr ==
+				استمر;
+			بدل (ifa->ifa_addr->sa_family) {
+			حالة AF_INET:
+				sa = (بنية sockaddr_in *)ifa->ifa_addr;
+				אם (!allow_local && sa->sin_addr.s_addr ==
 				    htonl(INADDR_LOOPBACK))
-					continue;
-				if (*rlenp < sizeof(struct sockaddr_in)) {
+					استمر;
+				אם (*rlenp < حجم(بنية sockaddr_in)) {
 					error_f("v4 addr doesn't fit");
-					return -1;
+					החזר -1;
 				}
-				*rlenp = sizeof(struct sockaddr_in);
+				*rlenp = حجم(بنية sockaddr_in);
 				memcpy(resultp, sa, *rlenp);
-				return 0;
-			case AF_INET6:
-				sa6 = (struct sockaddr_in6 *)ifa->ifa_addr;
+				החזר 0;
+			حالة AF_INET6:
+				sa6 = (بنية sockaddr_in6 *)ifa->ifa_addr;
 				v6addr = &sa6->sin6_addr;
-				if (!allow_local &&
+				אם (!allow_local &&
 				    (IN6_IS_ADDR_LINKLOCAL(v6addr) ||
 				    IN6_IS_ADDR_LOOPBACK(v6addr)))
-					continue;
-				if (*rlenp < sizeof(struct sockaddr_in6)) {
+					استمر;
+				אם (*rlenp < حجم(بنية sockaddr_in6)) {
 					error_f("v6 addr doesn't fit");
-					return -1;
+					החזר -1;
 				}
-				*rlenp = sizeof(struct sockaddr_in6);
+				*rlenp = حجم(بنية sockaddr_in6);
 				memcpy(resultp, sa6, *rlenp);
-				return 0;
+				החזר 0;
 			}
 		}
 	}
-	return -1;
+	החזר -1;
 }
 #endif
 
 /*
  * Creates a socket for use as the ssh connection.
  */
-static int
-ssh_create_socket(struct addrinfo *ai)
+ساكن صحيح
+ssh_create_socket(بنية addrinfo *ai)
 {
-	int sock, r;
-	struct sockaddr_storage bindaddr;
+	صحيح sock, r;
+	بنية sockaddr_storage bindaddr;
 	socklen_t bindaddrlen = 0;
-	struct addrinfo hints, *res = NULL;
+	بنية addrinfo hints, *res = عدم;
 #ifdef HAVE_IFADDRS_H
-	struct ifaddrs *ifaddrs = NULL;
+	بنية ifaddrs *ifaddrs = عدم;
 #endif
-	char ntop[NI_MAXHOST];
+	حرف ntop[NI_MAXHOST];
 
 	sock = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-	if (sock == -1) {
+	אם (sock == -1) {
 		error("socket: %s", strerror(errno));
-		return -1;
+		החזר -1;
 	}
-	(void)fcntl(sock, F_SETFD, FD_CLOEXEC);
+	(فراغ)fcntl(sock, F_SETFD, FD_CLOEXEC);
 
 	/* Use interactive QOS (if specified) until authentication completed */
-	if (options.ip_qos_interactive != INT_MAX)
+	אם (options.ip_qos_interactive != INT_MAX)
 		set_sock_tos(sock, options.ip_qos_interactive);
 
 	/* Bind the socket to an alternative local IP address */
-	if (options.bind_address == NULL && options.bind_interface == NULL)
-		return sock;
+	אם (options.bind_address == عدم && options.bind_interface == عدم)
+		החזר sock;
 
-	if (options.bind_address != NULL) {
-		memset(&hints, 0, sizeof(hints));
+	אם (options.bind_address != عدم) {
+		memset(&hints, 0, حجم(hints));
 		hints.ai_family = ai->ai_family;
 		hints.ai_socktype = ai->ai_socktype;
 		hints.ai_protocol = ai->ai_protocol;
 		hints.ai_flags = AI_PASSIVE;
-		if ((r = getaddrinfo(options.bind_address, NULL,
+		אם ((r = getaddrinfo(options.bind_address, عدم,
 		    &hints, &res)) != 0) {
 			error("getaddrinfo: %s: %s", options.bind_address,
 			    ssh_gai_strerror(r));
-			goto fail;
+			اذهب fail;
 		}
-		if (res == NULL) {
+		אם (res == عدم) {
 			error("getaddrinfo: no addrs");
-			goto fail;
+			اذهب fail;
 		}
 		memcpy(&bindaddr, res->ai_addr, res->ai_addrlen);
 		bindaddrlen = res->ai_addrlen;
-	} else if (options.bind_interface != NULL) {
+	} אחרת אם (options.bind_interface != عدم) {
 #ifdef HAVE_IFADDRS_H
-		if ((r = getifaddrs(&ifaddrs)) != 0) {
+		אם ((r = getifaddrs(&ifaddrs)) != 0) {
 			error("getifaddrs: %s: %s", options.bind_interface,
 			    strerror(errno));
-			goto fail;
+			اذهب fail;
 		}
-		bindaddrlen = sizeof(bindaddr);
-		if (check_ifaddrs(options.bind_interface, ai->ai_family,
+		bindaddrlen = حجم(bindaddr);
+		אם (check_ifaddrs(options.bind_interface, ai->ai_family,
 		    ifaddrs, &bindaddr, &bindaddrlen) != 0) {
 			logit("getifaddrs: %s: no suitable addresses",
 			    options.bind_interface);
-			goto fail;
+			اذهب fail;
 		}
-#else
+#אחרת
 		error("BindInterface not supported on this platform.");
 #endif
 	}
-	if ((r = getnameinfo((struct sockaddr *)&bindaddr, bindaddrlen,
-	    ntop, sizeof(ntop), NULL, 0, NI_NUMERICHOST)) != 0) {
+	אם ((r = getnameinfo((بنية sockaddr *)&bindaddr, bindaddrlen,
+	    ntop, حجم(ntop), عدم, 0, NI_NUMERICHOST)) != 0) {
 		error_f("getnameinfo failed: %s", ssh_gai_strerror(r));
-		goto fail;
+		اذهب fail;
 	}
-	if (bind(sock, (struct sockaddr *)&bindaddr, bindaddrlen) != 0) {
+	אם (bind(sock, (بنية sockaddr *)&bindaddr, bindaddrlen) != 0) {
 		error("bind %s: %s", ntop, strerror(errno));
-		goto fail;
+		اذهب fail;
 	}
 	debug_f("bound to %s", ntop);
 	/* success */
-	goto out;
+	اذهب out;
 fail:
 	close(sock);
 	sock = -1;
  out:
-	if (res != NULL)
+	אם (res != عدم)
 		freeaddrinfo(res);
 #ifdef HAVE_IFADDRS_H
-	if (ifaddrs != NULL)
+	אם (ifaddrs != عدم)
 		freeifaddrs(ifaddrs);
 #endif
-	return sock;
+	החזר sock;
 }
 
 /*
@@ -473,22 +473,22 @@ fail:
  * and %p substituted for host and port, respectively) to use to contact
  * the daemon.
  */
-static int
-ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
-    struct sockaddr_storage *hostaddr, u_short port, int connection_attempts,
-    int *timeout_ms, int want_keepalive)
+ساكن صحيح
+ssh_connect_direct(بنية ssh *ssh, ثابت حرف *host, بنية addrinfo *aitop,
+    بنية sockaddr_storage *hostaddr, u_short port, صحيح connection_attempts,
+    صحيح *timeout_ms, صحيح want_keepalive)
 {
-	int saved_timeout_ms = *timeout_ms;
-	int oerrno, sock = -1, attempt;
-	char ntop[NI_MAXHOST], strport[NI_MAXSERV];
-	struct addrinfo *ai;
+	صحيح saved_timeout_ms = *timeout_ms;
+	صحيح oerrno, sock = -1, attempt;
+	حرف ntop[NI_MAXHOST], strport[NI_MAXSERV];
+	بنية addrinfo *ai;
 
 	debug3_f("entering");
-	memset(ntop, 0, sizeof(ntop));
-	memset(strport, 0, sizeof(strport));
+	memset(ntop, 0, حجم(ntop));
+	memset(strport, 0, حجم(strport));
 
-	for (attempt = 0; attempt < connection_attempts; attempt++) {
-		if (attempt > 0) {
+	עבור (attempt = 0; attempt < connection_attempts; attempt++) {
+		אם (attempt > 0) {
 			/* Sleep a moment before retrying. */
 			sleep(1);
 			debug("Trying again...");
@@ -497,26 +497,26 @@ ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
 		 * Loop through addresses for this host, and try each one in
 		 * sequence until the connection succeeds.
 		 */
-		for (ai = aitop; ai; ai = ai->ai_next) {
-			if (ai->ai_family != AF_INET &&
+		עבור (ai = aitop; ai; ai = ai->ai_next) {
+			אם (ai->ai_family != AF_INET &&
 			    ai->ai_family != AF_INET6) {
 				errno = EAFNOSUPPORT;
-				continue;
+				استمر;
 			}
-			if (getnameinfo(ai->ai_addr, ai->ai_addrlen,
-			    ntop, sizeof(ntop), strport, sizeof(strport),
+			אם (getnameinfo(ai->ai_addr, ai->ai_addrlen,
+			    ntop, حجم(ntop), strport, حجم(strport),
 			    NI_NUMERICHOST|NI_NUMERICSERV) != 0) {
 				oerrno = errno;
 				error_f("getnameinfo failed");
 				errno = oerrno;
-				continue;
+				استمر;
 			}
-			if (options.address_family != AF_UNSPEC &&
+			אם (options.address_family != AF_UNSPEC &&
 			    ai->ai_family != options.address_family) {
 				debug2_f("skipping address [%s]:%s: "
 				    "wrong address family", ntop, strport);
 				errno = EAFNOSUPPORT;
-				continue;
+				استمر;
 			}
 
 			debug("Connecting to %.200s [%.100s] port %s.",
@@ -524,19 +524,19 @@ ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
 
 			/* Create a socket for connecting. */
 			sock = ssh_create_socket(ai);
-			if (sock < 0) {
+			אם (sock < 0) {
 				/* Any error is already output */
 				errno = 0;
-				continue;
+				استمر;
 			}
 
 			*timeout_ms = saved_timeout_ms;
-			if (timeout_connect(sock, ai->ai_addr, ai->ai_addrlen,
+			אם (timeout_connect(sock, ai->ai_addr, ai->ai_addrlen,
 			    timeout_ms) >= 0) {
 				/* Successful connection. */
 				memcpy(hostaddr, ai->ai_addr, ai->ai_addrlen);
-				break;
-			} else {
+				اكسر;
+			} אחרת {
 				oerrno = errno;
 				debug("connect to address %s port %s: %s",
 				    ntop, strport, strerror(errno));
@@ -545,99 +545,99 @@ ssh_connect_direct(struct ssh *ssh, const char *host, struct addrinfo *aitop,
 				errno = oerrno;
 			}
 		}
-		if (sock != -1)
-			break;	/* Successful connection. */
+		אם (sock != -1)
+			اكسر;	/* Successful connection. */
 	}
 
 	/* Return failure if we didn't get a successful connection. */
-	if (sock == -1) {
+	אם (sock == -1) {
 		error("ssh: connect to host %s port %s: %s",
 		    host, strport, errno == 0 ? "failure" : strerror(errno));
-		return -1;
+		החזר -1;
 	}
 
 	debug("Connection established.");
 
 	/* Set SO_KEEPALIVE if requested. */
-	if (want_keepalive)
+	אם (want_keepalive)
 		set_keepalive(sock); /* logs errors */
 
 	/* Set the connection. */
-	if (ssh_packet_set_connection(ssh, sock, sock) == NULL)
-		return -1; /* ssh_packet_set_connection logs error */
+	אם (ssh_packet_set_connection(ssh, sock, sock) == عدم)
+		החזר -1; /* ssh_packet_set_connection logs error */
 
-	return 0;
+	החזר 0;
 }
 
-int
-ssh_connect(struct ssh *ssh, const char *host, const char *host_arg,
-    struct addrinfo *addrs, struct sockaddr_storage *hostaddr, u_short port,
-    int connection_attempts, int *timeout_ms, int want_keepalive)
+صحيح
+ssh_connect(بنية ssh *ssh, ثابت حرف *host, ثابت حرف *host_arg,
+    بنية addrinfo *addrs, بنية sockaddr_storage *hostaddr, u_short port,
+    صحيح connection_attempts, صحيح *timeout_ms, صحيح want_keepalive)
 {
-	int in, out;
+	صحيح in, out;
 
-	if (options.proxy_command == NULL) {
-		return ssh_connect_direct(ssh, host, addrs, hostaddr, port,
+	אם (options.proxy_command == عدم) {
+		החזר ssh_connect_direct(ssh, host, addrs, hostaddr, port,
 		    connection_attempts, timeout_ms, want_keepalive);
-	} else if (strcmp(options.proxy_command, "-") == 0) {
-		if ((in = dup(STDIN_FILENO)) == -1 ||
+	} אחרת אם (strcmp(options.proxy_command, "-") == 0) {
+		אם ((in = dup(STDIN_FILENO)) == -1 ||
 		    (out = dup(STDOUT_FILENO)) == -1) {
-			if (in >= 0)
+			אם (in >= 0)
 				close(in);
 			error_f("dup() in/out failed");
-			return -1; /* ssh_packet_set_connection logs error */
+			החזר -1; /* ssh_packet_set_connection logs error */
 		}
-		if ((ssh_packet_set_connection(ssh, in, out)) == NULL)
-			return -1; /* ssh_packet_set_connection logs error */
-		return 0;
-	} else if (options.proxy_use_fdpass) {
-		return ssh_proxy_fdpass_connect(ssh, host, host_arg, port,
+		אם ((ssh_packet_set_connection(ssh, in, out)) == عدم)
+			החזר -1; /* ssh_packet_set_connection logs error */
+		החזר 0;
+	} אחרת אם (options.proxy_use_fdpass) {
+		החזר ssh_proxy_fdpass_connect(ssh, host, host_arg, port,
 		    options.proxy_command);
 	}
-	return ssh_proxy_connect(ssh, host, host_arg, port,
+	החזר ssh_proxy_connect(ssh, host, host_arg, port,
 	    options.proxy_command);
 }
 
 /* defaults to 'no' */
-static int
-confirm(const char *prompt, const char *fingerprint)
+ساكن صحيح
+confirm(ثابت حرف *prompt, ثابت حرف *fingerprint)
 {
-	const char *msg, *again = "Please type 'yes' or 'no': ";
-	const char *again_fp = "Please type 'yes', 'no' or the fingerprint: ";
-	char *p, *cp;
-	int ret = -1;
+	ثابت حرف *msg, *again = "Please type 'yes' or 'no': ";
+	ثابت حرف *again_fp = "Please type 'yes', 'no' or the fingerprint: ";
+	حرف *p, *cp;
+	صحيح ret = -1;
 
-	if (options.batch_mode)
-		return 0;
-	for (msg = prompt;;msg = fingerprint ? again_fp : again) {
+	אם (options.batch_mode)
+		החזר 0;
+	עבור (msg = prompt;;msg = fingerprint ? again_fp : again) {
 		cp = p = read_passphrase(msg, RP_ECHO);
-		if (p == NULL)
-			return 0;
+		אם (p == عدم)
+			החזר 0;
 		p += strspn(p, " \t"); /* skip leading whitespace */
 		p[strcspn(p, " \t\n")] = '\0'; /* remove trailing whitespace */
-		if (p[0] == '\0' || strcasecmp(p, "no") == 0)
+		אם (p[0] == '\0' || strcasecmp(p, "no") == 0)
 			ret = 0;
-		else if (strcasecmp(p, "yes") == 0 || (fingerprint != NULL &&
+		אחרת אם (strcasecmp(p, "yes") == 0 || (fingerprint != عدم &&
 		    strcmp(p, fingerprint) == 0))
 			ret = 1;
-		free(cp);
-		if (ret != -1)
-			return ret;
+		حرر(cp);
+		אם (ret != -1)
+			החזר ret;
 	}
 }
 
-static int
-sockaddr_is_local(struct sockaddr *hostaddr)
+ساكن صحيح
+sockaddr_is_local(بنية sockaddr *hostaddr)
 {
-	switch (hostaddr->sa_family) {
-	case AF_INET:
-		return (ntohl(((struct sockaddr_in *)hostaddr)->
+	بدل (hostaddr->sa_family) {
+	حالة AF_INET:
+		החזר (ntohl(((بنية sockaddr_in *)hostaddr)->
 		    sin_addr.s_addr) >> 24) == IN_LOOPBACKNET;
-	case AF_INET6:
-		return IN6_IS_ADDR_LOOPBACK(
-		    &(((struct sockaddr_in6 *)hostaddr)->sin6_addr));
-	default:
-		return 0;
+	حالة AF_INET6:
+		החזר IN6_IS_ADDR_LOOPBACK(
+		    &(((بنية sockaddr_in6 *)hostaddr)->sin6_addr));
+	افتراضي:
+		החזר 0;
 	}
 }
 
@@ -645,39 +645,39 @@ sockaddr_is_local(struct sockaddr *hostaddr)
  * Prepare the hostname and ip address strings that are used to lookup
  * host keys in known_hosts files. These may have a port number appended.
  */
-void
-get_hostfile_hostname_ipaddr(char *hostname, struct sockaddr *hostaddr,
-    u_short port, char **hostfile_hostname, char **hostfile_ipaddr)
+فراغ
+get_hostfile_hostname_ipaddr(حرف *hostname, بنية sockaddr *hostaddr,
+    u_short port, حرف **hostfile_hostname, حرف **hostfile_ipaddr)
 {
-	char ntop[NI_MAXHOST];
+	حرف ntop[NI_MAXHOST];
 	socklen_t addrlen;
 
-	switch (hostaddr == NULL ? -1 : hostaddr->sa_family) {
-	case -1:
+	بدل (hostaddr == عدم ? -1 : hostaddr->sa_family) {
+	حالة -1:
 		addrlen = 0;
-		break;
-	case AF_INET:
-		addrlen = sizeof(struct sockaddr_in);
-		break;
-	case AF_INET6:
-		addrlen = sizeof(struct sockaddr_in6);
-		break;
-	default:
-		addrlen = sizeof(struct sockaddr);
-		break;
+		اكسر;
+	حالة AF_INET:
+		addrlen = حجم(بنية sockaddr_in);
+		اكسر;
+	حالة AF_INET6:
+		addrlen = حجم(بنية sockaddr_in6);
+		اكسر;
+	افتراضي:
+		addrlen = حجم(بنية sockaddr);
+		اكسر;
 	}
 
 	/*
 	 * We don't have the remote ip-address for connections
 	 * using a proxy command
 	 */
-	if (hostfile_ipaddr != NULL) {
-		if (options.proxy_command == NULL) {
-			if (getnameinfo(hostaddr, addrlen,
-			    ntop, sizeof(ntop), NULL, 0, NI_NUMERICHOST) != 0)
+	אם (hostfile_ipaddr != عدم) {
+		אם (options.proxy_command == عدم) {
+			אם (getnameinfo(hostaddr, addrlen,
+			    ntop, حجم(ntop), عدم, 0, NI_NUMERICHOST) != 0)
 				fatal_f("getnameinfo failed");
 			*hostfile_ipaddr = put_host_port(ntop, port);
-		} else {
+		} אחרת {
 			*hostfile_ipaddr = xstrdup("<no hostip for proxy "
 			    "command>");
 		}
@@ -689,231 +689,231 @@ get_hostfile_hostname_ipaddr(char *hostname, struct sockaddr *hostaddr,
 	 * tunneling over forwarded connections or if you run multiple
 	 * sshd's on different ports on the same machine.
 	 */
-	if (hostfile_hostname != NULL) {
-		if (options.host_key_alias != NULL) {
+	אם (hostfile_hostname != عدم) {
+		אם (options.host_key_alias != عدم) {
 			*hostfile_hostname = xstrdup(options.host_key_alias);
 			debug("using hostkeyalias: %s", *hostfile_hostname);
-		} else {
+		} אחרת {
 			*hostfile_hostname = put_host_port(hostname, port);
 		}
 	}
 }
 
 /* returns non-zero if path appears in hostfiles, or 0 if not. */
-static int
-path_in_hostfiles(const char *path, char **hostfiles, u_int num_hostfiles)
+ساكن صحيح
+path_in_hostfiles(ثابت حرف *path, حرف **hostfiles, u_int num_hostfiles)
 {
 	u_int i;
 
-	for (i = 0; i < num_hostfiles; i++) {
-		if (strcmp(path, hostfiles[i]) == 0)
-			return 1;
+	עבור (i = 0; i < num_hostfiles; i++) {
+		אם (strcmp(path, hostfiles[i]) == 0)
+			החזר 1;
 	}
-	return 0;
+	החזר 0;
 }
 
-struct find_by_key_ctx {
-	const char *host, *ip;
-	const struct sshkey *key;
-	char **names;
+بنية find_by_key_ctx {
+	ثابت حرف *host, *ip;
+	ثابت بنية sshkey *key;
+	حرف **names;
 	u_int nnames;
 };
 
 /* Try to replace home directory prefix (per $HOME) with a ~/ sequence */
-static char *
-try_tilde_unexpand(const char *path)
+ساكن حرف *
+try_tilde_unexpand(ثابت حرف *path)
 {
-	char *home, *ret = NULL;
+	حرف *home, *ret = عدم;
 	size_t l;
 
-	if (*path != '/')
-		return xstrdup(path);
-	if ((home = getenv("HOME")) == NULL || (l = strlen(home)) == 0)
-		return xstrdup(path);
-	if (strncmp(path, home, l) != 0)
-		return xstrdup(path);
+	אם (*path != '/')
+		החזר xstrdup(path);
+	אם ((home = getenv("HOME")) == عدم || (l = strlen(home)) == 0)
+		החזר xstrdup(path);
+	אם (strncmp(path, home, l) != 0)
+		החזר xstrdup(path);
 	/*
 	 * ensure we have matched on a path boundary: either the $HOME that
 	 * we just compared ends with a '/' or the next character of the path
 	 * must be a '/'.
 	 */
-	if (home[l - 1] != '/' && path[l] != '/')
-		return xstrdup(path);
-	if (path[l] == '/')
+	אם (home[l - 1] != '/' && path[l] != '/')
+		החזר xstrdup(path);
+	אם (path[l] == '/')
 		l++;
 	xasprintf(&ret, "~/%s", path + l);
-	return ret;
+	החזר ret;
 }
 
 /*
  * Returns non-zero if the key is accepted by HostkeyAlgorithms.
  * Made slightly less trivial by the multiple RSA signature algorithm names.
  */
-int
-hostkey_accepted_by_hostkeyalgs(const struct sshkey *key)
+صحيح
+hostkey_accepted_by_hostkeyalgs(ثابت بنية sshkey *key)
 {
-	const char *ktype = sshkey_ssh_name(key);
-	const char *hostkeyalgs = options.hostkeyalgorithms;
+	ثابت حرف *ktype = sshkey_ssh_name(key);
+	ثابت حرف *hostkeyalgs = options.hostkeyalgorithms;
 
-	if (key->type == KEY_UNSPEC)
-		return 0;
-	if (key->type == KEY_RSA &&
+	אם (key->type == KEY_UNSPEC)
+		החזר 0;
+	אם (key->type == KEY_RSA &&
 	    (match_pattern_list("rsa-sha2-256", hostkeyalgs, 0) == 1 ||
 	    match_pattern_list("rsa-sha2-512", hostkeyalgs, 0) == 1))
-		return 1;
-	if (key->type == KEY_RSA_CERT &&
+		החזר 1;
+	אם (key->type == KEY_RSA_CERT &&
 	    (match_pattern_list("rsa-sha2-512-cert-v01@openssh.com", hostkeyalgs, 0) == 1 ||
 	    match_pattern_list("rsa-sha2-256-cert-v01@openssh.com", hostkeyalgs, 0) == 1))
-		return 1;
-	return match_pattern_list(ktype, hostkeyalgs, 0) == 1;
+		החזר 1;
+	החזר match_pattern_list(ktype, hostkeyalgs, 0) == 1;
 }
 
-static int
-hostkeys_find_by_key_cb(struct hostkey_foreach_line *l, void *_ctx)
+ساكن صحيح
+hostkeys_find_by_key_cb(بنية hostkey_foreach_line *l, فراغ *_ctx)
 {
-	struct find_by_key_ctx *ctx = (struct find_by_key_ctx *)_ctx;
-	char *path;
+	بنية find_by_key_ctx *ctx = (بنية find_by_key_ctx *)_ctx;
+	حرف *path;
 
 	/* we are looking for keys with names that *do not* match */
-	if ((l->match & HKF_MATCH_HOST) != 0)
-		return 0;
+	אם ((l->match & HKF_MATCH_HOST) != 0)
+		החזר 0;
 	/* not interested in marker lines */
-	if (l->marker != MRK_NONE)
-		return 0;
+	אם (l->marker != MRK_NONE)
+		החזר 0;
 	/* we are only interested in exact key matches */
-	if (l->key == NULL || !sshkey_equal(ctx->key, l->key))
-		return 0;
+	אם (l->key == عدم || !sshkey_equal(ctx->key, l->key))
+		החזר 0;
 	path = try_tilde_unexpand(l->path);
 	debug_f("found matching key in %s:%lu", path, l->linenum);
 	ctx->names = xrecallocarray(ctx->names,
-	    ctx->nnames, ctx->nnames + 1, sizeof(*ctx->names));
+	    ctx->nnames, ctx->nnames + 1, حجم(*ctx->names));
 	xasprintf(&ctx->names[ctx->nnames], "%s:%lu: %s", path, l->linenum,
 	    strncmp(l->hosts, HASH_MAGIC, strlen(HASH_MAGIC)) == 0 ?
 	    "[hashed name]" : l->hosts);
 	ctx->nnames++;
-	free(path);
-	return 0;
+	حرر(path);
+	החזר 0;
 }
 
-static int
-hostkeys_find_by_key_hostfile(const char *file, const char *which,
-    struct find_by_key_ctx *ctx)
+ساكن صحيح
+hostkeys_find_by_key_hostfile(ثابت حرف *file, ثابت حرف *which,
+    بنية find_by_key_ctx *ctx)
 {
-	int r;
+	صحيح r;
 
 	debug3_f("trying %s hostfile \"%s\"", which, file);
-	if ((r = hostkeys_foreach(file, hostkeys_find_by_key_cb, ctx,
+	אם ((r = hostkeys_foreach(file, hostkeys_find_by_key_cb, ctx,
 	    ctx->host, ctx->ip, HKF_WANT_PARSE_KEY, 0)) != 0) {
-		if (r == SSH_ERR_SYSTEM_ERROR && errno == ENOENT) {
+		אם (r == SSH_ERR_SYSTEM_ERROR && errno == ENOENT) {
 			debug_f("hostkeys file %s does not exist", file);
-			return 0;
+			החזר 0;
 		}
 		error_fr(r, "hostkeys_foreach failed for %s", file);
-		return r;
+		החזר r;
 	}
-	return 0;
+	החזר 0;
 }
 
 /*
  * Find 'key' in known hosts file(s) that do not match host/ip.
  * Used to display also-known-as information for previously-unseen hostkeys.
  */
-static void
-hostkeys_find_by_key(const char *host, const char *ip, const struct sshkey *key,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles,
-    char ***names, u_int *nnames)
+ساكن فراغ
+hostkeys_find_by_key(ثابت حرف *host, ثابت حرف *ip, ثابت بنية sshkey *key,
+    حرف **user_hostfiles, u_int num_user_hostfiles,
+    حرف **system_hostfiles, u_int num_system_hostfiles,
+    حرف ***names, u_int *nnames)
 {
-	struct find_by_key_ctx ctx = {NULL, NULL, NULL, NULL, 0};
+	بنية find_by_key_ctx ctx = {عدم, عدم, عدم, عدم, 0};
 	u_int i;
 
-	*names = NULL;
+	*names = عدم;
 	*nnames = 0;
 
-	if (key == NULL || sshkey_is_cert(key))
-		return;
+	אם (key == عدم || sshkey_is_cert(key))
+		החזר;
 
 	ctx.host = host;
 	ctx.ip = ip;
 	ctx.key = key;
 
-	for (i = 0; i < num_user_hostfiles; i++) {
-		if (hostkeys_find_by_key_hostfile(user_hostfiles[i],
+	עבור (i = 0; i < num_user_hostfiles; i++) {
+		אם (hostkeys_find_by_key_hostfile(user_hostfiles[i],
 		    "user", &ctx) != 0)
-			goto fail;
+			اذهب fail;
 	}
-	for (i = 0; i < num_system_hostfiles; i++) {
-		if (hostkeys_find_by_key_hostfile(system_hostfiles[i],
+	עבור (i = 0; i < num_system_hostfiles; i++) {
+		אם (hostkeys_find_by_key_hostfile(system_hostfiles[i],
 		    "system", &ctx) != 0)
-			goto fail;
+			اذهب fail;
 	}
 	/* success */
 	*names = ctx.names;
 	*nnames = ctx.nnames;
-	ctx.names = NULL;
+	ctx.names = عدم;
 	ctx.nnames = 0;
-	return;
+	החזר;
  fail:
-	for (i = 0; i < ctx.nnames; i++)
-		free(ctx.names[i]);
-	free(ctx.names);
+	עבור (i = 0; i < ctx.nnames; i++)
+		حرر(ctx.names[i]);
+	حرر(ctx.names);
 }
 
 #define MAX_OTHER_NAMES	8 /* Maximum number of names to list */
-static char *
-other_hostkeys_message(const char *host, const char *ip,
-    const struct sshkey *key,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles)
+ساكن حرف *
+other_hostkeys_message(ثابت حرف *host, ثابت حرف *ip,
+    ثابت بنية sshkey *key,
+    حرف **user_hostfiles, u_int num_user_hostfiles,
+    حرف **system_hostfiles, u_int num_system_hostfiles)
 {
-	char *ret = NULL, **othernames = NULL;
+	حرف *ret = عدم, **othernames = عدم;
 	u_int i, n, num_othernames = 0;
 
 	hostkeys_find_by_key(host, ip, key,
 	    user_hostfiles, num_user_hostfiles,
 	    system_hostfiles, num_system_hostfiles,
 	    &othernames, &num_othernames);
-	if (num_othernames == 0)
-		return xstrdup("This key is not known by any other names.");
+	אם (num_othernames == 0)
+		החזר xstrdup("This key is not known by any other names.");
 
 	xasprintf(&ret, "This host key is known by the following other "
 	    "names/addresses:");
 
 	n = num_othernames;
-	if (n > MAX_OTHER_NAMES)
+	אם (n > MAX_OTHER_NAMES)
 		n = MAX_OTHER_NAMES;
-	for (i = 0; i < n; i++) {
+	עבור (i = 0; i < n; i++) {
 		xextendf(&ret, "\n", "    %s", othernames[i]);
 	}
-	if (n < num_othernames) {
+	אם (n < num_othernames) {
 		xextendf(&ret, "\n", "    (%d additional names omitted)",
 		    num_othernames - n);
 	}
-	for (i = 0; i < num_othernames; i++)
-		free(othernames[i]);
-	free(othernames);
-	return ret;
+	עבור (i = 0; i < num_othernames; i++)
+		حرر(othernames[i]);
+	حرر(othernames);
+	החזר ret;
 }
 
-void
-load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
-    const char *invocation, const struct ssh_conn_info *cinfo,
-    const struct sshkey *host_key, const char *hostfile_hostname)
+فراغ
+load_hostkeys_command(بنية hostkeys *hostkeys, ثابت حرف *command_template,
+    ثابت حرف *invocation, ثابت بنية ssh_conn_info *cinfo,
+    ثابت بنية sshkey *host_key, ثابت حرف *hostfile_hostname)
 {
-	int r, i, ac = 0;
-	char *key_fp = NULL, *keytext = NULL, *tmp;
-	char *command = NULL, *tag = NULL, **av = NULL;
-	FILE *f = NULL;
+	صحيح r, i, ac = 0;
+	حرف *key_fp = عدم, *keytext = عدم, *tmp;
+	حرف *command = عدم, *tag = عدم, **av = عدم;
+	FILE *f = عدم;
 	pid_t pid;
-	void (*osigchld)(int);
+	فراغ (*osigchld)(صحيح);
 
 	xasprintf(&tag, "KnownHostsCommand-%s", invocation);
 
-	if (host_key != NULL) {
-		if ((key_fp = sshkey_fingerprint(host_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+	אם (host_key != عدم) {
+		אם ((key_fp = sshkey_fingerprint(host_key,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == عدم)
 			fatal_f("sshkey_fingerprint failed");
-		if ((r = sshkey_to_base64(host_key, &keytext)) != 0)
+		אם ((r = sshkey_to_base64(host_key, &keytext)) != 0)
 			fatal_fr(r, "sshkey_to_base64 failed");
 	}
 	/*
@@ -923,54 +923,54 @@ load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
 
 	/* Turn the command into an argument vector */
-	if (argv_split(command_template, &ac, &av, 0) != 0) {
+	אם (argv_split(command_template, &ac, &av, 0) != 0) {
 		error("%s \"%s\" contains invalid quotes", tag,
 		    command_template);
-		goto out;
+		اذهب out;
 	}
-	if (ac == 0) {
+	אם (ac == 0) {
 		error("%s \"%s\" yielded no arguments", tag,
 		    command_template);
-		goto out;
+		اذهب out;
 	}
-	for (i = 1; i < ac; i++) {
+	עבור (i = 1; i < ac; i++) {
 		tmp = percent_dollar_expand(av[i],
 		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
 		    "H", hostfile_hostname,
 		    "I", invocation,
-		    "t", host_key == NULL ? "NONE" : sshkey_ssh_name(host_key),
-		    "f", key_fp == NULL ? "NONE" : key_fp,
-		    "K", keytext == NULL ? "NONE" : keytext,
-		    (char *)NULL);
-		if (tmp == NULL)
+		    "t", host_key == عدم ? "NONE" : sshkey_ssh_name(host_key),
+		    "f", key_fp == عدم ? "NONE" : key_fp,
+		    "K", keytext == عدم ? "NONE" : keytext,
+		    (حرف *)عدم);
+		אם (tmp == عدم)
 			fatal_f("percent_expand failed");
-		free(av[i]);
+		حرر(av[i]);
 		av[i] = tmp;
 	}
 	/* Prepare a printable command for logs, etc. */
 	command = argv_assemble(ac, av);
 
-	if ((pid = subprocess(tag, command, ac, av, &f,
+	אם ((pid = subprocess(tag, command, ac, av, &f,
 	    SSH_SUBPROCESS_STDOUT_CAPTURE|SSH_SUBPROCESS_UNSAFE_PATH|
-	    SSH_SUBPROCESS_PRESERVE_ENV, NULL, NULL, NULL)) == 0)
-		goto out;
+	    SSH_SUBPROCESS_PRESERVE_ENV, عدم, عدم, عدم)) == 0)
+		اذهب out;
 
 	load_hostkeys_file(hostkeys, hostfile_hostname, tag, f, 1);
 
-	if (exited_cleanly(pid, tag, command, 0) != 0)
+	אם (exited_cleanly(pid, tag, command, 0) != 0)
 		fatal("KnownHostsCommand failed");
 
  out:
-	if (f != NULL)
+	אם (f != عدم)
 		fclose(f);
 	ssh_signal(SIGCHLD, osigchld);
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
-	free(tag);
-	free(command);
-	free(key_fp);
-	free(keytext);
+	עבור (i = 0; i < ac; i++)
+		حرر(av[i]);
+	حرر(av);
+	حرر(tag);
+	حرر(command);
+	حرر(key_fp);
+	حرر(keytext);
 }
 
 /*
@@ -980,26 +980,26 @@ load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
 #define RDRW	0
 #define RDONLY	1
 #define ROQUIET	2
-static int
-check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
-    struct sockaddr *hostaddr, u_short port,
-    struct sshkey *host_key, int readonly, int clobber_port,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles,
-    const char *hostfile_command)
+ساكن صحيح
+check_host_key(حرف *hostname, ثابت بنية ssh_conn_info *cinfo,
+    بنية sockaddr *hostaddr, u_short port,
+    بنية sshkey *host_key, صحيح readonly, صحيح clobber_port,
+    حرف **user_hostfiles, u_int num_user_hostfiles,
+    حرف **system_hostfiles, u_int num_system_hostfiles,
+    ثابت حرف *hostfile_command)
 {
 	HostStatus host_status = -1, ip_status = -1;
-	struct sshkey *raw_key = NULL;
-	char *ip = NULL, *host = NULL;
-	char hostline[1000], *hostp, *fp, *ra;
-	char msg[1024];
-	const char *type, *fail_reason = NULL;
-	const struct hostkey_entry *host_found = NULL, *ip_found = NULL;
-	int len, cancelled_forwarding = 0, confirmed;
-	int local = sockaddr_is_local(hostaddr);
-	int r, want_cert = sshkey_is_cert(host_key), host_ip_differ = 0;
-	int hostkey_trusted = 0; /* Known or explicitly accepted by user */
-	struct hostkeys *host_hostkeys, *ip_hostkeys;
+	بنية sshkey *raw_key = عدم;
+	حرف *ip = عدم, *host = عدم;
+	حرف hostline[1000], *hostp, *fp, *ra;
+	حرف msg[1024];
+	ثابت حرف *type, *fail_reason = عدم;
+	ثابت بنية hostkey_entry *host_found = عدم, *ip_found = عدم;
+	صحيح len, cancelled_forwarding = 0, confirmed;
+	صحيح local = sockaddr_is_local(hostaddr);
+	صحيح r, want_cert = sshkey_is_cert(host_key), host_ip_differ = 0;
+	صحيح hostkey_trusted = 0; /* Known or explicitly accepted by user */
+	بنية hostkeys *host_hostkeys, *ip_hostkeys;
 	u_int i;
 
 	/*
@@ -1010,12 +1010,12 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * essentially disables host authentication for localhost; however,
 	 * this is probably not a real problem.
 	 */
-	if (options.no_host_authentication_for_localhost == 1 && local &&
-	    options.host_key_alias == NULL) {
+	אם (options.no_host_authentication_for_localhost == 1 && local &&
+	    options.host_key_alias == عدم) {
 		debug("Forcing accepting of host key for "
 		    "loopback/localhost.");
 		options.update_hostkeys = 0;
-		return 0;
+		החזר 0;
 	}
 
 	/*
@@ -1023,7 +1023,7 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * Note: do this before get_hostfile_hostname_ipaddr() to catch
 	 * '[' or ']' in the name before they are added.
 	 */
-	if (strcspn(hostname, "@?*#[]|'\'\"\\") != strlen(hostname)) {
+	אם (strcspn(hostname, "@?*#[]|'\'\"\\") != strlen(hostname)) {
 		debug_f("invalid hostname \"%s\"; will not record: %s",
 		    hostname, fail_reason);
 		readonly = RDONLY;
@@ -1040,38 +1040,38 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * Turn off check_host_ip if the connection is to localhost, via proxy
 	 * command or if we don't have a hostname to compare with
 	 */
-	if (options.check_host_ip && (local ||
-	    strcmp(hostname, ip) == 0 || options.proxy_command != NULL))
+	אם (options.check_host_ip && (local ||
+	    strcmp(hostname, ip) == 0 || options.proxy_command != عدم))
 		options.check_host_ip = 0;
 
 	host_hostkeys = init_hostkeys();
-	for (i = 0; i < num_user_hostfiles; i++)
+	עבור (i = 0; i < num_user_hostfiles; i++)
 		load_hostkeys(host_hostkeys, host, user_hostfiles[i], 0);
-	for (i = 0; i < num_system_hostfiles; i++)
+	עבור (i = 0; i < num_system_hostfiles; i++)
 		load_hostkeys(host_hostkeys, host, system_hostfiles[i], 0);
-	if (hostfile_command != NULL && !clobber_port) {
+	אם (hostfile_command != عدم && !clobber_port) {
 		load_hostkeys_command(host_hostkeys, hostfile_command,
 		    "HOSTNAME", cinfo, host_key, host);
 	}
 
-	ip_hostkeys = NULL;
-	if (!want_cert && options.check_host_ip) {
+	ip_hostkeys = عدم;
+	אם (!want_cert && options.check_host_ip) {
 		ip_hostkeys = init_hostkeys();
-		for (i = 0; i < num_user_hostfiles; i++)
+		עבור (i = 0; i < num_user_hostfiles; i++)
 			load_hostkeys(ip_hostkeys, ip, user_hostfiles[i], 0);
-		for (i = 0; i < num_system_hostfiles; i++)
+		עבור (i = 0; i < num_system_hostfiles; i++)
 			load_hostkeys(ip_hostkeys, ip, system_hostfiles[i], 0);
-		if (hostfile_command != NULL && !clobber_port) {
+		אם (hostfile_command != عدم && !clobber_port) {
 			load_hostkeys_command(ip_hostkeys, hostfile_command,
 			    "ADDRESS", cinfo, host_key, ip);
 		}
 	}
 
  retry:
-	if (!hostkey_accepted_by_hostkeyalgs(host_key)) {
+	אם (!hostkey_accepted_by_hostkeyalgs(host_key)) {
 		error("host key %s not permitted by HostkeyAlgorithms",
 		    sshkey_ssh_name(host_key));
-		goto fail;
+		اذهب fail;
 	}
 
 	/* Reload these as they may have changed on cert->key downgrade */
@@ -1089,8 +1089,8 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * If there are no hostfiles, or if the hostkey was found via
 	 * KnownHostsCommand, then don't try to touch the disk.
 	 */
-	if (!readonly && (num_user_hostfiles == 0 ||
-	    (host_found != NULL && host_found->note != 0)))
+	אם (!readonly && (num_user_hostfiles == 0 ||
+	    (host_found != عدم && host_found->note != 0)))
 		readonly = RDONLY;
 
 	/*
@@ -1098,103 +1098,103 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * localhost, looking for a certificate, or the hostname was an ip
 	 * address to begin with.
 	 */
-	if (!want_cert && ip_hostkeys != NULL) {
+	אם (!want_cert && ip_hostkeys != عدم) {
 		ip_status = check_key_in_hostkeys(ip_hostkeys, host_key,
 		    &ip_found);
-		if (host_status == HOST_CHANGED &&
+		אם (host_status == HOST_CHANGED &&
 		    (ip_status != HOST_CHANGED ||
-		    (ip_found != NULL &&
+		    (ip_found != عدم &&
 		    !sshkey_equal(ip_found->key, host_found->key))))
 			host_ip_differ = 1;
-	} else
+	} אחרת
 		ip_status = host_status;
 
-	switch (host_status) {
-	case HOST_OK:
+	بدل (host_status) {
+	حالة HOST_OK:
 		/* The host is known and the key matches. */
 		debug("Host '%.200s' is known and matches the %s host %s.",
 		    host, type, want_cert ? "certificate" : "key");
 		debug("Found %s in %s:%lu", want_cert ? "CA key" : "key",
 		    host_found->file, host_found->line);
-		if (want_cert) {
-			if (sshkey_cert_check_host(host_key,
-			    options.host_key_alias == NULL ?
+		אם (want_cert) {
+			אם (sshkey_cert_check_host(host_key,
+			    options.host_key_alias == عدم ?
 			    hostname : options.host_key_alias,
 			    options.ca_sign_algorithms, &fail_reason) != 0) {
 				error("%s", fail_reason);
-				goto fail;
+				اذهب fail;
 			}
 			/*
 			 * Do not attempt hostkey update if a certificate was
 			 * successfully matched.
 			 */
-			if (options.update_hostkeys != 0) {
+			אם (options.update_hostkeys != 0) {
 				options.update_hostkeys = 0;
 				debug3_f("certificate host key in use; "
 				    "disabling UpdateHostkeys");
 			}
 		}
 		/* Turn off UpdateHostkeys if key was in system known_hosts */
-		if (options.update_hostkeys != 0 &&
+		אם (options.update_hostkeys != 0 &&
 		    (path_in_hostfiles(host_found->file,
 		    system_hostfiles, num_system_hostfiles) ||
-		    (ip_status == HOST_OK && ip_found != NULL &&
+		    (ip_status == HOST_OK && ip_found != عدم &&
 		    path_in_hostfiles(ip_found->file,
 		    system_hostfiles, num_system_hostfiles)))) {
 			options.update_hostkeys = 0;
 			debug3_f("host key found in GlobalKnownHostsFile; "
 			    "disabling UpdateHostkeys");
 		}
-		if (options.update_hostkeys != 0 && host_found->note) {
+		אם (options.update_hostkeys != 0 && host_found->note) {
 			options.update_hostkeys = 0;
 			debug3_f("host key found via KnownHostsCommand; "
 			    "disabling UpdateHostkeys");
 		}
-		if (options.check_host_ip && ip_status == HOST_NEW) {
-			if (readonly || want_cert)
+		אם (options.check_host_ip && ip_status == HOST_NEW) {
+			אם (readonly || want_cert)
 				logit("%s host key for IP address "
 				    "'%.128s' not in list of known hosts.",
 				    type, ip);
-			else if (!add_host_to_hostfile(user_hostfiles[0], ip,
+			אחרת אם (!add_host_to_hostfile(user_hostfiles[0], ip,
 			    host_key, options.hash_known_hosts))
 				logit("Failed to add the %s host key for IP "
 				    "address '%.128s' to the list of known "
 				    "hosts (%.500s).", type, ip,
 				    user_hostfiles[0]);
-			else
+			אחרת
 				logit("Warning: Permanently added the %s host "
 				    "key for IP address '%.128s' to the list "
 				    "of known hosts.", type, ip);
-		} else if (options.visual_host_key) {
+		} אחרת אם (options.visual_host_key) {
 			fp = sshkey_fingerprint(host_key,
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
 			ra = sshkey_fingerprint(host_key,
 			    options.fingerprint_hash, SSH_FP_RANDOMART);
-			if (fp == NULL || ra == NULL)
+			אם (fp == عدم || ra == عدم)
 				fatal_f("sshkey_fingerprint failed");
 			logit("Host key fingerprint is: %s\n%s", fp, ra);
-			free(ra);
-			free(fp);
+			حرر(ra);
+			حرر(fp);
 		}
 		hostkey_trusted = 1;
-		break;
-	case HOST_NEW:
-		if (options.host_key_alias == NULL && port != 0 &&
+		اكسر;
+	حالة HOST_NEW:
+		אם (options.host_key_alias == عدم && port != 0 &&
 		    port != SSH_DEFAULT_PORT && !clobber_port) {
 			debug("checking without port identifier");
-			if (check_host_key(hostname, cinfo, hostaddr, 0,
+			אם (check_host_key(hostname, cinfo, hostaddr, 0,
 			    host_key, ROQUIET, 1,
 			    user_hostfiles, num_user_hostfiles,
 			    system_hostfiles, num_system_hostfiles,
 			    hostfile_command) == 0) {
 				debug("found matching key w/out port");
-				break;
+				اكسر;
 			}
 		}
-		if (readonly || want_cert)
-			goto fail;
+		אם (readonly || want_cert)
+			اذهب fail;
 		/* The host is new. */
-		if (options.strict_host_key_checking ==
+		אם (options.strict_host_key_checking ==
 		    SSH_STRICT_HOSTKEY_YES) {
 			/*
 			 * User has requested strict host key checking.  We
@@ -1203,40 +1203,40 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			 */
 			error("No %s host key is known for %.200s and you "
 			    "have requested strict checking.", type, host);
-			goto fail;
-		} else if (options.strict_host_key_checking ==
+			اذهب fail;
+		} אחרת אם (options.strict_host_key_checking ==
 		    SSH_STRICT_HOSTKEY_ASK) {
-			char *msg1 = NULL, *msg2 = NULL;
+			حرف *msg1 = عدم, *msg2 = عدم;
 
 			xasprintf(&msg1, "The authenticity of host "
 			    "'%.200s (%s)' can't be established", host, ip);
 
-			if (show_other_keys(host_hostkeys, host_key)) {
+			אם (show_other_keys(host_hostkeys, host_key)) {
 				xextendf(&msg1, "\n", "but keys of different "
 				    "type are already known for this host.");
-			} else
+			} אחרת
 				xextendf(&msg1, "", ".");
 
 			fp = sshkey_fingerprint(host_key,
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
 			ra = sshkey_fingerprint(host_key,
 			    options.fingerprint_hash, SSH_FP_RANDOMART);
-			if (fp == NULL || ra == NULL)
+			אם (fp == عدم || ra == عدم)
 				fatal_f("sshkey_fingerprint failed");
 			xextendf(&msg1, "\n", "%s key fingerprint is: %s",
 			    type, fp);
-			if (options.visual_host_key)
+			אם (options.visual_host_key)
 				xextendf(&msg1, "\n", "%s", ra);
-			if (options.verify_host_key_dns) {
+			אם (options.verify_host_key_dns) {
 				xextendf(&msg1, "\n",
 				    "%s host key fingerprint found in DNS.",
 				    matching_host_key_dns ?
 				    "Matching" : "No matching");
 			}
 			/* msg2 informs for other names matching this key */
-			if ((msg2 = other_hostkeys_message(host, ip, host_key,
+			אם ((msg2 = other_hostkeys_message(host, ip, host_key,
 			    user_hostfiles, num_user_hostfiles,
-			    system_hostfiles, num_system_hostfiles)) != NULL)
+			    system_hostfiles, num_system_hostfiles)) != عدم)
 				xextendf(&msg1, "\n", "%s", msg2);
 
 			xextendf(&msg1, "\n",
@@ -1244,47 +1244,47 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			    "(yes/no/[fingerprint])? ");
 
 			confirmed = confirm(msg1, fp);
-			free(ra);
-			free(fp);
-			free(msg1);
-			free(msg2);
-			if (!confirmed)
-				goto fail;
+			حرر(ra);
+			حرر(fp);
+			حرر(msg1);
+			حرر(msg2);
+			אם (!confirmed)
+				اذهب fail;
 			hostkey_trusted = 1; /* user explicitly confirmed */
 		}
 		/*
 		 * If in "new" or "off" strict mode, add the key automatically
 		 * to the local known_hosts file.
 		 */
-		if (options.check_host_ip && ip_status == HOST_NEW) {
-			snprintf(hostline, sizeof(hostline), "%s,%s", host, ip);
+		אם (options.check_host_ip && ip_status == HOST_NEW) {
+			snprintf(hostline, حجم(hostline), "%s,%s", host, ip);
 			hostp = hostline;
-			if (options.hash_known_hosts) {
+			אם (options.hash_known_hosts) {
 				/* Add hash of host and IP separately */
 				r = add_host_to_hostfile(user_hostfiles[0],
 				    host, host_key, options.hash_known_hosts) &&
 				    add_host_to_hostfile(user_hostfiles[0], ip,
 				    host_key, options.hash_known_hosts);
-			} else {
+			} אחרת {
 				/* Add unhashed "host,ip" */
 				r = add_host_to_hostfile(user_hostfiles[0],
 				    hostline, host_key,
 				    options.hash_known_hosts);
 			}
-		} else {
+		} אחרת {
 			r = add_host_to_hostfile(user_hostfiles[0], host,
 			    host_key, options.hash_known_hosts);
 			hostp = host;
 		}
 
-		if (!r)
+		אם (!r)
 			logit("Failed to add the host to the list of known "
 			    "hosts (%.500s).", user_hostfiles[0]);
-		else
+		אחרת
 			logit("Warning: Permanently added '%.200s' (%s) to the "
 			    "list of known hosts.", hostp, type);
-		break;
-	case HOST_REVOKED:
+		اكسر;
+	حالة HOST_REVOKED:
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@       WARNING: REVOKED HOST KEY DETECTED!               @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -1296,16 +1296,16 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * If strict host key checking is in use, the user will have
 		 * to edit the key manually and we can only abort.
 		 */
-		if (options.strict_host_key_checking !=
+		אם (options.strict_host_key_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
 			error("%s host key for %.200s was revoked and you have "
 			    "requested strict checking.", type, host);
-			goto fail;
+			اذهب fail;
 		}
-		goto continue_unsafe;
+		اذهب continue_unsafe;
 
-	case HOST_CHANGED:
-		if (want_cert) {
+	حالة HOST_CHANGED:
+		אם (want_cert) {
 			/*
 			 * This is only a debug() since it is valid to have
 			 * CAs with wildcard DNS matches that don't match
@@ -1314,17 +1314,17 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			debug("Host certificate authority does not "
 			    "match %s in %s:%lu", CA_MARKER,
 			    host_found->file, host_found->line);
-			goto fail;
+			اذهب fail;
 		}
-		if (readonly == ROQUIET)
-			goto fail;
-		if (options.check_host_ip && host_ip_differ) {
-			char *key_msg;
-			if (ip_status == HOST_NEW)
+		אם (readonly == ROQUIET)
+			اذهب fail;
+		אם (options.check_host_ip && host_ip_differ) {
+			حرف *key_msg;
+			אם (ip_status == HOST_NEW)
 				key_msg = "is unknown";
-			else if (ip_status == HOST_OK)
+			אחרת אם (ip_status == HOST_OK)
 				key_msg = "is unchanged";
-			else
+			אחרת
 				key_msg = "has a different value";
 			error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			error("@       WARNING: POSSIBLE DNS SPOOFING DETECTED!          @");
@@ -1334,13 +1334,13 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			error("%s. This could either mean that", key_msg);
 			error("DNS SPOOFING is happening or the IP address for the host");
 			error("and its host key have changed at the same time.");
-			if (ip_status != HOST_NEW)
+			אם (ip_status != HOST_NEW)
 				error("Offending key for IP in %s:%lu",
 				    ip_found->file, ip_found->line);
 		}
 		/* The host key has changed. */
 		warn_changed_key(host_key);
-		if (num_user_hostfiles > 0 || num_system_hostfiles > 0) {
+		אם (num_user_hostfiles > 0 || num_system_hostfiles > 0) {
 			error("Add correct host key in %.100s to get rid "
 			    "of this message.", num_user_hostfiles > 0 ?
 			    user_hostfiles[0] : system_hostfiles[0]);
@@ -1353,11 +1353,11 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * If strict host key checking is in use, the user will have
 		 * to edit the key manually and we can only abort.
 		 */
-		if (options.strict_host_key_checking !=
+		אם (options.strict_host_key_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
 			error("Host key for %.200s has changed and you have "
 			    "requested strict checking.", host);
-			goto fail;
+			اذهب fail;
 		}
 
  continue_unsafe:
@@ -1366,31 +1366,31 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * the connection but without MITM-able authentication or
 		 * forwarding.
 		 */
-		if (options.password_authentication) {
+		אם (options.password_authentication) {
 			error("Password authentication is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.password_authentication = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.kbd_interactive_authentication) {
+		אם (options.kbd_interactive_authentication) {
 			error("Keyboard-interactive authentication is disabled"
 			    " to avoid man-in-the-middle attacks.");
 			options.kbd_interactive_authentication = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.forward_agent) {
+		אם (options.forward_agent) {
 			error("Agent forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.forward_agent = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.forward_x11) {
+		אם (options.forward_x11) {
 			error("X11 forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.forward_x11 = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.num_local_forwards > 0 ||
+		אם (options.num_local_forwards > 0 ||
 		    options.num_remote_forwards > 0) {
 			error("Port forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
@@ -1398,18 +1398,18 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			    options.num_remote_forwards = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.tun_open != SSH_TUNMODE_NO) {
+		אם (options.tun_open != SSH_TUNMODE_NO) {
 			error("Tunnel forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
 			options.tun_open = SSH_TUNMODE_NO;
 			cancelled_forwarding = 1;
 		}
-		if (options.update_hostkeys != 0) {
+		אם (options.update_hostkeys != 0) {
 			error("UpdateHostkeys is disabled because the host "
 			    "key is not trusted.");
 			options.update_hostkeys = 0;
 		}
-		if (options.exit_on_forward_failure && cancelled_forwarding)
+		אם (options.exit_on_forward_failure && cancelled_forwarding)
 			fatal("Error: forwarding disabled due to host key "
 			    "check failure");
 
@@ -1420,106 +1420,106 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * by that sentence, and ask the user if they wish to
 		 * accept the authentication.
 		 */
-		break;
-	case HOST_FOUND:
+		اكسر;
+	حالة HOST_FOUND:
 		fatal("internal error");
-		break;
+		اكسر;
 	}
 
-	if (options.check_host_ip && host_status != HOST_CHANGED &&
+	אם (options.check_host_ip && host_status != HOST_CHANGED &&
 	    ip_status == HOST_CHANGED) {
-		snprintf(msg, sizeof(msg),
+		snprintf(msg, حجم(msg),
 		    "Warning: the %s host key for '%.200s' "
 		    "differs from the key for the IP address '%.128s'"
 		    "\nOffending key for IP in %s:%lu",
 		    type, host, ip, ip_found->file, ip_found->line);
-		if (host_status == HOST_OK) {
+		אם (host_status == HOST_OK) {
 			len = strlen(msg);
-			snprintf(msg + len, sizeof(msg) - len,
+			snprintf(msg + len, حجم(msg) - len,
 			    "\nMatching host key in %s:%lu",
 			    host_found->file, host_found->line);
 		}
-		if (options.strict_host_key_checking ==
+		אם (options.strict_host_key_checking ==
 		    SSH_STRICT_HOSTKEY_ASK) {
 			strlcat(msg, "\nAre you sure you want "
-			    "to continue connecting (yes/no)? ", sizeof(msg));
-			if (!confirm(msg, NULL))
-				goto fail;
-		} else if (options.strict_host_key_checking !=
+			    "to continue connecting (yes/no)? ", حجم(msg));
+			אם (!confirm(msg, عدم))
+				اذهب fail;
+		} אחרת אם (options.strict_host_key_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
 			logit("%s", msg);
 			error("Exiting, you have requested strict checking.");
-			goto fail;
-		} else {
+			اذهب fail;
+		} אחרת {
 			logit("%s", msg);
 		}
 	}
 
-	if (!hostkey_trusted && options.update_hostkeys) {
+	אם (!hostkey_trusted && options.update_hostkeys) {
 		debug_f("hostkey not known or explicitly trusted: "
 		    "disabling UpdateHostkeys");
 		options.update_hostkeys = 0;
 	}
 
 	sshkey_free(raw_key);
-	free(ip);
-	free(host);
-	if (host_hostkeys != NULL)
+	حرر(ip);
+	حرر(host);
+	אם (host_hostkeys != عدم)
 		free_hostkeys(host_hostkeys);
-	if (ip_hostkeys != NULL)
+	אם (ip_hostkeys != عدم)
 		free_hostkeys(ip_hostkeys);
-	return 0;
+	החזר 0;
 
 fail:
-	if (want_cert && host_status != HOST_REVOKED) {
+	אם (want_cert && host_status != HOST_REVOKED) {
 		/*
 		 * No matching certificate. Downgrade cert to raw key and
 		 * search normally.
 		 */
 		debug("No matching CA found. Retry with plain key");
-		if ((r = sshkey_from_private(host_key, &raw_key)) != 0)
+		אם ((r = sshkey_from_private(host_key, &raw_key)) != 0)
 			fatal_fr(r, "decode key");
-		if ((r = sshkey_drop_cert(raw_key)) != 0)
+		אם ((r = sshkey_drop_cert(raw_key)) != 0)
 			fatal_r(r, "Couldn't drop certificate");
 		host_key = raw_key;
-		goto retry;
+		اذهب retry;
 	}
 	sshkey_free(raw_key);
-	free(ip);
-	free(host);
-	if (host_hostkeys != NULL)
+	حرر(ip);
+	حرر(host);
+	אם (host_hostkeys != عدم)
 		free_hostkeys(host_hostkeys);
-	if (ip_hostkeys != NULL)
+	אם (ip_hostkeys != عدم)
 		free_hostkeys(ip_hostkeys);
-	return -1;
+	החזר -1;
 }
 
 /* returns 0 if key verifies or -1 if key does NOT verify */
-int
-verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
-    const struct ssh_conn_info *cinfo)
+صحيح
+verify_host_key(حرف *host, بنية sockaddr *hostaddr, بنية sshkey *host_key,
+    ثابت بنية ssh_conn_info *cinfo)
 {
 	u_int i;
-	int r = -1, flags = 0;
-	char valid[64], *fp = NULL, *cafp = NULL;
-	struct sshkey *plain = NULL;
+	صحيح r = -1, flags = 0;
+	حرف valid[64], *fp = عدم, *cafp = عدم;
+	بنية sshkey *plain = عدم;
 
-	if ((fp = sshkey_fingerprint(host_key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	אם ((fp = sshkey_fingerprint(host_key,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == عدم) {
 		error_fr(r, "fingerprint host key");
 		r = -1;
-		goto out;
+		اذهب out;
 	}
 
-	if (sshkey_is_cert(host_key)) {
-		if ((cafp = sshkey_fingerprint(host_key->cert->signature_key,
-		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	אם (sshkey_is_cert(host_key)) {
+		אם ((cafp = sshkey_fingerprint(host_key->cert->signature_key,
+		    options.fingerprint_hash, SSH_FP_DEFAULT)) == عدم) {
 			error_fr(r, "fingerprint CA key");
 			r = -1;
-			goto out;
+			اذهب out;
 		}
 		sshkey_format_cert_validity(host_key->cert,
-		    valid, sizeof(valid));
+		    valid, حجم(valid));
 		debug("Server host certificate: %s %s, serial %llu "
 		    "ID \"%s\" CA %s %s valid %s",
 		    sshkey_ssh_name(host_key), fp,
@@ -1527,63 +1527,63 @@ verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
 		    host_key->cert->key_id,
 		    sshkey_ssh_name(host_key->cert->signature_key), cafp,
 		    valid);
-		for (i = 0; i < host_key->cert->nprincipals; i++) {
+		עבור (i = 0; i < host_key->cert->nprincipals; i++) {
 			debug2("Server host certificate hostname: %s",
 			    host_key->cert->principals[i]);
 		}
-	} else {
+	} אחרת {
 		debug("Server host key: %s %s", sshkey_ssh_name(host_key), fp);
 	}
 
-	if (sshkey_equal(previous_host_key, host_key)) {
+	אם (sshkey_equal(previous_host_key, host_key)) {
 		debug2_f("server host key %s %s matches cached key",
 		    sshkey_type(host_key), fp);
 		r = 0;
-		goto out;
+		اذهب out;
 	}
 
 	/* Check in RevokedHostKeys files if specified */
-	for (i = 0; i < options.num_revoked_host_keys; i++) {
+	עבור (i = 0; i < options.num_revoked_host_keys; i++) {
 		r = sshkey_check_revoked(host_key,
 		    options.revoked_host_keys[i]);
-		switch (r) {
-		case 0:
-			break; /* not revoked */
-		case SSH_ERR_KEY_REVOKED:
+		بدل (r) {
+		حالة 0:
+			اكسر; /* not revoked */
+		حالة SSH_ERR_KEY_REVOKED:
 			error("Host key %s %s revoked by file %s",
 			    sshkey_type(host_key), fp,
 			    options.revoked_host_keys[i]);
 			r = -1;
-			goto out;
-		default:
+			اذهب out;
+		افتراضي:
 			error_r(r, "Error checking host key %s %s in "
 			    "revoked keys file %s", sshkey_type(host_key),
 			    fp, options.revoked_host_keys[i]);
 			r = -1;
-			goto out;
+			اذهب out;
 		}
 	}
 
-	if (options.verify_host_key_dns) {
+	אם (options.verify_host_key_dns) {
 		/*
 		 * XXX certs are not yet supported for DNS, so downgrade
 		 * them and try the plain key.
 		 */
-		if ((r = sshkey_from_private(host_key, &plain)) != 0)
-			goto out;
-		if (sshkey_is_cert(plain))
+		אם ((r = sshkey_from_private(host_key, &plain)) != 0)
+			اذهب out;
+		אם (sshkey_is_cert(plain))
 			sshkey_drop_cert(plain);
-		if (verify_host_key_dns(host, hostaddr, plain, &flags) == 0) {
-			if (flags & DNS_VERIFY_FOUND) {
-				if (options.verify_host_key_dns == 1 &&
+		אם (verify_host_key_dns(host, hostaddr, plain, &flags) == 0) {
+			אם (flags & DNS_VERIFY_FOUND) {
+				אם (options.verify_host_key_dns == 1 &&
 				    flags & DNS_VERIFY_MATCH &&
 				    flags & DNS_VERIFY_SECURE) {
 					r = 0;
-					goto out;
+					اذهب out;
 				}
-				if (flags & DNS_VERIFY_MATCH) {
+				אם (flags & DNS_VERIFY_MATCH) {
 					matching_host_key_dns = 1;
-				} else {
+				} אחרת {
 					warn_changed_key(plain);
 					error("Update the SSHFP RR in DNS "
 					    "with the new host key to get rid "
@@ -1599,18 +1599,18 @@ verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
 
 out:
 	sshkey_free(plain);
-	free(fp);
-	free(cafp);
-	if (r == 0 && host_key != NULL) {
+	حرر(fp);
+	حرر(cafp);
+	אם (r == 0 && host_key != عدم) {
 		sshkey_free(previous_host_key);
 		r = sshkey_from_private(host_key, &previous_host_key);
 	}
 
-	return r;
+	החזר r;
 }
 
-static void
-warn_nonpq_kex(void)
+ساكن فراغ
+warn_nonpq_kex(فراغ)
 {
 	logit("** WARNING: connection is not using a post-quantum key exchange algorithm.");
 	logit("** This session may be vulnerable to \"store now, decrypt later\" attacks.");
@@ -1624,14 +1624,14 @@ warn_nonpq_kex(void)
  * If login fails, this function prints an error and never returns.
  * This function does not require super-user privileges.
  */
-void
-ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
-    struct sockaddr_storage *hostaddr, u_short port, struct passwd *pw,
-    int timeout_ms, const struct ssh_conn_info *cinfo)
+فراغ
+ssh_login(بنية ssh *ssh, Sensitive *sensitive, ثابت حرف *orighost,
+    بنية sockaddr_storage *hostaddr, u_short port, بنية passwd *pw,
+    صحيح timeout_ms, ثابت بنية ssh_conn_info *cinfo)
 {
-	char *host;
-	char *server_user, *local_user;
-	int r;
+	حرف *host;
+	حرف *server_user, *local_user;
+	صحيح r;
 
 	local_user = xstrdup(pw->pw_name);
 	server_user = options.user ? options.user : local_user;
@@ -1641,11 +1641,11 @@ ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
 	lowercase(host);
 
 	/* Exchange protocol version identification strings with the server. */
-	if ((r = kex_exchange_identification(ssh, timeout_ms,
+	אם ((r = kex_exchange_identification(ssh, timeout_ms,
 	    options.version_addendum)) != 0)
 		sshpkt_fatal(ssh, r, "banner exchange");
 
-	if ((ssh->compat & SSH_BUG_NOREKEY)) {
+	אם ((ssh->compat & SSH_BUG_NOREKEY)) {
 		logit("Warning: this server does not support rekeying.");
 		logit("This session will eventually fail");
 	}
@@ -1659,43 +1659,43 @@ ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
 	ssh_kex2(ssh, host, hostaddr, port, cinfo);
 	kex_set_warn_weak_crypto(ssh, options.warn_weak_crypto &&
 	    !options.kex_algorithms_set);
-	if (!options.kex_algorithms_set && ssh->kex != NULL &&
-	    ssh->kex->name != NULL && options.warn_weak_crypto &&
+	אם (!options.kex_algorithms_set && ssh->kex != عدم &&
+	    ssh->kex->name != عدم && options.warn_weak_crypto &&
 	    !kex_is_pq_from_name(ssh->kex->name)) {
 		warn_nonpq_kex();
 		ssh->kex->non_pq_kex_warned = 1;
 	}
 	ssh_userauth2(ssh, local_user, server_user, host, sensitive);
-	free(local_user);
-	free(host);
+	حرر(local_user);
+	حرر(host);
 }
 
 /* print all known host keys for a given host, but skip keys of given type */
-static int
-show_other_keys(struct hostkeys *hostkeys, struct sshkey *key)
+ساكن صحيح
+show_other_keys(بنية hostkeys *hostkeys, بنية sshkey *key)
 {
-	int type[] = {
+	صحيح type[] = {
 		KEY_RSA,
 		KEY_ECDSA,
 		KEY_ED25519,
 		KEY_MLDSA44_ED25519,
 		-1
 	};
-	int i, ret = 0;
-	char *fp, *ra;
-	const struct hostkey_entry *found;
+	صحيح i, ret = 0;
+	حرف *fp, *ra;
+	ثابت بنية hostkey_entry *found;
 
-	for (i = 0; type[i] != -1; i++) {
-		if (type[i] == key->type)
-			continue;
-		if (!lookup_key_in_hostkeys_by_type(hostkeys, type[i],
+	עבור (i = 0; type[i] != -1; i++) {
+		אם (type[i] == key->type)
+			استمر;
+		אם (!lookup_key_in_hostkeys_by_type(hostkeys, type[i],
 		    -1, &found))
-			continue;
+			استمر;
 		fp = sshkey_fingerprint(found->key,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
 		ra = sshkey_fingerprint(found->key,
 		    options.fingerprint_hash, SSH_FP_RANDOMART);
-		if (fp == NULL || ra == NULL)
+		אם (fp == عدم || ra == عدم)
 			fatal_f("sshkey_fingerprint fail");
 		logit("WARNING: %s key found for host %s\n"
 		    "in %s:%lu\n"
@@ -1703,23 +1703,23 @@ show_other_keys(struct hostkeys *hostkeys, struct sshkey *key)
 		    sshkey_type(found->key),
 		    found->host, found->file, found->line,
 		    sshkey_type(found->key), fp);
-		if (options.visual_host_key)
+		אם (options.visual_host_key)
 			logit("%s", ra);
-		free(ra);
-		free(fp);
+		حرر(ra);
+		حرر(fp);
 		ret = 1;
 	}
-	return ret;
+	החזר ret;
 }
 
-static void
-warn_changed_key(struct sshkey *host_key)
+ساكن فراغ
+warn_changed_key(بنية sshkey *host_key)
 {
-	char *fp;
+	حرف *fp;
 
 	fp = sshkey_fingerprint(host_key, options.fingerprint_hash,
 	    SSH_FP_DEFAULT);
-	if (fp == NULL)
+	אם (fp == عدم)
 		fatal_f("sshkey_fingerprint fail");
 
 	error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -1732,78 +1732,78 @@ warn_changed_key(struct sshkey *host_key)
 	    sshkey_type(host_key), fp);
 	error("Please contact your system administrator.");
 
-	free(fp);
+	حرر(fp);
 }
 
 /*
  * Execute a local command
  */
-int
-ssh_local_cmd(const char *args)
+صحيح
+ssh_local_cmd(ثابت حرف *args)
 {
-	char *shell;
+	حرف *shell;
 	pid_t pid;
-	int status;
-	void (*osighand)(int);
+	صحيح status;
+	فراغ (*osighand)(صحيح);
 
-	if (!options.permit_local_command ||
-	    args == NULL || !*args)
-		return (1);
+	אם (!options.permit_local_command ||
+	    args == عدم || !*args)
+		החזר (1);
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	אם ((shell = getenv("SHELL")) == عدم || *shell == '\0')
 		shell = _PATH_BSHELL;
 
 	osighand = ssh_signal(SIGCHLD, SIG_DFL);
 	pid = fork();
-	if (pid == 0) {
+	אם (pid == 0) {
 		ssh_signal(SIGPIPE, SIG_DFL);
 		debug3("Executing %s -c \"%s\"", shell, args);
-		execl(shell, shell, "-c", args, (char *)NULL);
+		execl(shell, shell, "-c", args, (حرف *)عدم);
 		error("Couldn't execute %s -c \"%s\": %s",
 		    shell, args, strerror(errno));
 		_exit(1);
-	} else if (pid == -1)
+	} אחרת אם (pid == -1)
 		fatal("fork failed: %.100s", strerror(errno));
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	כלעוד (waitpid(pid, &status, 0) == -1)
+		אם (errno != EINTR)
 			fatal("Couldn't wait for child: %s", strerror(errno));
 	ssh_signal(SIGCHLD, osighand);
 
-	if (!WIFEXITED(status))
-		return (1);
+	אם (!WIFEXITED(status))
+		החזר (1);
 
-	return (WEXITSTATUS(status));
+	החזר (WEXITSTATUS(status));
 }
 
-void
-maybe_add_key_to_agent(const char *authfile, struct sshkey *private,
-    const char *comment, const char *passphrase)
+فراغ
+maybe_add_key_to_agent(ثابت حرف *authfile, بنية sshkey *خاص,
+    ثابت حرف *comment, ثابت حرف *passphrase)
 {
-	int auth_sock = -1, r;
-	const char *skprovider = NULL;
+	صحيح auth_sock = -1, r;
+	ثابت حرف *skprovider = عدم;
 
-	if (options.add_keys_to_agent == 0)
-		return;
+	אם (options.add_keys_to_agent == 0)
+		החזר;
 
-	if ((r = ssh_get_authentication_socket(&auth_sock)) != 0) {
+	אם ((r = ssh_get_authentication_socket(&auth_sock)) != 0) {
 		debug3("no authentication agent, not adding key");
-		return;
+		החזר;
 	}
 
-	if (options.add_keys_to_agent == 2 &&
+	אם (options.add_keys_to_agent == 2 &&
 	    !ask_permission("Add key %s (%s) to agent?", authfile, comment)) {
 		debug3("user denied adding this key");
 		close(auth_sock);
-		return;
+		החזר;
 	}
-	if (sshkey_is_sk(private))
+	אם (sshkey_is_sk(خاص))
 		skprovider = options.sk_provider;
-	if ((r = ssh_add_identity_constrained(auth_sock, private,
-	    comment == NULL ? authfile : comment,
+	אם ((r = ssh_add_identity_constrained(auth_sock, خاص,
+	    comment == عدم ? authfile : comment,
 	    options.add_keys_to_agent_lifespan,
-	    (options.add_keys_to_agent == 3), skprovider, NULL, 0)) == 0)
+	    (options.add_keys_to_agent == 3), skprovider, عدم, 0)) == 0)
 		debug("identity added to agent: %s", authfile);
-	else
+	אחרת
 		debug("could not add identity to agent: %s (%d)", authfile, r);
 	close(auth_sock);
 }

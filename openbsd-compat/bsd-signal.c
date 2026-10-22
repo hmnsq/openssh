@@ -14,22 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <signal.h>
+#ضمن <stdio.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
-#include "openbsd-compat/bsd-signal.h"
+#ضمن "openbsd-compat/bsd-signal.h"
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int sig)
+#אם !defined(HAVE_STRSIGNAL)
+حرف *strsignal(صحيح sig)
 {
-	static char buf[16];
+	ساكن حرف buf[16];
 
-	(void)snprintf(buf, sizeof(buf), "%d", sig);
-	return buf;
+	(فراغ)snprintf(buf, حجم(buf), "%d", sig);
+	החזר buf;
 }
 #endif
 

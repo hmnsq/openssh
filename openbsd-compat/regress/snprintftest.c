@@ -17,24 +17,24 @@
 
 #define BUFSZ 2048
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
 
-static int failed = 0;
+ساكن صحيح failed = 0;
 
-static void
-fail(const char *m)
+ساكن فراغ
+fail(ثابت حرف *m)
 {
 	fprintf(stderr, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+صحيح x_snprintf(حرف *str, size_t count, ثابت حرف *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
@@ -42,37 +42,37 @@ int x_snprintf(char *str, size_t count, const char *fmt, ...)
 	va_start(ap, fmt);
 	ret = vsnprintf(str, count, fmt, ap);
 	va_end(ap);
-	return ret;
+	החזר ret;
 }
 
-int
-main(void)
+صحيح
+main(فراغ)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	حرف b[5];
+	حرف *src = عدم;
+	صحيح ret;
 
-	memset(b, 'X', sizeof(b));
+	memset(b, 'X', حجم(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	אם (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	אם ((src = malloc(BUFSZ)) == عدم) {
 		fail("malloc failed");
-	} else {
+	} אחרת {
 		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+		snprintf(b, حجم(b), "%.*s", 1, src);
+		אם (strcmp(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	אם (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	אם (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
-	free(src);
-	return failed;
+	حرر(src);
+	החזר failed;
 }

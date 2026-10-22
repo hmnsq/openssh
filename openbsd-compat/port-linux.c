@@ -19,25 +19,25 @@
  * Linux-specific portability code
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
-#include <sys/socket.h>
-#include <sys/un.h>
+#אם defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
+#ضمن <sys/socket.h>
+#ضمن <sys/un.h>
 
-#include <errno.h>
-#include <inttypes.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
+#ضمن <errno.h>
+#ضمن <inttypes.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <time.h>
+#ضمن <unistd.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#ضمن "log.h"
+#ضمن "xmalloc.h"
+#ضمن "port-linux.h"
+#ضمن "misc.h"
 
 #ifdef LINUX_OOM_ADJUST
 /*
@@ -46,163 +46,163 @@
  * http://lxr.linux.no/#linux+v2.6.36/Documentation/filesystems/proc.txt
  */
 
-static int oom_adj_save = INT_MIN;
-static char *oom_adj_path = NULL;
-struct {
-	char *path;
-	int value;
+ساكن صحيح oom_adj_save = INT_MIN;
+ساكن حرف *oom_adj_path = عدم;
+بنية {
+	حرف *path;
+	صحيح value;
 } oom_adjust[] = {
 	{"/proc/self/oom_score_adj", -1000},	/* kernels >= 2.6.36 */
 	{"/proc/self/oom_adj", -17},		/* kernels <= 2.6.35 */
-	{NULL, 0},
+	{عدم, 0},
 };
 
 /*
  * Tell the kernel's out-of-memory killer to avoid sshd.
  * Returns the previous oom_adj value or zero.
  */
-void
-oom_adjust_setup(void)
+فراغ
+oom_adjust_setup(فراغ)
 {
-	int i, value;
+	صحيح i, value;
 	FILE *fp;
 
 	debug3("%s", __func__);
-	 for (i = 0; oom_adjust[i].path != NULL; i++) {
+	 עבור (i = 0; oom_adjust[i].path != عدم; i++) {
 		oom_adj_path = oom_adjust[i].path;
 		value = oom_adjust[i].value;
-		if ((fp = fopen(oom_adj_path, "r+")) != NULL) {
-			if (fscanf(fp, "%d", &oom_adj_save) != 1)
+		אם ((fp = fopen(oom_adj_path, "r+")) != عدم) {
+			אם (fscanf(fp, "%d", &oom_adj_save) != 1)
 				verbose("error reading %s: %s", oom_adj_path,
 				    strerror(errno));
-			else {
+			אחרת {
 				rewind(fp);
-				if (fprintf(fp, "%d\n", value) <= 0)
+				אם (fprintf(fp, "%d\n", value) <= 0)
 					verbose("error writing %s: %s",
 					   oom_adj_path, strerror(errno));
-				else
+				אחרת
 					debug("Set %s from %d to %d",
 					   oom_adj_path, oom_adj_save, value);
 			}
 			fclose(fp);
-			return;
+			החזר;
 		}
 	}
-	oom_adj_path = NULL;
+	oom_adj_path = عدم;
 }
 
 /* Restore the saved OOM adjustment */
-void
-oom_adjust_restore(void)
+فراغ
+oom_adjust_restore(فراغ)
 {
 	FILE *fp;
 
 	debug3("%s", __func__);
-	if (oom_adj_save == INT_MIN || oom_adj_path == NULL ||
-	    (fp = fopen(oom_adj_path, "w")) == NULL)
-		return;
+	אם (oom_adj_save == INT_MIN || oom_adj_path == عدم ||
+	    (fp = fopen(oom_adj_path, "w")) == عدم)
+		החזר;
 
-	if (fprintf(fp, "%d\n", oom_adj_save) <= 0)
+	אם (fprintf(fp, "%d\n", oom_adj_save) <= 0)
 		verbose("error writing %s: %s", oom_adj_path, strerror(errno));
-	else
+	אחרת
 		debug("Set %s to %d", oom_adj_path, oom_adj_save);
 
 	fclose(fp);
-	return;
+	החזר;
 }
 #endif /* LINUX_OOM_ADJUST */
 
 #ifdef LINUX_MEMLOCK_ONFAULT
-#include <sys/mman.h>
+#ضمن <sys/mman.h>
 
-void
-memlock_onfault_setup(void)
+فراغ
+memlock_onfault_setup(فراغ)
 {
-	if (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
+	אם (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
 		verbose("unable to lock memory: %s", strerror(errno));
-	else
+	אחרת
 		debug("memory locked");
 }
 #endif /* LINUX_MEMLOCK_ONFAULT */
 
 #ifdef SYSTEMD_NOTIFY
 
-static void ssh_systemd_notify(const char *, ...)
+ساكن فراغ ssh_systemd_notify(ثابت حرف *, ...)
     __attribute__((__format__ (printf, 1, 2))) __attribute__((__nonnull__ (1)));
 
-static void
-ssh_systemd_notify(const char *fmt, ...)
+ساكن فراغ
+ssh_systemd_notify(ثابت حرف *fmt, ...)
 {
-	char *s = NULL;
-	const char *path;
-	struct stat sb;
-	struct sockaddr_un addr;
-	int fd = -1;
+	حرف *s = عدم;
+	ثابت حرف *path;
+	بنية stat sb;
+	بنية sockaddr_un addr;
+	صحيح fd = -1;
 	va_list ap;
 
-	if ((path = getenv("NOTIFY_SOCKET")) == NULL || strlen(path) == 0)
-		return;
+	אם ((path = getenv("NOTIFY_SOCKET")) == عدم || strlen(path) == 0)
+		החזר;
 
 	va_start(ap, fmt);
 	xvasprintf(&s, fmt, ap);
 	va_end(ap);
 
 	/* Only AF_UNIX is supported, with path or abstract sockets */
-	if (path[0] != '/' && path[0] != '@') {
+	אם (path[0] != '/' && path[0] != '@') {
 		error_f("socket \"%s\" is not compatible with AF_UNIX", path);
-		goto out;
+		اذهب out;
 	}
 
-	if (path[0] == '/' && stat(path, &sb) != 0) {
+	אם (path[0] == '/' && stat(path, &sb) != 0) {
 		error_f("socket \"%s\" stat: %s", path, strerror(errno));
-		goto out;
+		اذهب out;
 	}
 
-	memset(&addr, 0, sizeof(addr));
+	memset(&addr, 0, حجم(addr));
 	addr.sun_family = AF_UNIX;
-	if (strlcpy(addr.sun_path, path,
-	    sizeof(addr.sun_path)) >= sizeof(addr.sun_path)) {
+	אם (strlcpy(addr.sun_path, path,
+	    حجم(addr.sun_path)) >= حجم(addr.sun_path)) {
 		error_f("socket path \"%s\" too long", path);
-		goto out;
+		اذهب out;
 	}
 	/* Support for abstract socket */
-	if (addr.sun_path[0] == '@')
+	אם (addr.sun_path[0] == '@')
 		addr.sun_path[0] = 0;
-	if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
+	אם ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
 		error_f("socket \"%s\": %s", path, strerror(errno));
-		goto out;
+		اذهب out;
 	}
-	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
+	אם (connect(fd, (بنية sockaddr *)&addr, حجم(addr)) != 0) {
 		error_f("socket \"%s\" connect: %s", path, strerror(errno));
-		goto out;
+		اذهب out;
 	}
-	if (write(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
+	אם (اكتب(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
 		error_f("socket \"%s\" write: %s", path, strerror(errno));
-		goto out;
+		اذهب out;
 	}
 	debug_f("socket \"%s\" notified %s", path, s);
  out:
-	if (fd != -1)
+	אם (fd != -1)
 		close(fd);
-	free(s);
+	حرر(s);
 }
 
-void
-ssh_systemd_notify_ready(void)
+فراغ
+ssh_systemd_notify_ready(فراغ)
 {
 	ssh_systemd_notify("READY=1");
 }
 
-void
-ssh_systemd_notify_reload(void)
+فراغ
+ssh_systemd_notify_reload(فراغ)
 {
-	struct timespec now;
+	بنية timespec now;
 
 	monotime_ts(&now);
-	if (now.tv_sec < 0 || now.tv_nsec < 0) {
+	אם (now.tv_sec < 0 || now.tv_nsec < 0) {
 		error_f("monotime returned negative value");
 		ssh_systemd_notify("RELOADING=1");
-	} else {
+	} אחרת {
 		ssh_systemd_notify("RELOADING=1\nMONOTONIC_USEC=%llu",
 		    ((uint64_t)now.tv_sec * 1000000ULL) +
 		    ((uint64_t)now.tv_nsec / 1000ULL));

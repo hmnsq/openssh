@@ -17,144 +17,144 @@
 
 /* #define DEBUG_SK 1 */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #define SSHKEY_INTERNAL
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include "crypto_api.h"
+#ضمن "crypto_api.h"
 
-#include <string.h>
-#include <stdarg.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
 
-#include "log.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "digest.h"
+#ضمن "log.h"
+#ضمن "sshbuf.h"
+#ضمن "sshkey.h"
+#ضمن "ssherr.h"
+#ضمن "digest.h"
 
 /* Reuse some ED25519 internals */
-extern struct sshkey_impl_funcs sshkey_ed25519_funcs;
+خارجي بنية sshkey_impl_funcs sshkey_ed25519_funcs;
 
-static void
-ssh_ed25519_sk_cleanup(struct sshkey *k)
+ساكن فراغ
+ssh_ed25519_sk_cleanup(بنية sshkey *k)
 {
 	sshkey_sk_cleanup(k);
 	sshkey_ed25519_funcs.cleanup(k);
 }
 
-static int
-ssh_ed25519_sk_equal(const struct sshkey *a, const struct sshkey *b)
+ساكن صحيح
+ssh_ed25519_sk_equal(ثابت بنية sshkey *a, ثابت بنية sshkey *b)
 {
-	if (!sshkey_sk_fields_equal(a, b))
-		return 0;
-	if (!sshkey_ed25519_funcs.equal(a, b))
-		return 0;
-	return 1;
+	אם (!sshkey_sk_fields_equal(a, b))
+		החזר 0;
+	אם (!sshkey_ed25519_funcs.equal(a, b))
+		החזר 0;
+	החזר 1;
 }
 
-static int
-ssh_ed25519_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساكن صحيح
+ssh_ed25519_sk_serialize_public(ثابت بنية sshkey *key, بنية sshbuf *b,
+    تعداد sshkey_serialize_rep opts)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
-		return r;
+	אם ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
+		החזר r;
+	אם ((r = sshkey_serialize_sk(key, b)) != 0)
+		החזר r;
 
-	return 0;
+	החזר 0;
 }
 
-static int
-ssh_ed25519_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ساكن صحيح
+ssh_ed25519_sk_serialize_private(ثابت بنية sshkey *key, بنية sshbuf *b,
+    تعداد sshkey_serialize_rep opts)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
-		return r;
+	אם ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
+		החזר r;
+	אם ((r = sshkey_serialize_private_sk(key, b)) != 0)
+		החזר r;
 
-	return 0;
+	החזר 0;
 }
 
-static int
-ssh_ed25519_sk_copy_public(const struct sshkey *from, struct sshkey *to)
+ساكن صحيح
+ssh_ed25519_sk_copy_public(ثابت بنية sshkey *from, بنية sshkey *to)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshkey_ed25519_funcs.copy_public(from, to)) != 0)
-		return r;
-	if ((r = sshkey_copy_public_sk(from, to)) != 0)
-		return r;
-	return 0;
+	אם ((r = sshkey_ed25519_funcs.copy_public(from, to)) != 0)
+		החזר r;
+	אם ((r = sshkey_copy_public_sk(from, to)) != 0)
+		החזר r;
+	החזר 0;
 }
 
-static int
-ssh_ed25519_sk_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساكن صحيح
+ssh_ed25519_sk_deserialize_public(ثابت حرف *ktype, بنية sshbuf *b,
+    بنية sshkey *key)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	אם ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
+		החזר r;
+	אם ((r = sshkey_deserialize_sk(b, key)) != 0)
+		החזר r;
+	החזר 0;
 }
 
-static int
-ssh_ed25519_sk_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ساكن صحيح
+ssh_ed25519_sk_deserialize_private(ثابت حرف *ktype, بنية sshbuf *b,
+    بنية sshkey *key)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	אם ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
+		החזר r;
+	אם ((r = sshkey_private_deserialize_sk(b, key)) != 0)
+		החזר r;
+	החזר 0;
 }
 
-static int
-ssh_ed25519_sk_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+ساكن صحيح
+ssh_ed25519_sk_verify(ثابت بنية sshkey *key,
+    ثابت u_char *sig, size_t siglen,
+    ثابت u_char *data, size_t dlen, ثابت حرف *alg, u_int compat,
+    بنية sshkey_sig_details **detailsp)
 {
-	struct sshbuf *b = NULL;
-	struct sshbuf *encoded = NULL;
-	char *ktype = NULL;
-	const u_char *sigblob;
+	بنية sshbuf *b = عدم;
+	بنية sshbuf *encoded = عدم;
+	حرف *ktype = عدم;
+	ثابت u_char *sigblob;
 	u_char apphash[32];
 	u_char msghash[32];
 	u_char sig_flags;
 	u_int sig_counter;
 	size_t len;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int ret;
-	struct sshkey_sig_details *details = NULL;
+	صحيح r = SSH_ERR_INTERNAL_ERROR;
+	صحيح ret;
+	بنية sshkey_sig_details *details = عدم;
 
-	if (detailsp != NULL)
-		*detailsp = NULL;
+	אם (detailsp != عدم)
+		*detailsp = عدم;
 
-	if (key == NULL ||
+	אם (key == عدم ||
 	    sshkey_type_plain(key->type) != KEY_ED25519_SK ||
-	    key->ed25519_pk == NULL ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	    key->ed25519_pk == عدم ||
+	    sig == عدم || siglen == 0)
+		החזר SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
+	אם ((b = sshbuf_from(sig, siglen)) == عدم)
+		החזר SSH_ERR_ALLOC_FAIL;
+	אם (sshbuf_get_cstring(b, &ktype, عدم) != 0 ||
 	    sshbuf_get_string_direct(b, &sigblob, &len) != 0 ||
 	    sshbuf_get_u8(b, &sig_flags) != 0 ||
 	    sshbuf_get_u32(b, &sig_counter) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: data:\n", __func__);
@@ -164,94 +164,94 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, sig_flags, sig_counter);
 #endif
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
+	אם (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
 		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+		اذهب out;
 	}
-	if (sshbuf_len(b) != 0) {
+	אם (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		اذهب out;
 	}
-	if (len != crypto_sign_ed25519_BYTES) {
+	אם (len != crypto_sign_ed25519_BYTES) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
-	if (ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
-	    strlen(key->sk_application), apphash, sizeof(apphash)) != 0 ||
+	אם (ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
+	    strlen(key->sk_application), apphash, حجم(apphash)) != 0 ||
 	    ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
-	    msghash, sizeof(msghash)) != 0) {
+	    msghash, حجم(msghash)) != 0) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		اذهب out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: hashed application:\n", __func__);
-	sshbuf_dump_data(apphash, sizeof(apphash), stderr);
+	sshbuf_dump_data(apphash, حجم(apphash), stderr);
 	fprintf(stderr, "%s: hashed message:\n", __func__);
-	sshbuf_dump_data(msghash, sizeof(msghash), stderr);
+	sshbuf_dump_data(msghash, حجم(msghash), stderr);
 #endif
-	if ((details = calloc(1, sizeof(*details))) == NULL) {
+	אם ((details = calloc(1, حجم(*details))) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
 	details->sk_counter = sig_counter;
 	details->sk_flags = sig_flags;
-	if ((encoded = sshbuf_new()) == NULL) {
+	אם ((encoded = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
-	if (sshbuf_put(encoded, apphash, sizeof(apphash)) != 0 ||
+	אם (sshbuf_put(encoded, apphash, حجم(apphash)) != 0 ||
 	    sshbuf_put_u8(encoded, sig_flags) != 0 ||
 	    sshbuf_put_u32(encoded, sig_counter) != 0 ||
-	    sshbuf_put(encoded, msghash, sizeof(msghash)) != 0) {
+	    sshbuf_put(encoded, msghash, حجم(msghash)) != 0) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: signed buf:\n", __func__);
 	sshbuf_dump(encoded, stderr);
 #endif
-	if ((ret = crypto_sign_ed25519_verify_detached(sigblob,
+	אם ((ret = crypto_sign_ed25519_verify_detached(sigblob,
 	    sshbuf_ptr(encoded), sshbuf_len(encoded),
 	    key->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
-	if (ret != 0) {
+	אם (ret != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		اذهب out;
 	}
 	/* success */
 	r = 0;
-	if (detailsp != NULL) {
+	אם (detailsp != عدم) {
 		*detailsp = details;
-		details = NULL;
+		details = عدم;
 	}
  out:
 	sshkey_sig_details_free(details);
 	sshbuf_free(b);
 	sshbuf_free(encoded);
-	free(ktype);
-	return r;
+	حرر(ktype);
+	החזר r;
 }
 
-static const struct sshkey_impl_funcs sshkey_ed25519_sk_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+ساكن ثابت بنية sshkey_impl_funcs sshkey_ed25519_sk_funcs = {
+	/* .size = */		عدم,
+	/* .alloc = */		عدم,
 	/* .cleanup = */	ssh_ed25519_sk_cleanup,
 	/* .equal = */		ssh_ed25519_sk_equal,
 	/* .ssh_serialize_public = */ ssh_ed25519_sk_serialize_public,
 	/* .ssh_deserialize_public = */ ssh_ed25519_sk_deserialize_public,
 	/* .ssh_serialize_private = */ ssh_ed25519_sk_serialize_private,
 	/* .ssh_deserialize_private = */ ssh_ed25519_sk_deserialize_private,
-	/* .generate = */	NULL,
+	/* .generate = */	عدم,
 	/* .copy_public = */	ssh_ed25519_sk_copy_public,
-	/* .sign = */		NULL,
+	/* .sign = */		عدم,
 	/* .verify = */		ssh_ed25519_sk_verify,
 };
 
-const struct sshkey_impl sshkey_ed25519_sk_impl = {
+ثابت بنية sshkey_impl sshkey_ed25519_sk_impl = {
 	/* .name = */		"sk-ssh-ed25519@openssh.com",
 	/* .shortname = */	"ED25519-SK",
-	/* .sigalg = */		NULL,
+	/* .sigalg = */		عدم,
 	/* .type = */		KEY_ED25519_SK,
 	/* .nid = */		0,
 	/* .cert = */		0,
@@ -260,10 +260,10 @@ const struct sshkey_impl sshkey_ed25519_sk_impl = {
 	/* .funcs = */		&sshkey_ed25519_sk_funcs,
 };
 
-const struct sshkey_impl sshkey_ed25519_sk_cert_impl = {
+ثابت بنية sshkey_impl sshkey_ed25519_sk_cert_impl = {
 	/* .name = */		"sk-ssh-ed25519-cert-v01@openssh.com",
 	/* .shortname = */	"ED25519-SK-CERT",
-	/* .sigalg = */		NULL,
+	/* .sigalg = */		عدم,
 	/* .type = */		KEY_ED25519_SK_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,

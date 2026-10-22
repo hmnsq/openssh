@@ -17,56 +17,56 @@
 #ifndef _BSD_MISC_H
 #define _BSD_MISC_H
 
-#include "includes.h"
+#ضمن "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+حرف *ssh_get_progname(حرف *);
+صحيح seed_from_prngd(unsigned حرف *, size_t);
 
 #ifndef HAVE_SETSID
 #define setsid() setpgrp(0, getpid())
 #endif /* !HAVE_SETSID */
 
 #ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
+صحيح setenv(ثابت حرف *, ثابت حرف *, صحيح);
 #endif /* !HAVE_SETENV */
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *);
+صحيح setlogin(ثابت حرف *);
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
+صحيح innetgr(ثابت حرف *, ثابت حرف *, ثابت حرف *, ثابت حرف *);
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
+#אם !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+صحيح seteuid(uid_t);
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
+#אם !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+صحيح setegid(uid_t);
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
+#אם !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ثابت حرف *strerror(صحيح);
 #endif
 
-#if !defined(HAVE_SETLINEBUF)
-#define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
+#אם !defined(HAVE_SETLINEBUF)
+#define setlinebuf(a)	(setvbuf((a), عدم, _IOLBF, 0))
 #endif
 
 #ifndef HAVE_UTIMES
 #ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
+بنية timeval {
 	long tv_sec;
 	long tv_usec;
 }
 #endif /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
+صحيح utimes(ثابت حرف *, بنية timeval *);
 #endif /* HAVE_UTIMES */
 
 #ifndef HAVE_DIRFD
-int dirfd(void *);
+صحيح dirfd(فراغ *);
 #endif
 
 #ifndef AT_FDCWD
@@ -74,35 +74,35 @@ int dirfd(void *);
 #endif
 
 #ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
+صحيح fchmodat(صحيح, ثابت حرف *, mode_t, صحيح);
 #endif
 
 #ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
+صحيح fchownat(صحيح, ثابت حرف *, uid_t, gid_t, صحيح);
 #endif
 
 #ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
+صحيح fstatat(صحيح, ثابت حرف *, بنية stat *, صحيح);
 #endif
 
 #ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
+صحيح unlinkat(صحيح, ثابت حرف *, صحيح);
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
+صحيح truncate (ثابت حرف *, off_t);
 #endif /* HAVE_TRUNCATE */
 
 #ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
+بنية timespec {
 	time_t	tv_sec;
 	long	tv_nsec;
 };
 #endif /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#אם !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
+صحيح nanosleep(ثابت بنية timespec *, بنية timespec *);
 #endif
 
 #ifndef HAVE_UTIMENSAT
@@ -111,27 +111,27 @@ int nanosleep(const struct timespec *, struct timespec *);
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
+صحيح utimensat(صحيح, ثابت حرف *, ثابت بنية timespec[2], صحيح);
 #endif /* !HAVE_UTIMENSAT */
 
 #ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
+صحيح usleep(unsigned صحيح useconds);
 #endif
 
 #ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
+pid_t tcgetpgrp(صحيح);
 #endif
 
 #ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
+صحيح tcsendbreak(صحيح, صحيح);
 #endif
 
 #ifndef HAVE_UNSETENV
-int unsetenv(const char *);
+صحيح unsetenv(ثابت حرف *);
 #endif
 
 #ifndef HAVE_ISBLANK
-int	isblank(int);
+صحيح	isblank(صحيح);
 #endif
 
 #ifndef HAVE_GETPGID
@@ -139,12 +139,12 @@ pid_t getpgid(pid_t);
 #endif
 
 #ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
-    const sigset_t *);
+صحيح pselect(صحيح, fd_set *, fd_set *, fd_set *, ثابت بنية timespec *,
+    ثابت sigset_t *);
 #endif
 
 #ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
+# define endgrent() עשה { } כלעוד(0)
 #endif
 
 #ifndef HAVE_KRB5_GET_ERROR_MESSAGE
@@ -152,38 +152,38 @@ int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
 #endif
 
 #ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
+# define krb5_free_error_message(a,b) עשה { } כלעוד(0)
 #endif
 
 #ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
+صحيح pledge(ثابت حرف *promises, ثابت حرف *execpromises);
 #endif
 
 #ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
+صحيح unveil(ثابت حرف *, ثابت حرف *);
 #endif
 
 /* bsd-err.h */
 #ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
+فراغ err(صحيح, ثابت حرف *, ...) __attribute__((format(printf, 2, 3)));
 #endif
 #ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
+فراغ errx(صحيح, ثابت حرف *, ...) __attribute__((format(printf, 2, 3)));
 #endif
 #ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
+فراغ warn(ثابت حرف *, ...) __attribute__((format(printf, 1, 2)));
 #endif
 
 #ifndef HAVE_LLABS
 long long llabs(long long);
 #endif
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
-void bzero(void *, size_t);
+#אם defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+فراغ bzero(فراغ *, size_t);
 #endif
 
 #ifndef HAVE_RAISE
-int raise(int);
+صحيح ارفع(صحيح);
 #endif
 
 #ifndef HAVE_GETSID
@@ -195,7 +195,7 @@ pid_t getsid(pid_t);
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
+صحيح flock(صحيح, صحيح);
 #endif
 
 #ifdef FFLUSH_NULL_BUG
@@ -203,15 +203,15 @@ int flock(int, int);
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
+بنية tm *localtime_r(ثابت time_t *, بنية tm *);
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
+تعريفنوع صحيح clockid_t;
 #ifndef CLOCK_REALTIME
 # define CLOCK_REALTIME	0
 #endif
-int clock_gettime(clockid_t, struct timespec *);
+صحيح clock_gettime(clockid_t, بنية timespec *);
 #endif
 
 #ifndef HAVE_REALPATH

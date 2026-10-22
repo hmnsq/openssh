@@ -8,10 +8,10 @@ Public domain.
 
 /* $OpenBSD: chacha_private.h,v 1.3 2022/02/28 21:56:29 dtucker Exp $ */
 
-typedef unsigned char u8;
-typedef unsigned int u32;
+تعريفنوع unsigned حرف u8;
+تعريفنوع unsigned صحيح u32;
 
-typedef struct
+تعريفنوع بنية
 {
   u32 input[16]; /* could be compressed */
 } chacha_ctx;
@@ -32,12 +32,12 @@ typedef struct
    ((u32)((p)[3]) << 24))
 
 #define U32TO8_LITTLE(p, v) \
-  do { \
+  עשה { \
     (p)[0] = U8V((v)      ); \
     (p)[1] = U8V((v) >>  8); \
     (p)[2] = U8V((v) >> 16); \
     (p)[3] = U8V((v) >> 24); \
-  } while (0)
+  } כלעוד (0)
 
 #define ROTATE(v,c) (ROTL32(v,c))
 #define XOR(v,w) ((v) ^ (w))
@@ -50,22 +50,22 @@ typedef struct
   a = PLUS(a,b); d = ROTATE(XOR(d,a), 8); \
   c = PLUS(c,d); b = ROTATE(XOR(b,c), 7);
 
-static const char sigma[16] = "expand 32-byte k";
-static const char tau[16] = "expand 16-byte k";
+ساكن ثابت حرف sigma[16] = "expand 32-byte k";
+ساكن ثابت حرف tau[16] = "expand 16-byte k";
 
-static void
-chacha_keysetup(chacha_ctx *x,const u8 *k,u32 kbits)
+ساكن فراغ
+chacha_keysetup(chacha_ctx *x,ثابت u8 *k,u32 kbits)
 {
-  const char *constants;
+  ثابت حرف *constants;
 
   x->input[4] = U8TO32_LITTLE(k + 0);
   x->input[5] = U8TO32_LITTLE(k + 4);
   x->input[6] = U8TO32_LITTLE(k + 8);
   x->input[7] = U8TO32_LITTLE(k + 12);
-  if (kbits == 256) { /* recommended */
+  אם (kbits == 256) { /* recommended */
     k += 16;
     constants = sigma;
-  } else { /* kbits == 128 */
+  } אחרת { /* kbits == 128 */
     constants = tau;
   }
   x->input[8] = U8TO32_LITTLE(k + 0);
@@ -78,8 +78,8 @@ chacha_keysetup(chacha_ctx *x,const u8 *k,u32 kbits)
   x->input[3] = U8TO32_LITTLE(constants + 12);
 }
 
-static void
-chacha_ivsetup(chacha_ctx *x,const u8 *iv)
+ساكن فراغ
+chacha_ivsetup(chacha_ctx *x,ثابت u8 *iv)
 {
   x->input[12] = 0;
   x->input[13] = 0;
@@ -87,16 +87,16 @@ chacha_ivsetup(chacha_ctx *x,const u8 *iv)
   x->input[15] = U8TO32_LITTLE(iv + 4);
 }
 
-static void
-chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
+ساكن فراغ
+chacha_encrypt_bytes(chacha_ctx *x,ثابت u8 *m,u8 *c,u32 bytes)
 {
   u32 x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
   u32 j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
-  u8 *ctarget = NULL;
+  u8 *ctarget = عدم;
   u8 tmp[64];
   u_int i;
 
-  if (!bytes) return;
+  אם (!bytes) החזר;
 
   j0 = x->input[0];
   j1 = x->input[1];
@@ -115,9 +115,9 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
   j14 = x->input[14];
   j15 = x->input[15];
 
-  for (;;) {
-    if (bytes < 64) {
-      for (i = 0;i < bytes;++i) tmp[i] = m[i];
+  עבור (;;) {
+    אם (bytes < 64) {
+      עבור (i = 0;i < bytes;++i) tmp[i] = m[i];
       m = tmp;
       ctarget = c;
       c = tmp;
@@ -138,7 +138,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     x13 = j13;
     x14 = j14;
     x15 = j15;
-    for (i = 20;i > 0;i -= 2) {
+    עבור (i = 20;i > 0;i -= 2) {
       QUARTERROUND( x0, x4, x8,x12)
       QUARTERROUND( x1, x5, x9,x13)
       QUARTERROUND( x2, x6,x10,x14)
@@ -185,7 +185,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
 #endif
 
     j12 = PLUSONE(j12);
-    if (!j12) {
+    אם (!j12) {
       j13 = PLUSONE(j13);
       /* stopping at 2^70 bytes per nonce is user's responsibility */
     }
@@ -207,13 +207,13 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     U32TO8_LITTLE(c + 56,x14);
     U32TO8_LITTLE(c + 60,x15);
 
-    if (bytes <= 64) {
-      if (bytes < 64) {
-        for (i = 0;i < bytes;++i) ctarget[i] = c[i];
+    אם (bytes <= 64) {
+      אם (bytes < 64) {
+        עבור (i = 0;i < bytes;++i) ctarget[i] = c[i];
       }
       x->input[12] = j12;
       x->input[13] = j13;
-      return;
+      החזר;
     }
     bytes -= 64;
     c += 64;

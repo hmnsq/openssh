@@ -18,10 +18,10 @@
 
 /* OPENBSD ORIGINAL: lib/libc/crypto/arc4random_uniform.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <stdint.h>
-#include <stdlib.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
 
 #ifndef HAVE_ARC4RANDOM_UNIFORM
 /*
@@ -39,8 +39,8 @@ arc4random_uniform(uint32_t upper_bound)
 {
 	uint32_t r, min;
 
-	if (upper_bound < 2)
-		return 0;
+	אם (upper_bound < 2)
+		החזר 0;
 
 	/* 2**32 % x == (2**32 - x) % x */
 	min = -upper_bound % upper_bound;
@@ -51,12 +51,12 @@ arc4random_uniform(uint32_t upper_bound)
 	 * number inside the range we need, so it should rarely need
 	 * to re-roll.
 	 */
-	for (;;) {
+	עבור (;;) {
 		r = arc4random();
-		if (r >= min)
-			break;
+		אם (r >= min)
+			اكسر;
 	}
 
-	return r % upper_bound;
+	החזר r % upper_bound;
 }
 #endif /* !HAVE_ARC4RANDOM_UNIFORM */

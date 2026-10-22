@@ -5,27 +5,27 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "xmalloc.h"
+#ضمن "../test_helper/test_helper.h"
+#ضمن "crypto_api.h"
+#ضمن "xmalloc.h"
 
-struct ed25519_kat {
-	const char *sk;
-	const char *pk;
-	const char *msg;
-	const char *sig;
+بنية ed25519_kat {
+	ثابت حرف *sk;
+	ثابت حرف *pk;
+	ثابت حرف *msg;
+	ثابت حرف *sig;
 };
 
-static const struct ed25519_kat ed25519_kats[] = {
+ساكن ثابت بنية ed25519_kat ed25519_kats[] = {
 	{
 		"9d61b19deffd5a60ba844af492ec2cc44449c569"
 		"7b326919703bac031cae7f60",
@@ -61,10 +61,10 @@ static const struct ed25519_kat ed25519_kats[] = {
 	}
 };
 
-void ed25519_tests(void);
+فراغ ed25519_tests(فراغ);
 
-void
-ed25519_tests(void)
+فراغ
+ed25519_tests(فراغ)
 {
 	uint8_t pk[32], sk[64], seed[32], sig[64];
 	uint8_t expected_pk[32], expected_sig[64];
@@ -72,7 +72,7 @@ ed25519_tests(void)
 	size_t i, msglen;
 	unsigned long long smlen;
 
-	for (i = 0; i < sizeof(ed25519_kats)/sizeof(ed25519_kats[0]); i++) {
+	עבור (i = 0; i < حجم(ed25519_kats)/حجم(ed25519_kats[0]); i++) {
 		TEST_START("Ed25519 keypair from seed");
 		hex2bin(seed, ed25519_kats[i].sk, 32);
 		hex2bin(expected_pk, ed25519_kats[i].pk, 32);
@@ -82,7 +82,7 @@ ed25519_tests(void)
 
 		TEST_START("Ed25519 sign/verify KAT");
 		msglen = strlen(ed25519_kats[i].msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen == 0 ? 1 : msglen), NULL);
+		ASSERT_PTR_NE(msg = malloc(msglen == 0 ? 1 : msglen), عدم);
 		hex2bin(msg, ed25519_kats[i].msg, msglen);
 		hex2bin(expected_sig, ed25519_kats[i].sig, 64);
 
@@ -93,7 +93,7 @@ ed25519_tests(void)
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_verify_detached(sig,
 		    msg, msglen, pk), 0);
-		free(msg);
+		حرر(msg);
 		TEST_DONE();
 	}
 }

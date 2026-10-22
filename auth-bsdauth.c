@@ -23,105 +23,105 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ضمن <sys/types.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
 
 #ifdef BSD_AUTH
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
+#ضمن "xmalloc.h"
+#ضمن "sshkey.h"
+#ضمن "sshbuf.h"
+#ضمن "hostfile.h"
+#ضمن "auth.h"
+#ضمن "log.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#ضمن "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
+#ضمن "monitor_wrap.h"
 
-static void *
+ساكن فراغ *
 bsdauth_init_ctx(Authctxt *authctxt)
 {
-	return authctxt;
+	החזר authctxt;
 }
 
-int
-bsdauth_query(void *ctx, char **name, char **infotxt,
-   u_int *numprompts, char ***prompts, u_int **echo_on)
+صحيح
+bsdauth_query(فراغ *ctx, حرف **name, حرف **infotxt,
+   u_int *numprompts, حرف ***prompts, u_int **echo_on)
 {
 	Authctxt *authctxt = ctx;
-	char *challenge = NULL;
+	حرف *challenge = عدم;
 
-	*infotxt = NULL;
+	*infotxt = عدم;
 	*numprompts = 0;
-	*prompts = NULL;
-	*echo_on = NULL;
+	*prompts = عدم;
+	*echo_on = عدم;
 
-	if (authctxt->as != NULL) {
+	אם (authctxt->as != عدم) {
 		debug2("bsdauth_query: try reuse session");
 		challenge = auth_getitem(authctxt->as, AUTHV_CHALLENGE);
-		if (challenge == NULL) {
+		אם (challenge == عدم) {
 			auth_close(authctxt->as);
-			authctxt->as = NULL;
+			authctxt->as = عدم;
 		}
 	}
 
-	if (challenge == NULL) {
+	אם (challenge == عدم) {
 		debug2("bsdauth_query: new bsd auth session");
 		debug3("bsdauth_query: style %s",
 		    authctxt->style ? authctxt->style : "<default>");
 		authctxt->as = auth_userchallenge(authctxt->user,
 		    authctxt->style, "auth-ssh", &challenge);
-		if (authctxt->as == NULL)
-			challenge = NULL;
+		אם (authctxt->as == عدم)
+			challenge = عدم;
 		debug2("bsdauth_query: <%s>", challenge ? challenge : "empty");
 	}
 
-	if (challenge == NULL)
-		return -1;
+	אם (challenge == عدم)
+		החזר -1;
 
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
 	*numprompts = 1;
-	*prompts = xcalloc(*numprompts, sizeof(char *));
-	*echo_on = xcalloc(*numprompts, sizeof(u_int));
+	*prompts = xcalloc(*numprompts, حجم(حرف *));
+	*echo_on = xcalloc(*numprompts, حجم(u_int));
 	(*prompts)[0] = xstrdup(challenge);
 
-	return 0;
+	החזר 0;
 }
 
-int
-bsdauth_respond(void *ctx, u_int numresponses, char **responses)
+صحيح
+bsdauth_respond(فراغ *ctx, u_int numresponses, حرف **responses)
 {
 	Authctxt *authctxt = ctx;
-	int authok;
+	صحيح authok;
 
-	if (!authctxt->valid)
-		return -1;
+	אם (!authctxt->valid)
+		החזר -1;
 
-	if (authctxt->as == NULL)
+	אם (authctxt->as == عدم)
 		error("bsdauth_respond: no bsd auth session");
 
-	if (numresponses != 1)
-		return -1;
+	אם (numresponses != 1)
+		החזר -1;
 
 	authok = auth_userresponse(authctxt->as, responses[0], 0);
-	authctxt->as = NULL;
+	authctxt->as = عدم;
 	debug3("bsdauth_respond: <%s> = <%d>", responses[0], authok);
 
-	return (authok == 0) ? -1 : 0;
+	החזר (authok == 0) ? -1 : 0;
 }
 
-static void
-bsdauth_free_ctx(void *ctx)
+ساكن فراغ
+bsdauth_free_ctx(فراغ *ctx)
 {
 	Authctxt *authctxt = ctx;
 
-	if (authctxt && authctxt->as) {
+	אם (authctxt && authctxt->as) {
 		auth_close(authctxt->as);
-		authctxt->as = NULL;
+		authctxt->as = عدم;
 	}
 }
 

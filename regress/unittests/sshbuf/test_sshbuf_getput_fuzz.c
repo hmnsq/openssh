@@ -5,30 +5,30 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/objects.h>
-#include <openssl/ec.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/objects.h>
+#ضمن <openssl/ec.h>
 #endif
 
-#include "../test_helper/test_helper.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#ضمن "../test_helper/test_helper.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
 
-void sshbuf_getput_fuzz_tests(void);
+فراغ sshbuf_getput_fuzz_tests(فراغ);
 
-static void
+ساكن فراغ
 attempt_parse_blob(u_char *blob, size_t len)
 {
-	struct sshbuf *p1;
+	بنية sshbuf *p1;
 #ifdef WITH_OPENSSL
 	BIGNUM *bn;
 	EC_KEY *eck;
@@ -41,22 +41,22 @@ attempt_parse_blob(u_char *blob, size_t len)
 	uint64_t u64;
 
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, عدم);
 	ASSERT_INT_EQ(sshbuf_put(p1, blob, len), 0);
 	ASSERT_INT_EQ(sshbuf_get_u8(p1, &u8), 0);
 	ASSERT_INT_EQ(sshbuf_get_u16(p1, &u16), 0);
 	ASSERT_INT_EQ(sshbuf_get_u32(p1, &u32), 0);
 	ASSERT_INT_EQ(sshbuf_get_u64(p1, &u64), 0);
-	if (sshbuf_get_string(p1, &s, &l) == 0) {
+	אם (sshbuf_get_string(p1, &s, &l) == 0) {
 		bzero(s, l);
-		free(s);
+		حرر(s);
 	}
 #ifdef WITH_OPENSSL
-	bn = NULL;
+	bn = عدم;
 	ASSERT_INT_EQ(sshbuf_get_bignum2(p1, &bn), 0);
 	BN_clear_free(bn);
 	eck = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
-	ASSERT_PTR_NE(eck, NULL);
+	ASSERT_PTR_NE(eck, عدم);
 	ASSERT_INT_EQ(sshbuf_get_eckey(p1, eck), 0);
 	EC_KEY_free(eck);
 #endif /* WITH_OPENSSL */
@@ -64,15 +64,15 @@ attempt_parse_blob(u_char *blob, size_t len)
 }
 
 
-static void
-onerror(void *fuzz)
+ساكن فراغ
+onerror(فراغ *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((بنية fuzz *)fuzz);
 }
 
-void
-sshbuf_getput_fuzz_tests(void)
+فراغ
+sshbuf_getput_fuzz_tests(فراغ)
 {
 	u_char blob[] = {
 		/* u8 */
@@ -104,21 +104,21 @@ sshbuf_getput_fuzz_tests(void)
 		0xc8, 0xf9, 0xa3, 0x5e, 0x42, 0xbd, 0xd0, 0x47,
 		0x55, 0x0f, 0x69, 0xd8, 0x0e, 0xc2, 0x3c, 0xd4,
 	};
-	struct fuzz *fuzz;
+	بنية fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_2_BIT_FLIP |
 	    FUZZ_1_BYTE_FLIP | FUZZ_2_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
-	if (test_is_fast())
+	אם (test_is_fast())
 		fuzzers &= ~(FUZZ_2_BYTE_FLIP|FUZZ_2_BIT_FLIP);
 
 	TEST_START("fuzz blob parsing");
-	fuzz = fuzz_begin(fuzzers, blob, sizeof(blob));
+	fuzz = fuzz_begin(fuzzers, blob, حجم(blob));
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz))
-		attempt_parse_blob(blob, sizeof(blob));
+	עבור(; !fuzz_done(fuzz); fuzz_next(fuzz))
+		attempt_parse_blob(blob, حجم(blob));
 	fuzz_cleanup(fuzz);
 	TEST_DONE();
-	TEST_ONERROR(NULL, NULL);
+	TEST_ONERROR(عدم, عدم);
 }
 

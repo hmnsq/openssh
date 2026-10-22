@@ -20,41 +20,41 @@
 /* XXX: remove all logging, only return status codes */
 /* XXX: copy between two remote sites */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/statvfs.h>
-#include <sys/uio.h>
+#ضمن <sys/types.h>
+#ضمن <sys/queue.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/time.h>
+#ضمن <sys/statvfs.h>
+#ضمن <sys/uio.h>
 
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <dirent.h>
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <poll.h>
+#ضمن <signal.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "atomicio.h"
-#include "progressmeter.h"
-#include "misc.h"
-#include "utf8.h"
+#ضمن "xmalloc.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
+#ضمن "log.h"
+#ضمن "atomicio.h"
+#ضمن "progressmeter.h"
+#ضمن "misc.h"
+#ضمن "utf8.h"
 
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+#ضمن "sftp.h"
+#ضمن "sftp-common.h"
+#ضمن "sftp-client.h"
 
-extern volatile sig_atomic_t interrupted;
-extern int showprogress;
+خارجي متطاير sig_atomic_t interrupted;
+خارجي صحيح showprogress;
 
 /* Default size of buffer for up/download (fix sftp.1 scp.1 if changed) */
 #define DEFAULT_COPY_BUFLEN	32768
@@ -71,13 +71,13 @@ extern int showprogress;
 /* Directory separator characters */
 #ifdef HAVE_CYGWIN
 # define SFTP_DIRECTORY_CHARS      "/\\"
-#else /* HAVE_CYGWIN */
+#אחרת /* HAVE_CYGWIN */
 # define SFTP_DIRECTORY_CHARS      "/"
 #endif /* HAVE_CYGWIN */
 
-struct sftp_conn {
-	int fd_in;
-	int fd_out;
+بنية sftp_conn {
+	صحيح fd_in;
+	صحيح fd_out;
 	u_int download_buflen;
 	u_int upload_buflen;
 	u_int num_requests;
@@ -95,11 +95,11 @@ struct sftp_conn {
 #define SFTP_EXT_GETUSERSGROUPS_BY_ID	0x00000200
 	u_int exts;
 	uint64_t limit_kbps;
-	struct bwlimit bwlimit_in, bwlimit_out;
+	بنية bwlimit bwlimit_in, bwlimit_out;
 };
 
 /* Tracks in-progress requests during file transfers */
-struct request {
+بنية request {
 	u_int id;
 	size_t len;
 	uint64_t offset;
@@ -107,126 +107,126 @@ struct request {
 };
 TAILQ_HEAD(requests, request);
 
-static u_char *
-get_handle(struct sftp_conn *conn, u_int expected_id, size_t *len,
-    const char *errfmt, ...) __attribute__((format(printf, 4, 5)));
+ساكن u_char *
+get_handle(بنية sftp_conn *conn, u_int expected_id, size_t *len,
+    ثابت حرف *errfmt, ...) __attribute__((format(printf, 4, 5)));
 
-static struct request *
-request_enqueue(struct requests *requests, u_int id, size_t len,
+ساكن بنية request *
+request_enqueue(بنية requests *requests, u_int id, size_t len,
     uint64_t offset)
 {
-	struct request *req;
+	بنية request *req;
 
-	req = xcalloc(1, sizeof(*req));
+	req = xcalloc(1, حجم(*req));
 	req->id = id;
 	req->len = len;
 	req->offset = offset;
 	TAILQ_INSERT_TAIL(requests, req, tq);
-	return req;
+	החזר req;
 }
 
-static struct request *
-request_find(struct requests *requests, u_int id)
+ساكن بنية request *
+request_find(بنية requests *requests, u_int id)
 {
-	struct request *req;
+	بنية request *req;
 
-	for (req = TAILQ_FIRST(requests);
-	    req != NULL && req->id != id;
+	עבור (req = TAILQ_FIRST(requests);
+	    req != عدم && req->id != id;
 	    req = TAILQ_NEXT(req, tq))
 		;
-	return req;
+	החזר req;
 }
 
-static int
-sftpio(void *_bwlimit, size_t amount)
+ساكن صحيح
+sftpio(فراغ *_bwlimit, size_t amount)
 {
-	struct bwlimit *bwlimit = (struct bwlimit *)_bwlimit;
+	بنية bwlimit *bwlimit = (بنية bwlimit *)_bwlimit;
 
 	refresh_progress_meter(0);
-	if (bwlimit != NULL)
+	אם (bwlimit != عدم)
 		bandwidth_limit(bwlimit, amount);
-	return 0;
+	החזר 0;
 }
 
-static void
-send_msg(struct sftp_conn *conn, struct sshbuf *m)
+ساكن فراغ
+send_msg(بنية sftp_conn *conn, بنية sshbuf *m)
 {
 	u_char mlen[4];
-	struct iovec iov[2];
+	بنية iovec iov[2];
 
-	if (sshbuf_len(m) > SFTP_MAX_MSG_LENGTH)
+	אם (sshbuf_len(m) > SFTP_MAX_MSG_LENGTH)
 		fatal("Outbound message too long %zu", sshbuf_len(m));
 
 	/* Send length first */
 	put_u32(mlen, sshbuf_len(m));
 	iov[0].iov_base = mlen;
-	iov[0].iov_len = sizeof(mlen);
+	iov[0].iov_len = حجم(mlen);
 	iov[1].iov_base = (u_char *)sshbuf_ptr(m);
 	iov[1].iov_len = sshbuf_len(m);
 
-	if (atomiciov6(writev, conn->fd_out, iov, 2, sftpio,
-	    conn->limit_kbps > 0 ? &conn->bwlimit_out : NULL) !=
-	    sshbuf_len(m) + sizeof(mlen))
+	אם (atomiciov6(writev, conn->fd_out, iov, 2, sftpio,
+	    conn->limit_kbps > 0 ? &conn->bwlimit_out : عدم) !=
+	    sshbuf_len(m) + حجم(mlen))
 		fatal("Couldn't send packet: %s", strerror(errno));
 
 	sshbuf_reset(m);
 }
 
-static void
-get_msg_extended(struct sftp_conn *conn, struct sshbuf *m, int initial)
+ساكن فراغ
+get_msg_extended(بنية sftp_conn *conn, بنية sshbuf *m, صحيح initial)
 {
 	u_int msg_len;
 	u_char *p;
-	int r;
+	صحيح r;
 
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, 4, &p)) != 0)
+	אם ((r = sshbuf_reserve(m, 4, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio6(read, conn->fd_in, p, 4, sftpio,
-	    conn->limit_kbps > 0 ? &conn->bwlimit_in : NULL) != 4) {
-		if (errno == EPIPE || errno == ECONNRESET)
+	אם (atomicio6(اقرأ, conn->fd_in, p, 4, sftpio,
+	    conn->limit_kbps > 0 ? &conn->bwlimit_in : عدم) != 4) {
+		אם (errno == EPIPE || errno == ECONNRESET)
 			fatal("Connection closed");
-		else
+		אחרת
 			fatal("Couldn't read packet: %s", strerror(errno));
 	}
 
-	if ((r = sshbuf_get_u32(m, &msg_len)) != 0)
+	אם ((r = sshbuf_get_u32(m, &msg_len)) != 0)
 		fatal_fr(r, "sshbuf_get_u32");
-	if (msg_len > SFTP_MAX_MSG_LENGTH) {
+	אם (msg_len > SFTP_MAX_MSG_LENGTH) {
 		do_log2(initial ? SYSLOG_LEVEL_ERROR : SYSLOG_LEVEL_FATAL,
 		    "Received message too long %u", msg_len);
 		fatal("Ensure the remote shell produces no output "
 		    "for non-interactive sessions.");
 	}
 
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
+	אם ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio6(read, conn->fd_in, p, msg_len, sftpio,
-	    conn->limit_kbps > 0 ? &conn->bwlimit_in : NULL)
+	אם (atomicio6(اقرأ, conn->fd_in, p, msg_len, sftpio,
+	    conn->limit_kbps > 0 ? &conn->bwlimit_in : عدم)
 	    != msg_len) {
-		if (errno == EPIPE)
+		אם (errno == EPIPE)
 			fatal("Connection closed");
-		else
+		אחרת
 			fatal("Read packet: %s", strerror(errno));
 	}
 }
 
-static void
-get_msg(struct sftp_conn *conn, struct sshbuf *m)
+ساكن فراغ
+get_msg(بنية sftp_conn *conn, بنية sshbuf *m)
 {
 	get_msg_extended(conn, m, 0);
 }
 
-static void
-send_string_request(struct sftp_conn *conn, u_int id, u_int code, const char *s,
+ساكن فراغ
+send_string_request(بنية sftp_conn *conn, u_int id, u_int code, ثابت حرف *s,
     u_int len)
 {
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *msg;
+	صحيح r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, code)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, code)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_string(msg, s, len)) != 0)
 		fatal_fr(r, "compose");
@@ -235,16 +235,16 @@ send_string_request(struct sftp_conn *conn, u_int id, u_int code, const char *s,
 	sshbuf_free(msg);
 }
 
-static void
-send_string_attrs_request(struct sftp_conn *conn, u_int id, u_int code,
-    const void *s, u_int len, Attrib *a)
+ساكن فراغ
+send_string_attrs_request(بنية sftp_conn *conn, u_int id, u_int code,
+    ثابت فراغ *s, u_int len, Attrib *a)
 {
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *msg;
+	صحيح r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, code)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, code)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_string(msg, s, len)) != 0 ||
 	    (r = encode_attrib(msg, a)) != 0)
@@ -255,171 +255,171 @@ send_string_attrs_request(struct sftp_conn *conn, u_int id, u_int code,
 	sshbuf_free(msg);
 }
 
-static u_int
-get_status(struct sftp_conn *conn, u_int expected_id)
+ساكن u_int
+get_status(بنية sftp_conn *conn, u_int expected_id)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_char type;
 	u_int id, status;
-	int r;
+	صحيح r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+	אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 	    (r = sshbuf_get_u32(msg, &id)) != 0)
 		fatal_fr(r, "compose");
 
-	if (id != expected_id)
+	אם (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type != SSH2_FXP_STATUS)
+	אם (type != SSH2_FXP_STATUS)
 		fatal("Expected SSH2_FXP_STATUS(%u) packet, got %u",
 		    SSH2_FXP_STATUS, type);
 
-	if ((r = sshbuf_get_u32(msg, &status)) != 0)
+	אם ((r = sshbuf_get_u32(msg, &status)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(msg);
 
 	debug3("SSH2_FXP_STATUS %u", status);
 
-	return status;
+	החזר status;
 }
 
-static u_char *
-get_handle(struct sftp_conn *conn, u_int expected_id, size_t *len,
-    const char *errfmt, ...)
+ساكن u_char *
+get_handle(بنية sftp_conn *conn, u_int expected_id, size_t *len,
+    ثابت حرف *errfmt, ...)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int id, status;
 	u_char type;
 	u_char *handle;
-	char errmsg[256];
+	حرف errmsg[256];
 	va_list args;
-	int r;
+	صحيح r;
 
 	va_start(args, errfmt);
-	if (errfmt != NULL)
-		vsnprintf(errmsg, sizeof(errmsg), errfmt, args);
+	אם (errfmt != عدم)
+		vsnprintf(errmsg, حجم(errmsg), errfmt, args);
 	va_end(args);
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+	אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 	    (r = sshbuf_get_u32(msg, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	אם (id != expected_id)
 		fatal("%s: ID mismatch (%u != %u)",
-		    errfmt == NULL ? __func__ : errmsg, id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		    errfmt == عدم ? __func__ : errmsg, id, expected_id);
+	אם (type == SSH2_FXP_STATUS) {
+		אם ((r = sshbuf_get_u32(msg, &status)) != 0)
 			fatal_fr(r, "parse status");
-		if (errfmt != NULL)
+		אם (errfmt != عدم)
 			error("%s: %s", errmsg, fx2txt(status));
 		sshbuf_free(msg);
-		return(NULL);
-	} else if (type != SSH2_FXP_HANDLE)
+		החזר(عدم);
+	} אחרת אם (type != SSH2_FXP_HANDLE)
 		fatal("%s: Expected SSH2_FXP_HANDLE(%u) packet, got %u",
-		    errfmt == NULL ? __func__ : errmsg, SSH2_FXP_HANDLE, type);
+		    errfmt == عدم ? __func__ : errmsg, SSH2_FXP_HANDLE, type);
 
-	if ((r = sshbuf_get_string(msg, &handle, len)) != 0)
+	אם ((r = sshbuf_get_string(msg, &handle, len)) != 0)
 		fatal_fr(r, "parse handle");
 	sshbuf_free(msg);
 
-	return handle;
+	החזר handle;
 }
 
-static int
-get_decode_stat(struct sftp_conn *conn, u_int expected_id, int quiet, Attrib *a)
+ساكن صحيح
+get_decode_stat(بنية sftp_conn *conn, u_int expected_id, صحيح quiet, Attrib *a)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int id;
 	u_char type;
-	int r;
+	صحيح r;
 	Attrib attr;
 
-	if (a != NULL)
-		memset(a, '\0', sizeof(*a));
-	if ((msg = sshbuf_new()) == NULL)
+	אם (a != عدم)
+		memset(a, '\0', حجم(*a));
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	get_msg(conn, msg);
 
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+	אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 	    (r = sshbuf_get_u32(msg, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	אם (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
+	אם (type == SSH2_FXP_STATUS) {
 		u_int status;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		אם ((r = sshbuf_get_u32(msg, &status)) != 0)
 			fatal_fr(r, "parse status");
-		if (quiet)
+		אם (quiet)
 			debug("stat remote: %s", fx2txt(status));
-		else
+		אחרת
 			error("stat remote: %s", fx2txt(status));
 		sshbuf_free(msg);
-		return -1;
-	} else if (type != SSH2_FXP_ATTRS) {
+		החזר -1;
+	} אחרת אם (type != SSH2_FXP_ATTRS) {
 		fatal("Expected SSH2_FXP_ATTRS(%u) packet, got %u",
 		    SSH2_FXP_ATTRS, type);
 	}
-	if ((r = decode_attrib(msg, &attr)) != 0) {
+	אם ((r = decode_attrib(msg, &attr)) != 0) {
 		error_fr(r, "decode_attrib");
 		sshbuf_free(msg);
-		return -1;
+		החזר -1;
 	}
 	/* success */
-	if (a != NULL)
+	אם (a != عدم)
 		*a = attr;
 	debug3("Received stat reply T:%u I:%u F:0x%04x M:%05o",
 	    type, id, attr.flags, attr.perm);
 	sshbuf_free(msg);
 
-	return 0;
+	החזר 0;
 }
 
-static int
-get_decode_statvfs(struct sftp_conn *conn, struct sftp_statvfs *st,
-    u_int expected_id, int quiet)
+ساكن صحيح
+get_decode_statvfs(بنية sftp_conn *conn, بنية sftp_statvfs *st,
+    u_int expected_id, صحيح quiet)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_char type;
 	u_int id;
 	uint64_t flag;
-	int r;
+	صحيح r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	get_msg(conn, msg);
 
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+	אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 	    (r = sshbuf_get_u32(msg, &id)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("Received statvfs reply T:%u I:%u", type, id);
-	if (id != expected_id)
+	אם (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
+	אם (type == SSH2_FXP_STATUS) {
 		u_int status;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		אם ((r = sshbuf_get_u32(msg, &status)) != 0)
 			fatal_fr(r, "parse status");
-		if (quiet)
+		אם (quiet)
 			debug("remote statvfs: %s", fx2txt(status));
-		else
+		אחרת
 			error("remote statvfs: %s", fx2txt(status));
 		sshbuf_free(msg);
-		return -1;
-	} else if (type != SSH2_FXP_EXTENDED_REPLY) {
+		החזר -1;
+	} אחרת אם (type != SSH2_FXP_EXTENDED_REPLY) {
 		fatal("Expected SSH2_FXP_EXTENDED_REPLY(%u) packet, got %u",
 		    SSH2_FXP_EXTENDED_REPLY, type);
 	}
 
-	memset(st, 0, sizeof(*st));
-	if ((r = sshbuf_get_u64(msg, &st->f_bsize)) != 0 ||
+	memset(st, 0, حجم(*st));
+	אם ((r = sshbuf_get_u64(msg, &st->f_bsize)) != 0 ||
 	    (r = sshbuf_get_u64(msg, &st->f_frsize)) != 0 ||
 	    (r = sshbuf_get_u64(msg, &st->f_blocks)) != 0 ||
 	    (r = sshbuf_get_u64(msg, &st->f_bfree)) != 0 ||
@@ -437,19 +437,19 @@ get_decode_statvfs(struct sftp_conn *conn, struct sftp_statvfs *st,
 
 	sshbuf_free(msg);
 
-	return 0;
+	החזר 0;
 }
 
-struct sftp_conn *
-sftp_init(int fd_in, int fd_out, u_int transfer_buflen, u_int num_requests,
+بنية sftp_conn *
+sftp_init(صحيح fd_in, صحيح fd_out, u_int transfer_buflen, u_int num_requests,
     uint64_t limit_kbps)
 {
 	u_char type;
-	struct sshbuf *msg;
-	struct sftp_conn *ret;
-	int r;
+	بنية sshbuf *msg;
+	بنية sftp_conn *ret;
+	صحيح r;
 
-	ret = xcalloc(1, sizeof(*ret));
+	ret = xcalloc(1, حجم(*ret));
 	ret->msg_id = 1;
 	ret->fd_in = fd_in;
 	ret->fd_out = fd_out;
@@ -460,9 +460,9 @@ sftp_init(int fd_in, int fd_out, u_int transfer_buflen, u_int num_requests,
 	ret->exts = 0;
 	ret->limit_kbps = 0;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_INIT)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_INIT)) != 0 ||
 	    (r = sshbuf_put_u32(msg, SSH2_FILEXFER_VERSION)) != 0)
 		fatal_fr(r, "parse");
 
@@ -471,92 +471,92 @@ sftp_init(int fd_in, int fd_out, u_int transfer_buflen, u_int num_requests,
 	get_msg_extended(ret, msg, 1);
 
 	/* Expecting a VERSION reply */
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
+	אם ((r = sshbuf_get_u8(msg, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_FXP_VERSION) {
+	אם (type != SSH2_FXP_VERSION) {
 		error("Invalid packet back from SSH2_FXP_INIT (type %u)",
 		    type);
 		sshbuf_free(msg);
-		free(ret);
-		return(NULL);
+		حرر(ret);
+		החזר(عدم);
 	}
-	if ((r = sshbuf_get_u32(msg, &ret->version)) != 0)
+	אם ((r = sshbuf_get_u32(msg, &ret->version)) != 0)
 		fatal_fr(r, "parse version");
 
 	debug2("Remote version: %u", ret->version);
 
 	/* Check for extensions */
-	while (sshbuf_len(msg) > 0) {
-		char *name;
+	כלעוד (sshbuf_len(msg) > 0) {
+		حرف *name;
 		u_char *value;
 		size_t vlen;
-		int known = 0;
+		صحيح known = 0;
 
-		if ((r = sshbuf_get_cstring(msg, &name, NULL)) != 0 ||
+		אם ((r = sshbuf_get_cstring(msg, &name, عدم)) != 0 ||
 		    (r = sshbuf_get_string(msg, &value, &vlen)) != 0)
 			fatal_fr(r, "parse extension");
-		if (strcmp(name, "posix-rename@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		אם (strcmp(name, "posix-rename@openssh.com") == 0 &&
+		    strcmp((حرف *)value, "1") == 0) {
 			ret->exts |= SFTP_EXT_POSIX_RENAME;
 			known = 1;
-		} else if (strcmp(name, "statvfs@openssh.com") == 0 &&
-		    strcmp((char *)value, "2") == 0) {
+		} אחרת אם (strcmp(name, "statvfs@openssh.com") == 0 &&
+		    strcmp((حرف *)value, "2") == 0) {
 			ret->exts |= SFTP_EXT_STATVFS;
 			known = 1;
-		} else if (strcmp(name, "fstatvfs@openssh.com") == 0 &&
-		    strcmp((char *)value, "2") == 0) {
+		} אחרת אם (strcmp(name, "fstatvfs@openssh.com") == 0 &&
+		    strcmp((حرف *)value, "2") == 0) {
 			ret->exts |= SFTP_EXT_FSTATVFS;
 			known = 1;
-		} else if (strcmp(name, "hardlink@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} אחרת אם (strcmp(name, "hardlink@openssh.com") == 0 &&
+		    strcmp((حرف *)value, "1") == 0) {
 			ret->exts |= SFTP_EXT_HARDLINK;
 			known = 1;
-		} else if (strcmp(name, "fsync@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} אחרת אם (strcmp(name, "fsync@openssh.com") == 0 &&
+		    strcmp((حرف *)value, "1") == 0) {
 			ret->exts |= SFTP_EXT_FSYNC;
 			known = 1;
-		} else if (strcmp(name, "lsetstat@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} אחרת אם (strcmp(name, "lsetstat@openssh.com") == 0 &&
+		    strcmp((حرف *)value, "1") == 0) {
 			ret->exts |= SFTP_EXT_LSETSTAT;
 			known = 1;
-		} else if (strcmp(name, "limits@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} אחרת אם (strcmp(name, "limits@openssh.com") == 0 &&
+		    strcmp((حرف *)value, "1") == 0) {
 			ret->exts |= SFTP_EXT_LIMITS;
 			known = 1;
-		} else if (strcmp(name, "expand-path@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} אחרת אם (strcmp(name, "expand-path@openssh.com") == 0 &&
+		    strcmp((حرف *)value, "1") == 0) {
 			ret->exts |= SFTP_EXT_PATH_EXPAND;
 			known = 1;
-		} else if (strcmp(name, "copy-data") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		} אחרת אם (strcmp(name, "copy-data") == 0 &&
+		    strcmp((حرف *)value, "1") == 0) {
 			ret->exts |= SFTP_EXT_COPY_DATA;
 			known = 1;
-		} else if (strcmp(name,
+		} אחרת אם (strcmp(name,
 		    "users-groups-by-id@openssh.com") == 0 &&
-		    strcmp((char *)value, "1") == 0) {
+		    strcmp((حرف *)value, "1") == 0) {
 			ret->exts |= SFTP_EXT_GETUSERSGROUPS_BY_ID;
 			known = 1;
 		}
-		if (known) {
+		אם (known) {
 			debug2("Server supports extension \"%s\" revision %s",
 			    name, value);
-		} else {
+		} אחרת {
 			debug2("Unrecognised server extension \"%s\"", name);
 		}
-		free(name);
-		free(value);
+		حرر(name);
+		حرر(value);
 	}
 
 	sshbuf_free(msg);
 
 	/* Query the server for its limits */
-	if (ret->exts & SFTP_EXT_LIMITS) {
-		struct sftp_limits limits;
-		if (sftp_get_limits(ret, &limits) != 0)
+	אם (ret->exts & SFTP_EXT_LIMITS) {
+		بنية sftp_limits limits;
+		אם (sftp_get_limits(ret, &limits) != 0)
 			fatal_f("limits failed");
 
 		/* If the caller did not specify, find a good value */
-		if (transfer_buflen == 0) {
+		אם (transfer_buflen == 0) {
 			ret->download_buflen = MINIMUM(limits.read_length,
 			    SFTP_MAX_MSG_LENGTH - 1024);
 			ret->upload_buflen = MINIMUM(limits.write_length,
@@ -572,54 +572,54 @@ sftp_init(int fd_in, int fd_out, u_int transfer_buflen, u_int num_requests,
 	}
 
 	/* Some filexfer v.0 servers don't support large packets */
-	if (ret->version == 0) {
+	אם (ret->version == 0) {
 		ret->download_buflen = MINIMUM(ret->download_buflen, 20480);
 		ret->upload_buflen = MINIMUM(ret->upload_buflen, 20480);
 	}
 
 	ret->limit_kbps = limit_kbps;
-	if (ret->limit_kbps > 0) {
+	אם (ret->limit_kbps > 0) {
 		bandwidth_limit_init(&ret->bwlimit_in, ret->limit_kbps,
 		    ret->download_buflen);
 		bandwidth_limit_init(&ret->bwlimit_out, ret->limit_kbps,
 		    ret->upload_buflen);
 	}
 
-	return ret;
+	החזר ret;
 }
 
-void
-sftp_free(struct sftp_conn *conn)
+فراغ
+sftp_free(بنية sftp_conn *conn)
 {
-	if (conn == NULL)
-		return;
-	freezero(conn, sizeof(*conn));
+	אם (conn == عدم)
+		החזר;
+	freezero(conn, حجم(*conn));
 }
 
 u_int
-sftp_proto_version(struct sftp_conn *conn)
+sftp_proto_version(بنية sftp_conn *conn)
 {
-	return conn->version;
+	החזר conn->version;
 }
 
-int
-sftp_get_limits(struct sftp_conn *conn, struct sftp_limits *limits)
+صحيح
+sftp_get_limits(بنية sftp_conn *conn, بنية sftp_limits *limits)
 {
 	u_int id, msg_id;
 	u_char type;
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *msg;
+	صحيح r;
 
-	if ((conn->exts & SFTP_EXT_LIMITS) == 0) {
+	אם ((conn->exts & SFTP_EXT_LIMITS) == 0) {
 		error("Server does not support limits@openssh.com extension");
-		return -1;
+		החזר -1;
 	}
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
 	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "limits@openssh.com")) != 0)
 		fatal_fr(r, "compose");
@@ -628,24 +628,24 @@ sftp_get_limits(struct sftp_conn *conn, struct sftp_limits *limits)
 
 	get_msg(conn, msg);
 
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+	אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 	    (r = sshbuf_get_u32(msg, &msg_id)) != 0)
 		fatal_fr(r, "parse");
 
 	debug3("Received limits reply T:%u I:%u", type, msg_id);
-	if (id != msg_id)
+	אם (id != msg_id)
 		fatal("ID mismatch (%u != %u)", msg_id, id);
-	if (type != SSH2_FXP_EXTENDED_REPLY) {
+	אם (type != SSH2_FXP_EXTENDED_REPLY) {
 		debug_f("expected SSH2_FXP_EXTENDED_REPLY(%u) packet, got %u",
 		    SSH2_FXP_EXTENDED_REPLY, type);
 		/* Disable the limits extension */
 		conn->exts &= ~SFTP_EXT_LIMITS;
 		sshbuf_free(msg);
-		return -1;
+		החזר -1;
 	}
 
-	memset(limits, 0, sizeof(*limits));
-	if ((r = sshbuf_get_u64(msg, &limits->packet_length)) != 0 ||
+	memset(limits, 0, حجم(*limits));
+	אם ((r = sshbuf_get_u64(msg, &limits->packet_length)) != 0 ||
 	    (r = sshbuf_get_u64(msg, &limits->read_length)) != 0 ||
 	    (r = sshbuf_get_u64(msg, &limits->write_length)) != 0 ||
 	    (r = sshbuf_get_u64(msg, &limits->open_handles)) != 0)
@@ -653,21 +653,21 @@ sftp_get_limits(struct sftp_conn *conn, struct sftp_limits *limits)
 
 	sshbuf_free(msg);
 
-	return 0;
+	החזר 0;
 }
 
-int
-sftp_close(struct sftp_conn *conn, const u_char *handle, u_int handle_len)
+صحيح
+sftp_close(بنية sftp_conn *conn, ثابت u_char *handle, u_int handle_len)
 {
 	u_int id, status;
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *msg;
+	صحيح r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
 	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_CLOSE)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_CLOSE)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
 		fatal_fr(r, "parse");
@@ -675,34 +675,34 @@ sftp_close(struct sftp_conn *conn, const u_char *handle, u_int handle_len)
 	debug3("Sent message SSH2_FXP_CLOSE I:%u", id);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("close remote: %s", fx2txt(status));
 
 	sshbuf_free(msg);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
 
-static int
-sftp_lsreaddir(struct sftp_conn *conn, const char *path, int print_flag,
+ساكن صحيح
+sftp_lsreaddir(بنية sftp_conn *conn, ثابت حرف *path, صحيح print_flag,
     SFTP_DIRENT ***dir)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int count, id, i, expected_id, ents = 0;
 	size_t handle_len;
 	u_char type, *handle;
-	int status = SSH2_FX_FAILURE;
-	int r;
+	صحيح status = SSH2_FX_FAILURE;
+	صحيح r;
 
-	if (dir)
-		*dir = NULL;
+	אם (dir)
+		*dir = عدم;
 
 	id = conn->msg_id++;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPENDIR)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_OPENDIR)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, path)) != 0)
 		fatal_fr(r, "compose OPENDIR");
@@ -710,24 +710,24 @@ sftp_lsreaddir(struct sftp_conn *conn, const char *path, int print_flag,
 
 	handle = get_handle(conn, id, &handle_len,
 	    "remote readdir(\"%s\")", path);
-	if (handle == NULL) {
+	אם (handle == عدم) {
 		sshbuf_free(msg);
-		return -1;
+		החזר -1;
 	}
 
-	if (dir) {
+	אם (dir) {
 		ents = 0;
-		*dir = xcalloc(1, sizeof(**dir));
-		(*dir)[0] = NULL;
+		*dir = xcalloc(1, حجم(**dir));
+		(*dir)[0] = عدم;
 	}
 
-	for (; !interrupted;) {
+	עבור (; !interrupted;) {
 		id = expected_id = conn->msg_id++;
 
 		debug3("Sending SSH2_FXP_READDIR I:%u", id);
 
 		sshbuf_reset(msg);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_READDIR)) != 0 ||
+		אם ((r = sshbuf_put_u8(msg, SSH2_FXP_READDIR)) != 0 ||
 		    (r = sshbuf_put_u32(msg, id)) != 0 ||
 		    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
 			fatal_fr(r, "compose READDIR");
@@ -737,53 +737,53 @@ sftp_lsreaddir(struct sftp_conn *conn, const char *path, int print_flag,
 
 		get_msg(conn, msg);
 
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+		אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 		    (r = sshbuf_get_u32(msg, &id)) != 0)
 			fatal_fr(r, "parse");
 
 		debug3("Received reply T:%u I:%u", type, id);
 
-		if (id != expected_id)
+		אם (id != expected_id)
 			fatal("ID mismatch (%u != %u)", id, expected_id);
 
-		if (type == SSH2_FXP_STATUS) {
+		אם (type == SSH2_FXP_STATUS) {
 			u_int rstatus;
 
-			if ((r = sshbuf_get_u32(msg, &rstatus)) != 0)
+			אם ((r = sshbuf_get_u32(msg, &rstatus)) != 0)
 				fatal_fr(r, "parse status");
 			debug3("Received SSH2_FXP_STATUS %d", rstatus);
-			if (rstatus == SSH2_FX_EOF)
-				break;
+			אם (rstatus == SSH2_FX_EOF)
+				اكسر;
 			error("Couldn't read directory: %s", fx2txt(rstatus));
-			goto out;
-		} else if (type != SSH2_FXP_NAME)
+			اذهب out;
+		} אחרת אם (type != SSH2_FXP_NAME)
 			fatal("Expected SSH2_FXP_NAME(%u) packet, got %u",
 			    SSH2_FXP_NAME, type);
 
-		if ((r = sshbuf_get_u32(msg, &count)) != 0)
+		אם ((r = sshbuf_get_u32(msg, &count)) != 0)
 			fatal_fr(r, "parse count");
-		if (count > SSHBUF_SIZE_MAX)
+		אם (count > SSHBUF_SIZE_MAX)
 			fatal_f("nonsensical number of entries");
-		if (count == 0)
-			break;
+		אם (count == 0)
+			اكسر;
 		debug3("Received %d SSH2_FXP_NAME responses", count);
-		for (i = 0; i < count; i++) {
-			char *filename, *longname;
+		עבור (i = 0; i < count; i++) {
+			حرف *filename, *longname;
 			Attrib a;
 
-			if ((r = sshbuf_get_cstring(msg, &filename,
-			    NULL)) != 0 ||
+			אם ((r = sshbuf_get_cstring(msg, &filename,
+			    عدم)) != 0 ||
 			    (r = sshbuf_get_cstring(msg, &longname,
-			    NULL)) != 0)
+			    عدم)) != 0)
 				fatal_fr(r, "parse filenames");
-			if ((r = decode_attrib(msg, &a)) != 0) {
+			אם ((r = decode_attrib(msg, &a)) != 0) {
 				error_fr(r, "couldn't decode attrib");
-				free(filename);
-				free(longname);
-				goto out;
+				حرر(filename);
+				حرر(longname);
+				اذهب out;
 			}
 
-			if (print_flag)
+			אם (print_flag)
 				mprintf("%s\n", longname);
 
 			/*
@@ -791,20 +791,20 @@ sftp_lsreaddir(struct sftp_conn *conn, const char *path, int print_flag,
 			 * These can be used to attack recursive ops
 			 * (e.g. send '../../../../etc/passwd')
 			 */
-			if (*filename == '\0' ||
-			    strpbrk(filename, SFTP_DIRECTORY_CHARS) != NULL) {
+			אם (*filename == '\0' ||
+			    strpbrk(filename, SFTP_DIRECTORY_CHARS) != عدم) {
 				error("Server sent suspect path \"%s\" "
 				    "during readdir of \"%s\"", filename, path);
-			} else if (dir) {
-				*dir = xreallocarray(*dir, ents + 2, sizeof(**dir));
-				(*dir)[ents] = xcalloc(1, sizeof(***dir));
+			} אחרת אם (dir) {
+				*dir = xreallocarray(*dir, ents + 2, حجم(**dir));
+				(*dir)[ents] = xcalloc(1, حجم(***dir));
 				(*dir)[ents]->filename = xstrdup(filename);
 				(*dir)[ents]->longname = xstrdup(longname);
-				memcpy(&(*dir)[ents]->a, &a, sizeof(a));
-				(*dir)[++ents] = NULL;
+				memcpy(&(*dir)[ents]->a, &a, حجم(a));
+				(*dir)[++ents] = عدم;
 			}
-			free(filename);
-			free(longname);
+			حرر(filename);
+			حرر(longname);
 		}
 	}
 	status = 0;
@@ -812,44 +812,44 @@ sftp_lsreaddir(struct sftp_conn *conn, const char *path, int print_flag,
  out:
 	sshbuf_free(msg);
 	sftp_close(conn, handle, handle_len);
-	free(handle);
+	حرر(handle);
 
-	if (status != 0 && dir != NULL) {
+	אם (status != 0 && dir != عدم) {
 		/* Don't return results on error */
 		sftp_free_dirents(*dir);
-		*dir = NULL;
-	} else if (interrupted && dir != NULL && *dir != NULL) {
+		*dir = عدم;
+	} אחרת אם (interrupted && dir != عدم && *dir != عدم) {
 		/* Don't return partial matches on interrupt */
 		sftp_free_dirents(*dir);
-		*dir = xcalloc(1, sizeof(**dir));
-		**dir = NULL;
+		*dir = xcalloc(1, حجم(**dir));
+		**dir = عدم;
 	}
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_readdir(struct sftp_conn *conn, const char *path, SFTP_DIRENT ***dir)
+صحيح
+sftp_readdir(بنية sftp_conn *conn, ثابت حرف *path, SFTP_DIRENT ***dir)
 {
-	return sftp_lsreaddir(conn, path, 0, dir);
+	החזר sftp_lsreaddir(conn, path, 0, dir);
 }
 
-void sftp_free_dirents(SFTP_DIRENT **s)
+فراغ sftp_free_dirents(SFTP_DIRENT **s)
 {
-	int i;
+	صحيح i;
 
-	if (s == NULL)
-		return;
-	for (i = 0; s[i]; i++) {
-		free(s[i]->filename);
-		free(s[i]->longname);
-		free(s[i]);
+	אם (s == عدم)
+		החזר;
+	עבור (i = 0; s[i]; i++) {
+		حرر(s[i]->filename);
+		حرر(s[i]->longname);
+		حرر(s[i]);
 	}
-	free(s);
+	حرر(s);
 }
 
-int
-sftp_rm(struct sftp_conn *conn, const char *path)
+صحيح
+sftp_rm(بنية sftp_conn *conn, ثابت حرف *path)
 {
 	u_int status, id;
 
@@ -858,13 +858,13 @@ sftp_rm(struct sftp_conn *conn, const char *path)
 	id = conn->msg_id++;
 	send_string_request(conn, id, SSH2_FXP_REMOVE, path, strlen(path));
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("remote delete %s: %s", path, fx2txt(status));
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_mkdir(struct sftp_conn *conn, const char *path, Attrib *a, int print_flag)
+صحيح
+sftp_mkdir(بنية sftp_conn *conn, ثابت حرف *path, Attrib *a, صحيح print_flag)
 {
 	u_int status, id;
 
@@ -875,47 +875,47 @@ sftp_mkdir(struct sftp_conn *conn, const char *path, Attrib *a, int print_flag)
 	    strlen(path), a);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK && print_flag)
+	אם (status != SSH2_FX_OK && print_flag)
 		error("remote mkdir \"%s\": %s", path, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_mkpath(struct sftp_conn *conn, const char *path, Attrib *a, int print_flag)
+صحيح
+sftp_mkpath(بنية sftp_conn *conn, ثابت حرف *path, Attrib *a, صحيح print_flag)
 {
-	char *slash, *tmp_path;
-	int done;
+	حرف *slash, *tmp_path;
+	صحيح done;
 
 	tmp_path = xstrdup(path);
 	slash = tmp_path;
 
-	for (;;) {
+	עבור (;;) {
 		slash += strspn(slash, "/");
 		slash += strcspn(slash, "/");
 
 		done = (*slash == '\0');
 		*slash = '\0';
 
-		if (!sftp_remote_is_dir(conn, tmp_path)) {
-			if (sftp_mkdir(conn, tmp_path, a, print_flag) != 0) {
-				free(tmp_path);
-				return -1;
+		אם (!sftp_remote_is_dir(conn, tmp_path)) {
+			אם (sftp_mkdir(conn, tmp_path, a, print_flag) != 0) {
+				حرر(tmp_path);
+				החזר -1;
 			}
 		}
 
-		if (done)
-			break;
+		אם (done)
+			اكسر;
 
 		*slash = '/';
 	}
 
-	free(tmp_path);
-	return 0;
+	حرر(tmp_path);
+	החזר 0;
 }
 
-int
-sftp_rmdir(struct sftp_conn *conn, const char *path)
+صحيح
+sftp_rmdir(بنية sftp_conn *conn, ثابت حرف *path)
 {
 	u_int status, id;
 
@@ -926,14 +926,14 @@ sftp_rmdir(struct sftp_conn *conn, const char *path)
 	    strlen(path));
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("remote rmdir \"%s\": %s", path, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_stat(struct sftp_conn *conn, const char *path, int quiet, Attrib *a)
+صحيح
+sftp_stat(بنية sftp_conn *conn, ثابت حرف *path, صحيح quiet, Attrib *a)
 {
 	u_int id;
 
@@ -945,31 +945,31 @@ sftp_stat(struct sftp_conn *conn, const char *path, int quiet, Attrib *a)
 	    conn->version == 0 ? SSH2_FXP_STAT_VERSION_0 : SSH2_FXP_STAT,
 	    path, strlen(path));
 
-	return get_decode_stat(conn, id, quiet, a);
+	החזר get_decode_stat(conn, id, quiet, a);
 }
 
-int
-sftp_lstat(struct sftp_conn *conn, const char *path, int quiet, Attrib *a)
+صحيح
+sftp_lstat(بنية sftp_conn *conn, ثابت حرف *path, صحيح quiet, Attrib *a)
 {
 	u_int id;
 
-	if (conn->version == 0) {
+	אם (conn->version == 0) {
 		do_log2(quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_INFO,
 		    "Server version does not support lstat operation");
-		return sftp_stat(conn, path, quiet, a);
+		החזר sftp_stat(conn, path, quiet, a);
 	}
 
 	id = conn->msg_id++;
 	send_string_request(conn, id, SSH2_FXP_LSTAT, path,
 	    strlen(path));
 
-	return get_decode_stat(conn, id, quiet, a);
+	החזר get_decode_stat(conn, id, quiet, a);
 }
 
 #ifdef notyet
-int
-sftp_fstat(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
-    int quiet, Attrib *a)
+صحيح
+sftp_fstat(بنية sftp_conn *conn, ثابت u_char *handle, u_int handle_len,
+    صحيح quiet, Attrib *a)
 {
 	u_int id;
 
@@ -979,12 +979,12 @@ sftp_fstat(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
 	send_string_request(conn, id, SSH2_FXP_FSTAT, handle,
 	    handle_len);
 
-	return get_decode_stat(conn, id, quiet, a);
+	החזר get_decode_stat(conn, id, quiet, a);
 }
 #endif
 
-int
-sftp_setstat(struct sftp_conn *conn, const char *path, Attrib *a)
+صحيح
+sftp_setstat(بنية sftp_conn *conn, ثابت حرف *path, Attrib *a)
 {
 	u_int status, id;
 
@@ -995,14 +995,14 @@ sftp_setstat(struct sftp_conn *conn, const char *path, Attrib *a)
 	    strlen(path), a);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("remote setstat \"%s\": %s", path, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_fsetstat(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
+صحيح
+sftp_fsetstat(بنية sftp_conn *conn, ثابت u_char *handle, u_int handle_len,
     Attrib *a)
 {
 	u_int status, id;
@@ -1014,139 +1014,139 @@ sftp_fsetstat(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
 	    handle_len, a);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("remote fsetstat: %s", fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
 /* Implements both the realpath and expand-path operations */
-static char *
-sftp_realpath_expand(struct sftp_conn *conn, const char *path, int expand)
+ساكن حرف *
+sftp_realpath_expand(بنية sftp_conn *conn, ثابت حرف *path, صحيح expand)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int expected_id, count, id;
-	char *filename, *longname;
+	حرف *filename, *longname;
 	Attrib a;
 	u_char type;
-	int r;
-	const char *what = "SSH2_FXP_REALPATH";
+	صحيح r;
+	ثابت حرف *what = "SSH2_FXP_REALPATH";
 
-	if (expand)
+	אם (expand)
 		what = "expand-path@openssh.com";
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
 	expected_id = id = conn->msg_id++;
-	if (expand) {
+	אם (expand) {
 		debug2("Sending SSH2_FXP_EXTENDED(expand-path@openssh.com) "
 		    "\"%s\"", path);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+		אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 		    (r = sshbuf_put_u32(msg, id)) != 0 ||
 		    (r = sshbuf_put_cstring(msg,
 		    "expand-path@openssh.com")) != 0 ||
 		    (r = sshbuf_put_cstring(msg, path)) != 0)
 			fatal_fr(r, "compose %s", what);
 		send_msg(conn, msg);
-	} else {
+	} אחרת {
 		debug2("Sending SSH2_FXP_REALPATH \"%s\"", path);
 		send_string_request(conn, id, SSH2_FXP_REALPATH,
 		    path, strlen(path));
 	}
 	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+	אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 	    (r = sshbuf_get_u32(msg, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	אם (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
 
-	if (type == SSH2_FXP_STATUS) {
+	אם (type == SSH2_FXP_STATUS) {
 		u_int status;
-		char *errmsg;
+		حرف *errmsg;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0 ||
-		    (r = sshbuf_get_cstring(msg, &errmsg, NULL)) != 0)
+		אם ((r = sshbuf_get_u32(msg, &status)) != 0 ||
+		    (r = sshbuf_get_cstring(msg, &errmsg, عدم)) != 0)
 			fatal_fr(r, "parse status");
 		error("%s %s: %s", expand ? "expand" : "realpath",
 		    path, *errmsg == '\0' ? fx2txt(status) : errmsg);
-		free(errmsg);
+		حرر(errmsg);
 		sshbuf_free(msg);
-		return NULL;
-	} else if (type != SSH2_FXP_NAME)
+		החזר عدم;
+	} אחרת אם (type != SSH2_FXP_NAME)
 		fatal("Expected SSH2_FXP_NAME(%u) packet, got %u",
 		    SSH2_FXP_NAME, type);
 
-	if ((r = sshbuf_get_u32(msg, &count)) != 0)
+	אם ((r = sshbuf_get_u32(msg, &count)) != 0)
 		fatal_fr(r, "parse count");
-	if (count != 1)
+	אם (count != 1)
 		fatal("Got multiple names (%d) from %s", count, what);
 
-	if ((r = sshbuf_get_cstring(msg, &filename, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(msg, &longname, NULL)) != 0 ||
+	אם ((r = sshbuf_get_cstring(msg, &filename, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(msg, &longname, عدم)) != 0 ||
 	    (r = decode_attrib(msg, &a)) != 0)
 		fatal_fr(r, "parse filename/attrib");
 
 	debug3("%s %s -> %s", what, path, filename);
 
-	free(longname);
+	حرر(longname);
 
 	sshbuf_free(msg);
 
-	return(filename);
+	החזר(filename);
 }
 
-char *
-sftp_realpath(struct sftp_conn *conn, const char *path)
+حرف *
+sftp_realpath(بنية sftp_conn *conn, ثابت حرف *path)
 {
-	return sftp_realpath_expand(conn, path, 0);
+	החזר sftp_realpath_expand(conn, path, 0);
 }
 
-int
-sftp_can_expand_path(struct sftp_conn *conn)
+صحيح
+sftp_can_expand_path(بنية sftp_conn *conn)
 {
-	return (conn->exts & SFTP_EXT_PATH_EXPAND) != 0;
+	החזר (conn->exts & SFTP_EXT_PATH_EXPAND) != 0;
 }
 
-char *
-sftp_expand_path(struct sftp_conn *conn, const char *path)
+حرف *
+sftp_expand_path(بنية sftp_conn *conn, ثابت حرف *path)
 {
-	if (!sftp_can_expand_path(conn)) {
+	אם (!sftp_can_expand_path(conn)) {
 		debug3_f("no server support, fallback to realpath");
-		return sftp_realpath_expand(conn, path, 0);
+		החזר sftp_realpath_expand(conn, path, 0);
 	}
-	return sftp_realpath_expand(conn, path, 1);
+	החזר sftp_realpath_expand(conn, path, 1);
 }
 
-int
-sftp_copy(struct sftp_conn *conn, const char *oldpath, const char *newpath)
+صحيح
+sftp_copy(بنية sftp_conn *conn, ثابت حرف *oldpath, ثابت حرف *newpath)
 {
 	Attrib junk, attr;
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_char *old_handle, *new_handle;
 	u_int mode, status, id;
 	size_t old_handle_len, new_handle_len;
-	int r;
+	صحيح r;
 
 	/* Return if the extension is not supported */
-	if ((conn->exts & SFTP_EXT_COPY_DATA) == 0) {
+	אם ((conn->exts & SFTP_EXT_COPY_DATA) == 0) {
 		error("Server does not support copy-data extension");
-		return -1;
+		החזר -1;
 	}
 
 	/* Make sure the file exists, and we can copy its perms */
-	if (sftp_stat(conn, oldpath, 0, &attr) != 0)
-		return -1;
+	אם (sftp_stat(conn, oldpath, 0, &attr) != 0)
+		החזר -1;
 
 	/* Do not preserve set[ug]id here, as we do not preserve ownership */
-	if (attr.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+	אם (attr.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 		mode = attr.perm & 0777;
 
-		if (!S_ISREG(attr.perm)) {
+		אם (!S_ISREG(attr.perm)) {
 			error("Cannot copy non-regular file: %s", oldpath);
-			return -1;
+			החזר -1;
 		}
-	} else {
+	} אחרת {
 		/* NB: The user's umask will apply to this */
 		mode = 0666;
 	}
@@ -1156,14 +1156,14 @@ sftp_copy(struct sftp_conn *conn, const char *oldpath, const char *newpath)
 	attr.perm = mode;
 	attr.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
 	attrib_clear(&junk); /* Send empty attributes */
 
 	/* Open the old file for reading */
 	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
 	    (r = sshbuf_put_u32(msg, SSH2_FXF_READ)) != 0 ||
@@ -1176,14 +1176,14 @@ sftp_copy(struct sftp_conn *conn, const char *oldpath, const char *newpath)
 
 	old_handle = get_handle(conn, id, &old_handle_len,
 	    "remote open(\"%s\")", oldpath);
-	if (old_handle == NULL) {
+	אם (old_handle == عدم) {
 		sshbuf_free(msg);
-		return -1;
+		החזר -1;
 	}
 
 	/* Open the new file for writing */
 	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, newpath)) != 0 ||
 	    (r = sshbuf_put_u32(msg, SSH2_FXF_WRITE|SSH2_FXF_CREAT|
@@ -1197,15 +1197,15 @@ sftp_copy(struct sftp_conn *conn, const char *oldpath, const char *newpath)
 
 	new_handle = get_handle(conn, id, &new_handle_len,
 	    "remote open(\"%s\")", newpath);
-	if (new_handle == NULL) {
+	אם (new_handle == عدم) {
 		sshbuf_free(msg);
-		free(old_handle);
-		return -1;
+		حرر(old_handle);
+		החזר -1;
 	}
 
 	/* Copy the file data */
 	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "copy-data")) != 0 ||
 	    (r = sshbuf_put_string(msg, old_handle, old_handle_len)) != 0 ||
@@ -1219,7 +1219,7 @@ sftp_copy(struct sftp_conn *conn, const char *oldpath, const char *newpath)
 	       oldpath, newpath);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("Couldn't copy file \"%s\" to \"%s\": %s", oldpath,
 		    newpath, fx2txt(status));
 
@@ -1227,41 +1227,41 @@ sftp_copy(struct sftp_conn *conn, const char *oldpath, const char *newpath)
 	sshbuf_free(msg);
 	sftp_close(conn, old_handle, old_handle_len);
 	sftp_close(conn, new_handle, new_handle_len);
-	free(old_handle);
-	free(new_handle);
+	حرر(old_handle);
+	حرر(new_handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_rename(struct sftp_conn *conn, const char *oldpath, const char *newpath,
-    int force_legacy)
+صحيح
+sftp_rename(بنية sftp_conn *conn, ثابت حرف *oldpath, ثابت حرف *newpath,
+    صحيح force_legacy)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int status, id;
-	int r, use_ext = (conn->exts & SFTP_EXT_POSIX_RENAME) && !force_legacy;
+	صحيح r, use_ext = (conn->exts & SFTP_EXT_POSIX_RENAME) && !force_legacy;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
 	/* Send rename request */
 	id = conn->msg_id++;
-	if (use_ext) {
+	אם (use_ext) {
 		debug2("Sending SSH2_FXP_EXTENDED(posix-rename@openssh.com) "
 		    "\"%s\" to \"%s\"", oldpath, newpath);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+		אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 		    (r = sshbuf_put_u32(msg, id)) != 0 ||
 		    (r = sshbuf_put_cstring(msg,
 		    "posix-rename@openssh.com")) != 0)
 			fatal_fr(r, "compose posix-rename");
-	} else {
+	} אחרת {
 		debug2("Sending SSH2_FXP_RENAME \"%s\" to \"%s\"",
 		    oldpath, newpath);
-		if ((r = sshbuf_put_u8(msg, SSH2_FXP_RENAME)) != 0 ||
+		אם ((r = sshbuf_put_u8(msg, SSH2_FXP_RENAME)) != 0 ||
 		    (r = sshbuf_put_u32(msg, id)) != 0)
 			fatal_fr(r, "compose rename");
 	}
-	if ((r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
+	אם ((r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, newpath)) != 0)
 		fatal_fr(r, "compose paths");
 	send_msg(conn, msg);
@@ -1271,33 +1271,33 @@ sftp_rename(struct sftp_conn *conn, const char *oldpath, const char *newpath,
 	sshbuf_free(msg);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("remote rename \"%s\" to \"%s\": %s", oldpath,
 		    newpath, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_hardlink(struct sftp_conn *conn, const char *oldpath, const char *newpath)
+صحيح
+sftp_hardlink(بنية sftp_conn *conn, ثابت حرف *oldpath, ثابت حرف *newpath)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int status, id;
-	int r;
+	صحيح r;
 
-	if ((conn->exts & SFTP_EXT_HARDLINK) == 0) {
+	אם ((conn->exts & SFTP_EXT_HARDLINK) == 0) {
 		error("Server does not support hardlink@openssh.com extension");
-		return -1;
+		החזר -1;
 	}
 	debug2("Sending SSH2_FXP_EXTENDED(hardlink@openssh.com) "
 	    "\"%s\" to \"%s\"", oldpath, newpath);
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
 	/* Send link request */
 	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "hardlink@openssh.com")) != 0 ||
 	    (r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
@@ -1309,32 +1309,32 @@ sftp_hardlink(struct sftp_conn *conn, const char *oldpath, const char *newpath)
 	sshbuf_free(msg);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("remote link \"%s\" to \"%s\": %s", oldpath,
 		    newpath, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_symlink(struct sftp_conn *conn, const char *oldpath, const char *newpath)
+صحيح
+sftp_symlink(بنية sftp_conn *conn, ثابت حرف *oldpath, ثابت حرف *newpath)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int status, id;
-	int r;
+	صحيح r;
 
-	if (conn->version < 3) {
+	אם (conn->version < 3) {
 		error("This server does not support the symlink operation");
-		return(SSH2_FX_OP_UNSUPPORTED);
+		החזר(SSH2_FX_OP_UNSUPPORTED);
 	}
 	debug2("Sending SSH2_FXP_SYMLINK \"%s\" to \"%s\"", oldpath, newpath);
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
 	/* Send symlink request */
 	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_SYMLINK)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_SYMLINK)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, oldpath)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, newpath)) != 0)
@@ -1345,30 +1345,30 @@ sftp_symlink(struct sftp_conn *conn, const char *oldpath, const char *newpath)
 	sshbuf_free(msg);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("remote symlink file \"%s\" to \"%s\": %s", oldpath,
 		    newpath, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-int
-sftp_fsync(struct sftp_conn *conn, u_char *handle, u_int handle_len)
+صحيح
+sftp_fsync(بنية sftp_conn *conn, u_char *handle, u_int handle_len)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int status, id;
-	int r;
+	صحيح r;
 
 	/* Silently return if the extension is not supported */
-	if ((conn->exts & SFTP_EXT_FSYNC) == 0)
-		return -1;
+	אם ((conn->exts & SFTP_EXT_FSYNC) == 0)
+		החזר -1;
 	debug2("Sending SSH2_FXP_EXTENDED(fsync@openssh.com)");
 
 	/* Send fsync request */
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "fsync@openssh.com")) != 0 ||
 	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
@@ -1378,91 +1378,91 @@ sftp_fsync(struct sftp_conn *conn, u_char *handle, u_int handle_len)
 	sshbuf_free(msg);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("remote fsync: %s", fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
 #ifdef notyet
-char *
-sftp_readlink(struct sftp_conn *conn, const char *path)
+حرف *
+sftp_readlink(بنية sftp_conn *conn, ثابت حرف *path)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int expected_id, count, id;
-	char *filename, *longname;
+	حرف *filename, *longname;
 	Attrib a;
 	u_char type;
-	int r;
+	صحيح r;
 
 	debug2("Sending SSH2_FXP_READLINK \"%s\"", path);
 
 	expected_id = id = conn->msg_id++;
 	send_string_request(conn, id, SSH2_FXP_READLINK, path, strlen(path));
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
 	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+	אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 	    (r = sshbuf_get_u32(msg, &id)) != 0)
 		fatal_fr(r, "parse");
 
-	if (id != expected_id)
+	אם (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
 
-	if (type == SSH2_FXP_STATUS) {
+	אם (type == SSH2_FXP_STATUS) {
 		u_int status;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		אם ((r = sshbuf_get_u32(msg, &status)) != 0)
 			fatal_fr(r, "parse status");
 		error("Couldn't readlink: %s", fx2txt(status));
 		sshbuf_free(msg);
-		return(NULL);
-	} else if (type != SSH2_FXP_NAME)
+		החזר(عدم);
+	} אחרת אם (type != SSH2_FXP_NAME)
 		fatal("Expected SSH2_FXP_NAME(%u) packet, got %u",
 		    SSH2_FXP_NAME, type);
 
-	if ((r = sshbuf_get_u32(msg, &count)) != 0)
+	אם ((r = sshbuf_get_u32(msg, &count)) != 0)
 		fatal_fr(r, "parse count");
-	if (count != 1)
+	אם (count != 1)
 		fatal("Got multiple names (%d) from SSH_FXP_READLINK", count);
 
-	if ((r = sshbuf_get_cstring(msg, &filename, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(msg, &longname, NULL)) != 0 ||
+	אם ((r = sshbuf_get_cstring(msg, &filename, عدم)) != 0 ||
+	    (r = sshbuf_get_cstring(msg, &longname, عدم)) != 0 ||
 	    (r = decode_attrib(msg, &a)) != 0)
 		fatal_fr(r, "parse filenames/attrib");
 
 	debug3("SSH_FXP_READLINK %s -> %s", path, filename);
 
-	free(longname);
+	حرر(longname);
 
 	sshbuf_free(msg);
 
-	return filename;
+	החזר filename;
 }
 #endif
 
-int
-sftp_statvfs(struct sftp_conn *conn, const char *path, struct sftp_statvfs *st,
-    int quiet)
+صحيح
+sftp_statvfs(بنية sftp_conn *conn, ثابت حرف *path, بنية sftp_statvfs *st,
+    صحيح quiet)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int id;
-	int r;
+	صحيح r;
 
-	if ((conn->exts & SFTP_EXT_STATVFS) == 0) {
+	אם ((conn->exts & SFTP_EXT_STATVFS) == 0) {
 		error("Server does not support statvfs@openssh.com extension");
-		return -1;
+		החזר -1;
 	}
 
 	debug2("Sending SSH2_FXP_EXTENDED(statvfs@openssh.com) \"%s\"", path);
 
 	id = conn->msg_id++;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "statvfs@openssh.com")) != 0 ||
 	    (r = sshbuf_put_cstring(msg, path)) != 0)
@@ -1470,29 +1470,29 @@ sftp_statvfs(struct sftp_conn *conn, const char *path, struct sftp_statvfs *st,
 	send_msg(conn, msg);
 	sshbuf_free(msg);
 
-	return get_decode_statvfs(conn, st, id, quiet);
+	החזר get_decode_statvfs(conn, st, id, quiet);
 }
 
 #ifdef notyet
-int
-sftp_fstatvfs(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
-    struct sftp_statvfs *st, int quiet)
+صحيح
+sftp_fstatvfs(بنية sftp_conn *conn, ثابت u_char *handle, u_int handle_len,
+    بنية sftp_statvfs *st, صحيح quiet)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int id;
 
-	if ((conn->exts & SFTP_EXT_FSTATVFS) == 0) {
+	אם ((conn->exts & SFTP_EXT_FSTATVFS) == 0) {
 		error("Server does not support fstatvfs@openssh.com extension");
-		return -1;
+		החזר -1;
 	}
 
 	debug2("Sending SSH2_FXP_EXTENDED(fstatvfs@openssh.com)");
 
 	id = conn->msg_id++;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "fstatvfs@openssh.com")) != 0 ||
 	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0)
@@ -1500,28 +1500,28 @@ sftp_fstatvfs(struct sftp_conn *conn, const u_char *handle, u_int handle_len,
 	send_msg(conn, msg);
 	sshbuf_free(msg);
 
-	return get_decode_statvfs(conn, st, id, quiet);
+	החזר get_decode_statvfs(conn, st, id, quiet);
 }
 #endif
 
-int
-sftp_lsetstat(struct sftp_conn *conn, const char *path, Attrib *a)
+صحيح
+sftp_lsetstat(بنية sftp_conn *conn, ثابت حرف *path, Attrib *a)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_int status, id;
-	int r;
+	صحيح r;
 
-	if ((conn->exts & SFTP_EXT_LSETSTAT) == 0) {
+	אם ((conn->exts & SFTP_EXT_LSETSTAT) == 0) {
 		error("Server does not support lsetstat@openssh.com extension");
-		return -1;
+		החזר -1;
 	}
 
 	debug2("Sending SSH2_FXP_EXTENDED(lsetstat@openssh.com) \"%s\"", path);
 
 	id = conn->msg_id++;
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "lsetstat@openssh.com")) != 0 ||
 	    (r = sshbuf_put_cstring(msg, path)) != 0 ||
@@ -1531,22 +1531,22 @@ sftp_lsetstat(struct sftp_conn *conn, const char *path, Attrib *a)
 	sshbuf_free(msg);
 
 	status = get_status(conn, id);
-	if (status != SSH2_FX_OK)
+	אם (status != SSH2_FX_OK)
 		error("remote lsetstat \"%s\": %s", path, fx2txt(status));
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-static void
-send_read_request(struct sftp_conn *conn, u_int id, uint64_t offset,
-    u_int len, const u_char *handle, u_int handle_len)
+ساكن فراغ
+send_read_request(بنية sftp_conn *conn, u_int id, uint64_t offset,
+    u_int len, ثابت u_char *handle, u_int handle_len)
 {
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *msg;
+	صحيح r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_READ)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_READ)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_string(msg, handle, handle_len)) != 0 ||
 	    (r = sshbuf_put_u64(msg, offset)) != 0 ||
@@ -1556,31 +1556,31 @@ send_read_request(struct sftp_conn *conn, u_int id, uint64_t offset,
 	sshbuf_free(msg);
 }
 
-static int
-send_open(struct sftp_conn *conn, const char *path, const char *tag,
+ساكن صحيح
+send_open(بنية sftp_conn *conn, ثابت حرف *path, ثابت حرف *tag,
     u_int openmode, Attrib *a, u_char **handlep, size_t *handle_lenp)
 {
 	Attrib junk;
 	u_char *handle;
 	size_t handle_len;
-	struct sshbuf *msg;
-	int r;
+	بنية sshbuf *msg;
+	صحيح r;
 	u_int id;
 
 	debug2("Sending SSH2_FXP_OPEN \"%s\"", path);
 
-	*handlep = NULL;
+	*handlep = عدم;
 	*handle_lenp = 0;
 
-	if (a == NULL) {
+	אם (a == عدم) {
 		attrib_clear(&junk); /* Send empty attributes */
 		a = &junk;
 	}
 	/* Send open request */
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	id = conn->msg_id++;
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_OPEN)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, path)) != 0 ||
 	    (r = sshbuf_put_u32(msg, openmode)) != 0 ||
@@ -1590,44 +1590,44 @@ send_open(struct sftp_conn *conn, const char *path, const char *tag,
 	sshbuf_free(msg);
 	debug3("Sent %s message SSH2_FXP_OPEN I:%u P:%s M:0x%04x",
 	    tag, id, path, openmode);
-	if ((handle = get_handle(conn, id, &handle_len,
-	    "%s open \"%s\"", tag, path)) == NULL)
-		return -1;
+	אם ((handle = get_handle(conn, id, &handle_len,
+	    "%s open \"%s\"", tag, path)) == عدم)
+		החזר -1;
 	/* success */
 	*handlep = handle;
 	*handle_lenp = handle_len;
-	return 0;
+	החזר 0;
 }
 
-static const char *
-progress_meter_path(const char *path)
+ساكن ثابت حرف *
+progress_meter_path(ثابت حرف *path)
 {
-	const char *progresspath;
+	ثابت حرف *progresspath;
 
-	if ((progresspath = strrchr(path, '/')) == NULL)
-		return path;
+	אם ((progresspath = strrchr(path, '/')) == عدم)
+		החזר path;
 	progresspath++;
-	if (*progresspath == '\0')
-		return path;
-	return progresspath;
+	אם (*progresspath == '\0')
+		החזר path;
+	החזר progresspath;
 }
 
-int
-sftp_download(struct sftp_conn *conn, const char *remote_path,
-    const char *local_path, Attrib *a, int preserve_flag, int resume_flag,
-    int fsync_flag, int inplace_flag)
+صحيح
+sftp_download(بنية sftp_conn *conn, ثابت حرف *remote_path,
+    ثابت حرف *local_path, Attrib *a, صحيح preserve_flag, صحيح resume_flag,
+    صحيح fsync_flag, صحيح inplace_flag)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_char *handle;
-	int local_fd = -1, write_error, seen_zerolen = 0;
-	int read_error, write_errno, lmodified = 0, reordered = 0, r;
+	صحيح local_fd = -1, write_error, seen_zerolen = 0;
+	صحيح read_error, write_errno, lmodified = 0, reordered = 0, r;
 	uint64_t offset = 0, size, highwater = 0, maxack = 0;
 	u_int mode, id, buflen, num_req, max_req, status = SSH2_FX_OK;
 	off_t progress_counter;
 	size_t handle_len;
-	struct stat st;
-	struct requests requests;
-	struct request *req;
+	بنية stat st;
+	بنية requests requests;
+	بنية request *req;
 	u_char type;
 	Attrib attr;
 
@@ -1636,61 +1636,61 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 
 	TAILQ_INIT(&requests);
 
-	if (a == NULL) {
-		if (sftp_stat(conn, remote_path, 0, &attr) != 0)
-			return -1;
+	אם (a == عدم) {
+		אם (sftp_stat(conn, remote_path, 0, &attr) != 0)
+			החזר -1;
 		a = &attr;
 	}
 
 	/* Do not preserve set[ug]id here, as we do not preserve ownership */
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+	אם (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
 		mode = a->perm & 0777;
-	else
+	אחרת
 		mode = 0666;
 
-	if ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
+	אם ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
 	    (!S_ISREG(a->perm))) {
 		error("download %s: not a regular file", remote_path);
-		return(-1);
+		החזר(-1);
 	}
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
+	אם (a->flags & SSH2_FILEXFER_ATTR_SIZE)
 		size = a->size;
-	else
+	אחרת
 		size = 0;
 
 	buflen = conn->download_buflen;
 
 	/* Send open request */
-	if (send_open(conn, remote_path, "remote", SSH2_FXF_READ, NULL,
+	אם (send_open(conn, remote_path, "remote", SSH2_FXF_READ, عدم,
 	    &handle, &handle_len) != 0)
-		return -1;
+		החזר -1;
 
 	local_fd = open(local_path, O_WRONLY | O_CREAT |
 	((resume_flag || inplace_flag) ? 0 : O_TRUNC), mode | S_IWUSR);
-	if (local_fd == -1) {
+	אם (local_fd == -1) {
 		error("open local \"%s\": %s", local_path, strerror(errno));
-		goto fail;
+		اذهب fail;
 	}
-	if (resume_flag) {
-		if (fstat(local_fd, &st) == -1) {
+	אם (resume_flag) {
+		אם (fstat(local_fd, &st) == -1) {
 			error("stat local \"%s\": %s",
 			    local_path, strerror(errno));
-			goto fail;
+			اذهب fail;
 		}
-		if (st.st_size < 0) {
+		אם (st.st_size < 0) {
 			error("\"%s\" has negative size", local_path);
-			goto fail;
+			اذهب fail;
 		}
-		if ((uint64_t)st.st_size > size) {
+		אם ((uint64_t)st.st_size > size) {
 			error("Unable to resume download of \"%s\": "
 			    "local file is larger than remote", local_path);
  fail:
 			sftp_close(conn, handle, handle_len);
-			free(handle);
-			if (local_fd != -1)
+			حرر(handle);
+			אם (local_fd != -1)
 				close(local_fd);
-			return -1;
+			החזר -1;
 		}
 		offset = highwater = maxack = st.st_size;
 	}
@@ -1700,15 +1700,15 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 	max_req = 1;
 	progress_counter = offset;
 
-	if (showprogress && size != 0) {
+	אם (showprogress && size != 0) {
 		start_progress_meter(progress_meter_path(remote_path),
 		    size, &progress_counter);
 	}
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
-	while (num_req > 0 || max_req > 0) {
+	כלעוד (num_req > 0 || max_req > 0) {
 		u_char *data;
 		size_t len;
 
@@ -1716,14 +1716,14 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 		 * Simulate EOF on interrupt: stop sending new requests and
 		 * allow outstanding requests to drain gracefully
 		 */
-		if (interrupted) {
-			if (num_req == 0) /* If we haven't started yet... */
-				break;
+		אם (interrupted) {
+			אם (num_req == 0) /* If we haven't started yet... */
+				اكسر;
 			max_req = 0;
 		}
 
 		/* Send some more requests */
-		while (num_req < max_req) {
+		כלעוד (num_req < max_req) {
 			debug3("Request range %llu -> %llu (%d/%d)",
 			    (unsigned long long)offset,
 			    (unsigned long long)offset + buflen - 1,
@@ -1738,48 +1738,48 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 
 		sshbuf_reset(msg);
 		get_msg(conn, msg);
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+		אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 		    (r = sshbuf_get_u32(msg, &id)) != 0)
 			fatal_fr(r, "parse");
 		debug3("Received reply T:%u I:%u R:%d", type, id, max_req);
 
 		/* Find the request in our queue */
-		if ((req = request_find(&requests, id)) == NULL)
+		אם ((req = request_find(&requests, id)) == عدم)
 			fatal("Unexpected reply %u", id);
 
-		switch (type) {
-		case SSH2_FXP_STATUS:
-			if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		بدل (type) {
+		حالة SSH2_FXP_STATUS:
+			אם ((r = sshbuf_get_u32(msg, &status)) != 0)
 				fatal_fr(r, "parse status");
-			if (status != SSH2_FX_EOF)
+			אם (status != SSH2_FX_EOF)
 				read_error = 1;
 			max_req = 0;
 			TAILQ_REMOVE(&requests, req, tq);
-			free(req);
+			حرر(req);
 			num_req--;
-			break;
-		case SSH2_FXP_DATA:
-			if ((r = sshbuf_get_string(msg, &data, &len)) != 0)
+			اكسر;
+		حالة SSH2_FXP_DATA:
+			אם ((r = sshbuf_get_string(msg, &data, &len)) != 0)
 				fatal_fr(r, "parse data");
 			debug3("Received data %llu -> %llu",
 			    (unsigned long long)req->offset,
 			    (unsigned long long)req->offset + len - 1);
-			if (len > req->len)
+			אם (len > req->len)
 				fatal("Received more data than asked for "
 				    "%zu > %zu", len, req->len);
-			if (len == 0) {
-				if (seen_zerolen)
+			אם (len == 0) {
+				אם (seen_zerolen)
 					fatal_f("server sent zero data length");
 				seen_zerolen = 1;
 			}
 			lmodified = 1;
-			if ((lseek(local_fd, req->offset, SEEK_SET) == -1 ||
+			אם ((lseek(local_fd, req->offset, SEEK_SET) == -1 ||
 			    atomicio(vwrite, local_fd, data, len) != len) &&
 			    !write_error) {
 				write_errno = errno;
 				write_error = 1;
 				max_req = 0;
-			} else {
+			} אחרת {
 				/*
 				 * Track both the highest offset acknowledged
 				 * and the highest *contiguous* offset
@@ -1787,21 +1787,21 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 				 * We'll need the latter for ftruncate()ing
 				 * interrupted transfers.
 				 */
-				if (maxack < req->offset + len)
+				אם (maxack < req->offset + len)
 					maxack = req->offset + len;
-				if (!reordered && req->offset <= highwater)
+				אם (!reordered && req->offset <= highwater)
 					highwater = maxack;
-				else if (!reordered && req->offset > highwater)
+				אחרת אם (!reordered && req->offset > highwater)
 					reordered = 1;
 			}
 			progress_counter += len;
-			free(data);
+			حرر(data);
 
-			if (len == req->len) {
+			אם (len == req->len) {
 				TAILQ_REMOVE(&requests, req, tq);
-				free(req);
+				حرر(req);
 				num_req--;
-			} else {
+			} אחרת {
 				/* Resend the request for the missing data */
 				debug3("Short data block, re-requesting "
 				    "%llu -> %llu (%2d)",
@@ -1814,36 +1814,36 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 				send_read_request(conn, req->id,
 				    req->offset, req->len, handle, handle_len);
 				/* Reduce the request size */
-				if (len < buflen)
+				אם (len < buflen)
 					buflen = MAXIMUM(MIN_READ_SIZE, len);
 			}
-			if (max_req > 0) { /* max_req = 0 iff EOF received */
-				if (size > 0 && offset > size) {
+			אם (max_req > 0) { /* max_req = 0 iff EOF received */
+				אם (size > 0 && offset > size) {
 					/* Only one request at a time
 					 * after the expected EOF */
 					debug3("Finish at %llu (%2d)",
 					    (unsigned long long)offset,
 					    num_req);
 					max_req = 1;
-				} else if (max_req < conn->num_requests) {
+				} אחרת אם (max_req < conn->num_requests) {
 					++max_req;
 				}
 			}
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			fatal("Expected SSH2_FXP_DATA(%u) packet, got %u",
 			    SSH2_FXP_DATA, type);
 		}
 	}
 
-	if (showprogress && size)
+	אם (showprogress && size)
 		stop_progress_meter();
 
 	/* Sanity check */
-	if (TAILQ_FIRST(&requests) != NULL)
+	אם (TAILQ_FIRST(&requests) != عدم)
 		fatal("Transfer complete, but requests still in queue");
 
-	if (!read_error && !write_error && !interrupted) {
+	אם (!read_error && !write_error && !interrupted) {
 		/* we got everything */
 		highwater = maxack;
 	}
@@ -1852,222 +1852,222 @@ sftp_download(struct sftp_conn *conn, const char *remote_path,
 	 * Truncate at highest contiguous point to avoid holes on interrupt,
 	 * or unconditionally if writing in place.
 	 */
-	if (inplace_flag || read_error || write_error || interrupted) {
-		if (reordered && resume_flag &&
+	אם (inplace_flag || read_error || write_error || interrupted) {
+		אם (reordered && resume_flag &&
 		    (read_error || write_error || interrupted)) {
 			error("Unable to resume download of \"%s\": "
 			    "server reordered requests", local_path);
 		}
 		debug("truncating at %llu", (unsigned long long)highwater);
-		if (ftruncate(local_fd, highwater) == -1)
+		אם (ftruncate(local_fd, highwater) == -1)
 			error("local ftruncate \"%s\": %s", local_path,
 			    strerror(errno));
 	}
-	if (read_error) {
+	אם (read_error) {
 		error("read remote \"%s\" : %s", remote_path, fx2txt(status));
 		status = -1;
 		sftp_close(conn, handle, handle_len);
-	} else if (write_error) {
+	} אחרת אם (write_error) {
 		error("write local \"%s\": %s", local_path,
 		    strerror(write_errno));
 		status = SSH2_FX_FAILURE;
 		sftp_close(conn, handle, handle_len);
-	} else {
-		if (sftp_close(conn, handle, handle_len) != 0 || interrupted)
+	} אחרת {
+		אם (sftp_close(conn, handle, handle_len) != 0 || interrupted)
 			status = SSH2_FX_FAILURE;
-		else
+		אחרת
 			status = SSH2_FX_OK;
 		/* Override umask and utimes if asked */
 #ifdef HAVE_FCHMOD
-		if (preserve_flag && fchmod(local_fd, mode) == -1)
-#else
-		if (preserve_flag && chmod(local_path, mode) == -1)
+		אם (preserve_flag && fchmod(local_fd, mode) == -1)
+#אחרת
+		אם (preserve_flag && chmod(local_path, mode) == -1)
 #endif /* HAVE_FCHMOD */
 			error("local chmod \"%s\": %s", local_path,
 			    strerror(errno));
-		if (preserve_flag &&
+		אם (preserve_flag &&
 		    (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME)) {
-			struct timeval tv[2];
+			بنية timeval tv[2];
 			tv[0].tv_sec = a->atime;
 			tv[1].tv_sec = a->mtime;
 			tv[0].tv_usec = tv[1].tv_usec = 0;
-			if (utimes(local_path, tv) == -1)
+			אם (utimes(local_path, tv) == -1)
 				error("local set times \"%s\": %s",
 				    local_path, strerror(errno));
 		}
-		if (resume_flag && !lmodified)
+		אם (resume_flag && !lmodified)
 			logit("File \"%s\" was not modified", local_path);
-		else if (fsync_flag) {
+		אחרת אם (fsync_flag) {
 			debug("syncing \"%s\"", local_path);
-			if (fsync(local_fd) == -1)
+			אם (fsync(local_fd) == -1)
 				error("local sync \"%s\": %s",
 				    local_path, strerror(errno));
 		}
 	}
 	close(local_fd);
 	sshbuf_free(msg);
-	free(handle);
+	حرر(handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-static int
-download_dir_internal(struct sftp_conn *conn, const char *src, const char *dst,
-    int depth, Attrib *dirattrib, int preserve_flag, int print_flag,
-    int resume_flag, int fsync_flag, int follow_link_flag, int inplace_flag)
+ساكن صحيح
+download_dir_internal(بنية sftp_conn *conn, ثابت حرف *src, ثابت حرف *dst,
+    صحيح depth, Attrib *dirattrib, صحيح preserve_flag, صحيح print_flag,
+    صحيح resume_flag, صحيح fsync_flag, صحيح follow_link_flag, صحيح inplace_flag)
 {
-	int i, ret = 0;
+	صحيح i, ret = 0;
 	SFTP_DIRENT **dir_entries;
-	char *filename, *new_src = NULL, *new_dst = NULL;
+	حرف *filename, *new_src = عدم, *new_dst = عدم;
 	mode_t mode = 0777, tmpmode = mode;
 	Attrib *a, ldirattrib, lsym;
 
-	if (depth >= MAX_DIR_DEPTH) {
+	אם (depth >= MAX_DIR_DEPTH) {
 		error("Maximum directory depth exceeded: %d levels", depth);
-		return -1;
+		החזר -1;
 	}
 
 	debug2_f("download dir remote \"%s\" to local \"%s\"", src, dst);
 
-	if (dirattrib == NULL) {
-		if (sftp_stat(conn, src, 1, &ldirattrib) != 0) {
+	אם (dirattrib == عدم) {
+		אם (sftp_stat(conn, src, 1, &ldirattrib) != 0) {
 			error("stat remote \"%s\" directory failed", src);
-			return -1;
+			החזר -1;
 		}
 		dirattrib = &ldirattrib;
 	}
-	if (!S_ISDIR(dirattrib->perm)) {
+	אם (!S_ISDIR(dirattrib->perm)) {
 		error("\"%s\" is not a directory", src);
-		return -1;
+		החזר -1;
 	}
-	if (print_flag && print_flag != SFTP_PROGRESS_ONLY)
+	אם (print_flag && print_flag != SFTP_PROGRESS_ONLY)
 		mprintf("Retrieving %s\n", src);
 
-	if (dirattrib->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+	אם (dirattrib->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
 		mode = dirattrib->perm & 01777;
 		tmpmode = mode | (S_IWUSR|S_IXUSR);
-	} else {
+	} אחרת {
 		debug("download remote \"%s\": server "
 		    "did not send permissions", dst);
 	}
 
-	if (mkdir(dst, tmpmode) == -1 && errno != EEXIST) {
+	אם (mkdir(dst, tmpmode) == -1 && errno != EEXIST) {
 		error("mkdir %s: %s", dst, strerror(errno));
-		return -1;
+		החזר -1;
 	}
 
-	if (sftp_readdir(conn, src, &dir_entries) == -1) {
+	אם (sftp_readdir(conn, src, &dir_entries) == -1) {
 		error("remote readdir \"%s\" failed", src);
-		return -1;
+		החזר -1;
 	}
 
-	for (i = 0; dir_entries[i] != NULL && !interrupted; i++) {
-		free(new_dst);
-		free(new_src);
+	עבור (i = 0; dir_entries[i] != عدم && !interrupted; i++) {
+		حرر(new_dst);
+		حرر(new_src);
 
 		filename = dir_entries[i]->filename;
 		new_dst = sftp_path_append(dst, filename);
 		new_src = sftp_path_append(src, filename);
 
 		a = &dir_entries[i]->a;
-		if (S_ISLNK(a->perm)) {
-			if (!follow_link_flag) {
+		אם (S_ISLNK(a->perm)) {
+			אם (!follow_link_flag) {
 				logit("download \"%s\": not a regular file",
 				    new_src);
-				continue;
+				استمر;
 			}
 			/* Replace the stat contents with the symlink target */
-			if (sftp_stat(conn, new_src, 1, &lsym) != 0) {
+			אם (sftp_stat(conn, new_src, 1, &lsym) != 0) {
 				logit("remote stat \"%s\" failed", new_src);
 				ret = -1;
-				continue;
+				استمر;
 			}
 			a = &lsym;
 		}
 
-		if (S_ISDIR(a->perm)) {
-			if (strcmp(filename, ".") == 0 ||
+		אם (S_ISDIR(a->perm)) {
+			אם (strcmp(filename, ".") == 0 ||
 			    strcmp(filename, "..") == 0)
-				continue;
-			if (download_dir_internal(conn, new_src, new_dst,
+				استمر;
+			אם (download_dir_internal(conn, new_src, new_dst,
 			    depth + 1, a, preserve_flag,
 			    print_flag, resume_flag,
 			    fsync_flag, follow_link_flag, inplace_flag) == -1)
 				ret = -1;
-		} else if (S_ISREG(a->perm)) {
-			if (sftp_download(conn, new_src, new_dst, a,
+		} אחרת אם (S_ISREG(a->perm)) {
+			אם (sftp_download(conn, new_src, new_dst, a,
 			    preserve_flag, resume_flag, fsync_flag,
 			    inplace_flag) == -1) {
 				error("Download of file %s to %s failed",
 				    new_src, new_dst);
 				ret = -1;
 			}
-		} else
+		} אחרת
 			logit("download \"%s\": not a regular file", new_src);
 
 	}
-	free(new_dst);
-	free(new_src);
+	حرر(new_dst);
+	حرر(new_src);
 
-	if (preserve_flag) {
-		if (dirattrib->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-			struct timeval tv[2];
+	אם (preserve_flag) {
+		אם (dirattrib->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+			بنية timeval tv[2];
 			tv[0].tv_sec = dirattrib->atime;
 			tv[1].tv_sec = dirattrib->mtime;
 			tv[0].tv_usec = tv[1].tv_usec = 0;
-			if (utimes(dst, tv) == -1)
+			אם (utimes(dst, tv) == -1)
 				error("local set times on \"%s\": %s",
 				    dst, strerror(errno));
-		} else
+		} אחרת
 			debug("Server did not send times for directory "
 			    "\"%s\"", dst);
 	}
 
-	if (mode != tmpmode && chmod(dst, mode) == -1)
+	אם (mode != tmpmode && chmod(dst, mode) == -1)
 		error("local chmod directory \"%s\": %s", dst,
 		    strerror(errno));
 
 	sftp_free_dirents(dir_entries);
 
-	return ret;
+	החזר ret;
 }
 
-int
-sftp_download_dir(struct sftp_conn *conn, const char *src, const char *dst,
-    Attrib *dirattrib, int preserve_flag, int print_flag, int resume_flag,
-    int fsync_flag, int follow_link_flag, int inplace_flag)
+صحيح
+sftp_download_dir(بنية sftp_conn *conn, ثابت حرف *src, ثابت حرف *dst,
+    Attrib *dirattrib, صحيح preserve_flag, صحيح print_flag, صحيح resume_flag,
+    صحيح fsync_flag, صحيح follow_link_flag, صحيح inplace_flag)
 {
-	char *src_canon;
-	int ret;
+	حرف *src_canon;
+	صحيح ret;
 
-	if ((src_canon = sftp_realpath(conn, src)) == NULL) {
+	אם ((src_canon = sftp_realpath(conn, src)) == عدم) {
 		error("download \"%s\": path canonicalization failed", src);
-		return -1;
+		החזר -1;
 	}
 
 	ret = download_dir_internal(conn, src_canon, dst, 0,
 	    dirattrib, preserve_flag, print_flag, resume_flag, fsync_flag,
 	    follow_link_flag, inplace_flag);
-	free(src_canon);
-	return ret;
+	حرر(src_canon);
+	החזר ret;
 }
 
-int
-sftp_upload(struct sftp_conn *conn, const char *local_path,
-    const char *remote_path, int preserve_flag, int resume,
-    int fsync_flag, int inplace_flag)
+صحيح
+sftp_upload(بنية sftp_conn *conn, ثابت حرف *local_path,
+    ثابت حرف *remote_path, صحيح preserve_flag, صحيح resume,
+    صحيح fsync_flag, صحيح inplace_flag)
 {
-	int r, local_fd;
+	صحيح r, local_fd;
 	u_int openmode, id, status = SSH2_FX_OK, status2, reordered = 0;
 	off_t offset, progress_counter;
 	u_char type, *handle, *data;
-	struct sshbuf *msg;
-	struct stat sb;
+	بنية sshbuf *msg;
+	بنية stat sb;
 	Attrib a, t, c;
 	uint32_t startid, ackid;
 	uint64_t highwater = 0, maxack = 0;
-	struct request *ack = NULL;
-	struct requests acks;
+	بنية request *ack = عدم;
+	بنية requests acks;
 	size_t handle_len;
 
 	debug2_f("upload local \"%s\" to remote \"%s\"",
@@ -2075,60 +2075,60 @@ sftp_upload(struct sftp_conn *conn, const char *local_path,
 
 	TAILQ_INIT(&acks);
 
-	if ((local_fd = open(local_path, O_RDONLY)) == -1) {
+	אם ((local_fd = open(local_path, O_RDONLY)) == -1) {
 		error("open local \"%s\": %s", local_path, strerror(errno));
-		return(-1);
+		החזר(-1);
 	}
-	if (fstat(local_fd, &sb) == -1) {
+	אם (fstat(local_fd, &sb) == -1) {
 		error("fstat local \"%s\": %s", local_path, strerror(errno));
 		close(local_fd);
-		return(-1);
+		החזר(-1);
 	}
-	if (!S_ISREG(sb.st_mode)) {
+	אם (!S_ISREG(sb.st_mode)) {
 		error("local \"%s\" is not a regular file", local_path);
 		close(local_fd);
-		return(-1);
+		החזר(-1);
 	}
 	stat_to_attrib(&sb, &a);
 
 	a.flags &= ~SSH2_FILEXFER_ATTR_SIZE;
 	a.flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
 	a.perm &= 0777;
-	if (!preserve_flag)
+	אם (!preserve_flag)
 		a.flags &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
 
-	if (resume) {
+	אם (resume) {
 		/* Get remote file size if it exists */
-		if (sftp_stat(conn, remote_path, 0, &c) != 0) {
+		אם (sftp_stat(conn, remote_path, 0, &c) != 0) {
 			close(local_fd);
-			return -1;
+			החזר -1;
 		}
 
-		if ((off_t)c.size >= sb.st_size) {
+		אם ((off_t)c.size >= sb.st_size) {
 			error("resume \"%s\": destination file "
 			    "same size or larger", local_path);
 			close(local_fd);
-			return -1;
+			החזר -1;
 		}
 
-		if (lseek(local_fd, (off_t)c.size, SEEK_SET) == -1) {
+		אם (lseek(local_fd, (off_t)c.size, SEEK_SET) == -1) {
 			close(local_fd);
-			return -1;
+			החזר -1;
 		}
 		highwater = c.size;
 	}
 
 	openmode = SSH2_FXF_WRITE|SSH2_FXF_CREAT;
-	if (resume)
+	אם (resume)
 		openmode |= SSH2_FXF_APPEND;
-	else if (!inplace_flag)
+	אחרת אם (!inplace_flag)
 		openmode |= SSH2_FXF_TRUNC;
 
 	/* Send open request */
-	if (send_open(conn, remote_path, "dest", openmode, &a,
+	אם (send_open(conn, remote_path, "dest", openmode, &a,
 	    &handle, &handle_len) != 0) {
 		close(local_fd);
-		return -1;
+		החזר -1;
 	}
 
 	id = conn->msg_id;
@@ -2137,15 +2137,15 @@ sftp_upload(struct sftp_conn *conn, const char *local_path,
 
 	/* Read from local and write to remote */
 	offset = progress_counter = (resume ? c.size : 0);
-	if (showprogress) {
+	אם (showprogress) {
 		start_progress_meter(progress_meter_path(local_path),
 		    sb.st_size, &progress_counter);
 	}
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	for (;;) {
-		int len;
+	עבור (;;) {
+		صحيح len;
 
 		/*
 		 * Can't use atomicio here because it returns 0 on EOF,
@@ -2153,20 +2153,20 @@ sftp_upload(struct sftp_conn *conn, const char *local_path,
 		 * Simulate an EOF on interrupt, allowing ACKs from the
 		 * server to drain.
 		 */
-		if (interrupted || status != SSH2_FX_OK)
+		אם (interrupted || status != SSH2_FX_OK)
 			len = 0;
-		else do
-			len = read(local_fd, data, conn->upload_buflen);
-		while ((len == -1) &&
+		אחרת עשה
+			len = اقرأ(local_fd, data, conn->upload_buflen);
+		כלעוד ((len == -1) &&
 		    (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK));
 
-		if (len == -1) {
+		אם (len == -1) {
 			fatal("read local \"%s\": %s",
 			    local_path, strerror(errno));
-		} else if (len != 0) {
+		} אחרת אם (len != 0) {
 			ack = request_enqueue(&acks, ++id, len, offset);
 			sshbuf_reset(msg);
-			if ((r = sshbuf_put_u8(msg, SSH2_FXP_WRITE)) != 0 ||
+			אם ((r = sshbuf_put_u8(msg, SSH2_FXP_WRITE)) != 0 ||
 			    (r = sshbuf_put_u32(msg, ack->id)) != 0 ||
 			    (r = sshbuf_put_string(msg, handle,
 			    handle_len)) != 0 ||
@@ -2176,34 +2176,34 @@ sftp_upload(struct sftp_conn *conn, const char *local_path,
 			send_msg(conn, msg);
 			debug3("Sent message SSH2_FXP_WRITE I:%u O:%llu S:%u",
 			    id, (unsigned long long)offset, len);
-		} else if (TAILQ_FIRST(&acks) == NULL)
-			break;
+		} אחרת אם (TAILQ_FIRST(&acks) == عدم)
+			اكسر;
 
-		if (ack == NULL)
+		אם (ack == عدم)
 			fatal("Unexpected ACK %u", id);
 
-		if (id == startid || len == 0 ||
+		אם (id == startid || len == 0 ||
 		    id - ackid >= conn->num_requests) {
 			u_int rid;
 
 			sshbuf_reset(msg);
 			get_msg(conn, msg);
-			if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+			אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 			    (r = sshbuf_get_u32(msg, &rid)) != 0)
 				fatal_fr(r, "parse");
 
-			if (type != SSH2_FXP_STATUS)
+			אם (type != SSH2_FXP_STATUS)
 				fatal("Expected SSH2_FXP_STATUS(%d) packet, "
 				    "got %d", SSH2_FXP_STATUS, type);
 
-			if ((r = sshbuf_get_u32(msg, &status2)) != 0)
+			אם ((r = sshbuf_get_u32(msg, &status2)) != 0)
 				fatal_fr(r, "parse status");
 			debug3("SSH2_FXP_STATUS %u", status2);
-			if (status2 != SSH2_FX_OK)
+			אם (status2 != SSH2_FX_OK)
 				status = status2; /* remember errors */
 
 			/* Find the request in our queue */
-			if ((ack = request_find(&acks, rid)) == NULL)
+			אם ((ack = request_find(&acks, rid)) == عدم)
 				fatal("Can't find request for ID %u", rid);
 			TAILQ_REMOVE(&acks, ack, tq);
 			debug3("In write loop, ack for %u %zu bytes at %lld",
@@ -2216,36 +2216,36 @@ sftp_upload(struct sftp_conn *conn, const char *local_path,
 			 * We'll need the latter for ftruncate()ing
 			 * interrupted transfers.
 			 */
-			if (maxack < ack->offset + ack->len)
+			אם (maxack < ack->offset + ack->len)
 				maxack = ack->offset + ack->len;
-			if (!reordered && ack->offset <= highwater)
+			אם (!reordered && ack->offset <= highwater)
 				highwater = maxack;
-			else if (!reordered && ack->offset > highwater) {
+			אחרת אם (!reordered && ack->offset > highwater) {
 				debug3_f("server reordered ACKs");
 				reordered = 1;
 			}
-			free(ack);
+			حرر(ack);
 		}
 		offset += len;
-		if (offset < 0)
+		אם (offset < 0)
 			fatal_f("offset < 0");
 	}
 	sshbuf_free(msg);
 
-	if (showprogress)
+	אם (showprogress)
 		stop_progress_meter();
-	free(data);
+	حرر(data);
 
-	if (status == SSH2_FX_OK && !interrupted) {
+	אם (status == SSH2_FX_OK && !interrupted) {
 		/* we got everything */
 		highwater = maxack;
 	}
-	if (status != SSH2_FX_OK) {
+	אם (status != SSH2_FX_OK) {
 		error("write remote \"%s\": %s", remote_path, fx2txt(status));
 		status = SSH2_FX_FAILURE;
 	}
 
-	if (inplace_flag || (resume && (status != SSH2_FX_OK || interrupted))) {
+	אם (inplace_flag || (resume && (status != SSH2_FX_OK || interrupted))) {
 		debug("truncating at %llu", (unsigned long long)highwater);
 		attrib_clear(&t);
 		t.flags = SSH2_FILEXFER_ATTR_SIZE;
@@ -2253,62 +2253,62 @@ sftp_upload(struct sftp_conn *conn, const char *local_path,
 		sftp_fsetstat(conn, handle, handle_len, &t);
 	}
 
-	if (close(local_fd) == -1) {
+	אם (close(local_fd) == -1) {
 		error("close local \"%s\": %s", local_path, strerror(errno));
 		status = SSH2_FX_FAILURE;
 	}
 
 	/* Override umask and utimes if asked */
-	if (preserve_flag)
+	אם (preserve_flag)
 		sftp_fsetstat(conn, handle, handle_len, &a);
 
-	if (fsync_flag)
-		(void)sftp_fsync(conn, handle, handle_len);
+	אם (fsync_flag)
+		(فراغ)sftp_fsync(conn, handle, handle_len);
 
-	if (sftp_close(conn, handle, handle_len) != 0)
+	אם (sftp_close(conn, handle, handle_len) != 0)
 		status = SSH2_FX_FAILURE;
 
-	free(handle);
+	حرر(handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-static int
-upload_dir_internal(struct sftp_conn *conn, const char *src, const char *dst,
-    int depth, int preserve_flag, int print_flag, int resume, int fsync_flag,
-    int follow_link_flag, int inplace_flag)
+ساكن صحيح
+upload_dir_internal(بنية sftp_conn *conn, ثابت حرف *src, ثابت حرف *dst,
+    صحيح depth, صحيح preserve_flag, صحيح print_flag, صحيح resume, صحيح fsync_flag,
+    صحيح follow_link_flag, صحيح inplace_flag)
 {
-	int created = 0, ret = 0;
+	صحيح created = 0, ret = 0;
 	DIR *dirp;
-	struct dirent *dp;
-	char *filename, *new_src = NULL, *new_dst = NULL;
-	struct stat sb;
+	بنية dirent *dp;
+	حرف *filename, *new_src = عدم, *new_dst = عدم;
+	بنية stat sb;
 	Attrib a, dirattrib;
 	uint32_t saved_perm;
 
 	debug2_f("upload local dir \"%s\" to remote \"%s\"", src, dst);
 
-	if (depth >= MAX_DIR_DEPTH) {
+	אם (depth >= MAX_DIR_DEPTH) {
 		error("Maximum directory depth exceeded: %d levels", depth);
-		return -1;
+		החזר -1;
 	}
 
-	if (stat(src, &sb) == -1) {
+	אם (stat(src, &sb) == -1) {
 		error("stat local \"%s\": %s", src, strerror(errno));
-		return -1;
+		החזר -1;
 	}
-	if (!S_ISDIR(sb.st_mode)) {
+	אם (!S_ISDIR(sb.st_mode)) {
 		error("\"%s\" is not a directory", src);
-		return -1;
+		החזר -1;
 	}
-	if (print_flag && print_flag != SFTP_PROGRESS_ONLY)
+	אם (print_flag && print_flag != SFTP_PROGRESS_ONLY)
 		mprintf("Entering %s\n", src);
 
 	stat_to_attrib(&sb, &a);
 	a.flags &= ~SSH2_FILEXFER_ATTR_SIZE;
 	a.flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
 	a.perm &= 01777;
-	if (!preserve_flag)
+	אם (!preserve_flag)
 		a.flags &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
 
 	/*
@@ -2319,143 +2319,143 @@ upload_dir_internal(struct sftp_conn *conn, const char *src, const char *dst,
 	 */
 	saved_perm = a.perm;
 	a.perm |= (S_IWUSR|S_IXUSR);
-	if (sftp_mkdir(conn, dst, &a, 0) == 0)
+	אם (sftp_mkdir(conn, dst, &a, 0) == 0)
 		created = 1;
-	else {
-		if (sftp_stat(conn, dst, 0, &dirattrib) != 0)
-			return -1;
-		if (!S_ISDIR(dirattrib.perm)) {
+	אחרת {
+		אם (sftp_stat(conn, dst, 0, &dirattrib) != 0)
+			החזר -1;
+		אם (!S_ISDIR(dirattrib.perm)) {
 			error("\"%s\" exists but is not a directory", dst);
-			return -1;
+			החזר -1;
 		}
 	}
 	a.perm = saved_perm;
 
-	if ((dirp = opendir(src)) == NULL) {
+	אם ((dirp = opendir(src)) == عدم) {
 		error("local opendir \"%s\": %s", src, strerror(errno));
-		return -1;
+		החזר -1;
 	}
 
-	while (((dp = readdir(dirp)) != NULL) && !interrupted) {
-		if (dp->d_ino == 0)
-			continue;
-		free(new_dst);
-		free(new_src);
+	כלעוד (((dp = readdir(dirp)) != عدم) && !interrupted) {
+		אם (dp->d_ino == 0)
+			استمر;
+		حرر(new_dst);
+		حرر(new_src);
 		filename = dp->d_name;
 		new_dst = sftp_path_append(dst, filename);
 		new_src = sftp_path_append(src, filename);
 
-		if (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0)
-			continue;
-		if (lstat(new_src, &sb) == -1) {
+		אם (strcmp(filename, ".") == 0 || strcmp(filename, "..") == 0)
+			استمر;
+		אם (lstat(new_src, &sb) == -1) {
 			logit("local lstat \"%s\": %s", filename,
 			    strerror(errno));
 			ret = -1;
-			continue;
+			استمر;
 		}
-		if (S_ISLNK(sb.st_mode)) {
-			if (!follow_link_flag) {
+		אם (S_ISLNK(sb.st_mode)) {
+			אם (!follow_link_flag) {
 				logit("%s: not a regular file", filename);
-				continue;
+				استمر;
 			}
 			/* Replace the stat contents with the symlink target */
-			if (stat(new_src, &sb) == -1) {
+			אם (stat(new_src, &sb) == -1) {
 				logit("local stat \"%s\": %s", filename,
 				    strerror(errno));
 				ret = -1;
-				continue;
+				استمر;
 			}
 		}
-		if (S_ISDIR(sb.st_mode)) {
-			if (upload_dir_internal(conn, new_src, new_dst,
+		אם (S_ISDIR(sb.st_mode)) {
+			אם (upload_dir_internal(conn, new_src, new_dst,
 			    depth + 1, preserve_flag, print_flag, resume,
 			    fsync_flag, follow_link_flag, inplace_flag) == -1)
 				ret = -1;
-		} else if (S_ISREG(sb.st_mode)) {
-			if (sftp_upload(conn, new_src, new_dst,
+		} אחרת אם (S_ISREG(sb.st_mode)) {
+			אם (sftp_upload(conn, new_src, new_dst,
 			    preserve_flag, resume, fsync_flag,
 			    inplace_flag) == -1) {
 				error("upload \"%s\" to \"%s\" failed",
 				    new_src, new_dst);
 				ret = -1;
 			}
-		} else
+		} אחרת
 			logit("%s: not a regular file", filename);
 	}
-	free(new_dst);
-	free(new_src);
+	حرر(new_dst);
+	حرر(new_src);
 
-	if (created || preserve_flag)
+	אם (created || preserve_flag)
 		sftp_setstat(conn, dst, &a);
 
-	(void) closedir(dirp);
-	return ret;
+	(فراغ) closedir(dirp);
+	החזר ret;
 }
 
-int
-sftp_upload_dir(struct sftp_conn *conn, const char *src, const char *dst,
-    int preserve_flag, int print_flag, int resume, int fsync_flag,
-    int follow_link_flag, int inplace_flag)
+صحيح
+sftp_upload_dir(بنية sftp_conn *conn, ثابت حرف *src, ثابت حرف *dst,
+    صحيح preserve_flag, صحيح print_flag, صحيح resume, صحيح fsync_flag,
+    صحيح follow_link_flag, صحيح inplace_flag)
 {
-	char *dst_canon;
-	int ret;
+	حرف *dst_canon;
+	صحيح ret;
 
-	if ((dst_canon = sftp_realpath(conn, dst)) == NULL) {
+	אם ((dst_canon = sftp_realpath(conn, dst)) == عدم) {
 		error("upload \"%s\": path canonicalization failed", dst);
-		return -1;
+		החזר -1;
 	}
 
 	ret = upload_dir_internal(conn, src, dst_canon, 0, preserve_flag,
 	    print_flag, resume, fsync_flag, follow_link_flag, inplace_flag);
 
-	free(dst_canon);
-	return ret;
+	حرر(dst_canon);
+	החזר ret;
 }
 
-static void
-handle_dest_replies(struct sftp_conn *to, const char *to_path, int synchronous,
+ساكن فراغ
+handle_dest_replies(بنية sftp_conn *to, ثابت حرف *to_path, صحيح synchronous,
     u_int *nreqsp, u_int *write_errorp)
 {
-	struct sshbuf *msg;
+	بنية sshbuf *msg;
 	u_char type;
 	u_int id, status;
-	int r;
-	struct pollfd pfd;
+	صحيح r;
+	بنية pollfd pfd;
 
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
 	/* Try to eat replies from the upload side */
-	while (*nreqsp > 0) {
+	כלעוד (*nreqsp > 0) {
 		debug3_f("%u outstanding replies", *nreqsp);
-		if (!synchronous) {
+		אם (!synchronous) {
 			/* Bail out if no data is ready to be read */
 			pfd.fd = to->fd_in;
 			pfd.events = POLLIN;
-			if ((r = poll(&pfd, 1, 0)) == -1) {
-				if (errno == EINTR)
-					break;
+			אם ((r = poll(&pfd, 1, 0)) == -1) {
+				אם (errno == EINTR)
+					اكسر;
 				fatal_f("poll: %s", strerror(errno));
-			} else if (r == 0)
-				break; /* fd not ready */
+			} אחרת אם (r == 0)
+				اكسر; /* fd not ready */
 		}
 		sshbuf_reset(msg);
 		get_msg(to, msg);
 
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+		אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 		    (r = sshbuf_get_u32(msg, &id)) != 0)
 			fatal_fr(r, "dest parse");
 		debug3("Received dest reply T:%u I:%u R:%u", type, id, *nreqsp);
-		if (type != SSH2_FXP_STATUS) {
+		אם (type != SSH2_FXP_STATUS) {
 			fatal_f("Expected SSH2_FXP_STATUS(%d) packet, got %d",
 			    SSH2_FXP_STATUS, type);
 		}
-		if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		אם ((r = sshbuf_get_u32(msg, &status)) != 0)
 			fatal_fr(r, "parse dest status");
 		debug3("dest SSH2_FXP_STATUS %u", status);
-		if (status != SSH2_FX_OK) {
+		אם (status != SSH2_FX_OK) {
 			/* record first error */
-			if (*write_errorp == 0)
+			אם (*write_errorp == 0)
 				*write_errorp = status;
 		}
 		/*
@@ -2479,21 +2479,21 @@ handle_dest_replies(struct sftp_conn *to, const char *to_path, int synchronous,
 	sshbuf_free(msg);
 }
 
-int
-sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *a, int preserve_flag)
+صحيح
+sftp_crossload(بنية sftp_conn *from, بنية sftp_conn *to,
+    ثابت حرف *from_path, ثابت حرف *to_path,
+    Attrib *a, صحيح preserve_flag)
 {
-	struct sshbuf *msg;
-	int write_error, read_error, r, seen_zerolen = 0;
+	بنية sshbuf *msg;
+	صحيح write_error, read_error, r, seen_zerolen = 0;
 	uint64_t offset = 0, size;
 	u_int id, buflen, num_req, max_req, status = SSH2_FX_OK;
 	u_int num_upload_req;
 	off_t progress_counter;
 	u_char *from_handle, *to_handle;
 	size_t from_handle_len, to_handle_len;
-	struct requests requests;
-	struct request *req;
+	بنية requests requests;
+	بنية request *req;
 	u_char type;
 	Attrib attr;
 
@@ -2501,42 +2501,42 @@ sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
 
 	TAILQ_INIT(&requests);
 
-	if (a == NULL) {
-		if (sftp_stat(from, from_path, 0, &attr) != 0)
-			return -1;
+	אם (a == عدم) {
+		אם (sftp_stat(from, from_path, 0, &attr) != 0)
+			החזר -1;
 		a = &attr;
 	}
 
-	if ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
+	אם ((a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) &&
 	    (!S_ISREG(a->perm))) {
 		error("download \"%s\": not a regular file", from_path);
-		return(-1);
+		החזר(-1);
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
+	אם (a->flags & SSH2_FILEXFER_ATTR_SIZE)
 		size = a->size;
-	else
+	אחרת
 		size = 0;
 
 	buflen = from->download_buflen;
-	if (buflen > to->upload_buflen)
+	אם (buflen > to->upload_buflen)
 		buflen = to->upload_buflen;
 
 	/* Send open request to read side */
-	if (send_open(from, from_path, "origin", SSH2_FXF_READ, NULL,
+	אם (send_open(from, from_path, "origin", SSH2_FXF_READ, عدم,
 	    &from_handle, &from_handle_len) != 0)
-		return -1;
+		החזר -1;
 
 	/* Send open request to write side */
 	a->flags &= ~SSH2_FILEXFER_ATTR_SIZE;
 	a->flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
 	a->perm &= 0777;
-	if (!preserve_flag)
+	אם (!preserve_flag)
 		a->flags &= ~SSH2_FILEXFER_ATTR_ACMODTIME;
-	if (send_open(to, to_path, "dest",
+	אם (send_open(to, to_path, "dest",
 	    SSH2_FXF_WRITE|SSH2_FXF_CREAT|SSH2_FXF_TRUNC, a,
 	    &to_handle, &to_handle_len) != 0) {
 		sftp_close(from, from_handle, from_handle_len);
-		return -1;
+		החזר -1;
 	}
 
 	/* Read from remote "from" and write to remote "to" */
@@ -2545,13 +2545,13 @@ sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
 	max_req = 1;
 	progress_counter = 0;
 
-	if (showprogress && size != 0) {
+	אם (showprogress && size != 0) {
 		start_progress_meter(progress_meter_path(from_path),
 		    size, &progress_counter);
 	}
-	if ((msg = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
-	while (num_req > 0 || max_req > 0) {
+	כלעוד (num_req > 0 || max_req > 0) {
 		u_char *data;
 		size_t len;
 
@@ -2559,14 +2559,14 @@ sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
 		 * Simulate EOF on interrupt: stop sending new requests and
 		 * allow outstanding requests to drain gracefully
 		 */
-		if (interrupted) {
-			if (num_req == 0) /* If we haven't started yet... */
-				break;
+		אם (interrupted) {
+			אם (num_req == 0) /* If we haven't started yet... */
+				اكسر;
 			max_req = 0;
 		}
 
 		/* Send some more requests */
-		while (num_req < max_req) {
+		כלעוד (num_req < max_req) {
 			debug3("Request range %llu -> %llu (%d/%d)",
 			    (unsigned long long)offset,
 			    (unsigned long long)offset + buflen - 1,
@@ -2585,45 +2585,45 @@ sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
 
 		sshbuf_reset(msg);
 		get_msg(from, msg);
-		if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+		אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 		    (r = sshbuf_get_u32(msg, &id)) != 0)
 			fatal_fr(r, "parse");
 		debug3("Received origin reply T:%u I:%u R:%d",
 		    type, id, max_req);
 
 		/* Find the request in our queue */
-		if ((req = request_find(&requests, id)) == NULL)
+		אם ((req = request_find(&requests, id)) == عدم)
 			fatal("Unexpected reply %u", id);
 
-		switch (type) {
-		case SSH2_FXP_STATUS:
-			if ((r = sshbuf_get_u32(msg, &status)) != 0)
+		بدل (type) {
+		حالة SSH2_FXP_STATUS:
+			אם ((r = sshbuf_get_u32(msg, &status)) != 0)
 				fatal_fr(r, "parse status");
-			if (status != SSH2_FX_EOF)
+			אם (status != SSH2_FX_EOF)
 				read_error = 1;
 			max_req = 0;
 			TAILQ_REMOVE(&requests, req, tq);
-			free(req);
+			حرر(req);
 			num_req--;
-			break;
-		case SSH2_FXP_DATA:
-			if ((r = sshbuf_get_string(msg, &data, &len)) != 0)
+			اكسر;
+		حالة SSH2_FXP_DATA:
+			אם ((r = sshbuf_get_string(msg, &data, &len)) != 0)
 				fatal_fr(r, "parse data");
 			debug3("Received data %llu -> %llu",
 			    (unsigned long long)req->offset,
 			    (unsigned long long)req->offset + len - 1);
-			if (len > req->len)
+			אם (len > req->len)
 				fatal("Received more data than asked for "
 				    "%zu > %zu", len, req->len);
-			if (len == 0) {
-				if (seen_zerolen)
+			אם (len == 0) {
+				אם (seen_zerolen)
 					fatal_f("server sent zero data length");
 				seen_zerolen = 1;
 			}
 
 			/* Write this chunk out to the destination */
 			sshbuf_reset(msg);
-			if ((r = sshbuf_put_u8(msg, SSH2_FXP_WRITE)) != 0 ||
+			אם ((r = sshbuf_put_u8(msg, SSH2_FXP_WRITE)) != 0 ||
 			    (r = sshbuf_put_u32(msg, to->msg_id++)) != 0 ||
 			    (r = sshbuf_put_string(msg, to_handle,
 			    to_handle_len)) != 0 ||
@@ -2635,13 +2635,13 @@ sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
 			    id, (unsigned long long)offset, len);
 			num_upload_req++;
 			progress_counter += len;
-			free(data);
+			حرر(data);
 
-			if (len == req->len) {
+			אם (len == req->len) {
 				TAILQ_REMOVE(&requests, req, tq);
-				free(req);
+				حرر(req);
 				num_req--;
-			} else {
+			} אחרת {
 				/* Resend the request for the missing data */
 				debug3("Short data block, re-requesting "
 				    "%llu -> %llu (%2d)",
@@ -2655,29 +2655,29 @@ sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
 				    req->offset, req->len,
 				    from_handle, from_handle_len);
 				/* Reduce the request size */
-				if (len < buflen)
+				אם (len < buflen)
 					buflen = MAXIMUM(MIN_READ_SIZE, len);
 			}
-			if (max_req > 0) { /* max_req = 0 iff EOF received */
-				if (size > 0 && offset > size) {
+			אם (max_req > 0) { /* max_req = 0 iff EOF received */
+				אם (size > 0 && offset > size) {
 					/* Only one request at a time
 					 * after the expected EOF */
 					debug3("Finish at %llu (%2d)",
 					    (unsigned long long)offset,
 					    num_req);
 					max_req = 1;
-				} else if (max_req < from->num_requests) {
+				} אחרת אם (max_req < from->num_requests) {
 					++max_req;
 				}
 			}
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			fatal("Expected SSH2_FXP_DATA(%u) packet, got %u",
 			    SSH2_FXP_DATA, type);
 		}
 	}
 
-	if (showprogress && size)
+	אם (showprogress && size)
 		stop_progress_meter();
 
 	/* Drain replies from the server (blocking) */
@@ -2685,89 +2685,89 @@ sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
 	handle_dest_replies(to, to_path, 1, &num_upload_req, &write_error);
 
 	/* Sanity check */
-	if (TAILQ_FIRST(&requests) != NULL)
+	אם (TAILQ_FIRST(&requests) != عدم)
 		fatal("Transfer complete, but requests still in queue");
 	/* Truncate at 0 length on interrupt or error to avoid holes at dest */
-	if (read_error || write_error || interrupted) {
+	אם (read_error || write_error || interrupted) {
 		debug("truncating \"%s\" at 0", to_path);
 		sftp_close(to, to_handle, to_handle_len);
-		free(to_handle);
-		if (send_open(to, to_path, "dest",
+		حرر(to_handle);
+		אם (send_open(to, to_path, "dest",
 		    SSH2_FXF_WRITE|SSH2_FXF_CREAT|SSH2_FXF_TRUNC, a,
 		    &to_handle, &to_handle_len) != 0) {
 			error("dest truncate \"%s\" failed", to_path);
-			to_handle = NULL;
+			to_handle = عدم;
 		}
 	}
-	if (read_error) {
+	אם (read_error) {
 		error("read origin \"%s\": %s", from_path, fx2txt(status));
 		status = -1;
 		sftp_close(from, from_handle, from_handle_len);
-		if (to_handle != NULL)
+		אם (to_handle != عدم)
 			sftp_close(to, to_handle, to_handle_len);
-	} else if (write_error) {
+	} אחרת אם (write_error) {
 		error("write dest \"%s\": %s", to_path, fx2txt(write_error));
 		status = SSH2_FX_FAILURE;
 		sftp_close(from, from_handle, from_handle_len);
-		if (to_handle != NULL)
+		אם (to_handle != عدم)
 			sftp_close(to, to_handle, to_handle_len);
-	} else {
-		if (sftp_close(from, from_handle, from_handle_len) != 0 ||
+	} אחרת {
+		אם (sftp_close(from, from_handle, from_handle_len) != 0 ||
 		    interrupted)
 			status = -1;
-		else
+		אחרת
 			status = SSH2_FX_OK;
-		if (to_handle != NULL) {
+		אם (to_handle != عدم) {
 			/* Need to resend utimes after write */
-			if (preserve_flag)
+			אם (preserve_flag)
 				sftp_fsetstat(to, to_handle, to_handle_len, a);
 			sftp_close(to, to_handle, to_handle_len);
 		}
 	}
 	sshbuf_free(msg);
-	free(from_handle);
-	free(to_handle);
+	حرر(from_handle);
+	حرر(to_handle);
 
-	return status == SSH2_FX_OK ? 0 : -1;
+	החזר status == SSH2_FX_OK ? 0 : -1;
 }
 
-static int
-crossload_dir_internal(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    int depth, Attrib *dirattrib, int preserve_flag, int print_flag,
-    int follow_link_flag)
+ساكن صحيح
+crossload_dir_internal(بنية sftp_conn *from, بنية sftp_conn *to,
+    ثابت حرف *from_path, ثابت حرف *to_path,
+    صحيح depth, Attrib *dirattrib, صحيح preserve_flag, صحيح print_flag,
+    صحيح follow_link_flag)
 {
-	int i, ret = 0, created = 0;
+	صحيح i, ret = 0, created = 0;
 	SFTP_DIRENT **dir_entries;
-	char *filename, *new_from_path = NULL, *new_to_path = NULL;
+	حرف *filename, *new_from_path = عدم, *new_to_path = عدم;
 	mode_t mode = 0777;
 	Attrib *a, curdir, ldirattrib, newdir, lsym;
 
 	debug2_f("crossload dir src \"%s\" to dst \"%s\"", from_path, to_path);
 
-	if (depth >= MAX_DIR_DEPTH) {
+	אם (depth >= MAX_DIR_DEPTH) {
 		error("Maximum directory depth exceeded: %d levels", depth);
-		return -1;
+		החזר -1;
 	}
 
-	if (dirattrib == NULL) {
-		if (sftp_stat(from, from_path, 1, &ldirattrib) != 0) {
+	אם (dirattrib == عدم) {
+		אם (sftp_stat(from, from_path, 1, &ldirattrib) != 0) {
 			error("stat remote \"%s\" failed", from_path);
-			return -1;
+			החזר -1;
 		}
 		dirattrib = &ldirattrib;
 	}
-	if (!S_ISDIR(dirattrib->perm)) {
+	אם (!S_ISDIR(dirattrib->perm)) {
 		error("\"%s\" is not a directory", from_path);
-		return -1;
+		החזר -1;
 	}
-	if (print_flag && print_flag != SFTP_PROGRESS_ONLY)
+	אם (print_flag && print_flag != SFTP_PROGRESS_ONLY)
 		mprintf("Retrieving %s\n", from_path);
 
 	curdir = *dirattrib; /* dirattrib will be clobbered */
 	curdir.flags &= ~SSH2_FILEXFER_ATTR_SIZE;
 	curdir.flags &= ~SSH2_FILEXFER_ATTR_UIDGID;
-	if ((curdir.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) == 0) {
+	אם ((curdir.flags & SSH2_FILEXFER_ATTR_PERMISSIONS) == 0) {
 		debug("Origin did not send permissions for "
 		    "directory \"%s\"", to_path);
 		curdir.perm = S_IWUSR|S_IXUSR;
@@ -2783,135 +2783,135 @@ crossload_dir_internal(struct sftp_conn *from, struct sftp_conn *to,
 	 * the path already existed and is a directory.  Ensure we can
 	 * write to the directory we create for the duration of the transfer.
 	 */
-	if (sftp_mkdir(to, to_path, &curdir, 0) == 0)
+	אם (sftp_mkdir(to, to_path, &curdir, 0) == 0)
 		created = 1;
-	else {
-		if (sftp_stat(to, to_path, 0, &newdir) != 0)
-			return -1;
-		if (!S_ISDIR(newdir.perm)) {
+	אחרת {
+		אם (sftp_stat(to, to_path, 0, &newdir) != 0)
+			החזר -1;
+		אם (!S_ISDIR(newdir.perm)) {
 			error("\"%s\" exists but is not a directory", to_path);
-			return -1;
+			החזר -1;
 		}
 	}
 	curdir.perm = mode;
 
-	if (sftp_readdir(from, from_path, &dir_entries) == -1) {
+	אם (sftp_readdir(from, from_path, &dir_entries) == -1) {
 		error("origin readdir \"%s\" failed", from_path);
-		return -1;
+		החזר -1;
 	}
 
-	for (i = 0; dir_entries[i] != NULL && !interrupted; i++) {
-		free(new_from_path);
-		free(new_to_path);
+	עבור (i = 0; dir_entries[i] != عدم && !interrupted; i++) {
+		حرر(new_from_path);
+		حرر(new_to_path);
 
 		filename = dir_entries[i]->filename;
 		new_from_path = sftp_path_append(from_path, filename);
 		new_to_path = sftp_path_append(to_path, filename);
 
 		a = &dir_entries[i]->a;
-		if (S_ISLNK(a->perm)) {
-			if (!follow_link_flag) {
+		אם (S_ISLNK(a->perm)) {
+			אם (!follow_link_flag) {
 				logit("%s: not a regular file", filename);
-				continue;
+				استمر;
 			}
 			/* Replace the stat contents with the symlink target */
-			if (sftp_stat(from, new_from_path, 1, &lsym) != 0) {
+			אם (sftp_stat(from, new_from_path, 1, &lsym) != 0) {
 				logit("remote stat \"%s\" failed",
 				    new_from_path);
 				ret = -1;
-				continue;
+				استمر;
 			}
 			a = &lsym;
 		}
-		if (S_ISDIR(a->perm)) {
-			if (strcmp(filename, ".") == 0 ||
+		אם (S_ISDIR(a->perm)) {
+			אם (strcmp(filename, ".") == 0 ||
 			    strcmp(filename, "..") == 0)
-				continue;
-			if (crossload_dir_internal(from, to,
+				استمر;
+			אם (crossload_dir_internal(from, to,
 			    new_from_path, new_to_path,
 			    depth + 1, a, preserve_flag,
 			    print_flag, follow_link_flag) == -1)
 				ret = -1;
-		} else if (S_ISREG(a->perm)) {
-			if (sftp_crossload(from, to, new_from_path,
+		} אחרת אם (S_ISREG(a->perm)) {
+			אם (sftp_crossload(from, to, new_from_path,
 			    new_to_path, a, preserve_flag) == -1) {
 				error("crossload \"%s\" to \"%s\" failed",
 				    new_from_path, new_to_path);
 				ret = -1;
 			}
-		} else {
+		} אחרת {
 			logit("origin \"%s\": not a regular file",
 			    new_from_path);
 		}
 	}
-	free(new_to_path);
-	free(new_from_path);
+	حرر(new_to_path);
+	حرر(new_from_path);
 
-	if (created || preserve_flag)
+	אם (created || preserve_flag)
 		sftp_setstat(to, to_path, &curdir);
 
 	sftp_free_dirents(dir_entries);
 
-	return ret;
+	החזר ret;
 }
 
-int
-sftp_crossload_dir(struct sftp_conn *from, struct sftp_conn *to,
-    const char *from_path, const char *to_path,
-    Attrib *dirattrib, int preserve_flag, int print_flag, int follow_link_flag)
+صحيح
+sftp_crossload_dir(بنية sftp_conn *from, بنية sftp_conn *to,
+    ثابت حرف *from_path, ثابت حرف *to_path,
+    Attrib *dirattrib, صحيح preserve_flag, صحيح print_flag, صحيح follow_link_flag)
 {
-	char *from_path_canon;
-	int ret;
+	حرف *from_path_canon;
+	صحيح ret;
 
-	if ((from_path_canon = sftp_realpath(from, from_path)) == NULL) {
+	אם ((from_path_canon = sftp_realpath(from, from_path)) == عدم) {
 		error("crossload \"%s\": path canonicalization failed",
 		    from_path);
-		return -1;
+		החזר -1;
 	}
 
 	ret = crossload_dir_internal(from, to, from_path_canon, to_path, 0,
 	    dirattrib, preserve_flag, print_flag, follow_link_flag);
-	free(from_path_canon);
-	return ret;
+	حرر(from_path_canon);
+	החזר ret;
 }
 
-int
-sftp_can_get_users_groups_by_id(struct sftp_conn *conn)
+صحيح
+sftp_can_get_users_groups_by_id(بنية sftp_conn *conn)
 {
-	return (conn->exts & SFTP_EXT_GETUSERSGROUPS_BY_ID) != 0;
+	החזר (conn->exts & SFTP_EXT_GETUSERSGROUPS_BY_ID) != 0;
 }
 
-int
-sftp_get_users_groups_by_id(struct sftp_conn *conn,
-    const u_int *uids, u_int nuids,
-    const u_int *gids, u_int ngids,
-    char ***usernamesp, char ***groupnamesp)
+صحيح
+sftp_get_users_groups_by_id(بنية sftp_conn *conn,
+    ثابت u_int *uids, u_int nuids,
+    ثابت u_int *gids, u_int ngids,
+    حرف ***usernamesp, حرف ***groupnamesp)
 {
-	struct sshbuf *msg, *uidbuf, *gidbuf;
+	بنية sshbuf *msg, *uidbuf, *gidbuf;
 	u_int i, expected_id, id;
-	char *name, **usernames = NULL, **groupnames = NULL;
+	حرف *name, **usernames = عدم, **groupnames = عدم;
 	u_char type;
-	int r;
+	صحيح r;
 
-	*usernamesp = *groupnamesp = NULL;
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return SSH_ERR_FEATURE_UNSUPPORTED;
+	*usernamesp = *groupnamesp = عدم;
+	אם (!sftp_can_get_users_groups_by_id(conn))
+		החזר SSH_ERR_FEATURE_UNSUPPORTED;
 
-	if ((msg = sshbuf_new()) == NULL ||
-	    (uidbuf = sshbuf_new()) == NULL ||
-	    (gidbuf = sshbuf_new()) == NULL)
+	אם ((msg = sshbuf_new()) == عدم ||
+	    (uidbuf = sshbuf_new()) == عدم ||
+	    (gidbuf = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 	expected_id = id = conn->msg_id++;
 	debug2("Sending SSH2_FXP_EXTENDED(users-groups-by-id@openssh.com)");
-	for (i = 0; i < nuids; i++) {
-		if ((r = sshbuf_put_u32(uidbuf, uids[i])) != 0)
+	עבור (i = 0; i < nuids; i++) {
+		אם ((r = sshbuf_put_u32(uidbuf, uids[i])) != 0)
 			fatal_fr(r, "compose uids");
 	}
-	for (i = 0; i < ngids; i++) {
-		if ((r = sshbuf_put_u32(gidbuf, gids[i])) != 0)
+	עבור (i = 0; i < ngids; i++) {
+		אם ((r = sshbuf_put_u32(gidbuf, gids[i])) != 0)
 			fatal_fr(r, "compose gids");
 	}
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
+	אם ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED)) != 0 ||
 	    (r = sshbuf_put_u32(msg, id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg,
 	    "users-groups-by-id@openssh.com")) != 0 ||
@@ -2920,65 +2920,65 @@ sftp_get_users_groups_by_id(struct sftp_conn *conn,
 		fatal_fr(r, "compose");
 	send_msg(conn, msg);
 	get_msg(conn, msg);
-	if ((r = sshbuf_get_u8(msg, &type)) != 0 ||
+	אם ((r = sshbuf_get_u8(msg, &type)) != 0 ||
 	    (r = sshbuf_get_u32(msg, &id)) != 0)
 		fatal_fr(r, "parse");
-	if (id != expected_id)
+	אם (id != expected_id)
 		fatal("ID mismatch (%u != %u)", id, expected_id);
-	if (type == SSH2_FXP_STATUS) {
+	אם (type == SSH2_FXP_STATUS) {
 		u_int status;
-		char *errmsg;
+		حرف *errmsg;
 
-		if ((r = sshbuf_get_u32(msg, &status)) != 0 ||
-		    (r = sshbuf_get_cstring(msg, &errmsg, NULL)) != 0)
+		אם ((r = sshbuf_get_u32(msg, &status)) != 0 ||
+		    (r = sshbuf_get_cstring(msg, &errmsg, عدم)) != 0)
 			fatal_fr(r, "parse status");
 		error("users-groups-by-id %s",
 		    *errmsg == '\0' ? fx2txt(status) : errmsg);
-		free(errmsg);
+		حرر(errmsg);
 		sshbuf_free(msg);
 		sshbuf_free(uidbuf);
 		sshbuf_free(gidbuf);
-		return -1;
-	} else if (type != SSH2_FXP_EXTENDED_REPLY)
+		החזר -1;
+	} אחרת אם (type != SSH2_FXP_EXTENDED_REPLY)
 		fatal("Expected SSH2_FXP_EXTENDED_REPLY(%u) packet, got %u",
 		    SSH2_FXP_EXTENDED_REPLY, type);
 
 	/* reuse */
 	sshbuf_free(uidbuf);
 	sshbuf_free(gidbuf);
-	uidbuf = gidbuf = NULL;
-	if ((r = sshbuf_froms(msg, &uidbuf)) != 0 ||
+	uidbuf = gidbuf = عدم;
+	אם ((r = sshbuf_froms(msg, &uidbuf)) != 0 ||
 	    (r = sshbuf_froms(msg, &gidbuf)) != 0)
 		fatal_fr(r, "parse response");
-	if (nuids > 0) {
-		usernames = xcalloc(nuids, sizeof(*usernames));
-		for (i = 0; i < nuids; i++) {
-			if ((r = sshbuf_get_cstring(uidbuf, &name, NULL)) != 0)
+	אם (nuids > 0) {
+		usernames = xcalloc(nuids, حجم(*usernames));
+		עבור (i = 0; i < nuids; i++) {
+			אם ((r = sshbuf_get_cstring(uidbuf, &name, عدم)) != 0)
 				fatal_fr(r, "parse user name");
 			/* Handle unresolved names */
-			if (*name == '\0') {
-				free(name);
-				name = NULL;
+			אם (*name == '\0') {
+				حرر(name);
+				name = عدم;
 			}
 			usernames[i] = name;
 		}
 	}
-	if (ngids > 0) {
-		groupnames = xcalloc(ngids, sizeof(*groupnames));
-		for (i = 0; i < ngids; i++) {
-			if ((r = sshbuf_get_cstring(gidbuf, &name, NULL)) != 0)
+	אם (ngids > 0) {
+		groupnames = xcalloc(ngids, حجم(*groupnames));
+		עבור (i = 0; i < ngids; i++) {
+			אם ((r = sshbuf_get_cstring(gidbuf, &name, عدم)) != 0)
 				fatal_fr(r, "parse user name");
 			/* Handle unresolved names */
-			if (*name == '\0') {
-				free(name);
-				name = NULL;
+			אם (*name == '\0') {
+				حرر(name);
+				name = عدم;
 			}
 			groupnames[i] = name;
 		}
 	}
-	if (sshbuf_len(uidbuf) != 0)
+	אם (sshbuf_len(uidbuf) != 0)
 		fatal_f("unexpected extra username data");
-	if (sshbuf_len(gidbuf) != 0)
+	אם (sshbuf_len(gidbuf) != 0)
 		fatal_f("unexpected extra groupname data");
 	sshbuf_free(uidbuf);
 	sshbuf_free(gidbuf);
@@ -2986,62 +2986,62 @@ sftp_get_users_groups_by_id(struct sftp_conn *conn,
 	/* success */
 	*usernamesp = usernames;
 	*groupnamesp = groupnames;
-	return 0;
+	החזר 0;
 }
 
-char *
-sftp_path_append(const char *p1, const char *p2)
+حرف *
+sftp_path_append(ثابت حرف *p1, ثابت حرف *p2)
 {
-	char *ret;
+	حرف *ret;
 	size_t len = strlen(p1) + strlen(p2) + 2;
 
 	ret = xmalloc(len);
 	strlcpy(ret, p1, len);
-	if (p1[0] != '\0' && p1[strlen(p1) - 1] != '/')
+	אם (p1[0] != '\0' && p1[strlen(p1) - 1] != '/')
 		strlcat(ret, "/", len);
 	strlcat(ret, p2, len);
 
-	return(ret);
+	החזר(ret);
 }
 
 /*
  * Arg p must be dynamically allocated.  It will either be returned or
  * freed and a replacement allocated.  Caller must free returned string.
  */
-char *
-sftp_make_absolute(char *p, const char *pwd)
+حرف *
+sftp_make_absolute(حرف *p, ثابت حرف *pwd)
 {
-	char *abs_str;
+	حرف *abs_str;
 
 	/* Derelativise */
-	if (p && !path_absolute(p)) {
+	אם (p && !path_absolute(p)) {
 		abs_str = sftp_path_append(pwd, p);
-		free(p);
-		return(abs_str);
-	} else
-		return(p);
+		حرر(p);
+		החזר(abs_str);
+	} אחרת
+		החזר(p);
 }
 
-int
-sftp_remote_is_dir(struct sftp_conn *conn, const char *path)
+صحيح
+sftp_remote_is_dir(بنية sftp_conn *conn, ثابت حرف *path)
 {
 	Attrib a;
 
 	/* XXX: report errors? */
-	if (sftp_stat(conn, path, 1, &a) != 0)
-		return(0);
-	if (!(a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS))
-		return(0);
-	return S_ISDIR(a.perm);
+	אם (sftp_stat(conn, path, 1, &a) != 0)
+		החזר(0);
+	אם (!(a.flags & SSH2_FILEXFER_ATTR_PERMISSIONS))
+		החזר(0);
+	החזר S_ISDIR(a.perm);
 }
 
 
 /* Check whether path returned from glob(..., GLOB_MARK, ...) is a directory */
-int
-sftp_globpath_is_dir(const char *pathname)
+صحيح
+sftp_globpath_is_dir(ثابت حرف *pathname)
 {
 	size_t l = strlen(pathname);
 
-	return l > 0 && pathname[l - 1] == '/';
+	החזר l > 0 && pathname[l - 1] == '/';
 }
 

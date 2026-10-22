@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoll.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 #ifndef HAVE_STRTOLL
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#ضمن <ctype.h>
+#ضمن <errno.h>
+#ضمن <limits.h>
+#ضمن <stdlib.h>
 
 /*
  * Convert a string to a long long.
@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(ثابت حرف *nptr, حرف **endptr, صحيح base)
 {
-	const char *s;
+	ثابت حرف *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	صحيح c;
+	صحيح neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -60,24 +60,24 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	עשה {
+		c = (unsigned حرف) *s++;
+	} כלעוד (isspace(c));
+	אם (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} אחרת {
 		neg = 0;
-		if (c == '+')
+		אם (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	אם ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	אם (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	אם (neg) {
+		אם (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	עבור (acc = 0, any = 0;; c = (unsigned حرف) *s++) {
+		אם (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		אחרת אם (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		אחרת
+			اكسر;
+		אם (c >= base)
+			اكسر;
+		אם (any < 0)
+			استمر;
+		אם (neg) {
+			אם (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} אחרת {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} אחרת {
+			אם (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} אחרת {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	אם (endptr != 0)
+		*endptr = (حرف *) (any ? s - 1 : nptr);
+	החזר (acc);
 }
 #endif /* HAVE_STRTOLL */

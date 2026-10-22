@@ -30,57 +30,57 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getcwd.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if !defined(HAVE_GETCWD)
+#אם !defined(HAVE_GETCWD)
 
-#include <sys/stat.h>
-#include <errno.h>
-#include <dirent.h>
-#include <sys/dir.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "includes.h"
+#ضمن <sys/stat.h>
+#ضمن <errno.h>
+#ضمن <dirent.h>
+#ضمن <sys/dir.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن "includes.h"
 
 #define	ISDOT(dp) \
 	(dp->d_name[0] == '.' && (dp->d_name[1] == '\0' || \
 	    (dp->d_name[1] == '.' && dp->d_name[2] == '\0')))
 
-char *
-getcwd(char *pt, size_t size)
+حرف *
+getcwd(حرف *pt, size_t size)
 {
-	struct dirent *dp;
-	DIR *dir = NULL;
+	بنية dirent *dp;
+	DIR *dir = عدم;
 	dev_t dev;
 	ino_t ino;
-	int first;
-	char *bpt, *bup;
-	struct stat s;
+	صحيح first;
+	حرف *bpt, *bup;
+	بنية stat s;
 	dev_t root_dev;
 	ino_t root_ino;
 	size_t ptsize, upsize;
-	int save_errno;
-	char *ept, *eup, *up;
+	صحيح save_errno;
+	حرف *ept, *eup, *up;
 
 	/*
 	 * If no buffer specified by the user, allocate one as necessary.
 	 * If a buffer is specified, the size has to be non-zero.  The path
 	 * is built from the end of the buffer backwards.
 	 */
-	if (pt) {
+	אם (pt) {
 		ptsize = 0;
-		if (size == 0) {
+		אם (size == 0) {
 			errno = EINVAL;
-			return (NULL);
-		} else if (size == 1) {
+			החזר (عدم);
+		} אחרת אם (size == 1) {
 			errno = ERANGE;
-			return (NULL);
+			החזר (عدم);
 		}
 		ept = pt + size;
-	} else {
-		if ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
-			return (NULL);
+	} אחרת {
+		אם ((pt = malloc(ptsize = MAXPATHLEN)) == عدم)
+			החזר (عدم);
 		ept = pt + ptsize;
 	}
 	bpt = ept - 1;
@@ -91,32 +91,32 @@ getcwd(char *pt, size_t size)
 	 * Should always be enough (it's 340 levels).  If it's not, allocate
 	 * as necessary.  Special * case the first stat, it's ".", not "..".
 	 */
-	if ((up = malloc(upsize = MAXPATHLEN)) == NULL)
-		goto err;
+	אם ((up = malloc(upsize = MAXPATHLEN)) == عدم)
+		اذهب err;
 	eup = up + upsize;
 	bup = up;
 	up[0] = '.';
 	up[1] = '\0';
 
 	/* Save root values, so know when to stop. */
-	if (stat("/", &s))
-		goto err;
+	אם (stat("/", &s))
+		اذهب err;
 	root_dev = s.st_dev;
 	root_ino = s.st_ino;
 
 	errno = 0;			/* XXX readdir has no error return. */
 
-	for (first = 1;; first = 0) {
+	עבור (first = 1;; first = 0) {
 		/* Stat the current level. */
-		if (lstat(up, &s))
-			goto err;
+		אם (lstat(up, &s))
+			اذهب err;
 
 		/* Save current node values. */
 		ino = s.st_ino;
 		dev = s.st_dev;
 
 		/* Check for reaching root. */
-		if (root_dev == dev && root_ino == ino) {
+		אם (root_dev == dev && root_ino == ino) {
 			*--bpt = '/';
 			/*
 			 * It's unclear that it's a requirement to copy the
@@ -124,8 +124,8 @@ getcwd(char *pt, size_t size)
 			 * been that way and stuff would probably break.
 			 */
 			memmove(pt, bpt, ept - bpt);
-			free(up);
-			return (pt);
+			حرر(up);
+			החזר (pt);
 		}
 
 		/*
@@ -133,11 +133,11 @@ getcwd(char *pt, size_t size)
 		 * as necessary.  Max length is 3 for "../", the largest
 		 * possible component name, plus a trailing NUL.
 		 */
-		if (bup + 3  + MAXNAMLEN + 1 >= eup) {
-			char *nup;
+		אם (bup + 3  + MAXNAMLEN + 1 >= eup) {
+			حرف *nup;
 
-			if ((nup = realloc(up, upsize *= 2)) == NULL)
-				goto err;
+			אם ((nup = realloc(up, upsize *= 2)) == عدم)
+				اذهب err;
 			bup = nup + (bup - up);
 			up = nup;
 			eup = up + upsize;
@@ -147,8 +147,8 @@ getcwd(char *pt, size_t size)
 		*bup = '\0';
 
 		/* Open and stat parent directory. */
-		if (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
-			goto err;
+		אם (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
+			اذهب err;
 
 		/* Add trailing slash for next directory. */
 		*bup++ = '/';
@@ -159,58 +159,58 @@ getcwd(char *pt, size_t size)
 		 * parent directory, not the inode number of the mounted file.
 		 */
 		save_errno = 0;
-		if (s.st_dev == dev) {
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (dp->d_fileno == ino)
-					break;
+		אם (s.st_dev == dev) {
+			עבור (;;) {
+				אם (!(dp = readdir(dir)))
+					اذهب notfound;
+				אם (dp->d_fileno == ino)
+					اكسر;
 			}
-		} else
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (ISDOT(dp))
-					continue;
+		} אחרת
+			עבור (;;) {
+				אם (!(dp = readdir(dir)))
+					اذهب notfound;
+				אם (ISDOT(dp))
+					استمر;
 				memcpy(bup, dp->d_name, dp->d_namlen + 1);
 
 				/* Save the first error for later. */
-				if (lstat(up, &s)) {
-					if (!save_errno)
+				אם (lstat(up, &s)) {
+					אם (!save_errno)
 						save_errno = errno;
 					errno = 0;
-					continue;
+					استمر;
 				}
-				if (s.st_dev == dev && s.st_ino == ino)
-					break;
+				אם (s.st_dev == dev && s.st_ino == ino)
+					اكسر;
 			}
 
 		/*
 		 * Check for length of the current name, preceding slash,
 		 * leading slash.
 		 */
-		if (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
+		אם (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
 			size_t len;
-			char *npt;
+			حرف *npt;
 
-			if (!ptsize) {
+			אם (!ptsize) {
 				errno = ERANGE;
-				goto err;
+				اذهب err;
 			}
 			len = ept - bpt;
-			if ((npt = realloc(pt, ptsize *= 2)) == NULL)
-				goto err;
+			אם ((npt = realloc(pt, ptsize *= 2)) == عدم)
+				اذهب err;
 			bpt = npt + (bpt - pt);
 			pt = npt;
 			ept = pt + ptsize;
 			memmove(ept - len, bpt, len);
 			bpt = ept - len;
 		}
-		if (!first)
+		אם (!first)
 			*--bpt = '/';
 		bpt -= dp->d_namlen;
 		memcpy(bpt, dp->d_name, dp->d_namlen);
-		(void)closedir(dir);
+		(فراغ)closedir(dir);
 
 		/* Truncate any file name. */
 		*bup = '\0';
@@ -222,21 +222,21 @@ notfound:
 	 * didn't find the current directory in its parent directory, set
 	 * errno to ENOENT.
 	 */
-	if (!errno)
+	אם (!errno)
 		errno = save_errno ? save_errno : ENOENT;
 	/* FALLTHROUGH */
 err:
 	save_errno = errno;
 
-	if (ptsize)
-		free(pt);
-	free(up);
-	if (dir)
-		(void)closedir(dir);
+	אם (ptsize)
+		حرر(pt);
+	حرر(up);
+	אם (dir)
+		(فراغ)closedir(dir);
 
 	errno = save_errno;
 
-	return (NULL);
+	החזר (عدم);
 }
 
 #endif /* !defined(HAVE_GETCWD) */

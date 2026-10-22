@@ -30,17 +30,17 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/setenv.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#אם !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <errno.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-extern char **environ;
+خارجي حرف **environ;
 #ifndef HAVE_SETENV
-static char **lastenv;				/* last value of environ */
+ساكن حرف **lastenv;				/* last value of environ */
 #endif
 
 /* OpenSSH Portable: __findenv is from getenv.c rev 1.8, made static */
@@ -54,72 +54,72 @@ static char **lastenv;				/* last value of environ */
  *
  *	This routine *should* be a static; don't use it.
  */
-static char *
-__findenv(const char *name, int len, int *offset)
+ساكن حرف *
+__findenv(ثابت حرف *name, صحيح len, صحيح *offset)
 {
-	extern char **environ;
-	int i;
-	const char *np;
-	char **p, *cp;
+	خارجي حرف **environ;
+	صحيح i;
+	ثابت حرف *np;
+	حرف **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
-				break;
-		if (i == 0 && *cp++ == '=') {
+	אם (name == عدم || environ == عدم)
+		החזר (عدم);
+	עבור (p = environ + *offset; (cp = *p) != عدم; ++p) {
+		עבור (np = name, i = len; i && *cp; i--)
+			אם (*cp++ != *np++)
+				اكسر;
+		אם (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			החזר (cp);
 		}
 	}
-	return (NULL);
+	החזר (عدم);
 }
 
-#if 0 /* nothing uses putenv */
+#אם 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
-putenv(char *str)
+صحيح
+putenv(حرف *str)
 {
-	char **P, *cp;
+	حرف **P, *cp;
 	size_t cnt;
-	int offset = 0;
+	صحيح offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	עבור (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	אם (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		החזר (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	אם (__findenv(str, (صحيح)(cp - str), &offset) != عدم) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		כלעוד (__findenv(str, (صحيح)(cp - str), &offset)) {
+			עבור (P = &environ[offset];; ++P)
+				אם (!(*P = *(P + 1)))
+					اكسر;
 		}
-		return (0);
+		החזר (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	עבור (P = environ; *P != عدم; P++)
 		;
 	cnt = P - environ;
-	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
-		memcpy(P, environ, cnt * sizeof(char *));
+	P = (حرف **)realloc(lastenv, حجم(حرف *) * (cnt + 2));
+	אם (!P)
+		החזר (-1);
+	אם (lastenv != environ)
+		memcpy(P, environ, cnt * حجم(حرف *));
 	lastenv = environ = P;
 	environ[cnt] = str;
-	environ[cnt + 1] = NULL;
-	return (0);
+	environ[cnt + 1] = عدم;
+	החזר (0);
 }
 
 #endif
@@ -130,63 +130,63 @@ putenv(char *str)
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+صحيح
+setenv(ثابت حرف *name, ثابت حرف *value, صحيح rewrite)
 {
-	char *C, **P;
-	const char *np;
-	int l_value, offset = 0;
+	حرف *C, **P;
+	ثابت حرف *np;
+	صحيح l_value, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	עבור (np = name; *np && *np != '='; ++np)
 		;
 #ifdef notyet
-	if (*np) {
+	אם (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		החזר (-1);			/* has `=' in name */
 	}
 #endif
 
 	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	אם ((C = __findenv(name, (صحيح)(np - name), &offset)) != عدم) {
+		صحيح tmpoff = offset + 1;
+		אם (!rewrite)
+			החזר (0);
+#אם 0 /* XXX - existing entry may not be writable */
+		אם (strlen(C) >= l_value) {	/* old larger; copy over */
+			כלעוד ((*C++ = *value++))
 				;
-			return (0);
+			החזר (0);
 		}
 #endif
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		כלעוד (__findenv(name, (صحيح)(np - name), &tmpoff)) {
+			עבור (P = &environ[tmpoff];; ++P)
+				אם (!(*P = *(P + 1)))
+					اكسر;
 		}
-	} else {					/* create new slot */
+	} אחרת {					/* create new slot */
 		size_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		עבור (P = environ; *P != عدم; P++)
 			;
 		cnt = P - environ;
-		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
-			memcpy(P, environ, cnt * sizeof(char *));
+		P = (حرف **)realloc(lastenv, حجم(حرف *) * (cnt + 2));
+		אם (!P)
+			החזר (-1);
+		אם (lastenv != environ)
+			memcpy(P, environ, cnt * حجم(حرف *));
 		lastenv = environ = P;
 		offset = cnt;
-		environ[cnt + 1] = NULL;
+		environ[cnt + 1] = عدم;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	אם (!(environ[offset] =			/* name + `=' + value */
+	    malloc((size_t)((صحيح)(np - name) + l_value + 2))))
+		החזר (-1);
+	עבור (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	עבור (*C++ = '='; (*C++ = *value++); )
 		;
-	return (0);
+	החזר (0);
 }
 
 #endif /* HAVE_SETENV */
@@ -196,31 +196,31 @@ setenv(const char *name, const char *value, int rewrite)
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv(const char *name)
+صحيح
+unsetenv(ثابت حرف *name)
 {
-	char **P;
-	const char *np;
-	int offset = 0;
+	حرف **P;
+	ثابت حرف *np;
+	صحيح offset = 0;
 
-	if (!name || !*name) {
+	אם (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		החזר (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	עבור (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	אם (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		החזר (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
-				break;
+	כלעוד (__findenv(name, (صحيح)(np - name), &offset)) {
+		עבור (P = &environ[offset];; ++P)
+			אם (!(*P = *(P + 1)))
+				اكسر;
 	}
-	return (0);
+	החזר (0);
 }
 #endif /* HAVE_UNSETENV */
 

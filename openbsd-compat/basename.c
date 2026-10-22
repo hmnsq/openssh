@@ -18,50 +18,50 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/basename.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 #ifndef HAVE_BASENAME
-#include <errno.h>
-#include <string.h>
+#ضمن <errno.h>
+#ضمن <string.h>
 
-char *
-basename(const char *path)
+حرف *
+basename(ثابت حرف *path)
 {
-	static char bname[MAXPATHLEN];
+	ساكن حرف bname[MAXPATHLEN];
 	size_t len;
-	const char *endp, *startp;
+	ثابت حرف *endp, *startp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	אם (path == عدم || *path == '\0') {
 		bname[0] = '.';
 		bname[1] = '\0';
-		return (bname);
+		החזר (bname);
 	}
 
 	/* Strip any trailing slashes */
 	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	כלעוד (endp > path && *endp == '/')
 		endp--;
 
 	/* All slashes becomes "/" */
-	if (endp == path && *endp == '/') {
+	אם (endp == path && *endp == '/') {
 		bname[0] = '/';
 		bname[1] = '\0';
-		return (bname);
+		החזר (bname);
 	}
 
 	/* Find the start of the base */
 	startp = endp;
-	while (startp > path && *(startp - 1) != '/')
+	כלעוד (startp > path && *(startp - 1) != '/')
 		startp--;
 
 	len = endp - startp + 1;
-	if (len >= sizeof(bname)) {
+	אם (len >= حجم(bname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		החזר (عدم);
 	}
 	memcpy(bname, startp, len);
 	bname[len] = '\0';
-	return (bname);
+	החזר (bname);
 }
 
 #endif /* !defined(HAVE_BASENAME) */

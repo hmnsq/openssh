@@ -31,31 +31,31 @@
  * *Hobbit* <hobbit@avian.org>.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/uio.h>
-#include <sys/un.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/time.h>
+#ضمن <sys/uio.h>
+#ضمن <sys/un.h>
 
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <netinet/ip.h>
+#ضمن <netinet/in.h>
+#ضمن <netinet/tcp.h>
+#ضمن <netinet/ip.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <netdb.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include "atomicio.h"
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <limits.h>
+#ضمن <netdb.h>
+#ضمن <signal.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن "atomicio.h"
 
-#include <poll.h>
+#ضمن <poll.h>
 #ifdef HAVE_ERR_H
 # include <err.h>
 #endif
@@ -75,7 +75,7 @@
 
 #ifndef SUN_LEN
 #define SUN_LEN(su) \
-	(sizeof(*(su)) - sizeof((su)->sun_path) + strlen((su)->sun_path))
+	(حجم(*(su)) - حجم((su)->sun_path) + strlen((su)->sun_path))
 #endif
 
 #define PORT_MAX	65535
@@ -89,205 +89,205 @@
 #define BUFSIZE 16384
 
 /* Command Line Options */
-int	dflag;					/* detached, no stdin */
-int	Fflag;					/* fdpass sock to stdout */
-unsigned int iflag;				/* Interval Flag */
-int	kflag;					/* More than one connect */
-int	lflag;					/* Bind to local port */
-int	Nflag;					/* shutdown() network socket */
-int	nflag;					/* Don't do name look up */
-char   *Pflag;					/* Proxy username */
-char   *pflag;					/* Localport flag */
-int	rflag;					/* Random ports flag */
-char   *sflag;					/* Source Address */
-int	tflag;					/* Telnet Emulation */
-int	uflag;					/* UDP - Default to TCP */
-int	vflag;					/* Verbosity */
-int	xflag;					/* Socks proxy */
-int	zflag;					/* Port Scan Flag */
-int	Dflag;					/* sodebug */
-int	Iflag;					/* TCP receive buffer size */
-int	Oflag;					/* TCP send buffer size */
-int	Sflag;					/* TCP MD5 signature option */
-int	Tflag = -1;				/* IP Type of Service */
-int	rtableid = -1;
+صحيح	dflag;					/* detached, no stdin */
+صحيح	Fflag;					/* fdpass sock to stdout */
+unsigned صحيح iflag;				/* Interval Flag */
+صحيح	kflag;					/* More than one connect */
+صحيح	lflag;					/* Bind to local port */
+صحيح	Nflag;					/* shutdown() network socket */
+صحيح	nflag;					/* Don't do name look up */
+حرف   *Pflag;					/* Proxy username */
+حرف   *pflag;					/* Localport flag */
+صحيح	rflag;					/* Random ports flag */
+حرف   *sflag;					/* Source Address */
+صحيح	tflag;					/* Telnet Emulation */
+صحيح	uflag;					/* UDP - Default to TCP */
+صحيح	vflag;					/* Verbosity */
+صحيح	xflag;					/* Socks proxy */
+صحيح	zflag;					/* Port Scan Flag */
+صحيح	Dflag;					/* sodebug */
+صحيح	Iflag;					/* TCP receive buffer size */
+صحيح	Oflag;					/* TCP send buffer size */
+صحيح	Sflag;					/* TCP MD5 signature option */
+صحيح	Tflag = -1;				/* IP Type of Service */
+صحيح	rtableid = -1;
 
-int timeout = -1;
-int family = AF_UNSPEC;
-char *portlist[PORT_MAX+1];
-char *unix_dg_tmp_socket;
+صحيح timeout = -1;
+صحيح family = AF_UNSPEC;
+حرف *portlist[PORT_MAX+1];
+حرف *unix_dg_tmp_socket;
 
-void	atelnet(int, unsigned char *, unsigned int);
-void	build_ports(char *);
-void	help(void);
-int	local_listen(char *, char *, struct addrinfo);
-void	readwrite(int);
-void	fdpass(int nfd) __attribute__((noreturn));
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	timeout_connect(int, const struct sockaddr *, socklen_t);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int, const char *);
-int	udptest(int);
-int	unix_bind(char *);
-int	unix_connect(char *);
-int	unix_listen(char *);
-void	set_common_sockopts(int, int);
-int	map_tos(char *, int *);
-void	report_connect(const struct sockaddr *, socklen_t);
-void	usage(int);
-ssize_t drainbuf(int, unsigned char *, size_t *);
-ssize_t fillbuf(int, unsigned char *, size_t *);
+فراغ	atelnet(صحيح, unsigned حرف *, unsigned صحيح);
+فراغ	build_ports(حرف *);
+فراغ	help(فراغ);
+صحيح	local_listen(حرف *, حرف *, بنية addrinfo);
+فراغ	readwrite(صحيح);
+فراغ	fdpass(صحيح nfd) __attribute__((noreturn));
+صحيح	remote_connect(ثابت حرف *, ثابت حرف *, بنية addrinfo);
+صحيح	timeout_connect(صحيح, ثابت بنية sockaddr *, socklen_t);
+صحيح	socks_connect(ثابت حرف *, ثابت حرف *, بنية addrinfo,
+	    ثابت حرف *, ثابت حرف *, بنية addrinfo, صحيح, ثابت حرف *);
+صحيح	udptest(صحيح);
+صحيح	unix_bind(حرف *);
+صحيح	unix_connect(حرف *);
+صحيح	unix_listen(حرف *);
+فراغ	set_common_sockopts(صحيح, صحيح);
+صحيح	map_tos(حرف *, صحيح *);
+فراغ	report_connect(ثابت بنية sockaddr *, socklen_t);
+فراغ	usage(صحيح);
+ssize_t drainbuf(صحيح, unsigned حرف *, size_t *);
+ssize_t fillbuf(صحيح, unsigned حرف *, size_t *);
 
 
-int
-main(int argc, char *argv[])
+صحيح
+main(صحيح argc, حرف *argv[])
 {
-	int ch, s, ret, socksv;
-	char *host, *uport;
-	struct addrinfo hints;
-	struct servent *sv;
+	صحيح ch, s, ret, socksv;
+	حرف *host, *uport;
+	بنية addrinfo hints;
+	بنية servent *sv;
 	socklen_t len;
-	struct sockaddr_storage cliaddr;
-	char *proxy = NULL;
-	const char *errstr, *proxyhost = "", *proxyport = NULL;
-	struct addrinfo proxyhints;
-	char unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_SIZE];
+	بنية sockaddr_storage cliaddr;
+	حرف *proxy = عدم;
+	ثابت حرف *errstr, *proxyhost = "", *proxyport = عدم;
+	بنية addrinfo proxyhints;
+	حرف unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_SIZE];
 
 	ret = 1;
 	s = 0;
 	socksv = 5;
-	host = NULL;
-	uport = NULL;
-	sv = NULL;
+	host = عدم;
+	uport = عدم;
+	sv = عدم;
 
-	signal(SIGPIPE, SIG_IGN);
+	إشارة(SIGPIPE, SIG_IGN);
 
-	while ((ch = getopt(argc, argv,
+	כלעוד ((ch = getopt(argc, argv,
 	    "46DdFhI:i:klNnO:P:p:rSs:tT:UuV:vw:X:x:z")) != -1) {
-		switch (ch) {
-		case '4':
+		بدل (ch) {
+		حالة '4':
 			family = AF_INET;
-			break;
-		case '6':
+			اكسر;
+		حالة '6':
 			family = AF_INET6;
-			break;
-		case 'U':
+			اكسر;
+		حالة 'U':
 			family = AF_UNIX;
-			break;
-		case 'X':
-			if (strcasecmp(optarg, "connect") == 0)
+			اكسر;
+		حالة 'X':
+			אם (strcasecmp(optarg, "connect") == 0)
 				socksv = -1; /* HTTP proxy CONNECT */
-			else if (strcmp(optarg, "4") == 0)
+			אחרת אם (strcmp(optarg, "4") == 0)
 				socksv = 4; /* SOCKS v.4 */
-			else if (strcasecmp(optarg, "4A") == 0)
+			אחרת אם (strcasecmp(optarg, "4A") == 0)
 				socksv = 44; /* SOCKS v.4A */
-			else if (strcmp(optarg, "5") == 0)
+			אחרת אם (strcmp(optarg, "5") == 0)
 				socksv = 5; /* SOCKS v.5 */
-			else
+			אחרת
 				errx(1, "unsupported proxy protocol");
-			break;
-		case 'd':
+			اكسر;
+		حالة 'd':
 			dflag = 1;
-			break;
-		case 'F':
+			اكسر;
+		حالة 'F':
 			Fflag = 1;
-			break;
-		case 'h':
+			اكسر;
+		حالة 'h':
 			help();
-			break;
-		case 'i':
+			اكسر;
+		حالة 'i':
 			iflag = strtonum(optarg, 0, UINT_MAX, &errstr);
-			if (errstr)
+			אם (errstr)
 				errx(1, "interval %s: %s", errstr, optarg);
-			break;
-		case 'k':
+			اكسر;
+		حالة 'k':
 			kflag = 1;
-			break;
-		case 'l':
+			اكسر;
+		حالة 'l':
 			lflag = 1;
-			break;
-		case 'N':
+			اكسر;
+		حالة 'N':
 			Nflag = 1;
-			break;
-		case 'n':
+			اكسر;
+		حالة 'n':
 			nflag = 1;
-			break;
-		case 'P':
+			اكسر;
+		حالة 'P':
 			Pflag = optarg;
-			break;
-		case 'p':
+			اكسر;
+		حالة 'p':
 			pflag = optarg;
-			break;
-		case 'r':
+			اكسر;
+		حالة 'r':
 			rflag = 1;
-			break;
-		case 's':
+			اكسر;
+		حالة 's':
 			sflag = optarg;
-			break;
-		case 't':
+			اكسر;
+		حالة 't':
 			tflag = 1;
-			break;
-		case 'u':
+			اكسر;
+		حالة 'u':
 			uflag = 1;
-			break;
+			اكسر;
 #ifdef SO_RTABLE
-		case 'V':
-			rtableid = (int)strtonum(optarg, 0,
+		حالة 'V':
+			rtableid = (صحيح)strtonum(optarg, 0,
 			    RT_TABLEID_MAX, &errstr);
-			if (errstr)
+			אם (errstr)
 				errx(1, "rtable %s: %s", errstr, optarg);
-			break;
+			اكسر;
 #endif
-		case 'v':
+		حالة 'v':
 			vflag = 1;
-			break;
-		case 'w':
+			اكسر;
+		حالة 'w':
 			timeout = strtonum(optarg, 0, INT_MAX / 1000, &errstr);
-			if (errstr)
+			אם (errstr)
 				errx(1, "timeout %s: %s", errstr, optarg);
 			timeout *= 1000;
-			break;
-		case 'x':
+			اكسر;
+		حالة 'x':
 			xflag = 1;
-			if ((proxy = strdup(optarg)) == NULL)
+			אם ((proxy = strdup(optarg)) == عدم)
 				errx(1, "strdup");
-			break;
-		case 'z':
+			اكسر;
+		حالة 'z':
 			zflag = 1;
-			break;
-		case 'D':
+			اكسر;
+		حالة 'D':
 			Dflag = 1;
-			break;
-		case 'I':
+			اكسر;
+		حالة 'I':
 			Iflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			אם (errstr != عدم)
 				errx(1, "TCP receive window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'O':
+			اكسر;
+		حالة 'O':
 			Oflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			אם (errstr != عدم)
 				errx(1, "TCP send window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'S':
+			اكسر;
+		حالة 'S':
 			Sflag = 1;
-			break;
-		case 'T':
-			errstr = NULL;
+			اكسر;
+		حالة 'T':
+			errstr = عدم;
 			errno = 0;
-			if (map_tos(optarg, &Tflag))
-				break;
-			if (strlen(optarg) > 1 && optarg[0] == '0' &&
+			אם (map_tos(optarg, &Tflag))
+				اكسر;
+			אם (strlen(optarg) > 1 && optarg[0] == '0' &&
 			    optarg[1] == 'x')
-				Tflag = (int)strtol(optarg, NULL, 16);
-			else
-				Tflag = (int)strtonum(optarg, 0, 255,
+				Tflag = (صحيح)strtol(optarg, عدم, 16);
+			אחרת
+				Tflag = (صحيح)strtonum(optarg, 0, 255,
 				    &errstr);
-			if (Tflag < 0 || Tflag > 255 || errstr || errno)
+			אם (Tflag < 0 || Tflag > 255 || errstr || errno)
 				errx(1, "illegal tos value %s", optarg);
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			usage(1);
 		}
 	}
@@ -295,201 +295,201 @@ main(int argc, char *argv[])
 	argv += optind;
 
 	/* Cruft to make sure options are clean, and used properly. */
-	if (argv[0] && !argv[1] && family == AF_UNIX) {
+	אם (argv[0] && !argv[1] && family == AF_UNIX) {
 		host = argv[0];
-		uport = NULL;
-	} else if (argv[0] && !argv[1]) {
-		if  (!lflag)
+		uport = عدم;
+	} אחרת אם (argv[0] && !argv[1]) {
+		אם  (!lflag)
 			usage(1);
 		uport = argv[0];
-		host = NULL;
-	} else if (argv[0] && argv[1]) {
+		host = عدم;
+	} אחרת אם (argv[0] && argv[1]) {
 		host = argv[0];
 		uport = argv[1];
-	} else
+	} אחרת
 		usage(1);
 
-	if (lflag && sflag)
+	אם (lflag && sflag)
 		errx(1, "cannot use -s and -l");
-	if (lflag && pflag)
+	אם (lflag && pflag)
 		errx(1, "cannot use -p and -l");
-	if (lflag && zflag)
+	אם (lflag && zflag)
 		errx(1, "cannot use -z and -l");
-	if (!lflag && kflag)
+	אם (!lflag && kflag)
 		errx(1, "must use -l with -k");
 
 	/* Get name of temporary socket for unix datagram client */
-	if ((family == AF_UNIX) && uflag && !lflag) {
-		if (sflag) {
+	אם ((family == AF_UNIX) && uflag && !lflag) {
+		אם (sflag) {
 			unix_dg_tmp_socket = sflag;
-		} else {
+		} אחרת {
 			strlcpy(unix_dg_tmp_socket_buf, "/tmp/nc.XXXXXXXXXX",
 				UNIX_DG_TMP_SOCKET_SIZE);
-			if (mktemp(unix_dg_tmp_socket_buf) == NULL)
+			אם (mktemp(unix_dg_tmp_socket_buf) == عدم)
 				err(1, "mktemp");
 			unix_dg_tmp_socket = unix_dg_tmp_socket_buf;
 		}
 	}
 
 	/* Initialize addrinfo structure. */
-	if (family != AF_UNIX) {
-		memset(&hints, 0, sizeof(struct addrinfo));
+	אם (family != AF_UNIX) {
+		memset(&hints, 0, حجم(بنية addrinfo));
 		hints.ai_family = family;
 		hints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 		hints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
-		if (nflag)
+		אם (nflag)
 			hints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (xflag) {
-		if (uflag)
+	אם (xflag) {
+		אם (uflag)
 			errx(1, "no proxy support for UDP mode");
 
-		if (lflag)
+		אם (lflag)
 			errx(1, "no proxy support for listen");
 
-		if (family == AF_UNIX)
+		אם (family == AF_UNIX)
 			errx(1, "no proxy support for unix sockets");
 
 		/* XXX IPv6 transport to proxy would probably work */
-		if (family == AF_INET6)
+		אם (family == AF_INET6)
 			errx(1, "no proxy support for IPv6");
 
-		if (sflag)
+		אם (sflag)
 			errx(1, "no proxy support for local source address");
 
 		proxyhost = strsep(&proxy, ":");
 		proxyport = proxy;
 
-		memset(&proxyhints, 0, sizeof(struct addrinfo));
+		memset(&proxyhints, 0, حجم(بنية addrinfo));
 		proxyhints.ai_family = family;
 		proxyhints.ai_socktype = SOCK_STREAM;
 		proxyhints.ai_protocol = IPPROTO_TCP;
-		if (nflag)
+		אם (nflag)
 			proxyhints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (lflag) {
-		int connfd;
+	אם (lflag) {
+		صحيح connfd;
 		ret = 0;
 
-		if (family == AF_UNIX) {
-			if (uflag)
+		אם (family == AF_UNIX) {
+			אם (uflag)
 				s = unix_bind(host);
-			else
+			אחרת
 				s = unix_listen(host);
 		}
 
 		/* Allow only one connection at a time, but stay alive. */
-		for (;;) {
-			if (family != AF_UNIX)
+		עבור (;;) {
+			אם (family != AF_UNIX)
 				s = local_listen(host, uport, hints);
-			if (s < 0)
+			אם (s < 0)
 				err(1, "local_listen");
 			/*
 			 * For UDP and -k, don't connect the socket, let it
 			 * receive datagrams from multiple socket pairs.
 			 */
-			if (uflag && kflag)
+			אם (uflag && kflag)
 				readwrite(s);
 			/*
 			 * For UDP and not -k, we will use recvfrom() initially
 			 * to wait for a caller, then use the regular functions
 			 * to talk to the caller.
 			 */
-			else if (uflag && !kflag) {
-				int rv, plen;
-				char buf[16384];
-				struct sockaddr_storage z;
+			אחרת אם (uflag && !kflag) {
+				صحيح rv, plen;
+				حرف buf[16384];
+				بنية sockaddr_storage z;
 
-				len = sizeof(z);
+				len = حجم(z);
 				plen = 2048;
 				rv = recvfrom(s, buf, plen, MSG_PEEK,
-				    (struct sockaddr *)&z, &len);
-				if (rv < 0)
+				    (بنية sockaddr *)&z, &len);
+				אם (rv < 0)
 					err(1, "recvfrom");
 
-				rv = connect(s, (struct sockaddr *)&z, len);
-				if (rv < 0)
+				rv = connect(s, (بنية sockaddr *)&z, len);
+				אם (rv < 0)
 					err(1, "connect");
 
-				if (vflag)
-					report_connect((struct sockaddr *)&z, len);
+				אם (vflag)
+					report_connect((بنية sockaddr *)&z, len);
 
 				readwrite(s);
-			} else {
-				len = sizeof(cliaddr);
-				connfd = accept(s, (struct sockaddr *)&cliaddr,
+			} אחרת {
+				len = حجم(cliaddr);
+				connfd = accept(s, (بنية sockaddr *)&cliaddr,
 				    &len);
-				if (connfd == -1) {
+				אם (connfd == -1) {
 					/* For now, all errnos are fatal */
 					err(1, "accept");
 				}
-				if (vflag)
-					report_connect((struct sockaddr *)&cliaddr, len);
+				אם (vflag)
+					report_connect((بنية sockaddr *)&cliaddr, len);
 
 				readwrite(connfd);
 				close(connfd);
 			}
 
-			if (family != AF_UNIX)
+			אם (family != AF_UNIX)
 				close(s);
-			else if (uflag) {
-				if (connect(s, NULL, 0) < 0)
+			אחרת אם (uflag) {
+				אם (connect(s, عدم, 0) < 0)
 					err(1, "connect");
 			}
 
-			if (!kflag)
-				break;
+			אם (!kflag)
+				اكسر;
 		}
-	} else if (family == AF_UNIX) {
+	} אחרת אם (family == AF_UNIX) {
 		ret = 0;
 
-		if ((s = unix_connect(host)) > 0 && !zflag) {
+		אם ((s = unix_connect(host)) > 0 && !zflag) {
 			readwrite(s);
 			close(s);
-		} else
+		} אחרת
 			ret = 1;
 
-		if (uflag)
+		אם (uflag)
 			unlink(unix_dg_tmp_socket);
 		exit(ret);
 
-	} else {
-		int i = 0;
+	} אחרת {
+		صحيح i = 0;
 
 		/* Construct the portlist[] array. */
 		build_ports(uport);
 
 		/* Cycle through portlist, connecting to each port. */
-		for (i = 0; portlist[i] != NULL; i++) {
-			if (s)
+		עבור (i = 0; portlist[i] != عدم; i++) {
+			אם (s)
 				close(s);
 
-			if (xflag)
+			אם (xflag)
 				s = socks_connect(host, portlist[i], hints,
 				    proxyhost, proxyport, proxyhints, socksv,
 				    Pflag);
-			else
+			אחרת
 				s = remote_connect(host, portlist[i], hints);
 
-			if (s < 0)
-				continue;
+			אם (s < 0)
+				استمر;
 
 			ret = 0;
-			if (vflag || zflag) {
+			אם (vflag || zflag) {
 				/* For UDP, make sure we are connected. */
-				if (uflag) {
-					if (udptest(s) == -1) {
+				אם (uflag) {
+					אם (udptest(s) == -1) {
 						ret = 1;
-						continue;
+						استمر;
 					}
 				}
 
 				/* Don't look up port if -n. */
-				if (nflag)
-					sv = NULL;
-				else {
+				אם (nflag)
+					sv = عدم;
+				אחרת {
 					sv = getservbyport(
 					    ntohs(atoi(portlist[i])),
 					    uflag ? "udp" : "tcp");
@@ -501,14 +501,14 @@ main(int argc, char *argv[])
 				    uflag ? "udp" : "tcp",
 				    sv ? sv->s_name : "*");
 			}
-			if (Fflag)
+			אם (Fflag)
 				fdpass(s);
-			else if (!zflag)
+			אחרת אם (!zflag)
 				readwrite(s);
 		}
 	}
 
-	if (s)
+	אם (s)
 		close(s);
 
 	exit(ret);
@@ -518,67 +518,67 @@ main(int argc, char *argv[])
  * unix_bind()
  * Returns a unix socket bound to the given path
  */
-int
-unix_bind(char *path)
+صحيح
+unix_bind(حرف *path)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	بنية sockaddr_un sun_sa;
+	صحيح s;
 
 	/* Create unix domain socket. */
-	if ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
+	אם ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
 	     0)) < 0)
-		return (-1);
+		החזר (-1);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, حجم(بنية sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	אם (strlcpy(sun_sa.sun_path, path, حجم(sun_sa.sun_path)) >=
+	    حجم(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		החזר (-1);
 	}
 
-	if (bind(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	אם (bind(s, (بنية sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		החזר (-1);
 	}
-	return (s);
+	החזר (s);
 }
 
 /*
  * unix_connect()
  * Returns a socket connected to a local unix socket. Returns -1 on failure.
  */
-int
-unix_connect(char *path)
+صحيح
+unix_connect(حرف *path)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	بنية sockaddr_un sun_sa;
+	صحيح s;
 
-	if (uflag) {
-		if ((s = unix_bind(unix_dg_tmp_socket)) < 0)
-			return (-1);
-	} else {
-		if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-			return (-1);
+	אם (uflag) {
+		אם ((s = unix_bind(unix_dg_tmp_socket)) < 0)
+			החזר (-1);
+	} אחרת {
+		אם ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+			החזר (-1);
 	}
-	(void)fcntl(s, F_SETFD, FD_CLOEXEC);
+	(فراغ)fcntl(s, F_SETFD, FD_CLOEXEC);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, حجم(بنية sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	אם (strlcpy(sun_sa.sun_path, path, حجم(sun_sa.sun_path)) >=
+	    حجم(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		החזר (-1);
 	}
-	if (connect(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	אם (connect(s, (بنية sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		החזר (-1);
 	}
-	return (s);
+	החזר (s);
 
 }
 
@@ -586,18 +586,18 @@ unix_connect(char *path)
  * unix_listen()
  * Create a unix domain socket, and listen on it.
  */
-int
-unix_listen(char *path)
+صحيح
+unix_listen(حرف *path)
 {
-	int s;
-	if ((s = unix_bind(path)) < 0)
-		return (-1);
+	صحيح s;
+	אם ((s = unix_bind(path)) < 0)
+		החזר (-1);
 
-	if (listen(s, 5) < 0) {
+	אם (listen(s, 5) < 0) {
 		close(s);
-		return (-1);
+		החזר (-1);
 	}
-	return (s);
+	החזר (s);
 }
 
 /*
@@ -605,46 +605,46 @@ unix_listen(char *path)
  * Returns a socket connected to a remote host. Properly binds to a local
  * port or source address if needed. Returns -1 on failure.
  */
-int
-remote_connect(const char *host, const char *port, struct addrinfo hints)
+صحيح
+remote_connect(ثابت حرف *host, ثابت حرف *port, بنية addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, error;
-#if defined(SO_RTABLE) || defined(SO_BINDANY)
-	int on = 1;
+	بنية addrinfo *res, *res0;
+	صحيح s, error;
+#אם defined(SO_RTABLE) || defined(SO_BINDANY)
+	صحيح on = 1;
 #endif
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	אם ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
-	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+	עשה {
+		אם ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
-			continue;
+			استمر;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+		אם (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, حجم(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 		/* Bind to a local port or source address if specified. */
-		if (sflag || pflag) {
-			struct addrinfo ahints, *ares;
+		אם (sflag || pflag) {
+			بنية addrinfo ahints, *ares;
 
 #ifdef SO_BINDANY
 			/* try SO_BINDANY, but don't insist */
-			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, sizeof(on));
+			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, حجم(on));
 #endif
-			memset(&ahints, 0, sizeof(struct addrinfo));
+			memset(&ahints, 0, حجم(بنية addrinfo));
 			ahints.ai_family = res0->ai_family;
 			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
 			ahints.ai_flags = AI_PASSIVE;
-			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
+			אם ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
 				errx(1, "getaddrinfo: %s", gai_strerror(error));
 
-			if (bind(s, (struct sockaddr *)ares->ai_addr,
+			אם (bind(s, (بنية sockaddr *)ares->ai_addr,
 			    ares->ai_addrlen) < 0)
 				err(1, "bind failed");
 			freeaddrinfo(ares);
@@ -652,56 +652,56 @@ remote_connect(const char *host, const char *port, struct addrinfo hints)
 
 		set_common_sockopts(s, res0->ai_family);
 
-		if (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
-			break;
-		else if (vflag)
+		אם (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
+			اكسر;
+		אחרת אם (vflag)
 			warn("connect to %s port %s (%s) failed", host, port,
 			    uflag ? "udp" : "tcp");
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} כלעוד ((res0 = res0->ai_next) != عدم);
 
 	freeaddrinfo(res);
 
-	return (s);
+	החזר (s);
 }
 
-int
-timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
+صحيح
+timeout_connect(صحيح s, ثابت بنية sockaddr *name, socklen_t namelen)
 {
-	struct pollfd pfd;
+	بنية pollfd pfd;
 	socklen_t optlen;
-	int flags = 0, optval;
-	int ret;
+	صحيح flags = 0, optval;
+	صحيح ret;
 
-	if (timeout != -1) {
+	אם (timeout != -1) {
 		flags = fcntl(s, F_GETFL, 0);
-		if (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
+		אם (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
 			err(1, "set non-blocking mode");
 	}
 
-	if ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
+	אם ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
 		pfd.fd = s;
 		pfd.events = POLLOUT;
-		if ((ret = poll(&pfd, 1, timeout)) == 1) {
-			optlen = sizeof(optval);
-			if ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
+		אם ((ret = poll(&pfd, 1, timeout)) == 1) {
+			optlen = حجم(optval);
+			אם ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
 			    &optval, &optlen)) == 0) {
 				errno = optval;
 				ret = optval == 0 ? 0 : -1;
 			}
-		} else if (ret == 0) {
+		} אחרת אם (ret == 0) {
 			errno = ETIMEDOUT;
 			ret = -1;
-		} else
+		} אחרת
 			err(1, "poll failed");
 	}
 
-	if (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
+	אם (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
 		err(1, "restoring flags");
 
-	return (ret);
+	החזר (ret);
 }
 
 /*
@@ -709,12 +709,12 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
  * Returns a socket listening on a local port, binds to specified source
  * address. Returns -1 on failure.
  */
-int
-local_listen(char *host, char *port, struct addrinfo hints)
+صحيح
+local_listen(حرف *host, حرف *port, بنية addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, ret, x = 1;
-	int error;
+	بنية addrinfo *res, *res0;
+	صحيح s, ret, x = 1;
+	صحيح error;
 
 	/* Allow nodename to be null. */
 	hints.ai_flags |= AI_PASSIVE;
@@ -723,72 +723,72 @@ local_listen(char *host, char *port, struct addrinfo hints)
 	 * In the case of binding to a wildcard address
 	 * default to binding to an ipv4 address.
 	 */
-	if (host == NULL && hints.ai_family == AF_UNSPEC)
+	אם (host == عدم && hints.ai_family == AF_UNSPEC)
 		hints.ai_family = AF_INET;
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	אם ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
-	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+	עשה {
+		אם ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
-			continue;
+			استمر;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+		אם (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, حجم(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 #ifdef SO_REUSEPORT
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
-		if (ret == -1)
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, حجم(x));
+		אם (ret == -1)
 			err(1, "setsockopt SO_REUSEPORT");
 #endif
 #ifdef SO_REUSEADDR
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(x));
-		if (ret == -1)
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, حجم(x));
+		אם (ret == -1)
 			err(1, "setsockopt SO_REUSEADDR");
 #endif
 		set_common_sockopts(s, res0->ai_family);
 
-		if (bind(s, (struct sockaddr *)res0->ai_addr,
+		אם (bind(s, (بنية sockaddr *)res0->ai_addr,
 		    res0->ai_addrlen) == 0)
-			break;
+			اكسر;
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} כלעוד ((res0 = res0->ai_next) != عدم);
 
-	if (!uflag && s != -1) {
-		if (listen(s, 1) < 0)
+	אם (!uflag && s != -1) {
+		אם (listen(s, 1) < 0)
 			err(1, "listen");
 	}
 
 	freeaddrinfo(res);
 
-	return (s);
+	החזר (s);
 }
 
 /*
  * readwrite()
  * Loop that polls on the network file descriptor and stdin.
  */
-void
-readwrite(int net_fd)
+فراغ
+readwrite(صحيح net_fd)
 {
-	struct pollfd pfd[4];
-	int stdin_fd = STDIN_FILENO;
-	int stdout_fd = STDOUT_FILENO;
-	unsigned char netinbuf[BUFSIZE];
+	بنية pollfd pfd[4];
+	صحيح stdin_fd = STDIN_FILENO;
+	صحيح stdout_fd = STDOUT_FILENO;
+	unsigned حرف netinbuf[BUFSIZE];
 	size_t netinbufpos = 0;
-	unsigned char stdinbuf[BUFSIZE];
+	unsigned حرف stdinbuf[BUFSIZE];
 	size_t stdinbufpos = 0;
-	int n, num_fds;
+	صحيح n, num_fds;
 	ssize_t ret;
 
 	/* don't read from stdin if requested */
-	if (dflag)
+	אם (dflag)
 		stdin_fd = -1;
 
 	/* stdin */
@@ -807,226 +807,226 @@ readwrite(int net_fd)
 	pfd[POLL_STDOUT].fd = stdout_fd;
 	pfd[POLL_STDOUT].events = 0;
 
-	while (1) {
+	כלעוד (1) {
 		/* both inputs are gone, buffers are empty, we are done */
-		if (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
+		אם (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			החזר;
 		}
 		/* both outputs are gone, we can't continue */
-		if (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
+		אם (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
 			close(net_fd);
-			return;
+			החזר;
 		}
 		/* listen and net in gone, queues empty, done */
-		if (lflag && pfd[POLL_NETIN].fd == -1
+		אם (lflag && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			החזר;
 		}
 
 		/* help says -i is for "wait between lines sent". We read and
 		 * write arbitrary amounts of data, and we don't want to start
 		 * scanning for newlines, so this is as good as it gets */
-		if (iflag)
+		אם (iflag)
 			sleep(iflag);
 
 		/* poll */
 		num_fds = poll(pfd, 4, timeout);
 
 		/* treat poll errors */
-		if (num_fds == -1) {
+		אם (num_fds == -1) {
 			close(net_fd);
 			err(1, "polling error");
 		}
 
 		/* timeout happened */
-		if (num_fds == 0)
-			return;
+		אם (num_fds == 0)
+			החזר;
 
 		/* treat socket error conditions */
-		for (n = 0; n < 4; n++) {
-			if (pfd[n].revents & (POLLERR|POLLNVAL)) {
+		עבור (n = 0; n < 4; n++) {
+			אם (pfd[n].revents & (POLLERR|POLLNVAL)) {
 				pfd[n].fd = -1;
 			}
 		}
 		/* reading is possible after HUP */
-		if (pfd[POLL_STDIN].events & POLLIN &&
+		אם (pfd[POLL_STDIN].events & POLLIN &&
 		    pfd[POLL_STDIN].revents & POLLHUP &&
 		    ! (pfd[POLL_STDIN].revents & POLLIN))
 				pfd[POLL_STDIN].fd = -1;
 
-		if (pfd[POLL_NETIN].events & POLLIN &&
+		אם (pfd[POLL_NETIN].events & POLLIN &&
 		    pfd[POLL_NETIN].revents & POLLHUP &&
 		    ! (pfd[POLL_NETIN].revents & POLLIN))
 				pfd[POLL_NETIN].fd = -1;
 
-		if (pfd[POLL_NETOUT].revents & POLLHUP) {
-			if (Nflag)
+		אם (pfd[POLL_NETOUT].revents & POLLHUP) {
+			אם (Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* if HUP, stop watching stdout */
-		if (pfd[POLL_STDOUT].revents & POLLHUP)
+		אם (pfd[POLL_STDOUT].revents & POLLHUP)
 			pfd[POLL_STDOUT].fd = -1;
 		/* if no net out, stop watching stdin */
-		if (pfd[POLL_NETOUT].fd == -1)
+		אם (pfd[POLL_NETOUT].fd == -1)
 			pfd[POLL_STDIN].fd = -1;
 		/* if no stdout, stop watching net in */
-		if (pfd[POLL_STDOUT].fd == -1) {
-			if (pfd[POLL_NETIN].fd != -1)
+		אם (pfd[POLL_STDOUT].fd == -1) {
+			אם (pfd[POLL_NETIN].fd != -1)
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 			pfd[POLL_NETIN].fd = -1;
 		}
 
 		/* try to read from stdin */
-		if (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
+		אם (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_STDIN].fd, stdinbuf,
 			    &stdinbufpos);
 			/* error or eof on stdin - remove from pfd */
-			if (ret == 0 || ret == -1)
+			אם (ret == 0 || ret == -1)
 				pfd[POLL_STDIN].fd = -1;
 			/* read something - poll net out */
-			if (stdinbufpos > 0)
+			אם (stdinbufpos > 0)
 				pfd[POLL_NETOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (stdinbufpos == BUFSIZE)
+			אם (stdinbufpos == BUFSIZE)
 				pfd[POLL_STDIN].events = 0;
 		}
 		/* try to write to network */
-		if (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
+		אם (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_NETOUT].fd, stdinbuf,
 			    &stdinbufpos);
-			if (ret == -1)
+			אם (ret == -1)
 				pfd[POLL_NETOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (stdinbufpos == 0)
+			אם (stdinbufpos == 0)
 				pfd[POLL_NETOUT].events = 0;
 			/* buffer no longer full - poll stdin again */
-			if (stdinbufpos < BUFSIZE)
+			אם (stdinbufpos < BUFSIZE)
 				pfd[POLL_STDIN].events = POLLIN;
 		}
 		/* try to read from network */
-		if (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
+		אם (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_NETIN].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			אם (ret == -1)
 				pfd[POLL_NETIN].fd = -1;
 			/* eof on net in - remove from pfd */
-			if (ret == 0) {
+			אם (ret == 0) {
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 				pfd[POLL_NETIN].fd = -1;
 			}
 			/* read something - poll stdout */
-			if (netinbufpos > 0)
+			אם (netinbufpos > 0)
 				pfd[POLL_STDOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (netinbufpos == BUFSIZE)
+			אם (netinbufpos == BUFSIZE)
 				pfd[POLL_NETIN].events = 0;
 			/* handle telnet */
-			if (tflag)
+			אם (tflag)
 				atelnet(pfd[POLL_NETIN].fd, netinbuf,
 				    netinbufpos);
 		}
 		/* try to write to stdout */
-		if (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
+		אם (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_STDOUT].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			אם (ret == -1)
 				pfd[POLL_STDOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (netinbufpos == 0)
+			אם (netinbufpos == 0)
 				pfd[POLL_STDOUT].events = 0;
 			/* buffer no longer full - poll net in again */
-			if (netinbufpos < BUFSIZE)
+			אם (netinbufpos < BUFSIZE)
 				pfd[POLL_NETIN].events = POLLIN;
 		}
 
 		/* stdin gone and queue empty? */
-		if (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
-			if (pfd[POLL_NETOUT].fd != -1 && Nflag)
+		אם (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
+			אם (pfd[POLL_NETOUT].fd != -1 && Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* net in gone and queue empty? */
-		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
+		אם (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
 			pfd[POLL_STDOUT].fd = -1;
 		}
 	}
 }
 
 ssize_t
-drainbuf(int fd, unsigned char *buf, size_t *bufpos)
+drainbuf(صحيح fd, unsigned حرف *buf, size_t *bufpos)
 {
 	ssize_t n;
 	ssize_t adjust;
 
-	n = write(fd, buf, *bufpos);
+	n = اكتب(fd, buf, *bufpos);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	אם (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	אם (n <= 0)
+		החזר n;
 	/* adjust buffer */
 	adjust = *bufpos - n;
-	if (adjust > 0)
+	אם (adjust > 0)
 		memmove(buf, buf + n, adjust);
 	*bufpos -= n;
-	return n;
+	החזר n;
 }
 
 
 ssize_t
-fillbuf(int fd, unsigned char *buf, size_t *bufpos)
+fillbuf(صحيح fd, unsigned حرف *buf, size_t *bufpos)
 {
 	size_t num = BUFSIZE - *bufpos;
 	ssize_t n;
 
-	n = read(fd, buf + *bufpos, num);
+	n = اقرأ(fd, buf + *bufpos, num);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	אם (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	אם (n <= 0)
+		החזר n;
 	*bufpos += n;
-	return n;
+	החזר n;
 }
 
 /*
  * fdpass()
  * Pass the connected file descriptor to stdout and exit.
  */
-void
-fdpass(int nfd)
+فراغ
+fdpass(صحيح nfd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+#אם defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	بنية msghdr msg;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+	اتحاد {
+		بنية cmsghdr hdr;
+		حرف buf[CMSG_SPACE(حجم(صحيح))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
+	بنية cmsghdr *cmsg;
 #endif
-	struct iovec vec;
-	char ch = '\0';
-	struct pollfd pfd;
+	بنية iovec vec;
+	حرف ch = '\0';
+	بنية pollfd pfd;
 	ssize_t r;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&msg, 0, حجم(msg));
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
 	msg.msg_accrights = (caddr_t)&nfd;
-	msg.msg_accrightslen = sizeof(nfd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
+	msg.msg_accrightslen = حجم(nfd);
+#אחרת
+	memset(&cmsgbuf, 0, حجم(cmsgbuf));
 	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
+	msg.msg_controllen = حجم(cmsgbuf.buf);
 	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	cmsg->cmsg_len = CMSG_LEN(حجم(صحيح));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = nfd;
+	*(صحيح *)CMSG_DATA(cmsg) = nfd;
 #endif
 
 	vec.iov_base = &ch;
@@ -1034,56 +1034,56 @@ fdpass(int nfd)
 	msg.msg_iov = &vec;
 	msg.msg_iovlen = 1;
 
-	bzero(&pfd, sizeof(pfd));
+	bzero(&pfd, حجم(pfd));
 	pfd.fd = STDOUT_FILENO;
 	pfd.events = POLLOUT;
-	for (;;) {
+	עבור (;;) {
 		r = sendmsg(STDOUT_FILENO, &msg, 0);
-		if (r == -1) {
-			if (errno == EAGAIN || errno == EINTR) {
-				if (poll(&pfd, 1, -1) == -1)
+		אם (r == -1) {
+			אם (errno == EAGAIN || errno == EINTR) {
+				אם (poll(&pfd, 1, -1) == -1)
 					err(1, "poll");
-				continue;
+				استمر;
 			}
 			err(1, "sendmsg");
-		} else if (r != 1)
+		} אחרת אם (r != 1)
 			errx(1, "sendmsg: unexpected return value %zd", r);
-		else
-			break;
+		אחרת
+			اكسر;
 	}
 	exit(0);
-#else
+#אחרת
 	errx(1, "%s: file descriptor passing not supported", __func__);
 #endif
 }
 
 /* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
-void
-atelnet(int nfd, unsigned char *buf, unsigned int size)
+فراغ
+atelnet(صحيح nfd, unsigned حرف *buf, unsigned صحيح size)
 {
-	unsigned char *p, *end;
-	unsigned char obuf[4];
+	unsigned حرف *p, *end;
+	unsigned حرف obuf[4];
 
-	if (size < 3)
-		return;
+	אם (size < 3)
+		החזר;
 	end = buf + size - 2;
 
-	for (p = buf; p < end; p++) {
-		if (*p != IAC)
-			continue;
+	עבור (p = buf; p < end; p++) {
+		אם (*p != IAC)
+			استمر;
 
 		obuf[0] = IAC;
 		p++;
-		if ((*p == WILL) || (*p == WONT))
+		אם ((*p == WILL) || (*p == WONT))
 			obuf[1] = DONT;
-		else if ((*p == DO) || (*p == DONT))
+		אחרת אם ((*p == DO) || (*p == DONT))
 			obuf[1] = WONT;
-		else
-			continue;
+		אחרת
+			استمر;
 
 		p++;
 		obuf[2] = *p;
-		if (atomicio(vwrite, nfd, obuf, 3) != 3)
+		אם (atomicio(vwrite, nfd, obuf, 3) != 3)
 			warn("Write Error!");
 	}
 }
@@ -1093,59 +1093,59 @@ atelnet(int nfd, unsigned char *buf, unsigned int size)
  * Build an array of ports in portlist[], listing each port
  * that we should try to connect to.
  */
-void
-build_ports(char *p)
+فراغ
+build_ports(حرف *p)
 {
-	const char *errstr;
-	char *n;
-	int hi, lo, cp;
-	int x = 0;
+	ثابت حرف *errstr;
+	حرف *n;
+	صحيح hi, lo, cp;
+	صحيح x = 0;
 
-	if ((n = strchr(p, '-')) != NULL) {
+	אם ((n = strchr(p, '-')) != عدم) {
 		*n = '\0';
 		n++;
 
 		/* Make sure the ports are in order: lowest->highest. */
 		hi = strtonum(n, 1, PORT_MAX, &errstr);
-		if (errstr)
+		אם (errstr)
 			errx(1, "port number %s: %s", errstr, n);
 		lo = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		אם (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 
-		if (lo > hi) {
+		אם (lo > hi) {
 			cp = hi;
 			hi = lo;
 			lo = cp;
 		}
 
 		/* Load ports sequentially. */
-		for (cp = lo; cp <= hi; cp++) {
+		עבור (cp = lo; cp <= hi; cp++) {
 			portlist[x] = calloc(1, PORT_MAX_LEN);
-			if (portlist[x] == NULL)
+			אם (portlist[x] == عدم)
 				errx(1, "calloc");
 			snprintf(portlist[x], PORT_MAX_LEN, "%d", cp);
 			x++;
 		}
 
 		/* Randomly swap ports. */
-		if (rflag) {
-			int y;
-			char *c;
+		אם (rflag) {
+			صحيح y;
+			حرف *c;
 
-			for (x = 0; x <= (hi - lo); x++) {
+			עבור (x = 0; x <= (hi - lo); x++) {
 				y = arc4random_uniform(hi - lo);
 				c = portlist[x];
 				portlist[x] = portlist[y];
 				portlist[y] = c;
 			}
 		}
-	} else {
+	} אחרת {
 		hi = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		אם (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 		portlist[0] = strdup(p);
-		if (portlist[0] == NULL)
+		אם (portlist[0] == عدم)
 			errx(1, "strdup");
 	}
 }
@@ -1155,73 +1155,73 @@ build_ports(char *p)
  * Do a few writes to see if the UDP port is there.
  * Fails once PF state table is full.
  */
-int
-udptest(int s)
+صحيح
+udptest(صحيح s)
 {
-	int i, ret;
+	صحيح i, ret;
 
-	for (i = 0; i <= 3; i++) {
-		if (write(s, "X", 1) == 1)
+	עבור (i = 0; i <= 3; i++) {
+		אם (اكتب(s, "X", 1) == 1)
 			ret = 1;
-		else
+		אחרת
 			ret = -1;
 	}
-	return (ret);
+	החזר (ret);
 }
 
-void
-set_common_sockopts(int s, int af)
+فراغ
+set_common_sockopts(صحيح s, صحيح af)
 {
-	int x = 1;
+	صحيح x = 1;
 
 #ifdef TCP_MD5SIG
-	if (Sflag) {
-		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
-			&x, sizeof(x)) == -1)
+	אם (Sflag) {
+		אם (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
+			&x, حجم(x)) == -1)
 			err(1, "setsockopt");
 	}
 #endif
-	if (Dflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
-			&x, sizeof(x)) == -1)
+	אם (Dflag) {
+		אם (setsockopt(s, SOL_SOCKET, SO_DEBUG,
+			&x, حجم(x)) == -1)
 			err(1, "setsockopt");
 	}
-#if defined(IP_TOS) && defined(IPV6_TCLASS)
-	if (Tflag != -1) {
-		int proto, option;
+#אם defined(IP_TOS) && defined(IPV6_TCLASS)
+	אם (Tflag != -1) {
+		صحيح proto, option;
 
-		if (af == AF_INET6) {
+		אם (af == AF_INET6) {
 			proto = IPPROTO_IPV6;
 			option = IPV6_TCLASS;
-		} else {
+		} אחרת {
 			proto = IPPROTO_IP;
 			option = IP_TOS;
 		}
 
-		if (setsockopt(s, proto, option, &Tflag, sizeof(Tflag)) == -1)
+		אם (setsockopt(s, proto, option, &Tflag, حجم(Tflag)) == -1)
 			err(1, "set IP ToS");
 	}
 #endif
-	if (Iflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
-		    &Iflag, sizeof(Iflag)) == -1)
+	אם (Iflag) {
+		אם (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
+		    &Iflag, حجم(Iflag)) == -1)
 			err(1, "set TCP receive buffer size");
 	}
-	if (Oflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
-		    &Oflag, sizeof(Oflag)) == -1)
+	אם (Oflag) {
+		אם (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
+		    &Oflag, حجم(Oflag)) == -1)
 			err(1, "set TCP send buffer size");
 	}
 }
 
-int
-map_tos(char *s, int *val)
+صحيح
+map_tos(حرف *s, صحيح *val)
 {
 #ifdef IP_TOS
 	/* DiffServ Codepoints and other TOS mappings */
-	const struct toskeywords {
-		const char	*keyword;
-		int		 val;
+	ثابت بنية toskeywords {
+		ثابت حرف	*keyword;
+		صحيح		 val;
 	} *t, toskeywords[] = {
 		{ "af11",		IPTOS_DSCP_AF11 },
 		{ "af12",		IPTOS_DSCP_AF12 },
@@ -1250,38 +1250,38 @@ map_tos(char *s, int *val)
 		{ "netcontrol",		IPTOS_PREC_NETCONTROL },
 		{ "reliability",	IPTOS_RELIABILITY },
 		{ "throughput",		IPTOS_THROUGHPUT },
-		{ NULL, 		-1 },
+		{ عدم, 		-1 },
 	};
 
-	for (t = toskeywords; t->keyword != NULL; t++) {
-		if (strcmp(s, t->keyword) == 0) {
+	עבור (t = toskeywords; t->keyword != عدم; t++) {
+		אם (strcmp(s, t->keyword) == 0) {
 			*val = t->val;
-			return (1);
+			החזר (1);
 		}
 	}
 #endif
 
-	return (0);
+	החזר (0);
 }
 
-void
-report_connect(const struct sockaddr *sa, socklen_t salen)
+فراغ
+report_connect(ثابت بنية sockaddr *sa, socklen_t salen)
 {
-	char remote_host[NI_MAXHOST];
-	char remote_port[NI_MAXSERV];
-	int herr;
-	int flags = NI_NUMERICSERV;
+	حرف remote_host[NI_MAXHOST];
+	حرف remote_port[NI_MAXSERV];
+	صحيح herr;
+	صحيح flags = NI_NUMERICSERV;
 	
-	if (nflag)
+	אם (nflag)
 		flags |= NI_NUMERICHOST;
 	
-	if ((herr = getnameinfo(sa, salen,
-	    remote_host, sizeof(remote_host),
-	    remote_port, sizeof(remote_port),
+	אם ((herr = getnameinfo(sa, salen,
+	    remote_host, حجم(remote_host),
+	    remote_port, حجم(remote_port),
 	    flags)) != 0) {
-		if (herr == EAI_SYSTEM)
+		אם (herr == EAI_SYSTEM)
 			err(1, "getnameinfo");
-		else
+		אחרת
 			errx(1, "getnameinfo: %s", gai_strerror(herr));
 	}
 	
@@ -1290,8 +1290,8 @@ report_connect(const struct sockaddr *sa, socklen_t salen)
 	    "received!\n", remote_host, remote_port);
 }
 
-void
-help(void)
+فراغ
+help(فراغ)
 {
 	usage(0);
 	fprintf(stderr, "\tCommand Summary:\n\
@@ -1302,14 +1302,14 @@ help(void)
 	\t-F		Pass socket fd\n\
 	\t-h		This help text\n\
 	\t-I length	TCP receive buffer length\n\
-	\t-i secs\t	Delay interval for lines sent, ports scanned\n\
-	\t-k		Keep inbound sockets open for multiple connects\n\
-	\t-l		Listen mode, for inbound connects\n\
+	\t-i secs\t	Delay interval עבור lines sent, ports scanned\n\
+	\t-k		Keep inbound sockets open עבור multiple connects\n\
+	\t-l		Listen mode, עבור inbound connects\n\
 	\t-N		Shutdown the network socket after EOF on stdin\n\
 	\t-n		Suppress name/port resolutions\n\
 	\t-O length	TCP send buffer length\n\
-	\t-P proxyuser\tUsername for proxy authentication\n\
-	\t-p port\t	Specify local port for remote connects\n\
+	\t-P proxyuser\tUsername עבור proxy authentication\n\
+	\t-p port\t	Specify local port עבור remote connects\n\
 	\t-r		Randomize remote ports\n\
 	\t-S		Enable the TCP MD5 signature option\n\
 	\t-s addr\t	Local source address\n\
@@ -1319,23 +1319,23 @@ help(void)
 	\t-u		UDP mode\n\
 	\t-V rtable	Specify alternate routing table\n\
 	\t-v		Verbose\n\
-	\t-w secs\t	Timeout for connects and final net reads\n\
+	\t-w secs\t	Timeout עבור connects and final net reads\n\
 	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
 	\t-x addr[:port]\tSpecify proxy address and port\n\
-	\t-z		Zero-I/O mode [used for scanning]\n\
+	\t-z		Zero-I/O mode [used עבור scanning]\n\
 	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
 	exit(1);
 }
 
-void
-usage(int ret)
+فراغ
+usage(صحيح ret)
 {
 	fprintf(stderr,
 	    "usage: nc [-46DdFhklNnrStUuvz] [-I length] [-i interval] [-O length]\n"
 	    "\t  [-P proxy_username] [-p source_port] [-s source] [-T toskeyword]\n"
 	    "\t  [-V rtable] [-w timeout] [-X proxy_protocol]\n"
 	    "\t  [-x proxy_address[:port]] [destination] [port]\n");
-	if (ret)
+	אם (ret)
 		exit(1);
 }
 
@@ -1369,18 +1369,18 @@ usage(int ret)
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
+#ضمن <netinet/in.h>
+#ضمن <arpa/inet.h>
 
-#include <errno.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <resolv.h>
+#ضمن <errno.h>
+#ضمن <netdb.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <resolv.h>
 
 #define SOCKS_PORT	"1080"
 #define HTTP_PROXY_PORT	"3128"
@@ -1394,112 +1394,112 @@ usage(int ret)
 #define SOCKS_DOMAIN	3
 #define SOCKS_IPV6	4
 
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int,
-	    const char *);
+صحيح	remote_connect(ثابت حرف *, ثابت حرف *, بنية addrinfo);
+صحيح	socks_connect(ثابت حرف *, ثابت حرف *, بنية addrinfo,
+	    ثابت حرف *, ثابت حرف *, بنية addrinfo, صحيح,
+	    ثابت حرف *);
 
-static int
-decode_addrport(const char *h, const char *p, struct sockaddr *addr,
-    socklen_t addrlen, int v4only, int numeric)
+ساكن صحيح
+decode_addrport(ثابت حرف *h, ثابت حرف *p, بنية sockaddr *addr,
+    socklen_t addrlen, صحيح v4only, صحيح numeric)
 {
-	int r;
-	struct addrinfo hints, *res;
+	صحيح r;
+	بنية addrinfo hints, *res;
 
-	bzero(&hints, sizeof(hints));
+	bzero(&hints, حجم(hints));
 	hints.ai_family = v4only ? PF_INET : PF_UNSPEC;
 	hints.ai_flags = numeric ? AI_NUMERICHOST : 0;
 	hints.ai_socktype = SOCK_STREAM;
 	r = getaddrinfo(h, p, &hints, &res);
 	/* Don't fatal when attempting to convert a numeric address */
-	if (r != 0) {
-		if (!numeric) {
+	אם (r != 0) {
+		אם (!numeric) {
 			errx(1, "getaddrinfo(\"%.64s\", \"%.64s\"): %s", h, p,
 			    gai_strerror(r));
 		}
-		return (-1);
+		החזר (-1);
 	}
-	if (addrlen < res->ai_addrlen) {
+	אם (addrlen < res->ai_addrlen) {
 		freeaddrinfo(res);
 		errx(1, "internal error: addrlen < res->ai_addrlen");
 	}
 	memcpy(addr, res->ai_addr, res->ai_addrlen);
 	freeaddrinfo(res);
-	return (0);
+	החזר (0);
 }
 
-static int
-proxy_read_line(int fd, char *buf, size_t bufsz)
+ساكن صحيح
+proxy_read_line(صحيح fd, حرف *buf, size_t bufsz)
 {
 	size_t off;
 
-	for(off = 0;;) {
-		if (off >= bufsz)
+	עבור(off = 0;;) {
+		אם (off >= bufsz)
 			errx(1, "proxy read too long");
-		if (atomicio(read, fd, buf + off, 1) != 1)
+		אם (atomicio(اقرأ, fd, buf + off, 1) != 1)
 			err(1, "proxy read");
 		/* Skip CR */
-		if (buf[off] == '\r')
-			continue;
-		if (buf[off] == '\n') {
+		אם (buf[off] == '\r')
+			استمر;
+		אם (buf[off] == '\n') {
 			buf[off] = '\0';
-			break;
+			اكسر;
 		}
 		off++;
 	}
-	return (off);
+	החזר (off);
 }
 
-static const char *
-getproxypass(const char *proxyuser, const char *proxyhost)
+ساكن ثابت حرف *
+getproxypass(ثابت حرف *proxyuser, ثابت حرف *proxyhost)
 {
-	char prompt[512];
-	static char pw[256];
+	حرف prompt[512];
+	ساكن حرف pw[256];
 
-	snprintf(prompt, sizeof(prompt), "Proxy password for %s@%s: ",
+	snprintf(prompt, حجم(prompt), "Proxy password for %s@%s: ",
 	   proxyuser, proxyhost);
-	if (readpassphrase(prompt, pw, sizeof(pw), RPP_REQUIRE_TTY) == NULL)
+	אם (readpassphrase(prompt, pw, حجم(pw), RPP_REQUIRE_TTY) == عدم)
 		errx(1, "Unable to read proxy passphrase");
-	return (pw);
+	החזר (pw);
 }
 
-int
-socks_connect(const char *host, const char *port,
-    struct addrinfo hints __attribute__ ((__unused__)),
-    const char *proxyhost, const char *proxyport, struct addrinfo proxyhints,
-    int socksv, const char *proxyuser)
+صحيح
+socks_connect(ثابت حرف *host, ثابت حرف *port,
+    بنية addrinfo hints __attribute__ ((__unused__)),
+    ثابت حرف *proxyhost, ثابت حرف *proxyport, بنية addrinfo proxyhints,
+    صحيح socksv, ثابت حرف *proxyuser)
 {
-	int proxyfd, r, authretry = 0;
+	صحيح proxyfd, r, authretry = 0;
 	size_t hlen, wlen = 0;
-	unsigned char buf[1024];
+	unsigned حرف buf[1024];
 	size_t cnt;
-	struct sockaddr_storage addr;
-	struct sockaddr_in *in4 = (struct sockaddr_in *)&addr;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)&addr;
+	بنية sockaddr_storage addr;
+	بنية sockaddr_in *in4 = (بنية sockaddr_in *)&addr;
+	بنية sockaddr_in6 *in6 = (بنية sockaddr_in6 *)&addr;
 	in_port_t serverport;
-	const char *proxypass = NULL;
+	ثابت حرف *proxypass = عدم;
 
-	if (proxyport == NULL)
+	אם (proxyport == عدم)
 		proxyport = (socksv == -1) ? HTTP_PROXY_PORT : SOCKS_PORT;
 
 	/* Abuse API to lookup port */
-	if (decode_addrport("0.0.0.0", port, (struct sockaddr *)&addr,
-	    sizeof(addr), 1, 1) == -1)
+	אם (decode_addrport("0.0.0.0", port, (بنية sockaddr *)&addr,
+	    حجم(addr), 1, 1) == -1)
 		errx(1, "unknown port \"%.64s\"", port);
 	serverport = in4->sin_port;
 
  again:
-	if (authretry++ > 3)
+	אם (authretry++ > 3)
 		errx(1, "Too many authentication failures");
 
 	proxyfd = remote_connect(proxyhost, proxyport, proxyhints);
 
-	if (proxyfd < 0)
-		return (-1);
+	אם (proxyfd < 0)
+		החזר (-1);
 
-	if (socksv == 5) {
-		if (decode_addrport(host, port, (struct sockaddr *)&addr,
-		    sizeof(addr), 0, 1) == -1)
+	אם (socksv == 5) {
+		אם (decode_addrport(host, port, (بنية sockaddr *)&addr,
+		    حجم(addr), 0, 1) == -1)
 			addr.ss_family = 0; /* used in switch below */
 
 		/* Version 5, one method: no authentication */
@@ -1507,23 +1507,23 @@ socks_connect(const char *host, const char *port,
 		buf[1] = 1;
 		buf[2] = SOCKS_NOAUTH;
 		cnt = atomicio(vwrite, proxyfd, buf, 3);
-		if (cnt != 3)
+		אם (cnt != 3)
 			err(1, "write failed (%zu/3)", cnt);
 
-		cnt = atomicio(read, proxyfd, buf, 2);
-		if (cnt != 2)
+		cnt = atomicio(اقرأ, proxyfd, buf, 2);
+		אם (cnt != 2)
 			err(1, "read failed (%zu/3)", cnt);
 
-		if (buf[1] == SOCKS_NOMETHOD)
+		אם (buf[1] == SOCKS_NOMETHOD)
 			errx(1, "authentication method negotiation failed");
 
-		switch (addr.ss_family) {
-		case 0:
+		بدل (addr.ss_family) {
+		حالة 0:
 			/* Version 5, connect: domain name */
 
 			/* Max domain name length is 255 bytes */
 			hlen = strlen(host);
-			if (hlen > 255)
+			אם (hlen > 255)
 				errx(1, "host name too long for SOCKS5");
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
@@ -1531,166 +1531,166 @@ socks_connect(const char *host, const char *port,
 			buf[3] = SOCKS_DOMAIN;
 			buf[4] = hlen;
 			memcpy(buf + 5, host, hlen);			
-			memcpy(buf + 5 + hlen, &serverport, sizeof serverport);
+			memcpy(buf + 5 + hlen, &serverport, حجم serverport);
 			wlen = 7 + hlen;
-			break;
-		case AF_INET:
+			اكسر;
+		حالة AF_INET:
 			/* Version 5, connect: IPv4 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV4;
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-			memcpy(buf + 8, &in4->sin_port, sizeof in4->sin_port);
+			memcpy(buf + 4, &in4->sin_addr, حجم in4->sin_addr);
+			memcpy(buf + 8, &in4->sin_port, حجم in4->sin_port);
 			wlen = 10;
-			break;
-		case AF_INET6:
+			اكسر;
+		حالة AF_INET6:
 			/* Version 5, connect: IPv6 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV6;
-			memcpy(buf + 4, &in6->sin6_addr, sizeof in6->sin6_addr);
+			memcpy(buf + 4, &in6->sin6_addr, حجم in6->sin6_addr);
 			memcpy(buf + 20, &in6->sin6_port,
-			    sizeof in6->sin6_port);
+			    حجم in6->sin6_port);
 			wlen = 22;
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			errx(1, "internal error: silly AF");
 		}
 
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		אם (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
-		cnt = atomicio(read, proxyfd, buf, 4);
-		if (cnt != 4)
+		cnt = atomicio(اقرأ, proxyfd, buf, 4);
+		אם (cnt != 4)
 			err(1, "read failed (%zu/4)", cnt);
-		if (buf[1] != 0)
+		אם (buf[1] != 0)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-		switch (buf[3]) {
-		case SOCKS_IPV4:
-			cnt = atomicio(read, proxyfd, buf + 4, 6);
-			if (cnt != 6)
+		بدل (buf[3]) {
+		حالة SOCKS_IPV4:
+			cnt = atomicio(اقرأ, proxyfd, buf + 4, 6);
+			אם (cnt != 6)
 				err(1, "read failed (%zu/6)", cnt);
-			break;
-		case SOCKS_IPV6:
-			cnt = atomicio(read, proxyfd, buf + 4, 18);
-			if (cnt != 18)
+			اكسر;
+		حالة SOCKS_IPV6:
+			cnt = atomicio(اقرأ, proxyfd, buf + 4, 18);
+			אם (cnt != 18)
 				err(1, "read failed (%zu/18)", cnt);
-			break;
-		default:
+			اكسر;
+		افتراضي:
 			errx(1, "connection failed, unsupported address type");
 		}
-	} else if (socksv == 4 || socksv == 44) {
-		if (socksv == 4) {
+	} אחרת אם (socksv == 4 || socksv == 44) {
+		אם (socksv == 4) {
 			/* This will exit on lookup failure */
-			decode_addrport(host, port, (struct sockaddr *)&addr,
-			    sizeof(addr), 1, 0);
+			decode_addrport(host, port, (بنية sockaddr *)&addr,
+			    حجم(addr), 1, 0);
 		}
 
 		/* Version 4 */
 		buf[0] = SOCKS_V4;
 		buf[1] = SOCKS_CONNECT;	/* connect */
-		memcpy(buf + 2, &in4->sin_port, sizeof in4->sin_port);
-		if (socksv == 4) {
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-		} else {
+		memcpy(buf + 2, &in4->sin_port, حجم in4->sin_port);
+		אם (socksv == 4) {
+			memcpy(buf + 4, &in4->sin_addr, حجم in4->sin_addr);
+		} אחרת {
 			/* SOCKS4A uses addr of 0.0.0.x, and hostname later */
 			buf[4] = buf[5] = buf[6] = 0;
 			buf[7] = 1;
 		}
 		buf[8] = 0;	/* empty username */
 		wlen = 9;
-		if (socksv == 44) {
+		אם (socksv == 44) {
 			/* SOCKS4A has nul-terminated hostname after user */
-			if (strlcpy(buf + 9, host,
-			    sizeof(buf) - 9) >= sizeof(buf) - 9)
+			אם (strlcpy(buf + 9, host,
+			    حجم(buf) - 9) >= حجم(buf) - 9)
 				errx(1, "hostname too big");
 			wlen = 9 + strlen(host) + 1;
 		}
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		אם (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
-		cnt = atomicio(read, proxyfd, buf, 8);
-		if (cnt != 8)
+		cnt = atomicio(اقرأ, proxyfd, buf, 8);
+		אם (cnt != 8)
 			err(1, "read failed (%zu/8)", cnt);
-		if (buf[1] != 90)
+		אם (buf[1] != 90)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-	} else if (socksv == -1) {
+	} אחרת אם (socksv == -1) {
 		/* HTTP proxy CONNECT */
 
 		/* Disallow bad chars in hostname */
-		if (strcspn(host, "\r\n\t []:") != strlen(host))
+		אם (strcspn(host, "\r\n\t []:") != strlen(host))
 			errx(1, "Invalid hostname");
 
 		/* Try to be sane about numeric IPv6 addresses */
-		if (strchr(host, ':') != NULL) {
-			r = snprintf(buf, sizeof(buf),
+		אם (strchr(host, ':') != عدم) {
+			r = snprintf(buf, حجم(buf),
 			    "CONNECT [%s]:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
-		} else {
-			r = snprintf(buf, sizeof(buf),
+		} אחרת {
+			r = snprintf(buf, حجم(buf),
 			    "CONNECT %s:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
 		}
-		if (r == -1 || (size_t)r >= sizeof(buf))
+		אם (r == -1 || (size_t)r >= حجم(buf))
 			errx(1, "hostname too long");
 		r = strlen(buf);
 
 		cnt = atomicio(vwrite, proxyfd, buf, r);
-		if (cnt != (size_t)r)
+		אם (cnt != (size_t)r)
 			err(1, "write failed (%zu/%d)", cnt, r);
 
-		if (authretry > 1) {
-			char resp[1024];
+		אם (authretry > 1) {
+			حرف resp[1024];
 
 			proxypass = getproxypass(proxyuser, proxyhost);
-			r = snprintf(buf, sizeof(buf), "%s:%s",
+			r = snprintf(buf, حجم(buf), "%s:%s",
 			    proxyuser, proxypass);
-			if (r == -1 || (size_t)r >= sizeof(buf) ||
+			אם (r == -1 || (size_t)r >= حجم(buf) ||
 			    b64_ntop(buf, strlen(buf), resp,
-			    sizeof(resp)) == -1)
+			    حجم(resp)) == -1)
 				errx(1, "Proxy username/password too long");
-			r = snprintf(buf, sizeof(buf), "Proxy-Authorization: "
+			r = snprintf(buf, حجم(buf), "Proxy-Authorization: "
 			    "Basic %s\r\n", resp);
-			if (r == -1 || (size_t)r >= sizeof(buf))
+			אם (r == -1 || (size_t)r >= حجم(buf))
 				errx(1, "Proxy auth response too long");
 			r = strlen(buf);
-			if ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
+			אם ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
 				err(1, "write failed (%zu/%d)", cnt, r);
 		}
 
 		/* Terminate headers */
-		if ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
+		אם ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
 			err(1, "write failed (2/%d)", r);
 
 		/* Read status reply */
-		proxy_read_line(proxyfd, buf, sizeof(buf));
-		if (proxyuser != NULL &&
+		proxy_read_line(proxyfd, buf, حجم(buf));
+		אם (proxyuser != عدم &&
 		    strncmp(buf, "HTTP/1.0 407 ", 12) == 0) {
-			if (authretry > 1) {
+			אם (authretry > 1) {
 				fprintf(stderr, "Proxy authentication "
 				    "failed\n");
 			}
 			close(proxyfd);
-			goto again;
-		} else if (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
+			اذهب again;
+		} אחרת אם (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
 		    strncmp(buf, "HTTP/1.1 200 ", 12) != 0)
 			errx(1, "Proxy error: \"%s\"", buf);
 
 		/* Headers continue until we hit an empty line */
-		for (r = 0; r < HTTP_MAXHDRS; r++) {
-			proxy_read_line(proxyfd, buf, sizeof(buf));
-			if (*buf == '\0')
-				break;
+		עבור (r = 0; r < HTTP_MAXHDRS; r++) {
+			proxy_read_line(proxyfd, buf, حجم(buf));
+			אם (*buf == '\0')
+				اكسر;
 		}
-		if (*buf != '\0')
+		אם (*buf != '\0')
 			errx(1, "Too many proxy headers received");
-	} else
+	} אחרת
 		errx(1, "Unknown proxy protocol %d", socksv);
 
-	return (proxyfd);
+	החזר (proxyfd);
 }
 

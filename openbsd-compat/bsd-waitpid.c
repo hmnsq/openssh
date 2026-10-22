@@ -22,32 +22,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifndef HAVE_WAITPID
-#include <errno.h>
-#include <sys/wait.h>
-#include "bsd-waitpid.h"
+#ضمن <errno.h>
+#ضمن <sys/wait.h>
+#ضمن "bsd-waitpid.h"
 
 pid_t
-waitpid(int pid, int *stat_loc, int options)
+waitpid(صحيح pid, صحيح *stat_loc, صحيح options)
 {
-	union wait statusp;
+	اتحاد wait statusp;
 	pid_t wait_pid;
 
-	if (pid <= 0) {
-		if (pid != -1) {
+	אם (pid <= 0) {
+		אם (pid != -1) {
 			errno = EINVAL;
-			return (-1);
+			החזר (-1);
 		}
 		/* wait4() wants pid=0 for indiscriminate wait. */
 		pid = 0;
 	}
-	wait_pid = wait4(pid, &statusp, options, NULL);
-	if (stat_loc)
-		*stat_loc = (int) statusp.w_status;
+	wait_pid = wait4(pid, &statusp, options, عدم);
+	אם (stat_loc)
+		*stat_loc = (صحيح) statusp.w_status;
 
-	return (wait_pid);
+	החזר (wait_pid);
 }
 
 #endif /* !HAVE_WAITPID */

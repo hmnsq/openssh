@@ -28,23 +28,23 @@
  */
 
 #define NO_BINARY_OPEN	/* Avoid redefining open to binary_open for this file */
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifdef HAVE_CYGWIN
 
-#include <sys/types.h>
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <wchar.h>
-#include <wctype.h>
+#ضمن <sys/types.h>
+#ضمن <fcntl.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <stdarg.h>
+#ضمن <stdlib.h>
+#ضمن <wchar.h>
+#ضمن <wctype.h>
 
-#include "xmalloc.h"
+#ضمن "xmalloc.h"
 
-int
-binary_open(const char *filename, int flags, ...)
+صحيح
+binary_open(ثابت حرف *filename, صحيح flags, ...)
 {
 	va_list ap;
 	mode_t mode;
@@ -52,36 +52,36 @@ binary_open(const char *filename, int flags, ...)
 	va_start(ap, flags);
 	mode = va_arg(ap, mode_t);
 	va_end(ap);
-	return (open(filename, flags | O_BINARY, mode));
+	החזר (open(filename, flags | O_BINARY, mode));
 }
 
-int
-check_ntsec(const char *filename)
+صحيح
+check_ntsec(ثابت حرف *filename)
 {
-	return (pathconf(filename, _PC_POSIX_PERMISSIONS));
+	החזר (pathconf(filename, _PC_POSIX_PERMISSIONS));
 }
 
-const char *
+ثابت حرف *
 cygwin_ssh_privsep_user()
 {
-  static char cyg_privsep_user[DNLEN + UNLEN + 2];
+  ساكن حرف cyg_privsep_user[DNLEN + UNLEN + 2];
 
-  if (!cyg_privsep_user[0])
+  אם (!cyg_privsep_user[0])
     {
 #ifdef CW_CYGNAME_FROM_WINNAME
-      if (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
-			   sizeof cyg_privsep_user) != 0)
+      אם (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
+			   حجم cyg_privsep_user) != 0)
 #endif
-	strlcpy(cyg_privsep_user, "sshd", sizeof(cyg_privsep_user));
+	strlcpy(cyg_privsep_user, "sshd", حجم(cyg_privsep_user));
     }
-  return cyg_privsep_user;
+  החזר cyg_privsep_user;
 }
 
-#define NL(x) x, (sizeof (x) - 1)
-#define WENV_SIZ (sizeof (wenv_arr) / sizeof (wenv_arr[0]))
+#define NL(x) x, (حجم (x) - 1)
+#define WENV_SIZ (حجم (wenv_arr) / حجم (wenv_arr[0]))
 
-static struct wenv {
-	const char *name;
+ساكن بنية wenv {
+	ثابت حرف *name;
 	size_t namelen;
 } wenv_arr[] = {
 	{ NL("ALLUSERSPROFILE=") },
@@ -97,27 +97,27 @@ static struct wenv {
 	{ NL("WINDIR=") }
 };
 
-char **
-fetch_windows_environment(void)
+حرف **
+fetch_windows_environment(فراغ)
 {
-	char **e, **p;
-	unsigned int i, idx = 0;
+	حرف **e, **p;
+	unsigned صحيح i, idx = 0;
 
-	p = xcalloc(WENV_SIZ + 1, sizeof(char *));
-	for (e = environ; *e != NULL; ++e) {
-		for (i = 0; i < WENV_SIZ; ++i) {
-			if (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
+	p = xcalloc(WENV_SIZ + 1, حجم(حرف *));
+	עבור (e = environ; *e != عدم; ++e) {
+		עבור (i = 0; i < WENV_SIZ; ++i) {
+			אם (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
 				p[idx++] = *e;
 		}
 	}
-	p[idx] = NULL;
-	return p;
+	p[idx] = عدم;
+	החזר p;
 }
 
-void
-free_windows_environment(char **p)
+فراغ
+free_windows_environment(حرف **p)
 {
-	free(p);
+	حرر(p);
 }
 
 /*
@@ -128,56 +128,56 @@ free_windows_environment(char **p)
  * Unicode characters into account.
  */
 
-static int
-__match_pattern (const wchar_t *s, const wchar_t *pattern)
+ساكن صحيح
+__match_pattern (ثابت wchar_t *s, ثابت wchar_t *pattern)
 {
-	for (;;) {
+	עבור (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		אם (!*pattern)
+			החזר !*s;
 
-		if (*pattern == '*') {
+		אם (*pattern == '*') {
 			/* Skip the asterisk. */
 			pattern++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			אם (!*pattern)
+				החזר 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			אם (*pattern != '?' && *pattern != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
+				עבור (; *s; s++)
+					אם (*s == *pattern &&
 					    __match_pattern(s + 1, pattern + 1))
-						return 1;
+						החזר 1;
 				/* Failed. */
-				return 0;
+				החזר 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (__match_pattern(s, pattern))
-					return 1;
+			עבור (; *s; s++)
+				אם (__match_pattern(s, pattern))
+					החזר 1;
 			/* Failed. */
-			return 0;
+			החזר 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		אם (!*s)
+			החזר 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && towlower(*pattern) != towlower(*s))
-			return 0;
+		אם (*pattern != '?' && towlower(*pattern) != towlower(*s))
+			החזר 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
@@ -186,28 +186,28 @@ __match_pattern (const wchar_t *s, const wchar_t *pattern)
 	/* NOTREACHED */
 }
 
-static int
-_match_pattern(const char *s, const char *pattern)
+ساكن صحيح
+_match_pattern(ثابت حرف *s, ثابت حرف *pattern)
 {
 	wchar_t *ws;
 	wchar_t *wpattern;
 	size_t len;
-	int ret;
+	صحيح ret;
 
-	if ((len = mbstowcs(NULL, s, 0)) == (size_t) -1)
-		return 0;
-	ws = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
+	אם ((len = mbstowcs(عدم, s, 0)) == (size_t) -1)
+		החזר 0;
+	ws = (wchar_t *) xcalloc(len + 1, حجم (wchar_t));
 	mbstowcs(ws, s, len + 1);
-	if ((len = mbstowcs(NULL, pattern, 0)) == (size_t) -1) {
-		free(ws);
-		return 0;
+	אם ((len = mbstowcs(عدم, pattern, 0)) == (size_t) -1) {
+		حرر(ws);
+		החזר 0;
 	}
-	wpattern = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
+	wpattern = (wchar_t *) xcalloc(len + 1, حجم (wchar_t));
 	mbstowcs(wpattern, pattern, len + 1);
 	ret = __match_pattern (ws, wpattern);
-	free(ws);
-	free(wpattern);
-	return ret;
+	حرر(ws);
+	حرر(wpattern);
+	החזר ret;
 }
 
 /*
@@ -216,47 +216,47 @@ _match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-cygwin_ug_match_pattern_list(const char *string, const char *pattern)
+صحيح
+cygwin_ug_match_pattern_list(ثابت حرف *string, ثابت حرف *pattern)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
+	حرف sub[1024];
+	صحيح negated;
+	صحيح got_positive;
 	size_t i, subi, len = strlen(pattern);
 
 	got_positive = 0;
-	for (i = 0; i < len;) {
+	עבור (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		אם (pattern[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} אחרת
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		עבור (subi = 0;
+		    i < len && subi < حجم(sub) - 1 && pattern[i] != ',';
 		    subi++, i++)
 			sub[subi] = pattern[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		אם (subi >= حجم(sub) - 1)
+			החזר 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		אם (i < len && pattern[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (_match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
+		אם (_match_pattern(string, sub)) {
+			אם (negated)
+				החזר -1;		/* Negative */
+			אחרת
 				got_positive = 1;	/* Positive */
 		}
 	}
@@ -265,7 +265,7 @@ cygwin_ug_match_pattern_list(const char *string, const char *pattern)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	החזר got_positive;
 }
 
 #endif /* HAVE_CYGWIN */

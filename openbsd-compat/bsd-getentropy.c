@@ -16,72 +16,72 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
 #ifndef SSH_RANDOM_DEV
 # define SSH_RANDOM_DEV "/dev/urandom"
 #endif /* SSH_RANDOM_DEV */
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 #ifdef HAVE_SYS_RANDOM_H
 # include <sys/random.h>
 #endif
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ضمن <fcntl.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
 #ifdef WITH_OPENSSL
-#include <openssl/rand.h>
-#include <openssl/err.h>
+#ضمن <openssl/rand.h>
+#ضمن <openssl/err.h>
 #endif
 
-#include "log.h"
+#ضمن "log.h"
 
-int
-_ssh_compat_getentropy(void *s, size_t len)
+صحيح
+_ssh_compat_getentropy(فراغ *s, size_t len)
 {
-#if defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
-	if (RAND_bytes(s, len) <= 0)
+#אם defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
+	אם (RAND_bytes(s, len) <= 0)
 		fatal("Couldn't obtain random bytes (error 0x%lx)",
 		    (unsigned long)ERR_get_error());
-#else
-	int fd, save_errno;
+#אחרת
+	صحيح fd, save_errno;
 	ssize_t r;
 	size_t o = 0;
 
 #ifdef WITH_OPENSSL
-	if (RAND_bytes(s, len) == 1)
-		return 0;
+	אם (RAND_bytes(s, len) == 1)
+		החזר 0;
 #endif
 #ifdef HAVE_GETENTROPY
-	if ((r = getentropy(s, len)) == 0)
-		return 0;
+	אם ((r = getentropy(s, len)) == 0)
+		החזר 0;
 #endif /* HAVE_GETENTROPY */
 #ifdef HAVE_GETRANDOM
-	if ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
-		return 0;
+	אם ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
+		החזר 0;
 #endif /* HAVE_GETRANDOM */
 
-	if ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
+	אם ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
 		save_errno = errno;
 		/* Try egd/prngd before giving up. */
-		if (seed_from_prngd(s, len) == 0)
-			return 0;
+		אם (seed_from_prngd(s, len) == 0)
+			החזר 0;
 		fatal("Couldn't open %s: %s", SSH_RANDOM_DEV,
 		    strerror(save_errno));
 	}
-	while (o < len) {
-		r = read(fd, (u_char *)s + o, len - o);
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR ||
+	כלעוד (o < len) {
+		r = اقرأ(fd, (u_char *)s + o, len - o);
+		אם (r < 0) {
+			אם (errno == EAGAIN || errno == EINTR ||
 			    errno == EWOULDBLOCK)
-				continue;
+				استمر;
 			fatal("read %s: %s", SSH_RANDOM_DEV, strerror(errno));
 		}
 		o += r;
 	}
 	close(fd);
 #endif /* WITH_OPENSSL */
-	return 0;
+	החזר 0;
 }

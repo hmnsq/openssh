@@ -16,146 +16,146 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
+#ضمن <netinet/in.h>
+#ضمن <arpa/inet.h>
 
-#include <netdb.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
+#ضمن <netdb.h>
+#ضمن <string.h>
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <limits.h>
 
-#include "addr.h"
+#ضمن "addr.h"
 
-#define _SA(x)	((struct sockaddr *)(x))
+#define _SA(x)	((بنية sockaddr *)(x))
 
-static int
-addr_unicast_masklen(int af)
+ساكن صحيح
+addr_unicast_masklen(صحيح af)
 {
-	switch (af) {
-	case AF_INET:
-		return 32;
-	case AF_INET6:
-		return 128;
-	default:
-		return -1;
+	بدل (af) {
+	حالة AF_INET:
+		החזר 32;
+	حالة AF_INET6:
+		החזר 128;
+	افتراضي:
+		החזר -1;
 	}
 }
 
-static inline int
-masklen_valid(int af, u_int masklen)
+ساكن مضمن صحيح
+masklen_valid(صحيح af, u_int masklen)
 {
-	switch (af) {
-	case AF_INET:
-		return masklen <= 32 ? 0 : -1;
-	case AF_INET6:
-		return masklen <= 128 ? 0 : -1;
-	default:
-		return -1;
+	بدل (af) {
+	حالة AF_INET:
+		החזר masklen <= 32 ? 0 : -1;
+	حالة AF_INET6:
+		החזר masklen <= 128 ? 0 : -1;
+	افتراضي:
+		החזר -1;
 	}
 }
 
-static int
-addr_xaddr_to_sa(const struct xaddr *xa, struct sockaddr *sa, socklen_t *len,
+ساكن صحيح
+addr_xaddr_to_sa(ثابت بنية xaddr *xa, بنية sockaddr *sa, socklen_t *len,
     uint16_t port)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	بنية sockaddr_in *in4 = (بنية sockaddr_in *)sa;
+	بنية sockaddr_in6 *in6 = (بنية sockaddr_in6 *)sa;
 
-	if (xa == NULL || sa == NULL || len == NULL)
-		return -1;
+	אם (xa == عدم || sa == عدم || len == عدم)
+		החזר -1;
 
-	switch (xa->af) {
-	case AF_INET:
-		if (*len < sizeof(*in4))
-			return -1;
-		memset(sa, '\0', sizeof(*in4));
-		*len = sizeof(*in4);
+	بدل (xa->af) {
+	حالة AF_INET:
+		אם (*len < حجم(*in4))
+			החזר -1;
+		memset(sa, '\0', حجم(*in4));
+		*len = حجم(*in4);
 #ifdef SOCK_HAS_LEN
-		in4->sin_len = sizeof(*in4);
+		in4->sin_len = حجم(*in4);
 #endif
 		in4->sin_family = AF_INET;
 		in4->sin_port = htons(port);
-		memcpy(&in4->sin_addr, &xa->v4, sizeof(in4->sin_addr));
-		break;
-	case AF_INET6:
-		if (*len < sizeof(*in6))
-			return -1;
-		memset(sa, '\0', sizeof(*in6));
-		*len = sizeof(*in6);
+		memcpy(&in4->sin_addr, &xa->v4, حجم(in4->sin_addr));
+		اكسر;
+	حالة AF_INET6:
+		אם (*len < حجم(*in6))
+			החזר -1;
+		memset(sa, '\0', حجم(*in6));
+		*len = حجم(*in6);
 #ifdef SOCK_HAS_LEN
-		in6->sin6_len = sizeof(*in6);
+		in6->sin6_len = حجم(*in6);
 #endif
 		in6->sin6_family = AF_INET6;
 		in6->sin6_port = htons(port);
-		memcpy(&in6->sin6_addr, &xa->v6, sizeof(in6->sin6_addr));
+		memcpy(&in6->sin6_addr, &xa->v6, حجم(in6->sin6_addr));
 #ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		in6->sin6_scope_id = xa->scope_id;
 #endif
-		break;
-	default:
-		return -1;
+		اكسر;
+	افتراضي:
+		החזר -1;
 	}
-	return 0;
+	החזר 0;
 }
 
 /*
  * Convert struct sockaddr to struct xaddr
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa)
+صحيح
+addr_sa_to_xaddr(بنية sockaddr *sa, socklen_t slen, بنية xaddr *xa)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	بنية sockaddr_in *in4 = (بنية sockaddr_in *)sa;
+	بنية sockaddr_in6 *in6 = (بنية sockaddr_in6 *)sa;
 
-	memset(xa, '\0', sizeof(*xa));
+	memset(xa, '\0', حجم(*xa));
 
-	switch (sa->sa_family) {
-	case AF_INET:
-		if (slen < (socklen_t)sizeof(*in4))
-			return -1;
+	بدل (sa->sa_family) {
+	حالة AF_INET:
+		אם (slen < (socklen_t)حجم(*in4))
+			החזר -1;
 		xa->af = AF_INET;
-		memcpy(&xa->v4, &in4->sin_addr, sizeof(xa->v4));
-		break;
-	case AF_INET6:
-		if (slen < (socklen_t)sizeof(*in6))
-			return -1;
+		memcpy(&xa->v4, &in4->sin_addr, حجم(xa->v4));
+		اكسر;
+	حالة AF_INET6:
+		אם (slen < (socklen_t)حجم(*in6))
+			החזר -1;
 		xa->af = AF_INET6;
-		memcpy(&xa->v6, &in6->sin6_addr, sizeof(xa->v6));
+		memcpy(&xa->v6, &in6->sin6_addr, حجم(xa->v6));
 #ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		xa->scope_id = in6->sin6_scope_id;
 #endif
-		break;
-	default:
-		return -1;
+		اكسر;
+	افتراضي:
+		החזר -1;
 	}
 
-	return 0;
+	החזר 0;
 }
 
-static int
-addr_invert(struct xaddr *n)
+ساكن صحيح
+addr_invert(بنية xaddr *n)
 {
-	int i;
+	صحيح i;
 
-	if (n == NULL)
-		return -1;
+	אם (n == عدم)
+		החזר -1;
 
-	switch (n->af) {
-	case AF_INET:
+	بدل (n->af) {
+	حالة AF_INET:
 		n->v4.s_addr = ~n->v4.s_addr;
-		return 0;
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		החזר 0;
+	حالة AF_INET6:
+		עבור (i = 0; i < 4; i++)
 			n->addr32[i] = ~n->addr32[i];
-		return 0;
-	default:
-		return -1;
+		החזר 0;
+	افتراضي:
+		החזר -1;
 	}
 }
 
@@ -164,163 +164,163 @@ addr_invert(struct xaddr *n)
  * store it in 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_netmask(int af, u_int l, struct xaddr *n)
+صحيح
+addr_netmask(صحيح af, u_int l, بنية xaddr *n)
 {
-	int i;
+	صحيح i;
 
-	if (masklen_valid(af, l) != 0 || n == NULL)
-		return -1;
+	אם (masklen_valid(af, l) != 0 || n == عدم)
+		החזר -1;
 
-	memset(n, '\0', sizeof(*n));
-	switch (af) {
-	case AF_INET:
+	memset(n, '\0', حجم(*n));
+	بدل (af) {
+	حالة AF_INET:
 		n->af = AF_INET;
-		if (l == 0)
-			return 0;
+		אם (l == 0)
+			החזר 0;
 		n->v4.s_addr = htonl((0xffffffff << (32 - l)) & 0xffffffff);
-		return 0;
-	case AF_INET6:
+		החזר 0;
+	حالة AF_INET6:
 		n->af = AF_INET6;
-		for (i = 0; i < 4 && l >= 32; i++, l -= 32)
+		עבור (i = 0; i < 4 && l >= 32; i++, l -= 32)
 			n->addr32[i] = 0xffffffffU;
-		if (i < 4 && l != 0)
+		אם (i < 4 && l != 0)
 			n->addr32[i] = htonl((0xffffffff << (32 - l)) &
 			    0xffffffff);
-		return 0;
-	default:
-		return -1;
+		החזר 0;
+	افتراضي:
+		החזר -1;
 	}
 }
 
-static int
-addr_hostmask(int af, u_int l, struct xaddr *n)
+ساكن صحيح
+addr_hostmask(صحيح af, u_int l, بنية xaddr *n)
 {
-	if (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
-		return -1;
-	return 0;
+	אם (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
+		החזר -1;
+	החזר 0;
 }
 
 /*
  * Perform logical AND of addresses 'a' and 'b', storing result in 'dst'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+صحيح
+addr_and(بنية xaddr *dst, ثابت بنية xaddr *a, ثابت بنية xaddr *b)
 {
-	int i;
+	صحيح i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return -1;
+	אם (dst == عدم || a == عدم || b == عدم || a->af != b->af)
+		החזר -1;
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	memcpy(dst, a, حجم(*dst));
+	بدل (a->af) {
+	حالة AF_INET:
 		dst->v4.s_addr &= b->v4.s_addr;
-		return 0;
-	case AF_INET6:
+		החזר 0;
+	حالة AF_INET6:
 		dst->scope_id = a->scope_id;
-		for (i = 0; i < 4; i++)
+		עבור (i = 0; i < 4; i++)
 			dst->addr32[i] &= b->addr32[i];
-		return 0;
-	default:
-		return -1;
+		החזר 0;
+	افتراضي:
+		החזר -1;
 	}
 }
 
-static int
-addr_or(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+ساكن صحيح
+addr_or(بنية xaddr *dst, ثابت بنية xaddr *a, ثابت بنية xaddr *b)
 {
-	int i;
+	صحيح i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return (-1);
+	אם (dst == عدم || a == عدم || b == عدم || a->af != b->af)
+		החזר (-1);
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	memcpy(dst, a, حجم(*dst));
+	بدل (a->af) {
+	حالة AF_INET:
 		dst->v4.s_addr |= b->v4.s_addr;
-		return (0);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		החזר (0);
+	حالة AF_INET6:
+		עבור (i = 0; i < 4; i++)
 			dst->addr32[i] |= b->addr32[i];
-		return (0);
-	default:
-		return (-1);
+		החזר (0);
+	افتراضي:
+		החזר (-1);
 	}
 }
 
-int
-addr_cmp(const struct xaddr *a, const struct xaddr *b)
+صحيح
+addr_cmp(ثابت بنية xaddr *a, ثابت بنية xaddr *b)
 {
-	int i;
+	صحيح i;
 
-	if (a->af != b->af)
-		return (a->af == AF_INET6 ? 1 : -1);
+	אם (a->af != b->af)
+		החזר (a->af == AF_INET6 ? 1 : -1);
 
-	switch (a->af) {
-	case AF_INET:
+	بدل (a->af) {
+	حالة AF_INET:
 		/*
 		 * Can't just subtract here as 255.255.255.255 - 0.0.0.0 is
 		 * too big to fit into a signed int
 		 */
-		if (a->v4.s_addr == b->v4.s_addr)
-			return 0;
-		return (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
-	case AF_INET6:
+		אם (a->v4.s_addr == b->v4.s_addr)
+			החזר 0;
+		החזר (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
+	حالة AF_INET6:
 		/*
 		 * Do this a byte at a time to avoid the above issue and
 		 * any endian problems
 		 */
-		for (i = 0; i < 16; i++)
-			if (a->addr8[i] - b->addr8[i] != 0)
-				return (a->addr8[i] - b->addr8[i]);
-		if (a->scope_id == b->scope_id)
-			return (0);
-		return (a->scope_id > b->scope_id ? 1 : -1);
-	default:
-		return (-1);
+		עבור (i = 0; i < 16; i++)
+			אם (a->addr8[i] - b->addr8[i] != 0)
+				החזר (a->addr8[i] - b->addr8[i]);
+		אם (a->scope_id == b->scope_id)
+			החזר (0);
+		החזר (a->scope_id > b->scope_id ? 1 : -1);
+	افتراضي:
+		החזר (-1);
 	}
 }
 
-static int
-addr_is_all0s(const struct xaddr *a)
+ساكن صحيح
+addr_is_all0s(ثابت بنية xaddr *a)
 {
-	int i;
+	صحيح i;
 
-	switch (a->af) {
-	case AF_INET:
-		return (a->v4.s_addr == 0 ? 0 : -1);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
-			if (a->addr32[i] != 0)
-				return -1;
-		return 0;
-	default:
-		return -1;
+	بدل (a->af) {
+	حالة AF_INET:
+		החזר (a->v4.s_addr == 0 ? 0 : -1);
+	حالة AF_INET6:
+		עבור (i = 0; i < 4; i++)
+			אם (a->addr32[i] != 0)
+				החזר -1;
+		החזר 0;
+	افتراضي:
+		החזר -1;
 	}
 }
 
 /* Increment the specified address. Note, does not do overflow checking */
-void
-addr_increment(struct xaddr *a)
+فراغ
+addr_increment(بنية xaddr *a)
 {
-	int i;
+	صحيح i;
 	uint32_t n;
 
-	switch (a->af) {
-	case AF_INET:
+	بدل (a->af) {
+	حالة AF_INET:
 		a->v4.s_addr = htonl(ntohl(a->v4.s_addr) + 1);
-		break;
-	case AF_INET6:
-		for (i = 0; i < 4; i++) {
+		اكسر;
+	حالة AF_INET6:
+		עבור (i = 0; i < 4; i++) {
 			/* Increment with carry */
 			n = ntohl(a->addr32[3 - i]) + 1;
 			a->addr32[3 - i] = htonl(n);
-			if (n != 0)
-				break;
+			אם (n != 0)
+				اكسر;
 		}
-		break;
+		اكسر;
 	}
 }
 
@@ -330,181 +330,181 @@ addr_increment(struct xaddr *a)
  * Returns 0 if host portion of address is all-zeros,
  * -1 if not all zeros or on failure.
  */
-static int
-addr_host_is_all0s(const struct xaddr *a, u_int masklen)
+ساكن صحيح
+addr_host_is_all0s(ثابت بنية xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_addr, tmp_mask, tmp_result;
+	بنية xaddr tmp_addr, tmp_mask, tmp_result;
 
-	memcpy(&tmp_addr, a, sizeof(tmp_addr));
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, &tmp_addr, &tmp_mask) == -1)
-		return -1;
-	return addr_is_all0s(&tmp_result);
+	memcpy(&tmp_addr, a, حجم(tmp_addr));
+	אם (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
+		החזר -1;
+	אם (addr_and(&tmp_result, &tmp_addr, &tmp_mask) == -1)
+		החזר -1;
+	החזר addr_is_all0s(&tmp_result);
 }
 
-#if 0
-static int
-addr_host_to_all0s(struct xaddr *a, u_int masklen)
+#אם 0
+ساكن صحيح
+addr_host_to_all0s(بنية xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	بنية xaddr tmp_mask;
 
-	if (addr_netmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_and(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	אם (addr_netmask(a->af, masklen, &tmp_mask) == -1)
+		החזר (-1);
+	אם (addr_and(a, a, &tmp_mask) == -1)
+		החזר (-1);
+	החזר (0);
 }
 #endif
 
-int
-addr_host_to_all1s(struct xaddr *a, u_int masklen)
+صحيح
+addr_host_to_all1s(بنية xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	بنية xaddr tmp_mask;
 
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_or(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	אם (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
+		החזר (-1);
+	אם (addr_or(a, a, &tmp_mask) == -1)
+		החזר (-1);
+	החזר (0);
 }
 
 /*
  * Parse string address 'p' into 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_pton(const char *p, struct xaddr *n)
+صحيح
+addr_pton(ثابت حرف *p, بنية xaddr *n)
 {
-	struct addrinfo hints, *ai;
+	بنية addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', حجم(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (p == NULL || getaddrinfo(p, NULL, &hints, &ai) != 0)
-		return -1;
+	אם (p == عدم || getaddrinfo(p, عدم, &hints, &ai) != 0)
+		החזר -1;
 
-	if (ai == NULL)
-		return -1;
+	אם (ai == عدم)
+		החזר -1;
 
-	if (ai->ai_addr == NULL) {
+	אם (ai->ai_addr == عدم) {
 		freeaddrinfo(ai);
-		return -1;
+		החזר -1;
 	}
 
-	if (n != NULL && addr_sa_to_xaddr(ai->ai_addr, ai->ai_addrlen,
+	אם (n != عدم && addr_sa_to_xaddr(ai->ai_addr, ai->ai_addrlen,
 	    n) == -1) {
 		freeaddrinfo(ai);
-		return -1;
+		החזר -1;
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	החזר 0;
 }
 
-#if 0
-static int
-addr_sa_pton(const char *h, const char *s, struct sockaddr *sa, socklen_t slen)
+#אם 0
+ساكن صحيح
+addr_sa_pton(ثابت حرف *h, ثابت حرف *s, بنية sockaddr *sa, socklen_t slen)
 {
-	struct addrinfo hints, *ai;
+	بنية addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', حجم(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (h == NULL || getaddrinfo(h, s, &hints, &ai) != 0)
-		return -1;
+	אם (h == عدم || getaddrinfo(h, s, &hints, &ai) != 0)
+		החזר -1;
 
-	if (ai == NULL)
-		return -1;
+	אם (ai == عدم)
+		החזר -1;
 
-	if (ai->ai_addr == NULL) {
+	אם (ai->ai_addr == عدم) {
 		freeaddrinfo(ai);
-		return -1;
+		החזר -1;
 	}
 
-	if (sa != NULL) {
-		if (slen < ai->ai_addrlen) {
+	אם (sa != عدم) {
+		אם (slen < ai->ai_addrlen) {
 			freeaddrinfo(ai);
-			return -1;
+			החזר -1;
 		}
 		memcpy(sa, &ai->ai_addr, ai->ai_addrlen);
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	החזר 0;
 }
 #endif
 
-int
-addr_ntop(const struct xaddr *n, char *p, size_t len)
+صحيح
+addr_ntop(ثابت بنية xaddr *n, حرف *p, size_t len)
 {
-	struct sockaddr_storage ss;
-	socklen_t slen = sizeof(ss);
+	بنية sockaddr_storage ss;
+	socklen_t slen = حجم(ss);
 
-	if (addr_xaddr_to_sa(n, _SA(&ss), &slen, 0) == -1)
-		return -1;
-	if (p == NULL || len == 0)
-		return -1;
-	if (getnameinfo(_SA(&ss), slen, p, len, NULL, 0,
+	אם (addr_xaddr_to_sa(n, _SA(&ss), &slen, 0) == -1)
+		החזר -1;
+	אם (p == عدم || len == 0)
+		החזר -1;
+	אם (getnameinfo(_SA(&ss), slen, p, len, عدم, 0,
 	    NI_NUMERICHOST) != 0)
-		return -1;
+		החזר -1;
 
-	return 0;
+	החזר 0;
 }
 
 /*
  * Parse a CIDR address (x.x.x.x/y or xxxx:yyyy::/z).
  * Return -1 on parse error, -2 on inconsistency or 0 on success.
  */
-int
-addr_pton_cidr(const char *p, struct xaddr *n, u_int *l)
+صحيح
+addr_pton_cidr(ثابت حرف *p, بنية xaddr *n, u_int *l)
 {
-	struct xaddr tmp;
+	بنية xaddr tmp;
 	u_int masklen = 999;
-	char addrbuf[64], *mp;
-	const char *errstr;
+	حرف addrbuf[64], *mp;
+	ثابت حرف *errstr;
 
 	/* Don't modify argument */
-	if (p == NULL || strlcpy(addrbuf, p, sizeof(addrbuf)) >= sizeof(addrbuf))
-		return -1;
+	אם (p == عدم || strlcpy(addrbuf, p, حجم(addrbuf)) >= حجم(addrbuf))
+		החזר -1;
 
-	if ((mp = strchr(addrbuf, '/')) != NULL) {
+	אם ((mp = strchr(addrbuf, '/')) != عدم) {
 		*mp = '\0';
 		mp++;
 		masklen = (u_int)strtonum(mp, 0, INT_MAX, &errstr);
-		if (errstr)
-			return -1;
+		אם (errstr)
+			החזר -1;
 	}
 
-	if (addr_pton(addrbuf, &tmp) == -1)
-		return -1;
+	אם (addr_pton(addrbuf, &tmp) == -1)
+		החזר -1;
 
-	if (mp == NULL)
+	אם (mp == عدم)
 		masklen = addr_unicast_masklen(tmp.af);
-	if (masklen_valid(tmp.af, masklen) == -1)
-		return -2;
-	if (addr_host_is_all0s(&tmp, masklen) != 0)
-		return -2;
+	אם (masklen_valid(tmp.af, masklen) == -1)
+		החזר -2;
+	אם (addr_host_is_all0s(&tmp, masklen) != 0)
+		החזר -2;
 
-	if (n != NULL)
-		memcpy(n, &tmp, sizeof(*n));
-	if (l != NULL)
+	אם (n != عدم)
+		memcpy(n, &tmp, حجم(*n));
+	אם (l != عدم)
 		*l = masklen;
 
-	return 0;
+	החזר 0;
 }
 
-int
-addr_netmatch(const struct xaddr *host, const struct xaddr *net, u_int masklen)
+صحيح
+addr_netmatch(ثابت بنية xaddr *host, ثابت بنية xaddr *net, u_int masklen)
 {
-	struct xaddr tmp_mask, tmp_result;
+	بنية xaddr tmp_mask, tmp_result;
 
-	if (host->af != net->af)
-		return -1;
+	אם (host->af != net->af)
+		החזר -1;
 
-	if (addr_netmask(host->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, host, &tmp_mask) == -1)
-		return -1;
-	return addr_cmp(&tmp_result, net);
+	אם (addr_netmask(host->af, masklen, &tmp_mask) == -1)
+		החזר -1;
+	אם (addr_and(&tmp_result, host, &tmp_mask) == -1)
+		החזר -1;
+	החזר addr_cmp(&tmp_result, net);
 }

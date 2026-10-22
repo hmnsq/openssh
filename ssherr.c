@@ -15,144 +15,144 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <errno.h>
-#include <string.h>
-#include "ssherr.h"
+#ضمن <errno.h>
+#ضمن <string.h>
+#ضمن "ssherr.h"
 
-const char *
-ssh_err(int n)
+ثابت حرف *
+ssh_err(صحيح n)
 {
-	const char *msg = NULL;
+	ثابت حرف *msg = عدم;
 
-	switch (n) {
-	case SSH_ERR_SUCCESS:
-		return "success";
-	case SSH_ERR_INTERNAL_ERROR:
-		return "unexpected internal error";
-	case SSH_ERR_ALLOC_FAIL:
-		return "memory allocation failed";
-	case SSH_ERR_MESSAGE_INCOMPLETE:
-		return "incomplete message";
-	case SSH_ERR_INVALID_FORMAT:
-		return "invalid format";
-	case SSH_ERR_BIGNUM_IS_NEGATIVE:
-		return "bignum is negative";
-	case SSH_ERR_STRING_TOO_LARGE:
-		return "string is too large";
-	case SSH_ERR_BIGNUM_TOO_LARGE:
-		return "bignum is too large";
-	case SSH_ERR_ECPOINT_TOO_LARGE:
-		return "elliptic curve point is too large";
-	case SSH_ERR_NO_BUFFER_SPACE:
-		return "insufficient buffer space";
-	case SSH_ERR_INVALID_ARGUMENT:
-		return "invalid argument";
-	case SSH_ERR_KEY_BITS_MISMATCH:
-		return "key bits do not match";
-	case SSH_ERR_EC_CURVE_INVALID:
-		return "invalid elliptic curve";
-	case SSH_ERR_KEY_TYPE_MISMATCH:
-		return "key type does not match";
-	case SSH_ERR_KEY_TYPE_UNKNOWN:
-		return "unknown or unsupported key type";
-	case SSH_ERR_EC_CURVE_MISMATCH:
-		return "elliptic curve does not match";
-	case SSH_ERR_EXPECTED_CERT:
-		return "plain key provided where certificate required";
-	case SSH_ERR_KEY_LACKS_CERTBLOB:
-		return "key lacks certificate data";
-	case SSH_ERR_KEY_CERT_UNKNOWN_TYPE:
-		return "unknown/unsupported certificate type";
-	case SSH_ERR_KEY_CERT_INVALID_SIGN_KEY:
-		return "invalid certificate signing key";
-	case SSH_ERR_KEY_INVALID_EC_VALUE:
-		return "invalid elliptic curve value";
-	case SSH_ERR_SIGNATURE_INVALID:
-		return "incorrect signature";
-	case SSH_ERR_LIBCRYPTO_ERROR:
+	بدل (n) {
+	حالة SSH_ERR_SUCCESS:
+		החזר "success";
+	حالة SSH_ERR_INTERNAL_ERROR:
+		החזר "unexpected internal error";
+	حالة SSH_ERR_ALLOC_FAIL:
+		החזר "memory allocation failed";
+	حالة SSH_ERR_MESSAGE_INCOMPLETE:
+		החזר "incomplete message";
+	حالة SSH_ERR_INVALID_FORMAT:
+		החזר "invalid format";
+	حالة SSH_ERR_BIGNUM_IS_NEGATIVE:
+		החזר "bignum is negative";
+	حالة SSH_ERR_STRING_TOO_LARGE:
+		החזר "string is too large";
+	حالة SSH_ERR_BIGNUM_TOO_LARGE:
+		החזר "bignum is too large";
+	حالة SSH_ERR_ECPOINT_TOO_LARGE:
+		החזר "elliptic curve point is too large";
+	حالة SSH_ERR_NO_BUFFER_SPACE:
+		החזר "insufficient buffer space";
+	حالة SSH_ERR_INVALID_ARGUMENT:
+		החזר "invalid argument";
+	حالة SSH_ERR_KEY_BITS_MISMATCH:
+		החזר "key bits do not match";
+	حالة SSH_ERR_EC_CURVE_INVALID:
+		החזר "invalid elliptic curve";
+	حالة SSH_ERR_KEY_TYPE_MISMATCH:
+		החזר "key type does not match";
+	حالة SSH_ERR_KEY_TYPE_UNKNOWN:
+		החזר "unknown or unsupported key type";
+	حالة SSH_ERR_EC_CURVE_MISMATCH:
+		החזר "elliptic curve does not match";
+	حالة SSH_ERR_EXPECTED_CERT:
+		החזר "plain key provided where certificate required";
+	حالة SSH_ERR_KEY_LACKS_CERTBLOB:
+		החזר "key lacks certificate data";
+	حالة SSH_ERR_KEY_CERT_UNKNOWN_TYPE:
+		החזר "unknown/unsupported certificate type";
+	حالة SSH_ERR_KEY_CERT_INVALID_SIGN_KEY:
+		החזר "invalid certificate signing key";
+	حالة SSH_ERR_KEY_INVALID_EC_VALUE:
+		החזר "invalid elliptic curve value";
+	حالة SSH_ERR_SIGNATURE_INVALID:
+		החזר "incorrect signature";
+	حالة SSH_ERR_LIBCRYPTO_ERROR:
 		msg = ssherr_libcrypto();
-		return msg != NULL ? msg : "error in libcrypto";
-	case SSH_ERR_INTERNAL_CRYPTO_ERROR:
-		return "cryptographic operation failed";
-	case SSH_ERR_UNEXPECTED_TRAILING_DATA:
-		return "unexpected bytes remain after decoding";
-	case SSH_ERR_SYSTEM_ERROR:
-		return strerror(errno);
-	case SSH_ERR_KEY_CERT_INVALID:
-		return "invalid certificate";
-	case SSH_ERR_AGENT_COMMUNICATION:
-		return "communication with agent failed";
-	case SSH_ERR_AGENT_FAILURE:
-		return "agent refused operation";
-	case SSH_ERR_DH_GEX_OUT_OF_RANGE:
-		return "DH GEX group out of range";
-	case SSH_ERR_DISCONNECTED:
-		return "disconnected";
-	case SSH_ERR_MAC_INVALID:
-		return "message authentication code incorrect";
-	case SSH_ERR_NO_CIPHER_ALG_MATCH:
-		return "no matching cipher found";
-	case SSH_ERR_NO_MAC_ALG_MATCH:
-		return "no matching MAC found";
-	case SSH_ERR_NO_COMPRESS_ALG_MATCH:
-		return "no matching compression method found";
-	case SSH_ERR_NO_KEX_ALG_MATCH:
-		return "no matching key exchange method found";
-	case SSH_ERR_NO_HOSTKEY_ALG_MATCH:
-		return "no matching host key type found";
-	case SSH_ERR_PROTOCOL_MISMATCH:
-		return "protocol version mismatch";
-	case SSH_ERR_NO_PROTOCOL_VERSION:
-		return "could not read protocol version";
-	case SSH_ERR_NO_HOSTKEY_LOADED:
-		return "could not load host key";
-	case SSH_ERR_NEED_REKEY:
-		return "rekeying not supported by peer";
-	case SSH_ERR_PASSPHRASE_TOO_SHORT:
-		return "passphrase is too short (minimum five characters)";
-	case SSH_ERR_FILE_CHANGED:
-		return "file changed while reading";
-	case SSH_ERR_KEY_UNKNOWN_CIPHER:
-		return "key encrypted using unsupported cipher";
-	case SSH_ERR_KEY_WRONG_PASSPHRASE:
-		return "incorrect passphrase supplied to decrypt private key";
-	case SSH_ERR_KEY_BAD_PERMISSIONS:
-		return "bad permissions";
-	case SSH_ERR_KEY_CERT_MISMATCH:
-		return "certificate does not match key";
-	case SSH_ERR_KEY_NOT_FOUND:
-		return "key not found";
-	case SSH_ERR_AGENT_NOT_PRESENT:
-		return "agent not present";
-	case SSH_ERR_AGENT_NO_IDENTITIES:
-		return "agent contains no identities";
-	case SSH_ERR_BUFFER_READ_ONLY:
-		return "internal error: buffer is read-only";
-	case SSH_ERR_KRL_BAD_MAGIC:
-		return "KRL file has invalid magic number";
-	case SSH_ERR_KEY_REVOKED:
-		return "Key is revoked";
-	case SSH_ERR_CONN_CLOSED:
-		return "Connection closed";
-	case SSH_ERR_CONN_TIMEOUT:
-		return "Connection timed out";
-	case SSH_ERR_CONN_CORRUPT:
-		return "Connection corrupted";
-	case SSH_ERR_PROTOCOL_ERROR:
-		return "Protocol error";
-	case SSH_ERR_KEY_LENGTH:
-		return "Invalid key length";
-	case SSH_ERR_NUMBER_TOO_LARGE:
-		return "number is too large";
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
-		return "key algorithm not supported";
-	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
-		return "signature algorithm not supported";
-	case SSH_ERR_FEATURE_UNSUPPORTED:
-		return "requested feature not supported";
-	case SSH_ERR_DEVICE_NOT_FOUND:
-		return "device not found";
-	default:
-		return "unknown error";
+		החזר msg != عدم ? msg : "error in libcrypto";
+	حالة SSH_ERR_INTERNAL_CRYPTO_ERROR:
+		החזר "cryptographic operation failed";
+	حالة SSH_ERR_UNEXPECTED_TRAILING_DATA:
+		החזר "unexpected bytes remain after decoding";
+	حالة SSH_ERR_SYSTEM_ERROR:
+		החזר strerror(errno);
+	حالة SSH_ERR_KEY_CERT_INVALID:
+		החזר "invalid certificate";
+	حالة SSH_ERR_AGENT_COMMUNICATION:
+		החזר "communication with agent failed";
+	حالة SSH_ERR_AGENT_FAILURE:
+		החזר "agent refused operation";
+	حالة SSH_ERR_DH_GEX_OUT_OF_RANGE:
+		החזר "DH GEX group out of range";
+	حالة SSH_ERR_DISCONNECTED:
+		החזר "disconnected";
+	حالة SSH_ERR_MAC_INVALID:
+		החזר "message authentication code incorrect";
+	حالة SSH_ERR_NO_CIPHER_ALG_MATCH:
+		החזר "no matching cipher found";
+	حالة SSH_ERR_NO_MAC_ALG_MATCH:
+		החזר "no matching MAC found";
+	حالة SSH_ERR_NO_COMPRESS_ALG_MATCH:
+		החזר "no matching compression method found";
+	حالة SSH_ERR_NO_KEX_ALG_MATCH:
+		החזר "no matching key exchange method found";
+	حالة SSH_ERR_NO_HOSTKEY_ALG_MATCH:
+		החזר "no matching host key type found";
+	حالة SSH_ERR_PROTOCOL_MISMATCH:
+		החזר "protocol version mismatch";
+	حالة SSH_ERR_NO_PROTOCOL_VERSION:
+		החזר "could not read protocol version";
+	حالة SSH_ERR_NO_HOSTKEY_LOADED:
+		החזר "could not load host key";
+	حالة SSH_ERR_NEED_REKEY:
+		החזר "rekeying not supported by peer";
+	حالة SSH_ERR_PASSPHRASE_TOO_SHORT:
+		החזר "passphrase is too short (minimum five characters)";
+	حالة SSH_ERR_FILE_CHANGED:
+		החזר "file changed while reading";
+	حالة SSH_ERR_KEY_UNKNOWN_CIPHER:
+		החזר "key encrypted using unsupported cipher";
+	حالة SSH_ERR_KEY_WRONG_PASSPHRASE:
+		החזר "incorrect passphrase supplied to decrypt private key";
+	حالة SSH_ERR_KEY_BAD_PERMISSIONS:
+		החזר "bad permissions";
+	حالة SSH_ERR_KEY_CERT_MISMATCH:
+		החזר "certificate does not match key";
+	حالة SSH_ERR_KEY_NOT_FOUND:
+		החזר "key not found";
+	حالة SSH_ERR_AGENT_NOT_PRESENT:
+		החזר "agent not present";
+	حالة SSH_ERR_AGENT_NO_IDENTITIES:
+		החזר "agent contains no identities";
+	حالة SSH_ERR_BUFFER_READ_ONLY:
+		החזר "internal error: buffer is read-only";
+	حالة SSH_ERR_KRL_BAD_MAGIC:
+		החזר "KRL file has invalid magic number";
+	حالة SSH_ERR_KEY_REVOKED:
+		החזר "Key is revoked";
+	حالة SSH_ERR_CONN_CLOSED:
+		החזר "Connection closed";
+	حالة SSH_ERR_CONN_TIMEOUT:
+		החזר "Connection timed out";
+	حالة SSH_ERR_CONN_CORRUPT:
+		החזר "Connection corrupted";
+	حالة SSH_ERR_PROTOCOL_ERROR:
+		החזר "Protocol error";
+	حالة SSH_ERR_KEY_LENGTH:
+		החזר "Invalid key length";
+	حالة SSH_ERR_NUMBER_TOO_LARGE:
+		החזר "number is too large";
+	حالة SSH_ERR_KEY_ALG_UNSUPPORTED:
+		החזר "key algorithm not supported";
+	حالة SSH_ERR_SIGN_ALG_UNSUPPORTED:
+		החזר "signature algorithm not supported";
+	حالة SSH_ERR_FEATURE_UNSUPPORTED:
+		החזר "requested feature not supported";
+	حالة SSH_ERR_DEVICE_NOT_FOUND:
+		החזר "device not found";
+	افتراضي:
+		החזר "unknown error";
 	}
 }

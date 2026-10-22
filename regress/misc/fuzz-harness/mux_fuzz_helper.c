@@ -10,382 +10,382 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
+#ضمن <setjmp.h>
+#ضمن <signal.h>
+#ضمن <stdint.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <sys/types.h>
 
-#include "log.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "misc.h"
-#include "channels.h"
-#include "readconf.h"
+#ضمن "log.h"
+#ضمن "ssh.h"
+#ضمن "ssh2.h"
+#ضمن "ssh_api.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
+#ضمن "sshkey.h"
+#ضمن "packet.h"
+#ضمن "myproposal.h"
+#ضمن "kex.h"
+#ضمن "xmalloc.h"
+#ضمن "authfile.h"
+#ضمن "misc.h"
+#ضمن "channels.h"
+#ضمن "readconf.h"
 
 /* Externs that mux.c declares. */
-int tty_flag = 0;
+صحيح tty_flag = 0;
 Options options;
-char *host = NULL;
-struct sshbuf *command = NULL;
-volatile sig_atomic_t quit_pending = 0;
+حرف *host = عدم;
+بنية sshbuf *command = عدم;
+متطاير sig_atomic_t quit_pending = 0;
 
 /* Temporary: LSan off while upstream mux.c parse-chain leaks remain. */
-int
-__lsan_is_turned_off(void)
+صحيح
+__lsan_is_turned_off(فراغ)
 {
-	return 1;
+	החזר 1;
 }
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ساكن jmp_buf fuzz_env;
+ساكن متطاير صحيح in_fuzz = 0;
 
-void
-cleanup_exit(int code)
+فراغ
+cleanup_exit(صحيح code)
 {
-	if (in_fuzz)
+	אם (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+فراغ
+__wrap_ssh_packet_disconnect(بنية ssh *ssh, ثابت حرف *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(فراغ)ssh;
+	(فراغ)fmt;
+	אם (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+صحيح
+__wrap_sshpkt_fatal(بنية ssh *ssh, صحيح r, ثابت حرف *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(فراغ)ssh;
+	(فراغ)fmt;
+	אם (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
 /* Block the only interactive prompt by always granting permission. */
-int
-__wrap_ask_permission(const char *fmt, ...)
+صحيح
+__wrap_ask_permission(ثابت حرف *fmt, ...)
 {
-	(void)fmt;
-	return 1;
+	(فراغ)fmt;
+	החזר 1;
 }
 
 /* Socket-opening side effects we must neutralise. */
-int
-__wrap_channel_setup_local_fwd_listener(struct ssh *ssh,
-    struct Forward *fwd, struct ForwardOptions *fwd_opts)
+صحيح
+__wrap_channel_setup_local_fwd_listener(بنية ssh *ssh,
+    بنية Forward *fwd, بنية ForwardOptions *fwd_opts)
 {
-	(void)ssh; (void)fwd; (void)fwd_opts;
-	return 1;
+	(فراغ)ssh; (فراغ)fwd; (فراغ)fwd_opts;
+	החזר 1;
 }
 
-int
-__wrap_channel_connect_stdio_fwd(struct ssh *ssh, const char *host_arg,
-    int port, int in_fd, int out_fd, int nonblock)
+صحيح
+__wrap_channel_connect_stdio_fwd(بنية ssh *ssh, ثابت حرف *host_arg,
+    صحيح port, صحيح in_fd, صحيح out_fd, صحيح nonblock)
 {
-	(void)ssh; (void)host_arg; (void)port;
-	(void)in_fd; (void)out_fd; (void)nonblock;
-	return -1;
+	(فراغ)ssh; (فراغ)host_arg; (فراغ)port;
+	(فراغ)in_fd; (فراغ)out_fd; (فراغ)nonblock;
+	החזר -1;
 }
 
-int
-__wrap_channel_request_remote_forwarding(struct ssh *ssh, struct Forward *fwd)
+صحيح
+__wrap_channel_request_remote_forwarding(بنية ssh *ssh, بنية Forward *fwd)
 {
-	(void)ssh; (void)fwd;
-	return 0;
+	(فراغ)ssh; (فراغ)fwd;
+	החזר 0;
 }
 
-int
-__wrap_channel_request_rforward_cancel(struct ssh *ssh, struct Forward *fwd)
+صحيح
+__wrap_channel_request_rforward_cancel(بنية ssh *ssh, بنية Forward *fwd)
 {
-	(void)ssh; (void)fwd;
-	return 0;
+	(فراغ)ssh; (فراغ)fwd;
+	החזר 0;
 }
 
-int
-__wrap_channel_cancel_lport_listener(struct ssh *ssh, struct Forward *fwd,
-    int cport, struct ForwardOptions *fwd_opts)
+صحيح
+__wrap_channel_cancel_lport_listener(بنية ssh *ssh, بنية Forward *fwd,
+    صحيح cport, بنية ForwardOptions *fwd_opts)
 {
-	(void)ssh; (void)fwd; (void)cport; (void)fwd_opts;
-	return 0;
+	(فراغ)ssh; (فراغ)fwd; (فراغ)cport; (فراغ)fwd_opts;
+	החזר 0;
 }
 
-static struct sshkey *
-load_private(const char *str)
+ساكن بنية sshkey *
+load_private(ثابت حرف *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	بنية sshbuf *b = sshbuf_from(str, strlen(str));
+	بنية sshkey *k = عدم;
+	אם (b == عدم || sshkey_parse_private_fileblob(b, "", &k, عدم) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	החזר k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+ساكن بنية sshkey *
+load_public(ثابت حرف *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	حرف *tmp, *cp;
+	بنية sshkey *k = sshkey_new(KEY_UNSPEC);
+	אם (k == عدم)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	אם (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	حرر(tmp);
+	החזר k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+ساكن صحيح
+pump(بنية ssh *from, بنية ssh *to, size_t *transferred)
 {
-	const u_char *buf;
+	ثابت u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	صحيح r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	אם ((r = ssh_packet_next(from, &type)) != 0)
+		החזר r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	אם (len == 0)
+		החזר 0;
+	אם ((r = ssh_input_append(to, buf, len)) != 0)
+		החזר r;
+	אם ((r = ssh_output_consume(from, len)) != 0)
+		החזר r;
 	*transferred = len;
-	return 0;
+	החזר 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+ساكن صحيح
+run_kex(بنية ssh *client, بنية ssh *server)
 {
-	int r;
+	صحيح r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	עבור (صحيح i = 0; i < 100; i++) {
+		אם ((r = pump(server, client, &sn)) != 0) החזר r;
+		אם ((r = pump(client, server, &cn)) != 0) החזר r;
+		אם (server->kex->done && client->kex->done)
+			החזר 0;
+		אם (cn == 0 && sn == 0)
+			החזר SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	החזר SSH_ERR_PROTOCOL_ERROR;
 }
 
-#include "fixed-keys.h"
+#ضمن "fixed-keys.h"
 
 /* Forward decl of the static handler we drive; defined when mux.c is included. */
-static int mux_master_read_cb(struct ssh *ssh, Channel *c);
+ساكن صحيح mux_master_read_cb(بنية ssh *ssh, Channel *c);
 
-#include "../../../mux.c"
+#ضمن "../../../mux.c"
 
 /* Stubs for clientloop.c / channels.h symbols mux.o references but we don't link. */
-void *
-client_new_escape_filter_ctx(int escape_char)
+فراغ *
+client_new_escape_filter_ctx(صحيح escape_char)
 {
-	(void)escape_char;
-	return NULL;
+	(فراغ)escape_char;
+	החזר عدم;
 }
 
-void
-client_register_global_confirm(global_confirm_cb *cb, void *ctx)
+فراغ
+client_register_global_confirm(global_confirm_cb *cb, فراغ *ctx)
 {
-	(void)cb; (void)ctx;
+	(فراغ)cb; (فراغ)ctx;
 }
 
-void
-client_expect_confirm(struct ssh *ssh, int id, const char *reason,
-    enum confirm_action action)
+فراغ
+client_expect_confirm(بنية ssh *ssh, صحيح id, ثابت حرف *reason,
+    تعداد confirm_action action)
 {
-	(void)ssh; (void)id; (void)reason; (void)action;
+	(فراغ)ssh; (فراغ)id; (فراغ)reason; (فراغ)action;
 }
 
-void
-client_channel_request_agent_forwarding(struct ssh *ssh, int chanid)
+فراغ
+client_channel_request_agent_forwarding(بنية ssh *ssh, صحيح chanid)
 {
-	(void)ssh; (void)chanid;
+	(فراغ)ssh; (فراغ)chanid;
 }
 
-void
-client_stop_mux(void)
+فراغ
+client_stop_mux(فراغ)
 {
 }
 
-int
-client_simple_escape_filter(struct ssh *ssh, Channel *c, char *buf, int len)
+صحيح
+client_simple_escape_filter(بنية ssh *ssh, Channel *c, حرف *buf, صحيح len)
 {
-	(void)ssh; (void)c; (void)buf; (void)len;
-	return 0;
+	(فراغ)ssh; (فراغ)c; (فراغ)buf; (فراغ)len;
+	החזר 0;
 }
 
-void
-client_filter_cleanup(struct ssh *ssh, int cid, void *ctx)
+فراغ
+client_filter_cleanup(بنية ssh *ssh, صحيح cid, فراغ *ctx)
 {
-	(void)ssh; (void)cid; (void)ctx;
+	(فراغ)ssh; (فراغ)cid; (فراغ)ctx;
 }
 
-int
-client_x11_get_proto(struct ssh *ssh, const char *display,
-    const char *xauth_path, u_int trusted, u_int timeout,
-    char **_proto, char **_data)
+صحيح
+client_x11_get_proto(بنية ssh *ssh, ثابت حرف *display,
+    ثابت حرف *xauth_path, u_int trusted, u_int timeout,
+    حرف **_proto, حرف **_data)
 {
-	(void)ssh; (void)display; (void)xauth_path;
-	(void)trusted; (void)timeout;
-	if (_proto != NULL)
-		*_proto = NULL;
-	if (_data != NULL)
-		*_data = NULL;
-	return 0;
+	(فراغ)ssh; (فراغ)display; (فراغ)xauth_path;
+	(فراغ)trusted; (فراغ)timeout;
+	אם (_proto != عدم)
+		*_proto = عدم;
+	אם (_data != عدم)
+		*_data = عدم;
+	החזר 0;
 }
 
-void
-client_session2_setup(struct ssh *ssh, int id, int want_tty, int want_subsys,
-    const char *term, struct termios *tiop, int in_fd, struct sshbuf *cmd,
-    char **env)
+فراغ
+client_session2_setup(بنية ssh *ssh, صحيح id, صحيح want_tty, صحيح want_subsys,
+    ثابت حرف *term, بنية termios *tiop, صحيح in_fd, بنية sshbuf *cmd,
+    حرف **env)
 {
-	(void)ssh; (void)id; (void)want_tty; (void)want_subsys;
-	(void)term; (void)tiop; (void)in_fd; (void)cmd; (void)env;
+	(فراغ)ssh; (فراغ)id; (فراغ)want_tty; (فراغ)want_subsys;
+	(فراغ)term; (فراغ)tiop; (فراغ)in_fd; (فراغ)cmd; (فراغ)env;
 }
 
-void
-enter_raw_mode(int quiet)
+فراغ
+enter_raw_mode(صحيح quiet)
 {
-	(void)quiet;
+	(فراغ)quiet;
 }
 
-void
-leave_raw_mode(int quiet)
+فراغ
+leave_raw_mode(صحيح quiet)
 {
-	(void)quiet;
+	(فراغ)quiet;
 }
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_mux_channel_id = -1;
-static struct sshbuf *g_mux_in = NULL;
-static struct sshbuf *g_mux_out = NULL;
+ساكن بنية ssh *g_client = عدم;
+ساكن بنية ssh *g_server = عدم;
+ساكن صحيح g_init = 0;
+ساكن صحيح g_mux_channel_id = -1;
+ساكن بنية sshbuf *g_mux_in = عدم;
+ساكن بنية sshbuf *g_mux_out = عدم;
 
 /* Mirror of mux_master_read_cb's dispatch loop using file-static in/out */
-static void
-fuzz_drive_mux(struct ssh *ssh, Channel *c)
+ساكن فراغ
+fuzz_drive_mux(بنية ssh *ssh, Channel *c)
 {
 	u_int type, rid, i;
-	int r;
-	const u_char *body;
+	صحيح r;
+	ثابت u_char *body;
 	size_t blen;
-	struct mux_master_state *state;
+	بنية mux_master_state *state;
 
-	state = (struct mux_master_state *)c->mux_ctx;
-	if (state == NULL)
-		return;
+	state = (بنية mux_master_state *)c->mux_ctx;
+	אם (state == عدم)
+		החזר;
 
 	sshbuf_reset(g_mux_in);
 	sshbuf_reset(g_mux_out);
 
-	if ((r = sshbuf_get_string_direct(c->input, &body, &blen)) != 0)
-		return;
-	if (sshbuf_put(g_mux_in, body, blen) != 0)
-		return;
-	if ((r = sshbuf_get_u32(g_mux_in, &type)) != 0)
-		return;
+	אם ((r = sshbuf_get_string_direct(c->input, &body, &blen)) != 0)
+		החזר;
+	אם (sshbuf_put(g_mux_in, body, blen) != 0)
+		החזר;
+	אם ((r = sshbuf_get_u32(g_mux_in, &type)) != 0)
+		החזר;
 
-	if (type == MUX_MSG_HELLO) {
+	אם (type == MUX_MSG_HELLO) {
 		rid = 0;
-	} else {
-		if (!state->hello_rcvd)
-			return;
-		if ((r = sshbuf_get_u32(g_mux_in, &rid)) != 0)
-			return;
+	} אחרת {
+		אם (!state->hello_rcvd)
+			החזר;
+		אם ((r = sshbuf_get_u32(g_mux_in, &rid)) != 0)
+			החזר;
 	}
 
-	for (i = 0; mux_master_handlers[i].handler != NULL; i++) {
-		if (type == mux_master_handlers[i].type) {
-			(void)mux_master_handlers[i].handler(ssh, rid, c,
+	עבור (i = 0; mux_master_handlers[i].handler != عدم; i++) {
+		אם (type == mux_master_handlers[i].type) {
+			(فراغ)mux_master_handlers[i].handler(ssh, rid, c,
 			    g_mux_in, g_mux_out);
-			break;
+			اكسر;
 		}
 	}
 }
 
-static int
-init_once(void)
+ساكن صحيح
+init_once(فراغ)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	אם (g_init)
+		החזר 0;
+	إشارة(SIGPIPE, SIG_IGN);
 	log_init("mux_fuzz", SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 
 	/* Minimal Options for control-master flow. SSHCTL_MASTER_AUTO avoids
 	 * the interactive ASK paths that would gate on ask_permission. */
-	memset(&options, 0, sizeof(options));
+	memset(&options, 0, حجم(options));
 	options.control_master = SSHCTL_MASTER_AUTO;
-	options.control_path = (char *)"/fuzz";
+	options.control_path = (حرف *)"/fuzz";
 	options.escape_char = 0;
 	options.log_level = SYSLOG_LEVEL_ERROR;
 	options.fwd_opts.gateway_ports = 0;
 	options.fwd_opts.streamlocal_bind_mask = 0177;
 	options.fwd_opts.streamlocal_bind_unlink = 0;
-	host = (char *)"fuzz";
+	host = (حرف *)"fuzz";
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	بنية sshkey *priv = load_private(PRIV_ED25519);
+	بنية sshkey *pub = load_public(PUB_ED25519);
+	حرف *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	ثابت حرف *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	حرف *proposal[PROPOSAL_MAX] = { 0 };
+	صحيح i;
+	עבור (i = 0; i < PROPOSAL_MAX; i++) {
+		ثابت حرف *p = defaults[i];
+		אם (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		אחרת אם (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		אחרת אם (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		אחרת אם (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	بنية kex_params kp;
+	memcpy(kp.proposal, proposal, حجم(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	אם (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		החזר -1;
+	אם (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		החזר -1;
+	אם (run_kex(g_client, g_server) != 0)
+		החזר -1;
 
 	channel_init_channels(g_client);
 
 	Channel *c = channel_new(g_client, "mux-control",
 	    SSH_CHANNEL_MUX_CLIENT, -1, -1, -1, 65536, 65536, 0,
 	    "mux-control", 1);
-	if (c == NULL)
-		return -1;
+	אם (c == عدم)
+		החזר -1;
 	c->mux_rcb = mux_master_read_cb;
 	c->flags |= CHAN_LOCAL;
 	g_mux_channel_id = c->self;
@@ -394,32 +394,32 @@ init_once(void)
 	c->mux_rcb(g_client, c);
 
 	/* Skip the hello handshake so every iter goes straight to dispatch. */
-	struct mux_master_state *st = (struct mux_master_state *)c->mux_ctx;
-	if (st != NULL)
+	بنية mux_master_state *st = (بنية mux_master_state *)c->mux_ctx;
+	אם (st != عدم)
 		st->hello_rcvd = 1;
 
-	if ((g_mux_in = sshbuf_new()) == NULL ||
-	    (g_mux_out = sshbuf_new()) == NULL)
-		return -1;
+	אם ((g_mux_in = sshbuf_new()) == عدم ||
+	    (g_mux_out = sshbuf_new()) == عدم)
+		החזר -1;
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	حرر(keyname);
+	עבור (i = 0; i < PROPOSAL_MAX; i++)
+		حرر(proposal[i]);
 	g_init = 1;
-	return 0;
+	החזר 0;
 }
 
-void
-fuzz_mux_one(const uint8_t *data, size_t size)
+فراغ
+fuzz_mux_one(ثابت uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	אם (init_once() != 0)
+		החזר;
+	אם (size > 65000)
+		החזר;
 
 	Channel *c = channel_by_id(g_client, g_mux_channel_id);
-	if (c == NULL || c->mux_ctx == NULL || c->input == NULL)
-		return;
+	אם (c == عدم || c->mux_ctx == عدم || c->input == عدم)
+		החזר;
 
 	/* mux protocol: outer length-prefixed string containing the body. */
 	sshbuf_reset(c->input);
@@ -428,18 +428,18 @@ fuzz_mux_one(const uint8_t *data, size_t size)
 	hdr[1] = (u_char)(size >> 16);
 	hdr[2] = (u_char)(size >> 8);
 	hdr[3] = (u_char)size;
-	if (sshbuf_put(c->input, hdr, 4) != 0)
-		return;
-	if (size > 0 && sshbuf_put(c->input, data, size) != 0)
-		return;
+	אם (sshbuf_put(c->input, hdr, 4) != 0)
+		החזר;
+	אם (size > 0 && sshbuf_put(c->input, data, size) != 0)
+		החזר;
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	אם (setjmp(fuzz_env) == 0) {
 		fuzz_drive_mux(g_client, c);
 	}
 	in_fuzz = 0;
 
 	/* Drain anything the handler enqueued. */
-	if (c->output != NULL)
+	אם (c->output != عدم)
 		sshbuf_reset(c->output);
 }
