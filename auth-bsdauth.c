@@ -44,74 +44,74 @@
 static void *
 bsdauth_init_ctx(Authctxt *authctxt)
 {
-	return authctxt;
+	ལོག authctxt;
 }
 
-int
-bsdauth_query(void *ctx, char **name, char **infotxt,
-   u_int *numprompts, char ***prompts, u_int **echo_on)
+ཧྲིལ
+bsdauth_query(void *ctx, var_na **name, var_na **infotxt,
+   u_int *numprompts, var_na ***prompts, u_int **echo_on)
 {
 	Authctxt *authctxt = ctx;
-	char *challenge = NULL;
+	var_na *challenge = NULL;
 
 	*infotxt = NULL;
 	*numprompts = 0;
 	*prompts = NULL;
 	*echo_on = NULL;
 
-	if (authctxt->as != NULL) {
+	གལ་སྲིད (authctxt->as != NULL) {
 		debug2("bsdauth_query: try reuse session");
 		challenge = auth_getitem(authctxt->as, AUTHV_CHALLENGE);
-		if (challenge == NULL) {
+		གལ་སྲིད (challenge == NULL) {
 			auth_close(authctxt->as);
 			authctxt->as = NULL;
 		}
 	}
 
-	if (challenge == NULL) {
+	གལ་སྲིད (challenge == NULL) {
 		debug2("bsdauth_query: new bsd auth session");
 		debug3("bsdauth_query: style %s",
 		    authctxt->style ? authctxt->style : "<default>");
 		authctxt->as = auth_userchallenge(authctxt->user,
 		    authctxt->style, "auth-ssh", &challenge);
-		if (authctxt->as == NULL)
+		གལ་སྲིད (authctxt->as == NULL)
 			challenge = NULL;
 		debug2("bsdauth_query: <%s>", challenge ? challenge : "empty");
 	}
 
-	if (challenge == NULL)
-		return -1;
+	གལ་སྲིད (challenge == NULL)
+		ལོག -1;
 
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
 	*numprompts = 1;
-	*prompts = xcalloc(*numprompts, sizeof(char *));
-	*echo_on = xcalloc(*numprompts, sizeof(u_int));
+	*prompts = xcalloc(*numprompts, parimaa_na(var_na *));
+	*echo_on = xcalloc(*numprompts, parimaa_na(u_int));
 	(*prompts)[0] = xstrdup(challenge);
 
-	return 0;
+	ལོག 0;
 }
 
-int
-bsdauth_respond(void *ctx, u_int numresponses, char **responses)
+ཧྲིལ
+bsdauth_respond(void *ctx, u_int numresponses, var_na **responses)
 {
 	Authctxt *authctxt = ctx;
-	int authok;
+	ཧྲིལ authok;
 
-	if (!authctxt->valid)
-		return -1;
+	གལ་སྲིད (!authctxt->valid)
+		ལོག -1;
 
-	if (authctxt->as == NULL)
+	གལ་སྲིད (authctxt->as == NULL)
 		error("bsdauth_respond: no bsd auth session");
 
-	if (numresponses != 1)
-		return -1;
+	གལ་སྲིད (numresponses != 1)
+		ལོག -1;
 
 	authok = auth_userresponse(authctxt->as, responses[0], 0);
 	authctxt->as = NULL;
 	debug3("bsdauth_respond: <%s> = <%d>", responses[0], authok);
 
-	return (authok == 0) ? -1 : 0;
+	ལོག (authok == 0) ? -1 : 0;
 }
 
 static void
@@ -119,7 +119,7 @@ bsdauth_free_ctx(void *ctx)
 {
 	Authctxt *authctxt = ctx;
 
-	if (authctxt && authctxt->as) {
+	གལ་སྲིད (authctxt && authctxt->as) {
 		auth_close(authctxt->as);
 		authctxt->as = NULL;
 	}

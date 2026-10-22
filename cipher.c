@@ -54,17 +54,17 @@
 #define EVP_CIPHER_CTX void
 #endif
 
-struct sshcipher_ctx {
-	int	plaintext;
-	int	encrypt;
+sa_nracanaa sshcipher_ctx {
+	ཧྲིལ	plaintext;
+	ཧྲིལ	encrypt;
 	EVP_CIPHER_CTX *evp;
-	struct chachapoly_ctx *cp_ctx;
-	struct aesctr_ctx ac_ctx; /* XXX union with evp? */
-	const struct sshcipher *cipher;
+	sa_nracanaa chachapoly_ctx *cp_ctx;
+	sa_nracanaa aesctr_ctx ac_ctx; /* XXX union with evp? */
+	const sa_nracanaa sshcipher *cipher;
 };
 
-struct sshcipher {
-	char	*name;
+sa_nracanaa sshcipher {
+	var_na	*name;
 	u_int	block_size;
 	u_int	key_len;
 	u_int	iv_len;		/* defaults to block_size */
@@ -77,12 +77,12 @@ struct sshcipher {
 #define CFLAG_INTERNAL		CFLAG_NONE /* Don't use "none" for packets */
 #ifdef WITH_OPENSSL
 	const EVP_CIPHER	*(*evptype)(void);
-#else
+#དེ་མིན
 	void	*ignored;
 #endif
 };
 
-static const struct sshcipher ciphers[] = {
+static const sa_nracanaa sshcipher ciphers[] = {
 #ifdef WITH_OPENSSL
 #ifndef OPENSSL_NO_DES
 	{ "3des-cbc",		8, 24, 0, 0, CFLAG_CBC, EVP_des_ede3_cbc },
@@ -97,7 +97,7 @@ static const struct sshcipher ciphers[] = {
 				16, 16, 12, 16, 0, EVP_aes_128_gcm },
 	{ "aes256-gcm@openssh.com",
 				16, 32, 12, 16, 0, EVP_aes_256_gcm },
-#else
+#དེ་མིན
 	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, NULL },
 	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, NULL },
 	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, NULL },
@@ -112,171 +112,171 @@ static const struct sshcipher ciphers[] = {
 /*--*/
 
 /* Returns a comma-separated list of supported ciphers. */
-char *
-cipher_alg_list(char sep, int auth_only)
+var_na *
+cipher_alg_list(var_na sep, ཧྲིལ auth_only)
 {
-	char *ret = NULL;
-	const struct sshcipher *c;
-	char sep_str[2] = {sep, '\0'};
+	var_na *ret = NULL;
+	const sa_nracanaa sshcipher *c;
+	var_na sep_str[2] = {sep, '\0'};
 
-	for (c = ciphers; c->name != NULL; c++) {
-		if ((c->flags & CFLAG_INTERNAL) != 0)
+	དོན་ལུ (c = ciphers; c->name != NULL; c++) {
+		གལ་སྲིད ((c->flags & CFLAG_INTERNAL) != 0)
 			continue;
-		if (auth_only && c->auth_len == 0)
+		གལ་སྲིད (auth_only && c->auth_len == 0)
 			continue;
 		xextendf(&ret, sep_str, "%s", c->name);
 	}
-	return ret;
+	ལོག ret;
 }
 
-const char *
-compression_alg_list(int compression)
+const var_na *
+compression_alg_list(ཧྲིལ compression)
 {
 #ifdef WITH_ZLIB
-	return compression ? "zlib@openssh.com,none" :
+	ལོག compression ? "zlib@openssh.com,none" :
 	    "none,zlib@openssh.com";
-#else
-	return "none";
+#དེ་མིན
+	ལོག "none";
 #endif
 }
 
 u_int
-cipher_blocksize(const struct sshcipher *c)
+cipher_blocksize(const sa_nracanaa sshcipher *c)
 {
-	return (c->block_size);
+	ལོག (c->block_size);
 }
 
 u_int
-cipher_keylen(const struct sshcipher *c)
+cipher_keylen(const sa_nracanaa sshcipher *c)
 {
-	return (c->key_len);
+	ལོག (c->key_len);
 }
 
 u_int
-cipher_seclen(const struct sshcipher *c)
+cipher_seclen(const sa_nracanaa sshcipher *c)
 {
-	if (strcmp("3des-cbc", c->name) == 0)
-		return 14;
-	return cipher_keylen(c);
+	གལ་སྲིད (strcmp("3des-cbc", c->name) == 0)
+		ལོག 14;
+	ལོག cipher_keylen(c);
 }
 
 u_int
-cipher_authlen(const struct sshcipher *c)
+cipher_authlen(const sa_nracanaa sshcipher *c)
 {
-	return (c->auth_len);
+	ལོག (c->auth_len);
 }
 
 u_int
-cipher_ivlen(const struct sshcipher *c)
+cipher_ivlen(const sa_nracanaa sshcipher *c)
 {
 	/*
 	 * Default is cipher block size, except for chacha20+poly1305 that
 	 * needs no IV. XXX make iv_len == -1 default?
 	 */
-	return (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
+	ལོག (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
 	    c->iv_len : c->block_size;
 }
 
 u_int
-cipher_is_cbc(const struct sshcipher *c)
+cipher_is_cbc(const sa_nracanaa sshcipher *c)
 {
-	return (c->flags & CFLAG_CBC) != 0;
+	ལོག (c->flags & CFLAG_CBC) != 0;
 }
 
 u_int
-cipher_is_internal(const struct sshcipher *c)
+cipher_is_internal(const sa_nracanaa sshcipher *c)
 {
-	return (c->flags & CFLAG_INTERNAL) != 0;
+	ལོག (c->flags & CFLAG_INTERNAL) != 0;
 }
 
 u_int
-cipher_ctx_is_plaintext(struct sshcipher_ctx *cc)
+cipher_ctx_is_plaintext(sa_nracanaa sshcipher_ctx *cc)
 {
-	return cc->plaintext;
+	ལོག cc->plaintext;
 }
 
-const struct sshcipher *
-cipher_by_name(const char *name)
+const sa_nracanaa sshcipher *
+cipher_by_name(const var_na *name)
 {
-	const struct sshcipher *c;
-	for (c = ciphers; c->name != NULL; c++)
-		if (strcmp(c->name, name) == 0)
-			return c;
-	return NULL;
+	const sa_nracanaa sshcipher *c;
+	དོན་ལུ (c = ciphers; c->name != NULL; c++)
+		གལ་སྲིད (strcmp(c->name, name) == 0)
+			ལོག c;
+	ལོག NULL;
 }
 
 #define	CIPHER_SEP	","
-int
-ciphers_valid(const char *names)
+ཧྲིལ
+ciphers_valid(const var_na *names)
 {
-	const struct sshcipher *c;
-	char *cipher_list, *cp;
-	char *p;
-	int found = 0;
+	const sa_nracanaa sshcipher *c;
+	var_na *cipher_list, *cp;
+	var_na *p;
+	ཧྲིལ found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((cipher_list = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
+	གལ་སྲིད (names == NULL || strcmp(names, "") == 0)
+		ལོག 0;
+	གལ་སྲིད ((cipher_list = cp = strdup(names)) == NULL)
+		ལོག 0;
+	དོན་ལུ ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, CIPHER_SEP))) {
 		c = cipher_by_name(p);
-		if (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
+		གལ་སྲིད (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
 			free(cipher_list);
-			return 0;
-		} else
+			ལོག 0;
+		} དེ་མིན
 			found = 1;
 	}
 	free(cipher_list);
-	return found;
+	ལོག found;
 }
 
-const char *
-cipher_warning_message(const struct sshcipher_ctx *cc)
+const var_na *
+cipher_warning_message(const sa_nracanaa sshcipher_ctx *cc)
 {
-	if (cc == NULL || cc->cipher == NULL)
-		return NULL;
+	གལ་སྲིད (cc == NULL || cc->cipher == NULL)
+		ལོག NULL;
 	/* XXX repurpose for CBC warning */
-	return NULL;
+	ལོག NULL;
 }
 
-int
-cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
+ཧྲིལ
+cipher_init(sa_nracanaa sshcipher_ctx **ccp, const sa_nracanaa sshcipher *cipher,
     const u_char *key, u_int keylen, const u_char *iv, u_int ivlen,
-    int do_encrypt)
+    ཧྲིལ do_encrypt)
 {
-	struct sshcipher_ctx *cc = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	sa_nracanaa sshcipher_ctx *cc = NULL;
+	ཧྲིལ ret = SSH_ERR_INTERNAL_ERROR;
 #ifdef WITH_OPENSSL
 	const EVP_CIPHER *type;
-	int klen;
+	ཧྲིལ klen;
 #endif
 
 	*ccp = NULL;
-	if ((cc = calloc(1, sizeof(*cc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	གལ་སྲིད ((cc = calloc(1, parimaa_na(*cc))) == NULL)
+		ལོག SSH_ERR_ALLOC_FAIL;
 
 	cc->plaintext = (cipher->flags & CFLAG_NONE) != 0;
 	cc->encrypt = do_encrypt;
 
-	if (keylen < cipher->key_len ||
+	གལ་སྲིད (keylen < cipher->key_len ||
 	    (iv != NULL && ivlen < cipher_ivlen(cipher))) {
 		ret = SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
 
 	cc->cipher = cipher;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		cc->cp_ctx = chachapoly_new(key, keylen);
 		ret = cc->cp_ctx != NULL ? 0 : SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		ret = 0;
 		goto out;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
 		aesctr_keysetup(&cc->ac_ctx, key, 8 * keylen, 8 * ivlen);
 		aesctr_ivsetup(&cc->ac_ctx, iv);
 		ret = 0;
@@ -284,49 +284,49 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
 	}
 	ret = SSH_ERR_INVALID_ARGUMENT;
 	goto out;
-#else /* WITH_OPENSSL */
+#དེ་མིན /* WITH_OPENSSL */
 	type = (*cipher->evptype)();
-	if ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
+	གལ་སྲིད ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
+	གལ་སྲིད (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
 	    (do_encrypt == CIPHER_ENCRYPT)) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if (cipher_authlen(cipher) &&
+	གལ་སྲིད (cipher_authlen(cipher) &&
 	    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_IV_FIXED,
 	    -1, (u_char *)iv) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	klen = EVP_CIPHER_CTX_key_length(cc->evp);
-	if (klen > 0 && keylen != (u_int)klen) {
-		if (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
+	གལ་སྲིད (klen > 0 && keylen != (u_int)klen) {
+		གལ་སྲིད (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
 		}
 	}
-	if (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
+	གལ་སྲིད (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	ret = 0;
 #endif /* WITH_OPENSSL */
  out:
-	if (ret == 0) {
+	གལ་སྲིད (ret == 0) {
 		/* success */
 		*ccp = cc;
-	} else {
-		if (cc != NULL) {
+	} དེ་མིན {
+		གལ་སྲིད (cc != NULL) {
 #ifdef WITH_OPENSSL
 			EVP_CIPHER_CTX_free(cc->evp);
 #endif /* WITH_OPENSSL */
-			freezero(cc, sizeof(*cc));
+			freezero(cc, parimaa_na(*cc));
 		}
 	}
-	return ret;
+	ལོག ret;
 }
 
 /*
@@ -339,135 +339,135 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
  * This tag is written on encryption and verified on decryption.
  * Both 'aadlen' and 'authlen' can be set to 0.
  */
-int
-cipher_crypt(struct sshcipher_ctx *cc, u_int seqnr, u_char *dest,
+ཧྲིལ
+cipher_crypt(sa_nracanaa sshcipher_ctx *cc, u_int seqnr, u_char *dest,
    const u_char *src, u_int len, u_int aadlen, u_int authlen)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		return chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		ལོག chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
 		    len, aadlen, authlen, cc->encrypt);
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		memcpy(dest, src, aadlen + len);
-		return 0;
+		ལོག 0;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (aadlen)
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		གལ་སྲིད (aadlen)
 			memcpy(dest, src, aadlen);
 		aesctr_encrypt_bytes(&cc->ac_ctx, src + aadlen,
 		    dest + aadlen, len);
-		return 0;
+		ལོག 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
-#else
-	if (authlen) {
+	ལོག SSH_ERR_INVALID_ARGUMENT;
+#དེ་མིན
+	གལ་སྲིད (authlen) {
 		u_char lastiv[1];
 
-		if (authlen != cipher_authlen(cc->cipher))
-			return SSH_ERR_INVALID_ARGUMENT;
+		གལ་སྲིད (authlen != cipher_authlen(cc->cipher))
+			ལོག SSH_ERR_INVALID_ARGUMENT;
 		/* increment IV */
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
+		གལ་སྲིད (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
 		    1, lastiv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			ལོག SSH_ERR_LIBCRYPTO_ERROR;
 		/* set tag on decryption */
-		if (!cc->encrypt &&
+		གལ་སྲིད (!cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_TAG,
 		    authlen, (u_char *)src + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			ལོག SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	if (aadlen) {
-		if (authlen &&
+	གལ་སྲིད (aadlen) {
+		གལ་སྲིད (authlen &&
 		    EVP_Cipher(cc->evp, NULL, (u_char *)src, aadlen) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			ལོག SSH_ERR_LIBCRYPTO_ERROR;
 		memcpy(dest, src, aadlen);
 	}
-	if (len % cc->cipher->block_size)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
+	གལ་སྲིད (len % cc->cipher->block_size)
+		ལོག SSH_ERR_INVALID_ARGUMENT;
+	གལ་སྲིད (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
 	    len) < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (authlen) {
+		ལོག SSH_ERR_LIBCRYPTO_ERROR;
+	གལ་སྲིད (authlen) {
 		/* compute tag (on encrypt) or verify tag (on decrypt) */
-		if (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
-			return cc->encrypt ?
+		གལ་སྲིད (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
+			ལོག cc->encrypt ?
 			    SSH_ERR_LIBCRYPTO_ERROR : SSH_ERR_MAC_INVALID;
-		if (cc->encrypt &&
+		གལ་སྲིད (cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_GET_TAG,
 		    authlen, dest + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			ལོག SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	return 0;
+	ལོག 0;
 #endif
 }
 
 /* Extract the packet length, including any decryption necessary beforehand */
-int
-cipher_get_length(struct sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
+ཧྲིལ
+cipher_get_length(sa_nracanaa sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
     const u_char *cp, u_int len)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
-		return chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
+		ལོག chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
 		    cp, len);
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	གལ་སྲིད (len < 4)
+		ལོག SSH_ERR_MESSAGE_INCOMPLETE;
 	*plenp = PEEK_U32(cp);
-	return 0;
+	ལོག 0;
 }
 
 void
-cipher_free(struct sshcipher_ctx *cc)
+cipher_free(sa_nracanaa sshcipher_ctx *cc)
 {
-	if (cc == NULL)
-		return;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	གལ་སྲིད (cc == NULL)
+		ལོག;
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		chachapoly_free(cc->cp_ctx);
 		cc->cp_ctx = NULL;
-	} else if ((cc->cipher->flags & CFLAG_AESCTR) != 0)
-		explicit_bzero(&cc->ac_ctx, sizeof(cc->ac_ctx));
+	} དེ་མིན གལ་སྲིད ((cc->cipher->flags & CFLAG_AESCTR) != 0)
+		explicit_bzero(&cc->ac_ctx, parimaa_na(cc->ac_ctx));
 #ifdef WITH_OPENSSL
 	EVP_CIPHER_CTX_free(cc->evp);
 	cc->evp = NULL;
 #endif
-	freezero(cc, sizeof(*cc));
+	freezero(cc, parimaa_na(*cc));
 }
 
-int
-cipher_get_keyiv(struct sshcipher_ctx *cc, u_char *iv, size_t len)
+ཧྲིལ
+cipher_get_keyiv(sa_nracanaa sshcipher_ctx *cc, u_char *iv, size_t len)
 {
 #ifdef WITH_OPENSSL
-	const struct sshcipher *c = cc->cipher;
-	int evplen;
+	const sa_nracanaa sshcipher *c = cc->cipher;
+	ཧྲིལ evplen;
 #endif
 
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		if (len != 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		གལ་སྲིད (len != 0)
+			ལོག SSH_ERR_INVALID_ARGUMENT;
+		ལོག 0;
 	}
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (len != sizeof(cc->ac_ctx.ctr))
-			return SSH_ERR_INVALID_ARGUMENT;
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		གལ་སྲིད (len != parimaa_na(cc->ac_ctx.ctr))
+			ལོག SSH_ERR_INVALID_ARGUMENT;
 		memcpy(iv, cc->ac_ctx.ctr, len);
-		return 0;
+		ལོག 0;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0)
-		return 0;
+	གལ་སྲིད ((cc->cipher->flags & CFLAG_NONE) != 0)
+		ལོག 0;
 
 #ifdef WITH_OPENSSL
 	evplen = EVP_CIPHER_CTX_iv_length(cc->evp);
-	if (evplen == 0)
-		return 0;
-	else if (evplen < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if ((size_t)evplen != len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (cipher_authlen(c)) {
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
+	གལ་སྲིད (evplen == 0)
+		ལོག 0;
+	དེ་མིན གལ་སྲིད (evplen < 0)
+		ལོག SSH_ERR_LIBCRYPTO_ERROR;
+	གལ་སྲིད ((size_t)evplen != len)
+		ལོག SSH_ERR_INVALID_ARGUMENT;
+	གལ་སྲིད (cipher_authlen(c)) {
+		གལ་སྲིད (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
 		    iv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-	} else if (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+			ལོག SSH_ERR_LIBCRYPTO_ERROR;
+	} དེ་མིན གལ་སྲིད (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
+		ལོག SSH_ERR_LIBCRYPTO_ERROR;
 #endif
-	return 0;
+	ལོག 0;
 }

@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#གལ་སྲིད !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+ཧྲིལ
+sigaction(ཧྲིལ sig, sa_nracanaa sigaction *sigact, sa_nracanaa sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	ལོག sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+ཧྲིལ
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	གལ་སྲིད (!mask) {
 		errno = EINVAL;
-		return -1;
+		ལོག -1;
 	}
 	*mask = 0;
-	return 0;
+	ལོག 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+ཧྲིལ
+sigprocmask (ཧྲིལ mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	གལ་སྲིད (!mask) {
 		errno = EINVAL;
-		return -1;
+		ལོག -1;
 	}
 
-	if (omask)
+	གལ་སྲིད (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	གལ་སྲིད (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	དེ་མིན གལ་སྲིད (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	དེ་མིན གལ་སྲིད (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	ལོག 0;
 }
 
-int
+ཧྲིལ
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	གལ་སྲིད (!mask) {
 		errno = EINVAL;
-		return -1;
+		ལོག -1;
 	}
-	return sigpause(*mask);
+	ལོག sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+ཧྲིལ
+sigdelset (sigset_t *mask, ཧྲིལ sig)
 {
-	if (!mask) {
+	གལ་སྲིད (!mask) {
 		errno = EINVAL;
-		return -1;
+		ལོག -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	ལོག 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+ཧྲིལ
+sigaddset (sigset_t *mask, ཧྲིལ sig)
 {
-	if (!mask) {
+	གལ་སྲིད (!mask) {
 		errno = EINVAL;
-		return -1;
+		ལོག -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	ལོག 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+ཧྲིལ
+sigismember (sigset_t *mask, ཧྲིལ sig)
 {
-	if (!mask) {
+	གལ་སྲིད (!mask) {
 		errno = EINVAL;
-		return -1;
+		ལོག -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	ལོག (*mask & sigmask(sig)) != 0;
 }
 
 #endif

@@ -24,40 +24,40 @@
 #include <stdlib.h>
 
 /* LLONG_MAX is known as LONGLONG_MAX on AIX */
-#if defined(LONGLONG_MAX) && !defined(LLONG_MAX)
+#གལ་སྲིད defined(LONGLONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONGLONG_MAX
 # define LLONG_MIN LONGLONG_MIN
 #endif
 
 /* LLONG_MAX is known as LONG_LONG_MAX on HP-UX */
-#if defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
+#གལ་སྲིད defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONG_LONG_MAX
 # define LLONG_MIN LONG_LONG_MIN
 #endif
 
-long long strtonum(const char *, long long, long long, const char **);
+long long strtonum(const var_na *, long long, long long, const var_na **);
 
-int fail;
+ཧྲིལ fail;
 
 void
-test(const char *p, long long lb, long long ub, int ok)
+test(const var_na *p, long long lb, long long ub, ཧྲིལ ok)
 {
 	long long val;
-	const char *q;
+	const var_na *q;
 
 	val = strtonum(p, lb, ub, &q);
-	if (ok && q != NULL) {
+	གལ་སྲིད (ok && q != NULL) {
 		fprintf(stderr, "%s [%lld-%lld] ", p, lb, ub);
 		fprintf(stderr, "NUMBER NOT ACCEPTED %s\n", q);
 		fail = 1;
-	} else if (!ok && q == NULL) {
+	} དེ་མིན གལ་སྲིད (!ok && q == NULL) {
 		fprintf(stderr, "%s [%lld-%lld] %lld ", p, lb, ub, val);
 		fprintf(stderr, "NUMBER ACCEPTED\n");
 		fail = 1;
 	}
 }
 
-int main(void)
+ཧྲིལ main(void)
 {
 	test("1", 0, 10, 1);
 	test("0", -2, 5, 1);
@@ -77,6 +77,6 @@ int main(void)
 	test("-20", -10, -1, 0);
 	test("20", -10, -1, 0);
 
-	return (fail);
+	ལོག (fail);
 }
 

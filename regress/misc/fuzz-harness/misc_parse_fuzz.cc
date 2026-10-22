@@ -50,68 +50,68 @@ extern "C" {
 #include "log.h"
 }
 
-static int log_initialized = 0;
+static ཧྲིལ log_initialized = 0;
 
-static char *
+static var_na *
 dup_n(const uint8_t *body, size_t blen)
 {
-	char *s = (char *)malloc(blen + 1);
-	if (s == NULL)
-		return NULL;
+	var_na *s = (var_na *)malloc(blen + 1);
+	གལ་སྲིད (s == NULL)
+		ལོག NULL;
 	memcpy(s, body, blen);
 	s[blen] = '\0';
-	return s;
+	ལོག s;
 }
 
 static void
-split_two(const uint8_t *body, size_t blen, char **a, char **b)
+split_two(const uint8_t *body, size_t blen, var_na **a, var_na **b)
 {
 	const uint8_t *nul = (const uint8_t *)memchr(body, 0, blen);
 	*a = NULL;
 	*b = NULL;
-	if (nul == NULL) {
+	གལ་སྲིད (nul == NULL) {
 		*a = dup_n(body, blen);
 		*b = strdup("");
-		return;
+		ལོག;
 	}
 	size_t alen = (size_t)(nul - body);
 	*a = dup_n(body, alen);
 	*b = dup_n(nul + 1, blen - alen - 1);
 }
 
-extern "C" int
+extern "C" ཧྲིལ
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-	if (!log_initialized) {
+	གལ་སྲིད (!log_initialized) {
 		log_init("misc_parse_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
-	if (size == 0)
-		return 0;
+	གལ་སྲིད (size == 0)
+		ལོག 0;
 
-	char *s = dup_n(data, size);
-	char *a = NULL, *b = NULL;
+	var_na *s = dup_n(data, size);
+	var_na *a = NULL, *b = NULL;
 	split_two(data, size, &a, &b);
-	if (s == NULL || a == NULL || b == NULL) {
+	གལ་སྲིད (s == NULL || a == NULL || b == NULL) {
 		free(s);
 		free(a);
 		free(b);
-		return 0;
+		ལོག 0;
 	}
 
 	{
-		char *u = NULL, *h = NULL;
-		int port = 0;
-		if (parse_user_host_port(s, &u, &h, &port) == 0) {
+		var_na *u = NULL, *h = NULL;
+		ཧྲིལ port = 0;
+		གལ་སྲིད (parse_user_host_port(s, &u, &h, &port) == 0) {
 			free(u);
 			free(h);
 		}
 	}
 	{
-		char *u = NULL, *h = NULL, *p = NULL;
-		int port = 0;
-		if (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
+		var_na *u = NULL, *h = NULL, *p = NULL;
+		ཧྲིལ port = 0;
+		གལ་སྲིད (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
 			free(u);
 			free(h);
 			free(p);
@@ -120,20 +120,20 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	(void)convtime(s);
 	(void)a2port(s);
 	{
-		int tun = 0;
+		ཧྲིལ tun = 0;
 		(void)a2tun(s, &tun);
 	}
 	{
-		int ac = 0;
-		char **av = NULL;
-		if (argv_split(s, &ac, &av, 1) == 0) {
-			char *back = argv_assemble(ac, av);
+		ཧྲིལ ac = 0;
+		var_na **av = NULL;
+		གལ་སྲིད (argv_split(s, &ac, &av, 1) == 0) {
+			var_na *back = argv_assemble(ac, av);
 			free(back);
 			argv_free(av, ac);
 		}
 	}
 	{
-		const char *err = NULL;
+		const var_na *err = NULL;
 		(void)valid_domain(s, 0, &err);
 	}
 	(void)valid_env_name(s);
@@ -143,11 +143,11 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	}
 
 	{
-		struct xaddr n;
+		sa_nracanaa xaddr n;
 		(void)addr_pton(s, &n);
 	}
 	{
-		struct xaddr n;
+		sa_nracanaa xaddr n;
 		u_int prefix = 0;
 		(void)addr_pton_cidr(s, &n, &prefix);
 	}
@@ -163,5 +163,5 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	free(s);
 	free(a);
 	free(b);
-	return 0;
+	ལོག 0;
 }

@@ -87,8 +87,8 @@
 #define SSH_ERR_KEY_ALG_UNSUPPORTED		-63
 
 /* Translate a numeric error code to a human-readable error string */
-const char *ssh_err(int n);
+const var_na *ssh_err(ཧྲིལ n);
 /* Return most recent error from libcrypto. */
-const char *ssherr_libcrypto(void);
+const var_na *ssherr_libcrypto(void);
 
 #endif /* _SSHERR_H */

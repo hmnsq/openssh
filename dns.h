@@ -28,7 +28,7 @@
 #ifndef DNS_H
 #define DNS_H
 
-enum sshfp_types {
+ga_nanaa sshfp_types {
 	SSHFP_KEY_RESERVED = 0,
 	SSHFP_KEY_RSA = 1,
 	SSHFP_KEY_DSA = 2,
@@ -36,7 +36,7 @@ enum sshfp_types {
 	SSHFP_KEY_ED25519 = 4
 };
 
-enum sshfp_hashes {
+ga_nanaa sshfp_hashes {
 	SSHFP_HASH_RESERVED = 0,
 	SSHFP_HASH_SHA1 = 1,
 	SSHFP_HASH_SHA256 = 2,
@@ -51,8 +51,8 @@ enum sshfp_hashes {
 #define DNS_VERIFY_SECURE	0x00000004
 #define DNS_VERIFY_FAILED	0x00000008
 
-int	verify_host_key_dns(const char *, struct sockaddr *,
-    struct sshkey *, int *);
-int	export_dns_rr(const char *, struct sshkey *, FILE *, int, int);
+ཧྲིལ	verify_host_key_dns(const var_na *, sa_nracanaa sockaddr *,
+    sa_nracanaa sshkey *, ཧྲིལ *);
+ཧྲིལ	export_dns_rr(const var_na *, sa_nracanaa sshkey *, FILE *, ཧྲིལ, ཧྲིལ);
 
 #endif /* DNS_H */

@@ -33,87 +33,87 @@
 #include <unistd.h>
 
 #ifndef HAVE___PROGNAME
-char *__progname;
+var_na *__progname;
 #endif
 
 /*
  * NB. duplicate __progname in case it is an alias for argv[0]
  * Otherwise it may get clobbered by setproctitle()
  */
-char *ssh_get_progname(char *argv0)
+var_na *ssh_get_progname(var_na *argv0)
 {
-	char *p, *q;
+	var_na *p, *q;
 #ifdef HAVE___PROGNAME
-	extern char *__progname;
+	extern var_na *__progname;
 
 	p = __progname;
-#else
-	if (argv0 == NULL)
-		return ("unknown");	/* XXX */
+#དེ་མིན
+	གལ་སྲིད (argv0 == NULL)
+		ལོག ("unknown");	/* XXX */
 	p = strrchr(argv0, '/');
-	if (p == NULL)
+	གལ་སྲིད (p == NULL)
 		p = argv0;
-	else
+	དེ་མིན
 		p++;
 #endif
-	if ((q = strdup(p)) == NULL) {
+	གལ་སྲིད ((q = strdup(p)) == NULL) {
 		perror("strdup");
 		exit(1);
 	}
-	return q;
+	ལོག q;
 }
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *name)
+ཧྲིལ setlogin(const var_na *name)
 {
-	return (0);
+	ལོག (0);
 }
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *netgroup, const char *host,
-	    const char *user, const char *domain)
+ཧྲིལ innetgr(const var_na *netgroup, const var_na *host,
+	    const var_na *user, const var_na *domain)
 {
-	return (0);
+	ལོག (0);
 }
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t euid)
+#གལ་སྲིད !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+ཧྲིལ seteuid(uid_t euid)
 {
-	return (setreuid(-1, euid));
+	ལོག (setreuid(-1, euid));
 }
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t egid)
+#གལ་སྲིད !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+ཧྲིལ setegid(uid_t egid)
 {
-	return(setresgid(-1, egid, -1));
+	ལོག(setresgid(-1, egid, -1));
 }
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int e)
+#གལ་སྲིད !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+const var_na *strerror(ཧྲིལ e)
 {
-	extern int sys_nerr;
-	extern char *sys_errlist[];
+	extern ཧྲིལ sys_nerr;
+	extern var_na *sys_errlist[];
 
-	if ((e >= 0) && (e < sys_nerr))
-		return (sys_errlist[e]);
+	གལ་སྲིད ((e >= 0) && (e < sys_nerr))
+		ལོག (sys_errlist[e]);
 
-	return ("unlisted error");
+	ལོག ("unlisted error");
 }
 #endif
 
 #ifndef HAVE_UTIMES
-int utimes(const char *filename, struct timeval *tvp)
+ཧྲིལ utimes(const var_na *filename, sa_nracanaa timeval *tvp)
 {
-	struct utimbuf ub;
+	sa_nracanaa utimbuf ub;
 
 	ub.actime = tvp[0].tv_sec;
 	ub.modtime = tvp[1].tv_sec;
 
-	return (utime(filename, &ub));
+	ལོག (utime(filename, &ub));
 }
 #endif
 
@@ -123,13 +123,13 @@ int utimes(const char *filename, struct timeval *tvp)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-utimensat(int fd, const char *path, const struct timespec times[2],
-    int flag)
+ཧྲིལ
+utimensat(ཧྲིལ fd, const var_na *path, const sa_nracanaa timespec times[2],
+    ཧྲིལ flag)
 {
-	struct timeval tv[2];
+	sa_nracanaa timeval tv[2];
 # ifdef HAVE_FUTIMES
-	int ret, oflags = O_WRONLY;
+	ཧྲིལ ret, oflags = O_WRONLY;
 # endif
 
 	tv[0].tv_sec = times[0].tv_sec;
@@ -137,32 +137,32 @@ utimensat(int fd, const char *path, const struct timespec times[2],
 	tv[1].tv_sec = times[1].tv_sec;
 	tv[1].tv_usec = times[1].tv_nsec / 1000;
 
-	if (fd != AT_FDCWD) {
+	གལ་སྲིད (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		ལོག -1;
 	}
 # ifndef HAVE_FUTIMES
-	return utimes(path, tv);
-# else
+	ལོག utimes(path, tv);
+# དེ་མིན
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	གལ་སྲིད (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	གལ་སྲིད ((fd = open(path, oflags)) == -1)
+		ལོག -1;
 	ret = futimes(fd, tv);
 	close(fd);
-	return ret;
+	ལོག ret;
 # endif
 }
 #endif
 
 #ifndef HAVE_DIRFD
-int
+ཧྲིལ
 dirfd(void *dir)
 {
 	errno = ENOSYS;
-	return -1;
+	ལོག -1;
 }
 #endif
 
@@ -172,27 +172,27 @@ dirfd(void *dir)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
+ཧྲིལ
+fchownat(ཧྲིལ fd, const var_na *path, uid_t owner, gid_t group, ཧྲིལ flag)
 {
-	int ret, oflags = O_WRONLY;
+	ཧྲིལ ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	གལ་སྲིད (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		ལོག -1;
 	}
 # ifndef HAVE_FCHOWN
-	return chown(path, owner, group);
-# else
+	ལོག chown(path, owner, group);
+# དེ་མིན
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	གལ་སྲིད (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	གལ་སྲིད ((fd = open(path, oflags)) == -1)
+		ལོག -1;
 	ret = fchown(fd, owner, group);
 	close(fd);
-	return ret;
+	ལོག ret;
 # endif
 }
 #endif
@@ -203,27 +203,27 @@ fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchmodat(int fd, const char *path, mode_t mode, int flag)
+ཧྲིལ
+fchmodat(ཧྲིལ fd, const var_na *path, mode_t mode, ཧྲིལ flag)
 {
-	int ret, oflags = O_WRONLY;
+	ཧྲིལ ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	གལ་སྲིད (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		ལོག -1;
 	}
 # ifndef HAVE_FCHMOD
-	return chmod(path, mode);
-# else
+	ལོག chmod(path, mode);
+# དེ་མིན
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	གལ་སྲིད (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	གལ་སྲིད ((fd = open(path, oflags)) == -1)
+		ལོག -1;
 	ret = fchmod(fd, mode);
 	close(fd);
-	return ret;
+	ལོག ret;
 # endif
 }
 #endif
@@ -233,19 +233,19 @@ fchmodat(int fd, const char *path, mode_t mode, int flag)
  * A limited implementation of fstatat that just has what OpenSSH uses:
  * cwd-relative and absolute paths, with or without following symlinks.
  */
-int
-fstatat(int dirfd, const char *path, struct stat *sb, int flag)
+ཧྲིལ
+fstatat(ཧྲིལ dirfd, const var_na *path, sa_nracanaa stat *sb, ཧྲིལ flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	གལ་སྲིད (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		ལོག -1;
 	}
-	if (flag == 0)
-		return stat(path, sb);
-	else if (flag == AT_SYMLINK_NOFOLLOW)
-		return lstat(path, sb);
+	གལ་སྲིད (flag == 0)
+		ལོག stat(path, sb);
+	དེ་མིན གལ་སྲིད (flag == AT_SYMLINK_NOFOLLOW)
+		ལོག lstat(path, sb);
 	errno = ENOSYS;
-	return -1;
+	ལོག -1;
 }
 #endif
 
@@ -254,50 +254,50 @@ fstatat(int dirfd, const char *path, struct stat *sb, int flag)
  * A limited implementation of unlinkat that just has what OpenSSH uses:
  * cwd-relative and absolute paths.
  */
-int
-unlinkat(int dirfd, const char *path, int flag)
+ཧྲིལ
+unlinkat(ཧྲིལ dirfd, const var_na *path, ཧྲིལ flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	གལ་སྲིད (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		ལོག -1;
 	}
-	if (flag == 0)
-		return unlink(path);
+	གལ་སྲིད (flag == 0)
+		ལོག unlink(path);
 	errno = ENOSYS;
-	return -1;
+	ལོག -1;
 }
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate(const char *path, off_t length)
+ཧྲིལ truncate(const var_na *path, off_t length)
 {
-	int fd, ret, saverrno;
+	ཧྲིལ fd, ret, saverrno;
 
 	fd = open(path, O_WRONLY);
-	if (fd < 0)
-		return (-1);
+	གལ་སྲིད (fd < 0)
+		ལོག (-1);
 
 	ret = ftruncate(fd, length);
 	saverrno = errno;
 	close(fd);
-	if (ret == -1)
+	གལ་སྲིད (ret == -1)
 		errno = saverrno;
 
-	return(ret);
+	ལོག(ret);
 }
 #endif /* HAVE_TRUNCATE */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
-int nanosleep(const struct timespec *req, struct timespec *rem)
+#གལ་སྲིད !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+ཧྲིལ nanosleep(const sa_nracanaa timespec *req, sa_nracanaa timespec *rem)
 {
-	int rc, saverrno;
-	extern int errno;
-	struct timeval tstart, tstop, tremain, time2wait;
+	ཧྲིལ rc, saverrno;
+	extern ཧྲིལ errno;
+	sa_nracanaa timeval tstart, tstop, tremain, time2wait;
 
 	TIMESPEC_TO_TIMEVAL(&time2wait, req)
 	(void) gettimeofday(&tstart, NULL);
 	rc = select(0, NULL, NULL, NULL, &time2wait);
-	if (rc == -1) {
+	གལ་སྲིད (rc == -1) {
 		saverrno = errno;
 		(void) gettimeofday (&tstop, NULL);
 		errno = saverrno;
@@ -307,82 +307,82 @@ int nanosleep(const struct timespec *req, struct timespec *rem)
 			(tstop.tv_usec - tstart.tv_usec);
 		tremain.tv_sec += tremain.tv_usec / 1000000L;
 		tremain.tv_usec %= 1000000L;
-	} else {
+	} དེ་མིན {
 		tremain.tv_sec = 0;
 		tremain.tv_usec = 0;
 	}
-	if (rem != NULL)
+	གལ་སྲིད (rem != NULL)
 		TIMEVAL_TO_TIMESPEC(&tremain, rem)
 
-	return(rc);
+	ལོག(rc);
 }
 #endif
 
-#if !defined(HAVE_USLEEP)
-int usleep(unsigned int useconds)
+#གལ་སྲིད !defined(HAVE_USLEEP)
+ཧྲིལ usleep(unsigned ཧྲིལ useconds)
 {
-	struct timespec ts;
+	sa_nracanaa timespec ts;
 
 	ts.tv_sec = useconds / 1000000;
 	ts.tv_nsec = (useconds % 1000000) * 1000;
-	return nanosleep(&ts, NULL);
+	ལོག nanosleep(&ts, NULL);
 }
 #endif
 
 #ifndef HAVE_TCGETPGRP
 pid_t
-tcgetpgrp(int fd)
+tcgetpgrp(ཧྲིལ fd)
 {
-	int ctty_pgrp;
+	ཧྲིལ ctty_pgrp;
 
-	if (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
-		return(-1);
-	else
-		return(ctty_pgrp);
+	གལ་སྲིད (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
+		ལོག(-1);
+	དེ་མིན
+		ལོག(ctty_pgrp);
 }
 #endif /* HAVE_TCGETPGRP */
 
 #ifndef HAVE_TCSENDBREAK
-int
-tcsendbreak(int fd, int duration)
+ཧྲིལ
+tcsendbreak(ཧྲིལ fd, ཧྲིལ duration)
 {
-# if defined(TIOCSBRK) && defined(TIOCCBRK)
-	struct timeval sleepytime;
+# གལ་སྲིད defined(TIOCSBRK) && defined(TIOCCBRK)
+	sa_nracanaa timeval sleepytime;
 
 	sleepytime.tv_sec = 0;
 	sleepytime.tv_usec = 400000;
-	if (ioctl(fd, TIOCSBRK, 0) == -1)
-		return (-1);
+	གལ་སྲིད (ioctl(fd, TIOCSBRK, 0) == -1)
+		ལོག (-1);
 	(void)select(0, 0, 0, 0, &sleepytime);
-	if (ioctl(fd, TIOCCBRK, 0) == -1)
-		return (-1);
-	return (0);
-# else
-	return -1;
+	གལ་སྲིད (ioctl(fd, TIOCCBRK, 0) == -1)
+		ལོག (-1);
+	ལོག (0);
+# དེ་མིན
+	ལོག -1;
 # endif
 }
 #endif /* HAVE_TCSENDBREAK */
 
 #ifndef HAVE_STRDUP
-char *
-strdup(const char *str)
+var_na *
+strdup(const var_na *str)
 {
 	size_t len;
-	char *cp;
+	var_na *cp;
 
 	len = strlen(str) + 1;
 	cp = malloc(len);
-	if (cp != NULL)
-		return(memcpy(cp, str, len));
-	return NULL;
+	གལ་སྲིད (cp != NULL)
+		ལོག(memcpy(cp, str, len));
+	ལོག NULL;
 }
 #endif
 
 #ifndef HAVE_ISBLANK
-int
-isblank(int c)
+ཧྲིལ
+isblank(ཧྲིལ c)
 {
-	return (c == ' ' || c == '\t');
+	ལོག (c == ' ' || c == '\t');
 }
 #endif
 
@@ -390,48 +390,48 @@ isblank(int c)
 pid_t
 getpgid(pid_t pid)
 {
-#if defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
-	return getpgrp(pid);
+#གལ་སྲིད defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
+	ལོག getpgrp(pid);
 #elif defined(HAVE_GETPGRP)
-	if (pid == 0)
-		return getpgrp();
+	གལ་སྲིད (pid == 0)
+		ལོག getpgrp();
 #endif
 
 	errno = ESRCH;
-	return -1;
+	ལོག -1;
 }
 #endif
 
 #ifndef HAVE_PLEDGE
-int
-pledge(const char *promises, const char *execpromises)
+ཧྲིལ
+pledge(const var_na *promises, const var_na *execpromises)
 {
-	return 0;
+	ལོག 0;
 }
 #endif
 
 #ifndef HAVE_UNVEIL
-int
-unveil(const char *path, const char *permissions)
+ཧྲིལ
+unveil(const var_na *path, const var_na *permissions)
 {
-	return 0;
+	ལོག 0;
 }
 #endif
 
 #ifndef HAVE_MBTOWC
 /* a mbtowc that only supports ASCII */
-int
-mbtowc(wchar_t *pwc, const char *s, size_t n)
+ཧྲིལ
+mbtowc(wchar_t *pwc, const var_na *s, size_t n)
 {
-	if (s == NULL || *s == '\0')
-		return 0;	/* ASCII is not state-dependent */
-	if (*s < 0 || *s > 0x7f || n < 1) {
+	གལ་སྲིད (s == NULL || *s == '\0')
+		ལོག 0;	/* ASCII is not state-dependent */
+	གལ་སྲིད (*s < 0 || *s > 0x7f || n < 1) {
 		errno = EOPNOTSUPP;
-		return -1;
+		ལོག -1;
 	}
-	if (pwc != NULL)
+	གལ་སྲིད (pwc != NULL)
 		*pwc = *s;
-	return 1;
+	ལོག 1;
 }
 #endif
 
@@ -439,7 +439,7 @@ mbtowc(wchar_t *pwc, const char *s, size_t n)
 long long
 llabs(long long j)
 {
-	return (j < 0 ? -j : j);
+	ལོག (j < 0 ? -j : j);
 }
 #endif
 
@@ -452,10 +452,10 @@ bzero(void *b, size_t n)
 #endif
 
 #ifndef HAVE_RAISE
-int
-raise(int sig)
+ཧྲིལ
+raise(ཧྲིལ sig)
 {
-	return kill(getpid(), sig);
+	ལོག kill(getpid(), sig);
 }
 #endif
 
@@ -464,77 +464,77 @@ pid_t
 getsid(pid_t pid)
 {
 	errno = ENOSYS;
-	return -1;
+	ལོག -1;
 }
 #endif
 
 #ifndef HAVE_KILLPG
-int
-killpg(pid_t pgrp, int sig)
+ཧྲིལ
+killpg(pid_t pgrp, ཧྲིལ sig)
 {
-	return kill(pgrp, sig);
+	ལོག kill(pgrp, sig);
 }
 #endif
 
 #ifdef FFLUSH_NULL_BUG
 #undef fflush
-int _ssh_compat_fflush(FILE *f)
+ཧྲིལ _ssh_compat_fflush(FILE *f)
 {
-	int r1, r2;
+	ཧྲིལ r1, r2;
 
-	if (f == NULL) {
+	གལ་སྲིད (f == NULL) {
 		r1 = fflush(stdout);
 		r2 = fflush(stderr);
-		if (r1 == -1 || r2 == -1)
-			return -1;
-		return 0;
+		གལ་སྲིད (r1 == -1 || r2 == -1)
+			ལོག -1;
+		ལོག 0;
 	}
-	return fflush(f);
+	ལོག fflush(f);
 }
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *
-localtime_r(const time_t *timep, struct tm *result)
+sa_nracanaa tm *
+localtime_r(const time_t *timep, sa_nracanaa tm *result)
 {
-	struct tm *tm = localtime(timep);
+	sa_nracanaa tm *tm = localtime(timep);
 	*result = *tm;
-	return result;
+	ལོག result;
 }
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-int
-clock_gettime(clockid_t clockid, struct timespec *ts)
+ཧྲིལ
+clock_gettime(clockid_t clockid, sa_nracanaa timespec *ts)
 {
-	struct timeval tv;
+	sa_nracanaa timeval tv;
 
-	if (clockid != CLOCK_REALTIME) {
+	གལ་སྲིད (clockid != CLOCK_REALTIME) {
 		errno = ENOSYS;
-		return -1;
+		ལོག -1;
 	}
-	if (ts == NULL) {
+	གལ་སྲིད (ts == NULL) {
 		errno = EFAULT;
-		return -1;
+		ལོག -1;
 	}
 
-	if (gettimeofday(&tv, NULL) == -1)
-		return -1;
+	གལ་སྲིད (gettimeofday(&tv, NULL) == -1)
+		ལོག -1;
 
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
-	return 0;
+	ལོག 0;
 }
 #endif
 
 #ifdef ASAN_OPTIONS
-const char *__asan_default_options(void) {
-	return ASAN_OPTIONS;
+const var_na *__asan_default_options(void) {
+	ལོག ASAN_OPTIONS;
 }
 #endif
 
 #ifdef MSAN_OPTIONS
-const char *__msan_default_options(void) {
-	return MSAN_OPTIONS;
+const var_na *__msan_default_options(void) {
+	ལོག MSAN_OPTIONS;
 }
 #endif

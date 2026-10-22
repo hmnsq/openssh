@@ -32,7 +32,7 @@
 
 #include "includes.h"
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+#གལ་སྲིད defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
 
 /*
  * Convert network-format internet address
@@ -43,17 +43,17 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 
-char *
-inet_ntoa(struct in_addr in)
+var_na *
+inet_ntoa(sa_nracanaa in_addr in)
 {
-	static char b[18];
-	char *p;
+	static var_na b[18];
+	var_na *p;
 
-	p = (char *)&in;
-#define	UC(b)	(((int)b)&0xff)
-	(void)snprintf(b, sizeof(b),
+	p = (var_na *)&in;
+#define	UC(b)	(((ཧྲིལ)b)&0xff)
+	(void)snprintf(b, parimaa_na(b),
 	    "%u.%u.%u.%u", UC(p[0]), UC(p[1]), UC(p[2]), UC(p[3]));
-	return (b);
+	ལོག (b);
 }
 
 #endif /* defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA) */

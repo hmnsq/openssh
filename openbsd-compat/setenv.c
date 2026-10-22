@@ -32,15 +32,15 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#གལ་སྲིད !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
-extern char **environ;
+extern var_na **environ;
 #ifndef HAVE_SETENV
-static char **lastenv;				/* last value of environ */
+static var_na **lastenv;				/* last value of environ */
 #endif
 
 /* OpenSSH Portable: __findenv is from getenv.c rev 1.8, made static */
@@ -54,72 +54,72 @@ static char **lastenv;				/* last value of environ */
  *
  *	This routine *should* be a static; don't use it.
  */
-static char *
-__findenv(const char *name, int len, int *offset)
+static var_na *
+__findenv(const var_na *name, ཧྲིལ len, ཧྲིལ *offset)
 {
-	extern char **environ;
-	int i;
-	const char *np;
-	char **p, *cp;
+	extern var_na **environ;
+	ཧྲིལ i;
+	const var_na *np;
+	var_na **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
-				break;
-		if (i == 0 && *cp++ == '=') {
+	གལ་སྲིད (name == NULL || environ == NULL)
+		ལོག (NULL);
+	དོན་ལུ (p = environ + *offset; (cp = *p) != NULL; ++p) {
+		དོན་ལུ (np = name, i = len; i && *cp; i--)
+			གལ་སྲིད (*cp++ != *np++)
+				bha_nga;
+		གལ་སྲིད (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			ལོག (cp);
 		}
 	}
-	return (NULL);
+	ལོག (NULL);
 }
 
-#if 0 /* nothing uses putenv */
+#གལ་སྲིད 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
-putenv(char *str)
+ཧྲིལ
+putenv(var_na *str)
 {
-	char **P, *cp;
+	var_na **P, *cp;
 	size_t cnt;
-	int offset = 0;
+	ཧྲིལ offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	དོན་ལུ (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	གལ་སྲིད (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		ལོག (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	གལ་སྲིད (__findenv(str, (ཧྲིལ)(cp - str), &offset) != NULL) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		སྐབས (__findenv(str, (ཧྲིལ)(cp - str), &offset)) {
+			དོན་ལུ (P = &environ[offset];; ++P)
+				གལ་སྲིད (!(*P = *(P + 1)))
+					bha_nga;
 		}
-		return (0);
+		ལོག (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	དོན་ལུ (P = environ; *P != NULL; P++)
 		;
 	cnt = P - environ;
-	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
-		memcpy(P, environ, cnt * sizeof(char *));
+	P = (var_na **)realloc(lastenv, parimaa_na(var_na *) * (cnt + 2));
+	གལ་སྲིད (!P)
+		ལོག (-1);
+	གལ་སྲིད (lastenv != environ)
+		memcpy(P, environ, cnt * parimaa_na(var_na *));
 	lastenv = environ = P;
 	environ[cnt] = str;
 	environ[cnt + 1] = NULL;
-	return (0);
+	ལོག (0);
 }
 
 #endif
@@ -130,63 +130,63 @@ putenv(char *str)
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+ཧྲིལ
+setenv(const var_na *name, const var_na *value, ཧྲིལ rewrite)
 {
-	char *C, **P;
-	const char *np;
-	int l_value, offset = 0;
+	var_na *C, **P;
+	const var_na *np;
+	ཧྲིལ l_value, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	དོན་ལུ (np = name; *np && *np != '='; ++np)
 		;
 #ifdef notyet
-	if (*np) {
+	གལ་སྲིད (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		ལོག (-1);			/* has `=' in name */
 	}
 #endif
 
 	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	གལ་སྲིད ((C = __findenv(name, (ཧྲིལ)(np - name), &offset)) != NULL) {
+		ཧྲིལ tmpoff = offset + 1;
+		གལ་སྲིད (!rewrite)
+			ལོག (0);
+#གལ་སྲིད 0 /* XXX - existing entry may not be writable */
+		གལ་སྲིད (strlen(C) >= l_value) {	/* old larger; copy over */
+			སྐབས ((*C++ = *value++))
 				;
-			return (0);
+			ལོག (0);
 		}
 #endif
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		སྐབས (__findenv(name, (ཧྲིལ)(np - name), &tmpoff)) {
+			དོན་ལུ (P = &environ[tmpoff];; ++P)
+				གལ་སྲིད (!(*P = *(P + 1)))
+					bha_nga;
 		}
-	} else {					/* create new slot */
+	} དེ་མིན {					/* create new slot */
 		size_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		དོན་ལུ (P = environ; *P != NULL; P++)
 			;
 		cnt = P - environ;
-		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
-			memcpy(P, environ, cnt * sizeof(char *));
+		P = (var_na **)realloc(lastenv, parimaa_na(var_na *) * (cnt + 2));
+		གལ་སྲིད (!P)
+			ལོག (-1);
+		གལ་སྲིད (lastenv != environ)
+			memcpy(P, environ, cnt * parimaa_na(var_na *));
 		lastenv = environ = P;
 		offset = cnt;
 		environ[cnt + 1] = NULL;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	གལ་སྲིད (!(environ[offset] =			/* name + `=' + value */
+	    malloc((size_t)((ཧྲིལ)(np - name) + l_value + 2))))
+		ལོག (-1);
+	དོན་ལུ (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	དོན་ལུ (*C++ = '='; (*C++ = *value++); )
 		;
-	return (0);
+	ལོག (0);
 }
 
 #endif /* HAVE_SETENV */
@@ -196,31 +196,31 @@ setenv(const char *name, const char *value, int rewrite)
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv(const char *name)
+ཧྲིལ
+unsetenv(const var_na *name)
 {
-	char **P;
-	const char *np;
-	int offset = 0;
+	var_na **P;
+	const var_na *np;
+	ཧྲིལ offset = 0;
 
-	if (!name || !*name) {
+	གལ་སྲིད (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		ལོག (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	དོན་ལུ (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	གལ་སྲིད (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		ལོག (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
-				break;
+	སྐབས (__findenv(name, (ཧྲིལ)(np - name), &offset)) {
+		དོན་ལུ (P = &environ[offset];; ++P)
+			གལ་སྲིད (!(*P = *(P + 1)))
+				bha_nga;
 	}
-	return (0);
+	ལོག (0);
 }
 #endif /* HAVE_UNSETENV */
 

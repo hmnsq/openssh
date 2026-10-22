@@ -47,64 +47,64 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long long
-strtoull(const char *nptr, char **endptr, int base)
+strtoull(const var_na *nptr, var_na **endptr, ཧྲིལ base)
 {
-	const char *s;
+	const var_na *s;
 	unsigned long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ཧྲིལ c;
+	ཧྲིལ neg, any, cutlim;
 
 	/*
 	 * See strtoq for comments as to the logic used.
 	 */
 	s = nptr;
 	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+		c = (unsigned var_na) *s++;
+	} སྐབས (isspace(c));
+	གལ་སྲིད (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else { 
+	} དེ་མིན { 
 		neg = 0;
-		if (c == '+')
+		གལ་སྲིད (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	གལ་སྲིད ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	གལ་སྲིད (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULLONG_MAX / (unsigned long long)base;
 	cutlim = ULLONG_MAX % (unsigned long long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	དོན་ལུ (acc = 0, any = 0;; c = (unsigned var_na) *s++) {
+		གལ་སྲིད (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		དེ་མིན གལ་སྲིད (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
+		དེ་མིན
+			bha_nga;
+		གལ་སྲིད (c >= base)
+			bha_nga;
+		གལ་སྲིད (any < 0)
 			continue;
-		if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		གལ་སྲིད (acc > cutoff || (acc == cutoff && c > cutlim)) {
 			any = -1;
 			acc = ULLONG_MAX;
 			errno = ERANGE;
-		} else {
+		} དེ་མིན {
 			any = 1;
 			acc *= (unsigned long long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	གལ་སྲིད (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	གལ་སྲིད (endptr != 0)
+		*endptr = (var_na *) (any ? s - 1 : nptr);
+	ལོག (acc);
 }
 #endif /* !HAVE_STRTOULL */

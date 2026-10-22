@@ -40,42 +40,42 @@
 #include <errno.h>
 #include <fcntl.h>
 
-int
-flock(int fd, int op)
+ཧྲིལ
+flock(ཧྲིལ fd, ཧྲིལ op)
 {
-	int rc = 0;
+	ཧྲིལ rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
-	struct flock fl = {0};
+#གལ་སྲིད defined(F_SETLK) && defined(F_SETLKW)
+	sa_nracanaa flock fl = {0};
 
 	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
-	case LOCK_EX:
+	pak_sa LOCK_EX:
 		fl.l_type = F_WRLCK;
-		break;
+		bha_nga;
 
-	case LOCK_SH:
+	pak_sa LOCK_SH:
 		fl.l_type = F_RDLCK;
-		break;
+		bha_nga;
 
-	case LOCK_UN:
+	pak_sa LOCK_UN:
 		fl.l_type = F_UNLCK;
-		break;
+		bha_nga;
 
 	default:
 		errno = EINVAL;
-		return -1;
+		ལོག -1;
 	}
 
 	fl.l_whence = SEEK_SET;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
+	གལ་སྲིད (rc && (errno == EAGAIN))
 		errno = EWOULDBLOCK;
-#else
+#དེ་མིན
 	rc = -1;
 	errno = ENOSYS;
 #endif
 
-	return rc;
+	ལོག rc;
 }
 #endif

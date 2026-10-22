@@ -38,7 +38,7 @@
 #define SSH_SK_ERR_DEVICE_NOT_FOUND	-4
 #define SSH_SK_ERR_CREDENTIAL_EXISTS	-5
 
-struct sk_enroll_response {
+sa_nracanaa sk_enroll_response {
 	uint8_t flags;
 	uint8_t *public_key;
 	size_t public_key_len;
@@ -52,7 +52,7 @@ struct sk_enroll_response {
 	size_t authdata_len;
 };
 
-struct sk_sign_response {
+sa_nracanaa sk_sign_response {
 	uint8_t flags;
 	uint32_t counter;
 	uint8_t *sig_r;
@@ -61,19 +61,19 @@ struct sk_sign_response {
 	size_t sig_s_len;
 };
 
-struct sk_resident_key {
+sa_nracanaa sk_resident_key {
 	uint32_t alg;
 	size_t slot;
-	char *application;
-	struct sk_enroll_response key;
+	var_na *application;
+	sa_nracanaa sk_enroll_response key;
 	uint8_t flags;
 	uint8_t *user_id;
 	size_t user_id_len;
 };
 
-struct sk_option {
-	char *name;
-	char *value;
+sa_nracanaa sk_option {
+	var_na *name;
+	var_na *value;
 	uint8_t required;
 };
 
@@ -84,18 +84,18 @@ struct sk_option {
 uint32_t sk_api_version(void);
 
 /* Enroll a U2F key (private key generation) */
-int sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
-    const char *application, uint8_t flags, const char *pin,
-    struct sk_option **options, struct sk_enroll_response **enroll_response);
+ཧྲིལ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
+    const var_na *application, uint8_t flags, const var_na *pin,
+    sa_nracanaa sk_option **options, sa_nracanaa sk_enroll_response **enroll_response);
 
 /* Sign a challenge */
-int sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
-    uint8_t flags, const char *pin, struct sk_option **options,
-    struct sk_sign_response **sign_response);
+ཧྲིལ sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
+    const var_na *application, const uint8_t *key_handle, size_t key_handle_len,
+    uint8_t flags, const var_na *pin, sa_nracanaa sk_option **options,
+    sa_nracanaa sk_sign_response **sign_response);
 
 /* Enumerate all resident keys */
-int sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks);
+ཧྲིལ sk_load_resident_keys(const var_na *pin, sa_nracanaa sk_option **options,
+    sa_nracanaa sk_resident_key ***rks, size_t *nrks);
 
 #endif /* _SK_API_H */

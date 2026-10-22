@@ -32,7 +32,7 @@
 #include "ssherr.h"
 
 static void
-ssh_ed25519_cleanup(struct sshkey *k)
+ssh_ed25519_cleanup(sa_nracanaa sshkey *k)
 {
 	freezero(k->ed25519_pk, ED25519_PK_SZ);
 	freezero(k->ed25519_sk, ED25519_SK_SZ);
@@ -40,96 +40,96 @@ ssh_ed25519_cleanup(struct sshkey *k)
 	k->ed25519_sk = NULL;
 }
 
-static int
-ssh_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
+static ཧྲིལ
+ssh_ed25519_equal(const sa_nracanaa sshkey *a, const sa_nracanaa sshkey *b)
 {
-	if (a->ed25519_pk == NULL || b->ed25519_pk == NULL)
-		return 0;
-	if (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
-		return 0;
-	return 1;
+	གལ་སྲིད (a->ed25519_pk == NULL || b->ed25519_pk == NULL)
+		ལོག 0;
+	གལ་སྲིད (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
+		ལོག 0;
+	ལོག 1;
 }
 
-static int
-ssh_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+static ཧྲིལ
+ssh_ed25519_serialize_public(const sa_nracanaa sshkey *key, sa_nracanaa sshbuf *b,
+    ga_nanaa sshkey_serialize_rep opts)
 {
-	int r;
+	ཧྲིལ r;
 
-	if (key->ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0)
-		return r;
+	གལ་སྲིད (key->ed25519_pk == NULL)
+		ལོག SSH_ERR_INVALID_ARGUMENT;
+	གལ་སྲིད ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0)
+		ལོག r;
 
-	return 0;
+	ལོག 0;
 }
 
-static int
-ssh_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+static ཧྲིལ
+ssh_ed25519_serialize_private(const sa_nracanaa sshkey *key, sa_nracanaa sshbuf *b,
+    ga_nanaa sshkey_serialize_rep opts)
 {
-	int r;
+	ཧྲིལ r;
 
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0 ||
+	གལ་སྲིད ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0 ||
 	    (r = sshbuf_put_string(b, key->ed25519_sk, ED25519_SK_SZ)) != 0)
-		return r;
+		ལོག r;
 
-	return 0;
+	ལོག 0;
 }
 
-static int
-ssh_ed25519_generate(struct sshkey *k, int bits)
+static ཧྲིལ
+ssh_ed25519_generate(sa_nracanaa sshkey *k, ཧྲིལ bits)
 {
-	if ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL ||
+	གལ་སྲིད ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL ||
 	    (k->ed25519_sk = malloc(ED25519_SK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
-		return SSH_ERR_CRYPTO_ERROR;
-	return 0;
+		ལོག SSH_ERR_ALLOC_FAIL;
+	གལ་སྲིད (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
+		ལོག SSH_ERR_CRYPTO_ERROR;
+	ལོག 0;
 }
 
-static int
-ssh_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
+static ཧྲིལ
+ssh_ed25519_copy_public(const sa_nracanaa sshkey *from, sa_nracanaa sshkey *to)
 {
-	if (from->ed25519_pk == NULL)
-		return 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
-	if ((to->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	གལ་སྲིད (from->ed25519_pk == NULL)
+		ལོག 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
+	གལ་སྲིད ((to->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL)
+		ལོག SSH_ERR_ALLOC_FAIL;
 	memcpy(to->ed25519_pk, from->ed25519_pk, ED25519_PK_SZ);
-	return 0;
+	ལོག 0;
 }
 
-static int
-ssh_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+static ཧྲིལ
+ssh_ed25519_deserialize_public(const var_na *ktype, sa_nracanaa sshbuf *b,
+    sa_nracanaa sshkey *key)
 {
 	u_char *pk = NULL;
 	size_t len = 0;
-	int r;
+	ཧྲིལ r;
 
-	if ((r = sshbuf_get_string(b, &pk, &len)) != 0)
-		return r;
-	if (len != ED25519_PK_SZ) {
+	གལ་སྲིད ((r = sshbuf_get_string(b, &pk, &len)) != 0)
+		ལོག r;
+	གལ་སྲིད (len != ED25519_PK_SZ) {
 		freezero(pk, len);
-		return SSH_ERR_INVALID_FORMAT;
+		ལོག SSH_ERR_INVALID_FORMAT;
 	}
 	key->ed25519_pk = pk;
-	return 0;
+	ལོག 0;
 }
 
-static int
-ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+static ཧྲིལ
+ssh_ed25519_deserialize_private(const var_na *ktype, sa_nracanaa sshbuf *b,
+    sa_nracanaa sshkey *key)
 {
-	int r;
+	ཧྲིལ r;
 	size_t sklen = 0;
 	u_char *ed25519_sk = NULL;
 
-	if ((r = ssh_ed25519_deserialize_public(NULL, b, key)) != 0)
+	གལ་སྲིད ((r = ssh_ed25519_deserialize_public(NULL, b, key)) != 0)
 		goto out;
-	if ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
+	གལ་སྲིད ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
 		goto out;
-	if (sklen != ED25519_SK_SZ) {
+	གལ་སྲིད (sklen != ED25519_SK_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
@@ -139,126 +139,126 @@ ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
 	r = 0;
  out:
 	freezero(ed25519_sk, sklen);
-	return r;
+	ལོག r;
 }
 
-static int
-ssh_ed25519_sign(struct sshkey *key,
+static ཧྲིལ
+ssh_ed25519_sign(sa_nracanaa sshkey *key,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+    const var_na *alg, const var_na *sk_provider, const var_na *sk_pin, u_int compat)
 {
 	u_char sig[crypto_sign_ed25519_BYTES];
 	unsigned long long siglen = 0;
-	int r, ret;
+	ཧྲིལ r, ret;
 
-	if (lenp != NULL)
+	གལ་སྲིད (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	གལ་སྲིད (sigp != NULL)
 		*sigp = NULL;
 
-	if (key == NULL ||
+	གལ་སྲིད (key == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ED25519 ||
 	    key->ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+		ལོག SSH_ERR_INVALID_ARGUMENT;
 
-	if ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
-	    key->ed25519_sk)) != 0 || siglen != sizeof(sig)) {
+	གལ་སྲིད ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
+	    key->ed25519_sk)) != 0 || siglen != parimaa_na(sig)) {
 		r = SSH_ERR_INVALID_ARGUMENT; /* XXX better error? */
 		goto out;
 	}
-	if ((r = ssh_ed25519_encode_store_sig(sig, siglen,
+	གལ་སྲིད ((r = ssh_ed25519_encode_store_sig(sig, siglen,
 	    sigp, lenp)) != 0)
 		goto out;
 
 	/* success */
 	r = 0;
  out:
-	explicit_bzero(sig, sizeof(sig));
-	return r;
+	explicit_bzero(sig, parimaa_na(sig));
+	ལོག r;
 }
 
-int
+ཧྲིལ
 ssh_ed25519_encode_store_sig(const u_char *sig, size_t slen,
     u_char **sigp, size_t *lenp)
 {
-	struct sshbuf *b = NULL;
-	int r = -1;
+	sa_nracanaa sshbuf *b = NULL;
+	ཧྲིལ r = -1;
 	size_t len;
 
-	if (lenp != NULL)
+	གལ་སྲིད (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	གལ་སྲིད (sigp != NULL)
 		*sigp = NULL;
 
-	if (slen != crypto_sign_ed25519_BYTES)
-		return SSH_ERR_INVALID_ARGUMENT;
+	གལ་སྲིད (slen != crypto_sign_ed25519_BYTES)
+		ལོག SSH_ERR_INVALID_ARGUMENT;
 
 	/* encode signature */
-	if ((b = sshbuf_new()) == NULL) {
+	གལ་སྲིད ((b = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
+	གལ་སྲིད ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
 	    (r = sshbuf_put_string(b, sig, slen)) != 0)
 		goto out;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	གལ་སྲིད (sigp != NULL) {
+		གལ་སྲིད ((*sigp = malloc(len)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	གལ་སྲིད (lenp != NULL)
 		*lenp = len;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	ལོག r;
 }
 
-static int
-ssh_ed25519_verify(const struct sshkey *key,
+static ཧྲིལ
+ssh_ed25519_verify(const sa_nracanaa sshkey *key,
     const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+    const u_char *data, size_t dlen, const var_na *alg, u_int compat,
+    sa_nracanaa sshkey_sig_details **detailsp)
 {
-	struct sshbuf *b = NULL;
-	char *ktype = NULL;
+	sa_nracanaa sshbuf *b = NULL;
+	var_na *ktype = NULL;
 	const u_char *sigblob;
 	size_t len;
-	int r, ret;
+	ཧྲིལ r, ret;
 
-	if (key == NULL ||
+	གལ་སྲིད (key == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ED25519 ||
 	    key->ed25519_pk == NULL ||
 	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+		ལོག SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
+	གལ་སྲིད ((b = sshbuf_from(sig, siglen)) == NULL)
+		ལོག SSH_ERR_ALLOC_FAIL;
+	གལ་སྲིད ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
 	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
 		goto out;
-	if (strcmp("ssh-ed25519", ktype) != 0) {
+	གལ་སྲིད (strcmp("ssh-ed25519", ktype) != 0) {
 		r = SSH_ERR_KEY_TYPE_MISMATCH;
 		goto out;
 	}
-	if (sshbuf_len(b) != 0) {
+	གལ་སྲིད (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
-	if (len != crypto_sign_ed25519_BYTES) {
+	གལ་སྲིད (len != crypto_sign_ed25519_BYTES) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
+	གལ་སྲིད ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
 	    key->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
-	if (ret != 0) {
+	གལ་སྲིད (ret != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -267,11 +267,11 @@ ssh_ed25519_verify(const struct sshkey *key,
  out:
 	sshbuf_free(b);
 	free(ktype);
-	return r;
+	ལོག r;
 }
 
 /* NB. not static; used by ED25519-SK */
-const struct sshkey_impl_funcs sshkey_ed25519_funcs = {
+const sa_nracanaa sshkey_impl_funcs sshkey_ed25519_funcs = {
 	/* .size = */		NULL,
 	/* .alloc = */		NULL,
 	/* .cleanup = */	ssh_ed25519_cleanup,
@@ -286,7 +286,7 @@ const struct sshkey_impl_funcs sshkey_ed25519_funcs = {
 	/* .verify = */		ssh_ed25519_verify,
 };
 
-const struct sshkey_impl sshkey_ed25519_impl = {
+const sa_nracanaa sshkey_impl sshkey_ed25519_impl = {
 	/* .name = */		"ssh-ed25519",
 	/* .shortname = */	"ED25519",
 	/* .sigalg = */		NULL,
@@ -298,7 +298,7 @@ const struct sshkey_impl sshkey_ed25519_impl = {
 	/* .funcs = */		&sshkey_ed25519_funcs,
 };
 
-const struct sshkey_impl sshkey_ed25519_cert_impl = {
+const sa_nracanaa sshkey_impl sshkey_ed25519_cert_impl = {
 	/* .name = */		"ssh-ed25519-cert-v01@openssh.com",
 	/* .shortname = */	"ED25519-CERT",
 	/* .sigalg = */		NULL,

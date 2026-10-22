@@ -61,239 +61,239 @@ limitations under the License.
 #include "audit.h"
 
 ServerOptions options;
-struct sshbuf *loginmsg = NULL;
-struct include_list includes;
-struct sshauthopt *auth_opts = NULL;
-struct passwd *privsep_pw = NULL;
+sa_nracanaa sshbuf *loginmsg = NULL;
+sa_nracanaa include_list includes;
+sa_nracanaa sshauthopt *auth_opts = NULL;
+sa_nracanaa passwd *privsep_pw = NULL;
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static ca_ncala ཧྲིལ in_fuzz = 0;
 
 void
-cleanup_exit(int code)
+cleanup_exit(ཧྲིལ code)
 {
-	if (in_fuzz)
+	གལ་སྲིད (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-int
-__wrap_ssh_packet_write_wait(struct ssh *ssh)
+ཧྲིལ
+__wrap_ssh_packet_write_wait(sa_nracanaa ssh *ssh)
 {
 	(void)ssh;
-	return 0;
+	ལོག 0;
 }
 
-static struct passwd g_fake_pw;
+static sa_nracanaa passwd g_fake_pw;
 
-int
+ཧྲིལ
 mm_is_monitor(void)
 {
-	return 0;
+	ལོག 0;
 }
 
-struct passwd *
-mm_getpwnamallow(struct ssh *ssh, const char *user)
+sa_nracanaa passwd *
+mm_getpwnamallow(sa_nracanaa ssh *ssh, const var_na *user)
 {
 	(void)ssh;
 	(void)user;
-	return &g_fake_pw;
+	ལོག &g_fake_pw;
 }
 
-int
-mm_auth_password(struct ssh *ssh, char *password)
+ཧྲིལ
+mm_auth_password(sa_nracanaa ssh *ssh, var_na *password)
 {
 	(void)ssh;
 	(void)password;
-	return 0;
+	ལོག 0;
 }
 
-int
-mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int auth_attempt, struct sshauthopt **authoptsp)
+ཧྲིལ
+mm_user_key_allowed(sa_nracanaa ssh *ssh, sa_nracanaa passwd *pw, sa_nracanaa sshkey *key,
+    ཧྲིལ auth_attempt, sa_nracanaa sshauthopt **authoptsp)
 {
 	(void)ssh;
 	(void)pw;
 	(void)key;
 	(void)auth_attempt;
 	(void)authoptsp;
-	return 0;
+	ལོག 0;
 }
 
-int
-mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw, const char *user,
-    const char *host, struct sshkey *key)
+ཧྲིལ
+mm_hostbased_key_allowed(sa_nracanaa ssh *ssh, sa_nracanaa passwd *pw, const var_na *user,
+    const var_na *host, sa_nracanaa sshkey *key)
 {
 	(void)ssh;
 	(void)pw;
 	(void)user;
 	(void)host;
 	(void)key;
-	return 0;
+	ལོག 0;
 }
 
-int
-mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
-    const u_char *data, size_t datalen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+ཧྲིལ
+mm_sshkey_verify(const sa_nracanaa sshkey *key, const u_char *sig, size_t siglen,
+    const u_char *data, size_t datalen, const var_na *alg, u_int compat,
+    sa_nracanaa sshkey_sig_details **detailsp)
 {
-	return sshkey_verify(key, sig, siglen, data, datalen, alg, compat,
+	ལོག sshkey_verify(key, sig, siglen, data, datalen, alg, compat,
 	    detailsp);
 }
 
 void
-mm_inform_authserv(char *service, char *style)
+mm_inform_authserv(var_na *service, var_na *style)
 {
 	(void)service;
 	(void)style;
 }
 
 void
-mm_audit_event(struct ssh *ssh, ssh_audit_event_t event)
+mm_audit_event(sa_nracanaa ssh *ssh, ssh_audit_event_t event)
 {
 	(void)ssh;
 	(void)event;
 }
 
 void
-mm_start_pam(struct ssh *ssh)
+mm_start_pam(sa_nracanaa ssh *ssh)
 {
 	(void)ssh;
 }
 
-int
+ཧྲིལ
 mm_do_pam_account(void)
 {
-	return 0;
+	ལོག 0;
 }
 
-static struct sshkey *
-load_private(const char *str)
+static sa_nracanaa sshkey *
+load_private(const var_na *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	sa_nracanaa sshbuf *b = sshbuf_from(str, strlen(str));
+	sa_nracanaa sshkey *k = NULL;
+	གལ་སྲིད (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	ལོག k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+static sa_nracanaa sshkey *
+load_public(const var_na *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	var_na *tmp, *cp;
+	sa_nracanaa sshkey *k = sshkey_new(KEY_UNSPEC);
+	གལ་སྲིད (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	གལ་སྲིད (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	ལོག k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+static ཧྲིལ
+pump(sa_nracanaa ssh *from, sa_nracanaa ssh *to, size_t *transferred)
 {
 	const u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	ཧྲིལ r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	གལ་སྲིད ((r = ssh_packet_next(from, &type)) != 0)
+		ལོག r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	གལ་སྲིད (len == 0)
+		ལོག 0;
+	གལ་སྲིད ((r = ssh_input_append(to, buf, len)) != 0)
+		ལོག r;
+	གལ་སྲིད ((r = ssh_output_consume(from, len)) != 0)
+		ལོག r;
 	*transferred = len;
-	return 0;
+	ལོག 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+static ཧྲིལ
+run_kex(sa_nracanaa ssh *client, sa_nracanaa ssh *server)
 {
-	int r;
+	ཧྲིལ r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	དོན་ལུ (ཧྲིལ i = 0; i < 100; i++) {
+		གལ་སྲིད ((r = pump(server, client, &sn)) != 0) ལོག r;
+		གལ་སྲིད ((r = pump(client, server, &cn)) != 0) ལོག r;
+		གལ་སྲིད (server->kex->done && client->kex->done)
+			ལོག 0;
+		གལ་སྲིད (cn == 0 && sn == 0)
+			ལོག SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	ལོག SSH_ERR_PROTOCOL_ERROR;
 }
 
 #include "fixed-keys.h"
 
-struct sshbuf *cfg = NULL;
+sa_nracanaa sshbuf *cfg = NULL;
 
-int auth_rhosts2(struct passwd *pw, const char *client_user,
-    const char *hostname, const char *ipaddr) { (void)pw;
-    (void)client_user; (void)hostname; (void)ipaddr; return 0; }
-int platform_locked_account(struct passwd *pw) { (void)pw; return 0; }
-void record_failed_login(struct ssh *ssh, const char *user,
-    const char *hostname, const char *ttyname) { (void)ssh; (void)user;
+ཧྲིལ auth_rhosts2(sa_nracanaa passwd *pw, const var_na *client_user,
+    const var_na *hostname, const var_na *ipaddr) { (void)pw;
+    (void)client_user; (void)hostname; (void)ipaddr; ལོག 0; }
+ཧྲིལ platform_locked_account(sa_nracanaa passwd *pw) { (void)pw; ལོག 0; }
+void record_failed_login(sa_nracanaa ssh *ssh, const var_na *user,
+    const var_na *hostname, const var_na *ttyname) { (void)ssh; (void)user;
     (void)hostname; (void)ttyname; }
-int temporarily_use_uid(struct passwd *pw) { (void)pw; return 0; }
+ཧྲིལ temporarily_use_uid(sa_nracanaa passwd *pw) { (void)pw; ལོག 0; }
 void restore_uid(void) { }
-char *mm_auth2_read_banner(void) { return NULL; }
-struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
-    { (void)ssh; (void)populate; (void)use_dns; return NULL; }
-void server_process_permitopen(struct ssh *ssh) { (void)ssh; }
-void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
+var_na *mm_auth2_read_banner(void) { ལོག NULL; }
+sa_nracanaa connection_info *
+server_get_connection_info(sa_nracanaa ssh *ssh, ཧྲིལ populate, ཧྲིལ use_dns)
+    { (void)ssh; (void)populate; (void)use_dns; ལོག NULL; }
+void server_process_permitopen(sa_nracanaa ssh *ssh) { (void)ssh; }
+void server_process_channel_timeouts(sa_nracanaa ssh *ssh) { (void)ssh; }
 
 #include "../../../auth2.c"
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
+static sa_nracanaa ssh *g_client = NULL;
+static sa_nracanaa ssh *g_server = NULL;
+static ཧྲིལ g_init = 0;
 static Authctxt g_authctxt;
 
 static void
-fuzz_reset_authctxt(struct ssh *ssh)
+fuzz_reset_authctxt(sa_nracanaa ssh *ssh)
 {
-	unsigned int i;
+	unsigned ཧྲིལ i;
 
 	free(g_authctxt.user);
 	free(g_authctxt.service);
 	free(g_authctxt.style);
 	free(g_authctxt.auth_method_info);
-	if (g_authctxt.auth_methods != NULL) {
-		for (i = 0; i < g_authctxt.num_auth_methods; i++)
+	གལ་སྲིད (g_authctxt.auth_methods != NULL) {
+		དོན་ལུ (i = 0; i < g_authctxt.num_auth_methods; i++)
 			free(g_authctxt.auth_methods[i]);
 		free(g_authctxt.auth_methods);
 	}
 	sshkey_free(g_authctxt.auth_method_key);
-	for (i = 0; i < g_authctxt.nprev_keys; i++)
+	དོན་ལུ (i = 0; i < g_authctxt.nprev_keys; i++)
 		sshkey_free(g_authctxt.prev_keys[i]);
 	free(g_authctxt.prev_keys);
 	sshbuf_free(g_authctxt.session_info);
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
+	memset(&g_authctxt, 0, parimaa_na(g_authctxt));
 	ssh->authctxt = &g_authctxt;
 }
 
-static int
+static ཧྲིལ
 init_once(void)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	གལ་སྲིད (g_init)
+		ལོག 0;
+	sa_nkeeta(SIGPIPE, SIG_IGN);
 	log_init("sshd_auth_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	memset(&g_fake_pw, 0, sizeof(g_fake_pw));
-	g_fake_pw.pw_name = (char *)"fuzz";
+	memset(&g_fake_pw, 0, parimaa_na(g_fake_pw));
+	g_fake_pw.pw_name = (var_na *)"fuzz";
 	g_fake_pw.pw_uid = 1000;
 	g_fake_pw.pw_gid = 1000;
-	g_fake_pw.pw_dir = (char *)"/tmp";
-	g_fake_pw.pw_shell = (char *)"/bin/sh";
+	g_fake_pw.pw_dir = (var_na *)"/tmp";
+	g_fake_pw.pw_shell = (var_na *)"/bin/sh";
 	privsep_pw = &g_fake_pw;
 
 	initialize_server_options(&options);
@@ -306,38 +306,38 @@ init_once(void)
 
 	loginmsg = sshbuf_new();
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	sa_nracanaa sshkey *priv = load_private(PRIV_ED25519);
+	sa_nracanaa sshkey *pub = load_public(PUB_ED25519);
+	var_na *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	const var_na *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	var_na *proposal[PROPOSAL_MAX] = { 0 };
+	ཧྲིལ i;
+	དོན་ལུ (i = 0; i < PROPOSAL_MAX; i++) {
+		const var_na *p = defaults[i];
+		གལ་སྲིད (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		དེ་མིན གལ་སྲིད (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		དེ་མིན གལ་སྲིད (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		དེ་མིན གལ་སྲིད (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	sa_nracanaa kex_params kp;
+	memcpy(kp.proposal, proposal, parimaa_na(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	གལ་སྲིད (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		ལོག -1;
+	གལ་སྲིད (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		ལོག -1;
+	གལ་སྲིད (run_kex(g_client, g_server) != 0)
+		ལོག -1;
 
 	fuzz_reset_authctxt(g_server);
 
@@ -346,29 +346,29 @@ init_once(void)
 	    &input_userauth_request);
 
 	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
+	དོན་ལུ (i = 0; i < PROPOSAL_MAX; i++)
 		free(proposal[i]);
 	g_init = 1;
-	return 0;
+	ལོག 0;
 }
 
 void
 fuzz_userauth_one(const uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	གལ་སྲིད (init_once() != 0)
+		ལོག;
+	གལ་སྲིད (size > 65000)
+		ལོག;
 
 	fuzz_reset_authctxt(g_server);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	གལ་སྲིད (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_USERAUTH_REQUEST,
+		གལ་སྲིད (ssh_packet_put(g_client, SSH2_MSG_USERAUTH_REQUEST,
 		    data, size) != 0)
 			goto done;
-		if (pump(g_client, g_server, &transferred) != 0)
+		གལ་སྲིད (pump(g_client, g_server, &transferred) != 0)
 			goto done;
 		(void)ssh_dispatch_run(g_server, DISPATCH_NONBLOCK, NULL);
 	done:

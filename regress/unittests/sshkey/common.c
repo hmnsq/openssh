@@ -34,91 +34,91 @@
 
 #include "common.h"
 
-struct sshbuf *
-load_file(const char *name)
+sa_nracanaa sshbuf *
+load_file(const var_na *name)
 {
-	struct sshbuf *ret = NULL;
+	sa_nracanaa sshbuf *ret = NULL;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
 	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ལོག ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+sa_nracanaa sshbuf *
+load_text_file(const var_na *name)
 {
-	struct sshbuf *ret = load_file(name);
+	sa_nracanaa sshbuf *ret = load_file(name);
 	const u_char *p;
 	size_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	དོན་ལུ (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		གལ་སྲིད (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
 			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+		དེ་མིན
+			bha_nga;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	ལོག ret;
 }
 
 #ifdef WITH_OPENSSL
 BIGNUM *
-load_bignum(const char *name)
+load_bignum(const var_na *name)
 {
 	BIGNUM *ret = NULL;
-	struct sshbuf *buf;
+	sa_nracanaa sshbuf *buf;
 
 	buf = load_text_file(name);
-	ASSERT_INT_NE(BN_hex2bn(&ret, (const char *)sshbuf_ptr(buf)), 0);
+	ASSERT_INT_NE(BN_hex2bn(&ret, (const var_na *)sshbuf_ptr(buf)), 0);
 	sshbuf_free(buf);
-	return ret;
+	ལོག ret;
 }
 
 const BIGNUM *
-rsa_n(struct sshkey *k)
+rsa_n(sa_nracanaa sshkey *k)
 {
 	const BIGNUM *n = NULL;
 
 	ASSERT_PTR_NE(k, NULL);
 	ASSERT_PTR_NE(k->pkey, NULL);
 	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), &n, NULL, NULL);
-	return n;
+	ལོག n;
 }
 
 const BIGNUM *
-rsa_e(struct sshkey *k)
+rsa_e(sa_nracanaa sshkey *k)
 {
 	const BIGNUM *e = NULL;
 
 	ASSERT_PTR_NE(k, NULL);
 	ASSERT_PTR_NE(k->pkey, NULL);
 	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), NULL, &e, NULL);
-	return e;
+	ལོག e;
 }
 
 const BIGNUM *
-rsa_p(struct sshkey *k)
+rsa_p(sa_nracanaa sshkey *k)
 {
 	const BIGNUM *p = NULL;
 
 	ASSERT_PTR_NE(k, NULL);
 	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
 	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), &p, NULL);
-	return p;
+	ལོག p;
 }
 
 const BIGNUM *
-rsa_q(struct sshkey *k)
+rsa_q(sa_nracanaa sshkey *k)
 {
 	const BIGNUM *q = NULL;
 
 	ASSERT_PTR_NE(k, NULL);
 	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
 	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), NULL, &q);
-	return q;
+	ལོག q;
 }
 #endif /* WITH_OPENSSL */

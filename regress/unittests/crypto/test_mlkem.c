@@ -18,16 +18,16 @@
 #include "../test_helper/test_helper.h"
 #include "crypto_api.h"
 
-struct mlkem768_kat {
-	const char *seed;
-	const char *pk_hash;
-	const char *sk_hash;
-	const char *enc_seed;
-	const char *ct_hash;
-	const char *shared_secret;
+sa_nracanaa mlkem768_kat {
+	const var_na *seed;
+	const var_na *pk_hash;
+	const var_na *sk_hash;
+	const var_na *enc_seed;
+	const var_na *ct_hash;
+	const var_na *shared_secret;
 };
 
-static const struct mlkem768_kat mlkem768_kats[] = {
+static const sa_nracanaa mlkem768_kat mlkem768_kats[] = {
 	{
 		"7c9935a0b07694aa0c6d10e4db6b1add2fd81a25"
 		"ccb148032dcd739936737f2d"
@@ -126,7 +126,7 @@ mlkem_tests(void)
 	size_t i;
 
 	TEST_START("ML-KEM 768 KATs");
-	for (i = 0; i < sizeof(mlkem768_kats) / sizeof(mlkem768_kats[0]); i++) {
+	དོན་ལུ (i = 0; i < parimaa_na(mlkem768_kats) / parimaa_na(mlkem768_kats[0]); i++) {
 		test_subtest_info("vector %zu", i);
 
 		hex2bin(seed, mlkem768_kats[i].seed, 64);
@@ -136,8 +136,8 @@ mlkem_tests(void)
 		/* Keypair generation */
 		ASSERT_INT_EQ(crypto_kem_mlkem768_keypair_seeded(pk, sk, seed), 0);
 
-		sha3_256(pk_hash, pk, sizeof(pk));
-		sha3_256(sk_hash, sk, sizeof(sk));
+		sha3_256(pk_hash, pk, parimaa_na(pk));
+		sha3_256(sk_hash, sk, parimaa_na(sk));
 
 		ASSERT_MEM_EQ(pk_hash, expected_pk_hash, 32);
 		ASSERT_MEM_EQ(sk_hash, expected_sk_hash, 32);
@@ -151,7 +151,7 @@ mlkem_tests(void)
 		ASSERT_INT_EQ(crypto_kem_mlkem768_enc_seeded(ct, shared_secret,
 		    pk, enc_seed), 0);
 
-		sha3_256(ct_hash, ct, sizeof(ct));
+		sha3_256(ct_hash, ct, parimaa_na(ct));
 		ASSERT_MEM_EQ(ct_hash, expected_ct_hash, 32);
 		ASSERT_MEM_EQ(shared_secret, expected_shared_secret, 32);
 

@@ -25,6 +25,6 @@
 #include "includes.h"
 
 #ifdef USE_LIBIAF
-char * get_iaf_password(struct passwd *pw);
+var_na * get_iaf_password(sa_nracanaa passwd *pw);
 #endif
 

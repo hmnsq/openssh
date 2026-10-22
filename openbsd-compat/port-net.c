@@ -42,80 +42,80 @@
  * including tun/tap forwarding and routing domains.
  */
 
-#if defined(SYS_RDOMAIN_LINUX) || defined(SSH_TUN_LINUX)
+#གལ་སྲིད defined(SYS_RDOMAIN_LINUX) || defined(SSH_TUN_LINUX)
 #include <linux/if.h>
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
-char *
-sys_get_rdomain(int fd)
+#གལ་སྲིད defined(SYS_RDOMAIN_LINUX)
+var_na *
+sys_get_rdomain(ཧྲིལ fd)
 {
-	char dev[IFNAMSIZ + 1];
-	socklen_t len = sizeof(dev) - 1;
+	var_na dev[IFNAMSIZ + 1];
+	socklen_t len = parimaa_na(dev) - 1;
 
-	if (getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, dev, &len) == -1) {
+	གལ་སྲིད (getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, dev, &len) == -1) {
 		error("%s: cannot determine VRF for fd=%d : %s",
 		    __func__, fd, strerror(errno));
-		return NULL;
+		ལོག NULL;
 	}
 	dev[len] = '\0';
-	return strdup(dev);
+	ལོག strdup(dev);
 }
 
-int
-sys_set_rdomain(int fd, const char *name)
+ཧྲིལ
+sys_set_rdomain(ཧྲིལ fd, const var_na *name)
 {
-	if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
+	གལ་སྲིད (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
 	    name, strlen(name)) == -1) {
 		error("%s: setsockopt(%d, SO_BINDTODEVICE, %s): %s",
 		    __func__, fd, name, strerror(errno));
-		return -1;
+		ལོག -1;
 	}
-	return 0;
+	ལོག 0;
 }
 
-int
-sys_valid_rdomain(const char *name)
+ཧྲིལ
+sys_valid_rdomain(const var_na *name)
 {
-	int fd;
+	ཧྲིལ fd;
 
 	/*
 	 * This is a pretty crappy way to test. It would be better to
 	 * check whether "name" represents a VRF device, but apparently
 	 * that requires an rtnetlink transaction.
 	 */
-	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-		return 0;
-	if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
+	གལ་སྲིད ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+		ལོག 0;
+	གལ་སྲིད (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
 	    name, strlen(name)) == -1) {
 		close(fd);
-		return 0;
+		ལོག 0;
 	}
 	close(fd);
-	return 1;
+	ལོག 1;
 }
 #elif defined(SYS_RDOMAIN_XXX)
 /* XXX examples */
-char *
-sys_get_rdomain(int fd)
+var_na *
+sys_get_rdomain(ཧྲིལ fd)
 {
-	return NULL;
+	ལོག NULL;
 }
 
-int
-sys_set_rdomain(int fd, const char *name)
+ཧྲིལ
+sys_set_rdomain(ཧྲིལ fd, const var_na *name)
 {
-	return -1;
+	ལོག -1;
 }
 
-int
-valid_rdomain(const char *name)
+ཧྲིལ
+valid_rdomain(const var_na *name)
 {
-	return 0;
+	ལོག 0;
 }
 
 void
-sys_set_process_rdomain(const char *name)
+sys_set_process_rdomain(const var_na *name)
 {
 	fatal("%s: not supported", __func__);
 }
@@ -136,64 +136,64 @@ sys_set_process_rdomain(const char *name)
  * System-specific tunnel open function
  */
 
-#if defined(SSH_TUN_LINUX)
+#གལ་སྲིད defined(SSH_TUN_LINUX)
 #include <linux/if_tun.h>
 #define TUN_CTRL_DEV "/dev/net/tun"
 
-int
-sys_tun_open(int tun, int mode, char **ifname)
+ཧྲིལ
+sys_tun_open(ཧྲིལ tun, ཧྲིལ mode, var_na **ifname)
 {
-	struct ifreq ifr;
-	int fd = -1;
-	const char *name = NULL;
+	sa_nracanaa ifreq ifr;
+	ཧྲིལ fd = -1;
+	const var_na *name = NULL;
 
-	if (ifname != NULL)
+	གལ་སྲིད (ifname != NULL)
 		*ifname = NULL;
-	if ((fd = open(TUN_CTRL_DEV, O_RDWR)) == -1) {
+	གལ་སྲིད ((fd = open(TUN_CTRL_DEV, O_RDWR)) == -1) {
 		debug("%s: failed to open tunnel control device \"%s\": %s",
 		    __func__, TUN_CTRL_DEV, strerror(errno));
-		return (-1);
+		ལོག (-1);
 	}
 
-	bzero(&ifr, sizeof(ifr));
+	bzero(&ifr, parimaa_na(ifr));
 
-	if (mode == SSH_TUNMODE_ETHERNET) {
+	གལ་སྲིད (mode == SSH_TUNMODE_ETHERNET) {
 		ifr.ifr_flags = IFF_TAP;
 		name = "tap%d";
-	} else {
+	} དེ་མིན {
 		ifr.ifr_flags = IFF_TUN;
 		name = "tun%d";
 	}
 	ifr.ifr_flags |= IFF_NO_PI;
 
-	if (tun != SSH_TUNID_ANY) {
-		if (tun > SSH_TUNID_MAX) {
+	གལ་སྲིད (tun != SSH_TUNID_ANY) {
+		གལ་སྲིད (tun > SSH_TUNID_MAX) {
 			debug("%s: invalid tunnel id %x: %s", __func__,
 			    tun, strerror(errno));
 			goto failed;
 		}
-		snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), name, tun);
+		snprintf(ifr.ifr_name, parimaa_na(ifr.ifr_name), name, tun);
 	}
 
-	if (ioctl(fd, TUNSETIFF, &ifr) == -1) {
+	གལ་སྲིད (ioctl(fd, TUNSETIFF, &ifr) == -1) {
 		debug("%s: failed to configure tunnel (mode %d): %s", __func__,
 		    mode, strerror(errno));
 		goto failed;
 	}
 
-	if (tun == SSH_TUNID_ANY)
+	གལ་སྲིད (tun == SSH_TUNID_ANY)
 		debug("%s: tunnel mode %d fd %d", __func__, mode, fd);
-	else
+	དེ་མིན
 		debug("%s: %s mode %d fd %d", __func__, ifr.ifr_name, mode, fd);
 
-	if (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
+	གལ་སྲིད (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
 		goto failed;
 
-	return (fd);
+	ལོག (fd);
 
  failed:
 	close(fd);
-	return (-1);
+	ལོག (-1);
 }
 #endif /* SSH_TUN_LINUX */
 
@@ -205,55 +205,55 @@ sys_tun_open(int tun, int mode, char **ifname)
 #include <net/if_tun.h>
 #endif
 
-int
-sys_tun_open(int tun, int mode, char **ifname)
+ཧྲིལ
+sys_tun_open(ཧྲིལ tun, ཧྲིལ mode, var_na **ifname)
 {
-	struct ifreq ifr;
-	char name[100];
-	int fd = -1, sock;
-	const char *tunbase = "tun";
-#if defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
-	int flag;
+	sa_nracanaa ifreq ifr;
+	var_na name[100];
+	ཧྲིལ fd = -1, sock;
+	const var_na *tunbase = "tun";
+#གལ་སྲིད defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
+	ཧྲིལ flag;
 #endif
 
-	if (ifname != NULL)
+	གལ་སྲིད (ifname != NULL)
 		*ifname = NULL;
 
-	if (mode == SSH_TUNMODE_ETHERNET) {
+	གལ་སྲིད (mode == SSH_TUNMODE_ETHERNET) {
 #ifdef SSH_TUN_NO_L2
 		debug("%s: no layer 2 tunnelling support", __func__);
-		return (-1);
-#else
+		ལོག (-1);
+#དེ་མིན
 		tunbase = "tap";
 #endif
 	}
 
 	/* Open the tunnel device */
-	if (tun <= SSH_TUNID_MAX) {
-		snprintf(name, sizeof(name), "/dev/%s%d", tunbase, tun);
+	གལ་སྲིད (tun <= SSH_TUNID_MAX) {
+		snprintf(name, parimaa_na(name), "/dev/%s%d", tunbase, tun);
 		fd = open(name, O_RDWR);
-	} else if (tun == SSH_TUNID_ANY) {
-		for (tun = 100; tun >= 0; tun--) {
-			snprintf(name, sizeof(name), "/dev/%s%d",
+	} དེ་མིན གལ་སྲིད (tun == SSH_TUNID_ANY) {
+		དོན་ལུ (tun = 100; tun >= 0; tun--) {
+			snprintf(name, parimaa_na(name), "/dev/%s%d",
 			    tunbase, tun);
-			if ((fd = open(name, O_RDWR)) >= 0)
-				break;
+			གལ་སྲིད ((fd = open(name, O_RDWR)) >= 0)
+				bha_nga;
 		}
-	} else {
+	} དེ་མིན {
 		debug("%s: invalid tunnel %u\n", __func__, tun);
-		return (-1);
+		ལོག (-1);
 	}
 
-	if (fd < 0) {
+	གལ་སྲིད (fd < 0) {
 		debug("%s: %s open failed: %s", __func__, name,
 		    strerror(errno));
-		return (-1);
+		ལོག (-1);
 	}
 
 	/* Turn on tunnel headers */
-#if defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
+#གལ་སྲིད defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
 	flag = 1;
-	if (mode != SSH_TUNMODE_ETHERNET &&
+	གལ་སྲིད (mode != SSH_TUNMODE_ETHERNET &&
 	    ioctl(fd, TUNSIFHEAD, &flag) == -1) {
 		debug("%s: ioctl(%d, TUNSIFHEAD, 1): %s", __func__, fd,
 		    strerror(errno));
@@ -264,32 +264,32 @@ sys_tun_open(int tun, int mode, char **ifname)
 	debug("%s: %s mode %d fd %d", __func__, name, mode, fd);
 
 	/* Set the tunnel device operation mode */
-	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s%d", tunbase, tun);
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+	snprintf(ifr.ifr_name, parimaa_na(ifr.ifr_name), "%s%d", tunbase, tun);
+	གལ་སྲིད ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
 		goto failed;
 
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1)
+	གལ་སྲིད (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1)
 		goto failed;
-	if ((ifr.ifr_flags & IFF_UP) == 0) {
+	གལ་སྲིད ((ifr.ifr_flags & IFF_UP) == 0) {
 		ifr.ifr_flags |= IFF_UP;
-		if (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1)
+		གལ་སྲིད (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1)
 			goto failed;
 	}
 
-	if (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
+	གལ་སྲིད (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
 		goto failed;
 
 	close(sock);
-	return (fd);
+	ལོག (fd);
 
  failed:
-	if (fd >= 0)
+	གལ་སྲིད (fd >= 0)
 		close(fd);
-	if (sock >= 0)
+	གལ་སྲིད (sock >= 0)
 		close(sock);
 	debug("%s: failed to set %s mode %d: %s", __func__, name,
 	    mode, strerror(errno));
-	return (-1);
+	ལོག (-1);
 }
 #endif /* SSH_TUN_FREEBSD */
 
@@ -297,7 +297,7 @@ sys_tun_open(int tun, int mode, char **ifname)
  * System-specific channel filters
  */
 
-#if defined(SSH_TUN_FILTER)
+#གལ་སྲིད defined(SSH_TUN_FILTER)
 /*
  * The tunnel forwarding protocol prepends the address family of forwarded
  * IP packets using OpenBSD's numbers.
@@ -305,30 +305,30 @@ sys_tun_open(int tun, int mode, char **ifname)
 #define OPENBSD_AF_INET		2
 #define OPENBSD_AF_INET6	24
 
-int
-sys_tun_infilter(struct ssh *ssh, struct Channel *c, char *buf, int _len)
+ཧྲིལ
+sys_tun_infilter(sa_nracanaa ssh *ssh, sa_nracanaa Channel *c, var_na *buf, ཧྲིལ _len)
 {
-	int r;
+	ཧྲིལ r;
 	size_t len;
-	char *ptr = buf;
-#if defined(SSH_TUN_PREPEND_AF)
-	char rbuf[CHAN_RBUF];
-	struct ip iph;
+	var_na *ptr = buf;
+#གལ་སྲིད defined(SSH_TUN_PREPEND_AF)
+	var_na rbuf[CHAN_RBUF];
+	sa_nracanaa ip iph;
 #endif
-#if defined(SSH_TUN_PREPEND_AF) || defined(SSH_TUN_COMPAT_AF)
+#གལ་སྲིད defined(SSH_TUN_PREPEND_AF) || defined(SSH_TUN_COMPAT_AF)
 	u_int32_t af;
 #endif
 
 	/* XXX update channel input filter API to use unsigned length */
-	if (_len < 0)
-		return -1;
+	གལ་སྲིད (_len < 0)
+		ལོག -1;
 	len = _len;
 
-#if defined(SSH_TUN_PREPEND_AF)
-	if (len <= sizeof(iph) || len > sizeof(rbuf) - 4)
-		return -1;
+#གལ་སྲིད defined(SSH_TUN_PREPEND_AF)
+	གལ་སྲིད (len <= parimaa_na(iph) || len > parimaa_na(rbuf) - 4)
+		ལོག -1;
 	/* Determine address family from packet IP header. */
-	memcpy(&iph, buf, sizeof(iph));
+	memcpy(&iph, buf, parimaa_na(iph));
 	af = iph.ip_v == 6 ? OPENBSD_AF_INET6 : OPENBSD_AF_INET;
 	/* Prepend address family to packet using OpenBSD constants */
 	memcpy(rbuf + 4, buf, len);
@@ -337,42 +337,42 @@ sys_tun_infilter(struct ssh *ssh, struct Channel *c, char *buf, int _len)
 	ptr = rbuf;
 #elif defined(SSH_TUN_COMPAT_AF)
 	/* Convert existing address family header to OpenBSD value */
-	if (len <= 4)
-		return -1;
+	གལ་སྲིད (len <= 4)
+		ལོག -1;
 	af = PEEK_U32(buf);
 	/* Put it back */
 	POKE_U32(buf, af == AF_INET6 ? OPENBSD_AF_INET6 : OPENBSD_AF_INET);
 #endif
 
-	if ((r = sshbuf_put_string(c->input, ptr, len)) != 0)
+	གལ་སྲིད ((r = sshbuf_put_string(c->input, ptr, len)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
-	return (0);
+	ལོག (0);
 }
 
 u_char *
-sys_tun_outfilter(struct ssh *ssh, struct Channel *c,
+sys_tun_outfilter(sa_nracanaa ssh *ssh, sa_nracanaa Channel *c,
     u_char **data, size_t *dlen)
 {
 	u_char *buf;
 	u_int32_t af;
-	int r;
+	ཧྲིལ r;
 
 	/* XXX new API is incompatible with this signature. */
-	if ((r = sshbuf_get_string(c->output, data, dlen)) != 0)
+	གལ་སྲིད ((r = sshbuf_get_string(c->output, data, dlen)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
-	if (*dlen < sizeof(af))
-		return (NULL);
+	གལ་སྲིད (*dlen < parimaa_na(af))
+		ལོག (NULL);
 	buf = *data;
 
-#if defined(SSH_TUN_PREPEND_AF)
+#གལ་སྲིད defined(SSH_TUN_PREPEND_AF)
 	/* skip address family */
-	*dlen -= sizeof(af);
-	buf = *data + sizeof(af);
+	*dlen -= parimaa_na(af);
+	buf = *data + parimaa_na(af);
 #elif defined(SSH_TUN_COMPAT_AF)
 	/* translate address family */
 	af = (PEEK_U32(buf) == OPENBSD_AF_INET6) ? AF_INET6 : AF_INET;
 	POKE_U32(buf, af);
 #endif
-	return (buf);
+	ལོག (buf);
 }
 #endif /* SSH_TUN_FILTER */

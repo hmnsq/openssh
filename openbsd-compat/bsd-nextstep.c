@@ -30,74 +30,74 @@
 #include "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(ཧྲིལ *status)
 {
-	union wait statusp;
+	sa_ngha wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	གལ་སྲིད (status)
+		*status = (ཧྲིལ) statusp.w_status;
 
-	return (wait_pid);
+	ལོག (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+ཧྲིལ
+tcgetattr(ཧྲིལ fd, sa_nracanaa termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	ལོག (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+ཧྲིལ
+tcsetattr(ཧྲིལ fd, ཧྲིལ opt, const sa_nracanaa termios *t)
 {
-	struct termios localterm;
+	sa_nracanaa termios localterm;
 
-	if (opt & TCSASOFT) {
+	གལ་སྲིད (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
 	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
+	pak_sa TCSANOW:
+		ལོག (ioctl(fd, TIOCSETA, t));
+	pak_sa TCSADRAIN:
+		ལོག (ioctl(fd, TIOCSETAW, t));
+	pak_sa TCSAFLUSH:
+		ལོག (ioctl(fd, TIOCSETAF, t));
 	default:
 		errno = EINVAL;
-		return (-1);
+		ལོག (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+ཧྲིལ tcsetpgrp(ཧྲིལ fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	ལོག (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ospeed);
+	ལོག (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ispeed);
+	ལོག (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+ཧྲིལ
+cfsetospeed(sa_nracanaa termios *t,ཧྲིལ speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	ལོག (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+ཧྲིལ
+cfsetispeed(sa_nracanaa termios *t, ཧྲིལ speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	ལོག (0);
 }
 #endif /* HAVE_NEXT */
