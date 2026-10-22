@@ -13,14 +13,14 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-struct xaddr;
+संरचना xaddr;
 
-struct per_source_penalty;
+संरचना per_source_penalty;
 
-void	srclimit_init(int, int, int, int,
-    struct per_source_penalty *, const char *);
-int	srclimit_check_allow(int, int);
-void	srclimit_done(int);
+शून्य	srclimit_init(पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क, पूर्णाङ्क,
+    संरचना per_source_penalty *, ध्रुव वर्ण *);
+पूर्णाङ्क	srclimit_check_allow(पूर्णाङ्क, पूर्णाङ्क);
+शून्य	srclimit_done(पूर्णाङ्क);
 
 #define SRCLIMIT_PENALTY_NONE			0
 #define SRCLIMIT_PENALTY_CRASH			1
@@ -37,6 +37,6 @@ void	srclimit_done(int);
 #define EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
 #define EXIT_INVALID_USER	7	/* invalid user supplied */
 
-void	srclimit_penalise(struct xaddr *, int);
-int	srclimit_penalty_check_allow(int, const char **);
-void	srclimit_penalty_info(void);
+शून्य	srclimit_penalise(संरचना xaddr *, पूर्णाङ्क);
+पूर्णाङ्क	srclimit_penalty_check_allow(पूर्णाङ्क, ध्रुव वर्ण **);
+शून्य	srclimit_penalty_info(शून्य);
