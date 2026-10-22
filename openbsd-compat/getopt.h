@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# যদি defined __cplusplus
 #  define __THROW throw()
-# else
+# অন্যথা
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#যদি 0
+সংরচনা option {
 	/* name of long option */
-	const char *name;
+	ধ্রুব বর্ণ *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	পূর্ণাঙ্ক has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	পূর্ণাঙ্ক *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	পূর্ণাঙ্ক val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+পূর্ণাঙ্ক	 getopt_long(পূর্ণাঙ্ক, বর্ণ * ধ্রুব *, ধ্রুব বর্ণ *,
+	    ধ্রুব সংরচনা option *, পূর্ণাঙ্ক *);
+পূর্ণাঙ্ক	 getopt_long_only(পূর্ণাঙ্ক, বর্ণ * ধ্রুব *, ধ্রুব বর্ণ *,
+	    ধ্রুব সংরচনা option *, পূর্ণাঙ্ক *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+পূর্ণাঙ্ক	 getopt(পূর্ণাঙ্ক, বর্ণ * ধ্রুব *, ধ্রুব বর্ণ *) __THROW;
+পূর্ণাঙ্ক	 getsubopt(বর্ণ **, বর্ণ * ধ্রুব *, বর্ণ **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+বাহ্য   বর্ণ *optarg;                  /* getopt(3) external variables */
+বাহ্য   পূর্ণাঙ্ক opterr;
+বাহ্য   পূর্ণাঙ্ক optind;
+বাহ্য   পূর্ণাঙ্ক optopt;
+বাহ্য   পূর্ণাঙ্ক optreset;
+বাহ্য   বর্ণ *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

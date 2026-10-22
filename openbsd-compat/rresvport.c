@@ -31,78 +31,78 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/rresvport.c */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifndef HAVE_RRESVPORT_AF
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/socket.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#অন্তর্ভাব <netinet/in.h>
+#অন্তর্ভাব <arpa/inet.h>
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
-#if 0
-int
-rresvport(int *alport)
+#যদি 0
+পূর্ণাঙ্ক
+rresvport(পূর্ণাঙ্ক *alport)
 {
-	return rresvport_af(alport, AF_INET);
+	প্রত্যাগম rresvport_af(alport, AF_INET);
 }
 #endif
 
-int
-rresvport_af(int *alport, sa_family_t af)
+পূর্ণাঙ্ক
+rresvport_af(পূর্ণাঙ্ক *alport, sa_family_t af)
 {
-	struct sockaddr_storage ss;
-	struct sockaddr *sa;
+	সংরচনা sockaddr_storage ss;
+	সংরচনা sockaddr *sa;
 	u_int16_t *portp;
-	int s;
+	পূর্ণাঙ্ক s;
 	socklen_t salen;
 
-	memset(&ss, '\0', sizeof ss);
-	sa = (struct sockaddr *)&ss;
+	memset(&ss, '\0', পরিমাণ ss);
+	sa = (সংরচনা sockaddr *)&ss;
 
-	switch (af) {
-	case AF_INET:
-		salen = sizeof(struct sockaddr_in);
-		portp = &((struct sockaddr_in *)sa)->sin_port;
-		break;
-	case AF_INET6:
-		salen = sizeof(struct sockaddr_in6);
-		portp = &((struct sockaddr_in6 *)sa)->sin6_port;
-		break;
-	default:
+	বিকল্প (af) {
+	পক্ষ AF_INET:
+		salen = পরিমাণ(সংরচনা sockaddr_in);
+		portp = &((সংরচনা sockaddr_in *)sa)->sin_port;
+		ভঙ্গ;
+	পক্ষ AF_INET6:
+		salen = পরিমাণ(সংরচনা sockaddr_in6);
+		portp = &((সংরচনা sockaddr_in6 *)sa)->sin6_port;
+		ভঙ্গ;
+	স্বভাব:
 		errno = EPFNOSUPPORT;
-		return (-1);
+		প্রত্যাগম (-1);
 	}
 	sa->sa_family = af;
 	
 	s = socket(af, SOCK_STREAM, 0);
-	if (s < 0)
-		return (-1);
+	যদি (s < 0)
+		প্রত্যাগম (-1);
 
 	*portp = htons(*alport);
-	if (*alport < IPPORT_RESERVED - 1) {
-		if (bind(s, sa, salen) >= 0)
-			return (s);
-		if (errno != EADDRINUSE) {
-			(void)close(s);
-			return (-1);
+	যদি (*alport < IPPORT_RESERVED - 1) {
+		যদি (bind(s, sa, salen) >= 0)
+			প্রত্যাগম (s);
+		যদি (errno != EADDRINUSE) {
+			(শূন্য)close(s);
+			প্রত্যাগম (-1);
 		}
 	}
 
 	*portp = 0;
 	sa->sa_family = af;
-	if (bindresvport_sa(s, sa) == -1) {
-		(void)close(s);
-		return (-1);
+	যদি (bindresvport_sa(s, sa) == -1) {
+		(শূন্য)close(s);
+		প্রত্যাগম (-1);
 	}
 	*alport = ntohs(*portp);
-	return (s);
+	প্রত্যাগম (s);
 }
 
 #endif /* HAVE_RRESVPORT_AF */

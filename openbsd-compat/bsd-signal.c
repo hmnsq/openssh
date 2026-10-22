@@ -14,22 +14,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
-#include "openbsd-compat/bsd-signal.h"
+#অন্তর্ভাব "openbsd-compat/bsd-signal.h"
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int sig)
+#যদি !defined(HAVE_STRSIGNAL)
+বর্ণ *strsignal(পূর্ণাঙ্ক sig)
 {
-	static char buf[16];
+	স্থির বর্ণ buf[16];
 
-	(void)snprintf(buf, sizeof(buf), "%d", sig);
-	return buf;
+	(শূন্য)snprintf(buf, পরিমাণ(buf), "%d", sig);
+	প্রত্যাগম buf;
 }
 #endif
 

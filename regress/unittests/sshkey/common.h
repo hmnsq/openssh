@@ -6,17 +6,17 @@
  */
 
 /* Load a binary file into a buffer */
-struct sshbuf *load_file(const char *name);
+সংরচনা sshbuf *load_file(ধ্রুব বর্ণ *name);
 
 /* Load a text file into a buffer */
-struct sshbuf *load_text_file(const char *name);
+সংরচনা sshbuf *load_text_file(ধ্রুব বর্ণ *name);
 
 /* Load a bignum from a file */
-BIGNUM *load_bignum(const char *name);
+BIGNUM *load_bignum(ধ্রুব বর্ণ *name);
 
 /* Accessors for key components */
-const BIGNUM *rsa_n(struct sshkey *k);
-const BIGNUM *rsa_e(struct sshkey *k);
-const BIGNUM *rsa_p(struct sshkey *k);
-const BIGNUM *rsa_q(struct sshkey *k);
+ধ্রুব BIGNUM *rsa_n(সংরচনা sshkey *k);
+ধ্রুব BIGNUM *rsa_e(সংরচনা sshkey *k);
+ধ্রুব BIGNUM *rsa_p(সংরচনা sshkey *k);
+ধ্রুব BIGNUM *rsa_q(সংরচনা sshkey *k);
 

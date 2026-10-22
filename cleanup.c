@@ -15,18 +15,18 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <unistd.h>
-#include <stdarg.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <stdarg.h>
 
-#include "log.h"
+#অন্তর্ভাব "log.h"
 
 /* default implementation */
-void
-cleanup_exit(int i)
+শূন্য
+cleanup_exit(পূর্ণাঙ্ক i)
 {
 	_exit(i);
 }

@@ -29,21 +29,21 @@
 
 #define DISPATCH_MAX	255
 
-enum {
+গণনা {
 	DISPATCH_BLOCK,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+সংরচনা ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+প্রকারনির্দেশ পূর্ণাঙ্ক dispatch_fn(পূর্ণাঙ্ক, uint32_t, সংরচনা ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+পূর্ণাঙ্ক	dispatch_protocol_error(পূর্ণাঙ্ক, uint32_t, সংরচনা ssh *);
+পূর্ণাঙ্ক	dispatch_protocol_ignore(পূর্ণাঙ্ক, uint32_t, সংরচনা ssh *);
+শূন্য	ssh_dispatch_init(সংরচনা ssh *, dispatch_fn *);
+শূন্য	ssh_dispatch_set(সংরচনা ssh *, পূর্ণাঙ্ক, dispatch_fn *);
+শূন্য	ssh_dispatch_range(সংরচনা ssh *, u_int, u_int, dispatch_fn *);
+পূর্ণাঙ্ক	ssh_dispatch_run(সংরচনা ssh *, পূর্ণাঙ্ক, চঞ্চল sig_atomic_t *);
+শূন্য	ssh_dispatch_run_fatal(সংরচনা ssh *, পূর্ণাঙ্ক, চঞ্চল sig_atomic_t *);
 
 #endif

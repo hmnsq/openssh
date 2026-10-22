@@ -33,54 +33,54 @@
 
 /* NETBSD ORIGINAL: external/bsd/file/dist/src/getline.c */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#if 0
-#include "file.h"
+#যদি 0
+#অন্তর্ভাব "file.h"
 #endif
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
+#যদি !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <string.h>
 
-static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+স্থির ssize_t
+getdelim(বর্ণ **buf, size_t *bufsiz, পূর্ণাঙ্ক delimiter, FILE *fp)
 {
-	char *ptr, *eptr;
+	বর্ণ *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
+	যদি (*buf == রিক্ত || *bufsiz == 0) {
+		যদি ((*buf = malloc(BUFSIZ)) == রিক্ত)
+			প্রত্যাগম -1;
 		*bufsiz = BUFSIZ;
 	}
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+	প্রতি (ptr = *buf, eptr = *buf + *bufsiz;;) {
+		পূর্ণাঙ্ক c = fgetc(fp);
+		যদি (c == -1) {
+			যদি (feof(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				যদি (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					প্রত্যাগম diff;
 				}
 			}
-			return -1;
+			প্রত্যাগম -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		যদি (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			প্রত্যাগম ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
-			char *nbuf;
+		যদি (ptr + 2 >= eptr) {
+			বর্ণ *nbuf;
 			size_t nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			যদি ((nbuf = realloc(*buf, nbufsiz)) == রিক্ত)
+				প্রত্যাগম -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -90,24 +90,24 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 }
 
 ssize_t
-getline(char **buf, size_t *bufsiz, FILE *fp)
+getline(বর্ণ **buf, size_t *bufsiz, FILE *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	প্রত্যাগম getdelim(buf, bufsiz, '\n', fp);
 }
 
 #endif
 
 #ifdef TEST
-int
-main(int argc, char *argv[])
+পূর্ণাঙ্ক
+main(পূর্ণাঙ্ক argc, বর্ণ *argv[])
 {
-	char *p = NULL;
+	বর্ণ *p = রিক্ত;
 	ssize_t len;
 	size_t n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
-		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
-	free(p);
-	return 0;
+	যাবত্ ((len = getline(&p, &n, stdin)) != -1)
+		(শূন্য)printf("%" SIZE_T_FORMAT "d %s", len, p);
+	মুক্ত(p);
+	প্রত্যাগম 0;
 }
 #endif

@@ -15,67 +15,67 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/socket.h>
+#অন্তর্ভাব <sys/wait.h>
 
-#include <limits.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <fcntl.h>
 
-#include "log.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "ssh-sk.h"
-#include "misc.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "msg.h"
+#অন্তর্ভাব "pathnames.h"
+#অন্তর্ভাব "ssh-sk.h"
+#অন্তর্ভাব "misc.h"
 
 /* #define DEBUG_SK 1 */
 
-static int
-start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
+স্থির পূর্ণাঙ্ক
+start_helper(পূর্ণাঙ্ক *fdp, pid_t *pidp, শূন্য (**osigchldp)(পূর্ণাঙ্ক))
 {
-	void (*osigchld)(int);
-	int oerrno, pair[2], execpipe[2];
+	শূন্য (*osigchld)(পূর্ণাঙ্ক);
+	পূর্ণাঙ্ক oerrno, pair[2], execpipe[2];
 	ssize_t n;
 	pid_t pid;
-	char execbuf[100], *helper, *verbosity = NULL;
+	বর্ণ execbuf[100], *helper, *verbosity = রিক্ত;
 
 	*fdp = -1;
 	*pidp = 0;
 	*osigchldp = SIG_DFL;
 
 	helper = getenv("SSH_SK_HELPER");
-	if (helper == NULL || strlen(helper) == 0)
+	যদি (helper == রিক্ত || strlen(helper) == 0)
 		helper = _PATH_SSH_SK_HELPER;
 #ifdef DEBUG_SK
 	verbosity = "-vvv";
 #endif
 
 	/* Create a O_CLOEXEC pipe to capture the execve() failure */
-	if (pipe(execpipe) == -1) {
+	যদি (pipe(execpipe) == -1) {
 		error("pipe:  %s", strerror(errno));
-		return SSH_ERR_SYSTEM_ERROR;
+		প্রত্যাগম SSH_ERR_SYSTEM_ERROR;
 	}
 	/* Start helper */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
+	যদি (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
 		error("socketpair: %s", strerror(errno));
 		close(execpipe[0]);
 		close(execpipe[1]);
-		return SSH_ERR_SYSTEM_ERROR;
+		প্রত্যাগম SSH_ERR_SYSTEM_ERROR;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	যদি ((pid = fork()) == -1) {
 		oerrno = errno;
 		error("fork: %s", strerror(errno));
 		close(pair[0]);
@@ -84,38 +84,38 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 		close(execpipe[1]);
 		ssh_signal(SIGCHLD, osigchld);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		প্রত্যাগম SSH_ERR_SYSTEM_ERROR;
 	}
-	if (pid == 0) {
+	যদি (pid == 0) {
 		close(execpipe[0]);
 		FD_CLOSEONEXEC(execpipe[1]);
-		if ((dup2(pair[1], STDIN_FILENO) == -1) ||
+		যদি ((dup2(pair[1], STDIN_FILENO) == -1) ||
 		    (dup2(pair[1], STDOUT_FILENO) == -1)) {
-			snprintf(execbuf, sizeof execbuf,
+			snprintf(execbuf, পরিমাণ execbuf,
 			    "dup2: %s", strerror(errno));
-			write(execpipe[1], execbuf, strlen(execbuf)+1);
+			লিখ(execpipe[1], execbuf, strlen(execbuf)+1);
 			_exit(1);
 		}
 		close(pair[0]);
 		close(pair[1]);
 		closefrom(STDERR_FILENO + 1);
 		debug_f("starting %s %s", helper,
-		    verbosity == NULL ? "" : verbosity);
-		execlp(helper, helper, verbosity, (char *)NULL);
-		snprintf(execbuf, sizeof execbuf,
+		    verbosity == রিক্ত ? "" : verbosity);
+		execlp(helper, helper, verbosity, (বর্ণ *)রিক্ত);
+		snprintf(execbuf, পরিমাণ execbuf,
 		    "execlp: %s", strerror(errno));
-		write(execpipe[1], execbuf, strlen(execbuf)+1);
+		লিখ(execpipe[1], execbuf, strlen(execbuf)+1);
 		_exit(1);
 	}
 	close(pair[1]);
 
 	close(execpipe[1]);
-	n = read(execpipe[0], execbuf, sizeof execbuf);
+	n = পঠ(execpipe[0], execbuf, পরিমাণ execbuf);
 	close(execpipe[0]);
-	if (n > 0) {
+	যদি (n > 0) {
 		execbuf[n - 1] = '\0';
 		error_f("%s", execbuf);
-		return SSH_ERR_AGENT_FAILURE;
+		প্রত্যাগম SSH_ERR_AGENT_FAILURE;
 	}
 
 	/* success */
@@ -123,220 +123,220 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 	*fdp = pair[0];
 	*pidp = pid;
 	*osigchldp = osigchld;
-	return 0;
+	প্রত্যাগম 0;
 }
 
-static int
+স্থির পূর্ণাঙ্ক
 reap_helper(pid_t pid)
 {
-	int status, oerrno;
+	পূর্ণাঙ্ক status, oerrno;
 
 	debug3_f("pid=%ld", (long)pid);
 
 	errno = 0;
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno == EINTR) {
+	যাবত্ (waitpid(pid, &status, 0) == -1) {
+		যদি (errno == EINTR) {
 			errno = 0;
-			continue;
+			অনুবর্ত;
 		}
 		oerrno = errno;
 		error_f("waitpid: %s", strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		প্রত্যাগম SSH_ERR_SYSTEM_ERROR;
 	}
-	if (!WIFEXITED(status)) {
+	যদি (!WIFEXITED(status)) {
 		error_f("helper exited abnormally");
-		return SSH_ERR_AGENT_FAILURE;
-	} else if (WEXITSTATUS(status) != 0) {
+		প্রত্যাগম SSH_ERR_AGENT_FAILURE;
+	} অন্যথা যদি (WEXITSTATUS(status) != 0) {
 		error_f("helper exited with non-zero exit status");
-		return SSH_ERR_AGENT_FAILURE;
+		প্রত্যাগম SSH_ERR_AGENT_FAILURE;
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
-static int
-client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
+স্থির পূর্ণাঙ্ক
+client_converse(সংরচনা sshbuf *বার্তা, সংরচনা sshbuf **respp, u_int type)
 {
-	int oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
+	পূর্ণাঙ্ক oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
 	u_int rtype, rerr;
 	pid_t pid;
 	u_char version;
-	void (*osigchld)(int);
-	struct sshbuf *req = NULL, *resp = NULL;
-	*respp = NULL;
+	শূন্য (*osigchld)(পূর্ণাঙ্ক);
+	সংরচনা sshbuf *req = রিক্ত, *resp = রিক্ত;
+	*respp = রিক্ত;
 
-	if ((r = start_helper(&fd, &pid, &osigchld)) != 0)
-		return r;
+	যদি ((r = start_helper(&fd, &pid, &osigchld)) != 0)
+		প্রত্যাগম r;
 
-	if ((req = sshbuf_new()) == NULL || (resp = sshbuf_new()) == NULL) {
+	যদি ((req = sshbuf_new()) == রিক্ত || (resp = sshbuf_new()) == রিক্ত) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
 	/* Request preamble: type, log_on_stderr, log_level */
 	ll = log_level_get();
-	if ((r = sshbuf_put_u32(req, type)) != 0 ||
+	যদি ((r = sshbuf_put_u32(req, type)) != 0 ||
 	    (r = sshbuf_put_u8(req, log_is_on_stderr() != 0)) != 0 ||
 	    (r = sshbuf_put_u32(req, ll < 0 ? 0 : ll)) != 0 ||
-	    (r = sshbuf_putb(req, msg)) != 0) {
+	    (r = sshbuf_putb(req, বার্তা)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		গচ্ছ out;
 	}
-	if ((r = ssh_msg_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
+	যদি ((r = ssh_বার্তা_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
 		error_fr(r, "send");
-		goto out;
+		গচ্ছ out;
 	}
-	if ((r = ssh_msg_recv(fd, resp)) != 0) {
+	যদি ((r = ssh_বার্তা_recv(fd, resp)) != 0) {
 		error_fr(r, "receive");
-		goto out;
+		গচ্ছ out;
 	}
-	if ((r = sshbuf_get_u8(resp, &version)) != 0) {
+	যদি ((r = sshbuf_get_u8(resp, &version)) != 0) {
 		error_fr(r, "parse version");
-		goto out;
+		গচ্ছ out;
 	}
-	if (version != SSH_SK_HELPER_VERSION) {
+	যদি (version != SSH_SK_HELPER_VERSION) {
 		error_f("unsupported version: got %u, expected %u",
 		    version, SSH_SK_HELPER_VERSION);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		গচ্ছ out;
 	}
-	if ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
+	যদি ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
 		error_fr(r, "parse message type");
-		goto out;
+		গচ্ছ out;
 	}
-	if (rtype == SSH_SK_HELPER_ERROR) {
-		if ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
+	যদি (rtype == SSH_SK_HELPER_ERROR) {
+		যদি ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
 			error_fr(r, "parse");
-			goto out;
+			গচ্ছ out;
 		}
 		debug_f("helper returned error -%u", rerr);
 		/* OpenSSH error values are negative; encoded as -err on wire */
-		if (rerr == 0 || rerr >= INT_MAX)
+		যদি (rerr == 0 || rerr >= INT_MAX)
 			r = SSH_ERR_INTERNAL_ERROR;
-		else
-			r = -(int)rerr;
-		goto out;
-	} else if (rtype != type) {
+		অন্যথা
+			r = -(পূর্ণাঙ্ক)rerr;
+		গচ্ছ out;
+	} অন্যথা যদি (rtype != type) {
 		error_f("helper returned incorrect message type %u, "
 		    "expecting %u", rtype, type);
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		গচ্ছ out;
 	}
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	close(fd);
-	if ((r2 = reap_helper(pid)) != 0) {
-		if (r == 0) {
+	যদি ((r2 = reap_helper(pid)) != 0) {
+		যদি (r == 0) {
 			r = r2;
 			oerrno = errno;
 		}
 	}
-	if (r == 0) {
+	যদি (r == 0) {
 		*respp = resp;
-		resp = NULL;
+		resp = রিক্ত;
 	}
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	ssh_signal(SIGCHLD, osigchld);
 	errno = oerrno;
-	return r;
+	প্রত্যাগম r;
 
 }
 
-int
-sshsk_sign(const char *provider, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+পূর্ণাঙ্ক
+sshsk_sign(ধ্রুব বর্ণ *provider, সংরচনা sshkey *চাবি,
+    u_char **sigp, size_t *lenp, ধ্রুব u_char *data, size_t datalen,
+    u_int compat, ধ্রুব বর্ণ *pin)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
+	পূর্ণাঙ্ক oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	সংরচনা sshbuf *kbuf = রিক্ত, *req = রিক্ত, *resp = রিক্ত;
 
-	*sigp = NULL;
+	*sigp = রিক্ত;
 	*lenp = 0;
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	প্রত্যাগম SSH_ERR_চাবি_TYPE_UNKNOWN;
 #endif
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	যদি ((kbuf = sshbuf_new()) == রিক্ত ||
+	    (req = sshbuf_new()) == রিক্ত) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
 
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0) {
+	যদি ((r = sshkey_private_serialize(চাবি, kbuf)) != 0) {
 		error_fr(r, "encode key");
-		goto out;
+		গচ্ছ out;
 	}
-	if ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
+	যদি ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider)) != 0 ||
 	    (r = sshbuf_put_string(req, data, datalen)) != 0 ||
-	    (r = sshbuf_put_cstring(req, NULL)) != 0 || /* alg */
+	    (r = sshbuf_put_cstring(req, রিক্ত)) != 0 || /* alg */
 	    (r = sshbuf_put_u32(req, compat)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		গচ্ছ out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
-		goto out;
+	যদি ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
+		গচ্ছ out;
 
-	if ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
+	যদি ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
 		error_fr(r, "parse signature");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		গচ্ছ out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	যদি (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		গচ্ছ out;
 	}
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
-	if (r != 0) {
+	যদি (r != 0) {
 		freezero(*sigp, *lenp);
-		*sigp = NULL;
+		*sigp = রিক্ত;
 		*lenp = 0;
 	}
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	প্রত্যাগম r;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+পূর্ণাঙ্ক
+sshsk_enroll(পূর্ণাঙ্ক type, ধ্রুব বর্ণ *provider_path, ধ্রুব বর্ণ *device,
+    ধ্রুব বর্ণ *application, ধ্রুব বর্ণ *userid, uint8_t flags,
+    ধ্রুব বর্ণ *pin, সংরচনা sshbuf *challenge_buf,
+    সংরচনা sshkey **keyp, সংরচনা sshbuf *attest)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *abuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
+	পূর্ণাঙ্ক oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	সংরচনা sshbuf *kbuf = রিক্ত, *abuf = রিক্ত, *req = রিক্ত, *resp = রিক্ত;
+	সংরচনা sshkey *চাবি = রিক্ত;
 
-	*keyp = NULL;
-	if (attest != NULL)
+	*keyp = রিক্ত;
+	যদি (attest != রিক্ত)
 		sshbuf_reset(attest);
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	প্রত্যাগম SSH_ERR_চাবি_TYPE_UNKNOWN;
 #endif
 
-	if (type < 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি (type < 0)
+		প্রত্যাগম SSH_ERR_INVALID_ARGUMENT;
 
-	if ((abuf = sshbuf_new()) == NULL ||
-	    (kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	যদি ((abuf = sshbuf_new()) == রিক্ত ||
+	    (kbuf = sshbuf_new()) == রিক্ত ||
+	    (req = sshbuf_new()) == রিক্ত) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
 
-	if ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
+	যদি ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, application)) != 0 ||
@@ -345,156 +345,156 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_stringb(req, challenge_buf)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		গচ্ছ out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
-		goto out;
+	যদি ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
+		গচ্ছ out;
 
-	if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+	যদি ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_get_stringb(resp, abuf)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		গচ্ছ out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	যদি (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		গচ্ছ out;
 	}
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+	যদি ((r = sshkey_private_deserialize(kbuf, &চাবি)) != 0) {
 		error_fr(r, "encode");
-		goto out;
+		গচ্ছ out;
 	}
-	if (attest != NULL && (r = sshbuf_putb(attest, abuf)) != 0) {
+	যদি (attest != রিক্ত && (r = sshbuf_putb(attest, abuf)) != 0) {
 		error_fr(r, "encode attestation information");
-		goto out;
+		গচ্ছ out;
 	}
 
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
+	*keyp = চাবি;
+	চাবি = রিক্ত;
  out:
 	oerrno = errno;
-	sshkey_free(key);
+	sshkey_free(চাবি);
 	sshbuf_free(kbuf);
 	sshbuf_free(abuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	প্রত্যাগম r;
 }
 
-static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+স্থির শূন্য
+sshsk_free_resident_চাবি(সংরচনা sshsk_resident_চাবি *srk)
 {
-	if (srk == NULL)
-		return;
-	sshkey_free(srk->key);
+	যদি (srk == রিক্ত)
+		প্রত্যাগম;
+	sshkey_free(srk->চাবি);
 	freezero(srk->user_id, srk->user_id_len);
-	free(srk);
+	মুক্ত(srk);
 }
 
 
-void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+শূন্য
+sshsk_free_resident_চাবিগুলি(সংরচনা sshsk_resident_চাবি **srks, size_t nsrks)
 {
 	size_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	যদি (srks == রিক্ত || nsrks == 0)
+		প্রত্যাগম;
 
-	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
-	free(srks);
+	প্রতি (i = 0; i < nsrks; i++)
+		sshsk_free_resident_চাবি(srks[i]);
+	মুক্ত(srks);
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+পূর্ণাঙ্ক
+sshsk_load_resident(ধ্রুব বর্ণ *provider_path, ধ্রুব বর্ণ *device,
+    ধ্রুব বর্ণ *pin, u_int flags, সংরচনা sshsk_resident_চাবি ***srksp,
     size_t *nsrksp)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
-	u_char *userid = NULL;
+	পূর্ণাঙ্ক oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	সংরচনা sshbuf *kbuf = রিক্ত, *req = রিক্ত, *resp = রিক্ত;
+	সংরচনা sshkey *চাবি = রিক্ত;
+	সংরচনা sshsk_resident_চাবি *srk = রিক্ত, **srks = রিক্ত, **tmp;
+	u_char *userid = রিক্ত;
 	size_t userid_len = 0, nsrks = 0;
 
-	*srksp = NULL;
+	*srksp = রিক্ত;
 	*nsrksp = 0;
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	যদি ((kbuf = sshbuf_new()) == রিক্ত ||
+	    (req = sshbuf_new()) == রিক্ত) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
 
-	if ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
+	যদি ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_u32(req, flags)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		গচ্ছ out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
-		goto out;
+	যদি ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+		গচ্ছ out;
 
-	while (sshbuf_len(resp) != 0) {
+	যাবত্ (sshbuf_len(resp) != 0) {
 		/* key, comment, user_id */
-		if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
-		    (r = sshbuf_get_cstring(resp, NULL, NULL)) != 0 ||
+		যদি ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+		    (r = sshbuf_get_cstring(resp, রিক্ত, রিক্ত)) != 0 ||
 		    (r = sshbuf_get_string(resp, &userid, &userid_len)) != 0) {
 			error_fr(r, "parse");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			গচ্ছ out;
 		}
-		if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+		যদি ((r = sshkey_private_deserialize(kbuf, &চাবি)) != 0) {
 			error_fr(r, "decode key");
-			goto out;
+			গচ্ছ out;
 		}
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		যদি ((srk = calloc(1, পরিমাণ(*srk))) == রিক্ত) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			গচ্ছ out;
 		}
-		srk->key = key;
-		key = NULL;
+		srk->চাবি = চাবি;
+		চাবি = রিক্ত;
 		srk->user_id = userid;
 		srk->user_id_len = userid_len;
-		userid = NULL;
+		userid = রিক্ত;
 		userid_len = 0;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
-		    sizeof(*srks))) == NULL) {
+		যদি ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		    পরিমাণ(*srks))) == রিক্ত) {
 			error_f("recallocarray keys failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			গচ্ছ out;
 		}
 		debug_f("srks[%zu]: %s %s uidlen %zu", nsrks,
-		    sshkey_type(srk->key), srk->key->sk_application,
+		    sshkey_type(srk->চাবি), srk->চাবি->sk_application,
 		    srk->user_id_len);
 		srks = tmp;
 		srks[nsrks++] = srk;
-		srk = NULL;
+		srk = রিক্ত;
 	}
 
 	/* success */
 	r = 0;
 	*srksp = srks;
 	*nsrksp = nsrks;
-	srks = NULL;
+	srks = রিক্ত;
 	nsrks = 0;
  out:
 	oerrno = errno;
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
+	sshsk_free_resident_চাবি(srk);
+	sshsk_free_resident_চাবিগুলি(srks, nsrks);
 	freezero(userid, userid_len);
-	sshkey_free(key);
+	sshkey_free(চাবি);
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	প্রত্যাগম r;
 }

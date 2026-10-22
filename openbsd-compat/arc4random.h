@@ -24,68 +24,68 @@
  */
 
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
+#অন্তর্ভাব <sys/mman.h>
 #endif
 
-#include <signal.h>
+#অন্তর্ভাব <signal.h>
 
 /* OpenSSH isn't multithreaded */
 #define _ARC4_LOCK()
 #define _ARC4_UNLOCK()
 #define _ARC4_ATFORK(f)
 
-static inline void
-_getentropy_fail(void)
+স্থির অন্তঃস্থ শূন্য
+_getentropy_fail(শূন্য)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+স্থির চঞ্চল sig_atomic_t _rs_forked;
 
-static inline void
-_rs_forkhandler(void)
+স্থির অন্তঃস্থ শূন্য
+_rs_forkhandler(শূন্য)
 {
 	_rs_forked = 1;
 }
 
-static inline void
-_rs_forkdetect(void)
+স্থির অন্তঃস্থ শূন্য
+_rs_forkdetect(শূন্য)
 {
-	static pid_t _rs_pid = 0;
+	স্থির pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	যদি (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		যদি (rs)
+			memset(rs, 0, পরিমাণ(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+স্থির অন্তঃস্থ পূর্ণাঙ্ক
+_rs_allocate(সংরচনা _rs **rsp, সংরচনা _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#যদি defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	যদি ((*rsp = mmap(রিক্ত, পরিমাণ(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		প্রত্যাগম (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	যদি ((*rsxp = mmap(রিক্ত, পরিমাণ(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
-		*rsp = NULL;
-		return (-1);
+		munmap(*rsp, পরিমাণ(**rsp));
+		*rsp = রিক্ত;
+		প্রত্যাগম (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
-		free(*rsp);
-		*rsp = NULL;
-		return (-1);
+#অন্যথা
+	যদি ((*rsp = calloc(1, পরিমাণ(**rsp))) == রিক্ত)
+		প্রত্যাগম (-1);
+	যদি ((*rsxp = calloc(1, পরিমাণ(**rsxp))) == রিক্ত) {
+		মুক্ত(*rsp);
+		*rsp = রিক্ত;
+		প্রত্যাগম (-1);
 	}
 #endif /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	প্রত্যাগম (0);
 }

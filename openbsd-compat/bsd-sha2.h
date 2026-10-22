@@ -39,9 +39,9 @@
 #ifndef _SSHSHA2_H
 #define _SSHSHA2_H
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#if !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
+#যদি !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
     !defined(HAVE_SHA512UPDATE)
 
 /*** SHA-256/384/512 Various Length Definitions ***********************/
@@ -63,8 +63,8 @@
 
 
 /*** SHA-224/256/384/512 Context Structure *******************************/
-typedef struct _SHA2_CTX {
-	union {
+প্রকারনির্দেশ সংরচনা _SHA2_CTX {
+	সঙ্ঘ {
 		u_int32_t	st32[8];
 		u_int64_t	st64[8];
 	} state;
@@ -72,98 +72,98 @@ typedef struct _SHA2_CTX {
 	u_int8_t	buffer[SHA512_BLOCK_LENGTH];
 } SHA2_CTX;
 
-#if 0
+#যদি 0
 __BEGIN_DECLS
-void SHA224Init(SHA2_CTX *);
-void SHA224Transform(u_int32_t state[8], const u_int8_t [SHA224_BLOCK_LENGTH]);
-void SHA224Update(SHA2_CTX *, const u_int8_t *, size_t)
+শূন্য SHA224Init(SHA2_CTX *);
+শূন্য SHA224Transform(u_int32_t state[8], ধ্রুব u_int8_t [SHA224_BLOCK_LENGTH]);
+শূন্য SHA224Update(SHA2_CTX *, ধ্রুব u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA224Pad(SHA2_CTX *);
-void SHA224Final(u_int8_t [SHA224_DIGEST_LENGTH], SHA2_CTX *)
+শূন্য SHA224Pad(SHA2_CTX *);
+শূন্য SHA224Final(u_int8_t [SHA224_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA224_DIGEST_LENGTH)));
-char *SHA224End(SHA2_CTX *, char *)
+বর্ণ *SHA224End(SHA2_CTX *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_LENGTH)));
-char *SHA224File(const char *, char *)
+বর্ণ *SHA224File(ধ্রুব বর্ণ *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_LENGTH)));
-char *SHA224FileChunk(const char *, char *, off_t, off_t)
+বর্ণ *SHA224FileChunk(ধ্রুব বর্ণ *, বর্ণ *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA224_DIGEST_STRING_LENGTH)));
-char *SHA224Data(const u_int8_t *, size_t, char *)
+বর্ণ *SHA224Data(ধ্রুব u_int8_t *, size_t, বর্ণ *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA224_DIGEST_STRING_LENGTH)));
 #endif /* 0 */
 
 #ifndef HAVE_SHA256UPDATE
-void SHA256Init(SHA2_CTX *);
-void SHA256Transform(u_int32_t state[8], const u_int8_t [SHA256_BLOCK_LENGTH]);
-void SHA256Update(SHA2_CTX *, const u_int8_t *, size_t)
+শূন্য SHA256Init(SHA2_CTX *);
+শূন্য SHA256Transform(u_int32_t state[8], ধ্রুব u_int8_t [SHA256_BLOCK_LENGTH]);
+শূন্য SHA256Update(SHA2_CTX *, ধ্রুব u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA256Pad(SHA2_CTX *);
-void SHA256Final(u_int8_t [SHA256_DIGEST_LENGTH], SHA2_CTX *)
+শূন্য SHA256Pad(SHA2_CTX *);
+শূন্য SHA256Final(u_int8_t [SHA256_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA256_DIGEST_LENGTH)));
-char *SHA256End(SHA2_CTX *, char *)
+বর্ণ *SHA256End(SHA2_CTX *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_LENGTH)));
-char *SHA256File(const char *, char *)
+বর্ণ *SHA256File(ধ্রুব বর্ণ *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_LENGTH)));
-char *SHA256FileChunk(const char *, char *, off_t, off_t)
+বর্ণ *SHA256FileChunk(ধ্রুব বর্ণ *, বর্ণ *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA256_DIGEST_STRING_LENGTH)));
-char *SHA256Data(const u_int8_t *, size_t, char *)
+বর্ণ *SHA256Data(ধ্রুব u_int8_t *, size_t, বর্ণ *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA256_DIGEST_STRING_LENGTH)));
 #endif /* HAVE_SHA256UPDATE */
 
 #ifndef HAVE_SHA384UPDATE
-void SHA384Init(SHA2_CTX *);
-void SHA384Transform(u_int64_t state[8], const u_int8_t [SHA384_BLOCK_LENGTH]);
-void SHA384Update(SHA2_CTX *, const u_int8_t *, size_t)
+শূন্য SHA384Init(SHA2_CTX *);
+শূন্য SHA384Transform(u_int64_t state[8], ধ্রুব u_int8_t [SHA384_BLOCK_LENGTH]);
+শূন্য SHA384Update(SHA2_CTX *, ধ্রুব u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA384Pad(SHA2_CTX *);
-void SHA384Final(u_int8_t [SHA384_DIGEST_LENGTH], SHA2_CTX *)
+শূন্য SHA384Pad(SHA2_CTX *);
+শূন্য SHA384Final(u_int8_t [SHA384_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA384_DIGEST_LENGTH)));
-char *SHA384End(SHA2_CTX *, char *)
+বর্ণ *SHA384End(SHA2_CTX *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_LENGTH)));
-char *SHA384File(const char *, char *)
+বর্ণ *SHA384File(ধ্রুব বর্ণ *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_LENGTH)));
-char *SHA384FileChunk(const char *, char *, off_t, off_t)
+বর্ণ *SHA384FileChunk(ধ্রুব বর্ণ *, বর্ণ *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA384_DIGEST_STRING_LENGTH)));
-char *SHA384Data(const u_int8_t *, size_t, char *)
+বর্ণ *SHA384Data(ধ্রুব u_int8_t *, size_t, বর্ণ *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA384_DIGEST_STRING_LENGTH)));
 #endif /* HAVE_SHA384UPDATE */
 
 #ifndef HAVE_SHA512UPDATE
-void SHA512Init(SHA2_CTX *);
-void SHA512Transform(u_int64_t state[8], const u_int8_t [SHA512_BLOCK_LENGTH]);
-void SHA512Update(SHA2_CTX *, const u_int8_t *, size_t)
+শূন্য SHA512Init(SHA2_CTX *);
+শূন্য SHA512Transform(u_int64_t state[8], ধ্রুব u_int8_t [SHA512_BLOCK_LENGTH]);
+শূন্য SHA512Update(SHA2_CTX *, ধ্রুব u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA512Pad(SHA2_CTX *);
-void SHA512Final(u_int8_t [SHA512_DIGEST_LENGTH], SHA2_CTX *)
+শূন্য SHA512Pad(SHA2_CTX *);
+শূন্য SHA512Final(u_int8_t [SHA512_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA512_DIGEST_LENGTH)));
-char *SHA512End(SHA2_CTX *, char *)
+বর্ণ *SHA512End(SHA2_CTX *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_LENGTH)));
-char *SHA512File(const char *, char *)
+বর্ণ *SHA512File(ধ্রুব বর্ণ *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_LENGTH)));
-char *SHA512FileChunk(const char *, char *, off_t, off_t)
+বর্ণ *SHA512FileChunk(ধ্রুব বর্ণ *, বর্ণ *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_DIGEST_STRING_LENGTH)));
-char *SHA512Data(const u_int8_t *, size_t, char *)
+বর্ণ *SHA512Data(ধ্রুব u_int8_t *, size_t, বর্ণ *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA512_DIGEST_STRING_LENGTH)));
 #endif /* HAVE_SHA512UPDATE */
 
-#if 0
-void SHA512_256Init(SHA2_CTX *);
-void SHA512_256Transform(u_int64_t state[8], const u_int8_t [SHA512_256_BLOCK_LENGTH]);
-void SHA512_256Update(SHA2_CTX *, const u_int8_t *, size_t)
+#যদি 0
+শূন্য SHA512_256Init(SHA2_CTX *);
+শূন্য SHA512_256Transform(u_int64_t state[8], ধ্রুব u_int8_t [SHA512_256_BLOCK_LENGTH]);
+শূন্য SHA512_256Update(SHA2_CTX *, ধ্রুব u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
-void SHA512_256Pad(SHA2_CTX *);
-void SHA512_256Final(u_int8_t [SHA512_256_DIGEST_LENGTH], SHA2_CTX *)
+শূন্য SHA512_256Pad(SHA2_CTX *);
+শূন্য SHA512_256Final(u_int8_t [SHA512_256_DIGEST_LENGTH], SHA2_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA512_256_DIGEST_LENGTH)));
-char *SHA512_256End(SHA2_CTX *, char *)
+বর্ণ *SHA512_256End(SHA2_CTX *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_LENGTH)));
-char *SHA512_256File(const char *, char *)
+বর্ণ *SHA512_256File(ধ্রুব বর্ণ *, বর্ণ *)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_LENGTH)));
-char *SHA512_256FileChunk(const char *, char *, off_t, off_t)
+বর্ণ *SHA512_256FileChunk(ধ্রুব বর্ণ *, বর্ণ *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA512_256_DIGEST_STRING_LENGTH)));
-char *SHA512_256Data(const u_int8_t *, size_t, char *)
+বর্ণ *SHA512_256Data(ধ্রুব u_int8_t *, size_t, বর্ণ *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA512_256_DIGEST_STRING_LENGTH)));
 __END_DECLS

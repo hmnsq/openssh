@@ -5,71 +5,71 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
-#include "../test_helper/test_helper.h"
+#অন্তর্ভাব "../test_helper/test_helper.h"
 
-#include "match.h"
+#অন্তর্ভাব "match.h"
 
 /* Original match_pattern() implementation; has bad worst-case behaviour */
-static int
-match_pattern_original(const char *s, const char *pattern)
+স্থির পূর্ণাঙ্ক
+match_pattern_original(ধ্রুব বর্ণ *s, ধ্রুব বর্ণ *pattern)
 {
-	for (;;) {
+	প্রতি (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		যদি (!*pattern)
+			প্রত্যাগম !*s;
 
-		if (*pattern == '*') {
+		যদি (*pattern == '*') {
 			/* Skip this and any consecutive asterisks. */
-			while (*pattern == '*')
+			যাবত্ (*pattern == '*')
 				pattern++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			যদি (!*pattern)
+				প্রত্যাগম 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			যদি (*pattern != '?' && *pattern != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
+				প্রতি (; *s; s++)
+					যদি (*s == *pattern &&
 					    match_pattern_original(s + 1,
 					    pattern + 1))
-						return 1;
+						প্রত্যাগম 1;
 				/* Failed. */
-				return 0;
+				প্রত্যাগম 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (match_pattern_original(s, pattern))
-					return 1;
+			প্রতি (; *s; s++)
+				যদি (match_pattern_original(s, pattern))
+					প্রত্যাগম 1;
 			/* Failed. */
-			return 0;
+			প্রত্যাগম 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		যদি (!*s)
+			প্রত্যাগম 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && *pattern != *s)
-			return 0;
+		যদি (*pattern != '?' && *pattern != *s)
+			প্রত্যাগম 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
@@ -79,26 +79,26 @@ match_pattern_original(const char *s, const char *pattern)
 }
 
 /* n^x for size_t */
-static size_t
+স্থির size_t
 pow_size(size_t base, size_t exp)
 {
 	size_t r = 1;
 
 	ASSERT_SIZE_T_NE(base, 0);
-	while (exp-- != 0) {
+	যাবত্ (exp-- != 0) {
 		ASSERT_SIZE_T_LE(r, SIZE_MAX / base);
 		r *= base;
 	}
-	return r;
+	প্রত্যাগম r;
 }
 
-static void
-make_word(size_t v, const char *alphabet, size_t alphabet_len,
-    char *word, size_t wordlen)
+স্থির শূন্য
+make_word(size_t v, ধ্রুব বর্ণ *alphabet, size_t alphabet_len,
+    বর্ণ *word, size_t wordlen)
 {
 	size_t i;
 
-	for (i = 0; i < wordlen; i++) {
+	প্রতি (i = 0; i < wordlen; i++) {
 		word[i] = alphabet[v % alphabet_len];
 		v /= alphabet_len;
 	}
@@ -106,25 +106,25 @@ make_word(size_t v, const char *alphabet, size_t alphabet_len,
 }
 
 #define PATTERN_LEN	8
-#define INPUT_LEN	7
+#define প্রবেশ_LEN	7
 
-static void
-match_pattern_check_one_input(const char *input, const char *pattern_alphabet)
+স্থির শূন্য
+match_pattern_check_one_প্রবেশ(ধ্রুব বর্ণ *প্রবেশ, ধ্রুব বর্ণ *pattern_alphabet)
 {
-	char pattern[PATTERN_LEN];
+	বর্ণ pattern[PATTERN_LEN];
 	size_t len, i, npatterns;
-	int actual, expected;
+	পূর্ণাঙ্ক actual, expected;
 
-	for (len = 0; len < sizeof(pattern); len++) {
+	প্রতি (len = 0; len < পরিমাণ(pattern); len++) {
 		/* Check with all patterns of this size using alphabet */
 		npatterns = pow_size(strlen(pattern_alphabet), len);
-		for (i = 0; i < npatterns; i++) {
+		প্রতি (i = 0; i < npatterns; i++) {
 			make_word(i, pattern_alphabet,
 			    strlen(pattern_alphabet), pattern, len);
-			actual = match_pattern(input, pattern);
-			expected = match_pattern_original(input, pattern);
+			actual = match_pattern(প্রবেশ, pattern);
+			expected = match_pattern_original(প্রবেশ, pattern);
 			test_subtest_info("input=\"%s\" pattern=\"%s\"",
-			    input, pattern);
+			    প্রবেশ, pattern);
 			ASSERT_INT_EQ(actual, expected);
 		}
 	}
@@ -134,27 +134,27 @@ match_pattern_check_one_input(const char *input, const char *pattern_alphabet)
  * Check current match_pattern against original one with an exhaustive
  * combination of patterns and inputs.
  */
-static void
-match_pattern_exhaustive_original(void)
+স্থির শূন্য
+match_pattern_exhaustive_original(শূন্য)
 {
-	const char *pattern_alphabet = "abx?*";
-	const char *input_alphabet = "abc";
-	char input[INPUT_LEN];
+	ধ্রুব বর্ণ *pattern_alphabet = "abx?*";
+	ধ্রুব বর্ণ *প্রবেশ_alphabet = "abc";
+	বর্ণ প্রবেশ[প্রবেশ_LEN];
 	size_t len, i, ninputs;
 
-	for (len = 0; len < sizeof(input); len++) {
+	প্রতি (len = 0; len < পরিমাণ(প্রবেশ); len++) {
 		/* Check every possible input from alphabet of this size */
-		ninputs = pow_size(strlen(input_alphabet), len);
-		for (i = 0; i < ninputs; i++) {
-			make_word(i, input_alphabet,
-			    strlen(input_alphabet), input, len);
-			match_pattern_check_one_input(input, pattern_alphabet);
+		ninputs = pow_size(strlen(প্রবেশ_alphabet), len);
+		প্রতি (i = 0; i < ninputs; i++) {
+			make_word(i, প্রবেশ_alphabet,
+			    strlen(প্রবেশ_alphabet), প্রবেশ, len);
+			match_pattern_check_one_প্রবেশ(প্রবেশ, pattern_alphabet);
 		}
 	}
 }
 
-void
-tests(void)
+শূন্য
+tests(শূন্য)
 {
 	TEST_START("match_pattern");
 	ASSERT_INT_EQ(match_pattern("", ""), 1);
@@ -276,10 +276,10 @@ tests(void)
 
 	TEST_START("addr_match_list");
 	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "127.0.0.1/44"), -2);
-	ASSERT_INT_EQ(addr_match_list(NULL, "127.0.0.1/44"), -2);
+	ASSERT_INT_EQ(addr_match_list(রিক্ত, "127.0.0.1/44"), -2);
 	ASSERT_INT_EQ(addr_match_list("a", "*"), 0);
 	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "*"), 1);
-	ASSERT_INT_EQ(addr_match_list(NULL, "*"), 0);
+	ASSERT_INT_EQ(addr_match_list(রিক্ত, "*"), 0);
 	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "127.0.0.1"), 1);
 	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "127.0.0.2"), 0);
 	ASSERT_INT_EQ(addr_match_list("127.0.0.1", "!127.0.0.1"), -1);
@@ -299,11 +299,11 @@ tests(void)
 	TEST_DONE();
 
 #define CHECK_FILTER(string,filter,expected) \
-	do { \
-		char *result = match_filter_denylist((string), (filter)); \
+	কুরু { \
+		বর্ণ *result = match_filter_denylist((string), (filter)); \
 		ASSERT_STRING_EQ(result, expected); \
-		free(result); \
-	} while (0)
+		মুক্ত(result); \
+	} যাবত্ (0)
 
 	TEST_START("match_filter_list");
 	CHECK_FILTER("a,b,c", "", "a,b,c");
@@ -326,8 +326,8 @@ tests(void)
  */
 }
 
-void
-benchmarks(void)
+শূন্য
+benchmarks(শূন্য)
 {
 	printf("no benchmarks\n");
 }

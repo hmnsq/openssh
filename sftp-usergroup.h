@@ -17,9 +17,9 @@
 /* sftp client user/group lookup and caching */
 
 /* Lookup uids/gids and populate cache */
-void get_remote_user_groups_from_glob(struct sftp_conn *conn, glob_t *g);
-void get_remote_user_groups_from_dirents(struct sftp_conn *conn, SFTP_DIRENT **d);
+শূন্য get_remote_user_groups_from_glob(সংরচনা sftp_conn *conn, glob_t *g);
+শূন্য get_remote_user_groups_from_dirents(সংরচনা sftp_conn *conn, SFTP_DIRENT **d);
 
 /* Return user/group name from cache or NULL if not found */
-const char *ruser_name(uid_t uid);
-const char *rgroup_name(uid_t gid);
+ধ্রুব বর্ণ *ruser_name(uid_t uid);
+ধ্রুব বর্ণ *rgroup_name(uid_t gid);

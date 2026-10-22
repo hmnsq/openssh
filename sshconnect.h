@@ -24,32 +24,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+সংরচনা sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+প্রকারনির্দেশ সংরচনা Sensitive Sensitive;
+সংরচনা Sensitive {
+	সংরচনা sshkey	**চাবিগুলি;
+	পূর্ণাঙ্ক		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+সংরচনা ssh_conn_info {
+	বর্ণ *conn_hash_hex;
+	বর্ণ *shorthost;
+	বর্ণ *uidstr;
+	বর্ণ *keyalias;
+	বর্ণ *thishost;
+	বর্ণ *host_arg;
+	বর্ণ *portstr;
+	বর্ণ *remhost;
+	বর্ণ *remuser;
+	বর্ণ *homedir;
+	বর্ণ *locuser;
+	বর্ণ *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+সংরচনা addrinfo;
+সংরচনা ssh;
+সংরচনা hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
 #define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
@@ -70,39 +70,39 @@ struct hostkeys;
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
-void	 ssh_kill_proxy_command(void);
+পূর্ণাঙ্ক	 ssh_connect(সংরচনা ssh *, ধ্রুব বর্ণ *, ধ্রুব বর্ণ *,
+	    সংরচনা addrinfo *, সংরচনা sockaddr_storage *, u_short,
+	    পূর্ণাঙ্ক, পূর্ণাঙ্ক *, পূর্ণাঙ্ক);
+শূন্য	 ssh_kill_proxy_command(শূন্য);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+শূন্য	 ssh_login(সংরচনা ssh *, Sensitive *, ধ্রুব বর্ণ *,
+    সংরচনা sockaddr_storage *, u_short, সংরচনা passwd *, পূর্ণাঙ্ক,
+    ধ্রুব সংরচনা ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+পূর্ণাঙ্ক	 verify_host_চাবি(বর্ণ *, সংরচনা sockaddr *, সংরচনা sshkey *,
+    ধ্রুব সংরচনা ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+শূন্য	 get_hostfile_hostname_ipaddr(বর্ণ *, সংরচনা sockaddr *, u_short,
+    বর্ণ **, বর্ণ **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+শূন্য	 ssh_kex2(সংরচনা ssh *ssh, বর্ণ *, সংরচনা sockaddr_storage *, u_short,
+    ধ্রুব সংরচনা ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+শূন্য	 ssh_userauth2(সংরচনা ssh *ssh, ধ্রুব বর্ণ *, ধ্রুব বর্ণ *,
+    বর্ণ *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+শূন্য	 pubkey_dump(সংরচনা ssh *);
 
-int	 ssh_local_cmd(const char *);
+পূর্ণাঙ্ক	 ssh_local_cmd(ধ্রুব বর্ণ *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+শূন্য	 maybe_add_চাবি_to_agent(ধ্রুব বর্ণ *, সংরচনা sshkey *,
+    ধ্রুব বর্ণ *, ধ্রুব বর্ণ *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+শূন্য	 load_hostkeys_command(সংরচনা hostkeys *, ধ্রুব বর্ণ *,
+    ধ্রুব বর্ণ *, ধ্রুব সংরচনা ssh_conn_info *,
+    ধ্রুব সংরচনা sshkey *, ধ্রুব বর্ণ *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+পূর্ণাঙ্ক hostkey_accepted_by_hostkeyalgs(ধ্রুব সংরচনা sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+শূন্য ssh_conn_info_free(সংরচনা ssh_conn_info *);
+সংরচনা ssh_conn_info *ssh_conn_info_dup(ধ্রুব সংরচনা ssh_conn_info *);

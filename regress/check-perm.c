@@ -2,23 +2,23 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <pwd.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/stat.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <pwd.h>
 #ifdef HAVE_LIBGEN_H
-#include <libgen.h>
+#অন্তর্ভাব <libgen.h>
 #endif
 
-static void
-fatal(const char *fmt, ...)
+স্থির শূন্য
+fatal(ধ্রুব বর্ণ *fmt, ...)
 {
 	va_list args;
 
@@ -29,26 +29,26 @@ fatal(const char *fmt, ...)
 	exit(1);
 }
 /* Based on session.c. NB. keep tests in sync */
-static void
-safely_chroot(const char *path, uid_t uid)
+স্থির শূন্য
+safely_chroot(ধ্রুব বর্ণ *path, uid_t uid)
 {
-	const char *cp;
-	char component[PATH_MAX];
-	struct stat st;
+	ধ্রুব বর্ণ *cp;
+	বর্ণ component[PATH_MAX];
+	সংরচনা stat st;
 
-	if (*path != '/')
+	যদি (*path != '/')
 		fatal("chroot path does not begin at root");
-	if (strlen(path) >= sizeof(component))
+	যদি (strlen(path) >= পরিমাণ(component))
 		fatal("chroot path too long");
 
 	/*
 	 * Descend the path, checking that each component is a
 	 * root-owned directory with strict permissions.
 	 */
-	for (cp = path; cp != NULL;) {
-		if ((cp = strchr(cp, '/')) == NULL)
-			strlcpy(component, path, sizeof(component));
-		else {
+	প্রতি (cp = path; cp != রিক্ত;) {
+		যদি ((cp = strchr(cp, '/')) == রিক্ত)
+			strlcpy(component, path, পরিমাণ(component));
+		অন্যথা {
 			cp++;
 			memcpy(component, path, cp - path);
 			component[cp - path] = '\0';
@@ -56,148 +56,148 @@ safely_chroot(const char *path, uid_t uid)
 
 		/* debug3("%s: checking '%s'", __func__, component); */
 
-		if (stat(component, &st) != 0)
+		যদি (stat(component, &st) != 0)
 			fatal("%s: stat(\"%s\"): %s", __func__,
 			    component, strerror(errno));
-		if (st.st_uid != 0 || (st.st_mode & 022) != 0)
+		যদি (st.st_uid != 0 || (st.st_mode & 022) != 0)
 			fatal("bad ownership or modes for chroot "
 			    "directory %s\"%s\"",
-			    cp == NULL ? "" : "component ", component);
-		if (!S_ISDIR(st.st_mode))
+			    cp == রিক্ত ? "" : "component ", component);
+		যদি (!S_ISDIR(st.st_mode))
 			fatal("chroot path %s\"%s\" is not a directory",
-			    cp == NULL ? "" : "component ", component);
+			    cp == রিক্ত ? "" : "component ", component);
 
 	}
 
-	if (chdir(path) == -1)
+	যদি (chdir(path) == -1)
 		fatal("Unable to chdir to chroot path \"%s\": "
 		    "%s", path, strerror(errno));
 }
 
 /* from platform.c */
-int
+পূর্ণাঙ্ক
 platform_sys_dir_uid(uid_t uid)
 {
-	if (uid == 0)
-		return 1;
+	যদি (uid == 0)
+		প্রত্যাগম 1;
 #ifdef PLATFORM_SYS_DIR_UID
-	if (uid == PLATFORM_SYS_DIR_UID)
-		return 1;
+	যদি (uid == PLATFORM_SYS_DIR_UID)
+		প্রত্যাগম 1;
 #endif
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /* from auth.c */
-int
-auth_secure_path(const char *name, struct stat *stp, const char *pw_dir,
-    uid_t uid, char *err, size_t errlen)
+পূর্ণাঙ্ক
+auth_secure_path(ধ্রুব বর্ণ *name, সংরচনা stat *stp, ধ্রুব বর্ণ *pw_dir,
+    uid_t uid, বর্ণ *err, size_t errlen)
 {
-	char buf[PATH_MAX], homedir[PATH_MAX];
-	char *cp;
-	int comparehome = 0;
-	struct stat st;
+	বর্ণ buf[PATH_MAX], homedir[PATH_MAX];
+	বর্ণ *cp;
+	পূর্ণাঙ্ক comparehome = 0;
+	সংরচনা stat st;
 
-	if (realpath(name, buf) == NULL) {
+	যদি (realpath(name, buf) == রিক্ত) {
 		snprintf(err, errlen, "realpath %s failed: %s", name,
 		    strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
+	যদি (pw_dir != রিক্ত && realpath(pw_dir, homedir) != রিক্ত)
 		comparehome = 1;
 
-	if (!S_ISREG(stp->st_mode)) {
+	যদি (!S_ISREG(stp->st_mode)) {
 		snprintf(err, errlen, "%s is not a regular file", buf);
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
+	যদি ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
 	    (stp->st_mode & 022) != 0) {
 		snprintf(err, errlen, "bad ownership or modes for file %s",
 		    buf);
-		return -1;
+		প্রত্যাগম -1;
 	}
 
 	/* for each component of the canonical path, walking upwards */
-	for (;;) {
-		if ((cp = dirname(buf)) == NULL) {
+	প্রতি (;;) {
+		যদি ((cp = dirname(buf)) == রিক্ত) {
 			snprintf(err, errlen, "dirname() failed");
-			return -1;
+			প্রত্যাগম -1;
 		}
-		strlcpy(buf, cp, sizeof(buf));
+		strlcpy(buf, cp, পরিমাণ(buf));
 
-		if (stat(buf, &st) < 0 ||
+		যদি (stat(buf, &st) < 0 ||
 		    (!platform_sys_dir_uid(st.st_uid) && st.st_uid != uid) ||
 		    (st.st_mode & 022) != 0) {
 			snprintf(err, errlen,
 			    "bad ownership or modes for directory %s", buf);
-			return -1;
+			প্রত্যাগম -1;
 		}
 
 		/* If are past the homedir then we can stop */
-		if (comparehome && strcmp(homedir, buf) == 0)
-			break;
+		যদি (comparehome && strcmp(homedir, buf) == 0)
+			ভঙ্গ;
 
 		/*
 		 * dirname should always complete with a "/" path,
 		 * but we can be paranoid and check for "." too
 		 */
-		if ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
-			break;
+		যদি ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
+			ভঙ্গ;
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
-static void
-usage(void)
+স্থির শূন্য
+usage(শূন্য)
 {
 	fprintf(stderr, "check-perm -m [chroot | keys-command] [path]\n");
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+পূর্ণাঙ্ক
+main(পূর্ণাঙ্ক argc, বর্ণ **argv)
 {
-	const char *path = ".";
-	char errmsg[256];
-	int ch, mode = -1;
-	extern char *optarg;
-	extern int optind;
-	struct stat st;
+	ধ্রুব বর্ণ *path = ".";
+	বর্ণ errmsg[256];
+	পূর্ণাঙ্ক ch, mode = -1;
+	বাহ্য বর্ণ *optarg;
+	বাহ্য পূর্ণাঙ্ক optind;
+	সংরচনা stat st;
 
-	while ((ch = getopt(argc, argv, "hm:")) != -1) {
-		switch (ch) {
-		case 'm':
-			if (strcasecmp(optarg, "chroot") == 0)
+	যাবত্ ((ch = getopt(argc, argv, "hm:")) != -1) {
+		বিকল্প (ch) {
+		পক্ষ 'm':
+			যদি (strcasecmp(optarg, "chroot") == 0)
 				mode = 1;
-			else if (strcasecmp(optarg, "keys-command") == 0)
+			অন্যথা যদি (strcasecmp(optarg, "keys-command") == 0)
 				mode = 2;
-			else {
+			অন্যথা {
 				fprintf(stderr, "Invalid -m option\n"),
 				usage();
 			}
-			break;
-		default:
+			ভঙ্গ;
+		স্বভাব:
 			usage();
 		}
 	}
 	argc -= optind;
 	argv += optind;
 
-	if (argc > 1)
+	যদি (argc > 1)
 		usage();
-	else if (argc == 1)
+	অন্যথা যদি (argc == 1)
 		path = argv[0];
 
-	if (mode == 1)
+	যদি (mode == 1)
 		safely_chroot(path, getuid());
-	else if (mode == 2) {
-		if (stat(path, &st) < 0)
+	অন্যথা যদি (mode == 2) {
+		যদি (stat(path, &st) < 0)
 			fatal("Could not stat %s: %s", path, strerror(errno));
-		if (auth_secure_path(path, &st, NULL, 0,
-		    errmsg, sizeof(errmsg)) != 0)
+		যদি (auth_secure_path(path, &st, রিক্ত, 0,
+		    errmsg, পরিমাণ(errmsg)) != 0)
 			fatal("Unsafe %s: %s", path, errmsg);
-	} else {
+	} অন্যথা {
 		fprintf(stderr, "Invalid mode\n");
 		usage();
 	}
-	return 0;
+	প্রত্যাগম 0;
 }

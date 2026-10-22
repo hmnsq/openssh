@@ -19,20 +19,20 @@
 #define _HMAC_H
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_hmac_bytes(int alg);
+size_t ssh_hmac_bytes(পূর্ণাঙ্ক alg);
 
-struct sshbuf;
-struct ssh_hmac_ctx;
-struct ssh_hmac_ctx *ssh_hmac_start(int alg);
+সংরচনা sshbuf;
+সংরচনা ssh_hmac_ctx;
+সংরচনা ssh_hmac_ctx *ssh_hmac_start(পূর্ণাঙ্ক alg);
 
 /* Sets the state of the HMAC or resets the state if key == NULL */
-int ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
+পূর্ণাঙ্ক ssh_hmac_init(সংরচনা ssh_hmac_ctx *ctx, ধ্রুব শূন্য *চাবি, size_t klen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update(struct ssh_hmac_ctx *ctx, const void *m, size_t mlen)
+পূর্ণাঙ্ক ssh_hmac_update(সংরচনা ssh_hmac_ctx *ctx, ধ্রুব শূন্য *m, size_t mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update_buffer(struct ssh_hmac_ctx *ctx, const struct sshbuf *b);
-int ssh_hmac_final(struct ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
+পূর্ণাঙ্ক ssh_hmac_update_buffer(সংরচনা ssh_hmac_ctx *ctx, ধ্রুব সংরচনা sshbuf *b);
+পূর্ণাঙ্ক ssh_hmac_final(সংরচনা ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_hmac_free(struct ssh_hmac_ctx *ctx);
+শূন্য ssh_hmac_free(সংরচনা ssh_hmac_ctx *ctx);
 
 #endif /* _HMAC_H */

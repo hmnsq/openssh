@@ -10,60 +10,60 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
-extern "C" {
+বাহ্য "C" {
 
-#include "hostfile.h"
-#include "sshkey.h"
-#include "log.h"
+#অন্তর্ভাব "hostfile.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "log.h"
 
-static int log_initialized = 0;
+স্থির পূর্ণাঙ্ক log_initialized = 0;
 
-static int
-noop_cb(struct hostkey_foreach_line *l, void *ctx)
+স্থির পূর্ণাঙ্ক
+noop_cb(সংরচনা hostkey_foreach_সারি *l, শূন্য *ctx)
 {
-	(void)l; (void)ctx;
-	return 0;
+	(শূন্য)l; (শূন্য)ctx;
+	প্রত্যাগম 0;
 }
 
-int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+পূর্ণাঙ্ক
+LLVMFuzzer_Test_One_প্রবেশ(ধ্রুব uint8_t *data, size_t size)
 {
-	if (!log_initialized) {
+	যদি (!log_initialized) {
 		log_init("hostfile_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
 
 	/* Drive every HKF_WANT_* combination on each input. */
-	static const u_int flag_combos[] = {
+	স্থির ধ্রুব u_int flag_combos[] = {
 		0,
 		HKF_WANT_MATCH,
-		HKF_WANT_PARSE_KEY,
-		HKF_WANT_MATCH | HKF_WANT_PARSE_KEY,
+		HKF_WANT_PARSE_চাবি,
+		HKF_WANT_MATCH | HKF_WANT_PARSE_চাবি,
 	};
-	for (size_t i = 0; i < sizeof(flag_combos)/sizeof(flag_combos[0]); i++) {
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f == NULL)
-			continue;
-		const char *host = (flag_combos[i] & HKF_WANT_MATCH) ?
-		    "example.com" : NULL;
-		(void)hostkeys_foreach_file("/fuzz", f, noop_cb, NULL,
+	প্রতি (size_t i = 0; i < পরিমাণ(flag_combos)/পরিমাণ(flag_combos[0]); i++) {
+		FILE *f = fmemopen((শূন্য *)data, size, "r");
+		যদি (f == রিক্ত)
+			অনুবর্ত;
+		ধ্রুব বর্ণ *host = (flag_combos[i] & HKF_WANT_MATCH) ?
+		    "example.com" : রিক্ত;
+		(শূন্য)hostkeys_foreach_file("/fuzz", f, noop_cb, রিক্ত,
 		    host, "127.0.0.1", flag_combos[i], 0);
 		fclose(f);
 	}
 
 	/* Higher-level wrapper that adds record_hostkey on top of foreach. */
 	{
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f != NULL) {
-			struct hostkeys *hk = init_hostkeys();
-			if (hk != NULL) {
+		FILE *f = fmemopen((শূন্য *)data, size, "r");
+		যদি (f != রিক্ত) {
+			সংরচনা hostkeys *hk = init_hostkeys();
+			যদি (hk != রিক্ত) {
 				load_hostkeys_file(hk, "example.com",
 				    "/fuzz", f, 0);
 				free_hostkeys(hk);
@@ -73,19 +73,19 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	}
 
 	/* Drive host_hash + extract_salt on a bounded hostname-shaped slice. */
-	if (size > 0) {
+	যদি (size > 0) {
 		size_t n = size < 256 ? size : 256;
-		char *hb = (char *)malloc(n + 1);
-		if (hb != NULL) {
+		বর্ণ *hb = (বর্ণ *)malloc(n + 1);
+		যদি (hb != রিক্ত) {
 			memcpy(hb, data, n);
 			hb[n] = '\0';
-			char *h = host_hash("example.com", hb, 0);
-			free(h);
-			free(hb);
+			বর্ণ *h = host_hash("example.com", hb, 0);
+			মুক্ত(h);
+			মুক্ত(hb);
 		}
 	}
 
-	return 0;
+	প্রত্যাগম 0;
 }
 
 } // extern "C"

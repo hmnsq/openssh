@@ -58,28 +58,28 @@
  *	Number of matches in the current invocation of glob.
  */
 
-#include "includes.h"
-#include "glob.h"
+#অন্তর্ভাব "includes.h"
+#অন্তর্ভাব "glob.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/stat.h>
 
-#include <dirent.h>
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <dirent.h>
+#অন্তর্ভাব <ctype.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <pwd.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
-#if !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#যদি !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
 
-#include "charclass.h"
+#অন্তর্ভাব "charclass.h"
 
 #ifdef TILDE
 # undef TILDE
@@ -110,16 +110,16 @@
 #define	M_MASK		0xffff
 #define	M_ASCII		0x00ff
 
-typedef u_short Char;
+প্রকারনির্দেশ u_short Char;
 
-#else
+#অন্যথা
 
 #define	M_QUOTE		0x80
 #define	M_PROTECT	0x40
 #define	M_MASK		0xff
 #define	M_ASCII		0x7f
 
-typedef char Char;
+প্রকারনির্দেশ বর্ণ Char;
 
 #endif
 
@@ -139,94 +139,94 @@ typedef char Char;
 #define	GLOB_LIMIT_STAT		2048
 #define	GLOB_LIMIT_READDIR	16384
 
-struct glob_lim {
+সংরচনা glob_lim {
 	size_t	glim_malloc;
 	size_t	glim_stat;
 	size_t	glim_readdir;
 };
 
-struct glob_path_stat {
-	char		*gps_path;
-	struct stat	*gps_stat;
+সংরচনা glob_path_stat {
+	বর্ণ		*gps_path;
+	সংরচনা stat	*gps_stat;
 };
 
-static int	 compare(const void *, const void *);
-static int	 compare_gps(const void *, const void *);
-static int	 g_Ctoc(const Char *, char *, size_t);
-static int	 g_lstat(Char *, struct stat *, glob_t *);
-static DIR	*g_opendir(Char *, glob_t *);
-static Char	*g_strchr(const Char *, int);
-static int	 g_strncmp(const Char *, const char *, size_t);
-static int	 g_stat(Char *, struct stat *, glob_t *);
-static int	 glob0(const Char *, glob_t *, struct glob_lim *);
-static int	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
-static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
-		    glob_t *, struct glob_lim *);
-static int	 glob3(Char *, Char *, Char *, Char *, Char *,
-		    Char *, Char *, glob_t *, struct glob_lim *);
-static int	 globextend(const Char *, glob_t *, struct glob_lim *,
-		    struct stat *);
-static const Char *
-		 globtilde(const Char *, Char *, size_t, glob_t *);
-static int	 globexp1(const Char *, glob_t *, struct glob_lim *);
-static int	 globexp2(const Char *, const Char *, glob_t *,
-		    struct glob_lim *);
-static int	 match(Char *, Char *, Char *);
+স্থির পূর্ণাঙ্ক	 compare(ধ্রুব শূন্য *, ধ্রুব শূন্য *);
+স্থির পূর্ণাঙ্ক	 compare_gps(ধ্রুব শূন্য *, ধ্রুব শূন্য *);
+স্থির পূর্ণাঙ্ক	 g_Ctoc(ধ্রুব Char *, বর্ণ *, size_t);
+স্থির পূর্ণাঙ্ক	 g_lstat(Char *, সংরচনা stat *, glob_t *);
+স্থির DIR	*g_opendir(Char *, glob_t *);
+স্থির Char	*g_strchr(ধ্রুব Char *, পূর্ণাঙ্ক);
+স্থির পূর্ণাঙ্ক	 g_strncmp(ধ্রুব Char *, ধ্রুব বর্ণ *, size_t);
+স্থির পূর্ণাঙ্ক	 g_stat(Char *, সংরচনা stat *, glob_t *);
+স্থির পূর্ণাঙ্ক	 glob0(ধ্রুব Char *, glob_t *, সংরচনা glob_lim *);
+স্থির পূর্ণাঙ্ক	 glob1(Char *, Char *, glob_t *, সংরচনা glob_lim *);
+স্থির পূর্ণাঙ্ক	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
+		    glob_t *, সংরচনা glob_lim *);
+স্থির পূর্ণাঙ্ক	 glob3(Char *, Char *, Char *, Char *, Char *,
+		    Char *, Char *, glob_t *, সংরচনা glob_lim *);
+স্থির পূর্ণাঙ্ক	 globextend(ধ্রুব Char *, glob_t *, সংরচনা glob_lim *,
+		    সংরচনা stat *);
+স্থির ধ্রুব Char *
+		 globtilde(ধ্রুব Char *, Char *, size_t, glob_t *);
+স্থির পূর্ণাঙ্ক	 globexp1(ধ্রুব Char *, glob_t *, সংরচনা glob_lim *);
+স্থির পূর্ণাঙ্ক	 globexp2(ধ্রুব Char *, ধ্রুব Char *, glob_t *,
+		    সংরচনা glob_lim *);
+স্থির পূর্ণাঙ্ক	 match(Char *, Char *, Char *);
 #ifdef DEBUG
-static void	 qprintf(const char *, Char *);
+স্থির শূন্য	 qprintf(ধ্রুব বর্ণ *, Char *);
 #endif
 
-int
-glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
+পূর্ণাঙ্ক
+glob(ধ্রুব বর্ণ *pattern, পূর্ণাঙ্ক flags, পূর্ণাঙ্ক (*errfunc)(ধ্রুব বর্ণ *, পূর্ণাঙ্ক),
     glob_t *pglob)
 {
-	const u_char *patnext;
-	int c;
+	ধ্রুব u_char *patnext;
+	পূর্ণাঙ্ক c;
 	Char *bufnext, *bufend, patbuf[PATH_MAX];
-	struct glob_lim limit = { 0, 0, 0 };
+	সংরচনা glob_lim limit = { 0, 0, 0 };
 
 	patnext = (u_char *) pattern;
-	if (!(flags & GLOB_APPEND)) {
+	যদি (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathc = 0;
-		pglob->gl_pathv = NULL;
-		pglob->gl_statv = NULL;
-		if (!(flags & GLOB_DOOFFS))
+		pglob->gl_pathv = রিক্ত;
+		pglob->gl_statv = রিক্ত;
+		যদি (!(flags & GLOB_DOOFFS))
 			pglob->gl_offs = 0;
 	}
 	pglob->gl_flags = flags & ~GLOB_MAGCHAR;
 	pglob->gl_errfunc = errfunc;
 	pglob->gl_matchc = 0;
 
-	if (strnlen(pattern, PATH_MAX) == PATH_MAX)
-		return(GLOB_NOMATCH);
+	যদি (strnlen(pattern, PATH_MAX) == PATH_MAX)
+		প্রত্যাগম(GLOB_NOMATCH);
 
-	if (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
+	যদি (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX - pglob->gl_offs - 1)
-		return GLOB_NOSPACE;
+		প্রত্যাগম GLOB_NOSPACE;
 
 	bufnext = patbuf;
 	bufend = bufnext + PATH_MAX - 1;
-	if (flags & GLOB_NOESCAPE)
-		while (bufnext < bufend && (c = *patnext++) != EOS)
+	যদি (flags & GLOB_NOESCAPE)
+		যাবত্ (bufnext < bufend && (c = *patnext++) != EOS)
 			*bufnext++ = c;
-	else {
+	অন্যথা {
 		/* Protect the quoted characters. */
-		while (bufnext < bufend && (c = *patnext++) != EOS)
-			if (c == QUOTE) {
-				if ((c = *patnext++) == EOS) {
+		যাবত্ (bufnext < bufend && (c = *patnext++) != EOS)
+			যদি (c == QUOTE) {
+				যদি ((c = *patnext++) == EOS) {
 					c = QUOTE;
 					--patnext;
 				}
 				*bufnext++ = c | M_PROTECT;
-			} else
+			} অন্যথা
 				*bufnext++ = c;
 	}
 	*bufnext = EOS;
 
-	if (flags & GLOB_BRACE)
-		return globexp1(patbuf, pglob, &limit);
-	else
-		return glob0(patbuf, pglob, &limit);
+	যদি (flags & GLOB_BRACE)
+		প্রত্যাগম globexp1(patbuf, pglob, &limit);
+	অন্যথা
+		প্রত্যাগম glob0(patbuf, pglob, &limit);
 }
 
 /*
@@ -234,19 +234,19 @@ glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
  * invoke the standard globbing routine to glob the rest of the magic
  * characters
  */
-static int
-globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+স্থির পূর্ণাঙ্ক
+globexp1(ধ্রুব Char *pattern, glob_t *pglob, সংরচনা glob_lim *limitp)
 {
-	const Char* ptr = pattern;
+	ধ্রুব Char* ptr = pattern;
 
 	/* Protect a single {}, for find(1), like csh */
-	if (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
-		return glob0(pattern, pglob, limitp);
+	যদি (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
+		প্রত্যাগম glob0(pattern, pglob, limitp);
 
-	if ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
-		return globexp2(ptr, pattern, pglob, limitp);
+	যদি ((ptr = (ধ্রুব Char *) g_strchr(ptr, LBRACE)) != রিক্ত)
+		প্রত্যাগম globexp2(ptr, pattern, pglob, limitp);
 
-	return glob0(pattern, pglob, limitp);
+	প্রত্যাগম glob0(pattern, pglob, limitp);
 }
 
 
@@ -255,84 +255,84 @@ globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
  * If it succeeds then it invokes globexp1 with the new pattern.
  * If it fails then it tries to glob the rest of the pattern and returns.
  */
-static int
-globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
-    struct glob_lim *limitp)
+স্থির পূর্ণাঙ্ক
+globexp2(ধ্রুব Char *ptr, ধ্রুব Char *pattern, glob_t *pglob,
+    সংরচনা glob_lim *limitp)
 {
-	int     i, rv;
+	পূর্ণাঙ্ক     i, rv;
 	Char   *lm, *ls;
-	const Char *pe, *pm, *pl;
+	ধ্রুব Char *pe, *pm, *pl;
 	Char    patbuf[PATH_MAX];
 
 	/* copy part up to the brace */
-	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+	প্রতি (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
 		;
 	*lm = EOS;
 	ls = lm;
 
 	/* Find the balanced brace */
-	for (i = 0, pe = ++ptr; *pe; pe++)
-		if (*pe == LBRACKET) {
+	প্রতি (i = 0, pe = ++ptr; *pe; pe++)
+		যদি (*pe == LBRACKET) {
 			/* Ignore everything between [] */
-			for (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
+			প্রতি (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
 				;
-			if (*pe == EOS) {
+			যদি (*pe == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pe = pm;
 			}
-		} else if (*pe == LBRACE)
+		} অন্যথা যদি (*pe == LBRACE)
 			i++;
-		else if (*pe == RBRACE) {
-			if (i == 0)
-				break;
+		অন্যথা যদি (*pe == RBRACE) {
+			যদি (i == 0)
+				ভঙ্গ;
 			i--;
 		}
 
 	/* Non matching braces; just glob the pattern */
-	if (i != 0 || *pe == EOS)
-		return glob0(patbuf, pglob, limitp);
+	যদি (i != 0 || *pe == EOS)
+		প্রত্যাগম glob0(patbuf, pglob, limitp);
 
-	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
-		switch (*pm) {
-		case LBRACKET:
+	প্রতি (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+		বিকল্প (*pm) {
+		পক্ষ LBRACKET:
 			/* Ignore everything between [] */
-			for (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
+			প্রতি (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
 				;
-			if (*pm == EOS) {
+			যদি (*pm == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pm = pl;
 			}
-			break;
+			ভঙ্গ;
 
-		case LBRACE:
+		পক্ষ LBRACE:
 			i++;
-			break;
+			ভঙ্গ;
 
-		case RBRACE:
-			if (i) {
+		পক্ষ RBRACE:
+			যদি (i) {
 				i--;
-				break;
+				ভঙ্গ;
 			}
 			/* FALLTHROUGH */
-		case COMMA:
-			if (i && *pm == COMMA)
-				break;
-			else {
+		পক্ষ COMMA:
+			যদি (i && *pm == COMMA)
+				ভঙ্গ;
+			অন্যথা {
 				/* Append the current string */
-				for (lm = ls; (pl < pm); *lm++ = *pl++)
+				প্রতি (lm = ls; (pl < pm); *lm++ = *pl++)
 					;
 
 				/*
 				 * Append the rest of the pattern after the
 				 * closing brace
 				 */
-				for (pl = pe + 1; (*lm++ = *pl++) != EOS; )
+				প্রতি (pl = pe + 1; (*lm++ = *pl++) != EOS; )
 					;
 
 				/* Expand the current pattern */
@@ -340,19 +340,19 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 				qprintf("globexp2:", patbuf);
 #endif
 				rv = globexp1(patbuf, pglob, limitp);
-				if (rv && rv != GLOB_NOMATCH)
-					return rv;
+				যদি (rv && rv != GLOB_NOMATCH)
+					প্রত্যাগম rv;
 
 				/* move after the comma, to the next string */
 				pl = pm + 1;
 			}
-			break;
+			ভঙ্গ;
 
-		default:
-			break;
+		স্বভাব:
+			ভঙ্গ;
 		}
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
 
@@ -360,106 +360,106 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 /*
  * expand tilde from the passwd file.
  */
-static const Char *
-globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
+স্থির ধ্রুব Char *
+globtilde(ধ্রুব Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
 {
-	struct passwd *pwd;
-	char *h;
-	const Char *p;
+	সংরচনা passwd *pwd;
+	বর্ণ *h;
+	ধ্রুব Char *p;
 	Char *b, *eb;
 
-	if (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
-		return pattern;
+	যদি (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
+		প্রত্যাগম pattern;
 
 	/* Copy up to the end of the string or / */
 	eb = &patbuf[patbuf_len - 1];
-	for (p = pattern + 1, h = (char *) patbuf;
-	    h < (char *)eb && *p && *p != SLASH; *h++ = *p++)
+	প্রতি (p = pattern + 1, h = (বর্ণ *) patbuf;
+	    h < (বর্ণ *)eb && *p && *p != SLASH; *h++ = *p++)
 		;
 
 	*h = EOS;
 
-#if 0
-	if (h == (char *)eb)
-		return what;
+#যদি 0
+	যদি (h == (বর্ণ *)eb)
+		প্রত্যাগম what;
 #endif
 
-	if (((char *) patbuf)[0] == EOS) {
+	যদি (((বর্ণ *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-#if 0
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
+#যদি 0
+		যদি (issetugid() != 0 || (h = getenv("HOME")) == রিক্ত) {
 #endif
-		if ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
-			if ((pwd = getpwuid(getuid())) == NULL)
-				return pattern;
-			else
+		যদি ((getuid() != geteuid()) || (h = getenv("HOME")) == রিক্ত) {
+			যদি ((pwd = getpwuid(getuid())) == রিক্ত)
+				প্রত্যাগম pattern;
+			অন্যথা
 				h = pwd->pw_dir;
 		}
-	} else {
+	} অন্যথা {
 		/*
 		 * Expand a ~user
 		 */
-		if ((pwd = getpwnam((char*) patbuf)) == NULL)
-			return pattern;
-		else
+		যদি ((pwd = getpwnam((বর্ণ*) patbuf)) == রিক্ত)
+			প্রত্যাগম pattern;
+		অন্যথা
 			h = pwd->pw_dir;
 	}
 
 	/* Copy the home directory */
-	for (b = patbuf; b < eb && *h; *b++ = *h++)
+	প্রতি (b = patbuf; b < eb && *h; *b++ = *h++)
 		;
 
 	/* Append the rest of the pattern */
-	while (b < eb && (*b++ = *p++) != EOS)
+	যাবত্ (b < eb && (*b++ = *p++) != EOS)
 		;
 	*b = EOS;
 
-	return patbuf;
+	প্রত্যাগম patbuf;
 }
 
-static int
-g_strncmp(const Char *s1, const char *s2, size_t n)
+স্থির পূর্ণাঙ্ক
+g_strncmp(ধ্রুব Char *s1, ধ্রুব বর্ণ *s2, size_t n)
 {
-	int rv = 0;
+	পূর্ণাঙ্ক rv = 0;
 
-	while (n--) {
-		rv = *(Char *)s1 - *(const unsigned char *)s2++;
-		if (rv)
-			break;
-		if (*s1++ == '\0')
-			break;
+	যাবত্ (n--) {
+		rv = *(Char *)s1 - *(ধ্রুব unsigned বর্ণ *)s2++;
+		যদি (rv)
+			ভঙ্গ;
+		যদি (*s1++ == '\0')
+			ভঙ্গ;
 	}
-	return rv;
+	প্রত্যাগম rv;
 }
 
-static int
-g_charclass(const Char **patternp, Char **bufnextp)
+স্থির পূর্ণাঙ্ক
+g_charclass(ধ্রুব Char **patternp, Char **bufnextp)
 {
-	const Char *pattern = *patternp + 1;
+	ধ্রুব Char *pattern = *patternp + 1;
 	Char *bufnext = *bufnextp;
-	const Char *colon;
-	struct cclass *cc;
+	ধ্রুব Char *colon;
+	সংরচনা cclass *cc;
 	size_t len;
 
-	if ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
-		return 1;	/* not a character class */
+	যদি ((colon = g_strchr(pattern, ':')) == রিক্ত || colon[1] != ']')
+		প্রত্যাগম 1;	/* not a character class */
 
 	len = (size_t)(colon - pattern);
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
-			break;
+	প্রতি (cc = cclasses; cc->name != রিক্ত; cc++) {
+		যদি (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
+			ভঙ্গ;
 	}
-	if (cc->name == NULL)
-		return -1;	/* invalid character class */
+	যদি (cc->name == রিক্ত)
+		প্রত্যাগম -1;	/* invalid character class */
 	*bufnext++ = M_CLASS;
 	*bufnext++ = (Char)(cc - &cclasses[0]);
 	*bufnextp = bufnext;
 	*patternp += len + 3;
 
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /*
@@ -469,11 +469,11 @@ g_charclass(const Char **patternp, Char **bufnextp)
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
-static int
-glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+স্থির পূর্ণাঙ্ক
+glob0(ধ্রুব Char *pattern, glob_t *pglob, সংরচনা glob_lim *limitp)
 {
-	const Char *qpatnext;
-	int c, err;
+	ধ্রুব Char *qpatnext;
+	পূর্ণাঙ্ক c, err;
 	size_t oldpathc;
 	Char *bufnext, patbuf[PATH_MAX];
 
@@ -482,64 +482,64 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	bufnext = patbuf;
 
 	/* We don't need to check for buffer overflow any more. */
-	while ((c = *qpatnext++) != EOS) {
-		switch (c) {
-		case LBRACKET:
+	যাবত্ ((c = *qpatnext++) != EOS) {
+		বিকল্প (c) {
+		পক্ষ LBRACKET:
 			c = *qpatnext;
-			if (c == NOT)
+			যদি (c == NOT)
 				++qpatnext;
-			if (*qpatnext == EOS ||
-			    g_strchr(qpatnext+1, RBRACKET) == NULL) {
+			যদি (*qpatnext == EOS ||
+			    g_strchr(qpatnext+1, RBRACKET) == রিক্ত) {
 				*bufnext++ = LBRACKET;
-				if (c == NOT)
+				যদি (c == NOT)
 					--qpatnext;
-				break;
+				ভঙ্গ;
 			}
 			*bufnext++ = M_SET;
-			if (c == NOT)
+			যদি (c == NOT)
 				*bufnext++ = M_NOT;
 			c = *qpatnext++;
-			do {
-				if (c == LBRACKET && *qpatnext == ':') {
-					do {
+			কুরু {
+				যদি (c == LBRACKET && *qpatnext == ':') {
+					কুরু {
 						err = g_charclass(&qpatnext,
 						    &bufnext);
-						if (err)
-							break;
+						যদি (err)
+							ভঙ্গ;
 						c = *qpatnext++;
-					} while (c == LBRACKET && *qpatnext == ':');
-					if (err == -1 &&
+					} যাবত্ (c == LBRACKET && *qpatnext == ':');
+					যদি (err == -1 &&
 					    !(pglob->gl_flags & GLOB_NOCHECK))
-						return GLOB_NOMATCH;
-					if (c == RBRACKET)
-						break;
+						প্রত্যাগম GLOB_NOMATCH;
+					যদি (c == RBRACKET)
+						ভঙ্গ;
 				}
 				*bufnext++ = CHAR(c);
-				if (*qpatnext == RANGE &&
+				যদি (*qpatnext == RANGE &&
 				    (c = qpatnext[1]) != RBRACKET) {
 					*bufnext++ = M_RNG;
 					*bufnext++ = CHAR(c);
 					qpatnext += 2;
 				}
-			} while ((c = *qpatnext++) != RBRACKET);
+			} যাবত্ ((c = *qpatnext++) != RBRACKET);
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_END;
-			break;
-		case QUESTION:
+			ভঙ্গ;
+		পক্ষ QUESTION:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_ONE;
-			break;
-		case STAR:
+			ভঙ্গ;
+		পক্ষ STAR:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			/* collapse adjacent stars to one,
 			 * to avoid exponential behavior
 			 */
-			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+			যদি (bufnext == patbuf || bufnext[-1] != M_ALL)
 				*bufnext++ = M_ALL;
-			break;
-		default:
+			ভঙ্গ;
+		স্বভাব:
 			*bufnext++ = CHAR(c);
-			break;
+			ভঙ্গ;
 		}
 	}
 	*bufnext = EOS;
@@ -547,8 +547,8 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	qprintf("glob0:", patbuf);
 #endif
 
-	if ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
-		return(err);
+	যদি ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
+		প্রত্যাগম(err);
 
 	/*
 	 * If there was no match we are going to append the pattern
@@ -556,67 +556,67 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	 * and the pattern did not contain any magic characters
 	 * GLOB_NOMAGIC is there just for compatibility with csh.
 	 */
-	if (pglob->gl_pathc == oldpathc) {
-		if ((pglob->gl_flags & GLOB_NOCHECK) ||
+	যদি (pglob->gl_pathc == oldpathc) {
+		যদি ((pglob->gl_flags & GLOB_NOCHECK) ||
 		    ((pglob->gl_flags & GLOB_NOMAGIC) &&
 		    !(pglob->gl_flags & GLOB_MAGCHAR)))
-			return(globextend(pattern, pglob, limitp, NULL));
-		else
-			return(GLOB_NOMATCH);
+			প্রত্যাগম(globextend(pattern, pglob, limitp, রিক্ত));
+		অন্যথা
+			প্রত্যাগম(GLOB_NOMATCH);
 	}
-	if (!(pglob->gl_flags & GLOB_NOSORT)) {
-		if ((pglob->gl_flags & GLOB_KEEPSTAT)) {
+	যদি (!(pglob->gl_flags & GLOB_NOSORT)) {
+		যদি ((pglob->gl_flags & GLOB_KEEPSTAT)) {
 			/* Keep the paths and stat info synced during sort */
-			struct glob_path_stat *path_stat;
+			সংরচনা glob_path_stat *path_stat;
 			size_t i;
 			size_t n = pglob->gl_pathc - oldpathc;
 			size_t o = pglob->gl_offs + oldpathc;
 
-			if ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
-				return GLOB_NOSPACE;
-			for (i = 0; i < n; i++) {
+			যদি ((path_stat = calloc(n, পরিমাণ(*path_stat))) == রিক্ত)
+				প্রত্যাগম GLOB_NOSPACE;
+			প্রতি (i = 0; i < n; i++) {
 				path_stat[i].gps_path = pglob->gl_pathv[o + i];
 				path_stat[i].gps_stat = pglob->gl_statv[o + i];
 			}
-			qsort(path_stat, n, sizeof(*path_stat), compare_gps);
-			for (i = 0; i < n; i++) {
+			qsort(path_stat, n, পরিমাণ(*path_stat), compare_gps);
+			প্রতি (i = 0; i < n; i++) {
 				pglob->gl_pathv[o + i] = path_stat[i].gps_path;
 				pglob->gl_statv[o + i] = path_stat[i].gps_stat;
 			}
-			free(path_stat);
-		} else {
+			মুক্ত(path_stat);
+		} অন্যথা {
 			qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
-			    pglob->gl_pathc - oldpathc, sizeof(char *),
+			    pglob->gl_pathc - oldpathc, পরিমাণ(বর্ণ *),
 			    compare);
 		}
 	}
-	return(0);
+	প্রত্যাগম(0);
 }
 
-static int
-compare(const void *p, const void *q)
+স্থির পূর্ণাঙ্ক
+compare(ধ্রুব শূন্য *p, ধ্রুব শূন্য *q)
 {
-	return(strcmp(*(char **)p, *(char **)q));
+	প্রত্যাগম(strcmp(*(বর্ণ **)p, *(বর্ণ **)q));
 }
 
-static int
-compare_gps(const void *_p, const void *_q)
+স্থির পূর্ণাঙ্ক
+compare_gps(ধ্রুব শূন্য *_p, ধ্রুব শূন্য *_q)
 {
-	const struct glob_path_stat *p = (const struct glob_path_stat *)_p;
-	const struct glob_path_stat *q = (const struct glob_path_stat *)_q;
+	ধ্রুব সংরচনা glob_path_stat *p = (ধ্রুব সংরচনা glob_path_stat *)_p;
+	ধ্রুব সংরচনা glob_path_stat *q = (ধ্রুব সংরচনা glob_path_stat *)_q;
 
-	return(strcmp(p->gps_path, q->gps_path));
+	প্রত্যাগম(strcmp(p->gps_path, q->gps_path));
 }
 
-static int
-glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+স্থির পূর্ণাঙ্ক
+glob1(Char *pattern, Char *pattern_last, glob_t *pglob, সংরচনা glob_lim *limitp)
 {
 	Char pathbuf[PATH_MAX];
 
 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
-	if (*pattern == EOS)
-		return(0);
-	return(glob2(pathbuf, pathbuf+PATH_MAX-1,
+	যদি (*pattern == EOS)
+		প্রত্যাগম(0);
+	প্রত্যাগম(glob2(pathbuf, pathbuf+PATH_MAX-1,
 	    pathbuf, pathbuf+PATH_MAX-1,
 	    pattern, pattern_last, pglob, limitp));
 }
@@ -626,83 +626,83 @@ glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static int
+স্থির পূর্ণাঙ্ক
 glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
-    Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+    Char *pattern, Char *pattern_last, glob_t *pglob, সংরচনা glob_lim *limitp)
 {
-	struct stat sb;
+	সংরচনা stat sb;
 	Char *p, *q;
-	int anymeta;
+	পূর্ণাঙ্ক anymeta;
 
 	/*
 	 * Loop over pattern segments until end of pattern or until
 	 * segment with meta character found.
 	 */
-	for (anymeta = 0;;) {
-		if (*pattern == EOS) {		/* End of pattern? */
+	প্রতি (anymeta = 0;;) {
+		যদি (*pattern == EOS) {		/* End of pattern? */
 			*pathend = EOS;
 
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+			যদি ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_stat++ >= GLOB_LIMIT_STAT) {
 				errno = 0;
 				*pathend++ = SEP;
 				*pathend = EOS;
-				return(GLOB_NOSPACE);
+				প্রত্যাগম(GLOB_NOSPACE);
 			}
-			if (g_lstat(pathbuf, &sb, pglob))
-				return(0);
+			যদি (g_lstat(pathbuf, &sb, pglob))
+				প্রত্যাগম(0);
 
-			if (((pglob->gl_flags & GLOB_MARK) &&
+			যদি (((pglob->gl_flags & GLOB_MARK) &&
 			    pathend[-1] != SEP) && (S_ISDIR(sb.st_mode) ||
 			    (S_ISLNK(sb.st_mode) &&
 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
 			    S_ISDIR(sb.st_mode)))) {
-				if (pathend+1 > pathend_last)
-					return (1);
+				যদি (pathend+1 > pathend_last)
+					প্রত্যাগম (1);
 				*pathend++ = SEP;
 				*pathend = EOS;
 			}
 			++pglob->gl_matchc;
-			return(globextend(pathbuf, pglob, limitp, &sb));
+			প্রত্যাগম(globextend(pathbuf, pglob, limitp, &sb));
 		}
 
 		/* Find end of next segment, copy tentatively to pathend. */
 		q = pathend;
 		p = pattern;
-		while (*p != EOS && *p != SEP) {
-			if (ismeta(*p))
+		যাবত্ (*p != EOS && *p != SEP) {
+			যদি (ismeta(*p))
 				anymeta = 1;
-			if (q+1 > pathend_last)
-				return (1);
+			যদি (q+1 > pathend_last)
+				প্রত্যাগম (1);
 			*q++ = *p++;
 		}
 
-		if (!anymeta) {		/* No expansion, do next segment. */
+		যদি (!anymeta) {		/* No expansion, do next segment. */
 			pathend = q;
 			pattern = p;
-			while (*pattern == SEP) {
-				if (pathend+1 > pathend_last)
-					return (1);
+			যাবত্ (*pattern == SEP) {
+				যদি (pathend+1 > pathend_last)
+					প্রত্যাগম (1);
 				*pathend++ = *pattern++;
 			}
-		} else
+		} অন্যথা
 			/* Need expansion, recurse. */
-			return(glob3(pathbuf, pathbuf_last, pathend,
+			প্রত্যাগম(glob3(pathbuf, pathbuf_last, pathend,
 			    pathend_last, pattern, p, pattern_last,
 			    pglob, limitp));
 	}
 	/* NOTREACHED */
 }
 
-static int
+স্থির পূর্ণাঙ্ক
 glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
     Char *pattern, Char *restpattern, Char *restpattern_last, glob_t *pglob,
-    struct glob_lim *limitp)
+    সংরচনা glob_lim *limitp)
 {
-	struct dirent *dp;
+	সংরচনা dirent *dp;
 	DIR *dirp;
-	int err;
-	char buf[PATH_MAX];
+	পূর্ণাঙ্ক err;
+	বর্ণ buf[PATH_MAX];
 
 	/*
 	 * The readdirfunc declaration can't be prototyped, because it is
@@ -710,73 +710,73 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 	 * and dirent.h as taking pointers to differently typed opaque
 	 * structures.
 	 */
-	struct dirent *(*readdirfunc)(void *);
+	সংরচনা dirent *(*readdirfunc)(শূন্য *);
 
-	if (pathend > pathend_last)
-		return (1);
+	যদি (pathend > pathend_last)
+		প্রত্যাগম (1);
 	*pathend = EOS;
 	errno = 0;
 
-	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+	যদি ((dirp = g_opendir(pathbuf, pglob)) == রিক্ত) {
 		/* TODO: don't call for ENOENT or ENOTDIR? */
-		if (pglob->gl_errfunc) {
-			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
-				return(GLOB_ABORTED);
-			if (pglob->gl_errfunc(buf, errno) ||
+		যদি (pglob->gl_errfunc) {
+			যদি (g_Ctoc(pathbuf, buf, পরিমাণ(buf)))
+				প্রত্যাগম(GLOB_ABORTED);
+			যদি (pglob->gl_errfunc(buf, errno) ||
 			    pglob->gl_flags & GLOB_ERR)
-				return(GLOB_ABORTED);
+				প্রত্যাগম(GLOB_ABORTED);
 		}
-		return(0);
+		প্রত্যাগম(0);
 	}
 
 	err = 0;
 
 	/* Search directory for matching names. */
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	যদি (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		readdirfunc = pglob->gl_readdir;
-	else
-		readdirfunc = (struct dirent *(*)(void *))readdir;
-	while ((dp = (*readdirfunc)(dirp))) {
+	অন্যথা
+		readdirfunc = (সংরচনা dirent *(*)(শূন্য *))readdir;
+	যাবত্ ((dp = (*readdirfunc)(dirp))) {
 		u_char *sc;
 		Char *dc;
 
-		if ((pglob->gl_flags & GLOB_LIMIT) &&
+		যদি ((pglob->gl_flags & GLOB_LIMIT) &&
 		    limitp->glim_readdir++ >= GLOB_LIMIT_READDIR) {
 			errno = 0;
 			*pathend++ = SEP;
 			*pathend = EOS;
 			err = GLOB_NOSPACE;
-			break;
+			ভঙ্গ;
 		}
 
 		/* Initial DOT must be matched literally. */
-		if (dp->d_name[0] == DOT && *pattern != DOT)
-			continue;
+		যদি (dp->d_name[0] == DOT && *pattern != DOT)
+			অনুবর্ত;
 		dc = pathend;
 		sc = (u_char *) dp->d_name;
-		while (dc < pathend_last && (*dc++ = *sc++) != EOS)
+		যাবত্ (dc < pathend_last && (*dc++ = *sc++) != EOS)
 			;
-		if (dc >= pathend_last) {
+		যদি (dc >= pathend_last) {
 			*dc = EOS;
 			err = 1;
-			break;
+			ভঙ্গ;
 		}
 
-		if (!match(pathend, pattern, restpattern)) {
+		যদি (!match(pathend, pattern, restpattern)) {
 			*pathend = EOS;
-			continue;
+			অনুবর্ত;
 		}
 		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
 		    restpattern, restpattern_last, pglob, limitp);
-		if (err)
-			break;
+		যদি (err)
+			ভঙ্গ;
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	যদি (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		(*pglob->gl_closedir)(dirp);
-	else
+	অন্যথা
 		closedir(dirp);
-	return(err);
+	প্রত্যাগম(err);
 }
 
 
@@ -794,98 +794,98 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
  *	Either gl_pathc is zero and gl_pathv is NULL; or gl_pathc > 0 and
  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
  */
-static int
-globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
-    struct stat *sb)
+স্থির পূর্ণাঙ্ক
+globextend(ধ্রুব Char *path, glob_t *pglob, সংরচনা glob_lim *limitp,
+    সংরচনা stat *sb)
 {
-	char **pathv;
+	বর্ণ **pathv;
 	size_t i, newn, len;
-	char *copy = NULL;
-	const Char *p;
-	struct stat **statv;
+	বর্ণ *copy = রিক্ত;
+	ধ্রুব Char *p;
+	সংরচনা stat **statv;
 
 	newn = 2 + pglob->gl_pathc + pglob->gl_offs;
-	if (pglob->gl_offs >= SSIZE_MAX ||
+	যদি (pglob->gl_offs >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX ||
 	    newn >= SSIZE_MAX ||
-	    SIZE_MAX / sizeof(*pathv) <= newn ||
-	    SIZE_MAX / sizeof(*statv) <= newn) {
+	    SIZE_MAX / পরিমাণ(*pathv) <= newn ||
+	    SIZE_MAX / পরিমাণ(*statv) <= newn) {
  nospace:
-		for (i = pglob->gl_offs; i < newn - 2; i++) {
-			if (pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_pathv[i]);
-			if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
+		প্রতি (i = pglob->gl_offs; i < newn - 2; i++) {
+			যদি (pglob->gl_pathv && pglob->gl_pathv[i])
+				মুক্ত(pglob->gl_pathv[i]);
+			যদি ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
 			    pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_statv[i]);
+				মুক্ত(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
-		return(GLOB_NOSPACE);
+		মুক্ত(pglob->gl_pathv);
+		pglob->gl_pathv = রিক্ত;
+		মুক্ত(pglob->gl_statv);
+		pglob->gl_statv = রিক্ত;
+		প্রত্যাগম(GLOB_NOSPACE);
 	}
 
-	pathv = reallocarray(pglob->gl_pathv, newn, sizeof(*pathv));
-	if (pathv == NULL)
-		goto nospace;
-	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+	pathv = reallocarray(pglob->gl_pathv, newn, পরিমাণ(*pathv));
+	যদি (pathv == রিক্ত)
+		গচ্ছ nospace;
+	যদি (pglob->gl_pathv == রিক্ত && pglob->gl_offs > 0) {
 		/* first time around -- clear initial gl_offs items */
 		pathv += pglob->gl_offs;
-		for (i = pglob->gl_offs; i > 0; i--)
-			*--pathv = NULL;
+		প্রতি (i = pglob->gl_offs; i > 0; i--)
+			*--pathv = রিক্ত;
 	}
 	pglob->gl_pathv = pathv;
 
-	if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
-		statv = reallocarray(pglob->gl_statv, newn, sizeof(*statv));
-		if (statv == NULL)
-			goto nospace;
-		if (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
+	যদি ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
+		statv = reallocarray(pglob->gl_statv, newn, পরিমাণ(*statv));
+		যদি (statv == রিক্ত)
+			গচ্ছ nospace;
+		যদি (pglob->gl_statv == রিক্ত && pglob->gl_offs > 0) {
 			/* first time around -- clear initial gl_offs items */
 			statv += pglob->gl_offs;
-			for (i = pglob->gl_offs; i > 0; i--)
-				*--statv = NULL;
+			প্রতি (i = pglob->gl_offs; i > 0; i--)
+				*--statv = রিক্ত;
 		}
 		pglob->gl_statv = statv;
-		if (sb == NULL)
-			statv[pglob->gl_offs + pglob->gl_pathc] = NULL;
-		else {
-			limitp->glim_malloc += sizeof(**statv);
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+		যদি (sb == রিক্ত)
+			statv[pglob->gl_offs + pglob->gl_pathc] = রিক্ত;
+		অন্যথা {
+			limitp->glim_malloc += পরিমাণ(**statv);
+			যদি ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_malloc >= GLOB_LIMIT_MALLOC) {
 				errno = 0;
-				return(GLOB_NOSPACE);
+				প্রত্যাগম(GLOB_NOSPACE);
 			}
-			if ((statv[pglob->gl_offs + pglob->gl_pathc] =
-			    malloc(sizeof(**statv))) == NULL)
-				goto copy_error;
+			যদি ((statv[pglob->gl_offs + pglob->gl_pathc] =
+			    malloc(পরিমাণ(**statv))) == রিক্ত)
+				গচ্ছ copy_error;
 			memcpy(statv[pglob->gl_offs + pglob->gl_pathc], sb,
-			    sizeof(*sb));
+			    পরিমাণ(*sb));
 		}
-		statv[pglob->gl_offs + pglob->gl_pathc + 1] = NULL;
+		statv[pglob->gl_offs + pglob->gl_pathc + 1] = রিক্ত;
 	}
 
-	for (p = path; *p++;)
+	প্রতি (p = path; *p++;)
 		;
 	len = (size_t)(p - path);
 	limitp->glim_malloc += len;
-	if ((copy = malloc(len)) != NULL) {
-		if (g_Ctoc(path, copy, len)) {
-			free(copy);
-			return(GLOB_NOSPACE);
+	যদি ((copy = malloc(len)) != রিক্ত) {
+		যদি (g_Ctoc(path, copy, len)) {
+			মুক্ত(copy);
+			প্রত্যাগম(GLOB_NOSPACE);
 		}
 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
 	}
-	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
+	pathv[pglob->gl_offs + pglob->gl_pathc] = রিক্ত;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
-	    (newn * sizeof(*pathv)) + limitp->glim_malloc >
+	যদি ((pglob->gl_flags & GLOB_LIMIT) &&
+	    (newn * পরিমাণ(*pathv)) + limitp->glim_malloc >
 	    GLOB_LIMIT_MALLOC) {
 		errno = 0;
-		return(GLOB_NOSPACE);
+		প্রত্যাগম(GLOB_NOSPACE);
 	}
  copy_error:
-	return(copy == NULL ? GLOB_NOSPACE : 0);
+	প্রত্যাগম(copy == রিক্ত ? GLOB_NOSPACE : 0);
 }
 
 
@@ -900,176 +900,176 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
  * from Russ Cox to not go quadratic on cases like a file called
  * ("a" x 100) . "x" matched against a pattern like "a*a*a*a*a*a*a*y".
  */
-static int
+স্থির পূর্ণাঙ্ক
 match(Char *name, Char *pat, Char *patend)
 {
-	int ok, negate_range;
+	পূর্ণাঙ্ক ok, negate_range;
 	Char c, k;
-	Char *nextp = NULL;
-	Char *nextn = NULL;
+	Char *nextp = রিক্ত;
+	Char *nextn = রিক্ত;
 
 loop:
-	while (pat < patend) {
+	যাবত্ (pat < patend) {
 		c = *pat++;
-		switch (c & M_MASK) {
-		case M_ALL:
-			while (pat < patend && (*pat & M_MASK) == M_ALL)
+		বিকল্প (c & M_MASK) {
+		পক্ষ M_ALL:
+			যাবত্ (pat < patend && (*pat & M_MASK) == M_ALL)
 				pat++;	/* eat consecutive '*' */
-			if (pat == patend)
-				return(1);
-			if (*name == EOS)
-				return(0);
+			যদি (pat == patend)
+				প্রত্যাগম(1);
+			যদি (*name == EOS)
+				প্রত্যাগম(0);
 			nextn = name + 1;
 			nextp = pat - 1;
-			break;
-		case M_ONE:
-			if (*name++ == EOS)
-				goto fail;
-			break;
-		case M_SET:
+			ভঙ্গ;
+		পক্ষ M_ONE:
+			যদি (*name++ == EOS)
+				গচ্ছ fail;
+			ভঙ্গ;
+		পক্ষ M_SET:
 			ok = 0;
-			if ((k = *name++) == EOS)
-				goto fail;
-			if ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
+			যদি ((k = *name++) == EOS)
+				গচ্ছ fail;
+			যদি ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
 				++pat;
-			while (((c = *pat++) & M_MASK) != M_END) {
-				if ((c & M_MASK) == M_CLASS) {
+			যাবত্ (((c = *pat++) & M_MASK) != M_END) {
+				যদি ((c & M_MASK) == M_CLASS) {
 					Char idx = *pat & M_MASK;
-					if (idx < NCCLASSES &&
+					যদি (idx < NCCLASSES &&
 					    cclasses[idx].isctype(k))
 						ok = 1;
 					++pat;
 				}
-				if ((*pat & M_MASK) == M_RNG) {
-					if (c <= k && k <= pat[1])
+				যদি ((*pat & M_MASK) == M_RNG) {
+					যদি (c <= k && k <= pat[1])
 						ok = 1;
 					pat += 2;
-				} else if (c == k)
+				} অন্যথা যদি (c == k)
 					ok = 1;
 			}
-			if (ok == negate_range)
-				goto fail;
-			break;
-		default:
-			if (*name++ != c)
-				goto fail;
-			break;
+			যদি (ok == negate_range)
+				গচ্ছ fail;
+			ভঙ্গ;
+		স্বভাব:
+			যদি (*name++ != c)
+				গচ্ছ fail;
+			ভঙ্গ;
 		}
 	}
-	if (*name == EOS)
-		return(1);
+	যদি (*name == EOS)
+		প্রত্যাগম(1);
 
 fail:
-	if (nextn) {
+	যদি (nextn) {
 		pat = nextp;
 		name = nextn;
-		goto loop;
+		গচ্ছ loop;
 	}
-	return(0);
+	প্রত্যাগম(0);
 }
 
 /* Free allocated data belonging to a glob_t structure. */
-void
+শূন্য
 globfree(glob_t *pglob)
 {
 	size_t i;
-	char **pp;
+	বর্ণ **pp;
 
-	if (pglob->gl_pathv != NULL) {
+	যদি (pglob->gl_pathv != রিক্ত) {
 		pp = pglob->gl_pathv + pglob->gl_offs;
-		for (i = pglob->gl_pathc; i--; ++pp)
-			free(*pp);
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
+		প্রতি (i = pglob->gl_pathc; i--; ++pp)
+			মুক্ত(*pp);
+		মুক্ত(pglob->gl_pathv);
+		pglob->gl_pathv = রিক্ত;
 	}
-	if (pglob->gl_statv != NULL) {
-		for (i = 0; i < pglob->gl_pathc; i++) {
-			free(pglob->gl_statv[i]);
+	যদি (pglob->gl_statv != রিক্ত) {
+		প্রতি (i = 0; i < pglob->gl_pathc; i++) {
+			মুক্ত(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
+		মুক্ত(pglob->gl_statv);
+		pglob->gl_statv = রিক্ত;
 	}
 }
 
-static DIR *
+স্থির DIR *
 g_opendir(Char *str, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	বর্ণ buf[PATH_MAX];
 
-	if (!*str)
-		strlcpy(buf, ".", sizeof buf);
-	else {
-		if (g_Ctoc(str, buf, sizeof(buf)))
-			return(NULL);
+	যদি (!*str)
+		strlcpy(buf, ".", পরিমাণ buf);
+	অন্যথা {
+		যদি (g_Ctoc(str, buf, পরিমাণ(buf)))
+			প্রত্যাগম(রিক্ত);
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_opendir)(buf));
+	যদি (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		প্রত্যাগম((*pglob->gl_opendir)(buf));
 
-	return(opendir(buf));
+	প্রত্যাগম(opendir(buf));
 }
 
-static int
-g_lstat(Char *fn, struct stat *sb, glob_t *pglob)
+স্থির পূর্ণাঙ্ক
+g_lstat(Char *fn, সংরচনা stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	বর্ণ buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_lstat)(buf, sb));
-	return(lstat(buf, sb));
+	যদি (g_Ctoc(fn, buf, পরিমাণ(buf)))
+		প্রত্যাগম(-1);
+	যদি (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		প্রত্যাগম((*pglob->gl_lstat)(buf, sb));
+	প্রত্যাগম(lstat(buf, sb));
 }
 
-static int
-g_stat(Char *fn, struct stat *sb, glob_t *pglob)
+স্থির পূর্ণাঙ্ক
+g_stat(Char *fn, সংরচনা stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	বর্ণ buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_stat)(buf, sb));
-	return(stat(buf, sb));
+	যদি (g_Ctoc(fn, buf, পরিমাণ(buf)))
+		প্রত্যাগম(-1);
+	যদি (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		প্রত্যাগম((*pglob->gl_stat)(buf, sb));
+	প্রত্যাগম(stat(buf, sb));
 }
 
-static Char *
-g_strchr(const Char *str, int ch)
+স্থির Char *
+g_strchr(ধ্রুব Char *str, পূর্ণাঙ্ক ch)
 {
-	do {
-		if (*str == ch)
-			return ((Char *)str);
-	} while (*str++);
-	return (NULL);
+	কুরু {
+		যদি (*str == ch)
+			প্রত্যাগম ((Char *)str);
+	} যাবত্ (*str++);
+	প্রত্যাগম (রিক্ত);
 }
 
-static int
-g_Ctoc(const Char *str, char *buf, size_t len)
+স্থির পূর্ণাঙ্ক
+g_Ctoc(ধ্রুব Char *str, বর্ণ *buf, size_t len)
 {
 
-	while (len--) {
-		if ((*buf++ = *str++) == EOS)
-			return (0);
+	যাবত্ (len--) {
+		যদি ((*buf++ = *str++) == EOS)
+			প্রত্যাগম (0);
 	}
-	return (1);
+	প্রত্যাগম (1);
 }
 
 #ifdef DEBUG
-static void
-qprintf(const char *str, Char *s)
+স্থির শূন্য
+qprintf(ধ্রুব বর্ণ *str, Char *s)
 {
 	Char *p;
 
-	(void)printf("%s:\n", str);
-	for (p = s; *p; p++)
-		(void)printf("%c", CHAR(*p));
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", *p & M_PROTECT ? '"' : ' ');
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", ismeta(*p) ? '_' : ' ');
-	(void)printf("\n");
+	(শূন্য)printf("%s:\n", str);
+	প্রতি (p = s; *p; p++)
+		(শূন্য)printf("%c", CHAR(*p));
+	(শূন্য)printf("\n");
+	প্রতি (p = s; *p; p++)
+		(শূন্য)printf("%c", *p & M_PROTECT ? '"' : ' ');
+	(শূন্য)printf("\n");
+	প্রতি (p = s; *p; p++)
+		(শূন্য)printf("%c", ismeta(*p) ? '_' : ' ');
+	(শূন্য)printf("\n");
 }
 #endif
 

@@ -28,14 +28,14 @@ limitations under the License.
  *
  */
 
-#include <stddef.h>
-#include <stdint.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdint.h>
 
-extern "C" void fuzz_session_one(const uint8_t *data, size_t size);
+বাহ্য "C" শূন্য fuzz_session_one(ধ্রুব uint8_t *data, size_t size);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+বাহ্য "C" পূর্ণাঙ্ক
+LLVMFuzzer_Test_One_প্রবেশ(ধ্রুব uint8_t *data, size_t size)
 {
 	fuzz_session_one(data, size);
-	return 0;
+	প্রত্যাগম 0;
 }

@@ -15,44 +15,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifdef SANDBOX_NULL
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <unistd.h>
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "ssh-sandbox.h"
+#অন্তর্ভাব "xmalloc.h"
 
 /* dummy sandbox */
 
-struct ssh_sandbox {
-	int junk;
+সংরচনা ssh_sandbox {
+	পূর্ণাঙ্ক junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+সংরচনা ssh_sandbox *
+ssh_sandbox_init(সংরচনা monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	সংরচনা ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, পরিমাণ(*box));
+	প্রত্যাগম box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+শূন্য
+ssh_sandbox_child(সংরচনা ssh_sandbox *box)
 {
 	/* Nothing to do here */
 }

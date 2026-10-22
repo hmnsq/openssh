@@ -18,9 +18,9 @@
 #ifndef _SSH_SK_H
 #define _SSH_SK_H 1
 
-struct sshbuf;
-struct sshkey;
-struct sk_option;
+সংরচনা sshbuf;
+সংরচনা sshkey;
+সংরচনা sk_option;
 
 /* Version of protocol expected from ssh-sk-helper */
 #define SSH_SK_HELPER_VERSION		5
@@ -31,8 +31,8 @@ struct sk_option;
 #define SSH_SK_HELPER_ENROLL		2
 #define SSH_SK_HELPER_LOAD_RESIDENT	3
 
-struct sshsk_resident_key {
-	struct sshkey *key;
+সংরচনা sshsk_resident_চাবি {
+	সংরচনা sshkey *চাবি;
 	uint8_t *user_id;
 	size_t user_id_len;
 };
@@ -47,10 +47,10 @@ struct sshsk_resident_key {
  * If successful and the attest_data buffer is not NULL then attestation
  * information is placed there.
  */
-int sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest);
+পূর্ণাঙ্ক sshsk_enroll(পূর্ণাঙ্ক type, ধ্রুব বর্ণ *provider_path, ধ্রুব বর্ণ *device,
+    ধ্রুব বর্ণ *application, ধ্রুব বর্ণ *userid, uint8_t flags,
+    ধ্রুব বর্ণ *pin, সংরচনা sshbuf *challenge_buf,
+    সংরচনা sshkey **keyp, সংরচনা sshbuf *attest);
 
 /*
  * Calculate an ECDSA_SK or ED25519_SK signature using the specified key
@@ -58,9 +58,9 @@ int sshsk_enroll(int type, const char *provider_path, const char *device,
  *
  * Returns 0 on success or a ssherr.h error code on failure.
  */
-int sshsk_sign(const char *provider_path, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin);
+পূর্ণাঙ্ক sshsk_sign(ধ্রুব বর্ণ *provider_path, সংরচনা sshkey *চাবি,
+    u_char **sigp, size_t *lenp, ধ্রুব u_char *data, size_t datalen,
+    u_int compat, ধ্রুব বর্ণ *pin);
 
 /*
  * Enumerates and loads all SSH-compatible resident keys from a security
@@ -68,12 +68,12 @@ int sshsk_sign(const char *provider_path, struct sshkey *key,
  *
  * Returns 0 on success or a ssherr.h error code on failure.
  */
-int sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+পূর্ণাঙ্ক sshsk_load_resident(ধ্রুব বর্ণ *provider_path, ধ্রুব বর্ণ *device,
+    ধ্রুব বর্ণ *pin, u_int flags, সংরচনা sshsk_resident_চাবি ***srksp,
     size_t *nsrksp);
 
 /* Free an array of sshsk_resident_key (as returned from sshsk_load_resident) */
-void sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks);
+শূন্য sshsk_free_resident_চাবিগুলি(সংরচনা sshsk_resident_চাবি **srks, size_t nsrks);
 
 #endif /* _SSH_SK_H */
 

@@ -37,41 +37,41 @@
 #ifndef CIPHER_H
 #define CIPHER_H
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
+#অন্তর্ভাব <openssl/evp.h>
 #endif
-#include "cipher-chachapoly.h"
-#include "cipher-aesctr.h"
+#অন্তর্ভাব "cipher-chachapoly.h"
+#অন্তর্ভাব "cipher-aesctr.h"
 
 #define CIPHER_ENCRYPT		1
 #define CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+সংরচনা sshcipher;
+সংরচনা sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+ধ্রুব সংরচনা sshcipher *cipher_by_name(ধ্রুব বর্ণ *);
+ধ্রুব বর্ণ *cipher_warning_message(ধ্রুব সংরচনা sshcipher_ctx *);
+পূর্ণাঙ্ক	 ciphers_valid(ধ্রুব বর্ণ *);
+বর্ণ	*cipher_alg_list(বর্ণ, পূর্ণাঙ্ক);
+ধ্রুব বর্ণ *compression_alg_list(পূর্ণাঙ্ক);
+পূর্ণাঙ্ক	 cipher_init(সংরচনা sshcipher_ctx **, ধ্রুব সংরচনা sshcipher *,
+    ধ্রুব u_char *, u_int, ধ্রুব u_char *, u_int, পূর্ণাঙ্ক);
+পূর্ণাঙ্ক	 cipher_crypt(সংরচনা sshcipher_ctx *, u_int, u_char *, ধ্রুব u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
-    const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+পূর্ণাঙ্ক	 cipher_get_length(সংরচনা sshcipher_ctx *, u_int *, u_int,
+    ধ্রুব u_char *, u_int);
+শূন্য	 cipher_free(সংরচনা sshcipher_ctx *);
+u_int	 cipher_blocksize(ধ্রুব সংরচনা sshcipher *);
+u_int	 cipher_keylen(ধ্রুব সংরচনা sshcipher *);
+u_int	 cipher_seclen(ধ্রুব সংরচনা sshcipher *);
+u_int	 cipher_authlen(ধ্রুব সংরচনা sshcipher *);
+u_int	 cipher_ivlen(ধ্রুব সংরচনা sshcipher *);
+u_int	 cipher_is_cbc(ধ্রুব সংরচনা sshcipher *);
+u_int	 cipher_is_internal(ধ্রুব সংরচনা sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(সংরচনা sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+পূর্ণাঙ্ক	 cipher_get_keyiv(সংরচনা sshcipher_ctx *, u_char *, size_t);
 
 #endif				/* CIPHER_H */

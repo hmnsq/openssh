@@ -45,66 +45,66 @@
  * working.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdarg.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <inttypes.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <stdarg.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfile.h"
-#include "ssherr.h"
-#include "misc.h"
-#include "digest.h"
-#include "crypto_api.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "sshkey.h"
+#অন্তর্ভাব "authfile.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "digest.h"
+#অন্তর্ভাব "crypto_api.h"
 
-#include <fido.h>
-#include <openssl/x509.h>
-#include <openssl/x509v3.h>
-#include <openssl/bio.h>
-#include <openssl/err.h>
-#include <openssl/pem.h>
-#include "openbsd-compat/openssl-compat.h"
+#অন্তর্ভাব <fido.h>
+#অন্তর্ভাব <openssl/x509.h>
+#অন্তর্ভাব <openssl/x509v3.h>
+#অন্তর্ভাব <openssl/bio.h>
+#অন্তর্ভাব <openssl/err.h>
+#অন্তর্ভাব <openssl/pem.h>
+#অন্তর্ভাব "openbsd-compat/openssl-compat.h"
 
-extern char *__progname;
+বাহ্য বর্ণ *__progname;
 
 #define ATTEST_MAGIC	"ssh-sk-attest-v01"
 
-static int
-prepare_fido_cred(fido_cred_t *cred, int credtype, const char *attfmt,
-    const char *rp_id, struct sshbuf *b, const struct sshbuf *challenge,
-    struct sshbuf **attestation_certp)
+স্থির পূর্ণাঙ্ক
+prepare_fido_cred(fido_cred_t *cred, পূর্ণাঙ্ক credtype, ধ্রুব বর্ণ *attfmt,
+    ধ্রুব বর্ণ *rp_id, সংরচনা sshbuf *b, ধ্রুব সংরচনা sshbuf *challenge,
+    সংরচনা sshbuf **attestation_certp)
 {
-	struct sshbuf *attestation_cert = NULL, *sig = NULL, *authdata = NULL;
-	char *magic = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	সংরচনা sshbuf *attestation_cert = রিক্ত, *sig = রিক্ত, *authdata = রিক্ত;
+	বর্ণ *magic = রিক্ত;
+	পূর্ণাঙ্ক r = SSH_ERR_INTERNAL_ERROR;
 
-	*attestation_certp = NULL;
+	*attestation_certp = রিক্ত;
 
 	/* Make sure it's the format we're expecting */
-	if ((r = sshbuf_get_cstring(b, &magic, NULL)) != 0) {
+	যদি ((r = sshbuf_get_cstring(b, &magic, রিক্ত)) != 0) {
 		error_fr(r, "parse header");
-		goto out;
+		গচ্ছ out;
 	}
-	if (strcmp(magic, ATTEST_MAGIC) != 0) {
+	যদি (strcmp(magic, ATTEST_MAGIC) != 0) {
 		error_f("unsupported format");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		গচ্ছ out;
 	}
 	/* Parse the remaining fields */
-	if ((r = sshbuf_froms(b, &attestation_cert)) != 0 ||
+	যদি ((r = sshbuf_froms(b, &attestation_cert)) != 0 ||
 	    (r = sshbuf_froms(b, &sig)) != 0 ||
 	    (r = sshbuf_froms(b, &authdata)) != 0 ||
-	    (r = sshbuf_get_u32(b, NULL)) != 0 || /* reserved flags */
-	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0) { /* reserved */
+	    (r = sshbuf_get_u32(b, রিক্ত)) != 0 || /* reserved flags */
+	    (r = sshbuf_get_string_direct(b, রিক্ত, রিক্ত)) != 0) { /* reserved */
 		error_fr(r, "parse body");
-		goto out;
+		গচ্ছ out;
 	}
 	debug3_f("attestation cert len=%zu, sig len=%zu, "
 	    "authdata len=%zu challenge len=%zu", sshbuf_len(attestation_cert),
@@ -114,7 +114,7 @@ prepare_fido_cred(fido_cred_t *cred, int credtype, const char *attfmt,
 	fido_cred_set_fmt(cred, attfmt);
 	fido_cred_set_clientdata(cred, sshbuf_ptr(challenge),
 	    sshbuf_len(challenge));
-	fido_cred_set_rp(cred, rp_id, NULL);
+	fido_cred_set_rp(cred, rp_id, রিক্ত);
 	fido_cred_set_authdata(cred, sshbuf_ptr(authdata),
 	    sshbuf_len(authdata));
 	/* XXX set_extensions, set_rk, set_uv */
@@ -124,311 +124,311 @@ prepare_fido_cred(fido_cred_t *cred, int credtype, const char *attfmt,
 
 	/* success */
 	*attestation_certp = attestation_cert;
-	attestation_cert = NULL;
+	attestation_cert = রিক্ত;
 	r = 0;
  out:
-	free(magic);
+	মুক্ত(magic);
 	sshbuf_free(attestation_cert);
 	sshbuf_free(sig);
 	sshbuf_free(authdata);
-	return r;
+	প্রত্যাগম r;
 }
 
-static uint8_t *
-get_pubkey_from_cred_ecdsa(const fido_cred_t *cred, size_t *pubkey_len)
+স্থির uint8_t *
+get_pubkey_from_cred_ecdsa(ধ্রুব fido_cred_t *cred, size_t *pubkey_len)
 {
-	const uint8_t *ptr;
-	uint8_t *pubkey = NULL, *ret = NULL;
-	BIGNUM *x = NULL, *y = NULL;
-	EC_POINT *q = NULL;
-	EC_GROUP *g = NULL;
+	ধ্রুব uint8_t *ptr;
+	uint8_t *pubkey = রিক্ত, *ret = রিক্ত;
+	BIGNUM *x = রিক্ত, *y = রিক্ত;
+	EC_POINT *q = রিক্ত;
+	EC_GROUP *g = রিক্ত;
 
-	if ((x = BN_new()) == NULL ||
-	    (y = BN_new()) == NULL ||
-	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == NULL ||
-	    (q = EC_POINT_new(g)) == NULL) {
+	যদি ((x = BN_new()) == রিক্ত ||
+	    (y = BN_new()) == রিক্ত ||
+	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == রিক্ত ||
+	    (q = EC_POINT_new(g)) == রিক্ত) {
 		error_f("libcrypto setup failed");
-		goto out;
+		গচ্ছ out;
 	}
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	যদি ((ptr = fido_cred_pubkey_ptr(cred)) == রিক্ত) {
 		error_f("fido_cred_pubkey_ptr failed");
-		goto out;
+		গচ্ছ out;
 	}
-	if (fido_cred_pubkey_len(cred) != 64) {
+	যদি (fido_cred_pubkey_len(cred) != 64) {
 		error_f("bad fido_cred_pubkey_len %zu",
 		    fido_cred_pubkey_len(cred));
-		goto out;
+		গচ্ছ out;
 	}
 
-	if (BN_bin2bn(ptr, 32, x) == NULL ||
-	    BN_bin2bn(ptr + 32, 32, y) == NULL) {
+	যদি (BN_bin2bn(ptr, 32, x) == রিক্ত ||
+	    BN_bin2bn(ptr + 32, 32, y) == রিক্ত) {
 		error_f("BN_bin2bn failed");
-		goto out;
+		গচ্ছ out;
 	}
-	if (EC_POINT_set_affine_coordinates(g, q, x, y, NULL) != 1) {
+	যদি (EC_POINT_set_affine_coordinates(g, q, x, y, রিক্ত) != 1) {
 		error_f("EC_POINT_set_affine_coordinates failed");
-		goto out;
+		গচ্ছ out;
 	}
 	*pubkey_len = EC_POINT_point2oct(g, q,
-	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (*pubkey_len == 0 || *pubkey_len > 2048) {
+	    POINT_CONVERSION_UNCOMPRESSED, রিক্ত, 0, রিক্ত);
+	যদি (*pubkey_len == 0 || *pubkey_len > 2048) {
 		error_f("bad pubkey length %zu", *pubkey_len);
-		goto out;
+		গচ্ছ out;
 	}
-	if ((pubkey = malloc(*pubkey_len)) == NULL) {
+	যদি ((pubkey = malloc(*pubkey_len)) == রিক্ত) {
 		error_f("malloc pubkey failed");
-		goto out;
+		গচ্ছ out;
 	}
-	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
-	    pubkey, *pubkey_len, NULL) == 0) {
+	যদি (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
+	    pubkey, *pubkey_len, রিক্ত) == 0) {
 		error_f("EC_POINT_point2oct failed");
-		goto out;
+		গচ্ছ out;
 	}
 	/* success */
 	ret = pubkey;
-	pubkey = NULL;
+	pubkey = রিক্ত;
  out:
-	free(pubkey);
+	মুক্ত(pubkey);
 	EC_POINT_free(q);
 	EC_GROUP_free(g);
 	BN_clear_free(x);
 	BN_clear_free(y);
-	return ret;
+	প্রত্যাগম ret;
 }
 
 /* copied from sshsk_ecdsa_assemble() */
-static int
-cred_matches_key_ecdsa(const fido_cred_t *cred, const struct sshkey *k)
+স্থির পূর্ণাঙ্ক
+cred_matches_চাবি_ecdsa(ধ্রুব fido_cred_t *cred, ধ্রুব সংরচনা sshkey *k)
 {
-	struct sshkey *key = NULL;
-	struct sshbuf *b = NULL;
-	EC_KEY *ec = NULL;
-	uint8_t *pubkey = NULL;
+	সংরচনা sshkey *চাবি = রিক্ত;
+	সংরচনা sshbuf *b = রিক্ত;
+	EC_চাবি *ec = রিক্ত;
+	uint8_t *pubkey = রিক্ত;
 	size_t pubkey_len;
-	int r;
+	পূর্ণাঙ্ক r;
 
-	if ((key = sshkey_new(KEY_ECDSA_SK)) == NULL) {
+	যদি ((চাবি = sshkey_new(চাবি_ECDSA_SK)) == রিক্ত) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
-	key->ecdsa_nid = NID_X9_62_prime256v1;
-	if ((key->pkey = EVP_PKEY_new()) == NULL ||
-	    (ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL ||
-	    (b = sshbuf_new()) == NULL) {
+	চাবি->ecdsa_nid = NID_X9_62_prime256v1;
+	যদি ((চাবি->pkey = EVP_PKEY_new()) == রিক্ত ||
+	    (ec = EC_চাবি_new_by_curve_name(চাবি->ecdsa_nid)) == রিক্ত ||
+	    (b = sshbuf_new()) == রিক্ত) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
-	if ((pubkey = get_pubkey_from_cred_ecdsa(cred, &pubkey_len)) == NULL) {
+	যদি ((pubkey = get_pubkey_from_cred_ecdsa(cred, &pubkey_len)) == রিক্ত) {
 		error_f("get_pubkey_from_cred_ecdsa failed");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		গচ্ছ out;
 	}
-	if ((r = sshbuf_put_string(b, pubkey, pubkey_len)) != 0) {
+	যদি ((r = sshbuf_put_string(b, pubkey, pubkey_len)) != 0) {
 		error_fr(r, "sshbuf_put_string");
-		goto out;
+		গচ্ছ out;
 	}
-	if ((r = sshbuf_get_eckey(b, ec)) != 0) {
+	যদি ((r = sshbuf_get_eckey(b, ec)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		গচ্ছ out;
 	}
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec)) != 0) {
+	যদি (sshkey_ec_validate_public(EC_চাবি_get0_group(ec),
+	    EC_চাবি_get0_public_চাবি(ec)) != 0) {
 		error("Authenticator returned invalid ECDSA key");
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+		r = SSH_ERR_চাবি_INVALID_EC_মান;
+		গচ্ছ out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	যদি (EVP_PKEY_set1_EC_চাবি(চাবি->pkey, ec) != 1) {
 		/* XXX assume it is a allocation error */
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
-	key->sk_application = xstrdup(k->sk_application); /* XXX */
-	if (!sshkey_equal_public(key, k)) {
+	চাবি->sk_application = xstrdup(k->sk_application); /* XXX */
+	যদি (!sshkey_equal_public(চাবি, k)) {
 		error("sshkey_equal_public failed");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		গচ্ছ out;
 	}
 	r = 0; /* success */
  out:
-	EC_KEY_free(ec);
-	free(pubkey);
-	sshkey_free(key);
+	EC_চাবি_free(ec);
+	মুক্ত(pubkey);
+	sshkey_free(চাবি);
 	sshbuf_free(b);
-	return r;
+	প্রত্যাগম r;
 }
 
 
 /* copied from sshsk_ed25519_assemble() */
-static int
-cred_matches_key_ed25519(const fido_cred_t *cred, const struct sshkey *k)
+স্থির পূর্ণাঙ্ক
+cred_matches_চাবি_ed25519(ধ্রুব fido_cred_t *cred, ধ্রুব সংরচনা sshkey *k)
 {
-	struct sshkey *key = NULL;
-	const uint8_t *ptr;
-	int r = -1;
+	সংরচনা sshkey *চাবি = রিক্ত;
+	ধ্রুব uint8_t *ptr;
+	পূর্ণাঙ্ক r = -1;
 
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	যদি ((ptr = fido_cred_pubkey_ptr(cred)) == রিক্ত) {
 		error_f("fido_cred_pubkey_ptr failed");
-		goto out;
+		গচ্ছ out;
 	}
-	if (fido_cred_pubkey_len(cred) != ED25519_PK_SZ) {
+	যদি (fido_cred_pubkey_len(cred) != ED25519_PK_SZ) {
 		error_f("bad fido_cred_pubkey_len %zu",
 		    fido_cred_pubkey_len(cred));
-		goto out;
+		গচ্ছ out;
 	}
 
-	if ((key = sshkey_new(KEY_ED25519_SK)) == NULL) {
+	যদি ((চাবি = sshkey_new(চাবি_ED25519_SK)) == রিক্ত) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
-	if ((key->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL) {
+	যদি ((চাবি->ed25519_pk = malloc(ED25519_PK_SZ)) == রিক্ত) {
 		error_f("malloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
-	memcpy(key->ed25519_pk, ptr, ED25519_PK_SZ);
-	key->sk_application = xstrdup(k->sk_application); /* XXX */
-	if (!sshkey_equal_public(key, k)) {
+	memcpy(চাবি->ed25519_pk, ptr, ED25519_PK_SZ);
+	চাবি->sk_application = xstrdup(k->sk_application); /* XXX */
+	যদি (!sshkey_equal_public(চাবি, k)) {
 		error("sshkey_equal_public failed");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		গচ্ছ out;
 	}
 	r = 0; /* success */
  out:
-	sshkey_free(key);
-	return r;
+	sshkey_free(চাবি);
+	প্রত্যাগম r;
 }
 
-static int
-cred_matches_key(const fido_cred_t *cred, const struct sshkey *k)
+স্থির পূর্ণাঙ্ক
+cred_matches_চাবি(ধ্রুব fido_cred_t *cred, ধ্রুব সংরচনা sshkey *k)
 {
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
-		switch (k->ecdsa_nid) {
-		case NID_X9_62_prime256v1:
-			return cred_matches_key_ecdsa(cred, k);
-			break;
-		default:
+	বিকল্প (sshkey_type_plain(k->type)) {
+	পক্ষ চাবি_ECDSA_SK:
+		বিকল্প (k->ecdsa_nid) {
+		পক্ষ NID_X9_62_prime256v1:
+			প্রত্যাগম cred_matches_চাবি_ecdsa(cred, k);
+			ভঙ্গ;
+		স্বভাব:
 			fatal("Unsupported ECDSA key size");
 		}
-		break;
-	case KEY_ED25519_SK:
-		return cred_matches_key_ed25519(cred, k);
-	default:
+		ভঙ্গ;
+	পক্ষ চাবি_ED25519_SK:
+		প্রত্যাগম cred_matches_চাবি_ed25519(cred, k);
+	স্বভাব:
 		error_f("key type %s not supported", sshkey_type(k));
-		return -1;
+		প্রত্যাগম -1;
 	}
 }
 
-int
-main(int argc, char **argv)
+পূর্ণাঙ্ক
+main(পূর্ণাঙ্ক argc, বর্ণ **argv)
 {
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
-	int r, ch, credtype = -1;
-	struct sshkey *k = NULL;
-	struct sshbuf *attestation = NULL, *challenge = NULL;
-	struct sshbuf *attestation_cert = NULL;
-	char *fp;
-	const char *attfmt = "packed", *style = NULL;
-	fido_cred_t *cred = NULL;
-	int write_attestation_cert = 0;
-	extern int optind;
+	পূর্ণাঙ্ক r, ch, credtype = -1;
+	সংরচনা sshkey *k = রিক্ত;
+	সংরচনা sshbuf *attestation = রিক্ত, *challenge = রিক্ত;
+	সংরচনা sshbuf *attestation_cert = রিক্ত;
+	বর্ণ *fp;
+	ধ্রুব বর্ণ *attfmt = "packed", *style = রিক্ত;
+	fido_cred_t *cred = রিক্ত;
+	পূর্ণাঙ্ক write_attestation_cert = 0;
+	বাহ্য পূর্ণাঙ্ক optind;
 	/* extern char *optarg; */
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, রিক্ত);
 
 	sanitise_stdfd();
 	log_init(__progname, log_level, SYSLOG_FACILITY_AUTH, 1);
 
-	while ((ch = getopt(argc, argv, "UAv")) != -1) {
-		switch (ch) {
-		case 'U':
+	যাবত্ ((ch = getopt(argc, argv, "UAv")) != -1) {
+		বিকল্প (ch) {
+		পক্ষ 'U':
 			attfmt = "fido-u2f";
-			break;
-		case 'A':
+			ভঙ্গ;
+		পক্ষ 'A':
 			write_attestation_cert = 1;
-			break;
-		case 'v':
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			ভঙ্গ;
+		পক্ষ 'v':
+			যদি (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			অন্যথা যদি (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
-			goto usage;
+			ভঙ্গ;
+		স্বভাব:
+			গচ্ছ usage;
 		}
 	}
 	log_init(__progname, log_level, SYSLOG_FACILITY_AUTH, 1);
 	argv += optind;
 	argc -= optind;
 
-	if (argc < 3) {
+	যদি (argc < 3) {
  usage:
 		fprintf(stderr, "usage: %s [-vAU] "
 		   "pubkey challenge attestation-blob\n", __progname);
 		exit(1);
 	}
-	if ((r = sshkey_load_public(argv[0], &k, NULL)) != 0)
+	যদি ((r = sshkey_load_public(argv[0], &k, রিক্ত)) != 0)
 		fatal_r(r, "load key %s", argv[0]);
-	if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	যদি ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == রিক্ত)
 		fatal("sshkey_fingerprint failed");
 	debug2("key %s: %s %s", argv[2], sshkey_type(k), fp);
-	free(fp);
-	if ((r = sshbuf_load_file(argv[1], &challenge)) != 0)
+	মুক্ত(fp);
+	যদি ((r = sshbuf_load_file(argv[1], &challenge)) != 0)
 		fatal_r(r, "load challenge %s", argv[1]);
-	if ((r = sshbuf_load_file(argv[2], &attestation)) != 0)
+	যদি ((r = sshbuf_load_file(argv[2], &attestation)) != 0)
 		fatal_r(r, "load attestation %s", argv[2]);
-	if ((cred = fido_cred_new()) == NULL)
+	যদি ((cred = fido_cred_new()) == রিক্ত)
 		fatal("fido_cred_new failed");
 
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
-		switch (k->ecdsa_nid) {
-		case NID_X9_62_prime256v1:
+	বিকল্প (sshkey_type_plain(k->type)) {
+	পক্ষ চাবি_ECDSA_SK:
+		বিকল্প (k->ecdsa_nid) {
+		পক্ষ NID_X9_62_prime256v1:
 			credtype = COSE_ES256;
-			break;
-		default:
+			ভঙ্গ;
+		স্বভাব:
 			fatal("Unsupported ECDSA key size");
 		}
-		break;
-	case KEY_ED25519_SK:
+		ভঙ্গ;
+	পক্ষ চাবি_ED25519_SK:
 		credtype = COSE_EDDSA;
-		break;
-	default:
+		ভঙ্গ;
+	স্বভাব:
 		fatal("unsupported key type %s", sshkey_type(k));
 	}
 
-	if ((r = prepare_fido_cred(cred, credtype, attfmt, k->sk_application,
+	যদি ((r = prepare_fido_cred(cred, credtype, attfmt, k->sk_application,
 	    attestation, challenge, &attestation_cert)) != 0)
 		fatal_r(r, "prepare_fido_cred %s", argv[2]);
-	if (fido_cred_x5c_ptr(cred) != NULL) {
+	যদি (fido_cred_x5c_ptr(cred) != রিক্ত) {
 		debug("basic attestation");
-		if ((r = fido_cred_verify(cred)) != FIDO_OK)
+		যদি ((r = fido_cred_verify(cred)) != FIDO_OK)
 			fatal("basic attestation failed");
 		style = "basic";
-	} else {
+	} অন্যথা {
 		debug("self attestation");
-		if ((r = fido_cred_verify_self(cred)) != FIDO_OK)
+		যদি ((r = fido_cred_verify_self(cred)) != FIDO_OK)
 			fatal("self attestation failed");
 		style = "self";
 	}
-	if (cred_matches_key(cred, k) != 0)
+	যদি (cred_matches_চাবি(cred, k) != 0)
 		fatal("cred authdata does not match key");
 
 	fido_cred_free(&cred);
 
-	if (write_attestation_cert) {
-		PEM_write(stdout, "CERTIFICATE", NULL,
+	যদি (write_attestation_cert) {
+		PEM_write(stdout, "CERTIFICATE", রিক্ত,
 		    sshbuf_ptr(attestation_cert), sshbuf_len(attestation_cert));
 	}
 	sshbuf_free(attestation_cert);
 
 	logit("%s: verified %s attestation", argv[2], style);
 
-	return (0);
+	প্রত্যাগম (0);
 }

@@ -25,37 +25,37 @@
  * Red Hat author: Jan F. Chadima <jchadima@redhat.com>
  */
 
-#include "includes.h"
-#if defined(USE_LINUX_AUDIT)
-#include <libaudit.h>
-#include <unistd.h>
-#include <string.h>
+#অন্তর্ভাব "includes.h"
+#যদি defined(USE_LINUX_AUDIT)
+#অন্তর্ভাব <libaudit.h>
+#অন্তর্ভাব <unistd.h>
+#অন্তর্ভাব <string.h>
 
-#include "log.h"
-#include "audit.h"
-#include "canohost.h"
-#include "packet.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "audit.h"
+#অন্তর্ভাব "canohost.h"
+#অন্তর্ভাব "packet.h"
 
-const char *audit_username(void);
+ধ্রুব বর্ণ *audit_username(শূন্য);
 
-int
-linux_audit_record_event(int uid, const char *username, const char *hostname,
-    const char *ip, const char *ttyn, int success)
+পূর্ণাঙ্ক
+linux_audit_record_event(পূর্ণাঙ্ক uid, ধ্রুব বর্ণ *username, ধ্রুব বর্ণ *hostname,
+    ধ্রুব বর্ণ *ip, ধ্রুব বর্ণ *ttyn, পূর্ণাঙ্ক success)
 {
-	int audit_fd, rc, saved_errno;
+	পূর্ণাঙ্ক audit_fd, rc, saved_errno;
 
-	if ((audit_fd = audit_open()) < 0) {
-		if (errno == EINVAL || errno == EPROTONOSUPPORT ||
+	যদি ((audit_fd = audit_open()) < 0) {
+		যদি (errno == EINVAL || errno == EPROTONOSUPPORT ||
 		    errno == EAFNOSUPPORT)
-			return 1; /* No audit support in kernel */
-		else
-			return 0; /* Must prevent login */
+			প্রত্যাগম 1; /* No audit support in kernel */
+		অন্যথা
+			প্রত্যাগম 0; /* Must prevent login */
 	}
-        if (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
-                hostname = NULL;
+        যদি (hostname != রিক্ত && strcmp(hostname, "UNKNOWN") == 0)
+                hostname = রিক্ত;
 	rc = audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
-	    NULL, "login", username ? username : "(unknown)",
-	    username == NULL ? uid : -1, hostname, ip, ttyn, success);
+	    রিক্ত, "login", username ? username : "(unknown)",
+	    username == রিক্ত ? uid : -1, hostname, ip, ttyn, success);
 	saved_errno = errno;
 	close(audit_fd);
 
@@ -63,64 +63,64 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	যদি ((rc == -EPERM) && (geteuid() != 0))
 		rc = 0;
 	errno = saved_errno;
 
-	return rc >= 0;
+	প্রত্যাগম rc >= 0;
 }
 
 /* Below is the sshd audit API code */
 
-void
-audit_connection_from(const char *host, int port)
+শূন্য
+audit_connection_from(ধ্রুব বর্ণ *host, পূর্ণাঙ্ক port)
 {
 	/* not implemented */
 }
 
-void
-audit_run_command(const char *command)
+শূন্য
+audit_run_command(ধ্রুব বর্ণ *command)
 {
 	/* not implemented */
 }
 
-void
-audit_session_open(struct logininfo *li)
+শূন্য
+audit_session_open(সংরচনা logininfo *li)
 {
-	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
-	    li->line, 1) == 0)
+	যদি (linux_audit_record_event(li->uid, রিক্ত, li->hostname, রিক্ত,
+	    li->সারি, 1) == 0)
 		fatal("linux_audit_write_entry failed: %s", strerror(errno));
 }
 
-void
-audit_session_close(struct logininfo *li)
+শূন্য
+audit_session_close(সংরচনা logininfo *li)
 {
 	/* not implemented */
 }
 
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+শূন্য
+audit_event(সংরচনা ssh *ssh, ssh_audit_event_t event)
 {
-	switch(event) {
-	case SSH_AUTH_SUCCESS:
-	case SSH_CONNECTION_CLOSE:
-	case SSH_NOLOGIN:
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
-		break;
-	case SSH_AUTH_FAIL_NONE:
-	case SSH_AUTH_FAIL_PASSWD:
-	case SSH_AUTH_FAIL_KBDINT:
-	case SSH_AUTH_FAIL_PUBKEY:
-	case SSH_AUTH_FAIL_HOSTBASED:
-	case SSH_AUTH_FAIL_GSSAPI:
-	case SSH_INVALID_USER:
-		linux_audit_record_event(-1, audit_username(), NULL,
+	বিকল্প(event) {
+	পক্ষ SSH_AUTH_SUCCESS:
+	পক্ষ SSH_CONNECTION_CLOSE:
+	পক্ষ SSH_NOLOGIN:
+	পক্ষ SSH_LOGIN_EXCEED_MAXTRIES:
+	পক্ষ SSH_LOGIN_মূল_DENIED:
+		ভঙ্গ;
+	পক্ষ SSH_AUTH_FAIL_NONE:
+	পক্ষ SSH_AUTH_FAIL_PASSWD:
+	পক্ষ SSH_AUTH_FAIL_KBDINT:
+	পক্ষ SSH_AUTH_FAIL_PUBKEY:
+	পক্ষ SSH_AUTH_FAIL_HOSTBASED:
+	পক্ষ SSH_AUTH_FAIL_GSSAPI:
+	পক্ষ SSH_INVALID_USER:
+		linux_audit_record_event(-1, audit_username(), রিক্ত,
 		    ssh_remote_ipaddr(ssh), "sshd", 0);
-		break;
-	default:
+		ভঙ্গ;
+	স্বভাব:
 		debug_f("unhandled event %d", event);
-		break;
+		ভঙ্গ;
 	}
 }
 #endif /* USE_LINUX_AUDIT */

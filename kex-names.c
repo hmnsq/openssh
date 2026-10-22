@@ -23,34 +23,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <signal.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
+#অন্তর্ভাব <openssl/crypto.h>
+#অন্তর্ভাব <openssl/evp.h>
 #endif
 
-#include "kex.h"
-#include "log.h"
-#include "match.h"
-#include "digest.h"
-#include "misc.h"
+#অন্তর্ভাব "kex.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "match.h"
+#অন্তর্ভাব "digest.h"
+#অন্তর্ভাব "misc.h"
 
-#include "ssherr.h"
+#অন্তর্ভাব "ssherr.h"
 
-struct kexalg {
-	char *name;
+সংরচনা kexalg {
+	বর্ণ *name;
 	u_int type;
-	int ec_nid;
-	int hash_alg;
-	int pq_alg;
+	পূর্ণাঙ্ক ec_nid;
+	পূর্ণাঙ্ক hash_alg;
+	পূর্ণাঙ্ক pq_alg;
 };
-static const struct kexalg kexalgs[] = {
+স্থির ধ্রুব সংরচনা kexalg kexalgs[] = {
 #ifdef WITH_OPENSSL
 	{ KEX_DH1, KEX_DH_GRP1_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
 	{ KEX_DH14_SHA1, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
@@ -70,7 +70,7 @@ static const struct kexalg kexalgs[] = {
 	{ KEX_MLKEM768NISTP256_SHA256, KEX_KEM_MLKEM768ECDH_SHA256,
 	    NID_X9_62_prime256v1, SSH_DIGEST_SHA256, KEX_IS_PQ },
 #endif /* WITH_OPENSSL */
-#if defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
+#যদি defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
 	{ KEX_CURVE25519_SHA256, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 	{ KEX_CURVE25519_SHA256_OLD, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 #ifdef USE_SNTRUP761X25519
@@ -84,150 +84,150 @@ static const struct kexalg kexalgs[] = {
 	    SSH_DIGEST_SHA256, KEX_IS_PQ },
 #endif
 #endif /* HAVE_EVP_SHA256 || !WITH_OPENSSL */
-	{ NULL, 0, -1, -1, 0 },
+	{ রিক্ত, 0, -1, -1, 0 },
 };
 
-char *
-kex_alg_list(char sep)
+বর্ণ *
+kex_alg_list(বর্ণ sep)
 {
-	char *ret = NULL;
-	const struct kexalg *k;
-	char sep_str[2] = {sep, '\0'};
+	বর্ণ *ret = রিক্ত;
+	ধ্রুব সংরচনা kexalg *k;
+	বর্ণ sep_str[2] = {sep, '\0'};
 
-	for (k = kexalgs; k->name != NULL; k++)
+	প্রতি (k = kexalgs; k->name != রিক্ত; k++)
 		xextendf(&ret, sep_str, "%s", k->name);
 
-	return ret;
+	প্রত্যাগম ret;
 }
 
-static const struct kexalg *
-kex_alg_by_name(const char *name)
+স্থির ধ্রুব সংরচনা kexalg *
+kex_alg_by_name(ধ্রুব বর্ণ *name)
 {
-	const struct kexalg *k;
+	ধ্রুব সংরচনা kexalg *k;
 
-	for (k = kexalgs; k->name != NULL; k++) {
-		if (strcmp(k->name, name) == 0)
-			return k;
+	প্রতি (k = kexalgs; k->name != রিক্ত; k++) {
+		যদি (strcmp(k->name, name) == 0)
+			প্রত্যাগম k;
 	}
-	return NULL;
+	প্রত্যাগম রিক্ত;
 }
 
-int
-kex_name_valid(const char *name)
+পূর্ণাঙ্ক
+kex_name_valid(ধ্রুব বর্ণ *name)
 {
-	return kex_alg_by_name(name) != NULL;
+	প্রত্যাগম kex_alg_by_name(name) != রিক্ত;
 }
 
-int
-kex_is_pq_from_name(const char *name)
+পূর্ণাঙ্ক
+kex_is_pq_from_name(ধ্রুব বর্ণ *name)
 {
-	const struct kexalg *k;
+	ধ্রুব সংরচনা kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->pq_alg == KEX_IS_PQ;
+	যদি ((k = kex_alg_by_name(name)) == রিক্ত)
+		প্রত্যাগম 0;
+	প্রত্যাগম k->pq_alg == KEX_IS_PQ;
 }
 
 u_int
-kex_type_from_name(const char *name)
+kex_type_from_name(ধ্রুব বর্ণ *name)
 {
-	const struct kexalg *k;
+	ধ্রুব সংরচনা kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->type;
+	যদি ((k = kex_alg_by_name(name)) == রিক্ত)
+		প্রত্যাগম 0;
+	প্রত্যাগম k->type;
 }
 
-int
-kex_hash_from_name(const char *name)
+পূর্ণাঙ্ক
+kex_hash_from_name(ধ্রুব বর্ণ *name)
 {
-	const struct kexalg *k;
+	ধ্রুব সংরচনা kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->hash_alg;
+	যদি ((k = kex_alg_by_name(name)) == রিক্ত)
+		প্রত্যাগম -1;
+	প্রত্যাগম k->hash_alg;
 }
 
-int
-kex_nid_from_name(const char *name)
+পূর্ণাঙ্ক
+kex_nid_from_name(ধ্রুব বর্ণ *name)
 {
-	const struct kexalg *k;
+	ধ্রুব সংরচনা kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->ec_nid;
+	যদি ((k = kex_alg_by_name(name)) == রিক্ত)
+		প্রত্যাগম -1;
+	প্রত্যাগম k->ec_nid;
 }
 
 /* Validate KEX method name list */
-int
-kex_names_valid(const char *names)
+পূর্ণাঙ্ক
+kex_names_valid(ধ্রুব বর্ণ *names)
 {
-	char *s, *cp, *p;
+	বর্ণ *s, *cp, *p;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((s = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, ",")); p && *p != '\0';
+	যদি (names == রিক্ত || strcmp(names, "") == 0)
+		প্রত্যাগম 0;
+	যদি ((s = cp = strdup(names)) == রিক্ত)
+		প্রত্যাগম 0;
+	প্রতি ((p = strsep(&cp, ",")); p && *p != '\0';
 	    (p = strsep(&cp, ","))) {
-		if (kex_alg_by_name(p) == NULL) {
+		যদি (kex_alg_by_name(p) == রিক্ত) {
 			error("Unsupported KEX algorithm \"%.100s\"", p);
-			free(s);
-			return 0;
+			মুক্ত(s);
+			প্রত্যাগম 0;
 		}
 	}
 	debug3("kex names ok: [%s]", names);
-	free(s);
-	return 1;
+	মুক্ত(s);
+	প্রত্যাগম 1;
 }
 
 /* returns non-zero if proposal contains any algorithm from algs */
-int
-kex_has_any_alg(const char *proposal, const char *algs)
+পূর্ণাঙ্ক
+kex_has_any_alg(ধ্রুব বর্ণ *proposal, ধ্রুব বর্ণ *algs)
 {
-	char *cp;
+	বর্ণ *cp;
 
-	if ((cp = match_list(proposal, algs, NULL)) == NULL)
-		return 0;
-	free(cp);
-	return 1;
+	যদি ((cp = match_list(proposal, algs, রিক্ত)) == রিক্ত)
+		প্রত্যাগম 0;
+	মুক্ত(cp);
+	প্রত্যাগম 1;
 }
 
 /*
  * Concatenate algorithm names, avoiding duplicates in the process.
  * Caller must free returned string.
  */
-char *
-kex_names_cat(const char *a, const char *b)
+বর্ণ *
+kex_names_cat(ধ্রুব বর্ণ *a, ধ্রুব বর্ণ *b)
 {
-	char *ret = NULL, *tmp = NULL, *cp, *p;
+	বর্ণ *ret = রিক্ত, *tmp = রিক্ত, *cp, *p;
 	size_t len;
 
-	if (a == NULL || *a == '\0')
-		return strdup(b);
-	if (b == NULL || *b == '\0')
-		return strdup(a);
-	if (strlen(b) > 1024*1024)
-		return NULL;
+	যদি (a == রিক্ত || *a == '\0')
+		প্রত্যাগম strdup(b);
+	যদি (b == রিক্ত || *b == '\0')
+		প্রত্যাগম strdup(a);
+	যদি (strlen(b) > 1024*1024)
+		প্রত্যাগম রিক্ত;
 	len = strlen(a) + strlen(b) + 2;
-	if ((tmp = cp = strdup(b)) == NULL ||
-	    (ret = calloc(1, len)) == NULL) {
-		free(tmp);
-		return NULL;
+	যদি ((tmp = cp = strdup(b)) == রিক্ত ||
+	    (ret = calloc(1, len)) == রিক্ত) {
+		মুক্ত(tmp);
+		প্রত্যাগম রিক্ত;
 	}
 	strlcpy(ret, a, len);
-	for ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
-		if (kex_has_any_alg(ret, p))
-			continue; /* Algorithm already present */
-		if (strlcat(ret, ",", len) >= len ||
+	প্রতি ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
+		যদি (kex_has_any_alg(ret, p))
+			অনুবর্ত; /* Algorithm already present */
+		যদি (strlcat(ret, ",", len) >= len ||
 		    strlcat(ret, p, len) >= len) {
-			free(tmp);
-			free(ret);
-			return NULL; /* Shouldn't happen */
+			মুক্ত(tmp);
+			মুক্ত(ret);
+			প্রত্যাগম রিক্ত; /* Shouldn't happen */
 		}
 	}
-	free(tmp);
-	return ret;
+	মুক্ত(tmp);
+	প্রত্যাগম ret;
 }
 
 /*
@@ -237,50 +237,50 @@ kex_names_cat(const char *a, const char *b)
  * specified names should be removed, or '^' that they should be placed
  * at the head.
  */
-int
-kex_assemble_names(char **listp, const char *def, const char *all)
+পূর্ণাঙ্ক
+kex_assemble_names(বর্ণ **listp, ধ্রুব বর্ণ *def, ধ্রুব বর্ণ *all)
 {
-	char *cp, *tmp, *patterns;
-	char *list = NULL, *ret = NULL, *matching = NULL, *opatterns = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	বর্ণ *cp, *tmp, *patterns;
+	বর্ণ *list = রিক্ত, *ret = রিক্ত, *matching = রিক্ত, *opatterns = রিক্ত;
+	পূর্ণাঙ্ক r = SSH_ERR_INTERNAL_ERROR;
 
-	if (listp == NULL || def == NULL || all == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি (listp == রিক্ত || def == রিক্ত || all == রিক্ত)
+		প্রত্যাগম SSH_ERR_INVALID_ARGUMENT;
 
-	if (*listp == NULL || **listp == '\0') {
-		if ((*listp = strdup(def)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+	যদি (*listp == রিক্ত || **listp == '\0') {
+		যদি ((*listp = strdup(def)) == রিক্ত)
+			প্রত্যাগম SSH_ERR_ALLOC_FAIL;
+		প্রত্যাগম 0;
 	}
 
 	list = *listp;
-	*listp = NULL;
-	if (*list == '+') {
+	*listp = রিক্ত;
+	যদি (*list == '+') {
 		/* Append names to default list */
-		if ((tmp = kex_names_cat(def, list + 1)) == NULL) {
+		যদি ((tmp = kex_names_cat(def, list + 1)) == রিক্ত) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			গচ্ছ fail;
 		}
-		free(list);
+		মুক্ত(list);
 		list = tmp;
-	} else if (*list == '-') {
+	} অন্যথা যদি (*list == '-') {
 		/* Remove names from default list */
-		if ((*listp = match_filter_denylist(def, list + 1)) == NULL) {
+		যদি ((*listp = match_filter_denylist(def, list + 1)) == রিক্ত) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			গচ্ছ fail;
 		}
-		free(list);
+		মুক্ত(list);
 		/* filtering has already been done */
-		return 0;
-	} else if (*list == '^') {
+		প্রত্যাগম 0;
+	} অন্যথা যদি (*list == '^') {
 		/* Place names at head of default list */
-		if ((tmp = kex_names_cat(list + 1, def)) == NULL) {
+		যদি ((tmp = kex_names_cat(list + 1, def)) == রিক্ত) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			গচ্ছ fail;
 		}
-		free(list);
+		মুক্ত(list);
 		list = tmp;
-	} else {
+	} অন্যথা {
 		/* Explicit list, overrides default - just use "list" as is */
 	}
 
@@ -289,46 +289,46 @@ kex_assemble_names(char **listp, const char *def, const char *all)
 	 * the patterns are applied above. For the +list and explicit list
 	 * cases we need to do it now.
 	 */
-	ret = NULL;
-	if ((patterns = opatterns = strdup(list)) == NULL) {
+	ret = রিক্ত;
+	যদি ((patterns = opatterns = strdup(list)) == রিক্ত) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto fail;
+		গচ্ছ fail;
 	}
 	/* Apply positive (i.e. non-negated) patterns from the list */
-	while ((cp = strsep(&patterns, ",")) != NULL) {
-		if (*cp == '!') {
+	যাবত্ ((cp = strsep(&patterns, ",")) != রিক্ত) {
+		যদি (*cp == '!') {
 			/* negated matches are not supported here */
 			r = SSH_ERR_INVALID_ARGUMENT;
-			goto fail;
+			গচ্ছ fail;
 		}
-		free(matching);
-		if ((matching = match_filter_allowlist(all, cp)) == NULL) {
+		মুক্ত(matching);
+		যদি ((matching = match_filter_allowlist(all, cp)) == রিক্ত) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			গচ্ছ fail;
 		}
-		if ((tmp = kex_names_cat(ret, matching)) == NULL) {
+		যদি ((tmp = kex_names_cat(ret, matching)) == রিক্ত) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			গচ্ছ fail;
 		}
-		free(ret);
+		মুক্ত(ret);
 		ret = tmp;
 	}
-	if (ret == NULL || *ret == '\0') {
+	যদি (ret == রিক্ত || *ret == '\0') {
 		/* An empty name-list is an error */
 		/* XXX better error code? */
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto fail;
+		গচ্ছ fail;
 	}
 
 	/* success */
 	*listp = ret;
-	ret = NULL;
+	ret = রিক্ত;
 	r = 0;
 
  fail:
-	free(matching);
-	free(opatterns);
-	free(list);
-	free(ret);
-	return r;
+	মুক্ত(matching);
+	মুক্ত(opatterns);
+	মুক্ত(list);
+	মুক্ত(ret);
+	প্রত্যাগম r;
 }

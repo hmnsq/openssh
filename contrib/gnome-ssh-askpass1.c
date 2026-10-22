@@ -43,44 +43,44 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <gnome.h>
-#include <X11/Xlib.h>
-#include <gdk/gdkx.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <gnome.h>
+#অন্তর্ভাব <X11/Xlib.h>
+#অন্তর্ভাব <gdk/gdkx.h>
 
-void
-report_failed_grab (void)
+শূন্য
+report_failed_grab (শূন্য)
 {
 	GtkWidget *err;
 
 	err = gnome_message_box_new("Could not grab keyboard or mouse.\n"
 		"A malicious client may be eavesdropping on your session.",
-				    GNOME_MESSAGE_BOX_ERROR, "EXIT", NULL);
+				    GNOME_MESSAGE_BOX_ERROR, "EXIT", রিক্ত);
 	gtk_window_set_position(GTK_WINDOW(err), GTK_WIN_POS_CENTER);
-	gtk_object_set(GTK_OBJECT(err), "type", GTK_WINDOW_POPUP, NULL);
+	gtk_object_set(GTK_OBJECT(err), "type", GTK_WINDOW_POPUP, রিক্ত);
 
 	gnome_dialog_run_and_close(GNOME_DIALOG(err));
 }
 
-int
-passphrase_dialog(char *message)
+পূর্ণাঙ্ক
+passphrase_dialog(বর্ণ *message)
 {
-	char *passphrase;
-	char **messages;
-	int result, i, grab_server, grab_pointer;
+	বর্ণ *passphrase;
+	বর্ণ **messages;
+	পূর্ণাঙ্ক result, i, grab_server, grab_pointer;
 	GtkWidget *dialog, *entry, *label;
 
-	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != NULL);
-	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != NULL);
+	grab_server = (getenv("GNOME_SSH_ASKPASS_GRAB_SERVER") != রিক্ত);
+	grab_pointer = (getenv("GNOME_SSH_ASKPASS_GRAB_POINTER") != রিক্ত);
 
 	dialog = gnome_dialog_new("OpenSSH", GNOME_STOCK_BUTTON_OK,
-	    GNOME_STOCK_BUTTON_CANCEL, NULL);
+	    GNOME_STOCK_BUTTON_CANCEL, রিক্ত);
 
 	messages = g_strsplit(message, "\\n", 0);
-	if (messages)
-		for(i = 0; messages[i]; i++) {
+	যদি (messages)
+		প্রতি(i = 0; messages[i]; i++) {
 			label = gtk_label_new(messages[i]);
 			gtk_box_pack_start(GTK_BOX(GNOME_DIALOG(dialog)->vbox),
 			    label, FALSE, FALSE, 0);
@@ -93,7 +93,7 @@ passphrase_dialog(char *message)
 	gtk_widget_grab_focus(entry);
 
 	/* Center window and prepare for grab */
-	gtk_object_set(GTK_OBJECT(dialog), "type", GTK_WINDOW_POPUP, NULL);
+	gtk_object_set(GTK_OBJECT(dialog), "type", GTK_WINDOW_POPUP, রিক্ত);
 	gnome_dialog_set_default(GNOME_DIALOG(dialog), 0);
 	gtk_window_set_position (GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
 	gtk_window_set_policy(GTK_WINDOW(dialog), FALSE, FALSE, TRUE);
@@ -103,13 +103,13 @@ passphrase_dialog(char *message)
 	gtk_widget_show_all(dialog);
 
 	/* Grab focus */
-	if (grab_server)
+	যদি (grab_server)
 		XGrabServer(GDK_DISPLAY());
-	if (grab_pointer && gdk_pointer_grab(dialog->window, TRUE, 0,
-	    NULL, NULL, GDK_CURRENT_TIME))
-		goto nograb;
-	if (gdk_keyboard_grab(dialog->window, FALSE, GDK_CURRENT_TIME))
-		goto nograbkb;
+	যদি (grab_pointer && gdk_pointer_grab(dialog->window, TRUE, 0,
+	    রিক্ত, রিক্ত, GDK_CURRENT_TIME))
+		গচ্ছ nograb;
+	যদি (gdk_keyboard_grab(dialog->window, FALSE, GDK_CURRENT_TIME))
+		গচ্ছ nograbkb;
 
 	/* Make <enter> close dialog */
 	gnome_dialog_editable_enters(GNOME_DIALOG(dialog), GTK_EDITABLE(entry));
@@ -118,16 +118,16 @@ passphrase_dialog(char *message)
 	result = gnome_dialog_run(GNOME_DIALOG(dialog));
 
 	/* Ungrab */
-	if (grab_server)
+	যদি (grab_server)
 		XUngrabServer(GDK_DISPLAY());
-	if (grab_pointer)
+	যদি (grab_pointer)
 		gdk_pointer_ungrab(GDK_CURRENT_TIME);
 	gdk_keyboard_ungrab(GDK_CURRENT_TIME);
 	gdk_flush();
 
 	/* Report passphrase if user selected OK */
 	passphrase = gtk_entry_get_text(GTK_ENTRY(entry));
-	if (result == 0)
+	যদি (result == 0)
 		puts(passphrase);
 		
 	/* Zero passphrase in memory */
@@ -135,7 +135,7 @@ passphrase_dialog(char *message)
 	gtk_entry_set_text(GTK_ENTRY(entry), passphrase);
 			
 	gnome_dialog_close(GNOME_DIALOG(dialog));
-	return (result == 0 ? 0 : -1);
+	প্রত্যাগম (result == 0 ? 0 : -1);
 
 	/*
 	 * At least one grab failed - ungrab what we got, and report the
@@ -144,29 +144,29 @@ passphrase_dialog(char *message)
  nograbkb:
 	gdk_pointer_ungrab(GDK_CURRENT_TIME);
  nograb:
-	if (grab_server)
+	যদি (grab_server)
 		XUngrabServer(GDK_DISPLAY());
 	gnome_dialog_close(GNOME_DIALOG(dialog));
 	
 	report_failed_grab();
-	return (-1);
+	প্রত্যাগম (-1);
 }
 
-int
-main(int argc, char **argv)
+পূর্ণাঙ্ক
+main(পূর্ণাঙ্ক argc, বর্ণ **argv)
 {
-	char *message;
-	int result;
+	বর্ণ *message;
+	পূর্ণাঙ্ক result;
 
 	gnome_init("GNOME ssh-askpass", "0.1", argc, argv);
 
-	if (argc == 2)
+	যদি (argc == 2)
 		message = argv[1];
-	else
+	অন্যথা
 		message = "Enter your OpenSSH passphrase:";
 
 	setvbuf(stdout, 0, _IONBF, 0);
 	result = passphrase_dialog(message);
 
-	return (result);
+	প্রত্যাগম (result);
 }

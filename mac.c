@@ -23,39 +23,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাব <sys/types.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
-#include "digest.h"
-#include "hmac.h"
-#include "umac.h"
-#include "mac.h"
-#include "misc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#অন্তর্ভাব "digest.h"
+#অন্তর্ভাব "hmac.h"
+#অন্তর্ভাব "umac.h"
+#অন্তর্ভাব "mac.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "sshbuf.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#অন্তর্ভাব "openbsd-compat/openssl-compat.h"
 
 #define SSH_DIGEST	1	/* SSH_DIGEST_XXX */
 #define SSH_UMAC	2	/* UMAC (not integrated with OpenSSL) */
 #define SSH_UMAC128	3
 
-struct macalg {
-	char		*name;
-	int		type;
-	int		alg;
-	int		truncatebits;	/* truncate digest if != 0 */
-	int		key_len;	/* just for UMAC */
-	int		len;		/* just for UMAC */
-	int		etm;		/* Encrypt-then-MAC */
+সংরচনা macalg {
+	বর্ণ		*name;
+	পূর্ণাঙ্ক		type;
+	পূর্ণাঙ্ক		alg;
+	পূর্ণাঙ্ক		truncatebits;	/* truncate digest if != 0 */
+	পূর্ণাঙ্ক		চাবি_len;	/* just for UMAC */
+	পূর্ণাঙ্ক		len;		/* just for UMAC */
+	পূর্ণাঙ্ক		etm;		/* Encrypt-then-MAC */
 };
 
-static const struct macalg macs[] = {
+স্থির ধ্রুব সংরচনা macalg macs[] = {
 	/* Encrypt-and-MAC (encrypt-and-authenticate) variants */
 	{ "hmac-sha1",				SSH_DIGEST, SSH_DIGEST_SHA1, 0, 0, 0, 0 },
 	{ "hmac-sha1-96",			SSH_DIGEST, SSH_DIGEST_SHA1, 96, 0, 0, 0 },
@@ -76,180 +76,180 @@ static const struct macalg macs[] = {
 	{ "umac-64-etm@openssh.com",		SSH_UMAC, 0, 0, 128, 64, 1 },
 	{ "umac-128-etm@openssh.com",		SSH_UMAC128, 0, 0, 128, 128, 1 },
 
-	{ NULL,					0, 0, 0, 0, 0, 0 }
+	{ রিক্ত,					0, 0, 0, 0, 0, 0 }
 };
 
 /* Returns a list of supported MACs separated by the specified char. */
-char *
-mac_alg_list(char sep)
+বর্ণ *
+mac_alg_list(বর্ণ sep)
 {
-	char *ret = NULL;
-	const struct macalg *m;
-	char sep_str[2] = {sep, '\0'};
+	বর্ণ *ret = রিক্ত;
+	ধ্রুব সংরচনা macalg *m;
+	বর্ণ sep_str[2] = {sep, '\0'};
 
-	for (m = macs; m->name != NULL; m++)
+	প্রতি (m = macs; m->name != রিক্ত; m++)
 		xextendf(&ret, sep_str, "%s", m->name);
 
-	return ret;
+	প্রত্যাগম ret;
 }
 
-static int
-mac_setup_by_alg(struct sshmac *mac, const struct macalg *macalg)
+স্থির পূর্ণাঙ্ক
+mac_setup_by_alg(সংরচনা sshmac *mac, ধ্রুব সংরচনা macalg *macalg)
 {
 	mac->type = macalg->type;
-	if (mac->type == SSH_DIGEST) {
-		if ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		mac->key_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
-	} else {
+	যদি (mac->type == SSH_DIGEST) {
+		যদি ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == রিক্ত)
+			প্রত্যাগম SSH_ERR_ALLOC_FAIL;
+		mac->চাবি_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
+	} অন্যথা {
 		mac->mac_len = macalg->len / 8;
-		mac->key_len = macalg->key_len / 8;
-		mac->umac_ctx = NULL;
+		mac->চাবি_len = macalg->চাবি_len / 8;
+		mac->umac_ctx = রিক্ত;
 	}
-	if (macalg->truncatebits != 0)
+	যদি (macalg->truncatebits != 0)
 		mac->mac_len = macalg->truncatebits / 8;
 	mac->etm = macalg->etm;
-	return 0;
+	প্রত্যাগম 0;
 }
 
-int
-mac_setup(struct sshmac *mac, char *name)
+পূর্ণাঙ্ক
+mac_setup(সংরচনা sshmac *mac, বর্ণ *name)
 {
-	const struct macalg *m;
+	ধ্রুব সংরচনা macalg *m;
 
-	for (m = macs; m->name != NULL; m++) {
-		if (strcmp(name, m->name) != 0)
-			continue;
-		if (mac != NULL)
-			return mac_setup_by_alg(mac, m);
-		return 0;
+	প্রতি (m = macs; m->name != রিক্ত; m++) {
+		যদি (strcmp(name, m->name) != 0)
+			অনুবর্ত;
+		যদি (mac != রিক্ত)
+			প্রত্যাগম mac_setup_by_alg(mac, m);
+		প্রত্যাগম 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
+	প্রত্যাগম SSH_ERR_INVALID_ARGUMENT;
 }
 
-int
-mac_init(struct sshmac *mac)
+পূর্ণাঙ্ক
+mac_init(সংরচনা sshmac *mac)
 {
-	if (mac->key == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	switch (mac->type) {
-	case SSH_DIGEST:
-		if (mac->hmac_ctx == NULL ||
-		    ssh_hmac_init(mac->hmac_ctx, mac->key, mac->key_len) < 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
-	case SSH_UMAC:
-		if ((mac->umac_ctx = umac_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
-	case SSH_UMAC128:
-		if ((mac->umac_ctx = umac128_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+	যদি (mac->চাবি == রিক্ত)
+		প্রত্যাগম SSH_ERR_INVALID_ARGUMENT;
+	বিকল্প (mac->type) {
+	পক্ষ SSH_DIGEST:
+		যদি (mac->hmac_ctx == রিক্ত ||
+		    ssh_hmac_init(mac->hmac_ctx, mac->চাবি, mac->চাবি_len) < 0)
+			প্রত্যাগম SSH_ERR_INVALID_ARGUMENT;
+		প্রত্যাগম 0;
+	পক্ষ SSH_UMAC:
+		যদি ((mac->umac_ctx = umac_new(mac->চাবি)) == রিক্ত)
+			প্রত্যাগম SSH_ERR_ALLOC_FAIL;
+		প্রত্যাগম 0;
+	পক্ষ SSH_UMAC128:
+		যদি ((mac->umac_ctx = umac128_new(mac->চাবি)) == রিক্ত)
+			প্রত্যাগম SSH_ERR_ALLOC_FAIL;
+		প্রত্যাগম 0;
+	স্বভাব:
+		প্রত্যাগম SSH_ERR_INVALID_ARGUMENT;
 	}
 }
 
-int
-mac_compute(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, int datalen,
+পূর্ণাঙ্ক
+mac_compute(সংরচনা sshmac *mac, uint32_t seqno,
+    ধ্রুব u_char *data, পূর্ণাঙ্ক datalen,
     u_char *digest, size_t dlen)
 {
-	static union {
+	স্থির সঙ্ঘ {
 		u_char m[SSH_DIGEST_MAX_LENGTH];
 		uint64_t for_align;
 	} u;
 	u_char b[4];
 	u_char nonce[8];
 
-	if (mac->mac_len > sizeof(u))
-		return SSH_ERR_INTERNAL_ERROR;
+	যদি (mac->mac_len > পরিমাণ(u))
+		প্রত্যাগম SSH_ERR_INTERNAL_ERROR;
 
-	switch (mac->type) {
-	case SSH_DIGEST:
+	বিকল্প (mac->type) {
+	পক্ষ SSH_DIGEST:
 		put_u32(b, seqno);
 		/* reset HMAC context */
-		if (ssh_hmac_init(mac->hmac_ctx, NULL, 0) < 0 ||
-		    ssh_hmac_update(mac->hmac_ctx, b, sizeof(b)) < 0 ||
+		যদি (ssh_hmac_init(mac->hmac_ctx, রিক্ত, 0) < 0 ||
+		    ssh_hmac_update(mac->hmac_ctx, b, পরিমাণ(b)) < 0 ||
 		    ssh_hmac_update(mac->hmac_ctx, data, datalen) < 0 ||
-		    ssh_hmac_final(mac->hmac_ctx, u.m, sizeof(u.m)) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-		break;
-	case SSH_UMAC:
+		    ssh_hmac_final(mac->hmac_ctx, u.m, পরিমাণ(u.m)) < 0)
+			প্রত্যাগম SSH_ERR_LIBCRYPTO_ERROR;
+		ভঙ্গ;
+	পক্ষ SSH_UMAC:
 		POKE_U64(nonce, seqno);
 		umac_update(mac->umac_ctx, data, datalen);
 		umac_final(mac->umac_ctx, u.m, nonce);
-		break;
-	case SSH_UMAC128:
+		ভঙ্গ;
+	পক্ষ SSH_UMAC128:
 		put_u64(nonce, seqno);
 		umac128_update(mac->umac_ctx, data, datalen);
 		umac128_final(mac->umac_ctx, u.m, nonce);
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		ভঙ্গ;
+	স্বভাব:
+		প্রত্যাগম SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (digest != NULL) {
-		if (dlen > mac->mac_len)
+	যদি (digest != রিক্ত) {
+		যদি (dlen > mac->mac_len)
 			dlen = mac->mac_len;
 		memcpy(digest, u.m, dlen);
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
-int
-mac_check(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, size_t dlen,
-    const u_char *theirmac, size_t mlen)
+পূর্ণাঙ্ক
+mac_check(সংরচনা sshmac *mac, uint32_t seqno,
+    ধ্রুব u_char *data, size_t dlen,
+    ধ্রুব u_char *theirmac, size_t mlen)
 {
 	u_char ourmac[SSH_DIGEST_MAX_LENGTH];
-	int r;
+	পূর্ণাঙ্ক r;
 
-	if (mac->mac_len > mlen)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = mac_compute(mac, seqno, data, dlen,
-	    ourmac, sizeof(ourmac))) != 0)
-		return r;
-	if (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
-		return SSH_ERR_MAC_INVALID;
-	return 0;
+	যদি (mac->mac_len > mlen)
+		প্রত্যাগম SSH_ERR_INVALID_ARGUMENT;
+	যদি ((r = mac_compute(mac, seqno, data, dlen,
+	    ourmac, পরিমাণ(ourmac))) != 0)
+		প্রত্যাগম r;
+	যদি (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
+		প্রত্যাগম SSH_ERR_MAC_INVALID;
+	প্রত্যাগম 0;
 }
 
-void
-mac_clear(struct sshmac *mac)
+শূন্য
+mac_clear(সংরচনা sshmac *mac)
 {
-	if (mac->type == SSH_UMAC) {
-		if (mac->umac_ctx != NULL)
+	যদি (mac->type == SSH_UMAC) {
+		যদি (mac->umac_ctx != রিক্ত)
 			umac_delete(mac->umac_ctx);
-	} else if (mac->type == SSH_UMAC128) {
-		if (mac->umac_ctx != NULL)
+	} অন্যথা যদি (mac->type == SSH_UMAC128) {
+		যদি (mac->umac_ctx != রিক্ত)
 			umac128_delete(mac->umac_ctx);
-	} else if (mac->hmac_ctx != NULL)
+	} অন্যথা যদি (mac->hmac_ctx != রিক্ত)
 		ssh_hmac_free(mac->hmac_ctx);
-	mac->hmac_ctx = NULL;
-	mac->umac_ctx = NULL;
+	mac->hmac_ctx = রিক্ত;
+	mac->umac_ctx = রিক্ত;
 }
 
 /* XXX copied from ciphers_valid */
 #define	MAC_SEP	","
-int
-mac_valid(const char *names)
+পূর্ণাঙ্ক
+mac_valid(ধ্রুব বর্ণ *names)
 {
-	char *maclist, *cp, *p;
-	int found = 0;
+	বর্ণ *maclist, *cp, *p;
+	পূর্ণাঙ্ক found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((maclist = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
+	যদি (names == রিক্ত || strcmp(names, "") == 0)
+		প্রত্যাগম 0;
+	যদি ((maclist = cp = strdup(names)) == রিক্ত)
+		প্রত্যাগম 0;
+	প্রতি ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, MAC_SEP))) {
-		if (mac_setup(NULL, p) < 0) {
-			free(maclist);
-			return 0;
-		} else
+		যদি (mac_setup(রিক্ত, p) < 0) {
+			মুক্ত(maclist);
+			প্রত্যাগম 0;
+		} অন্যথা
 			found = 1;
 	}
-	free(maclist);
-	return found;
+	মুক্ত(maclist);
+	প্রত্যাগম found;
 }

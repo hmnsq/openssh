@@ -18,349 +18,349 @@
  */
 
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <sys/un.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <sys/ioctl.h>
+#অন্তর্ভাব <sys/mman.h>
+#অন্তর্ভাব <sys/socket.h>
+#অন্তর্ভাব <sys/stat.h>
+#অন্তর্ভাব <sys/time.h>
+#অন্তর্ভাব <sys/wait.h>
+#অন্তর্ভাব <sys/un.h>
 
-#include <limits.h>
-#include <libgen.h>
-#include <poll.h>
-#include <nlist.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#অন্তর্ভাব <limits.h>
+#অন্তর্ভাব <libgen.h>
+#অন্তর্ভাব <poll.h>
+#অন্তর্ভাব <nlist.h>
+#অন্তর্ভাব <signal.h>
+#অন্তর্ভাব <stdarg.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <time.h>
+#অন্তর্ভাব <unistd.h>
 
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
+#অন্তর্ভাব <netinet/in.h>
+#অন্তর্ভাব <netinet/ip.h>
+#অন্তর্ভাব <netinet/tcp.h>
+#অন্তর্ভাব <arpa/inet.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <grp.h>
+#অন্তর্ভাব <ctype.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <fcntl.h>
+#অন্তর্ভাব <netdb.h>
+#অন্তর্ভাব <paths.h>
+#অন্তর্ভাব <pwd.h>
+#অন্তর্ভাব <grp.h>
 #ifdef SSH_TUN_OPENBSD
-#include <net/if.h>
+#অন্তর্ভাব <net/if.h>
 #endif
 
-#include "xmalloc.h"
-#include "misc.h"
-#include "log.h"
-#include "ssh.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "platform.h"
+#অন্তর্ভাব "xmalloc.h"
+#অন্তর্ভাব "misc.h"
+#অন্তর্ভাব "log.h"
+#অন্তর্ভাব "ssh.h"
+#অন্তর্ভাব "sshbuf.h"
+#অন্তর্ভাব "ssherr.h"
+#অন্তর্ভাব "platform.h"
 
 /* remove newline at end of string */
-char *
-chop(char *s)
+বর্ণ *
+chop(বর্ণ *s)
 {
-	char *t = s;
-	while (*t) {
-		if (*t == '\n' || *t == '\r') {
+	বর্ণ *t = s;
+	যাবত্ (*t) {
+		যদি (*t == '\n' || *t == '\r') {
 			*t = '\0';
-			return s;
+			প্রত্যাগম s;
 		}
 		t++;
 	}
-	return s;
+	প্রত্যাগম s;
 
 }
 
 /* remove whitespace from end of string */
-void
-rtrim(char *s)
+শূন্য
+rtrim(বর্ণ *s)
 {
 	size_t i;
 
-	if ((i = strlen(s)) == 0)
-		return;
-	do {
+	যদি ((i = strlen(s)) == 0)
+		প্রত্যাগম;
+	কুরু {
 		i--;
-		if (isspace((unsigned char)s[i]))
+		যদি (isspace((unsigned বর্ণ)s[i]))
 			s[i] = '\0';
-		else
-			break;
-	} while (i > 0);
+		অন্যথা
+			ভঙ্গ;
+	} যাবত্ (i > 0);
 }
 
 /*
  * returns pointer to character after 'prefix' in 's' or otherwise NULL
  * if the prefix is not present.
  */
-const char *
-strprefix(const char *s, const char *prefix, int ignorecase)
+ধ্রুব বর্ণ *
+strprefix(ধ্রুব বর্ণ *s, ধ্রুব বর্ণ *prefix, পূর্ণাঙ্ক ignorecase)
 {
 	size_t prefixlen;
 
-	if ((prefixlen = strlen(prefix)) == 0)
-		return s;
-	if (ignorecase) {
-		if (strncasecmp(s, prefix, prefixlen) != 0)
-			return NULL;
-	} else {
-		if (strncmp(s, prefix, prefixlen) != 0)
-			return NULL;
+	যদি ((prefixlen = strlen(prefix)) == 0)
+		প্রত্যাগম s;
+	যদি (ignorecase) {
+		যদি (strncasecmp(s, prefix, prefixlen) != 0)
+			প্রত্যাগম রিক্ত;
+	} অন্যথা {
+		যদি (strncmp(s, prefix, prefixlen) != 0)
+			প্রত্যাগম রিক্ত;
 	}
-	return s + prefixlen;
+	প্রত্যাগম s + prefixlen;
 }
 
 /* Append string 's' to a NULL-terminated array of strings */
-void
-stringlist_append(char ***listp, const char *s)
+শূন্য
+stringlist_append(বর্ণ ***listp, ধ্রুব বর্ণ *s)
 {
 	size_t i = 0;
 
-	if (*listp == NULL)
-		*listp = xcalloc(2, sizeof(**listp));
-	else {
-		for (i = 0; (*listp)[i] != NULL; i++)
+	যদি (*listp == রিক্ত)
+		*listp = xcalloc(2, পরিমাণ(**listp));
+	অন্যথা {
+		প্রতি (i = 0; (*listp)[i] != রিক্ত; i++)
 			; /* count */
-		*listp = xrecallocarray(*listp, i + 1, i + 2, sizeof(**listp));
+		*listp = xrecallocarray(*listp, i + 1, i + 2, পরিমাণ(**listp));
 	}
 	(*listp)[i] = xstrdup(s);
 }
 
-void
-stringlist_free(char **list)
+শূন্য
+stringlist_free(বর্ণ **list)
 {
 	size_t i = 0;
 
-	if (list == NULL)
-		return;
-	for (i = 0; list[i] != NULL; i++)
-		free(list[i]);
-	free(list);
+	যদি (list == রিক্ত)
+		প্রত্যাগম;
+	প্রতি (i = 0; list[i] != রিক্ত; i++)
+		মুক্ত(list[i]);
+	মুক্ত(list);
 }
 
 /* set/unset filedescriptor to non-blocking */
-int
-set_nonblock(int fd)
+পূর্ণাঙ্ক
+set_nonblock(পূর্ণাঙ্ক fd)
 {
-	int val;
+	পূর্ণাঙ্ক val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
+	যদি (val == -1) {
 		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+		প্রত্যাগম (-1);
 	}
-	if (val & O_NONBLOCK) {
+	যদি (val & O_NONBLOCK) {
 		debug3("fd %d is O_NONBLOCK", fd);
-		return (0);
+		প্রত্যাগম (0);
 	}
 	debug2("fd %d setting O_NONBLOCK", fd);
 	val |= O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	যদি (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, O_NONBLOCK): %s", fd,
 		    strerror(errno));
-		return (-1);
+		প্রত্যাগম (-1);
 	}
-	return (0);
+	প্রত্যাগম (0);
 }
 
-int
-unset_nonblock(int fd)
+পূর্ণাঙ্ক
+unset_nonblock(পূর্ণাঙ্ক fd)
 {
-	int val;
+	পূর্ণাঙ্ক val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
+	যদি (val == -1) {
 		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+		প্রত্যাগম (-1);
 	}
-	if (!(val & O_NONBLOCK)) {
+	যদি (!(val & O_NONBLOCK)) {
 		debug3("fd %d is not O_NONBLOCK", fd);
-		return (0);
+		প্রত্যাগম (0);
 	}
 	debug("fd %d clearing O_NONBLOCK", fd);
 	val &= ~O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	যদি (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, ~O_NONBLOCK): %s",
 		    fd, strerror(errno));
-		return (-1);
+		প্রত্যাগম (-1);
 	}
-	return (0);
+	প্রত্যাগম (0);
 }
 
-const char *
-ssh_gai_strerror(int gaierr)
+ধ্রুব বর্ণ *
+ssh_gai_strerror(পূর্ণাঙ্ক gaierr)
 {
-	if (gaierr == EAI_SYSTEM && errno != 0)
-		return strerror(errno);
-	return gai_strerror(gaierr);
+	যদি (gaierr == EAI_SYSTEM && errno != 0)
+		প্রত্যাগম strerror(errno);
+	প্রত্যাগম gai_strerror(gaierr);
 }
 
 /* disable nagle on socket */
-void
-set_nodelay(int fd)
+শূন্য
+set_nodelay(পূর্ণাঙ্ক fd)
 {
-	int opt;
+	পূর্ণাঙ্ক opt;
 	socklen_t optlen;
 
-	optlen = sizeof opt;
-	if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
+	optlen = পরিমাণ opt;
+	যদি (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
 		debug("getsockopt TCP_NODELAY: %.100s", strerror(errno));
-		return;
+		প্রত্যাগম;
 	}
-	if (opt == 1) {
+	যদি (opt == 1) {
 		debug2("fd %d is TCP_NODELAY", fd);
-		return;
+		প্রত্যাগম;
 	}
 	opt = 1;
 	debug2("fd %d setting TCP_NODELAY", fd);
-	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof opt) == -1)
+	যদি (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, পরিমাণ opt) == -1)
 		error("setsockopt TCP_NODELAY: %.100s", strerror(errno));
 }
 
 /* Allow local port reuse in TIME_WAIT */
-int
-set_reuseaddr(int fd)
+পূর্ণাঙ্ক
+set_reuseaddr(পূর্ণাঙ্ক fd)
 {
-	int on = 1;
+	পূর্ণাঙ্ক on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
+	যদি (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, পরিমাণ(on)) == -1) {
 		error("setsockopt SO_REUSEADDR fd %d: %s", fd, strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /* Set TCP keepalives */
-int
-set_keepalive(int fd)
+পূর্ণাঙ্ক
+set_keepalive(পূর্ণাঙ্ক fd)
 {
-	int on = 1;
+	পূর্ণাঙ্ক on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on)) == -1) {
+	যদি (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, পরিমাণ(on)) == -1) {
 		error("setsockopt SO_KEEPALIVE fd %d: %s", fd, strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /* Get/set routing domain */
-char *
-get_rdomain(int fd)
+বর্ণ *
+get_rdomain(পূর্ণাঙ্ক fd)
 {
-#if defined(HAVE_SYS_GET_RDOMAIN)
-	return sys_get_rdomain(fd);
-#elif defined(__OpenBSD__)
-	int rtable;
-	char *ret;
-	socklen_t len = sizeof(rtable);
+#যদি defined(HAVE_SYS_GET_RDOMAIN)
+	প্রত্যাগম sys_get_rdomain(fd);
+#নোচেদ্যদি defined(__OpenBSD__)
+	পূর্ণাঙ্ক rtable;
+	বর্ণ *ret;
+	socklen_t len = পরিমাণ(rtable);
 
-	if (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
+	যদি (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
 		error("Failed to get routing domain for fd %d: %s",
 		    fd, strerror(errno));
-		return NULL;
+		প্রত্যাগম রিক্ত;
 	}
 	xasprintf(&ret, "%d", rtable);
-	return ret;
-#else /* defined(__OpenBSD__) */
-	return NULL;
+	প্রত্যাগম ret;
+#অন্যথা /* defined(__OpenBSD__) */
+	প্রত্যাগম রিক্ত;
 #endif
 }
 
-int
-set_rdomain(int fd, const char *name)
+পূর্ণাঙ্ক
+set_rdomain(পূর্ণাঙ্ক fd, ধ্রুব বর্ণ *name)
 {
-#if defined(HAVE_SYS_SET_RDOMAIN)
-	return sys_set_rdomain(fd, name);
-#elif defined(__OpenBSD__)
-	int rtable;
-	const char *errstr;
+#যদি defined(HAVE_SYS_SET_RDOMAIN)
+	প্রত্যাগম sys_set_rdomain(fd, name);
+#নোচেদ্যদি defined(__OpenBSD__)
+	পূর্ণাঙ্ক rtable;
+	ধ্রুব বর্ণ *errstr;
 
-	if (name == NULL)
-		return 0; /* default table */
+	যদি (name == রিক্ত)
+		প্রত্যাগম 0; /* default table */
 
-	rtable = (int)strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL) {
+	rtable = (পূর্ণাঙ্ক)strtonum(name, 0, 255, &errstr);
+	যদি (errstr != রিক্ত) {
 		/* Shouldn't happen */
 		error("Invalid routing domain \"%s\": %s", name, errstr);
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
-	    &rtable, sizeof(rtable)) == -1) {
+	যদি (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
+	    &rtable, পরিমাণ(rtable)) == -1) {
 		error("Failed to set routing domain %d on fd %d: %s",
 		    rtable, fd, strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	return 0;
-#else /* defined(__OpenBSD__) */
+	প্রত্যাগম 0;
+#অন্যথা /* defined(__OpenBSD__) */
 	error("Setting routing domain is not supported on this platform");
-	return -1;
+	প্রত্যাগম -1;
 #endif
 }
 
-int
-get_sock_af(int fd)
+পূর্ণাঙ্ক
+get_sock_af(পূর্ণাঙ্ক fd)
 {
-	struct sockaddr_storage to;
-	socklen_t tolen = sizeof(to);
+	সংরচনা sockaddr_storage to;
+	socklen_t tolen = পরিমাণ(to);
 
-	memset(&to, 0, sizeof(to));
-	if (getsockname(fd, (struct sockaddr *)&to, &tolen) == -1)
-		return -1;
+	memset(&to, 0, পরিমাণ(to));
+	যদি (getsockname(fd, (সংরচনা sockaddr *)&to, &tolen) == -1)
+		প্রত্যাগম -1;
 #ifdef IPV4_IN_IPV6
-	if (to.ss_family == AF_INET6 &&
-	    IN6_IS_ADDR_V4MAPPED(&((struct sockaddr_in6 *)&to)->sin6_addr))
-		return AF_INET;
+	যদি (to.ss_family == AF_INET6 &&
+	    IN6_IS_ADDR_V4MAPPED(&((সংরচনা sockaddr_in6 *)&to)->sin6_addr))
+		প্রত্যাগম AF_INET;
 #endif
-	return to.ss_family;
+	প্রত্যাগম to.ss_family;
 }
 
-void
-set_sock_tos(int fd, int tos)
+শূন্য
+set_sock_tos(পূর্ণাঙ্ক fd, পূর্ণাঙ্ক tos)
 {
 #ifndef IP_TOS_IS_BROKEN
-	int af;
+	পূর্ণাঙ্ক af;
 
-	if (tos < 0 || tos == INT_MAX) {
+	যদি (tos < 0 || tos == INT_MAX) {
 		debug_f("invalid TOS %d", tos);
-		return;
+		প্রত্যাগম;
 	}
-	switch ((af = get_sock_af(fd))) {
-	case -1:
+	বিকল্প ((af = get_sock_af(fd))) {
+	পক্ষ -1:
 		/* assume not a socket */
-		break;
-	case AF_INET:
+		ভঙ্গ;
+	পক্ষ AF_INET:
 # ifdef IP_TOS
 		debug3_f("set socket %d IP_TOS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IP, IP_TOS,
-		    &tos, sizeof(tos)) == -1) {
+		যদি (setsockopt(fd, IPPROTO_IP, IP_TOS,
+		    &tos, পরিমাণ(tos)) == -1) {
 			error("setsockopt socket %d IP_TOS %d: %s",
 			    fd, tos, strerror(errno));
 		}
 # endif /* IP_TOS */
-		break;
-	case AF_INET6:
+		ভঙ্গ;
+	পক্ষ AF_INET6:
 # ifdef IPV6_TCLASS
 		debug3_f("set socket %d IPV6_TCLASS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
-		    &tos, sizeof(tos)) == -1) {
+		যদি (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
+		    &tos, পরিমাণ(tos)) == -1) {
 			error("setsockopt socket %d IPV6_TCLASS %d: %s",
 			    fd, tos, strerror(errno));
 		}
 # endif /* IPV6_TCLASS */
-		break;
-	default:
+		ভঙ্গ;
+	স্বভাব:
 		debug2_f("unsupported socket family %d", af);
-		break;
+		ভঙ্গ;
 	}
 #endif /* IP_TOS_IS_BROKEN */
 }
@@ -370,50 +370,50 @@ set_sock_tos(int fd, int tos)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-static int
-waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
+স্থির পূর্ণাঙ্ক
+waitfd(পূর্ণাঙ্ক fd, পূর্ণাঙ্ক *timeoutp, short events, চঞ্চল sig_atomic_t *stop)
 {
-	struct pollfd pfd;
-	struct timespec timeout;
-	int oerrno, r;
+	সংরচনা pollfd pfd;
+	সংরচনা timespec timeout;
+	পূর্ণাঙ্ক oerrno, r;
 	sigset_t nsigset, osigset;
 
-	if (timeoutp && *timeoutp == -1)
-		timeoutp = NULL;
+	যদি (timeoutp && *timeoutp == -1)
+		timeoutp = রিক্ত;
 	pfd.fd = fd;
 	pfd.events = events;
 	ptimeout_init(&timeout);
-	if (timeoutp != NULL)
+	যদি (timeoutp != রিক্ত)
 		ptimeout_deadline_ms(&timeout, *timeoutp);
-	if (stop != NULL)
+	যদি (stop != রিক্ত)
 		sigfillset(&nsigset);
-	for (; timeoutp == NULL || *timeoutp >= 0;) {
-		if (stop != NULL) {
+	প্রতি (; timeoutp == রিক্ত || *timeoutp >= 0;) {
+		যদি (stop != রিক্ত) {
 			sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-			if (*stop) {
-				sigprocmask(SIG_SETMASK, &osigset, NULL);
+			যদি (*stop) {
+				sigprocmask(SIG_SETMASK, &osigset, রিক্ত);
 				errno = EINTR;
-				return -1;
+				প্রত্যাগম -1;
 			}
 		}
 		r = ppoll(&pfd, 1, ptimeout_get_tsp(&timeout),
-		    stop != NULL ? &osigset : NULL);
+		    stop != রিক্ত ? &osigset : রিক্ত);
 		oerrno = errno;
-		if (stop != NULL)
-			sigprocmask(SIG_SETMASK, &osigset, NULL);
-		if (timeoutp)
+		যদি (stop != রিক্ত)
+			sigprocmask(SIG_SETMASK, &osigset, রিক্ত);
+		যদি (timeoutp)
 			*timeoutp = ptimeout_get_ms(&timeout);
 		errno = oerrno;
-		if (r > 0)
-			return 0;
-		else if (r == -1 && errno != EAGAIN && errno != EINTR)
-			return -1;
-		else if (r == 0)
-			break;
+		যদি (r > 0)
+			প্রত্যাগম 0;
+		অন্যথা যদি (r == -1 && errno != EAGAIN && errno != EINTR)
+			প্রত্যাগম -1;
+		অন্যথা যদি (r == 0)
+			ভঙ্গ;
 	}
 	/* timeout */
 	errno = ETIMEDOUT;
-	return -1;
+	প্রত্যাগম -1;
 }
 
 /*
@@ -421,9 +421,9 @@ waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-int
-waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
-	return waitfd(fd, timeoutp, POLLIN, stop);
+পূর্ণাঙ্ক
+waitrfd(পূর্ণাঙ্ক fd, পূর্ণাঙ্ক *timeoutp, চঞ্চল sig_atomic_t *stop) {
+	প্রত্যাগম waitfd(fd, timeoutp, POLLIN, stop);
 }
 
 /*
@@ -433,44 +433,44 @@ waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
  *
  * Returns 0 on success or -1 on failure.
  */
-int
-timeout_connect(int sockfd, const struct sockaddr *serv_addr,
-    socklen_t addrlen, int *timeoutp)
+পূর্ণাঙ্ক
+timeout_connect(পূর্ণাঙ্ক sockfd, ধ্রুব সংরচনা sockaddr *serv_addr,
+    socklen_t addrlen, পূর্ণাঙ্ক *timeoutp)
 {
-	int optval = 0;
-	socklen_t optlen = sizeof(optval);
+	পূর্ণাঙ্ক optval = 0;
+	socklen_t optlen = পরিমাণ(optval);
 
 	/* No timeout: just do a blocking connect() */
-	if (timeoutp == NULL || *timeoutp <= 0)
-		return connect(sockfd, serv_addr, addrlen);
+	যদি (timeoutp == রিক্ত || *timeoutp <= 0)
+		প্রত্যাগম connect(sockfd, serv_addr, addrlen);
 
 	set_nonblock(sockfd);
-	for (;;) {
-		if (connect(sockfd, serv_addr, addrlen) == 0) {
+	প্রতি (;;) {
+		যদি (connect(sockfd, serv_addr, addrlen) == 0) {
 			/* Succeeded already? */
 			unset_nonblock(sockfd);
-			return 0;
-		} else if (errno == EINTR)
-			continue;
-		else if (errno != EINPROGRESS)
-			return -1;
-		break;
+			প্রত্যাগম 0;
+		} অন্যথা যদি (errno == EINTR)
+			অনুবর্ত;
+		অন্যথা যদি (errno != EINPROGRESS)
+			প্রত্যাগম -1;
+		ভঙ্গ;
 	}
 
-	if (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, NULL) == -1)
-		return -1;
+	যদি (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, রিক্ত) == -1)
+		প্রত্যাগম -1;
 
 	/* Completed or failed */
-	if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
+	যদি (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
 		debug("getsockopt: %s", strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if (optval != 0) {
+	যদি (optval != 0) {
 		errno = optval;
-		return -1;
+		প্রত্যাগম -1;
 	}
 	unset_nonblock(sockfd);
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /* Characters considered whitespace in strsep calls. */
@@ -478,75 +478,75 @@ timeout_connect(int sockfd, const struct sockaddr *serv_addr,
 #define QUOTE	"\""
 
 /* return next token in configuration line */
-static char *
-strdelim_internal(char **s, int split_equals)
+স্থির বর্ণ *
+strdelim_internal(বর্ণ **s, পূর্ণাঙ্ক split_equals)
 {
-	char *old;
-	int wspace = 0;
+	বর্ণ *old;
+	পূর্ণাঙ্ক wspace = 0;
 
-	if (*s == NULL)
-		return NULL;
+	যদি (*s == রিক্ত)
+		প্রত্যাগম রিক্ত;
 
 	old = *s;
 
 	*s = strpbrk(*s,
 	    split_equals ? WHITESPACE QUOTE "=" : WHITESPACE QUOTE);
-	if (*s == NULL)
-		return (old);
+	যদি (*s == রিক্ত)
+		প্রত্যাগম (old);
 
-	if (*s[0] == '\"') {
+	যদি (*s[0] == '\"') {
 		memmove(*s, *s + 1, strlen(*s)); /* move nul too */
 		/* Find matching quote */
-		if ((*s = strpbrk(*s, QUOTE)) == NULL) {
-			return (NULL);		/* no matching quote */
-		} else {
+		যদি ((*s = strpbrk(*s, QUOTE)) == রিক্ত) {
+			প্রত্যাগম (রিক্ত);		/* no matching quote */
+		} অন্যথা {
 			*s[0] = '\0';
 			*s += strspn(*s + 1, WHITESPACE) + 1;
-			return (old);
+			প্রত্যাগম (old);
 		}
 	}
 
 	/* Allow only one '=' to be skipped */
-	if (split_equals && *s[0] == '=')
+	যদি (split_equals && *s[0] == '=')
 		wspace = 1;
 	*s[0] = '\0';
 
 	/* Skip any extra whitespace after first token */
 	*s += strspn(*s + 1, WHITESPACE) + 1;
-	if (split_equals && *s[0] == '=' && !wspace)
+	যদি (split_equals && *s[0] == '=' && !wspace)
 		*s += strspn(*s + 1, WHITESPACE) + 1;
 
-	return (old);
+	প্রত্যাগম (old);
 }
 
 /*
  * Return next token in configuration line; splits on whitespace or a
  * single '=' character.
  */
-char *
-strdelim(char **s)
+বর্ণ *
+strdelim(বর্ণ **s)
 {
-	return strdelim_internal(s, 1);
+	প্রত্যাগম strdelim_internal(s, 1);
 }
 
 /*
  * Return next token in configuration line; splits on whitespace only.
  */
-char *
-strdelimw(char **s)
+বর্ণ *
+strdelimw(বর্ণ **s)
 {
-	return strdelim_internal(s, 0);
+	প্রত্যাগম strdelim_internal(s, 0);
 }
 
-struct passwd *
-pwcopy(struct passwd *pw)
+সংরচনা passwd *
+pwcopy(সংরচনা passwd *pw)
 {
-	struct passwd *copy = xcalloc(1, sizeof(*copy));
+	সংরচনা passwd *copy = xcalloc(1, পরিমাণ(*copy));
 
 	copy->pw_name = xstrdup(pw->pw_name);
-	copy->pw_passwd = xstrdup(pw->pw_passwd == NULL ? "*" : pw->pw_passwd);
+	copy->pw_passwd = xstrdup(pw->pw_passwd == রিক্ত ? "*" : pw->pw_passwd);
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	copy->pw_gecos = xstrdup(pw->pw_gecos == NULL ? "" : pw->pw_gecos);
+	copy->pw_gecos = xstrdup(pw->pw_gecos == রিক্ত ? "" : pw->pw_gecos);
 #endif
 	copy->pw_uid = pw->pw_uid;
 	copy->pw_gid = pw->pw_gid;
@@ -557,30 +557,30 @@ pwcopy(struct passwd *pw)
 	copy->pw_change = pw->pw_change;
 #endif
 #ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	copy->pw_class = xstrdup(pw->pw_class == NULL ? "" : pw->pw_class);
+	copy->pw_class = xstrdup(pw->pw_class == রিক্ত ? "" : pw->pw_class);
 #endif
-	copy->pw_dir = xstrdup(pw->pw_dir == NULL ? "" : pw->pw_dir);
-	copy->pw_shell = xstrdup(pw->pw_shell == NULL ? "" : pw->pw_shell);
-	return copy;
+	copy->pw_dir = xstrdup(pw->pw_dir == রিক্ত ? "" : pw->pw_dir);
+	copy->pw_shell = xstrdup(pw->pw_shell == রিক্ত ? "" : pw->pw_shell);
+	প্রত্যাগম copy;
 }
 
-void
-pwfree(struct passwd *pw)
+শূন্য
+pwfree(সংরচনা passwd *pw)
 {
-	if (pw == NULL)
-		return;
-	free(pw->pw_name);
+	যদি (pw == রিক্ত)
+		প্রত্যাগম;
+	মুক্ত(pw->pw_name);
 	freezero(pw->pw_passwd,
-	    pw->pw_passwd == NULL ? 0 : strlen(pw->pw_passwd));
+	    pw->pw_passwd == রিক্ত ? 0 : strlen(pw->pw_passwd));
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	free(pw->pw_gecos);
+	মুক্ত(pw->pw_gecos);
 #endif
 #ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	free(pw->pw_class);
+	মুক্ত(pw->pw_class);
 #endif
-	free(pw->pw_dir);
-	free(pw->pw_shell);
-	freezero(pw, sizeof(*pw));
+	মুক্ত(pw->pw_dir);
+	মুক্ত(pw->pw_shell);
+	freezero(pw, পরিমাণ(*pw));
 }
 
 /*
@@ -588,50 +588,50 @@ pwfree(struct passwd *pw)
  * Port must be >=0 and <=65535.
  * Return -1 if invalid.
  */
-int
-a2port(const char *s)
+পূর্ণাঙ্ক
+a2port(ধ্রুব বর্ণ *s)
 {
-	struct servent *se;
+	সংরচনা servent *se;
 	long long port;
-	const char *errstr;
+	ধ্রুব বর্ণ *errstr;
 
 	port = strtonum(s, 0, 65535, &errstr);
-	if (errstr == NULL)
-		return (int)port;
-	if ((se = getservbyname(s, "tcp")) != NULL)
-		return ntohs(se->s_port);
-	return -1;
+	যদি (errstr == রিক্ত)
+		প্রত্যাগম (পূর্ণাঙ্ক)port;
+	যদি ((se = getservbyname(s, "tcp")) != রিক্ত)
+		প্রত্যাগম ntohs(se->s_port);
+	প্রত্যাগম -1;
 }
 
-int
-a2tun(const char *s, int *remote)
+পূর্ণাঙ্ক
+a2tun(ধ্রুব বর্ণ *s, পূর্ণাঙ্ক *remote)
 {
-	const char *errstr = NULL;
-	char *sp, *ep;
-	int tun;
+	ধ্রুব বর্ণ *errstr = রিক্ত;
+	বর্ণ *sp, *ep;
+	পূর্ণাঙ্ক tun;
 
-	if (remote != NULL) {
+	যদি (remote != রিক্ত) {
 		*remote = SSH_TUNID_ANY;
 		sp = xstrdup(s);
-		if ((ep = strchr(sp, ':')) == NULL) {
-			free(sp);
-			return (a2tun(s, NULL));
+		যদি ((ep = strchr(sp, ':')) == রিক্ত) {
+			মুক্ত(sp);
+			প্রত্যাগম (a2tun(s, রিক্ত));
 		}
 		ep[0] = '\0'; ep++;
-		*remote = a2tun(ep, NULL);
-		tun = a2tun(sp, NULL);
-		free(sp);
-		return (*remote == SSH_TUNID_ERR ? *remote : tun);
+		*remote = a2tun(ep, রিক্ত);
+		tun = a2tun(sp, রিক্ত);
+		মুক্ত(sp);
+		প্রত্যাগম (*remote == SSH_TUNID_ERR ? *remote : tun);
 	}
 
-	if (strcasecmp(s, "any") == 0)
-		return (SSH_TUNID_ANY);
+	যদি (strcasecmp(s, "any") == 0)
+		প্রত্যাগম (SSH_TUNID_ANY);
 
 	tun = strtonum(s, 0, SSH_TUNID_MAX, &errstr);
-	if (errstr != NULL)
-		return (SSH_TUNID_ERR);
+	যদি (errstr != রিক্ত)
+		প্রত্যাগম (SSH_TUNID_ERR);
 
-	return (tun);
+	প্রত্যাগম (tun);
 }
 
 #define SECONDS		1.0
@@ -667,110 +667,110 @@ a2tun(const char *s, int *remote)
  *
  * Returns <0.0 if the time string is invalid.
  */
-double
-convtime_double(const char *s)
+দ্বিগুণ
+convtime_double(ধ্রুব বর্ণ *s)
 {
-	double val, total_sec = 0.0, multiplier;
-	const char *p, *start_p;
-	char *endp;
-	int seen_seconds = 0;
+	দ্বিগুণ val, total_sec = 0.0, multiplier;
+	ধ্রুব বর্ণ *p, *start_p;
+	বর্ণ *endp;
+	পূর্ণাঙ্ক seen_seconds = 0;
 
-	if (s == NULL || *s == '\0')
-		return -1.0;
+	যদি (s == রিক্ত || *s == '\0')
+		প্রত্যাগম -1.0;
 
-	for (p = s; *p != '\0';) {
-		if (!isdigit((unsigned char)*p) && *p != '.')
-			return -1.0;
+	প্রতি (p = s; *p != '\0';) {
+		যদি (!isdigit((unsigned বর্ণ)*p) && *p != '.')
+			প্রত্যাগম -1.0;
 
 		errno = 0;
-		if ((val = strtod(p, &endp)) < 0 || errno != 0 || p == endp)
-			return -1.0;
+		যদি ((val = strtod(p, &endp)) < 0 || errno != 0 || p == endp)
+			প্রত্যাগম -1.0;
 		/* Allow only decimal forms */
-		if (p + strspn(p, "0123456789.") != endp)
-			return -1.0;
+		যদি (p + strspn(p, "0123456789.") != endp)
+			প্রত্যাগম -1.0;
 		start_p = p;
 		p = endp;
 
-		switch (*p) {
-		case '\0':
+		বিকল্প (*p) {
+		পক্ষ '\0':
 			/* FALLTHROUGH */
-		case 's':
-		case 'S':
-			if (seen_seconds++)
-				return -1.0;
+		পক্ষ 's':
+		পক্ষ 'S':
+			যদি (seen_seconds++)
+				প্রত্যাগম -1.0;
 			multiplier = SECONDS;
-			break;
-		case 'm':
-		case 'M':
+			ভঙ্গ;
+		পক্ষ 'm':
+		পক্ষ 'M':
 			multiplier = MINUTES;
-			break;
-		case 'h':
-		case 'H':
+			ভঙ্গ;
+		পক্ষ 'h':
+		পক্ষ 'H':
 			multiplier = HOURS;
-			break;
-		case 'd':
-		case 'D':
+			ভঙ্গ;
+		পক্ষ 'd':
+		পক্ষ 'D':
 			multiplier = DAYS;
-			break;
-		case 'w':
-		case 'W':
+			ভঙ্গ;
+		পক্ষ 'w':
+		পক্ষ 'W':
 			multiplier = WEEKS;
-			break;
-		default:
-			return -1.0;
+			ভঙ্গ;
+		স্বভাব:
+			প্রত্যাগম -1.0;
 		}
 
 		/* Special handling if this was a decimal */
-		if (memchr(start_p, '.', endp - start_p) != NULL) {
+		যদি (memchr(start_p, '.', endp - start_p) != রিক্ত) {
 			/* Decimal point present */
-			if (multiplier > 1.0)
-				return -1.0; /* No fractionals for non-seconds */
+			যদি (multiplier > 1.0)
+				প্রত্যাগম -1.0; /* No fractionals for non-seconds */
 			/* For seconds, ensure digits follow */
-			if (!isdigit((unsigned char)*(endp - 1)))
-				return -1.0;
+			যদি (!isdigit((unsigned বর্ণ)*(endp - 1)))
+				প্রত্যাগম -1.0;
 		}
 
 		total_sec += val * multiplier;
 
-		if (*p != '\0')
+		যদি (*p != '\0')
 			p++;
 	}
-	return total_sec;
+	প্রত্যাগম total_sec;
 }
 
 /*
  * Same as convtime_double() above but fractional seconds are ignored.
  * Return -1 if time string is invalid.
  */
-int
-convtime(const char *s)
+পূর্ণাঙ্ক
+convtime(ধ্রুব বর্ণ *s)
 {
-	double sec_val;
+	দ্বিগুণ sec_val;
 
-	if ((sec_val = convtime_double(s)) < 0.0)
-		return -1;
+	যদি ((sec_val = convtime_double(s)) < 0.0)
+		প্রত্যাগম -1;
 
 	/* Check for overflow into int */
-	if (sec_val < 0 || sec_val > INT_MAX)
-		return -1;
+	যদি (sec_val < 0 || sec_val > INT_MAX)
+		প্রত্যাগম -1;
 
-	return (int)sec_val;
+	প্রত্যাগম (পূর্ণাঙ্ক)sec_val;
 }
 
 #define TF_BUFS	8
 #define TF_LEN	9
 
-const char *
+ধ্রুব বর্ণ *
 fmt_timeframe(time_t t)
 {
-	char		*buf;
-	static char	 tfbuf[TF_BUFS][TF_LEN];	/* ring buffer */
-	static int	 idx = 0;
-	unsigned int	 sec, min, hrs, day;
+	বর্ণ		*buf;
+	স্থির বর্ণ	 tfbuf[TF_BUFS][TF_LEN];	/* ring buffer */
+	স্থির পূর্ণাঙ্ক	 idx = 0;
+	unsigned পূর্ণাঙ্ক	 sec, min, hrs, day;
 	unsigned long long	week;
 
 	buf = tfbuf[idx++];
-	if (idx == TF_BUFS)
+	যদি (idx == TF_BUFS)
 		idx = 0;
 
 	week = t;
@@ -784,31 +784,31 @@ fmt_timeframe(time_t t)
 	day = week % 7;
 	week /= 7;
 
-	if (week > 0)
+	যদি (week > 0)
 		snprintf(buf, TF_LEN, "%02lluw%01ud%02uh", week, day, hrs);
-	else if (day > 0)
+	অন্যথা যদি (day > 0)
 		snprintf(buf, TF_LEN, "%01ud%02uh%02um", day, hrs, min);
-	else
+	অন্যথা
 		snprintf(buf, TF_LEN, "%02u:%02u:%02u", hrs, min, sec);
 
-	return (buf);
+	প্রত্যাগম (buf);
 }
 
 /*
  * Returns a standardized host+port identifier string.
  * Caller must free returned string.
  */
-char *
-put_host_port(const char *host, u_short port)
+বর্ণ *
+put_host_port(ধ্রুব বর্ণ *host, u_short port)
 {
-	char *hoststr;
+	বর্ণ *hoststr;
 
-	if (port == 0 || port == SSH_DEFAULT_PORT)
-		return(xstrdup(host));
-	if (asprintf(&hoststr, "[%s]:%d", host, (int)port) == -1)
+	যদি (port == 0 || port == SSH_DEFAULT_PORT)
+		প্রত্যাগম(xstrdup(host));
+	যদি (asprintf(&hoststr, "[%s]:%d", host, (পূর্ণাঙ্ক)port) == -1)
 		fatal("put_host_port: asprintf: %s", strerror(errno));
 	debug3("put_host_port: %s", hoststr);
-	return hoststr;
+	প্রত্যাগম hoststr;
 }
 
 /*
@@ -819,86 +819,86 @@ put_host_port(const char *host, u_short port)
  * The delimiter char, if present, is stored in delim.
  * If this is the last field, *cp is set to NULL.
  */
-char *
-hpdelim2(char **cp, char *delim)
+বর্ণ *
+hpdelim2(বর্ণ **cp, বর্ণ *delim)
 {
-	char *s, *old;
+	বর্ণ *s, *old;
 
-	if (cp == NULL || *cp == NULL)
-		return NULL;
+	যদি (cp == রিক্ত || *cp == রিক্ত)
+		প্রত্যাগম রিক্ত;
 
 	old = s = *cp;
-	if (*s == '[') {
-		if ((s = strchr(s, ']')) == NULL)
-			return NULL;
-		else
+	যদি (*s == '[') {
+		যদি ((s = strchr(s, ']')) == রিক্ত)
+			প্রত্যাগম রিক্ত;
+		অন্যথা
 			s++;
-	} else if ((s = strpbrk(s, ":/")) == NULL)
+	} অন্যথা যদি ((s = strpbrk(s, ":/")) == রিক্ত)
 		s = *cp + strlen(*cp); /* skip to end (see first case below) */
 
-	switch (*s) {
-	case '\0':
-		*cp = NULL;	/* no more fields*/
-		break;
+	বিকল্প (*s) {
+	পক্ষ '\0':
+		*cp = রিক্ত;	/* no more fields*/
+		ভঙ্গ;
 
-	case ':':
-	case '/':
-		if (delim != NULL)
+	পক্ষ ':':
+	পক্ষ '/':
+		যদি (delim != রিক্ত)
 			*delim = *s;
 		*s = '\0';	/* terminate */
 		*cp = s + 1;
-		break;
+		ভঙ্গ;
 
-	default:
-		return NULL;
+	স্বভাব:
+		প্রত্যাগম রিক্ত;
 	}
 
-	return old;
+	প্রত্যাগম old;
 }
 
 /* The common case: only accept colon as delimiter. */
-char *
-hpdelim(char **cp)
+বর্ণ *
+hpdelim(বর্ণ **cp)
 {
-	char *r, delim = '\0';
+	বর্ণ *r, delim = '\0';
 
 	r =  hpdelim2(cp, &delim);
-	if (delim == '/')
-		return NULL;
-	return r;
+	যদি (delim == '/')
+		প্রত্যাগম রিক্ত;
+	প্রত্যাগম r;
 }
 
-char *
-cleanhostname(char *host)
+বর্ণ *
+cleanhostname(বর্ণ *host)
 {
-	if (*host == '[' && host[strlen(host) - 1] == ']') {
+	যদি (*host == '[' && host[strlen(host) - 1] == ']') {
 		host[strlen(host) - 1] = '\0';
-		return (host + 1);
-	} else
-		return host;
+		প্রত্যাগম (host + 1);
+	} অন্যথা
+		প্রত্যাগম host;
 }
 
-char *
-colon(char *cp)
+বর্ণ *
+colon(বর্ণ *cp)
 {
-	int flag = 0;
+	পূর্ণাঙ্ক flag = 0;
 
-	if (*cp == ':')		/* Leading colon is part of file name. */
-		return NULL;
-	if (*cp == '[')
+	যদি (*cp == ':')		/* Leading colon is part of file name. */
+		প্রত্যাগম রিক্ত;
+	যদি (*cp == '[')
 		flag = 1;
 
-	for (; *cp; ++cp) {
-		if (*cp == '@' && *(cp+1) == '[')
+	প্রতি (; *cp; ++cp) {
+		যদি (*cp == '@' && *(cp+1) == '[')
 			flag = 1;
-		if (*cp == ']' && *(cp+1) == ':' && flag)
-			return (cp+1);
-		if (*cp == ':' && !flag)
-			return (cp);
-		if (*cp == '/')
-			return NULL;
+		যদি (*cp == ']' && *(cp+1) == ':' && flag)
+			প্রত্যাগম (cp+1);
+		যদি (*cp == ':' && !flag)
+			প্রত্যাগম (cp);
+		যদি (*cp == '/')
+			প্রত্যাগম রিক্ত;
 	}
-	return NULL;
+	প্রত্যাগম রিক্ত;
 }
 
 /*
@@ -910,64 +910,64 @@ colon(char *cp)
  * If path was not specified then *pathp will be set to ".".
  * Returns 0 on success, -1 on failure.
  */
-int
-parse_user_host_path(const char *s, char **userp, char **hostp, char **pathp)
+পূর্ণাঙ্ক
+parse_user_host_path(ধ্রুব বর্ণ *s, বর্ণ **userp, বর্ণ **hostp, বর্ণ **pathp)
 {
-	char *user = NULL, *host = NULL, *path = NULL;
-	char *sdup, *tmp;
-	int ret = -1;
+	বর্ণ *user = রিক্ত, *host = রিক্ত, *path = রিক্ত;
+	বর্ণ *sdup, *tmp;
+	পূর্ণাঙ্ক ret = -1;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (pathp != NULL)
-		*pathp = NULL;
+	যদি (userp != রিক্ত)
+		*userp = রিক্ত;
+	যদি (hostp != রিক্ত)
+		*hostp = রিক্ত;
+	যদি (pathp != রিক্ত)
+		*pathp = রিক্ত;
 
 	sdup = xstrdup(s);
 
 	/* Check for remote syntax: [user@]host:[path] */
-	if ((tmp = colon(sdup)) == NULL)
-		goto out;
+	যদি ((tmp = colon(sdup)) == রিক্ত)
+		গচ্ছ out;
 
 	/* Extract optional path */
 	*tmp++ = '\0';
-	if (*tmp == '\0')
+	যদি (*tmp == '\0')
 		tmp = ".";
 	path = xstrdup(tmp);
 
 	/* Extract optional user and mandatory host */
 	tmp = strrchr(sdup, '@');
-	if (tmp != NULL) {
+	যদি (tmp != রিক্ত) {
 		*tmp++ = '\0';
 		host = xstrdup(cleanhostname(tmp));
-		if (*sdup != '\0')
+		যদি (*sdup != '\0')
 			user = xstrdup(sdup);
-	} else {
+	} অন্যথা {
 		host = xstrdup(cleanhostname(sdup));
-		user = NULL;
+		user = রিক্ত;
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	যদি (userp != রিক্ত) {
 		*userp = user;
-		user = NULL;
+		user = রিক্ত;
 	}
-	if (hostp != NULL) {
+	যদি (hostp != রিক্ত) {
 		*hostp = host;
-		host = NULL;
+		host = রিক্ত;
 	}
-	if (pathp != NULL) {
+	যদি (pathp != রিক্ত) {
 		*pathp = path;
-		path = NULL;
+		path = রিক্ত;
 	}
 	ret = 0;
 out:
-	free(sdup);
-	free(user);
-	free(host);
-	free(path);
-	return ret;
+	মুক্ত(sdup);
+	মুক্ত(user);
+	মুক্ত(host);
+	মুক্ত(path);
+	প্রত্যাগম ret;
 }
 
 /*
@@ -978,120 +978,120 @@ out:
  * If port was not specified then *portp will be -1.
  * Returns 0 on success, -1 on failure.
  */
-int
-parse_user_host_port(const char *s, char **userp, char **hostp, int *portp)
+পূর্ণাঙ্ক
+parse_user_host_port(ধ্রুব বর্ণ *s, বর্ণ **userp, বর্ণ **hostp, পূর্ণাঙ্ক *portp)
 {
-	char *sdup, *cp, *tmp;
-	char *user = NULL, *host = NULL;
-	int port = -1, ret = -1;
+	বর্ণ *sdup, *cp, *tmp;
+	বর্ণ *user = রিক্ত, *host = রিক্ত;
+	পূর্ণাঙ্ক port = -1, ret = -1;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (portp != NULL)
+	যদি (userp != রিক্ত)
+		*userp = রিক্ত;
+	যদি (hostp != রিক্ত)
+		*hostp = রিক্ত;
+	যদি (portp != রিক্ত)
 		*portp = -1;
 
-	if ((sdup = tmp = strdup(s)) == NULL)
-		return -1;
+	যদি ((sdup = tmp = strdup(s)) == রিক্ত)
+		প্রত্যাগম -1;
 	/* Extract optional username */
-	if ((cp = strrchr(tmp, '@')) != NULL) {
+	যদি ((cp = strrchr(tmp, '@')) != রিক্ত) {
 		*cp = '\0';
-		if (*tmp == '\0')
-			goto out;
-		if ((user = strdup(tmp)) == NULL)
-			goto out;
+		যদি (*tmp == '\0')
+			গচ্ছ out;
+		যদি ((user = strdup(tmp)) == রিক্ত)
+			গচ্ছ out;
 		tmp = cp + 1;
 	}
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim(&tmp)) == NULL || *cp == '\0')
-		goto out;
+	যদি ((cp = hpdelim(&tmp)) == রিক্ত || *cp == '\0')
+		গচ্ছ out;
 	host = xstrdup(cleanhostname(cp));
 	/* Convert and verify optional port */
-	if (tmp != NULL && *tmp != '\0') {
-		if ((port = a2port(tmp)) <= 0)
-			goto out;
+	যদি (tmp != রিক্ত && *tmp != '\0') {
+		যদি ((port = a2port(tmp)) <= 0)
+			গচ্ছ out;
 	}
 	/* Success */
-	if (userp != NULL) {
+	যদি (userp != রিক্ত) {
 		*userp = user;
-		user = NULL;
+		user = রিক্ত;
 	}
-	if (hostp != NULL) {
+	যদি (hostp != রিক্ত) {
 		*hostp = host;
-		host = NULL;
+		host = রিক্ত;
 	}
-	if (portp != NULL)
+	যদি (portp != রিক্ত)
 		*portp = port;
 	ret = 0;
  out:
-	free(sdup);
-	free(user);
-	free(host);
-	return ret;
+	মুক্ত(sdup);
+	মুক্ত(user);
+	মুক্ত(host);
+	প্রত্যাগম ret;
 }
 
 /*
  * Converts a two-byte hex string to decimal.
  * Returns the decimal value or -1 for invalid input.
  */
-static int
-hexchar(const char *s)
+স্থির পূর্ণাঙ্ক
+hexchar(ধ্রুব বর্ণ *s)
 {
-	unsigned char result[2];
-	int i;
+	unsigned বর্ণ result[2];
+	পূর্ণাঙ্ক i;
 
-	for (i = 0; i < 2; i++) {
-		if (s[i] >= '0' && s[i] <= '9')
-			result[i] = (unsigned char)(s[i] - '0');
-		else if (s[i] >= 'a' && s[i] <= 'f')
-			result[i] = (unsigned char)(s[i] - 'a') + 10;
-		else if (s[i] >= 'A' && s[i] <= 'F')
-			result[i] = (unsigned char)(s[i] - 'A') + 10;
-		else
-			return -1;
+	প্রতি (i = 0; i < 2; i++) {
+		যদি (s[i] >= '0' && s[i] <= '9')
+			result[i] = (unsigned বর্ণ)(s[i] - '0');
+		অন্যথা যদি (s[i] >= 'a' && s[i] <= 'f')
+			result[i] = (unsigned বর্ণ)(s[i] - 'a') + 10;
+		অন্যথা যদি (s[i] >= 'A' && s[i] <= 'F')
+			result[i] = (unsigned বর্ণ)(s[i] - 'A') + 10;
+		অন্যথা
+			প্রত্যাগম -1;
 	}
-	return (result[0] << 4) | result[1];
+	প্রত্যাগম (result[0] << 4) | result[1];
 }
 
 /*
  * Decode an url-encoded string.
  * Returns a newly allocated string on success or NULL on failure.
  */
-static char *
-urldecode(const char *src)
+স্থির বর্ণ *
+urldecode(ধ্রুব বর্ণ *src)
 {
-	char *ret, *dst;
-	int ch;
+	বর্ণ *ret, *dst;
+	পূর্ণাঙ্ক ch;
 	size_t srclen;
 
-	if ((srclen = strlen(src)) >= SIZE_MAX)
-		return NULL;
+	যদি ((srclen = strlen(src)) >= SIZE_MAX)
+		প্রত্যাগম রিক্ত;
 	ret = xmalloc(srclen + 1);
-	for (dst = ret; *src != '\0'; src++) {
-		switch (*src) {
-		case '+':
+	প্রতি (dst = ret; *src != '\0'; src++) {
+		বিকল্প (*src) {
+		পক্ষ '+':
 			*dst++ = ' ';
-			break;
-		case '%':
+			ভঙ্গ;
+		পক্ষ '%':
 			/* note: don't allow \0 characters */
-			if (!isxdigit((unsigned char)src[1]) ||
-			    !isxdigit((unsigned char)src[2]) ||
+			যদি (!isxdigit((unsigned বর্ণ)src[1]) ||
+			    !isxdigit((unsigned বর্ণ)src[2]) ||
 			    (ch = hexchar(src + 1)) == -1 || ch == 0) {
-				free(ret);
-				return NULL;
+				মুক্ত(ret);
+				প্রত্যাগম রিক্ত;
 			}
 			*dst++ = ch;
 			src += 2;
-			break;
-		default:
+			ভঙ্গ;
+		স্বভাব:
 			*dst++ = *src;
-			break;
+			ভঙ্গ;
 		}
 	}
 	*dst = '\0';
 
-	return ret;
+	প্রত্যাগম ret;
 }
 
 /*
@@ -1106,248 +1106,248 @@ urldecode(const char *src)
  * If path was not specified then *pathp will be set to NULL.
  * Returns 0 on success, 1 if non-uri/wrong scheme, -1 on error/invalid uri.
  */
-int
-parse_uri(const char *scheme, const char *uri, char **userp, char **hostp,
-    int *portp, char **pathp)
+পূর্ণাঙ্ক
+parse_uri(ধ্রুব বর্ণ *scheme, ধ্রুব বর্ণ *uri, বর্ণ **userp, বর্ণ **hostp,
+    পূর্ণাঙ্ক *portp, বর্ণ **pathp)
 {
-	char *uridup, *cp, *tmp, ch;
-	char *user = NULL, *host = NULL, *path = NULL;
-	int port = -1, ret = -1;
+	বর্ণ *uridup, *cp, *tmp, ch;
+	বর্ণ *user = রিক্ত, *host = রিক্ত, *path = রিক্ত;
+	পূর্ণাঙ্ক port = -1, ret = -1;
 	size_t len;
 
 	len = strlen(scheme);
-	if (strncmp(uri, scheme, len) != 0 || strncmp(uri + len, "://", 3) != 0)
-		return 1;
+	যদি (strncmp(uri, scheme, len) != 0 || strncmp(uri + len, "://", 3) != 0)
+		প্রত্যাগম 1;
 	uri += len + 3;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (portp != NULL)
+	যদি (userp != রিক্ত)
+		*userp = রিক্ত;
+	যদি (hostp != রিক্ত)
+		*hostp = রিক্ত;
+	যদি (portp != রিক্ত)
 		*portp = -1;
-	if (pathp != NULL)
-		*pathp = NULL;
+	যদি (pathp != রিক্ত)
+		*pathp = রিক্ত;
 
 	uridup = tmp = xstrdup(uri);
 
 	/* Extract optional ssh-info (username + connection params) */
-	if ((cp = strchr(tmp, '@')) != NULL) {
-		char *delim;
+	যদি ((cp = strchr(tmp, '@')) != রিক্ত) {
+		বর্ণ *delim;
 
 		*cp = '\0';
 		/* Extract username and connection params */
-		if ((delim = strchr(tmp, ';')) != NULL) {
+		যদি ((delim = strchr(tmp, ';')) != রিক্ত) {
 			/* Just ignore connection params for now */
 			*delim = '\0';
 		}
-		if (*tmp == '\0') {
+		যদি (*tmp == '\0') {
 			/* Empty username */
-			goto out;
+			গচ্ছ out;
 		}
-		if ((user = urldecode(tmp)) == NULL)
-			goto out;
+		যদি ((user = urldecode(tmp)) == রিক্ত)
+			গচ্ছ out;
 		tmp = cp + 1;
 	}
 
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim2(&tmp, &ch)) == NULL || *cp == '\0')
-		goto out;
+	যদি ((cp = hpdelim2(&tmp, &ch)) == রিক্ত || *cp == '\0')
+		গচ্ছ out;
 	host = xstrdup(cleanhostname(cp));
-	if (!valid_domain(host, 0, NULL))
-		goto out;
+	যদি (!valid_domain(host, 0, রিক্ত))
+		গচ্ছ out;
 
-	if (tmp != NULL && *tmp != '\0') {
-		if (ch == ':') {
+	যদি (tmp != রিক্ত && *tmp != '\0') {
+		যদি (ch == ':') {
 			/* Convert and verify port. */
-			if ((cp = strchr(tmp, '/')) != NULL)
+			যদি ((cp = strchr(tmp, '/')) != রিক্ত)
 				*cp = '\0';
-			if ((port = a2port(tmp)) <= 0)
-				goto out;
-			tmp = cp ? cp + 1 : NULL;
+			যদি ((port = a2port(tmp)) <= 0)
+				গচ্ছ out;
+			tmp = cp ? cp + 1 : রিক্ত;
 		}
-		if (tmp != NULL && *tmp != '\0') {
+		যদি (tmp != রিক্ত && *tmp != '\0') {
 			/* Extract optional path */
-			if ((path = urldecode(tmp)) == NULL)
-				goto out;
+			যদি ((path = urldecode(tmp)) == রিক্ত)
+				গচ্ছ out;
 		}
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	যদি (userp != রিক্ত) {
 		*userp = user;
-		user = NULL;
+		user = রিক্ত;
 	}
-	if (hostp != NULL) {
+	যদি (hostp != রিক্ত) {
 		*hostp = host;
-		host = NULL;
+		host = রিক্ত;
 	}
-	if (portp != NULL)
+	যদি (portp != রিক্ত)
 		*portp = port;
-	if (pathp != NULL) {
+	যদি (pathp != রিক্ত) {
 		*pathp = path;
-		path = NULL;
+		path = রিক্ত;
 	}
 	ret = 0;
  out:
-	free(uridup);
-	free(user);
-	free(host);
-	free(path);
-	return ret;
+	মুক্ত(uridup);
+	মুক্ত(user);
+	মুক্ত(host);
+	মুক্ত(path);
+	প্রত্যাগম ret;
 }
 
 /* function to assist building execv() arguments */
-void
-addargs(arglist *args, char *fmt, ...)
+শূন্য
+addargs(arglist *args, বর্ণ *fmt, ...)
 {
 	va_list ap;
-	char *cp;
+	বর্ণ *cp;
 	u_int nalloc;
-	int r;
+	পূর্ণাঙ্ক r;
 
 	va_start(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
 	va_end(ap);
-	if (r == -1)
+	যদি (r == -1)
 		fatal_f("argument too long");
 
 	nalloc = args->nalloc;
-	if (args->list == NULL) {
+	যদি (args->list == রিক্ত) {
 		nalloc = 32;
-		args->num = 0;
-	} else if (args->num > (256 * 1024))
+		args->অঙ্ক = 0;
+	} অন্যথা যদি (args->অঙ্ক > (256 * 1024))
 		fatal_f("too many arguments");
-	else if (args->num >= args->nalloc)
+	অন্যথা যদি (args->অঙ্ক >= args->nalloc)
 		fatal_f("arglist corrupt");
-	else if (args->num+2 >= nalloc)
+	অন্যথা যদি (args->অঙ্ক+2 >= nalloc)
 		nalloc *= 2;
 
 	args->list = xrecallocarray(args->list, args->nalloc,
-	    nalloc, sizeof(char *));
+	    nalloc, পরিমাণ(বর্ণ *));
 	args->nalloc = nalloc;
-	args->list[args->num++] = cp;
-	args->list[args->num] = NULL;
+	args->list[args->অঙ্ক++] = cp;
+	args->list[args->অঙ্ক] = রিক্ত;
 }
 
-void
-replacearg(arglist *args, u_int which, char *fmt, ...)
+শূন্য
+replacearg(arglist *args, u_int which, বর্ণ *fmt, ...)
 {
 	va_list ap;
-	char *cp;
-	int r;
+	বর্ণ *cp;
+	পূর্ণাঙ্ক r;
 
 	va_start(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
 	va_end(ap);
-	if (r == -1)
+	যদি (r == -1)
 		fatal_f("argument too long");
-	if (args->list == NULL || args->num >= args->nalloc)
+	যদি (args->list == রিক্ত || args->অঙ্ক >= args->nalloc)
 		fatal_f("arglist corrupt");
 
-	if (which >= args->num)
+	যদি (which >= args->অঙ্ক)
 		fatal_f("tried to replace invalid arg %d >= %d",
-		    which, args->num);
-	free(args->list[which]);
+		    which, args->অঙ্ক);
+	মুক্ত(args->list[which]);
 	args->list[which] = cp;
 }
 
-void
+শূন্য
 freeargs(arglist *args)
 {
 	u_int i;
 
-	if (args == NULL)
-		return;
-	if (args->list != NULL && args->num < args->nalloc) {
-		for (i = 0; i < args->num; i++)
-			free(args->list[i]);
-		free(args->list);
+	যদি (args == রিক্ত)
+		প্রত্যাগম;
+	যদি (args->list != রিক্ত && args->অঙ্ক < args->nalloc) {
+		প্রতি (i = 0; i < args->অঙ্ক; i++)
+			মুক্ত(args->list[i]);
+		মুক্ত(args->list);
 	}
-	args->nalloc = args->num = 0;
-	args->list = NULL;
+	args->nalloc = args->অঙ্ক = 0;
+	args->list = রিক্ত;
 }
 
 /*
  * Expands tildes in the file name.  Returns data allocated by xmalloc.
  * Warning: this calls getpw*.
  */
-int
-tilde_expand(const char *filename, uid_t uid, char **retp)
+পূর্ণাঙ্ক
+tilde_expand(ধ্রুব বর্ণ *filename, uid_t uid, বর্ণ **retp)
 {
-	char *ocopy = NULL, *copy, *s = NULL;
-	const char *path = NULL, *user = NULL;
-	struct passwd *pw;
+	বর্ণ *ocopy = রিক্ত, *copy, *s = রিক্ত;
+	ধ্রুব বর্ণ *path = রিক্ত, *user = রিক্ত;
+	সংরচনা passwd *pw;
 	size_t len;
-	int ret = -1, r, slash;
+	পূর্ণাঙ্ক ret = -1, r, slash;
 
-	*retp = NULL;
-	if (*filename != '~') {
+	*retp = রিক্ত;
+	যদি (*filename != '~') {
 		*retp = xstrdup(filename);
-		return 0;
+		প্রত্যাগম 0;
 	}
 	ocopy = copy = xstrdup(filename + 1);
 
-	if (*copy == '\0')				/* ~ */
-		path = NULL;
-	else if (*copy == '/') {
+	যদি (*copy == '\0')				/* ~ */
+		path = রিক্ত;
+	অন্যথা যদি (*copy == '/') {
 		copy += strspn(copy, "/");
-		if (*copy == '\0')
-			path = NULL;			/* ~/ */
-		else
+		যদি (*copy == '\0')
+			path = রিক্ত;			/* ~/ */
+		অন্যথা
 			path = copy;			/* ~/path */
-	} else {
+	} অন্যথা {
 		user = copy;
-		if ((path = strchr(copy, '/')) != NULL) {
+		যদি ((path = strchr(copy, '/')) != রিক্ত) {
 			copy[path - copy] = '\0';
 			path++;
 			path += strspn(path, "/");
-			if (*path == '\0')		/* ~user/ */
-				path = NULL;
+			যদি (*path == '\0')		/* ~user/ */
+				path = রিক্ত;
 			/* else				 ~user/path */
 		}
 		/* else					~user */
 	}
-	if (user != NULL) {
-		if ((pw = getpwnam(user)) == NULL) {
+	যদি (user != রিক্ত) {
+		যদি ((pw = getpwnam(user)) == রিক্ত) {
 			error_f("No such user %s", user);
-			goto out;
+			গচ্ছ out;
 		}
-	} else if ((pw = getpwuid(uid)) == NULL) {
+	} অন্যথা যদি ((pw = getpwuid(uid)) == রিক্ত) {
 		error_f("No such uid %ld", (long)uid);
-		goto out;
+		গচ্ছ out;
 	}
 
 	/* Make sure directory has a trailing '/' */
 	slash = (len = strlen(pw->pw_dir)) == 0 || pw->pw_dir[len - 1] != '/';
 
-	if ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
-	    slash ? "/" : "", path != NULL ? path : "")) <= 0) {
+	যদি ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
+	    slash ? "/" : "", path != রিক্ত ? path : "")) <= 0) {
 		error_f("xasprintf failed");
-		goto out;
+		গচ্ছ out;
 	}
-	if (r >= PATH_MAX) {
+	যদি (r >= PATH_MAX) {
 		error_f("Path too long");
-		goto out;
+		গচ্ছ out;
 	}
 	/* success */
 	ret = 0;
 	*retp = s;
-	s = NULL;
+	s = রিক্ত;
  out:
-	free(s);
-	free(ocopy);
-	return ret;
+	মুক্ত(s);
+	মুক্ত(ocopy);
+	প্রত্যাগম ret;
 }
 
-char *
-tilde_expand_filename(const char *filename, uid_t uid)
+বর্ণ *
+tilde_expand_filename(ধ্রুব বর্ণ *filename, uid_t uid)
 {
-	char *ret;
+	বর্ণ *ret;
 
-	if (tilde_expand(filename, uid, &ret) != 0)
+	যদি (tilde_expand(filename, uid, &ret) != 0)
 		cleanup_exit(255);
-	return ret;
+	প্রত্যাগম ret;
 }
 
 /*
@@ -1357,73 +1357,73 @@ tilde_expand_filename(const char *filename, uid_t uid)
  * by a NULL escape_char. Returns replaced string in memory allocated by
  * xmalloc which the caller must free.
  */
-static char *
-vdollar_percent_expand(int *parseerror, int dollar, int percent,
-    const char *string, va_list ap)
+স্থির বর্ণ *
+vdollar_percent_expand(পূর্ণাঙ্ক *parseerror, পূর্ণাঙ্ক dollar, পূর্ণাঙ্ক percent,
+    ধ্রুব বর্ণ *string, va_list ap)
 {
-#define EXPAND_MAX_KEYS	64
-	u_int num_keys = 0, i;
-	struct {
-		const char *key;
-		const char *repl;
-	} keys[EXPAND_MAX_KEYS];
-	struct sshbuf *buf;
-	int r, missingvar = 0;
-	char *ret = NULL, *var, *varend, *val;
+#define EXPAND_MAX_চাবিগুলি	64
+	u_int অঙ্ক_চাবিগুলি = 0, i;
+	সংরচনা {
+		ধ্রুব বর্ণ *চাবি;
+		ধ্রুব বর্ণ *repl;
+	} চাবিগুলি[EXPAND_MAX_চাবিগুলি];
+	সংরচনা sshbuf *buf;
+	পূর্ণাঙ্ক r, missingvar = 0;
+	বর্ণ *ret = রিক্ত, *var, *varend, *val;
 	size_t len;
 
-	if ((buf = sshbuf_new()) == NULL)
+	যদি ((buf = sshbuf_new()) == রিক্ত)
 		fatal_f("sshbuf_new failed");
-	if (parseerror == NULL)
+	যদি (parseerror == রিক্ত)
 		fatal_f("null parseerror arg");
 	*parseerror = 1;
 
 	/* Gather keys if we're doing percent expansion. */
-	if (percent) {
-		for (num_keys = 0; num_keys < EXPAND_MAX_KEYS; num_keys++) {
-			keys[num_keys].key = va_arg(ap, char *);
-			if (keys[num_keys].key == NULL)
-				break;
-			keys[num_keys].repl = va_arg(ap, char *);
-			if (keys[num_keys].repl == NULL) {
+	যদি (percent) {
+		প্রতি (অঙ্ক_চাবিগুলি = 0; অঙ্ক_চাবিগুলি < EXPAND_MAX_চাবিগুলি; অঙ্ক_চাবিগুলি++) {
+			চাবিগুলি[অঙ্ক_চাবিগুলি].চাবি = va_arg(ap, বর্ণ *);
+			যদি (চাবিগুলি[অঙ্ক_চাবিগুলি].চাবি == রিক্ত)
+				ভঙ্গ;
+			চাবিগুলি[অঙ্ক_চাবিগুলি].repl = va_arg(ap, বর্ণ *);
+			যদি (চাবিগুলি[অঙ্ক_চাবিগুলি].repl == রিক্ত) {
 				fatal_f("NULL replacement for token %s",
-				    keys[num_keys].key);
+				    চাবিগুলি[অঙ্ক_চাবিগুলি].চাবি);
 			}
 		}
-		if (num_keys == EXPAND_MAX_KEYS && va_arg(ap, char *) != NULL)
+		যদি (অঙ্ক_চাবিগুলি == EXPAND_MAX_চাবিগুলি && va_arg(ap, বর্ণ *) != রিক্ত)
 			fatal_f("too many keys");
-		if (num_keys == 0)
+		যদি (অঙ্ক_চাবিগুলি == 0)
 			fatal_f("percent expansion without token list");
 	}
 
 	/* Expand string */
-	for (i = 0; *string != '\0'; string++) {
+	প্রতি (i = 0; *string != '\0'; string++) {
 		/* Optionally process ${ENVIRONMENT} expansions. */
-		if (dollar && string[0] == '$' && string[1] == '{') {
+		যদি (dollar && string[0] == '$' && string[1] == '{') {
 			string += 2;  /* skip over '${' */
-			if ((varend = strchr(string, '}')) == NULL) {
+			যদি ((varend = strchr(string, '}')) == রিক্ত) {
 				error_f("environment variable '%s' missing "
 				    "closing '}'", string);
-				goto out;
+				গচ্ছ out;
 			}
 			len = varend - string;
-			if (len == 0) {
+			যদি (len == 0) {
 				error_f("zero-length environment variable");
-				goto out;
+				গচ্ছ out;
 			}
 			var = xmalloc(len + 1);
-			(void)strlcpy(var, string, len + 1);
-			if ((val = getenv(var)) == NULL) {
+			(শূন্য)strlcpy(var, string, len + 1);
+			যদি ((val = getenv(var)) == রিক্ত) {
 				error_f("env var ${%s} has no value", var);
 				missingvar = 1;
-			} else {
+			} অন্যথা {
 				debug3_f("expand ${%s} -> '%s'", var, val);
-				if ((r = sshbuf_put(buf, val, strlen(val))) !=0)
+				যদি ((r = sshbuf_put(buf, val, strlen(val))) !=0)
 					fatal_fr(r, "sshbuf_put ${}");
 			}
-			free(var);
+			মুক্ত(var);
 			string += len;
-			continue;
+			অনুবর্ত;
 		}
 
 		/*
@@ -1431,40 +1431,40 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
 		 * If we're not doing percent expansion everything just gets
 		 * appended here.
 		 */
-		if (*string != '%' || !percent) {
+		যদি (*string != '%' || !percent) {
  append:
-			if ((r = sshbuf_put_u8(buf, *string)) != 0)
+			যদি ((r = sshbuf_put_u8(buf, *string)) != 0)
 				fatal_fr(r, "sshbuf_put_u8 %%");
-			continue;
+			অনুবর্ত;
 		}
 		string++;
 		/* %% case */
-		if (*string == '%')
-			goto append;
-		if (*string == '\0') {
+		যদি (*string == '%')
+			গচ্ছ append;
+		যদি (*string == '\0') {
 			error_f("invalid format");
-			goto out;
+			গচ্ছ out;
 		}
-		for (i = 0; i < num_keys; i++) {
-			if (strchr(keys[i].key, *string) != NULL) {
-				if ((r = sshbuf_put(buf, keys[i].repl,
-				    strlen(keys[i].repl))) != 0)
+		প্রতি (i = 0; i < অঙ্ক_চাবিগুলি; i++) {
+			যদি (strchr(চাবিগুলি[i].চাবি, *string) != রিক্ত) {
+				যদি ((r = sshbuf_put(buf, চাবিগুলি[i].repl,
+				    strlen(চাবিগুলি[i].repl))) != 0)
 					fatal_fr(r, "sshbuf_put %%-repl");
-				break;
+				ভঙ্গ;
 			}
 		}
-		if (i >= num_keys) {
+		যদি (i >= অঙ্ক_চাবিগুলি) {
 			error_f("unknown key %%%c", *string);
-			goto out;
+			গচ্ছ out;
 		}
 	}
-	if (!missingvar && (ret = sshbuf_dup_string(buf)) == NULL)
+	যদি (!missingvar && (ret = sshbuf_dup_string(buf)) == রিক্ত)
 		fatal_f("sshbuf_dup_string failed");
 	*parseerror = 0;
  out:
 	sshbuf_free(buf);
-	return *parseerror ? NULL : ret;
-#undef EXPAND_MAX_KEYS
+	প্রত্যাগম *parseerror ? রিক্ত : ret;
+#undef EXPAND_MAX_চাবিগুলি
 }
 
 /*
@@ -1473,177 +1473,177 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
  * functions, any such arguments will be unused.
  */
 
-char *
-dollar_expand(int *parseerr, const char *string, ...)
+বর্ণ *
+dollar_expand(পূর্ণাঙ্ক *parseerr, ধ্রুব বর্ণ *string, ...)
 {
-	char *ret;
-	int err;
+	বর্ণ *ret;
+	পূর্ণাঙ্ক err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 0, string, ap);
 	va_end(ap);
-	if (parseerr != NULL)
+	যদি (parseerr != রিক্ত)
 		*parseerr = err;
-	return ret;
+	প্রত্যাগম ret;
 }
 
 /*
  * Returns expanded string or NULL if a specified environment variable is
  * not defined, or calls fatal if the string is invalid.
  */
-char *
-percent_expand(const char *string, ...)
+বর্ণ *
+percent_expand(ধ্রুব বর্ণ *string, ...)
 {
-	char *ret;
-	int err;
+	বর্ণ *ret;
+	পূর্ণাঙ্ক err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 0, 1, string, ap);
 	va_end(ap);
-	if (err)
+	যদি (err)
 		fatal_f("failed");
-	return ret;
+	প্রত্যাগম ret;
 }
 
 /*
  * Returns expanded string or NULL if a specified environment variable is
  * not defined, or calls fatal if the string is invalid.
  */
-char *
-percent_dollar_expand(const char *string, ...)
+বর্ণ *
+percent_dollar_expand(ধ্রুব বর্ণ *string, ...)
 {
-	char *ret;
-	int err;
+	বর্ণ *ret;
+	পূর্ণাঙ্ক err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 1, string, ap);
 	va_end(ap);
-	if (err)
+	যদি (err)
 		fatal_f("failed");
-	return ret;
+	প্রত্যাগম ret;
 }
 
-int
-tun_open(int tun, int mode, char **ifname)
+পূর্ণাঙ্ক
+tun_open(পূর্ণাঙ্ক tun, পূর্ণাঙ্ক mode, বর্ণ **ifname)
 {
-#if defined(CUSTOM_SYS_TUN_OPEN)
-	return (sys_tun_open(tun, mode, ifname));
-#elif defined(SSH_TUN_OPENBSD)
-	struct ifreq ifr;
-	char name[100];
-	int fd = -1, sock;
-	const char *tunbase = "tun";
+#যদি defined(CUSTOM_SYS_TUN_OPEN)
+	প্রত্যাগম (sys_tun_open(tun, mode, ifname));
+#নোচেদ্যদি defined(SSH_TUN_OPENBSD)
+	সংরচনা ifreq ifr;
+	বর্ণ name[100];
+	পূর্ণাঙ্ক fd = -1, sock;
+	ধ্রুব বর্ণ *tunbase = "tun";
 
-	if (ifname != NULL)
-		*ifname = NULL;
+	যদি (ifname != রিক্ত)
+		*ifname = রিক্ত;
 
-	if (mode == SSH_TUNMODE_ETHERNET)
+	যদি (mode == SSH_TUNMODE_ETHERNET)
 		tunbase = "tap";
 
 	/* Open the tunnel device */
-	if (tun <= SSH_TUNID_MAX) {
-		snprintf(name, sizeof(name), "/dev/%s%d", tunbase, tun);
+	যদি (tun <= SSH_TUNID_MAX) {
+		snprintf(name, পরিমাণ(name), "/dev/%s%d", tunbase, tun);
 		fd = open(name, O_RDWR);
-	} else if (tun == SSH_TUNID_ANY) {
-		for (tun = 100; tun >= 0; tun--) {
-			snprintf(name, sizeof(name), "/dev/%s%d",
+	} অন্যথা যদি (tun == SSH_TUNID_ANY) {
+		প্রতি (tun = 100; tun >= 0; tun--) {
+			snprintf(name, পরিমাণ(name), "/dev/%s%d",
 			    tunbase, tun);
-			if ((fd = open(name, O_RDWR)) >= 0)
-				break;
+			যদি ((fd = open(name, O_RDWR)) >= 0)
+				ভঙ্গ;
 		}
-	} else {
+	} অন্যথা {
 		debug_f("invalid tunnel %u", tun);
-		return -1;
+		প্রত্যাগম -1;
 	}
 
-	if (fd == -1) {
+	যদি (fd == -1) {
 		debug_f("%s open: %s", name, strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
 
 	debug_f("%s mode %d fd %d", name, mode, fd);
 
 	/* Bring interface up if it is not already */
-	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s%d", tunbase, tun);
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
-		goto failed;
+	snprintf(ifr.ifr_name, পরিমাণ(ifr.ifr_name), "%s%d", tunbase, tun);
+	যদি ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+		গচ্ছ failed;
 
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
+	যদি (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
 		debug_f("get interface %s flags: %s", ifr.ifr_name,
 		    strerror(errno));
-		goto failed;
+		গচ্ছ failed;
 	}
 
-	if (!(ifr.ifr_flags & IFF_UP)) {
+	যদি (!(ifr.ifr_flags & IFF_UP)) {
 		ifr.ifr_flags |= IFF_UP;
-		if (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
+		যদি (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
 			debug_f("activate interface %s: %s", ifr.ifr_name,
 			    strerror(errno));
-			goto failed;
+			গচ্ছ failed;
 		}
 	}
 
-	if (ifname != NULL)
+	যদি (ifname != রিক্ত)
 		*ifname = xstrdup(ifr.ifr_name);
 
 	close(sock);
-	return fd;
+	প্রত্যাগম fd;
 
  failed:
-	if (fd >= 0)
+	যদি (fd >= 0)
 		close(fd);
-	if (sock >= 0)
+	যদি (sock >= 0)
 		close(sock);
-	return -1;
-#else
+	প্রত্যাগম -1;
+#অন্যথা
 	error("Tunnel interfaces are not supported on this platform");
-	return (-1);
+	প্রত্যাগম (-1);
 #endif
 }
 
-void
-sanitise_stdfd(void)
+শূন্য
+sanitise_stdfd(শূন্য)
 {
-	int nullfd, dupfd;
+	পূর্ণাঙ্ক nullfd, dupfd;
 
-	if ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	যদি ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 		fprintf(stderr, "Couldn't open /dev/null: %s\n",
 		    strerror(errno));
 		exit(1);
 	}
-	while (++dupfd <= STDERR_FILENO) {
+	যাবত্ (++dupfd <= STDERR_FILENO) {
 		/* Only populate closed fds. */
-		if (fcntl(dupfd, F_GETFL) == -1 && errno == EBADF) {
-			if (dup2(nullfd, dupfd) == -1) {
+		যদি (fcntl(dupfd, F_GETFL) == -1 && errno == EBADF) {
+			যদি (dup2(nullfd, dupfd) == -1) {
 				fprintf(stderr, "dup2: %s\n", strerror(errno));
 				exit(1);
 			}
 		}
 	}
-	if (nullfd > STDERR_FILENO)
+	যদি (nullfd > STDERR_FILENO)
 		close(nullfd);
 }
 
-char *
-tohex(const void *vp, size_t l)
+বর্ণ *
+tohex(ধ্রুব শূন্য *vp, size_t l)
 {
-	const u_char *p = (const u_char *)vp;
-	char b[3], *r;
+	ধ্রুব u_char *p = (ধ্রুব u_char *)vp;
+	বর্ণ b[3], *r;
 	size_t i, hl;
 
-	if (l > 65536)
-		return xstrdup("tohex: length > 65536");
+	যদি (l > 65536)
+		প্রত্যাগম xstrdup("tohex: length > 65536");
 
 	hl = l * 2 + 1;
 	r = xcalloc(1, hl);
-	for (i = 0; i < l; i++) {
-		snprintf(b, sizeof(b), "%02x", p[i]);
+	প্রতি (i = 0; i < l; i++) {
+		snprintf(b, পরিমাণ(b), "%02x", p[i]);
 		strlcat(r, b, hl);
 	}
-	return (r);
+	প্রত্যাগম (r);
 }
 
 /*
@@ -1651,32 +1651,32 @@ tohex(const void *vp, size_t l)
  * then the separator 'sep' will be prepended before the formatted arguments.
  * Extended strings are heap allocated.
  */
-void
-xextendf(char **sp, const char *sep, const char *fmt, ...)
+শূন্য
+xextendf(বর্ণ **sp, ধ্রুব বর্ণ *sep, ধ্রুব বর্ণ *fmt, ...)
 {
 	va_list ap;
-	char *tmp1, *tmp2;
+	বর্ণ *tmp1, *tmp2;
 
 	va_start(ap, fmt);
 	xvasprintf(&tmp1, fmt, ap);
 	va_end(ap);
 
-	if (*sp == NULL || **sp == '\0') {
-		free(*sp);
+	যদি (*sp == রিক্ত || **sp == '\0') {
+		মুক্ত(*sp);
 		*sp = tmp1;
-		return;
+		প্রত্যাগম;
 	}
-	xasprintf(&tmp2, "%s%s%s", *sp, sep == NULL ? "" : sep, tmp1);
-	free(tmp1);
-	free(*sp);
+	xasprintf(&tmp2, "%s%s%s", *sp, sep == রিক্ত ? "" : sep, tmp1);
+	মুক্ত(tmp1);
+	মুক্ত(*sp);
 	*sp = tmp2;
 }
 
 
 uint64_t
-get_u64(const void *vp)
+get_u64(ধ্রুব শূন্য *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	ধ্রুব u_char *p = (ধ্রুব u_char *)vp;
 	uint64_t v;
 
 	v  = (uint64_t)p[0] << 56;
@@ -1688,13 +1688,13 @@ get_u64(const void *vp)
 	v |= (uint64_t)p[6] << 8;
 	v |= (uint64_t)p[7];
 
-	return (v);
+	প্রত্যাগম (v);
 }
 
 uint32_t
-get_u32(const void *vp)
+get_u32(ধ্রুব শূন্য *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	ধ্রুব u_char *p = (ধ্রুব u_char *)vp;
 	uint32_t v;
 
 	v  = (uint32_t)p[0] << 24;
@@ -1702,13 +1702,13 @@ get_u32(const void *vp)
 	v |= (uint32_t)p[2] << 8;
 	v |= (uint32_t)p[3];
 
-	return (v);
+	প্রত্যাগম (v);
 }
 
 uint32_t
-get_u32_le(const void *vp)
+get_u32_le(ধ্রুব শূন্য *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	ধ্রুব u_char *p = (ধ্রুব u_char *)vp;
 	uint32_t v;
 
 	v  = (uint32_t)p[0];
@@ -1716,23 +1716,23 @@ get_u32_le(const void *vp)
 	v |= (uint32_t)p[2] << 16;
 	v |= (uint32_t)p[3] << 24;
 
-	return (v);
+	প্রত্যাগম (v);
 }
 
 uint16_t
-get_u16(const void *vp)
+get_u16(ধ্রুব শূন্য *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	ধ্রুব u_char *p = (ধ্রুব u_char *)vp;
 	uint16_t v;
 
 	v  = (uint16_t)p[0] << 8;
 	v |= (uint16_t)p[1];
 
-	return (v);
+	প্রত্যাগম (v);
 }
 
-void
-put_u64(void *vp, uint64_t v)
+শূন্য
+put_u64(শূন্য *vp, uint64_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1746,8 +1746,8 @@ put_u64(void *vp, uint64_t v)
 	p[7] = (u_char)v & 0xff;
 }
 
-void
-put_u32(void *vp, uint32_t v)
+শূন্য
+put_u32(শূন্য *vp, uint32_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1757,8 +1757,8 @@ put_u32(void *vp, uint32_t v)
 	p[3] = (u_char)v & 0xff;
 }
 
-void
-put_u32_le(void *vp, uint32_t v)
+শূন্য
+put_u32_le(শূন্য *vp, uint32_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1768,8 +1768,8 @@ put_u32_le(void *vp, uint32_t v)
 	p[3] = (u_char)(v >> 24) & 0xff;
 }
 
-void
-put_u16(void *vp, uint16_t v)
+শূন্য
+put_u16(শূন্য *vp, uint16_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1777,60 +1777,60 @@ put_u16(void *vp, uint16_t v)
 	p[1] = (u_char)v & 0xff;
 }
 
-void
-ms_subtract_diff(struct timeval *start, int *ms)
+শূন্য
+ms_subtract_diff(সংরচনা timeval *start, পূর্ণাঙ্ক *ms)
 {
-	struct timeval diff, finish;
+	সংরচনা timeval diff, finish;
 
 	monotime_tv(&finish);
 	timersub(&finish, start, &diff);
 	*ms -= (diff.tv_sec * 1000) + (diff.tv_usec / 1000);
 }
 
-void
-ms_to_timespec(struct timespec *ts, int ms)
+শূন্য
+ms_to_timespec(সংরচনা timespec *ts, পূর্ণাঙ্ক ms)
 {
-	if (ms < 0)
+	যদি (ms < 0)
 		ms = 0;
 	ts->tv_sec = ms / 1000;
 	ts->tv_nsec = (ms % 1000) * 1000 * 1000;
 }
 
-void
-monotime_ts(struct timespec *ts)
+শূন্য
+monotime_ts(সংরচনা timespec *ts)
 {
-	struct timeval tv;
-#if defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
+	সংরচনা timeval tv;
+#যদি defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
     defined(CLOCK_MONOTONIC) || defined(CLOCK_REALTIME))
-	static int gettime_failed = 0;
+	স্থির পূর্ণাঙ্ক gettime_failed = 0;
 
-	if (!gettime_failed) {
+	যদি (!gettime_failed) {
 # ifdef CLOCK_BOOTTIME
-		if (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
-			return;
+		যদি (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
+			প্রত্যাগম;
 # endif /* CLOCK_BOOTTIME */
 # ifdef CLOCK_MONOTONIC
-		if (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
-			return;
+		যদি (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
+			প্রত্যাগম;
 # endif /* CLOCK_MONOTONIC */
 # ifdef CLOCK_REALTIME
 		/* Not monotonic, but we're almost out of options here. */
-		if (clock_gettime(CLOCK_REALTIME, ts) == 0)
-			return;
+		যদি (clock_gettime(CLOCK_REALTIME, ts) == 0)
+			প্রত্যাগম;
 # endif /* CLOCK_REALTIME */
 		debug3("clock_gettime: %s", strerror(errno));
 		gettime_failed = 1;
 	}
 #endif /* HAVE_CLOCK_GETTIME && (BOOTTIME || MONOTONIC || REALTIME) */
-	gettimeofday(&tv, NULL);
+	gettimeofday(&tv, রিক্ত);
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
 }
 
-void
-monotime_tv(struct timeval *tv)
+শূন্য
+monotime_tv(সংরচনা timeval *tv)
 {
-	struct timespec ts;
+	সংরচনা timespec ts;
 
 	monotime_ts(&ts);
 	tv->tv_sec = ts.tv_sec;
@@ -1838,25 +1838,25 @@ monotime_tv(struct timeval *tv)
 }
 
 time_t
-monotime(void)
+monotime(শূন্য)
 {
-	struct timespec ts;
+	সংরচনা timespec ts;
 
 	monotime_ts(&ts);
-	return (ts.tv_sec);
+	প্রত্যাগম (ts.tv_sec);
 }
 
-double
-monotime_double(void)
+দ্বিগুণ
+monotime_double(শূন্য)
 {
-	struct timespec ts;
+	সংরচনা timespec ts;
 
 	monotime_ts(&ts);
-	return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
+	প্রত্যাগম (দ্বিগুণ)ts.tv_sec + (দ্বিগুণ)ts.tv_nsec / 1000000000.0;
 }
 
-void
-bandwidth_limit_init(struct bwlimit *bw, uint64_t kbps, size_t buflen)
+শূন্য
+bandwidth_limit_init(সংরচনা bwlimit *bw, uint64_t kbps, size_t buflen)
 {
 	bw->buflen = buflen;
 	bw->rate = kbps;
@@ -1867,49 +1867,49 @@ bandwidth_limit_init(struct bwlimit *bw, uint64_t kbps, size_t buflen)
 }
 
 /* Callback from read/write loop to insert bandwidth-limiting delays */
-void
-bandwidth_limit(struct bwlimit *bw, size_t read_len)
+শূন্য
+bandwidth_limit(সংরচনা bwlimit *bw, size_t read_len)
 {
 	uint64_t waitlen;
-	struct timespec ts, rm;
+	সংরচনা timespec ts, rm;
 
 	bw->lamt += read_len;
-	if (!timerisset(&bw->bwstart)) {
+	যদি (!timerisset(&bw->bwstart)) {
 		monotime_tv(&bw->bwstart);
-		return;
+		প্রত্যাগম;
 	}
-	if (bw->lamt < bw->thresh)
-		return;
+	যদি (bw->lamt < bw->thresh)
+		প্রত্যাগম;
 
 	monotime_tv(&bw->bwend);
 	timersub(&bw->bwend, &bw->bwstart, &bw->bwend);
-	if (!timerisset(&bw->bwend))
-		return;
+	যদি (!timerisset(&bw->bwend))
+		প্রত্যাগম;
 
 	bw->lamt *= 8;
-	waitlen = (double)1000000L * bw->lamt / bw->rate;
+	waitlen = (দ্বিগুণ)1000000L * bw->lamt / bw->rate;
 
 	bw->bwstart.tv_sec = waitlen / 1000000L;
 	bw->bwstart.tv_usec = waitlen % 1000000L;
 
-	if (timercmp(&bw->bwstart, &bw->bwend, >)) {
+	যদি (timercmp(&bw->bwstart, &bw->bwend, >)) {
 		timersub(&bw->bwstart, &bw->bwend, &bw->bwend);
 
 		/* Adjust the wait time */
-		if (bw->bwend.tv_sec) {
+		যদি (bw->bwend.tv_sec) {
 			bw->thresh /= 2;
-			if (bw->thresh < bw->buflen / 4)
+			যদি (bw->thresh < bw->buflen / 4)
 				bw->thresh = bw->buflen / 4;
-		} else if (bw->bwend.tv_usec < 10000) {
+		} অন্যথা যদি (bw->bwend.tv_usec < 10000) {
 			bw->thresh *= 2;
-			if (bw->thresh > bw->buflen * 8)
+			যদি (bw->thresh > bw->buflen * 8)
 				bw->thresh = bw->buflen * 8;
 		}
 
 		TIMEVAL_TO_TIMESPEC(&bw->bwend, &ts);
-		while (nanosleep(&ts, &rm) == -1) {
-			if (errno != EINTR)
-				break;
+		যাবত্ (nanosleep(&ts, &rm) == -1) {
+			যদি (errno != EINTR)
+				ভঙ্গ;
 			ts = rm;
 		}
 	}
@@ -1919,25 +1919,25 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
 }
 
 /* Make a template filename for mk[sd]temp() */
-void
-mktemp_proto(char *s, size_t len)
+শূন্য
+mktemp_proto(বর্ণ *s, size_t len)
 {
-	const char *tmpdir;
-	int r;
+	ধ্রুব বর্ণ *tmpdir;
+	পূর্ণাঙ্ক r;
 
-	if ((tmpdir = getenv("TMPDIR")) != NULL) {
+	যদি ((tmpdir = getenv("TMPDIR")) != রিক্ত) {
 		r = snprintf(s, len, "%s/ssh-XXXXXXXXXXXX", tmpdir);
-		if (r > 0 && (size_t)r < len)
-			return;
+		যদি (r > 0 && (size_t)r < len)
+			প্রত্যাগম;
 	}
 	r = snprintf(s, len, "/tmp/ssh-XXXXXXXXXXXX");
-	if (r < 0 || (size_t)r >= len)
+	যদি (r < 0 || (size_t)r >= len)
 		fatal_f("template string too short");
 }
 
-static const struct {
-	const char *name;
-	int value;
+স্থির ধ্রুব সংরচনা {
+	ধ্রুব বর্ণ *name;
+	পূর্ণাঙ্ক মান;
 } ipqos[] = {
 	{ "none", INT_MAX },		/* can't use 0 here; that's CS0 */
 	{ "af11", IPTOS_DSCP_AF11 },
@@ -1966,102 +1966,102 @@ static const struct {
 	{ "lowdelay", INT_MIN },	/* deprecated */
 	{ "throughput", INT_MIN },	/* deprecated */
 	{ "reliability", INT_MIN },	/* deprecated */
-	{ NULL, -1 }
+	{ রিক্ত, -1 }
 };
 
-int
-parse_ipqos(const char *cp)
+পূর্ণাঙ্ক
+parse_ipqos(ধ্রুব বর্ণ *cp)
 {
-	const char *errstr;
+	ধ্রুব বর্ণ *errstr;
 	u_int i;
-	int val;
+	পূর্ণাঙ্ক val;
 
-	if (cp == NULL)
-		return -1;
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (strcasecmp(cp, ipqos[i].name) == 0)
-			return ipqos[i].value;
+	যদি (cp == রিক্ত)
+		প্রত্যাগম -1;
+	প্রতি (i = 0; ipqos[i].name != রিক্ত; i++) {
+		যদি (strcasecmp(cp, ipqos[i].name) == 0)
+			প্রত্যাগম ipqos[i].মান;
 	}
 	/* Try parsing as an integer */
-	val = (int)strtonum(cp, 0, 255, &errstr);
-	if (errstr)
-		return -1;
-	return val;
+	val = (পূর্ণাঙ্ক)strtonum(cp, 0, 255, &errstr);
+	যদি (errstr)
+		প্রত্যাগম -1;
+	প্রত্যাগম val;
 }
 
-const char *
-iptos2str(int iptos)
+ধ্রুব বর্ণ *
+iptos2str(পূর্ণাঙ্ক iptos)
 {
-	int i;
-	static char iptos_str[sizeof "0xff"];
+	পূর্ণাঙ্ক i;
+	স্থির বর্ণ iptos_str[পরিমাণ "0xff"];
 
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (ipqos[i].value == iptos)
-			return ipqos[i].name;
+	প্রতি (i = 0; ipqos[i].name != রিক্ত; i++) {
+		যদি (ipqos[i].মান == iptos)
+			প্রত্যাগম ipqos[i].name;
 	}
-	snprintf(iptos_str, sizeof iptos_str, "0x%02x", iptos);
-	return iptos_str;
+	snprintf(iptos_str, পরিমাণ iptos_str, "0x%02x", iptos);
+	প্রত্যাগম iptos_str;
 }
 
-void
-lowercase(char *s)
+শূন্য
+lowercase(বর্ণ *s)
 {
-	for (; *s; s++)
+	প্রতি (; *s; s++)
 		*s = tolower((u_char)*s);
 }
 
-int
-unix_listener(const char *path, int backlog, int unlink_first)
+পূর্ণাঙ্ক
+unix_listener(ধ্রুব বর্ণ *path, পূর্ণাঙ্ক backlog, পূর্ণাঙ্ক unlink_first)
 {
-	struct sockaddr_un sunaddr;
-	int saved_errno, sock;
+	সংরচনা sockaddr_un sunaddr;
+	পূর্ণাঙ্ক saved_errno, sock;
 
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	memset(&sunaddr, 0, পরিমাণ(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	if (strlcpy(sunaddr.sun_path, path,
-	    sizeof(sunaddr.sun_path)) >= sizeof(sunaddr.sun_path)) {
+	যদি (strlcpy(sunaddr.sun_path, path,
+	    পরিমাণ(sunaddr.sun_path)) >= পরিমাণ(sunaddr.sun_path)) {
 		error_f("path \"%s\" too long for Unix domain socket", path);
 		errno = ENAMETOOLONG;
-		return -1;
+		প্রত্যাগম -1;
 	}
 
 	sock = socket(PF_UNIX, SOCK_STREAM, 0);
-	if (sock == -1) {
+	যদি (sock == -1) {
 		saved_errno = errno;
 		error_f("socket: %.100s", strerror(errno));
 		errno = saved_errno;
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if (unlink_first == 1) {
-		if (unlink(path) != 0 && errno != ENOENT)
+	যদি (unlink_first == 1) {
+		যদি (unlink(path) != 0 && errno != ENOENT)
 			error("unlink(%s): %.100s", path, strerror(errno));
 	}
-	if (bind(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
+	যদি (bind(sock, (সংরচনা sockaddr *)&sunaddr, পরিমাণ(sunaddr)) == -1) {
 		saved_errno = errno;
 		error_f("cannot bind to path %s: %s", path, strerror(errno));
 		close(sock);
 		errno = saved_errno;
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if (listen(sock, backlog) == -1) {
+	যদি (listen(sock, backlog) == -1) {
 		saved_errno = errno;
 		error_f("cannot listen on path %s: %s", path, strerror(errno));
 		close(sock);
 		unlink(path);
 		errno = saved_errno;
-		return -1;
+		প্রত্যাগম -1;
 	}
-	return sock;
+	প্রত্যাগম sock;
 }
 
-void
-sock_set_v6only(int s)
+শূন্য
+sock_set_v6only(পূর্ণাঙ্ক s)
 {
-#if defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
-	int on = 1;
+#যদি defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
+	পূর্ণাঙ্ক on = 1;
 
 	debug3_f("set socket %d IPV6_V6ONLY", s);
-	if (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) == -1)
+	যদি (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, পরিমাণ(on)) == -1)
 		error("setsockopt IPV6_V6ONLY: %s", strerror(errno));
 #endif
 }
@@ -2070,68 +2070,68 @@ sock_set_v6only(int s)
  * Compares two strings that maybe be NULL. Returns non-zero if strings
  * are both NULL or are identical, returns zero otherwise.
  */
-static int
-strcmp_maybe_null(const char *a, const char *b)
+স্থির পূর্ণাঙ্ক
+strcmp_maybe_null(ধ্রুব বর্ণ *a, ধ্রুব বর্ণ *b)
 {
-	if ((a == NULL && b != NULL) || (a != NULL && b == NULL))
-		return 0;
-	if (a != NULL && strcmp(a, b) != 0)
-		return 0;
-	return 1;
+	যদি ((a == রিক্ত && b != রিক্ত) || (a != রিক্ত && b == রিক্ত))
+		প্রত্যাগম 0;
+	যদি (a != রিক্ত && strcmp(a, b) != 0)
+		প্রত্যাগম 0;
+	প্রত্যাগম 1;
 }
 
 /*
  * Compare two forwards, returning non-zero if they are identical or
  * zero otherwise.
  */
-int
-forward_equals(const struct Forward *a, const struct Forward *b)
+পূর্ণাঙ্ক
+forward_equals(ধ্রুব সংরচনা Forward *a, ধ্রুব সংরচনা Forward *b)
 {
-	if (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
-		return 0;
-	if (a->listen_port != b->listen_port)
-		return 0;
-	if (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
-		return 0;
-	if (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
-		return 0;
-	if (a->connect_port != b->connect_port)
-		return 0;
-	if (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
-		return 0;
+	যদি (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
+		প্রত্যাগম 0;
+	যদি (a->listen_port != b->listen_port)
+		প্রত্যাগম 0;
+	যদি (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
+		প্রত্যাগম 0;
+	যদি (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
+		প্রত্যাগম 0;
+	যদি (a->connect_port != b->connect_port)
+		প্রত্যাগম 0;
+	যদি (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
+		প্রত্যাগম 0;
 	/* allocated_port and handle are not checked */
-	return 1;
+	প্রত্যাগম 1;
 }
 
 /* returns port number, FWD_PERMIT_ANY_PORT or -1 on error */
-int
-permitopen_port(const char *p)
+পূর্ণাঙ্ক
+permitopen_port(ধ্রুব বর্ণ *p)
 {
-	int port;
+	পূর্ণাঙ্ক port;
 
-	if (strcmp(p, "*") == 0)
-		return FWD_PERMIT_ANY_PORT;
-	if ((port = a2port(p)) > 0)
-		return port;
-	return -1;
+	যদি (strcmp(p, "*") == 0)
+		প্রত্যাগম FWD_PERMIT_ANY_PORT;
+	যদি ((port = a2port(p)) > 0)
+		প্রত্যাগম port;
+	প্রত্যাগম -1;
 }
 
 /* returns 1 if process is already daemonized, 0 otherwise */
-int
-daemonized(void)
+পূর্ণাঙ্ক
+daemonized(শূন্য)
 {
-	int fd;
+	পূর্ণাঙ্ক fd;
 
-	if ((fd = open(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
+	যদি ((fd = open(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
 		close(fd);
-		return 0;	/* have controlling terminal */
+		প্রত্যাগম 0;	/* have controlling terminal */
 	}
-	if (getppid() != 1)
-		return 0;	/* parent is not init */
-	if (getsid(0) != getpid())
-		return 0;	/* not session leader */
+	যদি (getppid() != 1)
+		প্রত্যাগম 0;	/* parent is not init */
+	যদি (getsid(0) != getpid())
+		প্রত্যাগম 0;	/* not session leader */
 	debug3("already daemonized");
-	return 1;
+	প্রত্যাগম 1;
 }
 
 /*
@@ -2139,180 +2139,180 @@ daemonized(void)
  * escape characters (\\, \", \'). Caller must free the argument vector
  * and its members.
  */
-int
-argv_split(const char *s, int *argcp, char ***argvp, int terminate_on_comment)
+পূর্ণাঙ্ক
+argv_split(ধ্রুব বর্ণ *s, পূর্ণাঙ্ক *argcp, বর্ণ ***argvp, পূর্ণাঙ্ক terminate_on_comment)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int argc = 0, quote, i, j;
-	char *arg, **argv = xcalloc(1, sizeof(*argv));
+	পূর্ণাঙ্ক r = SSH_ERR_INTERNAL_ERROR;
+	পূর্ণাঙ্ক argc = 0, quote, i, j;
+	বর্ণ *arg, **argv = xcalloc(1, পরিমাণ(*argv));
 
-	*argvp = NULL;
+	*argvp = রিক্ত;
 	*argcp = 0;
 
-	for (i = 0; s[i] != '\0'; i++) {
+	প্রতি (i = 0; s[i] != '\0'; i++) {
 		/* Skip leading whitespace */
-		if (s[i] == ' ' || s[i] == '\t')
-			continue;
-		if (terminate_on_comment && s[i] == '#')
-			break;
+		যদি (s[i] == ' ' || s[i] == '\t')
+			অনুবর্ত;
+		যদি (terminate_on_comment && s[i] == '#')
+			ভঙ্গ;
 		/* Start of a token */
 		quote = 0;
 
-		argv = xreallocarray(argv, (argc + 2), sizeof(*argv));
+		argv = xreallocarray(argv, (argc + 2), পরিমাণ(*argv));
 		arg = argv[argc++] = xcalloc(1, strlen(s + i) + 1);
-		argv[argc] = NULL;
+		argv[argc] = রিক্ত;
 
 		/* Copy the token in, removing escapes */
-		for (j = 0; s[i] != '\0'; i++) {
-			if (s[i] == '\\') {
-				if (s[i + 1] == '\'' ||
+		প্রতি (j = 0; s[i] != '\0'; i++) {
+			যদি (s[i] == '\\') {
+				যদি (s[i + 1] == '\'' ||
 				    s[i + 1] == '\"' ||
 				    s[i + 1] == '\\' ||
 				    (quote == 0 && s[i + 1] == ' ')) {
 					i++; /* Skip '\' */
 					arg[j++] = s[i];
-				} else {
+				} অন্যথা {
 					/* Unrecognised escape */
 					arg[j++] = s[i];
 				}
-			} else if (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
-				break; /* done */
-			else if (quote == 0 && (s[i] == '\"' || s[i] == '\''))
+			} অন্যথা যদি (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
+				ভঙ্গ; /* done */
+			অন্যথা যদি (quote == 0 && (s[i] == '\"' || s[i] == '\''))
 				quote = s[i]; /* quote start */
-			else if (quote != 0 && s[i] == quote)
+			অন্যথা যদি (quote != 0 && s[i] == quote)
 				quote = 0; /* quote end */
-			else
+			অন্যথা
 				arg[j++] = s[i];
 		}
-		if (s[i] == '\0') {
-			if (quote != 0) {
+		যদি (s[i] == '\0') {
+			যদি (quote != 0) {
 				/* Ran out of string looking for close quote */
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				গচ্ছ out;
 			}
-			break;
+			ভঙ্গ;
 		}
 	}
 	/* Success */
 	*argcp = argc;
 	*argvp = argv;
 	argc = 0;
-	argv = NULL;
+	argv = রিক্ত;
 	r = 0;
  out:
-	if (argc != 0 && argv != NULL) {
-		for (i = 0; i < argc; i++)
-			free(argv[i]);
-		free(argv);
+	যদি (argc != 0 && argv != রিক্ত) {
+		প্রতি (i = 0; i < argc; i++)
+			মুক্ত(argv[i]);
+		মুক্ত(argv);
 	}
-	return r;
+	প্রত্যাগম r;
 }
 
 /*
  * Reassemble an argument vector into a string, quoting and escaping as
  * necessary. Caller must free returned string.
  */
-char *
-argv_assemble(int argc, char **argv)
+বর্ণ *
+argv_assemble(পূর্ণাঙ্ক argc, বর্ণ **argv)
 {
-	int i, j, ws, r;
-	char c, *ret;
-	struct sshbuf *buf, *arg;
+	পূর্ণাঙ্ক i, j, ws, r;
+	বর্ণ c, *ret;
+	সংরচনা sshbuf *buf, *arg;
 
-	if ((buf = sshbuf_new()) == NULL || (arg = sshbuf_new()) == NULL)
+	যদি ((buf = sshbuf_new()) == রিক্ত || (arg = sshbuf_new()) == রিক্ত)
 		fatal_f("sshbuf_new failed");
 
-	for (i = 0; i < argc; i++) {
+	প্রতি (i = 0; i < argc; i++) {
 		ws = 0;
 		sshbuf_reset(arg);
-		for (j = 0; argv[i][j] != '\0'; j++) {
+		প্রতি (j = 0; argv[i][j] != '\0'; j++) {
 			r = 0;
 			c = argv[i][j];
-			switch (c) {
-			case ' ':
-			case '\t':
+			বিকল্প (c) {
+			পক্ষ ' ':
+			পক্ষ '\t':
 				ws = 1;
 				r = sshbuf_put_u8(arg, c);
-				break;
-			case '\\':
-			case '\'':
-			case '"':
-				if ((r = sshbuf_put_u8(arg, '\\')) != 0)
-					break;
+				ভঙ্গ;
+			পক্ষ '\\':
+			পক্ষ '\'':
+			পক্ষ '"':
+				যদি ((r = sshbuf_put_u8(arg, '\\')) != 0)
+					ভঙ্গ;
 				/* FALLTHROUGH */
-			default:
+			স্বভাব:
 				r = sshbuf_put_u8(arg, c);
-				break;
+				ভঙ্গ;
 			}
-			if (r != 0)
+			যদি (r != 0)
 				fatal_fr(r, "sshbuf_put_u8");
 		}
-		if ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
+		যদি ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0) ||
 		    (r = sshbuf_putb(buf, arg)) != 0 ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0))
 			fatal_fr(r, "assemble");
 	}
-	if ((ret = malloc(sshbuf_len(buf) + 1)) == NULL)
+	যদি ((ret = malloc(sshbuf_len(buf) + 1)) == রিক্ত)
 		fatal_f("malloc failed");
 	memcpy(ret, sshbuf_ptr(buf), sshbuf_len(buf));
 	ret[sshbuf_len(buf)] = '\0';
 	sshbuf_free(buf);
 	sshbuf_free(arg);
-	return ret;
+	প্রত্যাগম ret;
 }
 
-char *
-argv_next(int *argcp, char ***argvp)
+বর্ণ *
+argv_next(পূর্ণাঙ্ক *argcp, বর্ণ ***argvp)
 {
-	char *ret = (*argvp)[0];
+	বর্ণ *ret = (*argvp)[0];
 
-	if (*argcp > 0 && ret != NULL) {
+	যদি (*argcp > 0 && ret != রিক্ত) {
 		(*argcp)--;
 		(*argvp)++;
 	}
-	return ret;
+	প্রত্যাগম ret;
 }
 
-void
-argv_consume(int *argcp)
+শূন্য
+argv_consume(পূর্ণাঙ্ক *argcp)
 {
 	*argcp = 0;
 }
 
-void
-argv_free(char **av, int ac)
+শূন্য
+argv_free(বর্ণ **av, পূর্ণাঙ্ক ac)
 {
-	int i;
+	পূর্ণাঙ্ক i;
 
-	if (av == NULL)
-		return;
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
+	যদি (av == রিক্ত)
+		প্রত্যাগম;
+	প্রতি (i = 0; i < ac; i++)
+		মুক্ত(av[i]);
+	মুক্ত(av);
 }
 
 /* Returns 0 if pid exited cleanly, non-zero otherwise */
-int
-exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
+পূর্ণাঙ্ক
+exited_cleanly(pid_t pid, ধ্রুব বর্ণ *tag, ধ্রুব বর্ণ *cmd, পূর্ণাঙ্ক quiet)
 {
-	int status;
+	পূর্ণাঙ্ক status;
 
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR) {
+	যাবত্ (waitpid(pid, &status, 0) == -1) {
+		যদি (errno != EINTR) {
 			error("%s waitpid: %s", tag, strerror(errno));
-			return -1;
+			প্রত্যাগম -1;
 		}
 	}
-	if (WIFSIGNALED(status)) {
+	যদি (WIFSIGNALED(status)) {
 		error("%s %s exited on signal %d", tag, cmd, WTERMSIG(status));
-		return -1;
-	} else if (WEXITSTATUS(status) != 0) {
+		প্রত্যাগম -1;
+	} অন্যথা যদি (WEXITSTATUS(status) != 0) {
 		do_log2(quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_INFO,
 		    "%s %s failed, status %d", tag, cmd, WEXITSTATUS(status));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /*
@@ -2328,67 +2328,67 @@ exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
  *
  * Returns 0 on success and -1 on failure
  */
-int
-safe_path(const char *name, struct stat *stp, const char *pw_dir,
-    uid_t uid, char *err, size_t errlen)
+পূর্ণাঙ্ক
+safe_path(ধ্রুব বর্ণ *name, সংরচনা stat *stp, ধ্রুব বর্ণ *pw_dir,
+    uid_t uid, বর্ণ *err, size_t errlen)
 {
-	char buf[PATH_MAX], buf2[PATH_MAX], homedir[PATH_MAX];
-	char *cp;
-	int comparehome = 0;
-	struct stat st;
+	বর্ণ buf[PATH_MAX], buf2[PATH_MAX], homedir[PATH_MAX];
+	বর্ণ *cp;
+	পূর্ণাঙ্ক comparehome = 0;
+	সংরচনা stat st;
 
-	if (realpath(name, buf) == NULL) {
+	যদি (realpath(name, buf) == রিক্ত) {
 		snprintf(err, errlen, "realpath %s failed: %s", name,
 		    strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
+	যদি (pw_dir != রিক্ত && realpath(pw_dir, homedir) != রিক্ত)
 		comparehome = 1;
 
-	if (!S_ISREG(stp->st_mode)) {
+	যদি (!S_ISREG(stp->st_mode)) {
 		snprintf(err, errlen, "%s is not a regular file", buf);
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
+	যদি ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
 	    (stp->st_mode & 022) != 0) {
 		snprintf(err, errlen, "bad ownership or modes for file %s",
 		    buf);
-		return -1;
+		প্রত্যাগম -1;
 	}
 
 	/* for each component of the canonical path, walking upwards */
-	for (;;) {
+	প্রতি (;;) {
 		/*
 		 * POSIX allows dirname to modify its argument and return a
 		 * pointer into it, so make a copy to avoid overlapping strlcpy.
 		 */
-		strlcpy(buf2, buf, sizeof(buf2));
-		if ((cp = dirname(buf2)) == NULL) {
+		strlcpy(buf2, buf, পরিমাণ(buf2));
+		যদি ((cp = dirname(buf2)) == রিক্ত) {
 			snprintf(err, errlen, "dirname() failed");
-			return -1;
+			প্রত্যাগম -1;
 		}
-		strlcpy(buf, cp, sizeof(buf));
+		strlcpy(buf, cp, পরিমাণ(buf));
 
-		if (stat(buf, &st) == -1 ||
+		যদি (stat(buf, &st) == -1 ||
 		    (!platform_sys_dir_uid(st.st_uid) && st.st_uid != uid) ||
 		    (st.st_mode & 022) != 0) {
 			snprintf(err, errlen,
 			    "bad ownership or modes for directory %s", buf);
-			return -1;
+			প্রত্যাগম -1;
 		}
 
 		/* If are past the homedir then we can stop */
-		if (comparehome && strcmp(homedir, buf) == 0)
-			break;
+		যদি (comparehome && strcmp(homedir, buf) == 0)
+			ভঙ্গ;
 
 		/*
 		 * dirname should always complete with a "/" path,
 		 * but we can be paranoid and check for "." too
 		 */
-		if ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
-			break;
+		যদি ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
+			ভঙ্গ;
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /*
@@ -2397,47 +2397,47 @@ safe_path(const char *name, struct stat *stp, const char *pw_dir,
  *
  * Returns 0 on success and -1 on failure
  */
-int
-safe_path_fd(int fd, const char *file, struct passwd *pw,
-    char *err, size_t errlen)
+পূর্ণাঙ্ক
+safe_path_fd(পূর্ণাঙ্ক fd, ধ্রুব বর্ণ *file, সংরচনা passwd *pw,
+    বর্ণ *err, size_t errlen)
 {
-	struct stat st;
+	সংরচনা stat st;
 
 	/* check the open file to avoid races */
-	if (fstat(fd, &st) == -1) {
+	যদি (fstat(fd, &st) == -1) {
 		snprintf(err, errlen, "cannot stat file %s: %s",
 		    file, strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	return safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
+	প্রত্যাগম safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
 }
 
 /*
  * Sets the value of the given variable in the environment.  If the variable
  * already exists, its value is overridden.
  */
-void
-child_set_env(char ***envp, u_int *envsizep, const char *name,
-	const char *value)
+শূন্য
+child_set_env(বর্ণ ***envp, u_int *envsizep, ধ্রুব বর্ণ *name,
+	ধ্রুব বর্ণ *মান)
 {
-	char **env;
+	বর্ণ **env;
 	u_int envsize;
 	u_int i, namelen;
 
-	if (strchr(name, '=') != NULL) {
+	যদি (strchr(name, '=') != রিক্ত) {
 		error("Invalid environment variable \"%.100s\"", name);
-		return;
+		প্রত্যাগম;
 	}
 
 	/*
 	 * If we're passed an uninitialized list, allocate a single null
 	 * entry before continuing.
 	 */
-	if ((*envp == NULL) != (*envsizep == 0))
+	যদি ((*envp == রিক্ত) != (*envsizep == 0))
 		fatal_f("environment size mismatch");
-	if (*envp == NULL && *envsizep == 0) {
-		*envp = xmalloc(sizeof(char *));
-		*envp[0] = NULL;
+	যদি (*envp == রিক্ত && *envsizep == 0) {
+		*envp = xmalloc(পরিমাণ(বর্ণ *));
+		*envp[0] = রিক্ত;
 		*envsizep = 1;
 	}
 
@@ -2448,79 +2448,79 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
 	 */
 	env = *envp;
 	namelen = strlen(name);
-	for (i = 0; env[i]; i++)
-		if (strncmp(env[i], name, namelen) == 0 && env[i][namelen] == '=')
-			break;
-	if (env[i]) {
+	প্রতি (i = 0; env[i]; i++)
+		যদি (strncmp(env[i], name, namelen) == 0 && env[i][namelen] == '=')
+			ভঙ্গ;
+	যদি (env[i]) {
 		/* Reuse the slot. */
-		free(env[i]);
-	} else {
+		মুক্ত(env[i]);
+	} অন্যথা {
 		/* New variable.  Expand if necessary. */
 		envsize = *envsizep;
-		if (i >= envsize - 1) {
-			if (envsize >= 1000)
+		যদি (i >= envsize - 1) {
+			যদি (envsize >= 1000)
 				fatal("child_set_env: too many env vars");
 			envsize += 50;
-			env = (*envp) = xreallocarray(env, envsize, sizeof(char *));
+			env = (*envp) = xreallocarray(env, envsize, পরিমাণ(বর্ণ *));
 			*envsizep = envsize;
 		}
 		/* Need to set the NULL pointer at end of array beyond the new slot. */
-		env[i + 1] = NULL;
+		env[i + 1] = রিক্ত;
 	}
 
 	/* Allocate space and format the variable in the appropriate slot. */
 	/* XXX xasprintf */
-	env[i] = xmalloc(strlen(name) + 1 + strlen(value) + 1);
-	snprintf(env[i], strlen(name) + 1 + strlen(value) + 1, "%s=%s", name, value);
+	env[i] = xmalloc(strlen(name) + 1 + strlen(মান) + 1);
+	snprintf(env[i], strlen(name) + 1 + strlen(মান) + 1, "%s=%s", name, মান);
 }
 
 /*
  * Check and optionally lowercase a domain name, also removes trailing '.'
  * Returns 1 on success and 0 on failure, storing an error message in errstr.
  */
-int
-valid_domain(char *name, int makelower, const char **errstr)
+পূর্ণাঙ্ক
+valid_domain(বর্ণ *name, পূর্ণাঙ্ক makelower, ধ্রুব বর্ণ **errstr)
 {
 	size_t i, l = strlen(name);
 	u_char c, last = '\0';
-	static char errbuf[256];
+	স্থির বর্ণ errbuf[256];
 
-	if (l == 0) {
-		strlcpy(errbuf, "empty domain name", sizeof(errbuf));
-		goto bad;
+	যদি (l == 0) {
+		strlcpy(errbuf, "empty domain name", পরিমাণ(errbuf));
+		গচ্ছ bad;
 	}
-	if (!isalpha((u_char)name[0]) && !isdigit((u_char)name[0]) &&
+	যদি (!isalpha((u_char)name[0]) && !isdigit((u_char)name[0]) &&
 	   name[0] != '_' /* technically invalid, but common */) {
-		snprintf(errbuf, sizeof(errbuf), "domain name \"%.100s\" "
+		snprintf(errbuf, পরিমাণ(errbuf), "domain name \"%.100s\" "
 		    "starts with invalid character", name);
-		goto bad;
+		গচ্ছ bad;
 	}
-	for (i = 0; i < l; i++) {
+	প্রতি (i = 0; i < l; i++) {
 		c = tolower((u_char)name[i]);
-		if (makelower)
-			name[i] = (char)c;
-		if (last == '.' && c == '.') {
-			snprintf(errbuf, sizeof(errbuf), "domain name "
+		যদি (makelower)
+			name[i] = (বর্ণ)c;
+		যদি (last == '.' && c == '.') {
+			snprintf(errbuf, পরিমাণ(errbuf), "domain name "
 			    "\"%.100s\" contains consecutive separators", name);
-			goto bad;
+			গচ্ছ bad;
 		}
-		if (c != '.' && c != '-' && !isalnum(c) &&
+		যদি (c != '.' && c != '-' && !isalnum(c) &&
 		    c != '_') /* technically invalid, but common */ {
-			snprintf(errbuf, sizeof(errbuf), "domain name "
+			snprintf(errbuf, পরিমাণ(errbuf), "domain name "
 			    "\"%.100s\" contains invalid characters", name);
-			goto bad;
+			গচ্ছ bad;
 		}
 		last = c;
 	}
-	if (name[l - 1] == '.')
+	যদি (name[l - 1] == '.')
 		name[l - 1] = '\0';
-	if (errstr != NULL)
-		*errstr = NULL;
-	return 1;
+	যদি (errstr != রিক্ত)
+		*errstr = রিক্ত;
+	প্রত্যাগম 1;
 bad:
-	if (errstr != NULL)
+	যদি (errstr != রিক্ত)
 		*errstr = errbuf;
-	return 0;
+	প্রত্যাগম 0;
 }
 
 /*
@@ -2528,48 +2528,48 @@ bad:
  * valid; consisting of one or more alphanumeric or underscore characters only.
  * Returns 1 on valid, 0 otherwise.
  */
-int
-valid_env_name(const char *name)
+পূর্ণাঙ্ক
+valid_env_name(ধ্রুব বর্ণ *name)
 {
-	const char *cp;
+	ধ্রুব বর্ণ *cp;
 
-	if (name[0] == '\0')
-		return 0;
-	for (cp = name; *cp != '\0'; cp++) {
-		if (!isalnum((u_char)*cp) && *cp != '_')
-			return 0;
+	যদি (name[0] == '\0')
+		প্রত্যাগম 0;
+	প্রতি (cp = name; *cp != '\0'; cp++) {
+		যদি (!isalnum((u_char)*cp) && *cp != '_')
+			প্রত্যাগম 0;
 	}
-	return 1;
+	প্রত্যাগম 1;
 }
 
-const char *
-atoi_err(const char *nptr, int *val)
+ধ্রুব বর্ণ *
+atoi_err(ধ্রুব বর্ণ *nptr, পূর্ণাঙ্ক *val)
 {
-	const char *errstr = NULL;
+	ধ্রুব বর্ণ *errstr = রিক্ত;
 
-	if (nptr == NULL || *nptr == '\0')
-		return "missing";
+	যদি (nptr == রিক্ত || *nptr == '\0')
+		প্রত্যাগম "missing";
 	*val = strtonum(nptr, 0, INT_MAX, &errstr);
-	return errstr;
+	প্রত্যাগম errstr;
 }
 
-int
-parse_absolute_time(const char *s, uint64_t *tp)
+পূর্ণাঙ্ক
+parse_absolute_time(ধ্রুব বর্ণ *s, uint64_t *tp)
 {
-	struct tm tm;
+	সংরচনা tm tm;
 	time_t tt;
-	char buf[32], *fmt;
-	const char *cp;
+	বর্ণ buf[32], *fmt;
+	ধ্রুব বর্ণ *cp;
 	size_t l;
-	int is_utc = 0;
+	পূর্ণাঙ্ক is_utc = 0;
 
 	*tp = 0;
 
 	l = strlen(s);
-	if (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
+	যদি (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
 		is_utc = 1;
 		l--;
-	} else if (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
+	} অন্যথা যদি (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
 		is_utc = 1;
 		l -= 3;
 	}
@@ -2578,52 +2578,52 @@ parse_absolute_time(const char *s, uint64_t *tp)
 	 * is white-space or other non-alphanumeric characters between
 	 * any two conversion specifications" so arrange things this way.
 	 */
-	switch (l) {
-	case 8: /* YYYYMMDD */
+	বিকল্প (l) {
+	পক্ষ 8: /* YYYYMMDD */
 		fmt = "%Y-%m-%d";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2s", s, s + 4, s + 6);
-		break;
-	case 12: /* YYYYMMDDHHMM */
+		snprintf(buf, পরিমাণ(buf), "%.4s-%.2s-%.2s", s, s + 4, s + 6);
+		ভঙ্গ;
+	পক্ষ 12: /* YYYYMMDDHHMM */
 		fmt = "%Y-%m-%dT%H:%M";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2sT%.2s:%.2s",
+		snprintf(buf, পরিমাণ(buf), "%.4s-%.2s-%.2sT%.2s:%.2s",
 		    s, s + 4, s + 6, s + 8, s + 10);
-		break;
-	case 14: /* YYYYMMDDHHMMSS */
+		ভঙ্গ;
+	পক্ষ 14: /* YYYYMMDDHHMMSS */
 		fmt = "%Y-%m-%dT%H:%M:%S";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2sT%.2s:%.2s:%.2s",
+		snprintf(buf, পরিমাণ(buf), "%.4s-%.2s-%.2sT%.2s:%.2s:%.2s",
 		    s, s + 4, s + 6, s + 8, s + 10, s + 12);
-		break;
-	default:
-		return SSH_ERR_INVALID_FORMAT;
+		ভঙ্গ;
+	স্বভাব:
+		প্রত্যাগম SSH_ERR_INVALID_FORMAT;
 	}
 
-	memset(&tm, 0, sizeof(tm));
-	if ((cp = strptime(buf, fmt, &tm)) == NULL || *cp != '\0')
-		return SSH_ERR_INVALID_FORMAT;
-	if (is_utc) {
+	memset(&tm, 0, পরিমাণ(tm));
+	যদি ((cp = strptime(buf, fmt, &tm)) == রিক্ত || *cp != '\0')
+		প্রত্যাগম SSH_ERR_INVALID_FORMAT;
+	যদি (is_utc) {
 		tm.tm_wday = -1;	/* sentinel for error */
-		if ((tt = timegm(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
-	} else {
+		যদি ((tt = timegm(&tm)) == -1 && tm.tm_wday == -1)
+			প্রত্যাগম SSH_ERR_INVALID_FORMAT;
+	} অন্যথা {
 		tm.tm_wday = -1;	/* sentinel for error */
 		tm.tm_isdst = -1;	/* mktime decides DST */
-		if ((tt = mktime(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
+		যদি ((tt = mktime(&tm)) == -1 && tm.tm_wday == -1)
+			প্রত্যাগম SSH_ERR_INVALID_FORMAT;
 	}
 	/* success */
 	*tp = (uint64_t)tt;
-	return 0;
+	প্রত্যাগম 0;
 }
 
-void
-format_absolute_time(uint64_t t, char *buf, size_t len)
+শূন্য
+format_absolute_time(uint64_t t, বর্ণ *buf, size_t len)
 {
 	time_t tt = t > SSH_TIME_T_MAX ? SSH_TIME_T_MAX : t;
-	struct tm tm;
+	সংরচনা tm tm;
 
-	if (localtime_r(&tt, &tm) == NULL)
+	যদি (localtime_r(&tt, &tm) == রিক্ত)
 		strlcpy(buf, "UNKNOWN-TIME", len);
-	else
+	অন্যথা
 		strftime(buf, len, "%Y-%m-%dT%H:%M:%S", &tm);
 }
 
@@ -2632,51 +2632,51 @@ format_absolute_time(uint64_t t, char *buf, size_t len)
  * Returns 0 on success or non-zero on failure.
  * Caller must free *typep.
  */
-int
-parse_pattern_interval(const char *s, char **typep, double *secsp)
+পূর্ণাঙ্ক
+parse_pattern_interval(ধ্রুব বর্ণ *s, বর্ণ **typep, দ্বিগুণ *secsp)
 {
-	char *cp, *sdup;
-	double secs;
+	বর্ণ *cp, *sdup;
+	দ্বিগুণ secs;
 
-	if (typep != NULL)
-		*typep = NULL;
-	if (secsp != NULL)
+	যদি (typep != রিক্ত)
+		*typep = রিক্ত;
+	যদি (secsp != রিক্ত)
 		*secsp = 0;
-	if (s == NULL)
-		return -1;
+	যদি (s == রিক্ত)
+		প্রত্যাগম -1;
 	sdup = xstrdup(s);
 
-	if ((cp = strchr(sdup, '=')) == NULL || cp == sdup) {
-		free(sdup);
-		return -1;
+	যদি ((cp = strchr(sdup, '=')) == রিক্ত || cp == sdup) {
+		মুক্ত(sdup);
+		প্রত্যাগম -1;
 	}
 	*cp++ = '\0';
-	if ((secs = convtime_double(cp)) < 0.0) {
-		free(sdup);
-		return -1;
+	যদি ((secs = convtime_double(cp)) < 0.0) {
+		মুক্ত(sdup);
+		প্রত্যাগম -1;
 	}
 	/* success */
-	if (typep != NULL)
+	যদি (typep != রিক্ত)
 		*typep = xstrdup(sdup);
-	if (secsp != NULL)
+	যদি (secsp != রিক্ত)
 		*secsp = secs;
-	free(sdup);
-	return 0;
+	মুক্ত(sdup);
+	প্রত্যাগম 0;
 }
 
 /* check if path is absolute */
-int
-path_absolute(const char *path)
+পূর্ণাঙ্ক
+path_absolute(ধ্রুব বর্ণ *path)
 {
-	return (*path == '/') ? 1 : 0;
+	প্রত্যাগম (*path == '/') ? 1 : 0;
 }
 
-void
-skip_space(char **cpp)
+শূন্য
+skip_space(বর্ণ **cpp)
 {
-	char *cp;
+	বর্ণ *cp;
 
-	for (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
+	প্রতি (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
 		;
 	*cpp = cp;
 }
@@ -2690,146 +2690,146 @@ skip_space(char **cpp)
  * If the option or negated option matches, then *optsp is updated to
  * point to the first character after the option.
  */
-int
-opt_flag(const char *opt, int allow_negate, const char **optsp)
+পূর্ণাঙ্ক
+opt_flag(ধ্রুব বর্ণ *opt, পূর্ণাঙ্ক allow_negate, ধ্রুব বর্ণ **optsp)
 {
 	size_t opt_len = strlen(opt);
-	const char *opts = *optsp;
-	int negate = 0;
+	ধ্রুব বর্ণ *opts = *optsp;
+	পূর্ণাঙ্ক negate = 0;
 
-	if (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
+	যদি (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
 		opts += 3;
 		negate = 1;
 	}
-	if (strncasecmp(opts, opt, opt_len) == 0) {
+	যদি (strncasecmp(opts, opt, opt_len) == 0) {
 		*optsp = opts + opt_len;
-		return negate ? 0 : 1;
+		প্রত্যাগম negate ? 0 : 1;
 	}
-	return -1;
+	প্রত্যাগম -1;
 }
 
-char *
-opt_dequote(const char **sp, const char **errstrp)
+বর্ণ *
+opt_dequote(ধ্রুব বর্ণ **sp, ধ্রুব বর্ণ **errstrp)
 {
-	const char *s = *sp;
-	char *ret;
+	ধ্রুব বর্ণ *s = *sp;
+	বর্ণ *ret;
 	size_t i;
 
-	*errstrp = NULL;
-	if (*s != '"') {
+	*errstrp = রিক্ত;
+	যদি (*s != '"') {
 		*errstrp = "missing start quote";
-		return NULL;
+		প্রত্যাগম রিক্ত;
 	}
 	s++;
-	if ((ret = malloc(strlen((s)) + 1)) == NULL) {
+	যদি ((ret = malloc(strlen((s)) + 1)) == রিক্ত) {
 		*errstrp = "memory allocation failed";
-		return NULL;
+		প্রত্যাগম রিক্ত;
 	}
-	for (i = 0; *s != '\0' && *s != '"';) {
-		if (s[0] == '\\' && s[1] == '"')
+	প্রতি (i = 0; *s != '\0' && *s != '"';) {
+		যদি (s[0] == '\\' && s[1] == '"')
 			s++;
 		ret[i++] = *s++;
 	}
-	if (*s == '\0') {
+	যদি (*s == '\0') {
 		*errstrp = "missing end quote";
-		free(ret);
-		return NULL;
+		মুক্ত(ret);
+		প্রত্যাগম রিক্ত;
 	}
 	ret[i] = '\0';
 	s++;
 	*sp = s;
-	return ret;
+	প্রত্যাগম ret;
 }
 
-int
-opt_match(const char **opts, const char *term)
+পূর্ণাঙ্ক
+opt_match(ধ্রুব বর্ণ **opts, ধ্রুব বর্ণ *term)
 {
-	if (strncasecmp((*opts), term, strlen(term)) == 0 &&
+	যদি (strncasecmp((*opts), term, strlen(term)) == 0 &&
 	    (*opts)[strlen(term)] == '=') {
 		*opts += strlen(term) + 1;
-		return 1;
+		প্রত্যাগম 1;
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
-void
-opt_array_append2(const char *file, const int line, const char *directive,
-    char ***array, int **iarray, u_int *lp, const char *s, int i)
+শূন্য
+opt_array_append2(ধ্রুব বর্ণ *file, ধ্রুব পূর্ণাঙ্ক সারি, ধ্রুব বর্ণ *directive,
+    বর্ণ ***array, পূর্ণাঙ্ক **iarray, u_int *lp, ধ্রুব বর্ণ *s, পূর্ণাঙ্ক i)
 {
 
-	if (*lp >= INT_MAX)
-		fatal("%s line %d: Too many %s entries", file, line, directive);
+	যদি (*lp >= INT_MAX)
+		fatal("%s line %d: Too many %s entries", file, সারি, directive);
 
-	if (iarray != NULL) {
+	যদি (iarray != রিক্ত) {
 		*iarray = xrecallocarray(*iarray, *lp, *lp + 1,
-		    sizeof(**iarray));
+		    পরিমাণ(**iarray));
 		(*iarray)[*lp] = i;
 	}
 
-	*array = xrecallocarray(*array, *lp, *lp + 1, sizeof(**array));
+	*array = xrecallocarray(*array, *lp, *lp + 1, পরিমাণ(**array));
 	(*array)[*lp] = xstrdup(s);
 	(*lp)++;
 }
 
-void
-opt_array_append(const char *file, const int line, const char *directive,
-    char ***array, u_int *lp, const char *s)
+শূন্য
+opt_array_append(ধ্রুব বর্ণ *file, ধ্রুব পূর্ণাঙ্ক সারি, ধ্রুব বর্ণ *directive,
+    বর্ণ ***array, u_int *lp, ধ্রুব বর্ণ *s)
 {
-	opt_array_append2(file, line, directive, array, NULL, lp, s, 0);
+	opt_array_append2(file, সারি, directive, array, রিক্ত, lp, s, 0);
 }
 
-void
-opt_array_free2(char **array, int **iarray, u_int l)
+শূন্য
+opt_array_free2(বর্ণ **array, পূর্ণাঙ্ক **iarray, u_int l)
 {
 	u_int i;
 
-	if (array == NULL || l == 0)
-		return;
-	for (i = 0; i < l; i++)
-		free(array[i]);
-	free(array);
-	free(iarray);
+	যদি (array == রিক্ত || l == 0)
+		প্রত্যাগম;
+	প্রতি (i = 0; i < l; i++)
+		মুক্ত(array[i]);
+	মুক্ত(array);
+	মুক্ত(iarray);
 }
 
 sshsig_t
-ssh_signal(int signum, sshsig_t handler)
+ssh_signal(পূর্ণাঙ্ক signum, sshsig_t handler)
 {
-	struct sigaction sa, osa;
+	সংরচনা sigaction sa, osa;
 
 	/* mask all other signals while in handler */
-	memset(&sa, 0, sizeof(sa));
+	memset(&sa, 0, পরিমাণ(sa));
 	sa.sa_handler = handler;
 	sigfillset(&sa.sa_mask);
-#if defined(SA_RESTART) && !defined(NO_SA_RESTART)
-	if (signum != SIGALRM)
+#যদি defined(SA_RESTART) && !defined(NO_SA_RESTART)
+	যদি (signum != SIGALRM)
 		sa.sa_flags = SA_RESTART;
 #endif
-	if (sigaction(signum, &sa, &osa) == -1) {
+	যদি (sigaction(signum, &sa, &osa) == -1) {
 		debug3("sigaction(%s): %s", strsignal(signum), strerror(errno));
-		return SIG_ERR;
+		প্রত্যাগম SIG_ERR;
 	}
-	return osa.sa_handler;
+	প্রত্যাগম osa.sa_handler;
 }
 
-int
-stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
+পূর্ণাঙ্ক
+stdfd_devnull(পূর্ণাঙ্ক do_stdin, পূর্ণাঙ্ক do_stdout, পূর্ণাঙ্ক do_stderr)
 {
-	int devnull, ret = 0;
+	পূর্ণাঙ্ক devnull, ret = 0;
 
-	if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	যদি ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 		error_f("open %s: %s", _PATH_DEVNULL,
 		    strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
+	যদি ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
 	    (do_stdout && dup2(devnull, STDOUT_FILENO) == -1) ||
 	    (do_stderr && dup2(devnull, STDERR_FILENO) == -1)) {
 		error_f("dup2: %s", strerror(errno));
 		ret = -1;
 	}
-	if (devnull > STDERR_FILENO)
+	যদি (devnull > STDERR_FILENO)
 		close(devnull);
-	return ret;
+	প্রত্যাগম ret;
 }
 
 /*
@@ -2842,201 +2842,201 @@ stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
  * av[0].
  */
 pid_t
-subprocess(const char *tag, const char *command,
-    int ac, char **av, FILE **child, u_int flags,
-    struct passwd *pw, privdrop_fn *drop_privs, privrestore_fn *restore_privs)
+subprocess(ধ্রুব বর্ণ *tag, ধ্রুব বর্ণ *command,
+    পূর্ণাঙ্ক ac, বর্ণ **av, FILE **child, u_int flags,
+    সংরচনা passwd *pw, privdrop_fn *drop_privs, privrestore_fn *restore_privs)
 {
-	FILE *f = NULL;
-	struct stat st;
-	int fd, devnull, p[2], i;
+	FILE *f = রিক্ত;
+	সংরচনা stat st;
+	পূর্ণাঙ্ক fd, devnull, p[2], i;
 	pid_t pid;
-	char *cp, errmsg[512];
+	বর্ণ *cp, errmsg[512];
 	u_int nenv = 0;
-	char **env = NULL;
+	বর্ণ **env = রিক্ত;
 
 	/* If dropping privs, then must specify user and restore function */
-	if (drop_privs != NULL && (pw == NULL || restore_privs == NULL)) {
+	যদি (drop_privs != রিক্ত && (pw == রিক্ত || restore_privs == রিক্ত)) {
 		error("%s: inconsistent arguments", tag); /* XXX fatal? */
-		return 0;
+		প্রত্যাগম 0;
 	}
-	if (pw == NULL && (pw = getpwuid(getuid())) == NULL) {
+	যদি (pw == রিক্ত && (pw = getpwuid(getuid())) == রিক্ত) {
 		error("%s: no user for current uid", tag);
-		return 0;
+		প্রত্যাগম 0;
 	}
-	if (child != NULL)
-		*child = NULL;
+	যদি (child != রিক্ত)
+		*child = রিক্ত;
 
 	debug3_f("%s command \"%s\" running as %s (flags 0x%x)",
 	    tag, command, pw->pw_name, flags);
 
 	/* Check consistency */
-	if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+	যদি ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 	    (flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0) {
 		error_f("inconsistent flags");
-		return 0;
+		প্রত্যাগম 0;
 	}
-	if (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == NULL)) {
+	যদি (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == রিক্ত)) {
 		error_f("inconsistent flags/output");
-		return 0;
+		প্রত্যাগম 0;
 	}
 
 	/*
 	 * If executing an explicit binary, then verify the it exists
 	 * and appears safe-ish to execute
 	 */
-	if (!path_absolute(av[0])) {
+	যদি (!path_absolute(av[0])) {
 		error("%s path is not absolute", tag);
-		return 0;
+		প্রত্যাগম 0;
 	}
-	if (drop_privs != NULL)
+	যদি (drop_privs != রিক্ত)
 		drop_privs(pw);
-	if (stat(av[0], &st) == -1) {
+	যদি (stat(av[0], &st) == -1) {
 		error("Could not stat %s \"%s\": %s", tag,
 		    av[0], strerror(errno));
-		goto restore_return;
+		গচ্ছ restore_return;
 	}
-	if ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
-	    safe_path(av[0], &st, NULL, 0, errmsg, sizeof(errmsg)) != 0) {
+	যদি ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
+	    safe_path(av[0], &st, রিক্ত, 0, errmsg, পরিমাণ(errmsg)) != 0) {
 		error("Unsafe %s \"%s\": %s", tag, av[0], errmsg);
-		goto restore_return;
+		গচ্ছ restore_return;
 	}
 	/* Prepare to keep the child's stdout if requested */
-	if (pipe(p) == -1) {
+	যদি (pipe(p) == -1) {
 		error("%s: pipe: %s", tag, strerror(errno));
  restore_return:
-		if (restore_privs != NULL)
+		যদি (restore_privs != রিক্ত)
 			restore_privs();
-		return 0;
+		প্রত্যাগম 0;
 	}
-	if (restore_privs != NULL)
+	যদি (restore_privs != রিক্ত)
 		restore_privs();
 
-	switch ((pid = fork())) {
-	case -1: /* error */
+	বিকল্প ((pid = fork())) {
+	পক্ষ -1: /* error */
 		error("%s: fork: %s", tag, strerror(errno));
 		close(p[0]);
 		close(p[1]);
-		return 0;
-	case 0: /* child */
+		প্রত্যাগম 0;
+	পক্ষ 0: /* child */
 		/* Prepare a minimal environment for the child. */
-		if ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
+		যদি ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
 			nenv = 5;
-			env = xcalloc(sizeof(*env), nenv);
+			env = xcalloc(পরিমাণ(*env), nenv);
 			child_set_env(&env, &nenv, "PATH", _PATH_STDPATH);
 			child_set_env(&env, &nenv, "USER", pw->pw_name);
 			child_set_env(&env, &nenv, "LOGNAME", pw->pw_name);
 			child_set_env(&env, &nenv, "HOME", pw->pw_dir);
-			if ((cp = getenv("LANG")) != NULL)
+			যদি ((cp = getenv("LANG")) != রিক্ত)
 				child_set_env(&env, &nenv, "LANG", cp);
 		}
 
-		for (i = 1; i < NSIG; i++)
+		প্রতি (i = 1; i < NSIG; i++)
 			ssh_signal(i, SIG_DFL);
 
-		if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+		যদি ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 			error("%s: open %s: %s", tag, _PATH_DEVNULL,
 			    strerror(errno));
 			_exit(1);
 		}
-		if (dup2(devnull, STDIN_FILENO) == -1) {
+		যদি (dup2(devnull, STDIN_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
 
 		/* Set up stdout as requested; leave stderr in place for now. */
 		fd = -1;
-		if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
+		যদি ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
 			fd = p[1];
-		else if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
+		অন্যথা যদি ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
 			fd = devnull;
-		if (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
+		যদি (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
 		closefrom(STDERR_FILENO + 1);
 
-		if (geteuid() == 0 &&
+		যদি (geteuid() == 0 &&
 		    initgroups(pw->pw_name, pw->pw_gid) == -1) {
 			error("%s: initgroups(%s, %u): %s", tag,
 			    pw->pw_name, (u_int)pw->pw_gid, strerror(errno));
 			_exit(1);
 		}
-		if (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
+		যদি (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
 			error("%s: setresgid %u: %s", tag, (u_int)pw->pw_gid,
 			    strerror(errno));
 			_exit(1);
 		}
-		if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
+		যদি (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
 			error("%s: setresuid %u: %s", tag, (u_int)pw->pw_uid,
 			    strerror(errno));
 			_exit(1);
 		}
 		/* stdin is pointed to /dev/null at this point */
-		if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+		যদি ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 		    dup2(STDIN_FILENO, STDERR_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
-		if (env != NULL)
+		যদি (env != রিক্ত)
 			execve(av[0], av, env);
-		else
+		অন্যথা
 			execv(av[0], av);
-		error("%s %s \"%s\": %s", tag, env == NULL ? "execv" : "execve",
+		error("%s %s \"%s\": %s", tag, env == রিক্ত ? "execv" : "execve",
 		    command, strerror(errno));
 		_exit(127);
-	default: /* parent */
-		break;
+	স্বভাব: /* parent */
+		ভঙ্গ;
 	}
 
 	close(p[1]);
-	if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
+	যদি ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
 		close(p[0]);
-	else if ((f = fdopen(p[0], "r")) == NULL) {
+	অন্যথা যদি ((f = fdopen(p[0], "r")) == রিক্ত) {
 		error("%s: fdopen: %s", tag, strerror(errno));
 		close(p[0]);
 		/* Don't leave zombie child */
 		kill(pid, SIGTERM);
-		while (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
+		যাবত্ (waitpid(pid, রিক্ত, 0) == -1 && errno == EINTR)
 			;
-		return 0;
+		প্রত্যাগম 0;
 	}
 	/* Success */
 	debug3_f("%s pid %ld", tag, (long)pid);
-	if (child != NULL)
+	যদি (child != রিক্ত)
 		*child = f;
-	return pid;
+	প্রত্যাগম pid;
 }
 
-const char *
-lookup_env_in_list(const char *env, char * const *envs, size_t nenvs)
+ধ্রুব বর্ণ *
+lookup_env_in_list(ধ্রুব বর্ণ *env, বর্ণ * ধ্রুব *envs, size_t nenvs)
 {
 	size_t i, envlen;
 
 	envlen = strlen(env);
-	for (i = 0; i < nenvs; i++) {
-		if (strncmp(envs[i], env, envlen) == 0 &&
+	প্রতি (i = 0; i < nenvs; i++) {
+		যদি (strncmp(envs[i], env, envlen) == 0 &&
 		    envs[i][envlen] == '=') {
-			return envs[i] + envlen + 1;
+			প্রত্যাগম envs[i] + envlen + 1;
 		}
 	}
-	return NULL;
+	প্রত্যাগম রিক্ত;
 }
 
-const char *
-lookup_setenv_in_list(const char *env, char * const *envs, size_t nenvs)
+ধ্রুব বর্ণ *
+lookup_setenv_in_list(ধ্রুব বর্ণ *env, বর্ণ * ধ্রুব *envs, size_t nenvs)
 {
-	char *name, *cp;
-	const char *ret;
+	বর্ণ *name, *cp;
+	ধ্রুব বর্ণ *ret;
 
 	name = xstrdup(env);
-	if ((cp = strchr(name, '=')) == NULL) {
-		free(name);
-		return NULL; /* not env=val */
+	যদি ((cp = strchr(name, '=')) == রিক্ত) {
+		মুক্ত(name);
+		প্রত্যাগম রিক্ত; /* not env=val */
 	}
 	*cp = '\0';
 	ret = lookup_env_in_list(name, envs, nenvs);
-	free(name);
-	return ret;
+	মুক্ত(name);
+	প্রত্যাগম ret;
 }
 
 /*
@@ -3045,8 +3045,8 @@ lookup_setenv_in_list(const char *env, char * const *envs, size_t nenvs)
  */
 
 /* Initialise a poll/ppoll timeout with an indefinite deadline */
-void
-ptimeout_init(struct timespec *pt)
+শূন্য
+ptimeout_init(সংরচনা timespec *pt)
 {
 	/*
 	 * Deliberately invalid for ppoll(2).
@@ -3057,28 +3057,28 @@ ptimeout_init(struct timespec *pt)
 }
 
 /* Specify a poll/ppoll deadline of at most 'sec' seconds */
-void
-ptimeout_deadline_sec(struct timespec *pt, long sec)
+শূন্য
+ptimeout_deadline_sec(সংরচনা timespec *pt, long sec)
 {
-	if (pt->tv_sec == -1 || pt->tv_sec >= sec) {
+	যদি (pt->tv_sec == -1 || pt->tv_sec >= sec) {
 		pt->tv_sec = sec;
 		pt->tv_nsec = 0;
 	}
 }
 
 /* Specify a poll/ppoll deadline of at most 'p' (timespec) */
-static void
-ptimeout_deadline_tsp(struct timespec *pt, struct timespec *p)
+স্থির শূন্য
+ptimeout_deadline_tsp(সংরচনা timespec *pt, সংরচনা timespec *p)
 {
-	if (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
+	যদি (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
 		*pt = *p;
 }
 
 /* Specify a poll/ppoll deadline of at most 'ms' milliseconds */
-void
-ptimeout_deadline_ms(struct timespec *pt, long ms)
+শূন্য
+ptimeout_deadline_ms(সংরচনা timespec *pt, long ms)
 {
-	struct timespec p;
+	সংরচনা timespec p;
 
 	p.tv_sec = ms / 1000;
 	p.tv_nsec = (ms % 1000) * 1000000;
@@ -3086,51 +3086,51 @@ ptimeout_deadline_ms(struct timespec *pt, long ms)
 }
 
 /* Specify a poll/ppoll deadline of at most 'sec' seconds (double) */
-void
-ptimeout_deadline_sec_double(struct timespec *pt, double sec)
+শূন্য
+ptimeout_deadline_sec_double(সংরচনা timespec *pt, দ্বিগুণ sec)
 {
-	struct timespec t;
+	সংরচনা timespec t;
 
-	memset(&t, 0, sizeof(t));
-	if ((int64_t)sec >= SSH_TIME_T_MAX)
+	memset(&t, 0, পরিমাণ(t));
+	যদি ((int64_t)sec >= SSH_TIME_T_MAX)
 		t.tv_sec = SSH_TIME_T_MAX;
-	else if (sec > 0) {
+	অন্যথা যদি (sec > 0) {
 		t.tv_sec = sec;
-		t.tv_nsec = (sec - (double)t.tv_sec) * 1000000000.0;
+		t.tv_nsec = (sec - (দ্বিগুণ)t.tv_sec) * 1000000000.0;
 	}
 	ptimeout_deadline_tsp(pt, &t);
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' (timespec) */
-void
-ptimeout_deadline_monotime_tsp(struct timespec *pt, struct timespec *when)
+শূন্য
+ptimeout_deadline_monotime_tsp(সংরচনা timespec *pt, সংরচনা timespec *when)
 {
-	struct timespec now, t;
+	সংরচনা timespec now, t;
 
 	monotime_ts(&now);
 
-	if (timespeccmp(&now, when, >=)) {
+	যদি (timespeccmp(&now, when, >=)) {
 		/* 'when' is now or in the past. Timeout ASAP */
 		pt->tv_sec = 0;
 		pt->tv_nsec = 0;
-	} else {
+	} অন্যথা {
 		timespecsub(when, &now, &t);
 		ptimeout_deadline_tsp(pt, &t);
 	}
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' (double) */
-void
-ptimeout_deadline_monotime_double(struct timespec *pt, double when)
+শূন্য
+ptimeout_deadline_monotime_double(সংরচনা timespec *pt, দ্বিগুণ when)
 {
 	ptimeout_deadline_sec_double(pt, when - monotime_double());
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' */
-void
-ptimeout_deadline_monotime(struct timespec *pt, time_t when)
+শূন্য
+ptimeout_deadline_monotime(সংরচনা timespec *pt, time_t when)
 {
-	struct timespec t;
+	সংরচনা timespec t;
 
 	t.tv_sec = when;
 	t.tv_nsec = 0;
@@ -3138,215 +3138,215 @@ ptimeout_deadline_monotime(struct timespec *pt, time_t when)
 }
 
 /* Get a poll(2) timeout value in milliseconds */
-int
-ptimeout_get_ms(struct timespec *pt)
+পূর্ণাঙ্ক
+ptimeout_get_ms(সংরচনা timespec *pt)
 {
-	if (pt->tv_sec == -1)
-		return -1;
-	if (pt->tv_sec >= (INT_MAX - (pt->tv_nsec / 1000000)) / 1000)
-		return INT_MAX;
-	return (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
+	যদি (pt->tv_sec == -1)
+		প্রত্যাগম -1;
+	যদি (pt->tv_sec >= (INT_MAX - (pt->tv_nsec / 1000000)) / 1000)
+		প্রত্যাগম INT_MAX;
+	প্রত্যাগম (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
 }
 
 /* Get a ppoll(2) timeout value as a timespec pointer */
-struct timespec *
-ptimeout_get_tsp(struct timespec *pt)
+সংরচনা timespec *
+ptimeout_get_tsp(সংরচনা timespec *pt)
 {
-	return pt->tv_sec == -1 ? NULL : pt;
+	প্রত্যাগম pt->tv_sec == -1 ? রিক্ত : pt;
 }
 
 /* Returns non-zero if a timeout has been set (i.e. is not indefinite) */
-int
-ptimeout_isset(struct timespec *pt)
+পূর্ণাঙ্ক
+ptimeout_isset(সংরচনা timespec *pt)
 {
-	return pt->tv_sec != -1;
+	প্রত্যাগম pt->tv_sec != -1;
 }
 
 /*
  * Returns zero if the library at 'path' contains symbol 's', nonzero
  * otherwise.
  */
-int
-lib_contains_symbol(const char *path, const char *s)
+পূর্ণাঙ্ক
+lib_contains_প্রতীক(ধ্রুব বর্ণ *path, ধ্রুব বর্ণ *s)
 {
 #ifdef HAVE_NLIST
-	struct nlist nl[2];
-	int ret = -1, r;
+	সংরচনা nlist nl[2];
+	পূর্ণাঙ্ক ret = -1, r;
 
-	memset(nl, 0, sizeof(nl));
+	memset(nl, 0, পরিমাণ(nl));
 	nl[0].n_name = xstrdup(s);
-	nl[1].n_name = NULL;
-	if ((r = nlist(path, nl)) == -1) {
+	nl[1].n_name = রিক্ত;
+	যদি ((r = nlist(path, nl)) == -1) {
 		error_f("nlist failed for %s", path);
-		goto out;
+		গচ্ছ out;
 	}
-	if (r != 0 || nl[0].n_value == 0 || nl[0].n_type == 0) {
+	যদি (r != 0 || nl[0].n_মান == 0 || nl[0].n_type == 0) {
 		error_f("library %s does not contain symbol %s", path, s);
-		goto out;
+		গচ্ছ out;
 	}
 	/* success */
 	ret = 0;
  out:
-	free(nl[0].n_name);
-	return ret;
-#else /* HAVE_NLIST */
-	int fd, ret = -1;
-	struct stat st;
-	void *m = NULL;
+	মুক্ত(nl[0].n_name);
+	প্রত্যাগম ret;
+#অন্যথা /* HAVE_NLIST */
+	পূর্ণাঙ্ক fd, ret = -1;
+	সংরচনা stat st;
+	শূন্য *m = রিক্ত;
 	size_t sz = 0;
 
-	memset(&st, 0, sizeof(st));
-	if ((fd = open(path, O_RDONLY)) < 0) {
+	memset(&st, 0, পরিমাণ(st));
+	যদি ((fd = open(path, O_RDONLY)) < 0) {
 		error_f("open %s: %s", path, strerror(errno));
-		return -1;
+		প্রত্যাগম -1;
 	}
-	if (fstat(fd, &st) != 0) {
+	যদি (fstat(fd, &st) != 0) {
 		error_f("fstat %s: %s", path, strerror(errno));
-		goto out;
+		গচ্ছ out;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	যদি (!S_ISREG(st.st_mode)) {
 		error_f("%s is not a regular file", path);
-		goto out;
+		গচ্ছ out;
 	}
-	if (st.st_size < 0 ||
+	যদি (st.st_size < 0 ||
 	    (size_t)st.st_size < strlen(s) ||
 	    st.st_size >= INT_MAX/2) {
 		error_f("%s bad size %lld", path, (long long)st.st_size);
-		goto out;
+		গচ্ছ out;
 	}
 	sz = (size_t)st.st_size;
-	if ((m = mmap(NULL, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
-	    m == NULL) {
+	যদি ((m = mmap(রিক্ত, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
+	    m == রিক্ত) {
 		error_f("mmap %s: %s", path, strerror(errno));
-		goto out;
+		গচ্ছ out;
 	}
-	if (memmem(m, sz, s, strlen(s)) == NULL) {
+	যদি (memmem(m, sz, s, strlen(s)) == রিক্ত) {
 		error_f("%s does not contain expected string %s", path, s);
-		goto out;
+		গচ্ছ out;
 	}
 	/* success */
 	ret = 0;
  out:
-	if (m != NULL && m != MAP_FAILED)
+	যদি (m != রিক্ত && m != MAP_FAILED)
 		munmap(m, sz);
 	close(fd);
-	return ret;
+	প্রত্যাগম ret;
 #endif /* HAVE_NLIST */
 }
 
-int
-signal_is_crash(int sig)
+পূর্ণাঙ্ক
+signal_is_crash(পূর্ণাঙ্ক sig)
 {
-	switch (sig) {
-	case SIGSEGV:
-	case SIGBUS:
-	case SIGTRAP:
-	case SIGSYS:
-	case SIGFPE:
-	case SIGILL:
-	case SIGABRT:
-		return 1;
+	বিকল্প (sig) {
+	পক্ষ SIGSEGV:
+	পক্ষ SIGBUS:
+	পক্ষ SIGTRAP:
+	পক্ষ SIGSYS:
+	পক্ষ SIGFPE:
+	পক্ষ SIGILL:
+	পক্ষ SIGABRT:
+		প্রত্যাগম 1;
 	}
-	return 0;
+	প্রত্যাগম 0;
 }
 
-char *
-get_homedir(void)
+বর্ণ *
+get_homedir(শূন্য)
 {
-	char *cp;
-	struct passwd *pw;
+	বর্ণ *cp;
+	সংরচনা passwd *pw;
 
-	if ((cp = getenv("HOME")) != NULL && *cp != '\0')
-		return xstrdup(cp);
+	যদি ((cp = getenv("HOME")) != রিক্ত && *cp != '\0')
+		প্রত্যাগম xstrdup(cp);
 
-	if ((pw = getpwuid(getuid())) != NULL && *pw->pw_dir != '\0')
-		return xstrdup(pw->pw_dir);
+	যদি ((pw = getpwuid(getuid())) != রিক্ত && *pw->pw_dir != '\0')
+		প্রত্যাগম xstrdup(pw->pw_dir);
 
-	return NULL;
+	প্রত্যাগম রিক্ত;
 }
 
-int
-mkdir_path(const char *target, mode_t mode)
+পূর্ণাঙ্ক
+mkdir_path(ধ্রুব বর্ণ *target, mode_t mode)
 {
-#if defined(HAVE_OPENAT) && defined(O_DIRECTORY)
-	char *dir, *odir = NULL, *next;
-	int fd = AT_FDCWD, fd2, subpath_len, ret = -1;
+#যদি defined(HAVE_OPENAT) && defined(O_DIRECTORY)
+	বর্ণ *dir, *odir = রিক্ত, *next;
+	পূর্ণাঙ্ক fd = AT_FDCWD, fd2, subpath_len, ret = -1;
 
 	dir = odir = xstrdup(target);
 
-	if (*dir == '/' &&
+	যদি (*dir == '/' &&
 	    (fd = open("/", O_RDONLY|O_DIRECTORY)) == -1) {
 		error_f("open(\"/\"): %s", strerror(errno));
-		free(odir);
-		return -1;
+		মুক্ত(odir);
+		প্রত্যাগম -1;
 	}
 	/* Work through the path, component-wise */
-	for (; dir != NULL && *dir != '\0'; dir = next) {
-		if ((next = strchr(dir, '/')) != NULL)
+	প্রতি (; dir != রিক্ত && *dir != '\0'; dir = next) {
+		যদি ((next = strchr(dir, '/')) != রিক্ত)
 			*(next++) = '\0';
-		if (*dir == '\0')
-			continue;
-		subpath_len = (next == NULL) ? INT_MAX : next - odir - 1;
-		if (mkdirat(fd, dir, mode) == 0)
+		যদি (*dir == '\0')
+			অনুবর্ত;
+		subpath_len = (next == রিক্ত) ? INT_MAX : next - odir - 1;
+		যদি (mkdirat(fd, dir, mode) == 0)
 			debug_f("created directory %.*s", subpath_len, target);
-		else if (errno != EEXIST) {
+		অন্যথা যদি (errno != EEXIST) {
 			error_f("mkdir(\"%.*s\"): %s",
 			    subpath_len, target, strerror(errno));
-			goto out;
+			গচ্ছ out;
 		}
 
 		/* descend */
-		if ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
+		যদি ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
 			error_f("open(\"%.*s\"): %s",
 			    subpath_len, target, strerror(errno));
-			goto out;
+			গচ্ছ out;
 		}
-		if (fd != AT_FDCWD)
+		যদি (fd != AT_FDCWD)
 			close(fd);
 		fd = fd2;
 	}
 	/* success */
 	ret = 0;
  out:
-	free(odir);
-	if (fd != AT_FDCWD)
+	মুক্ত(odir);
+	যদি (fd != AT_FDCWD)
 		close(fd);
-	return ret;
-#else
+	প্রত্যাগম ret;
+#অন্যথা
 	/*
 	 * If we don't have openat (which was added in POSIX.1-2008), fall back
 	 * to the possibly racy way.
 	 */
-	char *dir, *odir, *p, path[PATH_MAX] = "";
-	int ret = -1;
-	size_t plen = sizeof(path);
+	বর্ণ *dir, *odir, *p, path[PATH_MAX] = "";
+	পূর্ণাঙ্ক ret = -1;
+	size_t plen = পরিমাণ(path);
 
 	dir = odir = xstrdup(target);
 
 	/* If the dir is relative, start with cwd. */
-	if (*dir != '/' && getcwd(path, plen) == NULL) {
+	যদি (*dir != '/' && getcwd(path, plen) == রিক্ত) {
 		error_f("getcwd: %s", strerror(errno));
-		goto out;
+		গচ্ছ out;
 	}
 
 	/* Work through the path, component-wise */
-	while ((p = strsep(&dir, "/"))) {
-		if (*p == '\0')
-			continue;
-		if (strlcat(path, "/", plen) >= plen ||
+	যাবত্ ((p = strsep(&dir, "/"))) {
+		যদি (*p == '\0')
+			অনুবর্ত;
+		যদি (strlcat(path, "/", plen) >= plen ||
 		    strlcat(path, p, plen) >= plen)
-			goto out;
-		if (mkdir(path, mode) == 0)
+			গচ্ছ out;
+		যদি (mkdir(path, mode) == 0)
 			debug_f("created directory %s", path);
-		else if (errno != EEXIST && errno != EISDIR) {
+		অন্যথা যদি (errno != EEXIST && errno != EISDIR) {
 			error_f("mkdir(\"%s\"): %s", path, strerror(errno));
-			goto out;
+			গচ্ছ out;
 		}
 	}
 	/* success */
 	ret = 0;
  out:
-	free(odir);
-	return ret;
+	মুক্ত(odir);
+	প্রত্যাগম ret;
 #endif
 }

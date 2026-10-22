@@ -38,9 +38,9 @@
 #ifndef _FAKE_RFC2553_H
 #define _FAKE_RFC2553_H
 
-#include "includes.h"
-#include <sys/types.h>
-#if defined(HAVE_NETDB_H)
+#অন্তর্ভাব "includes.h"
+#অন্তর্ভাব <sys/types.h>
+#যদি defined(HAVE_NETDB_H)
 # include <netdb.h>
 #endif
 
@@ -49,10 +49,10 @@
  */
 #ifndef HAVE_STRUCT_SOCKADDR_STORAGE
 # define	_SS_MAXSIZE	128	/* Implementation specific max size */
-# define       _SS_PADSIZE     (_SS_MAXSIZE - sizeof (struct sockaddr))
-struct sockaddr_storage {
-	struct sockaddr	ss_sa;
-	char		__ss_pad2[_SS_PADSIZE];
+# define       _SS_PADSIZE     (_SS_MAXSIZE - পরিমাণ (সংরচনা sockaddr))
+সংরচনা sockaddr_storage {
+	সংরচনা sockaddr	ss_sa;
+	বর্ণ		__ss_pad2[_SS_PADSIZE];
 };
 # define ss_family ss_sa.sa_family
 #endif /* !HAVE_STRUCT_SOCKADDR_STORAGE */
@@ -64,17 +64,17 @@ struct sockaddr_storage {
 #endif /* !IN6_IS_ADDR_LOOPBACK */
 
 #ifndef HAVE_STRUCT_IN6_ADDR
-struct in6_addr {
+সংরচনা in6_addr {
 	u_int8_t	s6_addr[16];
 };
 #endif /* !HAVE_STRUCT_IN6_ADDR */
 
 #ifndef HAVE_STRUCT_SOCKADDR_IN6
-struct sockaddr_in6 {
+সংরচনা sockaddr_in6 {
 	unsigned short	sin6_family;
 	u_int16_t	sin6_port;
 	u_int32_t	sin6_flowinfo;
-	struct in6_addr	sin6_addr;
+	সংরচনা in6_addr	sin6_addr;
 	u_int32_t	sin6_scope_id;
 };
 #endif /* !HAVE_STRUCT_SOCKADDR_IN6 */
@@ -135,15 +135,15 @@ struct sockaddr_in6 {
 #endif
 
 #ifndef HAVE_STRUCT_ADDRINFO
-struct addrinfo {
-	int	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
-	int	ai_family;	/* PF_xxx */
-	int	ai_socktype;	/* SOCK_xxx */
-	int	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
+সংরচনা addrinfo {
+	পূর্ণাঙ্ক	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
+	পূর্ণাঙ্ক	ai_family;	/* PF_xxx */
+	পূর্ণাঙ্ক	ai_socktype;	/* SOCK_xxx */
+	পূর্ণাঙ্ক	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
 	size_t	ai_addrlen;	/* length of ai_addr */
-	char	*ai_canonname;	/* canonical name for hostname */
-	struct sockaddr *ai_addr;	/* binary address */
-	struct addrinfo *ai_next;	/* next structure in linked list */
+	বর্ণ	*ai_canonname;	/* canonical name for hostname */
+	সংরচনা sockaddr *ai_addr;	/* binary address */
+	সংরচনা addrinfo *ai_next;	/* next structure in linked list */
 };
 #endif /* !HAVE_STRUCT_ADDRINFO */
 
@@ -152,24 +152,24 @@ struct addrinfo {
 # undef getaddrinfo
 #endif
 #define getaddrinfo(a,b,c,d)	(ssh_getaddrinfo(a,b,c,d))
-int getaddrinfo(const char *, const char *,
-    const struct addrinfo *, struct addrinfo **);
+পূর্ণাঙ্ক getaddrinfo(ধ্রুব বর্ণ *, ধ্রুব বর্ণ *,
+    ধ্রুব সংরচনা addrinfo *, সংরচনা addrinfo **);
 #endif /* !HAVE_GETADDRINFO */
 
-#if !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
+#যদি !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
 #define gai_strerror(a)		(_ssh_compat_gai_strerror(a))
-char *gai_strerror(int);
+বর্ণ *gai_strerror(পূর্ণাঙ্ক);
 #endif /* !HAVE_GAI_STRERROR */
 
 #ifndef HAVE_FREEADDRINFO
 #define freeaddrinfo(a)		(ssh_freeaddrinfo(a))
-void freeaddrinfo(struct addrinfo *);
+শূন্য freeaddrinfo(সংরচনা addrinfo *);
 #endif /* !HAVE_FREEADDRINFO */
 
 #ifndef HAVE_GETNAMEINFO
 #define getnameinfo(a,b,c,d,e,f,g) (ssh_getnameinfo(a,b,c,d,e,f,g))
-int getnameinfo(const struct sockaddr *, size_t, char *, size_t,
-    char *, size_t, int);
+পূর্ণাঙ্ক getnameinfo(ধ্রুব সংরচনা sockaddr *, size_t, বর্ণ *, size_t,
+    বর্ণ *, size_t, পূর্ণাঙ্ক);
 #endif /* !HAVE_GETNAMEINFO */
 
 #endif /* !_FAKE_RFC2553_H */

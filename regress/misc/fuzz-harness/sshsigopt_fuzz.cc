@@ -1,29 +1,29 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#অন্তর্ভাব <stddef.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdint.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <stdlib.h>
 
-extern "C" {
+বাহ্য "C" {
 
-#include "sshsig.h"
+#অন্তর্ভাব "sshsig.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+পূর্ণাঙ্ক LLVMFuzzer_Test_One_প্রবেশ(ধ্রুব uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshsigopt *opts = NULL;
+	বর্ণ *cp = (বর্ণ *)malloc(size + 1);
+	সংরচনা sshsigopt *opts = রিক্ত;
 
-	if (cp == NULL)
-		goto out;
+	যদি (cp == রিক্ত)
+		গচ্ছ out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshsigopt_parse(cp, "libfuzzer", 0, NULL)) == NULL)
-		goto out;
+	যদি ((opts = sshsigopt_parse(cp, "libfuzzer", 0, রিক্ত)) == রিক্ত)
+		গচ্ছ out;
 
  out:
-	free(cp);
+	মুক্ত(cp);
 	sshsigopt_free(opts);
-	return 0;
+	প্রত্যাগম 0;
 }
 
 } // extern "C"

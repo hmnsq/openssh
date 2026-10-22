@@ -14,34 +14,34 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <string.h>
 
-static int fail = 0;
+স্থির পূর্ণাঙ্ক fail = 0;
 
-void
-test(const char *a)
+শূন্য
+test(ধ্রুব বর্ণ *a)
 {
-	char *b;
+	বর্ণ *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	যদি (b == 0) {
 		fail = 1;
-		return;
+		প্রত্যাগম;
 	}
-	if (strcmp(a, b) != 0)
+	যদি (strcmp(a, b) != 0)
 		fail = 1;
-	free(b);
+	মুক্ত(b);
 }
 
-int
-main(void)
+পূর্ণাঙ্ক
+main(শূন্য)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	প্রত্যাগম fail;
 }

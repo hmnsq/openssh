@@ -38,25 +38,25 @@
  * Scanning code written for OpenBSD libutil.
  */
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifndef HAVE_FMT_SCALED
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
+#অন্তর্ভাব <stdio.h>
+#অন্তর্ভাব <stdlib.h>
+#অন্তর্ভাব <errno.h>
+#অন্তর্ভাব <string.h>
+#অন্তর্ভাব <ctype.h>
+#অন্তর্ভাব <limits.h>
 
-typedef enum {
+প্রকারনির্দেশ গণনা {
 	NONE = 0, KILO = 1, MEGA = 2, GIGA = 3, TERA = 4, PETA = 5, EXA = 6
 } unit_type;
 
 /* These three arrays MUST be in sync!  XXX make a struct */
-static const unit_type units[] = { NONE, KILO, MEGA, GIGA, TERA, PETA, EXA };
-static const char scale_chars[] = "BKMGTPE";
-static const long long scale_factors[] = {
+স্থির ধ্রুব unit_type units[] = { NONE, KILO, MEGA, GIGA, TERA, PETA, EXA };
+স্থির ধ্রুব বর্ণ scale_chars[] = "BKMGTPE";
+স্থির ধ্রুব long long scale_factors[] = {
 	1LL,
 	1024LL,
 	1024LL*1024,
@@ -65,38 +65,38 @@ static const long long scale_factors[] = {
 	1024LL*1024*1024*1024*1024,
 	1024LL*1024*1024*1024*1024*1024,
 };
-#define	SCALE_LENGTH (sizeof(units)/sizeof(units[0]))
+#define	SCALE_LENGTH (পরিমাণ(units)/পরিমাণ(units[0]))
 
 #define MAX_DIGITS (SCALE_LENGTH * 3)	/* XXX strlen(sprintf("%lld", -1)? */
 
 /* Convert the given input string "scaled" into numeric in "result".
  * Return 0 on success, -1 and errno set on error.
  */
-int
-scan_scaled(char *scaled, long long *result)
+পূর্ণাঙ্ক
+scan_scaled(বর্ণ *scaled, long long *result)
 {
-	char *p = scaled;
-	int sign = 0;
-	unsigned int i, ndigits = 0, fract_digits = 0, muls = 0, divs = 0;
+	বর্ণ *p = scaled;
+	পূর্ণাঙ্ক sign = 0;
+	unsigned পূর্ণাঙ্ক i, ndigits = 0, fract_digits = 0, muls = 0, divs = 0;
 	long long scale_fact = 1, whole = 0, fpart = 0;
 
 	/* Skip leading whitespace */
-	while (isascii((unsigned char)*p) && isspace((unsigned char)*p))
+	যাবত্ (isascii((unsigned বর্ণ)*p) && isspace((unsigned বর্ণ)*p))
 		++p;
 
 	/* Then at most one leading + or - */
-	while (*p == '-' || *p == '+') {
-		if (*p == '-') {
-			if (sign) {
+	যাবত্ (*p == '-' || *p == '+') {
+		যদি (*p == '-') {
+			যদি (sign) {
 				errno = EINVAL;
-				return -1;
+				প্রত্যাগম -1;
 			}
 			sign = -1;
 			++p;
-		} else if (*p == '+') {
-			if (sign) {
+		} অন্যথা যদি (*p == '+') {
+			যদি (sign) {
 				errno = EINVAL;
-				return -1;
+				প্রত্যাগম -1;
 			}
 			sign = +1;
 			++p;
@@ -108,79 +108,79 @@ scan_scaled(char *scaled, long long *result)
 	 * (but note that E for Exa might look like e to some!).
 	 * Advance 'p' to end, to get scale factor.
 	 */
-	for (; isascii((unsigned char)*p) &&
-	    (isdigit((unsigned char)*p) || *p=='.'); ++p) {
-		if (*p == '.') {
-			if (fract_digits > 0) {	/* oops, more than one '.' */
+	প্রতি (; isascii((unsigned বর্ণ)*p) &&
+	    (isdigit((unsigned বর্ণ)*p) || *p=='.'); ++p) {
+		যদি (*p == '.') {
+			যদি (fract_digits > 0) {	/* oops, more than one '.' */
 				errno = EINVAL;
-				return -1;
+				প্রত্যাগম -1;
 			}
 			fract_digits = 1;
-			continue;
+			অনুবর্ত;
 		}
 
 		i = (*p) - '0';			/* whew! finally a digit we can use */
-		if (fract_digits > 0) {
-			if (fract_digits >= MAX_DIGITS-1)
+		যদি (fract_digits > 0) {
+			যদি (fract_digits >= MAX_DIGITS-1)
 				/* ignore extra fractional digits */
-				continue;
+				অনুবর্ত;
 			fract_digits++;		/* for later scaling */
-			if (fpart > LLONG_MAX / 10) {
+			যদি (fpart > LLONG_MAX / 10) {
 				errno = ERANGE;
-				return -1;
+				প্রত্যাগম -1;
 			}
 			fpart *= 10;
-			if (i > LLONG_MAX - fpart) {
+			যদি (i > LLONG_MAX - fpart) {
 				errno = ERANGE;
-				return -1;
+				প্রত্যাগম -1;
 			}
 			fpart += i;
-		} else {				/* normal digit */
-			if (++ndigits >= MAX_DIGITS) {
+		} অন্যথা {				/* normal digit */
+			যদি (++ndigits >= MAX_DIGITS) {
 				errno = ERANGE;
-				return -1;
+				প্রত্যাগম -1;
 			}
-			if (whole > LLONG_MAX / 10) {
+			যদি (whole > LLONG_MAX / 10) {
 				errno = ERANGE;
-				return -1;
+				প্রত্যাগম -1;
 			}
 			whole *= 10;
-			if (i > LLONG_MAX - whole) {
+			যদি (i > LLONG_MAX - whole) {
 				errno = ERANGE;
-				return -1;
+				প্রত্যাগম -1;
 			}
 			whole += i;
 		}
 	}
 
-	if (sign)
+	যদি (sign)
 		whole *= sign;
 
 	/* If no scale factor given, we're done. fraction is discarded. */
-	if (!*p) {
+	যদি (!*p) {
 		*result = whole;
-		return 0;
+		প্রত্যাগম 0;
 	}
 
 	/* Validate scale factor, and scale whole and fraction by it. */
-	for (i = 0; i < SCALE_LENGTH; i++) {
+	প্রতি (i = 0; i < SCALE_LENGTH; i++) {
 
 		/* Are we there yet? */
-		if (*p == scale_chars[i] ||
-			*p == tolower((unsigned char)scale_chars[i])) {
+		যদি (*p == scale_chars[i] ||
+			*p == tolower((unsigned বর্ণ)scale_chars[i])) {
 
 			/* If it ends with alphanumerics after the scale char, bad. */
-			if (isalnum((unsigned char)*(p+1))) {
+			যদি (isalnum((unsigned বর্ণ)*(p+1))) {
 				errno = EINVAL;
-				return -1;
+				প্রত্যাগম -1;
 			}
 			scale_fact = scale_factors[i];
 
 			/* check for overflow and underflow after scaling */
-			if (whole > LLONG_MAX / scale_fact ||
+			যদি (whole > LLONG_MAX / scale_fact ||
 			    whole < LLONG_MIN / scale_fact) {
 				errno = ERANGE;
-				return -1;
+				প্রত্যাগম -1;
 			}
 
 			/* scale whole part */
@@ -197,103 +197,103 @@ scan_scaled(char *scaled, long long *result)
 			 */
 			muls = i;
 			divs = fract_digits > 0 ?  fract_digits - 1 : 0;
-			while (muls > 0 && divs > 0) {
-				if (fpart <= LLONG_MAX / 1024) {
+			যাবত্ (muls > 0 && divs > 0) {
+				যদি (fpart <= LLONG_MAX / 1024) {
 					fpart *= 1024;
 					muls--;
-				} else {
+				} অন্যথা {
 					fpart /= 10;
 					divs--;
 				}
 			}
-			while (muls > 0) {
+			যাবত্ (muls > 0) {
 				fpart *= 1024;
 				muls--;
 			}
-			while (divs > 0) {
+			যাবত্ (divs > 0) {
 				fpart /= 10;
 				divs--;
 			}
-			if (sign == -1)
+			যদি (sign == -1)
 				whole -= fpart;
-			else
+			অন্যথা
 				whole += fpart;
 			*result = whole;
-			return 0;
+			প্রত্যাগম 0;
 		}
 	}
 
 	/* Invalid unit or character */
 	errno = EINVAL;
-	return -1;
+	প্রত্যাগম -1;
 }
 
 /* Format the given "number" into human-readable form in "result".
  * Result must point to an allocated buffer of length FMT_SCALED_STRSIZE.
  * Return 0 on success, -1 and errno set if error.
  */
-int
-fmt_scaled(long long number, char *result)
+পূর্ণাঙ্ক
+fmt_scaled(long long সংখ্যা, বর্ণ *result)
 {
 	long long abval, fract = 0;
-	unsigned int i;
+	unsigned পূর্ণাঙ্ক i;
 	unit_type unit = NONE;
 
 	/* Not every negative long long has a positive representation. */
-	if (number == LLONG_MIN) {
+	যদি (সংখ্যা == LLONG_MIN) {
 		errno = ERANGE;
-		return -1;
+		প্রত্যাগম -1;
 	}
 
-	abval = llabs(number);
+	abval = llabs(সংখ্যা);
 
 	/* Also check for numbers that are just too darned big to format. */
-	if (abval / 1024 >= scale_factors[SCALE_LENGTH-1]) {
+	যদি (abval / 1024 >= scale_factors[SCALE_LENGTH-1]) {
 		errno = ERANGE;
-		return -1;
+		প্রত্যাগম -1;
 	}
 
 	/* scale whole part; get unscaled fraction */
-	for (i = 0; i < SCALE_LENGTH; i++) {
-		if (abval/1024 < scale_factors[i]) {
+	প্রতি (i = 0; i < SCALE_LENGTH; i++) {
+		যদি (abval/1024 < scale_factors[i]) {
 			unit = units[i];
 			fract = (i == 0) ? 0 : abval % scale_factors[i];
-			number /= scale_factors[i];
-			if (i > 0)
+			সংখ্যা /= scale_factors[i];
+			যদি (i > 0)
 				fract /= scale_factors[i - 1];
-			break;
+			ভঙ্গ;
 		}
 	}
 
 	fract = (10 * fract + 512) / 1024;
 	/* if the result would be >= 10, round main number */
-	if (fract >= 10) {
-		if (number >= 0)
-			number++;
-		else
-			number--;
+	যদি (fract >= 10) {
+		যদি (সংখ্যা >= 0)
+			সংখ্যা++;
+		অন্যথা
+			সংখ্যা--;
 		fract = 0;
-	} else if (fract < 0) {
+	} অন্যথা যদি (fract < 0) {
 		/* shouldn't happen */
 		fract = 0;
 	}
 
-	if (number == 0)
+	যদি (সংখ্যা == 0)
 		strlcpy(result, "0B", FMT_SCALED_STRSIZE);
-	else if (unit == NONE || number >= 100 || number <= -100) {
-		if (fract >= 5) {
-			if (number >= 0)
-				number++;
-			else
-				number--;
+	অন্যথা যদি (unit == NONE || সংখ্যা >= 100 || সংখ্যা <= -100) {
+		যদি (fract >= 5) {
+			যদি (সংখ্যা >= 0)
+				সংখ্যা++;
+			অন্যথা
+				সংখ্যা--;
 		}
-		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld%c",
-			number, scale_chars[unit]);
-	} else
-		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld.%1lld%c",
-			number, fract, scale_chars[unit]);
+		(শূন্য)snprintf(result, FMT_SCALED_STRSIZE, "%lld%c",
+			সংখ্যা, scale_chars[unit]);
+	} অন্যথা
+		(শূন্য)snprintf(result, FMT_SCALED_STRSIZE, "%lld.%1lld%c",
+			সংখ্যা, fract, scale_chars[unit]);
 
-	return 0;
+	প্রত্যাগম 0;
 }
 
 #ifdef	MAIN
@@ -301,23 +301,23 @@ fmt_scaled(long long number, char *result)
  * This is the original version of the program in the man page.
  * Copy-and-paste whatever you need from it.
  */
-int
-main(int argc, char **argv)
+পূর্ণাঙ্ক
+main(পূর্ণাঙ্ক argc, বর্ণ **argv)
 {
-	char *cinput = "1.5K", buf[FMT_SCALED_STRSIZE];
+	বর্ণ *cinput = "1.5K", buf[FMT_SCALED_STRSIZE];
 	long long ninput = 10483892, result;
 
-	if (scan_scaled(cinput, &result) == 0)
+	যদি (scan_scaled(cinput, &result) == 0)
 		printf("\"%s\" -> %lld\n", cinput, result);
-	else
+	অন্যথা
 		perror(cinput);
 
-	if (fmt_scaled(ninput, buf) == 0)
+	যদি (fmt_scaled(ninput, buf) == 0)
 		printf("%lld -> \"%s\"\n", ninput, buf);
-	else
+	অন্যথা
 		fprintf(stderr, "%lld invalid (%s)\n", ninput, strerror(errno));
 
-	return 0;
+	প্রত্যাগম 0;
 }
 #endif
 

@@ -30,29 +30,29 @@
 # include <sys/socket.h>
 #endif
 
-struct ssh;
-struct sshbuf;
+সংরচনা ssh;
+সংরচনা sshbuf;
 
 /* These should be in the system headers but are not. */
-int usrinfo(int, char *, int);
-#if defined(HAVE_DECL_SETAUTHDB) && (HAVE_DECL_SETAUTHDB == 0)
-int setauthdb(const char *, char *);
+পূর্ণাঙ্ক usrinfo(পূর্ণাঙ্ক, বর্ণ *, পূর্ণাঙ্ক);
+#যদি defined(HAVE_DECL_SETAUTHDB) && (HAVE_DECL_SETAUTHDB == 0)
+পূর্ণাঙ্ক setauthdb(ধ্রুব বর্ণ *, বর্ণ *);
 #endif
 /* these may or may not be in the headers depending on the version */
-#if defined(HAVE_DECL_AUTHENTICATE) && (HAVE_DECL_AUTHENTICATE == 0)
-int authenticate(char *, char *, int *, char **);
+#যদি defined(HAVE_DECL_AUTHENTICATE) && (HAVE_DECL_AUTHENTICATE == 0)
+পূর্ণাঙ্ক authenticate(বর্ণ *, বর্ণ *, পূর্ণাঙ্ক *, বর্ণ **);
 #endif
-#if defined(HAVE_DECL_LOGINFAILED) && (HAVE_DECL_LOGINFAILED == 0)
-int loginfailed(char *, char *, char *);
+#যদি defined(HAVE_DECL_LOGINFAILED) && (HAVE_DECL_LOGINFAILED == 0)
+পূর্ণাঙ্ক loginfailed(বর্ণ *, বর্ণ *, বর্ণ *);
 #endif
-#if defined(HAVE_DECL_LOGINRESTRICTIONS) && (HAVE_DECL_LOGINRESTRICTIONS == 0)
-int loginrestrictions(char *, int, char *, char **);
+#যদি defined(HAVE_DECL_LOGINRESTRICTIONS) && (HAVE_DECL_LOGINRESTRICTIONS == 0)
+পূর্ণাঙ্ক loginrestrictions(বর্ণ *, পূর্ণাঙ্ক, বর্ণ *, বর্ণ **);
 #endif
-#if defined(HAVE_DECL_LOGINSUCCESS) && (HAVE_DECL_LOGINSUCCESS == 0)
-int loginsuccess(char *, char *, char *, char **);
+#যদি defined(HAVE_DECL_LOGINSUCCESS) && (HAVE_DECL_LOGINSUCCESS == 0)
+পূর্ণাঙ্ক loginsuccess(বর্ণ *, বর্ণ *, বর্ণ *, বর্ণ **);
 #endif
-#if defined(HAVE_DECL_PASSWDEXPIRED) && (HAVE_DECL_PASSWDEXPIRED == 0)
-int passwdexpired(char *, char **);
+#যদি defined(HAVE_DECL_PASSWDEXPIRED) && (HAVE_DECL_PASSWDEXPIRED == 0)
+পূর্ণাঙ্ক passwdexpired(বর্ণ *, বর্ণ **);
 #endif
 
 /* Some versions define r_type in the above headers, which causes a conflict */
@@ -61,7 +61,7 @@ int passwdexpired(char *, char **);
 #endif
 
 /* AIX 4.2.x doesn't have nanosleep but does have nsleep which is equivalent */
-#if !defined(HAVE_NANOSLEEP) && defined(HAVE_NSLEEP)
+#যদি !defined(HAVE_NANOSLEEP) && defined(HAVE_NSLEEP)
 # define nanosleep(a,b) nsleep(a,b)
 #endif
 
@@ -83,34 +83,34 @@ int passwdexpired(char *, char **);
 # define REGISTRY_SIZE	16
 #endif
 
-void aix_usrinfo(struct passwd *);
+শূন্য aix_usrinfo(সংরচনা passwd *);
 
 #ifdef WITH_AIXAUTHENTICATE
 # define CUSTOM_SYS_AUTH_PASSWD 1
 # define CUSTOM_SYS_AUTH_ALLOWED_USER 1
-int sys_auth_allowed_user(struct passwd *, struct sshbuf *);
+পূর্ণাঙ্ক sys_auth_allowed_user(সংরচনা passwd *, সংরচনা sshbuf *);
 # define CUSTOM_SYS_AUTH_RECORD_LOGIN 1
-int sys_auth_record_login(const char *, const char *, const char *,
-    struct sshbuf *);
-# define CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-char *sys_auth_get_lastlogin_msg(const char *, uid_t);
+পূর্ণাঙ্ক sys_auth_record_login(ধ্রুব বর্ণ *, ধ্রুব বর্ণ *, ধ্রুব বর্ণ *,
+    সংরচনা sshbuf *);
+# define CUSTOM_SYS_AUTH_GET_LASTLOGIN_বার্তা
+বর্ণ *sys_auth_get_lastlogin_বার্তা(ধ্রুব বর্ণ *, uid_t);
 # define CUSTOM_FAILED_LOGIN 1
-# if defined(S_AUTHDOMAIN)  && defined (S_AUTHNAME)
+# যদি defined(S_AUTHDOMAIN)  && defined (S_AUTHNAME)
 # define USE_AIX_KRB_NAME
-char *aix_krb5_get_principal_name(const char *);
+বর্ণ *aix_krb5_get_principal_name(ধ্রুব বর্ণ *);
 # endif
 #endif
 
-void aix_setauthdb(const char *);
-void aix_restoreauthdb(void);
-void aix_remove_embedded_newlines(char *);
+শূন্য aix_setauthdb(ধ্রুব বর্ণ *);
+শূন্য aix_restoreauthdb(শূন্য);
+শূন্য aix_remove_embedded_newlines(বর্ণ *);
 
-#if defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_GETADDRINFO)
+#যদি defined(AIX_GETNAMEINFO_HACK) && !defined(BROKEN_GETADDRINFO)
 # ifdef getnameinfo
 #  undef getnameinfo
 # endif
-int sshaix_getnameinfo(const struct sockaddr *, size_t, char *, size_t,
-    char *, size_t, int);
+পূর্ণাঙ্ক sshaix_getnameinfo(ধ্রুব সংরচনা sockaddr *, size_t, বর্ণ *, size_t,
+    বর্ণ *, size_t, পূর্ণাঙ্ক);
 # define getnameinfo(a,b,c,d,e,f,g) (sshaix_getnameinfo(a,b,c,d,e,f,g))
 #endif
 
@@ -118,10 +118,10 @@ int sshaix_getnameinfo(const struct sockaddr *, size_t, char *, size_t,
  * We use getgrset in preference to multiple getgrent calls for efficiency
  * plus it supports NIS and LDAP groups.
  */
-#if !defined(HAVE_GETGROUPLIST) && defined(HAVE_GETGRSET)
+#যদি !defined(HAVE_GETGROUPLIST) && defined(HAVE_GETGRSET)
 # define HAVE_GETGROUPLIST
 # define USE_GETGRSET
-int getgrouplist(const char *, gid_t, gid_t *, int *);
+পূর্ণাঙ্ক getgrouplist(ধ্রুব বর্ণ *, gid_t, gid_t *, পূর্ণাঙ্ক *);
 #endif
 
 #endif /* _AIX */

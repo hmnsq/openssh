@@ -27,9 +27,9 @@
 #ifndef GROUPACCESS_H
 #define GROUPACCESS_H
 
-int	 ga_init(const char *, gid_t);
-int	 ga_match(char * const *, int);
-int	 ga_match_pattern_list(const char *);
-void	 ga_free(void);
+পূর্ণাঙ্ক	 ga_init(ধ্রুব বর্ণ *, gid_t);
+পূর্ণাঙ্ক	 ga_match(বর্ণ * ধ্রুব *, পূর্ণাঙ্ক);
+পূর্ণাঙ্ক	 ga_match_pattern_list(ধ্রুব বর্ণ *);
+শূন্য	 ga_free(শূন্য);
 
 #endif

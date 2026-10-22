@@ -25,7 +25,7 @@
 #ifndef _READPASSPHRASE_H_
 #define _READPASSPHRASE_H_
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifndef HAVE_READPASSPHRASE
 
@@ -37,7 +37,7 @@
 #define RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
 #define RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
 
-char * readpassphrase(const char *, char *, size_t, int);
+বর্ণ * readpassphrase(ধ্রুব বর্ণ *, বর্ণ *, size_t, পূর্ণাঙ্ক);
 
 #endif /* HAVE_READPASSPHRASE */
 

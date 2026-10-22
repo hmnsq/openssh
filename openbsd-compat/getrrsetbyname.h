@@ -48,15 +48,15 @@
 #ifndef _GETRRSETBYNAME_H
 #define _GETRRSETBYNAME_H
 
-#include "includes.h"
+#অন্তর্ভাব "includes.h"
 
 #ifndef HAVE_GETRRSETBYNAME
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <netdb.h>
-#include <resolv.h>
+#অন্তর্ভাব <sys/types.h>
+#অন্তর্ভাব <netinet/in.h>
+#অন্তর্ভাব <arpa/nameser.h>
+#অন্তর্ভাব <netdb.h>
+#অন্তর্ভাব <resolv.h>
 
 #ifndef HFIXEDSZ
 #define HFIXEDSZ 12
@@ -85,25 +85,25 @@
 # define ERRSET_NODATA		5
 #endif
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+সংরচনা rdatainfo {
+	unsigned পূর্ণাঙ্ক		rdi_length;	/* length of data */
+	unsigned বর্ণ		*rdi_data;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+সংরচনা rrsetinfo {
+	unsigned পূর্ণাঙ্ক		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned পূর্ণাঙ্ক		rri_rdclass;	/* class number */
+	unsigned পূর্ণাঙ্ক		rri_rdtype;	/* RR type number */
+	unsigned পূর্ণাঙ্ক		rri_ttl;	/* time to live */
+	unsigned পূর্ণাঙ্ক		rri_nrdatas;	/* size of rdatas array */
+	unsigned পূর্ণাঙ্ক		rri_nsigs;	/* size of sigs array */
+	বর্ণ			*rri_name;	/* canonical name */
+	সংরচনা rdatainfo	*rri_rdatas;	/* individual records */
+	সংরচনা rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+পূর্ণাঙ্ক		getrrsetbyname(ধ্রুব বর্ণ *, unsigned পূর্ণাঙ্ক, unsigned পূর্ণাঙ্ক, unsigned পূর্ণাঙ্ক, সংরচনা rrsetinfo **);
+শূন্য		freerrset(সংরচনা rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */
 
