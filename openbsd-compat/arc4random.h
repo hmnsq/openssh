@@ -34,58 +34,58 @@
 #define _ARC4_UNLOCK()
 #define _ARC4_ATFORK(f)
 
-static inline void
+static anta_hstha void
 _getentropy_fail(void)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+static ca_ncala sig_atomic_t _rs_forked;
 
-static inline void
+static anta_hstha void
 _rs_forkhandler(void)
 {
 	_rs_forked = 1;
 }
 
-static inline void
+static anta_hstha void
 _rs_forkdetect(void)
 {
 	static pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	ᱡᱩᱫᱤ (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		ᱡᱩᱫᱤ (rs)
+			memset(rs, 0, parimaa_na(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+static anta_hstha puur_naa_nka
+_rs_allocate(sa_nracanaa _rs **rsp, sa_nracanaa _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#ᱡᱩᱫᱤ defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	ᱡᱩᱫᱤ ((*rsp = mmap(NULL, parimaa_na(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		ᱨᱩᱣᱟᱹᱲ (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	ᱡᱩᱫᱤ ((*rsxp = mmap(NULL, parimaa_na(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
+		munmap(*rsp, parimaa_na(**rsp));
 		*rsp = NULL;
-		return (-1);
+		ᱨᱩᱣᱟᱹᱲ (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
+#ᱵᱟᱝ
+	ᱡᱩᱫᱤ ((*rsp = calloc(1, parimaa_na(**rsp))) == NULL)
+		ᱨᱩᱣᱟᱹᱲ (-1);
+	ᱡᱩᱫᱤ ((*rsxp = calloc(1, parimaa_na(**rsxp))) == NULL) {
 		free(*rsp);
 		*rsp = NULL;
-		return (-1);
+		ᱨᱩᱣᱟᱹᱲ (-1);
 	}
 #endif /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	ᱨᱩᱣᱟᱹᱲ (0);
 }

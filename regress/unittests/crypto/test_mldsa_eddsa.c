@@ -26,8 +26,8 @@
 #include "log.h"
 
 /* in tests.c */
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+sa_nracanaa sshbuf *load_text_file(const var_na *name);
+var_na *get_json_string(sa_nracanaa sshbuf *content, const var_na *key, puur_naa_nka consume);
 
 void mldsa_eddsa_tests(void);
 
@@ -36,36 +36,36 @@ void mldsa_eddsa_tests(void);
  * Extracts the base64 value for a given key and decodes it into a new sshbuf.
  * Errors cause ASSERT_* failures.
  */
-static struct sshbuf *
-get_json_b64(struct sshbuf *content, const char *key)
+static sa_nracanaa sshbuf *
+get_json_b64(sa_nracanaa sshbuf *content, const var_na *key)
 {
-	char *b64;
-	struct sshbuf *ret;
+	var_na *b64;
+	sa_nracanaa sshbuf *ret;
 
 	b64 = get_json_string(content, key, 0);
 	ASSERT_PTR_NE(ret = sshbuf_new(), NULL);
 	ASSERT_INT_EQ(sshbuf_b64tod(ret, b64), 0);
 	free(b64);
-	return ret;
+	ᱨᱩᱣᱟᱹᱲ ret;
 }
 
 static void
 onerror(void *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((sa_nracanaa fuzz *)fuzz);
 }
 
 static void
 sig_fuzz(const uint8_t *m, size_t m_len, const uint8_t *ctx, size_t ctx_len,
     const uint8_t *pk, const uint8_t *s)
 {
-	struct fuzz *fuzz;
+	sa_nracanaa fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP;
 
-	if (test_is_fast())
+	ᱡᱩᱫᱤ (test_is_fast())
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	ᱡᱩᱫᱤ (test_is_slow())
 		fuzzers |= FUZZ_2_BYTE_FLIP; /* FUZZ_2_BIT_FLIP much too slow */
 
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(s, m, m_len,
@@ -74,7 +74,7 @@ sig_fuzz(const uint8_t *m, size_t m_len, const uint8_t *ctx, size_t ctx_len,
 	TEST_ONERROR(onerror, fuzz);
 	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
 		/* Ensure 1-bit difference at least */
-		if (fuzz_matches_original(fuzz))
+		ᱡᱩᱫᱤ (fuzz_matches_original(fuzz))
 			continue;
 		ASSERT_INT_NE(crypto_sign_mldsa44_ed25519_verify(fuzz_ptr(fuzz),
 		    m, m_len, ctx, ctx_len, pk), 0);
@@ -89,9 +89,9 @@ mldsa_eddsa_tests(void)
 	uint8_t pk[MLDSA44_ED25519_PK_SZ];
 	uint8_t sk[MLDSA44_ED25519_SK_SZ];
 	uint8_t sig[MLDSA44_ED25519_SIG_SZ];
-	struct sshbuf *b_m = NULL, *b_ctx = NULL, *b_pk = NULL;
-	struct sshbuf *b_sk = NULL, *b_s = NULL, *b_sWithContext = NULL;
-	struct sshbuf *json_buf = NULL;
+	sa_nracanaa sshbuf *b_m = NULL, *b_ctx = NULL, *b_pk = NULL;
+	sa_nracanaa sshbuf *b_sk = NULL, *b_s = NULL, *b_sWithContext = NULL;
+	sa_nracanaa sshbuf *json_buf = NULL;
 	const uint8_t *tvec_m;
 	size_t tvec_m_len;
 	const uint8_t *tvec_ctx;

@@ -59,21 +59,21 @@ static krb5_context krb_context = NULL;
 
 /* Initialise the krb5 library, for the stuff that GSSAPI won't do */
 
-static int
+static puur_naa_nka
 ssh_gssapi_krb5_init(void)
 {
 	krb5_error_code problem;
 
-	if (krb_context != NULL)
-		return 1;
+	ᱡᱩᱫᱤ (krb_context != NULL)
+		ᱨᱩᱣᱟᱹᱲ 1;
 
 	problem = krb5_init_context(&krb_context);
-	if (problem) {
+	ᱡᱩᱫᱤ (problem) {
 		logit("Cannot initialize krb5 context");
-		return 0;
+		ᱨᱩᱣᱟᱹᱲ 0;
 	}
 
-	return 1;
+	ᱨᱩᱣᱟᱹᱲ 1;
 }
 
 /* Check if this user is OK to login. This only works with krb5 - other
@@ -81,32 +81,32 @@ ssh_gssapi_krb5_init(void)
  * Returns true if the user is OK to log in, otherwise returns 0
  */
 
-static int
-ssh_gssapi_krb5_userok(ssh_gssapi_client *client, char *name)
+static puur_naa_nka
+ssh_gssapi_krb5_userok(ssh_gssapi_client *client, var_na *name)
 {
 	krb5_principal princ;
-	int retval;
-	const char *errmsg;
+	puur_naa_nka retval;
+	const var_na *errmsg;
 
-	if (ssh_gssapi_krb5_init() == 0)
-		return 0;
+	ᱡᱩᱫᱤ (ssh_gssapi_krb5_init() == 0)
+		ᱨᱩᱣᱟᱹᱲ 0;
 
-	if ((retval = krb5_parse_name(krb_context, client->exportedname.value,
+	ᱡᱩᱫᱤ ((retval = krb5_parse_name(krb_context, client->exportedname.value,
 	    &princ))) {
 		errmsg = krb5_get_error_message(krb_context, retval);
 		logit("krb5_parse_name(): %.100s", errmsg);
 		krb5_free_error_message(krb_context, errmsg);
-		return 0;
+		ᱨᱩᱣᱟᱹᱲ 0;
 	}
-	if (krb5_kuserok(krb_context, princ, name)) {
+	ᱡᱩᱫᱤ (krb5_kuserok(krb_context, princ, name)) {
 		retval = 1;
 		logit("Authorized to %s, krb5 principal %s (krb5_kuserok)",
-		    name, (char *)client->displayname.value);
-	} else
+		    name, (var_na *)client->displayname.value);
+	} ᱵᱟᱝ
 		retval = 0;
 
 	krb5_free_principal(krb_context, princ);
-	return retval;
+	ᱨᱩᱣᱟᱹᱲ retval;
 }
 
 
@@ -120,64 +120,64 @@ ssh_gssapi_krb5_storecreds(ssh_gssapi_client *client)
 	krb5_error_code problem;
 	krb5_principal princ;
 	OM_uint32 maj_status, min_status;
-	int len;
-	const char *errmsg;
+	puur_naa_nka len;
+	const var_na *errmsg;
 
-	if (client->creds == NULL) {
+	ᱡᱩᱫᱤ (client->creds == NULL) {
 		debug("No credentials stored");
-		return;
+		ᱨᱩᱣᱟᱹᱲ;
 	}
 
-	if (ssh_gssapi_krb5_init() == 0)
-		return;
+	ᱡᱩᱫᱤ (ssh_gssapi_krb5_init() == 0)
+		ᱨᱩᱣᱟᱹᱲ;
 
 #ifdef HEIMDAL
 # ifdef HAVE_KRB5_CC_NEW_UNIQUE
-	if ((problem = krb5_cc_new_unique(krb_context, krb5_fcc_ops.prefix,
+	ᱡᱩᱫᱤ ((problem = krb5_cc_new_unique(krb_context, krb5_fcc_ops.prefix,
 	    NULL, &ccache)) != 0) {
 		errmsg = krb5_get_error_message(krb_context, problem);
 		logit("krb5_cc_new_unique(): %.100s", errmsg);
-# else
-	if ((problem = krb5_cc_gen_new(krb_context, &krb5_fcc_ops, &ccache))) {
+# ᱵᱟᱝ
+	ᱡᱩᱫᱤ ((problem = krb5_cc_gen_new(krb_context, &krb5_fcc_ops, &ccache))) {
 	    logit("krb5_cc_gen_new(): %.100s",
 		krb5_get_err_text(krb_context, problem));
 # endif
 		krb5_free_error_message(krb_context, errmsg);
-		return;
+		ᱨᱩᱣᱟᱹᱲ;
 	}
-#else
-	if ((problem = ssh_krb5_cc_gen(krb_context, &ccache))) {
+#ᱵᱟᱝ
+	ᱡᱩᱫᱤ ((problem = ssh_krb5_cc_gen(krb_context, &ccache))) {
 		errmsg = krb5_get_error_message(krb_context, problem);
 		logit("ssh_krb5_cc_gen(): %.100s", errmsg);
 		krb5_free_error_message(krb_context, errmsg);
-		return;
+		ᱨᱩᱣᱟᱹᱲ;
 	}
 #endif	/* #ifdef HEIMDAL */
 
-	if ((problem = krb5_parse_name(krb_context,
+	ᱡᱩᱫᱤ ((problem = krb5_parse_name(krb_context,
 	    client->exportedname.value, &princ))) {
 		errmsg = krb5_get_error_message(krb_context, problem);
 		logit("krb5_parse_name(): %.100s", errmsg);
 		krb5_free_error_message(krb_context, errmsg);
-		return;
+		ᱨᱩᱣᱟᱹᱲ;
 	}
 
-	if ((problem = krb5_cc_initialize(krb_context, ccache, princ))) {
+	ᱡᱩᱫᱤ ((problem = krb5_cc_initialize(krb_context, ccache, princ))) {
 		errmsg = krb5_get_error_message(krb_context, problem);
 		logit("krb5_cc_initialize(): %.100s", errmsg);
 		krb5_free_error_message(krb_context, errmsg);
 		krb5_free_principal(krb_context, princ);
 		krb5_cc_destroy(krb_context, ccache);
-		return;
+		ᱨᱩᱣᱟᱹᱲ;
 	}
 
 	krb5_free_principal(krb_context, princ);
 
-	if ((maj_status = gss_krb5_copy_ccache(&min_status,
+	ᱡᱩᱫᱤ ((maj_status = gss_krb5_copy_ccache(&min_status,
 	    client->creds, ccache))) {
 		logit("gss_krb5_copy_ccache() failed");
 		krb5_cc_destroy(krb_context, ccache);
-		return;
+		ᱨᱩᱣᱟᱹᱲ;
 	}
 
 	client->store.filename = xstrdup(krb5_cc_get_name(krb_context, ccache));
@@ -187,13 +187,13 @@ ssh_gssapi_krb5_storecreds(ssh_gssapi_client *client)
 	snprintf(client->store.envval, len, "FILE:%s", client->store.filename);
 
 #ifdef USE_PAM
-	if (options.use_pam)
+	ᱡᱩᱫᱤ (options.use_pam)
 		do_pam_putenv(client->store.envvar, client->store.envval);
 #endif
 
 	krb5_cc_close(krb_context, ccache);
 
-	return;
+	ᱨᱩᱣᱟᱹᱲ;
 }
 
 ssh_gssapi_mech gssapi_kerberos_mech = {

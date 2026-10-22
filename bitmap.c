@@ -25,35 +25,35 @@
 
 #define BITMAP_WTYPE	u_int
 #define BITMAP_MAX	(1<<24)
-#define BITMAP_BYTES	(sizeof(BITMAP_WTYPE))
-#define BITMAP_BITS	(sizeof(BITMAP_WTYPE) * 8)
+#define BITMAP_BYTES	(parimaa_na(BITMAP_WTYPE))
+#define BITMAP_BITS	(parimaa_na(BITMAP_WTYPE) * 8)
 #define BITMAP_WMASK	((BITMAP_WTYPE)BITMAP_BITS - 1)
-struct bitmap {
+sa_nracanaa bitmap {
 	BITMAP_WTYPE *d;
 	size_t len; /* number of words allocated */
 	size_t top; /* index of top word allocated */
 };
 
-struct bitmap *
+sa_nracanaa bitmap *
 bitmap_new(void)
 {
-	struct bitmap *ret;
+	sa_nracanaa bitmap *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if ((ret->d = calloc(1, BITMAP_BYTES)) == NULL) {
+	ᱡᱩᱫᱤ ((ret = calloc(1, parimaa_na(*ret))) == NULL)
+		ᱨᱩᱣᱟᱹᱲ NULL;
+	ᱡᱩᱫᱤ ((ret->d = calloc(1, BITMAP_BYTES)) == NULL) {
 		free(ret);
-		return NULL;
+		ᱨᱩᱣᱟᱹᱲ NULL;
 	}
 	ret->len = 1;
 	ret->top = 0;
-	return ret;
+	ᱨᱩᱣᱟᱹᱲ ret;
 }
 
 void
-bitmap_free(struct bitmap *b)
+bitmap_free(sa_nracanaa bitmap *b)
 {
-	if (b != NULL && b->d != NULL) {
+	ᱡᱩᱫᱤ (b != NULL && b->d != NULL) {
 		bitmap_zero(b);
 		free(b->d);
 		b->d = NULL;
@@ -62,153 +62,153 @@ bitmap_free(struct bitmap *b)
 }
 
 void
-bitmap_zero(struct bitmap *b)
+bitmap_zero(sa_nracanaa bitmap *b)
 {
 	memset(b->d, 0, b->len * BITMAP_BYTES);
 	b->top = 0;
 }
 
-int
-bitmap_test_bit(struct bitmap *b, u_int n)
+puur_naa_nka
+bitmap_test_bit(sa_nracanaa bitmap *b, u_int n)
 {
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (n / BITMAP_BITS) > b->top)
-		return 0;
-	return (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
+	ᱡᱩᱫᱤ (b->top >= b->len)
+		ᱨᱩᱣᱟᱹᱲ 0; /* invalid */
+	ᱡᱩᱫᱤ (b->len == 0 || (n / BITMAP_BITS) > b->top)
+		ᱨᱩᱣᱟᱹᱲ 0;
+	ᱨᱩᱣᱟᱹᱲ (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
 }
 
-static int
-reserve(struct bitmap *b, u_int n)
+static puur_naa_nka
+reserve(sa_nracanaa bitmap *b, u_int n)
 {
 	BITMAP_WTYPE *tmp;
 	size_t nlen;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return -1; /* invalid */
+	ᱡᱩᱫᱤ (b->top >= b->len || n > BITMAP_MAX)
+		ᱨᱩᱣᱟᱹᱲ -1; /* invalid */
 	nlen = (n / BITMAP_BITS) + 1;
-	if (b->len < nlen) {
-		if ((tmp = recallocarray(b->d, b->len,
+	ᱡᱩᱫᱤ (b->len < nlen) {
+		ᱡᱩᱫᱤ ((tmp = recallocarray(b->d, b->len,
 		    nlen, BITMAP_BYTES)) == NULL)
-			return -1;
+			ᱨᱩᱣᱟᱹᱲ -1;
 		b->d = tmp;
 		b->len = nlen;
 	}
-	return 0;
+	ᱨᱩᱣᱟᱹᱲ 0;
 }
 
-int
-bitmap_set_bit(struct bitmap *b, u_int n)
+puur_naa_nka
+bitmap_set_bit(sa_nracanaa bitmap *b, u_int n)
 {
-	int r;
+	puur_naa_nka r;
 	size_t offset;
 
-	if ((r = reserve(b, n)) != 0)
-		return r;
+	ᱡᱩᱫᱤ ((r = reserve(b, n)) != 0)
+		ᱨᱩᱣᱟᱹᱲ r;
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
+	ᱡᱩᱫᱤ (offset > b->top)
 		b->top = offset;
 	b->d[offset] |= (BITMAP_WTYPE)1 << (n & BITMAP_WMASK);
-	return 0;
+	ᱨᱩᱣᱟᱹᱲ 0;
 }
 
 /* Resets b->top to point to the most significant bit set in b->d */
 static void
-retop(struct bitmap *b)
+retop(sa_nracanaa bitmap *b)
 {
-	if (b->top >= b->len)
-		return;
-	while (b->top > 0 && b->d[b->top] == 0)
+	ᱡᱩᱫᱤ (b->top >= b->len)
+		ᱨᱩᱣᱟᱹᱲ;
+	ᱡᱚᱠᱷᱚᱱ (b->top > 0 && b->d[b->top] == 0)
 		b->top--;
 }
 
 void
-bitmap_clear_bit(struct bitmap *b, u_int n)
+bitmap_clear_bit(sa_nracanaa bitmap *b, u_int n)
 {
 	size_t offset;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return; /* invalid */
+	ᱡᱩᱫᱤ (b->top >= b->len || n > BITMAP_MAX)
+		ᱨᱩᱣᱟᱹᱲ; /* invalid */
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
-		return;
+	ᱡᱩᱫᱤ (offset > b->top)
+		ᱨᱩᱣᱟᱹᱲ;
 	b->d[offset] &= ~((BITMAP_WTYPE)1 << (n & BITMAP_WMASK));
 	/* The top may have changed as a result of the clear */
 	retop(b);
 }
 
 size_t
-bitmap_nbits(struct bitmap *b)
+bitmap_nbits(sa_nracanaa bitmap *b)
 {
 	size_t bits;
 	BITMAP_WTYPE w;
 
 	retop(b);
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (b->top == 0 && b->d[0] == 0))
-		return 0;
+	ᱡᱩᱫᱤ (b->top >= b->len)
+		ᱨᱩᱣᱟᱹᱲ 0; /* invalid */
+	ᱡᱩᱫᱤ (b->len == 0 || (b->top == 0 && b->d[0] == 0))
+		ᱨᱩᱣᱟᱹᱲ 0;
 	/* Find MSB set */
 	w = b->d[b->top];
 	bits = (b->top + 1) * BITMAP_BITS;
-	while (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
+	ᱡᱚᱠᱷᱚᱱ (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
 		w <<= 1;
 		bits--;
 	}
-	return bits;
+	ᱨᱩᱣᱟᱹᱲ bits;
 }
 
 size_t
-bitmap_nbytes(struct bitmap *b)
+bitmap_nbytes(sa_nracanaa bitmap *b)
 {
-	return (bitmap_nbits(b) + 7) / 8;
+	ᱨᱩᱣᱟᱹᱲ (bitmap_nbits(b) + 7) / 8;
 }
 
-int
-bitmap_to_string(struct bitmap *b, void *p, size_t l)
+puur_naa_nka
+bitmap_to_string(sa_nracanaa bitmap *b, void *p, size_t l)
 {
 	u_char *s = (u_char *)p;
 	size_t i, j, k, need = bitmap_nbytes(b);
 
-	if (l < need || b->top >= b->len)
-		return -1;
-	if (l > need)
+	ᱡᱩᱫᱤ (l < need || b->top >= b->len)
+		ᱨᱩᱣᱟᱹᱲ -1;
+	ᱡᱩᱫᱤ (l > need)
 		l = need;
 	/* Put the bytes from LSB backwards */
 	for (i = k = 0; i < b->top + 1; i++) {
 		for (j = 0; j < BITMAP_BYTES; j++) {
-			if (k >= l)
-				break;
+			ᱡᱩᱫᱤ (k >= l)
+				bha_nga;
 			s[need - 1 - k++] = (b->d[i] >> (j * 8)) & 0xff;
 		}
 	}
-	return 0;
+	ᱨᱩᱣᱟᱹᱲ 0;
 }
 
-int
-bitmap_from_string(struct bitmap *b, const void *p, size_t l)
+puur_naa_nka
+bitmap_from_string(sa_nracanaa bitmap *b, const void *p, size_t l)
 {
-	int r;
+	puur_naa_nka r;
 	size_t i, offset, shift;
 	const u_char *s = (const u_char *)p;
 
-	if (l > BITMAP_MAX / 8)
-		return -1;
-	if ((r = reserve(b, l * 8)) != 0)
-		return r;
+	ᱡᱩᱫᱤ (l > BITMAP_MAX / 8)
+		ᱨᱩᱣᱟᱹᱲ -1;
+	ᱡᱩᱫᱤ ((r = reserve(b, l * 8)) != 0)
+		ᱨᱩᱣᱟᱹᱲ r;
 	bitmap_zero(b);
-	if (l == 0)
-		return 0;
+	ᱡᱩᱫᱤ (l == 0)
+		ᱨᱩᱣᱟᱹᱲ 0;
 	b->top = offset = ((l + (BITMAP_BYTES - 1)) / BITMAP_BYTES) - 1;
 	shift = ((l + (BITMAP_BYTES - 1)) % BITMAP_BYTES) * 8;
 	for (i = 0; i < l; i++) {
 		b->d[offset] |= (BITMAP_WTYPE)s[i] << shift;
-		if (shift == 0) {
+		ᱡᱩᱫᱤ (shift == 0) {
 			offset--;
 			shift = BITMAP_BITS - 8;
-		} else
+		} ᱵᱟᱝ
 			shift -= 8;
 	}
 	retop(b);
-	return 0;
+	ᱨᱩᱣᱟᱹᱲ 0;
 }

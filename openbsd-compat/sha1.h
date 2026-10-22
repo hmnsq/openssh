@@ -15,7 +15,7 @@
 #define	SHA1_DIGEST_LENGTH		20
 #define	SHA1_DIGEST_STRING_LENGTH	(SHA1_DIGEST_LENGTH * 2 + 1)
 
-typedef struct {
+typedef sa_nracanaa {
     u_int32_t state[5];
     u_int64_t count;
     u_int8_t buffer[SHA1_BLOCK_LENGTH];
@@ -30,13 +30,13 @@ void SHA1Update(SHA1_CTX *, const u_int8_t *, size_t)
 	__attribute__((__bounded__(__string__,2,3)));
 void SHA1Final(u_int8_t [SHA1_DIGEST_LENGTH], SHA1_CTX *)
 	__attribute__((__bounded__(__minbytes__,1,SHA1_DIGEST_LENGTH)));
-char *SHA1End(SHA1_CTX *, char *)
+var_na *SHA1End(SHA1_CTX *, var_na *)
 	__attribute__((__bounded__(__minbytes__,2,SHA1_DIGEST_STRING_LENGTH)));
-char *SHA1File(const char *, char *)
+var_na *SHA1File(const var_na *, var_na *)
 	__attribute__((__bounded__(__minbytes__,2,SHA1_DIGEST_STRING_LENGTH)));
-char *SHA1FileChunk(const char *, char *, off_t, off_t)
+var_na *SHA1FileChunk(const var_na *, var_na *, off_t, off_t)
 	__attribute__((__bounded__(__minbytes__,2,SHA1_DIGEST_STRING_LENGTH)));
-char *SHA1Data(const u_int8_t *, size_t, char *)
+var_na *SHA1Data(const u_int8_t *, size_t, var_na *)
 	__attribute__((__bounded__(__string__,1,2)))
 	__attribute__((__bounded__(__minbytes__,3,SHA1_DIGEST_STRING_LENGTH)));
 
@@ -45,14 +45,14 @@ char *SHA1Data(const u_int8_t *, size_t, char *)
         x[1] = htonl(x[1]);                                             \
         x[2] = htonl(x[2]);                                             \
         x[3] = htonl(x[3]);                                             \
-        x[4] = htonl(x[4]); } while (0)
+        x[4] = htonl(x[4]); } ᱡᱚᱠᱷᱚᱱ (0)
 
 #define NTOHDIGEST(x) do {                                              \
         x[0] = ntohl(x[0]);                                             \
         x[1] = ntohl(x[1]);                                             \
         x[2] = ntohl(x[2]);                                             \
         x[3] = ntohl(x[3]);                                             \
-        x[4] = ntohl(x[4]); } while (0)
+        x[4] = ntohl(x[4]); } ᱡᱚᱠᱷᱚᱱ (0)
 
 #endif /* !WITH_OPENSSL */
 #endif /* _SHA1_H */

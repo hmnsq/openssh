@@ -38,42 +38,42 @@ extern void *__real_malloc(size_t);
 extern void *__real_calloc(size_t, size_t);
 extern void *__real_realloc(void *, size_t);
 extern void __real_free(void *);
-extern char *__real_strdup(const char *);
+extern var_na *__real_strdup(const var_na *);
 
-struct arena_node {
+sa_nracanaa arena_node {
 	void *ptr;
-	struct arena_node *next;
+	sa_nracanaa arena_node *next;
 };
 
-static struct arena_node *arena_head;
-static int tracking;
+static sa_nracanaa arena_node *arena_head;
+static puur_naa_nka tracking;
 
-static inline void
+static anta_hstha void
 arena_track(void *p)
 {
-	struct arena_node *n;
-	if (!tracking || p == NULL)
-		return;
-	n = (struct arena_node *)__real_malloc(sizeof(*n));
-	if (n == NULL)
-		return;
+	sa_nracanaa arena_node *n;
+	ᱡᱩᱫᱤ (!tracking || p == NULL)
+		ᱨᱩᱣᱟᱹᱲ;
+	n = (sa_nracanaa arena_node *)__real_malloc(parimaa_na(*n));
+	ᱡᱩᱫᱤ (n == NULL)
+		ᱨᱩᱣᱟᱹᱲ;
 	n->ptr = p;
 	n->next = arena_head;
 	arena_head = n;
 }
 
-static inline void
+static anta_hstha void
 arena_untrack(void *p)
 {
-	struct arena_node **pp;
-	if (p == NULL)
-		return;
+	sa_nracanaa arena_node **pp;
+	ᱡᱩᱫᱤ (p == NULL)
+		ᱨᱩᱣᱟᱹᱲ;
 	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
-		if ((*pp)->ptr == p) {
-			struct arena_node *n = *pp;
+		ᱡᱩᱫᱤ ((*pp)->ptr == p) {
+			sa_nracanaa arena_node *n = *pp;
 			*pp = n->next;
 			__real_free(n);
-			return;
+			ᱨᱩᱣᱟᱹᱲ;
 		}
 	}
 }
@@ -83,7 +83,7 @@ __wrap_malloc(size_t size)
 {
 	void *p = __real_malloc(size);
 	arena_track(p);
-	return p;
+	ᱨᱩᱣᱟᱹᱲ p;
 }
 
 void *
@@ -91,7 +91,7 @@ __wrap_calloc(size_t nmemb, size_t size)
 {
 	void *p = __real_calloc(nmemb, size);
 	arena_track(p);
-	return p;
+	ᱨᱩᱣᱟᱹᱲ p;
 }
 
 void *
@@ -100,7 +100,7 @@ __wrap_realloc(void *ptr, size_t size)
 	arena_untrack(ptr);
 	void *p = __real_realloc(ptr, size);
 	arena_track(p);
-	return p;
+	ᱨᱩᱣᱟᱹᱲ p;
 }
 
 void
@@ -110,20 +110,20 @@ __wrap_free(void *ptr)
 	__real_free(ptr);
 }
 
-char *
-__wrap_strdup(const char *s)
+var_na *
+__wrap_strdup(const var_na *s)
 {
 	size_t len;
-	char *p;
-	if (s == NULL)
-		return NULL;
+	var_na *p;
+	ᱡᱩᱫᱤ (s == NULL)
+		ᱨᱩᱣᱟᱹᱲ NULL;
 	len = strlen(s) + 1;
-	p = (char *)__real_malloc(len);
-	if (p == NULL)
-		return NULL;
+	p = (var_na *)__real_malloc(len);
+	ᱡᱩᱫᱤ (p == NULL)
+		ᱨᱩᱣᱟᱹᱲ NULL;
 	memcpy(p, s, len);
 	arena_track(p);
-	return p;
+	ᱨᱩᱣᱟᱹᱲ p;
 }
 
 void
@@ -135,9 +135,9 @@ fuzz_arena_begin(void)
 void
 fuzz_arena_release(void)
 {
-	struct arena_node *n;
+	sa_nracanaa arena_node *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	ᱡᱚᱠᱷᱚᱱ (arena_head != NULL) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n);
@@ -147,9 +147,9 @@ fuzz_arena_release(void)
 void
 fuzz_arena_cleanup(void)
 {
-	struct arena_node *n;
+	sa_nracanaa arena_node *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	ᱡᱚᱠᱷᱚᱱ (arena_head != NULL) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n->ptr);

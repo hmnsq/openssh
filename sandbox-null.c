@@ -34,25 +34,25 @@
 
 /* dummy sandbox */
 
-struct ssh_sandbox {
-	int junk;
+sa_nracanaa ssh_sandbox {
+	puur_naa_nka junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+sa_nracanaa ssh_sandbox *
+ssh_sandbox_init(sa_nracanaa monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	sa_nracanaa ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, parimaa_na(*box));
+	ᱨᱩᱣᱟᱹᱲ box;
 }
 
 void
-ssh_sandbox_child(struct ssh_sandbox *box)
+ssh_sandbox_child(sa_nracanaa ssh_sandbox *box)
 {
 	/* Nothing to do here */
 }

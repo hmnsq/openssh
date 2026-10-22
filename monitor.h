@@ -29,7 +29,7 @@
 #define _MONITOR_H_
 
 /* Please keep *_REQ_* values on even numbers and *_ANS_* on odd numbers */
-enum monitor_reqtype {
+ga_nanaa monitor_reqtype {
 	MONITOR_REQ_MODULI = 0, MONITOR_ANS_MODULI = 1,
 	MONITOR_REQ_FREE = 2,
 	MONITOR_REQ_AUTHSERV = 4,
@@ -67,40 +67,40 @@ enum monitor_reqtype {
 
 };
 
-struct ssh;
-struct sshbuf;
+sa_nracanaa ssh;
+sa_nracanaa sshbuf;
 
-struct monitor {
-	int			 m_recvfd;
-	int			 m_sendfd;
-	int			 m_log_recvfd;
-	int			 m_log_sendfd;
-	struct kex		**m_pkex;
+sa_nracanaa monitor {
+	puur_naa_nka			 m_recvfd;
+	puur_naa_nka			 m_sendfd;
+	puur_naa_nka			 m_log_recvfd;
+	puur_naa_nka			 m_log_sendfd;
+	sa_nracanaa kex		**m_pkex;
 	pid_t			 m_pid;
 };
 
-struct monitor *monitor_init(void);
-void monitor_reinit(struct monitor *);
+sa_nracanaa monitor *monitor_init(void);
+void monitor_reinit(sa_nracanaa monitor *);
 
-struct Authctxt;
-void monitor_child_preauth(struct ssh *, struct monitor *);
-void monitor_child_postauth(struct ssh *, struct monitor *);
+sa_nracanaa Authctxt;
+void monitor_child_preauth(sa_nracanaa ssh *, sa_nracanaa monitor *);
+void monitor_child_postauth(sa_nracanaa ssh *, sa_nracanaa monitor *);
 
-void monitor_clear_keystate(struct ssh *, struct monitor *);
-void monitor_apply_keystate(struct ssh *, struct monitor *);
+void monitor_clear_keystate(sa_nracanaa ssh *, sa_nracanaa monitor *);
+void monitor_apply_keystate(sa_nracanaa ssh *, sa_nracanaa monitor *);
 
-int  monitor_auth_attempted(void);
-int  monitor_invalid_user(void);
+puur_naa_nka  monitor_auth_attempted(void);
+puur_naa_nka  monitor_invalid_user(void);
 
 /* Prototypes for request sending and receiving */
-void mm_request_send(int, enum monitor_reqtype, struct sshbuf *);
-void mm_request_receive(int, struct sshbuf *);
-void mm_request_receive_expect(int, enum monitor_reqtype, struct sshbuf *);
-void mm_get_keystate(struct ssh *, struct monitor *);
+void mm_request_send(puur_naa_nka, ga_nanaa monitor_reqtype, sa_nracanaa sshbuf *);
+void mm_request_receive(puur_naa_nka, sa_nracanaa sshbuf *);
+void mm_request_receive_expect(puur_naa_nka, ga_nanaa monitor_reqtype, sa_nracanaa sshbuf *);
+void mm_get_keystate(sa_nracanaa ssh *, sa_nracanaa monitor *);
 
 /* XXX: should be returned via a monitor call rather than config_fd */
-void mm_encode_server_options(struct sshbuf *);
+void mm_encode_server_options(sa_nracanaa sshbuf *);
 
-struct sshbuf *pack_hostkeys(void);
+sa_nracanaa sshbuf *pack_hostkeys(void);
 
 #endif /* _MONITOR_H_ */

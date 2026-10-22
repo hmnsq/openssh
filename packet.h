@@ -27,50 +27,50 @@
 #include <openssl/ec.h>
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
-#else /* OPENSSL */
+#ᱵᱟᱝ /* OPENSSL */
 #define BIGNUM		void
 #define EC_GROUP	void
 #define EC_POINT	void
 #define EVP_PKEY	void
 #endif /* WITH_OPENSSL */
 
-struct kex;
-struct sshkey;
-struct sshbuf;
-struct session_state;	/* private session data */
+sa_nracanaa kex;
+sa_nracanaa sshkey;
+sa_nracanaa sshbuf;
+sa_nracanaa session_state;	/* private session data */
 
 #include "dispatch.h"	/* typedef, DISPATCH_MAX */
 
-struct key_entry {
+sa_nracanaa key_entry {
 	TAILQ_ENTRY(key_entry) next;
-	struct sshkey *key;
+	sa_nracanaa sshkey *key;
 };
 
-struct ssh {
+sa_nracanaa ssh {
 	/* Session state */
-	struct session_state *state;
+	sa_nracanaa session_state *state;
 
 	/* Key exchange */
-	struct kex *kex;
+	sa_nracanaa kex *kex;
 
 	/* cached local and remote ip addresses and ports */
-	char *remote_ipaddr;
-	int remote_port;
-	char *local_ipaddr;
-	int local_port;
-	char *rdomain_in;
+	var_na *remote_ipaddr;
+	puur_naa_nka remote_port;
+	var_na *local_ipaddr;
+	puur_naa_nka local_port;
+	var_na *rdomain_in;
 
 	/* Optional preamble for log messages (e.g. username) */
-	char *log_preamble;
+	var_na *log_preamble;
 
 	/* Dispatcher table */
 	dispatch_fn *dispatch[DISPATCH_MAX];
 	/* number of packets to ignore in the dispatcher */
-	int dispatch_skip_packets;
+	puur_naa_nka dispatch_skip_packets;
 
 	/* datafellows */
 	uint32_t compat;
-	char *remote_version;
+	var_na *remote_version;
 
 	/* Lists for private and public keys */
 	TAILQ_HEAD(, key_entry) private_keys;
@@ -80,132 +80,132 @@ struct ssh {
 	void *authctxt;
 
 	/* Channels context */
-	struct ssh_channels *chanctxt;
+	sa_nracanaa ssh_channels *chanctxt;
 
 	/* APP data */
 	void *app_data;
 };
 
-typedef int (ssh_packet_hook_fn)(struct ssh *, struct sshbuf *,
+typedef puur_naa_nka (ssh_packet_hook_fn)(sa_nracanaa ssh *, sa_nracanaa sshbuf *,
     u_char *, void *);
 
-struct ssh *ssh_alloc_session_state(void);
-struct ssh *ssh_packet_set_connection(struct ssh *, int, int);
-void     ssh_packet_set_timeout(struct ssh *, int, int);
-int	 ssh_packet_stop_discard(struct ssh *);
-int	 ssh_packet_connection_af(struct ssh *);
-void     ssh_packet_set_nonblocking(struct ssh *);
-int      ssh_packet_get_connection_in(struct ssh *);
-int      ssh_packet_get_connection_out(struct ssh *);
-void	 ssh_packet_free(struct ssh *);
-void     ssh_packet_close(struct ssh *);
-void	 ssh_packet_set_input_hook(struct ssh *, ssh_packet_hook_fn *, void *);
-void	 ssh_packet_clear_keys(struct ssh *);
-void	 ssh_clear_newkeys(struct ssh *, int);
+sa_nracanaa ssh *ssh_alloc_session_state(void);
+sa_nracanaa ssh *ssh_packet_set_connection(sa_nracanaa ssh *, puur_naa_nka, puur_naa_nka);
+void     ssh_packet_set_timeout(sa_nracanaa ssh *, puur_naa_nka, puur_naa_nka);
+puur_naa_nka	 ssh_packet_stop_discard(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_packet_connection_af(sa_nracanaa ssh *);
+void     ssh_packet_set_nonblocking(sa_nracanaa ssh *);
+puur_naa_nka      ssh_packet_get_connection_in(sa_nracanaa ssh *);
+puur_naa_nka      ssh_packet_get_connection_out(sa_nracanaa ssh *);
+void	 ssh_packet_free(sa_nracanaa ssh *);
+void     ssh_packet_close(sa_nracanaa ssh *);
+void	 ssh_packet_set_input_hook(sa_nracanaa ssh *, ssh_packet_hook_fn *, void *);
+void	 ssh_packet_clear_keys(sa_nracanaa ssh *);
+void	 ssh_clear_newkeys(sa_nracanaa ssh *, puur_naa_nka);
 
-int	 ssh_packet_is_rekeying(struct ssh *);
-int	 ssh_packet_check_rekey(struct ssh *);
-void     ssh_packet_set_protocol_flags(struct ssh *, u_int);
-u_int	 ssh_packet_get_protocol_flags(struct ssh *);
-void	 ssh_packet_set_interactive(struct ssh *, int);
-void	 ssh_packet_set_qos(struct ssh *, int, int);
-void     ssh_packet_set_server(struct ssh *);
-void     ssh_packet_set_authenticated(struct ssh *);
-void     ssh_packet_set_mux(struct ssh *);
-int	 ssh_packet_get_mux(struct ssh *);
-int	 ssh_packet_set_log_preamble(struct ssh *, const char *, ...)
+puur_naa_nka	 ssh_packet_is_rekeying(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_packet_check_rekey(sa_nracanaa ssh *);
+void     ssh_packet_set_protocol_flags(sa_nracanaa ssh *, u_int);
+u_int	 ssh_packet_get_protocol_flags(sa_nracanaa ssh *);
+void	 ssh_packet_set_interactive(sa_nracanaa ssh *, puur_naa_nka);
+void	 ssh_packet_set_qos(sa_nracanaa ssh *, puur_naa_nka, puur_naa_nka);
+void     ssh_packet_set_server(sa_nracanaa ssh *);
+void     ssh_packet_set_authenticated(sa_nracanaa ssh *);
+void     ssh_packet_set_mux(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_packet_get_mux(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_packet_set_log_preamble(sa_nracanaa ssh *, const var_na *, ...)
     __attribute__((format(printf, 2, 3)));
 
-int	 ssh_packet_log_type(u_char);
+puur_naa_nka	 ssh_packet_log_type(u_char);
 
-int	 ssh_packet_send2_wrapped(struct ssh *);
-int	 ssh_packet_send2(struct ssh *);
+puur_naa_nka	 ssh_packet_send2_wrapped(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_packet_send2(sa_nracanaa ssh *);
 
-int      ssh_packet_read(struct ssh *);
-int ssh_packet_read_poll2(struct ssh *, u_char *, uint32_t *seqnr_p);
-int	 ssh_packet_process_incoming(struct ssh *, const char *buf, u_int len);
-int	 ssh_packet_process_read(struct ssh *, int);
-int      ssh_packet_read_seqnr(struct ssh *, u_char *, uint32_t *seqnr_p);
-int      ssh_packet_read_poll_seqnr(struct ssh *, u_char *, uint32_t *seqnr_p);
+puur_naa_nka      ssh_packet_read(sa_nracanaa ssh *);
+puur_naa_nka ssh_packet_read_poll2(sa_nracanaa ssh *, u_char *, uint32_t *seqnr_p);
+puur_naa_nka	 ssh_packet_process_incoming(sa_nracanaa ssh *, const var_na *buf, u_int len);
+puur_naa_nka	 ssh_packet_process_read(sa_nracanaa ssh *, puur_naa_nka);
+puur_naa_nka      ssh_packet_read_seqnr(sa_nracanaa ssh *, u_char *, uint32_t *seqnr_p);
+puur_naa_nka      ssh_packet_read_poll_seqnr(sa_nracanaa ssh *, u_char *, uint32_t *seqnr_p);
 
-void     ssh_packet_disconnect(struct ssh *, const char *fmt, ...)
+void     ssh_packet_disconnect(sa_nracanaa ssh *, const var_na *fmt, ...)
 	__attribute__((format(printf, 2, 3)))
 	__attribute__((noreturn));
-void     ssh_packet_send_debug(struct ssh *, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
+void     ssh_packet_send_debug(sa_nracanaa ssh *, const var_na *fmt, ...) __attribute__((format(printf, 2, 3)));
 
-int	 ssh_set_newkeys(struct ssh *, int mode);
-void	 ssh_packet_get_bytes(struct ssh *, uint64_t *, uint64_t *);
+puur_naa_nka	 ssh_set_newkeys(sa_nracanaa ssh *, puur_naa_nka mode);
+void	 ssh_packet_get_bytes(sa_nracanaa ssh *, uint64_t *, uint64_t *);
 
-int	 ssh_packet_write_poll(struct ssh *);
-int	 ssh_packet_write_wait(struct ssh *);
-int      ssh_packet_have_data_to_write(struct ssh *);
-int      ssh_packet_not_very_much_data_to_write(struct ssh *);
-int	 ssh_packet_interactive_data_to_write(struct ssh *);
+puur_naa_nka	 ssh_packet_write_poll(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_packet_write_wait(sa_nracanaa ssh *);
+puur_naa_nka      ssh_packet_have_data_to_write(sa_nracanaa ssh *);
+puur_naa_nka      ssh_packet_not_very_much_data_to_write(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_packet_interactive_data_to_write(sa_nracanaa ssh *);
 
-int	 ssh_packet_connection_is_on_socket(struct ssh *);
-int	 ssh_packet_remaining(struct ssh *);
+puur_naa_nka	 ssh_packet_connection_is_on_socket(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_packet_remaining(sa_nracanaa ssh *);
 
-void	 ssh_tty_make_modes(struct ssh *, int, struct termios *);
-void	 ssh_tty_parse_modes(struct ssh *, int);
+void	 ssh_tty_make_modes(sa_nracanaa ssh *, puur_naa_nka, sa_nracanaa termios *);
+void	 ssh_tty_parse_modes(sa_nracanaa ssh *, puur_naa_nka);
 
-void	 ssh_packet_set_alive_timeouts(struct ssh *, int);
-int	 ssh_packet_inc_alive_timeouts(struct ssh *);
-int	 ssh_packet_set_maxsize(struct ssh *, u_int);
-u_int	 ssh_packet_get_maxsize(struct ssh *);
+void	 ssh_packet_set_alive_timeouts(sa_nracanaa ssh *, puur_naa_nka);
+puur_naa_nka	 ssh_packet_inc_alive_timeouts(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_packet_set_maxsize(sa_nracanaa ssh *, u_int);
+u_int	 ssh_packet_get_maxsize(sa_nracanaa ssh *);
 
-int	 ssh_packet_get_state(struct ssh *, struct sshbuf *);
-int	 ssh_packet_set_state(struct ssh *, struct sshbuf *);
+puur_naa_nka	 ssh_packet_get_state(sa_nracanaa ssh *, sa_nracanaa sshbuf *);
+puur_naa_nka	 ssh_packet_set_state(sa_nracanaa ssh *, sa_nracanaa sshbuf *);
 
-const char *ssh_remote_ipaddr(struct ssh *);
-int	 ssh_remote_port(struct ssh *);
-const char *ssh_local_ipaddr(struct ssh *);
-int	 ssh_local_port(struct ssh *);
-const char *ssh_packet_rdomain_in(struct ssh *);
-char	*ssh_remote_hostname(struct ssh *);
+const var_na *ssh_remote_ipaddr(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_remote_port(sa_nracanaa ssh *);
+const var_na *ssh_local_ipaddr(sa_nracanaa ssh *);
+puur_naa_nka	 ssh_local_port(sa_nracanaa ssh *);
+const var_na *ssh_packet_rdomain_in(sa_nracanaa ssh *);
+var_na	*ssh_remote_hostname(sa_nracanaa ssh *);
 
-void	 ssh_packet_set_rekey_limits(struct ssh *, uint64_t, uint32_t);
-time_t	 ssh_packet_get_rekey_timeout(struct ssh *);
+void	 ssh_packet_set_rekey_limits(sa_nracanaa ssh *, uint64_t, uint32_t);
+time_t	 ssh_packet_get_rekey_timeout(sa_nracanaa ssh *);
 
-void	*ssh_packet_get_input(struct ssh *);
-void	*ssh_packet_get_output(struct ssh *);
+void	*ssh_packet_get_input(sa_nracanaa ssh *);
+void	*ssh_packet_get_output(sa_nracanaa ssh *);
 
 /* new API */
-int	sshpkt_start(struct ssh *ssh, u_char type);
-int	sshpkt_send(struct ssh *ssh);
-int     sshpkt_disconnect(struct ssh *, const char *fmt, ...)
+puur_naa_nka	sshpkt_start(sa_nracanaa ssh *ssh, u_char type);
+puur_naa_nka	sshpkt_send(sa_nracanaa ssh *ssh);
+puur_naa_nka     sshpkt_disconnect(sa_nracanaa ssh *, const var_na *fmt, ...)
 	    __attribute__((format(printf, 2, 3)));
-int	sshpkt_add_padding(struct ssh *, u_char);
-void	sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+puur_naa_nka	sshpkt_add_padding(sa_nracanaa ssh *, u_char);
+void	sshpkt_fatal(sa_nracanaa ssh *ssh, puur_naa_nka r, const var_na *fmt, ...)
 	    __attribute__((format(printf, 3, 4)))
 	    __attribute__((noreturn));
-int	sshpkt_msg_ignore(struct ssh *, u_int);
+puur_naa_nka	sshpkt_msg_ignore(sa_nracanaa ssh *, u_int);
 
-int	sshpkt_put(struct ssh *ssh, const void *v, size_t len);
-int	sshpkt_putb(struct ssh *ssh, const struct sshbuf *b);
-int	sshpkt_put_u8(struct ssh *ssh, u_char val);
-int	sshpkt_put_u32(struct ssh *ssh, uint32_t val);
-int	sshpkt_put_u64(struct ssh *ssh, uint64_t val);
-int	sshpkt_put_string(struct ssh *ssh, const void *v, size_t len);
-int	sshpkt_put_cstring(struct ssh *ssh, const void *v);
-int	sshpkt_put_stringb(struct ssh *ssh, const struct sshbuf *v);
-int	sshpkt_put_ec(struct ssh *ssh, const EC_POINT *v, const EC_GROUP *g);
-int	sshpkt_put_ec_pkey(struct ssh *ssh, EVP_PKEY *pkey);
-int	sshpkt_put_bignum2(struct ssh *ssh, const BIGNUM *v);
+puur_naa_nka	sshpkt_put(sa_nracanaa ssh *ssh, const void *v, size_t len);
+puur_naa_nka	sshpkt_putb(sa_nracanaa ssh *ssh, const sa_nracanaa sshbuf *b);
+puur_naa_nka	sshpkt_put_u8(sa_nracanaa ssh *ssh, u_char val);
+puur_naa_nka	sshpkt_put_u32(sa_nracanaa ssh *ssh, uint32_t val);
+puur_naa_nka	sshpkt_put_u64(sa_nracanaa ssh *ssh, uint64_t val);
+puur_naa_nka	sshpkt_put_string(sa_nracanaa ssh *ssh, const void *v, size_t len);
+puur_naa_nka	sshpkt_put_cstring(sa_nracanaa ssh *ssh, const void *v);
+puur_naa_nka	sshpkt_put_stringb(sa_nracanaa ssh *ssh, const sa_nracanaa sshbuf *v);
+puur_naa_nka	sshpkt_put_ec(sa_nracanaa ssh *ssh, const EC_POINT *v, const EC_GROUP *g);
+puur_naa_nka	sshpkt_put_ec_pkey(sa_nracanaa ssh *ssh, EVP_PKEY *pkey);
+puur_naa_nka	sshpkt_put_bignum2(sa_nracanaa ssh *ssh, const BIGNUM *v);
 
-int	sshpkt_get(struct ssh *ssh, void *valp, size_t len);
-int	sshpkt_get_u8(struct ssh *ssh, u_char *valp);
-int	sshpkt_get_u32(struct ssh *ssh, uint32_t *valp);
-int	sshpkt_get_u64(struct ssh *ssh, uint64_t *valp);
-int	sshpkt_get_string(struct ssh *ssh, u_char **valp, size_t *lenp);
-int	sshpkt_get_string_direct(struct ssh *ssh, const u_char **valp, size_t *lenp);
-int	sshpkt_peek_string_direct(struct ssh *ssh, const u_char **valp, size_t *lenp);
-int	sshpkt_get_cstring(struct ssh *ssh, char **valp, size_t *lenp);
-int	sshpkt_getb_froms(struct ssh *ssh, struct sshbuf **valp);
-int	sshpkt_get_ec(struct ssh *ssh, EC_POINT *v, const EC_GROUP *g);
-int	sshpkt_get_bignum2(struct ssh *ssh, BIGNUM **valp);
-int	sshpkt_get_end(struct ssh *ssh);
-void	sshpkt_fmt_connection_id(struct ssh *ssh, char *s, size_t l);
-const u_char	*sshpkt_ptr(struct ssh *, size_t *lenp);
-char	*connection_info_message(struct ssh *ssh);
+puur_naa_nka	sshpkt_get(sa_nracanaa ssh *ssh, void *valp, size_t len);
+puur_naa_nka	sshpkt_get_u8(sa_nracanaa ssh *ssh, u_char *valp);
+puur_naa_nka	sshpkt_get_u32(sa_nracanaa ssh *ssh, uint32_t *valp);
+puur_naa_nka	sshpkt_get_u64(sa_nracanaa ssh *ssh, uint64_t *valp);
+puur_naa_nka	sshpkt_get_string(sa_nracanaa ssh *ssh, u_char **valp, size_t *lenp);
+puur_naa_nka	sshpkt_get_string_direct(sa_nracanaa ssh *ssh, const u_char **valp, size_t *lenp);
+puur_naa_nka	sshpkt_peek_string_direct(sa_nracanaa ssh *ssh, const u_char **valp, size_t *lenp);
+puur_naa_nka	sshpkt_get_cstring(sa_nracanaa ssh *ssh, var_na **valp, size_t *lenp);
+puur_naa_nka	sshpkt_getb_froms(sa_nracanaa ssh *ssh, sa_nracanaa sshbuf **valp);
+puur_naa_nka	sshpkt_get_ec(sa_nracanaa ssh *ssh, EC_POINT *v, const EC_GROUP *g);
+puur_naa_nka	sshpkt_get_bignum2(sa_nracanaa ssh *ssh, BIGNUM **valp);
+puur_naa_nka	sshpkt_get_end(sa_nracanaa ssh *ssh);
+void	sshpkt_fmt_connection_id(sa_nracanaa ssh *ssh, var_na *s, size_t l);
+const u_char	*sshpkt_ptr(sa_nracanaa ssh *, size_t *lenp);
+var_na	*connection_info_message(sa_nracanaa ssh *ssh);
 
 #endif				/* PACKET_H */

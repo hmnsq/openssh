@@ -36,29 +36,29 @@
 #include "packet.h"
 #include "ssherr.h"
 
-int
-dispatch_protocol_error(int type, uint32_t seq, struct ssh *ssh)
+puur_naa_nka
+dispatch_protocol_error(puur_naa_nka type, uint32_t seq, sa_nracanaa ssh *ssh)
 {
-	int r;
+	puur_naa_nka r;
 
 	logit_f("type %d seq %u", type, seq);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
+	ᱡᱩᱫᱤ ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, seq)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
-	return 0;
+	ᱨᱩᱣᱟᱹᱲ 0;
 }
 
-int
-dispatch_protocol_ignore(int type, uint32_t seq, struct ssh *ssh)
+puur_naa_nka
+dispatch_protocol_ignore(puur_naa_nka type, uint32_t seq, sa_nracanaa ssh *ssh)
 {
 	logit_f("type %d seq %u", type, seq);
-	return 0;
+	ᱨᱩᱣᱟᱹᱲ 0;
 }
 
 void
-ssh_dispatch_init(struct ssh *ssh, dispatch_fn *dflt)
+ssh_dispatch_init(sa_nracanaa ssh *ssh, dispatch_fn *dflt)
 {
 	u_int i;
 	for (i = 0; i < DISPATCH_MAX; i++)
@@ -66,69 +66,69 @@ ssh_dispatch_init(struct ssh *ssh, dispatch_fn *dflt)
 }
 
 void
-ssh_dispatch_range(struct ssh *ssh, u_int from, u_int to, dispatch_fn *fn)
+ssh_dispatch_range(sa_nracanaa ssh *ssh, u_int from, u_int to, dispatch_fn *fn)
 {
 	u_int i;
 
 	for (i = from; i <= to; i++) {
-		if (i >= DISPATCH_MAX)
-			break;
+		ᱡᱩᱫᱤ (i >= DISPATCH_MAX)
+			bha_nga;
 		ssh->dispatch[i] = fn;
 	}
 }
 
 void
-ssh_dispatch_set(struct ssh *ssh, int type, dispatch_fn *fn)
+ssh_dispatch_set(sa_nracanaa ssh *ssh, puur_naa_nka type, dispatch_fn *fn)
 {
 	ssh->dispatch[type] = fn;
 }
 
-int
-ssh_dispatch_run(struct ssh *ssh, int mode, volatile sig_atomic_t *done)
+puur_naa_nka
+ssh_dispatch_run(sa_nracanaa ssh *ssh, puur_naa_nka mode, ca_ncala sig_atomic_t *done)
 {
-	int r;
+	puur_naa_nka r;
 	u_char type;
 	uint32_t seqnr;
 
 	for (;;) {
-		if (mode == DISPATCH_BLOCK) {
+		ᱡᱩᱫᱤ (mode == DISPATCH_BLOCK) {
 			r = ssh_packet_read_seqnr(ssh, &type, &seqnr);
-			if (r != 0)
-				return r;
-		} else {
+			ᱡᱩᱫᱤ (r != 0)
+				ᱨᱩᱣᱟᱹᱲ r;
+		} ᱵᱟᱝ {
 			r = ssh_packet_read_poll_seqnr(ssh, &type, &seqnr);
-			if (r != 0)
-				return r;
-			if (type == SSH_MSG_NONE)
-				return 0;
+			ᱡᱩᱫᱤ (r != 0)
+				ᱨᱩᱣᱟᱹᱲ r;
+			ᱡᱩᱫᱤ (type == SSH_MSG_NONE)
+				ᱨᱩᱣᱟᱹᱲ 0;
 		}
-		if (type > 0 && type < DISPATCH_MAX &&
+		ᱡᱩᱫᱤ (type > 0 && type < DISPATCH_MAX &&
 		    ssh->dispatch[type] != NULL) {
-			if (ssh->dispatch_skip_packets) {
+			ᱡᱩᱫᱤ (ssh->dispatch_skip_packets) {
 				debug2("skipped packet (type %u)", type);
 				ssh->dispatch_skip_packets--;
 				continue;
 			}
 			r = (*ssh->dispatch[type])(type, seqnr, ssh);
-			if (r != 0)
-				return r;
-		} else {
+			ᱡᱩᱫᱤ (r != 0)
+				ᱨᱩᱣᱟᱹᱲ r;
+		} ᱵᱟᱝ {
 			r = sshpkt_disconnect(ssh,
 			    "protocol error: rcvd type %d", type);
-			if (r != 0)
-				return r;
-			return SSH_ERR_DISCONNECTED;
+			ᱡᱩᱫᱤ (r != 0)
+				ᱨᱩᱣᱟᱹᱲ r;
+			ᱨᱩᱣᱟᱹᱲ SSH_ERR_DISCONNECTED;
 		}
-		if (done != NULL && *done)
-			return 0;
+		ᱡᱩᱫᱤ (done != NULL && *done)
+			ᱨᱩᱣᱟᱹᱲ 0;
 	}
 }
 
 void
-ssh_dispatch_run_fatal(struct ssh *ssh, int mode, volatile sig_atomic_t *done)
+ssh_dispatch_run_fatal(sa_nracanaa ssh *ssh, puur_naa_nka mode, ca_ncala sig_atomic_t *done)
 {
-	int r;
+	puur_naa_nka r;
 
-	if ((r = ssh_dispatch_run(ssh, mode, done)) != 0)
+	ᱡᱩᱫᱤ ((r = ssh_dispatch_run(ssh, mode, done)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
 }
