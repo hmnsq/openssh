@@ -22,75 +22,75 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifndef OPENSSL_HAS_ED25519
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ OPENSSL_HAS_ED25519
 
-#include <sys/types.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "crypto_api.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "crypto_api.h"
 
 /* OpenSSH compatibility glue for the small libsodium API subset below. */
-#define ACQUIRE_FENCE (void)0
-#define COMPILER_ASSERT(x) (void)sizeof(char[(x) ? 1 : -1])
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ACQUIRE_FENCE (ਖਾਲੀ)0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ COMPILER_ASSERT(x) (ਖਾਲੀ)ਆਕਾਰ(ਅੱਖਰ[(x) ? 1 : -1])
 
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 # include <openssl/sha.h>
-typedef SHA512_CTX crypto_hash_sha512_state;
-#else
-typedef SHA2_CTX crypto_hash_sha512_state;
-#endif
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ SHA512_CTX crypto_hash_sha512_state;
+#ਨਹੀਂਤਾਂ
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ SHA2_CTX crypto_hash_sha512_state;
+#ਜੇ_ਅੰਤ
 
-static int
+ਸਥਿਰ ਪੂਰਨ
 crypto_hash_sha512_init(crypto_hash_sha512_state *state)
 {
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 	SHA512_Init(state);
-#else
+#ਨਹੀਂਤਾਂ
 	SHA512Init(state);
-#endif
-	return 0;
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ 0;
 }
 
-static int
+ਸਥਿਰ ਪੂਰਨ
 crypto_hash_sha512_update(crypto_hash_sha512_state *state,
-    const unsigned char *in, unsigned long long inlen)
+    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਵਿੱਚ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ inlen)
 {
-#ifdef WITH_OPENSSL
-	SHA512_Update(state, in, inlen);
-#else
-	SHA512Update(state, in, inlen);
-#endif
-	return 0;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+	SHA512_Update(state, ਵਿੱਚ, inlen);
+#ਨਹੀਂਤਾਂ
+	SHA512Update(state, ਵਿੱਚ, inlen);
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ 0;
 }
 
-static int
-crypto_hash_sha512_final(crypto_hash_sha512_state *state, unsigned char *out)
+ਸਥਿਰ ਪੂਰਨ
+crypto_hash_sha512_final(crypto_hash_sha512_state *state, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਬਾਹਰਲਾ)
 {
-#ifdef WITH_OPENSSL
-	SHA512_Final(out, state);
-#else
-	SHA512Final(out, state);
-#endif
-	return 0;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+	SHA512_Final(ਬਾਹਰਲਾ, state);
+#ਨਹੀਂਤਾਂ
+	SHA512Final(ਬਾਹਰਲਾ, state);
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ 0;
 }
 
-static int
-sodium_is_zero(const unsigned char *n, size_t nlen)
+ਸਥਿਰ ਪੂਰਨ
+sodium_is_zero(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *n, ਮਾਪ_t nlen)
 {
-	size_t i;
-	volatile unsigned char d = 0;
+	ਮਾਪ_t i;
+	ਅਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ d = 0;
 
-	for (i = 0; i < nlen; i++)
+	ਲਈ (i = 0; i < nlen; i++)
 		d |= n[i];
-	return 1 & ((d - 1) >> 8);
+	ਵਾਪਸ 1 & ((d - 1) >> 8);
 }
 
-#ifndef ed25519_ref10_H
-#define ed25519_ref10_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ed25519_ref10_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ed25519_ref10_H
 
 
 
@@ -99,19 +99,19 @@ sodium_is_zero(const unsigned char *n, size_t nlen)
  Here the field is \Z/(2^255-19).
  */
 
-#ifdef HAVE_TI_MODE
-typedef uint64_t fe25519[5];
-#else
-typedef int32_t fe25519[10];
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_TI_ਬਹੁਲਕ
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ uint64_t fe25519[5];
+#ਨਹੀਂਤਾਂ
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ int32_t fe25519[10];
+#ਜੇ_ਅੰਤ
 
-static void fe25519_invert(fe25519 out, const fe25519 z);
-static void fe25519_frombytes(fe25519 h, const unsigned char *s);
-static void fe25519_tobytes(unsigned char *s, const fe25519 h);
+ਸਥਿਰ ਖਾਲੀ fe25519_invert(fe25519 ਬਾਹਰਲਾ, ਅਚਲ fe25519 z);
+ਸਥਿਰ ਖਾਲੀ fe25519_frombytes(fe25519 h, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s);
+ਸਥਿਰ ਖਾਲੀ fe25519_tobytes(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s, ਅਚਲ fe25519 h);
 
-#ifdef HAVE_TI_MODE
-#else
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_TI_ਬਹੁਲਕ
+#ਨਹੀਂਤਾਂ
+#ਜੇ_ਅੰਤ
 
 /*
  ge means group element.
@@ -127,33 +127,33 @@ static void fe25519_tobytes(unsigned char *s, const fe25519 h);
  ge25519_precomp (Duif): (y+x,y-x,2dxy)
  */
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
 } ge25519_p2;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
     fe25519 T;
 } ge25519_p3;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     fe25519 X;
     fe25519 Y;
     fe25519 Z;
     fe25519 T;
 } ge25519_p1p1;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     fe25519 yplusx;
     fe25519 yminusx;
     fe25519 xy2d;
 } ge25519_precomp;
 
-typedef struct {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
     fe25519 YplusX;
     fe25519 YminusX;
     fe25519 Z;
@@ -161,35 +161,35 @@ typedef struct {
 } ge25519_cached;
 
 
-static void ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h);
+ਸਥਿਰ ਖਾਲੀ ge25519_p3_tobytes(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s, ਅਚਲ ge25519_p3 *h);
 
-static int ge25519_frombytes(ge25519_p3 *h, const unsigned char *s);
+ਸਥਿਰ ਪੂਰਨ ge25519_frombytes(ge25519_p3 *h, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s);
 
-static int ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s);
+ਸਥਿਰ ਪੂਰਨ ge25519_frombytes_negate_vartime(ge25519_p3 *h, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s);
 
-static void ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p);
+ਸਥਿਰ ਖਾਲੀ ge25519_p1p1_ਮੰਜ਼ਿਲ_p2(ge25519_p2 *r, ਅਚਲ ge25519_p1p1 *p);
 
-static void ge25519_p1p1_to_p3(ge25519_p3 *r, const ge25519_p1p1 *p);
+ਸਥਿਰ ਖਾਲੀ ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(ge25519_p3 *r, ਅਚਲ ge25519_p1p1 *p);
 
-static void ge25519_p2_to_p3(ge25519_p3 *r, const ge25519_p2 *p);
+ਸਥਿਰ ਖਾਲੀ ge25519_p2_ਮੰਜ਼ਿਲ_p3(ge25519_p3 *r, ਅਚਲ ge25519_p2 *p);
 
-static void ge25519_p3_add(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q);
+ਸਥਿਰ ਖਾਲੀ ge25519_p3_ਜੋੜੋ(ge25519_p3 *r, ਅਚਲ ge25519_p3 *p, ਅਚਲ ge25519_p3 *q);
 
-static void ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q);
+ਸਥਿਰ ਖਾਲੀ ge25519_p3_sub(ge25519_p3 *r, ਅਚਲ ge25519_p3 *p, ਅਚਲ ge25519_p3 *q);
 
-static void ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a);
+ਸਥਿਰ ਖਾਲੀ ge25519_scalarmult_ਅਧਾਰ(ge25519_p3 *h, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *a);
 
-static void ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
-                                       const ge25519_p3 *A,
-                                       const unsigned char *b);
-
-
-
-static int ge25519_is_canonical(const unsigned char *s);
+ਸਥਿਰ ਖਾਲੀ ge25519_double_scalarmult_vartime(ge25519_p2 *r, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *a,
+                                       ਅਚਲ ge25519_p3 *A,
+                                       ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *b);
 
 
 
-static int ge25519_has_small_order(const ge25519_p3 *p);
+ਸਥਿਰ ਪੂਰਨ ge25519_is_canonical(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s);
+
+
+
+ਸਥਿਰ ਪੂਰਨ ge25519_has_small_ਕ੍ਰਮ(ਅਚਲ ge25519_p3 *p);
 
 
 
@@ -206,37 +206,37 @@ static int ge25519_has_small_order(const ge25519_p3 *p);
  */
 
 
-static void sc25519_reduce(unsigned char s[64]);
+ਸਥਿਰ ਖਾਲੀ sc25519_reduce(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ s[64]);
 
 
-static void sc25519_muladd(unsigned char s[32], const unsigned char a[32],
-                    const unsigned char b[32], const unsigned char c[32]);
+ਸਥਿਰ ਖਾਲੀ sc25519_muladd(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ s[32], ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ a[32],
+                    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ b[32], ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ c[32]);
 
-static int sc25519_is_canonical(const unsigned char s[32]);
+ਸਥਿਰ ਪੂਰਨ sc25519_is_canonical(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ s[32]);
 
-#endif
+#ਜੇ_ਅੰਤ
 
 
 /*
  h = 0
  */
 
-static inline void
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
 fe25519_0(fe25519 h)
 {
-    memset(&h[0], 0, 10 * sizeof h[0]);
+    memset(&h[0], 0, 10 * ਆਕਾਰ h[0]);
 }
 
 /*
  h = 1
  */
 
-static inline void
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
 fe25519_1(fe25519 h)
 {
     h[0] = 1;
     h[1] = 0;
-    memset(&h[2], 0, 8 * sizeof h[0]);
+    memset(&h[2], 0, 8 * ਆਕਾਰ h[0]);
 }
 
 /*
@@ -251,8 +251,8 @@ fe25519_1(fe25519 h)
  |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline void
-fe25519_add(fe25519 h, const fe25519 f, const fe25519 g)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+fe25519_ਜੋੜੋ(fe25519 h, ਅਚਲ fe25519 f, ਅਚਲ fe25519 g)
 {
     int32_t h0 = f[0] + g[0];
     int32_t h1 = f[1] + g[1];
@@ -289,8 +289,8 @@ fe25519_add(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static void
-fe25519_sub(fe25519 h, const fe25519 f, const fe25519 g)
+ਸਥਿਰ ਖਾਲੀ
+fe25519_sub(fe25519 h, ਅਚਲ fe25519 f, ਅਚਲ fe25519 g)
 {
     int32_t h0 = f[0] - g[0];
     int32_t h1 = f[1] - g[1];
@@ -325,8 +325,8 @@ fe25519_sub(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
  */
 
-static inline void
-fe25519_neg(fe25519 h, const fe25519 f)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+fe25519_neg(fe25519 h, ਅਚਲ fe25519 f)
 {
     int32_t h0 = -f[0];
     int32_t h1 = -f[1];
@@ -358,10 +358,10 @@ fe25519_neg(fe25519 h, const fe25519 f)
  Preconditions: b in {0,1}.
  */
 
-static void
-fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
+ਸਥਿਰ ਖਾਲੀ
+fe25519_cmov(fe25519 f, ਅਚਲ fe25519 g, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ b)
 {
-    uint32_t mask = (uint32_t) (-(int32_t) b);
+    uint32_t ਨਕਾਬ = (uint32_t) (-(int32_t) b);
     int32_t  f0, f1, f2, f3, f4, f5, f6, f7, f8, f9;
     int32_t  x0, x1, x2, x3, x4, x5, x6, x7, x8, x9;
 
@@ -387,20 +387,20 @@ fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
     x8 = f8 ^ g[8];
     x9 = f9 ^ g[9];
 
-#ifdef HAVE_INLINE_ASM
-    __asm__ __volatile__("" : "+r"(mask));
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_INLINE_ASM
+    __asm__ __volatile__("" : "+r"(ਨਕਾਬ));
+#ਜੇ_ਅੰਤ
 
-    x0 &= mask;
-    x1 &= mask;
-    x2 &= mask;
-    x3 &= mask;
-    x4 &= mask;
-    x5 &= mask;
-    x6 &= mask;
-    x7 &= mask;
-    x8 &= mask;
-    x9 &= mask;
+    x0 &= ਨਕਾਬ;
+    x1 &= ਨਕਾਬ;
+    x2 &= ਨਕਾਬ;
+    x3 &= ਨਕਾਬ;
+    x4 &= ਨਕਾਬ;
+    x5 &= ਨਕਾਬ;
+    x6 &= ਨਕਾਬ;
+    x7 &= ਨਕਾਬ;
+    x8 &= ਨਕਾਬ;
+    x9 &= ਨਕਾਬ;
 
     f[0] = f0 ^ x0;
     f[1] = f1 ^ x1;
@@ -419,10 +419,10 @@ fe25519_cmov(fe25519 f, const fe25519 g, unsigned int b)
  h = f
  */
 
-static inline void
-fe25519_copy(fe25519 h, const fe25519 f)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+fe25519_copy(fe25519 h, ਅਚਲ fe25519 f)
 {
-    memcpy(h, f, 10 * sizeof h[0]);
+    ਸਮ੍ਰਿਤੀ_ਨਕਲ(h, f, 10 * ਆਕਾਰ h[0]);
 }
 
 /*
@@ -433,14 +433,14 @@ fe25519_copy(fe25519 h, const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
-fe25519_isnegative(const fe25519 f)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ
+fe25519_isnegative(ਅਚਲ fe25519 f)
 {
-    unsigned char s[32];
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ s[32];
 
     fe25519_tobytes(s, f);
 
-    return s[0] & 1;
+    ਵਾਪਸ s[0] & 1;
 }
 
 /*
@@ -451,14 +451,14 @@ fe25519_isnegative(const fe25519 f)
  |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
  */
 
-static inline int
-fe25519_iszero(const fe25519 f)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ
+fe25519_iszero(ਅਚਲ fe25519 f)
 {
-    unsigned char s[32];
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ s[32];
 
     fe25519_tobytes(s, f);
 
-    return sodium_is_zero(s, 32);
+    ਵਾਪਸ sodium_is_zero(s, 32);
 }
 
 /*
@@ -493,8 +493,8 @@ fe25519_iszero(const fe25519 f)
  With tighter constraints on inputs can squeeze carries into int32.
  */
 
-static void
-fe25519_mul(fe25519 h, const fe25519 f, const fe25519 g)
+ਸਥਿਰ ਖਾਲੀ
+fe25519_mul(fe25519 h, ਅਚਲ fe25519 f, ਅਚਲ fe25519 g)
 {
     int32_t f0 = f[0];
     int32_t f1 = f[1];
@@ -763,8 +763,8 @@ fe25519_mul(fe25519 h, const fe25519 f, const fe25519 g)
  |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
  */
 
-static void
-fe25519_sq(fe25519 h, const fe25519 f)
+ਸਥਿਰ ਖਾਲੀ
+fe25519_sq(fe25519 h, ਅਚਲ fe25519 f)
 {
     int32_t f0 = f[0];
     int32_t f1 = f[1];
@@ -935,8 +935,8 @@ fe25519_sq(fe25519 h, const fe25519 f)
  |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
  */
 
-static void
-fe25519_sq2(fe25519 h, const fe25519 f)
+ਸਥਿਰ ਖਾਲੀ
+fe25519_sq2(fe25519 h, ਅਚਲ fe25519 f)
 {
     int32_t f0 = f[0];
     int32_t f1 = f[1];
@@ -1109,29 +1109,29 @@ fe25519_sq2(fe25519 h, const fe25519 f)
 
 
 
-static inline uint64_t
-load_3(const unsigned char *in)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint64_t
+ਲੱਦੋ_3(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਵਿੱਚ)
 {
-    uint64_t result;
+    uint64_t ਨਤੀਜਾ;
 
-    result = (uint64_t) in[0];
-    result |= ((uint64_t) in[1]) << 8;
-    result |= ((uint64_t) in[2]) << 16;
+    ਨਤੀਜਾ = (uint64_t) ਵਿੱਚ[0];
+    ਨਤੀਜਾ |= ((uint64_t) ਵਿੱਚ[1]) << 8;
+    ਨਤੀਜਾ |= ((uint64_t) ਵਿੱਚ[2]) << 16;
 
-    return result;
+    ਵਾਪਸ ਨਤੀਜਾ;
 }
 
-static inline uint64_t
-load_4(const unsigned char *in)
+ਸਥਿਰ ਸਤਰਅੰਦਰ uint64_t
+ਲੱਦੋ_4(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਵਿੱਚ)
 {
-    uint64_t result;
+    uint64_t ਨਤੀਜਾ;
 
-    result = (uint64_t) in[0];
-    result |= ((uint64_t) in[1]) << 8;
-    result |= ((uint64_t) in[2]) << 16;
-    result |= ((uint64_t) in[3]) << 24;
+    ਨਤੀਜਾ = (uint64_t) ਵਿੱਚ[0];
+    ਨਤੀਜਾ |= ((uint64_t) ਵਿੱਚ[1]) << 8;
+    ਨਤੀਜਾ |= ((uint64_t) ਵਿੱਚ[2]) << 16;
+    ਨਤੀਜਾ |= ((uint64_t) ਵਿੱਚ[3]) << 24;
 
-    return result;
+    ਵਾਪਸ ਨਤੀਜਾ;
 }
 
 /*
@@ -1143,24 +1143,24 @@ load_4(const unsigned char *in)
  * via "private/ed25519_ref10.h".
  */
 
-#ifdef HAVE_TI_MODE
-#else
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_TI_ਬਹੁਲਕ
+#ਨਹੀਂਤਾਂ
 /* sqrt(-1) */
-static const fe25519 fe25519_sqrtm1 = {
+ਸਥਿਰ ਅਚਲ fe25519 fe25519_sqrtm1 = {
     -32595792, -7943725,  9377950,  3500415, 12389472, -272473, -25146209, -2005654, 326686, 11406482
 };
 
 /* sqrt(-486664) */
 
 /* 37095705934669439343138083508754565189542113879843219016388785533085940283555 */
-static const fe25519 ed25519_d = {
+ਸਥਿਰ ਅਚਲ fe25519 ed25519_d = {
     -10913610, 13857413, -15372611, 6949391,   114729, -8787816, -6275908, -3247719, -18696448, -12055116
 };
 
 /* 2 * d =
  * 16295367250680780974490674513165176452449235426866156013048779062215315747161
  */
-static const fe25519 ed25519_d2 = {
+ਸਥਿਰ ਅਚਲ fe25519 ed25519_d2 = {
     -21827239, -5839606,  -30745221, 13898782, 229458, 15978800, -12551817, -6495438, 29715968, 9444199 };
 
 /* A = 486662 */
@@ -1177,19 +1177,19 @@ static const fe25519 ed25519_d2 = {
  Ignores top bit of s.
  */
 
-void
-fe25519_frombytes(fe25519 h, const unsigned char *s)
+ਖਾਲੀ
+fe25519_frombytes(fe25519 h, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s)
 {
-    int64_t h0 = load_4(s);
-    int64_t h1 = load_3(s + 4) << 6;
-    int64_t h2 = load_3(s + 7) << 5;
-    int64_t h3 = load_3(s + 10) << 3;
-    int64_t h4 = load_3(s + 13) << 2;
-    int64_t h5 = load_4(s + 16);
-    int64_t h6 = load_3(s + 20) << 7;
-    int64_t h7 = load_3(s + 23) << 5;
-    int64_t h8 = load_3(s + 26) << 4;
-    int64_t h9 = (load_3(s + 29) & 8388607) << 2;
+    int64_t h0 = ਲੱਦੋ_4(s);
+    int64_t h1 = ਲੱਦੋ_3(s + 4) << 6;
+    int64_t h2 = ਲੱਦੋ_3(s + 7) << 5;
+    int64_t h3 = ਲੱਦੋ_3(s + 10) << 3;
+    int64_t h4 = ਲੱਦੋ_3(s + 13) << 2;
+    int64_t h5 = ਲੱਦੋ_4(s + 16);
+    int64_t h6 = ਲੱਦੋ_3(s + 20) << 7;
+    int64_t h7 = ਲੱਦੋ_3(s + 23) << 5;
+    int64_t h8 = ਲੱਦੋ_3(s + 26) << 4;
+    int64_t h9 = (ਲੱਦੋ_3(s + 29) & 8388607) << 2;
 
     int64_t carry0;
     int64_t carry1;
@@ -1271,8 +1271,8 @@ fe25519_frombytes(fe25519 h, const unsigned char *s)
  so floor(2^(-255)(h + 19 2^(-25) h9 + 2^(-1))) = q.
 */
 
-static void
-fe25519_reduce(fe25519 h, const fe25519 f)
+ਸਥਿਰ ਖਾਲੀ
+fe25519_reduce(fe25519 h, ਅਚਲ fe25519 f)
 {
     int32_t h0 = f[0];
     int32_t h1 = f[1];
@@ -1354,8 +1354,8 @@ fe25519_reduce(fe25519 h, const fe25519 f)
  Goal: Output h0+...+2^230 h9.
  */
 
-void
-fe25519_tobytes(unsigned char *s, const fe25519 h)
+ਖਾਲੀ
+fe25519_tobytes(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s, ਅਚਲ fe25519 h)
 {
     fe25519 t;
 
@@ -1393,17 +1393,17 @@ fe25519_tobytes(unsigned char *s, const fe25519 h)
     s[30] = t[9] >> 10;
     s[31] = t[9] >> 18;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 
 /*
  * Inversion - sets out to 0 if z=0
  */
-void
-fe25519_invert(fe25519 out, const fe25519 z)
+ਖਾਲੀ
+fe25519_invert(fe25519 ਬਾਹਰਲਾ, ਅਚਲ fe25519 z)
 {
     fe25519 t0, t1, t2, t3;
-    int     i;
+    ਪੂਰਨ     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1413,53 +1413,53 @@ fe25519_invert(fe25519 out, const fe25519 z)
     fe25519_sq(t2, t0);
     fe25519_mul(t1, t1, t2);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 5; ++i) {
+    ਲਈ (i = 1; i < 5; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 10; ++i) {
+    ਲਈ (i = 1; i < 10; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 20; ++i) {
+    ਲਈ (i = 1; i < 20; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 11; ++i) {
+    ਲਈ (i = 1; i < 11; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 50; ++i) {
+    ਲਈ (i = 1; i < 50; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t2, t2, t1);
     fe25519_sq(t3, t2);
-    for (i = 1; i < 100; ++i) {
+    ਲਈ (i = 1; i < 100; ++i) {
         fe25519_sq(t3, t3);
     }
     fe25519_mul(t2, t3, t2);
-    for (i = 1; i < 51; ++i) {
+    ਲਈ (i = 1; i < 51; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 6; ++i) {
+    ਲਈ (i = 1; i < 6; ++i) {
         fe25519_sq(t1, t1);
     }
-    fe25519_mul(out, t1, t0);
+    fe25519_mul(ਬਾਹਰਲਾ, t1, t0);
 }
 
 /*
  * returns z^((p-5)/8) = z^(2^252-3)
  * used to compute square roots since we have p=5 (mod 8); see Cohen and Frey.
  */
-static void
-fe25519_pow22523(fe25519 out, const fe25519 z)
+ਸਥਿਰ ਖਾਲੀ
+fe25519_pow22523(fe25519 ਬਾਹਰਲਾ, ਅਚਲ fe25519 z)
 {
     fe25519 t0, t1, t2;
-    int     i;
+    ਪੂਰਨ     i;
 
     fe25519_sq(t0, z);
     fe25519_sq(t1, t0);
@@ -1469,41 +1469,41 @@ fe25519_pow22523(fe25519 out, const fe25519 z)
     fe25519_sq(t0, t0);
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 5; ++i) {
+    ਲਈ (i = 1; i < 5; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 10; ++i) {
+    ਲਈ (i = 1; i < 10; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 20; ++i) {
+    ਲਈ (i = 1; i < 20; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 11; ++i) {
+    ਲਈ (i = 1; i < 11; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t1, t0);
-    for (i = 1; i < 50; ++i) {
+    ਲਈ (i = 1; i < 50; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t1, t1, t0);
     fe25519_sq(t2, t1);
-    for (i = 1; i < 100; ++i) {
+    ਲਈ (i = 1; i < 100; ++i) {
         fe25519_sq(t2, t2);
     }
     fe25519_mul(t1, t2, t1);
-    for (i = 1; i < 51; ++i) {
+    ਲਈ (i = 1; i < 51; ++i) {
         fe25519_sq(t1, t1);
     }
     fe25519_mul(t0, t1, t0);
     fe25519_sq(t0, t0);
     fe25519_sq(t0, t0);
-    fe25519_mul(out, t0, z);
+    fe25519_mul(ਬਾਹਰਲਾ, t0, z);
 }
 
 
@@ -1515,59 +1515,59 @@ fe25519_pow22523(fe25519 out, const fe25519 z)
  r = p + q
  */
 
-static void
-ge25519_add_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_ਜੋੜੋ_cached(ge25519_p1p1 *r, ਅਚਲ ge25519_p3 *p, ਅਚਲ ge25519_cached *q)
 {
     fe25519 t0;
 
-    fe25519_add(r->X, p->Y, p->X);
+    fe25519_ਜੋੜੋ(r->X, p->Y, p->X);
     fe25519_sub(r->Y, p->Y, p->X);
     fe25519_mul(r->Z, r->X, q->YplusX);
     fe25519_mul(r->Y, r->Y, q->YminusX);
     fe25519_mul(r->T, q->T2d, p->T);
     fe25519_mul(r->X, p->Z, q->Z);
-    fe25519_add(t0, r->X, r->X);
+    fe25519_ਜੋੜੋ(t0, r->X, r->X);
     fe25519_sub(r->X, r->Z, r->Y);
-    fe25519_add(r->Y, r->Z, r->Y);
-    fe25519_add(r->Z, t0, r->T);
+    fe25519_ਜੋੜੋ(r->Y, r->Z, r->Y);
+    fe25519_ਜੋੜੋ(r->Z, t0, r->T);
     fe25519_sub(r->T, t0, r->T);
 }
 
-static void
-slide_vartime(signed char *r, const unsigned char *a)
+ਸਥਿਰ ਖਾਲੀ
+slide_vartime(ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ *r, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *a)
 {
-    int i;
-    int b;
-    int k;
-    int ribs;
-    int cmp;
+    ਪੂਰਨ i;
+    ਪੂਰਨ b;
+    ਪੂਰਨ k;
+    ਪੂਰਨ ribs;
+    ਪੂਰਨ cmp;
 
-    for (i = 0; i < 256; ++i) {
+    ਲਈ (i = 0; i < 256; ++i) {
         r[i] = 1 & (a[i >> 3] >> (i & 7));
     }
-    for (i = 0; i < 256; ++i) {
-        if (! r[i]) {
-            continue;
+    ਲਈ (i = 0; i < 256; ++i) {
+        ਜੇ (! r[i]) {
+            ਜਾਰੀ;
         }
-        for (b = 1; b <= 6 && i + b < 256; ++b) {
-            if (! r[i + b]) {
-                continue;
+        ਲਈ (b = 1; b <= 6 && i + b < 256; ++b) {
+            ਜੇ (! r[i + b]) {
+                ਜਾਰੀ;
             }
             ribs = r[i + b] << b;
             cmp = r[i] + ribs;
-            if (cmp <= 15) {
+            ਜੇ (cmp <= 15) {
                 r[i] = cmp;
                 r[i + b] = 0;
-            } else {
+            } ਨਹੀਂਤਾਂ {
                 cmp = r[i] - ribs;
-                if (cmp < -15) {
-                    break;
+                ਜੇ (cmp < -15) {
+                    ਰੋਕੋ;
                 }
                 r[i] = cmp;
-                for (k = i + b; k < 256; ++k) {
-                    if (! r[k]) {
+                ਲਈ (k = i + b; k < 256; ++k) {
+                    ਜੇ (! r[k]) {
                         r[k] = 1;
-                        break;
+                        ਰੋਕੋ;
                     }
                     r[k] = 0;
                 }
@@ -1576,25 +1576,25 @@ slide_vartime(signed char *r, const unsigned char *a)
     }
 }
 
-static volatile unsigned char optblocker_u8;
+ਸਥਿਰ ਅਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ optblocker_u8;
 
-int
-ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
+ਪੂਰਨ
+ge25519_frombytes(ge25519_p3 *h, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s)
 {
     fe25519 u;
     fe25519 v;
     fe25519 vxx;
-    fe25519 m_root_check, p_root_check;
+    fe25519 m_ਜੜ੍ਹ_check, p_ਜੜ੍ਹ_check;
     fe25519 negx;
     fe25519 x_sqrtm1;
-    int     has_m_root, has_p_root;
+    ਪੂਰਨ     has_m_ਜੜ੍ਹ, has_p_ਜੜ੍ਹ;
 
     fe25519_frombytes(h->Y, s);
     fe25519_1(h->Z);
     fe25519_sq(u, h->Y);
     fe25519_mul(v, u, ed25519_d);
     fe25519_sub(u, u, h->Z); /* u = y^2-1 */
-    fe25519_add(v, v, h->Z); /* v = dy^2+1 */
+    fe25519_ਜੋੜੋ(v, v, h->Z); /* v = dy^2+1 */
 
     fe25519_mul(h->X, u, v);
     fe25519_pow22523(h->X, h->X);
@@ -1602,35 +1602,35 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
 
     fe25519_sq(vxx, h->X);
     fe25519_mul(vxx, vxx, v);
-    fe25519_sub(m_root_check, vxx, u); /* vx^2-u */
-    fe25519_add(p_root_check, vxx, u); /* vx^2+u */
-    has_m_root = fe25519_iszero(m_root_check);
-    has_p_root = fe25519_iszero(p_root_check);
+    fe25519_sub(m_ਜੜ੍ਹ_check, vxx, u); /* vx^2-u */
+    fe25519_ਜੋੜੋ(p_ਜੜ੍ਹ_check, vxx, u); /* vx^2+u */
+    has_m_ਜੜ੍ਹ = fe25519_iszero(m_ਜੜ੍ਹ_check);
+    has_p_ਜੜ੍ਹ = fe25519_iszero(p_ਜੜ੍ਹ_check);
     fe25519_mul(x_sqrtm1, h->X, fe25519_sqrtm1); /* x*sqrt(-1) */
-    fe25519_cmov(h->X, x_sqrtm1, 1 - has_m_root);
+    fe25519_cmov(h->X, x_sqrtm1, 1 - has_m_ਜੜ੍ਹ);
 
     fe25519_neg(negx, h->X);
     fe25519_cmov(h->X, negx, fe25519_isnegative(h->X) ^ (((s[31] >> 5) ^ optblocker_u8) >> 2));
     fe25519_mul(h->T, h->X, h->Y);
 
-    return (has_m_root | has_p_root) - 1;
+    ਵਾਪਸ (has_m_ਜੜ੍ਹ | has_p_ਜੜ੍ਹ) - 1;
 }
 
-int
-ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
+ਪੂਰਨ
+ge25519_frombytes_negate_vartime(ge25519_p3 *h, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s)
 {
     fe25519 u;
     fe25519 v;
     fe25519 v3;
     fe25519 vxx;
-    fe25519 m_root_check, p_root_check;
+    fe25519 m_ਜੜ੍ਹ_check, p_ਜੜ੍ਹ_check;
 
     fe25519_frombytes(h->Y, s);
     fe25519_1(h->Z);
     fe25519_sq(u, h->Y);
     fe25519_mul(v, u, ed25519_d);
     fe25519_sub(u, u, h->Z); /* u = y^2-1 */
-    fe25519_add(v, v, h->Z); /* v = dy^2+1 */
+    fe25519_ਜੋੜੋ(v, v, h->Z); /* v = dy^2+1 */
 
     fe25519_sq(v3, v);
     fe25519_mul(v3, v3, v); /* v3 = v^3 */
@@ -1644,41 +1644,41 @@ ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
 
     fe25519_sq(vxx, h->X);
     fe25519_mul(vxx, vxx, v);
-    fe25519_sub(m_root_check, vxx, u); /* vx^2-u */
-    if (fe25519_iszero(m_root_check) == 0) {
-        fe25519_add(p_root_check, vxx, u); /* vx^2+u */
-        if (fe25519_iszero(p_root_check) == 0) {
-            return -1;
+    fe25519_sub(m_ਜੜ੍ਹ_check, vxx, u); /* vx^2-u */
+    ਜੇ (fe25519_iszero(m_ਜੜ੍ਹ_check) == 0) {
+        fe25519_ਜੋੜੋ(p_ਜੜ੍ਹ_check, vxx, u); /* vx^2+u */
+        ਜੇ (fe25519_iszero(p_ਜੜ੍ਹ_check) == 0) {
+            ਵਾਪਸ -1;
         }
         fe25519_mul(h->X, h->X, fe25519_sqrtm1);
     }
 
-    if (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
+    ਜੇ (fe25519_isnegative(h->X) == (s[31] >> 7)) { /* vartime function - compiler optimization is fine */
         fe25519_neg(h->X, h->X);
     }
     fe25519_mul(h->T, h->X, h->Y);
 
-    return 0;
+    ਵਾਪਸ 0;
 }
 
 /*
  r = p + q
  */
 
-static void
-ge25519_add_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp *q)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_ਜੋੜੋ_precomp(ge25519_p1p1 *r, ਅਚਲ ge25519_p3 *p, ਅਚਲ ge25519_precomp *q)
 {
     fe25519 t0;
 
-    fe25519_add(r->X, p->Y, p->X);
+    fe25519_ਜੋੜੋ(r->X, p->Y, p->X);
     fe25519_sub(r->Y, p->Y, p->X);
     fe25519_mul(r->Z, r->X, q->yplusx);
     fe25519_mul(r->Y, r->Y, q->yminusx);
     fe25519_mul(r->T, q->xy2d, p->T);
-    fe25519_add(t0, p->Z, p->Z);
+    fe25519_ਜੋੜੋ(t0, p->Z, p->Z);
     fe25519_sub(r->X, r->Z, r->Y);
-    fe25519_add(r->Y, r->Z, r->Y);
-    fe25519_add(r->Z, t0, r->T);
+    fe25519_ਜੋੜੋ(r->Y, r->Z, r->Y);
+    fe25519_ਜੋੜੋ(r->Z, t0, r->T);
     fe25519_sub(r->T, t0, r->T);
 }
 
@@ -1686,29 +1686,29 @@ ge25519_add_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp 
  r = p - q
  */
 
-static void
-ge25519_sub_precomp(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_precomp *q)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_sub_precomp(ge25519_p1p1 *r, ਅਚਲ ge25519_p3 *p, ਅਚਲ ge25519_precomp *q)
 {
     fe25519 t0;
 
-    fe25519_add(r->X, p->Y, p->X);
+    fe25519_ਜੋੜੋ(r->X, p->Y, p->X);
     fe25519_sub(r->Y, p->Y, p->X);
     fe25519_mul(r->Z, r->X, q->yminusx);
     fe25519_mul(r->Y, r->Y, q->yplusx);
     fe25519_mul(r->T, q->xy2d, p->T);
-    fe25519_add(t0, p->Z, p->Z);
+    fe25519_ਜੋੜੋ(t0, p->Z, p->Z);
     fe25519_sub(r->X, r->Z, r->Y);
-    fe25519_add(r->Y, r->Z, r->Y);
+    fe25519_ਜੋੜੋ(r->Y, r->Z, r->Y);
     fe25519_sub(r->Z, t0, r->T);
-    fe25519_add(r->T, t0, r->T);
+    fe25519_ਜੋੜੋ(r->T, t0, r->T);
 }
 
 /*
  r = p
  */
 
-void
-ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p)
+ਖਾਲੀ
+ge25519_p1p1_ਮੰਜ਼ਿਲ_p2(ge25519_p2 *r, ਅਚਲ ge25519_p1p1 *p)
 {
     fe25519_mul(r->X, p->X, p->T);
     fe25519_mul(r->Y, p->Y, p->Z);
@@ -1719,8 +1719,8 @@ ge25519_p1p1_to_p2(ge25519_p2 *r, const ge25519_p1p1 *p)
  r = p
  */
 
-void
-ge25519_p1p1_to_p3(ge25519_p3 *r, const ge25519_p1p1 *p)
+ਖਾਲੀ
+ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(ge25519_p3 *r, ਅਚਲ ge25519_p1p1 *p)
 {
     fe25519_mul(r->X, p->X, p->T);
     fe25519_mul(r->Y, p->Y, p->Z);
@@ -1731,8 +1731,8 @@ ge25519_p1p1_to_p3(ge25519_p3 *r, const ge25519_p1p1 *p)
 /*
  r = p
  */
-void
-ge25519_p2_to_p3(ge25519_p3 *r, const ge25519_p2 *p)
+ਖਾਲੀ
+ge25519_p2_ਮੰਜ਼ਿਲ_p3(ge25519_p3 *r, ਅਚਲ ge25519_p2 *p)
 {
     fe25519_copy(r->X, p->X);
     fe25519_copy(r->Y, p->Y);
@@ -1740,7 +1740,7 @@ ge25519_p2_to_p3(ge25519_p3 *r, const ge25519_p2 *p)
     fe25519_mul(r->T, p->X, p->Y);
 }
 
-static void
+ਸਥਿਰ ਖਾਲੀ
 ge25519_p2_0(ge25519_p2 *h)
 {
     fe25519_0(h->X);
@@ -1752,23 +1752,23 @@ ge25519_p2_0(ge25519_p2 *h)
  r = 2 * p
  */
 
-static void
-ge25519_p2_dbl(ge25519_p1p1 *r, const ge25519_p2 *p)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_p2_dbl(ge25519_p1p1 *r, ਅਚਲ ge25519_p2 *p)
 {
     fe25519 t0;
 
     fe25519_sq(r->X, p->X);
     fe25519_sq(r->Z, p->Y);
     fe25519_sq2(r->T, p->Z);
-    fe25519_add(r->Y, p->X, p->Y);
+    fe25519_ਜੋੜੋ(r->Y, p->X, p->Y);
     fe25519_sq(t0, r->Y);
-    fe25519_add(r->Y, r->Z, r->X);
+    fe25519_ਜੋੜੋ(r->Y, r->Z, r->X);
     fe25519_sub(r->Z, r->Z, r->X);
     fe25519_sub(r->X, t0, r->Y);
     fe25519_sub(r->T, r->T, r->Z);
 }
 
-static void
+ਸਥਿਰ ਖਾਲੀ
 ge25519_p3_0(ge25519_p3 *h)
 {
     fe25519_0(h->X);
@@ -1782,10 +1782,10 @@ ge25519_p3_0(ge25519_p3 *h)
  r = p
  */
 
-static void
-ge25519_p3_to_cached(ge25519_cached *r, const ge25519_p3 *p)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_p3_ਮੰਜ਼ਿਲ_cached(ge25519_cached *r, ਅਚਲ ge25519_p3 *p)
 {
-    fe25519_add(r->YplusX, p->Y, p->X);
+    fe25519_ਜੋੜੋ(r->YplusX, p->Y, p->X);
     fe25519_sub(r->YminusX, p->Y, p->X);
     fe25519_copy(r->Z, p->Z);
     fe25519_mul(r->T2d, p->T, ed25519_d2);
@@ -1796,16 +1796,16 @@ ge25519_p3_to_cached(ge25519_cached *r, const ge25519_p3 *p)
  r = p
  */
 
-static void
-ge25519_p3_to_p2(ge25519_p2 *r, const ge25519_p3 *p)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_p3_ਮੰਜ਼ਿਲ_p2(ge25519_p2 *r, ਅਚਲ ge25519_p3 *p)
 {
     fe25519_copy(r->X, p->X);
     fe25519_copy(r->Y, p->Y);
     fe25519_copy(r->Z, p->Z);
 }
 
-void
-ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h)
+ਖਾਲੀ
+ge25519_p3_tobytes(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s, ਅਚਲ ge25519_p3 *h)
 {
     fe25519 recip;
     fe25519 x;
@@ -1822,15 +1822,15 @@ ge25519_p3_tobytes(unsigned char *s, const ge25519_p3 *h)
  r = 2 * p
  */
 
-static void
-ge25519_p3_dbl(ge25519_p1p1 *r, const ge25519_p3 *p)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_p3_dbl(ge25519_p1p1 *r, ਅਚਲ ge25519_p3 *p)
 {
     ge25519_p2 q;
-    ge25519_p3_to_p2(&q, p);
+    ge25519_p3_ਮੰਜ਼ਿਲ_p2(&q, p);
     ge25519_p2_dbl(r, &q);
 }
 
-static void
+ਸਥਿਰ ਖਾਲੀ
 ge25519_precomp_0(ge25519_precomp *h)
 {
     fe25519_1(h->yplusx);
@@ -1838,46 +1838,46 @@ ge25519_precomp_0(ge25519_precomp *h)
     fe25519_0(h->xy2d);
 }
 
-static unsigned char
-equal(signed char b, signed char c)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ
+equal(ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ b, ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ c)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#ਜੇ defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     int32_t b32 = (int32_t) b, c32 = (int32_t) c, q32, z32;
     __asm__ ("xorl %0,%0\n movl $1,%1\n cmpb %b3,%b2\n cmovel %1,%0" :
              "=&r"(z32), "=&r"(q32) : "q"(b32), "q"(c32) : "cc");
-    return (unsigned char) z32;
-#elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
-    unsigned char z;
+    ਵਾਪਸ (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) z32;
+#ਜਾਂਜੇ defined(HAVE_INLINE_ASM) && defined(__aarch64__)
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ z;
     __asm__ ("and %w0,%w1,255\n cmp %w0,%w2,uxtb\n cset %w0,eq" :
              "=&r"(z) : "r"(b), "r"(c) : "cc");
-    return z;
-#else
-    const unsigned char x  = (unsigned char) b ^ (unsigned char) c; /* 0: yes; 1..255: no */
+    ਵਾਪਸ z;
+#ਨਹੀਂਤਾਂ
+    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ x  = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) b ^ (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) c; /* 0: yes; 1..255: no */
     uint32_t            y  = (uint32_t) x; /* 0: yes; 1..255: no */
 
     y--;
-    return ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
-#endif
+    ਵਾਪਸ ((y >> 29) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+#ਜੇ_ਅੰਤ
 }
 
-static unsigned char
-negative(signed char b)
+ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ
+negative(ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ b)
 {
-#if defined(HAVE_INLINE_ASM) && defined(__x86_64__)
+#ਜੇ defined(HAVE_INLINE_ASM) && defined(__x86_64__)
     __asm__ ("shrb $7,%0" : "+r"(b) : : "cc");
-    return b;
-#elif defined(HAVE_INLINE_ASM) && defined(__aarch64__)
+    ਵਾਪਸ b;
+#ਜਾਂਜੇ defined(HAVE_INLINE_ASM) && defined(__aarch64__)
     uint8_t x;
     __asm__ ("ubfx %w0,%w1,7,1" : "=r"(x) : "r"(b) : );
-    return x;
-#else
-    const uint8_t x = (uint8_t) b; /* 0..127: no 128..255: yes */
-    return ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
-#endif
+    ਵਾਪਸ x;
+#ਨਹੀਂਤਾਂ
+    ਅਚਲ uint8_t x = (uint8_t) b; /* 0..127: no 128..255: yes */
+    ਵਾਪਸ ((x >> 5) ^ optblocker_u8) >> 2; /* 1: yes; 0: no */
+#ਜੇ_ਅੰਤ
 }
 
-static void
-ge25519_cmov(ge25519_precomp *t, const ge25519_precomp *u, unsigned char b)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_cmov(ge25519_precomp *t, ਅਚਲ ge25519_precomp *u, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ b)
 {
     fe25519_cmov(t->yplusx, u->yplusx, b);
     fe25519_cmov(t->yminusx, u->yminusx, b);
@@ -1885,12 +1885,12 @@ ge25519_cmov(ge25519_precomp *t, const ge25519_precomp *u, unsigned char b)
 }
 
 
-static void
-ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed char b)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_cmov8(ge25519_precomp *t, ਅਚਲ ge25519_precomp precomp[8], ਅਚਲ ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ b)
 {
     ge25519_precomp     minust;
-    const unsigned char bnegative = negative(b);
-    const unsigned char babs      = b - (((-bnegative) & b) * ((signed char) 1 << 1));
+    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ bnegative = negative(b);
+    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ babs      = b - (((-bnegative) & b) * ((ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ) 1 << 1));
 
     ge25519_precomp_0(t);
     ge25519_cmov(t, &precomp[0], equal(babs, 1));
@@ -1907,12 +1907,12 @@ ge25519_cmov8(ge25519_precomp *t, const ge25519_precomp precomp[8], const signed
     ge25519_cmov(t, &minust, bnegative);
 }
 
-static void
-ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_cmov8_ਅਧਾਰ(ge25519_precomp *t, ਅਚਲ ਪੂਰਨ pos, ਅਚਲ ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ b)
 {
-    static const ge25519_precomp base[32][8] = { /* base[i][j] = (j+1)*256^i*B */
-#ifdef HAVE_TI_MODE
-#else
+    ਸਥਿਰ ਅਚਲ ge25519_precomp ਅਧਾਰ[32][8] = { /* base[i][j] = (j+1)*256^i*B */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_TI_ਬਹੁਲਕ
+#ਨਹੀਂਤਾਂ
 { /* 0/31 */
   {
     { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
@@ -3257,9 +3257,9 @@ ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
     { -20430234, 14955537, -24126347, 8124619, -5369288, -5990470, 30468147, -13900640, 18423289, 4177476 }
   }
 }
-#endif
+#ਜੇ_ਅੰਤ
     };
-    ge25519_cmov8(t, base[pos], b);
+    ge25519_cmov8(t, ਅਧਾਰ[pos], b);
 }
 
 
@@ -3267,22 +3267,22 @@ ge25519_cmov8_base(ge25519_precomp *t, const int pos, const signed char b)
  r = p - q
  */
 
-static void
-ge25519_sub_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_sub_cached(ge25519_p1p1 *r, ਅਚਲ ge25519_p3 *p, ਅਚਲ ge25519_cached *q)
 {
     fe25519 t0;
 
-    fe25519_add(r->X, p->Y, p->X);
+    fe25519_ਜੋੜੋ(r->X, p->Y, p->X);
     fe25519_sub(r->Y, p->Y, p->X);
     fe25519_mul(r->Z, r->X, q->YminusX);
     fe25519_mul(r->Y, r->Y, q->YplusX);
     fe25519_mul(r->T, q->T2d, p->T);
     fe25519_mul(r->X, p->Z, q->Z);
-    fe25519_add(t0, r->X, r->X);
+    fe25519_ਜੋੜੋ(t0, r->X, r->X);
     fe25519_sub(r->X, r->Z, r->Y);
-    fe25519_add(r->Y, r->Z, r->Y);
+    fe25519_ਜੋੜੋ(r->Y, r->Z, r->Y);
     fe25519_sub(r->Z, t0, r->T);
-    fe25519_add(r->T, t0, r->T);
+    fe25519_ਜੋੜੋ(r->T, t0, r->T);
 }
 
 /* LCOV_EXCL_START */
@@ -3297,13 +3297,13 @@ ge25519_sub_cached(ge25519_p1p1 *r, const ge25519_p3 *p, const ge25519_cached *q
  Only used for signatures verification.
  */
 
-void
-ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
-                                  const ge25519_p3 *A, const unsigned char *b)
+ਖਾਲੀ
+ge25519_double_scalarmult_vartime(ge25519_p2 *r, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *a,
+                                  ਅਚਲ ge25519_p3 *A, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *b)
 {
-    static const ge25519_precomp Bi[8] = {
-#ifdef HAVE_TI_MODE
-#else
+    ਸਥਿਰ ਅਚਲ ge25519_precomp Bi[8] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_TI_ਬਹੁਲਕ
+#ਨਹੀਂਤਾਂ
 {
   { 25967493, -14356035, 29566456, 3660896, -12694345, 4014787, 27544626, -11754271, -6079156, 2047605 },
   { -12545711, 934262, -2722910, 3049990, -727428, 9406986, 12720692, 5043384, 19500929, -15469378 },
@@ -3344,80 +3344,80 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
   { -24326370, 15950226, -31801215, -14592823, -11662737, -5090925, 1573892, -2625887, 2198790, -15804619 },
   { -3099351, 10324967, -2241613, 7453183, -5446979, -2735503, -13812022, -16236442, -32461234, -12290683 }
 }
-#endif
+#ਜੇ_ਅੰਤ
     };
-    signed char    aslide[256];
-    signed char    bslide[256];
+    ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ    aslide[256];
+    ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ    bslide[256];
     ge25519_cached Ai[8]; /* A,3A,5A,7A,9A,11A,13A,15A */
     ge25519_p1p1   t;
     ge25519_p3     u;
     ge25519_p3     A2;
-    int            i;
+    ਪੂਰਨ            i;
 
     slide_vartime(aslide, a);
     slide_vartime(bslide, b);
 
-    ge25519_p3_to_cached(&Ai[0], A);
+    ge25519_p3_ਮੰਜ਼ਿਲ_cached(&Ai[0], A);
 
     ge25519_p3_dbl(&t, A);
-    ge25519_p1p1_to_p3(&A2, &t);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&A2, &t);
 
-    ge25519_add_cached(&t, &A2, &Ai[0]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[1], &u);
+    ge25519_ਜੋੜੋ_cached(&t, &A2, &Ai[0]);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
+    ge25519_p3_ਮੰਜ਼ਿਲ_cached(&Ai[1], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[1]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[2], &u);
+    ge25519_ਜੋੜੋ_cached(&t, &A2, &Ai[1]);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
+    ge25519_p3_ਮੰਜ਼ਿਲ_cached(&Ai[2], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[2]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[3], &u);
+    ge25519_ਜੋੜੋ_cached(&t, &A2, &Ai[2]);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
+    ge25519_p3_ਮੰਜ਼ਿਲ_cached(&Ai[3], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[3]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[4], &u);
+    ge25519_ਜੋੜੋ_cached(&t, &A2, &Ai[3]);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
+    ge25519_p3_ਮੰਜ਼ਿਲ_cached(&Ai[4], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[4]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[5], &u);
+    ge25519_ਜੋੜੋ_cached(&t, &A2, &Ai[4]);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
+    ge25519_p3_ਮੰਜ਼ਿਲ_cached(&Ai[5], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[5]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[6], &u);
+    ge25519_ਜੋੜੋ_cached(&t, &A2, &Ai[5]);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
+    ge25519_p3_ਮੰਜ਼ਿਲ_cached(&Ai[6], &u);
 
-    ge25519_add_cached(&t, &A2, &Ai[6]);
-    ge25519_p1p1_to_p3(&u, &t);
-    ge25519_p3_to_cached(&Ai[7], &u);
+    ge25519_ਜੋੜੋ_cached(&t, &A2, &Ai[6]);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
+    ge25519_p3_ਮੰਜ਼ਿਲ_cached(&Ai[7], &u);
 
     ge25519_p2_0(r);
 
-    for (i = 255; i >= 0; --i) {
-        if (aslide[i] || bslide[i]) {
-            break;
+    ਲਈ (i = 255; i >= 0; --i) {
+        ਜੇ (aslide[i] || bslide[i]) {
+            ਰੋਕੋ;
         }
     }
 
-    for (; i >= 0; --i) {
+    ਲਈ (; i >= 0; --i) {
         ge25519_p2_dbl(&t, r);
 
-        if (aslide[i] > 0) {
-            ge25519_p1p1_to_p3(&u, &t);
-            ge25519_add_cached(&t, &u, &Ai[aslide[i] / 2]);
-        } else if (aslide[i] < 0) {
-            ge25519_p1p1_to_p3(&u, &t);
+        ਜੇ (aslide[i] > 0) {
+            ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
+            ge25519_ਜੋੜੋ_cached(&t, &u, &Ai[aslide[i] / 2]);
+        } ਨਹੀਂਤਾਂ ਜੇ (aslide[i] < 0) {
+            ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
             ge25519_sub_cached(&t, &u, &Ai[(-aslide[i]) / 2]);
         }
 
-        if (bslide[i] > 0) {
-            ge25519_p1p1_to_p3(&u, &t);
-            ge25519_add_precomp(&t, &u, &Bi[bslide[i] / 2]);
-        } else if (bslide[i] < 0) {
-            ge25519_p1p1_to_p3(&u, &t);
+        ਜੇ (bslide[i] > 0) {
+            ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
+            ge25519_ਜੋੜੋ_precomp(&t, &u, &Bi[bslide[i] / 2]);
+        } ਨਹੀਂਤਾਂ ਜੇ (bslide[i] < 0) {
+            ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(&u, &t);
             ge25519_sub_precomp(&t, &u, &Bi[(-bslide[i]) / 2]);
         }
 
-        ge25519_p1p1_to_p2(r, &t);
+        ge25519_p1p1_ਮੰਜ਼ਿਲ_p2(r, &t);
     }
 }
 
@@ -3442,62 +3442,62 @@ ge25519_double_scalarmult_vartime(ge25519_p2 *r, const unsigned char *a,
  a[31] <= 127
  */
 
-void
-ge25519_scalarmult_base(ge25519_p3 *h, const unsigned char *a)
+ਖਾਲੀ
+ge25519_scalarmult_ਅਧਾਰ(ge25519_p3 *h, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *a)
 {
-    signed char     e[64];
-    signed char     carry;
+    ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ     e[64];
+    ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ     ਹਾਸਲ;
     ge25519_p1p1    r;
     ge25519_p2      s;
     ge25519_precomp t;
-    int             i;
+    ਪੂਰਨ             i;
 
-    for (i = 0; i < 32; ++i) {
+    ਲਈ (i = 0; i < 32; ++i) {
         e[2 * i + 0] = (a[i] >> 0) & 15;
         e[2 * i + 1] = (a[i] >> 4) & 15;
     }
     /* each e[i] is between 0 and 15 */
     /* e[63] is between 0 and 7 */
 
-    carry = 0;
-    for (i = 0; i < 63; ++i) {
-        e[i] += carry;
-        carry = e[i] + 8;
-        carry >>= 4;
-        e[i] -= carry * ((signed char) 1 << 4);
+    ਹਾਸਲ = 0;
+    ਲਈ (i = 0; i < 63; ++i) {
+        e[i] += ਹਾਸਲ;
+        ਹਾਸਲ = e[i] + 8;
+        ਹਾਸਲ >>= 4;
+        e[i] -= ਹਾਸਲ * ((ਨਿਸ਼ਾਨੀਵਾਲਾ ਅੱਖਰ) 1 << 4);
     }
-    e[63] += carry;
+    e[63] += ਹਾਸਲ;
     /* each e[i] is between -8 and 8 */
 
     ge25519_p3_0(h);
 
-    for (i = 1; i < 64; i += 2) {
-        ge25519_cmov8_base(&t, i / 2, e[i]);
-        ge25519_add_precomp(&r, h, &t);
-        ge25519_p1p1_to_p3(h, &r);
+    ਲਈ (i = 1; i < 64; i += 2) {
+        ge25519_cmov8_ਅਧਾਰ(&t, i / 2, e[i]);
+        ge25519_ਜੋੜੋ_precomp(&r, h, &t);
+        ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(h, &r);
     }
 
     ge25519_p3_dbl(&r, h);
-    ge25519_p1p1_to_p2(&s, &r);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p2(&s, &r);
     ge25519_p2_dbl(&r, &s);
-    ge25519_p1p1_to_p2(&s, &r);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p2(&s, &r);
     ge25519_p2_dbl(&r, &s);
-    ge25519_p1p1_to_p2(&s, &r);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p2(&s, &r);
     ge25519_p2_dbl(&r, &s);
-    ge25519_p1p1_to_p3(h, &r);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(h, &r);
 
-    for (i = 0; i < 64; i += 2) {
-        ge25519_cmov8_base(&t, i / 2, e[i]);
-        ge25519_add_precomp(&r, h, &t);
-        ge25519_p1p1_to_p3(h, &r);
+    ਲਈ (i = 0; i < 64; i += 2) {
+        ge25519_cmov8_ਅਧਾਰ(&t, i / 2, e[i]);
+        ge25519_ਜੋੜੋ_precomp(&r, h, &t);
+        ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(h, &r);
     }
 }
 
 /* r = 2p */
 
 /* r = -p */
-static void
-ge25519_p3_neg(ge25519_p3 *r, const ge25519_p3 *p)
+ਸਥਿਰ ਖਾਲੀ
+ge25519_p3_neg(ge25519_p3 *r, ਅਚਲ ge25519_p3 *p)
 {
     fe25519_neg(r->X, p->X);
     fe25519_copy(r->Y, p->Y);
@@ -3506,25 +3506,25 @@ ge25519_p3_neg(ge25519_p3 *r, const ge25519_p3 *p)
 }
 
 /* r = p+q */
-void
-ge25519_p3_add(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
+ਖਾਲੀ
+ge25519_p3_ਜੋੜੋ(ge25519_p3 *r, ਅਚਲ ge25519_p3 *p, ਅਚਲ ge25519_p3 *q)
 {
     ge25519_cached q_cached;
     ge25519_p1p1   p1p1;
 
-    ge25519_p3_to_cached(&q_cached, q);
-    ge25519_add_cached(&p1p1, p, &q_cached);
-    ge25519_p1p1_to_p3(r, &p1p1);
+    ge25519_p3_ਮੰਜ਼ਿਲ_cached(&q_cached, q);
+    ge25519_ਜੋੜੋ_cached(&p1p1, p, &q_cached);
+    ge25519_p1p1_ਮੰਜ਼ਿਲ_p3(r, &p1p1);
 }
 
 /* r = p-q */
-void
-ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
+ਖਾਲੀ
+ge25519_p3_sub(ge25519_p3 *r, ਅਚਲ ge25519_p3 *p, ਅਚਲ ge25519_p3 *q)
 {
     ge25519_p3 q_neg;
 
     ge25519_p3_neg(&q_neg, q);
-    ge25519_p3_add(r, p, &q_neg);
+    ge25519_p3_ਜੋੜੋ(r, p, &q_neg);
 }
 
 /* r = r*(2^n)+q */
@@ -3533,29 +3533,29 @@ ge25519_p3_sub(ge25519_p3 *r, const ge25519_p3 *p, const ge25519_p3 *q)
 
 
 
-int
-ge25519_is_canonical(const unsigned char *s)
+ਪੂਰਨ
+ge25519_is_canonical(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *s)
 {
-    unsigned char c;
-    unsigned char d;
-    unsigned int  i;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ c;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ d;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ  i;
 
     c = (s[31] & 0x7f) ^ 0x7f;
-    for (i = 30; i > 0; i--) {
+    ਲਈ (i = 30; i > 0; i--) {
         c |= s[i] ^ 0xff;
     }
-    c = (((unsigned int) c) - 1U) >> 8;
-    d = (0xed - 1U - (unsigned int) s[0]) >> 8;
+    c = (((ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ) c) - 1U) >> 8;
+    d = (0xed - 1U - (ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ) s[0]) >> 8;
 
-    return 1 - (c & d & 1);
+    ਵਾਪਸ 1 - (c & d & 1);
 }
 
-int
-ge25519_has_small_order(const ge25519_p3 *p)
+ਪੂਰਨ
+ge25519_has_small_ਕ੍ਰਮ(ਅਚਲ ge25519_p3 *p)
 {
     fe25519 y_sqrtm1;
     fe25519 c;
-    int     ret = 0;
+    ਪੂਰਨ     ret = 0;
 
     ret |= fe25519_iszero(p->X);
     ret |= fe25519_iszero(p->Y);
@@ -3563,10 +3563,10 @@ ge25519_has_small_order(const ge25519_p3 *p)
     fe25519_mul(y_sqrtm1, p->Y, fe25519_sqrtm1);
     fe25519_sub(c, y_sqrtm1, p->X);
     ret |= fe25519_iszero(c);
-    fe25519_add(c, y_sqrtm1, p->X);
+    fe25519_ਜੋੜੋ(c, y_sqrtm1, p->X);
     ret |= fe25519_iszero(c);
 
-    return ret;
+    ਵਾਪਸ ret;
 }
 
 /*
@@ -3591,48 +3591,48 @@ ge25519_has_small_order(const ge25519_p3 *p)
  where l = 2^252 + 27742317777372353535851937790883648493.
  */
 
-void
-sc25519_muladd(unsigned char s[32], const unsigned char a[32],
-               const unsigned char b[32], const unsigned char c[32])
+ਖਾਲੀ
+sc25519_muladd(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ s[32], ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ a[32],
+               ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ b[32], ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ c[32])
 {
-    int64_t a0  = 2097151 & load_3(a);
-    int64_t a1  = 2097151 & (load_4(a + 2) >> 5);
-    int64_t a2  = 2097151 & (load_3(a + 5) >> 2);
-    int64_t a3  = 2097151 & (load_4(a + 7) >> 7);
-    int64_t a4  = 2097151 & (load_4(a + 10) >> 4);
-    int64_t a5  = 2097151 & (load_3(a + 13) >> 1);
-    int64_t a6  = 2097151 & (load_4(a + 15) >> 6);
-    int64_t a7  = 2097151 & (load_3(a + 18) >> 3);
-    int64_t a8  = 2097151 & load_3(a + 21);
-    int64_t a9  = 2097151 & (load_4(a + 23) >> 5);
-    int64_t a10 = 2097151 & (load_3(a + 26) >> 2);
-    int64_t a11 = (load_4(a + 28) >> 7);
+    int64_t a0  = 2097151 & ਲੱਦੋ_3(a);
+    int64_t a1  = 2097151 & (ਲੱਦੋ_4(a + 2) >> 5);
+    int64_t a2  = 2097151 & (ਲੱਦੋ_3(a + 5) >> 2);
+    int64_t a3  = 2097151 & (ਲੱਦੋ_4(a + 7) >> 7);
+    int64_t a4  = 2097151 & (ਲੱਦੋ_4(a + 10) >> 4);
+    int64_t a5  = 2097151 & (ਲੱਦੋ_3(a + 13) >> 1);
+    int64_t a6  = 2097151 & (ਲੱਦੋ_4(a + 15) >> 6);
+    int64_t a7  = 2097151 & (ਲੱਦੋ_3(a + 18) >> 3);
+    int64_t a8  = 2097151 & ਲੱਦੋ_3(a + 21);
+    int64_t a9  = 2097151 & (ਲੱਦੋ_4(a + 23) >> 5);
+    int64_t a10 = 2097151 & (ਲੱਦੋ_3(a + 26) >> 2);
+    int64_t a11 = (ਲੱਦੋ_4(a + 28) >> 7);
 
-    int64_t b0  = 2097151 & load_3(b);
-    int64_t b1  = 2097151 & (load_4(b + 2) >> 5);
-    int64_t b2  = 2097151 & (load_3(b + 5) >> 2);
-    int64_t b3  = 2097151 & (load_4(b + 7) >> 7);
-    int64_t b4  = 2097151 & (load_4(b + 10) >> 4);
-    int64_t b5  = 2097151 & (load_3(b + 13) >> 1);
-    int64_t b6  = 2097151 & (load_4(b + 15) >> 6);
-    int64_t b7  = 2097151 & (load_3(b + 18) >> 3);
-    int64_t b8  = 2097151 & load_3(b + 21);
-    int64_t b9  = 2097151 & (load_4(b + 23) >> 5);
-    int64_t b10 = 2097151 & (load_3(b + 26) >> 2);
-    int64_t b11 = (load_4(b + 28) >> 7);
+    int64_t b0  = 2097151 & ਲੱਦੋ_3(b);
+    int64_t b1  = 2097151 & (ਲੱਦੋ_4(b + 2) >> 5);
+    int64_t b2  = 2097151 & (ਲੱਦੋ_3(b + 5) >> 2);
+    int64_t b3  = 2097151 & (ਲੱਦੋ_4(b + 7) >> 7);
+    int64_t b4  = 2097151 & (ਲੱਦੋ_4(b + 10) >> 4);
+    int64_t b5  = 2097151 & (ਲੱਦੋ_3(b + 13) >> 1);
+    int64_t b6  = 2097151 & (ਲੱਦੋ_4(b + 15) >> 6);
+    int64_t b7  = 2097151 & (ਲੱਦੋ_3(b + 18) >> 3);
+    int64_t b8  = 2097151 & ਲੱਦੋ_3(b + 21);
+    int64_t b9  = 2097151 & (ਲੱਦੋ_4(b + 23) >> 5);
+    int64_t b10 = 2097151 & (ਲੱਦੋ_3(b + 26) >> 2);
+    int64_t b11 = (ਲੱਦੋ_4(b + 28) >> 7);
 
-    int64_t c0  = 2097151 & load_3(c);
-    int64_t c1  = 2097151 & (load_4(c + 2) >> 5);
-    int64_t c2  = 2097151 & (load_3(c + 5) >> 2);
-    int64_t c3  = 2097151 & (load_4(c + 7) >> 7);
-    int64_t c4  = 2097151 & (load_4(c + 10) >> 4);
-    int64_t c5  = 2097151 & (load_3(c + 13) >> 1);
-    int64_t c6  = 2097151 & (load_4(c + 15) >> 6);
-    int64_t c7  = 2097151 & (load_3(c + 18) >> 3);
-    int64_t c8  = 2097151 & load_3(c + 21);
-    int64_t c9  = 2097151 & (load_4(c + 23) >> 5);
-    int64_t c10 = 2097151 & (load_3(c + 26) >> 2);
-    int64_t c11 = (load_4(c + 28) >> 7);
+    int64_t c0  = 2097151 & ਲੱਦੋ_3(c);
+    int64_t c1  = 2097151 & (ਲੱਦੋ_4(c + 2) >> 5);
+    int64_t c2  = 2097151 & (ਲੱਦੋ_3(c + 5) >> 2);
+    int64_t c3  = 2097151 & (ਲੱਦੋ_4(c + 7) >> 7);
+    int64_t c4  = 2097151 & (ਲੱਦੋ_4(c + 10) >> 4);
+    int64_t c5  = 2097151 & (ਲੱਦੋ_3(c + 13) >> 1);
+    int64_t c6  = 2097151 & (ਲੱਦੋ_4(c + 15) >> 6);
+    int64_t c7  = 2097151 & (ਲੱਦੋ_3(c + 18) >> 3);
+    int64_t c8  = 2097151 & ਲੱਦੋ_3(c + 21);
+    int64_t c9  = 2097151 & (ਲੱਦੋ_4(c + 23) >> 5);
+    int64_t c10 = 2097151 & (ਲੱਦੋ_3(c + 26) >> 2);
+    int64_t c11 = (ਲੱਦੋ_4(c + 28) >> 7);
 
     int64_t s0;
     int64_t s1;
@@ -4101,33 +4101,33 @@ sc25519_muladd(unsigned char s[32], const unsigned char a[32],
  Overwrites s in place.
  */
 
-void
-sc25519_reduce(unsigned char s[64])
+ਖਾਲੀ
+sc25519_reduce(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ s[64])
 {
-    int64_t s0  = 2097151 & load_3(s);
-    int64_t s1  = 2097151 & (load_4(s + 2) >> 5);
-    int64_t s2  = 2097151 & (load_3(s + 5) >> 2);
-    int64_t s3  = 2097151 & (load_4(s + 7) >> 7);
-    int64_t s4  = 2097151 & (load_4(s + 10) >> 4);
-    int64_t s5  = 2097151 & (load_3(s + 13) >> 1);
-    int64_t s6  = 2097151 & (load_4(s + 15) >> 6);
-    int64_t s7  = 2097151 & (load_3(s + 18) >> 3);
-    int64_t s8  = 2097151 & load_3(s + 21);
-    int64_t s9  = 2097151 & (load_4(s + 23) >> 5);
-    int64_t s10 = 2097151 & (load_3(s + 26) >> 2);
-    int64_t s11 = 2097151 & (load_4(s + 28) >> 7);
-    int64_t s12 = 2097151 & (load_4(s + 31) >> 4);
-    int64_t s13 = 2097151 & (load_3(s + 34) >> 1);
-    int64_t s14 = 2097151 & (load_4(s + 36) >> 6);
-    int64_t s15 = 2097151 & (load_3(s + 39) >> 3);
-    int64_t s16 = 2097151 & load_3(s + 42);
-    int64_t s17 = 2097151 & (load_4(s + 44) >> 5);
-    int64_t s18 = 2097151 & (load_3(s + 47) >> 2);
-    int64_t s19 = 2097151 & (load_4(s + 49) >> 7);
-    int64_t s20 = 2097151 & (load_4(s + 52) >> 4);
-    int64_t s21 = 2097151 & (load_3(s + 55) >> 1);
-    int64_t s22 = 2097151 & (load_4(s + 57) >> 6);
-    int64_t s23 = (load_4(s + 60) >> 3);
+    int64_t s0  = 2097151 & ਲੱਦੋ_3(s);
+    int64_t s1  = 2097151 & (ਲੱਦੋ_4(s + 2) >> 5);
+    int64_t s2  = 2097151 & (ਲੱਦੋ_3(s + 5) >> 2);
+    int64_t s3  = 2097151 & (ਲੱਦੋ_4(s + 7) >> 7);
+    int64_t s4  = 2097151 & (ਲੱਦੋ_4(s + 10) >> 4);
+    int64_t s5  = 2097151 & (ਲੱਦੋ_3(s + 13) >> 1);
+    int64_t s6  = 2097151 & (ਲੱਦੋ_4(s + 15) >> 6);
+    int64_t s7  = 2097151 & (ਲੱਦੋ_3(s + 18) >> 3);
+    int64_t s8  = 2097151 & ਲੱਦੋ_3(s + 21);
+    int64_t s9  = 2097151 & (ਲੱਦੋ_4(s + 23) >> 5);
+    int64_t s10 = 2097151 & (ਲੱਦੋ_3(s + 26) >> 2);
+    int64_t s11 = 2097151 & (ਲੱਦੋ_4(s + 28) >> 7);
+    int64_t s12 = 2097151 & (ਲੱਦੋ_4(s + 31) >> 4);
+    int64_t s13 = 2097151 & (ਲੱਦੋ_3(s + 34) >> 1);
+    int64_t s14 = 2097151 & (ਲੱਦੋ_4(s + 36) >> 6);
+    int64_t s15 = 2097151 & (ਲੱਦੋ_3(s + 39) >> 3);
+    int64_t s16 = 2097151 & ਲੱਦੋ_3(s + 42);
+    int64_t s17 = 2097151 & (ਲੱਦੋ_4(s + 44) >> 5);
+    int64_t s18 = 2097151 & (ਲੱਦੋ_3(s + 47) >> 2);
+    int64_t s19 = 2097151 & (ਲੱਦੋ_4(s + 49) >> 7);
+    int64_t s20 = 2097151 & (ਲੱਦੋ_4(s + 52) >> 4);
+    int64_t s21 = 2097151 & (ਲੱਦੋ_3(s + 55) >> 1);
+    int64_t s22 = 2097151 & (ਲੱਦੋ_4(s + 57) >> 6);
+    int64_t s23 = (ਲੱਦੋ_4(s + 60) >> 3);
 
     int64_t carry0;
     int64_t carry1;
@@ -4425,26 +4425,26 @@ sc25519_reduce(unsigned char s[64])
     s[31] = s11 >> 17;
 }
 
-int
-sc25519_is_canonical(const unsigned char s[32])
+ਪੂਰਨ
+sc25519_is_canonical(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ s[32])
 {
     /* 2^252+27742317777372353535851937790883648493 */
-    static const unsigned char L[32] = {
+    ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ L[32] = {
         0xed, 0xd3, 0xf5, 0x5c, 0x1a, 0x63, 0x12, 0x58, 0xd6, 0x9c, 0xf7,
         0xa2, 0xde, 0xf9, 0xde, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10
     };
-    unsigned char c = 0;
-    unsigned char n = 1;
-    unsigned int  i = 32;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ c = 0;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ n = 1;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ  i = 32;
 
-    do {
+    ਕਰੋ {
         i--;
         c |= ((s[i] - L[i]) >> 8) & n;
         n &= ((s[i] ^ L[i]) - 1) >> 8;
-    } while (i != 0);
+    } ਜਦੋਂ (i != 0);
 
-    return (c != 0);
+    ਵਾਪਸ (c != 0);
 }
 
 /* montgomery to edwards */
@@ -4461,68 +4461,68 @@ sc25519_is_canonical(const unsigned char s[32])
 
 /* Ristretto group */
 
-#ifndef sign_ed25519_ref10_H
-#define sign_ed25519_ref10_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ sign_ed25519_ref10_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ sign_ed25519_ref10_H
 
 
-static void _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs,
-                                      int prehashed);
+ਸਥਿਰ ਖਾਲੀ _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs,
+                                      ਪੂਰਨ prehashed);
 
-static int _crypto_sign_ed25519_detached(unsigned char *sig,
-                                  unsigned long long *siglen_p,
-                                  const unsigned char *m,
-                                  unsigned long long mlen,
-                                  const unsigned char *sk, int prehashed);
+ਸਥਿਰ ਪੂਰਨ _crypto_sign_ed25519_detached(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sig,
+                                  ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ *siglen_p,
+                                  ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *m,
+                                  ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ mlen,
+                                  ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sk, ਪੂਰਨ prehashed);
 
-static int _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                         const unsigned char *m,
-                                         unsigned long long   mlen,
-                                         const unsigned char *pk,
-                                         int prehashed);
-#endif
+ਸਥਿਰ ਪੂਰਨ _crypto_sign_ed25519_verify_detached(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sig,
+                                         ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *m,
+                                         ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ   mlen,
+                                         ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *pk,
+                                         ਪੂਰਨ prehashed);
+#ਜੇ_ਅੰਤ
 
 
 
-int
-crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
-                                 const unsigned char *seed)
+ਪੂਰਨ
+crypto_sign_ed25519_ਬੀਜ_keypair(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *pk, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sk,
+                                 ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ਬੀਜ)
 {
     ge25519_p3 A;
 
-    crypto_hash_sha512(sk, seed, 32);
+    crypto_hash_sha512(sk, ਬੀਜ, 32);
     sk[0] &= 248;
     sk[31] &= 127;
     sk[31] |= 64;
 
-    ge25519_scalarmult_base(&A, sk);
+    ge25519_scalarmult_ਅਧਾਰ(&A, sk);
     ge25519_p3_tobytes(pk, &A);
 
-    memmove(sk, seed, 32);
+    memmove(sk, ਬੀਜ, 32);
     memmove(sk + 32, pk, 32);
 
-    return 0;
+    ਵਾਪਸ 0;
 }
 
-int
-crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
+ਪੂਰਨ
+crypto_sign_ed25519_keypair(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *pk, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sk)
 {
-    unsigned char seed[32];
-    int           ret;
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ ਬੀਜ[32];
+    ਪੂਰਨ           ret;
 
-    arc4random_buf(seed, sizeof seed);
-    ret = crypto_sign_ed25519_seed_keypair(pk, sk, seed);
-    explicit_bzero(seed, sizeof seed);
+    arc4random_buf(ਬੀਜ, ਆਕਾਰ ਬੀਜ);
+    ret = crypto_sign_ed25519_ਬੀਜ_keypair(pk, sk, ਬੀਜ);
+    explicit_bzero(ਬੀਜ, ਆਕਾਰ ਬੀਜ);
 
-    return ret;
+    ਵਾਪਸ ret;
 }
 
 
 
 
-static void
-_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
+ਸਥਿਰ ਖਾਲੀ
+_crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, ਪੂਰਨ prehashed)
 {
-    static const unsigned char DOM2PREFIX[32 + 2] = {
+    ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ DOM2_ਅਗੇਤਰ[32 + 2] = {
         'S', 'i', 'g', 'E', 'd', '2', '5', '5', '1', '9', ' ',
         'n', 'o', ' ',
         'E', 'd', '2', '5', '5', '1', '9', ' ',
@@ -4530,52 +4530,52 @@ _crypto_sign_ed25519_ref10_hinit(crypto_hash_sha512_state *hs, int prehashed)
     };
 
     crypto_hash_sha512_init(hs);
-    if (prehashed) {
-        crypto_hash_sha512_update(hs, DOM2PREFIX, sizeof DOM2PREFIX);
+    ਜੇ (prehashed) {
+        crypto_hash_sha512_update(hs, DOM2_ਅਗੇਤਰ, ਆਕਾਰ DOM2_ਅਗੇਤਰ);
     }
 }
 
-static inline void
-_crypto_sign_ed25519_clamp(unsigned char k[32])
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਖਾਲੀ
+_crypto_sign_ed25519_clamp(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ k[32])
 {
     k[0] &= 248;
     k[31] &= 127;
     k[31] |= 64;
 }
 
-#ifdef ED25519_NONDETERMINISTIC
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ED25519_NONDETERMINISTIC
 /* r = hash(k || K || noise || pad || M) (mod q) */
-static void
+ਸਥਿਰ ਖਾਲੀ
 _crypto_sign_ed25519_synthetic_r_hv(crypto_hash_sha512_state *hs,
-                                    unsigned char tmp[64],
-                                    const unsigned char az[64])
+                                    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ tmp[64],
+                                    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ az[64])
 {
     crypto_hash_sha512_update(hs, az, 64);
     randombytes_buf(tmp, 32);
     memset(tmp + 32, 0, 32);
     crypto_hash_sha512_update(hs, tmp, 64);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-int
-_crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
-                              const unsigned char *m, unsigned long long mlen,
-                              const unsigned char *sk, int prehashed)
+ਪੂਰਨ
+_crypto_sign_ed25519_detached(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sig, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ *siglen_p,
+                              ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *m, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ mlen,
+                              ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sk, ਪੂਰਨ prehashed)
 {
     crypto_hash_sha512_state hs;
-    unsigned char            az[64];
-    unsigned char            nonce[64];
-    unsigned char            hram[64];
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ            az[64];
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ            nonce[64];
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ            hram[64];
     ge25519_p3               R;
 
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
 
     crypto_hash_sha512(az, sk, 32);
-#ifdef ED25519_NONDETERMINISTIC
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ED25519_NONDETERMINISTIC
     _crypto_sign_ed25519_synthetic_r_hv(&hs, nonce /* tmp */, az);
-#else
+#ਨਹੀਂਤਾਂ
     crypto_hash_sha512_update(&hs, az + 32, 32);
-#endif
+#ਜੇ_ਅੰਤ
 
     crypto_hash_sha512_update(&hs, m, mlen);
     crypto_hash_sha512_final(&hs, nonce);
@@ -4583,7 +4583,7 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     memmove(sig + 32, sk + 32, 32);
 
     sc25519_reduce(nonce);
-    ge25519_scalarmult_base(&R, nonce);
+    ge25519_scalarmult_ਅਧਾਰ(&R, nonce);
     ge25519_p3_tobytes(sig, &R);
 
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
@@ -4595,35 +4595,35 @@ _crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
     _crypto_sign_ed25519_clamp(az);
     sc25519_muladd(sig + 32, hram, az, nonce);
 
-    explicit_bzero(az, sizeof az);
-    explicit_bzero(nonce, sizeof nonce);
+    explicit_bzero(az, ਆਕਾਰ az);
+    explicit_bzero(nonce, ਆਕਾਰ nonce);
 
-    if (siglen_p != NULL) {
+    ਜੇ (siglen_p != ਨਿਰਾ) {
         *siglen_p = 64U;
     }
-    return 0;
+    ਵਾਪਸ 0;
 }
 
-int
-crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglen_p,
-                             const unsigned char *m, unsigned long long mlen,
-                             const unsigned char *sk)
+ਪੂਰਨ
+crypto_sign_ed25519_detached(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sig, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ *siglen_p,
+                             ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *m, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ mlen,
+                             ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sk)
 {
-    return _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
+    ਵਾਪਸ _crypto_sign_ed25519_detached(sig, siglen_p, m, mlen, sk, 0);
 }
 
 
 
 
-int
-_crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                     const unsigned char *m,
-                                     unsigned long long   mlen,
-                                     const unsigned char *pk,
-                                     int prehashed)
+ਪੂਰਨ
+_crypto_sign_ed25519_verify_detached(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sig,
+                                     ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *m,
+                                     ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ   mlen,
+                                     ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *pk,
+                                     ਪੂਰਨ prehashed)
 {
     crypto_hash_sha512_state hs;
-    unsigned char            h[64];
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ            h[64];
     ge25519_p3               check;
     ge25519_p3               expected_r;
     ge25519_p3               A;
@@ -4631,26 +4631,26 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
     ge25519_p2               sb_ah_p2;
 
     ACQUIRE_FENCE;
-#ifdef ED25519_COMPAT
-    if (sig[63] & 224) {
-        return -1;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ED25519_COMPAT
+    ਜੇ (sig[63] & 224) {
+        ਵਾਪਸ -1;
     }
-#else
-    if ((sig[63] & 240) != 0 &&
+#ਨਹੀਂਤਾਂ
+    ਜੇ ((sig[63] & 240) != 0 &&
         sc25519_is_canonical(sig + 32) == 0) {
-        return -1;
+        ਵਾਪਸ -1;
     }
-    if (ge25519_is_canonical(pk) == 0) {
-        return -1;
+    ਜੇ (ge25519_is_canonical(pk) == 0) {
+        ਵਾਪਸ -1;
     }
-#endif
-    if (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
-        ge25519_has_small_order(&A) != 0) {
-        return -1;
+#ਜੇ_ਅੰਤ
+    ਜੇ (ge25519_frombytes_negate_vartime(&A, pk) != 0 ||
+        ge25519_has_small_ਕ੍ਰਮ(&A) != 0) {
+        ਵਾਪਸ -1;
     }
-    if (ge25519_frombytes(&expected_r, sig) != 0 ||
-        ge25519_has_small_order(&expected_r) != 0) {
-        return -1;
+    ਜੇ (ge25519_frombytes(&expected_r, sig) != 0 ||
+        ge25519_has_small_ਕ੍ਰਮ(&expected_r) != 0) {
+        ਵਾਪਸ -1;
     }
     _crypto_sign_ed25519_ref10_hinit(&hs, prehashed);
     crypto_hash_sha512_update(&hs, sig, 32);
@@ -4660,20 +4660,20 @@ _crypto_sign_ed25519_verify_detached(const unsigned char *sig,
     sc25519_reduce(h);
 
     ge25519_double_scalarmult_vartime(&sb_ah_p2, h, &A, sig + 32);
-    ge25519_p2_to_p3(&sb_ah, &sb_ah_p2);
+    ge25519_p2_ਮੰਜ਼ਿਲ_p3(&sb_ah, &sb_ah_p2);
     ge25519_p3_sub(&check, &expected_r, &sb_ah);
 
-    return ge25519_has_small_order(&check) - 1;
+    ਵਾਪਸ ge25519_has_small_ਕ੍ਰਮ(&check) - 1;
 }
 
-int
-crypto_sign_ed25519_verify_detached(const unsigned char *sig,
-                                    const unsigned char *m,
-                                    unsigned long long   mlen,
-                                    const unsigned char *pk)
+ਪੂਰਨ
+crypto_sign_ed25519_verify_detached(ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *sig,
+                                    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *m,
+                                    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ   mlen,
+                                    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *pk)
 {
-    return _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
+    ਵਾਪਸ _crypto_sign_ed25519_verify_detached(sig, m, mlen, pk, 0);
 }
 
 
-#endif /* OPENSSL_HAS_ED25519 */
+#ਜੇ_ਅੰਤ /* OPENSSL_HAS_ED25519 */

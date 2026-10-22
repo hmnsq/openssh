@@ -14,21 +14,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "xmalloc.h"
-#include "hostfile.h"
-#include "auth.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "servconf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hostfile.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "auth.h"
 
-extern ServerOptions options;
+ਬਾਹਰੀ ServerOptions options;
 
 /*
  * Configuration of enabled authentication methods. Separate from the rest of
@@ -38,50 +38,50 @@ extern ServerOptions options;
  */
 
 /* "none" is allowed only one time and it is cleared by userauth_none() later */
-int none_enabled = 1;
-struct authmethod_cfg methodcfg_none = {
+ਪੂਰਨ none_enabled = 1;
+ਬਣਤਰ authmethod_cfg methodcfg_none = {
 	"none",
-	NULL,
+	ਨਿਰਾ,
 	&none_enabled
 };
-struct authmethod_cfg methodcfg_pubkey = {
+ਬਣਤਰ authmethod_cfg methodcfg_pubkey = {
 	"publickey",
 	"publickey-hostbound-v00@openssh.com",
 	&options.pubkey_authentication
 };
-#ifdef GSSAPI
-struct authmethod_cfg methodcfg_gssapi = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GSSAPI
+ਬਣਤਰ authmethod_cfg methodcfg_gssapi = {
 	"gssapi-with-mic",
-	NULL,
+	ਨਿਰਾ,
 	&options.gss_authentication
 };
-#endif
-struct authmethod_cfg methodcfg_passwd = {
+#ਜੇ_ਅੰਤ
+ਬਣਤਰ authmethod_cfg methodcfg_passwd = {
 	"password",
-	NULL,
+	ਨਿਰਾ,
 	&options.password_authentication
 };
-struct authmethod_cfg methodcfg_kbdint = {
+ਬਣਤਰ authmethod_cfg methodcfg_kbdint = {
 	"keyboard-interactive",
-	NULL,
+	ਨਿਰਾ,
 	&options.kbd_interactive_authentication
 };
-struct authmethod_cfg methodcfg_hostbased = {
+ਬਣਤਰ authmethod_cfg methodcfg_hostbased = {
 	"hostbased",
-	NULL,
+	ਨਿਰਾ,
 	&options.hostbased_authentication
 };
 
-static struct authmethod_cfg *authmethod_cfgs[] = {
+ਸਥਿਰ ਬਣਤਰ authmethod_cfg *authmethod_cfgs[] = {
 	&methodcfg_none,
 	&methodcfg_pubkey,
-#ifdef GSSAPI
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GSSAPI
 	&methodcfg_gssapi,
-#endif
+#ਜੇ_ਅੰਤ
 	&methodcfg_passwd,
 	&methodcfg_kbdint,
 	&methodcfg_hostbased,
-	NULL
+	ਨਿਰਾ
 };
 
 /*
@@ -89,46 +89,46 @@ static struct authmethod_cfg *authmethod_cfgs[] = {
  * non-zero, then also require that the methods are enabled.
  * Returns 0 on success or -1 if the methods list is invalid.
  */
-int
-auth2_methods_valid(const char *_methods, int need_enable)
+ਪੂਰਨ
+auth2_methods_valid(ਅਚਲ ਅੱਖਰ *_methods, ਪੂਰਨ need_enable)
 {
-	char *methods, *omethods, *method, *p;
-	u_int i, found;
-	int ret = -1;
-	const struct authmethod_cfg *cfg;
+	ਅੱਖਰ *methods, *omethods, *ਵਿਧੀ, *p;
+	u_int i, ਮਿਲਿਆ;
+	ਪੂਰਨ ret = -1;
+	ਅਚਲ ਬਣਤਰ authmethod_cfg *cfg;
 
-	if (*_methods == '\0') {
+	ਜੇ (*_methods == '\0') {
 		error("empty authentication method list");
-		return -1;
+		ਵਾਪਸ -1;
 	}
 	omethods = methods = xstrdup(_methods);
-	while ((method = strsep(&methods, ",")) != NULL) {
-		for (found = i = 0; !found && authmethod_cfgs[i] != NULL; i++) {
+	ਜਦੋਂ ((ਵਿਧੀ = strsep(&methods, ",")) != ਨਿਰਾ) {
+		ਲਈ (ਮਿਲਿਆ = i = 0; !ਮਿਲਿਆ && authmethod_cfgs[i] != ਨਿਰਾ; i++) {
 			cfg = authmethod_cfgs[i];
-			if ((p = strchr(method, ':')) != NULL)
+			ਜੇ ((p = strchr(ਵਿਧੀ, ':')) != ਨਿਰਾ)
 				*p = '\0';
-			if (strcmp(method, cfg->name) != 0)
-				continue;
-			if (need_enable) {
-				if (cfg->enabled == NULL ||
+			ਜੇ (strcmp(ਵਿਧੀ, cfg->name) != 0)
+				ਜਾਰੀ;
+			ਜੇ (need_enable) {
+				ਜੇ (cfg->enabled == ਨਿਰਾ ||
 				    *(cfg->enabled) == 0) {
 					error("Disabled method \"%s\" in "
 					    "AuthenticationMethods list \"%s\"",
-					    method, _methods);
-					goto out;
+					    ਵਿਧੀ, _methods);
+					ਜਾਓ ਬਾਹਰਲਾ;
 				}
 			}
-			found = 1;
-			break;
+			ਮਿਲਿਆ = 1;
+			ਰੋਕੋ;
 		}
-		if (!found) {
+		ਜੇ (!ਮਿਲਿਆ) {
 			error("Unknown authentication method \"%s\" in list",
-			    method);
-			goto out;
+			    ਵਿਧੀ);
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
 	}
 	ret = 0;
- out:
-	free(omethods);
-	return ret;
+ ਬਾਹਰਲਾ:
+	ਮੁਕਤ(omethods);
+	ਵਾਪਸ ret;
 }

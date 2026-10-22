@@ -35,62 +35,62 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <termios.h>
-#include <pwd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <termios.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <pwd.h>
 
-#include "sshpty.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshpty.h"
 
-static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+ਸਥਿਰ ਬਣਤਰ termios _saved_tio;
+ਸਥਿਰ ਪੂਰਨ ਵਿੱਚ_raw_ਬਹੁਲਕ = 0;
 
-struct termios *
-get_saved_tio(void)
+ਬਣਤਰ termios *
+get_saved_tio(ਖਾਲੀ)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	ਵਾਪਸ ਵਿੱਚ_raw_ਬਹੁਲਕ ? &_saved_tio : ਨਿਰਾ;
 }
 
-void
-leave_raw_mode(int quiet)
+ਖਾਲੀ
+leave_raw_ਬਹੁਲਕ(ਪੂਰਨ quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	ਜੇ (!ਵਿੱਚ_raw_ਬਹੁਲਕ)
+		ਵਾਪਸ;
+	ਜੇ (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		ਜੇ (!quiet)
 			perror("tcsetattr");
-	} else
-		_in_raw_mode = 0;
+	} ਨਹੀਂਤਾਂ
+		ਵਿੱਚ_raw_ਬਹੁਲਕ = 0;
 }
 
-void
-enter_raw_mode(int quiet)
+ਖਾਲੀ
+enter_raw_ਬਹੁਲਕ(ਪੂਰਨ quiet)
 {
-	struct termios tio;
+	ਬਣਤਰ termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	ਜੇ (tcgetattr(fileno(stdin), &tio) == -1) {
+		ਜੇ (!quiet)
 			perror("tcgetattr");
-		return;
+		ਵਾਪਸ;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
 	tio.c_iflag &= ~(ISTRIP | INLCR | IGNCR | ICRNL | IXON | IXANY | IXOFF);
-#ifdef IUCLC
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ IUCLC
 	tio.c_iflag &= ~IUCLC;
-#endif
+#ਜੇ_ਅੰਤ
 	tio.c_lflag &= ~(ISIG | ICANON | ECHO | ECHOE | ECHOK | ECHONL);
-#ifdef IEXTEN
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ IEXTEN
 	tio.c_lflag &= ~IEXTEN;
-#endif
+#ਜੇ_ਅੰਤ
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	ਜੇ (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		ਜੇ (!quiet)
 			perror("tcsetattr");
-	} else
-		_in_raw_mode = 1;
+	} ਨਹੀਂਤਾਂ
+		ਵਿੱਚ_raw_ਬਹੁਲਕ = 1;
 }

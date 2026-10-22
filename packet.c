@@ -37,222 +37,222 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/queue.h>
-#include <sys/socket.h>
-#include <sys/time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/queue.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/socket.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/time.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/in.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <arpa/inet.h>
 
-#include <errno.h>
-#include <netdb.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <poll.h>
-#include <signal.h>
-#include <time.h>
-#include <util.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netdb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <poll.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <signal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <util.h>
 
 /*
  * Explicitly include OpenSSL before zlib as some versions of OpenSSL have
  * "free_func" in their headers, which zlib typedefs.
  */
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 # include <openssl/bn.h>
 # include <openssl/evp.h>
 # include <openssl/ec.h>
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef WITH_ZLIB
-#include <zlib.h>
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_ZLIB
+#ਅਨ੍ਤਰ੍ਭਾਵ <zlib.h>
+#ਜੇ_ਅੰਤ
 
-#include "xmalloc.h"
-#include "compat.h"
-#include "ssh2.h"
-#include "cipher.h"
-#include "kex.h"
-#include "digest.h"
-#include "mac.h"
-#include "log.h"
-#include "canohost.h"
-#include "misc.h"
-#include "packet.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "version.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "compat.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh2.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "cipher.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "kex.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "digest.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "mac.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "canohost.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "packet.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "version.h"
 
-#ifdef PACKET_DEBUG
-#define DBG(x) x
-#else
-#define DBG(x)
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PACKET_DEBUG
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DBG(x) x
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DBG(x)
+#ਜੇ_ਅੰਤ
 
-#define PACKET_MAX_SIZE (256 * 1024)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ PACKET_MAX_ਮਾਪ (256 * 1024)
 
-struct packet_state {
+ਬਣਤਰ packet_state {
 	uint32_t seqnr;
 	uint32_t packets;
-	uint64_t blocks;
-	uint64_t bytes;
+	uint64_t ਖੰਡਾਂ;
+	uint64_t ਬਾਈਟਾਂ;
 };
 
-struct packet {
-	TAILQ_ENTRY(packet) next;
+ਬਣਤਰ packet {
+	TAILQ_ENTRY(packet) ਅਗਲਾ;
 	u_char type;
-	struct sshbuf *payload;
+	ਬਣਤਰ sshbuf *payload;
 };
 
-struct session_state {
+ਬਣਤਰ session_state {
 	/*
 	 * This variable contains the file descriptors used for
 	 * communicating with the other side.  connection_in is used for
 	 * reading; connection_out for writing.  These can be the same
 	 * descriptor, in which case it is assumed to be a socket.
 	 */
-	int connection_in;
-	int connection_out;
+	ਪੂਰਨ connection_ਵਿੱਚ;
+	ਪੂਰਨ connection_ਬਾਹਰਲਾ;
 
 	/* Protocol flags for the remote side. */
 	u_int remote_protocol_flags;
 
 	/* Encryption context for receiving data.  Only used for decryption. */
-	struct sshcipher_ctx *receive_context;
+	ਬਣਤਰ sshcipher_ctx *receive_context;
 
 	/* Encryption context for sending data.  Only used for encryption. */
-	struct sshcipher_ctx *send_context;
+	ਬਣਤਰ sshcipher_ctx *send_context;
 
 	/* Buffer for raw input data from the socket. */
-	struct sshbuf *input;
+	ਬਣਤਰ sshbuf *ਨਿਵੇਸ਼;
 
 	/* Buffer for raw output data going to the socket. */
-	struct sshbuf *output;
+	ਬਣਤਰ sshbuf *output;
 
 	/* Buffer for the partial outgoing packet being constructed. */
-	struct sshbuf *outgoing_packet;
+	ਬਣਤਰ sshbuf *outgoing_packet;
 
 	/* Buffer for the incoming packet currently being processed. */
-	struct sshbuf *incoming_packet;
+	ਬਣਤਰ sshbuf *incoming_packet;
 
 	/* Scratch buffer for packet compression/decompression. */
-	struct sshbuf *compression_buffer;
+	ਬਣਤਰ sshbuf *compression_ਬਫਰ;
 
-#ifdef WITH_ZLIB
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_ZLIB
 	/* Incoming/outgoing compression dictionaries */
-	z_stream compression_in_stream;
-	z_stream compression_out_stream;
-#endif
-	int compression_in_started;
-	int compression_out_started;
-	int compression_in_failures;
-	int compression_out_failures;
+	z_ਧਾਰਾ compression_ਵਿੱਚ_ਧਾਰਾ;
+	z_ਧਾਰਾ compression_ਬਾਹਰਲਾ_ਧਾਰਾ;
+#ਜੇ_ਅੰਤ
+	ਪੂਰਨ compression_ਵਿੱਚ_started;
+	ਪੂਰਨ compression_ਬਾਹਰਲਾ_started;
+	ਪੂਰਨ compression_ਵਿੱਚ_failures;
+	ਪੂਰਨ compression_ਬਾਹਰਲਾ_failures;
 
 	/* default maximum packet size */
-	u_int max_packet_size;
+	u_int max_packet_ਮਾਪ;
 
 	/* Flag indicating whether this module has been initialized. */
-	int initialized;
+	ਪੂਰਨ initialized;
 
 	/* Monotonic clock timestamp when the connection was started. */
-	time_t start_time;
+	time_t ਸ਼ੁਰੂ_ਸਮਾਂ;
 
 	/* Set to true if the connection is interactive. */
-	int interactive_mode;
+	ਪੂਰਨ interactive_ਬਹੁਲਕ;
 
 	/* Set to true if we are the server side. */
-	int server_side;
+	ਪੂਰਨ server_side;
 
 	/* Set to true if we are authenticated. */
-	int after_authentication;
+	ਪੂਰਨ after_authentication;
 
-	int keep_alive_timeouts;
+	ਪੂਰਨ keep_alive_timeouts;
 
 	/* The maximum time that we will wait to send or receive a packet */
-	int packet_timeout_ms;
+	ਪੂਰਨ packet_timeout_ms;
 
 	/* Session key information for Encryption and MAC */
-	struct newkeys *newkeys[MODE_MAX];
-	struct packet_state p_read, p_send;
+	ਬਣਤਰ newkeys *newkeys[ਬਹੁਲਕ_MAX];
+	ਬਣਤਰ packet_state p_read, p_send;
 
 	/* Volume-based rekeying */
-	uint64_t hard_max_blocks_in, hard_max_blocks_out;
-	uint64_t max_blocks_in, max_blocks_out, rekey_limit;
+	uint64_t hard_max_ਖੰਡਾਂ_ਵਿੱਚ, hard_max_ਖੰਡਾਂ_ਬਾਹਰਲਾ;
+	uint64_t max_ਖੰਡਾਂ_ਵਿੱਚ, max_ਖੰਡਾਂ_ਬਾਹਰਲਾ, rekey_ਹੱਦਬੰਦੀ;
 
 	/* Time-based rekeying */
 	uint32_t rekey_interval;	/* how often in seconds */
-	time_t rekey_time;	/* time of last rekeying */
+	time_t rekey_ਸਮਾਂ;	/* time of last rekeying */
 
 	/* roundup current message to extra_pad bytes */
 	u_char extra_pad;
 
 	/* XXX discard incoming data after MAC error */
 	u_int packet_discard;
-	size_t packet_discard_mac_already;
-	struct sshmac *packet_discard_mac;
+	ਮਾਪ_t packet_discard_mac_already;
+	ਬਣਤਰ sshmac *packet_discard_mac;
 
 	/* Used in packet_read_poll2() */
 	u_int packlen;
 
 	/* Used in packet_send2 */
-	int rekeying;
+	ਪੂਰਨ rekeying;
 
 	/* Used in ssh_packet_send_mux() */
-	int mux;
+	ਪੂਰਨ mux;
 
 	/* QoS handling */
-	int qos_interactive, qos_other;
+	ਪੂਰਨ qos_interactive, qos_other;
 
 	/* Used in packet_set_maxsize */
-	int set_maxsize_called;
+	ਪੂਰਨ ਸੈੱਟ_maxsize_called;
 
 	/* One-off warning about weak ciphers */
-	int cipher_warning_done;
+	ਪੂਰਨ cipher_warning_ਪੂਰਾ;
 
 	/*
 	 * Disconnect in progress. Used to prevent reentry in
 	 * ssh_packet_disconnect()
 	 */
-	int disconnecting;
+	ਪੂਰਨ disconnecting;
 
 	/* Nagle disabled on socket */
-	int nodelay_set;
+	ਪੂਰਨ nodelay_ਸੈੱਟ;
 
 	/* Hook for fuzzing inbound packets */
-	ssh_packet_hook_fn *hook_in;
-	void *hook_in_ctx;
+	ssh_packet_hook_fn *hook_ਵਿੱਚ;
+	ਖਾਲੀ *hook_ਵਿੱਚ_ctx;
 
 	TAILQ_HEAD(, packet) outgoing;
 };
 
-struct ssh *
-ssh_alloc_session_state(void)
+ਬਣਤਰ ssh *
+ssh_alloc_session_state(ਖਾਲੀ)
 {
-	struct ssh *ssh = NULL;
-	struct session_state *state = NULL;
+	ਬਣਤਰ ssh *ssh = ਨਿਰਾ;
+	ਬਣਤਰ session_state *state = ਨਿਰਾ;
 
-	if ((ssh = calloc(1, sizeof(*ssh))) == NULL ||
-	    (state = calloc(1, sizeof(*state))) == NULL ||
-	    (ssh->kex = kex_new()) == NULL ||
-	    (state->input = sshbuf_new()) == NULL ||
-	    (state->output = sshbuf_new()) == NULL ||
-	    (state->outgoing_packet = sshbuf_new()) == NULL ||
-	    (state->incoming_packet = sshbuf_new()) == NULL)
-		goto fail;
+	ਜੇ ((ssh = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*ssh))) == ਨਿਰਾ ||
+	    (state = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*state))) == ਨਿਰਾ ||
+	    (ssh->kex = kex_new()) == ਨਿਰਾ ||
+	    (state->ਨਿਵੇਸ਼ = sshbuf_new()) == ਨਿਰਾ ||
+	    (state->output = sshbuf_new()) == ਨਿਰਾ ||
+	    (state->outgoing_packet = sshbuf_new()) == ਨਿਰਾ ||
+	    (state->incoming_packet = sshbuf_new()) == ਨਿਰਾ)
+		ਜਾਓ fail;
 	TAILQ_INIT(&state->outgoing);
-	TAILQ_INIT(&ssh->private_keys);
-	TAILQ_INIT(&ssh->public_keys);
-	state->connection_in = -1;
-	state->connection_out = -1;
-	state->max_packet_size = 32768;
+	TAILQ_INIT(&ssh->ਨਿੱਜੀ_ਕੁੰਜੀਆਂ);
+	TAILQ_INIT(&ssh->ਜਨਤਕ_ਕੁੰਜੀਆਂ);
+	state->connection_ਵਿੱਚ = -1;
+	state->connection_ਬਾਹਰਲਾ = -1;
+	state->max_packet_ਮਾਪ = 32768;
 	state->packet_timeout_ms = -1;
-	state->interactive_mode = 1;
+	state->interactive_ਬਹੁਲਕ = 1;
 	state->qos_interactive = state->qos_other = -1;
 	state->p_send.packets = state->p_read.packets = 0;
 	state->initialized = 1;
@@ -262,257 +262,257 @@ ssh_alloc_session_state(void)
 	 */
 	state->rekeying = 1;
 	ssh->state = state;
-	return ssh;
+	ਵਾਪਸ ssh;
  fail:
-	if (ssh) {
+	ਜੇ (ssh) {
 		kex_free(ssh->kex);
-		free(ssh);
+		ਮੁਕਤ(ssh);
 	}
-	if (state) {
-		sshbuf_free(state->input);
+	ਜੇ (state) {
+		sshbuf_free(state->ਨਿਵੇਸ਼);
 		sshbuf_free(state->output);
 		sshbuf_free(state->incoming_packet);
 		sshbuf_free(state->outgoing_packet);
-		free(state);
+		ਮੁਕਤ(state);
 	}
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-void
-ssh_packet_set_input_hook(struct ssh *ssh, ssh_packet_hook_fn *hook, void *ctx)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_ਨਿਵੇਸ਼_hook(ਬਣਤਰ ssh *ssh, ssh_packet_hook_fn *hook, ਖਾਲੀ *ctx)
 {
-	ssh->state->hook_in = hook;
-	ssh->state->hook_in_ctx = ctx;
+	ssh->state->hook_ਵਿੱਚ = hook;
+	ssh->state->hook_ਵਿੱਚ_ctx = ctx;
 }
 
 /* Returns nonzero if rekeying is in progress */
-int
-ssh_packet_is_rekeying(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_is_rekeying(ਬਣਤਰ ssh *ssh)
 {
-	return ssh->state->rekeying ||
-	    (ssh->kex != NULL && ssh->kex->done == 0);
+	ਵਾਪਸ ssh->state->rekeying ||
+	    (ssh->kex != ਨਿਰਾ && ssh->kex->ਪੂਰਾ == 0);
 }
 
 /*
  * Sets the descriptors used for communication.
  */
-struct ssh *
-ssh_packet_set_connection(struct ssh *ssh, int fd_in, int fd_out)
+ਬਣਤਰ ssh *
+ssh_packet_ਸੈੱਟ_connection(ਬਣਤਰ ssh *ssh, ਪੂਰਨ fd_ਵਿੱਚ, ਪੂਰਨ fd_ਬਾਹਰਲਾ)
 {
-	struct session_state *state;
-	const struct sshcipher *none = cipher_by_name("none");
-	int r, wasnull = ssh == NULL;
+	ਬਣਤਰ session_state *state;
+	ਅਚਲ ਬਣਤਰ sshcipher *none = cipher_by_name("none");
+	ਪੂਰਨ r, wasnull = ssh == ਨਿਰਾ;
 
-	if (none == NULL) {
+	ਜੇ (none == ਨਿਰਾ) {
 		error_f("cannot load cipher 'none'");
-		return NULL;
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	if (ssh == NULL)
+	ਜੇ (ssh == ਨਿਰਾ)
 		ssh = ssh_alloc_session_state();
-	if (ssh == NULL) {
+	ਜੇ (ssh == ਨਿਰਾ) {
 		error_f("could not allocate state");
-		return NULL;
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 	state = ssh->state;
-	state->start_time = monotime();
-	state->connection_in = fd_in;
-	state->connection_out = fd_out;
-	if ((r = cipher_init(&state->send_context, none,
-	    (const u_char *)"", 0, NULL, 0, CIPHER_ENCRYPT)) != 0 ||
+	state->ਸ਼ੁਰੂ_ਸਮਾਂ = monotime();
+	state->connection_ਵਿੱਚ = fd_ਵਿੱਚ;
+	state->connection_ਬਾਹਰਲਾ = fd_ਬਾਹਰਲਾ;
+	ਜੇ ((r = cipher_init(&state->send_context, none,
+	    (ਅਚਲ u_char *)"", 0, ਨਿਰਾ, 0, CIPHER_ENCRYPT)) != 0 ||
 	    (r = cipher_init(&state->receive_context, none,
-	    (const u_char *)"", 0, NULL, 0, CIPHER_DECRYPT)) != 0) {
+	    (ਅਚਲ u_char *)"", 0, ਨਿਰਾ, 0, CIPHER_DECRYPT)) != 0) {
 		error_fr(r, "cipher_init failed");
-		if (wasnull)
-			free(ssh); /* XXX need ssh_free_session_state? */
-		return NULL;
+		ਜੇ (wasnull)
+			ਮੁਕਤ(ssh); /* XXX need ssh_free_session_state? */
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	state->newkeys[MODE_IN] = state->newkeys[MODE_OUT] = NULL;
+	state->newkeys[ਬਹੁਲਕ_ਵਿੱਚ] = state->newkeys[ਬਹੁਲਕ_ਬਾਹਰਲਾ] = ਨਿਰਾ;
 	/*
 	 * Cache the IP address of the remote connection for use in error
 	 * messages that might be generated after the connection has closed.
 	 */
-	(void)ssh_remote_ipaddr(ssh);
-	return ssh;
+	(ਖਾਲੀ)ssh_remote_ipaddr(ssh);
+	ਵਾਪਸ ssh;
 }
 
-void
-ssh_packet_set_timeout(struct ssh *ssh, int timeout, int count)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_timeout(ਬਣਤਰ ssh *ssh, ਪੂਰਨ timeout, ਪੂਰਨ ਗਿਣਤੀ_2)
 {
-	struct session_state *state = ssh->state;
+	ਬਣਤਰ session_state *state = ssh->state;
 
-	if (timeout <= 0 || count <= 0) {
+	ਜੇ (timeout <= 0 || ਗਿਣਤੀ_2 <= 0) {
 		state->packet_timeout_ms = -1;
-		return;
+		ਵਾਪਸ;
 	}
-	if ((INT_MAX / 1000) / count < timeout)
-		state->packet_timeout_ms = INT_MAX;
-	else
-		state->packet_timeout_ms = timeout * count * 1000;
+	ਜੇ ((ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ / 1000) / ਗਿਣਤੀ_2 < timeout)
+		state->packet_timeout_ms = ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ;
+	ਨਹੀਂਤਾਂ
+		state->packet_timeout_ms = timeout * ਗਿਣਤੀ_2 * 1000;
 }
 
-void
-ssh_packet_set_mux(struct ssh *ssh)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_mux(ਬਣਤਰ ssh *ssh)
 {
 	ssh->state->mux = 1;
 	ssh->state->rekeying = 0;
 	kex_free(ssh->kex);
-	ssh->kex = NULL;
+	ssh->kex = ਨਿਰਾ;
 }
 
-int
-ssh_packet_get_mux(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_get_mux(ਬਣਤਰ ssh *ssh)
 {
-	return ssh->state->mux;
+	ਵਾਪਸ ssh->state->mux;
 }
 
-int
-ssh_packet_set_log_preamble(struct ssh *ssh, const char *fmt, ...)
+ਪੂਰਨ
+ssh_packet_ਸੈੱਟ_log_preamble(ਬਣਤਰ ssh *ssh, ਅਚਲ ਅੱਖਰ *fmt, ...)
 {
-	va_list args;
-	int r;
+	va_list ਦਲੀਲਾਂ;
+	ਪੂਰਨ r;
 
-	free(ssh->log_preamble);
-	if (fmt == NULL)
-		ssh->log_preamble = NULL;
-	else {
-		va_start(args, fmt);
-		r = vasprintf(&ssh->log_preamble, fmt, args);
-		va_end(args);
-		if (r < 0 || ssh->log_preamble == NULL)
-			return SSH_ERR_ALLOC_FAIL;
+	ਮੁਕਤ(ssh->log_preamble);
+	ਜੇ (fmt == ਨਿਰਾ)
+		ssh->log_preamble = ਨਿਰਾ;
+	ਨਹੀਂਤਾਂ {
+		va_start(ਦਲੀਲਾਂ, fmt);
+		r = vasprintf(&ssh->log_preamble, fmt, ਦਲੀਲਾਂ);
+		va_end(ਦਲੀਲਾਂ);
+		ਜੇ (r < 0 || ssh->log_preamble == ਨਿਰਾ)
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-ssh_packet_stop_discard(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_stop_discard(ਬਣਤਰ ssh *ssh)
 {
-	struct session_state *state = ssh->state;
-	int r;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਪੂਰਨ r;
 
-	if (state->packet_discard_mac) {
-		char buf[1024];
-		size_t dlen = PACKET_MAX_SIZE;
+	ਜੇ (state->packet_discard_mac) {
+		ਅੱਖਰ buf[1024];
+		ਮਾਪ_t dlen = PACKET_MAX_ਮਾਪ;
 
-		if (dlen > state->packet_discard_mac_already)
+		ਜੇ (dlen > state->packet_discard_mac_already)
 			dlen -= state->packet_discard_mac_already;
-		memset(buf, 'a', sizeof(buf));
-		while (sshbuf_len(state->incoming_packet) < dlen)
-			if ((r = sshbuf_put(state->incoming_packet, buf,
-			    sizeof(buf))) != 0)
-				return r;
-		(void) mac_compute(state->packet_discard_mac,
+		memset(buf, 'a', ਆਕਾਰ(buf));
+		ਜਦੋਂ (sshbuf_len(state->incoming_packet) < dlen)
+			ਜੇ ((r = sshbuf_put(state->incoming_packet, buf,
+			    ਆਕਾਰ(buf))) != 0)
+				ਵਾਪਸ r;
+		(ਖਾਲੀ) mac_compute(state->packet_discard_mac,
 		    state->p_read.seqnr,
 		    sshbuf_ptr(state->incoming_packet), dlen,
-		    NULL, 0);
+		    ਨਿਰਾ, 0);
 	}
 	logit("Finished discarding for %.200s port %d",
-	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-	return SSH_ERR_MAC_INVALID;
+	    ssh_remote_ipaddr(ssh), ssh_remote_ਪੋਰਟ(ssh));
+	ਵਾਪਸ SSH_ERR_MAC_INVALID;
 }
 
-static int
-ssh_packet_start_discard(struct ssh *ssh, struct sshenc *enc,
-    struct sshmac *mac, size_t mac_already, u_int discard)
+ਸਥਿਰ ਪੂਰਨ
+ssh_packet_ਸ਼ੁਰੂ_discard(ਬਣਤਰ ssh *ssh, ਬਣਤਰ sshenc *enc,
+    ਬਣਤਰ sshmac *mac, ਮਾਪ_t mac_already, u_int discard)
 {
-	struct session_state *state = ssh->state;
-	int r;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਪੂਰਨ r;
 
-	if (enc == NULL || !cipher_is_cbc(enc->cipher) || (mac && mac->etm)) {
-		if ((r = sshpkt_disconnect(ssh, "Packet corrupt")) != 0)
-			return r;
-		return SSH_ERR_MAC_INVALID;
+	ਜੇ (enc == ਨਿਰਾ || !cipher_is_cbc(enc->cipher) || (mac && mac->etm)) {
+		ਜੇ ((r = sshpkt_disconnect(ssh, "Packet corrupt")) != 0)
+			ਵਾਪਸ r;
+		ਵਾਪਸ SSH_ERR_MAC_INVALID;
 	}
 	/*
 	 * Record number of bytes over which the mac has already
 	 * been computed in order to minimize timing attacks.
 	 */
-	if (mac && mac->enabled) {
+	ਜੇ (mac && mac->enabled) {
 		state->packet_discard_mac = mac;
 		state->packet_discard_mac_already = mac_already;
 	}
-	if (sshbuf_len(state->input) >= discard)
-		return ssh_packet_stop_discard(ssh);
-	state->packet_discard = discard - sshbuf_len(state->input);
-	return 0;
+	ਜੇ (sshbuf_len(state->ਨਿਵੇਸ਼) >= discard)
+		ਵਾਪਸ ssh_packet_stop_discard(ssh);
+	state->packet_discard = discard - sshbuf_len(state->ਨਿਵੇਸ਼);
+	ਵਾਪਸ 0;
 }
 
 /* Returns 1 if remote host is connected via socket, 0 if not. */
 
-int
-ssh_packet_connection_is_on_socket(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_connection_is_on_socket(ਬਣਤਰ ssh *ssh)
 {
-	struct session_state *state;
-	struct sockaddr_storage from, to;
+	ਬਣਤਰ session_state *state;
+	ਬਣਤਰ sockaddr_storage from, ਮੰਜ਼ਿਲ;
 	socklen_t fromlen, tolen;
 
-	if (ssh == NULL || ssh->state == NULL)
-		return 0;
+	ਜੇ (ssh == ਨਿਰਾ || ssh->state == ਨਿਰਾ)
+		ਵਾਪਸ 0;
 
 	state = ssh->state;
-	if (state->connection_in == -1 || state->connection_out == -1)
-		return 0;
-	fromlen = sizeof(from);
-	memset(&from, 0, sizeof(from));
-	if (getpeername(state->connection_in, (struct sockaddr *)&from,
+	ਜੇ (state->connection_ਵਿੱਚ == -1 || state->connection_ਬਾਹਰਲਾ == -1)
+		ਵਾਪਸ 0;
+	fromlen = ਆਕਾਰ(from);
+	memset(&from, 0, ਆਕਾਰ(from));
+	ਜੇ (getpeername(state->connection_ਵਿੱਚ, (ਬਣਤਰ sockaddr *)&from,
 	    &fromlen) == -1)
-		return 0;
-	if (from.ss_family != AF_INET && from.ss_family != AF_INET6)
-		return 0;
+		ਵਾਪਸ 0;
+	ਜੇ (from.ss_family != AF_INET && from.ss_family != AF_INET6)
+		ਵਾਪਸ 0;
 	/* filedescriptors in and out are the same, so it's a socket */
-	if (state->connection_in == state->connection_out)
-		return 1;
-	tolen = sizeof(to);
-	memset(&to, 0, sizeof(to));
-	if (getpeername(state->connection_out, (struct sockaddr *)&to,
+	ਜੇ (state->connection_ਵਿੱਚ == state->connection_ਬਾਹਰਲਾ)
+		ਵਾਪਸ 1;
+	tolen = ਆਕਾਰ(ਮੰਜ਼ਿਲ);
+	memset(&ਮੰਜ਼ਿਲ, 0, ਆਕਾਰ(ਮੰਜ਼ਿਲ));
+	ਜੇ (getpeername(state->connection_ਬਾਹਰਲਾ, (ਬਣਤਰ sockaddr *)&ਮੰਜ਼ਿਲ,
 	    &tolen) == -1)
-		return 0;
-	if (fromlen != tolen || memcmp(&from, &to, fromlen) != 0)
-		return 0;
-	return 1;
+		ਵਾਪਸ 0;
+	ਜੇ (fromlen != tolen || memcmp(&from, &ਮੰਜ਼ਿਲ, fromlen) != 0)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ 1;
 }
 
-void
-ssh_packet_get_bytes(struct ssh *ssh, uint64_t *ibytes, uint64_t *obytes)
+ਖਾਲੀ
+ssh_packet_get_ਬਾਈਟਾਂ(ਬਣਤਰ ssh *ssh, uint64_t *ibytes, uint64_t *obytes)
 {
-	if (ibytes)
-		*ibytes = ssh->state->p_read.bytes;
-	if (obytes)
-		*obytes = ssh->state->p_send.bytes;
+	ਜੇ (ibytes)
+		*ibytes = ssh->state->p_read.ਬਾਈਟਾਂ;
+	ਜੇ (obytes)
+		*obytes = ssh->state->p_send.ਬਾਈਟਾਂ;
 }
 
-int
-ssh_packet_connection_af(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_connection_af(ਬਣਤਰ ssh *ssh)
 {
-	return get_sock_af(ssh->state->connection_out);
+	ਵਾਪਸ get_sock_af(ssh->state->connection_ਬਾਹਰਲਾ);
 }
 
 /* Sets the connection into non-blocking mode. */
 
-void
-ssh_packet_set_nonblocking(struct ssh *ssh)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_nonblocking(ਬਣਤਰ ssh *ssh)
 {
 	/* Set the socket into non-blocking mode. */
-	set_nonblock(ssh->state->connection_in);
+	ਸੈੱਟ_nonblock(ssh->state->connection_ਵਿੱਚ);
 
-	if (ssh->state->connection_out != ssh->state->connection_in)
-		set_nonblock(ssh->state->connection_out);
+	ਜੇ (ssh->state->connection_ਬਾਹਰਲਾ != ssh->state->connection_ਵਿੱਚ)
+		ਸੈੱਟ_nonblock(ssh->state->connection_ਬਾਹਰਲਾ);
 }
 
 /* Returns the socket used for reading. */
 
-int
-ssh_packet_get_connection_in(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_get_connection_ਵਿੱਚ(ਬਣਤਰ ssh *ssh)
 {
-	return ssh->state->connection_in;
+	ਵਾਪਸ ssh->state->connection_ਵਿੱਚ;
 }
 
 /* Returns the descriptor used for writing. */
 
-int
-ssh_packet_get_connection_out(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_get_connection_ਬਾਹਰਲਾ(ਬਣਤਰ ssh *ssh)
 {
-	return ssh->state->connection_out;
+	ਵਾਪਸ ssh->state->connection_ਬਾਹਰਲਾ;
 }
 
 /*
@@ -520,27 +520,27 @@ ssh_packet_get_connection_out(struct ssh *ssh)
  * string must not be freed.
  */
 
-const char *
-ssh_remote_ipaddr(struct ssh *ssh)
+ਅਚਲ ਅੱਖਰ *
+ssh_remote_ipaddr(ਬਣਤਰ ssh *ssh)
 {
-	int sock;
+	ਪੂਰਨ sock;
 
 	/* Check whether we have cached the ipaddr. */
-	if (ssh->remote_ipaddr == NULL) {
-		if (ssh_packet_connection_is_on_socket(ssh)) {
-			sock = ssh->state->connection_in;
+	ਜੇ (ssh->remote_ipaddr == ਨਿਰਾ) {
+		ਜੇ (ssh_packet_connection_is_on_socket(ssh)) {
+			sock = ssh->state->connection_ਵਿੱਚ;
 			ssh->remote_ipaddr = get_peer_ipaddr(sock);
-			ssh->remote_port = get_peer_port(sock);
+			ssh->remote_ਪੋਰਟ = get_peer_ਪੋਰਟ(sock);
 			ssh->local_ipaddr = get_local_ipaddr(sock);
-			ssh->local_port = get_local_port(sock);
-		} else {
+			ssh->local_ਪੋਰਟ = get_local_ਪੋਰਟ(sock);
+		} ਨਹੀਂਤਾਂ {
 			ssh->remote_ipaddr = xstrdup("UNKNOWN");
-			ssh->remote_port = 65535;
+			ssh->remote_ਪੋਰਟ = 65535;
 			ssh->local_ipaddr = xstrdup("UNKNOWN");
-			ssh->local_port = 65535;
+			ssh->local_ਪੋਰਟ = 65535;
 		}
 	}
-	return ssh->remote_ipaddr;
+	ਵਾਪਸ ssh->remote_ipaddr;
 }
 
 /*
@@ -552,34 +552,34 @@ ssh_remote_ipaddr(struct ssh *ssh)
  * fall back to returning an address on error.
  */
 
-char *
-ssh_remote_hostname(struct ssh *ssh)
+ਅੱਖਰ *
+ssh_remote_hostname(ਬਣਤਰ ssh *ssh)
 {
-	struct sockaddr_storage from;
+	ਬਣਤਰ sockaddr_storage from;
 	socklen_t fromlen;
-	struct addrinfo hints, *ai, *aitop;
-	char name[NI_MAXHOST], ntop2[NI_MAXHOST];
-	const char *ntop = ssh_remote_ipaddr(ssh);
+	ਬਣਤਰ addrinfo hints, *ai, *aitop;
+	ਅੱਖਰ name[NI_MAXHOST], ntop2[NI_MAXHOST];
+	ਅਚਲ ਅੱਖਰ *ntop = ssh_remote_ipaddr(ssh);
 
 	/* Get IP address of client. */
-	fromlen = sizeof(from);
-	memset(&from, 0, sizeof(from));
-	if (getpeername(ssh_packet_get_connection_in(ssh),
-	    (struct sockaddr *)&from, &fromlen) == -1) {
+	fromlen = ਆਕਾਰ(from);
+	memset(&from, 0, ਆਕਾਰ(from));
+	ਜੇ (getpeername(ssh_packet_get_connection_ਵਿੱਚ(ssh),
+	    (ਬਣਤਰ sockaddr *)&from, &fromlen) == -1) {
 		debug_f("getpeername failed: %.100s", strerror(errno));
-		return xstrdup(ntop);
+		ਵਾਪਸ xstrdup(ntop);
 	}
 
 	ipv64_normalise_mapped(&from, &fromlen);
-	if (from.ss_family == AF_INET6)
-		fromlen = sizeof(struct sockaddr_in6);
+	ਜੇ (from.ss_family == AF_INET6)
+		fromlen = ਆਕਾਰ(ਬਣਤਰ sockaddr_in6);
 
 	debug3("trying to reverse map address %.100s.", ntop);
 	/* Map the IP address to a host name. */
-	if (getnameinfo((struct sockaddr *)&from, fromlen, name, sizeof(name),
-	    NULL, 0, NI_NAMEREQD) != 0) {
+	ਜੇ (getnameinfo((ਬਣਤਰ sockaddr *)&from, fromlen, name, ਆਕਾਰ(name),
+	    ਨਿਰਾ, 0, NI_NAMEREQD) != 0) {
 		/* Host name not found.  Use ip address. */
-		return xstrdup(ntop);
+		ਵਾਪਸ xstrdup(ntop);
 	}
 
 	/*
@@ -587,14 +587,14 @@ ssh_remote_hostname(struct ssh *ssh)
 	 * someone is trying to trick us by PTR record like following:
 	 *	1.1.1.10.in-addr.arpa.	IN PTR	2.3.4.5
 	 */
-	memset(&hints, 0, sizeof(hints));
+	memset(&hints, 0, ਆਕਾਰ(hints));
 	hints.ai_socktype = SOCK_DGRAM;	/*dummy*/
 	hints.ai_flags = AI_NUMERICHOST;
-	if (getaddrinfo(name, NULL, &hints, &ai) == 0) {
+	ਜੇ (getaddrinfo(name, ਨਿਰਾ, &hints, &ai) == 0) {
 		logit("Nasty PTR record \"%s\" is set up for %s, ignoring",
 		    name, ntop);
 		freeaddrinfo(ai);
-		return xstrdup(ntop);
+		ਵਾਪਸ xstrdup(ntop);
 	}
 
 	/* Names are stored in lowercase. */
@@ -609,39 +609,39 @@ ssh_remote_hostname(struct ssh *ssh)
 	 * fooled if the intruder has access to the name server of
 	 * the domain).
 	 */
-	memset(&hints, 0, sizeof(hints));
+	memset(&hints, 0, ਆਕਾਰ(hints));
 	hints.ai_family = from.ss_family;
 	hints.ai_socktype = SOCK_STREAM;
-	if (getaddrinfo(name, NULL, &hints, &aitop) != 0) {
+	ਜੇ (getaddrinfo(name, ਨਿਰਾ, &hints, &aitop) != 0) {
 		logit("reverse mapping checking getaddrinfo for %.700s "
 		    "[%s] failed.", name, ntop);
-		return xstrdup(ntop);
+		ਵਾਪਸ xstrdup(ntop);
 	}
 	/* Look for the address from the list of addresses. */
-	for (ai = aitop; ai; ai = ai->ai_next) {
-		if (getnameinfo(ai->ai_addr, ai->ai_addrlen, ntop2,
-		    sizeof(ntop2), NULL, 0, NI_NUMERICHOST) == 0 &&
+	ਲਈ (ai = aitop; ai; ai = ai->ai_next) {
+		ਜੇ (getnameinfo(ai->ai_addr, ai->ai_addrlen, ntop2,
+		    ਆਕਾਰ(ntop2), ਨਿਰਾ, 0, NI_NUMERICHOST) == 0 &&
 		    (strcmp(ntop, ntop2) == 0))
-				break;
+				ਰੋਕੋ;
 	}
 	freeaddrinfo(aitop);
 	/* If we reached the end of the list, the address was not there. */
-	if (ai == NULL) {
+	ਜੇ (ai == ਨਿਰਾ) {
 		/* Address not found for the host name. */
 		logit("Address %.100s maps to %.600s, but this does not "
 		    "map back to the address.", ntop, name);
-		return xstrdup(ntop);
+		ਵਾਪਸ xstrdup(ntop);
 	}
-	return xstrdup(name);
+	ਵਾਪਸ xstrdup(name);
 }
 
 /* Returns the port number of the remote host. */
 
-int
-ssh_remote_port(struct ssh *ssh)
+ਪੂਰਨ
+ssh_remote_ਪੋਰਟ(ਬਣਤਰ ssh *ssh)
 {
-	(void)ssh_remote_ipaddr(ssh); /* Will lookup and cache. */
-	return ssh->remote_port;
+	(ਖਾਲੀ)ssh_remote_ipaddr(ssh); /* Will lookup and cache. */
+	ਵਾਪਸ ssh->remote_ਪੋਰਟ;
 }
 
 /*
@@ -649,134 +649,134 @@ ssh_remote_port(struct ssh *ssh)
  * string must not be freed.
  */
 
-const char *
-ssh_local_ipaddr(struct ssh *ssh)
+ਅਚਲ ਅੱਖਰ *
+ssh_local_ipaddr(ਬਣਤਰ ssh *ssh)
 {
-	(void)ssh_remote_ipaddr(ssh); /* Will lookup and cache. */
-	return ssh->local_ipaddr;
+	(ਖਾਲੀ)ssh_remote_ipaddr(ssh); /* Will lookup and cache. */
+	ਵਾਪਸ ssh->local_ipaddr;
 }
 
 /* Returns the port number of the local host. */
 
-int
-ssh_local_port(struct ssh *ssh)
+ਪੂਰਨ
+ssh_local_ਪੋਰਟ(ਬਣਤਰ ssh *ssh)
 {
-	(void)ssh_remote_ipaddr(ssh); /* Will lookup and cache. */
-	return ssh->local_port;
+	(ਖਾਲੀ)ssh_remote_ipaddr(ssh); /* Will lookup and cache. */
+	ਵਾਪਸ ssh->local_ਪੋਰਟ;
 }
 
 /* Returns the routing domain of the input socket, or NULL if unavailable */
-const char *
-ssh_packet_rdomain_in(struct ssh *ssh)
+ਅਚਲ ਅੱਖਰ *
+ssh_packet_rdomain_ਵਿੱਚ(ਬਣਤਰ ssh *ssh)
 {
-	if (ssh->rdomain_in != NULL)
-		return ssh->rdomain_in;
-	if (!ssh_packet_connection_is_on_socket(ssh))
-		return NULL;
-	ssh->rdomain_in = get_rdomain(ssh->state->connection_in);
-	return ssh->rdomain_in;
+	ਜੇ (ssh->rdomain_ਵਿੱਚ != ਨਿਰਾ)
+		ਵਾਪਸ ssh->rdomain_ਵਿੱਚ;
+	ਜੇ (!ssh_packet_connection_is_on_socket(ssh))
+		ਵਾਪਸ ਨਿਰਾ;
+	ssh->rdomain_ਵਿੱਚ = get_rdomain(ssh->state->connection_ਵਿੱਚ);
+	ਵਾਪਸ ssh->rdomain_ਵਿੱਚ;
 }
 
 /* Closes the connection and clears and frees internal data structures. */
 
-static void
-ssh_packet_close_internal(struct ssh *ssh, int do_close)
+ਸਥਿਰ ਖਾਲੀ
+ssh_packet_close_ਅੰਦਰੂਨੀ(ਬਣਤਰ ssh *ssh, ਪੂਰਨ do_close)
 {
-	struct session_state *state = ssh->state;
-	u_int mode;
-	struct packet *p;
+	ਬਣਤਰ session_state *state = ssh->state;
+	u_int ਬਹੁਲਕ;
+	ਬਣਤਰ packet *p;
 
-	if (!state->initialized)
-		return;
+	ਜੇ (!state->initialized)
+		ਵਾਪਸ;
 	state->initialized = 0;
-	if (do_close) {
-		if (state->connection_in == state->connection_out) {
-			close(state->connection_out);
-		} else {
-			close(state->connection_in);
-			close(state->connection_out);
+	ਜੇ (do_close) {
+		ਜੇ (state->connection_ਵਿੱਚ == state->connection_ਬਾਹਰਲਾ) {
+			close(state->connection_ਬਾਹਰਲਾ);
+		} ਨਹੀਂਤਾਂ {
+			close(state->connection_ਵਿੱਚ);
+			close(state->connection_ਬਾਹਰਲਾ);
 		}
 	}
-	sshbuf_free(state->input);
+	sshbuf_free(state->ਨਿਵੇਸ਼);
 	sshbuf_free(state->output);
 	sshbuf_free(state->outgoing_packet);
 	sshbuf_free(state->incoming_packet);
-	while ((p = TAILQ_FIRST(&state->outgoing))) {
+	ਜਦੋਂ ((p = TAILQ_FIRST(&state->outgoing))) {
 		sshbuf_free(p->payload);
-		TAILQ_REMOVE(&state->outgoing, p, next);
-		free(p);
+		TAILQ_REMOVE(&state->outgoing, p, ਅਗਲਾ);
+		ਮੁਕਤ(p);
 	}
-	for (mode = 0; mode < MODE_MAX; mode++) {
-		kex_free_newkeys(state->newkeys[mode]);	/* current keys */
-		state->newkeys[mode] = NULL;
-		ssh_clear_newkeys(ssh, mode);		/* next keys */
+	ਲਈ (ਬਹੁਲਕ = 0; ਬਹੁਲਕ < ਬਹੁਲਕ_MAX; ਬਹੁਲਕ++) {
+		kex_free_newkeys(state->newkeys[ਬਹੁਲਕ]);	/* current keys */
+		state->newkeys[ਬਹੁਲਕ] = ਨਿਰਾ;
+		ssh_clear_newkeys(ssh, ਬਹੁਲਕ);		/* next keys */
 	}
-#ifdef WITH_ZLIB
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_ZLIB
 	/* compression state is in shared mem, so we can only release it once */
-	if (do_close && state->compression_buffer) {
-		sshbuf_free(state->compression_buffer);
-		if (state->compression_out_started) {
-			z_streamp stream = &state->compression_out_stream;
+	ਜੇ (do_close && state->compression_ਬਫਰ) {
+		sshbuf_free(state->compression_ਬਫਰ);
+		ਜੇ (state->compression_ਬਾਹਰਲਾ_started) {
+			z_streamp ਧਾਰਾ = &state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ;
 			debug("compress outgoing: "
 			    "raw data %llu, compressed %llu, factor %.2f",
-				(unsigned long long)stream->total_in,
-				(unsigned long long)stream->total_out,
-				stream->total_in == 0 ? 0.0 :
-				(double) stream->total_out / stream->total_in);
-			if (state->compression_out_failures == 0)
-				deflateEnd(stream);
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਧਾਰਾ->ਕੁੱਲ_ਵਿੱਚ,
+				(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਧਾਰਾ->ਕੁੱਲ_ਬਾਹਰਲਾ,
+				ਧਾਰਾ->ਕੁੱਲ_ਵਿੱਚ == 0 ? 0.0 :
+				(ਦੁੱਗਣਾ) ਧਾਰਾ->ਕੁੱਲ_ਬਾਹਰਲਾ / ਧਾਰਾ->ਕੁੱਲ_ਵਿੱਚ);
+			ਜੇ (state->compression_ਬਾਹਰਲਾ_failures == 0)
+				deflate_ਸਿਰਾ(ਧਾਰਾ);
 		}
-		if (state->compression_in_started) {
-			z_streamp stream = &state->compression_in_stream;
+		ਜੇ (state->compression_ਵਿੱਚ_started) {
+			z_streamp ਧਾਰਾ = &state->compression_ਵਿੱਚ_ਧਾਰਾ;
 			debug("compress incoming: "
 			    "raw data %llu, compressed %llu, factor %.2f",
-			    (unsigned long long)stream->total_out,
-			    (unsigned long long)stream->total_in,
-			    stream->total_out == 0 ? 0.0 :
-			    (double) stream->total_in / stream->total_out);
-			if (state->compression_in_failures == 0)
-				inflateEnd(stream);
+			    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਧਾਰਾ->ਕੁੱਲ_ਬਾਹਰਲਾ,
+			    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਧਾਰਾ->ਕੁੱਲ_ਵਿੱਚ,
+			    ਧਾਰਾ->ਕੁੱਲ_ਬਾਹਰਲਾ == 0 ? 0.0 :
+			    (ਦੁੱਗਣਾ) ਧਾਰਾ->ਕੁੱਲ_ਵਿੱਚ / ਧਾਰਾ->ਕੁੱਲ_ਬਾਹਰਲਾ);
+			ਜੇ (state->compression_ਵਿੱਚ_failures == 0)
+				inflate_ਸਿਰਾ(ਧਾਰਾ);
 		}
 	}
-#endif	/* WITH_ZLIB */
+#ਜੇ_ਅੰਤ	/* WITH_ZLIB */
 	cipher_free(state->send_context);
 	cipher_free(state->receive_context);
-	state->send_context = state->receive_context = NULL;
-	if (do_close) {
-		free(ssh->local_ipaddr);
-		ssh->local_ipaddr = NULL;
-		free(ssh->remote_ipaddr);
-		ssh->remote_ipaddr = NULL;
-		free(ssh->state);
-		ssh->state = NULL;
+	state->send_context = state->receive_context = ਨਿਰਾ;
+	ਜੇ (do_close) {
+		ਮੁਕਤ(ssh->local_ipaddr);
+		ssh->local_ipaddr = ਨਿਰਾ;
+		ਮੁਕਤ(ssh->remote_ipaddr);
+		ssh->remote_ipaddr = ਨਿਰਾ;
+		ਮੁਕਤ(ssh->state);
+		ssh->state = ਨਿਰਾ;
 		kex_free(ssh->kex);
-		ssh->kex = NULL;
+		ssh->kex = ਨਿਰਾ;
 	}
 }
 
-void
-ssh_packet_free(struct ssh *ssh)
+ਖਾਲੀ
+ssh_packet_free(ਬਣਤਰ ssh *ssh)
 {
-	ssh_packet_close_internal(ssh, 1);
-	freezero(ssh, sizeof(*ssh));
+	ssh_packet_close_ਅੰਦਰੂਨੀ(ssh, 1);
+	freezero(ssh, ਆਕਾਰ(*ssh));
 }
 
-void
-ssh_packet_close(struct ssh *ssh)
+ਖਾਲੀ
+ssh_packet_close(ਬਣਤਰ ssh *ssh)
 {
-	ssh_packet_close_internal(ssh, 1);
+	ssh_packet_close_ਅੰਦਰੂਨੀ(ssh, 1);
 }
 
-void
-ssh_packet_clear_keys(struct ssh *ssh)
+ਖਾਲੀ
+ssh_packet_clear_ਕੁੰਜੀਆਂ(ਬਣਤਰ ssh *ssh)
 {
-	ssh_packet_close_internal(ssh, 0);
+	ssh_packet_close_ਅੰਦਰੂਨੀ(ssh, 0);
 }
 
 /* Sets remote side protocol flags. */
 
-void
-ssh_packet_set_protocol_flags(struct ssh *ssh, u_int protocol_flags)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_protocol_flags(ਬਣਤਰ ssh *ssh, u_int protocol_flags)
 {
 	ssh->state->remote_protocol_flags = protocol_flags;
 }
@@ -784,9 +784,9 @@ ssh_packet_set_protocol_flags(struct ssh *ssh, u_int protocol_flags)
 /* Returns the remote protocol flags set earlier by the above function. */
 
 u_int
-ssh_packet_get_protocol_flags(struct ssh *ssh)
+ssh_packet_get_protocol_flags(ਬਣਤਰ ssh *ssh)
 {
-	return ssh->state->remote_protocol_flags;
+	ਵਾਪਸ ssh->state->remote_protocol_flags;
 }
 
 /*
@@ -794,262 +794,262 @@ ssh_packet_get_protocol_flags(struct ssh *ssh)
  * Level is compression level 1 (fastest) - 9 (slow, best) as in gzip.
  */
 
-static int
-ssh_packet_init_compression(struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ssh_packet_init_compression(ਬਣਤਰ ssh *ssh)
 {
-	if (!ssh->state->compression_buffer &&
-	    ((ssh->state->compression_buffer = sshbuf_new()) == NULL))
-		return SSH_ERR_ALLOC_FAIL;
-	return 0;
+	ਜੇ (!ssh->state->compression_ਬਫਰ &&
+	    ((ssh->state->compression_ਬਫਰ = sshbuf_new()) == ਨਿਰਾ))
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਵਾਪਸ 0;
 }
 
-#ifdef WITH_ZLIB
-static int
-start_compression_out(struct ssh *ssh)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_ZLIB
+ਸਥਿਰ ਪੂਰਨ
+ਸ਼ੁਰੂ_compression_ਬਾਹਰਲਾ(ਬਣਤਰ ssh *ssh)
 {
 	debug("Enabling compression.");
-	if (ssh->state->compression_out_started == 1)
-		deflateEnd(&ssh->state->compression_out_stream);
-	switch (deflateInit2(&ssh->state->compression_out_stream,
-	    Z_BEST_SPEED, Z_DEFLATED, 15, 8, Z_HUFFMAN_ONLY)) {
-	case Z_OK:
-		ssh->state->compression_out_started = 1;
-		break;
-	case Z_MEM_ERROR:
-		return SSH_ERR_ALLOC_FAIL;
-	default:
-		return SSH_ERR_INTERNAL_ERROR;
+	ਜੇ (ssh->state->compression_ਬਾਹਰਲਾ_started == 1)
+		deflate_ਸਿਰਾ(&ssh->state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ);
+	ਚੋਣ (deflateInit2(&ssh->state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ,
+	    Z_ਉੱਤਮ_ਰਫਤਾਰ, Z_DEFLATED, 15, 8, Z_HUFFMAN_ONLY)) {
+	ਹਾਲਤ Z_OK:
+		ssh->state->compression_ਬਾਹਰਲਾ_started = 1;
+		ਰੋਕੋ;
+	ਹਾਲਤ Z_MEM_ERROR:
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਮੂਲ:
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int
-start_compression_in(struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ਸ਼ੁਰੂ_compression_ਵਿੱਚ(ਬਣਤਰ ssh *ssh)
 {
-	if (ssh->state->compression_in_started == 1)
-		inflateEnd(&ssh->state->compression_in_stream);
-	switch (inflateInit(&ssh->state->compression_in_stream)) {
-	case Z_OK:
-		ssh->state->compression_in_started = 1;
-		break;
-	case Z_MEM_ERROR:
-		return SSH_ERR_ALLOC_FAIL;
-	default:
-		return SSH_ERR_INTERNAL_ERROR;
+	ਜੇ (ssh->state->compression_ਵਿੱਚ_started == 1)
+		inflate_ਸਿਰਾ(&ssh->state->compression_ਵਿੱਚ_ਧਾਰਾ);
+	ਚੋਣ (inflateInit(&ssh->state->compression_ਵਿੱਚ_ਧਾਰਾ)) {
+	ਹਾਲਤ Z_OK:
+		ssh->state->compression_ਵਿੱਚ_started = 1;
+		ਰੋਕੋ;
+	ਹਾਲਤ Z_MEM_ERROR:
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਮੂਲ:
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* XXX remove need for separate compression buffer */
-static int
-compress_buffer(struct ssh *ssh, struct sshbuf *in, struct sshbuf *out)
+ਸਥਿਰ ਪੂਰਨ
+compress_ਬਫਰ(ਬਣਤਰ ssh *ssh, ਬਣਤਰ sshbuf *ਵਿੱਚ, ਬਣਤਰ sshbuf *ਬਾਹਰਲਾ)
 {
 	u_char buf[4096];
-	int r, status;
+	ਪੂਰਨ r, ਸਥਿਤੀ;
 
-	if (ssh->state->compression_out_started != 1)
-		return SSH_ERR_INTERNAL_ERROR;
+	ਜੇ (ssh->state->compression_ਬਾਹਰਲਾ_started != 1)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 
 	/* This case is not handled below. */
-	if (sshbuf_len(in) == 0)
-		return 0;
+	ਜੇ (sshbuf_len(ਵਿੱਚ) == 0)
+		ਵਾਪਸ 0;
 
 	/* Input is the contents of the input buffer. */
-	if ((ssh->state->compression_out_stream.next_in =
-	    sshbuf_mutable_ptr(in)) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	ssh->state->compression_out_stream.avail_in = sshbuf_len(in);
+	ਜੇ ((ssh->state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ.ਅਗਲਾ_ਵਿੱਚ =
+	    sshbuf_mutable_ptr(ਵਿੱਚ)) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
+	ssh->state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ.avail_ਵਿੱਚ = sshbuf_len(ਵਿੱਚ);
 
 	/* Loop compressing until deflate() returns with avail_out != 0. */
-	do {
+	ਕਰੋ {
 		/* Set up fixed-size output buffer. */
-		ssh->state->compression_out_stream.next_out = buf;
-		ssh->state->compression_out_stream.avail_out = sizeof(buf);
+		ssh->state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ.ਅਗਲਾ_ਬਾਹਰਲਾ = buf;
+		ssh->state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ.avail_ਬਾਹਰਲਾ = ਆਕਾਰ(buf);
 
 		/* Compress as much data into the buffer as possible. */
-		status = deflate(&ssh->state->compression_out_stream,
+		ਸਥਿਤੀ = deflate(&ssh->state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ,
 		    Z_PARTIAL_FLUSH);
-		switch (status) {
-		case Z_MEM_ERROR:
-			return SSH_ERR_ALLOC_FAIL;
-		case Z_OK:
+		ਚੋਣ (ਸਥਿਤੀ) {
+		ਹਾਲਤ Z_MEM_ERROR:
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+		ਹਾਲਤ Z_OK:
 			/* Append compressed data to output_buffer. */
-			if ((r = sshbuf_put(out, buf, sizeof(buf) -
-			    ssh->state->compression_out_stream.avail_out)) != 0)
-				return r;
-			break;
-		case Z_STREAM_ERROR:
-		default:
-			ssh->state->compression_out_failures++;
-			return SSH_ERR_INVALID_FORMAT;
+			ਜੇ ((r = sshbuf_put(ਬਾਹਰਲਾ, buf, ਆਕਾਰ(buf) -
+			    ssh->state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ.avail_ਬਾਹਰਲਾ)) != 0)
+				ਵਾਪਸ r;
+			ਰੋਕੋ;
+		ਹਾਲਤ Z_ਧਾਰਾ_ERROR:
+		ਮੂਲ:
+			ssh->state->compression_ਬਾਹਰਲਾ_failures++;
+			ਵਾਪਸ SSH_ERR_INVALID_FORMAT;
 		}
-	} while (ssh->state->compression_out_stream.avail_out == 0);
-	return 0;
+	} ਜਦੋਂ (ssh->state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ.avail_ਬਾਹਰਲਾ == 0);
+	ਵਾਪਸ 0;
 }
 
-static int
-uncompress_buffer(struct ssh *ssh, struct sshbuf *in, struct sshbuf *out)
+ਸਥਿਰ ਪੂਰਨ
+uncompress_ਬਫਰ(ਬਣਤਰ ssh *ssh, ਬਣਤਰ sshbuf *ਵਿੱਚ, ਬਣਤਰ sshbuf *ਬਾਹਰਲਾ)
 {
 	u_char buf[4096];
-	int r, status;
+	ਪੂਰਨ r, ਸਥਿਤੀ;
 
-	if (ssh->state->compression_in_started != 1)
-		return SSH_ERR_INTERNAL_ERROR;
+	ਜੇ (ssh->state->compression_ਵਿੱਚ_started != 1)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 
-	if ((ssh->state->compression_in_stream.next_in =
-	    sshbuf_mutable_ptr(in)) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	ssh->state->compression_in_stream.avail_in = sshbuf_len(in);
+	ਜੇ ((ssh->state->compression_ਵਿੱਚ_ਧਾਰਾ.ਅਗਲਾ_ਵਿੱਚ =
+	    sshbuf_mutable_ptr(ਵਿੱਚ)) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
+	ssh->state->compression_ਵਿੱਚ_ਧਾਰਾ.avail_ਵਿੱਚ = sshbuf_len(ਵਿੱਚ);
 
-	for (;;) {
+	ਲਈ (;;) {
 		/* Set up fixed-size output buffer. */
-		ssh->state->compression_in_stream.next_out = buf;
-		ssh->state->compression_in_stream.avail_out = sizeof(buf);
+		ssh->state->compression_ਵਿੱਚ_ਧਾਰਾ.ਅਗਲਾ_ਬਾਹਰਲਾ = buf;
+		ssh->state->compression_ਵਿੱਚ_ਧਾਰਾ.avail_ਬਾਹਰਲਾ = ਆਕਾਰ(buf);
 
-		status = inflate(&ssh->state->compression_in_stream,
+		ਸਥਿਤੀ = inflate(&ssh->state->compression_ਵਿੱਚ_ਧਾਰਾ,
 		    Z_SYNC_FLUSH);
-		switch (status) {
-		case Z_OK:
-			if ((r = sshbuf_put(out, buf, sizeof(buf) -
-			    ssh->state->compression_in_stream.avail_out)) != 0)
-				return r;
-			if (sshbuf_len(out) >= PACKET_MAX_SIZE)
-				return SSH_ERR_INVALID_FORMAT;
-			break;
-		case Z_BUF_ERROR:
+		ਚੋਣ (ਸਥਿਤੀ) {
+		ਹਾਲਤ Z_OK:
+			ਜੇ ((r = sshbuf_put(ਬਾਹਰਲਾ, buf, ਆਕਾਰ(buf) -
+			    ssh->state->compression_ਵਿੱਚ_ਧਾਰਾ.avail_ਬਾਹਰਲਾ)) != 0)
+				ਵਾਪਸ r;
+			ਜੇ (sshbuf_len(ਬਾਹਰਲਾ) >= PACKET_MAX_ਮਾਪ)
+				ਵਾਪਸ SSH_ERR_INVALID_FORMAT;
+			ਰੋਕੋ;
+		ਹਾਲਤ Z_BUF_ERROR:
 			/*
 			 * Comments in zlib.h say that we should keep calling
 			 * inflate() until we get an error.  This appears to
 			 * be the error that we get.
 			 */
-			return 0;
-		case Z_DATA_ERROR:
-			return SSH_ERR_INVALID_FORMAT;
-		case Z_MEM_ERROR:
-			return SSH_ERR_ALLOC_FAIL;
-		case Z_STREAM_ERROR:
-		default:
-			ssh->state->compression_in_failures++;
-			return SSH_ERR_INTERNAL_ERROR;
+			ਵਾਪਸ 0;
+		ਹਾਲਤ Z_ਅੰਕੜੇ_ERROR:
+			ਵਾਪਸ SSH_ERR_INVALID_FORMAT;
+		ਹਾਲਤ Z_MEM_ERROR:
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+		ਹਾਲਤ Z_ਧਾਰਾ_ERROR:
+		ਮੂਲ:
+			ssh->state->compression_ਵਿੱਚ_failures++;
+			ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 		}
 	}
 	/* NOTREACHED */
 }
 
-#else	/* WITH_ZLIB */
+#ਨਹੀਂਤਾਂ	/* WITH_ZLIB */
 
-static int
-start_compression_out(struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ਸ਼ੁਰੂ_compression_ਬਾਹਰਲਾ(ਬਣਤਰ ssh *ssh)
 {
-	return SSH_ERR_INTERNAL_ERROR;
+	ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 }
 
-static int
-start_compression_in(struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ਸ਼ੁਰੂ_compression_ਵਿੱਚ(ਬਣਤਰ ssh *ssh)
 {
-	return SSH_ERR_INTERNAL_ERROR;
+	ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 }
 
-static int
-compress_buffer(struct ssh *ssh, struct sshbuf *in, struct sshbuf *out)
+ਸਥਿਰ ਪੂਰਨ
+compress_ਬਫਰ(ਬਣਤਰ ssh *ssh, ਬਣਤਰ sshbuf *ਵਿੱਚ, ਬਣਤਰ sshbuf *ਬਾਹਰਲਾ)
 {
-	return SSH_ERR_INTERNAL_ERROR;
+	ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 }
 
-static int
-uncompress_buffer(struct ssh *ssh, struct sshbuf *in, struct sshbuf *out)
+ਸਥਿਰ ਪੂਰਨ
+uncompress_ਬਫਰ(ਬਣਤਰ ssh *ssh, ਬਣਤਰ sshbuf *ਵਿੱਚ, ਬਣਤਰ sshbuf *ਬਾਹਰਲਾ)
 {
-	return SSH_ERR_INTERNAL_ERROR;
+	ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 }
-#endif	/* WITH_ZLIB */
+#ਜੇ_ਅੰਤ	/* WITH_ZLIB */
 
-void
-ssh_clear_newkeys(struct ssh *ssh, int mode)
+ਖਾਲੀ
+ssh_clear_newkeys(ਬਣਤਰ ssh *ssh, ਪੂਰਨ ਬਹੁਲਕ)
 {
-	if (ssh->kex && ssh->kex->newkeys[mode]) {
-		kex_free_newkeys(ssh->kex->newkeys[mode]);
-		ssh->kex->newkeys[mode] = NULL;
+	ਜੇ (ssh->kex && ssh->kex->newkeys[ਬਹੁਲਕ]) {
+		kex_free_newkeys(ssh->kex->newkeys[ਬਹੁਲਕ]);
+		ssh->kex->newkeys[ਬਹੁਲਕ] = ਨਿਰਾ;
 	}
 }
 
-int
-ssh_set_newkeys(struct ssh *ssh, int mode)
+ਪੂਰਨ
+ssh_ਸੈੱਟ_newkeys(ਬਣਤਰ ssh *ssh, ਪੂਰਨ ਬਹੁਲਕ)
 {
-	struct session_state *state = ssh->state;
-	struct sshenc *enc;
-	struct sshmac *mac;
-	struct sshcomp *comp;
-	struct sshcipher_ctx **ccp;
-	struct packet_state *ps;
-	uint64_t *max_blocks, *hard_max_blocks;
-	const char *wmsg;
-	int r, crypt_type;
-	const char *dir = mode == MODE_OUT ? "out" : "in";
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਬਣਤਰ sshenc *enc;
+	ਬਣਤਰ sshmac *mac;
+	ਬਣਤਰ sshcomp *comp;
+	ਬਣਤਰ sshcipher_ctx **ccp;
+	ਬਣਤਰ packet_state *ps;
+	uint64_t *max_ਖੰਡਾਂ, *hard_max_ਖੰਡਾਂ;
+	ਅਚਲ ਅੱਖਰ *wmsg;
+	ਪੂਰਨ r, crypt_type;
+	ਅਚਲ ਅੱਖਰ *dir = ਬਹੁਲਕ == ਬਹੁਲਕ_ਬਾਹਰਲਾ ? "out" : "in";
 
-	debug2_f("mode %d", mode);
+	debug2_f("mode %d", ਬਹੁਲਕ);
 
-	if (mode == MODE_OUT) {
+	ਜੇ (ਬਹੁਲਕ == ਬਹੁਲਕ_ਬਾਹਰਲਾ) {
 		ccp = &state->send_context;
 		crypt_type = CIPHER_ENCRYPT;
 		ps = &state->p_send;
-		hard_max_blocks = &state->hard_max_blocks_out;
-		max_blocks = &state->max_blocks_out;
-	} else {
+		hard_max_ਖੰਡਾਂ = &state->hard_max_ਖੰਡਾਂ_ਬਾਹਰਲਾ;
+		max_ਖੰਡਾਂ = &state->max_ਖੰਡਾਂ_ਬਾਹਰਲਾ;
+	} ਨਹੀਂਤਾਂ {
 		ccp = &state->receive_context;
 		crypt_type = CIPHER_DECRYPT;
 		ps = &state->p_read;
-		hard_max_blocks = &state->hard_max_blocks_in;
-		max_blocks = &state->max_blocks_in;
+		hard_max_ਖੰਡਾਂ = &state->hard_max_ਖੰਡਾਂ_ਵਿੱਚ;
+		max_ਖੰਡਾਂ = &state->max_ਖੰਡਾਂ_ਵਿੱਚ;
 	}
-	if (state->newkeys[mode] != NULL) {
+	ਜੇ (state->newkeys[ਬਹੁਲਕ] != ਨਿਰਾ) {
 		debug_f("rekeying %s, input %llu bytes %llu blocks, "
 		    "output %llu bytes %llu blocks", dir,
-		    (unsigned long long)state->p_read.bytes,
-		    (unsigned long long)state->p_read.blocks,
-		    (unsigned long long)state->p_send.bytes,
-		    (unsigned long long)state->p_send.blocks);
-		kex_free_newkeys(state->newkeys[mode]);
-		state->newkeys[mode] = NULL;
+		    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)state->p_read.ਬਾਈਟਾਂ,
+		    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)state->p_read.ਖੰਡਾਂ,
+		    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)state->p_send.ਬਾਈਟਾਂ,
+		    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)state->p_send.ਖੰਡਾਂ);
+		kex_free_newkeys(state->newkeys[ਬਹੁਲਕ]);
+		state->newkeys[ਬਹੁਲਕ] = ਨਿਰਾ;
 	}
 	/* note that both bytes and the seqnr are not reset */
-	ps->packets = ps->blocks = 0;
+	ps->packets = ps->ਖੰਡਾਂ = 0;
 	/* move newkeys from kex to state */
-	if ((state->newkeys[mode] = ssh->kex->newkeys[mode]) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	ssh->kex->newkeys[mode] = NULL;
-	enc  = &state->newkeys[mode]->enc;
-	mac  = &state->newkeys[mode]->mac;
-	comp = &state->newkeys[mode]->comp;
-	if (cipher_authlen(enc->cipher) == 0) {
-		if ((r = mac_init(mac)) != 0)
-			return r;
+	ਜੇ ((state->newkeys[ਬਹੁਲਕ] = ssh->kex->newkeys[ਬਹੁਲਕ]) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
+	ssh->kex->newkeys[ਬਹੁਲਕ] = ਨਿਰਾ;
+	enc  = &state->newkeys[ਬਹੁਲਕ]->enc;
+	mac  = &state->newkeys[ਬਹੁਲਕ]->mac;
+	comp = &state->newkeys[ਬਹੁਲਕ]->comp;
+	ਜੇ (cipher_authlen(enc->cipher) == 0) {
+		ਜੇ ((r = mac_init(mac)) != 0)
+			ਵਾਪਸ r;
 	}
 	mac->enabled = 1;
 	DBG(debug_f("cipher_init: %s", dir));
 	cipher_free(*ccp);
-	*ccp = NULL;
-	if ((r = cipher_init(ccp, enc->cipher, enc->key, enc->key_len,
+	*ccp = ਨਿਰਾ;
+	ਜੇ ((r = cipher_init(ccp, enc->cipher, enc->ਕੁੰਜੀ, enc->ਕੁੰਜੀ_len,
 	    enc->iv, enc->iv_len, crypt_type)) != 0)
-		return r;
-	if (!state->cipher_warning_done &&
-	    (wmsg = cipher_warning_message(*ccp)) != NULL) {
+		ਵਾਪਸ r;
+	ਜੇ (!state->cipher_warning_ਪੂਰਾ &&
+	    (wmsg = cipher_warning_ਸੁਨੇਹਾ(*ccp)) != ਨਿਰਾ) {
 		error("Warning: %s", wmsg);
-		state->cipher_warning_done = 1;
+		state->cipher_warning_ਪੂਰਾ = 1;
 	}
 	/* Deleting the keys does not gain extra security */
 	/* explicit_bzero(enc->iv,  enc->block_size);
 	   explicit_bzero(enc->key, enc->key_len);
 	   explicit_bzero(mac->key, mac->key_len); */
-	if (((comp->type == COMP_DELAYED && state->after_authentication)) &&
+	ਜੇ (((comp->type == COMP_DELAYED && state->after_authentication)) &&
 	    comp->enabled == 0) {
-		if ((r = ssh_packet_init_compression(ssh)) < 0)
-			return r;
-		if (mode == MODE_OUT) {
-			if ((r = start_compression_out(ssh)) != 0)
-				return r;
-		} else {
-			if ((r = start_compression_in(ssh)) != 0)
-				return r;
+		ਜੇ ((r = ssh_packet_init_compression(ssh)) < 0)
+			ਵਾਪਸ r;
+		ਜੇ (ਬਹੁਲਕ == ਬਹੁਲਕ_ਬਾਹਰਲਾ) {
+			ਜੇ ((r = ਸ਼ੁਰੂ_compression_ਬਾਹਰਲਾ(ssh)) != 0)
+				ਵਾਪਸ r;
+		} ਨਹੀਂਤਾਂ {
+			ਜੇ ((r = ਸ਼ੁਰੂ_compression_ਵਿੱਚ(ssh)) != 0)
+				ਵਾਪਸ r;
 		}
 		comp->enabled = 1;
 	}
@@ -1058,110 +1058,110 @@ ssh_set_newkeys(struct ssh *ssh, int mode)
 	 * so enforce a 1GB limit for small blocksizes.
 	 * See RFC4344 section 3.2.
 	 */
-	if (enc->block_size >= 16)
-		*hard_max_blocks = (uint64_t)1 << (enc->block_size*2);
-	else
-		*hard_max_blocks = ((uint64_t)1 << 30) / enc->block_size;
-	*max_blocks = *hard_max_blocks;
-	if (state->rekey_limit) {
-		*max_blocks = MINIMUM(*max_blocks,
-		    state->rekey_limit / enc->block_size);
+	ਜੇ (enc->ਖੰਡ_ਮਾਪ >= 16)
+		*hard_max_ਖੰਡਾਂ = (uint64_t)1 << (enc->ਖੰਡ_ਮਾਪ*2);
+	ਨਹੀਂਤਾਂ
+		*hard_max_ਖੰਡਾਂ = ((uint64_t)1 << 30) / enc->ਖੰਡ_ਮਾਪ;
+	*max_ਖੰਡਾਂ = *hard_max_ਖੰਡਾਂ;
+	ਜੇ (state->rekey_ਹੱਦਬੰਦੀ) {
+		*max_ਖੰਡਾਂ = MINIMUM(*max_ਖੰਡਾਂ,
+		    state->rekey_ਹੱਦਬੰਦੀ / enc->ਖੰਡ_ਮਾਪ);
 	}
 	debug("rekey %s after %llu blocks", dir,
-	    (unsigned long long)*max_blocks);
-	return 0;
+	    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)*max_ਖੰਡਾਂ);
+	ਵਾਪਸ 0;
 }
 
-#define MAX_PACKETS	(1U<<31)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_PACKETS	(1U<<31)
 /*
  * Checks whether the packet- or block- based rekeying limits have been
  * exceeded. If the 'hard' flag is set, the checks are performed against the
  * absolute maximum we're willing to accept for the given cipher. Otherwise
  * the checks are performed against the RekeyLimit volume, which may be lower.
  */
-static inline int
-ssh_packet_check_rekey_blocklimit(struct ssh *ssh, u_int packet_len, int hard)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ
+ssh_packet_check_rekey_blocklimit(ਬਣਤਰ ssh *ssh, u_int packet_len, ਪੂਰਨ hard)
 {
-	struct session_state *state = ssh->state;
-	uint32_t out_blocks;
-	const uint64_t max_blocks_in = hard ?
-	    state->hard_max_blocks_in : state->max_blocks_in;
-	const uint64_t max_blocks_out = hard ?
-	    state->hard_max_blocks_out : state->max_blocks_out;
+	ਬਣਤਰ session_state *state = ssh->state;
+	uint32_t ਬਾਹਰਲਾ_ਖੰਡਾਂ;
+	ਅਚਲ uint64_t max_ਖੰਡਾਂ_ਵਿੱਚ = hard ?
+	    state->hard_max_ਖੰਡਾਂ_ਵਿੱਚ : state->max_ਖੰਡਾਂ_ਵਿੱਚ;
+	ਅਚਲ uint64_t max_ਖੰਡਾਂ_ਬਾਹਰਲਾ = hard ?
+	    state->hard_max_ਖੰਡਾਂ_ਬਾਹਰਲਾ : state->max_ਖੰਡਾਂ_ਬਾਹਰਲਾ;
 
 	/*
 	 * Always rekey when MAX_PACKETS sent in either direction
 	 * As per RFC4344 section 3.1 we do this after 2^31 packets.
 	 */
-	if (state->p_send.packets > MAX_PACKETS ||
+	ਜੇ (state->p_send.packets > MAX_PACKETS ||
 	    state->p_read.packets > MAX_PACKETS)
-		return 1;
+		ਵਾਪਸ 1;
 
-	if (state->newkeys[MODE_OUT] == NULL)
-		return 0;
+	ਜੇ (state->newkeys[ਬਹੁਲਕ_ਬਾਹਰਲਾ] == ਨਿਰਾ)
+		ਵਾਪਸ 0;
 
 	/* Rekey after (cipher-specific) maximum blocks */
-	out_blocks = ROUNDUP(packet_len,
-	    state->newkeys[MODE_OUT]->enc.block_size);
-	return (max_blocks_out &&
-	    (state->p_send.blocks + out_blocks > max_blocks_out)) ||
-	    (max_blocks_in &&
-	    (state->p_read.blocks > max_blocks_in));
+	ਬਾਹਰਲਾ_ਖੰਡਾਂ = ROUNDUP(packet_len,
+	    state->newkeys[ਬਹੁਲਕ_ਬਾਹਰਲਾ]->enc.ਖੰਡ_ਮਾਪ);
+	ਵਾਪਸ (max_ਖੰਡਾਂ_ਬਾਹਰਲਾ &&
+	    (state->p_send.ਖੰਡਾਂ + ਬਾਹਰਲਾ_ਖੰਡਾਂ > max_ਖੰਡਾਂ_ਬਾਹਰਲਾ)) ||
+	    (max_ਖੰਡਾਂ_ਵਿੱਚ &&
+	    (state->p_read.ਖੰਡਾਂ > max_ਖੰਡਾਂ_ਵਿੱਚ));
 }
 
-static int
-ssh_packet_need_rekeying(struct ssh *ssh, u_int outbound_packet_len)
+ਸਥਿਰ ਪੂਰਨ
+ssh_packet_need_rekeying(ਬਣਤਰ ssh *ssh, u_int outbound_packet_len)
 {
-	struct session_state *state = ssh->state;
+	ਬਣਤਰ session_state *state = ssh->state;
 
 	/* Don't attempt rekeying during pre-auth */
-	if (!state->after_authentication)
-		return 0;
+	ਜੇ (!state->after_authentication)
+		ਵਾਪਸ 0;
 
 	/* Haven't keyed yet or KEX in progress. */
-	if (ssh_packet_is_rekeying(ssh))
-		return 0;
+	ਜੇ (ssh_packet_is_rekeying(ssh))
+		ਵਾਪਸ 0;
 
 	/*
 	 * Permit one packet in or out per rekey - this allows us to
 	 * make progress when rekey limits are very small.
 	 */
-	if (state->p_send.packets == 0 && state->p_read.packets == 0)
-		return 0;
+	ਜੇ (state->p_send.packets == 0 && state->p_read.packets == 0)
+		ਵਾਪਸ 0;
 
 	/* Time-based rekeying */
-	if (state->rekey_interval != 0 &&
-	    (int64_t)state->rekey_time + state->rekey_interval <= monotime())
-		return 1;
+	ਜੇ (state->rekey_interval != 0 &&
+	    (int64_t)state->rekey_ਸਮਾਂ + state->rekey_interval <= monotime())
+		ਵਾਪਸ 1;
 
-	return ssh_packet_check_rekey_blocklimit(ssh, outbound_packet_len, 0);
+	ਵਾਪਸ ssh_packet_check_rekey_blocklimit(ssh, outbound_packet_len, 0);
 }
 
 /* Checks that the hard rekey limits have not been exceeded during preauth */
-static int
-ssh_packet_check_rekey_preauth(struct ssh *ssh, u_int outgoing_packet_len)
+ਸਥਿਰ ਪੂਰਨ
+ssh_packet_check_rekey_preauth(ਬਣਤਰ ssh *ssh, u_int outgoing_packet_len)
 {
-	if (ssh->state->after_authentication)
-		return 0;
+	ਜੇ (ssh->state->after_authentication)
+		ਵਾਪਸ 0;
 
-	if (ssh_packet_check_rekey_blocklimit(ssh, 0, 1)) {
+	ਜੇ (ssh_packet_check_rekey_blocklimit(ssh, 0, 1)) {
 		error("RekeyLimit exceeded before authentication completed");
-		return SSH_ERR_NEED_REKEY;
+		ਵਾਪਸ SSH_ERR_NEED_REKEY;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-ssh_packet_check_rekey(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_check_rekey(ਬਣਤਰ ssh *ssh)
 {
-	int r;
+	ਪੂਰਨ r;
 
-	if ((r = ssh_packet_check_rekey_preauth(ssh, 0)) != 0)
-		return r;
-	if (!ssh_packet_need_rekeying(ssh, 0))
-		return 0;
+	ਜੇ ((r = ssh_packet_check_rekey_preauth(ssh, 0)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ (!ssh_packet_need_rekeying(ssh, 0))
+		ਵਾਪਸ 0;
 	debug3_f("rekex triggered");
-	return kex_start_rekex(ssh);
+	ਵਾਪਸ kex_ਸ਼ੁਰੂ_rekex(ssh);
 }
 
 /*
@@ -1169,105 +1169,105 @@ ssh_packet_check_rekey(struct ssh *ssh)
  * This happens on the server side after a SSH2_MSG_USERAUTH_SUCCESS is sent,
  * and on the client side after a SSH2_MSG_USERAUTH_SUCCESS is received.
  */
-static int
-ssh_packet_enable_delayed_compress(struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ssh_packet_enable_delayed_compress(ਬਣਤਰ ssh *ssh)
 {
-	struct session_state *state = ssh->state;
-	struct sshcomp *comp = NULL;
-	int r, mode;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਬਣਤਰ sshcomp *comp = ਨਿਰਾ;
+	ਪੂਰਨ r, ਬਹੁਲਕ;
 
 	/*
 	 * Remember that we are past the authentication step, so rekeying
 	 * with COMP_DELAYED will turn on compression immediately.
 	 */
 	state->after_authentication = 1;
-	for (mode = 0; mode < MODE_MAX; mode++) {
+	ਲਈ (ਬਹੁਲਕ = 0; ਬਹੁਲਕ < ਬਹੁਲਕ_MAX; ਬਹੁਲਕ++) {
 		/* protocol error: USERAUTH_SUCCESS received before NEWKEYS */
-		if (state->newkeys[mode] == NULL)
-			continue;
-		comp = &state->newkeys[mode]->comp;
-		if (comp && !comp->enabled && comp->type == COMP_DELAYED) {
-			if ((r = ssh_packet_init_compression(ssh)) != 0)
-				return r;
-			if (mode == MODE_OUT) {
-				if ((r = start_compression_out(ssh)) != 0)
-					return r;
-			} else {
-				if ((r = start_compression_in(ssh)) != 0)
-					return r;
+		ਜੇ (state->newkeys[ਬਹੁਲਕ] == ਨਿਰਾ)
+			ਜਾਰੀ;
+		comp = &state->newkeys[ਬਹੁਲਕ]->comp;
+		ਜੇ (comp && !comp->enabled && comp->type == COMP_DELAYED) {
+			ਜੇ ((r = ssh_packet_init_compression(ssh)) != 0)
+				ਵਾਪਸ r;
+			ਜੇ (ਬਹੁਲਕ == ਬਹੁਲਕ_ਬਾਹਰਲਾ) {
+				ਜੇ ((r = ਸ਼ੁਰੂ_compression_ਬਾਹਰਲਾ(ssh)) != 0)
+					ਵਾਪਸ r;
+			} ਨਹੀਂਤਾਂ {
+				ਜੇ ((r = ਸ਼ੁਰੂ_compression_ਵਿੱਚ(ssh)) != 0)
+					ਵਾਪਸ r;
 			}
 			comp->enabled = 1;
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* Used to mute debug logging for noisy packet types */
-int
+ਪੂਰਨ
 ssh_packet_log_type(u_char type)
 {
-	switch (type) {
-	case SSH2_MSG_PING:
-	case SSH2_MSG_PONG:
-	case SSH2_MSG_CHANNEL_DATA:
-	case SSH2_MSG_CHANNEL_EXTENDED_DATA:
-	case SSH2_MSG_CHANNEL_WINDOW_ADJUST:
-		return 0;
-	default:
-		return 1;
+	ਚੋਣ (type) {
+	ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_PING:
+	ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_PONG:
+	ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_CHANNEL_ਅੰਕੜੇ:
+	ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_CHANNEL_EXTENDED_ਅੰਕੜੇ:
+	ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_CHANNEL_ਖਿੜਕੀ_ADJUST:
+		ਵਾਪਸ 0;
+	ਮੂਲ:
+		ਵਾਪਸ 1;
 	}
 }
 
 /*
  * Finalize packet in SSH2 format (compress, mac, encrypt, enqueue)
  */
-int
-ssh_packet_send2_wrapped(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_send2_wrapped(ਬਣਤਰ ssh *ssh)
 {
-	struct session_state *state = ssh->state;
-	u_char type, *cp, macbuf[SSH_DIGEST_MAX_LENGTH];
+	ਬਣਤਰ session_state *state = ssh->state;
+	u_char type, *cp, macbuf[SSH_DIGEST_MAX_ਲੰਮਾਈ];
 	u_char tmp, padlen, pad = 0;
 	u_int authlen = 0, aadlen = 0;
 	u_int len;
-	struct sshenc *enc   = NULL;
-	struct sshmac *mac   = NULL;
-	struct sshcomp *comp = NULL;
-	int r, block_size;
+	ਬਣਤਰ sshenc *enc   = ਨਿਰਾ;
+	ਬਣਤਰ sshmac *mac   = ਨਿਰਾ;
+	ਬਣਤਰ sshcomp *comp = ਨਿਰਾ;
+	ਪੂਰਨ r, ਖੰਡ_ਮਾਪ;
 
-	if (state->newkeys[MODE_OUT] != NULL) {
-		enc  = &state->newkeys[MODE_OUT]->enc;
-		mac  = &state->newkeys[MODE_OUT]->mac;
-		comp = &state->newkeys[MODE_OUT]->comp;
+	ਜੇ (state->newkeys[ਬਹੁਲਕ_ਬਾਹਰਲਾ] != ਨਿਰਾ) {
+		enc  = &state->newkeys[ਬਹੁਲਕ_ਬਾਹਰਲਾ]->enc;
+		mac  = &state->newkeys[ਬਹੁਲਕ_ਬਾਹਰਲਾ]->mac;
+		comp = &state->newkeys[ਬਹੁਲਕ_ਬਾਹਰਲਾ]->comp;
 		/* disable mac for authenticated encryption */
-		if ((authlen = cipher_authlen(enc->cipher)) != 0)
-			mac = NULL;
+		ਜੇ ((authlen = cipher_authlen(enc->cipher)) != 0)
+			mac = ਨਿਰਾ;
 	}
-	block_size = enc ? enc->block_size : 8;
+	ਖੰਡ_ਮਾਪ = enc ? enc->ਖੰਡ_ਮਾਪ : 8;
 	aadlen = (mac && mac->enabled && mac->etm) || authlen ? 4 : 0;
 
 	type = (sshbuf_ptr(state->outgoing_packet))[5];
-	if (ssh_packet_log_type(type))
+	ਜੇ (ssh_packet_log_type(type))
 		debug3("send packet: type %u", type);
-#ifdef PACKET_DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PACKET_DEBUG
 	fprintf(stderr, "plain:     ");
 	sshbuf_dump(state->outgoing_packet, stderr);
-#endif
+#ਜੇ_ਅੰਤ
 
-	if (comp && comp->enabled) {
+	ਜੇ (comp && comp->enabled) {
 		len = sshbuf_len(state->outgoing_packet);
 		/* skip header, compress only payload */
-		if ((r = sshbuf_consume(state->outgoing_packet, 5)) != 0)
-			goto out;
-		sshbuf_reset(state->compression_buffer);
-		if ((r = compress_buffer(ssh, state->outgoing_packet,
-		    state->compression_buffer)) != 0)
-			goto out;
+		ਜੇ ((r = sshbuf_consume(state->outgoing_packet, 5)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
+		sshbuf_reset(state->compression_ਬਫਰ);
+		ਜੇ ((r = compress_ਬਫਰ(ssh, state->outgoing_packet,
+		    state->compression_ਬਫਰ)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 		sshbuf_reset(state->outgoing_packet);
-		if ((r = sshbuf_put(state->outgoing_packet,
+		ਜੇ ((r = sshbuf_put(state->outgoing_packet,
 		    "\0\0\0\0\0", 5)) != 0 ||
 		    (r = sshbuf_putb(state->outgoing_packet,
-		    state->compression_buffer)) != 0)
-			goto out;
+		    state->compression_ਬਫਰ)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 		DBG(debug("compression: raw %d compressed %zd", len,
 		    sshbuf_len(state->outgoing_packet)));
 	}
@@ -1280,45 +1280,45 @@ ssh_packet_send2_wrapped(struct ssh *ssh)
 	 * minimum padding is 4 bytes
 	 */
 	len -= aadlen; /* packet length is not encrypted for EtM modes */
-	padlen = block_size - (len % block_size);
-	if (padlen < 4)
-		padlen += block_size;
-	if (state->extra_pad) {
+	padlen = ਖੰਡ_ਮਾਪ - (len % ਖੰਡ_ਮਾਪ);
+	ਜੇ (padlen < 4)
+		padlen += ਖੰਡ_ਮਾਪ;
+	ਜੇ (state->extra_pad) {
 		tmp = state->extra_pad;
 		state->extra_pad =
-		    ROUNDUP(state->extra_pad, block_size);
+		    ROUNDUP(state->extra_pad, ਖੰਡ_ਮਾਪ);
 		/* check if roundup overflowed */
-		if (state->extra_pad < tmp)
-			return SSH_ERR_INVALID_ARGUMENT;
+		ਜੇ (state->extra_pad < tmp)
+			ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 		tmp = (len + padlen) % state->extra_pad;
 		/* Check whether pad calculation below will underflow */
-		if (tmp > state->extra_pad)
-			return SSH_ERR_INVALID_ARGUMENT;
+		ਜੇ (tmp > state->extra_pad)
+			ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 		pad = state->extra_pad - tmp;
 		DBG(debug3_f("adding %d (len %d padlen %d extra_pad %d)",
 		    pad, len, padlen, state->extra_pad));
 		tmp = padlen;
 		padlen += pad;
 		/* Check whether padlen calculation overflowed */
-		if (padlen < tmp)
-			return SSH_ERR_INVALID_ARGUMENT; /* overflow */
+		ਜੇ (padlen < tmp)
+			ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ; /*ਉਛਾਲ*/
 		state->extra_pad = 0;
 	}
-	if ((r = sshbuf_reserve(state->outgoing_packet, padlen, &cp)) != 0)
-		goto out;
-	if (enc && !cipher_ctx_is_plaintext(state->send_context)) {
+	ਜੇ ((r = sshbuf_reserve(state->outgoing_packet, padlen, &cp)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ (enc && !cipher_ctx_is_plaintext(state->send_context)) {
 		/* random padding */
 		arc4random_buf(cp, padlen);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* clear padding */
 		explicit_bzero(cp, padlen);
 	}
 	/* sizeof (packet_len + pad_len + payload + padding) */
 	len = sshbuf_len(state->outgoing_packet);
 	cp = sshbuf_mutable_ptr(state->outgoing_packet);
-	if (cp == NULL) {
-		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+	ਜੇ (cp == ਨਿਰਾ) {
+		r = SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 	/* packet_length includes payload, padding and padding length field */
 	POKE_U32(cp, len - 4);
@@ -1327,160 +1327,160 @@ ssh_packet_send2_wrapped(struct ssh *ssh)
 	    len, padlen, aadlen));
 
 	/* compute MAC over seqnr and packet(length fields, payload, padding) */
-	if (mac && mac->enabled && !mac->etm) {
-		if ((r = mac_compute(mac, state->p_send.seqnr,
+	ਜੇ (mac && mac->enabled && !mac->etm) {
+		ਜੇ ((r = mac_compute(mac, state->p_send.seqnr,
 		    sshbuf_ptr(state->outgoing_packet), len,
-		    macbuf, sizeof(macbuf))) != 0)
-			goto out;
+		    macbuf, ਆਕਾਰ(macbuf))) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 		DBG(debug("done calc MAC out #%d", state->p_send.seqnr));
 	}
 	/* encrypt packet and append to output buffer. */
-	if ((r = sshbuf_reserve(state->output,
+	ਜੇ ((r = sshbuf_reserve(state->output,
 	    sshbuf_len(state->outgoing_packet) + authlen, &cp)) != 0)
-		goto out;
-	if ((r = cipher_crypt(state->send_context, state->p_send.seqnr, cp,
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ ((r = cipher_crypt(state->send_context, state->p_send.seqnr, cp,
 	    sshbuf_ptr(state->outgoing_packet),
 	    len - aadlen, aadlen, authlen)) != 0)
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	/* append unencrypted MAC */
-	if (mac && mac->enabled) {
-		if (mac->etm) {
+	ਜੇ (mac && mac->enabled) {
+		ਜੇ (mac->etm) {
 			/* EtM: compute mac over aadlen + cipher text */
-			if ((r = mac_compute(mac, state->p_send.seqnr,
-			    cp, len, macbuf, sizeof(macbuf))) != 0)
-				goto out;
+			ਜੇ ((r = mac_compute(mac, state->p_send.seqnr,
+			    cp, len, macbuf, ਆਕਾਰ(macbuf))) != 0)
+				ਜਾਓ ਬਾਹਰਲਾ;
 			DBG(debug("done calc MAC(EtM) out #%d",
 			    state->p_send.seqnr));
 		}
-		if ((r = sshbuf_put(state->output, macbuf, mac->mac_len)) != 0)
-			goto out;
+		ਜੇ ((r = sshbuf_put(state->output, macbuf, mac->mac_len)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 	}
-#ifdef PACKET_DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PACKET_DEBUG
 	fprintf(stderr, "encrypted: ");
 	sshbuf_dump(state->output, stderr);
-#endif
+#ਜੇ_ਅੰਤ
 	/* increment sequence number for outgoing packets */
-	if (++state->p_send.seqnr == 0) {
-		if ((ssh->kex->flags & KEX_INITIAL) != 0) {
+	ਜੇ (++state->p_send.seqnr == 0) {
+		ਜੇ ((ssh->kex->flags & KEX_INITIAL) != 0) {
 			ssh_packet_disconnect(ssh, "outgoing sequence number "
 			    "wrapped during initial key exchange");
 		}
 		logit("outgoing seqnr wraps around");
 	}
-	if (++state->p_send.packets == 0)
-		return SSH_ERR_NEED_REKEY;
-	state->p_send.blocks += len / block_size;
-	state->p_send.bytes += len;
+	ਜੇ (++state->p_send.packets == 0)
+		ਵਾਪਸ SSH_ERR_NEED_REKEY;
+	state->p_send.ਖੰਡਾਂ += len / ਖੰਡ_ਮਾਪ;
+	state->p_send.ਬਾਈਟਾਂ += len;
 	sshbuf_reset(state->outgoing_packet);
 
-	if (type == SSH2_MSG_NEWKEYS && ssh->kex->kex_strict) {
+	ਜੇ (type == SSH2_ਸੁਨੇਹਾ_NEWKEYS && ssh->kex->kex_strict) {
 		debug_f("resetting send seqnr %u", state->p_send.seqnr);
 		state->p_send.seqnr = 0;
 	}
 
-	if (type == SSH2_MSG_NEWKEYS)
-		r = ssh_set_newkeys(ssh, MODE_OUT);
-	else if (type == SSH2_MSG_USERAUTH_SUCCESS && state->server_side)
+	ਜੇ (type == SSH2_ਸੁਨੇਹਾ_NEWKEYS)
+		r = ssh_ਸੈੱਟ_newkeys(ssh, ਬਹੁਲਕ_ਬਾਹਰਲਾ);
+	ਨਹੀਂਤਾਂ ਜੇ (type == SSH2_ਸੁਨੇਹਾ_USERAUTH_SUCCESS && state->server_side)
 		r = ssh_packet_enable_delayed_compress(ssh);
-	else
+	ਨਹੀਂਤਾਂ
 		r = 0;
- out:
-	return r;
+ ਬਾਹਰਲਾ:
+	ਵਾਪਸ r;
 }
 
 /* returns non-zero if the specified packet type is usec by KEX */
-static int
+ਸਥਿਰ ਪੂਰਨ
 ssh_packet_type_is_kex(u_char type)
 {
-	return
-	    type >= SSH2_MSG_TRANSPORT_MIN &&
-	    type <= SSH2_MSG_TRANSPORT_MAX &&
-	    type != SSH2_MSG_SERVICE_REQUEST &&
-	    type != SSH2_MSG_SERVICE_ACCEPT &&
-	    type != SSH2_MSG_EXT_INFO;
+	ਵਾਪਸ
+	    type >= SSH2_ਸੁਨੇਹਾ_TRANSPORT_MIN &&
+	    type <= SSH2_ਸੁਨੇਹਾ_TRANSPORT_MAX &&
+	    type != SSH2_ਸੁਨੇਹਾ_SERVICE_REQUEST &&
+	    type != SSH2_ਸੁਨੇਹਾ_SERVICE_ACCEPT &&
+	    type != SSH2_ਸੁਨੇਹਾ_EXT_INFO;
 }
 
-int
-ssh_packet_send2(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_send2(ਬਣਤਰ ssh *ssh)
 {
-	struct session_state *state = ssh->state;
-	struct packet *p;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਬਣਤਰ packet *p;
 	u_char type;
-	int r, need_rekey;
+	ਪੂਰਨ r, need_rekey;
 
-	if (sshbuf_len(state->outgoing_packet) < 6)
-		return SSH_ERR_INTERNAL_ERROR;
+	ਜੇ (sshbuf_len(state->outgoing_packet) < 6)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 	type = sshbuf_ptr(state->outgoing_packet)[5];
 	need_rekey = !ssh_packet_type_is_kex(type) &&
 	    ssh_packet_need_rekeying(ssh, sshbuf_len(state->outgoing_packet));
 
 	/* Enforce hard rekey limit during pre-auth */
-	if (!state->rekeying && !ssh_packet_type_is_kex(type) &&
+	ਜੇ (!state->rekeying && !ssh_packet_type_is_kex(type) &&
 	    (r = ssh_packet_check_rekey_preauth(ssh, 0)) != 0)
-		return r;
+		ਵਾਪਸ r;
 
 	/*
 	 * During rekeying we can only send key exchange messages.
 	 * Queue everything else.
 	 */
-	if ((need_rekey || state->rekeying) && !ssh_packet_type_is_kex(type)) {
-		if (need_rekey)
+	ਜੇ ((need_rekey || state->rekeying) && !ssh_packet_type_is_kex(type)) {
+		ਜੇ (need_rekey)
 			debug3_f("rekex triggered");
 		debug("enqueue packet: %u", type);
-		p = calloc(1, sizeof(*p));
-		if (p == NULL)
-			return SSH_ERR_ALLOC_FAIL;
+		p = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*p));
+		ਜੇ (p == ਨਿਰਾ)
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
 		p->type = type;
 		p->payload = state->outgoing_packet;
-		TAILQ_INSERT_TAIL(&state->outgoing, p, next);
+		TAILQ_INSERT_TAIL(&state->outgoing, p, ਅਗਲਾ);
 		state->outgoing_packet = sshbuf_new();
-		if (state->outgoing_packet == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		if (need_rekey) {
+		ਜੇ (state->outgoing_packet == ਨਿਰਾ)
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+		ਜੇ (need_rekey) {
 			/*
 			 * This packet triggered a rekey, so send the
 			 * KEXINIT now.
 			 * NB. reenters this function via kex_start_rekex().
 			 */
-			return kex_start_rekex(ssh);
+			ਵਾਪਸ kex_ਸ਼ੁਰੂ_rekex(ssh);
 		}
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
 	/* rekeying starts with sending KEXINIT */
-	if (type == SSH2_MSG_KEXINIT)
+	ਜੇ (type == SSH2_ਸੁਨੇਹਾ_KEXINIT)
 		state->rekeying = 1;
 
-	if ((r = ssh_packet_send2_wrapped(ssh)) != 0)
-		return r;
+	ਜੇ ((r = ssh_packet_send2_wrapped(ssh)) != 0)
+		ਵਾਪਸ r;
 
 	/* after a NEWKEYS message we can send the complete queue */
-	if (type == SSH2_MSG_NEWKEYS) {
+	ਜੇ (type == SSH2_ਸੁਨੇਹਾ_NEWKEYS) {
 		state->rekeying = 0;
-		state->rekey_time = monotime();
-		while ((p = TAILQ_FIRST(&state->outgoing))) {
+		state->rekey_ਸਮਾਂ = monotime();
+		ਜਦੋਂ ((p = TAILQ_FIRST(&state->outgoing))) {
 			type = p->type;
 			/*
 			 * If this packet triggers a rekex, then skip the
 			 * remaining packets in the queue for now.
 			 * NB. re-enters this function via kex_start_rekex.
 			 */
-			if (ssh_packet_need_rekeying(ssh,
+			ਜੇ (ssh_packet_need_rekeying(ssh,
 			    sshbuf_len(p->payload))) {
 				debug3_f("queued packet triggered rekex");
-				return kex_start_rekex(ssh);
+				ਵਾਪਸ kex_ਸ਼ੁਰੂ_rekex(ssh);
 			}
 			debug("dequeue packet: %u", type);
 			sshbuf_free(state->outgoing_packet);
 			state->outgoing_packet = p->payload;
-			TAILQ_REMOVE(&state->outgoing, p, next);
-			memset(p, 0, sizeof(*p));
-			free(p);
-			if ((r = ssh_packet_send2_wrapped(ssh)) != 0)
-				return r;
+			TAILQ_REMOVE(&state->outgoing, p, ਅਗਲਾ);
+			memset(p, 0, ਆਕਾਰ(*p));
+			ਮੁਕਤ(p);
+			ਜੇ ((r = ssh_packet_send2_wrapped(ssh)) != 0)
+				ਵਾਪਸ r;
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
@@ -1489,15 +1489,15 @@ ssh_packet_send2(struct ssh *ssh)
  * be used during the interactive session.
  */
 
-int
-ssh_packet_read_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
+ਪੂਰਨ
+ssh_packet_read_seqnr(ਬਣਤਰ ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 {
-	struct session_state *state = ssh->state;
-	int len, r, ms_remain = 0;
-	struct pollfd pfd;
-	char buf[8192];
-	struct timeval start;
-	struct timespec timespec, *timespecp = NULL;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਪੂਰਨ len, r, ms_remain = 0;
+	ਬਣਤਰ pollfd pfd;
+	ਅੱਖਰ buf[8192];
+	ਬਣਤਰ timeval ਸ਼ੁਰੂ;
+	ਬਣਤਰ timespec timespec, *timespecp = ਨਿਰਾ;
 
 	DBG(debug("packet_read()"));
 
@@ -1505,219 +1505,219 @@ ssh_packet_read_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 	 * Since we are blocking, ensure that all written packets have
 	 * been sent.
 	 */
-	if ((r = ssh_packet_write_wait(ssh)) != 0)
-		goto out;
+	ਜੇ ((r = ssh_packet_write_wait(ssh)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
 
 	/* Stay in the loop until we have received a complete packet. */
-	for (;;) {
+	ਲਈ (;;) {
 		/* Try to read a packet from the buffer. */
-		if ((r = ssh_packet_read_poll_seqnr(ssh, typep, seqnr_p)) != 0)
-			break;
+		ਜੇ ((r = ssh_packet_read_poll_seqnr(ssh, typep, seqnr_p)) != 0)
+			ਰੋਕੋ;
 		/* If we got a packet, return it. */
-		if (*typep != SSH_MSG_NONE)
-			break;
+		ਜੇ (*typep != SSH_ਸੁਨੇਹਾ_NONE)
+			ਰੋਕੋ;
 		/*
 		 * Otherwise, wait for some data to arrive, add it to the
 		 * buffer, and try again.
 		 */
-		pfd.fd = state->connection_in;
+		pfd.fd = state->connection_ਵਿੱਚ;
 		pfd.events = POLLIN;
 
-		if (state->packet_timeout_ms > 0) {
+		ਜੇ (state->packet_timeout_ms > 0) {
 			ms_remain = state->packet_timeout_ms;
 			timespecp = &timespec;
 		}
 		/* Wait for some data to arrive. */
-		for (;;) {
-			if (state->packet_timeout_ms > 0) {
-				ms_to_timespec(&timespec, ms_remain);
-				monotime_tv(&start);
+		ਲਈ (;;) {
+			ਜੇ (state->packet_timeout_ms > 0) {
+				ms_ਮੰਜ਼ਿਲ_timespec(&timespec, ms_remain);
+				monotime_tv(&ਸ਼ੁਰੂ);
 			}
-			if ((r = ppoll(&pfd, 1, timespecp, NULL)) >= 0)
-				break;
-			if (errno != EAGAIN && errno != EINTR &&
+			ਜੇ ((r = ppoll(&pfd, 1, timespecp, ਨਿਰਾ)) >= 0)
+				ਰੋਕੋ;
+			ਜੇ (errno != EAGAIN && errno != EINTR &&
 			    errno != EWOULDBLOCK) {
 				r = SSH_ERR_SYSTEM_ERROR;
-				goto out;
+				ਜਾਓ ਬਾਹਰਲਾ;
 			}
-			if (state->packet_timeout_ms <= 0)
-				continue;
-			ms_subtract_diff(&start, &ms_remain);
-			if (ms_remain <= 0) {
+			ਜੇ (state->packet_timeout_ms <= 0)
+				ਜਾਰੀ;
+			ms_ਘਟਾਓ_diff(&ਸ਼ੁਰੂ, &ms_remain);
+			ਜੇ (ms_remain <= 0) {
 				r = 0;
-				break;
+				ਰੋਕੋ;
 			}
 		}
-		if (r == 0) {
+		ਜੇ (r == 0) {
 			r = SSH_ERR_CONN_TIMEOUT;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
 		/* Read data from the socket. */
-		len = read(state->connection_in, buf, sizeof(buf));
-		if (len == 0) {
+		len = ਪਠ(state->connection_ਵਿੱਚ, buf, ਆਕਾਰ(buf));
+		ਜੇ (len == 0) {
 			r = SSH_ERR_CONN_CLOSED;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
-		if (len == -1) {
+		ਜੇ (len == -1) {
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
 
 		/* Append it to the buffer. */
-		if ((r = ssh_packet_process_incoming(ssh, buf, len)) != 0)
-			goto out;
+		ਜੇ ((r = ssh_packet_process_incoming(ssh, buf, len)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 	}
- out:
-	return r;
+ ਬਾਹਰਲਾ:
+	ਵਾਪਸ r;
 }
 
-int
-ssh_packet_read(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_read(ਬਣਤਰ ssh *ssh)
 {
 	u_char type;
-	int r;
+	ਪੂਰਨ r;
 
-	if ((r = ssh_packet_read_seqnr(ssh, &type, NULL)) != 0)
+	ਜੇ ((r = ssh_packet_read_seqnr(ssh, &type, ਨਿਰਾ)) != 0)
 		sshpkt_fatal(ssh, r, "read");
-	return type;
+	ਵਾਪਸ type;
 }
 
-static int
-ssh_packet_read_poll2_mux(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
+ਸਥਿਰ ਪੂਰਨ
+ssh_packet_read_poll2_mux(ਬਣਤਰ ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 {
-	struct session_state *state = ssh->state;
-	const u_char *cp;
-	size_t need;
-	int r;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਅਚਲ u_char *cp;
+	ਮਾਪ_t need;
+	ਪੂਰਨ r;
 
-	if (ssh->kex)
-		return SSH_ERR_INTERNAL_ERROR;
-	*typep = SSH_MSG_NONE;
-	cp = sshbuf_ptr(state->input);
-	if (state->packlen == 0) {
-		if (sshbuf_len(state->input) < 4 + 1)
-			return 0; /* packet is incomplete */
+	ਜੇ (ssh->kex)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
+	*typep = SSH_ਸੁਨੇਹਾ_NONE;
+	cp = sshbuf_ptr(state->ਨਿਵੇਸ਼);
+	ਜੇ (state->packlen == 0) {
+		ਜੇ (sshbuf_len(state->ਨਿਵੇਸ਼) < 4 + 1)
+			ਵਾਪਸ 0; /* packet is incomplete */
 		state->packlen = PEEK_U32(cp);
-		if (state->packlen < 4 + 1 ||
-		    state->packlen > PACKET_MAX_SIZE)
-			return SSH_ERR_MESSAGE_INCOMPLETE;
+		ਜੇ (state->packlen < 4 + 1 ||
+		    state->packlen > PACKET_MAX_ਮਾਪ)
+			ਵਾਪਸ SSH_ERR_ਸੁਨੇਹਾ_INCOMPLETE;
 	}
 	need = state->packlen + 4;
-	if (sshbuf_len(state->input) < need)
-		return 0; /* packet is incomplete */
+	ਜੇ (sshbuf_len(state->ਨਿਵੇਸ਼) < need)
+		ਵਾਪਸ 0; /* packet is incomplete */
 	sshbuf_reset(state->incoming_packet);
-	if ((r = sshbuf_put(state->incoming_packet, cp + 4,
+	ਜੇ ((r = sshbuf_put(state->incoming_packet, cp + 4,
 	    state->packlen)) != 0 ||
-	    (r = sshbuf_consume(state->input, need)) != 0 ||
-	    (r = sshbuf_get_u8(state->incoming_packet, NULL)) != 0 ||
+	    (r = sshbuf_consume(state->ਨਿਵੇਸ਼, need)) != 0 ||
+	    (r = sshbuf_get_u8(state->incoming_packet, ਨਿਰਾ)) != 0 ||
 	    (r = sshbuf_get_u8(state->incoming_packet, typep)) != 0)
-		return r;
-	if (ssh_packet_log_type(*typep))
+		ਵਾਪਸ r;
+	ਜੇ (ssh_packet_log_type(*typep))
 		debug3_f("type %u", *typep);
 	/* sshbuf_dump(state->incoming_packet, stderr); */
 	/* reset for next packet */
 	state->packlen = 0;
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
+ਪੂਰਨ
+ssh_packet_read_poll2(ਬਣਤਰ ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 {
-	struct session_state *state = ssh->state;
+	ਬਣਤਰ session_state *state = ssh->state;
 	u_int padlen, need;
 	u_char *cp;
-	u_int maclen, aadlen = 0, authlen = 0, block_size;
-	struct sshenc *enc   = NULL;
-	struct sshmac *mac   = NULL;
-	struct sshcomp *comp = NULL;
-	int r;
+	u_int maclen, aadlen = 0, authlen = 0, ਖੰਡ_ਮਾਪ;
+	ਬਣਤਰ sshenc *enc   = ਨਿਰਾ;
+	ਬਣਤਰ sshmac *mac   = ਨਿਰਾ;
+	ਬਣਤਰ sshcomp *comp = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if (state->mux)
-		return ssh_packet_read_poll2_mux(ssh, typep, seqnr_p);
+	ਜੇ (state->mux)
+		ਵਾਪਸ ssh_packet_read_poll2_mux(ssh, typep, seqnr_p);
 
-	*typep = SSH_MSG_NONE;
+	*typep = SSH_ਸੁਨੇਹਾ_NONE;
 
-	if (state->packet_discard)
-		return 0;
+	ਜੇ (state->packet_discard)
+		ਵਾਪਸ 0;
 
-	if (state->newkeys[MODE_IN] != NULL) {
-		enc  = &state->newkeys[MODE_IN]->enc;
-		mac  = &state->newkeys[MODE_IN]->mac;
-		comp = &state->newkeys[MODE_IN]->comp;
+	ਜੇ (state->newkeys[ਬਹੁਲਕ_ਵਿੱਚ] != ਨਿਰਾ) {
+		enc  = &state->newkeys[ਬਹੁਲਕ_ਵਿੱਚ]->enc;
+		mac  = &state->newkeys[ਬਹੁਲਕ_ਵਿੱਚ]->mac;
+		comp = &state->newkeys[ਬਹੁਲਕ_ਵਿੱਚ]->comp;
 		/* disable mac for authenticated encryption */
-		if ((authlen = cipher_authlen(enc->cipher)) != 0)
-			mac = NULL;
+		ਜੇ ((authlen = cipher_authlen(enc->cipher)) != 0)
+			mac = ਨਿਰਾ;
 	}
 	maclen = mac && mac->enabled ? mac->mac_len : 0;
-	block_size = enc ? enc->block_size : 8;
+	ਖੰਡ_ਮਾਪ = enc ? enc->ਖੰਡ_ਮਾਪ : 8;
 	aadlen = (mac && mac->enabled && mac->etm) || authlen ? 4 : 0;
 
-	if (aadlen && state->packlen == 0) {
-		if (cipher_get_length(state->receive_context,
+	ਜੇ (aadlen && state->packlen == 0) {
+		ਜੇ (cipher_get_ਲੰਮਾਈ(state->receive_context,
 		    &state->packlen, state->p_read.seqnr,
-		    sshbuf_ptr(state->input), sshbuf_len(state->input)) != 0)
-			return 0;
-		if (state->packlen < 1 + 4 ||
-		    state->packlen > PACKET_MAX_SIZE) {
-#ifdef PACKET_DEBUG
-			sshbuf_dump(state->input, stderr);
-#endif
+		    sshbuf_ptr(state->ਨਿਵੇਸ਼), sshbuf_len(state->ਨਿਵੇਸ਼)) != 0)
+			ਵਾਪਸ 0;
+		ਜੇ (state->packlen < 1 + 4 ||
+		    state->packlen > PACKET_MAX_ਮਾਪ) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PACKET_DEBUG
+			sshbuf_dump(state->ਨਿਵੇਸ਼, stderr);
+#ਜੇ_ਅੰਤ
 			logit("Bad packet length %u.", state->packlen);
-			if ((r = sshpkt_disconnect(ssh, "Packet corrupt")) != 0)
-				return r;
-			return SSH_ERR_CONN_CORRUPT;
+			ਜੇ ((r = sshpkt_disconnect(ssh, "Packet corrupt")) != 0)
+				ਵਾਪਸ r;
+			ਵਾਪਸ SSH_ERR_CONN_CORRUPT;
 		}
 		sshbuf_reset(state->incoming_packet);
-	} else if (state->packlen == 0) {
+	} ਨਹੀਂਤਾਂ ਜੇ (state->packlen == 0) {
 		/*
 		 * check if input size is less than the cipher block size,
 		 * decrypt first block and extract length of incoming packet
 		 */
-		if (sshbuf_len(state->input) < block_size)
-			return 0;
+		ਜੇ (sshbuf_len(state->ਨਿਵੇਸ਼) < ਖੰਡ_ਮਾਪ)
+			ਵਾਪਸ 0;
 		sshbuf_reset(state->incoming_packet);
-		if ((r = sshbuf_reserve(state->incoming_packet, block_size,
+		ਜੇ ((r = sshbuf_reserve(state->incoming_packet, ਖੰਡ_ਮਾਪ,
 		    &cp)) != 0)
-			goto out;
-		if ((r = cipher_crypt(state->receive_context,
-		    state->p_send.seqnr, cp, sshbuf_ptr(state->input),
-		    block_size, 0, 0)) != 0)
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
+		ਜੇ ((r = cipher_crypt(state->receive_context,
+		    state->p_send.seqnr, cp, sshbuf_ptr(state->ਨਿਵੇਸ਼),
+		    ਖੰਡ_ਮਾਪ, 0, 0)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 		state->packlen = PEEK_U32(sshbuf_ptr(state->incoming_packet));
-		if (state->packlen < 1 + 4 ||
-		    state->packlen > PACKET_MAX_SIZE) {
-#ifdef PACKET_DEBUG
+		ਜੇ (state->packlen < 1 + 4 ||
+		    state->packlen > PACKET_MAX_ਮਾਪ) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PACKET_DEBUG
 			fprintf(stderr, "input: \n");
-			sshbuf_dump(state->input, stderr);
+			sshbuf_dump(state->ਨਿਵੇਸ਼, stderr);
 			fprintf(stderr, "incoming_packet: \n");
 			sshbuf_dump(state->incoming_packet, stderr);
-#endif
+#ਜੇ_ਅੰਤ
 			logit("Bad packet length %u.", state->packlen);
-			return ssh_packet_start_discard(ssh, enc, mac, 0,
-			    PACKET_MAX_SIZE);
+			ਵਾਪਸ ssh_packet_ਸ਼ੁਰੂ_discard(ssh, enc, mac, 0,
+			    PACKET_MAX_ਮਾਪ);
 		}
-		if ((r = sshbuf_consume(state->input, block_size)) != 0)
-			goto out;
+		ਜੇ ((r = sshbuf_consume(state->ਨਿਵੇਸ਼, ਖੰਡ_ਮਾਪ)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 	}
 	DBG(debug("input: packet len %u", state->packlen+4));
 
-	if (aadlen) {
+	ਜੇ (aadlen) {
 		/* only the payload is encrypted */
 		need = state->packlen;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/*
 		 * the payload size and the payload are encrypted, but we
 		 * have a partial packet of block_size bytes
 		 */
-		need = 4 + state->packlen - block_size;
+		need = 4 + state->packlen - ਖੰਡ_ਮਾਪ;
 	}
 	DBG(debug("partial packet: block %d, need %d, maclen %d, authlen %d,"
-	    " aadlen %d", block_size, need, maclen, authlen, aadlen));
-	if (need % block_size != 0) {
+	    " aadlen %d", ਖੰਡ_ਮਾਪ, need, maclen, authlen, aadlen));
+	ਜੇ (need % ਖੰਡ_ਮਾਪ != 0) {
 		logit("padding error: need %d block %d mod %d",
-		    need, block_size, need % block_size);
-		return ssh_packet_start_discard(ssh, enc, mac, 0,
-		    PACKET_MAX_SIZE - block_size);
+		    need, ਖੰਡ_ਮਾਪ, need % ਖੰਡ_ਮਾਪ);
+		ਵਾਪਸ ssh_packet_ਸ਼ੁਰੂ_discard(ssh, enc, mac, 0,
+		    PACKET_MAX_ਮਾਪ - ਖੰਡ_ਮਾਪ);
 	}
 	/*
 	 * check if the entire packet has been received and
@@ -1727,93 +1727,93 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 	 * 'authlen' bytes of authentication tag or
 	 * 'maclen' bytes of message authentication code.
 	 */
-	if (sshbuf_len(state->input) < aadlen + need + authlen + maclen)
-		return 0; /* packet is incomplete */
-#ifdef PACKET_DEBUG
+	ਜੇ (sshbuf_len(state->ਨਿਵੇਸ਼) < aadlen + need + authlen + maclen)
+		ਵਾਪਸ 0; /* packet is incomplete */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PACKET_DEBUG
 	fprintf(stderr, "read_poll enc/full: ");
-	sshbuf_dump(state->input, stderr);
-#endif
+	sshbuf_dump(state->ਨਿਵੇਸ਼, stderr);
+#ਜੇ_ਅੰਤ
 	/* EtM: check mac over encrypted input */
-	if (mac && mac->enabled && mac->etm) {
-		if ((r = mac_check(mac, state->p_read.seqnr,
-		    sshbuf_ptr(state->input), aadlen + need,
-		    sshbuf_ptr(state->input) + aadlen + need + authlen,
+	ਜੇ (mac && mac->enabled && mac->etm) {
+		ਜੇ ((r = mac_check(mac, state->p_read.seqnr,
+		    sshbuf_ptr(state->ਨਿਵੇਸ਼), aadlen + need,
+		    sshbuf_ptr(state->ਨਿਵੇਸ਼) + aadlen + need + authlen,
 		    maclen)) != 0) {
-			if (r == SSH_ERR_MAC_INVALID)
+			ਜੇ (r == SSH_ERR_MAC_INVALID)
 				logit("Corrupted MAC on input.");
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
 	}
-	if ((r = sshbuf_reserve(state->incoming_packet, aadlen + need,
+	ਜੇ ((r = sshbuf_reserve(state->incoming_packet, aadlen + need,
 	    &cp)) != 0)
-		goto out;
-	if ((r = cipher_crypt(state->receive_context, state->p_read.seqnr, cp,
-	    sshbuf_ptr(state->input), need, aadlen, authlen)) != 0)
-		goto out;
-	if ((r = sshbuf_consume(state->input, aadlen + need + authlen)) != 0)
-		goto out;
-	if (mac && mac->enabled) {
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ ((r = cipher_crypt(state->receive_context, state->p_read.seqnr, cp,
+	    sshbuf_ptr(state->ਨਿਵੇਸ਼), need, aadlen, authlen)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ ((r = sshbuf_consume(state->ਨਿਵੇਸ਼, aadlen + need + authlen)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ (mac && mac->enabled) {
 		/* Not EtM: check MAC over cleartext */
-		if (!mac->etm && (r = mac_check(mac, state->p_read.seqnr,
+		ਜੇ (!mac->etm && (r = mac_check(mac, state->p_read.seqnr,
 		    sshbuf_ptr(state->incoming_packet),
 		    sshbuf_len(state->incoming_packet),
-		    sshbuf_ptr(state->input), maclen)) != 0) {
-			if (r != SSH_ERR_MAC_INVALID)
-				goto out;
+		    sshbuf_ptr(state->ਨਿਵੇਸ਼), maclen)) != 0) {
+			ਜੇ (r != SSH_ERR_MAC_INVALID)
+				ਜਾਓ ਬਾਹਰਲਾ;
 			logit("Corrupted MAC on input.");
-			if (need + block_size > PACKET_MAX_SIZE)
-				return SSH_ERR_INTERNAL_ERROR;
-			return ssh_packet_start_discard(ssh, enc, mac,
+			ਜੇ (need + ਖੰਡ_ਮਾਪ > PACKET_MAX_ਮਾਪ)
+				ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
+			ਵਾਪਸ ssh_packet_ਸ਼ੁਰੂ_discard(ssh, enc, mac,
 			    sshbuf_len(state->incoming_packet),
-			    PACKET_MAX_SIZE - need - block_size);
+			    PACKET_MAX_ਮਾਪ - need - ਖੰਡ_ਮਾਪ);
 		}
 		/* Remove MAC from input buffer */
 		DBG(debug("MAC #%d ok", state->p_read.seqnr));
-		if ((r = sshbuf_consume(state->input, mac->mac_len)) != 0)
-			goto out;
+		ਜੇ ((r = sshbuf_consume(state->ਨਿਵੇਸ਼, mac->mac_len)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
-	if (seqnr_p != NULL)
+	ਜੇ (seqnr_p != ਨਿਰਾ)
 		*seqnr_p = state->p_read.seqnr;
-	if (++state->p_read.seqnr == 0) {
-		if ((ssh->kex->flags & KEX_INITIAL) != 0) {
+	ਜੇ (++state->p_read.seqnr == 0) {
+		ਜੇ ((ssh->kex->flags & KEX_INITIAL) != 0) {
 			ssh_packet_disconnect(ssh, "incoming sequence number "
 			    "wrapped during initial key exchange");
 		}
 		logit("incoming seqnr wraps around");
 	}
-	if (++state->p_read.packets == 0)
-		return SSH_ERR_NEED_REKEY;
-	state->p_read.blocks += (state->packlen + 4) / block_size;
-	state->p_read.bytes += state->packlen + 4;
+	ਜੇ (++state->p_read.packets == 0)
+		ਵਾਪਸ SSH_ERR_NEED_REKEY;
+	state->p_read.ਖੰਡਾਂ += (state->packlen + 4) / ਖੰਡ_ਮਾਪ;
+	state->p_read.ਬਾਈਟਾਂ += state->packlen + 4;
 
 	/* get padlen */
 	padlen = sshbuf_ptr(state->incoming_packet)[4];
 	DBG(debug("input: padlen %d", padlen));
-	if (padlen < 4)	{
-		if ((r = sshpkt_disconnect(ssh,
+	ਜੇ (padlen < 4)	{
+		ਜੇ ((r = sshpkt_disconnect(ssh,
 		    "Corrupted padlen %d on input.", padlen)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
-			return r;
-		return SSH_ERR_CONN_CORRUPT;
+			ਵਾਪਸ r;
+		ਵਾਪਸ SSH_ERR_CONN_CORRUPT;
 	}
 
 	/* skip packet size + padlen, discard padding */
-	if ((r = sshbuf_consume(state->incoming_packet, 4 + 1)) != 0 ||
-	    ((r = sshbuf_consume_end(state->incoming_packet, padlen)) != 0))
-		goto out;
+	ਜੇ ((r = sshbuf_consume(state->incoming_packet, 4 + 1)) != 0 ||
+	    ((r = sshbuf_consume_ਸਿਰਾ(state->incoming_packet, padlen)) != 0))
+		ਜਾਓ ਬਾਹਰਲਾ;
 
 	DBG(debug("input: len before de-compress %zd",
 	    sshbuf_len(state->incoming_packet)));
-	if (comp && comp->enabled) {
-		sshbuf_reset(state->compression_buffer);
-		if ((r = uncompress_buffer(ssh, state->incoming_packet,
-		    state->compression_buffer)) != 0)
-			goto out;
+	ਜੇ (comp && comp->enabled) {
+		sshbuf_reset(state->compression_ਬਫਰ);
+		ਜੇ ((r = uncompress_ਬਫਰ(ssh, state->incoming_packet,
+		    state->compression_ਬਫਰ)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 		sshbuf_reset(state->incoming_packet);
-		if ((r = sshbuf_putb(state->incoming_packet,
-		    state->compression_buffer)) != 0)
-			goto out;
+		ਜੇ ((r = sshbuf_putb(state->incoming_packet,
+		    state->compression_ਬਫਰ)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 		DBG(debug("input: len after de-compress %zd",
 		    sshbuf_len(state->incoming_packet)));
 	}
@@ -1821,78 +1821,78 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 	 * get packet type, implies consume.
 	 * return length of payload (without type field)
 	 */
-	if ((r = sshbuf_get_u8(state->incoming_packet, typep)) != 0)
-		goto out;
-	if (ssh_packet_log_type(*typep))
+	ਜੇ ((r = sshbuf_get_u8(state->incoming_packet, typep)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ (ssh_packet_log_type(*typep))
 		debug3("receive packet: type %u", *typep);
-	if (*typep < SSH2_MSG_MIN) {
-		if ((r = sshpkt_disconnect(ssh,
+	ਜੇ (*typep < SSH2_ਸੁਨੇਹਾ_MIN) {
+		ਜੇ ((r = sshpkt_disconnect(ssh,
 		    "Invalid ssh2 packet type: %d", *typep)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
-			return r;
-		return SSH_ERR_PROTOCOL_ERROR;
+			ਵਾਪਸ r;
+		ਵਾਪਸ SSH_ERR_PROTOCOL_ERROR;
 	}
-	if (state->hook_in != NULL &&
-	    (r = state->hook_in(ssh, state->incoming_packet, typep,
-	    state->hook_in_ctx)) != 0)
-		return r;
-	if (*typep == SSH2_MSG_USERAUTH_SUCCESS && !state->server_side)
+	ਜੇ (state->hook_ਵਿੱਚ != ਨਿਰਾ &&
+	    (r = state->hook_ਵਿੱਚ(ssh, state->incoming_packet, typep,
+	    state->hook_ਵਿੱਚ_ctx)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ (*typep == SSH2_ਸੁਨੇਹਾ_USERAUTH_SUCCESS && !state->server_side)
 		r = ssh_packet_enable_delayed_compress(ssh);
-	else
+	ਨਹੀਂਤਾਂ
 		r = 0;
-#ifdef PACKET_DEBUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PACKET_DEBUG
 	fprintf(stderr, "read/plain[%d]:\r\n", *typep);
 	sshbuf_dump(state->incoming_packet, stderr);
-#endif
+#ਜੇ_ਅੰਤ
 	/* reset for next packet */
 	state->packlen = 0;
-	if (*typep == SSH2_MSG_NEWKEYS && ssh->kex->kex_strict) {
+	ਜੇ (*typep == SSH2_ਸੁਨੇਹਾ_NEWKEYS && ssh->kex->kex_strict) {
 		debug_f("resetting read seqnr %u", state->p_read.seqnr);
 		state->p_read.seqnr = 0;
 	}
 
-	if ((r = ssh_packet_check_rekey(ssh)) != 0)
-		return r;
- out:
-	return r;
+	ਜੇ ((r = ssh_packet_check_rekey(ssh)) != 0)
+		ਵਾਪਸ r;
+ ਬਾਹਰਲਾ:
+	ਵਾਪਸ r;
 }
 
-int
-ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
+ਪੂਰਨ
+ssh_packet_read_poll_seqnr(ਬਣਤਰ ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 {
-	struct session_state *state = ssh->state;
+	ਬਣਤਰ session_state *state = ssh->state;
 	u_int reason, seqnr;
-	int r;
-	u_char *msg;
-	const u_char *d;
-	size_t len;
+	ਪੂਰਨ r;
+	u_char *ਸੁਨੇਹਾ;
+	ਅਚਲ u_char *d;
+	ਮਾਪ_t len;
 
-	for (;;) {
-		msg = NULL;
+	ਲਈ (;;) {
+		ਸੁਨੇਹਾ = ਨਿਰਾ;
 		r = ssh_packet_read_poll2(ssh, typep, seqnr_p);
-		if (r != 0)
-			return r;
-		if (*typep == 0) {
+		ਜੇ (r != 0)
+			ਵਾਪਸ r;
+		ਜੇ (*typep == 0) {
 			/* no message ready */
-			return 0;
+			ਵਾਪਸ 0;
 		}
 		state->keep_alive_timeouts = 0;
 		DBG(debug("received packet type %d", *typep));
 
 		/* Always process disconnect messages */
-		if (*typep == SSH2_MSG_DISCONNECT) {
-			if ((r = sshpkt_get_u32(ssh, &reason)) != 0 ||
-			    (r = sshpkt_get_string(ssh, &msg, NULL)) != 0)
-				return r;
+		ਜੇ (*typep == SSH2_ਸੁਨੇਹਾ_DISCONNECT) {
+			ਜੇ ((r = sshpkt_get_u32(ssh, &reason)) != 0 ||
+			    (r = sshpkt_get_string(ssh, &ਸੁਨੇਹਾ, ਨਿਰਾ)) != 0)
+				ਵਾਪਸ r;
 			/* Ignore normal client exit notifications */
 			do_log2(ssh->state->server_side &&
 			    reason == SSH2_DISCONNECT_BY_APPLICATION ?
 			    SYSLOG_LEVEL_INFO : SYSLOG_LEVEL_ERROR,
 			    "Received disconnect from %s port %d:"
 			    "%u: %.400s", ssh_remote_ipaddr(ssh),
-			    ssh_remote_port(ssh), reason, msg);
-			free(msg);
-			return SSH_ERR_DISCONNECTED;
+			    ssh_remote_ਪੋਰਟ(ssh), reason, ਸੁਨੇਹਾ);
+			ਮੁਕਤ(ਸੁਨੇਹਾ);
+			ਵਾਪਸ SSH_ERR_DISCONNECTED;
 		}
 
 		/*
@@ -1901,62 +1901,62 @@ ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 		 * explicitly by the KEX dispatch table or they will generate
 		 * protocol errors.
 		 */
-		if (ssh->kex != NULL &&
+		ਜੇ (ssh->kex != ਨਿਰਾ &&
 		    (ssh->kex->flags & KEX_INITIAL) && ssh->kex->kex_strict)
-			return 0;
+			ਵਾਪਸ 0;
 		/* Implicitly handle transport-level messages */
-		switch (*typep) {
-		case SSH2_MSG_IGNORE:
+		ਚੋਣ (*typep) {
+		ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_IGNORE:
 			debug3("Received SSH2_MSG_IGNORE");
-			break;
-		case SSH2_MSG_DEBUG:
-			if ((r = sshpkt_get_u8(ssh, NULL)) != 0 ||
-			    (r = sshpkt_get_string(ssh, &msg, NULL)) != 0 ||
-			    (r = sshpkt_get_string(ssh, NULL, NULL)) != 0) {
-				free(msg);
-				return r;
+			ਰੋਕੋ;
+		ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_DEBUG:
+			ਜੇ ((r = sshpkt_get_u8(ssh, ਨਿਰਾ)) != 0 ||
+			    (r = sshpkt_get_string(ssh, &ਸੁਨੇਹਾ, ਨਿਰਾ)) != 0 ||
+			    (r = sshpkt_get_string(ssh, ਨਿਰਾ, ਨਿਰਾ)) != 0) {
+				ਮੁਕਤ(ਸੁਨੇਹਾ);
+				ਵਾਪਸ r;
 			}
-			debug("Remote: %.900s", msg);
-			free(msg);
-			break;
-		case SSH2_MSG_UNIMPLEMENTED:
-			if ((r = sshpkt_get_u32(ssh, &seqnr)) != 0)
-				return r;
+			debug("Remote: %.900s", ਸੁਨੇਹਾ);
+			ਮੁਕਤ(ਸੁਨੇਹਾ);
+			ਰੋਕੋ;
+		ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_UNIMPLEMENTED:
+			ਜੇ ((r = sshpkt_get_u32(ssh, &seqnr)) != 0)
+				ਵਾਪਸ r;
 			debug("Received SSH2_MSG_UNIMPLEMENTED for %u",
 			    seqnr);
-			break;
-		case SSH2_MSG_PING:
-			if ((r = sshpkt_get_string_direct(ssh, &d, &len)) != 0)
-				return r;
+			ਰੋਕੋ;
+		ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_PING:
+			ਜੇ ((r = sshpkt_get_string_ਸਿੱਧਾ(ssh, &d, &len)) != 0)
+				ਵਾਪਸ r;
 			DBG(debug("Received SSH2_MSG_PING len %zu", len));
-			if (!ssh->state->after_authentication) {
+			ਜੇ (!ssh->state->after_authentication) {
 				DBG(debug("Won't reply to PING in preauth"));
-				break;
+				ਰੋਕੋ;
 			}
-			if (ssh_packet_is_rekeying(ssh)) {
+			ਜੇ (ssh_packet_is_rekeying(ssh)) {
 				DBG(debug("Won't reply to PING during KEX"));
-				break;
+				ਰੋਕੋ;
 			}
-			if ((r = sshpkt_start(ssh, SSH2_MSG_PONG)) != 0 ||
+			ਜੇ ((r = sshpkt_ਸ਼ੁਰੂ(ssh, SSH2_ਸੁਨੇਹਾ_PONG)) != 0 ||
 			    (r = sshpkt_put_string(ssh, d, len)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
-				return r;
-			break;
-		case SSH2_MSG_PONG:
-			if ((r = sshpkt_get_string_direct(ssh,
-			    NULL, &len)) != 0)
-				return r;
+				ਵਾਪਸ r;
+			ਰੋਕੋ;
+		ਹਾਲਤ SSH2_ਸੁਨੇਹਾ_PONG:
+			ਜੇ ((r = sshpkt_get_string_ਸਿੱਧਾ(ssh,
+			    ਨਿਰਾ, &len)) != 0)
+				ਵਾਪਸ r;
 			DBG(debug("Received SSH2_MSG_PONG len %zu", len));
-			break;
-		default:
-			if (ssh->kex != NULL &&
+			ਰੋਕੋ;
+		ਮੂਲ:
+			ਜੇ (ssh->kex != ਨਿਰਾ &&
 			    (ssh->kex->flags & KEX_INIT_RECVD) != 0 &&
 			    !ssh_packet_type_is_kex(*typep)) {
 				error("non-transport message %u received "
 				    "from peer during key exchange", *typep);
-				return SSH_ERR_PROTOCOL_ERROR;
+				ਵਾਪਸ SSH_ERR_PROTOCOL_ERROR;
 			}
-			return 0;
+			ਵਾਪਸ 0;
 		}
 	}
 }
@@ -1965,56 +1965,56 @@ ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
  * Buffers the supplied input data. This is intended to be used together
  * with packet_read_poll().
  */
-int
-ssh_packet_process_incoming(struct ssh *ssh, const char *buf, u_int len)
+ਪੂਰਨ
+ssh_packet_process_incoming(ਬਣਤਰ ssh *ssh, ਅਚਲ ਅੱਖਰ *buf, u_int len)
 {
-	struct session_state *state = ssh->state;
-	int r;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਪੂਰਨ r;
 
-	if (state->packet_discard) {
+	ਜੇ (state->packet_discard) {
 		state->keep_alive_timeouts = 0; /* ?? */
-		if (len >= state->packet_discard) {
-			if ((r = ssh_packet_stop_discard(ssh)) != 0)
-				return r;
+		ਜੇ (len >= state->packet_discard) {
+			ਜੇ ((r = ssh_packet_stop_discard(ssh)) != 0)
+				ਵਾਪਸ r;
 		}
 		state->packet_discard -= len;
-		return 0;
+		ਵਾਪਸ 0;
 	}
-	if ((r = sshbuf_put(state->input, buf, len)) != 0)
-		return r;
+	ਜੇ ((r = sshbuf_put(state->ਨਿਵੇਸ਼, buf, len)) != 0)
+		ਵਾਪਸ r;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* Reads and buffers data from the specified fd */
-int
-ssh_packet_process_read(struct ssh *ssh, int fd)
+ਪੂਰਨ
+ssh_packet_process_read(ਬਣਤਰ ssh *ssh, ਪੂਰਨ fd)
 {
-	struct session_state *state = ssh->state;
-	int r;
-	size_t rlen;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਪੂਰਨ r;
+	ਮਾਪ_t rlen;
 
-	if ((r = sshbuf_read(fd, state->input, PACKET_MAX_SIZE, &rlen)) != 0)
-		return r;
+	ਜੇ ((r = sshbuf_read(fd, state->ਨਿਵੇਸ਼, PACKET_MAX_ਮਾਪ, &rlen)) != 0)
+		ਵਾਪਸ r;
 
-	if (state->packet_discard) {
-		if ((r = sshbuf_consume_end(state->input, rlen)) != 0)
-			return r;
+	ਜੇ (state->packet_discard) {
+		ਜੇ ((r = sshbuf_consume_ਸਿਰਾ(state->ਨਿਵੇਸ਼, rlen)) != 0)
+			ਵਾਪਸ r;
 		state->keep_alive_timeouts = 0; /* ?? */
-		if (rlen >= state->packet_discard) {
-			if ((r = ssh_packet_stop_discard(ssh)) != 0)
-				return r;
+		ਜੇ (rlen >= state->packet_discard) {
+			ਜੇ ((r = ssh_packet_stop_discard(ssh)) != 0)
+				ਵਾਪਸ r;
 		}
 		state->packet_discard -= rlen;
-		return 0;
+		ਵਾਪਸ 0;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-ssh_packet_remaining(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_ਬਚਿਆ(ਬਣਤਰ ssh *ssh)
 {
-	return sshbuf_len(ssh->state->incoming_packet);
+	ਵਾਪਸ sshbuf_len(ssh->state->incoming_packet);
 }
 
 /*
@@ -2025,23 +2025,23 @@ ssh_packet_remaining(struct ssh *ssh)
  * authentication problems.   The length of the formatted message must not
  * exceed 1024 bytes.  This will automatically call ssh_packet_write_wait.
  */
-void
-ssh_packet_send_debug(struct ssh *ssh, const char *fmt,...)
+ਖਾਲੀ
+ssh_packet_send_debug(ਬਣਤਰ ssh *ssh, ਅਚਲ ਅੱਖਰ *fmt,...)
 {
-	char buf[1024];
-	va_list args;
-	int r;
+	ਅੱਖਰ buf[1024];
+	va_list ਦਲੀਲਾਂ;
+	ਪੂਰਨ r;
 
-	if ((ssh->compat & SSH_BUG_DEBUG))
-		return;
+	ਜੇ ((ssh->compat & SSH_BUG_DEBUG))
+		ਵਾਪਸ;
 
-	va_start(args, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	va_start(ਦਲੀਲਾਂ, fmt);
+	vsnprintf(buf, ਆਕਾਰ(buf), fmt, ਦਲੀਲਾਂ);
+	va_end(ਦਲੀਲਾਂ);
 
 	debug3("sending debug message: %s", buf);
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_DEBUG)) != 0 ||
+	ਜੇ ((r = sshpkt_ਸ਼ੁਰੂ(ssh, SSH2_ਸੁਨੇਹਾ_DEBUG)) != 0 ||
 	    (r = sshpkt_put_u8(ssh, 0)) != 0 || /* always display */
 	    (r = sshpkt_put_cstring(ssh, buf)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||
@@ -2050,71 +2050,71 @@ ssh_packet_send_debug(struct ssh *ssh, const char *fmt,...)
 		sshpkt_fatal(ssh, r, "send DEBUG");
 }
 
-void
-sshpkt_fmt_connection_id(struct ssh *ssh, char *s, size_t l)
+ਖਾਲੀ
+sshpkt_fmt_connection_id(ਬਣਤਰ ssh *ssh, ਅੱਖਰ *s, ਮਾਪ_t l)
 {
 	snprintf(s, l, "%.200s%s%s port %d",
 	    ssh->log_preamble ? ssh->log_preamble : "",
 	    ssh->log_preamble ? " " : "",
-	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
+	    ssh_remote_ipaddr(ssh), ssh_remote_ਪੋਰਟ(ssh));
 }
 
 /*
  * Pretty-print connection-terminating errors and exit.
  */
-static void
-sshpkt_vfatal(struct ssh *ssh, int r, const char *fmt, va_list ap)
+ਸਥਿਰ ਖਾਲੀ
+sshpkt_vfatal(ਬਣਤਰ ssh *ssh, ਪੂਰਨ r, ਅਚਲ ਅੱਖਰ *fmt, va_list ap)
 {
-	char *tag = NULL, remote_id[512];
-	int oerrno = errno;
+	ਅੱਖਰ *ਟੈਗ = ਨਿਰਾ, remote_id[512];
+	ਪੂਰਨ oerrno = errno;
 
-	sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
+	sshpkt_fmt_connection_id(ssh, remote_id, ਆਕਾਰ(remote_id));
 
-	switch (r) {
-	case SSH_ERR_CONN_CLOSED:
-		ssh_packet_clear_keys(ssh);
+	ਚੋਣ (r) {
+	ਹਾਲਤ SSH_ERR_CONN_CLOSED:
+		ssh_packet_clear_ਕੁੰਜੀਆਂ(ssh);
 		logdie("Connection closed by %s", remote_id);
-	case SSH_ERR_CONN_TIMEOUT:
-		ssh_packet_clear_keys(ssh);
+	ਹਾਲਤ SSH_ERR_CONN_TIMEOUT:
+		ssh_packet_clear_ਕੁੰਜੀਆਂ(ssh);
 		logdie("Connection %s %s timed out",
 		    ssh->state->server_side ? "from" : "to", remote_id);
-	case SSH_ERR_DISCONNECTED:
-		ssh_packet_clear_keys(ssh);
+	ਹਾਲਤ SSH_ERR_DISCONNECTED:
+		ssh_packet_clear_ਕੁੰਜੀਆਂ(ssh);
 		logdie("Disconnected from %s", remote_id);
-	case SSH_ERR_SYSTEM_ERROR:
-		if (errno == ECONNRESET) {
-			ssh_packet_clear_keys(ssh);
+	ਹਾਲਤ SSH_ERR_SYSTEM_ERROR:
+		ਜੇ (errno == ECONNRESET) {
+			ssh_packet_clear_ਕੁੰਜੀਆਂ(ssh);
 			logdie("Connection reset by %s", remote_id);
 		}
 		/* FALLTHROUGH */
-	case SSH_ERR_NO_CIPHER_ALG_MATCH:
-	case SSH_ERR_NO_MAC_ALG_MATCH:
-	case SSH_ERR_NO_COMPRESS_ALG_MATCH:
-	case SSH_ERR_NO_KEX_ALG_MATCH:
-	case SSH_ERR_NO_HOSTKEY_ALG_MATCH:
-		if (ssh->kex && ssh->kex->failed_choice) {
-			ssh_packet_clear_keys(ssh);
+	ਹਾਲਤ SSH_ERR_NO_CIPHER_ALG_ਮੇਲ:
+	ਹਾਲਤ SSH_ERR_NO_MAC_ALG_ਮੇਲ:
+	ਹਾਲਤ SSH_ERR_NO_COMPRESS_ALG_ਮੇਲ:
+	ਹਾਲਤ SSH_ERR_NO_KEX_ALG_ਮੇਲ:
+	ਹਾਲਤ SSH_ERR_NO_HOSTKEY_ALG_ਮੇਲ:
+		ਜੇ (ssh->kex && ssh->kex->failed_choice) {
+			ssh_packet_clear_ਕੁੰਜੀਆਂ(ssh);
 			errno = oerrno;
 			logdie("Unable to negotiate with %s: %s. "
 			    "Their offer: %s", remote_id, ssh_err(r),
 			    ssh->kex->failed_choice);
 		}
 		/* FALLTHROUGH */
-	default:
-		if (vasprintf(&tag, fmt, ap) == -1) {
-			ssh_packet_clear_keys(ssh);
+	ਮੂਲ:
+		ਜੇ (vasprintf(&ਟੈਗ, fmt, ap) == -1) {
+			ssh_packet_clear_ਕੁੰਜੀਆਂ(ssh);
 			logdie_f("could not allocate failure message");
 		}
-		ssh_packet_clear_keys(ssh);
+		ssh_packet_clear_ਕੁੰਜੀਆਂ(ssh);
 		errno = oerrno;
 		logdie_r(r, "%s%sConnection %s %s",
-		    tag != NULL ? tag : "", tag != NULL ? ": " : "",
+		    ਟੈਗ != ਨਿਰਾ ? ਟੈਗ : "", ਟੈਗ != ਨਿਰਾ ? ": " : "",
 		    ssh->state->server_side ? "from" : "to", remote_id);
 	}
 }
 
-void
-sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+ਖਾਲੀ
+sshpkt_fatal(ਬਣਤਰ ssh *ssh, ਪੂਰਨ r, ਅਚਲ ਅੱਖਰ *fmt, ...)
 {
 	va_list ap;
 
@@ -2131,15 +2131,15 @@ sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
  * should not contain a newline.  The length of the formatted message must
  * not exceed 1024 bytes.
  */
-void
-ssh_packet_disconnect(struct ssh *ssh, const char *fmt,...)
+ਖਾਲੀ
+ssh_packet_disconnect(ਬਣਤਰ ssh *ssh, ਅਚਲ ਅੱਖਰ *fmt,...)
 {
-	char buf[1024], remote_id[512];
-	va_list args;
-	int r;
+	ਅੱਖਰ buf[1024], remote_id[512];
+	va_list ਦਲੀਲਾਂ;
+	ਪੂਰਨ r;
 
 	/* Guard against recursive invocations. */
-	if (ssh->state->disconnecting)
+	ਜੇ (ssh->state->disconnecting)
 		fatal("packet_disconnect called recursively.");
 	ssh->state->disconnecting = 1;
 
@@ -2147,10 +2147,10 @@ ssh_packet_disconnect(struct ssh *ssh, const char *fmt,...)
 	 * Format the message.  Note that the caller must make sure the
 	 * message is of limited size.
 	 */
-	sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
-	va_start(args, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	sshpkt_fmt_connection_id(ssh, remote_id, ਆਕਾਰ(remote_id));
+	va_start(ਦਲੀਲਾਂ, fmt);
+	vsnprintf(buf, ਆਕਾਰ(buf), fmt, ਦਲੀਲਾਂ);
+	va_end(ਦਲੀਲਾਂ);
 
 	/* Display the error locally */
 	logit("Disconnecting %s: %.100s", remote_id, buf);
@@ -2159,10 +2159,10 @@ ssh_packet_disconnect(struct ssh *ssh, const char *fmt,...)
 	 * Send the disconnect message to the other side, and wait
 	 * for it to get sent.
 	 */
-	if ((r = sshpkt_disconnect(ssh, "%s", buf)) != 0)
+	ਜੇ ((r = sshpkt_disconnect(ssh, "%s", buf)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
 
-	if ((r = ssh_packet_write_wait(ssh)) != 0)
+	ਜੇ ((r = ssh_packet_write_wait(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
 
 	/* Close the connection. */
@@ -2174,96 +2174,96 @@ ssh_packet_disconnect(struct ssh *ssh, const char *fmt,...)
  * Checks if there is any buffered output, and tries to write some of
  * the output.
  */
-int
-ssh_packet_write_poll(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_write_poll(ਬਣਤਰ ssh *ssh)
 {
-	struct session_state *state = ssh->state;
-	int len = sshbuf_len(state->output);
-	int r;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਪੂਰਨ len = sshbuf_len(state->output);
+	ਪੂਰਨ r;
 
-	if (len > 0) {
-		len = write(state->connection_out,
+	ਜੇ (len > 0) {
+		len = ਲਿਖ(state->connection_ਬਾਹਰਲਾ,
 		    sshbuf_ptr(state->output), len);
-		if (len == -1) {
-			if (errno == EINTR || errno == EAGAIN ||
+		ਜੇ (len == -1) {
+			ਜੇ (errno == EINTR || errno == EAGAIN ||
 			    errno == EWOULDBLOCK)
-				return 0;
-			return SSH_ERR_SYSTEM_ERROR;
+				ਵਾਪਸ 0;
+			ਵਾਪਸ SSH_ERR_SYSTEM_ERROR;
 		}
-		if (len == 0)
-			return SSH_ERR_CONN_CLOSED;
-		if ((r = sshbuf_consume(state->output, len)) != 0)
-			return r;
+		ਜੇ (len == 0)
+			ਵਾਪਸ SSH_ERR_CONN_CLOSED;
+		ਜੇ ((r = sshbuf_consume(state->output, len)) != 0)
+			ਵਾਪਸ r;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
  * Calls packet_write_poll repeatedly until all pending output data has been
  * written.
  */
-int
-ssh_packet_write_wait(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_write_wait(ਬਣਤਰ ssh *ssh)
 {
-	int ret, r, ms_remain = 0;
-	struct timeval start;
-	struct timespec timespec, *timespecp = NULL;
-	struct session_state *state = ssh->state;
-	struct pollfd pfd;
+	ਪੂਰਨ ret, r, ms_remain = 0;
+	ਬਣਤਰ timeval ਸ਼ੁਰੂ;
+	ਬਣਤਰ timespec timespec, *timespecp = ਨਿਰਾ;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਬਣਤਰ pollfd pfd;
 
-	if ((r = ssh_packet_write_poll(ssh)) != 0)
-		return r;
-	while (ssh_packet_have_data_to_write(ssh)) {
-		pfd.fd = state->connection_out;
+	ਜੇ ((r = ssh_packet_write_poll(ssh)) != 0)
+		ਵਾਪਸ r;
+	ਜਦੋਂ (ssh_packet_have_ਅੰਕੜੇ_ਮੰਜ਼ਿਲ_write(ssh)) {
+		pfd.fd = state->connection_ਬਾਹਰਲਾ;
 		pfd.events = POLLOUT;
 
-		if (state->packet_timeout_ms > 0) {
+		ਜੇ (state->packet_timeout_ms > 0) {
 			ms_remain = state->packet_timeout_ms;
 			timespecp = &timespec;
 		}
-		for (;;) {
-			if (state->packet_timeout_ms > 0) {
-				ms_to_timespec(&timespec, ms_remain);
-				monotime_tv(&start);
+		ਲਈ (;;) {
+			ਜੇ (state->packet_timeout_ms > 0) {
+				ms_ਮੰਜ਼ਿਲ_timespec(&timespec, ms_remain);
+				monotime_tv(&ਸ਼ੁਰੂ);
 			}
-			if ((ret = ppoll(&pfd, 1, timespecp, NULL)) >= 0)
-				break;
-			if (errno != EAGAIN && errno != EINTR &&
+			ਜੇ ((ret = ppoll(&pfd, 1, timespecp, ਨਿਰਾ)) >= 0)
+				ਰੋਕੋ;
+			ਜੇ (errno != EAGAIN && errno != EINTR &&
 			    errno != EWOULDBLOCK)
-				break;
-			if (state->packet_timeout_ms <= 0)
-				continue;
-			ms_subtract_diff(&start, &ms_remain);
-			if (ms_remain <= 0) {
+				ਰੋਕੋ;
+			ਜੇ (state->packet_timeout_ms <= 0)
+				ਜਾਰੀ;
+			ms_ਘਟਾਓ_diff(&ਸ਼ੁਰੂ, &ms_remain);
+			ਜੇ (ms_remain <= 0) {
 				ret = 0;
-				break;
+				ਰੋਕੋ;
 			}
 		}
-		if (ret == 0)
-			return SSH_ERR_CONN_TIMEOUT;
-		if ((r = ssh_packet_write_poll(ssh)) != 0)
-			return r;
+		ਜੇ (ret == 0)
+			ਵਾਪਸ SSH_ERR_CONN_TIMEOUT;
+		ਜੇ ((r = ssh_packet_write_poll(ssh)) != 0)
+			ਵਾਪਸ r;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* Returns true if there is buffered data to write to the connection. */
 
-int
-ssh_packet_have_data_to_write(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_have_ਅੰਕੜੇ_ਮੰਜ਼ਿਲ_write(ਬਣਤਰ ssh *ssh)
 {
-	return sshbuf_len(ssh->state->output) != 0;
+	ਵਾਪਸ sshbuf_len(ssh->state->output) != 0;
 }
 
 /* Returns true if there is not too much data to write to the connection. */
 
-int
-ssh_packet_not_very_much_data_to_write(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_not_very_much_ਅੰਕੜੇ_ਮੰਜ਼ਿਲ_write(ਬਣਤਰ ssh *ssh)
 {
-	if (ssh->state->interactive_mode)
-		return sshbuf_len(ssh->state->output) < 16384;
-	else
-		return sshbuf_len(ssh->state->output) < 128 * 1024;
+	ਜੇ (ssh->state->interactive_ਬਹੁਲਕ)
+		ਵਾਪਸ sshbuf_len(ssh->state->output) < 16384;
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ sshbuf_len(ssh->state->output) < 128 * 1024;
 }
 
 /*
@@ -2271,159 +2271,159 @@ ssh_packet_not_very_much_data_to_write(struct ssh *ssh)
  * and the connection is in interactive mode.
  */
 
-int
-ssh_packet_interactive_data_to_write(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_interactive_ਅੰਕੜੇ_ਮੰਜ਼ਿਲ_write(ਬਣਤਰ ssh *ssh)
 {
-	return ssh->state->interactive_mode &&
+	ਵਾਪਸ ssh->state->interactive_ਬਹੁਲਕ &&
 	    sshbuf_len(ssh->state->output) < 256;
 }
 
-static void
-apply_qos(struct ssh *ssh)
+ਸਥਿਰ ਖਾਲੀ
+apply_qos(ਬਣਤਰ ssh *ssh)
 {
-	struct session_state *state = ssh->state;
-	int qos = state->interactive_mode ?
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਪੂਰਨ qos = state->interactive_ਬਹੁਲਕ ?
 	    state->qos_interactive : state->qos_other;
 
-	if (!ssh_packet_connection_is_on_socket(ssh))
-		return;
-	if (!state->nodelay_set) {
-		set_nodelay(state->connection_in);
-		state->nodelay_set = 1;
+	ਜੇ (!ssh_packet_connection_is_on_socket(ssh))
+		ਵਾਪਸ;
+	ਜੇ (!state->nodelay_ਸੈੱਟ) {
+		ਸੈੱਟ_nodelay(state->connection_ਵਿੱਚ);
+		state->nodelay_ਸੈੱਟ = 1;
 	}
-	set_sock_tos(ssh->state->connection_in, qos);
+	ਸੈੱਟ_sock_tos(ssh->state->connection_ਵਿੱਚ, qos);
 }
 
 /* Informs that the current session is interactive. */
-void
-ssh_packet_set_interactive(struct ssh *ssh, int interactive)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_interactive(ਬਣਤਰ ssh *ssh, ਪੂਰਨ interactive)
 {
-	struct session_state *state = ssh->state;
+	ਬਣਤਰ session_state *state = ssh->state;
 
-	state->interactive_mode = interactive;
+	state->interactive_ਬਹੁਲਕ = interactive;
 	apply_qos(ssh);
 }
 
 /* Set QoS flags to be used for interactive and non-interactive sessions */
-void
-ssh_packet_set_qos(struct ssh *ssh, int qos_interactive, int qos_other)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_qos(ਬਣਤਰ ssh *ssh, ਪੂਰਨ qos_interactive, ਪੂਰਨ qos_other)
 {
-	struct session_state *state = ssh->state;
+	ਬਣਤਰ session_state *state = ssh->state;
 
 	state->qos_interactive = qos_interactive;
 	state->qos_other = qos_other;
 	apply_qos(ssh);
 }
 
-int
-ssh_packet_set_maxsize(struct ssh *ssh, u_int s)
+ਪੂਰਨ
+ssh_packet_ਸੈੱਟ_maxsize(ਬਣਤਰ ssh *ssh, u_int s)
 {
-	struct session_state *state = ssh->state;
+	ਬਣਤਰ session_state *state = ssh->state;
 
-	if (state->set_maxsize_called) {
+	ਜੇ (state->ਸੈੱਟ_maxsize_called) {
 		logit_f("called twice: old %d new %d",
-		    state->max_packet_size, s);
-		return -1;
+		    state->max_packet_ਮਾਪ, s);
+		ਵਾਪਸ -1;
 	}
-	if (s < 4 * 1024 || s > 1024 * 1024) {
+	ਜੇ (s < 4 * 1024 || s > 1024 * 1024) {
 		logit_f("bad size %d", s);
-		return -1;
+		ਵਾਪਸ -1;
 	}
-	state->set_maxsize_called = 1;
+	state->ਸੈੱਟ_maxsize_called = 1;
 	debug_f("setting to %d", s);
-	state->max_packet_size = s;
-	return s;
+	state->max_packet_ਮਾਪ = s;
+	ਵਾਪਸ s;
 }
 
-int
-ssh_packet_inc_alive_timeouts(struct ssh *ssh)
+ਪੂਰਨ
+ssh_packet_inc_alive_timeouts(ਬਣਤਰ ssh *ssh)
 {
-	return ++ssh->state->keep_alive_timeouts;
+	ਵਾਪਸ ++ssh->state->keep_alive_timeouts;
 }
 
-void
-ssh_packet_set_alive_timeouts(struct ssh *ssh, int ka)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_alive_timeouts(ਬਣਤਰ ssh *ssh, ਪੂਰਨ ka)
 {
 	ssh->state->keep_alive_timeouts = ka;
 }
 
 u_int
-ssh_packet_get_maxsize(struct ssh *ssh)
+ssh_packet_get_maxsize(ਬਣਤਰ ssh *ssh)
 {
-	return ssh->state->max_packet_size;
+	ਵਾਪਸ ssh->state->max_packet_ਮਾਪ;
 }
 
-void
-ssh_packet_set_rekey_limits(struct ssh *ssh, uint64_t bytes, uint32_t seconds)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_rekey_limits(ਬਣਤਰ ssh *ssh, uint64_t ਬਾਈਟਾਂ, uint32_t seconds)
 {
-	if (bytes == 0 && seconds == 0)
-		return;
+	ਜੇ (ਬਾਈਟਾਂ == 0 && seconds == 0)
+		ਵਾਪਸ;
 
-	debug3("rekey after %llu bytes, %u seconds", (unsigned long long)bytes,
-	    (unsigned int)seconds);
-	ssh->state->rekey_limit = bytes;
+	debug3("rekey after %llu bytes, %u seconds", (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਬਾਈਟਾਂ,
+	    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ)seconds);
+	ssh->state->rekey_ਹੱਦਬੰਦੀ = ਬਾਈਟਾਂ;
 	ssh->state->rekey_interval = seconds;
 }
 
 time_t
-ssh_packet_get_rekey_timeout(struct ssh *ssh)
+ssh_packet_get_rekey_timeout(ਬਣਤਰ ssh *ssh)
 {
 	time_t seconds;
 
-	seconds = ssh->state->rekey_time + ssh->state->rekey_interval -
+	seconds = ssh->state->rekey_ਸਮਾਂ + ssh->state->rekey_interval -
 	    monotime();
-	return (seconds <= 0 ? 1 : seconds);
+	ਵਾਪਸ (seconds <= 0 ? 1 : seconds);
 }
 
-void
-ssh_packet_set_server(struct ssh *ssh)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_server(ਬਣਤਰ ssh *ssh)
 {
 	ssh->state->server_side = 1;
 	ssh->kex->server = 1; /* XXX unify? */
 }
 
-void
-ssh_packet_set_authenticated(struct ssh *ssh)
+ਖਾਲੀ
+ssh_packet_ਸੈੱਟ_authenticated(ਬਣਤਰ ssh *ssh)
 {
 	ssh->state->after_authentication = 1;
 }
 
-void *
-ssh_packet_get_input(struct ssh *ssh)
+ਖਾਲੀ *
+ssh_packet_get_ਨਿਵੇਸ਼(ਬਣਤਰ ssh *ssh)
 {
-	return (void *)ssh->state->input;
+	ਵਾਪਸ (ਖਾਲੀ *)ssh->state->ਨਿਵੇਸ਼;
 }
 
-void *
-ssh_packet_get_output(struct ssh *ssh)
+ਖਾਲੀ *
+ssh_packet_get_output(ਬਣਤਰ ssh *ssh)
 {
-	return (void *)ssh->state->output;
+	ਵਾਪਸ (ਖਾਲੀ *)ssh->state->output;
 }
 
 /* Reset after_authentication and reset compression in post-auth privsep */
-static int
-ssh_packet_set_postauth(struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ssh_packet_ਸੈੱਟ_postauth(ਬਣਤਰ ssh *ssh)
 {
-	int r;
+	ਪੂਰਨ r;
 
 	debug_f("called");
 	/* This was set in net child, but is not visible in user child */
 	ssh->state->after_authentication = 1;
 	ssh->state->rekeying = 0;
-	if ((r = ssh_packet_enable_delayed_compress(ssh)) != 0)
-		return r;
-	return 0;
+	ਜੇ ((r = ssh_packet_enable_delayed_compress(ssh)) != 0)
+		ਵਾਪਸ r;
+	ਵਾਪਸ 0;
 }
 
 /* Packet state (de-)serialization for privsep */
 
 /* turn kex into a blob for packet state serialization */
-static int
-kex_to_blob(struct sshbuf *m, struct kex *kex)
+ਸਥਿਰ ਪੂਰਨ
+kex_ਮੰਜ਼ਿਲ_blob(ਬਣਤਰ sshbuf *m, ਬਣਤਰ kex *kex)
 {
-	int r;
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_put_u32(m, kex->we_need)) != 0 ||
+	ਜੇ ((r = sshbuf_put_u32(m, kex->we_need)) != 0 ||
 	    (r = sshbuf_put_cstring(m, kex->hostkey_alg)) != 0 ||
 	    (r = sshbuf_put_u32(m, kex->hostkey_type)) != 0 ||
 	    (r = sshbuf_put_u32(m, kex->hostkey_nid)) != 0 ||
@@ -2431,474 +2431,474 @@ kex_to_blob(struct sshbuf *m, struct kex *kex)
 	    (r = sshbuf_put_u32(m, kex->kex_strict)) != 0 ||
 	    (r = sshbuf_put_stringb(m, kex->my)) != 0 ||
 	    (r = sshbuf_put_stringb(m, kex->peer)) != 0 ||
-	    (r = sshbuf_put_stringb(m, kex->client_version)) != 0 ||
-	    (r = sshbuf_put_stringb(m, kex->server_version)) != 0 ||
+	    (r = sshbuf_put_stringb(m, kex->client_ਸੰਸਕਰਣ)) != 0 ||
+	    (r = sshbuf_put_stringb(m, kex->server_ਸੰਸਕਰਣ)) != 0 ||
 	    (r = sshbuf_put_stringb(m, kex->session_id)) != 0 ||
 	    (r = sshbuf_put_u32(m, kex->flags)) != 0 ||
 	    (r = sshbuf_put_u32(m, kex->warn_weak_crypto)) != 0 ||
 	    (r = sshbuf_put_u32(m, kex->pq_kex_negotiated)) != 0 ||
 	    (r = sshbuf_put_u32(m, kex->non_pq_kex_warned)) != 0)
-		return r;
-	return 0;
+		ਵਾਪਸ r;
+	ਵਾਪਸ 0;
 }
 
 /* turn key exchange results into a blob for packet state serialization */
-static int
-newkeys_to_blob(struct sshbuf *m, struct ssh *ssh, int mode)
+ਸਥਿਰ ਪੂਰਨ
+newkeys_ਮੰਜ਼ਿਲ_blob(ਬਣਤਰ sshbuf *m, ਬਣਤਰ ssh *ssh, ਪੂਰਨ ਬਹੁਲਕ)
 {
-	struct sshbuf *b;
-	struct sshcipher_ctx *cc;
-	struct sshcomp *comp;
-	struct sshenc *enc;
-	struct sshmac *mac;
-	struct newkeys *newkey;
-	int r;
+	ਬਣਤਰ sshbuf *b;
+	ਬਣਤਰ sshcipher_ctx *cc;
+	ਬਣਤਰ sshcomp *comp;
+	ਬਣਤਰ sshenc *enc;
+	ਬਣਤਰ sshmac *mac;
+	ਬਣਤਰ newkeys *newkey;
+	ਪੂਰਨ r;
 
-	if ((newkey = ssh->state->newkeys[mode]) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
+	ਜੇ ((newkey = ssh->state->newkeys[ਬਹੁਲਕ]) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 	enc = &newkey->enc;
 	mac = &newkey->mac;
 	comp = &newkey->comp;
-	cc = (mode == MODE_OUT) ? ssh->state->send_context :
+	cc = (ਬਹੁਲਕ == ਬਹੁਲਕ_ਬਾਹਰਲਾ) ? ssh->state->send_context :
 	    ssh->state->receive_context;
-	if ((r = cipher_get_keyiv(cc, enc->iv, enc->iv_len)) != 0)
-		return r;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_cstring(b, enc->name)) != 0 ||
+	ਜੇ ((r = cipher_get_keyiv(cc, enc->iv, enc->iv_len)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ ((b = sshbuf_new()) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਜੇ ((r = sshbuf_put_cstring(b, enc->name)) != 0 ||
 	    (r = sshbuf_put_u32(b, enc->enabled)) != 0 ||
-	    (r = sshbuf_put_u32(b, enc->block_size)) != 0 ||
-	    (r = sshbuf_put_string(b, enc->key, enc->key_len)) != 0 ||
+	    (r = sshbuf_put_u32(b, enc->ਖੰਡ_ਮਾਪ)) != 0 ||
+	    (r = sshbuf_put_string(b, enc->ਕੁੰਜੀ, enc->ਕੁੰਜੀ_len)) != 0 ||
 	    (r = sshbuf_put_string(b, enc->iv, enc->iv_len)) != 0)
-		goto out;
-	if (cipher_authlen(enc->cipher) == 0) {
-		if ((r = sshbuf_put_cstring(b, mac->name)) != 0 ||
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ (cipher_authlen(enc->cipher) == 0) {
+		ਜੇ ((r = sshbuf_put_cstring(b, mac->name)) != 0 ||
 		    (r = sshbuf_put_u32(b, mac->enabled)) != 0 ||
-		    (r = sshbuf_put_string(b, mac->key, mac->key_len)) != 0)
-			goto out;
+		    (r = sshbuf_put_string(b, mac->ਕੁੰਜੀ, mac->ਕੁੰਜੀ_len)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((r = sshbuf_put_u32(b, comp->type)) != 0 ||
+	ਜੇ ((r = sshbuf_put_u32(b, comp->type)) != 0 ||
 	    (r = sshbuf_put_cstring(b, comp->name)) != 0)
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	r = sshbuf_put_stringb(m, b);
- out:
+ ਬਾਹਰਲਾ:
 	sshbuf_free(b);
-	return r;
+	ਵਾਪਸ r;
 }
 
 /* serialize packet state into a blob */
-int
-ssh_packet_get_state(struct ssh *ssh, struct sshbuf *m)
+ਪੂਰਨ
+ssh_packet_get_state(ਬਣਤਰ ssh *ssh, ਬਣਤਰ sshbuf *m)
 {
-	struct session_state *state = ssh->state;
-	int r;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਪੂਰਨ r;
 
-#define ENCODE_INT(v) (((v) < 0) ? 0xFFFFFFFF : (u_int)v)
-	if ((r = kex_to_blob(m, ssh->kex)) != 0 ||
-	    (r = newkeys_to_blob(m, ssh, MODE_OUT)) != 0 ||
-	    (r = newkeys_to_blob(m, ssh, MODE_IN)) != 0 ||
-	    (r = sshbuf_put_u64(m, state->rekey_limit)) != 0 ||
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ENCODE_INT(v) (((v) < 0) ? 0xFFFFFFFF : (u_int)v)
+	ਜੇ ((r = kex_ਮੰਜ਼ਿਲ_blob(m, ssh->kex)) != 0 ||
+	    (r = newkeys_ਮੰਜ਼ਿਲ_blob(m, ssh, ਬਹੁਲਕ_ਬਾਹਰਲਾ)) != 0 ||
+	    (r = newkeys_ਮੰਜ਼ਿਲ_blob(m, ssh, ਬਹੁਲਕ_ਵਿੱਚ)) != 0 ||
+	    (r = sshbuf_put_u64(m, state->rekey_ਹੱਦਬੰਦੀ)) != 0 ||
 	    (r = sshbuf_put_u32(m, state->rekey_interval)) != 0 ||
 	    (r = sshbuf_put_u32(m, state->p_send.seqnr)) != 0 ||
-	    (r = sshbuf_put_u64(m, state->p_send.blocks)) != 0 ||
+	    (r = sshbuf_put_u64(m, state->p_send.ਖੰਡਾਂ)) != 0 ||
 	    (r = sshbuf_put_u32(m, state->p_send.packets)) != 0 ||
-	    (r = sshbuf_put_u64(m, state->p_send.bytes)) != 0 ||
+	    (r = sshbuf_put_u64(m, state->p_send.ਬਾਈਟਾਂ)) != 0 ||
 	    (r = sshbuf_put_u32(m, state->p_read.seqnr)) != 0 ||
-	    (r = sshbuf_put_u64(m, state->p_read.blocks)) != 0 ||
+	    (r = sshbuf_put_u64(m, state->p_read.ਖੰਡਾਂ)) != 0 ||
 	    (r = sshbuf_put_u32(m, state->p_read.packets)) != 0 ||
-	    (r = sshbuf_put_u64(m, state->p_read.bytes)) != 0 ||
-	    (r = sshbuf_put_stringb(m, state->input)) != 0 ||
+	    (r = sshbuf_put_u64(m, state->p_read.ਬਾਈਟਾਂ)) != 0 ||
+	    (r = sshbuf_put_stringb(m, state->ਨਿਵੇਸ਼)) != 0 ||
 	    (r = sshbuf_put_stringb(m, state->output)) != 0 ||
-	    (r = sshbuf_put_u32(m, ENCODE_INT(state->interactive_mode))) != 0 ||
+	    (r = sshbuf_put_u32(m, ENCODE_INT(state->interactive_ਬਹੁਲਕ))) != 0 ||
 	    (r = sshbuf_put_u32(m, ENCODE_INT(state->qos_interactive))) != 0 ||
 	    (r = sshbuf_put_u32(m, ENCODE_INT(state->qos_other))) != 0)
-		return r;
-#undef ENCODE_INT
-	return 0;
+		ਵਾਪਸ r;
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ ENCODE_INT
+	ਵਾਪਸ 0;
 }
 
 /* restore key exchange results from blob for packet state de-serialization */
-static int
-newkeys_from_blob(struct sshbuf *m, struct ssh *ssh, int mode)
+ਸਥਿਰ ਪੂਰਨ
+newkeys_from_blob(ਬਣਤਰ sshbuf *m, ਬਣਤਰ ssh *ssh, ਪੂਰਨ ਬਹੁਲਕ)
 {
-	struct sshbuf *b = NULL;
-	struct sshcomp *comp;
-	struct sshenc *enc;
-	struct sshmac *mac;
-	struct newkeys *newkey = NULL;
-	size_t keylen, ivlen, maclen;
-	int r;
+	ਬਣਤਰ sshbuf *b = ਨਿਰਾ;
+	ਬਣਤਰ sshcomp *comp;
+	ਬਣਤਰ sshenc *enc;
+	ਬਣਤਰ sshmac *mac;
+	ਬਣਤਰ newkeys *newkey = ਨਿਰਾ;
+	ਮਾਪ_t keylen, ivlen, maclen;
+	ਪੂਰਨ r;
 
-	if ((newkey = calloc(1, sizeof(*newkey))) == NULL) {
+	ਜੇ ((newkey = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*newkey))) == ਨਿਰਾ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((r = sshbuf_froms(m, &b)) != 0)
-		goto out;
-#ifdef DEBUG_PK
+	ਜੇ ((r = sshbuf_froms(m, &b)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_PK
 	sshbuf_dump(b, stderr);
-#endif
+#ਜੇ_ਅੰਤ
 	enc = &newkey->enc;
 	mac = &newkey->mac;
 	comp = &newkey->comp;
 
-	if ((r = sshbuf_get_cstring(b, &enc->name, NULL)) != 0 ||
+	ਜੇ ((r = sshbuf_get_cstring(b, &enc->name, ਨਿਰਾ)) != 0 ||
 	    (r = sshbuf_get_u32(b, (u_int *)&enc->enabled)) != 0 ||
-	    (r = sshbuf_get_u32(b, &enc->block_size)) != 0 ||
-	    (r = sshbuf_get_string(b, &enc->key, &keylen)) != 0 ||
+	    (r = sshbuf_get_u32(b, &enc->ਖੰਡ_ਮਾਪ)) != 0 ||
+	    (r = sshbuf_get_string(b, &enc->ਕੁੰਜੀ, &keylen)) != 0 ||
 	    (r = sshbuf_get_string(b, &enc->iv, &ivlen)) != 0)
-		goto out;
-	if ((enc->cipher = cipher_by_name(enc->name)) == NULL ||
-	    enc->block_size != cipher_blocksize(enc->cipher) ||
-	    cipher_is_internal(enc->cipher)) {
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ ((enc->cipher = cipher_by_name(enc->name)) == ਨਿਰਾ ||
+	    enc->ਖੰਡ_ਮਾਪ != cipher_blocksize(enc->cipher) ||
+	    cipher_is_ਅੰਦਰੂਨੀ(enc->cipher)) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if (keylen != cipher_keylen(enc->cipher) ||
+	ਜੇ (keylen != cipher_keylen(enc->cipher) ||
 	    ivlen != cipher_ivlen(enc->cipher)) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if (cipher_authlen(enc->cipher) == 0) {
-		if ((r = sshbuf_get_cstring(b, &mac->name, NULL)) != 0)
-			goto out;
-		if ((r = mac_setup(mac, mac->name)) != 0)
-			goto out;
-		if ((r = sshbuf_get_u32(b, (u_int *)&mac->enabled)) != 0 ||
-		    (r = sshbuf_get_string(b, &mac->key, &maclen)) != 0)
-			goto out;
-		if (maclen != mac->key_len) {
+	ਜੇ (cipher_authlen(enc->cipher) == 0) {
+		ਜੇ ((r = sshbuf_get_cstring(b, &mac->name, ਨਿਰਾ)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
+		ਜੇ ((r = mac_ਤਿਆਰੀ(mac, mac->name)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
+		ਜੇ ((r = sshbuf_get_u32(b, (u_int *)&mac->enabled)) != 0 ||
+		    (r = sshbuf_get_string(b, &mac->ਕੁੰਜੀ, &maclen)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
+		ਜੇ (maclen != mac->ਕੁੰਜੀ_len) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
-		mac->key_len = maclen;
+		mac->ਕੁੰਜੀ_len = maclen;
 	}
-	if ((r = sshbuf_get_u32(b, &comp->type)) != 0 ||
-	    (r = sshbuf_get_cstring(b, &comp->name, NULL)) != 0)
-		goto out;
-	if (sshbuf_len(b) != 0) {
+	ਜੇ ((r = sshbuf_get_u32(b, &comp->type)) != 0 ||
+	    (r = sshbuf_get_cstring(b, &comp->name, ਨਿਰਾ)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ (sshbuf_len(b) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	enc->key_len = keylen;
+	enc->ਕੁੰਜੀ_len = keylen;
 	enc->iv_len = ivlen;
-	ssh->kex->newkeys[mode] = newkey;
-	newkey = NULL;
+	ssh->kex->newkeys[ਬਹੁਲਕ] = newkey;
+	newkey = ਨਿਰਾ;
 	r = 0;
- out:
-	free(newkey);
+ ਬਾਹਰਲਾ:
+	ਮੁਕਤ(newkey);
 	sshbuf_free(b);
-	return r;
+	ਵਾਪਸ r;
 }
 
 /* restore kex from blob for packet state de-serialization */
-static int
-kex_from_blob(struct sshbuf *m, struct kex **kexp)
+ਸਥਿਰ ਪੂਰਨ
+kex_from_blob(ਬਣਤਰ sshbuf *m, ਬਣਤਰ kex **kexp)
 {
-	struct kex *kex;
-	int r;
+	ਬਣਤਰ kex *kex;
+	ਪੂਰਨ r;
 
-	if ((kex = kex_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_u32(m, &kex->we_need)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &kex->hostkey_alg, NULL)) != 0 ||
+	ਜੇ ((kex = kex_new()) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਜੇ ((r = sshbuf_get_u32(m, &kex->we_need)) != 0 ||
+	    (r = sshbuf_get_cstring(m, &kex->hostkey_alg, ਨਿਰਾ)) != 0 ||
 	    (r = sshbuf_get_u32(m, (u_int *)&kex->hostkey_type)) != 0 ||
 	    (r = sshbuf_get_u32(m, (u_int *)&kex->hostkey_nid)) != 0 ||
 	    (r = sshbuf_get_u32(m, &kex->kex_type)) != 0 ||
 	    (r = sshbuf_get_u32(m, &kex->kex_strict)) != 0 ||
 	    (r = sshbuf_get_stringb(m, kex->my)) != 0 ||
 	    (r = sshbuf_get_stringb(m, kex->peer)) != 0 ||
-	    (r = sshbuf_get_stringb(m, kex->client_version)) != 0 ||
-	    (r = sshbuf_get_stringb(m, kex->server_version)) != 0 ||
+	    (r = sshbuf_get_stringb(m, kex->client_ਸੰਸਕਰਣ)) != 0 ||
+	    (r = sshbuf_get_stringb(m, kex->server_ਸੰਸਕਰਣ)) != 0 ||
 	    (r = sshbuf_get_stringb(m, kex->session_id)) != 0 ||
 	    (r = sshbuf_get_u32(m, &kex->flags)) != 0 ||
 	    (r = sshbuf_get_u32(m, &kex->warn_weak_crypto)) != 0 ||
 	    (r = sshbuf_get_u32(m, &kex->pq_kex_negotiated)) != 0 ||
 	    (r = sshbuf_get_u32(m, &kex->non_pq_kex_warned)) != 0)
-		goto out;
-	if (kex->we_need > 1024) {
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ (kex->we_need > 1024) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 	kex->server = 1;
-	kex->done = 1;
+	kex->ਪੂਰਾ = 1;
 	r = 0;
- out:
-	if (r != 0 || kexp == NULL) {
+ ਬਾਹਰਲਾ:
+	ਜੇ (r != 0 || kexp == ਨਿਰਾ) {
 		kex_free(kex);
-		if (kexp != NULL)
-			*kexp = NULL;
-	} else {
+		ਜੇ (kexp != ਨਿਰਾ)
+			*kexp = ਨਿਰਾ;
+	} ਨਹੀਂਤਾਂ {
 		kex_free(*kexp);
 		*kexp = kex;
 	}
-	return r;
+	ਵਾਪਸ r;
 }
 
 /*
  * Restore packet state from content of blob 'm' (de-serialization).
  * Note that 'm' will be partially consumed on parsing or any other errors.
  */
-int
-ssh_packet_set_state(struct ssh *ssh, struct sshbuf *m)
+ਪੂਰਨ
+ssh_packet_ਸੈੱਟ_state(ਬਣਤਰ ssh *ssh, ਬਣਤਰ sshbuf *m)
 {
-	struct session_state *state = ssh->state;
-	const u_char *input, *output;
-	size_t ilen, olen;
-	int r;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਅਚਲ u_char *ਨਿਵੇਸ਼, *output;
+	ਮਾਪ_t ilen, olen;
+	ਪੂਰਨ r;
 	u_int interactive, qos_interactive, qos_other;
 
-	if ((r = kex_from_blob(m, &ssh->kex)) != 0 ||
-	    (r = newkeys_from_blob(m, ssh, MODE_OUT)) != 0 ||
-	    (r = newkeys_from_blob(m, ssh, MODE_IN)) != 0 ||
-	    (r = sshbuf_get_u64(m, &state->rekey_limit)) != 0 ||
+	ਜੇ ((r = kex_from_blob(m, &ssh->kex)) != 0 ||
+	    (r = newkeys_from_blob(m, ssh, ਬਹੁਲਕ_ਬਾਹਰਲਾ)) != 0 ||
+	    (r = newkeys_from_blob(m, ssh, ਬਹੁਲਕ_ਵਿੱਚ)) != 0 ||
+	    (r = sshbuf_get_u64(m, &state->rekey_ਹੱਦਬੰਦੀ)) != 0 ||
 	    (r = sshbuf_get_u32(m, &state->rekey_interval)) != 0 ||
 	    (r = sshbuf_get_u32(m, &state->p_send.seqnr)) != 0 ||
-	    (r = sshbuf_get_u64(m, &state->p_send.blocks)) != 0 ||
+	    (r = sshbuf_get_u64(m, &state->p_send.ਖੰਡਾਂ)) != 0 ||
 	    (r = sshbuf_get_u32(m, &state->p_send.packets)) != 0 ||
-	    (r = sshbuf_get_u64(m, &state->p_send.bytes)) != 0 ||
+	    (r = sshbuf_get_u64(m, &state->p_send.ਬਾਈਟਾਂ)) != 0 ||
 	    (r = sshbuf_get_u32(m, &state->p_read.seqnr)) != 0 ||
-	    (r = sshbuf_get_u64(m, &state->p_read.blocks)) != 0 ||
+	    (r = sshbuf_get_u64(m, &state->p_read.ਖੰਡਾਂ)) != 0 ||
 	    (r = sshbuf_get_u32(m, &state->p_read.packets)) != 0 ||
-	    (r = sshbuf_get_u64(m, &state->p_read.bytes)) != 0)
-		return r;
+	    (r = sshbuf_get_u64(m, &state->p_read.ਬਾਈਟਾਂ)) != 0)
+		ਵਾਪਸ r;
 	/*
 	 * We set the time here so that in post-auth privsep child we
 	 * count from the completion of the authentication.
 	 */
-	state->rekey_time = monotime();
+	state->rekey_ਸਮਾਂ = monotime();
 	/* XXX ssh_set_newkeys overrides p_read.packets? XXX */
-	if ((r = ssh_set_newkeys(ssh, MODE_IN)) != 0 ||
-	    (r = ssh_set_newkeys(ssh, MODE_OUT)) != 0)
-		return r;
+	ਜੇ ((r = ssh_ਸੈੱਟ_newkeys(ssh, ਬਹੁਲਕ_ਵਿੱਚ)) != 0 ||
+	    (r = ssh_ਸੈੱਟ_newkeys(ssh, ਬਹੁਲਕ_ਬਾਹਰਲਾ)) != 0)
+		ਵਾਪਸ r;
 
-	if ((r = ssh_packet_set_postauth(ssh)) != 0)
-		return r;
+	ਜੇ ((r = ssh_packet_ਸੈੱਟ_postauth(ssh)) != 0)
+		ਵਾਪਸ r;
 
-	sshbuf_reset(state->input);
+	sshbuf_reset(state->ਨਿਵੇਸ਼);
 	sshbuf_reset(state->output);
-	if ((r = sshbuf_get_string_direct(m, &input, &ilen)) != 0 ||
-	    (r = sshbuf_get_string_direct(m, &output, &olen)) != 0 ||
-	    (r = sshbuf_put(state->input, input, ilen)) != 0 ||
+	ਜੇ ((r = sshbuf_get_string_ਸਿੱਧਾ(m, &ਨਿਵੇਸ਼, &ilen)) != 0 ||
+	    (r = sshbuf_get_string_ਸਿੱਧਾ(m, &output, &olen)) != 0 ||
+	    (r = sshbuf_put(state->ਨਿਵੇਸ਼, ਨਿਵੇਸ਼, ilen)) != 0 ||
 	    (r = sshbuf_put(state->output, output, olen)) != 0)
-		return r;
+		ਵਾਪਸ r;
 
-	if ((r = sshbuf_get_u32(m, &interactive)) != 0 ||
+	ਜੇ ((r = sshbuf_get_u32(m, &interactive)) != 0 ||
 	    (r = sshbuf_get_u32(m, &qos_interactive)) != 0 ||
 	    (r = sshbuf_get_u32(m, &qos_other)) != 0)
-		return r;
-#define DECODE_INT(v) ((v) > INT_MAX ? -1 : (int)(v))
-	state->interactive_mode = DECODE_INT(interactive);
+		ਵਾਪਸ r;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DECODE_INT(v) ((v) > ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ ? -1 : (ਪੂਰਨ)(v))
+	state->interactive_ਬਹੁਲਕ = DECODE_INT(interactive);
 	state->qos_interactive = DECODE_INT(qos_interactive);
 	state->qos_other = DECODE_INT(qos_other);
-#undef DECODE_INT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ DECODE_INT
 
-	if (sshbuf_len(m))
-		return SSH_ERR_INVALID_FORMAT;
+	ਜੇ (sshbuf_len(m))
+		ਵਾਪਸ SSH_ERR_INVALID_FORMAT;
 	debug3_f("done");
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* NEW API */
 
 /* put data to the outgoing packet */
 
-int
-sshpkt_put(struct ssh *ssh, const void *v, size_t len)
+ਪੂਰਨ
+sshpkt_put(ਬਣਤਰ ssh *ssh, ਅਚਲ ਖਾਲੀ *v, ਮਾਪ_t len)
 {
-	return sshbuf_put(ssh->state->outgoing_packet, v, len);
+	ਵਾਪਸ sshbuf_put(ssh->state->outgoing_packet, v, len);
 }
 
-int
-sshpkt_putb(struct ssh *ssh, const struct sshbuf *b)
+ਪੂਰਨ
+sshpkt_putb(ਬਣਤਰ ssh *ssh, ਅਚਲ ਬਣਤਰ sshbuf *b)
 {
-	return sshbuf_putb(ssh->state->outgoing_packet, b);
+	ਵਾਪਸ sshbuf_putb(ssh->state->outgoing_packet, b);
 }
 
-int
-sshpkt_put_u8(struct ssh *ssh, u_char val)
+ਪੂਰਨ
+sshpkt_put_u8(ਬਣਤਰ ssh *ssh, u_char val)
 {
-	return sshbuf_put_u8(ssh->state->outgoing_packet, val);
+	ਵਾਪਸ sshbuf_put_u8(ssh->state->outgoing_packet, val);
 }
 
-int
-sshpkt_put_u32(struct ssh *ssh, uint32_t val)
+ਪੂਰਨ
+sshpkt_put_u32(ਬਣਤਰ ssh *ssh, uint32_t val)
 {
-	return sshbuf_put_u32(ssh->state->outgoing_packet, val);
+	ਵਾਪਸ sshbuf_put_u32(ssh->state->outgoing_packet, val);
 }
 
-int
-sshpkt_put_u64(struct ssh *ssh, uint64_t val)
+ਪੂਰਨ
+sshpkt_put_u64(ਬਣਤਰ ssh *ssh, uint64_t val)
 {
-	return sshbuf_put_u64(ssh->state->outgoing_packet, val);
+	ਵਾਪਸ sshbuf_put_u64(ssh->state->outgoing_packet, val);
 }
 
-int
-sshpkt_put_string(struct ssh *ssh, const void *v, size_t len)
+ਪੂਰਨ
+sshpkt_put_string(ਬਣਤਰ ssh *ssh, ਅਚਲ ਖਾਲੀ *v, ਮਾਪ_t len)
 {
-	return sshbuf_put_string(ssh->state->outgoing_packet, v, len);
+	ਵਾਪਸ sshbuf_put_string(ssh->state->outgoing_packet, v, len);
 }
 
-int
-sshpkt_put_cstring(struct ssh *ssh, const void *v)
+ਪੂਰਨ
+sshpkt_put_cstring(ਬਣਤਰ ssh *ssh, ਅਚਲ ਖਾਲੀ *v)
 {
-	return sshbuf_put_cstring(ssh->state->outgoing_packet, v);
+	ਵਾਪਸ sshbuf_put_cstring(ssh->state->outgoing_packet, v);
 }
 
-int
-sshpkt_put_stringb(struct ssh *ssh, const struct sshbuf *v)
+ਪੂਰਨ
+sshpkt_put_stringb(ਬਣਤਰ ssh *ssh, ਅਚਲ ਬਣਤਰ sshbuf *v)
 {
-	return sshbuf_put_stringb(ssh->state->outgoing_packet, v);
+	ਵਾਪਸ sshbuf_put_stringb(ssh->state->outgoing_packet, v);
 }
 
-#ifdef WITH_OPENSSL
-int
-sshpkt_put_ec(struct ssh *ssh, const EC_POINT *v, const EC_GROUP *g)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+ਪੂਰਨ
+sshpkt_put_ec(ਬਣਤਰ ssh *ssh, ਅਚਲ EC_ਬਿੰਦੂ *v, ਅਚਲ EC_ਸਮੂਹ *g)
 {
-	return sshbuf_put_ec(ssh->state->outgoing_packet, v, g);
+	ਵਾਪਸ sshbuf_put_ec(ssh->state->outgoing_packet, v, g);
 }
 
-int
-sshpkt_put_ec_pkey(struct ssh *ssh, EVP_PKEY *pkey)
+ਪੂਰਨ
+sshpkt_put_ec_pkey(ਬਣਤਰ ssh *ssh, EVP_PKEY *pkey)
 {
-	return sshbuf_put_ec_pkey(ssh->state->outgoing_packet, pkey);
+	ਵਾਪਸ sshbuf_put_ec_pkey(ssh->state->outgoing_packet, pkey);
 }
 
-int
-sshpkt_put_bignum2(struct ssh *ssh, const BIGNUM *v)
+ਪੂਰਨ
+sshpkt_put_bignum2(ਬਣਤਰ ssh *ssh, ਅਚਲ BIGNUM *v)
 {
-	return sshbuf_put_bignum2(ssh->state->outgoing_packet, v);
+	ਵਾਪਸ sshbuf_put_bignum2(ssh->state->outgoing_packet, v);
 }
-#endif /* WITH_OPENSSL */
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
 
 /* fetch data from the incoming packet */
 
-int
-sshpkt_get(struct ssh *ssh, void *valp, size_t len)
+ਪੂਰਨ
+sshpkt_get(ਬਣਤਰ ssh *ssh, ਖਾਲੀ *valp, ਮਾਪ_t len)
 {
-	return sshbuf_get(ssh->state->incoming_packet, valp, len);
+	ਵਾਪਸ sshbuf_get(ssh->state->incoming_packet, valp, len);
 }
 
-int
-sshpkt_get_u8(struct ssh *ssh, u_char *valp)
+ਪੂਰਨ
+sshpkt_get_u8(ਬਣਤਰ ssh *ssh, u_char *valp)
 {
-	return sshbuf_get_u8(ssh->state->incoming_packet, valp);
+	ਵਾਪਸ sshbuf_get_u8(ssh->state->incoming_packet, valp);
 }
 
-int
-sshpkt_get_u32(struct ssh *ssh, uint32_t *valp)
+ਪੂਰਨ
+sshpkt_get_u32(ਬਣਤਰ ssh *ssh, uint32_t *valp)
 {
-	return sshbuf_get_u32(ssh->state->incoming_packet, valp);
+	ਵਾਪਸ sshbuf_get_u32(ssh->state->incoming_packet, valp);
 }
 
-int
-sshpkt_get_u64(struct ssh *ssh, uint64_t *valp)
+ਪੂਰਨ
+sshpkt_get_u64(ਬਣਤਰ ssh *ssh, uint64_t *valp)
 {
-	return sshbuf_get_u64(ssh->state->incoming_packet, valp);
+	ਵਾਪਸ sshbuf_get_u64(ssh->state->incoming_packet, valp);
 }
 
-int
-sshpkt_get_string(struct ssh *ssh, u_char **valp, size_t *lenp)
+ਪੂਰਨ
+sshpkt_get_string(ਬਣਤਰ ssh *ssh, u_char **valp, ਮਾਪ_t *lenp)
 {
-	return sshbuf_get_string(ssh->state->incoming_packet, valp, lenp);
+	ਵਾਪਸ sshbuf_get_string(ssh->state->incoming_packet, valp, lenp);
 }
 
-int
-sshpkt_get_string_direct(struct ssh *ssh, const u_char **valp, size_t *lenp)
+ਪੂਰਨ
+sshpkt_get_string_ਸਿੱਧਾ(ਬਣਤਰ ssh *ssh, ਅਚਲ u_char **valp, ਮਾਪ_t *lenp)
 {
-	return sshbuf_get_string_direct(ssh->state->incoming_packet, valp, lenp);
+	ਵਾਪਸ sshbuf_get_string_ਸਿੱਧਾ(ssh->state->incoming_packet, valp, lenp);
 }
 
-int
-sshpkt_peek_string_direct(struct ssh *ssh, const u_char **valp, size_t *lenp)
+ਪੂਰਨ
+sshpkt_peek_string_ਸਿੱਧਾ(ਬਣਤਰ ssh *ssh, ਅਚਲ u_char **valp, ਮਾਪ_t *lenp)
 {
-	return sshbuf_peek_string_direct(ssh->state->incoming_packet, valp, lenp);
+	ਵਾਪਸ sshbuf_peek_string_ਸਿੱਧਾ(ssh->state->incoming_packet, valp, lenp);
 }
 
-int
-sshpkt_get_cstring(struct ssh *ssh, char **valp, size_t *lenp)
+ਪੂਰਨ
+sshpkt_get_cstring(ਬਣਤਰ ssh *ssh, ਅੱਖਰ **valp, ਮਾਪ_t *lenp)
 {
-	return sshbuf_get_cstring(ssh->state->incoming_packet, valp, lenp);
+	ਵਾਪਸ sshbuf_get_cstring(ssh->state->incoming_packet, valp, lenp);
 }
 
-int
-sshpkt_getb_froms(struct ssh *ssh, struct sshbuf **valp)
+ਪੂਰਨ
+sshpkt_getb_froms(ਬਣਤਰ ssh *ssh, ਬਣਤਰ sshbuf **valp)
 {
-	return sshbuf_froms(ssh->state->incoming_packet, valp);
+	ਵਾਪਸ sshbuf_froms(ssh->state->incoming_packet, valp);
 }
 
-#ifdef WITH_OPENSSL
-int
-sshpkt_get_ec(struct ssh *ssh, EC_POINT *v, const EC_GROUP *g)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+ਪੂਰਨ
+sshpkt_get_ec(ਬਣਤਰ ssh *ssh, EC_ਬਿੰਦੂ *v, ਅਚਲ EC_ਸਮੂਹ *g)
 {
-	return sshbuf_get_ec(ssh->state->incoming_packet, v, g);
+	ਵਾਪਸ sshbuf_get_ec(ssh->state->incoming_packet, v, g);
 }
 
-int
-sshpkt_get_bignum2(struct ssh *ssh, BIGNUM **valp)
+ਪੂਰਨ
+sshpkt_get_bignum2(ਬਣਤਰ ssh *ssh, BIGNUM **valp)
 {
-	return sshbuf_get_bignum2(ssh->state->incoming_packet, valp);
+	ਵਾਪਸ sshbuf_get_bignum2(ssh->state->incoming_packet, valp);
 }
-#endif /* WITH_OPENSSL */
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
 
-int
-sshpkt_get_end(struct ssh *ssh)
+ਪੂਰਨ
+sshpkt_get_ਸਿਰਾ(ਬਣਤਰ ssh *ssh)
 {
-	if (sshbuf_len(ssh->state->incoming_packet) > 0)
-		return SSH_ERR_UNEXPECTED_TRAILING_DATA;
-	return 0;
+	ਜੇ (sshbuf_len(ssh->state->incoming_packet) > 0)
+		ਵਾਪਸ SSH_ERR_UNEXPECTED_TRAILING_ਅੰਕੜੇ;
+	ਵਾਪਸ 0;
 }
 
-const u_char *
-sshpkt_ptr(struct ssh *ssh, size_t *lenp)
+ਅਚਲ u_char *
+sshpkt_ptr(ਬਣਤਰ ssh *ssh, ਮਾਪ_t *lenp)
 {
-	if (lenp != NULL)
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = sshbuf_len(ssh->state->incoming_packet);
-	return sshbuf_ptr(ssh->state->incoming_packet);
+	ਵਾਪਸ sshbuf_ptr(ssh->state->incoming_packet);
 }
 
 /* start a new packet */
 
-int
-sshpkt_start(struct ssh *ssh, u_char type)
+ਪੂਰਨ
+sshpkt_ਸ਼ੁਰੂ(ਬਣਤਰ ssh *ssh, u_char type)
 {
 	u_char buf[6]; /* u32 packet length, u8 pad len, u8 type */
 
 	DBG(debug("packet_start[%d]", type));
-	memset(buf, 0, sizeof(buf));
-	buf[sizeof(buf) - 1] = type;
+	memset(buf, 0, ਆਕਾਰ(buf));
+	buf[ਆਕਾਰ(buf) - 1] = type;
 	sshbuf_reset(ssh->state->outgoing_packet);
-	return sshbuf_put(ssh->state->outgoing_packet, buf, sizeof(buf));
+	ਵਾਪਸ sshbuf_put(ssh->state->outgoing_packet, buf, ਆਕਾਰ(buf));
 }
 
-static int
-ssh_packet_send_mux(struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ssh_packet_send_mux(ਬਣਤਰ ssh *ssh)
 {
-	struct session_state *state = ssh->state;
+	ਬਣਤਰ session_state *state = ssh->state;
 	u_char type, *cp;
-	size_t len;
-	int r;
+	ਮਾਪ_t len;
+	ਪੂਰਨ r;
 
-	if (ssh->kex)
-		return SSH_ERR_INTERNAL_ERROR;
+	ਜੇ (ssh->kex)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 	len = sshbuf_len(state->outgoing_packet);
-	if (len < 6)
-		return SSH_ERR_INTERNAL_ERROR;
+	ਜੇ (len < 6)
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 	cp = sshbuf_mutable_ptr(state->outgoing_packet);
 	type = cp[5];
-	if (ssh_packet_log_type(type))
+	ਜੇ (ssh_packet_log_type(type))
 		debug3_f("type %u", type);
 	/* drop everything, but the connection protocol */
-	if (type >= SSH2_MSG_CONNECTION_MIN &&
-	    type <= SSH2_MSG_CONNECTION_MAX) {
+	ਜੇ (type >= SSH2_ਸੁਨੇਹਾ_CONNECTION_MIN &&
+	    type <= SSH2_ਸੁਨੇਹਾ_CONNECTION_MAX) {
 		POKE_U32(cp, len - 4);
-		if ((r = sshbuf_putb(state->output,
+		ਜੇ ((r = sshbuf_putb(state->output,
 		    state->outgoing_packet)) != 0)
-			return r;
+			ਵਾਪਸ r;
 		/* sshbuf_dump(state->output, stderr); */
 	}
 	sshbuf_reset(state->outgoing_packet);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
@@ -2912,198 +2912,198 @@ ssh_packet_send_mux(struct ssh *ssh)
  * required to send them. This message can be used as an additional
  * protection measure against advanced traffic analysis techniques.
  */
-int
-sshpkt_msg_ignore(struct ssh *ssh, u_int nbytes)
+ਪੂਰਨ
+sshpkt_ਸੁਨੇਹਾ_ignore(ਬਣਤਰ ssh *ssh, u_int nbytes)
 {
 	uint32_t rnd = 0;
-	int r;
+	ਪੂਰਨ r;
 	u_int i;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	ਜੇ ((r = sshpkt_ਸ਼ੁਰੂ(ssh, SSH2_ਸੁਨੇਹਾ_IGNORE)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, nbytes)) != 0)
-		return r;
-	for (i = 0; i < nbytes; i++) {
-		if (i % 4 == 0)
+		ਵਾਪਸ r;
+	ਲਈ (i = 0; i < nbytes; i++) {
+		ਜੇ (i % 4 == 0)
 			rnd = arc4random();
-		if ((r = sshpkt_put_u8(ssh, (u_char)rnd & 0xff)) != 0)
-			return r;
+		ਜੇ ((r = sshpkt_put_u8(ssh, (u_char)rnd & 0xff)) != 0)
+			ਵਾਪਸ r;
 		rnd >>= 8;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* send it */
 
-int
-sshpkt_send(struct ssh *ssh)
+ਪੂਰਨ
+sshpkt_send(ਬਣਤਰ ssh *ssh)
 {
-	if (ssh->state && ssh->state->mux)
-		return ssh_packet_send_mux(ssh);
-	return ssh_packet_send2(ssh);
+	ਜੇ (ssh->state && ssh->state->mux)
+		ਵਾਪਸ ssh_packet_send_mux(ssh);
+	ਵਾਪਸ ssh_packet_send2(ssh);
 }
 
-int
-sshpkt_disconnect(struct ssh *ssh, const char *fmt,...)
+ਪੂਰਨ
+sshpkt_disconnect(ਬਣਤਰ ssh *ssh, ਅਚਲ ਅੱਖਰ *fmt,...)
 {
-	char buf[1024];
-	va_list args;
-	int r;
+	ਅੱਖਰ buf[1024];
+	va_list ਦਲੀਲਾਂ;
+	ਪੂਰਨ r;
 
-	va_start(args, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	va_start(ਦਲੀਲਾਂ, fmt);
+	vsnprintf(buf, ਆਕਾਰ(buf), fmt, ਦਲੀਲਾਂ);
+	va_end(ਦਲੀਲਾਂ);
 
 	debug2_f("sending SSH2_MSG_DISCONNECT: %s", buf);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_DISCONNECT)) != 0 ||
+	ਜੇ ((r = sshpkt_ਸ਼ੁਰੂ(ssh, SSH2_ਸੁਨੇਹਾ_DISCONNECT)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, SSH2_DISCONNECT_PROTOCOL_ERROR)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, buf)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
-	return 0;
+		ਵਾਪਸ r;
+	ਵਾਪਸ 0;
 }
 
 /* roundup current message to pad bytes */
-int
-sshpkt_add_padding(struct ssh *ssh, u_char pad)
+ਪੂਰਨ
+sshpkt_ਜੋੜੋ_padding(ਬਣਤਰ ssh *ssh, u_char pad)
 {
 	ssh->state->extra_pad = pad;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static char *
-format_traffic_stats(struct packet_state *ps)
+ਸਥਿਰ ਅੱਖਰ *
+format_traffic_stats(ਬਣਤਰ packet_state *ps)
 {
-	char *stats = NULL, bytes[FMT_SCALED_STRSIZE];
+	ਅੱਖਰ *stats = ਨਿਰਾ, ਬਾਈਟਾਂ[FMT_SCALED_STRSIZE];
 
-	if (ps->bytes > LLONG_MAX || fmt_scaled(ps->bytes, bytes) != 0)
-		strlcpy(bytes, "OVERFLOW", sizeof(bytes));
+	ਜੇ (ps->ਬਾਈਟਾਂ > LLONG_MAX || fmt_scaled(ps->ਬਾਈਟਾਂ, ਬਾਈਟਾਂ) != 0)
+		strlcpy(ਬਾਈਟਾਂ, "OVERFLOW", ਆਕਾਰ(ਬਾਈਟਾਂ));
 
 	xasprintf(&stats, "%lu pkts %llu blks %sB",
-	    (unsigned long)ps->packets, (unsigned long long)ps->blocks, bytes);
-	return stats;
+	    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ps->packets, (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ps->ਖੰਡਾਂ, ਬਾਈਟਾਂ);
+	ਵਾਪਸ stats;
 }
 
-static char *
-dedupe_alg_names(const char *in, const char *out)
+ਸਥਿਰ ਅੱਖਰ *
+dedupe_alg_ਨਾਂ(ਅਚਲ ਅੱਖਰ *ਵਿੱਚ, ਅਚਲ ਅੱਖਰ *ਬਾਹਰਲਾ)
 {
-	char *names = NULL;
+	ਅੱਖਰ *ਨਾਂ = ਨਿਰਾ;
 
-	if (in == NULL)
-		in = "<implicit>";
-	if (out == NULL)
-		out = "<implicit>";
+	ਜੇ (ਵਿੱਚ == ਨਿਰਾ)
+		ਵਿੱਚ = "<implicit>";
+	ਜੇ (ਬਾਹਰਲਾ == ਨਿਰਾ)
+		ਬਾਹਰਲਾ = "<implicit>";
 
-	if (strcmp(in, out) == 0) {
-		names = xstrdup(in);
-	} else {
-		xasprintf(&names, "%s in, %s out", in, out);
+	ਜੇ (strcmp(ਵਿੱਚ, ਬਾਹਰਲਾ) == 0) {
+		ਨਾਂ = xstrdup(ਵਿੱਚ);
+	} ਨਹੀਂਤਾਂ {
+		xasprintf(&ਨਾਂ, "%s in, %s out", ਵਿੱਚ, ਬਾਹਰਲਾ);
 	}
-	return names;
+	ਵਾਪਸ ਨਾਂ;
 }
 
-static char *
-comp_status_message(struct ssh *ssh)
+ਸਥਿਰ ਅੱਖਰ *
+comp_ਸਥਿਤੀ_ਸੁਨੇਹਾ(ਬਣਤਰ ssh *ssh)
 {
-#ifdef WITH_ZLIB
-	char *ret = NULL;
-	struct session_state *state = ssh->state;
-	unsigned long long iraw = 0, icmp = 0, oraw = 0, ocmp = 0;
-	char iraw_f[FMT_SCALED_STRSIZE] = "", oraw_f[FMT_SCALED_STRSIZE] = "";
-	char icmp_f[FMT_SCALED_STRSIZE] = "", ocmp_f[FMT_SCALED_STRSIZE] = "";
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_ZLIB
+	ਅੱਖਰ *ret = ਨਿਰਾ;
+	ਬਣਤਰ session_state *state = ssh->state;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ iraw = 0, icmp = 0, oraw = 0, ocmp = 0;
+	ਅੱਖਰ iraw_f[FMT_SCALED_STRSIZE] = "", oraw_f[FMT_SCALED_STRSIZE] = "";
+	ਅੱਖਰ icmp_f[FMT_SCALED_STRSIZE] = "", ocmp_f[FMT_SCALED_STRSIZE] = "";
 
-	if (state->compression_buffer) {
-		if (state->compression_in_started) {
-			iraw = state->compression_in_stream.total_out;
-			icmp = state->compression_in_stream.total_in;
-			if (fmt_scaled(iraw, iraw_f) != 0)
-				strlcpy(iraw_f, "OVERFLOW", sizeof(iraw_f));
-			if (fmt_scaled(icmp, icmp_f) != 0)
-				strlcpy(icmp_f, "OVERFLOW", sizeof(icmp_f));
+	ਜੇ (state->compression_ਬਫਰ) {
+		ਜੇ (state->compression_ਵਿੱਚ_started) {
+			iraw = state->compression_ਵਿੱਚ_ਧਾਰਾ.ਕੁੱਲ_ਬਾਹਰਲਾ;
+			icmp = state->compression_ਵਿੱਚ_ਧਾਰਾ.ਕੁੱਲ_ਵਿੱਚ;
+			ਜੇ (fmt_scaled(iraw, iraw_f) != 0)
+				strlcpy(iraw_f, "OVERFLOW", ਆਕਾਰ(iraw_f));
+			ਜੇ (fmt_scaled(icmp, icmp_f) != 0)
+				strlcpy(icmp_f, "OVERFLOW", ਆਕਾਰ(icmp_f));
 		}
-		if (state->compression_out_started) {
-			oraw = state->compression_out_stream.total_in;
-			ocmp = state->compression_out_stream.total_out;
-			if (fmt_scaled(oraw, oraw_f) != 0)
-				strlcpy(oraw_f, "OVERFLOW", sizeof(oraw_f));
-			if (fmt_scaled(ocmp, ocmp_f) != 0)
-				strlcpy(ocmp_f, "OVERFLOW", sizeof(ocmp_f));
+		ਜੇ (state->compression_ਬਾਹਰਲਾ_started) {
+			oraw = state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ.ਕੁੱਲ_ਵਿੱਚ;
+			ocmp = state->compression_ਬਾਹਰਲਾ_ਧਾਰਾ.ਕੁੱਲ_ਬਾਹਰਲਾ;
+			ਜੇ (fmt_scaled(oraw, oraw_f) != 0)
+				strlcpy(oraw_f, "OVERFLOW", ਆਕਾਰ(oraw_f));
+			ਜੇ (fmt_scaled(ocmp, ocmp_f) != 0)
+				strlcpy(ocmp_f, "OVERFLOW", ਆਕਾਰ(ocmp_f));
 		}
 		xasprintf(&ret,
 		    "    compressed %s/%s (*%.3f) in,"
 		    " %s/%s (*%.3f) out\r\n",
-		    icmp_f, iraw_f, iraw == 0 ? 0.0 : (double)icmp / iraw,
-		    ocmp_f, oraw_f, oraw == 0 ? 0.0 : (double)ocmp / oraw);
-		return ret;
+		    icmp_f, iraw_f, iraw == 0 ? 0.0 : (ਦੁੱਗਣਾ)icmp / iraw,
+		    ocmp_f, oraw_f, oraw == 0 ? 0.0 : (ਦੁੱਗਣਾ)ocmp / oraw);
+		ਵਾਪਸ ret;
 	}
-#endif	/* WITH_ZLIB */
-	return xstrdup("");
+#ਜੇ_ਅੰਤ	/* WITH_ZLIB */
+	ਵਾਪਸ xstrdup("");
 }
 
-char *
-connection_info_message(struct ssh *ssh)
+ਅੱਖਰ *
+connection_info_ਸੁਨੇਹਾ(ਬਣਤਰ ssh *ssh)
 {
-	char *ret = NULL, *cipher = NULL, *mac = NULL, *comp = NULL;
-	char *rekey_volume = NULL, *rekey_time = NULL, *comp_info = NULL;
-	char thishost[NI_MAXHOST] = "unknown", *tcp_info = NULL;
-	struct kex *kex;
-	struct session_state *state;
-	struct newkeys *nk_in, *nk_out;
-	char *stats_in = NULL, *stats_out = NULL;
-	uint64_t epoch = (uint64_t)time(NULL) - monotime();
+	ਅੱਖਰ *ret = ਨਿਰਾ, *cipher = ਨਿਰਾ, *mac = ਨਿਰਾ, *comp = ਨਿਰਾ;
+	ਅੱਖਰ *rekey_volume = ਨਿਰਾ, *rekey_ਸਮਾਂ = ਨਿਰਾ, *comp_info = ਨਿਰਾ;
+	ਅੱਖਰ thishost[NI_MAXHOST] = "unknown", *tcp_info = ਨਿਰਾ;
+	ਬਣਤਰ kex *kex;
+	ਬਣਤਰ session_state *state;
+	ਬਣਤਰ newkeys *nk_ਵਿੱਚ, *nk_ਬਾਹਰਲਾ;
+	ਅੱਖਰ *stats_ਵਿੱਚ = ਨਿਰਾ, *stats_ਬਾਹਰਲਾ = ਨਿਰਾ;
+	uint64_t epoch = (uint64_t)time(ਨਿਰਾ) - monotime();
 
-	if (ssh == NULL)
-		return NULL;
+	ਜੇ (ssh == ਨਿਰਾ)
+		ਵਾਪਸ ਨਿਰਾ;
 	state = ssh->state;
 	kex = ssh->kex;
 
-	(void)gethostname(thishost, sizeof(thishost));
+	(ਖਾਲੀ)gethostname(thishost, ਆਕਾਰ(thishost));
 
-	if (ssh_local_port(ssh) != 65535 ||
+	ਜੇ (ssh_local_ਪੋਰਟ(ssh) != 65535 ||
 	     strcmp(ssh_local_ipaddr(ssh), "UNKNOWN") != 0) {
 		xasprintf(&tcp_info, "  tcp %s:%d -> %s:%d\r\n",
-		    ssh_local_ipaddr(ssh), ssh_local_port(ssh),
-		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-	} else {
+		    ssh_local_ipaddr(ssh), ssh_local_ਪੋਰਟ(ssh),
+		    ssh_remote_ipaddr(ssh), ssh_remote_ਪੋਰਟ(ssh));
+	} ਨਹੀਂਤਾਂ {
 		tcp_info = xstrdup("");
 	}
 
-	nk_in = ssh->state->newkeys[MODE_IN];
-	nk_out = ssh->state->newkeys[MODE_OUT];
-	stats_in = format_traffic_stats(&ssh->state->p_read);
-	stats_out = format_traffic_stats(&ssh->state->p_send);
+	nk_ਵਿੱਚ = ssh->state->newkeys[ਬਹੁਲਕ_ਵਿੱਚ];
+	nk_ਬਾਹਰਲਾ = ssh->state->newkeys[ਬਹੁਲਕ_ਬਾਹਰਲਾ];
+	stats_ਵਿੱਚ = format_traffic_stats(&ssh->state->p_read);
+	stats_ਬਾਹਰਲਾ = format_traffic_stats(&ssh->state->p_send);
 
-	cipher = dedupe_alg_names(nk_in->enc.name, nk_out->enc.name);
-	mac = dedupe_alg_names(nk_in->mac.name, nk_out->mac.name);
-	comp = dedupe_alg_names(nk_in->comp.name, nk_out->comp.name);
+	cipher = dedupe_alg_ਨਾਂ(nk_ਵਿੱਚ->enc.name, nk_ਬਾਹਰਲਾ->enc.name);
+	mac = dedupe_alg_ਨਾਂ(nk_ਵਿੱਚ->mac.name, nk_ਬਾਹਰਲਾ->mac.name);
+	comp = dedupe_alg_ਨਾਂ(nk_ਵਿੱਚ->comp.name, nk_ਬਾਹਰਲਾ->comp.name);
 
 	/* Volume based rekeying. */
-	if (state->rekey_limit == 0) {
+	ਜੇ (state->rekey_ਹੱਦਬੰਦੀ == 0) {
 		xasprintf(&rekey_volume, "limit none");
-	} else {
-		char *volumes = NULL, in[32], out[32];
+	} ਨਹੀਂਤਾਂ {
+		ਅੱਖਰ *volumes = ਨਿਰਾ, ਵਿੱਚ[32], ਬਾਹਰਲਾ[32];
 
-		snprintf(in, sizeof(in), "%llu",
-		   (unsigned long long)state->max_blocks_in);
-		snprintf(out, sizeof(out), "%llu",
-		   (unsigned long long)state->max_blocks_out);
-		volumes = dedupe_alg_names(in, out);
+		snprintf(ਵਿੱਚ, ਆਕਾਰ(ਵਿੱਚ), "%llu",
+		   (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)state->max_ਖੰਡਾਂ_ਵਿੱਚ);
+		snprintf(ਬਾਹਰਲਾ, ਆਕਾਰ(ਬਾਹਰਲਾ), "%llu",
+		   (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)state->max_ਖੰਡਾਂ_ਬਾਹਰਲਾ);
+		volumes = dedupe_alg_ਨਾਂ(ਵਿੱਚ, ਬਾਹਰਲਾ);
 		xasprintf(&rekey_volume, "limit blocks %s", volumes);
-		free(volumes);
+		ਮੁਕਤ(volumes);
 	}
 
 	/* Time based rekeying. */
-	if (state->rekey_interval == 0) {
-		rekey_time = xstrdup("interval none");
-	} else {
-		char rekey_next[64];
+	ਜੇ (state->rekey_interval == 0) {
+		rekey_ਸਮਾਂ = xstrdup("interval none");
+	} ਨਹੀਂਤਾਂ {
+		ਅੱਖਰ rekey_ਅਗਲਾ[64];
 
-		format_absolute_time(epoch + state->rekey_time +
-		    state->rekey_interval, rekey_next, sizeof(rekey_next));
-		xasprintf(&rekey_time, "interval %s, next %s",
-		    fmt_timeframe(state->rekey_interval), rekey_next);
+		format_absolute_ਸਮਾਂ(epoch + state->rekey_ਸਮਾਂ +
+		    state->rekey_interval, rekey_ਅਗਲਾ, ਆਕਾਰ(rekey_ਅਗਲਾ));
+		xasprintf(&rekey_ਸਮਾਂ, "interval %s, next %s",
+		    fmt_timeframe(state->rekey_interval), rekey_ਅਗਲਾ);
 	}
-	comp_info = comp_status_message(ssh);
+	comp_info = comp_ਸਥਿਤੀ_ਸੁਨੇਹਾ(ssh);
 
 	xasprintf(&ret, "Connection information for %s pid %lld\r\n"
 	    "  versions %s -> %s\r\n"
@@ -3114,25 +3114,25 @@ connection_info_message(struct ssh *ssh)
 	    "  rekey %s %s\r\n"
 	    "  traffic %s in, %s out\r\n"
 	    "%s",
-	    thishost, (long long)getpid(),
-	    SSH_RELEASE, ssh->remote_version,
+	    thishost, (ਲੰਮਾ ਲੰਮਾ)getpid(),
+	    SSH_RELEASE, ssh->remote_ਸੰਸਕਰਣ,
 	    tcp_info,
-	    fmt_timeframe(monotime() - state->start_time),
+	    fmt_timeframe(monotime() - state->ਸ਼ੁਰੂ_ਸਮਾਂ),
 	    kex->name, kex->hostkey_alg,
 	    cipher, mac, comp,
-	    rekey_volume, rekey_time,
-	    stats_in, stats_out,
+	    rekey_volume, rekey_ਸਮਾਂ,
+	    stats_ਵਿੱਚ, stats_ਬਾਹਰਲਾ,
 	    comp_info
 	);
-	free(tcp_info);
-	free(cipher);
-	free(mac);
-	free(comp);
-	free(stats_in);
-	free(stats_out);
-	free(rekey_volume);
-	free(rekey_time);
-	free(comp_info);
-	return ret;
+	ਮੁਕਤ(tcp_info);
+	ਮੁਕਤ(cipher);
+	ਮੁਕਤ(mac);
+	ਮੁਕਤ(comp);
+	ਮੁਕਤ(stats_ਵਿੱਚ);
+	ਮੁਕਤ(stats_ਬਾਹਰਲਾ);
+	ਮੁਕਤ(rekey_volume);
+	ਮੁਕਤ(rekey_ਸਮਾਂ);
+	ਮੁਕਤ(comp_info);
+	ਵਾਪਸ ret;
 }
 

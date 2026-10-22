@@ -5,25 +5,25 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "../test_helper/test_helper.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../test_helper/test_helper.h"
 
-#include "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
 
-void
-tests(void)
+ਖਾਲੀ
+tests(ਖਾਲੀ)
 {
-	char buf[1024];
+	ਅੱਖਰ buf[1024];
 
-	TEST_START("conversion_convtime");
+	TEST_ਸ਼ੁਰੂ("conversion_convtime");
 	ASSERT_INT_EQ(convtime("0"), 0);
 	ASSERT_INT_EQ(convtime("1"), 1);
 	ASSERT_INT_EQ(convtime("1S"), 1);
@@ -37,21 +37,21 @@ tests(void)
 	ASSERT_INT_EQ(convtime("-7"), -1);
 	ASSERT_INT_EQ(convtime("-9d"), -1);
 	
-	/* overflow */
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX);
-	ASSERT_INT_EQ(convtime(buf), INT_MAX);
-	snprintf(buf, sizeof buf, "%llu", (unsigned long long)INT_MAX + 1);
+	/*ਉਛਾਲ*/
+	snprintf(buf, ਆਕਾਰ buf, "%llu", (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ);
+	ASSERT_INT_EQ(convtime(buf), ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ);
+	snprintf(buf, ਆਕਾਰ buf, "%llu", (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 
 	/* overflow with multiplier */
-	snprintf(buf, sizeof buf, "%lluM", (unsigned long long)INT_MAX/60 + 1);
+	snprintf(buf, ਆਕਾਰ buf, "%lluM", (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ/60 + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 	ASSERT_INT_EQ(convtime("1000000000000000000000w"), -1);
-	TEST_DONE();
+	TEST_ਪੂਰਾ();
 }
 
-void
-benchmarks(void)
+ਖਾਲੀ
+benchmarks(ਖਾਲੀ)
 {
-	printf("no benchmarks\n");
+	ਲਿਖੋ("no benchmarks\n");
 }

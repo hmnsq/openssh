@@ -23,39 +23,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "digest.h"
-#include "hmac.h"
-#include "umac.h"
-#include "mac.h"
-#include "misc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "digest.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hmac.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "umac.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "mac.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "openbsd-compat/openssl-compat.h"
 
-#define SSH_DIGEST	1	/* SSH_DIGEST_XXX */
-#define SSH_UMAC	2	/* UMAC (not integrated with OpenSSL) */
-#define SSH_UMAC128	3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_DIGEST	1	/* SSH_DIGEST_XXX */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_UMAC	2	/* UMAC (not integrated with OpenSSL) */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_UMAC128	3
 
-struct macalg {
-	char		*name;
-	int		type;
-	int		alg;
-	int		truncatebits;	/* truncate digest if != 0 */
-	int		key_len;	/* just for UMAC */
-	int		len;		/* just for UMAC */
-	int		etm;		/* Encrypt-then-MAC */
+ਬਣਤਰ macalg {
+	ਅੱਖਰ		*name;
+	ਪੂਰਨ		type;
+	ਪੂਰਨ		alg;
+	ਪੂਰਨ		truncatebits;	/* truncate digest if != 0 */
+	ਪੂਰਨ		ਕੁੰਜੀ_len;	/* just for UMAC */
+	ਪੂਰਨ		len;		/* just for UMAC */
+	ਪੂਰਨ		etm;		/* Encrypt-then-MAC */
 };
 
-static const struct macalg macs[] = {
+ਸਥਿਰ ਅਚਲ ਬਣਤਰ macalg macs[] = {
 	/* Encrypt-and-MAC (encrypt-and-authenticate) variants */
 	{ "hmac-sha1",				SSH_DIGEST, SSH_DIGEST_SHA1, 0, 0, 0, 0 },
 	{ "hmac-sha1-96",			SSH_DIGEST, SSH_DIGEST_SHA1, 96, 0, 0, 0 },
@@ -76,180 +76,180 @@ static const struct macalg macs[] = {
 	{ "umac-64-etm@openssh.com",		SSH_UMAC, 0, 0, 128, 64, 1 },
 	{ "umac-128-etm@openssh.com",		SSH_UMAC128, 0, 0, 128, 128, 1 },
 
-	{ NULL,					0, 0, 0, 0, 0, 0 }
+	{ ਨਿਰਾ,					0, 0, 0, 0, 0, 0 }
 };
 
 /* Returns a list of supported MACs separated by the specified char. */
-char *
-mac_alg_list(char sep)
+ਅੱਖਰ *
+mac_alg_list(ਅੱਖਰ sep)
 {
-	char *ret = NULL;
-	const struct macalg *m;
-	char sep_str[2] = {sep, '\0'};
+	ਅੱਖਰ *ret = ਨਿਰਾ;
+	ਅਚਲ ਬਣਤਰ macalg *m;
+	ਅੱਖਰ sep_str[2] = {sep, '\0'};
 
-	for (m = macs; m->name != NULL; m++)
+	ਲਈ (m = macs; m->name != ਨਿਰਾ; m++)
 		xextendf(&ret, sep_str, "%s", m->name);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-static int
-mac_setup_by_alg(struct sshmac *mac, const struct macalg *macalg)
+ਸਥਿਰ ਪੂਰਨ
+mac_ਤਿਆਰੀ_by_alg(ਬਣਤਰ sshmac *mac, ਅਚਲ ਬਣਤਰ macalg *macalg)
 {
 	mac->type = macalg->type;
-	if (mac->type == SSH_DIGEST) {
-		if ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		mac->key_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
-	} else {
+	ਜੇ (mac->type == SSH_DIGEST) {
+		ਜੇ ((mac->hmac_ctx = ssh_hmac_ਸ਼ੁਰੂ(macalg->alg)) == ਨਿਰਾ)
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+		mac->ਕੁੰਜੀ_len = mac->mac_len = ssh_hmac_ਬਾਈਟਾਂ(macalg->alg);
+	} ਨਹੀਂਤਾਂ {
 		mac->mac_len = macalg->len / 8;
-		mac->key_len = macalg->key_len / 8;
-		mac->umac_ctx = NULL;
+		mac->ਕੁੰਜੀ_len = macalg->ਕੁੰਜੀ_len / 8;
+		mac->umac_ctx = ਨਿਰਾ;
 	}
-	if (macalg->truncatebits != 0)
+	ਜੇ (macalg->truncatebits != 0)
 		mac->mac_len = macalg->truncatebits / 8;
 	mac->etm = macalg->etm;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-mac_setup(struct sshmac *mac, char *name)
+ਪੂਰਨ
+mac_ਤਿਆਰੀ(ਬਣਤਰ sshmac *mac, ਅੱਖਰ *name)
 {
-	const struct macalg *m;
+	ਅਚਲ ਬਣਤਰ macalg *m;
 
-	for (m = macs; m->name != NULL; m++) {
-		if (strcmp(name, m->name) != 0)
-			continue;
-		if (mac != NULL)
-			return mac_setup_by_alg(mac, m);
-		return 0;
+	ਲਈ (m = macs; m->name != ਨਿਰਾ; m++) {
+		ਜੇ (strcmp(name, m->name) != 0)
+			ਜਾਰੀ;
+		ਜੇ (mac != ਨਿਰਾ)
+			ਵਾਪਸ mac_ਤਿਆਰੀ_by_alg(mac, m);
+		ਵਾਪਸ 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
+	ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 }
 
-int
-mac_init(struct sshmac *mac)
+ਪੂਰਨ
+mac_init(ਬਣਤਰ sshmac *mac)
 {
-	if (mac->key == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	switch (mac->type) {
-	case SSH_DIGEST:
-		if (mac->hmac_ctx == NULL ||
-		    ssh_hmac_init(mac->hmac_ctx, mac->key, mac->key_len) < 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
-	case SSH_UMAC:
-		if ((mac->umac_ctx = umac_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
-	case SSH_UMAC128:
-		if ((mac->umac_ctx = umac128_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+	ਜੇ (mac->ਕੁੰਜੀ == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
+	ਚੋਣ (mac->type) {
+	ਹਾਲਤ SSH_DIGEST:
+		ਜੇ (mac->hmac_ctx == ਨਿਰਾ ||
+		    ssh_hmac_init(mac->hmac_ctx, mac->ਕੁੰਜੀ, mac->ਕੁੰਜੀ_len) < 0)
+			ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
+		ਵਾਪਸ 0;
+	ਹਾਲਤ SSH_UMAC:
+		ਜੇ ((mac->umac_ctx = umac_new(mac->ਕੁੰਜੀ)) == ਨਿਰਾ)
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+		ਵਾਪਸ 0;
+	ਹਾਲਤ SSH_UMAC128:
+		ਜੇ ((mac->umac_ctx = umac128_new(mac->ਕੁੰਜੀ)) == ਨਿਰਾ)
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+		ਵਾਪਸ 0;
+	ਮੂਲ:
+		ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 	}
 }
 
-int
-mac_compute(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, int datalen,
-    u_char *digest, size_t dlen)
+ਪੂਰਨ
+mac_compute(ਬਣਤਰ sshmac *mac, uint32_t seqno,
+    ਅਚਲ u_char *ਅੰਕੜੇ, ਪੂਰਨ datalen,
+    u_char *digest, ਮਾਪ_t dlen)
 {
-	static union {
-		u_char m[SSH_DIGEST_MAX_LENGTH];
+	ਸਥਿਰ ਸੰਘ {
+		u_char m[SSH_DIGEST_MAX_ਲੰਮਾਈ];
 		uint64_t for_align;
 	} u;
 	u_char b[4];
 	u_char nonce[8];
 
-	if (mac->mac_len > sizeof(u))
-		return SSH_ERR_INTERNAL_ERROR;
+	ਜੇ (mac->mac_len > ਆਕਾਰ(u))
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 
-	switch (mac->type) {
-	case SSH_DIGEST:
+	ਚੋਣ (mac->type) {
+	ਹਾਲਤ SSH_DIGEST:
 		put_u32(b, seqno);
 		/* reset HMAC context */
-		if (ssh_hmac_init(mac->hmac_ctx, NULL, 0) < 0 ||
-		    ssh_hmac_update(mac->hmac_ctx, b, sizeof(b)) < 0 ||
-		    ssh_hmac_update(mac->hmac_ctx, data, datalen) < 0 ||
-		    ssh_hmac_final(mac->hmac_ctx, u.m, sizeof(u.m)) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-		break;
-	case SSH_UMAC:
+		ਜੇ (ssh_hmac_init(mac->hmac_ctx, ਨਿਰਾ, 0) < 0 ||
+		    ssh_hmac_update(mac->hmac_ctx, b, ਆਕਾਰ(b)) < 0 ||
+		    ssh_hmac_update(mac->hmac_ctx, ਅੰਕੜੇ, datalen) < 0 ||
+		    ssh_hmac_final(mac->hmac_ctx, u.m, ਆਕਾਰ(u.m)) < 0)
+			ਵਾਪਸ SSH_ERR_LIBCRYPTO_ERROR;
+		ਰੋਕੋ;
+	ਹਾਲਤ SSH_UMAC:
 		POKE_U64(nonce, seqno);
-		umac_update(mac->umac_ctx, data, datalen);
+		umac_update(mac->umac_ctx, ਅੰਕੜੇ, datalen);
 		umac_final(mac->umac_ctx, u.m, nonce);
-		break;
-	case SSH_UMAC128:
+		ਰੋਕੋ;
+	ਹਾਲਤ SSH_UMAC128:
 		put_u64(nonce, seqno);
-		umac128_update(mac->umac_ctx, data, datalen);
+		umac128_update(mac->umac_ctx, ਅੰਕੜੇ, datalen);
 		umac128_final(mac->umac_ctx, u.m, nonce);
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 	}
-	if (digest != NULL) {
-		if (dlen > mac->mac_len)
+	ਜੇ (digest != ਨਿਰਾ) {
+		ਜੇ (dlen > mac->mac_len)
 			dlen = mac->mac_len;
-		memcpy(digest, u.m, dlen);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(digest, u.m, dlen);
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-mac_check(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, size_t dlen,
-    const u_char *theirmac, size_t mlen)
+ਪੂਰਨ
+mac_check(ਬਣਤਰ sshmac *mac, uint32_t seqno,
+    ਅਚਲ u_char *ਅੰਕੜੇ, ਮਾਪ_t dlen,
+    ਅਚਲ u_char *theirmac, ਮਾਪ_t mlen)
 {
-	u_char ourmac[SSH_DIGEST_MAX_LENGTH];
-	int r;
+	u_char ourmac[SSH_DIGEST_MAX_ਲੰਮਾਈ];
+	ਪੂਰਨ r;
 
-	if (mac->mac_len > mlen)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = mac_compute(mac, seqno, data, dlen,
-	    ourmac, sizeof(ourmac))) != 0)
-		return r;
-	if (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
-		return SSH_ERR_MAC_INVALID;
-	return 0;
+	ਜੇ (mac->mac_len > mlen)
+		ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
+	ਜੇ ((r = mac_compute(mac, seqno, ਅੰਕੜੇ, dlen,
+	    ourmac, ਆਕਾਰ(ourmac))) != 0)
+		ਵਾਪਸ r;
+	ਜੇ (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
+		ਵਾਪਸ SSH_ERR_MAC_INVALID;
+	ਵਾਪਸ 0;
 }
 
-void
-mac_clear(struct sshmac *mac)
+ਖਾਲੀ
+mac_clear(ਬਣਤਰ sshmac *mac)
 {
-	if (mac->type == SSH_UMAC) {
-		if (mac->umac_ctx != NULL)
+	ਜੇ (mac->type == SSH_UMAC) {
+		ਜੇ (mac->umac_ctx != ਨਿਰਾ)
 			umac_delete(mac->umac_ctx);
-	} else if (mac->type == SSH_UMAC128) {
-		if (mac->umac_ctx != NULL)
+	} ਨਹੀਂਤਾਂ ਜੇ (mac->type == SSH_UMAC128) {
+		ਜੇ (mac->umac_ctx != ਨਿਰਾ)
 			umac128_delete(mac->umac_ctx);
-	} else if (mac->hmac_ctx != NULL)
+	} ਨਹੀਂਤਾਂ ਜੇ (mac->hmac_ctx != ਨਿਰਾ)
 		ssh_hmac_free(mac->hmac_ctx);
-	mac->hmac_ctx = NULL;
-	mac->umac_ctx = NULL;
+	mac->hmac_ctx = ਨਿਰਾ;
+	mac->umac_ctx = ਨਿਰਾ;
 }
 
 /* XXX copied from ciphers_valid */
-#define	MAC_SEP	","
-int
-mac_valid(const char *names)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	MAC_SEP	","
+ਪੂਰਨ
+mac_valid(ਅਚਲ ਅੱਖਰ *ਨਾਂ)
 {
-	char *maclist, *cp, *p;
-	int found = 0;
+	ਅੱਖਰ *maclist, *cp, *p;
+	ਪੂਰਨ ਮਿਲਿਆ = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((maclist = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
+	ਜੇ (ਨਾਂ == ਨਿਰਾ || strcmp(ਨਾਂ, "") == 0)
+		ਵਾਪਸ 0;
+	ਜੇ ((maclist = cp = strdup(ਨਾਂ)) == ਨਿਰਾ)
+		ਵਾਪਸ 0;
+	ਲਈ ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, MAC_SEP))) {
-		if (mac_setup(NULL, p) < 0) {
-			free(maclist);
-			return 0;
-		} else
-			found = 1;
+		ਜੇ (mac_ਤਿਆਰੀ(ਨਿਰਾ, p) < 0) {
+			ਮੁਕਤ(maclist);
+			ਵਾਪਸ 0;
+		} ਨਹੀਂਤਾਂ
+			ਮਿਲਿਆ = 1;
 	}
-	free(maclist);
-	return found;
+	ਮੁਕਤ(maclist);
+	ਵਾਪਸ ਮਿਲਿਆ;
 }

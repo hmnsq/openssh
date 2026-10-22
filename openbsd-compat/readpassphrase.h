@@ -22,23 +22,23 @@
 
 /* OPENBSD ORIGINAL: include/readpassphrase.h */
 
-#ifndef _READPASSPHRASE_H_
-#define _READPASSPHRASE_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _READPASSPHRASE_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _READPASSPHRASE_H_
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifndef HAVE_READPASSPHRASE
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_READPASSPHRASE
 
-#define RPP_ECHO_OFF    0x00		/* Turn off echo (default). */
-#define RPP_ECHO_ON     0x01		/* Leave echo on. */
-#define RPP_REQUIRE_TTY 0x02		/* Fail if there is no tty. */
-#define RPP_FORCELOWER  0x04		/* Force input to lower case. */
-#define RPP_FORCEUPPER  0x08		/* Force input to upper case. */
-#define RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
-#define RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RPP_ECHO_OFF    0x00		/* Turn off echo (default). */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RPP_ECHO_ON     0x01		/* Leave echo on. */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RPP_REQUIRE_TTY 0x02		/* Fail if there is no tty. */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RPP_FORCELOWER  0x04		/* Force input to lower case. */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RPP_FORCEUPPER  0x08		/* Force input to upper case. */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RPP_SEVENBIT    0x10		/* Strip the high bit from input. */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RPP_STDIN       0x20		/* Read from stdin, not /dev/tty */
 
-char * readpassphrase(const char *, char *, size_t, int);
+ਅੱਖਰ * readpassphrase(ਅਚਲ ਅੱਖਰ *, ਅੱਖਰ *, ਮਾਪ_t, ਪੂਰਨ);
 
-#endif /* HAVE_READPASSPHRASE */
+#ਜੇ_ਅੰਤ /* HAVE_READPASSPHRASE */
 
-#endif /* !_READPASSPHRASE_H_ */
+#ਜੇ_ਅੰਤ /* !_READPASSPHRASE_H_ */

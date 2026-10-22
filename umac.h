@@ -44,86 +44,86 @@
   * includes a fast IA-32 assembly version.
   *
   /////////////////////////////////////////////////////////////////////// */
-#ifndef HEADER_UMAC_H
-#define HEADER_UMAC_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ਸਿਰਲੇਖ_UMAC_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਸਿਰਲੇਖ_UMAC_H
 
 
-#ifdef __cplusplus
-    extern "C" {
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __cplusplus
+    ਬਾਹਰੀ "C" {
+#ਜੇ_ਅੰਤ
 
-struct umac_ctx *umac_new(const u_char key[]);
+ਬਣਤਰ umac_ctx *umac_new(ਅਚਲ u_char ਕੁੰਜੀ[]);
 /* Dynamically allocate a umac_ctx struct, initialize variables, 
  * generate subkeys from key.
  */
 
-#if 0
-int umac_reset(struct umac_ctx *ctx);
+#ਜੇ 0
+ਪੂਰਨ umac_reset(ਬਣਤਰ umac_ctx *ctx);
 /* Reset a umac_ctx to begin authenticating a new message */
-#endif
+#ਜੇ_ਅੰਤ
 
-int umac_update(struct umac_ctx *ctx, const u_char *input, long len);
+ਪੂਰਨ umac_update(ਬਣਤਰ umac_ctx *ctx, ਅਚਲ u_char *ਨਿਵੇਸ਼, ਲੰਮਾ len);
 /* Incorporate len bytes pointed to by input into context ctx */
 
-int umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
+ਪੂਰਨ umac_final(ਬਣਤਰ umac_ctx *ctx, u_char ਟੈਗ[], ਅਚਲ u_char nonce[8]);
 /* Incorporate any pending data and the ctr value, and return tag. 
  * This function returns error code if ctr < 0. 
  */
 
-int umac_delete(struct umac_ctx *ctx);
+ਪੂਰਨ umac_delete(ਬਣਤਰ umac_ctx *ctx);
 /* Deallocate the context structure */
 
-#if 0
-int umac(struct umac_ctx *ctx, u_char *input, 
-         long len, u_char tag[],
+#ਜੇ 0
+ਪੂਰਨ umac(ਬਣਤਰ umac_ctx *ctx, u_char *ਨਿਵੇਸ਼, 
+         ਲੰਮਾ len, u_char ਟੈਗ[],
          u_char nonce[8]);
 /* All-in-one implementation of the functions Reset, Update and Final */
-#endif
+#ਜੇ_ਅੰਤ
 
 /* uhash.h */
 
 
-#if 0
-typedef struct uhash_ctx *uhash_ctx_t;
+#ਜੇ 0
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ uhash_ctx *uhash_ctx_t;
   /* The uhash_ctx structure is defined by the implementation of the    */
   /* UHASH functions.                                                   */
  
-uhash_ctx_t uhash_alloc(u_char key[16]);
+uhash_ctx_t uhash_alloc(u_char ਕੁੰਜੀ[16]);
   /* Dynamically allocate a uhash_ctx struct and generate subkeys using */
   /* the kdf and kdf_key passed in. If kdf_key_len is 0 then RC6 is     */
   /* used to generate key with a fixed key. If kdf_key_len > 0 but kdf  */
   /* is NULL then the first 16 bytes pointed at by kdf_key is used as a */
   /* key for an RC6 based KDF.                                          */
   
-int uhash_free(uhash_ctx_t ctx);
+ਪੂਰਨ uhash_free(uhash_ctx_t ctx);
 
-int uhash_set_params(uhash_ctx_t ctx,
-                   void       *params);
+ਪੂਰਨ uhash_ਸੈੱਟ_params(uhash_ctx_t ctx,
+                   ਖਾਲੀ       *params);
 
-int uhash_reset(uhash_ctx_t ctx);
+ਪੂਰਨ uhash_reset(uhash_ctx_t ctx);
 
-int uhash_update(uhash_ctx_t ctx,
-               u_char       *input,
-               long        len);
+ਪੂਰਨ uhash_update(uhash_ctx_t ctx,
+               u_char       *ਨਿਵੇਸ਼,
+               ਲੰਮਾ        len);
 
-int uhash_final(uhash_ctx_t ctx,
+ਪੂਰਨ uhash_final(uhash_ctx_t ctx,
               u_char        output[]);
 
-int uhash(uhash_ctx_t ctx,
-        u_char       *input,
-        long        len,
+ਪੂਰਨ uhash(uhash_ctx_t ctx,
+        u_char       *ਨਿਵੇਸ਼,
+        ਲੰਮਾ        len,
         u_char        output[]);
 
-#endif
+#ਜੇ_ਅੰਤ
 
 /* matching umac-128 API, we reuse umac_ctx, since it's opaque */
-struct umac_ctx *umac128_new(const u_char key[]);
-int umac128_update(struct umac_ctx *ctx, const u_char *input, long len);
-int umac128_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
-int umac128_delete(struct umac_ctx *ctx);
+ਬਣਤਰ umac_ctx *umac128_new(ਅਚਲ u_char ਕੁੰਜੀ[]);
+ਪੂਰਨ umac128_update(ਬਣਤਰ umac_ctx *ctx, ਅਚਲ u_char *ਨਿਵੇਸ਼, ਲੰਮਾ len);
+ਪੂਰਨ umac128_final(ਬਣਤਰ umac_ctx *ctx, u_char ਟੈਗ[], ਅਚਲ u_char nonce[8]);
+ਪੂਰਨ umac128_delete(ਬਣਤਰ umac_ctx *ctx);
 
-#ifdef __cplusplus
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ __cplusplus
     }
-#endif
+#ਜੇ_ਅੰਤ
 
-#endif /* HEADER_UMAC_H */
+#ਜੇ_ਅੰਤ /* HEADER_UMAC_H */

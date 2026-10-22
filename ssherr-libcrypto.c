@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
 
-#ifdef WITH_OPENSSL
-#include <openssl/err.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/err.h>
 
-const char *
-ssherr_libcrypto(void)
+ਅਚਲ ਅੱਖਰ *
+ssherr_libcrypto(ਖਾਲੀ)
 {
-	unsigned long e;
-	static char buf[512];
-	char msg[4096];
-	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ e;
+	ਸਥਿਰ ਅੱਖਰ buf[512];
+	ਅੱਖਰ ਸੁਨੇਹਾ[4096];
+	ਅਚਲ ਅੱਖਰ *reason = ਨਿਰਾ, *file, *ਅੰਕੜੇ;
+	ਪੂਰਨ ln, fl;
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
-		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
-		    (fl & ERR_TXT_STRING) ? data : "");
-		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
-			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
+	OPENSSL_init_crypto(OPENSSL_INIT_ਲੱਦੋ_CRYPTO_ਲੜੀਆਂ, ਨਿਰਾ);
+	ਜਦੋਂ ((e = ERR_get_error_ਸਤਰ_ਅੰਕੜੇ(&file, &ln, &ਅੰਕੜੇ, &fl)) != 0) {
+		ERR_error_string_n(e, buf, ਆਕਾਰ(buf));
+		snprintf(ਸੁਨੇਹਾ, ਆਕਾਰ(ਸੁਨੇਹਾ), "%s:%s:%d:%s", buf, file, ln,
+		    (fl & ERR_TXT_STRING) ? ਅੰਕੜੇ : "");
+		debug("libcrypto: '%s'", ਸੁਨੇਹਾ);
+		ਜੇ ((reason = ERR_reason_error_string(e)) != ਨਿਰਾ)
+			snprintf(buf, ਆਕਾਰ(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	ਜੇ (reason == ਨਿਰਾ)
+		ਵਾਪਸ ਨਿਰਾ;
+	ਵਾਪਸ buf;
 }
-#else
-const char *
-ssherr_libcrypto(void)
+#ਨਹੀਂਤਾਂ
+ਅਚਲ ਅੱਖਰ *
+ssherr_libcrypto(ਖਾਲੀ)
 {
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
-#endif
+#ਜੇ_ਅੰਤ

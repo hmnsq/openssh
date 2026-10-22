@@ -16,46 +16,46 @@
 
 /* Roughly equivalent to "mktemp -d -t TEMPLATE", but portable. */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
 
-#include "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
 
-static void
-usage(void)
+ਸਥਿਰ ਖਾਲੀ
+usage(ਖਾਲੀ)
 {
 	fprintf(stderr, "mkdtemp template\n");
-	exit(1);
+	ਬਾਹਰ_ਨਿਕਲੋ(1);
 }
 
-int
-main(int argc, char **argv)
+ਪੂਰਨ
+ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	const char *base;
-	const char *tmpdir;
-	char template[PATH_MAX];
-	int r;
-	char *dir;
+	ਅਚਲ ਅੱਖਰ *ਅਧਾਰ;
+	ਅਚਲ ਅੱਖਰ *tmpdir;
+	ਅੱਖਰ ਸਾਂਚਾ[PATH_MAX];
+	ਪੂਰਨ r;
+	ਅੱਖਰ *dir;
 
-	if (argc != 2)
+	ਜੇ (argc != 2)
 		usage();
-	base = argv[1];
+	ਅਧਾਰ = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	ਜੇ ((tmpdir = getenv("TMPDIR")) == ਨਿਰਾ)
 		tmpdir = "/tmp";
-	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	r = snprintf(ਸਾਂਚਾ, ਆਕਾਰ(ਸਾਂਚਾ), "%s/%s", tmpdir, ਅਧਾਰ);
+	ਜੇ (r < 0 || (ਮਾਪ_t)r >= ਆਕਾਰ(ਸਾਂਚਾ))
 		fatal("template string too long");
-	dir = mkdtemp(template);
-	if (dir == NULL) {
+	dir = mkdtemp(ਸਾਂਚਾ);
+	ਜੇ (dir == ਨਿਰਾ) {
 		perror("mkdtemp");
-		exit(1);
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
 	puts(dir);
-	return 0;
+	ਵਾਪਸ 0;
 }

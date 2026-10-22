@@ -27,64 +27,64 @@
 
 /* OPENBSD ORIGINAL: sys/sys/poll.h */
 
-#ifndef	_COMPAT_POLL_H_
-#define	_COMPAT_POLL_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ	_COMPAT_POLL_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	_COMPAT_POLL_H_
 
-#include <sys/types.h>
-#include <poll.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <poll.h>
 
-#ifndef HAVE_STRUCT_POLLFD_FD
-typedef struct pollfd {
-	int	fd;
-	short	events;
-	short	revents;
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_STRUCT_POLLFD_FD
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ pollfd {
+	ਪੂਰਨ	fd;
+	ਛੋਟਾ	events;
+	ਛੋਟਾ	revents;
 } pollfd_t;
 
-#ifndef POLLIN
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ POLLIN
 # define POLLIN		0x0001
-#endif
-#ifndef POLLPRI
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ POLLPRI
 # define POLLPRI	0x0002
-#endif
-#ifndef POLLOUT
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ POLLOUT
 # define POLLOUT	0x0004
-#endif
-#ifndef POLLERR
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ POLLERR
 # define POLLERR	0x0008
-#endif
-#ifndef POLLHUP
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ POLLHUP
 # define POLLHUP	0x0010
-#endif
-#ifndef POLLNVAL
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ POLLNVAL
 # define POLLNVAL	0x0020
-#endif
+#ਜੇ_ਅੰਤ
 
-#if 0
+#ਜੇ 0
 /* the following are currently not implemented */
-#define	POLLRDNORM	0x0040
-#define POLLNORM	POLLRDNORM
-#define POLLWRNORM      POLLOUT
-#define	POLLRDBAND	0x0080
-#define	POLLWRBAND	0x0100
-#endif
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	POLLRDNORM	0x0040
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ POLLNORM	POLLRDNORM
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ POLLWRNORM      POLLOUT
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	POLLRDBAND	0x0080
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	POLLWRBAND	0x0100
+#ਜੇ_ਅੰਤ
 
-#define INFTIM		(-1)	/* not standard */
-#endif /* !HAVE_STRUCT_POLLFD_FD */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ INFTIM		(-1)	/* not standard */
+#ਜੇ_ਅੰਤ /* !HAVE_STRUCT_POLLFD_FD */
 
-#ifndef HAVE_NFDS_T
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
-typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ	nfds_t;
+# ਨਹੀਂਤਾਂ
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ	nfds_t;
 # endif
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_POLL
+ਪੂਰਨ   poll(ਬਣਤਰ pollfd *, nfds_t, ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_PPOLL
+ਪੂਰਨ   ppoll(ਬਣਤਰ pollfd *, nfds_t, ਅਚਲ ਬਣਤਰ timespec *, ਅਚਲ sigset_t *);
+#ਜੇ_ਅੰਤ
 
-#endif /* !_COMPAT_POLL_H_ */
+#ਜੇ_ਅੰਤ /* !_COMPAT_POLL_H_ */

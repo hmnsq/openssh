@@ -12,62 +12,62 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/socket.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
-#include <openssl/bn.h>
-#include <openssl/evp.h>
-#include <openssl/pem.h>
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+#ਅਨ੍ਤਰ੍ਭਾਵ "openbsd-compat/openssl-compat.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/bn.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/evp.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/pem.h>
+#ਜੇ_ਅੰਤ
 
-#include <stdint.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <locale.h>
-#include <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netdb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <paths.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <pwd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <locale.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "authfile.h"
-#include "sshbuf.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "match.h"
-#include "hostfile.h"
-#include "dns.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#include "atomicio.h"
-#include "krl.h"
-#include "digest.h"
-#include "utf8.h"
-#include "authfd.h"
-#include "sshsig.h"
-#include "ssh-sk.h"
-#include "sk-api.h" /* XXX for SSH_SK_USER_PRESENCE_REQD; remove */
-#include "cipher.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshkey.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "authfile.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pathnames.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "match.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hostfile.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "dns.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh2.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "atomicio.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "krl.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "digest.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utf8.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "authfd.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshsig.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh-sk.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sk-api.h" /* XXX for SSH_SK_USER_PRESENCE_REQD; remove */
+#ਅਨ੍ਤਰ੍ਭਾਵ "cipher.h"
 
-#ifdef ENABLE_PKCS11
-#include "ssh-pkcs11.h"
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_PKCS11
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh-pkcs11.h"
+#ਜੇ_ਅੰਤ
 
-#define DEFAULT_KEY_TYPE_NAME "ed25519"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEFAULT_ਕੁੰਜੀ_TYPE_NAME "ed25519"
 
 /*
  * Default number of bits in the RSA and ECDSA keys.  These value can be
@@ -77,142 +77,142 @@
  * according to NIST Special Publication 800-57: Recommendation for Key
  * Management Part 1 rev 4 section 5.6.1.
  */
-#define DEFAULT_BITS		3072
-#define DEFAULT_BITS_ECDSA	256
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEFAULT_ਬਿੱਟ		3072
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEFAULT_ਬਿੱਟ_ECDSA	256
 
-#define KEY_COMMENT_MAX		(NI_MAXHOST + 1024)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਕੁੰਜੀ_COMMENT_MAX		(NI_MAXHOST + 1024)
 
-static int quiet = 0;
+ਸਥਿਰ ਪੂਰਨ quiet = 0;
 
 /* Flag indicating that we just want to see the key fingerprint */
-static int print_fingerprint = 0;
-static int print_bubblebabble = 0;
+ਸਥਿਰ ਪੂਰਨ print_fingerprint = 0;
+ਸਥਿਰ ਪੂਰਨ print_bubblebabble = 0;
 
 /* Hash algorithm to use for fingerprints. */
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+ਸਥਿਰ ਪੂਰਨ fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* The identity file name, given on the command line or entered by the user. */
-static char identity_file[PATH_MAX];
-static int have_identity = 0;
+ਸਥਿਰ ਅੱਖਰ ਪਛਾਣ_ਤੱਤ_file[PATH_MAX];
+ਸਥਿਰ ਪੂਰਨ have_ਪਛਾਣ_ਤੱਤ = 0;
 
 /* This is set to the passphrase if given on the command line. */
-static char *identity_passphrase = NULL;
+ਸਥਿਰ ਅੱਖਰ *ਪਛਾਣ_ਤੱਤ_passphrase = ਨਿਰਾ;
 
 /* This is set to the new passphrase if given on the command line. */
-static char *identity_new_passphrase = NULL;
+ਸਥਿਰ ਅੱਖਰ *ਪਛਾਣ_ਤੱਤ_new_passphrase = ਨਿਰਾ;
 
 /* Key type when certifying */
-static u_int cert_key_type = SSH2_CERT_TYPE_USER;
+ਸਥਿਰ u_int cert_ਕੁੰਜੀ_type = SSH2_CERT_TYPE_USER;
 
 /* "key ID" of signed key */
-static char *cert_key_id = NULL;
+ਸਥਿਰ ਅੱਖਰ *cert_ਕੁੰਜੀ_id = ਨਿਰਾ;
 
 /* Comma-separated list of principal names for certifying keys */
-static char *cert_principals = NULL;
+ਸਥਿਰ ਅੱਖਰ *cert_principals = ਨਿਰਾ;
 
 /* Validity period for certificates */
-static uint64_t cert_valid_from = 0;
-static uint64_t cert_valid_to = ~0ULL;
+ਸਥਿਰ uint64_t cert_valid_from = 0;
+ਸਥਿਰ uint64_t cert_valid_ਮੰਜ਼ਿਲ = ~0ULL;
 
 /* Certificate options */
-#define CERTOPT_X_FWD				(1)
-#define CERTOPT_AGENT_FWD			(1<<1)
-#define CERTOPT_PORT_FWD			(1<<2)
-#define CERTOPT_PTY				(1<<3)
-#define CERTOPT_USER_RC				(1<<4)
-#define CERTOPT_NO_REQUIRE_USER_PRESENCE	(1<<5)
-#define CERTOPT_REQUIRE_VERIFY			(1<<6)
-#define CERTOPT_DEFAULT	(CERTOPT_X_FWD|CERTOPT_AGENT_FWD| \
-			 CERTOPT_PORT_FWD|CERTOPT_PTY|CERTOPT_USER_RC)
-static uint32_t certflags_flags = CERTOPT_DEFAULT;
-static char *certflags_command = NULL;
-static char *certflags_src_addr = NULL;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CERTOPT_X_FWD				(1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CERTOPT_AGENT_FWD			(1<<1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CERTOPT_ਪੋਰਟ_FWD			(1<<2)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CERTOPT_PTY				(1<<3)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CERTOPT_USER_RC				(1<<4)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CERTOPT_NO_REQUIRE_USER_PRESENCE	(1<<5)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CERTOPT_REQUIRE_VERIFY			(1<<6)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CERTOPT_DEFAULT	(CERTOPT_X_FWD|CERTOPT_AGENT_FWD| \
+			 CERTOPT_ਪੋਰਟ_FWD|CERTOPT_PTY|CERTOPT_USER_RC)
+ਸਥਿਰ uint32_t certflags_flags = CERTOPT_DEFAULT;
+ਸਥਿਰ ਅੱਖਰ *certflags_command = ਨਿਰਾ;
+ਸਥਿਰ ਅੱਖਰ *certflags_src_addr = ਨਿਰਾ;
 
 /* Arbitrary extensions specified by user */
-struct cert_ext {
-	char *key;
-	char *val;
-	int crit;
+ਬਣਤਰ cert_ext {
+	ਅੱਖਰ *ਕੁੰਜੀ;
+	ਅੱਖਰ *val;
+	ਪੂਰਨ crit;
 };
-static struct cert_ext *cert_ext;
-static size_t ncert_ext;
+ਸਥਿਰ ਬਣਤਰ cert_ext *cert_ext;
+ਸਥਿਰ ਮਾਪ_t ncert_ext;
 
 /* Conversion to/from various formats */
-enum {
+ਗਿਣਤੀ {
 	FMT_RFC4716,
 	FMT_PKCS8,
 	FMT_PEM,
 	FMT_HEXDUMP
 } convert_format = FMT_RFC4716;
 
-static char *key_type_name = NULL;
+ਸਥਿਰ ਅੱਖਰ *ਕੁੰਜੀ_type_name = ਨਿਰਾ;
 
 /* Load key from this PKCS#11 provider */
-static char *pkcs11provider = NULL;
+ਸਥਿਰ ਅੱਖਰ *pkcs11provider = ਨਿਰਾ;
 
 /* FIDO/U2F provider to use */
-static char *sk_provider = NULL;
+ਸਥਿਰ ਅੱਖਰ *sk_provider = ਨਿਰਾ;
 
 /* Format for writing private keys */
-static int private_key_format = SSHKEY_PRIVATE_OPENSSH;
+ਸਥਿਰ ਪੂਰਨ ਨਿੱਜੀ_ਕੁੰਜੀ_format = SSHKEY_ਨਿੱਜੀ_OPENSSH;
 
 /* Cipher for new-format private keys */
-static char *openssh_format_cipher = NULL;
+ਸਥਿਰ ਅੱਖਰ *openssh_format_cipher = ਨਿਰਾ;
 
 /* Number of KDF rounds to derive new format keys. */
-static int rounds = 0;
+ਸਥਿਰ ਪੂਰਨ ਗੇੜ = 0;
 
 /* argv0 */
-extern char *__progname;
+ਬਾਹਰੀ ਅੱਖਰ *__progname;
 
-static char hostname[NI_MAXHOST];
+ਸਥਿਰ ਅੱਖਰ hostname[NI_MAXHOST];
 
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 /* moduli.c */
-int gen_candidates(FILE *, uint32_t, BIGNUM *);
-int prime_test(FILE *, FILE *, uint32_t, uint32_t, char *, unsigned long,
-    unsigned long);
-#endif
+ਪੂਰਨ gen_candidates(FILE *, uint32_t, BIGNUM *);
+ਪੂਰਨ ਅਭਾਜ_test(FILE *, FILE *, uint32_t, uint32_t, ਅੱਖਰ *, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ,
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ);
+#ਜੇ_ਅੰਤ
 
-static void
-type_bits_valid(int type, const char *name, uint32_t *bitsp)
+ਸਥਿਰ ਖਾਲੀ
+type_ਬਿੱਟ_valid(ਪੂਰਨ type, ਅਚਲ ਅੱਖਰ *name, uint32_t *bitsp)
 {
-	if (type == KEY_UNSPEC)
-		fatal("unknown key type %s", key_type_name);
-	if (*bitsp == 0) {
-#ifdef WITH_OPENSSL
-		int nid;
+	ਜੇ (type == ਕੁੰਜੀ_UNSPEC)
+		fatal("unknown key type %s", ਕੁੰਜੀ_type_name);
+	ਜੇ (*bitsp == 0) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+		ਪੂਰਨ nid;
 
-		switch(type) {
-		case KEY_ECDSA:
-			if (name != NULL &&
+		ਚੋਣ(type) {
+		ਹਾਲਤ ਕੁੰਜੀ_ECDSA:
+			ਜੇ (name != ਨਿਰਾ &&
 			    (nid = sshkey_ecdsa_nid_from_name(name)) > 0)
-				*bitsp = sshkey_curve_nid_to_bits(nid);
-			if (*bitsp == 0)
-				*bitsp = DEFAULT_BITS_ECDSA;
-			break;
-		case KEY_RSA:
-			*bitsp = DEFAULT_BITS;
-			break;
+				*bitsp = sshkey_ਵਕਰ_nid_ਮੰਜ਼ਿਲ_ਬਿੱਟ(nid);
+			ਜੇ (*bitsp == 0)
+				*bitsp = DEFAULT_ਬਿੱਟ_ECDSA;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਕੁੰਜੀ_RSA:
+			*bitsp = DEFAULT_ਬਿੱਟ;
+			ਰੋਕੋ;
 		}
-#endif
+#ਜੇ_ਅੰਤ
 	}
-#ifdef WITH_OPENSSL
-	switch (type) {
-	case KEY_RSA:
-		if (*bitsp < SSH_RSA_MINIMUM_MODULUS_SIZE)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+	ਚੋਣ (type) {
+	ਹਾਲਤ ਕੁੰਜੀ_RSA:
+		ਜੇ (*bitsp < SSH_RSA_MINIMUM_MODULUS_ਮਾਪ)
 			fatal("Invalid RSA key length: minimum is %d bits",
-			    SSH_RSA_MINIMUM_MODULUS_SIZE);
-		else if (*bitsp > OPENSSL_RSA_MAX_MODULUS_BITS)
+			    SSH_RSA_MINIMUM_MODULUS_ਮਾਪ);
+		ਨਹੀਂਤਾਂ ਜੇ (*bitsp > OPENSSL_RSA_MAX_MODULUS_ਬਿੱਟ)
 			fatal("Invalid RSA key length: maximum is %d bits",
-			    OPENSSL_RSA_MAX_MODULUS_BITS);
-		break;
-	case KEY_ECDSA:
-		if (sshkey_ecdsa_bits_to_nid(*bitsp) == -1)
+			    OPENSSL_RSA_MAX_MODULUS_ਬਿੱਟ);
+		ਰੋਕੋ;
+	ਹਾਲਤ ਕੁੰਜੀ_ECDSA:
+		ਜੇ (sshkey_ecdsa_ਬਿੱਟ_ਮੰਜ਼ਿਲ_nid(*bitsp) == -1)
 			fatal("Invalid ECDSA key length: valid lengths are "
 			    "256, 384 or 521 bits");
 	}
-#endif
+#ਜੇ_ਅੰਤ
 }
 
 /*
@@ -221,234 +221,234 @@ type_bits_valid(int type, const char *name, uint32_t *bitsp)
  * Returns nonzero if the file does not already exist or if the user agrees to
  * overwrite, or zero otherwise.
  */
-static int
-confirm_overwrite(const char *filename)
+ਸਥਿਰ ਪੂਰਨ
+confirm_overwrite(ਅਚਲ ਅੱਖਰ *filename)
 {
-	char yesno[3];
-	struct stat st;
+	ਅੱਖਰ yesno[3];
+	ਬਣਤਰ stat st;
 
-	if (stat(filename, &st) != 0)
-		return 1;
-	printf("%s already exists.\n", filename);
-	printf("Overwrite (y/n)? ");
+	ਜੇ (stat(filename, &st) != 0)
+		ਵਾਪਸ 1;
+	ਲਿਖੋ("%s already exists.\n", filename);
+	ਲਿਖੋ("Overwrite (y/n)? ");
 	fflush(stdout);
-	if (fgets(yesno, sizeof(yesno), stdin) == NULL)
-		return 0;
-	if (yesno[0] != 'y' && yesno[0] != 'Y')
-		return 0;
-	return 1;
+	ਜੇ (fgets(yesno, ਆਕਾਰ(yesno), stdin) == ਨਿਰਾ)
+		ਵਾਪਸ 0;
+	ਜੇ (yesno[0] != 'y' && yesno[0] != 'Y')
+		ਵਾਪਸ 0;
+	ਵਾਪਸ 1;
 }
 
-static void
-ask_filename(struct passwd *pw, const char *prompt)
+ਸਥਿਰ ਖਾਲੀ
+ask_filename(ਬਣਤਰ passwd *pw, ਅਚਲ ਅੱਖਰ *prompt)
 {
-	char buf[1024];
-	char *name = NULL;
+	ਅੱਖਰ buf[1024];
+	ਅੱਖਰ *name = ਨਿਰਾ;
 
-	if (key_type_name == NULL)
-		name = _PATH_SSH_CLIENT_ID_ED25519;
-	else {
-		switch (sshkey_type_from_shortname(key_type_name)) {
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA:
-			name = _PATH_SSH_CLIENT_ID_ECDSA;
-			break;
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ECDSA_SK:
-			name = _PATH_SSH_CLIENT_ID_ECDSA_SK;
-			break;
-		case KEY_RSA_CERT:
-		case KEY_RSA:
-			name = _PATH_SSH_CLIENT_ID_RSA;
-			break;
-		case KEY_ED25519:
-		case KEY_ED25519_CERT:
-			name = _PATH_SSH_CLIENT_ID_ED25519;
-			break;
-		case KEY_ED25519_SK:
-		case KEY_ED25519_SK_CERT:
-			name = _PATH_SSH_CLIENT_ID_ED25519_SK;
-			break;
-		case KEY_MLDSA44_ED25519:
-		case KEY_MLDSA44_ED25519_CERT:
-			name = _PATH_SSH_CLIENT_ID_MLDSA44_ED25519;
-			break;
-		default:
+	ਜੇ (ਕੁੰਜੀ_type_name == ਨਿਰਾ)
+		name = ਰਸਤਾ_SSH_CLIENT_ID_ED25519;
+	ਨਹੀਂਤਾਂ {
+		ਚੋਣ (sshkey_type_from_shortname(ਕੁੰਜੀ_type_name)) {
+		ਹਾਲਤ ਕੁੰਜੀ_ECDSA_CERT:
+		ਹਾਲਤ ਕੁੰਜੀ_ECDSA:
+			name = ਰਸਤਾ_SSH_CLIENT_ID_ECDSA;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਕੁੰਜੀ_ECDSA_SK_CERT:
+		ਹਾਲਤ ਕੁੰਜੀ_ECDSA_SK:
+			name = ਰਸਤਾ_SSH_CLIENT_ID_ECDSA_SK;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਕੁੰਜੀ_RSA_CERT:
+		ਹਾਲਤ ਕੁੰਜੀ_RSA:
+			name = ਰਸਤਾ_SSH_CLIENT_ID_RSA;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਕੁੰਜੀ_ED25519:
+		ਹਾਲਤ ਕੁੰਜੀ_ED25519_CERT:
+			name = ਰਸਤਾ_SSH_CLIENT_ID_ED25519;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਕੁੰਜੀ_ED25519_SK:
+		ਹਾਲਤ ਕੁੰਜੀ_ED25519_SK_CERT:
+			name = ਰਸਤਾ_SSH_CLIENT_ID_ED25519_SK;
+			ਰੋਕੋ;
+		ਹਾਲਤ ਕੁੰਜੀ_MLDSA44_ED25519:
+		ਹਾਲਤ ਕੁੰਜੀ_MLDSA44_ED25519_CERT:
+			name = ਰਸਤਾ_SSH_CLIENT_ID_MLDSA44_ED25519;
+			ਰੋਕੋ;
+		ਮੂਲ:
 			fatal("bad key type");
 		}
 	}
-	snprintf(identity_file, sizeof(identity_file),
+	snprintf(ਪਛਾਣ_ਤੱਤ_file, ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ_file),
 	    "%s/%s", pw->pw_dir, name);
-	printf("%s (%s): ", prompt, identity_file);
+	ਲਿਖੋ("%s (%s): ", prompt, ਪਛਾਣ_ਤੱਤ_file);
 	fflush(stdout);
-	if (fgets(buf, sizeof(buf), stdin) == NULL)
-		exit(1);
+	ਜੇ (fgets(buf, ਆਕਾਰ(buf), stdin) == ਨਿਰਾ)
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	buf[strcspn(buf, "\n")] = '\0';
-	if (strcmp(buf, "") != 0)
-		strlcpy(identity_file, buf, sizeof(identity_file));
-	have_identity = 1;
+	ਜੇ (strcmp(buf, "") != 0)
+		strlcpy(ਪਛਾਣ_ਤੱਤ_file, buf, ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ_file));
+	have_ਪਛਾਣ_ਤੱਤ = 1;
 }
 
-static struct sshkey *
-load_identity(const char *filename, char **commentp)
+ਸਥਿਰ ਬਣਤਰ sshkey *
+ਲੱਦੋ_ਪਛਾਣ_ਤੱਤ(ਅਚਲ ਅੱਖਰ *filename, ਅੱਖਰ **commentp)
 {
-	char *prompt, *pass;
-	struct sshkey *prv;
-	int r;
+	ਅੱਖਰ *prompt, *pass;
+	ਬਣਤਰ sshkey *prv;
+	ਪੂਰਨ r;
 
-	if (commentp != NULL)
-		*commentp = NULL;
-	if ((r = sshkey_load_private(filename, "", &prv, commentp)) == 0)
-		return prv;
-	if (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
+	ਜੇ (commentp != ਨਿਰਾ)
+		*commentp = ਨਿਰਾ;
+	ਜੇ ((r = sshkey_ਲੱਦੋ_ਨਿੱਜੀ(filename, "", &prv, commentp)) == 0)
+		ਵਾਪਸ prv;
+	ਜੇ (r != SSH_ERR_ਕੁੰਜੀ_WRONG_PASSPHRASE)
 		fatal_r(r, "Load key \"%s\"", filename);
-	if (identity_passphrase)
-		pass = xstrdup(identity_passphrase);
-	else {
+	ਜੇ (ਪਛਾਣ_ਤੱਤ_passphrase)
+		pass = xstrdup(ਪਛਾਣ_ਤੱਤ_passphrase);
+	ਨਹੀਂਤਾਂ {
 		xasprintf(&prompt, "Enter passphrase for \"%s\": ", filename);
 		pass = read_passphrase(prompt, RP_ALLOW_STDIN);
-		free(prompt);
+		ਮੁਕਤ(prompt);
 	}
-	r = sshkey_load_private(filename, pass, &prv, commentp);
-	freezero(pass, strlen(pass));
-	if (r != 0)
+	r = sshkey_ਲੱਦੋ_ਨਿੱਜੀ(filename, pass, &prv, commentp);
+	freezero(pass, ਲੜੀ_ਲੰਬਾਈ(pass));
+	ਜੇ (r != 0)
 		fatal_r(r, "Load key \"%s\"", filename);
-	return prv;
+	ਵਾਪਸ prv;
 }
 
-#define SSH_COM_PUBLIC_BEGIN		"---- BEGIN SSH2 PUBLIC KEY ----"
-#define SSH_COM_PUBLIC_END		"---- END SSH2 PUBLIC KEY ----"
-#define SSH_COM_PRIVATE_BEGIN		"---- BEGIN SSH2 ENCRYPTED PRIVATE KEY ----"
-#define	SSH_COM_PRIVATE_KEY_MAGIC	0x3f6ff9eb
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_COM_ਜਨਤਕ_BEGIN		"---- BEGIN SSH2 PUBLIC KEY ----"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_COM_ਜਨਤਕ_ਸਿਰਾ		"---- END SSH2 PUBLIC KEY ----"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_COM_ਨਿੱਜੀ_BEGIN		"---- BEGIN SSH2 ENCRYPTED PRIVATE KEY ----"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SSH_COM_ਨਿੱਜੀ_ਕੁੰਜੀ_MAGIC	0x3f6ff9eb
 
-#ifdef WITH_OPENSSL
-static void
-do_convert_to_ssh2(struct passwd *pw, struct sshkey *k)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+ਸਥਿਰ ਖਾਲੀ
+do_convert_ਮੰਜ਼ਿਲ_ssh2(ਬਣਤਰ passwd *pw, ਬਣਤਰ sshkey *k)
 {
-	struct sshbuf *b;
-	char comment[61], *b64;
-	int r;
+	ਬਣਤਰ sshbuf *b;
+	ਅੱਖਰ comment[61], *b64;
+	ਪੂਰਨ r;
 
-	if ((b = sshbuf_new()) == NULL)
+	ਜੇ ((b = sshbuf_new()) == ਨਿਰਾ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(k, b)) != 0)
+	ਜੇ ((r = sshkey_putb(k, b)) != 0)
 		fatal_fr(r, "put key");
-	if ((b64 = sshbuf_dtob64_string(b, 1)) == NULL)
+	ਜੇ ((b64 = sshbuf_dtob64_string(b, 1)) == ਨਿਰਾ)
 		fatal_f("sshbuf_dtob64_string failed");
 
 	/* Comment + surrounds must fit into 72 chars (RFC 4716 sec 3.3) */
-	snprintf(comment, sizeof(comment),
+	snprintf(comment, ਆਕਾਰ(comment),
 	    "%u-bit %s, converted by %s@%s from OpenSSH",
-	    sshkey_size(k), sshkey_type(k),
+	    sshkey_ਮਾਪ(k), sshkey_type(k),
 	    pw->pw_name, hostname);
 
 	sshkey_free(k);
 	sshbuf_free(b);
 
-	fprintf(stdout, "%s\n", SSH_COM_PUBLIC_BEGIN);
+	fprintf(stdout, "%s\n", SSH_COM_ਜਨਤਕ_BEGIN);
 	fprintf(stdout, "Comment: \"%s\"\n%s", comment, b64);
-	fprintf(stdout, "%s\n", SSH_COM_PUBLIC_END);
-	free(b64);
+	fprintf(stdout, "%s\n", SSH_COM_ਜਨਤਕ_ਸਿਰਾ);
+	ਮੁਕਤ(b64);
 }
 
-static void
-do_convert_to_pkcs8(struct sshkey *k)
+ਸਥਿਰ ਖਾਲੀ
+do_convert_ਮੰਜ਼ਿਲ_pkcs8(ਬਣਤਰ sshkey *k)
 {
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_RSA:
-		if (!PEM_write_RSA_PUBKEY(stdout,
+	ਚੋਣ (sshkey_type_plain(k->type)) {
+	ਹਾਲਤ ਕੁੰਜੀ_RSA:
+		ਜੇ (!PEM_write_RSA_PUBKEY(stdout,
 		    EVP_PKEY_get0_RSA(k->pkey)))
 			fatal("PEM_write_RSA_PUBKEY failed");
-		break;
-	case KEY_ECDSA:
-		if (!PEM_write_EC_PUBKEY(stdout,
-		    EVP_PKEY_get0_EC_KEY(k->pkey)))
+		ਰੋਕੋ;
+	ਹਾਲਤ ਕੁੰਜੀ_ECDSA:
+		ਜੇ (!PEM_write_EC_PUBKEY(stdout,
+		    EVP_PKEY_get0_EC_ਕੁੰਜੀ(k->pkey)))
 			fatal("PEM_write_EC_PUBKEY failed");
-		break;
-	default:
+		ਰੋਕੋ;
+	ਮੂਲ:
 		fatal_f("unsupported key type %s", sshkey_type(k));
 	}
 }
 
-static void
-do_convert_to_pem(struct sshkey *k)
+ਸਥਿਰ ਖਾਲੀ
+do_convert_ਮੰਜ਼ਿਲ_pem(ਬਣਤਰ sshkey *k)
 {
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_RSA:
-		if (!PEM_write_RSAPublicKey(stdout,
+	ਚੋਣ (sshkey_type_plain(k->type)) {
+	ਹਾਲਤ ਕੁੰਜੀ_RSA:
+		ਜੇ (!PEM_write_RSAPublic_ਕੁੰਜੀ(stdout,
 		    EVP_PKEY_get0_RSA(k->pkey)))
 			fatal("PEM_write_RSAPublicKey failed");
-		break;
-	case KEY_ECDSA:
-		if (!PEM_write_EC_PUBKEY(stdout,
-		    EVP_PKEY_get0_EC_KEY(k->pkey)))
+		ਰੋਕੋ;
+	ਹਾਲਤ ਕੁੰਜੀ_ECDSA:
+		ਜੇ (!PEM_write_EC_PUBKEY(stdout,
+		    EVP_PKEY_get0_EC_ਕੁੰਜੀ(k->pkey)))
 			fatal("PEM_write_EC_PUBKEY failed");
-		break;
-	default:
+		ਰੋਕੋ;
+	ਮੂਲ:
 		fatal_f("unsupported key type %s", sshkey_type(k));
 	}
 }
 
-static void
-do_convert_to_hexdump(struct sshkey *k)
+ਸਥਿਰ ਖਾਲੀ
+do_convert_ਮੰਜ਼ਿਲ_hexdump(ਬਣਤਰ sshkey *k)
 {
-	struct sshbuf *b;
-	int r;
+	ਬਣਤਰ sshbuf *b;
+	ਪੂਰਨ r;
 
-	if ((b = sshbuf_new()) == NULL)
+	ਜੇ ((b = sshbuf_new()) == ਨਿਰਾ)
 		fatal_f("sshbuf_new failed");
 	/* pubkey */
-	if ((r = sshkey_putb(k, b)) != 0)
+	ਜੇ ((r = sshkey_putb(k, b)) != 0)
 		fatal_fr(r, "serialise private");
-	printf("Public %s key:\n", sshkey_type(k));
+	ਲਿਖੋ("Public %s key:\n", sshkey_type(k));
 	sshbuf_dump(b, stdout);
 	sshbuf_reset(b);
-	if ((r = sshkey_private_serialize(k, b)) != 0) {
+	ਜੇ ((r = sshkey_ਨਿੱਜੀ_serialize(k, b)) != 0) {
 		debug_fr(r, "serialise private");
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	printf("\nPrivate %s key:\n", sshkey_type(k));
+	ਲਿਖੋ("\nPrivate %s key:\n", sshkey_type(k));
 	sshbuf_dump(b, stdout);
- out:
+ ਬਾਹਰਲਾ:
 	sshbuf_free(b);
 }
 
-static void
-do_convert_to(struct passwd *pw)
+ਸਥਿਰ ਖਾਲੀ
+do_convert_ਮੰਜ਼ਿਲ(ਬਣਤਰ passwd *pw)
 {
-	struct sshkey *k = NULL;
-	struct stat st;
-	int r;
+	ਬਣਤਰ sshkey *k = ਨਿਰਾ;
+	ਬਣਤਰ stat st;
+	ਪੂਰਨ r;
 
-	if (!have_identity)
+	ਜੇ (!have_ਪਛਾਣ_ਤੱਤ)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
-		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
+	ਜੇ (stat(ਪਛਾਣ_ਤੱਤ_file, &st) == -1)
+		fatal("%s: %s: %s", __progname, ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
 
 	/* If we're trying to hexdump, then prefer the private key */
-	if (convert_format == FMT_HEXDUMP) {
-		if ((r = sshkey_load_private(identity_file,
-		    NULL, &k, NULL)) != 0 &&
-		    r == SSH_ERR_KEY_WRONG_PASSPHRASE)
-			k = load_identity(identity_file, NULL);
+	ਜੇ (convert_format == FMT_HEXDUMP) {
+		ਜੇ ((r = sshkey_ਲੱਦੋ_ਨਿੱਜੀ(ਪਛਾਣ_ਤੱਤ_file,
+		    ਨਿਰਾ, &k, ਨਿਰਾ)) != 0 &&
+		    r == SSH_ERR_ਕੁੰਜੀ_WRONG_PASSPHRASE)
+			k = ਲੱਦੋ_ਪਛਾਣ_ਤੱਤ(ਪਛਾਣ_ਤੱਤ_file, ਨਿਰਾ);
 	}
-	if (k == NULL && (r = sshkey_load_public(identity_file, &k, NULL)) != 0)
-		k = load_identity(identity_file, NULL);
+	ਜੇ (k == ਨਿਰਾ && (r = sshkey_ਲੱਦੋ_ਜਨਤਕ(ਪਛਾਣ_ਤੱਤ_file, &k, ਨਿਰਾ)) != 0)
+		k = ਲੱਦੋ_ਪਛਾਣ_ਤੱਤ(ਪਛਾਣ_ਤੱਤ_file, ਨਿਰਾ);
 
-	switch (convert_format) {
-	case FMT_RFC4716:
-		do_convert_to_ssh2(pw, k);
-		break;
-	case FMT_PKCS8:
-		do_convert_to_pkcs8(k);
-		break;
-	case FMT_PEM:
-		do_convert_to_pem(k);
-		break;
-	case FMT_HEXDUMP:
-		do_convert_to_hexdump(k);
-		break;
-	default:
+	ਚੋਣ (convert_format) {
+	ਹਾਲਤ FMT_RFC4716:
+		do_convert_ਮੰਜ਼ਿਲ_ssh2(pw, k);
+		ਰੋਕੋ;
+	ਹਾਲਤ FMT_PKCS8:
+		do_convert_ਮੰਜ਼ਿਲ_pkcs8(k);
+		ਰੋਕੋ;
+	ਹਾਲਤ FMT_PEM:
+		do_convert_ਮੰਜ਼ਿਲ_pem(k);
+		ਰੋਕੋ;
+	ਹਾਲਤ FMT_HEXDUMP:
+		do_convert_ਮੰਜ਼ਿਲ_hexdump(k);
+		ਰੋਕੋ;
+	ਮੂਲ:
 		fatal_f("unknown key format %d", convert_format);
 	}
 }
@@ -457,83 +457,83 @@ do_convert_to(struct passwd *pw)
  * This is almost exactly the bignum1 encoding, but with 32 bit for length
  * instead of 16.
  */
-static void
-buffer_get_bignum_bits(struct sshbuf *b, BIGNUM *value)
+ਸਥਿਰ ਖਾਲੀ
+ਬਫਰ_get_bignum_ਬਿੱਟ(ਬਣਤਰ sshbuf *b, BIGNUM *ਮੁੱਲ)
 {
-	u_int bytes, bignum_bits;
-	int r;
+	u_int ਬਾਈਟਾਂ, bignum_ਬਿੱਟ;
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_get_u32(b, &bignum_bits)) != 0)
+	ਜੇ ((r = sshbuf_get_u32(b, &bignum_ਬਿੱਟ)) != 0)
 		fatal_fr(r, "parse");
-	bytes = (bignum_bits + 7) / 8;
-	if (sshbuf_len(b) < bytes)
+	ਬਾਈਟਾਂ = (bignum_ਬਿੱਟ + 7) / 8;
+	ਜੇ (sshbuf_len(b) < ਬਾਈਟਾਂ)
 		fatal_f("input buffer too small: need %d have %zu",
-		    bytes, sshbuf_len(b));
-	if (BN_bin2bn(sshbuf_ptr(b), bytes, value) == NULL)
+		    ਬਾਈਟਾਂ, sshbuf_len(b));
+	ਜੇ (BN_bin2bn(sshbuf_ptr(b), ਬਾਈਟਾਂ, ਮੁੱਲ) == ਨਿਰਾ)
 		fatal_f("BN_bin2bn failed");
-	if ((r = sshbuf_consume(b, bytes)) != 0)
+	ਜੇ ((r = sshbuf_consume(b, ਬਾਈਟਾਂ)) != 0)
 		fatal_fr(r, "consume");
 }
 
-static struct sshkey *
-do_convert_private_ssh2(struct sshbuf *b)
+ਸਥਿਰ ਬਣਤਰ sshkey *
+do_convert_ਨਿੱਜੀ_ssh2(ਬਣਤਰ sshbuf *b)
 {
-	struct sshkey *key = NULL;
-	char *type, *cipher;
-	const char *alg = NULL;
-	u_char e1, e2, e3, *sig = NULL, data[] = "abcde12345";
-	int r, rlen, ktype;
+	ਬਣਤਰ sshkey *ਕੁੰਜੀ = ਨਿਰਾ;
+	ਅੱਖਰ *type, *cipher;
+	ਅਚਲ ਅੱਖਰ *alg = ਨਿਰਾ;
+	u_char e1, e2, e3, *sig = ਨਿਰਾ, ਅੰਕੜੇ[] = "abcde12345";
+	ਪੂਰਨ r, rlen, ktype;
 	u_int magic, i1, i2, i3, i4;
-	size_t slen;
+	ਮਾਪ_t slen;
 	u_long e;
-	BIGNUM *rsa_n = NULL, *rsa_e = NULL, *rsa_d = NULL;
-	BIGNUM *rsa_p = NULL, *rsa_q = NULL, *rsa_iqmp = NULL;
-	BIGNUM *rsa_dmp1 = NULL, *rsa_dmq1 = NULL;
-	RSA *rsa = NULL;
+	BIGNUM *rsa_n = ਨਿਰਾ, *rsa_e = ਨਿਰਾ, *rsa_d = ਨਿਰਾ;
+	BIGNUM *rsa_p = ਨਿਰਾ, *rsa_q = ਨਿਰਾ, *rsa_iqmp = ਨਿਰਾ;
+	BIGNUM *rsa_dmp1 = ਨਿਰਾ, *rsa_dmq1 = ਨਿਰਾ;
+	RSA *rsa = ਨਿਰਾ;
 
-	if ((r = sshbuf_get_u32(b, &magic)) != 0)
+	ਜੇ ((r = sshbuf_get_u32(b, &magic)) != 0)
 		fatal_fr(r, "parse magic");
 
-	if (magic != SSH_COM_PRIVATE_KEY_MAGIC) {
+	ਜੇ (magic != SSH_COM_ਨਿੱਜੀ_ਕੁੰਜੀ_MAGIC) {
 		error("bad magic 0x%x != 0x%x", magic,
-		    SSH_COM_PRIVATE_KEY_MAGIC);
-		return NULL;
+		    SSH_COM_ਨਿੱਜੀ_ਕੁੰਜੀ_MAGIC);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	if ((r = sshbuf_get_u32(b, &i1)) != 0 ||
-	    (r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(b, &cipher, NULL)) != 0 ||
+	ਜੇ ((r = sshbuf_get_u32(b, &i1)) != 0 ||
+	    (r = sshbuf_get_cstring(b, &type, ਨਿਰਾ)) != 0 ||
+	    (r = sshbuf_get_cstring(b, &cipher, ਨਿਰਾ)) != 0 ||
 	    (r = sshbuf_get_u32(b, &i2)) != 0 ||
 	    (r = sshbuf_get_u32(b, &i3)) != 0 ||
 	    (r = sshbuf_get_u32(b, &i4)) != 0)
 		fatal_fr(r, "parse");
 	debug("ignore (%d %d %d %d)", i1, i2, i3, i4);
-	if (strcmp(cipher, "none") != 0) {
+	ਜੇ (strcmp(cipher, "none") != 0) {
 		error("unsupported cipher %s", cipher);
-		free(cipher);
-		free(type);
-		return NULL;
+		ਮੁਕਤ(cipher);
+		ਮੁਕਤ(type);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	free(cipher);
+	ਮੁਕਤ(cipher);
 
-	if (strstr(type, "rsa")) {
-		ktype = KEY_RSA;
-	} else {
-		free(type);
-		return NULL;
+	ਜੇ (ਲੜੀ_ਖੋਜ(type, "rsa")) {
+		ktype = ਕੁੰਜੀ_RSA;
+	} ਨਹੀਂਤਾਂ {
+		ਮੁਕਤ(type);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	if ((key = sshkey_new(ktype)) == NULL)
+	ਜੇ ((ਕੁੰਜੀ = sshkey_new(ktype)) == ਨਿਰਾ)
 		fatal("sshkey_new failed");
-	free(type);
+	ਮੁਕਤ(type);
 
-	switch (key->type) {
-	case KEY_RSA:
-		if ((r = sshbuf_get_u8(b, &e1)) != 0 ||
+	ਚੋਣ (ਕੁੰਜੀ->type) {
+	ਹਾਲਤ ਕੁੰਜੀ_RSA:
+		ਜੇ ((r = sshbuf_get_u8(b, &e1)) != 0 ||
 		    (e1 < 30 && (r = sshbuf_get_u8(b, &e2)) != 0) ||
 		    (e1 < 30 && (r = sshbuf_get_u8(b, &e3)) != 0))
 			fatal_fr(r, "parse RSA");
 		e = e1;
 		debug("e %lx", e);
-		if (e < 30) {
+		ਜੇ (e < 30) {
 			e <<= 8;
 			e += e2;
 			debug("e %lx", e);
@@ -541,425 +541,425 @@ do_convert_private_ssh2(struct sshbuf *b)
 			e += e3;
 			debug("e %lx", e);
 		}
-		if ((rsa_e = BN_new()) == NULL)
+		ਜੇ ((rsa_e = BN_new()) == ਨਿਰਾ)
 			fatal_f("BN_new");
-		if (!BN_set_word(rsa_e, e)) {
+		ਜੇ (!BN_ਸੈੱਟ_ਸ਼ਬਦ(rsa_e, e)) {
 			BN_clear_free(rsa_e);
-			sshkey_free(key);
-			return NULL;
+			sshkey_free(ਕੁੰਜੀ);
+			ਵਾਪਸ ਨਿਰਾ;
 		}
-		if ((rsa_n = BN_new()) == NULL ||
-		    (rsa_d = BN_new()) == NULL ||
-		    (rsa_p = BN_new()) == NULL ||
-		    (rsa_q = BN_new()) == NULL ||
-		    (rsa_iqmp = BN_new()) == NULL)
+		ਜੇ ((rsa_n = BN_new()) == ਨਿਰਾ ||
+		    (rsa_d = BN_new()) == ਨਿਰਾ ||
+		    (rsa_p = BN_new()) == ਨਿਰਾ ||
+		    (rsa_q = BN_new()) == ਨਿਰਾ ||
+		    (rsa_iqmp = BN_new()) == ਨਿਰਾ)
 			fatal_f("BN_new");
-		buffer_get_bignum_bits(b, rsa_d);
-		buffer_get_bignum_bits(b, rsa_n);
-		buffer_get_bignum_bits(b, rsa_iqmp);
-		buffer_get_bignum_bits(b, rsa_q);
-		buffer_get_bignum_bits(b, rsa_p);
-		if ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
+		ਬਫਰ_get_bignum_ਬਿੱਟ(b, rsa_d);
+		ਬਫਰ_get_bignum_ਬਿੱਟ(b, rsa_n);
+		ਬਫਰ_get_bignum_ਬਿੱਟ(b, rsa_iqmp);
+		ਬਫਰ_get_bignum_ਬਿੱਟ(b, rsa_q);
+		ਬਫਰ_get_bignum_ਬਿੱਟ(b, rsa_p);
+		ਜੇ ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
 		    rsa_iqmp, &rsa_dmp1, &rsa_dmq1)) != 0)
 			fatal_fr(r, "generate RSA CRT parameters");
-		EVP_PKEY_free(key->pkey);
-		if ((key->pkey = EVP_PKEY_new()) == NULL)
+		EVP_PKEY_free(ਕੁੰਜੀ->pkey);
+		ਜੇ ((ਕੁੰਜੀ->pkey = EVP_PKEY_new()) == ਨਿਰਾ)
 			fatal_f("EVP_PKEY_new failed");
-		if ((rsa = RSA_new()) == NULL)
+		ਜੇ ((rsa = RSA_new()) == ਨਿਰਾ)
 			fatal_f("RSA_new failed");
-		if (!RSA_set0_key(rsa, rsa_n, rsa_e, rsa_d))
+		ਜੇ (!RSA_set0_ਕੁੰਜੀ(rsa, rsa_n, rsa_e, rsa_d))
 			fatal_f("RSA_set0_key failed");
-		rsa_n = rsa_e = rsa_d = NULL; /* transferred */
-		if (!RSA_set0_factors(rsa, rsa_p, rsa_q))
+		rsa_n = rsa_e = rsa_d = ਨਿਰਾ; /* transferred */
+		ਜੇ (!RSA_set0_factors(rsa, rsa_p, rsa_q))
 			fatal_f("RSA_set0_factors failed");
-		rsa_p = rsa_q = NULL; /* transferred */
-		if (RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp) != 1)
+		rsa_p = rsa_q = ਨਿਰਾ; /* transferred */
+		ਜੇ (RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp) != 1)
 			fatal_f("RSA_set0_crt_params failed");
-		rsa_dmp1 = rsa_dmq1 = rsa_iqmp = NULL;
-		if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1)
+		rsa_dmp1 = rsa_dmq1 = rsa_iqmp = ਨਿਰਾ;
+		ਜੇ (EVP_PKEY_set1_RSA(ਕੁੰਜੀ->pkey, rsa) != 1)
 			fatal_f("EVP_PKEY_set1_RSA failed");
 		RSA_free(rsa);
 		alg = "rsa-sha2-256";
-		break;
+		ਰੋਕੋ;
 	}
 	rlen = sshbuf_len(b);
-	if (rlen != 0)
+	ਜੇ (rlen != 0)
 		error_f("remaining bytes in key blob %d", rlen);
 
 	/* try the key */
-	if ((r = sshkey_sign(key, &sig, &slen, data, sizeof(data),
-	    alg, NULL, NULL, 0)) != 0)
+	ਜੇ ((r = sshkey_sign(ਕੁੰਜੀ, &sig, &slen, ਅੰਕੜੇ, ਆਕਾਰ(ਅੰਕੜੇ),
+	    alg, ਨਿਰਾ, ਨਿਰਾ, 0)) != 0)
 		error_fr(r, "signing with converted key failed");
-	else if ((r = sshkey_verify(key, sig, slen, data, sizeof(data),
-	    alg, 0, NULL)) != 0)
+	ਨਹੀਂਤਾਂ ਜੇ ((r = sshkey_verify(ਕੁੰਜੀ, sig, slen, ਅੰਕੜੇ, ਆਕਾਰ(ਅੰਕੜੇ),
+	    alg, 0, ਨਿਰਾ)) != 0)
 		error_fr(r, "verification with converted key failed");
-	if (r != 0) {
-		sshkey_free(key);
-		free(sig);
-		return NULL;
+	ਜੇ (r != 0) {
+		sshkey_free(ਕੁੰਜੀ);
+		ਮੁਕਤ(sig);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	free(sig);
-	return key;
+	ਮੁਕਤ(sig);
+	ਵਾਪਸ ਕੁੰਜੀ;
 }
 
-static int
-get_line(FILE *fp, char *line, size_t len)
+ਸਥਿਰ ਪੂਰਨ
+get_ਸਤਰ(FILE *fp, ਅੱਖਰ *ਸਤਰ, ਮਾਪ_t len)
 {
-	int c;
-	size_t pos = 0;
+	ਪੂਰਨ c;
+	ਮਾਪ_t pos = 0;
 
-	line[0] = '\0';
-	while ((c = fgetc(fp)) != EOF) {
-		if (pos >= len - 1)
+	ਸਤਰ[0] = '\0';
+	ਜਦੋਂ ((c = fgetc(fp)) != EOF) {
+		ਜੇ (pos >= len - 1)
 			fatal("input line too long.");
-		switch (c) {
-		case '\r':
+		ਚੋਣ (c) {
+		ਹਾਲਤ '\r':
 			c = fgetc(fp);
-			if (c != EOF && c != '\n' && ungetc(c, fp) == EOF)
+			ਜੇ (c != EOF && c != '\n' && ungetc(c, fp) == EOF)
 				fatal("unget: %s", strerror(errno));
-			return pos;
-		case '\n':
-			return pos;
+			ਵਾਪਸ pos;
+		ਹਾਲਤ '\n':
+			ਵਾਪਸ pos;
 		}
-		line[pos++] = c;
-		line[pos] = '\0';
+		ਸਤਰ[pos++] = c;
+		ਸਤਰ[pos] = '\0';
 	}
 	/* We reached EOF */
-	return -1;
+	ਵਾਪਸ -1;
 }
 
-static void
-do_convert_from_ssh2(struct passwd *pw, struct sshkey **k, int *private)
+ਸਥਿਰ ਖਾਲੀ
+do_convert_from_ssh2(ਬਣਤਰ passwd *pw, ਬਣਤਰ sshkey **k, ਪੂਰਨ *ਨਿਜੀ)
 {
-	int r, blen, escaped = 0;
+	ਪੂਰਨ r, blen, escaped = 0;
 	u_int len;
-	char line[1024];
-	struct sshbuf *buf;
-	char encoded[8096];
+	ਅੱਖਰ ਸਤਰ[1024];
+	ਬਣਤਰ sshbuf *buf;
+	ਅੱਖਰ encoded[8096];
 	FILE *fp;
 
-	if ((buf = sshbuf_new()) == NULL)
+	ਜੇ ((buf = sshbuf_new()) == ਨਿਰਾ)
 		fatal("sshbuf_new failed");
-	if ((fp = fopen(identity_file, "r")) == NULL)
-		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
+	ਜੇ ((fp = fopen(ਪਛਾਣ_ਤੱਤ_file, "r")) == ਨਿਰਾ)
+		fatal("%s: %s: %s", __progname, ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
 	encoded[0] = '\0';
-	while ((blen = get_line(fp, line, sizeof(line))) != -1) {
-		if (blen > 0 && line[blen - 1] == '\\')
+	ਜਦੋਂ ((blen = get_ਸਤਰ(fp, ਸਤਰ, ਆਕਾਰ(ਸਤਰ))) != -1) {
+		ਜੇ (blen > 0 && ਸਤਰ[blen - 1] == '\\')
 			escaped++;
-		if (strncmp(line, "----", 4) == 0 ||
-		    strstr(line, ": ") != NULL) {
-			if (strstr(line, SSH_COM_PRIVATE_BEGIN) != NULL)
-				*private = 1;
-			if (strstr(line, " END ") != NULL) {
-				break;
+		ਜੇ (ਲੜੀ_ਤੁਲਨਾ(ਸਤਰ, "----", 4) == 0 ||
+		    ਲੜੀ_ਖੋਜ(ਸਤਰ, ": ") != ਨਿਰਾ) {
+			ਜੇ (ਲੜੀ_ਖੋਜ(ਸਤਰ, SSH_COM_ਨਿੱਜੀ_BEGIN) != ਨਿਰਾ)
+				*ਨਿਜੀ = 1;
+			ਜੇ (ਲੜੀ_ਖੋਜ(ਸਤਰ, " END ") != ਨਿਰਾ) {
+				ਰੋਕੋ;
 			}
 			/* fprintf(stderr, "ignore: %s", line); */
-			continue;
+			ਜਾਰੀ;
 		}
-		if (escaped) {
+		ਜੇ (escaped) {
 			escaped--;
 			/* fprintf(stderr, "escaped: %s", line); */
-			continue;
+			ਜਾਰੀ;
 		}
-		strlcat(encoded, line, sizeof(encoded));
+		strlcat(encoded, ਸਤਰ, ਆਕਾਰ(encoded));
 	}
-	len = strlen(encoded);
-	if (((len % 4) == 3) &&
+	len = ਲੜੀ_ਲੰਬਾਈ(encoded);
+	ਜੇ (((len % 4) == 3) &&
 	    (encoded[len-1] == '=') &&
 	    (encoded[len-2] == '=') &&
 	    (encoded[len-3] == '='))
 		encoded[len-3] = '\0';
-	if ((r = sshbuf_b64tod(buf, encoded)) != 0)
+	ਜੇ ((r = sshbuf_b64tod(buf, encoded)) != 0)
 		fatal_fr(r, "base64 decode");
-	if (*private) {
-		if ((*k = do_convert_private_ssh2(buf)) == NULL)
+	ਜੇ (*ਨਿਜੀ) {
+		ਜੇ ((*k = do_convert_ਨਿੱਜੀ_ssh2(buf)) == ਨਿਰਾ)
 			fatal_f("private key conversion failed");
-	} else if ((r = sshkey_fromb(buf, k)) != 0)
+	} ਨਹੀਂਤਾਂ ਜੇ ((r = sshkey_fromb(buf, k)) != 0)
 		fatal_fr(r, "parse key");
 	sshbuf_free(buf);
 	fclose(fp);
 }
 
-static void
-do_convert_from_pkcs8(struct sshkey **k, int *private)
+ਸਥਿਰ ਖਾਲੀ
+do_convert_from_pkcs8(ਬਣਤਰ sshkey **k, ਪੂਰਨ *ਨਿਜੀ)
 {
 	EVP_PKEY *pubkey;
 	FILE *fp;
 
-	if ((fp = fopen(identity_file, "r")) == NULL)
-		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
-	if ((pubkey = PEM_read_PUBKEY(fp, NULL, NULL, NULL)) == NULL) {
+	ਜੇ ((fp = fopen(ਪਛਾਣ_ਤੱਤ_file, "r")) == ਨਿਰਾ)
+		fatal("%s: %s: %s", __progname, ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
+	ਜੇ ((pubkey = PEM_read_PUBKEY(fp, ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ)) == ਨਿਰਾ) {
 		fatal_f("%s is not a recognised public key format",
-		    identity_file);
+		    ਪਛਾਣ_ਤੱਤ_file);
 	}
 	fclose(fp);
-	switch (EVP_PKEY_base_id(pubkey)) {
-	case EVP_PKEY_RSA:
-		if ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
+	ਚੋਣ (EVP_PKEY_ਅਧਾਰ_id(pubkey)) {
+	ਹਾਲਤ EVP_PKEY_RSA:
+		ਜੇ ((*k = sshkey_new(ਕੁੰਜੀ_UNSPEC)) == ਨਿਰਾ)
 			fatal("sshkey_new failed");
-		(*k)->type = KEY_RSA;
+		(*k)->type = ਕੁੰਜੀ_RSA;
 		(*k)->pkey = pubkey;
-		pubkey = NULL;
-		break;
-	case EVP_PKEY_EC:
-		if ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
+		pubkey = ਨਿਰਾ;
+		ਰੋਕੋ;
+	ਹਾਲਤ EVP_PKEY_EC:
+		ਜੇ ((*k = sshkey_new(ਕੁੰਜੀ_UNSPEC)) == ਨਿਰਾ)
 			fatal("sshkey_new failed");
-		if (((*k)->ecdsa_nid = sshkey_ecdsa_fixup_group(pubkey)) == -1)
+		ਜੇ (((*k)->ecdsa_nid = sshkey_ecdsa_fixup_ਸਮੂਹ(pubkey)) == -1)
 			fatal("sshkey_ecdsa_fixup_group failed");
-		(*k)->type = KEY_ECDSA;
+		(*k)->type = ਕੁੰਜੀ_ECDSA;
 		(*k)->pkey = pubkey;
-		pubkey = NULL;
-		break;
-	default:
+		pubkey = ਨਿਰਾ;
+		ਰੋਕੋ;
+	ਮੂਲ:
 		fatal_f("unsupported pubkey type %d",
-		    EVP_PKEY_base_id(pubkey));
+		    EVP_PKEY_ਅਧਾਰ_id(pubkey));
 	}
 	EVP_PKEY_free(pubkey);
 }
 
-static void
-do_convert_from_pem(struct sshkey **k, int *private)
+ਸਥਿਰ ਖਾਲੀ
+do_convert_from_pem(ਬਣਤਰ sshkey **k, ਪੂਰਨ *ਨਿਜੀ)
 {
 	FILE *fp;
 	RSA *rsa;
 
-	if ((fp = fopen(identity_file, "r")) == NULL)
-		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
-	if ((rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL)) != NULL) {
-		if ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
+	ਜੇ ((fp = fopen(ਪਛਾਣ_ਤੱਤ_file, "r")) == ਨਿਰਾ)
+		fatal("%s: %s: %s", __progname, ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
+	ਜੇ ((rsa = PEM_read_RSAPublic_ਕੁੰਜੀ(fp, ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ)) != ਨਿਰਾ) {
+		ਜੇ ((*k = sshkey_new(ਕੁੰਜੀ_UNSPEC)) == ਨਿਰਾ)
 			fatal("sshkey_new failed");
-		if (((*k)->pkey = EVP_PKEY_new()) == NULL)
+		ਜੇ (((*k)->pkey = EVP_PKEY_new()) == ਨਿਰਾ)
 			fatal("EVP_PKEY_new failed");
-		(*k)->type = KEY_RSA;
-		if (EVP_PKEY_set1_RSA((*k)->pkey, rsa) != 1)
+		(*k)->type = ਕੁੰਜੀ_RSA;
+		ਜੇ (EVP_PKEY_set1_RSA((*k)->pkey, rsa) != 1)
 			fatal("EVP_PKEY_set1_RSA failed");
 		RSA_free(rsa);
 		fclose(fp);
-		return;
+		ਵਾਪਸ;
 	}
 	fatal_f("unrecognised raw private key format");
 }
 
-static void
-do_convert_from(struct passwd *pw)
+ਸਥਿਰ ਖਾਲੀ
+do_convert_from(ਬਣਤਰ passwd *pw)
 {
-	struct sshkey *k = NULL;
-	int r, private = 0, ok = 0;
-	struct stat st;
+	ਬਣਤਰ sshkey *k = ਨਿਰਾ;
+	ਪੂਰਨ r, ਨਿਜੀ = 0, ok = 0;
+	ਬਣਤਰ stat st;
 
-	if (!have_identity)
+	ਜੇ (!have_ਪਛਾਣ_ਤੱਤ)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
-		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
+	ਜੇ (stat(ਪਛਾਣ_ਤੱਤ_file, &st) == -1)
+		fatal("%s: %s: %s", __progname, ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
 
-	switch (convert_format) {
-	case FMT_RFC4716:
-		do_convert_from_ssh2(pw, &k, &private);
-		break;
-	case FMT_PKCS8:
-		do_convert_from_pkcs8(&k, &private);
-		break;
-	case FMT_PEM:
-		do_convert_from_pem(&k, &private);
-		break;
-	default:
+	ਚੋਣ (convert_format) {
+	ਹਾਲਤ FMT_RFC4716:
+		do_convert_from_ssh2(pw, &k, &ਨਿਜੀ);
+		ਰੋਕੋ;
+	ਹਾਲਤ FMT_PKCS8:
+		do_convert_from_pkcs8(&k, &ਨਿਜੀ);
+		ਰੋਕੋ;
+	ਹਾਲਤ FMT_PEM:
+		do_convert_from_pem(&k, &ਨਿਜੀ);
+		ਰੋਕੋ;
+	ਮੂਲ:
 		fatal_f("unknown key format %d", convert_format);
 	}
 
-	if (!private) {
-		if ((r = sshkey_write(k, stdout)) == 0)
+	ਜੇ (!ਨਿਜੀ) {
+		ਜੇ ((r = sshkey_write(k, stdout)) == 0)
 			ok = 1;
-		if (ok)
+		ਜੇ (ok)
 			fprintf(stdout, "\n");
-	} else {
-		switch (k->type) {
-		case KEY_ECDSA:
-			ok = PEM_write_ECPrivateKey(stdout,
-			    EVP_PKEY_get0_EC_KEY(k->pkey), NULL, NULL, 0,
-			    NULL, NULL);
-			break;
-		case KEY_RSA:
-			ok = PEM_write_RSAPrivateKey(stdout,
-			    EVP_PKEY_get0_RSA(k->pkey), NULL, NULL, 0,
-			    NULL, NULL);
-			break;
-		default:
+	} ਨਹੀਂਤਾਂ {
+		ਚੋਣ (k->type) {
+		ਹਾਲਤ ਕੁੰਜੀ_ECDSA:
+			ok = PEM_write_ECPrivate_ਕੁੰਜੀ(stdout,
+			    EVP_PKEY_get0_EC_ਕੁੰਜੀ(k->pkey), ਨਿਰਾ, ਨਿਰਾ, 0,
+			    ਨਿਰਾ, ਨਿਰਾ);
+			ਰੋਕੋ;
+		ਹਾਲਤ ਕੁੰਜੀ_RSA:
+			ok = PEM_write_RSAPrivate_ਕੁੰਜੀ(stdout,
+			    EVP_PKEY_get0_RSA(k->pkey), ਨਿਰਾ, ਨਿਰਾ, 0,
+			    ਨਿਰਾ, ਨਿਰਾ);
+			ਰੋਕੋ;
+		ਮੂਲ:
 			fatal_f("unsupported key type %s", sshkey_type(k));
 		}
 	}
 
-	if (!ok)
+	ਜੇ (!ok)
 		fatal("key write failed");
 	sshkey_free(k);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-static void
-do_print_public(struct passwd *pw)
+ਸਥਿਰ ਖਾਲੀ
+do_print_ਜਨਤਕ(ਬਣਤਰ passwd *pw)
 {
-	struct sshkey *prv;
-	struct stat st;
-	int r;
-	char *comment = NULL;
+	ਬਣਤਰ sshkey *prv;
+	ਬਣਤਰ stat st;
+	ਪੂਰਨ r;
+	ਅੱਖਰ *comment = ਨਿਰਾ;
 
-	if (!have_identity)
+	ਜੇ (!have_ਪਛਾਣ_ਤੱਤ)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
-		fatal("%s: %s", identity_file, strerror(errno));
-	prv = load_identity(identity_file, &comment);
-	if ((r = sshkey_write(prv, stdout)) != 0)
+	ਜੇ (stat(ਪਛਾਣ_ਤੱਤ_file, &st) == -1)
+		fatal("%s: %s", ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
+	prv = ਲੱਦੋ_ਪਛਾਣ_ਤੱਤ(ਪਛਾਣ_ਤੱਤ_file, &comment);
+	ਜੇ ((r = sshkey_write(prv, stdout)) != 0)
 		fatal_fr(r, "write key");
-	if (comment != NULL && *comment != '\0')
+	ਜੇ (comment != ਨਿਰਾ && *comment != '\0')
 		fprintf(stdout, " %s", comment);
 	fprintf(stdout, "\n");
-	if (sshkey_is_sk(prv)) {
+	ਜੇ (sshkey_is_sk(prv)) {
 		debug("sk_application: \"%s\", sk_flags 0x%02x",
 			prv->sk_application, prv->sk_flags);
 	}
 	sshkey_free(prv);
-	free(comment);
-	exit(0);
+	ਮੁਕਤ(comment);
+	ਬਾਹਰ_ਨਿਕਲੋ(0);
 }
 
-static void
-do_download(struct passwd *pw)
+ਸਥਿਰ ਖਾਲੀ
+do_download(ਬਣਤਰ passwd *pw)
 {
-#ifdef ENABLE_PKCS11
-	struct sshkey **keys = NULL;
-	int i, nkeys;
-	enum sshkey_fp_rep rep;
-	int fptype;
-	char *fp, *ra, **comments = NULL;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_PKCS11
+	ਬਣਤਰ sshkey **ਕੁੰਜੀਆਂ = ਨਿਰਾ;
+	ਪੂਰਨ i, nkeys;
+	ਗਿਣਤੀ sshkey_fp_rep rep;
+	ਪੂਰਨ fptype;
+	ਅੱਖਰ *fp, *ra, **comments = ਨਿਰਾ;
 
 	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
 	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
 
 	pkcs11_init(1);
-	nkeys = pkcs11_add_provider(pkcs11provider, NULL, &keys, &comments);
-	if (nkeys <= 0)
+	nkeys = pkcs11_ਜੋੜੋ_provider(pkcs11provider, ਨਿਰਾ, &ਕੁੰਜੀਆਂ, &comments);
+	ਜੇ (nkeys <= 0)
 		fatal("cannot read public key from pkcs11");
-	for (i = 0; i < nkeys; i++) {
-		if (print_fingerprint) {
-			fp = sshkey_fingerprint(keys[i], fptype, rep);
-			ra = sshkey_fingerprint(keys[i], fingerprint_hash,
+	ਲਈ (i = 0; i < nkeys; i++) {
+		ਜੇ (print_fingerprint) {
+			fp = sshkey_fingerprint(ਕੁੰਜੀਆਂ[i], fptype, rep);
+			ra = sshkey_fingerprint(ਕੁੰਜੀਆਂ[i], fingerprint_hash,
 			    SSH_FP_RANDOMART);
-			if (fp == NULL || ra == NULL)
+			ਜੇ (fp == ਨਿਰਾ || ra == ਨਿਰਾ)
 				fatal_f("sshkey_fingerprint fail");
-			printf("%u %s %s (PKCS11 key)\n", sshkey_size(keys[i]),
-			    fp, sshkey_type(keys[i]));
-			if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
-				printf("%s\n", ra);
-			free(ra);
-			free(fp);
-		} else {
-			(void) sshkey_write(keys[i], stdout); /* XXX check */
+			ਲਿਖੋ("%u %s %s (PKCS11 key)\n", sshkey_ਮਾਪ(ਕੁੰਜੀਆਂ[i]),
+			    fp, sshkey_type(ਕੁੰਜੀਆਂ[i]));
+			ਜੇ (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
+				ਲਿਖੋ("%s\n", ra);
+			ਮੁਕਤ(ra);
+			ਮੁਕਤ(fp);
+		} ਨਹੀਂਤਾਂ {
+			(ਖਾਲੀ) sshkey_write(ਕੁੰਜੀਆਂ[i], stdout); /* XXX check */
 			fprintf(stdout, "%s%s\n",
 			    *(comments[i]) == '\0' ? "" : " ", comments[i]);
 		}
-		free(comments[i]);
-		sshkey_free(keys[i]);
+		ਮੁਕਤ(comments[i]);
+		sshkey_free(ਕੁੰਜੀਆਂ[i]);
 	}
-	free(comments);
-	free(keys);
+	ਮੁਕਤ(comments);
+	ਮੁਕਤ(ਕੁੰਜੀਆਂ);
 	pkcs11_terminate();
-	exit(0);
-#else
+	ਬਾਹਰ_ਨਿਕਲੋ(0);
+#ਨਹੀਂਤਾਂ
 	fatal("no pkcs11 support");
-#endif /* ENABLE_PKCS11 */
+#ਜੇ_ਅੰਤ /* ENABLE_PKCS11 */
 }
 
-static struct sshkey *
-try_read_key(char **cpp)
+ਸਥਿਰ ਬਣਤਰ sshkey *
+try_read_ਕੁੰਜੀ(ਅੱਖਰ **cpp)
 {
-	struct sshkey *ret;
-	int r;
+	ਬਣਤਰ sshkey *ret;
+	ਪੂਰਨ r;
 
-	if ((ret = sshkey_new(KEY_UNSPEC)) == NULL)
+	ਜੇ ((ret = sshkey_new(ਕੁੰਜੀ_UNSPEC)) == ਨਿਰਾ)
 		fatal("sshkey_new failed");
-	if ((r = sshkey_read(ret, cpp)) == 0)
-		return ret;
+	ਜੇ ((r = sshkey_read(ret, cpp)) == 0)
+		ਵਾਪਸ ret;
 	/* Not a key */
 	sshkey_free(ret);
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-static void
-fingerprint_one_key(const struct sshkey *public, const char *comment)
+ਸਥਿਰ ਖਾਲੀ
+fingerprint_one_ਕੁੰਜੀ(ਅਚਲ ਬਣਤਰ sshkey *ਜਨਤਕ, ਅਚਲ ਅੱਖਰ *comment)
 {
-	char *fp = NULL, *ra = NULL;
-	enum sshkey_fp_rep rep;
-	int fptype;
+	ਅੱਖਰ *fp = ਨਿਰਾ, *ra = ਨਿਰਾ;
+	ਗਿਣਤੀ sshkey_fp_rep rep;
+	ਪੂਰਨ fptype;
 
 	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
 	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
-	fp = sshkey_fingerprint(public, fptype, rep);
-	ra = sshkey_fingerprint(public, fingerprint_hash, SSH_FP_RANDOMART);
-	if (fp == NULL || ra == NULL)
+	fp = sshkey_fingerprint(ਜਨਤਕ, fptype, rep);
+	ra = sshkey_fingerprint(ਜਨਤਕ, fingerprint_hash, SSH_FP_RANDOMART);
+	ਜੇ (fp == ਨਿਰਾ || ra == ਨਿਰਾ)
 		fatal_f("sshkey_fingerprint failed");
-	mprintf("%u %s %s (%s)\n", sshkey_size(public), fp,
-	    comment ? comment : "no comment", sshkey_type(public));
-	if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
-		printf("%s\n", ra);
-	free(ra);
-	free(fp);
+	mprintf("%u %s %s (%s)\n", sshkey_ਮਾਪ(ਜਨਤਕ), fp,
+	    comment ? comment : "no comment", sshkey_type(ਜਨਤਕ));
+	ਜੇ (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
+		ਲਿਖੋ("%s\n", ra);
+	ਮੁਕਤ(ra);
+	ਮੁਕਤ(fp);
 }
 
-static void
-fingerprint_private(const char *path)
+ਸਥਿਰ ਖਾਲੀ
+fingerprint_ਨਿੱਜੀ(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ)
 {
-	struct stat st;
-	char *comment = NULL;
-	struct sshkey *privkey = NULL, *pubkey = NULL;
-	int r;
+	ਬਣਤਰ stat st;
+	ਅੱਖਰ *comment = ਨਿਰਾ;
+	ਬਣਤਰ sshkey *privkey = ਨਿਰਾ, *pubkey = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if (stat(identity_file, &st) == -1)
-		fatal("%s: %s", path, strerror(errno));
-	if ((r = sshkey_load_public(path, &pubkey, &comment)) != 0)
-		debug_r(r, "load public \"%s\"", path);
-	if (pubkey == NULL || comment == NULL || *comment == '\0') {
-		free(comment);
-		if ((r = sshkey_load_private(path, NULL,
+	ਜੇ (stat(ਪਛਾਣ_ਤੱਤ_file, &st) == -1)
+		fatal("%s: %s", ਰਸਤਾ, strerror(errno));
+	ਜੇ ((r = sshkey_ਲੱਦੋ_ਜਨਤਕ(ਰਸਤਾ, &pubkey, &comment)) != 0)
+		debug_r(r, "load public \"%s\"", ਰਸਤਾ);
+	ਜੇ (pubkey == ਨਿਰਾ || comment == ਨਿਰਾ || *comment == '\0') {
+		ਮੁਕਤ(comment);
+		ਜੇ ((r = sshkey_ਲੱਦੋ_ਨਿੱਜੀ(ਰਸਤਾ, ਨਿਰਾ,
 		    &privkey, &comment)) != 0)
-			debug_r(r, "load private \"%s\"", path);
+			debug_r(r, "load private \"%s\"", ਰਸਤਾ);
 	}
-	if (pubkey == NULL && privkey == NULL)
-		fatal("%s is not a key file.", path);
+	ਜੇ (pubkey == ਨਿਰਾ && privkey == ਨਿਰਾ)
+		fatal("%s is not a key file.", ਰਸਤਾ);
 
-	fingerprint_one_key(pubkey == NULL ? privkey : pubkey, comment);
+	fingerprint_one_ਕੁੰਜੀ(pubkey == ਨਿਰਾ ? privkey : pubkey, comment);
 	sshkey_free(pubkey);
 	sshkey_free(privkey);
-	free(comment);
+	ਮੁਕਤ(comment);
 }
 
-static void
-do_fingerprint(struct passwd *pw)
+ਸਥਿਰ ਖਾਲੀ
+do_fingerprint(ਬਣਤਰ passwd *pw)
 {
 	FILE *f;
-	struct sshkey *public = NULL;
-	char *comment = NULL, *cp, *ep, *line = NULL;
-	size_t linesize = 0;
-	int i, invalid = 1;
-	const char *path;
+	ਬਣਤਰ sshkey *ਜਨਤਕ = ਨਿਰਾ;
+	ਅੱਖਰ *comment = ਨਿਰਾ, *cp, *ep, *ਸਤਰ = ਨਿਰਾ;
+	ਮਾਪ_t linesize = 0;
+	ਪੂਰਨ i, invalid = 1;
+	ਅਚਲ ਅੱਖਰ *ਰਸਤਾ;
 	u_long lnum = 0;
 
-	if (!have_identity)
+	ਜੇ (!have_ਪਛਾਣ_ਤੱਤ)
 		ask_filename(pw, "Enter file in which the key is");
-	path = identity_file;
+	ਰਸਤਾ = ਪਛਾਣ_ਤੱਤ_file;
 
-	if (strcmp(identity_file, "-") == 0) {
+	ਜੇ (strcmp(ਪਛਾਣ_ਤੱਤ_file, "-") == 0) {
 		f = stdin;
-		path = "(stdin)";
-	} else if ((f = fopen(path, "r")) == NULL)
-		fatal("%s: %s: %s", __progname, path, strerror(errno));
+		ਰਸਤਾ = "(stdin)";
+	} ਨਹੀਂਤਾਂ ਜੇ ((f = fopen(ਰਸਤਾ, "r")) == ਨਿਰਾ)
+		fatal("%s: %s: %s", __progname, ਰਸਤਾ, strerror(errno));
 
-	while (getline(&line, &linesize, f) != -1) {
+	ਜਦੋਂ (getline(&ਸਤਰ, &linesize, f) != -1) {
 		lnum++;
-		cp = line;
+		cp = ਸਤਰ;
 		cp[strcspn(cp, "\r\n")] = '\0';
 		/* Trim leading space and comments */
-		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
-			continue;
+		cp = ਸਤਰ + strspn(ਸਤਰ, " \t");
+		ਜੇ (*cp == '#' || *cp == '\0')
+			ਜਾਰੀ;
 
 		/*
 		 * Input may be plain keys, private keys, authorized_keys
@@ -971,12 +971,12 @@ do_fingerprint(struct passwd *pw)
 		 * "SSH PRIVATE KEY" appears on the first line and we're
 		 * not reading from stdin (XXX support private keys on stdin).
 		 */
-		if (lnum == 1 && strcmp(identity_file, "-") != 0 &&
-		    strstr(cp, "PRIVATE KEY") != NULL) {
-			free(line);
+		ਜੇ (lnum == 1 && strcmp(ਪਛਾਣ_ਤੱਤ_file, "-") != 0 &&
+		    ਲੜੀ_ਖੋਜ(cp, "PRIVATE KEY") != ਨਿਰਾ) {
+			ਮੁਕਤ(ਸਤਰ);
 			fclose(f);
-			fingerprint_private(path);
-			exit(0);
+			fingerprint_ਨਿੱਜੀ(ਰਸਤਾ);
+			ਬਾਹਰ_ਨਿਕਲੋ(0);
 		}
 
 		/*
@@ -984,92 +984,92 @@ do_fingerprint(struct passwd *pw)
 		 * accept a public key prefixed with a hostname or options.
 		 * Try a bare key first, otherwise skip the leading stuff.
 		 */
-		comment = NULL;
-		if ((public = try_read_key(&cp)) == NULL) {
+		comment = ਨਿਰਾ;
+		ਜੇ ((ਜਨਤਕ = try_read_ਕੁੰਜੀ(&cp)) == ਨਿਰਾ) {
 			i = strtol(cp, &ep, 10);
-			if (i == 0 || ep == NULL ||
+			ਜੇ (i == 0 || ep == ਨਿਰਾ ||
 			    (*ep != ' ' && *ep != '\t')) {
-				int quoted = 0;
+				ਪੂਰਨ quoted = 0;
 
 				comment = cp;
-				for (; *cp && (quoted || (*cp != ' ' &&
+				ਲਈ (; *cp && (quoted || (*cp != ' ' &&
 				    *cp != '\t')); cp++) {
-					if (*cp == '\\' && cp[1] == '"')
+					ਜੇ (*cp == '\\' && cp[1] == '"')
 						cp++;	/* Skip both */
-					else if (*cp == '"')
+					ਨਹੀਂਤਾਂ ਜੇ (*cp == '"')
 						quoted = !quoted;
 				}
-				if (!*cp)
-					continue;
+				ਜੇ (!*cp)
+					ਜਾਰੀ;
 				*cp++ = '\0';
 			}
 		}
 		/* Retry after parsing leading hostname/key options */
-		if (public == NULL && (public = try_read_key(&cp)) == NULL) {
-			debug("%s:%lu: not a public key", path, lnum);
-			continue;
+		ਜੇ (ਜਨਤਕ == ਨਿਰਾ && (ਜਨਤਕ = try_read_ਕੁੰਜੀ(&cp)) == ਨਿਰਾ) {
+			debug("%s:%lu: not a public key", ਰਸਤਾ, lnum);
+			ਜਾਰੀ;
 		}
 
 		/* Find trailing comment, if any */
-		for (; *cp == ' ' || *cp == '\t'; cp++)
+		ਲਈ (; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (*cp != '\0' && *cp != '#')
+		ਜੇ (*cp != '\0' && *cp != '#')
 			comment = cp;
 
-		fingerprint_one_key(public, comment);
-		sshkey_free(public);
+		fingerprint_one_ਕੁੰਜੀ(ਜਨਤਕ, comment);
+		sshkey_free(ਜਨਤਕ);
 		invalid = 0; /* One good key in the file is sufficient */
 	}
 	fclose(f);
-	free(line);
+	ਮੁਕਤ(ਸਤਰ);
 
-	if (invalid)
-		fatal("%s is not a public key file.", path);
-	exit(0);
+	ਜੇ (invalid)
+		fatal("%s is not a public key file.", ਰਸਤਾ);
+	ਬਾਹਰ_ਨਿਕਲੋ(0);
 }
 
-static void
-do_gen_all_hostkeys(struct passwd *pw)
+ਸਥਿਰ ਖਾਲੀ
+do_gen_all_hostkeys(ਬਣਤਰ passwd *pw)
 {
-	struct {
-		char *key_type;
-		char *key_type_display;
-		char *path;
-	} key_types[] = {
-#ifdef WITH_OPENSSL
-		{ "rsa", "RSA" ,_PATH_HOST_RSA_KEY_FILE },
-		{ "ecdsa", "ECDSA",_PATH_HOST_ECDSA_KEY_FILE },
-#endif /* WITH_OPENSSL */
-		{ "ed25519", "ED25519",_PATH_HOST_ED25519_KEY_FILE },
-#ifdef USE_MLDSA
+	ਬਣਤਰ {
+		ਅੱਖਰ *ਕੁੰਜੀ_type;
+		ਅੱਖਰ *ਕੁੰਜੀ_type_display;
+		ਅੱਖਰ *ਰਸਤਾ;
+	} ਕੁੰਜੀ_types[] = {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+		{ "rsa", "RSA" ,ਰਸਤਾ_HOST_RSA_ਕੁੰਜੀ_FILE },
+		{ "ecdsa", "ECDSA",ਰਸਤਾ_HOST_ECDSA_ਕੁੰਜੀ_FILE },
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
+		{ "ed25519", "ED25519",ਰਸਤਾ_HOST_ED25519_ਕੁੰਜੀ_FILE },
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_MLDSA
 		{ "mldsa44-ed25519", "MLDSA44-ED25519",
-		     _PATH_HOST_MLDSA44_ED25519_KEY_FILE },
-#endif
-		{ NULL, NULL, NULL }
+		     ਰਸਤਾ_HOST_MLDSA44_ED25519_ਕੁੰਜੀ_FILE },
+#ਜੇ_ਅੰਤ
+		{ ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ }
 	};
 
-	uint32_t bits = 0;
-	int first = 0;
-	struct stat st;
-	struct sshkey *private, *public;
-	char comment[KEY_COMMENT_MAX], *prv_tmp, *pub_tmp, *prv_file, *pub_file;
-	int i, type, fd, r;
+	uint32_t ਬਿੱਟ = 0;
+	ਪੂਰਨ ਪਹਿਲਾ = 0;
+	ਬਣਤਰ stat st;
+	ਬਣਤਰ sshkey *ਨਿਜੀ, *ਜਨਤਕ;
+	ਅੱਖਰ comment[ਕੁੰਜੀ_COMMENT_MAX], *prv_tmp, *pub_tmp, *prv_file, *pub_file;
+	ਪੂਰਨ i, type, fd, r;
 
-	for (i = 0; key_types[i].key_type; i++) {
-		public = private = NULL;
-		prv_tmp = pub_tmp = prv_file = pub_file = NULL;
+	ਲਈ (i = 0; ਕੁੰਜੀ_types[i].ਕੁੰਜੀ_type; i++) {
+		ਜਨਤਕ = ਨਿਜੀ = ਨਿਰਾ;
+		prv_tmp = pub_tmp = prv_file = pub_file = ਨਿਰਾ;
 
 		xasprintf(&prv_file, "%s%s",
-		    identity_file, key_types[i].path);
+		    ਪਛਾਣ_ਤੱਤ_file, ਕੁੰਜੀ_types[i].ਰਸਤਾ);
 
 		/* Check whether private key exists and is not zero-length */
-		if (stat(prv_file, &st) == 0) {
-			if (st.st_size != 0)
-				goto next;
-		} else if (errno != ENOENT) {
-			error("Could not stat %s: %s", key_types[i].path,
+		ਜੇ (stat(prv_file, &st) == 0) {
+			ਜੇ (st.st_size != 0)
+				ਜਾਓ ਅਗਲਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (errno != ENOENT) {
+			error("Could not stat %s: %s", ਕੁੰਜੀ_types[i].ਰਸਤਾ,
 			    strerror(errno));
-			goto failnext;
+			ਜਾਓ failnext;
 		}
 
 		/*
@@ -1077,388 +1077,388 @@ do_gen_all_hostkeys(struct passwd *pw)
 		 * key generation.
 		 */
 		xasprintf(&prv_tmp, "%s%s.XXXXXXXXXX",
-		    identity_file, key_types[i].path);
+		    ਪਛਾਣ_ਤੱਤ_file, ਕੁੰਜੀ_types[i].ਰਸਤਾ);
 		xasprintf(&pub_tmp, "%s%s.pub.XXXXXXXXXX",
-		    identity_file, key_types[i].path);
+		    ਪਛਾਣ_ਤੱਤ_file, ਕੁੰਜੀ_types[i].ਰਸਤਾ);
 		xasprintf(&pub_file, "%s%s.pub",
-		    identity_file, key_types[i].path);
+		    ਪਛਾਣ_ਤੱਤ_file, ਕੁੰਜੀ_types[i].ਰਸਤਾ);
 
-		if (first == 0) {
-			first = 1;
-			printf("%s: generating new host keys: ", __progname);
+		ਜੇ (ਪਹਿਲਾ == 0) {
+			ਪਹਿਲਾ = 1;
+			ਲਿਖੋ("%s: generating new host keys: ", __progname);
 		}
-		printf("%s ", key_types[i].key_type_display);
+		ਲਿਖੋ("%s ", ਕੁੰਜੀ_types[i].ਕੁੰਜੀ_type_display);
 		fflush(stdout);
-		type = sshkey_type_from_shortname(key_types[i].key_type);
-		if ((fd = mkstemp(prv_tmp)) == -1) {
+		type = sshkey_type_from_shortname(ਕੁੰਜੀ_types[i].ਕੁੰਜੀ_type);
+		ਜੇ ((fd = mkstemp(prv_tmp)) == -1) {
 			error("Could not save your private key in %s: %s",
 			    prv_tmp, strerror(errno));
-			goto failnext;
+			ਜਾਓ failnext;
 		}
-		(void)close(fd); /* just using mkstemp() to reserve a name */
-		bits = 0;
-		type_bits_valid(type, NULL, &bits);
-		if ((r = sshkey_generate(type, bits, &private)) != 0) {
+		(ਖਾਲੀ)close(fd); /* just using mkstemp() to reserve a name */
+		ਬਿੱਟ = 0;
+		type_ਬਿੱਟ_valid(type, ਨਿਰਾ, &ਬਿੱਟ);
+		ਜੇ ((r = sshkey_generate(type, ਬਿੱਟ, &ਨਿਜੀ)) != 0) {
 			error_r(r, "sshkey_generate failed");
-			goto failnext;
+			ਜਾਓ failnext;
 		}
-		if ((r = sshkey_from_private(private, &public)) != 0)
+		ਜੇ ((r = sshkey_from_ਨਿੱਜੀ(ਨਿਜੀ, &ਜਨਤਕ)) != 0)
 			fatal_fr(r, "sshkey_from_private");
-		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name,
+		snprintf(comment, ਆਕਾਰ comment, "%s@%s", pw->pw_name,
 		    hostname);
-		if ((r = sshkey_save_private(private, prv_tmp, "",
-		    comment, private_key_format, openssh_format_cipher,
-		    rounds)) != 0) {
+		ਜੇ ((r = sshkey_save_ਨਿੱਜੀ(ਨਿਜੀ, prv_tmp, "",
+		    comment, ਨਿੱਜੀ_ਕੁੰਜੀ_format, openssh_format_cipher,
+		    ਗੇੜ)) != 0) {
 			error_r(r, "Saving key \"%s\" failed", prv_tmp);
-			goto failnext;
+			ਜਾਓ failnext;
 		}
-		if ((fd = mkstemp(pub_tmp)) == -1) {
+		ਜੇ ((fd = mkstemp(pub_tmp)) == -1) {
 			error("Could not save your public key in %s: %s",
 			    pub_tmp, strerror(errno));
-			goto failnext;
+			ਜਾਓ failnext;
 		}
-		(void)fchmod(fd, 0644);
-		(void)close(fd);
-		if ((r = sshkey_save_public(public, pub_tmp, comment)) != 0) {
+		(ਖਾਲੀ)fchmod(fd, 0644);
+		(ਖਾਲੀ)close(fd);
+		ਜੇ ((r = sshkey_save_ਜਨਤਕ(ਜਨਤਕ, pub_tmp, comment)) != 0) {
 			error_r(r, "Unable to save public key to %s",
-			    identity_file);
-			goto failnext;
+			    ਪਛਾਣ_ਤੱਤ_file);
+			ਜਾਓ failnext;
 		}
 
 		/* Rename temporary files to their permanent locations. */
-		if (rename(pub_tmp, pub_file) != 0) {
+		ਜੇ (rename(pub_tmp, pub_file) != 0) {
 			error("Unable to move %s into position: %s",
 			    pub_file, strerror(errno));
-			goto failnext;
+			ਜਾਓ failnext;
 		}
-		if (rename(prv_tmp, prv_file) != 0) {
+		ਜੇ (rename(prv_tmp, prv_file) != 0) {
 			error("Unable to move %s into position: %s",
-			    key_types[i].path, strerror(errno));
+			    ਕੁੰਜੀ_types[i].ਰਸਤਾ, strerror(errno));
  failnext:
-			first = 0;
-			goto next;
+			ਪਹਿਲਾ = 0;
+			ਜਾਓ ਅਗਲਾ;
 		}
- next:
-		sshkey_free(private);
-		sshkey_free(public);
-		free(prv_tmp);
-		free(pub_tmp);
-		free(prv_file);
-		free(pub_file);
+ ਅਗਲਾ:
+		sshkey_free(ਨਿਜੀ);
+		sshkey_free(ਜਨਤਕ);
+		ਮੁਕਤ(prv_tmp);
+		ਮੁਕਤ(pub_tmp);
+		ਮੁਕਤ(prv_file);
+		ਮੁਕਤ(pub_file);
 	}
-	if (first != 0)
-		printf("\n");
+	ਜੇ (ਪਹਿਲਾ != 0)
+		ਲਿਖੋ("\n");
 }
 
-struct known_hosts_ctx {
-	const char *host;	/* Hostname searched for in find/delete case */
-	FILE *out;		/* Output file, stdout for find_hosts case */
-	int has_unhashed;	/* When hashing, original had unhashed hosts */
-	int found_key;		/* For find/delete, host was found */
-	int invalid;		/* File contained invalid items; don't delete */
-	int hash_hosts;		/* Hash hostnames as we go */
-	int find_host;		/* Search for specific hostname */
-	int delete_host;	/* Delete host from known_hosts */
+ਬਣਤਰ ਗਿਆਤ_hosts_ctx {
+	ਅਚਲ ਅੱਖਰ *host;	/* Hostname searched for in find/delete case */
+	FILE *ਬਾਹਰਲਾ;		/* Output file, stdout for find_hosts case */
+	ਪੂਰਨ has_unhashed;	/* When hashing, original had unhashed hosts */
+	ਪੂਰਨ ਮਿਲਿਆ_ਕੁੰਜੀ;		/* For find/delete, host was found */
+	ਪੂਰਨ invalid;		/* File contained invalid items; don't delete */
+	ਪੂਰਨ hash_hosts;		/* Hash hostnames as we go */
+	ਪੂਰਨ ਲੱਭੋ_host;		/* Search for specific hostname */
+	ਪੂਰਨ delete_host;	/* Delete host from known_hosts */
 };
 
-static int
-known_hosts_hash(struct hostkey_foreach_line *l, void *_ctx)
+ਸਥਿਰ ਪੂਰਨ
+ਗਿਆਤ_hosts_hash(ਬਣਤਰ hostkey_foreach_ਸਤਰ *l, ਖਾਲੀ *_ctx)
 {
-	struct known_hosts_ctx *ctx = (struct known_hosts_ctx *)_ctx;
-	char *hashed, *cp, *hosts, *ohosts;
-	int has_wild = l->hosts && strcspn(l->hosts, "*?!") != strlen(l->hosts);
-	int was_hashed = l->hosts && l->hosts[0] == HASH_DELIM;
+	ਬਣਤਰ ਗਿਆਤ_hosts_ctx *ctx = (ਬਣਤਰ ਗਿਆਤ_hosts_ctx *)_ctx;
+	ਅੱਖਰ *hashed, *cp, *hosts, *ohosts;
+	ਪੂਰਨ has_wild = l->hosts && strcspn(l->hosts, "*?!") != ਲੜੀ_ਲੰਬਾਈ(l->hosts);
+	ਪੂਰਨ was_hashed = l->hosts && l->hosts[0] == HASH_DELIM;
 
-	switch (l->status) {
-	case HKF_STATUS_OK:
-	case HKF_STATUS_MATCHED:
+	ਚੋਣ (l->ਸਥਿਤੀ) {
+	ਹਾਲਤ HKF_ਸਥਿਤੀ_OK:
+	ਹਾਲਤ HKF_ਸਥਿਤੀ_MATCHED:
 		/*
 		 * Don't hash hosts already hashed, with wildcard
 		 * characters or a CA/revocation marker.
 		 */
-		if (was_hashed || has_wild || l->marker != MRK_NONE) {
-			fprintf(ctx->out, "%s\n", l->line);
-			if (has_wild && !ctx->find_host) {
+		ਜੇ (was_hashed || has_wild || l->marker != MRK_NONE) {
+			fprintf(ctx->ਬਾਹਰਲਾ, "%s\n", l->ਸਤਰ);
+			ਜੇ (has_wild && !ctx->ਲੱਭੋ_host) {
 				logit("%s:%lu: ignoring host name "
-				    "with wildcard: %.64s", l->path,
+				    "with wildcard: %.64s", l->ਰਸਤਾ,
 				    l->linenum, l->hosts);
 			}
-			return 0;
+			ਵਾਪਸ 0;
 		}
 		/*
 		 * Split any comma-separated hostnames from the host list,
 		 * hash and store separately.
 		 */
 		ohosts = hosts = xstrdup(l->hosts);
-		while ((cp = strsep(&hosts, ",")) != NULL && *cp != '\0') {
+		ਜਦੋਂ ((cp = strsep(&hosts, ",")) != ਨਿਰਾ && *cp != '\0') {
 			lowercase(cp);
-			if ((hashed = host_hash(cp, NULL, 0)) == NULL)
+			ਜੇ ((hashed = host_hash(cp, ਨਿਰਾ, 0)) == ਨਿਰਾ)
 				fatal("hash_host failed");
-			fprintf(ctx->out, "%s %s\n", hashed, l->rawkey);
-			free(hashed);
+			fprintf(ctx->ਬਾਹਰਲਾ, "%s %s\n", hashed, l->rawkey);
+			ਮੁਕਤ(hashed);
 			ctx->has_unhashed = 1;
 		}
-		free(ohosts);
-		return 0;
-	case HKF_STATUS_INVALID:
+		ਮੁਕਤ(ohosts);
+		ਵਾਪਸ 0;
+	ਹਾਲਤ HKF_ਸਥਿਤੀ_INVALID:
 		/* Retain invalid lines, but mark file as invalid. */
 		ctx->invalid = 1;
-		logit("%s:%lu: invalid line", l->path, l->linenum);
+		logit("%s:%lu: invalid line", l->ਰਸਤਾ, l->linenum);
 		/* FALLTHROUGH */
-	default:
-		fprintf(ctx->out, "%s\n", l->line);
-		return 0;
+	ਮੂਲ:
+		fprintf(ctx->ਬਾਹਰਲਾ, "%s\n", l->ਸਤਰ);
+		ਵਾਪਸ 0;
 	}
 	/* NOTREACHED */
-	return -1;
+	ਵਾਪਸ -1;
 }
 
-static int
-known_hosts_find_delete(struct hostkey_foreach_line *l, void *_ctx)
+ਸਥਿਰ ਪੂਰਨ
+ਗਿਆਤ_hosts_ਲੱਭੋ_delete(ਬਣਤਰ hostkey_foreach_ਸਤਰ *l, ਖਾਲੀ *_ctx)
 {
-	struct known_hosts_ctx *ctx = (struct known_hosts_ctx *)_ctx;
-	enum sshkey_fp_rep rep;
-	int fptype;
-	char *fp = NULL, *ra = NULL;
+	ਬਣਤਰ ਗਿਆਤ_hosts_ctx *ctx = (ਬਣਤਰ ਗਿਆਤ_hosts_ctx *)_ctx;
+	ਗਿਣਤੀ sshkey_fp_rep rep;
+	ਪੂਰਨ fptype;
+	ਅੱਖਰ *fp = ਨਿਰਾ, *ra = ਨਿਰਾ;
 
 	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
 	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
 
-	if (l->status == HKF_STATUS_MATCHED) {
-		if (ctx->delete_host) {
-			if (l->marker != MRK_NONE) {
+	ਜੇ (l->ਸਥਿਤੀ == HKF_ਸਥਿਤੀ_MATCHED) {
+		ਜੇ (ctx->delete_host) {
+			ਜੇ (l->marker != MRK_NONE) {
 				/* Don't remove CA and revocation lines */
-				fprintf(ctx->out, "%s\n", l->line);
-			} else {
+				fprintf(ctx->ਬਾਹਰਲਾ, "%s\n", l->ਸਤਰ);
+			} ਨਹੀਂਤਾਂ {
 				/*
 				 * Hostname matches and has no CA/revoke
 				 * marker, delete it by *not* writing the
 				 * line to ctx->out.
 				 */
-				ctx->found_key = 1;
-				if (!quiet)
-					printf("# Host %s found: line %lu\n",
+				ctx->ਮਿਲਿਆ_ਕੁੰਜੀ = 1;
+				ਜੇ (!quiet)
+					ਲਿਖੋ("# Host %s found: line %lu\n",
 					    ctx->host, l->linenum);
 			}
-			return 0;
-		} else if (ctx->find_host) {
-			ctx->found_key = 1;
-			if (!quiet) {
-				printf("# Host %s found: line %lu %s\n",
+			ਵਾਪਸ 0;
+		} ਨਹੀਂਤਾਂ ਜੇ (ctx->ਲੱਭੋ_host) {
+			ctx->ਮਿਲਿਆ_ਕੁੰਜੀ = 1;
+			ਜੇ (!quiet) {
+				ਲਿਖੋ("# Host %s found: line %lu %s\n",
 				    ctx->host,
 				    l->linenum, l->marker == MRK_CA ? "CA" :
 				    (l->marker == MRK_REVOKE ? "REVOKED" : ""));
 			}
-			if (ctx->hash_hosts)
-				known_hosts_hash(l, ctx);
-			else if (print_fingerprint) {
-				fp = sshkey_fingerprint(l->key, fptype, rep);
-				ra = sshkey_fingerprint(l->key,
+			ਜੇ (ctx->hash_hosts)
+				ਗਿਆਤ_hosts_hash(l, ctx);
+			ਨਹੀਂਤਾਂ ਜੇ (print_fingerprint) {
+				fp = sshkey_fingerprint(l->ਕੁੰਜੀ, fptype, rep);
+				ra = sshkey_fingerprint(l->ਕੁੰਜੀ,
 				    fingerprint_hash, SSH_FP_RANDOMART);
-				if (fp == NULL || ra == NULL)
+				ਜੇ (fp == ਨਿਰਾ || ra == ਨਿਰਾ)
 					fatal_f("sshkey_fingerprint failed");
 				mprintf("%s %s %s%s%s\n", ctx->host,
-				    sshkey_type(l->key), fp,
+				    sshkey_type(l->ਕੁੰਜੀ), fp,
 				    l->comment[0] ? " " : "",
 				    l->comment);
-				if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
-					printf("%s\n", ra);
-				free(ra);
-				free(fp);
-			} else
-				fprintf(ctx->out, "%s\n", l->line);
-			return 0;
+				ਜੇ (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
+					ਲਿਖੋ("%s\n", ra);
+				ਮੁਕਤ(ra);
+				ਮੁਕਤ(fp);
+			} ਨਹੀਂਤਾਂ
+				fprintf(ctx->ਬਾਹਰਲਾ, "%s\n", l->ਸਤਰ);
+			ਵਾਪਸ 0;
 		}
-	} else if (ctx->delete_host) {
+	} ਨਹੀਂਤਾਂ ਜੇ (ctx->delete_host) {
 		/* Retain non-matching hosts when deleting */
-		if (l->status == HKF_STATUS_INVALID) {
+		ਜੇ (l->ਸਥਿਤੀ == HKF_ਸਥਿਤੀ_INVALID) {
 			ctx->invalid = 1;
-			logit("%s:%lu: invalid line", l->path, l->linenum);
+			logit("%s:%lu: invalid line", l->ਰਸਤਾ, l->linenum);
 		}
-		fprintf(ctx->out, "%s\n", l->line);
+		fprintf(ctx->ਬਾਹਰਲਾ, "%s\n", l->ਸਤਰ);
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void
-do_known_hosts(struct passwd *pw, const char *name, int find_host,
-    int delete_host, int hash_hosts)
+ਸਥਿਰ ਖਾਲੀ
+do_ਗਿਆਤ_hosts(ਬਣਤਰ passwd *pw, ਅਚਲ ਅੱਖਰ *name, ਪੂਰਨ ਲੱਭੋ_host,
+    ਪੂਰਨ delete_host, ਪੂਰਨ hash_hosts)
 {
-	char *cp, tmp[PATH_MAX], old[PATH_MAX];
-	int r, fd, oerrno, inplace = 0;
-	struct known_hosts_ctx ctx;
+	ਅੱਖਰ *cp, tmp[PATH_MAX], old[PATH_MAX];
+	ਪੂਰਨ r, fd, oerrno, inplace = 0;
+	ਬਣਤਰ ਗਿਆਤ_hosts_ctx ctx;
 	u_int foreach_options;
-	struct stat sb;
+	ਬਣਤਰ stat sb;
 
-	if (!have_identity) {
-		cp = tilde_expand_filename(_PATH_SSH_USER_HOSTFILE, pw->pw_uid);
-		if (strlcpy(identity_file, cp, sizeof(identity_file)) >=
-		    sizeof(identity_file))
+	ਜੇ (!have_ਪਛਾਣ_ਤੱਤ) {
+		cp = tilde_expand_filename(ਰਸਤਾ_SSH_USER_HOSTFILE, pw->pw_uid);
+		ਜੇ (strlcpy(ਪਛਾਣ_ਤੱਤ_file, cp, ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ_file)) >=
+		    ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ_file))
 			fatal("Specified known hosts path too long");
-		free(cp);
-		have_identity = 1;
+		ਮੁਕਤ(cp);
+		have_ਪਛਾਣ_ਤੱਤ = 1;
 	}
-	if (stat(identity_file, &sb) != 0)
-		fatal("Cannot stat %s: %s", identity_file, strerror(errno));
+	ਜੇ (stat(ਪਛਾਣ_ਤੱਤ_file, &sb) != 0)
+		fatal("Cannot stat %s: %s", ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
 
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.out = stdout;
+	memset(&ctx, 0, ਆਕਾਰ(ctx));
+	ctx.ਬਾਹਰਲਾ = stdout;
 	ctx.host = name;
 	ctx.hash_hosts = hash_hosts;
-	ctx.find_host = find_host;
+	ctx.ਲੱਭੋ_host = ਲੱਭੋ_host;
 	ctx.delete_host = delete_host;
 
 	/*
 	 * Find hosts goes to stdout, hash and deletions happen in-place
 	 * A corner case is ssh-keygen -HF foo, which should go to stdout
 	 */
-	if (!find_host && (hash_hosts || delete_host)) {
-		if (strlcpy(tmp, identity_file, sizeof(tmp)) >= sizeof(tmp) ||
-		    strlcat(tmp, ".XXXXXXXXXX", sizeof(tmp)) >= sizeof(tmp) ||
-		    strlcpy(old, identity_file, sizeof(old)) >= sizeof(old) ||
-		    strlcat(old, ".old", sizeof(old)) >= sizeof(old))
+	ਜੇ (!ਲੱਭੋ_host && (hash_hosts || delete_host)) {
+		ਜੇ (strlcpy(tmp, ਪਛਾਣ_ਤੱਤ_file, ਆਕਾਰ(tmp)) >= ਆਕਾਰ(tmp) ||
+		    strlcat(tmp, ".XXXXXXXXXX", ਆਕਾਰ(tmp)) >= ਆਕਾਰ(tmp) ||
+		    strlcpy(old, ਪਛਾਣ_ਤੱਤ_file, ਆਕਾਰ(old)) >= ਆਕਾਰ(old) ||
+		    strlcat(old, ".old", ਆਕਾਰ(old)) >= ਆਕਾਰ(old))
 			fatal("known_hosts path too long");
 		umask(077);
-		if ((fd = mkstemp(tmp)) == -1)
+		ਜੇ ((fd = mkstemp(tmp)) == -1)
 			fatal("mkstemp: %s", strerror(errno));
-		if ((ctx.out = fdopen(fd, "w")) == NULL) {
+		ਜੇ ((ctx.ਬਾਹਰਲਾ = fdopen(fd, "w")) == ਨਿਰਾ) {
 			oerrno = errno;
 			unlink(tmp);
 			fatal("fdopen: %s", strerror(oerrno));
 		}
-		(void)fchmod(fd, sb.st_mode & 0644);
+		(ਖਾਲੀ)fchmod(fd, sb.st_mode & 0644);
 		inplace = 1;
 	}
 	/* XXX support identity_file == "-" for stdin */
-	foreach_options = find_host ? HKF_WANT_MATCH : 0;
-	foreach_options |= print_fingerprint ? HKF_WANT_PARSE_KEY : 0;
-	if ((r = hostkeys_foreach(identity_file, (find_host || !hash_hosts) ?
-	    known_hosts_find_delete : known_hosts_hash, &ctx, name, NULL,
+	foreach_options = ਲੱਭੋ_host ? HKF_WANT_ਮੇਲ : 0;
+	foreach_options |= print_fingerprint ? HKF_WANT_PARSE_ਕੁੰਜੀ : 0;
+	ਜੇ ((r = hostkeys_foreach(ਪਛਾਣ_ਤੱਤ_file, (ਲੱਭੋ_host || !hash_hosts) ?
+	    ਗਿਆਤ_hosts_ਲੱਭੋ_delete : ਗਿਆਤ_hosts_hash, &ctx, name, ਨਿਰਾ,
 	    foreach_options, 0)) != 0) {
-		if (inplace)
+		ਜੇ (inplace)
 			unlink(tmp);
 		fatal_fr(r, "hostkeys_foreach");
 	}
 
-	if (inplace)
-		fclose(ctx.out);
+	ਜੇ (inplace)
+		fclose(ctx.ਬਾਹਰਲਾ);
 
-	if (ctx.invalid) {
-		error("%s is not a valid known_hosts file.", identity_file);
-		if (inplace) {
+	ਜੇ (ctx.invalid) {
+		error("%s is not a valid known_hosts file.", ਪਛਾਣ_ਤੱਤ_file);
+		ਜੇ (inplace) {
 			error("Not replacing existing known_hosts "
 			    "file because of errors");
 			unlink(tmp);
 		}
-		exit(1);
-	} else if (delete_host && !ctx.found_key) {
-		logit("Host %s not found in %s", name, identity_file);
-		if (inplace)
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
+	} ਨਹੀਂਤਾਂ ਜੇ (delete_host && !ctx.ਮਿਲਿਆ_ਕੁੰਜੀ) {
+		logit("Host %s not found in %s", name, ਪਛਾਣ_ਤੱਤ_file);
+		ਜੇ (inplace)
 			unlink(tmp);
-	} else if (inplace) {
+	} ਨਹੀਂਤਾਂ ਜੇ (inplace) {
 		/* Backup existing file */
-		if (unlink(old) == -1 && errno != ENOENT)
+		ਜੇ (unlink(old) == -1 && errno != ENOENT)
 			fatal("unlink %.100s: %s", old, strerror(errno));
-		if (link(identity_file, old) == -1)
-			fatal("link %.100s to %.100s: %s", identity_file, old,
+		ਜੇ (link(ਪਛਾਣ_ਤੱਤ_file, old) == -1)
+			fatal("link %.100s to %.100s: %s", ਪਛਾਣ_ਤੱਤ_file, old,
 			    strerror(errno));
 		/* Move new one into place */
-		if (rename(tmp, identity_file) == -1) {
-			error("rename\"%s\" to \"%s\": %s", tmp, identity_file,
+		ਜੇ (rename(tmp, ਪਛਾਣ_ਤੱਤ_file) == -1) {
+			error("rename\"%s\" to \"%s\": %s", tmp, ਪਛਾਣ_ਤੱਤ_file,
 			    strerror(errno));
 			unlink(tmp);
 			unlink(old);
-			exit(1);
+			ਬਾਹਰ_ਨਿਕਲੋ(1);
 		}
 
-		printf("%s updated.\n", identity_file);
-		printf("Original contents retained as %s\n", old);
-		if (ctx.has_unhashed) {
+		ਲਿਖੋ("%s updated.\n", ਪਛਾਣ_ਤੱਤ_file);
+		ਲਿਖੋ("Original contents retained as %s\n", old);
+		ਜੇ (ctx.has_unhashed) {
 			logit("WARNING: %s contains unhashed entries", old);
 			logit("Delete this file to ensure privacy "
 			    "of hostnames");
 		}
 	}
 
-	exit (find_host && !ctx.found_key);
+	ਬਾਹਰ_ਨਿਕਲੋ (ਲੱਭੋ_host && !ctx.ਮਿਲਿਆ_ਕੁੰਜੀ);
 }
 
 /*
  * Perform changing a passphrase.  The argument is the passwd structure
  * for the current user.
  */
-static void
-do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
+ਸਥਿਰ ਖਾਲੀ
+do_change_passphrase(ਬਣਤਰ passwd *pw, ਅੱਖਰ * ਅਚਲ *opts, ਮਾਪ_t nopts)
 {
-	char *comment;
-	char *old_passphrase, *passphrase1, *passphrase2;
-	struct stat st;
-	struct sshkey *private;
-	int r;
-	size_t i;
+	ਅੱਖਰ *comment;
+	ਅੱਖਰ *old_passphrase, *passphrase1, *passphrase2;
+	ਬਣਤਰ stat st;
+	ਬਣਤਰ sshkey *ਨਿਜੀ;
+	ਪੂਰਨ r;
+	ਮਾਪ_t i;
 
-	if (!have_identity)
+	ਜੇ (!have_ਪਛਾਣ_ਤੱਤ)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
-		fatal("%s: %s", identity_file, strerror(errno));
+	ਜੇ (stat(ਪਛਾਣ_ਤੱਤ_file, &st) == -1)
+		fatal("%s: %s", ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
 	/* Try to load the file with empty passphrase. */
-	r = sshkey_load_private(identity_file, "", &private, &comment);
-	if (r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
-		if (identity_passphrase)
-			old_passphrase = xstrdup(identity_passphrase);
-		else
+	r = sshkey_ਲੱਦੋ_ਨਿੱਜੀ(ਪਛਾਣ_ਤੱਤ_file, "", &ਨਿਜੀ, &comment);
+	ਜੇ (r == SSH_ERR_ਕੁੰਜੀ_WRONG_PASSPHRASE) {
+		ਜੇ (ਪਛਾਣ_ਤੱਤ_passphrase)
+			old_passphrase = xstrdup(ਪਛਾਣ_ਤੱਤ_passphrase);
+		ਨਹੀਂਤਾਂ
 			old_passphrase =
 			    read_passphrase("Enter old passphrase: ",
 			    RP_ALLOW_STDIN);
-		r = sshkey_load_private(identity_file, old_passphrase,
-		    &private, &comment);
-		freezero(old_passphrase, strlen(old_passphrase));
-		if (r != 0)
-			goto badkey;
-	} else if (r != 0) {
+		r = sshkey_ਲੱਦੋ_ਨਿੱਜੀ(ਪਛਾਣ_ਤੱਤ_file, old_passphrase,
+		    &ਨਿਜੀ, &comment);
+		freezero(old_passphrase, ਲੜੀ_ਲੰਬਾਈ(old_passphrase));
+		ਜੇ (r != 0)
+			ਜਾਓ badkey;
+	} ਨਹੀਂਤਾਂ ਜੇ (r != 0) {
  badkey:
-		fatal_r(r, "Failed to load key %s", identity_file);
+		fatal_r(r, "Failed to load key %s", ਪਛਾਣ_ਤੱਤ_file);
 	}
-	if (comment)
+	ਜੇ (comment)
 		mprintf("Key has comment '%s'\n", comment);
 
 	/* All current -O options relate to FIDO keys only */
-	if (nopts != 0 && !sshkey_is_sk(private)) {
+	ਜੇ (nopts != 0 && !sshkey_is_sk(ਨਿਜੀ)) {
 		fatal("FIDO-specific option requested for non-FIDO key %s",
-		    identity_file);
+		    ਪਛਾਣ_ਤੱਤ_file);
 	}
-	if (sshkey_is_sk(private)) {
+	ਜੇ (sshkey_is_sk(ਨਿਜੀ)) {
 		debug_f("%s: original FIDO key flags: "
-		    "%stouch-required %sverify-required", identity_file,
-		    (private->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
-		    (private->sk_flags & SSH_SK_USER_VERIFICATION_REQD) ? "" : "no-");
+		    "%stouch-required %sverify-required", ਪਛਾਣ_ਤੱਤ_file,
+		    (ਨਿਜੀ->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
+		    (ਨਿਜੀ->sk_flags & SSH_SK_USER_VERIFICATION_REQD) ? "" : "no-");
 	}
-	for (i = 0; i < nopts; i++) {
-		if (strcasecmp(opts[i], "touch-required") == 0)
-			private->sk_flags |= SSH_SK_USER_PRESENCE_REQD;
-		else if (strcasecmp(opts[i], "no-touch-required") == 0)
-			private->sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
-		else if (strcasecmp(opts[i], "verify-required") == 0)
-			private->sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-		else if (strcasecmp(opts[i], "no-verify-required") == 0)
-			private->sk_flags &= ~SSH_SK_USER_VERIFICATION_REQD;
-		else {
+	ਲਈ (i = 0; i < nopts; i++) {
+		ਜੇ (strcasecmp(opts[i], "touch-required") == 0)
+			ਨਿਜੀ->sk_flags |= SSH_SK_USER_PRESENCE_REQD;
+		ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opts[i], "no-touch-required") == 0)
+			ਨਿਜੀ->sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
+		ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opts[i], "verify-required") == 0)
+			ਨਿਜੀ->sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
+		ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opts[i], "no-verify-required") == 0)
+			ਨਿਜੀ->sk_flags &= ~SSH_SK_USER_VERIFICATION_REQD;
+		ਨਹੀਂਤਾਂ {
 			fatal("Option \"%s\" is unsupported for "
 			    "key passphrase change", opts[i]);
 		}
 	}
-	if (sshkey_is_sk(private) && nopts != 0) {
+	ਜੇ (sshkey_is_sk(ਨਿਜੀ) && nopts != 0) {
 		debug_f("%s: updated FIDO key flags: "
-		    "%stouch-required %sverify-required", identity_file,
-		    (private->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
-		    (private->sk_flags & SSH_SK_USER_VERIFICATION_REQD) ? "" : "no-");
+		    "%stouch-required %sverify-required", ਪਛਾਣ_ਤੱਤ_file,
+		    (ਨਿਜੀ->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
+		    (ਨਿਜੀ->sk_flags & SSH_SK_USER_VERIFICATION_REQD) ? "" : "no-");
 	}
 
 	/* Ask the new passphrase (twice). */
-	if (identity_new_passphrase) {
-		passphrase1 = xstrdup(identity_new_passphrase);
-		passphrase2 = NULL;
-	} else {
+	ਜੇ (ਪਛਾਣ_ਤੱਤ_new_passphrase) {
+		passphrase1 = xstrdup(ਪਛਾਣ_ਤੱਤ_new_passphrase);
+		passphrase2 = ਨਿਰਾ;
+	} ਨਹੀਂਤਾਂ {
 		passphrase1 =
 			read_passphrase("Enter new passphrase (empty for no "
 			    "passphrase): ", RP_ALLOW_STDIN);
@@ -1466,232 +1466,232 @@ do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
 		    RP_ALLOW_STDIN);
 
 		/* Verify that they are the same. */
-		if (strcmp(passphrase1, passphrase2) != 0) {
-			explicit_bzero(passphrase1, strlen(passphrase1));
-			explicit_bzero(passphrase2, strlen(passphrase2));
-			free(passphrase1);
-			free(passphrase2);
-			printf("Pass phrases do not match.  Try again.\n");
-			exit(1);
+		ਜੇ (strcmp(passphrase1, passphrase2) != 0) {
+			explicit_bzero(passphrase1, ਲੜੀ_ਲੰਬਾਈ(passphrase1));
+			explicit_bzero(passphrase2, ਲੜੀ_ਲੰਬਾਈ(passphrase2));
+			ਮੁਕਤ(passphrase1);
+			ਮੁਕਤ(passphrase2);
+			ਲਿਖੋ("Pass phrases do not match.  Try again.\n");
+			ਬਾਹਰ_ਨਿਕਲੋ(1);
 		}
 		/* Destroy the other copy. */
-		freezero(passphrase2, strlen(passphrase2));
+		freezero(passphrase2, ਲੜੀ_ਲੰਬਾਈ(passphrase2));
 	}
 
 	/* Save the file using the new passphrase. */
-	if ((r = sshkey_save_private(private, identity_file, passphrase1,
-	    comment, private_key_format, openssh_format_cipher, rounds)) != 0) {
-		error_r(r, "Saving key \"%s\" failed", identity_file);
-		freezero(passphrase1, strlen(passphrase1));
-		sshkey_free(private);
-		free(comment);
-		exit(1);
+	ਜੇ ((r = sshkey_save_ਨਿੱਜੀ(ਨਿਜੀ, ਪਛਾਣ_ਤੱਤ_file, passphrase1,
+	    comment, ਨਿੱਜੀ_ਕੁੰਜੀ_format, openssh_format_cipher, ਗੇੜ)) != 0) {
+		error_r(r, "Saving key \"%s\" failed", ਪਛਾਣ_ਤੱਤ_file);
+		freezero(passphrase1, ਲੜੀ_ਲੰਬਾਈ(passphrase1));
+		sshkey_free(ਨਿਜੀ);
+		ਮੁਕਤ(comment);
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
 	/* Destroy the passphrase and the copy of the key in memory. */
-	freezero(passphrase1, strlen(passphrase1));
-	sshkey_free(private);		 /* Destroys contents */
-	free(comment);
+	freezero(passphrase1, ਲੜੀ_ਲੰਬਾਈ(passphrase1));
+	sshkey_free(ਨਿਜੀ);		 /* Destroys contents */
+	ਮੁਕਤ(comment);
 
-	printf("Your identification has been saved with the new passphrase.\n");
-	exit(0);
+	ਲਿਖੋ("Your identification has been saved with the new passphrase.\n");
+	ਬਾਹਰ_ਨਿਕਲੋ(0);
 }
 
 /*
  * Print the SSHFP RR.
  */
-static int
-do_print_resource_record(struct passwd *pw, char *fname, char *hname,
-    int print_generic, char * const *opts, size_t nopts)
+ਸਥਿਰ ਪੂਰਨ
+do_print_resource_ਰਿਕਾਰਡ(ਬਣਤਰ passwd *pw, ਅੱਖਰ *fname, ਅੱਖਰ *hname,
+    ਪੂਰਨ print_generic, ਅੱਖਰ * ਅਚਲ *opts, ਮਾਪ_t nopts)
 {
-	struct sshkey *public;
-	char *comment = NULL;
-	const char *p;
-	struct stat st;
-	int r, hash = -1;
-	size_t i;
+	ਬਣਤਰ sshkey *ਜਨਤਕ;
+	ਅੱਖਰ *comment = ਨਿਰਾ;
+	ਅਚਲ ਅੱਖਰ *p;
+	ਬਣਤਰ stat st;
+	ਪੂਰਨ r, hash = -1;
+	ਮਾਪ_t i;
 
-	for (i = 0; i < nopts; i++) {
-		if ((p = strprefix(opts[i], "hashalg=", 1)) != NULL) {
-			if ((hash = ssh_digest_alg_by_name(p)) == -1)
+	ਲਈ (i = 0; i < nopts; i++) {
+		ਜੇ ((p = strprefix(opts[i], "hashalg=", 1)) != ਨਿਰਾ) {
+			ਜੇ ((hash = ssh_digest_alg_by_name(p)) == -1)
 				fatal("Unsupported hash algorithm");
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			error("Invalid option \"%s\"", opts[i]);
-			return SSH_ERR_INVALID_ARGUMENT;
+			ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 		}
 	}
-	if (fname == NULL)
+	ਜੇ (fname == ਨਿਰਾ)
 		fatal_f("no filename");
-	if (stat(fname, &st) == -1) {
-		if (errno == ENOENT)
-			return 0;
+	ਜੇ (stat(fname, &st) == -1) {
+		ਜੇ (errno == ENOENT)
+			ਵਾਪਸ 0;
 		fatal("%s: %s", fname, strerror(errno));
 	}
-	if ((r = sshkey_load_public(fname, &public, &comment)) != 0)
+	ਜੇ ((r = sshkey_ਲੱਦੋ_ਜਨਤਕ(fname, &ਜਨਤਕ, &comment)) != 0)
 		fatal_r(r, "Failed to read v2 public key from \"%s\"", fname);
-	export_dns_rr(hname, public, stdout, print_generic, hash);
-	sshkey_free(public);
-	free(comment);
-	return 1;
+	export_dns_rr(hname, ਜਨਤਕ, stdout, print_generic, hash);
+	sshkey_free(ਜਨਤਕ);
+	ਮੁਕਤ(comment);
+	ਵਾਪਸ 1;
 }
 
 /*
  * Change the comment of a private key file.
  */
-static void
-do_change_comment(struct passwd *pw, const char *identity_comment)
+ਸਥਿਰ ਖਾਲੀ
+do_change_comment(ਬਣਤਰ passwd *pw, ਅਚਲ ਅੱਖਰ *ਪਛਾਣ_ਤੱਤ_comment)
 {
-	char new_comment[KEY_COMMENT_MAX], *comment, *passphrase;
-	struct sshkey *private;
-	struct sshkey *public;
-	struct stat st;
-	int r;
+	ਅੱਖਰ new_comment[ਕੁੰਜੀ_COMMENT_MAX], *comment, *passphrase;
+	ਬਣਤਰ sshkey *ਨਿਜੀ;
+	ਬਣਤਰ sshkey *ਜਨਤਕ;
+	ਬਣਤਰ stat st;
+	ਪੂਰਨ r;
 
-	if (!have_identity)
+	ਜੇ (!have_ਪਛਾਣ_ਤੱਤ)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
-		fatal("%s: %s", identity_file, strerror(errno));
-	if ((r = sshkey_load_private(identity_file, "",
-	    &private, &comment)) == 0)
+	ਜੇ (stat(ਪਛਾਣ_ਤੱਤ_file, &st) == -1)
+		fatal("%s: %s", ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
+	ਜੇ ((r = sshkey_ਲੱਦੋ_ਨਿੱਜੀ(ਪਛਾਣ_ਤੱਤ_file, "",
+	    &ਨਿਜੀ, &comment)) == 0)
 		passphrase = xstrdup("");
-	else if (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
-		fatal_r(r, "Cannot load private key \"%s\"", identity_file);
-	else {
-		if (identity_passphrase)
-			passphrase = xstrdup(identity_passphrase);
-		else if (identity_new_passphrase)
-			passphrase = xstrdup(identity_new_passphrase);
-		else
+	ਨਹੀਂਤਾਂ ਜੇ (r != SSH_ERR_ਕੁੰਜੀ_WRONG_PASSPHRASE)
+		fatal_r(r, "Cannot load private key \"%s\"", ਪਛਾਣ_ਤੱਤ_file);
+	ਨਹੀਂਤਾਂ {
+		ਜੇ (ਪਛਾਣ_ਤੱਤ_passphrase)
+			passphrase = xstrdup(ਪਛਾਣ_ਤੱਤ_passphrase);
+		ਨਹੀਂਤਾਂ ਜੇ (ਪਛਾਣ_ਤੱਤ_new_passphrase)
+			passphrase = xstrdup(ਪਛਾਣ_ਤੱਤ_new_passphrase);
+		ਨਹੀਂਤਾਂ
 			passphrase = read_passphrase("Enter passphrase: ",
 			    RP_ALLOW_STDIN);
 		/* Try to load using the passphrase. */
-		if ((r = sshkey_load_private(identity_file, passphrase,
-		    &private, &comment)) != 0) {
-			freezero(passphrase, strlen(passphrase));
+		ਜੇ ((r = sshkey_ਲੱਦੋ_ਨਿੱਜੀ(ਪਛਾਣ_ਤੱਤ_file, passphrase,
+		    &ਨਿਜੀ, &comment)) != 0) {
+			freezero(passphrase, ਲੜੀ_ਲੰਬਾਈ(passphrase));
 			fatal_r(r, "Cannot load private key \"%s\"",
-			    identity_file);
+			    ਪਛਾਣ_ਤੱਤ_file);
 		}
 	}
 
-	if (private->type != KEY_ED25519 &&
-	    private_key_format != SSHKEY_PRIVATE_OPENSSH) {
+	ਜੇ (ਨਿਜੀ->type != ਕੁੰਜੀ_ED25519 &&
+	    ਨਿੱਜੀ_ਕੁੰਜੀ_format != SSHKEY_ਨਿੱਜੀ_OPENSSH) {
 		error("Comments are only supported for keys stored in "
 		    "the new format (-o).");
-		explicit_bzero(passphrase, strlen(passphrase));
-		sshkey_free(private);
-		exit(1);
+		explicit_bzero(passphrase, ਲੜੀ_ਲੰਬਾਈ(passphrase));
+		sshkey_free(ਨਿਜੀ);
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	if (comment)
-		printf("Old comment: %s\n", comment);
-	else
-		printf("No existing comment\n");
+	ਜੇ (comment)
+		ਲਿਖੋ("Old comment: %s\n", comment);
+	ਨਹੀਂਤਾਂ
+		ਲਿਖੋ("No existing comment\n");
 
-	if (identity_comment) {
-		strlcpy(new_comment, identity_comment, sizeof(new_comment));
-	} else {
-		printf("New comment: ");
+	ਜੇ (ਪਛਾਣ_ਤੱਤ_comment) {
+		strlcpy(new_comment, ਪਛਾਣ_ਤੱਤ_comment, ਆਕਾਰ(new_comment));
+	} ਨਹੀਂਤਾਂ {
+		ਲਿਖੋ("New comment: ");
 		fflush(stdout);
-		if (!fgets(new_comment, sizeof(new_comment), stdin)) {
-			explicit_bzero(passphrase, strlen(passphrase));
-			sshkey_free(private);
-			exit(1);
+		ਜੇ (!fgets(new_comment, ਆਕਾਰ(new_comment), stdin)) {
+			explicit_bzero(passphrase, ਲੜੀ_ਲੰਬਾਈ(passphrase));
+			sshkey_free(ਨਿਜੀ);
+			ਬਾਹਰ_ਨਿਕਲੋ(1);
 		}
 		new_comment[strcspn(new_comment, "\n")] = '\0';
 	}
-	if (comment != NULL && strcmp(comment, new_comment) == 0) {
-		printf("No change to comment\n");
-		free(passphrase);
-		sshkey_free(private);
-		free(comment);
-		exit(0);
+	ਜੇ (comment != ਨਿਰਾ && strcmp(comment, new_comment) == 0) {
+		ਲਿਖੋ("No change to comment\n");
+		ਮੁਕਤ(passphrase);
+		sshkey_free(ਨਿਜੀ);
+		ਮੁਕਤ(comment);
+		ਬਾਹਰ_ਨਿਕਲੋ(0);
 	}
 
 	/* Save the file using the new passphrase. */
-	if ((r = sshkey_save_private(private, identity_file, passphrase,
-	    new_comment, private_key_format, openssh_format_cipher,
-	    rounds)) != 0) {
-		error_r(r, "Saving key \"%s\" failed", identity_file);
-		freezero(passphrase, strlen(passphrase));
-		sshkey_free(private);
-		free(comment);
-		exit(1);
+	ਜੇ ((r = sshkey_save_ਨਿੱਜੀ(ਨਿਜੀ, ਪਛਾਣ_ਤੱਤ_file, passphrase,
+	    new_comment, ਨਿੱਜੀ_ਕੁੰਜੀ_format, openssh_format_cipher,
+	    ਗੇੜ)) != 0) {
+		error_r(r, "Saving key \"%s\" failed", ਪਛਾਣ_ਤੱਤ_file);
+		freezero(passphrase, ਲੜੀ_ਲੰਬਾਈ(passphrase));
+		sshkey_free(ਨਿਜੀ);
+		ਮੁਕਤ(comment);
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	freezero(passphrase, strlen(passphrase));
-	if ((r = sshkey_from_private(private, &public)) != 0)
+	freezero(passphrase, ਲੜੀ_ਲੰਬਾਈ(passphrase));
+	ਜੇ ((r = sshkey_from_ਨਿੱਜੀ(ਨਿਜੀ, &ਜਨਤਕ)) != 0)
 		fatal_fr(r, "sshkey_from_private");
-	sshkey_free(private);
+	sshkey_free(ਨਿਜੀ);
 
-	strlcat(identity_file, ".pub", sizeof(identity_file));
-	if ((r = sshkey_save_public(public, identity_file, new_comment)) != 0)
-		fatal_r(r, "Unable to save public key to %s", identity_file);
-	sshkey_free(public);
-	free(comment);
+	strlcat(ਪਛਾਣ_ਤੱਤ_file, ".pub", ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ_file));
+	ਜੇ ((r = sshkey_save_ਜਨਤਕ(ਜਨਤਕ, ਪਛਾਣ_ਤੱਤ_file, new_comment)) != 0)
+		fatal_r(r, "Unable to save public key to %s", ਪਛਾਣ_ਤੱਤ_file);
+	sshkey_free(ਜਨਤਕ);
+	ਮੁਕਤ(comment);
 
-	if (strlen(new_comment) > 0)
-		printf("Comment '%s' applied\n", new_comment);
-	else
-		printf("Comment removed\n");
+	ਜੇ (ਲੜੀ_ਲੰਬਾਈ(new_comment) > 0)
+		ਲਿਖੋ("Comment '%s' applied\n", new_comment);
+	ਨਹੀਂਤਾਂ
+		ਲਿਖੋ("Comment removed\n");
 
-	exit(0);
+	ਬਾਹਰ_ਨਿਕਲੋ(0);
 }
 
-static void
-cert_ext_add(const char *key, const char *value, int iscrit)
+ਸਥਿਰ ਖਾਲੀ
+cert_ext_ਜੋੜੋ(ਅਚਲ ਅੱਖਰ *ਕੁੰਜੀ, ਅਚਲ ਅੱਖਰ *ਮੁੱਲ, ਪੂਰਨ iscrit)
 {
-	cert_ext = xreallocarray(cert_ext, ncert_ext + 1, sizeof(*cert_ext));
-	cert_ext[ncert_ext].key = xstrdup(key);
-	cert_ext[ncert_ext].val = value == NULL ? NULL : xstrdup(value);
+	cert_ext = xreallocarray(cert_ext, ncert_ext + 1, ਆਕਾਰ(*cert_ext));
+	cert_ext[ncert_ext].ਕੁੰਜੀ = xstrdup(ਕੁੰਜੀ);
+	cert_ext[ncert_ext].val = ਮੁੱਲ == ਨਿਰਾ ? ਨਿਰਾ : xstrdup(ਮੁੱਲ);
 	cert_ext[ncert_ext].crit = iscrit;
 	ncert_ext++;
 }
 
 /* qsort(3) comparison function for certificate extensions */
-static int
-cert_ext_cmp(const void *_a, const void *_b)
+ਸਥਿਰ ਪੂਰਨ
+cert_ext_cmp(ਅਚਲ ਖਾਲੀ *_a, ਅਚਲ ਖਾਲੀ *_b)
 {
-	const struct cert_ext *a = (const struct cert_ext *)_a;
-	const struct cert_ext *b = (const struct cert_ext *)_b;
-	int r;
+	ਅਚਲ ਬਣਤਰ cert_ext *a = (ਅਚਲ ਬਣਤਰ cert_ext *)_a;
+	ਅਚਲ ਬਣਤਰ cert_ext *b = (ਅਚਲ ਬਣਤਰ cert_ext *)_b;
+	ਪੂਰਨ r;
 
-	if (a->crit != b->crit)
-		return (a->crit < b->crit) ? -1 : 1;
-	if ((r = strcmp(a->key, b->key)) != 0)
-		return r;
-	if ((a->val == NULL) != (b->val == NULL))
-		return (a->val == NULL) ? -1 : 1;
-	if (a->val != NULL && (r = strcmp(a->val, b->val)) != 0)
-		return r;
-	return 0;
+	ਜੇ (a->crit != b->crit)
+		ਵਾਪਸ (a->crit < b->crit) ? -1 : 1;
+	ਜੇ ((r = strcmp(a->ਕੁੰਜੀ, b->ਕੁੰਜੀ)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ ((a->val == ਨਿਰਾ) != (b->val == ਨਿਰਾ))
+		ਵਾਪਸ (a->val == ਨਿਰਾ) ? -1 : 1;
+	ਜੇ (a->val != ਨਿਰਾ && (r = strcmp(a->val, b->val)) != 0)
+		ਵਾਪਸ r;
+	ਵਾਪਸ 0;
 }
 
-#define OPTIONS_CRITICAL	1
-#define OPTIONS_EXTENSIONS	2
-static void
-prepare_options_buf(struct sshbuf *c, int which)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPTIONS_CRITICAL	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ OPTIONS_EXTENSIONS	2
+ਸਥਿਰ ਖਾਲੀ
+prepare_options_buf(ਬਣਤਰ sshbuf *c, ਪੂਰਨ which)
 {
-	struct sshbuf *b;
-	size_t i;
-	int r;
-	const struct cert_ext *ext;
+	ਬਣਤਰ sshbuf *b;
+	ਮਾਪ_t i;
+	ਪੂਰਨ r;
+	ਅਚਲ ਬਣਤਰ cert_ext *ext;
 
-	if ((b = sshbuf_new()) == NULL)
+	ਜੇ ((b = sshbuf_new()) == ਨਿਰਾ)
 		fatal_f("sshbuf_new failed");
 	sshbuf_reset(c);
-	for (i = 0; i < ncert_ext; i++) {
+	ਲਈ (i = 0; i < ncert_ext; i++) {
 		ext = &cert_ext[i];
-		if ((ext->crit && (which & OPTIONS_EXTENSIONS)) ||
+		ਜੇ ((ext->crit && (which & OPTIONS_EXTENSIONS)) ||
 		    (!ext->crit && (which & OPTIONS_CRITICAL)))
-			continue;
-		if (ext->val == NULL) {
+			ਜਾਰੀ;
+		ਜੇ (ext->val == ਨਿਰਾ) {
 			/* flag option */
-			debug3_f("%s", ext->key);
-			if ((r = sshbuf_put_cstring(c, ext->key)) != 0 ||
-			    (r = sshbuf_put_string(c, NULL, 0)) != 0)
+			debug3_f("%s", ext->ਕੁੰਜੀ);
+			ਜੇ ((r = sshbuf_put_cstring(c, ext->ਕੁੰਜੀ)) != 0 ||
+			    (r = sshbuf_put_string(c, ਨਿਰਾ, 0)) != 0)
 				fatal_fr(r, "prepare flag");
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			/* key/value option */
-			debug3_f("%s=%s", ext->key, ext->val);
+			debug3_f("%s=%s", ext->ਕੁੰਜੀ, ext->val);
 			sshbuf_reset(b);
-			if ((r = sshbuf_put_cstring(c, ext->key)) != 0 ||
+			ਜੇ ((r = sshbuf_put_cstring(c, ext->ਕੁੰਜੀ)) != 0 ||
 			    (r = sshbuf_put_cstring(b, ext->val)) != 0 ||
 			    (r = sshbuf_put_stringb(c, b)) != 0)
 				fatal_fr(r, "prepare k/v");
@@ -1700,291 +1700,291 @@ prepare_options_buf(struct sshbuf *c, int which)
 	sshbuf_free(b);
 }
 
-static void
-finalise_cert_exts(void)
+ਸਥਿਰ ਖਾਲੀ
+finalise_cert_exts(ਖਾਲੀ)
 {
 	/* critical options */
-	if (certflags_command != NULL)
-		cert_ext_add("force-command", certflags_command, 1);
-	if (certflags_src_addr != NULL)
-		cert_ext_add("source-address", certflags_src_addr, 1);
-	if ((certflags_flags & CERTOPT_REQUIRE_VERIFY) != 0)
-		cert_ext_add("verify-required", NULL, 1);
+	ਜੇ (certflags_command != ਨਿਰਾ)
+		cert_ext_ਜੋੜੋ("force-command", certflags_command, 1);
+	ਜੇ (certflags_src_addr != ਨਿਰਾ)
+		cert_ext_ਜੋੜੋ("source-address", certflags_src_addr, 1);
+	ਜੇ ((certflags_flags & CERTOPT_REQUIRE_VERIFY) != 0)
+		cert_ext_ਜੋੜੋ("verify-required", ਨਿਰਾ, 1);
 	/* extensions */
-	if ((certflags_flags & CERTOPT_X_FWD) != 0)
-		cert_ext_add("permit-X11-forwarding", NULL, 0);
-	if ((certflags_flags & CERTOPT_AGENT_FWD) != 0)
-		cert_ext_add("permit-agent-forwarding", NULL, 0);
-	if ((certflags_flags & CERTOPT_PORT_FWD) != 0)
-		cert_ext_add("permit-port-forwarding", NULL, 0);
-	if ((certflags_flags & CERTOPT_PTY) != 0)
-		cert_ext_add("permit-pty", NULL, 0);
-	if ((certflags_flags & CERTOPT_USER_RC) != 0)
-		cert_ext_add("permit-user-rc", NULL, 0);
-	if ((certflags_flags & CERTOPT_NO_REQUIRE_USER_PRESENCE) != 0)
-		cert_ext_add("no-touch-required", NULL, 0);
+	ਜੇ ((certflags_flags & CERTOPT_X_FWD) != 0)
+		cert_ext_ਜੋੜੋ("permit-X11-forwarding", ਨਿਰਾ, 0);
+	ਜੇ ((certflags_flags & CERTOPT_AGENT_FWD) != 0)
+		cert_ext_ਜੋੜੋ("permit-agent-forwarding", ਨਿਰਾ, 0);
+	ਜੇ ((certflags_flags & CERTOPT_ਪੋਰਟ_FWD) != 0)
+		cert_ext_ਜੋੜੋ("permit-port-forwarding", ਨਿਰਾ, 0);
+	ਜੇ ((certflags_flags & CERTOPT_PTY) != 0)
+		cert_ext_ਜੋੜੋ("permit-pty", ਨਿਰਾ, 0);
+	ਜੇ ((certflags_flags & CERTOPT_USER_RC) != 0)
+		cert_ext_ਜੋੜੋ("permit-user-rc", ਨਿਰਾ, 0);
+	ਜੇ ((certflags_flags & CERTOPT_NO_REQUIRE_USER_PRESENCE) != 0)
+		cert_ext_ਜੋੜੋ("no-touch-required", ਨਿਰਾ, 0);
 	/* order lexically by key */
-	if (ncert_ext > 0)
-		qsort(cert_ext, ncert_ext, sizeof(*cert_ext), cert_ext_cmp);
+	ਜੇ (ncert_ext > 0)
+		qsort(cert_ext, ncert_ext, ਆਕਾਰ(*cert_ext), cert_ext_cmp);
 }
 
-static struct sshkey *
-load_pkcs11_key(char *path)
+ਸਥਿਰ ਬਣਤਰ sshkey *
+ਲੱਦੋ_pkcs11_ਕੁੰਜੀ(ਅੱਖਰ *ਰਸਤਾ)
 {
-#ifdef ENABLE_PKCS11
-	struct sshkey **keys = NULL, *public, *private = NULL;
-	int r, i, nkeys;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_PKCS11
+	ਬਣਤਰ sshkey **ਕੁੰਜੀਆਂ = ਨਿਰਾ, *ਜਨਤਕ, *ਨਿਜੀ = ਨਿਰਾ;
+	ਪੂਰਨ r, i, nkeys;
 
-	if ((r = sshkey_load_public(path, &public, NULL)) != 0)
-		fatal_r(r, "Couldn't load CA public key \"%s\"", path);
+	ਜੇ ((r = sshkey_ਲੱਦੋ_ਜਨਤਕ(ਰਸਤਾ, &ਜਨਤਕ, ਨਿਰਾ)) != 0)
+		fatal_r(r, "Couldn't load CA public key \"%s\"", ਰਸਤਾ);
 
-	nkeys = pkcs11_add_provider(pkcs11provider, identity_passphrase,
-	    &keys, NULL);
+	nkeys = pkcs11_ਜੋੜੋ_provider(pkcs11provider, ਪਛਾਣ_ਤੱਤ_passphrase,
+	    &ਕੁੰਜੀਆਂ, ਨਿਰਾ);
 	debug3_f("%d keys", nkeys);
-	if (nkeys <= 0)
+	ਜੇ (nkeys <= 0)
 		fatal("cannot read public key from pkcs11");
-	for (i = 0; i < nkeys; i++) {
-		if (sshkey_equal_public(public, keys[i])) {
-			private = keys[i];
-			continue;
+	ਲਈ (i = 0; i < nkeys; i++) {
+		ਜੇ (sshkey_equal_ਜਨਤਕ(ਜਨਤਕ, ਕੁੰਜੀਆਂ[i])) {
+			ਨਿਜੀ = ਕੁੰਜੀਆਂ[i];
+			ਜਾਰੀ;
 		}
-		sshkey_free(keys[i]);
+		sshkey_free(ਕੁੰਜੀਆਂ[i]);
 	}
-	free(keys);
-	sshkey_free(public);
-	return private;
-#else
+	ਮੁਕਤ(ਕੁੰਜੀਆਂ);
+	sshkey_free(ਜਨਤਕ);
+	ਵਾਪਸ ਨਿਜੀ;
+#ਨਹੀਂਤਾਂ
 	fatal("no pkcs11 support");
-#endif /* ENABLE_PKCS11 */
+#ਜੇ_ਅੰਤ /* ENABLE_PKCS11 */
 }
 
 /* Signer for sshkey_certify_custom that uses the agent */
-static int
-agent_signer(struct sshkey *key, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *provider, const char *pin,
-    u_int compat, void *ctx)
+ਸਥਿਰ ਪੂਰਨ
+agent_signer(ਬਣਤਰ sshkey *ਕੁੰਜੀ, u_char **sigp, ਮਾਪ_t *lenp,
+    ਅਚਲ u_char *ਅੰਕੜੇ, ਮਾਪ_t datalen,
+    ਅਚਲ ਅੱਖਰ *alg, ਅਚਲ ਅੱਖਰ *provider, ਅਚਲ ਅੱਖਰ *pin,
+    u_int compat, ਖਾਲੀ *ctx)
 {
-	int *agent_fdp = (int *)ctx;
+	ਪੂਰਨ *agent_fdp = (ਪੂਰਨ *)ctx;
 
-	return ssh_agent_sign(*agent_fdp, key, sigp, lenp,
-	    data, datalen, alg, compat);
+	ਵਾਪਸ ssh_agent_sign(*agent_fdp, ਕੁੰਜੀ, sigp, lenp,
+	    ਅੰਕੜੇ, datalen, alg, compat);
 }
 
-static void
-do_ca_sign(struct passwd *pw, const char *ca_key_path, int prefer_agent,
-    unsigned long long cert_serial, int cert_serial_autoinc,
-    int argc, char **argv)
+ਸਥਿਰ ਖਾਲੀ
+do_ca_sign(ਬਣਤਰ passwd *pw, ਅਚਲ ਅੱਖਰ *ca_ਕੁੰਜੀ_ਰਸਤਾ, ਪੂਰਨ prefer_agent,
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ cert_serial, ਪੂਰਨ cert_serial_autoinc,
+    ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	int r, i, key_in_agent = 0, agent_fd = -1;
+	ਪੂਰਨ r, i, ਕੁੰਜੀ_ਵਿੱਚ_agent = 0, agent_fd = -1;
 	u_int n;
-	struct sshkey *ca, *public;
-	char valid[64], *otmp, *tmp, *cp, *out, *comment;
-	char *ca_fp = NULL, **plist = NULL, *pin = NULL;
-	struct ssh_identitylist *agent_ids;
-	size_t j;
-	struct notifier_ctx *notifier = NULL;
+	ਬਣਤਰ sshkey *ca, *ਜਨਤਕ;
+	ਅੱਖਰ valid[64], *otmp, *tmp, *cp, *ਬਾਹਰਲਾ, *comment;
+	ਅੱਖਰ *ca_fp = ਨਿਰਾ, **plist = ਨਿਰਾ, *pin = ਨਿਰਾ;
+	ਬਣਤਰ ssh_identitylist *agent_ids;
+	ਮਾਪ_t j;
+	ਬਣਤਰ notifier_ctx *notifier = ਨਿਰਾ;
 
-#ifdef ENABLE_PKCS11
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_PKCS11
 	pkcs11_init(1);
-#endif
-	tmp = tilde_expand_filename(ca_key_path, pw->pw_uid);
-	if (pkcs11provider != NULL) {
+#ਜੇ_ਅੰਤ
+	tmp = tilde_expand_filename(ca_ਕੁੰਜੀ_ਰਸਤਾ, pw->pw_uid);
+	ਜੇ (pkcs11provider != ਨਿਰਾ) {
 		/* If a PKCS#11 token was specified then try to use it */
-		if ((ca = load_pkcs11_key(tmp)) == NULL)
-			fatal("No PKCS#11 key matching %s found", ca_key_path);
-	} else if (prefer_agent) {
+		ਜੇ ((ca = ਲੱਦੋ_pkcs11_ਕੁੰਜੀ(tmp)) == ਨਿਰਾ)
+			fatal("No PKCS#11 key matching %s found", ca_ਕੁੰਜੀ_ਰਸਤਾ);
+	} ਨਹੀਂਤਾਂ ਜੇ (prefer_agent) {
 		/*
 		 * Agent signature requested. Try to use agent after making
 		 * sure the public key specified is actually present in the
 		 * agent.
 		 */
-		if ((r = sshkey_load_public(tmp, &ca, NULL)) != 0)
+		ਜੇ ((r = sshkey_ਲੱਦੋ_ਜਨਤਕ(tmp, &ca, ਨਿਰਾ)) != 0)
 			fatal_r(r, "Cannot load CA public key %s", tmp);
-		if ((r = ssh_get_authentication_socket(&agent_fd)) != 0)
+		ਜੇ ((r = ssh_get_authentication_socket(&agent_fd)) != 0)
 			fatal_r(r, "Cannot use public key for CA signature");
-		if ((r = ssh_fetch_identitylist(agent_fd, &agent_ids)) != 0)
+		ਜੇ ((r = ssh_fetch_identitylist(agent_fd, &agent_ids)) != 0)
 			fatal_r(r, "Retrieve agent key list");
-		for (j = 0; j < agent_ids->nkeys; j++) {
-			if (sshkey_equal(ca, agent_ids->keys[j])) {
-				key_in_agent = 1;
+		ਲਈ (j = 0; j < agent_ids->nkeys; j++) {
+			ਜੇ (sshkey_equal(ca, agent_ids->ਕੁੰਜੀਆਂ[j])) {
+				ਕੁੰਜੀ_ਵਿੱਚ_agent = 1;
 				/* Replace the CA key with the agent one */
 				sshkey_free(ca);
-				ca = agent_ids->keys[j];
-				agent_ids->keys[j] = NULL;
-				break;
+				ca = agent_ids->ਕੁੰਜੀਆਂ[j];
+				agent_ids->ਕੁੰਜੀਆਂ[j] = ਨਿਰਾ;
+				ਰੋਕੋ;
 			}
 		}
-		if (!key_in_agent)
+		ਜੇ (!ਕੁੰਜੀ_ਵਿੱਚ_agent)
 			fatal("CA key %s not found in agent", tmp);
 		ssh_free_identitylist(agent_ids);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* CA key is assumed to be a private key on the filesystem */
-		ca = load_identity(tmp, NULL);
-		if (sshkey_is_sk(ca) &&
+		ca = ਲੱਦੋ_ਪਛਾਣ_ਤੱਤ(tmp, ਨਿਰਾ);
+		ਜੇ (sshkey_is_sk(ca) &&
 		    (ca->sk_flags & SSH_SK_USER_VERIFICATION_REQD)) {
-			if ((pin = read_passphrase("Enter PIN for CA key: ",
-			    RP_ALLOW_STDIN)) == NULL)
+			ਜੇ ((pin = read_passphrase("Enter PIN for CA key: ",
+			    RP_ALLOW_STDIN)) == ਨਿਰਾ)
 				fatal_f("couldn't read PIN");
 		}
 	}
-	free(tmp);
+	ਮੁਕਤ(tmp);
 
-	if (key_type_name != NULL) {
-		if (sshkey_type_from_shortname(key_type_name) != ca->type) {
+	ਜੇ (ਕੁੰਜੀ_type_name != ਨਿਰਾ) {
+		ਜੇ (sshkey_type_from_shortname(ਕੁੰਜੀ_type_name) != ca->type) {
 			fatal("CA key type %s doesn't match specified %s",
-			    sshkey_ssh_name(ca), key_type_name);
+			    sshkey_ssh_name(ca), ਕੁੰਜੀ_type_name);
 		}
-	} else if (ca->type == KEY_RSA) {
+	} ਨਹੀਂਤਾਂ ਜੇ (ca->type == ਕੁੰਜੀ_RSA) {
 		/* Default to a good signature algorithm */
-		key_type_name = "rsa-sha2-512";
+		ਕੁੰਜੀ_type_name = "rsa-sha2-512";
 	}
 	ca_fp = sshkey_fingerprint(ca, fingerprint_hash, SSH_FP_DEFAULT);
 
 	finalise_cert_exts();
-	for (i = 0; i < argc; i++) {
+	ਲਈ (i = 0; i < argc; i++) {
 		/* Split list of principals */
 		n = 0;
-		if (cert_principals != NULL) {
+		ਜੇ (cert_principals != ਨਿਰਾ) {
 			otmp = tmp = xstrdup(cert_principals);
-			plist = NULL;
-			for (; (cp = strsep(&tmp, ",")) != NULL; n++) {
-				plist = xreallocarray(plist, n + 1, sizeof(*plist));
-				if (*(plist[n] = xstrdup(cp)) == '\0')
+			plist = ਨਿਰਾ;
+			ਲਈ (; (cp = strsep(&tmp, ",")) != ਨਿਰਾ; n++) {
+				plist = xreallocarray(plist, n + 1, ਆਕਾਰ(*plist));
+				ਜੇ (*(plist[n] = xstrdup(cp)) == '\0')
 					fatal("Empty principal name");
 			}
-			free(otmp);
+			ਮੁਕਤ(otmp);
 		}
-		if (n > SSHKEY_CERT_MAX_PRINCIPALS)
+		ਜੇ (n > SSHKEY_CERT_MAX_PRINCIPALS)
 			fatal("Too many certificate principals specified");
 
 		tmp = tilde_expand_filename(argv[i], pw->pw_uid);
-		if ((r = sshkey_load_public(tmp, &public, &comment)) != 0)
+		ਜੇ ((r = sshkey_ਲੱਦੋ_ਜਨਤਕ(tmp, &ਜਨਤਕ, &comment)) != 0)
 			fatal_r(r, "load pubkey \"%s\"", tmp);
-		if (sshkey_is_cert(public))
+		ਜੇ (sshkey_is_cert(ਜਨਤਕ))
 			fatal_f("key \"%s\" type %s cannot be certified",
-			    tmp, sshkey_type(public));
+			    tmp, sshkey_type(ਜਨਤਕ));
 
 		/* Prepare certificate to sign */
-		if ((r = sshkey_to_certified(public)) != 0)
+		ਜੇ ((r = sshkey_ਮੰਜ਼ਿਲ_certified(ਜਨਤਕ)) != 0)
 			fatal_r(r, "Could not upgrade key %s to certificate", tmp);
-		public->cert->type = cert_key_type;
-		public->cert->serial = (uint64_t)cert_serial;
-		public->cert->key_id = xstrdup(cert_key_id);
-		public->cert->nprincipals = n;
-		public->cert->principals = plist;
-		public->cert->valid_after = cert_valid_from;
-		public->cert->valid_before = cert_valid_to;
-		prepare_options_buf(public->cert->critical, OPTIONS_CRITICAL);
-		prepare_options_buf(public->cert->extensions,
+		ਜਨਤਕ->cert->type = cert_ਕੁੰਜੀ_type;
+		ਜਨਤਕ->cert->serial = (uint64_t)cert_serial;
+		ਜਨਤਕ->cert->ਕੁੰਜੀ_id = xstrdup(cert_ਕੁੰਜੀ_id);
+		ਜਨਤਕ->cert->nprincipals = n;
+		ਜਨਤਕ->cert->principals = plist;
+		ਜਨਤਕ->cert->valid_after = cert_valid_from;
+		ਜਨਤਕ->cert->valid_before = cert_valid_ਮੰਜ਼ਿਲ;
+		prepare_options_buf(ਜਨਤਕ->cert->critical, OPTIONS_CRITICAL);
+		prepare_options_buf(ਜਨਤਕ->cert->extensions,
 		    OPTIONS_EXTENSIONS);
-		if ((r = sshkey_from_private(ca,
-		    &public->cert->signature_key)) != 0)
+		ਜੇ ((r = sshkey_from_ਨਿੱਜੀ(ca,
+		    &ਜਨਤਕ->cert->signature_ਕੁੰਜੀ)) != 0)
 			fatal_r(r, "sshkey_from_private (ca key)");
 
-		if (key_in_agent) {
-			if ((r = sshkey_certify_custom(public, ca,
-			    key_type_name, sk_provider, NULL, agent_signer,
+		ਜੇ (ਕੁੰਜੀ_ਵਿੱਚ_agent) {
+			ਜੇ ((r = sshkey_certify_custom(ਜਨਤਕ, ca,
+			    ਕੁੰਜੀ_type_name, sk_provider, ਨਿਰਾ, agent_signer,
 			    &agent_fd)) != 0)
 				fatal_r(r, "Couldn't certify %s via agent", tmp);
-		} else {
-			if (sshkey_is_sk(ca) &&
+		} ਨਹੀਂਤਾਂ {
+			ਜੇ (sshkey_is_sk(ca) &&
 			    (ca->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
-				notifier = notify_start(0,
+				notifier = notify_ਸ਼ੁਰੂ(0,
 				    "Confirm user presence for key %s %s",
 				    sshkey_type(ca), ca_fp);
 			}
-			r = sshkey_certify(public, ca, key_type_name,
+			r = sshkey_certify(ਜਨਤਕ, ca, ਕੁੰਜੀ_type_name,
 			    sk_provider, pin);
 			notify_complete(notifier, "User presence confirmed");
-			if (r != 0)
+			ਜੇ (r != 0)
 				fatal_r(r, "Couldn't certify key %s", tmp);
 		}
 
-		if ((cp = strrchr(tmp, '.')) != NULL && strcmp(cp, ".pub") == 0)
+		ਜੇ ((cp = strrchr(tmp, '.')) != ਨਿਰਾ && strcmp(cp, ".pub") == 0)
 			*cp = '\0';
-		xasprintf(&out, "%s-cert.pub", tmp);
-		free(tmp);
+		xasprintf(&ਬਾਹਰਲਾ, "%s-cert.pub", tmp);
+		ਮੁਕਤ(tmp);
 
-		if ((r = sshkey_save_public(public, out, comment)) != 0) {
+		ਜੇ ((r = sshkey_save_ਜਨਤਕ(ਜਨਤਕ, ਬਾਹਰਲਾ, comment)) != 0) {
 			fatal_r(r, "Unable to save public key to %s",
-			    identity_file);
+			    ਪਛਾਣ_ਤੱਤ_file);
 		}
 
-		if (!quiet) {
-			sshkey_format_cert_validity(public->cert,
-			    valid, sizeof(valid));
+		ਜੇ (!quiet) {
+			sshkey_format_cert_validity(ਜਨਤਕ->cert,
+			    valid, ਆਕਾਰ(valid));
 			logit("Signed %s key %s: id \"%s\" serial %llu%s%s "
-			    "valid %s", sshkey_cert_type(public),
-			    out, public->cert->key_id,
-			    (unsigned long long)public->cert->serial,
-			    cert_principals != NULL ? " for " : "",
-			    cert_principals != NULL ? cert_principals : "",
+			    "valid %s", sshkey_cert_type(ਜਨਤਕ),
+			    ਬਾਹਰਲਾ, ਜਨਤਕ->cert->ਕੁੰਜੀ_id,
+			    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਜਨਤਕ->cert->serial,
+			    cert_principals != ਨਿਰਾ ? " for " : "",
+			    cert_principals != ਨਿਰਾ ? cert_principals : "",
 			    valid);
 		}
 
-		sshkey_free(public);
-		free(out);
-		free(comment);
-		if (cert_serial_autoinc)
+		sshkey_free(ਜਨਤਕ);
+		ਮੁਕਤ(ਬਾਹਰਲਾ);
+		ਮੁਕਤ(comment);
+		ਜੇ (cert_serial_autoinc)
 			cert_serial++;
 	}
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
+	ਜੇ (pin != ਨਿਰਾ)
+		freezero(pin, ਲੜੀ_ਲੰਬਾਈ(pin));
 	sshkey_free(ca);
-	free(ca_fp);
-#ifdef ENABLE_PKCS11
+	ਮੁਕਤ(ca_fp);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_PKCS11
 	pkcs11_terminate();
-#endif
+#ਜੇ_ਅੰਤ
 }
 
-static uint64_t
-parse_relative_time(const char *s, time_t now)
+ਸਥਿਰ uint64_t
+parse_relative_ਸਮਾਂ(ਅਚਲ ਅੱਖਰ *s, time_t now)
 {
 	int64_t mul, secs;
 
 	mul = *s == '-' ? -1 : 1;
 
-	if ((secs = convtime(s + 1)) == -1)
+	ਜੇ ((secs = convtime(s + 1)) == -1)
 		fatal("Invalid relative certificate time %s", s);
-	if (mul == -1 && secs > now)
+	ਜੇ (mul == -1 && secs > now)
 		fatal("Certificate time %s cannot be represented", s);
-	return now + (uint64_t)(secs * mul);
+	ਵਾਪਸ now + (uint64_t)(secs * mul);
 }
 
-static void
-parse_hex_u64(const char *s, uint64_t *up)
+ਸਥਿਰ ਖਾਲੀ
+parse_hex_u64(ਅਚਲ ਅੱਖਰ *s, uint64_t *ਉੱਪਰ)
 {
-	char *ep;
-	unsigned long long ull;
+	ਅੱਖਰ *ep;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ ull;
 
 	errno = 0;
 	ull = strtoull(s, &ep, 16);
-	if (*s == '\0' || *ep != '\0')
+	ਜੇ (*s == '\0' || *ep != '\0')
 		fatal("Invalid certificate time: not a number");
-	if (errno == ERANGE && ull == ULONG_MAX)
+	ਜੇ (errno == ERANGE && ull == ULONG_MAX)
 		fatal_fr(SSH_ERR_SYSTEM_ERROR, "Invalid certificate time");
-	*up = (uint64_t)ull;
+	*ਉੱਪਰ = (uint64_t)ull;
 }
 
-static void
-parse_cert_times(char *timespec)
+ਸਥਿਰ ਖਾਲੀ
+parse_cert_times(ਅੱਖਰ *timespec)
 {
-	char *from, *to;
-	time_t now = time(NULL);
+	ਅੱਖਰ *from, *ਮੰਜ਼ਿਲ;
+	time_t now = time(ਨਿਰਾ);
 	int64_t secs;
 
 	/* +timespec relative to now */
-	if (*timespec == '+' && strchr(timespec, ':') == NULL) {
-		if ((secs = convtime(timespec + 1)) == -1)
+	ਜੇ (*timespec == '+' && strchr(timespec, ':') == ਨਿਰਾ) {
+		ਜੇ ((secs = convtime(timespec + 1)) == -1)
 			fatal("Invalid relative certificate life %s", timespec);
-		cert_valid_to = now + secs;
+		cert_valid_ਮੰਜ਼ਿਲ = now + secs;
 		/*
 		 * Backdate certificate one minute to avoid problems on hosts
 		 * with poorly-synchronised clocks.
 		 */
 		cert_valid_from = ((now - 59)/ 60) * 60;
-		return;
+		ਵਾਪਸ;
 	}
 
 	/*
@@ -1993,351 +1993,351 @@ parse_cert_times(char *timespec)
 	 *   to := [+-]timespec | YYYYMMDD | YYYYMMDDHHMMSS | 0x... | "forever"
 	 */
 	from = xstrdup(timespec);
-	to = strchr(from, ':');
-	if (to == NULL || from == to || *(to + 1) == '\0')
+	ਮੰਜ਼ਿਲ = strchr(from, ':');
+	ਜੇ (ਮੰਜ਼ਿਲ == ਨਿਰਾ || from == ਮੰਜ਼ਿਲ || *(ਮੰਜ਼ਿਲ + 1) == '\0')
 		fatal("Invalid certificate life specification %s", timespec);
-	*to++ = '\0';
+	*ਮੰਜ਼ਿਲ++ = '\0';
 
-	if (*from == '-' || *from == '+')
-		cert_valid_from = parse_relative_time(from, now);
-	else if (strcmp(from, "always") == 0)
+	ਜੇ (*from == '-' || *from == '+')
+		cert_valid_from = parse_relative_ਸਮਾਂ(from, now);
+	ਨਹੀਂਤਾਂ ਜੇ (strcmp(from, "always") == 0)
 		cert_valid_from = 0;
-	else if (strncmp(from, "0x", 2) == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (ਲੜੀ_ਤੁਲਨਾ(from, "0x", 2) == 0)
 		parse_hex_u64(from, &cert_valid_from);
-	else if (parse_absolute_time(from, &cert_valid_from) != 0)
+	ਨਹੀਂਤਾਂ ਜੇ (parse_absolute_ਸਮਾਂ(from, &cert_valid_from) != 0)
 		fatal("Invalid from time \"%s\"", from);
 
-	if (*to == '-' || *to == '+')
-		cert_valid_to = parse_relative_time(to, now);
-	else if (strcmp(to, "forever") == 0)
-		cert_valid_to = ~(uint64_t)0;
-	else if (strncmp(to, "0x", 2) == 0)
-		parse_hex_u64(to, &cert_valid_to);
-	else if (parse_absolute_time(to, &cert_valid_to) != 0)
-		fatal("Invalid to time \"%s\"", to);
+	ਜੇ (*ਮੰਜ਼ਿਲ == '-' || *ਮੰਜ਼ਿਲ == '+')
+		cert_valid_ਮੰਜ਼ਿਲ = parse_relative_ਸਮਾਂ(ਮੰਜ਼ਿਲ, now);
+	ਨਹੀਂਤਾਂ ਜੇ (strcmp(ਮੰਜ਼ਿਲ, "forever") == 0)
+		cert_valid_ਮੰਜ਼ਿਲ = ~(uint64_t)0;
+	ਨਹੀਂਤਾਂ ਜੇ (ਲੜੀ_ਤੁਲਨਾ(ਮੰਜ਼ਿਲ, "0x", 2) == 0)
+		parse_hex_u64(ਮੰਜ਼ਿਲ, &cert_valid_ਮੰਜ਼ਿਲ);
+	ਨਹੀਂਤਾਂ ਜੇ (parse_absolute_ਸਮਾਂ(ਮੰਜ਼ਿਲ, &cert_valid_ਮੰਜ਼ਿਲ) != 0)
+		fatal("Invalid to time \"%s\"", ਮੰਜ਼ਿਲ);
 
-	if (cert_valid_to <= cert_valid_from)
+	ਜੇ (cert_valid_ਮੰਜ਼ਿਲ <= cert_valid_from)
 		fatal("Empty certificate validity interval");
-	free(from);
+	ਮੁਕਤ(from);
 }
 
-static void
-add_cert_option(char *opt)
+ਸਥਿਰ ਖਾਲੀ
+ਜੋੜੋ_cert_option(ਅੱਖਰ *opt)
 {
-	char *val, *cp;
-	const char *p;
-	int iscrit = 0;
+	ਅੱਖਰ *val, *cp;
+	ਅਚਲ ਅੱਖਰ *p;
+	ਪੂਰਨ iscrit = 0;
 
-	if (strcasecmp(opt, "clear") == 0)
+	ਜੇ (strcasecmp(opt, "clear") == 0)
 		certflags_flags = 0;
-	else if (strcasecmp(opt, "no-x11-forwarding") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "no-x11-forwarding") == 0)
 		certflags_flags &= ~CERTOPT_X_FWD;
-	else if (strcasecmp(opt, "permit-x11-forwarding") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "permit-x11-forwarding") == 0)
 		certflags_flags |= CERTOPT_X_FWD;
-	else if (strcasecmp(opt, "no-agent-forwarding") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "no-agent-forwarding") == 0)
 		certflags_flags &= ~CERTOPT_AGENT_FWD;
-	else if (strcasecmp(opt, "permit-agent-forwarding") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "permit-agent-forwarding") == 0)
 		certflags_flags |= CERTOPT_AGENT_FWD;
-	else if (strcasecmp(opt, "no-port-forwarding") == 0)
-		certflags_flags &= ~CERTOPT_PORT_FWD;
-	else if (strcasecmp(opt, "permit-port-forwarding") == 0)
-		certflags_flags |= CERTOPT_PORT_FWD;
-	else if (strcasecmp(opt, "no-pty") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "no-port-forwarding") == 0)
+		certflags_flags &= ~CERTOPT_ਪੋਰਟ_FWD;
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "permit-port-forwarding") == 0)
+		certflags_flags |= CERTOPT_ਪੋਰਟ_FWD;
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "no-pty") == 0)
 		certflags_flags &= ~CERTOPT_PTY;
-	else if (strcasecmp(opt, "permit-pty") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "permit-pty") == 0)
 		certflags_flags |= CERTOPT_PTY;
-	else if (strcasecmp(opt, "no-user-rc") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "no-user-rc") == 0)
 		certflags_flags &= ~CERTOPT_USER_RC;
-	else if (strcasecmp(opt, "permit-user-rc") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "permit-user-rc") == 0)
 		certflags_flags |= CERTOPT_USER_RC;
-	else if (strcasecmp(opt, "touch-required") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "touch-required") == 0)
 		certflags_flags &= ~CERTOPT_NO_REQUIRE_USER_PRESENCE;
-	else if (strcasecmp(opt, "no-touch-required") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "no-touch-required") == 0)
 		certflags_flags |= CERTOPT_NO_REQUIRE_USER_PRESENCE;
-	else if (strcasecmp(opt, "no-verify-required") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "no-verify-required") == 0)
 		certflags_flags &= ~CERTOPT_REQUIRE_VERIFY;
-	else if (strcasecmp(opt, "verify-required") == 0)
+	ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opt, "verify-required") == 0)
 		certflags_flags |= CERTOPT_REQUIRE_VERIFY;
-	else if ((p = strprefix(opt, "force-command=", 1)) != NULL) {
-		if (*p == '\0')
+	ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opt, "force-command=", 1)) != ਨਿਰਾ) {
+		ਜੇ (*p == '\0')
 			fatal("Empty force-command option");
-		if (certflags_command != NULL)
+		ਜੇ (certflags_command != ਨਿਰਾ)
 			fatal("force-command already specified");
 		certflags_command = xstrdup(p);
-	} else if ((p = strprefix(opt, "source-address=", 1)) != NULL) {
-		if (*p == '\0')
+	} ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opt, "source-address=", 1)) != ਨਿਰਾ) {
+		ਜੇ (*p == '\0')
 			fatal("Empty source-address option");
-		if (certflags_src_addr != NULL)
+		ਜੇ (certflags_src_addr != ਨਿਰਾ)
 			fatal("source-address already specified");
-		if (addr_match_cidr_list(NULL, p) != 0)
+		ਜੇ (addr_ਮੇਲ_cidr_list(ਨਿਰਾ, p) != 0)
 			fatal("Invalid source-address list");
 		certflags_src_addr = xstrdup(p);
-	} else if (strprefix(opt, "extension:", 1) != NULL ||
-		    (iscrit = (strprefix(opt, "critical:", 1) != NULL))) {
+	} ਨਹੀਂਤਾਂ ਜੇ (strprefix(opt, "extension:", 1) != ਨਿਰਾ ||
+		    (iscrit = (strprefix(opt, "critical:", 1) != ਨਿਰਾ))) {
 		val = xstrdup(strchr(opt, ':') + 1);
-		if ((cp = strchr(val, '=')) != NULL)
+		ਜੇ ((cp = strchr(val, '=')) != ਨਿਰਾ)
 			*cp++ = '\0';
-		cert_ext_add(val, cp, iscrit);
-		free(val);
-	} else
+		cert_ext_ਜੋੜੋ(val, cp, iscrit);
+		ਮੁਕਤ(val);
+	} ਨਹੀਂਤਾਂ
 		fatal("Unsupported certificate option \"%s\"", opt);
 }
 
-static void
-show_options(struct sshbuf *optbuf, int in_critical)
+ਸਥਿਰ ਖਾਲੀ
+show_options(ਬਣਤਰ sshbuf *optbuf, ਪੂਰਨ ਵਿੱਚ_critical)
 {
-	char *name, *arg, *hex;
-	struct sshbuf *options, *option = NULL;
-	int r;
+	ਅੱਖਰ *name, *arg, *hex;
+	ਬਣਤਰ sshbuf *options, *option = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if ((options = sshbuf_fromb(optbuf)) == NULL)
+	ਜੇ ((options = sshbuf_fromb(optbuf)) == ਨਿਰਾ)
 		fatal_f("sshbuf_fromb failed");
-	while (sshbuf_len(options) != 0) {
+	ਜਦੋਂ (sshbuf_len(options) != 0) {
 		sshbuf_free(option);
-		option = NULL;
-		if ((r = sshbuf_get_cstring(options, &name, NULL)) != 0 ||
+		option = ਨਿਰਾ;
+		ਜੇ ((r = sshbuf_get_cstring(options, &name, ਨਿਰਾ)) != 0 ||
 		    (r = sshbuf_froms(options, &option)) != 0)
 			fatal_fr(r, "parse option");
-		printf("                %s", name);
-		if (!in_critical &&
+		ਲਿਖੋ("                %s", name);
+		ਜੇ (!ਵਿੱਚ_critical &&
 		    (strcmp(name, "permit-X11-forwarding") == 0 ||
 		    strcmp(name, "permit-agent-forwarding") == 0 ||
 		    strcmp(name, "permit-port-forwarding") == 0 ||
 		    strcmp(name, "permit-pty") == 0 ||
 		    strcmp(name, "permit-user-rc") == 0 ||
 		    strcmp(name, "no-touch-required") == 0)) {
-			printf("\n");
-		} else if (in_critical &&
+			ਲਿਖੋ("\n");
+		} ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_critical &&
 		    (strcmp(name, "force-command") == 0 ||
 		    strcmp(name, "source-address") == 0)) {
-			if ((r = sshbuf_get_cstring(option, &arg, NULL)) != 0)
+			ਜੇ ((r = sshbuf_get_cstring(option, &arg, ਨਿਰਾ)) != 0)
 				fatal_fr(r, "parse critical");
-			printf(" %s\n", arg);
-			free(arg);
-		} else if (in_critical &&
+			ਲਿਖੋ(" %s\n", arg);
+			ਮੁਕਤ(arg);
+		} ਨਹੀਂਤਾਂ ਜੇ (ਵਿੱਚ_critical &&
 		    strcmp(name, "verify-required") == 0) {
-			printf("\n");
-		} else if (sshbuf_len(option) > 0) {
+			ਲਿਖੋ("\n");
+		} ਨਹੀਂਤਾਂ ਜੇ (sshbuf_len(option) > 0) {
 			hex = sshbuf_dtob16(option);
-			printf(" UNKNOWN OPTION: %s (len %zu)\n",
+			ਲਿਖੋ(" UNKNOWN OPTION: %s (len %zu)\n",
 			    hex, sshbuf_len(option));
 			sshbuf_reset(option);
-			free(hex);
-		} else
-			printf(" UNKNOWN FLAG OPTION\n");
-		free(name);
-		if (sshbuf_len(option) != 0)
+			ਮੁਕਤ(hex);
+		} ਨਹੀਂਤਾਂ
+			ਲਿਖੋ(" UNKNOWN FLAG OPTION\n");
+		ਮੁਕਤ(name);
+		ਜੇ (sshbuf_len(option) != 0)
 			fatal("Option corrupt: extra data at end");
 	}
 	sshbuf_free(option);
 	sshbuf_free(options);
 }
 
-static void
-print_cert(struct sshkey *key)
+ਸਥਿਰ ਖਾਲੀ
+print_cert(ਬਣਤਰ sshkey *ਕੁੰਜੀ)
 {
-	char valid[64], *key_fp, *ca_fp;
+	ਅੱਖਰ valid[64], *ਕੁੰਜੀ_fp, *ca_fp;
 	u_int i;
 
-	key_fp = sshkey_fingerprint(key, fingerprint_hash, SSH_FP_DEFAULT);
-	ca_fp = sshkey_fingerprint(key->cert->signature_key,
+	ਕੁੰਜੀ_fp = sshkey_fingerprint(ਕੁੰਜੀ, fingerprint_hash, SSH_FP_DEFAULT);
+	ca_fp = sshkey_fingerprint(ਕੁੰਜੀ->cert->signature_ਕੁੰਜੀ,
 	    fingerprint_hash, SSH_FP_DEFAULT);
-	if (key_fp == NULL || ca_fp == NULL)
+	ਜੇ (ਕੁੰਜੀ_fp == ਨਿਰਾ || ca_fp == ਨਿਰਾ)
 		fatal_f("sshkey_fingerprint fail");
-	sshkey_format_cert_validity(key->cert, valid, sizeof(valid));
+	sshkey_format_cert_validity(ਕੁੰਜੀ->cert, valid, ਆਕਾਰ(valid));
 
-	printf("        Type: %s %s certificate\n", sshkey_ssh_name(key),
-	    sshkey_cert_type(key));
-	printf("        Public key: %s %s\n", sshkey_type(key), key_fp);
-	printf("        Signing CA: %s %s (using %s)\n",
-	    sshkey_type(key->cert->signature_key), ca_fp,
-	    key->cert->signature_type);
-	printf("        Key ID: \"%s\"\n", key->cert->key_id);
-	printf("        Serial: %llu\n", (unsigned long long)key->cert->serial);
-	printf("        Valid: %s\n", valid);
-	printf("        Principals: ");
-	if (key->cert->nprincipals == 0)
-		printf("(none)\n");
-	else {
-		for (i = 0; i < key->cert->nprincipals; i++)
-			printf("\n                %s",
-			    key->cert->principals[i]);
-		printf("\n");
+	ਲਿਖੋ("        Type: %s %s certificate\n", sshkey_ssh_name(ਕੁੰਜੀ),
+	    sshkey_cert_type(ਕੁੰਜੀ));
+	ਲਿਖੋ("        Public key: %s %s\n", sshkey_type(ਕੁੰਜੀ), ਕੁੰਜੀ_fp);
+	ਲਿਖੋ("        Signing CA: %s %s (using %s)\n",
+	    sshkey_type(ਕੁੰਜੀ->cert->signature_ਕੁੰਜੀ), ca_fp,
+	    ਕੁੰਜੀ->cert->signature_type);
+	ਲਿਖੋ("        Key ID: \"%s\"\n", ਕੁੰਜੀ->cert->ਕੁੰਜੀ_id);
+	ਲਿਖੋ("        Serial: %llu\n", (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)ਕੁੰਜੀ->cert->serial);
+	ਲਿਖੋ("        Valid: %s\n", valid);
+	ਲਿਖੋ("        Principals: ");
+	ਜੇ (ਕੁੰਜੀ->cert->nprincipals == 0)
+		ਲਿਖੋ("(none)\n");
+	ਨਹੀਂਤਾਂ {
+		ਲਈ (i = 0; i < ਕੁੰਜੀ->cert->nprincipals; i++)
+			ਲਿਖੋ("\n                %s",
+			    ਕੁੰਜੀ->cert->principals[i]);
+		ਲਿਖੋ("\n");
 	}
-	printf("        Critical Options: ");
-	if (sshbuf_len(key->cert->critical) == 0)
-		printf("(none)\n");
-	else {
-		printf("\n");
-		show_options(key->cert->critical, 1);
+	ਲਿਖੋ("        Critical Options: ");
+	ਜੇ (sshbuf_len(ਕੁੰਜੀ->cert->critical) == 0)
+		ਲਿਖੋ("(none)\n");
+	ਨਹੀਂਤਾਂ {
+		ਲਿਖੋ("\n");
+		show_options(ਕੁੰਜੀ->cert->critical, 1);
 	}
-	printf("        Extensions: ");
-	if (sshbuf_len(key->cert->extensions) == 0)
-		printf("(none)\n");
-	else {
-		printf("\n");
-		show_options(key->cert->extensions, 0);
+	ਲਿਖੋ("        Extensions: ");
+	ਜੇ (sshbuf_len(ਕੁੰਜੀ->cert->extensions) == 0)
+		ਲਿਖੋ("(none)\n");
+	ਨਹੀਂਤਾਂ {
+		ਲਿਖੋ("\n");
+		show_options(ਕੁੰਜੀ->cert->extensions, 0);
 	}
-	free(key_fp);
-	free(ca_fp);
+	ਮੁਕਤ(ਕੁੰਜੀ_fp);
+	ਮੁਕਤ(ca_fp);
 }
 
-static void
-do_show_cert(struct passwd *pw)
+ਸਥਿਰ ਖਾਲੀ
+do_show_cert(ਬਣਤਰ passwd *pw)
 {
-	struct sshkey *key = NULL;
-	struct stat st;
-	int r, is_stdin = 0, ok = 0;
+	ਬਣਤਰ sshkey *ਕੁੰਜੀ = ਨਿਰਾ;
+	ਬਣਤਰ stat st;
+	ਪੂਰਨ r, is_stdin = 0, ok = 0;
 	FILE *f;
-	char *cp, *line = NULL;
-	const char *path;
-	size_t linesize = 0;
+	ਅੱਖਰ *cp, *ਸਤਰ = ਨਿਰਾ;
+	ਅਚਲ ਅੱਖਰ *ਰਸਤਾ;
+	ਮਾਪ_t linesize = 0;
 	u_long lnum = 0;
 
-	if (!have_identity)
+	ਜੇ (!have_ਪਛਾਣ_ਤੱਤ)
 		ask_filename(pw, "Enter file in which the key is");
-	if (strcmp(identity_file, "-") != 0 && stat(identity_file, &st) == -1)
-		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
+	ਜੇ (strcmp(ਪਛਾਣ_ਤੱਤ_file, "-") != 0 && stat(ਪਛਾਣ_ਤੱਤ_file, &st) == -1)
+		fatal("%s: %s: %s", __progname, ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
 
-	path = identity_file;
-	if (strcmp(path, "-") == 0) {
+	ਰਸਤਾ = ਪਛਾਣ_ਤੱਤ_file;
+	ਜੇ (strcmp(ਰਸਤਾ, "-") == 0) {
 		f = stdin;
-		path = "(stdin)";
+		ਰਸਤਾ = "(stdin)";
 		is_stdin = 1;
-	} else if ((f = fopen(identity_file, "r")) == NULL)
-		fatal("fopen %s: %s", identity_file, strerror(errno));
+	} ਨਹੀਂਤਾਂ ਜੇ ((f = fopen(ਪਛਾਣ_ਤੱਤ_file, "r")) == ਨਿਰਾ)
+		fatal("fopen %s: %s", ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
 
-	while (getline(&line, &linesize, f) != -1) {
+	ਜਦੋਂ (getline(&ਸਤਰ, &linesize, f) != -1) {
 		lnum++;
-		sshkey_free(key);
-		key = NULL;
+		sshkey_free(ਕੁੰਜੀ);
+		ਕੁੰਜੀ = ਨਿਰਾ;
 		/* Trim leading space and comments */
-		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
-			continue;
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+		cp = ਸਤਰ + strspn(ਸਤਰ, " \t");
+		ਜੇ (*cp == '#' || *cp == '\0')
+			ਜਾਰੀ;
+		ਜੇ ((ਕੁੰਜੀ = sshkey_new(ਕੁੰਜੀ_UNSPEC)) == ਨਿਰਾ)
 			fatal("sshkey_new");
-		if ((r = sshkey_read(key, &cp)) != 0) {
-			error_r(r, "%s:%lu: invalid key", path, lnum);
-			continue;
+		ਜੇ ((r = sshkey_read(ਕੁੰਜੀ, &cp)) != 0) {
+			error_r(r, "%s:%lu: invalid key", ਰਸਤਾ, lnum);
+			ਜਾਰੀ;
 		}
-		if (!sshkey_is_cert(key)) {
-			error("%s:%lu is not a certificate", path, lnum);
-			continue;
+		ਜੇ (!sshkey_is_cert(ਕੁੰਜੀ)) {
+			error("%s:%lu is not a certificate", ਰਸਤਾ, lnum);
+			ਜਾਰੀ;
 		}
 		ok = 1;
-		if (!is_stdin && lnum == 1)
-			printf("%s:\n", path);
-		else
-			printf("%s:%lu:\n", path, lnum);
-		print_cert(key);
+		ਜੇ (!is_stdin && lnum == 1)
+			ਲਿਖੋ("%s:\n", ਰਸਤਾ);
+		ਨਹੀਂਤਾਂ
+			ਲਿਖੋ("%s:%lu:\n", ਰਸਤਾ, lnum);
+		print_cert(ਕੁੰਜੀ);
 	}
-	free(line);
-	sshkey_free(key);
+	ਮੁਕਤ(ਸਤਰ);
+	sshkey_free(ਕੁੰਜੀ);
 	fclose(f);
-	exit(ok ? 0 : 1);
+	ਬਾਹਰ_ਨਿਕਲੋ(ok ? 0 : 1);
 }
 
-static void
-load_krl(const char *path, struct ssh_krl **krlp)
+ਸਥਿਰ ਖਾਲੀ
+ਲੱਦੋ_krl(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਬਣਤਰ ssh_krl **krlp)
 {
-	struct sshbuf *krlbuf;
-	int r;
+	ਬਣਤਰ sshbuf *krlbuf;
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_load_file(path, &krlbuf)) != 0)
-		fatal_r(r, "Unable to load KRL %s", path);
+	ਜੇ ((r = sshbuf_ਲੱਦੋ_file(ਰਸਤਾ, &krlbuf)) != 0)
+		fatal_r(r, "Unable to load KRL %s", ਰਸਤਾ);
 	/* XXX check sigs */
-	if ((r = ssh_krl_from_blob(krlbuf, krlp)) != 0 ||
-	    *krlp == NULL)
-		fatal_r(r, "Invalid KRL file %s", path);
+	ਜੇ ((r = ssh_krl_from_blob(krlbuf, krlp)) != 0 ||
+	    *krlp == ਨਿਰਾ)
+		fatal_r(r, "Invalid KRL file %s", ਰਸਤਾ);
 	sshbuf_free(krlbuf);
 }
 
-static void
-hash_to_blob(const char *cp, u_char **blobp, size_t *lenp,
-    const char *file, u_long lnum)
+ਸਥਿਰ ਖਾਲੀ
+hash_ਮੰਜ਼ਿਲ_blob(ਅਚਲ ਅੱਖਰ *cp, u_char **blobp, ਮਾਪ_t *lenp,
+    ਅਚਲ ਅੱਖਰ *file, u_long lnum)
 {
-	char *tmp;
-	size_t tlen;
-	struct sshbuf *b;
-	int r;
+	ਅੱਖਰ *tmp;
+	ਮਾਪ_t tlen;
+	ਬਣਤਰ sshbuf *b;
+	ਪੂਰਨ r;
 
-	if ((cp = strprefix(cp, "SHA256:", 0)) == NULL)
+	ਜੇ ((cp = strprefix(cp, "SHA256:", 0)) == ਨਿਰਾ)
 		fatal("%s:%lu: unsupported hash algorithm", file, lnum);
 
 	/*
 	 * OpenSSH base64 hashes omit trailing '='
 	 * characters; put them back for decode.
 	 */
-	if ((tlen = strlen(cp)) >= SIZE_MAX - 5)
+	ਜੇ ((tlen = ਲੜੀ_ਲੰਬਾਈ(cp)) >= SIZE_MAX - 5)
 		fatal_f("hash too long: %zu bytes", tlen);
 	tmp = xmalloc(tlen + 4 + 1);
 	strlcpy(tmp, cp, tlen + 1);
-	while ((tlen % 4) != 0) {
+	ਜਦੋਂ ((tlen % 4) != 0) {
 		tmp[tlen++] = '=';
 		tmp[tlen] = '\0';
 	}
-	if ((b = sshbuf_new()) == NULL)
+	ਜੇ ((b = sshbuf_new()) == ਨਿਰਾ)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_b64tod(b, tmp)) != 0)
+	ਜੇ ((r = sshbuf_b64tod(b, tmp)) != 0)
 		fatal_r(r, "%s:%lu: decode hash failed", file, lnum);
-	free(tmp);
+	ਮੁਕਤ(tmp);
 	*lenp = sshbuf_len(b);
 	*blobp = xmalloc(*lenp);
-	memcpy(*blobp, sshbuf_ptr(b), *lenp);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(*blobp, sshbuf_ptr(b), *lenp);
 	sshbuf_free(b);
 }
 
-static void
-update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
-    const struct sshkey *ca, struct ssh_krl *krl)
+ਸਥਿਰ ਖਾਲੀ
+update_krl_from_file(ਬਣਤਰ passwd *pw, ਅਚਲ ਅੱਖਰ *file, ਪੂਰਨ wild_ca,
+    ਅਚਲ ਬਣਤਰ sshkey *ca, ਬਣਤਰ ssh_krl *krl)
 {
-	struct sshkey *key = NULL;
+	ਬਣਤਰ sshkey *ਕੁੰਜੀ = ਨਿਰਾ;
 	u_long lnum = 0;
-	char *path, *cp, *ep, *line = NULL;
-	u_char *blob = NULL;
-	size_t blen = 0, linesize = 0;
-	unsigned long long serial, serial2;
-	int i, was_explicit_key, was_sha1, was_sha256, was_hash, r;
+	ਅੱਖਰ *ਰਸਤਾ, *cp, *ep, *ਸਤਰ = ਨਿਰਾ;
+	u_char *blob = ਨਿਰਾ;
+	ਮਾਪ_t blen = 0, linesize = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ serial, serial2;
+	ਪੂਰਨ i, was_explicit_ਕੁੰਜੀ, was_sha1, was_sha256, was_hash, r;
 	FILE *krl_spec;
 
-	path = tilde_expand_filename(file, pw->pw_uid);
-	if (strcmp(path, "-") == 0) {
+	ਰਸਤਾ = tilde_expand_filename(file, pw->pw_uid);
+	ਜੇ (strcmp(ਰਸਤਾ, "-") == 0) {
 		krl_spec = stdin;
-		free(path);
-		path = xstrdup("(standard input)");
-	} else if ((krl_spec = fopen(path, "r")) == NULL)
-		fatal("fopen %s: %s", path, strerror(errno));
+		ਮੁਕਤ(ਰਸਤਾ);
+		ਰਸਤਾ = xstrdup("(standard input)");
+	} ਨਹੀਂਤਾਂ ਜੇ ((krl_spec = fopen(ਰਸਤਾ, "r")) == ਨਿਰਾ)
+		fatal("fopen %s: %s", ਰਸਤਾ, strerror(errno));
 
-	if (!quiet)
-		printf("Revoking from %s\n", path);
-	while (getline(&line, &linesize, krl_spec) != -1) {
-		if (linesize >= INT_MAX) {
+	ਜੇ (!quiet)
+		ਲਿਖੋ("Revoking from %s\n", ਰਸਤਾ);
+	ਜਦੋਂ (getline(&ਸਤਰ, &linesize, krl_spec) != -1) {
+		ਜੇ (linesize >= ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ) {
 			fatal_f("%s contains unparsable line, len=%zu",
-			    path, linesize);
+			    ਰਸਤਾ, linesize);
 		}
 		lnum++;
-		was_explicit_key = was_sha1 = was_sha256 = was_hash = 0;
-		cp = line + strspn(line, " \t");
+		was_explicit_ਕੁੰਜੀ = was_sha1 = was_sha256 = was_hash = 0;
+		cp = ਸਤਰ + strspn(ਸਤਰ, " \t");
 		/* Trim trailing space, comments and strip \n */
-		for (i = 0, r = -1; cp[i] != '\0'; i++) {
-			if (cp[i] == '#' || cp[i] == '\n') {
+		ਲਈ (i = 0, r = -1; cp[i] != '\0'; i++) {
+			ਜੇ (cp[i] == '#' || cp[i] == '\n') {
 				cp[i] = '\0';
-				break;
+				ਰੋਕੋ;
 			}
-			if (cp[i] == ' ' || cp[i] == '\t') {
+			ਜੇ (cp[i] == ' ' || cp[i] == '\t') {
 				/* Remember the start of a span of whitespace */
-				if (r == -1)
+				ਜੇ (r == -1)
 					r = i;
-			} else
+			} ਨਹੀਂਤਾਂ
 				r = -1;
 		}
-		if (r != -1)
+		ਜੇ (r != -1)
 			cp[r] = '\0';
-		if (*cp == '\0')
-			continue;
-		if (strncasecmp(cp, "serial:", 7) == 0) {
-			if (ca == NULL && !wild_ca) {
+		ਜੇ (*cp == '\0')
+			ਜਾਰੀ;
+		ਜੇ (strncasecmp(cp, "serial:", 7) == 0) {
+			ਜੇ (ca == ਨਿਰਾ && !wild_ca) {
 				fatal("revoking certificates by serial number "
 				    "requires specification of a CA key");
 			}
@@ -2345,62 +2345,62 @@ update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
 			cp = cp + strspn(cp, " \t");
 			errno = 0;
 			serial = strtoull(cp, &ep, 0);
-			if (*cp == '\0' || (*ep != '\0' && *ep != '-'))
+			ਜੇ (*cp == '\0' || (*ep != '\0' && *ep != '-'))
 				fatal("%s:%lu: invalid serial \"%s\"",
-				    path, lnum, cp);
-			if (errno == ERANGE && serial == ULLONG_MAX)
+				    ਰਸਤਾ, lnum, cp);
+			ਜੇ (errno == ERANGE && serial == ULLONG_MAX)
 				fatal("%s:%lu: serial out of range",
-				    path, lnum);
+				    ਰਸਤਾ, lnum);
 			serial2 = serial;
-			if (*ep == '-') {
+			ਜੇ (*ep == '-') {
 				cp = ep + 1;
 				errno = 0;
 				serial2 = strtoull(cp, &ep, 0);
-				if (*cp == '\0' || *ep != '\0')
+				ਜੇ (*cp == '\0' || *ep != '\0')
 					fatal("%s:%lu: invalid serial \"%s\"",
-					    path, lnum, cp);
-				if (errno == ERANGE && serial2 == ULLONG_MAX)
+					    ਰਸਤਾ, lnum, cp);
+				ਜੇ (errno == ERANGE && serial2 == ULLONG_MAX)
 					fatal("%s:%lu: serial out of range",
-					    path, lnum);
-				if (serial2 <= serial)
+					    ਰਸਤਾ, lnum);
+				ਜੇ (serial2 <= serial)
 					fatal("%s:%lu: invalid serial range "
-					    "%llu:%llu", path, lnum,
-					    (unsigned long long)serial,
-					    (unsigned long long)serial2);
+					    "%llu:%llu", ਰਸਤਾ, lnum,
+					    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)serial,
+					    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)serial2);
 			}
-			if (ssh_krl_revoke_cert_by_serial_range(krl,
+			ਜੇ (ssh_krl_revoke_cert_by_serial_range(krl,
 			    ca, serial, serial2) != 0) {
 				fatal_f("revoke serial failed");
 			}
-		} else if (strncasecmp(cp, "id:", 3) == 0) {
-			if (ca == NULL && !wild_ca) {
+		} ਨਹੀਂਤਾਂ ਜੇ (strncasecmp(cp, "id:", 3) == 0) {
+			ਜੇ (ca == ਨਿਰਾ && !wild_ca) {
 				fatal("revoking certificates by key ID "
 				    "requires specification of a CA key");
 			}
 			cp += 3;
 			cp = cp + strspn(cp, " \t");
-			if (ssh_krl_revoke_cert_by_key_id(krl, ca, cp) != 0)
+			ਜੇ (ssh_krl_revoke_cert_by_ਕੁੰਜੀ_id(krl, ca, cp) != 0)
 				fatal_f("revoke key ID failed");
-		} else if (strncasecmp(cp, "hash:", 5) == 0) {
+		} ਨਹੀਂਤਾਂ ਜੇ (strncasecmp(cp, "hash:", 5) == 0) {
 			cp += 5;
 			cp = cp + strspn(cp, " \t");
-			hash_to_blob(cp, &blob, &blen, file, lnum);
-			if ((r = ssh_krl_revoke_key_sha256(krl,
+			hash_ਮੰਜ਼ਿਲ_blob(cp, &blob, &blen, file, lnum);
+			ਜੇ ((r = ssh_krl_revoke_ਕੁੰਜੀ_sha256(krl,
 			    blob, blen)) != 0)
 				fatal_fr(r, "revoke key failed");
-			free(blob);
-			blob = NULL;
+			ਮੁਕਤ(blob);
+			blob = ਨਿਰਾ;
 			blen = 0;
-		} else {
-			if (strncasecmp(cp, "key:", 4) == 0) {
+		} ਨਹੀਂਤਾਂ {
+			ਜੇ (strncasecmp(cp, "key:", 4) == 0) {
 				cp += 4;
 				cp = cp + strspn(cp, " \t");
-				was_explicit_key = 1;
-			} else if (strncasecmp(cp, "sha1:", 5) == 0) {
+				was_explicit_ਕੁੰਜੀ = 1;
+			} ਨਹੀਂਤਾਂ ਜੇ (strncasecmp(cp, "sha1:", 5) == 0) {
 				cp += 5;
 				cp = cp + strspn(cp, " \t");
 				was_sha1 = 1;
-			} else if (strncasecmp(cp, "sha256:", 7) == 0) {
+			} ਨਹੀਂਤਾਂ ਜੇ (strncasecmp(cp, "sha256:", 7) == 0) {
 				cp += 7;
 				cp = cp + strspn(cp, " \t");
 				was_sha256 = 1;
@@ -2409,262 +2409,262 @@ update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
 				 * Parsing will fail if it isn't.
 				 */
 			}
-			if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+			ਜੇ ((ਕੁੰਜੀ = sshkey_new(ਕੁੰਜੀ_UNSPEC)) == ਨਿਰਾ)
 				fatal("sshkey_new");
-			if ((r = sshkey_read(key, &cp)) != 0)
-				fatal_r(r, "%s:%lu: invalid key", path, lnum);
-			if (was_explicit_key)
-				r = ssh_krl_revoke_key_explicit(krl, key);
-			else if (was_sha1) {
-				if (sshkey_fingerprint_raw(key,
+			ਜੇ ((r = sshkey_read(ਕੁੰਜੀ, &cp)) != 0)
+				fatal_r(r, "%s:%lu: invalid key", ਰਸਤਾ, lnum);
+			ਜੇ (was_explicit_ਕੁੰਜੀ)
+				r = ssh_krl_revoke_ਕੁੰਜੀ_explicit(krl, ਕੁੰਜੀ);
+			ਨਹੀਂਤਾਂ ਜੇ (was_sha1) {
+				ਜੇ (sshkey_fingerprint_raw(ਕੁੰਜੀ,
 				    SSH_DIGEST_SHA1, &blob, &blen) != 0) {
 					fatal("%s:%lu: fingerprint failed",
 					    file, lnum);
 				}
-				r = ssh_krl_revoke_key_sha1(krl, blob, blen);
-			} else if (was_sha256) {
-				if (sshkey_fingerprint_raw(key,
+				r = ssh_krl_revoke_ਕੁੰਜੀ_sha1(krl, blob, blen);
+			} ਨਹੀਂਤਾਂ ਜੇ (was_sha256) {
+				ਜੇ (sshkey_fingerprint_raw(ਕੁੰਜੀ,
 				    SSH_DIGEST_SHA256, &blob, &blen) != 0) {
 					fatal("%s:%lu: fingerprint failed",
 					    file, lnum);
 				}
-				r = ssh_krl_revoke_key_sha256(krl, blob, blen);
-			} else
-				r = ssh_krl_revoke_key(krl, key);
-			if (r != 0)
+				r = ssh_krl_revoke_ਕੁੰਜੀ_sha256(krl, blob, blen);
+			} ਨਹੀਂਤਾਂ
+				r = ssh_krl_revoke_ਕੁੰਜੀ(krl, ਕੁੰਜੀ);
+			ਜੇ (r != 0)
 				fatal_fr(r, "revoke key failed");
 			freezero(blob, blen);
-			blob = NULL;
+			blob = ਨਿਰਾ;
 			blen = 0;
-			sshkey_free(key);
+			sshkey_free(ਕੁੰਜੀ);
 		}
 	}
-	if (strcmp(path, "-") != 0)
+	ਜੇ (strcmp(ਰਸਤਾ, "-") != 0)
 		fclose(krl_spec);
-	free(line);
-	free(path);
+	ਮੁਕਤ(ਸਤਰ);
+	ਮੁਕਤ(ਰਸਤਾ);
 }
 
-static void
-do_gen_krl(struct passwd *pw, int updating, const char *ca_key_path,
-    unsigned long long krl_version, const char *krl_comment,
-    int argc, char **argv)
+ਸਥਿਰ ਖਾਲੀ
+do_gen_krl(ਬਣਤਰ passwd *pw, ਪੂਰਨ updating, ਅਚਲ ਅੱਖਰ *ca_ਕੁੰਜੀ_ਰਸਤਾ,
+    ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ krl_ਸੰਸਕਰਣ, ਅਚਲ ਅੱਖਰ *krl_comment,
+    ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	struct ssh_krl *krl;
-	struct stat sb;
-	struct sshkey *ca = NULL;
-	int i, r, wild_ca = 0;
-	char *tmp;
-	struct sshbuf *kbuf;
+	ਬਣਤਰ ssh_krl *krl;
+	ਬਣਤਰ stat sb;
+	ਬਣਤਰ sshkey *ca = ਨਿਰਾ;
+	ਪੂਰਨ i, r, wild_ca = 0;
+	ਅੱਖਰ *tmp;
+	ਬਣਤਰ sshbuf *kbuf;
 
-	if (*identity_file == '\0')
+	ਜੇ (*ਪਛਾਣ_ਤੱਤ_file == '\0')
 		fatal("KRL generation requires an output file");
-	if (stat(identity_file, &sb) == -1) {
-		if (errno != ENOENT)
+	ਜੇ (stat(ਪਛਾਣ_ਤੱਤ_file, &sb) == -1) {
+		ਜੇ (errno != ENOENT)
 			fatal("Cannot access KRL \"%s\": %s",
-			    identity_file, strerror(errno));
-		if (updating)
-			fatal("KRL \"%s\" does not exist", identity_file);
+			    ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
+		ਜੇ (updating)
+			fatal("KRL \"%s\" does not exist", ਪਛਾਣ_ਤੱਤ_file);
 	}
-	if (ca_key_path != NULL) {
-		if (strcasecmp(ca_key_path, "none") == 0)
+	ਜੇ (ca_ਕੁੰਜੀ_ਰਸਤਾ != ਨਿਰਾ) {
+		ਜੇ (strcasecmp(ca_ਕੁੰਜੀ_ਰਸਤਾ, "none") == 0)
 			wild_ca = 1;
-		else {
-			tmp = tilde_expand_filename(ca_key_path, pw->pw_uid);
-			if ((r = sshkey_load_public(tmp, &ca, NULL)) != 0)
+		ਨਹੀਂਤਾਂ {
+			tmp = tilde_expand_filename(ca_ਕੁੰਜੀ_ਰਸਤਾ, pw->pw_uid);
+			ਜੇ ((r = sshkey_ਲੱਦੋ_ਜਨਤਕ(tmp, &ca, ਨਿਰਾ)) != 0)
 				fatal_r(r, "Cannot load CA public key %s", tmp);
-			free(tmp);
+			ਮੁਕਤ(tmp);
 		}
 	}
 
-	if (updating)
-		load_krl(identity_file, &krl);
-	else if ((krl = ssh_krl_init()) == NULL)
+	ਜੇ (updating)
+		ਲੱਦੋ_krl(ਪਛਾਣ_ਤੱਤ_file, &krl);
+	ਨਹੀਂਤਾਂ ਜੇ ((krl = ssh_krl_init()) == ਨਿਰਾ)
 		fatal("couldn't create KRL");
 
-	if (krl_version != 0)
-		ssh_krl_set_version(krl, krl_version);
-	if (krl_comment != NULL)
-		ssh_krl_set_comment(krl, krl_comment);
+	ਜੇ (krl_ਸੰਸਕਰਣ != 0)
+		ssh_krl_ਸੈੱਟ_ਸੰਸਕਰਣ(krl, krl_ਸੰਸਕਰਣ);
+	ਜੇ (krl_comment != ਨਿਰਾ)
+		ssh_krl_ਸੈੱਟ_comment(krl, krl_comment);
 
-	for (i = 0; i < argc; i++)
+	ਲਈ (i = 0; i < argc; i++)
 		update_krl_from_file(pw, argv[i], wild_ca, ca, krl);
 
-	if ((kbuf = sshbuf_new()) == NULL)
+	ਜੇ ((kbuf = sshbuf_new()) == ਨਿਰਾ)
 		fatal("sshbuf_new failed");
-	if (ssh_krl_to_blob(krl, kbuf) != 0)
+	ਜੇ (ssh_krl_ਮੰਜ਼ਿਲ_blob(krl, kbuf) != 0)
 		fatal("Couldn't generate KRL");
-	if ((r = sshbuf_write_file(identity_file, kbuf)) != 0)
-		fatal("write %s: %s", identity_file, strerror(errno));
+	ਜੇ ((r = sshbuf_write_file(ਪਛਾਣ_ਤੱਤ_file, kbuf)) != 0)
+		fatal("write %s: %s", ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
 	sshbuf_free(kbuf);
 	ssh_krl_free(krl);
 	sshkey_free(ca);
 }
 
-static void
-do_check_krl(struct passwd *pw, int print_krl, int argc, char **argv)
+ਸਥਿਰ ਖਾਲੀ
+do_check_krl(ਬਣਤਰ passwd *pw, ਪੂਰਨ print_krl, ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	int i, r, ret = 0;
-	char *comment;
-	struct ssh_krl *krl;
-	struct sshkey *k;
+	ਪੂਰਨ i, r, ret = 0;
+	ਅੱਖਰ *comment;
+	ਬਣਤਰ ssh_krl *krl;
+	ਬਣਤਰ sshkey *k;
 
-	if (*identity_file == '\0')
+	ਜੇ (*ਪਛਾਣ_ਤੱਤ_file == '\0')
 		fatal("KRL checking requires an input file");
-	load_krl(identity_file, &krl);
-	if (print_krl)
+	ਲੱਦੋ_krl(ਪਛਾਣ_ਤੱਤ_file, &krl);
+	ਜੇ (print_krl)
 		krl_dump(krl, stdout);
-	for (i = 0; i < argc; i++) {
-		if ((r = sshkey_load_public(argv[i], &k, &comment)) != 0)
+	ਲਈ (i = 0; i < argc; i++) {
+		ਜੇ ((r = sshkey_ਲੱਦੋ_ਜਨਤਕ(argv[i], &k, &comment)) != 0)
 			fatal_r(r, "Cannot load public key %s", argv[i]);
-		r = ssh_krl_check_key(krl, k);
-		printf("%s%s%s%s: %s\n", argv[i],
+		r = ssh_krl_check_ਕੁੰਜੀ(krl, k);
+		ਲਿਖੋ("%s%s%s%s: %s\n", argv[i],
 		    *comment ? " (" : "", comment, *comment ? ")" : "",
 		    r == 0 ? "ok" : "REVOKED");
-		if (r != 0)
+		ਜੇ (r != 0)
 			ret = 1;
 		sshkey_free(k);
-		free(comment);
+		ਮੁਕਤ(comment);
 	}
 	ssh_krl_free(krl);
-	exit(ret);
+	ਬਾਹਰ_ਨਿਕਲੋ(ret);
 }
 
-static struct sshkey *
-load_sign_key(const char *keypath, const struct sshkey *pubkey)
+ਸਥਿਰ ਬਣਤਰ sshkey *
+ਲੱਦੋ_sign_ਕੁੰਜੀ(ਅਚਲ ਅੱਖਰ *keypath, ਅਚਲ ਬਣਤਰ sshkey *pubkey)
 {
-	size_t i, slen, plen = strlen(keypath);
-	char *privpath = xstrdup(keypath);
-	static const char * const suffixes[] = { "-cert.pub", ".pub", NULL };
-	struct sshkey *ret = NULL, *privkey = NULL;
-	int r, waspub = 0;
-	struct stat st;
+	ਮਾਪ_t i, slen, plen = ਲੜੀ_ਲੰਬਾਈ(keypath);
+	ਅੱਖਰ *privpath = xstrdup(keypath);
+	ਸਥਿਰ ਅਚਲ ਅੱਖਰ * ਅਚਲ suffixes[] = { "-cert.pub", ".pub", ਨਿਰਾ };
+	ਬਣਤਰ sshkey *ret = ਨਿਰਾ, *privkey = ਨਿਰਾ;
+	ਪੂਰਨ r, waspub = 0;
+	ਬਣਤਰ stat st;
 
 	/*
 	 * If passed a public key filename, then try to locate the corresponding
 	 * private key. This lets us specify certificates on the command-line
 	 * and have ssh-keygen find the appropriate private key.
 	 */
-	for (i = 0; suffixes[i]; i++) {
-		slen = strlen(suffixes[i]);
-		if (plen <= slen ||
+	ਲਈ (i = 0; suffixes[i]; i++) {
+		slen = ਲੜੀ_ਲੰਬਾਈ(suffixes[i]);
+		ਜੇ (plen <= slen ||
 		    strcmp(privpath + plen - slen, suffixes[i]) != 0)
-			continue;
+			ਜਾਰੀ;
 		privpath[plen - slen] = '\0';
 		debug_f("%s looks like a public key, using private key "
 		    "path %s instead", keypath, privpath);
 		waspub = 1;
 	}
-	if (waspub && stat(privpath, &st) != 0 && errno == ENOENT)
+	ਜੇ (waspub && stat(privpath, &st) != 0 && errno == ENOENT)
 		fatal("No private key found for public key \"%s\"", keypath);
-	if ((r = sshkey_load_private(privpath, "", &privkey, NULL)) != 0 &&
-	    (r != SSH_ERR_KEY_WRONG_PASSPHRASE)) {
+	ਜੇ ((r = sshkey_ਲੱਦੋ_ਨਿੱਜੀ(privpath, "", &privkey, ਨਿਰਾ)) != 0 &&
+	    (r != SSH_ERR_ਕੁੰਜੀ_WRONG_PASSPHRASE)) {
 		debug_fr(r, "load private key \"%s\"", privpath);
 		fatal("No private key found for \"%s\"", privpath);
-	} else if (privkey == NULL)
-		privkey = load_identity(privpath, NULL);
+	} ਨਹੀਂਤਾਂ ਜੇ (privkey == ਨਿਰਾ)
+		privkey = ਲੱਦੋ_ਪਛਾਣ_ਤੱਤ(privpath, ਨਿਰਾ);
 
-	if (!sshkey_equal_public(pubkey, privkey)) {
+	ਜੇ (!sshkey_equal_ਜਨਤਕ(pubkey, privkey)) {
 		error("Public key %s doesn't match private %s",
 		    keypath, privpath);
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if (sshkey_is_cert(pubkey) && !sshkey_is_cert(privkey)) {
+	ਜੇ (sshkey_is_cert(pubkey) && !sshkey_is_cert(privkey)) {
 		/*
 		 * Graft the certificate onto the private key to make
 		 * it capable of signing.
 		 */
-		if ((r = sshkey_to_certified(privkey)) != 0) {
+		ਜੇ ((r = sshkey_ਮੰਜ਼ਿਲ_certified(privkey)) != 0) {
 			error_fr(r, "sshkey_to_certified");
-			goto done;
+			ਜਾਓ ਪੂਰਾ;
 		}
-		if ((r = sshkey_cert_copy(pubkey, privkey)) != 0) {
+		ਜੇ ((r = sshkey_cert_copy(pubkey, privkey)) != 0) {
 			error_fr(r, "sshkey_cert_copy");
-			goto done;
+			ਜਾਓ ਪੂਰਾ;
 		}
 	}
 	/* success */
 	ret = privkey;
-	privkey = NULL;
- done:
+	privkey = ਨਿਰਾ;
+ ਪੂਰਾ:
 	sshkey_free(privkey);
-	free(privpath);
-	return ret;
+	ਮੁਕਤ(privpath);
+	ਵਾਪਸ ret;
 }
 
-static int
-sign_one(struct sshkey *signkey, const char *filename, int fd,
-    const char *sig_namespace, const char *hashalg, sshsig_signer *signer,
-    void *signer_ctx)
+ਸਥਿਰ ਪੂਰਨ
+sign_one(ਬਣਤਰ sshkey *signkey, ਅਚਲ ਅੱਖਰ *filename, ਪੂਰਨ fd,
+    ਅਚਲ ਅੱਖਰ *sig_namespace, ਅਚਲ ਅੱਖਰ *hashalg, sshsig_signer *signer,
+    ਖਾਲੀ *signer_ctx)
 {
-	struct sshbuf *sigbuf = NULL, *abuf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR, wfd = -1, oerrno;
-	char *wfile = NULL, *asig = NULL, *fp = NULL;
-	char *pin = NULL, *prompt = NULL;
+	ਬਣਤਰ sshbuf *sigbuf = ਨਿਰਾ, *abuf = ਨਿਰਾ;
+	ਪੂਰਨ r = SSH_ERR_ਅੰਦਰੂਨੀ_ERROR, wfd = -1, oerrno;
+	ਅੱਖਰ *wfile = ਨਿਰਾ, *asig = ਨਿਰਾ, *fp = ਨਿਰਾ;
+	ਅੱਖਰ *pin = ਨਿਰਾ, *prompt = ਨਿਰਾ;
 
-	if (!quiet) {
-		if (fd == STDIN_FILENO)
+	ਜੇ (!quiet) {
+		ਜੇ (fd == STDIN_FILENO)
 			fprintf(stderr, "Signing data on standard input\n");
-		else
+		ਨਹੀਂਤਾਂ
 			fprintf(stderr, "Signing file %s\n", filename);
 	}
-	if (signer == NULL && sshkey_is_sk(signkey)) {
-		if ((signkey->sk_flags & SSH_SK_USER_VERIFICATION_REQD)) {
+	ਜੇ (signer == ਨਿਰਾ && sshkey_is_sk(signkey)) {
+		ਜੇ ((signkey->sk_flags & SSH_SK_USER_VERIFICATION_REQD)) {
 			xasprintf(&prompt, "Enter PIN for %s key: ",
 			    sshkey_type(signkey));
-			if ((pin = read_passphrase(prompt,
-			    RP_ALLOW_STDIN)) == NULL)
+			ਜੇ ((pin = read_passphrase(prompt,
+			    RP_ALLOW_STDIN)) == ਨਿਰਾ)
 				fatal_f("couldn't read PIN");
 		}
-		if ((signkey->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
-			if ((fp = sshkey_fingerprint(signkey, fingerprint_hash,
-			    SSH_FP_DEFAULT)) == NULL)
+		ਜੇ ((signkey->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
+			ਜੇ ((fp = sshkey_fingerprint(signkey, fingerprint_hash,
+			    SSH_FP_DEFAULT)) == ਨਿਰਾ)
 				fatal_f("fingerprint failed");
 			fprintf(stderr, "Confirm user presence for key %s %s\n",
 			    sshkey_type(signkey), fp);
-			free(fp);
+			ਮੁਕਤ(fp);
 		}
 	}
-	if ((r = sshsig_sign_fd(signkey, hashalg, sk_provider, pin,
+	ਜੇ ((r = sshsig_sign_fd(signkey, hashalg, sk_provider, pin,
 	    fd, sig_namespace, &sigbuf, signer, signer_ctx)) != 0) {
 		error_r(r, "Signing %s failed", filename);
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((r = sshsig_armor(sigbuf, &abuf)) != 0) {
+	ਜੇ ((r = sshsig_armor(sigbuf, &abuf)) != 0) {
 		error_fr(r, "sshsig_armor");
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((asig = sshbuf_dup_string(abuf)) == NULL) {
+	ਜੇ ((asig = sshbuf_dup_string(abuf)) == ਨਿਰਾ) {
 		error_f("buffer error");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
-	if (fd == STDIN_FILENO) {
+	ਜੇ (fd == STDIN_FILENO) {
 		fputs(asig, stdout);
 		fflush(stdout);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		xasprintf(&wfile, "%s.sig", filename);
-		if (confirm_overwrite(wfile)) {
-			if ((wfd = open(wfile, O_WRONLY|O_CREAT|O_TRUNC,
+		ਜੇ (confirm_overwrite(wfile)) {
+			ਜੇ ((wfd = open(wfile, O_WRONLY|O_CREAT|O_TRUNC,
 			    0666)) == -1) {
 				oerrno = errno;
 				error("Cannot open %s: %s",
 				    wfile, strerror(errno));
 				errno = oerrno;
 				r = SSH_ERR_SYSTEM_ERROR;
-				goto out;
+				ਜਾਓ ਬਾਹਰਲਾ;
 			}
-			if (atomicio(vwrite, wfd, asig,
-			    strlen(asig)) != strlen(asig)) {
+			ਜੇ (atomicio(vwrite, wfd, asig,
+			    ਲੜੀ_ਲੰਬਾਈ(asig)) != ਲੜੀ_ਲੰਬਾਈ(asig)) {
 				oerrno = errno;
 				error("Cannot write to %s: %s",
 				    wfile, strerror(errno));
 				errno = oerrno;
 				r = SSH_ERR_SYSTEM_ERROR;
-				goto out;
+				ਜਾਓ ਬਾਹਰਲਾ;
 			}
-			if (!quiet) {
+			ਜੇ (!quiet) {
 				fprintf(stderr, "Write signature to %s\n",
 				    wfile);
 			}
@@ -2672,634 +2672,634 @@ sign_one(struct sshkey *signkey, const char *filename, int fd,
 	}
 	/* success */
 	r = 0;
- out:
-	free(wfile);
-	free(prompt);
-	free(asig);
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
+ ਬਾਹਰਲਾ:
+	ਮੁਕਤ(wfile);
+	ਮੁਕਤ(prompt);
+	ਮੁਕਤ(asig);
+	ਜੇ (pin != ਨਿਰਾ)
+		freezero(pin, ਲੜੀ_ਲੰਬਾਈ(pin));
 	sshbuf_free(abuf);
 	sshbuf_free(sigbuf);
-	if (wfd != -1)
+	ਜੇ (wfd != -1)
 		close(wfd);
-	return r;
+	ਵਾਪਸ r;
 }
 
-static int
-sig_process_opts(char * const *opts, size_t nopts, char **hashalgp,
-    uint64_t *verify_timep, int *print_pubkey)
+ਸਥਿਰ ਪੂਰਨ
+sig_process_opts(ਅੱਖਰ * ਅਚਲ *opts, ਮਾਪ_t nopts, ਅੱਖਰ **hashalgp,
+    uint64_t *verify_timep, ਪੂਰਨ *print_pubkey)
 {
-	size_t i;
+	ਮਾਪ_t i;
 	time_t now;
-	const char *p;
+	ਅਚਲ ਅੱਖਰ *p;
 
-	if (verify_timep != NULL)
+	ਜੇ (verify_timep != ਨਿਰਾ)
 		*verify_timep = 0;
-	if (print_pubkey != NULL)
+	ਜੇ (print_pubkey != ਨਿਰਾ)
 		*print_pubkey = 0;
-	if (hashalgp != NULL)
-		*hashalgp = NULL;
-	for (i = 0; i < nopts; i++) {
-		if (hashalgp != NULL &&
-		    (p = strprefix(opts[i], "hashalg=", 1)) != NULL) {
+	ਜੇ (hashalgp != ਨਿਰਾ)
+		*hashalgp = ਨਿਰਾ;
+	ਲਈ (i = 0; i < nopts; i++) {
+		ਜੇ (hashalgp != ਨਿਰਾ &&
+		    (p = strprefix(opts[i], "hashalg=", 1)) != ਨਿਰਾ) {
 			*hashalgp = xstrdup(p);
-		} else if (verify_timep &&
-		    (p = strprefix(opts[i], "verify-time=", 1)) != NULL) {
-			if (parse_absolute_time(p, verify_timep) != 0 ||
+		} ਨਹੀਂਤਾਂ ਜੇ (verify_timep &&
+		    (p = strprefix(opts[i], "verify-time=", 1)) != ਨਿਰਾ) {
+			ਜੇ (parse_absolute_ਸਮਾਂ(p, verify_timep) != 0 ||
 			    *verify_timep == 0) {
 				error("Invalid \"verify-time\" option");
-				return SSH_ERR_INVALID_ARGUMENT;
+				ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 			}
-		} else if (print_pubkey &&
+		} ਨਹੀਂਤਾਂ ਜੇ (print_pubkey &&
 		    strcasecmp(opts[i], "print-pubkey") == 0) {
 			*print_pubkey = 1;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			error("Invalid option \"%s\"", opts[i]);
-			return SSH_ERR_INVALID_ARGUMENT;
+			ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 		}
 	}
-	if (verify_timep && *verify_timep == 0) {
-		if ((now = time(NULL)) < 0) {
+	ਜੇ (verify_timep && *verify_timep == 0) {
+		ਜੇ ((now = time(ਨਿਰਾ)) < 0) {
 			error("Time is before epoch");
-			return SSH_ERR_INVALID_ARGUMENT;
+			ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 		}
 		*verify_timep = (uint64_t)now;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 
-static int
-sig_sign(const char *keypath, const char *sig_namespace, int require_agent,
-    int argc, char **argv, char * const *opts, size_t nopts)
+ਸਥਿਰ ਪੂਰਨ
+sig_sign(ਅਚਲ ਅੱਖਰ *keypath, ਅਚਲ ਅੱਖਰ *sig_namespace, ਪੂਰਨ require_agent,
+    ਪੂਰਨ argc, ਅੱਖਰ **argv, ਅੱਖਰ * ਅਚਲ *opts, ਮਾਪ_t nopts)
 {
-	int i, fd = -1, r, ret = -1;
-	int agent_fd = -1;
-	struct sshkey *pubkey = NULL, *privkey = NULL, *signkey = NULL;
-	sshsig_signer *signer = NULL;
-	char *hashalg = NULL;
+	ਪੂਰਨ i, fd = -1, r, ret = -1;
+	ਪੂਰਨ agent_fd = -1;
+	ਬਣਤਰ sshkey *pubkey = ਨਿਰਾ, *privkey = ਨਿਰਾ, *signkey = ਨਿਰਾ;
+	sshsig_signer *signer = ਨਿਰਾ;
+	ਅੱਖਰ *hashalg = ਨਿਰਾ;
 
 	/* Check file arguments. */
-	for (i = 0; i < argc; i++) {
-		if (strcmp(argv[i], "-") != 0)
-			continue;
-		if (i > 0 || argc > 1)
+	ਲਈ (i = 0; i < argc; i++) {
+		ਜੇ (strcmp(argv[i], "-") != 0)
+			ਜਾਰੀ;
+		ਜੇ (i > 0 || argc > 1)
 			fatal("Cannot sign mix of paths and standard input");
 	}
 
-	if (sig_process_opts(opts, nopts, &hashalg, NULL, NULL) != 0)
-		goto done; /* error already logged */
+	ਜੇ (sig_process_opts(opts, nopts, &hashalg, ਨਿਰਾ, ਨਿਰਾ) != 0)
+		ਜਾਓ ਪੂਰਾ; /* error already logged */
 
-	if ((r = sshkey_load_public(keypath, &pubkey, NULL)) != 0) {
+	ਜੇ ((r = sshkey_ਲੱਦੋ_ਜਨਤਕ(keypath, &pubkey, ਨਿਰਾ)) != 0) {
 		error_r(r, "Couldn't load public key %s", keypath);
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 
-	if ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
-		if (require_agent)
+	ਜੇ ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
+		ਜੇ (require_agent)
 			fatal("Couldn't get agent socket");
 		debug_r(r, "Couldn't get agent socket");
-	} else {
-		if ((r = ssh_agent_has_key(agent_fd, pubkey)) == 0)
+	} ਨਹੀਂਤਾਂ {
+		ਜੇ ((r = ssh_agent_has_ਕੁੰਜੀ(agent_fd, pubkey)) == 0)
 			signer = agent_signer;
-		else {
-			if (require_agent)
+		ਨਹੀਂਤਾਂ {
+			ਜੇ (require_agent)
 				fatal("Couldn't find key in agent");
 			debug_r(r, "Couldn't find key in agent");
 		}
 	}
 
-	if (signer == NULL) {
+	ਜੇ (signer == ਨਿਰਾ) {
 		/* Not using agent - try to load private key */
-		if ((privkey = load_sign_key(keypath, pubkey)) == NULL)
-			goto done;
+		ਜੇ ((privkey = ਲੱਦੋ_sign_ਕੁੰਜੀ(keypath, pubkey)) == ਨਿਰਾ)
+			ਜਾਓ ਪੂਰਾ;
 		signkey = privkey;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/* Will use key in agent */
 		signkey = pubkey;
 	}
 
-	if (argc == 0) {
-		if ((r = sign_one(signkey, "(stdin)", STDIN_FILENO,
+	ਜੇ (argc == 0) {
+		ਜੇ ((r = sign_one(signkey, "(stdin)", STDIN_FILENO,
 		    sig_namespace, hashalg, signer, &agent_fd)) != 0)
-			goto done;
-	} else {
-		for (i = 0; i < argc; i++) {
-			if (strcmp(argv[i], "-") == 0)
+			ਜਾਓ ਪੂਰਾ;
+	} ਨਹੀਂਤਾਂ {
+		ਲਈ (i = 0; i < argc; i++) {
+			ਜੇ (strcmp(argv[i], "-") == 0)
 				fd = STDIN_FILENO;
-			else if ((fd = open(argv[i], O_RDONLY)) == -1) {
+			ਨਹੀਂਤਾਂ ਜੇ ((fd = open(argv[i], O_RDONLY)) == -1) {
 				error("Cannot open %s for signing: %s",
 				    argv[i], strerror(errno));
-				goto done;
+				ਜਾਓ ਪੂਰਾ;
 			}
-			if ((r = sign_one(signkey, argv[i], fd, sig_namespace,
+			ਜੇ ((r = sign_one(signkey, argv[i], fd, sig_namespace,
 			    hashalg, signer, &agent_fd)) != 0)
-				goto done;
-			if (fd != STDIN_FILENO)
+				ਜਾਓ ਪੂਰਾ;
+			ਜੇ (fd != STDIN_FILENO)
 				close(fd);
 			fd = -1;
 		}
 	}
 
 	ret = 0;
-done:
-	if (fd != -1 && fd != STDIN_FILENO)
+ਪੂਰਾ:
+	ਜੇ (fd != -1 && fd != STDIN_FILENO)
 		close(fd);
 	sshkey_free(pubkey);
 	sshkey_free(privkey);
-	free(hashalg);
-	return ret;
+	ਮੁਕਤ(hashalg);
+	ਵਾਪਸ ret;
 }
 
-static int
-sig_verify(const char *signature, const char *sig_namespace,
-    const char *principal, const char *allowed_keys, const char *revoked_keys,
-    char * const *opts, size_t nopts)
+ਸਥਿਰ ਪੂਰਨ
+sig_verify(ਅਚਲ ਅੱਖਰ *signature, ਅਚਲ ਅੱਖਰ *sig_namespace,
+    ਅਚਲ ਅੱਖਰ *principal, ਅਚਲ ਅੱਖਰ *allowed_ਕੁੰਜੀਆਂ, ਅਚਲ ਅੱਖਰ *revoked_ਕੁੰਜੀਆਂ,
+    ਅੱਖਰ * ਅਚਲ *opts, ਮਾਪ_t nopts)
 {
-	int r, ret = -1;
-	int print_pubkey = 0;
-	struct sshbuf *sigbuf = NULL, *abuf = NULL;
-	struct sshkey *sign_key = NULL;
-	char *fp = NULL;
-	struct sshkey_sig_details *sig_details = NULL;
-	uint64_t verify_time = 0;
+	ਪੂਰਨ r, ret = -1;
+	ਪੂਰਨ print_pubkey = 0;
+	ਬਣਤਰ sshbuf *sigbuf = ਨਿਰਾ, *abuf = ਨਿਰਾ;
+	ਬਣਤਰ sshkey *sign_ਕੁੰਜੀ = ਨਿਰਾ;
+	ਅੱਖਰ *fp = ਨਿਰਾ;
+	ਬਣਤਰ sshkey_sig_details *sig_details = ਨਿਰਾ;
+	uint64_t verify_ਸਮਾਂ = 0;
 
-	if (sig_process_opts(opts, nopts, NULL, &verify_time,
+	ਜੇ (sig_process_opts(opts, nopts, ਨਿਰਾ, &verify_ਸਮਾਂ,
 	    &print_pubkey) != 0)
-		goto done; /* error already logged */
+		ਜਾਓ ਪੂਰਾ; /* error already logged */
 
-	memset(&sig_details, 0, sizeof(sig_details));
-	if ((r = sshbuf_load_file(signature, &abuf)) != 0) {
+	memset(&sig_details, 0, ਆਕਾਰ(sig_details));
+	ਜੇ ((r = sshbuf_ਲੱਦੋ_file(signature, &abuf)) != 0) {
 		error_r(r, "Couldn't read signature file");
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 
-	if ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
+	ਜੇ ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
 		error_fr(r, "sshsig_armor");
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if ((r = sshsig_verify_fd(sigbuf, STDIN_FILENO, sig_namespace,
-	    &sign_key, &sig_details)) != 0)
-		goto done; /* sshsig_verify() prints error */
+	ਜੇ ((r = sshsig_verify_fd(sigbuf, STDIN_FILENO, sig_namespace,
+	    &sign_ਕੁੰਜੀ, &sig_details)) != 0)
+		ਜਾਓ ਪੂਰਾ; /* sshsig_verify() prints error */
 
-	if ((fp = sshkey_fingerprint(sign_key, fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL)
+	ਜੇ ((fp = sshkey_fingerprint(sign_ਕੁੰਜੀ, fingerprint_hash,
+	    SSH_FP_DEFAULT)) == ਨਿਰਾ)
 		fatal_f("sshkey_fingerprint failed");
 	debug("Valid (unverified) signature from key %s", fp);
-	if (sig_details != NULL) {
+	ਜੇ (sig_details != ਨਿਰਾ) {
 		debug2_f("signature details: counter = %u, flags = 0x%02x",
 		    sig_details->sk_counter, sig_details->sk_flags);
 	}
-	free(fp);
-	fp = NULL;
+	ਮੁਕਤ(fp);
+	fp = ਨਿਰਾ;
 
-	if (revoked_keys != NULL) {
-		if ((r = sshkey_check_revoked(sign_key, revoked_keys)) != 0) {
+	ਜੇ (revoked_ਕੁੰਜੀਆਂ != ਨਿਰਾ) {
+		ਜੇ ((r = sshkey_check_revoked(sign_ਕੁੰਜੀ, revoked_ਕੁੰਜੀਆਂ)) != 0) {
 			debug3_fr(r, "sshkey_check_revoked");
-			goto done;
+			ਜਾਓ ਪੂਰਾ;
 		}
 	}
 
-	if (allowed_keys != NULL && (r = sshsig_check_allowed_keys(allowed_keys,
-	    sign_key, principal, sig_namespace, verify_time)) != 0) {
+	ਜੇ (allowed_ਕੁੰਜੀਆਂ != ਨਿਰਾ && (r = sshsig_check_allowed_ਕੁੰਜੀਆਂ(allowed_ਕੁੰਜੀਆਂ,
+	    sign_ਕੁੰਜੀ, principal, sig_namespace, verify_ਸਮਾਂ)) != 0) {
 		debug3_fr(r, "sshsig_check_allowed_keys");
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 	/* success */
 	ret = 0;
-done:
-	if (!quiet) {
-		if (ret == 0) {
-			if ((fp = sshkey_fingerprint(sign_key, fingerprint_hash,
-			    SSH_FP_DEFAULT)) == NULL)
+ਪੂਰਾ:
+	ਜੇ (!quiet) {
+		ਜੇ (ret == 0) {
+			ਜੇ ((fp = sshkey_fingerprint(sign_ਕੁੰਜੀ, fingerprint_hash,
+			    SSH_FP_DEFAULT)) == ਨਿਰਾ)
 				fatal_f("sshkey_fingerprint failed");
-			if (principal == NULL) {
-				printf("Good \"%s\" signature with %s key %s\n",
-				    sig_namespace, sshkey_type(sign_key), fp);
+			ਜੇ (principal == ਨਿਰਾ) {
+				ਲਿਖੋ("Good \"%s\" signature with %s key %s\n",
+				    sig_namespace, sshkey_type(sign_ਕੁੰਜੀ), fp);
 
-			} else {
-				printf("Good \"%s\" signature for %s with %s key %s\n",
+			} ਨਹੀਂਤਾਂ {
+				ਲਿਖੋ("Good \"%s\" signature for %s with %s key %s\n",
 				    sig_namespace, principal,
-				    sshkey_type(sign_key), fp);
+				    sshkey_type(sign_ਕੁੰਜੀ), fp);
 			}
-		} else {
-			printf("Could not verify signature.\n");
+		} ਨਹੀਂਤਾਂ {
+			ਲਿਖੋ("Could not verify signature.\n");
 		}
 	}
 	/* Print the signature key if requested */
-	if (ret == 0 && print_pubkey && sign_key != NULL) {
-		if ((r = sshkey_write(sign_key, stdout)) == 0)
+	ਜੇ (ret == 0 && print_pubkey && sign_ਕੁੰਜੀ != ਨਿਰਾ) {
+		ਜੇ ((r = sshkey_write(sign_ਕੁੰਜੀ, stdout)) == 0)
 			fputc('\n', stdout);
-		else {
+		ਨਹੀਂਤਾਂ {
 			error_r(r, "Could not print public key.\n");
 			ret = -1;
 		}
 	}
 	sshbuf_free(sigbuf);
 	sshbuf_free(abuf);
-	sshkey_free(sign_key);
+	sshkey_free(sign_ਕੁੰਜੀ);
 	sshkey_sig_details_free(sig_details);
-	free(fp);
-	return ret;
+	ਮੁਕਤ(fp);
+	ਵਾਪਸ ret;
 }
 
-static int
-sig_find_principals(const char *signature, const char *allowed_keys,
-    char * const *opts, size_t nopts)
+ਸਥਿਰ ਪੂਰਨ
+sig_ਲੱਭੋ_principals(ਅਚਲ ਅੱਖਰ *signature, ਅਚਲ ਅੱਖਰ *allowed_ਕੁੰਜੀਆਂ,
+    ਅੱਖਰ * ਅਚਲ *opts, ਮਾਪ_t nopts)
 {
-	int r, ret = -1;
-	struct sshbuf *sigbuf = NULL, *abuf = NULL;
-	struct sshkey *sign_key = NULL;
-	char *principals = NULL, *cp, *tmp;
-	uint64_t verify_time = 0;
+	ਪੂਰਨ r, ret = -1;
+	ਬਣਤਰ sshbuf *sigbuf = ਨਿਰਾ, *abuf = ਨਿਰਾ;
+	ਬਣਤਰ sshkey *sign_ਕੁੰਜੀ = ਨਿਰਾ;
+	ਅੱਖਰ *principals = ਨਿਰਾ, *cp, *tmp;
+	uint64_t verify_ਸਮਾਂ = 0;
 
-	if (sig_process_opts(opts, nopts, NULL, &verify_time, NULL) != 0)
-		goto done; /* error already logged */
+	ਜੇ (sig_process_opts(opts, nopts, ਨਿਰਾ, &verify_ਸਮਾਂ, ਨਿਰਾ) != 0)
+		ਜਾਓ ਪੂਰਾ; /* error already logged */
 
-	if ((r = sshbuf_load_file(signature, &abuf)) != 0) {
+	ਜੇ ((r = sshbuf_ਲੱਦੋ_file(signature, &abuf)) != 0) {
 		error_r(r, "Couldn't read signature file");
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
+	ਜੇ ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
 		error_fr(r, "sshsig_armor");
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if ((r = sshsig_get_pubkey(sigbuf, &sign_key)) != 0) {
+	ਜੇ ((r = sshsig_get_pubkey(sigbuf, &sign_ਕੁੰਜੀ)) != 0) {
 		error_fr(r, "sshsig_get_pubkey");
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if ((r = sshsig_find_principals(allowed_keys, sign_key,
-	    verify_time, &principals)) != 0) {
-		if (r != SSH_ERR_KEY_NOT_FOUND)
+	ਜੇ ((r = sshsig_ਲੱਭੋ_principals(allowed_ਕੁੰਜੀਆਂ, sign_ਕੁੰਜੀ,
+	    verify_ਸਮਾਂ, &principals)) != 0) {
+		ਜੇ (r != SSH_ERR_ਕੁੰਜੀ_NOT_ਮਿਲਿਆ)
 			error_fr(r, "sshsig_find_principal");
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 	ret = 0;
-done:
-	if (ret == 0 ) {
+ਪੂਰਾ:
+	ਜੇ (ret == 0 ) {
 		/* Emit matching principals one per line */
 		tmp = principals;
-		while ((cp = strsep(&tmp, ",")) != NULL && *cp != '\0')
+		ਜਦੋਂ ((cp = strsep(&tmp, ",")) != ਨਿਰਾ && *cp != '\0')
 			puts(cp);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		fprintf(stderr, "No principal matched.\n");
 	}
 	sshbuf_free(sigbuf);
 	sshbuf_free(abuf);
-	sshkey_free(sign_key);
-	free(principals);
-	return ret;
+	sshkey_free(sign_ਕੁੰਜੀ);
+	ਮੁਕਤ(principals);
+	ਵਾਪਸ ret;
 }
 
-static int
-sig_match_principals(const char *allowed_keys, char *principal,
-	char * const *opts, size_t nopts)
+ਸਥਿਰ ਪੂਰਨ
+sig_ਮੇਲ_principals(ਅਚਲ ਅੱਖਰ *allowed_ਕੁੰਜੀਆਂ, ਅੱਖਰ *principal,
+	ਅੱਖਰ * ਅਚਲ *opts, ਮਾਪ_t nopts)
 {
-	int r;
-	char **principals = NULL;
-	size_t i, nprincipals = 0;
+	ਪੂਰਨ r;
+	ਅੱਖਰ **principals = ਨਿਰਾ;
+	ਮਾਪ_t i, nprincipals = 0;
 
-	if ((r = sig_process_opts(opts, nopts, NULL, NULL, NULL)) != 0)
-		return r; /* error already logged */
+	ਜੇ ((r = sig_process_opts(opts, nopts, ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ)) != 0)
+		ਵਾਪਸ r; /* error already logged */
 
-	if ((r = sshsig_match_principals(allowed_keys, principal,
+	ਜੇ ((r = sshsig_ਮੇਲ_principals(allowed_ਕੁੰਜੀਆਂ, principal,
 	    &principals, &nprincipals)) != 0) {
 		debug_f("match: %s", ssh_err(r));
 		fprintf(stderr, "No principal matched.\n");
-		return r;
+		ਵਾਪਸ r;
 	}
-	for (i = 0; i < nprincipals; i++) {
-		printf("%s\n", principals[i]);
-		free(principals[i]);
+	ਲਈ (i = 0; i < nprincipals; i++) {
+		ਲਿਖੋ("%s\n", principals[i]);
+		ਮੁਕਤ(principals[i]);
 	}
-	free(principals);
+	ਮੁਕਤ(principals);
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static void
-do_moduli_gen(const char *out_file, char **opts, size_t nopts)
+ਸਥਿਰ ਖਾਲੀ
+do_moduli_gen(ਅਚਲ ਅੱਖਰ *ਬਾਹਰਲਾ_file, ਅੱਖਰ **opts, ਮਾਪ_t nopts)
 {
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 	/* Moduli generation/screening */
-	BIGNUM *start = NULL;
-	int moduli_bits = 0;
-	FILE *out;
-	size_t i;
-	const char *errstr, *p;
+	BIGNUM *ਸ਼ੁਰੂ = ਨਿਰਾ;
+	ਪੂਰਨ moduli_ਬਿੱਟ = 0;
+	FILE *ਬਾਹਰਲਾ;
+	ਮਾਪ_t i;
+	ਅਚਲ ਅੱਖਰ *errstr, *p;
 
 	/* Parse options */
-	for (i = 0; i < nopts; i++) {
-		if ((p = strprefix(opts[i], "start=", 0)) != NULL) {
+	ਲਈ (i = 0; i < nopts; i++) {
+		ਜੇ ((p = strprefix(opts[i], "start=", 0)) != ਨਿਰਾ) {
 			/* XXX - also compare length against bits */
-			if (BN_hex2bn(&start, p) == 0)
+			ਜੇ (BN_hex2bn(&ਸ਼ੁਰੂ, p) == 0)
 				fatal("Invalid start point.");
-		} else if ((p = strprefix(opts[i], "bits=", 0)) != NULL) {
-			moduli_bits = (int)strtonum(p, 1, INT_MAX, &errstr);
-			if (errstr) {
+		} ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opts[i], "bits=", 0)) != ਨਿਰਾ) {
+			moduli_ਬਿੱਟ = (ਪੂਰਨ)strtonum(p, 1, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ, &errstr);
+			ਜੇ (errstr) {
 				fatal("Invalid number: %s (%s)", p, errstr);
 			}
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			fatal("Option \"%s\" is unsupported for moduli "
 			    "generation", opts[i]);
 		}
 	}
 
-	if (strcmp(out_file, "-") == 0)
-		out = stdout;
-	else if ((out = fopen(out_file, "w")) == NULL) {
+	ਜੇ (strcmp(ਬਾਹਰਲਾ_file, "-") == 0)
+		ਬਾਹਰਲਾ = stdout;
+	ਨਹੀਂਤਾਂ ਜੇ ((ਬਾਹਰਲਾ = fopen(ਬਾਹਰਲਾ_file, "w")) == ਨਿਰਾ) {
 		fatal("Couldn't open modulus candidate file \"%s\": %s",
-		    out_file, strerror(errno));
+		    ਬਾਹਰਲਾ_file, strerror(errno));
 	}
-	setvbuf(out, NULL, _IOLBF, 0);
+	setvbuf(ਬਾਹਰਲਾ, ਨਿਰਾ, _IOLBF, 0);
 
-	if (moduli_bits == 0)
-		moduli_bits = DEFAULT_BITS;
-	if (gen_candidates(out, moduli_bits, start) != 0)
+	ਜੇ (moduli_ਬਿੱਟ == 0)
+		moduli_ਬਿੱਟ = DEFAULT_ਬਿੱਟ;
+	ਜੇ (gen_candidates(ਬਾਹਰਲਾ, moduli_ਬਿੱਟ, ਸ਼ੁਰੂ) != 0)
 		fatal("modulus candidate generation failed");
-#else /* WITH_OPENSSL */
+#ਨਹੀਂਤਾਂ /* WITH_OPENSSL */
 	fatal("Moduli generation is not supported");
-#endif /* WITH_OPENSSL */
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
 }
 
-static void
-do_moduli_screen(const char *out_file, char **opts, size_t nopts)
+ਸਥਿਰ ਖਾਲੀ
+do_moduli_screen(ਅਚਲ ਅੱਖਰ *ਬਾਹਰਲਾ_file, ਅੱਖਰ **opts, ਮਾਪ_t nopts)
 {
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 	/* Moduli generation/screening */
-	char *checkpoint = NULL;
+	ਅੱਖਰ *checkpoint = ਨਿਰਾ;
 	uint32_t generator_wanted = 0;
-	unsigned long start_lineno = 0, lines_to_process = 0;
-	int prime_tests = 0;
-	FILE *out, *in = stdin;
-	size_t i;
-	const char *errstr, *p;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਸ਼ੁਰੂ_lineno = 0, ਸਤਰਾਂ_ਮੰਜ਼ਿਲ_process = 0;
+	ਪੂਰਨ ਅਭਾਜ_tests = 0;
+	FILE *ਬਾਹਰਲਾ, *ਵਿੱਚ = stdin;
+	ਮਾਪ_t i;
+	ਅਚਲ ਅੱਖਰ *errstr, *p;
 
 	/* Parse options */
-	for (i = 0; i < nopts; i++) {
-		if ((p = strprefix(opts[i], "lines=", 0)) != NULL) {
-			lines_to_process = strtoul(p, NULL, 10);
-		} else if ((p = strprefix(opts[i], "start-line=", 0)) != NULL) {
-			start_lineno = strtoul(p, NULL, 10);
-		} else if ((p = strprefix(opts[i], "checkpoint=", 0)) != NULL) {
-			free(checkpoint);
+	ਲਈ (i = 0; i < nopts; i++) {
+		ਜੇ ((p = strprefix(opts[i], "lines=", 0)) != ਨਿਰਾ) {
+			ਸਤਰਾਂ_ਮੰਜ਼ਿਲ_process = strtoul(p, ਨਿਰਾ, 10);
+		} ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opts[i], "start-line=", 0)) != ਨਿਰਾ) {
+			ਸ਼ੁਰੂ_lineno = strtoul(p, ਨਿਰਾ, 10);
+		} ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opts[i], "checkpoint=", 0)) != ਨਿਰਾ) {
+			ਮੁਕਤ(checkpoint);
 			checkpoint = xstrdup(p);
-		} else if ((p = strprefix(opts[i], "generator=", 0)) != NULL) {
+		} ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opts[i], "generator=", 0)) != ਨਿਰਾ) {
 			generator_wanted = (uint32_t)strtonum(p, 1, UINT_MAX,
 			    &errstr);
-			if (errstr != NULL) {
+			ਜੇ (errstr != ਨਿਰਾ) {
 				fatal("Generator invalid: %s (%s)", p, errstr);
 			}
-		} else if ((p = strprefix(opts[i], "prime-tests=", 0)) != NULL) {
-			prime_tests = (int)strtonum(p, 1, INT_MAX, &errstr);
-			if (errstr) {
+		} ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opts[i], "prime-tests=", 0)) != ਨਿਰਾ) {
+			ਅਭਾਜ_tests = (ਪੂਰਨ)strtonum(p, 1, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ, &errstr);
+			ਜੇ (errstr) {
 				fatal("Invalid number: %s (%s)", p, errstr);
 			}
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			fatal("Option \"%s\" is unsupported for moduli "
 			    "screening", opts[i]);
 		}
 	}
 
-	if (have_identity && strcmp(identity_file, "-") != 0) {
-		if ((in = fopen(identity_file, "r")) == NULL) {
+	ਜੇ (have_ਪਛਾਣ_ਤੱਤ && strcmp(ਪਛਾਣ_ਤੱਤ_file, "-") != 0) {
+		ਜੇ ((ਵਿੱਚ = fopen(ਪਛਾਣ_ਤੱਤ_file, "r")) == ਨਿਰਾ) {
 			fatal("Couldn't open modulus candidate "
-			    "file \"%s\": %s", identity_file,
+			    "file \"%s\": %s", ਪਛਾਣ_ਤੱਤ_file,
 			    strerror(errno));
 		}
 	}
 
-	if (strcmp(out_file, "-") == 0)
-		out = stdout;
-	else if ((out = fopen(out_file, "a")) == NULL) {
+	ਜੇ (strcmp(ਬਾਹਰਲਾ_file, "-") == 0)
+		ਬਾਹਰਲਾ = stdout;
+	ਨਹੀਂਤਾਂ ਜੇ ((ਬਾਹਰਲਾ = fopen(ਬਾਹਰਲਾ_file, "a")) == ਨਿਰਾ) {
 		fatal("Couldn't open moduli file \"%s\": %s",
-		    out_file, strerror(errno));
+		    ਬਾਹਰਲਾ_file, strerror(errno));
 	}
-	setvbuf(out, NULL, _IOLBF, 0);
-	if (prime_test(in, out, prime_tests == 0 ? 100 : prime_tests,
+	setvbuf(ਬਾਹਰਲਾ, ਨਿਰਾ, _IOLBF, 0);
+	ਜੇ (ਅਭਾਜ_test(ਵਿੱਚ, ਬਾਹਰਲਾ, ਅਭਾਜ_tests == 0 ? 100 : ਅਭਾਜ_tests,
 	    generator_wanted, checkpoint,
-	    start_lineno, lines_to_process) != 0)
+	    ਸ਼ੁਰੂ_lineno, ਸਤਰਾਂ_ਮੰਜ਼ਿਲ_process) != 0)
 		fatal("modulus screening failed");
-	if (in != stdin)
-		(void)fclose(in);
-	free(checkpoint);
-#else /* WITH_OPENSSL */
+	ਜੇ (ਵਿੱਚ != stdin)
+		(ਖਾਲੀ)fclose(ਵਿੱਚ);
+	ਮੁਕਤ(checkpoint);
+#ਨਹੀਂਤਾਂ /* WITH_OPENSSL */
 	fatal("Moduli screening is not supported");
-#endif /* WITH_OPENSSL */
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
 }
 
 /* Read and confirm a passphrase */
-static char *
-read_check_passphrase(const char *prompt1, const char *prompt2,
-    const char *retry_prompt)
+ਸਥਿਰ ਅੱਖਰ *
+read_check_passphrase(ਅਚਲ ਅੱਖਰ *prompt1, ਅਚਲ ਅੱਖਰ *prompt2,
+    ਅਚਲ ਅੱਖਰ *retry_prompt)
 {
-	char *passphrase1, *passphrase2;
+	ਅੱਖਰ *passphrase1, *passphrase2;
 
-	for (;;) {
+	ਲਈ (;;) {
 		passphrase1 = read_passphrase(prompt1, RP_ALLOW_STDIN);
 		passphrase2 = read_passphrase(prompt2, RP_ALLOW_STDIN);
-		if (strcmp(passphrase1, passphrase2) == 0) {
-			freezero(passphrase2, strlen(passphrase2));
-			return passphrase1;
+		ਜੇ (strcmp(passphrase1, passphrase2) == 0) {
+			freezero(passphrase2, ਲੜੀ_ਲੰਬਾਈ(passphrase2));
+			ਵਾਪਸ passphrase1;
 		}
 		/* The passphrases do not match. Clear them and retry. */
-		freezero(passphrase1, strlen(passphrase1));
-		freezero(passphrase2, strlen(passphrase2));
+		freezero(passphrase1, ਲੜੀ_ਲੰਬਾਈ(passphrase1));
+		freezero(passphrase2, ਲੜੀ_ਲੰਬਾਈ(passphrase2));
 		fputs(retry_prompt, stdout);
 		fputc('\n', stdout);
 		fflush(stdout);
 	}
 	/* NOTREACHED */
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-static char *
-private_key_passphrase(const char *path)
+ਸਥਿਰ ਅੱਖਰ *
+ਨਿੱਜੀ_ਕੁੰਜੀ_passphrase(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ)
 {
-	char *prompt, *ret;
+	ਅੱਖਰ *prompt, *ret;
 
-	if (identity_passphrase)
-		return xstrdup(identity_passphrase);
-	if (identity_new_passphrase)
-		return xstrdup(identity_new_passphrase);
+	ਜੇ (ਪਛਾਣ_ਤੱਤ_passphrase)
+		ਵਾਪਸ xstrdup(ਪਛਾਣ_ਤੱਤ_passphrase);
+	ਜੇ (ਪਛਾਣ_ਤੱਤ_new_passphrase)
+		ਵਾਪਸ xstrdup(ਪਛਾਣ_ਤੱਤ_new_passphrase);
 
 	xasprintf(&prompt, "Enter passphrase for \"%s\" "
-	    "(empty for no passphrase): ", path);
+	    "(empty for no passphrase): ", ਰਸਤਾ);
 	ret = read_check_passphrase(prompt,
 	    "Enter same passphrase again: ",
 	    "Passphrases do not match.  Try again.");
-	free(prompt);
-	return ret;
+	ਮੁਕਤ(prompt);
+	ਵਾਪਸ ret;
 }
 
-static char *
-sk_suffix(const char *application, const uint8_t *user, size_t userlen)
+ਸਥਿਰ ਅੱਖਰ *
+sk_suffix(ਅਚਲ ਅੱਖਰ *application, ਅਚਲ uint8_t *user, ਮਾਪ_t userlen)
 {
-	char *ret, *cp;
-	const char *p;
-	size_t slen, i;
+	ਅੱਖਰ *ret, *cp;
+	ਅਚਲ ਅੱਖਰ *p;
+	ਮਾਪ_t slen, i;
 
 	/* Trim off URL-like preamble */
-	if ((p = strprefix(application, "ssh://", 0)) != NULL)
+	ਜੇ ((p = strprefix(application, "ssh://", 0)) != ਨਿਰਾ)
 		ret =  xstrdup(p);
-	else if ((p = strprefix(application, "ssh:", 0)) != NULL)
+	ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(application, "ssh:", 0)) != ਨਿਰਾ)
 		ret =  xstrdup(p);
-	else
+	ਨਹੀਂਤਾਂ
 		ret = xstrdup(application);
 
 	/* Count trailing zeros in user */
-	for (i = 0; i < userlen; i++) {
-		if (user[userlen - i - 1] != 0)
-			break;
+	ਲਈ (i = 0; i < userlen; i++) {
+		ਜੇ (user[userlen - i - 1] != 0)
+			ਰੋਕੋ;
 	}
-	if (i >= userlen)
-		return ret; /* user-id was default all-zeros */
+	ਜੇ (i >= userlen)
+		ਵਾਪਸ ret; /* user-id was default all-zeros */
 
 	/* Append user-id, escaping non-UTF-8 characters */
 	slen = userlen - i;
-	if (asmprintf(&cp, INT_MAX, NULL, "%.*s", (int)slen, user) == -1)
+	ਜੇ (asmprintf(&cp, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ, ਨਿਰਾ, "%.*s", (ਪੂਰਨ)slen, user) == -1)
 		fatal_f("asmprintf failed");
 	/* Don't emit a user-id that contains path or control characters */
-	if (strchr(cp, '/') != NULL || strstr(cp, "..") != NULL ||
-	    strchr(cp, '\\') != NULL) {
-		free(cp);
+	ਜੇ (strchr(cp, '/') != ਨਿਰਾ || ਲੜੀ_ਖੋਜ(cp, "..") != ਨਿਰਾ ||
+	    strchr(cp, '\\') != ਨਿਰਾ) {
+		ਮੁਕਤ(cp);
 		cp = tohex(user, slen);
 	}
 	xextendf(&ret, "_", "%s", cp);
-	free(cp);
-	return ret;
+	ਮੁਕਤ(cp);
+	ਵਾਪਸ ret;
 }
 
-static int
-do_download_sk(const char *skprovider, const char *device)
+ਸਥਿਰ ਪੂਰਨ
+do_download_sk(ਅਚਲ ਅੱਖਰ *skprovider, ਅਚਲ ਅੱਖਰ *device)
 {
-	struct sshsk_resident_key **srks;
-	size_t nsrks, i;
-	int r, ret = -1;
-	char *fp, *pin = NULL, *pass = NULL, *path, *pubpath;
-	const char *ext;
-	struct sshkey *key;
+	ਬਣਤਰ sshsk_resident_ਕੁੰਜੀ **srks;
+	ਮਾਪ_t nsrks, i;
+	ਪੂਰਨ r, ret = -1;
+	ਅੱਖਰ *fp, *pin = ਨਿਰਾ, *pass = ਨਿਰਾ, *ਰਸਤਾ, *pubpath;
+	ਅਚਲ ਅੱਖਰ *ext;
+	ਬਣਤਰ sshkey *ਕੁੰਜੀ;
 
-	if (skprovider == NULL)
+	ਜੇ (skprovider == ਨਿਰਾ)
 		fatal("Cannot download keys without provider");
 
 	pin = read_passphrase("Enter PIN for authenticator: ", RP_ALLOW_STDIN);
-	if (!quiet) {
-		printf("You may need to touch your authenticator "
+	ਜੇ (!quiet) {
+		ਲਿਖੋ("You may need to touch your authenticator "
 		    "to authorize key download.\n");
 	}
-	if ((r = sshsk_load_resident(skprovider, device, pin, 0,
+	ਜੇ ((r = sshsk_ਲੱਦੋ_resident(skprovider, device, pin, 0,
 	    &srks, &nsrks)) != 0) {
-		if (pin != NULL)
-			freezero(pin, strlen(pin));
+		ਜੇ (pin != ਨਿਰਾ)
+			freezero(pin, ਲੜੀ_ਲੰਬਾਈ(pin));
 		error_r(r, "Unable to load resident keys");
-		return -1;
+		ਵਾਪਸ -1;
 	}
-	if (nsrks == 0)
+	ਜੇ (nsrks == 0)
 		logit("No keys to download");
-	if (pin != NULL)
-		freezero(pin, strlen(pin));
+	ਜੇ (pin != ਨਿਰਾ)
+		freezero(pin, ਲੜੀ_ਲੰਬਾਈ(pin));
 
-	for (i = 0; i < nsrks; i++) {
-		key = srks[i]->key;
-		if (key->type != KEY_ECDSA_SK && key->type != KEY_ED25519_SK) {
+	ਲਈ (i = 0; i < nsrks; i++) {
+		ਕੁੰਜੀ = srks[i]->ਕੁੰਜੀ;
+		ਜੇ (ਕੁੰਜੀ->type != ਕੁੰਜੀ_ECDSA_SK && ਕੁੰਜੀ->type != ਕੁੰਜੀ_ED25519_SK) {
 			error("Unsupported key type %s (%d)",
-			    sshkey_type(key), key->type);
-			continue;
+			    sshkey_type(ਕੁੰਜੀ), ਕੁੰਜੀ->type);
+			ਜਾਰੀ;
 		}
-		if ((fp = sshkey_fingerprint(key, fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+		ਜੇ ((fp = sshkey_fingerprint(ਕੁੰਜੀ, fingerprint_hash,
+		    SSH_FP_DEFAULT)) == ਨਿਰਾ)
 			fatal_f("sshkey_fingerprint failed");
 		debug_f("key %zu: %s %s %s (flags 0x%02x)", i,
-		    sshkey_type(key), fp, key->sk_application, key->sk_flags);
-		ext = sk_suffix(key->sk_application,
+		    sshkey_type(ਕੁੰਜੀ), fp, ਕੁੰਜੀ->sk_application, ਕੁੰਜੀ->sk_flags);
+		ext = sk_suffix(ਕੁੰਜੀ->sk_application,
 		    srks[i]->user_id, srks[i]->user_id_len);
-		xasprintf(&path, "id_%s_rk%s%s",
-		    key->type == KEY_ECDSA_SK ? "ecdsa_sk" : "ed25519_sk",
+		xasprintf(&ਰਸਤਾ, "id_%s_rk%s%s",
+		    ਕੁੰਜੀ->type == ਕੁੰਜੀ_ECDSA_SK ? "ecdsa_sk" : "ed25519_sk",
 		    *ext == '\0' ? "" : "_", ext);
 
 		/* If the file already exists, ask the user to confirm. */
-		if (!confirm_overwrite(path)) {
-			free(path);
-			break;
+		ਜੇ (!confirm_overwrite(ਰਸਤਾ)) {
+			ਮੁਕਤ(ਰਸਤਾ);
+			ਰੋਕੋ;
 		}
 
 		/* Save the key with the application string as the comment */
-		if (pass == NULL)
-			pass = private_key_passphrase(path);
-		if ((r = sshkey_save_private(key, path, pass,
-		    key->sk_application, private_key_format,
-		    openssh_format_cipher, rounds)) != 0) {
-			error_r(r, "Saving key \"%s\" failed", path);
-			free(path);
-			break;
+		ਜੇ (pass == ਨਿਰਾ)
+			pass = ਨਿੱਜੀ_ਕੁੰਜੀ_passphrase(ਰਸਤਾ);
+		ਜੇ ((r = sshkey_save_ਨਿੱਜੀ(ਕੁੰਜੀ, ਰਸਤਾ, pass,
+		    ਕੁੰਜੀ->sk_application, ਨਿੱਜੀ_ਕੁੰਜੀ_format,
+		    openssh_format_cipher, ਗੇੜ)) != 0) {
+			error_r(r, "Saving key \"%s\" failed", ਰਸਤਾ);
+			ਮੁਕਤ(ਰਸਤਾ);
+			ਰੋਕੋ;
 		}
-		if (!quiet) {
-			printf("Saved %s key%s%s to %s\n", sshkey_type(key),
+		ਜੇ (!quiet) {
+			ਲਿਖੋ("Saved %s key%s%s to %s\n", sshkey_type(ਕੁੰਜੀ),
 			    *ext != '\0' ? " " : "",
-			    *ext != '\0' ? key->sk_application : "",
-			    path);
+			    *ext != '\0' ? ਕੁੰਜੀ->sk_application : "",
+			    ਰਸਤਾ);
 		}
 
 		/* Save public key too */
-		xasprintf(&pubpath, "%s.pub", path);
-		free(path);
-		if ((r = sshkey_save_public(key, pubpath,
-		    key->sk_application)) != 0) {
+		xasprintf(&pubpath, "%s.pub", ਰਸਤਾ);
+		ਮੁਕਤ(ਰਸਤਾ);
+		ਜੇ ((r = sshkey_save_ਜਨਤਕ(ਕੁੰਜੀ, pubpath,
+		    ਕੁੰਜੀ->sk_application)) != 0) {
 			error_r(r, "Saving public key \"%s\" failed", pubpath);
-			free(pubpath);
-			break;
+			ਮੁਕਤ(pubpath);
+			ਰੋਕੋ;
 		}
-		free(pubpath);
+		ਮੁਕਤ(pubpath);
 	}
 
-	if (i >= nsrks)
+	ਜੇ (i >= nsrks)
 		ret = 0; /* success */
-	if (pass != NULL)
-		freezero(pass, strlen(pass));
-	sshsk_free_resident_keys(srks, nsrks);
-	return ret;
+	ਜੇ (pass != ਨਿਰਾ)
+		freezero(pass, ਲੜੀ_ਲੰਬਾਈ(pass));
+	sshsk_free_resident_ਕੁੰਜੀਆਂ(srks, nsrks);
+	ਵਾਪਸ ret;
 }
 
-static void
-save_attestation(struct sshbuf *attest, const char *path)
+ਸਥਿਰ ਖਾਲੀ
+save_attestation(ਬਣਤਰ sshbuf *attest, ਅਚਲ ਅੱਖਰ *ਰਸਤਾ)
 {
-	mode_t omask;
-	int r;
+	ਬਹੁਲਕ_t omask;
+	ਪੂਰਨ r;
 
-	if (path == NULL)
-		return; /* nothing to do */
-	if (attest == NULL || sshbuf_len(attest) == 0)
+	ਜੇ (ਰਸਤਾ == ਨਿਰਾ)
+		ਵਾਪਸ; /* nothing to do */
+	ਜੇ (attest == ਨਿਰਾ || sshbuf_len(attest) == 0)
 		fatal("Enrollment did not return attestation data");
 	omask = umask(077);
-	r = sshbuf_write_file(path, attest);
+	r = sshbuf_write_file(ਰਸਤਾ, attest);
 	umask(omask);
-	if (r != 0)
-		fatal_r(r, "Unable to write attestation data \"%s\"", path);
-	if (!quiet)
-		printf("Your FIDO attestation certificate has been saved in "
-		    "%s\n", path);
+	ਜੇ (r != 0)
+		fatal_r(r, "Unable to write attestation data \"%s\"", ਰਸਤਾ);
+	ਜੇ (!quiet)
+		ਲਿਖੋ("Your FIDO attestation certificate has been saved in "
+		    "%s\n", ਰਸਤਾ);
 }
 
-static int
-confirm_sk_overwrite(const char *application, const char *user)
+ਸਥਿਰ ਪੂਰਨ
+confirm_sk_overwrite(ਅਚਲ ਅੱਖਰ *application, ਅਚਲ ਅੱਖਰ *user)
 {
-	char yesno[3];
+	ਅੱਖਰ yesno[3];
 
-	printf("A resident key scoped to '%s' with user id '%s' already "
-	    "exists.\n", application == NULL ? "ssh:" : application,
-	    user == NULL ? "null" : user);
-	printf("Overwrite key in token (y/n)? ");
+	ਲਿਖੋ("A resident key scoped to '%s' with user id '%s' already "
+	    "exists.\n", application == ਨਿਰਾ ? "ssh:" : application,
+	    user == ਨਿਰਾ ? "null" : user);
+	ਲਿਖੋ("Overwrite key in token (y/n)? ");
 	fflush(stdout);
-	if (fgets(yesno, sizeof(yesno), stdin) == NULL)
-		return 0;
-	if (yesno[0] != 'y' && yesno[0] != 'Y')
-		return 0;
-	return 1;
+	ਜੇ (fgets(yesno, ਆਕਾਰ(yesno), stdin) == ਨਿਰਾ)
+		ਵਾਪਸ 0;
+	ਜੇ (yesno[0] != 'y' && yesno[0] != 'Y')
+		ਵਾਪਸ 0;
+	ਵਾਪਸ 1;
 }
 
-static void
-usage(void)
+ਸਥਿਰ ਖਾਲੀ
+usage(ਖਾਲੀ)
 {
 	fprintf(stderr,
 	    "usage: ssh-keygen [-q] [-a rounds] [-b bits] [-C comment] [-f output_keyfile]\n"
@@ -3308,28 +3308,28 @@ usage(void)
 	    "                  [-w provider] [-Z cipher]\n"
 	    "       ssh-keygen -p [-a rounds] [-f keyfile] [-m format] [-N new_passphrase]\n"
 	    "                   [-P old_passphrase] [-Z cipher]\n"
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 	    "       ssh-keygen -i [-f input_keyfile] [-m key_format]\n"
 	    "       ssh-keygen -e [-f input_keyfile] [-m key_format]\n"
-#endif
+#ਜੇ_ਅੰਤ
 	    "       ssh-keygen -y [-f input_keyfile]\n"
 	    "       ssh-keygen -c [-a rounds] [-C comment] [-f keyfile] [-P passphrase]\n"
 	    "       ssh-keygen -l [-v] [-E fingerprint_hash] [-f input_keyfile]\n"
 	    "       ssh-keygen -B [-f input_keyfile]\n");
-#ifdef ENABLE_PKCS11
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_PKCS11
 	fprintf(stderr,
 	    "       ssh-keygen -D pkcs11\n");
-#endif
+#ਜੇ_ਅੰਤ
 	fprintf(stderr,
 	    "       ssh-keygen -F hostname [-lv] [-f known_hosts_file]\n"
 	    "       ssh-keygen -H [-f known_hosts_file]\n"
 	    "       ssh-keygen -K [-a rounds] [-w provider]\n"
 	    "       ssh-keygen -R hostname [-f known_hosts_file]\n"
 	    "       ssh-keygen -r hostname [-g] [-f input_keyfile]\n"
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 	    "       ssh-keygen -M generate [-O option] output_file\n"
 	    "       ssh-keygen -M screen [-f input_file] [-O option] output_file\n"
-#endif
+#ਜੇ_ਅੰਤ
 	    "       ssh-keygen -I certificate_identity -s ca_key [-hU] [-D pkcs11_provider]\n"
 	    "                  [-n principals] [-O option] [-V validity_interval]\n"
 	    "                  [-z serial_number] file ...\n"
@@ -3344,47 +3344,47 @@ usage(void)
 	    "       ssh-keygen -Y sign -f key_file -n namespace file [-O option] ...\n"
 	    "       ssh-keygen -Y verify -f allowed_signers_file -I signer_identity\n"
 	    "                  -n namespace -s signature_file [-r krl_file] [-O option]\n");
-	exit(1);
+	ਬਾਹਰ_ਨਿਕਲੋ(1);
 }
 
 /*
  * Main program for key management.
  */
-int
-main(int argc, char **argv)
+ਪੂਰਨ
+ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	char comment[KEY_COMMENT_MAX], *passphrase = NULL;
-	char *rr_hostname = NULL, *ep, *fp, *ra;
-	struct sshkey *private = NULL, *public = NULL;
-	struct passwd *pw;
-	int ret = 0, r, opt, type;
-	int change_passphrase = 0, change_comment = 0, show_cert = 0;
-	int find_host = 0, delete_host = 0, hash_hosts = 0;
-	int gen_all_hostkeys = 0, gen_krl = 0, update_krl = 0, check_krl = 0;
-	int prefer_agent = 0, convert_to = 0, convert_from = 0;
-	int print_public = 0, print_generic = 0, cert_serial_autoinc = 0;
-	int do_gen_candidates = 0, do_screen_candidates = 0, download_sk = 0;
-	unsigned long long cert_serial = 0;
-	char *identity_comment = NULL, *ca_key_path = NULL, **opts = NULL;
-	char *sk_application = NULL, *sk_device = NULL, *sk_user = NULL;
-	char *sk_attestation_path = NULL;
-	struct sshbuf *challenge = NULL, *attest = NULL;
-	size_t i, nopts = 0;
-	uint32_t bits = 0;
+	ਅੱਖਰ comment[ਕੁੰਜੀ_COMMENT_MAX], *passphrase = ਨਿਰਾ;
+	ਅੱਖਰ *rr_hostname = ਨਿਰਾ, *ep, *fp, *ra;
+	ਬਣਤਰ sshkey *ਨਿਜੀ = ਨਿਰਾ, *ਜਨਤਕ = ਨਿਰਾ;
+	ਬਣਤਰ passwd *pw;
+	ਪੂਰਨ ret = 0, r, opt, type;
+	ਪੂਰਨ change_passphrase = 0, change_comment = 0, show_cert = 0;
+	ਪੂਰਨ ਲੱਭੋ_host = 0, delete_host = 0, hash_hosts = 0;
+	ਪੂਰਨ gen_all_hostkeys = 0, gen_krl = 0, update_krl = 0, check_krl = 0;
+	ਪੂਰਨ prefer_agent = 0, convert_ਮੰਜ਼ਿਲ = 0, convert_from = 0;
+	ਪੂਰਨ print_ਜਨਤਕ = 0, print_generic = 0, cert_serial_autoinc = 0;
+	ਪੂਰਨ do_gen_candidates = 0, do_screen_candidates = 0, download_sk = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ cert_serial = 0;
+	ਅੱਖਰ *ਪਛਾਣ_ਤੱਤ_comment = ਨਿਰਾ, *ca_ਕੁੰਜੀ_ਰਸਤਾ = ਨਿਰਾ, **opts = ਨਿਰਾ;
+	ਅੱਖਰ *sk_application = ਨਿਰਾ, *sk_device = ਨਿਰਾ, *sk_user = ਨਿਰਾ;
+	ਅੱਖਰ *sk_attestation_ਰਸਤਾ = ਨਿਰਾ;
+	ਬਣਤਰ sshbuf *challenge = ਨਿਰਾ, *attest = ਨਿਰਾ;
+	ਮਾਪ_t i, nopts = 0;
+	uint32_t ਬਿੱਟ = 0;
 	uint8_t sk_flags = SSH_SK_USER_PRESENCE_REQD;
-	const char *errstr, *p;
-	int log_level = SYSLOG_LEVEL_INFO;
-	char *sign_op = NULL;
+	ਅਚਲ ਅੱਖਰ *errstr, *p;
+	ਪੂਰਨ log_level = SYSLOG_LEVEL_INFO;
+	ਅੱਖਰ *sign_op = ਨਿਰਾ;
 
-	extern int optind;
-	extern char *optarg;
+	ਬਾਹਰੀ ਪੂਰਨ optind;
+	ਬਾਹਰੀ ਅੱਖਰ *optarg;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
 	__progname = ssh_get_progname(argv[0]);
 
-	seed_rng();
+	ਬੀਜ_rng();
 
 	log_init(argv[0], SYSLOG_LEVEL_INFO, SYSLOG_FACILITY_USER, 1);
 
@@ -3392,217 +3392,217 @@ main(int argc, char **argv)
 
 	/* we need this for the home * directory.  */
 	pw = getpwuid(getuid());
-	if (!pw)
+	ਜੇ (!pw)
 		fatal("No user exists for uid %lu", (u_long)getuid());
 	pw = pwcopy(pw);
-	if (gethostname(hostname, sizeof(hostname)) == -1)
+	ਜੇ (gethostname(hostname, ਆਕਾਰ(hostname)) == -1)
 		fatal("gethostname: %s", strerror(errno));
 
 	sk_provider = getenv("SSH_SK_PROVIDER");
 
 	/* Remaining characters: dGjJSTWx */
-	while ((opt = getopt(argc, argv, "ABHKLQUXceghiklopquvy"
+	ਜਦੋਂ ((opt = getopt(argc, argv, "ABHKLQUXceghiklopquvy"
 	    "C:D:E:F:I:M:N:O:P:R:V:Y:Z:"
 	    "a:b:f:g:m:n:r:s:t:w:z:")) != -1) {
-		switch (opt) {
-		case 'A':
+		ਚੋਣ (opt) {
+		ਹਾਲਤ 'A':
 			gen_all_hostkeys = 1;
-			break;
-		case 'b':
-			bits = (uint32_t)strtonum(optarg, 1, UINT32_MAX,
+			ਰੋਕੋ;
+		ਹਾਲਤ 'b':
+			ਬਿੱਟ = (uint32_t)strtonum(optarg, 1, UINT32_MAX,
 			    &errstr);
-			if (errstr)
+			ਜੇ (errstr)
 				fatal("Bits has bad value %s (%s)",
 					optarg, errstr);
-			break;
-		case 'E':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			ਜੇ (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
-			break;
-		case 'F':
-			find_host = 1;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'F':
+			ਲੱਭੋ_host = 1;
 			rr_hostname = optarg;
-			break;
-		case 'H':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'H':
 			hash_hosts = 1;
-			break;
-		case 'I':
-			cert_key_id = optarg;
-			break;
-		case 'R':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'I':
+			cert_ਕੁੰਜੀ_id = optarg;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'R':
 			delete_host = 1;
 			rr_hostname = optarg;
-			break;
-		case 'L':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'L':
 			show_cert = 1;
-			break;
-		case 'l':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'l':
 			print_fingerprint = 1;
-			break;
-		case 'B':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'B':
 			print_bubblebabble = 1;
-			break;
-		case 'm':
-			if (strcasecmp(optarg, "RFC4716") == 0 ||
+			ਰੋਕੋ;
+		ਹਾਲਤ 'm':
+			ਜੇ (strcasecmp(optarg, "RFC4716") == 0 ||
 			    strcasecmp(optarg, "ssh2") == 0) {
 				convert_format = FMT_RFC4716;
-				break;
+				ਰੋਕੋ;
 			}
-			if (strcasecmp(optarg, "PKCS8") == 0) {
+			ਜੇ (strcasecmp(optarg, "PKCS8") == 0) {
 				convert_format = FMT_PKCS8;
-				private_key_format = SSHKEY_PRIVATE_PKCS8;
-				break;
+				ਨਿੱਜੀ_ਕੁੰਜੀ_format = SSHKEY_ਨਿੱਜੀ_PKCS8;
+				ਰੋਕੋ;
 			}
-			if (strcasecmp(optarg, "PEM") == 0) {
+			ਜੇ (strcasecmp(optarg, "PEM") == 0) {
 				convert_format = FMT_PEM;
-				private_key_format = SSHKEY_PRIVATE_PEM;
-				break;
+				ਨਿੱਜੀ_ਕੁੰਜੀ_format = SSHKEY_ਨਿੱਜੀ_PEM;
+				ਰੋਕੋ;
 			}
-			if (strcasecmp(optarg, "hexdump") == 0) {
+			ਜੇ (strcasecmp(optarg, "hexdump") == 0) {
 				convert_format = FMT_HEXDUMP;
-				break;
+				ਰੋਕੋ;
 			}
 			fatal("Unsupported conversion format \"%s\"", optarg);
-		case 'n':
+		ਹਾਲਤ 'n':
 			cert_principals = optarg;
-			break;
-		case 'o':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'o':
 			/* no-op; new format is already the default */
-			break;
-		case 'p':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'p':
 			change_passphrase = 1;
-			break;
-		case 'c':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'c':
 			change_comment = 1;
-			break;
-		case 'f':
-			if (strlcpy(identity_file, optarg,
-			    sizeof(identity_file)) >= sizeof(identity_file))
+			ਰੋਕੋ;
+		ਹਾਲਤ 'f':
+			ਜੇ (strlcpy(ਪਛਾਣ_ਤੱਤ_file, optarg,
+			    ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ_file)) >= ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ_file))
 				fatal("Identity filename too long");
-			have_identity = 1;
-			break;
-		case 'g':
+			have_ਪਛਾਣ_ਤੱਤ = 1;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'g':
 			print_generic = 1;
-			break;
-		case 'K':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'K':
 			download_sk = 1;
-			break;
-		case 'P':
-			identity_passphrase = optarg;
-			break;
-		case 'N':
-			identity_new_passphrase = optarg;
-			break;
-		case 'Q':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'P':
+			ਪਛਾਣ_ਤੱਤ_passphrase = optarg;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'N':
+			ਪਛਾਣ_ਤੱਤ_new_passphrase = optarg;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'Q':
 			check_krl = 1;
-			break;
-		case 'O':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'O':
 			opts = xrecallocarray(opts, nopts, nopts + 1,
-			    sizeof(*opts));
+			    ਆਕਾਰ(*opts));
 			opts[nopts++] = xstrdup(optarg);
-			break;
-		case 'Z':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'Z':
 			openssh_format_cipher = optarg;
-			if (cipher_by_name(openssh_format_cipher) == NULL)
+			ਜੇ (cipher_by_name(openssh_format_cipher) == ਨਿਰਾ)
 				fatal("Invalid OpenSSH-format cipher '%s'",
 				    openssh_format_cipher);
-			break;
-		case 'C':
-			identity_comment = optarg;
-			break;
-		case 'q':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'C':
+			ਪਛਾਣ_ਤੱਤ_comment = optarg;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'q':
 			quiet = 1;
-			break;
-		case 'e':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'e':
 			/* export key */
-			convert_to = 1;
-			break;
-		case 'h':
-			cert_key_type = SSH2_CERT_TYPE_HOST;
+			convert_ਮੰਜ਼ਿਲ = 1;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'h':
+			cert_ਕੁੰਜੀ_type = SSH2_CERT_TYPE_HOST;
 			certflags_flags = 0;
-			break;
-		case 'k':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'k':
 			gen_krl = 1;
-			break;
-		case 'i':
-		case 'X':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'i':
+		ਹਾਲਤ 'X':
 			/* import key */
 			convert_from = 1;
-			break;
-		case 'y':
-			print_public = 1;
-			break;
-		case 's':
-			ca_key_path = optarg;
-			break;
-		case 't':
-			key_type_name = optarg;
-			break;
-		case 'D':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'y':
+			print_ਜਨਤਕ = 1;
+			ਰੋਕੋ;
+		ਹਾਲਤ 's':
+			ca_ਕੁੰਜੀ_ਰਸਤਾ = optarg;
+			ਰੋਕੋ;
+		ਹਾਲਤ 't':
+			ਕੁੰਜੀ_type_name = optarg;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'D':
 			pkcs11provider = optarg;
-			break;
-		case 'U':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'U':
 			prefer_agent = 1;
-			break;
-		case 'u':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'u':
 			update_krl = 1;
-			break;
-		case 'v':
-			if (log_level == SYSLOG_LEVEL_INFO)
+			ਰੋਕੋ;
+		ਹਾਲਤ 'v':
+			ਜੇ (log_level == SYSLOG_LEVEL_INFO)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else {
-				if (log_level >= SYSLOG_LEVEL_DEBUG1 &&
+			ਨਹੀਂਤਾਂ {
+				ਜੇ (log_level >= SYSLOG_LEVEL_DEBUG1 &&
 				    log_level < SYSLOG_LEVEL_DEBUG3)
 					log_level++;
 			}
-			break;
-		case 'r':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'r':
 			rr_hostname = optarg;
-			break;
-		case 'a':
-			rounds = (int)strtonum(optarg, 1, INT_MAX, &errstr);
-			if (errstr)
+			ਰੋਕੋ;
+		ਹਾਲਤ 'a':
+			ਗੇੜ = (ਪੂਰਨ)strtonum(optarg, 1, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ, &errstr);
+			ਜੇ (errstr)
 				fatal("Invalid number: %s (%s)",
 					optarg, errstr);
-			break;
-		case 'V':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'V':
 			parse_cert_times(optarg);
-			break;
-		case 'Y':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'Y':
 			sign_op = optarg;
-			break;
-		case 'w':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'w':
 			sk_provider = optarg;
-			break;
-		case 'z':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'z':
 			errno = 0;
-			if (*optarg == '+') {
+			ਜੇ (*optarg == '+') {
 				cert_serial_autoinc = 1;
 				optarg++;
 			}
 			cert_serial = strtoull(optarg, &ep, 10);
-			if (*optarg < '0' || *optarg > '9' || *ep != '\0' ||
+			ਜੇ (*optarg < '0' || *optarg > '9' || *ep != '\0' ||
 			    (errno == ERANGE && cert_serial == ULLONG_MAX))
 				fatal("Invalid serial number \"%s\"", optarg);
-			break;
-		case 'M':
-			if (strcmp(optarg, "generate") == 0)
+			ਰੋਕੋ;
+		ਹਾਲਤ 'M':
+			ਜੇ (strcmp(optarg, "generate") == 0)
 				do_gen_candidates = 1;
-			else if (strcmp(optarg, "screen") == 0)
+			ਨਹੀਂਤਾਂ ਜੇ (strcmp(optarg, "screen") == 0)
 				do_screen_candidates = 1;
-			else
+			ਨਹੀਂਤਾਂ
 				fatal("Unsupported moduli option %s", optarg);
-			break;
-		default:
+			ਰੋਕੋ;
+		ਮੂਲ:
 			usage();
 		}
 	}
 
-#ifdef ENABLE_SK_INTERNAL
-	if (sk_provider == NULL)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ ENABLE_SK_ਅੰਦਰੂਨੀ
+	ਜੇ (sk_provider == ਨਿਰਾ)
 		sk_provider = "internal";
-#endif
+#ਜੇ_ਅੰਤ
 
 	/* reinit */
 	log_init(argv[0], log_level, SYSLOG_FACILITY_USER, 1);
@@ -3610,131 +3610,131 @@ main(int argc, char **argv)
 	argv += optind;
 	argc -= optind;
 
-	if (sign_op != NULL) {
-		if (strprefix(sign_op, "find-principals", 0) != NULL) {
-			if (ca_key_path == NULL) {
+	ਜੇ (sign_op != ਨਿਰਾ) {
+		ਜੇ (strprefix(sign_op, "find-principals", 0) != ਨਿਰਾ) {
+			ਜੇ (ca_ਕੁੰਜੀ_ਰਸਤਾ == ਨਿਰਾ) {
 				error("Too few arguments for find-principals:"
 				    "missing signature file");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			if (!have_identity) {
+			ਜੇ (!have_ਪਛਾਣ_ਤੱਤ) {
 				error("Too few arguments for find-principals:"
 				    "missing allowed keys file");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			ret = sig_find_principals(ca_key_path, identity_file,
+			ret = sig_ਲੱਭੋ_principals(ca_ਕੁੰਜੀ_ਰਸਤਾ, ਪਛਾਣ_ਤੱਤ_file,
 			    opts, nopts);
-			goto done;
-		} else if (strprefix(sign_op, "match-principals", 0) != NULL) {
-			if (!have_identity) {
+			ਜਾਓ ਪੂਰਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (strprefix(sign_op, "match-principals", 0) != ਨਿਰਾ) {
+			ਜੇ (!have_ਪਛਾਣ_ਤੱਤ) {
 				error("Too few arguments for match-principals:"
 				    "missing allowed keys file");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			if (cert_key_id == NULL) {
+			ਜੇ (cert_ਕੁੰਜੀ_id == ਨਿਰਾ) {
 				error("Too few arguments for match-principals: "
 				    "missing principal ID");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			ret = sig_match_principals(identity_file, cert_key_id,
+			ret = sig_ਮੇਲ_principals(ਪਛਾਣ_ਤੱਤ_file, cert_ਕੁੰਜੀ_id,
 			    opts, nopts);
-			goto done;
-		} else if (strprefix(sign_op, "sign", 0) != NULL) {
+			ਜਾਓ ਪੂਰਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (strprefix(sign_op, "sign", 0) != ਨਿਰਾ) {
 			/* NB. cert_principals is actually namespace, via -n */
-			if (cert_principals == NULL ||
+			ਜੇ (cert_principals == ਨਿਰਾ ||
 			    *cert_principals == '\0') {
 				error("Too few arguments for sign: "
 				    "missing namespace");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			if (!have_identity) {
+			ਜੇ (!have_ਪਛਾਣ_ਤੱਤ) {
 				error("Too few arguments for sign: "
 				    "missing key");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			ret = sig_sign(identity_file, cert_principals,
+			ret = sig_sign(ਪਛਾਣ_ਤੱਤ_file, cert_principals,
 			    prefer_agent, argc, argv, opts, nopts);
-			goto done;
-		} else if (strprefix(sign_op, "check-novalidate", 0) != NULL) {
+			ਜਾਓ ਪੂਰਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (strprefix(sign_op, "check-novalidate", 0) != ਨਿਰਾ) {
 			/* NB. cert_principals is actually namespace, via -n */
-			if (cert_principals == NULL ||
+			ਜੇ (cert_principals == ਨਿਰਾ ||
 			    *cert_principals == '\0') {
 				error("Too few arguments for check-novalidate: "
 				    "missing namespace");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			if (ca_key_path == NULL) {
+			ਜੇ (ca_ਕੁੰਜੀ_ਰਸਤਾ == ਨਿਰਾ) {
 				error("Too few arguments for check-novalidate: "
 				    "missing signature file");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			ret = sig_verify(ca_key_path, cert_principals,
-			    NULL, NULL, NULL, opts, nopts);
-			goto done;
-		} else if (strprefix(sign_op, "verify", 0) != NULL) {
+			ret = sig_verify(ca_ਕੁੰਜੀ_ਰਸਤਾ, cert_principals,
+			    ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ, opts, nopts);
+			ਜਾਓ ਪੂਰਾ;
+		} ਨਹੀਂਤਾਂ ਜੇ (strprefix(sign_op, "verify", 0) != ਨਿਰਾ) {
 			/* NB. cert_principals is actually namespace, via -n */
-			if (cert_principals == NULL ||
+			ਜੇ (cert_principals == ਨਿਰਾ ||
 			    *cert_principals == '\0') {
 				error("Too few arguments for verify: "
 				    "missing namespace");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			if (ca_key_path == NULL) {
+			ਜੇ (ca_ਕੁੰਜੀ_ਰਸਤਾ == ਨਿਰਾ) {
 				error("Too few arguments for verify: "
 				    "missing signature file");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			if (!have_identity) {
+			ਜੇ (!have_ਪਛਾਣ_ਤੱਤ) {
 				error("Too few arguments for sign: "
 				    "missing allowed keys file");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			if (cert_key_id == NULL) {
+			ਜੇ (cert_ਕੁੰਜੀ_id == ਨਿਰਾ) {
 				error("Too few arguments for verify: "
 				    "missing principal identity");
-				exit(1);
+				ਬਾਹਰ_ਨਿਕਲੋ(1);
 			}
-			ret = sig_verify(ca_key_path, cert_principals,
-			    cert_key_id, identity_file, rr_hostname,
+			ret = sig_verify(ca_ਕੁੰਜੀ_ਰਸਤਾ, cert_principals,
+			    cert_ਕੁੰਜੀ_id, ਪਛਾਣ_ਤੱਤ_file, rr_hostname,
 			    opts, nopts);
-			goto done;
+			ਜਾਓ ਪੂਰਾ;
 		}
 		error("Unsupported operation for -Y: \"%s\"", sign_op);
 		usage();
 		/* NOTREACHED */
 	}
 
-	if (ca_key_path != NULL) {
-		if (argc < 1 && !gen_krl) {
+	ਜੇ (ca_ਕੁੰਜੀ_ਰਸਤਾ != ਨਿਰਾ) {
+		ਜੇ (argc < 1 && !gen_krl) {
 			error("Too few arguments.");
 			usage();
 		}
-	} else if (argc > 0 && !gen_krl && !check_krl &&
+	} ਨਹੀਂਤਾਂ ਜੇ (argc > 0 && !gen_krl && !check_krl &&
 	    !do_gen_candidates && !do_screen_candidates) {
 		error("Too many arguments.");
 		usage();
 	}
-	if (change_passphrase && change_comment) {
+	ਜੇ (change_passphrase && change_comment) {
 		error("Can only have one of -p and -c.");
 		usage();
 	}
-	if (print_fingerprint && (delete_host || hash_hosts)) {
+	ਜੇ (print_fingerprint && (delete_host || hash_hosts)) {
 		error("Cannot use -l with -H or -R.");
 		usage();
 	}
-	if (gen_krl) {
-		do_gen_krl(pw, update_krl, ca_key_path,
-		    cert_serial, identity_comment, argc, argv);
-		goto done;
+	ਜੇ (gen_krl) {
+		do_gen_krl(pw, update_krl, ca_ਕੁੰਜੀ_ਰਸਤਾ,
+		    cert_serial, ਪਛਾਣ_ਤੱਤ_comment, argc, argv);
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if (check_krl) {
+	ਜੇ (check_krl) {
 		do_check_krl(pw, print_fingerprint, argc, argv);
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if (ca_key_path != NULL) {
-		if (cert_key_id == NULL)
+	ਜੇ (ca_ਕੁੰਜੀ_ਰਸਤਾ != ਨਿਰਾ) {
+		ਜੇ (cert_ਕੁੰਜੀ_id == ਨਿਰਾ)
 			fatal("Must specify key id (-I) when certifying");
-		if (cert_principals == NULL) {
+		ਜੇ (cert_principals == ਨਿਰਾ) {
 			/*
 			 * Ideally this would be a fatal(), but we need to
 			 * be able to generate such certificates for testing
@@ -3743,258 +3743,258 @@ main(int argc, char **argv)
 			error("Warning: certificate will contain no "
 			    "principals (-n)");
 		}
-		for (i = 0; i < nopts; i++)
-			add_cert_option(opts[i]);
-		do_ca_sign(pw, ca_key_path, prefer_agent,
+		ਲਈ (i = 0; i < nopts; i++)
+			ਜੋੜੋ_cert_option(opts[i]);
+		do_ca_sign(pw, ca_ਕੁੰਜੀ_ਰਸਤਾ, prefer_agent,
 		    cert_serial, cert_serial_autoinc, argc, argv);
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if (show_cert)
+	ਜੇ (show_cert)
 		do_show_cert(pw);
-	if (delete_host || hash_hosts || find_host) {
-		do_known_hosts(pw, rr_hostname, find_host,
+	ਜੇ (delete_host || hash_hosts || ਲੱਭੋ_host) {
+		do_ਗਿਆਤ_hosts(pw, rr_hostname, ਲੱਭੋ_host,
 		    delete_host, hash_hosts);
 	}
-	if (pkcs11provider != NULL)
+	ਜੇ (pkcs11provider != ਨਿਰਾ)
 		do_download(pw);
-	if (download_sk) {
-		for (i = 0; i < nopts; i++) {
-			if ((p = strprefix(opts[i], "device=", 1)) != NULL) {
+	ਜੇ (download_sk) {
+		ਲਈ (i = 0; i < nopts; i++) {
+			ਜੇ ((p = strprefix(opts[i], "device=", 1)) != ਨਿਰਾ) {
 				sk_device = xstrdup(p);
-			} else {
+			} ਨਹੀਂਤਾਂ {
 				fatal("Option \"%s\" is unsupported for "
 				    "FIDO authenticator download", opts[i]);
 			}
 		}
 		ret = do_download_sk(sk_provider, sk_device);
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if (print_fingerprint || print_bubblebabble)
+	ਜੇ (print_fingerprint || print_bubblebabble)
 		do_fingerprint(pw);
-	if (change_passphrase)
+	ਜੇ (change_passphrase)
 		do_change_passphrase(pw, opts, nopts);
-	if (change_comment)
-		do_change_comment(pw, identity_comment);
-#ifdef WITH_OPENSSL
-	if (convert_to) {
-		do_convert_to(pw);
-		goto done;
+	ਜੇ (change_comment)
+		do_change_comment(pw, ਪਛਾਣ_ਤੱਤ_comment);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+	ਜੇ (convert_ਮੰਜ਼ਿਲ) {
+		do_convert_ਮੰਜ਼ਿਲ(pw);
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if (convert_from) {
+	ਜੇ (convert_from) {
 		do_convert_from(pw);
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-#else /* WITH_OPENSSL */
-	if (convert_to || convert_from)
+#ਨਹੀਂਤਾਂ /* WITH_OPENSSL */
+	ਜੇ (convert_ਮੰਜ਼ਿਲ || convert_from)
 		fatal("key conversion disabled at compile time");
-#endif /* WITH_OPENSSL */
-	if (print_public)
-		do_print_public(pw);
-	if (rr_hostname != NULL) {
-		unsigned int n = 0;
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
+	ਜੇ (print_ਜਨਤਕ)
+		do_print_ਜਨਤਕ(pw);
+	ਜੇ (rr_hostname != ਨਿਰਾ) {
+		ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ n = 0;
 
-		if (have_identity) {
-			n = do_print_resource_record(pw, identity_file,
+		ਜੇ (have_ਪਛਾਣ_ਤੱਤ) {
+			n = do_print_resource_ਰਿਕਾਰਡ(pw, ਪਛਾਣ_ਤੱਤ_file,
 			    rr_hostname, print_generic, opts, nopts);
-			if (n == 0)
-				fatal("%s: %s", identity_file, strerror(errno));
-			exit(0);
-		} else {
+			ਜੇ (n == 0)
+				fatal("%s: %s", ਪਛਾਣ_ਤੱਤ_file, strerror(errno));
+			ਬਾਹਰ_ਨਿਕਲੋ(0);
+		} ਨਹੀਂਤਾਂ {
 
-			n += do_print_resource_record(pw,
-			    _PATH_HOST_RSA_KEY_FILE, rr_hostname,
+			n += do_print_resource_ਰਿਕਾਰਡ(pw,
+			    ਰਸਤਾ_HOST_RSA_ਕੁੰਜੀ_FILE, rr_hostname,
 			    print_generic, opts, nopts);
-			n += do_print_resource_record(pw,
-			    _PATH_HOST_ECDSA_KEY_FILE, rr_hostname,
+			n += do_print_resource_ਰਿਕਾਰਡ(pw,
+			    ਰਸਤਾ_HOST_ECDSA_ਕੁੰਜੀ_FILE, rr_hostname,
 			    print_generic, opts, nopts);
-			n += do_print_resource_record(pw,
-			    _PATH_HOST_ED25519_KEY_FILE, rr_hostname,
+			n += do_print_resource_ਰਿਕਾਰਡ(pw,
+			    ਰਸਤਾ_HOST_ED25519_ਕੁੰਜੀ_FILE, rr_hostname,
 			    print_generic, opts, nopts);
-			if (n == 0)
+			ਜੇ (n == 0)
 				fatal("no keys found.");
-			exit(0);
+			ਬਾਹਰ_ਨਿਕਲੋ(0);
 		}
 	}
 
-	if (do_gen_candidates || do_screen_candidates) {
-		if (argc <= 0)
+	ਜੇ (do_gen_candidates || do_screen_candidates) {
+		ਜੇ (argc <= 0)
 			fatal("No output file specified");
-		else if (argc > 1)
+		ਨਹੀਂਤਾਂ ਜੇ (argc > 1)
 			fatal("Too many output files specified");
 	}
-	if (do_gen_candidates) {
+	ਜੇ (do_gen_candidates) {
 		do_moduli_gen(argv[0], opts, nopts);
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if (do_screen_candidates) {
+	ਜੇ (do_screen_candidates) {
 		do_moduli_screen(argv[0], opts, nopts);
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 
-	if (gen_all_hostkeys) {
+	ਜੇ (gen_all_hostkeys) {
 		do_gen_all_hostkeys(pw);
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
 
-	if (key_type_name == NULL)
-		key_type_name = DEFAULT_KEY_TYPE_NAME;
+	ਜੇ (ਕੁੰਜੀ_type_name == ਨਿਰਾ)
+		ਕੁੰਜੀ_type_name = DEFAULT_ਕੁੰਜੀ_TYPE_NAME;
 
-	type = sshkey_type_from_shortname(key_type_name);
-	type_bits_valid(type, key_type_name, &bits);
+	type = sshkey_type_from_shortname(ਕੁੰਜੀ_type_name);
+	type_ਬਿੱਟ_valid(type, ਕੁੰਜੀ_type_name, &ਬਿੱਟ);
 
-	if (!quiet)
-		printf("Generating public/private %s key pair.\n",
-		    key_type_name);
-	switch (type) {
-	case KEY_ECDSA_SK:
-	case KEY_ED25519_SK:
-		for (i = 0; i < nopts; i++) {
-			if (strcasecmp(opts[i], "no-touch-required") == 0) {
+	ਜੇ (!quiet)
+		ਲਿਖੋ("Generating public/private %s key pair.\n",
+		    ਕੁੰਜੀ_type_name);
+	ਚੋਣ (type) {
+	ਹਾਲਤ ਕੁੰਜੀ_ECDSA_SK:
+	ਹਾਲਤ ਕੁੰਜੀ_ED25519_SK:
+		ਲਈ (i = 0; i < nopts; i++) {
+			ਜੇ (strcasecmp(opts[i], "no-touch-required") == 0) {
 				sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
-			} else if (strcasecmp(opts[i], "verify-required") == 0) {
+			} ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opts[i], "verify-required") == 0) {
 				sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-			} else if (strcasecmp(opts[i], "resident") == 0) {
-				sk_flags |= SSH_SK_RESIDENT_KEY;
-			} else if ((p = strprefix(opts[i], "device=", 1))
-			    != NULL ) {
+			} ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(opts[i], "resident") == 0) {
+				sk_flags |= SSH_SK_RESIDENT_ਕੁੰਜੀ;
+			} ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opts[i], "device=", 1))
+			    != ਨਿਰਾ ) {
 				sk_device = xstrdup(p);
-			} else if ((p = strprefix(opts[i], "user=", 1))
-			    != NULL) {
+			} ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opts[i], "user=", 1))
+			    != ਨਿਰਾ) {
 				sk_user = xstrdup(p);
-			} else if ((p = strprefix(opts[i], "challenge=", 1))
-			    != NULL) {
-				if ((r = sshbuf_load_file(p,
+			} ਨਹੀਂਤਾਂ ਜੇ ((p = strprefix(opts[i], "challenge=", 1))
+			    != ਨਿਰਾ) {
+				ਜੇ ((r = sshbuf_ਲੱਦੋ_file(p,
 				    &challenge)) != 0) {
 					fatal_r(r, "Unable to load FIDO "
 					    "enrollment challenge \"%s\"", p);
 				}
-			} else if (strncasecmp(opts[i],
+			} ਨਹੀਂਤਾਂ ਜੇ (strncasecmp(opts[i],
 			    "write-attestation=", 18) == 0) {
-				sk_attestation_path = opts[i] + 18;
-			} else if (strncasecmp(opts[i],
+				sk_attestation_ਰਸਤਾ = opts[i] + 18;
+			} ਨਹੀਂਤਾਂ ਜੇ (strncasecmp(opts[i],
 			    "application=", 12) == 0) {
 				sk_application = xstrdup(opts[i] + 12);
-				if (strncmp(sk_application, "ssh:", 4) != 0) {
+				ਜੇ (ਲੜੀ_ਤੁਲਨਾ(sk_application, "ssh:", 4) != 0) {
 					fatal("FIDO application string must "
 					    "begin with \"ssh:\"");
 				}
-			} else {
+			} ਨਹੀਂਤਾਂ {
 				fatal("Option \"%s\" is unsupported for "
 				    "FIDO authenticator enrollment", opts[i]);
 			}
 		}
-		if ((attest = sshbuf_new()) == NULL)
+		ਜੇ ((attest = sshbuf_new()) == ਨਿਰਾ)
 			fatal("sshbuf_new failed");
 		r = 0;
-		for (i = 0 ;;) {
-			if (!quiet) {
-				printf("You may need to touch your "
+		ਲਈ (i = 0 ;;) {
+			ਜੇ (!quiet) {
+				ਲਿਖੋ("You may need to touch your "
 				    "authenticator%s to authorize key "
 				    "generation.\n",
 				    r == 0 ? "" : " again");
 			}
 			fflush(stdout);
 			r = sshsk_enroll(type, sk_provider, sk_device,
-			    sk_application == NULL ? "ssh:" : sk_application,
+			    sk_application == ਨਿਰਾ ? "ssh:" : sk_application,
 			    sk_user, sk_flags, passphrase, challenge,
-			    &private, attest);
-			if (r == 0)
-				break;
-			if (r == SSH_ERR_KEY_BAD_PERMISSIONS &&
-			    (sk_flags & SSH_SK_RESIDENT_KEY) != 0 &&
+			    &ਨਿਜੀ, attest);
+			ਜੇ (r == 0)
+				ਰੋਕੋ;
+			ਜੇ (r == SSH_ERR_ਕੁੰਜੀ_BAD_PERMISSIONS &&
+			    (sk_flags & SSH_SK_RESIDENT_ਕੁੰਜੀ) != 0 &&
 			    (sk_flags & SSH_SK_FORCE_OPERATION) == 0 &&
 			    confirm_sk_overwrite(sk_application, sk_user)) {
 				sk_flags |= SSH_SK_FORCE_OPERATION;
-				continue;
+				ਜਾਰੀ;
 			}
-			if (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
+			ਜੇ (r != SSH_ERR_ਕੁੰਜੀ_WRONG_PASSPHRASE)
 				fatal_r(r, "Key enrollment failed");
-			else if (passphrase != NULL) {
+			ਨਹੀਂਤਾਂ ਜੇ (passphrase != ਨਿਰਾ) {
 				error("PIN incorrect");
-				freezero(passphrase, strlen(passphrase));
-				passphrase = NULL;
+				freezero(passphrase, ਲੜੀ_ਲੰਬਾਈ(passphrase));
+				passphrase = ਨਿਰਾ;
 			}
-			if (++i >= 3)
+			ਜੇ (++i >= 3)
 				fatal("Too many incorrect PINs");
 			passphrase = read_passphrase("Enter PIN for "
 			    "authenticator: ", RP_ALLOW_STDIN);
 		}
-		if (passphrase != NULL) {
-			freezero(passphrase, strlen(passphrase));
-			passphrase = NULL;
+		ਜੇ (passphrase != ਨਿਰਾ) {
+			freezero(passphrase, ਲੜੀ_ਲੰਬਾਈ(passphrase));
+			passphrase = ਨਿਰਾ;
 		}
-		break;
-	default:
-		if ((r = sshkey_generate(type, bits, &private)) != 0)
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਜੇ ((r = sshkey_generate(type, ਬਿੱਟ, &ਨਿਜੀ)) != 0)
 			fatal("sshkey_generate failed");
-		break;
+		ਰੋਕੋ;
 	}
-	if ((r = sshkey_from_private(private, &public)) != 0)
+	ਜੇ ((r = sshkey_from_ਨਿੱਜੀ(ਨਿਜੀ, &ਜਨਤਕ)) != 0)
 		fatal_r(r, "sshkey_from_private");
 
-	if (!have_identity)
+	ਜੇ (!have_ਪਛਾਣ_ਤੱਤ)
 		ask_filename(pw, "Enter file in which to save the key");
 
 	/* Create ~/.ssh directory if it doesn't already exist. */
-	hostfile_create_user_ssh_dir(identity_file, !quiet);
+	hostfile_create_user_ssh_dir(ਪਛਾਣ_ਤੱਤ_file, !quiet);
 
 	/* If the file already exists, ask the user to confirm. */
-	if (!confirm_overwrite(identity_file))
-		exit(1);
+	ਜੇ (!confirm_overwrite(ਪਛਾਣ_ਤੱਤ_file))
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 
 	/* Determine the passphrase for the private key */
-	passphrase = private_key_passphrase(identity_file);
-	if (identity_comment) {
-		strlcpy(comment, identity_comment, sizeof(comment));
-	} else {
+	passphrase = ਨਿੱਜੀ_ਕੁੰਜੀ_passphrase(ਪਛਾਣ_ਤੱਤ_file);
+	ਜੇ (ਪਛਾਣ_ਤੱਤ_comment) {
+		strlcpy(comment, ਪਛਾਣ_ਤੱਤ_comment, ਆਕਾਰ(comment));
+	} ਨਹੀਂਤਾਂ {
 		/* Create default comment field for the passphrase. */
-		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name, hostname);
+		snprintf(comment, ਆਕਾਰ comment, "%s@%s", pw->pw_name, hostname);
 	}
 
 
 
 	/* Save the key with the given passphrase and comment. */
-	if ((r = sshkey_save_private(private, identity_file, passphrase,
-	    comment, private_key_format, openssh_format_cipher, rounds)) != 0) {
-		error_r(r, "Saving key \"%s\" failed", identity_file);
-		freezero(passphrase, strlen(passphrase));
-		exit(1);
+	ਜੇ ((r = sshkey_save_ਨਿੱਜੀ(ਨਿਜੀ, ਪਛਾਣ_ਤੱਤ_file, passphrase,
+	    comment, ਨਿੱਜੀ_ਕੁੰਜੀ_format, openssh_format_cipher, ਗੇੜ)) != 0) {
+		error_r(r, "Saving key \"%s\" failed", ਪਛਾਣ_ਤੱਤ_file);
+		freezero(passphrase, ਲੜੀ_ਲੰਬਾਈ(passphrase));
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 	}
-	freezero(passphrase, strlen(passphrase));
-	sshkey_free(private);
+	freezero(passphrase, ਲੜੀ_ਲੰਬਾਈ(passphrase));
+	sshkey_free(ਨਿਜੀ);
 
-	if (!quiet) {
-		printf("Your identification has been saved in %s\n",
-		    identity_file);
+	ਜੇ (!quiet) {
+		ਲਿਖੋ("Your identification has been saved in %s\n",
+		    ਪਛਾਣ_ਤੱਤ_file);
 	}
 
-	strlcat(identity_file, ".pub", sizeof(identity_file));
-	if ((r = sshkey_save_public(public, identity_file, comment)) != 0)
-		fatal_r(r, "Unable to save public key to %s", identity_file);
+	strlcat(ਪਛਾਣ_ਤੱਤ_file, ".pub", ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ_file));
+	ਜੇ ((r = sshkey_save_ਜਨਤਕ(ਜਨਤਕ, ਪਛਾਣ_ਤੱਤ_file, comment)) != 0)
+		fatal_r(r, "Unable to save public key to %s", ਪਛਾਣ_ਤੱਤ_file);
 
-	if (!quiet) {
-		fp = sshkey_fingerprint(public, fingerprint_hash,
+	ਜੇ (!quiet) {
+		fp = sshkey_fingerprint(ਜਨਤਕ, fingerprint_hash,
 		    SSH_FP_DEFAULT);
-		ra = sshkey_fingerprint(public, fingerprint_hash,
+		ra = sshkey_fingerprint(ਜਨਤਕ, fingerprint_hash,
 		    SSH_FP_RANDOMART);
-		if (fp == NULL || ra == NULL)
+		ਜੇ (fp == ਨਿਰਾ || ra == ਨਿਰਾ)
 			fatal("sshkey_fingerprint failed");
-		printf("Your public key has been saved in %s\n",
-		    identity_file);
-		printf("The key fingerprint is:\n");
-		printf("%s %s\n", fp, comment);
-		printf("The key's randomart image is:\n");
-		printf("%s\n", ra);
-		free(ra);
-		free(fp);
+		ਲਿਖੋ("Your public key has been saved in %s\n",
+		    ਪਛਾਣ_ਤੱਤ_file);
+		ਲਿਖੋ("The key fingerprint is:\n");
+		ਲਿਖੋ("%s %s\n", fp, comment);
+		ਲਿਖੋ("The key's randomart image is:\n");
+		ਲਿਖੋ("%s\n", ra);
+		ਮੁਕਤ(ra);
+		ਮੁਕਤ(fp);
 	}
 
-	if (sk_attestation_path != NULL)
-		save_attestation(attest, sk_attestation_path);
+	ਜੇ (sk_attestation_ਰਸਤਾ != ਨਿਰਾ)
+		save_attestation(attest, sk_attestation_ਰਸਤਾ);
 
- done:
+ ਪੂਰਾ:
 	sshbuf_free(attest);
-	sshkey_free(public);
+	sshkey_free(ਜਨਤਕ);
 	pwfree(pw);
-	exit(ret);
+	ਬਾਹਰ_ਨਿਕਲੋ(ret);
 }

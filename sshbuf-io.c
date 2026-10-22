@@ -15,102 +15,102 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "atomicio.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "atomicio.h"
 
 /* Load a file from a fd into a buffer */
-int
-sshbuf_load_fd(int fd, struct sshbuf **blobp)
+ਪੂਰਨ
+sshbuf_ਲੱਦੋ_fd(ਪੂਰਨ fd, ਬਣਤਰ sshbuf **blobp)
 {
 	u_char buf[4096];
-	size_t len;
-	struct stat st;
-	int r;
-	struct sshbuf *blob;
+	ਮਾਪ_t len;
+	ਬਣਤਰ stat st;
+	ਪੂਰਨ r;
+	ਬਣਤਰ sshbuf *blob;
 
-	*blobp = NULL;
+	*blobp = ਨਿਰਾ;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (S_ISREG(st.st_mode) && st.st_size > SSHBUF_SIZE_MAX)
-		return SSH_ERR_INVALID_FORMAT;
-	if ((blob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	for (;;) {
-		if ((len = atomicio(read, fd, buf, sizeof(buf))) == 0) {
-			if (errno == EPIPE)
-				break;
+	ਜੇ (fstat(fd, &st) == -1)
+		ਵਾਪਸ SSH_ERR_SYSTEM_ERROR;
+	ਜੇ (S_ISREG(st.st_mode) && st.st_size > SSHBUF_ਮਾਪ_MAX)
+		ਵਾਪਸ SSH_ERR_INVALID_FORMAT;
+	ਜੇ ((blob = sshbuf_new()) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਲਈ (;;) {
+		ਜੇ ((len = atomicio(ਪਠ, fd, buf, ਆਕਾਰ(buf))) == 0) {
+			ਜੇ (errno == EPIPE)
+				ਰੋਕੋ;
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
-		if ((r = sshbuf_put(blob, buf, len)) != 0)
-			goto out;
-		if (sshbuf_len(blob) > SSHBUF_SIZE_MAX) {
+		ਜੇ ((r = sshbuf_put(blob, buf, len)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
+		ਜੇ (sshbuf_len(blob) > SSHBUF_ਮਾਪ_MAX) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
 	}
-	if (S_ISREG(st.st_mode) != 0 &&
+	ਜੇ (S_ISREG(st.st_mode) != 0 &&
 	    st.st_size != (off_t)sshbuf_len(blob)) {
-		r = SSH_ERR_FILE_CHANGED;
-		goto out;
+		r = SSH_ERR_FILE_ਬਦਲਿਆ;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 	/* success */
 	*blobp = blob;
-	blob = NULL; /* transferred */
+	blob = ਨਿਰਾ; /* transferred */
 	r = 0;
- out:
-	explicit_bzero(buf, sizeof(buf));
+ ਬਾਹਰਲਾ:
+	explicit_bzero(buf, ਆਕਾਰ(buf));
 	sshbuf_free(blob);
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-sshbuf_load_file(const char *path, struct sshbuf **bufp)
+ਪੂਰਨ
+sshbuf_ਲੱਦੋ_file(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਬਣਤਰ sshbuf **bufp)
 {
-	int r, fd, oerrno;
+	ਪੂਰਨ r, fd, oerrno;
 
-	*bufp = NULL;
-	if ((fd = open(path, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, bufp)) != 0)
-		goto out;
+	*bufp = ਨਿਰਾ;
+	ਜੇ ((fd = open(ਰਸਤਾ, O_RDONLY)) == -1)
+		ਵਾਪਸ SSH_ERR_SYSTEM_ERROR;
+	ਜੇ ((r = sshbuf_ਲੱਦੋ_fd(fd, bufp)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
 	/* success */
 	r = 0;
- out:
+ ਬਾਹਰਲਾ:
 	oerrno = errno;
 	close(fd);
-	if (r != 0)
+	ਜੇ (r != 0)
 		errno = oerrno;
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-sshbuf_write_file(const char *path, struct sshbuf *buf)
+ਪੂਰਨ
+sshbuf_write_file(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਬਣਤਰ sshbuf *buf)
 {
-	int fd, oerrno;
+	ਪੂਰਨ fd, oerrno;
 
-	if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
+	ਜੇ ((fd = open(ਰਸਤਾ, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
+		ਵਾਪਸ SSH_ERR_SYSTEM_ERROR;
+	ਜੇ (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf)) != sshbuf_len(buf) || close(fd) != 0) {
 		oerrno = errno;
 		close(fd);
-		unlink(path);
+		unlink(ਰਸਤਾ);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		ਵਾਪਸ SSH_ERR_SYSTEM_ERROR;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 

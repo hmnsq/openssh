@@ -22,26 +22,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
-#ifdef USE_PAM
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_PAM
 
-struct ssh;
+ਬਣਤਰ ssh;
 
-void start_pam(struct ssh *);
-void finish_pam(void);
-u_int do_pam_account(void);
-void do_pam_session(struct ssh *);
-void do_pam_setcred(void);
-int do_pam_putenv(char *, char *);
-char ** fetch_pam_environment(void);
-char ** fetch_pam_child_environment(void);
-void free_pam_environment(char **);
-void sshpam_thread_cleanup(void);
-void sshpam_cleanup(void);
-int sshpam_auth_passwd(Authctxt *, const char *);
-int sshpam_get_maxtries_reached(void);
-void sshpam_set_maxtries_reached(int);
-int is_pam_session_open(void);
-int sshpam_priv_kbdint_authdone(void *ctxtp);
+ਖਾਲੀ ਸ਼ੁਰੂ_pam(ਬਣਤਰ ssh *);
+ਖਾਲੀ ਅੰਤ_pam(ਖਾਲੀ);
+u_int do_pam_account(ਖਾਲੀ);
+ਖਾਲੀ do_pam_session(ਬਣਤਰ ssh *);
+ਖਾਲੀ do_pam_setcred(ਖਾਲੀ);
+ਪੂਰਨ do_pam_putenv(ਅੱਖਰ *, ਅੱਖਰ *);
+ਅੱਖਰ ** fetch_pam_environment(ਖਾਲੀ);
+ਅੱਖਰ ** fetch_pam_ਬੱਚਾ_environment(ਖਾਲੀ);
+ਖਾਲੀ free_pam_environment(ਅੱਖਰ **);
+ਖਾਲੀ sshpam_thread_cleanup(ਖਾਲੀ);
+ਖਾਲੀ sshpam_cleanup(ਖਾਲੀ);
+ਪੂਰਨ sshpam_auth_passwd(Authctxt *, ਅਚਲ ਅੱਖਰ *);
+ਪੂਰਨ sshpam_get_maxtries_reached(ਖਾਲੀ);
+ਖਾਲੀ sshpam_ਸੈੱਟ_maxtries_reached(ਪੂਰਨ);
+ਪੂਰਨ is_pam_session_open(ਖਾਲੀ);
+ਪੂਰਨ sshpam_priv_kbdint_authdone(ਖਾਲੀ *ctxtp);
 
-#endif /* USE_PAM */
+#ਜੇ_ਅੰਤ /* USE_PAM */

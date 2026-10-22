@@ -16,43 +16,43 @@
 
 /* $OpenBSD$ */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#ifdef HAVE_SYS_STATVFS_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SYS_STATVFS_H
 # include <sys/statvfs.h>
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
 
-static void
-usage(void)
+ਸਥਿਰ ਖਾਲੀ
+usage(ਖਾਲੀ)
 {
 	fprintf(stderr, "check-setuid [path]\n");
-	exit(1);
+	ਬਾਹਰ_ਨਿਕਲੋ(1);
 }
 
-int
-main(int argc, char **argv)
+ਪੂਰਨ
+ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
-	const char *path = ".";
-	struct statvfs sb;
+	ਅਚਲ ਅੱਖਰ *ਰਸਤਾ = ".";
+	ਬਣਤਰ statvfs sb;
 
-	if (argc > 2)
+	ਜੇ (argc > 2)
 		usage();
-	else if (argc == 2)
-		path = argv[1];
+	ਨਹੀਂਤਾਂ ਜੇ (argc == 2)
+		ਰਸਤਾ = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	ਜੇ (statvfs(ਰਸਤਾ, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		ਜੇ (errno == ENOSYS)
+			ਵਾਪਸ 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
-		     path, strerror(errno));
+		     ਰਸਤਾ, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	ਵਾਪਸ (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

@@ -24,206 +24,206 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
 
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "dispatch.h"
-#include "ssherr.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh2.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshkey.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hostfile.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "auth.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "packet.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "dispatch.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "servconf.h"
 
 /* import */
-extern ServerOptions options;
+ਬਾਹਰੀ ServerOptions options;
 
-static int auth2_challenge_start(struct ssh *);
-static int send_userauth_info_request(struct ssh *);
-static int input_userauth_info_response(int, uint32_t, struct ssh *);
+ਸਥਿਰ ਪੂਰਨ auth2_challenge_ਸ਼ੁਰੂ(ਬਣਤਰ ssh *);
+ਸਥਿਰ ਪੂਰਨ send_userauth_info_request(ਬਣਤਰ ssh *);
+ਸਥਿਰ ਪੂਰਨ ਨਿਵੇਸ਼_userauth_info_response(ਪੂਰਨ, uint32_t, ਬਣਤਰ ssh *);
 
-#ifdef BSD_AUTH
-extern KbdintDevice mm_bsdauth_device;
-#else
-#ifdef USE_PAM
-extern KbdintDevice mm_sshpam_device;
-#endif
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BSD_AUTH
+ਬਾਹਰੀ KbdintDevice mm_bsdauth_device;
+#ਨਹੀਂਤਾਂ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_PAM
+ਬਾਹਰੀ KbdintDevice mm_sshpam_device;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
 
 KbdintDevice *devices[] = {
-#ifdef BSD_AUTH
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ BSD_AUTH
 	&mm_bsdauth_device,
-#else
-#ifdef USE_PAM
+#ਨਹੀਂਤਾਂ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_PAM
 	&mm_sshpam_device,
-#endif
-#endif
-	NULL
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅੰਤ
+	ਨਿਰਾ
 };
 
-typedef struct KbdintAuthctxt KbdintAuthctxt;
-struct KbdintAuthctxt
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ KbdintAuthctxt KbdintAuthctxt;
+ਬਣਤਰ KbdintAuthctxt
 {
-	char *devices;
-	void *ctxt;
+	ਅੱਖਰ *devices;
+	ਖਾਲੀ *ctxt;
 	KbdintDevice *device;
 	u_int nreq;
-	u_int devices_done;
+	u_int devices_ਪੂਰਾ;
 };
 
-#ifdef USE_PAM
-void
-remove_kbdint_device(const char *devname)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_PAM
+ਖਾਲੀ
+remove_kbdint_device(ਅਚਲ ਅੱਖਰ *devname)
 {
-	int i, j;
+	ਪੂਰਨ i, j;
 
-	for (i = 0; devices[i] != NULL; i++)
-		if (strcmp(devices[i]->name, devname) == 0) {
-			for (j = i; devices[j] != NULL; j++)
+	ਲਈ (i = 0; devices[i] != ਨਿਰਾ; i++)
+		ਜੇ (strcmp(devices[i]->name, devname) == 0) {
+			ਲਈ (j = i; devices[j] != ਨਿਰਾ; j++)
 				devices[j] = devices[j+1];
 			i--;
 		}
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-static KbdintAuthctxt *
-kbdint_alloc(const char *devs)
+ਸਥਿਰ KbdintAuthctxt *
+kbdint_alloc(ਅਚਲ ਅੱਖਰ *devs)
 {
 	KbdintAuthctxt *kbdintctxt;
-	struct sshbuf *b;
-	int i, r;
+	ਬਣਤਰ sshbuf *b;
+	ਪੂਰਨ i, r;
 
-#ifdef USE_PAM
-	if (!options.use_pam)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_PAM
+	ਜੇ (!options.use_pam)
 		remove_kbdint_device("pam");
-#endif
+#ਜੇ_ਅੰਤ
 
-	kbdintctxt = xcalloc(1, sizeof(KbdintAuthctxt));
-	if (strcmp(devs, "") == 0) {
-		if ((b = sshbuf_new()) == NULL)
+	kbdintctxt = xcalloc(1, ਆਕਾਰ(KbdintAuthctxt));
+	ਜੇ (strcmp(devs, "") == 0) {
+		ਜੇ ((b = sshbuf_new()) == ਨਿਰਾ)
 			fatal_f("sshbuf_new failed");
-		for (i = 0; devices[i]; i++) {
-			if ((r = sshbuf_putf(b, "%s%s",
+		ਲਈ (i = 0; devices[i]; i++) {
+			ਜੇ ((r = sshbuf_putf(b, "%s%s",
 			    sshbuf_len(b) ? "," : "", devices[i]->name)) != 0)
 				fatal_fr(r, "buffer error");
 		}
-		if ((kbdintctxt->devices = sshbuf_dup_string(b)) == NULL)
+		ਜੇ ((kbdintctxt->devices = sshbuf_dup_string(b)) == ਨਿਰਾ)
 			fatal_f("sshbuf_dup_string failed");
 		sshbuf_free(b);
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		kbdintctxt->devices = xstrdup(devs);
 	}
 	debug("kbdint_alloc: devices '%s'", kbdintctxt->devices);
-	kbdintctxt->ctxt = NULL;
-	kbdintctxt->device = NULL;
+	kbdintctxt->ctxt = ਨਿਰਾ;
+	kbdintctxt->device = ਨਿਰਾ;
 	kbdintctxt->nreq = 0;
 
-	return kbdintctxt;
+	ਵਾਪਸ kbdintctxt;
 }
-static void
+ਸਥਿਰ ਖਾਲੀ
 kbdint_reset_device(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->ctxt) {
+	ਜੇ (kbdintctxt->ctxt) {
 		kbdintctxt->device->free_ctx(kbdintctxt->ctxt);
-		kbdintctxt->ctxt = NULL;
+		kbdintctxt->ctxt = ਨਿਰਾ;
 	}
-	kbdintctxt->device = NULL;
+	kbdintctxt->device = ਨਿਰਾ;
 }
-static void
+ਸਥਿਰ ਖਾਲੀ
 kbdint_free(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->device)
+	ਜੇ (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
-	free(kbdintctxt->devices);
-	freezero(kbdintctxt, sizeof(*kbdintctxt));
+	ਮੁਕਤ(kbdintctxt->devices);
+	freezero(kbdintctxt, ਆਕਾਰ(*kbdintctxt));
 }
 /* get next device */
-static int
-kbdint_next_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
+ਸਥਿਰ ਪੂਰਨ
+kbdint_ਅਗਲਾ_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
 {
-	size_t len;
-	char *t;
-	size_t i;
+	ਮਾਪ_t len;
+	ਅੱਖਰ *t;
+	ਮਾਪ_t i;
 
-	if (kbdintctxt->device)
+	ਜੇ (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
-	do {
+	ਕਰੋ {
 		len = kbdintctxt->devices ?
 		    strcspn(kbdintctxt->devices, ",") : 0;
 
-		if (len == 0)
-			break;
-		for (i = 0; devices[i]; i++) {
-			if (i >= sizeof(kbdintctxt->devices_done) * 8 ||
-			    i >= sizeof(devices) / sizeof(devices[0]))
+		ਜੇ (len == 0)
+			ਰੋਕੋ;
+		ਲਈ (i = 0; devices[i]; i++) {
+			ਜੇ (i >= ਆਕਾਰ(kbdintctxt->devices_ਪੂਰਾ) * 8 ||
+			    i >= ਆਕਾਰ(devices) / ਆਕਾਰ(devices[0]))
 				fatal_f("internal error: too many devices");
-			if ((kbdintctxt->devices_done & (1 << i)) != 0 ||
-			    !auth2_method_allowed(authctxt,
+			ਜੇ ((kbdintctxt->devices_ਪੂਰਾ & (1 << i)) != 0 ||
+			    !auth2_ਵਿਧੀ_allowed(authctxt,
 			    "keyboard-interactive", devices[i]->name))
-				continue;
-			if (strlen(devices[i]->name) == len &&
+				ਜਾਰੀ;
+			ਜੇ (ਲੜੀ_ਲੰਬਾਈ(devices[i]->name) == len &&
 			    memcmp(kbdintctxt->devices, devices[i]->name,
 			    len) == 0) {
 				kbdintctxt->device = devices[i];
-				kbdintctxt->devices_done |= 1 << i;
+				kbdintctxt->devices_ਪੂਰਾ |= 1 << i;
 			}
 		}
 		t = kbdintctxt->devices;
-		kbdintctxt->devices = t[len] ? xstrdup(t+len+1) : NULL;
-		free(t);
+		kbdintctxt->devices = t[len] ? xstrdup(t+len+1) : ਨਿਰਾ;
+		ਮੁਕਤ(t);
 		debug2("kbdint_next_device: devices %s", kbdintctxt->devices ?
 		    kbdintctxt->devices : "<empty>");
-	} while (kbdintctxt->devices && !kbdintctxt->device);
+	} ਜਦੋਂ (kbdintctxt->devices && !kbdintctxt->device);
 
-	return kbdintctxt->device ? 1 : 0;
+	ਵਾਪਸ kbdintctxt->device ? 1 : 0;
 }
 
 /*
  * try challenge-response, set authctxt->postponed if we have to
  * wait for the response.
  */
-int
-auth2_challenge(struct ssh *ssh, char *devs)
+ਪੂਰਨ
+auth2_challenge(ਬਣਤਰ ssh *ssh, ਅੱਖਰ *devs)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	debug("auth2_challenge: user=%s devs=%s",
 	    authctxt->user ? authctxt->user : "<nouser>",
 	    devs ? devs : "<no devs>");
 
-	if (authctxt->user == NULL || !devs)
-		return 0;
-	if (authctxt->kbdintctxt == NULL)
+	ਜੇ (authctxt->user == ਨਿਰਾ || !devs)
+		ਵਾਪਸ 0;
+	ਜੇ (authctxt->kbdintctxt == ਨਿਰਾ)
 		authctxt->kbdintctxt = kbdint_alloc(devs);
-	return auth2_challenge_start(ssh);
+	ਵਾਪਸ auth2_challenge_ਸ਼ੁਰੂ(ssh);
 }
 
 /* unregister kbd-int callbacks and context */
-void
-auth2_challenge_stop(struct ssh *ssh)
+ਖਾਲੀ
+auth2_challenge_stop(ਬਣਤਰ ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	/* unregister callback */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE, NULL);
-	if (authctxt->kbdintctxt != NULL) {
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_INFO_RESPONSE, ਨਿਰਾ);
+	ਜੇ (authctxt->kbdintctxt != ਨਿਰਾ) {
 		kbdint_free(authctxt->kbdintctxt);
-		authctxt->kbdintctxt = NULL;
+		authctxt->kbdintctxt = ਨਿਰਾ;
 	}
 }
 
 /* side effect: sets authctxt->postponed if a reply was sent*/
-static int
-auth2_challenge_start(struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+auth2_challenge_ਸ਼ੁਰੂ(ਬਣਤਰ ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt = authctxt->kbdintctxt;
@@ -231,138 +231,138 @@ auth2_challenge_start(struct ssh *ssh)
 	debug2("auth2_challenge_start: devices %s",
 	    kbdintctxt->devices ?  kbdintctxt->devices : "<empty>");
 
-	if (kbdint_next_device(authctxt, kbdintctxt) == 0) {
+	ਜੇ (kbdint_ਅਗਲਾ_device(authctxt, kbdintctxt) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		ਵਾਪਸ 0;
 	}
 	debug("auth2_challenge_start: trying authentication method '%s'",
 	    kbdintctxt->device->name);
 
-	if ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == NULL) {
+	ਜੇ ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == ਨਿਰਾ) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		ਵਾਪਸ 0;
 	}
-	if (send_userauth_info_request(ssh) == 0) {
+	ਜੇ (send_userauth_info_request(ssh) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		ਵਾਪਸ 0;
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE,
-	    &input_userauth_info_response);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_INFO_RESPONSE,
+	    &ਨਿਵੇਸ਼_userauth_info_response);
 
 	authctxt->postponed = 1;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int
-send_userauth_info_request(struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+send_userauth_info_request(ਬਣਤਰ ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	char *name, *instr, **prompts;
+	ਅੱਖਰ *name, *instr, **prompts;
 	u_int r, i, *echo_on;
 
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt->device->query(kbdintctxt->ctxt,
+	ਜੇ (kbdintctxt->device->query(kbdintctxt->ctxt,
 	    &name, &instr, &kbdintctxt->nreq, &prompts, &echo_on))
-		return 0;
+		ਵਾਪਸ 0;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
+	ਜੇ ((r = sshpkt_ਸ਼ੁਰੂ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_INFO_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, name)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, instr)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language not used */
 	    (r = sshpkt_put_u32(ssh, kbdintctxt->nreq)) != 0)
 		fatal_fr(r, "start packet");
-	for (i = 0; i < kbdintctxt->nreq; i++) {
-		if ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
+	ਲਈ (i = 0; i < kbdintctxt->nreq; i++) {
+		ਜੇ ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
 		    (r = sshpkt_put_u8(ssh, echo_on[i])) != 0)
 			fatal_fr(r, "assemble packet");
 	}
-	if ((r = sshpkt_send(ssh)) != 0 ||
+	ਜੇ ((r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	for (i = 0; i < kbdintctxt->nreq; i++)
-		free(prompts[i]);
-	free(prompts);
-	free(echo_on);
-	free(name);
-	free(instr);
-	return 1;
+	ਲਈ (i = 0; i < kbdintctxt->nreq; i++)
+		ਮੁਕਤ(prompts[i]);
+	ਮੁਕਤ(prompts);
+	ਮੁਕਤ(echo_on);
+	ਮੁਕਤ(name);
+	ਮੁਕਤ(instr);
+	ਵਾਪਸ 1;
 }
 
-static int
-input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ਨਿਵੇਸ਼_userauth_info_response(ਪੂਰਨ type, uint32_t seq, ਬਣਤਰ ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	int authenticated = 0, res;
-	int r;
+	ਪੂਰਨ authenticated = 0, res;
+	ਪੂਰਨ r;
 	u_int i, nresp;
-	const char *devicename = NULL;
-	char **response = NULL;
-	double tstart = monotime_double();
+	ਅਚਲ ਅੱਖਰ *devicename = ਨਿਰਾ;
+	ਅੱਖਰ **response = ਨਿਰਾ;
+	ਦੁੱਗਣਾ tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ਜੇ (authctxt == ਨਿਰਾ)
 		fatal_f("no authctxt");
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt == NULL || kbdintctxt->ctxt == NULL)
+	ਜੇ (kbdintctxt == ਨਿਰਾ || kbdintctxt->ctxt == ਨਿਰਾ)
 		fatal_f("no kbdintctxt");
-	if (kbdintctxt->device == NULL)
+	ਜੇ (kbdintctxt->device == ਨਿਰਾ)
 		fatal_f("no device");
 
 	authctxt->postponed = 0;	/* reset */
-	if ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
+	ਜੇ ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
 		fatal_fr(r, "parse packet");
-	if (nresp != kbdintctxt->nreq)
+	ਜੇ (nresp != kbdintctxt->nreq)
 		fatal_f("wrong number of replies");
-	if (nresp > 100)
+	ਜੇ (nresp > 100)
 		fatal_f("too many replies");
-	if (nresp > 0) {
-		response = xcalloc(nresp, sizeof(char *));
-		for (i = 0; i < nresp; i++) {
-			if ((r = sshpkt_get_cstring(ssh, &response[i], NULL)) != 0)
+	ਜੇ (nresp > 0) {
+		response = xcalloc(nresp, ਆਕਾਰ(ਅੱਖਰ *));
+		ਲਈ (i = 0; i < nresp; i++) {
+			ਜੇ ((r = sshpkt_get_cstring(ssh, &response[i], ਨਿਰਾ)) != 0)
 				fatal_fr(r, "parse response");
 		}
 	}
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	ਜੇ ((r = sshpkt_get_ਸਿਰਾ(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	res = kbdintctxt->device->respond(kbdintctxt->ctxt, nresp, response);
 
-	for (i = 0; i < nresp; i++) {
-		explicit_bzero(response[i], strlen(response[i]));
-		free(response[i]);
+	ਲਈ (i = 0; i < nresp; i++) {
+		explicit_bzero(response[i], ਲੜੀ_ਲੰਬਾਈ(response[i]));
+		ਮੁਕਤ(response[i]);
 	}
-	free(response);
+	ਮੁਕਤ(response);
 
-	switch (res) {
-	case 0:
+	ਚੋਣ (res) {
+	ਹਾਲਤ 0:
 		/* Success! */
 		authenticated = authctxt->valid ? 1 : 0;
-		break;
-	case 1:
+		ਰੋਕੋ;
+	ਹਾਲਤ 1:
 		/* Authentication needs further interaction */
-		if (send_userauth_info_request(ssh) == 1)
+		ਜੇ (send_userauth_info_request(ssh) == 1)
 			authctxt->postponed = 1;
-		break;
-	default:
+		ਰੋਕੋ;
+	ਮੂਲ:
 		/* Failure! */
-		break;
+		ਰੋਕੋ;
 	}
 	devicename = kbdintctxt->device->name;
-	if (!authctxt->postponed) {
-		if (authenticated) {
+	ਜੇ (!authctxt->postponed) {
+		ਜੇ (authenticated) {
 			auth2_challenge_stop(ssh);
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			/* start next device */
 			/* may set authctxt->postponed */
-			auth2_challenge_start(ssh);
+			auth2_challenge_ਸ਼ੁਰੂ(ssh);
 		}
 	}
 
-	if (!authenticated)
+	ਜੇ (!authenticated)
 		auth_failure_delay(authctxt, tstart);
-	userauth_finish(ssh, authenticated, "keyboard-interactive",
+	userauth_ਅੰਤ(ssh, authenticated, "keyboard-interactive",
 	    devicename);
-	return 0;
+	ਵਾਪਸ 0;
 }

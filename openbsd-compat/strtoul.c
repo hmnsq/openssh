@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoul.c */
 
-#include "includes.h"
-#ifndef HAVE_STRTOUL
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_STRTOUL
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <ctype.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
 /*
  * Convert a string to an unsigned long integer.
@@ -44,65 +44,65 @@
  * Ignores `locale' stuff.  Assumes that the upper and lower case
  * alphabets and digits are each contiguous.
  */
-unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ
+strtoul(ਅਚਲ ਅੱਖਰ *nptr, ਅੱਖਰ **endptr, ਪੂਰਨ ਅਧਾਰ)
 {
-	const char *s;
-	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ਅਚਲ ਅੱਖਰ *s;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ acc, cutoff;
+	ਪੂਰਨ c;
+	ਪੂਰਨ neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	ਕਰੋ {
+		c = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) *s++;
+	} ਜਦੋਂ (ਖਾਲੀ_ਥਾਂ_ਹੈ(c));
+	ਜੇ (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		neg = 0;
-		if (c == '+')
+		ਜੇ (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	ਜੇ ((ਅਧਾਰ == 0 || ਅਧਾਰ == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
-		base = 16;
+		ਅਧਾਰ = 16;
 	}
-	if (base == 0)
-		base = c == '0' ? 8 : 10;
+	ਜੇ (ਅਧਾਰ == 0)
+		ਅਧਾਰ = c == '0' ? 8 : 10;
 
-	cutoff = ULONG_MAX / (unsigned long)base;
-	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	cutoff = ULONG_MAX / (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ਅਧਾਰ;
+	cutlim = ULONG_MAX % (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ਅਧਾਰ;
+	ਲਈ (acc = 0, any = 0;; c = (ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ) *s++) {
+		ਜੇ (ਅੰਕ_ਹੈ(c))
 			c -= '0';
-		else if (isalpha(c))
+		ਨਹੀਂਤਾਂ ਜੇ (ਅੱਖਰ_ਹੈ(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		ਨਹੀਂਤਾਂ
+			ਰੋਕੋ;
+		ਜੇ (c >= ਅਧਾਰ)
+			ਰੋਕੋ;
+		ਜੇ (any < 0)
+			ਜਾਰੀ;
+		ਜੇ (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			any = 1;
-			acc *= (unsigned long)base;
+			acc *= (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ਅਧਾਰ;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	ਜੇ (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	ਜੇ (endptr != 0)
+		*endptr = (ਅੱਖਰ *) (any ? s - 1 : nptr);
+	ਵਾਪਸ (acc);
 }
-#endif /* !HAVE_STRTOUL */
+#ਜੇ_ਅੰਤ /* !HAVE_STRTOUL */

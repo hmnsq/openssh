@@ -5,30 +5,30 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "../test_helper/test_helper.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
 
-void test_convtime(void);
+ਖਾਲੀ test_convtime(ਖਾਲੀ);
 
-void
-test_convtime(void)
+ਖਾਲੀ
+test_convtime(ਖਾਲੀ)
 {
-	char buf[1024];
+	ਅੱਖਰ buf[1024];
 	uint64_t t;
 
-	TEST_START("misc_convtime");
+	TEST_ਸ਼ੁਰੂ("misc_convtime");
 	ASSERT_INT_EQ(convtime("0"), 0);
 	ASSERT_INT_EQ(convtime("1"), 1);
 	ASSERT_INT_EQ(convtime("2s"), 2);
@@ -47,17 +47,17 @@ test_convtime(void)
 	ASSERT_INT_EQ(convtime("trout"),  -1);
 	ASSERT_INT_EQ(convtime("-77"),  -1);
 	/* boundary conditions */
-	snprintf(buf, sizeof buf, "%llu", (long long unsigned)INT_MAX);
-	ASSERT_INT_EQ(convtime(buf), INT_MAX);
-	snprintf(buf, sizeof buf, "%llu", (long long unsigned)INT_MAX + 1);
+	snprintf(buf, ਆਕਾਰ buf, "%llu", (ਲੰਮਾ ਲੰਮਾ ਬਿਨਾਨਿਸ਼ਾਨੀ)ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ);
+	ASSERT_INT_EQ(convtime(buf), ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ);
+	snprintf(buf, ਆਕਾਰ buf, "%llu", (ਲੰਮਾ ਲੰਮਾ ਬਿਨਾਨਿਸ਼ਾਨੀ)ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 	ASSERT_INT_EQ(convtime("3550w5d3h14m7s"), 2147483647);
-#if INT_MAX == 2147483647
+#ਜੇ ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ == 2147483647
 	ASSERT_INT_EQ(convtime("3550w5d3h14m8s"), -1);
-#endif
-	TEST_DONE();
+#ਜੇ_ਅੰਤ
+	TEST_ਪੂਰਾ();
 
-	TEST_START("misc_convtime_double");
+	TEST_ਸ਼ੁਰੂ("misc_convtime_double");
 	ASSERT_DOUBLE_EQ(convtime_double("0"), 0);
 	ASSERT_DOUBLE_EQ(convtime_double("1"), 1.0);
 	ASSERT_DOUBLE_EQ(convtime_double("2s"), 2.0);
@@ -90,65 +90,65 @@ test_convtime(void)
 	ASSERT_DOUBLE_LT(convtime_double("1.5d"), 0.0);
 	ASSERT_DOUBLE_LT(convtime_double("1.5w"), 0.0);
 	ASSERT_DOUBLE_LT(convtime_double("1s1.5"), 0.0);
-	TEST_DONE();
+	TEST_ਪੂਰਾ();
 
 	/* XXX timezones/DST make verification of this tricky */
 	/* XXX maybe setenv TZ and tzset() to make it unambiguous? */
-	TEST_START("misc_parse_absolute_time");
-	ASSERT_INT_EQ(parse_absolute_time("20000101", &t), 0);
-	ASSERT_INT_EQ(parse_absolute_time("200001011223", &t), 0);
-	ASSERT_INT_EQ(parse_absolute_time("20000101122345", &t), 0);
+	TEST_ਸ਼ੁਰੂ("misc_parse_absolute_time");
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101", &t), 0);
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("200001011223", &t), 0);
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101122345", &t), 0);
 
 	/* forced UTC TZ */
-	ASSERT_INT_EQ(parse_absolute_time("20000101Z", &t), 0);
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101Z", &t), 0);
 	ASSERT_U64_EQ(t, 946684800);
-	ASSERT_INT_EQ(parse_absolute_time("200001011223Z", &t), 0);
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("200001011223Z", &t), 0);
 	ASSERT_U64_EQ(t, 946729380);
-	ASSERT_INT_EQ(parse_absolute_time("20000101122345Z", &t), 0);
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101122345Z", &t), 0);
 	ASSERT_U64_EQ(t, 946729425);
-	ASSERT_INT_EQ(parse_absolute_time("20000101UTC", &t), 0);
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101UTC", &t), 0);
 	ASSERT_U64_EQ(t, 946684800);
-	ASSERT_INT_EQ(parse_absolute_time("200001011223UTC", &t), 0);
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("200001011223UTC", &t), 0);
 	ASSERT_U64_EQ(t, 946729380);
-	ASSERT_INT_EQ(parse_absolute_time("20000101122345UTC", &t), 0);
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101122345UTC", &t), 0);
 	ASSERT_U64_EQ(t, 946729425);
 
 	/* Bad month */
-	ASSERT_INT_EQ(parse_absolute_time("20001301", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20001301", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("20000001", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000001", &t),
 	    SSH_ERR_INVALID_FORMAT);
 	/* Incomplete */
-	ASSERT_INT_EQ(parse_absolute_time("2", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("2", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("2000", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("2000", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("20000", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("200001", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("200001", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("2000010", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("2000010", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("200001010", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("200001010", &t),
 	    SSH_ERR_INVALID_FORMAT);
 	/* Bad day, hour, minute, second */
-	ASSERT_INT_EQ(parse_absolute_time("20000199", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000199", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("200001019900", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("200001019900", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("200001010099", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("200001010099", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("20000101000099", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101000099", &t),
 	    SSH_ERR_INVALID_FORMAT);
 	/* Invalid TZ specifier */
-	ASSERT_INT_EQ(parse_absolute_time("20000101ZZ", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101ZZ", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("20000101PDT", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101PDT", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("20000101U", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101U", &t),
 	    SSH_ERR_INVALID_FORMAT);
-	ASSERT_INT_EQ(parse_absolute_time("20000101UTCUTC", &t),
+	ASSERT_INT_EQ(parse_absolute_ਸਮਾਂ("20000101UTCUTC", &t),
 	    SSH_ERR_INVALID_FORMAT);
 
-	TEST_DONE();
+	TEST_ਪੂਰਾ();
 }

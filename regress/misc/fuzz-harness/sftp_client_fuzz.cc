@@ -39,59 +39,59 @@ limitations under the License.
  * so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <setjmp.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <signal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/socket.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+ਬਾਹਰੀ "C" {
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sftp.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sftp-common.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sftp-client.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+ਖਾਲੀ fuzz_arena_begin(ਖਾਲੀ);
+ਖਾਲੀ fuzz_arena_cleanup(ਖਾਲੀ);
 }
 
-extern "C" volatile sig_atomic_t interrupted = 0;
-extern "C" int showprogress = 0;
-extern "C" void start_progress_meter(const char *file, off_t filesize,
-    off_t *ctr) { (void)file; (void)filesize; (void)ctr; }
-extern "C" void refresh_progress_meter(int force_update) { (void)force_update; }
-extern "C" void stop_progress_meter(void) { }
+ਬਾਹਰੀ "C" ਅਸਥਿਰ sig_atomic_t interrupted = 0;
+ਬਾਹਰੀ "C" ਪੂਰਨ showprogress = 0;
+ਬਾਹਰੀ "C" ਖਾਲੀ ਸ਼ੁਰੂ_ਤਰੱਕੀ_meter(ਅਚਲ ਅੱਖਰ *file, off_t filesize,
+    off_t *ctr) { (ਖਾਲੀ)file; (ਖਾਲੀ)filesize; (ਖਾਲੀ)ctr; }
+ਬਾਹਰੀ "C" ਖਾਲੀ refresh_ਤਰੱਕੀ_meter(ਪੂਰਨ force_update) { (ਖਾਲੀ)force_update; }
+ਬਾਹਰੀ "C" ਖਾਲੀ stop_ਤਰੱਕੀ_meter(ਖਾਲੀ) { }
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ਸਥਿਰ jmp_buf fuzz_env;
+ਸਥਿਰ ਅਸਥਿਰ ਪੂਰਨ ਵਿੱਚ_fuzz = 0;
 
-extern "C" void
-cleanup_exit(int code)
+ਬਾਹਰੀ "C" ਖਾਲੀ
+cleanup_exit(ਪੂਰਨ ਕੋਡ)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	ਜੇ (ਵਿੱਚ_fuzz)
+		longjmp(fuzz_env, ਕੋਡ ? ਕੋਡ : 1);
+	_exit(ਕੋਡ);
 }
 
-static const uint8_t k_version_reply[] = {
+ਸਥਿਰ ਅਚਲ uint8_t k_ਸੰਸਕਰਣ_ਜਵਾਬ[] = {
     0x00, 0x00, 0x00, 0x05,
     0x02,
     0x00, 0x00, 0x00, 0x03,
 };
 
-enum {
+ਗਿਣਤੀ {
 	API_STAT,
 	API_LSTAT,
 	API_REALPATH,
-	API_EXPAND_PATH,
+	API_EXPAND_ਰਸਤਾ,
 	API_READDIR,
 	API_STATVFS,
 	API_GET_LIMITS,
@@ -100,111 +100,111 @@ enum {
 	API_RMDIR,
 	API_RENAME,
 	API_SYMLINK,
-	API_COUNT,
+	API_ਗਿਣਤੀ,
 };
 
-static void
-run_one(int api, const uint8_t *body, size_t bsize)
+ਸਥਿਰ ਖਾਲੀ
+ਲੜੀਵਾਰ_one(ਪੂਰਨ api, ਅਚਲ uint8_t *body, ਮਾਪ_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	ਪੂਰਨ sv[2] = { -1, -1 };
+	ਜੇ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		ਵਾਪਸ;
 
-	ssize_t w = write(sv[0], k_version_reply, sizeof(k_version_reply));
-	(void)w;
-	if (bsize > 0)
-		w = write(sv[0], body, bsize);
-	(void)w;
+	ssize_t w = ਲਿਖ(sv[0], k_ਸੰਸਕਰਣ_ਜਵਾਬ, ਆਕਾਰ(k_ਸੰਸਕਰਣ_ਜਵਾਬ));
+	(ਖਾਲੀ)w;
+	ਜੇ (bsize > 0)
+		w = ਲਿਖ(sv[0], body, bsize);
+	(ਖਾਲੀ)w;
 	shutdown(sv[0], SHUT_WR);
 
 	fuzz_arena_begin();
-	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		struct sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
-		if (conn != NULL) {
+	ਵਿੱਚ_fuzz = 1;
+	ਜੇ (setjmp(fuzz_env) == 0) {
+		ਬਣਤਰ sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
+		ਜੇ (conn != ਨਿਰਾ) {
 			Attrib attr;
 			attrib_clear(&attr);
 
-			switch (api) {
-			case API_STAT: {
+			ਚੋਣ (api) {
+			ਹਾਲਤ API_STAT: {
 				Attrib a;
-				(void)sftp_stat(conn, "/fuzz", 1, &a);
-				break;
+				(ਖਾਲੀ)sftp_stat(conn, "/fuzz", 1, &a);
+				ਰੋਕੋ;
 			}
-			case API_LSTAT: {
+			ਹਾਲਤ API_LSTAT: {
 				Attrib a;
-				(void)sftp_lstat(conn, "/fuzz", 1, &a);
-				break;
+				(ਖਾਲੀ)sftp_lstat(conn, "/fuzz", 1, &a);
+				ਰੋਕੋ;
 			}
-			case API_REALPATH: {
-				char *p = sftp_realpath(conn, "/fuzz");
-				free(p);
-				break;
+			ਹਾਲਤ API_REALPATH: {
+				ਅੱਖਰ *p = sftp_realpath(conn, "/fuzz");
+				ਮੁਕਤ(p);
+				ਰੋਕੋ;
 			}
-			case API_EXPAND_PATH: {
-				char *p = sftp_expand_path(conn, "~");
-				free(p);
-				break;
+			ਹਾਲਤ API_EXPAND_ਰਸਤਾ: {
+				ਅੱਖਰ *p = sftp_expand_ਰਸਤਾ(conn, "~");
+				ਮੁਕਤ(p);
+				ਰੋਕੋ;
 			}
-			case API_READDIR: {
-				SFTP_DIRENT **dir = NULL;
-				(void)sftp_readdir(conn, "/fuzz", &dir);
-				if (dir != NULL)
+			ਹਾਲਤ API_READDIR: {
+				SFTP_DIRENT **dir = ਨਿਰਾ;
+				(ਖਾਲੀ)sftp_readdir(conn, "/fuzz", &dir);
+				ਜੇ (dir != ਨਿਰਾ)
 					sftp_free_dirents(dir);
-				break;
+				ਰੋਕੋ;
 			}
-			case API_STATVFS: {
-				struct sftp_statvfs vfs;
-				(void)sftp_statvfs(conn, "/fuzz", &vfs, 1);
-				break;
+			ਹਾਲਤ API_STATVFS: {
+				ਬਣਤਰ sftp_statvfs vfs;
+				(ਖਾਲੀ)sftp_statvfs(conn, "/fuzz", &vfs, 1);
+				ਰੋਕੋ;
 			}
-			case API_GET_LIMITS: {
-				struct sftp_limits lim;
-				(void)sftp_get_limits(conn, &lim);
-				break;
+			ਹਾਲਤ API_GET_LIMITS: {
+				ਬਣਤਰ sftp_limits lim;
+				(ਖਾਲੀ)sftp_get_limits(conn, &lim);
+				ਰੋਕੋ;
 			}
-			case API_RM:
-				(void)sftp_rm(conn, "/fuzz");
-				break;
-			case API_MKDIR:
-				(void)sftp_mkdir(conn, "/fuzz", &attr, 0);
-				break;
-			case API_RMDIR:
-				(void)sftp_rmdir(conn, "/fuzz");
-				break;
-			case API_RENAME:
-				(void)sftp_rename(conn, "/a", "/b", 0);
-				break;
-			case API_SYMLINK:
-				(void)sftp_symlink(conn, "/a", "/b");
-				break;
+			ਹਾਲਤ API_RM:
+				(ਖਾਲੀ)sftp_rm(conn, "/fuzz");
+				ਰੋਕੋ;
+			ਹਾਲਤ API_MKDIR:
+				(ਖਾਲੀ)sftp_mkdir(conn, "/fuzz", &attr, 0);
+				ਰੋਕੋ;
+			ਹਾਲਤ API_RMDIR:
+				(ਖਾਲੀ)sftp_rmdir(conn, "/fuzz");
+				ਰੋਕੋ;
+			ਹਾਲਤ API_RENAME:
+				(ਖਾਲੀ)sftp_rename(conn, "/a", "/b", 0);
+				ਰੋਕੋ;
+			ਹਾਲਤ API_SYMLINK:
+				(ਖਾਲੀ)sftp_symlink(conn, "/a", "/b");
+				ਰੋਕੋ;
 			}
 
 			sftp_free(conn);
 		}
 	}
-	in_fuzz = 0;
+	ਵਿੱਚ_fuzz = 0;
 	fuzz_arena_cleanup();
 
 	close(sv[0]);
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ਬਾਹਰੀ "C" ਪੂਰਨ
+LLVMFuzzer_Test_One_ਨਿਵੇਸ਼(ਅਚਲ uint8_t *ਅੰਕੜੇ, ਮਾਪ_t ਮਾਪ)
 {
-	static int initialized = 0;
-	if (!initialized) {
+	ਸਥਿਰ ਪੂਰਨ initialized = 0;
+	ਜੇ (!initialized) {
 		initialized = 1;
 		log_init("sftp_client_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 	}
 
-	if (size > 65536)
-		return 0;
+	ਜੇ (ਮਾਪ > 65536)
+		ਵਾਪਸ 0;
 
-	for (int api = 0; api < API_COUNT; api++)
-		run_one(api, data, size);
+	ਲਈ (ਪੂਰਨ api = 0; api < API_ਗਿਣਤੀ; api++)
+		ਲੜੀਵਾਰ_one(api, ਅੰਕੜੇ, ਮਾਪ);
 
-	return 0;
+	ਵਾਪਸ 0;
 }

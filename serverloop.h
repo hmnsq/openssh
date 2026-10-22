@@ -18,11 +18,11 @@
  * (of the child program), and reads from stdout and stderr (of the child
  * program).
  */
-#ifndef SERVERLOOP_H
-#define SERVERLOOP_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ SERVERLOOP_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SERVERLOOP_H
 
-struct ssh;
+ਬਣਤਰ ssh;
 
-void    server_loop2(struct ssh *, Authctxt *);
+ਖਾਲੀ    server_loop2(ਬਣਤਰ ssh *, Authctxt *);
 
-#endif
+#ਜੇ_ਅੰਤ

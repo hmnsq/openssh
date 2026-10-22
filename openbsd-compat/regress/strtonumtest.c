@@ -17,47 +17,47 @@
 
 /* OPENBSD ORIGINAL: regress/lib/libc/strtonum/strtonumtest.c */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
 /* LLONG_MAX is known as LONGLONG_MAX on AIX */
-#if defined(LONGLONG_MAX) && !defined(LLONG_MAX)
+#ਜੇ defined(LONGLONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONGLONG_MAX
 # define LLONG_MIN LONGLONG_MIN
-#endif
+#ਜੇ_ਅੰਤ
 
 /* LLONG_MAX is known as LONG_LONG_MAX on HP-UX */
-#if defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
+#ਜੇ defined(LONG_LONG_MAX) && !defined(LLONG_MAX)
 # define LLONG_MAX LONG_LONG_MAX
 # define LLONG_MIN LONG_LONG_MIN
-#endif
+#ਜੇ_ਅੰਤ
 
-long long strtonum(const char *, long long, long long, const char **);
+ਲੰਮਾ ਲੰਮਾ strtonum(ਅਚਲ ਅੱਖਰ *, ਲੰਮਾ ਲੰਮਾ, ਲੰਮਾ ਲੰਮਾ, ਅਚਲ ਅੱਖਰ **);
 
-int fail;
+ਪੂਰਨ fail;
 
-void
-test(const char *p, long long lb, long long ub, int ok)
+ਖਾਲੀ
+test(ਅਚਲ ਅੱਖਰ *p, ਲੰਮਾ ਲੰਮਾ lb, ਲੰਮਾ ਲੰਮਾ ub, ਪੂਰਨ ok)
 {
-	long long val;
-	const char *q;
+	ਲੰਮਾ ਲੰਮਾ val;
+	ਅਚਲ ਅੱਖਰ *q;
 
 	val = strtonum(p, lb, ub, &q);
-	if (ok && q != NULL) {
+	ਜੇ (ok && q != ਨਿਰਾ) {
 		fprintf(stderr, "%s [%lld-%lld] ", p, lb, ub);
 		fprintf(stderr, "NUMBER NOT ACCEPTED %s\n", q);
 		fail = 1;
-	} else if (!ok && q == NULL) {
+	} ਨਹੀਂਤਾਂ ਜੇ (!ok && q == ਨਿਰਾ) {
 		fprintf(stderr, "%s [%lld-%lld] %lld ", p, lb, ub, val);
 		fprintf(stderr, "NUMBER ACCEPTED\n");
 		fail = 1;
 	}
 }
 
-int main(void)
+ਪੂਰਨ ਮੁੱਖ(ਖਾਲੀ)
 {
 	test("1", 0, 10, 1);
 	test("0", -2, 5, 1);
@@ -77,6 +77,6 @@ int main(void)
 	test("-20", -10, -1, 0);
 	test("20", -10, -1, 0);
 
-	return (fail);
+	ਵਾਪਸ (fail);
 }
 

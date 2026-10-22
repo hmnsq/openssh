@@ -30,56 +30,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef _GETOPT_H_
-#define _GETOPT_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _GETOPT_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _GETOPT_H_
 
-#ifndef __THROW
-# if defined __cplusplus
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ __THROW
+# ਜੇ defined __cplusplus
 #  define __THROW throw()
-# else
+# ਨਹੀਂਤਾਂ
 #  define __THROW
 # endif
-#endif
+#ਜੇ_ਅੰਤ
 
 /*
  * GNU-like getopt_long() and 4.4BSD getsubopt()/optreset extensions
  */
-#define no_argument        0
-#define required_argument  1
-#define optional_argument  2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ no_argument        0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ required_argument  1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ optional_argument  2
 
-#if 0
-struct option {
+#ਜੇ 0
+ਬਣਤਰ option {
 	/* name of long option */
-	const char *name;
+	ਅਚਲ ਅੱਖਰ *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	ਪੂਰਨ has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	ਪੂਰਨ *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	ਪੂਰਨ val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
-#endif
+ਪੂਰਨ	 getopt_long(ਪੂਰਨ, ਅੱਖਰ * ਅਚਲ *, ਅਚਲ ਅੱਖਰ *,
+	    ਅਚਲ ਬਣਤਰ option *, ਪੂਰਨ *);
+ਪੂਰਨ	 getopt_long_only(ਪੂਰਨ, ਅੱਖਰ * ਅਚਲ *, ਅਚਲ ਅੱਖਰ *,
+	    ਅਚਲ ਬਣਤਰ option *, ਪੂਰਨ *);
+#ਜੇ_ਅੰਤ
 
-#ifndef _GETOPT_DEFINED_
-#define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _GETOPT_DEFINED_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _GETOPT_DEFINED_
+ਪੂਰਨ	 getopt(ਪੂਰਨ, ਅੱਖਰ * ਅਚਲ *, ਅਚਲ ਅੱਖਰ *) __THROW;
+ਪੂਰਨ	 getsubopt(ਅੱਖਰ **, ਅੱਖਰ * ਅਚਲ *, ਅੱਖਰ **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
-#endif
+ਬਾਹਰੀ   ਅੱਖਰ *optarg;                  /* getopt(3) external variables */
+ਬਾਹਰੀ   ਪੂਰਨ opterr;
+ਬਾਹਰੀ   ਪੂਰਨ optind;
+ਬਾਹਰੀ   ਪੂਰਨ optopt;
+ਬਾਹਰੀ   ਪੂਰਨ optreset;
+ਬਾਹਰੀ   ਅੱਖਰ *suboptarg;               /* getsubopt(3) external variable */
+#ਜੇ_ਅੰਤ
  
-#endif /* !_GETOPT_H_ */
+#ਜੇ_ਅੰਤ /* !_GETOPT_H_ */

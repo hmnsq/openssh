@@ -36,19 +36,19 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <ctype.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
 
-#include "xmalloc.h"
-#include "match.h"
-#include "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "match.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
 
 /*
  * Computes the epsilon closure of an NFA set.
@@ -57,20 +57,20 @@
  *
  * This function modifies 'states' in place.
  */
-static void
-epsilon_closure(char *states, const char *pattern, size_t M)
+ਸਥਿਰ ਖਾਲੀ
+epsilon_ਘੇਰਾ(ਅੱਖਰ *ਹਾਲਤਾਂ, ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ, ਮਾਪ_t M)
 {
-	size_t i;
+	ਮਾਪ_t i;
 
 	/* only need a forward pass as there are no back jumps in our grammar */
-	for (i = 0; i < M; i++) {
-		if (!states[i] || pattern[i] != '*')
-			continue;
+	ਲਈ (i = 0; i < M; i++) {
+		ਜੇ (!ਹਾਲਤਾਂ[i] || ਨਮੂਨਾ[i] != '*')
+			ਜਾਰੀ;
 		/*
 		 * State i is active, and pattern[i] is '*', so we can
 		 * epsilon-transition to i+1.
 		 */
-		states[i + 1] = 1;
+		ਹਾਲਤਾਂ[i + 1] = 1;
 	}
 }
 
@@ -78,77 +78,77 @@ epsilon_closure(char *states, const char *pattern, size_t M)
  * Returns true if the given string matches the pattern (which may contain ?
  * and * as wildcards), and zero if it does not match. Uses an NFA internally.
  */
-int
-match_pattern(const char *s, const char *pattern)
+ਪੂਰਨ
+ਮੇਲ_ਨਮੂਨਾ(ਅਚਲ ਅੱਖਰ *s, ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ)
 {
-	size_t M;
-	size_t i;
-	char *states, *next_states, *tmp;
-	int active, matched = 0;
+	ਮਾਪ_t M;
+	ਮਾਪ_t i;
+	ਅੱਖਰ *ਹਾਲਤਾਂ, *ਅਗਲਾ_ਹਾਲਤਾਂ, *tmp;
+	ਪੂਰਨ ਸਰਗਰਮ, matched = 0;
 
 	/* trivial case: empty pattern vs empty input */
-	if ((M = strlen(pattern)) == 0)
-		return *s == '\0';
+	ਜੇ ((M = ਲੜੀ_ਲੰਬਾਈ(ਨਮੂਨਾ)) == 0)
+		ਵਾਪਸ *s == '\0';
 
 	/* A state for each pattern character, plus one final accepting state */
-	states = xcalloc(M + 1, sizeof(*states));
-	next_states = xcalloc(M + 1, sizeof(*next_states));
+	ਹਾਲਤਾਂ = xcalloc(M + 1, ਆਕਾਰ(*ਹਾਲਤਾਂ));
+	ਅਗਲਾ_ਹਾਲਤਾਂ = xcalloc(M + 1, ਆਕਾਰ(*ਅਗਲਾ_ਹਾਲਤਾਂ));
 
 	/* Initial state: state 0 is active */
-	states[0] = 1;
+	ਹਾਲਤਾਂ[0] = 1;
 	/* Other states might be reachable now if the pattern starts with '*' */
-	epsilon_closure(states, pattern, M);
+	epsilon_ਘੇਰਾ(ਹਾਲਤਾਂ, ਨਮੂਨਾ, M);
 
-	for (; *s; s++) {
-		memset(next_states, 0, M + 1);
+	ਲਈ (; *s; s++) {
+		memset(ਅਗਲਾ_ਹਾਲਤਾਂ, 0, M + 1);
 
 		/* Calculate the reachable next states given the input char */
-		for (i = 0; i < M; i++) {
-			if (!states[i])
-				continue;
-			if (pattern[i] == '*') {
+		ਲਈ (i = 0; i < M; i++) {
+			ਜੇ (!ਹਾਲਤਾਂ[i])
+				ਜਾਰੀ;
+			ਜੇ (ਨਮੂਨਾ[i] == '*') {
 				/*
 				 * '*' matches any character, so we can
 				 * stay in state i
 				 */
-				next_states[i] = 1;
-			} else if (pattern[i] == '?' || pattern[i] == *s) {
+				ਅਗਲਾ_ਹਾਲਤਾਂ[i] = 1;
+			} ਨਹੀਂਤਾਂ ਜੇ (ਨਮੂਨਾ[i] == '?' || ਨਮੂਨਾ[i] == *s) {
 				/*
 				 * '?' matches any character, or we have
 				 * a literal match.
 				 */
-				next_states[i + 1] = 1;
+				ਅਗਲਾ_ਹਾਲਤਾਂ[i + 1] = 1;
 			}
 		}
 
 		/* Expand the reachable next states with epsilon transitions */
-		epsilon_closure(next_states, pattern, M);
+		epsilon_ਘੇਰਾ(ਅਗਲਾ_ਹਾਲਤਾਂ, ਨਮੂਨਾ, M);
 
 		/* Swap states and next_states */
-		tmp = states;
-		states = next_states;
-		next_states = tmp;
+		tmp = ਹਾਲਤਾਂ;
+		ਹਾਲਤਾਂ = ਅਗਲਾ_ਹਾਲਤਾਂ;
+		ਅਗਲਾ_ਹਾਲਤਾਂ = tmp;
 
 		/* Check if we have any active pattern states left */
-		active = 0;
-		for (i = 0; i <= M; i++) {
-			if (states[i]) {
-				active = 1;
-				break;
+		ਸਰਗਰਮ = 0;
+		ਲਈ (i = 0; i <= M; i++) {
+			ਜੇ (ਹਾਲਤਾਂ[i]) {
+				ਸਰਗਰਮ = 1;
+				ਰੋਕੋ;
 			}
 		}
-		if (!active)
-			goto out; /* No active states, fail early */
+		ਜੇ (!ਸਰਗਰਮ)
+			ਜਾਓ ਬਾਹਰਲਾ; /* No active states, fail early */
 	}
 	/*
 	 * We matched only if we ended up in the final, accepting state
 	 * after consuming all the input.
 	 */
-	matched = states[M];
- out:
-	free(states);
-	free(next_states);
-	return matched;
+	matched = ਹਾਲਤਾਂ[M];
+ ਬਾਹਰਲਾ:
+	ਮੁਕਤ(ਹਾਲਤਾਂ);
+	ਮੁਕਤ(ਅਗਲਾ_ਹਾਲਤਾਂ);
+	ਵਾਪਸ matched;
 }
 
 /*
@@ -157,49 +157,49 @@ match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-match_pattern_list(const char *string, const char *pattern, int dolower)
+ਪੂਰਨ
+ਮੇਲ_ਨਮੂਨਾ_list(ਅਚਲ ਅੱਖਰ *string, ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ, ਪੂਰਨ dolower)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
-	u_int i, subi, len = strlen(pattern);
+	ਅੱਖਰ sub[1024];
+	ਪੂਰਨ negated;
+	ਪੂਰਨ got_ਸਕਾਰਾਤਮਕ;
+	u_int i, subi, len = ਲੜੀ_ਲੰਬਾਈ(ਨਮੂਨਾ);
 
-	got_positive = 0;
-	for (i = 0; i < len;) {
+	got_ਸਕਾਰਾਤਮਕ = 0;
+	ਲਈ (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		ਜੇ (ਨਮੂਨਾ[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} ਨਹੀਂਤਾਂ
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		ਲਈ (subi = 0;
+		    i < len && subi < ਆਕਾਰ(sub) - 1 && ਨਮੂਨਾ[i] != ',';
 		    subi++, i++)
-			sub[subi] = dolower && isupper((u_char)pattern[i]) ?
-			    tolower((u_char)pattern[i]) : pattern[i];
+			sub[subi] = dolower && isupper((u_char)ਨਮੂਨਾ[i]) ?
+			    tolower((u_char)ਨਮੂਨਾ[i]) : ਨਮੂਨਾ[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		ਜੇ (subi >= ਆਕਾਰ(sub) - 1)
+			ਵਾਪਸ 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		ਜੇ (i < len && ਨਮੂਨਾ[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
-				got_positive = 1;	/* Positive */
+		ਜੇ (ਮੇਲ_ਨਮੂਨਾ(string, sub)) {
+			ਜੇ (negated)
+				ਵਾਪਸ -1;		/* Negative */
+			ਨਹੀਂਤਾਂ
+				got_ਸਕਾਰਾਤਮਕ = 1;	/*ਸਕਾਰਾਤਮਕ*/
 		}
 	}
 
@@ -207,20 +207,20 @@ match_pattern_list(const char *string, const char *pattern, int dolower)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	ਵਾਪਸ got_ਸਕਾਰਾਤਮਕ;
 }
 
 /* Match a list representing users or groups. */
-int
-match_usergroup_pattern_list(const char *string, const char *pattern)
+ਪੂਰਨ
+ਮੇਲ_usergroup_ਨਮੂਨਾ_list(ਅਚਲ ਅੱਖਰ *string, ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ)
 {
-#ifdef HAVE_CYGWIN
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_CYGWIN
 	/* Windows usernames may be Unicode and are not case sensitive */
-	return cygwin_ug_match_pattern_list(string, pattern);
-#else
+	ਵਾਪਸ cygwin_ug_ਮੇਲ_ਨਮੂਨਾ_list(string, ਨਮੂਨਾ);
+#ਨਹੀਂਤਾਂ
 	/* Case sensitive match */
-	return match_pattern_list(string, pattern, 0);
-#endif
+	ਵਾਪਸ ਮੇਲ_ਨਮੂਨਾ_list(string, ਨਮੂਨਾ, 0);
+#ਜੇ_ਅੰਤ
 }
 
 /*
@@ -229,16 +229,16 @@ match_usergroup_pattern_list(const char *string, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-match_hostname(const char *host, const char *pattern)
+ਪੂਰਨ
+ਮੇਲ_hostname(ਅਚਲ ਅੱਖਰ *host, ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ)
 {
-	char *hostcopy = xstrdup(host);
-	int r;
+	ਅੱਖਰ *hostcopy = xstrdup(host);
+	ਪੂਰਨ r;
 
 	lowercase(hostcopy);
-	r = match_pattern_list(hostcopy, pattern, 1);
-	free(hostcopy);
-	return r;
+	r = ਮੇਲ_ਨਮੂਨਾ_list(hostcopy, ਨਮੂਨਾ, 1);
+	ਮੁਕਤ(hostcopy);
+	ਵਾਪਸ r;
 }
 
 /*
@@ -246,24 +246,24 @@ match_hostname(const char *host, const char *pattern)
  * or if we get no match at all.  returns -1 on error, or 1 on
  * successful match.
  */
-int
-match_host_and_ip(const char *host, const char *ipaddr,
-    const char *patterns)
+ਪੂਰਨ
+ਮੇਲ_host_and_ip(ਅਚਲ ਅੱਖਰ *host, ਅਚਲ ਅੱਖਰ *ipaddr,
+    ਅਚਲ ਅੱਖਰ *patterns)
 {
-	int mhost, mip;
+	ਪੂਰਨ mhost, mip;
 
-	if ((mip = addr_match_list(ipaddr, patterns)) == -2)
-		return -1; /* error in ipaddr match */
-	else if (host == NULL || ipaddr == NULL || mip == -1)
-		return 0; /* negative ip address match, or testing pattern */
+	ਜੇ ((mip = addr_ਮੇਲ_list(ipaddr, patterns)) == -2)
+		ਵਾਪਸ -1; /* error in ipaddr match */
+	ਨਹੀਂਤਾਂ ਜੇ (host == ਨਿਰਾ || ipaddr == ਨਿਰਾ || mip == -1)
+		ਵਾਪਸ 0; /* negative ip address match, or testing pattern */
 
 	/* negative hostname match */
-	if ((mhost = match_hostname(host, patterns)) == -1)
-		return 0;
+	ਜੇ ((mhost = ਮੇਲ_hostname(host, patterns)) == -1)
+		ਵਾਪਸ 0;
 	/* no match at all */
-	if (mhost == 0 && mip == 0)
-		return 0;
-	return 1;
+	ਜੇ (mhost == 0 && mip == 0)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ 1;
 }
 
 /*
@@ -271,82 +271,82 @@ match_host_and_ip(const char *host, const char *ipaddr,
  * If user, host and ipaddr are all NULL then validate pattern/
  * Returns -1 on invalid pattern, 0 on no match, 1 on match.
  */
-int
-match_user(const char *user, const char *host, const char *ipaddr,
-    const char *pattern)
+ਪੂਰਨ
+ਮੇਲ_user(ਅਚਲ ਅੱਖਰ *user, ਅਚਲ ਅੱਖਰ *host, ਅਚਲ ਅੱਖਰ *ipaddr,
+    ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ)
 {
-	char *p, *pat;
-	int ret;
+	ਅੱਖਰ *p, *pat;
+	ਪੂਰਨ ret;
 
 	/* test mode */
-	if (user == NULL && host == NULL && ipaddr == NULL) {
-		if ((p = strrchr(pattern, '@')) != NULL &&
-		    match_host_and_ip(NULL, NULL, p + 1) < 0)
-			return -1;
-		return 0;
+	ਜੇ (user == ਨਿਰਾ && host == ਨਿਰਾ && ipaddr == ਨਿਰਾ) {
+		ਜੇ ((p = strrchr(ਨਮੂਨਾ, '@')) != ਨਿਰਾ &&
+		    ਮੇਲ_host_and_ip(ਨਿਰਾ, ਨਿਰਾ, p + 1) < 0)
+			ਵਾਪਸ -1;
+		ਵਾਪਸ 0;
 	}
 
-	if (user == NULL)
-		return 0; /* shouldn't happen */
+	ਜੇ (user == ਨਿਰਾ)
+		ਵਾਪਸ 0; /* shouldn't happen */
 
-	if (strrchr(pattern, '@') == NULL)
-		return match_pattern(user, pattern);
+	ਜੇ (strrchr(ਨਮੂਨਾ, '@') == ਨਿਰਾ)
+		ਵਾਪਸ ਮੇਲ_ਨਮੂਨਾ(user, ਨਮੂਨਾ);
 
-	pat = xstrdup(pattern);
+	pat = xstrdup(ਨਮੂਨਾ);
 	p = strrchr(pat, '@');
 	*p++ = '\0';
 
-	if ((ret = match_pattern(user, pat)) == 1)
-		ret = match_host_and_ip(host, ipaddr, p);
-	free(pat);
+	ਜੇ ((ret = ਮੇਲ_ਨਮੂਨਾ(user, pat)) == 1)
+		ret = ਮੇਲ_host_and_ip(host, ipaddr, p);
+	ਮੁਕਤ(pat);
 
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 /*
  * Returns first item from client-list that is also supported by server-list,
  * caller must free the returned string.
  */
-#define	MAX_PROP	40
-#define	SEP	","
-char *
-match_list(const char *client, const char *server, u_int *next)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	MAX_PROP	40
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SEP	","
+ਅੱਖਰ *
+ਮੇਲ_list(ਅਚਲ ਅੱਖਰ *client, ਅਚਲ ਅੱਖਰ *server, u_int *ਅਗਲਾ)
 {
-	char *sproposals[MAX_PROP];
-	char *c, *s, *p, *ret, *cp, *sp;
-	int i, j, nproposals;
+	ਅੱਖਰ *sproposals[MAX_PROP];
+	ਅੱਖਰ *c, *s, *p, *ret, *cp, *sp;
+	ਪੂਰਨ i, j, nproposals;
 
 	c = cp = xstrdup(client);
 	s = sp = xstrdup(server);
 
-	for ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
+	ਲਈ ((p = strsep(&sp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&sp, SEP)), i++) {
-		if (i < MAX_PROP)
+		ਜੇ (i < MAX_PROP)
 			sproposals[i] = p;
-		else
-			break;
+		ਨਹੀਂਤਾਂ
+			ਰੋਕੋ;
 	}
 	nproposals = i;
 
-	for ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
+	ਲਈ ((p = strsep(&cp, SEP)), i=0; p && *p != '\0';
 	    (p = strsep(&cp, SEP)), i++) {
-		for (j = 0; j < nproposals; j++) {
-			if (strcmp(p, sproposals[j]) == 0) {
+		ਲਈ (j = 0; j < nproposals; j++) {
+			ਜੇ (strcmp(p, sproposals[j]) == 0) {
 				ret = xstrdup(p);
-				if (next != NULL)
-					*next = (cp == NULL) ?
-					    strlen(c) : (u_int)(cp - c);
-				free(c);
-				free(s);
-				return ret;
+				ਜੇ (ਅਗਲਾ != ਨਿਰਾ)
+					*ਅਗਲਾ = (cp == ਨਿਰਾ) ?
+					    ਲੜੀ_ਲੰਬਾਈ(c) : (u_int)(cp - c);
+				ਮੁਕਤ(c);
+				ਮੁਕਤ(s);
+				ਵਾਪਸ ret;
 			}
 		}
 	}
-	if (next != NULL)
-		*next = strlen(c);
-	free(c);
-	free(s);
-	return NULL;
+	ਜੇ (ਅਗਲਾ != ਨਿਰਾ)
+		*ਅਗਲਾ = ਲੜੀ_ਲੰਬਾਈ(c);
+	ਮੁਕਤ(c);
+	ਮੁਕਤ(s);
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
 /*
@@ -356,51 +356,51 @@ match_list(const char *client, const char *server, u_int *next)
  * zero indicates that only items matching filter should be included.
  * returns NULL on allocation error, otherwise caller must free result.
  */
-static char *
-filter_list(const char *proposal, const char *filter, int denylist)
+ਸਥਿਰ ਅੱਖਰ *
+filter_list(ਅਚਲ ਅੱਖਰ *proposal, ਅਚਲ ਅੱਖਰ *filter, ਪੂਰਨ denylist)
 {
-	size_t len = strlen(proposal) + 1;
-	char *fix_prop = malloc(len);
-	char *orig_prop = strdup(proposal);
-	char *cp, *tmp;
-	int r;
+	ਮਾਪ_t len = ਲੜੀ_ਲੰਬਾਈ(proposal) + 1;
+	ਅੱਖਰ *fix_prop = ਸਮ੍ਰਿਤੀ_ਦਿਓ(len);
+	ਅੱਖਰ *orig_prop = strdup(proposal);
+	ਅੱਖਰ *cp, *tmp;
+	ਪੂਰਨ r;
 
-	if (fix_prop == NULL || orig_prop == NULL) {
-		free(orig_prop);
-		free(fix_prop);
-		return NULL;
+	ਜੇ (fix_prop == ਨਿਰਾ || orig_prop == ਨਿਰਾ) {
+		ਮੁਕਤ(orig_prop);
+		ਮੁਕਤ(fix_prop);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
 	tmp = orig_prop;
 	*fix_prop = '\0';
-	while ((cp = strsep(&tmp, ",")) != NULL) {
-		r = match_pattern_list(cp, filter, 0);
-		if ((denylist && r != 1) || (!denylist && r == 1)) {
-			if (*fix_prop != '\0')
+	ਜਦੋਂ ((cp = strsep(&tmp, ",")) != ਨਿਰਾ) {
+		r = ਮੇਲ_ਨਮੂਨਾ_list(cp, filter, 0);
+		ਜੇ ((denylist && r != 1) || (!denylist && r == 1)) {
+			ਜੇ (*fix_prop != '\0')
 				strlcat(fix_prop, ",", len);
 			strlcat(fix_prop, cp, len);
 		}
 	}
-	free(orig_prop);
-	return fix_prop;
+	ਮੁਕਤ(orig_prop);
+	ਵਾਪਸ fix_prop;
 }
 
 /*
  * Filters a comma-separated list of strings, excluding any entry matching
  * the 'filter' pattern list. Caller must free returned string.
  */
-char *
-match_filter_denylist(const char *proposal, const char *filter)
+ਅੱਖਰ *
+ਮੇਲ_filter_denylist(ਅਚਲ ਅੱਖਰ *proposal, ਅਚਲ ਅੱਖਰ *filter)
 {
-	return filter_list(proposal, filter, 1);
+	ਵਾਪਸ filter_list(proposal, filter, 1);
 }
 
 /*
  * Filters a comma-separated list of strings, including only entries matching
  * the 'filter' pattern list. Caller must free returned string.
  */
-char *
-match_filter_allowlist(const char *proposal, const char *filter)
+ਅੱਖਰ *
+ਮੇਲ_filter_allowlist(ਅਚਲ ਅੱਖਰ *proposal, ਅਚਲ ਅੱਖਰ *filter)
 {
-	return filter_list(proposal, filter, 0);
+	ਵਾਪਸ filter_list(proposal, filter, 0);
 }

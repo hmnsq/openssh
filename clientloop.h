@@ -35,51 +35,51 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <termios.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <termios.h>
 
-struct ssh;
+ਬਣਤਰ ssh;
 
 /* Client side main loop for the interactive session. */
-int	 client_loop(struct ssh *, int, int, int);
-int	 client_x11_get_proto(struct ssh *, const char *, const char *,
-	    u_int, u_int, char **, char **);
-void	 client_session2_setup(struct ssh *, int, int, int,
-	    const char *, struct termios *, int, struct sshbuf *, char **);
-char	 *client_request_tun_fwd(struct ssh *, int, int, int,
-    channel_open_fn *, void *);
-void	 client_stop_mux(void);
+ਪੂਰਨ	 client_loop(ਬਣਤਰ ssh *, ਪੂਰਨ, ਪੂਰਨ, ਪੂਰਨ);
+ਪੂਰਨ	 client_x11_get_proto(ਬਣਤਰ ssh *, ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *,
+	    u_int, u_int, ਅੱਖਰ **, ਅੱਖਰ **);
+ਖਾਲੀ	 client_session2_ਤਿਆਰੀ(ਬਣਤਰ ssh *, ਪੂਰਨ, ਪੂਰਨ, ਪੂਰਨ,
+	    ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ termios *, ਪੂਰਨ, ਬਣਤਰ sshbuf *, ਅੱਖਰ **);
+ਅੱਖਰ	 *client_request_tun_fwd(ਬਣਤਰ ssh *, ਪੂਰਨ, ਪੂਰਨ, ਪੂਰਨ,
+    channel_open_fn *, ਖਾਲੀ *);
+ਖਾਲੀ	 client_stop_mux(ਖਾਲੀ);
 
 /* Escape filter for protocol 2 sessions */
-void	*client_new_escape_filter_ctx(int);
-void	 client_filter_cleanup(struct ssh *, int, void *);
-int	 client_simple_escape_filter(struct ssh *, Channel *, char *, int);
+ਖਾਲੀ	*client_new_escape_filter_ctx(ਪੂਰਨ);
+ਖਾਲੀ	 client_filter_cleanup(ਬਣਤਰ ssh *, ਪੂਰਨ, ਖਾਲੀ *);
+ਪੂਰਨ	 client_simple_escape_filter(ਬਣਤਰ ssh *, Channel *, ਅੱਖਰ *, ਪੂਰਨ);
 
 /* Global request confirmation callbacks */
-typedef void global_confirm_cb(struct ssh *, int, uint32_t, void *);
-void	 client_register_global_confirm(global_confirm_cb *, void *);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਖਾਲੀ global_confirm_cb(ਬਣਤਰ ssh *, ਪੂਰਨ, uint32_t, ਖਾਲੀ *);
+ਖਾਲੀ	 client_ਰਜਿਸਟਰ_global_confirm(global_confirm_cb *, ਖਾਲੀ *);
 
 /* Channel request confirmation callbacks */
-enum confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
-void client_expect_confirm(struct ssh *, int, const char *,
-    enum confirm_action);
+ਗਿਣਤੀ confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
+ਖਾਲੀ client_expect_confirm(ਬਣਤਰ ssh *, ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *,
+    ਗਿਣਤੀ confirm_action);
 
 /* Multiplexing protocol version */
-#define SSHMUX_VER			4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_VER			4
 
 /* Multiplexing control protocol flags */
-#define SSHMUX_COMMAND_OPEN		1	/* Open new connection */
-#define SSHMUX_COMMAND_ALIVE_CHECK	2	/* Check master is alive */
-#define SSHMUX_COMMAND_TERMINATE	3	/* Ask master to exit */
-#define SSHMUX_COMMAND_STDIO_FWD	4	/* Open stdio fwd (ssh -W) */
-#define SSHMUX_COMMAND_FORWARD		5	/* Forward only, no command */
-#define SSHMUX_COMMAND_STOP		6	/* Disable mux but not conn */
-#define SSHMUX_COMMAND_CANCEL_FWD	7	/* Cancel forwarding(s) */
-#define SSHMUX_COMMAND_PROXY		8	/* Open new connection */
-#define SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
-#define SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_OPEN		1	/* Open new connection */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_ALIVE_CHECK	2	/* Check master is alive */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_TERMINATE	3	/* Ask master to exit */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_STDIO_FWD	4	/* Open stdio fwd (ssh -W) */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_FORWARD		5	/* Forward only, no command */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_STOP		6	/* Disable mux but not conn */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_CANCEL_FWD	7	/* Cancel forwarding(s) */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_PROXY		8	/* Open new connection */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
 
-void	muxserver_listen(struct ssh *);
-int	muxclient(const char *);
-void	mux_exit_message(struct ssh *, Channel *, int);
-void	mux_tty_alloc_failed(struct ssh *ssh, Channel *);
+ਖਾਲੀ	muxserver_listen(ਬਣਤਰ ssh *);
+ਪੂਰਨ	muxclient(ਅਚਲ ਅੱਖਰ *);
+ਖਾਲੀ	mux_exit_ਸੁਨੇਹਾ(ਬਣਤਰ ssh *, Channel *, ਪੂਰਨ);
+ਖਾਲੀ	mux_tty_alloc_failed(ਬਣਤਰ ssh *ssh, Channel *);
 

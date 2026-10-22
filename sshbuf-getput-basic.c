@@ -15,655 +15,655 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
 
-#include "ssherr.h"
-#define SSHBUF_INTERNAL
-#include "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHBUF_ਅੰਦਰੂਨੀ
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
 
-int
-sshbuf_get(struct sshbuf *buf, void *v, size_t len)
+ਪੂਰਨ
+sshbuf_get(ਬਣਤਰ sshbuf *buf, ਖਾਲੀ *v, ਮਾਪ_t len)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	ਅਚਲ u_char *p = sshbuf_ptr(buf);
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_consume(buf, len)) < 0)
-		return r;
-	if (v != NULL && len != 0)
-		memcpy(v, p, len);
-	return 0;
+	ਜੇ ((r = sshbuf_consume(buf, len)) < 0)
+		ਵਾਪਸ r;
+	ਜੇ (v != ਨਿਰਾ && len != 0)
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(v, p, len);
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_u64(struct sshbuf *buf, uint64_t *valp)
+ਪੂਰਨ
+sshbuf_get_u64(ਬਣਤਰ sshbuf *buf, uint64_t *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	ਅਚਲ u_char *p = sshbuf_ptr(buf);
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_consume(buf, 8)) < 0)
-		return r;
-	if (valp != NULL)
+	ਜੇ ((r = sshbuf_consume(buf, 8)) < 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = PEEK_U64(p);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_u32(struct sshbuf *buf, uint32_t *valp)
+ਪੂਰਨ
+sshbuf_get_u32(ਬਣਤਰ sshbuf *buf, uint32_t *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	ਅਚਲ u_char *p = sshbuf_ptr(buf);
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_consume(buf, 4)) < 0)
-		return r;
-	if (valp != NULL)
+	ਜੇ ((r = sshbuf_consume(buf, 4)) < 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = PEEK_U32(p);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_u16(struct sshbuf *buf, uint16_t *valp)
+ਪੂਰਨ
+sshbuf_get_u16(ਬਣਤਰ sshbuf *buf, uint16_t *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	ਅਚਲ u_char *p = sshbuf_ptr(buf);
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_consume(buf, 2)) < 0)
-		return r;
-	if (valp != NULL)
+	ਜੇ ((r = sshbuf_consume(buf, 2)) < 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = PEEK_U16(p);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_u8(struct sshbuf *buf, u_char *valp)
+ਪੂਰਨ
+sshbuf_get_u8(ਬਣਤਰ sshbuf *buf, u_char *valp)
 {
-	const u_char *p = sshbuf_ptr(buf);
-	int r;
+	ਅਚਲ u_char *p = sshbuf_ptr(buf);
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_consume(buf, 1)) < 0)
-		return r;
-	if (valp != NULL)
+	ਜੇ ((r = sshbuf_consume(buf, 1)) < 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = (uint8_t)*p;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int
-check_offset(const struct sshbuf *buf, int wr, size_t offset, size_t len)
+ਸਥਿਰ ਪੂਰਨ
+check_ਵਿੱਥ(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਪੂਰਨ wr, ਮਾਪ_t ਵਿੱਥ, ਮਾਪ_t len)
 {
-	if (sshbuf_ptr(buf) == NULL) /* calls sshbuf_check_sanity() */
-		return SSH_ERR_INTERNAL_ERROR;
-	if (offset >= SIZE_MAX - len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (offset + len > sshbuf_len(buf)) {
-		return wr ?
-		    SSH_ERR_NO_BUFFER_SPACE : SSH_ERR_MESSAGE_INCOMPLETE;
+	ਜੇ (sshbuf_ptr(buf) == ਨਿਰਾ) /* calls sshbuf_check_sanity() */
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
+	ਜੇ (ਵਿੱਥ >= SIZE_MAX - len)
+		ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
+	ਜੇ (ਵਿੱਥ + len > sshbuf_len(buf)) {
+		ਵਾਪਸ wr ?
+		    SSH_ERR_NO_ਬਫਰ_SPACE : SSH_ERR_ਸੁਨੇਹਾ_INCOMPLETE;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int
-check_roffset(const struct sshbuf *buf, size_t offset, size_t len,
-    const u_char **p)
+ਸਥਿਰ ਪੂਰਨ
+check_roffset(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, ਮਾਪ_t len,
+    ਅਚਲ u_char **p)
 {
-	int r;
+	ਪੂਰਨ r;
 
-	*p = NULL;
-	if ((r = check_offset(buf, 0, offset, len)) != 0)
-		return r;
-	*p = sshbuf_ptr(buf) + offset;
-	return 0;
+	*p = ਨਿਰਾ;
+	ਜੇ ((r = check_ਵਿੱਥ(buf, 0, ਵਿੱਥ, len)) != 0)
+		ਵਾਪਸ r;
+	*p = sshbuf_ptr(buf) + ਵਿੱਥ;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_peek_u64(const struct sshbuf *buf, size_t offset, uint64_t *valp)
+ਪੂਰਨ
+sshbuf_peek_u64(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, uint64_t *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	ਅਚਲ u_char *p = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if (valp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 8, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	ਜੇ ((r = check_roffset(buf, ਵਿੱਥ, 8, &p)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = PEEK_U64(p);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_peek_u32(const struct sshbuf *buf, size_t offset, uint32_t *valp)
+ਪੂਰਨ
+sshbuf_peek_u32(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, uint32_t *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	ਅਚਲ u_char *p = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if (valp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 4, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	ਜੇ ((r = check_roffset(buf, ਵਿੱਥ, 4, &p)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = PEEK_U32(p);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_peek_u16(const struct sshbuf *buf, size_t offset, uint16_t *valp)
+ਪੂਰਨ
+sshbuf_peek_u16(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, uint16_t *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	ਅਚਲ u_char *p = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if (valp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 2, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	ਜੇ ((r = check_roffset(buf, ਵਿੱਥ, 2, &p)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = PEEK_U16(p);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_peek_u8(const struct sshbuf *buf, size_t offset, u_char *valp)
+ਪੂਰਨ
+sshbuf_peek_u8(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, u_char *valp)
 {
-	const u_char *p = NULL;
-	int r;
+	ਅਚਲ u_char *p = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if (valp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = 0;
-	if ((r = check_roffset(buf, offset, 1, &p)) != 0)
-		return r;
-	if (valp != NULL)
+	ਜੇ ((r = check_roffset(buf, ਵਿੱਥ, 1, &p)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = *p;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_string(struct sshbuf *buf, u_char **valp, size_t *lenp)
+ਪੂਰਨ
+sshbuf_get_string(ਬਣਤਰ sshbuf *buf, u_char **valp, ਮਾਪ_t *lenp)
 {
-	const u_char *val;
-	size_t len;
-	int r;
+	ਅਚਲ u_char *val;
+	ਮਾਪ_t len;
+	ਪੂਰਨ r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
+		*valp = ਨਿਰਾ;
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = 0;
-	if ((r = sshbuf_get_string_direct(buf, &val, &len)) < 0)
-		return r;
-	if (valp != NULL) {
-		if ((*valp = malloc(len + 1)) == NULL) {
+	ਜੇ ((r = sshbuf_get_string_ਸਿੱਧਾ(buf, &val, &len)) < 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ) {
+		ਜੇ ((*valp = ਸਮ੍ਰਿਤੀ_ਦਿਓ(len + 1)) == ਨਿਰਾ) {
 			SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-			return SSH_ERR_ALLOC_FAIL;
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
 		}
-		if (len != 0)
-			memcpy(*valp, val, len);
+		ਜੇ (len != 0)
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(*valp, val, len);
 		(*valp)[len] = '\0';
 	}
-	if (lenp != NULL)
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = len;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_string_direct(struct sshbuf *buf, const u_char **valp, size_t *lenp)
+ਪੂਰਨ
+sshbuf_get_string_ਸਿੱਧਾ(ਬਣਤਰ sshbuf *buf, ਅਚਲ u_char **valp, ਮਾਪ_t *lenp)
 {
-	size_t len;
-	const u_char *p;
-	int r;
+	ਮਾਪ_t len;
+	ਅਚਲ u_char *p;
+	ਪੂਰਨ r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
+		*valp = ਨਿਰਾ;
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = 0;
-	if ((r = sshbuf_peek_string_direct(buf, &p, &len)) < 0)
-		return r;
-	if (valp != NULL)
+	ਜੇ ((r = sshbuf_peek_string_ਸਿੱਧਾ(buf, &p, &len)) < 0)
+		ਵਾਪਸ r;
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = p;
-	if (lenp != NULL)
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = len;
-	if (sshbuf_consume(buf, len + 4) != 0) {
+	ਜੇ (sshbuf_consume(buf, len + 4) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_peek_string_direct(const struct sshbuf *buf, const u_char **valp,
-    size_t *lenp)
+ਪੂਰਨ
+sshbuf_peek_string_ਸਿੱਧਾ(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਅਚਲ u_char **valp,
+    ਮਾਪ_t *lenp)
 {
 	uint32_t len;
-	const u_char *p = sshbuf_ptr(buf);
+	ਅਚਲ u_char *p = sshbuf_ptr(buf);
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
+		*valp = ਨਿਰਾ;
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = 0;
-	if (sshbuf_len(buf) < 4) {
+	ਜੇ (sshbuf_len(buf) < 4) {
 		SSHBUF_DBG(("SSH_ERR_MESSAGE_INCOMPLETE"));
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+		ਵਾਪਸ SSH_ERR_ਸੁਨੇਹਾ_INCOMPLETE;
 	}
 	len = PEEK_U32(p);
-	if (len > SSHBUF_SIZE_MAX - 4) {
+	ਜੇ (len > SSHBUF_ਮਾਪ_MAX - 4) {
 		SSHBUF_DBG(("SSH_ERR_STRING_TOO_LARGE"));
-		return SSH_ERR_STRING_TOO_LARGE;
+		ਵਾਪਸ SSH_ERR_STRING_TOO_LARGE;
 	}
-	if (sshbuf_len(buf) - 4 < len) {
+	ਜੇ (sshbuf_len(buf) - 4 < len) {
 		SSHBUF_DBG(("SSH_ERR_MESSAGE_INCOMPLETE"));
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+		ਵਾਪਸ SSH_ERR_ਸੁਨੇਹਾ_INCOMPLETE;
 	}
-	if (valp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = p + 4;
-	if (lenp != NULL)
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = len;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_cstring(struct sshbuf *buf, char **valp, size_t *lenp)
+ਪੂਰਨ
+sshbuf_get_cstring(ਬਣਤਰ sshbuf *buf, ਅੱਖਰ **valp, ਮਾਪ_t *lenp)
 {
-	size_t len;
-	const u_char *p, *z;
-	int r;
+	ਮਾਪ_t len;
+	ਅਚਲ u_char *p, *z;
+	ਪੂਰਨ r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
+		*valp = ਨਿਰਾ;
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = 0;
-	if ((r = sshbuf_peek_string_direct(buf, &p, &len)) != 0)
-		return r;
+	ਜੇ ((r = sshbuf_peek_string_ਸਿੱਧਾ(buf, &p, &len)) != 0)
+		ਵਾਪਸ r;
 	/* Allow a \0 only at the end of the string */
-	if (len > 0 &&
-	    (z = memchr(p , '\0', len)) != NULL && z < p + len - 1) {
+	ਜੇ (len > 0 &&
+	    (z = memchr(p , '\0', len)) != ਨਿਰਾ && z < p + len - 1) {
 		SSHBUF_DBG(("SSH_ERR_INVALID_FORMAT"));
-		return SSH_ERR_INVALID_FORMAT;
+		ਵਾਪਸ SSH_ERR_INVALID_FORMAT;
 	}
-	if ((r = sshbuf_skip_string(buf)) != 0)
-		return -1;
-	if (valp != NULL) {
-		if ((*valp = malloc(len + 1)) == NULL) {
+	ਜੇ ((r = sshbuf_skip_string(buf)) != 0)
+		ਵਾਪਸ -1;
+	ਜੇ (valp != ਨਿਰਾ) {
+		ਜੇ ((*valp = ਸਮ੍ਰਿਤੀ_ਦਿਓ(len + 1)) == ਨਿਰਾ) {
 			SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-			return SSH_ERR_ALLOC_FAIL;
+			ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
 		}
-		if (len != 0)
-			memcpy(*valp, p, len);
+		ਜੇ (len != 0)
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(*valp, p, len);
 		(*valp)[len] = '\0';
 	}
-	if (lenp != NULL)
-		*lenp = (size_t)len;
-	return 0;
+	ਜੇ (lenp != ਨਿਰਾ)
+		*lenp = (ਮਾਪ_t)len;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_stringb(struct sshbuf *buf, struct sshbuf *v)
+ਪੂਰਨ
+sshbuf_get_stringb(ਬਣਤਰ sshbuf *buf, ਬਣਤਰ sshbuf *v)
 {
 	uint32_t len;
 	u_char *p;
-	int r;
+	ਪੂਰਨ r;
 
 	/*
 	 * Use sshbuf_peek_string_direct() to figure out if there is
 	 * a complete string in 'buf' and copy the string directly
 	 * into 'v'.
 	 */
-	if ((r = sshbuf_peek_string_direct(buf, NULL, NULL)) != 0 ||
+	ਜੇ ((r = sshbuf_peek_string_ਸਿੱਧਾ(buf, ਨਿਰਾ, ਨਿਰਾ)) != 0 ||
 	    (r = sshbuf_get_u32(buf, &len)) != 0 ||
 	    (r = sshbuf_reserve(v, len, &p)) != 0 ||
 	    (r = sshbuf_get(buf, p, len)) != 0)
-		return r;
-	return 0;
+		ਵਾਪਸ r;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_put(struct sshbuf *buf, const void *v, size_t len)
+ਪੂਰਨ
+sshbuf_put(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਖਾਲੀ *v, ਮਾਪ_t len)
 {
 	u_char *p;
-	int r;
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_reserve(buf, len, &p)) < 0)
-		return r;
-	if (len != 0)
-		memcpy(p, v, len);
-	return 0;
+	ਜੇ ((r = sshbuf_reserve(buf, len, &p)) < 0)
+		ਵਾਪਸ r;
+	ਜੇ (len != 0)
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(p, v, len);
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_putb(struct sshbuf *buf, const struct sshbuf *v)
+ਪੂਰਨ
+sshbuf_putb(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਬਣਤਰ sshbuf *v)
 {
-	if (v == NULL)
-		return 0;
-	return sshbuf_put(buf, sshbuf_ptr(v), sshbuf_len(v));
+	ਜੇ (v == ਨਿਰਾ)
+		ਵਾਪਸ 0;
+	ਵਾਪਸ sshbuf_put(buf, sshbuf_ptr(v), sshbuf_len(v));
 }
 
-int
-sshbuf_putf(struct sshbuf *buf, const char *fmt, ...)
+ਪੂਰਨ
+sshbuf_putf(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਅੱਖਰ *fmt, ...)
 {
 	va_list ap;
-	int r;
+	ਪੂਰਨ r;
 
 	va_start(ap, fmt);
 	r = sshbuf_putfv(buf, fmt, ap);
 	va_end(ap);
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-sshbuf_putfv(struct sshbuf *buf, const char *fmt, va_list ap)
+ਪੂਰਨ
+sshbuf_putfv(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਅੱਖਰ *fmt, va_list ap)
 {
 	va_list ap2;
-	int r, len;
+	ਪੂਰਨ r, len;
 	u_char *p;
 
 	VA_COPY(ap2, ap);
-	if ((len = vsnprintf(NULL, 0, fmt, ap2)) < 0) {
-		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+	ਜੇ ((len = vsnprintf(ਨਿਰਾ, 0, fmt, ap2)) < 0) {
+		r = SSH_ERR_INVALID_ਦਲੀਲ;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if (len == 0) {
+	ਜੇ (len == 0) {
 		r = 0;
-		goto out; /* Nothing to do */
+		ਜਾਓ ਬਾਹਰਲਾ; /* Nothing to do */
 	}
 	va_end(ap2);
 	VA_COPY(ap2, ap);
-	if ((r = sshbuf_reserve(buf, (size_t)len + 1, &p)) < 0)
-		goto out;
-	if ((r = vsnprintf((char *)p, len + 1, fmt, ap2)) != len) {
-		r = SSH_ERR_INTERNAL_ERROR;
-		goto out; /* Shouldn't happen */
+	ਜੇ ((r = sshbuf_reserve(buf, (ਮਾਪ_t)len + 1, &p)) < 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ ((r = vsnprintf((ਅੱਖਰ *)p, len + 1, fmt, ap2)) != len) {
+		r = SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
+		ਜਾਓ ਬਾਹਰਲਾ; /* Shouldn't happen */
 	}
 	/* Consume terminating \0 */
-	if ((r = sshbuf_consume_end(buf, 1)) != 0)
-		goto out;
+	ਜੇ ((r = sshbuf_consume_ਸਿਰਾ(buf, 1)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
 	r = 0;
- out:
+ ਬਾਹਰਲਾ:
 	va_end(ap2);
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-sshbuf_put_u64(struct sshbuf *buf, uint64_t val)
+ਪੂਰਨ
+sshbuf_put_u64(ਬਣਤਰ sshbuf *buf, uint64_t val)
 {
 	u_char *p;
-	int r;
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_reserve(buf, 8, &p)) < 0)
-		return r;
+	ਜੇ ((r = sshbuf_reserve(buf, 8, &p)) < 0)
+		ਵਾਪਸ r;
 	POKE_U64(p, val);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_put_u32(struct sshbuf *buf, uint32_t val)
+ਪੂਰਨ
+sshbuf_put_u32(ਬਣਤਰ sshbuf *buf, uint32_t val)
 {
 	u_char *p;
-	int r;
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_reserve(buf, 4, &p)) < 0)
-		return r;
+	ਜੇ ((r = sshbuf_reserve(buf, 4, &p)) < 0)
+		ਵਾਪਸ r;
 	POKE_U32(p, val);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_put_u16(struct sshbuf *buf, uint16_t val)
+ਪੂਰਨ
+sshbuf_put_u16(ਬਣਤਰ sshbuf *buf, uint16_t val)
 {
 	u_char *p;
-	int r;
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_reserve(buf, 2, &p)) < 0)
-		return r;
+	ਜੇ ((r = sshbuf_reserve(buf, 2, &p)) < 0)
+		ਵਾਪਸ r;
 	POKE_U16(p, val);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_put_u8(struct sshbuf *buf, u_char val)
+ਪੂਰਨ
+sshbuf_put_u8(ਬਣਤਰ sshbuf *buf, u_char val)
 {
 	u_char *p;
-	int r;
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_reserve(buf, 1, &p)) < 0)
-		return r;
+	ਜੇ ((r = sshbuf_reserve(buf, 1, &p)) < 0)
+		ਵਾਪਸ r;
 	p[0] = val;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int
-check_woffset(struct sshbuf *buf, size_t offset, size_t len, u_char **p)
+ਸਥਿਰ ਪੂਰਨ
+check_woffset(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, ਮਾਪ_t len, u_char **p)
 {
-	int r;
+	ਪੂਰਨ r;
 
-	*p = NULL;
-	if ((r = check_offset(buf, 1, offset, len)) != 0)
-		return r;
-	if (sshbuf_mutable_ptr(buf) == NULL)
-		return SSH_ERR_BUFFER_READ_ONLY;
-	*p = sshbuf_mutable_ptr(buf) + offset;
-	return 0;
+	*p = ਨਿਰਾ;
+	ਜੇ ((r = check_ਵਿੱਥ(buf, 1, ਵਿੱਥ, len)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ (sshbuf_mutable_ptr(buf) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ਬਫਰ_READ_ONLY;
+	*p = sshbuf_mutable_ptr(buf) + ਵਿੱਥ;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_poke_u64(struct sshbuf *buf, size_t offset, uint64_t val)
+ਪੂਰਨ
+sshbuf_poke_u64(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, uint64_t val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if ((r = check_woffset(buf, offset, 8, &p)) != 0)
-		return r;
+	ਜੇ ((r = check_woffset(buf, ਵਿੱਥ, 8, &p)) != 0)
+		ਵਾਪਸ r;
 	POKE_U64(p, val);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_poke_u32(struct sshbuf *buf, size_t offset, uint32_t val)
+ਪੂਰਨ
+sshbuf_poke_u32(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, uint32_t val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if ((r = check_woffset(buf, offset, 4, &p)) != 0)
-		return r;
+	ਜੇ ((r = check_woffset(buf, ਵਿੱਥ, 4, &p)) != 0)
+		ਵਾਪਸ r;
 	POKE_U32(p, val);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_poke_u16(struct sshbuf *buf, size_t offset, uint16_t val)
+ਪੂਰਨ
+sshbuf_poke_u16(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, uint16_t val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if ((r = check_woffset(buf, offset, 2, &p)) != 0)
-		return r;
+	ਜੇ ((r = check_woffset(buf, ਵਿੱਥ, 2, &p)) != 0)
+		ਵਾਪਸ r;
 	POKE_U16(p, val);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_poke_u8(struct sshbuf *buf, size_t offset, u_char val)
+ਪੂਰਨ
+sshbuf_poke_u8(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, u_char val)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if ((r = check_woffset(buf, offset, 1, &p)) != 0)
-		return r;
+	ਜੇ ((r = check_woffset(buf, ਵਿੱਥ, 1, &p)) != 0)
+		ਵਾਪਸ r;
 	*p = val;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_poke(struct sshbuf *buf, size_t offset, void *v, size_t len)
+ਪੂਰਨ
+sshbuf_poke(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, ਖਾਲੀ *v, ਮਾਪ_t len)
 {
-	u_char *p = NULL;
-	int r;
+	u_char *p = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if ((r = check_woffset(buf, offset, len, &p)) != 0)
-		return r;
-	memcpy(p, v, len);
-	return 0;
+	ਜੇ ((r = check_woffset(buf, ਵਿੱਥ, len, &p)) != 0)
+		ਵਾਪਸ r;
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(p, v, len);
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_put_string(struct sshbuf *buf, const void *v, size_t len)
+ਪੂਰਨ
+sshbuf_put_string(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਖਾਲੀ *v, ਮਾਪ_t len)
 {
 	u_char *d;
-	int r;
+	ਪੂਰਨ r;
 
-	if (len > SSHBUF_SIZE_MAX - 4) {
+	ਜੇ (len > SSHBUF_ਮਾਪ_MAX - 4) {
 		SSHBUF_DBG(("SSH_ERR_NO_BUFFER_SPACE"));
-		return SSH_ERR_NO_BUFFER_SPACE;
+		ਵਾਪਸ SSH_ERR_NO_ਬਫਰ_SPACE;
 	}
-	if ((r = sshbuf_reserve(buf, len + 4, &d)) < 0)
-		return r;
+	ਜੇ ((r = sshbuf_reserve(buf, len + 4, &d)) < 0)
+		ਵਾਪਸ r;
 	POKE_U32(d, len);
-	if (len != 0)
-		memcpy(d + 4, v, len);
-	return 0;
+	ਜੇ (len != 0)
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(d + 4, v, len);
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_put_cstring(struct sshbuf *buf, const char *v)
+ਪੂਰਨ
+sshbuf_put_cstring(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਅੱਖਰ *v)
 {
-	return sshbuf_put_string(buf, v, v == NULL ? 0 : strlen(v));
+	ਵਾਪਸ sshbuf_put_string(buf, v, v == ਨਿਰਾ ? 0 : ਲੜੀ_ਲੰਬਾਈ(v));
 }
 
-int
-sshbuf_put_stringb(struct sshbuf *buf, const struct sshbuf *v)
+ਪੂਰਨ
+sshbuf_put_stringb(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਬਣਤਰ sshbuf *v)
 {
-	if (v == NULL)
-		return sshbuf_put_string(buf, NULL, 0);
+	ਜੇ (v == ਨਿਰਾ)
+		ਵਾਪਸ sshbuf_put_string(buf, ਨਿਰਾ, 0);
 
-	return sshbuf_put_string(buf, sshbuf_ptr(v), sshbuf_len(v));
+	ਵਾਪਸ sshbuf_put_string(buf, sshbuf_ptr(v), sshbuf_len(v));
 }
 
-int
-sshbuf_froms(struct sshbuf *buf, struct sshbuf **bufp)
+ਪੂਰਨ
+sshbuf_froms(ਬਣਤਰ sshbuf *buf, ਬਣਤਰ sshbuf **bufp)
 {
-	const u_char *p;
-	size_t len;
-	struct sshbuf *ret;
-	int r;
+	ਅਚਲ u_char *p;
+	ਮਾਪ_t len;
+	ਬਣਤਰ sshbuf *ret;
+	ਪੂਰਨ r;
 
-	if (buf == NULL || bufp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*bufp = NULL;
-	if ((r = sshbuf_peek_string_direct(buf, &p, &len)) != 0)
-		return r;
-	if ((ret = sshbuf_from(p, len)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_consume(buf, len + 4)) != 0 ||  /* Shouldn't happen */
-	    (r = sshbuf_set_parent(ret, buf)) != 0) {
+	ਜੇ (buf == ਨਿਰਾ || bufp == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
+	*bufp = ਨਿਰਾ;
+	ਜੇ ((r = sshbuf_peek_string_ਸਿੱਧਾ(buf, &p, &len)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ ((ret = sshbuf_from(p, len)) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਜੇ ((r = sshbuf_consume(buf, len + 4)) != 0 ||  /* Shouldn't happen */
+	    (r = sshbuf_ਸੈੱਟ_ਮਾਪਾ(ret, buf)) != 0) {
 		sshbuf_free(ret);
-		return r;
+		ਵਾਪਸ r;
 	}
 	*bufp = ret;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_put_bignum2_bytes(struct sshbuf *buf, const void *v, size_t len)
+ਪੂਰਨ
+sshbuf_put_bignum2_ਬਾਈਟਾਂ(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਖਾਲੀ *v, ਮਾਪ_t len)
 {
 	u_char *d;
-	const u_char *s = (const u_char *)v;
-	int r, prepend;
+	ਅਚਲ u_char *s = (ਅਚਲ u_char *)v;
+	ਪੂਰਨ r, prepend;
 
-	if (len > SSHBUF_SIZE_MAX - 5) {
+	ਜੇ (len > SSHBUF_ਮਾਪ_MAX - 5) {
 		SSHBUF_DBG(("SSH_ERR_NO_BUFFER_SPACE"));
-		return SSH_ERR_NO_BUFFER_SPACE;
+		ਵਾਪਸ SSH_ERR_NO_ਬਫਰ_SPACE;
 	}
 	/* Skip leading zero bytes */
-	for (; len > 0 && *s == 0; len--, s++)
+	ਲਈ (; len > 0 && *s == 0; len--, s++)
 		;
 	/*
 	 * If most significant bit is set then prepend a zero byte to
 	 * avoid interpretation as a negative number.
 	 */
 	prepend = len > 0 && (s[0] & 0x80) != 0;
-	if ((r = sshbuf_reserve(buf, len + 4 + prepend, &d)) < 0)
-		return r;
+	ਜੇ ((r = sshbuf_reserve(buf, len + 4 + prepend, &d)) < 0)
+		ਵਾਪਸ r;
 	POKE_U32(d, len + prepend);
-	if (prepend)
+	ਜੇ (prepend)
 		d[4] = 0;
-	if (len != 0)
-		memcpy(d + 4 + prepend, s, len);
-	return 0;
+	ਜੇ (len != 0)
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(d + 4 + prepend, s, len);
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_bignum2_bytes_direct(struct sshbuf *buf,
-    const u_char **valp, size_t *lenp)
+ਪੂਰਨ
+sshbuf_get_bignum2_ਬਾਈਟਾਂ_ਸਿੱਧਾ(ਬਣਤਰ sshbuf *buf,
+    ਅਚਲ u_char **valp, ਮਾਪ_t *lenp)
 {
-	const u_char *d;
-	size_t len, olen;
-	int r;
+	ਅਚਲ u_char *d;
+	ਮਾਪ_t len, olen;
+	ਪੂਰਨ r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &olen)) < 0)
-		return r;
+	ਜੇ ((r = sshbuf_peek_string_ਸਿੱਧਾ(buf, &d, &olen)) < 0)
+		ਵਾਪਸ r;
 	len = olen;
 	/* Refuse negative (MSB set) bignums */
-	if ((len != 0 && (*d & 0x80) != 0))
-		return SSH_ERR_BIGNUM_IS_NEGATIVE;
+	ਜੇ ((len != 0 && (*d & 0x80) != 0))
+		ਵਾਪਸ SSH_ERR_BIGNUM_IS_NEGATIVE;
 	/* Refuse overlong bignums, allow prepended \0 to avoid MSB set */
-	if (len > SSHBUF_MAX_BIGNUM + 1 ||
+	ਜੇ (len > SSHBUF_MAX_BIGNUM + 1 ||
 	    (len == SSHBUF_MAX_BIGNUM + 1 && *d != 0))
-		return SSH_ERR_BIGNUM_TOO_LARGE;
+		ਵਾਪਸ SSH_ERR_BIGNUM_TOO_LARGE;
 	/* Trim leading zeros */
-	while (len > 0 && *d == 0x00) {
+	ਜਦੋਂ (len > 0 && *d == 0x00) {
 		d++;
 		len--;
 	}
-	if (valp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
 		*valp = d;
-	if (lenp != NULL)
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = len;
-	if (sshbuf_consume(buf, olen + 4) != 0) {
+	ਜੇ (sshbuf_consume(buf, olen + 4) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		ਵਾਪਸ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-sshbuf_get_nulterminated_string(struct sshbuf *buf, size_t maxlen,
-    char **valp, size_t *lenp)
+ਪੂਰਨ
+sshbuf_get_nulterminated_string(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t maxlen,
+    ਅੱਖਰ **valp, ਮਾਪ_t *lenp)
 {
-	const u_char zero = 0;
-	char *val = NULL;
-	size_t len = 0;
-	int r;
+	ਅਚਲ u_char zero = 0;
+	ਅੱਖਰ *val = ਨਿਰਾ;
+	ਮਾਪ_t len = 0;
+	ਪੂਰਨ r;
 
-	if (valp != NULL)
-		*valp = NULL;
-	if (lenp != NULL)
+	ਜੇ (valp != ਨਿਰਾ)
+		*valp = ਨਿਰਾ;
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = 0;
-	if ((r = sshbuf_find(buf, 0, &zero, sizeof(zero), &len)) != 0) {
-		if (r == SSH_ERR_INVALID_FORMAT && sshbuf_len(buf) < maxlen)
-			return SSH_ERR_MESSAGE_INCOMPLETE;
-		return r;
+	ਜੇ ((r = sshbuf_ਲੱਭੋ(buf, 0, &zero, ਆਕਾਰ(zero), &len)) != 0) {
+		ਜੇ (r == SSH_ERR_INVALID_FORMAT && sshbuf_len(buf) < maxlen)
+			ਵਾਪਸ SSH_ERR_ਸੁਨੇਹਾ_INCOMPLETE;
+		ਵਾਪਸ r;
 	}
-	if (len > maxlen)
-		return SSH_ERR_INVALID_FORMAT;
+	ਜੇ (len > maxlen)
+		ਵਾਪਸ SSH_ERR_INVALID_FORMAT;
 	/* can strdup() because it's definitely nul-terminated */
-	if ((val = strdup(sshbuf_ptr(buf))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_consume(buf, len + 1)) != 0)
-		goto out;
+	ਜੇ ((val = strdup(sshbuf_ptr(buf))) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਜੇ ((r = sshbuf_consume(buf, len + 1)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
 	/* success */
 	r = 0;
-	if (valp != NULL) {
+	ਜੇ (valp != ਨਿਰਾ) {
 		*valp = val;
-		val = NULL;
+		val = ਨਿਰਾ;
 	}
-	if (lenp != NULL)
+	ਜੇ (lenp != ਨਿਰਾ)
 		*lenp = len;
- out:
-	free(val);
-	return r;
+ ਬਾਹਰਲਾ:
+	ਮੁਕਤ(val);
+	ਵਾਪਸ r;
 }

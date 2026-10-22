@@ -14,80 +14,80 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#ਜੇ !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
-#ifdef HAVE_SYS_MOUNT_H
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
-#endif
+#ਜੇ_ਅੰਤ
 
-#include <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
 
-#ifndef MNAMELEN
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ MNAMELEN
 # define MNAMELEN 32
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef HAVE_STRUCT_STATFS_F_FILES
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_STRUCT_STATFS_F_FILES
 # define HAVE_STRUCT_STATFS
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifdef HAVE_STRUCT_STATFS
-static void
-copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_STRUCT_STATFS
+ਸਥਿਰ ਖਾਲੀ
+copy_statfs_ਮੰਜ਼ਿਲ_statvfs(ਬਣਤਰ statvfs *ਮੰਜ਼ਿਲ, ਬਣਤਰ statfs *from)
 {
-	to->f_bsize = from->f_bsize;
-	to->f_frsize = from->f_bsize;	/* no exact equivalent */
-	to->f_blocks = from->f_blocks;
-	to->f_bfree = from->f_bfree;
-	to->f_bavail = from->f_bavail;
-	to->f_files = from->f_files;
-	to->f_ffree = from->f_ffree;
-	to->f_favail = from->f_ffree;	/* no exact equivalent */
-	to->f_fsid = 0;			/* XXX fix me */
-#ifdef HAVE_STRUCT_STATFS_F_FLAGS
-	to->f_flag = from->f_flags;
-#else
-	to->f_flag = 0;
-#endif
-	to->f_namemax = MNAMELEN;
+	ਮੰਜ਼ਿਲ->f_bsize = from->f_bsize;
+	ਮੰਜ਼ਿਲ->f_frsize = from->f_bsize;	/* no exact equivalent */
+	ਮੰਜ਼ਿਲ->f_ਖੰਡਾਂ = from->f_ਖੰਡਾਂ;
+	ਮੰਜ਼ਿਲ->f_bfree = from->f_bfree;
+	ਮੰਜ਼ਿਲ->f_bavail = from->f_bavail;
+	ਮੰਜ਼ਿਲ->f_files = from->f_files;
+	ਮੰਜ਼ਿਲ->f_ffree = from->f_ffree;
+	ਮੰਜ਼ਿਲ->f_favail = from->f_ffree;	/* no exact equivalent */
+	ਮੰਜ਼ਿਲ->f_fsid = 0;			/* XXX fix me */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_STRUCT_STATFS_F_FLAGS
+	ਮੰਜ਼ਿਲ->f_flag = from->f_flags;
+#ਨਹੀਂਤਾਂ
+	ਮੰਜ਼ਿਲ->f_flag = 0;
+#ਜੇ_ਅੰਤ
+	ਮੰਜ਼ਿਲ->f_namemax = MNAMELEN;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 # ifndef HAVE_STATVFS
-int statvfs(const char *path, struct statvfs *buf)
+ਪੂਰਨ statvfs(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਬਣਤਰ statvfs *buf)
 {
-#  if defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  ਜੇ defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
+	ਬਣਤਰ statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (statfs(path, &fs) == -1)
-		return -1;
-	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	memset(&fs, 0, ਆਕਾਰ(fs));
+	ਜੇ (statfs(ਰਸਤਾ, &fs) == -1)
+		ਵਾਪਸ -1;
+	copy_statfs_ਮੰਜ਼ਿਲ_statvfs(buf, &fs);
+	ਵਾਪਸ 0;
+#  ਨਹੀਂਤਾਂ
 	errno = ENOSYS;
-	return -1;
+	ਵਾਪਸ -1;
 #  endif
 }
 # endif
 
 # ifndef HAVE_FSTATVFS
-int fstatvfs(int fd, struct statvfs *buf)
+ਪੂਰਨ fstatvfs(ਪੂਰਨ fd, ਬਣਤਰ statvfs *buf)
 {
-#  if defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  ਜੇ defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
+	ਬਣਤਰ statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (fstatfs(fd, &fs) == -1)
-		return -1;
-	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	memset(&fs, 0, ਆਕਾਰ(fs));
+	ਜੇ (fstatfs(fd, &fs) == -1)
+		ਵਾਪਸ -1;
+	copy_statfs_ਮੰਜ਼ਿਲ_statvfs(buf, &fs);
+	ਵਾਪਸ 0;
+#  ਨਹੀਂਤਾਂ
 	errno = ENOSYS;
-	return -1;
+	ਵਾਪਸ -1;
 #  endif
 }
 # endif
 
-#endif
+#ਜੇ_ਅੰਤ

@@ -22,34 +22,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#define RANDOM_SEED_SIZE 48
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RANDOM_ਬੀਜ_ਮਾਪ 48
 
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <signal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
 
-#include <openssl/rand.h>
-#include <openssl/crypto.h>
-#include <openssl/err.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/rand.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/crypto.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/err.h>
 
-#include "openbsd-compat/openssl-compat.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "openbsd-compat/openssl-compat.h"
 
-#include "ssh.h"
-#include "misc.h"
-#include "xmalloc.h"
-#include "atomicio.h"
-#include "pathnames.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "atomicio.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pathnames.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
 
 /*
  * Portable OpenSSH PRNG seeding:
@@ -58,74 +58,74 @@
  * PRNGd.
  */
 
-void
-seed_rng(void)
+ਖਾਲੀ
+ਬੀਜ_rng(ਖਾਲੀ)
 {
-	unsigned char buf[RANDOM_SEED_SIZE];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ buf[RANDOM_ਬੀਜ_ਮਾਪ];
 
 	/* Initialise libcrypto */
-	if (ssh_libcrypto_init() != 1)
+	ਜੇ (ssh_libcrypto_init() != 1)
 		fatal("libcrypto failed to initialize.");
 
-	if (!ssh_compatible_openssl(OPENSSL_VERSION_NUMBER,
-	    OpenSSL_version_num()))
+	ਜੇ (!ssh_compatible_openssl(OPENSSL_ਸੰਸਕਰਣ_ਸੰਖਿਆ,
+	    Open_SSL_ਸੰਸਕਰਣ_ਅੰਕ()))
 		fatal("OpenSSL version mismatch. Built against %lx, you "
-		    "have %lx", (u_long)OPENSSL_VERSION_NUMBER,
-		    OpenSSL_version_num());
+		    "have %lx", (u_long)OPENSSL_ਸੰਸਕਰਣ_ਸੰਖਿਆ,
+		    Open_SSL_ਸੰਸਕਰਣ_ਅੰਕ());
 
-#ifndef OPENSSL_PRNG_ONLY
-	if (RAND_status() == 1)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ OPENSSL_PRNG_ONLY
+	ਜੇ (RAND_ਸਥਿਤੀ() == 1)
 		debug3("RNG is ready, skipping seeding");
-	else {
-		if (seed_from_prngd(buf, sizeof(buf)) == -1)
+	ਨਹੀਂਤਾਂ {
+		ਜੇ (ਬੀਜ_from_prngd(buf, ਆਕਾਰ(buf)) == -1)
 			fatal("Could not obtain seed from PRNGd");
-		RAND_add(buf, sizeof(buf), sizeof(buf));
+		RAND_ਜੋੜੋ(buf, ਆਕਾਰ(buf), ਆਕਾਰ(buf));
 	}
-#endif /* OPENSSL_PRNG_ONLY */
+#ਜੇ_ਅੰਤ /* OPENSSL_PRNG_ONLY */
 
-	if (RAND_status() != 1)
+	ਜੇ (RAND_ਸਥਿਤੀ() != 1)
 		fatal("PRNG is not seeded");
 
 	/* Ensure arc4random() is primed */
-	arc4random_buf(buf, sizeof(buf));
-	explicit_bzero(buf, sizeof(buf));
+	arc4random_buf(buf, ਆਕਾਰ(buf));
+	explicit_bzero(buf, ਆਕਾਰ(buf));
 }
 
-#else /* WITH_OPENSSL */
+#ਨਹੀਂਤਾਂ /* WITH_OPENSSL */
 
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
 /* Actual initialisation is handled in arc4random() */
-void
-seed_rng(void)
+ਖਾਲੀ
+ਬੀਜ_rng(ਖਾਲੀ)
 {
-	unsigned char buf[RANDOM_SEED_SIZE];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ buf[RANDOM_ਬੀਜ_ਮਾਪ];
 
 	/* Ensure arc4random() is primed */
-	arc4random_buf(buf, sizeof(buf));
-	explicit_bzero(buf, sizeof(buf));
+	arc4random_buf(buf, ਆਕਾਰ(buf));
+	explicit_bzero(buf, ਆਕਾਰ(buf));
 }
 
-#endif /* WITH_OPENSSL */
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
 
-void
-reseed_prngs(void)
+ਖਾਲੀ
+reseed_prngs(ਖਾਲੀ)
 {
 	uint32_t rnd[256];
 
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 	RAND_poll();
-#endif
+#ਜੇ_ਅੰਤ
 	arc4random_stir(); /* noop on recent arc4random() implementations */
-	arc4random_buf(rnd, sizeof(rnd)); /* let arc4random notice PID change */
+	arc4random_buf(rnd, ਆਕਾਰ(rnd)); /* let arc4random notice PID change */
 
-#ifdef WITH_OPENSSL
-	RAND_seed(rnd, sizeof(rnd));
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+	RAND_ਬੀਜ(rnd, ਆਕਾਰ(rnd));
 	/* give libcrypto a chance to notice the PID change */
-	if ((RAND_bytes((u_char *)rnd, 1)) != 1)
+	ਜੇ ((RAND_ਬਾਈਟਾਂ((u_char *)rnd, 1)) != 1)
 		fatal_f("RAND_bytes failed");
-#endif
+#ਜੇ_ਅੰਤ
 
-	explicit_bzero(rnd, sizeof(rnd));
+	explicit_bzero(rnd, ਆਕਾਰ(rnd));
 }

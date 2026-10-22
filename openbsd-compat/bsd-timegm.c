@@ -35,40 +35,40 @@
   adapted for Samba4 by Andrew Tridgell
 */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
 
-#ifndef HAVE_TIMEGM
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_TIMEGM
 
-static int is_leap(unsigned y)
+ਸਥਿਰ ਪੂਰਨ is_leap(ਬਿਨਾਨਿਸ਼ਾਨੀ y)
 {
 	y += 1900;
-	return (y % 4) == 0 && ((y % 100) != 0 || (y % 400) == 0);
+	ਵਾਪਸ (y % 4) == 0 && ((y % 100) != 0 || (y % 400) == 0);
 }
 
-time_t timegm(struct tm *tm)
+time_t timegm(ਬਣਤਰ tm *tm)
 {
-	static const unsigned ndays[2][12] ={
+	ਸਥਿਰ ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ndays[2][12] ={
 		{31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 		{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}};
 	time_t res = 0;
-	unsigned i;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ i;
 
-	if (tm->tm_mon > 12 ||
+	ਜੇ (tm->tm_mon > 12 ||
 	    tm->tm_mon < 0 ||
 	    tm->tm_mday > 31 ||
 	    tm->tm_min > 60 ||
 	    tm->tm_sec > 60 ||
 	    tm->tm_hour > 24) {
 		/* invalid tm structure */
-		return 0;
+		ਵਾਪਸ 0;
 	}
 
-	for (i = 70; i < tm->tm_year; ++i)
+	ਲਈ (i = 70; i < tm->tm_year; ++i)
 		res += is_leap(i) ? 366 : 365;
 
-	for (i = 0; i < tm->tm_mon; ++i)
+	ਲਈ (i = 0; i < tm->tm_mon; ++i)
 		res += ndays[is_leap(tm->tm_year)][i];
 	res += tm->tm_mday - 1;
 	res *= 24;
@@ -77,6 +77,6 @@ time_t timegm(struct tm *tm)
 	res += tm->tm_min;
 	res *= 60;
 	res += tm->tm_sec;
-	return res;
+	ਵਾਪਸ res;
 }
-#endif /* HAVE_TIMEGM */
+#ਜੇ_ਅੰਤ /* HAVE_TIMEGM */

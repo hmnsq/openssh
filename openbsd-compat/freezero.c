@@ -14,21 +14,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#ifndef HAVE_FREEZERO
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_FREEZERO
 
-void
-freezero(void *ptr, size_t sz)
+ਖਾਲੀ
+freezero(ਖਾਲੀ *ptr, ਮਾਪ_t sz)
 {
-	if (ptr == NULL)
-		return;
+	ਜੇ (ptr == ਨਿਰਾ)
+		ਵਾਪਸ;
 	explicit_bzero(ptr, sz);
-	free(ptr);
+	ਮੁਕਤ(ptr);
 }
 
-#endif /* HAVE_FREEZERO */
+#ਜੇ_ਅੰਤ /* HAVE_FREEZERO */
 

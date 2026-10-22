@@ -6,31 +6,31 @@ D. J. Bernstein
 Public domain.
 */
 
-#ifndef CHACHA_H
-#define CHACHA_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CHACHA_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CHACHA_H
 
-#include <sys/types.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-struct chacha_ctx {
-	u_int input[16];
+ਬਣਤਰ chacha_ctx {
+	u_int ਨਿਵੇਸ਼[16];
 };
 
-#define CHACHA_MINKEYLEN	16
-#define CHACHA_NONCELEN		8
-#define CHACHA_CTRLEN		8
-#define CHACHA_STATELEN		(CHACHA_NONCELEN+CHACHA_CTRLEN)
-#define CHACHA_BLOCKLEN		64
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CHACHA_MINKEYLEN	16
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CHACHA_NONCELEN		8
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CHACHA_CTRLEN		8
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CHACHA_STATELEN		(CHACHA_NONCELEN+CHACHA_CTRLEN)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CHACHA_BLOCKLEN		64
 
-void chacha_keysetup(struct chacha_ctx *x, const u_char *k, u_int kbits)
+ਖਾਲੀ chacha_keysetup(ਬਣਤਰ chacha_ctx *x, ਅਚਲ u_char *k, u_int kbits)
     __attribute__((__bounded__(__minbytes__, 2, CHACHA_MINKEYLEN)));
-void chacha_ivsetup(struct chacha_ctx *x, const u_char *iv, const u_char *ctr)
+ਖਾਲੀ chacha_ivsetup(ਬਣਤਰ chacha_ctx *x, ਅਚਲ u_char *iv, ਅਚਲ u_char *ctr)
     __attribute__((__bounded__(__minbytes__, 2, CHACHA_NONCELEN)))
     __attribute__((__bounded__(__minbytes__, 3, CHACHA_CTRLEN)));
-void chacha_encrypt_bytes(struct chacha_ctx *x, const u_char *m,
-    u_char *c, u_int bytes)
+ਖਾਲੀ chacha_encrypt_ਬਾਈਟਾਂ(ਬਣਤਰ chacha_ctx *x, ਅਚਲ u_char *m,
+    u_char *c, u_int ਬਾਈਟਾਂ)
     __attribute__((__bounded__(__buffer__, 2, 4)))
     __attribute__((__bounded__(__buffer__, 3, 4)));
 
-#endif	/* CHACHA_H */
+#ਜੇ_ਅੰਤ	/* CHACHA_H */
 

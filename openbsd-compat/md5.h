@@ -12,40 +12,40 @@
  * with every copy.
  */
 
-#ifndef _MD5_H_
-#define _MD5_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _MD5_H_
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _MD5_H_
 
-#ifndef WITH_OPENSSL
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 
-#define	MD5_BLOCK_LENGTH		64
-#define	MD5_DIGEST_LENGTH		16
-#define	MD5_DIGEST_STRING_LENGTH	(MD5_DIGEST_LENGTH * 2 + 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	MD5_ਖੰਡ_ਲੰਮਾਈ		64
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	MD5_DIGEST_ਲੰਮਾਈ		16
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	MD5_DIGEST_STRING_ਲੰਮਾਈ	(MD5_DIGEST_ਲੰਮਾਈ * 2 + 1)
 
-typedef struct MD5Context {
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ MD5Context {
 	u_int32_t state[4];			/* state */
-	u_int64_t count;			/* number of bits, mod 2^64 */
-	u_int8_t buffer[MD5_BLOCK_LENGTH];	/* input buffer */
+	u_int64_t ਗਿਣਤੀ_2;			/* number of bits, mod 2^64 */
+	u_int8_t ਬਫਰ[MD5_ਖੰਡ_ਲੰਮਾਈ];	/* input buffer */
 } MD5_CTX;
 
-void	 MD5Init(MD5_CTX *);
-void	 MD5Update(MD5_CTX *, const u_int8_t *, size_t)
+ਖਾਲੀ	 MD5Init(MD5_CTX *);
+ਖਾਲੀ	 MD5Update(MD5_CTX *, ਅਚਲ u_int8_t *, ਮਾਪ_t)
 		__attribute__((__bounded__(__string__,2,3)));
-void	 MD5Pad(MD5_CTX *);
-void	 MD5Final(u_int8_t [MD5_DIGEST_LENGTH], MD5_CTX *)
-		__attribute__((__bounded__(__minbytes__,1,MD5_DIGEST_LENGTH)));
-void	 MD5Transform(u_int32_t [4], const u_int8_t [MD5_BLOCK_LENGTH])
+ਖਾਲੀ	 MD5Pad(MD5_CTX *);
+ਖਾਲੀ	 MD5Final(u_int8_t [MD5_DIGEST_ਲੰਮਾਈ], MD5_CTX *)
+		__attribute__((__bounded__(__minbytes__,1,MD5_DIGEST_ਲੰਮਾਈ)));
+ਖਾਲੀ	 MD5Transform(u_int32_t [4], ਅਚਲ u_int8_t [MD5_ਖੰਡ_ਲੰਮਾਈ])
 		__attribute__((__bounded__(__minbytes__,1,4)))
-		__attribute__((__bounded__(__minbytes__,2,MD5_BLOCK_LENGTH)));
-char	*MD5End(MD5_CTX *, char *)
-		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5File(const char *, char *)
-		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5FileChunk(const char *, char *, off_t, off_t)
-		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_LENGTH)));
-char	*MD5Data(const u_int8_t *, size_t, char *)
+		__attribute__((__bounded__(__minbytes__,2,MD5_ਖੰਡ_ਲੰਮਾਈ)));
+ਅੱਖਰ	*MD5_ਸਿਰਾ(MD5_CTX *, ਅੱਖਰ *)
+		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_ਲੰਮਾਈ)));
+ਅੱਖਰ	*MD5File(ਅਚਲ ਅੱਖਰ *, ਅੱਖਰ *)
+		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_ਲੰਮਾਈ)));
+ਅੱਖਰ	*MD5FileChunk(ਅਚਲ ਅੱਖਰ *, ਅੱਖਰ *, off_t, off_t)
+		__attribute__((__bounded__(__minbytes__,2,MD5_DIGEST_STRING_ਲੰਮਾਈ)));
+ਅੱਖਰ	*MD5_ਅੰਕੜੇ(ਅਚਲ u_int8_t *, ਮਾਪ_t, ਅੱਖਰ *)
 		__attribute__((__bounded__(__string__,1,2)))
-		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_LENGTH)));
+		__attribute__((__bounded__(__minbytes__,3,MD5_DIGEST_STRING_ਲੰਮਾਈ)));
 
-#endif /* !WITH_OPENSSL */
+#ਜੇ_ਅੰਤ /* !WITH_OPENSSL */
 
-#endif /* _MD5_H_ */
+#ਜੇ_ਅੰਤ /* _MD5_H_ */

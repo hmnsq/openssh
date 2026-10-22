@@ -5,74 +5,74 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/objects.h>
-#include <openssl/ec.h>
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/bn.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/objects.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/ec.h>
+#ਜੇ_ਅੰਤ
 
-#include "../test_helper/test_helper.h"
-#include "ssherr.h"
-#include "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../test_helper/test_helper.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
 
-void sshbuf_getput_fuzz_tests(void);
+ਖਾਲੀ sshbuf_getput_fuzz_tests(ਖਾਲੀ);
 
-static void
-attempt_parse_blob(u_char *blob, size_t len)
+ਸਥਿਰ ਖਾਲੀ
+attempt_parse_blob(u_char *blob, ਮਾਪ_t len)
 {
-	struct sshbuf *p1;
-#ifdef WITH_OPENSSL
+	ਬਣਤਰ sshbuf *p1;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 	BIGNUM *bn;
-	EC_KEY *eck;
-#endif /* WITH_OPENSSL */
+	EC_ਕੁੰਜੀ *eck;
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
 	u_char *s;
-	size_t l;
+	ਮਾਪ_t l;
 	uint8_t u8;
 	uint16_t u16;
 	uint32_t u32;
 	uint64_t u64;
 
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ਨਿਰਾ);
 	ASSERT_INT_EQ(sshbuf_put(p1, blob, len), 0);
 	ASSERT_INT_EQ(sshbuf_get_u8(p1, &u8), 0);
 	ASSERT_INT_EQ(sshbuf_get_u16(p1, &u16), 0);
 	ASSERT_INT_EQ(sshbuf_get_u32(p1, &u32), 0);
 	ASSERT_INT_EQ(sshbuf_get_u64(p1, &u64), 0);
-	if (sshbuf_get_string(p1, &s, &l) == 0) {
+	ਜੇ (sshbuf_get_string(p1, &s, &l) == 0) {
 		bzero(s, l);
-		free(s);
+		ਮੁਕਤ(s);
 	}
-#ifdef WITH_OPENSSL
-	bn = NULL;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+	bn = ਨਿਰਾ;
 	ASSERT_INT_EQ(sshbuf_get_bignum2(p1, &bn), 0);
 	BN_clear_free(bn);
-	eck = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
-	ASSERT_PTR_NE(eck, NULL);
+	eck = EC_ਕੁੰਜੀ_new_by_ਵਕਰ_name(NID_X9_62_prime256v1);
+	ASSERT_PTR_NE(eck, ਨਿਰਾ);
 	ASSERT_INT_EQ(sshbuf_get_eckey(p1, eck), 0);
-	EC_KEY_free(eck);
-#endif /* WITH_OPENSSL */
+	EC_ਕੁੰਜੀ_free(eck);
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
 	sshbuf_free(p1);
 }
 
 
-static void
-onerror(void *fuzz)
+ਸਥਿਰ ਖਾਲੀ
+onerror(ਖਾਲੀ *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((ਬਣਤਰ fuzz *)fuzz);
 }
 
-void
-sshbuf_getput_fuzz_tests(void)
+ਖਾਲੀ
+sshbuf_getput_fuzz_tests(ਖਾਲੀ)
 {
 	u_char blob[] = {
 		/* u8 */
@@ -104,21 +104,21 @@ sshbuf_getput_fuzz_tests(void)
 		0xc8, 0xf9, 0xa3, 0x5e, 0x42, 0xbd, 0xd0, 0x47,
 		0x55, 0x0f, 0x69, 0xd8, 0x0e, 0xc2, 0x3c, 0xd4,
 	};
-	struct fuzz *fuzz;
-	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_2_BIT_FLIP |
+	ਬਣਤਰ fuzz *fuzz;
+	u_int fuzzers = FUZZ_1_ਦੋਆਧਾਰੀ_ਅੰਕ_FLIP | FUZZ_2_ਦੋਆਧਾਰੀ_ਅੰਕ_FLIP |
 	    FUZZ_1_BYTE_FLIP | FUZZ_2_BYTE_FLIP |
-	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
+	    FUZZ_TRUNCATE_ਸ਼ੁਰੂ | FUZZ_TRUNCATE_ਸਿਰਾ;
 
-	if (test_is_fast())
-		fuzzers &= ~(FUZZ_2_BYTE_FLIP|FUZZ_2_BIT_FLIP);
+	ਜੇ (test_is_fast())
+		fuzzers &= ~(FUZZ_2_BYTE_FLIP|FUZZ_2_ਦੋਆਧਾਰੀ_ਅੰਕ_FLIP);
 
-	TEST_START("fuzz blob parsing");
-	fuzz = fuzz_begin(fuzzers, blob, sizeof(blob));
+	TEST_ਸ਼ੁਰੂ("fuzz blob parsing");
+	fuzz = fuzz_begin(fuzzers, blob, ਆਕਾਰ(blob));
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz))
-		attempt_parse_blob(blob, sizeof(blob));
+	ਲਈ(; !fuzz_ਪੂਰਾ(fuzz); fuzz_ਅਗਲਾ(fuzz))
+		attempt_parse_blob(blob, ਆਕਾਰ(blob));
 	fuzz_cleanup(fuzz);
-	TEST_DONE();
-	TEST_ONERROR(NULL, NULL);
+	TEST_ਪੂਰਾ();
+	TEST_ONERROR(ਨਿਰਾ, ਨਿਰਾ);
 }
 

@@ -5,36 +5,36 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "../test_helper/test_helper.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
 
-void test_expand(void);
+ਖਾਲੀ test_expand(ਖਾਲੀ);
 
-void
-test_expand(void)
+ਖਾਲੀ
+test_expand(ਖਾਲੀ)
 {
-	int parseerr;
-	char *ret;
+	ਪੂਰਨ parseerr;
+	ਅੱਖਰ *ret;
 
-	TEST_START("dollar_expand");
+	TEST_ਸ਼ੁਰੂ("dollar_expand");
 	ASSERT_INT_EQ(setenv("FOO", "bar", 1), 0);
 	ASSERT_INT_EQ(setenv("BAR", "baz", 1), 0);
-	(void)unsetenv("BAZ");
-#define ASSERT_DOLLAR_EQ(x, y) do { \
-	char *str = dollar_expand(NULL, (x)); \
+	(ਖਾਲੀ)unsetenv("BAZ");
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ASSERT_DOLLAR_EQ(x, y) ਕਰੋ { \
+	ਅੱਖਰ *str = dollar_expand(ਨਿਰਾ, (x)); \
 	ASSERT_STRING_EQ(str, (y)); \
-	free(str); \
-} while(0)
+	ਮੁਕਤ(str); \
+} ਜਦੋਂ(0)
 	ASSERT_DOLLAR_EQ("${FOO}", "bar");
 	ASSERT_DOLLAR_EQ(" ${FOO}", " bar");
 	ASSERT_DOLLAR_EQ("${FOO} ", "bar ");
@@ -51,46 +51,46 @@ test_expand(void)
 	log_init("test_misc", SYSLOG_LEVEL_QUIET, SYSLOG_FACILITY_AUTH, 1);
 	/* error checking, non existent variable */
 	ret = dollar_expand(&parseerr, "a${BAZ}");
-	ASSERT_PTR_EQ(ret, NULL); ASSERT_INT_EQ(parseerr, 0);
+	ASSERT_PTR_EQ(ret, ਨਿਰਾ); ASSERT_INT_EQ(parseerr, 0);
 	ret = dollar_expand(&parseerr, "${BAZ}b");
-	ASSERT_PTR_EQ(ret, NULL); ASSERT_INT_EQ(parseerr, 0);
+	ASSERT_PTR_EQ(ret, ਨਿਰਾ); ASSERT_INT_EQ(parseerr, 0);
 	ret = dollar_expand(&parseerr, "a${BAZ}b");
-	ASSERT_PTR_EQ(ret, NULL); ASSERT_INT_EQ(parseerr, 0);
+	ASSERT_PTR_EQ(ret, ਨਿਰਾ); ASSERT_INT_EQ(parseerr, 0);
 	/* invalid format */
 	ret = dollar_expand(&parseerr, "${");
-	ASSERT_PTR_EQ(ret, NULL); ASSERT_INT_EQ(parseerr, 1);
+	ASSERT_PTR_EQ(ret, ਨਿਰਾ); ASSERT_INT_EQ(parseerr, 1);
 	ret = dollar_expand(&parseerr, "${F");
-	ASSERT_PTR_EQ(ret, NULL); ASSERT_INT_EQ(parseerr, 1);
+	ASSERT_PTR_EQ(ret, ਨਿਰਾ); ASSERT_INT_EQ(parseerr, 1);
 	ret = dollar_expand(&parseerr, "${FO");
-	ASSERT_PTR_EQ(ret, NULL); ASSERT_INT_EQ(parseerr, 1);
+	ASSERT_PTR_EQ(ret, ਨਿਰਾ); ASSERT_INT_EQ(parseerr, 1);
 	/* empty variable name */
 	ret = dollar_expand(&parseerr, "${}");
-	ASSERT_PTR_EQ(ret, NULL); ASSERT_INT_EQ(parseerr, 1);
+	ASSERT_PTR_EQ(ret, ਨਿਰਾ); ASSERT_INT_EQ(parseerr, 1);
 	/* restore loglevel to default */
 	log_init("test_misc", SYSLOG_LEVEL_INFO, SYSLOG_FACILITY_AUTH, 1);
-	TEST_DONE();
+	TEST_ਪੂਰਾ();
 
-	TEST_START("percent_expand");
-#define CHECK_ONE(val, expect) \
+	TEST_ਸ਼ੁਰੂ("percent_expand");
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ CHECK_ONE(val, expect) \
 	ASSERT_STRING_EQ(val, expect); \
-	free(val);
-	ret = percent_expand("%%", "%h", "foo", NULL);
+	ਮੁਕਤ(val);
+	ret = percent_expand("%%", "%h", "foo", ਨਿਰਾ);
 	CHECK_ONE(ret, "%");
-	ret = percent_expand("%h", "h", "foo", NULL);
+	ret = percent_expand("%h", "h", "foo", ਨਿਰਾ);
 	CHECK_ONE(ret, "foo");
-	ret = percent_expand("%h ", "h", "foo", NULL);
+	ret = percent_expand("%h ", "h", "foo", ਨਿਰਾ);
 	CHECK_ONE(ret, "foo ");
-	ret = percent_expand(" %h", "h", "foo", NULL);
+	ret = percent_expand(" %h", "h", "foo", ਨਿਰਾ);
 	CHECK_ONE(ret, " foo");
-	ret = percent_expand(" %h ", "h", "foo", NULL);
+	ret = percent_expand(" %h ", "h", "foo", ਨਿਰਾ);
 	CHECK_ONE(ret, " foo ");
-	ret = percent_expand(" %a%b ", "a", "foo", "b", "bar", NULL);
+	ret = percent_expand(" %a%b ", "a", "foo", "b", "bar", ਨਿਰਾ);
 	CHECK_ONE(ret, " foobar ");
-	TEST_DONE();
+	TEST_ਪੂਰਾ();
 
-	TEST_START("percent_dollar_expand");
-	ret = percent_dollar_expand("%h${FOO}", "h", "foo", NULL);
+	TEST_ਸ਼ੁਰੂ("percent_dollar_expand");
+	ret = percent_dollar_expand("%h${FOO}", "h", "foo", ਨਿਰਾ);
 	CHECK_ONE(ret, "foobar");
-#undef CHECK_ONE
-	TEST_DONE();
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CHECK_ONE
+	TEST_ਪੂਰਾ();
 }

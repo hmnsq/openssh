@@ -24,48 +24,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifdef GSSAPI
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GSSAPI
 
-#include <sys/types.h>
-#include <sys/param.h>
-#include <sys/queue.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/param.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/queue.h>
 
-#include <netdb.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netdb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
-#include "channels.h"
-#include "session.h"
-#include "misc.h"
-#include "servconf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshkey.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hostfile.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "auth.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "channels.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "session.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "servconf.h"
 
-#include "ssh-gss.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh-gss.h"
 
-extern ServerOptions options;
+ਬਾਹਰੀ ServerOptions options;
 
-static ssh_gssapi_client gssapi_client =
-    { GSS_C_EMPTY_BUFFER, GSS_C_EMPTY_BUFFER,
-    GSS_C_NO_CREDENTIAL, NULL, {NULL, NULL, NULL, NULL}, 0};
+ਸਥਿਰ ssh_gssapi_client gssapi_client =
+    { GSS_C_ਖਾਲੀ_ਥਾਵਾਂ_ਬਫਰ, GSS_C_ਖਾਲੀ_ਥਾਵਾਂ_ਬਫਰ,
+    GSS_C_NO_CREDENTIAL, ਨਿਰਾ, {ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ}, 0};
 
 ssh_gssapi_mech gssapi_null_mech =
-    { NULL, NULL, {0, NULL}, NULL, NULL, NULL, NULL};
+    { ਨਿਰਾ, ਨਿਰਾ, {0, ਨਿਰਾ}, ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ, ਨਿਰਾ};
 
-#ifdef KRB5
-extern ssh_gssapi_mech gssapi_kerberos_mech;
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ KRB5
+ਬਾਹਰੀ ssh_gssapi_mech gssapi_kerberos_mech;
+#ਜੇ_ਅੰਤ
 
 ssh_gssapi_mech* supported_mechs[]= {
-#ifdef KRB5
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ KRB5
 	&gssapi_kerberos_mech,
-#endif
+#ਜੇ_ਅੰਤ
 	&gssapi_null_mech,
 };
 
@@ -73,20 +73,20 @@ ssh_gssapi_mech* supported_mechs[]= {
  * ssh_gssapi_supported_oids() can cause sandbox violations, so prepare the
  * list of supported mechanisms before privsep is set up.
  */
-static gss_OID_set supported_oids;
+ਸਥਿਰ gss_OID_ਸੈੱਟ supported_oids;
 
-void
-ssh_gssapi_prepare_supported_oids(void)
+ਖਾਲੀ
+ssh_gssapi_prepare_supported_oids(ਖਾਲੀ)
 {
 	ssh_gssapi_supported_oids(&supported_oids);
 }
 
 OM_uint32
-ssh_gssapi_test_oid_supported(OM_uint32 *ms, gss_OID member, int *present)
+ssh_gssapi_test_oid_supported(OM_uint32 *ms, gss_OID member, ਪੂਰਨ *present)
 {
-	if (supported_oids == NULL)
+	ਜੇ (supported_oids == ਨਿਰਾ)
 		ssh_gssapi_prepare_supported_oids();
-	return gss_test_oid_set_member(ms, member, supported_oids, present);
+	ਵਾਪਸ gss_test_oid_ਸੈੱਟ_member(ms, member, supported_oids, present);
 }
 
 /*
@@ -96,75 +96,75 @@ ssh_gssapi_test_oid_supported(OM_uint32 *ms, gss_OID member, int *present)
 
 /* Returns a GSSAPI error code */
 /* Privileged (called from ssh_gssapi_server_ctx) */
-static OM_uint32
+ਸਥਿਰ OM_uint32
 ssh_gssapi_acquire_cred(Gssctxt *ctx)
 {
-	OM_uint32 status;
-	char lname[NI_MAXHOST];
-	gss_OID_set oidset;
+	OM_uint32 ਸਥਿਤੀ;
+	ਅੱਖਰ lname[NI_MAXHOST];
+	gss_OID_ਸੈੱਟ oidset;
 
-	if (options.gss_strict_acceptor) {
-		gss_create_empty_oid_set(&status, &oidset);
-		gss_add_oid_set_member(&status, ctx->oid, &oidset);
+	ਜੇ (options.gss_strict_acceptor) {
+		gss_create_ਖਾਲੀ_ਥਾਵਾਂ_oid_ਸੈੱਟ(&ਸਥਿਤੀ, &oidset);
+		gss_ਜੋੜੋ_oid_ਸੈੱਟ_member(&ਸਥਿਤੀ, ctx->oid, &oidset);
 
-		if (gethostname(lname, sizeof(lname))) {
-			gss_release_oid_set(&status, &oidset);
-			return (-1);
+		ਜੇ (gethostname(lname, ਆਕਾਰ(lname))) {
+			gss_release_oid_ਸੈੱਟ(&ਸਥਿਤੀ, &oidset);
+			ਵਾਪਸ (-1);
 		}
 
-		if (GSS_ERROR(ssh_gssapi_import_name(ctx, lname))) {
-			gss_release_oid_set(&status, &oidset);
-			return (ctx->major);
+		ਜੇ (GSS_ERROR(ssh_gssapi_import_name(ctx, lname))) {
+			gss_release_oid_ਸੈੱਟ(&ਸਥਿਤੀ, &oidset);
+			ਵਾਪਸ (ctx->major);
 		}
 
-		if ((ctx->major = gss_acquire_cred(&ctx->minor,
+		ਜੇ ((ctx->major = gss_acquire_cred(&ctx->minor,
 		    ctx->name, 0, oidset, GSS_C_ACCEPT, &ctx->creds,
-		    NULL, NULL)))
+		    ਨਿਰਾ, ਨਿਰਾ)))
 			ssh_gssapi_error(ctx);
 
-		gss_release_oid_set(&status, &oidset);
-		return (ctx->major);
-	} else {
+		gss_release_oid_ਸੈੱਟ(&ਸਥਿਤੀ, &oidset);
+		ਵਾਪਸ (ctx->major);
+	} ਨਹੀਂਤਾਂ {
 		ctx->name = GSS_C_NO_NAME;
 		ctx->creds = GSS_C_NO_CREDENTIAL;
 	}
-	return GSS_S_COMPLETE;
+	ਵਾਪਸ GSS_S_COMPLETE;
 }
 
 /* Privileged */
 OM_uint32
 ssh_gssapi_server_ctx(Gssctxt **ctx, gss_OID oid)
 {
-	if (*ctx)
+	ਜੇ (*ctx)
 		ssh_gssapi_delete_ctx(ctx);
 	ssh_gssapi_build_ctx(ctx);
-	ssh_gssapi_set_oid(*ctx, oid);
-	return (ssh_gssapi_acquire_cred(*ctx));
+	ssh_gssapi_ਸੈੱਟ_oid(*ctx, oid);
+	ਵਾਪਸ (ssh_gssapi_acquire_cred(*ctx));
 }
 
 /* Unprivileged */
-void
-ssh_gssapi_supported_oids(gss_OID_set *oidset)
+ਖਾਲੀ
+ssh_gssapi_supported_oids(gss_OID_ਸੈੱਟ *oidset)
 {
-	int i = 0;
-	OM_uint32 min_status;
-	int present;
-	gss_OID_set supported;
+	ਪੂਰਨ i = 0;
+	OM_uint32 min_ਸਥਿਤੀ;
+	ਪੂਰਨ present;
+	gss_OID_ਸੈੱਟ supported;
 
-	gss_create_empty_oid_set(&min_status, oidset);
-	gss_indicate_mechs(&min_status, &supported);
+	gss_create_ਖਾਲੀ_ਥਾਵਾਂ_oid_ਸੈੱਟ(&min_ਸਥਿਤੀ, oidset);
+	gss_indicate_mechs(&min_ਸਥਿਤੀ, &supported);
 
-	while (supported_mechs[i]->name != NULL) {
-		if (GSS_ERROR(gss_test_oid_set_member(&min_status,
+	ਜਦੋਂ (supported_mechs[i]->name != ਨਿਰਾ) {
+		ਜੇ (GSS_ERROR(gss_test_oid_ਸੈੱਟ_member(&min_ਸਥਿਤੀ,
 		    &supported_mechs[i]->oid, supported, &present)))
 			present = 0;
-		if (present)
-			gss_add_oid_set_member(&min_status,
+		ਜੇ (present)
+			gss_ਜੋੜੋ_oid_ਸੈੱਟ_member(&min_ਸਥਿਤੀ,
 			    &supported_mechs[i]->oid, oidset);
 		i++;
 	}
 
-	gss_release_oid_set(&min_status, &supported);
+	gss_release_oid_ਸੈੱਟ(&min_ਸਥਿਤੀ, &supported);
 }
 
 
@@ -175,38 +175,38 @@ ssh_gssapi_supported_oids(gss_OID_set *oidset)
  */
 /* Privileged */
 OM_uint32
-ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *recv_tok,
-    gss_buffer_desc *send_tok, OM_uint32 *flags)
+ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_ਬਫਰ_desc *recv_tok,
+    gss_ਬਫਰ_desc *send_tok, OM_uint32 *flags)
 {
-	OM_uint32 status;
+	OM_uint32 ਸਥਿਤੀ;
 	gss_OID mech;
 
 	ctx->major = gss_accept_sec_context(&ctx->minor,
 	    &ctx->context, ctx->creds, recv_tok,
 	    GSS_C_NO_CHANNEL_BINDINGS, &ctx->client, &mech,
-	    send_tok, flags, NULL, &ctx->client_creds);
+	    send_tok, flags, ਨਿਰਾ, &ctx->client_creds);
 
-	if (GSS_ERROR(ctx->major))
+	ਜੇ (GSS_ERROR(ctx->major))
 		ssh_gssapi_error(ctx);
 
-	if (ctx->client_creds)
+	ਜੇ (ctx->client_creds)
 		debug("Received some client credentials");
-	else
+	ਨਹੀਂਤਾਂ
 		debug("Got no client credentials");
 
-	status = ctx->major;
+	ਸਥਿਤੀ = ctx->major;
 
 	/* Now, if we're complete and we have the right flags, then
 	 * we flag the user as also having been authenticated
 	 */
 
-	if (((flags == NULL) || ((*flags & GSS_C_MUTUAL_FLAG) &&
+	ਜੇ (((flags == ਨਿਰਾ) || ((*flags & GSS_C_MUTUAL_FLAG) &&
 	    (*flags & GSS_C_INTEG_FLAG))) && (ctx->major == GSS_S_COMPLETE)) {
-		if (ssh_gssapi_getclient(ctx, &gssapi_client))
+		ਜੇ (ssh_gssapi_getclient(ctx, &gssapi_client))
 			fatal("Couldn't convert client name");
 	}
 
-	return (status);
+	ਵਾਪਸ (ਸਥਿਤੀ);
 }
 
 /*
@@ -214,22 +214,22 @@ ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *recv_tok,
  * to use for ACL checking. It verifies that the name belongs the mechanism
  * originally selected.
  */
-static OM_uint32
-ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
+ਸਥਿਰ OM_uint32
+ssh_gssapi_parse_ename(Gssctxt *ctx, gss_ਬਫਰ_t ename, gss_ਬਫਰ_t name)
 {
 	u_char *tok;
-	OM_uint32 offset;
+	OM_uint32 ਵਿੱਥ;
 	OM_uint32 oidl;
 
-	tok = ename->value;
+	tok = ename->ਮੁੱਲ;
 
 	/*
 	 * Check that ename is long enough for all of the fixed length
 	 * header, and that the initial ID bytes are correct
 	 */
 
-	if (ename->length < 6 || memcmp(tok, "\x04\x01", 2) != 0)
-		return GSS_S_FAILURE;
+	ਜੇ (ename->ਲੰਮਾਈ < 6 || memcmp(tok, "\x04\x01", 2) != 0)
+		ਵਾਪਸ GSS_S_FAILURE;
 
 	/*
 	 * Extract the OID, and check it. Here GSSAPI breaks with tradition
@@ -245,29 +245,29 @@ ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 	 * Check the BER encoding for correct type and length, that the
 	 * string is long enough and that the OID matches that in our context
 	 */
-	if (tok[4] != 0x06 || tok[5] != oidl ||
-	    ename->length < oidl+6 ||
+	ਜੇ (tok[4] != 0x06 || tok[5] != oidl ||
+	    ename->ਲੰਮਾਈ < oidl+6 ||
 	    !ssh_gssapi_check_oid(ctx, tok+6, oidl))
-		return GSS_S_FAILURE;
+		ਵਾਪਸ GSS_S_FAILURE;
 
-	offset = oidl+6;
+	ਵਿੱਥ = oidl+6;
 
-	if (ename->length < offset+4)
-		return GSS_S_FAILURE;
+	ਜੇ (ename->ਲੰਮਾਈ < ਵਿੱਥ+4)
+		ਵਾਪਸ GSS_S_FAILURE;
 
-	name->length = get_u32(tok+offset);
-	offset += 4;
+	name->ਲੰਮਾਈ = get_u32(tok+ਵਿੱਥ);
+	ਵਿੱਥ += 4;
 
-	if (UINT_MAX - offset < name->length)
-		return GSS_S_FAILURE;
-	if (ename->length < offset+name->length)
-		return GSS_S_FAILURE;
+	ਜੇ (UINT_MAX - ਵਿੱਥ < name->ਲੰਮਾਈ)
+		ਵਾਪਸ GSS_S_FAILURE;
+	ਜੇ (ename->ਲੰਮਾਈ < ਵਿੱਥ+name->ਲੰਮਾਈ)
+		ਵਾਪਸ GSS_S_FAILURE;
 
-	name->value = xmalloc(name->length+1);
-	memcpy(name->value, tok+offset, name->length);
-	((char *)name->value)[name->length] = 0;
+	name->ਮੁੱਲ = xmalloc(name->ਲੰਮਾਈ+1);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(name->ਮੁੱਲ, tok+ਵਿੱਥ, name->ਲੰਮਾਈ);
+	((ਅੱਖਰ *)name->ਮੁੱਲ)[name->ਲੰਮਾਈ] = 0;
 
-	return GSS_S_COMPLETE;
+	ਵਾਪਸ GSS_S_COMPLETE;
 }
 
 /* Extract the client details from a given context. This can only reliably
@@ -277,52 +277,52 @@ ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 OM_uint32
 ssh_gssapi_getclient(Gssctxt *ctx, ssh_gssapi_client *client)
 {
-	int i = 0;
+	ਪੂਰਨ i = 0;
 
-	gss_buffer_desc ename;
+	gss_ਬਫਰ_desc ename;
 
 	client->userok = 0;
-	client->mech = NULL;
+	client->mech = ਨਿਰਾ;
 
-	while (supported_mechs[i]->name != NULL) {
-		if (supported_mechs[i]->oid.length == ctx->oid->length &&
+	ਜਦੋਂ (supported_mechs[i]->name != ਨਿਰਾ) {
+		ਜੇ (supported_mechs[i]->oid.ਲੰਮਾਈ == ctx->oid->ਲੰਮਾਈ &&
 		    (memcmp(supported_mechs[i]->oid.elements,
-		    ctx->oid->elements, ctx->oid->length) == 0))
+		    ctx->oid->elements, ctx->oid->ਲੰਮਾਈ) == 0))
 			client->mech = supported_mechs[i];
 		i++;
 	}
 
-	if (client->mech == NULL)
-		return GSS_S_FAILURE;
+	ਜੇ (client->mech == ਨਿਰਾ)
+		ਵਾਪਸ GSS_S_FAILURE;
 
-	if ((ctx->major = gss_display_name(&ctx->minor, ctx->client,
-	    &client->displayname, NULL))) {
+	ਜੇ ((ctx->major = gss_display_name(&ctx->minor, ctx->client,
+	    &client->displayname, ਨਿਰਾ))) {
 		ssh_gssapi_error(ctx);
-		return (ctx->major);
+		ਵਾਪਸ (ctx->major);
 	}
 
-	if ((ctx->major = gss_export_name(&ctx->minor, ctx->client,
+	ਜੇ ((ctx->major = gss_export_name(&ctx->minor, ctx->client,
 	    &ename))) {
 		ssh_gssapi_error(ctx);
-		return (ctx->major);
+		ਵਾਪਸ (ctx->major);
 	}
 
-	if ((ctx->major = ssh_gssapi_parse_ename(ctx,&ename,
+	ਜੇ ((ctx->major = ssh_gssapi_parse_ename(ctx,&ename,
 	    &client->exportedname))) {
-		return (ctx->major);
+		ਵਾਪਸ (ctx->major);
 	}
 
 	/* We can't copy this structure, so we just move the pointer to it */
 	client->creds = ctx->client_creds;
 	ctx->client_creds = GSS_C_NO_CREDENTIAL;
-	return (ctx->major);
+	ਵਾਪਸ (ctx->major);
 }
 
 /* As user - called on fatal/exit */
-void
-ssh_gssapi_cleanup_creds(void)
+ਖਾਲੀ
+ssh_gssapi_cleanup_creds(ਖਾਲੀ)
 {
-	if (gssapi_client.store.filename != NULL) {
+	ਜੇ (gssapi_client.store.filename != ਨਿਰਾ) {
 		/* Unlink probably isn't sufficient */
 		debug("removing gssapi cred file\"%s\"",
 		    gssapi_client.store.filename);
@@ -331,22 +331,22 @@ ssh_gssapi_cleanup_creds(void)
 }
 
 /* As user */
-void
-ssh_gssapi_storecreds(void)
+ਖਾਲੀ
+ssh_gssapi_storecreds(ਖਾਲੀ)
 {
-	if (!gssapi_client.userok) {
+	ਜੇ (!gssapi_client.userok) {
 		debug_f("GSSAPI client was not authorized, doing nothing");
-		return;
+		ਵਾਪਸ;
 	}
 
-	if (options.gss_deleg_creds == 0) {
+	ਜੇ (options.gss_deleg_creds == 0) {
 		debug_f("delegate credential is disabled, doing nothing");
-		return;
+		ਵਾਪਸ;
 	}
 
-	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
+	ਜੇ (gssapi_client.mech && gssapi_client.mech->storecreds) {
 		(*gssapi_client.mech->storecreds)(&gssapi_client);
-	} else
+	} ਨਹੀਂਤਾਂ
 		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
 }
 
@@ -354,70 +354,70 @@ ssh_gssapi_storecreds(void)
  * on the passed authentication process and credentials.
  */
 /* As user */
-void
-ssh_gssapi_do_child(char ***envp, u_int *envsizep)
+ਖਾਲੀ
+ssh_gssapi_do_ਬੱਚਾ(ਅੱਖਰ ***envp, u_int *envsizep)
 {
 
-	if (gssapi_client.store.envvar != NULL &&
-	    gssapi_client.store.envval != NULL) {
+	ਜੇ (gssapi_client.store.envvar != ਨਿਰਾ &&
+	    gssapi_client.store.envval != ਨਿਰਾ) {
 		debug("Setting %s to %s", gssapi_client.store.envvar,
 		    gssapi_client.store.envval);
-		child_set_env(envp, envsizep, gssapi_client.store.envvar,
+		ਬੱਚਾ_ਸੈੱਟ_env(envp, envsizep, gssapi_client.store.envvar,
 		    gssapi_client.store.envval);
 	}
 }
 
-void
-ssh_gssapi_cleanup_global_client(void)
+ਖਾਲੀ
+ssh_gssapi_cleanup_global_client(ਖਾਲੀ)
 {
 	OM_uint32 lmin;
 
-	gss_release_buffer(&lmin, &gssapi_client.displayname);
-	gss_release_buffer(&lmin, &gssapi_client.exportedname);
+	gss_release_ਬਫਰ(&lmin, &gssapi_client.displayname);
+	gss_release_ਬਫਰ(&lmin, &gssapi_client.exportedname);
 	gss_release_cred(&lmin, &gssapi_client.creds);
-	explicit_bzero(&gssapi_client, sizeof(ssh_gssapi_client));
+	explicit_bzero(&gssapi_client, ਆਕਾਰ(ssh_gssapi_client));
 }
 
 /* Privileged */
-int
-ssh_gssapi_userok(char *user)
+ਪੂਰਨ
+ssh_gssapi_userok(ਅੱਖਰ *user)
 {
-	if (gssapi_client.exportedname.length == 0 ||
-	    gssapi_client.exportedname.value == NULL) {
+	ਜੇ (gssapi_client.exportedname.ਲੰਮਾਈ == 0 ||
+	    gssapi_client.exportedname.ਮੁੱਲ == ਨਿਰਾ) {
 		debug("No suitable client data");
-		return 0;
+		ਵਾਪਸ 0;
 	}
-	if (gssapi_client.mech && gssapi_client.mech->userok)
-		if ((*gssapi_client.mech->userok)(&gssapi_client, user)) {
+	ਜੇ (gssapi_client.mech && gssapi_client.mech->userok)
+		ਜੇ ((*gssapi_client.mech->userok)(&gssapi_client, user)) {
 			gssapi_client.userok = 1;
-			return 1;
-		} else {
+			ਵਾਪਸ 1;
+		} ਨਹੀਂਤਾਂ {
 			/* Destroy delegated credentials if userok fails */
 			ssh_gssapi_cleanup_global_client();
-			return 0;
+			ਵਾਪਸ 0;
 		}
-	else
+	ਨਹੀਂਤਾਂ
 		debug("ssh_gssapi_userok: Unknown GSSAPI mechanism");
-	return (0);
+	ਵਾਪਸ (0);
 }
 
 /* Privileged */
 OM_uint32
-ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
+ssh_gssapi_checkmic(Gssctxt *ctx, gss_ਬਫਰ_t gssbuf, gss_ਬਫਰ_t gssmic)
 {
 	ctx->major = gss_verify_mic(&ctx->minor, ctx->context,
-	    gssbuf, gssmic, NULL);
+	    gssbuf, gssmic, ਨਿਰਾ);
 
-	return (ctx->major);
+	ਵਾਪਸ (ctx->major);
 }
 
 /* Privileged */
-const char *ssh_gssapi_displayname(void)
+ਅਚਲ ਅੱਖਰ *ssh_gssapi_displayname(ਖਾਲੀ)
 {
-	if (gssapi_client.displayname.length == 0 ||
-	    gssapi_client.displayname.value == NULL)
-		return NULL;
-	return (char *)gssapi_client.displayname.value;
+	ਜੇ (gssapi_client.displayname.ਲੰਮਾਈ == 0 ||
+	    gssapi_client.displayname.ਮੁੱਲ == ਨਿਰਾ)
+		ਵਾਪਸ ਨਿਰਾ;
+	ਵਾਪਸ (ਅੱਖਰ *)gssapi_client.displayname.ਮੁੱਲ;
 }
 
-#endif
+#ਜੇ_ਅੰਤ

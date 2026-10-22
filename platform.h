@@ -14,27 +14,27 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <pwd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <pwd.h>
 
-void platform_pre_listen(void);
-void platform_pre_fork(void);
-void platform_pre_restart(void);
-void platform_post_listen(void);
-void platform_post_fork_parent(pid_t child_pid);
-void platform_post_fork_child(void);
-void platform_pre_session_start(void);
-int  platform_privileged_uidswap(void);
-void platform_setusercontext(struct passwd *);
-void platform_setusercontext_post_groups(struct passwd *);
-char *platform_get_krb5_client(const char *);
-char *platform_krb5_get_principal_name(const char *);
-int platform_locked_account(struct passwd *);
-int platform_sys_dir_uid(uid_t);
-void platform_disable_tracing(int);
+ਖਾਲੀ platform_pre_listen(ਖਾਲੀ);
+ਖਾਲੀ platform_pre_fork(ਖਾਲੀ);
+ਖਾਲੀ platform_pre_restart(ਖਾਲੀ);
+ਖਾਲੀ platform_post_listen(ਖਾਲੀ);
+ਖਾਲੀ platform_post_fork_ਮਾਪਾ(pid_t ਬੱਚਾ_pid);
+ਖਾਲੀ platform_post_fork_ਬੱਚਾ(ਖਾਲੀ);
+ਖਾਲੀ platform_pre_session_ਸ਼ੁਰੂ(ਖਾਲੀ);
+ਪੂਰਨ  platform_privileged_uidswap(ਖਾਲੀ);
+ਖਾਲੀ platform_setusercontext(ਬਣਤਰ passwd *);
+ਖਾਲੀ platform_setusercontext_post_groups(ਬਣਤਰ passwd *);
+ਅੱਖਰ *platform_get_krb5_client(ਅਚਲ ਅੱਖਰ *);
+ਅੱਖਰ *platform_krb5_get_principal_name(ਅਚਲ ਅੱਖਰ *);
+ਪੂਰਨ platform_locked_account(ਬਣਤਰ passwd *);
+ਪੂਰਨ platform_sys_dir_uid(uid_t);
+ਖਾਲੀ platform_disable_tracing(ਪੂਰਨ);
 
 /* in platform-pledge.c */
-void platform_pledge_agent(void);
-void platform_pledge_sftp_server(void);
-void platform_pledge_mux(void);
+ਖਾਲੀ platform_pledge_agent(ਖਾਲੀ);
+ਖਾਲੀ platform_pledge_sftp_server(ਖਾਲੀ);
+ਖਾਲੀ platform_pledge_mux(ਖਾਲੀ);

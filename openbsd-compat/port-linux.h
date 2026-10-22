@@ -14,29 +14,29 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_LINUX_H
-#define _PORT_LINUX_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ਪੋਰਟ_LINUX_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਪੋਰਟ_LINUX_H
 
-#ifdef WITH_SELINUX
-int ssh_selinux_enabled(void);
-void ssh_selinux_setup_pty(char *, const char *);
-void ssh_selinux_setup_exec_context(char *);
-void ssh_selinux_change_context(const char *);
-void ssh_selinux_setfscreatecon(const char *);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_SELINUX
+ਪੂਰਨ ssh_selinux_enabled(ਖਾਲੀ);
+ਖਾਲੀ ssh_selinux_ਤਿਆਰੀ_pty(ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *);
+ਖਾਲੀ ssh_selinux_ਤਿਆਰੀ_exec_context(ਅੱਖਰ *);
+ਖਾਲੀ ssh_selinux_change_context(ਅਚਲ ਅੱਖਰ *);
+ਖਾਲੀ ssh_selinux_setfscreatecon(ਅਚਲ ਅੱਖਰ *);
+#ਜੇ_ਅੰਤ
 
-#ifdef LINUX_OOM_ADJUST
-void oom_adjust_restore(void);
-void oom_adjust_setup(void);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ LINUX_OOM_ADJUST
+ਖਾਲੀ oom_adjust_restore(ਖਾਲੀ);
+ਖਾਲੀ oom_adjust_ਤਿਆਰੀ(ਖਾਲੀ);
+#ਜੇ_ਅੰਤ
 
-#ifdef LINUX_MEMLOCK_ONFAULT
-void memlock_onfault_setup(void);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ LINUX_MEMLOCK_ONFAULT
+ਖਾਲੀ memlock_onfault_ਤਿਆਰੀ(ਖਾਲੀ);
+#ਜੇ_ਅੰਤ
 
-#ifdef SYSTEMD_NOTIFY
-void ssh_systemd_notify_ready(void);
-void ssh_systemd_notify_reload(void);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SYSTEMD_NOTIFY
+ਖਾਲੀ ssh_systemd_notify_ready(ਖਾਲੀ);
+ਖਾਲੀ ssh_systemd_notify_reload(ਖਾਲੀ);
+#ਜੇ_ਅੰਤ
 
-#endif /* ! _PORT_LINUX_H */
+#ਜੇ_ਅੰਤ /* ! _PORT_LINUX_H */

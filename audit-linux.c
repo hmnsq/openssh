@@ -25,37 +25,37 @@
  * Red Hat author: Jan F. Chadima <jchadima@redhat.com>
  */
 
-#include "includes.h"
-#if defined(USE_LINUX_AUDIT)
-#include <libaudit.h>
-#include <unistd.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
+#ਜੇ defined(USE_LINUX_AUDIT)
+#ਅਨ੍ਤਰ੍ਭਾਵ <libaudit.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "log.h"
-#include "audit.h"
-#include "canohost.h"
-#include "packet.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "audit.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "canohost.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "packet.h"
 
-const char *audit_username(void);
+ਅਚਲ ਅੱਖਰ *audit_username(ਖਾਲੀ);
 
-int
-linux_audit_record_event(int uid, const char *username, const char *hostname,
-    const char *ip, const char *ttyn, int success)
+ਪੂਰਨ
+linux_audit_ਰਿਕਾਰਡ_event(ਪੂਰਨ uid, ਅਚਲ ਅੱਖਰ *username, ਅਚਲ ਅੱਖਰ *hostname,
+    ਅਚਲ ਅੱਖਰ *ip, ਅਚਲ ਅੱਖਰ *ttyn, ਪੂਰਨ success)
 {
-	int audit_fd, rc, saved_errno;
+	ਪੂਰਨ audit_fd, rc, saved_errno;
 
-	if ((audit_fd = audit_open()) < 0) {
-		if (errno == EINVAL || errno == EPROTONOSUPPORT ||
+	ਜੇ ((audit_fd = audit_open()) < 0) {
+		ਜੇ (errno == EINVAL || errno == EPROTONOSUPPORT ||
 		    errno == EAFNOSUPPORT)
-			return 1; /* No audit support in kernel */
-		else
-			return 0; /* Must prevent login */
+			ਵਾਪਸ 1; /* No audit support in kernel */
+		ਨਹੀਂਤਾਂ
+			ਵਾਪਸ 0; /* Must prevent login */
 	}
-        if (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
-                hostname = NULL;
-	rc = audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
-	    NULL, "login", username ? username : "(unknown)",
-	    username == NULL ? uid : -1, hostname, ip, ttyn, success);
+        ਜੇ (hostname != ਨਿਰਾ && strcmp(hostname, "UNKNOWN") == 0)
+                hostname = ਨਿਰਾ;
+	rc = audit_log_acct_ਸੁਨੇਹਾ(audit_fd, AUDIT_USER_LOGIN,
+	    ਨਿਰਾ, "login", username ? username : "(unknown)",
+	    username == ਨਿਰਾ ? uid : -1, hostname, ip, ttyn, success);
 	saved_errno = errno;
 	close(audit_fd);
 
@@ -63,64 +63,64 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	ਜੇ ((rc == -EPERM) && (geteuid() != 0))
 		rc = 0;
 	errno = saved_errno;
 
-	return rc >= 0;
+	ਵਾਪਸ rc >= 0;
 }
 
 /* Below is the sshd audit API code */
 
-void
-audit_connection_from(const char *host, int port)
+ਖਾਲੀ
+audit_connection_from(ਅਚਲ ਅੱਖਰ *host, ਪੂਰਨ ਪੋਰਟ)
 {
 	/* not implemented */
 }
 
-void
-audit_run_command(const char *command)
+ਖਾਲੀ
+audit_ਲੜੀਵਾਰ_command(ਅਚਲ ਅੱਖਰ *command)
 {
 	/* not implemented */
 }
 
-void
-audit_session_open(struct logininfo *li)
+ਖਾਲੀ
+audit_session_open(ਬਣਤਰ logininfo *li)
 {
-	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
-	    li->line, 1) == 0)
+	ਜੇ (linux_audit_ਰਿਕਾਰਡ_event(li->uid, ਨਿਰਾ, li->hostname, ਨਿਰਾ,
+	    li->ਸਤਰ, 1) == 0)
 		fatal("linux_audit_write_entry failed: %s", strerror(errno));
 }
 
-void
-audit_session_close(struct logininfo *li)
+ਖਾਲੀ
+audit_session_close(ਬਣਤਰ logininfo *li)
 {
 	/* not implemented */
 }
 
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+ਖਾਲੀ
+audit_event(ਬਣਤਰ ssh *ssh, ssh_audit_event_t event)
 {
-	switch(event) {
-	case SSH_AUTH_SUCCESS:
-	case SSH_CONNECTION_CLOSE:
-	case SSH_NOLOGIN:
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
-		break;
-	case SSH_AUTH_FAIL_NONE:
-	case SSH_AUTH_FAIL_PASSWD:
-	case SSH_AUTH_FAIL_KBDINT:
-	case SSH_AUTH_FAIL_PUBKEY:
-	case SSH_AUTH_FAIL_HOSTBASED:
-	case SSH_AUTH_FAIL_GSSAPI:
-	case SSH_INVALID_USER:
-		linux_audit_record_event(-1, audit_username(), NULL,
+	ਚੋਣ(event) {
+	ਹਾਲਤ SSH_AUTH_SUCCESS:
+	ਹਾਲਤ SSH_CONNECTION_CLOSE:
+	ਹਾਲਤ SSH_NOLOGIN:
+	ਹਾਲਤ SSH_LOGIN_EXCEED_MAXTRIES:
+	ਹਾਲਤ SSH_LOGIN_ਜੜ੍ਹ_DENIED:
+		ਰੋਕੋ;
+	ਹਾਲਤ SSH_AUTH_FAIL_NONE:
+	ਹਾਲਤ SSH_AUTH_FAIL_PASSWD:
+	ਹਾਲਤ SSH_AUTH_FAIL_KBDINT:
+	ਹਾਲਤ SSH_AUTH_FAIL_PUBKEY:
+	ਹਾਲਤ SSH_AUTH_FAIL_HOSTBASED:
+	ਹਾਲਤ SSH_AUTH_FAIL_GSSAPI:
+	ਹਾਲਤ SSH_INVALID_USER:
+		linux_audit_ਰਿਕਾਰਡ_event(-1, audit_username(), ਨਿਰਾ,
 		    ssh_remote_ipaddr(ssh), "sshd", 0);
-		break;
-	default:
+		ਰੋਕੋ;
+	ਮੂਲ:
 		debug_f("unhandled event %d", event);
-		break;
+		ਰੋਕੋ;
 	}
 }
-#endif /* USE_LINUX_AUDIT */
+#ਜੇ_ਅੰਤ /* USE_LINUX_AUDIT */

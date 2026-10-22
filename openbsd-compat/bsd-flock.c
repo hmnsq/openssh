@@ -34,48 +34,48 @@
  * Otherwise, don't do locking; just pretend success.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifndef HAVE_FLOCK
-#include <errno.h>
-#include <fcntl.h>
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_FLOCK
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
 
-int
-flock(int fd, int op)
+ਪੂਰਨ
+flock(ਪੂਰਨ fd, ਪੂਰਨ op)
 {
-	int rc = 0;
+	ਪੂਰਨ rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
-	struct flock fl = {0};
+#ਜੇ defined(F_SETLK) && defined(F_SETLKW)
+	ਬਣਤਰ flock fl = {0};
 
-	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
-	case LOCK_EX:
+	ਚੋਣ (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
+	ਹਾਲਤ LOCK_EX:
 		fl.l_type = F_WRLCK;
-		break;
+		ਰੋਕੋ;
 
-	case LOCK_SH:
+	ਹਾਲਤ LOCK_SH:
 		fl.l_type = F_RDLCK;
-		break;
+		ਰੋਕੋ;
 
-	case LOCK_UN:
+	ਹਾਲਤ LOCK_UN:
 		fl.l_type = F_UNLCK;
-		break;
+		ਰੋਕੋ;
 
-	default:
+	ਮੂਲ:
 		errno = EINVAL;
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	fl.l_whence = SEEK_SET;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
+	ਜੇ (rc && (errno == EAGAIN))
 		errno = EWOULDBLOCK;
-#else
+#ਨਹੀਂਤਾਂ
 	rc = -1;
 	errno = ENOSYS;
-#endif
+#ਜੇ_ਅੰਤ
 
-	return rc;
+	ਵਾਪਸ rc;
 }
-#endif
+#ਜੇ_ਅੰਤ

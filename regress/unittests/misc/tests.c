@@ -5,31 +5,31 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "../test_helper/test_helper.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
 
-void test_parse(void);
-void test_convtime(void);
-void test_expand(void);
-void test_argv(void);
-void test_strdelim(void);
-void test_hpdelim(void);
-void test_ptimeout(void);
-void test_xextendf(void);
-void test_misc(void);
+ਖਾਲੀ test_parse(ਖਾਲੀ);
+ਖਾਲੀ test_convtime(ਖਾਲੀ);
+ਖਾਲੀ test_expand(ਖਾਲੀ);
+ਖਾਲੀ test_argv(ਖਾਲੀ);
+ਖਾਲੀ test_strdelim(ਖਾਲੀ);
+ਖਾਲੀ test_hpdelim(ਖਾਲੀ);
+ਖਾਲੀ test_ptimeout(ਖਾਲੀ);
+ਖਾਲੀ test_xextendf(ਖਾਲੀ);
+ਖਾਲੀ test_misc(ਖਾਲੀ);
 
-void
-tests(void)
+ਖਾਲੀ
+tests(ਖਾਲੀ)
 {
 	test_parse();
 	test_convtime();
@@ -42,8 +42,8 @@ tests(void)
 	test_misc();
 }
 
-void
-benchmarks(void)
+ਖਾਲੀ
+benchmarks(ਖਾਲੀ)
 {
-	printf("no benchmarks\n");
+	ਲਿਖੋ("no benchmarks\n");
 }

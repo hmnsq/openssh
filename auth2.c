@@ -23,310 +23,310 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/uio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/uio.h>
 
-#include <fcntl.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
-#include <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <pwd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
 
-#include "stdlib.h"
-#include "atomicio.h"
-#include "xmalloc.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "dispatch.h"
-#include "pathnames.h"
-#include "ssherr.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "digest.h"
-#include "kex.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "stdlib.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "atomicio.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh2.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "packet.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "servconf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshkey.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hostfile.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "auth.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "dispatch.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "pathnames.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GSSAPI
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh-gss.h"
+#ਜੇ_ਅੰਤ
+#ਅਨ੍ਤਰ੍ਭਾਵ "monitor_wrap.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "digest.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "kex.h"
 
 /* import */
-extern ServerOptions options;
-extern struct sshbuf *loginmsg;
+ਬਾਹਰੀ ServerOptions options;
+ਬਾਹਰੀ ਬਣਤਰ sshbuf *loginmsg;
 
 /* methods */
 
-extern Authmethod method_none;
-extern Authmethod method_pubkey;
-extern Authmethod method_passwd;
-extern Authmethod method_kbdint;
-extern Authmethod method_hostbased;
-#ifdef GSSAPI
-extern Authmethod method_gssapi;
-#endif
+ਬਾਹਰੀ Authmethod ਵਿਧੀ_none;
+ਬਾਹਰੀ Authmethod ਵਿਧੀ_pubkey;
+ਬਾਹਰੀ Authmethod ਵਿਧੀ_passwd;
+ਬਾਹਰੀ Authmethod ਵਿਧੀ_kbdint;
+ਬਾਹਰੀ Authmethod ਵਿਧੀ_hostbased;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GSSAPI
+ਬਾਹਰੀ Authmethod ਵਿਧੀ_gssapi;
+#ਜੇ_ਅੰਤ
 
 Authmethod *authmethods[] = {
-	&method_none,
-	&method_pubkey,
-#ifdef GSSAPI
-	&method_gssapi,
-#endif
-	&method_passwd,
-	&method_kbdint,
-	&method_hostbased,
-	NULL
+	&ਵਿਧੀ_none,
+	&ਵਿਧੀ_pubkey,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GSSAPI
+	&ਵਿਧੀ_gssapi,
+#ਜੇ_ਅੰਤ
+	&ਵਿਧੀ_passwd,
+	&ਵਿਧੀ_kbdint,
+	&ਵਿਧੀ_hostbased,
+	ਨਿਰਾ
 };
 
 /* protocol */
 
-static int input_service_request(int, uint32_t, struct ssh *);
-static int input_userauth_request(int, uint32_t, struct ssh *);
+ਸਥਿਰ ਪੂਰਨ ਨਿਵੇਸ਼_service_request(ਪੂਰਨ, uint32_t, ਬਣਤਰ ssh *);
+ਸਥਿਰ ਪੂਰਨ ਨਿਵੇਸ਼_userauth_request(ਪੂਰਨ, uint32_t, ਬਣਤਰ ssh *);
 
 /* helper */
-static Authmethod *authmethod_byname(const char *);
-static Authmethod *authmethod_lookup(Authctxt *, const char *);
-static char *authmethods_get(Authctxt *authctxt);
+ਸਥਿਰ Authmethod *authmethod_byname(ਅਚਲ ਅੱਖਰ *);
+ਸਥਿਰ Authmethod *authmethod_lookup(Authctxt *, ਅਚਲ ਅੱਖਰ *);
+ਸਥਿਰ ਅੱਖਰ *authmethods_get(Authctxt *authctxt);
 
-#define MATCH_NONE	0	/* method or submethod mismatch */
-#define MATCH_METHOD	1	/* method matches (no submethod specified) */
-#define MATCH_BOTH	2	/* method and submethod match */
-#define MATCH_PARTIAL	3	/* method matches, submethod can't be checked */
-static int list_starts_with(const char *, const char *, const char *);
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਮੇਲ_NONE	0	/* method or submethod mismatch */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਮੇਲ_ਵਿਧੀ	1	/* method matches (no submethod specified) */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਮੇਲ_BOTH	2	/* method and submethod match */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਮੇਲ_PARTIAL	3	/* method matches, submethod can't be checked */
+ਸਥਿਰ ਪੂਰਨ list_starts_with(ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *);
 
-char *
-auth2_read_banner(void)
+ਅੱਖਰ *
+auth2_read_banner(ਖਾਲੀ)
 {
-	struct stat st;
-	char *banner = NULL;
-	size_t len, n;
-	int fd;
+	ਬਣਤਰ stat st;
+	ਅੱਖਰ *banner = ਨਿਰਾ;
+	ਮਾਪ_t len, n;
+	ਪੂਰਨ fd;
 
-	if ((fd = open(options.banner, O_RDONLY)) == -1)
-		return (NULL);
-	if (fstat(fd, &st) == -1) {
+	ਜੇ ((fd = open(options.banner, O_RDONLY)) == -1)
+		ਵਾਪਸ (ਨਿਰਾ);
+	ਜੇ (fstat(fd, &st) == -1) {
 		close(fd);
-		return (NULL);
+		ਵਾਪਸ (ਨਿਰਾ);
 	}
-	if (st.st_size <= 0 || st.st_size > 1*1024*1024) {
+	ਜੇ (st.st_size <= 0 || st.st_size > 1*1024*1024) {
 		close(fd);
-		return (NULL);
+		ਵਾਪਸ (ਨਿਰਾ);
 	}
 
-	len = (size_t)st.st_size;		/* truncate */
+	len = (ਮਾਪ_t)st.st_size;		/* truncate */
 	banner = xmalloc(len + 1);
-	n = atomicio(read, fd, banner, len);
+	n = atomicio(ਪਠ, fd, banner, len);
 	close(fd);
 
-	if (n != len) {
-		free(banner);
-		return (NULL);
+	ਜੇ (n != len) {
+		ਮੁਕਤ(banner);
+		ਵਾਪਸ (ਨਿਰਾ);
 	}
 	banner[n] = '\0';
 
-	return (banner);
+	ਵਾਪਸ (banner);
 }
 
-static void
-userauth_send_banner(struct ssh *ssh, const char *msg)
+ਸਥਿਰ ਖਾਲੀ
+userauth_send_banner(ਬਣਤਰ ssh *ssh, ਅਚਲ ਅੱਖਰ *ਸੁਨੇਹਾ)
 {
-	int r;
+	ਪੂਰਨ r;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_BANNER)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, msg)) != 0 ||
+	ਜੇ ((r = sshpkt_ਸ਼ੁਰੂ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_BANNER)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, ਸੁਨੇਹਾ)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language, unused */
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 	debug_f("sent");
 }
 
-static void
-userauth_banner(struct ssh *ssh)
+ਸਥਿਰ ਖਾਲੀ
+userauth_banner(ਬਣਤਰ ssh *ssh)
 {
-	char *banner = NULL;
+	ਅੱਖਰ *banner = ਨਿਰਾ;
 
-	if (options.banner == NULL)
-		return;
+	ਜੇ (options.banner == ਨਿਰਾ)
+		ਵਾਪਸ;
 
-	if ((banner = mm_auth2_read_banner()) == NULL)
-		goto done;
+	ਜੇ ((banner = mm_auth2_read_banner()) == ਨਿਰਾ)
+		ਜਾਓ ਪੂਰਾ;
 	userauth_send_banner(ssh, banner);
 
-done:
-	free(banner);
+ਪੂਰਾ:
+	ਮੁਕਤ(banner);
 }
 
 /*
  * loop until authctxt->success == TRUE
  */
-void
-do_authentication2(struct ssh *ssh)
+ਖਾਲੀ
+do_authentication2(ਬਣਤਰ ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_error);
-	if (ssh->kex->ext_info_c)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_REQUEST, &input_service_request);
-	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &authctxt->success);
-	ssh->authctxt = NULL;
+	ਜੇ (ssh->kex->ext_info_c)
+		ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_EXT_INFO, &kex_ਨਿਵੇਸ਼_ext_info);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_SERVICE_REQUEST, &ਨਿਵੇਸ਼_service_request);
+	ssh_dispatch_ਲੜੀਵਾਰ_fatal(ssh, DISPATCH_ਖੰਡ, &authctxt->success);
+	ssh->authctxt = ਨਿਰਾ;
 }
 
-static int
-input_service_request(int type, uint32_t seq, struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ਨਿਵੇਸ਼_service_request(ਪੂਰਨ type, uint32_t seq, ਬਣਤਰ ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	char *service = NULL;
-	int r, acceptit = 0;
+	ਅੱਖਰ *service = ਨਿਰਾ;
+	ਪੂਰਨ r, acceptit = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+	ਜੇ ((r = sshpkt_get_cstring(ssh, &service, ਨਿਰਾ)) != 0 ||
+	    (r = sshpkt_get_ਸਿਰਾ(ssh)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
 
-	if (authctxt == NULL)
+	ਜੇ (authctxt == ਨਿਰਾ)
 		fatal("input_service_request: no authctxt");
 
-	if (strcmp(service, "ssh-userauth") == 0) {
-		if (!authctxt->success) {
+	ਜੇ (strcmp(service, "ssh-userauth") == 0) {
+		ਜੇ (!authctxt->success) {
 			acceptit = 1;
 			/* now we can handle user-auth requests */
-			ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
-			    &input_userauth_request);
+			ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_REQUEST,
+			    &ਨਿਵੇਸ਼_userauth_request);
 		}
 	}
 	/* XXX all other service requests are denied */
 
-	if (acceptit) {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_ACCEPT)) != 0 ||
+	ਜੇ (acceptit) {
+		ਜੇ ((r = sshpkt_ਸ਼ੁਰੂ(ssh, SSH2_ਸੁਨੇਹਾ_SERVICE_ACCEPT)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, service)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
-			goto out;
-	} else {
+			ਜਾਓ ਬਾਹਰਲਾ;
+	} ਨਹੀਂਤਾਂ {
 		debug("bad service request %s", service);
 		ssh_packet_disconnect(ssh, "bad service request %s", service);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &dispatch_protocol_error);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_EXT_INFO, &dispatch_protocol_error);
 	r = 0;
- out:
-	free(service);
-	return r;
+ ਬਾਹਰਲਾ:
+	ਮੁਕਤ(service);
+	ਵਾਪਸ r;
 }
 
-#define MIN_FAIL_DELAY_SECONDS 0.005
-#define MAX_FAIL_DELAY_SECONDS 5.0
-static double
-user_specific_delay(const char *user)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MIN_FAIL_DELAY_SECONDS 0.005
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_FAIL_DELAY_SECONDS 5.0
+ਸਥਿਰ ਦੁੱਗਣਾ
+user_specific_delay(ਅਚਲ ਅੱਖਰ *user)
 {
-	char b[512];
-	size_t len = ssh_digest_bytes(SSH_DIGEST_SHA512);
+	ਅੱਖਰ b[512];
+	ਮਾਪ_t len = ssh_digest_ਬਾਈਟਾਂ(SSH_DIGEST_SHA512);
 	u_char *hash = xmalloc(len);
-	double delay;
+	ਦੁੱਗਣਾ delay;
 
-	(void)snprintf(b, sizeof b, "%llu%s",
-	    (unsigned long long)options.timing_secret, user);
-	if (ssh_digest_memory(SSH_DIGEST_SHA512, b, strlen(b), hash, len) != 0)
+	(ਖਾਲੀ)snprintf(b, ਆਕਾਰ b, "%llu%s",
+	    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ ਲੰਮਾ)options.timing_secret, user);
+	ਜੇ (ssh_digest_ਸਮ੍ਰਿਤੀ(SSH_DIGEST_SHA512, b, ਲੜੀ_ਲੰਬਾਈ(b), hash, len) != 0)
 		fatal_f("ssh_digest_memory");
 	/* 0-4.2 ms of delay */
-	delay = (double)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
+	delay = (ਦੁੱਗਣਾ)PEEK_U32(hash) / 1000 / 1000 / 1000 / 1000;
 	freezero(hash, len);
 	debug3_f("user specific delay %0.3lfms", delay*1000);
-	return MIN_FAIL_DELAY_SECONDS + delay;
+	ਵਾਪਸ MIN_FAIL_DELAY_SECONDS + delay;
 }
 
-static void
-ensure_minimum_time_since(double start, double seconds)
+ਸਥਿਰ ਖਾਲੀ
+ensure_minimum_ਸਮਾਂ_since(ਦੁੱਗਣਾ ਸ਼ੁਰੂ, ਦੁੱਗਣਾ seconds)
 {
-	struct timespec ts;
-	double elapsed = monotime_double() - start, req = seconds, remain;
+	ਬਣਤਰ timespec ts;
+	ਦੁੱਗਣਾ elapsed = monotime_double() - ਸ਼ੁਰੂ, req = seconds, remain;
 
-	if (elapsed > MAX_FAIL_DELAY_SECONDS) {
+	ਜੇ (elapsed > MAX_FAIL_DELAY_SECONDS) {
 		debug3_f("elapsed %0.3lfms exceeded the max delay "
 		    "requested %0.3lfms)", elapsed*1000, req*1000);
-		return;
+		ਵਾਪਸ;
 	}
 
 	/* if we've already passed the requested time, scale up */
-	while ((remain = seconds - elapsed) < 0.0)
+	ਜਦੋਂ ((remain = seconds - elapsed) < 0.0)
 		seconds *= 2;
 
 	ts.tv_sec = remain;
 	ts.tv_nsec = (remain - ts.tv_sec) * 1000000000;
 	debug3_f("elapsed %0.3lfms, delaying %0.3lfms (requested %0.3lfms)",
 	    elapsed*1000, remain*1000, req*1000);
-	nanosleep(&ts, NULL);
+	nanosleep(&ts, ਨਿਰਾ);
 }
 
-void
-auth_failure_delay(Authctxt *authctxt, double tstart)
+ਖਾਲੀ
+auth_failure_delay(Authctxt *authctxt, ਦੁੱਗਣਾ tstart)
 {
-	ensure_minimum_time_since(tstart, user_specific_delay(authctxt->user));
+	ensure_minimum_ਸਮਾਂ_since(tstart, user_specific_delay(authctxt->user));
 }
 
-static int
-input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
+ਸਥਿਰ ਪੂਰਨ
+ਨਿਵੇਸ਼_userauth_request(ਪੂਰਨ type, uint32_t seq, ਬਣਤਰ ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	char *user = NULL, *service = NULL, *method = NULL, *style = NULL;
-	int r, authenticated = 0;
-	double tstart = monotime_double();
+	Authmethod *m = ਨਿਰਾ;
+	ਅੱਖਰ *user = ਨਿਰਾ, *service = ਨਿਰਾ, *ਵਿਧੀ = ਨਿਰਾ, *style = ਨਿਰਾ;
+	ਪੂਰਨ r, authenticated = 0;
+	ਦੁੱਗਣਾ tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ਜੇ (authctxt == ਨਿਰਾ)
 		fatal("input_userauth_request: no authctxt");
 
-	if ((r = sshpkt_get_cstring(ssh, &user, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &service, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &method, NULL)) != 0)
-		goto out;
-	debug("userauth-request for user %s service %s method %s", user, service, method);
+	ਜੇ ((r = sshpkt_get_cstring(ssh, &user, ਨਿਰਾ)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &service, ਨਿਰਾ)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &ਵਿਧੀ, ਨਿਰਾ)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	debug("userauth-request for user %s service %s method %s", user, service, ਵਿਧੀ);
 	debug("attempt %d failures %d", authctxt->attempt, authctxt->failures);
 
-	if ((style = strchr(user, ':')) != NULL)
+	ਜੇ ((style = strchr(user, ':')) != ਨਿਰਾ)
 		*style++ = 0;
 
-	if (authctxt->attempt >= 1024)
+	ਜੇ (authctxt->attempt >= 1024)
 		auth_maxtries_exceeded(ssh);
-	if (authctxt->attempt++ == 0) {
+	ਜੇ (authctxt->attempt++ == 0) {
 		/* setup auth context */
 		authctxt->pw = mm_getpwnamallow(ssh, user);
 		authctxt->user = xstrdup(user);
 		authctxt->service = xstrdup(service);
-		authctxt->style = style ? xstrdup(style) : NULL;
-		if (authctxt->pw && strcmp(service, "ssh-connection")==0) {
+		authctxt->style = style ? xstrdup(style) : ਨਿਰਾ;
+		ਜੇ (authctxt->pw && strcmp(service, "ssh-connection")==0) {
 			authctxt->valid = 1;
 			debug2_f("setting up authctxt for %s", user);
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			authctxt->valid = 0;
 			/* Invalid user, fake password information */
 			authctxt->pw = fakepw();
-#ifdef SSH_AUDIT_EVENTS
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SSH_AUDIT_EVENTS
 			mm_audit_event(ssh, SSH_INVALID_USER);
-#endif
+#ਜੇ_ਅੰਤ
 		}
-#ifdef USE_PAM
-		if (options.use_pam)
-			mm_start_pam(ssh);
-#endif
-		ssh_packet_set_log_preamble(ssh, "%suser %s",
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_PAM
+		ਜੇ (options.use_pam)
+			mm_ਸ਼ੁਰੂ_pam(ssh);
+#ਜੇ_ਅੰਤ
+		ssh_packet_ਸੈੱਟ_log_preamble(ssh, "%suser %s",
 		    authctxt->valid ? "authenticating " : "invalid ", user);
 		setproctitle("%s [net]", authctxt->valid ? user : "unknown");
 		mm_inform_authserv(service, style);
 		userauth_banner(ssh);
-		if ((r = kex_server_update_ext_info(ssh)) != 0)
+		ਜੇ ((r = kex_server_update_ext_info(ssh)) != 0)
 			fatal_fr(r, "kex_server_update_ext_info failed");
-		if (auth2_setup_methods_lists(authctxt) != 0)
+		ਜੇ (auth2_ਤਿਆਰੀ_methods_lists(authctxt) != 0)
 			ssh_packet_disconnect(ssh,
 			    "no authentication methods enabled");
-	} else if (strcmp(user, authctxt->user) != 0 ||
+	} ਨਹੀਂਤਾਂ ਜੇ (strcmp(user, authctxt->user) != 0 ||
 	    strcmp(service, authctxt->service) != 0) {
 		ssh_packet_disconnect(ssh, "Change of username or service "
 		    "not allowed: (%s,%s) -> (%s,%s)",
@@ -335,12 +335,12 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 	/* reset state */
 	auth2_challenge_stop(ssh);
 
-#ifdef GSSAPI
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ GSSAPI
 	ssh_gssapi_cleanup_global_client();
 	/* XXX move to auth2_gssapi_stop() */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-#endif
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_GSSAPI_TOKEN, ਨਿਰਾ);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ਨਿਰਾ);
+#ਜੇ_ਅੰਤ
 
 	auth2_authctxt_reset_info(authctxt);
 	authctxt->postponed = 0;
@@ -348,127 +348,127 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 	authctxt->auth_failure_already_counted = 0;
 
 	/* try to authenticate user */
-	m = authmethod_lookup(authctxt, method);
-	if (m != NULL && authctxt->failures < options.max_authtries) {
-		debug2("input_userauth_request: try method %s", method);
-		authenticated =	m->userauth(ssh, method);
+	m = authmethod_lookup(authctxt, ਵਿਧੀ);
+	ਜੇ (m != ਨਿਰਾ && authctxt->failures < options.max_authtries) {
+		debug2("input_userauth_request: try method %s", ਵਿਧੀ);
+		authenticated =	m->userauth(ssh, ਵਿਧੀ);
 	}
-	if (!authctxt->authenticated && strcmp(method, "none") != 0)
+	ਜੇ (!authctxt->authenticated && strcmp(ਵਿਧੀ, "none") != 0)
 		auth_failure_delay(authctxt, tstart);
 
-	userauth_finish(ssh, authenticated, method, NULL);
+	userauth_ਅੰਤ(ssh, authenticated, ਵਿਧੀ, ਨਿਰਾ);
 	r = 0;
- out:
-	free(service);
-	free(user);
-	free(method);
-	return r;
+ ਬਾਹਰਲਾ:
+	ਮੁਕਤ(service);
+	ਮੁਕਤ(user);
+	ਮੁਕਤ(ਵਿਧੀ);
+	ਵਾਪਸ r;
 }
 
-void
-userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
-    const char *submethod)
+ਖਾਲੀ
+userauth_ਅੰਤ(ਬਣਤਰ ssh *ssh, ਪੂਰਨ authenticated, ਅਚਲ ਅੱਖਰ *packet_ਵਿਧੀ,
+    ਅਚਲ ਅੱਖਰ *submethod)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	Authmethod *m = NULL;
-	const char *method = packet_method;
-	char *methods;
-	int r, partial = 0;
+	Authmethod *m = ਨਿਰਾ;
+	ਅਚਲ ਅੱਖਰ *ਵਿਧੀ = packet_ਵਿਧੀ;
+	ਅੱਖਰ *methods;
+	ਪੂਰਨ r, partial = 0;
 
-	if (authenticated) {
-		if (!authctxt->valid) {
+	ਜੇ (authenticated) {
+		ਜੇ (!authctxt->valid) {
 			fatal("INTERNAL ERROR: authenticated invalid user %s",
 			    authctxt->user);
 		}
-		if (authctxt->postponed)
+		ਜੇ (authctxt->postponed)
 			fatal("INTERNAL ERROR: authenticated and postponed");
 		/* prefer primary authmethod name to possible synonym */
-		if ((m = authmethod_byname(method)) == NULL)
-			fatal("INTERNAL ERROR: bad method %s", method);
-		method = m->cfg->name;
+		ਜੇ ((m = authmethod_byname(ਵਿਧੀ)) == ਨਿਰਾ)
+			fatal("INTERNAL ERROR: bad method %s", ਵਿਧੀ);
+		ਵਿਧੀ = m->cfg->name;
 	}
 
 	/* Special handling for root */
-	if (authenticated && authctxt->pw->pw_uid == 0 &&
-	    !auth_root_allowed(ssh, method)) {
+	ਜੇ (authenticated && authctxt->pw->pw_uid == 0 &&
+	    !auth_ਜੜ੍ਹ_allowed(ssh, ਵਿਧੀ)) {
 		authenticated = 0;
-#ifdef SSH_AUDIT_EVENTS
-		mm_audit_event(ssh, SSH_LOGIN_ROOT_DENIED);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SSH_AUDIT_EVENTS
+		mm_audit_event(ssh, SSH_LOGIN_ਜੜ੍ਹ_DENIED);
+#ਜੇ_ਅੰਤ
 	}
 
-	if (authenticated && options.num_auth_methods != 0) {
-		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
+	ਜੇ (authenticated && options.ਅੰਕ_auth_methods != 0) {
+		ਜੇ (!auth2_update_methods_lists(authctxt, ਵਿਧੀ, submethod)) {
 			authenticated = 0;
 			partial = 1;
 		}
 	}
 
 	/* Log before sending the reply */
-	auth_log(ssh, authenticated, partial, method, submethod);
+	auth_log(ssh, authenticated, partial, ਵਿਧੀ, submethod);
 
 	/* Update information exposed to session */
-	if (authenticated || partial)
-		auth2_update_session_info(authctxt, method, submethod);
+	ਜੇ (authenticated || partial)
+		auth2_update_session_info(authctxt, ਵਿਧੀ, submethod);
 
-	if (authctxt->postponed)
-		return;
+	ਜੇ (authctxt->postponed)
+		ਵਾਪਸ;
 
-#ifdef USE_PAM
-	if (options.use_pam && authenticated) {
-		int r, success = mm_do_pam_account();
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_PAM
+	ਜੇ (options.use_pam && authenticated) {
+		ਪੂਰਨ r, success = mm_do_pam_account();
 
 		/* If PAM returned a message, send it to the user. */
-		if (sshbuf_len(loginmsg) > 0) {
-			if ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
+		ਜੇ (sshbuf_len(loginmsg) > 0) {
+			ਜੇ ((r = sshbuf_put(loginmsg, "\0", 1)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
 			userauth_send_banner(ssh, sshbuf_ptr(loginmsg));
-			if ((r = ssh_packet_write_wait(ssh)) != 0) {
+			ਜੇ ((r = ssh_packet_write_wait(ssh)) != 0) {
 				sshpkt_fatal(ssh, r,
 				    "%s: send PAM banner", __func__);
 			}
 		}
-		if (!success) {
+		ਜੇ (!success) {
 			fatal("Access denied for user %s by PAM account "
 			    "configuration", authctxt->user);
 		}
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-	if (authenticated == 1) {
+	ਜੇ (authenticated == 1) {
 		/* turn off userauth */
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
+		ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_REQUEST,
 		    &dispatch_protocol_ignore);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_SUCCESS)) != 0 ||
+		ਜੇ ((r = sshpkt_ਸ਼ੁਰੂ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_SUCCESS)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send success packet");
 		/* now we can break out */
 		authctxt->success = 1;
-		ssh_packet_set_log_preamble(ssh, "user %s", authctxt->user);
-	} else {
+		ssh_packet_ਸੈੱਟ_log_preamble(ssh, "user %s", authctxt->user);
+	} ਨਹੀਂਤਾਂ {
 		/* Allow initial try of "none" auth without failure penalty */
-		if (!partial && !authctxt->server_caused_failure &&
+		ਜੇ (!partial && !authctxt->server_caused_failure &&
 		    !authctxt->auth_failure_already_counted &&
-		    (authctxt->attempt > 1 || strcmp(method, "none") != 0))
+		    (authctxt->attempt > 1 || strcmp(ਵਿਧੀ, "none") != 0))
 			authctxt->failures++;
-		if (authctxt->failures >= options.max_authtries) {
-#ifdef SSH_AUDIT_EVENTS
+		ਜੇ (authctxt->failures >= options.max_authtries) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SSH_AUDIT_EVENTS
 			mm_audit_event(ssh, SSH_LOGIN_EXCEED_MAXTRIES);
-#endif
+#ਜੇ_ਅੰਤ
 			auth_maxtries_exceeded(ssh);
 		}
 		methods = authmethods_get(authctxt);
 		debug3_f("failure partial=%d next methods=\"%s\"",
 		    partial, methods);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_FAILURE)) != 0 ||
+		ਜੇ ((r = sshpkt_ਸ਼ੁਰੂ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_FAILURE)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, methods)) != 0 ||
 		    (r = sshpkt_put_u8(ssh, partial)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send failure packet");
-		free(methods);
+		ਮੁਕਤ(methods);
 	}
 }
 
@@ -477,9 +477,9 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
  * methods list. Returns 1 if allowed, or no methods lists configured.
  * 0 otherwise.
  */
-int
-auth2_method_allowed(Authctxt *authctxt, const char *method,
-    const char *submethod)
+ਪੂਰਨ
+auth2_ਵਿਧੀ_allowed(Authctxt *authctxt, ਅਚਲ ਅੱਖਰ *ਵਿਧੀ,
+    ਅਚਲ ਅੱਖਰ *submethod)
 {
 	u_int i;
 
@@ -487,79 +487,79 @@ auth2_method_allowed(Authctxt *authctxt, const char *method,
 	 * NB. authctxt->num_auth_methods might be zero as a result of
 	 * auth2_setup_methods_lists(), so check the configuration.
 	 */
-	if (options.num_auth_methods == 0)
-		return 1;
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (list_starts_with(authctxt->auth_methods[i], method,
-		    submethod) != MATCH_NONE)
-			return 1;
+	ਜੇ (options.ਅੰਕ_auth_methods == 0)
+		ਵਾਪਸ 1;
+	ਲਈ (i = 0; i < authctxt->ਅੰਕ_auth_methods; i++) {
+		ਜੇ (list_starts_with(authctxt->auth_methods[i], ਵਿਧੀ,
+		    submethod) != ਮੇਲ_NONE)
+			ਵਾਪਸ 1;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static char *
+ਸਥਿਰ ਅੱਖਰ *
 authmethods_get(Authctxt *authctxt)
 {
-	struct sshbuf *b;
-	char *list;
-	int i, r;
+	ਬਣਤਰ sshbuf *b;
+	ਅੱਖਰ *list;
+	ਪੂਰਨ i, r;
 
-	if ((b = sshbuf_new()) == NULL)
+	ਜੇ ((b = sshbuf_new()) == ਨਿਰਾ)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(authmethods[i]->cfg->name, "none") == 0)
-			continue;
-		if (authmethods[i]->cfg->enabled == NULL ||
+	ਲਈ (i = 0; authmethods[i] != ਨਿਰਾ; i++) {
+		ਜੇ (strcmp(authmethods[i]->cfg->name, "none") == 0)
+			ਜਾਰੀ;
+		ਜੇ (authmethods[i]->cfg->enabled == ਨਿਰਾ ||
 		    *(authmethods[i]->cfg->enabled) == 0)
-			continue;
-		if (!auth2_method_allowed(authctxt, authmethods[i]->cfg->name,
-		    NULL))
-			continue;
-		if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
+			ਜਾਰੀ;
+		ਜੇ (!auth2_ਵਿਧੀ_allowed(authctxt, authmethods[i]->cfg->name,
+		    ਨਿਰਾ))
+			ਜਾਰੀ;
+		ਜੇ ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) ? "," : "",
 		    authmethods[i]->cfg->name)) != 0)
 			fatal_fr(r, "buffer error");
 	}
-	if ((list = sshbuf_dup_string(b)) == NULL)
+	ਜੇ ((list = sshbuf_dup_string(b)) == ਨਿਰਾ)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
-	return list;
+	ਵਾਪਸ list;
 }
 
-static Authmethod *
-authmethod_byname(const char *name)
+ਸਥਿਰ Authmethod *
+authmethod_byname(ਅਚਲ ਅੱਖਰ *name)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	if (name == NULL)
+	ਜੇ (name == ਨਿਰਾ)
 		fatal_f("NULL authentication method name");
-	for (i = 0; authmethods[i] != NULL; i++) {
-		if (strcmp(name, authmethods[i]->cfg->name) == 0 ||
-		    (authmethods[i]->cfg->synonym != NULL &&
+	ਲਈ (i = 0; authmethods[i] != ਨਿਰਾ; i++) {
+		ਜੇ (strcmp(name, authmethods[i]->cfg->name) == 0 ||
+		    (authmethods[i]->cfg->synonym != ਨਿਰਾ &&
 		    strcmp(name, authmethods[i]->cfg->synonym) == 0))
-			return authmethods[i];
+			ਵਾਪਸ authmethods[i];
 	}
 	debug_f("unrecognized authentication method name: %s", name);
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-static Authmethod *
-authmethod_lookup(Authctxt *authctxt, const char *name)
+ਸਥਿਰ Authmethod *
+authmethod_lookup(Authctxt *authctxt, ਅਚਲ ਅੱਖਰ *name)
 {
-	Authmethod *method;
+	Authmethod *ਵਿਧੀ;
 
-	if ((method = authmethod_byname(name)) == NULL)
-		return NULL;
+	ਜੇ ((ਵਿਧੀ = authmethod_byname(name)) == ਨਿਰਾ)
+		ਵਾਪਸ ਨਿਰਾ;
 
-	if (method->cfg->enabled == NULL || *(method->cfg->enabled) == 0) {
+	ਜੇ (ਵਿਧੀ->cfg->enabled == ਨਿਰਾ || *(ਵਿਧੀ->cfg->enabled) == 0) {
 		debug3_f("method %s not enabled", name);
-		return NULL;
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	if (!auth2_method_allowed(authctxt, method->cfg->name, NULL)) {
+	ਜੇ (!auth2_ਵਿਧੀ_allowed(authctxt, ਵਿਧੀ->cfg->name, ਨਿਰਾ)) {
 		debug3_f("method %s not allowed "
 		    "by AuthenticationMethods", name);
-		return NULL;
+		ਵਾਪਸ ਨਿਰਾ;
 	}
-	return method;
+	ਵਾਪਸ ਵਿਧੀ;
 }
 
 /*
@@ -569,70 +569,70 @@ authmethod_lookup(Authctxt *authctxt, const char *name)
  * has been requested. For this reason, all tests for whether multiple is
  * enabled should consult options.num_auth_methods directly.
  */
-int
-auth2_setup_methods_lists(Authctxt *authctxt)
+ਪੂਰਨ
+auth2_ਤਿਆਰੀ_methods_lists(Authctxt *authctxt)
 {
 	u_int i;
 
 	/* First, normalise away the "any" pseudo-method */
-	if (options.num_auth_methods == 1 &&
+	ਜੇ (options.ਅੰਕ_auth_methods == 1 &&
 	    strcmp(options.auth_methods[0], "any") == 0) {
-		free(options.auth_methods[0]);
-		options.auth_methods[0] = NULL;
-		options.num_auth_methods = 0;
+		ਮੁਕਤ(options.auth_methods[0]);
+		options.auth_methods[0] = ਨਿਰਾ;
+		options.ਅੰਕ_auth_methods = 0;
 	}
 
-	if (options.num_auth_methods == 0)
-		return 0;
+	ਜੇ (options.ਅੰਕ_auth_methods == 0)
+		ਵਾਪਸ 0;
 	debug3_f("checking methods");
-	authctxt->auth_methods = xcalloc(options.num_auth_methods,
-	    sizeof(*authctxt->auth_methods));
-	authctxt->num_auth_methods = 0;
-	for (i = 0; i < options.num_auth_methods; i++) {
-		if (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
+	authctxt->auth_methods = xcalloc(options.ਅੰਕ_auth_methods,
+	    ਆਕਾਰ(*authctxt->auth_methods));
+	authctxt->ਅੰਕ_auth_methods = 0;
+	ਲਈ (i = 0; i < options.ਅੰਕ_auth_methods; i++) {
+		ਜੇ (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
 			logit("Authentication methods list \"%s\" contains "
 			    "disabled method, skipping",
 			    options.auth_methods[i]);
-			continue;
+			ਜਾਰੀ;
 		}
 		debug("authentication methods list %d: %s",
-		    authctxt->num_auth_methods, options.auth_methods[i]);
-		authctxt->auth_methods[authctxt->num_auth_methods++] =
+		    authctxt->ਅੰਕ_auth_methods, options.auth_methods[i]);
+		authctxt->auth_methods[authctxt->ਅੰਕ_auth_methods++] =
 		    xstrdup(options.auth_methods[i]);
 	}
-	if (authctxt->num_auth_methods == 0) {
+	ਜੇ (authctxt->ਅੰਕ_auth_methods == 0) {
 		error("No AuthenticationMethods left after eliminating "
 		    "disabled methods");
-		return -1;
+		ਵਾਪਸ -1;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int
-list_starts_with(const char *methods, const char *method,
-    const char *submethod)
+ਸਥਿਰ ਪੂਰਨ
+list_starts_with(ਅਚਲ ਅੱਖਰ *methods, ਅਚਲ ਅੱਖਰ *ਵਿਧੀ,
+    ਅਚਲ ਅੱਖਰ *submethod)
 {
-	size_t l = strlen(method);
-	int match;
-	const char *p;
+	ਮਾਪ_t l = ਲੜੀ_ਲੰਬਾਈ(ਵਿਧੀ);
+	ਪੂਰਨ ਮੇਲ;
+	ਅਚਲ ਅੱਖਰ *p;
 
-	if (strncmp(methods, method, l) != 0)
-		return MATCH_NONE;
+	ਜੇ (ਲੜੀ_ਤੁਲਨਾ(methods, ਵਿਧੀ, l) != 0)
+		ਵਾਪਸ ਮੇਲ_NONE;
 	p = methods + l;
-	match = MATCH_METHOD;
-	if (*p == ':') {
-		if (!submethod)
-			return MATCH_PARTIAL;
-		l = strlen(submethod);
+	ਮੇਲ = ਮੇਲ_ਵਿਧੀ;
+	ਜੇ (*p == ':') {
+		ਜੇ (!submethod)
+			ਵਾਪਸ ਮੇਲ_PARTIAL;
+		l = ਲੜੀ_ਲੰਬਾਈ(submethod);
 		p += 1;
-		if (strncmp(submethod, p, l))
-			return MATCH_NONE;
+		ਜੇ (ਲੜੀ_ਤੁਲਨਾ(submethod, p, l))
+			ਵਾਪਸ ਮੇਲ_NONE;
 		p += l;
-		match = MATCH_BOTH;
+		ਮੇਲ = ਮੇਲ_BOTH;
 	}
-	if (*p != ',' && *p != '\0')
-		return MATCH_NONE;
-	return match;
+	ਜੇ (*p != ',' && *p != '\0')
+		ਵਾਪਸ ਮੇਲ_NONE;
+	ਵਾਪਸ ਮੇਲ;
 }
 
 /*
@@ -640,24 +640,24 @@ list_starts_with(const char *methods, const char *method,
  * Returns 0 if the list of methods did not start with that method or 1
  * if it did.
  */
-static int
-remove_method(char **methods, const char *method, const char *submethod)
+ਸਥਿਰ ਪੂਰਨ
+remove_ਵਿਧੀ(ਅੱਖਰ **methods, ਅਚਲ ਅੱਖਰ *ਵਿਧੀ, ਅਚਲ ਅੱਖਰ *submethod)
 {
-	char *omethods = *methods, *p;
-	size_t l = strlen(method);
-	int match;
+	ਅੱਖਰ *omethods = *methods, *p;
+	ਮਾਪ_t l = ਲੜੀ_ਲੰਬਾਈ(ਵਿਧੀ);
+	ਪੂਰਨ ਮੇਲ;
 
-	match = list_starts_with(omethods, method, submethod);
-	if (match != MATCH_METHOD && match != MATCH_BOTH)
-		return 0;
+	ਮੇਲ = list_starts_with(omethods, ਵਿਧੀ, submethod);
+	ਜੇ (ਮੇਲ != ਮੇਲ_ਵਿਧੀ && ਮੇਲ != ਮੇਲ_BOTH)
+		ਵਾਪਸ 0;
 	p = omethods + l;
-	if (submethod && match == MATCH_BOTH)
-		p += 1 + strlen(submethod); /* include colon */
-	if (*p == ',')
+	ਜੇ (submethod && ਮੇਲ == ਮੇਲ_BOTH)
+		p += 1 + ਲੜੀ_ਲੰਬਾਈ(submethod); /* include colon */
+	ਜੇ (*p == ',')
 		p++;
 	*methods = xstrdup(p);
-	free(omethods);
-	return 1;
+	ਮੁਕਤ(omethods);
+	ਵਾਪਸ 1;
 }
 
 /*
@@ -666,55 +666,55 @@ remove_method(char **methods, const char *method, const char *submethod)
  * in any list, then authentication is deemed successful.
  * Returns 1 if the method completed any authentication list or 0 otherwise.
  */
-int
-auth2_update_methods_lists(Authctxt *authctxt, const char *method,
-    const char *submethod)
+ਪੂਰਨ
+auth2_update_methods_lists(Authctxt *authctxt, ਅਚਲ ਅੱਖਰ *ਵਿਧੀ,
+    ਅਚਲ ਅੱਖਰ *submethod)
 {
-	u_int i, found = 0;
+	u_int i, ਮਿਲਿਆ = 0;
 
-	debug3_f("updating methods list after \"%s\"", method);
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
-		if (!remove_method(&(authctxt->auth_methods[i]), method,
+	debug3_f("updating methods list after \"%s\"", ਵਿਧੀ);
+	ਲਈ (i = 0; i < authctxt->ਅੰਕ_auth_methods; i++) {
+		ਜੇ (!remove_ਵਿਧੀ(&(authctxt->auth_methods[i]), ਵਿਧੀ,
 		    submethod))
-			continue;
-		found = 1;
-		if (*authctxt->auth_methods[i] == '\0') {
+			ਜਾਰੀ;
+		ਮਿਲਿਆ = 1;
+		ਜੇ (*authctxt->auth_methods[i] == '\0') {
 			debug2("authentication methods list %d complete", i);
-			return 1;
+			ਵਾਪਸ 1;
 		}
 		debug3("authentication methods list %d remaining: \"%s\"",
 		    i, authctxt->auth_methods[i]);
 	}
 	/* This should not happen, but would be bad if it did */
-	if (!found)
+	ਜੇ (!ਮਿਲਿਆ)
 		fatal_f("method not in AuthenticationMethods");
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /* Reset method-specific information */
-void auth2_authctxt_reset_info(Authctxt *authctxt)
+ਖਾਲੀ auth2_authctxt_reset_info(Authctxt *authctxt)
 {
-	sshkey_free(authctxt->auth_method_key);
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_key = NULL;
-	authctxt->auth_method_info = NULL;
+	sshkey_free(authctxt->auth_ਵਿਧੀ_ਕੁੰਜੀ);
+	ਮੁਕਤ(authctxt->auth_ਵਿਧੀ_info);
+	authctxt->auth_ਵਿਧੀ_ਕੁੰਜੀ = ਨਿਰਾ;
+	authctxt->auth_ਵਿਧੀ_info = ਨਿਰਾ;
 }
 
 /* Record auth method-specific information for logs */
-void
-auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
+ਖਾਲੀ
+auth2_ਰਿਕਾਰਡ_info(Authctxt *authctxt, ਅਚਲ ਅੱਖਰ *fmt, ...)
 {
 	va_list ap;
-	int i;
+	ਪੂਰਨ i;
 
-	free(authctxt->auth_method_info);
-	authctxt->auth_method_info = NULL;
+	ਮੁਕਤ(authctxt->auth_ਵਿਧੀ_info);
+	authctxt->auth_ਵਿਧੀ_info = ਨਿਰਾ;
 
 	va_start(ap, fmt);
-	i = vasprintf(&authctxt->auth_method_info, fmt, ap);
+	i = vasprintf(&authctxt->auth_ਵਿਧੀ_info, fmt, ap);
 	va_end(ap);
 
-	if (i == -1)
+	ਜੇ (i == -1)
 		fatal_f("vasprintf failed");
 }
 
@@ -723,95 +723,95 @@ auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
  * and to ensure that the same key is not subsequently accepted again for
  * multiple authentication.
  */
-void
-auth2_record_key(Authctxt *authctxt, int authenticated,
-    const struct sshkey *key)
+ਖਾਲੀ
+auth2_ਰਿਕਾਰਡ_ਕੁੰਜੀ(Authctxt *authctxt, ਪੂਰਨ authenticated,
+    ਅਚਲ ਬਣਤਰ sshkey *ਕੁੰਜੀ)
 {
-	struct sshkey **tmp, *dup;
-	int r;
+	ਬਣਤਰ sshkey **tmp, *dup;
+	ਪੂਰਨ r;
 
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	ਜੇ ((r = sshkey_from_ਨਿੱਜੀ(ਕੁੰਜੀ, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	sshkey_free(authctxt->auth_method_key);
-	authctxt->auth_method_key = dup;
+	sshkey_free(authctxt->auth_ਵਿਧੀ_ਕੁੰਜੀ);
+	authctxt->auth_ਵਿਧੀ_ਕੁੰਜੀ = dup;
 
-	if (!authenticated)
-		return;
+	ਜੇ (!authenticated)
+		ਵਾਪਸ;
 
 	/* If authenticated, make sure we don't accept this key again */
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	ਜੇ ((r = sshkey_from_ਨਿੱਜੀ(ਕੁੰਜੀ, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	if (authctxt->nprev_keys >= INT_MAX ||
-	    (tmp = recallocarray(authctxt->prev_keys, authctxt->nprev_keys,
-	    authctxt->nprev_keys + 1, sizeof(*authctxt->prev_keys))) == NULL)
+	ਜੇ (authctxt->nprev_ਕੁੰਜੀਆਂ >= ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ ||
+	    (tmp = recallocarray(authctxt->prev_ਕੁੰਜੀਆਂ, authctxt->nprev_ਕੁੰਜੀਆਂ,
+	    authctxt->nprev_ਕੁੰਜੀਆਂ + 1, ਆਕਾਰ(*authctxt->prev_ਕੁੰਜੀਆਂ))) == ਨਿਰਾ)
 		fatal_f("reallocarray failed");
-	authctxt->prev_keys = tmp;
-	authctxt->prev_keys[authctxt->nprev_keys] = dup;
-	authctxt->nprev_keys++;
+	authctxt->prev_ਕੁੰਜੀਆਂ = tmp;
+	authctxt->prev_ਕੁੰਜੀਆਂ[authctxt->nprev_ਕੁੰਜੀਆਂ] = dup;
+	authctxt->nprev_ਕੁੰਜੀਆਂ++;
 
 }
 
 /* Checks whether a key has already been previously used for authentication */
-int
-auth2_key_already_used(Authctxt *authctxt, const struct sshkey *key)
+ਪੂਰਨ
+auth2_ਕੁੰਜੀ_already_ਵਰਤਿਆ(Authctxt *authctxt, ਅਚਲ ਬਣਤਰ sshkey *ਕੁੰਜੀ)
 {
 	u_int i;
-	char *fp;
+	ਅੱਖਰ *fp;
 
-	for (i = 0; i < authctxt->nprev_keys; i++) {
-		if (sshkey_equal_public(key, authctxt->prev_keys[i])) {
-			fp = sshkey_fingerprint(authctxt->prev_keys[i],
+	ਲਈ (i = 0; i < authctxt->nprev_ਕੁੰਜੀਆਂ; i++) {
+		ਜੇ (sshkey_equal_ਜਨਤਕ(ਕੁੰਜੀ, authctxt->prev_ਕੁੰਜੀਆਂ[i])) {
+			fp = sshkey_fingerprint(authctxt->prev_ਕੁੰਜੀਆਂ[i],
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
 			debug3_f("key already used: %s %s",
-			    sshkey_type(authctxt->prev_keys[i]),
-			    fp == NULL ? "UNKNOWN" : fp);
-			free(fp);
-			return 1;
+			    sshkey_type(authctxt->prev_ਕੁੰਜੀਆਂ[i]),
+			    fp == ਨਿਰਾ ? "UNKNOWN" : fp);
+			ਮੁਕਤ(fp);
+			ਵਾਪਸ 1;
 		}
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
  * Updates authctxt->session_info with details of authentication. Should be
  * whenever an authentication method succeeds.
  */
-void
-auth2_update_session_info(Authctxt *authctxt, const char *method,
-    const char *submethod)
+ਖਾਲੀ
+auth2_update_session_info(Authctxt *authctxt, ਅਚਲ ਅੱਖਰ *ਵਿਧੀ,
+    ਅਚਲ ਅੱਖਰ *submethod)
 {
-	int r;
+	ਪੂਰਨ r;
 
-	if (authctxt->session_info == NULL) {
-		if ((authctxt->session_info = sshbuf_new()) == NULL)
+	ਜੇ (authctxt->session_info == ਨਿਰਾ) {
+		ਜੇ ((authctxt->session_info = sshbuf_new()) == ਨਿਰਾ)
 			fatal_f("sshbuf_new");
 	}
 
 	/* Append method[/submethod] */
-	if ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
-	    method, submethod == NULL ? "" : "/",
-	    submethod == NULL ? "" : submethod)) != 0)
+	ਜੇ ((r = sshbuf_putf(authctxt->session_info, "%s%s%s",
+	    ਵਿਧੀ, submethod == ਨਿਰਾ ? "" : "/",
+	    submethod == ਨਿਰਾ ? "" : submethod)) != 0)
 		fatal_fr(r, "append method");
 
 	/* Append key if present */
-	if (authctxt->auth_method_key != NULL) {
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
-		    (r = sshkey_format_text(authctxt->auth_method_key,
+	ਜੇ (authctxt->auth_ਵਿਧੀ_ਕੁੰਜੀ != ਨਿਰਾ) {
+		ਜੇ ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		    (r = sshkey_format_ਪਾਠ(authctxt->auth_ਵਿਧੀ_ਕੁੰਜੀ,
 		    authctxt->session_info)) != 0)
 			fatal_fr(r, "append key");
 	}
 
-	if (authctxt->auth_method_info != NULL) {
+	ਜੇ (authctxt->auth_ਵਿਧੀ_info != ਨਿਰਾ) {
 		/* Ensure no ambiguity here */
-		if (strchr(authctxt->auth_method_info, '\n') != NULL)
+		ਜੇ (strchr(authctxt->auth_ਵਿਧੀ_info, '\n') != ਨਿਰਾ)
 			fatal_f("auth_method_info contains \\n");
-		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
+		ਜੇ ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
 		    (r = sshbuf_putf(authctxt->session_info, "%s",
-		    authctxt->auth_method_info)) != 0) {
+		    authctxt->auth_ਵਿਧੀ_info)) != 0) {
 			fatal_fr(r, "append method info");
 		}
 	}
-	if ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
+	ਜੇ ((r = sshbuf_put_u8(authctxt->session_info, '\n')) != 0)
 		fatal_fr(r, "append");
 }
 

@@ -1,10 +1,10 @@
 /* $OpenBSD: umac128.c,v 1.2 2018/02/08 04:12:32 dtucker Exp $ */
 
-#define UMAC_OUTPUT_LEN	16
-#define umac_new	umac128_new
-#define umac_update	umac128_update
-#define umac_final	umac128_final
-#define umac_delete	umac128_delete
-#define umac_ctx	umac128_ctx
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UMAC_OUTPUT_LEN	16
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ umac_new	umac128_new
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ umac_update	umac128_update
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ umac_final	umac128_final
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ umac_delete	umac128_delete
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ umac_ctx	umac128_ctx
 
-#include "umac.c"
+#ਅਨ੍ਤਰ੍ਭਾਵ "umac.c"

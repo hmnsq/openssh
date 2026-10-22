@@ -16,146 +16,146 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/socket.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/in.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <arpa/inet.h>
 
-#include <netdb.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netdb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
 
-#include "addr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "addr.h"
 
-#define _SA(x)	((struct sockaddr *)(x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _SA(x)	((ਬਣਤਰ sockaddr *)(x))
 
-static int
-addr_unicast_masklen(int af)
+ਸਥਿਰ ਪੂਰਨ
+addr_unicast_masklen(ਪੂਰਨ af)
 {
-	switch (af) {
-	case AF_INET:
-		return 32;
-	case AF_INET6:
-		return 128;
-	default:
-		return -1;
+	ਚੋਣ (af) {
+	ਹਾਲਤ AF_INET:
+		ਵਾਪਸ 32;
+	ਹਾਲਤ AF_INET6:
+		ਵਾਪਸ 128;
+	ਮੂਲ:
+		ਵਾਪਸ -1;
 	}
 }
 
-static inline int
-masklen_valid(int af, u_int masklen)
+ਸਥਿਰ ਸਤਰਅੰਦਰ ਪੂਰਨ
+masklen_valid(ਪੂਰਨ af, u_int masklen)
 {
-	switch (af) {
-	case AF_INET:
-		return masklen <= 32 ? 0 : -1;
-	case AF_INET6:
-		return masklen <= 128 ? 0 : -1;
-	default:
-		return -1;
+	ਚੋਣ (af) {
+	ਹਾਲਤ AF_INET:
+		ਵਾਪਸ masklen <= 32 ? 0 : -1;
+	ਹਾਲਤ AF_INET6:
+		ਵਾਪਸ masklen <= 128 ? 0 : -1;
+	ਮੂਲ:
+		ਵਾਪਸ -1;
 	}
 }
 
-static int
-addr_xaddr_to_sa(const struct xaddr *xa, struct sockaddr *sa, socklen_t *len,
-    uint16_t port)
+ਸਥਿਰ ਪੂਰਨ
+addr_xaddr_ਮੰਜ਼ਿਲ_sa(ਅਚਲ ਬਣਤਰ xaddr *xa, ਬਣਤਰ sockaddr *sa, socklen_t *len,
+    uint16_t ਪੋਰਟ)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	ਬਣਤਰ sockaddr_in *in4 = (ਬਣਤਰ sockaddr_in *)sa;
+	ਬਣਤਰ sockaddr_in6 *in6 = (ਬਣਤਰ sockaddr_in6 *)sa;
 
-	if (xa == NULL || sa == NULL || len == NULL)
-		return -1;
+	ਜੇ (xa == ਨਿਰਾ || sa == ਨਿਰਾ || len == ਨਿਰਾ)
+		ਵਾਪਸ -1;
 
-	switch (xa->af) {
-	case AF_INET:
-		if (*len < sizeof(*in4))
-			return -1;
-		memset(sa, '\0', sizeof(*in4));
-		*len = sizeof(*in4);
-#ifdef SOCK_HAS_LEN
-		in4->sin_len = sizeof(*in4);
-#endif
+	ਚੋਣ (xa->af) {
+	ਹਾਲਤ AF_INET:
+		ਜੇ (*len < ਆਕਾਰ(*in4))
+			ਵਾਪਸ -1;
+		memset(sa, '\0', ਆਕਾਰ(*in4));
+		*len = ਆਕਾਰ(*in4);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SOCK_HAS_LEN
+		in4->sin_len = ਆਕਾਰ(*in4);
+#ਜੇ_ਅੰਤ
 		in4->sin_family = AF_INET;
-		in4->sin_port = htons(port);
-		memcpy(&in4->sin_addr, &xa->v4, sizeof(in4->sin_addr));
-		break;
-	case AF_INET6:
-		if (*len < sizeof(*in6))
-			return -1;
-		memset(sa, '\0', sizeof(*in6));
-		*len = sizeof(*in6);
-#ifdef SOCK_HAS_LEN
-		in6->sin6_len = sizeof(*in6);
-#endif
+		in4->sin_port = htons(ਪੋਰਟ);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(&in4->sin_addr, &xa->v4, ਆਕਾਰ(in4->sin_addr));
+		ਰੋਕੋ;
+	ਹਾਲਤ AF_INET6:
+		ਜੇ (*len < ਆਕਾਰ(*in6))
+			ਵਾਪਸ -1;
+		memset(sa, '\0', ਆਕਾਰ(*in6));
+		*len = ਆਕਾਰ(*in6);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SOCK_HAS_LEN
+		in6->sin6_len = ਆਕਾਰ(*in6);
+#ਜੇ_ਅੰਤ
 		in6->sin6_family = AF_INET6;
-		in6->sin6_port = htons(port);
-		memcpy(&in6->sin6_addr, &xa->v6, sizeof(in6->sin6_addr));
-#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
+		in6->sin6_port = htons(ਪੋਰਟ);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(&in6->sin6_addr, &xa->v6, ਆਕਾਰ(in6->sin6_addr));
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		in6->sin6_scope_id = xa->scope_id;
-#endif
-		break;
-	default:
-		return -1;
+#ਜੇ_ਅੰਤ
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਵਾਪਸ -1;
 	}
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
  * Convert struct sockaddr to struct xaddr
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa)
+ਪੂਰਨ
+addr_sa_ਮੰਜ਼ਿਲ_xaddr(ਬਣਤਰ sockaddr *sa, socklen_t slen, ਬਣਤਰ xaddr *xa)
 {
-	struct sockaddr_in *in4 = (struct sockaddr_in *)sa;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)sa;
+	ਬਣਤਰ sockaddr_in *in4 = (ਬਣਤਰ sockaddr_in *)sa;
+	ਬਣਤਰ sockaddr_in6 *in6 = (ਬਣਤਰ sockaddr_in6 *)sa;
 
-	memset(xa, '\0', sizeof(*xa));
+	memset(xa, '\0', ਆਕਾਰ(*xa));
 
-	switch (sa->sa_family) {
-	case AF_INET:
-		if (slen < (socklen_t)sizeof(*in4))
-			return -1;
+	ਚੋਣ (sa->sa_family) {
+	ਹਾਲਤ AF_INET:
+		ਜੇ (slen < (socklen_t)ਆਕਾਰ(*in4))
+			ਵਾਪਸ -1;
 		xa->af = AF_INET;
-		memcpy(&xa->v4, &in4->sin_addr, sizeof(xa->v4));
-		break;
-	case AF_INET6:
-		if (slen < (socklen_t)sizeof(*in6))
-			return -1;
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(&xa->v4, &in4->sin_addr, ਆਕਾਰ(xa->v4));
+		ਰੋਕੋ;
+	ਹਾਲਤ AF_INET6:
+		ਜੇ (slen < (socklen_t)ਆਕਾਰ(*in6))
+			ਵਾਪਸ -1;
 		xa->af = AF_INET6;
-		memcpy(&xa->v6, &in6->sin6_addr, sizeof(xa->v6));
-#ifdef HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(&xa->v6, &in6->sin6_addr, ਆਕਾਰ(xa->v6));
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_STRUCT_SOCKADDR_IN6_SIN6_SCOPE_ID
 		xa->scope_id = in6->sin6_scope_id;
-#endif
-		break;
-	default:
-		return -1;
+#ਜੇ_ਅੰਤ
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਵਾਪਸ -1;
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int
-addr_invert(struct xaddr *n)
+ਸਥਿਰ ਪੂਰਨ
+addr_invert(ਬਣਤਰ xaddr *n)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	if (n == NULL)
-		return -1;
+	ਜੇ (n == ਨਿਰਾ)
+		ਵਾਪਸ -1;
 
-	switch (n->af) {
-	case AF_INET:
+	ਚੋਣ (n->af) {
+	ਹਾਲਤ AF_INET:
 		n->v4.s_addr = ~n->v4.s_addr;
-		return 0;
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		ਵਾਪਸ 0;
+	ਹਾਲਤ AF_INET6:
+		ਲਈ (i = 0; i < 4; i++)
 			n->addr32[i] = ~n->addr32[i];
-		return 0;
-	default:
-		return -1;
+		ਵਾਪਸ 0;
+	ਮੂਲ:
+		ਵਾਪਸ -1;
 	}
 }
 
@@ -164,163 +164,163 @@ addr_invert(struct xaddr *n)
  * store it in 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_netmask(int af, u_int l, struct xaddr *n)
+ਪੂਰਨ
+addr_netmask(ਪੂਰਨ af, u_int l, ਬਣਤਰ xaddr *n)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	if (masklen_valid(af, l) != 0 || n == NULL)
-		return -1;
+	ਜੇ (masklen_valid(af, l) != 0 || n == ਨਿਰਾ)
+		ਵਾਪਸ -1;
 
-	memset(n, '\0', sizeof(*n));
-	switch (af) {
-	case AF_INET:
+	memset(n, '\0', ਆਕਾਰ(*n));
+	ਚੋਣ (af) {
+	ਹਾਲਤ AF_INET:
 		n->af = AF_INET;
-		if (l == 0)
-			return 0;
+		ਜੇ (l == 0)
+			ਵਾਪਸ 0;
 		n->v4.s_addr = htonl((0xffffffff << (32 - l)) & 0xffffffff);
-		return 0;
-	case AF_INET6:
+		ਵਾਪਸ 0;
+	ਹਾਲਤ AF_INET6:
 		n->af = AF_INET6;
-		for (i = 0; i < 4 && l >= 32; i++, l -= 32)
+		ਲਈ (i = 0; i < 4 && l >= 32; i++, l -= 32)
 			n->addr32[i] = 0xffffffffU;
-		if (i < 4 && l != 0)
+		ਜੇ (i < 4 && l != 0)
 			n->addr32[i] = htonl((0xffffffff << (32 - l)) &
 			    0xffffffff);
-		return 0;
-	default:
-		return -1;
+		ਵਾਪਸ 0;
+	ਮੂਲ:
+		ਵਾਪਸ -1;
 	}
 }
 
-static int
-addr_hostmask(int af, u_int l, struct xaddr *n)
+ਸਥਿਰ ਪੂਰਨ
+addr_hostmask(ਪੂਰਨ af, u_int l, ਬਣਤਰ xaddr *n)
 {
-	if (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
-		return -1;
-	return 0;
+	ਜੇ (addr_netmask(af, l, n) == -1 || addr_invert(n) == -1)
+		ਵਾਪਸ -1;
+	ਵਾਪਸ 0;
 }
 
 /*
  * Perform logical AND of addresses 'a' and 'b', storing result in 'dst'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+ਪੂਰਨ
+addr_and(ਬਣਤਰ xaddr *dst, ਅਚਲ ਬਣਤਰ xaddr *a, ਅਚਲ ਬਣਤਰ xaddr *b)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return -1;
+	ਜੇ (dst == ਨਿਰਾ || a == ਨਿਰਾ || b == ਨਿਰਾ || a->af != b->af)
+		ਵਾਪਸ -1;
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(dst, a, ਆਕਾਰ(*dst));
+	ਚੋਣ (a->af) {
+	ਹਾਲਤ AF_INET:
 		dst->v4.s_addr &= b->v4.s_addr;
-		return 0;
-	case AF_INET6:
+		ਵਾਪਸ 0;
+	ਹਾਲਤ AF_INET6:
 		dst->scope_id = a->scope_id;
-		for (i = 0; i < 4; i++)
+		ਲਈ (i = 0; i < 4; i++)
 			dst->addr32[i] &= b->addr32[i];
-		return 0;
-	default:
-		return -1;
+		ਵਾਪਸ 0;
+	ਮੂਲ:
+		ਵਾਪਸ -1;
 	}
 }
 
-static int
-addr_or(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b)
+ਸਥਿਰ ਪੂਰਨ
+addr_or(ਬਣਤਰ xaddr *dst, ਅਚਲ ਬਣਤਰ xaddr *a, ਅਚਲ ਬਣਤਰ xaddr *b)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	if (dst == NULL || a == NULL || b == NULL || a->af != b->af)
-		return (-1);
+	ਜੇ (dst == ਨਿਰਾ || a == ਨਿਰਾ || b == ਨਿਰਾ || a->af != b->af)
+		ਵਾਪਸ (-1);
 
-	memcpy(dst, a, sizeof(*dst));
-	switch (a->af) {
-	case AF_INET:
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(dst, a, ਆਕਾਰ(*dst));
+	ਚੋਣ (a->af) {
+	ਹਾਲਤ AF_INET:
 		dst->v4.s_addr |= b->v4.s_addr;
-		return (0);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
+		ਵਾਪਸ (0);
+	ਹਾਲਤ AF_INET6:
+		ਲਈ (i = 0; i < 4; i++)
 			dst->addr32[i] |= b->addr32[i];
-		return (0);
-	default:
-		return (-1);
+		ਵਾਪਸ (0);
+	ਮੂਲ:
+		ਵਾਪਸ (-1);
 	}
 }
 
-int
-addr_cmp(const struct xaddr *a, const struct xaddr *b)
+ਪੂਰਨ
+addr_cmp(ਅਚਲ ਬਣਤਰ xaddr *a, ਅਚਲ ਬਣਤਰ xaddr *b)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	if (a->af != b->af)
-		return (a->af == AF_INET6 ? 1 : -1);
+	ਜੇ (a->af != b->af)
+		ਵਾਪਸ (a->af == AF_INET6 ? 1 : -1);
 
-	switch (a->af) {
-	case AF_INET:
+	ਚੋਣ (a->af) {
+	ਹਾਲਤ AF_INET:
 		/*
 		 * Can't just subtract here as 255.255.255.255 - 0.0.0.0 is
 		 * too big to fit into a signed int
 		 */
-		if (a->v4.s_addr == b->v4.s_addr)
-			return 0;
-		return (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
-	case AF_INET6:
+		ਜੇ (a->v4.s_addr == b->v4.s_addr)
+			ਵਾਪਸ 0;
+		ਵਾਪਸ (ntohl(a->v4.s_addr) > ntohl(b->v4.s_addr) ? 1 : -1);
+	ਹਾਲਤ AF_INET6:
 		/*
 		 * Do this a byte at a time to avoid the above issue and
 		 * any endian problems
 		 */
-		for (i = 0; i < 16; i++)
-			if (a->addr8[i] - b->addr8[i] != 0)
-				return (a->addr8[i] - b->addr8[i]);
-		if (a->scope_id == b->scope_id)
-			return (0);
-		return (a->scope_id > b->scope_id ? 1 : -1);
-	default:
-		return (-1);
+		ਲਈ (i = 0; i < 16; i++)
+			ਜੇ (a->addr8[i] - b->addr8[i] != 0)
+				ਵਾਪਸ (a->addr8[i] - b->addr8[i]);
+		ਜੇ (a->scope_id == b->scope_id)
+			ਵਾਪਸ (0);
+		ਵਾਪਸ (a->scope_id > b->scope_id ? 1 : -1);
+	ਮੂਲ:
+		ਵਾਪਸ (-1);
 	}
 }
 
-static int
-addr_is_all0s(const struct xaddr *a)
+ਸਥਿਰ ਪੂਰਨ
+addr_is_all0s(ਅਚਲ ਬਣਤਰ xaddr *a)
 {
-	int i;
+	ਪੂਰਨ i;
 
-	switch (a->af) {
-	case AF_INET:
-		return (a->v4.s_addr == 0 ? 0 : -1);
-	case AF_INET6:
-		for (i = 0; i < 4; i++)
-			if (a->addr32[i] != 0)
-				return -1;
-		return 0;
-	default:
-		return -1;
+	ਚੋਣ (a->af) {
+	ਹਾਲਤ AF_INET:
+		ਵਾਪਸ (a->v4.s_addr == 0 ? 0 : -1);
+	ਹਾਲਤ AF_INET6:
+		ਲਈ (i = 0; i < 4; i++)
+			ਜੇ (a->addr32[i] != 0)
+				ਵਾਪਸ -1;
+		ਵਾਪਸ 0;
+	ਮੂਲ:
+		ਵਾਪਸ -1;
 	}
 }
 
 /* Increment the specified address. Note, does not do overflow checking */
-void
-addr_increment(struct xaddr *a)
+ਖਾਲੀ
+addr_increment(ਬਣਤਰ xaddr *a)
 {
-	int i;
+	ਪੂਰਨ i;
 	uint32_t n;
 
-	switch (a->af) {
-	case AF_INET:
+	ਚੋਣ (a->af) {
+	ਹਾਲਤ AF_INET:
 		a->v4.s_addr = htonl(ntohl(a->v4.s_addr) + 1);
-		break;
-	case AF_INET6:
-		for (i = 0; i < 4; i++) {
+		ਰੋਕੋ;
+	ਹਾਲਤ AF_INET6:
+		ਲਈ (i = 0; i < 4; i++) {
 			/* Increment with carry */
 			n = ntohl(a->addr32[3 - i]) + 1;
 			a->addr32[3 - i] = htonl(n);
-			if (n != 0)
-				break;
+			ਜੇ (n != 0)
+				ਰੋਕੋ;
 		}
-		break;
+		ਰੋਕੋ;
 	}
 }
 
@@ -330,181 +330,181 @@ addr_increment(struct xaddr *a)
  * Returns 0 if host portion of address is all-zeros,
  * -1 if not all zeros or on failure.
  */
-static int
-addr_host_is_all0s(const struct xaddr *a, u_int masklen)
+ਸਥਿਰ ਪੂਰਨ
+addr_host_is_all0s(ਅਚਲ ਬਣਤਰ xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_addr, tmp_mask, tmp_result;
+	ਬਣਤਰ xaddr tmp_addr, tmp_ਨਕਾਬ, tmp_ਨਤੀਜਾ;
 
-	memcpy(&tmp_addr, a, sizeof(tmp_addr));
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, &tmp_addr, &tmp_mask) == -1)
-		return -1;
-	return addr_is_all0s(&tmp_result);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(&tmp_addr, a, ਆਕਾਰ(tmp_addr));
+	ਜੇ (addr_hostmask(a->af, masklen, &tmp_ਨਕਾਬ) == -1)
+		ਵਾਪਸ -1;
+	ਜੇ (addr_and(&tmp_ਨਤੀਜਾ, &tmp_addr, &tmp_ਨਕਾਬ) == -1)
+		ਵਾਪਸ -1;
+	ਵਾਪਸ addr_is_all0s(&tmp_ਨਤੀਜਾ);
 }
 
-#if 0
-static int
-addr_host_to_all0s(struct xaddr *a, u_int masklen)
+#ਜੇ 0
+ਸਥਿਰ ਪੂਰਨ
+addr_host_ਮੰਜ਼ਿਲ_all0s(ਬਣਤਰ xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	ਬਣਤਰ xaddr tmp_ਨਕਾਬ;
 
-	if (addr_netmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_and(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	ਜੇ (addr_netmask(a->af, masklen, &tmp_ਨਕਾਬ) == -1)
+		ਵਾਪਸ (-1);
+	ਜੇ (addr_and(a, a, &tmp_ਨਕਾਬ) == -1)
+		ਵਾਪਸ (-1);
+	ਵਾਪਸ (0);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-int
-addr_host_to_all1s(struct xaddr *a, u_int masklen)
+ਪੂਰਨ
+addr_host_ਮੰਜ਼ਿਲ_all1s(ਬਣਤਰ xaddr *a, u_int masklen)
 {
-	struct xaddr tmp_mask;
+	ਬਣਤਰ xaddr tmp_ਨਕਾਬ;
 
-	if (addr_hostmask(a->af, masklen, &tmp_mask) == -1)
-		return (-1);
-	if (addr_or(a, a, &tmp_mask) == -1)
-		return (-1);
-	return (0);
+	ਜੇ (addr_hostmask(a->af, masklen, &tmp_ਨਕਾਬ) == -1)
+		ਵਾਪਸ (-1);
+	ਜੇ (addr_or(a, a, &tmp_ਨਕਾਬ) == -1)
+		ਵਾਪਸ (-1);
+	ਵਾਪਸ (0);
 }
 
 /*
  * Parse string address 'p' into 'n'.
  * Returns 0 on success, -1 on failure.
  */
-int
-addr_pton(const char *p, struct xaddr *n)
+ਪੂਰਨ
+addr_pton(ਅਚਲ ਅੱਖਰ *p, ਬਣਤਰ xaddr *n)
 {
-	struct addrinfo hints, *ai;
+	ਬਣਤਰ addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', ਆਕਾਰ(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (p == NULL || getaddrinfo(p, NULL, &hints, &ai) != 0)
-		return -1;
+	ਜੇ (p == ਨਿਰਾ || getaddrinfo(p, ਨਿਰਾ, &hints, &ai) != 0)
+		ਵਾਪਸ -1;
 
-	if (ai == NULL)
-		return -1;
+	ਜੇ (ai == ਨਿਰਾ)
+		ਵਾਪਸ -1;
 
-	if (ai->ai_addr == NULL) {
+	ਜੇ (ai->ai_addr == ਨਿਰਾ) {
 		freeaddrinfo(ai);
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (n != NULL && addr_sa_to_xaddr(ai->ai_addr, ai->ai_addrlen,
+	ਜੇ (n != ਨਿਰਾ && addr_sa_ਮੰਜ਼ਿਲ_xaddr(ai->ai_addr, ai->ai_addrlen,
 	    n) == -1) {
 		freeaddrinfo(ai);
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#if 0
-static int
-addr_sa_pton(const char *h, const char *s, struct sockaddr *sa, socklen_t slen)
+#ਜੇ 0
+ਸਥਿਰ ਪੂਰਨ
+addr_sa_pton(ਅਚਲ ਅੱਖਰ *h, ਅਚਲ ਅੱਖਰ *s, ਬਣਤਰ sockaddr *sa, socklen_t slen)
 {
-	struct addrinfo hints, *ai;
+	ਬਣਤਰ addrinfo hints, *ai;
 
-	memset(&hints, '\0', sizeof(hints));
+	memset(&hints, '\0', ਆਕਾਰ(hints));
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (h == NULL || getaddrinfo(h, s, &hints, &ai) != 0)
-		return -1;
+	ਜੇ (h == ਨਿਰਾ || getaddrinfo(h, s, &hints, &ai) != 0)
+		ਵਾਪਸ -1;
 
-	if (ai == NULL)
-		return -1;
+	ਜੇ (ai == ਨਿਰਾ)
+		ਵਾਪਸ -1;
 
-	if (ai->ai_addr == NULL) {
+	ਜੇ (ai->ai_addr == ਨਿਰਾ) {
 		freeaddrinfo(ai);
-		return -1;
+		ਵਾਪਸ -1;
 	}
 
-	if (sa != NULL) {
-		if (slen < ai->ai_addrlen) {
+	ਜੇ (sa != ਨਿਰਾ) {
+		ਜੇ (slen < ai->ai_addrlen) {
 			freeaddrinfo(ai);
-			return -1;
+			ਵਾਪਸ -1;
 		}
-		memcpy(sa, &ai->ai_addr, ai->ai_addrlen);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(sa, &ai->ai_addr, ai->ai_addrlen);
 	}
 
 	freeaddrinfo(ai);
-	return 0;
+	ਵਾਪਸ 0;
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-int
-addr_ntop(const struct xaddr *n, char *p, size_t len)
+ਪੂਰਨ
+addr_ntop(ਅਚਲ ਬਣਤਰ xaddr *n, ਅੱਖਰ *p, ਮਾਪ_t len)
 {
-	struct sockaddr_storage ss;
-	socklen_t slen = sizeof(ss);
+	ਬਣਤਰ sockaddr_storage ss;
+	socklen_t slen = ਆਕਾਰ(ss);
 
-	if (addr_xaddr_to_sa(n, _SA(&ss), &slen, 0) == -1)
-		return -1;
-	if (p == NULL || len == 0)
-		return -1;
-	if (getnameinfo(_SA(&ss), slen, p, len, NULL, 0,
+	ਜੇ (addr_xaddr_ਮੰਜ਼ਿਲ_sa(n, _SA(&ss), &slen, 0) == -1)
+		ਵਾਪਸ -1;
+	ਜੇ (p == ਨਿਰਾ || len == 0)
+		ਵਾਪਸ -1;
+	ਜੇ (getnameinfo(_SA(&ss), slen, p, len, ਨਿਰਾ, 0,
 	    NI_NUMERICHOST) != 0)
-		return -1;
+		ਵਾਪਸ -1;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 /*
  * Parse a CIDR address (x.x.x.x/y or xxxx:yyyy::/z).
  * Return -1 on parse error, -2 on inconsistency or 0 on success.
  */
-int
-addr_pton_cidr(const char *p, struct xaddr *n, u_int *l)
+ਪੂਰਨ
+addr_pton_cidr(ਅਚਲ ਅੱਖਰ *p, ਬਣਤਰ xaddr *n, u_int *l)
 {
-	struct xaddr tmp;
+	ਬਣਤਰ xaddr tmp;
 	u_int masklen = 999;
-	char addrbuf[64], *mp;
-	const char *errstr;
+	ਅੱਖਰ addrbuf[64], *mp;
+	ਅਚਲ ਅੱਖਰ *errstr;
 
 	/* Don't modify argument */
-	if (p == NULL || strlcpy(addrbuf, p, sizeof(addrbuf)) >= sizeof(addrbuf))
-		return -1;
+	ਜੇ (p == ਨਿਰਾ || strlcpy(addrbuf, p, ਆਕਾਰ(addrbuf)) >= ਆਕਾਰ(addrbuf))
+		ਵਾਪਸ -1;
 
-	if ((mp = strchr(addrbuf, '/')) != NULL) {
+	ਜੇ ((mp = strchr(addrbuf, '/')) != ਨਿਰਾ) {
 		*mp = '\0';
 		mp++;
-		masklen = (u_int)strtonum(mp, 0, INT_MAX, &errstr);
-		if (errstr)
-			return -1;
+		masklen = (u_int)strtonum(mp, 0, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ, &errstr);
+		ਜੇ (errstr)
+			ਵਾਪਸ -1;
 	}
 
-	if (addr_pton(addrbuf, &tmp) == -1)
-		return -1;
+	ਜੇ (addr_pton(addrbuf, &tmp) == -1)
+		ਵਾਪਸ -1;
 
-	if (mp == NULL)
+	ਜੇ (mp == ਨਿਰਾ)
 		masklen = addr_unicast_masklen(tmp.af);
-	if (masklen_valid(tmp.af, masklen) == -1)
-		return -2;
-	if (addr_host_is_all0s(&tmp, masklen) != 0)
-		return -2;
+	ਜੇ (masklen_valid(tmp.af, masklen) == -1)
+		ਵਾਪਸ -2;
+	ਜੇ (addr_host_is_all0s(&tmp, masklen) != 0)
+		ਵਾਪਸ -2;
 
-	if (n != NULL)
-		memcpy(n, &tmp, sizeof(*n));
-	if (l != NULL)
+	ਜੇ (n != ਨਿਰਾ)
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(n, &tmp, ਆਕਾਰ(*n));
+	ਜੇ (l != ਨਿਰਾ)
 		*l = masklen;
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-int
-addr_netmatch(const struct xaddr *host, const struct xaddr *net, u_int masklen)
+ਪੂਰਨ
+addr_netmatch(ਅਚਲ ਬਣਤਰ xaddr *host, ਅਚਲ ਬਣਤਰ xaddr *net, u_int masklen)
 {
-	struct xaddr tmp_mask, tmp_result;
+	ਬਣਤਰ xaddr tmp_ਨਕਾਬ, tmp_ਨਤੀਜਾ;
 
-	if (host->af != net->af)
-		return -1;
+	ਜੇ (host->af != net->af)
+		ਵਾਪਸ -1;
 
-	if (addr_netmask(host->af, masklen, &tmp_mask) == -1)
-		return -1;
-	if (addr_and(&tmp_result, host, &tmp_mask) == -1)
-		return -1;
-	return addr_cmp(&tmp_result, net);
+	ਜੇ (addr_netmask(host->af, masklen, &tmp_ਨਕਾਬ) == -1)
+		ਵਾਪਸ -1;
+	ਜੇ (addr_and(&tmp_ਨਤੀਜਾ, host, &tmp_ਨਕਾਬ) == -1)
+		ਵਾਪਸ -1;
+	ਵਾਪਸ addr_cmp(&tmp_ਨਤੀਜਾ, net);
 }

@@ -9,23 +9,23 @@
 /*
  * POSIX character class support for fnmatch() and glob().
  */
-static struct cclass {
-	const char *name;
-	int (*isctype)(int);
+ਸਥਿਰ ਬਣਤਰ cclass {
+	ਅਚਲ ਅੱਖਰ *name;
+	ਪੂਰਨ (*isctype)(ਪੂਰਨ);
 } cclasses[] = {
-	{ "alnum",	isalnum },
-	{ "alpha",	isalpha },
+	{ "alnum",	ਅੱਖਰ_ਜਾਂ_ਅੰਕ },
+	{ "alpha",	ਅੱਖਰ_ਹੈ },
 	{ "blank",	isblank },
 	{ "cntrl",	iscntrl },
-	{ "digit",	isdigit },
+	{ "digit",	ਅੰਕ_ਹੈ },
 	{ "graph",	isgraph },
 	{ "lower",	islower },
 	{ "print",	isprint },
 	{ "punct",	ispunct },
-	{ "space",	isspace },
+	{ "space",	ਖਾਲੀ_ਥਾਂ_ਹੈ },
 	{ "upper",	isupper },
 	{ "xdigit",	isxdigit },
-	{ NULL,		NULL }
+	{ ਨਿਰਾ,		ਨਿਰਾ }
 };
 
-#define NCCLASSES	(sizeof(cclasses) / sizeof(cclasses[0]) - 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NCCLASSES	(ਆਕਾਰ(cclasses) / ਆਕਾਰ(cclasses[0]) - 1)

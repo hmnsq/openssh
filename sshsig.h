@@ -15,17 +15,17 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef SSHSIG_H
-#define SSHSIG_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ SSHSIG_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHSIG_H
 
-struct sshbuf;
-struct sshkey;
-struct sshsigopt;
-struct sshkey_sig_details;
+ਬਣਤਰ sshbuf;
+ਬਣਤਰ sshkey;
+ਬਣਤਰ sshsigopt;
+ਬਣਤਰ sshkey_sig_details;
 
-typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *,
-    u_int, void *);
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ sshsig_signer(ਬਣਤਰ sshkey *, u_char **, ਮਾਪ_t *,
+    ਅਚਲ u_char *, ਮਾਪ_t, ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *,
+    u_int, ਖਾਲੀ *);
 
 /* Buffer-oriented API */
 
@@ -34,19 +34,19 @@ typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_signb(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin, const struct sshbuf *message,
-    const char *sig_namespace, struct sshbuf **out,
-    sshsig_signer *signer, void *signer_ctx);
+ਪੂਰਨ sshsig_signb(ਬਣਤਰ sshkey *ਕੁੰਜੀ, ਅਚਲ ਅੱਖਰ *hashalg,
+    ਅਚਲ ਅੱਖਰ *sk_provider, ਅਚਲ ਅੱਖਰ *sk_pin, ਅਚਲ ਬਣਤਰ sshbuf *ਸੁਨੇਹਾ_2,
+    ਅਚਲ ਅੱਖਰ *sig_namespace, ਬਣਤਰ sshbuf **ਬਾਹਰਲਾ,
+    sshsig_signer *signer, ਖਾਲੀ *signer_ctx);
 
 /*
  * Verifies that a detached signature is valid and optionally returns key
  * used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verifyb(struct sshbuf *signature,
-    const struct sshbuf *message, const char *sig_namespace,
-    struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details);
+ਪੂਰਨ sshsig_verifyb(ਬਣਤਰ sshbuf *signature,
+    ਅਚਲ ਬਣਤਰ sshbuf *ਸੁਨੇਹਾ_2, ਅਚਲ ਅੱਖਰ *sig_namespace,
+    ਬਣਤਰ sshkey **sign_keyp, ਬਣਤਰ sshkey_sig_details **sig_details);
 
 /* File/FD-oriented API */
 
@@ -55,57 +55,57 @@ int sshsig_verifyb(struct sshbuf *signature,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_sign_fd(struct sshkey *key, const char *hashalg,
-    const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace,
-    struct sshbuf **out, sshsig_signer *signer, void *signer_ctx);
+ਪੂਰਨ sshsig_sign_fd(ਬਣਤਰ sshkey *ਕੁੰਜੀ, ਅਚਲ ਅੱਖਰ *hashalg,
+    ਅਚਲ ਅੱਖਰ *sk_provider, ਅਚਲ ਅੱਖਰ *sk_pin,
+    ਪੂਰਨ fd, ਅਚਲ ਅੱਖਰ *sig_namespace,
+    ਬਣਤਰ sshbuf **ਬਾਹਰਲਾ, sshsig_signer *signer, ਖਾਲੀ *signer_ctx);
 
 /*
  * Verifies that a detached signature over a file is valid and optionally
  * returns key used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verify_fd(struct sshbuf *signature, int fd,
-    const char *sig_namespace, struct sshkey **sign_keyp,
-    struct sshkey_sig_details **sig_details);
+ਪੂਰਨ sshsig_verify_fd(ਬਣਤਰ sshbuf *signature, ਪੂਰਨ fd,
+    ਅਚਲ ਅੱਖਰ *sig_namespace, ਬਣਤਰ sshkey **sign_keyp,
+    ਬਣਤਰ sshkey_sig_details **sig_details);
 
 /* Utility functions */
 
 /*
  * Return a base64 encoded "ASCII armoured" version of a raw signature.
  */
-int sshsig_armor(const struct sshbuf *blob, struct sshbuf **out);
+ਪੂਰਨ sshsig_armor(ਅਚਲ ਬਣਤਰ sshbuf *blob, ਬਣਤਰ sshbuf **ਬਾਹਰਲਾ);
 
 /*
  * Decode a base64 encoded armoured signature to a raw signature.
  */
-int sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out);
+ਪੂਰਨ sshsig_dearmor(ਬਣਤਰ sshbuf *sig, ਬਣਤਰ sshbuf **ਬਾਹਰਲਾ);
 
 /*
  * Checks whether a particular key/principal/namespace is permitted by
  * an allowed_keys file. Returns 0 on success.
  */
-int sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
-    const char *principal, const char *ns, uint64_t verify_time);
+ਪੂਰਨ sshsig_check_allowed_ਕੁੰਜੀਆਂ(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਅਚਲ ਬਣਤਰ sshkey *sign_ਕੁੰਜੀ,
+    ਅਚਲ ਅੱਖਰ *principal, ਅਚਲ ਅੱਖਰ *ns, uint64_t verify_ਸਮਾਂ);
 
 /* Parse zero or more allowed_keys signature options */
-struct sshsigopt *sshsigopt_parse(const char *opts,
-    const char *path, u_long linenum, const char **errstrp);
+ਬਣਤਰ sshsigopt *sshsigopt_parse(ਅਚਲ ਅੱਖਰ *opts,
+    ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, u_long linenum, ਅਚਲ ਅੱਖਰ **errstrp);
 
 /* Free signature options */
-void sshsigopt_free(struct sshsigopt *opts);
+ਖਾਲੀ sshsigopt_free(ਬਣਤਰ sshsigopt *opts);
 
 /* Get public key from signature */
-int sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey);
+ਪੂਰਨ sshsig_get_pubkey(ਬਣਤਰ sshbuf *signature, ਬਣਤਰ sshkey **pubkey);
 
 /* Find principal in allowed_keys file, given a sshkey. Returns
  * 0 on success.
  */
-int sshsig_find_principals(const char *path, const struct sshkey *sign_key,
-    uint64_t verify_time, char **principal);
+ਪੂਰਨ sshsig_ਲੱਭੋ_principals(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਅਚਲ ਬਣਤਰ sshkey *sign_ਕੁੰਜੀ,
+    uint64_t verify_ਸਮਾਂ, ਅੱਖਰ **principal);
 
 /* Find all principals in allowed_keys file matching *principal */
-int sshsig_match_principals(const char *path,
-	const char *principal, char ***principalsp, size_t *nprincipalsp);
+ਪੂਰਨ sshsig_ਮੇਲ_principals(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ,
+	ਅਚਲ ਅੱਖਰ *principal, ਅੱਖਰ ***principalsp, ਮਾਪ_t *nprincipalsp);
 
-#endif /* SSHSIG_H */
+#ਜੇ_ਅੰਤ /* SSHSIG_H */

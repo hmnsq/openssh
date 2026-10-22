@@ -23,70 +23,70 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#if defined(WITH_IRIX_PROJECT) || \
+#ਜੇ defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || \
     defined(WITH_IRIX_ARRAY)
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
 
-#ifdef WITH_IRIX_PROJECT
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_IRIX_PROJECT
 # include <proj.h>
-#endif /* WITH_IRIX_PROJECT */
-#ifdef WITH_IRIX_JOBS
+#ਜੇ_ਅੰਤ /* WITH_IRIX_PROJECT */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_IRIX_JOBS
 # include <sys/resource.h>
-#endif
-#ifdef WITH_IRIX_AUDIT
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_IRIX_AUDIT
 # include <sat.h>
-#endif /* WITH_IRIX_AUDIT */
+#ਜੇ_ਅੰਤ /* WITH_IRIX_AUDIT */
 
-#include "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
 
-void
-irix_setusercontext(struct passwd *pw)
+ਖਾਲੀ
+irix_setusercontext(ਬਣਤਰ passwd *pw)
 {
-#ifdef WITH_IRIX_PROJECT
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_IRIX_PROJECT
 	prid_t projid;
-#endif
-#ifdef WITH_IRIX_JOBS
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_IRIX_JOBS
 	jid_t jid = 0;
-#elif defined(WITH_IRIX_ARRAY)
-	int jid = 0;
-#endif
+#ਜਾਂਜੇ defined(WITH_IRIX_ARRAY)
+	ਪੂਰਨ jid = 0;
+#ਜੇ_ਅੰਤ
 
-#ifdef WITH_IRIX_JOBS
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_IRIX_JOBS
 	jid = jlimit_startjob(pw->pw_name, pw->pw_uid, "interactive");
-	if (jid == -1)
+	ਜੇ (jid == -1)
 		fatal("Failed to create job container: %.100s",
 		    strerror(errno));
-#endif /* WITH_IRIX_JOBS */
-#ifdef WITH_IRIX_ARRAY
+#ਜੇ_ਅੰਤ /* WITH_IRIX_JOBS */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_IRIX_ARRAY
 	/* initialize array session */
-	if (jid == 0  && newarraysess() != 0)
+	ਜੇ (jid == 0  && newarraysess() != 0)
 		fatal("Failed to set up new array session: %.100s",
 		    strerror(errno));
-#endif /* WITH_IRIX_ARRAY */
-#ifdef WITH_IRIX_PROJECT
+#ਜੇ_ਅੰਤ /* WITH_IRIX_ARRAY */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_IRIX_PROJECT
 	/* initialize irix project info */
-	if ((projid = getdfltprojuser(pw->pw_name)) == -1) {
+	ਜੇ ((projid = getdfltprojuser(pw->pw_name)) == -1) {
 		debug("Failed to get project id, using projid 0");
 		projid = 0;
 	}
-	if (setprid(projid))
+	ਜੇ (setprid(projid))
 		fatal("Failed to initialize project %d for %s: %.100s",
-		    (int)projid, pw->pw_name, strerror(errno));
-#endif /* WITH_IRIX_PROJECT */
-#ifdef WITH_IRIX_AUDIT
-	if (sysconf(_SC_AUDIT)) {
-		debug("Setting sat id to %d", (int) pw->pw_uid);
-		if (satsetid(pw->pw_uid))
+		    (ਪੂਰਨ)projid, pw->pw_name, strerror(errno));
+#ਜੇ_ਅੰਤ /* WITH_IRIX_PROJECT */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_IRIX_AUDIT
+	ਜੇ (sysconf(_SC_AUDIT)) {
+		debug("Setting sat id to %d", (ਪੂਰਨ) pw->pw_uid);
+		ਜੇ (satsetid(pw->pw_uid))
 			debug("error setting satid: %.100s", strerror(errno));
 	}
-#endif /* WITH_IRIX_AUDIT */
+#ਜੇ_ਅੰਤ /* WITH_IRIX_AUDIT */
 }
 
 
-#endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
+#ਜੇ_ਅੰਤ /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */

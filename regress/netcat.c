@@ -31,263 +31,263 @@
  * *Hobbit* <hobbit@avian.org>.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/uio.h>
-#include <sys/un.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/socket.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/uio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/un.h>
 
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <netinet/ip.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/in.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/tcp.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/ip.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <netdb.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include "atomicio.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netdb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <signal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "atomicio.h"
 
-#include <poll.h>
-#ifdef HAVE_ERR_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <poll.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_ERR_H
 # include <err.h>
-#endif
-#ifdef HAVE_SYS_BYTEORDER_H
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SYS_BYTEORDER_H
 # include <sys/byteorder.h>
-#endif
+#ਜੇ_ਅੰਤ
 
 /* rename to avoid collision in libssh */
-#define timeout_connect netcat_timeout_connect
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ timeout_connect netcat_timeout_connect
 
 /* Telnet options from arpa/telnet.h */
-#define IAC	255
-#define DONT	254
-#define DO	253
-#define WONT	252
-#define WILL	251
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ IAC	255
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DONT	254
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DO	253
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WONT	252
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WILL	251
 
-#ifndef SUN_LEN
-#define SUN_LEN(su) \
-	(sizeof(*(su)) - sizeof((su)->sun_path) + strlen((su)->sun_path))
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ SUN_LEN
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SUN_LEN(su) \
+	(ਆਕਾਰ(*(su)) - ਆਕਾਰ((su)->sun_ਰਸਤਾ) + ਲੜੀ_ਲੰਬਾਈ((su)->sun_ਰਸਤਾ))
+#ਜੇ_ਅੰਤ
 
-#define PORT_MAX	65535
-#define PORT_MAX_LEN	6
-#define UNIX_DG_TMP_SOCKET_SIZE	19
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਪੋਰਟ_MAX	65535
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਪੋਰਟ_MAX_LEN	6
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UNIX_DG_TMP_SOCKET_ਮਾਪ	19
 
-#define POLL_STDIN 0
-#define POLL_NETOUT 1
-#define POLL_NETIN 2
-#define POLL_STDOUT 3
-#define BUFSIZE 16384
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ POLL_STDIN 0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ POLL_NETOUT 1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ POLL_NETIN 2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ POLL_STDOUT 3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ BUFSIZE 16384
 
 /* Command Line Options */
-int	dflag;					/* detached, no stdin */
-int	Fflag;					/* fdpass sock to stdout */
-unsigned int iflag;				/* Interval Flag */
-int	kflag;					/* More than one connect */
-int	lflag;					/* Bind to local port */
-int	Nflag;					/* shutdown() network socket */
-int	nflag;					/* Don't do name look up */
-char   *Pflag;					/* Proxy username */
-char   *pflag;					/* Localport flag */
-int	rflag;					/* Random ports flag */
-char   *sflag;					/* Source Address */
-int	tflag;					/* Telnet Emulation */
-int	uflag;					/* UDP - Default to TCP */
-int	vflag;					/* Verbosity */
-int	xflag;					/* Socks proxy */
-int	zflag;					/* Port Scan Flag */
-int	Dflag;					/* sodebug */
-int	Iflag;					/* TCP receive buffer size */
-int	Oflag;					/* TCP send buffer size */
-int	Sflag;					/* TCP MD5 signature option */
-int	Tflag = -1;				/* IP Type of Service */
-int	rtableid = -1;
+ਪੂਰਨ	dflag;					/* detached, no stdin */
+ਪੂਰਨ	Fflag;					/* fdpass sock to stdout */
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ iflag;				/* Interval Flag */
+ਪੂਰਨ	kflag;					/* More than one connect */
+ਪੂਰਨ	lflag;					/* Bind to local port */
+ਪੂਰਨ	Nflag;					/* shutdown() network socket */
+ਪੂਰਨ	nflag;					/* Don't do name look up */
+ਅੱਖਰ   *Pflag;					/* Proxy username */
+ਅੱਖਰ   *pflag;					/* Localport flag */
+ਪੂਰਨ	rflag;					/* Random ports flag */
+ਅੱਖਰ   *sflag;					/* Source Address */
+ਪੂਰਨ	tflag;					/* Telnet Emulation */
+ਪੂਰਨ	uflag;					/* UDP - Default to TCP */
+ਪੂਰਨ	vflag;					/* Verbosity */
+ਪੂਰਨ	xflag;					/* Socks proxy */
+ਪੂਰਨ	zflag;					/* Port Scan Flag */
+ਪੂਰਨ	Dflag;					/* sodebug */
+ਪੂਰਨ	Iflag;					/* TCP receive buffer size */
+ਪੂਰਨ	Oflag;					/* TCP send buffer size */
+ਪੂਰਨ	Sflag;					/* TCP MD5 signature option */
+ਪੂਰਨ	Tflag = -1;				/* IP Type of Service */
+ਪੂਰਨ	rtableid = -1;
 
-int timeout = -1;
-int family = AF_UNSPEC;
-char *portlist[PORT_MAX+1];
-char *unix_dg_tmp_socket;
+ਪੂਰਨ timeout = -1;
+ਪੂਰਨ family = AF_UNSPEC;
+ਅੱਖਰ *portlist[ਪੋਰਟ_MAX+1];
+ਅੱਖਰ *unix_dg_tmp_socket;
 
-void	atelnet(int, unsigned char *, unsigned int);
-void	build_ports(char *);
-void	help(void);
-int	local_listen(char *, char *, struct addrinfo);
-void	readwrite(int);
-void	fdpass(int nfd) __attribute__((noreturn));
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	timeout_connect(int, const struct sockaddr *, socklen_t);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int, const char *);
-int	udptest(int);
-int	unix_bind(char *);
-int	unix_connect(char *);
-int	unix_listen(char *);
-void	set_common_sockopts(int, int);
-int	map_tos(char *, int *);
-void	report_connect(const struct sockaddr *, socklen_t);
-void	usage(int);
-ssize_t drainbuf(int, unsigned char *, size_t *);
-ssize_t fillbuf(int, unsigned char *, size_t *);
+ਖਾਲੀ	atelnet(ਪੂਰਨ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ);
+ਖਾਲੀ	build_ports(ਅੱਖਰ *);
+ਖਾਲੀ	help(ਖਾਲੀ);
+ਪੂਰਨ	local_listen(ਅੱਖਰ *, ਅੱਖਰ *, ਬਣਤਰ addrinfo);
+ਖਾਲੀ	readwrite(ਪੂਰਨ);
+ਖਾਲੀ	fdpass(ਪੂਰਨ nfd) __attribute__((noreturn));
+ਪੂਰਨ	remote_connect(ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ addrinfo);
+ਪੂਰਨ	timeout_connect(ਪੂਰਨ, ਅਚਲ ਬਣਤਰ sockaddr *, socklen_t);
+ਪੂਰਨ	socks_connect(ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ addrinfo,
+	    ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ addrinfo, ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *);
+ਪੂਰਨ	udptest(ਪੂਰਨ);
+ਪੂਰਨ	unix_bind(ਅੱਖਰ *);
+ਪੂਰਨ	unix_connect(ਅੱਖਰ *);
+ਪੂਰਨ	unix_listen(ਅੱਖਰ *);
+ਖਾਲੀ	ਸੈੱਟ_common_sockopts(ਪੂਰਨ, ਪੂਰਨ);
+ਪੂਰਨ	map_tos(ਅੱਖਰ *, ਪੂਰਨ *);
+ਖਾਲੀ	report_connect(ਅਚਲ ਬਣਤਰ sockaddr *, socklen_t);
+ਖਾਲੀ	usage(ਪੂਰਨ);
+ssize_t drainbuf(ਪੂਰਨ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *, ਮਾਪ_t *);
+ssize_t fillbuf(ਪੂਰਨ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *, ਮਾਪ_t *);
 
 
-int
-main(int argc, char *argv[])
+ਪੂਰਨ
+ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ *argv[])
 {
-	int ch, s, ret, socksv;
-	char *host, *uport;
-	struct addrinfo hints;
-	struct servent *sv;
+	ਪੂਰਨ ch, s, ret, socksv;
+	ਅੱਖਰ *host, *uport;
+	ਬਣਤਰ addrinfo hints;
+	ਬਣਤਰ servent *sv;
 	socklen_t len;
-	struct sockaddr_storage cliaddr;
-	char *proxy = NULL;
-	const char *errstr, *proxyhost = "", *proxyport = NULL;
-	struct addrinfo proxyhints;
-	char unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_SIZE];
+	ਬਣਤਰ sockaddr_storage cliaddr;
+	ਅੱਖਰ *proxy = ਨਿਰਾ;
+	ਅਚਲ ਅੱਖਰ *errstr, *proxyhost = "", *proxyport = ਨਿਰਾ;
+	ਬਣਤਰ addrinfo proxyhints;
+	ਅੱਖਰ unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_ਮਾਪ];
 
 	ret = 1;
 	s = 0;
 	socksv = 5;
-	host = NULL;
-	uport = NULL;
-	sv = NULL;
+	host = ਨਿਰਾ;
+	uport = ਨਿਰਾ;
+	sv = ਨਿਰਾ;
 
-	signal(SIGPIPE, SIG_IGN);
+	ਸੰਕੇਤ(SIGPIPE, SIG_IGN);
 
-	while ((ch = getopt(argc, argv,
+	ਜਦੋਂ ((ch = getopt(argc, argv,
 	    "46DdFhI:i:klNnO:P:p:rSs:tT:UuV:vw:X:x:z")) != -1) {
-		switch (ch) {
-		case '4':
+		ਚੋਣ (ch) {
+		ਹਾਲਤ '4':
 			family = AF_INET;
-			break;
-		case '6':
+			ਰੋਕੋ;
+		ਹਾਲਤ '6':
 			family = AF_INET6;
-			break;
-		case 'U':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'U':
 			family = AF_UNIX;
-			break;
-		case 'X':
-			if (strcasecmp(optarg, "connect") == 0)
+			ਰੋਕੋ;
+		ਹਾਲਤ 'X':
+			ਜੇ (strcasecmp(optarg, "connect") == 0)
 				socksv = -1; /* HTTP proxy CONNECT */
-			else if (strcmp(optarg, "4") == 0)
+			ਨਹੀਂਤਾਂ ਜੇ (strcmp(optarg, "4") == 0)
 				socksv = 4; /* SOCKS v.4 */
-			else if (strcasecmp(optarg, "4A") == 0)
+			ਨਹੀਂਤਾਂ ਜੇ (strcasecmp(optarg, "4A") == 0)
 				socksv = 44; /* SOCKS v.4A */
-			else if (strcmp(optarg, "5") == 0)
+			ਨਹੀਂਤਾਂ ਜੇ (strcmp(optarg, "5") == 0)
 				socksv = 5; /* SOCKS v.5 */
-			else
+			ਨਹੀਂਤਾਂ
 				errx(1, "unsupported proxy protocol");
-			break;
-		case 'd':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'd':
 			dflag = 1;
-			break;
-		case 'F':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'F':
 			Fflag = 1;
-			break;
-		case 'h':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'h':
 			help();
-			break;
-		case 'i':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'i':
 			iflag = strtonum(optarg, 0, UINT_MAX, &errstr);
-			if (errstr)
+			ਜੇ (errstr)
 				errx(1, "interval %s: %s", errstr, optarg);
-			break;
-		case 'k':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'k':
 			kflag = 1;
-			break;
-		case 'l':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'l':
 			lflag = 1;
-			break;
-		case 'N':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'N':
 			Nflag = 1;
-			break;
-		case 'n':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'n':
 			nflag = 1;
-			break;
-		case 'P':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'P':
 			Pflag = optarg;
-			break;
-		case 'p':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'p':
 			pflag = optarg;
-			break;
-		case 'r':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'r':
 			rflag = 1;
-			break;
-		case 's':
+			ਰੋਕੋ;
+		ਹਾਲਤ 's':
 			sflag = optarg;
-			break;
-		case 't':
+			ਰੋਕੋ;
+		ਹਾਲਤ 't':
 			tflag = 1;
-			break;
-		case 'u':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'u':
 			uflag = 1;
-			break;
-#ifdef SO_RTABLE
-		case 'V':
-			rtableid = (int)strtonum(optarg, 0,
+			ਰੋਕੋ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SO_RTABLE
+		ਹਾਲਤ 'V':
+			rtableid = (ਪੂਰਨ)strtonum(optarg, 0,
 			    RT_TABLEID_MAX, &errstr);
-			if (errstr)
+			ਜੇ (errstr)
 				errx(1, "rtable %s: %s", errstr, optarg);
-			break;
-#endif
-		case 'v':
+			ਰੋਕੋ;
+#ਜੇ_ਅੰਤ
+		ਹਾਲਤ 'v':
 			vflag = 1;
-			break;
-		case 'w':
-			timeout = strtonum(optarg, 0, INT_MAX / 1000, &errstr);
-			if (errstr)
+			ਰੋਕੋ;
+		ਹਾਲਤ 'w':
+			timeout = strtonum(optarg, 0, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ / 1000, &errstr);
+			ਜੇ (errstr)
 				errx(1, "timeout %s: %s", errstr, optarg);
 			timeout *= 1000;
-			break;
-		case 'x':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'x':
 			xflag = 1;
-			if ((proxy = strdup(optarg)) == NULL)
+			ਜੇ ((proxy = strdup(optarg)) == ਨਿਰਾ)
 				errx(1, "strdup");
-			break;
-		case 'z':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'z':
 			zflag = 1;
-			break;
-		case 'D':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'D':
 			Dflag = 1;
-			break;
-		case 'I':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'I':
 			Iflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			ਜੇ (errstr != ਨਿਰਾ)
 				errx(1, "TCP receive window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'O':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'O':
 			Oflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			ਜੇ (errstr != ਨਿਰਾ)
 				errx(1, "TCP send window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'S':
+			ਰੋਕੋ;
+		ਹਾਲਤ 'S':
 			Sflag = 1;
-			break;
-		case 'T':
-			errstr = NULL;
+			ਰੋਕੋ;
+		ਹਾਲਤ 'T':
+			errstr = ਨਿਰਾ;
 			errno = 0;
-			if (map_tos(optarg, &Tflag))
-				break;
-			if (strlen(optarg) > 1 && optarg[0] == '0' &&
+			ਜੇ (map_tos(optarg, &Tflag))
+				ਰੋਕੋ;
+			ਜੇ (ਲੜੀ_ਲੰਬਾਈ(optarg) > 1 && optarg[0] == '0' &&
 			    optarg[1] == 'x')
-				Tflag = (int)strtol(optarg, NULL, 16);
-			else
-				Tflag = (int)strtonum(optarg, 0, 255,
+				Tflag = (ਪੂਰਨ)strtol(optarg, ਨਿਰਾ, 16);
+			ਨਹੀਂਤਾਂ
+				Tflag = (ਪੂਰਨ)strtonum(optarg, 0, 255,
 				    &errstr);
-			if (Tflag < 0 || Tflag > 255 || errstr || errno)
+			ਜੇ (Tflag < 0 || Tflag > 255 || errstr || errno)
 				errx(1, "illegal tos value %s", optarg);
-			break;
-		default:
+			ਰੋਕੋ;
+		ਮੂਲ:
 			usage(1);
 		}
 	}
@@ -295,201 +295,201 @@ main(int argc, char *argv[])
 	argv += optind;
 
 	/* Cruft to make sure options are clean, and used properly. */
-	if (argv[0] && !argv[1] && family == AF_UNIX) {
+	ਜੇ (argv[0] && !argv[1] && family == AF_UNIX) {
 		host = argv[0];
-		uport = NULL;
-	} else if (argv[0] && !argv[1]) {
-		if  (!lflag)
+		uport = ਨਿਰਾ;
+	} ਨਹੀਂਤਾਂ ਜੇ (argv[0] && !argv[1]) {
+		ਜੇ  (!lflag)
 			usage(1);
 		uport = argv[0];
-		host = NULL;
-	} else if (argv[0] && argv[1]) {
+		host = ਨਿਰਾ;
+	} ਨਹੀਂਤਾਂ ਜੇ (argv[0] && argv[1]) {
 		host = argv[0];
 		uport = argv[1];
-	} else
+	} ਨਹੀਂਤਾਂ
 		usage(1);
 
-	if (lflag && sflag)
+	ਜੇ (lflag && sflag)
 		errx(1, "cannot use -s and -l");
-	if (lflag && pflag)
+	ਜੇ (lflag && pflag)
 		errx(1, "cannot use -p and -l");
-	if (lflag && zflag)
+	ਜੇ (lflag && zflag)
 		errx(1, "cannot use -z and -l");
-	if (!lflag && kflag)
+	ਜੇ (!lflag && kflag)
 		errx(1, "must use -l with -k");
 
 	/* Get name of temporary socket for unix datagram client */
-	if ((family == AF_UNIX) && uflag && !lflag) {
-		if (sflag) {
+	ਜੇ ((family == AF_UNIX) && uflag && !lflag) {
+		ਜੇ (sflag) {
 			unix_dg_tmp_socket = sflag;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			strlcpy(unix_dg_tmp_socket_buf, "/tmp/nc.XXXXXXXXXX",
-				UNIX_DG_TMP_SOCKET_SIZE);
-			if (mktemp(unix_dg_tmp_socket_buf) == NULL)
+				UNIX_DG_TMP_SOCKET_ਮਾਪ);
+			ਜੇ (mktemp(unix_dg_tmp_socket_buf) == ਨਿਰਾ)
 				err(1, "mktemp");
 			unix_dg_tmp_socket = unix_dg_tmp_socket_buf;
 		}
 	}
 
 	/* Initialize addrinfo structure. */
-	if (family != AF_UNIX) {
-		memset(&hints, 0, sizeof(struct addrinfo));
+	ਜੇ (family != AF_UNIX) {
+		memset(&hints, 0, ਆਕਾਰ(ਬਣਤਰ addrinfo));
 		hints.ai_family = family;
 		hints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 		hints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
-		if (nflag)
+		ਜੇ (nflag)
 			hints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (xflag) {
-		if (uflag)
+	ਜੇ (xflag) {
+		ਜੇ (uflag)
 			errx(1, "no proxy support for UDP mode");
 
-		if (lflag)
+		ਜੇ (lflag)
 			errx(1, "no proxy support for listen");
 
-		if (family == AF_UNIX)
+		ਜੇ (family == AF_UNIX)
 			errx(1, "no proxy support for unix sockets");
 
 		/* XXX IPv6 transport to proxy would probably work */
-		if (family == AF_INET6)
+		ਜੇ (family == AF_INET6)
 			errx(1, "no proxy support for IPv6");
 
-		if (sflag)
+		ਜੇ (sflag)
 			errx(1, "no proxy support for local source address");
 
 		proxyhost = strsep(&proxy, ":");
 		proxyport = proxy;
 
-		memset(&proxyhints, 0, sizeof(struct addrinfo));
+		memset(&proxyhints, 0, ਆਕਾਰ(ਬਣਤਰ addrinfo));
 		proxyhints.ai_family = family;
 		proxyhints.ai_socktype = SOCK_STREAM;
 		proxyhints.ai_protocol = IPPROTO_TCP;
-		if (nflag)
+		ਜੇ (nflag)
 			proxyhints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (lflag) {
-		int connfd;
+	ਜੇ (lflag) {
+		ਪੂਰਨ connfd;
 		ret = 0;
 
-		if (family == AF_UNIX) {
-			if (uflag)
+		ਜੇ (family == AF_UNIX) {
+			ਜੇ (uflag)
 				s = unix_bind(host);
-			else
+			ਨਹੀਂਤਾਂ
 				s = unix_listen(host);
 		}
 
 		/* Allow only one connection at a time, but stay alive. */
-		for (;;) {
-			if (family != AF_UNIX)
+		ਲਈ (;;) {
+			ਜੇ (family != AF_UNIX)
 				s = local_listen(host, uport, hints);
-			if (s < 0)
+			ਜੇ (s < 0)
 				err(1, "local_listen");
 			/*
 			 * For UDP and -k, don't connect the socket, let it
 			 * receive datagrams from multiple socket pairs.
 			 */
-			if (uflag && kflag)
+			ਜੇ (uflag && kflag)
 				readwrite(s);
 			/*
 			 * For UDP and not -k, we will use recvfrom() initially
 			 * to wait for a caller, then use the regular functions
 			 * to talk to the caller.
 			 */
-			else if (uflag && !kflag) {
-				int rv, plen;
-				char buf[16384];
-				struct sockaddr_storage z;
+			ਨਹੀਂਤਾਂ ਜੇ (uflag && !kflag) {
+				ਪੂਰਨ rv, plen;
+				ਅੱਖਰ buf[16384];
+				ਬਣਤਰ sockaddr_storage z;
 
-				len = sizeof(z);
+				len = ਆਕਾਰ(z);
 				plen = 2048;
 				rv = recvfrom(s, buf, plen, MSG_PEEK,
-				    (struct sockaddr *)&z, &len);
-				if (rv < 0)
+				    (ਬਣਤਰ sockaddr *)&z, &len);
+				ਜੇ (rv < 0)
 					err(1, "recvfrom");
 
-				rv = connect(s, (struct sockaddr *)&z, len);
-				if (rv < 0)
+				rv = connect(s, (ਬਣਤਰ sockaddr *)&z, len);
+				ਜੇ (rv < 0)
 					err(1, "connect");
 
-				if (vflag)
-					report_connect((struct sockaddr *)&z, len);
+				ਜੇ (vflag)
+					report_connect((ਬਣਤਰ sockaddr *)&z, len);
 
 				readwrite(s);
-			} else {
-				len = sizeof(cliaddr);
-				connfd = accept(s, (struct sockaddr *)&cliaddr,
+			} ਨਹੀਂਤਾਂ {
+				len = ਆਕਾਰ(cliaddr);
+				connfd = accept(s, (ਬਣਤਰ sockaddr *)&cliaddr,
 				    &len);
-				if (connfd == -1) {
+				ਜੇ (connfd == -1) {
 					/* For now, all errnos are fatal */
 					err(1, "accept");
 				}
-				if (vflag)
-					report_connect((struct sockaddr *)&cliaddr, len);
+				ਜੇ (vflag)
+					report_connect((ਬਣਤਰ sockaddr *)&cliaddr, len);
 
 				readwrite(connfd);
 				close(connfd);
 			}
 
-			if (family != AF_UNIX)
+			ਜੇ (family != AF_UNIX)
 				close(s);
-			else if (uflag) {
-				if (connect(s, NULL, 0) < 0)
+			ਨਹੀਂਤਾਂ ਜੇ (uflag) {
+				ਜੇ (connect(s, ਨਿਰਾ, 0) < 0)
 					err(1, "connect");
 			}
 
-			if (!kflag)
-				break;
+			ਜੇ (!kflag)
+				ਰੋਕੋ;
 		}
-	} else if (family == AF_UNIX) {
+	} ਨਹੀਂਤਾਂ ਜੇ (family == AF_UNIX) {
 		ret = 0;
 
-		if ((s = unix_connect(host)) > 0 && !zflag) {
+		ਜੇ ((s = unix_connect(host)) > 0 && !zflag) {
 			readwrite(s);
 			close(s);
-		} else
+		} ਨਹੀਂਤਾਂ
 			ret = 1;
 
-		if (uflag)
+		ਜੇ (uflag)
 			unlink(unix_dg_tmp_socket);
-		exit(ret);
+		ਬਾਹਰ_ਨਿਕਲੋ(ret);
 
-	} else {
-		int i = 0;
+	} ਨਹੀਂਤਾਂ {
+		ਪੂਰਨ i = 0;
 
 		/* Construct the portlist[] array. */
 		build_ports(uport);
 
 		/* Cycle through portlist, connecting to each port. */
-		for (i = 0; portlist[i] != NULL; i++) {
-			if (s)
+		ਲਈ (i = 0; portlist[i] != ਨਿਰਾ; i++) {
+			ਜੇ (s)
 				close(s);
 
-			if (xflag)
+			ਜੇ (xflag)
 				s = socks_connect(host, portlist[i], hints,
 				    proxyhost, proxyport, proxyhints, socksv,
 				    Pflag);
-			else
+			ਨਹੀਂਤਾਂ
 				s = remote_connect(host, portlist[i], hints);
 
-			if (s < 0)
-				continue;
+			ਜੇ (s < 0)
+				ਜਾਰੀ;
 
 			ret = 0;
-			if (vflag || zflag) {
+			ਜੇ (vflag || zflag) {
 				/* For UDP, make sure we are connected. */
-				if (uflag) {
-					if (udptest(s) == -1) {
+				ਜੇ (uflag) {
+					ਜੇ (udptest(s) == -1) {
 						ret = 1;
-						continue;
+						ਜਾਰੀ;
 					}
 				}
 
 				/* Don't look up port if -n. */
-				if (nflag)
-					sv = NULL;
-				else {
+				ਜੇ (nflag)
+					sv = ਨਿਰਾ;
+				ਨਹੀਂਤਾਂ {
 					sv = getservbyport(
 					    ntohs(atoi(portlist[i])),
 					    uflag ? "udp" : "tcp");
@@ -501,84 +501,84 @@ main(int argc, char *argv[])
 				    uflag ? "udp" : "tcp",
 				    sv ? sv->s_name : "*");
 			}
-			if (Fflag)
+			ਜੇ (Fflag)
 				fdpass(s);
-			else if (!zflag)
+			ਨਹੀਂਤਾਂ ਜੇ (!zflag)
 				readwrite(s);
 		}
 	}
 
-	if (s)
+	ਜੇ (s)
 		close(s);
 
-	exit(ret);
+	ਬਾਹਰ_ਨਿਕਲੋ(ret);
 }
 
 /*
  * unix_bind()
  * Returns a unix socket bound to the given path
  */
-int
-unix_bind(char *path)
+ਪੂਰਨ
+unix_bind(ਅੱਖਰ *ਰਸਤਾ)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	ਬਣਤਰ sockaddr_un sun_sa;
+	ਪੂਰਨ s;
 
 	/* Create unix domain socket. */
-	if ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
+	ਜੇ ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
 	     0)) < 0)
-		return (-1);
+		ਵਾਪਸ (-1);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, ਆਕਾਰ(ਬਣਤਰ sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	ਜੇ (strlcpy(sun_sa.sun_ਰਸਤਾ, ਰਸਤਾ, ਆਕਾਰ(sun_sa.sun_ਰਸਤਾ)) >=
+	    ਆਕਾਰ(sun_sa.sun_ਰਸਤਾ)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		ਵਾਪਸ (-1);
 	}
 
-	if (bind(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	ਜੇ (bind(s, (ਬਣਤਰ sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		ਵਾਪਸ (-1);
 	}
-	return (s);
+	ਵਾਪਸ (s);
 }
 
 /*
  * unix_connect()
  * Returns a socket connected to a local unix socket. Returns -1 on failure.
  */
-int
-unix_connect(char *path)
+ਪੂਰਨ
+unix_connect(ਅੱਖਰ *ਰਸਤਾ)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	ਬਣਤਰ sockaddr_un sun_sa;
+	ਪੂਰਨ s;
 
-	if (uflag) {
-		if ((s = unix_bind(unix_dg_tmp_socket)) < 0)
-			return (-1);
-	} else {
-		if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-			return (-1);
+	ਜੇ (uflag) {
+		ਜੇ ((s = unix_bind(unix_dg_tmp_socket)) < 0)
+			ਵਾਪਸ (-1);
+	} ਨਹੀਂਤਾਂ {
+		ਜੇ ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+			ਵਾਪਸ (-1);
 	}
-	(void)fcntl(s, F_SETFD, FD_CLOEXEC);
+	(ਖਾਲੀ)fcntl(s, F_SETFD, FD_CLOEXEC);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, ਆਕਾਰ(ਬਣਤਰ sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	ਜੇ (strlcpy(sun_sa.sun_ਰਸਤਾ, ਰਸਤਾ, ਆਕਾਰ(sun_sa.sun_ਰਸਤਾ)) >=
+	    ਆਕਾਰ(sun_sa.sun_ਰਸਤਾ)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		ਵਾਪਸ (-1);
 	}
-	if (connect(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	ਜੇ (connect(s, (ਬਣਤਰ sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		ਵਾਪਸ (-1);
 	}
-	return (s);
+	ਵਾਪਸ (s);
 
 }
 
@@ -586,18 +586,18 @@ unix_connect(char *path)
  * unix_listen()
  * Create a unix domain socket, and listen on it.
  */
-int
-unix_listen(char *path)
+ਪੂਰਨ
+unix_listen(ਅੱਖਰ *ਰਸਤਾ)
 {
-	int s;
-	if ((s = unix_bind(path)) < 0)
-		return (-1);
+	ਪੂਰਨ s;
+	ਜੇ ((s = unix_bind(ਰਸਤਾ)) < 0)
+		ਵਾਪਸ (-1);
 
-	if (listen(s, 5) < 0) {
+	ਜੇ (listen(s, 5) < 0) {
 		close(s);
-		return (-1);
+		ਵਾਪਸ (-1);
 	}
-	return (s);
+	ਵਾਪਸ (s);
 }
 
 /*
@@ -605,103 +605,103 @@ unix_listen(char *path)
  * Returns a socket connected to a remote host. Properly binds to a local
  * port or source address if needed. Returns -1 on failure.
  */
-int
-remote_connect(const char *host, const char *port, struct addrinfo hints)
+ਪੂਰਨ
+remote_connect(ਅਚਲ ਅੱਖਰ *host, ਅਚਲ ਅੱਖਰ *ਪੋਰਟ, ਬਣਤਰ addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, error;
-#if defined(SO_RTABLE) || defined(SO_BINDANY)
-	int on = 1;
-#endif
+	ਬਣਤਰ addrinfo *res, *res0;
+	ਪੂਰਨ s, error;
+#ਜੇ defined(SO_RTABLE) || defined(SO_BINDANY)
+	ਪੂਰਨ on = 1;
+#ਜੇ_ਅੰਤ
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	ਜੇ ((error = getaddrinfo(host, ਪੋਰਟ, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
-	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+	ਕਰੋ {
+		ਜੇ ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
-			continue;
+			ਜਾਰੀ;
 
-#ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SO_RTABLE
+		ਜੇ (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, ਆਕਾਰ(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
-#endif
+#ਜੇ_ਅੰਤ
 		/* Bind to a local port or source address if specified. */
-		if (sflag || pflag) {
-			struct addrinfo ahints, *ares;
+		ਜੇ (sflag || pflag) {
+			ਬਣਤਰ addrinfo ahints, *ares;
 
-#ifdef SO_BINDANY
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SO_BINDANY
 			/* try SO_BINDANY, but don't insist */
-			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, sizeof(on));
-#endif
-			memset(&ahints, 0, sizeof(struct addrinfo));
+			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, ਆਕਾਰ(on));
+#ਜੇ_ਅੰਤ
+			memset(&ahints, 0, ਆਕਾਰ(ਬਣਤਰ addrinfo));
 			ahints.ai_family = res0->ai_family;
 			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
 			ahints.ai_flags = AI_PASSIVE;
-			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
+			ਜੇ ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
 				errx(1, "getaddrinfo: %s", gai_strerror(error));
 
-			if (bind(s, (struct sockaddr *)ares->ai_addr,
+			ਜੇ (bind(s, (ਬਣਤਰ sockaddr *)ares->ai_addr,
 			    ares->ai_addrlen) < 0)
 				err(1, "bind failed");
 			freeaddrinfo(ares);
 		}
 
-		set_common_sockopts(s, res0->ai_family);
+		ਸੈੱਟ_common_sockopts(s, res0->ai_family);
 
-		if (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
-			break;
-		else if (vflag)
-			warn("connect to %s port %s (%s) failed", host, port,
+		ਜੇ (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
+			ਰੋਕੋ;
+		ਨਹੀਂਤਾਂ ਜੇ (vflag)
+			warn("connect to %s port %s (%s) failed", host, ਪੋਰਟ,
 			    uflag ? "udp" : "tcp");
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} ਜਦੋਂ ((res0 = res0->ai_next) != ਨਿਰਾ);
 
 	freeaddrinfo(res);
 
-	return (s);
+	ਵਾਪਸ (s);
 }
 
-int
-timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
+ਪੂਰਨ
+timeout_connect(ਪੂਰਨ s, ਅਚਲ ਬਣਤਰ sockaddr *name, socklen_t namelen)
 {
-	struct pollfd pfd;
+	ਬਣਤਰ pollfd pfd;
 	socklen_t optlen;
-	int flags = 0, optval;
-	int ret;
+	ਪੂਰਨ flags = 0, optval;
+	ਪੂਰਨ ret;
 
-	if (timeout != -1) {
+	ਜੇ (timeout != -1) {
 		flags = fcntl(s, F_GETFL, 0);
-		if (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
+		ਜੇ (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
 			err(1, "set non-blocking mode");
 	}
 
-	if ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
+	ਜੇ ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
 		pfd.fd = s;
 		pfd.events = POLLOUT;
-		if ((ret = poll(&pfd, 1, timeout)) == 1) {
-			optlen = sizeof(optval);
-			if ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
+		ਜੇ ((ret = poll(&pfd, 1, timeout)) == 1) {
+			optlen = ਆਕਾਰ(optval);
+			ਜੇ ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
 			    &optval, &optlen)) == 0) {
 				errno = optval;
 				ret = optval == 0 ? 0 : -1;
 			}
-		} else if (ret == 0) {
+		} ਨਹੀਂਤਾਂ ਜੇ (ret == 0) {
 			errno = ETIMEDOUT;
 			ret = -1;
-		} else
+		} ਨਹੀਂਤਾਂ
 			err(1, "poll failed");
 	}
 
-	if (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
+	ਜੇ (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
 		err(1, "restoring flags");
 
-	return (ret);
+	ਵਾਪਸ (ret);
 }
 
 /*
@@ -709,12 +709,12 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
  * Returns a socket listening on a local port, binds to specified source
  * address. Returns -1 on failure.
  */
-int
-local_listen(char *host, char *port, struct addrinfo hints)
+ਪੂਰਨ
+local_listen(ਅੱਖਰ *host, ਅੱਖਰ *ਪੋਰਟ, ਬਣਤਰ addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, ret, x = 1;
-	int error;
+	ਬਣਤਰ addrinfo *res, *res0;
+	ਪੂਰਨ s, ret, x = 1;
+	ਪੂਰਨ error;
 
 	/* Allow nodename to be null. */
 	hints.ai_flags |= AI_PASSIVE;
@@ -723,72 +723,72 @@ local_listen(char *host, char *port, struct addrinfo hints)
 	 * In the case of binding to a wildcard address
 	 * default to binding to an ipv4 address.
 	 */
-	if (host == NULL && hints.ai_family == AF_UNSPEC)
+	ਜੇ (host == ਨਿਰਾ && hints.ai_family == AF_UNSPEC)
 		hints.ai_family = AF_INET;
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	ਜੇ ((error = getaddrinfo(host, ਪੋਰਟ, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
-	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+	ਕਰੋ {
+		ਜੇ ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
-			continue;
+			ਜਾਰੀ;
 
-#ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SO_RTABLE
+		ਜੇ (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, ਆਕਾਰ(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
-#endif
-#ifdef SO_REUSEPORT
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
-		if (ret == -1)
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SO_REUSEPORT
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, ਆਕਾਰ(x));
+		ਜੇ (ret == -1)
 			err(1, "setsockopt SO_REUSEPORT");
-#endif
-#ifdef SO_REUSEADDR
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(x));
-		if (ret == -1)
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SO_REUSEADDR
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, ਆਕਾਰ(x));
+		ਜੇ (ret == -1)
 			err(1, "setsockopt SO_REUSEADDR");
-#endif
-		set_common_sockopts(s, res0->ai_family);
+#ਜੇ_ਅੰਤ
+		ਸੈੱਟ_common_sockopts(s, res0->ai_family);
 
-		if (bind(s, (struct sockaddr *)res0->ai_addr,
+		ਜੇ (bind(s, (ਬਣਤਰ sockaddr *)res0->ai_addr,
 		    res0->ai_addrlen) == 0)
-			break;
+			ਰੋਕੋ;
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} ਜਦੋਂ ((res0 = res0->ai_next) != ਨਿਰਾ);
 
-	if (!uflag && s != -1) {
-		if (listen(s, 1) < 0)
+	ਜੇ (!uflag && s != -1) {
+		ਜੇ (listen(s, 1) < 0)
 			err(1, "listen");
 	}
 
 	freeaddrinfo(res);
 
-	return (s);
+	ਵਾਪਸ (s);
 }
 
 /*
  * readwrite()
  * Loop that polls on the network file descriptor and stdin.
  */
-void
-readwrite(int net_fd)
+ਖਾਲੀ
+readwrite(ਪੂਰਨ net_fd)
 {
-	struct pollfd pfd[4];
-	int stdin_fd = STDIN_FILENO;
-	int stdout_fd = STDOUT_FILENO;
-	unsigned char netinbuf[BUFSIZE];
-	size_t netinbufpos = 0;
-	unsigned char stdinbuf[BUFSIZE];
-	size_t stdinbufpos = 0;
-	int n, num_fds;
+	ਬਣਤਰ pollfd pfd[4];
+	ਪੂਰਨ stdin_fd = STDIN_FILENO;
+	ਪੂਰਨ stdout_fd = STDOUT_FILENO;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ netinbuf[BUFSIZE];
+	ਮਾਪ_t netinbufpos = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ stdinbuf[BUFSIZE];
+	ਮਾਪ_t stdinbufpos = 0;
+	ਪੂਰਨ n, ਅੰਕ_fds;
 	ssize_t ret;
 
 	/* don't read from stdin if requested */
-	if (dflag)
+	ਜੇ (dflag)
 		stdin_fd = -1;
 
 	/* stdin */
@@ -807,283 +807,283 @@ readwrite(int net_fd)
 	pfd[POLL_STDOUT].fd = stdout_fd;
 	pfd[POLL_STDOUT].events = 0;
 
-	while (1) {
+	ਜਦੋਂ (1) {
 		/* both inputs are gone, buffers are empty, we are done */
-		if (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
+		ਜੇ (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			ਵਾਪਸ;
 		}
 		/* both outputs are gone, we can't continue */
-		if (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
+		ਜੇ (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
 			close(net_fd);
-			return;
+			ਵਾਪਸ;
 		}
 		/* listen and net in gone, queues empty, done */
-		if (lflag && pfd[POLL_NETIN].fd == -1
+		ਜੇ (lflag && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			ਵਾਪਸ;
 		}
 
 		/* help says -i is for "wait between lines sent". We read and
 		 * write arbitrary amounts of data, and we don't want to start
 		 * scanning for newlines, so this is as good as it gets */
-		if (iflag)
+		ਜੇ (iflag)
 			sleep(iflag);
 
 		/* poll */
-		num_fds = poll(pfd, 4, timeout);
+		ਅੰਕ_fds = poll(pfd, 4, timeout);
 
 		/* treat poll errors */
-		if (num_fds == -1) {
+		ਜੇ (ਅੰਕ_fds == -1) {
 			close(net_fd);
 			err(1, "polling error");
 		}
 
 		/* timeout happened */
-		if (num_fds == 0)
-			return;
+		ਜੇ (ਅੰਕ_fds == 0)
+			ਵਾਪਸ;
 
 		/* treat socket error conditions */
-		for (n = 0; n < 4; n++) {
-			if (pfd[n].revents & (POLLERR|POLLNVAL)) {
+		ਲਈ (n = 0; n < 4; n++) {
+			ਜੇ (pfd[n].revents & (POLLERR|POLLNVAL)) {
 				pfd[n].fd = -1;
 			}
 		}
 		/* reading is possible after HUP */
-		if (pfd[POLL_STDIN].events & POLLIN &&
+		ਜੇ (pfd[POLL_STDIN].events & POLLIN &&
 		    pfd[POLL_STDIN].revents & POLLHUP &&
 		    ! (pfd[POLL_STDIN].revents & POLLIN))
 				pfd[POLL_STDIN].fd = -1;
 
-		if (pfd[POLL_NETIN].events & POLLIN &&
+		ਜੇ (pfd[POLL_NETIN].events & POLLIN &&
 		    pfd[POLL_NETIN].revents & POLLHUP &&
 		    ! (pfd[POLL_NETIN].revents & POLLIN))
 				pfd[POLL_NETIN].fd = -1;
 
-		if (pfd[POLL_NETOUT].revents & POLLHUP) {
-			if (Nflag)
+		ਜੇ (pfd[POLL_NETOUT].revents & POLLHUP) {
+			ਜੇ (Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* if HUP, stop watching stdout */
-		if (pfd[POLL_STDOUT].revents & POLLHUP)
+		ਜੇ (pfd[POLL_STDOUT].revents & POLLHUP)
 			pfd[POLL_STDOUT].fd = -1;
 		/* if no net out, stop watching stdin */
-		if (pfd[POLL_NETOUT].fd == -1)
+		ਜੇ (pfd[POLL_NETOUT].fd == -1)
 			pfd[POLL_STDIN].fd = -1;
 		/* if no stdout, stop watching net in */
-		if (pfd[POLL_STDOUT].fd == -1) {
-			if (pfd[POLL_NETIN].fd != -1)
+		ਜੇ (pfd[POLL_STDOUT].fd == -1) {
+			ਜੇ (pfd[POLL_NETIN].fd != -1)
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 			pfd[POLL_NETIN].fd = -1;
 		}
 
 		/* try to read from stdin */
-		if (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
+		ਜੇ (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_STDIN].fd, stdinbuf,
 			    &stdinbufpos);
 			/* error or eof on stdin - remove from pfd */
-			if (ret == 0 || ret == -1)
+			ਜੇ (ret == 0 || ret == -1)
 				pfd[POLL_STDIN].fd = -1;
 			/* read something - poll net out */
-			if (stdinbufpos > 0)
+			ਜੇ (stdinbufpos > 0)
 				pfd[POLL_NETOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (stdinbufpos == BUFSIZE)
+			ਜੇ (stdinbufpos == BUFSIZE)
 				pfd[POLL_STDIN].events = 0;
 		}
 		/* try to write to network */
-		if (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
+		ਜੇ (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_NETOUT].fd, stdinbuf,
 			    &stdinbufpos);
-			if (ret == -1)
+			ਜੇ (ret == -1)
 				pfd[POLL_NETOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (stdinbufpos == 0)
+			ਜੇ (stdinbufpos == 0)
 				pfd[POLL_NETOUT].events = 0;
 			/* buffer no longer full - poll stdin again */
-			if (stdinbufpos < BUFSIZE)
+			ਜੇ (stdinbufpos < BUFSIZE)
 				pfd[POLL_STDIN].events = POLLIN;
 		}
 		/* try to read from network */
-		if (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
+		ਜੇ (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_NETIN].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			ਜੇ (ret == -1)
 				pfd[POLL_NETIN].fd = -1;
 			/* eof on net in - remove from pfd */
-			if (ret == 0) {
+			ਜੇ (ret == 0) {
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 				pfd[POLL_NETIN].fd = -1;
 			}
 			/* read something - poll stdout */
-			if (netinbufpos > 0)
+			ਜੇ (netinbufpos > 0)
 				pfd[POLL_STDOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (netinbufpos == BUFSIZE)
+			ਜੇ (netinbufpos == BUFSIZE)
 				pfd[POLL_NETIN].events = 0;
 			/* handle telnet */
-			if (tflag)
+			ਜੇ (tflag)
 				atelnet(pfd[POLL_NETIN].fd, netinbuf,
 				    netinbufpos);
 		}
 		/* try to write to stdout */
-		if (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
+		ਜੇ (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_STDOUT].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			ਜੇ (ret == -1)
 				pfd[POLL_STDOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (netinbufpos == 0)
+			ਜੇ (netinbufpos == 0)
 				pfd[POLL_STDOUT].events = 0;
 			/* buffer no longer full - poll net in again */
-			if (netinbufpos < BUFSIZE)
+			ਜੇ (netinbufpos < BUFSIZE)
 				pfd[POLL_NETIN].events = POLLIN;
 		}
 
 		/* stdin gone and queue empty? */
-		if (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
-			if (pfd[POLL_NETOUT].fd != -1 && Nflag)
+		ਜੇ (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
+			ਜੇ (pfd[POLL_NETOUT].fd != -1 && Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* net in gone and queue empty? */
-		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
+		ਜੇ (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
 			pfd[POLL_STDOUT].fd = -1;
 		}
 	}
 }
 
 ssize_t
-drainbuf(int fd, unsigned char *buf, size_t *bufpos)
+drainbuf(ਪੂਰਨ fd, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *buf, ਮਾਪ_t *bufpos)
 {
 	ssize_t n;
 	ssize_t adjust;
 
-	n = write(fd, buf, *bufpos);
+	n = ਲਿਖ(fd, buf, *bufpos);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	ਜੇ (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	ਜੇ (n <= 0)
+		ਵਾਪਸ n;
 	/* adjust buffer */
 	adjust = *bufpos - n;
-	if (adjust > 0)
+	ਜੇ (adjust > 0)
 		memmove(buf, buf + n, adjust);
 	*bufpos -= n;
-	return n;
+	ਵਾਪਸ n;
 }
 
 
 ssize_t
-fillbuf(int fd, unsigned char *buf, size_t *bufpos)
+fillbuf(ਪੂਰਨ fd, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *buf, ਮਾਪ_t *bufpos)
 {
-	size_t num = BUFSIZE - *bufpos;
+	ਮਾਪ_t ਅੰਕ = BUFSIZE - *bufpos;
 	ssize_t n;
 
-	n = read(fd, buf + *bufpos, num);
+	n = ਪਠ(fd, buf + *bufpos, ਅੰਕ);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	ਜੇ (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	ਜੇ (n <= 0)
+		ਵਾਪਸ n;
 	*bufpos += n;
-	return n;
+	ਵਾਪਸ n;
 }
 
 /*
  * fdpass()
  * Pass the connected file descriptor to stdout and exit.
  */
-void
-fdpass(int nfd)
+ਖਾਲੀ
+fdpass(ਪੂਰਨ nfd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
-#ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+#ਜੇ defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_ਵਿੱਚ_MSGHDR) || defined(HAVE_CONTROL_ਵਿੱਚ_MSGHDR))
+	ਬਣਤਰ msghdr ਸੁਨੇਹਾ;
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_ACCRIGHTS_ਵਿੱਚ_MSGHDR
+	ਸੰਘ {
+		ਬਣਤਰ cmsghdr hdr;
+		ਅੱਖਰ buf[CMSG_SPACE(ਆਕਾਰ(ਪੂਰਨ))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
-#endif
-	struct iovec vec;
-	char ch = '\0';
-	struct pollfd pfd;
+	ਬਣਤਰ cmsghdr *cmsg;
+#ਜੇ_ਅੰਤ
+	ਬਣਤਰ iovec vec;
+	ਅੱਖਰ ch = '\0';
+	ਬਣਤਰ pollfd pfd;
 	ssize_t r;
 
-	memset(&msg, 0, sizeof(msg));
-#ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&nfd;
-	msg.msg_accrightslen = sizeof(nfd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	memset(&ਸੁਨੇਹਾ, 0, ਆਕਾਰ(ਸੁਨੇਹਾ));
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_ACCRIGHTS_ਵਿੱਚ_MSGHDR
+	ਸੁਨੇਹਾ.ਸੁਨੇਹਾ_accrights = (caddr_t)&nfd;
+	ਸੁਨੇਹਾ.ਸੁਨੇਹਾ_accrightslen = ਆਕਾਰ(nfd);
+#ਨਹੀਂਤਾਂ
+	memset(&cmsgbuf, 0, ਆਕਾਰ(cmsgbuf));
+	ਸੁਨੇਹਾ.msg_control = (caddr_t)&cmsgbuf.buf;
+	ਸੁਨੇਹਾ.msg_controllen = ਆਕਾਰ(cmsgbuf.buf);
+	cmsg = CMSG_FIRSTHDR(&ਸੁਨੇਹਾ);
+	cmsg->cmsg_len = CMSG_LEN(ਆਕਾਰ(ਪੂਰਨ));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = nfd;
-#endif
+	*(ਪੂਰਨ *)CMSG_DATA(cmsg) = nfd;
+#ਜੇ_ਅੰਤ
 
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	ਸੁਨੇਹਾ.msg_iov = &vec;
+	ਸੁਨੇਹਾ.msg_iovlen = 1;
 
-	bzero(&pfd, sizeof(pfd));
+	bzero(&pfd, ਆਕਾਰ(pfd));
 	pfd.fd = STDOUT_FILENO;
 	pfd.events = POLLOUT;
-	for (;;) {
-		r = sendmsg(STDOUT_FILENO, &msg, 0);
-		if (r == -1) {
-			if (errno == EAGAIN || errno == EINTR) {
-				if (poll(&pfd, 1, -1) == -1)
+	ਲਈ (;;) {
+		r = sendmsg(STDOUT_FILENO, &ਸੁਨੇਹਾ, 0);
+		ਜੇ (r == -1) {
+			ਜੇ (errno == EAGAIN || errno == EINTR) {
+				ਜੇ (poll(&pfd, 1, -1) == -1)
 					err(1, "poll");
-				continue;
+				ਜਾਰੀ;
 			}
 			err(1, "sendmsg");
-		} else if (r != 1)
+		} ਨਹੀਂਤਾਂ ਜੇ (r != 1)
 			errx(1, "sendmsg: unexpected return value %zd", r);
-		else
-			break;
+		ਨਹੀਂਤਾਂ
+			ਰੋਕੋ;
 	}
-	exit(0);
-#else
+	ਬਾਹਰ_ਨਿਕਲੋ(0);
+#ਨਹੀਂਤਾਂ
 	errx(1, "%s: file descriptor passing not supported", __func__);
-#endif
+#ਜੇ_ਅੰਤ
 }
 
 /* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
-void
-atelnet(int nfd, unsigned char *buf, unsigned int size)
+ਖਾਲੀ
+atelnet(ਪੂਰਨ nfd, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *buf, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ ਮਾਪ)
 {
-	unsigned char *p, *end;
-	unsigned char obuf[4];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *p, *ਸਿਰਾ;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ obuf[4];
 
-	if (size < 3)
-		return;
-	end = buf + size - 2;
+	ਜੇ (ਮਾਪ < 3)
+		ਵਾਪਸ;
+	ਸਿਰਾ = buf + ਮਾਪ - 2;
 
-	for (p = buf; p < end; p++) {
-		if (*p != IAC)
-			continue;
+	ਲਈ (p = buf; p < ਸਿਰਾ; p++) {
+		ਜੇ (*p != IAC)
+			ਜਾਰੀ;
 
 		obuf[0] = IAC;
 		p++;
-		if ((*p == WILL) || (*p == WONT))
+		ਜੇ ((*p == WILL) || (*p == WONT))
 			obuf[1] = DONT;
-		else if ((*p == DO) || (*p == DONT))
+		ਨਹੀਂਤਾਂ ਜੇ ((*p == DO) || (*p == DONT))
 			obuf[1] = WONT;
-		else
-			continue;
+		ਨਹੀਂਤਾਂ
+			ਜਾਰੀ;
 
 		p++;
 		obuf[2] = *p;
-		if (atomicio(vwrite, nfd, obuf, 3) != 3)
+		ਜੇ (atomicio(vwrite, nfd, obuf, 3) != 3)
 			warn("Write Error!");
 	}
 }
@@ -1093,59 +1093,59 @@ atelnet(int nfd, unsigned char *buf, unsigned int size)
  * Build an array of ports in portlist[], listing each port
  * that we should try to connect to.
  */
-void
-build_ports(char *p)
+ਖਾਲੀ
+build_ports(ਅੱਖਰ *p)
 {
-	const char *errstr;
-	char *n;
-	int hi, lo, cp;
-	int x = 0;
+	ਅਚਲ ਅੱਖਰ *errstr;
+	ਅੱਖਰ *n;
+	ਪੂਰਨ hi, lo, cp;
+	ਪੂਰਨ x = 0;
 
-	if ((n = strchr(p, '-')) != NULL) {
+	ਜੇ ((n = strchr(p, '-')) != ਨਿਰਾ) {
 		*n = '\0';
 		n++;
 
 		/* Make sure the ports are in order: lowest->highest. */
-		hi = strtonum(n, 1, PORT_MAX, &errstr);
-		if (errstr)
+		hi = strtonum(n, 1, ਪੋਰਟ_MAX, &errstr);
+		ਜੇ (errstr)
 			errx(1, "port number %s: %s", errstr, n);
-		lo = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		lo = strtonum(p, 1, ਪੋਰਟ_MAX, &errstr);
+		ਜੇ (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 
-		if (lo > hi) {
+		ਜੇ (lo > hi) {
 			cp = hi;
 			hi = lo;
 			lo = cp;
 		}
 
 		/* Load ports sequentially. */
-		for (cp = lo; cp <= hi; cp++) {
-			portlist[x] = calloc(1, PORT_MAX_LEN);
-			if (portlist[x] == NULL)
+		ਲਈ (cp = lo; cp <= hi; cp++) {
+			portlist[x] = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਪੋਰਟ_MAX_LEN);
+			ਜੇ (portlist[x] == ਨਿਰਾ)
 				errx(1, "calloc");
-			snprintf(portlist[x], PORT_MAX_LEN, "%d", cp);
+			snprintf(portlist[x], ਪੋਰਟ_MAX_LEN, "%d", cp);
 			x++;
 		}
 
 		/* Randomly swap ports. */
-		if (rflag) {
-			int y;
-			char *c;
+		ਜੇ (rflag) {
+			ਪੂਰਨ y;
+			ਅੱਖਰ *c;
 
-			for (x = 0; x <= (hi - lo); x++) {
-				y = arc4random_uniform(hi - lo);
+			ਲਈ (x = 0; x <= (hi - lo); x++) {
+				y = arc4random_ਇਕਸਾਰ(hi - lo);
 				c = portlist[x];
 				portlist[x] = portlist[y];
 				portlist[y] = c;
 			}
 		}
-	} else {
-		hi = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+	} ਨਹੀਂਤਾਂ {
+		hi = strtonum(p, 1, ਪੋਰਟ_MAX, &errstr);
+		ਜੇ (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 		portlist[0] = strdup(p);
-		if (portlist[0] == NULL)
+		ਜੇ (portlist[0] == ਨਿਰਾ)
 			errx(1, "strdup");
 	}
 }
@@ -1155,73 +1155,73 @@ build_ports(char *p)
  * Do a few writes to see if the UDP port is there.
  * Fails once PF state table is full.
  */
-int
-udptest(int s)
+ਪੂਰਨ
+udptest(ਪੂਰਨ s)
 {
-	int i, ret;
+	ਪੂਰਨ i, ret;
 
-	for (i = 0; i <= 3; i++) {
-		if (write(s, "X", 1) == 1)
+	ਲਈ (i = 0; i <= 3; i++) {
+		ਜੇ (ਲਿਖ(s, "X", 1) == 1)
 			ret = 1;
-		else
+		ਨਹੀਂਤਾਂ
 			ret = -1;
 	}
-	return (ret);
+	ਵਾਪਸ (ret);
 }
 
-void
-set_common_sockopts(int s, int af)
+ਖਾਲੀ
+ਸੈੱਟ_common_sockopts(ਪੂਰਨ s, ਪੂਰਨ af)
 {
-	int x = 1;
+	ਪੂਰਨ x = 1;
 
-#ifdef TCP_MD5SIG
-	if (Sflag) {
-		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
-			&x, sizeof(x)) == -1)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ TCP_MD5SIG
+	ਜੇ (Sflag) {
+		ਜੇ (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
+			&x, ਆਕਾਰ(x)) == -1)
 			err(1, "setsockopt");
 	}
-#endif
-	if (Dflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
-			&x, sizeof(x)) == -1)
+#ਜੇ_ਅੰਤ
+	ਜੇ (Dflag) {
+		ਜੇ (setsockopt(s, SOL_SOCKET, SO_DEBUG,
+			&x, ਆਕਾਰ(x)) == -1)
 			err(1, "setsockopt");
 	}
-#if defined(IP_TOS) && defined(IPV6_TCLASS)
-	if (Tflag != -1) {
-		int proto, option;
+#ਜੇ defined(IP_TOS) && defined(IPV6_TCLASS)
+	ਜੇ (Tflag != -1) {
+		ਪੂਰਨ proto, option;
 
-		if (af == AF_INET6) {
+		ਜੇ (af == AF_INET6) {
 			proto = IPPROTO_IPV6;
 			option = IPV6_TCLASS;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			proto = IPPROTO_IP;
 			option = IP_TOS;
 		}
 
-		if (setsockopt(s, proto, option, &Tflag, sizeof(Tflag)) == -1)
+		ਜੇ (setsockopt(s, proto, option, &Tflag, ਆਕਾਰ(Tflag)) == -1)
 			err(1, "set IP ToS");
 	}
-#endif
-	if (Iflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
-		    &Iflag, sizeof(Iflag)) == -1)
+#ਜੇ_ਅੰਤ
+	ਜੇ (Iflag) {
+		ਜੇ (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
+		    &Iflag, ਆਕਾਰ(Iflag)) == -1)
 			err(1, "set TCP receive buffer size");
 	}
-	if (Oflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
-		    &Oflag, sizeof(Oflag)) == -1)
+	ਜੇ (Oflag) {
+		ਜੇ (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
+		    &Oflag, ਆਕਾਰ(Oflag)) == -1)
 			err(1, "set TCP send buffer size");
 	}
 }
 
-int
-map_tos(char *s, int *val)
+ਪੂਰਨ
+map_tos(ਅੱਖਰ *s, ਪੂਰਨ *val)
 {
-#ifdef IP_TOS
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ IP_TOS
 	/* DiffServ Codepoints and other TOS mappings */
-	const struct toskeywords {
-		const char	*keyword;
-		int		 val;
+	ਅਚਲ ਬਣਤਰ toskeywords {
+		ਅਚਲ ਅੱਖਰ	*keyword;
+		ਪੂਰਨ		 val;
 	} *t, toskeywords[] = {
 		{ "af11",		IPTOS_DSCP_AF11 },
 		{ "af12",		IPTOS_DSCP_AF12 },
@@ -1250,48 +1250,48 @@ map_tos(char *s, int *val)
 		{ "netcontrol",		IPTOS_PREC_NETCONTROL },
 		{ "reliability",	IPTOS_RELIABILITY },
 		{ "throughput",		IPTOS_THROUGHPUT },
-		{ NULL, 		-1 },
+		{ ਨਿਰਾ, 		-1 },
 	};
 
-	for (t = toskeywords; t->keyword != NULL; t++) {
-		if (strcmp(s, t->keyword) == 0) {
+	ਲਈ (t = toskeywords; t->keyword != ਨਿਰਾ; t++) {
+		ਜੇ (strcmp(s, t->keyword) == 0) {
 			*val = t->val;
-			return (1);
+			ਵਾਪਸ (1);
 		}
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
-	return (0);
+	ਵਾਪਸ (0);
 }
 
-void
-report_connect(const struct sockaddr *sa, socklen_t salen)
+ਖਾਲੀ
+report_connect(ਅਚਲ ਬਣਤਰ sockaddr *sa, socklen_t salen)
 {
-	char remote_host[NI_MAXHOST];
-	char remote_port[NI_MAXSERV];
-	int herr;
-	int flags = NI_NUMERICSERV;
+	ਅੱਖਰ remote_host[NI_MAXHOST];
+	ਅੱਖਰ remote_ਪੋਰਟ[NI_MAXSERV];
+	ਪੂਰਨ herr;
+	ਪੂਰਨ flags = NI_NUMERICSERV;
 	
-	if (nflag)
+	ਜੇ (nflag)
 		flags |= NI_NUMERICHOST;
 	
-	if ((herr = getnameinfo(sa, salen,
-	    remote_host, sizeof(remote_host),
-	    remote_port, sizeof(remote_port),
+	ਜੇ ((herr = getnameinfo(sa, salen,
+	    remote_host, ਆਕਾਰ(remote_host),
+	    remote_ਪੋਰਟ, ਆਕਾਰ(remote_ਪੋਰਟ),
 	    flags)) != 0) {
-		if (herr == EAI_SYSTEM)
+		ਜੇ (herr == EAI_SYSTEM)
 			err(1, "getnameinfo");
-		else
+		ਨਹੀਂਤਾਂ
 			errx(1, "getnameinfo: %s", gai_strerror(herr));
 	}
 	
 	fprintf(stderr,
 	    "Connection from %s %s "
-	    "received!\n", remote_host, remote_port);
+	    "received!\n", remote_host, remote_ਪੋਰਟ);
 }
 
-void
-help(void)
+ਖਾਲੀ
+help(ਖਾਲੀ)
 {
 	usage(0);
 	fprintf(stderr, "\tCommand Summary:\n\
@@ -1300,43 +1300,43 @@ help(void)
 	\t-D		Enable the debug socket option\n\
 	\t-d		Detach from stdin\n\
 	\t-F		Pass socket fd\n\
-	\t-h		This help text\n\
-	\t-I length	TCP receive buffer length\n\
-	\t-i secs\t	Delay interval for lines sent, ports scanned\n\
-	\t-k		Keep inbound sockets open for multiple connects\n\
-	\t-l		Listen mode, for inbound connects\n\
-	\t-N		Shutdown the network socket after EOF on stdin\n\
-	\t-n		Suppress name/port resolutions\n\
-	\t-O length	TCP send buffer length\n\
-	\t-P proxyuser\tUsername for proxy authentication\n\
-	\t-p port\t	Specify local port for remote connects\n\
+	\t-h		This help ਪਾਠ\n\
+	\t-I ਲੰਮਾਈ	TCP receive ਬਫਰ ਲੰਮਾਈ\n\
+	\t-i secs\t	Delay interval ਲਈ ਸਤਰਾਂ ਭੇਜਿਆ, ports scanned\n\
+	\t-k		Keep inbound sockets open ਲਈ ਗੁਣਜ connects\n\
+	\t-l		Listen ਬਹੁਲਕ, ਲਈ inbound connects\n\
+	\t-N		Shutdown the ਜਾਲ socket after EOF on stdin\n\
+	\t-n		Suppress name/ਪੋਰਟ resolutions\n\
+	\t-O ਲੰਮਾਈ	TCP send ਬਫਰ ਲੰਮਾਈ\n\
+	\t-P proxyuser\tUsername ਲਈ proxy authentication\n\
+	\t-p ਪੋਰਟ\t	Specify local ਪੋਰਟ ਲਈ remote connects\n\
 	\t-r		Randomize remote ports\n\
 	\t-S		Enable the TCP MD5 signature option\n\
-	\t-s addr\t	Local source address\n\
-	\t-T toskeyword\tSet IP Type of Service\n\
+	\t-s addr\t	Local ਸਰੋਤ ਪਤਾ\n\
+	\t-T toskeyword\t_ਸੈੱਟ IP Type ਦਾ Service\n\
 	\t-t		Answer TELNET negotiation\n\
 	\t-U		Use UNIX domain socket\n\
-	\t-u		UDP mode\n\
-	\t-V rtable	Specify alternate routing table\n\
+	\t-u		UDP ਬਹੁਲਕ\n\
+	\t-V rtable	Specify alternate routing ਸਾਰਣੀ\n\
 	\t-v		Verbose\n\
-	\t-w secs\t	Timeout for connects and final net reads\n\
+	\t-w secs\t	Timeout ਲਈ connects and final net reads\n\
 	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
-	\t-x addr[:port]\tSpecify proxy address and port\n\
-	\t-z		Zero-I/O mode [used for scanning]\n\
-	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
-	exit(1);
+	\t-x addr[:ਪੋਰਟ]\tSpecify proxy ਪਤਾ and ਪੋਰਟ\n\
+	\t-z		Zero-I/O ਬਹੁਲਕ [ਵਰਤਿਆ ਲਈ scanning]\n\
+	ਪੋਰਟ_2 numbers can be individual or ranges: lo-hi [inclusive]\n");
+	ਬਾਹਰ_ਨਿਕਲੋ(1);
 }
 
-void
-usage(int ret)
+ਖਾਲੀ
+usage(ਪੂਰਨ ret)
 {
 	fprintf(stderr,
 	    "usage: nc [-46DdFhklNnrStUuvz] [-I length] [-i interval] [-O length]\n"
 	    "\t  [-P proxy_username] [-p source_port] [-s source] [-T toskeyword]\n"
 	    "\t  [-V rtable] [-w timeout] [-X proxy_protocol]\n"
 	    "\t  [-x proxy_address[:port]] [destination] [port]\n");
-	if (ret)
-		exit(1);
+	ਜੇ (ret)
+		ਬਾਹਰ_ਨਿਕਲੋ(1);
 }
 
 /* *** src/usr.bin/nc/socks.c *** */
@@ -1369,137 +1369,137 @@ usage(int ret)
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/socket.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/in.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <arpa/inet.h>
 
-#include <errno.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <resolv.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netdb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <resolv.h>
 
-#define SOCKS_PORT	"1080"
-#define HTTP_PROXY_PORT	"3128"
-#define HTTP_MAXHDRS	64
-#define SOCKS_V5	5
-#define SOCKS_V4	4
-#define SOCKS_NOAUTH	0
-#define SOCKS_NOMETHOD	0xff
-#define SOCKS_CONNECT	1
-#define SOCKS_IPV4	1
-#define SOCKS_DOMAIN	3
-#define SOCKS_IPV6	4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOCKS_ਪੋਰਟ	"1080"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HTTP_PROXY_ਪੋਰਟ	"3128"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HTTP_MAXHDRS	64
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOCKS_V5	5
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOCKS_V4	4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOCKS_NOAUTH	0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOCKS_NOMETHOD	0xff
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOCKS_CONNECT	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOCKS_IPV4	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOCKS_DOMAIN	3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SOCKS_IPV6	4
 
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int,
-	    const char *);
+ਪੂਰਨ	remote_connect(ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ addrinfo);
+ਪੂਰਨ	socks_connect(ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ addrinfo,
+	    ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ addrinfo, ਪੂਰਨ,
+	    ਅਚਲ ਅੱਖਰ *);
 
-static int
-decode_addrport(const char *h, const char *p, struct sockaddr *addr,
-    socklen_t addrlen, int v4only, int numeric)
+ਸਥਿਰ ਪੂਰਨ
+decode_addrport(ਅਚਲ ਅੱਖਰ *h, ਅਚਲ ਅੱਖਰ *p, ਬਣਤਰ sockaddr *addr,
+    socklen_t addrlen, ਪੂਰਨ v4only, ਪੂਰਨ numeric)
 {
-	int r;
-	struct addrinfo hints, *res;
+	ਪੂਰਨ r;
+	ਬਣਤਰ addrinfo hints, *res;
 
-	bzero(&hints, sizeof(hints));
+	bzero(&hints, ਆਕਾਰ(hints));
 	hints.ai_family = v4only ? PF_INET : PF_UNSPEC;
 	hints.ai_flags = numeric ? AI_NUMERICHOST : 0;
 	hints.ai_socktype = SOCK_STREAM;
 	r = getaddrinfo(h, p, &hints, &res);
 	/* Don't fatal when attempting to convert a numeric address */
-	if (r != 0) {
-		if (!numeric) {
+	ਜੇ (r != 0) {
+		ਜੇ (!numeric) {
 			errx(1, "getaddrinfo(\"%.64s\", \"%.64s\"): %s", h, p,
 			    gai_strerror(r));
 		}
-		return (-1);
+		ਵਾਪਸ (-1);
 	}
-	if (addrlen < res->ai_addrlen) {
+	ਜੇ (addrlen < res->ai_addrlen) {
 		freeaddrinfo(res);
 		errx(1, "internal error: addrlen < res->ai_addrlen");
 	}
-	memcpy(addr, res->ai_addr, res->ai_addrlen);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(addr, res->ai_addr, res->ai_addrlen);
 	freeaddrinfo(res);
-	return (0);
+	ਵਾਪਸ (0);
 }
 
-static int
-proxy_read_line(int fd, char *buf, size_t bufsz)
+ਸਥਿਰ ਪੂਰਨ
+proxy_read_ਸਤਰ(ਪੂਰਨ fd, ਅੱਖਰ *buf, ਮਾਪ_t bufsz)
 {
-	size_t off;
+	ਮਾਪ_t off;
 
-	for(off = 0;;) {
-		if (off >= bufsz)
+	ਲਈ(off = 0;;) {
+		ਜੇ (off >= bufsz)
 			errx(1, "proxy read too long");
-		if (atomicio(read, fd, buf + off, 1) != 1)
+		ਜੇ (atomicio(ਪਠ, fd, buf + off, 1) != 1)
 			err(1, "proxy read");
 		/* Skip CR */
-		if (buf[off] == '\r')
-			continue;
-		if (buf[off] == '\n') {
+		ਜੇ (buf[off] == '\r')
+			ਜਾਰੀ;
+		ਜੇ (buf[off] == '\n') {
 			buf[off] = '\0';
-			break;
+			ਰੋਕੋ;
 		}
 		off++;
 	}
-	return (off);
+	ਵਾਪਸ (off);
 }
 
-static const char *
-getproxypass(const char *proxyuser, const char *proxyhost)
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *
+getproxypass(ਅਚਲ ਅੱਖਰ *proxyuser, ਅਚਲ ਅੱਖਰ *proxyhost)
 {
-	char prompt[512];
-	static char pw[256];
+	ਅੱਖਰ prompt[512];
+	ਸਥਿਰ ਅੱਖਰ pw[256];
 
-	snprintf(prompt, sizeof(prompt), "Proxy password for %s@%s: ",
+	snprintf(prompt, ਆਕਾਰ(prompt), "Proxy password for %s@%s: ",
 	   proxyuser, proxyhost);
-	if (readpassphrase(prompt, pw, sizeof(pw), RPP_REQUIRE_TTY) == NULL)
+	ਜੇ (readpassphrase(prompt, pw, ਆਕਾਰ(pw), RPP_REQUIRE_TTY) == ਨਿਰਾ)
 		errx(1, "Unable to read proxy passphrase");
-	return (pw);
+	ਵਾਪਸ (pw);
 }
 
-int
-socks_connect(const char *host, const char *port,
-    struct addrinfo hints __attribute__ ((__unused__)),
-    const char *proxyhost, const char *proxyport, struct addrinfo proxyhints,
-    int socksv, const char *proxyuser)
+ਪੂਰਨ
+socks_connect(ਅਚਲ ਅੱਖਰ *host, ਅਚਲ ਅੱਖਰ *ਪੋਰਟ,
+    ਬਣਤਰ addrinfo hints __attribute__ ((__unused__)),
+    ਅਚਲ ਅੱਖਰ *proxyhost, ਅਚਲ ਅੱਖਰ *proxyport, ਬਣਤਰ addrinfo proxyhints,
+    ਪੂਰਨ socksv, ਅਚਲ ਅੱਖਰ *proxyuser)
 {
-	int proxyfd, r, authretry = 0;
-	size_t hlen, wlen = 0;
-	unsigned char buf[1024];
-	size_t cnt;
-	struct sockaddr_storage addr;
-	struct sockaddr_in *in4 = (struct sockaddr_in *)&addr;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)&addr;
+	ਪੂਰਨ proxyfd, r, authretry = 0;
+	ਮਾਪ_t hlen, wlen = 0;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ buf[1024];
+	ਮਾਪ_t cnt;
+	ਬਣਤਰ sockaddr_storage addr;
+	ਬਣਤਰ sockaddr_in *in4 = (ਬਣਤਰ sockaddr_in *)&addr;
+	ਬਣਤਰ sockaddr_in6 *in6 = (ਬਣਤਰ sockaddr_in6 *)&addr;
 	in_port_t serverport;
-	const char *proxypass = NULL;
+	ਅਚਲ ਅੱਖਰ *proxypass = ਨਿਰਾ;
 
-	if (proxyport == NULL)
-		proxyport = (socksv == -1) ? HTTP_PROXY_PORT : SOCKS_PORT;
+	ਜੇ (proxyport == ਨਿਰਾ)
+		proxyport = (socksv == -1) ? HTTP_PROXY_ਪੋਰਟ : SOCKS_ਪੋਰਟ;
 
 	/* Abuse API to lookup port */
-	if (decode_addrport("0.0.0.0", port, (struct sockaddr *)&addr,
-	    sizeof(addr), 1, 1) == -1)
-		errx(1, "unknown port \"%.64s\"", port);
+	ਜੇ (decode_addrport("0.0.0.0", ਪੋਰਟ, (ਬਣਤਰ sockaddr *)&addr,
+	    ਆਕਾਰ(addr), 1, 1) == -1)
+		errx(1, "unknown port \"%.64s\"", ਪੋਰਟ);
 	serverport = in4->sin_port;
 
  again:
-	if (authretry++ > 3)
+	ਜੇ (authretry++ > 3)
 		errx(1, "Too many authentication failures");
 
 	proxyfd = remote_connect(proxyhost, proxyport, proxyhints);
 
-	if (proxyfd < 0)
-		return (-1);
+	ਜੇ (proxyfd < 0)
+		ਵਾਪਸ (-1);
 
-	if (socksv == 5) {
-		if (decode_addrport(host, port, (struct sockaddr *)&addr,
-		    sizeof(addr), 0, 1) == -1)
+	ਜੇ (socksv == 5) {
+		ਜੇ (decode_addrport(host, ਪੋਰਟ, (ਬਣਤਰ sockaddr *)&addr,
+		    ਆਕਾਰ(addr), 0, 1) == -1)
 			addr.ss_family = 0; /* used in switch below */
 
 		/* Version 5, one method: no authentication */
@@ -1507,190 +1507,190 @@ socks_connect(const char *host, const char *port,
 		buf[1] = 1;
 		buf[2] = SOCKS_NOAUTH;
 		cnt = atomicio(vwrite, proxyfd, buf, 3);
-		if (cnt != 3)
+		ਜੇ (cnt != 3)
 			err(1, "write failed (%zu/3)", cnt);
 
-		cnt = atomicio(read, proxyfd, buf, 2);
-		if (cnt != 2)
+		cnt = atomicio(ਪਠ, proxyfd, buf, 2);
+		ਜੇ (cnt != 2)
 			err(1, "read failed (%zu/3)", cnt);
 
-		if (buf[1] == SOCKS_NOMETHOD)
+		ਜੇ (buf[1] == SOCKS_NOMETHOD)
 			errx(1, "authentication method negotiation failed");
 
-		switch (addr.ss_family) {
-		case 0:
+		ਚੋਣ (addr.ss_family) {
+		ਹਾਲਤ 0:
 			/* Version 5, connect: domain name */
 
 			/* Max domain name length is 255 bytes */
-			hlen = strlen(host);
-			if (hlen > 255)
+			hlen = ਲੜੀ_ਲੰਬਾਈ(host);
+			ਜੇ (hlen > 255)
 				errx(1, "host name too long for SOCKS5");
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_DOMAIN;
 			buf[4] = hlen;
-			memcpy(buf + 5, host, hlen);			
-			memcpy(buf + 5 + hlen, &serverport, sizeof serverport);
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf + 5, host, hlen);			
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf + 5 + hlen, &serverport, ਆਕਾਰ serverport);
 			wlen = 7 + hlen;
-			break;
-		case AF_INET:
+			ਰੋਕੋ;
+		ਹਾਲਤ AF_INET:
 			/* Version 5, connect: IPv4 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV4;
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-			memcpy(buf + 8, &in4->sin_port, sizeof in4->sin_port);
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf + 4, &in4->sin_addr, ਆਕਾਰ in4->sin_addr);
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf + 8, &in4->sin_port, ਆਕਾਰ in4->sin_port);
 			wlen = 10;
-			break;
-		case AF_INET6:
+			ਰੋਕੋ;
+		ਹਾਲਤ AF_INET6:
 			/* Version 5, connect: IPv6 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV6;
-			memcpy(buf + 4, &in6->sin6_addr, sizeof in6->sin6_addr);
-			memcpy(buf + 20, &in6->sin6_port,
-			    sizeof in6->sin6_port);
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf + 4, &in6->sin6_addr, ਆਕਾਰ in6->sin6_addr);
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf + 20, &in6->sin6_port,
+			    ਆਕਾਰ in6->sin6_port);
 			wlen = 22;
-			break;
-		default:
+			ਰੋਕੋ;
+		ਮੂਲ:
 			errx(1, "internal error: silly AF");
 		}
 
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		ਜੇ (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
-		cnt = atomicio(read, proxyfd, buf, 4);
-		if (cnt != 4)
+		cnt = atomicio(ਪਠ, proxyfd, buf, 4);
+		ਜੇ (cnt != 4)
 			err(1, "read failed (%zu/4)", cnt);
-		if (buf[1] != 0)
+		ਜੇ (buf[1] != 0)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-		switch (buf[3]) {
-		case SOCKS_IPV4:
-			cnt = atomicio(read, proxyfd, buf + 4, 6);
-			if (cnt != 6)
+		ਚੋਣ (buf[3]) {
+		ਹਾਲਤ SOCKS_IPV4:
+			cnt = atomicio(ਪਠ, proxyfd, buf + 4, 6);
+			ਜੇ (cnt != 6)
 				err(1, "read failed (%zu/6)", cnt);
-			break;
-		case SOCKS_IPV6:
-			cnt = atomicio(read, proxyfd, buf + 4, 18);
-			if (cnt != 18)
+			ਰੋਕੋ;
+		ਹਾਲਤ SOCKS_IPV6:
+			cnt = atomicio(ਪਠ, proxyfd, buf + 4, 18);
+			ਜੇ (cnt != 18)
 				err(1, "read failed (%zu/18)", cnt);
-			break;
-		default:
+			ਰੋਕੋ;
+		ਮੂਲ:
 			errx(1, "connection failed, unsupported address type");
 		}
-	} else if (socksv == 4 || socksv == 44) {
-		if (socksv == 4) {
+	} ਨਹੀਂਤਾਂ ਜੇ (socksv == 4 || socksv == 44) {
+		ਜੇ (socksv == 4) {
 			/* This will exit on lookup failure */
-			decode_addrport(host, port, (struct sockaddr *)&addr,
-			    sizeof(addr), 1, 0);
+			decode_addrport(host, ਪੋਰਟ, (ਬਣਤਰ sockaddr *)&addr,
+			    ਆਕਾਰ(addr), 1, 0);
 		}
 
 		/* Version 4 */
 		buf[0] = SOCKS_V4;
 		buf[1] = SOCKS_CONNECT;	/* connect */
-		memcpy(buf + 2, &in4->sin_port, sizeof in4->sin_port);
-		if (socksv == 4) {
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-		} else {
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf + 2, &in4->sin_port, ਆਕਾਰ in4->sin_port);
+		ਜੇ (socksv == 4) {
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(buf + 4, &in4->sin_addr, ਆਕਾਰ in4->sin_addr);
+		} ਨਹੀਂਤਾਂ {
 			/* SOCKS4A uses addr of 0.0.0.x, and hostname later */
 			buf[4] = buf[5] = buf[6] = 0;
 			buf[7] = 1;
 		}
 		buf[8] = 0;	/* empty username */
 		wlen = 9;
-		if (socksv == 44) {
+		ਜੇ (socksv == 44) {
 			/* SOCKS4A has nul-terminated hostname after user */
-			if (strlcpy(buf + 9, host,
-			    sizeof(buf) - 9) >= sizeof(buf) - 9)
+			ਜੇ (strlcpy(buf + 9, host,
+			    ਆਕਾਰ(buf) - 9) >= ਆਕਾਰ(buf) - 9)
 				errx(1, "hostname too big");
-			wlen = 9 + strlen(host) + 1;
+			wlen = 9 + ਲੜੀ_ਲੰਬਾਈ(host) + 1;
 		}
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		ਜੇ (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
-		cnt = atomicio(read, proxyfd, buf, 8);
-		if (cnt != 8)
+		cnt = atomicio(ਪਠ, proxyfd, buf, 8);
+		ਜੇ (cnt != 8)
 			err(1, "read failed (%zu/8)", cnt);
-		if (buf[1] != 90)
+		ਜੇ (buf[1] != 90)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-	} else if (socksv == -1) {
+	} ਨਹੀਂਤਾਂ ਜੇ (socksv == -1) {
 		/* HTTP proxy CONNECT */
 
 		/* Disallow bad chars in hostname */
-		if (strcspn(host, "\r\n\t []:") != strlen(host))
+		ਜੇ (strcspn(host, "\r\n\t []:") != ਲੜੀ_ਲੰਬਾਈ(host))
 			errx(1, "Invalid hostname");
 
 		/* Try to be sane about numeric IPv6 addresses */
-		if (strchr(host, ':') != NULL) {
-			r = snprintf(buf, sizeof(buf),
+		ਜੇ (strchr(host, ':') != ਨਿਰਾ) {
+			r = snprintf(buf, ਆਕਾਰ(buf),
 			    "CONNECT [%s]:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
-		} else {
-			r = snprintf(buf, sizeof(buf),
+		} ਨਹੀਂਤਾਂ {
+			r = snprintf(buf, ਆਕਾਰ(buf),
 			    "CONNECT %s:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
 		}
-		if (r == -1 || (size_t)r >= sizeof(buf))
+		ਜੇ (r == -1 || (ਮਾਪ_t)r >= ਆਕਾਰ(buf))
 			errx(1, "hostname too long");
-		r = strlen(buf);
+		r = ਲੜੀ_ਲੰਬਾਈ(buf);
 
 		cnt = atomicio(vwrite, proxyfd, buf, r);
-		if (cnt != (size_t)r)
+		ਜੇ (cnt != (ਮਾਪ_t)r)
 			err(1, "write failed (%zu/%d)", cnt, r);
 
-		if (authretry > 1) {
-			char resp[1024];
+		ਜੇ (authretry > 1) {
+			ਅੱਖਰ resp[1024];
 
 			proxypass = getproxypass(proxyuser, proxyhost);
-			r = snprintf(buf, sizeof(buf), "%s:%s",
+			r = snprintf(buf, ਆਕਾਰ(buf), "%s:%s",
 			    proxyuser, proxypass);
-			if (r == -1 || (size_t)r >= sizeof(buf) ||
-			    b64_ntop(buf, strlen(buf), resp,
-			    sizeof(resp)) == -1)
+			ਜੇ (r == -1 || (ਮਾਪ_t)r >= ਆਕਾਰ(buf) ||
+			    b64_ntop(buf, ਲੜੀ_ਲੰਬਾਈ(buf), resp,
+			    ਆਕਾਰ(resp)) == -1)
 				errx(1, "Proxy username/password too long");
-			r = snprintf(buf, sizeof(buf), "Proxy-Authorization: "
+			r = snprintf(buf, ਆਕਾਰ(buf), "Proxy-Authorization: "
 			    "Basic %s\r\n", resp);
-			if (r == -1 || (size_t)r >= sizeof(buf))
+			ਜੇ (r == -1 || (ਮਾਪ_t)r >= ਆਕਾਰ(buf))
 				errx(1, "Proxy auth response too long");
-			r = strlen(buf);
-			if ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
+			r = ਲੜੀ_ਲੰਬਾਈ(buf);
+			ਜੇ ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (ਮਾਪ_t)r)
 				err(1, "write failed (%zu/%d)", cnt, r);
 		}
 
 		/* Terminate headers */
-		if ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
+		ਜੇ ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
 			err(1, "write failed (2/%d)", r);
 
 		/* Read status reply */
-		proxy_read_line(proxyfd, buf, sizeof(buf));
-		if (proxyuser != NULL &&
-		    strncmp(buf, "HTTP/1.0 407 ", 12) == 0) {
-			if (authretry > 1) {
+		proxy_read_ਸਤਰ(proxyfd, buf, ਆਕਾਰ(buf));
+		ਜੇ (proxyuser != ਨਿਰਾ &&
+		    ਲੜੀ_ਤੁਲਨਾ(buf, "HTTP/1.0 407 ", 12) == 0) {
+			ਜੇ (authretry > 1) {
 				fprintf(stderr, "Proxy authentication "
 				    "failed\n");
 			}
 			close(proxyfd);
-			goto again;
-		} else if (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
-		    strncmp(buf, "HTTP/1.1 200 ", 12) != 0)
+			ਜਾਓ again;
+		} ਨਹੀਂਤਾਂ ਜੇ (ਲੜੀ_ਤੁਲਨਾ(buf, "HTTP/1.0 200 ", 12) != 0 &&
+		    ਲੜੀ_ਤੁਲਨਾ(buf, "HTTP/1.1 200 ", 12) != 0)
 			errx(1, "Proxy error: \"%s\"", buf);
 
 		/* Headers continue until we hit an empty line */
-		for (r = 0; r < HTTP_MAXHDRS; r++) {
-			proxy_read_line(proxyfd, buf, sizeof(buf));
-			if (*buf == '\0')
-				break;
+		ਲਈ (r = 0; r < HTTP_MAXHDRS; r++) {
+			proxy_read_ਸਤਰ(proxyfd, buf, ਆਕਾਰ(buf));
+			ਜੇ (*buf == '\0')
+				ਰੋਕੋ;
 		}
-		if (*buf != '\0')
+		ਜੇ (*buf != '\0')
 			errx(1, "Too many proxy headers received");
-	} else
+	} ਨਹੀਂਤਾਂ
 		errx(1, "Unknown proxy protocol %d", socksv);
 
-	return (proxyfd);
+	ਵਾਪਸ (proxyfd);
 }
 

@@ -15,153 +15,153 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "digest.h"
-#include "hmac.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "digest.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hmac.h"
 
-struct ssh_hmac_ctx {
-	int			 alg;
-	struct ssh_digest_ctx	*ictx;
-	struct ssh_digest_ctx	*octx;
-	struct ssh_digest_ctx	*digest;
+ਬਣਤਰ ssh_hmac_ctx {
+	ਪੂਰਨ			 alg;
+	ਬਣਤਰ ssh_digest_ctx	*ictx;
+	ਬਣਤਰ ssh_digest_ctx	*octx;
+	ਬਣਤਰ ssh_digest_ctx	*digest;
 	u_char			*buf;
-	size_t			 buf_len;
+	ਮਾਪ_t			 buf_len;
 };
 
-size_t
-ssh_hmac_bytes(int alg)
+ਮਾਪ_t
+ssh_hmac_ਬਾਈਟਾਂ(ਪੂਰਨ alg)
 {
-	return ssh_digest_bytes(alg);
+	ਵਾਪਸ ssh_digest_ਬਾਈਟਾਂ(alg);
 }
 
-struct ssh_hmac_ctx *
-ssh_hmac_start(int alg)
+ਬਣਤਰ ssh_hmac_ctx *
+ssh_hmac_ਸ਼ੁਰੂ(ਪੂਰਨ alg)
 {
-	struct ssh_hmac_ctx	*ret;
+	ਬਣਤਰ ssh_hmac_ctx	*ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	ਜੇ ((ret = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ਆਕਾਰ(*ret))) == ਨਿਰਾ)
+		ਵਾਪਸ ਨਿਰਾ;
 	ret->alg = alg;
-	if ((ret->ictx = ssh_digest_start(alg)) == NULL ||
-	    (ret->octx = ssh_digest_start(alg)) == NULL ||
-	    (ret->digest = ssh_digest_start(alg)) == NULL)
-		goto fail;
+	ਜੇ ((ret->ictx = ssh_digest_ਸ਼ੁਰੂ(alg)) == ਨਿਰਾ ||
+	    (ret->octx = ssh_digest_ਸ਼ੁਰੂ(alg)) == ਨਿਰਾ ||
+	    (ret->digest = ssh_digest_ਸ਼ੁਰੂ(alg)) == ਨਿਰਾ)
+		ਜਾਓ fail;
 	ret->buf_len = ssh_digest_blocksize(ret->ictx);
-	if ((ret->buf = calloc(1, ret->buf_len)) == NULL)
-		goto fail;
-	return ret;
+	ਜੇ ((ret->buf = ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(1, ret->buf_len)) == ਨਿਰਾ)
+		ਜਾਓ fail;
+	ਵਾਪਸ ret;
 fail:
 	ssh_hmac_free(ret);
-	return NULL;
+	ਵਾਪਸ ਨਿਰਾ;
 }
 
-int
-ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
+ਪੂਰਨ
+ssh_hmac_init(ਬਣਤਰ ssh_hmac_ctx *ctx, ਅਚਲ ਖਾਲੀ *ਕੁੰਜੀ, ਮਾਪ_t klen)
 {
-	size_t i;
+	ਮਾਪ_t i;
 
 	/* reset ictx and octx if no is key given */
-	if (key != NULL) {
+	ਜੇ (ਕੁੰਜੀ != ਨਿਰਾ) {
 		/* truncate long keys */
-		if (klen <= ctx->buf_len)
-			memcpy(ctx->buf, key, klen);
-		else if (ssh_digest_memory(ctx->alg, key, klen, ctx->buf,
+		ਜੇ (klen <= ctx->buf_len)
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(ctx->buf, ਕੁੰਜੀ, klen);
+		ਨਹੀਂਤਾਂ ਜੇ (ssh_digest_ਸਮ੍ਰਿਤੀ(ctx->alg, ਕੁੰਜੀ, klen, ctx->buf,
 		    ctx->buf_len) < 0)
-			return -1;
-		for (i = 0; i < ctx->buf_len; i++)
+			ਵਾਪਸ -1;
+		ਲਈ (i = 0; i < ctx->buf_len; i++)
 			ctx->buf[i] ^= 0x36;
-		if (ssh_digest_update(ctx->ictx, ctx->buf, ctx->buf_len) < 0)
-			return -1;
-		for (i = 0; i < ctx->buf_len; i++)
+		ਜੇ (ssh_digest_update(ctx->ictx, ctx->buf, ctx->buf_len) < 0)
+			ਵਾਪਸ -1;
+		ਲਈ (i = 0; i < ctx->buf_len; i++)
 			ctx->buf[i] ^= 0x36 ^ 0x5c;
-		if (ssh_digest_update(ctx->octx, ctx->buf, ctx->buf_len) < 0)
-			return -1;
+		ਜੇ (ssh_digest_update(ctx->octx, ctx->buf, ctx->buf_len) < 0)
+			ਵਾਪਸ -1;
 		explicit_bzero(ctx->buf, ctx->buf_len);
 	}
 	/* start with ictx */
-	if (ssh_digest_copy_state(ctx->ictx, ctx->digest) < 0)
-		return -1;
-	return 0;
+	ਜੇ (ssh_digest_copy_state(ctx->ictx, ctx->digest) < 0)
+		ਵਾਪਸ -1;
+	ਵਾਪਸ 0;
 }
 
-int
-ssh_hmac_update(struct ssh_hmac_ctx *ctx, const void *m, size_t mlen)
+ਪੂਰਨ
+ssh_hmac_update(ਬਣਤਰ ssh_hmac_ctx *ctx, ਅਚਲ ਖਾਲੀ *m, ਮਾਪ_t mlen)
 {
-	return ssh_digest_update(ctx->digest, m, mlen);
+	ਵਾਪਸ ssh_digest_update(ctx->digest, m, mlen);
 }
 
-int
-ssh_hmac_update_buffer(struct ssh_hmac_ctx *ctx, const struct sshbuf *b)
+ਪੂਰਨ
+ssh_hmac_update_ਬਫਰ(ਬਣਤਰ ssh_hmac_ctx *ctx, ਅਚਲ ਬਣਤਰ sshbuf *b)
 {
-	return ssh_digest_update_buffer(ctx->digest, b);
+	ਵਾਪਸ ssh_digest_update_ਬਫਰ(ctx->digest, b);
 }
 
-int
-ssh_hmac_final(struct ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
+ਪੂਰਨ
+ssh_hmac_final(ਬਣਤਰ ssh_hmac_ctx *ctx, u_char *d, ਮਾਪ_t dlen)
 {
-	size_t len;
+	ਮਾਪ_t len;
 
-	len = ssh_digest_bytes(ctx->alg);
-	if (dlen < len ||
+	len = ssh_digest_ਬਾਈਟਾਂ(ctx->alg);
+	ਜੇ (dlen < len ||
 	    ssh_digest_final(ctx->digest, ctx->buf, len))
-		return -1;
+		ਵਾਪਸ -1;
 	/* switch to octx */
-	if (ssh_digest_copy_state(ctx->octx, ctx->digest) < 0 ||
+	ਜੇ (ssh_digest_copy_state(ctx->octx, ctx->digest) < 0 ||
 	    ssh_digest_update(ctx->digest, ctx->buf, len) < 0 ||
 	    ssh_digest_final(ctx->digest, d, dlen) < 0)
-		return -1;
-	return 0;
+		ਵਾਪਸ -1;
+	ਵਾਪਸ 0;
 }
 
-void
-ssh_hmac_free(struct ssh_hmac_ctx *ctx)
+ਖਾਲੀ
+ssh_hmac_free(ਬਣਤਰ ssh_hmac_ctx *ctx)
 {
-	if (ctx != NULL) {
+	ਜੇ (ctx != ਨਿਰਾ) {
 		ssh_digest_free(ctx->ictx);
 		ssh_digest_free(ctx->octx);
 		ssh_digest_free(ctx->digest);
-		if (ctx->buf) {
+		ਜੇ (ctx->buf) {
 			explicit_bzero(ctx->buf, ctx->buf_len);
-			free(ctx->buf);
+			ਮੁਕਤ(ctx->buf);
 		}
-		freezero(ctx, sizeof(*ctx));
+		freezero(ctx, ਆਕਾਰ(*ctx));
 	}
 }
 
-#ifdef TEST
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ TEST
 
 /* cc -DTEST hmac.c digest.c buffer.c cleanup.c fatal.c log.c xmalloc.c -lcrypto */
-static void
-hmac_test(void *key, size_t klen, void *m, size_t mlen, u_char *e, size_t elen)
+ਸਥਿਰ ਖਾਲੀ
+hmac_test(ਖਾਲੀ *ਕੁੰਜੀ, ਮਾਪ_t klen, ਖਾਲੀ *m, ਮਾਪ_t mlen, u_char *e, ਮਾਪ_t elen)
 {
-	struct ssh_hmac_ctx	*ctx;
-	size_t			 i;
+	ਬਣਤਰ ssh_hmac_ctx	*ctx;
+	ਮਾਪ_t			 i;
 	u_char			 digest[16];
 
-	if ((ctx = ssh_hmac_start(SSH_DIGEST_MD5)) == NULL)
-		printf("ssh_hmac_start failed");
-	if (ssh_hmac_init(ctx, key, klen) < 0 ||
+	ਜੇ ((ctx = ssh_hmac_ਸ਼ੁਰੂ(SSH_DIGEST_MD5)) == ਨਿਰਾ)
+		ਲਿਖੋ("ssh_hmac_start failed");
+	ਜੇ (ssh_hmac_init(ctx, ਕੁੰਜੀ, klen) < 0 ||
 	    ssh_hmac_update(ctx, m, mlen) < 0 ||
-	    ssh_hmac_final(ctx, digest, sizeof(digest)) < 0)
-		printf("ssh_hmac_xxx failed");
+	    ssh_hmac_final(ctx, digest, ਆਕਾਰ(digest)) < 0)
+		ਲਿਖੋ("ssh_hmac_xxx failed");
 	ssh_hmac_free(ctx);
 
-	if (memcmp(e, digest, elen)) {
-		for (i = 0; i < elen; i++)
-			printf("[%zu] %2.2x %2.2x\n", i, e[i], digest[i]);
-		printf("mismatch\n");
-	} else
-		printf("ok\n");
+	ਜੇ (memcmp(e, digest, elen)) {
+		ਲਈ (i = 0; i < elen; i++)
+			ਲਿਖੋ("[%zu] %2.2x %2.2x\n", i, e[i], digest[i]);
+		ਲਿਖੋ("mismatch\n");
+	} ਨਹੀਂਤਾਂ
+		ਲਿਖੋ("ok\n");
 }
 
-int
-main(int argc, char **argv)
+ਪੂਰਨ
+ਮੁੱਖ(ਪੂਰਨ argc, ਅੱਖਰ **argv)
 {
 	/* try test vectors from RFC 2104 */
 
@@ -184,14 +184,14 @@ main(int argc, char **argv)
 	u_char dig3[16] = {
 	    0x56, 0xbe, 0x34, 0x52, 0x1d, 0x14, 0x4c, 0x88,
 	    0xdb, 0xb8, 0xc7, 0x33, 0xf0, 0xe8, 0xb3, 0xf6 };
-	memset(key3, 0xaa, sizeof(key3));
-	memset(data3, 0xdd, sizeof(data3));
+	memset(key3, 0xaa, ਆਕਾਰ(key3));
+	memset(data3, 0xdd, ਆਕਾਰ(data3));
 
-	hmac_test(key1, sizeof(key1), data1, strlen(data1), dig1, sizeof(dig1));
-	hmac_test(key2, strlen(key2), data2, strlen(data2), dig2, sizeof(dig2));
-	hmac_test(key3, sizeof(key3), data3, sizeof(data3), dig3, sizeof(dig3));
+	hmac_test(key1, ਆਕਾਰ(key1), data1, ਲੜੀ_ਲੰਬਾਈ(data1), dig1, ਆਕਾਰ(dig1));
+	hmac_test(key2, ਲੜੀ_ਲੰਬਾਈ(key2), data2, ਲੜੀ_ਲੰਬਾਈ(data2), dig2, ਆਕਾਰ(dig2));
+	hmac_test(key3, ਆਕਾਰ(key3), data3, ਆਕਾਰ(data3), dig3, ਆਕਾਰ(dig3));
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-#endif
+#ਜੇ_ਅੰਤ

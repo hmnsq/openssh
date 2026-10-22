@@ -22,14 +22,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <pwd.h>
 
-# if defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
+# ਜੇ defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
 #  include <crypt.h>
 # endif
 
@@ -44,22 +44,22 @@
 #  include <prot.h>
 # endif
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+# ਜੇ defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 #  include <shadow.h>
 # endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+# ਜੇ defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
 #  include <sys/label.h>
 #  include <sys/audit.h>
 #  include <pwdadj.h>
 # endif
 
-# if defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
+# ਜੇ defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
 #  include <openssl/des.h>
 #  define crypt DES_crypt
 # endif
 
-#define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 
 /*
  * Pick an appropriate password encryption type and salt for the running
@@ -67,57 +67,57 @@
  * salt.  Usually this will be root unless the root account is locked out.
  * If we don't find one we return a traditional DES-based salt.
  */
-static const char *
-pick_salt(void)
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *
+pick_salt(ਖਾਲੀ)
 {
-	struct passwd *pw;
-	char *passwd, *p;
-	size_t typelen;
-	static char salt[32];
+	ਬਣਤਰ passwd *pw;
+	ਅੱਖਰ *passwd, *p;
+	ਮਾਪ_t typelen;
+	ਸਥਿਰ ਅੱਖਰ salt[32];
 
-	if (salt[0] != '\0')
-		return salt;
-	strlcpy(salt, "xx", sizeof(salt));
+	ਜੇ (salt[0] != '\0')
+		ਵਾਪਸ salt;
+	strlcpy(salt, "xx", ਆਕਾਰ(salt));
 	setpwent();
-	while ((pw = getpwent()) != NULL) {
-		if ((passwd = shadow_pw(pw)) == NULL)
-			continue;
-		if (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != NULL) {
+	ਜਦੋਂ ((pw = getpwent()) != ਨਿਰਾ) {
+		ਜੇ ((passwd = shadow_pw(pw)) == ਨਿਰਾ)
+			ਜਾਰੀ;
+		ਜੇ (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != ਨਿਰਾ) {
 			typelen = p - passwd + 1;
-			strlcpy(salt, passwd, MINIMUM(typelen, sizeof(salt)));
-			explicit_bzero(passwd, strlen(passwd));
-			goto out;
+			strlcpy(salt, passwd, MINIMUM(typelen, ਆਕਾਰ(salt)));
+			explicit_bzero(passwd, ਲੜੀ_ਲੰਬਾਈ(passwd));
+			ਜਾਓ ਬਾਹਰਲਾ;
 		}
 	}
- out:
+ ਬਾਹਰਲਾ:
 	endpwent();
-	return salt;
+	ਵਾਪਸ salt;
 }
 
-char *
-xcrypt(const char *password, const char *salt)
+ਅੱਖਰ *
+xcrypt(ਅਚਲ ਅੱਖਰ *password, ਅਚਲ ਅੱਖਰ *salt)
 {
-	char *crypted;
+	ਅੱਖਰ *crypted;
 
 	/*
 	 * If we don't have a salt we are encrypting a fake password for
 	 * for timing purposes.  Pick an appropriate salt.
 	 */
-	if (salt == NULL)
+	ਜੇ (salt == ਨਿਰਾ)
 		salt = pick_salt();
 
-#if defined(__hpux) && !defined(HAVE_SECUREWARE)
-	if (iscomsec())
+#ਜੇ defined(__hpux) && !defined(HAVE_SECUREWARE)
+	ਜੇ (iscomsec())
 		crypted = bigcrypt(password, salt);
-	else
+	ਨਹੀਂਤਾਂ
 		crypted = crypt(password, salt);
 # elif defined(HAVE_SECUREWARE)
 	crypted = bigcrypt(password, salt);
-# else
+# ਨਹੀਂਤਾਂ
 	crypted = crypt(password, salt);
-#endif
+#ਜੇ_ਅੰਤ
 
-	return crypted;
+	ਵਾਪਸ crypted;
 }
 
 /*
@@ -125,32 +125,32 @@ xcrypt(const char *password, const char *salt)
  * version.
  */
 
-char *
-shadow_pw(struct passwd *pw)
+ਅੱਖਰ *
+shadow_pw(ਬਣਤਰ passwd *pw)
 {
-	char *pw_password = pw->pw_passwd;
+	ਅੱਖਰ *pw_password = pw->pw_passwd;
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
-	struct spwd *spw = getspnam(pw->pw_name);
+# ਜੇ defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+	ਬਣਤਰ spwd *spw = getspnam(pw->pw_name);
 
-	if (spw != NULL)
+	ਜੇ (spw != ਨਿਰਾ)
 		pw_password = spw->sp_pwdp;
 # endif
 
-#ifdef USE_LIBIAF
-	return(get_iaf_password(pw));
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_LIBIAF
+	ਵਾਪਸ(get_iaf_password(pw));
+#ਜੇ_ਅੰਤ
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
-	struct passwd_adjunct *spw;
-	if (issecure() && (spw = getpwanam(pw->pw_name)) != NULL)
+# ਜੇ defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+	ਬਣਤਰ passwd_adjunct *spw;
+	ਜੇ (issecure() && (spw = getpwanam(pw->pw_name)) != ਨਿਰਾ)
 		pw_password = spw->pwa_passwd;
 # elif defined(HAVE_SECUREWARE)
-	struct pr_passwd *spw = getprpwnam(pw->pw_name);
+	ਬਣਤਰ pr_passwd *spw = getprpwnam(pw->pw_name);
 
-	if (spw != NULL)
+	ਜੇ (spw != ਨਿਰਾ)
 		pw_password = spw->ufld.fd_encrypt;
 # endif
 
-	return pw_password;
+	ਵਾਪਸ pw_password;
 }

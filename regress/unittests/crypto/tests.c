@@ -5,52 +5,52 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <ctype.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../test_helper/test_helper.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
 
-void mldsa_tests(void);
-void mlkem_tests(void);
-void ed25519_tests(void);
-void mldsa_eddsa_tests(void);
+ਖਾਲੀ mldsa_tests(ਖਾਲੀ);
+ਖਾਲੀ mlkem_tests(ਖਾਲੀ);
+ਖਾਲੀ ed25519_tests(ਖਾਲੀ);
+ਖਾਲੀ mldsa_eddsa_tests(ਖਾਲੀ);
 
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+ਬਣਤਰ sshbuf *ਲੱਦੋ_ਪਾਠ_file(ਅਚਲ ਅੱਖਰ *name);
+ਅੱਖਰ *get_json_string(ਬਣਤਰ sshbuf *content, ਅਚਲ ਅੱਖਰ *ਕੁੰਜੀ, ਪੂਰਨ consume);
 
-static struct sshbuf *
-load_file(const char *name)
+ਸਥਿਰ ਬਣਤਰ sshbuf *
+ਲੱਦੋ_file(ਅਚਲ ਅੱਖਰ *name)
 {
-	struct sshbuf *ret = NULL;
+	ਬਣਤਰ sshbuf *ret = ਨਿਰਾ;
 
-	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_INT_EQ(sshbuf_ਲੱਦੋ_file(test_ਅੰਕੜੇ_file(name), &ret), 0);
+	ASSERT_PTR_NE(ret, ਨਿਰਾ);
+	ਵਾਪਸ ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+ਬਣਤਰ sshbuf *
+ਲੱਦੋ_ਪਾਠ_file(ਅਚਲ ਅੱਖਰ *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
-	size_t len;
+	ਬਣਤਰ sshbuf *ret = ਲੱਦੋ_file(name);
+	ਅਚਲ u_char *p;
+	ਮਾਪ_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	ਲਈ (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		ਜੇ (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
-			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+			ASSERT_INT_EQ(sshbuf_consume_ਸਿਰਾ(ret, 1), 0);
+		ਨਹੀਂਤਾਂ
+			ਰੋਕੋ;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	ਵਾਪਸ ret;
 }
 
 
@@ -59,65 +59,65 @@ load_text_file(const char *name)
  * Extracts the value for a given key.
  * Errors cause ASSERT_* failures.
  */
-char *
-get_json_string(struct sshbuf *content, const char *key, int consume)
+ਅੱਖਰ *
+get_json_string(ਬਣਤਰ sshbuf *content, ਅਚਲ ਅੱਖਰ *ਕੁੰਜੀ, ਪੂਰਨ consume)
 {
-	struct sshbuf *tmp;
-	char *k, *ret;
-	size_t off, end_off;
+	ਬਣਤਰ sshbuf *tmp;
+	ਅੱਖਰ *k, *ret;
+	ਮਾਪ_t off, ਸਿਰਾ_off;
 	u_char c;
 
 	tmp = sshbuf_fromb(content);
-	ASSERT_PTR_NE(tmp, NULL);
-	ASSERT_INT_GT(asprintf(&k, "\"%s\"", key), 0);
-	if (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
+	ASSERT_PTR_NE(tmp, ਨਿਰਾ);
+	ASSERT_INT_GT(asprintf(&k, "\"%s\"", ਕੁੰਜੀ), 0);
+	ਜੇ (sshbuf_ਲੱਭੋ(tmp, 0, k, ਲੜੀ_ਲੰਬਾਈ(k), &off) != 0) {
 		fprintf(stderr, "Key %s not found in JSON\n", k);
 		ASSERT_INT_EQ(1, 0);
 	}
-	ASSERT_INT_EQ(sshbuf_consume(tmp, off + strlen(k)), 0);
-	free(k);
+	ASSERT_INT_EQ(sshbuf_consume(tmp, off + ਲੜੀ_ਲੰਬਾਈ(k)), 0);
+	ਮੁਕਤ(k);
 
 	/* Skip colon, spaces, commas */
-	while (sshbuf_len(tmp) > 0) {
+	ਜਦੋਂ (sshbuf_len(tmp) > 0) {
 		c = *sshbuf_ptr(tmp);
-		if (isspace(c) || c == ':' || c == ',')
+		ਜੇ (ਖਾਲੀ_ਥਾਂ_ਹੈ(c) || c == ':' || c == ',')
 			ASSERT_INT_EQ(sshbuf_consume(tmp, 1), 0);
-		else
-			break;
+		ਨਹੀਂਤਾਂ
+			ਰੋਕੋ;
 	}
 	/* Expect opening quote */
 	ASSERT_INT_EQ(sshbuf_get_u8(tmp, &c), 0);
 	ASSERT_CHAR_EQ(c, '"');
 	/* Find closing quote */
-	ASSERT_INT_EQ(sshbuf_find(tmp, 0, "\"", 1, &end_off), 0);
-	ASSERT_PTR_NE(ret = malloc(end_off + 1), NULL);
-	memcpy(ret, sshbuf_ptr(tmp), end_off);
-	ret[end_off] = '\0';
-	if (consume) {
-		ASSERT_INT_EQ(sshbuf_consume(tmp, end_off), 0);
-		ASSERT_INT_EQ(sshbuf_consume_upto_child(content, tmp), 0);
+	ASSERT_INT_EQ(sshbuf_ਲੱਭੋ(tmp, 0, "\"", 1, &ਸਿਰਾ_off), 0);
+	ASSERT_PTR_NE(ret = ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਸਿਰਾ_off + 1), ਨਿਰਾ);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(ret, sshbuf_ptr(tmp), ਸਿਰਾ_off);
+	ret[ਸਿਰਾ_off] = '\0';
+	ਜੇ (consume) {
+		ASSERT_INT_EQ(sshbuf_consume(tmp, ਸਿਰਾ_off), 0);
+		ASSERT_INT_EQ(sshbuf_consume_upto_ਬੱਚਾ(content, tmp), 0);
 	}
 	sshbuf_free(tmp);
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-void
-tests(void)
+ਖਾਲੀ
+tests(ਖਾਲੀ)
 {
-#ifdef USE_MLDSA
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_MLDSA
 	mldsa_tests();
-#endif
-#ifdef USE_MLKEM768X25519
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_MLKEM768X25519
 	mlkem_tests();
-#endif
+#ਜੇ_ਅੰਤ
 	ed25519_tests();
-#ifdef USE_MLDSA
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_MLDSA
 	mldsa_eddsa_tests();
-#endif
+#ਜੇ_ਅੰਤ
 }
 
-void
-benchmarks(void)
+ਖਾਲੀ
+benchmarks(ਖਾਲੀ)
 {
 	/* none */
 }

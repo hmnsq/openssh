@@ -36,132 +36,132 @@ limitations under the License.
  *   match_host_and_ip, match_user (match.c)
  */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-extern "C" {
-#include "addr.h"
-#include "match.h"
-#include "misc.h"
-#include "log.h"
+ਬਾਹਰੀ "C" {
+#ਅਨ੍ਤਰ੍ਭਾਵ "addr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "match.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
 }
 
-static int log_initialized = 0;
+ਸਥਿਰ ਪੂਰਨ log_initialized = 0;
 
-static char *
-dup_n(const uint8_t *body, size_t blen)
+ਸਥਿਰ ਅੱਖਰ *
+dup_n(ਅਚਲ uint8_t *body, ਮਾਪ_t blen)
 {
-	char *s = (char *)malloc(blen + 1);
-	if (s == NULL)
-		return NULL;
-	memcpy(s, body, blen);
+	ਅੱਖਰ *s = (ਅੱਖਰ *)ਸਮ੍ਰਿਤੀ_ਦਿਓ(blen + 1);
+	ਜੇ (s == ਨਿਰਾ)
+		ਵਾਪਸ ਨਿਰਾ;
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(s, body, blen);
 	s[blen] = '\0';
-	return s;
+	ਵਾਪਸ s;
 }
 
-static void
-split_two(const uint8_t *body, size_t blen, char **a, char **b)
+ਸਥਿਰ ਖਾਲੀ
+ਵੰਡੋ_two(ਅਚਲ uint8_t *body, ਮਾਪ_t blen, ਅੱਖਰ **a, ਅੱਖਰ **b)
 {
-	const uint8_t *nul = (const uint8_t *)memchr(body, 0, blen);
-	*a = NULL;
-	*b = NULL;
-	if (nul == NULL) {
+	ਅਚਲ uint8_t *nul = (ਅਚਲ uint8_t *)memchr(body, 0, blen);
+	*a = ਨਿਰਾ;
+	*b = ਨਿਰਾ;
+	ਜੇ (nul == ਨਿਰਾ) {
 		*a = dup_n(body, blen);
 		*b = strdup("");
-		return;
+		ਵਾਪਸ;
 	}
-	size_t alen = (size_t)(nul - body);
+	ਮਾਪ_t alen = (ਮਾਪ_t)(nul - body);
 	*a = dup_n(body, alen);
 	*b = dup_n(nul + 1, blen - alen - 1);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ਬਾਹਰੀ "C" ਪੂਰਨ
+LLVMFuzzer_Test_One_ਨਿਵੇਸ਼(ਅਚਲ uint8_t *ਅੰਕੜੇ, ਮਾਪ_t ਮਾਪ)
 {
-	if (!log_initialized) {
+	ਜੇ (!log_initialized) {
 		log_init("misc_parse_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
-	if (size == 0)
-		return 0;
+	ਜੇ (ਮਾਪ == 0)
+		ਵਾਪਸ 0;
 
-	char *s = dup_n(data, size);
-	char *a = NULL, *b = NULL;
-	split_two(data, size, &a, &b);
-	if (s == NULL || a == NULL || b == NULL) {
-		free(s);
-		free(a);
-		free(b);
-		return 0;
+	ਅੱਖਰ *s = dup_n(ਅੰਕੜੇ, ਮਾਪ);
+	ਅੱਖਰ *a = ਨਿਰਾ, *b = ਨਿਰਾ;
+	ਵੰਡੋ_two(ਅੰਕੜੇ, ਮਾਪ, &a, &b);
+	ਜੇ (s == ਨਿਰਾ || a == ਨਿਰਾ || b == ਨਿਰਾ) {
+		ਮੁਕਤ(s);
+		ਮੁਕਤ(a);
+		ਮੁਕਤ(b);
+		ਵਾਪਸ 0;
 	}
 
 	{
-		char *u = NULL, *h = NULL;
-		int port = 0;
-		if (parse_user_host_port(s, &u, &h, &port) == 0) {
-			free(u);
-			free(h);
+		ਅੱਖਰ *u = ਨਿਰਾ, *h = ਨਿਰਾ;
+		ਪੂਰਨ ਪੋਰਟ = 0;
+		ਜੇ (parse_user_host_ਪੋਰਟ(s, &u, &h, &ਪੋਰਟ) == 0) {
+			ਮੁਕਤ(u);
+			ਮੁਕਤ(h);
 		}
 	}
 	{
-		char *u = NULL, *h = NULL, *p = NULL;
-		int port = 0;
-		if (parse_uri("ssh", s, &u, &h, &port, &p) == 0) {
-			free(u);
-			free(h);
-			free(p);
+		ਅੱਖਰ *u = ਨਿਰਾ, *h = ਨਿਰਾ, *p = ਨਿਰਾ;
+		ਪੂਰਨ ਪੋਰਟ = 0;
+		ਜੇ (parse_uri("ssh", s, &u, &h, &ਪੋਰਟ, &p) == 0) {
+			ਮੁਕਤ(u);
+			ਮੁਕਤ(h);
+			ਮੁਕਤ(p);
 		}
 	}
-	(void)convtime(s);
-	(void)a2port(s);
+	(ਖਾਲੀ)convtime(s);
+	(ਖਾਲੀ)a2port(s);
 	{
-		int tun = 0;
-		(void)a2tun(s, &tun);
+		ਪੂਰਨ tun = 0;
+		(ਖਾਲੀ)a2tun(s, &tun);
 	}
 	{
-		int ac = 0;
-		char **av = NULL;
-		if (argv_split(s, &ac, &av, 1) == 0) {
-			char *back = argv_assemble(ac, av);
-			free(back);
+		ਪੂਰਨ ac = 0;
+		ਅੱਖਰ **av = ਨਿਰਾ;
+		ਜੇ (argv_ਵੰਡੋ(s, &ac, &av, 1) == 0) {
+			ਅੱਖਰ *ਪਿੱਠ = argv_assemble(ac, av);
+			ਮੁਕਤ(ਪਿੱਠ);
 			argv_free(av, ac);
 		}
 	}
 	{
-		const char *err = NULL;
-		(void)valid_domain(s, 0, &err);
+		ਅਚਲ ਅੱਖਰ *err = ਨਿਰਾ;
+		(ਖਾਲੀ)valid_domain(s, 0, &err);
 	}
-	(void)valid_env_name(s);
+	(ਖਾਲੀ)valid_env_name(s);
 	{
 		uint64_t t = 0;
-		(void)parse_absolute_time(s, &t);
+		(ਖਾਲੀ)parse_absolute_ਸਮਾਂ(s, &t);
 	}
 
 	{
-		struct xaddr n;
-		(void)addr_pton(s, &n);
+		ਬਣਤਰ xaddr n;
+		(ਖਾਲੀ)addr_pton(s, &n);
 	}
 	{
-		struct xaddr n;
-		u_int prefix = 0;
-		(void)addr_pton_cidr(s, &n, &prefix);
+		ਬਣਤਰ xaddr n;
+		u_int ਅਗੇਤਰ = 0;
+		(ਖਾਲੀ)addr_pton_cidr(s, &n, &ਅਗੇਤਰ);
 	}
 
-	(void)addr_match_list(a, b);
-	(void)addr_match_cidr_list(a, b);
-	(void)match_pattern(a, b);
-	(void)match_pattern_list(a, b, 0);
-	(void)match_hostname(a, b);
-	(void)match_host_and_ip(a, "127.0.0.1", b);
-	(void)match_user("fuzz", a, "127.0.0.1", b);
+	(ਖਾਲੀ)addr_ਮੇਲ_list(a, b);
+	(ਖਾਲੀ)addr_ਮੇਲ_cidr_list(a, b);
+	(ਖਾਲੀ)ਮੇਲ_ਨਮੂਨਾ(a, b);
+	(ਖਾਲੀ)ਮੇਲ_ਨਮੂਨਾ_list(a, b, 0);
+	(ਖਾਲੀ)ਮੇਲ_hostname(a, b);
+	(ਖਾਲੀ)ਮੇਲ_host_and_ip(a, "127.0.0.1", b);
+	(ਖਾਲੀ)ਮੇਲ_user("fuzz", a, "127.0.0.1", b);
 
-	free(s);
-	free(a);
-	free(b);
-	return 0;
+	ਮੁਕਤ(s);
+	ਮੁਕਤ(a);
+	ਮੁਕਤ(b);
+	ਵਾਪਸ 0;
 }

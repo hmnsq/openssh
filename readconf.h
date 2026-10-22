@@ -13,256 +13,256 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#ifndef READCONF_H
-#define READCONF_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ READCONF_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ READCONF_H
 
 /* Data structure for representing option data. */
 
-#define SSH_MAX_HOSTS_FILES	32
-#define PATH_MAX_SUN		(sizeof((struct sockaddr_un *)0)->sun_path)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_MAX_HOSTS_FILES	32
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਰਸਤਾ_MAX_SUN		(ਆਕਾਰ((ਬਣਤਰ sockaddr_un *)0)->sun_ਰਸਤਾ)
 
-struct allowed_cname {
-	char *source_list;
-	char *target_list;
+ਬਣਤਰ allowed_cname {
+	ਅੱਖਰ *ਸਰੋਤ_list;
+	ਅੱਖਰ *ਨਿਸ਼ਾਨਾ_list;
 };
 
-typedef struct {
-	char   *host_arg;	/* Host arg as specified on command line. */
-	int     forward_agent;	/* Forward authentication agent. */
-	char   *forward_agent_sock_path; /* Optional path of the agent. */
-	int     forward_x11;	/* Forward X11 display. */
-	int     forward_x11_timeout;	/* Expiration for Cookies */
-	int     forward_x11_trusted;	/* Trust Forward X11 display. */
-	int     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
-	char   *xauth_location;	/* Location for xauth program */
-	struct ForwardOptions fwd_opts;	/* forwarding options */
-	int     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
-	int     hostbased_authentication;	/* ssh2's rhosts_rsa */
-	int     gss_authentication;	/* Try GSS authentication */
-	int     gss_deleg_creds;	/* Delegate GSS credentials */
-	int     password_authentication;	/* Try password
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਬਣਤਰ {
+	ਅੱਖਰ   *host_arg;	/* Host arg as specified on command line. */
+	ਪੂਰਨ     forward_agent;	/* Forward authentication agent. */
+	ਅੱਖਰ   *forward_agent_sock_ਰਸਤਾ; /* Optional path of the agent. */
+	ਪੂਰਨ     forward_x11;	/* Forward X11 display. */
+	ਪੂਰਨ     forward_x11_timeout;	/* Expiration for Cookies */
+	ਪੂਰਨ     forward_x11_trusted;	/* Trust Forward X11 display. */
+	ਪੂਰਨ     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
+	ਅੱਖਰ   *xauth_location;	/* Location for xauth program */
+	ਬਣਤਰ ForwardOptions fwd_opts;	/* forwarding options */
+	ਪੂਰਨ     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
+	ਪੂਰਨ     hostbased_authentication;	/* ssh2's rhosts_rsa */
+	ਪੂਰਨ     gss_authentication;	/* Try GSS authentication */
+	ਪੂਰਨ     gss_deleg_creds;	/* Delegate GSS credentials */
+	ਪੂਰਨ     password_authentication;	/* Try password
 						 * authentication. */
-	int     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
-	char	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
-	int     batch_mode;	/* Batch mode: do not ask for passwords. */
-	int     check_host_ip;	/* Also keep track of keys for IP address */
-	int     strict_host_key_checking;	/* Strict host key checking. */
-	int     compression;	/* Compress packets in both directions. */
-	int     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
-	int	ip_qos_interactive;	/* DSCP value for interactive */
-	int	ip_qos_bulk;		/* DSCP value for bulk traffic */
+	ਪੂਰਨ     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
+	ਅੱਖਰ	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
+	ਪੂਰਨ     batch_ਬਹੁਲਕ;	/* Batch mode: do not ask for passwords. */
+	ਪੂਰਨ     check_host_ip;	/* Also keep track of keys for IP address */
+	ਪੂਰਨ     strict_host_ਕੁੰਜੀ_checking;	/* Strict host key checking. */
+	ਪੂਰਨ     compression;	/* Compress packets in both directions. */
+	ਪੂਰਨ     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
+	ਪੂਰਨ	ip_qos_interactive;	/* DSCP value for interactive */
+	ਪੂਰਨ	ip_qos_bulk;		/* DSCP value for bulk traffic */
 	SyslogFacility log_facility;	/* Facility for system logging. */
 	LogLevel log_level;	/* Level for logging. */
-	u_int	num_log_verbose;	/* Verbose log overrides */
-	char   **log_verbose;
-	int     port;		/* Port to connect. */
-	int     address_family;
-	int     connection_attempts;	/* Max attempts (seconds) before
+	u_int	ਅੰਕ_log_verbose;	/* Verbose log overrides */
+	ਅੱਖਰ   **log_verbose;
+	ਪੂਰਨ     ਪੋਰਟ;		/* Port to connect. */
+	ਪੂਰਨ     ਪਤਾ_family;
+	ਪੂਰਨ     connection_attempts;	/* Max attempts (seconds) before
 					 * giving up */
-	int     connection_timeout;	/* Max time (seconds) before
+	ਪੂਰਨ     connection_timeout;	/* Max time (seconds) before
 					 * aborting connection attempt */
-	int     number_of_password_prompts;	/* Max number of password
+	ਪੂਰਨ     ਸੰਖਿਆ_ਦਾ_password_prompts;	/* Max number of password
 						 * prompts. */
-	char   *ciphers;	/* SSH2 ciphers in order of preference. */
-	char   *macs;		/* SSH2 macs in order of preference. */
-	char   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
-	char   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
-	int	kex_algorithms_set; /* KexAlgorithms was set by the user */
-	char   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
-	char   *hostname;	/* Real host to connect. */
-	char   *tag;		/* Configuration tag name. */
-	char   *host_key_alias;	/* hostname alias for .ssh/known_hosts */
-	char   *proxy_command;	/* Proxy command for connecting the host. */
-	char   *user;		/* User to log in as. */
-	int     escape_char;	/* Escape character; -2 = none */
+	ਅੱਖਰ   *ciphers;	/* SSH2 ciphers in order of preference. */
+	ਅੱਖਰ   *macs;		/* SSH2 macs in order of preference. */
+	ਅੱਖਰ   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
+	ਅੱਖਰ   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
+	ਪੂਰਨ	kex_algorithms_ਸੈੱਟ; /* KexAlgorithms was set by the user */
+	ਅੱਖਰ   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
+	ਅੱਖਰ   *hostname;	/* Real host to connect. */
+	ਅੱਖਰ   *ਟੈਗ;		/* Configuration tag name. */
+	ਅੱਖਰ   *host_ਕੁੰਜੀ_alias;	/* hostname alias for .ssh/known_hosts */
+	ਅੱਖਰ   *proxy_command;	/* Proxy command for connecting the host. */
+	ਅੱਖਰ   *user;		/* User to log in as. */
+	ਪੂਰਨ     escape_char;	/* Escape character; -2 = none */
 
-	u_int	num_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
-	char   *system_hostfiles[SSH_MAX_HOSTS_FILES];
-	u_int	num_user_hostfiles;	/* Path for $HOME/.ssh/known_hosts */
-	char   *user_hostfiles[SSH_MAX_HOSTS_FILES];
-	char   *preferred_authentications;
-	char   *bind_address;	/* local socket address for connection to sshd */
-	char   *bind_interface;	/* local interface for bind address */
-	char   *pkcs11_provider; /* PKCS#11 provider */
-	char   *sk_provider; /* Security key provider */
-	int	verify_host_key_dns;	/* Verify host key using DNS */
+	u_int	ਅੰਕ_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
+	ਅੱਖਰ   *system_hostfiles[SSH_MAX_HOSTS_FILES];
+	u_int	ਅੰਕ_user_hostfiles;	/* Path for $HOME/.ssh/known_hosts */
+	ਅੱਖਰ   *user_hostfiles[SSH_MAX_HOSTS_FILES];
+	ਅੱਖਰ   *preferred_authentications;
+	ਅੱਖਰ   *bind_ਪਤਾ;	/* local socket address for connection to sshd */
+	ਅੱਖਰ   *bind_interface;	/* local interface for bind address */
+	ਅੱਖਰ   *pkcs11_provider; /* PKCS#11 provider */
+	ਅੱਖਰ   *sk_provider; /* Security key provider */
+	ਪੂਰਨ	verify_host_ਕੁੰਜੀ_dns;	/* Verify host key using DNS */
 
-	int     num_identity_files;	/* Number of files for identities. */
-	char   *identity_files[SSH_MAX_IDENTITY_FILES];
-	int    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
-	struct sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
+	ਪੂਰਨ     ਅੰਕ_ਪਛਾਣ_ਤੱਤ_files;	/* Number of files for identities. */
+	ਅੱਖਰ   *ਪਛਾਣ_ਤੱਤ_files[SSH_MAX_ਪਛਾਣ_ਤੱਤ_FILES];
+	ਪੂਰਨ    ਪਛਾਣ_ਤੱਤ_file_userprovided[SSH_MAX_ਪਛਾਣ_ਤੱਤ_FILES];
+	ਬਣਤਰ sshkey *ਪਛਾਣ_ਤੱਤ_ਕੁੰਜੀਆਂ[SSH_MAX_ਪਛਾਣ_ਤੱਤ_FILES];
 
-	int	num_certificate_files; /* Number of extra certificates for ssh. */
-	char	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
-	int	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
-	struct sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
+	ਪੂਰਨ	ਅੰਕ_certificate_files; /* Number of extra certificates for ssh. */
+	ਅੱਖਰ	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
+	ਪੂਰਨ	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
+	ਬਣਤਰ sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
 
-	int	add_keys_to_agent;
-	int	add_keys_to_agent_lifespan;
-	char   *identity_agent;		/* Optional path to ssh-agent socket */
+	ਪੂਰਨ	ਜੋੜੋ_ਕੁੰਜੀਆਂ_ਮੰਜ਼ਿਲ_agent;
+	ਪੂਰਨ	ਜੋੜੋ_ਕੁੰਜੀਆਂ_ਮੰਜ਼ਿਲ_agent_lifespan;
+	ਅੱਖਰ   *ਪਛਾਣ_ਤੱਤ_agent;		/* Optional path to ssh-agent socket */
 
 	/* Local TCP/IP forward requests. */
-	int     num_local_forwards;
-	struct Forward *local_forwards;
+	ਪੂਰਨ     ਅੰਕ_local_forwards;
+	ਬਣਤਰ Forward *local_forwards;
 
 	/* Remote TCP/IP forward requests. */
-	int     num_remote_forwards;
-	struct Forward *remote_forwards;
-	int	clear_forwardings;
+	ਪੂਰਨ     ਅੰਕ_remote_forwards;
+	ਬਣਤਰ Forward *remote_forwards;
+	ਪੂਰਨ	clear_forwardings;
 
 	/* Restrict remote dynamic forwarding */
-	char  **permitted_remote_opens;
-	u_int	num_permitted_remote_opens;
+	ਅੱਖਰ  **permitted_remote_opens;
+	u_int	ਅੰਕ_permitted_remote_opens;
 
 	/* stdio forwarding (-W) host and port */
-	char   *stdio_forward_host;
-	int	stdio_forward_port;
+	ਅੱਖਰ   *stdio_forward_host;
+	ਪੂਰਨ	stdio_forward_ਪੋਰਟ;
 
-	int	enable_ssh_keysign;
-	int64_t rekey_limit;
-	int	rekey_interval;
-	int	no_host_authentication_for_localhost;
-	int	identities_only;
-	int	server_alive_interval;
-	int	server_alive_count_max;
+	ਪੂਰਨ	enable_ssh_keysign;
+	int64_t rekey_ਹੱਦਬੰਦੀ;
+	ਪੂਰਨ	rekey_interval;
+	ਪੂਰਨ	no_host_authentication_for_localhost;
+	ਪੂਰਨ	identities_only;
+	ਪੂਰਨ	server_alive_interval;
+	ਪੂਰਨ	server_alive_ਗਿਣਤੀ_max;
 
-	u_int	num_send_env;
-	char	**send_env;
-	u_int	num_setenv;
-	char	**setenv;
+	u_int	ਅੰਕ_send_env;
+	ਅੱਖਰ	**send_env;
+	u_int	ਅੰਕ_setenv;
+	ਅੱਖਰ	**setenv;
 
-	char	*control_path;
-	int	control_master;
-	int     control_persist; /* ControlPersist flag */
-	int     control_persist_timeout; /* ControlPersist timeout (seconds) */
+	ਅੱਖਰ	*control_ਰਸਤਾ;
+	ਪੂਰਨ	control_master;
+	ਪੂਰਨ     control_persist; /* ControlPersist flag */
+	ਪੂਰਨ     control_persist_timeout; /* ControlPersist timeout (seconds) */
 
-	int	hash_known_hosts;
+	ਪੂਰਨ	hash_ਗਿਆਤ_hosts;
 
-	int	tun_open;	/* tun(4) */
-	int     tun_local;	/* force tun device (optional) */
-	int     tun_remote;	/* force tun device (optional) */
+	ਪੂਰਨ	tun_open;	/* tun(4) */
+	ਪੂਰਨ     tun_local;	/* force tun device (optional) */
+	ਪੂਰਨ     tun_remote;	/* force tun device (optional) */
 
-	char	*local_command;
-	int	permit_local_command;
-	char	*remote_command;
-	int	visual_host_key;
+	ਅੱਖਰ	*local_command;
+	ਪੂਰਨ	permit_local_command;
+	ਅੱਖਰ	*remote_command;
+	ਪੂਰਨ	visual_host_ਕੁੰਜੀ;
 
-	int	request_tty;
-	int	session_type;
-	int	stdin_null;
-	int	fork_after_authentication;
+	ਪੂਰਨ	request_tty;
+	ਪੂਰਨ	session_type;
+	ਪੂਰਨ	stdin_null;
+	ਪੂਰਨ	fork_after_authentication;
 
-	int	proxy_use_fdpass;
+	ਪੂਰਨ	proxy_use_fdpass;
 
-	int	num_canonical_domains;
-	char	**canonical_domains;
-	int	canonicalize_hostname;
-	int	canonicalize_max_dots;
-	int	canonicalize_fallback_local;
-	int	num_permitted_cnames;
-	struct allowed_cname *permitted_cnames;
+	ਪੂਰਨ	ਅੰਕ_canonical_domains;
+	ਅੱਖਰ	**canonical_domains;
+	ਪੂਰਨ	canonicalize_hostname;
+	ਪੂਰਨ	canonicalize_max_dots;
+	ਪੂਰਨ	canonicalize_fallback_local;
+	ਪੂਰਨ	ਅੰਕ_permitted_cnames;
+	ਬਣਤਰ allowed_cname *permitted_cnames;
 
-	u_int	num_revoked_host_keys;
-	char	**revoked_host_keys;
+	u_int	ਅੰਕ_revoked_host_ਕੁੰਜੀਆਂ;
+	ਅੱਖਰ	**revoked_host_ਕੁੰਜੀਆਂ;
 
-	int	 fingerprint_hash;
+	ਪੂਰਨ	 fingerprint_hash;
 
-	int	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
+	ਪੂਰਨ	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
 
-	char   *hostbased_accepted_algos;
-	char   *pubkey_accepted_algos;
+	ਅੱਖਰ   *hostbased_accepted_algos;
+	ਅੱਖਰ   *pubkey_accepted_algos;
 
-	char   *jump_user;
-	char   *jump_host;
-	int	jump_port;
-	char   *jump_extra;
+	ਅੱਖਰ   *jump_user;
+	ਅੱਖਰ   *jump_host;
+	ਪੂਰਨ	jump_ਪੋਰਟ;
+	ਅੱਖਰ   *jump_extra;
 
-	char   *known_hosts_command;
+	ਅੱਖਰ   *ਗਿਆਤ_hosts_command;
 
-	int	required_rsa_size;	/* minimum size of RSA keys */
-	int	enable_escape_commandline;	/* ~C commandline */
-	int	obscure_keystroke_timing_interval;
-	int	warn_weak_crypto;
+	ਪੂਰਨ	required_rsa_ਮਾਪ;	/* minimum size of RSA keys */
+	ਪੂਰਨ	enable_escape_commandline;	/* ~C commandline */
+	ਪੂਰਨ	obscure_keystroke_timing_interval;
+	ਪੂਰਨ	warn_weak_crypto;
 
-	char	**channel_timeouts;	/* inactivity timeout by channel type */
-	u_int	num_channel_timeouts;
+	ਅੱਖਰ	**channel_timeouts;	/* inactivity timeout by channel type */
+	u_int	ਅੰਕ_channel_timeouts;
 
-	char	*version_addendum;
+	ਅੱਖਰ	*ਸੰਸਕਰਣ_addendum;
 
-	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
+	ਅੱਖਰ	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
 }       Options;
 
-#define SSH_PUBKEY_AUTH_NO	0x00
-#define SSH_PUBKEY_AUTH_UNBOUND	0x01
-#define SSH_PUBKEY_AUTH_HBOUND	0x02
-#define SSH_PUBKEY_AUTH_ALL	0x03
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_PUBKEY_AUTH_NO	0x00
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_PUBKEY_AUTH_UNBOUND	0x01
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_PUBKEY_AUTH_HBOUND	0x02
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_PUBKEY_AUTH_ALL	0x03
 
-#define SSH_CANONICALISE_NO	0
-#define SSH_CANONICALISE_YES	1
-#define SSH_CANONICALISE_ALWAYS	2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_CANONICALISE_NO	0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_CANONICALISE_YES	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_CANONICALISE_ALWAYS	2
 
-#define SSHCTL_MASTER_NO	0
-#define SSHCTL_MASTER_YES	1
-#define SSHCTL_MASTER_AUTO	2
-#define SSHCTL_MASTER_ASK	3
-#define SSHCTL_MASTER_AUTO_ASK	4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHCTL_MASTER_NO	0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHCTL_MASTER_YES	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHCTL_MASTER_AUTO	2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHCTL_MASTER_ASK	3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHCTL_MASTER_AUTO_ASK	4
 
-#define REQUEST_TTY_AUTO	0
-#define REQUEST_TTY_NO		1
-#define REQUEST_TTY_YES		2
-#define REQUEST_TTY_FORCE	3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ REQUEST_TTY_AUTO	0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ REQUEST_TTY_NO		1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ REQUEST_TTY_YES		2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ REQUEST_TTY_FORCE	3
 
-#define SESSION_TYPE_NONE	0
-#define SESSION_TYPE_SUBSYSTEM	1
-#define SESSION_TYPE_DEFAULT	2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SESSION_TYPE_NONE	0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SESSION_TYPE_SUBSYSTEM	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SESSION_TYPE_DEFAULT	2
 
-#define SSHCONF_CHECKPERM	1  /* check permissions on config file */
-#define SSHCONF_USERCONF	2  /* user provided config file not system */
-#define SSHCONF_FINAL		4  /* Final pass over config, after canon. */
-#define SSHCONF_NEVERMATCH	8  /* Match/Host never matches; internal only */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHCONF_CHECKPERM	1  /* check permissions on config file */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHCONF_USERCONF	2  /* user provided config file not system */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHCONF_FINAL		4  /* Final pass over config, after canon. */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHCONF_NEVERMATCH	8  /* Match/Host never matches; internal only */
 
-#define SSH_UPDATE_HOSTKEYS_NO	0
-#define SSH_UPDATE_HOSTKEYS_YES	1
-#define SSH_UPDATE_HOSTKEYS_ASK	2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_UPDATE_HOSTKEYS_NO	0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_UPDATE_HOSTKEYS_YES	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_UPDATE_HOSTKEYS_ASK	2
 
-#define SSH_STRICT_HOSTKEY_OFF	0
-#define SSH_STRICT_HOSTKEY_NEW	1
-#define SSH_STRICT_HOSTKEY_YES	2
-#define SSH_STRICT_HOSTKEY_ASK	3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_STRICT_HOSTKEY_OFF	0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_STRICT_HOSTKEY_NEW	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_STRICT_HOSTKEY_YES	2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_STRICT_HOSTKEY_ASK	3
 
 /* ObscureKeystrokes parameters */
-#define SSH_KEYSTROKE_DEFAULT_INTERVAL_MS	20
-#define SSH_KEYSTROKE_CHAFF_MIN_MS		1024
-#define SSH_KEYSTROKE_CHAFF_RNG_MS		2048
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_KEYSTROKE_DEFAULT_INTERVAL_MS	20
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_KEYSTROKE_CHAFF_MIN_MS		1024
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_KEYSTROKE_CHAFF_RNG_MS		2048
 
-#define SSH_KEEPALIVES_OFF		0
-#define SSH_KEEPALIVES_TRANSPORT	1
-#define SSH_KEEPALIVES_ALL		2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_KEEPALIVES_OFF		0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_KEEPALIVES_TRANSPORT	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_KEEPALIVES_ALL		2
 
-const char *kex_default_pk_alg(void);
-char	*ssh_connection_hash(const char *thishost, const char *host,
-    const char *portstr, const char *user, const char *jump_host);
-void     initialize_options(Options *);
-int      fill_default_options(Options *);
-void	 fill_default_options_for_canonicalization(Options *);
-void	 free_options(Options *o);
-int	 process_config_line(Options *, struct passwd *, const char *,
-    const char *, const char *, char *, const char *, int, int *, int);
-int	 read_config_file(const char *, struct passwd *, const char *,
-    const char *, const char *, Options *, int, int *);
-int	 parse_forward(struct Forward *, const char *, int, int);
-int	 ssh_valid_hostname(const char *);
-int	 ssh_valid_ruser(const char *);
-int	 parse_jump(const char *, Options *, int, int);
-int	 parse_ssh_uri(const char *, char **, char **, int *);
-int	 default_ssh_port(void);
-int	 option_clear_or_none(const char *);
-int	 config_has_permitted_cnames(Options *);
-void	 dump_client_config(Options *o, const char *host);
+ਅਚਲ ਅੱਖਰ *kex_default_pk_alg(ਖਾਲੀ);
+ਅੱਖਰ	*ssh_connection_hash(ਅਚਲ ਅੱਖਰ *thishost, ਅਚਲ ਅੱਖਰ *host,
+    ਅਚਲ ਅੱਖਰ *portstr, ਅਚਲ ਅੱਖਰ *user, ਅਚਲ ਅੱਖਰ *jump_host);
+ਖਾਲੀ     initialize_options(Options *);
+ਪੂਰਨ      fill_default_options(Options *);
+ਖਾਲੀ	 fill_default_options_for_canonicalization(Options *);
+ਖਾਲੀ	 free_options(Options *o);
+ਪੂਰਨ	 process_config_ਸਤਰ(Options *, ਬਣਤਰ passwd *, ਅਚਲ ਅੱਖਰ *,
+    ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਪੂਰਨ, ਪੂਰਨ *, ਪੂਰਨ);
+ਪੂਰਨ	 read_config_file(ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ passwd *, ਅਚਲ ਅੱਖਰ *,
+    ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, Options *, ਪੂਰਨ, ਪੂਰਨ *);
+ਪੂਰਨ	 parse_forward(ਬਣਤਰ Forward *, ਅਚਲ ਅੱਖਰ *, ਪੂਰਨ, ਪੂਰਨ);
+ਪੂਰਨ	 ssh_valid_hostname(ਅਚਲ ਅੱਖਰ *);
+ਪੂਰਨ	 ssh_valid_ruser(ਅਚਲ ਅੱਖਰ *);
+ਪੂਰਨ	 parse_jump(ਅਚਲ ਅੱਖਰ *, Options *, ਪੂਰਨ, ਪੂਰਨ);
+ਪੂਰਨ	 parse_ssh_uri(ਅਚਲ ਅੱਖਰ *, ਅੱਖਰ **, ਅੱਖਰ **, ਪੂਰਨ *);
+ਪੂਰਨ	 default_ssh_ਪੋਰਟ(ਖਾਲੀ);
+ਪੂਰਨ	 option_clear_or_none(ਅਚਲ ਅੱਖਰ *);
+ਪੂਰਨ	 config_has_permitted_cnames(Options *);
+ਖਾਲੀ	 dump_client_config(Options *o, ਅਚਲ ਅੱਖਰ *host);
 
-void	 add_local_forward(Options *, const struct Forward *);
-void	 add_remote_forward(Options *, const struct Forward *);
-void	 add_identity_file(Options *, const char *, const char *, int);
-void	 add_certificate_file(Options *, const char *, int);
+ਖਾਲੀ	 ਜੋੜੋ_local_forward(Options *, ਅਚਲ ਬਣਤਰ Forward *);
+ਖਾਲੀ	 ਜੋੜੋ_remote_forward(Options *, ਅਚਲ ਬਣਤਰ Forward *);
+ਖਾਲੀ	 ਜੋੜੋ_ਪਛਾਣ_ਤੱਤ_file(Options *, ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਪੂਰਨ);
+ਖਾਲੀ	 ਜੋੜੋ_certificate_file(Options *, ਅਚਲ ਅੱਖਰ *, ਪੂਰਨ);
 
-#endif				/* READCONF_H */
+#ਜੇ_ਅੰਤ				/* READCONF_H */

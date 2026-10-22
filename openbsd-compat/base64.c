@@ -44,26 +44,26 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/base64.c */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#if (!defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP)) || (!defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON))
+#ਜੇ (!defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP)) || (!defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON))
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/socket.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/in.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <arpa/inet.h>
 
-#include <ctype.h>
-#include <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <ctype.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
 
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include "base64.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "base64.h"
 
-static const char Base64[] =
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ Base64[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static const char Pad64 = '=';
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ Pad64 = '=';
 
 /* (From RFC1521 and draft-ietf-dnssec-secext-03.txt)
    The following encoding technique is taken from RFC 1521 by Borenstein
@@ -128,63 +128,63 @@ static const char Pad64 = '=';
 	   characters followed by one "=" padding character.
    */
 
-#if !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) 
-int
-b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
+#ਜੇ !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) 
+ਪੂਰਨ
+b64_ntop(u_char ਅਚਲ *src, ਮਾਪ_t srclength, ਅੱਖਰ *ਨਿਸ਼ਾਨਾ, ਮਾਪ_t targsize)
 {
-	size_t datalength = 0;
-	u_char input[3];
+	ਮਾਪ_t datalength = 0;
+	u_char ਨਿਵੇਸ਼[3];
 	u_char output[4];
 	u_int i;
 
-	while (2 < srclength) {
-		input[0] = *src++;
-		input[1] = *src++;
-		input[2] = *src++;
+	ਜਦੋਂ (2 < srclength) {
+		ਨਿਵੇਸ਼[0] = *src++;
+		ਨਿਵੇਸ਼[1] = *src++;
+		ਨਿਵੇਸ਼[2] = *src++;
 		srclength -= 3;
 
-		output[0] = input[0] >> 2;
-		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
-		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
-		output[3] = input[2] & 0x3f;
+		output[0] = ਨਿਵੇਸ਼[0] >> 2;
+		output[1] = ((ਨਿਵੇਸ਼[0] & 0x03) << 4) + (ਨਿਵੇਸ਼[1] >> 4);
+		output[2] = ((ਨਿਵੇਸ਼[1] & 0x0f) << 2) + (ਨਿਵੇਸ਼[2] >> 6);
+		output[3] = ਨਿਵੇਸ਼[2] & 0x3f;
 
-		if (datalength + 4 > targsize)
-			return (-1);
-		target[datalength++] = Base64[output[0]];
-		target[datalength++] = Base64[output[1]];
-		target[datalength++] = Base64[output[2]];
-		target[datalength++] = Base64[output[3]];
+		ਜੇ (datalength + 4 > targsize)
+			ਵਾਪਸ (-1);
+		ਨਿਸ਼ਾਨਾ[datalength++] = Base64[output[0]];
+		ਨਿਸ਼ਾਨਾ[datalength++] = Base64[output[1]];
+		ਨਿਸ਼ਾਨਾ[datalength++] = Base64[output[2]];
+		ਨਿਸ਼ਾਨਾ[datalength++] = Base64[output[3]];
 	}
     
 	/* Now we worry about padding. */
-	if (0 != srclength) {
+	ਜੇ (0 != srclength) {
 		/* Get what's left. */
-		input[0] = input[1] = input[2] = '\0';
-		for (i = 0; i < srclength; i++)
-			input[i] = *src++;
+		ਨਿਵੇਸ਼[0] = ਨਿਵੇਸ਼[1] = ਨਿਵੇਸ਼[2] = '\0';
+		ਲਈ (i = 0; i < srclength; i++)
+			ਨਿਵੇਸ਼[i] = *src++;
 	
-		output[0] = input[0] >> 2;
-		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
-		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
+		output[0] = ਨਿਵੇਸ਼[0] >> 2;
+		output[1] = ((ਨਿਵੇਸ਼[0] & 0x03) << 4) + (ਨਿਵੇਸ਼[1] >> 4);
+		output[2] = ((ਨਿਵੇਸ਼[1] & 0x0f) << 2) + (ਨਿਵੇਸ਼[2] >> 6);
 
-		if (datalength + 4 > targsize)
-			return (-1);
-		target[datalength++] = Base64[output[0]];
-		target[datalength++] = Base64[output[1]];
-		if (srclength == 1)
-			target[datalength++] = Pad64;
-		else
-			target[datalength++] = Base64[output[2]];
-		target[datalength++] = Pad64;
+		ਜੇ (datalength + 4 > targsize)
+			ਵਾਪਸ (-1);
+		ਨਿਸ਼ਾਨਾ[datalength++] = Base64[output[0]];
+		ਨਿਸ਼ਾਨਾ[datalength++] = Base64[output[1]];
+		ਜੇ (srclength == 1)
+			ਨਿਸ਼ਾਨਾ[datalength++] = Pad64;
+		ਨਹੀਂਤਾਂ
+			ਨਿਸ਼ਾਨਾ[datalength++] = Base64[output[2]];
+		ਨਿਸ਼ਾਨਾ[datalength++] = Pad64;
 	}
-	if (datalength >= targsize)
-		return (-1);
-	target[datalength] = '\0';	/* Returned value doesn't count \0. */
-	return (datalength);
+	ਜੇ (datalength >= targsize)
+		ਵਾਪਸ (-1);
+	ਨਿਸ਼ਾਨਾ[datalength] = '\0';	/* Returned value doesn't count \0. */
+	ਵਾਪਸ (datalength);
 }
-#endif /* !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) */
+#ਜੇ_ਅੰਤ /* !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) */
 
-#if !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON)
+#ਜੇ !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON)
 
 /* skips all whitespace anywhere.
    converts characters, four at a time, starting at (or after)
@@ -192,67 +192,67 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
    it returns the number of data bytes stored at the target, or -1 on error.
  */
 
-int
-b64_pton(char const *src, u_char *target, size_t targsize)
+ਪੂਰਨ
+b64_pton(ਅੱਖਰ ਅਚਲ *src, u_char *ਨਿਸ਼ਾਨਾ, ਮਾਪ_t targsize)
 {
 	u_int tarindex, state;
-	int ch;
-	char *pos;
+	ਪੂਰਨ ch;
+	ਅੱਖਰ *pos;
 
 	state = 0;
 	tarindex = 0;
 
-	while ((ch = *src++) != '\0') {
-		if (isspace(ch))	/* Skip whitespace anywhere. */
-			continue;
+	ਜਦੋਂ ((ch = *src++) != '\0') {
+		ਜੇ (ਖਾਲੀ_ਥਾਂ_ਹੈ(ch))	/* Skip whitespace anywhere. */
+			ਜਾਰੀ;
 
-		if (ch == Pad64)
-			break;
+		ਜੇ (ch == Pad64)
+			ਰੋਕੋ;
 
 		pos = strchr(Base64, ch);
-		if (pos == 0)		/* A non-base64 character. */
-			return (-1);
+		ਜੇ (pos == 0)		/* A non-base64 character. */
+			ਵਾਪਸ (-1);
 
-		switch (state) {
-		case 0:
-			if (target) {
-				if (tarindex >= targsize)
-					return (-1);
-				target[tarindex] = (pos - Base64) << 2;
+		ਚੋਣ (state) {
+		ਹਾਲਤ 0:
+			ਜੇ (ਨਿਸ਼ਾਨਾ) {
+				ਜੇ (tarindex >= targsize)
+					ਵਾਪਸ (-1);
+				ਨਿਸ਼ਾਨਾ[tarindex] = (pos - Base64) << 2;
 			}
 			state = 1;
-			break;
-		case 1:
-			if (target) {
-				if (tarindex + 1 >= targsize)
-					return (-1);
-				target[tarindex]   |=  (pos - Base64) >> 4;
-				target[tarindex+1]  = ((pos - Base64) & 0x0f)
+			ਰੋਕੋ;
+		ਹਾਲਤ 1:
+			ਜੇ (ਨਿਸ਼ਾਨਾ) {
+				ਜੇ (tarindex + 1 >= targsize)
+					ਵਾਪਸ (-1);
+				ਨਿਸ਼ਾਨਾ[tarindex]   |=  (pos - Base64) >> 4;
+				ਨਿਸ਼ਾਨਾ[tarindex+1]  = ((pos - Base64) & 0x0f)
 							<< 4 ;
 			}
 			tarindex++;
 			state = 2;
-			break;
-		case 2:
-			if (target) {
-				if (tarindex + 1 >= targsize)
-					return (-1);
-				target[tarindex]   |=  (pos - Base64) >> 2;
-				target[tarindex+1]  = ((pos - Base64) & 0x03)
+			ਰੋਕੋ;
+		ਹਾਲਤ 2:
+			ਜੇ (ਨਿਸ਼ਾਨਾ) {
+				ਜੇ (tarindex + 1 >= targsize)
+					ਵਾਪਸ (-1);
+				ਨਿਸ਼ਾਨਾ[tarindex]   |=  (pos - Base64) >> 2;
+				ਨਿਸ਼ਾਨਾ[tarindex+1]  = ((pos - Base64) & 0x03)
 							<< 6;
 			}
 			tarindex++;
 			state = 3;
-			break;
-		case 3:
-			if (target) {
-				if (tarindex >= targsize)
-					return (-1);
-				target[tarindex] |= (pos - Base64);
+			ਰੋਕੋ;
+		ਹਾਲਤ 3:
+			ਜੇ (ਨਿਸ਼ਾਨਾ) {
+				ਜੇ (tarindex >= targsize)
+					ਵਾਪਸ (-1);
+				ਨਿਸ਼ਾਨਾ[tarindex] |= (pos - Base64);
 			}
 			tarindex++;
 			state = 0;
-			break;
+			ਰੋਕੋ;
 		}
 	}
 
@@ -261,33 +261,33 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 	 * on a byte boundary, and/or with erroneous trailing characters.
 	 */
 
-	if (ch == Pad64) {		/* We got a pad char. */
+	ਜੇ (ch == Pad64) {		/* We got a pad char. */
 		ch = *src++;		/* Skip it, get next. */
-		switch (state) {
-		case 0:		/* Invalid = in first position */
-		case 1:		/* Invalid = in second position */
-			return (-1);
+		ਚੋਣ (state) {
+		ਹਾਲਤ 0:		/* Invalid = in first position */
+		ਹਾਲਤ 1:		/* Invalid = in second position */
+			ਵਾਪਸ (-1);
 
-		case 2:		/* Valid, means one byte of info */
+		ਹਾਲਤ 2:		/* Valid, means one byte of info */
 			/* Skip any number of spaces. */
-			for (; ch != '\0'; ch = *src++)
-				if (!isspace(ch))
-					break;
+			ਲਈ (; ch != '\0'; ch = *src++)
+				ਜੇ (!ਖਾਲੀ_ਥਾਂ_ਹੈ(ch))
+					ਰੋਕੋ;
 			/* Make sure there is another trailing = sign. */
-			if (ch != Pad64)
-				return (-1);
+			ਜੇ (ch != Pad64)
+				ਵਾਪਸ (-1);
 			ch = *src++;		/* Skip the = */
 			/* Fall through to "single trailing =" case. */
 			/* FALLTHROUGH */
 
-		case 3:		/* Valid, means two bytes of info */
+		ਹਾਲਤ 3:		/* Valid, means two bytes of info */
 			/*
 			 * We know this char is an =.  Is there anything but
 			 * whitespace after it?
 			 */
-			for (; ch != '\0'; ch = *src++)
-				if (!isspace(ch))
-					return (-1);
+			ਲਈ (; ch != '\0'; ch = *src++)
+				ਜੇ (!ਖਾਲੀ_ਥਾਂ_ਹੈ(ch))
+					ਵਾਪਸ (-1);
 
 			/*
 			 * Now make sure for cases 2 and 3 that the "extra"
@@ -295,20 +295,20 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 			 * zeros.  If we don't check them, they become a
 			 * subliminal channel.
 			 */
-			if (target && target[tarindex] != 0)
-				return (-1);
+			ਜੇ (ਨਿਸ਼ਾਨਾ && ਨਿਸ਼ਾਨਾ[tarindex] != 0)
+				ਵਾਪਸ (-1);
 		}
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		/*
 		 * We ended by seeing the end of the string.  Make sure we
 		 * have no partial bytes lying around.
 		 */
-		if (state != 0)
-			return (-1);
+		ਜੇ (state != 0)
+			ਵਾਪਸ (-1);
 	}
 
-	return (tarindex);
+	ਵਾਪਸ (tarindex);
 }
 
-#endif /* !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON) */
-#endif 
+#ਜੇ_ਅੰਤ /* !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON) */
+#ਜੇ_ਅੰਤ 

@@ -25,53 +25,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#ifndef HAVE_ERR
-void
-err(int r, const char *fmt, ...)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_ERR
+ਖਾਲੀ
+err(ਪੂਰਨ r, ਅਚਲ ਅੱਖਰ *fmt, ...)
 {
-	va_list args;
+	va_list ਦਲੀਲਾਂ;
 
-	va_start(args, fmt);
+	va_start(ਦਲੀਲਾਂ, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, ਦਲੀਲਾਂ);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(ਦਲੀਲਾਂ);
+	ਬਾਹਰ_ਨਿਕਲੋ(r);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_ERRX
-void
-errx(int r, const char *fmt, ...)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_ERRX
+ਖਾਲੀ
+errx(ਪੂਰਨ r, ਅਚਲ ਅੱਖਰ *fmt, ...)
 {
-	va_list args;
+	va_list ਦਲੀਲਾਂ;
 
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
+	va_start(ਦਲੀਲਾਂ, fmt);
+	vfprintf(stderr, fmt, ਦਲੀਲਾਂ);
 	fputc('\n', stderr);
-	va_end(args);
-	exit(r);
+	va_end(ਦਲੀਲਾਂ);
+	ਬਾਹਰ_ਨਿਕਲੋ(r);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_WARN
-void
-warn(const char *fmt, ...)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_WARN
+ਖਾਲੀ
+warn(ਅਚਲ ਅੱਖਰ *fmt, ...)
 {
-	va_list args;
+	va_list ਦਲੀਲਾਂ;
 
-	va_start(args, fmt);
+	va_start(ਦਲੀਲਾਂ, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, ਦਲੀਲਾਂ);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(ਦਲੀਲਾਂ);
 }
-#endif
+#ਜੇ_ਅੰਤ

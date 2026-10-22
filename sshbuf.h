@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _SSHBUF_H
-#define _SSHBUF_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _SSHBUF_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _SSHBUF_H
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
-#else /* OPENSSL */
-#define BIGNUM		void
-#define EC_KEY		void
-#define EC_GROUP	void
-#define EC_POINT	void
-#define EVP_PKEY	void
-#endif /* WITH_OPENSSL */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/bn.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/ec.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/ecdsa.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/evp.h>
+#ਨਹੀਂਤਾਂ /* OPENSSL */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ BIGNUM		ਖਾਲੀ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EC_ਕੁੰਜੀ		ਖਾਲੀ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EC_ਸਮੂਹ	ਖਾਲੀ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EC_ਬਿੰਦੂ	ਖਾਲੀ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ EVP_PKEY	ਖਾਲੀ
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
 
-#define SSHBUF_SIZE_MAX		0x8000000	/* Hard maximum size */
-#define SSHBUF_REFS_MAX		0x100000	/* Max child buffers */
-#define SSHBUF_MAX_BIGNUM	(16384 / 8)	/* Max bignum *bytes* */
-#define SSHBUF_MAX_ECPOINT	((528 * 2 / 8) + 1) /* Max EC point *bytes* */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHBUF_ਮਾਪ_MAX		0x8000000	/* Hard maximum size */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHBUF_REFS_MAX		0x100000	/* Max child buffers */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHBUF_MAX_BIGNUM	(16384 / 8)	/* Max bignum *bytes* */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSHBUF_MAX_ECPOINT	((528 * 2 / 8) + 1) /* Max EC point *bytes* */
 
-struct sshbuf;
+ਬਣਤਰ sshbuf;
 
 /*
  * Create a new sshbuf buffer.
  * Returns pointer to buffer on success, or NULL on allocation failure.
  */
-struct sshbuf *sshbuf_new(void);
+ਬਣਤਰ sshbuf *sshbuf_new(ਖਾਲੀ);
 
 /*
  * Create a new, read-only sshbuf buffer from existing data.
  * Returns pointer to buffer on success, or NULL on allocation failure.
  */
-struct sshbuf *sshbuf_from(const void *blob, size_t len);
+ਬਣਤਰ sshbuf *sshbuf_from(ਅਚਲ ਖਾਲੀ *blob, ਮਾਪ_t len);
 
 /*
  * Create a new, read-only sshbuf buffer from the contents of an existing
@@ -61,7 +61,7 @@ struct sshbuf *sshbuf_from(const void *blob, size_t len);
  * resultant buffer.
  * Returns pointer to buffer on success, or NULL on allocation failure.
  */
-struct sshbuf *sshbuf_fromb(struct sshbuf *buf);
+ਬਣਤਰ sshbuf *sshbuf_fromb(ਬਣਤਰ sshbuf *buf);
 
 /*
  * Create a new, read-only sshbuf buffer from the contents of a string in
@@ -71,49 +71,49 @@ struct sshbuf *sshbuf_fromb(struct sshbuf *buf);
  * On success, a pointer to the newly allocated buffer is placed in *bufp.
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_froms(struct sshbuf *buf, struct sshbuf **bufp);
+ਪੂਰਨ	sshbuf_froms(ਬਣਤਰ sshbuf *buf, ਬਣਤਰ sshbuf **bufp);
 
 /*
  * Clear and free buf
  */
-void	sshbuf_free(struct sshbuf *buf);
+ਖਾਲੀ	sshbuf_free(ਬਣਤਰ sshbuf *buf);
 
 /*
  * Reset buf, clearing its contents. NB. max_size is preserved.
  */
-void	sshbuf_reset(struct sshbuf *buf);
+ਖਾਲੀ	sshbuf_reset(ਬਣਤਰ sshbuf *buf);
 
 /*
  * Return the maximum size of buf
  */
-size_t	sshbuf_max_size(const struct sshbuf *buf);
+ਮਾਪ_t	sshbuf_max_ਮਾਪ(ਅਚਲ ਬਣਤਰ sshbuf *buf);
 
 /*
  * Set the maximum size of buf
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_set_max_size(struct sshbuf *buf, size_t max_size);
+ਪੂਰਨ	sshbuf_ਸੈੱਟ_max_ਮਾਪ(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t max_ਮਾਪ);
 
 /*
  * Returns the length of data in buf
  */
-size_t	sshbuf_len(const struct sshbuf *buf);
+ਮਾਪ_t	sshbuf_len(ਅਚਲ ਬਣਤਰ sshbuf *buf);
 
 /*
  * Returns number of bytes left in buffer before hitting max_size.
  */
-size_t	sshbuf_avail(const struct sshbuf *buf);
+ਮਾਪ_t	sshbuf_avail(ਅਚਲ ਬਣਤਰ sshbuf *buf);
 
 /*
  * Returns a read-only pointer to the start of the data in buf
  */
-const u_char *sshbuf_ptr(const struct sshbuf *buf);
+ਅਚਲ u_char *sshbuf_ptr(ਅਚਲ ਬਣਤਰ sshbuf *buf);
 
 /*
  * Returns a mutable pointer to the start of the data in buf, or
  * NULL if the buffer is read-only.
  */
-u_char *sshbuf_mutable_ptr(const struct sshbuf *buf);
+u_char *sshbuf_mutable_ptr(ਅਚਲ ਬਣਤਰ sshbuf *buf);
 
 /*
  * Check whether a reservation of size len will succeed in buf
@@ -121,7 +121,7 @@ u_char *sshbuf_mutable_ptr(const struct sshbuf *buf);
  * with unsigned overflows correctly.
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_check_reserve(const struct sshbuf *buf, size_t len);
+ਪੂਰਨ	sshbuf_check_reserve(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t len);
 
 /*
  * Preallocates len additional bytes in buf.
@@ -129,26 +129,26 @@ int	sshbuf_check_reserve(const struct sshbuf *buf, size_t len);
  * required to avoid realloc in the buffer code.
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_allocate(struct sshbuf *buf, size_t len);
+ਪੂਰਨ	sshbuf_allocate(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t len);
 
 /*
  * Reserve len bytes in buf.
  * Returns 0 on success and a pointer to the first reserved byte via the
  * optional dpp parameter or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_reserve(struct sshbuf *buf, size_t len, u_char **dpp);
+ਪੂਰਨ	sshbuf_reserve(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t len, u_char **dpp);
 
 /*
  * Consume len bytes from the start of buf
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_consume(struct sshbuf *buf, size_t len);
+ਪੂਰਨ	sshbuf_consume(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t len);
 
 /*
  * Consume len bytes from the end of buf
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_consume_end(struct sshbuf *buf, size_t len);
+ਪੂਰਨ	sshbuf_consume_ਸਿਰਾ(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t len);
 
 /*
  * Consume data from a parent buffer up to that of a child buffer (i.e.
@@ -166,113 +166,113 @@ int	sshbuf_consume_end(struct sshbuf *buf, size_t len);
  * "child" must be a direct child of "buf" (i.e. neither an unrelated buffer
  * nor a grandchild) which has consumed data past that of "buf".
  */
-int	sshbuf_consume_upto_child(struct sshbuf *buf, const struct sshbuf *child);
+ਪੂਰਨ	sshbuf_consume_upto_ਬੱਚਾ(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਬਣਤਰ sshbuf *ਬੱਚਾ);
 
 /* Extract or deposit some bytes */
-int	sshbuf_get(struct sshbuf *buf, void *v, size_t len);
-int	sshbuf_put(struct sshbuf *buf, const void *v, size_t len);
-int	sshbuf_putb(struct sshbuf *buf, const struct sshbuf *v);
+ਪੂਰਨ	sshbuf_get(ਬਣਤਰ sshbuf *buf, ਖਾਲੀ *v, ਮਾਪ_t len);
+ਪੂਰਨ	sshbuf_put(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਖਾਲੀ *v, ਮਾਪ_t len);
+ਪੂਰਨ	sshbuf_putb(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਬਣਤਰ sshbuf *v);
 
 /* Append using a printf(3) format */
-int	sshbuf_putf(struct sshbuf *buf, const char *fmt, ...)
-	    __attribute__((format(printf, 2, 3)));
-int	sshbuf_putfv(struct sshbuf *buf, const char *fmt, va_list ap);
+ਪੂਰਨ	sshbuf_putf(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਅੱਖਰ *fmt, ...)
+	    __attribute__((format(ਲਿਖੋ, 2, 3)));
+ਪੂਰਨ	sshbuf_putfv(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਅੱਖਰ *fmt, va_list ap);
 
 /* Functions to extract or store big-endian words of various sizes */
-int	sshbuf_get_u64(struct sshbuf *buf, uint64_t *valp);
-int	sshbuf_get_u32(struct sshbuf *buf, uint32_t *valp);
-int	sshbuf_get_u16(struct sshbuf *buf, uint16_t *valp);
-int	sshbuf_get_u8(struct sshbuf *buf, u_char *valp);
-int	sshbuf_put_u64(struct sshbuf *buf, uint64_t val);
-int	sshbuf_put_u32(struct sshbuf *buf, uint32_t val);
-int	sshbuf_put_u16(struct sshbuf *buf, uint16_t val);
-int	sshbuf_put_u8(struct sshbuf *buf, u_char val);
+ਪੂਰਨ	sshbuf_get_u64(ਬਣਤਰ sshbuf *buf, uint64_t *valp);
+ਪੂਰਨ	sshbuf_get_u32(ਬਣਤਰ sshbuf *buf, uint32_t *valp);
+ਪੂਰਨ	sshbuf_get_u16(ਬਣਤਰ sshbuf *buf, uint16_t *valp);
+ਪੂਰਨ	sshbuf_get_u8(ਬਣਤਰ sshbuf *buf, u_char *valp);
+ਪੂਰਨ	sshbuf_put_u64(ਬਣਤਰ sshbuf *buf, uint64_t val);
+ਪੂਰਨ	sshbuf_put_u32(ਬਣਤਰ sshbuf *buf, uint32_t val);
+ਪੂਰਨ	sshbuf_put_u16(ਬਣਤਰ sshbuf *buf, uint16_t val);
+ਪੂਰਨ	sshbuf_put_u8(ਬਣਤਰ sshbuf *buf, u_char val);
 
 /* Functions to peek at the contents of a buffer without modifying it. */
-int	sshbuf_peek_u64(const struct sshbuf *buf, size_t offset,
+ਪੂਰਨ	sshbuf_peek_u64(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ,
     uint64_t *valp);
-int	sshbuf_peek_u32(const struct sshbuf *buf, size_t offset,
+ਪੂਰਨ	sshbuf_peek_u32(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ,
     uint32_t *valp);
-int	sshbuf_peek_u16(const struct sshbuf *buf, size_t offset,
+ਪੂਰਨ	sshbuf_peek_u16(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ,
     uint16_t *valp);
-int	sshbuf_peek_u8(const struct sshbuf *buf, size_t offset,
+ਪੂਰਨ	sshbuf_peek_u8(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ,
     u_char *valp);
 
 /*
  * Functions to poke values into an existing buffer (e.g. a length header
  * to a packet). The destination bytes must already exist in the buffer.
  */
-int sshbuf_poke_u64(struct sshbuf *buf, size_t offset, uint64_t val);
-int sshbuf_poke_u32(struct sshbuf *buf, size_t offset, uint32_t val);
-int sshbuf_poke_u16(struct sshbuf *buf, size_t offset, uint16_t val);
-int sshbuf_poke_u8(struct sshbuf *buf, size_t offset, u_char val);
-int sshbuf_poke(struct sshbuf *buf, size_t offset, void *v, size_t len);
+ਪੂਰਨ sshbuf_poke_u64(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, uint64_t val);
+ਪੂਰਨ sshbuf_poke_u32(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, uint32_t val);
+ਪੂਰਨ sshbuf_poke_u16(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, uint16_t val);
+ਪੂਰਨ sshbuf_poke_u8(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, u_char val);
+ਪੂਰਨ sshbuf_poke(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t ਵਿੱਥ, ਖਾਲੀ *v, ਮਾਪ_t len);
 
 /*
  * Functions to extract or store SSH wire encoded strings (u32 len || data)
  * The "cstring" variants admit no \0 characters in the string contents.
  * Caller must free *valp.
  */
-int	sshbuf_get_string(struct sshbuf *buf, u_char **valp, size_t *lenp);
-int	sshbuf_get_cstring(struct sshbuf *buf, char **valp, size_t *lenp);
-int	sshbuf_get_stringb(struct sshbuf *buf, struct sshbuf *v);
-int	sshbuf_put_string(struct sshbuf *buf, const void *v, size_t len);
-int	sshbuf_put_cstring(struct sshbuf *buf, const char *v);
-int	sshbuf_put_stringb(struct sshbuf *buf, const struct sshbuf *v);
+ਪੂਰਨ	sshbuf_get_string(ਬਣਤਰ sshbuf *buf, u_char **valp, ਮਾਪ_t *lenp);
+ਪੂਰਨ	sshbuf_get_cstring(ਬਣਤਰ sshbuf *buf, ਅੱਖਰ **valp, ਮਾਪ_t *lenp);
+ਪੂਰਨ	sshbuf_get_stringb(ਬਣਤਰ sshbuf *buf, ਬਣਤਰ sshbuf *v);
+ਪੂਰਨ	sshbuf_put_string(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਖਾਲੀ *v, ਮਾਪ_t len);
+ਪੂਰਨ	sshbuf_put_cstring(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਅੱਖਰ *v);
+ਪੂਰਨ	sshbuf_put_stringb(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਬਣਤਰ sshbuf *v);
 
 /*
  * "Direct" variant of sshbuf_get_string, returns pointer into the sshbuf to
  * avoid an malloc+memcpy. The pointer is guaranteed to be valid until the
  * next sshbuf-modifying function call. Caller does not free.
  */
-int	sshbuf_get_string_direct(struct sshbuf *buf, const u_char **valp,
-	    size_t *lenp);
+ਪੂਰਨ	sshbuf_get_string_ਸਿੱਧਾ(ਬਣਤਰ sshbuf *buf, ਅਚਲ u_char **valp,
+	    ਮਾਪ_t *lenp);
 
 /* Skip past a string */
-#define sshbuf_skip_string(buf) sshbuf_get_string_direct(buf, NULL, NULL)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ sshbuf_skip_string(buf) sshbuf_get_string_ਸਿੱਧਾ(buf, ਨਿਰਾ, ਨਿਰਾ)
 
 /* Another variant: "peeks" into the buffer without modifying it */
-int	sshbuf_peek_string_direct(const struct sshbuf *buf, const u_char **valp,
-	    size_t *lenp);
+ਪੂਰਨ	sshbuf_peek_string_ਸਿੱਧਾ(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਅਚਲ u_char **valp,
+	    ਮਾਪ_t *lenp);
 
 /*
  * Functions to extract or store SSH wire encoded bignums and elliptic
  * curve points.
  */
-int	sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp);
-int	sshbuf_get_bignum2_bytes_direct(struct sshbuf *buf,
-	    const u_char **valp, size_t *lenp);
-int	sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v);
-int	sshbuf_put_bignum2_bytes(struct sshbuf *buf, const void *v, size_t len);
-int	sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g);
-int	sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v);
-int	sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g);
-int	sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v);
-int	sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey);
+ਪੂਰਨ	sshbuf_get_bignum2(ਬਣਤਰ sshbuf *buf, BIGNUM **valp);
+ਪੂਰਨ	sshbuf_get_bignum2_ਬਾਈਟਾਂ_ਸਿੱਧਾ(ਬਣਤਰ sshbuf *buf,
+	    ਅਚਲ u_char **valp, ਮਾਪ_t *lenp);
+ਪੂਰਨ	sshbuf_put_bignum2(ਬਣਤਰ sshbuf *buf, ਅਚਲ BIGNUM *v);
+ਪੂਰਨ	sshbuf_put_bignum2_ਬਾਈਟਾਂ(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਖਾਲੀ *v, ਮਾਪ_t len);
+ਪੂਰਨ	sshbuf_get_ec(ਬਣਤਰ sshbuf *buf, EC_ਬਿੰਦੂ *v, ਅਚਲ EC_ਸਮੂਹ *g);
+ਪੂਰਨ	sshbuf_get_eckey(ਬਣਤਰ sshbuf *buf, EC_ਕੁੰਜੀ *v);
+ਪੂਰਨ	sshbuf_put_ec(ਬਣਤਰ sshbuf *buf, ਅਚਲ EC_ਬਿੰਦੂ *v, ਅਚਲ EC_ਸਮੂਹ *g);
+ਪੂਰਨ	sshbuf_put_eckey(ਬਣਤਰ sshbuf *buf, ਅਚਲ EC_ਕੁੰਜੀ *v);
+ਪੂਰਨ	sshbuf_put_ec_pkey(ਬਣਤਰ sshbuf *buf, EVP_PKEY *pkey);
 
 /* Functions to extract or store various non-SSH wire encoded values */
-int	sshbuf_get_nulterminated_string(struct sshbuf *buf, size_t maxlen,
-	    char **valp, size_t *lenp);
+ਪੂਰਨ	sshbuf_get_nulterminated_string(ਬਣਤਰ sshbuf *buf, ਮਾਪ_t maxlen,
+	    ਅੱਖਰ **valp, ਮਾਪ_t *lenp);
 
 /* Dump the contents of the buffer in a human-readable format */
-void	sshbuf_dump(const struct sshbuf *buf, FILE *f);
+ਖਾਲੀ	sshbuf_dump(ਅਚਲ ਬਣਤਰ sshbuf *buf, FILE *f);
 
 /* Dump specified memory in a human-readable format */
-void	sshbuf_dump_data(const void *s, size_t len, FILE *f);
+ਖਾਲੀ	sshbuf_dump_ਅੰਕੜੇ(ਅਚਲ ਖਾਲੀ *s, ਮਾਪ_t len, FILE *f);
 
 /* Return the hexadecimal representation of the contents of the buffer */
-char	*sshbuf_dtob16(const struct sshbuf *buf);
+ਅੱਖਰ	*sshbuf_dtob16(ਅਚਲ ਬਣਤਰ sshbuf *buf);
 /* Make a sshbuf from a hex string */
-struct sshbuf *sshbuf_b16tod(const char *b16);
+ਬਣਤਰ sshbuf *sshbuf_b16tod(ਅਚਲ ਅੱਖਰ *b16);
 
 /* Encode the contents of the buffer as base64 */
-char	*sshbuf_dtob64_string(const struct sshbuf *buf, int wrap);
-int	sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, int wrap);
+ਅੱਖਰ	*sshbuf_dtob64_string(ਅਚਲ ਬਣਤਰ sshbuf *buf, ਪੂਰਨ wrap);
+ਪੂਰਨ	sshbuf_dtob64(ਅਚਲ ਬਣਤਰ sshbuf *d, ਬਣਤਰ sshbuf *b64, ਪੂਰਨ wrap);
 /* RFC4648 "base64url" encoding variant */
-int	sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, int wrap);
+ਪੂਰਨ	sshbuf_dtourlb64(ਅਚਲ ਬਣਤਰ sshbuf *d, ਬਣਤਰ sshbuf *b64, ਪੂਰਨ wrap);
 
 /* Decode base64 data and append it to the buffer */
-int	sshbuf_b64tod(struct sshbuf *buf, const char *b64);
+ਪੂਰਨ	sshbuf_b64tod(ਬਣਤਰ sshbuf *buf, ਅਚਲ ਅੱਖਰ *b64);
 
 /*
  * Tests whether the buffer contains the specified byte sequence at the
@@ -286,8 +286,8 @@ int	sshbuf_b64tod(struct sshbuf *buf, const char *b64);
  * insufficient data is present then the comparison is not attempted at
  * all.
  */
-int	sshbuf_cmp(const struct sshbuf *b, size_t offset,
-    const void *s, size_t len);
+ਪੂਰਨ	sshbuf_cmp(ਅਚਲ ਬਣਤਰ sshbuf *b, ਮਾਪ_t ਵਿੱਥ,
+    ਅਚਲ ਖਾਲੀ *s, ਮਾਪ_t len);
 
 /*
  * Test whether two buffers have identical contents.
@@ -296,7 +296,7 @@ int	sshbuf_cmp(const struct sshbuf *b, size_t offset,
  * had differing contents.
  * Returns 0 on successful compare (comparing two empty buffers returns 0).
  */
-int sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b);
+ਪੂਰਨ sshbuf_equals(ਅਚਲ ਬਣਤਰ sshbuf *a, ਅਚਲ ਬਣਤਰ sshbuf *b);
 
 /*
  * Searches the buffer for the specified string. Returns 0 on success
@@ -306,59 +306,59 @@ int sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b);
  * present in the buffer for a match to be possible but none was found.
  * Searches for zero-length data are not allowed.
  */
-int
-sshbuf_find(const struct sshbuf *b, size_t start_offset,
-    const void *s, size_t len, size_t *offsetp);
+ਪੂਰਨ
+sshbuf_ਲੱਭੋ(ਅਚਲ ਬਣਤਰ sshbuf *b, ਮਾਪ_t ਸ਼ੁਰੂ_ਵਿੱਥ,
+    ਅਚਲ ਖਾਲੀ *s, ਮਾਪ_t len, ਮਾਪ_t *offsetp);
 
 /*
  * Duplicate the contents of a buffer to a string (caller to free).
  * Returns NULL on buffer error, or if the buffer contains a premature
  * nul character.
  */
-char *sshbuf_dup_string(struct sshbuf *buf);
+ਅੱਖਰ *sshbuf_dup_string(ਬਣਤਰ sshbuf *buf);
 
 /*
  * Fill a buffer from a file descriptor or filename. Both allocate the
  * buffer for the caller.
  */
-int sshbuf_load_fd(int, struct sshbuf **)
+ਪੂਰਨ sshbuf_ਲੱਦੋ_fd(ਪੂਰਨ, ਬਣਤਰ sshbuf **)
     __attribute__((__nonnull__ (2)));
-int sshbuf_load_file(const char *, struct sshbuf **)
+ਪੂਰਨ sshbuf_ਲੱਦੋ_file(ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ sshbuf **)
     __attribute__((__nonnull__ (2)));
 
 /*
  * Write a buffer to a path, creating/truncating as needed (mode 0644,
  * subject to umask). The buffer contents are not modified.
  */
-int sshbuf_write_file(const char *path, struct sshbuf *buf)
+ਪੂਰਨ sshbuf_write_file(ਅਚਲ ਅੱਖਰ *ਰਸਤਾ, ਬਣਤਰ sshbuf *buf)
     __attribute__((__nonnull__ (2)));
 
 /* Read up to maxlen bytes from a fd directly to a buffer */
-int sshbuf_read(int, struct sshbuf *, size_t, size_t *)
+ਪੂਰਨ sshbuf_read(ਪੂਰਨ, ਬਣਤਰ sshbuf *, ਮਾਪ_t, ਮਾਪ_t *)
     __attribute__((__nonnull__ (2)));
 
 /* Macros for decoding/encoding integers */
-#define PEEK_U64(p) \
-	(((uint64_t)(((const u_char *)(p))[0]) << 56) | \
-	 ((uint64_t)(((const u_char *)(p))[1]) << 48) | \
-	 ((uint64_t)(((const u_char *)(p))[2]) << 40) | \
-	 ((uint64_t)(((const u_char *)(p))[3]) << 32) | \
-	 ((uint64_t)(((const u_char *)(p))[4]) << 24) | \
-	 ((uint64_t)(((const u_char *)(p))[5]) << 16) | \
-	 ((uint64_t)(((const u_char *)(p))[6]) << 8) | \
-	  (uint64_t)(((const u_char *)(p))[7]))
-#define PEEK_U32(p) \
-	(((uint32_t)(((const u_char *)(p))[0]) << 24) | \
-	 ((uint32_t)(((const u_char *)(p))[1]) << 16) | \
-	 ((uint32_t)(((const u_char *)(p))[2]) << 8) | \
-	  (uint32_t)(((const u_char *)(p))[3]))
-#define PEEK_U16(p) \
-	(((uint16_t)(((const u_char *)(p))[0]) << 8) | \
-	  (uint16_t)(((const u_char *)(p))[1]))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ PEEK_U64(p) \
+	(((uint64_t)(((ਅਚਲ u_char *)(p))[0]) << 56) | \
+	 ((uint64_t)(((ਅਚਲ u_char *)(p))[1]) << 48) | \
+	 ((uint64_t)(((ਅਚਲ u_char *)(p))[2]) << 40) | \
+	 ((uint64_t)(((ਅਚਲ u_char *)(p))[3]) << 32) | \
+	 ((uint64_t)(((ਅਚਲ u_char *)(p))[4]) << 24) | \
+	 ((uint64_t)(((ਅਚਲ u_char *)(p))[5]) << 16) | \
+	 ((uint64_t)(((ਅਚਲ u_char *)(p))[6]) << 8) | \
+	  (uint64_t)(((ਅਚਲ u_char *)(p))[7]))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ PEEK_U32(p) \
+	(((uint32_t)(((ਅਚਲ u_char *)(p))[0]) << 24) | \
+	 ((uint32_t)(((ਅਚਲ u_char *)(p))[1]) << 16) | \
+	 ((uint32_t)(((ਅਚਲ u_char *)(p))[2]) << 8) | \
+	  (uint32_t)(((ਅਚਲ u_char *)(p))[3]))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ PEEK_U16(p) \
+	(((uint16_t)(((ਅਚਲ u_char *)(p))[0]) << 8) | \
+	  (uint16_t)(((ਅਚਲ u_char *)(p))[1]))
 
-#define POKE_U64(p, v) \
-	do { \
-		const uint64_t __v = (v); \
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ POKE_U64(p, v) \
+	ਕਰੋ { \
+		ਅਚਲ uint64_t __v = (v); \
 		((u_char *)(p))[0] = (__v >> 56) & 0xff; \
 		((u_char *)(p))[1] = (__v >> 48) & 0xff; \
 		((u_char *)(p))[2] = (__v >> 40) & 0xff; \
@@ -367,47 +367,47 @@ int sshbuf_read(int, struct sshbuf *, size_t, size_t *)
 		((u_char *)(p))[5] = (__v >> 16) & 0xff; \
 		((u_char *)(p))[6] = (__v >> 8) & 0xff; \
 		((u_char *)(p))[7] = __v & 0xff; \
-	} while (0)
-#define POKE_U32(p, v) \
-	do { \
-		const uint32_t __v = (v); \
+	} ਜਦੋਂ (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ POKE_U32(p, v) \
+	ਕਰੋ { \
+		ਅਚਲ uint32_t __v = (v); \
 		((u_char *)(p))[0] = (__v >> 24) & 0xff; \
 		((u_char *)(p))[1] = (__v >> 16) & 0xff; \
 		((u_char *)(p))[2] = (__v >> 8) & 0xff; \
 		((u_char *)(p))[3] = __v & 0xff; \
-	} while (0)
-#define POKE_U16(p, v) \
-	do { \
-		const uint16_t __v = (v); \
+	} ਜਦੋਂ (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ POKE_U16(p, v) \
+	ਕਰੋ { \
+		ਅਚਲ uint16_t __v = (v); \
 		((u_char *)(p))[0] = (__v >> 8) & 0xff; \
 		((u_char *)(p))[1] = __v & 0xff; \
-	} while (0)
+	} ਜਦੋਂ (0)
 
 /* Internal definitions follow. Exposed for regress tests */
-#ifdef SSHBUF_INTERNAL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SSHBUF_ਅੰਦਰੂਨੀ
 
 /*
  * Return the allocation size of buf
  */
-size_t	sshbuf_alloc(const struct sshbuf *buf);
+ਮਾਪ_t	sshbuf_alloc(ਅਚਲ ਬਣਤਰ sshbuf *buf);
 
 /*
  * Increment the reference count of buf.
  */
-int	sshbuf_set_parent(struct sshbuf *child, struct sshbuf *parent);
+ਪੂਰਨ	sshbuf_ਸੈੱਟ_ਮਾਪਾ(ਬਣਤਰ sshbuf *ਬੱਚਾ, ਬਣਤਰ sshbuf *ਮਾਪਾ);
 
 /*
  * Return the parent buffer of buf, or NULL if it has no parent.
  */
-const struct sshbuf *sshbuf_parent(const struct sshbuf *buf);
+ਅਚਲ ਬਣਤਰ sshbuf *sshbuf_ਮਾਪਾ(ਅਚਲ ਬਣਤਰ sshbuf *buf);
 
 /*
  * Return the reference count of buf
  */
-u_int	sshbuf_refcount(const struct sshbuf *buf);
+u_int	sshbuf_refcount(ਅਚਲ ਬਣਤਰ sshbuf *buf);
 
-# define SSHBUF_SIZE_INIT	256		/* Initial allocation */
-# define SSHBUF_SIZE_INC	256		/* Preferred increment length */
+# define SSHBUF_ਮਾਪ_INIT	256		/* Initial allocation */
+# define SSHBUF_ਮਾਪ_INC	256		/* Preferred increment length */
 # define SSHBUF_PACK_MIN	8192		/* Minimum packable offset */
 
 /* # define SSHBUF_ABORT abort */
@@ -418,15 +418,15 @@ u_int	sshbuf_refcount(const struct sshbuf *buf);
 # endif
 
 # ifdef SSHBUF_DEBUG
-#  define SSHBUF_DBG(x) do { \
-		printf("%s:%d %s: ", __FILE__, __LINE__, __func__); \
-		printf x; \
-		printf("\n"); \
+#  define SSHBUF_DBG(x) ਕਰੋ { \
+		ਲਿਖੋ("%s:%d %s: ", __FILE__, __LINE__, __func__); \
+		ਲਿਖੋ x; \
+		ਲਿਖੋ("\n"); \
 		fflush(stdout); \
-	} while (0)
-# else
+	} ਜਦੋਂ (0)
+# ਨਹੀਂਤਾਂ
 #  define SSHBUF_DBG(x)
 # endif
-#endif /* SSHBUF_INTERNAL */
+#ਜੇ_ਅੰਤ /* SSHBUF_INTERNAL */
 
-#endif /* _SSHBUF_H */
+#ਜੇ_ਅੰਤ /* _SSHBUF_H */

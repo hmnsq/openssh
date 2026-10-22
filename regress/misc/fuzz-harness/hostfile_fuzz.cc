@@ -10,61 +10,61 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-extern "C" {
+ਬਾਹਰੀ "C" {
 
-#include "hostfile.h"
-#include "sshkey.h"
-#include "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hostfile.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshkey.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
 
-static int log_initialized = 0;
+ਸਥਿਰ ਪੂਰਨ log_initialized = 0;
 
-static int
-noop_cb(struct hostkey_foreach_line *l, void *ctx)
+ਸਥਿਰ ਪੂਰਨ
+noop_cb(ਬਣਤਰ hostkey_foreach_ਸਤਰ *l, ਖਾਲੀ *ctx)
 {
-	(void)l; (void)ctx;
-	return 0;
+	(ਖਾਲੀ)l; (ਖਾਲੀ)ctx;
+	ਵਾਪਸ 0;
 }
 
-int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ਪੂਰਨ
+LLVMFuzzer_Test_One_ਨਿਵੇਸ਼(ਅਚਲ uint8_t *ਅੰਕੜੇ, ਮਾਪ_t ਮਾਪ)
 {
-	if (!log_initialized) {
+	ਜੇ (!log_initialized) {
 		log_init("hostfile_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
 
 	/* Drive every HKF_WANT_* combination on each input. */
-	static const u_int flag_combos[] = {
+	ਸਥਿਰ ਅਚਲ u_int flag_combos[] = {
 		0,
-		HKF_WANT_MATCH,
-		HKF_WANT_PARSE_KEY,
-		HKF_WANT_MATCH | HKF_WANT_PARSE_KEY,
+		HKF_WANT_ਮੇਲ,
+		HKF_WANT_PARSE_ਕੁੰਜੀ,
+		HKF_WANT_ਮੇਲ | HKF_WANT_PARSE_ਕੁੰਜੀ,
 	};
-	for (size_t i = 0; i < sizeof(flag_combos)/sizeof(flag_combos[0]); i++) {
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f == NULL)
-			continue;
-		const char *host = (flag_combos[i] & HKF_WANT_MATCH) ?
-		    "example.com" : NULL;
-		(void)hostkeys_foreach_file("/fuzz", f, noop_cb, NULL,
+	ਲਈ (ਮਾਪ_t i = 0; i < ਆਕਾਰ(flag_combos)/ਆਕਾਰ(flag_combos[0]); i++) {
+		FILE *f = fmemopen((ਖਾਲੀ *)ਅੰਕੜੇ, ਮਾਪ, "r");
+		ਜੇ (f == ਨਿਰਾ)
+			ਜਾਰੀ;
+		ਅਚਲ ਅੱਖਰ *host = (flag_combos[i] & HKF_WANT_ਮੇਲ) ?
+		    "example.com" : ਨਿਰਾ;
+		(ਖਾਲੀ)hostkeys_foreach_file("/fuzz", f, noop_cb, ਨਿਰਾ,
 		    host, "127.0.0.1", flag_combos[i], 0);
 		fclose(f);
 	}
 
 	/* Higher-level wrapper that adds record_hostkey on top of foreach. */
 	{
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f != NULL) {
-			struct hostkeys *hk = init_hostkeys();
-			if (hk != NULL) {
-				load_hostkeys_file(hk, "example.com",
+		FILE *f = fmemopen((ਖਾਲੀ *)ਅੰਕੜੇ, ਮਾਪ, "r");
+		ਜੇ (f != ਨਿਰਾ) {
+			ਬਣਤਰ hostkeys *hk = init_hostkeys();
+			ਜੇ (hk != ਨਿਰਾ) {
+				ਲੱਦੋ_hostkeys_file(hk, "example.com",
 				    "/fuzz", f, 0);
 				free_hostkeys(hk);
 			}
@@ -73,19 +73,19 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	}
 
 	/* Drive host_hash + extract_salt on a bounded hostname-shaped slice. */
-	if (size > 0) {
-		size_t n = size < 256 ? size : 256;
-		char *hb = (char *)malloc(n + 1);
-		if (hb != NULL) {
-			memcpy(hb, data, n);
+	ਜੇ (ਮਾਪ > 0) {
+		ਮਾਪ_t n = ਮਾਪ < 256 ? ਮਾਪ : 256;
+		ਅੱਖਰ *hb = (ਅੱਖਰ *)ਸਮ੍ਰਿਤੀ_ਦਿਓ(n + 1);
+		ਜੇ (hb != ਨਿਰਾ) {
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(hb, ਅੰਕੜੇ, n);
 			hb[n] = '\0';
-			char *h = host_hash("example.com", hb, 0);
-			free(h);
-			free(hb);
+			ਅੱਖਰ *h = host_hash("example.com", hb, 0);
+			ਮੁਕਤ(h);
+			ਮੁਕਤ(hb);
 		}
 	}
 
-	return 0;
+	ਵਾਪਸ 0;
 }
 
 } // extern "C"

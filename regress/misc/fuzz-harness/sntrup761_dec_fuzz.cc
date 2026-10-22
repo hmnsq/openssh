@@ -1,74 +1,74 @@
 // Basic fuzz test for depcapsulate operation,
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <err.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <err.h>
 
-extern "C" {
+ਬਾਹਰੀ "C" {
 
-#include "crypto_api.h"
-#include "hash.c"
+#ਅਨ੍ਤਰ੍ਭਾਵ "crypto_api.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hash.c"
 
-#undef randombytes
-#define USE_SNTRUP761X25519 1
-#ifdef SNTRUP761_NO_ASM
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ randombytes
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ USE_SNTRUP761X25519 1
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SNTRUP761_NO_ASM
 # undef __GNUC__
-#endif
-void randombytes(unsigned char *ptr, size_t l);
-volatile crypto_int16 crypto_int16_optblocker = 0;
-volatile crypto_int32 crypto_int32_optblocker = 0;
-volatile crypto_int64 crypto_int64_optblocker = 0;
-#include "sntrup761.c"
+#ਜੇ_ਅੰਤ
+ਖਾਲੀ randombytes(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ptr, ਮਾਪ_t l);
+ਅਸਥਿਰ crypto_int16 crypto_int16_optblocker = 0;
+ਅਸਥਿਰ crypto_int32 crypto_int32_optblocker = 0;
+ਅਸਥਿਰ crypto_int64 crypto_int64_optblocker = 0;
+#ਅਨ੍ਤਰ੍ਭਾਵ "sntrup761.c"
 
-static int real_random;
+ਸਥਿਰ ਪੂਰਨ real_random;
 
-void
-randombytes(unsigned char *ptr, size_t l)
+ਖਾਲੀ
+randombytes(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *ptr, ਮਾਪ_t l)
 {
-	if (real_random)
+	ਜੇ (real_random)
 		arc4random_buf(ptr, l);
-	else
+	ਨਹੀਂਤਾਂ
 		memset(ptr, 0, l);
 }
 
-void privkeys(unsigned char *zero_sk, unsigned char *rnd_sk)
+ਖਾਲੀ privkeys(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *zero_sk, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *rnd_sk)
 {
-	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
 
 	real_random = 0;
-	if (crypto_kem_sntrup761_keypair(pk, zero_sk) != 0)
+	ਜੇ (crypto_kem_sntrup761_keypair(pk, zero_sk) != 0)
 		errx(1, "crypto_kem_sntrup761_keypair failed");
 	real_random = 1;
-	if (crypto_kem_sntrup761_keypair(pk, rnd_sk) != 0)
+	ਜੇ (crypto_kem_sntrup761_keypair(pk, rnd_sk) != 0)
 		errx(1, "crypto_kem_sntrup761_keypair failed");
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
+ਪੂਰਨ LLVMFuzzer_Test_One_ਨਿਵੇਸ਼(ਅਚਲ uint8_t* ਨਿਵੇਸ਼, ਮਾਪ_t len)
 {
-	static bool once;
-	static unsigned char zero_sk[crypto_kem_sntrup761_SECRETKEYBYTES];
-	static unsigned char rnd_sk[crypto_kem_sntrup761_SECRETKEYBYTES];
-	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
-	unsigned char secret[crypto_kem_sntrup761_BYTES];
+	ਸਥਿਰ ਤਾਰਕਿਕ once;
+	ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ zero_sk[crypto_kem_sntrup761_SECRETKEYBYTES];
+	ਸਥਿਰ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ rnd_sk[crypto_kem_sntrup761_SECRETKEYBYTES];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ secret[crypto_kem_sntrup761_ਬਾਈਟਾਂ];
 
-	if (!once) {
+	ਜੇ (!once) {
 		privkeys(zero_sk, rnd_sk);
-		once = true;
+		once = ਸੱਚ;
 	}
 
-	memset(&ciphertext, 0, sizeof(ciphertext));
-	if (len > sizeof(ciphertext)) {
-		len = sizeof(ciphertext);
+	memset(&ciphertext, 0, ਆਕਾਰ(ciphertext));
+	ਜੇ (len > ਆਕਾਰ(ciphertext)) {
+		len = ਆਕਾਰ(ciphertext);
 	}
-	memcpy(ciphertext, input, len);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(ciphertext, ਨਿਵੇਸ਼, len);
 
-	(void)crypto_kem_sntrup761_dec(secret, ciphertext, zero_sk);
-	(void)crypto_kem_sntrup761_dec(secret, ciphertext, rnd_sk);
-	return 0;
+	(ਖਾਲੀ)crypto_kem_sntrup761_dec(secret, ciphertext, zero_sk);
+	(ਖਾਲੀ)crypto_kem_sntrup761_dec(secret, ciphertext, rnd_sk);
+	ਵਾਪਸ 0;
 }
 
 } // extern

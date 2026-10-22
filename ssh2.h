@@ -58,123 +58,123 @@
 
 /* special marker for no message */
 
-#define SSH_MSG_NONE					0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ਸੁਨੇਹਾ_NONE					0
 
 /* ranges */
 
-#define SSH2_MSG_TRANSPORT_MIN				1
-#define SSH2_MSG_TRANSPORT_MAX				49
-#define SSH2_MSG_USERAUTH_MIN				50
-#define SSH2_MSG_USERAUTH_MAX				79
-#define SSH2_MSG_USERAUTH_PER_METHOD_MIN		60
-#define SSH2_MSG_USERAUTH_PER_METHOD_MAX		SSH2_MSG_USERAUTH_MAX
-#define SSH2_MSG_CONNECTION_MIN				80
-#define SSH2_MSG_CONNECTION_MAX				127
-#define SSH2_MSG_RESERVED_MIN				128
-#define SSH2_MSG_RESERVED_MAX				191
-#define SSH2_MSG_LOCAL_MIN				192
-#define SSH2_MSG_LOCAL_MAX				255
-#define SSH2_MSG_MIN					1
-#define SSH2_MSG_MAX					255
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_TRANSPORT_MIN				1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_TRANSPORT_MAX				49
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_MIN				50
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_MAX				79
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_ਪ੍ਰਤੀ_ਵਿਧੀ_MIN		60
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_ਪ੍ਰਤੀ_ਵਿਧੀ_MAX		SSH2_ਸੁਨੇਹਾ_USERAUTH_MAX
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CONNECTION_MIN				80
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CONNECTION_MAX				127
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_RESERVED_MIN				128
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_RESERVED_MAX				191
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_LOCAL_MIN				192
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_LOCAL_MAX				255
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_MIN					1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_MAX					255
 
 /* transport layer: generic */
 
-#define SSH2_MSG_DISCONNECT				1
-#define SSH2_MSG_IGNORE					2
-#define SSH2_MSG_UNIMPLEMENTED				3
-#define SSH2_MSG_DEBUG					4
-#define SSH2_MSG_SERVICE_REQUEST			5
-#define SSH2_MSG_SERVICE_ACCEPT				6
-#define SSH2_MSG_EXT_INFO				7
-#define SSH2_MSG_NEWCOMPRESS				8
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_DISCONNECT				1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_IGNORE					2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_UNIMPLEMENTED				3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_DEBUG					4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_SERVICE_REQUEST			5
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_SERVICE_ACCEPT				6
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_EXT_INFO				7
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_NEWCOMPRESS				8
 
 /* transport layer: alg negotiation */
 
-#define SSH2_MSG_KEXINIT				20
-#define SSH2_MSG_NEWKEYS				21
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEXINIT				20
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_NEWKEYS				21
 
 /* transport layer: kex specific messages, can be reused */
 
-#define SSH2_MSG_KEXDH_INIT				30
-#define SSH2_MSG_KEXDH_REPLY				31
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEXDH_INIT				30
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEXDH_ਜਵਾਬ				31
 
 /* dh-group-exchange */
-#define SSH2_MSG_KEX_DH_GEX_REQUEST_OLD			30
-#define SSH2_MSG_KEX_DH_GEX_GROUP			31
-#define SSH2_MSG_KEX_DH_GEX_INIT			32
-#define SSH2_MSG_KEX_DH_GEX_REPLY			33
-#define SSH2_MSG_KEX_DH_GEX_REQUEST			34
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEX_DH_GEX_REQUEST_OLD			30
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEX_DH_GEX_ਸਮੂਹ			31
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEX_DH_GEX_INIT			32
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEX_DH_GEX_ਜਵਾਬ			33
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEX_DH_GEX_REQUEST			34
 
 /* ecdh */
-#define SSH2_MSG_KEX_ECDH_INIT				30
-#define SSH2_MSG_KEX_ECDH_REPLY				31
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEX_ECDH_INIT				30
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_KEX_ECDH_ਜਵਾਬ				31
 
 /* transport layer: OpenSSH extensions */
-#define SSH2_MSG_PING					192
-#define SSH2_MSG_PONG					193
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_PING					192
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_PONG					193
 
 /* user authentication: generic */
 
-#define SSH2_MSG_USERAUTH_REQUEST			50
-#define SSH2_MSG_USERAUTH_FAILURE			51
-#define SSH2_MSG_USERAUTH_SUCCESS			52
-#define SSH2_MSG_USERAUTH_BANNER			53
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_REQUEST			50
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_FAILURE			51
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_SUCCESS			52
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_BANNER			53
 
 /* user authentication: method specific, can be reused */
 
-#define SSH2_MSG_USERAUTH_PK_OK				60
-#define SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ		60
-#define SSH2_MSG_USERAUTH_INFO_REQUEST			60
-#define SSH2_MSG_USERAUTH_INFO_RESPONSE			61
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_PK_OK				60
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_PASSWD_CHANGEREQ		60
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_INFO_REQUEST			60
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_USERAUTH_INFO_RESPONSE			61
 
 /* connection protocol: generic */
 
-#define SSH2_MSG_GLOBAL_REQUEST				80
-#define SSH2_MSG_REQUEST_SUCCESS			81
-#define SSH2_MSG_REQUEST_FAILURE			82
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_GLOBAL_REQUEST				80
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_REQUEST_SUCCESS			81
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_REQUEST_FAILURE			82
 
 /* channel related messages */
 
-#define SSH2_MSG_CHANNEL_OPEN				90
-#define SSH2_MSG_CHANNEL_OPEN_CONFIRMATION		91
-#define SSH2_MSG_CHANNEL_OPEN_FAILURE			92
-#define SSH2_MSG_CHANNEL_WINDOW_ADJUST			93
-#define SSH2_MSG_CHANNEL_DATA				94
-#define SSH2_MSG_CHANNEL_EXTENDED_DATA			95
-#define SSH2_MSG_CHANNEL_EOF				96
-#define SSH2_MSG_CHANNEL_CLOSE				97
-#define SSH2_MSG_CHANNEL_REQUEST			98
-#define SSH2_MSG_CHANNEL_SUCCESS			99
-#define SSH2_MSG_CHANNEL_FAILURE			100
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_OPEN				90
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_OPEN_CONFIRMATION		91
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_OPEN_FAILURE			92
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_ਖਿੜਕੀ_ADJUST			93
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_ਅੰਕੜੇ				94
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_EXTENDED_ਅੰਕੜੇ			95
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_EOF				96
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_CLOSE				97
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_REQUEST			98
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_SUCCESS			99
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_ਸੁਨੇਹਾ_CHANNEL_FAILURE			100
 
 /* disconnect reason code */
 
-#define SSH2_DISCONNECT_HOST_NOT_ALLOWED_TO_CONNECT	1
-#define SSH2_DISCONNECT_PROTOCOL_ERROR			2
-#define SSH2_DISCONNECT_KEY_EXCHANGE_FAILED		3
-#define SSH2_DISCONNECT_HOST_AUTHENTICATION_FAILED	4
-#define SSH2_DISCONNECT_RESERVED			4
-#define SSH2_DISCONNECT_MAC_ERROR			5
-#define SSH2_DISCONNECT_COMPRESSION_ERROR		6
-#define SSH2_DISCONNECT_SERVICE_NOT_AVAILABLE		7
-#define SSH2_DISCONNECT_PROTOCOL_VERSION_NOT_SUPPORTED	8
-#define SSH2_DISCONNECT_HOST_KEY_NOT_VERIFIABLE		9
-#define SSH2_DISCONNECT_CONNECTION_LOST			10
-#define SSH2_DISCONNECT_BY_APPLICATION			11
-#define SSH2_DISCONNECT_TOO_MANY_CONNECTIONS		12
-#define SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER		13
-#define SSH2_DISCONNECT_NO_MORE_AUTH_METHODS_AVAILABLE	14
-#define SSH2_DISCONNECT_ILLEGAL_USER_NAME		15
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_HOST_NOT_ALLOWED_ਮੰਜ਼ਿਲ_CONNECT	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_PROTOCOL_ERROR			2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_ਕੁੰਜੀ_EXCHANGE_FAILED		3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_HOST_AUTHENTICATION_FAILED	4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_RESERVED			4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_MAC_ERROR			5
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_COMPRESSION_ERROR		6
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_SERVICE_NOT_ਉਪਲਬਧ		7
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_PROTOCOL_ਸੰਸਕਰਣ_NOT_SUPPORTED	8
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_HOST_ਕੁੰਜੀ_NOT_VERIFIABLE		9
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_CONNECTION_ਗੁਆਚਾ			10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_BY_APPLICATION			11
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_TOO_MANY_CONNECTIONS		12
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_AUTH_CANCELLED_BY_USER		13
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_NO_ਹੋਰ_AUTH_METHODS_ਉਪਲਬਧ	14
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_DISCONNECT_ILLEGAL_USER_NAME		15
 
 /* misc */
 
-#define SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED		1
-#define SSH2_OPEN_CONNECT_FAILED			2
-#define SSH2_OPEN_UNKNOWN_CHANNEL_TYPE			3
-#define SSH2_OPEN_RESOURCE_SHORTAGE			4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED		1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_OPEN_CONNECT_FAILED			2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_OPEN_UNKNOWN_CHANNEL_TYPE			3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_OPEN_RESOURCE_SHORTAGE			4
 
-#define SSH2_EXTENDED_DATA_STDERR			1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_EXTENDED_ਅੰਕੜੇ_STDERR			1
 
 /* Certificate types for OpenSSH certificate keys extension */
-#define SSH2_CERT_TYPE_USER				1
-#define SSH2_CERT_TYPE_HOST				2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_CERT_TYPE_USER				1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH2_CERT_TYPE_HOST				2

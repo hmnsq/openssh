@@ -15,80 +15,80 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _SSHERR_H
-#define _SSHERR_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _SSHERR_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _SSHERR_H
 
 /* XXX are these too granular? not granular enough? I can't decide - djm */
 
 /* Error codes */
-#define SSH_ERR_SUCCESS				0
-#define SSH_ERR_INTERNAL_ERROR			-1
-#define SSH_ERR_ALLOC_FAIL			-2
-#define SSH_ERR_MESSAGE_INCOMPLETE		-3
-#define SSH_ERR_INVALID_FORMAT			-4
-#define SSH_ERR_BIGNUM_IS_NEGATIVE		-5
-#define SSH_ERR_STRING_TOO_LARGE		-6
-#define SSH_ERR_BIGNUM_TOO_LARGE		-7
-#define SSH_ERR_ECPOINT_TOO_LARGE		-8
-#define SSH_ERR_NO_BUFFER_SPACE			-9
-#define SSH_ERR_INVALID_ARGUMENT		-10
-#define SSH_ERR_KEY_BITS_MISMATCH		-11
-#define SSH_ERR_EC_CURVE_INVALID		-12
-#define SSH_ERR_KEY_TYPE_MISMATCH		-13
-#define SSH_ERR_KEY_TYPE_UNKNOWN		-14 /* XXX UNSUPPORTED? */
-#define SSH_ERR_EC_CURVE_MISMATCH		-15
-#define SSH_ERR_EXPECTED_CERT			-16
-#define SSH_ERR_KEY_LACKS_CERTBLOB		-17
-#define SSH_ERR_KEY_CERT_UNKNOWN_TYPE		-18
-#define SSH_ERR_KEY_CERT_INVALID_SIGN_KEY	-19
-#define SSH_ERR_KEY_INVALID_EC_VALUE		-20
-#define SSH_ERR_SIGNATURE_INVALID		-21
-#define SSH_ERR_LIBCRYPTO_ERROR			-22
-#define SSH_ERR_UNEXPECTED_TRAILING_DATA	-23
-#define SSH_ERR_SYSTEM_ERROR			-24
-#define SSH_ERR_KEY_CERT_INVALID		-25
-#define SSH_ERR_AGENT_COMMUNICATION		-26
-#define SSH_ERR_AGENT_FAILURE			-27
-#define SSH_ERR_DH_GEX_OUT_OF_RANGE		-28
-#define SSH_ERR_DISCONNECTED			-29
-#define SSH_ERR_MAC_INVALID			-30
-#define SSH_ERR_NO_CIPHER_ALG_MATCH		-31
-#define SSH_ERR_NO_MAC_ALG_MATCH		-32
-#define SSH_ERR_NO_COMPRESS_ALG_MATCH		-33
-#define SSH_ERR_NO_KEX_ALG_MATCH		-34
-#define SSH_ERR_NO_HOSTKEY_ALG_MATCH		-35
-#define SSH_ERR_NO_HOSTKEY_LOADED		-36
-#define SSH_ERR_PROTOCOL_MISMATCH		-37
-#define SSH_ERR_NO_PROTOCOL_VERSION		-38
-#define SSH_ERR_NEED_REKEY			-39
-#define SSH_ERR_PASSPHRASE_TOO_SHORT		-40
-#define SSH_ERR_FILE_CHANGED			-41
-#define SSH_ERR_KEY_UNKNOWN_CIPHER		-42
-#define SSH_ERR_KEY_WRONG_PASSPHRASE		-43
-#define SSH_ERR_KEY_BAD_PERMISSIONS		-44
-#define SSH_ERR_KEY_CERT_MISMATCH		-45
-#define SSH_ERR_KEY_NOT_FOUND			-46
-#define SSH_ERR_AGENT_NOT_PRESENT		-47
-#define SSH_ERR_AGENT_NO_IDENTITIES		-48
-#define SSH_ERR_BUFFER_READ_ONLY		-49
-#define SSH_ERR_KRL_BAD_MAGIC			-50
-#define SSH_ERR_KEY_REVOKED			-51
-#define SSH_ERR_CONN_CLOSED			-52
-#define SSH_ERR_CONN_TIMEOUT			-53
-#define SSH_ERR_CONN_CORRUPT			-54
-#define SSH_ERR_PROTOCOL_ERROR			-55
-#define SSH_ERR_KEY_LENGTH			-56
-#define SSH_ERR_NUMBER_TOO_LARGE		-57
-#define SSH_ERR_SIGN_ALG_UNSUPPORTED		-58
-#define SSH_ERR_FEATURE_UNSUPPORTED		-59
-#define SSH_ERR_DEVICE_NOT_FOUND		-60
-#define SSH_ERR_CRYPTO_ERROR			-61
-#define SSH_ERR_INTERNAL_CRYPTO_ERROR		-62
-#define SSH_ERR_KEY_ALG_UNSUPPORTED		-63
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_SUCCESS				0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਅੰਦਰੂਨੀ_ERROR			-1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ALLOC_FAIL			-2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਸੁਨੇਹਾ_INCOMPLETE		-3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_INVALID_FORMAT			-4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_BIGNUM_IS_NEGATIVE		-5
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_STRING_TOO_LARGE		-6
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_BIGNUM_TOO_LARGE		-7
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ECPOINT_TOO_LARGE		-8
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_NO_ਬਫਰ_SPACE			-9
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_INVALID_ਦਲੀਲ		-10
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_ਬਿੱਟ_MISMATCH		-11
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_EC_ਵਕਰ_INVALID		-12
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_TYPE_MISMATCH		-13
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_TYPE_UNKNOWN		-14 /* XXX UNSUPPORTED? */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_EC_ਵਕਰ_MISMATCH		-15
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_EXPECTED_CERT			-16
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_LACKS_CERTBLOB		-17
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_CERT_UNKNOWN_TYPE		-18
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_CERT_INVALID_SIGN_ਕੁੰਜੀ	-19
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_INVALID_EC_ਮੁੱਲ		-20
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_SIGNATURE_INVALID		-21
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_LIBCRYPTO_ERROR			-22
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_UNEXPECTED_TRAILING_ਅੰਕੜੇ	-23
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_SYSTEM_ERROR			-24
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_CERT_INVALID		-25
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_AGENT_COMMUNICATION		-26
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_AGENT_FAILURE			-27
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_DH_GEX_ਬਾਹਰਲਾ_ਦਾ_RANGE		-28
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_DISCONNECTED			-29
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_MAC_INVALID			-30
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_NO_CIPHER_ALG_ਮੇਲ		-31
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_NO_MAC_ALG_ਮੇਲ		-32
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_NO_COMPRESS_ALG_ਮੇਲ		-33
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_NO_KEX_ALG_ਮੇਲ		-34
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_NO_HOSTKEY_ALG_ਮੇਲ		-35
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_NO_HOSTKEY_LOADED		-36
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_PROTOCOL_MISMATCH		-37
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_NO_PROTOCOL_ਸੰਸਕਰਣ		-38
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_NEED_REKEY			-39
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_PASSPHRASE_TOO_SHORT		-40
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_FILE_ਬਦਲਿਆ			-41
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_UNKNOWN_CIPHER		-42
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_WRONG_PASSPHRASE		-43
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_BAD_PERMISSIONS		-44
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_CERT_MISMATCH		-45
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_NOT_ਮਿਲਿਆ			-46
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_AGENT_NOT_PRESENT		-47
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_AGENT_NO_IDENTITIES		-48
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਬਫਰ_READ_ONLY		-49
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_KRL_BAD_MAGIC			-50
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_REVOKED			-51
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_CONN_CLOSED			-52
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_CONN_TIMEOUT			-53
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_CONN_CORRUPT			-54
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_PROTOCOL_ERROR			-55
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_ਲੰਮਾਈ			-56
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਸੰਖਿਆ_TOO_LARGE		-57
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_SIGN_ALG_UNSUPPORTED		-58
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_FEATURE_UNSUPPORTED		-59
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_DEVICE_NOT_ਮਿਲਿਆ		-60
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_CRYPTO_ERROR			-61
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਅੰਦਰੂਨੀ_CRYPTO_ERROR		-62
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SSH_ERR_ਕੁੰਜੀ_ALG_UNSUPPORTED		-63
 
 /* Translate a numeric error code to a human-readable error string */
-const char *ssh_err(int n);
+ਅਚਲ ਅੱਖਰ *ssh_err(ਪੂਰਨ n);
 /* Return most recent error from libcrypto. */
-const char *ssherr_libcrypto(void);
+ਅਚਲ ਅੱਖਰ *ssherr_libcrypto(ਖਾਲੀ);
 
-#endif /* _SSHERR_H */
+#ਜੇ_ਅੰਤ /* _SSHERR_H */

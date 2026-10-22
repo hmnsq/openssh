@@ -1,159 +1,159 @@
-#include "fixed-keys.h"
-#include <assert.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ "fixed-keys.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ <assert.h>
 
-#define main(ac, av) xxxmain(ac, av)
-#include "../../../ssh-agent.c"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਮੁੱਖ(ac, av) xxxmain(ac, av)
+#ਅਨ੍ਤਰ੍ਭਾਵ "../../../ssh-agent.c"
 
-void test_one(const uint8_t* s, size_t slen);
+ਖਾਲੀ test_one(ਅਚਲ uint8_t* s, ਮਾਪ_t slen);
 
-static int
-devnull_or_die(void)
+ਸਥਿਰ ਪੂਰਨ
+devnull_or_die(ਖਾਲੀ)
 {
-	int fd;
+	ਪੂਰਨ fd;
 
-	if ((fd = open("/dev/null", O_RDWR)) == -1) {
+	ਜੇ ((fd = open("/dev/null", O_RDWR)) == -1) {
 		error_f("open /dev/null: %s", strerror(errno));
 		abort();
 	}
-	return fd;
+	ਵਾਪਸ fd;
 }
 
-static struct sshkey *
-pubkey_or_die(const char *s)
+ਸਥਿਰ ਬਣਤਰ sshkey *
+pubkey_or_die(ਅਚਲ ਅੱਖਰ *s)
 {
-	char *tmp, *cp;
-	struct sshkey *pubkey;
-	int r;
+	ਅੱਖਰ *tmp, *cp;
+	ਬਣਤਰ sshkey *pubkey;
+	ਪੂਰਨ r;
 
 	tmp = cp = xstrdup(s);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	ਜੇ ((pubkey = sshkey_new(ਕੁੰਜੀ_UNSPEC)) == ਨਿਰਾ)
 		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	ਜੇ ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
-	free(tmp);
-	return pubkey;
+	ਮੁਕਤ(tmp);
+	ਵਾਪਸ pubkey;
 }
 
-static struct sshkey *
-privkey_or_die(const char *s)
+ਸਥਿਰ ਬਣਤਰ sshkey *
+privkey_or_die(ਅਚਲ ਅੱਖਰ *s)
 {
-	int r;
-	struct sshbuf *b;
-	struct sshkey *privkey;
+	ਪੂਰਨ r;
+	ਬਣਤਰ sshbuf *b;
+	ਬਣਤਰ sshkey *privkey;
 
-	if ((b = sshbuf_from(s, strlen(s))) == NULL) {
+	ਜੇ ((b = sshbuf_from(s, ਲੜੀ_ਲੰਬਾਈ(s))) == ਨਿਰਾ) {
 		error_f("sshbuf_from failed");
 		abort();
 	}
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	ਜੇ ((r = sshkey_parse_ਨਿੱਜੀ_fileblob(b, "", &privkey, ਨਿਰਾ)) != 0) {
 		error_fr(r, "parse");
 		abort();
 	}
 	sshbuf_free(b);
-	return privkey;
+	ਵਾਪਸ privkey;
 }
 
-static void
-add_key(const char *privkey, const char *certpath)
+ਸਥਿਰ ਖਾਲੀ
+ਜੋੜੋ_ਕੁੰਜੀ(ਅਚਲ ਅੱਖਰ *privkey, ਅਚਲ ਅੱਖਰ *certpath)
 {
-	Identity *id;
-	int r;
-	struct sshkey *cert;
+	ਪਛਾਣ_ਤੱਤ *id;
+	ਪੂਰਨ r;
+	ਬਣਤਰ sshkey *cert;
 
-	id = xcalloc(1, sizeof(Identity));
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	id = xcalloc(1, ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ));
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, ਅਗਲਾ);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->ਕੁੰਜੀ = privkey_or_die(privkey);
 	id->comment = xstrdup("rhododaktulos Eos");
-	if (sshkey_is_sk(id->key))
+	ਜੇ (sshkey_is_sk(id->ਕੁੰਜੀ))
 		id->sk_provider = xstrdup("internal");
 
 	/* Now the cert too */
-	id = xcalloc(1, sizeof(Identity));
-	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
+	id = xcalloc(1, ਆਕਾਰ(ਪਛਾਣ_ਤੱਤ));
+	TAILQ_INSERT_TAIL(&idtab->idlist, id, ਅਗਲਾ);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->ਕੁੰਜੀ = privkey_or_die(privkey);
 	cert = pubkey_or_die(certpath);
-	if ((r = sshkey_to_certified(id->key)) != 0) {
+	ਜੇ ((r = sshkey_ਮੰਜ਼ਿਲ_certified(id->ਕੁੰਜੀ)) != 0) {
 		error_fr(r, "sshkey_to_certified");
 		abort();
 	}
-	if ((r = sshkey_cert_copy(cert, id->key)) != 0) {
+	ਜੇ ((r = sshkey_cert_copy(cert, id->ਕੁੰਜੀ)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
 		abort();
 	}
 	sshkey_free(cert);
 	id->comment = xstrdup("outis");
-	if (sshkey_is_sk(id->key))
+	ਜੇ (sshkey_is_sk(id->ਕੁੰਜੀ))
 		id->sk_provider = xstrdup("internal");
 }
 
-static void
-cleanup_idtab(void)
+ਸਥਿਰ ਖਾਲੀ
+cleanup_idtab(ਖਾਲੀ)
 {
-	Identity *id;
+	ਪਛਾਣ_ਤੱਤ *id;
 
-	if (idtab == NULL) return;
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	ਜੇ (idtab == ਨਿਰਾ) ਵਾਪਸ;
+	ਲਈ (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
-		TAILQ_REMOVE(&idtab->idlist, id, next);
-		free_identity(id);
+		TAILQ_REMOVE(&idtab->idlist, id, ਅਗਲਾ);
+		free_ਪਛਾਣ_ਤੱਤ(id);
 	}
-	free(idtab);
-	idtab = NULL;
+	ਮੁਕਤ(idtab);
+	idtab = ਨਿਰਾ;
 }
 
-static void
-reset_idtab(void)
+ਸਥਿਰ ਖਾਲੀ
+reset_idtab(ਖਾਲੀ)
 {
 	cleanup_idtab();
 	idtab_init();
 	// Load keys.
-	add_key(PRIV_RSA, CERT_RSA);
-	add_key(PRIV_ECDSA, CERT_ECDSA);
-	add_key(PRIV_ED25519, CERT_ED25519);
-	add_key(PRIV_ECDSA_SK, CERT_ECDSA_SK);
-	add_key(PRIV_ED25519_SK, CERT_ED25519_SK);
+	ਜੋੜੋ_ਕੁੰਜੀ(PRIV_RSA, CERT_RSA);
+	ਜੋੜੋ_ਕੁੰਜੀ(PRIV_ECDSA, CERT_ECDSA);
+	ਜੋੜੋ_ਕੁੰਜੀ(PRIV_ED25519, CERT_ED25519);
+	ਜੋੜੋ_ਕੁੰਜੀ(PRIV_ECDSA_SK, CERT_ECDSA_SK);
+	ਜੋੜੋ_ਕੁੰਜੀ(PRIV_ED25519_SK, CERT_ED25519_SK);
 }
 
-static void
-cleanup_sockettab(void)
+ਸਥਿਰ ਖਾਲੀ
+cleanup_sockettab(ਖਾਲੀ)
 {
 	u_int i;
-	for (i = 0; i < sockets_alloc; i++) {
-		if (sockets[i].type != AUTH_UNUSED)
+	ਲਈ (i = 0; i < sockets_alloc; i++) {
+		ਜੇ (sockets[i].type != AUTH_ਅਣਵਰਤਿਆ)
 			close_socket(sockets + i);
 	}
-	free(sockets);
-	sockets = NULL;
+	ਮੁਕਤ(sockets);
+	sockets = ਨਿਰਾ;
 	sockets_alloc = 0;
 }
 
-static void
-reset_sockettab(int devnull)
+ਸਥਿਰ ਖਾਲੀ
+reset_sockettab(ਪੂਰਨ devnull)
 {
-	int fd;
+	ਪੂਰਨ fd;
 
 	cleanup_sockettab();
-	if ((fd = dup(devnull)) == -1) {
+	ਜੇ ((fd = dup(devnull)) == -1) {
 		error_f("dup: %s", strerror(errno));
 		abort();
 	}
 	new_socket(AUTH_CONNECTION, fd);
-	assert(sockets[0].type == AUTH_CONNECTION);
-	assert(sockets[0].fd == fd);
+	ਪ੍ਰਤਿਜ੍ਞਾ(sockets[0].type == AUTH_CONNECTION);
+	ਪ੍ਰਤਿਜ੍ਞਾ(sockets[0].fd == fd);
 }
 
-#define MAX_MESSAGES 256
-void
-test_one(const uint8_t* s, size_t slen)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_MESSAGES 256
+ਖਾਲੀ
+test_one(ਅਚਲ uint8_t* s, ਮਾਪ_t slen)
 {
-	static int devnull = -1;
-	size_t i, olen, nlen;
+	ਸਥਿਰ ਪੂਰਨ devnull = -1;
+	ਮਾਪ_t i, olen, nlen;
 
-	if (devnull == -1) {
+	ਜੇ (devnull == -1) {
 		log_init(__progname, SYSLOG_LEVEL_DEBUG3,
 		    SYSLOG_FACILITY_AUTH, 1);
 		devnull = devnull_or_die();
@@ -164,13 +164,13 @@ test_one(const uint8_t* s, size_t slen)
 
 	reset_idtab();
 	reset_sockettab(devnull);
-	(void)sshbuf_put(sockets[0].input, s, slen);
-	for (i = 0; i < MAX_MESSAGES; i++) {
-		olen = sshbuf_len(sockets[0].input);
-		process_message(0);
-		nlen = sshbuf_len(sockets[0].input);
-		if (nlen == 0 || nlen == olen)
-			break;
+	(ਖਾਲੀ)sshbuf_put(sockets[0].ਨਿਵੇਸ਼, s, slen);
+	ਲਈ (i = 0; i < MAX_MESSAGES; i++) {
+		olen = sshbuf_len(sockets[0].ਨਿਵੇਸ਼);
+		process_ਸੁਨੇਹਾ(0);
+		nlen = sshbuf_len(sockets[0].ਨਿਵੇਸ਼);
+		ਜੇ (nlen == 0 || nlen == olen)
+			ਰੋਕੋ;
 	}
 	cleanup_idtab();
 	cleanup_sockettab();

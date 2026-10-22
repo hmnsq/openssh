@@ -34,166 +34,166 @@ limitations under the License.
  * - __wrap_read_passphrase (real one reads /dev/tty)
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <setjmp.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <signal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
 
-#include "log.h"
-#include "digest.h"
-#include "misc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "readconf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "digest.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh2.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh_api.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshkey.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "packet.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "myproposal.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "kex.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "authfile.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "readconf.h"
 
 Options options;
-int debug_flag = 0;
+ਪੂਰਨ debug_flag = 0;
 
-struct ssh;
+ਬਣਤਰ ssh;
 
-int
-__wrap_ssh_packet_write_wait(struct ssh *ssh)
+ਪੂਰਨ
+__wrap_ssh_packet_write_wait(ਬਣਤਰ ssh *ssh)
 {
-	(void)ssh;
-	return 0;
+	(ਖਾਲੀ)ssh;
+	ਵਾਪਸ 0;
 }
 
-char *
-__wrap_read_passphrase(const char *prompt, int flags)
+ਅੱਖਰ *
+__wrap_read_passphrase(ਅਚਲ ਅੱਖਰ *prompt, ਪੂਰਨ flags)
 {
-	(void)prompt;
-	(void)flags;
-	return strdup("fuzz");
+	(ਖਾਲੀ)prompt;
+	(ਖਾਲੀ)flags;
+	ਵਾਪਸ strdup("fuzz");
 }
 
-#include "../../../sshconnect2.c"
-#include "fixed-keys.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../../../sshconnect2.c"
+#ਅਨ੍ਤਰ੍ਭਾਵ "fixed-keys.h"
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ਸਥਿਰ jmp_buf fuzz_env;
+ਸਥਿਰ ਅਸਥਿਰ ਪੂਰਨ ਵਿੱਚ_fuzz = 0;
 
-void
-cleanup_exit(int code)
+ਖਾਲੀ
+cleanup_exit(ਪੂਰਨ ਕੋਡ)
 {
-	if (in_fuzz)
-		longjmp(fuzz_env, code ? code : 1);
-	_exit(code);
+	ਜੇ (ਵਿੱਚ_fuzz)
+		longjmp(fuzz_env, ਕੋਡ ? ਕੋਡ : 1);
+	_exit(ਕੋਡ);
 }
 
-static struct sshkey *
-load_private(const char *str)
+ਸਥਿਰ ਬਣਤਰ sshkey *
+ਲੱਦੋ_ਨਿੱਜੀ(ਅਚਲ ਅੱਖਰ *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	ਬਣਤਰ sshbuf *b = sshbuf_from(str, ਲੜੀ_ਲੰਬਾਈ(str));
+	ਬਣਤਰ sshkey *k = ਨਿਰਾ;
+	ਜੇ (b == ਨਿਰਾ || sshkey_parse_ਨਿੱਜੀ_fileblob(b, "", &k, ਨਿਰਾ) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	ਵਾਪਸ k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+ਸਥਿਰ ਬਣਤਰ sshkey *
+ਲੱਦੋ_ਜਨਤਕ(ਅਚਲ ਅੱਖਰ *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	ਅੱਖਰ *tmp, *cp;
+	ਬਣਤਰ sshkey *k = sshkey_new(ਕੁੰਜੀ_UNSPEC);
+	ਜੇ (k == ਨਿਰਾ)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	ਜੇ (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	ਮੁਕਤ(tmp);
+	ਵਾਪਸ k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+ਸਥਿਰ ਪੂਰਨ
+pump(ਬਣਤਰ ssh *from, ਬਣਤਰ ssh *ਮੰਜ਼ਿਲ, ਮਾਪ_t *transferred)
 {
-	const u_char *buf;
-	size_t len;
+	ਅਚਲ u_char *buf;
+	ਮਾਪ_t len;
 	u_char type;
-	int r;
+	ਪੂਰਨ r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	ਜੇ ((r = ssh_packet_ਅਗਲਾ(from, &type)) != 0)
+		ਵਾਪਸ r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	ਜੇ (len == 0)
+		ਵਾਪਸ 0;
+	ਜੇ ((r = ssh_ਨਿਵੇਸ਼_append(ਮੰਜ਼ਿਲ, buf, len)) != 0)
+		ਵਾਪਸ r;
+	ਜੇ ((r = ssh_output_consume(from, len)) != 0)
+		ਵਾਪਸ r;
 	*transferred = len;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+ਸਥਿਰ ਪੂਰਨ
+ਲੜੀਵਾਰ_kex(ਬਣਤਰ ssh *client, ਬਣਤਰ ssh *server)
 {
-	int r;
-	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	ਪੂਰਨ r;
+	ਮਾਪ_t cn, sn;
+	ਲਈ (ਪੂਰਨ i = 0; i < 100; i++) {
+		ਜੇ ((r = pump(server, client, &sn)) != 0) ਵਾਪਸ r;
+		ਜੇ ((r = pump(client, server, &cn)) != 0) ਵਾਪਸ r;
+		ਜੇ (server->kex->ਪੂਰਾ && client->kex->ਪੂਰਾ)
+			ਵਾਪਸ 0;
+		ਜੇ (cn == 0 && sn == 0)
+			ਵਾਪਸ SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	ਵਾਪਸ SSH_ERR_PROTOCOL_ERROR;
 }
 
-static Sensitive g_sensitive = { NULL, 0 };
-static Authctxt g_authctxt;
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
+ਸਥਿਰ Sensitive g_sensitive = { ਨਿਰਾ, 0 };
+ਸਥਿਰ Authctxt g_authctxt;
+ਸਥਿਰ ਬਣਤਰ ssh *g_client = ਨਿਰਾ;
+ਸਥਿਰ ਬਣਤਰ ssh *g_server = ਨਿਰਾ;
+ਸਥਿਰ ਪੂਰਨ g_init = 0;
 
-static void
-fuzz_reset_authctxt(struct ssh *ssh)
+ਸਥਿਰ ਖਾਲੀ
+fuzz_reset_authctxt(ਬਣਤਰ ssh *ssh)
 {
-	free(g_authctxt.authlist);
-	g_authctxt.authlist = NULL;
-	if (ssh->authctxt == &g_authctxt)
+	ਮੁਕਤ(g_authctxt.authlist);
+	g_authctxt.authlist = ਨਿਰਾ;
+	ਜੇ (ssh->authctxt == &g_authctxt)
 		pubkey_cleanup(ssh);
 
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
-	g_authctxt.server_user = (char *)"fuzz";
-	g_authctxt.local_user = (char *)"fuzz";
-	g_authctxt.host = (char *)"127.0.0.1";
-	g_authctxt.service = (char *)"ssh-connection";
+	memset(&g_authctxt, 0, ਆਕਾਰ(g_authctxt));
+	g_authctxt.server_user = (ਅੱਖਰ *)"fuzz";
+	g_authctxt.local_user = (ਅੱਖਰ *)"fuzz";
+	g_authctxt.host = (ਅੱਖਰ *)"127.0.0.1";
+	g_authctxt.service = (ਅੱਖਰ *)"ssh-connection";
 	g_authctxt.success = 0;
-	g_authctxt.method = authmethod_lookup("none");
-	g_authctxt.authlist = NULL;
-	g_authctxt.methoddata = NULL;
+	g_authctxt.ਵਿਧੀ = authmethod_lookup("none");
+	g_authctxt.authlist = ਨਿਰਾ;
+	g_authctxt.methoddata = ਨਿਰਾ;
 	g_authctxt.sensitive = &g_sensitive;
-	g_authctxt.active_ktype = NULL;
-	g_authctxt.oktypes = NULL;
-	g_authctxt.ktypes = NULL;
-	g_authctxt.info_req_seen = 0;
+	g_authctxt.ਸਰਗਰਮ_ktype = ਨਿਰਾ;
+	g_authctxt.oktypes = ਨਿਰਾ;
+	g_authctxt.ktypes = ਨਿਰਾ;
+	g_authctxt.info_req_ਵੇਖਿਆ = 0;
 	g_authctxt.attempt_kbdint = 0;
 	g_authctxt.attempt_passwd = 0;
 	g_authctxt.agent_fd = -1;
-	TAILQ_INIT(&g_authctxt.keys);
+	TAILQ_INIT(&g_authctxt.ਕੁੰਜੀਆਂ);
 	ssh->authctxt = &g_authctxt;
 }
 
-static void
-fuzz_setup(struct ssh *ssh)
+ਸਥਿਰ ਖਾਲੀ
+fuzz_ਤਿਆਰੀ(ਬਣਤਰ ssh *ssh)
 {
 	initialize_options(&options);
-	options.batch_mode = 1;
+	options.batch_ਬਹੁਲਕ = 1;
 	options.pubkey_authentication = 0;
 	options.password_authentication = 0;
 	options.kbd_interactive_authentication = 0;
@@ -201,111 +201,111 @@ fuzz_setup(struct ssh *ssh)
 	options.gss_authentication = 0;
 	options.preferred_authentications = strdup("none");
 	options.user = strdup("fuzz");
-	options.number_of_password_prompts = 0;
+	options.ਸੰਖਿਆ_ਦਾ_password_prompts = 0;
 	options.log_level = SYSLOG_LEVEL_ERROR;
 	options.fingerprint_hash = SSH_DIGEST_SHA256;
-	(void)fill_default_options(&options);
+	(ਖਾਲੀ)fill_default_options(&options);
 
 	fuzz_reset_authctxt(ssh);
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_ignore);
 
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_ACCEPT, &input_userauth_service_accept);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_SUCCESS, &input_userauth_success);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_FAILURE, &input_userauth_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_BANNER, &input_userauth_banner);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, &input_userauth_info_req);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PK_OK, &input_userauth_pk_ok);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ, &input_userauth_passwd_changereq);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_EXT_INFO, kex_ਨਿਵੇਸ਼_ext_info);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_SERVICE_ACCEPT, &ਨਿਵੇਸ਼_userauth_service_accept);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_SUCCESS, &ਨਿਵੇਸ਼_userauth_success);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_FAILURE, &ਨਿਵੇਸ਼_userauth_failure);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_BANNER, &ਨਿਵੇਸ਼_userauth_banner);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_INFO_REQUEST, &ਨਿਵੇਸ਼_userauth_info_req);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_PK_OK, &ਨਿਵੇਸ਼_userauth_pk_ok);
+	ssh_dispatch_ਸੈੱਟ(ssh, SSH2_ਸੁਨੇਹਾ_USERAUTH_PASSWD_CHANGEREQ, &ਨਿਵੇਸ਼_userauth_passwd_changereq);
 }
 
-static int
-init_once(void)
+ਸਥਿਰ ਪੂਰਨ
+init_once(ਖਾਲੀ)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	ਜੇ (g_init)
+		ਵਾਪਸ 0;
+	ਸੰਕੇਤ(SIGPIPE, SIG_IGN);
 	log_init("ssh_client_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	ਬਣਤਰ sshkey *priv = ਲੱਦੋ_ਨਿੱਜੀ(PRIV_ED25519);
+	ਬਣਤਰ sshkey *pub = ਲੱਦੋ_ਜਨਤਕ(PUB_ED25519);
+	ਅੱਖਰ *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	ਅਚਲ ਅੱਖਰ *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	ਅੱਖਰ *proposal[PROPOSAL_MAX] = { 0 };
+	ਪੂਰਨ i;
+	ਲਈ (i = 0; i < PROPOSAL_MAX; i++) {
+		ਅਚਲ ਅੱਖਰ *p = defaults[i];
+		ਜੇ (i == PROPOSAL_SERVER_HOST_ਕੁੰਜੀ_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		ਨਹੀਂਤਾਂ ਜੇ (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		ਨਹੀਂਤਾਂ ਜੇ (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		ਨਹੀਂਤਾਂ ਜੇ (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	ਬਣਤਰ kex_params kp;
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(kp.proposal, proposal, ਆਕਾਰ(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	ਜੇ (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
-	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		ਵਾਪਸ -1;
+	ਜੇ (ssh_ਜੋੜੋ_hostkey(g_server, priv) != 0 ||
+	    ssh_ਜੋੜੋ_hostkey(g_client, pub) != 0)
+		ਵਾਪਸ -1;
+	ਜੇ (ਲੜੀਵਾਰ_kex(g_client, g_server) != 0)
+		ਵਾਪਸ -1;
 
-	fuzz_setup(g_client);
+	fuzz_ਤਿਆਰੀ(g_client);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	ਮੁਕਤ(keyname);
+	ਲਈ (i = 0; i < PROPOSAL_MAX; i++)
+		ਮੁਕਤ(proposal[i]);
 	g_init = 1;
-	return 0;
+	ਵਾਪਸ 0;
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_DISCONNECT, SSH2_MSG_IGNORE, SSH2_MSG_UNIMPLEMENTED,
-	SSH2_MSG_DEBUG, SSH2_MSG_SERVICE_ACCEPT, SSH2_MSG_EXT_INFO,
-	SSH2_MSG_USERAUTH_FAILURE, SSH2_MSG_USERAUTH_SUCCESS,
-	SSH2_MSG_USERAUTH_BANNER, SSH2_MSG_USERAUTH_INFO_REQUEST,
-	SSH2_MSG_USERAUTH_PK_OK, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
+ਸਥਿਰ ਅਚਲ uint8_t k_ਸੁਨੇਹਾ_types[] = {
+	SSH2_ਸੁਨੇਹਾ_DISCONNECT, SSH2_ਸੁਨੇਹਾ_IGNORE, SSH2_ਸੁਨੇਹਾ_UNIMPLEMENTED,
+	SSH2_ਸੁਨੇਹਾ_DEBUG, SSH2_ਸੁਨੇਹਾ_SERVICE_ACCEPT, SSH2_ਸੁਨੇਹਾ_EXT_INFO,
+	SSH2_ਸੁਨੇਹਾ_USERAUTH_FAILURE, SSH2_ਸੁਨੇਹਾ_USERAUTH_SUCCESS,
+	SSH2_ਸੁਨੇਹਾ_USERAUTH_BANNER, SSH2_ਸੁਨੇਹਾ_USERAUTH_INFO_REQUEST,
+	SSH2_ਸੁਨੇਹਾ_USERAUTH_PK_OK, SSH2_ਸੁਨੇਹਾ_USERAUTH_PASSWD_CHANGEREQ,
 };
 
-void
-fuzz_one_message(const uint8_t *data, size_t size)
+ਖਾਲੀ
+fuzz_one_ਸੁਨੇਹਾ(ਅਚਲ uint8_t *ਅੰਕੜੇ, ਮਾਪ_t ਮਾਪ)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	ਜੇ (init_once() != 0)
+		ਵਾਪਸ;
+	ਜੇ (ਮਾਪ > 65000)
+		ਵਾਪਸ;
 
-	uint8_t selector = size > 0 ? data[0] : 0;
-	const uint8_t *payload = size > 0 ? data + 1 : NULL;
-	size_t plen = size > 0 ? size - 1 : 0;
+	uint8_t selector = ਮਾਪ > 0 ? ਅੰਕੜੇ[0] : 0;
+	ਅਚਲ uint8_t *payload = ਮਾਪ > 0 ? ਅੰਕੜੇ + 1 : ਨਿਰਾ;
+	ਮਾਪ_t plen = ਮਾਪ > 0 ? ਮਾਪ - 1 : 0;
 
-	uint8_t msg_type = k_msg_types[selector %
-	    (sizeof(k_msg_types) / sizeof(k_msg_types[0]))];
+	uint8_t ਸੁਨੇਹਾ_type = k_ਸੁਨੇਹਾ_types[selector %
+	    (ਆਕਾਰ(k_ਸੁਨੇਹਾ_types) / ਆਕਾਰ(k_ਸੁਨੇਹਾ_types[0]))];
 
 	fuzz_reset_authctxt(g_client);
 
-	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		size_t transferred;
-		if (ssh_packet_put(g_server, msg_type, payload, plen) != 0)
-			goto done;
-		if (pump(g_server, g_client, &transferred) != 0)
-			goto done;
-		(void)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, NULL);
-	done:
+	ਵਿੱਚ_fuzz = 1;
+	ਜੇ (setjmp(fuzz_env) == 0) {
+		ਮਾਪ_t transferred;
+		ਜੇ (ssh_packet_put(g_server, ਸੁਨੇਹਾ_type, payload, plen) != 0)
+			ਜਾਓ ਪੂਰਾ;
+		ਜੇ (pump(g_server, g_client, &transferred) != 0)
+			ਜਾਓ ਪੂਰਾ;
+		(ਖਾਲੀ)ssh_dispatch_ਲੜੀਵਾਰ(g_client, DISPATCH_NONBLOCK, ਨਿਰਾ);
+	ਪੂਰਾ:
 		;
 	}
-	in_fuzz = 0;
+	ਵਿੱਚ_fuzz = 0;
 }

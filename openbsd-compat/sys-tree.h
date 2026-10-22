@@ -26,13 +26,13 @@
 
 /* OPENBSD ORIGINAL: sys/sys/tree.h */
 
-#include "config.h"
-#ifdef NO_ATTRIBUTE_ON_RETURN_TYPE
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ NO_ATTRIBUTE_ON_RETURN_TYPE
 # define __attribute__(x)
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef	_SYS_TREE_H_
-#define	_SYS_TREE_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ	SYS_ਰੁੱਖ_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SYS_ਰੁੱਖ_H
 
 /*
  * This file defines data structures for different types of trees:
@@ -61,695 +61,695 @@
  * The maximum height of a red-black tree is 2lg (n+1).
  */
 
-#define SPLAY_HEAD(name, type)						\
-struct name {								\
-	struct type *sph_root; /* root of the tree */			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ਸਿਰ(name, type)						\
+ਬਣਤਰ name {								\
+	ਬਣਤਰ type *sph_ਜੜ੍ਹ; /* root of the tree */			\
 }
 
-#define SPLAY_INITIALIZER(root)						\
-	{ NULL }
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_INITIALIZER(ਜੜ੍ਹ)						\
+	{ ਨਿਰਾ }
 
-#define SPLAY_INIT(root) do {						\
-	(root)->sph_root = NULL;					\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_INIT(ਜੜ੍ਹ) ਕਰੋ {						\
+	(ਜੜ੍ਹ)->sph_ਜੜ੍ਹ = ਨਿਰਾ;					\
+} ਜਦੋਂ (0)
 
-#define SPLAY_ENTRY(type)						\
-struct {								\
-	struct type *spe_left; /* left element */			\
-	struct type *spe_right; /* right element */			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ਇੰਦਰਾਜ(type)						\
+ਬਣਤਰ {								\
+	ਬਣਤਰ type *spe_ਖੱਬਾ; /* left element */			\
+	ਬਣਤਰ type *spe_ਸੱਜਾ; /* right element */			\
 }
 
-#define SPLAY_LEFT(elm, field)		(elm)->field.spe_left
-#define SPLAY_RIGHT(elm, field)		(elm)->field.spe_right
-#define SPLAY_ROOT(head)		(head)->sph_root
-#define SPLAY_EMPTY(head)		(SPLAY_ROOT(head) == NULL)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ਖੱਬਾ(elm, ਖੇਤਰ)		(elm)->ਖੇਤਰ.spe_ਖੱਬਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ਸੱਜਾ(elm, ਖੇਤਰ)		(elm)->ਖੇਤਰ.spe_ਸੱਜਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ਜੜ੍ਹ(ਸਿਰ)		(ਸਿਰ)->sph_ਜੜ੍ਹ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ਖਾਲੀ_ਥਾਵਾਂ(ਸਿਰ)		(SPLAY_ਜੜ੍ਹ(ਸਿਰ) == ਨਿਰਾ)
 
 /* SPLAY_ROTATE_{LEFT,RIGHT} expect that tmp hold SPLAY_{RIGHT,LEFT} */
-#define SPLAY_ROTATE_RIGHT(head, tmp, field) do {			\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(tmp, field);	\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ROTATE_ਸੱਜਾ(ਸਿਰ, tmp, ਖੇਤਰ) ਕਰੋ {			\
+	SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) = SPLAY_ਸੱਜਾ(tmp, ਖੇਤਰ);	\
+	SPLAY_ਸੱਜਾ(tmp, ਖੇਤਰ) = (ਸਿਰ)->sph_ਜੜ੍ਹ;			\
+	(ਸਿਰ)->sph_ਜੜ੍ਹ = tmp;						\
+} ਜਦੋਂ (0)
 	
-#define SPLAY_ROTATE_LEFT(head, tmp, field) do {			\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(tmp, field);	\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ROTATE_ਖੱਬਾ(ਸਿਰ, tmp, ਖੇਤਰ) ਕਰੋ {			\
+	SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) = SPLAY_ਖੱਬਾ(tmp, ਖੇਤਰ);	\
+	SPLAY_ਖੱਬਾ(tmp, ਖੇਤਰ) = (ਸਿਰ)->sph_ਜੜ੍ਹ;			\
+	(ਸਿਰ)->sph_ਜੜ੍ਹ = tmp;						\
+} ਜਦੋਂ (0)
 
-#define SPLAY_LINKLEFT(head, tmp, field) do {				\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);		\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_LINKLEFT(ਸਿਰ, tmp, ਖੇਤਰ) ਕਰੋ {				\
+	SPLAY_ਖੱਬਾ(tmp, ਖੇਤਰ) = (ਸਿਰ)->sph_ਜੜ੍ਹ;			\
+	tmp = (ਸਿਰ)->sph_ਜੜ੍ਹ;						\
+	(ਸਿਰ)->sph_ਜੜ੍ਹ = SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);		\
+} ਜਦੋਂ (0)
 
-#define SPLAY_LINKRIGHT(head, tmp, field) do {				\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);	\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_LINKRIGHT(ਸਿਰ, tmp, ਖੇਤਰ) ਕਰੋ {				\
+	SPLAY_ਸੱਜਾ(tmp, ਖੇਤਰ) = (ਸਿਰ)->sph_ਜੜ੍ਹ;			\
+	tmp = (ਸਿਰ)->sph_ਜੜ੍ਹ;						\
+	(ਸਿਰ)->sph_ਜੜ੍ਹ = SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);	\
+} ਜਦੋਂ (0)
 
-#define SPLAY_ASSEMBLE(head, node, left, right, field) do {		\
-	SPLAY_RIGHT(left, field) = SPLAY_LEFT((head)->sph_root, field);	\
-	SPLAY_LEFT(right, field) = SPLAY_RIGHT((head)->sph_root, field);\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(node, field);	\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(node, field);	\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ASSEMBLE(ਸਿਰ, ਗੰਢ, ਖੱਬਾ, ਸੱਜਾ, ਖੇਤਰ) ਕਰੋ {		\
+	SPLAY_ਸੱਜਾ(ਖੱਬਾ, ਖੇਤਰ) = SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);	\
+	SPLAY_ਖੱਬਾ(ਸੱਜਾ, ਖੇਤਰ) = SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);\
+	SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) = SPLAY_ਸੱਜਾ(ਗੰਢ, ਖੇਤਰ);	\
+	SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) = SPLAY_ਖੱਬਾ(ਗੰਢ, ਖੇਤਰ);	\
+} ਜਦੋਂ (0)
 
 /* Generates prototypes and inline functions */
 
-#define SPLAY_PROTOTYPE(name, type, field, cmp)				\
-void name##_SPLAY(struct name *, struct type *);			\
-void name##_SPLAY_MINMAX(struct name *, int);				\
-struct type *name##_SPLAY_INSERT(struct name *, struct type *);		\
-struct type *name##_SPLAY_REMOVE(struct name *, struct type *);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_PROTOTYPE(name, type, ਖੇਤਰ, cmp)				\
+ਖਾਲੀ name##_SPLAY(ਬਣਤਰ name *, ਬਣਤਰ type *);			\
+ਖਾਲੀ name##_SPLAY_MINMAX(ਬਣਤਰ name *, ਪੂਰਨ);				\
+ਬਣਤਰ type *name##_SPLAY_INSERT(ਬਣਤਰ name *, ਬਣਤਰ type *);		\
+ਬਣਤਰ type *name##_SPLAY_REMOVE(ਬਣਤਰ name *, ਬਣਤਰ type *);		\
 									\
 /* Finds the node with the same key as elm */				\
-static __inline struct type *						\
-name##_SPLAY_FIND(struct name *head, struct type *elm)			\
+ਸਥਿਰ __inline ਬਣਤਰ type *						\
+name##_SPLAY_FIND(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)			\
 {									\
-	if (SPLAY_EMPTY(head))						\
-		return(NULL);						\
-	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0)				\
-		return (head->sph_root);				\
-	return (NULL);							\
+	ਜੇ (SPLAY_ਖਾਲੀ_ਥਾਵਾਂ(ਸਿਰ))						\
+		ਵਾਪਸ(ਨਿਰਾ);						\
+	name##_SPLAY(ਸਿਰ, elm);					\
+	ਜੇ ((cmp)(elm, (ਸਿਰ)->sph_ਜੜ੍ਹ) == 0)				\
+		ਵਾਪਸ (ਸਿਰ->sph_ਜੜ੍ਹ);				\
+	ਵਾਪਸ (ਨਿਰਾ);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_NEXT(struct name *head, struct type *elm)			\
+ਸਥਿਰ __inline ਬਣਤਰ type *						\
+name##_SPLAY_NEXT(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)			\
 {									\
-	name##_SPLAY(head, elm);					\
-	if (SPLAY_RIGHT(elm, field) != NULL) {				\
-		elm = SPLAY_RIGHT(elm, field);				\
-		while (SPLAY_LEFT(elm, field) != NULL) {		\
-			elm = SPLAY_LEFT(elm, field);			\
+	name##_SPLAY(ਸਿਰ, elm);					\
+	ਜੇ (SPLAY_ਸੱਜਾ(elm, ਖੇਤਰ) != ਨਿਰਾ) {				\
+		elm = SPLAY_ਸੱਜਾ(elm, ਖੇਤਰ);				\
+		ਜਦੋਂ (SPLAY_ਖੱਬਾ(elm, ਖੇਤਰ) != ਨਿਰਾ) {		\
+			elm = SPLAY_ਖੱਬਾ(elm, ਖੇਤਰ);			\
 		}							\
-	} else								\
-		elm = NULL;						\
-	return (elm);							\
+	} ਨਹੀਂਤਾਂ								\
+		elm = ਨਿਰਾ;						\
+	ਵਾਪਸ (elm);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_MIN_MAX(struct name *head, int val)			\
+ਸਥਿਰ __inline ਬਣਤਰ type *						\
+name##_SPLAY_MIN_MAX(ਬਣਤਰ name *ਸਿਰ, ਪੂਰਨ val)			\
 {									\
-	name##_SPLAY_MINMAX(head, val);					\
-        return (SPLAY_ROOT(head));					\
+	name##_SPLAY_MINMAX(ਸਿਰ, val);					\
+        ਵਾਪਸ (SPLAY_ਜੜ੍ਹ(ਸਿਰ));					\
 }
 
 /* Main splay operation.
  * Moves node close to the key of elm to top
  */
-#define SPLAY_GENERATE(name, type, field, cmp)				\
-struct type *								\
-name##_SPLAY_INSERT(struct name *head, struct type *elm)		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_GENERATE(name, type, ਖੇਤਰ, cmp)				\
+ਬਣਤਰ type *								\
+name##_SPLAY_INSERT(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)		\
 {									\
-    if (SPLAY_EMPTY(head)) {						\
-	    SPLAY_LEFT(elm, field) = SPLAY_RIGHT(elm, field) = NULL;	\
-    } else {								\
-	    int __comp;							\
-	    name##_SPLAY(head, elm);					\
-	    __comp = (cmp)(elm, (head)->sph_root);			\
-	    if(__comp < 0) {						\
-		    SPLAY_LEFT(elm, field) = SPLAY_LEFT((head)->sph_root, field);\
-		    SPLAY_RIGHT(elm, field) = (head)->sph_root;		\
-		    SPLAY_LEFT((head)->sph_root, field) = NULL;		\
-	    } else if (__comp > 0) {					\
-		    SPLAY_RIGHT(elm, field) = SPLAY_RIGHT((head)->sph_root, field);\
-		    SPLAY_LEFT(elm, field) = (head)->sph_root;		\
-		    SPLAY_RIGHT((head)->sph_root, field) = NULL;	\
-	    } else							\
-		    return ((head)->sph_root);				\
+    ਜੇ (SPLAY_ਖਾਲੀ_ਥਾਵਾਂ(ਸਿਰ)) {						\
+	    SPLAY_ਖੱਬਾ(elm, ਖੇਤਰ) = SPLAY_ਸੱਜਾ(elm, ਖੇਤਰ) = ਨਿਰਾ;	\
+    } ਨਹੀਂਤਾਂ {								\
+	    ਪੂਰਨ __comp;							\
+	    name##_SPLAY(ਸਿਰ, elm);					\
+	    __comp = (cmp)(elm, (ਸਿਰ)->sph_ਜੜ੍ਹ);			\
+	    ਜੇ(__comp < 0) {						\
+		    SPLAY_ਖੱਬਾ(elm, ਖੇਤਰ) = SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);\
+		    SPLAY_ਸੱਜਾ(elm, ਖੇਤਰ) = (ਸਿਰ)->sph_ਜੜ੍ਹ;		\
+		    SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) = ਨਿਰਾ;		\
+	    } ਨਹੀਂਤਾਂ ਜੇ (__comp > 0) {					\
+		    SPLAY_ਸੱਜਾ(elm, ਖੇਤਰ) = SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);\
+		    SPLAY_ਖੱਬਾ(elm, ਖੇਤਰ) = (ਸਿਰ)->sph_ਜੜ੍ਹ;		\
+		    SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) = ਨਿਰਾ;	\
+	    } ਨਹੀਂਤਾਂ							\
+		    ਵਾਪਸ ((ਸਿਰ)->sph_ਜੜ੍ਹ);				\
     }									\
-    (head)->sph_root = (elm);						\
-    return (NULL);							\
+    (ਸਿਰ)->sph_ਜੜ੍ਹ = (elm);						\
+    ਵਾਪਸ (ਨਿਰਾ);							\
 }									\
 									\
-struct type *								\
-name##_SPLAY_REMOVE(struct name *head, struct type *elm)		\
+ਬਣਤਰ type *								\
+name##_SPLAY_REMOVE(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)		\
 {									\
-	struct type *__tmp;						\
-	if (SPLAY_EMPTY(head))						\
-		return (NULL);						\
-	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0) {			\
-		if (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
-			(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);\
-		} else {						\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);\
-			name##_SPLAY(head, elm);			\
-			SPLAY_RIGHT((head)->sph_root, field) = __tmp;	\
+	ਬਣਤਰ type *__tmp;						\
+	ਜੇ (SPLAY_ਖਾਲੀ_ਥਾਵਾਂ(ਸਿਰ))						\
+		ਵਾਪਸ (ਨਿਰਾ);						\
+	name##_SPLAY(ਸਿਰ, elm);					\
+	ਜੇ ((cmp)(elm, (ਸਿਰ)->sph_ਜੜ੍ਹ) == 0) {			\
+		ਜੇ (SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) == ਨਿਰਾ) {	\
+			(ਸਿਰ)->sph_ਜੜ੍ਹ = SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);\
+		} ਨਹੀਂਤਾਂ {						\
+			__tmp = SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);	\
+			(ਸਿਰ)->sph_ਜੜ੍ਹ = SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);\
+			name##_SPLAY(ਸਿਰ, elm);			\
+			SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) = __tmp;	\
 		}							\
-		return (elm);						\
+		ਵਾਪਸ (elm);						\
 	}								\
-	return (NULL);							\
+	ਵਾਪਸ (ਨਿਰਾ);							\
 }									\
 									\
-void									\
-name##_SPLAY(struct name *head, struct type *elm)			\
+ਖਾਲੀ									\
+name##_SPLAY(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)			\
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
-	int __comp;							\
+	ਬਣਤਰ type __node, *__left, *__right, *__tmp;			\
+	ਪੂਰਨ __comp;							\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ਖੱਬਾ(&__node, ਖੇਤਰ) = SPLAY_ਸੱਜਾ(&__node, ਖੇਤਰ) = ਨਿਰਾ;\
 	__left = __right = &__node;					\
 \
-	while ((__comp = (cmp)(elm, (head)->sph_root))) {		\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) < 0){			\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	ਜਦੋਂ ((__comp = (cmp)(elm, (ਸਿਰ)->sph_ਜੜ੍ਹ))) {		\
+		ਜੇ (__comp < 0) {					\
+			__tmp = SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);	\
+			ਜੇ (__tmp == ਨਿਰਾ)				\
+				ਰੋਕੋ;					\
+			ਜੇ ((cmp)(elm, __tmp) < 0){			\
+				SPLAY_ROTATE_ਸੱਜਾ(ਸਿਰ, __tmp, ਖੇਤਰ);	\
+				ਜੇ (SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) == ਨਿਰਾ)\
+					ਰੋਕੋ;				\
 			}						\
-			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) > 0){			\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+			SPLAY_LINKLEFT(ਸਿਰ, __right, ਖੇਤਰ);		\
+		} ਨਹੀਂਤਾਂ ਜੇ (__comp > 0) {				\
+			__tmp = SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);	\
+			ਜੇ (__tmp == ਨਿਰਾ)				\
+				ਰੋਕੋ;					\
+			ਜੇ ((cmp)(elm, __tmp) > 0){			\
+				SPLAY_ROTATE_ਖੱਬਾ(ਸਿਰ, __tmp, ਖੇਤਰ);	\
+				ਜੇ (SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) == ਨਿਰਾ)\
+					ਰੋਕੋ;				\
 			}						\
-			SPLAY_LINKRIGHT(head, __left, field);		\
+			SPLAY_LINKRIGHT(ਸਿਰ, __left, ਖੇਤਰ);		\
 		}							\
 	}								\
-	SPLAY_ASSEMBLE(head, &__node, __left, __right, field);		\
+	SPLAY_ASSEMBLE(ਸਿਰ, &__node, __left, __right, ਖੇਤਰ);		\
 }									\
 									\
 /* Splay with either the minimum or the maximum element			\
  * Used to find minimum or maximum element in tree.			\
  */									\
-void name##_SPLAY_MINMAX(struct name *head, int __comp) \
+ਖਾਲੀ name##_SPLAY_MINMAX(ਬਣਤਰ name *ਸਿਰ, ਪੂਰਨ __comp) \
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
+	ਬਣਤਰ type __node, *__left, *__right, *__tmp;			\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ਖੱਬਾ(&__node, ਖੇਤਰ) = SPLAY_ਸੱਜਾ(&__node, ਖੇਤਰ) = ਨਿਰਾ;\
 	__left = __right = &__node;					\
 \
-	while (1) {							\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp < 0){				\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	ਜਦੋਂ (1) {							\
+		ਜੇ (__comp < 0) {					\
+			__tmp = SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);	\
+			ਜੇ (__tmp == ਨਿਰਾ)				\
+				ਰੋਕੋ;					\
+			ਜੇ (__comp < 0){				\
+				SPLAY_ROTATE_ਸੱਜਾ(ਸਿਰ, __tmp, ਖੇਤਰ);	\
+				ਜੇ (SPLAY_ਖੱਬਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) == ਨਿਰਾ)\
+					ਰੋਕੋ;				\
 			}						\
-			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp > 0) {				\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+			SPLAY_LINKLEFT(ਸਿਰ, __right, ਖੇਤਰ);		\
+		} ਨਹੀਂਤਾਂ ਜੇ (__comp > 0) {				\
+			__tmp = SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ);	\
+			ਜੇ (__tmp == ਨਿਰਾ)				\
+				ਰੋਕੋ;					\
+			ਜੇ (__comp > 0) {				\
+				SPLAY_ROTATE_ਖੱਬਾ(ਸਿਰ, __tmp, ਖੇਤਰ);	\
+				ਜੇ (SPLAY_ਸੱਜਾ((ਸਿਰ)->sph_ਜੜ੍ਹ, ਖੇਤਰ) == ਨਿਰਾ)\
+					ਰੋਕੋ;				\
 			}						\
-			SPLAY_LINKRIGHT(head, __left, field);		\
+			SPLAY_LINKRIGHT(ਸਿਰ, __left, ਖੇਤਰ);		\
 		}							\
 	}								\
-	SPLAY_ASSEMBLE(head, &__node, __left, __right, field);		\
+	SPLAY_ASSEMBLE(ਸਿਰ, &__node, __left, __right, ਖੇਤਰ);		\
 }
 
-#define SPLAY_NEGINF	-1
-#define SPLAY_INF	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_NEGINF	-1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_INF	1
 
-#define SPLAY_INSERT(name, x, y)	name##_SPLAY_INSERT(x, y)
-#define SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
-#define SPLAY_FIND(name, x, y)		name##_SPLAY_FIND(x, y)
-#define SPLAY_NEXT(name, x, y)		name##_SPLAY_NEXT(x, y)
-#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ਪਾਓ(name, x, y)	name##_SPLAY_INSERT(x, y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ਲੱਭੋ(name, x, y)		name##_SPLAY_FIND(x, y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_ਅਗਲਾ(name, x, y)		name##_SPLAY_NEXT(x, y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_MIN(name, x)		(SPLAY_ਖਾਲੀ_ਥਾਵਾਂ(x) ? ਨਿਰਾ	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_NEGINF))
-#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_MAX(name, x)		(SPLAY_ਖਾਲੀ_ਥਾਵਾਂ(x) ? ਨਿਰਾ	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_INF))
 
-#define SPLAY_FOREACH(x, name, head)					\
-	for ((x) = SPLAY_MIN(name, head);				\
-	     (x) != NULL;						\
-	     (x) = SPLAY_NEXT(name, head, x))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SPLAY_FOREACH(x, name, ਸਿਰ)					\
+	ਲਈ ((x) = SPLAY_MIN(name, ਸਿਰ);				\
+	     (x) != ਨਿਰਾ;						\
+	     (x) = SPLAY_ਅਗਲਾ(name, ਸਿਰ, x))
 
 /* Macros that define a red-black tree */
-#define RB_HEAD(name, type)						\
-struct name {								\
-	struct type *rbh_root; /* root of the tree */			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਸਿਰ(name, type)						\
+ਬਣਤਰ name {								\
+	ਬਣਤਰ type *rbh_ਜੜ੍ਹ; /* root of the tree */			\
 }
 
-#define RB_INITIALIZER(root)						\
-	{ NULL }
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_INITIALIZER(ਜੜ੍ਹ)						\
+	{ ਨਿਰਾ }
 
-#define RB_INIT(root) do {						\
-	(root)->rbh_root = NULL;					\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_INIT(ਜੜ੍ਹ) ਕਰੋ {						\
+	(ਜੜ੍ਹ)->rbh_ਜੜ੍ਹ = ਨਿਰਾ;					\
+} ਜਦੋਂ (0)
 
-#define RB_BLACK	0
-#define RB_RED		1
-#define RB_ENTRY(type)							\
-struct {								\
-	struct type *rbe_left;		/* left element */		\
-	struct type *rbe_right;		/* right element */		\
-	struct type *rbe_parent;	/* parent element */		\
-	int rbe_color;			/* node color */		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_BLACK	0
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_RED		1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਇੰਦਰਾਜ(type)							\
+ਬਣਤਰ {								\
+	ਬਣਤਰ type *rbe_ਖੱਬਾ;		/* left element */		\
+	ਬਣਤਰ type *rbe_ਸੱਜਾ;		/* right element */		\
+	ਬਣਤਰ type *rbe_ਮਾਪਾ;	/* parent element */		\
+	ਪੂਰਨ rbe_color;			/* node color */		\
 }
 
-#define RB_LEFT(elm, field)		(elm)->field.rbe_left
-#define RB_RIGHT(elm, field)		(elm)->field.rbe_right
-#define RB_PARENT(elm, field)		(elm)->field.rbe_parent
-#define RB_COLOR(elm, field)		(elm)->field.rbe_color
-#define RB_ROOT(head)			(head)->rbh_root
-#define RB_EMPTY(head)			(RB_ROOT(head) == NULL)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਖੱਬਾ(elm, ਖੇਤਰ)		(elm)->ਖੇਤਰ.rbe_ਖੱਬਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਸੱਜਾ(elm, ਖੇਤਰ)		(elm)->ਖੇਤਰ.rbe_ਸੱਜਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਮਾਪਾ(elm, ਖੇਤਰ)		(elm)->ਖੇਤਰ.rbe_ਮਾਪਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_COLOR(elm, ਖੇਤਰ)		(elm)->ਖੇਤਰ.rbe_color
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਜੜ੍ਹ(ਸਿਰ)			(ਸਿਰ)->rbh_ਜੜ੍ਹ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਖਾਲੀ_ਥਾਵਾਂ(ਸਿਰ)			(RB_ਜੜ੍ਹ(ਸਿਰ) == ਨਿਰਾ)
 
-#define RB_SET(elm, parent, field) do {					\
-	RB_PARENT(elm, field) = parent;					\
-	RB_LEFT(elm, field) = RB_RIGHT(elm, field) = NULL;		\
-	RB_COLOR(elm, field) = RB_RED;					\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਸੈੱਟ(elm, ਮਾਪਾ, ਖੇਤਰ) ਕਰੋ {					\
+	RB_ਮਾਪਾ(elm, ਖੇਤਰ) = ਮਾਪਾ;					\
+	RB_ਖੱਬਾ(elm, ਖੇਤਰ) = RB_ਸੱਜਾ(elm, ਖੇਤਰ) = ਨਿਰਾ;		\
+	RB_COLOR(elm, ਖੇਤਰ) = RB_RED;					\
+} ਜਦੋਂ (0)
 
-#define RB_SET_BLACKRED(black, red, field) do {				\
-	RB_COLOR(black, field) = RB_BLACK;				\
-	RB_COLOR(red, field) = RB_RED;					\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਸੈੱਟ_BLACKRED(black, red, ਖੇਤਰ) ਕਰੋ {				\
+	RB_COLOR(black, ਖੇਤਰ) = RB_BLACK;				\
+	RB_COLOR(red, ਖੇਤਰ) = RB_RED;					\
+} ਜਦੋਂ (0)
 
-#ifndef RB_AUGMENT
-#define RB_AUGMENT(x)	do {} while (0)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ RB_AUGMENT
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_AUGMENT(x)	ਕਰੋ {} ਜਦੋਂ (0)
+#ਜੇ_ਅੰਤ
 
-#define RB_ROTATE_LEFT(head, elm, tmp, field) do {			\
-	(tmp) = RB_RIGHT(elm, field);					\
-	if ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
-		RB_PARENT(RB_LEFT(tmp, field), field) = (elm);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ROTATE_ਖੱਬਾ(ਸਿਰ, elm, tmp, ਖੇਤਰ) ਕਰੋ {			\
+	(tmp) = RB_ਸੱਜਾ(elm, ਖੇਤਰ);					\
+	ਜੇ ((RB_ਸੱਜਾ(elm, ਖੇਤਰ) = RB_ਖੱਬਾ(tmp, ਖੇਤਰ))) {		\
+		RB_ਮਾਪਾ(RB_ਖੱਬਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_LEFT(tmp, field) = (elm);					\
-	RB_PARENT(elm, field) = (tmp);					\
+	ਜੇ ((RB_ਮਾਪਾ(tmp, ਖੇਤਰ) = RB_ਮਾਪਾ(elm, ਖੇਤਰ))) {		\
+		ਜੇ ((elm) == RB_ਖੱਬਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ))	\
+			RB_ਖੱਬਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ) = (tmp);	\
+		ਨਹੀਂਤਾਂ							\
+			RB_ਸੱਜਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ) = (tmp);	\
+	} ਨਹੀਂਤਾਂ								\
+		(ਸਿਰ)->rbh_ਜੜ੍ਹ = (tmp);				\
+	RB_ਖੱਬਾ(tmp, ਖੇਤਰ) = (elm);					\
+	RB_ਮਾਪਾ(elm, ਖੇਤਰ) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
-		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+	ਜੇ ((RB_ਮਾਪਾ(tmp, ਖੇਤਰ)))					\
+		RB_AUGMENT(RB_ਮਾਪਾ(tmp, ਖੇਤਰ));			\
+} ਜਦੋਂ (0)
 
-#define RB_ROTATE_RIGHT(head, elm, tmp, field) do {			\
-	(tmp) = RB_LEFT(elm, field);					\
-	if ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
-		RB_PARENT(RB_RIGHT(tmp, field), field) = (elm);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ROTATE_ਸੱਜਾ(ਸਿਰ, elm, tmp, ਖੇਤਰ) ਕਰੋ {			\
+	(tmp) = RB_ਖੱਬਾ(elm, ਖੇਤਰ);					\
+	ਜੇ ((RB_ਖੱਬਾ(elm, ਖੇਤਰ) = RB_ਸੱਜਾ(tmp, ਖੇਤਰ))) {		\
+		RB_ਮਾਪਾ(RB_ਸੱਜਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_RIGHT(tmp, field) = (elm);					\
-	RB_PARENT(elm, field) = (tmp);					\
+	ਜੇ ((RB_ਮਾਪਾ(tmp, ਖੇਤਰ) = RB_ਮਾਪਾ(elm, ਖੇਤਰ))) {		\
+		ਜੇ ((elm) == RB_ਖੱਬਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ))	\
+			RB_ਖੱਬਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ) = (tmp);	\
+		ਨਹੀਂਤਾਂ							\
+			RB_ਸੱਜਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ) = (tmp);	\
+	} ਨਹੀਂਤਾਂ								\
+		(ਸਿਰ)->rbh_ਜੜ੍ਹ = (tmp);				\
+	RB_ਸੱਜਾ(tmp, ਖੇਤਰ) = (elm);					\
+	RB_ਮਾਪਾ(elm, ਖੇਤਰ) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
-		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+	ਜੇ ((RB_ਮਾਪਾ(tmp, ਖੇਤਰ)))					\
+		RB_AUGMENT(RB_ਮਾਪਾ(tmp, ਖੇਤਰ));			\
+} ਜਦੋਂ (0)
 
 /* Generates prototypes and inline functions */
-#define	RB_PROTOTYPE(name, type, field, cmp)				\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp,)
-#define	RB_PROTOTYPE_STATIC(name, type, field, cmp)			\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
-#define RB_PROTOTYPE_INTERNAL(name, type, field, cmp, attr)		\
-attr void name##_RB_INSERT_COLOR(struct name *, struct type *);		\
-attr void name##_RB_REMOVE_COLOR(struct name *, struct type *, struct type *);\
-attr struct type *name##_RB_REMOVE(struct name *, struct type *);	\
-attr struct type *name##_RB_INSERT(struct name *, struct type *);	\
-attr struct type *name##_RB_FIND(struct name *, struct type *);		\
-attr struct type *name##_RB_NFIND(struct name *, struct type *);	\
-attr struct type *name##_RB_NEXT(struct type *);			\
-attr struct type *name##_RB_PREV(struct type *);			\
-attr struct type *name##_RB_MINMAX(struct name *, int);			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	RB_PROTOTYPE(name, type, ਖੇਤਰ, cmp)				\
+	RB_PROTOTYPE_ਅੰਦਰੂਨੀ(name, type, ਖੇਤਰ, cmp,)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	RB_PROTOTYPE_STATIC(name, type, ਖੇਤਰ, cmp)			\
+	RB_PROTOTYPE_ਅੰਦਰੂਨੀ(name, type, ਖੇਤਰ, cmp, __attribute__((__unused__)) ਸਥਿਰ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_PROTOTYPE_ਅੰਦਰੂਨੀ(name, type, ਖੇਤਰ, cmp, attr)		\
+attr ਖਾਲੀ name##_RB_INSERT_COLOR(ਬਣਤਰ name *, ਬਣਤਰ type *);		\
+attr ਖਾਲੀ name##_RB_REMOVE_COLOR(ਬਣਤਰ name *, ਬਣਤਰ type *, ਬਣਤਰ type *);\
+attr ਬਣਤਰ type *name##_RB_REMOVE(ਬਣਤਰ name *, ਬਣਤਰ type *);	\
+attr ਬਣਤਰ type *name##_RB_INSERT(ਬਣਤਰ name *, ਬਣਤਰ type *);	\
+attr ਬਣਤਰ type *name##_RB_FIND(ਬਣਤਰ name *, ਬਣਤਰ type *);		\
+attr ਬਣਤਰ type *name##_RB_NFIND(ਬਣਤਰ name *, ਬਣਤਰ type *);	\
+attr ਬਣਤਰ type *name##_RB_NEXT(ਬਣਤਰ type *);			\
+attr ਬਣਤਰ type *name##_RB_PREV(ਬਣਤਰ type *);			\
+attr ਬਣਤਰ type *name##_RB_MINMAX(ਬਣਤਰ name *, ਪੂਰਨ);			\
 									\
 
 /* Main rb operation.
  * Moves node close to the key of elm to top
  */
-#define	RB_GENERATE(name, type, field, cmp)				\
-	RB_GENERATE_INTERNAL(name, type, field, cmp,)
-#define	RB_GENERATE_STATIC(name, type, field, cmp)			\
-	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
-#define RB_GENERATE_INTERNAL(name, type, field, cmp, attr)		\
-attr void								\
-name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	RB_GENERATE(name, type, ਖੇਤਰ, cmp)				\
+	RB_GENERATE_ਅੰਦਰੂਨੀ(name, type, ਖੇਤਰ, cmp,)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	RB_GENERATE_STATIC(name, type, ਖੇਤਰ, cmp)			\
+	RB_GENERATE_ਅੰਦਰੂਨੀ(name, type, ਖੇਤਰ, cmp, __attribute__((__unused__)) ਸਥਿਰ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_GENERATE_ਅੰਦਰੂਨੀ(name, type, ਖੇਤਰ, cmp, attr)		\
+attr ਖਾਲੀ								\
+name##_RB_INSERT_COLOR(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)		\
 {									\
-	struct type *parent, *gparent, *tmp;				\
-	while ((parent = RB_PARENT(elm, field)) &&			\
-	    RB_COLOR(parent, field) == RB_RED) {			\
-		gparent = RB_PARENT(parent, field);			\
-		if (parent == RB_LEFT(gparent, field)) {		\
-			tmp = RB_RIGHT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
-				RB_COLOR(tmp, field) = RB_BLACK;	\
-				RB_SET_BLACKRED(parent, gparent, field);\
+	ਬਣਤਰ type *ਮਾਪਾ, *gparent, *tmp;				\
+	ਜਦੋਂ ((ਮਾਪਾ = RB_ਮਾਪਾ(elm, ਖੇਤਰ)) &&			\
+	    RB_COLOR(ਮਾਪਾ, ਖੇਤਰ) == RB_RED) {			\
+		gparent = RB_ਮਾਪਾ(ਮਾਪਾ, ਖੇਤਰ);			\
+		ਜੇ (ਮਾਪਾ == RB_ਖੱਬਾ(gparent, ਖੇਤਰ)) {		\
+			tmp = RB_ਸੱਜਾ(gparent, ਖੇਤਰ);			\
+			ਜੇ (tmp && RB_COLOR(tmp, ਖੇਤਰ) == RB_RED) {	\
+				RB_COLOR(tmp, ਖੇਤਰ) = RB_BLACK;	\
+				RB_ਸੈੱਟ_BLACKRED(ਮਾਪਾ, gparent, ਖੇਤਰ);\
 				elm = gparent;				\
-				continue;				\
+				ਜਾਰੀ;				\
 			}						\
-			if (RB_RIGHT(parent, field) == elm) {		\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = parent;				\
-				parent = elm;				\
+			ਜੇ (RB_ਸੱਜਾ(ਮਾਪਾ, ਖੇਤਰ) == elm) {		\
+				RB_ROTATE_ਖੱਬਾ(ਸਿਰ, ਮਾਪਾ, tmp, ਖੇਤਰ);\
+				tmp = ਮਾਪਾ;				\
+				ਮਾਪਾ = elm;				\
 				elm = tmp;				\
 			}						\
-			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_RIGHT(head, gparent, tmp, field);	\
-		} else {						\
-			tmp = RB_LEFT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
-				RB_COLOR(tmp, field) = RB_BLACK;	\
-				RB_SET_BLACKRED(parent, gparent, field);\
+			RB_ਸੈੱਟ_BLACKRED(ਮਾਪਾ, gparent, ਖੇਤਰ);	\
+			RB_ROTATE_ਸੱਜਾ(ਸਿਰ, gparent, tmp, ਖੇਤਰ);	\
+		} ਨਹੀਂਤਾਂ {						\
+			tmp = RB_ਖੱਬਾ(gparent, ਖੇਤਰ);			\
+			ਜੇ (tmp && RB_COLOR(tmp, ਖੇਤਰ) == RB_RED) {	\
+				RB_COLOR(tmp, ਖੇਤਰ) = RB_BLACK;	\
+				RB_ਸੈੱਟ_BLACKRED(ਮਾਪਾ, gparent, ਖੇਤਰ);\
 				elm = gparent;				\
-				continue;				\
+				ਜਾਰੀ;				\
 			}						\
-			if (RB_LEFT(parent, field) == elm) {		\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = parent;				\
-				parent = elm;				\
+			ਜੇ (RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ) == elm) {		\
+				RB_ROTATE_ਸੱਜਾ(ਸਿਰ, ਮਾਪਾ, tmp, ਖੇਤਰ);\
+				tmp = ਮਾਪਾ;				\
+				ਮਾਪਾ = elm;				\
 				elm = tmp;				\
 			}						\
-			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_LEFT(head, gparent, tmp, field);	\
+			RB_ਸੈੱਟ_BLACKRED(ਮਾਪਾ, gparent, ਖੇਤਰ);	\
+			RB_ROTATE_ਖੱਬਾ(ਸਿਰ, gparent, tmp, ਖੇਤਰ);	\
 		}							\
 	}								\
-	RB_COLOR(head->rbh_root, field) = RB_BLACK;			\
+	RB_COLOR(ਸਿਰ->rbh_ਜੜ੍ਹ, ਖੇਤਰ) = RB_BLACK;			\
 }									\
 									\
-attr void								\
-name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm) \
+attr ਖਾਲੀ								\
+name##_RB_REMOVE_COLOR(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *ਮਾਪਾ, ਬਣਤਰ type *elm) \
 {									\
-	struct type *tmp;						\
-	while ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
-	    elm != RB_ROOT(head)) {					\
-		if (RB_LEFT(parent, field) == elm) {			\
-			tmp = RB_RIGHT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
-				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = RB_RIGHT(parent, field);		\
+	ਬਣਤਰ type *tmp;						\
+	ਜਦੋਂ ((elm == ਨਿਰਾ || RB_COLOR(elm, ਖੇਤਰ) == RB_BLACK) &&	\
+	    elm != RB_ਜੜ੍ਹ(ਸਿਰ)) {					\
+		ਜੇ (RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ) == elm) {			\
+			tmp = RB_ਸੱਜਾ(ਮਾਪਾ, ਖੇਤਰ);			\
+			ਜੇ (RB_COLOR(tmp, ਖੇਤਰ) == RB_RED) {		\
+				RB_ਸੈੱਟ_BLACKRED(tmp, ਮਾਪਾ, ਖੇਤਰ);	\
+				RB_ROTATE_ਖੱਬਾ(ਸਿਰ, ਮਾਪਾ, tmp, ਖੇਤਰ);\
+				tmp = RB_ਸੱਜਾ(ਮਾਪਾ, ਖੇਤਰ);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
-				RB_COLOR(tmp, field) = RB_RED;		\
-				elm = parent;				\
-				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_RIGHT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK) {\
-					struct type *oleft;		\
-					if ((oleft = RB_LEFT(tmp, field)))\
-						RB_COLOR(oleft, field) = RB_BLACK;\
-					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_RIGHT(head, tmp, oleft, field);\
-					tmp = RB_RIGHT(parent, field);	\
+			ਜੇ ((RB_ਖੱਬਾ(tmp, ਖੇਤਰ) == ਨਿਰਾ ||		\
+			    RB_COLOR(RB_ਖੱਬਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) == RB_BLACK) &&\
+			    (RB_ਸੱਜਾ(tmp, ਖੇਤਰ) == ਨਿਰਾ ||		\
+			    RB_COLOR(RB_ਸੱਜਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) == RB_BLACK)) {\
+				RB_COLOR(tmp, ਖੇਤਰ) = RB_RED;		\
+				elm = ਮਾਪਾ;				\
+				ਮਾਪਾ = RB_ਮਾਪਾ(elm, ਖੇਤਰ);		\
+			} ਨਹੀਂਤਾਂ {					\
+				ਜੇ (RB_ਸੱਜਾ(tmp, ਖੇਤਰ) == ਨਿਰਾ ||	\
+				    RB_COLOR(RB_ਸੱਜਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) == RB_BLACK) {\
+					ਬਣਤਰ type *oleft;		\
+					ਜੇ ((oleft = RB_ਖੱਬਾ(tmp, ਖੇਤਰ)))\
+						RB_COLOR(oleft, ਖੇਤਰ) = RB_BLACK;\
+					RB_COLOR(tmp, ਖੇਤਰ) = RB_RED;	\
+					RB_ROTATE_ਸੱਜਾ(ਸਿਰ, tmp, oleft, ਖੇਤਰ);\
+					tmp = RB_ਸੱਜਾ(ਮਾਪਾ, ਖੇਤਰ);	\
 				}					\
-				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
-				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_RIGHT(tmp, field))		\
-					RB_COLOR(RB_RIGHT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				RB_COLOR(tmp, ਖੇਤਰ) = RB_COLOR(ਮਾਪਾ, ਖੇਤਰ);\
+				RB_COLOR(ਮਾਪਾ, ਖੇਤਰ) = RB_BLACK;	\
+				ਜੇ (RB_ਸੱਜਾ(tmp, ਖੇਤਰ))		\
+					RB_COLOR(RB_ਸੱਜਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) = RB_BLACK;\
+				RB_ROTATE_ਖੱਬਾ(ਸਿਰ, ਮਾਪਾ, tmp, ਖੇਤਰ);\
+				elm = RB_ਜੜ੍ਹ(ਸਿਰ);			\
+				ਰੋਕੋ;					\
 			}						\
-		} else {						\
-			tmp = RB_LEFT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
-				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = RB_LEFT(parent, field);		\
+		} ਨਹੀਂਤਾਂ {						\
+			tmp = RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ);			\
+			ਜੇ (RB_COLOR(tmp, ਖੇਤਰ) == RB_RED) {		\
+				RB_ਸੈੱਟ_BLACKRED(tmp, ਮਾਪਾ, ਖੇਤਰ);	\
+				RB_ROTATE_ਸੱਜਾ(ਸਿਰ, ਮਾਪਾ, tmp, ਖੇਤਰ);\
+				tmp = RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
-				RB_COLOR(tmp, field) = RB_RED;		\
-				elm = parent;				\
-				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_LEFT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) {\
-					struct type *oright;		\
-					if ((oright = RB_RIGHT(tmp, field)))\
-						RB_COLOR(oright, field) = RB_BLACK;\
-					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_LEFT(head, tmp, oright, field);\
-					tmp = RB_LEFT(parent, field);	\
+			ਜੇ ((RB_ਖੱਬਾ(tmp, ਖੇਤਰ) == ਨਿਰਾ ||		\
+			    RB_COLOR(RB_ਖੱਬਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) == RB_BLACK) &&\
+			    (RB_ਸੱਜਾ(tmp, ਖੇਤਰ) == ਨਿਰਾ ||		\
+			    RB_COLOR(RB_ਸੱਜਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) == RB_BLACK)) {\
+				RB_COLOR(tmp, ਖੇਤਰ) = RB_RED;		\
+				elm = ਮਾਪਾ;				\
+				ਮਾਪਾ = RB_ਮਾਪਾ(elm, ਖੇਤਰ);		\
+			} ਨਹੀਂਤਾਂ {					\
+				ਜੇ (RB_ਖੱਬਾ(tmp, ਖੇਤਰ) == ਨਿਰਾ ||	\
+				    RB_COLOR(RB_ਖੱਬਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) == RB_BLACK) {\
+					ਬਣਤਰ type *oright;		\
+					ਜੇ ((oright = RB_ਸੱਜਾ(tmp, ਖੇਤਰ)))\
+						RB_COLOR(oright, ਖੇਤਰ) = RB_BLACK;\
+					RB_COLOR(tmp, ਖੇਤਰ) = RB_RED;	\
+					RB_ROTATE_ਖੱਬਾ(ਸਿਰ, tmp, oright, ਖੇਤਰ);\
+					tmp = RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ);	\
 				}					\
-				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
-				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_LEFT(tmp, field))		\
-					RB_COLOR(RB_LEFT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				RB_COLOR(tmp, ਖੇਤਰ) = RB_COLOR(ਮਾਪਾ, ਖੇਤਰ);\
+				RB_COLOR(ਮਾਪਾ, ਖੇਤਰ) = RB_BLACK;	\
+				ਜੇ (RB_ਖੱਬਾ(tmp, ਖੇਤਰ))		\
+					RB_COLOR(RB_ਖੱਬਾ(tmp, ਖੇਤਰ), ਖੇਤਰ) = RB_BLACK;\
+				RB_ROTATE_ਸੱਜਾ(ਸਿਰ, ਮਾਪਾ, tmp, ਖੇਤਰ);\
+				elm = RB_ਜੜ੍ਹ(ਸਿਰ);			\
+				ਰੋਕੋ;					\
 			}						\
 		}							\
 	}								\
-	if (elm)							\
-		RB_COLOR(elm, field) = RB_BLACK;			\
+	ਜੇ (elm)							\
+		RB_COLOR(elm, ਖੇਤਰ) = RB_BLACK;			\
 }									\
 									\
-attr struct type *							\
-name##_RB_REMOVE(struct name *head, struct type *elm)			\
+attr ਬਣਤਰ type *							\
+name##_RB_REMOVE(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)			\
 {									\
-	struct type *child, *parent, *old = elm;			\
-	int color;							\
-	if (RB_LEFT(elm, field) == NULL)				\
-		child = RB_RIGHT(elm, field);				\
-	else if (RB_RIGHT(elm, field) == NULL)				\
-		child = RB_LEFT(elm, field);				\
-	else {								\
-		struct type *left;					\
-		elm = RB_RIGHT(elm, field);				\
-		while ((left = RB_LEFT(elm, field)))			\
-			elm = left;					\
-		child = RB_RIGHT(elm, field);				\
-		parent = RB_PARENT(elm, field);				\
-		color = RB_COLOR(elm, field);				\
-		if (child)						\
-			RB_PARENT(child, field) = parent;		\
-		if (parent) {						\
-			if (RB_LEFT(parent, field) == elm)		\
-				RB_LEFT(parent, field) = child;		\
-			else						\
-				RB_RIGHT(parent, field) = child;	\
-			RB_AUGMENT(parent);				\
-		} else							\
-			RB_ROOT(head) = child;				\
-		if (RB_PARENT(elm, field) == old)			\
-			parent = elm;					\
-		(elm)->field = (old)->field;				\
-		if (RB_PARENT(old, field)) {				\
-			if (RB_LEFT(RB_PARENT(old, field), field) == old)\
-				RB_LEFT(RB_PARENT(old, field), field) = elm;\
-			else						\
-				RB_RIGHT(RB_PARENT(old, field), field) = elm;\
-			RB_AUGMENT(RB_PARENT(old, field));		\
-		} else							\
-			RB_ROOT(head) = elm;				\
-		RB_PARENT(RB_LEFT(old, field), field) = elm;		\
-		if (RB_RIGHT(old, field))				\
-			RB_PARENT(RB_RIGHT(old, field), field) = elm;	\
-		if (parent) {						\
-			left = parent;					\
-			do {						\
-				RB_AUGMENT(left);			\
-			} while ((left = RB_PARENT(left, field)));	\
+	ਬਣਤਰ type *ਬੱਚਾ, *ਮਾਪਾ, *old = elm;			\
+	ਪੂਰਨ color;							\
+	ਜੇ (RB_ਖੱਬਾ(elm, ਖੇਤਰ) == ਨਿਰਾ)				\
+		ਬੱਚਾ = RB_ਸੱਜਾ(elm, ਖੇਤਰ);				\
+	ਨਹੀਂਤਾਂ ਜੇ (RB_ਸੱਜਾ(elm, ਖੇਤਰ) == ਨਿਰਾ)				\
+		ਬੱਚਾ = RB_ਖੱਬਾ(elm, ਖੇਤਰ);				\
+	ਨਹੀਂਤਾਂ {								\
+		ਬਣਤਰ type *ਖੱਬਾ;					\
+		elm = RB_ਸੱਜਾ(elm, ਖੇਤਰ);				\
+		ਜਦੋਂ ((ਖੱਬਾ = RB_ਖੱਬਾ(elm, ਖੇਤਰ)))			\
+			elm = ਖੱਬਾ;					\
+		ਬੱਚਾ = RB_ਸੱਜਾ(elm, ਖੇਤਰ);				\
+		ਮਾਪਾ = RB_ਮਾਪਾ(elm, ਖੇਤਰ);				\
+		color = RB_COLOR(elm, ਖੇਤਰ);				\
+		ਜੇ (ਬੱਚਾ)						\
+			RB_ਮਾਪਾ(ਬੱਚਾ, ਖੇਤਰ) = ਮਾਪਾ;		\
+		ਜੇ (ਮਾਪਾ) {						\
+			ਜੇ (RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ) == elm)		\
+				RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ) = ਬੱਚਾ;		\
+			ਨਹੀਂਤਾਂ						\
+				RB_ਸੱਜਾ(ਮਾਪਾ, ਖੇਤਰ) = ਬੱਚਾ;	\
+			RB_AUGMENT(ਮਾਪਾ);				\
+		} ਨਹੀਂਤਾਂ							\
+			RB_ਜੜ੍ਹ(ਸਿਰ) = ਬੱਚਾ;				\
+		ਜੇ (RB_ਮਾਪਾ(elm, ਖੇਤਰ) == old)			\
+			ਮਾਪਾ = elm;					\
+		(elm)->ਖੇਤਰ = (old)->ਖੇਤਰ;				\
+		ਜੇ (RB_ਮਾਪਾ(old, ਖੇਤਰ)) {				\
+			ਜੇ (RB_ਖੱਬਾ(RB_ਮਾਪਾ(old, ਖੇਤਰ), ਖੇਤਰ) == old)\
+				RB_ਖੱਬਾ(RB_ਮਾਪਾ(old, ਖੇਤਰ), ਖੇਤਰ) = elm;\
+			ਨਹੀਂਤਾਂ						\
+				RB_ਸੱਜਾ(RB_ਮਾਪਾ(old, ਖੇਤਰ), ਖੇਤਰ) = elm;\
+			RB_AUGMENT(RB_ਮਾਪਾ(old, ਖੇਤਰ));		\
+		} ਨਹੀਂਤਾਂ							\
+			RB_ਜੜ੍ਹ(ਸਿਰ) = elm;				\
+		RB_ਮਾਪਾ(RB_ਖੱਬਾ(old, ਖੇਤਰ), ਖੇਤਰ) = elm;		\
+		ਜੇ (RB_ਸੱਜਾ(old, ਖੇਤਰ))				\
+			RB_ਮਾਪਾ(RB_ਸੱਜਾ(old, ਖੇਤਰ), ਖੇਤਰ) = elm;	\
+		ਜੇ (ਮਾਪਾ) {						\
+			ਖੱਬਾ = ਮਾਪਾ;					\
+			ਕਰੋ {						\
+				RB_AUGMENT(ਖੱਬਾ);			\
+			} ਜਦੋਂ ((ਖੱਬਾ = RB_ਮਾਪਾ(ਖੱਬਾ, ਖੇਤਰ)));	\
 		}							\
-		goto color;						\
+		ਜਾਓ color;						\
 	}								\
-	parent = RB_PARENT(elm, field);					\
-	color = RB_COLOR(elm, field);					\
-	if (child)							\
-		RB_PARENT(child, field) = parent;			\
-	if (parent) {							\
-		if (RB_LEFT(parent, field) == elm)			\
-			RB_LEFT(parent, field) = child;			\
-		else							\
-			RB_RIGHT(parent, field) = child;		\
-		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = child;					\
+	ਮਾਪਾ = RB_ਮਾਪਾ(elm, ਖੇਤਰ);					\
+	color = RB_COLOR(elm, ਖੇਤਰ);					\
+	ਜੇ (ਬੱਚਾ)							\
+		RB_ਮਾਪਾ(ਬੱਚਾ, ਖੇਤਰ) = ਮਾਪਾ;			\
+	ਜੇ (ਮਾਪਾ) {							\
+		ਜੇ (RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ) == elm)			\
+			RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ) = ਬੱਚਾ;			\
+		ਨਹੀਂਤਾਂ							\
+			RB_ਸੱਜਾ(ਮਾਪਾ, ਖੇਤਰ) = ਬੱਚਾ;		\
+		RB_AUGMENT(ਮਾਪਾ);					\
+	} ਨਹੀਂਤਾਂ								\
+		RB_ਜੜ੍ਹ(ਸਿਰ) = ਬੱਚਾ;					\
 color:									\
-	if (color == RB_BLACK)						\
-		name##_RB_REMOVE_COLOR(head, parent, child);		\
-	return (old);							\
+	ਜੇ (color == RB_BLACK)						\
+		name##_RB_REMOVE_COLOR(ਸਿਰ, ਮਾਪਾ, ਬੱਚਾ);		\
+	ਵਾਪਸ (old);							\
 }									\
 									\
 /* Inserts a node into the RB tree */					\
-attr struct type *							\
-name##_RB_INSERT(struct name *head, struct type *elm)			\
+attr ਬਣਤਰ type *							\
+name##_RB_INSERT(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)			\
 {									\
-	struct type *tmp;						\
-	struct type *parent = NULL;					\
-	int comp = 0;							\
-	tmp = RB_ROOT(head);						\
-	while (tmp) {							\
-		parent = tmp;						\
-		comp = (cmp)(elm, parent);				\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+	ਬਣਤਰ type *tmp;						\
+	ਬਣਤਰ type *ਮਾਪਾ = ਨਿਰਾ;					\
+	ਪੂਰਨ comp = 0;							\
+	tmp = RB_ਜੜ੍ਹ(ਸਿਰ);						\
+	ਜਦੋਂ (tmp) {							\
+		ਮਾਪਾ = tmp;						\
+		comp = (cmp)(elm, ਮਾਪਾ);				\
+		ਜੇ (comp < 0)						\
+			tmp = RB_ਖੱਬਾ(tmp, ਖੇਤਰ);			\
+		ਨਹੀਂਤਾਂ ਜੇ (comp > 0)					\
+			tmp = RB_ਸੱਜਾ(tmp, ਖੇਤਰ);			\
+		ਨਹੀਂਤਾਂ							\
+			ਵਾਪਸ (tmp);					\
 	}								\
-	RB_SET(elm, parent, field);					\
-	if (parent != NULL) {						\
-		if (comp < 0)						\
-			RB_LEFT(parent, field) = elm;			\
-		else							\
-			RB_RIGHT(parent, field) = elm;			\
-		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = elm;					\
-	name##_RB_INSERT_COLOR(head, elm);				\
-	return (NULL);							\
+	RB_ਸੈੱਟ(elm, ਮਾਪਾ, ਖੇਤਰ);					\
+	ਜੇ (ਮਾਪਾ != ਨਿਰਾ) {						\
+		ਜੇ (comp < 0)						\
+			RB_ਖੱਬਾ(ਮਾਪਾ, ਖੇਤਰ) = elm;			\
+		ਨਹੀਂਤਾਂ							\
+			RB_ਸੱਜਾ(ਮਾਪਾ, ਖੇਤਰ) = elm;			\
+		RB_AUGMENT(ਮਾਪਾ);					\
+	} ਨਹੀਂਤਾਂ								\
+		RB_ਜੜ੍ਹ(ਸਿਰ) = elm;					\
+	name##_RB_INSERT_COLOR(ਸਿਰ, elm);				\
+	ਵਾਪਸ (ਨਿਰਾ);							\
 }									\
 									\
 /* Finds the node with the same key as elm */				\
-attr struct type *							\
-name##_RB_FIND(struct name *head, struct type *elm)			\
+attr ਬਣਤਰ type *							\
+name##_RB_FIND(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	int comp;							\
-	while (tmp) {							\
+	ਬਣਤਰ type *tmp = RB_ਜੜ੍ਹ(ਸਿਰ);				\
+	ਪੂਰਨ comp;							\
+	ਜਦੋਂ (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ਜੇ (comp < 0)						\
+			tmp = RB_ਖੱਬਾ(tmp, ਖੇਤਰ);			\
+		ਨਹੀਂਤਾਂ ਜੇ (comp > 0)					\
+			tmp = RB_ਸੱਜਾ(tmp, ਖੇਤਰ);			\
+		ਨਹੀਂਤਾਂ							\
+			ਵਾਪਸ (tmp);					\
 	}								\
-	return (NULL);							\
+	ਵਾਪਸ (ਨਿਰਾ);							\
 }									\
 									\
 /* Finds the first node greater than or equal to the search key */	\
-attr struct type *							\
-name##_RB_NFIND(struct name *head, struct type *elm)			\
+attr ਬਣਤਰ type *							\
+name##_RB_NFIND(ਬਣਤਰ name *ਸਿਰ, ਬਣਤਰ type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *res = NULL;					\
-	int comp;							\
-	while (tmp) {							\
+	ਬਣਤਰ type *tmp = RB_ਜੜ੍ਹ(ਸਿਰ);				\
+	ਬਣਤਰ type *res = ਨਿਰਾ;					\
+	ਪੂਰਨ comp;							\
+	ਜਦੋਂ (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0) {						\
+		ਜੇ (comp < 0) {						\
 			res = tmp;					\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_ਖੱਬਾ(tmp, ਖੇਤਰ);			\
 		}							\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ਨਹੀਂਤਾਂ ਜੇ (comp > 0)					\
+			tmp = RB_ਸੱਜਾ(tmp, ਖੇਤਰ);			\
+		ਨਹੀਂਤਾਂ							\
+			ਵਾਪਸ (tmp);					\
 	}								\
-	return (res);							\
+	ਵਾਪਸ (res);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_NEXT(struct type *elm)					\
+attr ਬਣਤਰ type *							\
+name##_RB_NEXT(ਬਣਤਰ type *elm)					\
 {									\
-	if (RB_RIGHT(elm, field)) {					\
-		elm = RB_RIGHT(elm, field);				\
-		while (RB_LEFT(elm, field))				\
-			elm = RB_LEFT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_LEFT(RB_PARENT(elm, field), field)))	\
-			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))\
-				elm = RB_PARENT(elm, field);		\
-			elm = RB_PARENT(elm, field);			\
+	ਜੇ (RB_ਸੱਜਾ(elm, ਖੇਤਰ)) {					\
+		elm = RB_ਸੱਜਾ(elm, ਖੇਤਰ);				\
+		ਜਦੋਂ (RB_ਖੱਬਾ(elm, ਖੇਤਰ))				\
+			elm = RB_ਖੱਬਾ(elm, ਖੇਤਰ);			\
+	} ਨਹੀਂਤਾਂ {							\
+		ਜੇ (RB_ਮਾਪਾ(elm, ਖੇਤਰ) &&				\
+		    (elm == RB_ਖੱਬਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ)))	\
+			elm = RB_ਮਾਪਾ(elm, ਖੇਤਰ);			\
+		ਨਹੀਂਤਾਂ {							\
+			ਜਦੋਂ (RB_ਮਾਪਾ(elm, ਖੇਤਰ) &&			\
+			    (elm == RB_ਸੱਜਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ)))\
+				elm = RB_ਮਾਪਾ(elm, ਖੇਤਰ);		\
+			elm = RB_ਮਾਪਾ(elm, ਖੇਤਰ);			\
 		}							\
 	}								\
-	return (elm);							\
+	ਵਾਪਸ (elm);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_PREV(struct type *elm)					\
+attr ਬਣਤਰ type *							\
+name##_RB_PREV(ਬਣਤਰ type *elm)					\
 {									\
-	if (RB_LEFT(elm, field)) {					\
-		elm = RB_LEFT(elm, field);				\
-		while (RB_RIGHT(elm, field))				\
-			elm = RB_RIGHT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))	\
-			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_LEFT(RB_PARENT(elm, field), field)))\
-				elm = RB_PARENT(elm, field);		\
-			elm = RB_PARENT(elm, field);			\
+	ਜੇ (RB_ਖੱਬਾ(elm, ਖੇਤਰ)) {					\
+		elm = RB_ਖੱਬਾ(elm, ਖੇਤਰ);				\
+		ਜਦੋਂ (RB_ਸੱਜਾ(elm, ਖੇਤਰ))				\
+			elm = RB_ਸੱਜਾ(elm, ਖੇਤਰ);			\
+	} ਨਹੀਂਤਾਂ {							\
+		ਜੇ (RB_ਮਾਪਾ(elm, ਖੇਤਰ) &&				\
+		    (elm == RB_ਸੱਜਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ)))	\
+			elm = RB_ਮਾਪਾ(elm, ਖੇਤਰ);			\
+		ਨਹੀਂਤਾਂ {							\
+			ਜਦੋਂ (RB_ਮਾਪਾ(elm, ਖੇਤਰ) &&			\
+			    (elm == RB_ਖੱਬਾ(RB_ਮਾਪਾ(elm, ਖੇਤਰ), ਖੇਤਰ)))\
+				elm = RB_ਮਾਪਾ(elm, ਖੇਤਰ);		\
+			elm = RB_ਮਾਪਾ(elm, ਖੇਤਰ);			\
 		}							\
 	}								\
-	return (elm);							\
+	ਵਾਪਸ (elm);							\
 }									\
 									\
-attr struct type *							\
-name##_RB_MINMAX(struct name *head, int val)				\
+attr ਬਣਤਰ type *							\
+name##_RB_MINMAX(ਬਣਤਰ name *ਸਿਰ, ਪੂਰਨ val)				\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *parent = NULL;					\
-	while (tmp) {							\
-		parent = tmp;						\
-		if (val < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else							\
-			tmp = RB_RIGHT(tmp, field);			\
+	ਬਣਤਰ type *tmp = RB_ਜੜ੍ਹ(ਸਿਰ);				\
+	ਬਣਤਰ type *ਮਾਪਾ = ਨਿਰਾ;					\
+	ਜਦੋਂ (tmp) {							\
+		ਮਾਪਾ = tmp;						\
+		ਜੇ (val < 0)						\
+			tmp = RB_ਖੱਬਾ(tmp, ਖੇਤਰ);			\
+		ਨਹੀਂਤਾਂ							\
+			tmp = RB_ਸੱਜਾ(tmp, ਖੇਤਰ);			\
 	}								\
-	return (parent);						\
+	ਵਾਪਸ (ਮਾਪਾ);						\
 }
 
-#define RB_NEGINF	-1
-#define RB_INF	1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_NEGINF	-1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_INF	1
 
-#define RB_INSERT(name, x, y)	name##_RB_INSERT(x, y)
-#define RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
-#define RB_FIND(name, x, y)	name##_RB_FIND(x, y)
-#define RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
-#define RB_NEXT(name, x, y)	name##_RB_NEXT(y)
-#define RB_PREV(name, x, y)	name##_RB_PREV(y)
-#define RB_MIN(name, x)		name##_RB_MINMAX(x, RB_NEGINF)
-#define RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਪਾਓ(name, x, y)	name##_RB_INSERT(x, y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਲੱਭੋ(name, x, y)	name##_RB_FIND(x, y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_ਅਗਲਾ(name, x, y)	name##_RB_NEXT(y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_PREV(name, x, y)	name##_RB_PREV(y)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_MIN(name, x)		name##_RB_MINMAX(x, RB_NEGINF)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
 
-#define RB_FOREACH(x, name, head)					\
-	for ((x) = RB_MIN(name, head);					\
-	     (x) != NULL;						\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_FOREACH(x, name, ਸਿਰ)					\
+	ਲਈ ((x) = RB_MIN(name, ਸਿਰ);					\
+	     (x) != ਨਿਰਾ;						\
 	     (x) = name##_RB_NEXT(x))
 
-#define RB_FOREACH_SAFE(x, name, head, y)				\
-	for ((x) = RB_MIN(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_NEXT(x), 1);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_FOREACH_ਸੁਰੱਖਿਅਤ(x, name, ਸਿਰ, y)				\
+	ਲਈ ((x) = RB_MIN(name, ਸਿਰ);					\
+	    ((x) != ਨਿਰਾ) && ((y) = name##_RB_NEXT(x), 1);		\
 	     (x) = (y))
 
-#define RB_FOREACH_REVERSE(x, name, head)				\
-	for ((x) = RB_MAX(name, head);					\
-	     (x) != NULL;						\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_FOREACH_ਉਲਟ(x, name, ਸਿਰ)				\
+	ਲਈ ((x) = RB_MAX(name, ਸਿਰ);					\
+	     (x) != ਨਿਰਾ;						\
 	     (x) = name##_RB_PREV(x))
 
-#define RB_FOREACH_REVERSE_SAFE(x, name, head, y)			\
-	for ((x) = RB_MAX(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_PREV(x), 1);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ RB_FOREACH_ਉਲਟ_ਸੁਰੱਖਿਅਤ(x, name, ਸਿਰ, y)			\
+	ਲਈ ((x) = RB_MAX(name, ਸਿਰ);					\
+	    ((x) != ਨਿਰਾ) && ((y) = name##_RB_PREV(x), 1);		\
 	     (x) = (y))
 
-#endif	/* _SYS_TREE_H_ */
+#ਜੇ_ਅੰਤ	/* _SYS_TREE_H_ */

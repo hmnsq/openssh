@@ -124,80 +124,80 @@
  *  Otherwise, patches to the specific method(s) are very helpful!
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/socket.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/time.h>
 
-#include <netinet/in.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/in.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <paths.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <paths.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <pwd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "ssh.h"
-#include "loginrec.h"
-#include "log.h"
-#include "atomicio.h"
-#include "packet.h"
-#include "canohost.h"
-#include "auth.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshkey.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "hostfile.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "loginrec.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "atomicio.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "packet.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "canohost.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "auth.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
 
 # include <util.h>
 
-#ifdef USE_WTMPDB
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_WTMPDB
 # include <wtmpdb.h>
-#endif
+#ਜੇ_ਅੰਤ
 
 /**
  ** prototypes for helper functions in this file
  **/
 
-#if HAVE_UTMP_H
-void set_utmp_time(struct logininfo *li, struct utmp *ut);
-void construct_utmp(struct logininfo *li, struct utmp *ut);
-#endif
+#ਜੇ HAVE_UTMP_H
+ਖਾਲੀ ਸੈੱਟ_utmp_ਸਮਾਂ(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmp *ut);
+ਖਾਲੀ construct_utmp(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmp *ut);
+#ਜੇ_ਅੰਤ
 
-#ifdef HAVE_UTMPX_H
-void set_utmpx_time(struct logininfo *li, struct utmpx *ut);
-void construct_utmpx(struct logininfo *li, struct utmpx *ut);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_UTMPX_H
+ਖਾਲੀ ਸੈੱਟ_utmpx_ਸਮਾਂ(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmpx *ut);
+ਖਾਲੀ construct_utmpx(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmpx *ut);
+#ਜੇ_ਅੰਤ
 
-int utmp_write_entry(struct logininfo *li);
-int utmpx_write_entry(struct logininfo *li);
-int wtmp_write_entry(struct logininfo *li);
-int wtmpx_write_entry(struct logininfo *li);
-int lastlog_write_entry(struct logininfo *li);
-int syslogin_write_entry(struct logininfo *li);
-#ifdef USE_WTMPDB
-int wtmpdb_write_entry(struct logininfo *li);
-#endif
+ਪੂਰਨ utmp_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+ਪੂਰਨ utmpx_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+ਪੂਰਨ wtmp_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+ਪੂਰਨ wtmpx_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+ਪੂਰਨ lastlog_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+ਪੂਰਨ syslogin_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_WTMPDB
+ਪੂਰਨ wtmpdb_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+#ਜੇ_ਅੰਤ
 
-int getlast_entry(struct logininfo *li);
-int lastlog_get_entry(struct logininfo *li);
-int utmpx_get_entry(struct logininfo *li);
-int wtmp_get_entry(struct logininfo *li);
-int wtmpx_get_entry(struct logininfo *li);
+ਪੂਰਨ getlast_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+ਪੂਰਨ lastlog_get_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+ਪੂਰਨ utmpx_get_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+ਪੂਰਨ wtmp_get_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
+ਪੂਰਨ wtmpx_get_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li);
 
-extern struct sshbuf *loginmsg;
+ਬਾਹਰੀ ਬਣਤਰ sshbuf *loginmsg;
 
 /* pick the shortest string */
-#define MIN_SIZEOF(s1,s2) (sizeof(s1) < sizeof(s2) ? sizeof(s1) : sizeof(s2))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MIN_SIZEOF(s1,s2) (ਆਕਾਰ(s1) < ਆਕਾਰ(s2) ? ਆਕਾਰ(s1) : ਆਕਾਰ(s2))
 
 /**
  ** platform-independent login functions
@@ -213,11 +213,11 @@ extern struct sshbuf *loginmsg;
  *  >0 if successful
  *  0  on failure (will use OpenSSH's logging facilities for diagnostics)
  */
-int
-login_login(struct logininfo *li)
+ਪੂਰਨ
+login_login(ਬਣਤਰ logininfo *li)
 {
 	li->type = LTYPE_LOGIN;
-	return (login_write(li));
+	ਵਾਪਸ (login_write(li));
 }
 
 
@@ -230,11 +230,11 @@ login_login(struct logininfo *li)
  *  >0 if successful
  *  0  on failure (will use OpenSSH's logging facilities for diagnostics)
  */
-int
-login_logout(struct logininfo *li)
+ਪੂਰਨ
+login_logout(ਬਣਤਰ logininfo *li)
 {
 	li->type = LTYPE_LOGOUT;
-	return (login_write(li));
+	ਵਾਪਸ (login_write(li));
 }
 
 /*
@@ -255,15 +255,15 @@ login_logout(struct logininfo *li)
  *                facilities. If this and DISABLE_LASTLOG are not set,
  *                try to retrieve lastlog information from wtmp/wtmpx.
  */
-unsigned int
-login_get_lastlog_time(const uid_t uid)
+ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ
+login_get_lastlog_ਸਮਾਂ(ਅਚਲ uid_t uid)
 {
-	struct logininfo li;
+	ਬਣਤਰ logininfo li;
 
-	if (login_get_lastlog(&li, uid))
-		return (li.tv_sec);
-	else
-		return (0);
+	ਜੇ (login_get_lastlog(&li, uid))
+		ਵਾਪਸ (li.tv_sec);
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ (0);
 }
 
 /*
@@ -279,12 +279,12 @@ login_get_lastlog_time(const uid_t uid)
  *  >0: A pointer to your struct logininfo if successful
  *  0  on failure (will use OpenSSH's logging facilities for diagnostics)
  */
-struct logininfo *
-login_get_lastlog(struct logininfo *li, const uid_t uid)
+ਬਣਤਰ logininfo *
+login_get_lastlog(ਬਣਤਰ logininfo *li, ਅਚਲ uid_t uid)
 {
-	struct passwd *pw;
+	ਬਣਤਰ passwd *pw;
 
-	memset(li, '\0', sizeof(*li));
+	memset(li, '\0', ਆਕਾਰ(*li));
 	li->uid = uid;
 
 	/*
@@ -293,22 +293,22 @@ login_get_lastlog(struct logininfo *li, const uid_t uid)
 	 * wtmp_get_entry().)
 	 */
 	pw = getpwuid(uid);
-	if (pw == NULL)
+	ਜੇ (pw == ਨਿਰਾ)
 		fatal("%s: Cannot find account for uid %ld", __func__,
-		    (long)uid);
+		    (ਲੰਮਾ)uid);
 
-	if (strlcpy(li->username, pw->pw_name, sizeof(li->username)) >=
-	    sizeof(li->username)) {
+	ਜੇ (strlcpy(li->username, pw->pw_name, ਆਕਾਰ(li->username)) >=
+	    ਆਕਾਰ(li->username)) {
 		error("%s: username too long (%lu > max %lu)", __func__,
-		    (unsigned long)strlen(pw->pw_name),
-		    (unsigned long)sizeof(li->username) - 1);
-		return NULL;
+		    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ਲੜੀ_ਲੰਬਾਈ(pw->pw_name),
+		    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ਆਕਾਰ(li->username) - 1);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
-	if (getlast_entry(li))
-		return (li);
-	else
-		return (NULL);
+	ਜੇ (getlast_ਇੰਦਰਾਜ(li))
+		ਵਾਪਸ (li);
+	ਨਹੀਂਤਾਂ
+		ਵਾਪਸ (ਨਿਰਾ);
 }
 
 /*
@@ -321,23 +321,23 @@ login_get_lastlog(struct logininfo *li, const uid_t uid)
  * Returns a pointer to a newly created struct logininfo. If memory
  * allocation fails, the program halts.
  */
-struct
-logininfo *login_alloc_entry(pid_t pid, const char *username,
-    const char *hostname, const char *line)
+ਬਣਤਰ
+logininfo *login_alloc_ਇੰਦਰਾਜ(pid_t pid, ਅਚਲ ਅੱਖਰ *username,
+    ਅਚਲ ਅੱਖਰ *hostname, ਅਚਲ ਅੱਖਰ *ਸਤਰ)
 {
-	struct logininfo *newli;
+	ਬਣਤਰ logininfo *newli;
 
-	newli = xmalloc(sizeof(*newli));
-	login_init_entry(newli, pid, username, hostname, line);
-	return (newli);
+	newli = xmalloc(ਆਕਾਰ(*newli));
+	login_init_ਇੰਦਰਾਜ(newli, pid, username, hostname, ਸਤਰ);
+	ਵਾਪਸ (newli);
 }
 
 
 /* login_free_entry(struct logininfo *)    - free struct memory */
-void
-login_free_entry(struct logininfo *li)
+ਖਾਲੀ
+login_free_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	free(li);
+	ਮੁਕਤ(li);
 }
 
 
@@ -349,34 +349,34 @@ login_free_entry(struct logininfo *li)
  *
  * Returns: 1
  */
-int
-login_init_entry(struct logininfo *li, pid_t pid, const char *username,
-    const char *hostname, const char *line)
+ਪੂਰਨ
+login_init_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li, pid_t pid, ਅਚਲ ਅੱਖਰ *username,
+    ਅਚਲ ਅੱਖਰ *hostname, ਅਚਲ ਅੱਖਰ *ਸਤਰ)
 {
-	struct passwd *pw;
+	ਬਣਤਰ passwd *pw;
 
-	memset(li, 0, sizeof(*li));
+	memset(li, 0, ਆਕਾਰ(*li));
 
 	li->pid = pid;
 
 	/* set the line information */
-	if (line)
-		line_fullname(li->line, line, sizeof(li->line));
+	ਜੇ (ਸਤਰ)
+		ਸਤਰ_fullname(li->ਸਤਰ, ਸਤਰ, ਆਕਾਰ(li->ਸਤਰ));
 
-	if (username) {
-		strlcpy(li->username, username, sizeof(li->username));
+	ਜੇ (username) {
+		strlcpy(li->username, username, ਆਕਾਰ(li->username));
 		pw = getpwnam(li->username);
-		if (pw == NULL) {
+		ਜੇ (pw == ਨਿਰਾ) {
 			fatal("%s: Cannot find user \"%s\"", __func__,
 			    li->username);
 		}
 		li->uid = pw->pw_uid;
 	}
 
-	if (hostname)
-		strlcpy(li->hostname, hostname, sizeof(li->hostname));
+	ਜੇ (hostname)
+		strlcpy(li->hostname, hostname, ਆਕਾਰ(li->hostname));
 
-	return (1);
+	ਵਾਪਸ (1);
 }
 
 /*
@@ -386,29 +386,29 @@ login_init_entry(struct logininfo *li, pid_t pid, const char *username,
  * meant to eliminate the need to deal with system dependencies for
  * time handling.
  */
-void
-login_set_current_time(struct logininfo *li)
+ਖਾਲੀ
+login_ਸੈੱਟ_current_ਸਮਾਂ(ਬਣਤਰ logininfo *li)
 {
-	struct timeval tv;
+	ਬਣਤਰ timeval tv;
 
-	gettimeofday(&tv, NULL);
+	gettimeofday(&tv, ਨਿਰਾ);
 
 	li->tv_sec = tv.tv_sec;
 	li->tv_usec = tv.tv_usec;
 }
 
 /* copy a sockaddr_* into our logininfo */
-void
-login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-    const unsigned int sa_size)
+ਖਾਲੀ
+login_ਸੈੱਟ_addr(ਬਣਤਰ logininfo *li, ਅਚਲ ਬਣਤਰ sockaddr *sa,
+    ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ sa_ਮਾਪ)
 {
-	unsigned int bufsize = sa_size;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ bufsize = sa_ਮਾਪ;
 
 	/* make sure we don't overrun our union */
-	if (sizeof(li->hostaddr) < sa_size)
-		bufsize = sizeof(li->hostaddr);
+	ਜੇ (ਆਕਾਰ(li->hostaddr) < sa_ਮਾਪ)
+		bufsize = ਆਕਾਰ(li->hostaddr);
 
-	memcpy(&li->hostaddr.sa, sa, bufsize);
+	ਸਮ੍ਰਿਤੀ_ਨਕਲ(&li->hostaddr.sa, sa, bufsize);
 }
 
 
@@ -416,76 +416,76 @@ login_set_addr(struct logininfo *li, const struct sockaddr *sa,
  ** login_write: Call low-level recording functions based on autoconf
  ** results
  **/
-int
-login_write(struct logininfo *li)
+ਪੂਰਨ
+login_write(ਬਣਤਰ logininfo *li)
 {
-#ifndef HAVE_CYGWIN
-	if (geteuid() != 0) {
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_CYGWIN
+	ਜੇ (geteuid() != 0) {
 		logit("Attempt to write login records by non-root user (aborting)");
-		return (1);
+		ਵਾਪਸ (1);
 	}
-#endif
+#ਜੇ_ਅੰਤ
 
 	/* set the timestamp */
-	login_set_current_time(li);
-#ifdef USE_LOGIN
-	syslogin_write_entry(li);
-#endif
-#ifdef USE_LASTLOG
-	if (li->type == LTYPE_LOGIN)
-		lastlog_write_entry(li);
-#endif
-#ifdef USE_UTMP
-	utmp_write_entry(li);
-#endif
-#ifdef USE_WTMP
-	wtmp_write_entry(li);
-#endif
-#ifdef USE_UTMPX
-	utmpx_write_entry(li);
-#endif
-#ifdef USE_WTMPX
-	wtmpx_write_entry(li);
-#endif
-#ifdef USE_WTMPDB
-	wtmpdb_write_entry(li);
-#endif
-#ifdef CUSTOM_SYS_AUTH_RECORD_LOGIN
-	if (li->type == LTYPE_LOGIN &&
-	    !sys_auth_record_login(li->username,li->hostname,li->line,
+	login_ਸੈੱਟ_current_ਸਮਾਂ(li);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_LOGIN
+	syslogin_write_ਇੰਦਰਾਜ(li);
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_LASTLOG
+	ਜੇ (li->type == LTYPE_LOGIN)
+		lastlog_write_ਇੰਦਰਾਜ(li);
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_UTMP
+	utmp_write_ਇੰਦਰਾਜ(li);
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_WTMP
+	wtmp_write_ਇੰਦਰਾਜ(li);
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_UTMPX
+	utmpx_write_ਇੰਦਰਾਜ(li);
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_WTMPX
+	wtmpx_write_ਇੰਦਰਾਜ(li);
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_WTMPDB
+	wtmpdb_write_ਇੰਦਰਾਜ(li);
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CUSTOM_SYS_AUTH_ਰਿਕਾਰਡ_LOGIN
+	ਜੇ (li->type == LTYPE_LOGIN &&
+	    !sys_auth_ਰਿਕਾਰਡ_login(li->username,li->hostname,li->ਸਤਰ,
 	    loginmsg))
 		logit("Writing login record failed for %s", li->username);
-#endif
-#ifdef SSH_AUDIT_EVENTS
-	if (li->type == LTYPE_LOGIN)
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SSH_AUDIT_EVENTS
+	ਜੇ (li->type == LTYPE_LOGIN)
 		audit_session_open(li);
-	else if (li->type == LTYPE_LOGOUT)
+	ਨਹੀਂਤਾਂ ਜੇ (li->type == LTYPE_LOGOUT)
 		audit_session_close(li);
-#endif
-	return (0);
+#ਜੇ_ਅੰਤ
+	ਵਾਪਸ (0);
 }
 
-#ifdef LOGIN_NEEDS_UTMPX
-int
-login_utmp_only(struct logininfo *li)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ LOGIN_NEEDS_UTMPX
+ਪੂਰਨ
+login_utmp_only(ਬਣਤਰ logininfo *li)
 {
 	li->type = LTYPE_LOGIN;
-	login_set_current_time(li);
+	login_ਸੈੱਟ_current_ਸਮਾਂ(li);
 # ifdef USE_UTMP
-	utmp_write_entry(li);
+	utmp_write_ਇੰਦਰਾਜ(li);
 # endif
 # ifdef USE_WTMP
-	wtmp_write_entry(li);
+	wtmp_write_ਇੰਦਰਾਜ(li);
 # endif
 # ifdef USE_UTMPX
-	utmpx_write_entry(li);
+	utmpx_write_ਇੰਦਰਾਜ(li);
 # endif
 # ifdef USE_WTMPX
-	wtmpx_write_entry(li);
+	wtmpx_write_ਇੰਦਰਾਜ(li);
 # endif
-	return (0);
+	ਵਾਪਸ (0);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 /**
  ** getlast_entry: Call low-level functions to retrieve the last login
@@ -493,34 +493,34 @@ login_utmp_only(struct logininfo *li)
  **/
 
 /* take the uid in li and return the last login time */
-int
-getlast_entry(struct logininfo *li)
+ਪੂਰਨ
+getlast_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-#ifdef USE_LASTLOG
-	return(lastlog_get_entry(li));
-#else /* !USE_LASTLOG */
-#if defined(USE_UTMPX) && defined(HAVE_SETUTXDB) && \
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_LASTLOG
+	ਵਾਪਸ(lastlog_get_ਇੰਦਰਾਜ(li));
+#ਨਹੀਂਤਾਂ /* !USE_LASTLOG */
+#ਜੇ defined(USE_UTMPX) && defined(HAVE_SETUTXDB) && \
     defined(UTXDB_LASTLOGIN) && defined(HAVE_GETUTXUSER)
-	return (utmpx_get_entry(li));
-#endif
+	ਵਾਪਸ (utmpx_get_ਇੰਦਰਾਜ(li));
+#ਜੇ_ਅੰਤ
 
-#if defined(DISABLE_LASTLOG)
+#ਜੇ defined(DISABLE_LASTLOG)
 	/* On some systems we shouldn't even try to obtain last login
 	 * time, e.g. AIX */
-	return (0);
+	ਵਾਪਸ (0);
 # elif defined(USE_WTMP) && \
-    (defined(HAVE_TIME_IN_UTMP) || defined(HAVE_TV_IN_UTMP))
+    (defined(HAVE_ਸਮਾਂ_ਵਿੱਚ_UTMP) || defined(HAVE_TV_ਵਿੱਚ_UTMP))
 	/* retrieve last login time from utmp */
-	return (wtmp_get_entry(li));
+	ਵਾਪਸ (wtmp_get_ਇੰਦਰਾਜ(li));
 # elif defined(USE_WTMPX) && \
-    (defined(HAVE_TIME_IN_UTMPX) || defined(HAVE_TV_IN_UTMPX))
+    (defined(HAVE_ਸਮਾਂ_ਵਿੱਚ_UTMPX) || defined(HAVE_TV_ਵਿੱਚ_UTMPX))
 	/* If wtmp isn't available, try wtmpx */
-	return (wtmpx_get_entry(li));
-# else
+	ਵਾਪਸ (wtmpx_get_ਇੰਦਰਾਜ(li));
+# ਨਹੀਂਤਾਂ
 	/* Give up: No means of retrieving last login time */
-	return (0);
+	ਵਾਪਸ (0);
 # endif /* DISABLE_LASTLOG */
-#endif /* USE_LASTLOG */
+#ਜੇ_ਅੰਤ /* USE_LASTLOG */
 }
 
 
@@ -546,29 +546,29 @@ getlast_entry(struct logininfo *li)
  * line_fullname(): add the leading '/dev/' if it doesn't exist make
  * sure dst has enough space, if not just copy src (ugh)
  */
-char *
-line_fullname(char *dst, const char *src, u_int dstsize)
+ਅੱਖਰ *
+ਸਤਰ_fullname(ਅੱਖਰ *dst, ਅਚਲ ਅੱਖਰ *src, u_int dstsize)
 {
 	memset(dst, '\0', dstsize);
-	if ((strncmp(src, "/dev/", 5) == 0) || (dstsize < (strlen(src) + 5)))
+	ਜੇ ((ਲੜੀ_ਤੁਲਨਾ(src, "/dev/", 5) == 0) || (dstsize < (ਲੜੀ_ਲੰਬਾਈ(src) + 5)))
 		strlcpy(dst, src, dstsize);
-	else {
+	ਨਹੀਂਤਾਂ {
 		strlcpy(dst, "/dev/", dstsize);
 		strlcat(dst, src, dstsize);
 	}
-	return (dst);
+	ਵਾਪਸ (dst);
 }
 
 /* line_stripname(): strip the leading '/dev' if it exists, return dst */
-char *
-line_stripname(char *dst, const char *src, int dstsize)
+ਅੱਖਰ *
+ਸਤਰ_stripname(ਅੱਖਰ *dst, ਅਚਲ ਅੱਖਰ *src, ਪੂਰਨ dstsize)
 {
 	memset(dst, '\0', dstsize);
-	if (strncmp(src, "/dev/", 5) == 0)
+	ਜੇ (ਲੜੀ_ਤੁਲਨਾ(src, "/dev/", 5) == 0)
 		strlcpy(dst, src + 5, dstsize);
-	else
+	ਨਹੀਂਤਾਂ
 		strlcpy(dst, src, dstsize);
-	return (dst);
+	ਵਾਪਸ (dst);
 }
 
 /*
@@ -579,36 +579,36 @@ line_stripname(char *dst, const char *src, int dstsize)
  * NOTE: use strncpy because we do NOT necessarily want zero
  * termination
  */
-char *
-line_abbrevname(char *dst, const char *src, int dstsize)
+ਅੱਖਰ *
+ਸਤਰ_abbrevname(ਅੱਖਰ *dst, ਅਚਲ ਅੱਖਰ *src, ਪੂਰਨ dstsize)
 {
-	size_t len;
+	ਮਾਪ_t len;
 
 	memset(dst, '\0', dstsize);
 
-	if (strcmp(src, "ssh:notty") == 0)
-		return dst;
+	ਜੇ (strcmp(src, "ssh:notty") == 0)
+		ਵਾਪਸ dst;
 
 	/* Always skip prefix if present */
-	if (strncmp(src, "/dev/", 5) == 0)
+	ਜੇ (ਲੜੀ_ਤੁਲਨਾ(src, "/dev/", 5) == 0)
 		src += 5;
 
-#ifdef WITH_ABBREV_NO_TTY
-	if (strncmp(src, "tty", 3) == 0)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_ABBREV_NO_TTY
+	ਜੇ (ਲੜੀ_ਤੁਲਨਾ(src, "tty", 3) == 0)
 		src += 3;
-#endif
+#ਜੇ_ਅੰਤ
 
-	len = strlen(src);
+	len = ਲੜੀ_ਲੰਬਾਈ(src);
 
-	if (len > 0) {
-		if (((int)len - dstsize) > 0)
-			src +=  ((int)len - dstsize);
+	ਜੇ (len > 0) {
+		ਜੇ (((ਪੂਰਨ)len - dstsize) > 0)
+			src +=  ((ਪੂਰਨ)len - dstsize);
 
 		/* note: _don't_ change this to strlcpy */
-		strncpy(dst, src, (size_t)dstsize);
+		strncpy(dst, src, (ਮਾਪ_t)dstsize);
 	}
 
-	return (dst);
+	ਵਾਪਸ (dst);
 }
 
 /**
@@ -618,61 +618,61 @@ line_abbrevname(char *dst, const char *src, int dstsize)
  ** into account.
  **/
 
-#if defined(USE_BTMP) || defined(USE_UTMP) || defined (USE_WTMP) || defined (USE_LOGIN)
+#ਜੇ defined(USE_BTMP) || defined(USE_UTMP) || defined (USE_WTMP) || defined (USE_LOGIN)
 
 /* build the utmp structure */
-void
-set_utmp_time(struct logininfo *li, struct utmp *ut)
+ਖਾਲੀ
+ਸੈੱਟ_utmp_ਸਮਾਂ(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmp *ut)
 {
-# if defined(HAVE_TV_IN_UTMP)
+# ਜੇ defined(HAVE_TV_ਵਿੱਚ_UTMP)
 	ut->ut_tv.tv_sec = li->tv_sec;
 	ut->ut_tv.tv_usec = li->tv_usec;
-# elif defined(HAVE_TIME_IN_UTMP)
-	ut->ut_time = li->tv_sec;
+# elif defined(HAVE_ਸਮਾਂ_ਵਿੱਚ_UTMP)
+	ut->ut_ਸਮਾਂ = li->tv_sec;
 # endif
 }
 
-void
-construct_utmp(struct logininfo *li,
-		    struct utmp *ut)
+ਖਾਲੀ
+construct_utmp(ਬਣਤਰ logininfo *li,
+		    ਬਣਤਰ utmp *ut)
 {
-# ifdef HAVE_ADDR_V6_IN_UTMP
-	struct sockaddr_in6 *sa6;
+# ifdef HAVE_ADDR_V6_ਵਿੱਚ_UTMP
+	ਬਣਤਰ sockaddr_in6 *sa6;
 # endif
 
-	memset(ut, '\0', sizeof(*ut));
+	memset(ut, '\0', ਆਕਾਰ(*ut));
 
 	/* First fill out fields used for both logins and logouts */
 
-# ifdef HAVE_ID_IN_UTMP
-	line_abbrevname(ut->ut_id, li->line, sizeof(ut->ut_id));
+# ifdef HAVE_ID_ਵਿੱਚ_UTMP
+	ਸਤਰ_abbrevname(ut->ut_id, li->ਸਤਰ, ਆਕਾਰ(ut->ut_id));
 # endif
 
-# ifdef HAVE_TYPE_IN_UTMP
+# ifdef HAVE_TYPE_ਵਿੱਚ_UTMP
 	/* This is done here to keep utmp constants out of struct logininfo */
-	switch (li->type) {
-	case LTYPE_FAILED:
+	ਚੋਣ (li->type) {
+	ਹਾਲਤ LTYPE_FAILED:
 		ut->ut_type = LOGIN_PROCESS;
-		break;
-	case LTYPE_LOGIN:
+		ਰੋਕੋ;
+	ਹਾਲਤ LTYPE_LOGIN:
 		ut->ut_type = USER_PROCESS;
-		break;
-	case LTYPE_LOGOUT:
+		ਰੋਕੋ;
+	ਹਾਲਤ LTYPE_LOGOUT:
 		ut->ut_type = DEAD_PROCESS;
-		break;
+		ਰੋਕੋ;
 	}
 # endif
-	set_utmp_time(li, ut);
+	ਸੈੱਟ_utmp_ਸਮਾਂ(li, ut);
 
-	line_stripname(ut->ut_line, li->line, sizeof(ut->ut_line));
+	ਸਤਰ_stripname(ut->ut_ਸਤਰ, li->ਸਤਰ, ਆਕਾਰ(ut->ut_ਸਤਰ));
 
-# ifdef HAVE_PID_IN_UTMP
+# ifdef HAVE_PID_ਵਿੱਚ_UTMP
 	ut->ut_pid = li->pid;
 # endif
 
 	/* If we're logging out, leave all other fields blank */
-	if (li->type == LTYPE_LOGOUT)
-		return;
+	ਜੇ (li->type == LTYPE_LOGOUT)
+		ਵਾਪਸ;
 
 	/*
 	 * These fields are only used when logging in, and are blank
@@ -682,21 +682,21 @@ construct_utmp(struct logininfo *li,
 	/* Use strncpy because we don't necessarily want null termination */
 	strncpy(ut->ut_name, li->username,
 	    MIN_SIZEOF(ut->ut_name, li->username));
-# ifdef HAVE_HOST_IN_UTMP
+# ifdef HAVE_HOST_ਵਿੱਚ_UTMP
 	strncpy(ut->ut_host, li->hostname,
 	    MIN_SIZEOF(ut->ut_host, li->hostname));
 # endif
-# ifdef HAVE_ADDR_IN_UTMP
+# ifdef HAVE_ADDR_ਵਿੱਚ_UTMP
 	/* this is just a 32-bit IP address */
-	if (li->hostaddr.sa.sa_family == AF_INET)
-		ut->ut_addr = li->hostaddr.sa_in.sin_addr.s_addr;
+	ਜੇ (li->hostaddr.sa.sa_family == AF_INET)
+		ut->ut_addr = li->hostaddr.sa_ਵਿੱਚ.sin_addr.s_addr;
 # endif
-# ifdef HAVE_ADDR_V6_IN_UTMP
+# ifdef HAVE_ADDR_V6_ਵਿੱਚ_UTMP
 	/* this is just a 128-bit IPv6 address */
-	if (li->hostaddr.sa.sa_family == AF_INET6) {
-		sa6 = ((struct sockaddr_in6 *)&li->hostaddr.sa);
-		memcpy(ut->ut_addr_v6, sa6->sin6_addr.s6_addr, 16);
-		if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr)) {
+	ਜੇ (li->hostaddr.sa.sa_family == AF_INET6) {
+		sa6 = ((ਬਣਤਰ sockaddr_in6 *)&li->hostaddr.sa);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(ut->ut_addr_v6, sa6->sin6_addr.s6_addr, 16);
+		ਜੇ (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr)) {
 			ut->ut_addr_v6[0] = ut->ut_addr_v6[3];
 			ut->ut_addr_v6[1] = 0;
 			ut->ut_addr_v6[2] = 0;
@@ -705,7 +705,7 @@ construct_utmp(struct logininfo *li,
 	}
 # endif
 }
-#endif /* USE_BTMP || USE_UTMP || USE_WTMP || USE_LOGIN */
+#ਜੇ_ਅੰਤ /* USE_BTMP || USE_UTMP || USE_WTMP || USE_LOGIN */
 
 /**
  ** utmpx utility functions
@@ -714,74 +714,74 @@ construct_utmp(struct logininfo *li,
  ** variations.
  **/
 
-#if defined(USE_UTMPX) || defined (USE_WTMPX)
+#ਜੇ defined(USE_UTMPX) || defined (USE_WTMPX)
 /* build the utmpx structure */
-void
-set_utmpx_time(struct logininfo *li, struct utmpx *utx)
+ਖਾਲੀ
+ਸੈੱਟ_utmpx_ਸਮਾਂ(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmpx *utx)
 {
-# if defined(HAVE_TV_IN_UTMPX)
+# ਜੇ defined(HAVE_TV_ਵਿੱਚ_UTMPX)
 	utx->ut_tv.tv_sec = li->tv_sec;
 	utx->ut_tv.tv_usec = li->tv_usec;
-# elif defined(HAVE_TIME_IN_UTMPX)
-	utx->ut_time = li->tv_sec;
+# elif defined(HAVE_ਸਮਾਂ_ਵਿੱਚ_UTMPX)
+	utx->ut_ਸਮਾਂ = li->tv_sec;
 # endif
 }
 
-void
-construct_utmpx(struct logininfo *li, struct utmpx *utx)
+ਖਾਲੀ
+construct_utmpx(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmpx *utx)
 {
-# ifdef HAVE_ADDR_V6_IN_UTMPX
-	struct sockaddr_in6 *sa6;
+# ifdef HAVE_ADDR_V6_ਵਿੱਚ_UTMPX
+	ਬਣਤਰ sockaddr_in6 *sa6;
 #  endif
-	memset(utx, '\0', sizeof(*utx));
+	memset(utx, '\0', ਆਕਾਰ(*utx));
 
-# ifdef HAVE_ID_IN_UTMPX
-	line_abbrevname(utx->ut_id, li->line, sizeof(utx->ut_id));
+# ifdef HAVE_ID_ਵਿੱਚ_UTMPX
+	ਸਤਰ_abbrevname(utx->ut_id, li->ਸਤਰ, ਆਕਾਰ(utx->ut_id));
 # endif
 
 	/* this is done here to keep utmp constants out of loginrec.h */
-	switch (li->type) {
-	case LTYPE_LOGIN:
+	ਚੋਣ (li->type) {
+	ਹਾਲਤ LTYPE_LOGIN:
 		utx->ut_type = USER_PROCESS;
-		break;
-	case LTYPE_LOGOUT:
+		ਰੋਕੋ;
+	ਹਾਲਤ LTYPE_LOGOUT:
 		utx->ut_type = DEAD_PROCESS;
-		break;
+		ਰੋਕੋ;
 	}
-	line_stripname(utx->ut_line, li->line, sizeof(utx->ut_line));
-	set_utmpx_time(li, utx);
+	ਸਤਰ_stripname(utx->ut_ਸਤਰ, li->ਸਤਰ, ਆਕਾਰ(utx->ut_ਸਤਰ));
+	ਸੈੱਟ_utmpx_ਸਮਾਂ(li, utx);
 	utx->ut_pid = li->pid;
 
 	/* strncpy(): Don't necessarily want null termination */
 	strncpy(utx->ut_user, li->username,
 	    MIN_SIZEOF(utx->ut_user, li->username));
 
-	if (li->type == LTYPE_LOGOUT)
-		return;
+	ਜੇ (li->type == LTYPE_LOGOUT)
+		ਵਾਪਸ;
 
 	/*
 	 * These fields are only used when logging in, and are blank
 	 * for logouts.
 	 */
 
-# ifdef HAVE_HOST_IN_UTMPX
+# ifdef HAVE_HOST_ਵਿੱਚ_UTMPX
 	strncpy(utx->ut_host, li->hostname,
 	    MIN_SIZEOF(utx->ut_host, li->hostname));
 # endif
-# ifdef HAVE_SS_IN_UTMPX
+# ifdef HAVE_SS_ਵਿੱਚ_UTMPX
 	utx->ut_ss = li->hostaddr.sa_storage;
 # endif
-# ifdef HAVE_ADDR_IN_UTMPX
+# ifdef HAVE_ADDR_ਵਿੱਚ_UTMPX
 	/* this is just a 32-bit IP address */
-	if (li->hostaddr.sa.sa_family == AF_INET)
-		utx->ut_addr = li->hostaddr.sa_in.sin_addr.s_addr;
+	ਜੇ (li->hostaddr.sa.sa_family == AF_INET)
+		utx->ut_addr = li->hostaddr.sa_ਵਿੱਚ.sin_addr.s_addr;
 # endif
-# ifdef HAVE_ADDR_V6_IN_UTMPX
+# ifdef HAVE_ADDR_V6_ਵਿੱਚ_UTMPX
 	/* this is just a 128-bit IPv6 address */
-	if (li->hostaddr.sa.sa_family == AF_INET6) {
-		sa6 = ((struct sockaddr_in6 *)&li->hostaddr.sa);
-		memcpy(utx->ut_addr_v6, sa6->sin6_addr.s6_addr, 16);
-		if (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr)) {
+	ਜੇ (li->hostaddr.sa.sa_family == AF_INET6) {
+		sa6 = ((ਬਣਤਰ sockaddr_in6 *)&li->hostaddr.sa);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(utx->ut_addr_v6, sa6->sin6_addr.s6_addr, 16);
+		ਜੇ (IN6_IS_ADDR_V4MAPPED(&sa6->sin6_addr)) {
 			utx->ut_addr_v6[0] = utx->ut_addr_v6[3];
 			utx->ut_addr_v6[1] = 0;
 			utx->ut_addr_v6[2] = 0;
@@ -789,22 +789,22 @@ construct_utmpx(struct logininfo *li, struct utmpx *utx)
 		}
 	}
 # endif
-# ifdef HAVE_SYSLEN_IN_UTMPX
+# ifdef HAVE_SYSLEN_ਵਿੱਚ_UTMPX
 	/* ut_syslen is the length of the utx_host string */
-	utx->ut_syslen = MINIMUM(strlen(li->hostname), sizeof(utx->ut_host));
+	utx->ut_syslen = MINIMUM(ਲੜੀ_ਲੰਬਾਈ(li->hostname), ਆਕਾਰ(utx->ut_host));
 # endif
 }
-#endif /* USE_UTMPX || USE_WTMPX */
+#ਜੇ_ਅੰਤ /* USE_UTMPX || USE_WTMPX */
 
 /**
  ** Low-level utmp functions
  **/
 
 /* FIXME: (ATL) utmp_write_direct needs testing */
-#ifdef USE_UTMP
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_UTMP
 
 /* if we can, use pututline() etc. */
-# if !defined(DISABLE_PUTUTLINE) && defined(HAVE_SETUTENT) && \
+# ਜੇ !defined(DISABLE_PUTUTLINE) && defined(HAVE_SETUTENT) && \
 	defined(HAVE_PUTUTLINE)
 #  define UTMP_USE_LIBRARY
 # endif
@@ -812,163 +812,163 @@ construct_utmpx(struct logininfo *li, struct utmpx *utx)
 
 /* write a utmp entry with the system's help (pututline() and pals) */
 # ifdef UTMP_USE_LIBRARY
-static int
-utmp_write_library(struct logininfo *li, struct utmp *ut)
+ਸਥਿਰ ਪੂਰਨ
+utmp_write_library(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmp *ut)
 {
 	setutent();
 	pututline(ut);
 #  ifdef HAVE_ENDUTENT
 	endutent();
 #  endif
-	return (1);
+	ਵਾਪਸ (1);
 }
-# else /* UTMP_USE_LIBRARY */
+# ਨਹੀਂਤਾਂ /* UTMP_USE_LIBRARY */
 
 /*
  * Write a utmp entry direct to the file
  * This is a slightly modification of code in OpenBSD's login.c
  */
-static int
-utmp_write_direct(struct logininfo *li, struct utmp *ut)
+ਸਥਿਰ ਪੂਰਨ
+utmp_write_ਸਿੱਧਾ(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmp *ut)
 {
-	struct utmp old_ut;
-	register int fd;
-	int tty;
+	ਬਣਤਰ utmp old_ut;
+	ਰਜਿਸਟਰ ਪੂਰਨ fd;
+	ਪੂਰਨ tty;
 
 	/* FIXME: (ATL) ttyslot() needs local implementation */
 
-#if defined(HAVE_GETTTYENT)
-	struct ttyent *ty;
+#ਜੇ defined(HAVE_GETTTYENT)
+	ਬਣਤਰ ttyent *ty;
 
 	tty=0;
 	setttyent();
-	while (NULL != (ty = getttyent())) {
+	ਜਦੋਂ (ਨਿਰਾ != (ty = getttyent())) {
 		tty++;
-		if (!strncmp(ty->ty_name, ut->ut_line, sizeof(ut->ut_line)))
-			break;
+		ਜੇ (!ਲੜੀ_ਤੁਲਨਾ(ty->ty_name, ut->ut_ਸਤਰ, ਆਕਾਰ(ut->ut_ਸਤਰ)))
+			ਰੋਕੋ;
 	}
 	endttyent();
 
-	if (NULL == ty) {
+	ਜੇ (ਨਿਰਾ == ty) {
 		logit_f("tty not found");
-		return (0);
+		ਵਾਪਸ (0);
 	}
-#else /* FIXME */
+#ਨਹੀਂਤਾਂ /* FIXME */
 
 	tty = ttyslot(); /* seems only to work for /dev/ttyp? style names */
 
-#endif /* HAVE_GETTTYENT */
+#ਜੇ_ਅੰਤ /* HAVE_GETTTYENT */
 
-	if (tty > 0 && (fd = open(UTMP_FILE, O_RDWR|O_CREAT, 0644)) >= 0) {
+	ਜੇ (tty > 0 && (fd = open(UTMP_FILE, O_RDWR|O_CREAT, 0644)) >= 0) {
 		off_t pos, ret;
 
-		pos = (off_t)tty * sizeof(struct utmp);
-		if ((ret = lseek(fd, pos, SEEK_SET)) == -1) {
+		pos = (off_t)tty * ਆਕਾਰ(ਬਣਤਰ utmp);
+		ਜੇ ((ret = lseek(fd, pos, SEEK_SET)) == -1) {
 			logit_f("lseek: %s", strerror(errno));
 			close(fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
-		if (ret != pos) {
+		ਜੇ (ret != pos) {
 			logit("%s: Couldn't seek to tty %d slot in %s",
 			    __func__, tty, UTMP_FILE);
 			close(fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
 		/*
 		 * Prevent luser from zero'ing out ut_host.
 		 * If the new ut_line is empty but the old one is not
 		 * and ut_line and ut_name match, preserve the old ut_line.
 		 */
-		if (atomicio(read, fd, &old_ut, sizeof(old_ut)) == sizeof(old_ut) &&
+		ਜੇ (atomicio(ਪਠ, fd, &old_ut, ਆਕਾਰ(old_ut)) == ਆਕਾਰ(old_ut) &&
 		    (ut->ut_host[0] == '\0') && (old_ut.ut_host[0] != '\0') &&
-		    (strncmp(old_ut.ut_line, ut->ut_line, sizeof(ut->ut_line)) == 0) &&
-		    (strncmp(old_ut.ut_name, ut->ut_name, sizeof(ut->ut_name)) == 0))
-			memcpy(ut->ut_host, old_ut.ut_host, sizeof(ut->ut_host));
+		    (ਲੜੀ_ਤੁਲਨਾ(old_ut.ut_ਸਤਰ, ut->ut_ਸਤਰ, ਆਕਾਰ(ut->ut_ਸਤਰ)) == 0) &&
+		    (ਲੜੀ_ਤੁਲਨਾ(old_ut.ut_name, ut->ut_name, ਆਕਾਰ(ut->ut_name)) == 0))
+			ਸਮ੍ਰਿਤੀ_ਨਕਲ(ut->ut_host, old_ut.ut_host, ਆਕਾਰ(ut->ut_host));
 
-		if ((ret = lseek(fd, pos, SEEK_SET)) == -1) {
+		ਜੇ ((ret = lseek(fd, pos, SEEK_SET)) == -1) {
 			logit_f("lseek: %s", strerror(errno));
 			close(fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
-		if (ret != pos) {
+		ਜੇ (ret != pos) {
 			logit("%s: Couldn't seek to tty %d slot in %s",
 			    __func__, tty, UTMP_FILE);
 			close(fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
-		if (atomicio(vwrite, fd, ut, sizeof(*ut)) != sizeof(*ut)) {
+		ਜੇ (atomicio(vwrite, fd, ut, ਆਕਾਰ(*ut)) != ਆਕਾਰ(*ut)) {
 			logit("%s: error writing %s: %s", __func__,
 			    UTMP_FILE, strerror(errno));
 			close(fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
 
 		close(fd);
-		return (1);
-	} else {
-		return (0);
+		ਵਾਪਸ (1);
+	} ਨਹੀਂਤਾਂ {
+		ਵਾਪਸ (0);
 	}
 }
 # endif /* UTMP_USE_LIBRARY */
 
-static int
-utmp_perform_login(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+utmp_perform_login(ਬਣਤਰ logininfo *li)
 {
-	struct utmp ut;
+	ਬਣਤਰ utmp ut;
 
 	construct_utmp(li, &ut);
 # ifdef UTMP_USE_LIBRARY
-	if (!utmp_write_library(li, &ut)) {
+	ਜੇ (!utmp_write_library(li, &ut)) {
 		logit_f("utmp_write_library() failed");
-		return (0);
+		ਵਾਪਸ (0);
 	}
-# else
-	if (!utmp_write_direct(li, &ut)) {
+# ਨਹੀਂਤਾਂ
+	ਜੇ (!utmp_write_ਸਿੱਧਾ(li, &ut)) {
 		logit_f("utmp_write_direct() failed");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 # endif
-	return (1);
+	ਵਾਪਸ (1);
 }
 
 
-static int
-utmp_perform_logout(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+utmp_perform_logout(ਬਣਤਰ logininfo *li)
 {
-	struct utmp ut;
+	ਬਣਤਰ utmp ut;
 
 	construct_utmp(li, &ut);
 # ifdef UTMP_USE_LIBRARY
-	if (!utmp_write_library(li, &ut)) {
+	ਜੇ (!utmp_write_library(li, &ut)) {
 		logit_f("utmp_write_library() failed");
-		return (0);
+		ਵਾਪਸ (0);
 	}
-# else
-	if (!utmp_write_direct(li, &ut)) {
+# ਨਹੀਂਤਾਂ
+	ਜੇ (!utmp_write_ਸਿੱਧਾ(li, &ut)) {
 		logit_f("utmp_write_direct() failed");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 # endif
-	return (1);
+	ਵਾਪਸ (1);
 }
 
 
-int
-utmp_write_entry(struct logininfo *li)
+ਪੂਰਨ
+utmp_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	switch(li->type) {
-	case LTYPE_LOGIN:
-		return (utmp_perform_login(li));
+	ਚੋਣ(li->type) {
+	ਹਾਲਤ LTYPE_LOGIN:
+		ਵਾਪਸ (utmp_perform_login(li));
 
-	case LTYPE_LOGOUT:
-		return (utmp_perform_logout(li));
+	ਹਾਲਤ LTYPE_LOGOUT:
+		ਵਾਪਸ (utmp_perform_logout(li));
 
-	default:
+	ਮੂਲ:
 		logit_f("invalid type field");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 }
-#endif /* USE_UTMP */
+#ਜੇ_ਅੰਤ /* USE_UTMP */
 
 
 /**
@@ -976,10 +976,10 @@ utmp_write_entry(struct logininfo *li)
  **/
 
 /* not much point if we don't want utmpx entries */
-#ifdef USE_UTMPX
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_UTMPX
 
 /* if we have the wherewithal, use pututxline etc. */
-# if !defined(DISABLE_PUTUTXLINE) && defined(HAVE_SETUTXENT) && \
+# ਜੇ !defined(DISABLE_PUTUTXLINE) && defined(HAVE_SETUTXENT) && \
 	defined(HAVE_PUTUTXLINE)
 #  define UTMPX_USE_LIBRARY
 # endif
@@ -987,8 +987,8 @@ utmp_write_entry(struct logininfo *li)
 
 /* write a utmpx entry with the system's help (pututxline() and pals) */
 # ifdef UTMPX_USE_LIBRARY
-static int
-utmpx_write_library(struct logininfo *li, struct utmpx *utx)
+ਸਥਿਰ ਪੂਰਨ
+utmpx_write_library(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmpx *utx)
 {
 	setutxent();
 	pututxline(utx);
@@ -996,141 +996,141 @@ utmpx_write_library(struct logininfo *li, struct utmpx *utx)
 #  ifdef HAVE_ENDUTXENT
 	endutxent();
 #  endif
-	return (1);
+	ਵਾਪਸ (1);
 }
 
-# else /* UTMPX_USE_LIBRARY */
+# ਨਹੀਂਤਾਂ /* UTMPX_USE_LIBRARY */
 
 /* write a utmp entry direct to the file */
-static int
-utmpx_write_direct(struct logininfo *li, struct utmpx *utx)
+ਸਥਿਰ ਪੂਰਨ
+utmpx_write_ਸਿੱਧਾ(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmpx *utx)
 {
 	logit_f("not implemented!");
-	return (0);
+	ਵਾਪਸ (0);
 }
 # endif /* UTMPX_USE_LIBRARY */
 
-static int
-utmpx_perform_login(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+utmpx_perform_login(ਬਣਤਰ logininfo *li)
 {
-	struct utmpx utx;
+	ਬਣਤਰ utmpx utx;
 
 	construct_utmpx(li, &utx);
 # ifdef UTMPX_USE_LIBRARY
-	if (!utmpx_write_library(li, &utx)) {
+	ਜੇ (!utmpx_write_library(li, &utx)) {
 		logit_f("utmp_write_library() failed");
-		return (0);
+		ਵਾਪਸ (0);
 	}
-# else
-	if (!utmpx_write_direct(li, &utx)) {
+# ਨਹੀਂਤਾਂ
+	ਜੇ (!utmpx_write_ਸਿੱਧਾ(li, &utx)) {
 		logit_f("utmp_write_direct() failed");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 # endif
-	return (1);
+	ਵਾਪਸ (1);
 }
 
 
-static int
-utmpx_perform_logout(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+utmpx_perform_logout(ਬਣਤਰ logininfo *li)
 {
-	struct utmpx utx;
+	ਬਣਤਰ utmpx utx;
 
 	construct_utmpx(li, &utx);
-# ifdef HAVE_ID_IN_UTMPX
-	line_abbrevname(utx.ut_id, li->line, sizeof(utx.ut_id));
+# ifdef HAVE_ID_ਵਿੱਚ_UTMPX
+	ਸਤਰ_abbrevname(utx.ut_id, li->ਸਤਰ, ਆਕਾਰ(utx.ut_id));
 # endif
-# ifdef HAVE_TYPE_IN_UTMPX
+# ifdef HAVE_TYPE_ਵਿੱਚ_UTMPX
 	utx.ut_type = DEAD_PROCESS;
 # endif
 
 # ifdef UTMPX_USE_LIBRARY
 	utmpx_write_library(li, &utx);
-# else
-	utmpx_write_direct(li, &utx);
+# ਨਹੀਂਤਾਂ
+	utmpx_write_ਸਿੱਧਾ(li, &utx);
 # endif
-	return (1);
+	ਵਾਪਸ (1);
 }
 
-int
-utmpx_write_entry(struct logininfo *li)
+ਪੂਰਨ
+utmpx_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	switch(li->type) {
-	case LTYPE_LOGIN:
-		return (utmpx_perform_login(li));
-	case LTYPE_LOGOUT:
-		return (utmpx_perform_logout(li));
-	default:
+	ਚੋਣ(li->type) {
+	ਹਾਲਤ LTYPE_LOGIN:
+		ਵਾਪਸ (utmpx_perform_login(li));
+	ਹਾਲਤ LTYPE_LOGOUT:
+		ਵਾਪਸ (utmpx_perform_logout(li));
+	ਮੂਲ:
 		logit_f("invalid type field");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 }
-#endif /* USE_UTMPX */
+#ਜੇ_ਅੰਤ /* USE_UTMPX */
 
 
 /**
  ** Low-level wtmp functions
  **/
 
-#ifdef USE_WTMP
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_WTMP
 
 /*
  * Write a wtmp entry direct to the end of the file
  * This is a slight modification of code in OpenBSD's logwtmp.c
  */
-static int
-wtmp_write(struct logininfo *li, struct utmp *ut)
+ਸਥਿਰ ਪੂਰਨ
+wtmp_write(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmp *ut)
 {
-	struct stat buf;
-	int fd, ret = 1;
+	ਬਣਤਰ stat buf;
+	ਪੂਰਨ fd, ret = 1;
 
-	if ((fd = open(WTMP_FILE, O_WRONLY|O_APPEND, 0)) < 0) {
+	ਜੇ ((fd = open(WTMP_FILE, O_WRONLY|O_APPEND, 0)) < 0) {
 		logit("%s: problem writing %s: %s", __func__,
 		    WTMP_FILE, strerror(errno));
-		return (0);
+		ਵਾਪਸ (0);
 	}
-	if (fstat(fd, &buf) == 0)
-		if (atomicio(vwrite, fd, ut, sizeof(*ut)) != sizeof(*ut)) {
+	ਜੇ (fstat(fd, &buf) == 0)
+		ਜੇ (atomicio(vwrite, fd, ut, ਆਕਾਰ(*ut)) != ਆਕਾਰ(*ut)) {
 			ftruncate(fd, buf.st_size);
 			logit("%s: problem writing %s: %s", __func__,
 			    WTMP_FILE, strerror(errno));
 			ret = 0;
 		}
 	close(fd);
-	return (ret);
+	ਵਾਪਸ (ret);
 }
 
-static int
-wtmp_perform_login(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+wtmp_perform_login(ਬਣਤਰ logininfo *li)
 {
-	struct utmp ut;
+	ਬਣਤਰ utmp ut;
 
 	construct_utmp(li, &ut);
-	return (wtmp_write(li, &ut));
+	ਵਾਪਸ (wtmp_write(li, &ut));
 }
 
 
-static int
-wtmp_perform_logout(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+wtmp_perform_logout(ਬਣਤਰ logininfo *li)
 {
-	struct utmp ut;
+	ਬਣਤਰ utmp ut;
 
 	construct_utmp(li, &ut);
-	return (wtmp_write(li, &ut));
+	ਵਾਪਸ (wtmp_write(li, &ut));
 }
 
 
-int
-wtmp_write_entry(struct logininfo *li)
+ਪੂਰਨ
+wtmp_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	switch(li->type) {
-	case LTYPE_LOGIN:
-		return (wtmp_perform_login(li));
-	case LTYPE_LOGOUT:
-		return (wtmp_perform_logout(li));
-	default:
+	ਚੋਣ(li->type) {
+	ਹਾਲਤ LTYPE_LOGIN:
+		ਵਾਪਸ (wtmp_perform_login(li));
+	ਹਾਲਤ LTYPE_LOGOUT:
+		ਵਾਪਸ (wtmp_perform_logout(li));
+	ਮੂਲ:
 		logit_f("invalid type field");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 }
 
@@ -1153,89 +1153,89 @@ wtmp_write_entry(struct logininfo *li)
  */
 
 /* return true if this wtmp entry indicates a login */
-static int
-wtmp_islogin(struct logininfo *li, struct utmp *ut)
+ਸਥਿਰ ਪੂਰਨ
+wtmp_islogin(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmp *ut)
 {
-	if (strncmp(li->username, ut->ut_name,
+	ਜੇ (ਲੜੀ_ਤੁਲਨਾ(li->username, ut->ut_name,
 	    MIN_SIZEOF(li->username, ut->ut_name)) == 0) {
-# ifdef HAVE_TYPE_IN_UTMP
-		if (ut->ut_type & USER_PROCESS)
-			return (1);
-# else
-		return (1);
+# ifdef HAVE_TYPE_ਵਿੱਚ_UTMP
+		ਜੇ (ut->ut_type & USER_PROCESS)
+			ਵਾਪਸ (1);
+# ਨਹੀਂਤਾਂ
+		ਵਾਪਸ (1);
 # endif
 	}
-	return (0);
+	ਵਾਪਸ (0);
 }
 
-int
-wtmp_get_entry(struct logininfo *li)
+ਪੂਰਨ
+wtmp_get_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	struct stat st;
-	struct utmp ut;
-	int fd, found = 0;
+	ਬਣਤਰ stat st;
+	ਬਣਤਰ utmp ut;
+	ਪੂਰਨ fd, ਮਿਲਿਆ = 0;
 
 	/* Clear the time entries in our logininfo */
 	li->tv_sec = li->tv_usec = 0;
 
-	if ((fd = open(WTMP_FILE, O_RDONLY)) < 0) {
+	ਜੇ ((fd = open(WTMP_FILE, O_RDONLY)) < 0) {
 		logit("%s: problem opening %s: %s", __func__,
 		    WTMP_FILE, strerror(errno));
-		return (0);
+		ਵਾਪਸ (0);
 	}
-	if (fstat(fd, &st) != 0) {
+	ਜੇ (fstat(fd, &st) != 0) {
 		logit("%s: couldn't stat %s: %s", __func__,
 		    WTMP_FILE, strerror(errno));
 		close(fd);
-		return (0);
+		ਵਾਪਸ (0);
 	}
 
 	/* Seek to the start of the last struct utmp */
-	if (lseek(fd, -(off_t)sizeof(struct utmp), SEEK_END) == -1) {
+	ਜੇ (lseek(fd, -(off_t)ਆਕਾਰ(ਬਣਤਰ utmp), SEEK_END) == -1) {
 		/* Looks like we've got a fresh wtmp file */
 		close(fd);
-		return (0);
+		ਵਾਪਸ (0);
 	}
 
-	while (!found) {
-		if (atomicio(read, fd, &ut, sizeof(ut)) != sizeof(ut)) {
+	ਜਦੋਂ (!ਮਿਲਿਆ) {
+		ਜੇ (atomicio(ਪਠ, fd, &ut, ਆਕਾਰ(ut)) != ਆਕਾਰ(ut)) {
 			logit("%s: read of %s failed: %s", __func__,
 			    WTMP_FILE, strerror(errno));
 			close (fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
-		if (wtmp_islogin(li, &ut) ) {
-			found = 1;
+		ਜੇ (wtmp_islogin(li, &ut) ) {
+			ਮਿਲਿਆ = 1;
 			/*
 			 * We've already checked for a time in struct
 			 * utmp, in login_getlast()
 			 */
-# ifdef HAVE_TIME_IN_UTMP
-			li->tv_sec = ut.ut_time;
-# else
-#  if HAVE_TV_IN_UTMP
+# ifdef HAVE_ਸਮਾਂ_ਵਿੱਚ_UTMP
+			li->tv_sec = ut.ut_ਸਮਾਂ;
+# ਨਹੀਂਤਾਂ
+#  ਜੇ HAVE_TV_ਵਿੱਚ_UTMP
 			li->tv_sec = ut.ut_tv.tv_sec;
 #  endif
 # endif
-			line_fullname(li->line, ut.ut_line,
-			    MIN_SIZEOF(li->line, ut.ut_line));
-# ifdef HAVE_HOST_IN_UTMP
+			ਸਤਰ_fullname(li->ਸਤਰ, ut.ut_ਸਤਰ,
+			    MIN_SIZEOF(li->ਸਤਰ, ut.ut_ਸਤਰ));
+# ifdef HAVE_HOST_ਵਿੱਚ_UTMP
 			strlcpy(li->hostname, ut.ut_host,
 			    MIN_SIZEOF(li->hostname, ut.ut_host));
 # endif
-			continue;
+			ਜਾਰੀ;
 		}
 		/* Seek back 2 x struct utmp */
-		if (lseek(fd, -(off_t)(2 * sizeof(struct utmp)), SEEK_CUR) == -1) {
+		ਜੇ (lseek(fd, -(off_t)(2 * ਆਕਾਰ(ਬਣਤਰ utmp)), SEEK_CUR) == -1) {
 			/* We've found the start of the file, so quit */
 			close(fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
 	}
 
 	/* We found an entry. Tidy up and return */
 	close(fd);
-	return (1);
+	ਵਾਪਸ (1);
 }
 # endif /* USE_WTMP */
 
@@ -1244,26 +1244,26 @@ wtmp_get_entry(struct logininfo *li)
  ** Low-level wtmpx functions
  **/
 
-#ifdef USE_WTMPX
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_WTMPX
 /*
  * Write a wtmpx entry direct to the end of the file
  * This is a slight modification of code in OpenBSD's logwtmp.c
  */
-static int
-wtmpx_write(struct logininfo *li, struct utmpx *utx)
+ਸਥਿਰ ਪੂਰਨ
+wtmpx_write(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmpx *utx)
 {
-#ifndef HAVE_UPDWTMPX
-	struct stat buf;
-	int fd, ret = 1;
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_UPDWTMPX
+	ਬਣਤਰ stat buf;
+	ਪੂਰਨ fd, ret = 1;
 
-	if ((fd = open(WTMPX_FILE, O_WRONLY|O_APPEND, 0)) < 0) {
+	ਜੇ ((fd = open(WTMPX_FILE, O_WRONLY|O_APPEND, 0)) < 0) {
 		logit("%s: problem opening %s: %s", __func__,
 		    WTMPX_FILE, strerror(errno));
-		return (0);
+		ਵਾਪਸ (0);
 	}
 
-	if (fstat(fd, &buf) == 0)
-		if (atomicio(vwrite, fd, utx, sizeof(*utx)) != sizeof(*utx)) {
+	ਜੇ (fstat(fd, &buf) == 0)
+		ਜੇ (atomicio(vwrite, fd, utx, ਆਕਾਰ(*utx)) != ਆਕਾਰ(*utx)) {
 			ftruncate(fd, buf.st_size);
 			logit("%s: problem writing %s: %s", __func__,
 			    WTMPX_FILE, strerror(errno));
@@ -1271,45 +1271,45 @@ wtmpx_write(struct logininfo *li, struct utmpx *utx)
 		}
 	close(fd);
 
-	return (ret);
-#else
+	ਵਾਪਸ (ret);
+#ਨਹੀਂਤਾਂ
 	updwtmpx(WTMPX_FILE, utx);
-	return (1);
-#endif
+	ਵਾਪਸ (1);
+#ਜੇ_ਅੰਤ
 }
 
 
-static int
-wtmpx_perform_login(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+wtmpx_perform_login(ਬਣਤਰ logininfo *li)
 {
-	struct utmpx utx;
+	ਬਣਤਰ utmpx utx;
 
 	construct_utmpx(li, &utx);
-	return (wtmpx_write(li, &utx));
+	ਵਾਪਸ (wtmpx_write(li, &utx));
 }
 
 
-static int
-wtmpx_perform_logout(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+wtmpx_perform_logout(ਬਣਤਰ logininfo *li)
 {
-	struct utmpx utx;
+	ਬਣਤਰ utmpx utx;
 
 	construct_utmpx(li, &utx);
-	return (wtmpx_write(li, &utx));
+	ਵਾਪਸ (wtmpx_write(li, &utx));
 }
 
 
-int
-wtmpx_write_entry(struct logininfo *li)
+ਪੂਰਨ
+wtmpx_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	switch(li->type) {
-	case LTYPE_LOGIN:
-		return (wtmpx_perform_login(li));
-	case LTYPE_LOGOUT:
-		return (wtmpx_perform_logout(li));
-	default:
+	ਚੋਣ(li->type) {
+	ਹਾਲਤ LTYPE_LOGIN:
+		ਵਾਪਸ (wtmpx_perform_login(li));
+	ਹਾਲਤ LTYPE_LOGOUT:
+		ਵਾਪਸ (wtmpx_perform_logout(li));
+	ਮੂਲ:
 		logit_f("invalid type field");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 }
 
@@ -1317,199 +1317,199 @@ wtmpx_write_entry(struct logininfo *li)
    next two functions */
 
 /* Return true if this wtmpx entry indicates a login */
-static int
-wtmpx_islogin(struct logininfo *li, struct utmpx *utx)
+ਸਥਿਰ ਪੂਰਨ
+wtmpx_islogin(ਬਣਤਰ logininfo *li, ਬਣਤਰ utmpx *utx)
 {
-	if (strncmp(li->username, utx->ut_user,
+	ਜੇ (ਲੜੀ_ਤੁਲਨਾ(li->username, utx->ut_user,
 	    MIN_SIZEOF(li->username, utx->ut_user)) == 0 ) {
-# ifdef HAVE_TYPE_IN_UTMPX
-		if (utx->ut_type == USER_PROCESS)
-			return (1);
-# else
-		return (1);
+# ifdef HAVE_TYPE_ਵਿੱਚ_UTMPX
+		ਜੇ (utx->ut_type == USER_PROCESS)
+			ਵਾਪਸ (1);
+# ਨਹੀਂਤਾਂ
+		ਵਾਪਸ (1);
 # endif
 	}
-	return (0);
+	ਵਾਪਸ (0);
 }
 
 
-int
-wtmpx_get_entry(struct logininfo *li)
+ਪੂਰਨ
+wtmpx_get_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	struct stat st;
-	struct utmpx utx;
-	int fd, found=0;
+	ਬਣਤਰ stat st;
+	ਬਣਤਰ utmpx utx;
+	ਪੂਰਨ fd, ਮਿਲਿਆ=0;
 
 	/* Clear the time entries */
 	li->tv_sec = li->tv_usec = 0;
 
-	if ((fd = open(WTMPX_FILE, O_RDONLY)) < 0) {
+	ਜੇ ((fd = open(WTMPX_FILE, O_RDONLY)) < 0) {
 		logit("%s: problem opening %s: %s", __func__,
 		    WTMPX_FILE, strerror(errno));
-		return (0);
+		ਵਾਪਸ (0);
 	}
-	if (fstat(fd, &st) != 0) {
+	ਜੇ (fstat(fd, &st) != 0) {
 		logit("%s: couldn't stat %s: %s", __func__,
 		    WTMPX_FILE, strerror(errno));
 		close(fd);
-		return (0);
+		ਵਾਪਸ (0);
 	}
 
 	/* Seek to the start of the last struct utmpx */
-	if (lseek(fd, -(off_t)sizeof(struct utmpx), SEEK_END) == -1 ) {
+	ਜੇ (lseek(fd, -(off_t)ਆਕਾਰ(ਬਣਤਰ utmpx), SEEK_END) == -1 ) {
 		/* probably a newly rotated wtmpx file */
 		close(fd);
-		return (0);
+		ਵਾਪਸ (0);
 	}
 
-	while (!found) {
-		if (atomicio(read, fd, &utx, sizeof(utx)) != sizeof(utx)) {
+	ਜਦੋਂ (!ਮਿਲਿਆ) {
+		ਜੇ (atomicio(ਪਠ, fd, &utx, ਆਕਾਰ(utx)) != ਆਕਾਰ(utx)) {
 			logit("%s: read of %s failed: %s", __func__,
 			    WTMPX_FILE, strerror(errno));
 			close (fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
 		/*
 		 * Logouts are recorded as a blank username on a particular
 		 * line. So, we just need to find the username in struct utmpx
 		 */
-		if (wtmpx_islogin(li, &utx)) {
-			found = 1;
-# if defined(HAVE_TV_IN_UTMPX)
+		ਜੇ (wtmpx_islogin(li, &utx)) {
+			ਮਿਲਿਆ = 1;
+# ਜੇ defined(HAVE_TV_ਵਿੱਚ_UTMPX)
 			li->tv_sec = utx.ut_tv.tv_sec;
-# elif defined(HAVE_TIME_IN_UTMPX)
-			li->tv_sec = utx.ut_time;
+# elif defined(HAVE_ਸਮਾਂ_ਵਿੱਚ_UTMPX)
+			li->tv_sec = utx.ut_ਸਮਾਂ;
 # endif
-			line_fullname(li->line, utx.ut_line, sizeof(li->line));
-# if defined(HAVE_HOST_IN_UTMPX)
+			ਸਤਰ_fullname(li->ਸਤਰ, utx.ut_ਸਤਰ, ਆਕਾਰ(li->ਸਤਰ));
+# ਜੇ defined(HAVE_HOST_ਵਿੱਚ_UTMPX)
 			strlcpy(li->hostname, utx.ut_host,
 			    MIN_SIZEOF(li->hostname, utx.ut_host));
 # endif
-			continue;
+			ਜਾਰੀ;
 		}
-		if (lseek(fd, -(off_t)(2 * sizeof(struct utmpx)), SEEK_CUR) == -1) {
+		ਜੇ (lseek(fd, -(off_t)(2 * ਆਕਾਰ(ਬਣਤਰ utmpx)), SEEK_CUR) == -1) {
 			close(fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
 	}
 
 	close(fd);
-	return (1);
+	ਵਾਪਸ (1);
 }
-#endif /* USE_WTMPX */
+#ਜੇ_ਅੰਤ /* USE_WTMPX */
 
-#ifdef USE_WTMPDB
-static int
-wtmpdb_perform_login(struct logininfo *li)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_WTMPDB
+ਸਥਿਰ ਪੂਰਨ
+wtmpdb_perform_login(ਬਣਤਰ logininfo *li)
 {
-	uint64_t login_time = li->tv_sec * ((uint64_t) 1000000ULL) +
+	uint64_t login_ਸਮਾਂ = li->tv_sec * ((uint64_t) 1000000ULL) +
 	    li->tv_usec;
-	const char *tty;
+	ਅਚਲ ਅੱਖਰ *tty;
 
-	if (strncmp(li->line, "/dev/", 5) == 0)
-		tty = &(li->line[5]);
-	else
-		tty = li->line;
+	ਜੇ (ਲੜੀ_ਤੁਲਨਾ(li->ਸਤਰ, "/dev/", 5) == 0)
+		tty = &(li->ਸਤਰ[5]);
+	ਨਹੀਂਤਾਂ
+		tty = li->ਸਤਰ;
 
-	li->wtmpdb_id = wtmpdb_login(NULL, USER_PROCESS, li->username,
-	    login_time, tty, li->hostname, 0, 0);
+	li->wtmpdb_id = wtmpdb_login(ਨਿਰਾ, USER_PROCESS, li->username,
+	    login_ਸਮਾਂ, tty, li->hostname, 0, 0);
 
-	if (li->wtmpdb_id < 0)
-		return (0);
+	ਜੇ (li->wtmpdb_id < 0)
+		ਵਾਪਸ (0);
 
-	return (1);
+	ਵਾਪਸ (1);
 }
 
-static int
-wtmpdb_perform_logout(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+wtmpdb_perform_logout(ਬਣਤਰ logininfo *li)
 {
-	uint64_t logout_time = li->tv_sec * ((uint64_t) 1000000ULL) +
+	uint64_t logout_ਸਮਾਂ = li->tv_sec * ((uint64_t) 1000000ULL) +
 	   li->tv_usec;
 
-	if (li->wtmpdb_id == 0) {
-		const char *tty;
+	ਜੇ (li->wtmpdb_id == 0) {
+		ਅਚਲ ਅੱਖਰ *tty;
 
-		if (strncmp(li->line, "/dev/", 5) == 0)
-			tty = &(li->line[5]);
-		else
-			tty = li->line;
+		ਜੇ (ਲੜੀ_ਤੁਲਨਾ(li->ਸਤਰ, "/dev/", 5) == 0)
+			tty = &(li->ਸਤਰ[5]);
+		ਨਹੀਂਤਾਂ
+			tty = li->ਸਤਰ;
 
-		li->wtmpdb_id = wtmpdb_get_id(NULL, tty, NULL);
+		li->wtmpdb_id = wtmpdb_get_id(ਨਿਰਾ, tty, ਨਿਰਾ);
 	}
-	wtmpdb_logout(NULL, li->wtmpdb_id, logout_time, NULL);
+	wtmpdb_logout(ਨਿਰਾ, li->wtmpdb_id, logout_ਸਮਾਂ, ਨਿਰਾ);
 
-	return (1);
+	ਵਾਪਸ (1);
 }
 
-int
-wtmpdb_write_entry(struct logininfo *li)
+ਪੂਰਨ
+wtmpdb_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	switch(li->type) {
-	case LTYPE_LOGIN:
-		return (wtmpdb_perform_login(li));
-	case LTYPE_LOGOUT:
-		return (wtmpdb_perform_logout(li));
-	default:
+	ਚੋਣ(li->type) {
+	ਹਾਲਤ LTYPE_LOGIN:
+		ਵਾਪਸ (wtmpdb_perform_login(li));
+	ਹਾਲਤ LTYPE_LOGOUT:
+		ਵਾਪਸ (wtmpdb_perform_logout(li));
+	ਮੂਲ:
 		logit_f("invalid type field");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 /**
  ** Low-level libutil login() functions
  **/
 
-#ifdef USE_LOGIN
-static int
-syslogin_perform_login(struct logininfo *li)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_LOGIN
+ਸਥਿਰ ਪੂਰਨ
+syslogin_perform_login(ਬਣਤਰ logininfo *li)
 {
-	struct utmp *ut;
+	ਬਣਤਰ utmp *ut;
 
-	ut = xmalloc(sizeof(*ut));
+	ut = xmalloc(ਆਕਾਰ(*ut));
 	construct_utmp(li, ut);
 	login(ut);
-	free(ut);
+	ਮੁਕਤ(ut);
 
-	return (1);
+	ਵਾਪਸ (1);
 }
 
-static int
-syslogin_perform_logout(struct logininfo *li)
+ਸਥਿਰ ਪੂਰਨ
+syslogin_perform_logout(ਬਣਤਰ logininfo *li)
 {
 # ifdef HAVE_LOGOUT
-	char line[UT_LINESIZE];
+	ਅੱਖਰ ਸਤਰ[UT_LINESIZE];
 
-	(void)line_stripname(line, li->line, sizeof(line));
+	(ਖਾਲੀ)ਸਤਰ_stripname(ਸਤਰ, li->ਸਤਰ, ਆਕਾਰ(ਸਤਰ));
 
-	if (!logout(line))
+	ਜੇ (!logout(ਸਤਰ))
 		logit_f("logout() returned an error");
 #  ifdef HAVE_LOGWTMP
-	else
-		logwtmp(line, "", "");
+	ਨਹੀਂਤਾਂ
+		logwtmp(ਸਤਰ, "", "");
 #  endif
 	/* FIXME: (ATL - if the need arises) What to do if we have
 	 * login, but no logout?  what if logout but no logwtmp? All
 	 * routines are in libutil so they should all be there,
 	 * but... */
 # endif
-	return (1);
+	ਵਾਪਸ (1);
 }
 
-int
-syslogin_write_entry(struct logininfo *li)
+ਪੂਰਨ
+syslogin_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	switch (li->type) {
-	case LTYPE_LOGIN:
-		return (syslogin_perform_login(li));
-	case LTYPE_LOGOUT:
-		return (syslogin_perform_logout(li));
-	default:
+	ਚੋਣ (li->type) {
+	ਹਾਲਤ LTYPE_LOGIN:
+		ਵਾਪਸ (syslogin_perform_login(li));
+	ਹਾਲਤ LTYPE_LOGOUT:
+		ਵਾਪਸ (syslogin_perform_logout(li));
+	ਮੂਲ:
 		logit_f("Invalid type field");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 }
-#endif /* USE_LOGIN */
+#ਜੇ_ਅੰਤ /* USE_LOGIN */
 
 /* end of file log-syslogin.c */
 
@@ -1517,242 +1517,242 @@ syslogin_write_entry(struct logininfo *li)
  ** Low-level lastlog functions
  **/
 
-#ifdef USE_LASTLOG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_LASTLOG
 
-#if !defined(LASTLOG_WRITE_PUTUTXLINE) || !defined(HAVE_GETLASTLOGXBYNAME)
+#ਜੇ !defined(LASTLOG_WRITE_PUTUTXLINE) || !defined(HAVE_GETLASTLOGXBYNAME)
 /* open the file (using filemode) and seek to the login entry */
-static int
-lastlog_openseek(struct logininfo *li, int *fd, int filemode)
+ਸਥਿਰ ਪੂਰਨ
+lastlog_openseek(ਬਣਤਰ logininfo *li, ਪੂਰਨ *fd, ਪੂਰਨ filemode)
 {
-	off_t offset;
-	char lastlog_file[1024];
-	struct stat st;
+	off_t ਵਿੱਥ;
+	ਅੱਖਰ lastlog_file[1024];
+	ਬਣਤਰ stat st;
 
-	if (stat(LASTLOG_FILE, &st) != 0) {
+	ਜੇ (stat(LASTLOG_FILE, &st) != 0) {
 		logit("%s: Couldn't stat %s: %s", __func__,
 		    LASTLOG_FILE, strerror(errno));
-		return (0);
+		ਵਾਪਸ (0);
 	}
-	if (S_ISDIR(st.st_mode)) {
-		snprintf(lastlog_file, sizeof(lastlog_file), "%s/%s",
+	ਜੇ (S_ISDIR(st.st_mode)) {
+		snprintf(lastlog_file, ਆਕਾਰ(lastlog_file), "%s/%s",
 		    LASTLOG_FILE, li->username);
-	} else if (S_ISREG(st.st_mode)) {
-		strlcpy(lastlog_file, LASTLOG_FILE, sizeof(lastlog_file));
-	} else {
+	} ਨਹੀਂਤਾਂ ਜੇ (S_ISREG(st.st_mode)) {
+		strlcpy(lastlog_file, LASTLOG_FILE, ਆਕਾਰ(lastlog_file));
+	} ਨਹੀਂਤਾਂ {
 		logit("%s: %.100s is not a file or directory!", __func__,
 		    LASTLOG_FILE);
-		return (0);
+		ਵਾਪਸ (0);
 	}
 
 	*fd = open(lastlog_file, filemode, 0600);
-	if (*fd < 0) {
+	ਜੇ (*fd < 0) {
 		debug("%s: Couldn't open %s: %s", __func__,
 		    lastlog_file, strerror(errno));
-		return (0);
+		ਵਾਪਸ (0);
 	}
 
-	if (S_ISREG(st.st_mode)) {
+	ਜੇ (S_ISREG(st.st_mode)) {
 		/* find this uid's offset in the lastlog file */
-		offset = (off_t) ((u_long)li->uid * sizeof(struct lastlog));
+		ਵਿੱਥ = (off_t) ((u_long)li->uid * ਆਕਾਰ(ਬਣਤਰ lastlog));
 
-		if (lseek(*fd, offset, SEEK_SET) != offset) {
+		ਜੇ (lseek(*fd, ਵਿੱਥ, SEEK_SET) != ਵਿੱਥ) {
 			logit("%s: %s->lseek(): %s", __func__,
 			    lastlog_file, strerror(errno));
 			close(*fd);
-			return (0);
+			ਵਾਪਸ (0);
 		}
 	}
 
-	return (1);
+	ਵਾਪਸ (1);
 }
-#endif /* !LASTLOG_WRITE_PUTUTXLINE || !HAVE_GETLASTLOGXBYNAME */
+#ਜੇ_ਅੰਤ /* !LASTLOG_WRITE_PUTUTXLINE || !HAVE_GETLASTLOGXBYNAME */
 
-#ifdef LASTLOG_WRITE_PUTUTXLINE
-int
-lastlog_write_entry(struct logininfo *li)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ LASTLOG_WRITE_PUTUTXLINE
+ਪੂਰਨ
+lastlog_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	switch(li->type) {
-	case LTYPE_LOGIN:
-		return 1; /* lastlog written by pututxline */
-	default:
+	ਚੋਣ(li->type) {
+	ਹਾਲਤ LTYPE_LOGIN:
+		ਵਾਪਸ 1; /* lastlog written by pututxline */
+	ਮੂਲ:
 		logit("lastlog_write_entry: Invalid type field");
-		return 0;
+		ਵਾਪਸ 0;
 	}
 }
-#else /* LASTLOG_WRITE_PUTUTXLINE */
-int
-lastlog_write_entry(struct logininfo *li)
+#ਨਹੀਂਤਾਂ /* LASTLOG_WRITE_PUTUTXLINE */
+ਪੂਰਨ
+lastlog_write_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	struct lastlog last;
-	int fd;
+	ਬਣਤਰ lastlog ਆਖਰੀ;
+	ਪੂਰਨ fd;
 
-	switch(li->type) {
-	case LTYPE_LOGIN:
+	ਚੋਣ(li->type) {
+	ਹਾਲਤ LTYPE_LOGIN:
 		/* create our struct lastlog */
-		memset(&last, '\0', sizeof(last));
-		line_stripname(last.ll_line, li->line, sizeof(last.ll_line));
-		strlcpy(last.ll_host, li->hostname,
-		    MIN_SIZEOF(last.ll_host, li->hostname));
-		last.ll_time = li->tv_sec;
+		memset(&ਆਖਰੀ, '\0', ਆਕਾਰ(ਆਖਰੀ));
+		ਸਤਰ_stripname(ਆਖਰੀ.ll_ਸਤਰ, li->ਸਤਰ, ਆਕਾਰ(ਆਖਰੀ.ll_ਸਤਰ));
+		strlcpy(ਆਖਰੀ.ll_host, li->hostname,
+		    MIN_SIZEOF(ਆਖਰੀ.ll_host, li->hostname));
+		ਆਖਰੀ.ll_ਸਮਾਂ = li->tv_sec;
 
-		if (!lastlog_openseek(li, &fd, O_RDWR|O_CREAT))
-			return (0);
+		ਜੇ (!lastlog_openseek(li, &fd, O_RDWR|O_CREAT))
+			ਵਾਪਸ (0);
 
 		/* write the entry */
-		if (atomicio(vwrite, fd, &last, sizeof(last)) != sizeof(last)) {
+		ਜੇ (atomicio(vwrite, fd, &ਆਖਰੀ, ਆਕਾਰ(ਆਖਰੀ)) != ਆਕਾਰ(ਆਖਰੀ)) {
 			close(fd);
 			logit("%s: Error writing to %s: %s", __func__,
 			    LASTLOG_FILE, strerror(errno));
-			return (0);
+			ਵਾਪਸ (0);
 		}
 
 		close(fd);
-		return (1);
-	default:
+		ਵਾਪਸ (1);
+	ਮੂਲ:
 		logit_f("Invalid type field");
-		return (0);
+		ਵਾਪਸ (0);
 	}
 }
-#endif /* LASTLOG_WRITE_PUTUTXLINE */
+#ਜੇ_ਅੰਤ /* LASTLOG_WRITE_PUTUTXLINE */
 
-#ifdef HAVE_GETLASTLOGXBYNAME
-int
-lastlog_get_entry(struct logininfo *li)
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_GETLASTLOGXBYNAME
+ਪੂਰਨ
+lastlog_get_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	struct lastlogx l, *ll;
+	ਬਣਤਰ lastlogx l, *ll;
 
-	if ((ll = getlastlogxbyname(li->username, &l)) == NULL) {
-		memset(&l, '\0', sizeof(l));
+	ਜੇ ((ll = getlastlogxbyname(li->username, &l)) == ਨਿਰਾ) {
+		memset(&l, '\0', ਆਕਾਰ(l));
 		ll = &l;
 	}
-	line_fullname(li->line, ll->ll_line, sizeof(li->line));
+	ਸਤਰ_fullname(li->ਸਤਰ, ll->ll_ਸਤਰ, ਆਕਾਰ(li->ਸਤਰ));
 	strlcpy(li->hostname, ll->ll_host,
 		MIN_SIZEOF(li->hostname, ll->ll_host));
 	li->tv_sec = ll->ll_tv.tv_sec;
 	li->tv_usec = ll->ll_tv.tv_usec;
-	return (1);
+	ਵਾਪਸ (1);
 }
-#else /* HAVE_GETLASTLOGXBYNAME */
-int
-lastlog_get_entry(struct logininfo *li)
+#ਨਹੀਂਤਾਂ /* HAVE_GETLASTLOGXBYNAME */
+ਪੂਰਨ
+lastlog_get_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	struct lastlog last;
-	int fd, ret;
+	ਬਣਤਰ lastlog ਆਖਰੀ;
+	ਪੂਰਨ fd, ret;
 
-	if (!lastlog_openseek(li, &fd, O_RDONLY))
-		return (0);
+	ਜੇ (!lastlog_openseek(li, &fd, O_RDONLY))
+		ਵਾਪਸ (0);
 
-	ret = atomicio(read, fd, &last, sizeof(last));
+	ret = atomicio(ਪਠ, fd, &ਆਖਰੀ, ਆਕਾਰ(ਆਖਰੀ));
 	close(fd);
 
-	switch (ret) {
-	case 0:
-		memset(&last, '\0', sizeof(last));
+	ਚੋਣ (ret) {
+	ਹਾਲਤ 0:
+		memset(&ਆਖਰੀ, '\0', ਆਕਾਰ(ਆਖਰੀ));
 		/* FALLTHRU */
-	case sizeof(last):
-		line_fullname(li->line, last.ll_line, sizeof(li->line));
-		strlcpy(li->hostname, last.ll_host,
-		    MIN_SIZEOF(li->hostname, last.ll_host));
-		li->tv_sec = last.ll_time;
-		return (1);
-	case -1:
+	ਹਾਲਤ ਆਕਾਰ(ਆਖਰੀ):
+		ਸਤਰ_fullname(li->ਸਤਰ, ਆਖਰੀ.ll_ਸਤਰ, ਆਕਾਰ(li->ਸਤਰ));
+		strlcpy(li->hostname, ਆਖਰੀ.ll_host,
+		    MIN_SIZEOF(li->hostname, ਆਖਰੀ.ll_host));
+		li->tv_sec = ਆਖਰੀ.ll_ਸਮਾਂ;
+		ਵਾਪਸ (1);
+	ਹਾਲਤ -1:
 		error("%s: Error reading from %s: %s", __func__,
 		    LASTLOG_FILE, strerror(errno));
-		return (0);
-	default:
+		ਵਾਪਸ (0);
+	ਮੂਲ:
 		error("%s: Error reading from %s: Expecting %d, got %d",
-		    __func__, LASTLOG_FILE, (int)sizeof(last), ret);
-		return (0);
+		    __func__, LASTLOG_FILE, (ਪੂਰਨ)ਆਕਾਰ(ਆਖਰੀ), ret);
+		ਵਾਪਸ (0);
 	}
 
 	/* NOTREACHED */
-	return (0);
+	ਵਾਪਸ (0);
 }
-#endif /* HAVE_GETLASTLOGXBYNAME */
-#endif /* USE_LASTLOG */
+#ਜੇ_ਅੰਤ /* HAVE_GETLASTLOGXBYNAME */
+#ਜੇ_ਅੰਤ /* USE_LASTLOG */
 
-#if defined(USE_UTMPX) && defined(HAVE_SETUTXDB) && \
+#ਜੇ defined(USE_UTMPX) && defined(HAVE_SETUTXDB) && \
     defined(UTXDB_LASTLOGIN) && defined(HAVE_GETUTXUSER)
-int
-utmpx_get_entry(struct logininfo *li)
+ਪੂਰਨ
+utmpx_get_ਇੰਦਰਾਜ(ਬਣਤਰ logininfo *li)
 {
-	struct utmpx *utx;
+	ਬਣਤਰ utmpx *utx;
 
-	if (setutxdb(UTXDB_LASTLOGIN, NULL) != 0)
-		return (0);
+	ਜੇ (setutxdb(UTXDB_LASTLOGIN, ਨਿਰਾ) != 0)
+		ਵਾਪਸ (0);
 	utx = getutxuser(li->username);
-	if (utx == NULL) {
+	ਜੇ (utx == ਨਿਰਾ) {
 		endutxent();
-		return (0);
+		ਵਾਪਸ (0);
 	}
 
-	line_fullname(li->line, utx->ut_line,
-	    MIN_SIZEOF(li->line, utx->ut_line));
+	ਸਤਰ_fullname(li->ਸਤਰ, utx->ut_ਸਤਰ,
+	    MIN_SIZEOF(li->ਸਤਰ, utx->ut_ਸਤਰ));
 	strlcpy(li->hostname, utx->ut_host,
 	    MIN_SIZEOF(li->hostname, utx->ut_host));
 	li->tv_sec = utx->ut_tv.tv_sec;
 	li->tv_usec = utx->ut_tv.tv_usec;
 	endutxent();
-	return (1);
+	ਵਾਪਸ (1);
 }
-#endif /* USE_UTMPX && HAVE_SETUTXDB && UTXDB_LASTLOGIN && HAVE_GETUTXUSER */
+#ਜੇ_ਅੰਤ /* USE_UTMPX && HAVE_SETUTXDB && UTXDB_LASTLOGIN && HAVE_GETUTXUSER */
 
-#ifdef USE_BTMP
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ USE_BTMP
 /*
  * Logs failed login attempts in _PATH_BTMP if that exists.
  * The most common login failure is to give password instead of username.
  * So the _PATH_BTMP file is checked for the correct permission, so that only
  * root can read it.
  */
-void
-record_failed_login(struct ssh *ssh, const char *username, const char *hostname,
-    const char *ttyn)
+ਖਾਲੀ
+ਰਿਕਾਰਡ_failed_login(ਬਣਤਰ ssh *ssh, ਅਚਲ ਅੱਖਰ *username, ਅਚਲ ਅੱਖਰ *hostname,
+    ਅਚਲ ਅੱਖਰ *ttyn)
 {
-	int fd;
-	struct utmp ut;
-	struct logininfo li;
-	socklen_t fromlen = sizeof(li.hostaddr);
+	ਪੂਰਨ fd;
+	ਬਣਤਰ utmp ut;
+	ਬਣਤਰ logininfo li;
+	socklen_t fromlen = ਆਕਾਰ(li.hostaddr);
 	time_t t;
-	struct stat fst;
+	ਬਣਤਰ stat fst;
 
-	if (geteuid() != 0)
-		return;
-	if ((fd = open(_PATH_BTMP, O_WRONLY | O_APPEND)) < 0) {
-		debug("Unable to open the btmp file %s: %s", _PATH_BTMP,
+	ਜੇ (geteuid() != 0)
+		ਵਾਪਸ;
+	ਜੇ ((fd = open(ਰਸਤਾ_BTMP, O_WRONLY | O_APPEND)) < 0) {
+		debug("Unable to open the btmp file %s: %s", ਰਸਤਾ_BTMP,
 		    strerror(errno));
-		return;
+		ਵਾਪਸ;
 	}
-	if (fstat(fd, &fst) < 0) {
-		logit("%s: fstat of %s failed: %s", __func__, _PATH_BTMP,
+	ਜੇ (fstat(fd, &fst) < 0) {
+		logit("%s: fstat of %s failed: %s", __func__, ਰਸਤਾ_BTMP,
 		    strerror(errno));
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((fst.st_mode & (S_IXGRP | S_IRWXO)) || fst.st_uid != 0) {
+	ਜੇ ((fst.st_mode & (S_IXGRP | S_IRWXO)) || fst.st_uid != 0) {
 		logit("Excess permission or bad ownership on file %s",
-		    _PATH_BTMP);
-		goto out;
+		    ਰਸਤਾ_BTMP);
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 
 	/* Construct a logininfo and turn it into a utmp */
-	memset(&li, 0, sizeof(li));
+	memset(&li, 0, ਆਕਾਰ(li));
 	li.type = LTYPE_FAILED;
 	li.pid = getpid();
-	strlcpy(li.line, "ssh:notty", sizeof(li.line));
-	strlcpy(li.username, username, sizeof(li.username));
-	strlcpy(li.hostname, hostname, sizeof(li.hostname));
+	strlcpy(li.ਸਤਰ, "ssh:notty", ਆਕਾਰ(li.ਸਤਰ));
+	strlcpy(li.username, username, ਆਕਾਰ(li.username));
+	strlcpy(li.hostname, hostname, ਆਕਾਰ(li.hostname));
 	time(&t);
-	li.tv_sec = t > 0 ? (unsigned long)t : 0;
-	if (ssh_packet_connection_is_on_socket(ssh)) {
-		(void)getpeername(ssh_packet_get_connection_in(ssh),
+	li.tv_sec = t > 0 ? (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)t : 0;
+	ਜੇ (ssh_packet_connection_is_on_socket(ssh)) {
+		(ਖਾਲੀ)getpeername(ssh_packet_get_connection_ਵਿੱਚ(ssh),
 		    &li.hostaddr.sa, &fromlen);
 	}
 	construct_utmp(&li, &ut);
 
-	if (atomicio(vwrite, fd, &ut, sizeof(ut)) != sizeof(ut)) {
-		error("Failed to write to %s: %s", _PATH_BTMP,
+	ਜੇ (atomicio(vwrite, fd, &ut, ਆਕਾਰ(ut)) != ਆਕਾਰ(ut)) {
+		error("Failed to write to %s: %s", ਰਸਤਾ_BTMP,
 		    strerror(errno));
 	}
-out:
+ਬਾਹਰਲਾ:
 	close(fd);
 }
-#endif	/* USE_BTMP */
+#ਜੇ_ਅੰਤ	/* USE_BTMP */

@@ -6,62 +6,62 @@
  * and placed in the public domain.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <locale.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <locale.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "../test_helper/test_helper.h"
 
-#include "utf8.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utf8.h"
 
-static void
-badarg(void)
+ਸਥਿਰ ਖਾਲੀ
+badarg(ਖਾਲੀ)
 {
-	char	 buf[16];
-	int	 len, width;
+	ਅੱਖਰ	 buf[16];
+	ਪੂਰਨ	 len, ਚੌੜਾਈ;
 
-	width = 1;
-	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	ਚੌੜਾਈ = 1;
+	TEST_ਸ਼ੁਰੂ("utf8_badarg");
+	len = snmprintf(buf, ਆਕਾਰ(buf), &ਚੌੜਾਈ, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
-	ASSERT_INT_EQ(width, 0);
-	TEST_DONE();
+	ASSERT_INT_EQ(ਚੌੜਾਈ, 0);
+	TEST_ਪੂਰਾ();
 }
 
-static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+ਸਥਿਰ ਖਾਲੀ
+one(ਪੂਰਨ utf8, ਅਚਲ ਅੱਖਰ *name, ਅਚਲ ਅੱਖਰ *mbs, ਪੂਰਨ ਚੌੜਾਈ,
+    ਪੂਰਨ wantwidth, ਪੂਰਨ wantlen, ਅਚਲ ਅੱਖਰ *ਚਾਹੁੰਦਾ)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	ਅੱਖਰ	 buf[16];
+	ਪੂਰਨ	*wp;
+	ਪੂਰਨ	 len;
 
-	if (wantlen == -2)
-		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
-	TEST_START(buf);
-	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	ਜੇ (wantlen == -2)
+		wantlen = ਲੜੀ_ਲੰਬਾਈ(ਚਾਹੁੰਦਾ);
+	(ਖਾਲੀ)strlcpy(buf, utf8 ? "utf8_" : "c_", ਆਕਾਰ(buf));
+	(ਖਾਲੀ)strlcat(buf, name, ਆਕਾਰ(buf));
+	TEST_ਸ਼ੁਰੂ(buf);
+	wp = wantwidth == -2 ? ਨਿਰਾ : &ਚੌੜਾਈ;
+	len = snmprintf(buf, ਆਕਾਰ(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
-	ASSERT_STRING_EQ(buf, wants);
-	ASSERT_INT_EQ(width, wantwidth);
-	TEST_DONE();
+	ASSERT_STRING_EQ(buf, ਚਾਹੁੰਦਾ);
+	ASSERT_INT_EQ(ਚੌੜਾਈ, wantwidth);
+	TEST_ਪੂਰਾ();
 }
 
-void
-tests(void)
+ਖਾਲੀ
+tests(ਖਾਲੀ)
 {
-	char	*loc;
+	ਅੱਖਰ	*loc;
 
-	TEST_START("utf8_setlocale");
+	TEST_ਸ਼ੁਰੂ("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");
-	ASSERT_PTR_NE(loc, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(loc, ਨਿਰਾ);
+	TEST_ਪੂਰਾ();
 
 	badarg();
 	one(1, "empty", "", 2, 0, 0, "");
@@ -80,10 +80,10 @@ tests(void)
 	one(1, "double_fit", "a\343\201\201", 3, 3, 4, "a\343\201\201");
 	one(1, "double_spc", "a\343\201\201", 4, 3, 4, "a\343\201\201");
 
-	TEST_START("C_setlocale");
+	TEST_ਸ਼ੁਰੂ("C_setlocale");
 	loc = setlocale(LC_CTYPE, "C");
-	ASSERT_PTR_NE(loc, NULL);
-	TEST_DONE();
+	ASSERT_PTR_NE(loc, ਨਿਰਾ);
+	TEST_ਪੂਰਾ();
 
 	badarg();
 	one(0, "empty", "", 2, 0, 0, "");
@@ -103,8 +103,8 @@ tests(void)
 	one(0, "double_spc", "a\343\201\201", 13, 13, 13, "a\\343\\201\\201");
 }
 
-void
-benchmarks(void)
+ਖਾਲੀ
+benchmarks(ਖਾਲੀ)
 {
-	printf("no benchmarks\n");
+	ਲਿਖੋ("no benchmarks\n");
 }

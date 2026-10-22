@@ -16,72 +16,72 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifndef SSH_RANDOM_DEV
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ SSH_RANDOM_DEV
 # define SSH_RANDOM_DEV "/dev/urandom"
-#endif /* SSH_RANDOM_DEV */
+#ਜੇ_ਅੰਤ /* SSH_RANDOM_DEV */
 
-#include <sys/types.h>
-#ifdef HAVE_SYS_RANDOM_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SYS_RANDOM_H
 # include <sys/random.h>
-#endif
+#ਜੇ_ਅੰਤ
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#ifdef WITH_OPENSSL
-#include <openssl/rand.h>
-#include <openssl/err.h>
-#endif
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/rand.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/err.h>
+#ਜੇ_ਅੰਤ
 
-#include "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
 
-int
-_ssh_compat_getentropy(void *s, size_t len)
+ਪੂਰਨ
+_ssh_compat_getentropy(ਖਾਲੀ *s, ਮਾਪ_t len)
 {
-#if defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
-	if (RAND_bytes(s, len) <= 0)
+#ਜੇ defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
+	ਜੇ (RAND_ਬਾਈਟਾਂ(s, len) <= 0)
 		fatal("Couldn't obtain random bytes (error 0x%lx)",
-		    (unsigned long)ERR_get_error());
-#else
-	int fd, save_errno;
+		    (ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)ERR_get_error());
+#ਨਹੀਂਤਾਂ
+	ਪੂਰਨ fd, save_errno;
 	ssize_t r;
-	size_t o = 0;
+	ਮਾਪ_t o = 0;
 
-#ifdef WITH_OPENSSL
-	if (RAND_bytes(s, len) == 1)
-		return 0;
-#endif
-#ifdef HAVE_GETENTROPY
-	if ((r = getentropy(s, len)) == 0)
-		return 0;
-#endif /* HAVE_GETENTROPY */
-#ifdef HAVE_GETRANDOM
-	if ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
-		return 0;
-#endif /* HAVE_GETRANDOM */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+	ਜੇ (RAND_ਬਾਈਟਾਂ(s, len) == 1)
+		ਵਾਪਸ 0;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_GETENTROPY
+	ਜੇ ((r = getentropy(s, len)) == 0)
+		ਵਾਪਸ 0;
+#ਜੇ_ਅੰਤ /* HAVE_GETENTROPY */
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_GETRANDOM
+	ਜੇ ((r = getrandom(s, len, 0)) > 0 && (ਮਾਪ_t)r == len)
+		ਵਾਪਸ 0;
+#ਜੇ_ਅੰਤ /* HAVE_GETRANDOM */
 
-	if ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
+	ਜੇ ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
 		save_errno = errno;
 		/* Try egd/prngd before giving up. */
-		if (seed_from_prngd(s, len) == 0)
-			return 0;
+		ਜੇ (ਬੀਜ_from_prngd(s, len) == 0)
+			ਵਾਪਸ 0;
 		fatal("Couldn't open %s: %s", SSH_RANDOM_DEV,
 		    strerror(save_errno));
 	}
-	while (o < len) {
-		r = read(fd, (u_char *)s + o, len - o);
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR ||
+	ਜਦੋਂ (o < len) {
+		r = ਪਠ(fd, (u_char *)s + o, len - o);
+		ਜੇ (r < 0) {
+			ਜੇ (errno == EAGAIN || errno == EINTR ||
 			    errno == EWOULDBLOCK)
-				continue;
+				ਜਾਰੀ;
 			fatal("read %s: %s", SSH_RANDOM_DEV, strerror(errno));
 		}
 		o += r;
 	}
 	close(fd);
-#endif /* WITH_OPENSSL */
-	return 0;
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */
+	ਵਾਪਸ 0;
 }

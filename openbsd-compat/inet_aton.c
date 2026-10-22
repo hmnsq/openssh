@@ -51,30 +51,30 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_addr.c */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#if !defined(HAVE_INET_ATON)
+#ਜੇ !defined(HAVE_INET_ATON)
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <ctype.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/in.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <arpa/inet.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <ctype.h>
 
-#if 0
+#ਜੇ 0
 /*
  * Ascii internet address interpretation routine.
  * The value returned is in network order.
  */
 in_addr_t
-inet_addr(const char *cp)
+inet_addr(ਅਚਲ ਅੱਖਰ *cp)
 {
-	struct in_addr val;
+	ਬਣਤਰ in_addr val;
 
-	if (inet_aton(cp, &val))
-		return (val.s_addr);
-	return (INADDR_NONE);
+	ਜੇ (inet_aton(cp, &val))
+		ਵਾਪਸ (val.s_addr);
+	ਵਾਪਸ (INADDR_NONE);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
 /*
  * Check whether "cp" is a valid ascii representation
@@ -83,96 +83,96 @@ inet_addr(const char *cp)
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int
-inet_aton(const char *cp, struct in_addr *addr)
+ਪੂਰਨ
+inet_aton(ਅਚਲ ਅੱਖਰ *cp, ਬਣਤਰ in_addr *addr)
 {
 	u_int32_t val;
-	int base, n;
-	char c;
+	ਪੂਰਨ ਅਧਾਰ, n;
+	ਅੱਖਰ c;
 	u_int parts[4];
 	u_int *pp = parts;
 
 	c = *cp;
-	for (;;) {
+	ਲਈ (;;) {
 		/*
 		 * Collect number up to ``.''.
 		 * Values are specified as for C:
 		 * 0x=hex, 0=octal, isdigit=decimal.
 		 */
-		if (!isdigit(c))
-			return (0);
-		val = 0; base = 10;
-		if (c == '0') {
+		ਜੇ (!ਅੰਕ_ਹੈ(c))
+			ਵਾਪਸ (0);
+		val = 0; ਅਧਾਰ = 10;
+		ਜੇ (c == '0') {
 			c = *++cp;
-			if (c == 'x' || c == 'X')
-				base = 16, c = *++cp;
-			else
-				base = 8;
+			ਜੇ (c == 'x' || c == 'X')
+				ਅਧਾਰ = 16, c = *++cp;
+			ਨਹੀਂਤਾਂ
+				ਅਧਾਰ = 8;
 		}
-		for (;;) {
-			if (isascii(c) && isdigit(c)) {
-				val = (val * base) + (c - '0');
+		ਲਈ (;;) {
+			ਜੇ (isascii(c) && ਅੰਕ_ਹੈ(c)) {
+				val = (val * ਅਧਾਰ) + (c - '0');
 				c = *++cp;
-			} else if (base == 16 && isascii(c) && isxdigit(c)) {
+			} ਨਹੀਂਤਾਂ ਜੇ (ਅਧਾਰ == 16 && isascii(c) && isxdigit(c)) {
 				val = (val << 4) |
 					(c + 10 - (islower(c) ? 'a' : 'A'));
 				c = *++cp;
-			} else
-				break;
+			} ਨਹੀਂਤਾਂ
+				ਰੋਕੋ;
 		}
-		if (c == '.') {
+		ਜੇ (c == '.') {
 			/*
 			 * Internet format:
 			 *	a.b.c.d
 			 *	a.b.c	(with c treated as 16 bits)
 			 *	a.b	(with b treated as 24 bits)
 			 */
-			if (pp >= parts + 3)
-				return (0);
+			ਜੇ (pp >= parts + 3)
+				ਵਾਪਸ (0);
 			*pp++ = val;
 			c = *++cp;
-		} else
-			break;
+		} ਨਹੀਂਤਾਂ
+			ਰੋਕੋ;
 	}
 	/*
 	 * Check for trailing characters.
 	 */
-	if (c != '\0' && (!isascii(c) || !isspace(c)))
-		return (0);
+	ਜੇ (c != '\0' && (!isascii(c) || !ਖਾਲੀ_ਥਾਂ_ਹੈ(c)))
+		ਵਾਪਸ (0);
 	/*
 	 * Concoct the address according to
 	 * the number of parts specified.
 	 */
 	n = pp - parts + 1;
-	switch (n) {
+	ਚੋਣ (n) {
 
-	case 0:
-		return (0);		/* initial nondigit */
+	ਹਾਲਤ 0:
+		ਵਾਪਸ (0);		/* initial nondigit */
 
-	case 1:				/* a -- 32 bits */
-		break;
+	ਹਾਲਤ 1:				/* a -- 32 bits */
+		ਰੋਕੋ;
 
-	case 2:				/* a.b -- 8.24 bits */
-		if ((val > 0xffffff) || (parts[0] > 0xff))
-			return (0);
+	ਹਾਲਤ 2:				/* a.b -- 8.24 bits */
+		ਜੇ ((val > 0xffffff) || (parts[0] > 0xff))
+			ਵਾਪਸ (0);
 		val |= parts[0] << 24;
-		break;
+		ਰੋਕੋ;
 
-	case 3:				/* a.b.c -- 8.8.16 bits */
-		if ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
-			return (0);
+	ਹਾਲਤ 3:				/* a.b.c -- 8.8.16 bits */
+		ਜੇ ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
+			ਵਾਪਸ (0);
 		val |= (parts[0] << 24) | (parts[1] << 16);
-		break;
+		ਰੋਕੋ;
 
-	case 4:				/* a.b.c.d -- 8.8.8.8 bits */
-		if ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
-			return (0);
+	ਹਾਲਤ 4:				/* a.b.c.d -- 8.8.8.8 bits */
+		ਜੇ ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
+			ਵਾਪਸ (0);
 		val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
-		break;
+		ਰੋਕੋ;
 	}
-	if (addr)
+	ਜੇ (addr)
 		addr->s_addr = htonl(val);
-	return (1);
+	ਵਾਪਸ (1);
 }
 
-#endif /* !defined(HAVE_INET_ATON) */
+#ਜੇ_ਅੰਤ /* !defined(HAVE_INET_ATON) */

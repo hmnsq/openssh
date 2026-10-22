@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
-#undef malloc
-#undef calloc
-#undef realloc
+#ਅਨ੍ਤਰ੍ਭਾਵ "config.h"
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ ਸਮ੍ਰਿਤੀ_ਦਿਓ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
-rpl_malloc(size_t size)
+#ਜੇ defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+ਖਾਲੀ *
+rpl_malloc(ਮਾਪ_t ਮਾਪ)
 {
-	if (size == 0)
-		size = 1;
-	return malloc(size);
+	ਜੇ (ਮਾਪ == 0)
+		ਮਾਪ = 1;
+	ਵਾਪਸ ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਮਾਪ);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
-rpl_calloc(size_t nmemb, size_t size)
+#ਜੇ defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+ਖਾਲੀ *
+rpl_calloc(ਮਾਪ_t nmemb, ਮਾਪ_t ਮਾਪ)
 {
-	if (nmemb == 0)
+	ਜੇ (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
-		size = 1;
-	return calloc(nmemb, size);
+	ਜੇ (ਮਾਪ == 0)
+		ਮਾਪ = 1;
+	ਵਾਪਸ ਸਿਫਰ_ਸਮ੍ਰਿਤੀ_ਦਿਓ(nmemb, ਮਾਪ);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#ਜੇ defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+ਖਾਲੀ *
+rpl_realloc(ਖਾਲੀ *ptr, ਮਾਪ_t ਮਾਪ)
 {
-	if (size == 0)
-		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	ਜੇ (ਮਾਪ == 0)
+		ਮਾਪ = 1;
+	ਜੇ (ptr == 0)
+		ਵਾਪਸ ਸਮ੍ਰਿਤੀ_ਦਿਓ(ਮਾਪ);
+	ਵਾਪਸ realloc(ptr, ਮਾਪ);
 }
-#endif
+#ਜੇ_ਅੰਤ

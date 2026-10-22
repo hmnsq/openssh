@@ -1,54 +1,54 @@
 // libfuzzer driver for krl parse fuzzing.
 
-#include <stddef.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stddef.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "krl.h"
-#include "log.h"
-#include "authfile.h"
+ਬਾਹਰੀ "C" {
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshkey.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "krl.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "authfile.h"
 }
 
-static int initialised = 0;
-static FILE *null_file;
-static struct sshkey *key = NULL;
+ਸਥਿਰ ਪੂਰਨ initialised = 0;
+ਸਥਿਰ FILE *null_file;
+ਸਥਿਰ ਬਣਤਰ sshkey *ਕੁੰਜੀ = ਨਿਰਾ;
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+ਬਾਹਰੀ "C" ਪੂਰਨ LLVMFuzzer_Test_One_ਨਿਵੇਸ਼(ਅਚਲ uint8_t *ਅੰਕੜੇ, ਮਾਪ_t ਮਾਪ) {
     // single initialisation
-    if (!initialised) {
+    ਜੇ (!initialised) {
         log_init("krl_fuzz", SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 
-        if ((null_file = fopen("/dev/null", "w")) == NULL) return 0;
+        ਜੇ ((null_file = fopen("/dev/null", "w")) == ਨਿਰਾ) ਵਾਪਸ 0;
 
-        if (sshkey_generate(KEY_ED25519, 0, &key) != 0) return 0;
+        ਜੇ (sshkey_generate(ਕੁੰਜੀ_ED25519, 0, &ਕੁੰਜੀ) != 0) ਵਾਪਸ 0;
 
         initialised = 1;
     }
 
     // Reject empty corpus
-    if (size < 4) return 0;
+    ਜੇ (ਮਾਪ < 4) ਵਾਪਸ 0;
 
     // Convert fuzzer data to ssh buffer
-    struct sshbuf *buf = sshbuf_from(data, size);
-    if (!buf) return 0;
+    ਬਣਤਰ sshbuf *buf = sshbuf_from(ਅੰਕੜੇ, ਮਾਪ);
+    ਜੇ (!buf) ਵਾਪਸ 0;
 
     // Parse the ssh buffer as krl, early exit if failed
-    struct ssh_krl *krl = NULL;
-    int ret = ssh_krl_from_blob(buf, &krl);
+    ਬਣਤਰ ssh_krl *krl = ਨਿਰਾ;
+    ਪੂਰਨ ret = ssh_krl_from_blob(buf, &krl);
     sshbuf_free(buf);
-    if (ret != 0) return 0;
+    ਜੇ (ret != 0) ਵਾਪਸ 0;
 
     // Fuzz serailisation roundtrip
-    struct sshbuf *output = sshbuf_new();
-    struct ssh_krl *krl2 = NULL;
-    ssh_krl_to_blob(krl, output);
+    ਬਣਤਰ sshbuf *output = sshbuf_new();
+    ਬਣਤਰ ssh_krl *krl2 = ਨਿਰਾ;
+    ssh_krl_ਮੰਜ਼ਿਲ_blob(krl, output);
     ssh_krl_from_blob(output, &krl2);
     ssh_krl_free(krl2);
     sshbuf_free(output);
@@ -57,8 +57,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     krl_dump(krl, null_file);
 
     // Fuzz ssh_krl_check_key
-    ssh_krl_check_key(krl, key);
+    ssh_krl_check_ਕੁੰਜੀ(krl, ਕੁੰਜੀ);
 
     ssh_krl_free(krl);
-    return 0;
+    ਵਾਪਸ 0;
 }

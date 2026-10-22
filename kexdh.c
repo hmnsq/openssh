@@ -23,179 +23,179 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
+#ਅਨ੍ਤਰ੍ਭਾਵ "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/bn.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/dh.h>
 
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "dh.h"
-#include "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "kex.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "dh.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
 
-int
-kex_dh_keygen(struct kex *kex)
+ਪੂਰਨ
+kex_dh_keygen(ਬਣਤਰ kex *kex)
 {
-	switch (kex->kex_type) {
-	case KEX_DH_GRP1_SHA1:
+	ਚੋਣ (kex->kex_type) {
+	ਹਾਲਤ KEX_DH_GRP1_SHA1:
 		kex->dh = dh_new_group1();
-		break;
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
+		ਰੋਕੋ;
+	ਹਾਲਤ KEX_DH_GRP14_SHA1:
+	ਹਾਲਤ KEX_DH_GRP14_SHA256:
 		kex->dh = dh_new_group14();
-		break;
-	case KEX_DH_GRP16_SHA512:
+		ਰੋਕੋ;
+	ਹਾਲਤ KEX_DH_GRP16_SHA512:
 		kex->dh = dh_new_group16();
-		break;
-	case KEX_DH_GRP18_SHA512:
+		ਰੋਕੋ;
+	ਹਾਲਤ KEX_DH_GRP18_SHA512:
 		kex->dh = dh_new_group18();
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		ਰੋਕੋ;
+	ਮੂਲ:
+		ਵਾਪਸ SSH_ERR_INVALID_ਦਲੀਲ;
 	}
-	if (kex->dh == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return (dh_gen_key(kex->dh, kex->we_need * 8));
+	ਜੇ (kex->dh == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਵਾਪਸ (dh_gen_ਕੁੰਜੀ(kex->dh, kex->we_need * 8));
 }
 
-int
-kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
+ਪੂਰਨ
+kex_dh_compute_ਕੁੰਜੀ(ਬਣਤਰ kex *kex, BIGNUM *dh_pub, ਬਣਤਰ sshbuf *ਬਾਹਰਲਾ)
 {
-	BIGNUM *shared_secret = NULL;
-	u_char *kbuf = NULL;
-	size_t klen = 0;
-	int kout, r;
+	BIGNUM *shared_secret = ਨਿਰਾ;
+	u_char *kbuf = ਨਿਰਾ;
+	ਮਾਪ_t klen = 0;
+	ਪੂਰਨ kout, r;
 
-#ifdef DEBUG_KEXDH
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_KEXDH
 	fprintf(stderr, "dh_pub= ");
 	BN_print_fp(stderr, dh_pub);
 	fprintf(stderr, "\n");
-	debug("bits %d", BN_num_bits(dh_pub));
+	debug("bits %d", BN_ਅੰਕ_ਬਿੱਟ(dh_pub));
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "\n");
-#endif
+#ਜੇ_ਅੰਤ
 
-	if (!dh_pub_is_valid(kex->dh, dh_pub)) {
-		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+	ਜੇ (!dh_pub_is_valid(kex->dh, dh_pub)) {
+		r = SSH_ERR_ਸੁਨੇਹਾ_INCOMPLETE;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	klen = DH_size(kex->dh);
-	if ((kbuf = malloc(klen)) == NULL ||
-	    (shared_secret = BN_new()) == NULL) {
+	klen = DH_ਮਾਪ(kex->dh);
+	ਜੇ ((kbuf = ਸਮ੍ਰਿਤੀ_ਦਿਓ(klen)) == ਨਿਰਾ ||
+	    (shared_secret = BN_new()) == ਨਿਰਾ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((kout = DH_compute_key(kbuf, dh_pub, kex->dh)) < 0 ||
-	    BN_bin2bn(kbuf, kout, shared_secret) == NULL) {
+	ਜੇ ((kout = DH_compute_ਕੁੰਜੀ(kbuf, dh_pub, kex->dh)) < 0 ||
+	    BN_bin2bn(kbuf, kout, shared_secret) == ਨਿਰਾ) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-#ifdef DEBUG_KEXDH
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_KEXDH
 	dump_digest("shared secret", kbuf, kout);
-#endif
-	r = sshbuf_put_bignum2(out, shared_secret);
- out:
+#ਜੇ_ਅੰਤ
+	r = sshbuf_put_bignum2(ਬਾਹਰਲਾ, shared_secret);
+ ਬਾਹਰਲਾ:
 	freezero(kbuf, klen);
 	BN_clear_free(shared_secret);
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-kex_dh_keypair(struct kex *kex)
+ਪੂਰਨ
+kex_dh_keypair(ਬਣਤਰ kex *kex)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	ਅਚਲ BIGNUM *pub_ਕੁੰਜੀ;
+	ਬਣਤਰ sshbuf *buf = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		return r;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_bignum2(buf, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
-#ifdef DEBUG_KEXDH
+	ਜੇ ((r = kex_dh_keygen(kex)) != 0)
+		ਵਾਪਸ r;
+	DH_get0_ਕੁੰਜੀ(kex->dh, &pub_ਕੁੰਜੀ, ਨਿਰਾ);
+	ਜੇ ((buf = sshbuf_new()) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਜੇ ((r = sshbuf_put_bignum2(buf, pub_ਕੁੰਜੀ)) != 0 ||
+	    (r = sshbuf_get_u32(buf, ਨਿਰਾ)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_KEXDH
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
+	BN_print_fp(stderr, pub_ਕੁੰਜੀ);
 	fprintf(stderr, "\n");
-#endif
+#ਜੇ_ਅੰਤ
 	kex->client_pub = buf;
-	buf = NULL;
- out:
+	buf = ਨਿਰਾ;
+ ਬਾਹਰਲਾ:
 	sshbuf_free(buf);
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+ਪੂਰਨ
+kex_dh_enc(ਬਣਤਰ kex *kex, ਅਚਲ ਬਣਤਰ sshbuf *client_blob,
+    ਬਣਤਰ sshbuf **server_blobp, ਬਣਤਰ sshbuf **shared_secretp)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	ਅਚਲ BIGNUM *pub_ਕੁੰਜੀ;
+	ਬਣਤਰ sshbuf *server_blob = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = ਨਿਰਾ;
+	*shared_secretp = ਨਿਰਾ;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	ਜੇ ((r = kex_dh_keygen(kex)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	DH_get0_ਕੁੰਜੀ(kex->dh, &pub_ਕੁੰਜੀ, ਨਿਰਾ);
+	ਜੇ ((server_blob = sshbuf_new()) == ਨਿਰਾ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((r = sshbuf_put_bignum2(server_blob, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
-		goto out;
+	ਜੇ ((r = sshbuf_put_bignum2(server_blob, pub_ਕੁੰਜੀ)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, ਨਿਰਾ)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	ਜੇ ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
 	*server_blobp = server_blob;
-	server_blob = NULL;
- out:
+	server_blob = ਨਿਰਾ;
+ ਬਾਹਰਲਾ:
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = ਨਿਰਾ;
 	sshbuf_free(server_blob);
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-kex_dh_dec(struct kex *kex, const struct sshbuf *dh_blob,
-    struct sshbuf **shared_secretp)
+ਪੂਰਨ
+kex_dh_dec(ਬਣਤਰ kex *kex, ਅਚਲ ਬਣਤਰ sshbuf *dh_blob,
+    ਬਣਤਰ sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *dh_pub = NULL;
-	int r;
+	ਬਣਤਰ sshbuf *buf = ਨਿਰਾ;
+	BIGNUM *dh_pub = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = ਨਿਰਾ;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	ਜੇ ((buf = sshbuf_new()) == ਨਿਰਾ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
+	ਜੇ ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
 	    (r = sshbuf_get_bignum2(buf, &dh_pub)) != 0)
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	sshbuf_reset(buf);
-	if ((r = kex_dh_compute_key(kex, dh_pub, buf)) != 0)
-		goto out;
+	ਜੇ ((r = kex_dh_compute_ਕੁੰਜੀ(kex, dh_pub, buf)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
 	*shared_secretp = buf;
-	buf = NULL;
- out:
+	buf = ਨਿਰਾ;
+ ਬਾਹਰਲਾ:
 	BN_free(dh_pub);
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = ਨਿਰਾ;
 	sshbuf_free(buf);
-	return r;
+	ਵਾਪਸ r;
 }
-#endif /* WITH_OPENSSL */
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */

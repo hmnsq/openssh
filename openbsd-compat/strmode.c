@@ -30,119 +30,119 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strmode.c */
 
-#include "includes.h"
-#ifndef HAVE_STRMODE
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_STRMODE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/stat.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
 /* XXX mode should be mode_t */
 
-void
-strmode(int mode, char *p)
+ਖਾਲੀ
+strmode(ਪੂਰਨ ਬਹੁਲਕ, ਅੱਖਰ *p)
 {
 	 /* print type */
-	switch (mode & S_IFMT) {
-	case S_IFDIR:			/* directory */
+	ਚੋਣ (ਬਹੁਲਕ & S_IFMT) {
+	ਹਾਲਤ S_IFDIR:			/* directory */
 		*p++ = 'd';
-		break;
-	case S_IFCHR:			/* character special */
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IFCHR:			/* character special */
 		*p++ = 'c';
-		break;
-	case S_IFBLK:			/* block special */
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IFBLK:			/* block special */
 		*p++ = 'b';
-		break;
-	case S_IFREG:			/* regular */
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IFREG:			/* regular */
 		*p++ = '-';
-		break;
-	case S_IFLNK:			/* symbolic link */
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
-		break;
-#ifdef S_IFSOCK
-	case S_IFSOCK:			/* socket */
+		ਰੋਕੋ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ S_IFSOCK
+	ਹਾਲਤ S_IFSOCK:			/* socket */
 		*p++ = 's';
-		break;
-#endif
-#ifdef S_IFIFO
-	case S_IFIFO:			/* fifo */
+		ਰੋਕੋ;
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ S_IFIFO
+	ਹਾਲਤ S_IFIFO:			/* fifo */
 		*p++ = 'p';
-		break;
-#endif
-	default:			/* unknown */
+		ਰੋਕੋ;
+#ਜੇ_ਅੰਤ
+	ਮੂਲ:			/* unknown */
 		*p++ = '?';
-		break;
+		ਰੋਕੋ;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	ਜੇ (ਬਹੁਲਕ & S_IRUSR)
 		*p++ = 'r';
-	else
+	ਨਹੀਂਤਾਂ
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	ਜੇ (ਬਹੁਲਕ & S_IWUSR)
 		*p++ = 'w';
-	else
+	ਨਹੀਂਤਾਂ
 		*p++ = '-';
-	switch (mode & (S_IXUSR | S_ISUID)) {
-	case 0:
+	ਚੋਣ (ਬਹੁਲਕ & (S_IXUSR | S_ISUID)) {
+	ਹਾਲਤ 0:
 		*p++ = '-';
-		break;
-	case S_IXUSR:
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IXUSR:
 		*p++ = 'x';
-		break;
-	case S_ISUID:
+		ਰੋਕੋ;
+	ਹਾਲਤ S_ISUID:
 		*p++ = 'S';
-		break;
-	case S_IXUSR | S_ISUID:
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IXUSR | S_ISUID:
 		*p++ = 's';
-		break;
+		ਰੋਕੋ;
 	}
-	/* group */
-	if (mode & S_IRGRP)
+	/*ਸਮੂਹ*/
+	ਜੇ (ਬਹੁਲਕ & S_IRGRP)
 		*p++ = 'r';
-	else
+	ਨਹੀਂਤਾਂ
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	ਜੇ (ਬਹੁਲਕ & S_IWGRP)
 		*p++ = 'w';
-	else
+	ਨਹੀਂਤਾਂ
 		*p++ = '-';
-	switch (mode & (S_IXGRP | S_ISGID)) {
-	case 0:
+	ਚੋਣ (ਬਹੁਲਕ & (S_IXGRP | S_ISGID)) {
+	ਹਾਲਤ 0:
 		*p++ = '-';
-		break;
-	case S_IXGRP:
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IXGRP:
 		*p++ = 'x';
-		break;
-	case S_ISGID:
+		ਰੋਕੋ;
+	ਹਾਲਤ S_ISGID:
 		*p++ = 'S';
-		break;
-	case S_IXGRP | S_ISGID:
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IXGRP | S_ISGID:
 		*p++ = 's';
-		break;
+		ਰੋਕੋ;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	ਜੇ (ਬਹੁਲਕ & S_IROTH)
 		*p++ = 'r';
-	else
+	ਨਹੀਂਤਾਂ
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	ਜੇ (ਬਹੁਲਕ & S_IWOTH)
 		*p++ = 'w';
-	else
+	ਨਹੀਂਤਾਂ
 		*p++ = '-';
-	switch (mode & (S_IXOTH | S_ISVTX)) {
-	case 0:
+	ਚੋਣ (ਬਹੁਲਕ & (S_IXOTH | S_ISVTX)) {
+	ਹਾਲਤ 0:
 		*p++ = '-';
-		break;
-	case S_IXOTH:
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IXOTH:
 		*p++ = 'x';
-		break;
-	case S_ISVTX:
+		ਰੋਕੋ;
+	ਹਾਲਤ S_ISVTX:
 		*p++ = 'T';
-		break;
-	case S_IXOTH | S_ISVTX:
+		ਰੋਕੋ;
+	ਹਾਲਤ S_IXOTH | S_ISVTX:
 		*p++ = 't';
-		break;
+		ਰੋਕੋ;
 	}
 	*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';
 }
-#endif
+#ਜੇ_ਅੰਤ

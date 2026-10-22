@@ -14,73 +14,73 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifdef WITH_OPENSSL
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_OPENSSL
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#include <openssl/evp.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <openssl/evp.h>
 
-#ifndef HAVE_EVP_CIPHER_CTX_GET_IV
-int
-EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx, unsigned char *iv, size_t len)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_EVP_CIPHER_CTX_GET_IV
+ਪੂਰਨ
+EVP_CIPHER_CTX_get_iv(ਅਚਲ EVP_CIPHER_CTX *ctx, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *iv, ਮਾਪ_t len)
 {
-	if (ctx == NULL)
-		return 0;
-	if (EVP_CIPHER_CTX_iv_length(ctx) < 0)
-		return 0;
-	if (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
-		return 0;
-	if (len > EVP_MAX_IV_LENGTH)
-		return 0; /* sanity check; shouldn't happen */
+	ਜੇ (ctx == ਨਿਰਾ)
+		ਵਾਪਸ 0;
+	ਜੇ (EVP_CIPHER_CTX_iv_ਲੰਮਾਈ(ctx) < 0)
+		ਵਾਪਸ 0;
+	ਜੇ (len != (ਮਾਪ_t)EVP_CIPHER_CTX_iv_ਲੰਮਾਈ(ctx))
+		ਵਾਪਸ 0;
+	ਜੇ (len > EVP_MAX_IV_ਲੰਮਾਈ)
+		ਵਾਪਸ 0; /* sanity check; shouldn't happen */
 	/*
 	 * Skip the memcpy entirely when the requested IV length is zero,
 	 * since the iv pointer may be NULL or invalid.
 	 */
-	if (len != 0) {
-		if (iv == NULL)
-			return 0;
+	ਜੇ (len != 0) {
+		ਜੇ (iv == ਨਿਰਾ)
+			ਵਾਪਸ 0;
 # ifdef HAVE_EVP_CIPHER_CTX_IV
-		memcpy(iv, EVP_CIPHER_CTX_iv(ctx), len);
-# else
-		memcpy(iv, ctx->iv, len);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(iv, EVP_CIPHER_CTX_iv(ctx), len);
+# ਨਹੀਂਤਾਂ
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(iv, ctx->iv, len);
 # endif /* HAVE_EVP_CIPHER_CTX_IV */
 	}
-	return 1;
+	ਵਾਪਸ 1;
 }
-#endif /* HAVE_EVP_CIPHER_CTX_GET_IV */
+#ਜੇ_ਅੰਤ /* HAVE_EVP_CIPHER_CTX_GET_IV */
 
-#ifndef HAVE_EVP_CIPHER_CTX_SET_IV
-int
-EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx, const unsigned char *iv, size_t len)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_EVP_CIPHER_CTX_ਸੈੱਟ_IV
+ਪੂਰਨ
+EVP_CIPHER_CTX_ਸੈੱਟ_iv(EVP_CIPHER_CTX *ctx, ਅਚਲ ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *iv, ਮਾਪ_t len)
 {
-	if (ctx == NULL)
-		return 0;
-	if (EVP_CIPHER_CTX_iv_length(ctx) < 0)
-		return 0;
-	if (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
-		return 0;
-	if (len > EVP_MAX_IV_LENGTH)
-		return 0; /* sanity check; shouldn't happen */
+	ਜੇ (ctx == ਨਿਰਾ)
+		ਵਾਪਸ 0;
+	ਜੇ (EVP_CIPHER_CTX_iv_ਲੰਮਾਈ(ctx) < 0)
+		ਵਾਪਸ 0;
+	ਜੇ (len != (ਮਾਪ_t)EVP_CIPHER_CTX_iv_ਲੰਮਾਈ(ctx))
+		ਵਾਪਸ 0;
+	ਜੇ (len > EVP_MAX_IV_ਲੰਮਾਈ)
+		ਵਾਪਸ 0; /* sanity check; shouldn't happen */
 	/*
 	 * Skip the memcpy entirely when the requested IV length is zero,
 	 * since the iv pointer may be NULL or invalid.
 	 */
-	if (len != 0) {
-		if (iv == NULL)
-			return 0;
+	ਜੇ (len != 0) {
+		ਜੇ (iv == ਨਿਰਾ)
+			ਵਾਪਸ 0;
 # ifdef HAVE_EVP_CIPHER_CTX_IV_NOCONST
-		memcpy(EVP_CIPHER_CTX_iv_noconst(ctx), iv, len);
-# else
-		memcpy(ctx->iv, iv, len);
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(EVP_CIPHER_CTX_iv_noconst(ctx), iv, len);
+# ਨਹੀਂਤਾਂ
+		ਸਮ੍ਰਿਤੀ_ਨਕਲ(ctx->iv, iv, len);
 # endif /* HAVE_EVP_CIPHER_CTX_IV_NOCONST */
 	}
-	return 1;
+	ਵਾਪਸ 1;
 }
-#endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
+#ਜੇ_ਅੰਤ /* HAVE_EVP_CIPHER_CTX_SET_IV */
 
-#endif /* WITH_OPENSSL */
+#ਜੇ_ਅੰਤ /* WITH_OPENSSL */

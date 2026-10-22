@@ -27,62 +27,62 @@
  * binary mode on Windows systems.
  */
 
-#define NO_BINARY_OPEN	/* Avoid redefining open to binary_open for this file */
-#include "includes.h"
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NO_ਦੁਆਧਾਰੀ_OPEN	/* Avoid redefining open to binary_open for this file */
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifdef HAVE_CYGWIN
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_CYGWIN
 
-#include <sys/types.h>
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <wchar.h>
-#include <wctype.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <fcntl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <wchar.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <wctype.h>
 
-#include "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
 
-int
-binary_open(const char *filename, int flags, ...)
+ਪੂਰਨ
+ਦੁਆਧਾਰੀ_open(ਅਚਲ ਅੱਖਰ *filename, ਪੂਰਨ flags, ...)
 {
 	va_list ap;
-	mode_t mode;
+	ਬਹੁਲਕ_t ਬਹੁਲਕ;
 
 	va_start(ap, flags);
-	mode = va_arg(ap, mode_t);
+	ਬਹੁਲਕ = va_arg(ap, ਬਹੁਲਕ_t);
 	va_end(ap);
-	return (open(filename, flags | O_BINARY, mode));
+	ਵਾਪਸ (open(filename, flags | O_ਦੁਆਧਾਰੀ, ਬਹੁਲਕ));
 }
 
-int
-check_ntsec(const char *filename)
+ਪੂਰਨ
+check_ntsec(ਅਚਲ ਅੱਖਰ *filename)
 {
-	return (pathconf(filename, _PC_POSIX_PERMISSIONS));
+	ਵਾਪਸ (pathconf(filename, _PC_POSIX_PERMISSIONS));
 }
 
-const char *
+ਅਚਲ ਅੱਖਰ *
 cygwin_ssh_privsep_user()
 {
-  static char cyg_privsep_user[DNLEN + UNLEN + 2];
+  ਸਥਿਰ ਅੱਖਰ cyg_privsep_user[DNLEN + UNLEN + 2];
 
-  if (!cyg_privsep_user[0])
+  ਜੇ (!cyg_privsep_user[0])
     {
-#ifdef CW_CYGNAME_FROM_WINNAME
-      if (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
-			   sizeof cyg_privsep_user) != 0)
-#endif
-	strlcpy(cyg_privsep_user, "sshd", sizeof(cyg_privsep_user));
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ CW_CYGNAME_FROM_WINNAME
+      ਜੇ (cygwin_ਅੰਦਰੂਨੀ (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
+			   ਆਕਾਰ cyg_privsep_user) != 0)
+#ਜੇ_ਅੰਤ
+	strlcpy(cyg_privsep_user, "sshd", ਆਕਾਰ(cyg_privsep_user));
     }
-  return cyg_privsep_user;
+  ਵਾਪਸ cyg_privsep_user;
 }
 
-#define NL(x) x, (sizeof (x) - 1)
-#define WENV_SIZ (sizeof (wenv_arr) / sizeof (wenv_arr[0]))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ NL(x) x, (ਆਕਾਰ (x) - 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ WENV_SIZ (ਆਕਾਰ (wenv_arr) / ਆਕਾਰ (wenv_arr[0]))
 
-static struct wenv {
-	const char *name;
-	size_t namelen;
+ਸਥਿਰ ਬਣਤਰ wenv {
+	ਅਚਲ ਅੱਖਰ *name;
+	ਮਾਪ_t namelen;
 } wenv_arr[] = {
 	{ NL("ALLUSERSPROFILE=") },
 	{ NL("COMPUTERNAME=") },
@@ -97,27 +97,27 @@ static struct wenv {
 	{ NL("WINDIR=") }
 };
 
-char **
-fetch_windows_environment(void)
+ਅੱਖਰ **
+fetch_windows_environment(ਖਾਲੀ)
 {
-	char **e, **p;
-	unsigned int i, idx = 0;
+	ਅੱਖਰ **e, **p;
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ i, idx = 0;
 
-	p = xcalloc(WENV_SIZ + 1, sizeof(char *));
-	for (e = environ; *e != NULL; ++e) {
-		for (i = 0; i < WENV_SIZ; ++i) {
-			if (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
+	p = xcalloc(WENV_SIZ + 1, ਆਕਾਰ(ਅੱਖਰ *));
+	ਲਈ (e = environ; *e != ਨਿਰਾ; ++e) {
+		ਲਈ (i = 0; i < WENV_SIZ; ++i) {
+			ਜੇ (!ਲੜੀ_ਤੁਲਨਾ(*e, wenv_arr[i].name, wenv_arr[i].namelen))
 				p[idx++] = *e;
 		}
 	}
-	p[idx] = NULL;
-	return p;
+	p[idx] = ਨਿਰਾ;
+	ਵਾਪਸ p;
 }
 
-void
-free_windows_environment(char **p)
+ਖਾਲੀ
+free_windows_environment(ਅੱਖਰ **p)
 {
-	free(p);
+	ਮੁਕਤ(p);
 }
 
 /*
@@ -128,86 +128,86 @@ free_windows_environment(char **p)
  * Unicode characters into account.
  */
 
-static int
-__match_pattern (const wchar_t *s, const wchar_t *pattern)
+ਸਥਿਰ ਪੂਰਨ
+__match_pattern (ਅਚਲ wchar_t *s, ਅਚਲ wchar_t *ਨਮੂਨਾ)
 {
-	for (;;) {
+	ਲਈ (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		ਜੇ (!*ਨਮੂਨਾ)
+			ਵਾਪਸ !*s;
 
-		if (*pattern == '*') {
+		ਜੇ (*ਨਮੂਨਾ == '*') {
 			/* Skip the asterisk. */
-			pattern++;
+			ਨਮੂਨਾ++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			ਜੇ (!*ਨਮੂਨਾ)
+				ਵਾਪਸ 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			ਜੇ (*ਨਮੂਨਾ != '?' && *ਨਮੂਨਾ != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
-					    __match_pattern(s + 1, pattern + 1))
-						return 1;
+				ਲਈ (; *s; s++)
+					ਜੇ (*s == *ਨਮੂਨਾ &&
+					    __match_pattern(s + 1, ਨਮੂਨਾ + 1))
+						ਵਾਪਸ 1;
 				/* Failed. */
-				return 0;
+				ਵਾਪਸ 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (__match_pattern(s, pattern))
-					return 1;
+			ਲਈ (; *s; s++)
+				ਜੇ (__match_pattern(s, ਨਮੂਨਾ))
+					ਵਾਪਸ 1;
 			/* Failed. */
-			return 0;
+			ਵਾਪਸ 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		ਜੇ (!*s)
+			ਵਾਪਸ 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && towlower(*pattern) != towlower(*s))
-			return 0;
+		ਜੇ (*ਨਮੂਨਾ != '?' && towlower(*ਨਮੂਨਾ) != towlower(*s))
+			ਵਾਪਸ 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
-		pattern++;
+		ਨਮੂਨਾ++;
 	}
 	/* NOTREACHED */
 }
 
-static int
-_match_pattern(const char *s, const char *pattern)
+ਸਥਿਰ ਪੂਰਨ
+ਮੇਲ_ਨਮੂਨਾ_2(ਅਚਲ ਅੱਖਰ *s, ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ)
 {
 	wchar_t *ws;
 	wchar_t *wpattern;
-	size_t len;
-	int ret;
+	ਮਾਪ_t len;
+	ਪੂਰਨ ret;
 
-	if ((len = mbstowcs(NULL, s, 0)) == (size_t) -1)
-		return 0;
-	ws = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
+	ਜੇ ((len = mbstowcs(ਨਿਰਾ, s, 0)) == (ਮਾਪ_t) -1)
+		ਵਾਪਸ 0;
+	ws = (wchar_t *) xcalloc(len + 1, ਆਕਾਰ (wchar_t));
 	mbstowcs(ws, s, len + 1);
-	if ((len = mbstowcs(NULL, pattern, 0)) == (size_t) -1) {
-		free(ws);
-		return 0;
+	ਜੇ ((len = mbstowcs(ਨਿਰਾ, ਨਮੂਨਾ, 0)) == (ਮਾਪ_t) -1) {
+		ਮੁਕਤ(ws);
+		ਵਾਪਸ 0;
 	}
-	wpattern = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
-	mbstowcs(wpattern, pattern, len + 1);
+	wpattern = (wchar_t *) xcalloc(len + 1, ਆਕਾਰ (wchar_t));
+	mbstowcs(wpattern, ਨਮੂਨਾ, len + 1);
 	ret = __match_pattern (ws, wpattern);
-	free(ws);
-	free(wpattern);
-	return ret;
+	ਮੁਕਤ(ws);
+	ਮੁਕਤ(wpattern);
+	ਵਾਪਸ ret;
 }
 
 /*
@@ -216,48 +216,48 @@ _match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-cygwin_ug_match_pattern_list(const char *string, const char *pattern)
+ਪੂਰਨ
+cygwin_ug_ਮੇਲ_ਨਮੂਨਾ_list(ਅਚਲ ਅੱਖਰ *string, ਅਚਲ ਅੱਖਰ *ਨਮੂਨਾ)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
-	size_t i, subi, len = strlen(pattern);
+	ਅੱਖਰ sub[1024];
+	ਪੂਰਨ negated;
+	ਪੂਰਨ got_ਸਕਾਰਾਤਮਕ;
+	ਮਾਪ_t i, subi, len = ਲੜੀ_ਲੰਬਾਈ(ਨਮੂਨਾ);
 
-	got_positive = 0;
-	for (i = 0; i < len;) {
+	got_ਸਕਾਰਾਤਮਕ = 0;
+	ਲਈ (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		ਜੇ (ਨਮੂਨਾ[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} ਨਹੀਂਤਾਂ
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		ਲਈ (subi = 0;
+		    i < len && subi < ਆਕਾਰ(sub) - 1 && ਨਮੂਨਾ[i] != ',';
 		    subi++, i++)
-			sub[subi] = pattern[i];
+			sub[subi] = ਨਮੂਨਾ[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		ਜੇ (subi >= ਆਕਾਰ(sub) - 1)
+			ਵਾਪਸ 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		ਜੇ (i < len && ਨਮੂਨਾ[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (_match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
-				got_positive = 1;	/* Positive */
+		ਜੇ (ਮੇਲ_ਨਮੂਨਾ_2(string, sub)) {
+			ਜੇ (negated)
+				ਵਾਪਸ -1;		/* Negative */
+			ਨਹੀਂਤਾਂ
+				got_ਸਕਾਰਾਤਮਕ = 1;	/*ਸਕਾਰਾਤਮਕ*/
 		}
 	}
 
@@ -265,7 +265,7 @@ cygwin_ug_match_pattern_list(const char *string, const char *pattern)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	ਵਾਪਸ got_ਸਕਾਰਾਤਮਕ;
 }
 
-#endif /* HAVE_CYGWIN */
+#ਜੇ_ਅੰਤ /* HAVE_CYGWIN */

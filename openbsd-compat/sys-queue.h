@@ -34,100 +34,100 @@
 
 /* OPENBSD ORIGINAL: sys/sys/queue.h */
 
-#ifndef	_FAKE_QUEUE_H_
-#define	_FAKE_QUEUE_H_
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ	FAKE_ਕਤਾਰ_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	FAKE_ਕਤਾਰ_H
 
 /*
  * Require for OS/X and other platforms that have old/broken/incomplete
  * <sys/queue.h>.
  */
-#undef CIRCLEQ_EMPTY
-#undef CIRCLEQ_END
-#undef CIRCLEQ_ENTRY
-#undef CIRCLEQ_FIRST
-#undef CIRCLEQ_FOREACH
-#undef CIRCLEQ_FOREACH_REVERSE
-#undef CIRCLEQ_HEAD
-#undef CIRCLEQ_HEAD_INITIALIZER
-#undef CIRCLEQ_INIT
-#undef CIRCLEQ_INSERT_AFTER
-#undef CIRCLEQ_INSERT_BEFORE
-#undef CIRCLEQ_INSERT_HEAD
-#undef CIRCLEQ_INSERT_TAIL
-#undef CIRCLEQ_LAST
-#undef CIRCLEQ_NEXT
-#undef CIRCLEQ_PREV
-#undef CIRCLEQ_REMOVE
-#undef CIRCLEQ_REPLACE
-#undef LIST_EMPTY
-#undef LIST_END
-#undef LIST_ENTRY
-#undef LIST_FIRST
-#undef LIST_FOREACH
-#undef LIST_FOREACH_SAFE
-#undef LIST_HEAD
-#undef LIST_HEAD_INITIALIZER
-#undef LIST_INIT
-#undef LIST_INSERT_AFTER
-#undef LIST_INSERT_BEFORE
-#undef LIST_INSERT_HEAD
-#undef LIST_NEXT
-#undef LIST_REMOVE
-#undef LIST_REPLACE
-#undef SIMPLEQ_CONCAT
-#undef SIMPLEQ_EMPTY
-#undef SIMPLEQ_END
-#undef SIMPLEQ_ENTRY
-#undef SIMPLEQ_FIRST
-#undef SIMPLEQ_FOREACH
-#undef SIMPLEQ_FOREACH_SAFE
-#undef SIMPLEQ_HEAD
-#undef SIMPLEQ_HEAD_INITIALIZER
-#undef SIMPLEQ_INIT
-#undef SIMPLEQ_INSERT_AFTER
-#undef SIMPLEQ_INSERT_HEAD
-#undef SIMPLEQ_INSERT_TAIL
-#undef SIMPLEQ_NEXT
-#undef SIMPLEQ_REMOVE_AFTER
-#undef SIMPLEQ_REMOVE_HEAD
-#undef SLIST_EMPTY
-#undef SLIST_END
-#undef SLIST_ENTRY
-#undef SLIST_FIRST
-#undef SLIST_FOREACH
-#undef SLIST_FOREACH_PREVPTR
-#undef SLIST_FOREACH_SAFE
-#undef SLIST_HEAD
-#undef SLIST_HEAD_INITIALIZER
-#undef SLIST_INIT
-#undef SLIST_INSERT_AFTER
-#undef SLIST_INSERT_HEAD
-#undef SLIST_NEXT
-#undef SLIST_REMOVE
-#undef SLIST_REMOVE_AFTER
-#undef SLIST_REMOVE_HEAD
-#undef SLIST_REMOVE_NEXT
-#undef TAILQ_CONCAT
-#undef TAILQ_EMPTY
-#undef TAILQ_END
-#undef TAILQ_ENTRY
-#undef TAILQ_FIRST
-#undef TAILQ_FOREACH
-#undef TAILQ_FOREACH_REVERSE
-#undef TAILQ_FOREACH_REVERSE_SAFE
-#undef TAILQ_FOREACH_SAFE
-#undef TAILQ_HEAD
-#undef TAILQ_HEAD_INITIALIZER
-#undef TAILQ_INIT
-#undef TAILQ_INSERT_AFTER
-#undef TAILQ_INSERT_BEFORE
-#undef TAILQ_INSERT_HEAD
-#undef TAILQ_INSERT_TAIL
-#undef TAILQ_LAST
-#undef TAILQ_NEXT
-#undef TAILQ_PREV
-#undef TAILQ_REMOVE
-#undef TAILQ_REPLACE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_EMPTY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_ਸਿਰਾ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_ENTRY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_FIRST
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_FOREACH
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_FOREACH_REVERSE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_HEAD_INITIALIZER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_INIT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_INSERT_AFTER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_INSERT_BEFORE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_INSERT_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_INSERT_TAIL
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_LAST
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_NEXT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_PREV
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_REMOVE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ CIRCLEQ_REPLACE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_EMPTY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_ਸਿਰਾ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_ENTRY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_FIRST
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_FOREACH
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_FOREACH_ਸੁਰੱਖਿਅਤ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_HEAD_INITIALIZER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_INIT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_INSERT_AFTER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_INSERT_BEFORE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_INSERT_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_NEXT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_REMOVE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ LIST_REPLACE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_CONCAT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_EMPTY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_ਸਿਰਾ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_ENTRY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_FIRST
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_FOREACH
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_FOREACH_ਸੁਰੱਖਿਅਤ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_HEAD_INITIALIZER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_INIT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_INSERT_AFTER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_INSERT_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_INSERT_TAIL
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_NEXT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_REMOVE_AFTER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SIMPLEQ_REMOVE_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_EMPTY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_ਸਿਰਾ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_ENTRY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_FIRST
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_FOREACH
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_FOREACH_PREVPTR
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_FOREACH_ਸੁਰੱਖਿਅਤ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_HEAD_INITIALIZER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_INIT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_INSERT_AFTER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_INSERT_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_NEXT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_REMOVE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_REMOVE_AFTER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_REMOVE_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ SLIST_REMOVE_ਅਗਲਾ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_CONCAT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_EMPTY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_ਸਿਰਾ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_ENTRY
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_FIRST
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_FOREACH
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_FOREACH_ਉਲਟ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_FOREACH_ਉਲਟ_ਸੁਰੱਖਿਅਤ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_FOREACH_ਸੁਰੱਖਿਅਤ
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_HEAD_INITIALIZER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_INIT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_INSERT_AFTER
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_INSERT_BEFORE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_INSERT_HEAD
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_INSERT_TAIL
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_LAST
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_NEXT
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_PREV
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_REMOVE
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ TAILQ_REPLACE
 
 /*
  * This file defines five types of data structures: singly-linked lists,
@@ -173,456 +173,456 @@
  * For details on the use of these macros, see the queue(3) manual page.
  */
 
-#if defined(QUEUE_MACRO_DEBUG) || (defined(_KERNEL) && defined(DIAGNOSTIC))
-#define _Q_INVALID ((void *)-1)
-#define _Q_INVALIDATE(a) (a) = _Q_INVALID
-#else
-#define _Q_INVALIDATE(a)
-#endif
+#ਜੇ defined(ਕਤਾਰ_MACRO_DEBUG) || (defined(_KERNEL) && defined(DIAGNOSTIC))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _Q_INVALID ((ਖਾਲੀ *)-1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _Q_INVALIDATE(a) (a) = _Q_INVALID
+#ਨਹੀਂਤਾਂ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _Q_INVALIDATE(a)
+#ਜੇ_ਅੰਤ
 
 /*
  * Singly-linked List definitions.
  */
-#define SLIST_HEAD(name, type)						\
-struct name {								\
-	struct type *slh_first;	/* first element */			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SLIST_HEAD(name, type)						\
+ਬਣਤਰ name {								\
+	ਬਣਤਰ type *slh_ਪਹਿਲਾ;	/* first element */			\
 }
 
-#define	SLIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_HEAD_INITIALIZER(ਸਿਰ)					\
+	{ ਨਿਰਾ }
 
-#define SLIST_ENTRY(type)						\
-struct {								\
-	struct type *sle_next;	/* next element */			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SLIST_ENTRY(type)						\
+ਬਣਤਰ {								\
+	ਬਣਤਰ type *sle_ਅਗਲਾ;	/* next element */			\
 }
 
 /*
  * Singly-linked List access methods.
  */
-#define	SLIST_FIRST(head)	((head)->slh_first)
-#define	SLIST_END(head)		NULL
-#define	SLIST_EMPTY(head)	(SLIST_FIRST(head) == SLIST_END(head))
-#define	SLIST_NEXT(elm, field)	((elm)->field.sle_next)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_FIRST(ਸਿਰ)	((ਸਿਰ)->slh_ਪਹਿਲਾ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_ਸਿਰਾ(ਸਿਰ)		ਨਿਰਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_EMPTY(ਸਿਰ)	(SLIST_FIRST(ਸਿਰ) == SLIST_ਸਿਰਾ(ਸਿਰ))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_NEXT(elm, ਖੇਤਰ)	((elm)->ਖੇਤਰ.sle_ਅਗਲਾ)
 
-#define	SLIST_FOREACH(var, head, field)					\
-	for((var) = SLIST_FIRST(head);					\
-	    (var) != SLIST_END(head);					\
-	    (var) = SLIST_NEXT(var, field))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_FOREACH(var, ਸਿਰ, ਖੇਤਰ)					\
+	ਲਈ((var) = SLIST_FIRST(ਸਿਰ);					\
+	    (var) != SLIST_ਸਿਰਾ(ਸਿਰ);					\
+	    (var) = SLIST_NEXT(var, ਖੇਤਰ))
 
-#define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SLIST_FIRST(head);				\
-	    (var) && ((tvar) = SLIST_NEXT(var, field), 1);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_FOREACH_ਸੁਰੱਖਿਅਤ(var, ਸਿਰ, ਖੇਤਰ, tvar)			\
+	ਲਈ ((var) = SLIST_FIRST(ਸਿਰ);				\
+	    (var) && ((tvar) = SLIST_NEXT(var, ਖੇਤਰ), 1);		\
 	    (var) = (tvar))
 
 /*
  * Singly-linked List functions.
  */
-#define	SLIST_INIT(head) {						\
-	SLIST_FIRST(head) = SLIST_END(head);				\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_INIT(ਸਿਰ) {						\
+	SLIST_FIRST(ਸਿਰ) = SLIST_ਸਿਰਾ(ਸਿਰ);				\
 }
 
-#define	SLIST_INSERT_AFTER(slistelm, elm, field) do {			\
-	(elm)->field.sle_next = (slistelm)->field.sle_next;		\
-	(slistelm)->field.sle_next = (elm);				\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_INSERT_AFTER(slistelm, elm, ਖੇਤਰ) ਕਰੋ {			\
+	(elm)->ਖੇਤਰ.sle_ਅਗਲਾ = (slistelm)->ਖੇਤਰ.sle_ਅਗਲਾ;		\
+	(slistelm)->ਖੇਤਰ.sle_ਅਗਲਾ = (elm);				\
+} ਜਦੋਂ (0)
 
-#define	SLIST_INSERT_HEAD(head, elm, field) do {			\
-	(elm)->field.sle_next = (head)->slh_first;			\
-	(head)->slh_first = (elm);					\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_INSERT_HEAD(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {			\
+	(elm)->ਖੇਤਰ.sle_ਅਗਲਾ = (ਸਿਰ)->slh_ਪਹਿਲਾ;			\
+	(ਸਿਰ)->slh_ਪਹਿਲਾ = (elm);					\
+} ਜਦੋਂ (0)
 
-#define	SLIST_REMOVE_AFTER(elm, field) do {				\
-	(elm)->field.sle_next = (elm)->field.sle_next->field.sle_next;	\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_REMOVE_AFTER(elm, ਖੇਤਰ) ਕਰੋ {				\
+	(elm)->ਖੇਤਰ.sle_ਅਗਲਾ = (elm)->ਖੇਤਰ.sle_ਅਗਲਾ->ਖੇਤਰ.sle_ਅਗਲਾ;	\
+} ਜਦੋਂ (0)
 
-#define	SLIST_REMOVE_HEAD(head, field) do {				\
-	(head)->slh_first = (head)->slh_first->field.sle_next;		\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SLIST_REMOVE_HEAD(ਸਿਰ, ਖੇਤਰ) ਕਰੋ {				\
+	(ਸਿਰ)->slh_ਪਹਿਲਾ = (ਸਿਰ)->slh_ਪਹਿਲਾ->ਖੇਤਰ.sle_ਅਗਲਾ;		\
+} ਜਦੋਂ (0)
 
-#define SLIST_REMOVE(head, elm, type, field) do {			\
-	if ((head)->slh_first == (elm)) {				\
-		SLIST_REMOVE_HEAD((head), field);			\
-	} else {							\
-		struct type *curelm = (head)->slh_first;		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SLIST_REMOVE(ਸਿਰ, elm, type, ਖੇਤਰ) ਕਰੋ {			\
+	ਜੇ ((ਸਿਰ)->slh_ਪਹਿਲਾ == (elm)) {				\
+		SLIST_REMOVE_HEAD((ਸਿਰ), ਖੇਤਰ);			\
+	} ਨਹੀਂਤਾਂ {							\
+		ਬਣਤਰ type *curelm = (ਸਿਰ)->slh_ਪਹਿਲਾ;		\
 									\
-		while (curelm->field.sle_next != (elm))			\
-			curelm = curelm->field.sle_next;		\
-		curelm->field.sle_next =				\
-		    curelm->field.sle_next->field.sle_next;		\
+		ਜਦੋਂ (curelm->ਖੇਤਰ.sle_ਅਗਲਾ != (elm))			\
+			curelm = curelm->ਖੇਤਰ.sle_ਅਗਲਾ;		\
+		curelm->ਖੇਤਰ.sle_ਅਗਲਾ =				\
+		    curelm->ਖੇਤਰ.sle_ਅਗਲਾ->ਖੇਤਰ.sle_ਅਗਲਾ;		\
 	}								\
-	_Q_INVALIDATE((elm)->field.sle_next);				\
-} while (0)
+	_Q_INVALIDATE((elm)->ਖੇਤਰ.sle_ਅਗਲਾ);				\
+} ਜਦੋਂ (0)
 
 /*
  * List definitions.
  */
-#define LIST_HEAD(name, type)						\
-struct name {								\
-	struct type *lh_first;	/* first element */			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LIST_HEAD(name, type)						\
+ਬਣਤਰ name {								\
+	ਬਣਤਰ type *lh_ਪਹਿਲਾ;	/* first element */			\
 }
 
-#define LIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LIST_HEAD_INITIALIZER(ਸਿਰ)					\
+	{ ਨਿਰਾ }
 
-#define LIST_ENTRY(type)						\
-struct {								\
-	struct type *le_next;	/* next element */			\
-	struct type **le_prev;	/* address of previous next element */	\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LIST_ENTRY(type)						\
+ਬਣਤਰ {								\
+	ਬਣਤਰ type *le_ਅਗਲਾ;	/* next element */			\
+	ਬਣਤਰ type **le_prev;	/* address of previous next element */	\
 }
 
 /*
  * List access methods.
  */
-#define	LIST_FIRST(head)		((head)->lh_first)
-#define	LIST_END(head)			NULL
-#define	LIST_EMPTY(head)		(LIST_FIRST(head) == LIST_END(head))
-#define	LIST_NEXT(elm, field)		((elm)->field.le_next)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	LIST_FIRST(ਸਿਰ)		((ਸਿਰ)->lh_ਪਹਿਲਾ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	LIST_ਸਿਰਾ(ਸਿਰ)			ਨਿਰਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	LIST_EMPTY(ਸਿਰ)		(LIST_FIRST(ਸਿਰ) == LIST_ਸਿਰਾ(ਸਿਰ))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	LIST_NEXT(elm, ਖੇਤਰ)		((elm)->ਖੇਤਰ.le_ਅਗਲਾ)
 
-#define LIST_FOREACH(var, head, field)					\
-	for((var) = LIST_FIRST(head);					\
-	    (var)!= LIST_END(head);					\
-	    (var) = LIST_NEXT(var, field))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LIST_FOREACH(var, ਸਿਰ, ਖੇਤਰ)					\
+	ਲਈ((var) = LIST_FIRST(ਸਿਰ);					\
+	    (var)!= LIST_ਸਿਰਾ(ਸਿਰ);					\
+	    (var) = LIST_NEXT(var, ਖੇਤਰ))
 
-#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = LIST_FIRST(head);				\
-	    (var) && ((tvar) = LIST_NEXT(var, field), 1);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	LIST_FOREACH_ਸੁਰੱਖਿਅਤ(var, ਸਿਰ, ਖੇਤਰ, tvar)			\
+	ਲਈ ((var) = LIST_FIRST(ਸਿਰ);				\
+	    (var) && ((tvar) = LIST_NEXT(var, ਖੇਤਰ), 1);		\
 	    (var) = (tvar))
 
 /*
  * List functions.
  */
-#define	LIST_INIT(head) do {						\
-	LIST_FIRST(head) = LIST_END(head);				\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	LIST_INIT(ਸਿਰ) ਕਰੋ {						\
+	LIST_FIRST(ਸਿਰ) = LIST_ਸਿਰਾ(ਸਿਰ);				\
+} ਜਦੋਂ (0)
 
-#define LIST_INSERT_AFTER(listelm, elm, field) do {			\
-	if (((elm)->field.le_next = (listelm)->field.le_next) != NULL)	\
-		(listelm)->field.le_next->field.le_prev =		\
-		    &(elm)->field.le_next;				\
-	(listelm)->field.le_next = (elm);				\
-	(elm)->field.le_prev = &(listelm)->field.le_next;		\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LIST_INSERT_AFTER(listelm, elm, ਖੇਤਰ) ਕਰੋ {			\
+	ਜੇ (((elm)->ਖੇਤਰ.le_ਅਗਲਾ = (listelm)->ਖੇਤਰ.le_ਅਗਲਾ) != ਨਿਰਾ)	\
+		(listelm)->ਖੇਤਰ.le_ਅਗਲਾ->ਖੇਤਰ.le_prev =		\
+		    &(elm)->ਖੇਤਰ.le_ਅਗਲਾ;				\
+	(listelm)->ਖੇਤਰ.le_ਅਗਲਾ = (elm);				\
+	(elm)->ਖੇਤਰ.le_prev = &(listelm)->ਖੇਤਰ.le_ਅਗਲਾ;		\
+} ਜਦੋਂ (0)
 
-#define	LIST_INSERT_BEFORE(listelm, elm, field) do {			\
-	(elm)->field.le_prev = (listelm)->field.le_prev;		\
-	(elm)->field.le_next = (listelm);				\
-	*(listelm)->field.le_prev = (elm);				\
-	(listelm)->field.le_prev = &(elm)->field.le_next;		\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	LIST_INSERT_BEFORE(listelm, elm, ਖੇਤਰ) ਕਰੋ {			\
+	(elm)->ਖੇਤਰ.le_prev = (listelm)->ਖੇਤਰ.le_prev;		\
+	(elm)->ਖੇਤਰ.le_ਅਗਲਾ = (listelm);				\
+	*(listelm)->ਖੇਤਰ.le_prev = (elm);				\
+	(listelm)->ਖੇਤਰ.le_prev = &(elm)->ਖੇਤਰ.le_ਅਗਲਾ;		\
+} ਜਦੋਂ (0)
 
-#define LIST_INSERT_HEAD(head, elm, field) do {				\
-	if (((elm)->field.le_next = (head)->lh_first) != NULL)		\
-		(head)->lh_first->field.le_prev = &(elm)->field.le_next;\
-	(head)->lh_first = (elm);					\
-	(elm)->field.le_prev = &(head)->lh_first;			\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LIST_INSERT_HEAD(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {				\
+	ਜੇ (((elm)->ਖੇਤਰ.le_ਅਗਲਾ = (ਸਿਰ)->lh_ਪਹਿਲਾ) != ਨਿਰਾ)		\
+		(ਸਿਰ)->lh_ਪਹਿਲਾ->ਖੇਤਰ.le_prev = &(elm)->ਖੇਤਰ.le_ਅਗਲਾ;\
+	(ਸਿਰ)->lh_ਪਹਿਲਾ = (elm);					\
+	(elm)->ਖੇਤਰ.le_prev = &(ਸਿਰ)->lh_ਪਹਿਲਾ;			\
+} ਜਦੋਂ (0)
 
-#define LIST_REMOVE(elm, field) do {					\
-	if ((elm)->field.le_next != NULL)				\
-		(elm)->field.le_next->field.le_prev =			\
-		    (elm)->field.le_prev;				\
-	*(elm)->field.le_prev = (elm)->field.le_next;			\
-	_Q_INVALIDATE((elm)->field.le_prev);				\
-	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LIST_REMOVE(elm, ਖੇਤਰ) ਕਰੋ {					\
+	ਜੇ ((elm)->ਖੇਤਰ.le_ਅਗਲਾ != ਨਿਰਾ)				\
+		(elm)->ਖੇਤਰ.le_ਅਗਲਾ->ਖੇਤਰ.le_prev =			\
+		    (elm)->ਖੇਤਰ.le_prev;				\
+	*(elm)->ਖੇਤਰ.le_prev = (elm)->ਖੇਤਰ.le_ਅਗਲਾ;			\
+	_Q_INVALIDATE((elm)->ਖੇਤਰ.le_prev);				\
+	_Q_INVALIDATE((elm)->ਖੇਤਰ.le_ਅਗਲਾ);				\
+} ਜਦੋਂ (0)
 
-#define LIST_REPLACE(elm, elm2, field) do {				\
-	if (((elm2)->field.le_next = (elm)->field.le_next) != NULL)	\
-		(elm2)->field.le_next->field.le_prev =			\
-		    &(elm2)->field.le_next;				\
-	(elm2)->field.le_prev = (elm)->field.le_prev;			\
-	*(elm2)->field.le_prev = (elm2);				\
-	_Q_INVALIDATE((elm)->field.le_prev);				\
-	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ LIST_REPLACE(elm, elm2, ਖੇਤਰ) ਕਰੋ {				\
+	ਜੇ (((elm2)->ਖੇਤਰ.le_ਅਗਲਾ = (elm)->ਖੇਤਰ.le_ਅਗਲਾ) != ਨਿਰਾ)	\
+		(elm2)->ਖੇਤਰ.le_ਅਗਲਾ->ਖੇਤਰ.le_prev =			\
+		    &(elm2)->ਖੇਤਰ.le_ਅਗਲਾ;				\
+	(elm2)->ਖੇਤਰ.le_prev = (elm)->ਖੇਤਰ.le_prev;			\
+	*(elm2)->ਖੇਤਰ.le_prev = (elm2);				\
+	_Q_INVALIDATE((elm)->ਖੇਤਰ.le_prev);				\
+	_Q_INVALIDATE((elm)->ਖੇਤਰ.le_ਅਗਲਾ);				\
+} ਜਦੋਂ (0)
 
 /*
  * Simple queue definitions.
  */
-#define SIMPLEQ_HEAD(name, type)					\
-struct name {								\
-	struct type *sqh_first;	/* first element */			\
-	struct type **sqh_last;	/* addr of last next element */		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_HEAD(name, type)					\
+ਬਣਤਰ name {								\
+	ਬਣਤਰ type *sqh_ਪਹਿਲਾ;	/* first element */			\
+	ਬਣਤਰ type **sqh_ਆਖਰੀ;	/* addr of last next element */		\
 }
 
-#define SIMPLEQ_HEAD_INITIALIZER(head)					\
-	{ NULL, &(head).sqh_first }
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_HEAD_INITIALIZER(ਸਿਰ)					\
+	{ ਨਿਰਾ, &(ਸਿਰ).sqh_ਪਹਿਲਾ }
 
-#define SIMPLEQ_ENTRY(type)						\
-struct {								\
-	struct type *sqe_next;	/* next element */			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_ENTRY(type)						\
+ਬਣਤਰ {								\
+	ਬਣਤਰ type *sqe_ਅਗਲਾ;	/* next element */			\
 }
 
 /*
  * Simple queue access methods.
  */
-#define	SIMPLEQ_FIRST(head)	    ((head)->sqh_first)
-#define	SIMPLEQ_END(head)	    NULL
-#define	SIMPLEQ_EMPTY(head)	    (SIMPLEQ_FIRST(head) == SIMPLEQ_END(head))
-#define	SIMPLEQ_NEXT(elm, field)    ((elm)->field.sqe_next)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SIMPLEQ_FIRST(ਸਿਰ)	    ((ਸਿਰ)->sqh_ਪਹਿਲਾ)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SIMPLEQ_ਸਿਰਾ(ਸਿਰ)	    ਨਿਰਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SIMPLEQ_EMPTY(ਸਿਰ)	    (SIMPLEQ_FIRST(ਸਿਰ) == SIMPLEQ_ਸਿਰਾ(ਸਿਰ))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SIMPLEQ_NEXT(elm, ਖੇਤਰ)    ((elm)->ਖੇਤਰ.sqe_ਅਗਲਾ)
 
-#define SIMPLEQ_FOREACH(var, head, field)				\
-	for((var) = SIMPLEQ_FIRST(head);				\
-	    (var) != SIMPLEQ_END(head);					\
-	    (var) = SIMPLEQ_NEXT(var, field))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_FOREACH(var, ਸਿਰ, ਖੇਤਰ)				\
+	ਲਈ((var) = SIMPLEQ_FIRST(ਸਿਰ);				\
+	    (var) != SIMPLEQ_ਸਿਰਾ(ਸਿਰ);					\
+	    (var) = SIMPLEQ_NEXT(var, ਖੇਤਰ))
 
-#define	SIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SIMPLEQ_FIRST(head);				\
-	    (var) && ((tvar) = SIMPLEQ_NEXT(var, field), 1);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SIMPLEQ_FOREACH_ਸੁਰੱਖਿਅਤ(var, ਸਿਰ, ਖੇਤਰ, tvar)			\
+	ਲਈ ((var) = SIMPLEQ_FIRST(ਸਿਰ);				\
+	    (var) && ((tvar) = SIMPLEQ_NEXT(var, ਖੇਤਰ), 1);		\
 	    (var) = (tvar))
 
 /*
  * Simple queue functions.
  */
-#define	SIMPLEQ_INIT(head) do {						\
-	(head)->sqh_first = NULL;					\
-	(head)->sqh_last = &(head)->sqh_first;				\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SIMPLEQ_INIT(ਸਿਰ) ਕਰੋ {						\
+	(ਸਿਰ)->sqh_ਪਹਿਲਾ = ਨਿਰਾ;					\
+	(ਸਿਰ)->sqh_ਆਖਰੀ = &(ਸਿਰ)->sqh_ਪਹਿਲਾ;				\
+} ਜਦੋਂ (0)
 
-#define SIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (head)->sqh_first) == NULL)	\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-	(head)->sqh_first = (elm);					\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_INSERT_HEAD(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {			\
+	ਜੇ (((elm)->ਖੇਤਰ.sqe_ਅਗਲਾ = (ਸਿਰ)->sqh_ਪਹਿਲਾ) == ਨਿਰਾ)	\
+		(ਸਿਰ)->sqh_ਆਖਰੀ = &(elm)->ਖੇਤਰ.sqe_ਅਗਲਾ;		\
+	(ਸਿਰ)->sqh_ਪਹਿਲਾ = (elm);					\
+} ਜਦੋਂ (0)
 
-#define SIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.sqe_next = NULL;					\
-	*(head)->sqh_last = (elm);					\
-	(head)->sqh_last = &(elm)->field.sqe_next;			\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_INSERT_TAIL(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {			\
+	(elm)->ਖੇਤਰ.sqe_ਅਗਲਾ = ਨਿਰਾ;					\
+	*(ਸਿਰ)->sqh_ਆਖਰੀ = (elm);					\
+	(ਸਿਰ)->sqh_ਆਖਰੀ = &(elm)->ਖੇਤਰ.sqe_ਅਗਲਾ;			\
+} ਜਦੋਂ (0)
 
-#define SIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqe_next = (listelm)->field.sqe_next) == NULL)\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-	(listelm)->field.sqe_next = (elm);				\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_INSERT_AFTER(ਸਿਰ, listelm, elm, ਖੇਤਰ) ਕਰੋ {		\
+	ਜੇ (((elm)->ਖੇਤਰ.sqe_ਅਗਲਾ = (listelm)->ਖੇਤਰ.sqe_ਅਗਲਾ) == ਨਿਰਾ)\
+		(ਸਿਰ)->sqh_ਆਖਰੀ = &(elm)->ਖੇਤਰ.sqe_ਅਗਲਾ;		\
+	(listelm)->ਖੇਤਰ.sqe_ਅਗਲਾ = (elm);				\
+} ਜਦੋਂ (0)
 
-#define SIMPLEQ_REMOVE_HEAD(head, field) do {			\
-	if (((head)->sqh_first = (head)->sqh_first->field.sqe_next) == NULL) \
-		(head)->sqh_last = &(head)->sqh_first;			\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_REMOVE_HEAD(ਸਿਰ, ਖੇਤਰ) ਕਰੋ {			\
+	ਜੇ (((ਸਿਰ)->sqh_ਪਹਿਲਾ = (ਸਿਰ)->sqh_ਪਹਿਲਾ->ਖੇਤਰ.sqe_ਅਗਲਾ) == ਨਿਰਾ) \
+		(ਸਿਰ)->sqh_ਆਖਰੀ = &(ਸਿਰ)->sqh_ਪਹਿਲਾ;			\
+} ਜਦੋਂ (0)
 
-#define SIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (elm)->field.sqe_next->field.sqe_next) \
-	    == NULL)							\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_REMOVE_AFTER(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {			\
+	ਜੇ (((elm)->ਖੇਤਰ.sqe_ਅਗਲਾ = (elm)->ਖੇਤਰ.sqe_ਅਗਲਾ->ਖੇਤਰ.sqe_ਅਗਲਾ) \
+	    == ਨਿਰਾ)							\
+		(ਸਿਰ)->sqh_ਆਖਰੀ = &(elm)->ਖੇਤਰ.sqe_ਅਗਲਾ;		\
+} ਜਦੋਂ (0)
 
-#define SIMPLEQ_CONCAT(head1, head2) do {				\
-	if (!SIMPLEQ_EMPTY((head2))) {					\
-		*(head1)->sqh_last = (head2)->sqh_first;		\
-		(head1)->sqh_last = (head2)->sqh_last;			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ SIMPLEQ_CONCAT(head1, head2) ਕਰੋ {				\
+	ਜੇ (!SIMPLEQ_EMPTY((head2))) {					\
+		*(head1)->sqh_ਆਖਰੀ = (head2)->sqh_ਪਹਿਲਾ;		\
+		(head1)->sqh_ਆਖਰੀ = (head2)->sqh_ਆਖਰੀ;			\
 		SIMPLEQ_INIT((head2));					\
 	}								\
-} while (0)
+} ਜਦੋਂ (0)
 
 /*
  * XOR Simple queue definitions.
  */
-#define XSIMPLEQ_HEAD(name, type)					\
-struct name {								\
-	struct type *sqx_first;	/* first element */			\
-	struct type **sqx_last;	/* addr of last next element */		\
-	unsigned long sqx_cookie;					\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XSIMPLEQ_ਸਿਰ(name, type)					\
+ਬਣਤਰ name {								\
+	ਬਣਤਰ type *sqx_ਪਹਿਲਾ;	/* first element */			\
+	ਬਣਤਰ type **sqx_ਆਖਰੀ;	/* addr of last next element */		\
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ sqx_cookie;					\
 }
 
-#define XSIMPLEQ_ENTRY(type)						\
-struct {								\
-	struct type *sqx_next;	/* next element */			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XSIMPLEQ_ਇੰਦਰਾਜ(type)						\
+ਬਣਤਰ {								\
+	ਬਣਤਰ type *sqx_ਅਗਲਾ;	/* next element */			\
 }
 
 /*
  * XOR Simple queue access methods.
  */
-#define XSIMPLEQ_XOR(head, ptr)	    ((__typeof(ptr))((head)->sqx_cookie ^ \
-					(unsigned long)(ptr)))
-#define	XSIMPLEQ_FIRST(head)	    XSIMPLEQ_XOR(head, ((head)->sqx_first))
-#define	XSIMPLEQ_END(head)	    NULL
-#define	XSIMPLEQ_EMPTY(head)	    (XSIMPLEQ_FIRST(head) == XSIMPLEQ_END(head))
-#define	XSIMPLEQ_NEXT(head, elm, field)    XSIMPLEQ_XOR(head, ((elm)->field.sqx_next))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XSIMPLEQ_XOR(ਸਿਰ, ptr)	    ((__typeof(ptr))((ਸਿਰ)->sqx_cookie ^ \
+					(ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ)(ptr)))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	XSIMPLEQ_ਪਹਿਲਾ(ਸਿਰ)	    XSIMPLEQ_XOR(ਸਿਰ, ((ਸਿਰ)->sqx_ਪਹਿਲਾ))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	XSIMPLEQ_ਸਿਰਾ(ਸਿਰ)	    ਨਿਰਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	XSIMPLEQ_ਖਾਲੀ_ਥਾਵਾਂ(ਸਿਰ)	    (XSIMPLEQ_ਪਹਿਲਾ(ਸਿਰ) == XSIMPLEQ_ਸਿਰਾ(ਸਿਰ))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	XSIMPLEQ_ਅਗਲਾ(ਸਿਰ, elm, ਖੇਤਰ)    XSIMPLEQ_XOR(ਸਿਰ, ((elm)->ਖੇਤਰ.sqx_ਅਗਲਾ))
 
 
-#define XSIMPLEQ_FOREACH(var, head, field)				\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
-	    (var) != XSIMPLEQ_END(head);				\
-	    (var) = XSIMPLEQ_NEXT(head, var, field))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XSIMPLEQ_FOREACH(var, ਸਿਰ, ਖੇਤਰ)				\
+	ਲਈ ((var) = XSIMPLEQ_ਪਹਿਲਾ(ਸਿਰ);				\
+	    (var) != XSIMPLEQ_ਸਿਰਾ(ਸਿਰ);				\
+	    (var) = XSIMPLEQ_ਅਗਲਾ(ਸਿਰ, var, ਖੇਤਰ))
 
-#define	XSIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
-	    (var) && ((tvar) = XSIMPLEQ_NEXT(head, var, field), 1);	\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	XSIMPLEQ_FOREACH_ਸੁਰੱਖਿਅਤ(var, ਸਿਰ, ਖੇਤਰ, tvar)			\
+	ਲਈ ((var) = XSIMPLEQ_ਪਹਿਲਾ(ਸਿਰ);				\
+	    (var) && ((tvar) = XSIMPLEQ_ਅਗਲਾ(ਸਿਰ, var, ਖੇਤਰ), 1);	\
 	    (var) = (tvar))
 
 /*
  * XOR Simple queue functions.
  */
-#define	XSIMPLEQ_INIT(head) do {					\
-	arc4random_buf(&(head)->sqx_cookie, sizeof((head)->sqx_cookie)); \
-	(head)->sqx_first = XSIMPLEQ_XOR(head, NULL);			\
-	(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first);	\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	XSIMPLEQ_INIT(ਸਿਰ) ਕਰੋ {					\
+	arc4random_buf(&(ਸਿਰ)->sqx_cookie, ਆਕਾਰ((ਸਿਰ)->sqx_cookie)); \
+	(ਸਿਰ)->sqx_ਪਹਿਲਾ = XSIMPLEQ_XOR(ਸਿਰ, ਨਿਰਾ);			\
+	(ਸਿਰ)->sqx_ਆਖਰੀ = XSIMPLEQ_XOR(ਸਿਰ, &(ਸਿਰ)->sqx_ਪਹਿਲਾ);	\
+} ਜਦੋਂ (0)
 
-#define XSIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = (head)->sqx_first) ==		\
-	    XSIMPLEQ_XOR(head, NULL))					\
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
-	(head)->sqx_first = XSIMPLEQ_XOR(head, (elm));			\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XSIMPLEQ_ਪਾਓ_ਸਿਰ(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {			\
+	ਜੇ (((elm)->ਖੇਤਰ.sqx_ਅਗਲਾ = (ਸਿਰ)->sqx_ਪਹਿਲਾ) ==		\
+	    XSIMPLEQ_XOR(ਸਿਰ, ਨਿਰਾ))					\
+		(ਸਿਰ)->sqx_ਆਖਰੀ = XSIMPLEQ_XOR(ਸਿਰ, &(elm)->ਖੇਤਰ.sqx_ਅਗਲਾ); \
+	(ਸਿਰ)->sqx_ਪਹਿਲਾ = XSIMPLEQ_XOR(ਸਿਰ, (elm));			\
+} ਜਦੋਂ (0)
 
-#define XSIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.sqx_next = XSIMPLEQ_XOR(head, NULL);		\
-	*(XSIMPLEQ_XOR(head, (head)->sqx_last)) = XSIMPLEQ_XOR(head, (elm)); \
-	(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);	\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XSIMPLEQ_ਪਾਓ_ਪੂਛ(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {			\
+	(elm)->ਖੇਤਰ.sqx_ਅਗਲਾ = XSIMPLEQ_XOR(ਸਿਰ, ਨਿਰਾ);		\
+	*(XSIMPLEQ_XOR(ਸਿਰ, (ਸਿਰ)->sqx_ਆਖਰੀ)) = XSIMPLEQ_XOR(ਸਿਰ, (elm)); \
+	(ਸਿਰ)->sqx_ਆਖਰੀ = XSIMPLEQ_XOR(ਸਿਰ, &(elm)->ਖੇਤਰ.sqx_ਅਗਲਾ);	\
+} ਜਦੋਂ (0)
 
-#define XSIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqx_next = (listelm)->field.sqx_next) ==	\
-	    XSIMPLEQ_XOR(head, NULL))					\
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
-	(listelm)->field.sqx_next = XSIMPLEQ_XOR(head, (elm));		\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XSIMPLEQ_ਪਾਓ_AFTER(ਸਿਰ, listelm, elm, ਖੇਤਰ) ਕਰੋ {		\
+	ਜੇ (((elm)->ਖੇਤਰ.sqx_ਅਗਲਾ = (listelm)->ਖੇਤਰ.sqx_ਅਗਲਾ) ==	\
+	    XSIMPLEQ_XOR(ਸਿਰ, ਨਿਰਾ))					\
+		(ਸਿਰ)->sqx_ਆਖਰੀ = XSIMPLEQ_XOR(ਸਿਰ, &(elm)->ਖੇਤਰ.sqx_ਅਗਲਾ); \
+	(listelm)->ਖੇਤਰ.sqx_ਅਗਲਾ = XSIMPLEQ_XOR(ਸਿਰ, (elm));		\
+} ਜਦੋਂ (0)
 
-#define XSIMPLEQ_REMOVE_HEAD(head, field) do {				\
-	if (((head)->sqx_first = XSIMPLEQ_XOR(head,			\
-	    (head)->sqx_first)->field.sqx_next) == XSIMPLEQ_XOR(head, NULL)) \
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first); \
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XSIMPLEQ_REMOVE_ਸਿਰ(ਸਿਰ, ਖੇਤਰ) ਕਰੋ {				\
+	ਜੇ (((ਸਿਰ)->sqx_ਪਹਿਲਾ = XSIMPLEQ_XOR(ਸਿਰ,			\
+	    (ਸਿਰ)->sqx_ਪਹਿਲਾ)->ਖੇਤਰ.sqx_ਅਗਲਾ) == XSIMPLEQ_XOR(ਸਿਰ, ਨਿਰਾ)) \
+		(ਸਿਰ)->sqx_ਆਖਰੀ = XSIMPLEQ_XOR(ਸਿਰ, &(ਸਿਰ)->sqx_ਪਹਿਲਾ); \
+} ਜਦੋਂ (0)
 
-#define XSIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = XSIMPLEQ_XOR(head,			\
-	    (elm)->field.sqx_next)->field.sqx_next)			\
-	    == XSIMPLEQ_XOR(head, NULL))				\
-		(head)->sqx_last = 					\
-		    XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);		\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ XSIMPLEQ_REMOVE_AFTER(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {			\
+	ਜੇ (((elm)->ਖੇਤਰ.sqx_ਅਗਲਾ = XSIMPLEQ_XOR(ਸਿਰ,			\
+	    (elm)->ਖੇਤਰ.sqx_ਅਗਲਾ)->ਖੇਤਰ.sqx_ਅਗਲਾ)			\
+	    == XSIMPLEQ_XOR(ਸਿਰ, ਨਿਰਾ))				\
+		(ਸਿਰ)->sqx_ਆਖਰੀ = 					\
+		    XSIMPLEQ_XOR(ਸਿਰ, &(elm)->ਖੇਤਰ.sqx_ਅਗਲਾ);		\
+} ਜਦੋਂ (0)
 
 
 /*
  * Tail queue definitions.
  */
-#define TAILQ_HEAD(name, type)						\
-struct name {								\
-	struct type *tqh_first;	/* first element */			\
-	struct type **tqh_last;	/* addr of last next element */		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_HEAD(name, type)						\
+ਬਣਤਰ name {								\
+	ਬਣਤਰ type *tqh_first;	/* first element */			\
+	ਬਣਤਰ type **tqh_last;	/* addr of last next element */		\
 }
 
-#define TAILQ_HEAD_INITIALIZER(head)					\
-	{ NULL, &(head).tqh_first }
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_HEAD_INITIALIZER(ਸਿਰ)					\
+	{ ਨਿਰਾ, &(ਸਿਰ).tqh_first }
 
-#define TAILQ_ENTRY(type)						\
-struct {								\
-	struct type *tqe_next;	/* next element */			\
-	struct type **tqe_prev;	/* address of previous next element */	\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_ENTRY(type)						\
+ਬਣਤਰ {								\
+	ਬਣਤਰ type *tqe_next;	/* next element */			\
+	ਬਣਤਰ type **tqe_prev;	/* address of previous next element */	\
 }
 
 /*
  * Tail queue access methods.
  */
-#define	TAILQ_FIRST(head)		((head)->tqh_first)
-#define	TAILQ_END(head)			NULL
-#define	TAILQ_NEXT(elm, field)		((elm)->field.tqe_next)
-#define TAILQ_LAST(head, headname)					\
-	(*(((struct headname *)((head)->tqh_last))->tqh_last))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	TAILQ_FIRST(ਸਿਰ)		((ਸਿਰ)->tqh_first)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	TAILQ_ਸਿਰਾ(ਸਿਰ)			ਨਿਰਾ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	TAILQ_NEXT(elm, ਖੇਤਰ)		((elm)->ਖੇਤਰ.tqe_next)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_LAST(ਸਿਰ, headname)					\
+	(*(((ਬਣਤਰ headname *)((ਸਿਰ)->tqh_last))->tqh_last))
 /* XXX */
-#define TAILQ_PREV(elm, headname, field)				\
-	(*(((struct headname *)((elm)->field.tqe_prev))->tqh_last))
-#define	TAILQ_EMPTY(head)						\
-	(TAILQ_FIRST(head) == TAILQ_END(head))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_PREV(elm, headname, ਖੇਤਰ)				\
+	(*(((ਬਣਤਰ headname *)((elm)->ਖੇਤਰ.tqe_prev))->tqh_last))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	TAILQ_EMPTY(ਸਿਰ)						\
+	(TAILQ_FIRST(ਸਿਰ) == TAILQ_ਸਿਰਾ(ਸਿਰ))
 
-#define TAILQ_FOREACH(var, head, field)					\
-	for((var) = TAILQ_FIRST(head);					\
-	    (var) != TAILQ_END(head);					\
-	    (var) = TAILQ_NEXT(var, field))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_FOREACH(var, ਸਿਰ, ਖੇਤਰ)					\
+	ਲਈ((var) = TAILQ_FIRST(ਸਿਰ);					\
+	    (var) != TAILQ_ਸਿਰਾ(ਸਿਰ);					\
+	    (var) = TAILQ_NEXT(var, ਖੇਤਰ))
 
-#define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = TAILQ_FIRST(head);					\
-	    (var) != TAILQ_END(head) &&					\
-	    ((tvar) = TAILQ_NEXT(var, field), 1);			\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	TAILQ_FOREACH_ਸੁਰੱਖਿਅਤ(var, ਸਿਰ, ਖੇਤਰ, tvar)			\
+	ਲਈ ((var) = TAILQ_FIRST(ਸਿਰ);					\
+	    (var) != TAILQ_ਸਿਰਾ(ਸਿਰ) &&					\
+	    ((tvar) = TAILQ_NEXT(var, ਖੇਤਰ), 1);			\
 	    (var) = (tvar))
 
 
-#define TAILQ_FOREACH_REVERSE(var, head, headname, field)		\
-	for((var) = TAILQ_LAST(head, headname);				\
-	    (var) != TAILQ_END(head);					\
-	    (var) = TAILQ_PREV(var, headname, field))
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_FOREACH_ਉਲਟ(var, ਸਿਰ, headname, ਖੇਤਰ)		\
+	ਲਈ((var) = TAILQ_LAST(ਸਿਰ, headname);				\
+	    (var) != TAILQ_ਸਿਰਾ(ਸਿਰ);					\
+	    (var) = TAILQ_PREV(var, headname, ਖੇਤਰ))
 
-#define	TAILQ_FOREACH_REVERSE_SAFE(var, head, headname, field, tvar)	\
-	for ((var) = TAILQ_LAST(head, headname);			\
-	    (var) != TAILQ_END(head) &&					\
-	    ((tvar) = TAILQ_PREV(var, headname, field), 1);		\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	TAILQ_FOREACH_ਉਲਟ_ਸੁਰੱਖਿਅਤ(var, ਸਿਰ, headname, ਖੇਤਰ, tvar)	\
+	ਲਈ ((var) = TAILQ_LAST(ਸਿਰ, headname);			\
+	    (var) != TAILQ_ਸਿਰਾ(ਸਿਰ) &&					\
+	    ((tvar) = TAILQ_PREV(var, headname, ਖੇਤਰ), 1);		\
 	    (var) = (tvar))
 
 /*
  * Tail queue functions.
  */
-#define	TAILQ_INIT(head) do {						\
-	(head)->tqh_first = NULL;					\
-	(head)->tqh_last = &(head)->tqh_first;				\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	TAILQ_INIT(ਸਿਰ) ਕਰੋ {						\
+	(ਸਿਰ)->tqh_first = ਨਿਰਾ;					\
+	(ਸਿਰ)->tqh_last = &(ਸਿਰ)->tqh_first;				\
+} ਜਦੋਂ (0)
 
-#define TAILQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.tqe_next = (head)->tqh_first) != NULL)	\
-		(head)->tqh_first->field.tqe_prev =			\
-		    &(elm)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm)->field.tqe_next;		\
-	(head)->tqh_first = (elm);					\
-	(elm)->field.tqe_prev = &(head)->tqh_first;			\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_INSERT_HEAD(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {			\
+	ਜੇ (((elm)->ਖੇਤਰ.tqe_next = (ਸਿਰ)->tqh_first) != ਨਿਰਾ)	\
+		(ਸਿਰ)->tqh_first->ਖੇਤਰ.tqe_prev =			\
+		    &(elm)->ਖੇਤਰ.tqe_next;				\
+	ਨਹੀਂਤਾਂ								\
+		(ਸਿਰ)->tqh_last = &(elm)->ਖੇਤਰ.tqe_next;		\
+	(ਸਿਰ)->tqh_first = (elm);					\
+	(elm)->ਖੇਤਰ.tqe_prev = &(ਸਿਰ)->tqh_first;			\
+} ਜਦੋਂ (0)
 
-#define TAILQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.tqe_next = NULL;					\
-	(elm)->field.tqe_prev = (head)->tqh_last;			\
-	*(head)->tqh_last = (elm);					\
-	(head)->tqh_last = &(elm)->field.tqe_next;			\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_INSERT_TAIL(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {			\
+	(elm)->ਖੇਤਰ.tqe_next = ਨਿਰਾ;					\
+	(elm)->ਖੇਤਰ.tqe_prev = (ਸਿਰ)->tqh_last;			\
+	*(ਸਿਰ)->tqh_last = (elm);					\
+	(ਸਿਰ)->tqh_last = &(elm)->ਖੇਤਰ.tqe_next;			\
+} ਜਦੋਂ (0)
 
-#define TAILQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.tqe_next = (listelm)->field.tqe_next) != NULL)\
-		(elm)->field.tqe_next->field.tqe_prev =			\
-		    &(elm)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm)->field.tqe_next;		\
-	(listelm)->field.tqe_next = (elm);				\
-	(elm)->field.tqe_prev = &(listelm)->field.tqe_next;		\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_INSERT_AFTER(ਸਿਰ, listelm, elm, ਖੇਤਰ) ਕਰੋ {		\
+	ਜੇ (((elm)->ਖੇਤਰ.tqe_next = (listelm)->ਖੇਤਰ.tqe_next) != ਨਿਰਾ)\
+		(elm)->ਖੇਤਰ.tqe_next->ਖੇਤਰ.tqe_prev =			\
+		    &(elm)->ਖੇਤਰ.tqe_next;				\
+	ਨਹੀਂਤਾਂ								\
+		(ਸਿਰ)->tqh_last = &(elm)->ਖੇਤਰ.tqe_next;		\
+	(listelm)->ਖੇਤਰ.tqe_next = (elm);				\
+	(elm)->ਖੇਤਰ.tqe_prev = &(listelm)->ਖੇਤਰ.tqe_next;		\
+} ਜਦੋਂ (0)
 
-#define	TAILQ_INSERT_BEFORE(listelm, elm, field) do {			\
-	(elm)->field.tqe_prev = (listelm)->field.tqe_prev;		\
-	(elm)->field.tqe_next = (listelm);				\
-	*(listelm)->field.tqe_prev = (elm);				\
-	(listelm)->field.tqe_prev = &(elm)->field.tqe_next;		\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	TAILQ_INSERT_BEFORE(listelm, elm, ਖੇਤਰ) ਕਰੋ {			\
+	(elm)->ਖੇਤਰ.tqe_prev = (listelm)->ਖੇਤਰ.tqe_prev;		\
+	(elm)->ਖੇਤਰ.tqe_next = (listelm);				\
+	*(listelm)->ਖੇਤਰ.tqe_prev = (elm);				\
+	(listelm)->ਖੇਤਰ.tqe_prev = &(elm)->ਖੇਤਰ.tqe_next;		\
+} ਜਦੋਂ (0)
 
-#define TAILQ_REMOVE(head, elm, field) do {				\
-	if (((elm)->field.tqe_next) != NULL)				\
-		(elm)->field.tqe_next->field.tqe_prev =			\
-		    (elm)->field.tqe_prev;				\
-	else								\
-		(head)->tqh_last = (elm)->field.tqe_prev;		\
-	*(elm)->field.tqe_prev = (elm)->field.tqe_next;			\
-	_Q_INVALIDATE((elm)->field.tqe_prev);				\
-	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_REMOVE(ਸਿਰ, elm, ਖੇਤਰ) ਕਰੋ {				\
+	ਜੇ (((elm)->ਖੇਤਰ.tqe_next) != ਨਿਰਾ)				\
+		(elm)->ਖੇਤਰ.tqe_next->ਖੇਤਰ.tqe_prev =			\
+		    (elm)->ਖੇਤਰ.tqe_prev;				\
+	ਨਹੀਂਤਾਂ								\
+		(ਸਿਰ)->tqh_last = (elm)->ਖੇਤਰ.tqe_prev;		\
+	*(elm)->ਖੇਤਰ.tqe_prev = (elm)->ਖੇਤਰ.tqe_next;			\
+	_Q_INVALIDATE((elm)->ਖੇਤਰ.tqe_prev);				\
+	_Q_INVALIDATE((elm)->ਖੇਤਰ.tqe_next);				\
+} ਜਦੋਂ (0)
 
-#define TAILQ_REPLACE(head, elm, elm2, field) do {			\
-	if (((elm2)->field.tqe_next = (elm)->field.tqe_next) != NULL)	\
-		(elm2)->field.tqe_next->field.tqe_prev =		\
-		    &(elm2)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm2)->field.tqe_next;		\
-	(elm2)->field.tqe_prev = (elm)->field.tqe_prev;			\
-	*(elm2)->field.tqe_prev = (elm2);				\
-	_Q_INVALIDATE((elm)->field.tqe_prev);				\
-	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_REPLACE(ਸਿਰ, elm, elm2, ਖੇਤਰ) ਕਰੋ {			\
+	ਜੇ (((elm2)->ਖੇਤਰ.tqe_next = (elm)->ਖੇਤਰ.tqe_next) != ਨਿਰਾ)	\
+		(elm2)->ਖੇਤਰ.tqe_next->ਖੇਤਰ.tqe_prev =		\
+		    &(elm2)->ਖੇਤਰ.tqe_next;				\
+	ਨਹੀਂਤਾਂ								\
+		(ਸਿਰ)->tqh_last = &(elm2)->ਖੇਤਰ.tqe_next;		\
+	(elm2)->ਖੇਤਰ.tqe_prev = (elm)->ਖੇਤਰ.tqe_prev;			\
+	*(elm2)->ਖੇਤਰ.tqe_prev = (elm2);				\
+	_Q_INVALIDATE((elm)->ਖੇਤਰ.tqe_prev);				\
+	_Q_INVALIDATE((elm)->ਖੇਤਰ.tqe_next);				\
+} ਜਦੋਂ (0)
 
-#define TAILQ_CONCAT(head1, head2, field) do {				\
-	if (!TAILQ_EMPTY(head2)) {					\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ TAILQ_CONCAT(head1, head2, ਖੇਤਰ) ਕਰੋ {				\
+	ਜੇ (!TAILQ_EMPTY(head2)) {					\
 		*(head1)->tqh_last = (head2)->tqh_first;		\
-		(head2)->tqh_first->field.tqe_prev = (head1)->tqh_last;	\
+		(head2)->tqh_first->ਖੇਤਰ.tqe_prev = (head1)->tqh_last;	\
 		(head1)->tqh_last = (head2)->tqh_last;			\
 		TAILQ_INIT((head2));					\
 	}								\
-} while (0)
+} ਜਦੋਂ (0)
 
-#endif	/* !_SYS_QUEUE_H_ */
+#ਜੇ_ਅੰਤ	/* !_SYS_QUEUE_H_ */

@@ -18,32 +18,32 @@
 /* API for ssh-pkcs11.c and ssh-pkcs11-client.c */
 
 /* Errors for pkcs11_add_provider() */
-#define	SSH_PKCS11_ERR_GENERIC			1
-#define	SSH_PKCS11_ERR_LOGIN_FAIL		2
-#define	SSH_PKCS11_ERR_NO_SLOTS			3
-#define	SSH_PKCS11_ERR_PIN_REQUIRED		4
-#define	SSH_PKCS11_ERR_PIN_LOCKED		5
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SSH_PKCS11_ERR_GENERIC			1
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SSH_PKCS11_ERR_LOGIN_FAIL		2
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SSH_PKCS11_ERR_NO_SLOTS			3
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SSH_PKCS11_ERR_PIN_REQUIRED		4
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	SSH_PKCS11_ERR_PIN_LOCKED		5
 
-struct sshkey;
+ਬਣਤਰ sshkey;
 
-int	pkcs11_init(int);
-void	pkcs11_terminate(void);
-int	pkcs11_add_provider(char *, char *, struct sshkey ***, char ***);
-int	pkcs11_del_provider(char *);
-int	pkcs11_sign(struct sshkey *, u_char **, size_t *,
-	    const u_char *, size_t, const char *, const char *,
-	    const char *, u_int);
-void	pkcs11_key_free(struct sshkey *);
+ਪੂਰਨ	pkcs11_init(ਪੂਰਨ);
+ਖਾਲੀ	pkcs11_terminate(ਖਾਲੀ);
+ਪੂਰਨ	pkcs11_ਜੋੜੋ_provider(ਅੱਖਰ *, ਅੱਖਰ *, ਬਣਤਰ sshkey ***, ਅੱਖਰ ***);
+ਪੂਰਨ	pkcs11_del_provider(ਅੱਖਰ *);
+ਪੂਰਨ	pkcs11_sign(ਬਣਤਰ sshkey *, u_char **, ਮਾਪ_t *,
+	    ਅਚਲ u_char *, ਮਾਪ_t, ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *,
+	    ਅਚਲ ਅੱਖਰ *, u_int);
+ਖਾਲੀ	pkcs11_ਕੁੰਜੀ_free(ਬਣਤਰ sshkey *);
 
-#ifdef WITH_PKCS11_KEYGEN
-struct sshkey *
-	pkcs11_gakp(char *, char *, unsigned int, char *, unsigned int,
-	    unsigned int, unsigned char, uint32_t *);
-struct sshkey *
-	pkcs11_destroy_keypair(char *, char *, unsigned long, unsigned char,
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ WITH_PKCS11_KEYGEN
+ਬਣਤਰ sshkey *
+	pkcs11_gakp(ਅੱਖਰ *, ਅੱਖਰ *, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, ਅੱਖਰ *, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ,
+	    ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ, uint32_t *);
+ਬਣਤਰ sshkey *
+	pkcs11_destroy_keypair(ਅੱਖਰ *, ਅੱਖਰ *, ਬਿਨਾਨਿਸ਼ਾਨੀ ਲੰਮਾ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ,
 	    uint32_t *);
-#endif
+#ਜੇ_ਅੰਤ
 
 /* Only available in ssh-pkcs11-client.c */
-int pkcs11_make_cert(const struct sshkey *,
-    const struct sshkey *, struct sshkey **);
+ਪੂਰਨ pkcs11_make_cert(ਅਚਲ ਬਣਤਰ sshkey *,
+    ਅਚਲ ਬਣਤਰ sshkey *, ਬਣਤਰ sshkey **);

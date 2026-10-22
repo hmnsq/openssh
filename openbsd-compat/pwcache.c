@@ -30,85 +30,85 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/pwcache.c */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <grp.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <pwd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-#define	NCACHE	64			/* power of 2 */
-#define	MASK	(NCACHE - 1)		/* bits to store with */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	NCACHE	64			/* power of 2 */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	ਨਕਾਬ_2	(NCACHE - 1)		/* bits to store with */
 
-#ifndef HAVE_USER_FROM_UID
-char *
-user_from_uid(uid_t uid, int nouser)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_USER_FROM_UID
+ਅੱਖਰ *
+user_from_uid(uid_t uid, ਪੂਰਨ nouser)
 {
-	static struct ncache {
+	ਸਥਿਰ ਬਣਤਰ ncache {
 		uid_t	uid;
-		char	*name;
+		ਅੱਖਰ	*name;
 	} c_uid[NCACHE];
-	static int pwopen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct passwd *pw;
-	struct ncache *cp;
+	ਸਥਿਰ ਪੂਰਨ pwopen;
+	ਸਥਿਰ ਅੱਖਰ nbuf[15];		/* 32 bits == 10 digits */
+	ਬਣਤਰ passwd *pw;
+	ਬਣਤਰ ncache *cp;
 
-	cp = c_uid + (uid & MASK);
-	if (cp->uid != uid || cp->name == NULL) {
-		if (pwopen == 0) {
-#ifdef HAVE_SETPASSENT
+	cp = c_uid + (uid & ਨਕਾਬ_2);
+	ਜੇ (cp->uid != uid || cp->name == ਨਿਰਾ) {
+		ਜੇ (pwopen == 0) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SETPASSENT
 			setpassent(1);
-#endif
+#ਜੇ_ਅੰਤ
 			pwopen = 1;
 		}
-		if ((pw = getpwuid(uid)) == NULL) {
-			if (nouser)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)uid);
+		ਜੇ ((pw = getpwuid(uid)) == ਨਿਰਾ) {
+			ਜੇ (nouser)
+				ਵਾਪਸ (ਨਿਰਾ);
+			(ਖਾਲੀ)snprintf(nbuf, ਆਕਾਰ(nbuf), "%lu", (u_long)uid);
 		}
 		cp->uid = uid;
-		if (cp->name != NULL)
-			free(cp->name);
+		ਜੇ (cp->name != ਨਿਰਾ)
+			ਮੁਕਤ(cp->name);
 		cp->name = strdup(pw ? pw->pw_name : nbuf);
 	}
-	return (cp->name);
+	ਵਾਪਸ (cp->name);
 }
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_GROUP_FROM_GID
-char *
-group_from_gid(gid_t gid, int nogroup)
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_ਸਮੂਹ_FROM_GID
+ਅੱਖਰ *
+ਸਮੂਹ_from_gid(gid_t gid, ਪੂਰਨ nogroup)
 {
-	static struct ncache {
+	ਸਥਿਰ ਬਣਤਰ ncache {
 		gid_t	gid;
-		char	*name;
+		ਅੱਖਰ	*name;
 	} c_gid[NCACHE];
-	static int gropen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct group *gr;
-	struct ncache *cp;
+	ਸਥਿਰ ਪੂਰਨ gropen;
+	ਸਥਿਰ ਅੱਖਰ nbuf[15];		/* 32 bits == 10 digits */
+	ਬਣਤਰ ਸਮੂਹ *gr;
+	ਬਣਤਰ ncache *cp;
 
-	cp = c_gid + (gid & MASK);
-	if (cp->gid != gid || cp->name == NULL) {
-		if (gropen == 0) {
-#ifdef HAVE_SETGROUPENT
+	cp = c_gid + (gid & ਨਕਾਬ_2);
+	ਜੇ (cp->gid != gid || cp->name == ਨਿਰਾ) {
+		ਜੇ (gropen == 0) {
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_SETGROUPENT
 			setgroupent(1);
-#endif
+#ਜੇ_ਅੰਤ
 			gropen = 1;
 		}
-		if ((gr = getgrgid(gid)) == NULL) {
-			if (nogroup)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)gid);
+		ਜੇ ((gr = getgrgid(gid)) == ਨਿਰਾ) {
+			ਜੇ (nogroup)
+				ਵਾਪਸ (ਨਿਰਾ);
+			(ਖਾਲੀ)snprintf(nbuf, ਆਕਾਰ(nbuf), "%lu", (u_long)gid);
 		}
 		cp->gid = gid;
-		if (cp->name != NULL)
-			free(cp->name);
+		ਜੇ (cp->name != ਨਿਰਾ)
+			ਮੁਕਤ(cp->name);
 		cp->name = strdup(gr ? gr->gr_name : nbuf);
 	}
-	return (cp->name);
+	ਵਾਪਸ (cp->name);
 }
-#endif
+#ਜੇ_ਅੰਤ

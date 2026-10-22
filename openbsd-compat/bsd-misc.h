@@ -14,208 +14,208 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BSD_MISC_H
-#define _BSD_MISC_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _BSD_MISC_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _BSD_MISC_H
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+ਅੱਖਰ *ssh_get_progname(ਅੱਖਰ *);
+ਪੂਰਨ ਬੀਜ_from_prngd(ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ *, ਮਾਪ_t);
 
-#ifndef HAVE_SETSID
-#define setsid() setpgrp(0, getpid())
-#endif /* !HAVE_SETSID */
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_SETSID
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ setsid() setpgrp(0, getpid())
+#ਜੇ_ਅੰਤ /* !HAVE_SETSID */
 
-#ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
-#endif /* !HAVE_SETENV */
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_SETENV
+ਪੂਰਨ setenv(ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਪੂਰਨ);
+#ਜੇ_ਅੰਤ /* !HAVE_SETENV */
 
-#ifndef HAVE_SETLOGIN
-int setlogin(const char *);
-#endif /* !HAVE_SETLOGIN */
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_SETLOGIN
+ਪੂਰਨ setlogin(ਅਚਲ ਅੱਖਰ *);
+#ਜੇ_ਅੰਤ /* !HAVE_SETLOGIN */
 
-#ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
-#endif /* HAVE_INNETGR */
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_INNETGR
+ਪੂਰਨ innetgr(ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *);
+#ਜੇ_ਅੰਤ /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
-#endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
+#ਜੇ !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+ਪੂਰਨ seteuid(uid_t);
+#ਜੇ_ਅੰਤ /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
-#endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
+#ਜੇ !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+ਪੂਰਨ setegid(uid_t);
+#ਜੇ_ਅੰਤ /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
-#endif
+#ਜੇ !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ਅਚਲ ਅੱਖਰ *strerror(ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#if !defined(HAVE_SETLINEBUF)
-#define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
-#endif
+#ਜੇ !defined(HAVE_SETLINEBUF)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ setlinebuf(a)	(setvbuf((a), ਨਿਰਾ, _IOLBF, 0))
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_UTIMES
-#ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
-	long tv_sec;
-	long tv_usec;
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_UTIMES
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_STRUCT_TIMEVAL
+ਬਣਤਰ timeval {
+	ਲੰਮਾ tv_sec;
+	ਲੰਮਾ tv_usec;
 }
-#endif /* HAVE_STRUCT_TIMEVAL */
+#ਜੇ_ਅੰਤ /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
-#endif /* HAVE_UTIMES */
+ਪੂਰਨ utimes(ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ timeval *);
+#ਜੇ_ਅੰਤ /* HAVE_UTIMES */
 
-#ifndef HAVE_DIRFD
-int dirfd(void *);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_DIRFD
+ਪੂਰਨ dirfd(ਖਾਲੀ *);
+#ਜੇ_ਅੰਤ
 
-#ifndef AT_FDCWD
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ AT_FDCWD
 # define AT_FDCWD (-2)
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_FCHMODAT
+ਪੂਰਨ fchmodat(ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *, ਬਹੁਲਕ_t, ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_FCHOWNAT
+ਪੂਰਨ fchownat(ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *, uid_t, gid_t, ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_FSTATAT
+ਪੂਰਨ fstatat(ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *, ਬਣਤਰ stat *, ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_UNLINKAT
+ਪੂਰਨ unlinkat(ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *, ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
-#endif /* HAVE_TRUNCATE */
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_TRUNCATE
+ਪੂਰਨ truncate (ਅਚਲ ਅੱਖਰ *, off_t);
+#ਜੇ_ਅੰਤ /* HAVE_TRUNCATE */
 
-#ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_STRUCT_TIMESPEC
+ਬਣਤਰ timespec {
 	time_t	tv_sec;
-	long	tv_nsec;
+	ਲੰਮਾ	tv_nsec;
 };
-#endif /* !HAVE_STRUCT_TIMESPEC */
+#ਜੇ_ਅੰਤ /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#ਜੇ !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
-#endif
+ਪੂਰਨ nanosleep(ਅਚਲ ਬਣਤਰ timespec *, ਬਣਤਰ timespec *);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_UTIMENSAT
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_UTIMENSAT
 # include <time.h>
 /* start with the high bits and work down to minimise risk of overlap */
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
-#endif /* !HAVE_UTIMENSAT */
+ਪੂਰਨ utimensat(ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਬਣਤਰ timespec[2], ਪੂਰਨ);
+#ਜੇ_ਅੰਤ /* !HAVE_UTIMENSAT */
 
-#ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_USLEEP
+ਪੂਰਨ usleep(ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ useconds);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_TCGETPGRP
+pid_t tcgetpgrp(ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_TCSENDBREAK
+ਪੂਰਨ tcsendbreak(ਪੂਰਨ, ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_UNSETENV
-int unsetenv(const char *);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_UNSETENV
+ਪੂਰਨ unsetenv(ਅਚਲ ਅੱਖਰ *);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_ISBLANK
-int	isblank(int);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_ISBLANK
+ਪੂਰਨ	isblank(ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_GETPGID
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_GETPGID
 pid_t getpgid(pid_t);
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
-    const sigset_t *);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_PSELECT
+ਪੂਰਨ pselect(ਪੂਰਨ, fd_set *, fd_set *, fd_set *, ਅਚਲ ਬਣਤਰ timespec *,
+    ਅਚਲ sigset_t *);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_ENDGRENT
+# define endgrent() ਕਰੋ { } ਜਦੋਂ(0)
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_KRB5_GET_ERROR_MESSAGE
-# define krb5_get_error_message krb5_get_err_text
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_KRB5_GET_ERROR_ਸੁਨੇਹਾ
+# define krb5_get_error_ਸੁਨੇਹਾ krb5_get_err_ਪਾਠ
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_KRB5_FREE_ERROR_ਸੁਨੇਹਾ
+# define krb5_free_error_ਸੁਨੇਹਾ(a,b) ਕਰੋ { } ਜਦੋਂ(0)
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_PLEDGE
+ਪੂਰਨ pledge(ਅਚਲ ਅੱਖਰ *promises, ਅਚਲ ਅੱਖਰ *execpromises);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_UNVEIL
+ਪੂਰਨ unveil(ਅਚਲ ਅੱਖਰ *, ਅਚਲ ਅੱਖਰ *);
+#ਜੇ_ਅੰਤ
 
 /* bsd-err.h */
-#ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_ERR
+ਖਾਲੀ err(ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *, ...) __attribute__((format(ਲਿਖੋ, 2, 3)));
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_ERRX
+ਖਾਲੀ errx(ਪੂਰਨ, ਅਚਲ ਅੱਖਰ *, ...) __attribute__((format(ਲਿਖੋ, 2, 3)));
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_WARN
+ਖਾਲੀ warn(ਅਚਲ ਅੱਖਰ *, ...) __attribute__((format(ਲਿਖੋ, 1, 2)));
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_LLABS
-long long llabs(long long);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_LLABS
+ਲੰਮਾ ਲੰਮਾ llabs(ਲੰਮਾ ਲੰਮਾ);
+#ਜੇ_ਅੰਤ
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
-void bzero(void *, size_t);
-#endif
+#ਜੇ defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+ਖਾਲੀ bzero(ਖਾਲੀ *, ਮਾਪ_t);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_RAISE
-int raise(int);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_RAISE
+ਪੂਰਨ ਉਠਾਓ(ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_GETSID
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_GETSID
 pid_t getsid(pid_t);
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_FLOCK
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_FLOCK
 # define LOCK_SH		0x01
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
-#endif
+ਪੂਰਨ flock(ਪੂਰਨ, ਪੂਰਨ);
+#ਜੇ_ਅੰਤ
 
-#ifdef FFLUSH_NULL_BUG
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ FFLUSH_NULL_BUG
 # define fflush(x)	(_ssh_compat_fflush(x))
-#endif
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_LOCALTIME_R
+ਬਣਤਰ tm *localtime_r(ਅਚਲ time_t *, ਬਣਤਰ tm *);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
-#ifndef CLOCK_REALTIME
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_CLOCK_GETTIME
+ਕਿਸਮਪਰਿਭਾਸ਼ਾ ਪੂਰਨ clockid_t;
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ CLOCK_REALTIME
 # define CLOCK_REALTIME	0
-#endif
-int clock_gettime(clockid_t, struct timespec *);
-#endif
+#ਜੇ_ਅੰਤ
+ਪੂਰਨ clock_gettime(clockid_t, ਬਣਤਰ timespec *);
+#ਜੇ_ਅੰਤ
 
-#ifndef HAVE_REALPATH
-#define realpath(x, y)	(sftp_realpath((x), (y)))
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_REALPATH
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ realpath(x, y)	(sftp_realpath((x), (y)))
+#ਜੇ_ਅੰਤ
 
-#endif /* _BSD_MISC_H */
+#ਜੇ_ਅੰਤ /* _BSD_MISC_H */

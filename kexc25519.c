@@ -25,175 +25,175 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <signal.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
-#include "ssh2.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshkey.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "kex.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "sshbuf.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "digest.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssherr.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh2.h"
 
-extern int crypto_scalarmult_curve25519(u_char a[CURVE25519_SIZE],
-    const u_char b[CURVE25519_SIZE], const u_char c[CURVE25519_SIZE])
-	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
-	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)))
-	__attribute__((__bounded__(__minbytes__, 3, CURVE25519_SIZE)));
+ਬਾਹਰੀ ਪੂਰਨ crypto_scalarmult_curve25519(u_char a[CURVE25519_ਮਾਪ],
+    ਅਚਲ u_char b[CURVE25519_ਮਾਪ], ਅਚਲ u_char c[CURVE25519_ਮਾਪ])
+	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_ਮਾਪ)))
+	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_ਮਾਪ)))
+	__attribute__((__bounded__(__minbytes__, 3, CURVE25519_ਮਾਪ)));
 
-void
-kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
+ਖਾਲੀ
+kexc25519_keygen(u_char ਕੁੰਜੀ[CURVE25519_ਮਾਪ], u_char pub[CURVE25519_ਮਾਪ])
 {
-	static const u_char basepoint[CURVE25519_SIZE] = {9};
+	ਸਥਿਰ ਅਚਲ u_char basepoint[CURVE25519_ਮਾਪ] = {9};
 
-	arc4random_buf(key, CURVE25519_SIZE);
-	crypto_scalarmult_curve25519(pub, key, basepoint);
+	arc4random_buf(ਕੁੰਜੀ, CURVE25519_ਮਾਪ);
+	crypto_scalarmult_curve25519(pub, ਕੁੰਜੀ, basepoint);
 }
 
-int
-kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int raw)
+ਪੂਰਨ
+kexc25519_shared_ਕੁੰਜੀ_ext(ਅਚਲ u_char ਕੁੰਜੀ[CURVE25519_ਮਾਪ],
+    ਅਚਲ u_char pub[CURVE25519_ਮਾਪ], ਬਣਤਰ sshbuf *ਬਾਹਰਲਾ, ਪੂਰਨ raw)
 {
-	u_char shared_key[CURVE25519_SIZE];
-	u_char zero[CURVE25519_SIZE];
-	int r;
+	u_char shared_ਕੁੰਜੀ[CURVE25519_ਮਾਪ];
+	u_char zero[CURVE25519_ਮਾਪ];
+	ਪੂਰਨ r;
 
-	crypto_scalarmult_curve25519(shared_key, key, pub);
+	crypto_scalarmult_curve25519(shared_ਕੁੰਜੀ, ਕੁੰਜੀ, pub);
 
 	/* Check for all-zero shared secret */
-	explicit_bzero(zero, CURVE25519_SIZE);
-	if (timingsafe_bcmp(zero, shared_key, CURVE25519_SIZE) == 0)
-		return SSH_ERR_KEY_INVALID_EC_VALUE;
+	explicit_bzero(zero, CURVE25519_ਮਾਪ);
+	ਜੇ (timingsafe_bcmp(zero, shared_ਕੁੰਜੀ, CURVE25519_ਮਾਪ) == 0)
+		ਵਾਪਸ SSH_ERR_ਕੁੰਜੀ_INVALID_EC_ਮੁੱਲ;
 
-#ifdef DEBUG_KEXECDH
-	dump_digest("shared secret 25519", shared_key, CURVE25519_SIZE);
-#endif
-	if (raw)
-		r = sshbuf_put(out, shared_key, CURVE25519_SIZE);
-	else
-		r = sshbuf_put_bignum2_bytes(out, shared_key, CURVE25519_SIZE);
-	explicit_bzero(shared_key, CURVE25519_SIZE);
-	return r;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_KEXECDH
+	dump_digest("shared secret 25519", shared_ਕੁੰਜੀ, CURVE25519_ਮਾਪ);
+#ਜੇ_ਅੰਤ
+	ਜੇ (raw)
+		r = sshbuf_put(ਬਾਹਰਲਾ, shared_ਕੁੰਜੀ, CURVE25519_ਮਾਪ);
+	ਨਹੀਂਤਾਂ
+		r = sshbuf_put_bignum2_ਬਾਈਟਾਂ(ਬਾਹਰਲਾ, shared_ਕੁੰਜੀ, CURVE25519_ਮਾਪ);
+	explicit_bzero(shared_ਕੁੰਜੀ, CURVE25519_ਮਾਪ);
+	ਵਾਪਸ r;
 }
 
-int
-kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
+ਪੂਰਨ
+kexc25519_shared_ਕੁੰਜੀ(ਅਚਲ u_char ਕੁੰਜੀ[CURVE25519_ਮਾਪ],
+    ਅਚਲ u_char pub[CURVE25519_ਮਾਪ], ਬਣਤਰ sshbuf *ਬਾਹਰਲਾ)
 {
-	return kexc25519_shared_key_ext(key, pub, out, 0);
+	ਵਾਪਸ kexc25519_shared_ਕੁੰਜੀ_ext(ਕੁੰਜੀ, pub, ਬਾਹਰਲਾ, 0);
 }
 
-int
-kex_c25519_keypair(struct kex *kex)
+ਪੂਰਨ
+kex_c25519_keypair(ਬਣਤਰ kex *kex)
 {
-	struct sshbuf *buf = NULL;
-	u_char *cp = NULL;
-	int r;
+	ਬਣਤਰ sshbuf *buf = ਨਿਰਾ;
+	u_char *cp = ਨਿਰਾ;
+	ਪੂਰਨ r;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_reserve(buf, CURVE25519_SIZE, &cp)) != 0)
-		goto out;
-	kexc25519_keygen(kex->c25519_client_key, cp);
-#ifdef DEBUG_KEXECDH
-	dump_digest("client public key c25519:", cp, CURVE25519_SIZE);
-#endif
+	ਜੇ ((buf = sshbuf_new()) == ਨਿਰਾ)
+		ਵਾਪਸ SSH_ERR_ALLOC_FAIL;
+	ਜੇ ((r = sshbuf_reserve(buf, CURVE25519_ਮਾਪ, &cp)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	kexc25519_keygen(kex->c25519_client_ਕੁੰਜੀ, cp);
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_KEXECDH
+	dump_digest("client public key c25519:", cp, CURVE25519_ਮਾਪ);
+#ਜੇ_ਅੰਤ
 	kex->client_pub = buf;
-	buf = NULL;
- out:
+	buf = ਨਿਰਾ;
+ ਬਾਹਰਲਾ:
 	sshbuf_free(buf);
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-kex_c25519_enc(struct kex *kex, const struct sshbuf *client_blob,
-   struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+ਪੂਰਨ
+kex_c25519_enc(ਬਣਤਰ kex *kex, ਅਚਲ ਬਣਤਰ sshbuf *client_blob,
+   ਬਣਤਰ sshbuf **server_blobp, ਬਣਤਰ sshbuf **shared_secretp)
 {
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *buf = NULL;
-	const u_char *client_pub;
+	ਬਣਤਰ sshbuf *server_blob = ਨਿਰਾ;
+	ਬਣਤਰ sshbuf *buf = ਨਿਰਾ;
+	ਅਚਲ u_char *client_pub;
 	u_char *server_pub;
-	u_char server_key[CURVE25519_SIZE];
-	int r;
+	u_char server_ਕੁੰਜੀ[CURVE25519_ਮਾਪ];
+	ਪੂਰਨ r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = ਨਿਰਾ;
+	*shared_secretp = ਨਿਰਾ;
 
-	if (sshbuf_len(client_blob) != CURVE25519_SIZE) {
+	ਜੇ (sshbuf_len(client_blob) != CURVE25519_ਮਾਪ) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 	client_pub = sshbuf_ptr(client_blob);
-#ifdef DEBUG_KEXECDH
-	dump_digest("client public key 25519:", client_pub, CURVE25519_SIZE);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_KEXECDH
+	dump_digest("client public key 25519:", client_pub, CURVE25519_ਮਾਪ);
+#ਜੇ_ਅੰਤ
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	ਜੇ ((server_blob = sshbuf_new()) == ਨਿਰਾ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((r = sshbuf_reserve(server_blob, CURVE25519_SIZE, &server_pub)) != 0)
-		goto out;
-	kexc25519_keygen(server_key, server_pub);
+	ਜੇ ((r = sshbuf_reserve(server_blob, CURVE25519_ਮਾਪ, &server_pub)) != 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+	kexc25519_keygen(server_ਕੁੰਜੀ, server_pub);
 	/* allocate shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	ਜੇ ((buf = sshbuf_new()) == ਨਿਰਾ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 0)) < 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
-	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
+	ਜੇ ((r = kexc25519_shared_ਕੁੰਜੀ_ext(server_ਕੁੰਜੀ, client_pub, buf, 0)) < 0)
+		ਜਾਓ ਬਾਹਰਲਾ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_KEXECDH
+	dump_digest("server public key 25519:", server_pub, CURVE25519_ਮਾਪ);
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#ਜੇ_ਅੰਤ
 	*server_blobp = server_blob;
 	*shared_secretp = buf;
-	server_blob = NULL;
-	buf = NULL;
- out:
-	explicit_bzero(server_key, sizeof(server_key));
+	server_blob = ਨਿਰਾ;
+	buf = ਨਿਰਾ;
+ ਬਾਹਰਲਾ:
+	explicit_bzero(server_ਕੁੰਜੀ, ਆਕਾਰ(server_ਕੁੰਜੀ));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	ਵਾਪਸ r;
 }
 
-int
-kex_c25519_dec(struct kex *kex, const struct sshbuf *server_blob,
-    struct sshbuf **shared_secretp)
+ਪੂਰਨ
+kex_c25519_dec(ਬਣਤਰ kex *kex, ਅਚਲ ਬਣਤਰ sshbuf *server_blob,
+    ਬਣਤਰ sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	const u_char *server_pub;
-	int r;
+	ਬਣਤਰ sshbuf *buf = ਨਿਰਾ;
+	ਅਚਲ u_char *server_pub;
+	ਪੂਰਨ r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = ਨਿਰਾ;
 
-	if (sshbuf_len(server_blob) != CURVE25519_SIZE) {
+	ਜੇ (sshbuf_len(server_blob) != CURVE25519_ਮਾਪ) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
 	server_pub = sshbuf_ptr(server_blob);
-#ifdef DEBUG_KEXECDH
-	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
-#endif
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_KEXECDH
+	dump_digest("server public key c25519:", server_pub, CURVE25519_ਮਾਪ);
+#ਜੇ_ਅੰਤ
 	/* shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	ਜੇ ((buf = sshbuf_new()) == ਨਿਰਾ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ਜਾਓ ਬਾਹਰਲਾ;
 	}
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	ਜੇ ((r = kexc25519_shared_ਕੁੰਜੀ_ext(kex->c25519_client_ਕੁੰਜੀ, server_pub,
 	    buf, 0)) < 0)
-		goto out;
-#ifdef DEBUG_KEXECDH
+		ਜਾਓ ਬਾਹਰਲਾ;
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
-#endif
+#ਜੇ_ਅੰਤ
 	*shared_secretp = buf;
-	buf = NULL;
- out:
+	buf = ਨਿਰਾ;
+ ਬਾਹਰਲਾ:
 	sshbuf_free(buf);
-	return r;
+	ਵਾਪਸ r;
 }

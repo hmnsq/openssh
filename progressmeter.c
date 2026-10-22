@@ -23,190 +23,190 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/uio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/ioctl.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/uio.h>
 
-#include <errno.h>
-#include <limits.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <signal.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <time.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
 
-#include "progressmeter.h"
-#include "atomicio.h"
-#include "misc.h"
-#include "utf8.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "progressmeter.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "atomicio.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "misc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "utf8.h"
 
-#define DEFAULT_WINSIZE 80
-#define MAX_WINSIZE 512
-#define UPDATE_INTERVAL 1	/* update the progress meter every second */
-#define STALL_TIME 5		/* we're stalled after this many seconds */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ DEFAULT_WINSIZE 80
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ MAX_WINSIZE 512
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ UPDATE_INTERVAL 1	/* update the progress meter every second */
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ STALL_ਸਮਾਂ 5		/* we're stalled after this many seconds */
 
 /* determines whether we can output to the terminal */
-static int can_output(void);
+ਸਥਿਰ ਪੂਰਨ can_output(ਖਾਲੀ);
 
 /* window resizing */
-static void sig_winch(int);
-static void setscreensize(void);
+ਸਥਿਰ ਖਾਲੀ sig_winch(ਪੂਰਨ);
+ਸਥਿਰ ਖਾਲੀ setscreensize(ਖਾਲੀ);
 
 /* signal handler for updating the progress meter */
-static void sig_alarm(int);
+ਸਥਿਰ ਖਾਲੀ sig_alarm(ਪੂਰਨ);
 
-static double start;		/* start progress */
-static double last_update;	/* last progress update */
-static const char *file;	/* name of the file being transferred */
-static off_t start_pos;		/* initial position of transfer */
-static off_t end_pos;		/* ending position of transfer */
-static off_t cur_pos;		/* transfer position as of last refresh */
-static volatile off_t *counter;	/* progress counter */
-static long stalled;		/* how long we have been stalled */
-static long long bytes_per_second; /* current speed in bytes per second */
-static int win_size;		/* terminal window size */
-static volatile sig_atomic_t win_resized; /* for window resizing */
-static volatile sig_atomic_t alarm_fired;
+ਸਥਿਰ ਦੁੱਗਣਾ ਸ਼ੁਰੂ;		/* start progress */
+ਸਥਿਰ ਦੁੱਗਣਾ ਆਖਰੀ_update;	/* last progress update */
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *file;	/* name of the file being transferred */
+ਸਥਿਰ off_t ਸ਼ੁਰੂ_pos;		/* initial position of transfer */
+ਸਥਿਰ off_t ਸਿਰਾ_pos;		/* ending position of transfer */
+ਸਥਿਰ off_t cur_pos;		/* transfer position as of last refresh */
+ਸਥਿਰ ਅਸਥਿਰ off_t *counter;	/* progress counter */
+ਸਥਿਰ ਲੰਮਾ stalled;		/* how long we have been stalled */
+ਸਥਿਰ ਲੰਮਾ ਲੰਮਾ ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ; /* current speed in bytes per second */
+ਸਥਿਰ ਪੂਰਨ win_ਮਾਪ;		/* terminal window size */
+ਸਥਿਰ ਅਸਥਿਰ sig_atomic_t win_resized; /* for window resizing */
+ਸਥਿਰ ਅਸਥਿਰ sig_atomic_t alarm_fired;
 
 /* units for format_size */
-static const char unit[] = " KMGT";
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ unit[] = " KMGT";
 
-static int
-can_output(void)
+ਸਥਿਰ ਪੂਰਨ
+can_output(ਖਾਲੀ)
 {
-	return (getpgrp() == tcgetpgrp(STDOUT_FILENO));
+	ਵਾਪਸ (getpgrp() == tcgetpgrp(STDOUT_FILENO));
 }
 
 /* size needed to format integer type v, using (nbits(v) * log2(10) / 10) */
-#define STRING_SIZE(v) (((sizeof(v) * 8 * 4) / 10) + 1)
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ STRING_ਮਾਪ(v) (((ਆਕਾਰ(v) * 8 * 4) / 10) + 1)
 
-static const char *
-format_rate(off_t bytes)
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *
+format_ਦਰ(off_t ਬਾਈਟਾਂ)
 {
-	int i;
-	static char buf[STRING_SIZE(bytes) * 2 + 16];
+	ਪੂਰਨ i;
+	ਸਥਿਰ ਅੱਖਰ buf[STRING_ਮਾਪ(ਬਾਈਟਾਂ) * 2 + 16];
 
-	bytes *= 100;
-	for (i = 0; bytes >= 100*1000 && unit[i] != 'T'; i++)
-		bytes = (bytes + 512) / 1024;
+	ਬਾਈਟਾਂ *= 100;
+	ਲਈ (i = 0; ਬਾਈਟਾਂ >= 100*1000 && unit[i] != 'T'; i++)
+		ਬਾਈਟਾਂ = (ਬਾਈਟਾਂ + 512) / 1024;
 	/* Display at least KB, even when rate is low or zero. */
-	if (i == 0) {
+	ਜੇ (i == 0) {
 		i++;
-		bytes = (bytes + 512) / 1024;
+		ਬਾਈਟਾਂ = (ਬਾਈਟਾਂ + 512) / 1024;
 	}
-	snprintf(buf, sizeof(buf), "%3lld.%1lld%cB",
-	    (long long) (bytes + 5) / 100,
-	    (long long) (bytes + 5) / 10 % 10,
+	snprintf(buf, ਆਕਾਰ(buf), "%3lld.%1lld%cB",
+	    (ਲੰਮਾ ਲੰਮਾ) (ਬਾਈਟਾਂ + 5) / 100,
+	    (ਲੰਮਾ ਲੰਮਾ) (ਬਾਈਟਾਂ + 5) / 10 % 10,
 	    unit[i]);
-	return buf;
+	ਵਾਪਸ buf;
 }
 
-static const char *
-format_size(off_t bytes)
+ਸਥਿਰ ਅਚਲ ਅੱਖਰ *
+format_ਮਾਪ(off_t ਬਾਈਟਾਂ)
 {
-	int i;
-	static char buf[STRING_SIZE(bytes) + 16];
+	ਪੂਰਨ i;
+	ਸਥਿਰ ਅੱਖਰ buf[STRING_ਮਾਪ(ਬਾਈਟਾਂ) + 16];
 
-	for (i = 0; bytes >= 10000 && unit[i] != 'T'; i++)
-		bytes = (bytes + 512) / 1024;
-	snprintf(buf, sizeof(buf), "%4lld%c%s",
-	    (long long) bytes,
+	ਲਈ (i = 0; ਬਾਈਟਾਂ >= 10000 && unit[i] != 'T'; i++)
+		ਬਾਈਟਾਂ = (ਬਾਈਟਾਂ + 512) / 1024;
+	snprintf(buf, ਆਕਾਰ(buf), "%4lld%c%s",
+	    (ਲੰਮਾ ਲੰਮਾ) ਬਾਈਟਾਂ,
 	    unit[i],
 	    i ? "B" : " ");
-	return buf;
+	ਵਾਪਸ buf;
 }
 
-void
-refresh_progress_meter(int force_update)
+ਖਾਲੀ
+refresh_ਤਰੱਕੀ_meter(ਪੂਰਨ force_update)
 {
-	char *buf = NULL, *obuf = NULL;
+	ਅੱਖਰ *buf = ਨਿਰਾ, *obuf = ਨਿਰਾ;
 	off_t transferred;
-	double elapsed, now;
-	int percent;
-	off_t bytes_left;
-	long long cur_speed;
-	int hours, minutes, seconds;
-	int file_len, cols;
+	ਦੁੱਗਣਾ elapsed, now;
+	ਪੂਰਨ percent;
+	off_t ਬਾਈਟਾਂ_ਖੱਬਾ;
+	ਲੰਮਾ ਲੰਮਾ cur_ਰਫਤਾਰ;
+	ਪੂਰਨ hours, minutes, seconds;
+	ਪੂਰਨ file_len, ਖਾਨੇ_ਗਿਣਤੀ;
 
-	if (file == NULL || (!force_update && !alarm_fired && !win_resized) ||
+	ਜੇ (file == ਨਿਰਾ || (!force_update && !alarm_fired && !win_resized) ||
 	    !can_output())
-		return;
+		ਵਾਪਸ;
 	alarm_fired = 0;
 
-	if (win_resized) {
+	ਜੇ (win_resized) {
 		setscreensize();
 		win_resized = 0;
 	}
 
-	transferred = *counter - (cur_pos ? cur_pos : start_pos);
+	transferred = *counter - (cur_pos ? cur_pos : ਸ਼ੁਰੂ_pos);
 	cur_pos = *counter;
 	now = monotime_double();
-	bytes_left = end_pos - cur_pos;
+	ਬਾਈਟਾਂ_ਖੱਬਾ = ਸਿਰਾ_pos - cur_pos;
 
-	if (bytes_left > 0)
-		elapsed = now - last_update;
-	else {
-		elapsed = now - start;
+	ਜੇ (ਬਾਈਟਾਂ_ਖੱਬਾ > 0)
+		elapsed = now - ਆਖਰੀ_update;
+	ਨਹੀਂਤਾਂ {
+		elapsed = now - ਸ਼ੁਰੂ;
 		/* Calculate true total speed when done */
-		transferred = end_pos - start_pos;
-		bytes_per_second = 0;
+		transferred = ਸਿਰਾ_pos - ਸ਼ੁਰੂ_pos;
+		ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ = 0;
 	}
 
 	/* calculate speed */
-	if (elapsed != 0)
-		cur_speed = (transferred / elapsed);
-	else
-		cur_speed = transferred;
+	ਜੇ (elapsed != 0)
+		cur_ਰਫਤਾਰ = (transferred / elapsed);
+	ਨਹੀਂਤਾਂ
+		cur_ਰਫਤਾਰ = transferred;
 
-#define AGE_FACTOR 0.9
-	if (bytes_per_second != 0) {
-		bytes_per_second = (bytes_per_second * AGE_FACTOR) +
-		    (cur_speed * (1.0 - AGE_FACTOR));
-	} else
-		bytes_per_second = cur_speed;
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ AGE_ਗੁਣਕ 0.9
+	ਜੇ (ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ != 0) {
+		ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ = (ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ * AGE_ਗੁਣਕ) +
+		    (cur_ਰਫਤਾਰ * (1.0 - AGE_ਗੁਣਕ));
+	} ਨਹੀਂਤਾਂ
+		ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ = cur_ਰਫਤਾਰ;
 
-	last_update = now;
+	ਆਖਰੀ_update = now;
 
 	/* Don't bother if we can't even display the completion percentage */
-	if (win_size < 4)
-		return;
+	ਜੇ (win_ਮਾਪ < 4)
+		ਵਾਪਸ;
 
 	/* filename */
-	file_len = cols = win_size - 36;
-	if (file_len > 0) {
-		asmprintf(&buf, INT_MAX, &cols, "%-*s", file_len, file);
+	file_len = ਖਾਨੇ_ਗਿਣਤੀ = win_ਮਾਪ - 36;
+	ਜੇ (file_len > 0) {
+		asmprintf(&buf, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ, &ਖਾਨੇ_ਗਿਣਤੀ, "%-*s", file_len, file);
 		/* If we used fewer columns than expected then pad */
-		if (cols < file_len)
-			xextendf(&buf, NULL, "%*s", file_len - cols, "");
+		ਜੇ (ਖਾਨੇ_ਗਿਣਤੀ < file_len)
+			xextendf(&buf, ਨਿਰਾ, "%*s", file_len - ਖਾਨੇ_ਗਿਣਤੀ, "");
 	}
 	/* percent of transfer done */
-	if (end_pos == 0 || cur_pos == end_pos)
+	ਜੇ (ਸਿਰਾ_pos == 0 || cur_pos == ਸਿਰਾ_pos)
 		percent = 100;
-	else
-		percent = ((float)cur_pos / end_pos) * 100;
+	ਨਹੀਂਤਾਂ
+		percent = ((ਦਸ਼ਮਲਵ)cur_pos / ਸਿਰਾ_pos) * 100;
 
 	/* percent / amount transferred / bandwidth usage */
-	xextendf(&buf, NULL, " %3d%% %s %s/s ", percent, format_size(cur_pos),
-	    format_rate((off_t)bytes_per_second));
+	xextendf(&buf, ਨਿਰਾ, " %3d%% %s %s/s ", percent, format_ਮਾਪ(cur_pos),
+	    format_ਦਰ((off_t)ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ));
 
 	/* ETA */
-	if (!transferred)
+	ਜੇ (!transferred)
 		stalled += elapsed;
-	else
+	ਨਹੀਂਤਾਂ
 		stalled = 0;
 
-	if (stalled >= STALL_TIME)
-		xextendf(&buf, NULL, "- stalled -");
-	else if (bytes_per_second == 0 && bytes_left)
-		xextendf(&buf, NULL, "  --:-- ETA");
-	else {
-		if (bytes_left > 0)
-			seconds = bytes_left / bytes_per_second;
-		else
+	ਜੇ (stalled >= STALL_ਸਮਾਂ)
+		xextendf(&buf, ਨਿਰਾ, "- stalled -");
+	ਨਹੀਂਤਾਂ ਜੇ (ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ == 0 && ਬਾਈਟਾਂ_ਖੱਬਾ)
+		xextendf(&buf, ਨਿਰਾ, "  --:-- ETA");
+	ਨਹੀਂਤਾਂ {
+		ਜੇ (ਬਾਈਟਾਂ_ਖੱਬਾ > 0)
+			seconds = ਬਾਈਟਾਂ_ਖੱਬਾ / ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ;
+		ਨਹੀਂਤਾਂ
 			seconds = elapsed;
 
 		hours = seconds / 3600;
@@ -214,90 +214,90 @@ refresh_progress_meter(int force_update)
 		minutes = seconds / 60;
 		seconds -= minutes * 60;
 
-		if (hours != 0) {
-			xextendf(&buf, NULL, "%d:%02d:%02d",
+		ਜੇ (hours != 0) {
+			xextendf(&buf, ਨਿਰਾ, "%d:%02d:%02d",
 			    hours, minutes, seconds);
-		} else
-			xextendf(&buf, NULL, "  %02d:%02d", minutes, seconds);
+		} ਨਹੀਂਤਾਂ
+			xextendf(&buf, ਨਿਰਾ, "  %02d:%02d", minutes, seconds);
 
-		if (bytes_left > 0)
-			xextendf(&buf, NULL, " ETA");
-		else
-			xextendf(&buf, NULL, "    ");
+		ਜੇ (ਬਾਈਟਾਂ_ਖੱਬਾ > 0)
+			xextendf(&buf, ਨਿਰਾ, " ETA");
+		ਨਹੀਂਤਾਂ
+			xextendf(&buf, ਨਿਰਾ, "    ");
 	}
 
 	/* Finally, truncate string at window width */
-	cols = win_size - 1;
-	asmprintf(&obuf, INT_MAX, &cols, " %s", buf);
-	if (obuf != NULL) {
+	ਖਾਨੇ_ਗਿਣਤੀ = win_ਮਾਪ - 1;
+	asmprintf(&obuf, ਵੱਧ_ਤੋਂ_ਵੱਧ_ਅੰਕ, &ਖਾਨੇ_ਗਿਣਤੀ, " %s", buf);
+	ਜੇ (obuf != ਨਿਰਾ) {
 		*obuf = '\r'; /* must insert as asmprintf() would escape it */
-		atomicio(vwrite, STDOUT_FILENO, obuf, strlen(obuf));
+		atomicio(vwrite, STDOUT_FILENO, obuf, ਲੜੀ_ਲੰਬਾਈ(obuf));
 	}
-	free(buf);
-	free(obuf);
+	ਮੁਕਤ(buf);
+	ਮੁਕਤ(obuf);
 }
 
-static void
-sig_alarm(int ignore)
+ਸਥਿਰ ਖਾਲੀ
+sig_alarm(ਪੂਰਨ ignore)
 {
 	alarm_fired = 1;
 	alarm(UPDATE_INTERVAL);
 }
 
-void
-start_progress_meter(const char *f, off_t filesize, off_t *ctr)
+ਖਾਲੀ
+ਸ਼ੁਰੂ_ਤਰੱਕੀ_meter(ਅਚਲ ਅੱਖਰ *f, off_t filesize, off_t *ctr)
 {
-	start = last_update = monotime_double();
+	ਸ਼ੁਰੂ = ਆਖਰੀ_update = monotime_double();
 	file = f;
-	start_pos = *ctr;
-	end_pos = filesize;
+	ਸ਼ੁਰੂ_pos = *ctr;
+	ਸਿਰਾ_pos = filesize;
 	cur_pos = 0;
 	counter = ctr;
 	stalled = 0;
-	bytes_per_second = 0;
+	ਬਾਈਟਾਂ_ਪ੍ਰਤੀ_ਦੂਜਾ = 0;
 
 	setscreensize();
-	refresh_progress_meter(1);
+	refresh_ਤਰੱਕੀ_meter(1);
 
 	ssh_signal(SIGALRM, sig_alarm);
 	ssh_signal(SIGWINCH, sig_winch);
 	alarm(UPDATE_INTERVAL);
 }
 
-void
-stop_progress_meter(void)
+ਖਾਲੀ
+stop_ਤਰੱਕੀ_meter(ਖਾਲੀ)
 {
 	alarm(0);
 
-	if (!can_output())
-		return;
+	ਜੇ (!can_output())
+		ਵਾਪਸ;
 
 	/* Ensure we complete the progress */
-	if (cur_pos != end_pos)
-		refresh_progress_meter(1);
+	ਜੇ (cur_pos != ਸਿਰਾ_pos)
+		refresh_ਤਰੱਕੀ_meter(1);
 
 	atomicio(vwrite, STDOUT_FILENO, "\n", 1);
-	file = NULL;
+	file = ਨਿਰਾ;
 }
 
-static void
-sig_winch(int sig)
+ਸਥਿਰ ਖਾਲੀ
+sig_winch(ਪੂਰਨ sig)
 {
 	win_resized = 1;
 }
 
-static void
-setscreensize(void)
+ਸਥਿਰ ਖਾਲੀ
+setscreensize(ਖਾਲੀ)
 {
-	struct winsize winsize;
+	ਬਣਤਰ winsize winsize;
 
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &winsize) != -1 &&
-	    winsize.ws_col != 0) {
-		if (winsize.ws_col > MAX_WINSIZE)
-			win_size = MAX_WINSIZE;
-		else
-			win_size = winsize.ws_col;
-	} else
-		win_size = DEFAULT_WINSIZE;
-	win_size += 1;					/* trailing \0 */
+	ਜੇ (ioctl(STDOUT_FILENO, TIOCGWINSZ, &winsize) != -1 &&
+	    winsize.ws_ਖਾਨਾ != 0) {
+		ਜੇ (winsize.ws_ਖਾਨਾ > MAX_WINSIZE)
+			win_ਮਾਪ = MAX_WINSIZE;
+		ਨਹੀਂਤਾਂ
+			win_ਮਾਪ = winsize.ws_ਖਾਨਾ;
+	} ਨਹੀਂਤਾਂ
+		win_ਮਾਪ = DEFAULT_WINSIZE;
+	win_ਮਾਪ += 1;					/* trailing \0 */
 }

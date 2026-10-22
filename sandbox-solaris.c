@@ -15,86 +15,86 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifdef SANDBOX_SOLARIS
-#ifndef USE_SOLARIS_PRIVS
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ SANDBOX_SOLARIS
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ USE_SOLARIS_PRIVS
 # error "--with-solaris-privs must be used with the Solaris sandbox"
-#endif
+#ਜੇ_ਅੰਤ
 
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#ifdef HAVE_PRIV_H
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ HAVE_PRIV_H
 # include <priv.h>
-#endif
+#ਜੇ_ਅੰਤ
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "ssh-sandbox.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "xmalloc.h"
 
-struct ssh_sandbox {
-	priv_set_t *pset;
+ਬਣਤਰ ssh_sandbox {
+	priv_ਸੈੱਟ_t *pset;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+ਬਣਤਰ ssh_sandbox *
+ssh_sandbox_init(ਬਣਤਰ monitor *monitor)
 {
-	struct ssh_sandbox *box = NULL;
+	ਬਣਤਰ ssh_sandbox *box = ਨਿਰਾ;
 
-	box = xcalloc(1, sizeof(*box));
+	box = xcalloc(1, ਆਕਾਰ(*box));
 
 	/* Start with "basic" and drop everything we don't need. */
 	box->pset = solaris_basic_privset();
 
-	if (box->pset == NULL) {
-		free(box);
-		return NULL;
+	ਜੇ (box->pset == ਨਿਰਾ) {
+		ਮੁਕਤ(box);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
 	/* Drop everything except the ability to use already-opened files */
-	if (priv_delset(box->pset, PRIV_FILE_LINK_ANY) != 0 ||
-#ifdef PRIV_NET_ACCESS
+	ਜੇ (priv_delset(box->pset, PRIV_FILE_LINK_ANY) != 0 ||
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PRIV_NET_ACCESS
 	    priv_delset(box->pset, PRIV_NET_ACCESS) != 0 ||
-#endif
-#ifdef PRIV_DAX_ACCESS
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PRIV_DAX_ACCESS
 	    priv_delset(box->pset, PRIV_DAX_ACCESS) != 0 ||
-#endif
-#ifdef PRIV_SYS_IB_INFO
+#ਜੇ_ਅੰਤ
+#ਜੇ_ਪਰਿਭਾਸ਼ਿਤ PRIV_SYS_IB_INFO
 	    priv_delset(box->pset, PRIV_SYS_IB_INFO) != 0 ||
-#endif
+#ਜੇ_ਅੰਤ
 	    priv_delset(box->pset, PRIV_PROC_EXEC) != 0 ||
 	    priv_delset(box->pset, PRIV_PROC_FORK) != 0 ||
 	    priv_delset(box->pset, PRIV_PROC_INFO) != 0 ||
 	    priv_delset(box->pset, PRIV_PROC_SESSION) != 0) {
-		free(box);
-		return NULL;
+		ਮੁਕਤ(box);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 
 	/* These may not be available on older Solaris-es */
-# if defined(PRIV_FILE_READ) && defined(PRIV_FILE_WRITE)
-	if (priv_delset(box->pset, PRIV_FILE_READ) != 0 ||
+# ਜੇ defined(PRIV_FILE_READ) && defined(PRIV_FILE_WRITE)
+	ਜੇ (priv_delset(box->pset, PRIV_FILE_READ) != 0 ||
 	    priv_delset(box->pset, PRIV_FILE_WRITE) != 0) {
-		free(box);
-		return NULL;
+		ਮੁਕਤ(box);
+		ਵਾਪਸ ਨਿਰਾ;
 	}
 # endif
 
-	return box;
+	ਵਾਪਸ box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+ਖਾਲੀ
+ssh_sandbox_ਬੱਚਾ(ਬਣਤਰ ssh_sandbox *box)
 {
-	if (setppriv(PRIV_SET, PRIV_PERMITTED, box->pset) != 0 ||
-	    setppriv(PRIV_SET, PRIV_LIMIT, box->pset) != 0 ||
-	    setppriv(PRIV_SET, PRIV_INHERITABLE, box->pset) != 0)
+	ਜੇ (setppriv(PRIV_ਸੈੱਟ, PRIV_PERMITTED, box->pset) != 0 ||
+	    setppriv(PRIV_ਸੈੱਟ, PRIV_ਹੱਦਬੰਦੀ, box->pset) != 0 ||
+	    setppriv(PRIV_ਸੈੱਟ, PRIV_INHERITABLE, box->pset) != 0)
 		fatal("setppriv: %s", strerror(errno));
 }
 
-#endif /* SANDBOX_SOLARIS */
+#ਜੇ_ਅੰਤ /* SANDBOX_SOLARIS */

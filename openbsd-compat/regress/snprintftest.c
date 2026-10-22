@@ -15,64 +15,64 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#define BUFSZ 2048
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ BUFSZ 2048
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdio.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdarg.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
 
-static int failed = 0;
+ਸਥਿਰ ਪੂਰਨ failed = 0;
 
-static void
-fail(const char *m)
+ਸਥਿਰ ਖਾਲੀ
+fail(ਅਚਲ ਅੱਖਰ *m)
 {
 	fprintf(stderr, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+ਪੂਰਨ x_snprintf(ਅੱਖਰ *str, ਮਾਪ_t ਗਿਣਤੀ_2, ਅਚਲ ਅੱਖਰ *fmt, ...)
 {
-	size_t ret;
+	ਮਾਪ_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, ਗਿਣਤੀ_2, fmt, ap);
 	va_end(ap);
-	return ret;
+	ਵਾਪਸ ret;
 }
 
-int
-main(void)
+ਪੂਰਨ
+ਮੁੱਖ(ਖਾਲੀ)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	ਅੱਖਰ b[5];
+	ਅੱਖਰ *src = ਨਿਰਾ;
+	ਪੂਰਨ ret;
 
-	memset(b, 'X', sizeof(b));
+	memset(b, 'X', ਆਕਾਰ(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	ਜੇ (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	ਜੇ ((src = ਸਮ੍ਰਿਤੀ_ਦਿਓ(BUFSZ)) == ਨਿਰਾ) {
 		fail("malloc failed");
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+		snprintf(b, ਆਕਾਰ(b), "%.*s", 1, src);
+		ਜੇ (strcmp(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ਜੇ (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ਜੇ (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
-	free(src);
-	return failed;
+	ਮੁਕਤ(src);
+	ਵਾਪਸ failed;
 }

@@ -14,35 +14,35 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _PORT_TUN_H
-#define _PORT_TUN_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ਪੋਰਟ_TUN_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ ਪੋਰਟ_TUN_H
 
-struct Channel;
-struct ssh;
+ਬਣਤਰ Channel;
+ਬਣਤਰ ssh;
 
-#if defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
+#ਜੇ defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
 # define CUSTOM_SYS_TUN_OPEN
-int	  sys_tun_open(int, int, char **);
-#endif
+ਪੂਰਨ	  sys_tun_open(ਪੂਰਨ, ਪੂਰਨ, ਅੱਖਰ **);
+#ਜੇ_ਅੰਤ
 
-#if defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
+#ਜੇ defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
 # define SSH_TUN_FILTER
-int	 sys_tun_infilter(struct ssh *, struct Channel *, char *, int);
-u_char	*sys_tun_outfilter(struct ssh *, struct Channel *, u_char **, size_t *);
-#endif
+ਪੂਰਨ	 sys_tun_infilter(ਬਣਤਰ ssh *, ਬਣਤਰ Channel *, ਅੱਖਰ *, ਪੂਰਨ);
+u_char	*sys_tun_outfilter(ਬਣਤਰ ssh *, ਬਣਤਰ Channel *, u_char **, ਮਾਪ_t *);
+#ਜੇ_ਅੰਤ
 
-#if defined(SYS_RDOMAIN_LINUX)
+#ਜੇ defined(SYS_RDOMAIN_LINUX)
 # define HAVE_SYS_GET_RDOMAIN
-# define HAVE_SYS_SET_RDOMAIN
+# define HAVE_SYS_ਸੈੱਟ_RDOMAIN
 # define HAVE_SYS_VALID_RDOMAIN
-char *sys_get_rdomain(int fd);
-int sys_set_rdomain(int fd, const char *name);
-int sys_valid_rdomain(const char *name);
-#endif
+ਅੱਖਰ *sys_get_rdomain(ਪੂਰਨ fd);
+ਪੂਰਨ sys_ਸੈੱਟ_rdomain(ਪੂਰਨ fd, ਅਚਲ ਅੱਖਰ *name);
+ਪੂਰਨ sys_valid_rdomain(ਅਚਲ ਅੱਖਰ *name);
+#ਜੇ_ਅੰਤ
 
-#if defined(SYS_RDOMAIN_XXX)
-# define HAVE_SYS_SET_PROCESS_RDOMAIN
-void sys_set_process_rdomain(const char *name);
-#endif
+#ਜੇ defined(SYS_RDOMAIN_XXX)
+# define HAVE_SYS_ਸੈੱਟ_PROCESS_RDOMAIN
+ਖਾਲੀ sys_ਸੈੱਟ_process_rdomain(ਅਚਲ ਅੱਖਰ *name);
+#ਜੇ_ਅੰਤ
 
-#endif
+#ਜੇ_ਅੰਤ

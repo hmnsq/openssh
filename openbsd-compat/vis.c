@@ -30,20 +30,20 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
+#ਜੇ !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
-#include <sys/types.h>
-#include <errno.h>
-#include <ctype.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <errno.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <ctype.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <limits.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
 
-#include "vis.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "vis.h"
 
-#define	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
-#define	isvisible(c,flag)						\
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ	isvisible(c,flag)						\
 	(((c) == '\\' || (flag & VIS_ALL) == 0) &&			\
 	(((u_int)(c) <= UCHAR_MAX && isascii((u_char)(c)) &&		\
 	(((c) != '*' && (c) != '?' && (c) != '[' && (c) != '#') ||	\
@@ -51,96 +51,96 @@
 	((flag & VIS_SP) == 0 && (c) == ' ') ||				\
 	((flag & VIS_TAB) == 0 && (c) == '\t') ||			\
 	((flag & VIS_NL) == 0 && (c) == '\n') ||			\
-	((flag & VIS_SAFE) && ((c) == '\b' ||				\
+	((flag & VIS_ਸੁਰੱਖਿਅਤ) && ((c) == '\b' ||				\
 		(c) == '\007' || (c) == '\r' ||				\
 		isgraph((u_char)(c))))))
 
 /*
  * vis - visually encode characters
  */
-char *
-vis(char *dst, int c, int flag, int nextc)
+ਅੱਖਰ *
+vis(ਅੱਖਰ *dst, ਪੂਰਨ c, ਪੂਰਨ flag, ਪੂਰਨ nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	ਜੇ (isvisible(c, flag)) {
+		ਜੇ ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		ਵਾਪਸ (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
-		switch(c) {
-		case '\n':
+	ਜੇ (flag & VIS_CSTYLE) {
+		ਚੋਣ(c) {
+		ਹਾਲਤ '\n':
 			*dst++ = '\\';
 			*dst++ = 'n';
-			goto done;
-		case '\r':
+			ਜਾਓ ਪੂਰਾ;
+		ਹਾਲਤ '\r':
 			*dst++ = '\\';
 			*dst++ = 'r';
-			goto done;
-		case '\b':
+			ਜਾਓ ਪੂਰਾ;
+		ਹਾਲਤ '\b':
 			*dst++ = '\\';
 			*dst++ = 'b';
-			goto done;
-		case '\a':
+			ਜਾਓ ਪੂਰਾ;
+		ਹਾਲਤ '\a':
 			*dst++ = '\\';
 			*dst++ = 'a';
-			goto done;
-		case '\v':
+			ਜਾਓ ਪੂਰਾ;
+		ਹਾਲਤ '\v':
 			*dst++ = '\\';
 			*dst++ = 'v';
-			goto done;
-		case '\t':
+			ਜਾਓ ਪੂਰਾ;
+		ਹਾਲਤ '\t':
 			*dst++ = '\\';
 			*dst++ = 't';
-			goto done;
-		case '\f':
+			ਜਾਓ ਪੂਰਾ;
+		ਹਾਲਤ '\f':
 			*dst++ = '\\';
 			*dst++ = 'f';
-			goto done;
-		case ' ':
+			ਜਾਓ ਪੂਰਾ;
+		ਹਾਲਤ ' ':
 			*dst++ = '\\';
 			*dst++ = 's';
-			goto done;
-		case '\0':
+			ਜਾਓ ਪੂਰਾ;
+		ਹਾਲਤ '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			ਜੇ (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
-			goto done;
+			ਜਾਓ ਪੂਰਾ;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	ਜੇ (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
 		*dst++ = ((u_char)c >> 3 & 07) + '0';
 		*dst++ = ((u_char)c & 07) + '0';
-		goto done;
+		ਜਾਓ ਪੂਰਾ;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	ਜੇ ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	ਜੇ (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	ਜੇ (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		ਜੇ (c == 0177)
 			*dst++ = '?';
-		else
+		ਨਹੀਂਤਾਂ
 			*dst++ = c + '@';
-	} else {
+	} ਨਹੀਂਤਾਂ {
 		*dst++ = '-';
 		*dst++ = c;
 	}
-done:
+ਪੂਰਾ:
 	*dst = '\0';
-	return (dst);
+	ਵਾਪਸ (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,97 +157,97 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+ਪੂਰਨ
+strvis(ਅੱਖਰ *dst, ਅਚਲ ਅੱਖਰ *src, ਪੂਰਨ flag)
 {
-	char c;
-	char *start;
+	ਅੱਖਰ c;
+	ਅੱਖਰ *ਸ਼ੁਰੂ;
 
-	for (start = dst; (c = *src);)
+	ਲਈ (ਸ਼ੁਰੂ = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	ਵਾਪਸ (dst - ਸ਼ੁਰੂ);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+ਪੂਰਨ
+strnvis(ਅੱਖਰ *dst, ਅਚਲ ਅੱਖਰ *src, ਮਾਪ_t siz, ਪੂਰਨ flag)
 {
-	char *start, *end;
-	char tbuf[5];
-	int c, i;
+	ਅੱਖਰ *ਸ਼ੁਰੂ, *ਸਿਰਾ;
+	ਅੱਖਰ tbuf[5];
+	ਪੂਰਨ c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	ਲਈ (ਸ਼ੁਰੂ = dst, ਸਿਰਾ = ਸ਼ੁਰੂ + siz - 1; (c = *src) && dst < ਸਿਰਾ; ) {
+		ਜੇ (isvisible(c, flag)) {
+			ਜੇ ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				ਜੇ (dst + 1 >= ਸਿਰਾ) {
 					i = 2;
-					break;
+					ਰੋਕੋ;
 				}
 				*dst++ = '\\';
 			}
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} ਨਹੀਂਤਾਂ {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
-				memcpy(dst, tbuf, i);
+			ਜੇ (dst + i <= ਸਿਰਾ) {
+				ਸਮ੍ਰਿਤੀ_ਨਕਲ(dst, tbuf, i);
 				dst += i;
-			} else {
+			} ਨਹੀਂਤਾਂ {
 				src--;
-				break;
+				ਰੋਕੋ;
 			}
 		}
 	}
-	if (siz > 0)
+	ਜੇ (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	ਜੇ (dst + i > ਸਿਰਾ) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		ਜਦੋਂ ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	ਵਾਪਸ (dst - ਸ਼ੁਰੂ);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#ਜੇ 0 /* unused in OpenSSH */
+ਪੂਰਨ
+stravis(ਅੱਖਰ **outp, ਅਚਲ ਅੱਖਰ *src, ਪੂਰਨ flag)
 {
-	char *buf;
-	int len, serrno;
+	ਅੱਖਰ *buf;
+	ਪੂਰਨ len, serrno;
 
-	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	buf = reallocarray(ਨਿਰਾ, 4, ਲੜੀ_ਲੰਬਾਈ(src) + 1);
+	ਜੇ (buf == ਨਿਰਾ)
+		ਵਾਪਸ -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	ਜੇ (*outp == ਨਿਰਾ) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	ਵਾਪਸ (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+ਪੂਰਨ
+strvisx(ਅੱਖਰ *dst, ਅਚਲ ਅੱਖਰ *src, ਮਾਪ_t len, ਪੂਰਨ flag)
 {
-	char c;
-	char *start;
+	ਅੱਖਰ c;
+	ਅੱਖਰ *ਸ਼ੁਰੂ;
 
-	for (start = dst; len > 1; len--) {
+	ਲਈ (ਸ਼ੁਰੂ = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	ਜੇ (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	ਵਾਪਸ (dst - ਸ਼ੁਰੂ);
 }
-#endif /* unused */
+#ਜੇ_ਅੰਤ /*ਅਣਵਰਤਿਆ*/
 
-#endif
+#ਜੇ_ਅੰਤ

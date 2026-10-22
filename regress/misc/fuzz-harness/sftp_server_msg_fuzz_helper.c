@@ -38,156 +38,156 @@ limitations under the License.
  * recovery so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <setjmp.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdint.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <stdlib.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <string.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <unistd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <pwd.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
 
-#include "log.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "log.h"
 
-extern void fuzz_arena_begin(void);
-extern void fuzz_arena_release(void);
-extern void fuzz_arena_cleanup(void);
+ਬਾਹਰੀ ਖਾਲੀ fuzz_arena_begin(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ fuzz_arena_release(ਖਾਲੀ);
+ਬਾਹਰੀ ਖਾਲੀ fuzz_arena_cleanup(ਖਾਲੀ);
 
-static jmp_buf fuzz_server_env;
-static volatile int in_fuzz_server = 0;
+ਸਥਿਰ jmp_buf fuzz_server_env;
+ਸਥਿਰ ਅਸਥਿਰ ਪੂਰਨ ਵਿੱਚ_fuzz_server = 0;
 
-void
-cleanup_exit(int code)
+ਖਾਲੀ
+cleanup_exit(ਪੂਰਨ ਕੋਡ)
 {
-	if (in_fuzz_server)
-		longjmp(fuzz_server_env, code ? code : 1);
-	_exit(code);
+	ਜੇ (ਵਿੱਚ_fuzz_server)
+		longjmp(fuzz_server_env, ਕੋਡ ? ਕੋਡ : 1);
+	_exit(ਕੋਡ);
 }
 
-#define sftp_server_cleanup_exit __orig_sftp_server_cleanup_exit
-#include "../../../sftp-server.c"
-#undef sftp_server_cleanup_exit
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ sftp_server_cleanup_exit __orig_sftp_server_cleanup_exit
+#ਅਨ੍ਤਰ੍ਭਾਵ "../../../sftp-server.c"
+#ਪਰਿਭਾਸ਼ਾ_ਰੱਦ sftp_server_cleanup_exit
 
-void
-sftp_server_cleanup_exit(int code)
+ਖਾਲੀ
+sftp_server_cleanup_exit(ਪੂਰਨ ਕੋਡ)
 {
-	if (in_fuzz_server)
-		longjmp(fuzz_server_env, code ? code : 1);
-	_exit(code);
+	ਜੇ (ਵਿੱਚ_fuzz_server)
+		longjmp(fuzz_server_env, ਕੋਡ ? ਕੋਡ : 1);
+	_exit(ਕੋਡ);
 }
 
-static void (* const __force_use_renamed)(int) =
+ਸਥਿਰ ਖਾਲੀ (* ਅਚਲ __force_use_renamed)(ਪੂਰਨ) =
     __orig_sftp_server_cleanup_exit;
 
-static struct passwd fuzz_pw;
-static int log_initialized = 0;
+ਸਥਿਰ ਬਣਤਰ passwd fuzz_pw;
+ਸਥਿਰ ਪੂਰਨ log_initialized = 0;
 
-static void
-cleanup_handles(void)
+ਸਥਿਰ ਖਾਲੀ
+cleanup_handles(ਖਾਲੀ)
 {
 	u_int i;
-	if (handles == NULL)
-		return;
-	for (i = 0; i < num_handles; i++) {
-		if (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
+	ਜੇ (handles == ਨਿਰਾ)
+		ਵਾਪਸ;
+	ਲਈ (i = 0; i < ਅੰਕ_handles; i++) {
+		ਜੇ (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
 			close(handles[i].fd);
-		else if (handles[i].use == HANDLE_DIR && handles[i].dirp != NULL)
+		ਨਹੀਂਤਾਂ ਜੇ (handles[i].use == HANDLE_DIR && handles[i].dirp != ਨਿਰਾ)
 			closedir(handles[i].dirp);
-		free(handles[i].name);
+		ਮੁਕਤ(handles[i].name);
 	}
-	free(handles);
-	handles = NULL;
-	num_handles = 0;
-	first_unused_handle = -1;
+	ਮੁਕਤ(handles);
+	handles = ਨਿਰਾ;
+	ਅੰਕ_handles = 0;
+	ਪਹਿਲਾ_ਅਣਵਰਤਿਆ_handle = -1;
 }
 
-static void
-reset_module_globals(void)
+ਸਥਿਰ ਖਾਲੀ
+reset_module_globals(ਖਾਲੀ)
 {
 	pw = &fuzz_pw;
-	client_addr = NULL;
-	version = 0;
-	init_done = 0;
+	client_addr = ਨਿਰਾ;
+	ਸੰਸਕਰਣ = 0;
+	init_ਪੂਰਾ = 0;
 	readonly = 0;
-	request_allowlist = NULL;
-	request_denylist = NULL;
-	handles = NULL;
-	num_handles = 0;
-	first_unused_handle = -1;
-	iqueue = NULL;
-	oqueue = NULL;
+	request_allowlist = ਨਿਰਾ;
+	request_denylist = ਨਿਰਾ;
+	handles = ਨਿਰਾ;
+	ਅੰਕ_handles = 0;
+	ਪਹਿਲਾ_ਅਣਵਰਤਿਆ_handle = -1;
+	iqueue = ਨਿਰਾ;
+	oqueue = ਨਿਰਾ;
 }
 
-void
-fuzz_server_one(const uint8_t *data, size_t size)
+ਖਾਲੀ
+fuzz_server_one(ਅਚਲ uint8_t *ਅੰਕੜੇ, ਮਾਪ_t ਮਾਪ)
 {
-	if (!log_initialized) {
+	ਜੇ (!log_initialized) {
 		log_initialized = 1;
 		log_init("sftp_server_msg_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 
 		/* Confine filesystem syscalls (process_open/mkdir/symlink) to a fresh tmpdir. */
-		char tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
-		if (mkdtemp(tmpdir) != NULL && chdir(tmpdir) != 0)
+		ਅੱਖਰ tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
+		ਜੇ (mkdtemp(tmpdir) != ਨਿਰਾ && chdir(tmpdir) != 0)
 			_exit(1);
 
-		memset(&fuzz_pw, 0, sizeof(fuzz_pw));
-		fuzz_pw.pw_name = (char *)"fuzz";
+		memset(&fuzz_pw, 0, ਆਕਾਰ(fuzz_pw));
+		fuzz_pw.pw_name = (ਅੱਖਰ *)"fuzz";
 		fuzz_pw.pw_uid = getuid();
 		fuzz_pw.pw_gid = getgid();
-		fuzz_pw.pw_dir = (char *)"/tmp";
-		fuzz_pw.pw_shell = (char *)"/bin/sh";
+		fuzz_pw.pw_dir = (ਅੱਖਰ *)"/tmp";
+		fuzz_pw.pw_shell = (ਅੱਖਰ *)"/bin/sh";
 	}
 
-	if (size == 0 || size > 65000)
-		return;
+	ਜੇ (ਮਾਪ == 0 || ਮਾਪ > 65000)
+		ਵਾਪਸ;
 
 	reset_module_globals();
 
 	fuzz_arena_begin();
-	in_fuzz_server = 1;
-	if (setjmp(fuzz_server_env) == 0) {
+	ਵਿੱਚ_fuzz_server = 1;
+	ਜੇ (setjmp(fuzz_server_env) == 0) {
 		client_addr = strdup("127.0.0.1");
 		iqueue = sshbuf_new();
 		oqueue = sshbuf_new();
-		if (iqueue == NULL || oqueue == NULL)
-			goto out;
+		ਜੇ (iqueue == ਨਿਰਾ || oqueue == ਨਿਰਾ)
+			ਜਾਓ ਬਾਹਰਲਾ;
 
-		const uint8_t init_msg[] = {
+		ਅਚਲ uint8_t init_ਸੁਨੇਹਾ[] = {
 		    0x00, 0x00, 0x00, 0x05,
 		    SSH2_FXP_INIT,
 		    0x00, 0x00, 0x00, 0x03,
 		};
-		if (sshbuf_put(iqueue, init_msg, sizeof(init_msg)) != 0)
-			goto out;
+		ਜੇ (sshbuf_put(iqueue, init_ਸੁਨੇਹਾ, ਆਕਾਰ(init_ਸੁਨੇਹਾ)) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 		process();
 
 		sshbuf_reset(iqueue);
 		sshbuf_reset(oqueue);
 
 		uint8_t hdr[4] = {
-		    (uint8_t)((size >> 24) & 0xff),
-		    (uint8_t)((size >> 16) & 0xff),
-		    (uint8_t)((size >> 8) & 0xff),
-		    (uint8_t)(size & 0xff),
+		    (uint8_t)((ਮਾਪ >> 24) & 0xff),
+		    (uint8_t)((ਮਾਪ >> 16) & 0xff),
+		    (uint8_t)((ਮਾਪ >> 8) & 0xff),
+		    (uint8_t)(ਮਾਪ & 0xff),
 		};
-		if (sshbuf_put(iqueue, hdr, 4) != 0 ||
-		    sshbuf_put(iqueue, data, size) != 0)
-			goto out;
+		ਜੇ (sshbuf_put(iqueue, hdr, 4) != 0 ||
+		    sshbuf_put(iqueue, ਅੰਕੜੇ, ਮਾਪ) != 0)
+			ਜਾਓ ਬਾਹਰਲਾ;
 		process();
-	out:
+	ਬਾਹਰਲਾ:
 		cleanup_handles();
 		sshbuf_free(iqueue);
 		sshbuf_free(oqueue);
-		free(client_addr);
-		iqueue = oqueue = NULL;
-		client_addr = NULL;
-		in_fuzz_server = 0;
+		ਮੁਕਤ(client_addr);
+		iqueue = oqueue = ਨਿਰਾ;
+		client_addr = ਨਿਰਾ;
+		ਵਿੱਚ_fuzz_server = 0;
 		fuzz_arena_release();
-		return;
+		ਵਾਪਸ;
 	}
 	cleanup_handles();
-	in_fuzz_server = 0;
+	ਵਿੱਚ_fuzz_server = 0;
 	fuzz_arena_cleanup();
-	iqueue = oqueue = NULL;
-	client_addr = NULL;
+	iqueue = oqueue = ਨਿਰਾ;
+	client_addr = ਨਿਰਾ;
 }

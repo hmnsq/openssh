@@ -45,66 +45,66 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _GETRRSETBYNAME_H
-#define _GETRRSETBYNAME_H
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ _GETRRSETBYNAME_H
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ _GETRRSETBYNAME_H
 
-#include "includes.h"
+#ਅਨ੍ਤਰ੍ਭਾਵ "includes.h"
 
-#ifndef HAVE_GETRRSETBYNAME
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HAVE_GETRRSETBYNAME
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <netdb.h>
-#include <resolv.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <sys/types.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netinet/in.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <arpa/nameser.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <netdb.h>
+#ਅਨ੍ਤਰ੍ਭਾਵ <resolv.h>
 
-#ifndef HFIXEDSZ
-#define HFIXEDSZ 12
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ HFIXEDSZ
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ HFIXEDSZ 12
+#ਜੇ_ਅੰਤ
 
-#ifndef T_RRSIG
-#define T_RRSIG 46
-#endif
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ T_RRSIG
+#ਪਰਿਭਾਸ਼ਿਤ_ਕਰੋ T_RRSIG 46
+#ਜੇ_ਅੰਤ
 
 /*
  * Flags for getrrsetbyname()
  */
-#ifndef RRSET_VALIDATED
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ RRSET_VALIDATED
 # define RRSET_VALIDATED	1
-#endif
+#ਜੇ_ਅੰਤ
 
 /*
  * Return codes for getrrsetbyname()
  */
-#ifndef ERRSET_SUCCESS
+#ਜੇ_ਅਪਰਿਭਾਸ਼ਿਤ ERRSET_SUCCESS
 # define ERRSET_SUCCESS		0
 # define ERRSET_NOMEMORY	1
 # define ERRSET_FAIL		2
 # define ERRSET_INVAL		3
 # define ERRSET_NONAME		4
 # define ERRSET_NODATA		5
-#endif
+#ਜੇ_ਅੰਤ
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+ਬਣਤਰ rdatainfo {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rdi_ਲੰਮਾਈ;	/* length of data */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਅੱਖਰ		*rdi_ਅੰਕੜੇ;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+ਬਣਤਰ rrsetinfo {
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rri_flags;	/* RRSET_VALIDATED ... */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rri_rdclass;	/* class number */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rri_rdtype;	/* RR type number */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rri_ttl;	/* time to live */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rri_nrdatas;	/* size of rdatas array */
+	ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ		rri_nsigs;	/* size of sigs array */
+	ਅੱਖਰ			*rri_name;	/* canonical name */
+	ਬਣਤਰ rdatainfo	*rri_rdatas;	/* individual records */
+	ਬਣਤਰ rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+ਪੂਰਨ		getrrsetbyname(ਅਚਲ ਅੱਖਰ *, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, ਬਿਨਾਨਿਸ਼ਾਨੀ ਪੂਰਨ, ਬਣਤਰ rrsetinfo **);
+ਖਾਲੀ		freerrset(ਬਣਤਰ rrsetinfo *);
 
-#endif /* !defined(HAVE_GETRRSETBYNAME) */
+#ਜੇ_ਅੰਤ /* !defined(HAVE_GETRRSETBYNAME) */
 
-#endif /* _GETRRSETBYNAME_H */
+#ਜੇ_ਅੰਤ /* _GETRRSETBYNAME_H */
