@@ -23,26 +23,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/uio.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/ioctl.h>
+#अन्तर्भाव <sys/uio.h>
 
-#include <errno.h>
-#include <limits.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <unistd.h>
 
-#include "progressmeter.h"
-#include "atomicio.h"
-#include "misc.h"
-#include "utf8.h"
+#अन्तर्भाव "progressmeter.h"
+#अन्तर्भाव "atomicio.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "utf8.h"
 
 #define DEFAULT_WINSIZE 80
 #define MAX_WINSIZE 512
@@ -50,94 +50,94 @@
 #define STALL_TIME 5		/* we're stalled after this many seconds */
 
 /* determines whether we can output to the terminal */
-static int can_output(void);
+स्थिर पूर्णाङ्क can_output(शून्य);
 
 /* window resizing */
-static void sig_winch(int);
-static void setscreensize(void);
+स्थिर शून्य sig_winch(पूर्णाङ्क);
+स्थिर शून्य setscreensize(शून्य);
 
 /* signal handler for updating the progress meter */
-static void sig_alarm(int);
+स्थिर शून्य sig_alarm(पूर्णाङ्क);
 
-static double start;		/* start progress */
-static double last_update;	/* last progress update */
-static const char *file;	/* name of the file being transferred */
-static off_t start_pos;		/* initial position of transfer */
-static off_t end_pos;		/* ending position of transfer */
-static off_t cur_pos;		/* transfer position as of last refresh */
-static volatile off_t *counter;	/* progress counter */
-static long stalled;		/* how long we have been stalled */
-static long long bytes_per_second; /* current speed in bytes per second */
-static int win_size;		/* terminal window size */
-static volatile sig_atomic_t win_resized; /* for window resizing */
-static volatile sig_atomic_t alarm_fired;
+स्थिर द्विगुण start;		/* start progress */
+स्थिर द्विगुण last_update;	/* last progress update */
+स्थिर ध्रुव वर्ण *file;	/* name of the file being transferred */
+स्थिर off_t start_pos;		/* initial position of transfer */
+स्थिर off_t end_pos;		/* ending position of transfer */
+स्थिर off_t cur_pos;		/* transfer position as of last refresh */
+स्थिर चञ्चल off_t *counter;	/* progress counter */
+स्थिर long stalled;		/* how long we have been stalled */
+स्थिर long long bytes_per_second; /* current speed in bytes per second */
+स्थिर पूर्णाङ्क win_size;		/* terminal window size */
+स्थिर चञ्चल sig_atomic_t win_resized; /* for window resizing */
+स्थिर चञ्चल sig_atomic_t alarm_fired;
 
 /* units for format_size */
-static const char unit[] = " KMGT";
+स्थिर ध्रुव वर्ण unit[] = " KMGT";
 
-static int
-can_output(void)
+स्थिर पूर्णाङ्क
+can_output(शून्य)
 {
-	return (getpgrp() == tcgetpgrp(STDOUT_FILENO));
+	प्रत्यागम (getpgrp() == tcgetpgrp(STDOUT_FILENO));
 }
 
 /* size needed to format integer type v, using (nbits(v) * log2(10) / 10) */
-#define STRING_SIZE(v) (((sizeof(v) * 8 * 4) / 10) + 1)
+#define STRING_SIZE(v) (((परिमाण(v) * 8 * 4) / 10) + 1)
 
-static const char *
+स्थिर ध्रुव वर्ण *
 format_rate(off_t bytes)
 {
-	int i;
-	static char buf[STRING_SIZE(bytes) * 2 + 16];
+	पूर्णाङ्क i;
+	स्थिर वर्ण buf[STRING_SIZE(bytes) * 2 + 16];
 
 	bytes *= 100;
-	for (i = 0; bytes >= 100*1000 && unit[i] != 'T'; i++)
+	प्रति (i = 0; bytes >= 100*1000 && unit[i] != 'T'; i++)
 		bytes = (bytes + 512) / 1024;
 	/* Display at least KB, even when rate is low or zero. */
-	if (i == 0) {
+	जइ (i == 0) {
 		i++;
 		bytes = (bytes + 512) / 1024;
 	}
-	snprintf(buf, sizeof(buf), "%3lld.%1lld%cB",
+	snprintf(buf, परिमाण(buf), "%3lld.%1lld%cB",
 	    (long long) (bytes + 5) / 100,
 	    (long long) (bytes + 5) / 10 % 10,
 	    unit[i]);
-	return buf;
+	प्रत्यागम buf;
 }
 
-static const char *
+स्थिर ध्रुव वर्ण *
 format_size(off_t bytes)
 {
-	int i;
-	static char buf[STRING_SIZE(bytes) + 16];
+	पूर्णाङ्क i;
+	स्थिर वर्ण buf[STRING_SIZE(bytes) + 16];
 
-	for (i = 0; bytes >= 10000 && unit[i] != 'T'; i++)
+	प्रति (i = 0; bytes >= 10000 && unit[i] != 'T'; i++)
 		bytes = (bytes + 512) / 1024;
-	snprintf(buf, sizeof(buf), "%4lld%c%s",
+	snprintf(buf, परिमाण(buf), "%4lld%c%s",
 	    (long long) bytes,
 	    unit[i],
 	    i ? "B" : " ");
-	return buf;
+	प्रत्यागम buf;
 }
 
-void
-refresh_progress_meter(int force_update)
+शून्य
+refresh_progress_meter(पूर्णाङ्क force_update)
 {
-	char *buf = NULL, *obuf = NULL;
+	वर्ण *buf = रिक्त, *obuf = रिक्त;
 	off_t transferred;
-	double elapsed, now;
-	int percent;
-	off_t bytes_left;
+	द्विगुण elapsed, now;
+	पूर्णाङ्क percent;
+	off_t bytes_वामः;
 	long long cur_speed;
-	int hours, minutes, seconds;
-	int file_len, cols;
+	पूर्णाङ्क hours, minutes, seconds;
+	पूर्णाङ्क file_len, cols;
 
-	if (file == NULL || (!force_update && !alarm_fired && !win_resized) ||
+	जइ (file == रिक्त || (!force_update && !alarm_fired && !win_resized) ||
 	    !can_output())
-		return;
+		प्रत्यागम;
 	alarm_fired = 0;
 
-	if (win_resized) {
+	जइ (win_resized) {
 		setscreensize();
 		win_resized = 0;
 	}
@@ -145,11 +145,11 @@ refresh_progress_meter(int force_update)
 	transferred = *counter - (cur_pos ? cur_pos : start_pos);
 	cur_pos = *counter;
 	now = monotime_double();
-	bytes_left = end_pos - cur_pos;
+	bytes_वामः = end_pos - cur_pos;
 
-	if (bytes_left > 0)
+	जइ (bytes_वामः > 0)
 		elapsed = now - last_update;
-	else {
+	अण्णहा {
 		elapsed = now - start;
 		/* Calculate true total speed when done */
 		transferred = end_pos - start_pos;
@@ -157,56 +157,56 @@ refresh_progress_meter(int force_update)
 	}
 
 	/* calculate speed */
-	if (elapsed != 0)
+	जइ (elapsed != 0)
 		cur_speed = (transferred / elapsed);
-	else
+	अण्णहा
 		cur_speed = transferred;
 
 #define AGE_FACTOR 0.9
-	if (bytes_per_second != 0) {
+	जइ (bytes_per_second != 0) {
 		bytes_per_second = (bytes_per_second * AGE_FACTOR) +
 		    (cur_speed * (1.0 - AGE_FACTOR));
-	} else
+	} अण्णहा
 		bytes_per_second = cur_speed;
 
 	last_update = now;
 
 	/* Don't bother if we can't even display the completion percentage */
-	if (win_size < 4)
-		return;
+	जइ (win_size < 4)
+		प्रत्यागम;
 
 	/* filename */
 	file_len = cols = win_size - 36;
-	if (file_len > 0) {
+	जइ (file_len > 0) {
 		asmprintf(&buf, INT_MAX, &cols, "%-*s", file_len, file);
 		/* If we used fewer columns than expected then pad */
-		if (cols < file_len)
-			xextendf(&buf, NULL, "%*s", file_len - cols, "");
+		जइ (cols < file_len)
+			xextendf(&buf, रिक्त, "%*s", file_len - cols, "");
 	}
 	/* percent of transfer done */
-	if (end_pos == 0 || cur_pos == end_pos)
+	जइ (end_pos == 0 || cur_pos == end_pos)
 		percent = 100;
-	else
-		percent = ((float)cur_pos / end_pos) * 100;
+	अण्णहा
+		percent = ((भिन्न)cur_pos / end_pos) * 100;
 
 	/* percent / amount transferred / bandwidth usage */
-	xextendf(&buf, NULL, " %3d%% %s %s/s ", percent, format_size(cur_pos),
+	xextendf(&buf, रिक्त, " %3d%% %s %s/s ", percent, format_size(cur_pos),
 	    format_rate((off_t)bytes_per_second));
 
 	/* ETA */
-	if (!transferred)
+	जइ (!transferred)
 		stalled += elapsed;
-	else
+	अण्णहा
 		stalled = 0;
 
-	if (stalled >= STALL_TIME)
-		xextendf(&buf, NULL, "- stalled -");
-	else if (bytes_per_second == 0 && bytes_left)
-		xextendf(&buf, NULL, "  --:-- ETA");
-	else {
-		if (bytes_left > 0)
-			seconds = bytes_left / bytes_per_second;
-		else
+	जइ (stalled >= STALL_TIME)
+		xextendf(&buf, रिक्त, "- stalled -");
+	अण्णहा जइ (bytes_per_second == 0 && bytes_वामः)
+		xextendf(&buf, रिक्त, "  --:-- ETA");
+	अण्णहा {
+		जइ (bytes_वामः > 0)
+			seconds = bytes_वामः / bytes_per_second;
+		अण्णहा
 			seconds = elapsed;
 
 		hours = seconds / 3600;
@@ -214,38 +214,38 @@ refresh_progress_meter(int force_update)
 		minutes = seconds / 60;
 		seconds -= minutes * 60;
 
-		if (hours != 0) {
-			xextendf(&buf, NULL, "%d:%02d:%02d",
+		जइ (hours != 0) {
+			xextendf(&buf, रिक्त, "%d:%02d:%02d",
 			    hours, minutes, seconds);
-		} else
-			xextendf(&buf, NULL, "  %02d:%02d", minutes, seconds);
+		} अण्णहा
+			xextendf(&buf, रिक्त, "  %02d:%02d", minutes, seconds);
 
-		if (bytes_left > 0)
-			xextendf(&buf, NULL, " ETA");
-		else
-			xextendf(&buf, NULL, "    ");
+		जइ (bytes_वामः > 0)
+			xextendf(&buf, रिक्त, " ETA");
+		अण्णहा
+			xextendf(&buf, रिक्त, "    ");
 	}
 
 	/* Finally, truncate string at window width */
 	cols = win_size - 1;
 	asmprintf(&obuf, INT_MAX, &cols, " %s", buf);
-	if (obuf != NULL) {
+	जइ (obuf != रिक्त) {
 		*obuf = '\r'; /* must insert as asmprintf() would escape it */
 		atomicio(vwrite, STDOUT_FILENO, obuf, strlen(obuf));
 	}
-	free(buf);
-	free(obuf);
+	मुक्त(buf);
+	मुक्त(obuf);
 }
 
-static void
-sig_alarm(int ignore)
+स्थिर शून्य
+sig_alarm(पूर्णाङ्क ignore)
 {
 	alarm_fired = 1;
 	alarm(UPDATE_INTERVAL);
 }
 
-void
-start_progress_meter(const char *f, off_t filesize, off_t *ctr)
+शून्य
+start_progress_meter(ध्रुव वर्ण *f, off_t filesize, off_t *ctr)
 {
 	start = last_update = monotime_double();
 	file = f;
@@ -264,40 +264,40 @@ start_progress_meter(const char *f, off_t filesize, off_t *ctr)
 	alarm(UPDATE_INTERVAL);
 }
 
-void
-stop_progress_meter(void)
+शून्य
+stop_progress_meter(शून्य)
 {
 	alarm(0);
 
-	if (!can_output())
-		return;
+	जइ (!can_output())
+		प्रत्यागम;
 
 	/* Ensure we complete the progress */
-	if (cur_pos != end_pos)
+	जइ (cur_pos != end_pos)
 		refresh_progress_meter(1);
 
 	atomicio(vwrite, STDOUT_FILENO, "\n", 1);
-	file = NULL;
+	file = रिक्त;
 }
 
-static void
-sig_winch(int sig)
+स्थिर शून्य
+sig_winch(पूर्णाङ्क sig)
 {
 	win_resized = 1;
 }
 
-static void
-setscreensize(void)
+स्थिर शून्य
+setscreensize(शून्य)
 {
-	struct winsize winsize;
+	संरचना winsize winsize;
 
-	if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &winsize) != -1 &&
+	जइ (ioctl(STDOUT_FILENO, TIOCGWINSZ, &winsize) != -1 &&
 	    winsize.ws_col != 0) {
-		if (winsize.ws_col > MAX_WINSIZE)
+		जइ (winsize.ws_col > MAX_WINSIZE)
 			win_size = MAX_WINSIZE;
-		else
+		अण्णहा
 			win_size = winsize.ws_col;
-	} else
+	} अण्णहा
 		win_size = DEFAULT_WINSIZE;
 	win_size += 1;					/* trailing \0 */
 }

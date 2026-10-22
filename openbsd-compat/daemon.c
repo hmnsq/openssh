@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/daemon.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifndef HAVE_DAEMON
 
-#include <sys/types.h>
+#अन्तर्भाव <sys/types.h>
 
-#include <sys/stat.h>
+#अन्तर्भाव <sys/stat.h>
 
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
@@ -46,34 +46,34 @@
 # include <unistd.h>
 #endif
 
-int
-daemon(int nochdir, int noclose)
+पूर्णाङ्क
+daemon(पूर्णाङ्क nochdir, पूर्णाङ्क noclose)
 {
-	int fd;
+	पूर्णाङ्क fd;
 
-	switch (fork()) {
-	case -1:
-		return (-1);
-	case 0:
-		break;
-	default:
+	विकल्प (fork()) {
+	पक्ष -1:
+		प्रत्यागम (-1);
+	पक्ष 0:
+		भङ्ग;
+	स्वभाव:
 		_exit(0);
 	}
 
-	if (setsid() == -1)
-		return (-1);
+	जइ (setsid() == -1)
+		प्रत्यागम (-1);
 
-	if (!nochdir)
-		(void)chdir("/");
+	जइ (!nochdir)
+		(शून्य)chdir("/");
 
-	if (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
-		(void)dup2(fd, STDIN_FILENO);
-		(void)dup2(fd, STDOUT_FILENO);
-		(void)dup2(fd, STDERR_FILENO);
-		if (fd > 2)
-			(void)close (fd);
+	जइ (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
+		(शून्य)dup2(fd, STDIN_FILENO);
+		(शून्य)dup2(fd, STDOUT_FILENO);
+		(शून्य)dup2(fd, STDERR_FILENO);
+		जइ (fd > 2)
+			(शून्य)close (fd);
 	}
-	return (0);
+	प्रत्यागम (0);
 }
 
 #endif /* !HAVE_DAEMON */

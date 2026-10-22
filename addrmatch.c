@@ -16,19 +16,19 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <netinet/in.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <netinet/in.h>
 
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdarg.h>
 
-#include "addr.h"
-#include "match.h"
-#include "log.h"
+#अन्तर्भाव "addr.h"
+#अन्तर्भाव "match.h"
+#अन्तर्भाव "log.h"
 
 /*
  * Match "addr" against list pattern list "_list", which may contain a
@@ -42,55 +42,55 @@
  * Returns -1 on negated match found (never returned when addr == NULL).
  * Returns -2 on invalid list entry.
  */
-int
-addr_match_list(const char *addr, const char *_list)
+पूर्णाङ्क
+addr_match_list(ध्रुव वर्ण *addr, ध्रुव वर्ण *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	वर्ण *list, *cp, *o;
+	संरचना xaddr try_addr, match_addr;
 	u_int masklen, neg;
-	int ret = 0, r;
+	पूर्णाङ्क ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	जइ (addr != रिक्त && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		प्रत्यागम 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
+	जइ ((o = list = strdup(_list)) == रिक्त)
+		प्रत्यागम -1;
+	जाव ((cp = strsep(&list, ",")) != रिक्त) {
 		neg = *cp == '!';
-		if (neg)
+		जइ (neg)
 			cp++;
-		if (*cp == '\0') {
+		जइ (*cp == '\0') {
 			ret = -2;
-			break;
+			भङ्ग;
 		}
 		/* Prefer CIDR address matching */
 		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -2) {
+		जइ (r == -2) {
 			debug2_f("inconsistent mask length for "
 			    "match network \"%.100s\"", cp);
 			ret = -2;
-			break;
-		} else if (r == 0) {
-			if (addr != NULL && addr_netmatch(&try_addr,
+			भङ्ग;
+		} अण्णहा जइ (r == 0) {
+			जइ (addr != रिक्त && addr_netmatch(&try_addr,
 			    &match_addr, masklen) == 0) {
  foundit:
-				if (neg) {
+				जइ (neg) {
 					ret = -1;
-					break;
+					भङ्ग;
 				}
 				ret = 1;
 			}
-			continue;
-		} else {
+			अनुवर्त;
+		} अण्णहा {
 			/* If CIDR parse failed, try wildcard string match */
-			if (addr != NULL && match_pattern(addr, cp) == 1)
-				goto foundit;
+			जइ (addr != रिक्त && match_pattern(addr, cp) == 1)
+				गच्छ foundit;
 		}
 	}
-	free(o);
+	मुक्त(o);
 
-	return ret;
+	प्रत्यागम ret;
 }
 
 /*
@@ -102,25 +102,25 @@ addr_match_list(const char *addr, const char *_list)
  * Returns 0 on if no match found, or no errors found when addr == NULL.
  * Returns -1 on error
  */
-int
-addr_match_cidr_list(const char *addr, const char *_list)
+पूर्णाङ्क
+addr_match_cidr_list(ध्रुव वर्ण *addr, ध्रुव वर्ण *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	वर्ण *list, *cp, *o;
+	संरचना xaddr try_addr, match_addr;
 	u_int masklen;
-	int ret = 0, r;
+	पूर्णाङ्क ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	जइ (addr != रिक्त && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		प्रत्यागम 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
-		if (*cp == '\0') {
+	जइ ((o = list = strdup(_list)) == रिक्त)
+		प्रत्यागम -1;
+	जाव ((cp = strsep(&list, ",")) != रिक्त) {
+		जइ (*cp == '\0') {
 			error_f("empty entry in list \"%.100s\"", o);
 			ret = -1;
-			break;
+			भङ्ग;
 		}
 
 		/*
@@ -130,13 +130,13 @@ addr_match_cidr_list(const char *addr, const char *_list)
 		 */
 
 		/* Stop junk from reaching getaddrinfo. +3 is for masklen */
-		if (strlen(cp) > INET6_ADDRSTRLEN + 3) {
+		जइ (strlen(cp) > INET6_ADDRSTRLEN + 3) {
 			error_f("list entry \"%.100s\" too long", cp);
 			ret = -1;
-			break;
+			भङ्ग;
 		}
 #define VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
-		if (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
+		जइ (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
 			error_f("list entry \"%.100s\" contains invalid "
 			    "characters", cp);
 			ret = -1;
@@ -144,23 +144,23 @@ addr_match_cidr_list(const char *addr, const char *_list)
 
 		/* Prefer CIDR address matching */
 		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -1) {
+		जइ (r == -1) {
 			error("Invalid network entry \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == -2) {
+			भङ्ग;
+		} अण्णहा जइ (r == -2) {
 			error("Inconsistent mask length for "
 			    "network \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == 0 && addr != NULL) {
-			if (addr_netmatch(&try_addr, &match_addr,
+			भङ्ग;
+		} अण्णहा जइ (r == 0 && addr != रिक्त) {
+			जइ (addr_netmatch(&try_addr, &match_addr,
 			    masklen) == 0)
 				ret = 1;
-			continue;
+			अनुवर्त;
 		}
 	}
-	free(o);
+	मुक्त(o);
 
-	return ret;
+	प्रत्यागम ret;
 }

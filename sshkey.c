@@ -25,49 +25,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <netinet/in.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/mman.h>
+#अन्तर्भाव <netinet/in.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/evp.h>
-#include <openssl/err.h>
-#include <openssl/pem.h>
+#अन्तर्भाव <openssl/bn.h>
+#अन्तर्भाव <openssl/evp.h>
+#अन्तर्भाव <openssl/err.h>
+#अन्तर्भाव <openssl/pem.h>
 #endif
 
-#include "crypto_api.h"
+#अन्तर्भाव "crypto_api.h"
 
-#include <errno.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <resolv.h>
-#include <time.h>
-#include <util.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <resolv.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <util.h>
 
-#include "ssh2.h"
-#include "ssherr.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "cipher.h"
-#include "digest.h"
+#अन्तर्भाव "ssh2.h"
+#अन्तर्भाव "ssherr.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "sshbuf.h"
+#अन्तर्भाव "cipher.h"
+#अन्तर्भाव "digest.h"
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
-#include "match.h"
-#include "ssh-sk.h"
-#include "ssh-pkcs11.h"
+#अन्तर्भाव "sshkey.h"
+#अन्तर्भाव "match.h"
+#अन्तर्भाव "ssh-sk.h"
+#अन्तर्भाव "ssh-pkcs11.h"
 
-#include "openbsd-compat/openssl-compat.h"
+#अन्तर्भाव "openbsd-compat/openssl-compat.h"
 
 /* openssh private key file format */
 #define MARK_BEGIN		"-----BEGIN OPENSSH PRIVATE KEY-----\n"
 #define MARK_END		"-----END OPENSSH PRIVATE KEY-----\n"
-#define MARK_BEGIN_LEN		(sizeof(MARK_BEGIN) - 1)
-#define MARK_END_LEN		(sizeof(MARK_END) - 1)
+#define MARK_BEGIN_LEN		(परिमाण(MARK_BEGIN) - 1)
+#define MARK_END_LEN		(परिमाण(MARK_END) - 1)
 #define KDFNAME			"bcrypt"
 #define AUTH_MAGIC		"openssh-key-v1"
 #define SALT_LEN		16
@@ -83,41 +83,41 @@
 #define SSHKEY_SHIELD_CIPHER		"aes256-ctr" /* XXX want AES-EME* */
 #define SSHKEY_SHIELD_PREKEY_HASH	SSH_DIGEST_SHA512
 
-static int sshkey_from_blob_internal(struct sshbuf *buf,
-    struct sshkey **keyp, int allow_cert,
-    const char *alg_allowlist, const char *ca_sigalg_allowlist);
+स्थिर पूर्णाङ्क sshkey_from_blob_internal(संरचना sshbuf *buf,
+    संरचना sshkey **keyp, पूर्णाङ्क allow_cert,
+    ध्रुव वर्ण *alg_allowlist, ध्रुव वर्ण *ca_sigalg_allowlist);
 
 /* Supported key types */
-extern const struct sshkey_impl sshkey_ed25519_impl;
-extern const struct sshkey_impl sshkey_ed25519_cert_impl;
-extern const struct sshkey_impl sshkey_ed25519_sk_impl;
-extern const struct sshkey_impl sshkey_ed25519_sk_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ed25519_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ed25519_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ed25519_sk_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ed25519_sk_cert_impl;
 # ifdef USE_MLDSA
-extern const struct sshkey_impl sshkey_mldsa44_ed25519_impl;
-extern const struct sshkey_impl sshkey_mldsa44_ed25519_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_mldsa44_ed25519_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_mldsa44_ed25519_cert_impl;
 # endif /* USE_MLDSA */
 #ifdef WITH_OPENSSL
 # ifdef ENABLE_SK
-extern const struct sshkey_impl sshkey_ecdsa_sk_impl;
-extern const struct sshkey_impl sshkey_ecdsa_sk_cert_impl;
-extern const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl;
-extern const struct sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_sk_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_sk_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_sk_webauthn_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl;
 # endif /* ENABLE_SK */
-extern const struct sshkey_impl sshkey_ecdsa_nistp256_impl;
-extern const struct sshkey_impl sshkey_ecdsa_nistp256_cert_impl;
-extern const struct sshkey_impl sshkey_ecdsa_nistp384_impl;
-extern const struct sshkey_impl sshkey_ecdsa_nistp384_cert_impl;
-extern const struct sshkey_impl sshkey_ecdsa_nistp521_impl;
-extern const struct sshkey_impl sshkey_ecdsa_nistp521_cert_impl;
-extern const struct sshkey_impl sshkey_rsa_impl;
-extern const struct sshkey_impl sshkey_rsa_cert_impl;
-extern const struct sshkey_impl sshkey_rsa_sha256_impl;
-extern const struct sshkey_impl sshkey_rsa_sha256_cert_impl;
-extern const struct sshkey_impl sshkey_rsa_sha512_impl;
-extern const struct sshkey_impl sshkey_rsa_sha512_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_nistp256_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_nistp256_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_nistp384_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_nistp384_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_nistp521_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_ecdsa_nistp521_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_rsa_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_rsa_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_rsa_sha256_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_rsa_sha256_cert_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_rsa_sha512_impl;
+बाह्य ध्रुव संरचना sshkey_impl sshkey_rsa_sha512_cert_impl;
 #endif /* WITH_OPENSSL */
 
-const struct sshkey_impl * const keyimpls[] = {
+ध्रुव संरचना sshkey_impl * ध्रुव keyimpls[] = {
 	&sshkey_ed25519_impl,
 	&sshkey_ed25519_cert_impl,
 #ifdef ENABLE_SK
@@ -148,927 +148,927 @@ const struct sshkey_impl * const keyimpls[] = {
 	&sshkey_rsa_sha512_impl,
 	&sshkey_rsa_sha512_cert_impl,
 #endif /* WITH_OPENSSL */
-	NULL
+	रिक्त
 };
 
-static const struct sshkey_impl *
-sshkey_impl_from_type(int type)
+स्थिर ध्रुव संरचना sshkey_impl *
+sshkey_impl_from_type(पूर्णाङ्क type)
 {
-	int i;
+	पूर्णाङ्क i;
 
-	for (i = 0; keyimpls[i] != NULL; i++) {
-		if (keyimpls[i]->type == type)
-			return keyimpls[i];
+	प्रति (i = 0; keyimpls[i] != रिक्त; i++) {
+		जइ (keyimpls[i]->type == type)
+			प्रत्यागम keyimpls[i];
 	}
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-static const struct sshkey_impl *
-sshkey_impl_from_type_nid(int type, int nid)
+स्थिर ध्रुव संरचना sshkey_impl *
+sshkey_impl_from_type_nid(पूर्णाङ्क type, पूर्णाङ्क nid)
 {
-	int i;
+	पूर्णाङ्क i;
 
-	for (i = 0; keyimpls[i] != NULL; i++) {
-		if (keyimpls[i]->type == type &&
+	प्रति (i = 0; keyimpls[i] != रिक्त; i++) {
+		जइ (keyimpls[i]->type == type &&
 		    (keyimpls[i]->nid == 0 || keyimpls[i]->nid == nid))
-			return keyimpls[i];
+			प्रत्यागम keyimpls[i];
 	}
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-static const struct sshkey_impl *
-sshkey_impl_from_key(const struct sshkey *k)
+स्थिर ध्रुव संरचना sshkey_impl *
+sshkey_impl_from_कुञ्चिका(ध्रुव संरचना sshkey *k)
 {
-	if (k == NULL)
-		return NULL;
-	return sshkey_impl_from_type_nid(k->type, k->ecdsa_nid);
+	जइ (k == रिक्त)
+		प्रत्यागम रिक्त;
+	प्रत्यागम sshkey_impl_from_type_nid(k->type, k->ecdsa_nid);
 }
 
-const char *
-sshkey_type(const struct sshkey *k)
+ध्रुव वर्ण *
+sshkey_type(ध्रुव संरचना sshkey *k)
 {
-	const struct sshkey_impl *impl;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if ((impl = sshkey_impl_from_key(k)) == NULL)
-		return "unknown";
-	return impl->shortname;
+	जइ ((impl = sshkey_impl_from_कुञ्चिका(k)) == रिक्त)
+		प्रत्यागम "unknown";
+	प्रत्यागम impl->shortname;
 }
 
-static const char *
-sshkey_ssh_name_from_type_nid(int type, int nid)
+स्थिर ध्रुव वर्ण *
+sshkey_ssh_name_from_type_nid(पूर्णाङ्क type, पूर्णाङ्क nid)
 {
-	const struct sshkey_impl *impl;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if ((impl = sshkey_impl_from_type_nid(type, nid)) == NULL)
-		return "ssh-unknown";
-	return impl->name;
+	जइ ((impl = sshkey_impl_from_type_nid(type, nid)) == रिक्त)
+		प्रत्यागम "ssh-unknown";
+	प्रत्यागम impl->name;
 }
 
-int
-sshkey_type_is_cert(int type)
+पूर्णाङ्क
+sshkey_type_is_cert(पूर्णाङ्क type)
 {
-	const struct sshkey_impl *impl;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if ((impl = sshkey_impl_from_type(type)) == NULL)
-		return 0;
-	return impl->cert;
+	जइ ((impl = sshkey_impl_from_type(type)) == रिक्त)
+		प्रत्यागम 0;
+	प्रत्यागम impl->cert;
 }
 
-const char *
-sshkey_ssh_name(const struct sshkey *k)
+ध्रुव वर्ण *
+sshkey_ssh_name(ध्रुव संरचना sshkey *k)
 {
-	return sshkey_ssh_name_from_type_nid(k->type, k->ecdsa_nid);
+	प्रत्यागम sshkey_ssh_name_from_type_nid(k->type, k->ecdsa_nid);
 }
 
-const char *
-sshkey_ssh_name_plain(const struct sshkey *k)
+ध्रुव वर्ण *
+sshkey_ssh_name_plain(ध्रुव संरचना sshkey *k)
 {
-	return sshkey_ssh_name_from_type_nid(sshkey_type_plain(k->type),
+	प्रत्यागम sshkey_ssh_name_from_type_nid(sshkey_type_plain(k->type),
 	    k->ecdsa_nid);
 }
 
-static int
-type_from_name(const char *name, int allow_short)
+स्थिर पूर्णाङ्क
+type_from_name(ध्रुव वर्ण *name, पूर्णाङ्क allow_short)
 {
-	int i;
-	const struct sshkey_impl *impl;
+	पूर्णाङ्क i;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	for (i = 0; keyimpls[i] != NULL; i++) {
+	प्रति (i = 0; keyimpls[i] != रिक्त; i++) {
 		impl = keyimpls[i];
-		if (impl->name != NULL && strcmp(name, impl->name) == 0)
-			return impl->type;
+		जइ (impl->name != रिक्त && strcmp(name, impl->name) == 0)
+			प्रत्यागम impl->type;
 		/* Only allow shortname matches for plain key types */
-		if (allow_short && !impl->cert && impl->shortname != NULL &&
+		जइ (allow_short && !impl->cert && impl->shortname != रिक्त &&
 		    strcasecmp(impl->shortname, name) == 0)
-			return impl->type;
+			प्रत्यागम impl->type;
 	}
-	return KEY_UNSPEC;
+	प्रत्यागम कुञ्चिका_UNSPEC;
 }
 
-int
-sshkey_type_from_name(const char *name)
+पूर्णाङ्क
+sshkey_type_from_name(ध्रुव वर्ण *name)
 {
-	return type_from_name(name, 0);
+	प्रत्यागम type_from_name(name, 0);
 }
 
-int
-sshkey_type_from_shortname(const char *name)
+पूर्णाङ्क
+sshkey_type_from_shortname(ध्रुव वर्ण *name)
 {
-	return type_from_name(name, 1);
+	प्रत्यागम type_from_name(name, 1);
 }
 
-static int
-key_type_is_ecdsa_variant(int type)
+स्थिर पूर्णाङ्क
+कुञ्चिका_type_is_ecdsa_variant(पूर्णाङ्क type)
 {
-	switch (type) {
-	case KEY_ECDSA:
-	case KEY_ECDSA_CERT:
-	case KEY_ECDSA_SK:
-	case KEY_ECDSA_SK_CERT:
-		return 1;
+	विकल्प (type) {
+	पक्ष कुञ्चिका_ECDSA:
+	पक्ष कुञ्चिका_ECDSA_CERT:
+	पक्ष कुञ्चिका_ECDSA_SK:
+	पक्ष कुञ्चिका_ECDSA_SK_CERT:
+		प्रत्यागम 1;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-int
-sshkey_ecdsa_nid_from_name(const char *name)
+पूर्णाङ्क
+sshkey_ecdsa_nid_from_name(ध्रुव वर्ण *name)
 {
-	int i;
+	पूर्णाङ्क i;
 
-	for (i = 0; keyimpls[i] != NULL; i++) {
-		if (!key_type_is_ecdsa_variant(keyimpls[i]->type))
-			continue;
-		if (keyimpls[i]->name != NULL &&
+	प्रति (i = 0; keyimpls[i] != रिक्त; i++) {
+		जइ (!कुञ्चिका_type_is_ecdsa_variant(keyimpls[i]->type))
+			अनुवर्त;
+		जइ (keyimpls[i]->name != रिक्त &&
 		    strcmp(name, keyimpls[i]->name) == 0)
-			return keyimpls[i]->nid;
+			प्रत्यागम keyimpls[i]->nid;
 	}
-	return -1;
+	प्रत्यागम -1;
 }
 
-int
-sshkey_match_keyname_to_sigalgs(const char *keyname, const char *sigalgs)
+पूर्णाङ्क
+sshkey_match_keyname_to_sigalgs(ध्रुव वर्ण *keyname, ध्रुव वर्ण *sigalgs)
 {
-	int ktype;
+	पूर्णाङ्क ktype;
 
-	if (sigalgs == NULL || *sigalgs == '\0' ||
-	    (ktype = sshkey_type_from_name(keyname)) == KEY_UNSPEC)
-		return 0;
-	else if (ktype == KEY_RSA) {
-		return match_pattern_list("ssh-rsa", sigalgs, 0) == 1 ||
+	जइ (sigalgs == रिक्त || *sigalgs == '\0' ||
+	    (ktype = sshkey_type_from_name(keyname)) == कुञ्चिका_UNSPEC)
+		प्रत्यागम 0;
+	अण्णहा जइ (ktype == कुञ्चिका_RSA) {
+		प्रत्यागम match_pattern_list("ssh-rsa", sigalgs, 0) == 1 ||
 		    match_pattern_list("rsa-sha2-256", sigalgs, 0) == 1 ||
 		    match_pattern_list("rsa-sha2-512", sigalgs, 0) == 1;
-	} else if (ktype == KEY_RSA_CERT) {
-		return match_pattern_list("ssh-rsa-cert-v01@openssh.com",
+	} अण्णहा जइ (ktype == कुञ्चिका_RSA_CERT) {
+		प्रत्यागम match_pattern_list("ssh-rsa-cert-v01@openssh.com",
 		    sigalgs, 0) == 1 ||
 		    match_pattern_list("rsa-sha2-256-cert-v01@openssh.com",
 		    sigalgs, 0) == 1 ||
 		    match_pattern_list("rsa-sha2-512-cert-v01@openssh.com",
 		    sigalgs, 0) == 1;
-	} else if (ktype == KEY_ECDSA_SK) {
-		return match_pattern_list("sk-ecdsa-sha2-nistp256@openssh.com",
+	} अण्णहा जइ (ktype == कुञ्चिका_ECDSA_SK) {
+		प्रत्यागम match_pattern_list("sk-ecdsa-sha2-nistp256@openssh.com",
 		    sigalgs, 0) == 1 || match_pattern_list(
 		    "webauthn-sk-ecdsa-sha2-nistp256@openssh.com",
 		    sigalgs, 0) == 1;
-	} else if (ktype == KEY_ECDSA_SK_CERT) {
-		return match_pattern_list(
+	} अण्णहा जइ (ktype == कुञ्चिका_ECDSA_SK_CERT) {
+		प्रत्यागम match_pattern_list(
 		    "sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 		    sigalgs, 0) == 1 || match_pattern_list(
 		    "webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 		    sigalgs, 0) == 1;
-	} else
-		return match_pattern_list(keyname, sigalgs, 0) == 1;
+	} अण्णहा
+		प्रत्यागम match_pattern_list(keyname, sigalgs, 0) == 1;
 }
 
-char *
-sshkey_alg_list(int certs_only, int plain_only, int include_sigonly, char sep)
+वर्ण *
+sshkey_alg_list(पूर्णाङ्क certs_only, पूर्णाङ्क plain_only, पूर्णाङ्क include_sigonly, वर्ण sep)
 {
-	char *ret = NULL;
+	वर्ण *ret = रिक्त;
 	size_t i;
-	const struct sshkey_impl *impl;
-	char sep_str[2] = {sep, '\0'};
+	ध्रुव संरचना sshkey_impl *impl;
+	वर्ण sep_str[2] = {sep, '\0'};
 
-	for (i = 0; keyimpls[i] != NULL; i++) {
+	प्रति (i = 0; keyimpls[i] != रिक्त; i++) {
 		impl = keyimpls[i];
-		if (impl->name == NULL)
-			continue;
-		if (!include_sigonly && impl->sigonly)
-			continue;
-		if ((certs_only && !impl->cert) || (plain_only && impl->cert))
-			continue;
+		जइ (impl->name == रिक्त)
+			अनुवर्त;
+		जइ (!include_sigonly && impl->sigonly)
+			अनुवर्त;
+		जइ ((certs_only && !impl->cert) || (plain_only && impl->cert))
+			अनुवर्त;
 		xextendf(&ret, sep_str, "%s", impl->name);
 	}
-	return ret;
+	प्रत्यागम ret;
 }
 
-int
-sshkey_names_valid2(const char *names, int allow_wildcard, int plain_only)
+पूर्णाङ्क
+sshkey_names_valid2(ध्रुव वर्ण *names, पूर्णाङ्क allow_wildcard, पूर्णाङ्क plain_only)
 {
-	char *s, *cp, *p;
-	const struct sshkey_impl *impl;
-	int i, type;
+	वर्ण *s, *cp, *p;
+	ध्रुव संरचना sshkey_impl *impl;
+	पूर्णाङ्क i, type;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((s = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, ",")); p && *p != '\0';
+	जइ (names == रिक्त || strcmp(names, "") == 0)
+		प्रत्यागम 0;
+	जइ ((s = cp = strdup(names)) == रिक्त)
+		प्रत्यागम 0;
+	प्रति ((p = strsep(&cp, ",")); p && *p != '\0';
 	    (p = strsep(&cp, ","))) {
 		type = sshkey_type_from_name(p);
-		if (type == KEY_UNSPEC) {
-			if (allow_wildcard) {
+		जइ (type == कुञ्चिका_UNSPEC) {
+			जइ (allow_wildcard) {
 				/*
 				 * Try matching key types against the string.
 				 * If any has a positive or negative match then
 				 * the component is accepted.
 				 */
-				impl = NULL;
-				for (i = 0; keyimpls[i] != NULL; i++) {
-					if (match_pattern_list(
+				impl = रिक्त;
+				प्रति (i = 0; keyimpls[i] != रिक्त; i++) {
+					जइ (match_pattern_list(
 					    keyimpls[i]->name, p, 0) != 0) {
 						impl = keyimpls[i];
-						break;
+						भङ्ग;
 					}
 				}
-				if (impl != NULL)
-					continue;
+				जइ (impl != रिक्त)
+					अनुवर्त;
 			}
-			free(s);
-			return 0;
-		} else if (plain_only && sshkey_type_is_cert(type)) {
-			free(s);
-			return 0;
+			मुक्त(s);
+			प्रत्यागम 0;
+		} अण्णहा जइ (plain_only && sshkey_type_is_cert(type)) {
+			मुक्त(s);
+			प्रत्यागम 0;
 		}
 	}
-	free(s);
-	return 1;
+	मुक्त(s);
+	प्रत्यागम 1;
 }
 
 u_int
-sshkey_size(const struct sshkey *k)
+sshkey_size(ध्रुव संरचना sshkey *k)
 {
-	const struct sshkey_impl *impl;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if ((impl = sshkey_impl_from_key(k)) == NULL)
-		return 0;
-	if (impl->funcs->size != NULL)
-		return impl->funcs->size(k);
-	return impl->keybits;
+	जइ ((impl = sshkey_impl_from_कुञ्चिका(k)) == रिक्त)
+		प्रत्यागम 0;
+	जइ (impl->funcs->size != रिक्त)
+		प्रत्यागम impl->funcs->size(k);
+	प्रत्यागम impl->keybits;
 }
 
-static int
-sshkey_type_is_valid_ca(int type)
+स्थिर पूर्णाङ्क
+sshkey_type_is_valid_ca(पूर्णाङ्क type)
 {
-	const struct sshkey_impl *impl;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if ((impl = sshkey_impl_from_type(type)) == NULL)
-		return 0;
+	जइ ((impl = sshkey_impl_from_type(type)) == रिक्त)
+		प्रत्यागम 0;
 	/* All non-certificate types may act as CAs */
-	return !impl->cert;
+	प्रत्यागम !impl->cert;
 }
 
-int
-sshkey_is_cert(const struct sshkey *k)
+पूर्णाङ्क
+sshkey_is_cert(ध्रुव संरचना sshkey *k)
 {
-	if (k == NULL)
-		return 0;
-	return sshkey_type_is_cert(k->type);
+	जइ (k == रिक्त)
+		प्रत्यागम 0;
+	प्रत्यागम sshkey_type_is_cert(k->type);
 }
 
-int
-sshkey_is_sk(const struct sshkey *k)
+पूर्णाङ्क
+sshkey_is_sk(ध्रुव संरचना sshkey *k)
 {
-	if (k == NULL)
-		return 0;
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
-	case KEY_ED25519_SK:
-		return 1;
-	default:
-		return 0;
+	जइ (k == रिक्त)
+		प्रत्यागम 0;
+	विकल्प (sshkey_type_plain(k->type)) {
+	पक्ष कुञ्चिका_ECDSA_SK:
+	पक्ष कुञ्चिका_ED25519_SK:
+		प्रत्यागम 1;
+	स्वभाव:
+		प्रत्यागम 0;
 	}
 }
 
 /* Return the cert-less equivalent to a certified key type */
-int
-sshkey_type_plain(int type)
+पूर्णाङ्क
+sshkey_type_plain(पूर्णाङ्क type)
 {
-	switch (type) {
-	case KEY_RSA_CERT:
-		return KEY_RSA;
-	case KEY_ECDSA_CERT:
-		return KEY_ECDSA;
-	case KEY_ECDSA_SK_CERT:
-		return KEY_ECDSA_SK;
-	case KEY_ED25519_CERT:
-		return KEY_ED25519;
-	case KEY_MLDSA44_ED25519_CERT:
-		return KEY_MLDSA44_ED25519;
-	case KEY_ED25519_SK_CERT:
-		return KEY_ED25519_SK;
-	default:
-		return type;
+	विकल्प (type) {
+	पक्ष कुञ्चिका_RSA_CERT:
+		प्रत्यागम कुञ्चिका_RSA;
+	पक्ष कुञ्चिका_ECDSA_CERT:
+		प्रत्यागम कुञ्चिका_ECDSA;
+	पक्ष कुञ्चिका_ECDSA_SK_CERT:
+		प्रत्यागम कुञ्चिका_ECDSA_SK;
+	पक्ष कुञ्चिका_ED25519_CERT:
+		प्रत्यागम कुञ्चिका_ED25519;
+	पक्ष कुञ्चिका_MLDSA44_ED25519_CERT:
+		प्रत्यागम कुञ्चिका_MLDSA44_ED25519;
+	पक्ष कुञ्चिका_ED25519_SK_CERT:
+		प्रत्यागम कुञ्चिका_ED25519_SK;
+	स्वभाव:
+		प्रत्यागम type;
 	}
 }
 
 /* Return the cert equivalent to a plain key type */
-static int
-sshkey_type_certified(int type)
+स्थिर पूर्णाङ्क
+sshkey_type_certified(पूर्णाङ्क type)
 {
-	switch (type) {
-	case KEY_RSA:
-		return KEY_RSA_CERT;
-	case KEY_ECDSA:
-		return KEY_ECDSA_CERT;
-	case KEY_ECDSA_SK:
-		return KEY_ECDSA_SK_CERT;
-	case KEY_ED25519:
-		return KEY_ED25519_CERT;
-	case KEY_MLDSA44_ED25519:
-		return KEY_MLDSA44_ED25519_CERT;
-	case KEY_ED25519_SK:
-		return KEY_ED25519_SK_CERT;
-	default:
-		return -1;
+	विकल्प (type) {
+	पक्ष कुञ्चिका_RSA:
+		प्रत्यागम कुञ्चिका_RSA_CERT;
+	पक्ष कुञ्चिका_ECDSA:
+		प्रत्यागम कुञ्चिका_ECDSA_CERT;
+	पक्ष कुञ्चिका_ECDSA_SK:
+		प्रत्यागम कुञ्चिका_ECDSA_SK_CERT;
+	पक्ष कुञ्चिका_ED25519:
+		प्रत्यागम कुञ्चिका_ED25519_CERT;
+	पक्ष कुञ्चिका_MLDSA44_ED25519:
+		प्रत्यागम कुञ्चिका_MLDSA44_ED25519_CERT;
+	पक्ष कुञ्चिका_ED25519_SK:
+		प्रत्यागम कुञ्चिका_ED25519_SK_CERT;
+	स्वभाव:
+		प्रत्यागम -1;
 	}
 }
 
 #ifdef WITH_OPENSSL
-static const EVP_MD *
-ssh_digest_to_md(int hash_alg)
+स्थिर ध्रुव EVP_MD *
+ssh_digest_to_md(पूर्णाङ्क hash_alg)
 {
-	switch (hash_alg) {
-	case SSH_DIGEST_SHA1:
-		return EVP_sha1();
-	case SSH_DIGEST_SHA256:
-		return EVP_sha256();
-	case SSH_DIGEST_SHA384:
-		return EVP_sha384();
-	case SSH_DIGEST_SHA512:
-		return EVP_sha512();
+	विकल्प (hash_alg) {
+	पक्ष SSH_DIGEST_SHA1:
+		प्रत्यागम EVP_sha1();
+	पक्ष SSH_DIGEST_SHA256:
+		प्रत्यागम EVP_sha256();
+	पक्ष SSH_DIGEST_SHA384:
+		प्रत्यागम EVP_sha384();
+	पक्ष SSH_DIGEST_SHA512:
+		प्रत्यागम EVP_sha512();
 	}
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
-int
-sshkey_pkey_digest_sign(EVP_PKEY *pkey, int hash_alg, u_char **sigp,
-    size_t *lenp, const u_char *data, size_t datalen)
+पूर्णाङ्क
+sshkey_pkey_digest_sign(EVP_PKEY *pkey, पूर्णाङ्क hash_alg, u_char **sigp,
+    size_t *lenp, ध्रुव u_char *data, size_t datalen)
 {
-	EVP_MD_CTX *ctx = NULL;
-	u_char *sig = NULL;
-	int ret;
+	EVP_MD_CTX *ctx = रिक्त;
+	u_char *sig = रिक्त;
+	पूर्णाङ्क ret;
 	size_t slen;
-	const EVP_MD *evpmd;
+	ध्रुव EVP_MD *evpmd;
 
-	*sigp = NULL;
+	*sigp = रिक्त;
 	*lenp = 0;
 
 	slen = EVP_PKEY_size(pkey);
-	if (slen <= 0 || slen > SSHBUF_MAX_BIGNUM ||
-	   (evpmd = ssh_digest_to_md(hash_alg)) == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	जइ (slen <= 0 || slen > SSHBUF_MAX_BIGNUM ||
+	   (evpmd = ssh_digest_to_md(hash_alg)) == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
 
-	if ((sig = malloc(slen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	जइ ((sig = malloc(slen)) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
 
-	if ((ctx = EVP_MD_CTX_new()) == NULL) {
+	जइ ((ctx = EVP_MD_CTX_new()) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (EVP_DigestSignInit(ctx, NULL, evpmd, NULL, pkey) != 1 ||
+	जइ (EVP_DigestSignInit(ctx, रिक्त, evpmd, रिक्त, pkey) != 1 ||
 	    EVP_DigestSign(ctx, sig, &slen, data, datalen) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
 
 	*sigp = sig;
 	*lenp = slen;
 	/* Now owned by the caller */
-	sig = NULL;
+	sig = रिक्त;
 	ret = 0;
 
  out:
 	EVP_MD_CTX_free(ctx);
-	free(sig);
-	return ret;
+	मुक्त(sig);
+	प्रत्यागम ret;
 }
 
-int
-sshkey_pkey_digest_verify(EVP_PKEY *pkey, int hash_alg, const u_char *data,
+पूर्णाङ्क
+sshkey_pkey_digest_verify(EVP_PKEY *pkey, पूर्णाङ्क hash_alg, ध्रुव u_char *data,
     size_t datalen, u_char *sigbuf, size_t siglen)
 {
-	EVP_MD_CTX *ctx = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	const EVP_MD *evpmd;
+	EVP_MD_CTX *ctx = रिक्त;
+	पूर्णाङ्क ret = SSH_ERR_INTERNAL_ERROR;
+	ध्रुव EVP_MD *evpmd;
 
-	if ((evpmd = ssh_digest_to_md(hash_alg)) == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((ctx = EVP_MD_CTX_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (EVP_DigestVerifyInit(ctx, NULL, evpmd, NULL, pkey) != 1) {
+	जइ ((evpmd = ssh_digest_to_md(hash_alg)) == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ ((ctx = EVP_MD_CTX_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	जइ (EVP_DigestVerifyInit(ctx, रिक्त, evpmd, रिक्त, pkey) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	switch (EVP_DigestVerify(ctx, sigbuf, siglen, data, datalen)) {
-	case 1:
+	विकल्प (EVP_DigestVerify(ctx, sigbuf, siglen, data, datalen)) {
+	पक्ष 1:
 		ret = 0;
-		break;
-	case 0:
+		भङ्ग;
+	पक्ष 0:
 		ret = SSH_ERR_SIGNATURE_INVALID;
-		break;
-	default:
+		भङ्ग;
+	स्वभाव:
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		break;
+		भङ्ग;
 	}
 
  out:
 	EVP_MD_CTX_free(ctx);
-	return ret;
+	प्रत्यागम ret;
 }
 
 /* XXX: these are really begging for a table-driven approach */
-int
-sshkey_curve_name_to_nid(const char *name)
+पूर्णाङ्क
+sshkey_curve_name_to_nid(ध्रुव वर्ण *name)
 {
-	if (strcmp(name, "nistp256") == 0)
-		return NID_X9_62_prime256v1;
-	else if (strcmp(name, "nistp384") == 0)
-		return NID_secp384r1;
-	else if (strcmp(name, "nistp521") == 0)
-		return NID_secp521r1;
-	else
-		return -1;
+	जइ (strcmp(name, "nistp256") == 0)
+		प्रत्यागम NID_X9_62_prime256v1;
+	अण्णहा जइ (strcmp(name, "nistp384") == 0)
+		प्रत्यागम NID_secp384r1;
+	अण्णहा जइ (strcmp(name, "nistp521") == 0)
+		प्रत्यागम NID_secp521r1;
+	अण्णहा
+		प्रत्यागम -1;
 }
 
 u_int
-sshkey_curve_nid_to_bits(int nid)
+sshkey_curve_nid_to_bits(पूर्णाङ्क nid)
 {
-	switch (nid) {
-	case NID_X9_62_prime256v1:
-		return 256;
-	case NID_secp384r1:
-		return 384;
-	case NID_secp521r1:
-		return 521;
-	default:
-		return 0;
+	विकल्प (nid) {
+	पक्ष NID_X9_62_prime256v1:
+		प्रत्यागम 256;
+	पक्ष NID_secp384r1:
+		प्रत्यागम 384;
+	पक्ष NID_secp521r1:
+		प्रत्यागम 521;
+	स्वभाव:
+		प्रत्यागम 0;
 	}
 }
 
-int
-sshkey_ecdsa_bits_to_nid(int bits)
+पूर्णाङ्क
+sshkey_ecdsa_bits_to_nid(पूर्णाङ्क bits)
 {
-	switch (bits) {
-	case 256:
-		return NID_X9_62_prime256v1;
-	case 384:
-		return NID_secp384r1;
-	case 521:
-		return NID_secp521r1;
-	default:
-		return -1;
+	विकल्प (bits) {
+	पक्ष 256:
+		प्रत्यागम NID_X9_62_prime256v1;
+	पक्ष 384:
+		प्रत्यागम NID_secp384r1;
+	पक्ष 521:
+		प्रत्यागम NID_secp521r1;
+	स्वभाव:
+		प्रत्यागम -1;
 	}
 }
 
-const char *
-sshkey_curve_nid_to_name(int nid)
+ध्रुव वर्ण *
+sshkey_curve_nid_to_name(पूर्णाङ्क nid)
 {
-	switch (nid) {
-	case NID_X9_62_prime256v1:
-		return "nistp256";
-	case NID_secp384r1:
-		return "nistp384";
-	case NID_secp521r1:
-		return "nistp521";
-	default:
-		return NULL;
+	विकल्प (nid) {
+	पक्ष NID_X9_62_prime256v1:
+		प्रत्यागम "nistp256";
+	पक्ष NID_secp384r1:
+		प्रत्यागम "nistp384";
+	पक्ष NID_secp521r1:
+		प्रत्यागम "nistp521";
+	स्वभाव:
+		प्रत्यागम रिक्त;
 	}
 }
 
-int
-sshkey_ec_nid_to_hash_alg(int nid)
+पूर्णाङ्क
+sshkey_ec_nid_to_hash_alg(पूर्णाङ्क nid)
 {
-	int kbits = sshkey_curve_nid_to_bits(nid);
+	पूर्णाङ्क kbits = sshkey_curve_nid_to_bits(nid);
 
-	if (kbits <= 0)
-		return -1;
+	जइ (kbits <= 0)
+		प्रत्यागम -1;
 
 	/* RFC5656 section 6.2.1 */
-	if (kbits <= 256)
-		return SSH_DIGEST_SHA256;
-	else if (kbits <= 384)
-		return SSH_DIGEST_SHA384;
-	else
-		return SSH_DIGEST_SHA512;
+	जइ (kbits <= 256)
+		प्रत्यागम SSH_DIGEST_SHA256;
+	अण्णहा जइ (kbits <= 384)
+		प्रत्यागम SSH_DIGEST_SHA384;
+	अण्णहा
+		प्रत्यागम SSH_DIGEST_SHA512;
 }
 #endif /* WITH_OPENSSL */
 
-static void
-cert_free(struct sshkey_cert *cert)
+स्थिर शून्य
+cert_free(संरचना sshkey_cert *cert)
 {
 	u_int i;
 
-	if (cert == NULL)
-		return;
+	जइ (cert == रिक्त)
+		प्रत्यागम;
 	sshbuf_free(cert->certblob);
 	sshbuf_free(cert->critical);
 	sshbuf_free(cert->extensions);
-	free(cert->key_id);
-	for (i = 0; i < cert->nprincipals; i++)
-		free(cert->principals[i]);
-	free(cert->principals);
-	sshkey_free(cert->signature_key);
-	free(cert->signature_type);
-	freezero(cert, sizeof(*cert));
+	मुक्त(cert->कुञ्चिका_id);
+	प्रति (i = 0; i < cert->nprincipals; i++)
+		मुक्त(cert->principals[i]);
+	मुक्त(cert->principals);
+	sshkey_free(cert->signature_कुञ्चिका);
+	मुक्त(cert->signature_type);
+	freezero(cert, परिमाण(*cert));
 }
 
-static struct sshkey_cert *
-cert_new(void)
+स्थिर संरचना sshkey_cert *
+cert_new(शून्य)
 {
-	struct sshkey_cert *cert;
+	संरचना sshkey_cert *cert;
 
-	if ((cert = calloc(1, sizeof(*cert))) == NULL)
-		return NULL;
-	if ((cert->certblob = sshbuf_new()) == NULL ||
-	    (cert->critical = sshbuf_new()) == NULL ||
-	    (cert->extensions = sshbuf_new()) == NULL) {
+	जइ ((cert = calloc(1, परिमाण(*cert))) == रिक्त)
+		प्रत्यागम रिक्त;
+	जइ ((cert->certblob = sshbuf_new()) == रिक्त ||
+	    (cert->critical = sshbuf_new()) == रिक्त ||
+	    (cert->extensions = sshbuf_new()) == रिक्त) {
 		cert_free(cert);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
-	cert->key_id = NULL;
-	cert->principals = NULL;
-	cert->signature_key = NULL;
-	cert->signature_type = NULL;
-	return cert;
+	cert->कुञ्चिका_id = रिक्त;
+	cert->principals = रिक्त;
+	cert->signature_कुञ्चिका = रिक्त;
+	cert->signature_type = रिक्त;
+	प्रत्यागम cert;
 }
 
-struct sshkey *
-sshkey_new(int type)
+संरचना sshkey *
+sshkey_new(पूर्णाङ्क type)
 {
-	struct sshkey *k;
-	const struct sshkey_impl *impl = NULL;
+	संरचना sshkey *k;
+	ध्रुव संरचना sshkey_impl *impl = रिक्त;
 
-	if (type != KEY_UNSPEC &&
-	    (impl = sshkey_impl_from_type(type)) == NULL)
-		return NULL;
+	जइ (type != कुञ्चिका_UNSPEC &&
+	    (impl = sshkey_impl_from_type(type)) == रिक्त)
+		प्रत्यागम रिक्त;
 
 	/* All non-certificate types may act as CAs */
-	if ((k = calloc(1, sizeof(*k))) == NULL)
-		return NULL;
+	जइ ((k = calloc(1, परिमाण(*k))) == रिक्त)
+		प्रत्यागम रिक्त;
 	k->type = type;
 	k->ecdsa_nid = -1;
-	if (impl != NULL && impl->funcs->alloc != NULL) {
-		if (impl->funcs->alloc(k) != 0) {
-			free(k);
-			return NULL;
+	जइ (impl != रिक्त && impl->funcs->alloc != रिक्त) {
+		जइ (impl->funcs->alloc(k) != 0) {
+			मुक्त(k);
+			प्रत्यागम रिक्त;
 		}
 	}
-	if (sshkey_is_cert(k)) {
-		if ((k->cert = cert_new()) == NULL) {
+	जइ (sshkey_is_cert(k)) {
+		जइ ((k->cert = cert_new()) == रिक्त) {
 			sshkey_free(k);
-			return NULL;
+			प्रत्यागम रिक्त;
 		}
 	}
 
-	return k;
+	प्रत्यागम k;
 }
 
 /* Frees common FIDO fields */
-void
-sshkey_sk_cleanup(struct sshkey *k)
+शून्य
+sshkey_sk_cleanup(संरचना sshkey *k)
 {
-	free(k->sk_application);
-	sshbuf_free(k->sk_key_handle);
+	मुक्त(k->sk_application);
+	sshbuf_free(k->sk_कुञ्चिका_handle);
 	sshbuf_free(k->sk_reserved);
-	k->sk_application = NULL;
-	k->sk_key_handle = k->sk_reserved = NULL;
+	k->sk_application = रिक्त;
+	k->sk_कुञ्चिका_handle = k->sk_reserved = रिक्त;
 }
 
-#if defined(MAP_CONCEAL)
+#जइ defined(MAP_CONCEAL)
 # define PREKEY_MMAP_FLAG	MAP_CONCEAL
-#elif defined(MAP_NOCORE)
+#नोचेद्यदि defined(MAP_NOCORE)
 # define PREKEY_MMAP_FLAG	MAP_NOCORE
-#else
+#अण्णहा
 # define PREKEY_MMAP_FLAG	0
 #endif
 
-static int
+स्थिर पूर्णाङ्क
 sshkey_prekey_alloc(u_char **prekeyp, size_t len)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+#जइ defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
 	u_char *prekey;
 
-	*prekeyp = NULL;
-	if ((prekey = mmap(NULL, len, PROT_READ|PROT_WRITE,
+	*prekeyp = रिक्त;
+	जइ ((prekey = mmap(रिक्त, len, PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE|PREKEY_MMAP_FLAG, -1, 0)) == MAP_FAILED)
-		return SSH_ERR_SYSTEM_ERROR;
-#if defined(MADV_DONTDUMP) && !defined(MAP_CONCEAL) && !defined(MAP_NOCORE)
-	(void)madvise(prekey, len, MADV_DONTDUMP);
+		प्रत्यागम SSH_ERR_SYSTEM_ERROR;
+#जइ defined(MADV_DONTDUMP) && !defined(MAP_CONCEAL) && !defined(MAP_NOCORE)
+	(शून्य)madvise(prekey, len, MADV_DONTDUMP);
 #endif
 	*prekeyp = prekey;
-#else
+#अण्णहा
 	*prekeyp = calloc(1, len);
 #endif /* HAVE_MMAP et al */
-	return 0;
+	प्रत्यागम 0;
 }
 
-static void
-sshkey_prekey_free(void *prekey, size_t len)
+स्थिर शून्य
+sshkey_prekey_free(शून्य *prekey, size_t len)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if (prekey == NULL)
-		return;
+#जइ defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	जइ (prekey == रिक्त)
+		प्रत्यागम;
 	munmap(prekey, len);
-#else
-	free(prekey);
+#अण्णहा
+	मुक्त(prekey);
 #endif /* HAVE_MMAP et al */
 }
 
-static void
-sshkey_free_contents(struct sshkey *k)
+स्थिर शून्य
+sshkey_free_contents(संरचना sshkey *k)
 {
-	const struct sshkey_impl *impl;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if (k == NULL)
-		return;
-	if ((k->flags & SSHKEY_FLAG_EXT) != 0)
-		pkcs11_key_free(k);
-	if ((impl = sshkey_impl_from_type(k->type)) != NULL &&
-	    impl->funcs->cleanup != NULL)
+	जइ (k == रिक्त)
+		प्रत्यागम;
+	जइ ((k->flags & SSHKEY_FLAG_EXT) != 0)
+		pkcs11_कुञ्चिका_free(k);
+	जइ ((impl = sshkey_impl_from_type(k->type)) != रिक्त &&
+	    impl->funcs->cleanup != रिक्त)
 		impl->funcs->cleanup(k);
-	if (sshkey_is_cert(k))
+	जइ (sshkey_is_cert(k))
 		cert_free(k->cert);
 	freezero(k->shielded_private, k->shielded_len);
 	sshkey_prekey_free(k->shield_prekey, k->shield_prekey_len);
 }
 
-void
-sshkey_free(struct sshkey *k)
+शून्य
+sshkey_free(संरचना sshkey *k)
 {
 	sshkey_free_contents(k);
-	freezero(k, sizeof(*k));
+	freezero(k, परिमाण(*k));
 }
 
-static int
-cert_compare(struct sshkey_cert *a, struct sshkey_cert *b)
+स्थिर पूर्णाङ्क
+cert_compare(संरचना sshkey_cert *a, संरचना sshkey_cert *b)
 {
-	if (a == NULL && b == NULL)
-		return 1;
-	if (a == NULL || b == NULL)
-		return 0;
-	if (sshbuf_len(a->certblob) != sshbuf_len(b->certblob))
-		return 0;
-	if (timingsafe_bcmp(sshbuf_ptr(a->certblob), sshbuf_ptr(b->certblob),
+	जइ (a == रिक्त && b == रिक्त)
+		प्रत्यागम 1;
+	जइ (a == रिक्त || b == रिक्त)
+		प्रत्यागम 0;
+	जइ (sshbuf_len(a->certblob) != sshbuf_len(b->certblob))
+		प्रत्यागम 0;
+	जइ (timingsafe_bcmp(sshbuf_ptr(a->certblob), sshbuf_ptr(b->certblob),
 	    sshbuf_len(a->certblob)) != 0)
-		return 0;
-	return 1;
+		प्रत्यागम 0;
+	प्रत्यागम 1;
 }
 
 /* Compares FIDO-specific pubkey fields only */
-int
-sshkey_sk_fields_equal(const struct sshkey *a, const struct sshkey *b)
+पूर्णाङ्क
+sshkey_sk_fields_equal(ध्रुव संरचना sshkey *a, ध्रुव संरचना sshkey *b)
 {
-	if (a->sk_application == NULL || b->sk_application == NULL)
-		return 0;
-	if (strcmp(a->sk_application, b->sk_application) != 0)
-		return 0;
-	return 1;
+	जइ (a->sk_application == रिक्त || b->sk_application == रिक्त)
+		प्रत्यागम 0;
+	जइ (strcmp(a->sk_application, b->sk_application) != 0)
+		प्रत्यागम 0;
+	प्रत्यागम 1;
 }
 
 /*
  * Compare public portions of key only, allowing comparisons between
  * certificates and plain keys too.
  */
-int
-sshkey_equal_public(const struct sshkey *a, const struct sshkey *b)
+पूर्णाङ्क
+sshkey_equal_public(ध्रुव संरचना sshkey *a, ध्रुव संरचना sshkey *b)
 {
-	const struct sshkey_impl *impl;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if (a == NULL || b == NULL ||
+	जइ (a == रिक्त || b == रिक्त ||
 	    sshkey_type_plain(a->type) != sshkey_type_plain(b->type))
-		return 0;
-	if ((impl = sshkey_impl_from_type(a->type)) == NULL)
-		return 0;
-	return impl->funcs->equal(a, b);
+		प्रत्यागम 0;
+	जइ ((impl = sshkey_impl_from_type(a->type)) == रिक्त)
+		प्रत्यागम 0;
+	प्रत्यागम impl->funcs->equal(a, b);
 }
 
-int
-sshkey_equal(const struct sshkey *a, const struct sshkey *b)
+पूर्णाङ्क
+sshkey_equal(ध्रुव संरचना sshkey *a, ध्रुव संरचना sshkey *b)
 {
-	if (a == NULL || b == NULL || a->type != b->type)
-		return 0;
-	if (sshkey_is_cert(a)) {
-		if (!cert_compare(a->cert, b->cert))
-			return 0;
+	जइ (a == रिक्त || b == रिक्त || a->type != b->type)
+		प्रत्यागम 0;
+	जइ (sshkey_is_cert(a)) {
+		जइ (!cert_compare(a->cert, b->cert))
+			प्रत्यागम 0;
 	}
-	return sshkey_equal_public(a, b);
+	प्रत्यागम sshkey_equal_public(a, b);
 }
 
 
 /* Serialise common FIDO key parts */
-int
-sshkey_serialize_sk(const struct sshkey *key, struct sshbuf *b)
+पूर्णाङ्क
+sshkey_serialize_sk(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshbuf_put_cstring(b, key->sk_application)) != 0)
-		return r;
+	जइ ((r = sshbuf_put_cstring(b, कुञ्चिका->sk_application)) != 0)
+		प्रत्यागम r;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-to_blob_buf(const struct sshkey *key, struct sshbuf *b, int force_plain,
-  enum sshkey_serialize_rep opts)
+स्थिर पूर्णाङ्क
+to_blob_buf(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b, पूर्णाङ्क force_plain,
+  गणना sshkey_serialize_rep opts)
 {
-	int type, ret = SSH_ERR_INTERNAL_ERROR;
-	const char *typename;
-	const struct sshkey_impl *impl;
+	पूर्णाङ्क type, ret = SSH_ERR_INTERNAL_ERROR;
+	ध्रुव वर्ण *typename;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if (key == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	जइ (कुञ्चिका == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
 
-	type = force_plain ? sshkey_type_plain(key->type) : key->type;
+	type = force_plain ? sshkey_type_plain(कुञ्चिका->type) : कुञ्चिका->type;
 
-	if (sshkey_type_is_cert(type)) {
-		if (key->cert == NULL)
-			return SSH_ERR_EXPECTED_CERT;
-		if (sshbuf_len(key->cert->certblob) == 0)
-			return SSH_ERR_KEY_LACKS_CERTBLOB;
+	जइ (sshkey_type_is_cert(type)) {
+		जइ (कुञ्चिका->cert == रिक्त)
+			प्रत्यागम SSH_ERR_EXPECTED_CERT;
+		जइ (sshbuf_len(कुञ्चिका->cert->certblob) == 0)
+			प्रत्यागम SSH_ERR_कुञ्चिका_LACKS_CERTBLOB;
 		/* Use the existing blob */
-		if ((ret = sshbuf_putb(b, key->cert->certblob)) != 0)
-			return ret;
-		return 0;
+		जइ ((ret = sshbuf_putb(b, कुञ्चिका->cert->certblob)) != 0)
+			प्रत्यागम ret;
+		प्रत्यागम 0;
 	}
-	if ((impl = sshkey_impl_from_type(type)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+	जइ ((impl = sshkey_impl_from_type(type)) == रिक्त)
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_UNKNOWN;
 
-	typename = sshkey_ssh_name_from_type_nid(type, key->ecdsa_nid);
-	if ((ret = sshbuf_put_cstring(b, typename)) != 0)
-		return ret;
-	return impl->funcs->serialize_public(key, b, opts);
+	typename = sshkey_ssh_name_from_type_nid(type, कुञ्चिका->ecdsa_nid);
+	जइ ((ret = sshbuf_put_cstring(b, typename)) != 0)
+		प्रत्यागम ret;
+	प्रत्यागम impl->funcs->serialize_public(कुञ्चिका, b, opts);
 }
 
-int
-sshkey_putb(const struct sshkey *key, struct sshbuf *b)
+पूर्णाङ्क
+sshkey_putb(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b)
 {
-	return to_blob_buf(key, b, 0, SSHKEY_SERIALIZE_DEFAULT);
+	प्रत्यागम to_blob_buf(कुञ्चिका, b, 0, SSHKEY_SERIALIZE_DEFAULT);
 }
 
-static int
-sshkey_puts_opts_internal(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts, int force_plain)
+स्थिर पूर्णाङ्क
+sshkey_puts_opts_internal(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b,
+    गणना sshkey_serialize_rep opts, पूर्णाङ्क force_plain)
 {
-	struct sshbuf *tmp;
-	int r;
+	संरचना sshbuf *tmp;
+	पूर्णाङ्क r;
 
-	if ((tmp = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	r = to_blob_buf(key, tmp, force_plain, opts);
-	if (r == 0)
+	जइ ((tmp = sshbuf_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	r = to_blob_buf(कुञ्चिका, tmp, force_plain, opts);
+	जइ (r == 0)
 		r = sshbuf_put_stringb(b, tmp);
 	sshbuf_free(tmp);
-	return r;
+	प्रत्यागम r;
 }
 
-int
-sshkey_puts(const struct sshkey *key, struct sshbuf *b)
+पूर्णाङ्क
+sshkey_puts(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b)
 {
-	return sshkey_puts_opts_internal(key, b, SSHKEY_SERIALIZE_DEFAULT, 0);
+	प्रत्यागम sshkey_puts_opts_internal(कुञ्चिका, b, SSHKEY_SERIALIZE_DEFAULT, 0);
 }
 
-int
-sshkey_putb_plain(const struct sshkey *key, struct sshbuf *b)
+पूर्णाङ्क
+sshkey_putb_plain(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b)
 {
-	return to_blob_buf(key, b, 1, SSHKEY_SERIALIZE_DEFAULT);
+	प्रत्यागम to_blob_buf(कुञ्चिका, b, 1, SSHKEY_SERIALIZE_DEFAULT);
 }
 
-int
-sshkey_puts_plain(const struct sshkey *key, struct sshbuf *b)
+पूर्णाङ्क
+sshkey_puts_plain(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b)
 {
-	return sshkey_puts_opts_internal(key, b, SSHKEY_SERIALIZE_DEFAULT, 1);
+	प्रत्यागम sshkey_puts_opts_internal(कुञ्चिका, b, SSHKEY_SERIALIZE_DEFAULT, 1);
 }
 
-static int
-to_blob(const struct sshkey *key, u_char **blobp, size_t *lenp, int force_plain,
-    enum sshkey_serialize_rep opts)
+स्थिर पूर्णाङ्क
+to_blob(ध्रुव संरचना sshkey *कुञ्चिका, u_char **blobp, size_t *lenp, पूर्णाङ्क force_plain,
+    गणना sshkey_serialize_rep opts)
 {
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क ret = SSH_ERR_INTERNAL_ERROR;
 	size_t len;
-	struct sshbuf *b = NULL;
+	संरचना sshbuf *b = रिक्त;
 
-	if (lenp != NULL)
+	जइ (lenp != रिक्त)
 		*lenp = 0;
-	if (blobp != NULL)
-		*blobp = NULL;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((ret = to_blob_buf(key, b, force_plain, opts)) != 0)
-		goto out;
+	जइ (blobp != रिक्त)
+		*blobp = रिक्त;
+	जइ ((b = sshbuf_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	जइ ((ret = to_blob_buf(कुञ्चिका, b, force_plain, opts)) != 0)
+		गच्छ out;
 	len = sshbuf_len(b);
-	if (lenp != NULL)
+	जइ (lenp != रिक्त)
 		*lenp = len;
-	if (blobp != NULL) {
-		if ((*blobp = malloc(len)) == NULL) {
+	जइ (blobp != रिक्त) {
+		जइ ((*blobp = malloc(len)) == रिक्त) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
 		memcpy(*blobp, sshbuf_ptr(b), len);
 	}
 	ret = 0;
  out:
 	sshbuf_free(b);
-	return ret;
+	प्रत्यागम ret;
 }
 
-int
-sshkey_to_blob(const struct sshkey *key, u_char **blobp, size_t *lenp)
+पूर्णाङ्क
+sshkey_to_blob(ध्रुव संरचना sshkey *कुञ्चिका, u_char **blobp, size_t *lenp)
 {
-	return to_blob(key, blobp, lenp, 0, SSHKEY_SERIALIZE_DEFAULT);
+	प्रत्यागम to_blob(कुञ्चिका, blobp, lenp, 0, SSHKEY_SERIALIZE_DEFAULT);
 }
 
-int
-sshkey_plain_to_blob(const struct sshkey *key, u_char **blobp, size_t *lenp)
+पूर्णाङ्क
+sshkey_plain_to_blob(ध्रुव संरचना sshkey *कुञ्चिका, u_char **blobp, size_t *lenp)
 {
-	return to_blob(key, blobp, lenp, 1, SSHKEY_SERIALIZE_DEFAULT);
+	प्रत्यागम to_blob(कुञ्चिका, blobp, lenp, 1, SSHKEY_SERIALIZE_DEFAULT);
 }
 
-int
-sshkey_fingerprint_raw(const struct sshkey *k, int dgst_alg,
+पूर्णाङ्क
+sshkey_fingerprint_raw(ध्रुव संरचना sshkey *k, पूर्णाङ्क dgst_alg,
     u_char **retp, size_t *lenp)
 {
-	u_char *blob = NULL, *ret = NULL;
+	u_char *blob = रिक्त, *ret = रिक्त;
 	size_t blob_len = 0;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	if (retp != NULL)
-		*retp = NULL;
-	if (lenp != NULL)
+	जइ (retp != रिक्त)
+		*retp = रिक्त;
+	जइ (lenp != रिक्त)
 		*lenp = 0;
-	if (ssh_digest_bytes(dgst_alg) == 0) {
+	जइ (ssh_digest_bytes(dgst_alg) == 0) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = to_blob(k, &blob, &blob_len, 1, SSHKEY_SERIALIZE_DEFAULT))
+	जइ ((r = to_blob(k, &blob, &blob_len, 1, SSHKEY_SERIALIZE_DEFAULT))
 	    != 0)
-		goto out;
-	if ((ret = calloc(1, SSH_DIGEST_MAX_LENGTH)) == NULL) {
+		गच्छ out;
+	जइ ((ret = calloc(1, SSH_DIGEST_MAX_LENGTH)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = ssh_digest_memory(dgst_alg, blob, blob_len,
+	जइ ((r = ssh_digest_memory(dgst_alg, blob, blob_len,
 	    ret, SSH_DIGEST_MAX_LENGTH)) != 0)
-		goto out;
+		गच्छ out;
 	/* success */
-	if (retp != NULL) {
+	जइ (retp != रिक्त) {
 		*retp = ret;
-		ret = NULL;
+		ret = रिक्त;
 	}
-	if (lenp != NULL)
+	जइ (lenp != रिक्त)
 		*lenp = ssh_digest_bytes(dgst_alg);
 	r = 0;
  out:
-	free(ret);
-	if (blob != NULL)
+	मुक्त(ret);
+	जइ (blob != रिक्त)
 		freezero(blob, blob_len);
-	return r;
+	प्रत्यागम r;
 }
 
-static char *
-fingerprint_b64(const char *alg, u_char *dgst_raw, size_t dgst_raw_len)
+स्थिर वर्ण *
+fingerprint_b64(ध्रुव वर्ण *alg, u_char *dgst_raw, size_t dgst_raw_len)
 {
-	char *ret;
+	वर्ण *ret;
 	size_t plen = strlen(alg) + 1;
 	size_t rlen = ((dgst_raw_len + 2) / 3) * 4 + plen + 1;
 
-	if (dgst_raw_len > 65536 || (ret = calloc(1, rlen)) == NULL)
-		return NULL;
+	जइ (dgst_raw_len > 65536 || (ret = calloc(1, rlen)) == रिक्त)
+		प्रत्यागम रिक्त;
 	strlcpy(ret, alg, rlen);
 	strlcat(ret, ":", rlen);
-	if (dgst_raw_len == 0)
-		return ret;
-	if (b64_ntop(dgst_raw, dgst_raw_len, ret + plen, rlen - plen) == -1) {
+	जइ (dgst_raw_len == 0)
+		प्रत्यागम ret;
+	जइ (b64_ntop(dgst_raw, dgst_raw_len, ret + plen, rlen - plen) == -1) {
 		freezero(ret, rlen);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 	/* Trim padding characters from end */
 	ret[strcspn(ret, "=")] = '\0';
-	return ret;
+	प्रत्यागम ret;
 }
 
-static char *
-fingerprint_hex(const char *alg, u_char *dgst_raw, size_t dgst_raw_len)
+स्थिर वर्ण *
+fingerprint_hex(ध्रुव वर्ण *alg, u_char *dgst_raw, size_t dgst_raw_len)
 {
-	char *retval, hex[5];
+	वर्ण *retval, hex[5];
 	size_t i, rlen = dgst_raw_len * 3 + strlen(alg) + 2;
 
-	if (dgst_raw_len > 65536 || (retval = calloc(1, rlen)) == NULL)
-		return NULL;
+	जइ (dgst_raw_len > 65536 || (retval = calloc(1, rlen)) == रिक्त)
+		प्रत्यागम रिक्त;
 	strlcpy(retval, alg, rlen);
 	strlcat(retval, ":", rlen);
-	for (i = 0; i < dgst_raw_len; i++) {
-		snprintf(hex, sizeof(hex), "%s%02x",
+	प्रति (i = 0; i < dgst_raw_len; i++) {
+		snprintf(hex, परिमाण(hex), "%s%02x",
 		    i > 0 ? ":" : "", dgst_raw[i]);
 		strlcat(retval, hex, rlen);
 	}
-	return retval;
+	प्रत्यागम retval;
 }
 
-static char *
+स्थिर वर्ण *
 fingerprint_bubblebabble(u_char *dgst_raw, size_t dgst_raw_len)
 {
-	char vowels[] = { 'a', 'e', 'i', 'o', 'u', 'y' };
-	char consonants[] = { 'b', 'c', 'd', 'f', 'g', 'h', 'k', 'l', 'm',
+	वर्ण vowels[] = { 'a', 'e', 'i', 'o', 'u', 'y' };
+	वर्ण consonants[] = { 'b', 'c', 'd', 'f', 'g', 'h', 'k', 'l', 'm',
 	    'n', 'p', 'r', 's', 't', 'v', 'z', 'x' };
 	u_int i, j = 0, rounds, seed = 1;
-	char *retval;
+	वर्ण *retval;
 
 	rounds = (dgst_raw_len / 2) + 1;
-	if ((retval = calloc(rounds, 6)) == NULL)
-		return NULL;
+	जइ ((retval = calloc(rounds, 6)) == रिक्त)
+		प्रत्यागम रिक्त;
 	retval[j++] = 'x';
-	for (i = 0; i < rounds; i++) {
+	प्रति (i = 0; i < rounds; i++) {
 		u_int idx0, idx1, idx2, idx3, idx4;
-		if ((i + 1 < rounds) || (dgst_raw_len % 2 != 0)) {
+		जइ ((i + 1 < rounds) || (dgst_raw_len % 2 != 0)) {
 			idx0 = (((((u_int)(dgst_raw[2 * i])) >> 6) & 3) +
 			    seed) % 6;
 			idx1 = (((u_int)(dgst_raw[2 * i])) >> 2) & 15;
@@ -1077,7 +1077,7 @@ fingerprint_bubblebabble(u_char *dgst_raw, size_t dgst_raw_len)
 			retval[j++] = vowels[idx0];
 			retval[j++] = consonants[idx1];
 			retval[j++] = vowels[idx2];
-			if ((i + 1) < rounds) {
+			जइ ((i + 1) < rounds) {
 				idx3 = (((u_int)(dgst_raw[(2 * i) + 1])) >> 4) & 15;
 				idx4 = (((u_int)(dgst_raw[(2 * i) + 1]))) & 15;
 				retval[j++] = consonants[idx3];
@@ -1087,7 +1087,7 @@ fingerprint_bubblebabble(u_char *dgst_raw, size_t dgst_raw_len)
 				    ((((u_int)(dgst_raw[2 * i])) * 7) +
 				    ((u_int)(dgst_raw[(2 * i) + 1])))) % 36;
 			}
-		} else {
+		} अण्णहा {
 			idx0 = seed % 6;
 			idx1 = 16;
 			idx2 = seed / 6;
@@ -1098,7 +1098,7 @@ fingerprint_bubblebabble(u_char *dgst_raw, size_t dgst_raw_len)
 	}
 	retval[j++] = 'x';
 	retval[j++] = '\0';
-	return retval;
+	प्रत्यागम retval;
 }
 
 /*
@@ -1134,39 +1134,39 @@ fingerprint_bubblebabble(u_char *dgst_raw, size_t dgst_raw_len)
 #define	FLDBASE		8
 #define	FLDSIZE_Y	(FLDBASE + 1)
 #define	FLDSIZE_X	(FLDBASE * 2 + 1)
-static char *
-fingerprint_randomart(const char *alg, u_char *dgst_raw, size_t dgst_raw_len,
-    const struct sshkey *k)
+स्थिर वर्ण *
+fingerprint_randomart(ध्रुव वर्ण *alg, u_char *dgst_raw, size_t dgst_raw_len,
+    ध्रुव संरचना sshkey *k)
 {
 	/*
 	 * Chars to be used after each other every time the worm
 	 * intersects with itself.  Matter of taste.
 	 */
-	char	*augmentation_string = " .o+=*BOX@%&#/^SE";
-	char	*retval, *p, title[FLDSIZE_X], hash[FLDSIZE_X];
+	वर्ण	*augmentation_string = " .o+=*BOX@%&#/^SE";
+	वर्ण	*retval, *p, title[FLDSIZE_X], hash[FLDSIZE_X];
 	u_char	 field[FLDSIZE_X][FLDSIZE_Y];
 	size_t	 i, tlen, hlen;
 	u_int	 b;
-	int	 x, y, r;
+	पूर्णाङ्क	 x, y, r;
 	size_t	 len = strlen(augmentation_string) - 1;
 
-	if ((retval = calloc((FLDSIZE_X + 3), (FLDSIZE_Y + 2))) == NULL)
-		return NULL;
+	जइ ((retval = calloc((FLDSIZE_X + 3), (FLDSIZE_Y + 2))) == रिक्त)
+		प्रत्यागम रिक्त;
 
 	/* initialize field */
-	memset(field, 0, FLDSIZE_X * FLDSIZE_Y * sizeof(char));
+	memset(field, 0, FLDSIZE_X * FLDSIZE_Y * परिमाण(वर्ण));
 	x = FLDSIZE_X / 2;
 	y = FLDSIZE_Y / 2;
 
 	/* process raw key */
-	for (i = 0; i < dgst_raw_len; i++) {
-		int input;
+	प्रति (i = 0; i < dgst_raw_len; i++) {
+		पूर्णाङ्क निवेशः;
 		/* each byte conveys four 2-bit move commands */
-		input = dgst_raw[i];
-		for (b = 0; b < 4; b++) {
+		निवेशः = dgst_raw[i];
+		प्रति (b = 0; b < 4; b++) {
 			/* evaluate 2 bit, rest is shifted later */
-			x += (input & 0x1) ? 1 : -1;
-			y += (input & 0x2) ? 1 : -1;
+			x += (निवेशः & 0x1) ? 1 : -1;
+			y += (निवेशः & 0x2) ? 1 : -1;
 
 			/* assure we are still in bounds */
 			x = MAXIMUM(x, 0);
@@ -1175,9 +1175,9 @@ fingerprint_randomart(const char *alg, u_char *dgst_raw, size_t dgst_raw_len,
 			y = MINIMUM(y, FLDSIZE_Y - 1);
 
 			/* augment the field */
-			if (field[x][y] < len - 2)
+			जइ (field[x][y] < len - 2)
 				field[x][y]++;
-			input = input >> 2;
+			निवेशः = निवेशः >> 2;
 		}
 	}
 
@@ -1186,33 +1186,33 @@ fingerprint_randomart(const char *alg, u_char *dgst_raw, size_t dgst_raw_len,
 	field[x][y] = len;
 
 	/* assemble title */
-	r = snprintf(title, sizeof(title), "[%s %u]",
+	r = snprintf(title, परिमाण(title), "[%s %u]",
 		sshkey_type(k), sshkey_size(k));
 	/* If [type size] won't fit, then try [type]; fits "[ED25519-CERT]" */
-	if (r < 0 || r > (int)sizeof(title))
-		r = snprintf(title, sizeof(title), "[%s]", sshkey_type(k));
+	जइ (r < 0 || r > (पूर्णाङ्क)परिमाण(title))
+		r = snprintf(title, परिमाण(title), "[%s]", sshkey_type(k));
 	tlen = (r <= 0) ? 0 : strlen(title);
 
 	/* assemble hash ID. */
-	r = snprintf(hash, sizeof(hash), "[%s]", alg);
+	r = snprintf(hash, परिमाण(hash), "[%s]", alg);
 	hlen = (r <= 0) ? 0 : strlen(hash);
 
 	/* output upper border */
 	p = retval;
 	*p++ = '+';
-	for (i = 0; i < (FLDSIZE_X - tlen) / 2; i++)
+	प्रति (i = 0; i < (FLDSIZE_X - tlen) / 2; i++)
 		*p++ = '-';
 	memcpy(p, title, tlen);
 	p += tlen;
-	for (i += tlen; i < FLDSIZE_X; i++)
+	प्रति (i += tlen; i < FLDSIZE_X; i++)
 		*p++ = '-';
 	*p++ = '+';
 	*p++ = '\n';
 
 	/* output content */
-	for (y = 0; y < FLDSIZE_Y; y++) {
+	प्रति (y = 0; y < FLDSIZE_Y; y++) {
 		*p++ = '|';
-		for (x = 0; x < FLDSIZE_X; x++)
+		प्रति (x = 0; x < FLDSIZE_X; x++)
 			*p++ = augmentation_string[MINIMUM(field[x][y], len)];
 		*p++ = '|';
 		*p++ = '\n';
@@ -1220,468 +1220,468 @@ fingerprint_randomart(const char *alg, u_char *dgst_raw, size_t dgst_raw_len,
 
 	/* output lower border */
 	*p++ = '+';
-	for (i = 0; i < (FLDSIZE_X - hlen) / 2; i++)
+	प्रति (i = 0; i < (FLDSIZE_X - hlen) / 2; i++)
 		*p++ = '-';
 	memcpy(p, hash, hlen);
 	p += hlen;
-	for (i += hlen; i < FLDSIZE_X; i++)
+	प्रति (i += hlen; i < FLDSIZE_X; i++)
 		*p++ = '-';
 	*p++ = '+';
 
-	return retval;
+	प्रत्यागम retval;
 }
 
-char *
-sshkey_fingerprint(const struct sshkey *k, int dgst_alg,
-    enum sshkey_fp_rep dgst_rep)
+वर्ण *
+sshkey_fingerprint(ध्रुव संरचना sshkey *k, पूर्णाङ्क dgst_alg,
+    गणना sshkey_fp_rep dgst_rep)
 {
-	char *retval = NULL;
+	वर्ण *retval = रिक्त;
 	u_char *dgst_raw;
 	size_t dgst_raw_len;
 
-	if (sshkey_fingerprint_raw(k, dgst_alg, &dgst_raw, &dgst_raw_len) != 0)
-		return NULL;
-	switch (dgst_rep) {
-	case SSH_FP_DEFAULT:
-		if (dgst_alg == SSH_DIGEST_MD5) {
+	जइ (sshkey_fingerprint_raw(k, dgst_alg, &dgst_raw, &dgst_raw_len) != 0)
+		प्रत्यागम रिक्त;
+	विकल्प (dgst_rep) {
+	पक्ष SSH_FP_DEFAULT:
+		जइ (dgst_alg == SSH_DIGEST_MD5) {
 			retval = fingerprint_hex(ssh_digest_alg_name(dgst_alg),
 			    dgst_raw, dgst_raw_len);
-		} else {
+		} अण्णहा {
 			retval = fingerprint_b64(ssh_digest_alg_name(dgst_alg),
 			    dgst_raw, dgst_raw_len);
 		}
-		break;
-	case SSH_FP_HEX:
+		भङ्ग;
+	पक्ष SSH_FP_HEX:
 		retval = fingerprint_hex(ssh_digest_alg_name(dgst_alg),
 		    dgst_raw, dgst_raw_len);
-		break;
-	case SSH_FP_BASE64:
+		भङ्ग;
+	पक्ष SSH_FP_BASE64:
 		retval = fingerprint_b64(ssh_digest_alg_name(dgst_alg),
 		    dgst_raw, dgst_raw_len);
-		break;
-	case SSH_FP_BUBBLEBABBLE:
+		भङ्ग;
+	पक्ष SSH_FP_BUBBLEBABBLE:
 		retval = fingerprint_bubblebabble(dgst_raw, dgst_raw_len);
-		break;
-	case SSH_FP_RANDOMART:
+		भङ्ग;
+	पक्ष SSH_FP_RANDOMART:
 		retval = fingerprint_randomart(ssh_digest_alg_name(dgst_alg),
 		    dgst_raw, dgst_raw_len, k);
-		break;
-	default:
+		भङ्ग;
+	स्वभाव:
 		freezero(dgst_raw, dgst_raw_len);
-		return NULL;
+		प्रत्यागम रिक्त;
 	}
 	freezero(dgst_raw, dgst_raw_len);
-	return retval;
+	प्रत्यागम retval;
 }
 
-static int
-peek_type_nid(const char *s, size_t l, int *nid)
+स्थिर पूर्णाङ्क
+peek_type_nid(ध्रुव वर्ण *s, size_t l, पूर्णाङ्क *nid)
 {
-	const struct sshkey_impl *impl;
-	int i;
+	ध्रुव संरचना sshkey_impl *impl;
+	पूर्णाङ्क i;
 
-	for (i = 0; keyimpls[i] != NULL; i++) {
+	प्रति (i = 0; keyimpls[i] != रिक्त; i++) {
 		impl = keyimpls[i];
-		if (impl->name == NULL || strlen(impl->name) != l)
-			continue;
-		if (memcmp(s, impl->name, l) == 0) {
+		जइ (impl->name == रिक्त || strlen(impl->name) != l)
+			अनुवर्त;
+		जइ (memcmp(s, impl->name, l) == 0) {
 			*nid = -1;
-			if (key_type_is_ecdsa_variant(impl->type))
+			जइ (कुञ्चिका_type_is_ecdsa_variant(impl->type))
 				*nid = impl->nid;
-			return impl->type;
+			प्रत्यागम impl->type;
 		}
 	}
-	return KEY_UNSPEC;
+	प्रत्यागम कुञ्चिका_UNSPEC;
 }
 
 /* XXX this can now be made const char * */
-int
-sshkey_read(struct sshkey *ret, char **cpp)
+पूर्णाङ्क
+sshkey_read(संरचना sshkey *ret, वर्ण **cpp)
 {
-	struct sshkey *k;
-	char *cp, *blobcopy;
+	संरचना sshkey *k;
+	वर्ण *cp, *blobcopy;
 	size_t space;
-	int r, type, curve_nid = -1;
-	struct sshbuf *blob;
+	पूर्णाङ्क r, type, curve_nid = -1;
+	संरचना sshbuf *blob;
 
-	if (ret == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (ret->type != KEY_UNSPEC && sshkey_impl_from_type(ret->type) == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	जइ (ret == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ (ret->type != कुञ्चिका_UNSPEC && sshkey_impl_from_type(ret->type) == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
 
 	/* Decode type */
 	cp = *cpp;
 	space = strcspn(cp, " \t");
-	if (space == strlen(cp))
-		return SSH_ERR_INVALID_FORMAT;
-	if ((type = peek_type_nid(cp, space, &curve_nid)) == KEY_UNSPEC)
-		return SSH_ERR_INVALID_FORMAT;
+	जइ (space == strlen(cp))
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
+	जइ ((type = peek_type_nid(cp, space, &curve_nid)) == कुञ्चिका_UNSPEC)
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
 
 	/* skip whitespace */
-	for (cp += space; *cp == ' ' || *cp == '\t'; cp++)
+	प्रति (cp += space; *cp == ' ' || *cp == '\t'; cp++)
 		;
-	if (*cp == '\0')
-		return SSH_ERR_INVALID_FORMAT;
-	if (ret->type != KEY_UNSPEC && ret->type != type)
-		return SSH_ERR_KEY_TYPE_MISMATCH;
-	if ((blob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	जइ (*cp == '\0')
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
+	जइ (ret->type != कुञ्चिका_UNSPEC && ret->type != type)
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_MISMATCH;
+	जइ ((blob = sshbuf_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
 
 	/* find end of keyblob and decode */
 	space = strcspn(cp, " \t");
-	if ((blobcopy = strndup(cp, space)) == NULL) {
+	जइ ((blobcopy = strndup(cp, space)) == रिक्त) {
 		sshbuf_free(blob);
-		return SSH_ERR_ALLOC_FAIL;
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
 	}
-	if ((r = sshbuf_b64tod(blob, blobcopy)) != 0) {
-		free(blobcopy);
+	जइ ((r = sshbuf_b64tod(blob, blobcopy)) != 0) {
+		मुक्त(blobcopy);
 		sshbuf_free(blob);
-		return r;
+		प्रत्यागम r;
 	}
-	free(blobcopy);
-	if ((r = sshkey_fromb(blob, &k)) != 0) {
+	मुक्त(blobcopy);
+	जइ ((r = sshkey_fromb(blob, &k)) != 0) {
 		sshbuf_free(blob);
-		return r;
+		प्रत्यागम r;
 	}
 	sshbuf_free(blob);
 
 	/* skip whitespace and leave cp at start of comment */
-	for (cp += space; *cp == ' ' || *cp == '\t'; cp++)
+	प्रति (cp += space; *cp == ' ' || *cp == '\t'; cp++)
 		;
 
 	/* ensure type of blob matches type at start of line */
-	if (k->type != type) {
+	जइ (k->type != type) {
 		sshkey_free(k);
-		return SSH_ERR_KEY_TYPE_MISMATCH;
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_MISMATCH;
 	}
-	if (key_type_is_ecdsa_variant(type) && curve_nid != k->ecdsa_nid) {
+	जइ (कुञ्चिका_type_is_ecdsa_variant(type) && curve_nid != k->ecdsa_nid) {
 		sshkey_free(k);
-		return SSH_ERR_EC_CURVE_MISMATCH;
+		प्रत्यागम SSH_ERR_EC_CURVE_MISMATCH;
 	}
 
 	/* Fill in ret from parsed key */
 	sshkey_free_contents(ret);
 	*ret = *k;
-	freezero(k, sizeof(*k));
+	freezero(k, परिमाण(*k));
 
 	/* success */
 	*cpp = cp;
-	return 0;
+	प्रत्यागम 0;
 }
 
-int
-sshkey_to_base64(const struct sshkey *key, char **b64p)
+पूर्णाङ्क
+sshkey_to_base64(ध्रुव संरचना sshkey *कुञ्चिका, वर्ण **b64p)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL;
-	char *uu = NULL;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *b = रिक्त;
+	वर्ण *uu = रिक्त;
 
-	if (b64p != NULL)
-		*b64p = NULL;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_putb(key, b)) != 0)
-		goto out;
-	if ((uu = sshbuf_dtob64_string(b, 0)) == NULL) {
+	जइ (b64p != रिक्त)
+		*b64p = रिक्त;
+	जइ ((b = sshbuf_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	जइ ((r = sshkey_putb(कुञ्चिका, b)) != 0)
+		गच्छ out;
+	जइ ((uu = sshbuf_dtob64_string(b, 0)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 	/* Success */
-	if (b64p != NULL) {
+	जइ (b64p != रिक्त) {
 		*b64p = uu;
-		uu = NULL;
+		uu = रिक्त;
 	}
 	r = 0;
  out:
 	sshbuf_free(b);
-	free(uu);
-	return r;
+	मुक्त(uu);
+	प्रत्यागम r;
 }
 
-int
-sshkey_format_text(const struct sshkey *key, struct sshbuf *b)
+पूर्णाङ्क
+sshkey_format_text(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	char *uu = NULL;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	वर्ण *uu = रिक्त;
 
-	if ((r = sshkey_to_base64(key, &uu)) != 0)
-		goto out;
-	if ((r = sshbuf_putf(b, "%s %s",
-	    sshkey_ssh_name(key), uu)) != 0)
-		goto out;
+	जइ ((r = sshkey_to_base64(कुञ्चिका, &uu)) != 0)
+		गच्छ out;
+	जइ ((r = sshbuf_putf(b, "%s %s",
+	    sshkey_ssh_name(कुञ्चिका), uu)) != 0)
+		गच्छ out;
 	r = 0;
  out:
-	free(uu);
-	return r;
+	मुक्त(uu);
+	प्रत्यागम r;
 }
 
-int
-sshkey_write(const struct sshkey *key, FILE *f)
+पूर्णाङ्क
+sshkey_write(ध्रुव संरचना sshkey *कुञ्चिका, FILE *f)
 {
-	struct sshbuf *b = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *b = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_format_text(key, b)) != 0)
-		goto out;
-	if (fwrite(sshbuf_ptr(b), sshbuf_len(b), 1, f) != 1) {
-		if (feof(f))
+	जइ ((b = sshbuf_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	जइ ((r = sshkey_format_text(कुञ्चिका, b)) != 0)
+		गच्छ out;
+	जइ (fwrite(sshbuf_ptr(b), sshbuf_len(b), 1, f) != 1) {
+		जइ (feof(f))
 			errno = EPIPE;
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto out;
+		गच्छ out;
 	}
 	/* Success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	प्रत्यागम r;
 }
 
-const char *
-sshkey_cert_type(const struct sshkey *k)
+ध्रुव वर्ण *
+sshkey_cert_type(ध्रुव संरचना sshkey *k)
 {
-	switch (k->cert->type) {
-	case SSH2_CERT_TYPE_USER:
-		return "user";
-	case SSH2_CERT_TYPE_HOST:
-		return "host";
-	default:
-		return "unknown";
+	विकल्प (k->cert->type) {
+	पक्ष SSH2_CERT_TYPE_USER:
+		प्रत्यागम "user";
+	पक्ष SSH2_CERT_TYPE_HOST:
+		प्रत्यागम "host";
+	स्वभाव:
+		प्रत्यागम "unknown";
 	}
 }
 
-int
-sshkey_check_rsa_length(const struct sshkey *k, int min_size)
+पूर्णाङ्क
+sshkey_check_rsa_length(ध्रुव संरचना sshkey *k, पूर्णाङ्क min_size)
 {
 #ifdef WITH_OPENSSL
-	int nbits;
+	पूर्णाङ्क nbits;
 
-	if (k == NULL || k->pkey == NULL ||
-	    (k->type != KEY_RSA && k->type != KEY_RSA_CERT))
-		return 0;
+	जइ (k == रिक्त || k->pkey == रिक्त ||
+	    (k->type != कुञ्चिका_RSA && k->type != कुञ्चिका_RSA_CERT))
+		प्रत्यागम 0;
 	nbits = EVP_PKEY_bits(k->pkey);
-	if (nbits < SSH_RSA_MINIMUM_MODULUS_SIZE ||
+	जइ (nbits < SSH_RSA_MINIMUM_MODULUS_SIZE ||
 	    (min_size > 0 && nbits < min_size))
-		return SSH_ERR_KEY_LENGTH;
+		प्रत्यागम SSH_ERR_कुञ्चिका_LENGTH;
 #endif /* WITH_OPENSSL */
-	return 0;
+	प्रत्यागम 0;
 }
 
 #ifdef WITH_OPENSSL
-int
-sshkey_ecdsa_key_to_nid(const EC_KEY *k)
+पूर्णाङ्क
+sshkey_ecdsa_कुञ्चिका_to_nid(ध्रुव EC_कुञ्चिका *k)
 {
-	const EC_GROUP *g;
-	int nid;
+	ध्रुव EC_GROUP *g;
+	पूर्णाङ्क nid;
 
-	if (k == NULL || (g = EC_KEY_get0_group(k)) == NULL)
-		return -1;
-	if ((nid = EC_GROUP_get_curve_name(g)) <= 0)
-		return -1;
-	return nid;
+	जइ (k == रिक्त || (g = EC_कुञ्चिका_get0_group(k)) == रिक्त)
+		प्रत्यागम -1;
+	जइ ((nid = EC_GROUP_get_curve_name(g)) <= 0)
+		प्रत्यागम -1;
+	प्रत्यागम nid;
 }
 
-int
+पूर्णाङ्क
 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *pkey)
 {
-	return sshkey_ecdsa_key_to_nid(EVP_PKEY_get0_EC_KEY(pkey));
+	प्रत्यागम sshkey_ecdsa_कुञ्चिका_to_nid(EVP_PKEY_get0_EC_कुञ्चिका(pkey));
 }
 #endif /* WITH_OPENSSL */
 
-int
-sshkey_generate(int type, u_int bits, struct sshkey **keyp)
+पूर्णाङ्क
+sshkey_generate(पूर्णाङ्क type, u_int bits, संरचना sshkey **keyp)
 {
-	struct sshkey *k;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	const struct sshkey_impl *impl;
+	संरचना sshkey *k;
+	पूर्णाङ्क ret = SSH_ERR_INTERNAL_ERROR;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if (keyp == NULL || sshkey_type_is_cert(type))
-		return SSH_ERR_INVALID_ARGUMENT;
-	*keyp = NULL;
-	if ((impl = sshkey_impl_from_type(type)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
-	if (impl->funcs->generate == NULL)
-		return SSH_ERR_FEATURE_UNSUPPORTED;
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	जइ (keyp == रिक्त || sshkey_type_is_cert(type))
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	*keyp = रिक्त;
+	जइ ((impl = sshkey_impl_from_type(type)) == रिक्त)
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_UNKNOWN;
+	जइ (impl->funcs->generate == रिक्त)
+		प्रत्यागम SSH_ERR_FEATURE_UNSUPPORTED;
+	जइ ((k = sshkey_new(कुञ्चिका_UNSPEC)) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
 	k->type = type;
-	if ((ret = impl->funcs->generate(k, bits)) != 0) {
+	जइ ((ret = impl->funcs->generate(k, bits)) != 0) {
 		sshkey_free(k);
-		return ret;
+		प्रत्यागम ret;
 	}
 	/* success */
 	*keyp = k;
-	return 0;
+	प्रत्यागम 0;
 }
 
-int
-sshkey_cert_copy(const struct sshkey *from_key, struct sshkey *to_key)
+पूर्णाङ्क
+sshkey_cert_copy(ध्रुव संरचना sshkey *from_कुञ्चिका, संरचना sshkey *to_कुञ्चिका)
 {
 	u_int i;
-	const struct sshkey_cert *from;
-	struct sshkey_cert *to;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ध्रुव संरचना sshkey_cert *from;
+	संरचना sshkey_cert *to;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	if (to_key == NULL || (from = from_key->cert) == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	जइ (to_कुञ्चिका == रिक्त || (from = from_कुञ्चिका->cert) == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
 
-	if ((to = cert_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	जइ ((to = cert_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
 
-	if ((r = sshbuf_putb(to->certblob, from->certblob)) != 0 ||
+	जइ ((r = sshbuf_putb(to->certblob, from->certblob)) != 0 ||
 	    (r = sshbuf_putb(to->critical, from->critical)) != 0 ||
 	    (r = sshbuf_putb(to->extensions, from->extensions)) != 0)
-		goto out;
+		गच्छ out;
 
 	to->serial = from->serial;
 	to->type = from->type;
-	if (from->key_id == NULL)
-		to->key_id = NULL;
-	else if ((to->key_id = strdup(from->key_id)) == NULL) {
+	जइ (from->कुञ्चिका_id == रिक्त)
+		to->कुञ्चिका_id = रिक्त;
+	अण्णहा जइ ((to->कुञ्चिका_id = strdup(from->कुञ्चिका_id)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 	to->valid_after = from->valid_after;
 	to->valid_before = from->valid_before;
-	if (from->signature_key == NULL)
-		to->signature_key = NULL;
-	else if ((r = sshkey_from_private(from->signature_key,
-	    &to->signature_key)) != 0)
-		goto out;
-	if (from->signature_type != NULL &&
-	    (to->signature_type = strdup(from->signature_type)) == NULL) {
+	जइ (from->signature_कुञ्चिका == रिक्त)
+		to->signature_कुञ्चिका = रिक्त;
+	अण्णहा जइ ((r = sshkey_from_private(from->signature_कुञ्चिका,
+	    &to->signature_कुञ्चिका)) != 0)
+		गच्छ out;
+	जइ (from->signature_type != रिक्त &&
+	    (to->signature_type = strdup(from->signature_type)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (from->nprincipals > SSHKEY_CERT_MAX_PRINCIPALS) {
+	जइ (from->nprincipals > SSHKEY_CERT_MAX_PRINCIPALS) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		गच्छ out;
 	}
-	if (from->nprincipals > 0) {
-		if ((to->principals = calloc(from->nprincipals,
-		    sizeof(*to->principals))) == NULL) {
+	जइ (from->nprincipals > 0) {
+		जइ ((to->principals = calloc(from->nprincipals,
+		    परिमाण(*to->principals))) == रिक्त) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
-		for (i = 0; i < from->nprincipals; i++) {
+		प्रति (i = 0; i < from->nprincipals; i++) {
 			to->principals[i] = strdup(from->principals[i]);
-			if (to->principals[i] == NULL) {
+			जइ (to->principals[i] == रिक्त) {
 				to->nprincipals = i;
 				r = SSH_ERR_ALLOC_FAIL;
-				goto out;
+				गच्छ out;
 			}
 		}
 	}
 	to->nprincipals = from->nprincipals;
 
 	/* success */
-	cert_free(to_key->cert);
-	to_key->cert = to;
-	to = NULL;
+	cert_free(to_कुञ्चिका->cert);
+	to_कुञ्चिका->cert = to;
+	to = रिक्त;
 	r = 0;
  out:
 	cert_free(to);
-	return r;
+	प्रत्यागम r;
 }
 
-int
-sshkey_copy_public_sk(const struct sshkey *from, struct sshkey *to)
+पूर्णाङ्क
+sshkey_copy_public_sk(ध्रुव संरचना sshkey *from, संरचना sshkey *to)
 {
 	/* Append security-key application string */
-	if ((to->sk_application = strdup(from->sk_application)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return 0;
+	जइ ((to->sk_application = strdup(from->sk_application)) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	प्रत्यागम 0;
 }
 
-int
-sshkey_from_private(const struct sshkey *k, struct sshkey **pkp)
+पूर्णाङ्क
+sshkey_from_private(ध्रुव संरचना sshkey *k, संरचना sshkey **pkp)
 {
-	struct sshkey *n = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	const struct sshkey_impl *impl;
+	संरचना sshkey *n = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	*pkp = NULL;
-	if ((impl = sshkey_impl_from_key(k)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
-	if ((n = sshkey_new(k->type)) == NULL) {
+	*pkp = रिक्त;
+	जइ ((impl = sshkey_impl_from_कुञ्चिका(k)) == रिक्त)
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_UNKNOWN;
+	जइ ((n = sshkey_new(k->type)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = impl->funcs->copy_public(k, n)) != 0)
-		goto out;
-	if (sshkey_is_cert(k) && (r = sshkey_cert_copy(k, n)) != 0)
-		goto out;
+	जइ ((r = impl->funcs->copy_public(k, n)) != 0)
+		गच्छ out;
+	जइ (sshkey_is_cert(k) && (r = sshkey_cert_copy(k, n)) != 0)
+		गच्छ out;
 	/* success */
 	*pkp = n;
-	n = NULL;
+	n = रिक्त;
 	r = 0;
  out:
 	sshkey_free(n);
-	return r;
+	प्रत्यागम r;
 }
 
-int
-sshkey_is_shielded(struct sshkey *k)
+पूर्णाङ्क
+sshkey_is_shielded(संरचना sshkey *k)
 {
-	return k != NULL && k->shielded_private != NULL;
+	प्रत्यागम k != रिक्त && k->shielded_private != रिक्त;
 }
 
-int
-sshkey_shield_private(struct sshkey *k)
+पूर्णाङ्क
+sshkey_shield_private(संरचना sshkey *k)
 {
-	struct sshbuf *prvbuf = NULL;
-	u_char *prekey = NULL, *enc = NULL, keyiv[SSH_DIGEST_MAX_LENGTH];
-	struct sshcipher_ctx *cctx = NULL;
-	const struct sshcipher *cipher;
+	संरचना sshbuf *prvbuf = रिक्त;
+	u_char *prekey = रिक्त, *enc = रिक्त, keyiv[SSH_DIGEST_MAX_LENGTH];
+	संरचना sshcipher_ctx *cctx = रिक्त;
+	ध्रुव संरचना sshcipher *cipher;
 	size_t i, enclen = 0;
-	struct sshkey *kswap = NULL, tmp;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshkey *kswap = रिक्त, tmp;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
 #ifdef DEBUG_PK
 	fprintf(stderr, "%s: entering for %s\n", __func__, sshkey_ssh_name(k));
 #endif
-	if ((cipher = cipher_by_name(SSHKEY_SHIELD_CIPHER)) == NULL) {
+	जइ ((cipher = cipher_by_name(SSHKEY_SHIELD_CIPHER)) == रिक्त) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		गच्छ out;
 	}
-	if (cipher_keylen(cipher) + cipher_ivlen(cipher) >
+	जइ (cipher_keylen(cipher) + cipher_ivlen(cipher) >
 	    ssh_digest_bytes(SSHKEY_SHIELD_PREKEY_HASH)) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		गच्छ out;
 	}
 
 	/* Prepare a random pre-key, and from it an ephemeral key */
-	if ((r = sshkey_prekey_alloc(&prekey, SSHKEY_SHIELD_PREKEY_LEN)) != 0)
-		goto out;
+	जइ ((r = sshkey_prekey_alloc(&prekey, SSHKEY_SHIELD_PREKEY_LEN)) != 0)
+		गच्छ out;
 	arc4random_buf(prekey, SSHKEY_SHIELD_PREKEY_LEN);
-	if ((r = ssh_digest_memory(SSHKEY_SHIELD_PREKEY_HASH,
+	जइ ((r = ssh_digest_memory(SSHKEY_SHIELD_PREKEY_HASH,
 	    prekey, SSHKEY_SHIELD_PREKEY_LEN,
 	    keyiv, SSH_DIGEST_MAX_LENGTH)) != 0)
-		goto out;
+		गच्छ out;
 #ifdef DEBUG_PK
 	fprintf(stderr, "%s: key+iv\n", __func__);
 	sshbuf_dump_data(keyiv, ssh_digest_bytes(SSHKEY_SHIELD_PREKEY_HASH),
 	    stderr);
 #endif
-	if ((r = cipher_init(&cctx, cipher, keyiv, cipher_keylen(cipher),
+	जइ ((r = cipher_init(&cctx, cipher, keyiv, cipher_keylen(cipher),
 	    keyiv + cipher_keylen(cipher), cipher_ivlen(cipher), 1)) != 0)
-		goto out;
+		गच्छ out;
 
 	/* Serialise and encrypt the private key using the ephemeral key */
-	if ((prvbuf = sshbuf_new()) == NULL) {
+	जइ ((prvbuf = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (sshkey_is_shielded(k) && (r = sshkey_unshield_private(k)) != 0)
-		goto out;
-	if ((r = sshkey_private_serialize(k, prvbuf)) != 0)
-		goto out;
+	जइ (sshkey_is_shielded(k) && (r = sshkey_unshield_private(k)) != 0)
+		गच्छ out;
+	जइ ((r = sshkey_private_serialize(k, prvbuf)) != 0)
+		गच्छ out;
 	/* pad to cipher blocksize */
 	i = 0;
-	while (sshbuf_len(prvbuf) % cipher_blocksize(cipher)) {
-		if ((r = sshbuf_put_u8(prvbuf, ++i & 0xff)) != 0)
-			goto out;
+	जाव (sshbuf_len(prvbuf) % cipher_blocksize(cipher)) {
+		जइ ((r = sshbuf_put_u8(prvbuf, ++i & 0xff)) != 0)
+			गच्छ out;
 	}
 #ifdef DEBUG_PK
 	fprintf(stderr, "%s: serialised\n", __func__);
@@ -1689,21 +1689,21 @@ sshkey_shield_private(struct sshkey *k)
 #endif
 	/* encrypt */
 	enclen = sshbuf_len(prvbuf);
-	if ((enc = malloc(enclen)) == NULL) {
+	जइ ((enc = malloc(enclen)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = cipher_crypt(cctx, 0, enc,
+	जइ ((r = cipher_crypt(cctx, 0, enc,
 	    sshbuf_ptr(prvbuf), sshbuf_len(prvbuf), 0, 0)) != 0)
-		goto out;
+		गच्छ out;
 #ifdef DEBUG_PK
 	fprintf(stderr, "%s: encrypted\n", __func__);
 	sshbuf_dump_data(enc, enclen, stderr);
 #endif
 
 	/* Make a scrubbed, public-only copy of our private key argument */
-	if ((r = sshkey_from_private(k, &kswap)) != 0)
-		goto out;
+	जइ ((r = sshkey_from_private(k, &kswap)) != 0)
+		गच्छ out;
 
 	/* Swap the private key out (it will be destroyed below) */
 	tmp = *kswap;
@@ -1715,7 +1715,7 @@ sshkey_shield_private(struct sshkey *k)
 	k->shielded_len = enclen;
 	k->shield_prekey = prekey;
 	k->shield_prekey_len = SSHKEY_SHIELD_PREKEY_LEN;
-	enc = prekey = NULL; /* transferred */
+	enc = prekey = रिक्त; /* transferred */
 	enclen = 0;
 
 	/* preserve key fields that are required for correct operation */
@@ -1727,80 +1727,80 @@ sshkey_shield_private(struct sshkey *k)
  out:
 	/* XXX behaviour on error - invalidate original private key? */
 	cipher_free(cctx);
-	explicit_bzero(keyiv, sizeof(keyiv));
-	explicit_bzero(&tmp, sizeof(tmp));
+	explicit_bzero(keyiv, परिमाण(keyiv));
+	explicit_bzero(&tmp, परिमाण(tmp));
 	freezero(enc, enclen);
 	sshkey_prekey_free(prekey, SSHKEY_SHIELD_PREKEY_LEN);
 	sshkey_free(kswap);
 	sshbuf_free(prvbuf);
-	return r;
+	प्रत्यागम r;
 }
 
 /* Check deterministic padding after private key */
-static int
-private2_check_padding(struct sshbuf *decrypted)
+स्थिर पूर्णाङ्क
+private2_check_padding(संरचना sshbuf *decrypted)
 {
 	u_char pad;
 	size_t i;
-	int r;
+	पूर्णाङ्क r;
 
 	i = 0;
-	while (sshbuf_len(decrypted)) {
-		if ((r = sshbuf_get_u8(decrypted, &pad)) != 0)
-			goto out;
-		if (pad != (++i & 0xff)) {
+	जाव (sshbuf_len(decrypted)) {
+		जइ ((r = sshbuf_get_u8(decrypted, &pad)) != 0)
+			गच्छ out;
+		जइ (pad != (++i & 0xff)) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 	}
 	/* success */
 	r = 0;
  out:
-	explicit_bzero(&pad, sizeof(pad));
-	explicit_bzero(&i, sizeof(i));
-	return r;
+	explicit_bzero(&pad, परिमाण(pad));
+	explicit_bzero(&i, परिमाण(i));
+	प्रत्यागम r;
 }
 
-int
-sshkey_unshield_private(struct sshkey *k)
+पूर्णाङ्क
+sshkey_unshield_private(संरचना sshkey *k)
 {
-	struct sshbuf *prvbuf = NULL;
+	संरचना sshbuf *prvbuf = रिक्त;
 	u_char *cp, keyiv[SSH_DIGEST_MAX_LENGTH];
-	struct sshcipher_ctx *cctx = NULL;
-	const struct sshcipher *cipher;
-	struct sshkey *kswap = NULL, tmp;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshcipher_ctx *cctx = रिक्त;
+	ध्रुव संरचना sshcipher *cipher;
+	संरचना sshkey *kswap = रिक्त, tmp;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
 #ifdef DEBUG_PK
 	fprintf(stderr, "%s: entering for %s\n", __func__, sshkey_ssh_name(k));
 #endif
-	if (!sshkey_is_shielded(k))
-		return 0; /* nothing to do */
+	जइ (!sshkey_is_shielded(k))
+		प्रत्यागम 0; /* nothing to do */
 
-	if ((cipher = cipher_by_name(SSHKEY_SHIELD_CIPHER)) == NULL) {
+	जइ ((cipher = cipher_by_name(SSHKEY_SHIELD_CIPHER)) == रिक्त) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		गच्छ out;
 	}
-	if (cipher_keylen(cipher) + cipher_ivlen(cipher) >
+	जइ (cipher_keylen(cipher) + cipher_ivlen(cipher) >
 	    ssh_digest_bytes(SSHKEY_SHIELD_PREKEY_HASH)) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		गच्छ out;
 	}
 	/* check size of shielded key blob */
-	if (k->shielded_len < cipher_blocksize(cipher) ||
+	जइ (k->shielded_len < cipher_blocksize(cipher) ||
 	    (k->shielded_len % cipher_blocksize(cipher)) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	/* Calculate the ephemeral key from the prekey */
-	if ((r = ssh_digest_memory(SSHKEY_SHIELD_PREKEY_HASH,
+	जइ ((r = ssh_digest_memory(SSHKEY_SHIELD_PREKEY_HASH,
 	    k->shield_prekey, k->shield_prekey_len,
 	    keyiv, SSH_DIGEST_MAX_LENGTH)) != 0)
-		goto out;
-	if ((r = cipher_init(&cctx, cipher, keyiv, cipher_keylen(cipher),
+		गच्छ out;
+	जइ ((r = cipher_init(&cctx, cipher, keyiv, cipher_keylen(cipher),
 	    keyiv + cipher_keylen(cipher), cipher_ivlen(cipher), 0)) != 0)
-		goto out;
+		गच्छ out;
 #ifdef DEBUG_PK
 	fprintf(stderr, "%s: key+iv\n", __func__);
 	sshbuf_dump_data(keyiv, ssh_digest_bytes(SSHKEY_SHIELD_PREKEY_HASH),
@@ -1808,30 +1808,30 @@ sshkey_unshield_private(struct sshkey *k)
 #endif
 
 	/* Decrypt and parse the shielded private key using the ephemeral key */
-	if ((prvbuf = sshbuf_new()) == NULL) {
+	जइ ((prvbuf = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_reserve(prvbuf, k->shielded_len, &cp)) != 0)
-		goto out;
+	जइ ((r = sshbuf_reserve(prvbuf, k->shielded_len, &cp)) != 0)
+		गच्छ out;
 	/* decrypt */
 #ifdef DEBUG_PK
 	fprintf(stderr, "%s: encrypted\n", __func__);
 	sshbuf_dump_data(k->shielded_private, k->shielded_len, stderr);
 #endif
-	if ((r = cipher_crypt(cctx, 0, cp,
+	जइ ((r = cipher_crypt(cctx, 0, cp,
 	    k->shielded_private, k->shielded_len, 0, 0)) != 0)
-		goto out;
+		गच्छ out;
 #ifdef DEBUG_PK
 	fprintf(stderr, "%s: serialised\n", __func__);
 	sshbuf_dump(prvbuf, stderr);
 #endif
 	/* Parse private key */
-	if ((r = sshkey_private_deserialize(prvbuf, &kswap)) != 0)
-		goto out;
+	जइ ((r = sshkey_private_deserialize(prvbuf, &kswap)) != 0)
+		गच्छ out;
 
-	if ((r = private2_check_padding(prvbuf)) != 0)
-		goto out;
+	जइ ((r = private2_check_padding(prvbuf)) != 0)
+		गच्छ out;
 
 	/* Swap the parsed key back into place */
 	tmp = *kswap;
@@ -1843,302 +1843,302 @@ sshkey_unshield_private(struct sshkey *k)
 
  out:
 	cipher_free(cctx);
-	explicit_bzero(keyiv, sizeof(keyiv));
-	explicit_bzero(&tmp, sizeof(tmp));
+	explicit_bzero(keyiv, परिमाण(keyiv));
+	explicit_bzero(&tmp, परिमाण(tmp));
 	sshkey_free(kswap);
 	sshbuf_free(prvbuf);
-	return r;
+	प्रत्यागम r;
 }
 
-static int
-cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
-    const char *ca_sigalg_allowlist)
+स्थिर पूर्णाङ्क
+cert_parse(संरचना sshbuf *b, संरचना sshkey *कुञ्चिका, संरचना sshbuf *certbuf,
+    ध्रुव वर्ण *ca_sigalg_allowlist)
 {
-	struct sshbuf *principals = NULL, *crit = NULL;
-	struct sshbuf *exts = NULL, *ca = NULL;
-	u_char *sig = NULL;
-	char *sigtype = NULL;
+	संरचना sshbuf *principals = रिक्त, *crit = रिक्त;
+	संरचना sshbuf *exts = रिक्त, *ca = रिक्त;
+	u_char *sig = रिक्त;
+	वर्ण *sigtype = रिक्त;
 	size_t signed_len = 0, slen = 0, kidlen = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क ret = SSH_ERR_INTERNAL_ERROR;
 
 	/* Copy the entire key blob for verification and later serialisation */
-	if ((ret = sshbuf_putb(key->cert->certblob, certbuf)) != 0)
-		return ret;
+	जइ ((ret = sshbuf_putb(कुञ्चिका->cert->certblob, certbuf)) != 0)
+		प्रत्यागम ret;
 
 	/* Parse body of certificate up to signature */
-	if ((ret = sshbuf_get_u64(b, &key->cert->serial)) != 0 ||
-	    (ret = sshbuf_get_u32(b, &key->cert->type)) != 0 ||
-	    (ret = sshbuf_get_cstring(b, &key->cert->key_id, &kidlen)) != 0 ||
+	जइ ((ret = sshbuf_get_u64(b, &कुञ्चिका->cert->serial)) != 0 ||
+	    (ret = sshbuf_get_u32(b, &कुञ्चिका->cert->type)) != 0 ||
+	    (ret = sshbuf_get_cstring(b, &कुञ्चिका->cert->कुञ्चिका_id, &kidlen)) != 0 ||
 	    (ret = sshbuf_froms(b, &principals)) != 0 ||
-	    (ret = sshbuf_get_u64(b, &key->cert->valid_after)) != 0 ||
-	    (ret = sshbuf_get_u64(b, &key->cert->valid_before)) != 0 ||
+	    (ret = sshbuf_get_u64(b, &कुञ्चिका->cert->valid_after)) != 0 ||
+	    (ret = sshbuf_get_u64(b, &कुञ्चिका->cert->valid_before)) != 0 ||
 	    (ret = sshbuf_froms(b, &crit)) != 0 ||
 	    (ret = sshbuf_froms(b, &exts)) != 0 ||
-	    (ret = sshbuf_get_string_direct(b, NULL, NULL)) != 0 ||
+	    (ret = sshbuf_get_string_direct(b, रिक्त, रिक्त)) != 0 ||
 	    (ret = sshbuf_froms(b, &ca)) != 0) {
 		/* XXX debug print error for ret */
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	/* Signature is left in the buffer so we can calculate this length */
-	signed_len = sshbuf_len(key->cert->certblob) - sshbuf_len(b);
+	signed_len = sshbuf_len(कुञ्चिका->cert->certblob) - sshbuf_len(b);
 
-	if ((ret = sshbuf_get_string(b, &sig, &slen)) != 0) {
+	जइ ((ret = sshbuf_get_string(b, &sig, &slen)) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	/* Is this a signature we're prepared to accept? */
-	if ((ret = sshkey_get_sigtype(sig, slen, &sigtype)) != 0) {
+	जइ ((ret = sshkey_get_sigtype(sig, slen, &sigtype)) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
-	if (ca_sigalg_allowlist != NULL &&
+	जइ (ca_sigalg_allowlist != रिक्त &&
 	    match_pattern_list(sigtype, ca_sigalg_allowlist, 0) != 1) {
 		ret = SSH_ERR_SIGN_ALG_UNSUPPORTED;
-		goto out;
+		गच्छ out;
 	}
 
 	/* Parse CA key and check whether we might accept it */
-	if (sshkey_from_blob_internal(ca, &key->cert->signature_key, 0,
-	    ca_sigalg_allowlist, NULL) != 0) {
-		ret = SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
-		goto out;
+	जइ (sshkey_from_blob_internal(ca, &कुञ्चिका->cert->signature_कुञ्चिका, 0,
+	    ca_sigalg_allowlist, रिक्त) != 0) {
+		ret = SSH_ERR_कुञ्चिका_CERT_INVALID_SIGN_कुञ्चिका;
+		गच्छ out;
 	}
-	if (!sshkey_type_is_valid_ca(key->cert->signature_key->type)) {
-		ret = SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
-		goto out;
+	जइ (!sshkey_type_is_valid_ca(कुञ्चिका->cert->signature_कुञ्चिका->type)) {
+		ret = SSH_ERR_कुञ्चिका_CERT_INVALID_SIGN_कुञ्चिका;
+		गच्छ out;
 	}
 
-	if (key->cert->type != SSH2_CERT_TYPE_USER &&
-	    key->cert->type != SSH2_CERT_TYPE_HOST) {
-		ret = SSH_ERR_KEY_CERT_UNKNOWN_TYPE;
-		goto out;
+	जइ (कुञ्चिका->cert->type != SSH2_CERT_TYPE_USER &&
+	    कुञ्चिका->cert->type != SSH2_CERT_TYPE_HOST) {
+		ret = SSH_ERR_कुञ्चिका_CERT_UNKNOWN_TYPE;
+		गच्छ out;
 	}
 
 	/* Parse principals section */
-	while (sshbuf_len(principals) > 0) {
-		char *principal = NULL;
-		char **oprincipals = NULL;
+	जाव (sshbuf_len(principals) > 0) {
+		वर्ण *principal = रिक्त;
+		वर्ण **oprincipals = रिक्त;
 
-		if (key->cert->nprincipals >= SSHKEY_CERT_MAX_PRINCIPALS) {
+		जइ (कुञ्चिका->cert->nprincipals >= SSHKEY_CERT_MAX_PRINCIPALS) {
 			ret = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
-		if ((ret = sshbuf_get_cstring(principals, &principal,
-		    NULL)) != 0) {
+		जइ ((ret = sshbuf_get_cstring(principals, &principal,
+		    रिक्त)) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
-		oprincipals = key->cert->principals;
-		key->cert->principals = recallocarray(key->cert->principals,
-		    key->cert->nprincipals, key->cert->nprincipals + 1,
-		    sizeof(*key->cert->principals));
-		if (key->cert->principals == NULL) {
-			free(principal);
-			key->cert->principals = oprincipals;
+		oprincipals = कुञ्चिका->cert->principals;
+		कुञ्चिका->cert->principals = recallocarray(कुञ्चिका->cert->principals,
+		    कुञ्चिका->cert->nprincipals, कुञ्चिका->cert->nprincipals + 1,
+		    परिमाण(*कुञ्चिका->cert->principals));
+		जइ (कुञ्चिका->cert->principals == रिक्त) {
+			मुक्त(principal);
+			कुञ्चिका->cert->principals = oprincipals;
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
-		key->cert->principals[key->cert->nprincipals++] = principal;
+		कुञ्चिका->cert->principals[कुञ्चिका->cert->nprincipals++] = principal;
 	}
 
 	/*
 	 * Stash a copies of the critical options and extensions sections
 	 * for later use.
 	 */
-	if ((ret = sshbuf_putb(key->cert->critical, crit)) != 0 ||
-	    (exts != NULL &&
-	    (ret = sshbuf_putb(key->cert->extensions, exts)) != 0))
-		goto out;
+	जइ ((ret = sshbuf_putb(कुञ्चिका->cert->critical, crit)) != 0 ||
+	    (exts != रिक्त &&
+	    (ret = sshbuf_putb(कुञ्चिका->cert->extensions, exts)) != 0))
+		गच्छ out;
 
 	/*
 	 * Validate critical options and extensions sections format.
 	 */
-	while (sshbuf_len(crit) != 0) {
-		if ((ret = sshbuf_get_string_direct(crit, NULL, NULL)) != 0 ||
-		    (ret = sshbuf_get_string_direct(crit, NULL, NULL)) != 0) {
-			sshbuf_reset(key->cert->critical);
+	जाव (sshbuf_len(crit) != 0) {
+		जइ ((ret = sshbuf_get_string_direct(crit, रिक्त, रिक्त)) != 0 ||
+		    (ret = sshbuf_get_string_direct(crit, रिक्त, रिक्त)) != 0) {
+			sshbuf_reset(कुञ्चिका->cert->critical);
 			ret = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 	}
-	while (exts != NULL && sshbuf_len(exts) != 0) {
-		if ((ret = sshbuf_get_string_direct(exts, NULL, NULL)) != 0 ||
-		    (ret = sshbuf_get_string_direct(exts, NULL, NULL)) != 0) {
-			sshbuf_reset(key->cert->extensions);
+	जाव (exts != रिक्त && sshbuf_len(exts) != 0) {
+		जइ ((ret = sshbuf_get_string_direct(exts, रिक्त, रिक्त)) != 0 ||
+		    (ret = sshbuf_get_string_direct(exts, रिक्त, रिक्त)) != 0) {
+			sshbuf_reset(कुञ्चिका->cert->extensions);
 			ret = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 	}
 
 	/* Finally, validate signature */
-	if ((ret = sshkey_verify(key->cert->signature_key, sig, slen,
-	    sshbuf_ptr(key->cert->certblob), signed_len, NULL, 0, NULL)) != 0)
-		goto out;
+	जइ ((ret = sshkey_verify(कुञ्चिका->cert->signature_कुञ्चिका, sig, slen,
+	    sshbuf_ptr(कुञ्चिका->cert->certblob), signed_len, रिक्त, 0, रिक्त)) != 0)
+		गच्छ out;
 
 	/* Success */
 	ret = 0;
-	key->cert->signature_type = sigtype;
-	sigtype = NULL;
+	कुञ्चिका->cert->signature_type = sigtype;
+	sigtype = रिक्त;
  out:
 	sshbuf_free(ca);
 	sshbuf_free(crit);
 	sshbuf_free(exts);
 	sshbuf_free(principals);
-	free(sig);
-	free(sigtype);
-	return ret;
+	मुक्त(sig);
+	मुक्त(sigtype);
+	प्रत्यागम ret;
 }
 
-int
-sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *key)
+पूर्णाङ्क
+sshkey_deserialize_sk(संरचना sshbuf *b, संरचना sshkey *कुञ्चिका)
 {
 	/* Parse additional security-key application string */
-	if (sshbuf_get_cstring(b, &key->sk_application, NULL) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	जइ (sshbuf_get_cstring(b, &कुञ्चिका->sk_application, रिक्त) != 0)
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
+	प्रत्यागम 0;
 }
 
-static int
-sshkey_from_blob_internal(struct sshbuf *b, struct sshkey **keyp,
-    int allow_cert, const char *alg_allowlist, const char *ca_sigalg_allowlist)
+स्थिर पूर्णाङ्क
+sshkey_from_blob_internal(संरचना sshbuf *b, संरचना sshkey **keyp,
+    पूर्णाङ्क allow_cert, ध्रुव वर्ण *alg_allowlist, ध्रुव वर्ण *ca_sigalg_allowlist)
 {
-	int type, ret = SSH_ERR_INTERNAL_ERROR;
-	char *ktype = NULL;
-	struct sshkey *key = NULL;
-	struct sshbuf *copy;
-	const struct sshkey_impl *impl;
+	पूर्णाङ्क type, ret = SSH_ERR_INTERNAL_ERROR;
+	वर्ण *ktype = रिक्त;
+	संरचना sshkey *कुञ्चिका = रिक्त;
+	संरचना sshbuf *copy;
+	ध्रुव संरचना sshkey_impl *impl;
 
 #ifdef DEBUG_PK /* XXX */
 	sshbuf_dump(b, stderr);
 #endif
-	if (keyp != NULL)
-		*keyp = NULL;
-	if ((copy = sshbuf_fromb(b)) == NULL) {
+	जइ (keyp != रिक्त)
+		*keyp = रिक्त;
+	जइ ((copy = sshbuf_fromb(b)) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0) {
+	जइ (sshbuf_get_cstring(b, &ktype, रिक्त) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	type = sshkey_type_from_name(ktype);
-	if (!allow_cert && sshkey_type_is_cert(type)) {
-		ret = SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
-		goto out;
+	जइ (!allow_cert && sshkey_type_is_cert(type)) {
+		ret = SSH_ERR_कुञ्चिका_CERT_INVALID_SIGN_कुञ्चिका;
+		गच्छ out;
 	}
 
-	if (alg_allowlist != NULL &&
+	जइ (alg_allowlist != रिक्त &&
 	    !sshkey_match_keyname_to_sigalgs(ktype, alg_allowlist)) {
-		ret = SSH_ERR_KEY_ALG_UNSUPPORTED;
-		goto out;
+		ret = SSH_ERR_कुञ्चिका_ALG_UNSUPPORTED;
+		गच्छ out;
 	}
 
-	if ((impl = sshkey_impl_from_type(type)) == NULL) {
-		ret = SSH_ERR_KEY_TYPE_UNKNOWN;
-		goto out;
+	जइ ((impl = sshkey_impl_from_type(type)) == रिक्त) {
+		ret = SSH_ERR_कुञ्चिका_TYPE_UNKNOWN;
+		गच्छ out;
 	}
-	if ((key = sshkey_new(type)) == NULL) {
+	जइ ((कुञ्चिका = sshkey_new(type)) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (sshkey_type_is_cert(type)) {
+	जइ (sshkey_type_is_cert(type)) {
 		/* Skip nonce that precedes all certificates */
-		if (sshbuf_get_string_direct(b, NULL, NULL) != 0) {
+		जइ (sshbuf_get_string_direct(b, रिक्त, रिक्त) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 	}
-	if ((ret = impl->funcs->deserialize_public(ktype, b, key)) != 0)
-		goto out;
+	जइ ((ret = impl->funcs->deserialize_public(ktype, b, कुञ्चिका)) != 0)
+		गच्छ out;
 
 	/* Parse certificate potion */
-	if (sshkey_is_cert(key) &&
-	    (ret = cert_parse(b, key, copy, ca_sigalg_allowlist)) != 0)
-		goto out;
+	जइ (sshkey_is_cert(कुञ्चिका) &&
+	    (ret = cert_parse(b, कुञ्चिका, copy, ca_sigalg_allowlist)) != 0)
+		गच्छ out;
 
-	if (key != NULL && sshbuf_len(b) != 0) {
+	जइ (कुञ्चिका != रिक्त && sshbuf_len(b) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 	ret = 0;
-	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL;
+	जइ (keyp != रिक्त) {
+		*keyp = कुञ्चिका;
+		कुञ्चिका = रिक्त;
 	}
  out:
 	sshbuf_free(copy);
-	sshkey_free(key);
-	free(ktype);
-	return ret;
+	sshkey_free(कुञ्चिका);
+	मुक्त(ktype);
+	प्रत्यागम ret;
 }
 
-int
-sshkey_from_blob(const u_char *blob, size_t blen, struct sshkey **keyp)
+पूर्णाङ्क
+sshkey_from_blob(ध्रुव u_char *blob, size_t blen, संरचना sshkey **keyp)
 {
-	struct sshbuf *b;
-	int r;
+	संरचना sshbuf *b;
+	पूर्णाङ्क r;
 
-	if ((b = sshbuf_from(blob, blen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	r = sshkey_from_blob_internal(b, keyp, 1, NULL, NULL);
+	जइ ((b = sshbuf_from(blob, blen)) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	r = sshkey_from_blob_internal(b, keyp, 1, रिक्त, रिक्त);
 	sshbuf_free(b);
-	return r;
+	प्रत्यागम r;
 }
 
-int
-sshkey_fromb(struct sshbuf *b, struct sshkey **keyp)
+पूर्णाङ्क
+sshkey_fromb(संरचना sshbuf *b, संरचना sshkey **keyp)
 {
-	return sshkey_from_blob_internal(b, keyp, 1, NULL, NULL);
+	प्रत्यागम sshkey_from_blob_internal(b, keyp, 1, रिक्त, रिक्त);
 }
 
-int
-sshkey_fromb_allowlist(struct sshbuf *b, struct sshkey **keyp,
-    const char *alg_allowlist, const char *ca_sigalg_allowlist)
+पूर्णाङ्क
+sshkey_fromb_allowlist(संरचना sshbuf *b, संरचना sshkey **keyp,
+    ध्रुव वर्ण *alg_allowlist, ध्रुव वर्ण *ca_sigalg_allowlist)
 {
-	return sshkey_from_blob_internal(b, keyp, 1,
+	प्रत्यागम sshkey_from_blob_internal(b, keyp, 1,
 	    alg_allowlist, ca_sigalg_allowlist);
 }
 
-int
-sshkey_froms(struct sshbuf *buf, struct sshkey **keyp)
+पूर्णाङ्क
+sshkey_froms(संरचना sshbuf *buf, संरचना sshkey **keyp)
 {
-	struct sshbuf *b;
-	int r;
+	संरचना sshbuf *b;
+	पूर्णाङ्क r;
 
-	if ((r = sshbuf_froms(buf, &b)) != 0)
-		return r;
-	r = sshkey_from_blob_internal(b, keyp, 1, NULL, NULL);
+	जइ ((r = sshbuf_froms(buf, &b)) != 0)
+		प्रत्यागम r;
+	r = sshkey_from_blob_internal(b, keyp, 1, रिक्त, रिक्त);
 	sshbuf_free(b);
-	return r;
+	प्रत्यागम r;
 }
 
-int
-sshkey_get_sigtype(const u_char *sig, size_t siglen, char **sigtypep)
+पूर्णाङ्क
+sshkey_get_sigtype(ध्रुव u_char *sig, size_t siglen, वर्ण **sigtypep)
 {
-	int r;
-	struct sshbuf *b = NULL;
-	char *sigtype = NULL;
+	पूर्णाङ्क r;
+	संरचना sshbuf *b = रिक्त;
+	वर्ण *sigtype = रिक्त;
 
-	if (sigtypep != NULL)
-		*sigtypep = NULL;
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(b, &sigtype, NULL)) != 0)
-		goto out;
+	जइ (sigtypep != रिक्त)
+		*sigtypep = रिक्त;
+	जइ ((b = sshbuf_from(sig, siglen)) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	जइ ((r = sshbuf_get_cstring(b, &sigtype, रिक्त)) != 0)
+		गच्छ out;
 	/* success */
-	if (sigtypep != NULL) {
+	जइ (sigtypep != रिक्त) {
 		*sigtypep = sigtype;
-		sigtype = NULL;
+		sigtype = रिक्त;
 	}
 	r = 0;
  out:
-	free(sigtype);
+	मुक्त(sigtype);
 	sshbuf_free(b);
-	return r;
+	प्रत्यागम r;
 }
 
 /*
@@ -2148,448 +2148,448 @@ sshkey_get_sigtype(const u_char *sig, size_t siglen, char **sigtypep)
  * "allowed" pattern-list, or the key is not a certificate to begin with.
  * Otherwise returns a ssherr.h code.
  */
-int
-sshkey_check_cert_sigtype(const struct sshkey *key, const char *allowed)
+पूर्णाङ्क
+sshkey_check_cert_sigtype(ध्रुव संरचना sshkey *कुञ्चिका, ध्रुव वर्ण *allowed)
 {
-	if (key == NULL || allowed == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (!sshkey_type_is_cert(key->type))
-		return 0;
-	if (key->cert == NULL || key->cert->signature_type == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (match_pattern_list(key->cert->signature_type, allowed, 0) != 1)
-		return SSH_ERR_SIGN_ALG_UNSUPPORTED;
-	return 0;
+	जइ (कुञ्चिका == रिक्त || allowed == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ (!sshkey_type_is_cert(कुञ्चिका->type))
+		प्रत्यागम 0;
+	जइ (कुञ्चिका->cert == रिक्त || कुञ्चिका->cert->signature_type == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ (match_pattern_list(कुञ्चिका->cert->signature_type, allowed, 0) != 1)
+		प्रत्यागम SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	प्रत्यागम 0;
 }
 
 /*
  * Returns the expected signature algorithm for a given public key algorithm.
  */
-const char *
-sshkey_sigalg_by_name(const char *name)
+ध्रुव वर्ण *
+sshkey_sigalg_by_name(ध्रुव वर्ण *name)
 {
-	const struct sshkey_impl *impl;
-	int i;
+	ध्रुव संरचना sshkey_impl *impl;
+	पूर्णाङ्क i;
 
-	for (i = 0; keyimpls[i] != NULL; i++) {
+	प्रति (i = 0; keyimpls[i] != रिक्त; i++) {
 		impl = keyimpls[i];
-		if (strcmp(impl->name, name) != 0)
-			continue;
-		if (impl->sigalg != NULL)
-			return impl->sigalg;
-		if (!impl->cert)
-			return impl->name;
-		return sshkey_ssh_name_from_type_nid(
+		जइ (strcmp(impl->name, name) != 0)
+			अनुवर्त;
+		जइ (impl->sigalg != रिक्त)
+			प्रत्यागम impl->sigalg;
+		जइ (!impl->cert)
+			प्रत्यागम impl->name;
+		प्रत्यागम sshkey_ssh_name_from_type_nid(
 		    sshkey_type_plain(impl->type), impl->nid);
 	}
-	return NULL;
+	प्रत्यागम रिक्त;
 }
 
 /*
  * Verifies that the signature algorithm appearing inside the signature blob
  * matches that which was requested.
  */
-int
-sshkey_check_sigtype(const u_char *sig, size_t siglen,
-    const char *requested_alg)
+पूर्णाङ्क
+sshkey_check_sigtype(ध्रुव u_char *sig, size_t siglen,
+    ध्रुव वर्ण *requested_alg)
 {
-	const char *expected_alg;
-	char *sigtype = NULL;
-	int r;
+	ध्रुव वर्ण *expected_alg;
+	वर्ण *sigtype = रिक्त;
+	पूर्णाङ्क r;
 
-	if (requested_alg == NULL)
-		return 0;
-	if ((expected_alg = sshkey_sigalg_by_name(requested_alg)) == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0)
-		return r;
+	जइ (requested_alg == रिक्त)
+		प्रत्यागम 0;
+	जइ ((expected_alg = sshkey_sigalg_by_name(requested_alg)) == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0)
+		प्रत्यागम r;
 	r = strcmp(expected_alg, sigtype) == 0;
-	free(sigtype);
-	return r ? 0 : SSH_ERR_SIGN_ALG_UNSUPPORTED;
+	मुक्त(sigtype);
+	प्रत्यागम r ? 0 : SSH_ERR_SIGN_ALG_UNSUPPORTED;
 }
 
-int
-sshkey_sign(struct sshkey *key,
+पूर्णाङ्क
+sshkey_sign(संरचना sshkey *कुञ्चिका,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+    ध्रुव u_char *data, size_t datalen,
+    ध्रुव वर्ण *alg, ध्रुव वर्ण *sk_provider, ध्रुव वर्ण *sk_pin, u_int compat)
 {
-	int was_shielded = sshkey_is_shielded(key);
-	int r2, r = SSH_ERR_INTERNAL_ERROR;
-	const struct sshkey_impl *impl;
+	पूर्णाङ्क was_shielded = sshkey_is_shielded(कुञ्चिका);
+	पूर्णाङ्क r2, r = SSH_ERR_INTERNAL_ERROR;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if (sigp != NULL)
-		*sigp = NULL;
-	if (lenp != NULL)
+	जइ (sigp != रिक्त)
+		*sigp = रिक्त;
+	जइ (lenp != रिक्त)
 		*lenp = 0;
-	if (datalen > SSH_KEY_MAX_SIGN_DATA_SIZE)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((impl = sshkey_impl_from_key(key)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
-	if ((r = sshkey_unshield_private(key)) != 0)
-		return r;
-	if (sshkey_is_sk(key)) {
-		r = sshsk_sign(sk_provider, key, sigp, lenp, data,
+	जइ (datalen > SSH_कुञ्चिका_MAX_SIGN_DATA_SIZE)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ ((impl = sshkey_impl_from_कुञ्चिका(कुञ्चिका)) == रिक्त)
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_UNKNOWN;
+	जइ ((r = sshkey_unshield_private(कुञ्चिका)) != 0)
+		प्रत्यागम r;
+	जइ (sshkey_is_sk(कुञ्चिका)) {
+		r = sshsk_sign(sk_provider, कुञ्चिका, sigp, lenp, data,
 		    datalen, compat, sk_pin);
-	} else if ((key->flags & SSHKEY_FLAG_EXT) != 0) {
-		r = pkcs11_sign(key, sigp, lenp, data, datalen,
+	} अण्णहा जइ ((कुञ्चिका->flags & SSHKEY_FLAG_EXT) != 0) {
+		r = pkcs11_sign(कुञ्चिका, sigp, lenp, data, datalen,
 		    alg, sk_provider, sk_pin, compat);
-	} else {
-		if (impl->funcs->sign == NULL)
+	} अण्णहा {
+		जइ (impl->funcs->sign == रिक्त)
 			r = SSH_ERR_SIGN_ALG_UNSUPPORTED;
-		else {
-			r = impl->funcs->sign(key, sigp, lenp, data, datalen,
+		अण्णहा {
+			r = impl->funcs->sign(कुञ्चिका, sigp, lenp, data, datalen,
 			    alg, sk_provider, sk_pin, compat);
 		 }
 	}
-	if (was_shielded && (r2 = sshkey_shield_private(key)) != 0)
-		return r2;
-	return r;
+	जइ (was_shielded && (r2 = sshkey_shield_private(कुञ्चिका)) != 0)
+		प्रत्यागम r2;
+	प्रत्यागम r;
 }
 
 /*
  * ssh_key_verify returns 0 for a correct signature and < 0 on error.
  * If "alg" specified, then the signature must use that algorithm.
  */
-int
-sshkey_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+पूर्णाङ्क
+sshkey_verify(ध्रुव संरचना sshkey *कुञ्चिका,
+    ध्रुव u_char *sig, size_t siglen,
+    ध्रुव u_char *data, size_t dlen, ध्रुव वर्ण *alg, u_int compat,
+    संरचना sshkey_sig_details **detailsp)
 {
-	const struct sshkey_impl *impl;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if (detailsp != NULL)
-		*detailsp = NULL;
-	if (siglen == 0 || dlen > SSH_KEY_MAX_SIGN_DATA_SIZE)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((impl = sshkey_impl_from_key(key)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
-	return impl->funcs->verify(key, sig, siglen, data, dlen,
+	जइ (detailsp != रिक्त)
+		*detailsp = रिक्त;
+	जइ (siglen == 0 || dlen > SSH_कुञ्चिका_MAX_SIGN_DATA_SIZE)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ ((impl = sshkey_impl_from_कुञ्चिका(कुञ्चिका)) == रिक्त)
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_UNKNOWN;
+	प्रत्यागम impl->funcs->verify(कुञ्चिका, sig, siglen, data, dlen,
 	    alg, compat, detailsp);
 }
 
 /* Convert a plain key to their _CERT equivalent */
-int
-sshkey_to_certified(struct sshkey *k)
+पूर्णाङ्क
+sshkey_to_certified(संरचना sshkey *k)
 {
-	int newtype;
+	पूर्णाङ्क newtype;
 
-	if ((newtype = sshkey_type_certified(k->type)) == -1)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((k->cert = cert_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	जइ ((newtype = sshkey_type_certified(k->type)) == -1)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ ((k->cert = cert_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
 	k->type = newtype;
-	return 0;
+	प्रत्यागम 0;
 }
 
 /* Convert a certificate to its raw key equivalent */
-int
-sshkey_drop_cert(struct sshkey *k)
+पूर्णाङ्क
+sshkey_drop_cert(संरचना sshkey *k)
 {
-	if (!sshkey_type_is_cert(k->type))
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+	जइ (!sshkey_type_is_cert(k->type))
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_UNKNOWN;
 	cert_free(k->cert);
-	k->cert = NULL;
+	k->cert = रिक्त;
 	k->type = sshkey_type_plain(k->type);
-	return 0;
+	प्रत्यागम 0;
 }
 
 /* Sign a certified key, (re-)generating the signed certblob. */
-int
-sshkey_certify_custom(struct sshkey *k, struct sshkey *ca, const char *alg,
-    const char *sk_provider, const char *sk_pin,
-    sshkey_certify_signer *signer, void *signer_ctx)
+पूर्णाङ्क
+sshkey_certify_custom(संरचना sshkey *k, संरचना sshkey *ca, ध्रुव वर्ण *alg,
+    ध्रुव वर्ण *sk_provider, ध्रुव वर्ण *sk_pin,
+    sshkey_certify_signer *signer, शून्य *signer_ctx)
 {
-	const struct sshkey_impl *impl;
-	struct sshbuf *principals = NULL;
-	u_char *ca_blob = NULL, *sig_blob = NULL, nonce[32];
+	ध्रुव संरचना sshkey_impl *impl;
+	संरचना sshbuf *principals = रिक्त;
+	u_char *ca_blob = रिक्त, *sig_blob = रिक्त, nonce[32];
 	size_t i, ca_len, sig_len;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *cert = NULL;
-	char *sigtype = NULL;
+	पूर्णाङ्क ret = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *cert = रिक्त;
+	वर्ण *sigtype = रिक्त;
 
-	if (k == NULL || k->cert == NULL ||
-	    k->cert->certblob == NULL || ca == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (!sshkey_is_cert(k))
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
-	if (!sshkey_type_is_valid_ca(ca->type))
-		return SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
-	if ((impl = sshkey_impl_from_key(k)) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
+	जइ (k == रिक्त || k->cert == रिक्त ||
+	    k->cert->certblob == रिक्त || ca == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ (!sshkey_is_cert(k))
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_UNKNOWN;
+	जइ (!sshkey_type_is_valid_ca(ca->type))
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID_SIGN_कुञ्चिका;
+	जइ ((impl = sshkey_impl_from_कुञ्चिका(k)) == रिक्त)
+		प्रत्यागम SSH_ERR_INTERNAL_ERROR;
 
 	/*
 	 * If no alg specified as argument but a signature_type was set,
 	 * then prefer that. If both were specified, then they must match.
 	 */
-	if (alg == NULL)
+	जइ (alg == रिक्त)
 		alg = k->cert->signature_type;
-	else if (k->cert->signature_type != NULL &&
+	अण्णहा जइ (k->cert->signature_type != रिक्त &&
 	    strcmp(alg, k->cert->signature_type) != 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
 
 	/*
 	 * If no signing algorithm or signature_type was specified and we're
 	 * using a RSA key, then default to a good signature algorithm.
 	 */
-	if (alg == NULL && ca->type == KEY_RSA)
+	जइ (alg == रिक्त && ca->type == कुञ्चिका_RSA)
 		alg = "rsa-sha2-512";
 
-	if ((ret = sshkey_to_blob(ca, &ca_blob, &ca_len)) != 0)
-		return SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
+	जइ ((ret = sshkey_to_blob(ca, &ca_blob, &ca_len)) != 0)
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID_SIGN_कुञ्चिका;
 
 	cert = k->cert->certblob; /* for readability */
 	sshbuf_reset(cert);
-	if ((ret = sshbuf_put_cstring(cert, sshkey_ssh_name(k))) != 0)
-		goto out;
+	जइ ((ret = sshbuf_put_cstring(cert, sshkey_ssh_name(k))) != 0)
+		गच्छ out;
 
 	/* -v01 certs put nonce first */
-	arc4random_buf(&nonce, sizeof(nonce));
-	if ((ret = sshbuf_put_string(cert, nonce, sizeof(nonce))) != 0)
-		goto out;
+	arc4random_buf(&nonce, परिमाण(nonce));
+	जइ ((ret = sshbuf_put_string(cert, nonce, परिमाण(nonce))) != 0)
+		गच्छ out;
 
 	/* Public key next */
-	if ((ret = impl->funcs->serialize_public(k, cert,
+	जइ ((ret = impl->funcs->serialize_public(k, cert,
 	    SSHKEY_SERIALIZE_DEFAULT)) != 0)
-		goto out;
+		गच्छ out;
 
 	/* Then remaining cert fields */
-	if ((ret = sshbuf_put_u64(cert, k->cert->serial)) != 0 ||
+	जइ ((ret = sshbuf_put_u64(cert, k->cert->serial)) != 0 ||
 	    (ret = sshbuf_put_u32(cert, k->cert->type)) != 0 ||
-	    (ret = sshbuf_put_cstring(cert, k->cert->key_id)) != 0)
-		goto out;
+	    (ret = sshbuf_put_cstring(cert, k->cert->कुञ्चिका_id)) != 0)
+		गच्छ out;
 
-	if ((principals = sshbuf_new()) == NULL) {
+	जइ ((principals = sshbuf_new()) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	for (i = 0; i < k->cert->nprincipals; i++) {
-		if ((ret = sshbuf_put_cstring(principals,
+	प्रति (i = 0; i < k->cert->nprincipals; i++) {
+		जइ ((ret = sshbuf_put_cstring(principals,
 		    k->cert->principals[i])) != 0)
-			goto out;
+			गच्छ out;
 	}
-	if ((ret = sshbuf_put_stringb(cert, principals)) != 0 ||
+	जइ ((ret = sshbuf_put_stringb(cert, principals)) != 0 ||
 	    (ret = sshbuf_put_u64(cert, k->cert->valid_after)) != 0 ||
 	    (ret = sshbuf_put_u64(cert, k->cert->valid_before)) != 0 ||
 	    (ret = sshbuf_put_stringb(cert, k->cert->critical)) != 0 ||
 	    (ret = sshbuf_put_stringb(cert, k->cert->extensions)) != 0 ||
-	    (ret = sshbuf_put_string(cert, NULL, 0)) != 0 || /* Reserved */
+	    (ret = sshbuf_put_string(cert, रिक्त, 0)) != 0 || /* Reserved */
 	    (ret = sshbuf_put_string(cert, ca_blob, ca_len)) != 0)
-		goto out;
+		गच्छ out;
 
 	/* Sign the whole mess */
-	if ((ret = signer(ca, &sig_blob, &sig_len, sshbuf_ptr(cert),
+	जइ ((ret = signer(ca, &sig_blob, &sig_len, sshbuf_ptr(cert),
 	    sshbuf_len(cert), alg, sk_provider, sk_pin, 0, signer_ctx)) != 0)
-		goto out;
+		गच्छ out;
 	/* Check and update signature_type against what was actually used */
-	if ((ret = sshkey_get_sigtype(sig_blob, sig_len, &sigtype)) != 0)
-		goto out;
-	if (alg != NULL && strcmp(alg, sigtype) != 0) {
+	जइ ((ret = sshkey_get_sigtype(sig_blob, sig_len, &sigtype)) != 0)
+		गच्छ out;
+	जइ (alg != रिक्त && strcmp(alg, sigtype) != 0) {
 		ret = SSH_ERR_SIGN_ALG_UNSUPPORTED;
-		goto out;
+		गच्छ out;
 	}
-	if (k->cert->signature_type == NULL) {
+	जइ (k->cert->signature_type == रिक्त) {
 		k->cert->signature_type = sigtype;
-		sigtype = NULL;
+		sigtype = रिक्त;
 	}
 	/* Append signature and we are done */
-	if ((ret = sshbuf_put_string(cert, sig_blob, sig_len)) != 0)
-		goto out;
+	जइ ((ret = sshbuf_put_string(cert, sig_blob, sig_len)) != 0)
+		गच्छ out;
 	ret = 0;
  out:
-	if (ret != 0)
+	जइ (ret != 0)
 		sshbuf_reset(cert);
-	free(sig_blob);
-	free(ca_blob);
-	free(sigtype);
+	मुक्त(sig_blob);
+	मुक्त(ca_blob);
+	मुक्त(sigtype);
 	sshbuf_free(principals);
-	return ret;
+	प्रत्यागम ret;
 }
 
-static int
-default_key_sign(struct sshkey *key, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin,
-    u_int compat, void *ctx)
+स्थिर पूर्णाङ्क
+default_कुञ्चिका_sign(संरचना sshkey *कुञ्चिका, u_char **sigp, size_t *lenp,
+    ध्रुव u_char *data, size_t datalen,
+    ध्रुव वर्ण *alg, ध्रुव वर्ण *sk_provider, ध्रुव वर्ण *sk_pin,
+    u_int compat, शून्य *ctx)
 {
-	if (ctx != NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	return sshkey_sign(key, sigp, lenp, data, datalen, alg,
+	जइ (ctx != रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	प्रत्यागम sshkey_sign(कुञ्चिका, sigp, lenp, data, datalen, alg,
 	    sk_provider, sk_pin, compat);
 }
 
-int
-sshkey_certify(struct sshkey *k, struct sshkey *ca, const char *alg,
-    const char *sk_provider, const char *sk_pin)
+पूर्णाङ्क
+sshkey_certify(संरचना sshkey *k, संरचना sshkey *ca, ध्रुव वर्ण *alg,
+    ध्रुव वर्ण *sk_provider, ध्रुव वर्ण *sk_pin)
 {
-	return sshkey_certify_custom(k, ca, alg, sk_provider, sk_pin,
-	    default_key_sign, NULL);
+	प्रत्यागम sshkey_certify_custom(k, ca, alg, sk_provider, sk_pin,
+	    default_कुञ्चिका_sign, रिक्त);
 }
 
-int
-sshkey_cert_check_authority(const struct sshkey *k,
-    int want_host, int wildcard_pattern, uint64_t verify_time,
-    const char *name, const char **reason)
+पूर्णाङ्क
+sshkey_cert_check_authority(ध्रुव संरचना sshkey *k,
+    पूर्णाङ्क want_host, पूर्णाङ्क wildcard_pattern, uint64_t verify_time,
+    ध्रुव वर्ण *name, ध्रुव वर्ण **reason)
 {
 	u_int i, principal_matches;
 
-	if (reason == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (!sshkey_is_cert(k)) {
+	जइ (reason == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
+	जइ (!sshkey_is_cert(k)) {
 		*reason = "Key is not a certificate";
-		return SSH_ERR_KEY_CERT_INVALID;
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 	}
-	if (want_host) {
-		if (k->cert->type != SSH2_CERT_TYPE_HOST) {
+	जइ (want_host) {
+		जइ (k->cert->type != SSH2_CERT_TYPE_HOST) {
 			*reason = "Certificate invalid: not a host certificate";
-			return SSH_ERR_KEY_CERT_INVALID;
+			प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 		}
-	} else {
-		if (k->cert->type != SSH2_CERT_TYPE_USER) {
+	} अण्णहा {
+		जइ (k->cert->type != SSH2_CERT_TYPE_USER) {
 			*reason = "Certificate invalid: not a user certificate";
-			return SSH_ERR_KEY_CERT_INVALID;
+			प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 		}
 	}
-	if (verify_time < k->cert->valid_after) {
+	जइ (verify_time < k->cert->valid_after) {
 		*reason = "Certificate invalid: not yet valid";
-		return SSH_ERR_KEY_CERT_INVALID;
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 	}
-	if (verify_time >= k->cert->valid_before) {
+	जइ (verify_time >= k->cert->valid_before) {
 		*reason = "Certificate invalid: expired";
-		return SSH_ERR_KEY_CERT_INVALID;
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 	}
-	if (k->cert->nprincipals == 0) {
+	जइ (k->cert->nprincipals == 0) {
 		*reason = "Certificate lacks principal list";
-		return SSH_ERR_KEY_CERT_INVALID;
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 	}
-	if (name == NULL)
-		return 0; /* principal matching not requested */
+	जइ (name == रिक्त)
+		प्रत्यागम 0; /* principal matching not requested */
 
 	principal_matches = 0;
-	for (i = 0; i < k->cert->nprincipals; i++) {
-		if (wildcard_pattern) {
-			if (match_pattern(name, k->cert->principals[i])) {
+	प्रति (i = 0; i < k->cert->nprincipals; i++) {
+		जइ (wildcard_pattern) {
+			जइ (match_pattern(name, k->cert->principals[i])) {
 				principal_matches = 1;
-				break;
+				भङ्ग;
 			}
-		} else if (strcmp(name, k->cert->principals[i]) == 0) {
+		} अण्णहा जइ (strcmp(name, k->cert->principals[i]) == 0) {
 			principal_matches = 1;
-			break;
+			भङ्ग;
 		}
 	}
-	if (!principal_matches) {
+	जइ (!principal_matches) {
 		*reason = "Certificate invalid: name is not a listed "
 		    "principal";
-		return SSH_ERR_KEY_CERT_INVALID;
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-int
-sshkey_cert_check_authority_now(const struct sshkey *k,
-    int want_host, int wildcard_pattern, const char *name,
-    const char **reason)
+पूर्णाङ्क
+sshkey_cert_check_authority_now(ध्रुव संरचना sshkey *k,
+    पूर्णाङ्क want_host, पूर्णाङ्क wildcard_pattern, ध्रुव वर्ण *name,
+    ध्रुव वर्ण **reason)
 {
 	time_t now;
 
-	if ((now = time(NULL)) < 0) {
+	जइ ((now = time(रिक्त)) < 0) {
 		/* yikes - system clock before epoch! */
 		*reason = "Certificate invalid: not yet valid";
-		return SSH_ERR_KEY_CERT_INVALID;
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 	}
-	return sshkey_cert_check_authority(k, want_host, wildcard_pattern,
+	प्रत्यागम sshkey_cert_check_authority(k, want_host, wildcard_pattern,
 	    (uint64_t)now, name, reason);
 }
 
-int
-sshkey_cert_check_host(const struct sshkey *key, const char *host,
-    const char *ca_sign_algorithms, const char **reason)
+पूर्णाङ्क
+sshkey_cert_check_host(ध्रुव संरचना sshkey *कुञ्चिका, ध्रुव वर्ण *host,
+    ध्रुव वर्ण *ca_sign_algorithms, ध्रुव वर्ण **reason)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshkey_cert_check_authority_now(key, 1, 1, host, reason)) != 0)
-		return r;
-	if (sshbuf_len(key->cert->critical) != 0) {
+	जइ ((r = sshkey_cert_check_authority_now(कुञ्चिका, 1, 1, host, reason)) != 0)
+		प्रत्यागम r;
+	जइ (sshbuf_len(कुञ्चिका->cert->critical) != 0) {
 		*reason = "Certificate contains unsupported critical options";
-		return SSH_ERR_KEY_CERT_INVALID;
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 	}
-	if (ca_sign_algorithms != NULL &&
-	    (r = sshkey_check_cert_sigtype(key, ca_sign_algorithms)) != 0) {
+	जइ (ca_sign_algorithms != रिक्त &&
+	    (r = sshkey_check_cert_sigtype(कुञ्चिका, ca_sign_algorithms)) != 0) {
 		*reason = "Certificate signed with disallowed algorithm";
-		return SSH_ERR_KEY_CERT_INVALID;
+		प्रत्यागम SSH_ERR_कुञ्चिका_CERT_INVALID;
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
 size_t
-sshkey_format_cert_validity(const struct sshkey_cert *cert, char *s, size_t l)
+sshkey_format_cert_validity(ध्रुव संरचना sshkey_cert *cert, वर्ण *s, size_t l)
 {
-	char from[32], to[32], ret[128];
+	वर्ण from[32], to[32], ret[128];
 
 	*from = *to = '\0';
-	if (cert->valid_after == 0 &&
+	जइ (cert->valid_after == 0 &&
 	    cert->valid_before == 0xffffffffffffffffULL)
-		return strlcpy(s, "forever", l);
+		प्रत्यागम strlcpy(s, "forever", l);
 
-	if (cert->valid_after != 0)
-		format_absolute_time(cert->valid_after, from, sizeof(from));
-	if (cert->valid_before != 0xffffffffffffffffULL)
-		format_absolute_time(cert->valid_before, to, sizeof(to));
+	जइ (cert->valid_after != 0)
+		format_absolute_time(cert->valid_after, from, परिमाण(from));
+	जइ (cert->valid_before != 0xffffffffffffffffULL)
+		format_absolute_time(cert->valid_before, to, परिमाण(to));
 
-	if (cert->valid_after == 0)
-		snprintf(ret, sizeof(ret), "before %s", to);
-	else if (cert->valid_before == 0xffffffffffffffffULL)
-		snprintf(ret, sizeof(ret), "after %s", from);
-	else
-		snprintf(ret, sizeof(ret), "from %s to %s", from, to);
+	जइ (cert->valid_after == 0)
+		snprintf(ret, परिमाण(ret), "before %s", to);
+	अण्णहा जइ (cert->valid_before == 0xffffffffffffffffULL)
+		snprintf(ret, परिमाण(ret), "after %s", from);
+	अण्णहा
+		snprintf(ret, परिमाण(ret), "from %s to %s", from, to);
 
-	return strlcpy(s, ret, l);
+	प्रत्यागम strlcpy(s, ret, l);
 }
 
 /* Common serialization for FIDO private keys */
-int
-sshkey_serialize_private_sk(const struct sshkey *key, struct sshbuf *b)
+पूर्णाङ्क
+sshkey_serialize_private_sk(ध्रुव संरचना sshkey *कुञ्चिका, संरचना sshbuf *b)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((r = sshbuf_put_cstring(b, key->sk_application)) != 0 ||
-	    (r = sshbuf_put_u8(b, key->sk_flags)) != 0 ||
-	    (r = sshbuf_put_stringb(b, key->sk_key_handle)) != 0 ||
-	    (r = sshbuf_put_stringb(b, key->sk_reserved)) != 0)
-		return r;
+	जइ ((r = sshbuf_put_cstring(b, कुञ्चिका->sk_application)) != 0 ||
+	    (r = sshbuf_put_u8(b, कुञ्चिका->sk_flags)) != 0 ||
+	    (r = sshbuf_put_stringb(b, कुञ्चिका->sk_कुञ्चिका_handle)) != 0 ||
+	    (r = sshbuf_put_stringb(b, कुञ्चिका->sk_reserved)) != 0)
+		प्रत्यागम r;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-sshkey_private_serialize_opt(struct sshkey *key, struct sshbuf *buf,
-    enum sshkey_serialize_rep opts)
+स्थिर पूर्णाङ्क
+sshkey_private_serialize_opt(संरचना sshkey *कुञ्चिका, संरचना sshbuf *buf,
+    गणना sshkey_serialize_rep opts)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int was_shielded = sshkey_is_shielded(key);
-	struct sshbuf *b = NULL;
-	const struct sshkey_impl *impl;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क was_shielded = sshkey_is_shielded(कुञ्चिका);
+	संरचना sshbuf *b = रिक्त;
+	ध्रुव संरचना sshkey_impl *impl;
 
-	if ((impl = sshkey_impl_from_key(key)) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if ((r = sshkey_unshield_private(key)) != 0)
-		return r;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_cstring(b, sshkey_ssh_name(key))) != 0)
-		goto out;
-	if (sshkey_is_cert(key)) {
-		if (key->cert == NULL ||
-		    sshbuf_len(key->cert->certblob) == 0) {
+	जइ ((impl = sshkey_impl_from_कुञ्चिका(कुञ्चिका)) == रिक्त)
+		प्रत्यागम SSH_ERR_INTERNAL_ERROR;
+	जइ ((r = sshkey_unshield_private(कुञ्चिका)) != 0)
+		प्रत्यागम r;
+	जइ ((b = sshbuf_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	जइ ((r = sshbuf_put_cstring(b, sshkey_ssh_name(कुञ्चिका))) != 0)
+		गच्छ out;
+	जइ (sshkey_is_cert(कुञ्चिका)) {
+		जइ (कुञ्चिका->cert == रिक्त ||
+		    sshbuf_len(कुञ्चिका->cert->certblob) == 0) {
 			r = SSH_ERR_INVALID_ARGUMENT;
-			goto out;
+			गच्छ out;
 		}
-		if ((r = sshbuf_put_stringb(b, key->cert->certblob)) != 0)
-			goto out;
+		जइ ((r = sshbuf_put_stringb(b, कुञ्चिका->cert->certblob)) != 0)
+			गच्छ out;
 	}
-	if ((r = impl->funcs->serialize_private(key, b, opts)) != 0)
-		goto out;
+	जइ ((r = impl->funcs->serialize_private(कुञ्चिका, b, opts)) != 0)
+		गच्छ out;
 
 	/*
 	 * success (but we still need to append the output to buf after
@@ -2597,73 +2597,73 @@ sshkey_private_serialize_opt(struct sshkey *key, struct sshbuf *buf,
 	 */
 	r = 0;
  out:
-	if (was_shielded)
-		r = sshkey_shield_private(key);
-	if (r == 0)
+	जइ (was_shielded)
+		r = sshkey_shield_private(कुञ्चिका);
+	जइ (r == 0)
 		r = sshbuf_putb(buf, b);
 	sshbuf_free(b);
 
-	return r;
+	प्रत्यागम r;
 }
 
-int
-sshkey_private_serialize(struct sshkey *key, struct sshbuf *b)
+पूर्णाङ्क
+sshkey_private_serialize(संरचना sshkey *कुञ्चिका, संरचना sshbuf *b)
 {
-	return sshkey_private_serialize_opt(key, b,
+	प्रत्यागम sshkey_private_serialize_opt(कुञ्चिका, b,
 	    SSHKEY_SERIALIZE_DEFAULT);
 }
 
 
 /* Shared deserialization of FIDO private key components */
-int
-sshkey_private_deserialize_sk(struct sshbuf *buf, struct sshkey *k)
+पूर्णाङ्क
+sshkey_private_deserialize_sk(संरचना sshbuf *buf, संरचना sshkey *k)
 {
-	int r;
+	पूर्णाङ्क r;
 
-	if ((k->sk_key_handle = sshbuf_new()) == NULL ||
-	    (k->sk_reserved = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(buf, &k->sk_application, NULL)) != 0 ||
+	जइ ((k->sk_कुञ्चिका_handle = sshbuf_new()) == रिक्त ||
+	    (k->sk_reserved = sshbuf_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	जइ ((r = sshbuf_get_cstring(buf, &k->sk_application, रिक्त)) != 0 ||
 	    (r = sshbuf_get_u8(buf, &k->sk_flags)) != 0 ||
-	    (r = sshbuf_get_stringb(buf, k->sk_key_handle)) != 0 ||
+	    (r = sshbuf_get_stringb(buf, k->sk_कुञ्चिका_handle)) != 0 ||
 	    (r = sshbuf_get_stringb(buf, k->sk_reserved)) != 0)
-		return r;
+		प्रत्यागम r;
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-int
-sshkey_private_deserialize(struct sshbuf *buf, struct sshkey **kp)
+पूर्णाङ्क
+sshkey_private_deserialize(संरचना sshbuf *buf, संरचना sshkey **kp)
 {
-	const struct sshkey_impl *impl;
-	char *tname = NULL;
-	char *expect_sk_application = NULL;
-	u_char *expect_ed25519_pk = NULL;
-	struct sshkey *k = NULL;
-	int type, r = SSH_ERR_INTERNAL_ERROR;
+	ध्रुव संरचना sshkey_impl *impl;
+	वर्ण *tname = रिक्त;
+	वर्ण *expect_sk_application = रिक्त;
+	u_char *expect_ed25519_pk = रिक्त;
+	संरचना sshkey *k = रिक्त;
+	पूर्णाङ्क type, r = SSH_ERR_INTERNAL_ERROR;
 
-	if (kp != NULL)
-		*kp = NULL;
-	if ((r = sshbuf_get_cstring(buf, &tname, NULL)) != 0)
-		goto out;
+	जइ (kp != रिक्त)
+		*kp = रिक्त;
+	जइ ((r = sshbuf_get_cstring(buf, &tname, रिक्त)) != 0)
+		गच्छ out;
 	type = sshkey_type_from_name(tname);
-	if (sshkey_type_is_cert(type)) {
+	जइ (sshkey_type_is_cert(type)) {
 		/*
 		 * Certificate key private keys begin with the certificate
 		 * itself. Make sure this matches the type of the enclosing
 		 * private key.
 		 */
-		if ((r = sshkey_froms(buf, &k)) != 0)
-			goto out;
-		if (k->type != type) {
-			r = SSH_ERR_KEY_CERT_MISMATCH;
-			goto out;
+		जइ ((r = sshkey_froms(buf, &k)) != 0)
+			गच्छ out;
+		जइ (k->type != type) {
+			r = SSH_ERR_कुञ्चिका_CERT_MISMATCH;
+			गच्छ out;
 		}
 		/* For ECDSA keys, the group must match too */
-		if (k->type == KEY_ECDSA &&
+		जइ (k->type == कुञ्चिका_ECDSA &&
 		    k->ecdsa_nid != sshkey_ecdsa_nid_from_name(tname)) {
-			r = SSH_ERR_KEY_CERT_MISMATCH;
-			goto out;
+			r = SSH_ERR_कुञ्चिका_CERT_MISMATCH;
+			गच्छ out;
 		}
 		/*
 		 * Several fields are redundant between certificate and
@@ -2671,49 +2671,49 @@ sshkey_private_deserialize(struct sshbuf *buf, struct sshkey **kp)
 		 */
 		expect_sk_application = k->sk_application;
 		expect_ed25519_pk = k->ed25519_pk;
-		k->sk_application = NULL;
-		k->ed25519_pk = NULL;
-	} else {
-		if ((k = sshkey_new(type)) == NULL) {
+		k->sk_application = रिक्त;
+		k->ed25519_pk = रिक्त;
+	} अण्णहा {
+		जइ ((k = sshkey_new(type)) == रिक्त) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
 	}
-	if ((impl = sshkey_impl_from_type(type)) == NULL) {
+	जइ ((impl = sshkey_impl_from_type(type)) == रिक्त) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = impl->funcs->deserialize_private(tname, buf, k)) != 0)
-		goto out;
+	जइ ((r = impl->funcs->deserialize_private(tname, buf, k)) != 0)
+		गच्छ out;
 
-	if ((expect_sk_application != NULL && (k->sk_application == NULL ||
+	जइ ((expect_sk_application != रिक्त && (k->sk_application == रिक्त ||
 	    strcmp(expect_sk_application, k->sk_application) != 0)) ||
-	    (expect_ed25519_pk != NULL && (k->ed25519_pk == NULL ||
+	    (expect_ed25519_pk != रिक्त && (k->ed25519_pk == रिक्त ||
 	    memcmp(expect_ed25519_pk, k->ed25519_pk, ED25519_PK_SZ) != 0))) {
-		r = SSH_ERR_KEY_CERT_MISMATCH;
-		goto out;
+		r = SSH_ERR_कुञ्चिका_CERT_MISMATCH;
+		गच्छ out;
 	}
 	/* success */
 	r = 0;
-	if (kp != NULL) {
+	जइ (kp != रिक्त) {
 		*kp = k;
-		k = NULL;
+		k = रिक्त;
 	}
  out:
-	free(tname);
+	मुक्त(tname);
 	sshkey_free(k);
-	free(expect_sk_application);
-	free(expect_ed25519_pk);
-	return r;
+	मुक्त(expect_sk_application);
+	मुक्त(expect_ed25519_pk);
+	प्रत्यागम r;
 }
 
 #ifdef WITH_OPENSSL
-int
-sshkey_ec_validate_public(const EC_GROUP *group, const EC_POINT *public)
+पूर्णाङ्क
+sshkey_ec_validate_public(ध्रुव EC_GROUP *group, ध्रुव EC_POINT *सार्वजनिक)
 {
-	EC_POINT *nq = NULL;
-	BIGNUM *order = NULL, *cofactor = NULL;
-	int ret = SSH_ERR_KEY_INVALID_EC_VALUE;
+	EC_POINT *nq = रिक्त;
+	BIGNUM *order = रिक्त, *cofactor = रिक्त;
+	पूर्णाङ्क ret = SSH_ERR_कुञ्चिका_INVALID_EC_मानम्;
 
 	/*
 	 * NB. This assumes OpenSSL has already verified that the public
@@ -2723,40 +2723,40 @@ sshkey_ec_validate_public(const EC_GROUP *group, const EC_POINT *public)
 	 */
 
 	/* Q != infinity */
-	if (EC_POINT_is_at_infinity(group, public))
-		goto out;
+	जइ (EC_POINT_is_at_infinity(group, सार्वजनिक))
+		गच्छ out;
 
-	if ((cofactor = BN_new()) == NULL) {
+	जइ ((cofactor = BN_new()) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (EC_GROUP_get_cofactor(group, cofactor, NULL) != 1)
-		goto out;
+	जइ (EC_GROUP_get_cofactor(group, cofactor, रिक्त) != 1)
+		गच्छ out;
 
 	/*
 	 * Verify nQ == infinity (n == order of subgroup)
 	 * This check may be skipped for curves with cofactor 1, as per
 	 * NIST SP 800-56A, 5.6.2.3.
 	 */
-	if (!BN_is_one(cofactor)) {
-		if ((order = BN_new()) == NULL) {
+	जइ (!BN_is_one(cofactor)) {
+		जइ ((order = BN_new()) == रिक्त) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
-		if (EC_GROUP_get_order(group, order, NULL) != 1) {
+		जइ (EC_GROUP_get_order(group, order, रिक्त) != 1) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
-		if ((nq = EC_POINT_new(group)) == NULL) {
+		जइ ((nq = EC_POINT_new(group)) == रिक्त) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
-		if (EC_POINT_mul(group, nq, NULL, public, order, NULL) != 1) {
+		जइ (EC_POINT_mul(group, nq, रिक्त, सार्वजनिक, order, रिक्त) != 1) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
-		if (EC_POINT_is_at_infinity(group, nq) != 1)
-			goto out;
+		जइ (EC_POINT_is_at_infinity(group, nq) != 1)
+			गच्छ out;
 	}
 
 	/* success */
@@ -2765,60 +2765,60 @@ sshkey_ec_validate_public(const EC_GROUP *group, const EC_POINT *public)
 	BN_clear_free(cofactor);
 	BN_clear_free(order);
 	EC_POINT_free(nq);
-	return ret;
+	प्रत्यागम ret;
 }
 
-int
-sshkey_ec_validate_private(const EC_KEY *key)
+पूर्णाङ्क
+sshkey_ec_validate_private(ध्रुव EC_कुञ्चिका *कुञ्चिका)
 {
-	BIGNUM *order = NULL, *tmp = NULL;
-	int ret = SSH_ERR_KEY_INVALID_EC_VALUE;
+	BIGNUM *order = रिक्त, *tmp = रिक्त;
+	पूर्णाङ्क ret = SSH_ERR_कुञ्चिका_INVALID_EC_मानम्;
 
-	if ((order = BN_new()) == NULL || (tmp = BN_new()) == NULL) {
+	जइ ((order = BN_new()) == रिक्त || (tmp = BN_new()) == रिक्त) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 
 	/* log2(private) > log2(order)/2 */
-	if (EC_GROUP_get_order(EC_KEY_get0_group(key), order, NULL) != 1) {
+	जइ (EC_GROUP_get_order(EC_कुञ्चिका_get0_group(कुञ्चिका), order, रिक्त) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	if (BN_num_bits(EC_KEY_get0_private_key(key)) <=
-	    BN_num_bits(order) / 2)
-		goto out;
+	जइ (BN_अङ्कः_bits(EC_कुञ्चिका_get0_private_कुञ्चिका(कुञ्चिका)) <=
+	    BN_अङ्कः_bits(order) / 2)
+		गच्छ out;
 
 	/* private < order - 1 */
-	if (!BN_sub(tmp, order, BN_value_one())) {
+	जइ (!BN_sub(tmp, order, BN_मानम्_one())) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	if (BN_cmp(EC_KEY_get0_private_key(key), tmp) >= 0)
-		goto out;
+	जइ (BN_cmp(EC_कुञ्चिका_get0_private_कुञ्चिका(कुञ्चिका), tmp) >= 0)
+		गच्छ out;
 	ret = 0;
  out:
 	BN_clear_free(order);
 	BN_clear_free(tmp);
-	return ret;
+	प्रत्यागम ret;
 }
 
-void
-sshkey_dump_ec_point(const EC_GROUP *group, const EC_POINT *point)
+शून्य
+sshkey_dump_ec_point(ध्रुव EC_GROUP *group, ध्रुव EC_POINT *point)
 {
-	BIGNUM *x = NULL, *y = NULL;
+	BIGNUM *x = रिक्त, *y = रिक्त;
 
-	if (point == NULL) {
+	जइ (point == रिक्त) {
 		fputs("point=(NULL)\n", stderr);
-		return;
+		प्रत्यागम;
 	}
-	if ((x = BN_new()) == NULL || (y = BN_new()) == NULL) {
+	जइ ((x = BN_new()) == रिक्त || (y = BN_new()) == रिक्त) {
 		fprintf(stderr, "%s: BN_new failed\n", __func__);
-		goto out;
+		गच्छ out;
 	}
-	if (EC_POINT_get_affine_coordinates(group, point, x, y, NULL) != 1) {
+	जइ (EC_POINT_get_affine_coordinates(group, point, x, y, रिक्त) != 1) {
 		fprintf(stderr, "%s: EC_POINT_get_affine_coordinates\n",
 		    __func__);
-		goto out;
+		गच्छ out;
 	}
 	fputs("x=", stderr);
 	BN_print_fp(stderr, x);
@@ -2830,134 +2830,134 @@ sshkey_dump_ec_point(const EC_GROUP *group, const EC_POINT *point)
 	BN_clear_free(y);
 }
 
-void
-sshkey_dump_ec_key(const EC_KEY *key)
+शून्य
+sshkey_dump_ec_कुञ्चिका(ध्रुव EC_कुञ्चिका *कुञ्चिका)
 {
-	const BIGNUM *exponent;
+	ध्रुव BIGNUM *exponent;
 
-	sshkey_dump_ec_point(EC_KEY_get0_group(key),
-	    EC_KEY_get0_public_key(key));
+	sshkey_dump_ec_point(EC_कुञ्चिका_get0_group(कुञ्चिका),
+	    EC_कुञ्चिका_get0_public_कुञ्चिका(कुञ्चिका));
 	fputs("exponent=", stderr);
-	if ((exponent = EC_KEY_get0_private_key(key)) == NULL)
+	जइ ((exponent = EC_कुञ्चिका_get0_private_कुञ्चिका(कुञ्चिका)) == रिक्त)
 		fputs("(NULL)", stderr);
-	else
-		BN_print_fp(stderr, EC_KEY_get0_private_key(key));
+	अण्णहा
+		BN_print_fp(stderr, EC_कुञ्चिका_get0_private_कुञ्चिका(कुञ्चिका));
 	fputs("\n", stderr);
 }
 #endif /* WITH_OPENSSL */
 
-static int
-sshkey_private_to_blob2(struct sshkey *prv, struct sshbuf *blob,
-    const char *passphrase, const char *comment, const char *ciphername,
-    int rounds)
+स्थिर पूर्णाङ्क
+sshkey_private_to_blob2(संरचना sshkey *prv, संरचना sshbuf *blob,
+    ध्रुव वर्ण *passphrase, ध्रुव वर्ण *comment, ध्रुव वर्ण *ciphername,
+    पूर्णाङ्क rounds)
 {
-	u_char *cp, *key = NULL, *pubkeyblob = NULL;
+	u_char *cp, *कुञ्चिका = रिक्त, *pubkeyblob = रिक्त;
 	u_char salt[SALT_LEN];
 	size_t i, pubkeylen, keylen, ivlen, blocksize, authlen;
 	u_int check;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshcipher_ctx *ciphercontext = NULL;
-	const struct sshcipher *cipher;
-	const char *kdfname = KDFNAME;
-	struct sshbuf *encoded = NULL, *encrypted = NULL, *kdf = NULL;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshcipher_ctx *ciphercontext = रिक्त;
+	ध्रुव संरचना sshcipher *cipher;
+	ध्रुव वर्ण *kdfname = KDFNAME;
+	संरचना sshbuf *encoded = रिक्त, *encrypted = रिक्त, *kdf = रिक्त;
 
-	if (rounds <= 0)
+	जइ (rounds <= 0)
 		rounds = DEFAULT_ROUNDS;
-	if (rounds > MAX_KDF_ROUNDS) {
+	जइ (rounds > MAX_KDF_ROUNDS) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		गच्छ out;
 	}
-	if (passphrase == NULL || !strlen(passphrase)) {
+	जइ (passphrase == रिक्त || !strlen(passphrase)) {
 		ciphername = "none";
 		kdfname = "none";
-	} else if (ciphername == NULL)
+	} अण्णहा जइ (ciphername == रिक्त)
 		ciphername = DEFAULT_CIPHERNAME;
-	if ((cipher = cipher_by_name(ciphername)) == NULL) {
+	जइ ((cipher = cipher_by_name(ciphername)) == रिक्त) {
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		गच्छ out;
 	}
 
-	if ((kdf = sshbuf_new()) == NULL ||
-	    (encoded = sshbuf_new()) == NULL ||
-	    (encrypted = sshbuf_new()) == NULL) {
+	जइ ((kdf = sshbuf_new()) == रिक्त ||
+	    (encoded = sshbuf_new()) == रिक्त ||
+	    (encrypted = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 	blocksize = cipher_blocksize(cipher);
 	keylen = cipher_keylen(cipher);
 	ivlen = cipher_ivlen(cipher);
 	authlen = cipher_authlen(cipher);
-	if ((key = calloc(1, keylen + ivlen)) == NULL) {
+	जइ ((कुञ्चिका = calloc(1, keylen + ivlen)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (strcmp(kdfname, "bcrypt") == 0) {
+	जइ (strcmp(kdfname, "bcrypt") == 0) {
 		arc4random_buf(salt, SALT_LEN);
-		if (bcrypt_pbkdf(passphrase, strlen(passphrase),
-		    salt, SALT_LEN, key, keylen + ivlen, rounds) < 0) {
+		जइ (bcrypt_pbkdf(passphrase, strlen(passphrase),
+		    salt, SALT_LEN, कुञ्चिका, keylen + ivlen, rounds) < 0) {
 			r = SSH_ERR_INVALID_ARGUMENT;
-			goto out;
+			गच्छ out;
 		}
-		if ((r = sshbuf_put_string(kdf, salt, SALT_LEN)) != 0 ||
+		जइ ((r = sshbuf_put_string(kdf, salt, SALT_LEN)) != 0 ||
 		    (r = sshbuf_put_u32(kdf, rounds)) != 0)
-			goto out;
-	} else if (strcmp(kdfname, "none") != 0) {
+			गच्छ out;
+	} अण्णहा जइ (strcmp(kdfname, "none") != 0) {
 		/* Unsupported KDF type */
-		r = SSH_ERR_KEY_UNKNOWN_CIPHER;
-		goto out;
+		r = SSH_ERR_कुञ्चिका_UNKNOWN_CIPHER;
+		गच्छ out;
 	}
-	if ((r = cipher_init(&ciphercontext, cipher, key, keylen,
-	    key + keylen, ivlen, 1)) != 0)
-		goto out;
+	जइ ((r = cipher_init(&ciphercontext, cipher, कुञ्चिका, keylen,
+	    कुञ्चिका + keylen, ivlen, 1)) != 0)
+		गच्छ out;
 
-	if ((r = sshbuf_put(encoded, AUTH_MAGIC, sizeof(AUTH_MAGIC))) != 0 ||
+	जइ ((r = sshbuf_put(encoded, AUTH_MAGIC, परिमाण(AUTH_MAGIC))) != 0 ||
 	    (r = sshbuf_put_cstring(encoded, ciphername)) != 0 ||
 	    (r = sshbuf_put_cstring(encoded, kdfname)) != 0 ||
 	    (r = sshbuf_put_stringb(encoded, kdf)) != 0 ||
 	    (r = sshbuf_put_u32(encoded, 1)) != 0 ||	/* number of keys */
 	    (r = sshkey_to_blob(prv, &pubkeyblob, &pubkeylen)) != 0 ||
 	    (r = sshbuf_put_string(encoded, pubkeyblob, pubkeylen)) != 0)
-		goto out;
+		गच्छ out;
 
 	/* set up the buffer that will be encrypted */
 
 	/* Random check bytes */
 	check = arc4random();
-	if ((r = sshbuf_put_u32(encrypted, check)) != 0 ||
+	जइ ((r = sshbuf_put_u32(encrypted, check)) != 0 ||
 	    (r = sshbuf_put_u32(encrypted, check)) != 0)
-		goto out;
+		गच्छ out;
 
 	/* append private key and comment*/
-	if ((r = sshkey_private_serialize(prv, encrypted)) != 0 ||
+	जइ ((r = sshkey_private_serialize(prv, encrypted)) != 0 ||
 	    (r = sshbuf_put_cstring(encrypted, comment)) != 0)
-		goto out;
+		गच्छ out;
 
 	/* padding */
 	i = 0;
-	while (sshbuf_len(encrypted) % blocksize) {
-		if ((r = sshbuf_put_u8(encrypted, ++i & 0xff)) != 0)
-			goto out;
+	जाव (sshbuf_len(encrypted) % blocksize) {
+		जइ ((r = sshbuf_put_u8(encrypted, ++i & 0xff)) != 0)
+			गच्छ out;
 	}
 
 	/* length in destination buffer */
-	if ((r = sshbuf_put_u32(encoded, sshbuf_len(encrypted))) != 0)
-		goto out;
+	जइ ((r = sshbuf_put_u32(encoded, sshbuf_len(encrypted))) != 0)
+		गच्छ out;
 
 	/* encrypt */
-	if ((r = sshbuf_reserve(encoded,
+	जइ ((r = sshbuf_reserve(encoded,
 	    sshbuf_len(encrypted) + authlen, &cp)) != 0)
-		goto out;
-	if ((r = cipher_crypt(ciphercontext, 0, cp,
+		गच्छ out;
+	जइ ((r = cipher_crypt(ciphercontext, 0, cp,
 	    sshbuf_ptr(encrypted), sshbuf_len(encrypted), 0, authlen)) != 0)
-		goto out;
+		गच्छ out;
 
 	sshbuf_reset(blob);
 
 	/* assemble uuencoded key */
-	if ((r = sshbuf_put(blob, MARK_BEGIN, MARK_BEGIN_LEN)) != 0 ||
+	जइ ((r = sshbuf_put(blob, MARK_BEGIN, MARK_BEGIN_LEN)) != 0 ||
 	    (r = sshbuf_dtob64(encoded, blob, 1)) != 0 ||
 	    (r = sshbuf_put(blob, MARK_END, MARK_END_LEN)) != 0)
-		goto out;
+		गच्छ out;
 
 	/* success */
 	r = 0;
@@ -2967,539 +2967,539 @@ sshkey_private_to_blob2(struct sshkey *prv, struct sshbuf *blob,
 	sshbuf_free(encoded);
 	sshbuf_free(encrypted);
 	cipher_free(ciphercontext);
-	explicit_bzero(salt, sizeof(salt));
-	if (key != NULL)
-		freezero(key, keylen + ivlen);
-	if (pubkeyblob != NULL)
+	explicit_bzero(salt, परिमाण(salt));
+	जइ (कुञ्चिका != रिक्त)
+		freezero(कुञ्चिका, keylen + ivlen);
+	जइ (pubkeyblob != रिक्त)
 		freezero(pubkeyblob, pubkeylen);
-	return r;
+	प्रत्यागम r;
 }
 
-static int
-private2_uudecode(struct sshbuf *blob, struct sshbuf **decodedp)
+स्थिर पूर्णाङ्क
+private2_uudecode(संरचना sshbuf *blob, संरचना sshbuf **decodedp)
 {
-	const u_char *cp;
+	ध्रुव u_char *cp;
 	size_t encoded_len;
-	int r;
+	पूर्णाङ्क r;
 	u_char last;
-	struct sshbuf *encoded = NULL, *decoded = NULL;
+	संरचना sshbuf *encoded = रिक्त, *decoded = रिक्त;
 
-	if (blob == NULL || decodedp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	जइ (blob == रिक्त || decodedp == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
 
-	*decodedp = NULL;
+	*decodedp = रिक्त;
 
-	if ((encoded = sshbuf_new()) == NULL ||
-	    (decoded = sshbuf_new()) == NULL) {
+	जइ ((encoded = sshbuf_new()) == रिक्त ||
+	    (decoded = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 
 	/* check preamble */
 	cp = sshbuf_ptr(blob);
 	encoded_len = sshbuf_len(blob);
-	if (encoded_len < (MARK_BEGIN_LEN + MARK_END_LEN) ||
+	जइ (encoded_len < (MARK_BEGIN_LEN + MARK_END_LEN) ||
 	    memcmp(cp, MARK_BEGIN, MARK_BEGIN_LEN) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 	cp += MARK_BEGIN_LEN;
 	encoded_len -= MARK_BEGIN_LEN;
 
 	/* Look for end marker, removing whitespace as we go */
-	while (encoded_len > 0) {
-		if (*cp != '\n' && *cp != '\r') {
-			if ((r = sshbuf_put_u8(encoded, *cp)) != 0)
-				goto out;
+	जाव (encoded_len > 0) {
+		जइ (*cp != '\n' && *cp != '\r') {
+			जइ ((r = sshbuf_put_u8(encoded, *cp)) != 0)
+				गच्छ out;
 		}
 		last = *cp;
 		encoded_len--;
 		cp++;
-		if (last == '\n') {
-			if (encoded_len >= MARK_END_LEN &&
+		जइ (last == '\n') {
+			जइ (encoded_len >= MARK_END_LEN &&
 			    memcmp(cp, MARK_END, MARK_END_LEN) == 0) {
 				/* \0 terminate */
-				if ((r = sshbuf_put_u8(encoded, 0)) != 0)
-					goto out;
-				break;
+				जइ ((r = sshbuf_put_u8(encoded, 0)) != 0)
+					गच्छ out;
+				भङ्ग;
 			}
 		}
 	}
-	if (encoded_len == 0) {
+	जइ (encoded_len == 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	/* decode base64 */
-	if ((r = sshbuf_b64tod(decoded, (char *)sshbuf_ptr(encoded))) != 0)
-		goto out;
+	जइ ((r = sshbuf_b64tod(decoded, (वर्ण *)sshbuf_ptr(encoded))) != 0)
+		गच्छ out;
 
 	/* check magic */
-	if (sshbuf_len(decoded) < sizeof(AUTH_MAGIC) ||
-	    memcmp(sshbuf_ptr(decoded), AUTH_MAGIC, sizeof(AUTH_MAGIC))) {
+	जइ (sshbuf_len(decoded) < परिमाण(AUTH_MAGIC) ||
+	    memcmp(sshbuf_ptr(decoded), AUTH_MAGIC, परिमाण(AUTH_MAGIC))) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 	/* success */
 	*decodedp = decoded;
-	decoded = NULL;
+	decoded = रिक्त;
 	r = 0;
  out:
 	sshbuf_free(encoded);
 	sshbuf_free(decoded);
-	return r;
+	प्रत्यागम r;
 }
 
-static int
-private2_decrypt(struct sshbuf *decoded, const char *passphrase,
-    struct sshbuf **decryptedp, struct sshkey **pubkeyp)
+स्थिर पूर्णाङ्क
+private2_decrypt(संरचना sshbuf *decoded, ध्रुव वर्ण *passphrase,
+    संरचना sshbuf **decryptedp, संरचना sshkey **pubkeyp)
 {
-	char *ciphername = NULL, *kdfname = NULL;
-	const struct sshcipher *cipher = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	वर्ण *ciphername = रिक्त, *kdfname = रिक्त;
+	ध्रुव संरचना sshcipher *cipher = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 	size_t keylen = 0, ivlen = 0, authlen = 0, slen = 0;
-	struct sshbuf *kdf = NULL, *decrypted = NULL;
-	struct sshcipher_ctx *ciphercontext = NULL;
-	struct sshkey *pubkey = NULL;
-	u_char *key = NULL, *salt = NULL, *dp;
+	संरचना sshbuf *kdf = रिक्त, *decrypted = रिक्त;
+	संरचना sshcipher_ctx *ciphercontext = रिक्त;
+	संरचना sshkey *pubkey = रिक्त;
+	u_char *कुञ्चिका = रिक्त, *salt = रिक्त, *dp;
 	u_int blocksize, rounds, nkeys, encrypted_len, check1, check2;
 
-	if (decoded == NULL || decryptedp == NULL || pubkeyp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	जइ (decoded == रिक्त || decryptedp == रिक्त || pubkeyp == रिक्त)
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
 
-	*decryptedp = NULL;
-	*pubkeyp = NULL;
+	*decryptedp = रिक्त;
+	*pubkeyp = रिक्त;
 
-	if ((decrypted = sshbuf_new()) == NULL) {
+	जइ ((decrypted = sshbuf_new()) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 
 	/* parse public portion of key */
-	if ((r = sshbuf_consume(decoded, sizeof(AUTH_MAGIC))) != 0 ||
-	    (r = sshbuf_get_cstring(decoded, &ciphername, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(decoded, &kdfname, NULL)) != 0 ||
+	जइ ((r = sshbuf_consume(decoded, परिमाण(AUTH_MAGIC))) != 0 ||
+	    (r = sshbuf_get_cstring(decoded, &ciphername, रिक्त)) != 0 ||
+	    (r = sshbuf_get_cstring(decoded, &kdfname, रिक्त)) != 0 ||
 	    (r = sshbuf_froms(decoded, &kdf)) != 0 ||
 	    (r = sshbuf_get_u32(decoded, &nkeys)) != 0)
-		goto out;
+		गच्छ out;
 
-	if (nkeys != 1) {
+	जइ (nkeys != 1) {
 		/* XXX only one key supported at present */
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
-	if ((r = sshkey_froms(decoded, &pubkey)) != 0 ||
+	जइ ((r = sshkey_froms(decoded, &pubkey)) != 0 ||
 	    (r = sshbuf_get_u32(decoded, &encrypted_len)) != 0)
-		goto out;
+		गच्छ out;
 
-	if ((cipher = cipher_by_name(ciphername)) == NULL) {
-		r = SSH_ERR_KEY_UNKNOWN_CIPHER;
-		goto out;
+	जइ ((cipher = cipher_by_name(ciphername)) == रिक्त) {
+		r = SSH_ERR_कुञ्चिका_UNKNOWN_CIPHER;
+		गच्छ out;
 	}
-	if (strcmp(kdfname, "none") != 0 && strcmp(kdfname, "bcrypt") != 0) {
-		r = SSH_ERR_KEY_UNKNOWN_CIPHER;
-		goto out;
+	जइ (strcmp(kdfname, "none") != 0 && strcmp(kdfname, "bcrypt") != 0) {
+		r = SSH_ERR_कुञ्चिका_UNKNOWN_CIPHER;
+		गच्छ out;
 	}
-	if (strcmp(kdfname, "none") == 0 && strcmp(ciphername, "none") != 0) {
+	जइ (strcmp(kdfname, "none") == 0 && strcmp(ciphername, "none") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
-	if ((passphrase == NULL || strlen(passphrase) == 0) &&
+	जइ ((passphrase == रिक्त || strlen(passphrase) == 0) &&
 	    strcmp(kdfname, "none") != 0) {
 		/* passphrase required */
-		r = SSH_ERR_KEY_WRONG_PASSPHRASE;
-		goto out;
+		r = SSH_ERR_कुञ्चिका_WRONG_PASSPHRASE;
+		गच्छ out;
 	}
 
 	/* check size of encrypted key blob */
 	blocksize = cipher_blocksize(cipher);
-	if (encrypted_len < blocksize || (encrypted_len % blocksize) != 0) {
+	जइ (encrypted_len < blocksize || (encrypted_len % blocksize) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	/* setup key */
 	keylen = cipher_keylen(cipher);
 	ivlen = cipher_ivlen(cipher);
 	authlen = cipher_authlen(cipher);
-	if ((key = calloc(1, keylen + ivlen)) == NULL) {
+	जइ ((कुञ्चिका = calloc(1, keylen + ivlen)) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if (strcmp(kdfname, "bcrypt") == 0) {
-		if ((r = sshbuf_get_string(kdf, &salt, &slen)) != 0 ||
+	जइ (strcmp(kdfname, "bcrypt") == 0) {
+		जइ ((r = sshbuf_get_string(kdf, &salt, &slen)) != 0 ||
 		    (r = sshbuf_get_u32(kdf, &rounds)) != 0)
-			goto out;
-		if (rounds > MAX_KDF_ROUNDS) {
+			गच्छ out;
+		जइ (rounds > MAX_KDF_ROUNDS) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
-		if (bcrypt_pbkdf(passphrase, strlen(passphrase), salt, slen,
-		    key, keylen + ivlen, rounds) < 0) {
+		जइ (bcrypt_pbkdf(passphrase, strlen(passphrase), salt, slen,
+		    कुञ्चिका, keylen + ivlen, rounds) < 0) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 	}
 
 	/* check that an appropriate amount of auth data is present */
-	if (sshbuf_len(decoded) < authlen ||
+	जइ (sshbuf_len(decoded) < authlen ||
 	    sshbuf_len(decoded) - authlen < encrypted_len) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	/* decrypt private portion of key */
-	if ((r = sshbuf_reserve(decrypted, encrypted_len, &dp)) != 0 ||
-	    (r = cipher_init(&ciphercontext, cipher, key, keylen,
-	    key + keylen, ivlen, 0)) != 0)
-		goto out;
-	if ((r = cipher_crypt(ciphercontext, 0, dp, sshbuf_ptr(decoded),
+	जइ ((r = sshbuf_reserve(decrypted, encrypted_len, &dp)) != 0 ||
+	    (r = cipher_init(&ciphercontext, cipher, कुञ्चिका, keylen,
+	    कुञ्चिका + keylen, ivlen, 0)) != 0)
+		गच्छ out;
+	जइ ((r = cipher_crypt(ciphercontext, 0, dp, sshbuf_ptr(decoded),
 	    encrypted_len, 0, authlen)) != 0) {
 		/* an integrity error here indicates an incorrect passphrase */
-		if (r == SSH_ERR_MAC_INVALID)
-			r = SSH_ERR_KEY_WRONG_PASSPHRASE;
-		goto out;
+		जइ (r == SSH_ERR_MAC_INVALID)
+			r = SSH_ERR_कुञ्चिका_WRONG_PASSPHRASE;
+		गच्छ out;
 	}
-	if ((r = sshbuf_consume(decoded, encrypted_len + authlen)) != 0)
-		goto out;
+	जइ ((r = sshbuf_consume(decoded, encrypted_len + authlen)) != 0)
+		गच्छ out;
 	/* there should be no trailing data */
-	if (sshbuf_len(decoded) != 0) {
+	जइ (sshbuf_len(decoded) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	/* check check bytes */
-	if ((r = sshbuf_get_u32(decrypted, &check1)) != 0 ||
+	जइ ((r = sshbuf_get_u32(decrypted, &check1)) != 0 ||
 	    (r = sshbuf_get_u32(decrypted, &check2)) != 0)
-		goto out;
-	if (check1 != check2) {
-		r = SSH_ERR_KEY_WRONG_PASSPHRASE;
-		goto out;
+		गच्छ out;
+	जइ (check1 != check2) {
+		r = SSH_ERR_कुञ्चिका_WRONG_PASSPHRASE;
+		गच्छ out;
 	}
 	/* success */
 	*decryptedp = decrypted;
-	decrypted = NULL;
+	decrypted = रिक्त;
 	*pubkeyp = pubkey;
-	pubkey = NULL;
+	pubkey = रिक्त;
 	r = 0;
  out:
 	cipher_free(ciphercontext);
-	free(ciphername);
-	free(kdfname);
+	मुक्त(ciphername);
+	मुक्त(kdfname);
 	sshkey_free(pubkey);
-	if (salt != NULL) {
+	जइ (salt != रिक्त) {
 		explicit_bzero(salt, slen);
-		free(salt);
+		मुक्त(salt);
 	}
-	if (key != NULL) {
-		explicit_bzero(key, keylen + ivlen);
-		free(key);
+	जइ (कुञ्चिका != रिक्त) {
+		explicit_bzero(कुञ्चिका, keylen + ivlen);
+		मुक्त(कुञ्चिका);
 	}
 	sshbuf_free(kdf);
 	sshbuf_free(decrypted);
-	return r;
+	प्रत्यागम r;
 }
 
-static int
-sshkey_parse_private2(struct sshbuf *blob, int type, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+स्थिर पूर्णाङ्क
+sshkey_parse_private2(संरचना sshbuf *blob, पूर्णाङ्क type, ध्रुव वर्ण *passphrase,
+    संरचना sshkey **keyp, वर्ण **commentp)
 {
-	char *comment = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *decoded = NULL, *decrypted = NULL;
-	struct sshkey *k = NULL, *pubkey = NULL;
+	वर्ण *comment = रिक्त;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *decoded = रिक्त, *decrypted = रिक्त;
+	संरचना sshkey *k = रिक्त, *pubkey = रिक्त;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	जइ (keyp != रिक्त)
+		*keyp = रिक्त;
+	जइ (commentp != रिक्त)
+		*commentp = रिक्त;
 
 	/* Undo base64 encoding and decrypt the private section */
-	if ((r = private2_uudecode(blob, &decoded)) != 0 ||
+	जइ ((r = private2_uudecode(blob, &decoded)) != 0 ||
 	    (r = private2_decrypt(decoded, passphrase,
 	    &decrypted, &pubkey)) != 0)
-		goto out;
+		गच्छ out;
 
-	if (type != KEY_UNSPEC &&
+	जइ (type != कुञ्चिका_UNSPEC &&
 	    sshkey_type_plain(type) != sshkey_type_plain(pubkey->type)) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+		r = SSH_ERR_कुञ्चिका_TYPE_MISMATCH;
+		गच्छ out;
 	}
 
 	/* Load the private key and comment */
-	if ((r = sshkey_private_deserialize(decrypted, &k)) != 0 ||
-	    (r = sshbuf_get_cstring(decrypted, &comment, NULL)) != 0)
-		goto out;
+	जइ ((r = sshkey_private_deserialize(decrypted, &k)) != 0 ||
+	    (r = sshbuf_get_cstring(decrypted, &comment, रिक्त)) != 0)
+		गच्छ out;
 
 	/* Check deterministic padding after private section */
-	if ((r = private2_check_padding(decrypted)) != 0)
-		goto out;
+	जइ ((r = private2_check_padding(decrypted)) != 0)
+		गच्छ out;
 
 	/* Check that the public key in the envelope matches the private key */
-	if (!sshkey_equal(pubkey, k)) {
+	जइ (!sshkey_equal(pubkey, k)) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	/* success */
 	r = 0;
-	if (keyp != NULL) {
+	जइ (keyp != रिक्त) {
 		*keyp = k;
-		k = NULL;
+		k = रिक्त;
 	}
-	if (commentp != NULL) {
+	जइ (commentp != रिक्त) {
 		*commentp = comment;
-		comment = NULL;
+		comment = रिक्त;
 	}
  out:
-	free(comment);
+	मुक्त(comment);
 	sshbuf_free(decoded);
 	sshbuf_free(decrypted);
 	sshkey_free(k);
 	sshkey_free(pubkey);
-	return r;
+	प्रत्यागम r;
 }
 
-static int
-sshkey_parse_private2_pubkey(struct sshbuf *blob, int type,
-    struct sshkey **keyp)
+स्थिर पूर्णाङ्क
+sshkey_parse_private2_pubkey(संरचना sshbuf *blob, पूर्णाङ्क type,
+    संरचना sshkey **keyp)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *decoded = NULL;
-	struct sshkey *pubkey = NULL;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
+	संरचना sshbuf *decoded = रिक्त;
+	संरचना sshkey *pubkey = रिक्त;
 	u_int nkeys = 0;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	जइ (keyp != रिक्त)
+		*keyp = रिक्त;
 
-	if ((r = private2_uudecode(blob, &decoded)) != 0)
-		goto out;
+	जइ ((r = private2_uudecode(blob, &decoded)) != 0)
+		गच्छ out;
 	/* parse public key from unencrypted envelope */
-	if ((r = sshbuf_consume(decoded, sizeof(AUTH_MAGIC))) != 0 ||
+	जइ ((r = sshbuf_consume(decoded, परिमाण(AUTH_MAGIC))) != 0 ||
 	    (r = sshbuf_skip_string(decoded)) != 0 || /* cipher */
 	    (r = sshbuf_skip_string(decoded)) != 0 || /* KDF alg */
 	    (r = sshbuf_skip_string(decoded)) != 0 || /* KDF hint */
 	    (r = sshbuf_get_u32(decoded, &nkeys)) != 0)
-		goto out;
+		गच्छ out;
 
-	if (nkeys != 1) {
+	जइ (nkeys != 1) {
 		/* XXX only one key supported at present */
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 
 	/* Parse the public key */
-	if ((r = sshkey_froms(decoded, &pubkey)) != 0)
-		goto out;
+	जइ ((r = sshkey_froms(decoded, &pubkey)) != 0)
+		गच्छ out;
 
-	if (type != KEY_UNSPEC &&
+	जइ (type != कुञ्चिका_UNSPEC &&
 	    sshkey_type_plain(type) != sshkey_type_plain(pubkey->type)) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+		r = SSH_ERR_कुञ्चिका_TYPE_MISMATCH;
+		गच्छ out;
 	}
 
 	/* success */
 	r = 0;
-	if (keyp != NULL) {
+	जइ (keyp != रिक्त) {
 		*keyp = pubkey;
-		pubkey = NULL;
+		pubkey = रिक्त;
 	}
  out:
 	sshbuf_free(decoded);
 	sshkey_free(pubkey);
-	return r;
+	प्रत्यागम r;
 }
 
 #ifdef WITH_OPENSSL
 /* convert SSH v2 key to PEM or PKCS#8 format */
-static int
-sshkey_private_to_blob_pem_pkcs8(struct sshkey *key, struct sshbuf *buf,
-    int format, const char *_passphrase, const char *comment)
+स्थिर पूर्णाङ्क
+sshkey_private_to_blob_pem_pkcs8(संरचना sshkey *कुञ्चिका, संरचना sshbuf *buf,
+    पूर्णाङ्क format, ध्रुव वर्ण *_passphrase, ध्रुव वर्ण *comment)
 {
-	int was_shielded = sshkey_is_shielded(key);
-	int success, r;
-	int blen, len = strlen(_passphrase);
-	u_char *passphrase = (len > 0) ? (u_char *)_passphrase : NULL;
-	const EVP_CIPHER *cipher = (len > 0) ? EVP_aes_128_cbc() : NULL;
-	char *bptr;
-	BIO *bio = NULL;
-	struct sshbuf *blob;
-	EVP_PKEY *pkey = NULL;
+	पूर्णाङ्क was_shielded = sshkey_is_shielded(कुञ्चिका);
+	पूर्णाङ्क success, r;
+	पूर्णाङ्क blen, len = strlen(_passphrase);
+	u_char *passphrase = (len > 0) ? (u_char *)_passphrase : रिक्त;
+	ध्रुव EVP_CIPHER *cipher = (len > 0) ? EVP_aes_128_cbc() : रिक्त;
+	वर्ण *bptr;
+	BIO *bio = रिक्त;
+	संरचना sshbuf *blob;
+	EVP_PKEY *pkey = रिक्त;
 
-	if (len > 0 && len <= 4)
-		return SSH_ERR_PASSPHRASE_TOO_SHORT;
-	if ((blob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((bio = BIO_new(BIO_s_mem())) == NULL) {
+	जइ (len > 0 && len <= 4)
+		प्रत्यागम SSH_ERR_PASSPHRASE_TOO_SHORT;
+	जइ ((blob = sshbuf_new()) == रिक्त)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	जइ ((bio = BIO_new(BIO_s_mem())) == रिक्त) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshkey_unshield_private(key)) != 0)
-		goto out;
+	जइ ((r = sshkey_unshield_private(कुञ्चिका)) != 0)
+		गच्छ out;
 
-	switch (key->type) {
-	case KEY_ECDSA:
-		if (format == SSHKEY_PRIVATE_PEM) {
-			success = PEM_write_bio_ECPrivateKey(bio,
-			    EVP_PKEY_get0_EC_KEY(key->pkey),
-			    cipher, passphrase, len, NULL, NULL);
-		} else {
-			pkey = key->pkey;
-			EVP_PKEY_up_ref(key->pkey);
+	विकल्प (कुञ्चिका->type) {
+	पक्ष कुञ्चिका_ECDSA:
+		जइ (format == SSHKEY_PRIVATE_PEM) {
+			success = PEM_write_bio_ECPrivate_कुञ्चिका(bio,
+			    EVP_PKEY_get0_EC_कुञ्चिका(कुञ्चिका->pkey),
+			    cipher, passphrase, len, रिक्त, रिक्त);
+		} अण्णहा {
+			pkey = कुञ्चिका->pkey;
+			EVP_PKEY_up_ref(कुञ्चिका->pkey);
 			success = 1;
 		}
-		break;
-	case KEY_RSA:
-		if (format == SSHKEY_PRIVATE_PEM) {
-			success = PEM_write_bio_RSAPrivateKey(bio,
-			    EVP_PKEY_get0_RSA(key->pkey),
-			    cipher, passphrase, len, NULL, NULL);
-		} else {
-			pkey = key->pkey;
-			EVP_PKEY_up_ref(key->pkey);
+		भङ्ग;
+	पक्ष कुञ्चिका_RSA:
+		जइ (format == SSHKEY_PRIVATE_PEM) {
+			success = PEM_write_bio_RSAPrivate_कुञ्चिका(bio,
+			    EVP_PKEY_get0_RSA(कुञ्चिका->pkey),
+			    cipher, passphrase, len, रिक्त, रिक्त);
+		} अण्णहा {
+			pkey = कुञ्चिका->pkey;
+			EVP_PKEY_up_ref(कुञ्चिका->pkey);
 			success = 1;
 		}
-		break;
+		भङ्ग;
 #ifdef OPENSSL_HAS_ED25519
-	case KEY_ED25519:
-		if (format == SSHKEY_PRIVATE_PEM) {
+	पक्ष कुञ्चिका_ED25519:
+		जइ (format == SSHKEY_PRIVATE_PEM) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
-		} else {
-			pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519,
-			    NULL, key->ed25519_sk,
+			गच्छ out;
+		} अण्णहा {
+			pkey = EVP_PKEY_new_raw_private_कुञ्चिका(EVP_PKEY_ED25519,
+			    रिक्त, कुञ्चिका->ed25519_sk,
 			    ED25519_SK_SZ - ED25519_PK_SZ);
-			success = pkey != NULL;
+			success = pkey != रिक्त;
 		}
-		break;
+		भङ्ग;
 #endif
-	default:
+	स्वभाव:
 		success = 0;
-		break;
+		भङ्ग;
 	}
-	if (success == 0) {
+	जइ (success == 0) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	if (format == SSHKEY_PRIVATE_PKCS8) {
-		if ((success = PEM_write_bio_PrivateKey(bio, pkey, cipher,
-		    passphrase, len, NULL, NULL)) == 0) {
+	जइ (format == SSHKEY_PRIVATE_PKCS8) {
+		जइ ((success = PEM_write_bio_Private_कुञ्चिका(bio, pkey, cipher,
+		    passphrase, len, रिक्त, रिक्त)) == 0) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
 	}
-	if ((blen = BIO_get_mem_data(bio, &bptr)) <= 0) {
+	जइ ((blen = BIO_get_mem_data(bio, &bptr)) <= 0) {
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		गच्छ out;
 	}
-	if ((r = sshbuf_put(blob, bptr, blen)) != 0)
-		goto out;
+	जइ ((r = sshbuf_put(blob, bptr, blen)) != 0)
+		गच्छ out;
 	r = 0;
  out:
-	if (was_shielded)
-		r = sshkey_shield_private(key);
-	if (r == 0)
+	जइ (was_shielded)
+		r = sshkey_shield_private(कुञ्चिका);
+	जइ (r == 0)
 		r = sshbuf_putb(buf, blob);
 
 	EVP_PKEY_free(pkey);
 	sshbuf_free(blob);
 	BIO_free(bio);
-	return r;
+	प्रत्यागम r;
 }
 #endif /* WITH_OPENSSL */
 
 /* Serialise "key" to buffer "blob" */
-int
-sshkey_private_to_fileblob(struct sshkey *key, struct sshbuf *blob,
-    const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds)
+पूर्णाङ्क
+sshkey_private_to_fileblob(संरचना sshkey *कुञ्चिका, संरचना sshbuf *blob,
+    ध्रुव वर्ण *passphrase, ध्रुव वर्ण *comment,
+    पूर्णाङ्क format, ध्रुव वर्ण *openssh_format_cipher, पूर्णाङ्क openssh_format_rounds)
 {
-	switch (key->type) {
+	विकल्प (कुञ्चिका->type) {
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA:
-	case KEY_RSA:
-	case KEY_ED25519:
-		break; /* see below */
-#else /* WITH_OPENSSL */
-	case KEY_ED25519:
+	पक्ष कुञ्चिका_ECDSA:
+	पक्ष कुञ्चिका_RSA:
+	पक्ष कुञ्चिका_ED25519:
+		भङ्ग; /* see below */
+#अण्णहा /* WITH_OPENSSL */
+	पक्ष कुञ्चिका_ED25519:
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+	पक्ष कुञ्चिका_ED25519_SK:
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	पक्ष कुञ्चिका_ECDSA_SK:
 #endif /* WITH_OPENSSL */
-	case KEY_MLDSA44_ED25519:
-		return sshkey_private_to_blob2(key, blob, passphrase,
+	पक्ष कुञ्चिका_MLDSA44_ED25519:
+		प्रत्यागम sshkey_private_to_blob2(कुञ्चिका, blob, passphrase,
 		    comment, openssh_format_cipher, openssh_format_rounds);
-	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+	स्वभाव:
+		प्रत्यागम SSH_ERR_कुञ्चिका_TYPE_UNKNOWN;
 	}
 
 #ifdef WITH_OPENSSL
-	switch (format) {
-	case SSHKEY_PRIVATE_OPENSSH:
-		return sshkey_private_to_blob2(key, blob, passphrase,
+	विकल्प (format) {
+	पक्ष SSHKEY_PRIVATE_OPENSSH:
+		प्रत्यागम sshkey_private_to_blob2(कुञ्चिका, blob, passphrase,
 		    comment, openssh_format_cipher, openssh_format_rounds);
-	case SSHKEY_PRIVATE_PEM:
-	case SSHKEY_PRIVATE_PKCS8:
-		return sshkey_private_to_blob_pem_pkcs8(key, blob,
+	पक्ष SSHKEY_PRIVATE_PEM:
+	पक्ष SSHKEY_PRIVATE_PKCS8:
+		प्रत्यागम sshkey_private_to_blob_pem_pkcs8(कुञ्चिका, blob,
 		    format, passphrase, comment);
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+	स्वभाव:
+		प्रत्यागम SSH_ERR_INVALID_ARGUMENT;
 	}
 #endif /* WITH_OPENSSL */
 }
 
 #ifdef WITH_OPENSSL
-static int
+स्थिर पूर्णाङ्क
 translate_libcrypto_error(unsigned long pem_err)
 {
-	int pem_reason = ERR_GET_REASON(pem_err);
+	पूर्णाङ्क pem_reason = ERR_GET_REASON(pem_err);
 
-	switch (ERR_GET_LIB(pem_err)) {
-	case ERR_LIB_PEM:
-		switch (pem_reason) {
-		case PEM_R_BAD_PASSWORD_READ:
+	विकल्प (ERR_GET_LIB(pem_err)) {
+	पक्ष ERR_LIB_PEM:
+		विकल्प (pem_reason) {
+		पक्ष PEM_R_BAD_PASSWORD_READ:
 #ifdef PEM_R_PROBLEMS_GETTING_PASSWORD
-		case PEM_R_PROBLEMS_GETTING_PASSWORD:
+		पक्ष PEM_R_PROBLEMS_GETTING_PASSWORD:
 #endif
 #ifdef PEM_R_BAD_DECRYPT
-		case PEM_R_BAD_DECRYPT:
+		पक्ष PEM_R_BAD_DECRYPT:
 #endif
-			return SSH_ERR_KEY_WRONG_PASSPHRASE;
-		default:
-			return SSH_ERR_INVALID_FORMAT;
+			प्रत्यागम SSH_ERR_कुञ्चिका_WRONG_PASSPHRASE;
+		स्वभाव:
+			प्रत्यागम SSH_ERR_INVALID_FORMAT;
 		}
-	case ERR_LIB_EVP:
-		switch (pem_reason) {
+	पक्ष ERR_LIB_EVP:
+		विकल्प (pem_reason) {
 #ifdef EVP_R_BAD_DECRYPT
-		case EVP_R_BAD_DECRYPT:
-			return SSH_ERR_KEY_WRONG_PASSPHRASE;
+		पक्ष EVP_R_BAD_DECRYPT:
+			प्रत्यागम SSH_ERR_कुञ्चिका_WRONG_PASSPHRASE;
 #endif
 #ifdef EVP_R_BN_DECODE_ERROR
-		case EVP_R_BN_DECODE_ERROR:
+		पक्ष EVP_R_BN_DECODE_ERROR:
 #endif
-		case EVP_R_DECODE_ERROR:
-#ifdef EVP_R_PRIVATE_KEY_DECODE_ERROR
-		case EVP_R_PRIVATE_KEY_DECODE_ERROR:
+		पक्ष EVP_R_DECODE_ERROR:
+#ifdef EVP_R_PRIVATE_कुञ्चिका_DECODE_ERROR
+		पक्ष EVP_R_PRIVATE_कुञ्चिका_DECODE_ERROR:
 #endif
-			return SSH_ERR_INVALID_FORMAT;
-		default:
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			प्रत्यागम SSH_ERR_INVALID_FORMAT;
+		स्वभाव:
+			प्रत्यागम SSH_ERR_LIBCRYPTO_ERROR;
 		}
-	case ERR_LIB_ASN1:
+	पक्ष ERR_LIB_ASN1:
 #ifdef ERR_LIB_OSSL_DECODER
-	case ERR_LIB_OSSL_DECODER:
+	पक्ष ERR_LIB_OSSL_DECODER:
 #endif
-		return SSH_ERR_INVALID_FORMAT;
+		प्रत्यागम SSH_ERR_INVALID_FORMAT;
 	}
-	return SSH_ERR_LIBCRYPTO_ERROR;
+	प्रत्यागम SSH_ERR_LIBCRYPTO_ERROR;
 }
 
-static void
-clear_libcrypto_errors(void)
+स्थिर शून्य
+clear_libcrypto_errors(शून्य)
 {
-	while (ERR_get_error() != 0)
+	जाव (ERR_get_error() != 0)
 		;
 }
 
@@ -3507,147 +3507,147 @@ clear_libcrypto_errors(void)
  * Translate OpenSSL error codes to determine whether
  * passphrase is required/incorrect.
  */
-static int
-convert_libcrypto_error(void)
+स्थिर पूर्णाङ्क
+convert_libcrypto_error(शून्य)
 {
 	/*
 	 * Some password errors are reported at the beginning
 	 * of the error queue.
 	 */
-	if (translate_libcrypto_error(ERR_peek_error()) ==
-	    SSH_ERR_KEY_WRONG_PASSPHRASE)
-		return SSH_ERR_KEY_WRONG_PASSPHRASE;
-	return translate_libcrypto_error(ERR_peek_last_error());
+	जइ (translate_libcrypto_error(ERR_peek_error()) ==
+	    SSH_ERR_कुञ्चिका_WRONG_PASSPHRASE)
+		प्रत्यागम SSH_ERR_कुञ्चिका_WRONG_PASSPHRASE;
+	प्रत्यागम translate_libcrypto_error(ERR_peek_last_error());
 }
 
-static int
-pem_passphrase_cb(char *buf, int size, int rwflag, void *u)
+स्थिर पूर्णाङ्क
+pem_passphrase_cb(वर्ण *buf, पूर्णाङ्क size, पूर्णाङ्क rwflag, शून्य *u)
 {
-	char *p = (char *)u;
+	वर्ण *p = (वर्ण *)u;
 	size_t len;
 
-	if (p == NULL || (len = strlen(p)) == 0)
-		return -1;
-	if (size < 0 || len > (size_t)size)
-		return -1;
+	जइ (p == रिक्त || (len = strlen(p)) == 0)
+		प्रत्यागम -1;
+	जइ (size < 0 || len > (size_t)size)
+		प्रत्यागम -1;
 	memcpy(buf, p, len);
-	return (int)len;
+	प्रत्यागम (पूर्णाङ्क)len;
 }
 
-static int
-sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
-    const char *passphrase, struct sshkey **keyp)
+स्थिर पूर्णाङ्क
+sshkey_parse_private_pem_fileblob(संरचना sshbuf *blob, पूर्णाङ्क type,
+    ध्रुव वर्ण *passphrase, संरचना sshkey **keyp)
 {
-	EVP_PKEY *pk = NULL;
-	struct sshkey *prv = NULL;
-	BIO *bio = NULL;
-	int r;
-	RSA *rsa = NULL;
-	EC_KEY *ecdsa = NULL;
+	EVP_PKEY *pk = रिक्त;
+	संरचना sshkey *prv = रिक्त;
+	BIO *bio = रिक्त;
+	पूर्णाङ्क r;
+	RSA *rsa = रिक्त;
+	EC_कुञ्चिका *ecdsa = रिक्त;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	जइ (keyp != रिक्त)
+		*keyp = रिक्त;
 
-	if ((bio = BIO_new(BIO_s_mem())) == NULL || sshbuf_len(blob) > INT_MAX)
-		return SSH_ERR_ALLOC_FAIL;
-	if (BIO_write(bio, sshbuf_ptr(blob), sshbuf_len(blob)) !=
-	    (int)sshbuf_len(blob)) {
+	जइ ((bio = BIO_new(BIO_s_mem())) == रिक्त || sshbuf_len(blob) > INT_MAX)
+		प्रत्यागम SSH_ERR_ALLOC_FAIL;
+	जइ (BIO_write(bio, sshbuf_ptr(blob), sshbuf_len(blob)) !=
+	    (पूर्णाङ्क)sshbuf_len(blob)) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		गच्छ out;
 	}
 
 	clear_libcrypto_errors();
-	if ((pk = PEM_read_bio_PrivateKey(bio, NULL, pem_passphrase_cb,
-	    (char *)passphrase)) == NULL) {
+	जइ ((pk = PEM_read_bio_Private_कुञ्चिका(bio, रिक्त, pem_passphrase_cb,
+	    (वर्ण *)passphrase)) == रिक्त) {
 		/*
 		 * libcrypto may return various ASN.1 errors when attempting
 		 * to parse a key with an incorrect passphrase.
 		 * Treat all format errors as "incorrect passphrase" if a
 		 * passphrase was supplied.
 		 */
-		if (passphrase != NULL && *passphrase != '\0')
-			r = SSH_ERR_KEY_WRONG_PASSPHRASE;
-		else
+		जइ (passphrase != रिक्त && *passphrase != '\0')
+			r = SSH_ERR_कुञ्चिका_WRONG_PASSPHRASE;
+		अण्णहा
 			r = convert_libcrypto_error();
-		goto out;
+		गच्छ out;
 	}
-	if (EVP_PKEY_base_id(pk) == EVP_PKEY_RSA &&
-	    (type == KEY_UNSPEC || type == KEY_RSA)) {
-		if ((prv = sshkey_new(KEY_UNSPEC)) == NULL) {
+	जइ (EVP_PKEY_base_id(pk) == EVP_PKEY_RSA &&
+	    (type == कुञ्चिका_UNSPEC || type == कुञ्चिका_RSA)) {
+		जइ ((prv = sshkey_new(कुञ्चिका_UNSPEC)) == रिक्त) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
-		if ((rsa = EVP_PKEY_get1_RSA(pk)) == NULL) {
+		जइ ((rsa = EVP_PKEY_get1_RSA(pk)) == रिक्त) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
-		prv->type = KEY_RSA;
+		prv->type = कुञ्चिका_RSA;
 #ifdef DEBUG_PK
 		RSA_print_fp(stderr, rsa, 8);
 #endif
-		if (RSA_blinding_on(rsa, NULL) != 1 ||
+		जइ (RSA_blinding_on(rsa, रिक्त) != 1 ||
 		    EVP_PKEY_set1_RSA(pk, rsa) != 1) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
 		EVP_PKEY_up_ref(pk);
 		prv->pkey = pk;
-		if ((r = sshkey_check_rsa_length(prv, 0)) != 0)
-			goto out;
-	} else if (EVP_PKEY_base_id(pk) == EVP_PKEY_EC &&
-	    (type == KEY_UNSPEC || type == KEY_ECDSA)) {
-		if ((prv = sshkey_new(KEY_UNSPEC)) == NULL) {
+		जइ ((r = sshkey_check_rsa_length(prv, 0)) != 0)
+			गच्छ out;
+	} अण्णहा जइ (EVP_PKEY_base_id(pk) == EVP_PKEY_EC &&
+	    (type == कुञ्चिका_UNSPEC || type == कुञ्चिका_ECDSA)) {
+		जइ ((prv = sshkey_new(कुञ्चिका_UNSPEC)) == रिक्त) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
-		if ((prv->ecdsa_nid = sshkey_ecdsa_fixup_group(pk)) == -1 ||
-		    (ecdsa = EVP_PKEY_get1_EC_KEY(pk)) == NULL) {
+		जइ ((prv->ecdsa_nid = sshkey_ecdsa_fixup_group(pk)) == -1 ||
+		    (ecdsa = EVP_PKEY_get1_EC_कुञ्चिका(pk)) == रिक्त) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
-		prv->type = KEY_ECDSA;
-		if (sshkey_curve_nid_to_name(prv->ecdsa_nid) == NULL ||
-		    sshkey_ec_validate_public(EC_KEY_get0_group(ecdsa),
-		    EC_KEY_get0_public_key(ecdsa)) != 0 ||
+		prv->type = कुञ्चिका_ECDSA;
+		जइ (sshkey_curve_nid_to_name(prv->ecdsa_nid) == रिक्त ||
+		    sshkey_ec_validate_public(EC_कुञ्चिका_get0_group(ecdsa),
+		    EC_कुञ्चिका_get0_public_कुञ्चिका(ecdsa)) != 0 ||
 		    sshkey_ec_validate_private(ecdsa) != 0) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 		EVP_PKEY_up_ref(pk);
 		prv->pkey = pk;
 #ifdef DEBUG_PK
-		if (prv != NULL && prv->pkey != NULL)
-			sshkey_dump_ec_key(EVP_PKEY_get0_EC_KEY(prv->pkey));
+		जइ (prv != रिक्त && prv->pkey != रिक्त)
+			sshkey_dump_ec_कुञ्चिका(EVP_PKEY_get0_EC_कुञ्चिका(prv->pkey));
 #endif
 #ifdef OPENSSL_HAS_ED25519
-	} else if (EVP_PKEY_base_id(pk) == EVP_PKEY_ED25519 &&
-	    (type == KEY_UNSPEC || type == KEY_ED25519)) {
+	} अण्णहा जइ (EVP_PKEY_base_id(pk) == EVP_PKEY_ED25519 &&
+	    (type == कुञ्चिका_UNSPEC || type == कुञ्चिका_ED25519)) {
 		size_t len;
 
-		if ((prv = sshkey_new(KEY_UNSPEC)) == NULL ||
-		    (prv->ed25519_sk = calloc(1, ED25519_SK_SZ)) == NULL ||
-		    (prv->ed25519_pk = calloc(1, ED25519_PK_SZ)) == NULL) {
+		जइ ((prv = sshkey_new(कुञ्चिका_UNSPEC)) == रिक्त ||
+		    (prv->ed25519_sk = calloc(1, ED25519_SK_SZ)) == रिक्त ||
+		    (prv->ed25519_pk = calloc(1, ED25519_PK_SZ)) == रिक्त) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			गच्छ out;
 		}
-		prv->type = KEY_ED25519;
+		prv->type = कुञ्चिका_ED25519;
 		len = ED25519_PK_SZ;
-		if (!EVP_PKEY_get_raw_public_key(pk, prv->ed25519_pk, &len)) {
+		जइ (!EVP_PKEY_get_raw_public_कुञ्चिका(pk, prv->ed25519_pk, &len)) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
-		if (len != ED25519_PK_SZ) {
+		जइ (len != ED25519_PK_SZ) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 		len = ED25519_SK_SZ - ED25519_PK_SZ;
-		if (!EVP_PKEY_get_raw_private_key(pk, prv->ed25519_sk, &len)) {
+		जइ (!EVP_PKEY_get_raw_private_कुञ्चिका(pk, prv->ed25519_sk, &len)) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			गच्छ out;
 		}
-		if (len != ED25519_SK_SZ - ED25519_PK_SZ) {
+		जइ (len != ED25519_SK_SZ - ED25519_PK_SZ) {
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			गच्छ out;
 		}
 		/* Append the public key to our private key */
 		memcpy(prv->ed25519_sk + (ED25519_SK_SZ - ED25519_PK_SZ),
@@ -3656,77 +3656,77 @@ sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
 		sshbuf_dump_data(prv->ed25519_sk, ED25519_SK_SZ, stderr);
 #endif
 #endif /* OPENSSL_HAS_ED25519 */
-	} else {
+	} अण्णहा {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		गच्छ out;
 	}
 	r = 0;
-	if (keyp != NULL) {
+	जइ (keyp != रिक्त) {
 		*keyp = prv;
-		prv = NULL;
+		prv = रिक्त;
 	}
  out:
 	BIO_free(bio);
 	EVP_PKEY_free(pk);
 	RSA_free(rsa);
-	EC_KEY_free(ecdsa);
+	EC_कुञ्चिका_free(ecdsa);
 	sshkey_free(prv);
-	return r;
+	प्रत्यागम r;
 }
 #endif /* WITH_OPENSSL */
 
-int
-sshkey_parse_private_fileblob_type(struct sshbuf *blob, int type,
-    const char *passphrase, struct sshkey **keyp, char **commentp)
+पूर्णाङ्क
+sshkey_parse_private_fileblob_type(संरचना sshbuf *blob, पूर्णाङ्क type,
+    ध्रुव वर्ण *passphrase, संरचना sshkey **keyp, वर्ण **commentp)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	जइ (keyp != रिक्त)
+		*keyp = रिक्त;
+	जइ (commentp != रिक्त)
+		*commentp = रिक्त;
 
 	r = sshkey_parse_private2(blob, type, passphrase, keyp, commentp);
 	/* Only fallback to PEM parser if a format error occurred. */
-	if (r != SSH_ERR_INVALID_FORMAT)
-		return r;
+	जइ (r != SSH_ERR_INVALID_FORMAT)
+		प्रत्यागम r;
 #ifdef WITH_OPENSSL
-	return sshkey_parse_private_pem_fileblob(blob, type,
+	प्रत्यागम sshkey_parse_private_pem_fileblob(blob, type,
 	    passphrase, keyp);
-#else
-	return SSH_ERR_INVALID_FORMAT;
+#अण्णहा
+	प्रत्यागम SSH_ERR_INVALID_FORMAT;
 #endif /* WITH_OPENSSL */
 }
 
-int
-sshkey_parse_private_fileblob(struct sshbuf *buffer, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+पूर्णाङ्क
+sshkey_parse_private_fileblob(संरचना sshbuf *buffer, ध्रुव वर्ण *passphrase,
+    संरचना sshkey **keyp, वर्ण **commentp)
 {
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	जइ (keyp != रिक्त)
+		*keyp = रिक्त;
+	जइ (commentp != रिक्त)
+		*commentp = रिक्त;
 
-	return sshkey_parse_private_fileblob_type(buffer, KEY_UNSPEC,
+	प्रत्यागम sshkey_parse_private_fileblob_type(buffer, कुञ्चिका_UNSPEC,
 	    passphrase, keyp, commentp);
 }
 
-void
-sshkey_sig_details_free(struct sshkey_sig_details *details)
+शून्य
+sshkey_sig_details_free(संरचना sshkey_sig_details *details)
 {
-	freezero(details, sizeof(*details));
+	freezero(details, परिमाण(*details));
 }
 
-int
-sshkey_parse_pubkey_from_private_fileblob_type(struct sshbuf *blob, int type,
-    struct sshkey **pubkeyp)
+पूर्णाङ्क
+sshkey_parse_pubkey_from_private_fileblob_type(संरचना sshbuf *blob, पूर्णाङ्क type,
+    संरचना sshkey **pubkeyp)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	पूर्णाङ्क r = SSH_ERR_INTERNAL_ERROR;
 
-	if (pubkeyp != NULL)
-		*pubkeyp = NULL;
+	जइ (pubkeyp != रिक्त)
+		*pubkeyp = रिक्त;
 	/* only new-format private keys bundle a public key inside */
-	if ((r = sshkey_parse_private2_pubkey(blob, type, pubkeyp)) != 0)
-		return r;
-	return 0;
+	जइ ((r = sshkey_parse_private2_pubkey(blob, type, pubkeyp)) != 0)
+		प्रत्यागम r;
+	प्रत्यागम 0;
 }

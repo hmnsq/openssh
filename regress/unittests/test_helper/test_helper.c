@@ -17,40 +17,40 @@
 
 /* Utility functions/framework for regress tests */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <sys/time.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/uio.h>
+#अन्तर्भाव <sys/time.h>
 
-#include <assert.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <math.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#अन्तर्भाव <assert.h>
+#अन्तर्भाव <fcntl.h>
+#अन्तर्भाव <limits.h>
+#अन्तर्भाव <math.h>
+#अन्तर्भाव <signal.h>
+#अन्तर्भाव <stdarg.h>
+#अन्तर्भाव <stdint.h>
+#अन्तर्भाव <stdio.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <time.h>
+#अन्तर्भाव <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/err.h>
+#अन्तर्भाव <openssl/bn.h>
+#अन्तर्भाव <openssl/err.h>
 #endif
 
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#जइ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 
-#include "entropy.h"
-#include "test_helper.h"
-#include "atomicio.h"
-#include "match.h"
-#include "misc.h"
-#include "xmalloc.h"
+#अन्तर्भाव "entropy.h"
+#अन्तर्भाव "test_helper.h"
+#अन्तर्भाव "atomicio.h"
+#अन्तर्भाव "match.h"
+#अन्तर्भाव "misc.h"
+#अन्तर्भाव "xmalloc.h"
 
 #define BENCH_FAST_DEADLINE	1
 #define BENCH_NORMAL_DEADLINE	10
@@ -60,497 +60,497 @@
 
 #define MINIMUM(a, b)    (((a) < (b)) ? (a) : (b))
 
-#define TEST_CHECK_INT(r, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (r == 0)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (r != 0)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (r < 0)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (r <= 0)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (r > 0)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (r >= 0)		\
-				return;		\
-			break;			\
-		default:			\
+#define TEST_CHECK_INT(r, pred) करेहि {		\
+		विकल्प (pred) {			\
+		पक्ष TEST_EQ:			\
+			जइ (r == 0)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_NE:			\
+			जइ (r != 0)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_LT:			\
+			जइ (r < 0)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_LE:			\
+			जइ (r <= 0)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_GT:			\
+			जइ (r > 0)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_GE:			\
+			जइ (r >= 0)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		स्वभाव:			\
 			abort();		\
 		}				\
-	} while (0)
+	} जाव (0)
 
-#define TEST_CHECK(x1, x2, pred) do {		\
-		switch (pred) {			\
-		case TEST_EQ:			\
-			if (x1 == x2)		\
-				return;		\
-			break;			\
-		case TEST_NE:			\
-			if (x1 != x2)		\
-				return;		\
-			break;			\
-		case TEST_LT:			\
-			if (x1 < x2)		\
-				return;		\
-			break;			\
-		case TEST_LE:			\
-			if (x1 <= x2)		\
-				return;		\
-			break;			\
-		case TEST_GT:			\
-			if (x1 > x2)		\
-				return;		\
-			break;			\
-		case TEST_GE:			\
-			if (x1 >= x2)		\
-				return;		\
-			break;			\
-		default:			\
+#define TEST_CHECK(x1, x2, pred) करेहि {		\
+		विकल्प (pred) {			\
+		पक्ष TEST_EQ:			\
+			जइ (x1 == x2)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_NE:			\
+			जइ (x1 != x2)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_LT:			\
+			जइ (x1 < x2)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_LE:			\
+			जइ (x1 <= x2)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_GT:			\
+			जइ (x1 > x2)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		पक्ष TEST_GE:			\
+			जइ (x1 >= x2)		\
+				प्रत्यागम;		\
+			भङ्ग;			\
+		स्वभाव:			\
 			abort();		\
 		}				\
-	} while (0)
+	} जाव (0)
 
-extern char *__progname;
+बाह्य वर्ण *__progname;
 
-static int verbose_mode = 0;
-static int quiet_mode = 0;
-static char *active_test_name = NULL;
-static u_int test_number = 0;
-static test_onerror_func_t *test_onerror = NULL;
-static void *onerror_ctx = NULL;
-static const char *data_dir = NULL;
-static char subtest_info[512];
-static int fast = 0;
-static int slow = 0;
-static int benchmark_detail_statistics = 0;
+स्थिर पूर्णाङ्क verbose_mode = 0;
+स्थिर पूर्णाङ्क quiet_mode = 0;
+स्थिर वर्ण *active_test_name = रिक्त;
+स्थिर u_int test_सङ्ख्या = 0;
+स्थिर test_onerror_func_t *test_onerror = रिक्त;
+स्थिर शून्य *onerror_ctx = रिक्त;
+स्थिर ध्रुव वर्ण *data_dir = रिक्त;
+स्थिर वर्ण subtest_info[512];
+स्थिर पूर्णाङ्क fast = 0;
+स्थिर पूर्णाङ्क slow = 0;
+स्थिर पूर्णाङ्क benchmark_detail_statistics = 0;
 
-static int benchmark = 0;
-static const char *bench_name = NULL;
-static char *benchmark_pattern = NULL;
-static struct timespec bench_start_time, bench_finish_time;
-static struct timespec *bench_samples;
-static int bench_skip, bench_nruns, bench_nalloc;
-double bench_accum_secs;
+स्थिर पूर्णाङ्क benchmark = 0;
+स्थिर ध्रुव वर्ण *bench_name = रिक्त;
+स्थिर वर्ण *benchmark_pattern = रिक्त;
+स्थिर संरचना timespec bench_start_time, bench_finish_time;
+स्थिर संरचना timespec *bench_samples;
+स्थिर पूर्णाङ्क bench_skip, bench_nruns, bench_nalloc;
+द्विगुण bench_accum_secs;
 
-int
-main(int argc, char **argv)
+पूर्णाङ्क
+main(पूर्णाङ्क argc, वर्ण **argv)
 {
-	int ch;
+	पूर्णाङ्क ch;
 
 	seed_rng();
 #ifdef WITH_OPENSSL
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, रिक्त);
 #endif
 
 	/* Handle systems without __progname */
-	if (__progname == NULL) {
+	जइ (__progname == रिक्त) {
 		__progname = strrchr(argv[0], '/');
-		if (__progname == NULL || __progname[1] == '\0')
+		जइ (__progname == रिक्त || __progname[1] == '\0')
 			__progname = argv[0];	
-		else
+		अण्णहा
 			__progname++;
-		if ((__progname = strdup(__progname)) == NULL) {
+		जइ ((__progname = strdup(__progname)) == रिक्त) {
 			fprintf(stderr, "strdup failed\n");
 			exit(1);
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
-		switch (ch) {
-		case 'b':
+	जाव ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
+		विकल्प (ch) {
+		पक्ष 'b':
 			benchmark = 1;
-			break;
-		case 'B':
+			भङ्ग;
+		पक्ष 'B':
 			benchmark = benchmark_detail_statistics = 1;
-			break;
-		case 'O':
+			भङ्ग;
+		पक्ष 'O':
 			benchmark_pattern = xstrdup(optarg);
-			break;
-		case 'F':
+			भङ्ग;
+		पक्ष 'F':
 			slow = 1;
-			break;
-		case 'f':
+			भङ्ग;
+		पक्ष 'f':
 			fast = 1;
-			break;
-		case 'd':
+			भङ्ग;
+		पक्ष 'd':
 			data_dir = optarg;
-			break;
-		case 'q':
+			भङ्ग;
+		पक्ष 'q':
 			verbose_mode = 0;
 			quiet_mode = 1;
-			break;
-		case 'v':
+			भङ्ग;
+		पक्ष 'v':
 			verbose_mode = 1;
 			quiet_mode = 0;
-			break;
-		default:
+			भङ्ग;
+		स्वभाव:
 			fprintf(stderr, "Unrecognised command line option\n");
 			fprintf(stderr, "Usage: %s [-vqfFbB] [-d data_dir] "
 			    "[-O pattern]\n", __progname);
 			exit(1);
 		}
 	}
-	setvbuf(stdout, NULL, _IONBF, 0);
-	if (!quiet_mode)
+	setvbuf(stdout, रिक्त, _IONBF, 0);
+	जइ (!quiet_mode)
 		printf("%s: ", __progname);
-	if (verbose_mode)
+	जइ (verbose_mode)
 		printf("\n");
 
-	if (benchmark)
+	जइ (benchmark)
 		benchmarks();
-	else
+	अण्णहा
 		tests();
 
-	if (!quiet_mode && !benchmark)
-		printf(" %u tests ok\n", test_number);
-	return 0;
+	जइ (!quiet_mode && !benchmark)
+		printf(" %u tests ok\n", test_सङ्ख्या);
+	प्रत्यागम 0;
 }
 
-int
-test_is_verbose(void)
+पूर्णाङ्क
+test_is_verbose(शून्य)
 {
-	return verbose_mode;
+	प्रत्यागम verbose_mode;
 }
 
-int
-test_is_quiet(void)
+पूर्णाङ्क
+test_is_quiet(शून्य)
 {
-	return quiet_mode;
+	प्रत्यागम quiet_mode;
 }
 
-int
-test_is_fast(void)
+पूर्णाङ्क
+test_is_fast(शून्य)
 {
-	return fast;
+	प्रत्यागम fast;
 }
 
-int
-test_is_slow(void)
+पूर्णाङ्क
+test_is_slow(शून्य)
 {
-	return slow;
+	प्रत्यागम slow;
 }
 
-const char *
-test_data_file(const char *name)
+ध्रुव वर्ण *
+test_data_file(ध्रुव वर्ण *name)
 {
-	static char ret[PATH_MAX];
+	स्थिर वर्ण ret[PATH_MAX];
 
-	if (data_dir != NULL)
-		snprintf(ret, sizeof(ret), "%s/%s", data_dir, name);
-	else
-		strlcpy(ret, name, sizeof(ret));
-	if (access(ret, F_OK) != 0) {
+	जइ (data_dir != रिक्त)
+		snprintf(ret, परिमाण(ret), "%s/%s", data_dir, name);
+	अण्णहा
+		strlcpy(ret, name, परिमाण(ret));
+	जइ (access(ret, F_OK) != 0) {
 		fprintf(stderr, "Cannot access data file %s: %s\n",
 		    ret, strerror(errno));
 		exit(1);
 	}
-	return ret;
+	प्रत्यागम ret;
 }
 
-void
-test_info(char *s, size_t len)
+शून्य
+test_info(वर्ण *s, size_t len)
 {
-	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_number,
-	    active_test_name == NULL ? "<none>" : active_test_name,
+	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_सङ्ख्या,
+	    active_test_name == रिक्त ? "<none>" : active_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 }
 
-static void
-siginfo(int unused __attribute__((__unused__)))
+स्थिर शून्य
+siginfo(पूर्णाङ्क unused __attribute__((__unused__)))
 {
-	char buf[256];
+	वर्ण buf[256];
 
-	test_info(buf, sizeof(buf));
+	test_info(buf, परिमाण(buf));
 	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
 }
 
-void
-test_start(const char *n)
+शून्य
+test_start(ध्रुव वर्ण *n)
 {
-	assert(active_test_name == NULL);
-	assert((active_test_name = strdup(n)) != NULL);
+	प्रतिज्ञा(active_test_name == रिक्त);
+	प्रतिज्ञा((active_test_name = strdup(n)) != रिक्त);
 	*subtest_info = '\0';
-	if (verbose_mode)
-		printf("test %u - \"%s\": ", test_number, active_test_name);
-	test_number++;
+	जइ (verbose_mode)
+		printf("test %u - \"%s\": ", test_सङ्ख्या, active_test_name);
+	test_सङ्ख्या++;
 #ifdef SIGINFO
-	signal(SIGINFO, siginfo);
+	सङ्केत(SIGINFO, siginfo);
 #endif
-	signal(SIGUSR1, siginfo);
+	सङ्केत(SIGUSR1, siginfo);
 }
 
-void
-set_onerror_func(test_onerror_func_t *f, void *ctx)
+शून्य
+set_onerror_func(test_onerror_func_t *f, शून्य *ctx)
 {
 	test_onerror = f;
 	onerror_ctx = ctx;
 }
 
-void
-test_done(void)
+शून्य
+test_done(शून्य)
 {
 	*subtest_info = '\0';
-	assert(active_test_name != NULL);
-	free(active_test_name);
-	active_test_name = NULL;
-	if (verbose_mode)
+	प्रतिज्ञा(active_test_name != रिक्त);
+	मुक्त(active_test_name);
+	active_test_name = रिक्त;
+	जइ (verbose_mode)
 		printf("OK\n");
-	else if (!quiet_mode && !benchmark) {
+	अण्णहा जइ (!quiet_mode && !benchmark) {
 		printf(".");
 		fflush(stdout);
 	}
 }
 
-void
-test_subtest_info(const char *fmt, ...)
+शून्य
+test_subtest_info(ध्रुव वर्ण *fmt, ...)
 {
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(subtest_info, sizeof(subtest_info), fmt, ap);
+	vsnprintf(subtest_info, परिमाण(subtest_info), fmt, ap);
 	va_end(ap);
 }
 
-int
-test_is_benchmark(void)
+पूर्णाङ्क
+test_is_benchmark(शून्य)
 {
-	return benchmark;
+	प्रत्यागम benchmark;
 }
 
-void
-ssl_err_check(const char *file, int line)
+शून्य
+ssl_err_check(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः)
 {
 #ifdef WITH_OPENSSL
 	long openssl_error = ERR_get_error();
 
-	if (openssl_error == 0)
-		return;
+	जइ (openssl_error == 0)
+		प्रत्यागम;
 
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error: %s",
-	    file, line, ERR_error_string(openssl_error, NULL));
-#else /* WITH_OPENSSL */
+	    file, पङ्क्तिः, ERR_error_string(openssl_error, रिक्त));
+#अण्णहा /* WITH_OPENSSL */
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error ",
-	    file, line);
+	    file, पङ्क्तिः);
 #endif /* WITH_OPENSSL */
 	abort();
 }
 
-static const char *
-pred_name(enum test_predicate p)
+स्थिर ध्रुव वर्ण *
+pred_name(गणना test_predicate p)
 {
-	switch (p) {
-	case TEST_EQ:
-		return "EQ";
-	case TEST_NE:
-		return "NE";
-	case TEST_LT:
-		return "LT";
-	case TEST_LE:
-		return "LE";
-	case TEST_GT:
-		return "GT";
-	case TEST_GE:
-		return "GE";
-	default:
-		return "UNKNOWN";
+	विकल्प (p) {
+	पक्ष TEST_EQ:
+		प्रत्यागम "EQ";
+	पक्ष TEST_NE:
+		प्रत्यागम "NE";
+	पक्ष TEST_LT:
+		प्रत्यागम "LT";
+	पक्ष TEST_LE:
+		प्रत्यागम "LE";
+	पक्ष TEST_GT:
+		प्रत्यागम "GT";
+	पक्ष TEST_GE:
+		प्रत्यागम "GE";
+	स्वभाव:
+		प्रत्यागम "UNKNOWN";
 	}
 }
 
-static void
-test_die(void)
+स्थिर शून्य
+test_die(शून्य)
 {
-	if (test_onerror != NULL)
+	जइ (test_onerror != रिक्त)
 		test_onerror(onerror_ctx);
 	abort();
 }
 
-static void
-test_header(const char *file, int line, const char *a1, const char *a2,
-    const char *name, enum test_predicate pred)
+स्थिर शून्य
+test_header(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    ध्रुव वर्ण *name, गणना test_predicate pred)
 {
 	fprintf(stderr, "\n%s:%d test #%u \"%s\"%s%s\n", 
-	    file, line, test_number, active_test_name,
+	    file, पङ्क्तिः, test_सङ्ख्या, active_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 	fprintf(stderr, "ASSERT_%s_%s(%s%s%s) failed:\n",
 	    name, pred_name(pred), a1,
-	    a2 != NULL ? ", " : "", a2 != NULL ? a2 : "");
+	    a2 != रिक्त ? ", " : "", a2 != रिक्त ? a2 : "");
 }
 
 #ifdef WITH_OPENSSL
-void
-assert_bignum(const char *file, int line, const char *a1, const char *a2,
-    const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred)
+शून्य
+assert_bignum(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    ध्रुव BIGNUM *aa1, ध्रुव BIGNUM *aa2, गणना test_predicate pred)
 {
-	int r = BN_cmp(aa1, aa2);
+	पूर्णाङ्क r = BN_cmp(aa1, aa2);
 
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "BIGNUM", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "BIGNUM", pred);
 	fprintf(stderr, "%12s = 0x%s\n", a1, BN_bn2hex(aa1));
 	fprintf(stderr, "%12s = 0x%s\n", a2, BN_bn2hex(aa2));
 	test_die();
 }
 #endif
 
-void
-assert_string(const char *file, int line, const char *a1, const char *a2,
-    const char *aa1, const char *aa2, enum test_predicate pred)
+शून्य
+assert_string(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    ध्रुव वर्ण *aa1, ध्रुव वर्ण *aa2, गणना test_predicate pred)
 {
-	int r;
+	पूर्णाङ्क r;
 
 	/* Verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, पङ्क्तिः, a1, "NULL", aa1, रिक्त, TEST_NE);
+	assert_ptr(file, पङ्क्तिः, a2, "NULL", aa2, रिक्त, TEST_NE);
 
 	r = strcmp(aa1, aa2);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "STRING", pred);
 	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1, strlen(aa1));
 	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2, strlen(aa2));
 	test_die();
 }
 
-void
-assert_mem(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, size_t l, enum test_predicate pred)
+शून्य
+assert_mem(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    ध्रुव शून्य *aa1, ध्रुव शून्य *aa2, size_t l, गणना test_predicate pred)
 {
-	int r;
-	char *aa1_tohex = NULL;
-	char *aa2_tohex = NULL;
+	पूर्णाङ्क r;
+	वर्ण *aa1_tohex = रिक्त;
+	वर्ण *aa2_tohex = रिक्त;
 
-	if (l == 0)
-		return;
+	जइ (l == 0)
+		प्रत्यागम;
 	/* If length is >0, then verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, पङ्क्तिः, a1, "NULL", aa1, रिक्त, TEST_NE);
+	assert_ptr(file, पङ्क्तिः, a2, "NULL", aa2, रिक्त, TEST_NE);
 
 	r = memcmp(aa1, aa2, l);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "STRING", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 256));
 	aa2_tohex = tohex(aa2, MINIMUM(l, 256));
 	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1_tohex, l);
 	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2_tohex, l);
-	free(aa1_tohex);
-	free(aa2_tohex);
+	मुक्त(aa1_tohex);
+	मुक्त(aa2_tohex);
 	test_die();
 }
 
-static int
-memvalcmp(const uint8_t *s, u_char v, size_t l, size_t *where)
+स्थिर पूर्णाङ्क
+memvalcmp(ध्रुव uint8_t *s, u_char v, size_t l, size_t *where)
 {
 	size_t i;
 
-	for (i = 0; i < l; i++) {
-		if (s[i] != v) {
+	प्रति (i = 0; i < l; i++) {
+		जइ (s[i] != v) {
 			*where = i;
-			return 1;
+			प्रत्यागम 1;
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }
 
-void
-assert_mem_filled(const char *file, int line, const char *a1,
-    const void *aa1, u_char v, size_t l, enum test_predicate pred)
+शून्य
+assert_mem_filled(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1,
+    ध्रुव शून्य *aa1, u_char v, size_t l, गणना test_predicate pred)
 {
 	size_t where = -1;
-	int r;
-	char tmp[64];
-	char *aa1_tohex = NULL;
+	पूर्णाङ्क r;
+	वर्ण tmp[64];
+	वर्ण *aa1_tohex = रिक्त;
 
-	if (l == 0)
-		return;
+	जइ (l == 0)
+		प्रत्यागम;
 	/* If length is >0, then verify the pointer is not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
+	assert_ptr(file, पङ्क्तिः, a1, "NULL", aa1, रिक्त, TEST_NE);
 
 	r = memvalcmp(aa1, v, l, &where);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, NULL, "MEM_ZERO", pred);
+	test_header(file, पङ्क्तिः, a1, रिक्त, "MEM_ZERO", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 20));
 	fprintf(stderr, "%20s = %s%s (len %zu)\n", a1,
 	    aa1_tohex, l > 20 ? "..." : "", l);
-	free(aa1_tohex);
-	snprintf(tmp, sizeof(tmp), "(%s)[%zu]", a1, where);
+	मुक्त(aa1_tohex);
+	snprintf(tmp, परिमाण(tmp), "(%s)[%zu]", a1, where);
 	fprintf(stderr, "%20s = 0x%02x (expected 0x%02x)\n", tmp,
 	    ((u_char *)aa1)[where], v);
 	test_die();
 }
 
-void
-assert_int(const char *file, int line, const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred)
+शून्य
+assert_int(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    पूर्णाङ्क aa1, पूर्णाङ्क aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "INT", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "INT", pred);
 	fprintf(stderr, "%12s = %d\n", a1, aa1);
 	fprintf(stderr, "%12s = %d\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_size_t(const char *file, int line, const char *a1, const char *a2,
-    size_t aa1, size_t aa2, enum test_predicate pred)
+शून्य
+assert_size_t(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    size_t aa1, size_t aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "SIZE_T", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "SIZE_T", pred);
 	fprintf(stderr, "%12s = %zu\n", a1, aa1);
 	fprintf(stderr, "%12s = %zu\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_u_int(const char *file, int line, const char *a1, const char *a2,
-    u_int aa1, u_int aa2, enum test_predicate pred)
+शून्य
+assert_u_int(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    u_int aa1, u_int aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U_INT", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "U_INT", pred);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long(const char *file, int line, const char *a1, const char *a2,
-    long aa1, long aa2, enum test_predicate pred)
+शून्य
+assert_long(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    long aa1, long aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "LONG", pred);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_long_long(const char *file, int line, const char *a1, const char *a2,
-    long long aa1, long long aa2, enum test_predicate pred)
+शून्य
+assert_long_long(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    long long aa1, long long aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG LONG", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "LONG LONG", pred);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_char(const char *file, int line, const char *a1, const char *a2,
-    char aa1, char aa2, enum test_predicate pred)
+शून्य
+assert_char(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    वर्ण aa1, वर्ण aa2, गणना test_predicate pred)
 {
-	char buf[8];
+	वर्ण buf[8];
 
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "CHAR", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "CHAR", pred);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
 	    vis(buf, aa1, VIS_SAFE|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa1);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
@@ -558,45 +558,45 @@ assert_char(const char *file, int line, const char *a1, const char *a2,
 	test_die();
 }
 
-void
-assert_u8(const char *file, int line, const char *a1, const char *a2,
-    uint8_t aa1, uint8_t aa2, enum test_predicate pred)
+शून्य
+assert_u8(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    uint8_t aa1, uint8_t aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U8", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "U8", pred);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u16(const char *file, int line, const char *a1, const char *a2,
-    uint16_t aa1, uint16_t aa2, enum test_predicate pred)
+शून्य
+assert_u16(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    uint16_t aa1, uint16_t aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U16", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "U16", pred);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u32(const char *file, int line, const char *a1, const char *a2,
-    uint32_t aa1, uint32_t aa2, enum test_predicate pred)
+शून्य
+assert_u32(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    uint32_t aa1, uint32_t aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U32", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "U32", pred);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
-void
-assert_u64(const char *file, int line, const char *a1, const char *a2,
-    uint64_t aa1, uint64_t aa2, enum test_predicate pred)
+शून्य
+assert_u64(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    uint64_t aa1, uint64_t aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U64", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "U64", pred);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a1,
 	    (unsigned long long)aa1, (unsigned long long)aa1);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a2,
@@ -604,197 +604,197 @@ assert_u64(const char *file, int line, const char *a1, const char *a2,
 	test_die();
 }
 
-void
-assert_double(const char *file, int line, const char *a1, const char *a2,
-    double aa1, double aa2, enum test_predicate pred)
+शून्य
+assert_double(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    द्विगुण aa1, द्विगुण aa2, गणना test_predicate pred)
 {
-	const double epsilon = 0.000000001;
+	ध्रुव द्विगुण epsilon = 0.000000001;
 
-	switch (pred) {
-	case TEST_EQ:
-		if (fabs(aa1 - aa2) < epsilon)
-			return;
-		break;
-	case TEST_NE:
-		if (fabs(aa1 - aa2) >= epsilon)
-			return;
-		break;
-	case TEST_LT:
-		if (aa1 < aa2)
-			return;
-		break;
-	case TEST_LE:
-		if (aa1 <= aa2)
-			return;
-		break;
-	case TEST_GT:
-		if (aa1 > aa2)
-			return;
-		break;
-	case TEST_GE:
-		if (aa1 >= aa2)
-			return;
-		break;
-	default:
+	विकल्प (pred) {
+	पक्ष TEST_EQ:
+		जइ (fabs(aa1 - aa2) < epsilon)
+			प्रत्यागम;
+		भङ्ग;
+	पक्ष TEST_NE:
+		जइ (fabs(aa1 - aa2) >= epsilon)
+			प्रत्यागम;
+		भङ्ग;
+	पक्ष TEST_LT:
+		जइ (aa1 < aa2)
+			प्रत्यागम;
+		भङ्ग;
+	पक्ष TEST_LE:
+		जइ (aa1 <= aa2)
+			प्रत्यागम;
+		भङ्ग;
+	पक्ष TEST_GT:
+		जइ (aa1 > aa2)
+			प्रत्यागम;
+		भङ्ग;
+	पक्ष TEST_GE:
+		जइ (aa1 >= aa2)
+			प्रत्यागम;
+		भङ्ग;
+	स्वभाव:
 		abort();
 	}
 
-	test_header(file, line, a1, a2, "DOUBLE", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "DOUBLE", pred);
 	fprintf(stderr, "%12s = %f\n", a1, aa1);
 	fprintf(stderr, "%12s = %f\n", a2, aa2);
 	test_die();
 }
 
-void
-assert_ptr(const char *file, int line, const char *a1, const char *a2,
-    const void *aa1, const void *aa2, enum test_predicate pred)
+शून्य
+assert_ptr(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *a1, ध्रुव वर्ण *a2,
+    ध्रुव शून्य *aa1, ध्रुव शून्य *aa2, गणना test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "PTR", pred);
+	test_header(file, पङ्क्तिः, a1, a2, "PTR", pred);
 	fprintf(stderr, "%12s = %p\n", a1, aa1);
 	fprintf(stderr, "%12s = %p\n", a2, aa2);
 	test_die();
 }
 
-static double
-tstod(const struct timespec *ts)
+स्थिर द्विगुण
+tstod(ध्रुव संरचना timespec *ts)
 {
-	return (double)ts->tv_sec + ((double)ts->tv_nsec / 1000000000.0);
+	प्रत्यागम (द्विगुण)ts->tv_sec + ((द्विगुण)ts->tv_nsec / 1000000000.0);
 }
 
-void
-hex2bin(uint8_t *bin, const char *hex, size_t len)
+शून्य
+hex2bin(uint8_t *bin, ध्रुव वर्ण *hex, size_t len)
 {
 	size_t i;
-	unsigned int v;
+	unsigned पूर्णाङ्क v;
 
 	/* Don't use %hhx since it's C99 and older platforms don't have it. */
-	for (i = 0; i < len; i++) {
+	प्रति (i = 0; i < len; i++) {
 		ASSERT_INT_EQ(sscanf(hex + i * 2, "%02x", &v), 1);
 		ASSERT_U_INT_LE(v, 256);
 		bin[i] = (uint8_t)v;
 	}
 }
 
-void
-bench_start(const char *file, int line, const char *name)
+शून्य
+bench_start(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *name)
 {
-	char *cp;
+	वर्ण *cp;
 
-	if (bench_name != NULL) {
+	जइ (bench_name != रिक्त) {
 		fprintf(stderr, "\n%s:%d internal error: BENCH_START() called "
 		    "while previous benchmark \"%s\" incomplete",
-		    file, line, bench_name);
+		    file, पङ्क्तिः, bench_name);
 		abort();
 	}
 	cp = xstrdup(name);
 	lowercase(cp);
-	bench_skip = benchmark_pattern != NULL &&
+	bench_skip = benchmark_pattern != रिक्त &&
 	    match_pattern_list(cp, benchmark_pattern, 1) != 1;
-	free(cp);
+	मुक्त(cp);
 
 	bench_name = name;
 	bench_nruns = 0;
-	if (bench_skip)
-		return;
-	free(bench_samples);
+	जइ (bench_skip)
+		प्रत्यागम;
+	मुक्त(bench_samples);
 	bench_nalloc = BENCH_SAMPLES_ALLOC;
-	bench_samples = xcalloc(sizeof(*bench_samples), bench_nalloc);
+	bench_samples = xcalloc(परिमाण(*bench_samples), bench_nalloc);
 	bench_accum_secs = 0;
 }
 
-int
-bench_done(void)
+पूर्णाङ्क
+bench_done(शून्य)
 {
-	return bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
+	प्रत्यागम bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
 	    (slow ? BENCH_SLOW_DEADLINE : BENCH_NORMAL_DEADLINE));
 }
 
-void
-bench_case_start(const char *file, int line)
+शून्य
+bench_case_start(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः)
 {
 	clock_gettime(CLOCK_REALTIME, &bench_start_time);
 }
 
-void
-bench_case_finish(const char *file, int line)
+शून्य
+bench_case_finish(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः)
 {
-	struct timespec ts;
+	संरचना timespec ts;
 
 	clock_gettime(CLOCK_REALTIME, &bench_finish_time);
 	timespecsub(&bench_finish_time, &bench_start_time, &ts);
-	if (bench_nruns >= bench_nalloc) {
-		if (bench_nalloc >= INT_MAX / 2) {
+	जइ (bench_nruns >= bench_nalloc) {
+		जइ (bench_nalloc >= INT_MAX / 2) {
 			fprintf(stderr, "\n%s:%d benchmark %s too many samples",
 			    __FILE__, __LINE__, bench_name);
 			abort();
 		}
 		bench_samples = xrecallocarray(bench_samples, bench_nalloc,
-		    bench_nalloc * 2, sizeof(*bench_samples));
+		    bench_nalloc * 2, परिमाण(*bench_samples));
 		bench_nalloc *= 2;
 	}
 	bench_samples[bench_nruns++] = ts;
 	bench_accum_secs += tstod(&ts);
 }
 
-static int
-tscmp(const void *aa, const void *bb)
+स्थिर पूर्णाङ्क
+tscmp(ध्रुव शून्य *aa, ध्रुव शून्य *bb)
 {
-	const struct timespec *a = (const struct timespec *)aa;
-	const struct timespec *b = (const struct timespec *)bb;
+	ध्रुव संरचना timespec *a = (ध्रुव संरचना timespec *)aa;
+	ध्रुव संरचना timespec *b = (ध्रुव संरचना timespec *)bb;
 
-	if (timespeccmp(a, b, ==))
-		return 0;
-	return timespeccmp(a, b, <) ? -1 : 1;
+	जइ (timespeccmp(a, b, ==))
+		प्रत्यागम 0;
+	प्रत्यागम timespeccmp(a, b, <) ? -1 : 1;
 }
 
-void
-bench_finish(const char *file, int line, const char *unit)
+शून्य
+bench_finish(ध्रुव वर्ण *file, पूर्णाङ्क पङ्क्तिः, ध्रुव वर्ण *unit)
 {
-	double std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
-	int i;
+	द्विगुण std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
+	पूर्णाङ्क i;
 
-	if (bench_skip)
-		goto done;
+	जइ (bench_skip)
+		गच्छ done;
 
-	if (bench_nruns < 1) {
-		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, line,
+	जइ (bench_nruns < 1) {
+		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, पङ्क्तिः,
 		    bench_name);
 		abort();
 	}
 	/* median */
-	qsort(bench_samples, bench_nruns, sizeof(*bench_samples), tscmp);
+	qsort(bench_samples, bench_nruns, परिमाण(*bench_samples), tscmp);
 	i = bench_nruns / 2;
 	med_spr = tstod(&bench_samples[i]);
-	if (bench_nruns > 1 && bench_nruns & 1)
+	जइ (bench_nruns > 1 && bench_nruns & 1)
 		med_spr = (med_spr + tstod(&bench_samples[i - 1])) / 2.0;
 	med_rps = (med_spr == 0.0) ? INFINITY : 1.0/med_spr;
 	/* mean */
-	mean_spr = bench_accum_secs / (double)bench_nruns;
+	mean_spr = bench_accum_secs / (द्विगुण)bench_nruns;
 	mean_rps = (mean_spr == 0.0) ? INFINITY : 1.0/mean_spr;
 	/* std. dev */
 	std_dev = 0;
-	for (i = 0; i < bench_nruns; i++) {
+	प्रति (i = 0; i < bench_nruns; i++) {
 		std_dev = tstod(&bench_samples[i]) - mean_spr;
 		std_dev *= std_dev;
 	}
-	std_dev /= (double)bench_nruns;
+	std_dev /= (द्विगुण)bench_nruns;
 	std_dev = sqrt(std_dev);
-	if (benchmark_detail_statistics) {
+	जइ (benchmark_detail_statistics) {
 		printf("%s: %d runs in %0.3fs, %0.03f/%0.03f ms/%s "
 		    "(mean/median), std.dev %0.03f ms, "
 		    "%0.2f/%0.2f %s/s (mean/median)\n",
 		    bench_name, bench_nruns, bench_accum_secs,
 		    mean_spr * 1000, med_spr * 1000, unit, std_dev * 1000,
 		    mean_rps, med_rps, unit);
-	} else {
+	} अण्णहा {
 		printf("%-*s %0.2f %s/s\n", BENCH_COLUMN_WIDTH,
 		    bench_name, med_rps, unit);
 	}
  done:
-	bench_name = NULL;
+	bench_name = रिक्त;
 	bench_nruns = 0;
-	free(bench_samples);
-	bench_samples = NULL;
+	मुक्त(bench_samples);
+	bench_samples = रिक्त;
 	bench_skip = 0;
 }

@@ -15,65 +15,65 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <sys/stat.h>
 
-#include <dirent.h>
-#include <glob.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
+#अन्तर्भाव <dirent.h>
+#अन्तर्भाव <glob.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
+#अन्तर्भाव <stdarg.h>
 
-#include "xmalloc.h"
-#include "sftp.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
+#अन्तर्भाव "xmalloc.h"
+#अन्तर्भाव "sftp.h"
+#अन्तर्भाव "sftp-common.h"
+#अन्तर्भाव "sftp-client.h"
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *);
+पूर्णाङ्क sftp_glob(संरचना sftp_conn *, ध्रुव वर्ण *, पूर्णाङ्क,
+    पूर्णाङ्क (*)(ध्रुव वर्ण *, पूर्णाङ्क), glob_t *);
 
-struct SFTP_OPENDIR {
+संरचना SFTP_OPENDIR {
 	SFTP_DIRENT **dir;
-	int offset;
+	पूर्णाङ्क offset;
 };
 
-static struct {
-	struct sftp_conn *conn;
+स्थिर संरचना {
+	संरचना sftp_conn *conn;
 } cur;
 
-static void *
-fudge_opendir(const char *path)
+स्थिर शून्य *
+fudge_opendir(ध्रुव वर्ण *path)
 {
-	struct SFTP_OPENDIR *r;
+	संरचना SFTP_OPENDIR *r;
 
-	r = xcalloc(1, sizeof(*r));
+	r = xcalloc(1, परिमाण(*r));
 
-	if (sftp_readdir(cur.conn, path, &r->dir)) {
-		free(r);
-		return(NULL);
+	जइ (sftp_readdir(cur.conn, path, &r->dir)) {
+		मुक्त(r);
+		प्रत्यागम(रिक्त);
 	}
 
 	r->offset = 0;
 
-	return((void *)r);
+	प्रत्यागम((शून्य *)r);
 }
 
-static struct dirent *
-fudge_readdir(struct SFTP_OPENDIR *od)
+स्थिर संरचना dirent *
+fudge_readdir(संरचना SFTP_OPENDIR *od)
 {
 	/* Solaris needs sizeof(dirent) + path length (see below) */
-	static char buf[sizeof(struct dirent) + MAXPATHLEN];
-	struct dirent *ret = (struct dirent *)buf;
+	स्थिर वर्ण buf[परिमाण(संरचना dirent) + MAXPATHLEN];
+	संरचना dirent *ret = (संरचना dirent *)buf;
 #ifdef __GNU_LIBRARY__
-	static int inum = 1;
+	स्थिर पूर्णाङ्क inum = 1;
 #endif /* __GNU_LIBRARY__ */
 
-	if (od->dir[od->offset] == NULL)
-		return(NULL);
+	जइ (od->dir[od->offset] == रिक्त)
+		प्रत्यागम(रिक्त);
 
-	memset(buf, 0, sizeof(buf));
+	memset(buf, 0, परिमाण(buf));
 
 	/*
 	 * Solaris defines dirent->d_name as a one byte array and expects
@@ -81,9 +81,9 @@ fudge_readdir(struct SFTP_OPENDIR *od)
 	 */
 #ifdef BROKEN_ONE_BYTE_DIRENT_D_NAME
 	strlcpy(ret->d_name, od->dir[od->offset++]->filename, MAXPATHLEN);
-#else
+#अण्णहा
 	strlcpy(ret->d_name, od->dir[od->offset++]->filename,
-	    sizeof(ret->d_name));
+	    परिमाण(ret->d_name));
 #endif
 #ifdef __GNU_LIBRARY__
 	/*
@@ -92,66 +92,66 @@ fudge_readdir(struct SFTP_OPENDIR *od)
 	 * source... Fake an inode number to appease it.
 	 */
 	ret->d_ino = inum++;
-	if (!inum)
+	जइ (!inum)
 		inum = 1;
 #endif /* __GNU_LIBRARY__ */
 
-	return(ret);
+	प्रत्यागम(ret);
 }
 
-static void
-fudge_closedir(struct SFTP_OPENDIR *od)
+स्थिर शून्य
+fudge_closedir(संरचना SFTP_OPENDIR *od)
 {
 	sftp_free_dirents(od->dir);
-	free(od);
+	मुक्त(od);
 }
 
-static int
-fudge_lstat(const char *path, struct stat *st)
+स्थिर पूर्णाङ्क
+fudge_lstat(ध्रुव वर्ण *path, संरचना stat *st)
 {
 	Attrib a;
 
-	if (sftp_lstat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	जइ (sftp_lstat(cur.conn, path, 1, &a) != 0)
+		प्रत्यागम -1;
 
 	attrib_to_stat(&a, st);
 
-	return 0;
+	प्रत्यागम 0;
 }
 
-static int
-fudge_stat(const char *path, struct stat *st)
+स्थिर पूर्णाङ्क
+fudge_stat(ध्रुव वर्ण *path, संरचना stat *st)
 {
 	Attrib a;
 
-	if (sftp_stat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	जइ (sftp_stat(cur.conn, path, 1, &a) != 0)
+		प्रत्यागम -1;
 
 	attrib_to_stat(&a, st);
 
-	return(0);
+	प्रत्यागम(0);
 }
 
-int
-sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
-    int (*errfunc)(const char *, int), glob_t *pglob)
+पूर्णाङ्क
+sftp_glob(संरचना sftp_conn *conn, ध्रुव वर्ण *pattern, पूर्णाङ्क flags,
+    पूर्णाङ्क (*errfunc)(ध्रुव वर्ण *, पूर्णाङ्क), glob_t *pglob)
 {
-	int r;
+	पूर्णाङ्क r;
 	size_t l;
-	char *s;
-	struct stat sb;
+	वर्ण *s;
+	संरचना stat sb;
 
 	pglob->gl_opendir = fudge_opendir;
-	pglob->gl_readdir = (struct dirent *(*)(void *))fudge_readdir;
-	pglob->gl_closedir = (void (*)(void *))fudge_closedir;
+	pglob->gl_readdir = (संरचना dirent *(*)(शून्य *))fudge_readdir;
+	pglob->gl_closedir = (शून्य (*)(शून्य *))fudge_closedir;
 	pglob->gl_lstat = fudge_lstat;
 	pglob->gl_stat = fudge_stat;
 
-	memset(&cur, 0, sizeof(cur));
+	memset(&cur, 0, परिमाण(cur));
 	cur.conn = conn;
 
-	if ((r = glob(pattern, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
-		return r;
+	जइ ((r = glob(pattern, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
+		प्रत्यागम r;
 	/*
 	 * When both GLOB_NOCHECK and GLOB_MARK are active, a single gl_pathv
 	 * entry has been returned and that entry has not already been marked,
@@ -163,17 +163,17 @@ sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
 	 *
 	 * XXX doesn't try to handle gl_offs.
 	 */
-	if ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
+	जइ ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
 	    pglob->gl_matchc == 0 && pglob->gl_offs == 0 &&
-	    pglob->gl_pathc == 1 && (s = pglob->gl_pathv[0]) != NULL &&
+	    pglob->gl_pathc == 1 && (s = pglob->gl_pathv[0]) != रिक्त &&
 	    (l = strlen(s)) > 0 && s[l-1] != '/') {
-		if (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+		जइ (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
 			/* NOCHECK on a directory; annotate */
-			if ((s = realloc(s, l + 2)) != NULL) {
+			जइ ((s = realloc(s, l + 2)) != रिक्त) {
 				memcpy(s + l, "/", 2);
 				pglob->gl_pathv[0] = s;
 			}
 		}
 	}
-	return 0;
+	प्रत्यागम 0;
 }

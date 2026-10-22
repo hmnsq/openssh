@@ -24,68 +24,68 @@
  */
 
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
+#अन्तर्भाव <sys/mman.h>
 #endif
 
-#include <signal.h>
+#अन्तर्भाव <signal.h>
 
 /* OpenSSH isn't multithreaded */
 #define _ARC4_LOCK()
 #define _ARC4_UNLOCK()
 #define _ARC4_ATFORK(f)
 
-static inline void
-_getentropy_fail(void)
+स्थिर अन्तःस्थ शून्य
+_getentropy_fail(शून्य)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+स्थिर चञ्चल sig_atomic_t _rs_forked;
 
-static inline void
-_rs_forkhandler(void)
+स्थिर अन्तःस्थ शून्य
+_rs_forkhandler(शून्य)
 {
 	_rs_forked = 1;
 }
 
-static inline void
-_rs_forkdetect(void)
+स्थिर अन्तःस्थ शून्य
+_rs_forkdetect(शून्य)
 {
-	static pid_t _rs_pid = 0;
+	स्थिर pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	जइ (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		जइ (rs)
+			memset(rs, 0, परिमाण(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+स्थिर अन्तःस्थ पूर्णाङ्क
+_rs_allocate(संरचना _rs **rsp, संरचना _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#जइ defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	जइ ((*rsp = mmap(रिक्त, परिमाण(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		प्रत्यागम (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	जइ ((*rsxp = mmap(रिक्त, परिमाण(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
-		*rsp = NULL;
-		return (-1);
+		munmap(*rsp, परिमाण(**rsp));
+		*rsp = रिक्त;
+		प्रत्यागम (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
-		free(*rsp);
-		*rsp = NULL;
-		return (-1);
+#अण्णहा
+	जइ ((*rsp = calloc(1, परिमाण(**rsp))) == रिक्त)
+		प्रत्यागम (-1);
+	जइ ((*rsxp = calloc(1, परिमाण(**rsxp))) == रिक्त) {
+		मुक्त(*rsp);
+		*rsp = रिक्त;
+		प्रत्यागम (-1);
 	}
 #endif /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	प्रत्यागम (0);
 }

@@ -34,48 +34,48 @@
  * Otherwise, don't do locking; just pretend success.
  */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 
 #ifndef HAVE_FLOCK
-#include <errno.h>
-#include <fcntl.h>
+#अन्तर्भाव <errno.h>
+#अन्तर्भाव <fcntl.h>
 
-int
-flock(int fd, int op)
+पूर्णाङ्क
+flock(पूर्णाङ्क fd, पूर्णाङ्क op)
 {
-	int rc = 0;
+	पूर्णाङ्क rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
-	struct flock fl = {0};
+#जइ defined(F_SETLK) && defined(F_SETLKW)
+	संरचना flock fl = {0};
 
-	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
-	case LOCK_EX:
+	विकल्प (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
+	पक्ष LOCK_EX:
 		fl.l_type = F_WRLCK;
-		break;
+		भङ्ग;
 
-	case LOCK_SH:
+	पक्ष LOCK_SH:
 		fl.l_type = F_RDLCK;
-		break;
+		भङ्ग;
 
-	case LOCK_UN:
+	पक्ष LOCK_UN:
 		fl.l_type = F_UNLCK;
-		break;
+		भङ्ग;
 
-	default:
+	स्वभाव:
 		errno = EINVAL;
-		return -1;
+		प्रत्यागम -1;
 	}
 
 	fl.l_whence = SEEK_SET;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
+	जइ (rc && (errno == EAGAIN))
 		errno = EWOULDBLOCK;
-#else
+#अण्णहा
 	rc = -1;
 	errno = ENOSYS;
 #endif
 
-	return rc;
+	प्रत्यागम rc;
 }
 #endif

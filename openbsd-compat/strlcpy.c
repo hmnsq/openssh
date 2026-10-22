@@ -18,11 +18,11 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strlcpy.c */
 
-#include "includes.h"
+#अन्तर्भाव "includes.h"
 #ifndef HAVE_STRLCPY
 
-#include <sys/types.h>
-#include <string.h>
+#अन्तर्भाव <sys/types.h>
+#अन्तर्भाव <string.h>
 
 /*
  * Copy src to string dst of size siz.  At most siz-1 characters
@@ -30,29 +30,29 @@
  * Returns strlen(src); if retval >= siz, truncation occurred.
  */
 size_t
-strlcpy(char *dst, const char *src, size_t siz)
+strlcpy(वर्ण *dst, ध्रुव वर्ण *src, size_t siz)
 {
-	char *d = dst;
-	const char *s = src;
+	वर्ण *d = dst;
+	ध्रुव वर्ण *s = src;
 	size_t n = siz;
 
 	/* Copy as many bytes as will fit */
-	if (n != 0) {
-		while (--n != 0) {
-			if ((*d++ = *s++) == '\0')
-				break;
+	जइ (n != 0) {
+		जाव (--n != 0) {
+			जइ ((*d++ = *s++) == '\0')
+				भङ्ग;
 		}
 	}
 
 	/* Not enough room in dst, add NUL and traverse rest of src */
-	if (n == 0) {
-		if (siz != 0)
+	जइ (n == 0) {
+		जइ (siz != 0)
 			*d = '\0';		/* NUL-terminate dst */
-		while (*s++)
+		जाव (*s++)
 			;
 	}
 
-	return(s - src - 1);	/* count does not include NUL */
+	प्रत्यागम(s - src - 1);	/* count does not include NUL */
 }
 
 #endif /* !HAVE_STRLCPY */
