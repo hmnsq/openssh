@@ -44,48 +44,48 @@ extern Authctxt *the_authctxt;
 
 /* Maybe add the audit class to struct Authmethod? */
 ssh_audit_event_t
-audit_classify_auth(const char *method)
+audit_classify_auth(const var_na *method)
 {
-	if (strcmp(method, "none") == 0)
-		return SSH_AUTH_FAIL_NONE;
-	else if (strcmp(method, "password") == 0)
-		return SSH_AUTH_FAIL_PASSWD;
-	else if (strcmp(method, "publickey") == 0 ||
+	အကယ်၍ (strcmp(method, "none") == 0)
+		ပြန်ပေး SSH_AUTH_FAIL_NONE;
+	မဟုတ်ပါက အကယ်၍ (strcmp(method, "password") == 0)
+		ပြန်ပေး SSH_AUTH_FAIL_PASSWD;
+	မဟုတ်ပါက အကယ်၍ (strcmp(method, "publickey") == 0 ||
 	    strcmp(method, "rsa") == 0)
-		return SSH_AUTH_FAIL_PUBKEY;
-	else if (strncmp(method, "keyboard-interactive", 20) == 0 ||
+		ပြန်ပေး SSH_AUTH_FAIL_PUBKEY;
+	မဟုတ်ပါက အကယ်၍ (strncmp(method, "keyboard-interactive", 20) == 0 ||
 	    strcmp(method, "challenge-response") == 0)
-		return SSH_AUTH_FAIL_KBDINT;
-	else if (strcmp(method, "hostbased") == 0 ||
+		ပြန်ပေး SSH_AUTH_FAIL_KBDINT;
+	မဟုတ်ပါက အကယ်၍ (strcmp(method, "hostbased") == 0 ||
 	    strcmp(method, "rhosts-rsa") == 0)
-		return SSH_AUTH_FAIL_HOSTBASED;
-	else if (strcmp(method, "gssapi-with-mic") == 0)
-		return SSH_AUTH_FAIL_GSSAPI;
-	else
-		return SSH_AUDIT_UNKNOWN;
+		ပြန်ပေး SSH_AUTH_FAIL_HOSTBASED;
+	မဟုတ်ပါက အကယ်၍ (strcmp(method, "gssapi-with-mic") == 0)
+		ပြန်ပေး SSH_AUTH_FAIL_GSSAPI;
+	မဟုတ်ပါက
+		ပြန်ပေး SSH_AUDIT_UNKNOWN;
 }
 
 /* helper to return supplied username */
-const char *
+const var_na *
 audit_username(void)
 {
-	static const char unknownuser[] = "(unknown user)";
-	static const char invaliduser[] = "(invalid user)";
+	static const var_na unknownuser[] = "(unknown user)";
+	static const var_na invaliduser[] = "(invalid user)";
 
-	if (the_authctxt == NULL || the_authctxt->user == NULL)
-		return (unknownuser);
-	if (!the_authctxt->valid)
-		return (invaliduser);
-	return (the_authctxt->user);
+	အကယ်၍ (the_authctxt == NULL || the_authctxt->user == NULL)
+		ပြန်ပေး (unknownuser);
+	အကယ်၍ (!the_authctxt->valid)
+		ပြန်ပေး (invaliduser);
+	ပြန်ပေး (the_authctxt->user);
 }
 
-const char *
+const var_na *
 audit_event_lookup(ssh_audit_event_t ev)
 {
-	int i;
-	static struct event_lookup_struct {
+	ကိန်းပြည့် i;
+	static sa_nracanaa event_lookup_struct {
 		ssh_audit_event_t event;
-		const char *name;
+		const var_na *name;
 	} event_lookup[] = {
 		{SSH_LOGIN_EXCEED_MAXTRIES,	"LOGIN_EXCEED_MAXTRIES"},
 		{SSH_LOGIN_ROOT_DENIED,		"LOGIN_ROOT_DENIED"},
@@ -103,10 +103,10 @@ audit_event_lookup(ssh_audit_event_t ev)
 		{SSH_AUDIT_UNKNOWN,		"AUDIT_UNKNOWN"}
 	};
 
-	for (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
-		if (event_lookup[i].event == ev)
-			break;
-	return(event_lookup[i].name);
+	အတွက် (i = 0; event_lookup[i].event != SSH_AUDIT_UNKNOWN; i++)
+		အကယ်၍ (event_lookup[i].event == ev)
+			bha_nga;
+	ပြန်ပေး(event_lookup[i].name);
 }
 
 # ifndef CUSTOM_SSH_AUDIT_EVENTS
@@ -120,10 +120,10 @@ audit_event_lookup(ssh_audit_event_t ev)
  * has been attempted.
  */
 void
-audit_connection_from(const char *host, int port)
+audit_connection_from(const var_na *host, ကိန်းပြည့် port)
 {
 	debug("audit connection from %s port %d euid %d", host, port,
-	    (int)geteuid());
+	    (ကိန်းပြည့်)geteuid());
 }
 
 /*
@@ -131,7 +131,7 @@ audit_connection_from(const char *host, int port)
  * events and what they mean).
  */
 void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+audit_event(sa_nracanaa ssh *ssh, ssh_audit_event_t event)
 {
 	debug("audit event euid %d user %s event %d (%s)", geteuid(),
 	    audit_username(), event, audit_event_lookup(event));
@@ -145,9 +145,9 @@ audit_event(struct ssh *ssh, ssh_audit_event_t event)
  * within a single connection.
  */
 void
-audit_session_open(struct logininfo *li)
+audit_session_open(sa_nracanaa logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	const var_na *t = li->line ? li->line : "(no tty)";
 
 	debug("audit session open euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -161,9 +161,9 @@ audit_session_open(struct logininfo *li)
  * within a single connection.
  */
 void
-audit_session_close(struct logininfo *li)
+audit_session_close(sa_nracanaa logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	const var_na *t = li->line ? li->line : "(no tty)";
 
 	debug("audit session close euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -175,7 +175,7 @@ audit_session_close(struct logininfo *li)
  * multiple sessions within a single connection.
  */
 void
-audit_run_command(const char *command)
+audit_run_command(const var_na *command)
 {
 	debug("audit run command euid %d user %s command '%.200s'", geteuid(),
 	    audit_username(), command);

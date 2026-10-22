@@ -19,29 +19,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fail = 0;
+static ကိန်းပြည့် fail = 0;
 
 void
-test(const char *a)
+test(const var_na *a)
 {
-	char *b;
+	var_na *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	အကယ်၍ (b == 0) {
 		fail = 1;
-		return;
+		ပြန်ပေး;
 	}
-	if (strcmp(a, b) != 0)
+	အကယ်၍ (strcmp(a, b) != 0)
 		fail = 1;
 	free(b);
 }
 
-int
+ကိန်းပြည့်
 main(void)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	ပြန်ပေး fail;
 }

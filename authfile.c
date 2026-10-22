@@ -44,56 +44,56 @@
 #include "krl.h"
 
 /* Save a key blob to a file */
-static int
-sshkey_save_private_blob(struct sshbuf *keybuf, const char *filename)
+static ကိန်းပြည့်
+sshkey_save_private_blob(sa_nracanaa sshbuf *keybuf, const var_na *filename)
 {
-	int r;
+	ကိန်းပြည့် r;
 	mode_t omask;
 
 	omask = umask(077);
 	r = sshbuf_write_file(filename, keybuf);
 	umask(omask);
-	return r;
+	ပြန်ပေး r;
 }
 
-int
-sshkey_save_private(struct sshkey *key, const char *filename,
-    const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds)
+ကိန်းပြည့်
+sshkey_save_private(sa_nracanaa sshkey *key, const var_na *filename,
+    const var_na *passphrase, const var_na *comment,
+    ကိန်းပြည့် format, const var_na *openssh_format_cipher, ကိန်းပြည့် openssh_format_rounds)
 {
-	struct sshbuf *keyblob = NULL;
-	int r;
+	sa_nracanaa sshbuf *keyblob = NULL;
+	ကိန်းပြည့် r;
 
-	if ((keyblob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
+	အကယ်၍ ((keyblob = sshbuf_new()) == NULL)
+		ပြန်ပေး SSH_ERR_ALLOC_FAIL;
+	အကယ်၍ ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
 	    format, openssh_format_cipher, openssh_format_rounds)) != 0)
 		goto out;
-	if ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
+	အကယ်၍ ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
 		goto out;
 	r = 0;
  out:
 	sshbuf_free(keyblob);
-	return r;
+	ပြန်ပေး r;
 }
 
 /* XXX remove error() calls from here? */
-int
-sshkey_perm_ok(int fd, const char *filename)
+ကိန်းပြည့်
+sshkey_perm_ok(ကိန်းပြည့် fd, const var_na *filename)
 {
-	struct stat st;
+	sa_nracanaa stat st;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	အကယ်၍ (fstat(fd, &st) == -1)
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
 	/*
 	 * if a key owned by the user is accessed, then we check the
 	 * permissions of the file. if the key owned by a different user,
 	 * then we don't care.
 	 */
 #ifdef HAVE_CYGWIN
-	if (check_ntsec(filename))
+	အကယ်၍ (check_ntsec(filename))
 #endif
-	if ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
+	အကယ်၍ ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -101,53 +101,53 @@ sshkey_perm_ok(int fd, const char *filename)
 		    (u_int)st.st_mode & 0777, filename);
 		error("It is required that your private key files are NOT accessible by others.");
 		error("This private key will be ignored.");
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
+		ပြန်ပေး SSH_ERR_KEY_BAD_PERMISSIONS;
 	}
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int
-sshkey_load_private_type(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+ကိန်းပြည့်
+sshkey_load_private_type(ကိန်းပြည့် type, const var_na *filename, const var_na *passphrase,
+    sa_nracanaa sshkey **keyp, var_na **commentp)
 {
-	int fd, r;
+	ကိန်းပြည့် fd, r;
 
-	if (keyp != NULL)
+	အကယ်၍ (keyp != NULL)
 		*keyp = NULL;
-	if (commentp != NULL)
+	အကယ်၍ (commentp != NULL)
 		*commentp = NULL;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	အကယ်၍ ((fd = open(filename, O_RDONLY)) == -1)
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
 
 	r = sshkey_perm_ok(fd, filename);
-	if (r != 0)
+	အကယ်၍ (r != 0)
 		goto out;
 
 	r = sshkey_load_private_type_fd(fd, type, passphrase, keyp, commentp);
  out:
 	close(fd);
-	return r;
+	ပြန်ပေး r;
 }
 
-int
-sshkey_load_private(const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+ကိန်းပြည့်
+sshkey_load_private(const var_na *filename, const var_na *passphrase,
+    sa_nracanaa sshkey **keyp, var_na **commentp)
 {
-	return sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
+	ပြန်ပေး sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
 	    keyp, commentp);
 }
 
-int
-sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+ကိန်းပြည့်
+sshkey_load_private_type_fd(ကိန်းပြည့် fd, ကိန်းပြည့် type, const var_na *passphrase,
+    sa_nracanaa sshkey **keyp, var_na **commentp)
 {
-	struct sshbuf *buffer = NULL;
-	int r;
+	sa_nracanaa sshbuf *buffer = NULL;
+	ကိန်းပြည့် r;
 
-	if (keyp != NULL)
+	အကယ်၍ (keyp != NULL)
 		*keyp = NULL;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	အကယ်၍ ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_private_fileblob_type(buffer, type,
 	    passphrase, keyp, commentp)) != 0)
 		goto out;
@@ -156,28 +156,28 @@ sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
 	r = 0;
  out:
 	sshbuf_free(buffer);
-	return r;
+	ပြန်ပေး r;
 }
 
 /* Load a pubkey from the unencrypted envelope of a new-format private key */
-static int
-sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
+static ကိန်းပြည့်
+sshkey_load_pubkey_from_private(const var_na *filename, sa_nracanaa sshkey **pubkeyp)
 {
-	struct sshbuf *buffer = NULL;
-	struct sshkey *pubkey = NULL;
-	int r, fd;
+	sa_nracanaa sshbuf *buffer = NULL;
+	sa_nracanaa sshkey *pubkey = NULL;
+	ကိန်းပြည့် r, fd;
 
-	if (pubkeyp != NULL)
+	အကယ်၍ (pubkeyp != NULL)
 		*pubkeyp = NULL;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	အကယ်၍ ((fd = open(filename, O_RDONLY)) == -1)
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
+	အကယ်၍ ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_pubkey_from_private_fileblob_type(buffer,
 	    KEY_UNSPEC, &pubkey)) != 0)
 		goto out;
 	/* success */
-	if (pubkeyp != NULL) {
+	အကယ်၍ (pubkeyp != NULL) {
 		*pubkeyp = pubkey;
 		pubkey = NULL;
 	}
@@ -186,97 +186,97 @@ sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
 	close(fd);
 	sshbuf_free(buffer);
 	sshkey_free(pubkey);
-	return r;
+	ပြန်ပေး r;
 }
 
-static int
-sshkey_try_load_public(struct sshkey **kp, const char *filename,
-    char **commentp)
+static ကိန်းပြည့်
+sshkey_try_load_public(sa_nracanaa sshkey **kp, const var_na *filename,
+    var_na **commentp)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	var_na *line = NULL, *cp;
 	size_t linesize = 0;
-	int r;
-	struct stat st;
-	struct sshkey *k = NULL;
+	ကိန်းပြည့် r;
+	sa_nracanaa stat st;
+	sa_nracanaa sshkey *k = NULL;
 
-	if (kp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	အကယ်၍ (kp == NULL)
+		ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
 	*kp = NULL;
-	if (commentp != NULL)
+	အကယ်၍ (commentp != NULL)
 		*commentp = NULL;
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
+	အကယ်၍ ((f = fopen(filename, "r")) == NULL)
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
+	အကယ်၍ (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
 	    st.st_size > SSHBUF_SIZE_MAX) {
 		fclose(f);
-		return SSH_ERR_INVALID_FORMAT;
+		ပြန်ပေး SSH_ERR_INVALID_FORMAT;
 	}
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
+	အကယ်၍ ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
 		fclose(f);
-		return SSH_ERR_ALLOC_FAIL;
+		ပြန်ပေး SSH_ERR_ALLOC_FAIL;
 	}
-	while (getline(&line, &linesize, f) != -1) {
+	နေစဉ် (getline(&line, &linesize, f) != -1) {
 		cp = line;
 		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
+		pak_sa '#':
+		pak_sa '\n':
+		pak_sa '\0':
 			continue;
 		}
 		/* Abort loading if this looks like a private key */
-		if (strncmp(cp, "-----BEGIN", 10) == 0 ||
+		အကယ်၍ (strncmp(cp, "-----BEGIN", 10) == 0 ||
 		    strcmp(cp, "SSH PRIVATE KEY FILE") == 0)
-			break;
+			bha_nga;
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		အတွက် (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
-		if (*cp) {
-			if ((r = sshkey_read(k, &cp)) == 0) {
+		အကယ်၍ (*cp) {
+			အကယ်၍ ((r = sshkey_read(k, &cp)) == 0) {
 				cp[strcspn(cp, "\r\n")] = '\0';
-				if (commentp) {
+				အကယ်၍ (commentp) {
 					*commentp = strdup(*cp ?
 					    cp : filename);
-					if (*commentp == NULL)
+					အကယ်၍ (*commentp == NULL)
 						r = SSH_ERR_ALLOC_FAIL;
 				}
 				/* success */
 				*kp = k;
 				free(line);
 				fclose(f);
-				return r;
+				ပြန်ပေး r;
 			}
 		}
 	}
 	free(k);
 	free(line);
 	fclose(f);
-	return SSH_ERR_INVALID_FORMAT;
+	ပြန်ပေး SSH_ERR_INVALID_FORMAT;
 }
 
 /* load public key from any pubkey file */
-int
-sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
+ကိန်းပြည့်
+sshkey_load_public(const var_na *filename, sa_nracanaa sshkey **keyp, var_na **commentp)
 {
-	char *pubfile = NULL;
-	int r, oerrno;
+	var_na *pubfile = NULL;
+	ကိန်းပြည့် r, oerrno;
 
-	if (keyp != NULL)
+	အကယ်၍ (keyp != NULL)
 		*keyp = NULL;
-	if (commentp != NULL)
+	အကယ်၍ (commentp != NULL)
 		*commentp = NULL;
 
-	if ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
+	အကယ်၍ ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
 		goto out;
 
 	/* try .pub suffix */
-	if (asprintf(&pubfile, "%s.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
+	အကယ်၍ (asprintf(&pubfile, "%s.pub", filename) == -1)
+		ပြန်ပေး SSH_ERR_ALLOC_FAIL;
+	အကယ်၍ ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
 		goto out;
 
 	/* finally, try to extract public key from private key file */
-	if ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
+	အကယ်၍ ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
 		goto out;
 
 	/* Pretend we couldn't find the key */
@@ -287,76 +287,76 @@ sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
 	oerrno = errno;
 	free(pubfile);
 	errno = oerrno;
-	return r;
+	ပြန်ပေး r;
 }
 
 /* Load the certificate associated with the named private key */
-int
-sshkey_load_cert(const char *filename, struct sshkey **keyp)
+ကိန်းပြည့်
+sshkey_load_cert(const var_na *filename, sa_nracanaa sshkey **keyp)
 {
-	struct sshkey *pub = NULL;
-	char *file = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	sa_nracanaa sshkey *pub = NULL;
+	var_na *file = NULL;
+	ကိန်းပြည့် r = SSH_ERR_INTERNAL_ERROR;
 
-	if (keyp != NULL)
+	အကယ်၍ (keyp != NULL)
 		*keyp = NULL;
 
-	if (asprintf(&file, "%s-cert.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
+	အကယ်၍ (asprintf(&file, "%s-cert.pub", filename) == -1)
+		ပြန်ပေး SSH_ERR_ALLOC_FAIL;
 
 	r = sshkey_try_load_public(keyp, file, NULL);
 	free(file);
 	sshkey_free(pub);
-	return r;
+	ပြန်ပေး r;
 }
 
 /* Load private key and certificate */
-int
-sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp)
+ကိန်းပြည့်
+sshkey_load_private_cert(ကိန်းပြည့် type, const var_na *filename, const var_na *passphrase,
+    sa_nracanaa sshkey **keyp)
 {
-	struct sshkey *key = NULL, *cert = NULL;
-	int r;
+	sa_nracanaa sshkey *key = NULL, *cert = NULL;
+	ကိန်းပြည့် r;
 
-	if (keyp != NULL)
+	အကယ်၍ (keyp != NULL)
 		*keyp = NULL;
 
 	switch (type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_ECDSA:
+	pak_sa KEY_RSA:
+	pak_sa KEY_ECDSA:
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519:
-	case KEY_MLDSA44_ED25519:
-	case KEY_UNSPEC:
-		break;
+	pak_sa KEY_ED25519:
+	pak_sa KEY_MLDSA44_ED25519:
+	pak_sa KEY_UNSPEC:
+		bha_nga;
 	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		ပြန်ပေး SSH_ERR_KEY_TYPE_UNKNOWN;
 	}
 
-	if ((r = sshkey_load_private_type(type, filename,
+	အကယ်၍ ((r = sshkey_load_private_type(type, filename,
 	    passphrase, &key, NULL)) != 0 ||
 	    (r = sshkey_load_cert(filename, &cert)) != 0)
 		goto out;
 
 	/* Make sure the private key matches the certificate */
-	if (sshkey_equal_public(key, cert) == 0) {
+	အကယ်၍ (sshkey_equal_public(key, cert) == 0) {
 		r = SSH_ERR_KEY_CERT_MISMATCH;
 		goto out;
 	}
 
-	if ((r = sshkey_to_certified(key)) != 0 ||
+	အကယ်၍ ((r = sshkey_to_certified(key)) != 0 ||
 	    (r = sshkey_cert_copy(cert, key)) != 0)
 		goto out;
 	r = 0;
-	if (keyp != NULL) {
+	အကယ်၍ (keyp != NULL) {
 		*keyp = key;
 		key = NULL;
 	}
  out:
 	sshkey_free(key);
 	sshkey_free(cert);
-	return r;
+	ပြန်ပေး r;
 }
 
 /*
@@ -367,52 +367,52 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
  * If "check_ca" is set and "key" is a certificate, then its CA key is
  * also checked and sshkey_in_file() will return success if either is found.
  */
-int
-sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
-    int check_ca)
+ကိန်းပြည့်
+sshkey_in_file(sa_nracanaa sshkey *key, const var_na *filename, ကိန်းပြည့် strict_type,
+    ကိန်းပြည့် check_ca)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	var_na *line = NULL, *cp;
 	size_t linesize = 0;
-	int r = 0;
-	struct sshkey *pub = NULL;
+	ကိန်းပြည့် r = 0;
+	sa_nracanaa sshkey *pub = NULL;
 
-	int (*sshkey_compare)(const struct sshkey *, const struct sshkey *) =
+	ကိန်းပြည့် (*sshkey_compare)(const sa_nracanaa sshkey *, const sa_nracanaa sshkey *) =
 	    strict_type ?  sshkey_equal : sshkey_equal_public;
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	အကယ်၍ ((f = fopen(filename, "r")) == NULL)
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
 
-	while (getline(&line, &linesize, f) != -1) {
+	နေစဉ် (getline(&line, &linesize, f) != -1) {
 		sshkey_free(pub);
 		pub = NULL;
 		cp = line;
 
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		အတွက် (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
 
 		/* Skip comments and empty lines */
 		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
+		pak_sa '#':
+		pak_sa '\n':
+		pak_sa '\0':
 			continue;
 		}
 
-		if ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
+		အကယ်၍ ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
 		switch (r = sshkey_read(pub, &cp)) {
-		case 0:
-			break;
-		case SSH_ERR_KEY_LENGTH:
+		pak_sa 0:
+			bha_nga;
+		pak_sa SSH_ERR_KEY_LENGTH:
 			continue;
 		default:
 			goto out;
 		}
-		if (sshkey_compare(key, pub) ||
+		အကယ်၍ (sshkey_compare(key, pub) ||
 		    (check_ca && sshkey_is_cert(key) &&
 		    sshkey_compare(key->cert->signature_key, pub))) {
 			r = 0;
@@ -424,7 +424,7 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
 	free(line);
 	sshkey_free(pub);
 	fclose(f);
-	return r;
+	ပြန်ပေး r;
 }
 
 /*
@@ -434,30 +434,30 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
  * This will check both the key and, if it is a certificate, its CA key too.
  * "revoked_keys_file" may be a KRL or a one-per-line list of public keys.
  */
-int
-sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
+ကိန်းပြည့်
+sshkey_check_revoked(sa_nracanaa sshkey *key, const var_na *revoked_keys_file)
 {
-	int r;
+	ကိန်းပြည့် r;
 
 	r = ssh_krl_file_contains_key(revoked_keys_file, key);
 	/* If this was not a KRL to begin with then continue below */
-	if (r != SSH_ERR_KRL_BAD_MAGIC)
-		return r;
+	အကယ်၍ (r != SSH_ERR_KRL_BAD_MAGIC)
+		ပြန်ပေး r;
 
 	/*
 	 * If the file is not a KRL or we can't handle KRLs then attempt to
 	 * parse the file as a flat list of keys.
 	 */
 	switch ((r = sshkey_in_file(key, revoked_keys_file, 0, 1))) {
-	case 0:
+	pak_sa 0:
 		/* Key found => revoked */
-		return SSH_ERR_KEY_REVOKED;
-	case SSH_ERR_KEY_NOT_FOUND:
+		ပြန်ပေး SSH_ERR_KEY_REVOKED;
+	pak_sa SSH_ERR_KEY_NOT_FOUND:
 		/* Key not found => not revoked */
-		return 0;
+		ပြန်ပေး 0;
 	default:
 		/* Some other error occurred */
-		return r;
+		ပြန်ပေး r;
 	}
 }
 
@@ -466,56 +466,56 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
  * whitespace character. Returns 0 on success or -1 on failure (e.g.
  * unterminated quotes).
  */
-int
-sshkey_advance_past_options(char **cpp)
+ကိန်းပြည့်
+sshkey_advance_past_options(var_na **cpp)
 {
-	char *cp = *cpp;
-	int quoted = 0;
+	var_na *cp = *cpp;
+	ကိန်းပြည့် quoted = 0;
 
-	for (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
-		if (*cp == '\\' && cp[1] == '"')
+	အတွက် (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
+		အကယ်၍ (*cp == '\\' && cp[1] == '"')
 			cp++;	/* Skip both */
-		else if (*cp == '"')
+		မဟုတ်ပါက အကယ်၍ (*cp == '"')
 			quoted = !quoted;
 	}
 	*cpp = cp;
 	/* return failure for unterminated quotes */
-	return (*cp == '\0' && quoted) ? -1 : 0;
+	ပြန်ပေး (*cp == '\0' && quoted) ? -1 : 0;
 }
 
 /* Save a public key */
-int
-sshkey_save_public(const struct sshkey *key, const char *path,
-    const char *comment)
+ကိန်းပြည့်
+sshkey_save_public(const sa_nracanaa sshkey *key, const var_na *path,
+    const var_na *comment)
 {
-	int fd, oerrno;
+	ကိန်းပြည့် fd, oerrno;
 	FILE *f = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ကိန်းပြည့် r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((f = fdopen(fd, "w")) == NULL) {
+	အကယ်၍ ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
+	အကယ်၍ ((f = fdopen(fd, "w")) == NULL) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		close(fd);
 		goto fail;
 	}
-	if ((r = sshkey_write(key, f)) != 0)
+	အကယ်၍ ((r = sshkey_write(key, f)) != 0)
 		goto fail;
 	fprintf(f, " %s\n", comment);
-	if (ferror(f)) {
+	အကယ်၍ (ferror(f)) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		goto fail;
 	}
-	if (fclose(f) != 0) {
+	အကယ်၍ (fclose(f) != 0) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		f = NULL;
  fail:
-		if (f != NULL) {
+		အကယ်၍ (f != NULL) {
 			oerrno = errno;
 			fclose(f);
 			errno = oerrno;
 		}
-		return r;
+		ပြန်ပေး r;
 	}
-	return 0;
+	ပြန်ပေး 0;
 }

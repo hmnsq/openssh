@@ -63,20 +63,20 @@ void fuzz_arena_begin(void);
 void fuzz_arena_cleanup(void);
 }
 
-extern "C" volatile sig_atomic_t interrupted = 0;
-extern "C" int showprogress = 0;
-extern "C" void start_progress_meter(const char *file, off_t filesize,
+extern "C" ca_ncala sig_atomic_t interrupted = 0;
+extern "C" ကိန်းပြည့် showprogress = 0;
+extern "C" void start_progress_meter(const var_na *file, off_t filesize,
     off_t *ctr) { (void)file; (void)filesize; (void)ctr; }
-extern "C" void refresh_progress_meter(int force_update) { (void)force_update; }
+extern "C" void refresh_progress_meter(ကိန်းပြည့် force_update) { (void)force_update; }
 extern "C" void stop_progress_meter(void) { }
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static ca_ncala ကိန်းပြည့် in_fuzz = 0;
 
 extern "C" void
-cleanup_exit(int code)
+cleanup_exit(ကိန်းပြည့် code)
 {
-	if (in_fuzz)
+	အကယ်၍ (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
@@ -87,7 +87,7 @@ static const uint8_t k_version_reply[] = {
     0x00, 0x00, 0x00, 0x03,
 };
 
-enum {
+ga_nanaa {
 	API_STAT,
 	API_LSTAT,
 	API_REALPATH,
@@ -104,80 +104,80 @@ enum {
 };
 
 static void
-run_one(int api, const uint8_t *body, size_t bsize)
+run_one(ကိန်းပြည့် api, const uint8_t *body, size_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	ကိန်းပြည့် sv[2] = { -1, -1 };
+	အကယ်၍ (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		ပြန်ပေး;
 
-	ssize_t w = write(sv[0], k_version_reply, sizeof(k_version_reply));
+	ssize_t w = write(sv[0], k_version_reply, parimaa_na(k_version_reply));
 	(void)w;
-	if (bsize > 0)
+	အကယ်၍ (bsize > 0)
 		w = write(sv[0], body, bsize);
 	(void)w;
 	shutdown(sv[0], SHUT_WR);
 
 	fuzz_arena_begin();
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
-		struct sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
-		if (conn != NULL) {
+	အကယ်၍ (setjmp(fuzz_env) == 0) {
+		sa_nracanaa sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
+		အကယ်၍ (conn != NULL) {
 			Attrib attr;
 			attrib_clear(&attr);
 
 			switch (api) {
-			case API_STAT: {
+			pak_sa API_STAT: {
 				Attrib a;
 				(void)sftp_stat(conn, "/fuzz", 1, &a);
-				break;
+				bha_nga;
 			}
-			case API_LSTAT: {
+			pak_sa API_LSTAT: {
 				Attrib a;
 				(void)sftp_lstat(conn, "/fuzz", 1, &a);
-				break;
+				bha_nga;
 			}
-			case API_REALPATH: {
-				char *p = sftp_realpath(conn, "/fuzz");
+			pak_sa API_REALPATH: {
+				var_na *p = sftp_realpath(conn, "/fuzz");
 				free(p);
-				break;
+				bha_nga;
 			}
-			case API_EXPAND_PATH: {
-				char *p = sftp_expand_path(conn, "~");
+			pak_sa API_EXPAND_PATH: {
+				var_na *p = sftp_expand_path(conn, "~");
 				free(p);
-				break;
+				bha_nga;
 			}
-			case API_READDIR: {
+			pak_sa API_READDIR: {
 				SFTP_DIRENT **dir = NULL;
 				(void)sftp_readdir(conn, "/fuzz", &dir);
-				if (dir != NULL)
+				အကယ်၍ (dir != NULL)
 					sftp_free_dirents(dir);
-				break;
+				bha_nga;
 			}
-			case API_STATVFS: {
-				struct sftp_statvfs vfs;
+			pak_sa API_STATVFS: {
+				sa_nracanaa sftp_statvfs vfs;
 				(void)sftp_statvfs(conn, "/fuzz", &vfs, 1);
-				break;
+				bha_nga;
 			}
-			case API_GET_LIMITS: {
-				struct sftp_limits lim;
+			pak_sa API_GET_LIMITS: {
+				sa_nracanaa sftp_limits lim;
 				(void)sftp_get_limits(conn, &lim);
-				break;
+				bha_nga;
 			}
-			case API_RM:
+			pak_sa API_RM:
 				(void)sftp_rm(conn, "/fuzz");
-				break;
-			case API_MKDIR:
+				bha_nga;
+			pak_sa API_MKDIR:
 				(void)sftp_mkdir(conn, "/fuzz", &attr, 0);
-				break;
-			case API_RMDIR:
+				bha_nga;
+			pak_sa API_RMDIR:
 				(void)sftp_rmdir(conn, "/fuzz");
-				break;
-			case API_RENAME:
+				bha_nga;
+			pak_sa API_RENAME:
 				(void)sftp_rename(conn, "/a", "/b", 0);
-				break;
-			case API_SYMLINK:
+				bha_nga;
+			pak_sa API_SYMLINK:
 				(void)sftp_symlink(conn, "/a", "/b");
-				break;
+				bha_nga;
 			}
 
 			sftp_free(conn);
@@ -190,21 +190,21 @@ run_one(int api, const uint8_t *body, size_t bsize)
 	close(sv[1]);
 }
 
-extern "C" int
+extern "C" ကိန်းပြည့်
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-	static int initialized = 0;
-	if (!initialized) {
+	static ကိန်းပြည့် initialized = 0;
+	အကယ်၍ (!initialized) {
 		initialized = 1;
 		log_init("sftp_client_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 	}
 
-	if (size > 65536)
-		return 0;
+	အကယ်၍ (size > 65536)
+		ပြန်ပေး 0;
 
-	for (int api = 0; api < API_COUNT; api++)
+	အတွက် (ကိန်းပြည့် api = 0; api < API_COUNT; api++)
 		run_one(api, data, size);
 
-	return 0;
+	ပြန်ပေး 0;
 }

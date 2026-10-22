@@ -23,33 +23,33 @@
 #include "ssherr.h"
 #include "xmalloc.h"
 
-struct sshbuf *cfg;
+sa_nracanaa sshbuf *cfg;
 
 /* stub */
-int auth2_methods_valid(const char *methods, int need_enable);
-int
-auth2_methods_valid(const char *methods, int need_enable)
+ကိန်းပြည့် auth2_methods_valid(const var_na *methods, ကိန်းပြည့် need_enable);
+ကိန်းပြည့်
+auth2_methods_valid(const var_na *methods, ကိန်းပြည့် need_enable)
 {
-	return 1;
+	ပြန်ပေး 1;
 }
 
 static void
 onerror(void *fuzz)
 {
 	fprintf(stderr, "Failed during fuzz:\n");
-	fuzz_dump((struct fuzz *)fuzz);
+	fuzz_dump((sa_nracanaa fuzz *)fuzz);
 }
 
 static void
-set_string(char **dst, const char *s)
+set_string(var_na **dst, const var_na *s)
 {
 	*dst = s == NULL ? NULL : xstrdup(s);
 }
 
-static char **
+static var_na **
 new_string_array(u_int n)
 {
-	return xcalloc(n, sizeof(char *));
+	ပြန်ပေး xcalloc(n, parimaa_na(var_na *));
 }
 
 static void
@@ -96,7 +96,7 @@ set_test_options(ServerOptions *o)
 	o->num_host_key_files = 3;
 	o->host_key_file_userprovided =
 	    xcalloc(o->num_host_key_files,
-	    sizeof(*o->host_key_file_userprovided));
+	    parimaa_na(*o->host_key_file_userprovided));
 	o->host_key_files = new_string_array(o->num_host_key_files);
 	o->host_key_file_userprovided[0] = 0;
 	o->host_key_file_userprovided[1] = 1;
@@ -107,7 +107,7 @@ set_test_options(ServerOptions *o)
 
 	o->num_queued_listens = 2;
 	o->queued_listen_addrs = xcalloc(o->num_queued_listens,
-	    sizeof(*o->queued_listen_addrs));
+	    parimaa_na(*o->queued_listen_addrs));
 	set_string(&o->queued_listen_addrs[0].addr, "127.0.0.1");
 	o->queued_listen_addrs[0].port = 2222;
 	set_string(&o->queued_listen_addrs[0].rdomain, NULL);
@@ -130,7 +130,7 @@ set_test_options(ServerOptions *o)
 static void
 check_roundtrip(const ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	ServerOptions out;
 
 	initialize_server_options(&out);
@@ -204,9 +204,9 @@ check_roundtrip(const ServerOptions *o)
 static void
 check_rejects_trailing_data(const ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	ServerOptions out;
-	int r;
+	ကိန်းပြည့် r;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
@@ -221,9 +221,9 @@ check_rejects_trailing_data(const ServerOptions *o)
 static void
 check_rejects_bad_version(const ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	ServerOptions out;
-	int r;
+	ကိန်းပြည့် r;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
@@ -239,9 +239,9 @@ check_rejects_bad_version(const ServerOptions *o)
 static void
 check_rejects_bad_port_count(const ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	ServerOptions out;
-	int r;
+	ကိန်းပြည့် r;
 
 	initialize_server_options(&out);
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
@@ -258,7 +258,7 @@ check_rejects_bad_port_count(const ServerOptions *o)
 static void
 check_roundtrip_signed_limits(const ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
+	sa_nracanaa sshbuf *buf = NULL;
 	ServerOptions out, in;
 
 	initialize_server_options(&out);
@@ -279,7 +279,7 @@ check_roundtrip_signed_limits(const ServerOptions *o)
 static void
 attempt_deserialise_blob(const u_char *p, size_t len)
 {
-	struct sshbuf *buf;
+	sa_nracanaa sshbuf *buf;
 	ServerOptions out;
 
 	initialize_server_options(&out);
@@ -292,21 +292,21 @@ attempt_deserialise_blob(const u_char *p, size_t len)
 static void
 check_fuzz_deserialise(const ServerOptions *o)
 {
-	struct sshbuf *buf = NULL;
-	struct fuzz *fuzz;
+	sa_nracanaa sshbuf *buf = NULL;
+	sa_nracanaa fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
-	if (test_is_fast())
+	အကယ်၍ (test_is_fast())
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	အကယ်၍ (test_is_slow())
 		fuzzers |= FUZZ_2_BYTE_FLIP;
 
 	ASSERT_INT_EQ(serialise_server_options(o, &buf), 0);
 	ASSERT_PTR_NE(buf, NULL);
 	fuzz = fuzz_begin(fuzzers, sshbuf_ptr(buf), sshbuf_len(buf));
 	TEST_ONERROR(onerror, fuzz);
-	for (; !fuzz_done(fuzz); fuzz_next(fuzz))
+	အတွက် (; !fuzz_done(fuzz); fuzz_next(fuzz))
 		attempt_deserialise_blob(fuzz_ptr(fuzz), fuzz_len(fuzz));
 	TEST_ONERROR(NULL, NULL);
 	fuzz_cleanup(fuzz);

@@ -16,38 +16,38 @@ extern "C" {
 #include "authfile.h"
 }
 
-static int initialised = 0;
+static ကိန်းပြည့် initialised = 0;
 static FILE *null_file;
-static struct sshkey *key = NULL;
+static sa_nracanaa sshkey *key = NULL;
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+extern "C" ကိန်းပြည့် LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     // single initialisation
-    if (!initialised) {
+    အကယ်၍ (!initialised) {
         log_init("krl_fuzz", SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 
-        if ((null_file = fopen("/dev/null", "w")) == NULL) return 0;
+        အကယ်၍ ((null_file = fopen("/dev/null", "w")) == NULL) ပြန်ပေး 0;
 
-        if (sshkey_generate(KEY_ED25519, 0, &key) != 0) return 0;
+        အကယ်၍ (sshkey_generate(KEY_ED25519, 0, &key) != 0) ပြန်ပေး 0;
 
         initialised = 1;
     }
 
     // Reject empty corpus
-    if (size < 4) return 0;
+    အကယ်၍ (size < 4) ပြန်ပေး 0;
 
     // Convert fuzzer data to ssh buffer
-    struct sshbuf *buf = sshbuf_from(data, size);
-    if (!buf) return 0;
+    sa_nracanaa sshbuf *buf = sshbuf_from(data, size);
+    အကယ်၍ (!buf) ပြန်ပေး 0;
 
     // Parse the ssh buffer as krl, early exit if failed
-    struct ssh_krl *krl = NULL;
-    int ret = ssh_krl_from_blob(buf, &krl);
+    sa_nracanaa ssh_krl *krl = NULL;
+    ကိန်းပြည့် ret = ssh_krl_from_blob(buf, &krl);
     sshbuf_free(buf);
-    if (ret != 0) return 0;
+    အကယ်၍ (ret != 0) ပြန်ပေး 0;
 
     // Fuzz serailisation roundtrip
-    struct sshbuf *output = sshbuf_new();
-    struct ssh_krl *krl2 = NULL;
+    sa_nracanaa sshbuf *output = sshbuf_new();
+    sa_nracanaa ssh_krl *krl2 = NULL;
     ssh_krl_to_blob(krl, output);
     ssh_krl_from_blob(output, &krl2);
     ssh_krl_free(krl2);
@@ -60,5 +60,5 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     ssh_krl_check_key(krl, key);
 
     ssh_krl_free(krl);
-    return 0;
+    ပြန်ပေး 0;
 }

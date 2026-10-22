@@ -82,33 +82,33 @@
 
 #define KEY_COMMENT_MAX		(NI_MAXHOST + 1024)
 
-static int quiet = 0;
+static ကိန်းပြည့် quiet = 0;
 
 /* Flag indicating that we just want to see the key fingerprint */
-static int print_fingerprint = 0;
-static int print_bubblebabble = 0;
+static ကိန်းပြည့် print_fingerprint = 0;
+static ကိန်းပြည့် print_bubblebabble = 0;
 
 /* Hash algorithm to use for fingerprints. */
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+static ကိန်းပြည့် fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* The identity file name, given on the command line or entered by the user. */
-static char identity_file[PATH_MAX];
-static int have_identity = 0;
+static var_na identity_file[PATH_MAX];
+static ကိန်းပြည့် have_identity = 0;
 
 /* This is set to the passphrase if given on the command line. */
-static char *identity_passphrase = NULL;
+static var_na *identity_passphrase = NULL;
 
 /* This is set to the new passphrase if given on the command line. */
-static char *identity_new_passphrase = NULL;
+static var_na *identity_new_passphrase = NULL;
 
 /* Key type when certifying */
 static u_int cert_key_type = SSH2_CERT_TYPE_USER;
 
 /* "key ID" of signed key */
-static char *cert_key_id = NULL;
+static var_na *cert_key_id = NULL;
 
 /* Comma-separated list of principal names for certifying keys */
-static char *cert_principals = NULL;
+static var_na *cert_principals = NULL;
 
 /* Validity period for certificates */
 static uint64_t cert_valid_from = 0;
@@ -125,90 +125,90 @@ static uint64_t cert_valid_to = ~0ULL;
 #define CERTOPT_DEFAULT	(CERTOPT_X_FWD|CERTOPT_AGENT_FWD| \
 			 CERTOPT_PORT_FWD|CERTOPT_PTY|CERTOPT_USER_RC)
 static uint32_t certflags_flags = CERTOPT_DEFAULT;
-static char *certflags_command = NULL;
-static char *certflags_src_addr = NULL;
+static var_na *certflags_command = NULL;
+static var_na *certflags_src_addr = NULL;
 
 /* Arbitrary extensions specified by user */
-struct cert_ext {
-	char *key;
-	char *val;
-	int crit;
+sa_nracanaa cert_ext {
+	var_na *key;
+	var_na *val;
+	ကိန်းပြည့် crit;
 };
-static struct cert_ext *cert_ext;
+static sa_nracanaa cert_ext *cert_ext;
 static size_t ncert_ext;
 
 /* Conversion to/from various formats */
-enum {
+ga_nanaa {
 	FMT_RFC4716,
 	FMT_PKCS8,
 	FMT_PEM,
 	FMT_HEXDUMP
 } convert_format = FMT_RFC4716;
 
-static char *key_type_name = NULL;
+static var_na *key_type_name = NULL;
 
 /* Load key from this PKCS#11 provider */
-static char *pkcs11provider = NULL;
+static var_na *pkcs11provider = NULL;
 
 /* FIDO/U2F provider to use */
-static char *sk_provider = NULL;
+static var_na *sk_provider = NULL;
 
 /* Format for writing private keys */
-static int private_key_format = SSHKEY_PRIVATE_OPENSSH;
+static ကိန်းပြည့် private_key_format = SSHKEY_PRIVATE_OPENSSH;
 
 /* Cipher for new-format private keys */
-static char *openssh_format_cipher = NULL;
+static var_na *openssh_format_cipher = NULL;
 
 /* Number of KDF rounds to derive new format keys. */
-static int rounds = 0;
+static ကိန်းပြည့် rounds = 0;
 
 /* argv0 */
-extern char *__progname;
+extern var_na *__progname;
 
-static char hostname[NI_MAXHOST];
+static var_na hostname[NI_MAXHOST];
 
 #ifdef WITH_OPENSSL
 /* moduli.c */
-int gen_candidates(FILE *, uint32_t, BIGNUM *);
-int prime_test(FILE *, FILE *, uint32_t, uint32_t, char *, unsigned long,
+ကိန်းပြည့် gen_candidates(FILE *, uint32_t, BIGNUM *);
+ကိန်းပြည့် prime_test(FILE *, FILE *, uint32_t, uint32_t, var_na *, unsigned long,
     unsigned long);
 #endif
 
 static void
-type_bits_valid(int type, const char *name, uint32_t *bitsp)
+type_bits_valid(ကိန်းပြည့် type, const var_na *name, uint32_t *bitsp)
 {
-	if (type == KEY_UNSPEC)
+	အကယ်၍ (type == KEY_UNSPEC)
 		fatal("unknown key type %s", key_type_name);
-	if (*bitsp == 0) {
+	အကယ်၍ (*bitsp == 0) {
 #ifdef WITH_OPENSSL
-		int nid;
+		ကိန်းပြည့် nid;
 
 		switch(type) {
-		case KEY_ECDSA:
-			if (name != NULL &&
+		pak_sa KEY_ECDSA:
+			အကယ်၍ (name != NULL &&
 			    (nid = sshkey_ecdsa_nid_from_name(name)) > 0)
 				*bitsp = sshkey_curve_nid_to_bits(nid);
-			if (*bitsp == 0)
+			အကယ်၍ (*bitsp == 0)
 				*bitsp = DEFAULT_BITS_ECDSA;
-			break;
-		case KEY_RSA:
+			bha_nga;
+		pak_sa KEY_RSA:
 			*bitsp = DEFAULT_BITS;
-			break;
+			bha_nga;
 		}
 #endif
 	}
 #ifdef WITH_OPENSSL
 	switch (type) {
-	case KEY_RSA:
-		if (*bitsp < SSH_RSA_MINIMUM_MODULUS_SIZE)
+	pak_sa KEY_RSA:
+		အကယ်၍ (*bitsp < SSH_RSA_MINIMUM_MODULUS_SIZE)
 			fatal("Invalid RSA key length: minimum is %d bits",
 			    SSH_RSA_MINIMUM_MODULUS_SIZE);
-		else if (*bitsp > OPENSSL_RSA_MAX_MODULUS_BITS)
+		မဟုတ်ပါက အကယ်၍ (*bitsp > OPENSSL_RSA_MAX_MODULUS_BITS)
 			fatal("Invalid RSA key length: maximum is %d bits",
 			    OPENSSL_RSA_MAX_MODULUS_BITS);
-		break;
-	case KEY_ECDSA:
-		if (sshkey_ecdsa_bits_to_nid(*bitsp) == -1)
+		bha_nga;
+	pak_sa KEY_ECDSA:
+		အကယ်၍ (sshkey_ecdsa_bits_to_nid(*bitsp) == -1)
 			fatal("Invalid ECDSA key length: valid lengths are "
 			    "256, 384 or 521 bits");
 	}
@@ -221,99 +221,99 @@ type_bits_valid(int type, const char *name, uint32_t *bitsp)
  * Returns nonzero if the file does not already exist or if the user agrees to
  * overwrite, or zero otherwise.
  */
-static int
-confirm_overwrite(const char *filename)
+static ကိန်းပြည့်
+confirm_overwrite(const var_na *filename)
 {
-	char yesno[3];
-	struct stat st;
+	var_na yesno[3];
+	sa_nracanaa stat st;
 
-	if (stat(filename, &st) != 0)
-		return 1;
+	အကယ်၍ (stat(filename, &st) != 0)
+		ပြန်ပေး 1;
 	printf("%s already exists.\n", filename);
 	printf("Overwrite (y/n)? ");
 	fflush(stdout);
-	if (fgets(yesno, sizeof(yesno), stdin) == NULL)
-		return 0;
-	if (yesno[0] != 'y' && yesno[0] != 'Y')
-		return 0;
-	return 1;
+	အကယ်၍ (fgets(yesno, parimaa_na(yesno), stdin) == NULL)
+		ပြန်ပေး 0;
+	အကယ်၍ (yesno[0] != 'y' && yesno[0] != 'Y')
+		ပြန်ပေး 0;
+	ပြန်ပေး 1;
 }
 
 static void
-ask_filename(struct passwd *pw, const char *prompt)
+ask_filename(sa_nracanaa passwd *pw, const var_na *prompt)
 {
-	char buf[1024];
-	char *name = NULL;
+	var_na buf[1024];
+	var_na *name = NULL;
 
-	if (key_type_name == NULL)
+	အကယ်၍ (key_type_name == NULL)
 		name = _PATH_SSH_CLIENT_ID_ED25519;
-	else {
+	မဟုတ်ပါက {
 		switch (sshkey_type_from_shortname(key_type_name)) {
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA:
+		pak_sa KEY_ECDSA_CERT:
+		pak_sa KEY_ECDSA:
 			name = _PATH_SSH_CLIENT_ID_ECDSA;
-			break;
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ECDSA_SK:
+			bha_nga;
+		pak_sa KEY_ECDSA_SK_CERT:
+		pak_sa KEY_ECDSA_SK:
 			name = _PATH_SSH_CLIENT_ID_ECDSA_SK;
-			break;
-		case KEY_RSA_CERT:
-		case KEY_RSA:
+			bha_nga;
+		pak_sa KEY_RSA_CERT:
+		pak_sa KEY_RSA:
 			name = _PATH_SSH_CLIENT_ID_RSA;
-			break;
-		case KEY_ED25519:
-		case KEY_ED25519_CERT:
+			bha_nga;
+		pak_sa KEY_ED25519:
+		pak_sa KEY_ED25519_CERT:
 			name = _PATH_SSH_CLIENT_ID_ED25519;
-			break;
-		case KEY_ED25519_SK:
-		case KEY_ED25519_SK_CERT:
+			bha_nga;
+		pak_sa KEY_ED25519_SK:
+		pak_sa KEY_ED25519_SK_CERT:
 			name = _PATH_SSH_CLIENT_ID_ED25519_SK;
-			break;
-		case KEY_MLDSA44_ED25519:
-		case KEY_MLDSA44_ED25519_CERT:
+			bha_nga;
+		pak_sa KEY_MLDSA44_ED25519:
+		pak_sa KEY_MLDSA44_ED25519_CERT:
 			name = _PATH_SSH_CLIENT_ID_MLDSA44_ED25519;
-			break;
+			bha_nga;
 		default:
 			fatal("bad key type");
 		}
 	}
-	snprintf(identity_file, sizeof(identity_file),
+	snprintf(identity_file, parimaa_na(identity_file),
 	    "%s/%s", pw->pw_dir, name);
 	printf("%s (%s): ", prompt, identity_file);
 	fflush(stdout);
-	if (fgets(buf, sizeof(buf), stdin) == NULL)
+	အကယ်၍ (fgets(buf, parimaa_na(buf), stdin) == NULL)
 		exit(1);
 	buf[strcspn(buf, "\n")] = '\0';
-	if (strcmp(buf, "") != 0)
-		strlcpy(identity_file, buf, sizeof(identity_file));
+	အကယ်၍ (strcmp(buf, "") != 0)
+		strlcpy(identity_file, buf, parimaa_na(identity_file));
 	have_identity = 1;
 }
 
-static struct sshkey *
-load_identity(const char *filename, char **commentp)
+static sa_nracanaa sshkey *
+load_identity(const var_na *filename, var_na **commentp)
 {
-	char *prompt, *pass;
-	struct sshkey *prv;
-	int r;
+	var_na *prompt, *pass;
+	sa_nracanaa sshkey *prv;
+	ကိန်းပြည့် r;
 
-	if (commentp != NULL)
+	အကယ်၍ (commentp != NULL)
 		*commentp = NULL;
-	if ((r = sshkey_load_private(filename, "", &prv, commentp)) == 0)
-		return prv;
-	if (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
+	အကယ်၍ ((r = sshkey_load_private(filename, "", &prv, commentp)) == 0)
+		ပြန်ပေး prv;
+	အကယ်၍ (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
 		fatal_r(r, "Load key \"%s\"", filename);
-	if (identity_passphrase)
+	အကယ်၍ (identity_passphrase)
 		pass = xstrdup(identity_passphrase);
-	else {
+	မဟုတ်ပါက {
 		xasprintf(&prompt, "Enter passphrase for \"%s\": ", filename);
 		pass = read_passphrase(prompt, RP_ALLOW_STDIN);
 		free(prompt);
 	}
 	r = sshkey_load_private(filename, pass, &prv, commentp);
 	freezero(pass, strlen(pass));
-	if (r != 0)
+	အကယ်၍ (r != 0)
 		fatal_r(r, "Load key \"%s\"", filename);
-	return prv;
+	ပြန်ပေး prv;
 }
 
 #define SSH_COM_PUBLIC_BEGIN		"---- BEGIN SSH2 PUBLIC KEY ----"
@@ -323,21 +323,21 @@ load_identity(const char *filename, char **commentp)
 
 #ifdef WITH_OPENSSL
 static void
-do_convert_to_ssh2(struct passwd *pw, struct sshkey *k)
+do_convert_to_ssh2(sa_nracanaa passwd *pw, sa_nracanaa sshkey *k)
 {
-	struct sshbuf *b;
-	char comment[61], *b64;
-	int r;
+	sa_nracanaa sshbuf *b;
+	var_na comment[61], *b64;
+	ကိန်းပြည့် r;
 
-	if ((b = sshbuf_new()) == NULL)
+	အကယ်၍ ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(k, b)) != 0)
+	အကယ်၍ ((r = sshkey_putb(k, b)) != 0)
 		fatal_fr(r, "put key");
-	if ((b64 = sshbuf_dtob64_string(b, 1)) == NULL)
+	အကယ်၍ ((b64 = sshbuf_dtob64_string(b, 1)) == NULL)
 		fatal_f("sshbuf_dtob64_string failed");
 
 	/* Comment + surrounds must fit into 72 chars (RFC 4716 sec 3.3) */
-	snprintf(comment, sizeof(comment),
+	snprintf(comment, parimaa_na(comment),
 	    "%u-bit %s, converted by %s@%s from OpenSSH",
 	    sshkey_size(k), sshkey_type(k),
 	    pw->pw_name, hostname);
@@ -352,58 +352,58 @@ do_convert_to_ssh2(struct passwd *pw, struct sshkey *k)
 }
 
 static void
-do_convert_to_pkcs8(struct sshkey *k)
+do_convert_to_pkcs8(sa_nracanaa sshkey *k)
 {
 	switch (sshkey_type_plain(k->type)) {
-	case KEY_RSA:
-		if (!PEM_write_RSA_PUBKEY(stdout,
+	pak_sa KEY_RSA:
+		အကယ်၍ (!PEM_write_RSA_PUBKEY(stdout,
 		    EVP_PKEY_get0_RSA(k->pkey)))
 			fatal("PEM_write_RSA_PUBKEY failed");
-		break;
-	case KEY_ECDSA:
-		if (!PEM_write_EC_PUBKEY(stdout,
+		bha_nga;
+	pak_sa KEY_ECDSA:
+		အကယ်၍ (!PEM_write_EC_PUBKEY(stdout,
 		    EVP_PKEY_get0_EC_KEY(k->pkey)))
 			fatal("PEM_write_EC_PUBKEY failed");
-		break;
+		bha_nga;
 	default:
 		fatal_f("unsupported key type %s", sshkey_type(k));
 	}
 }
 
 static void
-do_convert_to_pem(struct sshkey *k)
+do_convert_to_pem(sa_nracanaa sshkey *k)
 {
 	switch (sshkey_type_plain(k->type)) {
-	case KEY_RSA:
-		if (!PEM_write_RSAPublicKey(stdout,
+	pak_sa KEY_RSA:
+		အကယ်၍ (!PEM_write_RSAPublicKey(stdout,
 		    EVP_PKEY_get0_RSA(k->pkey)))
 			fatal("PEM_write_RSAPublicKey failed");
-		break;
-	case KEY_ECDSA:
-		if (!PEM_write_EC_PUBKEY(stdout,
+		bha_nga;
+	pak_sa KEY_ECDSA:
+		အကယ်၍ (!PEM_write_EC_PUBKEY(stdout,
 		    EVP_PKEY_get0_EC_KEY(k->pkey)))
 			fatal("PEM_write_EC_PUBKEY failed");
-		break;
+		bha_nga;
 	default:
 		fatal_f("unsupported key type %s", sshkey_type(k));
 	}
 }
 
 static void
-do_convert_to_hexdump(struct sshkey *k)
+do_convert_to_hexdump(sa_nracanaa sshkey *k)
 {
-	struct sshbuf *b;
-	int r;
+	sa_nracanaa sshbuf *b;
+	ကိန်းပြည့် r;
 
-	if ((b = sshbuf_new()) == NULL)
+	အကယ်၍ ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	/* pubkey */
-	if ((r = sshkey_putb(k, b)) != 0)
+	အကယ်၍ ((r = sshkey_putb(k, b)) != 0)
 		fatal_fr(r, "serialise private");
 	printf("Public %s key:\n", sshkey_type(k));
 	sshbuf_dump(b, stdout);
 	sshbuf_reset(b);
-	if ((r = sshkey_private_serialize(k, b)) != 0) {
+	အကယ်၍ ((r = sshkey_private_serialize(k, b)) != 0) {
 		debug_fr(r, "serialise private");
 		goto out;
 	}
@@ -414,40 +414,40 @@ do_convert_to_hexdump(struct sshkey *k)
 }
 
 static void
-do_convert_to(struct passwd *pw)
+do_convert_to(sa_nracanaa passwd *pw)
 {
-	struct sshkey *k = NULL;
-	struct stat st;
-	int r;
+	sa_nracanaa sshkey *k = NULL;
+	sa_nracanaa stat st;
+	ကိန်းပြည့် r;
 
-	if (!have_identity)
+	အကယ်၍ (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	အကယ်၍ (stat(identity_file, &st) == -1)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
 
 	/* If we're trying to hexdump, then prefer the private key */
-	if (convert_format == FMT_HEXDUMP) {
-		if ((r = sshkey_load_private(identity_file,
+	အကယ်၍ (convert_format == FMT_HEXDUMP) {
+		အကယ်၍ ((r = sshkey_load_private(identity_file,
 		    NULL, &k, NULL)) != 0 &&
 		    r == SSH_ERR_KEY_WRONG_PASSPHRASE)
 			k = load_identity(identity_file, NULL);
 	}
-	if (k == NULL && (r = sshkey_load_public(identity_file, &k, NULL)) != 0)
+	အကယ်၍ (k == NULL && (r = sshkey_load_public(identity_file, &k, NULL)) != 0)
 		k = load_identity(identity_file, NULL);
 
 	switch (convert_format) {
-	case FMT_RFC4716:
+	pak_sa FMT_RFC4716:
 		do_convert_to_ssh2(pw, k);
-		break;
-	case FMT_PKCS8:
+		bha_nga;
+	pak_sa FMT_PKCS8:
 		do_convert_to_pkcs8(k);
-		break;
-	case FMT_PEM:
+		bha_nga;
+	pak_sa FMT_PEM:
 		do_convert_to_pem(k);
-		break;
-	case FMT_HEXDUMP:
+		bha_nga;
+	pak_sa FMT_HEXDUMP:
 		do_convert_to_hexdump(k);
-		break;
+		bha_nga;
 	default:
 		fatal_f("unknown key format %d", convert_format);
 	}
@@ -458,31 +458,31 @@ do_convert_to(struct passwd *pw)
  * instead of 16.
  */
 static void
-buffer_get_bignum_bits(struct sshbuf *b, BIGNUM *value)
+buffer_get_bignum_bits(sa_nracanaa sshbuf *b, BIGNUM *value)
 {
 	u_int bytes, bignum_bits;
-	int r;
+	ကိန်းပြည့် r;
 
-	if ((r = sshbuf_get_u32(b, &bignum_bits)) != 0)
+	အကယ်၍ ((r = sshbuf_get_u32(b, &bignum_bits)) != 0)
 		fatal_fr(r, "parse");
 	bytes = (bignum_bits + 7) / 8;
-	if (sshbuf_len(b) < bytes)
+	အကယ်၍ (sshbuf_len(b) < bytes)
 		fatal_f("input buffer too small: need %d have %zu",
 		    bytes, sshbuf_len(b));
-	if (BN_bin2bn(sshbuf_ptr(b), bytes, value) == NULL)
+	အကယ်၍ (BN_bin2bn(sshbuf_ptr(b), bytes, value) == NULL)
 		fatal_f("BN_bin2bn failed");
-	if ((r = sshbuf_consume(b, bytes)) != 0)
+	အကယ်၍ ((r = sshbuf_consume(b, bytes)) != 0)
 		fatal_fr(r, "consume");
 }
 
-static struct sshkey *
-do_convert_private_ssh2(struct sshbuf *b)
+static sa_nracanaa sshkey *
+do_convert_private_ssh2(sa_nracanaa sshbuf *b)
 {
-	struct sshkey *key = NULL;
-	char *type, *cipher;
-	const char *alg = NULL;
+	sa_nracanaa sshkey *key = NULL;
+	var_na *type, *cipher;
+	const var_na *alg = NULL;
 	u_char e1, e2, e3, *sig = NULL, data[] = "abcde12345";
-	int r, rlen, ktype;
+	ကိန်းပြည့် r, rlen, ktype;
 	u_int magic, i1, i2, i3, i4;
 	size_t slen;
 	u_long e;
@@ -491,15 +491,15 @@ do_convert_private_ssh2(struct sshbuf *b)
 	BIGNUM *rsa_dmp1 = NULL, *rsa_dmq1 = NULL;
 	RSA *rsa = NULL;
 
-	if ((r = sshbuf_get_u32(b, &magic)) != 0)
+	အကယ်၍ ((r = sshbuf_get_u32(b, &magic)) != 0)
 		fatal_fr(r, "parse magic");
 
-	if (magic != SSH_COM_PRIVATE_KEY_MAGIC) {
+	အကယ်၍ (magic != SSH_COM_PRIVATE_KEY_MAGIC) {
 		error("bad magic 0x%x != 0x%x", magic,
 		    SSH_COM_PRIVATE_KEY_MAGIC);
-		return NULL;
+		ပြန်ပေး NULL;
 	}
-	if ((r = sshbuf_get_u32(b, &i1)) != 0 ||
+	အကယ်၍ ((r = sshbuf_get_u32(b, &i1)) != 0 ||
 	    (r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(b, &cipher, NULL)) != 0 ||
 	    (r = sshbuf_get_u32(b, &i2)) != 0 ||
@@ -507,33 +507,33 @@ do_convert_private_ssh2(struct sshbuf *b)
 	    (r = sshbuf_get_u32(b, &i4)) != 0)
 		fatal_fr(r, "parse");
 	debug("ignore (%d %d %d %d)", i1, i2, i3, i4);
-	if (strcmp(cipher, "none") != 0) {
+	အကယ်၍ (strcmp(cipher, "none") != 0) {
 		error("unsupported cipher %s", cipher);
 		free(cipher);
 		free(type);
-		return NULL;
+		ပြန်ပေး NULL;
 	}
 	free(cipher);
 
-	if (strstr(type, "rsa")) {
+	အကယ်၍ (strstr(type, "rsa")) {
 		ktype = KEY_RSA;
-	} else {
+	} မဟုတ်ပါက {
 		free(type);
-		return NULL;
+		ပြန်ပေး NULL;
 	}
-	if ((key = sshkey_new(ktype)) == NULL)
+	အကယ်၍ ((key = sshkey_new(ktype)) == NULL)
 		fatal("sshkey_new failed");
 	free(type);
 
 	switch (key->type) {
-	case KEY_RSA:
-		if ((r = sshbuf_get_u8(b, &e1)) != 0 ||
+	pak_sa KEY_RSA:
+		အကယ်၍ ((r = sshbuf_get_u8(b, &e1)) != 0 ||
 		    (e1 < 30 && (r = sshbuf_get_u8(b, &e2)) != 0) ||
 		    (e1 < 30 && (r = sshbuf_get_u8(b, &e3)) != 0))
 			fatal_fr(r, "parse RSA");
 		e = e1;
 		debug("e %lx", e);
-		if (e < 30) {
+		အကယ်၍ (e < 30) {
 			e <<= 8;
 			e += e2;
 			debug("e %lx", e);
@@ -541,14 +541,14 @@ do_convert_private_ssh2(struct sshbuf *b)
 			e += e3;
 			debug("e %lx", e);
 		}
-		if ((rsa_e = BN_new()) == NULL)
+		အကယ်၍ ((rsa_e = BN_new()) == NULL)
 			fatal_f("BN_new");
-		if (!BN_set_word(rsa_e, e)) {
+		အကယ်၍ (!BN_set_word(rsa_e, e)) {
 			BN_clear_free(rsa_e);
 			sshkey_free(key);
-			return NULL;
+			ပြန်ပေး NULL;
 		}
-		if ((rsa_n = BN_new()) == NULL ||
+		အကယ်၍ ((rsa_n = BN_new()) == NULL ||
 		    (rsa_d = BN_new()) == NULL ||
 		    (rsa_p = BN_new()) == NULL ||
 		    (rsa_q = BN_new()) == NULL ||
@@ -559,157 +559,157 @@ do_convert_private_ssh2(struct sshbuf *b)
 		buffer_get_bignum_bits(b, rsa_iqmp);
 		buffer_get_bignum_bits(b, rsa_q);
 		buffer_get_bignum_bits(b, rsa_p);
-		if ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
+		အကယ်၍ ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
 		    rsa_iqmp, &rsa_dmp1, &rsa_dmq1)) != 0)
 			fatal_fr(r, "generate RSA CRT parameters");
 		EVP_PKEY_free(key->pkey);
-		if ((key->pkey = EVP_PKEY_new()) == NULL)
+		အကယ်၍ ((key->pkey = EVP_PKEY_new()) == NULL)
 			fatal_f("EVP_PKEY_new failed");
-		if ((rsa = RSA_new()) == NULL)
+		အကယ်၍ ((rsa = RSA_new()) == NULL)
 			fatal_f("RSA_new failed");
-		if (!RSA_set0_key(rsa, rsa_n, rsa_e, rsa_d))
+		အကယ်၍ (!RSA_set0_key(rsa, rsa_n, rsa_e, rsa_d))
 			fatal_f("RSA_set0_key failed");
 		rsa_n = rsa_e = rsa_d = NULL; /* transferred */
-		if (!RSA_set0_factors(rsa, rsa_p, rsa_q))
+		အကယ်၍ (!RSA_set0_factors(rsa, rsa_p, rsa_q))
 			fatal_f("RSA_set0_factors failed");
 		rsa_p = rsa_q = NULL; /* transferred */
-		if (RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp) != 1)
+		အကယ်၍ (RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp) != 1)
 			fatal_f("RSA_set0_crt_params failed");
 		rsa_dmp1 = rsa_dmq1 = rsa_iqmp = NULL;
-		if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1)
+		အကယ်၍ (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1)
 			fatal_f("EVP_PKEY_set1_RSA failed");
 		RSA_free(rsa);
 		alg = "rsa-sha2-256";
-		break;
+		bha_nga;
 	}
 	rlen = sshbuf_len(b);
-	if (rlen != 0)
+	အကယ်၍ (rlen != 0)
 		error_f("remaining bytes in key blob %d", rlen);
 
 	/* try the key */
-	if ((r = sshkey_sign(key, &sig, &slen, data, sizeof(data),
+	အကယ်၍ ((r = sshkey_sign(key, &sig, &slen, data, parimaa_na(data),
 	    alg, NULL, NULL, 0)) != 0)
 		error_fr(r, "signing with converted key failed");
-	else if ((r = sshkey_verify(key, sig, slen, data, sizeof(data),
+	မဟုတ်ပါက အကယ်၍ ((r = sshkey_verify(key, sig, slen, data, parimaa_na(data),
 	    alg, 0, NULL)) != 0)
 		error_fr(r, "verification with converted key failed");
-	if (r != 0) {
+	အကယ်၍ (r != 0) {
 		sshkey_free(key);
 		free(sig);
-		return NULL;
+		ပြန်ပေး NULL;
 	}
 	free(sig);
-	return key;
+	ပြန်ပေး key;
 }
 
-static int
-get_line(FILE *fp, char *line, size_t len)
+static ကိန်းပြည့်
+get_line(FILE *fp, var_na *line, size_t len)
 {
-	int c;
+	ကိန်းပြည့် c;
 	size_t pos = 0;
 
 	line[0] = '\0';
-	while ((c = fgetc(fp)) != EOF) {
-		if (pos >= len - 1)
+	နေစဉ် ((c = fgetc(fp)) != EOF) {
+		အကယ်၍ (pos >= len - 1)
 			fatal("input line too long.");
 		switch (c) {
-		case '\r':
+		pak_sa '\r':
 			c = fgetc(fp);
-			if (c != EOF && c != '\n' && ungetc(c, fp) == EOF)
+			အကယ်၍ (c != EOF && c != '\n' && ungetc(c, fp) == EOF)
 				fatal("unget: %s", strerror(errno));
-			return pos;
-		case '\n':
-			return pos;
+			ပြန်ပေး pos;
+		pak_sa '\n':
+			ပြန်ပေး pos;
 		}
 		line[pos++] = c;
 		line[pos] = '\0';
 	}
 	/* We reached EOF */
-	return -1;
+	ပြန်ပေး -1;
 }
 
 static void
-do_convert_from_ssh2(struct passwd *pw, struct sshkey **k, int *private)
+do_convert_from_ssh2(sa_nracanaa passwd *pw, sa_nracanaa sshkey **k, ကိန်းပြည့် *private)
 {
-	int r, blen, escaped = 0;
+	ကိန်းပြည့် r, blen, escaped = 0;
 	u_int len;
-	char line[1024];
-	struct sshbuf *buf;
-	char encoded[8096];
+	var_na line[1024];
+	sa_nracanaa sshbuf *buf;
+	var_na encoded[8096];
 	FILE *fp;
 
-	if ((buf = sshbuf_new()) == NULL)
+	အကယ်၍ ((buf = sshbuf_new()) == NULL)
 		fatal("sshbuf_new failed");
-	if ((fp = fopen(identity_file, "r")) == NULL)
+	အကယ်၍ ((fp = fopen(identity_file, "r")) == NULL)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
 	encoded[0] = '\0';
-	while ((blen = get_line(fp, line, sizeof(line))) != -1) {
-		if (blen > 0 && line[blen - 1] == '\\')
+	နေစဉ် ((blen = get_line(fp, line, parimaa_na(line))) != -1) {
+		အကယ်၍ (blen > 0 && line[blen - 1] == '\\')
 			escaped++;
-		if (strncmp(line, "----", 4) == 0 ||
+		အကယ်၍ (strncmp(line, "----", 4) == 0 ||
 		    strstr(line, ": ") != NULL) {
-			if (strstr(line, SSH_COM_PRIVATE_BEGIN) != NULL)
+			အကယ်၍ (strstr(line, SSH_COM_PRIVATE_BEGIN) != NULL)
 				*private = 1;
-			if (strstr(line, " END ") != NULL) {
-				break;
+			အကယ်၍ (strstr(line, " END ") != NULL) {
+				bha_nga;
 			}
 			/* fprintf(stderr, "ignore: %s", line); */
 			continue;
 		}
-		if (escaped) {
+		အကယ်၍ (escaped) {
 			escaped--;
 			/* fprintf(stderr, "escaped: %s", line); */
 			continue;
 		}
-		strlcat(encoded, line, sizeof(encoded));
+		strlcat(encoded, line, parimaa_na(encoded));
 	}
 	len = strlen(encoded);
-	if (((len % 4) == 3) &&
+	အကယ်၍ (((len % 4) == 3) &&
 	    (encoded[len-1] == '=') &&
 	    (encoded[len-2] == '=') &&
 	    (encoded[len-3] == '='))
 		encoded[len-3] = '\0';
-	if ((r = sshbuf_b64tod(buf, encoded)) != 0)
+	အကယ်၍ ((r = sshbuf_b64tod(buf, encoded)) != 0)
 		fatal_fr(r, "base64 decode");
-	if (*private) {
-		if ((*k = do_convert_private_ssh2(buf)) == NULL)
+	အကယ်၍ (*private) {
+		အကယ်၍ ((*k = do_convert_private_ssh2(buf)) == NULL)
 			fatal_f("private key conversion failed");
-	} else if ((r = sshkey_fromb(buf, k)) != 0)
+	} မဟုတ်ပါက အကယ်၍ ((r = sshkey_fromb(buf, k)) != 0)
 		fatal_fr(r, "parse key");
 	sshbuf_free(buf);
 	fclose(fp);
 }
 
 static void
-do_convert_from_pkcs8(struct sshkey **k, int *private)
+do_convert_from_pkcs8(sa_nracanaa sshkey **k, ကိန်းပြည့် *private)
 {
 	EVP_PKEY *pubkey;
 	FILE *fp;
 
-	if ((fp = fopen(identity_file, "r")) == NULL)
+	အကယ်၍ ((fp = fopen(identity_file, "r")) == NULL)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
-	if ((pubkey = PEM_read_PUBKEY(fp, NULL, NULL, NULL)) == NULL) {
+	အကယ်၍ ((pubkey = PEM_read_PUBKEY(fp, NULL, NULL, NULL)) == NULL) {
 		fatal_f("%s is not a recognised public key format",
 		    identity_file);
 	}
 	fclose(fp);
 	switch (EVP_PKEY_base_id(pubkey)) {
-	case EVP_PKEY_RSA:
-		if ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
+	pak_sa EVP_PKEY_RSA:
+		အကယ်၍ ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
 			fatal("sshkey_new failed");
 		(*k)->type = KEY_RSA;
 		(*k)->pkey = pubkey;
 		pubkey = NULL;
-		break;
-	case EVP_PKEY_EC:
-		if ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
+		bha_nga;
+	pak_sa EVP_PKEY_EC:
+		အကယ်၍ ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
 			fatal("sshkey_new failed");
-		if (((*k)->ecdsa_nid = sshkey_ecdsa_fixup_group(pubkey)) == -1)
+		အကယ်၍ (((*k)->ecdsa_nid = sshkey_ecdsa_fixup_group(pubkey)) == -1)
 			fatal("sshkey_ecdsa_fixup_group failed");
 		(*k)->type = KEY_ECDSA;
 		(*k)->pkey = pubkey;
 		pubkey = NULL;
-		break;
+		bha_nga;
 	default:
 		fatal_f("unsupported pubkey type %d",
 		    EVP_PKEY_base_id(pubkey));
@@ -718,101 +718,101 @@ do_convert_from_pkcs8(struct sshkey **k, int *private)
 }
 
 static void
-do_convert_from_pem(struct sshkey **k, int *private)
+do_convert_from_pem(sa_nracanaa sshkey **k, ကိန်းပြည့် *private)
 {
 	FILE *fp;
 	RSA *rsa;
 
-	if ((fp = fopen(identity_file, "r")) == NULL)
+	အကယ်၍ ((fp = fopen(identity_file, "r")) == NULL)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
-	if ((rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL)) != NULL) {
-		if ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
+	အကယ်၍ ((rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL)) != NULL) {
+		အကယ်၍ ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
 			fatal("sshkey_new failed");
-		if (((*k)->pkey = EVP_PKEY_new()) == NULL)
+		အကယ်၍ (((*k)->pkey = EVP_PKEY_new()) == NULL)
 			fatal("EVP_PKEY_new failed");
 		(*k)->type = KEY_RSA;
-		if (EVP_PKEY_set1_RSA((*k)->pkey, rsa) != 1)
+		အကယ်၍ (EVP_PKEY_set1_RSA((*k)->pkey, rsa) != 1)
 			fatal("EVP_PKEY_set1_RSA failed");
 		RSA_free(rsa);
 		fclose(fp);
-		return;
+		ပြန်ပေး;
 	}
 	fatal_f("unrecognised raw private key format");
 }
 
 static void
-do_convert_from(struct passwd *pw)
+do_convert_from(sa_nracanaa passwd *pw)
 {
-	struct sshkey *k = NULL;
-	int r, private = 0, ok = 0;
-	struct stat st;
+	sa_nracanaa sshkey *k = NULL;
+	ကိန်းပြည့် r, private = 0, ok = 0;
+	sa_nracanaa stat st;
 
-	if (!have_identity)
+	အကယ်၍ (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	အကယ်၍ (stat(identity_file, &st) == -1)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
 
 	switch (convert_format) {
-	case FMT_RFC4716:
+	pak_sa FMT_RFC4716:
 		do_convert_from_ssh2(pw, &k, &private);
-		break;
-	case FMT_PKCS8:
+		bha_nga;
+	pak_sa FMT_PKCS8:
 		do_convert_from_pkcs8(&k, &private);
-		break;
-	case FMT_PEM:
+		bha_nga;
+	pak_sa FMT_PEM:
 		do_convert_from_pem(&k, &private);
-		break;
+		bha_nga;
 	default:
 		fatal_f("unknown key format %d", convert_format);
 	}
 
-	if (!private) {
-		if ((r = sshkey_write(k, stdout)) == 0)
+	အကယ်၍ (!private) {
+		အကယ်၍ ((r = sshkey_write(k, stdout)) == 0)
 			ok = 1;
-		if (ok)
+		အကယ်၍ (ok)
 			fprintf(stdout, "\n");
-	} else {
+	} မဟုတ်ပါက {
 		switch (k->type) {
-		case KEY_ECDSA:
+		pak_sa KEY_ECDSA:
 			ok = PEM_write_ECPrivateKey(stdout,
 			    EVP_PKEY_get0_EC_KEY(k->pkey), NULL, NULL, 0,
 			    NULL, NULL);
-			break;
-		case KEY_RSA:
+			bha_nga;
+		pak_sa KEY_RSA:
 			ok = PEM_write_RSAPrivateKey(stdout,
 			    EVP_PKEY_get0_RSA(k->pkey), NULL, NULL, 0,
 			    NULL, NULL);
-			break;
+			bha_nga;
 		default:
 			fatal_f("unsupported key type %s", sshkey_type(k));
 		}
 	}
 
-	if (!ok)
+	အကယ်၍ (!ok)
 		fatal("key write failed");
 	sshkey_free(k);
 }
 #endif
 
 static void
-do_print_public(struct passwd *pw)
+do_print_public(sa_nracanaa passwd *pw)
 {
-	struct sshkey *prv;
-	struct stat st;
-	int r;
-	char *comment = NULL;
+	sa_nracanaa sshkey *prv;
+	sa_nracanaa stat st;
+	ကိန်းပြည့် r;
+	var_na *comment = NULL;
 
-	if (!have_identity)
+	အကယ်၍ (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	အကယ်၍ (stat(identity_file, &st) == -1)
 		fatal("%s: %s", identity_file, strerror(errno));
 	prv = load_identity(identity_file, &comment);
-	if ((r = sshkey_write(prv, stdout)) != 0)
+	အကယ်၍ ((r = sshkey_write(prv, stdout)) != 0)
 		fatal_fr(r, "write key");
-	if (comment != NULL && *comment != '\0')
+	အကယ်၍ (comment != NULL && *comment != '\0')
 		fprintf(stdout, " %s", comment);
 	fprintf(stdout, "\n");
-	if (sshkey_is_sk(prv)) {
+	အကယ်၍ (sshkey_is_sk(prv)) {
 		debug("sk_application: \"%s\", sk_flags 0x%02x",
 			prv->sk_application, prv->sk_flags);
 	}
@@ -822,36 +822,36 @@ do_print_public(struct passwd *pw)
 }
 
 static void
-do_download(struct passwd *pw)
+do_download(sa_nracanaa passwd *pw)
 {
 #ifdef ENABLE_PKCS11
-	struct sshkey **keys = NULL;
-	int i, nkeys;
-	enum sshkey_fp_rep rep;
-	int fptype;
-	char *fp, *ra, **comments = NULL;
+	sa_nracanaa sshkey **keys = NULL;
+	ကိန်းပြည့် i, nkeys;
+	ga_nanaa sshkey_fp_rep rep;
+	ကိန်းပြည့် fptype;
+	var_na *fp, *ra, **comments = NULL;
 
 	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
 	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
 
 	pkcs11_init(1);
 	nkeys = pkcs11_add_provider(pkcs11provider, NULL, &keys, &comments);
-	if (nkeys <= 0)
+	အကယ်၍ (nkeys <= 0)
 		fatal("cannot read public key from pkcs11");
-	for (i = 0; i < nkeys; i++) {
-		if (print_fingerprint) {
+	အတွက် (i = 0; i < nkeys; i++) {
+		အကယ်၍ (print_fingerprint) {
 			fp = sshkey_fingerprint(keys[i], fptype, rep);
 			ra = sshkey_fingerprint(keys[i], fingerprint_hash,
 			    SSH_FP_RANDOMART);
-			if (fp == NULL || ra == NULL)
+			အကယ်၍ (fp == NULL || ra == NULL)
 				fatal_f("sshkey_fingerprint fail");
 			printf("%u %s %s (PKCS11 key)\n", sshkey_size(keys[i]),
 			    fp, sshkey_type(keys[i]));
-			if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
+			အကယ်၍ (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
 				printf("%s\n", ra);
 			free(ra);
 			free(fp);
-		} else {
+		} မဟုတ်ပါက {
 			(void) sshkey_write(keys[i], stdout); /* XXX check */
 			fprintf(stdout, "%s%s\n",
 			    *(comments[i]) == '\0' ? "" : " ", comments[i]);
@@ -863,66 +863,66 @@ do_download(struct passwd *pw)
 	free(keys);
 	pkcs11_terminate();
 	exit(0);
-#else
+#မဟုတ်ပါက
 	fatal("no pkcs11 support");
 #endif /* ENABLE_PKCS11 */
 }
 
-static struct sshkey *
-try_read_key(char **cpp)
+static sa_nracanaa sshkey *
+try_read_key(var_na **cpp)
 {
-	struct sshkey *ret;
-	int r;
+	sa_nracanaa sshkey *ret;
+	ကိန်းပြည့် r;
 
-	if ((ret = sshkey_new(KEY_UNSPEC)) == NULL)
+	အကယ်၍ ((ret = sshkey_new(KEY_UNSPEC)) == NULL)
 		fatal("sshkey_new failed");
-	if ((r = sshkey_read(ret, cpp)) == 0)
-		return ret;
+	အကယ်၍ ((r = sshkey_read(ret, cpp)) == 0)
+		ပြန်ပေး ret;
 	/* Not a key */
 	sshkey_free(ret);
-	return NULL;
+	ပြန်ပေး NULL;
 }
 
 static void
-fingerprint_one_key(const struct sshkey *public, const char *comment)
+fingerprint_one_key(const sa_nracanaa sshkey *public, const var_na *comment)
 {
-	char *fp = NULL, *ra = NULL;
-	enum sshkey_fp_rep rep;
-	int fptype;
+	var_na *fp = NULL, *ra = NULL;
+	ga_nanaa sshkey_fp_rep rep;
+	ကိန်းပြည့် fptype;
 
 	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
 	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
 	fp = sshkey_fingerprint(public, fptype, rep);
 	ra = sshkey_fingerprint(public, fingerprint_hash, SSH_FP_RANDOMART);
-	if (fp == NULL || ra == NULL)
+	အကယ်၍ (fp == NULL || ra == NULL)
 		fatal_f("sshkey_fingerprint failed");
 	mprintf("%u %s %s (%s)\n", sshkey_size(public), fp,
 	    comment ? comment : "no comment", sshkey_type(public));
-	if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
+	အကယ်၍ (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
 		printf("%s\n", ra);
 	free(ra);
 	free(fp);
 }
 
 static void
-fingerprint_private(const char *path)
+fingerprint_private(const var_na *path)
 {
-	struct stat st;
-	char *comment = NULL;
-	struct sshkey *privkey = NULL, *pubkey = NULL;
-	int r;
+	sa_nracanaa stat st;
+	var_na *comment = NULL;
+	sa_nracanaa sshkey *privkey = NULL, *pubkey = NULL;
+	ကိန်းပြည့် r;
 
-	if (stat(identity_file, &st) == -1)
+	အကယ်၍ (stat(identity_file, &st) == -1)
 		fatal("%s: %s", path, strerror(errno));
-	if ((r = sshkey_load_public(path, &pubkey, &comment)) != 0)
+	အကယ်၍ ((r = sshkey_load_public(path, &pubkey, &comment)) != 0)
 		debug_r(r, "load public \"%s\"", path);
-	if (pubkey == NULL || comment == NULL || *comment == '\0') {
+	အကယ်၍ (pubkey == NULL || comment == NULL || *comment == '\0') {
 		free(comment);
-		if ((r = sshkey_load_private(path, NULL,
+		အကယ်၍ ((r = sshkey_load_private(path, NULL,
 		    &privkey, &comment)) != 0)
 			debug_r(r, "load private \"%s\"", path);
 	}
-	if (pubkey == NULL && privkey == NULL)
+	အကယ်၍ (pubkey == NULL && privkey == NULL)
 		fatal("%s is not a key file.", path);
 
 	fingerprint_one_key(pubkey == NULL ? privkey : pubkey, comment);
@@ -932,33 +932,33 @@ fingerprint_private(const char *path)
 }
 
 static void
-do_fingerprint(struct passwd *pw)
+do_fingerprint(sa_nracanaa passwd *pw)
 {
 	FILE *f;
-	struct sshkey *public = NULL;
-	char *comment = NULL, *cp, *ep, *line = NULL;
+	sa_nracanaa sshkey *public = NULL;
+	var_na *comment = NULL, *cp, *ep, *line = NULL;
 	size_t linesize = 0;
-	int i, invalid = 1;
-	const char *path;
+	ကိန်းပြည့် i, invalid = 1;
+	const var_na *path;
 	u_long lnum = 0;
 
-	if (!have_identity)
+	အကယ်၍ (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
 	path = identity_file;
 
-	if (strcmp(identity_file, "-") == 0) {
+	အကယ်၍ (strcmp(identity_file, "-") == 0) {
 		f = stdin;
 		path = "(stdin)";
-	} else if ((f = fopen(path, "r")) == NULL)
+	} မဟုတ်ပါက အကယ်၍ ((f = fopen(path, "r")) == NULL)
 		fatal("%s: %s: %s", __progname, path, strerror(errno));
 
-	while (getline(&line, &linesize, f) != -1) {
+	နေစဉ် (getline(&line, &linesize, f) != -1) {
 		lnum++;
 		cp = line;
 		cp[strcspn(cp, "\r\n")] = '\0';
 		/* Trim leading space and comments */
 		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
+		အကယ်၍ (*cp == '#' || *cp == '\0')
 			continue;
 
 		/*
@@ -971,7 +971,7 @@ do_fingerprint(struct passwd *pw)
 		 * "SSH PRIVATE KEY" appears on the first line and we're
 		 * not reading from stdin (XXX support private keys on stdin).
 		 */
-		if (lnum == 1 && strcmp(identity_file, "-") != 0 &&
+		အကယ်၍ (lnum == 1 && strcmp(identity_file, "-") != 0 &&
 		    strstr(cp, "PRIVATE KEY") != NULL) {
 			free(line);
 			fclose(f);
@@ -985,35 +985,35 @@ do_fingerprint(struct passwd *pw)
 		 * Try a bare key first, otherwise skip the leading stuff.
 		 */
 		comment = NULL;
-		if ((public = try_read_key(&cp)) == NULL) {
+		အကယ်၍ ((public = try_read_key(&cp)) == NULL) {
 			i = strtol(cp, &ep, 10);
-			if (i == 0 || ep == NULL ||
+			အကယ်၍ (i == 0 || ep == NULL ||
 			    (*ep != ' ' && *ep != '\t')) {
-				int quoted = 0;
+				ကိန်းပြည့် quoted = 0;
 
 				comment = cp;
-				for (; *cp && (quoted || (*cp != ' ' &&
+				အတွက် (; *cp && (quoted || (*cp != ' ' &&
 				    *cp != '\t')); cp++) {
-					if (*cp == '\\' && cp[1] == '"')
+					အကယ်၍ (*cp == '\\' && cp[1] == '"')
 						cp++;	/* Skip both */
-					else if (*cp == '"')
+					မဟုတ်ပါက အကယ်၍ (*cp == '"')
 						quoted = !quoted;
 				}
-				if (!*cp)
+				အကယ်၍ (!*cp)
 					continue;
 				*cp++ = '\0';
 			}
 		}
 		/* Retry after parsing leading hostname/key options */
-		if (public == NULL && (public = try_read_key(&cp)) == NULL) {
+		အကယ်၍ (public == NULL && (public = try_read_key(&cp)) == NULL) {
 			debug("%s:%lu: not a public key", path, lnum);
 			continue;
 		}
 
 		/* Find trailing comment, if any */
-		for (; *cp == ' ' || *cp == '\t'; cp++)
+		အတွက် (; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (*cp != '\0' && *cp != '#')
+		အကယ်၍ (*cp != '\0' && *cp != '#')
 			comment = cp;
 
 		fingerprint_one_key(public, comment);
@@ -1023,18 +1023,18 @@ do_fingerprint(struct passwd *pw)
 	fclose(f);
 	free(line);
 
-	if (invalid)
+	အကယ်၍ (invalid)
 		fatal("%s is not a public key file.", path);
 	exit(0);
 }
 
 static void
-do_gen_all_hostkeys(struct passwd *pw)
+do_gen_all_hostkeys(sa_nracanaa passwd *pw)
 {
-	struct {
-		char *key_type;
-		char *key_type_display;
-		char *path;
+	sa_nracanaa {
+		var_na *key_type;
+		var_na *key_type_display;
+		var_na *path;
 	} key_types[] = {
 #ifdef WITH_OPENSSL
 		{ "rsa", "RSA" ,_PATH_HOST_RSA_KEY_FILE },
@@ -1049,13 +1049,13 @@ do_gen_all_hostkeys(struct passwd *pw)
 	};
 
 	uint32_t bits = 0;
-	int first = 0;
-	struct stat st;
-	struct sshkey *private, *public;
-	char comment[KEY_COMMENT_MAX], *prv_tmp, *pub_tmp, *prv_file, *pub_file;
-	int i, type, fd, r;
+	ကိန်းပြည့် first = 0;
+	sa_nracanaa stat st;
+	sa_nracanaa sshkey *private, *public;
+	var_na comment[KEY_COMMENT_MAX], *prv_tmp, *pub_tmp, *prv_file, *pub_file;
+	ကိန်းပြည့် i, type, fd, r;
 
-	for (i = 0; key_types[i].key_type; i++) {
+	အတွက် (i = 0; key_types[i].key_type; i++) {
 		public = private = NULL;
 		prv_tmp = pub_tmp = prv_file = pub_file = NULL;
 
@@ -1063,10 +1063,10 @@ do_gen_all_hostkeys(struct passwd *pw)
 		    identity_file, key_types[i].path);
 
 		/* Check whether private key exists and is not zero-length */
-		if (stat(prv_file, &st) == 0) {
-			if (st.st_size != 0)
+		အကယ်၍ (stat(prv_file, &st) == 0) {
+			အကယ်၍ (st.st_size != 0)
 				goto next;
-		} else if (errno != ENOENT) {
+		} မဟုတ်ပါက အကယ်၍ (errno != ENOENT) {
 			error("Could not stat %s: %s", key_types[i].path,
 			    strerror(errno));
 			goto failnext;
@@ -1083,14 +1083,14 @@ do_gen_all_hostkeys(struct passwd *pw)
 		xasprintf(&pub_file, "%s%s.pub",
 		    identity_file, key_types[i].path);
 
-		if (first == 0) {
+		အကယ်၍ (first == 0) {
 			first = 1;
 			printf("%s: generating new host keys: ", __progname);
 		}
 		printf("%s ", key_types[i].key_type_display);
 		fflush(stdout);
 		type = sshkey_type_from_shortname(key_types[i].key_type);
-		if ((fd = mkstemp(prv_tmp)) == -1) {
+		အကယ်၍ ((fd = mkstemp(prv_tmp)) == -1) {
 			error("Could not save your private key in %s: %s",
 			    prv_tmp, strerror(errno));
 			goto failnext;
@@ -1098,40 +1098,40 @@ do_gen_all_hostkeys(struct passwd *pw)
 		(void)close(fd); /* just using mkstemp() to reserve a name */
 		bits = 0;
 		type_bits_valid(type, NULL, &bits);
-		if ((r = sshkey_generate(type, bits, &private)) != 0) {
+		အကယ်၍ ((r = sshkey_generate(type, bits, &private)) != 0) {
 			error_r(r, "sshkey_generate failed");
 			goto failnext;
 		}
-		if ((r = sshkey_from_private(private, &public)) != 0)
+		အကယ်၍ ((r = sshkey_from_private(private, &public)) != 0)
 			fatal_fr(r, "sshkey_from_private");
-		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name,
+		snprintf(comment, parimaa_na comment, "%s@%s", pw->pw_name,
 		    hostname);
-		if ((r = sshkey_save_private(private, prv_tmp, "",
+		အကယ်၍ ((r = sshkey_save_private(private, prv_tmp, "",
 		    comment, private_key_format, openssh_format_cipher,
 		    rounds)) != 0) {
 			error_r(r, "Saving key \"%s\" failed", prv_tmp);
 			goto failnext;
 		}
-		if ((fd = mkstemp(pub_tmp)) == -1) {
+		အကယ်၍ ((fd = mkstemp(pub_tmp)) == -1) {
 			error("Could not save your public key in %s: %s",
 			    pub_tmp, strerror(errno));
 			goto failnext;
 		}
 		(void)fchmod(fd, 0644);
 		(void)close(fd);
-		if ((r = sshkey_save_public(public, pub_tmp, comment)) != 0) {
+		အကယ်၍ ((r = sshkey_save_public(public, pub_tmp, comment)) != 0) {
 			error_r(r, "Unable to save public key to %s",
 			    identity_file);
 			goto failnext;
 		}
 
 		/* Rename temporary files to their permanent locations. */
-		if (rename(pub_tmp, pub_file) != 0) {
+		အကယ်၍ (rename(pub_tmp, pub_file) != 0) {
 			error("Unable to move %s into position: %s",
 			    pub_file, strerror(errno));
 			goto failnext;
 		}
-		if (rename(prv_tmp, prv_file) != 0) {
+		အကယ်၍ (rename(prv_tmp, prv_file) != 0) {
 			error("Unable to move %s into position: %s",
 			    key_types[i].path, strerror(errno));
  failnext:
@@ -1146,162 +1146,162 @@ do_gen_all_hostkeys(struct passwd *pw)
 		free(prv_file);
 		free(pub_file);
 	}
-	if (first != 0)
+	အကယ်၍ (first != 0)
 		printf("\n");
 }
 
-struct known_hosts_ctx {
-	const char *host;	/* Hostname searched for in find/delete case */
+sa_nracanaa known_hosts_ctx {
+	const var_na *host;	/* Hostname searched for in find/delete case */
 	FILE *out;		/* Output file, stdout for find_hosts case */
-	int has_unhashed;	/* When hashing, original had unhashed hosts */
-	int found_key;		/* For find/delete, host was found */
-	int invalid;		/* File contained invalid items; don't delete */
-	int hash_hosts;		/* Hash hostnames as we go */
-	int find_host;		/* Search for specific hostname */
-	int delete_host;	/* Delete host from known_hosts */
+	ကိန်းပြည့် has_unhashed;	/* When hashing, original had unhashed hosts */
+	ကိန်းပြည့် found_key;		/* For find/delete, host was found */
+	ကိန်းပြည့် invalid;		/* File contained invalid items; don't delete */
+	ကိန်းပြည့် hash_hosts;		/* Hash hostnames as we go */
+	ကိန်းပြည့် find_host;		/* Search for specific hostname */
+	ကိန်းပြည့် delete_host;	/* Delete host from known_hosts */
 };
 
-static int
-known_hosts_hash(struct hostkey_foreach_line *l, void *_ctx)
+static ကိန်းပြည့်
+known_hosts_hash(sa_nracanaa hostkey_foreach_line *l, void *_ctx)
 {
-	struct known_hosts_ctx *ctx = (struct known_hosts_ctx *)_ctx;
-	char *hashed, *cp, *hosts, *ohosts;
-	int has_wild = l->hosts && strcspn(l->hosts, "*?!") != strlen(l->hosts);
-	int was_hashed = l->hosts && l->hosts[0] == HASH_DELIM;
+	sa_nracanaa known_hosts_ctx *ctx = (sa_nracanaa known_hosts_ctx *)_ctx;
+	var_na *hashed, *cp, *hosts, *ohosts;
+	ကိန်းပြည့် has_wild = l->hosts && strcspn(l->hosts, "*?!") != strlen(l->hosts);
+	ကိန်းပြည့် was_hashed = l->hosts && l->hosts[0] == HASH_DELIM;
 
 	switch (l->status) {
-	case HKF_STATUS_OK:
-	case HKF_STATUS_MATCHED:
+	pak_sa HKF_STATUS_OK:
+	pak_sa HKF_STATUS_MATCHED:
 		/*
 		 * Don't hash hosts already hashed, with wildcard
 		 * characters or a CA/revocation marker.
 		 */
-		if (was_hashed || has_wild || l->marker != MRK_NONE) {
+		အကယ်၍ (was_hashed || has_wild || l->marker != MRK_NONE) {
 			fprintf(ctx->out, "%s\n", l->line);
-			if (has_wild && !ctx->find_host) {
+			အကယ်၍ (has_wild && !ctx->find_host) {
 				logit("%s:%lu: ignoring host name "
 				    "with wildcard: %.64s", l->path,
 				    l->linenum, l->hosts);
 			}
-			return 0;
+			ပြန်ပေး 0;
 		}
 		/*
 		 * Split any comma-separated hostnames from the host list,
 		 * hash and store separately.
 		 */
 		ohosts = hosts = xstrdup(l->hosts);
-		while ((cp = strsep(&hosts, ",")) != NULL && *cp != '\0') {
+		နေစဉ် ((cp = strsep(&hosts, ",")) != NULL && *cp != '\0') {
 			lowercase(cp);
-			if ((hashed = host_hash(cp, NULL, 0)) == NULL)
+			အကယ်၍ ((hashed = host_hash(cp, NULL, 0)) == NULL)
 				fatal("hash_host failed");
 			fprintf(ctx->out, "%s %s\n", hashed, l->rawkey);
 			free(hashed);
 			ctx->has_unhashed = 1;
 		}
 		free(ohosts);
-		return 0;
-	case HKF_STATUS_INVALID:
+		ပြန်ပေး 0;
+	pak_sa HKF_STATUS_INVALID:
 		/* Retain invalid lines, but mark file as invalid. */
 		ctx->invalid = 1;
 		logit("%s:%lu: invalid line", l->path, l->linenum);
 		/* FALLTHROUGH */
 	default:
 		fprintf(ctx->out, "%s\n", l->line);
-		return 0;
+		ပြန်ပေး 0;
 	}
 	/* NOTREACHED */
-	return -1;
+	ပြန်ပေး -1;
 }
 
-static int
-known_hosts_find_delete(struct hostkey_foreach_line *l, void *_ctx)
+static ကိန်းပြည့်
+known_hosts_find_delete(sa_nracanaa hostkey_foreach_line *l, void *_ctx)
 {
-	struct known_hosts_ctx *ctx = (struct known_hosts_ctx *)_ctx;
-	enum sshkey_fp_rep rep;
-	int fptype;
-	char *fp = NULL, *ra = NULL;
+	sa_nracanaa known_hosts_ctx *ctx = (sa_nracanaa known_hosts_ctx *)_ctx;
+	ga_nanaa sshkey_fp_rep rep;
+	ကိန်းပြည့် fptype;
+	var_na *fp = NULL, *ra = NULL;
 
 	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
 	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
 
-	if (l->status == HKF_STATUS_MATCHED) {
-		if (ctx->delete_host) {
-			if (l->marker != MRK_NONE) {
+	အကယ်၍ (l->status == HKF_STATUS_MATCHED) {
+		အကယ်၍ (ctx->delete_host) {
+			အကယ်၍ (l->marker != MRK_NONE) {
 				/* Don't remove CA and revocation lines */
 				fprintf(ctx->out, "%s\n", l->line);
-			} else {
+			} မဟုတ်ပါက {
 				/*
 				 * Hostname matches and has no CA/revoke
 				 * marker, delete it by *not* writing the
 				 * line to ctx->out.
 				 */
 				ctx->found_key = 1;
-				if (!quiet)
+				အကယ်၍ (!quiet)
 					printf("# Host %s found: line %lu\n",
 					    ctx->host, l->linenum);
 			}
-			return 0;
-		} else if (ctx->find_host) {
+			ပြန်ပေး 0;
+		} မဟုတ်ပါက အကယ်၍ (ctx->find_host) {
 			ctx->found_key = 1;
-			if (!quiet) {
+			အကယ်၍ (!quiet) {
 				printf("# Host %s found: line %lu %s\n",
 				    ctx->host,
 				    l->linenum, l->marker == MRK_CA ? "CA" :
 				    (l->marker == MRK_REVOKE ? "REVOKED" : ""));
 			}
-			if (ctx->hash_hosts)
+			အကယ်၍ (ctx->hash_hosts)
 				known_hosts_hash(l, ctx);
-			else if (print_fingerprint) {
+			မဟုတ်ပါက အကယ်၍ (print_fingerprint) {
 				fp = sshkey_fingerprint(l->key, fptype, rep);
 				ra = sshkey_fingerprint(l->key,
 				    fingerprint_hash, SSH_FP_RANDOMART);
-				if (fp == NULL || ra == NULL)
+				အကယ်၍ (fp == NULL || ra == NULL)
 					fatal_f("sshkey_fingerprint failed");
 				mprintf("%s %s %s%s%s\n", ctx->host,
 				    sshkey_type(l->key), fp,
 				    l->comment[0] ? " " : "",
 				    l->comment);
-				if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
+				အကယ်၍ (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
 					printf("%s\n", ra);
 				free(ra);
 				free(fp);
-			} else
+			} မဟုတ်ပါက
 				fprintf(ctx->out, "%s\n", l->line);
-			return 0;
+			ပြန်ပေး 0;
 		}
-	} else if (ctx->delete_host) {
+	} မဟုတ်ပါက အကယ်၍ (ctx->delete_host) {
 		/* Retain non-matching hosts when deleting */
-		if (l->status == HKF_STATUS_INVALID) {
+		အကယ်၍ (l->status == HKF_STATUS_INVALID) {
 			ctx->invalid = 1;
 			logit("%s:%lu: invalid line", l->path, l->linenum);
 		}
 		fprintf(ctx->out, "%s\n", l->line);
 	}
-	return 0;
+	ပြန်ပေး 0;
 }
 
 static void
-do_known_hosts(struct passwd *pw, const char *name, int find_host,
-    int delete_host, int hash_hosts)
+do_known_hosts(sa_nracanaa passwd *pw, const var_na *name, ကိန်းပြည့် find_host,
+    ကိန်းပြည့် delete_host, ကိန်းပြည့် hash_hosts)
 {
-	char *cp, tmp[PATH_MAX], old[PATH_MAX];
-	int r, fd, oerrno, inplace = 0;
-	struct known_hosts_ctx ctx;
+	var_na *cp, tmp[PATH_MAX], old[PATH_MAX];
+	ကိန်းပြည့် r, fd, oerrno, inplace = 0;
+	sa_nracanaa known_hosts_ctx ctx;
 	u_int foreach_options;
-	struct stat sb;
+	sa_nracanaa stat sb;
 
-	if (!have_identity) {
+	အကယ်၍ (!have_identity) {
 		cp = tilde_expand_filename(_PATH_SSH_USER_HOSTFILE, pw->pw_uid);
-		if (strlcpy(identity_file, cp, sizeof(identity_file)) >=
-		    sizeof(identity_file))
+		အကယ်၍ (strlcpy(identity_file, cp, parimaa_na(identity_file)) >=
+		    parimaa_na(identity_file))
 			fatal("Specified known hosts path too long");
 		free(cp);
 		have_identity = 1;
 	}
-	if (stat(identity_file, &sb) != 0)
+	အကယ်၍ (stat(identity_file, &sb) != 0)
 		fatal("Cannot stat %s: %s", identity_file, strerror(errno));
 
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, parimaa_na(ctx));
 	ctx.out = stdout;
 	ctx.host = name;
 	ctx.hash_hosts = hash_hosts;
@@ -1312,16 +1312,16 @@ do_known_hosts(struct passwd *pw, const char *name, int find_host,
 	 * Find hosts goes to stdout, hash and deletions happen in-place
 	 * A corner case is ssh-keygen -HF foo, which should go to stdout
 	 */
-	if (!find_host && (hash_hosts || delete_host)) {
-		if (strlcpy(tmp, identity_file, sizeof(tmp)) >= sizeof(tmp) ||
-		    strlcat(tmp, ".XXXXXXXXXX", sizeof(tmp)) >= sizeof(tmp) ||
-		    strlcpy(old, identity_file, sizeof(old)) >= sizeof(old) ||
-		    strlcat(old, ".old", sizeof(old)) >= sizeof(old))
+	အကယ်၍ (!find_host && (hash_hosts || delete_host)) {
+		အကယ်၍ (strlcpy(tmp, identity_file, parimaa_na(tmp)) >= parimaa_na(tmp) ||
+		    strlcat(tmp, ".XXXXXXXXXX", parimaa_na(tmp)) >= parimaa_na(tmp) ||
+		    strlcpy(old, identity_file, parimaa_na(old)) >= parimaa_na(old) ||
+		    strlcat(old, ".old", parimaa_na(old)) >= parimaa_na(old))
 			fatal("known_hosts path too long");
 		umask(077);
-		if ((fd = mkstemp(tmp)) == -1)
+		အကယ်၍ ((fd = mkstemp(tmp)) == -1)
 			fatal("mkstemp: %s", strerror(errno));
-		if ((ctx.out = fdopen(fd, "w")) == NULL) {
+		အကယ်၍ ((ctx.out = fdopen(fd, "w")) == NULL) {
 			oerrno = errno;
 			unlink(tmp);
 			fatal("fdopen: %s", strerror(oerrno));
@@ -1332,38 +1332,38 @@ do_known_hosts(struct passwd *pw, const char *name, int find_host,
 	/* XXX support identity_file == "-" for stdin */
 	foreach_options = find_host ? HKF_WANT_MATCH : 0;
 	foreach_options |= print_fingerprint ? HKF_WANT_PARSE_KEY : 0;
-	if ((r = hostkeys_foreach(identity_file, (find_host || !hash_hosts) ?
+	အကယ်၍ ((r = hostkeys_foreach(identity_file, (find_host || !hash_hosts) ?
 	    known_hosts_find_delete : known_hosts_hash, &ctx, name, NULL,
 	    foreach_options, 0)) != 0) {
-		if (inplace)
+		အကယ်၍ (inplace)
 			unlink(tmp);
 		fatal_fr(r, "hostkeys_foreach");
 	}
 
-	if (inplace)
+	အကယ်၍ (inplace)
 		fclose(ctx.out);
 
-	if (ctx.invalid) {
+	အကယ်၍ (ctx.invalid) {
 		error("%s is not a valid known_hosts file.", identity_file);
-		if (inplace) {
+		အကယ်၍ (inplace) {
 			error("Not replacing existing known_hosts "
 			    "file because of errors");
 			unlink(tmp);
 		}
 		exit(1);
-	} else if (delete_host && !ctx.found_key) {
+	} မဟုတ်ပါက အကယ်၍ (delete_host && !ctx.found_key) {
 		logit("Host %s not found in %s", name, identity_file);
-		if (inplace)
+		အကယ်၍ (inplace)
 			unlink(tmp);
-	} else if (inplace) {
+	} မဟုတ်ပါက အကယ်၍ (inplace) {
 		/* Backup existing file */
-		if (unlink(old) == -1 && errno != ENOENT)
+		အကယ်၍ (unlink(old) == -1 && errno != ENOENT)
 			fatal("unlink %.100s: %s", old, strerror(errno));
-		if (link(identity_file, old) == -1)
+		အကယ်၍ (link(identity_file, old) == -1)
 			fatal("link %.100s to %.100s: %s", identity_file, old,
 			    strerror(errno));
 		/* Move new one into place */
-		if (rename(tmp, identity_file) == -1) {
+		အကယ်၍ (rename(tmp, identity_file) == -1) {
 			error("rename\"%s\" to \"%s\": %s", tmp, identity_file,
 			    strerror(errno));
 			unlink(tmp);
@@ -1373,7 +1373,7 @@ do_known_hosts(struct passwd *pw, const char *name, int find_host,
 
 		printf("%s updated.\n", identity_file);
 		printf("Original contents retained as %s\n", old);
-		if (ctx.has_unhashed) {
+		အကယ်၍ (ctx.has_unhashed) {
 			logit("WARNING: %s contains unhashed entries", old);
 			logit("Delete this file to ensure privacy "
 			    "of hostnames");
@@ -1388,66 +1388,66 @@ do_known_hosts(struct passwd *pw, const char *name, int find_host,
  * for the current user.
  */
 static void
-do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
+do_change_passphrase(sa_nracanaa passwd *pw, var_na * const *opts, size_t nopts)
 {
-	char *comment;
-	char *old_passphrase, *passphrase1, *passphrase2;
-	struct stat st;
-	struct sshkey *private;
-	int r;
+	var_na *comment;
+	var_na *old_passphrase, *passphrase1, *passphrase2;
+	sa_nracanaa stat st;
+	sa_nracanaa sshkey *private;
+	ကိန်းပြည့် r;
 	size_t i;
 
-	if (!have_identity)
+	အကယ်၍ (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	အကယ်၍ (stat(identity_file, &st) == -1)
 		fatal("%s: %s", identity_file, strerror(errno));
 	/* Try to load the file with empty passphrase. */
 	r = sshkey_load_private(identity_file, "", &private, &comment);
-	if (r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
-		if (identity_passphrase)
+	အကယ်၍ (r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
+		အကယ်၍ (identity_passphrase)
 			old_passphrase = xstrdup(identity_passphrase);
-		else
+		မဟုတ်ပါက
 			old_passphrase =
 			    read_passphrase("Enter old passphrase: ",
 			    RP_ALLOW_STDIN);
 		r = sshkey_load_private(identity_file, old_passphrase,
 		    &private, &comment);
 		freezero(old_passphrase, strlen(old_passphrase));
-		if (r != 0)
+		အကယ်၍ (r != 0)
 			goto badkey;
-	} else if (r != 0) {
+	} မဟုတ်ပါက အကယ်၍ (r != 0) {
  badkey:
 		fatal_r(r, "Failed to load key %s", identity_file);
 	}
-	if (comment)
+	အကယ်၍ (comment)
 		mprintf("Key has comment '%s'\n", comment);
 
 	/* All current -O options relate to FIDO keys only */
-	if (nopts != 0 && !sshkey_is_sk(private)) {
+	အကယ်၍ (nopts != 0 && !sshkey_is_sk(private)) {
 		fatal("FIDO-specific option requested for non-FIDO key %s",
 		    identity_file);
 	}
-	if (sshkey_is_sk(private)) {
+	အကယ်၍ (sshkey_is_sk(private)) {
 		debug_f("%s: original FIDO key flags: "
 		    "%stouch-required %sverify-required", identity_file,
 		    (private->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
 		    (private->sk_flags & SSH_SK_USER_VERIFICATION_REQD) ? "" : "no-");
 	}
-	for (i = 0; i < nopts; i++) {
-		if (strcasecmp(opts[i], "touch-required") == 0)
+	အတွက် (i = 0; i < nopts; i++) {
+		အကယ်၍ (strcasecmp(opts[i], "touch-required") == 0)
 			private->sk_flags |= SSH_SK_USER_PRESENCE_REQD;
-		else if (strcasecmp(opts[i], "no-touch-required") == 0)
+		မဟုတ်ပါက အကယ်၍ (strcasecmp(opts[i], "no-touch-required") == 0)
 			private->sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
-		else if (strcasecmp(opts[i], "verify-required") == 0)
+		မဟုတ်ပါက အကယ်၍ (strcasecmp(opts[i], "verify-required") == 0)
 			private->sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-		else if (strcasecmp(opts[i], "no-verify-required") == 0)
+		မဟုတ်ပါက အကယ်၍ (strcasecmp(opts[i], "no-verify-required") == 0)
 			private->sk_flags &= ~SSH_SK_USER_VERIFICATION_REQD;
-		else {
+		မဟုတ်ပါက {
 			fatal("Option \"%s\" is unsupported for "
 			    "key passphrase change", opts[i]);
 		}
 	}
-	if (sshkey_is_sk(private) && nopts != 0) {
+	အကယ်၍ (sshkey_is_sk(private) && nopts != 0) {
 		debug_f("%s: updated FIDO key flags: "
 		    "%stouch-required %sverify-required", identity_file,
 		    (private->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
@@ -1455,10 +1455,10 @@ do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
 	}
 
 	/* Ask the new passphrase (twice). */
-	if (identity_new_passphrase) {
+	အကယ်၍ (identity_new_passphrase) {
 		passphrase1 = xstrdup(identity_new_passphrase);
 		passphrase2 = NULL;
-	} else {
+	} မဟုတ်ပါက {
 		passphrase1 =
 			read_passphrase("Enter new passphrase (empty for no "
 			    "passphrase): ", RP_ALLOW_STDIN);
@@ -1466,7 +1466,7 @@ do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
 		    RP_ALLOW_STDIN);
 
 		/* Verify that they are the same. */
-		if (strcmp(passphrase1, passphrase2) != 0) {
+		အကယ်၍ (strcmp(passphrase1, passphrase2) != 0) {
 			explicit_bzero(passphrase1, strlen(passphrase1));
 			explicit_bzero(passphrase2, strlen(passphrase2));
 			free(passphrase1);
@@ -1479,7 +1479,7 @@ do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
 	}
 
 	/* Save the file using the new passphrase. */
-	if ((r = sshkey_save_private(private, identity_file, passphrase1,
+	အကယ်၍ ((r = sshkey_save_private(private, identity_file, passphrase1,
 	    comment, private_key_format, openssh_format_cipher, rounds)) != 0) {
 		error_r(r, "Saving key \"%s\" failed", identity_file);
 		freezero(passphrase1, strlen(passphrase1));
@@ -1499,72 +1499,72 @@ do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
 /*
  * Print the SSHFP RR.
  */
-static int
-do_print_resource_record(struct passwd *pw, char *fname, char *hname,
-    int print_generic, char * const *opts, size_t nopts)
+static ကိန်းပြည့်
+do_print_resource_record(sa_nracanaa passwd *pw, var_na *fname, var_na *hname,
+    ကိန်းပြည့် print_generic, var_na * const *opts, size_t nopts)
 {
-	struct sshkey *public;
-	char *comment = NULL;
-	const char *p;
-	struct stat st;
-	int r, hash = -1;
+	sa_nracanaa sshkey *public;
+	var_na *comment = NULL;
+	const var_na *p;
+	sa_nracanaa stat st;
+	ကိန်းပြည့် r, hash = -1;
 	size_t i;
 
-	for (i = 0; i < nopts; i++) {
-		if ((p = strprefix(opts[i], "hashalg=", 1)) != NULL) {
-			if ((hash = ssh_digest_alg_by_name(p)) == -1)
+	အတွက် (i = 0; i < nopts; i++) {
+		အကယ်၍ ((p = strprefix(opts[i], "hashalg=", 1)) != NULL) {
+			အကယ်၍ ((hash = ssh_digest_alg_by_name(p)) == -1)
 				fatal("Unsupported hash algorithm");
-		} else {
+		} မဟုတ်ပါက {
 			error("Invalid option \"%s\"", opts[i]);
-			return SSH_ERR_INVALID_ARGUMENT;
+			ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
 		}
 	}
-	if (fname == NULL)
+	အကယ်၍ (fname == NULL)
 		fatal_f("no filename");
-	if (stat(fname, &st) == -1) {
-		if (errno == ENOENT)
-			return 0;
+	အကယ်၍ (stat(fname, &st) == -1) {
+		အကယ်၍ (errno == ENOENT)
+			ပြန်ပေး 0;
 		fatal("%s: %s", fname, strerror(errno));
 	}
-	if ((r = sshkey_load_public(fname, &public, &comment)) != 0)
+	အကယ်၍ ((r = sshkey_load_public(fname, &public, &comment)) != 0)
 		fatal_r(r, "Failed to read v2 public key from \"%s\"", fname);
 	export_dns_rr(hname, public, stdout, print_generic, hash);
 	sshkey_free(public);
 	free(comment);
-	return 1;
+	ပြန်ပေး 1;
 }
 
 /*
  * Change the comment of a private key file.
  */
 static void
-do_change_comment(struct passwd *pw, const char *identity_comment)
+do_change_comment(sa_nracanaa passwd *pw, const var_na *identity_comment)
 {
-	char new_comment[KEY_COMMENT_MAX], *comment, *passphrase;
-	struct sshkey *private;
-	struct sshkey *public;
-	struct stat st;
-	int r;
+	var_na new_comment[KEY_COMMENT_MAX], *comment, *passphrase;
+	sa_nracanaa sshkey *private;
+	sa_nracanaa sshkey *public;
+	sa_nracanaa stat st;
+	ကိန်းပြည့် r;
 
-	if (!have_identity)
+	အကယ်၍ (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	အကယ်၍ (stat(identity_file, &st) == -1)
 		fatal("%s: %s", identity_file, strerror(errno));
-	if ((r = sshkey_load_private(identity_file, "",
+	အကယ်၍ ((r = sshkey_load_private(identity_file, "",
 	    &private, &comment)) == 0)
 		passphrase = xstrdup("");
-	else if (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
+	မဟုတ်ပါက အကယ်၍ (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
 		fatal_r(r, "Cannot load private key \"%s\"", identity_file);
-	else {
-		if (identity_passphrase)
+	မဟုတ်ပါက {
+		အကယ်၍ (identity_passphrase)
 			passphrase = xstrdup(identity_passphrase);
-		else if (identity_new_passphrase)
+		မဟုတ်ပါက အကယ်၍ (identity_new_passphrase)
 			passphrase = xstrdup(identity_new_passphrase);
-		else
+		မဟုတ်ပါက
 			passphrase = read_passphrase("Enter passphrase: ",
 			    RP_ALLOW_STDIN);
 		/* Try to load using the passphrase. */
-		if ((r = sshkey_load_private(identity_file, passphrase,
+		အကယ်၍ ((r = sshkey_load_private(identity_file, passphrase,
 		    &private, &comment)) != 0) {
 			freezero(passphrase, strlen(passphrase));
 			fatal_r(r, "Cannot load private key \"%s\"",
@@ -1572,7 +1572,7 @@ do_change_comment(struct passwd *pw, const char *identity_comment)
 		}
 	}
 
-	if (private->type != KEY_ED25519 &&
+	အကယ်၍ (private->type != KEY_ED25519 &&
 	    private_key_format != SSHKEY_PRIVATE_OPENSSH) {
 		error("Comments are only supported for keys stored in "
 		    "the new format (-o).");
@@ -1580,24 +1580,24 @@ do_change_comment(struct passwd *pw, const char *identity_comment)
 		sshkey_free(private);
 		exit(1);
 	}
-	if (comment)
+	အကယ်၍ (comment)
 		printf("Old comment: %s\n", comment);
-	else
+	မဟုတ်ပါက
 		printf("No existing comment\n");
 
-	if (identity_comment) {
-		strlcpy(new_comment, identity_comment, sizeof(new_comment));
-	} else {
+	အကယ်၍ (identity_comment) {
+		strlcpy(new_comment, identity_comment, parimaa_na(new_comment));
+	} မဟုတ်ပါက {
 		printf("New comment: ");
 		fflush(stdout);
-		if (!fgets(new_comment, sizeof(new_comment), stdin)) {
+		အကယ်၍ (!fgets(new_comment, parimaa_na(new_comment), stdin)) {
 			explicit_bzero(passphrase, strlen(passphrase));
 			sshkey_free(private);
 			exit(1);
 		}
 		new_comment[strcspn(new_comment, "\n")] = '\0';
 	}
-	if (comment != NULL && strcmp(comment, new_comment) == 0) {
+	အကယ်၍ (comment != NULL && strcmp(comment, new_comment) == 0) {
 		printf("No change to comment\n");
 		free(passphrase);
 		sshkey_free(private);
@@ -1606,7 +1606,7 @@ do_change_comment(struct passwd *pw, const char *identity_comment)
 	}
 
 	/* Save the file using the new passphrase. */
-	if ((r = sshkey_save_private(private, identity_file, passphrase,
+	အကယ်၍ ((r = sshkey_save_private(private, identity_file, passphrase,
 	    new_comment, private_key_format, openssh_format_cipher,
 	    rounds)) != 0) {
 		error_r(r, "Saving key \"%s\" failed", identity_file);
@@ -1616,28 +1616,28 @@ do_change_comment(struct passwd *pw, const char *identity_comment)
 		exit(1);
 	}
 	freezero(passphrase, strlen(passphrase));
-	if ((r = sshkey_from_private(private, &public)) != 0)
+	အကယ်၍ ((r = sshkey_from_private(private, &public)) != 0)
 		fatal_fr(r, "sshkey_from_private");
 	sshkey_free(private);
 
-	strlcat(identity_file, ".pub", sizeof(identity_file));
-	if ((r = sshkey_save_public(public, identity_file, new_comment)) != 0)
+	strlcat(identity_file, ".pub", parimaa_na(identity_file));
+	အကယ်၍ ((r = sshkey_save_public(public, identity_file, new_comment)) != 0)
 		fatal_r(r, "Unable to save public key to %s", identity_file);
 	sshkey_free(public);
 	free(comment);
 
-	if (strlen(new_comment) > 0)
+	အကယ်၍ (strlen(new_comment) > 0)
 		printf("Comment '%s' applied\n", new_comment);
-	else
+	မဟုတ်ပါက
 		printf("Comment removed\n");
 
 	exit(0);
 }
 
 static void
-cert_ext_add(const char *key, const char *value, int iscrit)
+cert_ext_add(const var_na *key, const var_na *value, ကိန်းပြည့် iscrit)
 {
-	cert_ext = xreallocarray(cert_ext, ncert_ext + 1, sizeof(*cert_ext));
+	cert_ext = xreallocarray(cert_ext, ncert_ext + 1, parimaa_na(*cert_ext));
 	cert_ext[ncert_ext].key = xstrdup(key);
 	cert_ext[ncert_ext].val = value == NULL ? NULL : xstrdup(value);
 	cert_ext[ncert_ext].crit = iscrit;
@@ -1645,53 +1645,53 @@ cert_ext_add(const char *key, const char *value, int iscrit)
 }
 
 /* qsort(3) comparison function for certificate extensions */
-static int
+static ကိန်းပြည့်
 cert_ext_cmp(const void *_a, const void *_b)
 {
-	const struct cert_ext *a = (const struct cert_ext *)_a;
-	const struct cert_ext *b = (const struct cert_ext *)_b;
-	int r;
+	const sa_nracanaa cert_ext *a = (const sa_nracanaa cert_ext *)_a;
+	const sa_nracanaa cert_ext *b = (const sa_nracanaa cert_ext *)_b;
+	ကိန်းပြည့် r;
 
-	if (a->crit != b->crit)
-		return (a->crit < b->crit) ? -1 : 1;
-	if ((r = strcmp(a->key, b->key)) != 0)
-		return r;
-	if ((a->val == NULL) != (b->val == NULL))
-		return (a->val == NULL) ? -1 : 1;
-	if (a->val != NULL && (r = strcmp(a->val, b->val)) != 0)
-		return r;
-	return 0;
+	အကယ်၍ (a->crit != b->crit)
+		ပြန်ပေး (a->crit < b->crit) ? -1 : 1;
+	အကယ်၍ ((r = strcmp(a->key, b->key)) != 0)
+		ပြန်ပေး r;
+	အကယ်၍ ((a->val == NULL) != (b->val == NULL))
+		ပြန်ပေး (a->val == NULL) ? -1 : 1;
+	အကယ်၍ (a->val != NULL && (r = strcmp(a->val, b->val)) != 0)
+		ပြန်ပေး r;
+	ပြန်ပေး 0;
 }
 
 #define OPTIONS_CRITICAL	1
 #define OPTIONS_EXTENSIONS	2
 static void
-prepare_options_buf(struct sshbuf *c, int which)
+prepare_options_buf(sa_nracanaa sshbuf *c, ကိန်းပြည့် which)
 {
-	struct sshbuf *b;
+	sa_nracanaa sshbuf *b;
 	size_t i;
-	int r;
-	const struct cert_ext *ext;
+	ကိန်းပြည့် r;
+	const sa_nracanaa cert_ext *ext;
 
-	if ((b = sshbuf_new()) == NULL)
+	အကယ်၍ ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	sshbuf_reset(c);
-	for (i = 0; i < ncert_ext; i++) {
+	အတွက် (i = 0; i < ncert_ext; i++) {
 		ext = &cert_ext[i];
-		if ((ext->crit && (which & OPTIONS_EXTENSIONS)) ||
+		အကယ်၍ ((ext->crit && (which & OPTIONS_EXTENSIONS)) ||
 		    (!ext->crit && (which & OPTIONS_CRITICAL)))
 			continue;
-		if (ext->val == NULL) {
+		အကယ်၍ (ext->val == NULL) {
 			/* flag option */
 			debug3_f("%s", ext->key);
-			if ((r = sshbuf_put_cstring(c, ext->key)) != 0 ||
+			အကယ်၍ ((r = sshbuf_put_cstring(c, ext->key)) != 0 ||
 			    (r = sshbuf_put_string(c, NULL, 0)) != 0)
 				fatal_fr(r, "prepare flag");
-		} else {
+		} မဟုတ်ပါက {
 			/* key/value option */
 			debug3_f("%s=%s", ext->key, ext->val);
 			sshbuf_reset(b);
-			if ((r = sshbuf_put_cstring(c, ext->key)) != 0 ||
+			အကယ်၍ ((r = sshbuf_put_cstring(c, ext->key)) != 0 ||
 			    (r = sshbuf_put_cstring(b, ext->val)) != 0 ||
 			    (r = sshbuf_put_stringb(c, b)) != 0)
 				fatal_fr(r, "prepare k/v");
@@ -1704,47 +1704,47 @@ static void
 finalise_cert_exts(void)
 {
 	/* critical options */
-	if (certflags_command != NULL)
+	အကယ်၍ (certflags_command != NULL)
 		cert_ext_add("force-command", certflags_command, 1);
-	if (certflags_src_addr != NULL)
+	အကယ်၍ (certflags_src_addr != NULL)
 		cert_ext_add("source-address", certflags_src_addr, 1);
-	if ((certflags_flags & CERTOPT_REQUIRE_VERIFY) != 0)
+	အကယ်၍ ((certflags_flags & CERTOPT_REQUIRE_VERIFY) != 0)
 		cert_ext_add("verify-required", NULL, 1);
 	/* extensions */
-	if ((certflags_flags & CERTOPT_X_FWD) != 0)
+	အကယ်၍ ((certflags_flags & CERTOPT_X_FWD) != 0)
 		cert_ext_add("permit-X11-forwarding", NULL, 0);
-	if ((certflags_flags & CERTOPT_AGENT_FWD) != 0)
+	အကယ်၍ ((certflags_flags & CERTOPT_AGENT_FWD) != 0)
 		cert_ext_add("permit-agent-forwarding", NULL, 0);
-	if ((certflags_flags & CERTOPT_PORT_FWD) != 0)
+	အကယ်၍ ((certflags_flags & CERTOPT_PORT_FWD) != 0)
 		cert_ext_add("permit-port-forwarding", NULL, 0);
-	if ((certflags_flags & CERTOPT_PTY) != 0)
+	အကယ်၍ ((certflags_flags & CERTOPT_PTY) != 0)
 		cert_ext_add("permit-pty", NULL, 0);
-	if ((certflags_flags & CERTOPT_USER_RC) != 0)
+	အကယ်၍ ((certflags_flags & CERTOPT_USER_RC) != 0)
 		cert_ext_add("permit-user-rc", NULL, 0);
-	if ((certflags_flags & CERTOPT_NO_REQUIRE_USER_PRESENCE) != 0)
+	အကယ်၍ ((certflags_flags & CERTOPT_NO_REQUIRE_USER_PRESENCE) != 0)
 		cert_ext_add("no-touch-required", NULL, 0);
 	/* order lexically by key */
-	if (ncert_ext > 0)
-		qsort(cert_ext, ncert_ext, sizeof(*cert_ext), cert_ext_cmp);
+	အကယ်၍ (ncert_ext > 0)
+		qsort(cert_ext, ncert_ext, parimaa_na(*cert_ext), cert_ext_cmp);
 }
 
-static struct sshkey *
-load_pkcs11_key(char *path)
+static sa_nracanaa sshkey *
+load_pkcs11_key(var_na *path)
 {
 #ifdef ENABLE_PKCS11
-	struct sshkey **keys = NULL, *public, *private = NULL;
-	int r, i, nkeys;
+	sa_nracanaa sshkey **keys = NULL, *public, *private = NULL;
+	ကိန်းပြည့် r, i, nkeys;
 
-	if ((r = sshkey_load_public(path, &public, NULL)) != 0)
+	အကယ်၍ ((r = sshkey_load_public(path, &public, NULL)) != 0)
 		fatal_r(r, "Couldn't load CA public key \"%s\"", path);
 
 	nkeys = pkcs11_add_provider(pkcs11provider, identity_passphrase,
 	    &keys, NULL);
 	debug3_f("%d keys", nkeys);
-	if (nkeys <= 0)
+	အကယ်၍ (nkeys <= 0)
 		fatal("cannot read public key from pkcs11");
-	for (i = 0; i < nkeys; i++) {
-		if (sshkey_equal_public(public, keys[i])) {
+	အတွက် (i = 0; i < nkeys; i++) {
+		အကယ်၍ (sshkey_equal_public(public, keys[i])) {
 			private = keys[i];
 			continue;
 		}
@@ -1752,121 +1752,121 @@ load_pkcs11_key(char *path)
 	}
 	free(keys);
 	sshkey_free(public);
-	return private;
-#else
+	ပြန်ပေး private;
+#မဟုတ်ပါက
 	fatal("no pkcs11 support");
 #endif /* ENABLE_PKCS11 */
 }
 
 /* Signer for sshkey_certify_custom that uses the agent */
-static int
-agent_signer(struct sshkey *key, u_char **sigp, size_t *lenp,
+static ကိန်းပြည့်
+agent_signer(sa_nracanaa sshkey *key, u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
-    const char *alg, const char *provider, const char *pin,
+    const var_na *alg, const var_na *provider, const var_na *pin,
     u_int compat, void *ctx)
 {
-	int *agent_fdp = (int *)ctx;
+	ကိန်းပြည့် *agent_fdp = (ကိန်းပြည့် *)ctx;
 
-	return ssh_agent_sign(*agent_fdp, key, sigp, lenp,
+	ပြန်ပေး ssh_agent_sign(*agent_fdp, key, sigp, lenp,
 	    data, datalen, alg, compat);
 }
 
 static void
-do_ca_sign(struct passwd *pw, const char *ca_key_path, int prefer_agent,
-    unsigned long long cert_serial, int cert_serial_autoinc,
-    int argc, char **argv)
+do_ca_sign(sa_nracanaa passwd *pw, const var_na *ca_key_path, ကိန်းပြည့် prefer_agent,
+    unsigned long long cert_serial, ကိန်းပြည့် cert_serial_autoinc,
+    ကိန်းပြည့် argc, var_na **argv)
 {
-	int r, i, key_in_agent = 0, agent_fd = -1;
+	ကိန်းပြည့် r, i, key_in_agent = 0, agent_fd = -1;
 	u_int n;
-	struct sshkey *ca, *public;
-	char valid[64], *otmp, *tmp, *cp, *out, *comment;
-	char *ca_fp = NULL, **plist = NULL, *pin = NULL;
-	struct ssh_identitylist *agent_ids;
+	sa_nracanaa sshkey *ca, *public;
+	var_na valid[64], *otmp, *tmp, *cp, *out, *comment;
+	var_na *ca_fp = NULL, **plist = NULL, *pin = NULL;
+	sa_nracanaa ssh_identitylist *agent_ids;
 	size_t j;
-	struct notifier_ctx *notifier = NULL;
+	sa_nracanaa notifier_ctx *notifier = NULL;
 
 #ifdef ENABLE_PKCS11
 	pkcs11_init(1);
 #endif
 	tmp = tilde_expand_filename(ca_key_path, pw->pw_uid);
-	if (pkcs11provider != NULL) {
+	အကယ်၍ (pkcs11provider != NULL) {
 		/* If a PKCS#11 token was specified then try to use it */
-		if ((ca = load_pkcs11_key(tmp)) == NULL)
+		အကယ်၍ ((ca = load_pkcs11_key(tmp)) == NULL)
 			fatal("No PKCS#11 key matching %s found", ca_key_path);
-	} else if (prefer_agent) {
+	} မဟုတ်ပါက အကယ်၍ (prefer_agent) {
 		/*
 		 * Agent signature requested. Try to use agent after making
 		 * sure the public key specified is actually present in the
 		 * agent.
 		 */
-		if ((r = sshkey_load_public(tmp, &ca, NULL)) != 0)
+		အကယ်၍ ((r = sshkey_load_public(tmp, &ca, NULL)) != 0)
 			fatal_r(r, "Cannot load CA public key %s", tmp);
-		if ((r = ssh_get_authentication_socket(&agent_fd)) != 0)
+		အကယ်၍ ((r = ssh_get_authentication_socket(&agent_fd)) != 0)
 			fatal_r(r, "Cannot use public key for CA signature");
-		if ((r = ssh_fetch_identitylist(agent_fd, &agent_ids)) != 0)
+		အကယ်၍ ((r = ssh_fetch_identitylist(agent_fd, &agent_ids)) != 0)
 			fatal_r(r, "Retrieve agent key list");
-		for (j = 0; j < agent_ids->nkeys; j++) {
-			if (sshkey_equal(ca, agent_ids->keys[j])) {
+		အတွက် (j = 0; j < agent_ids->nkeys; j++) {
+			အကယ်၍ (sshkey_equal(ca, agent_ids->keys[j])) {
 				key_in_agent = 1;
 				/* Replace the CA key with the agent one */
 				sshkey_free(ca);
 				ca = agent_ids->keys[j];
 				agent_ids->keys[j] = NULL;
-				break;
+				bha_nga;
 			}
 		}
-		if (!key_in_agent)
+		အကယ်၍ (!key_in_agent)
 			fatal("CA key %s not found in agent", tmp);
 		ssh_free_identitylist(agent_ids);
-	} else {
+	} မဟုတ်ပါက {
 		/* CA key is assumed to be a private key on the filesystem */
 		ca = load_identity(tmp, NULL);
-		if (sshkey_is_sk(ca) &&
+		အကယ်၍ (sshkey_is_sk(ca) &&
 		    (ca->sk_flags & SSH_SK_USER_VERIFICATION_REQD)) {
-			if ((pin = read_passphrase("Enter PIN for CA key: ",
+			အကယ်၍ ((pin = read_passphrase("Enter PIN for CA key: ",
 			    RP_ALLOW_STDIN)) == NULL)
 				fatal_f("couldn't read PIN");
 		}
 	}
 	free(tmp);
 
-	if (key_type_name != NULL) {
-		if (sshkey_type_from_shortname(key_type_name) != ca->type) {
+	အကယ်၍ (key_type_name != NULL) {
+		အကယ်၍ (sshkey_type_from_shortname(key_type_name) != ca->type) {
 			fatal("CA key type %s doesn't match specified %s",
 			    sshkey_ssh_name(ca), key_type_name);
 		}
-	} else if (ca->type == KEY_RSA) {
+	} မဟုတ်ပါက အကယ်၍ (ca->type == KEY_RSA) {
 		/* Default to a good signature algorithm */
 		key_type_name = "rsa-sha2-512";
 	}
 	ca_fp = sshkey_fingerprint(ca, fingerprint_hash, SSH_FP_DEFAULT);
 
 	finalise_cert_exts();
-	for (i = 0; i < argc; i++) {
+	အတွက် (i = 0; i < argc; i++) {
 		/* Split list of principals */
 		n = 0;
-		if (cert_principals != NULL) {
+		အကယ်၍ (cert_principals != NULL) {
 			otmp = tmp = xstrdup(cert_principals);
 			plist = NULL;
-			for (; (cp = strsep(&tmp, ",")) != NULL; n++) {
-				plist = xreallocarray(plist, n + 1, sizeof(*plist));
-				if (*(plist[n] = xstrdup(cp)) == '\0')
+			အတွက် (; (cp = strsep(&tmp, ",")) != NULL; n++) {
+				plist = xreallocarray(plist, n + 1, parimaa_na(*plist));
+				အကယ်၍ (*(plist[n] = xstrdup(cp)) == '\0')
 					fatal("Empty principal name");
 			}
 			free(otmp);
 		}
-		if (n > SSHKEY_CERT_MAX_PRINCIPALS)
+		အကယ်၍ (n > SSHKEY_CERT_MAX_PRINCIPALS)
 			fatal("Too many certificate principals specified");
 
 		tmp = tilde_expand_filename(argv[i], pw->pw_uid);
-		if ((r = sshkey_load_public(tmp, &public, &comment)) != 0)
+		အကယ်၍ ((r = sshkey_load_public(tmp, &public, &comment)) != 0)
 			fatal_r(r, "load pubkey \"%s\"", tmp);
-		if (sshkey_is_cert(public))
+		အကယ်၍ (sshkey_is_cert(public))
 			fatal_f("key \"%s\" type %s cannot be certified",
 			    tmp, sshkey_type(public));
 
 		/* Prepare certificate to sign */
-		if ((r = sshkey_to_certified(public)) != 0)
+		အကယ်၍ ((r = sshkey_to_certified(public)) != 0)
 			fatal_r(r, "Could not upgrade key %s to certificate", tmp);
 		public->cert->type = cert_key_type;
 		public->cert->serial = (uint64_t)cert_serial;
@@ -1878,17 +1878,17 @@ do_ca_sign(struct passwd *pw, const char *ca_key_path, int prefer_agent,
 		prepare_options_buf(public->cert->critical, OPTIONS_CRITICAL);
 		prepare_options_buf(public->cert->extensions,
 		    OPTIONS_EXTENSIONS);
-		if ((r = sshkey_from_private(ca,
+		အကယ်၍ ((r = sshkey_from_private(ca,
 		    &public->cert->signature_key)) != 0)
 			fatal_r(r, "sshkey_from_private (ca key)");
 
-		if (key_in_agent) {
-			if ((r = sshkey_certify_custom(public, ca,
+		အကယ်၍ (key_in_agent) {
+			အကယ်၍ ((r = sshkey_certify_custom(public, ca,
 			    key_type_name, sk_provider, NULL, agent_signer,
 			    &agent_fd)) != 0)
 				fatal_r(r, "Couldn't certify %s via agent", tmp);
-		} else {
-			if (sshkey_is_sk(ca) &&
+		} မဟုတ်ပါက {
+			အကယ်၍ (sshkey_is_sk(ca) &&
 			    (ca->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
 				notifier = notify_start(0,
 				    "Confirm user presence for key %s %s",
@@ -1897,23 +1897,23 @@ do_ca_sign(struct passwd *pw, const char *ca_key_path, int prefer_agent,
 			r = sshkey_certify(public, ca, key_type_name,
 			    sk_provider, pin);
 			notify_complete(notifier, "User presence confirmed");
-			if (r != 0)
+			အကယ်၍ (r != 0)
 				fatal_r(r, "Couldn't certify key %s", tmp);
 		}
 
-		if ((cp = strrchr(tmp, '.')) != NULL && strcmp(cp, ".pub") == 0)
+		အကယ်၍ ((cp = strrchr(tmp, '.')) != NULL && strcmp(cp, ".pub") == 0)
 			*cp = '\0';
 		xasprintf(&out, "%s-cert.pub", tmp);
 		free(tmp);
 
-		if ((r = sshkey_save_public(public, out, comment)) != 0) {
+		အကယ်၍ ((r = sshkey_save_public(public, out, comment)) != 0) {
 			fatal_r(r, "Unable to save public key to %s",
 			    identity_file);
 		}
 
-		if (!quiet) {
+		အကယ်၍ (!quiet) {
 			sshkey_format_cert_validity(public->cert,
-			    valid, sizeof(valid));
+			    valid, parimaa_na(valid));
 			logit("Signed %s key %s: id \"%s\" serial %llu%s%s "
 			    "valid %s", sshkey_cert_type(public),
 			    out, public->cert->key_id,
@@ -1926,10 +1926,10 @@ do_ca_sign(struct passwd *pw, const char *ca_key_path, int prefer_agent,
 		sshkey_free(public);
 		free(out);
 		free(comment);
-		if (cert_serial_autoinc)
+		အကယ်၍ (cert_serial_autoinc)
 			cert_serial++;
 	}
-	if (pin != NULL)
+	အကယ်၍ (pin != NULL)
 		freezero(pin, strlen(pin));
 	sshkey_free(ca);
 	free(ca_fp);
@@ -1939,44 +1939,44 @@ do_ca_sign(struct passwd *pw, const char *ca_key_path, int prefer_agent,
 }
 
 static uint64_t
-parse_relative_time(const char *s, time_t now)
+parse_relative_time(const var_na *s, time_t now)
 {
 	int64_t mul, secs;
 
 	mul = *s == '-' ? -1 : 1;
 
-	if ((secs = convtime(s + 1)) == -1)
+	အကယ်၍ ((secs = convtime(s + 1)) == -1)
 		fatal("Invalid relative certificate time %s", s);
-	if (mul == -1 && secs > now)
+	အကယ်၍ (mul == -1 && secs > now)
 		fatal("Certificate time %s cannot be represented", s);
-	return now + (uint64_t)(secs * mul);
+	ပြန်ပေး now + (uint64_t)(secs * mul);
 }
 
 static void
-parse_hex_u64(const char *s, uint64_t *up)
+parse_hex_u64(const var_na *s, uint64_t *up)
 {
-	char *ep;
+	var_na *ep;
 	unsigned long long ull;
 
 	errno = 0;
 	ull = strtoull(s, &ep, 16);
-	if (*s == '\0' || *ep != '\0')
+	အကယ်၍ (*s == '\0' || *ep != '\0')
 		fatal("Invalid certificate time: not a number");
-	if (errno == ERANGE && ull == ULONG_MAX)
+	အကယ်၍ (errno == ERANGE && ull == ULONG_MAX)
 		fatal_fr(SSH_ERR_SYSTEM_ERROR, "Invalid certificate time");
 	*up = (uint64_t)ull;
 }
 
 static void
-parse_cert_times(char *timespec)
+parse_cert_times(var_na *timespec)
 {
-	char *from, *to;
+	var_na *from, *to;
 	time_t now = time(NULL);
 	int64_t secs;
 
 	/* +timespec relative to now */
-	if (*timespec == '+' && strchr(timespec, ':') == NULL) {
-		if ((secs = convtime(timespec + 1)) == -1)
+	အကယ်၍ (*timespec == '+' && strchr(timespec, ':') == NULL) {
+		အကယ်၍ ((secs = convtime(timespec + 1)) == -1)
 			fatal("Invalid relative certificate life %s", timespec);
 		cert_valid_to = now + secs;
 		/*
@@ -1984,7 +1984,7 @@ parse_cert_times(char *timespec)
 		 * with poorly-synchronised clocks.
 		 */
 		cert_valid_from = ((now - 59)/ 60) * 60;
-		return;
+		ပြန်ပေး;
 	}
 
 	/*
@@ -1994,112 +1994,112 @@ parse_cert_times(char *timespec)
 	 */
 	from = xstrdup(timespec);
 	to = strchr(from, ':');
-	if (to == NULL || from == to || *(to + 1) == '\0')
+	အကယ်၍ (to == NULL || from == to || *(to + 1) == '\0')
 		fatal("Invalid certificate life specification %s", timespec);
 	*to++ = '\0';
 
-	if (*from == '-' || *from == '+')
+	အကယ်၍ (*from == '-' || *from == '+')
 		cert_valid_from = parse_relative_time(from, now);
-	else if (strcmp(from, "always") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcmp(from, "always") == 0)
 		cert_valid_from = 0;
-	else if (strncmp(from, "0x", 2) == 0)
+	မဟုတ်ပါက အကယ်၍ (strncmp(from, "0x", 2) == 0)
 		parse_hex_u64(from, &cert_valid_from);
-	else if (parse_absolute_time(from, &cert_valid_from) != 0)
+	မဟုတ်ပါက အကယ်၍ (parse_absolute_time(from, &cert_valid_from) != 0)
 		fatal("Invalid from time \"%s\"", from);
 
-	if (*to == '-' || *to == '+')
+	အကယ်၍ (*to == '-' || *to == '+')
 		cert_valid_to = parse_relative_time(to, now);
-	else if (strcmp(to, "forever") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcmp(to, "forever") == 0)
 		cert_valid_to = ~(uint64_t)0;
-	else if (strncmp(to, "0x", 2) == 0)
+	မဟုတ်ပါက အကယ်၍ (strncmp(to, "0x", 2) == 0)
 		parse_hex_u64(to, &cert_valid_to);
-	else if (parse_absolute_time(to, &cert_valid_to) != 0)
+	မဟုတ်ပါက အကယ်၍ (parse_absolute_time(to, &cert_valid_to) != 0)
 		fatal("Invalid to time \"%s\"", to);
 
-	if (cert_valid_to <= cert_valid_from)
+	အကယ်၍ (cert_valid_to <= cert_valid_from)
 		fatal("Empty certificate validity interval");
 	free(from);
 }
 
 static void
-add_cert_option(char *opt)
+add_cert_option(var_na *opt)
 {
-	char *val, *cp;
-	const char *p;
-	int iscrit = 0;
+	var_na *val, *cp;
+	const var_na *p;
+	ကိန်းပြည့် iscrit = 0;
 
-	if (strcasecmp(opt, "clear") == 0)
+	အကယ်၍ (strcasecmp(opt, "clear") == 0)
 		certflags_flags = 0;
-	else if (strcasecmp(opt, "no-x11-forwarding") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "no-x11-forwarding") == 0)
 		certflags_flags &= ~CERTOPT_X_FWD;
-	else if (strcasecmp(opt, "permit-x11-forwarding") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "permit-x11-forwarding") == 0)
 		certflags_flags |= CERTOPT_X_FWD;
-	else if (strcasecmp(opt, "no-agent-forwarding") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "no-agent-forwarding") == 0)
 		certflags_flags &= ~CERTOPT_AGENT_FWD;
-	else if (strcasecmp(opt, "permit-agent-forwarding") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "permit-agent-forwarding") == 0)
 		certflags_flags |= CERTOPT_AGENT_FWD;
-	else if (strcasecmp(opt, "no-port-forwarding") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "no-port-forwarding") == 0)
 		certflags_flags &= ~CERTOPT_PORT_FWD;
-	else if (strcasecmp(opt, "permit-port-forwarding") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "permit-port-forwarding") == 0)
 		certflags_flags |= CERTOPT_PORT_FWD;
-	else if (strcasecmp(opt, "no-pty") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "no-pty") == 0)
 		certflags_flags &= ~CERTOPT_PTY;
-	else if (strcasecmp(opt, "permit-pty") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "permit-pty") == 0)
 		certflags_flags |= CERTOPT_PTY;
-	else if (strcasecmp(opt, "no-user-rc") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "no-user-rc") == 0)
 		certflags_flags &= ~CERTOPT_USER_RC;
-	else if (strcasecmp(opt, "permit-user-rc") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "permit-user-rc") == 0)
 		certflags_flags |= CERTOPT_USER_RC;
-	else if (strcasecmp(opt, "touch-required") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "touch-required") == 0)
 		certflags_flags &= ~CERTOPT_NO_REQUIRE_USER_PRESENCE;
-	else if (strcasecmp(opt, "no-touch-required") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "no-touch-required") == 0)
 		certflags_flags |= CERTOPT_NO_REQUIRE_USER_PRESENCE;
-	else if (strcasecmp(opt, "no-verify-required") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "no-verify-required") == 0)
 		certflags_flags &= ~CERTOPT_REQUIRE_VERIFY;
-	else if (strcasecmp(opt, "verify-required") == 0)
+	မဟုတ်ပါက အကယ်၍ (strcasecmp(opt, "verify-required") == 0)
 		certflags_flags |= CERTOPT_REQUIRE_VERIFY;
-	else if ((p = strprefix(opt, "force-command=", 1)) != NULL) {
-		if (*p == '\0')
+	မဟုတ်ပါက အကယ်၍ ((p = strprefix(opt, "force-command=", 1)) != NULL) {
+		အကယ်၍ (*p == '\0')
 			fatal("Empty force-command option");
-		if (certflags_command != NULL)
+		အကယ်၍ (certflags_command != NULL)
 			fatal("force-command already specified");
 		certflags_command = xstrdup(p);
-	} else if ((p = strprefix(opt, "source-address=", 1)) != NULL) {
-		if (*p == '\0')
+	} မဟုတ်ပါက အကယ်၍ ((p = strprefix(opt, "source-address=", 1)) != NULL) {
+		အကယ်၍ (*p == '\0')
 			fatal("Empty source-address option");
-		if (certflags_src_addr != NULL)
+		အကယ်၍ (certflags_src_addr != NULL)
 			fatal("source-address already specified");
-		if (addr_match_cidr_list(NULL, p) != 0)
+		အကယ်၍ (addr_match_cidr_list(NULL, p) != 0)
 			fatal("Invalid source-address list");
 		certflags_src_addr = xstrdup(p);
-	} else if (strprefix(opt, "extension:", 1) != NULL ||
+	} မဟုတ်ပါက အကယ်၍ (strprefix(opt, "extension:", 1) != NULL ||
 		    (iscrit = (strprefix(opt, "critical:", 1) != NULL))) {
 		val = xstrdup(strchr(opt, ':') + 1);
-		if ((cp = strchr(val, '=')) != NULL)
+		အကယ်၍ ((cp = strchr(val, '=')) != NULL)
 			*cp++ = '\0';
 		cert_ext_add(val, cp, iscrit);
 		free(val);
-	} else
+	} မဟုတ်ပါက
 		fatal("Unsupported certificate option \"%s\"", opt);
 }
 
 static void
-show_options(struct sshbuf *optbuf, int in_critical)
+show_options(sa_nracanaa sshbuf *optbuf, ကိန်းပြည့် in_critical)
 {
-	char *name, *arg, *hex;
-	struct sshbuf *options, *option = NULL;
-	int r;
+	var_na *name, *arg, *hex;
+	sa_nracanaa sshbuf *options, *option = NULL;
+	ကိန်းပြည့် r;
 
-	if ((options = sshbuf_fromb(optbuf)) == NULL)
+	အကယ်၍ ((options = sshbuf_fromb(optbuf)) == NULL)
 		fatal_f("sshbuf_fromb failed");
-	while (sshbuf_len(options) != 0) {
+	နေစဉ် (sshbuf_len(options) != 0) {
 		sshbuf_free(option);
 		option = NULL;
-		if ((r = sshbuf_get_cstring(options, &name, NULL)) != 0 ||
+		အကယ်၍ ((r = sshbuf_get_cstring(options, &name, NULL)) != 0 ||
 		    (r = sshbuf_froms(options, &option)) != 0)
 			fatal_fr(r, "parse option");
 		printf("                %s", name);
-		if (!in_critical &&
+		အကယ်၍ (!in_critical &&
 		    (strcmp(name, "permit-X11-forwarding") == 0 ||
 		    strcmp(name, "permit-agent-forwarding") == 0 ||
 		    strcmp(name, "permit-port-forwarding") == 0 ||
@@ -2107,26 +2107,26 @@ show_options(struct sshbuf *optbuf, int in_critical)
 		    strcmp(name, "permit-user-rc") == 0 ||
 		    strcmp(name, "no-touch-required") == 0)) {
 			printf("\n");
-		} else if (in_critical &&
+		} မဟုတ်ပါက အကယ်၍ (in_critical &&
 		    (strcmp(name, "force-command") == 0 ||
 		    strcmp(name, "source-address") == 0)) {
-			if ((r = sshbuf_get_cstring(option, &arg, NULL)) != 0)
+			အကယ်၍ ((r = sshbuf_get_cstring(option, &arg, NULL)) != 0)
 				fatal_fr(r, "parse critical");
 			printf(" %s\n", arg);
 			free(arg);
-		} else if (in_critical &&
+		} မဟုတ်ပါက အကယ်၍ (in_critical &&
 		    strcmp(name, "verify-required") == 0) {
 			printf("\n");
-		} else if (sshbuf_len(option) > 0) {
+		} မဟုတ်ပါက အကယ်၍ (sshbuf_len(option) > 0) {
 			hex = sshbuf_dtob16(option);
 			printf(" UNKNOWN OPTION: %s (len %zu)\n",
 			    hex, sshbuf_len(option));
 			sshbuf_reset(option);
 			free(hex);
-		} else
+		} မဟုတ်ပါက
 			printf(" UNKNOWN FLAG OPTION\n");
 		free(name);
-		if (sshbuf_len(option) != 0)
+		အကယ်၍ (sshbuf_len(option) != 0)
 			fatal("Option corrupt: extra data at end");
 	}
 	sshbuf_free(option);
@@ -2134,17 +2134,17 @@ show_options(struct sshbuf *optbuf, int in_critical)
 }
 
 static void
-print_cert(struct sshkey *key)
+print_cert(sa_nracanaa sshkey *key)
 {
-	char valid[64], *key_fp, *ca_fp;
+	var_na valid[64], *key_fp, *ca_fp;
 	u_int i;
 
 	key_fp = sshkey_fingerprint(key, fingerprint_hash, SSH_FP_DEFAULT);
 	ca_fp = sshkey_fingerprint(key->cert->signature_key,
 	    fingerprint_hash, SSH_FP_DEFAULT);
-	if (key_fp == NULL || ca_fp == NULL)
+	အကယ်၍ (key_fp == NULL || ca_fp == NULL)
 		fatal_f("sshkey_fingerprint fail");
-	sshkey_format_cert_validity(key->cert, valid, sizeof(valid));
+	sshkey_format_cert_validity(key->cert, valid, parimaa_na(valid));
 
 	printf("        Type: %s %s certificate\n", sshkey_ssh_name(key),
 	    sshkey_cert_type(key));
@@ -2156,25 +2156,25 @@ print_cert(struct sshkey *key)
 	printf("        Serial: %llu\n", (unsigned long long)key->cert->serial);
 	printf("        Valid: %s\n", valid);
 	printf("        Principals: ");
-	if (key->cert->nprincipals == 0)
+	အကယ်၍ (key->cert->nprincipals == 0)
 		printf("(none)\n");
-	else {
-		for (i = 0; i < key->cert->nprincipals; i++)
+	မဟုတ်ပါက {
+		အတွက် (i = 0; i < key->cert->nprincipals; i++)
 			printf("\n                %s",
 			    key->cert->principals[i]);
 		printf("\n");
 	}
 	printf("        Critical Options: ");
-	if (sshbuf_len(key->cert->critical) == 0)
+	အကယ်၍ (sshbuf_len(key->cert->critical) == 0)
 		printf("(none)\n");
-	else {
+	မဟုတ်ပါက {
 		printf("\n");
 		show_options(key->cert->critical, 1);
 	}
 	printf("        Extensions: ");
-	if (sshbuf_len(key->cert->extensions) == 0)
+	အကယ်၍ (sshbuf_len(key->cert->extensions) == 0)
 		printf("(none)\n");
-	else {
+	မဟုတ်ပါက {
 		printf("\n");
 		show_options(key->cert->extensions, 0);
 	}
@@ -2183,52 +2183,52 @@ print_cert(struct sshkey *key)
 }
 
 static void
-do_show_cert(struct passwd *pw)
+do_show_cert(sa_nracanaa passwd *pw)
 {
-	struct sshkey *key = NULL;
-	struct stat st;
-	int r, is_stdin = 0, ok = 0;
+	sa_nracanaa sshkey *key = NULL;
+	sa_nracanaa stat st;
+	ကိန်းပြည့် r, is_stdin = 0, ok = 0;
 	FILE *f;
-	char *cp, *line = NULL;
-	const char *path;
+	var_na *cp, *line = NULL;
+	const var_na *path;
 	size_t linesize = 0;
 	u_long lnum = 0;
 
-	if (!have_identity)
+	အကယ်၍ (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (strcmp(identity_file, "-") != 0 && stat(identity_file, &st) == -1)
+	အကယ်၍ (strcmp(identity_file, "-") != 0 && stat(identity_file, &st) == -1)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
 
 	path = identity_file;
-	if (strcmp(path, "-") == 0) {
+	အကယ်၍ (strcmp(path, "-") == 0) {
 		f = stdin;
 		path = "(stdin)";
 		is_stdin = 1;
-	} else if ((f = fopen(identity_file, "r")) == NULL)
+	} မဟုတ်ပါက အကယ်၍ ((f = fopen(identity_file, "r")) == NULL)
 		fatal("fopen %s: %s", identity_file, strerror(errno));
 
-	while (getline(&line, &linesize, f) != -1) {
+	နေစဉ် (getline(&line, &linesize, f) != -1) {
 		lnum++;
 		sshkey_free(key);
 		key = NULL;
 		/* Trim leading space and comments */
 		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
+		အကယ်၍ (*cp == '#' || *cp == '\0')
 			continue;
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+		အကယ်၍ ((key = sshkey_new(KEY_UNSPEC)) == NULL)
 			fatal("sshkey_new");
-		if ((r = sshkey_read(key, &cp)) != 0) {
+		အကယ်၍ ((r = sshkey_read(key, &cp)) != 0) {
 			error_r(r, "%s:%lu: invalid key", path, lnum);
 			continue;
 		}
-		if (!sshkey_is_cert(key)) {
+		အကယ်၍ (!sshkey_is_cert(key)) {
 			error("%s:%lu is not a certificate", path, lnum);
 			continue;
 		}
 		ok = 1;
-		if (!is_stdin && lnum == 1)
+		အကယ်၍ (!is_stdin && lnum == 1)
 			printf("%s:\n", path);
-		else
+		မဟုတ်ပါက
 			printf("%s:%lu:\n", path, lnum);
 		print_cert(key);
 	}
@@ -2239,47 +2239,47 @@ do_show_cert(struct passwd *pw)
 }
 
 static void
-load_krl(const char *path, struct ssh_krl **krlp)
+load_krl(const var_na *path, sa_nracanaa ssh_krl **krlp)
 {
-	struct sshbuf *krlbuf;
-	int r;
+	sa_nracanaa sshbuf *krlbuf;
+	ကိန်းပြည့် r;
 
-	if ((r = sshbuf_load_file(path, &krlbuf)) != 0)
+	အကယ်၍ ((r = sshbuf_load_file(path, &krlbuf)) != 0)
 		fatal_r(r, "Unable to load KRL %s", path);
 	/* XXX check sigs */
-	if ((r = ssh_krl_from_blob(krlbuf, krlp)) != 0 ||
+	အကယ်၍ ((r = ssh_krl_from_blob(krlbuf, krlp)) != 0 ||
 	    *krlp == NULL)
 		fatal_r(r, "Invalid KRL file %s", path);
 	sshbuf_free(krlbuf);
 }
 
 static void
-hash_to_blob(const char *cp, u_char **blobp, size_t *lenp,
-    const char *file, u_long lnum)
+hash_to_blob(const var_na *cp, u_char **blobp, size_t *lenp,
+    const var_na *file, u_long lnum)
 {
-	char *tmp;
+	var_na *tmp;
 	size_t tlen;
-	struct sshbuf *b;
-	int r;
+	sa_nracanaa sshbuf *b;
+	ကိန်းပြည့် r;
 
-	if ((cp = strprefix(cp, "SHA256:", 0)) == NULL)
+	အကယ်၍ ((cp = strprefix(cp, "SHA256:", 0)) == NULL)
 		fatal("%s:%lu: unsupported hash algorithm", file, lnum);
 
 	/*
 	 * OpenSSH base64 hashes omit trailing '='
 	 * characters; put them back for decode.
 	 */
-	if ((tlen = strlen(cp)) >= SIZE_MAX - 5)
+	အကယ်၍ ((tlen = strlen(cp)) >= SIZE_MAX - 5)
 		fatal_f("hash too long: %zu bytes", tlen);
 	tmp = xmalloc(tlen + 4 + 1);
 	strlcpy(tmp, cp, tlen + 1);
-	while ((tlen % 4) != 0) {
+	နေစဉ် ((tlen % 4) != 0) {
 		tmp[tlen++] = '=';
 		tmp[tlen] = '\0';
 	}
-	if ((b = sshbuf_new()) == NULL)
+	အကယ်၍ ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_b64tod(b, tmp)) != 0)
+	အကယ်၍ ((r = sshbuf_b64tod(b, tmp)) != 0)
 		fatal_r(r, "%s:%lu: decode hash failed", file, lnum);
 	free(tmp);
 	*lenp = sshbuf_len(b);
@@ -2289,30 +2289,30 @@ hash_to_blob(const char *cp, u_char **blobp, size_t *lenp,
 }
 
 static void
-update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
-    const struct sshkey *ca, struct ssh_krl *krl)
+update_krl_from_file(sa_nracanaa passwd *pw, const var_na *file, ကိန်းပြည့် wild_ca,
+    const sa_nracanaa sshkey *ca, sa_nracanaa ssh_krl *krl)
 {
-	struct sshkey *key = NULL;
+	sa_nracanaa sshkey *key = NULL;
 	u_long lnum = 0;
-	char *path, *cp, *ep, *line = NULL;
+	var_na *path, *cp, *ep, *line = NULL;
 	u_char *blob = NULL;
 	size_t blen = 0, linesize = 0;
 	unsigned long long serial, serial2;
-	int i, was_explicit_key, was_sha1, was_sha256, was_hash, r;
+	ကိန်းပြည့် i, was_explicit_key, was_sha1, was_sha256, was_hash, r;
 	FILE *krl_spec;
 
 	path = tilde_expand_filename(file, pw->pw_uid);
-	if (strcmp(path, "-") == 0) {
+	အကယ်၍ (strcmp(path, "-") == 0) {
 		krl_spec = stdin;
 		free(path);
 		path = xstrdup("(standard input)");
-	} else if ((krl_spec = fopen(path, "r")) == NULL)
+	} မဟုတ်ပါက အကယ်၍ ((krl_spec = fopen(path, "r")) == NULL)
 		fatal("fopen %s: %s", path, strerror(errno));
 
-	if (!quiet)
+	အကယ်၍ (!quiet)
 		printf("Revoking from %s\n", path);
-	while (getline(&line, &linesize, krl_spec) != -1) {
-		if (linesize >= INT_MAX) {
+	နေစဉ် (getline(&line, &linesize, krl_spec) != -1) {
+		အကယ်၍ (linesize >= INT_MAX) {
 			fatal_f("%s contains unparsable line, len=%zu",
 			    path, linesize);
 		}
@@ -2320,24 +2320,24 @@ update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
 		was_explicit_key = was_sha1 = was_sha256 = was_hash = 0;
 		cp = line + strspn(line, " \t");
 		/* Trim trailing space, comments and strip \n */
-		for (i = 0, r = -1; cp[i] != '\0'; i++) {
-			if (cp[i] == '#' || cp[i] == '\n') {
+		အတွက် (i = 0, r = -1; cp[i] != '\0'; i++) {
+			အကယ်၍ (cp[i] == '#' || cp[i] == '\n') {
 				cp[i] = '\0';
-				break;
+				bha_nga;
 			}
-			if (cp[i] == ' ' || cp[i] == '\t') {
+			အကယ်၍ (cp[i] == ' ' || cp[i] == '\t') {
 				/* Remember the start of a span of whitespace */
-				if (r == -1)
+				အကယ်၍ (r == -1)
 					r = i;
-			} else
+			} မဟုတ်ပါက
 				r = -1;
 		}
-		if (r != -1)
+		အကယ်၍ (r != -1)
 			cp[r] = '\0';
-		if (*cp == '\0')
+		အကယ်၍ (*cp == '\0')
 			continue;
-		if (strncasecmp(cp, "serial:", 7) == 0) {
-			if (ca == NULL && !wild_ca) {
+		အကယ်၍ (strncasecmp(cp, "serial:", 7) == 0) {
+			အကယ်၍ (ca == NULL && !wild_ca) {
 				fatal("revoking certificates by serial number "
 				    "requires specification of a CA key");
 			}
@@ -2345,62 +2345,62 @@ update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
 			cp = cp + strspn(cp, " \t");
 			errno = 0;
 			serial = strtoull(cp, &ep, 0);
-			if (*cp == '\0' || (*ep != '\0' && *ep != '-'))
+			အကယ်၍ (*cp == '\0' || (*ep != '\0' && *ep != '-'))
 				fatal("%s:%lu: invalid serial \"%s\"",
 				    path, lnum, cp);
-			if (errno == ERANGE && serial == ULLONG_MAX)
+			အကယ်၍ (errno == ERANGE && serial == ULLONG_MAX)
 				fatal("%s:%lu: serial out of range",
 				    path, lnum);
 			serial2 = serial;
-			if (*ep == '-') {
+			အကယ်၍ (*ep == '-') {
 				cp = ep + 1;
 				errno = 0;
 				serial2 = strtoull(cp, &ep, 0);
-				if (*cp == '\0' || *ep != '\0')
+				အကယ်၍ (*cp == '\0' || *ep != '\0')
 					fatal("%s:%lu: invalid serial \"%s\"",
 					    path, lnum, cp);
-				if (errno == ERANGE && serial2 == ULLONG_MAX)
+				အကယ်၍ (errno == ERANGE && serial2 == ULLONG_MAX)
 					fatal("%s:%lu: serial out of range",
 					    path, lnum);
-				if (serial2 <= serial)
+				အကယ်၍ (serial2 <= serial)
 					fatal("%s:%lu: invalid serial range "
 					    "%llu:%llu", path, lnum,
 					    (unsigned long long)serial,
 					    (unsigned long long)serial2);
 			}
-			if (ssh_krl_revoke_cert_by_serial_range(krl,
+			အကယ်၍ (ssh_krl_revoke_cert_by_serial_range(krl,
 			    ca, serial, serial2) != 0) {
 				fatal_f("revoke serial failed");
 			}
-		} else if (strncasecmp(cp, "id:", 3) == 0) {
-			if (ca == NULL && !wild_ca) {
+		} မဟုတ်ပါက အကယ်၍ (strncasecmp(cp, "id:", 3) == 0) {
+			အကယ်၍ (ca == NULL && !wild_ca) {
 				fatal("revoking certificates by key ID "
 				    "requires specification of a CA key");
 			}
 			cp += 3;
 			cp = cp + strspn(cp, " \t");
-			if (ssh_krl_revoke_cert_by_key_id(krl, ca, cp) != 0)
+			အကယ်၍ (ssh_krl_revoke_cert_by_key_id(krl, ca, cp) != 0)
 				fatal_f("revoke key ID failed");
-		} else if (strncasecmp(cp, "hash:", 5) == 0) {
+		} မဟုတ်ပါက အကယ်၍ (strncasecmp(cp, "hash:", 5) == 0) {
 			cp += 5;
 			cp = cp + strspn(cp, " \t");
 			hash_to_blob(cp, &blob, &blen, file, lnum);
-			if ((r = ssh_krl_revoke_key_sha256(krl,
+			အကယ်၍ ((r = ssh_krl_revoke_key_sha256(krl,
 			    blob, blen)) != 0)
 				fatal_fr(r, "revoke key failed");
 			free(blob);
 			blob = NULL;
 			blen = 0;
-		} else {
-			if (strncasecmp(cp, "key:", 4) == 0) {
+		} မဟုတ်ပါက {
+			အကယ်၍ (strncasecmp(cp, "key:", 4) == 0) {
 				cp += 4;
 				cp = cp + strspn(cp, " \t");
 				was_explicit_key = 1;
-			} else if (strncasecmp(cp, "sha1:", 5) == 0) {
+			} မဟုတ်ပါက အကယ်၍ (strncasecmp(cp, "sha1:", 5) == 0) {
 				cp += 5;
 				cp = cp + strspn(cp, " \t");
 				was_sha1 = 1;
-			} else if (strncasecmp(cp, "sha256:", 7) == 0) {
+			} မဟုတ်ပါက အကယ်၍ (strncasecmp(cp, "sha256:", 7) == 0) {
 				cp += 7;
 				cp = cp + strspn(cp, " \t");
 				was_sha256 = 1;
@@ -2409,29 +2409,29 @@ update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
 				 * Parsing will fail if it isn't.
 				 */
 			}
-			if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+			အကယ်၍ ((key = sshkey_new(KEY_UNSPEC)) == NULL)
 				fatal("sshkey_new");
-			if ((r = sshkey_read(key, &cp)) != 0)
+			အကယ်၍ ((r = sshkey_read(key, &cp)) != 0)
 				fatal_r(r, "%s:%lu: invalid key", path, lnum);
-			if (was_explicit_key)
+			အကယ်၍ (was_explicit_key)
 				r = ssh_krl_revoke_key_explicit(krl, key);
-			else if (was_sha1) {
-				if (sshkey_fingerprint_raw(key,
+			မဟုတ်ပါက အကယ်၍ (was_sha1) {
+				အကယ်၍ (sshkey_fingerprint_raw(key,
 				    SSH_DIGEST_SHA1, &blob, &blen) != 0) {
 					fatal("%s:%lu: fingerprint failed",
 					    file, lnum);
 				}
 				r = ssh_krl_revoke_key_sha1(krl, blob, blen);
-			} else if (was_sha256) {
-				if (sshkey_fingerprint_raw(key,
+			} မဟုတ်ပါက အကယ်၍ (was_sha256) {
+				အကယ်၍ (sshkey_fingerprint_raw(key,
 				    SSH_DIGEST_SHA256, &blob, &blen) != 0) {
 					fatal("%s:%lu: fingerprint failed",
 					    file, lnum);
 				}
 				r = ssh_krl_revoke_key_sha256(krl, blob, blen);
-			} else
+			} မဟုတ်ပါက
 				r = ssh_krl_revoke_key(krl, key);
-			if (r != 0)
+			အကယ်၍ (r != 0)
 				fatal_fr(r, "revoke key failed");
 			freezero(blob, blen);
 			blob = NULL;
@@ -2439,62 +2439,62 @@ update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
 			sshkey_free(key);
 		}
 	}
-	if (strcmp(path, "-") != 0)
+	အကယ်၍ (strcmp(path, "-") != 0)
 		fclose(krl_spec);
 	free(line);
 	free(path);
 }
 
 static void
-do_gen_krl(struct passwd *pw, int updating, const char *ca_key_path,
-    unsigned long long krl_version, const char *krl_comment,
-    int argc, char **argv)
+do_gen_krl(sa_nracanaa passwd *pw, ကိန်းပြည့် updating, const var_na *ca_key_path,
+    unsigned long long krl_version, const var_na *krl_comment,
+    ကိန်းပြည့် argc, var_na **argv)
 {
-	struct ssh_krl *krl;
-	struct stat sb;
-	struct sshkey *ca = NULL;
-	int i, r, wild_ca = 0;
-	char *tmp;
-	struct sshbuf *kbuf;
+	sa_nracanaa ssh_krl *krl;
+	sa_nracanaa stat sb;
+	sa_nracanaa sshkey *ca = NULL;
+	ကိန်းပြည့် i, r, wild_ca = 0;
+	var_na *tmp;
+	sa_nracanaa sshbuf *kbuf;
 
-	if (*identity_file == '\0')
+	အကယ်၍ (*identity_file == '\0')
 		fatal("KRL generation requires an output file");
-	if (stat(identity_file, &sb) == -1) {
-		if (errno != ENOENT)
+	အကယ်၍ (stat(identity_file, &sb) == -1) {
+		အကယ်၍ (errno != ENOENT)
 			fatal("Cannot access KRL \"%s\": %s",
 			    identity_file, strerror(errno));
-		if (updating)
+		အကယ်၍ (updating)
 			fatal("KRL \"%s\" does not exist", identity_file);
 	}
-	if (ca_key_path != NULL) {
-		if (strcasecmp(ca_key_path, "none") == 0)
+	အကယ်၍ (ca_key_path != NULL) {
+		အကယ်၍ (strcasecmp(ca_key_path, "none") == 0)
 			wild_ca = 1;
-		else {
+		မဟုတ်ပါက {
 			tmp = tilde_expand_filename(ca_key_path, pw->pw_uid);
-			if ((r = sshkey_load_public(tmp, &ca, NULL)) != 0)
+			အကယ်၍ ((r = sshkey_load_public(tmp, &ca, NULL)) != 0)
 				fatal_r(r, "Cannot load CA public key %s", tmp);
 			free(tmp);
 		}
 	}
 
-	if (updating)
+	အကယ်၍ (updating)
 		load_krl(identity_file, &krl);
-	else if ((krl = ssh_krl_init()) == NULL)
+	မဟုတ်ပါက အကယ်၍ ((krl = ssh_krl_init()) == NULL)
 		fatal("couldn't create KRL");
 
-	if (krl_version != 0)
+	အကယ်၍ (krl_version != 0)
 		ssh_krl_set_version(krl, krl_version);
-	if (krl_comment != NULL)
+	အကယ်၍ (krl_comment != NULL)
 		ssh_krl_set_comment(krl, krl_comment);
 
-	for (i = 0; i < argc; i++)
+	အတွက် (i = 0; i < argc; i++)
 		update_krl_from_file(pw, argv[i], wild_ca, ca, krl);
 
-	if ((kbuf = sshbuf_new()) == NULL)
+	အကယ်၍ ((kbuf = sshbuf_new()) == NULL)
 		fatal("sshbuf_new failed");
-	if (ssh_krl_to_blob(krl, kbuf) != 0)
+	အကယ်၍ (ssh_krl_to_blob(krl, kbuf) != 0)
 		fatal("Couldn't generate KRL");
-	if ((r = sshbuf_write_file(identity_file, kbuf)) != 0)
+	အကယ်၍ ((r = sshbuf_write_file(identity_file, kbuf)) != 0)
 		fatal("write %s: %s", identity_file, strerror(errno));
 	sshbuf_free(kbuf);
 	ssh_krl_free(krl);
@@ -2502,26 +2502,26 @@ do_gen_krl(struct passwd *pw, int updating, const char *ca_key_path,
 }
 
 static void
-do_check_krl(struct passwd *pw, int print_krl, int argc, char **argv)
+do_check_krl(sa_nracanaa passwd *pw, ကိန်းပြည့် print_krl, ကိန်းပြည့် argc, var_na **argv)
 {
-	int i, r, ret = 0;
-	char *comment;
-	struct ssh_krl *krl;
-	struct sshkey *k;
+	ကိန်းပြည့် i, r, ret = 0;
+	var_na *comment;
+	sa_nracanaa ssh_krl *krl;
+	sa_nracanaa sshkey *k;
 
-	if (*identity_file == '\0')
+	အကယ်၍ (*identity_file == '\0')
 		fatal("KRL checking requires an input file");
 	load_krl(identity_file, &krl);
-	if (print_krl)
+	အကယ်၍ (print_krl)
 		krl_dump(krl, stdout);
-	for (i = 0; i < argc; i++) {
-		if ((r = sshkey_load_public(argv[i], &k, &comment)) != 0)
+	အတွက် (i = 0; i < argc; i++) {
+		အကယ်၍ ((r = sshkey_load_public(argv[i], &k, &comment)) != 0)
 			fatal_r(r, "Cannot load public key %s", argv[i]);
 		r = ssh_krl_check_key(krl, k);
 		printf("%s%s%s%s: %s\n", argv[i],
 		    *comment ? " (" : "", comment, *comment ? ")" : "",
 		    r == 0 ? "ok" : "REVOKED");
-		if (r != 0)
+		အကယ်၍ (r != 0)
 			ret = 1;
 		sshkey_free(k);
 		free(comment);
@@ -2530,24 +2530,24 @@ do_check_krl(struct passwd *pw, int print_krl, int argc, char **argv)
 	exit(ret);
 }
 
-static struct sshkey *
-load_sign_key(const char *keypath, const struct sshkey *pubkey)
+static sa_nracanaa sshkey *
+load_sign_key(const var_na *keypath, const sa_nracanaa sshkey *pubkey)
 {
 	size_t i, slen, plen = strlen(keypath);
-	char *privpath = xstrdup(keypath);
-	static const char * const suffixes[] = { "-cert.pub", ".pub", NULL };
-	struct sshkey *ret = NULL, *privkey = NULL;
-	int r, waspub = 0;
-	struct stat st;
+	var_na *privpath = xstrdup(keypath);
+	static const var_na * const suffixes[] = { "-cert.pub", ".pub", NULL };
+	sa_nracanaa sshkey *ret = NULL, *privkey = NULL;
+	ကိန်းပြည့် r, waspub = 0;
+	sa_nracanaa stat st;
 
 	/*
 	 * If passed a public key filename, then try to locate the corresponding
 	 * private key. This lets us specify certificates on the command-line
 	 * and have ssh-keygen find the appropriate private key.
 	 */
-	for (i = 0; suffixes[i]; i++) {
+	အတွက် (i = 0; suffixes[i]; i++) {
 		slen = strlen(suffixes[i]);
-		if (plen <= slen ||
+		အကယ်၍ (plen <= slen ||
 		    strcmp(privpath + plen - slen, suffixes[i]) != 0)
 			continue;
 		privpath[plen - slen] = '\0';
@@ -2555,30 +2555,30 @@ load_sign_key(const char *keypath, const struct sshkey *pubkey)
 		    "path %s instead", keypath, privpath);
 		waspub = 1;
 	}
-	if (waspub && stat(privpath, &st) != 0 && errno == ENOENT)
+	အကယ်၍ (waspub && stat(privpath, &st) != 0 && errno == ENOENT)
 		fatal("No private key found for public key \"%s\"", keypath);
-	if ((r = sshkey_load_private(privpath, "", &privkey, NULL)) != 0 &&
+	အကယ်၍ ((r = sshkey_load_private(privpath, "", &privkey, NULL)) != 0 &&
 	    (r != SSH_ERR_KEY_WRONG_PASSPHRASE)) {
 		debug_fr(r, "load private key \"%s\"", privpath);
 		fatal("No private key found for \"%s\"", privpath);
-	} else if (privkey == NULL)
+	} မဟုတ်ပါက အကယ်၍ (privkey == NULL)
 		privkey = load_identity(privpath, NULL);
 
-	if (!sshkey_equal_public(pubkey, privkey)) {
+	အကယ်၍ (!sshkey_equal_public(pubkey, privkey)) {
 		error("Public key %s doesn't match private %s",
 		    keypath, privpath);
 		goto done;
 	}
-	if (sshkey_is_cert(pubkey) && !sshkey_is_cert(privkey)) {
+	အကယ်၍ (sshkey_is_cert(pubkey) && !sshkey_is_cert(privkey)) {
 		/*
 		 * Graft the certificate onto the private key to make
 		 * it capable of signing.
 		 */
-		if ((r = sshkey_to_certified(privkey)) != 0) {
+		အကယ်၍ ((r = sshkey_to_certified(privkey)) != 0) {
 			error_fr(r, "sshkey_to_certified");
 			goto done;
 		}
-		if ((r = sshkey_cert_copy(pubkey, privkey)) != 0) {
+		အကယ်၍ ((r = sshkey_cert_copy(pubkey, privkey)) != 0) {
 			error_fr(r, "sshkey_cert_copy");
 			goto done;
 		}
@@ -2589,35 +2589,35 @@ load_sign_key(const char *keypath, const struct sshkey *pubkey)
  done:
 	sshkey_free(privkey);
 	free(privpath);
-	return ret;
+	ပြန်ပေး ret;
 }
 
-static int
-sign_one(struct sshkey *signkey, const char *filename, int fd,
-    const char *sig_namespace, const char *hashalg, sshsig_signer *signer,
+static ကိန်းပြည့်
+sign_one(sa_nracanaa sshkey *signkey, const var_na *filename, ကိန်းပြည့် fd,
+    const var_na *sig_namespace, const var_na *hashalg, sshsig_signer *signer,
     void *signer_ctx)
 {
-	struct sshbuf *sigbuf = NULL, *abuf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR, wfd = -1, oerrno;
-	char *wfile = NULL, *asig = NULL, *fp = NULL;
-	char *pin = NULL, *prompt = NULL;
+	sa_nracanaa sshbuf *sigbuf = NULL, *abuf = NULL;
+	ကိန်းပြည့် r = SSH_ERR_INTERNAL_ERROR, wfd = -1, oerrno;
+	var_na *wfile = NULL, *asig = NULL, *fp = NULL;
+	var_na *pin = NULL, *prompt = NULL;
 
-	if (!quiet) {
-		if (fd == STDIN_FILENO)
+	အကယ်၍ (!quiet) {
+		အကယ်၍ (fd == STDIN_FILENO)
 			fprintf(stderr, "Signing data on standard input\n");
-		else
+		မဟုတ်ပါက
 			fprintf(stderr, "Signing file %s\n", filename);
 	}
-	if (signer == NULL && sshkey_is_sk(signkey)) {
-		if ((signkey->sk_flags & SSH_SK_USER_VERIFICATION_REQD)) {
+	အကယ်၍ (signer == NULL && sshkey_is_sk(signkey)) {
+		အကယ်၍ ((signkey->sk_flags & SSH_SK_USER_VERIFICATION_REQD)) {
 			xasprintf(&prompt, "Enter PIN for %s key: ",
 			    sshkey_type(signkey));
-			if ((pin = read_passphrase(prompt,
+			အကယ်၍ ((pin = read_passphrase(prompt,
 			    RP_ALLOW_STDIN)) == NULL)
 				fatal_f("couldn't read PIN");
 		}
-		if ((signkey->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
-			if ((fp = sshkey_fingerprint(signkey, fingerprint_hash,
+		အကယ်၍ ((signkey->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
+			အကယ်၍ ((fp = sshkey_fingerprint(signkey, fingerprint_hash,
 			    SSH_FP_DEFAULT)) == NULL)
 				fatal_f("fingerprint failed");
 			fprintf(stderr, "Confirm user presence for key %s %s\n",
@@ -2625,28 +2625,28 @@ sign_one(struct sshkey *signkey, const char *filename, int fd,
 			free(fp);
 		}
 	}
-	if ((r = sshsig_sign_fd(signkey, hashalg, sk_provider, pin,
+	အကယ်၍ ((r = sshsig_sign_fd(signkey, hashalg, sk_provider, pin,
 	    fd, sig_namespace, &sigbuf, signer, signer_ctx)) != 0) {
 		error_r(r, "Signing %s failed", filename);
 		goto out;
 	}
-	if ((r = sshsig_armor(sigbuf, &abuf)) != 0) {
+	အကယ်၍ ((r = sshsig_armor(sigbuf, &abuf)) != 0) {
 		error_fr(r, "sshsig_armor");
 		goto out;
 	}
-	if ((asig = sshbuf_dup_string(abuf)) == NULL) {
+	အကယ်၍ ((asig = sshbuf_dup_string(abuf)) == NULL) {
 		error_f("buffer error");
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 
-	if (fd == STDIN_FILENO) {
+	အကယ်၍ (fd == STDIN_FILENO) {
 		fputs(asig, stdout);
 		fflush(stdout);
-	} else {
+	} မဟုတ်ပါက {
 		xasprintf(&wfile, "%s.sig", filename);
-		if (confirm_overwrite(wfile)) {
-			if ((wfd = open(wfile, O_WRONLY|O_CREAT|O_TRUNC,
+		အကယ်၍ (confirm_overwrite(wfile)) {
+			အကယ်၍ ((wfd = open(wfile, O_WRONLY|O_CREAT|O_TRUNC,
 			    0666)) == -1) {
 				oerrno = errno;
 				error("Cannot open %s: %s",
@@ -2655,7 +2655,7 @@ sign_one(struct sshkey *signkey, const char *filename, int fd,
 				r = SSH_ERR_SYSTEM_ERROR;
 				goto out;
 			}
-			if (atomicio(vwrite, wfd, asig,
+			အကယ်၍ (atomicio(vwrite, wfd, asig,
 			    strlen(asig)) != strlen(asig)) {
 				oerrno = errno;
 				error("Cannot write to %s: %s",
@@ -2664,7 +2664,7 @@ sign_one(struct sshkey *signkey, const char *filename, int fd,
 				r = SSH_ERR_SYSTEM_ERROR;
 				goto out;
 			}
-			if (!quiet) {
+			အကယ်၍ (!quiet) {
 				fprintf(stderr, "Write signature to %s\n",
 				    wfile);
 			}
@@ -2676,126 +2676,126 @@ sign_one(struct sshkey *signkey, const char *filename, int fd,
 	free(wfile);
 	free(prompt);
 	free(asig);
-	if (pin != NULL)
+	အကယ်၍ (pin != NULL)
 		freezero(pin, strlen(pin));
 	sshbuf_free(abuf);
 	sshbuf_free(sigbuf);
-	if (wfd != -1)
+	အကယ်၍ (wfd != -1)
 		close(wfd);
-	return r;
+	ပြန်ပေး r;
 }
 
-static int
-sig_process_opts(char * const *opts, size_t nopts, char **hashalgp,
-    uint64_t *verify_timep, int *print_pubkey)
+static ကိန်းပြည့်
+sig_process_opts(var_na * const *opts, size_t nopts, var_na **hashalgp,
+    uint64_t *verify_timep, ကိန်းပြည့် *print_pubkey)
 {
 	size_t i;
 	time_t now;
-	const char *p;
+	const var_na *p;
 
-	if (verify_timep != NULL)
+	အကယ်၍ (verify_timep != NULL)
 		*verify_timep = 0;
-	if (print_pubkey != NULL)
+	အကယ်၍ (print_pubkey != NULL)
 		*print_pubkey = 0;
-	if (hashalgp != NULL)
+	အကယ်၍ (hashalgp != NULL)
 		*hashalgp = NULL;
-	for (i = 0; i < nopts; i++) {
-		if (hashalgp != NULL &&
+	အတွက် (i = 0; i < nopts; i++) {
+		အကယ်၍ (hashalgp != NULL &&
 		    (p = strprefix(opts[i], "hashalg=", 1)) != NULL) {
 			*hashalgp = xstrdup(p);
-		} else if (verify_timep &&
+		} မဟုတ်ပါက အကယ်၍ (verify_timep &&
 		    (p = strprefix(opts[i], "verify-time=", 1)) != NULL) {
-			if (parse_absolute_time(p, verify_timep) != 0 ||
+			အကယ်၍ (parse_absolute_time(p, verify_timep) != 0 ||
 			    *verify_timep == 0) {
 				error("Invalid \"verify-time\" option");
-				return SSH_ERR_INVALID_ARGUMENT;
+				ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
 			}
-		} else if (print_pubkey &&
+		} မဟုတ်ပါက အကယ်၍ (print_pubkey &&
 		    strcasecmp(opts[i], "print-pubkey") == 0) {
 			*print_pubkey = 1;
-		} else {
+		} မဟုတ်ပါက {
 			error("Invalid option \"%s\"", opts[i]);
-			return SSH_ERR_INVALID_ARGUMENT;
+			ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
 		}
 	}
-	if (verify_timep && *verify_timep == 0) {
-		if ((now = time(NULL)) < 0) {
+	အကယ်၍ (verify_timep && *verify_timep == 0) {
+		အကယ်၍ ((now = time(NULL)) < 0) {
 			error("Time is before epoch");
-			return SSH_ERR_INVALID_ARGUMENT;
+			ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
 		}
 		*verify_timep = (uint64_t)now;
 	}
-	return 0;
+	ပြန်ပေး 0;
 }
 
 
-static int
-sig_sign(const char *keypath, const char *sig_namespace, int require_agent,
-    int argc, char **argv, char * const *opts, size_t nopts)
+static ကိန်းပြည့်
+sig_sign(const var_na *keypath, const var_na *sig_namespace, ကိန်းပြည့် require_agent,
+    ကိန်းပြည့် argc, var_na **argv, var_na * const *opts, size_t nopts)
 {
-	int i, fd = -1, r, ret = -1;
-	int agent_fd = -1;
-	struct sshkey *pubkey = NULL, *privkey = NULL, *signkey = NULL;
+	ကိန်းပြည့် i, fd = -1, r, ret = -1;
+	ကိန်းပြည့် agent_fd = -1;
+	sa_nracanaa sshkey *pubkey = NULL, *privkey = NULL, *signkey = NULL;
 	sshsig_signer *signer = NULL;
-	char *hashalg = NULL;
+	var_na *hashalg = NULL;
 
 	/* Check file arguments. */
-	for (i = 0; i < argc; i++) {
-		if (strcmp(argv[i], "-") != 0)
+	အတွက် (i = 0; i < argc; i++) {
+		အကယ်၍ (strcmp(argv[i], "-") != 0)
 			continue;
-		if (i > 0 || argc > 1)
+		အကယ်၍ (i > 0 || argc > 1)
 			fatal("Cannot sign mix of paths and standard input");
 	}
 
-	if (sig_process_opts(opts, nopts, &hashalg, NULL, NULL) != 0)
+	အကယ်၍ (sig_process_opts(opts, nopts, &hashalg, NULL, NULL) != 0)
 		goto done; /* error already logged */
 
-	if ((r = sshkey_load_public(keypath, &pubkey, NULL)) != 0) {
+	အကယ်၍ ((r = sshkey_load_public(keypath, &pubkey, NULL)) != 0) {
 		error_r(r, "Couldn't load public key %s", keypath);
 		goto done;
 	}
 
-	if ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
-		if (require_agent)
+	အကယ်၍ ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
+		အကယ်၍ (require_agent)
 			fatal("Couldn't get agent socket");
 		debug_r(r, "Couldn't get agent socket");
-	} else {
-		if ((r = ssh_agent_has_key(agent_fd, pubkey)) == 0)
+	} မဟုတ်ပါက {
+		အကယ်၍ ((r = ssh_agent_has_key(agent_fd, pubkey)) == 0)
 			signer = agent_signer;
-		else {
-			if (require_agent)
+		မဟုတ်ပါက {
+			အကယ်၍ (require_agent)
 				fatal("Couldn't find key in agent");
 			debug_r(r, "Couldn't find key in agent");
 		}
 	}
 
-	if (signer == NULL) {
+	အကယ်၍ (signer == NULL) {
 		/* Not using agent - try to load private key */
-		if ((privkey = load_sign_key(keypath, pubkey)) == NULL)
+		အကယ်၍ ((privkey = load_sign_key(keypath, pubkey)) == NULL)
 			goto done;
 		signkey = privkey;
-	} else {
+	} မဟုတ်ပါက {
 		/* Will use key in agent */
 		signkey = pubkey;
 	}
 
-	if (argc == 0) {
-		if ((r = sign_one(signkey, "(stdin)", STDIN_FILENO,
+	အကယ်၍ (argc == 0) {
+		အကယ်၍ ((r = sign_one(signkey, "(stdin)", STDIN_FILENO,
 		    sig_namespace, hashalg, signer, &agent_fd)) != 0)
 			goto done;
-	} else {
-		for (i = 0; i < argc; i++) {
-			if (strcmp(argv[i], "-") == 0)
+	} မဟုတ်ပါက {
+		အတွက် (i = 0; i < argc; i++) {
+			အကယ်၍ (strcmp(argv[i], "-") == 0)
 				fd = STDIN_FILENO;
-			else if ((fd = open(argv[i], O_RDONLY)) == -1) {
+			မဟုတ်ပါက အကယ်၍ ((fd = open(argv[i], O_RDONLY)) == -1) {
 				error("Cannot open %s for signing: %s",
 				    argv[i], strerror(errno));
 				goto done;
 			}
-			if ((r = sign_one(signkey, argv[i], fd, sig_namespace,
+			အကယ်၍ ((r = sign_one(signkey, argv[i], fd, sig_namespace,
 			    hashalg, signer, &agent_fd)) != 0)
 				goto done;
-			if (fd != STDIN_FILENO)
+			အကယ်၍ (fd != STDIN_FILENO)
 				close(fd);
 			fd = -1;
 		}
@@ -2803,64 +2803,64 @@ sig_sign(const char *keypath, const char *sig_namespace, int require_agent,
 
 	ret = 0;
 done:
-	if (fd != -1 && fd != STDIN_FILENO)
+	အကယ်၍ (fd != -1 && fd != STDIN_FILENO)
 		close(fd);
 	sshkey_free(pubkey);
 	sshkey_free(privkey);
 	free(hashalg);
-	return ret;
+	ပြန်ပေး ret;
 }
 
-static int
-sig_verify(const char *signature, const char *sig_namespace,
-    const char *principal, const char *allowed_keys, const char *revoked_keys,
-    char * const *opts, size_t nopts)
+static ကိန်းပြည့်
+sig_verify(const var_na *signature, const var_na *sig_namespace,
+    const var_na *principal, const var_na *allowed_keys, const var_na *revoked_keys,
+    var_na * const *opts, size_t nopts)
 {
-	int r, ret = -1;
-	int print_pubkey = 0;
-	struct sshbuf *sigbuf = NULL, *abuf = NULL;
-	struct sshkey *sign_key = NULL;
-	char *fp = NULL;
-	struct sshkey_sig_details *sig_details = NULL;
+	ကိန်းပြည့် r, ret = -1;
+	ကိန်းပြည့် print_pubkey = 0;
+	sa_nracanaa sshbuf *sigbuf = NULL, *abuf = NULL;
+	sa_nracanaa sshkey *sign_key = NULL;
+	var_na *fp = NULL;
+	sa_nracanaa sshkey_sig_details *sig_details = NULL;
 	uint64_t verify_time = 0;
 
-	if (sig_process_opts(opts, nopts, NULL, &verify_time,
+	အကယ်၍ (sig_process_opts(opts, nopts, NULL, &verify_time,
 	    &print_pubkey) != 0)
 		goto done; /* error already logged */
 
-	memset(&sig_details, 0, sizeof(sig_details));
-	if ((r = sshbuf_load_file(signature, &abuf)) != 0) {
+	memset(&sig_details, 0, parimaa_na(sig_details));
+	အကယ်၍ ((r = sshbuf_load_file(signature, &abuf)) != 0) {
 		error_r(r, "Couldn't read signature file");
 		goto done;
 	}
 
-	if ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
+	အကယ်၍ ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
 		error_fr(r, "sshsig_armor");
 		goto done;
 	}
-	if ((r = sshsig_verify_fd(sigbuf, STDIN_FILENO, sig_namespace,
+	အကယ်၍ ((r = sshsig_verify_fd(sigbuf, STDIN_FILENO, sig_namespace,
 	    &sign_key, &sig_details)) != 0)
 		goto done; /* sshsig_verify() prints error */
 
-	if ((fp = sshkey_fingerprint(sign_key, fingerprint_hash,
+	အကယ်၍ ((fp = sshkey_fingerprint(sign_key, fingerprint_hash,
 	    SSH_FP_DEFAULT)) == NULL)
 		fatal_f("sshkey_fingerprint failed");
 	debug("Valid (unverified) signature from key %s", fp);
-	if (sig_details != NULL) {
+	အကယ်၍ (sig_details != NULL) {
 		debug2_f("signature details: counter = %u, flags = 0x%02x",
 		    sig_details->sk_counter, sig_details->sk_flags);
 	}
 	free(fp);
 	fp = NULL;
 
-	if (revoked_keys != NULL) {
-		if ((r = sshkey_check_revoked(sign_key, revoked_keys)) != 0) {
+	အကယ်၍ (revoked_keys != NULL) {
+		အကယ်၍ ((r = sshkey_check_revoked(sign_key, revoked_keys)) != 0) {
 			debug3_fr(r, "sshkey_check_revoked");
 			goto done;
 		}
 	}
 
-	if (allowed_keys != NULL && (r = sshsig_check_allowed_keys(allowed_keys,
+	အကယ်၍ (allowed_keys != NULL && (r = sshsig_check_allowed_keys(allowed_keys,
 	    sign_key, principal, sig_namespace, verify_time)) != 0) {
 		debug3_fr(r, "sshsig_check_allowed_keys");
 		goto done;
@@ -2868,29 +2868,29 @@ sig_verify(const char *signature, const char *sig_namespace,
 	/* success */
 	ret = 0;
 done:
-	if (!quiet) {
-		if (ret == 0) {
-			if ((fp = sshkey_fingerprint(sign_key, fingerprint_hash,
+	အကယ်၍ (!quiet) {
+		အကယ်၍ (ret == 0) {
+			အကယ်၍ ((fp = sshkey_fingerprint(sign_key, fingerprint_hash,
 			    SSH_FP_DEFAULT)) == NULL)
 				fatal_f("sshkey_fingerprint failed");
-			if (principal == NULL) {
+			အကယ်၍ (principal == NULL) {
 				printf("Good \"%s\" signature with %s key %s\n",
 				    sig_namespace, sshkey_type(sign_key), fp);
 
-			} else {
+			} မဟုတ်ပါက {
 				printf("Good \"%s\" signature for %s with %s key %s\n",
 				    sig_namespace, principal,
 				    sshkey_type(sign_key), fp);
 			}
-		} else {
+		} မဟုတ်ပါက {
 			printf("Could not verify signature.\n");
 		}
 	}
 	/* Print the signature key if requested */
-	if (ret == 0 && print_pubkey && sign_key != NULL) {
-		if ((r = sshkey_write(sign_key, stdout)) == 0)
+	အကယ်၍ (ret == 0 && print_pubkey && sign_key != NULL) {
+		အကယ်၍ ((r = sshkey_write(sign_key, stdout)) == 0)
 			fputc('\n', stdout);
-		else {
+		မဟုတ်ပါက {
 			error_r(r, "Could not print public key.\n");
 			ret = -1;
 		}
@@ -2900,207 +2900,207 @@ done:
 	sshkey_free(sign_key);
 	sshkey_sig_details_free(sig_details);
 	free(fp);
-	return ret;
+	ပြန်ပေး ret;
 }
 
-static int
-sig_find_principals(const char *signature, const char *allowed_keys,
-    char * const *opts, size_t nopts)
+static ကိန်းပြည့်
+sig_find_principals(const var_na *signature, const var_na *allowed_keys,
+    var_na * const *opts, size_t nopts)
 {
-	int r, ret = -1;
-	struct sshbuf *sigbuf = NULL, *abuf = NULL;
-	struct sshkey *sign_key = NULL;
-	char *principals = NULL, *cp, *tmp;
+	ကိန်းပြည့် r, ret = -1;
+	sa_nracanaa sshbuf *sigbuf = NULL, *abuf = NULL;
+	sa_nracanaa sshkey *sign_key = NULL;
+	var_na *principals = NULL, *cp, *tmp;
 	uint64_t verify_time = 0;
 
-	if (sig_process_opts(opts, nopts, NULL, &verify_time, NULL) != 0)
+	အကယ်၍ (sig_process_opts(opts, nopts, NULL, &verify_time, NULL) != 0)
 		goto done; /* error already logged */
 
-	if ((r = sshbuf_load_file(signature, &abuf)) != 0) {
+	အကယ်၍ ((r = sshbuf_load_file(signature, &abuf)) != 0) {
 		error_r(r, "Couldn't read signature file");
 		goto done;
 	}
-	if ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
+	အကယ်၍ ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
 		error_fr(r, "sshsig_armor");
 		goto done;
 	}
-	if ((r = sshsig_get_pubkey(sigbuf, &sign_key)) != 0) {
+	အကယ်၍ ((r = sshsig_get_pubkey(sigbuf, &sign_key)) != 0) {
 		error_fr(r, "sshsig_get_pubkey");
 		goto done;
 	}
-	if ((r = sshsig_find_principals(allowed_keys, sign_key,
+	အကယ်၍ ((r = sshsig_find_principals(allowed_keys, sign_key,
 	    verify_time, &principals)) != 0) {
-		if (r != SSH_ERR_KEY_NOT_FOUND)
+		အကယ်၍ (r != SSH_ERR_KEY_NOT_FOUND)
 			error_fr(r, "sshsig_find_principal");
 		goto done;
 	}
 	ret = 0;
 done:
-	if (ret == 0 ) {
+	အကယ်၍ (ret == 0 ) {
 		/* Emit matching principals one per line */
 		tmp = principals;
-		while ((cp = strsep(&tmp, ",")) != NULL && *cp != '\0')
+		နေစဉ် ((cp = strsep(&tmp, ",")) != NULL && *cp != '\0')
 			puts(cp);
-	} else {
+	} မဟုတ်ပါက {
 		fprintf(stderr, "No principal matched.\n");
 	}
 	sshbuf_free(sigbuf);
 	sshbuf_free(abuf);
 	sshkey_free(sign_key);
 	free(principals);
-	return ret;
+	ပြန်ပေး ret;
 }
 
-static int
-sig_match_principals(const char *allowed_keys, char *principal,
-	char * const *opts, size_t nopts)
+static ကိန်းပြည့်
+sig_match_principals(const var_na *allowed_keys, var_na *principal,
+	var_na * const *opts, size_t nopts)
 {
-	int r;
-	char **principals = NULL;
+	ကိန်းပြည့် r;
+	var_na **principals = NULL;
 	size_t i, nprincipals = 0;
 
-	if ((r = sig_process_opts(opts, nopts, NULL, NULL, NULL)) != 0)
-		return r; /* error already logged */
+	အကယ်၍ ((r = sig_process_opts(opts, nopts, NULL, NULL, NULL)) != 0)
+		ပြန်ပေး r; /* error already logged */
 
-	if ((r = sshsig_match_principals(allowed_keys, principal,
+	အကယ်၍ ((r = sshsig_match_principals(allowed_keys, principal,
 	    &principals, &nprincipals)) != 0) {
 		debug_f("match: %s", ssh_err(r));
 		fprintf(stderr, "No principal matched.\n");
-		return r;
+		ပြန်ပေး r;
 	}
-	for (i = 0; i < nprincipals; i++) {
+	အတွက် (i = 0; i < nprincipals; i++) {
 		printf("%s\n", principals[i]);
 		free(principals[i]);
 	}
 	free(principals);
 
-	return 0;
+	ပြန်ပေး 0;
 }
 
 static void
-do_moduli_gen(const char *out_file, char **opts, size_t nopts)
+do_moduli_gen(const var_na *out_file, var_na **opts, size_t nopts)
 {
 #ifdef WITH_OPENSSL
 	/* Moduli generation/screening */
 	BIGNUM *start = NULL;
-	int moduli_bits = 0;
+	ကိန်းပြည့် moduli_bits = 0;
 	FILE *out;
 	size_t i;
-	const char *errstr, *p;
+	const var_na *errstr, *p;
 
 	/* Parse options */
-	for (i = 0; i < nopts; i++) {
-		if ((p = strprefix(opts[i], "start=", 0)) != NULL) {
+	အတွက် (i = 0; i < nopts; i++) {
+		အကယ်၍ ((p = strprefix(opts[i], "start=", 0)) != NULL) {
 			/* XXX - also compare length against bits */
-			if (BN_hex2bn(&start, p) == 0)
+			အကယ်၍ (BN_hex2bn(&start, p) == 0)
 				fatal("Invalid start point.");
-		} else if ((p = strprefix(opts[i], "bits=", 0)) != NULL) {
-			moduli_bits = (int)strtonum(p, 1, INT_MAX, &errstr);
-			if (errstr) {
+		} မဟုတ်ပါက အကယ်၍ ((p = strprefix(opts[i], "bits=", 0)) != NULL) {
+			moduli_bits = (ကိန်းပြည့်)strtonum(p, 1, INT_MAX, &errstr);
+			အကယ်၍ (errstr) {
 				fatal("Invalid number: %s (%s)", p, errstr);
 			}
-		} else {
+		} မဟုတ်ပါက {
 			fatal("Option \"%s\" is unsupported for moduli "
 			    "generation", opts[i]);
 		}
 	}
 
-	if (strcmp(out_file, "-") == 0)
+	အကယ်၍ (strcmp(out_file, "-") == 0)
 		out = stdout;
-	else if ((out = fopen(out_file, "w")) == NULL) {
+	မဟုတ်ပါက အကယ်၍ ((out = fopen(out_file, "w")) == NULL) {
 		fatal("Couldn't open modulus candidate file \"%s\": %s",
 		    out_file, strerror(errno));
 	}
 	setvbuf(out, NULL, _IOLBF, 0);
 
-	if (moduli_bits == 0)
+	အကယ်၍ (moduli_bits == 0)
 		moduli_bits = DEFAULT_BITS;
-	if (gen_candidates(out, moduli_bits, start) != 0)
+	အကယ်၍ (gen_candidates(out, moduli_bits, start) != 0)
 		fatal("modulus candidate generation failed");
-#else /* WITH_OPENSSL */
+#မဟုတ်ပါက /* WITH_OPENSSL */
 	fatal("Moduli generation is not supported");
 #endif /* WITH_OPENSSL */
 }
 
 static void
-do_moduli_screen(const char *out_file, char **opts, size_t nopts)
+do_moduli_screen(const var_na *out_file, var_na **opts, size_t nopts)
 {
 #ifdef WITH_OPENSSL
 	/* Moduli generation/screening */
-	char *checkpoint = NULL;
+	var_na *checkpoint = NULL;
 	uint32_t generator_wanted = 0;
 	unsigned long start_lineno = 0, lines_to_process = 0;
-	int prime_tests = 0;
+	ကိန်းပြည့် prime_tests = 0;
 	FILE *out, *in = stdin;
 	size_t i;
-	const char *errstr, *p;
+	const var_na *errstr, *p;
 
 	/* Parse options */
-	for (i = 0; i < nopts; i++) {
-		if ((p = strprefix(opts[i], "lines=", 0)) != NULL) {
+	အတွက် (i = 0; i < nopts; i++) {
+		အကယ်၍ ((p = strprefix(opts[i], "lines=", 0)) != NULL) {
 			lines_to_process = strtoul(p, NULL, 10);
-		} else if ((p = strprefix(opts[i], "start-line=", 0)) != NULL) {
+		} မဟုတ်ပါက အကယ်၍ ((p = strprefix(opts[i], "start-line=", 0)) != NULL) {
 			start_lineno = strtoul(p, NULL, 10);
-		} else if ((p = strprefix(opts[i], "checkpoint=", 0)) != NULL) {
+		} မဟုတ်ပါက အကယ်၍ ((p = strprefix(opts[i], "checkpoint=", 0)) != NULL) {
 			free(checkpoint);
 			checkpoint = xstrdup(p);
-		} else if ((p = strprefix(opts[i], "generator=", 0)) != NULL) {
+		} မဟုတ်ပါက အကယ်၍ ((p = strprefix(opts[i], "generator=", 0)) != NULL) {
 			generator_wanted = (uint32_t)strtonum(p, 1, UINT_MAX,
 			    &errstr);
-			if (errstr != NULL) {
+			အကယ်၍ (errstr != NULL) {
 				fatal("Generator invalid: %s (%s)", p, errstr);
 			}
-		} else if ((p = strprefix(opts[i], "prime-tests=", 0)) != NULL) {
-			prime_tests = (int)strtonum(p, 1, INT_MAX, &errstr);
-			if (errstr) {
+		} မဟုတ်ပါက အကယ်၍ ((p = strprefix(opts[i], "prime-tests=", 0)) != NULL) {
+			prime_tests = (ကိန်းပြည့်)strtonum(p, 1, INT_MAX, &errstr);
+			အကယ်၍ (errstr) {
 				fatal("Invalid number: %s (%s)", p, errstr);
 			}
-		} else {
+		} မဟုတ်ပါက {
 			fatal("Option \"%s\" is unsupported for moduli "
 			    "screening", opts[i]);
 		}
 	}
 
-	if (have_identity && strcmp(identity_file, "-") != 0) {
-		if ((in = fopen(identity_file, "r")) == NULL) {
+	အကယ်၍ (have_identity && strcmp(identity_file, "-") != 0) {
+		အကယ်၍ ((in = fopen(identity_file, "r")) == NULL) {
 			fatal("Couldn't open modulus candidate "
 			    "file \"%s\": %s", identity_file,
 			    strerror(errno));
 		}
 	}
 
-	if (strcmp(out_file, "-") == 0)
+	အကယ်၍ (strcmp(out_file, "-") == 0)
 		out = stdout;
-	else if ((out = fopen(out_file, "a")) == NULL) {
+	မဟုတ်ပါက အကယ်၍ ((out = fopen(out_file, "a")) == NULL) {
 		fatal("Couldn't open moduli file \"%s\": %s",
 		    out_file, strerror(errno));
 	}
 	setvbuf(out, NULL, _IOLBF, 0);
-	if (prime_test(in, out, prime_tests == 0 ? 100 : prime_tests,
+	အကယ်၍ (prime_test(in, out, prime_tests == 0 ? 100 : prime_tests,
 	    generator_wanted, checkpoint,
 	    start_lineno, lines_to_process) != 0)
 		fatal("modulus screening failed");
-	if (in != stdin)
+	အကယ်၍ (in != stdin)
 		(void)fclose(in);
 	free(checkpoint);
-#else /* WITH_OPENSSL */
+#မဟုတ်ပါက /* WITH_OPENSSL */
 	fatal("Moduli screening is not supported");
 #endif /* WITH_OPENSSL */
 }
 
 /* Read and confirm a passphrase */
-static char *
-read_check_passphrase(const char *prompt1, const char *prompt2,
-    const char *retry_prompt)
+static var_na *
+read_check_passphrase(const var_na *prompt1, const var_na *prompt2,
+    const var_na *retry_prompt)
 {
-	char *passphrase1, *passphrase2;
+	var_na *passphrase1, *passphrase2;
 
-	for (;;) {
+	အတွက် (;;) {
 		passphrase1 = read_passphrase(prompt1, RP_ALLOW_STDIN);
 		passphrase2 = read_passphrase(prompt2, RP_ALLOW_STDIN);
-		if (strcmp(passphrase1, passphrase2) == 0) {
+		အကယ်၍ (strcmp(passphrase1, passphrase2) == 0) {
 			freezero(passphrase2, strlen(passphrase2));
-			return passphrase1;
+			ပြန်ပေး passphrase1;
 		}
 		/* The passphrases do not match. Clear them and retry. */
 		freezero(passphrase1, strlen(passphrase1));
@@ -3110,18 +3110,18 @@ read_check_passphrase(const char *prompt1, const char *prompt2,
 		fflush(stdout);
 	}
 	/* NOTREACHED */
-	return NULL;
+	ပြန်ပေး NULL;
 }
 
-static char *
-private_key_passphrase(const char *path)
+static var_na *
+private_key_passphrase(const var_na *path)
 {
-	char *prompt, *ret;
+	var_na *prompt, *ret;
 
-	if (identity_passphrase)
-		return xstrdup(identity_passphrase);
-	if (identity_new_passphrase)
-		return xstrdup(identity_new_passphrase);
+	အကယ်၍ (identity_passphrase)
+		ပြန်ပေး xstrdup(identity_passphrase);
+	အကယ်၍ (identity_new_passphrase)
+		ပြန်ပေး xstrdup(identity_new_passphrase);
 
 	xasprintf(&prompt, "Enter passphrase for \"%s\" "
 	    "(empty for no passphrase): ", path);
@@ -3129,85 +3129,85 @@ private_key_passphrase(const char *path)
 	    "Enter same passphrase again: ",
 	    "Passphrases do not match.  Try again.");
 	free(prompt);
-	return ret;
+	ပြန်ပေး ret;
 }
 
-static char *
-sk_suffix(const char *application, const uint8_t *user, size_t userlen)
+static var_na *
+sk_suffix(const var_na *application, const uint8_t *user, size_t userlen)
 {
-	char *ret, *cp;
-	const char *p;
+	var_na *ret, *cp;
+	const var_na *p;
 	size_t slen, i;
 
 	/* Trim off URL-like preamble */
-	if ((p = strprefix(application, "ssh://", 0)) != NULL)
+	အကယ်၍ ((p = strprefix(application, "ssh://", 0)) != NULL)
 		ret =  xstrdup(p);
-	else if ((p = strprefix(application, "ssh:", 0)) != NULL)
+	မဟုတ်ပါက အကယ်၍ ((p = strprefix(application, "ssh:", 0)) != NULL)
 		ret =  xstrdup(p);
-	else
+	မဟုတ်ပါက
 		ret = xstrdup(application);
 
 	/* Count trailing zeros in user */
-	for (i = 0; i < userlen; i++) {
-		if (user[userlen - i - 1] != 0)
-			break;
+	အတွက် (i = 0; i < userlen; i++) {
+		အကယ်၍ (user[userlen - i - 1] != 0)
+			bha_nga;
 	}
-	if (i >= userlen)
-		return ret; /* user-id was default all-zeros */
+	အကယ်၍ (i >= userlen)
+		ပြန်ပေး ret; /* user-id was default all-zeros */
 
 	/* Append user-id, escaping non-UTF-8 characters */
 	slen = userlen - i;
-	if (asmprintf(&cp, INT_MAX, NULL, "%.*s", (int)slen, user) == -1)
+	အကယ်၍ (asmprintf(&cp, INT_MAX, NULL, "%.*s", (ကိန်းပြည့်)slen, user) == -1)
 		fatal_f("asmprintf failed");
 	/* Don't emit a user-id that contains path or control characters */
-	if (strchr(cp, '/') != NULL || strstr(cp, "..") != NULL ||
+	အကယ်၍ (strchr(cp, '/') != NULL || strstr(cp, "..") != NULL ||
 	    strchr(cp, '\\') != NULL) {
 		free(cp);
 		cp = tohex(user, slen);
 	}
 	xextendf(&ret, "_", "%s", cp);
 	free(cp);
-	return ret;
+	ပြန်ပေး ret;
 }
 
-static int
-do_download_sk(const char *skprovider, const char *device)
+static ကိန်းပြည့်
+do_download_sk(const var_na *skprovider, const var_na *device)
 {
-	struct sshsk_resident_key **srks;
+	sa_nracanaa sshsk_resident_key **srks;
 	size_t nsrks, i;
-	int r, ret = -1;
-	char *fp, *pin = NULL, *pass = NULL, *path, *pubpath;
-	const char *ext;
-	struct sshkey *key;
+	ကိန်းပြည့် r, ret = -1;
+	var_na *fp, *pin = NULL, *pass = NULL, *path, *pubpath;
+	const var_na *ext;
+	sa_nracanaa sshkey *key;
 
-	if (skprovider == NULL)
+	အကယ်၍ (skprovider == NULL)
 		fatal("Cannot download keys without provider");
 
 	pin = read_passphrase("Enter PIN for authenticator: ", RP_ALLOW_STDIN);
-	if (!quiet) {
+	အကယ်၍ (!quiet) {
 		printf("You may need to touch your authenticator "
 		    "to authorize key download.\n");
 	}
-	if ((r = sshsk_load_resident(skprovider, device, pin, 0,
+	အကယ်၍ ((r = sshsk_load_resident(skprovider, device, pin, 0,
 	    &srks, &nsrks)) != 0) {
-		if (pin != NULL)
+		အကယ်၍ (pin != NULL)
 			freezero(pin, strlen(pin));
 		error_r(r, "Unable to load resident keys");
-		return -1;
+		ပြန်ပေး -1;
 	}
-	if (nsrks == 0)
+	အကယ်၍ (nsrks == 0)
 		logit("No keys to download");
-	if (pin != NULL)
+	အကယ်၍ (pin != NULL)
 		freezero(pin, strlen(pin));
 
-	for (i = 0; i < nsrks; i++) {
+	အတွက် (i = 0; i < nsrks; i++) {
 		key = srks[i]->key;
-		if (key->type != KEY_ECDSA_SK && key->type != KEY_ED25519_SK) {
+		အကယ်၍ (key->type != KEY_ECDSA_SK && key->type != KEY_ED25519_SK) {
 			error("Unsupported key type %s (%d)",
 			    sshkey_type(key), key->type);
 			continue;
 		}
-		if ((fp = sshkey_fingerprint(key, fingerprint_hash,
+		အကယ်၍ ((fp = sshkey_fingerprint(key, fingerprint_hash,
 		    SSH_FP_DEFAULT)) == NULL)
 			fatal_f("sshkey_fingerprint failed");
 		debug_f("key %zu: %s %s %s (flags 0x%02x)", i,
@@ -3219,22 +3219,22 @@ do_download_sk(const char *skprovider, const char *device)
 		    *ext == '\0' ? "" : "_", ext);
 
 		/* If the file already exists, ask the user to confirm. */
-		if (!confirm_overwrite(path)) {
+		အကယ်၍ (!confirm_overwrite(path)) {
 			free(path);
-			break;
+			bha_nga;
 		}
 
 		/* Save the key with the application string as the comment */
-		if (pass == NULL)
+		အကယ်၍ (pass == NULL)
 			pass = private_key_passphrase(path);
-		if ((r = sshkey_save_private(key, path, pass,
+		အကယ်၍ ((r = sshkey_save_private(key, path, pass,
 		    key->sk_application, private_key_format,
 		    openssh_format_cipher, rounds)) != 0) {
 			error_r(r, "Saving key \"%s\" failed", path);
 			free(path);
-			break;
+			bha_nga;
 		}
-		if (!quiet) {
+		အကယ်၍ (!quiet) {
 			printf("Saved %s key%s%s to %s\n", sshkey_type(key),
 			    *ext != '\0' ? " " : "",
 			    *ext != '\0' ? key->sk_application : "",
@@ -3244,58 +3244,58 @@ do_download_sk(const char *skprovider, const char *device)
 		/* Save public key too */
 		xasprintf(&pubpath, "%s.pub", path);
 		free(path);
-		if ((r = sshkey_save_public(key, pubpath,
+		အကယ်၍ ((r = sshkey_save_public(key, pubpath,
 		    key->sk_application)) != 0) {
 			error_r(r, "Saving public key \"%s\" failed", pubpath);
 			free(pubpath);
-			break;
+			bha_nga;
 		}
 		free(pubpath);
 	}
 
-	if (i >= nsrks)
+	အကယ်၍ (i >= nsrks)
 		ret = 0; /* success */
-	if (pass != NULL)
+	အကယ်၍ (pass != NULL)
 		freezero(pass, strlen(pass));
 	sshsk_free_resident_keys(srks, nsrks);
-	return ret;
+	ပြန်ပေး ret;
 }
 
 static void
-save_attestation(struct sshbuf *attest, const char *path)
+save_attestation(sa_nracanaa sshbuf *attest, const var_na *path)
 {
 	mode_t omask;
-	int r;
+	ကိန်းပြည့် r;
 
-	if (path == NULL)
-		return; /* nothing to do */
-	if (attest == NULL || sshbuf_len(attest) == 0)
+	အကယ်၍ (path == NULL)
+		ပြန်ပေး; /* nothing to do */
+	အကယ်၍ (attest == NULL || sshbuf_len(attest) == 0)
 		fatal("Enrollment did not return attestation data");
 	omask = umask(077);
 	r = sshbuf_write_file(path, attest);
 	umask(omask);
-	if (r != 0)
+	အကယ်၍ (r != 0)
 		fatal_r(r, "Unable to write attestation data \"%s\"", path);
-	if (!quiet)
+	အကယ်၍ (!quiet)
 		printf("Your FIDO attestation certificate has been saved in "
 		    "%s\n", path);
 }
 
-static int
-confirm_sk_overwrite(const char *application, const char *user)
+static ကိန်းပြည့်
+confirm_sk_overwrite(const var_na *application, const var_na *user)
 {
-	char yesno[3];
+	var_na yesno[3];
 
 	printf("A resident key scoped to '%s' with user id '%s' already "
 	    "exists.\n", application == NULL ? "ssh:" : application,
 	    user == NULL ? "null" : user);
 	printf("Overwrite key in token (y/n)? ");
 	fflush(stdout);
-	if (fgets(yesno, sizeof(yesno), stdin) == NULL)
-		return 0;
-	if (yesno[0] != 'y' && yesno[0] != 'Y')
-		return 0;
-	return 1;
+	အကယ်၍ (fgets(yesno, parimaa_na(yesno), stdin) == NULL)
+		ပြန်ပေး 0;
+	အကယ်၍ (yesno[0] != 'y' && yesno[0] != 'Y')
+		ပြန်ပေး 0;
+	ပြန်ပေး 1;
 }
 
 static void
@@ -3350,34 +3350,34 @@ usage(void)
 /*
  * Main program for key management.
  */
-int
-main(int argc, char **argv)
+ကိန်းပြည့်
+main(ကိန်းပြည့် argc, var_na **argv)
 {
-	char comment[KEY_COMMENT_MAX], *passphrase = NULL;
-	char *rr_hostname = NULL, *ep, *fp, *ra;
-	struct sshkey *private = NULL, *public = NULL;
-	struct passwd *pw;
-	int ret = 0, r, opt, type;
-	int change_passphrase = 0, change_comment = 0, show_cert = 0;
-	int find_host = 0, delete_host = 0, hash_hosts = 0;
-	int gen_all_hostkeys = 0, gen_krl = 0, update_krl = 0, check_krl = 0;
-	int prefer_agent = 0, convert_to = 0, convert_from = 0;
-	int print_public = 0, print_generic = 0, cert_serial_autoinc = 0;
-	int do_gen_candidates = 0, do_screen_candidates = 0, download_sk = 0;
+	var_na comment[KEY_COMMENT_MAX], *passphrase = NULL;
+	var_na *rr_hostname = NULL, *ep, *fp, *ra;
+	sa_nracanaa sshkey *private = NULL, *public = NULL;
+	sa_nracanaa passwd *pw;
+	ကိန်းပြည့် ret = 0, r, opt, type;
+	ကိန်းပြည့် change_passphrase = 0, change_comment = 0, show_cert = 0;
+	ကိန်းပြည့် find_host = 0, delete_host = 0, hash_hosts = 0;
+	ကိန်းပြည့် gen_all_hostkeys = 0, gen_krl = 0, update_krl = 0, check_krl = 0;
+	ကိန်းပြည့် prefer_agent = 0, convert_to = 0, convert_from = 0;
+	ကိန်းပြည့် print_public = 0, print_generic = 0, cert_serial_autoinc = 0;
+	ကိန်းပြည့် do_gen_candidates = 0, do_screen_candidates = 0, download_sk = 0;
 	unsigned long long cert_serial = 0;
-	char *identity_comment = NULL, *ca_key_path = NULL, **opts = NULL;
-	char *sk_application = NULL, *sk_device = NULL, *sk_user = NULL;
-	char *sk_attestation_path = NULL;
-	struct sshbuf *challenge = NULL, *attest = NULL;
+	var_na *identity_comment = NULL, *ca_key_path = NULL, **opts = NULL;
+	var_na *sk_application = NULL, *sk_device = NULL, *sk_user = NULL;
+	var_na *sk_attestation_path = NULL;
+	sa_nracanaa sshbuf *challenge = NULL, *attest = NULL;
 	size_t i, nopts = 0;
 	uint32_t bits = 0;
 	uint8_t sk_flags = SSH_SK_USER_PRESENCE_REQD;
-	const char *errstr, *p;
-	int log_level = SYSLOG_LEVEL_INFO;
-	char *sign_op = NULL;
+	const var_na *errstr, *p;
+	ကိန်းပြည့် log_level = SYSLOG_LEVEL_INFO;
+	var_na *sign_op = NULL;
 
-	extern int optind;
-	extern char *optarg;
+	extern ကိန်းပြည့် optind;
+	extern var_na *optarg;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
@@ -3392,215 +3392,215 @@ main(int argc, char **argv)
 
 	/* we need this for the home * directory.  */
 	pw = getpwuid(getuid());
-	if (!pw)
+	အကယ်၍ (!pw)
 		fatal("No user exists for uid %lu", (u_long)getuid());
 	pw = pwcopy(pw);
-	if (gethostname(hostname, sizeof(hostname)) == -1)
+	အကယ်၍ (gethostname(hostname, parimaa_na(hostname)) == -1)
 		fatal("gethostname: %s", strerror(errno));
 
 	sk_provider = getenv("SSH_SK_PROVIDER");
 
 	/* Remaining characters: dGjJSTWx */
-	while ((opt = getopt(argc, argv, "ABHKLQUXceghiklopquvy"
+	နေစဉ် ((opt = getopt(argc, argv, "ABHKLQUXceghiklopquvy"
 	    "C:D:E:F:I:M:N:O:P:R:V:Y:Z:"
 	    "a:b:f:g:m:n:r:s:t:w:z:")) != -1) {
 		switch (opt) {
-		case 'A':
+		pak_sa 'A':
 			gen_all_hostkeys = 1;
-			break;
-		case 'b':
+			bha_nga;
+		pak_sa 'b':
 			bits = (uint32_t)strtonum(optarg, 1, UINT32_MAX,
 			    &errstr);
-			if (errstr)
+			အကယ်၍ (errstr)
 				fatal("Bits has bad value %s (%s)",
 					optarg, errstr);
-			break;
-		case 'E':
+			bha_nga;
+		pak_sa 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			အကယ်၍ (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
-			break;
-		case 'F':
+			bha_nga;
+		pak_sa 'F':
 			find_host = 1;
 			rr_hostname = optarg;
-			break;
-		case 'H':
+			bha_nga;
+		pak_sa 'H':
 			hash_hosts = 1;
-			break;
-		case 'I':
+			bha_nga;
+		pak_sa 'I':
 			cert_key_id = optarg;
-			break;
-		case 'R':
+			bha_nga;
+		pak_sa 'R':
 			delete_host = 1;
 			rr_hostname = optarg;
-			break;
-		case 'L':
+			bha_nga;
+		pak_sa 'L':
 			show_cert = 1;
-			break;
-		case 'l':
+			bha_nga;
+		pak_sa 'l':
 			print_fingerprint = 1;
-			break;
-		case 'B':
+			bha_nga;
+		pak_sa 'B':
 			print_bubblebabble = 1;
-			break;
-		case 'm':
-			if (strcasecmp(optarg, "RFC4716") == 0 ||
+			bha_nga;
+		pak_sa 'm':
+			အကယ်၍ (strcasecmp(optarg, "RFC4716") == 0 ||
 			    strcasecmp(optarg, "ssh2") == 0) {
 				convert_format = FMT_RFC4716;
-				break;
+				bha_nga;
 			}
-			if (strcasecmp(optarg, "PKCS8") == 0) {
+			အကယ်၍ (strcasecmp(optarg, "PKCS8") == 0) {
 				convert_format = FMT_PKCS8;
 				private_key_format = SSHKEY_PRIVATE_PKCS8;
-				break;
+				bha_nga;
 			}
-			if (strcasecmp(optarg, "PEM") == 0) {
+			အကယ်၍ (strcasecmp(optarg, "PEM") == 0) {
 				convert_format = FMT_PEM;
 				private_key_format = SSHKEY_PRIVATE_PEM;
-				break;
+				bha_nga;
 			}
-			if (strcasecmp(optarg, "hexdump") == 0) {
+			အကယ်၍ (strcasecmp(optarg, "hexdump") == 0) {
 				convert_format = FMT_HEXDUMP;
-				break;
+				bha_nga;
 			}
 			fatal("Unsupported conversion format \"%s\"", optarg);
-		case 'n':
+		pak_sa 'n':
 			cert_principals = optarg;
-			break;
-		case 'o':
+			bha_nga;
+		pak_sa 'o':
 			/* no-op; new format is already the default */
-			break;
-		case 'p':
+			bha_nga;
+		pak_sa 'p':
 			change_passphrase = 1;
-			break;
-		case 'c':
+			bha_nga;
+		pak_sa 'c':
 			change_comment = 1;
-			break;
-		case 'f':
-			if (strlcpy(identity_file, optarg,
-			    sizeof(identity_file)) >= sizeof(identity_file))
+			bha_nga;
+		pak_sa 'f':
+			အကယ်၍ (strlcpy(identity_file, optarg,
+			    parimaa_na(identity_file)) >= parimaa_na(identity_file))
 				fatal("Identity filename too long");
 			have_identity = 1;
-			break;
-		case 'g':
+			bha_nga;
+		pak_sa 'g':
 			print_generic = 1;
-			break;
-		case 'K':
+			bha_nga;
+		pak_sa 'K':
 			download_sk = 1;
-			break;
-		case 'P':
+			bha_nga;
+		pak_sa 'P':
 			identity_passphrase = optarg;
-			break;
-		case 'N':
+			bha_nga;
+		pak_sa 'N':
 			identity_new_passphrase = optarg;
-			break;
-		case 'Q':
+			bha_nga;
+		pak_sa 'Q':
 			check_krl = 1;
-			break;
-		case 'O':
+			bha_nga;
+		pak_sa 'O':
 			opts = xrecallocarray(opts, nopts, nopts + 1,
-			    sizeof(*opts));
+			    parimaa_na(*opts));
 			opts[nopts++] = xstrdup(optarg);
-			break;
-		case 'Z':
+			bha_nga;
+		pak_sa 'Z':
 			openssh_format_cipher = optarg;
-			if (cipher_by_name(openssh_format_cipher) == NULL)
+			အကယ်၍ (cipher_by_name(openssh_format_cipher) == NULL)
 				fatal("Invalid OpenSSH-format cipher '%s'",
 				    openssh_format_cipher);
-			break;
-		case 'C':
+			bha_nga;
+		pak_sa 'C':
 			identity_comment = optarg;
-			break;
-		case 'q':
+			bha_nga;
+		pak_sa 'q':
 			quiet = 1;
-			break;
-		case 'e':
+			bha_nga;
+		pak_sa 'e':
 			/* export key */
 			convert_to = 1;
-			break;
-		case 'h':
+			bha_nga;
+		pak_sa 'h':
 			cert_key_type = SSH2_CERT_TYPE_HOST;
 			certflags_flags = 0;
-			break;
-		case 'k':
+			bha_nga;
+		pak_sa 'k':
 			gen_krl = 1;
-			break;
-		case 'i':
-		case 'X':
+			bha_nga;
+		pak_sa 'i':
+		pak_sa 'X':
 			/* import key */
 			convert_from = 1;
-			break;
-		case 'y':
+			bha_nga;
+		pak_sa 'y':
 			print_public = 1;
-			break;
-		case 's':
+			bha_nga;
+		pak_sa 's':
 			ca_key_path = optarg;
-			break;
-		case 't':
+			bha_nga;
+		pak_sa 't':
 			key_type_name = optarg;
-			break;
-		case 'D':
+			bha_nga;
+		pak_sa 'D':
 			pkcs11provider = optarg;
-			break;
-		case 'U':
+			bha_nga;
+		pak_sa 'U':
 			prefer_agent = 1;
-			break;
-		case 'u':
+			bha_nga;
+		pak_sa 'u':
 			update_krl = 1;
-			break;
-		case 'v':
-			if (log_level == SYSLOG_LEVEL_INFO)
+			bha_nga;
+		pak_sa 'v':
+			အကယ်၍ (log_level == SYSLOG_LEVEL_INFO)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else {
-				if (log_level >= SYSLOG_LEVEL_DEBUG1 &&
+			မဟုတ်ပါက {
+				အကယ်၍ (log_level >= SYSLOG_LEVEL_DEBUG1 &&
 				    log_level < SYSLOG_LEVEL_DEBUG3)
 					log_level++;
 			}
-			break;
-		case 'r':
+			bha_nga;
+		pak_sa 'r':
 			rr_hostname = optarg;
-			break;
-		case 'a':
-			rounds = (int)strtonum(optarg, 1, INT_MAX, &errstr);
-			if (errstr)
+			bha_nga;
+		pak_sa 'a':
+			rounds = (ကိန်းပြည့်)strtonum(optarg, 1, INT_MAX, &errstr);
+			အကယ်၍ (errstr)
 				fatal("Invalid number: %s (%s)",
 					optarg, errstr);
-			break;
-		case 'V':
+			bha_nga;
+		pak_sa 'V':
 			parse_cert_times(optarg);
-			break;
-		case 'Y':
+			bha_nga;
+		pak_sa 'Y':
 			sign_op = optarg;
-			break;
-		case 'w':
+			bha_nga;
+		pak_sa 'w':
 			sk_provider = optarg;
-			break;
-		case 'z':
+			bha_nga;
+		pak_sa 'z':
 			errno = 0;
-			if (*optarg == '+') {
+			အကယ်၍ (*optarg == '+') {
 				cert_serial_autoinc = 1;
 				optarg++;
 			}
 			cert_serial = strtoull(optarg, &ep, 10);
-			if (*optarg < '0' || *optarg > '9' || *ep != '\0' ||
+			အကယ်၍ (*optarg < '0' || *optarg > '9' || *ep != '\0' ||
 			    (errno == ERANGE && cert_serial == ULLONG_MAX))
 				fatal("Invalid serial number \"%s\"", optarg);
-			break;
-		case 'M':
-			if (strcmp(optarg, "generate") == 0)
+			bha_nga;
+		pak_sa 'M':
+			အကယ်၍ (strcmp(optarg, "generate") == 0)
 				do_gen_candidates = 1;
-			else if (strcmp(optarg, "screen") == 0)
+			မဟုတ်ပါက အကယ်၍ (strcmp(optarg, "screen") == 0)
 				do_screen_candidates = 1;
-			else
+			မဟုတ်ပါက
 				fatal("Unsupported moduli option %s", optarg);
-			break;
+			bha_nga;
 		default:
 			usage();
 		}
 	}
 
 #ifdef ENABLE_SK_INTERNAL
-	if (sk_provider == NULL)
+	အကယ်၍ (sk_provider == NULL)
 		sk_provider = "internal";
 #endif
 
@@ -3610,14 +3610,14 @@ main(int argc, char **argv)
 	argv += optind;
 	argc -= optind;
 
-	if (sign_op != NULL) {
-		if (strprefix(sign_op, "find-principals", 0) != NULL) {
-			if (ca_key_path == NULL) {
+	အကယ်၍ (sign_op != NULL) {
+		အကယ်၍ (strprefix(sign_op, "find-principals", 0) != NULL) {
+			အကယ်၍ (ca_key_path == NULL) {
 				error("Too few arguments for find-principals:"
 				    "missing signature file");
 				exit(1);
 			}
-			if (!have_identity) {
+			အကယ်၍ (!have_identity) {
 				error("Too few arguments for find-principals:"
 				    "missing allowed keys file");
 				exit(1);
@@ -3625,13 +3625,13 @@ main(int argc, char **argv)
 			ret = sig_find_principals(ca_key_path, identity_file,
 			    opts, nopts);
 			goto done;
-		} else if (strprefix(sign_op, "match-principals", 0) != NULL) {
-			if (!have_identity) {
+		} မဟုတ်ပါက အကယ်၍ (strprefix(sign_op, "match-principals", 0) != NULL) {
+			အကယ်၍ (!have_identity) {
 				error("Too few arguments for match-principals:"
 				    "missing allowed keys file");
 				exit(1);
 			}
-			if (cert_key_id == NULL) {
+			အကယ်၍ (cert_key_id == NULL) {
 				error("Too few arguments for match-principals: "
 				    "missing principal ID");
 				exit(1);
@@ -3639,15 +3639,15 @@ main(int argc, char **argv)
 			ret = sig_match_principals(identity_file, cert_key_id,
 			    opts, nopts);
 			goto done;
-		} else if (strprefix(sign_op, "sign", 0) != NULL) {
+		} မဟုတ်ပါက အကယ်၍ (strprefix(sign_op, "sign", 0) != NULL) {
 			/* NB. cert_principals is actually namespace, via -n */
-			if (cert_principals == NULL ||
+			အကယ်၍ (cert_principals == NULL ||
 			    *cert_principals == '\0') {
 				error("Too few arguments for sign: "
 				    "missing namespace");
 				exit(1);
 			}
-			if (!have_identity) {
+			အကယ်၍ (!have_identity) {
 				error("Too few arguments for sign: "
 				    "missing key");
 				exit(1);
@@ -3655,15 +3655,15 @@ main(int argc, char **argv)
 			ret = sig_sign(identity_file, cert_principals,
 			    prefer_agent, argc, argv, opts, nopts);
 			goto done;
-		} else if (strprefix(sign_op, "check-novalidate", 0) != NULL) {
+		} မဟုတ်ပါက အကယ်၍ (strprefix(sign_op, "check-novalidate", 0) != NULL) {
 			/* NB. cert_principals is actually namespace, via -n */
-			if (cert_principals == NULL ||
+			အကယ်၍ (cert_principals == NULL ||
 			    *cert_principals == '\0') {
 				error("Too few arguments for check-novalidate: "
 				    "missing namespace");
 				exit(1);
 			}
-			if (ca_key_path == NULL) {
+			အကယ်၍ (ca_key_path == NULL) {
 				error("Too few arguments for check-novalidate: "
 				    "missing signature file");
 				exit(1);
@@ -3671,25 +3671,25 @@ main(int argc, char **argv)
 			ret = sig_verify(ca_key_path, cert_principals,
 			    NULL, NULL, NULL, opts, nopts);
 			goto done;
-		} else if (strprefix(sign_op, "verify", 0) != NULL) {
+		} မဟုတ်ပါက အကယ်၍ (strprefix(sign_op, "verify", 0) != NULL) {
 			/* NB. cert_principals is actually namespace, via -n */
-			if (cert_principals == NULL ||
+			အကယ်၍ (cert_principals == NULL ||
 			    *cert_principals == '\0') {
 				error("Too few arguments for verify: "
 				    "missing namespace");
 				exit(1);
 			}
-			if (ca_key_path == NULL) {
+			အကယ်၍ (ca_key_path == NULL) {
 				error("Too few arguments for verify: "
 				    "missing signature file");
 				exit(1);
 			}
-			if (!have_identity) {
+			အကယ်၍ (!have_identity) {
 				error("Too few arguments for sign: "
 				    "missing allowed keys file");
 				exit(1);
 			}
-			if (cert_key_id == NULL) {
+			အကယ်၍ (cert_key_id == NULL) {
 				error("Too few arguments for verify: "
 				    "missing principal identity");
 				exit(1);
@@ -3704,37 +3704,37 @@ main(int argc, char **argv)
 		/* NOTREACHED */
 	}
 
-	if (ca_key_path != NULL) {
-		if (argc < 1 && !gen_krl) {
+	အကယ်၍ (ca_key_path != NULL) {
+		အကယ်၍ (argc < 1 && !gen_krl) {
 			error("Too few arguments.");
 			usage();
 		}
-	} else if (argc > 0 && !gen_krl && !check_krl &&
+	} မဟုတ်ပါက အကယ်၍ (argc > 0 && !gen_krl && !check_krl &&
 	    !do_gen_candidates && !do_screen_candidates) {
 		error("Too many arguments.");
 		usage();
 	}
-	if (change_passphrase && change_comment) {
+	အကယ်၍ (change_passphrase && change_comment) {
 		error("Can only have one of -p and -c.");
 		usage();
 	}
-	if (print_fingerprint && (delete_host || hash_hosts)) {
+	အကယ်၍ (print_fingerprint && (delete_host || hash_hosts)) {
 		error("Cannot use -l with -H or -R.");
 		usage();
 	}
-	if (gen_krl) {
+	အကယ်၍ (gen_krl) {
 		do_gen_krl(pw, update_krl, ca_key_path,
 		    cert_serial, identity_comment, argc, argv);
 		goto done;
 	}
-	if (check_krl) {
+	အကယ်၍ (check_krl) {
 		do_check_krl(pw, print_fingerprint, argc, argv);
 		goto done;
 	}
-	if (ca_key_path != NULL) {
-		if (cert_key_id == NULL)
+	အကယ်၍ (ca_key_path != NULL) {
+		အကယ်၍ (cert_key_id == NULL)
 			fatal("Must specify key id (-I) when certifying");
-		if (cert_principals == NULL) {
+		အကယ်၍ (cert_principals == NULL) {
 			/*
 			 * Ideally this would be a fatal(), but we need to
 			 * be able to generate such certificates for testing
@@ -3743,25 +3743,25 @@ main(int argc, char **argv)
 			error("Warning: certificate will contain no "
 			    "principals (-n)");
 		}
-		for (i = 0; i < nopts; i++)
+		အတွက် (i = 0; i < nopts; i++)
 			add_cert_option(opts[i]);
 		do_ca_sign(pw, ca_key_path, prefer_agent,
 		    cert_serial, cert_serial_autoinc, argc, argv);
 		goto done;
 	}
-	if (show_cert)
+	အကယ်၍ (show_cert)
 		do_show_cert(pw);
-	if (delete_host || hash_hosts || find_host) {
+	အကယ်၍ (delete_host || hash_hosts || find_host) {
 		do_known_hosts(pw, rr_hostname, find_host,
 		    delete_host, hash_hosts);
 	}
-	if (pkcs11provider != NULL)
+	အကယ်၍ (pkcs11provider != NULL)
 		do_download(pw);
-	if (download_sk) {
-		for (i = 0; i < nopts; i++) {
-			if ((p = strprefix(opts[i], "device=", 1)) != NULL) {
+	အကယ်၍ (download_sk) {
+		အတွက် (i = 0; i < nopts; i++) {
+			အကယ်၍ ((p = strprefix(opts[i], "device=", 1)) != NULL) {
 				sk_device = xstrdup(p);
-			} else {
+			} မဟုတ်ပါက {
 				fatal("Option \"%s\" is unsupported for "
 				    "FIDO authenticator download", opts[i]);
 			}
@@ -3769,37 +3769,37 @@ main(int argc, char **argv)
 		ret = do_download_sk(sk_provider, sk_device);
 		goto done;
 	}
-	if (print_fingerprint || print_bubblebabble)
+	အကယ်၍ (print_fingerprint || print_bubblebabble)
 		do_fingerprint(pw);
-	if (change_passphrase)
+	အကယ်၍ (change_passphrase)
 		do_change_passphrase(pw, opts, nopts);
-	if (change_comment)
+	အကယ်၍ (change_comment)
 		do_change_comment(pw, identity_comment);
 #ifdef WITH_OPENSSL
-	if (convert_to) {
+	အကယ်၍ (convert_to) {
 		do_convert_to(pw);
 		goto done;
 	}
-	if (convert_from) {
+	အကယ်၍ (convert_from) {
 		do_convert_from(pw);
 		goto done;
 	}
-#else /* WITH_OPENSSL */
-	if (convert_to || convert_from)
+#မဟုတ်ပါက /* WITH_OPENSSL */
+	အကယ်၍ (convert_to || convert_from)
 		fatal("key conversion disabled at compile time");
 #endif /* WITH_OPENSSL */
-	if (print_public)
+	အကယ်၍ (print_public)
 		do_print_public(pw);
-	if (rr_hostname != NULL) {
-		unsigned int n = 0;
+	အကယ်၍ (rr_hostname != NULL) {
+		unsigned ကိန်းပြည့် n = 0;
 
-		if (have_identity) {
+		အကယ်၍ (have_identity) {
 			n = do_print_resource_record(pw, identity_file,
 			    rr_hostname, print_generic, opts, nopts);
-			if (n == 0)
+			အကယ်၍ (n == 0)
 				fatal("%s: %s", identity_file, strerror(errno));
 			exit(0);
-		} else {
+		} မဟုတ်ပါက {
 
 			n += do_print_resource_record(pw,
 			    _PATH_HOST_RSA_KEY_FILE, rr_hostname,
@@ -3810,84 +3810,84 @@ main(int argc, char **argv)
 			n += do_print_resource_record(pw,
 			    _PATH_HOST_ED25519_KEY_FILE, rr_hostname,
 			    print_generic, opts, nopts);
-			if (n == 0)
+			အကယ်၍ (n == 0)
 				fatal("no keys found.");
 			exit(0);
 		}
 	}
 
-	if (do_gen_candidates || do_screen_candidates) {
-		if (argc <= 0)
+	အကယ်၍ (do_gen_candidates || do_screen_candidates) {
+		အကယ်၍ (argc <= 0)
 			fatal("No output file specified");
-		else if (argc > 1)
+		မဟုတ်ပါက အကယ်၍ (argc > 1)
 			fatal("Too many output files specified");
 	}
-	if (do_gen_candidates) {
+	အကယ်၍ (do_gen_candidates) {
 		do_moduli_gen(argv[0], opts, nopts);
 		goto done;
 	}
-	if (do_screen_candidates) {
+	အကယ်၍ (do_screen_candidates) {
 		do_moduli_screen(argv[0], opts, nopts);
 		goto done;
 	}
 
-	if (gen_all_hostkeys) {
+	အကယ်၍ (gen_all_hostkeys) {
 		do_gen_all_hostkeys(pw);
 		goto done;
 	}
 
-	if (key_type_name == NULL)
+	အကယ်၍ (key_type_name == NULL)
 		key_type_name = DEFAULT_KEY_TYPE_NAME;
 
 	type = sshkey_type_from_shortname(key_type_name);
 	type_bits_valid(type, key_type_name, &bits);
 
-	if (!quiet)
+	အကယ်၍ (!quiet)
 		printf("Generating public/private %s key pair.\n",
 		    key_type_name);
 	switch (type) {
-	case KEY_ECDSA_SK:
-	case KEY_ED25519_SK:
-		for (i = 0; i < nopts; i++) {
-			if (strcasecmp(opts[i], "no-touch-required") == 0) {
+	pak_sa KEY_ECDSA_SK:
+	pak_sa KEY_ED25519_SK:
+		အတွက် (i = 0; i < nopts; i++) {
+			အကယ်၍ (strcasecmp(opts[i], "no-touch-required") == 0) {
 				sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
-			} else if (strcasecmp(opts[i], "verify-required") == 0) {
+			} မဟုတ်ပါက အကယ်၍ (strcasecmp(opts[i], "verify-required") == 0) {
 				sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-			} else if (strcasecmp(opts[i], "resident") == 0) {
+			} မဟုတ်ပါက အကယ်၍ (strcasecmp(opts[i], "resident") == 0) {
 				sk_flags |= SSH_SK_RESIDENT_KEY;
-			} else if ((p = strprefix(opts[i], "device=", 1))
+			} မဟုတ်ပါက အကယ်၍ ((p = strprefix(opts[i], "device=", 1))
 			    != NULL ) {
 				sk_device = xstrdup(p);
-			} else if ((p = strprefix(opts[i], "user=", 1))
+			} မဟုတ်ပါက အကယ်၍ ((p = strprefix(opts[i], "user=", 1))
 			    != NULL) {
 				sk_user = xstrdup(p);
-			} else if ((p = strprefix(opts[i], "challenge=", 1))
+			} မဟုတ်ပါက အကယ်၍ ((p = strprefix(opts[i], "challenge=", 1))
 			    != NULL) {
-				if ((r = sshbuf_load_file(p,
+				အကယ်၍ ((r = sshbuf_load_file(p,
 				    &challenge)) != 0) {
 					fatal_r(r, "Unable to load FIDO "
 					    "enrollment challenge \"%s\"", p);
 				}
-			} else if (strncasecmp(opts[i],
+			} မဟုတ်ပါက အကယ်၍ (strncasecmp(opts[i],
 			    "write-attestation=", 18) == 0) {
 				sk_attestation_path = opts[i] + 18;
-			} else if (strncasecmp(opts[i],
+			} မဟုတ်ပါက အကယ်၍ (strncasecmp(opts[i],
 			    "application=", 12) == 0) {
 				sk_application = xstrdup(opts[i] + 12);
-				if (strncmp(sk_application, "ssh:", 4) != 0) {
+				အကယ်၍ (strncmp(sk_application, "ssh:", 4) != 0) {
 					fatal("FIDO application string must "
 					    "begin with \"ssh:\"");
 				}
-			} else {
+			} မဟုတ်ပါက {
 				fatal("Option \"%s\" is unsupported for "
 				    "FIDO authenticator enrollment", opts[i]);
 			}
 		}
-		if ((attest = sshbuf_new()) == NULL)
+		အကယ်၍ ((attest = sshbuf_new()) == NULL)
 			fatal("sshbuf_new failed");
 		r = 0;
-		for (i = 0 ;;) {
-			if (!quiet) {
+		အတွက် (i = 0 ;;) {
+			အကယ်၍ (!quiet) {
 				printf("You may need to touch your "
 				    "authenticator%s to authorize key "
 				    "generation.\n",
@@ -3898,63 +3898,63 @@ main(int argc, char **argv)
 			    sk_application == NULL ? "ssh:" : sk_application,
 			    sk_user, sk_flags, passphrase, challenge,
 			    &private, attest);
-			if (r == 0)
-				break;
-			if (r == SSH_ERR_KEY_BAD_PERMISSIONS &&
+			အကယ်၍ (r == 0)
+				bha_nga;
+			အကယ်၍ (r == SSH_ERR_KEY_BAD_PERMISSIONS &&
 			    (sk_flags & SSH_SK_RESIDENT_KEY) != 0 &&
 			    (sk_flags & SSH_SK_FORCE_OPERATION) == 0 &&
 			    confirm_sk_overwrite(sk_application, sk_user)) {
 				sk_flags |= SSH_SK_FORCE_OPERATION;
 				continue;
 			}
-			if (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
+			အကယ်၍ (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
 				fatal_r(r, "Key enrollment failed");
-			else if (passphrase != NULL) {
+			မဟုတ်ပါက အကယ်၍ (passphrase != NULL) {
 				error("PIN incorrect");
 				freezero(passphrase, strlen(passphrase));
 				passphrase = NULL;
 			}
-			if (++i >= 3)
+			အကယ်၍ (++i >= 3)
 				fatal("Too many incorrect PINs");
 			passphrase = read_passphrase("Enter PIN for "
 			    "authenticator: ", RP_ALLOW_STDIN);
 		}
-		if (passphrase != NULL) {
+		အကယ်၍ (passphrase != NULL) {
 			freezero(passphrase, strlen(passphrase));
 			passphrase = NULL;
 		}
-		break;
+		bha_nga;
 	default:
-		if ((r = sshkey_generate(type, bits, &private)) != 0)
+		အကယ်၍ ((r = sshkey_generate(type, bits, &private)) != 0)
 			fatal("sshkey_generate failed");
-		break;
+		bha_nga;
 	}
-	if ((r = sshkey_from_private(private, &public)) != 0)
+	အကယ်၍ ((r = sshkey_from_private(private, &public)) != 0)
 		fatal_r(r, "sshkey_from_private");
 
-	if (!have_identity)
+	အကယ်၍ (!have_identity)
 		ask_filename(pw, "Enter file in which to save the key");
 
 	/* Create ~/.ssh directory if it doesn't already exist. */
 	hostfile_create_user_ssh_dir(identity_file, !quiet);
 
 	/* If the file already exists, ask the user to confirm. */
-	if (!confirm_overwrite(identity_file))
+	အကယ်၍ (!confirm_overwrite(identity_file))
 		exit(1);
 
 	/* Determine the passphrase for the private key */
 	passphrase = private_key_passphrase(identity_file);
-	if (identity_comment) {
-		strlcpy(comment, identity_comment, sizeof(comment));
-	} else {
+	အကယ်၍ (identity_comment) {
+		strlcpy(comment, identity_comment, parimaa_na(comment));
+	} မဟုတ်ပါက {
 		/* Create default comment field for the passphrase. */
-		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name, hostname);
+		snprintf(comment, parimaa_na comment, "%s@%s", pw->pw_name, hostname);
 	}
 
 
 
 	/* Save the key with the given passphrase and comment. */
-	if ((r = sshkey_save_private(private, identity_file, passphrase,
+	အကယ်၍ ((r = sshkey_save_private(private, identity_file, passphrase,
 	    comment, private_key_format, openssh_format_cipher, rounds)) != 0) {
 		error_r(r, "Saving key \"%s\" failed", identity_file);
 		freezero(passphrase, strlen(passphrase));
@@ -3963,21 +3963,21 @@ main(int argc, char **argv)
 	freezero(passphrase, strlen(passphrase));
 	sshkey_free(private);
 
-	if (!quiet) {
+	အကယ်၍ (!quiet) {
 		printf("Your identification has been saved in %s\n",
 		    identity_file);
 	}
 
-	strlcat(identity_file, ".pub", sizeof(identity_file));
-	if ((r = sshkey_save_public(public, identity_file, comment)) != 0)
+	strlcat(identity_file, ".pub", parimaa_na(identity_file));
+	အကယ်၍ ((r = sshkey_save_public(public, identity_file, comment)) != 0)
 		fatal_r(r, "Unable to save public key to %s", identity_file);
 
-	if (!quiet) {
+	အကယ်၍ (!quiet) {
 		fp = sshkey_fingerprint(public, fingerprint_hash,
 		    SSH_FP_DEFAULT);
 		ra = sshkey_fingerprint(public, fingerprint_hash,
 		    SSH_FP_RANDOMART);
-		if (fp == NULL || ra == NULL)
+		အကယ်၍ (fp == NULL || ra == NULL)
 			fatal("sshkey_fingerprint failed");
 		printf("Your public key has been saved in %s\n",
 		    identity_file);
@@ -3989,7 +3989,7 @@ main(int argc, char **argv)
 		free(fp);
 	}
 
-	if (sk_attestation_path != NULL)
+	အကယ်၍ (sk_attestation_path != NULL)
 		save_attestation(attest, sk_attestation_path);
 
  done:

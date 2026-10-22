@@ -44,36 +44,36 @@
 
 #include "sshpty.h"
 
-static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+static sa_nracanaa termios _saved_tio;
+static ကိန်းပြည့် _in_raw_mode = 0;
 
-struct termios *
+sa_nracanaa termios *
 get_saved_tio(void)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	ပြန်ပေး _in_raw_mode ? &_saved_tio : NULL;
 }
 
 void
-leave_raw_mode(int quiet)
+leave_raw_mode(ကိန်းပြည့် quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	အကယ်၍ (!_in_raw_mode)
+		ပြန်ပေး;
+	အကယ်၍ (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		အကယ်၍ (!quiet)
 			perror("tcsetattr");
-	} else
+	} မဟုတ်ပါက
 		_in_raw_mode = 0;
 }
 
 void
-enter_raw_mode(int quiet)
+enter_raw_mode(ကိန်းပြည့် quiet)
 {
-	struct termios tio;
+	sa_nracanaa termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	အကယ်၍ (tcgetattr(fileno(stdin), &tio) == -1) {
+		အကယ်၍ (!quiet)
 			perror("tcgetattr");
-		return;
+		ပြန်ပေး;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
@@ -88,9 +88,9 @@ enter_raw_mode(int quiet)
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	အကယ်၍ (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		အကယ်၍ (!quiet)
 			perror("tcsetattr");
-	} else
+	} မဟုတ်ပါက
 		_in_raw_mode = 1;
 }

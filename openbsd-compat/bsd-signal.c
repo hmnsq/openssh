@@ -23,13 +23,13 @@
 
 #include "openbsd-compat/bsd-signal.h"
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int sig)
+#အကယ်၍ !defined(HAVE_STRSIGNAL)
+var_na *strsignal(ကိန်းပြည့် sig)
 {
-	static char buf[16];
+	static var_na buf[16];
 
-	(void)snprintf(buf, sizeof(buf), "%d", sig);
-	return buf;
+	(void)snprintf(buf, parimaa_na(buf), "%d", sig);
+	ပြန်ပေး buf;
 }
 #endif
 

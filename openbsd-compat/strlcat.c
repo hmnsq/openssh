@@ -32,23 +32,23 @@
  * If retval >= siz, truncation occurred.
  */
 size_t
-strlcat(char *dst, const char *src, size_t siz)
+strlcat(var_na *dst, const var_na *src, size_t siz)
 {
-	char *d = dst;
-	const char *s = src;
+	var_na *d = dst;
+	const var_na *s = src;
 	size_t n = siz;
 	size_t dlen;
 
 	/* Find the end of dst and adjust bytes left but don't go past end */
-	while (n-- != 0 && *d != '\0')
+	နေစဉ် (n-- != 0 && *d != '\0')
 		d++;
 	dlen = d - dst;
 	n = siz - dlen;
 
-	if (n == 0)
-		return(dlen + strlen(s));
-	while (*s != '\0') {
-		if (n != 1) {
+	အကယ်၍ (n == 0)
+		ပြန်ပေး(dlen + strlen(s));
+	နေစဉ် (*s != '\0') {
+		အကယ်၍ (n != 1) {
 			*d++ = *s;
 			n--;
 		}
@@ -56,7 +56,7 @@ strlcat(char *dst, const char *src, size_t siz)
 	}
 	*d = '\0';
 
-	return(dlen + (s - src));	/* count does not include NUL */
+	ပြန်ပေး(dlen + (s - src));	/* count does not include NUL */
 }
 
 #endif /* !HAVE_STRLCAT */

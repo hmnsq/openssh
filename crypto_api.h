@@ -29,21 +29,21 @@ typedef uint64_t crypto_uint64;
 
 #ifdef WITH_OPENSSL
 #include <openssl/evp.h>
-static inline int
-crypto_hash_sha512(unsigned char *out, const unsigned char *in,
+static anta_hstha ကိန်းပြည့်
+crypto_hash_sha512(unsigned var_na *out, const unsigned var_na *in,
     unsigned long long inlen)
 {
 
-	if (!EVP_Digest(in, inlen, out, NULL, EVP_sha512(), NULL))
-		return -1;
-	return 0;
+	အကယ်၍ (!EVP_Digest(in, inlen, out, NULL, EVP_sha512(), NULL))
+		ပြန်ပေး -1;
+	ပြန်ပေး 0;
 }
-#else /* WITH_OPENSSL */
+#မဟုတ်ပါက /* WITH_OPENSSL */
 # ifdef HAVE_SHA2_H
 #  include <sha2.h>
 # endif
-static inline int
-crypto_hash_sha512(unsigned char *out, const unsigned char *in,
+static anta_hstha ကိန်းပြည့်
+crypto_hash_sha512(unsigned var_na *out, const unsigned var_na *in,
     unsigned long long inlen)
 {
 
@@ -52,7 +52,7 @@ crypto_hash_sha512(unsigned char *out, const unsigned char *in,
 	SHA512Init(&ctx);
 	SHA512Update(&ctx, in, inlen);
 	SHA512Final(out, &ctx);
-	return 0;
+	ပြန်ပေး 0;
 }
 #endif /* WITH_OPENSSL */
 
@@ -61,24 +61,24 @@ crypto_hash_sha512(unsigned char *out, const unsigned char *in,
 #define crypto_sign_ed25519_SEEDBYTES 32U
 #define crypto_sign_ed25519_BYTES 64U
 
-int	crypto_sign_ed25519_detached(unsigned char *, unsigned long long *,
-    const unsigned char *, unsigned long long, const unsigned char *);
-int	crypto_sign_ed25519_verify_detached(const unsigned char *,
-    const unsigned char *, unsigned long long, const unsigned char *);
-int	crypto_sign_ed25519_keypair(unsigned char *, unsigned char *);
-int	crypto_sign_ed25519_seed_keypair(unsigned char *, unsigned char *,
-    const unsigned char *);
+ကိန်းပြည့်	crypto_sign_ed25519_detached(unsigned var_na *, unsigned long long *,
+    const unsigned var_na *, unsigned long long, const unsigned var_na *);
+ကိန်းပြည့်	crypto_sign_ed25519_verify_detached(const unsigned var_na *,
+    const unsigned var_na *, unsigned long long, const unsigned var_na *);
+ကိန်းပြည့်	crypto_sign_ed25519_keypair(unsigned var_na *, unsigned var_na *);
+ကိန်းပြည့်	crypto_sign_ed25519_seed_keypair(unsigned var_na *, unsigned var_na *,
+    const unsigned var_na *);
 
 #define crypto_kem_sntrup761_PUBLICKEYBYTES 1158
 #define crypto_kem_sntrup761_SECRETKEYBYTES 1763
 #define crypto_kem_sntrup761_CIPHERTEXTBYTES 1039
 #define crypto_kem_sntrup761_BYTES 32
 
-int	crypto_kem_sntrup761_enc(unsigned char *cstr, unsigned char *k,
-    const unsigned char *pk);
-int	crypto_kem_sntrup761_dec(unsigned char *k,
-    const unsigned char *cstr, const unsigned char *sk);
-int	crypto_kem_sntrup761_keypair(unsigned char *pk, unsigned char *sk);
+ကိန်းပြည့်	crypto_kem_sntrup761_enc(unsigned var_na *cstr, unsigned var_na *k,
+    const unsigned var_na *pk);
+ကိန်းပြည့်	crypto_kem_sntrup761_dec(unsigned var_na *k,
+    const unsigned var_na *cstr, const unsigned var_na *sk);
+ကိန်းပြည့်	crypto_kem_sntrup761_keypair(unsigned var_na *pk, unsigned var_na *sk);
 
 /* ML-KEM-768 */
 #define crypto_kem_mlkem768_PUBLICKEYBYTES 1184
@@ -94,17 +94,17 @@ int	crypto_kem_sntrup761_keypair(unsigned char *pk, unsigned char *sk);
 #define MLKEM768_CIPHERTEXTBYTES crypto_kem_mlkem768_CIPHERTEXTBYTES
 #define MLKEM768_BYTES crypto_kem_mlkem768_BYTES
 
-int crypto_kem_mlkem768_keypair(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+ကိန်းပြည့် crypto_kem_mlkem768_keypair(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
     uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
-int crypto_kem_mlkem768_enc(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+ကိန်းပြည့် crypto_kem_mlkem768_enc(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
     uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
     const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES]);
-int crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
+ကိန်းပြည့် crypto_kem_mlkem768_dec(uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
     const uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
     const uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES]);
-int crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
+ကိန်းပြည့် crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
     uint8_t sk[crypto_kem_mlkem768_SECRETKEYBYTES], const uint8_t seed[64]);
-int crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
+ကိန်းပြည့် crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
     uint8_t shared_secret[crypto_kem_mlkem768_BYTES],
     const uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES],
     const uint8_t seed[32]);
@@ -115,19 +115,19 @@ int crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTE
 #define MLDSA44_SIGBYTES 2420
 #define MLDSA44_SEEDBYTES 32
 
-int crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
+ကိန်းပြည့် crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
     uint8_t sk[MLDSA44_SECRETKEYBYTES]);
-int crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
+ကိန်းပြည့် crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA44_SECRETKEYBYTES]);
-int crypto_sign_mldsa44_verify(const uint8_t sig[MLDSA44_SIGBYTES],
+ကိန်းပြည့် crypto_sign_mldsa44_verify(const uint8_t sig[MLDSA44_SIGBYTES],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA44_PUBLICKEYBYTES]);
-int crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
+ကိန်းပြည့် crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
     uint8_t sk[MLDSA44_SECRETKEYBYTES], const uint8_t seed[MLDSA44_SEEDBYTES]);
-int crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
+ကိန်းပြည့် crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA44_SECRETKEYBYTES],
@@ -139,20 +139,20 @@ int crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
 #define MLDSA65_SIGBYTES 3309
 #define MLDSA65_SEEDBYTES 32
 
-#if 0
-int crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
+#အကယ်၍ 0
+ကိန်းပြည့် crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
     uint8_t sk[MLDSA65_SECRETKEYBYTES]);
-int crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
+ကိန်းပြည့် crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA65_SECRETKEYBYTES]);
-int crypto_sign_mldsa65_verify(const uint8_t sig[MLDSA65_SIGBYTES],
+ကိန်းပြည့် crypto_sign_mldsa65_verify(const uint8_t sig[MLDSA65_SIGBYTES],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA65_PUBLICKEYBYTES]);
-int crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
+ကိန်းပြည့် crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
     uint8_t sk[MLDSA65_SECRETKEYBYTES], const uint8_t seed[MLDSA65_SEEDBYTES]);
-int crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
+ကိန်းပြည့် crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA65_SECRETKEYBYTES],
@@ -165,19 +165,19 @@ int crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
 #define MLDSA87_SIGBYTES 4627
 #define MLDSA87_SEEDBYTES 32
 
-int crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
+ကိန်းပြည့် crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
     uint8_t sk[MLDSA87_SECRETKEYBYTES]);
-int crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
+ကိန်းပြည့် crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA87_SECRETKEYBYTES]);
-int crypto_sign_mldsa87_verify(const uint8_t sig[MLDSA87_SIGBYTES],
+ကိန်းပြည့် crypto_sign_mldsa87_verify(const uint8_t sig[MLDSA87_SIGBYTES],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA87_PUBLICKEYBYTES]);
-int crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
+ကိန်းပြည့် crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
     uint8_t sk[MLDSA87_SECRETKEYBYTES], const uint8_t seed[MLDSA87_SEEDBYTES]);
-int crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
+ကိန်းပြည့် crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA87_SECRETKEYBYTES],
@@ -188,17 +188,17 @@ int crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
 #define MLDSA44_ED25519_SK_SZ (MLDSA44_SEEDBYTES + crypto_sign_ed25519_SEEDBYTES)
 #define MLDSA44_ED25519_SIG_SZ (MLDSA44_SIGBYTES + crypto_sign_ed25519_BYTES)
 
-int crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
+ကိန်းပြည့် crypto_sign_mldsa44_ed25519_keygen(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ]);
-int crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
+ကိန်းပြည့် crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     uint8_t sk[MLDSA44_ED25519_SK_SZ],
     const uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
     const uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES]);
-int crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+ကိန်းပြည့် crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA44_ED25519_SK_SZ]);
-int crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
+ကိန်းပြည့် crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
     const uint8_t *msg, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA44_ED25519_PK_SZ]);

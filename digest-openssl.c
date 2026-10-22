@@ -42,20 +42,20 @@
 # define EVP_sha512 NULL
 #endif
 
-struct ssh_digest_ctx {
-	int alg;
+sa_nracanaa ssh_digest_ctx {
+	ကိန်းပြည့် alg;
 	EVP_MD_CTX *mdctx;
 };
 
-struct ssh_digest {
-	int id;
-	const char *name;
+sa_nracanaa ssh_digest {
+	ကိန်းပြည့် id;
+	const var_na *name;
 	size_t digest_len;
 	const EVP_MD *(*mdfunc)(void);
 };
 
 /* NB. Indexed directly by algorithm number */
-const struct ssh_digest digests[] = {
+const sa_nracanaa ssh_digest digests[] = {
 	{ SSH_DIGEST_MD5,	"MD5",		16,	EVP_md5 },
 	{ SSH_DIGEST_SHA1,	"SHA1",		20,	EVP_sha1 },
 	{ SSH_DIGEST_SHA256,	"SHA256",	32,	EVP_sha256 },
@@ -64,144 +64,144 @@ const struct ssh_digest digests[] = {
 	{ -1,			NULL,		0,	NULL },
 };
 
-static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+static const sa_nracanaa ssh_digest *
+ssh_digest_by_alg(ကိန်းပြည့် alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	if (digests[alg].mdfunc == NULL)
-		return NULL;
-	return &(digests[alg]);
+	အကယ်၍ (alg < 0 || alg >= SSH_DIGEST_MAX)
+		ပြန်ပေး NULL;
+	အကယ်၍ (digests[alg].id != alg) /* sanity */
+		ပြန်ပေး NULL;
+	အကယ်၍ (digests[alg].mdfunc == NULL)
+		ပြန်ပေး NULL;
+	ပြန်ပေး &(digests[alg]);
 }
 
-int
-ssh_digest_alg_by_name(const char *name)
+ကိန်းပြည့်
+ssh_digest_alg_by_name(const var_na *name)
 {
-	int alg;
+	ကိန်းပြည့် alg;
 
-	for (alg = 0; digests[alg].id != -1; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	အတွက် (alg = 0; digests[alg].id != -1; alg++) {
+		အကယ်၍ (strcasecmp(name, digests[alg].name) == 0)
+			ပြန်ပေး digests[alg].id;
 	}
-	return -1;
+	ပြန်ပေး -1;
 }
 
-const char *
-ssh_digest_alg_name(int alg)
+const var_na *
+ssh_digest_alg_name(ကိန်းပြည့် alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
-}
-
-size_t
-ssh_digest_bytes(int alg)
-{
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-
-	return digest == NULL ? 0 : digest->digest_len;
+	ပြန်ပေး digest == NULL ? NULL : digest->name;
 }
 
 size_t
-ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
+ssh_digest_bytes(ကိန်းပြည့် alg)
 {
-	return EVP_MD_CTX_block_size(ctx->mdctx);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
+
+	ပြန်ပေး digest == NULL ? 0 : digest->digest_len;
 }
 
-struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+size_t
+ssh_digest_blocksize(sa_nracanaa ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-	struct ssh_digest_ctx *ret;
+	ပြန်ပေး EVP_MD_CTX_block_size(ctx->mdctx);
+}
 
-	if (digest == NULL || ((ret = calloc(1, sizeof(*ret))) == NULL))
-		return NULL;
+sa_nracanaa ssh_digest_ctx *
+ssh_digest_start(ကိန်းပြည့် alg)
+{
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
+	sa_nracanaa ssh_digest_ctx *ret;
+
+	အကယ်၍ (digest == NULL || ((ret = calloc(1, parimaa_na(*ret))) == NULL))
+		ပြန်ပေး NULL;
 	ret->alg = alg;
-	if ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
+	အကယ်၍ ((ret->mdctx = EVP_MD_CTX_new()) == NULL) {
 		free(ret);
-		return NULL;
+		ပြန်ပေး NULL;
 	}
-	if (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
+	အကယ်၍ (EVP_DigestInit_ex(ret->mdctx, digest->mdfunc(), NULL) != 1) {
 		ssh_digest_free(ret);
-		return NULL;
+		ပြန်ပေး NULL;
 	}
-	return ret;
+	ပြန်ပေး ret;
 }
 
-int
-ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
+ကိန်းပြည့်
+ssh_digest_copy_state(sa_nracanaa ssh_digest_ctx *from, sa_nracanaa ssh_digest_ctx *to)
 {
-	if (from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	အကယ်၍ (from->alg != to->alg)
+		ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
 	/* we have bcopy-style order while openssl has memcpy-style */
-	if (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	အကယ်၍ (!EVP_MD_CTX_copy_ex(to->mdctx, from->mdctx))
+		ပြန်ပေး SSH_ERR_LIBCRYPTO_ERROR;
+	ပြန်ပေး 0;
 }
 
-int
-ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+ကိန်းပြည့်
+ssh_digest_update(sa_nracanaa ssh_digest_ctx *ctx, const void *m, size_t mlen)
 {
-	if (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	အကယ်၍ (EVP_DigestUpdate(ctx->mdctx, m, mlen) != 1)
+		ပြန်ပေး SSH_ERR_LIBCRYPTO_ERROR;
+	ပြန်ပေး 0;
 }
 
-int
-ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
+ကိန်းပြည့်
+ssh_digest_update_buffer(sa_nracanaa ssh_digest_ctx *ctx, const sa_nracanaa sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	ပြန်ပေး ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
-ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+ကိန်းပြည့်
+ssh_digest_final(sa_nracanaa ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 	u_int l = dlen;
 
-	if (digest == NULL || dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (l != digest->digest_len) /* sanity */
-		return SSH_ERR_INTERNAL_ERROR;
-	return 0;
+	အကယ်၍ (digest == NULL || dlen > UINT_MAX)
+		ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
+	အကယ်၍ (dlen < digest->digest_len) /* No truncation allowed */
+		ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
+	အကယ်၍ (EVP_DigestFinal_ex(ctx->mdctx, d, &l) != 1)
+		ပြန်ပေး SSH_ERR_LIBCRYPTO_ERROR;
+	အကယ်၍ (l != digest->digest_len) /* sanity */
+		ပြန်ပေး SSH_ERR_INTERNAL_ERROR;
+	ပြန်ပေး 0;
 }
 
 void
-ssh_digest_free(struct ssh_digest_ctx *ctx)
+ssh_digest_free(sa_nracanaa ssh_digest_ctx *ctx)
 {
-	if (ctx == NULL)
-		return;
+	အကယ်၍ (ctx == NULL)
+		ပြန်ပေး;
 	EVP_MD_CTX_free(ctx->mdctx);
-	freezero(ctx, sizeof(*ctx));
+	freezero(ctx, parimaa_na(*ctx));
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+ကိန်းပြည့်
+ssh_digest_memory(ကိန်းပြည့် alg, const void *m, size_t mlen, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	const sa_nracanaa ssh_digest *digest = ssh_digest_by_alg(alg);
 	u_int mdlen;
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len)
-		return SSH_ERR_INVALID_ARGUMENT;
+	အကယ်၍ (digest == NULL)
+		ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
+	အကယ်၍ (dlen > UINT_MAX)
+		ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
+	အကယ်၍ (dlen < digest->digest_len)
+		ပြန်ပေး SSH_ERR_INVALID_ARGUMENT;
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return 0;
+	အကယ်၍ (!EVP_Digest(m, mlen, d, &mdlen, digest->mdfunc(), NULL))
+		ပြန်ပေး SSH_ERR_LIBCRYPTO_ERROR;
+	ပြန်ပေး 0;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+ကိန်းပြည့်
+ssh_digest_buffer(ကိန်းပြည့် alg, const sa_nracanaa sshbuf *b, u_char *d, size_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	ပြန်ပေး ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* WITH_OPENSSL */

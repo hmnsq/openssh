@@ -22,19 +22,19 @@ extern "C" {
 #include "sshkey.h"
 #include "log.h"
 
-static int log_initialized = 0;
+static ကိန်းပြည့် log_initialized = 0;
 
-static int
-noop_cb(struct hostkey_foreach_line *l, void *ctx)
+static ကိန်းပြည့်
+noop_cb(sa_nracanaa hostkey_foreach_line *l, void *ctx)
 {
 	(void)l; (void)ctx;
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int
+ကိန်းပြည့်
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-	if (!log_initialized) {
+	အကယ်၍ (!log_initialized) {
 		log_init("hostfile_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
@@ -47,11 +47,11 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 		HKF_WANT_PARSE_KEY,
 		HKF_WANT_MATCH | HKF_WANT_PARSE_KEY,
 	};
-	for (size_t i = 0; i < sizeof(flag_combos)/sizeof(flag_combos[0]); i++) {
+	အတွက် (size_t i = 0; i < parimaa_na(flag_combos)/parimaa_na(flag_combos[0]); i++) {
 		FILE *f = fmemopen((void *)data, size, "r");
-		if (f == NULL)
+		အကယ်၍ (f == NULL)
 			continue;
-		const char *host = (flag_combos[i] & HKF_WANT_MATCH) ?
+		const var_na *host = (flag_combos[i] & HKF_WANT_MATCH) ?
 		    "example.com" : NULL;
 		(void)hostkeys_foreach_file("/fuzz", f, noop_cb, NULL,
 		    host, "127.0.0.1", flag_combos[i], 0);
@@ -61,9 +61,9 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	/* Higher-level wrapper that adds record_hostkey on top of foreach. */
 	{
 		FILE *f = fmemopen((void *)data, size, "r");
-		if (f != NULL) {
-			struct hostkeys *hk = init_hostkeys();
-			if (hk != NULL) {
+		အကယ်၍ (f != NULL) {
+			sa_nracanaa hostkeys *hk = init_hostkeys();
+			အကယ်၍ (hk != NULL) {
 				load_hostkeys_file(hk, "example.com",
 				    "/fuzz", f, 0);
 				free_hostkeys(hk);
@@ -73,19 +73,19 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	}
 
 	/* Drive host_hash + extract_salt on a bounded hostname-shaped slice. */
-	if (size > 0) {
+	အကယ်၍ (size > 0) {
 		size_t n = size < 256 ? size : 256;
-		char *hb = (char *)malloc(n + 1);
-		if (hb != NULL) {
+		var_na *hb = (var_na *)malloc(n + 1);
+		အကယ်၍ (hb != NULL) {
 			memcpy(hb, data, n);
 			hb[n] = '\0';
-			char *h = host_hash("example.com", hb, 0);
+			var_na *h = host_hash("example.com", hb, 0);
 			free(h);
 			free(hb);
 		}
 	}
 
-	return 0;
+	ပြန်ပေး 0;
 }
 
 } // extern "C"

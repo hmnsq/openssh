@@ -18,7 +18,7 @@
 
 #include <sys/queue.h>
 
-struct sshbuf;
+sa_nracanaa sshbuf;
 
 #define MAX_PORTS		256	/* Max # ports. */
 
@@ -53,7 +53,7 @@ struct sshbuf;
 #define SSHD_DEFAULT_X11_DISPLAY_OFFSET	10
 #ifdef WITH_ZLIB
 #define SSHD_DEFAULT_COMPRESSION	COMP_DELAYED
-#else
+#မဟုတ်ပါက
 #define SSHD_DEFAULT_COMPRESSION	COMP_NONE
 #endif
 
@@ -62,41 +62,41 @@ struct sshbuf;
 #define SSH_KEEPALIVES_TRANSPORT	1
 #define SSH_KEEPALIVES_ALL		2
 
-struct ssh;
+sa_nracanaa ssh;
 
 /*
  * Used to store addresses from ListenAddr directives. These may be
  * incomplete, as they may specify addresses that need to be merged
  * with any ports requested by ListenPort.
  */
-struct queued_listenaddr {
-	char *addr;
-	int port; /* <=0 if unspecified */
-	char *rdomain;
+sa_nracanaa queued_listenaddr {
+	var_na *addr;
+	ကိန်းပြည့် port; /* <=0 if unspecified */
+	var_na *rdomain;
 };
 
 /* Resolved listen addresses, grouped by optional routing domain */
-struct listenaddr {
-	char *rdomain;
-	struct addrinfo *addrs;
+sa_nracanaa listenaddr {
+	var_na *rdomain;
+	sa_nracanaa addrinfo *addrs;
 };
 
 #define PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL	1
 #define PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE	2
-struct per_source_penalty {
-	int	enabled;
-	int	max_sources4;
-	int	max_sources6;
-	int	overflow_mode;
-	int	overflow_mode6;
-	double	penalty_crash;
-	double	penalty_grace;
-	double	penalty_authfail;
-	double	penalty_invaliduser;
-	double	penalty_noauth;
-	double	penalty_refuseconnection;
-	double	penalty_max;
-	double	penalty_min;
+sa_nracanaa per_source_penalty {
+	ကိန်းပြည့်	enabled;
+	ကိန်းပြည့်	max_sources4;
+	ကိန်းပြည့်	max_sources6;
+	ကိန်းပြည့်	overflow_mode;
+	ကိန်းပြည့်	overflow_mode6;
+	dviguu_na	penalty_crash;
+	dviguu_na	penalty_grace;
+	dviguu_na	penalty_authfail;
+	dviguu_na	penalty_invaliduser;
+	dviguu_na	penalty_noauth;
+	dviguu_na	penalty_refuseconnection;
+	dviguu_na	penalty_max;
+	dviguu_na	penalty_min;
 };
 
 /* Options for whether config entries are copied after Match processing */
@@ -281,7 +281,7 @@ SSHCONF_ALIAS(KeepAlive, TCPKeepAlive, SSHCFG_GLOBAL)
 #define SSHD_CONFIG_ENTRIES_PAM \
 SSHCONF_INTFLAG(use_pam, UsePAM, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL, SSHCFG_COPY_MATCH)
-#else
+#မဟုတ်ပါက
 #define SSHD_CONFIG_ENTRIES_PAM \
 SSHCONF_UNSUPPORTED_INT(use_pam, UsePAM, SSHCFG_GLOBAL) \
 SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL)
@@ -290,7 +290,7 @@ SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL)
 #ifdef DISABLE_LASTLOG
 #define SSHD_CONFIG_ENTRIES_LASTLOG \
 SSHCONF_UNSUPPORTED_INT(print_lastlog, PrintLastLog, SSHCFG_GLOBAL)
-#else
+#မဟုတ်ပါက
 #define SSHD_CONFIG_ENTRIES_LASTLOG \
 SSHCONF_INTFLAG(print_lastlog, PrintLastLog, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 #endif
@@ -301,7 +301,7 @@ SSHCONF_INTFLAG(print_lastlog, PrintLastLog, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 #ifdef USE_AFS
 #define SSHD_CONFIG_KRB5_AFS \
 SSHCONF_INTFLAG(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE)
-#else /* USE_AFS */
+#မဟုတ်ပါက /* USE_AFS */
 #define SSHD_CONFIG_KRB5_AFS \
 SSHCONF_UNSUPPORTED_INT(kerberos_get_afs_token, KerberosGetAFSToken, SSHCFG_GLOBAL)
 #endif /* USE_AFS */
@@ -311,7 +311,7 @@ SSHCONF_INTFLAG(kerberos_authentication, KerberosAuthentication, SSHCFG_ALL, 0, 
 SSHCONF_INTFLAG(kerberos_or_local_passwd, KerberosOrLocalPasswd, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(kerberos_ticket_cleanup, KerberosTicketCleanup, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHD_CONFIG_KRB5_AFS
-#else /* KRB5 */
+#မဟုတ်ပါက /* KRB5 */
 #define SSHD_CONFIG_ENTRIES_KRB5 \
 SSHCONF_UNSUPPORTED_INT(kerberos_authentication, KerberosAuthentication, SSHCFG_ALL) \
 SSHCONF_UNSUPPORTED_INT(kerberos_or_local_passwd, KerberosOrLocalPasswd, SSHCFG_GLOBAL) \
@@ -325,7 +325,7 @@ SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_
 SSHCONF_INTFLAG(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
-#else /* GSSAPI */
+#မဟုတ်ပါက /* GSSAPI */
 #define SSHD_CONFIG_ENTRIES_GSS \
 SSHCONF_UNSUPPORTED_INT(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL) \
 SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL) \
@@ -339,66 +339,66 @@ SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_G
 	SSHD_CONFIG_ENTRIES_GSS \
 
 /* Macros to declare ServerOptions member variables */
-#define SSHCONF_INT(var, conf, flags, ms, def, cp)	int var;
-#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	int var;
-#define SSHCONF_STRING(var, conf, flags, cp)		char *var;
+#define SSHCONF_INT(var, conf, flags, ms, def, cp)	ကိန်းပြည့် var;
+#define SSHCONF_INTFLAG(var, conf, flags, def, cp)	ကိန်းပြည့် var;
+#define SSHCONF_STRING(var, conf, flags, cp)		var_na *var;
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	\
-	char **var; \
+	var_na **var; \
 	u_int nvar;
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp)	/* empty */
 #define SSHCONF_NONCONF(funcsuffix)			/* empty */
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
-#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	int var;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	char *var;
+#define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	ကိန်းပြည့် var;
+#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	var_na *var;
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
-typedef struct ServerOptions {
+typedef sa_nracanaa ServerOptions {
 	SSHD_CONFIG_ENTRIES
 	/* Ports */
 	u_int	num_ports;
 	u_int	ports_from_cmdline;
-	int	ports[MAX_PORTS];	/* Port number to listen on. */
+	ကိန်းပြည့်	ports[MAX_PORTS];	/* Port number to listen on. */
 	/* ListenAddress */
-	struct queued_listenaddr *queued_listen_addrs;
+	sa_nracanaa queued_listenaddr *queued_listen_addrs;
 	u_int	num_queued_listens;
-	struct listenaddr *listen_addrs;
+	sa_nracanaa listenaddr *listen_addrs;
 	u_int	num_listen_addrs;
 	/* HostKey */
-	char   **host_key_files;	/* Files containing host keys. */
-	int	*host_key_file_userprovided; /* Key was specified by user. */
+	var_na   **host_key_files;	/* Files containing host keys. */
+	ကိန်းပြည့်	*host_key_file_userprovided; /* Key was specified by user. */
 	u_int	num_host_key_files;     /* Number of files for host keys. */
 	/* IPQoS */
-	int	ip_qos_interactive;	/* IP ToS/DSCP/class for interactive */
-	int	ip_qos_bulk;		/* IP ToS/DSCP/class for bulk traffic */
+	ကိန်းပြည့်	ip_qos_interactive;	/* IP ToS/DSCP/class for interactive */
+	ကိန်းပြည့်	ip_qos_bulk;		/* IP ToS/DSCP/class for bulk traffic */
 	/* GatewayPorts, StreamLocalBindMask, StreamLocalBindUnlink */
-	struct ForwardOptions fwd_opts;	/* forwarding options */
+	sa_nracanaa ForwardOptions fwd_opts;	/* forwarding options */
 	/* LogFacility */
 	SyslogFacility log_facility;	/* Facility for system logging. */
 	/* LogLevel */
 	LogLevel log_level;	/* Level for system logging. */
 	/* PermitUserEnvironment */
-	int     permit_user_env;	/* If true, read ~/.ssh/environment */
-	char   *permit_user_env_allowlist; /* pattern-list of allowed env names */
+	ကိန်းပြည့်     permit_user_env;	/* If true, read ~/.ssh/environment */
+	var_na   *permit_user_env_allowlist; /* pattern-list of allowed env names */
 	/* Subsystem */
 	u_int num_subsystems;
-	char   **subsystem_name;
-	char   **subsystem_command;
-	char   **subsystem_args;
+	var_na   **subsystem_name;
+	var_na   **subsystem_command;
+	var_na   **subsystem_args;
 	/* MaxStartups */
-	int	max_startups_begin;
-	int	max_startups_rate;
-	int	max_startups;
+	ကိန်းပြည့်	max_startups_begin;
+	ကိန်းပြည့်	max_startups_rate;
+	ကိန်းပြည့်	max_startups;
 	/* PerSourceNetBlockSize */
-	int	per_source_masklen_ipv4;
-	int	per_source_masklen_ipv6;
+	ကိန်းပြည့်	per_source_masklen_ipv4;
+	ကိန်းပြည့်	per_source_masklen_ipv6;
 	/* PerSourcePenalties */
-	struct per_source_penalty per_source_penalty;
+	sa_nracanaa per_source_penalty per_source_penalty;
 	/* RekeyLimit */
 	int64_t rekey_limit;
-	int	rekey_interval;
+	ကိန်းပြည့်	rekey_interval;
 	/* PubkeyAuthOptions */
-	int	pubkey_auth_options;
-	int	max_pubkey_ok;
+	ကိန်းပြည့်	pubkey_auth_options;
+	ကိန်းပြည့်	max_pubkey_ok;
 	/* Passed by config but not keyword for this */
 	uint64_t timing_secret;
 }       ServerOptions;
@@ -414,48 +414,48 @@ typedef struct ServerOptions {
 #undef SSHCONF_ALIAS
 
 /* Information about the incoming connection as used by Match */
-struct connection_info {
-	const char *user;
-	int user_invalid;
-	const char *host;	/* possibly resolved hostname */
-	const char *address;	/* remote address */
-	const char *laddress;	/* local address */
-	int lport;		/* local port */
-	const char *rdomain;	/* routing domain if available */
-	int test;		/* test mode, allow some attributes to be
+sa_nracanaa connection_info {
+	const var_na *user;
+	ကိန်းပြည့် user_invalid;
+	const var_na *host;	/* possibly resolved hostname */
+	const var_na *address;	/* remote address */
+	const var_na *laddress;	/* local address */
+	ကိန်းပြည့် lport;		/* local port */
+	const var_na *rdomain;	/* routing domain if available */
+	ကိန်းပြည့် test;		/* test mode, allow some attributes to be
 				 * unspecified */
 };
 
 /* List of included files for re-exec from the parsed configuration */
-struct include_item {
-	char *selector;
-	char *filename;
-	struct sshbuf *contents;
+sa_nracanaa include_item {
+	var_na *selector;
+	var_na *filename;
+	sa_nracanaa sshbuf *contents;
 	TAILQ_ENTRY(include_item) entry;
 };
 TAILQ_HEAD(include_list, include_item);
 
 void	 initialize_server_options(ServerOptions *);
 void	 fill_default_server_options(ServerOptions *);
-int	 process_server_config_line(ServerOptions *, char *, const char *, int,
-	    int *, struct connection_info *, struct include_list *includes);
-void	 load_server_config(const char *, struct sshbuf *);
-void	 parse_server_config(ServerOptions *, const char *, struct sshbuf *,
-	    struct include_list *includes, struct connection_info *, int);
+ကိန်းပြည့်	 process_server_config_line(ServerOptions *, var_na *, const var_na *, ကိန်းပြည့်,
+	    ကိန်းပြည့် *, sa_nracanaa connection_info *, sa_nracanaa include_list *includes);
+void	 load_server_config(const var_na *, sa_nracanaa sshbuf *);
+void	 parse_server_config(ServerOptions *, const var_na *, sa_nracanaa sshbuf *,
+	    sa_nracanaa include_list *includes, sa_nracanaa connection_info *, ကိန်းပြည့်);
 void	 parse_server_match_config(ServerOptions *,
-	    struct include_list *includes, struct connection_info *);
-int	 parse_server_match_testspec(struct connection_info *, char *);
+	    sa_nracanaa include_list *includes, sa_nracanaa connection_info *);
+ကိန်းပြည့်	 parse_server_match_testspec(sa_nracanaa connection_info *, var_na *);
 void	 servconf_merge_subsystems(ServerOptions *, ServerOptions *);
-void	 copy_set_server_options(ServerOptions *, ServerOptions *, int);
+void	 copy_set_server_options(ServerOptions *, ServerOptions *, ကိန်းပြည့်);
 void	 dump_config(ServerOptions *);
-char	*derelativise_path(const char *);
-void	 servconf_add_hostkey(const char *, const int,
-	    ServerOptions *, const char *path, int);
-void	 servconf_add_hostcert(const char *, const int,
-	    ServerOptions *, const char *path);
+var_na	*derelativise_path(const var_na *);
+void	 servconf_add_hostkey(const var_na *, const ကိန်းပြည့်,
+	    ServerOptions *, const var_na *path, ကိန်းပြည့်);
+void	 servconf_add_hostcert(const var_na *, const ကိန်းပြည့်,
+	    ServerOptions *, const var_na *path);
 
-int	 serialise_server_options(const ServerOptions *, struct sshbuf **);
-int	 deserialise_server_options(struct sshbuf *, ServerOptions *);
+ကိန်းပြည့်	 serialise_server_options(const ServerOptions *, sa_nracanaa sshbuf **);
+ကိန်းပြည့်	 deserialise_server_options(sa_nracanaa sshbuf *, ServerOptions *);
 void	 free_server_options(ServerOptions *);
 
 #endif				/* SERVCONF_H */

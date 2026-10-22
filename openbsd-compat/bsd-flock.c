@@ -40,42 +40,42 @@
 #include <errno.h>
 #include <fcntl.h>
 
-int
-flock(int fd, int op)
+ကိန်းပြည့်
+flock(ကိန်းပြည့် fd, ကိန်းပြည့် op)
 {
-	int rc = 0;
+	ကိန်းပြည့် rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
-	struct flock fl = {0};
+#အကယ်၍ defined(F_SETLK) && defined(F_SETLKW)
+	sa_nracanaa flock fl = {0};
 
 	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
-	case LOCK_EX:
+	pak_sa LOCK_EX:
 		fl.l_type = F_WRLCK;
-		break;
+		bha_nga;
 
-	case LOCK_SH:
+	pak_sa LOCK_SH:
 		fl.l_type = F_RDLCK;
-		break;
+		bha_nga;
 
-	case LOCK_UN:
+	pak_sa LOCK_UN:
 		fl.l_type = F_UNLCK;
-		break;
+		bha_nga;
 
 	default:
 		errno = EINVAL;
-		return -1;
+		ပြန်ပေး -1;
 	}
 
 	fl.l_whence = SEEK_SET;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
+	အကယ်၍ (rc && (errno == EAGAIN))
 		errno = EWOULDBLOCK;
-#else
+#မဟုတ်ပါက
 	rc = -1;
 	errno = ENOSYS;
 #endif
 
-	return rc;
+	ပြန်ပေး rc;
 }
 #endif

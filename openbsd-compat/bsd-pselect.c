@@ -42,24 +42,24 @@
 #include "log.h"
 
 #ifndef HAVE_SIGHANDLER_T
-typedef void (*sighandler_t)(int);
+typedef void (*sighandler_t)(ကိန်းပြည့်);
 #endif
 
 static sighandler_t saved_sighandler[_NSIG];
-static int notify_pipe[2];	/* 0 = read end, 1 = write end */
+static ကိန်းပြည့် notify_pipe[2];	/* 0 = read end, 1 = write end */
 
 /*
  * Because the debugging for this is so noisy, we only output on the first
  * call, and suppress it thereafter.
  */
-static int suppress_debug;
+static ကိန်းပြည့် suppress_debug;
 
 static void
-pselect_set_nonblock(int fd)
+pselect_set_nonblock(ကိန်းပြည့် fd)
 {
-	int val;
+	ကိန်းပြည့် val;
 
-	if ((val = fcntl(fd, F_GETFL)) == -1 ||
+	အကယ်၍ ((val = fcntl(fd, F_GETFL)) == -1 ||
 	     fcntl(fd, F_SETFL, val|O_NONBLOCK) == -1)
 		error_f("fcntl: %s", strerror(errno));
 }
@@ -68,39 +68,39 @@ pselect_set_nonblock(int fd)
  * we write to this pipe if a SIGCHLD is caught in order to avoid
  * the race between select() and child_terminated.
  */
-static int
+static ကိန်းပြည့်
 pselect_notify_setup(void)
 {
-	if (pipe(notify_pipe) == -1) {
+	အကယ်၍ (pipe(notify_pipe) == -1) {
 		error("pipe(notify_pipe) failed %s", strerror(errno));
 		notify_pipe[0] = notify_pipe[1] = -1;
-		return -1;
+		ပြန်ပေး -1;
 	}
 	pselect_set_nonblock(notify_pipe[0]);
 	pselect_set_nonblock(notify_pipe[1]);
-	if (!suppress_debug)
+	အကယ်၍ (!suppress_debug)
 		debug3_f("pipe0 %d pipe1 %d", notify_pipe[0], notify_pipe[1]);
-	return 0;
+	ပြန်ပေး 0;
 }
 static void
 pselect_notify_parent(void)
 {
-	if (notify_pipe[1] != -1)
+	အကယ်၍ (notify_pipe[1] != -1)
 		(void)write(notify_pipe[1], "", 1);
 }
 static void
 pselect_notify_prepare(fd_set *readset)
 {
-	if (notify_pipe[0] != -1)
+	အကယ်၍ (notify_pipe[0] != -1)
 		FD_SET(notify_pipe[0], readset);
 }
 static void
 pselect_notify_done(fd_set *readset)
 {
-	char c;
+	var_na c;
 
-	if (notify_pipe[0] != -1 && FD_ISSET(notify_pipe[0], readset)) {
-		while (read(notify_pipe[0], &c, 1) != -1)
+	အကယ်၍ (notify_pipe[0] != -1 && FD_ISSET(notify_pipe[0], readset)) {
+		နေစဉ် (read(notify_pipe[0], &c, 1) != -1)
 			debug2_f("reading");
 		FD_CLR(notify_pipe[0], readset);
 	}
@@ -110,12 +110,12 @@ pselect_notify_done(fd_set *readset)
 
 /*ARGSUSED*/
 static void
-pselect_sig_handler(int sig)
+pselect_sig_handler(ကိန်းပြည့် sig)
 {
-	int save_errno = errno;
+	ကိန်းပြည့် save_errno = errno;
 
 	pselect_notify_parent();
-	if (saved_sighandler[sig] != NULL)
+	အကယ်၍ (saved_sighandler[sig] != NULL)
 		(*saved_sighandler[sig])(sig);  /* call original handler */
 	errno = save_errno;
 }
@@ -124,34 +124,34 @@ pselect_sig_handler(int sig)
  * A minimal implementation of pselect(2), built on top of select(2).
  */
 
-int
-pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
-    const struct timespec *timeout, const sigset_t *mask)
+ကိန်းပြည့်
+pselect(ကိန်းပြည့် nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
+    const sa_nracanaa timespec *timeout, const sigset_t *mask)
 {
-	int ret, sig, saved_errno, unmasked = 0;
+	ကိန်းပြည့် ret, sig, saved_errno, unmasked = 0;
 	sigset_t osig;
-	struct sigaction sa, osa;
-	struct timeval tv, *tvp = NULL;
+	sa_nracanaa sigaction sa, osa;
+	sa_nracanaa timeval tv, *tvp = NULL;
 
-	if (timeout != NULL) {
+	အကယ်၍ (timeout != NULL) {
 		tv.tv_sec = timeout->tv_sec;
 		tv.tv_usec = timeout->tv_nsec / 1000;
 		tvp = &tv;
 	}
-	if (mask == NULL)  /* no signal mask, just call select */
-		return select(nfds, readfds, writefds, exceptfds, tvp);
+	အကယ်၍ (mask == NULL)  /* no signal mask, just call select */
+		ပြန်ပေး select(nfds, readfds, writefds, exceptfds, tvp);
 
 	/* For each signal unmasked, save old handler and install ours. */
-	for (sig = 0; sig < _NSIG; sig++) {
+	အတွက် (sig = 0; sig < _NSIG; sig++) {
 		saved_sighandler[sig] = NULL;
-		if (sig == SIGKILL || sig == SIGSTOP || sigismember(mask, sig))
+		အကယ်၍ (sig == SIGKILL || sig == SIGSTOP || sigismember(mask, sig))
 			continue;
-		if (sigaction(sig, NULL, &sa) == 0 &&
+		အကယ်၍ (sigaction(sig, NULL, &sa) == 0 &&
 		    sa.sa_handler != SIG_IGN && sa.sa_handler != SIG_DFL) {
 			unmasked = 1;
 			sa.sa_handler = pselect_sig_handler;
-			if (sigaction(sig, &sa, &osa) == 0) {
-				if (!suppress_debug)
+			အကယ်၍ (sigaction(sig, &sa, &osa) == 0) {
+				အကယ်၍ (!suppress_debug)
 					debug3_f("installed signal handler for"
 					    " %s, previous 0x%p",
 					    strsignal(sig), osa.sa_handler);
@@ -159,8 +159,8 @@ pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 			}
 		}
 	}
-	if (unmasked) {
-		if ((ret = pselect_notify_setup()) == -1) {
+	အကယ်၍ (unmasked) {
+		အကယ်၍ ((ret = pselect_notify_setup()) == -1) {
 			saved_errno = ENOMEM;
 			goto out;
 		}
@@ -174,21 +174,21 @@ pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 	saved_errno = errno;
 	sigprocmask(SIG_SETMASK, &osig, NULL);
 
-	if (unmasked)
+	အကယ်၍ (unmasked)
 		pselect_notify_done(readfds);
 
  out:
 	/* Restore signal handlers. */
-	for (sig = 0; sig < _NSIG; sig++) {
-		if (saved_sighandler[sig] == NULL)
+	အတွက် (sig = 0; sig < _NSIG; sig++) {
+		အကယ်၍ (saved_sighandler[sig] == NULL)
 			continue;
-		if (sigaction(sig, NULL, &sa) == 0) {
+		အကယ်၍ (sigaction(sig, NULL, &sa) == 0) {
 			sa.sa_handler = saved_sighandler[sig];
-			if (sigaction(sig, &sa, NULL) == 0) {
-				if (!suppress_debug)
+			အကယ်၍ (sigaction(sig, &sa, NULL) == 0) {
+				အကယ်၍ (!suppress_debug)
 					debug3_f("restored signal handler for "
 					    "%s", strsignal(sig));
-			} else {
+			} မဟုတ်ပါက {
 				error_f("failed to restore signal handler for "
 				    "%s: %s", strsignal(sig), strerror(errno));
 			}
@@ -196,6 +196,6 @@ pselect(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
 	}
 	suppress_debug = 1;
 	errno = saved_errno;
-	return ret;
+	ပြန်ပေး ret;
 }
 #endif

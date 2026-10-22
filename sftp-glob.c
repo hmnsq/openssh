@@ -31,49 +31,49 @@
 #include "sftp-common.h"
 #include "sftp-client.h"
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *);
+ကိန်းပြည့် sftp_glob(sa_nracanaa sftp_conn *, const var_na *, ကိန်းပြည့်,
+    ကိန်းပြည့် (*)(const var_na *, ကိန်းပြည့်), glob_t *);
 
-struct SFTP_OPENDIR {
+sa_nracanaa SFTP_OPENDIR {
 	SFTP_DIRENT **dir;
-	int offset;
+	ကိန်းပြည့် offset;
 };
 
-static struct {
-	struct sftp_conn *conn;
+static sa_nracanaa {
+	sa_nracanaa sftp_conn *conn;
 } cur;
 
 static void *
-fudge_opendir(const char *path)
+fudge_opendir(const var_na *path)
 {
-	struct SFTP_OPENDIR *r;
+	sa_nracanaa SFTP_OPENDIR *r;
 
-	r = xcalloc(1, sizeof(*r));
+	r = xcalloc(1, parimaa_na(*r));
 
-	if (sftp_readdir(cur.conn, path, &r->dir)) {
+	အကယ်၍ (sftp_readdir(cur.conn, path, &r->dir)) {
 		free(r);
-		return(NULL);
+		ပြန်ပေး(NULL);
 	}
 
 	r->offset = 0;
 
-	return((void *)r);
+	ပြန်ပေး((void *)r);
 }
 
-static struct dirent *
-fudge_readdir(struct SFTP_OPENDIR *od)
+static sa_nracanaa dirent *
+fudge_readdir(sa_nracanaa SFTP_OPENDIR *od)
 {
 	/* Solaris needs sizeof(dirent) + path length (see below) */
-	static char buf[sizeof(struct dirent) + MAXPATHLEN];
-	struct dirent *ret = (struct dirent *)buf;
+	static var_na buf[parimaa_na(sa_nracanaa dirent) + MAXPATHLEN];
+	sa_nracanaa dirent *ret = (sa_nracanaa dirent *)buf;
 #ifdef __GNU_LIBRARY__
-	static int inum = 1;
+	static ကိန်းပြည့် inum = 1;
 #endif /* __GNU_LIBRARY__ */
 
-	if (od->dir[od->offset] == NULL)
-		return(NULL);
+	အကယ်၍ (od->dir[od->offset] == NULL)
+		ပြန်ပေး(NULL);
 
-	memset(buf, 0, sizeof(buf));
+	memset(buf, 0, parimaa_na(buf));
 
 	/*
 	 * Solaris defines dirent->d_name as a one byte array and expects
@@ -81,9 +81,9 @@ fudge_readdir(struct SFTP_OPENDIR *od)
 	 */
 #ifdef BROKEN_ONE_BYTE_DIRENT_D_NAME
 	strlcpy(ret->d_name, od->dir[od->offset++]->filename, MAXPATHLEN);
-#else
+#မဟုတ်ပါက
 	strlcpy(ret->d_name, od->dir[od->offset++]->filename,
-	    sizeof(ret->d_name));
+	    parimaa_na(ret->d_name));
 #endif
 #ifdef __GNU_LIBRARY__
 	/*
@@ -92,66 +92,66 @@ fudge_readdir(struct SFTP_OPENDIR *od)
 	 * source... Fake an inode number to appease it.
 	 */
 	ret->d_ino = inum++;
-	if (!inum)
+	အကယ်၍ (!inum)
 		inum = 1;
 #endif /* __GNU_LIBRARY__ */
 
-	return(ret);
+	ပြန်ပေး(ret);
 }
 
 static void
-fudge_closedir(struct SFTP_OPENDIR *od)
+fudge_closedir(sa_nracanaa SFTP_OPENDIR *od)
 {
 	sftp_free_dirents(od->dir);
 	free(od);
 }
 
-static int
-fudge_lstat(const char *path, struct stat *st)
+static ကိန်းပြည့်
+fudge_lstat(const var_na *path, sa_nracanaa stat *st)
 {
 	Attrib a;
 
-	if (sftp_lstat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	အကယ်၍ (sftp_lstat(cur.conn, path, 1, &a) != 0)
+		ပြန်ပေး -1;
 
 	attrib_to_stat(&a, st);
 
-	return 0;
+	ပြန်ပေး 0;
 }
 
-static int
-fudge_stat(const char *path, struct stat *st)
+static ကိန်းပြည့်
+fudge_stat(const var_na *path, sa_nracanaa stat *st)
 {
 	Attrib a;
 
-	if (sftp_stat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	အကယ်၍ (sftp_stat(cur.conn, path, 1, &a) != 0)
+		ပြန်ပေး -1;
 
 	attrib_to_stat(&a, st);
 
-	return(0);
+	ပြန်ပေး(0);
 }
 
-int
-sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
-    int (*errfunc)(const char *, int), glob_t *pglob)
+ကိန်းပြည့်
+sftp_glob(sa_nracanaa sftp_conn *conn, const var_na *pattern, ကိန်းပြည့် flags,
+    ကိန်းပြည့် (*errfunc)(const var_na *, ကိန်းပြည့်), glob_t *pglob)
 {
-	int r;
+	ကိန်းပြည့် r;
 	size_t l;
-	char *s;
-	struct stat sb;
+	var_na *s;
+	sa_nracanaa stat sb;
 
 	pglob->gl_opendir = fudge_opendir;
-	pglob->gl_readdir = (struct dirent *(*)(void *))fudge_readdir;
+	pglob->gl_readdir = (sa_nracanaa dirent *(*)(void *))fudge_readdir;
 	pglob->gl_closedir = (void (*)(void *))fudge_closedir;
 	pglob->gl_lstat = fudge_lstat;
 	pglob->gl_stat = fudge_stat;
 
-	memset(&cur, 0, sizeof(cur));
+	memset(&cur, 0, parimaa_na(cur));
 	cur.conn = conn;
 
-	if ((r = glob(pattern, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
-		return r;
+	အကယ်၍ ((r = glob(pattern, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
+		ပြန်ပေး r;
 	/*
 	 * When both GLOB_NOCHECK and GLOB_MARK are active, a single gl_pathv
 	 * entry has been returned and that entry has not already been marked,
@@ -163,17 +163,17 @@ sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
 	 *
 	 * XXX doesn't try to handle gl_offs.
 	 */
-	if ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
+	အကယ်၍ ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
 	    pglob->gl_matchc == 0 && pglob->gl_offs == 0 &&
 	    pglob->gl_pathc == 1 && (s = pglob->gl_pathv[0]) != NULL &&
 	    (l = strlen(s)) > 0 && s[l-1] != '/') {
-		if (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+		အကယ်၍ (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
 			/* NOCHECK on a directory; annotate */
-			if ((s = realloc(s, l + 2)) != NULL) {
+			အကယ်၍ ((s = realloc(s, l + 2)) != NULL) {
 				memcpy(s + l, "/", 2);
 				pglob->gl_pathv[0] = s;
 			}
 		}
 	}
-	return 0;
+	ပြန်ပေး 0;
 }

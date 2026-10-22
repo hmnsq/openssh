@@ -85,25 +85,25 @@
 # define ERRSET_NODATA		5
 #endif
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+sa_nracanaa rdatainfo {
+	unsigned ကိန်းပြည့်		rdi_length;	/* length of data */
+	unsigned var_na		*rdi_data;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+sa_nracanaa rrsetinfo {
+	unsigned ကိန်းပြည့်		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned ကိန်းပြည့်		rri_rdclass;	/* class number */
+	unsigned ကိန်းပြည့်		rri_rdtype;	/* RR type number */
+	unsigned ကိန်းပြည့်		rri_ttl;	/* time to live */
+	unsigned ကိန်းပြည့်		rri_nrdatas;	/* size of rdatas array */
+	unsigned ကိန်းပြည့်		rri_nsigs;	/* size of sigs array */
+	var_na			*rri_name;	/* canonical name */
+	sa_nracanaa rdatainfo	*rri_rdatas;	/* individual records */
+	sa_nracanaa rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+ကိန်းပြည့်		getrrsetbyname(const var_na *, unsigned ကိန်းပြည့်, unsigned ကိန်းပြည့်, unsigned ကိန်းပြည့်, sa_nracanaa rrsetinfo **);
+void		freerrset(sa_nracanaa rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */
 

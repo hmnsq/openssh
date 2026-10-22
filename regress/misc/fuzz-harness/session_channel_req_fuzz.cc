@@ -33,9 +33,9 @@ limitations under the License.
 
 extern "C" void fuzz_session_one(const uint8_t *data, size_t size);
 
-extern "C" int
+extern "C" ကိန်းပြည့်
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	fuzz_session_one(data, size);
-	return 0;
+	ပြန်ပေး 0;
 }

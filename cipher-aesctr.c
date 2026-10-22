@@ -29,19 +29,19 @@
  * the counter is of size 'len' bytes and stored in network-byte-order.
  * (LSB at ctr[len-1], MSB at ctr[0])
  */
-static inline void
+static anta_hstha void
 aesctr_inc(u8 *ctr, u32 len)
 {
 	ssize_t i;
 
 #ifndef CONSTANT_TIME_INCREMENT
-	for (i = len - 1; i >= 0; i--)
-		if (++ctr[i])	/* continue on overflow */
-			return;
-#else
+	အတွက် (i = len - 1; i >= 0; i--)
+		အကယ်၍ (++ctr[i])	/* continue on overflow */
+			ပြန်ပေး;
+#မဟုတ်ပါက
 	u8 x, add = 1;
 
-	for (i = len - 1; i >= 0; i--) {
+	အတွက် (i = len - 1; i >= 0; i--) {
 		ctr[i] += add;
 		/* constant time for: x = ctr[i] ? 1 : 0 */
 		x = ctr[i];
@@ -71,8 +71,8 @@ aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes)
 	u32 n = 0;
 	u8 buf[AES_BLOCK_SIZE];
 
-	while ((bytes--) > 0) {
-		if (n == 0) {
+	နေစဉ် ((bytes--) > 0) {
+		အကယ်၍ (n == 0) {
 			rijndaelEncrypt(x->ek, x->rounds, x->ctr, buf);
 			aesctr_inc(x->ctr, AES_BLOCK_SIZE);
 		}

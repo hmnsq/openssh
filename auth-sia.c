@@ -46,63 +46,63 @@
 #include "uidswap.h"
 
 extern ServerOptions options;
-extern int saved_argc;
-extern char **saved_argv;
+extern ကိန်းပြည့် saved_argc;
+extern var_na **saved_argv;
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *pass)
+ကိန်းပြည့်
+sys_auth_passwd(sa_nracanaa ssh *ssh, const var_na *pass)
 {
-	int ret;
+	ကိန်းပြည့် ret;
 	SIAENTITY *ent = NULL;
-	const char *host;
+	const var_na *host;
 	Authctxt *authctxt = ssh->authctxt;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (!authctxt->user || pass == NULL || pass[0] == '\0')
-		return (0);
+	အကယ်၍ (!authctxt->user || pass == NULL || pass[0] == '\0')
+		ပြန်ပေး (0);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
+	အကယ်၍ (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
 	    NULL, 0, NULL) != SIASUCCESS)
-		return (0);
+		ပြန်ပေး (0);
 
-	if ((ret = sia_ses_authent(NULL, pass, ent)) != SIASUCCESS) {
+	အကယ်၍ ((ret = sia_ses_authent(NULL, pass, ent)) != SIASUCCESS) {
 		error("Couldn't authenticate %s from %s",
 		    authctxt->user, host);
-		if (ret & SIASTOP)
+		အကယ်၍ (ret & SIASTOP)
 			sia_ses_release(&ent);
 
-		return (0);
+		ပြန်ပေး (0);
 	}
 
 	sia_ses_release(&ent);
 
-	return (1);
+	ပြန်ပေး (1);
 }
 
 void
-session_setup_sia(struct passwd *pw, char *tty)
+session_setup_sia(sa_nracanaa passwd *pw, var_na *tty)
 {
 	SIAENTITY *ent = NULL;
-	const char *host;
+	const var_na *host;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
+	အကယ်၍ (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
 	    tty, 0, NULL) != SIASUCCESS)
 		fatal("sia_ses_init failed");
 
-	if (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
+	အကယ်၍ (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
 		sia_ses_release(&ent);
 		fatal("sia_make_entity_pwd failed");
 	}
 
 	ent->authtype = SIA_A_NONE;
-	if (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
+	အကယ်၍ (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't establish session for %s from %s",
 		    pw->pw_name, host);
 
-	if (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
+	အကယ်၍ (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't launch session for %s from %s",
 		    pw->pw_name, host);
 

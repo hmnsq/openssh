@@ -30,74 +30,74 @@
 #include "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(ကိန်းပြည့် *status)
 {
-	union wait statusp;
+	sa_ngha wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	အကယ်၍ (status)
+		*status = (ကိန်းပြည့်) statusp.w_status;
 
-	return (wait_pid);
+	ပြန်ပေး (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+ကိန်းပြည့်
+tcgetattr(ကိန်းပြည့် fd, sa_nracanaa termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	ပြန်ပေး (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+ကိန်းပြည့်
+tcsetattr(ကိန်းပြည့် fd, ကိန်းပြည့် opt, const sa_nracanaa termios *t)
 {
-	struct termios localterm;
+	sa_nracanaa termios localterm;
 
-	if (opt & TCSASOFT) {
+	အကယ်၍ (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
 	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
+	pak_sa TCSANOW:
+		ပြန်ပေး (ioctl(fd, TIOCSETA, t));
+	pak_sa TCSADRAIN:
+		ပြန်ပေး (ioctl(fd, TIOCSETAW, t));
+	pak_sa TCSAFLUSH:
+		ပြန်ပေး (ioctl(fd, TIOCSETAF, t));
 	default:
 		errno = EINVAL;
-		return (-1);
+		ပြန်ပေး (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+ကိန်းပြည့် tcsetpgrp(ကိန်းပြည့် fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	ပြန်ပေး (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ospeed);
+	ပြန်ပေး (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ispeed);
+	ပြန်ပေး (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+ကိန်းပြည့်
+cfsetospeed(sa_nracanaa termios *t,ကိန်းပြည့် speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	ပြန်ပေး (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+ကိန်းပြည့်
+cfsetispeed(sa_nracanaa termios *t, ကိန်းပြည့် speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	ပြန်ပေး (0);
 }
 #endif /* HAVE_NEXT */

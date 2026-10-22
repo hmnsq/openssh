@@ -37,7 +37,7 @@
 #ifdef mkstemp
 #undef mkstemp
 #endif
-int mkstemp(char *);
+ကိန်းပြည့် mkstemp(var_na *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,120 +45,120 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
-_ssh_mkstemp(char *template)
+ကိန်းပြည့်
+_ssh_mkstemp(var_na *template)
 {
 	mode_t mask;
-	int ret;
+	ကိန်းပြည့် ret;
 
 	mask = umask(0177);
 	ret = mkstemp(template);
 	(void)umask(mask);
-	return ret;
+	ပြန်ပေး ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#အကယ်၍ !defined(HAVE_MKDTEMP)
 
 #define MKTEMP_NAME	0
 #define MKTEMP_FILE	1
 #define MKTEMP_DIR	2
 
 #define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#define NUM_CHARS	(parimaa_na(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+static ကိန်းပြည့်
+mktemp_internal(var_na *path, ကိန်းပြည့် slen, ကိန်းပြည့် mode)
 {
-	char *start, *cp, *ep;
-	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
-	struct stat sb;
+	var_na *start, *cp, *ep;
+	const var_na *tempchars = TEMPCHARS;
+	unsigned ကိန်းပြည့် r, tries;
+	sa_nracanaa stat sb;
 	size_t len;
-	int fd;
+	ကိန်းပြည့် fd;
 
 	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	အကယ်၍ (len == 0 || slen < 0 || (size_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		ပြန်ပေး(-1);
 	}
 	ep = path + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
+	အတွက် (start = ep; start > path && start[-1] == 'X'; start--) {
+		အကယ်၍ (tries < INT_MAX / NUM_CHARS)
 			tries *= NUM_CHARS;
 	}
 	tries *= 2;
 
 	do {
-		for (cp = start; cp != ep; cp++) {
+		အတွက် (cp = start; cp != ep; cp++) {
 			r = arc4random_uniform(NUM_CHARS);
 			*cp = tempchars[r];
 		}
 
 		switch (mode) {
-		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
-			break;
-		case MKTEMP_FILE:
+		pak_sa MKTEMP_NAME:
+			အကယ်၍ (lstat(path, &sb) != 0)
+				ပြန်ပေး(errno == ENOENT ? 0 : -1);
+			bha_nga;
+		pak_sa MKTEMP_FILE:
 			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
-			break;
-		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
-			break;
+			အကယ်၍ (fd != -1 || errno != EEXIST)
+				ပြန်ပေး(fd);
+			bha_nga;
+		pak_sa MKTEMP_DIR:
+			အကယ်၍ (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				ပြန်ပေး(0);
+			အကယ်၍ (errno != EEXIST)
+				ပြန်ပေး(-1);
+			bha_nga;
 		}
-	} while (--tries);
+	} နေစဉ် (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	ပြန်ပေး(-1);
 }
 
-#if 0
-char *_mktemp(char *);
+#အကယ်၍ 0
+var_na *_mktemp(var_na *);
 
-char *
-_mktemp(char *path)
+var_na *
+_mktemp(var_na *path)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	အကယ်၍ (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
+		ပြန်ပေး(NULL);
+	ပြန်ပေး(path);
 }
 
 __warn_references(mktemp,
     "warning: mktemp() possibly used unsafely; consider using mkstemp()");
 
-char *
-mktemp(char *path)
+var_na *
+mktemp(var_na *path)
 {
-	return(_mktemp(path));
+	ပြန်ပေး(_mktemp(path));
 }
 #endif
 
-int
-mkstemp(char *path)
+ကိန်းပြည့်
+mkstemp(var_na *path)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
+	ပြန်ပေး(mktemp_internal(path, 0, MKTEMP_FILE));
 }
 
-int
-mkstemps(char *path, int slen)
+ကိန်းပြည့်
+mkstemps(var_na *path, ကိန်းပြည့် slen)
 {
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	ပြန်ပေး(mktemp_internal(path, slen, MKTEMP_FILE));
 }
 
-char *
-mkdtemp(char *path)
+var_na *
+mkdtemp(var_na *path)
 {
-	int error;
+	ကိန်းပြည့် error;
 
 	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	ပြန်ပေး(error ? NULL : path);
 }
 
 #endif /* !defined(HAVE_MKDTEMP) */

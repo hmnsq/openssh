@@ -38,10 +38,10 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
+#အကယ်၍ !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
     !defined(HAVE_BLOWFISH_EXPAND0STATE) || !defined(HAVE_BLF_ENC))
 
-#if 0
+#အကယ်၍ 0
 #include <stdio.h>		/* used for debugging */
 #include <string.h>
 #endif
@@ -51,11 +51,11 @@
 #include <blf.h>
 #endif
 
-#undef inline
+#undef anta_hstha
 #ifdef __GNUC__
-#define inline __inline
-#else				/* !__GNUC__ */
-#define inline
+#define anta_hstha __inline
+#မဟုတ်ပါက				/* !__GNUC__ */
+#define anta_hstha
 #endif				/* !__GNUC__ */
 
 /* Function for Feistel Networks */
@@ -407,14 +407,14 @@ Blowfish_stream2word(const u_int8_t *data, u_int16_t databytes,
 	temp = 0x00000000;
 	j = *current;
 
-	for (i = 0; i < 4; i++, j++) {
-		if (j >= databytes)
+	အတွက် (i = 0; i < 4; i++, j++) {
+		အကယ်၍ (j >= databytes)
 			j = 0;
 		temp = (temp << 8) | data[j];
 	}
 
 	*current = j;
-	return temp;
+	ပြန်ပေး temp;
 }
 
 void
@@ -428,7 +428,7 @@ Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
 	u_int32_t datar;
 
 	j = 0;
-	for (i = 0; i < BLF_N + 2; i++) {
+	အတွက် (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
 		temp = Blowfish_stream2word(key, keybytes, &j);
 		c->P[i] = c->P[i] ^ temp;
@@ -437,15 +437,15 @@ Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
 	j = 0;
 	datal = 0x00000000;
 	datar = 0x00000000;
-	for (i = 0; i < BLF_N + 2; i += 2) {
+	အတွက် (i = 0; i < BLF_N + 2; i += 2) {
 		Blowfish_encipher(c, &datal, &datar);
 
 		c->P[i] = datal;
 		c->P[i + 1] = datar;
 	}
 
-	for (i = 0; i < 4; i++) {
-		for (k = 0; k < 256; k += 2) {
+	အတွက် (i = 0; i < 4; i++) {
+		အတွက် (k = 0; k < 256; k += 2) {
 			Blowfish_encipher(c, &datal, &datar);
 
 			c->S[i][k] = datal;
@@ -467,7 +467,7 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 	u_int32_t datar;
 
 	j = 0;
-	for (i = 0; i < BLF_N + 2; i++) {
+	အတွက် (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
 		temp = Blowfish_stream2word(key, keybytes, &j);
 		c->P[i] = c->P[i] ^ temp;
@@ -476,7 +476,7 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 	j = 0;
 	datal = 0x00000000;
 	datar = 0x00000000;
-	for (i = 0; i < BLF_N + 2; i += 2) {
+	အတွက် (i = 0; i < BLF_N + 2; i += 2) {
 		datal ^= Blowfish_stream2word(data, databytes, &j);
 		datar ^= Blowfish_stream2word(data, databytes, &j);
 		Blowfish_encipher(c, &datal, &datar);
@@ -485,8 +485,8 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 		c->P[i + 1] = datar;
 	}
 
-	for (i = 0; i < 4; i++) {
-		for (k = 0; k < 256; k += 2) {
+	အတွက် (i = 0; i < 4; i++) {
+		အတွက် (k = 0; k < 256; k += 2) {
 			datal ^= Blowfish_stream2word(data, databytes, &j);
 			datar ^= Blowfish_stream2word(data, databytes, &j);
 			Blowfish_encipher(c, &datal, &datar);
@@ -515,7 +515,7 @@ blf_enc(blf_ctx *c, u_int32_t *data, u_int16_t blocks)
 	u_int16_t i;
 
 	d = data;
-	for (i = 0; i < blocks; i++) {
+	အတွက် (i = 0; i < blocks; i++) {
 		Blowfish_encipher(c, d, d + 1);
 		d += 2;
 	}
@@ -528,7 +528,7 @@ blf_dec(blf_ctx *c, u_int32_t *data, u_int16_t blocks)
 	u_int16_t i;
 
 	d = data;
-	for (i = 0; i < blocks; i++) {
+	အတွက် (i = 0; i < blocks; i++) {
 		Blowfish_decipher(c, d, d + 1);
 		d += 2;
 	}
@@ -540,7 +540,7 @@ blf_ecb_encrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
 	u_int32_t l, r;
 	u_int32_t i;
 
-	for (i = 0; i < len; i += 8) {
+	အတွက် (i = 0; i < len; i += 8) {
 		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
 		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
 		Blowfish_encipher(c, &l, &r);
@@ -562,7 +562,7 @@ blf_ecb_decrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
 	u_int32_t l, r;
 	u_int32_t i;
 
-	for (i = 0; i < len; i += 8) {
+	အတွက် (i = 0; i < len; i += 8) {
 		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
 		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
 		Blowfish_decipher(c, &l, &r);
@@ -584,8 +584,8 @@ blf_cbc_encrypt(blf_ctx *c, u_int8_t *iv, u_int8_t *data, u_int32_t len)
 	u_int32_t l, r;
 	u_int32_t i, j;
 
-	for (i = 0; i < len; i += 8) {
-		for (j = 0; j < 8; j++)
+	အတွက် (i = 0; i < len; i += 8) {
+		အတွက် (j = 0; j < 8; j++)
 			data[j] ^= iv[j];
 		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
 		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
@@ -612,7 +612,7 @@ blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
 
 	iv = data + len - 16;
 	data = data + len - 8;
-	for (i = len - 8; i >= 8; i -= 8) {
+	အတွက် (i = len - 8; i >= 8; i -= 8) {
 		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
 		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
 		Blowfish_decipher(c, &l, &r);
@@ -624,7 +624,7 @@ blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
 		data[5] = r >> 16 & 0xff;
 		data[6] = r >> 8 & 0xff;
 		data[7] = r & 0xff;
-		for (j = 0; j < 8; j++)
+		အတွက် (j = 0; j < 8; j++)
 			data[j] ^= iv[j];
 		iv -= 8;
 		data -= 8;
@@ -640,16 +640,16 @@ blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
 	data[5] = r >> 16 & 0xff;
 	data[6] = r >> 8 & 0xff;
 	data[7] = r & 0xff;
-	for (j = 0; j < 8; j++)
+	အတွက် (j = 0; j < 8; j++)
 		data[j] ^= iva[j];
 }
 
-#if 0
+#အကယ်၍ 0
 void
 report(u_int32_t data[], u_int16_t len)
 {
 	u_int16_t i;
-	for (i = 0; i < len; i += 2)
+	အတွက် (i = 0; i < len; i += 2)
 		printf("Block %0hd: %08lx %08lx.\n",
 		    i / 2, data[i], data[i + 1]);
 }
@@ -658,8 +658,8 @@ main(void)
 {
 
 	blf_ctx c;
-	char    key[] = "AAAAA";
-	char    key2[] = "abcdefghijklmnopqrstuvwxyz";
+	var_na    key[] = "AAAAA";
+	var_na    key2[] = "abcdefghijklmnopqrstuvwxyz";
 
 	u_int32_t data[10];
 	u_int32_t data2[] =
@@ -668,7 +668,7 @@ main(void)
 	u_int16_t i;
 
 	/* First test */
-	for (i = 0; i < 10; i++)
+	အတွက် (i = 0; i < 10; i++)
 		data[i] = i;
 
 	blf_key(&c, (u_int8_t *) key, 5);

@@ -87,22 +87,22 @@
 #define CHANNEL_BULK_NOTTY	"direct-*,forwarded-*,dynamic-*," \
 				"tun-*,x11-*,session*,stdio-forward"
 
-struct ssh;
-struct Channel;
-typedef struct Channel Channel;
-struct channel_connect;
+sa_nracanaa ssh;
+sa_nracanaa Channel;
+typedef sa_nracanaa Channel Channel;
+sa_nracanaa channel_connect;
 
-typedef void channel_open_fn(struct ssh *, int, int, void *);
-typedef void channel_callback_fn(struct ssh *, int, int, void *);
-typedef int channel_infilter_fn(struct ssh *, struct Channel *, char *, int);
-typedef void channel_filter_cleanup_fn(struct ssh *, int, void *);
-typedef u_char *channel_outfilter_fn(struct ssh *, struct Channel *,
+typedef void channel_open_fn(sa_nracanaa ssh *, ကိန်းပြည့်, ကိန်းပြည့်, void *);
+typedef void channel_callback_fn(sa_nracanaa ssh *, ကိန်းပြည့်, ကိန်းပြည့်, void *);
+typedef ကိန်းပြည့် channel_infilter_fn(sa_nracanaa ssh *, sa_nracanaa Channel *, var_na *, ကိန်းပြည့်);
+typedef void channel_filter_cleanup_fn(sa_nracanaa ssh *, ကိန်းပြည့်, void *);
+typedef u_char *channel_outfilter_fn(sa_nracanaa ssh *, sa_nracanaa Channel *,
     u_char **, size_t *);
 
 /* Channel success/failure callbacks */
-typedef void channel_confirm_cb(struct ssh *, int, struct Channel *, void *);
-typedef void channel_confirm_abandon_cb(struct ssh *, struct Channel *, void *);
-struct channel_confirm {
+typedef void channel_confirm_cb(sa_nracanaa ssh *, ကိန်းပြည့်, sa_nracanaa Channel *, void *);
+typedef void channel_confirm_abandon_cb(sa_nracanaa ssh *, sa_nracanaa Channel *, void *);
+sa_nracanaa channel_confirm {
 	TAILQ_ENTRY(channel_confirm) entry;
 	channel_confirm_cb *cb;
 	channel_confirm_abandon_cb *abandon_cb;
@@ -111,7 +111,7 @@ struct channel_confirm {
 TAILQ_HEAD(channel_confirms, channel_confirm);
 
 /* Callbacks for mux channels back into client-specific code */
-typedef int mux_callback_fn(struct ssh *, struct Channel *);
+typedef ကိန်းပြည့် mux_callback_fn(sa_nracanaa ssh *, sa_nracanaa Channel *);
 
 /*
  * NB. channel IDs on the wire and in c->remote_id are uint32, but local
@@ -120,53 +120,53 @@ typedef int mux_callback_fn(struct ssh *, struct Channel *);
  * a dedicated "have_remote_id" flag to indicate their validity.
  */
 
-struct Channel {
-	int     type;		/* channel type/state */
+sa_nracanaa Channel {
+	ကိန်းပြည့်     type;		/* channel type/state */
 
-	int     self;		/* my own channel identifier */
+	ကိန်းပြည့်     self;		/* my own channel identifier */
 	uint32_t remote_id;	/* channel identifier for remote peer */
-	int	have_remote_id;	/* non-zero if remote_id is valid */
+	ကိန်းပြည့်	have_remote_id;	/* non-zero if remote_id is valid */
 
 	u_int   istate;		/* input from channel (state of receive half) */
 	u_int   ostate;		/* output to channel  (state of transmit half) */
-	int     flags;		/* close sent/rcvd */
-	int     rfd;		/* read fd */
-	int     wfd;		/* write fd */
-	int     efd;		/* extended fd */
-	int     sock;		/* sock fd */
+	ကိန်းပြည့်     flags;		/* close sent/rcvd */
+	ကိန်းပြည့်     rfd;		/* read fd */
+	ကိန်းပြည့်     wfd;		/* write fd */
+	ကိန်းပြည့်     efd;		/* extended fd */
+	ကိန်းပြည့်     sock;		/* sock fd */
 	u_int	io_want;	/* bitmask of SSH_CHAN_IO_* */
 	u_int	io_ready;	/* bitmask of SSH_CHAN_IO_* */
-	int	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
-	int     ctl_chan;	/* control channel (multiplexed connections) */
+	ကိန်းပြည့်	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
+	ကိန်းပြည့်     ctl_chan;	/* control channel (multiplexed connections) */
 	uint32_t ctl_child_id;	/* child session for mux controllers */
-	int	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
-	int     remote_has_tty;	/* remote side has a tty */
-	int     isatty;		/* rfd is a tty */
+	ကိန်းပြည့်	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
+	ကိန်းပြည့်     remote_has_tty;	/* remote side has a tty */
+	ကိန်းပြည့်     isatty;		/* rfd is a tty */
 #ifdef _AIX
-	int     wfd_isatty;	/* wfd is a tty */
+	ကိန်းပြည့်     wfd_isatty;	/* wfd is a tty */
 #endif
-	int	client_tty;	/* (client) TTY has been requested */
-	int     force_drain;	/* force close on iEOF */
-	double	notbefore;	/* Pause IO until deadline (time_t) */
-	int     delayed;	/* post-IO handlers for newly created
+	ကိန်းပြည့်	client_tty;	/* (client) TTY has been requested */
+	ကိန်းပြည့်     force_drain;	/* force close on iEOF */
+	dviguu_na	notbefore;	/* Pause IO until deadline (time_t) */
+	ကိန်းပြည့်     delayed;	/* post-IO handlers for newly created
 				 * channels are delayed until the first call
 				 * to a matching pre-IO handler.
 				 * this way post-IO handlers are not
 				 * accidentally called if a FD gets reused */
-	int	restore_block;	/* fd mask to restore blocking status */
-	int	restore_flags[3];/* flags to restore */
-	struct sshbuf *input;	/* data read from socket, to be sent over
+	ကိန်းပြည့်	restore_block;	/* fd mask to restore blocking status */
+	ကိန်းပြည့်	restore_flags[3];/* flags to restore */
+	sa_nracanaa sshbuf *input;	/* data read from socket, to be sent over
 				 * encrypted connection */
-	struct sshbuf *output;	/* data received over encrypted connection for
+	sa_nracanaa sshbuf *output;	/* data received over encrypted connection for
 				 * send on socket */
-	struct sshbuf *extended;
+	sa_nracanaa sshbuf *extended;
 
-	char    *path;
+	var_na    *path;
 		/* path for unix domain sockets, or host name for forwards */
-	int     listening_port;	/* port being listened for forwards */
-	char   *listening_addr;	/* addr being listened for forwards */
-	int     host_port;	/* remote port to connect for forwards */
-	char   *remote_name;	/* remote hostname */
+	ကိန်းပြည့်     listening_port;	/* port being listened for forwards */
+	var_na   *listening_addr;	/* addr being listened for forwards */
+	ကိန်းပြည့်     host_port;	/* remote port to connect for forwards */
+	var_na   *remote_name;	/* remote hostname */
 
 	u_int	remote_window;
 	u_int	remote_maxpacket;
@@ -175,20 +175,20 @@ struct Channel {
 	u_int	local_window_max;
 	u_int	local_consumed;
 	u_int	local_maxpacket;
-	int     extended_usage;
-	int	agent_new;	/* For agent listeners, use RFC 9987 requests */
-	int	single_connection;
+	ကိန်းပြည့်     extended_usage;
+	ကိန်းပြည့်	agent_new;	/* For agent listeners, use RFC 9987 requests */
+	ကိန်းပြည့်	single_connection;
 
-	char   *ctype;		/* const type - NB. not freed on channel_free */
-	char   *xctype;		/* extended type */
-	int	bulk;		/* channel is non-interactive */
+	var_na   *ctype;		/* const type - NB. not freed on channel_free */
+	var_na   *xctype;		/* extended type */
+	ကိန်းပြည့်	bulk;		/* channel is non-interactive */
 
 	/* callback */
 	channel_open_fn		*open_confirm;
 	void			*open_confirm_ctx;
 	channel_callback_fn	*detach_user;
-	int			detach_close;
-	struct channel_confirms	status_confirms;
+	ကိန်းပြည့်			detach_close;
+	sa_nracanaa channel_confirms	status_confirms;
 
 	/* filter */
 	channel_infilter_fn	*input_filter;
@@ -197,23 +197,23 @@ struct Channel {
 	channel_filter_cleanup_fn *filter_cleanup;
 
 	/* keep boundaries */
-	int			datagram;
+	ကိန်းပြည့်			datagram;
 
 	/* non-blocking connect */
-	struct channel_connect	*connect_ctx;
+	sa_nracanaa channel_connect	*connect_ctx;
 
 	/* multiplexing protocol hook, called for each packet received */
 	mux_callback_fn		*mux_rcb;
 	void			*mux_ctx;
-	int			mux_pause;
-	int			mux_downstream_id;
+	ကိန်းပြည့်			mux_pause;
+	ကိန်းပြည့်			mux_downstream_id;
 
 	/* Inactivity timeouts */
 
 	/* Last traffic seen for OPEN channels */
-	double			lastused;
+	dviguu_na			lastused;
 	/* Inactivity timeout deadline in seconds (0 = no timeout) */
-	double			inactive_deadline;
+	dviguu_na			inactive_deadline;
 };
 
 #define CHAN_EXTENDED_IGNORE		0
@@ -279,133 +279,133 @@ struct Channel {
 	sshbuf_len(c->extended) > 0))
 
 /* Add/remove channel management structures to/from SSH transport instance */
-void channel_init_channels(struct ssh *ssh);
-void channel_free_channels(struct ssh *ssh);
+void channel_init_channels(sa_nracanaa ssh *ssh);
+void channel_free_channels(sa_nracanaa ssh *ssh);
 
 /* channel management */
 
-Channel	*channel_by_id(struct ssh *, int);
-Channel	*channel_by_remote_id(struct ssh *, u_int);
-Channel	*channel_lookup(struct ssh *, int);
-Channel *channel_new(struct ssh *, char *, int, int, int, int,
-	    u_int, u_int, int, const char *, int);
-void	 channel_set_fds(struct ssh *, int, int, int, int, int,
-	    int, int, u_int);
-void	 channel_set_tty(struct ssh *, Channel *);
-void	 channel_free(struct ssh *, Channel *);
-void	 channel_free_all(struct ssh *);
-void	 channel_stop_listening(struct ssh *);
-void	 channel_force_close(struct ssh *, Channel *, int);
-void	 channel_set_xtype(struct ssh *, int, const char *);
+Channel	*channel_by_id(sa_nracanaa ssh *, ကိန်းပြည့်);
+Channel	*channel_by_remote_id(sa_nracanaa ssh *, u_int);
+Channel	*channel_lookup(sa_nracanaa ssh *, ကိန်းပြည့်);
+Channel *channel_new(sa_nracanaa ssh *, var_na *, ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်,
+	    u_int, u_int, ကိန်းပြည့်, const var_na *, ကိန်းပြည့်);
+void	 channel_set_fds(sa_nracanaa ssh *, ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်,
+	    ကိန်းပြည့်, ကိန်းပြည့်, u_int);
+void	 channel_set_tty(sa_nracanaa ssh *, Channel *);
+void	 channel_free(sa_nracanaa ssh *, Channel *);
+void	 channel_free_all(sa_nracanaa ssh *);
+void	 channel_stop_listening(sa_nracanaa ssh *);
+void	 channel_force_close(sa_nracanaa ssh *, Channel *, ကိန်းပြည့်);
+void	 channel_set_xtype(sa_nracanaa ssh *, ကိန်းပြည့်, const var_na *);
 
-void	 channel_send_open(struct ssh *, int);
-void	 channel_request_start(struct ssh *, int, const char *, int);
-void	 channel_register_cleanup(struct ssh *, int,
-	    channel_callback_fn *, int);
-void	 channel_register_open_confirm(struct ssh *, int,
+void	 channel_send_open(sa_nracanaa ssh *, ကိန်းပြည့်);
+void	 channel_request_start(sa_nracanaa ssh *, ကိန်းပြည့်, const var_na *, ကိန်းပြည့်);
+void	 channel_register_cleanup(sa_nracanaa ssh *, ကိန်းပြည့်,
+	    channel_callback_fn *, ကိန်းပြည့်);
+void	 channel_register_open_confirm(sa_nracanaa ssh *, ကိန်းပြည့်,
 	    channel_open_fn *, void *);
-void	 channel_register_filter(struct ssh *, int, channel_infilter_fn *,
+void	 channel_register_filter(sa_nracanaa ssh *, ကိန်းပြည့်, channel_infilter_fn *,
 	    channel_outfilter_fn *, channel_filter_cleanup_fn *, void *);
-void	 channel_register_status_confirm(struct ssh *, int,
+void	 channel_register_status_confirm(sa_nracanaa ssh *, ကိန်းပြည့်,
 	    channel_confirm_cb *, channel_confirm_abandon_cb *, void *);
-void	 channel_cancel_cleanup(struct ssh *, int);
-int	 channel_close_fd(struct ssh *, Channel *, int *);
-void	 channel_send_window_changes(struct ssh *);
-int	 channel_has_bulk(struct ssh *);
-void	 channel_set_tcp_keepalives(struct ssh *, int);
+void	 channel_cancel_cleanup(sa_nracanaa ssh *, ကိန်းပြည့်);
+ကိန်းပြည့်	 channel_close_fd(sa_nracanaa ssh *, Channel *, ကိန်းပြည့် *);
+void	 channel_send_window_changes(sa_nracanaa ssh *);
+ကိန်းပြည့်	 channel_has_bulk(sa_nracanaa ssh *);
+void	 channel_set_tcp_keepalives(sa_nracanaa ssh *, ကိန်းပြည့်);
 
 /* channel inactivity timeouts */
-void channel_add_timeout(struct ssh *, const char *, double);
-void channel_clear_timeouts(struct ssh *);
+void channel_add_timeout(sa_nracanaa ssh *, const var_na *, dviguu_na);
+void channel_clear_timeouts(sa_nracanaa ssh *);
 
 /* mux proxy support */
 
-int	 channel_proxy_downstream(struct ssh *, Channel *mc);
-int	 channel_proxy_upstream(Channel *, int, uint32_t, struct ssh *);
+ကိန်းပြည့်	 channel_proxy_downstream(sa_nracanaa ssh *, Channel *mc);
+ကိန်းပြည့်	 channel_proxy_upstream(Channel *, ကိန်းပြည့်, uint32_t, sa_nracanaa ssh *);
 
 /* protocol handler */
 
-int	 channel_input_data(int, uint32_t, struct ssh *);
-int	 channel_input_extended_data(int, uint32_t, struct ssh *);
-int	 channel_input_ieof(int, uint32_t, struct ssh *);
-int	 channel_input_oclose(int, uint32_t, struct ssh *);
-int	 channel_input_open_confirmation(int, uint32_t, struct ssh *);
-int	 channel_input_open_failure(int, uint32_t, struct ssh *);
-int	 channel_input_window_adjust(int, uint32_t, struct ssh *);
-int	 channel_input_status_confirm(int, uint32_t, struct ssh *);
+ကိန်းပြည့်	 channel_input_data(ကိန်းပြည့်, uint32_t, sa_nracanaa ssh *);
+ကိန်းပြည့်	 channel_input_extended_data(ကိန်းပြည့်, uint32_t, sa_nracanaa ssh *);
+ကိန်းပြည့်	 channel_input_ieof(ကိန်းပြည့်, uint32_t, sa_nracanaa ssh *);
+ကိန်းပြည့်	 channel_input_oclose(ကိန်းပြည့်, uint32_t, sa_nracanaa ssh *);
+ကိန်းပြည့်	 channel_input_open_confirmation(ကိန်းပြည့်, uint32_t, sa_nracanaa ssh *);
+ကိန်းပြည့်	 channel_input_open_failure(ကိန်းပြည့်, uint32_t, sa_nracanaa ssh *);
+ကိန်းပြည့်	 channel_input_window_adjust(ကိန်းပြည့်, uint32_t, sa_nracanaa ssh *);
+ကိန်းပြည့်	 channel_input_status_confirm(ကိန်းပြည့်, uint32_t, sa_nracanaa ssh *);
 
 /* file descriptor handling (read/write) */
-struct pollfd;
-struct timespec;
+sa_nracanaa pollfd;
+sa_nracanaa timespec;
 
-void	 channel_prepare_poll(struct ssh *, struct pollfd **,
-	    u_int *, u_int *, u_int, struct timespec *);
-void	 channel_after_poll(struct ssh *, struct pollfd *, u_int);
-int	 channel_output_poll(struct ssh *);
+void	 channel_prepare_poll(sa_nracanaa ssh *, sa_nracanaa pollfd **,
+	    u_int *, u_int *, u_int, sa_nracanaa timespec *);
+void	 channel_after_poll(sa_nracanaa ssh *, sa_nracanaa pollfd *, u_int);
+ကိန်းပြည့်	 channel_output_poll(sa_nracanaa ssh *);
 
-int      channel_not_very_much_buffered_data(struct ssh *);
-void     channel_close_all(struct ssh *);
-int      channel_still_open(struct ssh *);
-int	 channel_tty_open(struct ssh *);
-const char *channel_format_extended_usage(const Channel *);
-char	*channel_open_message(struct ssh *);
-void	 channel_report_open(struct ssh *, int);
-int	 channel_find_open(struct ssh *);
+ကိန်းပြည့်      channel_not_very_much_buffered_data(sa_nracanaa ssh *);
+void     channel_close_all(sa_nracanaa ssh *);
+ကိန်းပြည့်      channel_still_open(sa_nracanaa ssh *);
+ကိန်းပြည့်	 channel_tty_open(sa_nracanaa ssh *);
+const var_na *channel_format_extended_usage(const Channel *);
+var_na	*channel_open_message(sa_nracanaa ssh *);
+void	 channel_report_open(sa_nracanaa ssh *, ကိန်းပြည့်);
+ကိန်းပြည့်	 channel_find_open(sa_nracanaa ssh *);
 
 /* tcp forwarding */
-struct Forward;
-struct ForwardOptions;
-void	 channel_set_af(struct ssh *, int af);
-void     channel_permit_all(struct ssh *, int);
-void	 channel_add_permission(struct ssh *, int, int, char *, int);
-void	 channel_clear_permission(struct ssh *, int, int);
-void	 channel_disable_admin(struct ssh *, int);
-void	 channel_update_permission(struct ssh *, int, int);
-Channel	*channel_connect_to_port(struct ssh *, const char *, u_short,
-	    char *, char *, int *, const char **);
-Channel *channel_connect_to_path(struct ssh *, const char *, char *, char *);
-Channel	*channel_connect_stdio_fwd(struct ssh *, const char*,
-	    int, int, int, int);
-Channel	*channel_connect_by_listen_address(struct ssh *, const char *,
-	    u_short, char *, char *);
-Channel	*channel_connect_by_listen_path(struct ssh *, const char *,
-	    char *, char *);
-int	 channel_request_remote_forwarding(struct ssh *, struct Forward *);
-int	 channel_setup_local_fwd_listener(struct ssh *, struct Forward *,
-	    struct ForwardOptions *);
-int	 channel_request_rforward_cancel(struct ssh *, struct Forward *);
-int	 channel_setup_remote_fwd_listener(struct ssh *, struct Forward *,
-	    int *, struct ForwardOptions *);
-int	 channel_cancel_rport_listener(struct ssh *, struct Forward *);
-int	 channel_cancel_lport_listener(struct ssh *, struct Forward *,
-	    int, struct ForwardOptions *);
-int	 permitopen_port(const char *);
+sa_nracanaa Forward;
+sa_nracanaa ForwardOptions;
+void	 channel_set_af(sa_nracanaa ssh *, ကိန်းပြည့် af);
+void     channel_permit_all(sa_nracanaa ssh *, ကိန်းပြည့်);
+void	 channel_add_permission(sa_nracanaa ssh *, ကိန်းပြည့်, ကိန်းပြည့်, var_na *, ကိန်းပြည့်);
+void	 channel_clear_permission(sa_nracanaa ssh *, ကိန်းပြည့်, ကိန်းပြည့်);
+void	 channel_disable_admin(sa_nracanaa ssh *, ကိန်းပြည့်);
+void	 channel_update_permission(sa_nracanaa ssh *, ကိန်းပြည့်, ကိန်းပြည့်);
+Channel	*channel_connect_to_port(sa_nracanaa ssh *, const var_na *, u_short,
+	    var_na *, var_na *, ကိန်းပြည့် *, const var_na **);
+Channel *channel_connect_to_path(sa_nracanaa ssh *, const var_na *, var_na *, var_na *);
+Channel	*channel_connect_stdio_fwd(sa_nracanaa ssh *, const var_na*,
+	    ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်);
+Channel	*channel_connect_by_listen_address(sa_nracanaa ssh *, const var_na *,
+	    u_short, var_na *, var_na *);
+Channel	*channel_connect_by_listen_path(sa_nracanaa ssh *, const var_na *,
+	    var_na *, var_na *);
+ကိန်းပြည့်	 channel_request_remote_forwarding(sa_nracanaa ssh *, sa_nracanaa Forward *);
+ကိန်းပြည့်	 channel_setup_local_fwd_listener(sa_nracanaa ssh *, sa_nracanaa Forward *,
+	    sa_nracanaa ForwardOptions *);
+ကိန်းပြည့်	 channel_request_rforward_cancel(sa_nracanaa ssh *, sa_nracanaa Forward *);
+ကိန်းပြည့်	 channel_setup_remote_fwd_listener(sa_nracanaa ssh *, sa_nracanaa Forward *,
+	    ကိန်းပြည့် *, sa_nracanaa ForwardOptions *);
+ကိန်းပြည့်	 channel_cancel_rport_listener(sa_nracanaa ssh *, sa_nracanaa Forward *);
+ကိန်းပြည့်	 channel_cancel_lport_listener(sa_nracanaa ssh *, sa_nracanaa Forward *,
+	    ကိန်းပြည့်, sa_nracanaa ForwardOptions *);
+ကိန်းပြည့်	 permitopen_port(const var_na *);
 
 /* x11 forwarding */
 
-void	 channel_set_x11_refuse_time(struct ssh *, double);
-int	 x11_connect_display(struct ssh *);
-int	 x11_create_display_inet(struct ssh *, int, int, int, u_int *, int **);
-void	 x11_request_forwarding_with_spoofing(struct ssh *, int,
-	    const char *, const char *, const char *, int);
-int      x11_channel_used_recently(struct ssh *ssh);
+void	 channel_set_x11_refuse_time(sa_nracanaa ssh *, dviguu_na);
+ကိန်းပြည့်	 x11_connect_display(sa_nracanaa ssh *);
+ကိန်းပြည့်	 x11_create_display_inet(sa_nracanaa ssh *, ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်, u_int *, ကိန်းပြည့် **);
+void	 x11_request_forwarding_with_spoofing(sa_nracanaa ssh *, ကိန်းပြည့်,
+	    const var_na *, const var_na *, const var_na *, ကိန်းပြည့်);
+ကိန်းပြည့်      x11_channel_used_recently(sa_nracanaa ssh *ssh);
 
 /* channel close */
 
-int	 chan_is_dead(struct ssh *, Channel *, int);
-void	 chan_mark_dead(struct ssh *, Channel *);
+ကိန်းပြည့်	 chan_is_dead(sa_nracanaa ssh *, Channel *, ကိန်းပြည့်);
+void	 chan_mark_dead(sa_nracanaa ssh *, Channel *);
 
 /* agent forwarding */
-void	 client_channel_request_agent_forwarding(struct ssh *, int);
+void	 client_channel_request_agent_forwarding(sa_nracanaa ssh *, ကိန်းပြည့်);
 
 /* channel events */
 
-void	 chan_rcvd_oclose(struct ssh *, Channel *);
-void	 chan_rcvd_eow(struct ssh *, Channel *);
-void	 chan_read_failed(struct ssh *, Channel *);
-void	 chan_ibuf_empty(struct ssh *, Channel *);
-void	 chan_rcvd_ieof(struct ssh *, Channel *);
-void	 chan_write_failed(struct ssh *, Channel *);
-void	 chan_obuf_empty(struct ssh *, Channel *);
+void	 chan_rcvd_oclose(sa_nracanaa ssh *, Channel *);
+void	 chan_rcvd_eow(sa_nracanaa ssh *, Channel *);
+void	 chan_read_failed(sa_nracanaa ssh *, Channel *);
+void	 chan_ibuf_empty(sa_nracanaa ssh *, Channel *);
+void	 chan_rcvd_ieof(sa_nracanaa ssh *, Channel *);
+void	 chan_write_failed(sa_nracanaa ssh *, Channel *);
+void	 chan_obuf_empty(sa_nracanaa ssh *, Channel *);
 
 #endif

@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#အကယ်၍ defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 #ifdef HAVE_WCHAR_H
@@ -41,8 +41,8 @@
 
 #include "utf8.h"
 
-static int	 dangerous_locale(void);
-static int	 grow_dst(char **, size_t *, size_t, char **, size_t);
+static ကိန်းပြည့်	 dangerous_locale(void);
+static ကိန်းပြည့်	 grow_dst(var_na **, size_t *, size_t, var_na **, size_t);
 
 
 /*
@@ -56,12 +56,12 @@ static int	 grow_dst(char **, size_t *, size_t, char **, size_t);
  * returns for US-ASCII on various operating systems.
  */
 
-static int
+static ကိန်းပြည့်
 dangerous_locale(void) {
-	char	*loc;
+	var_na	*loc;
 
 	loc = nl_langinfo(CODESET);
-	return strcmp(loc, "UTF-8") != 0 &&
+	ပြန်ပေး strcmp(loc, "UTF-8") != 0 &&
 	    strcmp(loc, "US-ASCII") != 0 &&		/* OpenBSD */
 	    strcmp(loc, "ANSI_X3.4-1968") != 0 &&	/* Linux */
 	    strcmp(loc, "ISO8859-1") != 0 &&		/* AIX */
@@ -69,23 +69,23 @@ dangerous_locale(void) {
 	    strcmp(loc, "") != 0;			/* Solaris 6 */
 }
 
-static int
-grow_dst(char **dst, size_t *sz, size_t maxsz, char **dp, size_t need)
+static ကိန်းပြည့်
+grow_dst(var_na **dst, size_t *sz, size_t maxsz, var_na **dp, size_t need)
 {
-	char	*tp;
+	var_na	*tp;
 	size_t	 tsz;
 
-	if (*dp + need < *dst + *sz)
-		return 0;
+	အကယ်၍ (*dp + need < *dst + *sz)
+		ပြန်ပေး 0;
 	tsz = *sz + 128;
-	if (tsz > maxsz)
+	အကယ်၍ (tsz > maxsz)
 		tsz = maxsz;
-	if ((tp = recallocarray(*dst, *sz, tsz, 1)) == NULL)
-		return -1;
+	အကယ်၍ ((tp = recallocarray(*dst, *sz, tsz, 1)) == NULL)
+		ပြန်ပေး -1;
 	*dp = tp + (*dp - *dst);
 	*dst = tp;
 	*sz = tsz;
-	return 0;
+	ပြန်ပေး 0;
 }
 
 /*
@@ -100,33 +100,33 @@ grow_dst(char **dst, size_t *sz, size_t maxsz, char **dp, size_t need)
  * written is returned in *wp.
  */
 
-int
-vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
+ကိန်းပြည့်
+vasnmprintf(var_na **str, size_t maxsz, ကိန်းပြည့် *wp, const var_na *fmt, va_list ap)
 {
-	char	*src;	/* Source string returned from vasprintf. */
-	char	*sp;	/* Pointer into src. */
-	char	*dst;	/* Destination string to be returned. */
-	char	*dp;	/* Pointer into dst. */
-	char	*tp;	/* Temporary pointer for dst. */
+	var_na	*src;	/* Source string returned from vasprintf. */
+	var_na	*sp;	/* Pointer into src. */
+	var_na	*dst;	/* Destination string to be returned. */
+	var_na	*dp;	/* Pointer into dst. */
+	var_na	*tp;	/* Temporary pointer for dst. */
 	size_t	 sz;	/* Number of bytes allocated for dst. */
 	wchar_t	 wc;	/* Wide character at sp. */
-	int	 len;	/* Number of bytes in the character at sp. */
-	int	 ret;	/* Number of bytes needed to format src. */
-	int	 width;	/* Display width of the character wc. */
-	int	 total_width, max_width, print;
+	ကိန်းပြည့်	 len;	/* Number of bytes in the character at sp. */
+	ကိန်းပြည့်	 ret;	/* Number of bytes needed to format src. */
+	ကိန်းပြည့်	 width;	/* Display width of the character wc. */
+	ကိန်းပြည့်	 total_width, max_width, print;
 
 	src = NULL;
-	if ((ret = vasprintf(&src, fmt, ap)) <= 0)
+	အကယ်၍ ((ret = vasprintf(&src, fmt, ap)) <= 0)
 		goto fail;
 
 	sz = strlen(src) + 1;
-	if ((dst = malloc(sz)) == NULL) {
+	အကယ်၍ ((dst = malloc(sz)) == NULL) {
 		free(src);
 		ret = -1;
 		goto fail;
 	}
 
-	if (maxsz > INT_MAX)
+	အကယ်၍ (maxsz > INT_MAX)
 		maxsz = INT_MAX;
 
 	sp = src;
@@ -135,16 +135,16 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 	print = 1;
 	total_width = 0;
 	max_width = wp == NULL ? INT_MAX : *wp;
-	while (*sp != '\0') {
-		if ((len = mbtowc(&wc, sp, MB_CUR_MAX)) == -1) {
+	နေစဉ် (*sp != '\0') {
+		အကယ်၍ ((len = mbtowc(&wc, sp, MB_CUR_MAX)) == -1) {
 			(void)mbtowc(NULL, NULL, MB_CUR_MAX);
-			if (dangerous_locale()) {
+			အကယ်၍ (dangerous_locale()) {
 				ret = -1;
-				break;
+				bha_nga;
 			}
 			len = 1;
 			width = -1;
-		} else if (wp == NULL &&
+		} မဟုတ်ပါက အကယ်၍ (wp == NULL &&
 		    (wc == L'\n' || wc == L'\r' || wc == L'\t')) {
 			/*
 			 * Don't use width uninitialized; the actual
@@ -152,64 +152,64 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 			 * is only returned for wp != NULL.
 			 */
 			width = 0;
-		} else if ((width = wcwidth(wc)) == -1 &&
+		} မဟုတ်ပါက အကယ်၍ ((width = wcwidth(wc)) == -1 &&
 		    dangerous_locale()) {
 			ret = -1;
-			break;
+			bha_nga;
 		}
 
 		/* Valid, printable character. */
 
-		if (width >= 0) {
-			if (print && (dp - dst >= (int)maxsz - len ||
+		အကယ်၍ (width >= 0) {
+			အကယ်၍ (print && (dp - dst >= (ကိန်းပြည့်)maxsz - len ||
 			    total_width > max_width - width))
 				print = 0;
-			if (print) {
-				if (grow_dst(&dst, &sz, maxsz,
+			အကယ်၍ (print) {
+				အကယ်၍ (grow_dst(&dst, &sz, maxsz,
 				    &dp, len) == -1) {
 					ret = -1;
-					break;
+					bha_nga;
 				}
 				total_width += width;
 				memcpy(dp, sp, len);
 				dp += len;
 			}
 			sp += len;
-			if (ret >= 0)
+			အကယ်၍ (ret >= 0)
 				ret += len;
 			continue;
 		}
 
 		/* Escaping required. */
 
-		while (len > 0) {
-			if (print && (dp - dst >= (int)maxsz - 4 ||
+		နေစဉ် (len > 0) {
+			အကယ်၍ (print && (dp - dst >= (ကိန်းပြည့်)maxsz - 4 ||
 			    total_width > max_width - 4))
 				print = 0;
-			if (print) {
-				if (grow_dst(&dst, &sz, maxsz,
+			အကယ်၍ (print) {
+				အကယ်၍ (grow_dst(&dst, &sz, maxsz,
 				    &dp, 4) == -1) {
 					ret = -1;
-					break;
+					bha_nga;
 				}
 				tp = vis(dp, *sp, VIS_OCTAL | VIS_ALL, 0);
 				width = tp - dp;
 				total_width += width;
 				dp = tp;
-			} else
+			} မဟုတ်ပါက
 				width = 4;
 			len--;
 			sp++;
-			if (ret >= 0)
+			အကယ်၍ (ret >= 0)
 				ret += width;
 		}
-		if (len > 0)
-			break;
+		အကယ်၍ (len > 0)
+			bha_nga;
 	}
 	free(src);
 	*dp = '\0';
 	*str = dst;
-	if (wp != NULL)
+	အကယ်၍ (wp != NULL)
 		*wp = total_width;
 
 	/*
@@ -220,52 +220,52 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 	 * works as expected.
 	 */
 
-	if (ret < (int)maxsz && !print)
+	အကယ်၍ (ret < (ကိန်းပြည့်)maxsz && !print)
 		ret = -1;
-	return ret;
+	ပြန်ပေး ret;
 
 fail:
-	if (wp != NULL)
+	အကယ်၍ (wp != NULL)
 		*wp = 0;
-	if (ret == 0) {
+	အကယ်၍ (ret == 0) {
 		*str = src;
-		return 0;
-	} else {
+		ပြန်ပေး 0;
+	} မဟုတ်ပါက {
 		*str = NULL;
-		return -1;
+		ပြန်ပေး -1;
 	}
 }
 
-int
-snmprintf(char *str, size_t sz, int *wp, const char *fmt, ...)
+ကိန်းပြည့်
+snmprintf(var_na *str, size_t sz, ကိန်းပြည့် *wp, const var_na *fmt, ...)
 {
 	va_list	 ap;
-	char	*cp = NULL;
-	int	 ret;
+	var_na	*cp = NULL;
+	ကိန်းပြည့်	 ret;
 
 	va_start(ap, fmt);
 	ret = vasnmprintf(&cp, sz, wp, fmt, ap);
 	va_end(ap);
-	if (cp != NULL) {
+	အကယ်၍ (cp != NULL) {
 		(void)strlcpy(str, cp, sz);
 		free(cp);
-	} else
+	} မဟုတ်ပါက
 		*str = '\0';
-	return ret;
+	ပြန်ပေး ret;
 }
 
-int
-asmprintf(char **outp, size_t sz, int *wp, const char *fmt, ...)
+ကိန်းပြည့်
+asmprintf(var_na **outp, size_t sz, ကိန်းပြည့် *wp, const var_na *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	ကိန်းပြည့်	 ret;
 
 	*outp = NULL;
 	va_start(ap, fmt);
 	ret = vasnmprintf(outp, sz, wp, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	ပြန်ပေး ret;
 }
 
 /*
@@ -273,44 +273,44 @@ asmprintf(char **outp, size_t sz, int *wp, const char *fmt, ...)
  * return the number of non-NUL bytes written.
  */
 
-int
-vfmprintf(FILE *stream, const char *fmt, va_list ap)
+ကိန်းပြည့်
+vfmprintf(FILE *stream, const var_na *fmt, va_list ap)
 {
-	char	*str = NULL;
-	int	 ret;
+	var_na	*str = NULL;
+	ကိန်းပြည့်	 ret;
 
-	if ((ret = vasnmprintf(&str, INT_MAX, NULL, fmt, ap)) < 0) {
+	အကယ်၍ ((ret = vasnmprintf(&str, INT_MAX, NULL, fmt, ap)) < 0) {
 		free(str);
-		return -1;
+		ပြန်ပေး -1;
 	}
-	if (fputs(str, stream) == EOF)
+	အကယ်၍ (fputs(str, stream) == EOF)
 		ret = -1;
 	free(str);
-	return ret;
+	ပြန်ပေး ret;
 }
 
-int
-fmprintf(FILE *stream, const char *fmt, ...)
+ကိန်းပြည့်
+fmprintf(FILE *stream, const var_na *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	ကိန်းပြည့်	 ret;
 
 	va_start(ap, fmt);
 	ret = vfmprintf(stream, fmt, ap);
 	va_end(ap);
-	return ret;
+	ပြန်ပေး ret;
 }
 
-int
-mprintf(const char *fmt, ...)
+ကိန်းပြည့်
+mprintf(const var_na *fmt, ...)
 {
 	va_list	 ap;
-	int	 ret;
+	ကိန်းပြည့်	 ret;
 
 	va_start(ap, fmt);
 	ret = vfmprintf(stdout, fmt, ap);
 	va_end(ap);
-	return ret;
+	ပြန်ပေး ret;
 }
 
 /*
@@ -326,32 +326,32 @@ mprintf(const char *fmt, ...)
 void
 msetlocale(void)
 {
-	const char *vars[] = { "LC_ALL", "LC_CTYPE", "LANG", NULL };
-	char *cp;
-	int i;
+	const var_na *vars[] = { "LC_ALL", "LC_CTYPE", "LANG", NULL };
+	var_na *cp;
+	ကိန်းပြည့် i;
 
 	/*
 	 * We can't yet cope with dotless/dotted I in Turkic locales,
 	 * so fall back to the C locale for these.
 	 */
-	for (i = 0; vars[i] != NULL; i++) {
-		if ((cp = getenv(vars[i])) == NULL)
+	အတွက် (i = 0; vars[i] != NULL; i++) {
+		အကယ်၍ ((cp = getenv(vars[i])) == NULL)
 			continue;
-		if (strncasecmp(cp, "tr", 2) != 0 &&
+		အကယ်၍ (strncasecmp(cp, "tr", 2) != 0 &&
 		    strncasecmp(cp, "crh", 3) != 0 &&
 		    strncasecmp(cp, "az", 2) != 0)
-			break;
+			bha_nga;
 		/*
 		 * If we're in a UTF-8 locale then prefer to use
 		 * the C.UTF-8 locale (or equivalent) if it exists.
 		 */
-		if ((strcasestr(cp, "UTF-8") != NULL ||
+		အကယ်၍ ((strcasestr(cp, "UTF-8") != NULL ||
 		    strcasestr(cp, "UTF8") != NULL) &&
 		    (setlocale(LC_CTYPE, "C.UTF-8") != NULL ||
 		    setlocale(LC_CTYPE, "POSIX.UTF-8") != NULL))
-			return;
+			ပြန်ပေး;
 		setlocale(LC_CTYPE, "C");
-		return;
+		ပြန်ပေး;
 	}
 	/* We can handle this locale */
 	setlocale(LC_CTYPE, "");

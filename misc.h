@@ -28,124 +28,124 @@
 #define FWD_PERMIT_ANY_HOST	"*"
 
 /* Data structure for representing a forwarding request. */
-struct Forward {
-	char	 *listen_host;		/* Host (address) to listen on. */
-	int	  listen_port;		/* Port to forward. */
-	char	 *listen_path;		/* Path to bind domain socket. */
-	char	 *connect_host;		/* Host to connect. */
-	int	  connect_port;		/* Port to connect on connect_host. */
-	char	 *connect_path;		/* Path to connect domain socket. */
-	int	  allocated_port;	/* Dynamically allocated listen port */
-	int	  handle;		/* Handle for dynamic listen ports */
+sa_nracanaa Forward {
+	var_na	 *listen_host;		/* Host (address) to listen on. */
+	ကိန်းပြည့်	  listen_port;		/* Port to forward. */
+	var_na	 *listen_path;		/* Path to bind domain socket. */
+	var_na	 *connect_host;		/* Host to connect. */
+	ကိန်းပြည့်	  connect_port;		/* Port to connect on connect_host. */
+	var_na	 *connect_path;		/* Path to connect domain socket. */
+	ကိန်းပြည့်	  allocated_port;	/* Dynamically allocated listen port */
+	ကိန်းပြည့်	  handle;		/* Handle for dynamic listen ports */
 };
 
-int forward_equals(const struct Forward *, const struct Forward *);
-int permitopen_port(const char *p);
+ကိန်းပြည့် forward_equals(const sa_nracanaa Forward *, const sa_nracanaa Forward *);
+ကိန်းပြည့် permitopen_port(const var_na *p);
 
-int daemonized(void);
+ကိန်းပြည့် daemonized(void);
 
 /* Common server and client forwarding options. */
-struct ForwardOptions {
-	int	 gateway_ports; /* Allow remote connects to forwarded ports. */
+sa_nracanaa ForwardOptions {
+	ကိန်းပြည့်	 gateway_ports; /* Allow remote connects to forwarded ports. */
 	mode_t	 streamlocal_bind_mask; /* umask for streamlocal binds */
-	int	 streamlocal_bind_unlink; /* unlink socket before bind */
+	ကိန်းပြည့်	 streamlocal_bind_unlink; /* unlink socket before bind */
 };
 
 /* misc.c */
 
-char	*chop(char *);
-void	 rtrim(char *);
-void	skip_space(char **);
-const char *strprefix(const char *, const char *, int);
-char	*strdelim(char **);
-char	*strdelimw(char **);
-void	 stringlist_append(char ***listp, const char *s);
-void	 stringlist_free(char **list);
-int	 set_nonblock(int);
-int	 unset_nonblock(int);
-void	 set_nodelay(int);
-int	 set_reuseaddr(int);
-int	 set_keepalive(int);
-char	*get_rdomain(int);
-int	 set_rdomain(int, const char *);
-int	 get_sock_af(int);
-void	 set_sock_tos(int, int);
-int	 waitrfd(int, int *, volatile sig_atomic_t *);
-int	 timeout_connect(int, const struct sockaddr *, socklen_t, int *);
-int	 a2port(const char *);
-int	 a2tun(const char *, int *);
-char	*put_host_port(const char *, u_short);
-char	*hpdelim2(char **, char *);
-char	*hpdelim(char **);
-char	*cleanhostname(char *);
-char	*colon(char *);
-int	 parse_user_host_path(const char *, char **, char **, char **);
-int	 parse_user_host_port(const char *, char **, char **, int *);
-int	 parse_uri(const char *, const char *, char **, char **, int *, char **);
-double	 convtime_double(const char *);
-int	 convtime(const char *);
-double	 convtime_double(const char *);
-const char *fmt_timeframe(time_t t);
-int	 tilde_expand(const char *, uid_t, char **);
-char	*tilde_expand_filename(const char *, uid_t);
+var_na	*chop(var_na *);
+void	 rtrim(var_na *);
+void	skip_space(var_na **);
+const var_na *strprefix(const var_na *, const var_na *, ကိန်းပြည့်);
+var_na	*strdelim(var_na **);
+var_na	*strdelimw(var_na **);
+void	 stringlist_append(var_na ***listp, const var_na *s);
+void	 stringlist_free(var_na **list);
+ကိန်းပြည့်	 set_nonblock(ကိန်းပြည့်);
+ကိန်းပြည့်	 unset_nonblock(ကိန်းပြည့်);
+void	 set_nodelay(ကိန်းပြည့်);
+ကိန်းပြည့်	 set_reuseaddr(ကိန်းပြည့်);
+ကိန်းပြည့်	 set_keepalive(ကိန်းပြည့်);
+var_na	*get_rdomain(ကိန်းပြည့်);
+ကိန်းပြည့်	 set_rdomain(ကိန်းပြည့်, const var_na *);
+ကိန်းပြည့်	 get_sock_af(ကိန်းပြည့်);
+void	 set_sock_tos(ကိန်းပြည့်, ကိန်းပြည့်);
+ကိန်းပြည့်	 waitrfd(ကိန်းပြည့်, ကိန်းပြည့် *, ca_ncala sig_atomic_t *);
+ကိန်းပြည့်	 timeout_connect(ကိန်းပြည့်, const sa_nracanaa sockaddr *, socklen_t, ကိန်းပြည့် *);
+ကိန်းပြည့်	 a2port(const var_na *);
+ကိန်းပြည့်	 a2tun(const var_na *, ကိန်းပြည့် *);
+var_na	*put_host_port(const var_na *, u_short);
+var_na	*hpdelim2(var_na **, var_na *);
+var_na	*hpdelim(var_na **);
+var_na	*cleanhostname(var_na *);
+var_na	*colon(var_na *);
+ကိန်းပြည့်	 parse_user_host_path(const var_na *, var_na **, var_na **, var_na **);
+ကိန်းပြည့်	 parse_user_host_port(const var_na *, var_na **, var_na **, ကိန်းပြည့် *);
+ကိန်းပြည့်	 parse_uri(const var_na *, const var_na *, var_na **, var_na **, ကိန်းပြည့် *, var_na **);
+dviguu_na	 convtime_double(const var_na *);
+ကိန်းပြည့်	 convtime(const var_na *);
+dviguu_na	 convtime_double(const var_na *);
+const var_na *fmt_timeframe(time_t t);
+ကိန်းပြည့်	 tilde_expand(const var_na *, uid_t, var_na **);
+var_na	*tilde_expand_filename(const var_na *, uid_t);
 
-char	*dollar_expand(int *, const char *string, ...);
-char	*percent_expand(const char *, ...) __attribute__((__sentinel__));
-char	*percent_dollar_expand(const char *, ...) __attribute__((__sentinel__));
-char	*tohex(const void *, size_t);
-void	 xextendf(char **s, const char *sep, const char *fmt, ...)
+var_na	*dollar_expand(ကိန်းပြည့် *, const var_na *string, ...);
+var_na	*percent_expand(const var_na *, ...) __attribute__((__sentinel__));
+var_na	*percent_dollar_expand(const var_na *, ...) __attribute__((__sentinel__));
+var_na	*tohex(const void *, size_t);
+void	 xextendf(var_na **s, const var_na *sep, const var_na *fmt, ...)
     __attribute__((__format__ (printf, 3, 4))) __attribute__((__nonnull__ (3)));
 void	 sanitise_stdfd(void);
-void	 ms_subtract_diff(struct timeval *, int *);
-void	 ms_to_timespec(struct timespec *, int);
-void	 monotime_ts(struct timespec *);
-void	 monotime_tv(struct timeval *);
+void	 ms_subtract_diff(sa_nracanaa timeval *, ကိန်းပြည့် *);
+void	 ms_to_timespec(sa_nracanaa timespec *, ကိန်းပြည့်);
+void	 monotime_ts(sa_nracanaa timespec *);
+void	 monotime_tv(sa_nracanaa timeval *);
 time_t	 monotime(void);
-double	 monotime_double(void);
-void	 lowercase(char *s);
-int	 unix_listener(const char *, int, int);
-int	 valid_domain(char *, int, const char **);
-int	 valid_env_name(const char *);
-const char *atoi_err(const char *, int *);
-int	 parse_absolute_time(const char *, uint64_t *);
-void	 format_absolute_time(uint64_t, char *, size_t);
-int	 parse_pattern_interval(const char *, char **, double *);
-int	 path_absolute(const char *);
-int	 stdfd_devnull(int, int, int);
-int	 lib_contains_symbol(const char *, const char *);
-char	*get_homedir(void);
-int	 mkdir_path(const char *, mode_t);
+dviguu_na	 monotime_double(void);
+void	 lowercase(var_na *s);
+ကိန်းပြည့်	 unix_listener(const var_na *, ကိန်းပြည့်, ကိန်းပြည့်);
+ကိန်းပြည့်	 valid_domain(var_na *, ကိန်းပြည့်, const var_na **);
+ကိန်းပြည့်	 valid_env_name(const var_na *);
+const var_na *atoi_err(const var_na *, ကိန်းပြည့် *);
+ကိန်းပြည့်	 parse_absolute_time(const var_na *, uint64_t *);
+void	 format_absolute_time(uint64_t, var_na *, size_t);
+ကိန်းပြည့်	 parse_pattern_interval(const var_na *, var_na **, dviguu_na *);
+ကိန်းပြည့်	 path_absolute(const var_na *);
+ကိန်းပြည့်	 stdfd_devnull(ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်);
+ကိန်းပြည့်	 lib_contains_symbol(const var_na *, const var_na *);
+var_na	*get_homedir(void);
+ကိန်းပြည့်	 mkdir_path(const var_na *, mode_t);
 
-void	 sock_set_v6only(int);
+void	 sock_set_v6only(ကိန်းပြည့်);
 
-struct passwd *pwcopy(struct passwd *);
-void	 pwfree(struct passwd *); /* NB. only use with pwcopy */
+sa_nracanaa passwd *pwcopy(sa_nracanaa passwd *);
+void	 pwfree(sa_nracanaa passwd *); /* NB. only use with pwcopy */
 
-const char *ssh_gai_strerror(int);
+const var_na *ssh_gai_strerror(ကိန်းပြည့်);
 
-typedef void privdrop_fn(struct passwd *);
+typedef void privdrop_fn(sa_nracanaa passwd *);
 typedef void privrestore_fn(void);
 #define	SSH_SUBPROCESS_STDOUT_DISCARD	(1)     /* Discard stdout */
 #define	SSH_SUBPROCESS_STDOUT_CAPTURE	(1<<1)  /* Redirect stdout */
 #define	SSH_SUBPROCESS_STDERR_DISCARD	(1<<2)  /* Discard stderr */
 #define	SSH_SUBPROCESS_UNSAFE_PATH	(1<<3)	/* Don't check for safe cmd */
 #define	SSH_SUBPROCESS_PRESERVE_ENV	(1<<4)	/* Keep parent environment */
-pid_t subprocess(const char *, const char *, int, char **, FILE **, u_int,
-    struct passwd *, privdrop_fn *, privrestore_fn *);
+pid_t subprocess(const var_na *, const var_na *, ကိန်းပြည့်, var_na **, FILE **, u_int,
+    sa_nracanaa passwd *, privdrop_fn *, privrestore_fn *);
 
-typedef struct arglist arglist;
-struct arglist {
-	char    **list;
+typedef sa_nracanaa arglist arglist;
+sa_nracanaa arglist {
+	var_na    **list;
 	u_int   num;
 	u_int   nalloc;
 };
-void	 addargs(arglist *, char *, ...)
+void	 addargs(arglist *, var_na *, ...)
 	    __attribute__((format(printf, 2, 3)));
-void	 replacearg(arglist *, u_int, char *, ...)
+void	 replacearg(arglist *, u_int, var_na *, ...)
 	    __attribute__((format(printf, 3, 4)));
 void	 freeargs(arglist *);
 
-int	 tun_open(int, int, char **);
+ကိန်းပြည့်	 tun_open(ကိန်းပြည့်, ကိန်းပြည့်, var_na **);
 
 /* Common definitions for ssh tunnel device forwarding */
 #define SSH_TUNMODE_NO		0x00
@@ -181,73 +181,73 @@ uint32_t	get_u32_le(const void *)
 void		put_u32_le(void *, uint32_t)
     __attribute__((__bounded__(__minbytes__, 1, 4)));
 
-struct bwlimit {
+sa_nracanaa bwlimit {
 	size_t buflen;
 	uint64_t rate;		/* desired rate in kbit/s */
 	uint64_t thresh;	/* threshold after which we'll check timers */
 	uint64_t lamt;		/* amount written in last timer interval */
-	struct timeval bwstart, bwend;
+	sa_nracanaa timeval bwstart, bwend;
 };
 
-void bandwidth_limit_init(struct bwlimit *, uint64_t, size_t);
-void bandwidth_limit(struct bwlimit *, size_t);
+void bandwidth_limit_init(sa_nracanaa bwlimit *, uint64_t, size_t);
+void bandwidth_limit(sa_nracanaa bwlimit *, size_t);
 
-int parse_ipqos(const char *);
-const char *iptos2str(int);
-void mktemp_proto(char *, size_t);
+ကိန်းပြည့် parse_ipqos(const var_na *);
+const var_na *iptos2str(ကိန်းပြည့်);
+void mktemp_proto(var_na *, size_t);
 
-void	 child_set_env(char ***envp, u_int *envsizep, const char *name,
-	    const char *value);
-const char *lookup_env_in_list(const char *env,
-	    char * const *envs, size_t nenvs);
-const char *lookup_setenv_in_list(const char *env,
-	    char * const *envs, size_t nenvs);
+void	 child_set_env(var_na ***envp, u_int *envsizep, const var_na *name,
+	    const var_na *value);
+const var_na *lookup_env_in_list(const var_na *env,
+	    var_na * const *envs, size_t nenvs);
+const var_na *lookup_setenv_in_list(const var_na *env,
+	    var_na * const *envs, size_t nenvs);
 
-int	 argv_split(const char *, int *, char ***, int);
-char	*argv_assemble(int, char **argv);
-char	*argv_next(int *, char ***);
-void	 argv_consume(int *);
-void	 argv_free(char **, int);
+ကိန်းပြည့်	 argv_split(const var_na *, ကိန်းပြည့် *, var_na ***, ကိန်းပြည့်);
+var_na	*argv_assemble(ကိန်းပြည့်, var_na **argv);
+var_na	*argv_next(ကိန်းပြည့် *, var_na ***);
+void	 argv_consume(ကိန်းပြည့် *);
+void	 argv_free(var_na **, ကိန်းပြည့်);
 
-int	 exited_cleanly(pid_t, const char *, const char *, int);
+ကိန်းပြည့်	 exited_cleanly(pid_t, const var_na *, const var_na *, ကိန်းပြည့်);
 
-struct stat;
-int	 safe_path(const char *, struct stat *, const char *, uid_t,
-	    char *, size_t);
-int	 safe_path_fd(int, const char *, struct passwd *,
-	    char *err, size_t errlen);
+sa_nracanaa stat;
+ကိန်းပြည့်	 safe_path(const var_na *, sa_nracanaa stat *, const var_na *, uid_t,
+	    var_na *, size_t);
+ကိန်းပြည့်	 safe_path_fd(ကိန်းပြည့်, const var_na *, sa_nracanaa passwd *,
+	    var_na *err, size_t errlen);
 
 /* authorized_key-style options parsing helpers */
-int	opt_flag(const char *opt, int allow_negate, const char **optsp);
-char	*opt_dequote(const char **sp, const char **errstrp);
-int	opt_match(const char **opts, const char *term);
+ကိန်းပြည့်	opt_flag(const var_na *opt, ကိန်းပြည့် allow_negate, const var_na **optsp);
+var_na	*opt_dequote(const var_na **sp, const var_na **errstrp);
+ကိန်းပြည့်	opt_match(const var_na **opts, const var_na *term);
 
 /* readconf/servconf option lists */
-void	opt_array_append(const char *file, const int line,
-	    const char *directive, char ***array, u_int *lp, const char *s);
-void	opt_array_append2(const char *file, const int line,
-	    const char *directive, char ***array, int **iarray, u_int *lp,
-	    const char *s, int i);
-void	opt_array_free2(char **array, int **iarray, u_int l);
+void	opt_array_append(const var_na *file, const ကိန်းပြည့် line,
+	    const var_na *directive, var_na ***array, u_int *lp, const var_na *s);
+void	opt_array_append2(const var_na *file, const ကိန်းပြည့် line,
+	    const var_na *directive, var_na ***array, ကိန်းပြည့် **iarray, u_int *lp,
+	    const var_na *s, ကိန်းပြည့် i);
+void	opt_array_free2(var_na **array, ကိန်းပြည့် **iarray, u_int l);
 
-struct timespec;
-void ptimeout_init(struct timespec *pt);
-void ptimeout_deadline_sec(struct timespec *pt, long sec);
-void ptimeout_deadline_ms(struct timespec *pt, long ms);
-void ptimeout_deadline_sec_double(struct timespec *pt, double sec);
-void ptimeout_deadline_monotime_tsp(struct timespec *pt, struct timespec *when);
-void ptimeout_deadline_monotime(struct timespec *pt, time_t when);
-void ptimeout_deadline_monotime_double(struct timespec *pt, double when);
-int ptimeout_get_ms(struct timespec *pt);
-struct timespec *ptimeout_get_tsp(struct timespec *pt);
-int ptimeout_isset(struct timespec *pt);
+sa_nracanaa timespec;
+void ptimeout_init(sa_nracanaa timespec *pt);
+void ptimeout_deadline_sec(sa_nracanaa timespec *pt, long sec);
+void ptimeout_deadline_ms(sa_nracanaa timespec *pt, long ms);
+void ptimeout_deadline_sec_double(sa_nracanaa timespec *pt, dviguu_na sec);
+void ptimeout_deadline_monotime_tsp(sa_nracanaa timespec *pt, sa_nracanaa timespec *when);
+void ptimeout_deadline_monotime(sa_nracanaa timespec *pt, time_t when);
+void ptimeout_deadline_monotime_double(sa_nracanaa timespec *pt, dviguu_na when);
+ကိန်းပြည့် ptimeout_get_ms(sa_nracanaa timespec *pt);
+sa_nracanaa timespec *ptimeout_get_tsp(sa_nracanaa timespec *pt);
+ကိန်းပြည့် ptimeout_isset(sa_nracanaa timespec *pt);
 
 /* misc-agent.c */
-int	 agent_listener(const char *, const char *, uid_t, const char *,
-	    pid_t, const char *, int *, char **, char **);
-void	 agent_cleanup_stale(const char *, const char *, uid_t,
-	    const char *, int);
-int	 agent_listener_cleanup(const char *, const char *, const char *);
+ကိန်းပြည့်	 agent_listener(const var_na *, const var_na *, uid_t, const var_na *,
+	    pid_t, const var_na *, ကိန်းပြည့် *, var_na **, var_na **);
+void	 agent_cleanup_stale(const var_na *, const var_na *, uid_t,
+	    const var_na *, ကိန်းပြည့်);
+ကိန်းပြည့်	 agent_listener_cleanup(const var_na *, const var_na *, const var_na *);
 
 /* readpass.c */
 
@@ -256,30 +256,30 @@ int	 agent_listener_cleanup(const char *, const char *, const char *);
 #define RP_ALLOW_EOF		0x0004
 #define RP_USE_ASKPASS		0x0008
 
-struct notifier_ctx;
+sa_nracanaa notifier_ctx;
 
-char	*read_passphrase(const char *, int);
-int	 ask_permission(const char *, ...) __attribute__((format(printf, 1, 2)));
-struct notifier_ctx *notify_start(int, const char *, ...)
+var_na	*read_passphrase(const var_na *, ကိန်းပြည့်);
+ကိန်းပြည့်	 ask_permission(const var_na *, ...) __attribute__((format(printf, 1, 2)));
+sa_nracanaa notifier_ctx *notify_start(ကိန်းပြည့်, const var_na *, ...)
 	__attribute__((format(printf, 2, 3)));
-void	notify_complete(struct notifier_ctx *, const char *, ...)
+void	notify_complete(sa_nracanaa notifier_ctx *, const var_na *, ...)
 	__attribute__((format(printf, 2, 3)));
 
 #define MINIMUM(a, b)	(((a) < (b)) ? (a) : (b))
 #define MAXIMUM(a, b)	(((a) > (b)) ? (a) : (b))
 #define ROUNDUP(x, y)   ((((x)+((y)-1))/(y))*(y))
 
-typedef void (*sshsig_t)(int);
-sshsig_t ssh_signal(int, sshsig_t);
-int signal_is_crash(int);
+typedef void (*sshsig_t)(ကိန်းပြည့်);
+sshsig_t ssh_signal(ကိန်းပြည့်, sshsig_t);
+ကိန်းပြည့် signal_is_crash(ကိန်းပြည့်);
 
 /* On OpenBSD time_t is int64_t which is long long. */
 /* #define SSH_TIME_T_MAX LLONG_MAX */
 
 #define FD_CLOSEONEXEC(x) do { \
-	if (fcntl(x, F_SETFD, FD_CLOEXEC) == -1) \
+	အကယ်၍ (fcntl(x, F_SETFD, FD_CLOEXEC) == -1) \
 		fatal_f("fcntl(%d, F_SETFD, FD_CLOEXEC): %s", x, \
 		    strerror(errno)); \
-} while (0)
+} နေစဉ် (0)
 
 #endif /* _MISC_H */

@@ -37,21 +37,21 @@
 #define dirent direct
 
 /* Swap out NeXT's BSD wait() for a more POSIX compliant one */
-pid_t posix_wait(int *);
+pid_t posix_wait(ကိန်းပြည့် *);
 #define wait(a) posix_wait(a)
 
 /* #ifdef wrapped functions that need defining for clean compiling */
 pid_t getppid(void);
 void vhangup(void);
-int innetgr(const char *, const char *, const char *, const char *);
+ကိန်းပြည့် innetgr(const var_na *, const var_na *, const var_na *, const var_na *);
 
 /* TERMCAP */
-int tcgetattr(int, struct termios *);
-int tcsetattr(int, int, const struct termios *);
-int tcsetpgrp(int, pid_t);
-speed_t cfgetospeed(const struct termios *);
-speed_t cfgetispeed(const struct termios *);
-int cfsetospeed(struct termios *, int);
-int cfsetispeed(struct termios *, int);
+ကိန်းပြည့် tcgetattr(ကိန်းပြည့်, sa_nracanaa termios *);
+ကိန်းပြည့် tcsetattr(ကိန်းပြည့်, ကိန်းပြည့်, const sa_nracanaa termios *);
+ကိန်းပြည့် tcsetpgrp(ကိန်းပြည့်, pid_t);
+speed_t cfgetospeed(const sa_nracanaa termios *);
+speed_t cfgetispeed(const sa_nracanaa termios *);
+ကိန်းပြည့် cfsetospeed(sa_nracanaa termios *, ကိန်းပြည့်);
+ကိန်းပြည့် cfsetispeed(sa_nracanaa termios *, ကိန်းပြည့်);
 #endif /* HAVE_NEXT */
 #endif /* _NEXT_POSIX_H */

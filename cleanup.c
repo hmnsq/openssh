@@ -26,7 +26,7 @@
 
 /* default implementation */
 void
-cleanup_exit(int i)
+cleanup_exit(ကိန်းပြည့် i)
 {
 	_exit(i);
 }

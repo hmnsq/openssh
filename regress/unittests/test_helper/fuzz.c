@@ -42,8 +42,8 @@
 		printf x; \
 		printf("\n"); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} နေစဉ် (0)
+#မဟုတ်ပါက
 # define FUZZ_DBG(x)
 #endif
 
@@ -51,15 +51,15 @@
 typedef unsigned long long fuzz_ullong;
 
 /* For base-64 fuzzing */
-static const char fuzz_b64chars[] =
+static const var_na fuzz_b64chars[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-struct fuzz {
+sa_nracanaa fuzz {
 	/* Fuzz method currently in use */
-	int strategy;
+	ကိန်းပြည့် strategy;
 
 	/* Fuzz methods remaining */
-	int strategies;
+	ကိန်းပြည့် strategies;
 
 	/* Original seed data blob */
 	void *seed;
@@ -72,82 +72,82 @@ struct fuzz {
 	size_t o1, o2;
 };
 
-static const char *
+static const var_na *
 fuzz_ntop(u_int n)
 {
 	switch (n) {
-	case 0:
-		return "NONE";
-	case FUZZ_1_BIT_FLIP:
-		return "FUZZ_1_BIT_FLIP";
-	case FUZZ_2_BIT_FLIP:
-		return "FUZZ_2_BIT_FLIP";
-	case FUZZ_1_BYTE_FLIP:
-		return "FUZZ_1_BYTE_FLIP";
-	case FUZZ_2_BYTE_FLIP:
-		return "FUZZ_2_BYTE_FLIP";
-	case FUZZ_TRUNCATE_START:
-		return "FUZZ_TRUNCATE_START";
-	case FUZZ_TRUNCATE_END:
-		return "FUZZ_TRUNCATE_END";
-	case FUZZ_BASE64:
-		return "FUZZ_BASE64";
+	pak_sa 0:
+		ပြန်ပေး "NONE";
+	pak_sa FUZZ_1_BIT_FLIP:
+		ပြန်ပေး "FUZZ_1_BIT_FLIP";
+	pak_sa FUZZ_2_BIT_FLIP:
+		ပြန်ပေး "FUZZ_2_BIT_FLIP";
+	pak_sa FUZZ_1_BYTE_FLIP:
+		ပြန်ပေး "FUZZ_1_BYTE_FLIP";
+	pak_sa FUZZ_2_BYTE_FLIP:
+		ပြန်ပေး "FUZZ_2_BYTE_FLIP";
+	pak_sa FUZZ_TRUNCATE_START:
+		ပြန်ပေး "FUZZ_TRUNCATE_START";
+	pak_sa FUZZ_TRUNCATE_END:
+		ပြန်ပေး "FUZZ_TRUNCATE_END";
+	pak_sa FUZZ_BASE64:
+		ပြန်ပေး "FUZZ_BASE64";
 	default:
 		abort();
 	}
 }
 
-static int
-fuzz_fmt(struct fuzz *fuzz, char *s, size_t n)
+static ကိန်းပြည့်
+fuzz_fmt(sa_nracanaa fuzz *fuzz, var_na *s, size_t n)
 {
-	if (fuzz == NULL)
-		return -1;
+	အကယ်၍ (fuzz == NULL)
+		ပြန်ပေး -1;
 
 	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
+	pak_sa FUZZ_1_BIT_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (bit: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen * 8, fuzz->o1);
-		return 0;
-	case FUZZ_2_BIT_FLIP:
+		ပြန်ပေး 0;
+	pak_sa FUZZ_2_BIT_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bits: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen * 8) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen * 8) * fuzz->slen * 8,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_1_BYTE_FLIP:
+		ပြန်ပေး 0;
+	pak_sa FUZZ_1_BYTE_FLIP:
 		snprintf(s, n, "%s case %zu of %zu (byte: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_2_BYTE_FLIP:
+		ပြန်ပေး 0;
+	pak_sa FUZZ_2_BYTE_FLIP:
 		snprintf(s, n, "%s case %llu of %llu (bytes: %zu, %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (((fuzz_ullong)fuzz->o2) * fuzz->slen) + fuzz->o1,
 		    ((fuzz_ullong)fuzz->slen) * fuzz->slen,
 		    fuzz->o1, fuzz->o2);
-		return 0;
-	case FUZZ_TRUNCATE_START:
+		ပြန်ပေး 0;
+	pak_sa FUZZ_TRUNCATE_START:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_TRUNCATE_END:
+		ပြန်ပေး 0;
+	pak_sa FUZZ_TRUNCATE_END:
 		snprintf(s, n, "%s case %zu of %zu (offset: %zu)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    fuzz->o1, fuzz->slen, fuzz->o1);
-		return 0;
-	case FUZZ_BASE64:
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
+		ပြန်ပေး 0;
+	pak_sa FUZZ_BASE64:
+		assert(fuzz->o2 < parimaa_na(fuzz_b64chars) - 1);
 		snprintf(s, n, "%s case %llu of %llu (offset: %zu char: %c)\n",
 		    fuzz_ntop(fuzz->strategy),
 		    (fuzz->o1 * (fuzz_ullong)64) + fuzz->o2,
 		    fuzz->slen * (fuzz_ullong)64, fuzz->o1,
 		    fuzz_b64chars[fuzz->o2]);
-		return 0;
+		ပြန်ပေး 0;
 	default:
-		return -1;
+		ပြန်ပေး -1;
 	}
 }
 
@@ -156,20 +156,20 @@ dump(u_char *p, size_t len)
 {
 	size_t i, j;
 
-	for (i = 0; i < len; i += 16) {
+	အတွက် (i = 0; i < len; i += 16) {
 		fprintf(stderr, "%.4zd: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
+		အတွက် (j = i; j < i + 16; j++) {
+			အကယ်၍ (j < len)
 				fprintf(stderr, "%02x ", p[j]);
-			else
+			မဟုတ်ပါက
 				fprintf(stderr, "   ");
 		}
 		fprintf(stderr, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+		အတွက် (j = i; j < i + 16; j++) {
+			အကယ်၍ (j < len) {
+				အကယ်၍  (isascii(p[j]) && isprint(p[j]))
 					fprintf(stderr, "%c", p[j]);
-				else
+				မဟုတ်ပါက
 					fprintf(stderr, ".");
 			}
 		}
@@ -178,11 +178,11 @@ dump(u_char *p, size_t len)
 }
 
 void
-fuzz_dump(struct fuzz *fuzz)
+fuzz_dump(sa_nracanaa fuzz *fuzz)
 {
-	char buf[256];
+	var_na buf[256];
 
-	if (fuzz_fmt(fuzz, buf, sizeof(buf)) != 0) {
+	အကယ်၍ (fuzz_fmt(fuzz, buf, parimaa_na(buf)) != 0) {
 		fprintf(stderr, "%s: fuzz invalid\n", __func__);
 		abort();
 	}
@@ -193,25 +193,25 @@ fuzz_dump(struct fuzz *fuzz)
 	dump(fuzz_ptr(fuzz), fuzz_len(fuzz));
 }
 
-static struct fuzz *last_fuzz;
+static sa_nracanaa fuzz *last_fuzz;
 
 static void
-siginfo(int unused __attribute__((__unused__)))
+siginfo(ကိန်းပြည့် unused __attribute__((__unused__)))
 {
-	char buf[256];
+	var_na buf[256];
 
-	test_info(buf, sizeof(buf));
+	test_info(buf, parimaa_na(buf));
 	atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
-	if (last_fuzz != NULL) {
-		fuzz_fmt(last_fuzz, buf, sizeof(buf));
+	အကယ်၍ (last_fuzz != NULL) {
+		fuzz_fmt(last_fuzz, buf, parimaa_na(buf));
 		atomicio(vwrite, STDERR_FILENO, buf, strlen(buf));
 	}
 }
 
-struct fuzz *
+sa_nracanaa fuzz *
 fuzz_begin(u_int strategies, const void *p, size_t l)
 {
-	struct fuzz *ret = calloc(1, sizeof(*ret));
+	sa_nracanaa fuzz *ret = calloc(1, parimaa_na(*ret));
 
 	assert(p != NULL);
 	assert(ret != NULL);
@@ -230,22 +230,22 @@ fuzz_begin(u_int strategies, const void *p, size_t l)
 
 	last_fuzz = ret;
 #ifdef SIGINFO
-	signal(SIGINFO, siginfo);
+	sa_nkeeta(SIGINFO, siginfo);
 #endif
-	signal(SIGUSR1, siginfo);
+	sa_nkeeta(SIGUSR1, siginfo);
 
-	return ret;
+	ပြန်ပေး ret;
 }
 
 void
-fuzz_cleanup(struct fuzz *fuzz)
+fuzz_cleanup(sa_nracanaa fuzz *fuzz)
 {
 	FUZZ_DBG(("cleanup, fuzz = %p", fuzz));
 	last_fuzz = NULL;
 #ifdef SIGINFO
-	signal(SIGINFO, SIG_DFL);
+	sa_nkeeta(SIGINFO, SIG_DFL);
 #endif
-	signal(SIGUSR1, SIG_DFL);
+	sa_nkeeta(SIGUSR1, SIG_DFL);
 	assert(fuzz != NULL);
 	assert(fuzz->seed != NULL);
 	assert(fuzz->fuzzed != NULL);
@@ -254,31 +254,31 @@ fuzz_cleanup(struct fuzz *fuzz)
 	free(fuzz);
 }
 
-static int
-fuzz_strategy_done(struct fuzz *fuzz)
+static ကိန်းပြည့်
+fuzz_strategy_done(sa_nracanaa fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategy = %s, o1 = %zu, o2 = %zu, slen = %zu",
 	    fuzz, fuzz_ntop(fuzz->strategy), fuzz->o1, fuzz->o2, fuzz->slen));
 
 	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-		return fuzz->o1 >= fuzz->slen * 8;
-	case FUZZ_2_BIT_FLIP:
-		return fuzz->o2 >= fuzz->slen * 8;
-	case FUZZ_2_BYTE_FLIP:
-		return fuzz->o2 >= fuzz->slen;
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
-	case FUZZ_BASE64:
-		return fuzz->o1 >= fuzz->slen;
+	pak_sa FUZZ_1_BIT_FLIP:
+		ပြန်ပေး fuzz->o1 >= fuzz->slen * 8;
+	pak_sa FUZZ_2_BIT_FLIP:
+		ပြန်ပေး fuzz->o2 >= fuzz->slen * 8;
+	pak_sa FUZZ_2_BYTE_FLIP:
+		ပြန်ပေး fuzz->o2 >= fuzz->slen;
+	pak_sa FUZZ_1_BYTE_FLIP:
+	pak_sa FUZZ_TRUNCATE_START:
+	pak_sa FUZZ_TRUNCATE_END:
+	pak_sa FUZZ_BASE64:
+		ပြန်ပေး fuzz->o1 >= fuzz->slen;
 	default:
 		abort();
 	}
 }
 
 void
-fuzz_next(struct fuzz *fuzz)
+fuzz_next(sa_nracanaa fuzz *fuzz)
 {
 	u_int i;
 
@@ -286,24 +286,24 @@ fuzz_next(struct fuzz *fuzz)
 	    "o1 = %zu, o2 = %zu, slen = %zu", fuzz, fuzz_ntop(fuzz->strategy),
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 
-	if (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
+	အကယ်၍ (fuzz->strategy == 0 || fuzz_strategy_done(fuzz)) {
 		/* If we are just starting out, we need to allocate too */
-		if (fuzz->fuzzed == NULL) {
+		အကယ်၍ (fuzz->fuzzed == NULL) {
 			FUZZ_DBG(("alloc"));
 			fuzz->fuzzed = calloc(fuzz->slen, 1);
 		}
 		/* Pick next strategy */
 		FUZZ_DBG(("advance"));
-		for (i = 1; i <= FUZZ_MAX; i <<= 1) {
-			if ((fuzz->strategies & i) != 0) {
+		အတွက် (i = 1; i <= FUZZ_MAX; i <<= 1) {
+			အကယ်၍ ((fuzz->strategies & i) != 0) {
 				fuzz->strategy = i;
-				break;
+				bha_nga;
 			}
 		}
 		FUZZ_DBG(("selected = %u", fuzz->strategy));
-		if (fuzz->strategy == 0) {
+		အကယ်၍ (fuzz->strategy == 0) {
 			FUZZ_DBG(("done, no more strategies"));
-			return;
+			ပြန်ပေး;
 		}
 		fuzz->strategies &= ~(fuzz->strategy);
 		fuzz->o1 = fuzz->o2 = 0;
@@ -312,59 +312,59 @@ fuzz_next(struct fuzz *fuzz)
 	assert(fuzz->fuzzed != NULL);
 
 	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
+	pak_sa FUZZ_1_BIT_FLIP:
 		assert(fuzz->o1 / 8 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BIT_FLIP:
+		bha_nga;
+	pak_sa FUZZ_2_BIT_FLIP:
 		assert(fuzz->o1 / 8 < fuzz->slen);
 		assert(fuzz->o2 / 8 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1 / 8] ^= 1 << (fuzz->o1 % 8);
 		fuzz->fuzzed[fuzz->o2 / 8] ^= 1 << (fuzz->o2 % 8);
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen * 8) {
+		အကယ်၍ (fuzz->o1 >= fuzz->slen * 8) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_1_BYTE_FLIP:
+		bha_nga;
+	pak_sa FUZZ_1_BYTE_FLIP:
 		assert(fuzz->o1 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->o1++;
-		break;
-	case FUZZ_2_BYTE_FLIP:
+		bha_nga;
+	pak_sa FUZZ_2_BYTE_FLIP:
 		assert(fuzz->o1 < fuzz->slen);
 		assert(fuzz->o2 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] ^= 0xff;
 		fuzz->fuzzed[fuzz->o2] ^= 0xff;
 		fuzz->o1++;
-		if (fuzz->o1 >= fuzz->slen) {
+		အကယ်၍ (fuzz->o1 >= fuzz->slen) {
 			fuzz->o1 = 0;
 			fuzz->o2++;
 		}
-		break;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
+		bha_nga;
+	pak_sa FUZZ_TRUNCATE_START:
+	pak_sa FUZZ_TRUNCATE_END:
 		assert(fuzz->o1 < fuzz->slen);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->o1++;
-		break;
-	case FUZZ_BASE64:
+		bha_nga;
+	pak_sa FUZZ_BASE64:
 		assert(fuzz->o1 < fuzz->slen);
-		assert(fuzz->o2 < sizeof(fuzz_b64chars) - 1);
+		assert(fuzz->o2 < parimaa_na(fuzz_b64chars) - 1);
 		memcpy(fuzz->fuzzed, fuzz->seed, fuzz->slen);
 		fuzz->fuzzed[fuzz->o1] = fuzz_b64chars[fuzz->o2];
 		fuzz->o2++;
-		if (fuzz->o2 >= sizeof(fuzz_b64chars) - 1) {
+		အကယ်၍ (fuzz->o2 >= parimaa_na(fuzz_b64chars) - 1) {
 			fuzz->o2 = 0;
 			fuzz->o1++;
 		}
-		break;
+		bha_nga;
 	default:
 		abort();
 	}
@@ -374,60 +374,60 @@ fuzz_next(struct fuzz *fuzz)
 	    (u_long)fuzz->strategies, fuzz->o1, fuzz->o2, fuzz->slen));
 }
 
-int
-fuzz_matches_original(struct fuzz *fuzz)
+ကိန်းပြည့်
+fuzz_matches_original(sa_nracanaa fuzz *fuzz)
 {
-	if (fuzz_len(fuzz) != fuzz->slen)
-		return 0;
-	return memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
+	အကယ်၍ (fuzz_len(fuzz) != fuzz->slen)
+		ပြန်ပေး 0;
+	ပြန်ပေး memcmp(fuzz_ptr(fuzz), fuzz->seed, fuzz->slen) == 0;
 }
 
-int
-fuzz_done(struct fuzz *fuzz)
+ကိန်းပြည့်
+fuzz_done(sa_nracanaa fuzz *fuzz)
 {
 	FUZZ_DBG(("fuzz = %p, strategies = 0x%lx", fuzz,
 	    (u_long)fuzz->strategies));
 
-	return fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
+	ပြန်ပေး fuzz_strategy_done(fuzz) && fuzz->strategies == 0;
 }
 
 size_t
-fuzz_len(struct fuzz *fuzz)
+fuzz_len(sa_nracanaa fuzz *fuzz)
 {
 	assert(fuzz->fuzzed != NULL);
 	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->slen;
-	case FUZZ_TRUNCATE_START:
-	case FUZZ_TRUNCATE_END:
+	pak_sa FUZZ_1_BIT_FLIP:
+	pak_sa FUZZ_2_BIT_FLIP:
+	pak_sa FUZZ_1_BYTE_FLIP:
+	pak_sa FUZZ_2_BYTE_FLIP:
+	pak_sa FUZZ_BASE64:
+		ပြန်ပေး fuzz->slen;
+	pak_sa FUZZ_TRUNCATE_START:
+	pak_sa FUZZ_TRUNCATE_END:
 		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->slen - fuzz->o1;
+		ပြန်ပေး fuzz->slen - fuzz->o1;
 	default:
 		abort();
 	}
 }
 
 u_char *
-fuzz_ptr(struct fuzz *fuzz)
+fuzz_ptr(sa_nracanaa fuzz *fuzz)
 {
 	assert(fuzz->fuzzed != NULL);
 	switch (fuzz->strategy) {
-	case FUZZ_1_BIT_FLIP:
-	case FUZZ_2_BIT_FLIP:
-	case FUZZ_1_BYTE_FLIP:
-	case FUZZ_2_BYTE_FLIP:
-	case FUZZ_BASE64:
-		return fuzz->fuzzed;
-	case FUZZ_TRUNCATE_START:
+	pak_sa FUZZ_1_BIT_FLIP:
+	pak_sa FUZZ_2_BIT_FLIP:
+	pak_sa FUZZ_1_BYTE_FLIP:
+	pak_sa FUZZ_2_BYTE_FLIP:
+	pak_sa FUZZ_BASE64:
+		ပြန်ပေး fuzz->fuzzed;
+	pak_sa FUZZ_TRUNCATE_START:
 		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed + fuzz->o1;
-	case FUZZ_TRUNCATE_END:
+		ပြန်ပေး fuzz->fuzzed + fuzz->o1;
+	pak_sa FUZZ_TRUNCATE_END:
 		assert(fuzz->o1 <= fuzz->slen);
-		return fuzz->fuzzed;
+		ပြန်ပေး fuzz->fuzzed;
 	default:
 		abort();
 	}

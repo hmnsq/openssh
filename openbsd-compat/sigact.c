@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#အကယ်၍ !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+ကိန်းပြည့်
+sigaction(ကိန်းပြည့် sig, sa_nracanaa sigaction *sigact, sa_nracanaa sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	ပြန်ပေး sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+ကိန်းပြည့်
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	အကယ်၍ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ပြန်ပေး -1;
 	}
 	*mask = 0;
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+ကိန်းပြည့်
+sigprocmask (ကိန်းပြည့် mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	အကယ်၍ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ပြန်ပေး -1;
 	}
 
-	if (omask)
+	အကယ်၍ (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	အကယ်၍ (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	မဟုတ်ပါက အကယ်၍ (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	မဟုတ်ပါက အကယ်၍ (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int
+ကိန်းပြည့်
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	အကယ်၍ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ပြန်ပေး -1;
 	}
-	return sigpause(*mask);
+	ပြန်ပေး sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+ကိန်းပြည့်
+sigdelset (sigset_t *mask, ကိန်းပြည့် sig)
 {
-	if (!mask) {
+	အကယ်၍ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ပြန်ပေး -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+ကိန်းပြည့်
+sigaddset (sigset_t *mask, ကိန်းပြည့် sig)
 {
-	if (!mask) {
+	အကယ်၍ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ပြန်ပေး -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	ပြန်ပေး 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+ကိန်းပြည့်
+sigismember (sigset_t *mask, ကိန်းပြည့် sig)
 {
-	if (!mask) {
+	အကယ်၍ (!mask) {
 		errno = EINVAL;
-		return -1;
+		ပြန်ပေး -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	ပြန်ပေး (*mask & sigmask(sig)) != 0;
 }
 
 #endif

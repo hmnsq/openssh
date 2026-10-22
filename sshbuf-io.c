@@ -30,38 +30,38 @@
 #include "atomicio.h"
 
 /* Load a file from a fd into a buffer */
-int
-sshbuf_load_fd(int fd, struct sshbuf **blobp)
+ကိန်းပြည့်
+sshbuf_load_fd(ကိန်းပြည့် fd, sa_nracanaa sshbuf **blobp)
 {
 	u_char buf[4096];
 	size_t len;
-	struct stat st;
-	int r;
-	struct sshbuf *blob;
+	sa_nracanaa stat st;
+	ကိန်းပြည့် r;
+	sa_nracanaa sshbuf *blob;
 
 	*blobp = NULL;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (S_ISREG(st.st_mode) && st.st_size > SSHBUF_SIZE_MAX)
-		return SSH_ERR_INVALID_FORMAT;
-	if ((blob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	for (;;) {
-		if ((len = atomicio(read, fd, buf, sizeof(buf))) == 0) {
-			if (errno == EPIPE)
-				break;
+	အကယ်၍ (fstat(fd, &st) == -1)
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
+	အကယ်၍ (S_ISREG(st.st_mode) && st.st_size > SSHBUF_SIZE_MAX)
+		ပြန်ပေး SSH_ERR_INVALID_FORMAT;
+	အကယ်၍ ((blob = sshbuf_new()) == NULL)
+		ပြန်ပေး SSH_ERR_ALLOC_FAIL;
+	အတွက် (;;) {
+		အကယ်၍ ((len = atomicio(read, fd, buf, parimaa_na(buf))) == 0) {
+			အကယ်၍ (errno == EPIPE)
+				bha_nga;
 			r = SSH_ERR_SYSTEM_ERROR;
 			goto out;
 		}
-		if ((r = sshbuf_put(blob, buf, len)) != 0)
+		အကယ်၍ ((r = sshbuf_put(blob, buf, len)) != 0)
 			goto out;
-		if (sshbuf_len(blob) > SSHBUF_SIZE_MAX) {
+		အကယ်၍ (sshbuf_len(blob) > SSHBUF_SIZE_MAX) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
 	}
-	if (S_ISREG(st.st_mode) != 0 &&
+	အကယ်၍ (S_ISREG(st.st_mode) != 0 &&
 	    st.st_size != (off_t)sshbuf_len(blob)) {
 		r = SSH_ERR_FILE_CHANGED;
 		goto out;
@@ -71,46 +71,46 @@ sshbuf_load_fd(int fd, struct sshbuf **blobp)
 	blob = NULL; /* transferred */
 	r = 0;
  out:
-	explicit_bzero(buf, sizeof(buf));
+	explicit_bzero(buf, parimaa_na(buf));
 	sshbuf_free(blob);
-	return r;
+	ပြန်ပေး r;
 }
 
-int
-sshbuf_load_file(const char *path, struct sshbuf **bufp)
+ကိန်းပြည့်
+sshbuf_load_file(const var_na *path, sa_nracanaa sshbuf **bufp)
 {
-	int r, fd, oerrno;
+	ကိန်းပြည့် r, fd, oerrno;
 
 	*bufp = NULL;
-	if ((fd = open(path, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, bufp)) != 0)
+	အကယ်၍ ((fd = open(path, O_RDONLY)) == -1)
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
+	အကယ်၍ ((r = sshbuf_load_fd(fd, bufp)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	close(fd);
-	if (r != 0)
+	အကယ်၍ (r != 0)
 		errno = oerrno;
-	return r;
+	ပြန်ပေး r;
 }
 
-int
-sshbuf_write_file(const char *path, struct sshbuf *buf)
+ကိန်းပြည့်
+sshbuf_write_file(const var_na *path, sa_nracanaa sshbuf *buf)
 {
-	int fd, oerrno;
+	ကိန်းပြည့် fd, oerrno;
 
-	if ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
+	အကယ်၍ ((fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0644)) == -1)
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
+	အကယ်၍ (atomicio(vwrite, fd, sshbuf_mutable_ptr(buf),
 	    sshbuf_len(buf)) != sshbuf_len(buf) || close(fd) != 0) {
 		oerrno = errno;
 		close(fd);
 		unlink(path);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		ပြန်ပေး SSH_ERR_SYSTEM_ERROR;
 	}
-	return 0;
+	ပြန်ပေး 0;
 }
 

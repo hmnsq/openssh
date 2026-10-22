@@ -20,15 +20,15 @@
 #include "includes.h"
 #ifndef HAVE_TIMINGSAFE_BCMP
 
-int
+ကိန်းပြည့်
 timingsafe_bcmp(const void *b1, const void *b2, size_t n)
 {
-	const unsigned char *p1 = b1, *p2 = b2;
-	int ret = 0;
+	const unsigned var_na *p1 = b1, *p2 = b2;
+	ကိန်းပြည့် ret = 0;
 
-	for (; n > 0; n--)
+	အတွက် (; n > 0; n--)
 		ret |= *p1++ ^ *p2++;
-	return (ret != 0);
+	ပြန်ပေး (ret != 0);
 }
 
 #endif /* TIMINGSAFE_BCMP */

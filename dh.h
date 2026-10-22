@@ -28,26 +28,26 @@
 
 #ifdef WITH_OPENSSL
 
-struct dhgroup {
-	int size;
+sa_nracanaa dhgroup {
+	ကိန်းပြည့် size;
 	BIGNUM *g;
 	BIGNUM *p;
 };
 
-DH	*choose_dh(int, int, int);
-DH	*dh_new_group_asc(const char *, const char *);
+DH	*choose_dh(ကိန်းပြည့်, ကိန်းပြည့်, ကိန်းပြည့်);
+DH	*dh_new_group_asc(const var_na *, const var_na *);
 DH	*dh_new_group(BIGNUM *, BIGNUM *);
 DH	*dh_new_group1(void);
 DH	*dh_new_group14(void);
 DH	*dh_new_group16(void);
 DH	*dh_new_group18(void);
-DH	*dh_new_group_fallback(int);
+DH	*dh_new_group_fallback(ကိန်းပြည့်);
 
-int	 dh_gen_key(DH *, int);
-int	 dh_pub_is_valid(const DH *, const BIGNUM *);
+ကိန်းပြည့်	 dh_gen_key(DH *, ကိန်းပြည့်);
+ကိန်းပြည့်	 dh_pub_is_valid(const DH *, const BIGNUM *);
 
-u_int	 dh_estimate(int);
-void	 dh_set_moduli_file(const char *);
+u_int	 dh_estimate(ကိန်းပြည့်);
+void	 dh_set_moduli_file(const var_na *);
 
 /*
  * Max value from RFC4419.
