@@ -22,133 +22,133 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
 /* compatibility with old or broken OpenSSL versions */
-#include "openbsd-compat/openssl-compat.h"
+#অন্তর্ভাৱ "openbsd-compat/openssl-compat.h"
 
 #ifdef USE_BUILTIN_RIJNDAEL
-#include <sys/types.h>
+#অন্তর্ভাৱ <sys/types.h>
 
-#include <openssl/evp.h>
+#অন্তর্ভাৱ <openssl/evp.h>
 
-#include <stdarg.h>
-#include <string.h>
+#অন্তর্ভাৱ <stdarg.h>
+#অন্তর্ভাৱ <string.h>
 
-#include "rijndael.h"
-#include "xmalloc.h"
-#include "log.h"
+#অন্তর্ভাৱ "rijndael.h"
+#অন্তর্ভাৱ "xmalloc.h"
+#অন্তর্ভাৱ "log.h"
 
 #define RIJNDAEL_BLOCKSIZE 16
-struct ssh_rijndael_ctx
+সংরচনা ssh_rijndael_ctx
 {
 	rijndael_ctx	r_ctx;
 	u_char		r_iv[RIJNDAEL_BLOCKSIZE];
 };
 
-static int
-ssh_rijndael_init(EVP_CIPHER_CTX *ctx, const u_char *key, const u_char *iv,
-    int enc)
+স্থির পূর্ণাঙ্ক
+ssh_rijndael_init(EVP_CIPHER_CTX *ctx, ধ্রুৱ u_char *চাবি, ধ্রুৱ u_char *iv,
+    পূর্ণাঙ্ক enc)
 {
-	struct ssh_rijndael_ctx *c;
+	সংরচনা ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
-		c = xmalloc(sizeof(*c));
+	যদি ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == রিক্ত) {
+		c = xmalloc(পরিমাণ(*c));
 		EVP_CIPHER_CTX_set_app_data(ctx, c);
 	}
-	if (key != NULL) {
-		if (enc == -1)
+	যদি (চাবি != রিক্ত) {
+		যদি (enc == -1)
 			enc = ctx->encrypt;
-		rijndael_set_key(&c->r_ctx, (u_char *)key,
-		    8*EVP_CIPHER_CTX_key_length(ctx), enc);
+		rijndael_set_চাবি(&c->r_ctx, (u_char *)চাবি,
+		    8*EVP_CIPHER_CTX_চাবি_length(ctx), enc);
 	}
-	if (iv != NULL)
+	যদি (iv != রিক্ত)
 		memcpy(c->r_iv, iv, RIJNDAEL_BLOCKSIZE);
-	return (1);
+	ঘূৰাই (1);
 }
 
-static int
-ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, const u_char *src,
+স্থির পূর্ণাঙ্ক
+ssh_rijndael_cbc(EVP_CIPHER_CTX *ctx, u_char *dest, ধ্রুৱ u_char *src,
     size_t len)
 {
-	struct ssh_rijndael_ctx *c;
+	সংরচনা ssh_rijndael_ctx *c;
 	u_char buf[RIJNDAEL_BLOCKSIZE];
 	u_char *cprev, *cnow, *plain, *ivp;
-	int i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
+	পূর্ণাঙ্ক i, j, blocks = len / RIJNDAEL_BLOCKSIZE;
 
-	if (len == 0)
-		return (1);
-	if (len % RIJNDAEL_BLOCKSIZE)
+	যদি (len == 0)
+		ঘূৰাই (1);
+	যদি (len % RIJNDAEL_BLOCKSIZE)
 		fatal("ssh_rijndael_cbc: bad len %d", len);
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == NULL) {
+	যদি ((c = EVP_CIPHER_CTX_get_app_data(ctx)) == রিক্ত) {
 		error("ssh_rijndael_cbc: no context");
-		return (0);
+		ঘূৰাই (0);
 	}
-	if (ctx->encrypt) {
+	যদি (ctx->encrypt) {
 		cnow  = dest;
 		plain = (u_char *)src;
 		cprev = c->r_iv;
-		for (i = 0; i < blocks; i++, plain+=RIJNDAEL_BLOCKSIZE,
+		বাবে (i = 0; i < blocks; i++, plain+=RIJNDAEL_BLOCKSIZE,
 		    cnow+=RIJNDAEL_BLOCKSIZE) {
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			বাবে (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				buf[j] = plain[j] ^ cprev[j];
 			rijndael_encrypt(&c->r_ctx, buf, cnow);
 			cprev = cnow;
 		}
 		memcpy(c->r_iv, cprev, RIJNDAEL_BLOCKSIZE);
-	} else {
+	} অন্যথা {
 		cnow  = (u_char *) (src+len-RIJNDAEL_BLOCKSIZE);
 		plain = dest+len-RIJNDAEL_BLOCKSIZE;
 
 		memcpy(buf, cnow, RIJNDAEL_BLOCKSIZE);
-		for (i = blocks; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
+		বাবে (i = blocks; i > 0; i--, cnow-=RIJNDAEL_BLOCKSIZE,
 		    plain-=RIJNDAEL_BLOCKSIZE) {
 			rijndael_decrypt(&c->r_ctx, cnow, plain);
 			ivp = (i == 1) ? c->r_iv : cnow-RIJNDAEL_BLOCKSIZE;
-			for (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
+			বাবে (j = 0; j < RIJNDAEL_BLOCKSIZE; j++)
 				plain[j] ^= ivp[j];
 		}
 		memcpy(c->r_iv, buf, RIJNDAEL_BLOCKSIZE);
 	}
-	return (1);
+	ঘূৰাই (1);
 }
 
-static int
+স্থির পূর্ণাঙ্ক
 ssh_rijndael_cleanup(EVP_CIPHER_CTX *ctx)
 {
-	struct ssh_rijndael_ctx *c;
+	সংরচনা ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != NULL) {
-		memset(c, 0, sizeof(*c));
-		free(c);
-		EVP_CIPHER_CTX_set_app_data(ctx, NULL);
+	যদি ((c = EVP_CIPHER_CTX_get_app_data(ctx)) != রিক্ত) {
+		memset(c, 0, পরিমাণ(*c));
+		মুক্ত(c);
+		EVP_CIPHER_CTX_set_app_data(ctx, রিক্ত);
 	}
-	return (1);
+	ঘূৰাই (1);
 }
 
-void
-ssh_rijndael_iv(EVP_CIPHER_CTX *evp, int doset, u_char * iv, u_int len)
+শূন্য
+ssh_rijndael_iv(EVP_CIPHER_CTX *evp, পূর্ণাঙ্ক doset, u_char * iv, u_int len)
 {
-	struct ssh_rijndael_ctx *c;
+	সংরচনা ssh_rijndael_ctx *c;
 
-	if ((c = EVP_CIPHER_CTX_get_app_data(evp)) == NULL)
+	যদি ((c = EVP_CIPHER_CTX_get_app_data(evp)) == রিক্ত)
 		fatal("ssh_rijndael_iv: no context");
-	if (doset)
+	যদি (doset)
 		memcpy(c->r_iv, iv, len);
-	else
+	অন্যথা
 		memcpy(iv, c->r_iv, len);
 }
 
-const EVP_CIPHER *
-evp_rijndael(void)
+ধ্রুৱ EVP_CIPHER *
+evp_rijndael(শূন্য)
 {
-	static EVP_CIPHER rijndal_cbc;
+	স্থির EVP_CIPHER rijndal_cbc;
 
-	memset(&rijndal_cbc, 0, sizeof(EVP_CIPHER));
+	memset(&rijndal_cbc, 0, পরিমাণ(EVP_CIPHER));
 	rijndal_cbc.nid = NID_undef;
 	rijndal_cbc.block_size = RIJNDAEL_BLOCKSIZE;
 	rijndal_cbc.iv_len = RIJNDAEL_BLOCKSIZE;
-	rijndal_cbc.key_len = 16;
+	rijndal_cbc.চাবি_len = 16;
 	rijndal_cbc.init = ssh_rijndael_init;
 	rijndal_cbc.cleanup = ssh_rijndael_cleanup;
 	rijndal_cbc.do_cipher = ssh_rijndael_cbc;
@@ -156,6 +156,6 @@ evp_rijndael(void)
 	rijndal_cbc.flags = EVP_CIPH_CBC_MODE | EVP_CIPH_VARIABLE_LENGTH |
 	    EVP_CIPH_ALWAYS_CALL_INIT | EVP_CIPH_CUSTOM_IV;
 #endif
-	return (&rijndal_cbc);
+	ঘূৰাই (&rijndal_cbc);
 }
 #endif /* USE_BUILTIN_RIJNDAEL */

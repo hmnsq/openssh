@@ -22,87 +22,87 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
 #ifdef HAVE_OSF_SIA
-#include <sia.h>
-#include <siad.h>
-#include <pwd.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <sys/resource.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <string.h>
+#অন্তর্ভাৱ <sia.h>
+#অন্তর্ভাৱ <siad.h>
+#অন্তর্ভাৱ <pwd.h>
+#অন্তর্ভাৱ <signal.h>
+#অন্তর্ভাৱ <setjmp.h>
+#অন্তর্ভাৱ <sys/resource.h>
+#অন্তর্ভাৱ <unistd.h>
+#অন্তর্ভাৱ <stdarg.h>
+#অন্তর্ভাৱ <string.h>
 
-#include "ssh.h"
-#include "ssh_api.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-sia.h"
-#include "log.h"
-#include "servconf.h"
-#include "canohost.h"
-#include "uidswap.h"
+#অন্তর্ভাৱ "ssh.h"
+#অন্তর্ভাৱ "ssh_api.h"
+#অন্তর্ভাৱ "hostfile.h"
+#অন্তর্ভাৱ "auth.h"
+#অন্তর্ভাৱ "auth-sia.h"
+#অন্তর্ভাৱ "log.h"
+#অন্তর্ভাৱ "servconf.h"
+#অন্তর্ভাৱ "canohost.h"
+#অন্তর্ভাৱ "uidswap.h"
 
-extern ServerOptions options;
-extern int saved_argc;
-extern char **saved_argv;
+বাহ্য ServerOptions options;
+বাহ্য পূর্ণাঙ্ক saved_argc;
+বাহ্য ৱর্ণ **saved_argv;
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *pass)
+পূর্ণাঙ্ক
+sys_auth_passwd(সংরচনা ssh *ssh, ধ্রুৱ ৱর্ণ *pass)
 {
-	int ret;
-	SIAENTITY *ent = NULL;
-	const char *host;
+	পূর্ণাঙ্ক ret;
+	SIAENTITY *ent = রিক্ত;
+	ধ্রুৱ ৱর্ণ *host;
 	Authctxt *authctxt = ssh->authctxt;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (!authctxt->user || pass == NULL || pass[0] == '\0')
-		return (0);
+	যদি (!authctxt->user || pass == রিক্ত || pass[0] == '\0')
+		ঘূৰাই (0);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
-	    NULL, 0, NULL) != SIASUCCESS)
-		return (0);
+	যদি (sia_ses_init(&ent, saved_argc, saved_argv, host, authctxt->user,
+	    রিক্ত, 0, রিক্ত) != SIASUCCESS)
+		ঘূৰাই (0);
 
-	if ((ret = sia_ses_authent(NULL, pass, ent)) != SIASUCCESS) {
+	যদি ((ret = sia_ses_authent(রিক্ত, pass, ent)) != SIASUCCESS) {
 		error("Couldn't authenticate %s from %s",
 		    authctxt->user, host);
-		if (ret & SIASTOP)
+		যদি (ret & SIASTOP)
 			sia_ses_release(&ent);
 
-		return (0);
+		ঘূৰাই (0);
 	}
 
 	sia_ses_release(&ent);
 
-	return (1);
+	ঘূৰাই (1);
 }
 
-void
-session_setup_sia(struct passwd *pw, char *tty)
+শূন্য
+session_setup_sia(সংরচনা passwd *pw, ৱর্ণ *tty)
 {
-	SIAENTITY *ent = NULL;
-	const char *host;
+	SIAENTITY *ent = রিক্ত;
+	ধ্রুৱ ৱর্ণ *host;
 
 	host = get_canonical_hostname(options.use_dns);
 
-	if (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
-	    tty, 0, NULL) != SIASUCCESS)
+	যদি (sia_ses_init(&ent, saved_argc, saved_argv, host, pw->pw_name,
+	    tty, 0, রিক্ত) != SIASUCCESS)
 		fatal("sia_ses_init failed");
 
-	if (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
+	যদি (sia_make_entity_pwd(pw, ent) != SIASUCCESS) {
 		sia_ses_release(&ent);
 		fatal("sia_make_entity_pwd failed");
 	}
 
 	ent->authtype = SIA_A_NONE;
-	if (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
+	যদি (sia_ses_estab(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't establish session for %s from %s",
 		    pw->pw_name, host);
 
-	if (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
+	যদি (sia_ses_launch(sia_collect_trm, ent) != SIASUCCESS)
 		fatal("Couldn't launch session for %s from %s",
 		    pw->pw_name, host);
 

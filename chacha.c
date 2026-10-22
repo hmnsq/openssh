@@ -5,14 +5,14 @@ D. J. Bernstein
 Public domain.
 */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
-#include "chacha.h"
+#অন্তর্ভাৱ "chacha.h"
 
-typedef unsigned char u8;
-typedef unsigned int u32;
+প্রকারনির্দেশ unsigned ৱর্ণ u8;
+প্রকারনির্দেশ unsigned পূর্ণাঙ্ক u32;
 
-typedef struct chacha_ctx chacha_ctx;
+প্রকারনির্দেশ সংরচনা chacha_ctx chacha_ctx;
 
 #define U8C(v) (v##U)
 #define U32C(v) (v##U)
@@ -30,12 +30,12 @@ typedef struct chacha_ctx chacha_ctx;
    ((u32)((p)[3]) << 24))
 
 #define U32TO8_LITTLE(p, v) \
-  do { \
+  কৰা { \
     (p)[0] = U8V((v)      ); \
     (p)[1] = U8V((v) >>  8); \
     (p)[2] = U8V((v) >> 16); \
     (p)[3] = U8V((v) >> 24); \
-  } while (0)
+  } যেতিয়ালৈ (0)
 
 #define ROTATE(v,c) (ROTL32(v,c))
 #define XOR(v,w) ((v) ^ (w))
@@ -48,74 +48,74 @@ typedef struct chacha_ctx chacha_ctx;
   a = PLUS(a,b); d = ROTATE(XOR(d,a), 8); \
   c = PLUS(c,d); b = ROTATE(XOR(b,c), 7);
 
-static const char sigma[] = "expand 32-byte k";
-static const char tau[] = "expand 16-byte k";
+স্থির ধ্রুৱ ৱর্ণ sigma[] = "expand 32-byte k";
+স্থির ধ্রুৱ ৱর্ণ tau[] = "expand 16-byte k";
 
-void
-chacha_keysetup(chacha_ctx *x,const u8 *k,u32 kbits)
+শূন্য
+chacha_keysetup(chacha_ctx *x,ধ্রুৱ u8 *k,u32 kbits)
 {
-  const char *constants;
+  ধ্রুৱ ৱর্ণ *constants;
 
-  x->input[4] = U8TO32_LITTLE(k + 0);
-  x->input[5] = U8TO32_LITTLE(k + 4);
-  x->input[6] = U8TO32_LITTLE(k + 8);
-  x->input[7] = U8TO32_LITTLE(k + 12);
-  if (kbits == 256) { /* recommended */
+  x->প্ৰবেশ[4] = U8TO32_LITTLE(k + 0);
+  x->প্ৰবেশ[5] = U8TO32_LITTLE(k + 4);
+  x->প্ৰবেশ[6] = U8TO32_LITTLE(k + 8);
+  x->প্ৰবেশ[7] = U8TO32_LITTLE(k + 12);
+  যদি (kbits == 256) { /* recommended */
     k += 16;
     constants = sigma;
-  } else { /* kbits == 128 */
+  } অন্যথা { /* kbits == 128 */
     constants = tau;
   }
-  x->input[8] = U8TO32_LITTLE(k + 0);
-  x->input[9] = U8TO32_LITTLE(k + 4);
-  x->input[10] = U8TO32_LITTLE(k + 8);
-  x->input[11] = U8TO32_LITTLE(k + 12);
-  x->input[0] = U8TO32_LITTLE(constants + 0);
-  x->input[1] = U8TO32_LITTLE(constants + 4);
-  x->input[2] = U8TO32_LITTLE(constants + 8);
-  x->input[3] = U8TO32_LITTLE(constants + 12);
+  x->প্ৰবেশ[8] = U8TO32_LITTLE(k + 0);
+  x->প্ৰবেশ[9] = U8TO32_LITTLE(k + 4);
+  x->প্ৰবেশ[10] = U8TO32_LITTLE(k + 8);
+  x->প্ৰবেশ[11] = U8TO32_LITTLE(k + 12);
+  x->প্ৰবেশ[0] = U8TO32_LITTLE(constants + 0);
+  x->প্ৰবেশ[1] = U8TO32_LITTLE(constants + 4);
+  x->প্ৰবেশ[2] = U8TO32_LITTLE(constants + 8);
+  x->প্ৰবেশ[3] = U8TO32_LITTLE(constants + 12);
 }
 
-void
-chacha_ivsetup(chacha_ctx *x, const u8 *iv, const u8 *counter)
+শূন্য
+chacha_ivsetup(chacha_ctx *x, ধ্রুৱ u8 *iv, ধ্রুৱ u8 *counter)
 {
-  x->input[12] = counter == NULL ? 0 : U8TO32_LITTLE(counter + 0);
-  x->input[13] = counter == NULL ? 0 : U8TO32_LITTLE(counter + 4);
-  x->input[14] = U8TO32_LITTLE(iv + 0);
-  x->input[15] = U8TO32_LITTLE(iv + 4);
+  x->প্ৰবেশ[12] = counter == রিক্ত ? 0 : U8TO32_LITTLE(counter + 0);
+  x->প্ৰবেশ[13] = counter == রিক্ত ? 0 : U8TO32_LITTLE(counter + 4);
+  x->প্ৰবেশ[14] = U8TO32_LITTLE(iv + 0);
+  x->প্ৰবেশ[15] = U8TO32_LITTLE(iv + 4);
 }
 
-void
-chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
+শূন্য
+chacha_encrypt_bytes(chacha_ctx *x,ধ্রুৱ u8 *m,u8 *c,u32 bytes)
 {
   u32 x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
   u32 j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
-  u8 *ctarget = NULL;
+  u8 *ctarget = রিক্ত;
   u8 tmp[64];
   u_int i;
 
-  if (!bytes) return;
+  যদি (!bytes) ঘূৰাই;
 
-  j0 = x->input[0];
-  j1 = x->input[1];
-  j2 = x->input[2];
-  j3 = x->input[3];
-  j4 = x->input[4];
-  j5 = x->input[5];
-  j6 = x->input[6];
-  j7 = x->input[7];
-  j8 = x->input[8];
-  j9 = x->input[9];
-  j10 = x->input[10];
-  j11 = x->input[11];
-  j12 = x->input[12];
-  j13 = x->input[13];
-  j14 = x->input[14];
-  j15 = x->input[15];
+  j0 = x->প্ৰবেশ[0];
+  j1 = x->প্ৰবেশ[1];
+  j2 = x->প্ৰবেশ[2];
+  j3 = x->প্ৰবেশ[3];
+  j4 = x->প্ৰবেশ[4];
+  j5 = x->প্ৰবেশ[5];
+  j6 = x->প্ৰবেশ[6];
+  j7 = x->প্ৰবেশ[7];
+  j8 = x->প্ৰবেশ[8];
+  j9 = x->প্ৰবেশ[9];
+  j10 = x->প্ৰবেশ[10];
+  j11 = x->প্ৰবেশ[11];
+  j12 = x->প্ৰবেশ[12];
+  j13 = x->প্ৰবেশ[13];
+  j14 = x->প্ৰবেশ[14];
+  j15 = x->প্ৰবেশ[15];
 
-  for (;;) {
-    if (bytes < 64) {
-      for (i = 0;i < bytes;++i) tmp[i] = m[i];
+  বাবে (;;) {
+    যদি (bytes < 64) {
+      বাবে (i = 0;i < bytes;++i) tmp[i] = m[i];
       m = tmp;
       ctarget = c;
       c = tmp;
@@ -136,7 +136,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     x13 = j13;
     x14 = j14;
     x15 = j15;
-    for (i = 20;i > 0;i -= 2) {
+    বাবে (i = 20;i > 0;i -= 2) {
       QUARTERROUND( x0, x4, x8,x12)
       QUARTERROUND( x1, x5, x9,x13)
       QUARTERROUND( x2, x6,x10,x14)
@@ -181,7 +181,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     x15 = XOR(x15,U8TO32_LITTLE(m + 60));
 
     j12 = PLUSONE(j12);
-    if (!j12) {
+    যদি (!j12) {
       j13 = PLUSONE(j13);
       /* stopping at 2^70 bytes per nonce is user's responsibility */
     }
@@ -203,13 +203,13 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     U32TO8_LITTLE(c + 56,x14);
     U32TO8_LITTLE(c + 60,x15);
 
-    if (bytes <= 64) {
-      if (bytes < 64) {
-        for (i = 0;i < bytes;++i) ctarget[i] = c[i];
+    যদি (bytes <= 64) {
+      যদি (bytes < 64) {
+        বাবে (i = 0;i < bytes;++i) ctarget[i] = c[i];
       }
-      x->input[12] = j12;
-      x->input[13] = j13;
-      return;
+      x->প্ৰবেশ[12] = j12;
+      x->প্ৰবেশ[13] = j13;
+      ঘূৰাই;
     }
     bytes -= 64;
     c += 64;

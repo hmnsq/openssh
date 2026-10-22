@@ -1,33 +1,33 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#অন্তর্ভাৱ <stddef.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdint.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <stdlib.h>
 
-extern "C" {
+বাহ্য "C" {
 
-#include "auth-options.h"
+#অন্তর্ভাৱ "auth-options.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+পূর্ণাঙ্ক LLVMFuzzer_Test_One_প্ৰবেশ(ধ্রুৱ uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();
+	ৱর্ণ *cp = (ৱর্ণ *)malloc(size + 1);
+	সংরচনা sshauthopt *opts = রিক্ত, *merge = রিক্ত, *add = sshauthopt_new();
 
-	if (cp == NULL || add == NULL)
-		goto out;
+	যদি (cp == রিক্ত || add == রিক্ত)
+		গচ্ছ out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshauthopt_parse(cp, NULL)) == NULL)
-		goto out;
-	if ((merge = sshauthopt_merge(opts, add, NULL)) == NULL)
-		goto out;
+	যদি ((opts = sshauthopt_parse(cp, রিক্ত)) == রিক্ত)
+		গচ্ছ out;
+	যদি ((merge = sshauthopt_merge(opts, add, রিক্ত)) == রিক্ত)
+		গচ্ছ out;
 
  out:
-	free(cp);
+	মুক্ত(cp);
 	sshauthopt_free(add);
 	sshauthopt_free(opts);
 	sshauthopt_free(merge);
-	return 0;
+	ঘূৰাই 0;
 }
 
 } // extern "C"

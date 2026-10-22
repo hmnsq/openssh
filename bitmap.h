@@ -18,40 +18,40 @@
 #ifndef _BITMAP_H
 #define _BITMAP_H
 
-#include <sys/types.h>
+#অন্তর্ভাৱ <sys/types.h>
 
 /* Simple bit vector routines */
 
-struct bitmap;
+সংরচনা bitmap;
 
 /* Allocate a new bitmap. Returns NULL on allocation failure. */
-struct bitmap *bitmap_new(void);
+সংরচনা bitmap *bitmap_new(শূন্য);
 
 /* Free a bitmap */
-void bitmap_free(struct bitmap *b);
+শূন্য bitmap_free(সংরচনা bitmap *b);
 
 /* Zero an existing bitmap */
-void bitmap_zero(struct bitmap *b);
+শূন্য bitmap_zero(সংরচনা bitmap *b);
 
 /* Test whether a bit is set in a bitmap. */
-int bitmap_test_bit(struct bitmap *b, u_int n);
+পূর্ণাঙ্ক bitmap_test_bit(সংরচনা bitmap *b, u_int n);
 
 /* Set a bit in a bitmap. Returns 0 on success or -1 on error */
-int bitmap_set_bit(struct bitmap *b, u_int n);
+পূর্ণাঙ্ক bitmap_set_bit(সংরচনা bitmap *b, u_int n);
 
 /* Clear a bit in a bitmap */
-void bitmap_clear_bit(struct bitmap *b, u_int n);
+শূন্য bitmap_clear_bit(সংরচনা bitmap *b, u_int n);
 
 /* Return the number of bits in a bitmap (i.e. the position of the MSB) */
-size_t bitmap_nbits(struct bitmap *b);
+size_t bitmap_nbits(সংরচনা bitmap *b);
 
 /* Return the number of bytes needed to represent a bitmap */
-size_t bitmap_nbytes(struct bitmap *b);
+size_t bitmap_nbytes(সংরচনা bitmap *b);
 
 /* Convert a bitmap to a big endian byte string */
-int bitmap_to_string(struct bitmap *b, void *p, size_t l);
+পূর্ণাঙ্ক bitmap_to_string(সংরচনা bitmap *b, শূন্য *p, size_t l);
 
 /* Convert a big endian byte string to a bitmap */
-int bitmap_from_string(struct bitmap *b, const void *p, size_t l);
+পূর্ণাঙ্ক bitmap_from_string(সংরচনা bitmap *b, ধ্রুৱ শূন্য *p, size_t l);
 
 #endif /* _BITMAP_H */

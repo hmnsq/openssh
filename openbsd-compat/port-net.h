@@ -17,32 +17,32 @@
 #ifndef _PORT_TUN_H
 #define _PORT_TUN_H
 
-struct Channel;
-struct ssh;
+সংরচনা Channel;
+সংরচনা ssh;
 
-#if defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
+#যদি defined(SSH_TUN_LINUX) || defined(SSH_TUN_FREEBSD)
 # define CUSTOM_SYS_TUN_OPEN
-int	  sys_tun_open(int, int, char **);
+পূর্ণাঙ্ক	  sys_tun_open(পূর্ণাঙ্ক, পূর্ণাঙ্ক, ৱর্ণ **);
 #endif
 
-#if defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
+#যদি defined(SSH_TUN_COMPAT_AF) || defined(SSH_TUN_PREPEND_AF)
 # define SSH_TUN_FILTER
-int	 sys_tun_infilter(struct ssh *, struct Channel *, char *, int);
-u_char	*sys_tun_outfilter(struct ssh *, struct Channel *, u_char **, size_t *);
+পূর্ণাঙ্ক	 sys_tun_infilter(সংরচনা ssh *, সংরচনা Channel *, ৱর্ণ *, পূর্ণাঙ্ক);
+u_char	*sys_tun_outfilter(সংরচনা ssh *, সংরচনা Channel *, u_char **, size_t *);
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
+#যদি defined(SYS_RDOMAIN_LINUX)
 # define HAVE_SYS_GET_RDOMAIN
 # define HAVE_SYS_SET_RDOMAIN
 # define HAVE_SYS_VALID_RDOMAIN
-char *sys_get_rdomain(int fd);
-int sys_set_rdomain(int fd, const char *name);
-int sys_valid_rdomain(const char *name);
+ৱর্ণ *sys_get_rdomain(পূর্ণাঙ্ক fd);
+পূর্ণাঙ্ক sys_set_rdomain(পূর্ণাঙ্ক fd, ধ্রুৱ ৱর্ণ *name);
+পূর্ণাঙ্ক sys_valid_rdomain(ধ্রুৱ ৱর্ণ *name);
 #endif
 
-#if defined(SYS_RDOMAIN_XXX)
+#যদি defined(SYS_RDOMAIN_XXX)
 # define HAVE_SYS_SET_PROCESS_RDOMAIN
-void sys_set_process_rdomain(const char *name);
+শূন্য sys_set_process_rdomain(ধ্রুৱ ৱর্ণ *name);
 #endif
 
 #endif

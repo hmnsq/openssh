@@ -27,24 +27,24 @@
  * binary mode on Windows systems.
  */
 
-#define NO_BINARY_OPEN	/* Avoid redefining open to binary_open for this file */
-#include "includes.h"
+#define NO_দ্বিমিক_OPEN	/* Avoid redefining open to binary_open for this file */
+#অন্তর্ভাৱ "includes.h"
 
 #ifdef HAVE_CYGWIN
 
-#include <sys/types.h>
-#include <fcntl.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <wchar.h>
-#include <wctype.h>
+#অন্তর্ভাৱ <sys/types.h>
+#অন্তর্ভাৱ <fcntl.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <unistd.h>
+#অন্তর্ভাৱ <stdarg.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <wchar.h>
+#অন্তর্ভাৱ <wctype.h>
 
-#include "xmalloc.h"
+#অন্তর্ভাৱ "xmalloc.h"
 
-int
-binary_open(const char *filename, int flags, ...)
+পূর্ণাঙ্ক
+দ্বিমিক_open(ধ্রুৱ ৱর্ণ *filename, পূর্ণাঙ্ক flags, ...)
 {
 	va_list ap;
 	mode_t mode;
@@ -52,36 +52,36 @@ binary_open(const char *filename, int flags, ...)
 	va_start(ap, flags);
 	mode = va_arg(ap, mode_t);
 	va_end(ap);
-	return (open(filename, flags | O_BINARY, mode));
+	ঘূৰাই (open(filename, flags | O_দ্বিমিক, mode));
 }
 
-int
-check_ntsec(const char *filename)
+পূর্ণাঙ্ক
+check_ntsec(ধ্রুৱ ৱর্ণ *filename)
 {
-	return (pathconf(filename, _PC_POSIX_PERMISSIONS));
+	ঘূৰাই (pathconf(filename, _PC_POSIX_PERMISSIONS));
 }
 
-const char *
+ধ্রুৱ ৱর্ণ *
 cygwin_ssh_privsep_user()
 {
-  static char cyg_privsep_user[DNLEN + UNLEN + 2];
+  স্থির ৱর্ণ cyg_privsep_user[DNLEN + UNLEN + 2];
 
-  if (!cyg_privsep_user[0])
+  যদি (!cyg_privsep_user[0])
     {
 #ifdef CW_CYGNAME_FROM_WINNAME
-      if (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
-			   sizeof cyg_privsep_user) != 0)
+      যদি (cygwin_internal (CW_CYGNAME_FROM_WINNAME, "sshd", cyg_privsep_user,
+			   পরিমাণ cyg_privsep_user) != 0)
 #endif
-	strlcpy(cyg_privsep_user, "sshd", sizeof(cyg_privsep_user));
+	strlcpy(cyg_privsep_user, "sshd", পরিমাণ(cyg_privsep_user));
     }
-  return cyg_privsep_user;
+  ঘূৰাই cyg_privsep_user;
 }
 
-#define NL(x) x, (sizeof (x) - 1)
-#define WENV_SIZ (sizeof (wenv_arr) / sizeof (wenv_arr[0]))
+#define NL(x) x, (পরিমাণ (x) - 1)
+#define WENV_SIZ (পরিমাণ (wenv_arr) / পরিমাণ (wenv_arr[0]))
 
-static struct wenv {
-	const char *name;
+স্থির সংরচনা wenv {
+	ধ্রুৱ ৱর্ণ *name;
 	size_t namelen;
 } wenv_arr[] = {
 	{ NL("ALLUSERSPROFILE=") },
@@ -97,27 +97,27 @@ static struct wenv {
 	{ NL("WINDIR=") }
 };
 
-char **
-fetch_windows_environment(void)
+ৱর্ণ **
+fetch_windows_environment(শূন্য)
 {
-	char **e, **p;
-	unsigned int i, idx = 0;
+	ৱর্ণ **e, **p;
+	unsigned পূর্ণাঙ্ক i, idx = 0;
 
-	p = xcalloc(WENV_SIZ + 1, sizeof(char *));
-	for (e = environ; *e != NULL; ++e) {
-		for (i = 0; i < WENV_SIZ; ++i) {
-			if (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
+	p = xcalloc(WENV_SIZ + 1, পরিমাণ(ৱর্ণ *));
+	বাবে (e = environ; *e != রিক্ত; ++e) {
+		বাবে (i = 0; i < WENV_SIZ; ++i) {
+			যদি (!strncmp(*e, wenv_arr[i].name, wenv_arr[i].namelen))
 				p[idx++] = *e;
 		}
 	}
-	p[idx] = NULL;
-	return p;
+	p[idx] = রিক্ত;
+	ঘূৰাই p;
 }
 
-void
-free_windows_environment(char **p)
+শূন্য
+free_windows_environment(ৱর্ণ **p)
 {
-	free(p);
+	মুক্ত(p);
 }
 
 /*
@@ -128,56 +128,56 @@ free_windows_environment(char **p)
  * Unicode characters into account.
  */
 
-static int
-__match_pattern (const wchar_t *s, const wchar_t *pattern)
+স্থির পূর্ণাঙ্ক
+__match_pattern (ধ্রুৱ wchar_t *s, ধ্রুৱ wchar_t *pattern)
 {
-	for (;;) {
+	বাবে (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		যদি (!*pattern)
+			ঘূৰাই !*s;
 
-		if (*pattern == '*') {
+		যদি (*pattern == '*') {
 			/* Skip the asterisk. */
 			pattern++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			যদি (!*pattern)
+				ঘূৰাই 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			যদি (*pattern != '?' && *pattern != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
+				বাবে (; *s; s++)
+					যদি (*s == *pattern &&
 					    __match_pattern(s + 1, pattern + 1))
-						return 1;
+						ঘূৰাই 1;
 				/* Failed. */
-				return 0;
+				ঘূৰাই 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (__match_pattern(s, pattern))
-					return 1;
+			বাবে (; *s; s++)
+				যদি (__match_pattern(s, pattern))
+					ঘূৰাই 1;
 			/* Failed. */
-			return 0;
+			ঘূৰাই 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		যদি (!*s)
+			ঘূৰাই 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && towlower(*pattern) != towlower(*s))
-			return 0;
+		যদি (*pattern != '?' && towlower(*pattern) != towlower(*s))
+			ঘূৰাই 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
@@ -186,28 +186,28 @@ __match_pattern (const wchar_t *s, const wchar_t *pattern)
 	/* NOTREACHED */
 }
 
-static int
-_match_pattern(const char *s, const char *pattern)
+স্থির পূর্ণাঙ্ক
+_match_pattern(ধ্রুৱ ৱর্ণ *s, ধ্রুৱ ৱর্ণ *pattern)
 {
 	wchar_t *ws;
 	wchar_t *wpattern;
 	size_t len;
-	int ret;
+	পূর্ণাঙ্ক ret;
 
-	if ((len = mbstowcs(NULL, s, 0)) == (size_t) -1)
-		return 0;
-	ws = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
+	যদি ((len = mbstowcs(রিক্ত, s, 0)) == (size_t) -1)
+		ঘূৰাই 0;
+	ws = (wchar_t *) xcalloc(len + 1, পরিমাণ (wchar_t));
 	mbstowcs(ws, s, len + 1);
-	if ((len = mbstowcs(NULL, pattern, 0)) == (size_t) -1) {
-		free(ws);
-		return 0;
+	যদি ((len = mbstowcs(রিক্ত, pattern, 0)) == (size_t) -1) {
+		মুক্ত(ws);
+		ঘূৰাই 0;
 	}
-	wpattern = (wchar_t *) xcalloc(len + 1, sizeof (wchar_t));
+	wpattern = (wchar_t *) xcalloc(len + 1, পরিমাণ (wchar_t));
 	mbstowcs(wpattern, pattern, len + 1);
 	ret = __match_pattern (ws, wpattern);
-	free(ws);
-	free(wpattern);
-	return ret;
+	মুক্ত(ws);
+	মুক্ত(wpattern);
+	ঘূৰাই ret;
 }
 
 /*
@@ -216,47 +216,47 @@ _match_pattern(const char *s, const char *pattern)
  * indicate negation).  Returns -1 if negation matches, 1 if there is
  * a positive match, 0 if there is no match at all.
  */
-int
-cygwin_ug_match_pattern_list(const char *string, const char *pattern)
+পূর্ণাঙ্ক
+cygwin_ug_match_pattern_list(ধ্রুৱ ৱর্ণ *string, ধ্রুৱ ৱর্ণ *pattern)
 {
-	char sub[1024];
-	int negated;
-	int got_positive;
+	ৱর্ণ sub[1024];
+	পূর্ণাঙ্ক negated;
+	পূর্ণাঙ্ক got_positive;
 	size_t i, subi, len = strlen(pattern);
 
 	got_positive = 0;
-	for (i = 0; i < len;) {
+	বাবে (i = 0; i < len;) {
 		/* Check if the subpattern is negated. */
-		if (pattern[i] == '!') {
+		যদি (pattern[i] == '!') {
 			negated = 1;
 			i++;
-		} else
+		} অন্যথা
 			negated = 0;
 
 		/*
 		 * Extract the subpattern up to a comma or end.  Convert the
 		 * subpattern to lowercase.
 		 */
-		for (subi = 0;
-		    i < len && subi < sizeof(sub) - 1 && pattern[i] != ',';
+		বাবে (subi = 0;
+		    i < len && subi < পরিমাণ(sub) - 1 && pattern[i] != ',';
 		    subi++, i++)
 			sub[subi] = pattern[i];
 		/* If subpattern too long, return failure (no match). */
-		if (subi >= sizeof(sub) - 1)
-			return 0;
+		যদি (subi >= পরিমাণ(sub) - 1)
+			ঘূৰাই 0;
 
 		/* If the subpattern was terminated by a comma, then skip it. */
-		if (i < len && pattern[i] == ',')
+		যদি (i < len && pattern[i] == ',')
 			i++;
 
 		/* Null-terminate the subpattern. */
 		sub[subi] = '\0';
 
 		/* Try to match the subpattern against the string. */
-		if (_match_pattern(string, sub)) {
-			if (negated)
-				return -1;		/* Negative */
-			else
+		যদি (_match_pattern(string, sub)) {
+			যদি (negated)
+				ঘূৰাই -1;		/* Negative */
+			অন্যথা
 				got_positive = 1;	/* Positive */
 		}
 	}
@@ -265,7 +265,7 @@ cygwin_ug_match_pattern_list(const char *string, const char *pattern)
 	 * Return success if got a positive match.  If there was a negative
 	 * match, we have already returned -1 and never get here.
 	 */
-	return got_positive;
+	ঘূৰাই got_positive;
 }
 
 #endif /* HAVE_CYGWIN */

@@ -15,45 +15,45 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
-#include <sys/types.h>
+#অন্তর্ভাৱ <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
+#অন্তর্ভাৱ <errno.h>
+#অন্তর্ভাৱ <string.h>
 
-#include "log.h"
+#অন্তর্ভাৱ "log.h"
 
 #ifdef WITH_OPENSSL
-#include <openssl/err.h>
+#অন্তর্ভাৱ <openssl/err.h>
 
-const char *
-ssherr_libcrypto(void)
+ধ্রুৱ ৱর্ণ *
+ssherr_libcrypto(শূন্য)
 {
 	unsigned long e;
-	static char buf[512];
-	char msg[4096];
-	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	স্থির ৱর্ণ buf[512];
+	ৱর্ণ বাৰ্তা[4096];
+	ধ্রুৱ ৱর্ণ *reason = রিক্ত, *file, *data;
+	পূর্ণাঙ্ক ln, fl;
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
-		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, রিক্ত);
+	যেতিয়ালৈ ((e = ERR_get_error_সাৰি_data(&file, &ln, &data, &fl)) != 0) {
+		ERR_error_string_n(e, buf, পরিমাণ(buf));
+		snprintf(বাৰ্তা, পরিমাণ(বাৰ্তা), "%s:%s:%d:%s", buf, file, ln,
 		    (fl & ERR_TXT_STRING) ? data : "");
-		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
-			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
+		debug("libcrypto: '%s'", বাৰ্তা);
+		যদি ((reason = ERR_reason_error_string(e)) != রিক্ত)
+			snprintf(buf, পরিমাণ(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	যদি (reason == রিক্ত)
+		ঘূৰাই রিক্ত;
+	ঘূৰাই buf;
 }
-#else
-const char *
-ssherr_libcrypto(void)
+#অন্যথা
+ধ্রুৱ ৱর্ণ *
+ssherr_libcrypto(শূন্য)
 {
-	return NULL;
+	ঘূৰাই রিক্ত;
 }
 #endif

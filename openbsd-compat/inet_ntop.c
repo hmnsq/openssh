@@ -18,18 +18,18 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_ntop.c */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
 #ifndef HAVE_INET_NTOP
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <arpa/nameser.h>
-#include <string.h>
-#include <errno.h>
-#include <stdio.h>
+#অন্তর্ভাৱ <sys/types.h>
+#অন্তর্ভাৱ <sys/socket.h>
+#অন্তর্ভাৱ <netinet/in.h>
+#অন্তর্ভাৱ <arpa/inet.h>
+#অন্তর্ভাৱ <arpa/nameser.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <errno.h>
+#অন্তর্ভাৱ <stdio.h>
 
 #ifndef IN6ADDRSZ
 #define IN6ADDRSZ   16   /* IPv6 T_AAAA */                 
@@ -44,8 +44,8 @@
  * sizeof(int) < 4.  sizeof(int) > 4 is fine; all the world's not a VAX.
  */
 
-static const char *inet_ntop4(const u_char *src, char *dst, size_t size);
-static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
+স্থির ধ্রুৱ ৱর্ণ *inet_ntop4(ধ্রুৱ u_char *src, ৱর্ণ *dst, size_t size);
+স্থির ধ্রুৱ ৱর্ণ *inet_ntop6(ধ্রুৱ u_char *src, ৱর্ণ *dst, size_t size);
 
 /* char *
  * inet_ntop(af, src, dst, size)
@@ -55,17 +55,17 @@ static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
  * author:
  *	Paul Vixie, 1996.
  */
-const char *
-inet_ntop(int af, const void *src, char *dst, socklen_t size)
+ধ্রুৱ ৱর্ণ *
+inet_ntop(পূর্ণাঙ্ক af, ধ্রুৱ শূন্য *src, ৱর্ণ *dst, socklen_t size)
 {
-	switch (af) {
-	case AF_INET:
-		return (inet_ntop4(src, dst, (size_t)size));
-	case AF_INET6:
-		return (inet_ntop6(src, dst, (size_t)size));
-	default:
+	ৱিকল্প (af) {
+	পক্ষ AF_INET:
+		ঘূৰাই (inet_ntop4(src, dst, (size_t)size));
+	পক্ষ AF_INET6:
+		ঘূৰাই (inet_ntop6(src, dst, (size_t)size));
+	স্ৱভাৱ:
 		errno = EAFNOSUPPORT;
-		return (NULL);
+		ঘূৰাই (রিক্ত);
 	}
 	/* NOTREACHED */
 }
@@ -81,20 +81,20 @@ inet_ntop(int af, const void *src, char *dst, socklen_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop4(const u_char *src, char *dst, size_t size)
+স্থির ধ্রুৱ ৱর্ণ *
+inet_ntop4(ধ্রুৱ u_char *src, ৱর্ণ *dst, size_t size)
 {
-	static const char fmt[] = "%u.%u.%u.%u";
-	char tmp[sizeof "255.255.255.255"];
-	int l;
+	স্থির ধ্রুৱ ৱর্ণ fmt[] = "%u.%u.%u.%u";
+	ৱর্ণ tmp[পরিমাণ "255.255.255.255"];
+	পূর্ণাঙ্ক l;
 
 	l = snprintf(tmp, size, fmt, src[0], src[1], src[2], src[3]);
-	if (l <= 0 || l >= size) {
+	যদি (l <= 0 || l >= size) {
 		errno = ENOSPC;
-		return (NULL);
+		ঘূৰাই (রিক্ত);
 	}
 	strlcpy(dst, tmp, size);
-	return (dst);
+	ঘূৰাই (dst);
 }
 
 /* const char *
@@ -103,8 +103,8 @@ inet_ntop4(const u_char *src, char *dst, size_t size)
  * author:
  *	Paul Vixie, 1996.
  */
-static const char *
-inet_ntop6(const u_char *src, char *dst, size_t size)
+স্থির ধ্রুৱ ৱর্ণ *
+inet_ntop6(ধ্রুৱ u_char *src, ৱর্ণ *dst, size_t size)
 {
 	/*
 	 * Note that int32_t and int16_t need only be "at least" large enough
@@ -113,98 +113,98 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	 * Keep this in mind if you think this function should have been coded
 	 * to use pointer overlays.  All the world's not a VAX.
 	 */
-	char tmp[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
-	char *tp, *ep;
-	struct { int base, len; } best, cur;
-	u_int words[IN6ADDRSZ / INT16SZ];
-	int i;
-	int advance;
+	ৱর্ণ tmp[পরিমাণ "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
+	ৱর্ণ *tp, *ep;
+	সংরচনা { পূর্ণাঙ্ক base, len; } best, cur;
+	u_int শব্দগুলি[IN6ADDRSZ / INT16SZ];
+	পূর্ণাঙ্ক i;
+	পূর্ণাঙ্ক advance;
 
 	/*
 	 * Preprocess:
 	 *	Copy the input (bytewise) array into a wordwise array.
 	 *	Find the longest run of 0x00's in src[] for :: shorthanding.
 	 */
-	memset(words, '\0', sizeof words);
-	for (i = 0; i < IN6ADDRSZ; i++)
-		words[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
+	memset(শব্দগুলি, '\0', পরিমাণ শব্দগুলি);
+	বাবে (i = 0; i < IN6ADDRSZ; i++)
+		শব্দগুলি[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
 	best.base = -1;
 	cur.base = -1;
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
-		if (words[i] == 0) {
-			if (cur.base == -1)
+	বাবে (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
+		যদি (শব্দগুলি[i] == 0) {
+			যদি (cur.base == -1)
 				cur.base = i, cur.len = 1;
-			else
+			অন্যথা
 				cur.len++;
-		} else {
-			if (cur.base != -1) {
-				if (best.base == -1 || cur.len > best.len)
+		} অন্যথা {
+			যদি (cur.base != -1) {
+				যদি (best.base == -1 || cur.len > best.len)
 					best = cur;
 				cur.base = -1;
 			}
 		}
 	}
-	if (cur.base != -1) {
-		if (best.base == -1 || cur.len > best.len)
+	যদি (cur.base != -1) {
+		যদি (best.base == -1 || cur.len > best.len)
 			best = cur;
 	}
-	if (best.base != -1 && best.len < 2)
+	যদি (best.base != -1 && best.len < 2)
 		best.base = -1;
 
 	/*
 	 * Format the result.
 	 */
 	tp = tmp;
-	ep = tmp + sizeof(tmp);
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
+	ep = tmp + পরিমাণ(tmp);
+	বাবে (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
 		/* Are we inside the best run of 0x00's? */
-		if (best.base != -1 && i >= best.base &&
+		যদি (best.base != -1 && i >= best.base &&
 		    i < (best.base + best.len)) {
-			if (i == best.base) {
-				if (tp + 1 >= ep)
-					return (NULL);
+			যদি (i == best.base) {
+				যদি (tp + 1 >= ep)
+					ঘূৰাই (রিক্ত);
 				*tp++ = ':';
 			}
-			continue;
+			অনুৱর্ত;
 		}
 		/* Are we following an initial run of 0x00s or any real hex? */
-		if (i != 0) {
-			if (tp + 1 >= ep)
-				return (NULL);
+		যদি (i != 0) {
+			যদি (tp + 1 >= ep)
+				ঘূৰাই (রিক্ত);
 			*tp++ = ':';
 		}
 		/* Is this address an encapsulated IPv4? */
-		if (i == 6 && best.base == 0 &&
-		    (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
-			if (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
-				return (NULL);
+		যদি (i == 6 && best.base == 0 &&
+		    (best.len == 6 || (best.len == 5 && শব্দগুলি[5] == 0xffff))) {
+			যদি (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
+				ঘূৰাই (রিক্ত);
 			tp += strlen(tp);
-			break;
+			ভঙ্গ;
 		}
-		advance = snprintf(tp, ep - tp, "%x", words[i]);
-		if (advance <= 0 || advance >= ep - tp)
-			return (NULL);
+		advance = snprintf(tp, ep - tp, "%x", শব্দগুলি[i]);
+		যদি (advance <= 0 || advance >= ep - tp)
+			ঘূৰাই (রিক্ত);
 		tp += advance;
 	}
 	/* Was it a trailing run of 0x00's? */
-	if (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
-		if (tp + 1 >= ep)
-			return (NULL);
+	যদি (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
+		যদি (tp + 1 >= ep)
+			ঘূৰাই (রিক্ত);
 		*tp++ = ':';
 	}
-	if (tp + 1 >= ep)
-		return (NULL);
+	যদি (tp + 1 >= ep)
+		ঘূৰাই (রিক্ত);
 	*tp++ = '\0';
 
 	/*
 	 * Check for overflow, copy, and we're done.
 	 */
-	if ((size_t)(tp - tmp) > size) {
+	যদি ((size_t)(tp - tmp) > size) {
 		errno = ENOSPC;
-		return (NULL);
+		ঘূৰাই (রিক্ত);
 	}
 	strlcpy(dst, tmp, size);
-	return (dst);
+	ঘূৰাই (dst);
 }
 
 #endif /* !HAVE_INET_NTOP */

@@ -18,20 +18,20 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strnlen.c */
 
-#include "includes.h"
-#if !defined(HAVE_STRNLEN) || defined(BROKEN_STRNLEN)
-#include <sys/types.h>
+#অন্তর্ভাৱ "includes.h"
+#যদি !defined(HAVE_STRNLEN) || defined(BROKEN_STRNLEN)
+#অন্তর্ভাৱ <sys/types.h>
 
-#include <string.h>
+#অন্তর্ভাৱ <string.h>
 
 size_t
-strnlen(const char *str, size_t maxlen)
+strnlen(ধ্রুৱ ৱর্ণ *str, size_t maxlen)
 {
-	const char *cp;
+	ধ্রুৱ ৱর্ণ *cp;
 
-	for (cp = str; maxlen != 0 && *cp != '\0'; cp++, maxlen--)
+	বাবে (cp = str; maxlen != 0 && *cp != '\0'; cp++, maxlen--)
 		;
 
-	return (size_t)(cp - str);
+	ঘূৰাই (size_t)(cp - str);
 }
 #endif

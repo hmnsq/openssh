@@ -35,202 +35,202 @@
  * that ai_family is AF_INET. Don't use it for another purpose.
  */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <string.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#অন্তর্ভাৱ <netinet/in.h>
+#অন্তর্ভাৱ <arpa/inet.h>
 
 #ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-		size_t hostlen, char *serv, size_t servlen, int flags)
+পূর্ণাঙ্ক getnameinfo(ধ্রুৱ সংরচনা sockaddr *sa, size_t salen, ৱর্ণ *host,
+		size_t hostlen, ৱর্ণ *serv, size_t servlen, পূর্ণাঙ্ক flags)
 {
-	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
-	struct hostent *hp;
-	char tmpserv[16];
+	সংরচনা sockaddr_in *sin = (সংরচনা sockaddr_in *)sa;
+	সংরচনা hostent *hp;
+	ৱর্ণ tmpserv[16];
 
-	if ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
-	    salen < sizeof(struct sockaddr_in))
-		return (EAI_FAMILY);
-	if (serv != NULL) {
-		snprintf(tmpserv, sizeof(tmpserv), "%d", ntohs(sin->sin_port));
-		if (strlcpy(serv, tmpserv, servlen) >= servlen)
-			return (EAI_MEMORY);
+	যদি ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
+	    salen < পরিমাণ(সংরচনা sockaddr_in))
+		ঘূৰাই (EAI_FAMILY);
+	যদি (serv != রিক্ত) {
+		snprintf(tmpserv, পরিমাণ(tmpserv), "%d", ntohs(sin->sin_port));
+		যদি (strlcpy(serv, tmpserv, servlen) >= servlen)
+			ঘূৰাই (EAI_MEMORY);
 	}
 
-	if (host != NULL) {
-		if (flags & NI_NUMERICHOST) {
-			if (strlcpy(host, inet_ntoa(sin->sin_addr),
+	যদি (host != রিক্ত) {
+		যদি (flags & NI_NUMERICHOST) {
+			যদি (strlcpy(host, inet_ntoa(sin->sin_addr),
 			    hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
-		} else {
-			hp = gethostbyaddr((char *)&sin->sin_addr,
-			    sizeof(struct in_addr), AF_INET);
-			if (hp == NULL)
-				return (EAI_NODATA);
+				ঘূৰাই (EAI_MEMORY);
+			অন্যথা
+				ঘূৰাই (0);
+		} অন্যথা {
+			hp = gethostbyaddr((ৱর্ণ *)&sin->sin_addr,
+			    পরিমাণ(সংরচনা in_addr), AF_INET);
+			যদি (hp == রিক্ত)
+				ঘূৰাই (EAI_NODATA);
 
-			if (strlcpy(host, hp->h_name, hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
+			যদি (strlcpy(host, hp->h_name, hostlen) >= hostlen)
+				ঘূৰাই (EAI_MEMORY);
+			অন্যথা
+				ঘূৰাই (0);
 		}
 	}
-	return (0);
+	ঘূৰাই (0);
 }
 #endif /* !HAVE_GETNAMEINFO */
 
 #ifndef HAVE_GAI_STRERROR
 #ifdef HAVE_CONST_GAI_STRERROR_PROTO
-const char *
-#else
-char *
+ধ্রুৱ ৱর্ণ *
+#অন্যথা
+ৱর্ণ *
 #endif
-gai_strerror(int err)
+gai_strerror(পূর্ণাঙ্ক err)
 {
-	switch (err) {
-	case EAI_NODATA:
-		return ("no address associated with name");
-	case EAI_MEMORY:
-		return ("memory allocation failure");
-	case EAI_NONAME:
-		return ("name or service is not known");
-	case EAI_FAMILY:
-		return ("ai_family not supported");
-	default:
-		return ("unknown/invalid error");
+	ৱিকল্প (err) {
+	পক্ষ EAI_NODATA:
+		ঘূৰাই ("no address associated with name");
+	পক্ষ EAI_MEMORY:
+		ঘূৰাই ("memory allocation failure");
+	পক্ষ EAI_NONAME:
+		ঘূৰাই ("name or service is not known");
+	পক্ষ EAI_FAMILY:
+		ঘূৰাই ("ai_family not supported");
+	স্ৱভাৱ:
+		ঘূৰাই ("unknown/invalid error");
 	}
 }
 #endif /* !HAVE_GAI_STRERROR */
 
 #ifndef HAVE_FREEADDRINFO
-void
-freeaddrinfo(struct addrinfo *ai)
+শূন্য
+freeaddrinfo(সংরচনা addrinfo *ai)
 {
-	struct addrinfo *next;
+	সংরচনা addrinfo *next;
 
-	for(; ai != NULL;) {
+	বাবে(; ai != রিক্ত;) {
 		next = ai->ai_next;
-		free(ai);
+		মুক্ত(ai);
 		ai = next;
 	}
 }
 #endif /* !HAVE_FREEADDRINFO */
 
 #ifndef HAVE_GETADDRINFO
-static struct
-addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
+স্থির সংরচনা
+addrinfo *malloc_ai(পূর্ণাঙ্ক port, u_long addr, ধ্রুৱ সংরচনা addrinfo *hints)
 {
-	struct addrinfo *ai;
+	সংরচনা addrinfo *ai;
 
-	ai = malloc(sizeof(*ai) + sizeof(struct sockaddr_in));
-	if (ai == NULL)
-		return (NULL);
+	ai = malloc(পরিমাণ(*ai) + পরিমাণ(সংরচনা sockaddr_in));
+	যদি (ai == রিক্ত)
+		ঘূৰাই (রিক্ত);
 
-	memset(ai, '\0', sizeof(*ai) + sizeof(struct sockaddr_in));
+	memset(ai, '\0', পরিমাণ(*ai) + পরিমাণ(সংরচনা sockaddr_in));
 
-	ai->ai_addr = (struct sockaddr *)(ai + 1);
+	ai->ai_addr = (সংরচনা sockaddr *)(ai + 1);
 	/* XXX -- ssh doesn't use sa_len */
-	ai->ai_addrlen = sizeof(struct sockaddr_in);
+	ai->ai_addrlen = পরিমাণ(সংরচনা sockaddr_in);
 	ai->ai_addr->sa_family = ai->ai_family = AF_INET;
 
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_port = port;
-	((struct sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
+	((সংরচনা sockaddr_in *)(ai)->ai_addr)->sin_port = port;
+	((সংরচনা sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
 
 	/* XXX: the following is not generally correct, but does what we want */
-	if (hints->ai_socktype)
+	যদি (hints->ai_socktype)
 		ai->ai_socktype = hints->ai_socktype;
-	else
+	অন্যথা
 		ai->ai_socktype = SOCK_STREAM;
 
-	if (hints->ai_protocol)
+	যদি (hints->ai_protocol)
 		ai->ai_protocol = hints->ai_protocol;
 
-	return (ai);
+	ঘূৰাই (ai);
 }
 
-int
-getaddrinfo(const char *hostname, const char *servname,
-    const struct addrinfo *hints, struct addrinfo **res)
+পূর্ণাঙ্ক
+getaddrinfo(ধ্রুৱ ৱর্ণ *hostname, ধ্রুৱ ৱর্ণ *servname,
+    ধ্রুৱ সংরচনা addrinfo *hints, সংরচনা addrinfo **res)
 {
-	struct hostent *hp;
-	struct servent *sp;
-	struct in_addr in;
-	int i;
-	long int port;
+	সংরচনা hostent *hp;
+	সংরচনা servent *sp;
+	সংরচনা in_addr in;
+	পূর্ণাঙ্ক i;
+	long পূর্ণাঙ্ক port;
 	u_long addr;
 
 	port = 0;
-	if (hints && hints->ai_family != AF_UNSPEC &&
+	যদি (hints && hints->ai_family != AF_UNSPEC &&
 	    hints->ai_family != AF_INET)
-		return (EAI_FAMILY);
-	if (servname != NULL) {
-		char *cp;
+		ঘূৰাই (EAI_FAMILY);
+	যদি (servname != রিক্ত) {
+		ৱর্ণ *cp;
 
 		port = strtol(servname, &cp, 10);
-		if (port > 0 && port <= 65535 && *cp == '\0')
+		যদি (port > 0 && port <= 65535 && *cp == '\0')
 			port = htons(port);
-		else if ((sp = getservbyname(servname, NULL)) != NULL)
+		অন্যথা যদি ((sp = getservbyname(servname, রিক্ত)) != রিক্ত)
 			port = sp->s_port;
-		else
+		অন্যথা
 			port = 0;
 	}
 
-	if (hints && hints->ai_flags & AI_PASSIVE) {
+	যদি (hints && hints->ai_flags & AI_PASSIVE) {
 		addr = htonl(0x00000000);
-		if (hostname && inet_aton(hostname, &in) != 0)
+		যদি (hostname && inet_aton(hostname, &in) != 0)
 			addr = in.s_addr;
 		*res = malloc_ai(port, addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		যদি (*res == রিক্ত)
+			ঘূৰাই (EAI_MEMORY);
+		ঘূৰাই (0);
 	}
 
-	if (!hostname) {
+	যদি (!hostname) {
 		*res = malloc_ai(port, htonl(0x7f000001), hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		যদি (*res == রিক্ত)
+			ঘূৰাই (EAI_MEMORY);
+		ঘূৰাই (0);
 	}
 
-	if (inet_aton(hostname, &in)) {
+	যদি (inet_aton(hostname, &in)) {
 		*res = malloc_ai(port, in.s_addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		যদি (*res == রিক্ত)
+			ঘূৰাই (EAI_MEMORY);
+		ঘূৰাই (0);
 	}
 
 	/* Don't try DNS if AI_NUMERICHOST is set */
-	if (hints && hints->ai_flags & AI_NUMERICHOST)
-		return (EAI_NONAME);
+	যদি (hints && hints->ai_flags & AI_NUMERICHOST)
+		ঘূৰাই (EAI_NONAME);
 
 	hp = gethostbyname(hostname);
-	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
-		struct addrinfo *cur, *prev;
+	যদি (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
+		সংরচনা addrinfo *cur, *prev;
 
-		cur = prev = *res = NULL;
-		for (i = 0; hp->h_addr_list[i]; i++) {
-			struct in_addr *in = (struct in_addr *)hp->h_addr_list[i];
+		cur = prev = *res = রিক্ত;
+		বাবে (i = 0; hp->h_addr_list[i]; i++) {
+			সংরচনা in_addr *in = (সংরচনা in_addr *)hp->h_addr_list[i];
 
 			cur = malloc_ai(port, in->s_addr, hints);
-			if (cur == NULL) {
-				if (*res != NULL)
+			যদি (cur == রিক্ত) {
+				যদি (*res != রিক্ত)
 					freeaddrinfo(*res);
-				return (EAI_MEMORY);
+				ঘূৰাই (EAI_MEMORY);
 			}
-			if (prev)
+			যদি (prev)
 				prev->ai_next = cur;
-			else
+			অন্যথা
 				*res = cur;
 
 			prev = cur;
 		}
-		return (0);
+		ঘূৰাই (0);
 	}
 
-	return (EAI_NODATA);
+	ঘূৰাই (EAI_NODATA);
 }
 #endif /* !HAVE_GETADDRINFO */

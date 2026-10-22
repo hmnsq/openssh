@@ -12,62 +12,62 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
+#অন্তর্ভাৱ <sys/types.h>
+#অন্তর্ভাৱ <sys/socket.h>
+#অন্তর্ভাৱ <sys/stat.h>
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
-#include <openssl/bn.h>
-#include <openssl/evp.h>
-#include <openssl/pem.h>
+#অন্তর্ভাৱ "openbsd-compat/openssl-compat.h"
+#অন্তর্ভাৱ <openssl/bn.h>
+#অন্তর্ভাৱ <openssl/evp.h>
+#অন্তর্ভাৱ <openssl/pem.h>
 #endif
 
-#include <stdint.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <locale.h>
-#include <time.h>
+#অন্তর্ভাৱ <stdint.h>
+#অন্তর্ভাৱ <errno.h>
+#অন্তর্ভাৱ <fcntl.h>
+#অন্তর্ভাৱ <netdb.h>
+#অন্তর্ভাৱ <paths.h>
+#অন্তর্ভাৱ <pwd.h>
+#অন্তর্ভাৱ <stdarg.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <unistd.h>
+#অন্তর্ভাৱ <limits.h>
+#অন্তর্ভাৱ <locale.h>
+#অন্তর্ভাৱ <time.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "authfile.h"
-#include "sshbuf.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "match.h"
-#include "hostfile.h"
-#include "dns.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#include "atomicio.h"
-#include "krl.h"
-#include "digest.h"
-#include "utf8.h"
-#include "authfd.h"
-#include "sshsig.h"
-#include "ssh-sk.h"
-#include "sk-api.h" /* XXX for SSH_SK_USER_PRESENCE_REQD; remove */
-#include "cipher.h"
+#অন্তর্ভাৱ "xmalloc.h"
+#অন্তর্ভাৱ "sshkey.h"
+#অন্তর্ভাৱ "authfile.h"
+#অন্তর্ভাৱ "sshbuf.h"
+#অন্তর্ভাৱ "pathnames.h"
+#অন্তর্ভাৱ "log.h"
+#অন্তর্ভাৱ "misc.h"
+#অন্তর্ভাৱ "match.h"
+#অন্তর্ভাৱ "hostfile.h"
+#অন্তর্ভাৱ "dns.h"
+#অন্তর্ভাৱ "ssh.h"
+#অন্তর্ভাৱ "ssh2.h"
+#অন্তর্ভাৱ "ssherr.h"
+#অন্তর্ভাৱ "atomicio.h"
+#অন্তর্ভাৱ "krl.h"
+#অন্তর্ভাৱ "digest.h"
+#অন্তর্ভাৱ "utf8.h"
+#অন্তর্ভাৱ "authfd.h"
+#অন্তর্ভাৱ "sshsig.h"
+#অন্তর্ভাৱ "ssh-sk.h"
+#অন্তর্ভাৱ "sk-api.h" /* XXX for SSH_SK_USER_PRESENCE_REQD; remove */
+#অন্তর্ভাৱ "cipher.h"
 
 #ifdef ENABLE_PKCS11
-#include "ssh-pkcs11.h"
+#অন্তর্ভাৱ "ssh-pkcs11.h"
 #endif
 
-#define DEFAULT_KEY_TYPE_NAME "ed25519"
+#define DEFAULT_চাবি_TYPE_NAME "ed25519"
 
 /*
  * Default number of bits in the RSA and ECDSA keys.  These value can be
@@ -80,39 +80,39 @@
 #define DEFAULT_BITS		3072
 #define DEFAULT_BITS_ECDSA	256
 
-#define KEY_COMMENT_MAX		(NI_MAXHOST + 1024)
+#define চাবি_COMMENT_MAX		(NI_MAXHOST + 1024)
 
-static int quiet = 0;
+স্থির পূর্ণাঙ্ক quiet = 0;
 
 /* Flag indicating that we just want to see the key fingerprint */
-static int print_fingerprint = 0;
-static int print_bubblebabble = 0;
+স্থির পূর্ণাঙ্ক print_fingerprint = 0;
+স্থির পূর্ণাঙ্ক print_bubblebabble = 0;
 
 /* Hash algorithm to use for fingerprints. */
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+স্থির পূর্ণাঙ্ক fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* The identity file name, given on the command line or entered by the user. */
-static char identity_file[PATH_MAX];
-static int have_identity = 0;
+স্থির ৱর্ণ identity_file[PATH_MAX];
+স্থির পূর্ণাঙ্ক have_identity = 0;
 
 /* This is set to the passphrase if given on the command line. */
-static char *identity_passphrase = NULL;
+স্থির ৱর্ণ *identity_passphrase = রিক্ত;
 
 /* This is set to the new passphrase if given on the command line. */
-static char *identity_new_passphrase = NULL;
+স্থির ৱর্ণ *identity_new_passphrase = রিক্ত;
 
 /* Key type when certifying */
-static u_int cert_key_type = SSH2_CERT_TYPE_USER;
+স্থির u_int cert_চাবি_type = SSH2_CERT_TYPE_USER;
 
 /* "key ID" of signed key */
-static char *cert_key_id = NULL;
+স্থির ৱর্ণ *cert_চাবি_id = রিক্ত;
 
 /* Comma-separated list of principal names for certifying keys */
-static char *cert_principals = NULL;
+স্থির ৱর্ণ *cert_principals = রিক্ত;
 
 /* Validity period for certificates */
-static uint64_t cert_valid_from = 0;
-static uint64_t cert_valid_to = ~0ULL;
+স্থির uint64_t cert_valid_from = 0;
+স্থির uint64_t cert_valid_to = ~0ULL;
 
 /* Certificate options */
 #define CERTOPT_X_FWD				(1)
@@ -124,91 +124,91 @@ static uint64_t cert_valid_to = ~0ULL;
 #define CERTOPT_REQUIRE_VERIFY			(1<<6)
 #define CERTOPT_DEFAULT	(CERTOPT_X_FWD|CERTOPT_AGENT_FWD| \
 			 CERTOPT_PORT_FWD|CERTOPT_PTY|CERTOPT_USER_RC)
-static uint32_t certflags_flags = CERTOPT_DEFAULT;
-static char *certflags_command = NULL;
-static char *certflags_src_addr = NULL;
+স্থির uint32_t certflags_flags = CERTOPT_DEFAULT;
+স্থির ৱর্ণ *certflags_command = রিক্ত;
+স্থির ৱর্ণ *certflags_src_addr = রিক্ত;
 
 /* Arbitrary extensions specified by user */
-struct cert_ext {
-	char *key;
-	char *val;
-	int crit;
+সংরচনা cert_ext {
+	ৱর্ণ *চাবি;
+	ৱর্ণ *val;
+	পূর্ণাঙ্ক crit;
 };
-static struct cert_ext *cert_ext;
-static size_t ncert_ext;
+স্থির সংরচনা cert_ext *cert_ext;
+স্থির size_t ncert_ext;
 
 /* Conversion to/from various formats */
-enum {
+গণনা {
 	FMT_RFC4716,
 	FMT_PKCS8,
 	FMT_PEM,
 	FMT_HEXDUMP
 } convert_format = FMT_RFC4716;
 
-static char *key_type_name = NULL;
+স্থির ৱর্ণ *চাবি_type_name = রিক্ত;
 
 /* Load key from this PKCS#11 provider */
-static char *pkcs11provider = NULL;
+স্থির ৱর্ণ *pkcs11provider = রিক্ত;
 
 /* FIDO/U2F provider to use */
-static char *sk_provider = NULL;
+স্থির ৱর্ণ *sk_provider = রিক্ত;
 
 /* Format for writing private keys */
-static int private_key_format = SSHKEY_PRIVATE_OPENSSH;
+স্থির পূর্ণাঙ্ক private_চাবি_format = SSHKEY_PRIVATE_OPENSSH;
 
 /* Cipher for new-format private keys */
-static char *openssh_format_cipher = NULL;
+স্থির ৱর্ণ *openssh_format_cipher = রিক্ত;
 
 /* Number of KDF rounds to derive new format keys. */
-static int rounds = 0;
+স্থির পূর্ণাঙ্ক rounds = 0;
 
 /* argv0 */
-extern char *__progname;
+বাহ্য ৱর্ণ *__progname;
 
-static char hostname[NI_MAXHOST];
+স্থির ৱর্ণ hostname[NI_MAXHOST];
 
 #ifdef WITH_OPENSSL
 /* moduli.c */
-int gen_candidates(FILE *, uint32_t, BIGNUM *);
-int prime_test(FILE *, FILE *, uint32_t, uint32_t, char *, unsigned long,
+পূর্ণাঙ্ক gen_candidates(FILE *, uint32_t, BIGNUM *);
+পূর্ণাঙ্ক মৌলিক_test(FILE *, FILE *, uint32_t, uint32_t, ৱর্ণ *, unsigned long,
     unsigned long);
 #endif
 
-static void
-type_bits_valid(int type, const char *name, uint32_t *bitsp)
+স্থির শূন্য
+type_bits_valid(পূর্ণাঙ্ক type, ধ্রুৱ ৱর্ণ *name, uint32_t *bitsp)
 {
-	if (type == KEY_UNSPEC)
-		fatal("unknown key type %s", key_type_name);
-	if (*bitsp == 0) {
+	যদি (type == চাবি_UNSPEC)
+		fatal("unknown key type %s", চাবি_type_name);
+	যদি (*bitsp == 0) {
 #ifdef WITH_OPENSSL
-		int nid;
+		পূর্ণাঙ্ক nid;
 
-		switch(type) {
-		case KEY_ECDSA:
-			if (name != NULL &&
+		ৱিকল্প(type) {
+		পক্ষ চাবি_ECDSA:
+			যদি (name != রিক্ত &&
 			    (nid = sshkey_ecdsa_nid_from_name(name)) > 0)
 				*bitsp = sshkey_curve_nid_to_bits(nid);
-			if (*bitsp == 0)
+			যদি (*bitsp == 0)
 				*bitsp = DEFAULT_BITS_ECDSA;
-			break;
-		case KEY_RSA:
+			ভঙ্গ;
+		পক্ষ চাবি_RSA:
 			*bitsp = DEFAULT_BITS;
-			break;
+			ভঙ্গ;
 		}
 #endif
 	}
 #ifdef WITH_OPENSSL
-	switch (type) {
-	case KEY_RSA:
-		if (*bitsp < SSH_RSA_MINIMUM_MODULUS_SIZE)
+	ৱিকল্প (type) {
+	পক্ষ চাবি_RSA:
+		যদি (*bitsp < SSH_RSA_MINIMUM_MODULUS_SIZE)
 			fatal("Invalid RSA key length: minimum is %d bits",
 			    SSH_RSA_MINIMUM_MODULUS_SIZE);
-		else if (*bitsp > OPENSSL_RSA_MAX_MODULUS_BITS)
+		অন্যথা যদি (*bitsp > OPENSSL_RSA_MAX_MODULUS_BITS)
 			fatal("Invalid RSA key length: maximum is %d bits",
 			    OPENSSL_RSA_MAX_MODULUS_BITS);
-		break;
-	case KEY_ECDSA:
-		if (sshkey_ecdsa_bits_to_nid(*bitsp) == -1)
+		ভঙ্গ;
+	পক্ষ চাবি_ECDSA:
+		যদি (sshkey_ecdsa_bits_to_nid(*bitsp) == -1)
 			fatal("Invalid ECDSA key length: valid lengths are "
 			    "256, 384 or 521 bits");
 	}
@@ -221,123 +221,123 @@ type_bits_valid(int type, const char *name, uint32_t *bitsp)
  * Returns nonzero if the file does not already exist or if the user agrees to
  * overwrite, or zero otherwise.
  */
-static int
-confirm_overwrite(const char *filename)
+স্থির পূর্ণাঙ্ক
+confirm_overwrite(ধ্রুৱ ৱর্ণ *filename)
 {
-	char yesno[3];
-	struct stat st;
+	ৱর্ণ yesno[3];
+	সংরচনা stat st;
 
-	if (stat(filename, &st) != 0)
-		return 1;
+	যদি (stat(filename, &st) != 0)
+		ঘূৰাই 1;
 	printf("%s already exists.\n", filename);
 	printf("Overwrite (y/n)? ");
 	fflush(stdout);
-	if (fgets(yesno, sizeof(yesno), stdin) == NULL)
-		return 0;
-	if (yesno[0] != 'y' && yesno[0] != 'Y')
-		return 0;
-	return 1;
+	যদি (fgets(yesno, পরিমাণ(yesno), stdin) == রিক্ত)
+		ঘূৰাই 0;
+	যদি (yesno[0] != 'y' && yesno[0] != 'Y')
+		ঘূৰাই 0;
+	ঘূৰাই 1;
 }
 
-static void
-ask_filename(struct passwd *pw, const char *prompt)
+স্থির শূন্য
+ask_filename(সংরচনা passwd *pw, ধ্রুৱ ৱর্ণ *prompt)
 {
-	char buf[1024];
-	char *name = NULL;
+	ৱর্ণ buf[1024];
+	ৱর্ণ *name = রিক্ত;
 
-	if (key_type_name == NULL)
+	যদি (চাবি_type_name == রিক্ত)
 		name = _PATH_SSH_CLIENT_ID_ED25519;
-	else {
-		switch (sshkey_type_from_shortname(key_type_name)) {
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA:
+	অন্যথা {
+		ৱিকল্প (sshkey_type_from_shortname(চাবি_type_name)) {
+		পক্ষ চাবি_ECDSA_CERT:
+		পক্ষ চাবি_ECDSA:
 			name = _PATH_SSH_CLIENT_ID_ECDSA;
-			break;
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ECDSA_SK:
+			ভঙ্গ;
+		পক্ষ চাবি_ECDSA_SK_CERT:
+		পক্ষ চাবি_ECDSA_SK:
 			name = _PATH_SSH_CLIENT_ID_ECDSA_SK;
-			break;
-		case KEY_RSA_CERT:
-		case KEY_RSA:
+			ভঙ্গ;
+		পক্ষ চাবি_RSA_CERT:
+		পক্ষ চাবি_RSA:
 			name = _PATH_SSH_CLIENT_ID_RSA;
-			break;
-		case KEY_ED25519:
-		case KEY_ED25519_CERT:
+			ভঙ্গ;
+		পক্ষ চাবি_ED25519:
+		পক্ষ চাবি_ED25519_CERT:
 			name = _PATH_SSH_CLIENT_ID_ED25519;
-			break;
-		case KEY_ED25519_SK:
-		case KEY_ED25519_SK_CERT:
+			ভঙ্গ;
+		পক্ষ চাবি_ED25519_SK:
+		পক্ষ চাবি_ED25519_SK_CERT:
 			name = _PATH_SSH_CLIENT_ID_ED25519_SK;
-			break;
-		case KEY_MLDSA44_ED25519:
-		case KEY_MLDSA44_ED25519_CERT:
+			ভঙ্গ;
+		পক্ষ চাবি_MLDSA44_ED25519:
+		পক্ষ চাবি_MLDSA44_ED25519_CERT:
 			name = _PATH_SSH_CLIENT_ID_MLDSA44_ED25519;
-			break;
-		default:
+			ভঙ্গ;
+		স্ৱভাৱ:
 			fatal("bad key type");
 		}
 	}
-	snprintf(identity_file, sizeof(identity_file),
+	snprintf(identity_file, পরিমাণ(identity_file),
 	    "%s/%s", pw->pw_dir, name);
 	printf("%s (%s): ", prompt, identity_file);
 	fflush(stdout);
-	if (fgets(buf, sizeof(buf), stdin) == NULL)
+	যদি (fgets(buf, পরিমাণ(buf), stdin) == রিক্ত)
 		exit(1);
 	buf[strcspn(buf, "\n")] = '\0';
-	if (strcmp(buf, "") != 0)
-		strlcpy(identity_file, buf, sizeof(identity_file));
+	যদি (strcmp(buf, "") != 0)
+		strlcpy(identity_file, buf, পরিমাণ(identity_file));
 	have_identity = 1;
 }
 
-static struct sshkey *
-load_identity(const char *filename, char **commentp)
+স্থির সংরচনা sshkey *
+load_identity(ধ্রুৱ ৱর্ণ *filename, ৱর্ণ **commentp)
 {
-	char *prompt, *pass;
-	struct sshkey *prv;
-	int r;
+	ৱর্ণ *prompt, *pass;
+	সংরচনা sshkey *prv;
+	পূর্ণাঙ্ক r;
 
-	if (commentp != NULL)
-		*commentp = NULL;
-	if ((r = sshkey_load_private(filename, "", &prv, commentp)) == 0)
-		return prv;
-	if (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
+	যদি (commentp != রিক্ত)
+		*commentp = রিক্ত;
+	যদি ((r = sshkey_load_private(filename, "", &prv, commentp)) == 0)
+		ঘূৰাই prv;
+	যদি (r != SSH_ERR_চাবি_WRONG_PASSPHRASE)
 		fatal_r(r, "Load key \"%s\"", filename);
-	if (identity_passphrase)
+	যদি (identity_passphrase)
 		pass = xstrdup(identity_passphrase);
-	else {
+	অন্যথা {
 		xasprintf(&prompt, "Enter passphrase for \"%s\": ", filename);
 		pass = read_passphrase(prompt, RP_ALLOW_STDIN);
-		free(prompt);
+		মুক্ত(prompt);
 	}
 	r = sshkey_load_private(filename, pass, &prv, commentp);
 	freezero(pass, strlen(pass));
-	if (r != 0)
+	যদি (r != 0)
 		fatal_r(r, "Load key \"%s\"", filename);
-	return prv;
+	ঘূৰাই prv;
 }
 
 #define SSH_COM_PUBLIC_BEGIN		"---- BEGIN SSH2 PUBLIC KEY ----"
 #define SSH_COM_PUBLIC_END		"---- END SSH2 PUBLIC KEY ----"
 #define SSH_COM_PRIVATE_BEGIN		"---- BEGIN SSH2 ENCRYPTED PRIVATE KEY ----"
-#define	SSH_COM_PRIVATE_KEY_MAGIC	0x3f6ff9eb
+#define	SSH_COM_PRIVATE_চাবি_MAGIC	0x3f6ff9eb
 
 #ifdef WITH_OPENSSL
-static void
-do_convert_to_ssh2(struct passwd *pw, struct sshkey *k)
+স্থির শূন্য
+do_convert_to_ssh2(সংরচনা passwd *pw, সংরচনা sshkey *k)
 {
-	struct sshbuf *b;
-	char comment[61], *b64;
-	int r;
+	সংরচনা sshbuf *b;
+	ৱর্ণ comment[61], *b64;
+	পূর্ণাঙ্ক r;
 
-	if ((b = sshbuf_new()) == NULL)
+	যদি ((b = sshbuf_new()) == রিক্ত)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(k, b)) != 0)
+	যদি ((r = sshkey_putb(k, b)) != 0)
 		fatal_fr(r, "put key");
-	if ((b64 = sshbuf_dtob64_string(b, 1)) == NULL)
+	যদি ((b64 = sshbuf_dtob64_string(b, 1)) == রিক্ত)
 		fatal_f("sshbuf_dtob64_string failed");
 
 	/* Comment + surrounds must fit into 72 chars (RFC 4716 sec 3.3) */
-	snprintf(comment, sizeof(comment),
+	snprintf(comment, পরিমাণ(comment),
 	    "%u-bit %s, converted by %s@%s from OpenSSH",
 	    sshkey_size(k), sshkey_type(k),
 	    pw->pw_name, hostname);
@@ -348,64 +348,64 @@ do_convert_to_ssh2(struct passwd *pw, struct sshkey *k)
 	fprintf(stdout, "%s\n", SSH_COM_PUBLIC_BEGIN);
 	fprintf(stdout, "Comment: \"%s\"\n%s", comment, b64);
 	fprintf(stdout, "%s\n", SSH_COM_PUBLIC_END);
-	free(b64);
+	মুক্ত(b64);
 }
 
-static void
-do_convert_to_pkcs8(struct sshkey *k)
+স্থির শূন্য
+do_convert_to_pkcs8(সংরচনা sshkey *k)
 {
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_RSA:
-		if (!PEM_write_RSA_PUBKEY(stdout,
+	ৱিকল্প (sshkey_type_plain(k->type)) {
+	পক্ষ চাবি_RSA:
+		যদি (!PEM_write_RSA_PUBKEY(stdout,
 		    EVP_PKEY_get0_RSA(k->pkey)))
 			fatal("PEM_write_RSA_PUBKEY failed");
-		break;
-	case KEY_ECDSA:
-		if (!PEM_write_EC_PUBKEY(stdout,
-		    EVP_PKEY_get0_EC_KEY(k->pkey)))
+		ভঙ্গ;
+	পক্ষ চাবি_ECDSA:
+		যদি (!PEM_write_EC_PUBKEY(stdout,
+		    EVP_PKEY_get0_EC_চাবি(k->pkey)))
 			fatal("PEM_write_EC_PUBKEY failed");
-		break;
-	default:
+		ভঙ্গ;
+	স্ৱভাৱ:
 		fatal_f("unsupported key type %s", sshkey_type(k));
 	}
 }
 
-static void
-do_convert_to_pem(struct sshkey *k)
+স্থির শূন্য
+do_convert_to_pem(সংরচনা sshkey *k)
 {
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_RSA:
-		if (!PEM_write_RSAPublicKey(stdout,
+	ৱিকল্প (sshkey_type_plain(k->type)) {
+	পক্ষ চাবি_RSA:
+		যদি (!PEM_write_RSAPublic_চাবি(stdout,
 		    EVP_PKEY_get0_RSA(k->pkey)))
 			fatal("PEM_write_RSAPublicKey failed");
-		break;
-	case KEY_ECDSA:
-		if (!PEM_write_EC_PUBKEY(stdout,
-		    EVP_PKEY_get0_EC_KEY(k->pkey)))
+		ভঙ্গ;
+	পক্ষ চাবি_ECDSA:
+		যদি (!PEM_write_EC_PUBKEY(stdout,
+		    EVP_PKEY_get0_EC_চাবি(k->pkey)))
 			fatal("PEM_write_EC_PUBKEY failed");
-		break;
-	default:
+		ভঙ্গ;
+	স্ৱভাৱ:
 		fatal_f("unsupported key type %s", sshkey_type(k));
 	}
 }
 
-static void
-do_convert_to_hexdump(struct sshkey *k)
+স্থির শূন্য
+do_convert_to_hexdump(সংরচনা sshkey *k)
 {
-	struct sshbuf *b;
-	int r;
+	সংরচনা sshbuf *b;
+	পূর্ণাঙ্ক r;
 
-	if ((b = sshbuf_new()) == NULL)
+	যদি ((b = sshbuf_new()) == রিক্ত)
 		fatal_f("sshbuf_new failed");
 	/* pubkey */
-	if ((r = sshkey_putb(k, b)) != 0)
+	যদি ((r = sshkey_putb(k, b)) != 0)
 		fatal_fr(r, "serialise private");
 	printf("Public %s key:\n", sshkey_type(k));
 	sshbuf_dump(b, stdout);
 	sshbuf_reset(b);
-	if ((r = sshkey_private_serialize(k, b)) != 0) {
+	যদি ((r = sshkey_private_serialize(k, b)) != 0) {
 		debug_fr(r, "serialise private");
-		goto out;
+		গচ্ছ out;
 	}
 	printf("\nPrivate %s key:\n", sshkey_type(k));
 	sshbuf_dump(b, stdout);
@@ -413,42 +413,42 @@ do_convert_to_hexdump(struct sshkey *k)
 	sshbuf_free(b);
 }
 
-static void
-do_convert_to(struct passwd *pw)
+স্থির শূন্য
+do_convert_to(সংরচনা passwd *pw)
 {
-	struct sshkey *k = NULL;
-	struct stat st;
-	int r;
+	সংরচনা sshkey *k = রিক্ত;
+	সংরচনা stat st;
+	পূর্ণাঙ্ক r;
 
-	if (!have_identity)
+	যদি (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	যদি (stat(identity_file, &st) == -1)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
 
 	/* If we're trying to hexdump, then prefer the private key */
-	if (convert_format == FMT_HEXDUMP) {
-		if ((r = sshkey_load_private(identity_file,
-		    NULL, &k, NULL)) != 0 &&
-		    r == SSH_ERR_KEY_WRONG_PASSPHRASE)
-			k = load_identity(identity_file, NULL);
+	যদি (convert_format == FMT_HEXDUMP) {
+		যদি ((r = sshkey_load_private(identity_file,
+		    রিক্ত, &k, রিক্ত)) != 0 &&
+		    r == SSH_ERR_চাবি_WRONG_PASSPHRASE)
+			k = load_identity(identity_file, রিক্ত);
 	}
-	if (k == NULL && (r = sshkey_load_public(identity_file, &k, NULL)) != 0)
-		k = load_identity(identity_file, NULL);
+	যদি (k == রিক্ত && (r = sshkey_load_public(identity_file, &k, রিক্ত)) != 0)
+		k = load_identity(identity_file, রিক্ত);
 
-	switch (convert_format) {
-	case FMT_RFC4716:
+	ৱিকল্প (convert_format) {
+	পক্ষ FMT_RFC4716:
 		do_convert_to_ssh2(pw, k);
-		break;
-	case FMT_PKCS8:
+		ভঙ্গ;
+	পক্ষ FMT_PKCS8:
 		do_convert_to_pkcs8(k);
-		break;
-	case FMT_PEM:
+		ভঙ্গ;
+	পক্ষ FMT_PEM:
 		do_convert_to_pem(k);
-		break;
-	case FMT_HEXDUMP:
+		ভঙ্গ;
+	পক্ষ FMT_HEXDUMP:
 		do_convert_to_hexdump(k);
-		break;
-	default:
+		ভঙ্গ;
+	স্ৱভাৱ:
 		fatal_f("unknown key format %d", convert_format);
 	}
 }
@@ -457,83 +457,83 @@ do_convert_to(struct passwd *pw)
  * This is almost exactly the bignum1 encoding, but with 32 bit for length
  * instead of 16.
  */
-static void
-buffer_get_bignum_bits(struct sshbuf *b, BIGNUM *value)
+স্থির শূন্য
+buffer_get_bignum_bits(সংরচনা sshbuf *b, BIGNUM *মান)
 {
 	u_int bytes, bignum_bits;
-	int r;
+	পূর্ণাঙ্ক r;
 
-	if ((r = sshbuf_get_u32(b, &bignum_bits)) != 0)
+	যদি ((r = sshbuf_get_u32(b, &bignum_bits)) != 0)
 		fatal_fr(r, "parse");
 	bytes = (bignum_bits + 7) / 8;
-	if (sshbuf_len(b) < bytes)
+	যদি (sshbuf_len(b) < bytes)
 		fatal_f("input buffer too small: need %d have %zu",
 		    bytes, sshbuf_len(b));
-	if (BN_bin2bn(sshbuf_ptr(b), bytes, value) == NULL)
+	যদি (BN_bin2bn(sshbuf_ptr(b), bytes, মান) == রিক্ত)
 		fatal_f("BN_bin2bn failed");
-	if ((r = sshbuf_consume(b, bytes)) != 0)
+	যদি ((r = sshbuf_consume(b, bytes)) != 0)
 		fatal_fr(r, "consume");
 }
 
-static struct sshkey *
-do_convert_private_ssh2(struct sshbuf *b)
+স্থির সংরচনা sshkey *
+do_convert_private_ssh2(সংরচনা sshbuf *b)
 {
-	struct sshkey *key = NULL;
-	char *type, *cipher;
-	const char *alg = NULL;
-	u_char e1, e2, e3, *sig = NULL, data[] = "abcde12345";
-	int r, rlen, ktype;
+	সংরচনা sshkey *চাবি = রিক্ত;
+	ৱর্ণ *type, *cipher;
+	ধ্রুৱ ৱর্ণ *alg = রিক্ত;
+	u_char e1, e2, e3, *sig = রিক্ত, data[] = "abcde12345";
+	পূর্ণাঙ্ক r, rlen, ktype;
 	u_int magic, i1, i2, i3, i4;
 	size_t slen;
 	u_long e;
-	BIGNUM *rsa_n = NULL, *rsa_e = NULL, *rsa_d = NULL;
-	BIGNUM *rsa_p = NULL, *rsa_q = NULL, *rsa_iqmp = NULL;
-	BIGNUM *rsa_dmp1 = NULL, *rsa_dmq1 = NULL;
-	RSA *rsa = NULL;
+	BIGNUM *rsa_n = রিক্ত, *rsa_e = রিক্ত, *rsa_d = রিক্ত;
+	BIGNUM *rsa_p = রিক্ত, *rsa_q = রিক্ত, *rsa_iqmp = রিক্ত;
+	BIGNUM *rsa_dmp1 = রিক্ত, *rsa_dmq1 = রিক্ত;
+	RSA *rsa = রিক্ত;
 
-	if ((r = sshbuf_get_u32(b, &magic)) != 0)
+	যদি ((r = sshbuf_get_u32(b, &magic)) != 0)
 		fatal_fr(r, "parse magic");
 
-	if (magic != SSH_COM_PRIVATE_KEY_MAGIC) {
+	যদি (magic != SSH_COM_PRIVATE_চাবি_MAGIC) {
 		error("bad magic 0x%x != 0x%x", magic,
-		    SSH_COM_PRIVATE_KEY_MAGIC);
-		return NULL;
+		    SSH_COM_PRIVATE_চাবি_MAGIC);
+		ঘূৰাই রিক্ত;
 	}
-	if ((r = sshbuf_get_u32(b, &i1)) != 0 ||
-	    (r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(b, &cipher, NULL)) != 0 ||
+	যদি ((r = sshbuf_get_u32(b, &i1)) != 0 ||
+	    (r = sshbuf_get_cstring(b, &type, রিক্ত)) != 0 ||
+	    (r = sshbuf_get_cstring(b, &cipher, রিক্ত)) != 0 ||
 	    (r = sshbuf_get_u32(b, &i2)) != 0 ||
 	    (r = sshbuf_get_u32(b, &i3)) != 0 ||
 	    (r = sshbuf_get_u32(b, &i4)) != 0)
 		fatal_fr(r, "parse");
 	debug("ignore (%d %d %d %d)", i1, i2, i3, i4);
-	if (strcmp(cipher, "none") != 0) {
+	যদি (strcmp(cipher, "none") != 0) {
 		error("unsupported cipher %s", cipher);
-		free(cipher);
-		free(type);
-		return NULL;
+		মুক্ত(cipher);
+		মুক্ত(type);
+		ঘূৰাই রিক্ত;
 	}
-	free(cipher);
+	মুক্ত(cipher);
 
-	if (strstr(type, "rsa")) {
-		ktype = KEY_RSA;
-	} else {
-		free(type);
-		return NULL;
+	যদি (strstr(type, "rsa")) {
+		ktype = চাবি_RSA;
+	} অন্যথা {
+		মুক্ত(type);
+		ঘূৰাই রিক্ত;
 	}
-	if ((key = sshkey_new(ktype)) == NULL)
+	যদি ((চাবি = sshkey_new(ktype)) == রিক্ত)
 		fatal("sshkey_new failed");
-	free(type);
+	মুক্ত(type);
 
-	switch (key->type) {
-	case KEY_RSA:
-		if ((r = sshbuf_get_u8(b, &e1)) != 0 ||
+	ৱিকল্প (চাবি->type) {
+	পক্ষ চাবি_RSA:
+		যদি ((r = sshbuf_get_u8(b, &e1)) != 0 ||
 		    (e1 < 30 && (r = sshbuf_get_u8(b, &e2)) != 0) ||
 		    (e1 < 30 && (r = sshbuf_get_u8(b, &e3)) != 0))
 			fatal_fr(r, "parse RSA");
 		e = e1;
 		debug("e %lx", e);
-		if (e < 30) {
+		যদি (e < 30) {
 			e <<= 8;
 			e += e2;
 			debug("e %lx", e);
@@ -541,425 +541,425 @@ do_convert_private_ssh2(struct sshbuf *b)
 			e += e3;
 			debug("e %lx", e);
 		}
-		if ((rsa_e = BN_new()) == NULL)
+		যদি ((rsa_e = BN_new()) == রিক্ত)
 			fatal_f("BN_new");
-		if (!BN_set_word(rsa_e, e)) {
+		যদি (!BN_set_word(rsa_e, e)) {
 			BN_clear_free(rsa_e);
-			sshkey_free(key);
-			return NULL;
+			sshkey_free(চাবি);
+			ঘূৰাই রিক্ত;
 		}
-		if ((rsa_n = BN_new()) == NULL ||
-		    (rsa_d = BN_new()) == NULL ||
-		    (rsa_p = BN_new()) == NULL ||
-		    (rsa_q = BN_new()) == NULL ||
-		    (rsa_iqmp = BN_new()) == NULL)
+		যদি ((rsa_n = BN_new()) == রিক্ত ||
+		    (rsa_d = BN_new()) == রিক্ত ||
+		    (rsa_p = BN_new()) == রিক্ত ||
+		    (rsa_q = BN_new()) == রিক্ত ||
+		    (rsa_iqmp = BN_new()) == রিক্ত)
 			fatal_f("BN_new");
 		buffer_get_bignum_bits(b, rsa_d);
 		buffer_get_bignum_bits(b, rsa_n);
 		buffer_get_bignum_bits(b, rsa_iqmp);
 		buffer_get_bignum_bits(b, rsa_q);
 		buffer_get_bignum_bits(b, rsa_p);
-		if ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
+		যদি ((r = ssh_rsa_complete_crt_parameters(rsa_d, rsa_p, rsa_q,
 		    rsa_iqmp, &rsa_dmp1, &rsa_dmq1)) != 0)
 			fatal_fr(r, "generate RSA CRT parameters");
-		EVP_PKEY_free(key->pkey);
-		if ((key->pkey = EVP_PKEY_new()) == NULL)
+		EVP_PKEY_free(চাবি->pkey);
+		যদি ((চাবি->pkey = EVP_PKEY_new()) == রিক্ত)
 			fatal_f("EVP_PKEY_new failed");
-		if ((rsa = RSA_new()) == NULL)
+		যদি ((rsa = RSA_new()) == রিক্ত)
 			fatal_f("RSA_new failed");
-		if (!RSA_set0_key(rsa, rsa_n, rsa_e, rsa_d))
+		যদি (!RSA_set0_চাবি(rsa, rsa_n, rsa_e, rsa_d))
 			fatal_f("RSA_set0_key failed");
-		rsa_n = rsa_e = rsa_d = NULL; /* transferred */
-		if (!RSA_set0_factors(rsa, rsa_p, rsa_q))
+		rsa_n = rsa_e = rsa_d = রিক্ত; /* transferred */
+		যদি (!RSA_set0_factors(rsa, rsa_p, rsa_q))
 			fatal_f("RSA_set0_factors failed");
-		rsa_p = rsa_q = NULL; /* transferred */
-		if (RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp) != 1)
+		rsa_p = rsa_q = রিক্ত; /* transferred */
+		যদি (RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp) != 1)
 			fatal_f("RSA_set0_crt_params failed");
-		rsa_dmp1 = rsa_dmq1 = rsa_iqmp = NULL;
-		if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1)
+		rsa_dmp1 = rsa_dmq1 = rsa_iqmp = রিক্ত;
+		যদি (EVP_PKEY_set1_RSA(চাবি->pkey, rsa) != 1)
 			fatal_f("EVP_PKEY_set1_RSA failed");
 		RSA_free(rsa);
 		alg = "rsa-sha2-256";
-		break;
+		ভঙ্গ;
 	}
 	rlen = sshbuf_len(b);
-	if (rlen != 0)
+	যদি (rlen != 0)
 		error_f("remaining bytes in key blob %d", rlen);
 
 	/* try the key */
-	if ((r = sshkey_sign(key, &sig, &slen, data, sizeof(data),
-	    alg, NULL, NULL, 0)) != 0)
+	যদি ((r = sshkey_sign(চাবি, &sig, &slen, data, পরিমাণ(data),
+	    alg, রিক্ত, রিক্ত, 0)) != 0)
 		error_fr(r, "signing with converted key failed");
-	else if ((r = sshkey_verify(key, sig, slen, data, sizeof(data),
-	    alg, 0, NULL)) != 0)
+	অন্যথা যদি ((r = sshkey_verify(চাবি, sig, slen, data, পরিমাণ(data),
+	    alg, 0, রিক্ত)) != 0)
 		error_fr(r, "verification with converted key failed");
-	if (r != 0) {
-		sshkey_free(key);
-		free(sig);
-		return NULL;
+	যদি (r != 0) {
+		sshkey_free(চাবি);
+		মুক্ত(sig);
+		ঘূৰাই রিক্ত;
 	}
-	free(sig);
-	return key;
+	মুক্ত(sig);
+	ঘূৰাই চাবি;
 }
 
-static int
-get_line(FILE *fp, char *line, size_t len)
+স্থির পূর্ণাঙ্ক
+get_সাৰি(FILE *fp, ৱর্ণ *সাৰি, size_t len)
 {
-	int c;
+	পূর্ণাঙ্ক c;
 	size_t pos = 0;
 
-	line[0] = '\0';
-	while ((c = fgetc(fp)) != EOF) {
-		if (pos >= len - 1)
+	সাৰি[0] = '\0';
+	যেতিয়ালৈ ((c = fgetc(fp)) != EOF) {
+		যদি (pos >= len - 1)
 			fatal("input line too long.");
-		switch (c) {
-		case '\r':
+		ৱিকল্প (c) {
+		পক্ষ '\r':
 			c = fgetc(fp);
-			if (c != EOF && c != '\n' && ungetc(c, fp) == EOF)
+			যদি (c != EOF && c != '\n' && ungetc(c, fp) == EOF)
 				fatal("unget: %s", strerror(errno));
-			return pos;
-		case '\n':
-			return pos;
+			ঘূৰাই pos;
+		পক্ষ '\n':
+			ঘূৰাই pos;
 		}
-		line[pos++] = c;
-		line[pos] = '\0';
+		সাৰি[pos++] = c;
+		সাৰি[pos] = '\0';
 	}
 	/* We reached EOF */
-	return -1;
+	ঘূৰাই -1;
 }
 
-static void
-do_convert_from_ssh2(struct passwd *pw, struct sshkey **k, int *private)
+স্থির শূন্য
+do_convert_from_ssh2(সংরচনা passwd *pw, সংরচনা sshkey **k, পূর্ণাঙ্ক *গুপ্ত)
 {
-	int r, blen, escaped = 0;
+	পূর্ণাঙ্ক r, blen, escaped = 0;
 	u_int len;
-	char line[1024];
-	struct sshbuf *buf;
-	char encoded[8096];
+	ৱর্ণ সাৰি[1024];
+	সংরচনা sshbuf *buf;
+	ৱর্ণ encoded[8096];
 	FILE *fp;
 
-	if ((buf = sshbuf_new()) == NULL)
+	যদি ((buf = sshbuf_new()) == রিক্ত)
 		fatal("sshbuf_new failed");
-	if ((fp = fopen(identity_file, "r")) == NULL)
+	যদি ((fp = fopen(identity_file, "r")) == রিক্ত)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
 	encoded[0] = '\0';
-	while ((blen = get_line(fp, line, sizeof(line))) != -1) {
-		if (blen > 0 && line[blen - 1] == '\\')
+	যেতিয়ালৈ ((blen = get_সাৰি(fp, সাৰি, পরিমাণ(সাৰি))) != -1) {
+		যদি (blen > 0 && সাৰি[blen - 1] == '\\')
 			escaped++;
-		if (strncmp(line, "----", 4) == 0 ||
-		    strstr(line, ": ") != NULL) {
-			if (strstr(line, SSH_COM_PRIVATE_BEGIN) != NULL)
-				*private = 1;
-			if (strstr(line, " END ") != NULL) {
-				break;
+		যদি (strncmp(সাৰি, "----", 4) == 0 ||
+		    strstr(সাৰি, ": ") != রিক্ত) {
+			যদি (strstr(সাৰি, SSH_COM_PRIVATE_BEGIN) != রিক্ত)
+				*গুপ্ত = 1;
+			যদি (strstr(সাৰি, " END ") != রিক্ত) {
+				ভঙ্গ;
 			}
 			/* fprintf(stderr, "ignore: %s", line); */
-			continue;
+			অনুৱর্ত;
 		}
-		if (escaped) {
+		যদি (escaped) {
 			escaped--;
 			/* fprintf(stderr, "escaped: %s", line); */
-			continue;
+			অনুৱর্ত;
 		}
-		strlcat(encoded, line, sizeof(encoded));
+		strlcat(encoded, সাৰি, পরিমাণ(encoded));
 	}
 	len = strlen(encoded);
-	if (((len % 4) == 3) &&
+	যদি (((len % 4) == 3) &&
 	    (encoded[len-1] == '=') &&
 	    (encoded[len-2] == '=') &&
 	    (encoded[len-3] == '='))
 		encoded[len-3] = '\0';
-	if ((r = sshbuf_b64tod(buf, encoded)) != 0)
+	যদি ((r = sshbuf_b64tod(buf, encoded)) != 0)
 		fatal_fr(r, "base64 decode");
-	if (*private) {
-		if ((*k = do_convert_private_ssh2(buf)) == NULL)
+	যদি (*গুপ্ত) {
+		যদি ((*k = do_convert_private_ssh2(buf)) == রিক্ত)
 			fatal_f("private key conversion failed");
-	} else if ((r = sshkey_fromb(buf, k)) != 0)
+	} অন্যথা যদি ((r = sshkey_fromb(buf, k)) != 0)
 		fatal_fr(r, "parse key");
 	sshbuf_free(buf);
 	fclose(fp);
 }
 
-static void
-do_convert_from_pkcs8(struct sshkey **k, int *private)
+স্থির শূন্য
+do_convert_from_pkcs8(সংরচনা sshkey **k, পূর্ণাঙ্ক *গুপ্ত)
 {
 	EVP_PKEY *pubkey;
 	FILE *fp;
 
-	if ((fp = fopen(identity_file, "r")) == NULL)
+	যদি ((fp = fopen(identity_file, "r")) == রিক্ত)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
-	if ((pubkey = PEM_read_PUBKEY(fp, NULL, NULL, NULL)) == NULL) {
+	যদি ((pubkey = PEM_read_PUBKEY(fp, রিক্ত, রিক্ত, রিক্ত)) == রিক্ত) {
 		fatal_f("%s is not a recognised public key format",
 		    identity_file);
 	}
 	fclose(fp);
-	switch (EVP_PKEY_base_id(pubkey)) {
-	case EVP_PKEY_RSA:
-		if ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
+	ৱিকল্প (EVP_PKEY_base_id(pubkey)) {
+	পক্ষ EVP_PKEY_RSA:
+		যদি ((*k = sshkey_new(চাবি_UNSPEC)) == রিক্ত)
 			fatal("sshkey_new failed");
-		(*k)->type = KEY_RSA;
+		(*k)->type = চাবি_RSA;
 		(*k)->pkey = pubkey;
-		pubkey = NULL;
-		break;
-	case EVP_PKEY_EC:
-		if ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
+		pubkey = রিক্ত;
+		ভঙ্গ;
+	পক্ষ EVP_PKEY_EC:
+		যদি ((*k = sshkey_new(চাবি_UNSPEC)) == রিক্ত)
 			fatal("sshkey_new failed");
-		if (((*k)->ecdsa_nid = sshkey_ecdsa_fixup_group(pubkey)) == -1)
+		যদি (((*k)->ecdsa_nid = sshkey_ecdsa_fixup_group(pubkey)) == -1)
 			fatal("sshkey_ecdsa_fixup_group failed");
-		(*k)->type = KEY_ECDSA;
+		(*k)->type = চাবি_ECDSA;
 		(*k)->pkey = pubkey;
-		pubkey = NULL;
-		break;
-	default:
+		pubkey = রিক্ত;
+		ভঙ্গ;
+	স্ৱভাৱ:
 		fatal_f("unsupported pubkey type %d",
 		    EVP_PKEY_base_id(pubkey));
 	}
 	EVP_PKEY_free(pubkey);
 }
 
-static void
-do_convert_from_pem(struct sshkey **k, int *private)
+স্থির শূন্য
+do_convert_from_pem(সংরচনা sshkey **k, পূর্ণাঙ্ক *গুপ্ত)
 {
 	FILE *fp;
 	RSA *rsa;
 
-	if ((fp = fopen(identity_file, "r")) == NULL)
+	যদি ((fp = fopen(identity_file, "r")) == রিক্ত)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
-	if ((rsa = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL)) != NULL) {
-		if ((*k = sshkey_new(KEY_UNSPEC)) == NULL)
+	যদি ((rsa = PEM_read_RSAPublic_চাবি(fp, রিক্ত, রিক্ত, রিক্ত)) != রিক্ত) {
+		যদি ((*k = sshkey_new(চাবি_UNSPEC)) == রিক্ত)
 			fatal("sshkey_new failed");
-		if (((*k)->pkey = EVP_PKEY_new()) == NULL)
+		যদি (((*k)->pkey = EVP_PKEY_new()) == রিক্ত)
 			fatal("EVP_PKEY_new failed");
-		(*k)->type = KEY_RSA;
-		if (EVP_PKEY_set1_RSA((*k)->pkey, rsa) != 1)
+		(*k)->type = চাবি_RSA;
+		যদি (EVP_PKEY_set1_RSA((*k)->pkey, rsa) != 1)
 			fatal("EVP_PKEY_set1_RSA failed");
 		RSA_free(rsa);
 		fclose(fp);
-		return;
+		ঘূৰাই;
 	}
 	fatal_f("unrecognised raw private key format");
 }
 
-static void
-do_convert_from(struct passwd *pw)
+স্থির শূন্য
+do_convert_from(সংরচনা passwd *pw)
 {
-	struct sshkey *k = NULL;
-	int r, private = 0, ok = 0;
-	struct stat st;
+	সংরচনা sshkey *k = রিক্ত;
+	পূর্ণাঙ্ক r, গুপ্ত = 0, ok = 0;
+	সংরচনা stat st;
 
-	if (!have_identity)
+	যদি (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	যদি (stat(identity_file, &st) == -1)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
 
-	switch (convert_format) {
-	case FMT_RFC4716:
-		do_convert_from_ssh2(pw, &k, &private);
-		break;
-	case FMT_PKCS8:
-		do_convert_from_pkcs8(&k, &private);
-		break;
-	case FMT_PEM:
-		do_convert_from_pem(&k, &private);
-		break;
-	default:
+	ৱিকল্প (convert_format) {
+	পক্ষ FMT_RFC4716:
+		do_convert_from_ssh2(pw, &k, &গুপ্ত);
+		ভঙ্গ;
+	পক্ষ FMT_PKCS8:
+		do_convert_from_pkcs8(&k, &গুপ্ত);
+		ভঙ্গ;
+	পক্ষ FMT_PEM:
+		do_convert_from_pem(&k, &গুপ্ত);
+		ভঙ্গ;
+	স্ৱভাৱ:
 		fatal_f("unknown key format %d", convert_format);
 	}
 
-	if (!private) {
-		if ((r = sshkey_write(k, stdout)) == 0)
+	যদি (!গুপ্ত) {
+		যদি ((r = sshkey_write(k, stdout)) == 0)
 			ok = 1;
-		if (ok)
+		যদি (ok)
 			fprintf(stdout, "\n");
-	} else {
-		switch (k->type) {
-		case KEY_ECDSA:
-			ok = PEM_write_ECPrivateKey(stdout,
-			    EVP_PKEY_get0_EC_KEY(k->pkey), NULL, NULL, 0,
-			    NULL, NULL);
-			break;
-		case KEY_RSA:
-			ok = PEM_write_RSAPrivateKey(stdout,
-			    EVP_PKEY_get0_RSA(k->pkey), NULL, NULL, 0,
-			    NULL, NULL);
-			break;
-		default:
+	} অন্যথা {
+		ৱিকল্প (k->type) {
+		পক্ষ চাবি_ECDSA:
+			ok = PEM_write_ECPrivate_চাবি(stdout,
+			    EVP_PKEY_get0_EC_চাবি(k->pkey), রিক্ত, রিক্ত, 0,
+			    রিক্ত, রিক্ত);
+			ভঙ্গ;
+		পক্ষ চাবি_RSA:
+			ok = PEM_write_RSAPrivate_চাবি(stdout,
+			    EVP_PKEY_get0_RSA(k->pkey), রিক্ত, রিক্ত, 0,
+			    রিক্ত, রিক্ত);
+			ভঙ্গ;
+		স্ৱভাৱ:
 			fatal_f("unsupported key type %s", sshkey_type(k));
 		}
 	}
 
-	if (!ok)
+	যদি (!ok)
 		fatal("key write failed");
 	sshkey_free(k);
 }
 #endif
 
-static void
-do_print_public(struct passwd *pw)
+স্থির শূন্য
+do_print_public(সংরচনা passwd *pw)
 {
-	struct sshkey *prv;
-	struct stat st;
-	int r;
-	char *comment = NULL;
+	সংরচনা sshkey *prv;
+	সংরচনা stat st;
+	পূর্ণাঙ্ক r;
+	ৱর্ণ *comment = রিক্ত;
 
-	if (!have_identity)
+	যদি (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	যদি (stat(identity_file, &st) == -1)
 		fatal("%s: %s", identity_file, strerror(errno));
 	prv = load_identity(identity_file, &comment);
-	if ((r = sshkey_write(prv, stdout)) != 0)
+	যদি ((r = sshkey_write(prv, stdout)) != 0)
 		fatal_fr(r, "write key");
-	if (comment != NULL && *comment != '\0')
+	যদি (comment != রিক্ত && *comment != '\0')
 		fprintf(stdout, " %s", comment);
 	fprintf(stdout, "\n");
-	if (sshkey_is_sk(prv)) {
+	যদি (sshkey_is_sk(prv)) {
 		debug("sk_application: \"%s\", sk_flags 0x%02x",
 			prv->sk_application, prv->sk_flags);
 	}
 	sshkey_free(prv);
-	free(comment);
+	মুক্ত(comment);
 	exit(0);
 }
 
-static void
-do_download(struct passwd *pw)
+স্থির শূন্য
+do_download(সংরচনা passwd *pw)
 {
 #ifdef ENABLE_PKCS11
-	struct sshkey **keys = NULL;
-	int i, nkeys;
-	enum sshkey_fp_rep rep;
-	int fptype;
-	char *fp, *ra, **comments = NULL;
+	সংরচনা sshkey **চাবিগুলি = রিক্ত;
+	পূর্ণাঙ্ক i, nkeys;
+	গণনা sshkey_fp_rep rep;
+	পূর্ণাঙ্ক fptype;
+	ৱর্ণ *fp, *ra, **comments = রিক্ত;
 
 	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
 	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
 
 	pkcs11_init(1);
-	nkeys = pkcs11_add_provider(pkcs11provider, NULL, &keys, &comments);
-	if (nkeys <= 0)
+	nkeys = pkcs11_add_provider(pkcs11provider, রিক্ত, &চাবিগুলি, &comments);
+	যদি (nkeys <= 0)
 		fatal("cannot read public key from pkcs11");
-	for (i = 0; i < nkeys; i++) {
-		if (print_fingerprint) {
-			fp = sshkey_fingerprint(keys[i], fptype, rep);
-			ra = sshkey_fingerprint(keys[i], fingerprint_hash,
+	বাবে (i = 0; i < nkeys; i++) {
+		যদি (print_fingerprint) {
+			fp = sshkey_fingerprint(চাবিগুলি[i], fptype, rep);
+			ra = sshkey_fingerprint(চাবিগুলি[i], fingerprint_hash,
 			    SSH_FP_RANDOMART);
-			if (fp == NULL || ra == NULL)
+			যদি (fp == রিক্ত || ra == রিক্ত)
 				fatal_f("sshkey_fingerprint fail");
-			printf("%u %s %s (PKCS11 key)\n", sshkey_size(keys[i]),
-			    fp, sshkey_type(keys[i]));
-			if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
+			printf("%u %s %s (PKCS11 key)\n", sshkey_size(চাবিগুলি[i]),
+			    fp, sshkey_type(চাবিগুলি[i]));
+			যদি (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
 				printf("%s\n", ra);
-			free(ra);
-			free(fp);
-		} else {
-			(void) sshkey_write(keys[i], stdout); /* XXX check */
+			মুক্ত(ra);
+			মুক্ত(fp);
+		} অন্যথা {
+			(শূন্য) sshkey_write(চাবিগুলি[i], stdout); /* XXX check */
 			fprintf(stdout, "%s%s\n",
 			    *(comments[i]) == '\0' ? "" : " ", comments[i]);
 		}
-		free(comments[i]);
-		sshkey_free(keys[i]);
+		মুক্ত(comments[i]);
+		sshkey_free(চাবিগুলি[i]);
 	}
-	free(comments);
-	free(keys);
+	মুক্ত(comments);
+	মুক্ত(চাবিগুলি);
 	pkcs11_terminate();
 	exit(0);
-#else
+#অন্যথা
 	fatal("no pkcs11 support");
 #endif /* ENABLE_PKCS11 */
 }
 
-static struct sshkey *
-try_read_key(char **cpp)
+স্থির সংরচনা sshkey *
+try_read_চাবি(ৱর্ণ **cpp)
 {
-	struct sshkey *ret;
-	int r;
+	সংরচনা sshkey *ret;
+	পূর্ণাঙ্ক r;
 
-	if ((ret = sshkey_new(KEY_UNSPEC)) == NULL)
+	যদি ((ret = sshkey_new(চাবি_UNSPEC)) == রিক্ত)
 		fatal("sshkey_new failed");
-	if ((r = sshkey_read(ret, cpp)) == 0)
-		return ret;
+	যদি ((r = sshkey_read(ret, cpp)) == 0)
+		ঘূৰাই ret;
 	/* Not a key */
 	sshkey_free(ret);
-	return NULL;
+	ঘূৰাই রিক্ত;
 }
 
-static void
-fingerprint_one_key(const struct sshkey *public, const char *comment)
+স্থির শূন্য
+fingerprint_one_চাবি(ধ্রুৱ সংরচনা sshkey *সার্ৱজনিক, ধ্রুৱ ৱর্ণ *comment)
 {
-	char *fp = NULL, *ra = NULL;
-	enum sshkey_fp_rep rep;
-	int fptype;
+	ৱর্ণ *fp = রিক্ত, *ra = রিক্ত;
+	গণনা sshkey_fp_rep rep;
+	পূর্ণাঙ্ক fptype;
 
 	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
 	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
-	fp = sshkey_fingerprint(public, fptype, rep);
-	ra = sshkey_fingerprint(public, fingerprint_hash, SSH_FP_RANDOMART);
-	if (fp == NULL || ra == NULL)
+	fp = sshkey_fingerprint(সার্ৱজনিক, fptype, rep);
+	ra = sshkey_fingerprint(সার্ৱজনিক, fingerprint_hash, SSH_FP_RANDOMART);
+	যদি (fp == রিক্ত || ra == রিক্ত)
 		fatal_f("sshkey_fingerprint failed");
-	mprintf("%u %s %s (%s)\n", sshkey_size(public), fp,
-	    comment ? comment : "no comment", sshkey_type(public));
-	if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
+	mprintf("%u %s %s (%s)\n", sshkey_size(সার্ৱজনিক), fp,
+	    comment ? comment : "no comment", sshkey_type(সার্ৱজনিক));
+	যদি (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
 		printf("%s\n", ra);
-	free(ra);
-	free(fp);
+	মুক্ত(ra);
+	মুক্ত(fp);
 }
 
-static void
-fingerprint_private(const char *path)
+স্থির শূন্য
+fingerprint_private(ধ্রুৱ ৱর্ণ *path)
 {
-	struct stat st;
-	char *comment = NULL;
-	struct sshkey *privkey = NULL, *pubkey = NULL;
-	int r;
+	সংরচনা stat st;
+	ৱর্ণ *comment = রিক্ত;
+	সংরচনা sshkey *privkey = রিক্ত, *pubkey = রিক্ত;
+	পূর্ণাঙ্ক r;
 
-	if (stat(identity_file, &st) == -1)
+	যদি (stat(identity_file, &st) == -1)
 		fatal("%s: %s", path, strerror(errno));
-	if ((r = sshkey_load_public(path, &pubkey, &comment)) != 0)
+	যদি ((r = sshkey_load_public(path, &pubkey, &comment)) != 0)
 		debug_r(r, "load public \"%s\"", path);
-	if (pubkey == NULL || comment == NULL || *comment == '\0') {
-		free(comment);
-		if ((r = sshkey_load_private(path, NULL,
+	যদি (pubkey == রিক্ত || comment == রিক্ত || *comment == '\0') {
+		মুক্ত(comment);
+		যদি ((r = sshkey_load_private(path, রিক্ত,
 		    &privkey, &comment)) != 0)
 			debug_r(r, "load private \"%s\"", path);
 	}
-	if (pubkey == NULL && privkey == NULL)
+	যদি (pubkey == রিক্ত && privkey == রিক্ত)
 		fatal("%s is not a key file.", path);
 
-	fingerprint_one_key(pubkey == NULL ? privkey : pubkey, comment);
+	fingerprint_one_চাবি(pubkey == রিক্ত ? privkey : pubkey, comment);
 	sshkey_free(pubkey);
 	sshkey_free(privkey);
-	free(comment);
+	মুক্ত(comment);
 }
 
-static void
-do_fingerprint(struct passwd *pw)
+স্থির শূন্য
+do_fingerprint(সংরচনা passwd *pw)
 {
 	FILE *f;
-	struct sshkey *public = NULL;
-	char *comment = NULL, *cp, *ep, *line = NULL;
+	সংরচনা sshkey *সার্ৱজনিক = রিক্ত;
+	ৱর্ণ *comment = রিক্ত, *cp, *ep, *সাৰি = রিক্ত;
 	size_t linesize = 0;
-	int i, invalid = 1;
-	const char *path;
+	পূর্ণাঙ্ক i, invalid = 1;
+	ধ্রুৱ ৱর্ণ *path;
 	u_long lnum = 0;
 
-	if (!have_identity)
+	যদি (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
 	path = identity_file;
 
-	if (strcmp(identity_file, "-") == 0) {
+	যদি (strcmp(identity_file, "-") == 0) {
 		f = stdin;
 		path = "(stdin)";
-	} else if ((f = fopen(path, "r")) == NULL)
+	} অন্যথা যদি ((f = fopen(path, "r")) == রিক্ত)
 		fatal("%s: %s: %s", __progname, path, strerror(errno));
 
-	while (getline(&line, &linesize, f) != -1) {
+	যেতিয়ালৈ (getline(&সাৰি, &linesize, f) != -1) {
 		lnum++;
-		cp = line;
+		cp = সাৰি;
 		cp[strcspn(cp, "\r\n")] = '\0';
 		/* Trim leading space and comments */
-		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
-			continue;
+		cp = সাৰি + strspn(সাৰি, " \t");
+		যদি (*cp == '#' || *cp == '\0')
+			অনুৱর্ত;
 
 		/*
 		 * Input may be plain keys, private keys, authorized_keys
@@ -971,9 +971,9 @@ do_fingerprint(struct passwd *pw)
 		 * "SSH PRIVATE KEY" appears on the first line and we're
 		 * not reading from stdin (XXX support private keys on stdin).
 		 */
-		if (lnum == 1 && strcmp(identity_file, "-") != 0 &&
-		    strstr(cp, "PRIVATE KEY") != NULL) {
-			free(line);
+		যদি (lnum == 1 && strcmp(identity_file, "-") != 0 &&
+		    strstr(cp, "PRIVATE KEY") != রিক্ত) {
+			মুক্ত(সাৰি);
 			fclose(f);
 			fingerprint_private(path);
 			exit(0);
@@ -984,92 +984,92 @@ do_fingerprint(struct passwd *pw)
 		 * accept a public key prefixed with a hostname or options.
 		 * Try a bare key first, otherwise skip the leading stuff.
 		 */
-		comment = NULL;
-		if ((public = try_read_key(&cp)) == NULL) {
+		comment = রিক্ত;
+		যদি ((সার্ৱজনিক = try_read_চাবি(&cp)) == রিক্ত) {
 			i = strtol(cp, &ep, 10);
-			if (i == 0 || ep == NULL ||
+			যদি (i == 0 || ep == রিক্ত ||
 			    (*ep != ' ' && *ep != '\t')) {
-				int quoted = 0;
+				পূর্ণাঙ্ক quoted = 0;
 
 				comment = cp;
-				for (; *cp && (quoted || (*cp != ' ' &&
+				বাবে (; *cp && (quoted || (*cp != ' ' &&
 				    *cp != '\t')); cp++) {
-					if (*cp == '\\' && cp[1] == '"')
+					যদি (*cp == '\\' && cp[1] == '"')
 						cp++;	/* Skip both */
-					else if (*cp == '"')
+					অন্যথা যদি (*cp == '"')
 						quoted = !quoted;
 				}
-				if (!*cp)
-					continue;
+				যদি (!*cp)
+					অনুৱর্ত;
 				*cp++ = '\0';
 			}
 		}
 		/* Retry after parsing leading hostname/key options */
-		if (public == NULL && (public = try_read_key(&cp)) == NULL) {
+		যদি (সার্ৱজনিক == রিক্ত && (সার্ৱজনিক = try_read_চাবি(&cp)) == রিক্ত) {
 			debug("%s:%lu: not a public key", path, lnum);
-			continue;
+			অনুৱর্ত;
 		}
 
 		/* Find trailing comment, if any */
-		for (; *cp == ' ' || *cp == '\t'; cp++)
+		বাবে (; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (*cp != '\0' && *cp != '#')
+		যদি (*cp != '\0' && *cp != '#')
 			comment = cp;
 
-		fingerprint_one_key(public, comment);
-		sshkey_free(public);
+		fingerprint_one_চাবি(সার্ৱজনিক, comment);
+		sshkey_free(সার্ৱজনিক);
 		invalid = 0; /* One good key in the file is sufficient */
 	}
 	fclose(f);
-	free(line);
+	মুক্ত(সাৰি);
 
-	if (invalid)
+	যদি (invalid)
 		fatal("%s is not a public key file.", path);
 	exit(0);
 }
 
-static void
-do_gen_all_hostkeys(struct passwd *pw)
+স্থির শূন্য
+do_gen_all_hostkeys(সংরচনা passwd *pw)
 {
-	struct {
-		char *key_type;
-		char *key_type_display;
-		char *path;
-	} key_types[] = {
+	সংরচনা {
+		ৱর্ণ *চাবি_type;
+		ৱর্ণ *চাবি_type_display;
+		ৱর্ণ *path;
+	} চাবি_types[] = {
 #ifdef WITH_OPENSSL
-		{ "rsa", "RSA" ,_PATH_HOST_RSA_KEY_FILE },
-		{ "ecdsa", "ECDSA",_PATH_HOST_ECDSA_KEY_FILE },
+		{ "rsa", "RSA" ,PATH_HOST_RSA_চাবি_FILE },
+		{ "ecdsa", "ECDSA",PATH_HOST_ECDSA_চাবি_FILE },
 #endif /* WITH_OPENSSL */
-		{ "ed25519", "ED25519",_PATH_HOST_ED25519_KEY_FILE },
+		{ "ed25519", "ED25519",PATH_HOST_ED25519_চাবি_FILE },
 #ifdef USE_MLDSA
 		{ "mldsa44-ed25519", "MLDSA44-ED25519",
-		     _PATH_HOST_MLDSA44_ED25519_KEY_FILE },
+		     PATH_HOST_MLDSA44_ED25519_চাবি_FILE },
 #endif
-		{ NULL, NULL, NULL }
+		{ রিক্ত, রিক্ত, রিক্ত }
 	};
 
 	uint32_t bits = 0;
-	int first = 0;
-	struct stat st;
-	struct sshkey *private, *public;
-	char comment[KEY_COMMENT_MAX], *prv_tmp, *pub_tmp, *prv_file, *pub_file;
-	int i, type, fd, r;
+	পূর্ণাঙ্ক first = 0;
+	সংরচনা stat st;
+	সংরচনা sshkey *গুপ্ত, *সার্ৱজনিক;
+	ৱর্ণ comment[চাবি_COMMENT_MAX], *prv_tmp, *pub_tmp, *prv_file, *pub_file;
+	পূর্ণাঙ্ক i, type, fd, r;
 
-	for (i = 0; key_types[i].key_type; i++) {
-		public = private = NULL;
-		prv_tmp = pub_tmp = prv_file = pub_file = NULL;
+	বাবে (i = 0; চাবি_types[i].চাবি_type; i++) {
+		সার্ৱজনিক = গুপ্ত = রিক্ত;
+		prv_tmp = pub_tmp = prv_file = pub_file = রিক্ত;
 
 		xasprintf(&prv_file, "%s%s",
-		    identity_file, key_types[i].path);
+		    identity_file, চাবি_types[i].path);
 
 		/* Check whether private key exists and is not zero-length */
-		if (stat(prv_file, &st) == 0) {
-			if (st.st_size != 0)
-				goto next;
-		} else if (errno != ENOENT) {
-			error("Could not stat %s: %s", key_types[i].path,
+		যদি (stat(prv_file, &st) == 0) {
+			যদি (st.st_size != 0)
+				গচ্ছ next;
+		} অন্যথা যদি (errno != ENOENT) {
+			error("Could not stat %s: %s", চাবি_types[i].path,
 			    strerror(errno));
-			goto failnext;
+			গচ্ছ failnext;
 		}
 
 		/*
@@ -1077,231 +1077,231 @@ do_gen_all_hostkeys(struct passwd *pw)
 		 * key generation.
 		 */
 		xasprintf(&prv_tmp, "%s%s.XXXXXXXXXX",
-		    identity_file, key_types[i].path);
+		    identity_file, চাবি_types[i].path);
 		xasprintf(&pub_tmp, "%s%s.pub.XXXXXXXXXX",
-		    identity_file, key_types[i].path);
+		    identity_file, চাবি_types[i].path);
 		xasprintf(&pub_file, "%s%s.pub",
-		    identity_file, key_types[i].path);
+		    identity_file, চাবি_types[i].path);
 
-		if (first == 0) {
+		যদি (first == 0) {
 			first = 1;
 			printf("%s: generating new host keys: ", __progname);
 		}
-		printf("%s ", key_types[i].key_type_display);
+		printf("%s ", চাবি_types[i].চাবি_type_display);
 		fflush(stdout);
-		type = sshkey_type_from_shortname(key_types[i].key_type);
-		if ((fd = mkstemp(prv_tmp)) == -1) {
+		type = sshkey_type_from_shortname(চাবি_types[i].চাবি_type);
+		যদি ((fd = mkstemp(prv_tmp)) == -1) {
 			error("Could not save your private key in %s: %s",
 			    prv_tmp, strerror(errno));
-			goto failnext;
+			গচ্ছ failnext;
 		}
-		(void)close(fd); /* just using mkstemp() to reserve a name */
+		(শূন্য)close(fd); /* just using mkstemp() to reserve a name */
 		bits = 0;
-		type_bits_valid(type, NULL, &bits);
-		if ((r = sshkey_generate(type, bits, &private)) != 0) {
+		type_bits_valid(type, রিক্ত, &bits);
+		যদি ((r = sshkey_generate(type, bits, &গুপ্ত)) != 0) {
 			error_r(r, "sshkey_generate failed");
-			goto failnext;
+			গচ্ছ failnext;
 		}
-		if ((r = sshkey_from_private(private, &public)) != 0)
+		যদি ((r = sshkey_from_private(গুপ্ত, &সার্ৱজনিক)) != 0)
 			fatal_fr(r, "sshkey_from_private");
-		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name,
+		snprintf(comment, পরিমাণ comment, "%s@%s", pw->pw_name,
 		    hostname);
-		if ((r = sshkey_save_private(private, prv_tmp, "",
-		    comment, private_key_format, openssh_format_cipher,
+		যদি ((r = sshkey_save_private(গুপ্ত, prv_tmp, "",
+		    comment, private_চাবি_format, openssh_format_cipher,
 		    rounds)) != 0) {
 			error_r(r, "Saving key \"%s\" failed", prv_tmp);
-			goto failnext;
+			গচ্ছ failnext;
 		}
-		if ((fd = mkstemp(pub_tmp)) == -1) {
+		যদি ((fd = mkstemp(pub_tmp)) == -1) {
 			error("Could not save your public key in %s: %s",
 			    pub_tmp, strerror(errno));
-			goto failnext;
+			গচ্ছ failnext;
 		}
-		(void)fchmod(fd, 0644);
-		(void)close(fd);
-		if ((r = sshkey_save_public(public, pub_tmp, comment)) != 0) {
+		(শূন্য)fchmod(fd, 0644);
+		(শূন্য)close(fd);
+		যদি ((r = sshkey_save_public(সার্ৱজনিক, pub_tmp, comment)) != 0) {
 			error_r(r, "Unable to save public key to %s",
 			    identity_file);
-			goto failnext;
+			গচ্ছ failnext;
 		}
 
 		/* Rename temporary files to their permanent locations. */
-		if (rename(pub_tmp, pub_file) != 0) {
+		যদি (rename(pub_tmp, pub_file) != 0) {
 			error("Unable to move %s into position: %s",
 			    pub_file, strerror(errno));
-			goto failnext;
+			গচ্ছ failnext;
 		}
-		if (rename(prv_tmp, prv_file) != 0) {
+		যদি (rename(prv_tmp, prv_file) != 0) {
 			error("Unable to move %s into position: %s",
-			    key_types[i].path, strerror(errno));
+			    চাবি_types[i].path, strerror(errno));
  failnext:
 			first = 0;
-			goto next;
+			গচ্ছ next;
 		}
  next:
-		sshkey_free(private);
-		sshkey_free(public);
-		free(prv_tmp);
-		free(pub_tmp);
-		free(prv_file);
-		free(pub_file);
+		sshkey_free(গুপ্ত);
+		sshkey_free(সার্ৱজনিক);
+		মুক্ত(prv_tmp);
+		মুক্ত(pub_tmp);
+		মুক্ত(prv_file);
+		মুক্ত(pub_file);
 	}
-	if (first != 0)
+	যদি (first != 0)
 		printf("\n");
 }
 
-struct known_hosts_ctx {
-	const char *host;	/* Hostname searched for in find/delete case */
+সংরচনা known_hosts_ctx {
+	ধ্রুৱ ৱর্ণ *host;	/* Hostname searched for in find/delete case */
 	FILE *out;		/* Output file, stdout for find_hosts case */
-	int has_unhashed;	/* When hashing, original had unhashed hosts */
-	int found_key;		/* For find/delete, host was found */
-	int invalid;		/* File contained invalid items; don't delete */
-	int hash_hosts;		/* Hash hostnames as we go */
-	int find_host;		/* Search for specific hostname */
-	int delete_host;	/* Delete host from known_hosts */
+	পূর্ণাঙ্ক has_unhashed;	/* When hashing, original had unhashed hosts */
+	পূর্ণাঙ্ক found_চাবি;		/* For find/delete, host was found */
+	পূর্ণাঙ্ক invalid;		/* File contained invalid items; don't delete */
+	পূর্ণাঙ্ক hash_hosts;		/* Hash hostnames as we go */
+	পূর্ণাঙ্ক find_host;		/* Search for specific hostname */
+	পূর্ণাঙ্ক delete_host;	/* Delete host from known_hosts */
 };
 
-static int
-known_hosts_hash(struct hostkey_foreach_line *l, void *_ctx)
+স্থির পূর্ণাঙ্ক
+known_hosts_hash(সংরচনা hostkey_foreach_সাৰি *l, শূন্য *_ctx)
 {
-	struct known_hosts_ctx *ctx = (struct known_hosts_ctx *)_ctx;
-	char *hashed, *cp, *hosts, *ohosts;
-	int has_wild = l->hosts && strcspn(l->hosts, "*?!") != strlen(l->hosts);
-	int was_hashed = l->hosts && l->hosts[0] == HASH_DELIM;
+	সংরচনা known_hosts_ctx *ctx = (সংরচনা known_hosts_ctx *)_ctx;
+	ৱর্ণ *hashed, *cp, *hosts, *ohosts;
+	পূর্ণাঙ্ক has_wild = l->hosts && strcspn(l->hosts, "*?!") != strlen(l->hosts);
+	পূর্ণাঙ্ক was_hashed = l->hosts && l->hosts[0] == HASH_DELIM;
 
-	switch (l->status) {
-	case HKF_STATUS_OK:
-	case HKF_STATUS_MATCHED:
+	ৱিকল্প (l->status) {
+	পক্ষ HKF_STATUS_OK:
+	পক্ষ HKF_STATUS_MATCHED:
 		/*
 		 * Don't hash hosts already hashed, with wildcard
 		 * characters or a CA/revocation marker.
 		 */
-		if (was_hashed || has_wild || l->marker != MRK_NONE) {
-			fprintf(ctx->out, "%s\n", l->line);
-			if (has_wild && !ctx->find_host) {
+		যদি (was_hashed || has_wild || l->marker != MRK_NONE) {
+			fprintf(ctx->out, "%s\n", l->সাৰি);
+			যদি (has_wild && !ctx->find_host) {
 				logit("%s:%lu: ignoring host name "
 				    "with wildcard: %.64s", l->path,
 				    l->linenum, l->hosts);
 			}
-			return 0;
+			ঘূৰাই 0;
 		}
 		/*
 		 * Split any comma-separated hostnames from the host list,
 		 * hash and store separately.
 		 */
 		ohosts = hosts = xstrdup(l->hosts);
-		while ((cp = strsep(&hosts, ",")) != NULL && *cp != '\0') {
+		যেতিয়ালৈ ((cp = strsep(&hosts, ",")) != রিক্ত && *cp != '\0') {
 			lowercase(cp);
-			if ((hashed = host_hash(cp, NULL, 0)) == NULL)
+			যদি ((hashed = host_hash(cp, রিক্ত, 0)) == রিক্ত)
 				fatal("hash_host failed");
 			fprintf(ctx->out, "%s %s\n", hashed, l->rawkey);
-			free(hashed);
+			মুক্ত(hashed);
 			ctx->has_unhashed = 1;
 		}
-		free(ohosts);
-		return 0;
-	case HKF_STATUS_INVALID:
+		মুক্ত(ohosts);
+		ঘূৰাই 0;
+	পক্ষ HKF_STATUS_INVALID:
 		/* Retain invalid lines, but mark file as invalid. */
 		ctx->invalid = 1;
 		logit("%s:%lu: invalid line", l->path, l->linenum);
 		/* FALLTHROUGH */
-	default:
-		fprintf(ctx->out, "%s\n", l->line);
-		return 0;
+	স্ৱভাৱ:
+		fprintf(ctx->out, "%s\n", l->সাৰি);
+		ঘূৰাই 0;
 	}
 	/* NOTREACHED */
-	return -1;
+	ঘূৰাই -1;
 }
 
-static int
-known_hosts_find_delete(struct hostkey_foreach_line *l, void *_ctx)
+স্থির পূর্ণাঙ্ক
+known_hosts_find_delete(সংরচনা hostkey_foreach_সাৰি *l, শূন্য *_ctx)
 {
-	struct known_hosts_ctx *ctx = (struct known_hosts_ctx *)_ctx;
-	enum sshkey_fp_rep rep;
-	int fptype;
-	char *fp = NULL, *ra = NULL;
+	সংরচনা known_hosts_ctx *ctx = (সংরচনা known_hosts_ctx *)_ctx;
+	গণনা sshkey_fp_rep rep;
+	পূর্ণাঙ্ক fptype;
+	ৱর্ণ *fp = রিক্ত, *ra = রিক্ত;
 
 	fptype = print_bubblebabble ? SSH_DIGEST_SHA1 : fingerprint_hash;
 	rep =    print_bubblebabble ? SSH_FP_BUBBLEBABBLE : SSH_FP_DEFAULT;
 
-	if (l->status == HKF_STATUS_MATCHED) {
-		if (ctx->delete_host) {
-			if (l->marker != MRK_NONE) {
+	যদি (l->status == HKF_STATUS_MATCHED) {
+		যদি (ctx->delete_host) {
+			যদি (l->marker != MRK_NONE) {
 				/* Don't remove CA and revocation lines */
-				fprintf(ctx->out, "%s\n", l->line);
-			} else {
+				fprintf(ctx->out, "%s\n", l->সাৰি);
+			} অন্যথা {
 				/*
 				 * Hostname matches and has no CA/revoke
 				 * marker, delete it by *not* writing the
 				 * line to ctx->out.
 				 */
-				ctx->found_key = 1;
-				if (!quiet)
+				ctx->found_চাবি = 1;
+				যদি (!quiet)
 					printf("# Host %s found: line %lu\n",
 					    ctx->host, l->linenum);
 			}
-			return 0;
-		} else if (ctx->find_host) {
-			ctx->found_key = 1;
-			if (!quiet) {
+			ঘূৰাই 0;
+		} অন্যথা যদি (ctx->find_host) {
+			ctx->found_চাবি = 1;
+			যদি (!quiet) {
 				printf("# Host %s found: line %lu %s\n",
 				    ctx->host,
 				    l->linenum, l->marker == MRK_CA ? "CA" :
 				    (l->marker == MRK_REVOKE ? "REVOKED" : ""));
 			}
-			if (ctx->hash_hosts)
+			যদি (ctx->hash_hosts)
 				known_hosts_hash(l, ctx);
-			else if (print_fingerprint) {
-				fp = sshkey_fingerprint(l->key, fptype, rep);
-				ra = sshkey_fingerprint(l->key,
+			অন্যথা যদি (print_fingerprint) {
+				fp = sshkey_fingerprint(l->চাবি, fptype, rep);
+				ra = sshkey_fingerprint(l->চাবি,
 				    fingerprint_hash, SSH_FP_RANDOMART);
-				if (fp == NULL || ra == NULL)
+				যদি (fp == রিক্ত || ra == রিক্ত)
 					fatal_f("sshkey_fingerprint failed");
 				mprintf("%s %s %s%s%s\n", ctx->host,
-				    sshkey_type(l->key), fp,
+				    sshkey_type(l->চাবি), fp,
 				    l->comment[0] ? " " : "",
 				    l->comment);
-				if (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
+				যদি (log_level_get() >= SYSLOG_LEVEL_VERBOSE)
 					printf("%s\n", ra);
-				free(ra);
-				free(fp);
-			} else
-				fprintf(ctx->out, "%s\n", l->line);
-			return 0;
+				মুক্ত(ra);
+				মুক্ত(fp);
+			} অন্যথা
+				fprintf(ctx->out, "%s\n", l->সাৰি);
+			ঘূৰাই 0;
 		}
-	} else if (ctx->delete_host) {
+	} অন্যথা যদি (ctx->delete_host) {
 		/* Retain non-matching hosts when deleting */
-		if (l->status == HKF_STATUS_INVALID) {
+		যদি (l->status == HKF_STATUS_INVALID) {
 			ctx->invalid = 1;
 			logit("%s:%lu: invalid line", l->path, l->linenum);
 		}
-		fprintf(ctx->out, "%s\n", l->line);
+		fprintf(ctx->out, "%s\n", l->সাৰি);
 	}
-	return 0;
+	ঘূৰাই 0;
 }
 
-static void
-do_known_hosts(struct passwd *pw, const char *name, int find_host,
-    int delete_host, int hash_hosts)
+স্থির শূন্য
+do_known_hosts(সংরচনা passwd *pw, ধ্রুৱ ৱর্ণ *name, পূর্ণাঙ্ক find_host,
+    পূর্ণাঙ্ক delete_host, পূর্ণাঙ্ক hash_hosts)
 {
-	char *cp, tmp[PATH_MAX], old[PATH_MAX];
-	int r, fd, oerrno, inplace = 0;
-	struct known_hosts_ctx ctx;
+	ৱর্ণ *cp, tmp[PATH_MAX], old[PATH_MAX];
+	পূর্ণাঙ্ক r, fd, oerrno, inplace = 0;
+	সংরচনা known_hosts_ctx ctx;
 	u_int foreach_options;
-	struct stat sb;
+	সংরচনা stat sb;
 
-	if (!have_identity) {
+	যদি (!have_identity) {
 		cp = tilde_expand_filename(_PATH_SSH_USER_HOSTFILE, pw->pw_uid);
-		if (strlcpy(identity_file, cp, sizeof(identity_file)) >=
-		    sizeof(identity_file))
+		যদি (strlcpy(identity_file, cp, পরিমাণ(identity_file)) >=
+		    পরিমাণ(identity_file))
 			fatal("Specified known hosts path too long");
-		free(cp);
+		মুক্ত(cp);
 		have_identity = 1;
 	}
-	if (stat(identity_file, &sb) != 0)
+	যদি (stat(identity_file, &sb) != 0)
 		fatal("Cannot stat %s: %s", identity_file, strerror(errno));
 
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, পরিমাণ(ctx));
 	ctx.out = stdout;
 	ctx.host = name;
 	ctx.hash_hosts = hash_hosts;
@@ -1312,58 +1312,58 @@ do_known_hosts(struct passwd *pw, const char *name, int find_host,
 	 * Find hosts goes to stdout, hash and deletions happen in-place
 	 * A corner case is ssh-keygen -HF foo, which should go to stdout
 	 */
-	if (!find_host && (hash_hosts || delete_host)) {
-		if (strlcpy(tmp, identity_file, sizeof(tmp)) >= sizeof(tmp) ||
-		    strlcat(tmp, ".XXXXXXXXXX", sizeof(tmp)) >= sizeof(tmp) ||
-		    strlcpy(old, identity_file, sizeof(old)) >= sizeof(old) ||
-		    strlcat(old, ".old", sizeof(old)) >= sizeof(old))
+	যদি (!find_host && (hash_hosts || delete_host)) {
+		যদি (strlcpy(tmp, identity_file, পরিমাণ(tmp)) >= পরিমাণ(tmp) ||
+		    strlcat(tmp, ".XXXXXXXXXX", পরিমাণ(tmp)) >= পরিমাণ(tmp) ||
+		    strlcpy(old, identity_file, পরিমাণ(old)) >= পরিমাণ(old) ||
+		    strlcat(old, ".old", পরিমাণ(old)) >= পরিমাণ(old))
 			fatal("known_hosts path too long");
 		umask(077);
-		if ((fd = mkstemp(tmp)) == -1)
+		যদি ((fd = mkstemp(tmp)) == -1)
 			fatal("mkstemp: %s", strerror(errno));
-		if ((ctx.out = fdopen(fd, "w")) == NULL) {
+		যদি ((ctx.out = fdopen(fd, "w")) == রিক্ত) {
 			oerrno = errno;
 			unlink(tmp);
 			fatal("fdopen: %s", strerror(oerrno));
 		}
-		(void)fchmod(fd, sb.st_mode & 0644);
+		(শূন্য)fchmod(fd, sb.st_mode & 0644);
 		inplace = 1;
 	}
 	/* XXX support identity_file == "-" for stdin */
 	foreach_options = find_host ? HKF_WANT_MATCH : 0;
-	foreach_options |= print_fingerprint ? HKF_WANT_PARSE_KEY : 0;
-	if ((r = hostkeys_foreach(identity_file, (find_host || !hash_hosts) ?
-	    known_hosts_find_delete : known_hosts_hash, &ctx, name, NULL,
+	foreach_options |= print_fingerprint ? HKF_WANT_PARSE_চাবি : 0;
+	যদি ((r = hostkeys_foreach(identity_file, (find_host || !hash_hosts) ?
+	    known_hosts_find_delete : known_hosts_hash, &ctx, name, রিক্ত,
 	    foreach_options, 0)) != 0) {
-		if (inplace)
+		যদি (inplace)
 			unlink(tmp);
 		fatal_fr(r, "hostkeys_foreach");
 	}
 
-	if (inplace)
+	যদি (inplace)
 		fclose(ctx.out);
 
-	if (ctx.invalid) {
+	যদি (ctx.invalid) {
 		error("%s is not a valid known_hosts file.", identity_file);
-		if (inplace) {
+		যদি (inplace) {
 			error("Not replacing existing known_hosts "
 			    "file because of errors");
 			unlink(tmp);
 		}
 		exit(1);
-	} else if (delete_host && !ctx.found_key) {
+	} অন্যথা যদি (delete_host && !ctx.found_চাবি) {
 		logit("Host %s not found in %s", name, identity_file);
-		if (inplace)
+		যদি (inplace)
 			unlink(tmp);
-	} else if (inplace) {
+	} অন্যথা যদি (inplace) {
 		/* Backup existing file */
-		if (unlink(old) == -1 && errno != ENOENT)
+		যদি (unlink(old) == -1 && errno != ENOENT)
 			fatal("unlink %.100s: %s", old, strerror(errno));
-		if (link(identity_file, old) == -1)
+		যদি (link(identity_file, old) == -1)
 			fatal("link %.100s to %.100s: %s", identity_file, old,
 			    strerror(errno));
 		/* Move new one into place */
-		if (rename(tmp, identity_file) == -1) {
+		যদি (rename(tmp, identity_file) == -1) {
 			error("rename\"%s\" to \"%s\": %s", tmp, identity_file,
 			    strerror(errno));
 			unlink(tmp);
@@ -1373,92 +1373,92 @@ do_known_hosts(struct passwd *pw, const char *name, int find_host,
 
 		printf("%s updated.\n", identity_file);
 		printf("Original contents retained as %s\n", old);
-		if (ctx.has_unhashed) {
+		যদি (ctx.has_unhashed) {
 			logit("WARNING: %s contains unhashed entries", old);
 			logit("Delete this file to ensure privacy "
 			    "of hostnames");
 		}
 	}
 
-	exit (find_host && !ctx.found_key);
+	exit (find_host && !ctx.found_চাবি);
 }
 
 /*
  * Perform changing a passphrase.  The argument is the passwd structure
  * for the current user.
  */
-static void
-do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
+স্থির শূন্য
+do_change_passphrase(সংরচনা passwd *pw, ৱর্ণ * ধ্রুৱ *opts, size_t nopts)
 {
-	char *comment;
-	char *old_passphrase, *passphrase1, *passphrase2;
-	struct stat st;
-	struct sshkey *private;
-	int r;
+	ৱর্ণ *comment;
+	ৱর্ণ *old_passphrase, *passphrase1, *passphrase2;
+	সংরচনা stat st;
+	সংরচনা sshkey *গুপ্ত;
+	পূর্ণাঙ্ক r;
 	size_t i;
 
-	if (!have_identity)
+	যদি (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	যদি (stat(identity_file, &st) == -1)
 		fatal("%s: %s", identity_file, strerror(errno));
 	/* Try to load the file with empty passphrase. */
-	r = sshkey_load_private(identity_file, "", &private, &comment);
-	if (r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
-		if (identity_passphrase)
+	r = sshkey_load_private(identity_file, "", &গুপ্ত, &comment);
+	যদি (r == SSH_ERR_চাবি_WRONG_PASSPHRASE) {
+		যদি (identity_passphrase)
 			old_passphrase = xstrdup(identity_passphrase);
-		else
+		অন্যথা
 			old_passphrase =
 			    read_passphrase("Enter old passphrase: ",
 			    RP_ALLOW_STDIN);
 		r = sshkey_load_private(identity_file, old_passphrase,
-		    &private, &comment);
+		    &গুপ্ত, &comment);
 		freezero(old_passphrase, strlen(old_passphrase));
-		if (r != 0)
-			goto badkey;
-	} else if (r != 0) {
+		যদি (r != 0)
+			গচ্ছ badkey;
+	} অন্যথা যদি (r != 0) {
  badkey:
 		fatal_r(r, "Failed to load key %s", identity_file);
 	}
-	if (comment)
+	যদি (comment)
 		mprintf("Key has comment '%s'\n", comment);
 
 	/* All current -O options relate to FIDO keys only */
-	if (nopts != 0 && !sshkey_is_sk(private)) {
+	যদি (nopts != 0 && !sshkey_is_sk(গুপ্ত)) {
 		fatal("FIDO-specific option requested for non-FIDO key %s",
 		    identity_file);
 	}
-	if (sshkey_is_sk(private)) {
+	যদি (sshkey_is_sk(গুপ্ত)) {
 		debug_f("%s: original FIDO key flags: "
 		    "%stouch-required %sverify-required", identity_file,
-		    (private->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
-		    (private->sk_flags & SSH_SK_USER_VERIFICATION_REQD) ? "" : "no-");
+		    (গুপ্ত->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
+		    (গুপ্ত->sk_flags & SSH_SK_USER_VERIFICATION_REQD) ? "" : "no-");
 	}
-	for (i = 0; i < nopts; i++) {
-		if (strcasecmp(opts[i], "touch-required") == 0)
-			private->sk_flags |= SSH_SK_USER_PRESENCE_REQD;
-		else if (strcasecmp(opts[i], "no-touch-required") == 0)
-			private->sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
-		else if (strcasecmp(opts[i], "verify-required") == 0)
-			private->sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-		else if (strcasecmp(opts[i], "no-verify-required") == 0)
-			private->sk_flags &= ~SSH_SK_USER_VERIFICATION_REQD;
-		else {
+	বাবে (i = 0; i < nopts; i++) {
+		যদি (strcasecmp(opts[i], "touch-required") == 0)
+			গুপ্ত->sk_flags |= SSH_SK_USER_PRESENCE_REQD;
+		অন্যথা যদি (strcasecmp(opts[i], "no-touch-required") == 0)
+			গুপ্ত->sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
+		অন্যথা যদি (strcasecmp(opts[i], "verify-required") == 0)
+			গুপ্ত->sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
+		অন্যথা যদি (strcasecmp(opts[i], "no-verify-required") == 0)
+			গুপ্ত->sk_flags &= ~SSH_SK_USER_VERIFICATION_REQD;
+		অন্যথা {
 			fatal("Option \"%s\" is unsupported for "
 			    "key passphrase change", opts[i]);
 		}
 	}
-	if (sshkey_is_sk(private) && nopts != 0) {
+	যদি (sshkey_is_sk(গুপ্ত) && nopts != 0) {
 		debug_f("%s: updated FIDO key flags: "
 		    "%stouch-required %sverify-required", identity_file,
-		    (private->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
-		    (private->sk_flags & SSH_SK_USER_VERIFICATION_REQD) ? "" : "no-");
+		    (গুপ্ত->sk_flags & SSH_SK_USER_PRESENCE_REQD) ? "": "no-",
+		    (গুপ্ত->sk_flags & SSH_SK_USER_VERIFICATION_REQD) ? "" : "no-");
 	}
 
 	/* Ask the new passphrase (twice). */
-	if (identity_new_passphrase) {
+	যদি (identity_new_passphrase) {
 		passphrase1 = xstrdup(identity_new_passphrase);
-		passphrase2 = NULL;
-	} else {
+		passphrase2 = রিক্ত;
+	} অন্যথা {
 		passphrase1 =
 			read_passphrase("Enter new passphrase (empty for no "
 			    "passphrase): ", RP_ALLOW_STDIN);
@@ -1466,11 +1466,11 @@ do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
 		    RP_ALLOW_STDIN);
 
 		/* Verify that they are the same. */
-		if (strcmp(passphrase1, passphrase2) != 0) {
+		যদি (strcmp(passphrase1, passphrase2) != 0) {
 			explicit_bzero(passphrase1, strlen(passphrase1));
 			explicit_bzero(passphrase2, strlen(passphrase2));
-			free(passphrase1);
-			free(passphrase2);
+			মুক্ত(passphrase1);
+			মুক্ত(passphrase2);
 			printf("Pass phrases do not match.  Try again.\n");
 			exit(1);
 		}
@@ -1479,18 +1479,18 @@ do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
 	}
 
 	/* Save the file using the new passphrase. */
-	if ((r = sshkey_save_private(private, identity_file, passphrase1,
-	    comment, private_key_format, openssh_format_cipher, rounds)) != 0) {
+	যদি ((r = sshkey_save_private(গুপ্ত, identity_file, passphrase1,
+	    comment, private_চাবি_format, openssh_format_cipher, rounds)) != 0) {
 		error_r(r, "Saving key \"%s\" failed", identity_file);
 		freezero(passphrase1, strlen(passphrase1));
-		sshkey_free(private);
-		free(comment);
+		sshkey_free(গুপ্ত);
+		মুক্ত(comment);
 		exit(1);
 	}
 	/* Destroy the passphrase and the copy of the key in memory. */
 	freezero(passphrase1, strlen(passphrase1));
-	sshkey_free(private);		 /* Destroys contents */
-	free(comment);
+	sshkey_free(গুপ্ত);		 /* Destroys contents */
+	মুক্ত(comment);
 
 	printf("Your identification has been saved with the new passphrase.\n");
 	exit(0);
@@ -1499,199 +1499,199 @@ do_change_passphrase(struct passwd *pw, char * const *opts, size_t nopts)
 /*
  * Print the SSHFP RR.
  */
-static int
-do_print_resource_record(struct passwd *pw, char *fname, char *hname,
-    int print_generic, char * const *opts, size_t nopts)
+স্থির পূর্ণাঙ্ক
+do_print_resource_record(সংরচনা passwd *pw, ৱর্ণ *fname, ৱর্ণ *hname,
+    পূর্ণাঙ্ক print_generic, ৱর্ণ * ধ্রুৱ *opts, size_t nopts)
 {
-	struct sshkey *public;
-	char *comment = NULL;
-	const char *p;
-	struct stat st;
-	int r, hash = -1;
+	সংরচনা sshkey *সার্ৱজনিক;
+	ৱর্ণ *comment = রিক্ত;
+	ধ্রুৱ ৱর্ণ *p;
+	সংরচনা stat st;
+	পূর্ণাঙ্ক r, hash = -1;
 	size_t i;
 
-	for (i = 0; i < nopts; i++) {
-		if ((p = strprefix(opts[i], "hashalg=", 1)) != NULL) {
-			if ((hash = ssh_digest_alg_by_name(p)) == -1)
+	বাবে (i = 0; i < nopts; i++) {
+		যদি ((p = strprefix(opts[i], "hashalg=", 1)) != রিক্ত) {
+			যদি ((hash = ssh_digest_alg_by_name(p)) == -1)
 				fatal("Unsupported hash algorithm");
-		} else {
+		} অন্যথা {
 			error("Invalid option \"%s\"", opts[i]);
-			return SSH_ERR_INVALID_ARGUMENT;
+			ঘূৰাই SSH_ERR_INVALID_ARGUMENT;
 		}
 	}
-	if (fname == NULL)
+	যদি (fname == রিক্ত)
 		fatal_f("no filename");
-	if (stat(fname, &st) == -1) {
-		if (errno == ENOENT)
-			return 0;
+	যদি (stat(fname, &st) == -1) {
+		যদি (errno == ENOENT)
+			ঘূৰাই 0;
 		fatal("%s: %s", fname, strerror(errno));
 	}
-	if ((r = sshkey_load_public(fname, &public, &comment)) != 0)
+	যদি ((r = sshkey_load_public(fname, &সার্ৱজনিক, &comment)) != 0)
 		fatal_r(r, "Failed to read v2 public key from \"%s\"", fname);
-	export_dns_rr(hname, public, stdout, print_generic, hash);
-	sshkey_free(public);
-	free(comment);
-	return 1;
+	export_dns_rr(hname, সার্ৱজনিক, stdout, print_generic, hash);
+	sshkey_free(সার্ৱজনিক);
+	মুক্ত(comment);
+	ঘূৰাই 1;
 }
 
 /*
  * Change the comment of a private key file.
  */
-static void
-do_change_comment(struct passwd *pw, const char *identity_comment)
+স্থির শূন্য
+do_change_comment(সংরচনা passwd *pw, ধ্রুৱ ৱর্ণ *identity_comment)
 {
-	char new_comment[KEY_COMMENT_MAX], *comment, *passphrase;
-	struct sshkey *private;
-	struct sshkey *public;
-	struct stat st;
-	int r;
+	ৱর্ণ new_comment[চাবি_COMMENT_MAX], *comment, *passphrase;
+	সংরচনা sshkey *গুপ্ত;
+	সংরচনা sshkey *সার্ৱজনিক;
+	সংরচনা stat st;
+	পূর্ণাঙ্ক r;
 
-	if (!have_identity)
+	যদি (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (stat(identity_file, &st) == -1)
+	যদি (stat(identity_file, &st) == -1)
 		fatal("%s: %s", identity_file, strerror(errno));
-	if ((r = sshkey_load_private(identity_file, "",
-	    &private, &comment)) == 0)
+	যদি ((r = sshkey_load_private(identity_file, "",
+	    &গুপ্ত, &comment)) == 0)
 		passphrase = xstrdup("");
-	else if (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
+	অন্যথা যদি (r != SSH_ERR_চাবি_WRONG_PASSPHRASE)
 		fatal_r(r, "Cannot load private key \"%s\"", identity_file);
-	else {
-		if (identity_passphrase)
+	অন্যথা {
+		যদি (identity_passphrase)
 			passphrase = xstrdup(identity_passphrase);
-		else if (identity_new_passphrase)
+		অন্যথা যদি (identity_new_passphrase)
 			passphrase = xstrdup(identity_new_passphrase);
-		else
+		অন্যথা
 			passphrase = read_passphrase("Enter passphrase: ",
 			    RP_ALLOW_STDIN);
 		/* Try to load using the passphrase. */
-		if ((r = sshkey_load_private(identity_file, passphrase,
-		    &private, &comment)) != 0) {
+		যদি ((r = sshkey_load_private(identity_file, passphrase,
+		    &গুপ্ত, &comment)) != 0) {
 			freezero(passphrase, strlen(passphrase));
 			fatal_r(r, "Cannot load private key \"%s\"",
 			    identity_file);
 		}
 	}
 
-	if (private->type != KEY_ED25519 &&
-	    private_key_format != SSHKEY_PRIVATE_OPENSSH) {
+	যদি (গুপ্ত->type != চাবি_ED25519 &&
+	    private_চাবি_format != SSHKEY_PRIVATE_OPENSSH) {
 		error("Comments are only supported for keys stored in "
 		    "the new format (-o).");
 		explicit_bzero(passphrase, strlen(passphrase));
-		sshkey_free(private);
+		sshkey_free(গুপ্ত);
 		exit(1);
 	}
-	if (comment)
+	যদি (comment)
 		printf("Old comment: %s\n", comment);
-	else
+	অন্যথা
 		printf("No existing comment\n");
 
-	if (identity_comment) {
-		strlcpy(new_comment, identity_comment, sizeof(new_comment));
-	} else {
+	যদি (identity_comment) {
+		strlcpy(new_comment, identity_comment, পরিমাণ(new_comment));
+	} অন্যথা {
 		printf("New comment: ");
 		fflush(stdout);
-		if (!fgets(new_comment, sizeof(new_comment), stdin)) {
+		যদি (!fgets(new_comment, পরিমাণ(new_comment), stdin)) {
 			explicit_bzero(passphrase, strlen(passphrase));
-			sshkey_free(private);
+			sshkey_free(গুপ্ত);
 			exit(1);
 		}
 		new_comment[strcspn(new_comment, "\n")] = '\0';
 	}
-	if (comment != NULL && strcmp(comment, new_comment) == 0) {
+	যদি (comment != রিক্ত && strcmp(comment, new_comment) == 0) {
 		printf("No change to comment\n");
-		free(passphrase);
-		sshkey_free(private);
-		free(comment);
+		মুক্ত(passphrase);
+		sshkey_free(গুপ্ত);
+		মুক্ত(comment);
 		exit(0);
 	}
 
 	/* Save the file using the new passphrase. */
-	if ((r = sshkey_save_private(private, identity_file, passphrase,
-	    new_comment, private_key_format, openssh_format_cipher,
+	যদি ((r = sshkey_save_private(গুপ্ত, identity_file, passphrase,
+	    new_comment, private_চাবি_format, openssh_format_cipher,
 	    rounds)) != 0) {
 		error_r(r, "Saving key \"%s\" failed", identity_file);
 		freezero(passphrase, strlen(passphrase));
-		sshkey_free(private);
-		free(comment);
+		sshkey_free(গুপ্ত);
+		মুক্ত(comment);
 		exit(1);
 	}
 	freezero(passphrase, strlen(passphrase));
-	if ((r = sshkey_from_private(private, &public)) != 0)
+	যদি ((r = sshkey_from_private(গুপ্ত, &সার্ৱজনিক)) != 0)
 		fatal_fr(r, "sshkey_from_private");
-	sshkey_free(private);
+	sshkey_free(গুপ্ত);
 
-	strlcat(identity_file, ".pub", sizeof(identity_file));
-	if ((r = sshkey_save_public(public, identity_file, new_comment)) != 0)
+	strlcat(identity_file, ".pub", পরিমাণ(identity_file));
+	যদি ((r = sshkey_save_public(সার্ৱজনিক, identity_file, new_comment)) != 0)
 		fatal_r(r, "Unable to save public key to %s", identity_file);
-	sshkey_free(public);
-	free(comment);
+	sshkey_free(সার্ৱজনিক);
+	মুক্ত(comment);
 
-	if (strlen(new_comment) > 0)
+	যদি (strlen(new_comment) > 0)
 		printf("Comment '%s' applied\n", new_comment);
-	else
+	অন্যথা
 		printf("Comment removed\n");
 
 	exit(0);
 }
 
-static void
-cert_ext_add(const char *key, const char *value, int iscrit)
+স্থির শূন্য
+cert_ext_add(ধ্রুৱ ৱর্ণ *চাবি, ধ্রুৱ ৱর্ণ *মান, পূর্ণাঙ্ক iscrit)
 {
-	cert_ext = xreallocarray(cert_ext, ncert_ext + 1, sizeof(*cert_ext));
-	cert_ext[ncert_ext].key = xstrdup(key);
-	cert_ext[ncert_ext].val = value == NULL ? NULL : xstrdup(value);
+	cert_ext = xreallocarray(cert_ext, ncert_ext + 1, পরিমাণ(*cert_ext));
+	cert_ext[ncert_ext].চাবি = xstrdup(চাবি);
+	cert_ext[ncert_ext].val = মান == রিক্ত ? রিক্ত : xstrdup(মান);
 	cert_ext[ncert_ext].crit = iscrit;
 	ncert_ext++;
 }
 
 /* qsort(3) comparison function for certificate extensions */
-static int
-cert_ext_cmp(const void *_a, const void *_b)
+স্থির পূর্ণাঙ্ক
+cert_ext_cmp(ধ্রুৱ শূন্য *_a, ধ্রুৱ শূন্য *_b)
 {
-	const struct cert_ext *a = (const struct cert_ext *)_a;
-	const struct cert_ext *b = (const struct cert_ext *)_b;
-	int r;
+	ধ্রুৱ সংরচনা cert_ext *a = (ধ্রুৱ সংরচনা cert_ext *)_a;
+	ধ্রুৱ সংরচনা cert_ext *b = (ধ্রুৱ সংরচনা cert_ext *)_b;
+	পূর্ণাঙ্ক r;
 
-	if (a->crit != b->crit)
-		return (a->crit < b->crit) ? -1 : 1;
-	if ((r = strcmp(a->key, b->key)) != 0)
-		return r;
-	if ((a->val == NULL) != (b->val == NULL))
-		return (a->val == NULL) ? -1 : 1;
-	if (a->val != NULL && (r = strcmp(a->val, b->val)) != 0)
-		return r;
-	return 0;
+	যদি (a->crit != b->crit)
+		ঘূৰাই (a->crit < b->crit) ? -1 : 1;
+	যদি ((r = strcmp(a->চাবি, b->চাবি)) != 0)
+		ঘূৰাই r;
+	যদি ((a->val == রিক্ত) != (b->val == রিক্ত))
+		ঘূৰাই (a->val == রিক্ত) ? -1 : 1;
+	যদি (a->val != রিক্ত && (r = strcmp(a->val, b->val)) != 0)
+		ঘূৰাই r;
+	ঘূৰাই 0;
 }
 
 #define OPTIONS_CRITICAL	1
 #define OPTIONS_EXTENSIONS	2
-static void
-prepare_options_buf(struct sshbuf *c, int which)
+স্থির শূন্য
+prepare_options_buf(সংরচনা sshbuf *c, পূর্ণাঙ্ক which)
 {
-	struct sshbuf *b;
+	সংরচনা sshbuf *b;
 	size_t i;
-	int r;
-	const struct cert_ext *ext;
+	পূর্ণাঙ্ক r;
+	ধ্রুৱ সংরচনা cert_ext *ext;
 
-	if ((b = sshbuf_new()) == NULL)
+	যদি ((b = sshbuf_new()) == রিক্ত)
 		fatal_f("sshbuf_new failed");
 	sshbuf_reset(c);
-	for (i = 0; i < ncert_ext; i++) {
+	বাবে (i = 0; i < ncert_ext; i++) {
 		ext = &cert_ext[i];
-		if ((ext->crit && (which & OPTIONS_EXTENSIONS)) ||
+		যদি ((ext->crit && (which & OPTIONS_EXTENSIONS)) ||
 		    (!ext->crit && (which & OPTIONS_CRITICAL)))
-			continue;
-		if (ext->val == NULL) {
+			অনুৱর্ত;
+		যদি (ext->val == রিক্ত) {
 			/* flag option */
-			debug3_f("%s", ext->key);
-			if ((r = sshbuf_put_cstring(c, ext->key)) != 0 ||
-			    (r = sshbuf_put_string(c, NULL, 0)) != 0)
+			debug3_f("%s", ext->চাবি);
+			যদি ((r = sshbuf_put_cstring(c, ext->চাবি)) != 0 ||
+			    (r = sshbuf_put_string(c, রিক্ত, 0)) != 0)
 				fatal_fr(r, "prepare flag");
-		} else {
+		} অন্যথা {
 			/* key/value option */
-			debug3_f("%s=%s", ext->key, ext->val);
+			debug3_f("%s=%s", ext->চাবি, ext->val);
 			sshbuf_reset(b);
-			if ((r = sshbuf_put_cstring(c, ext->key)) != 0 ||
+			যদি ((r = sshbuf_put_cstring(c, ext->চাবি)) != 0 ||
 			    (r = sshbuf_put_cstring(b, ext->val)) != 0 ||
 			    (r = sshbuf_put_stringb(c, b)) != 0)
 				fatal_fr(r, "prepare k/v");
@@ -1700,283 +1700,283 @@ prepare_options_buf(struct sshbuf *c, int which)
 	sshbuf_free(b);
 }
 
-static void
-finalise_cert_exts(void)
+স্থির শূন্য
+finalise_cert_exts(শূন্য)
 {
 	/* critical options */
-	if (certflags_command != NULL)
+	যদি (certflags_command != রিক্ত)
 		cert_ext_add("force-command", certflags_command, 1);
-	if (certflags_src_addr != NULL)
+	যদি (certflags_src_addr != রিক্ত)
 		cert_ext_add("source-address", certflags_src_addr, 1);
-	if ((certflags_flags & CERTOPT_REQUIRE_VERIFY) != 0)
-		cert_ext_add("verify-required", NULL, 1);
+	যদি ((certflags_flags & CERTOPT_REQUIRE_VERIFY) != 0)
+		cert_ext_add("verify-required", রিক্ত, 1);
 	/* extensions */
-	if ((certflags_flags & CERTOPT_X_FWD) != 0)
-		cert_ext_add("permit-X11-forwarding", NULL, 0);
-	if ((certflags_flags & CERTOPT_AGENT_FWD) != 0)
-		cert_ext_add("permit-agent-forwarding", NULL, 0);
-	if ((certflags_flags & CERTOPT_PORT_FWD) != 0)
-		cert_ext_add("permit-port-forwarding", NULL, 0);
-	if ((certflags_flags & CERTOPT_PTY) != 0)
-		cert_ext_add("permit-pty", NULL, 0);
-	if ((certflags_flags & CERTOPT_USER_RC) != 0)
-		cert_ext_add("permit-user-rc", NULL, 0);
-	if ((certflags_flags & CERTOPT_NO_REQUIRE_USER_PRESENCE) != 0)
-		cert_ext_add("no-touch-required", NULL, 0);
+	যদি ((certflags_flags & CERTOPT_X_FWD) != 0)
+		cert_ext_add("permit-X11-forwarding", রিক্ত, 0);
+	যদি ((certflags_flags & CERTOPT_AGENT_FWD) != 0)
+		cert_ext_add("permit-agent-forwarding", রিক্ত, 0);
+	যদি ((certflags_flags & CERTOPT_PORT_FWD) != 0)
+		cert_ext_add("permit-port-forwarding", রিক্ত, 0);
+	যদি ((certflags_flags & CERTOPT_PTY) != 0)
+		cert_ext_add("permit-pty", রিক্ত, 0);
+	যদি ((certflags_flags & CERTOPT_USER_RC) != 0)
+		cert_ext_add("permit-user-rc", রিক্ত, 0);
+	যদি ((certflags_flags & CERTOPT_NO_REQUIRE_USER_PRESENCE) != 0)
+		cert_ext_add("no-touch-required", রিক্ত, 0);
 	/* order lexically by key */
-	if (ncert_ext > 0)
-		qsort(cert_ext, ncert_ext, sizeof(*cert_ext), cert_ext_cmp);
+	যদি (ncert_ext > 0)
+		qsort(cert_ext, ncert_ext, পরিমাণ(*cert_ext), cert_ext_cmp);
 }
 
-static struct sshkey *
-load_pkcs11_key(char *path)
+স্থির সংরচনা sshkey *
+load_pkcs11_চাবি(ৱর্ণ *path)
 {
 #ifdef ENABLE_PKCS11
-	struct sshkey **keys = NULL, *public, *private = NULL;
-	int r, i, nkeys;
+	সংরচনা sshkey **চাবিগুলি = রিক্ত, *সার্ৱজনিক, *গুপ্ত = রিক্ত;
+	পূর্ণাঙ্ক r, i, nkeys;
 
-	if ((r = sshkey_load_public(path, &public, NULL)) != 0)
+	যদি ((r = sshkey_load_public(path, &সার্ৱজনিক, রিক্ত)) != 0)
 		fatal_r(r, "Couldn't load CA public key \"%s\"", path);
 
 	nkeys = pkcs11_add_provider(pkcs11provider, identity_passphrase,
-	    &keys, NULL);
+	    &চাবিগুলি, রিক্ত);
 	debug3_f("%d keys", nkeys);
-	if (nkeys <= 0)
+	যদি (nkeys <= 0)
 		fatal("cannot read public key from pkcs11");
-	for (i = 0; i < nkeys; i++) {
-		if (sshkey_equal_public(public, keys[i])) {
-			private = keys[i];
-			continue;
+	বাবে (i = 0; i < nkeys; i++) {
+		যদি (sshkey_equal_public(সার্ৱজনিক, চাবিগুলি[i])) {
+			গুপ্ত = চাবিগুলি[i];
+			অনুৱর্ত;
 		}
-		sshkey_free(keys[i]);
+		sshkey_free(চাবিগুলি[i]);
 	}
-	free(keys);
-	sshkey_free(public);
-	return private;
-#else
+	মুক্ত(চাবিগুলি);
+	sshkey_free(সার্ৱজনিক);
+	ঘূৰাই গুপ্ত;
+#অন্যথা
 	fatal("no pkcs11 support");
 #endif /* ENABLE_PKCS11 */
 }
 
 /* Signer for sshkey_certify_custom that uses the agent */
-static int
-agent_signer(struct sshkey *key, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *provider, const char *pin,
-    u_int compat, void *ctx)
+স্থির পূর্ণাঙ্ক
+agent_signer(সংরচনা sshkey *চাবি, u_char **sigp, size_t *lenp,
+    ধ্রুৱ u_char *data, size_t datalen,
+    ধ্রুৱ ৱর্ণ *alg, ধ্রুৱ ৱর্ণ *provider, ধ্রুৱ ৱর্ণ *pin,
+    u_int compat, শূন্য *ctx)
 {
-	int *agent_fdp = (int *)ctx;
+	পূর্ণাঙ্ক *agent_fdp = (পূর্ণাঙ্ক *)ctx;
 
-	return ssh_agent_sign(*agent_fdp, key, sigp, lenp,
+	ঘূৰাই ssh_agent_sign(*agent_fdp, চাবি, sigp, lenp,
 	    data, datalen, alg, compat);
 }
 
-static void
-do_ca_sign(struct passwd *pw, const char *ca_key_path, int prefer_agent,
-    unsigned long long cert_serial, int cert_serial_autoinc,
-    int argc, char **argv)
+স্থির শূন্য
+do_ca_sign(সংরচনা passwd *pw, ধ্রুৱ ৱর্ণ *ca_চাবি_path, পূর্ণাঙ্ক prefer_agent,
+    unsigned long long cert_serial, পূর্ণাঙ্ক cert_serial_autoinc,
+    পূর্ণাঙ্ক argc, ৱর্ণ **argv)
 {
-	int r, i, key_in_agent = 0, agent_fd = -1;
+	পূর্ণাঙ্ক r, i, চাবি_in_agent = 0, agent_fd = -1;
 	u_int n;
-	struct sshkey *ca, *public;
-	char valid[64], *otmp, *tmp, *cp, *out, *comment;
-	char *ca_fp = NULL, **plist = NULL, *pin = NULL;
-	struct ssh_identitylist *agent_ids;
+	সংরচনা sshkey *ca, *সার্ৱজনিক;
+	ৱর্ণ valid[64], *otmp, *tmp, *cp, *out, *comment;
+	ৱর্ণ *ca_fp = রিক্ত, **plist = রিক্ত, *pin = রিক্ত;
+	সংরচনা ssh_identitylist *agent_ids;
 	size_t j;
-	struct notifier_ctx *notifier = NULL;
+	সংরচনা notifier_ctx *notifier = রিক্ত;
 
 #ifdef ENABLE_PKCS11
 	pkcs11_init(1);
 #endif
-	tmp = tilde_expand_filename(ca_key_path, pw->pw_uid);
-	if (pkcs11provider != NULL) {
+	tmp = tilde_expand_filename(ca_চাবি_path, pw->pw_uid);
+	যদি (pkcs11provider != রিক্ত) {
 		/* If a PKCS#11 token was specified then try to use it */
-		if ((ca = load_pkcs11_key(tmp)) == NULL)
-			fatal("No PKCS#11 key matching %s found", ca_key_path);
-	} else if (prefer_agent) {
+		যদি ((ca = load_pkcs11_চাবি(tmp)) == রিক্ত)
+			fatal("No PKCS#11 key matching %s found", ca_চাবি_path);
+	} অন্যথা যদি (prefer_agent) {
 		/*
 		 * Agent signature requested. Try to use agent after making
 		 * sure the public key specified is actually present in the
 		 * agent.
 		 */
-		if ((r = sshkey_load_public(tmp, &ca, NULL)) != 0)
+		যদি ((r = sshkey_load_public(tmp, &ca, রিক্ত)) != 0)
 			fatal_r(r, "Cannot load CA public key %s", tmp);
-		if ((r = ssh_get_authentication_socket(&agent_fd)) != 0)
+		যদি ((r = ssh_get_authentication_socket(&agent_fd)) != 0)
 			fatal_r(r, "Cannot use public key for CA signature");
-		if ((r = ssh_fetch_identitylist(agent_fd, &agent_ids)) != 0)
+		যদি ((r = ssh_fetch_identitylist(agent_fd, &agent_ids)) != 0)
 			fatal_r(r, "Retrieve agent key list");
-		for (j = 0; j < agent_ids->nkeys; j++) {
-			if (sshkey_equal(ca, agent_ids->keys[j])) {
-				key_in_agent = 1;
+		বাবে (j = 0; j < agent_ids->nkeys; j++) {
+			যদি (sshkey_equal(ca, agent_ids->চাবিগুলি[j])) {
+				চাবি_in_agent = 1;
 				/* Replace the CA key with the agent one */
 				sshkey_free(ca);
-				ca = agent_ids->keys[j];
-				agent_ids->keys[j] = NULL;
-				break;
+				ca = agent_ids->চাবিগুলি[j];
+				agent_ids->চাবিগুলি[j] = রিক্ত;
+				ভঙ্গ;
 			}
 		}
-		if (!key_in_agent)
+		যদি (!চাবি_in_agent)
 			fatal("CA key %s not found in agent", tmp);
 		ssh_free_identitylist(agent_ids);
-	} else {
+	} অন্যথা {
 		/* CA key is assumed to be a private key on the filesystem */
-		ca = load_identity(tmp, NULL);
-		if (sshkey_is_sk(ca) &&
+		ca = load_identity(tmp, রিক্ত);
+		যদি (sshkey_is_sk(ca) &&
 		    (ca->sk_flags & SSH_SK_USER_VERIFICATION_REQD)) {
-			if ((pin = read_passphrase("Enter PIN for CA key: ",
-			    RP_ALLOW_STDIN)) == NULL)
+			যদি ((pin = read_passphrase("Enter PIN for CA key: ",
+			    RP_ALLOW_STDIN)) == রিক্ত)
 				fatal_f("couldn't read PIN");
 		}
 	}
-	free(tmp);
+	মুক্ত(tmp);
 
-	if (key_type_name != NULL) {
-		if (sshkey_type_from_shortname(key_type_name) != ca->type) {
+	যদি (চাবি_type_name != রিক্ত) {
+		যদি (sshkey_type_from_shortname(চাবি_type_name) != ca->type) {
 			fatal("CA key type %s doesn't match specified %s",
-			    sshkey_ssh_name(ca), key_type_name);
+			    sshkey_ssh_name(ca), চাবি_type_name);
 		}
-	} else if (ca->type == KEY_RSA) {
+	} অন্যথা যদি (ca->type == চাবি_RSA) {
 		/* Default to a good signature algorithm */
-		key_type_name = "rsa-sha2-512";
+		চাবি_type_name = "rsa-sha2-512";
 	}
 	ca_fp = sshkey_fingerprint(ca, fingerprint_hash, SSH_FP_DEFAULT);
 
 	finalise_cert_exts();
-	for (i = 0; i < argc; i++) {
+	বাবে (i = 0; i < argc; i++) {
 		/* Split list of principals */
 		n = 0;
-		if (cert_principals != NULL) {
+		যদি (cert_principals != রিক্ত) {
 			otmp = tmp = xstrdup(cert_principals);
-			plist = NULL;
-			for (; (cp = strsep(&tmp, ",")) != NULL; n++) {
-				plist = xreallocarray(plist, n + 1, sizeof(*plist));
-				if (*(plist[n] = xstrdup(cp)) == '\0')
+			plist = রিক্ত;
+			বাবে (; (cp = strsep(&tmp, ",")) != রিক্ত; n++) {
+				plist = xreallocarray(plist, n + 1, পরিমাণ(*plist));
+				যদি (*(plist[n] = xstrdup(cp)) == '\0')
 					fatal("Empty principal name");
 			}
-			free(otmp);
+			মুক্ত(otmp);
 		}
-		if (n > SSHKEY_CERT_MAX_PRINCIPALS)
+		যদি (n > SSHKEY_CERT_MAX_PRINCIPALS)
 			fatal("Too many certificate principals specified");
 
 		tmp = tilde_expand_filename(argv[i], pw->pw_uid);
-		if ((r = sshkey_load_public(tmp, &public, &comment)) != 0)
+		যদি ((r = sshkey_load_public(tmp, &সার্ৱজনিক, &comment)) != 0)
 			fatal_r(r, "load pubkey \"%s\"", tmp);
-		if (sshkey_is_cert(public))
+		যদি (sshkey_is_cert(সার্ৱজনিক))
 			fatal_f("key \"%s\" type %s cannot be certified",
-			    tmp, sshkey_type(public));
+			    tmp, sshkey_type(সার্ৱজনিক));
 
 		/* Prepare certificate to sign */
-		if ((r = sshkey_to_certified(public)) != 0)
+		যদি ((r = sshkey_to_certified(সার্ৱজনিক)) != 0)
 			fatal_r(r, "Could not upgrade key %s to certificate", tmp);
-		public->cert->type = cert_key_type;
-		public->cert->serial = (uint64_t)cert_serial;
-		public->cert->key_id = xstrdup(cert_key_id);
-		public->cert->nprincipals = n;
-		public->cert->principals = plist;
-		public->cert->valid_after = cert_valid_from;
-		public->cert->valid_before = cert_valid_to;
-		prepare_options_buf(public->cert->critical, OPTIONS_CRITICAL);
-		prepare_options_buf(public->cert->extensions,
+		সার্ৱজনিক->cert->type = cert_চাবি_type;
+		সার্ৱজনিক->cert->serial = (uint64_t)cert_serial;
+		সার্ৱজনিক->cert->চাবি_id = xstrdup(cert_চাবি_id);
+		সার্ৱজনিক->cert->nprincipals = n;
+		সার্ৱজনিক->cert->principals = plist;
+		সার্ৱজনিক->cert->valid_after = cert_valid_from;
+		সার্ৱজনিক->cert->valid_before = cert_valid_to;
+		prepare_options_buf(সার্ৱজনিক->cert->critical, OPTIONS_CRITICAL);
+		prepare_options_buf(সার্ৱজনিক->cert->extensions,
 		    OPTIONS_EXTENSIONS);
-		if ((r = sshkey_from_private(ca,
-		    &public->cert->signature_key)) != 0)
+		যদি ((r = sshkey_from_private(ca,
+		    &সার্ৱজনিক->cert->signature_চাবি)) != 0)
 			fatal_r(r, "sshkey_from_private (ca key)");
 
-		if (key_in_agent) {
-			if ((r = sshkey_certify_custom(public, ca,
-			    key_type_name, sk_provider, NULL, agent_signer,
+		যদি (চাবি_in_agent) {
+			যদি ((r = sshkey_certify_custom(সার্ৱজনিক, ca,
+			    চাবি_type_name, sk_provider, রিক্ত, agent_signer,
 			    &agent_fd)) != 0)
 				fatal_r(r, "Couldn't certify %s via agent", tmp);
-		} else {
-			if (sshkey_is_sk(ca) &&
+		} অন্যথা {
+			যদি (sshkey_is_sk(ca) &&
 			    (ca->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
 				notifier = notify_start(0,
 				    "Confirm user presence for key %s %s",
 				    sshkey_type(ca), ca_fp);
 			}
-			r = sshkey_certify(public, ca, key_type_name,
+			r = sshkey_certify(সার্ৱজনিক, ca, চাবি_type_name,
 			    sk_provider, pin);
 			notify_complete(notifier, "User presence confirmed");
-			if (r != 0)
+			যদি (r != 0)
 				fatal_r(r, "Couldn't certify key %s", tmp);
 		}
 
-		if ((cp = strrchr(tmp, '.')) != NULL && strcmp(cp, ".pub") == 0)
+		যদি ((cp = strrchr(tmp, '.')) != রিক্ত && strcmp(cp, ".pub") == 0)
 			*cp = '\0';
 		xasprintf(&out, "%s-cert.pub", tmp);
-		free(tmp);
+		মুক্ত(tmp);
 
-		if ((r = sshkey_save_public(public, out, comment)) != 0) {
+		যদি ((r = sshkey_save_public(সার্ৱজনিক, out, comment)) != 0) {
 			fatal_r(r, "Unable to save public key to %s",
 			    identity_file);
 		}
 
-		if (!quiet) {
-			sshkey_format_cert_validity(public->cert,
-			    valid, sizeof(valid));
+		যদি (!quiet) {
+			sshkey_format_cert_validity(সার্ৱজনিক->cert,
+			    valid, পরিমাণ(valid));
 			logit("Signed %s key %s: id \"%s\" serial %llu%s%s "
-			    "valid %s", sshkey_cert_type(public),
-			    out, public->cert->key_id,
-			    (unsigned long long)public->cert->serial,
-			    cert_principals != NULL ? " for " : "",
-			    cert_principals != NULL ? cert_principals : "",
+			    "valid %s", sshkey_cert_type(সার্ৱজনিক),
+			    out, সার্ৱজনিক->cert->চাবি_id,
+			    (unsigned long long)সার্ৱজনিক->cert->serial,
+			    cert_principals != রিক্ত ? " for " : "",
+			    cert_principals != রিক্ত ? cert_principals : "",
 			    valid);
 		}
 
-		sshkey_free(public);
-		free(out);
-		free(comment);
-		if (cert_serial_autoinc)
+		sshkey_free(সার্ৱজনিক);
+		মুক্ত(out);
+		মুক্ত(comment);
+		যদি (cert_serial_autoinc)
 			cert_serial++;
 	}
-	if (pin != NULL)
+	যদি (pin != রিক্ত)
 		freezero(pin, strlen(pin));
 	sshkey_free(ca);
-	free(ca_fp);
+	মুক্ত(ca_fp);
 #ifdef ENABLE_PKCS11
 	pkcs11_terminate();
 #endif
 }
 
-static uint64_t
-parse_relative_time(const char *s, time_t now)
+স্থির uint64_t
+parse_relative_time(ধ্রুৱ ৱর্ণ *s, time_t now)
 {
 	int64_t mul, secs;
 
 	mul = *s == '-' ? -1 : 1;
 
-	if ((secs = convtime(s + 1)) == -1)
+	যদি ((secs = convtime(s + 1)) == -1)
 		fatal("Invalid relative certificate time %s", s);
-	if (mul == -1 && secs > now)
+	যদি (mul == -1 && secs > now)
 		fatal("Certificate time %s cannot be represented", s);
-	return now + (uint64_t)(secs * mul);
+	ঘূৰাই now + (uint64_t)(secs * mul);
 }
 
-static void
-parse_hex_u64(const char *s, uint64_t *up)
+স্থির শূন্য
+parse_hex_u64(ধ্রুৱ ৱর্ণ *s, uint64_t *up)
 {
-	char *ep;
+	ৱর্ণ *ep;
 	unsigned long long ull;
 
 	errno = 0;
 	ull = strtoull(s, &ep, 16);
-	if (*s == '\0' || *ep != '\0')
+	যদি (*s == '\0' || *ep != '\0')
 		fatal("Invalid certificate time: not a number");
-	if (errno == ERANGE && ull == ULONG_MAX)
+	যদি (errno == ERANGE && ull == ULONG_MAX)
 		fatal_fr(SSH_ERR_SYSTEM_ERROR, "Invalid certificate time");
 	*up = (uint64_t)ull;
 }
 
-static void
-parse_cert_times(char *timespec)
+স্থির শূন্য
+parse_cert_times(ৱর্ণ *timespec)
 {
-	char *from, *to;
-	time_t now = time(NULL);
+	ৱর্ণ *from, *to;
+	time_t now = time(রিক্ত);
 	int64_t secs;
 
 	/* +timespec relative to now */
-	if (*timespec == '+' && strchr(timespec, ':') == NULL) {
-		if ((secs = convtime(timespec + 1)) == -1)
+	যদি (*timespec == '+' && strchr(timespec, ':') == রিক্ত) {
+		যদি ((secs = convtime(timespec + 1)) == -1)
 			fatal("Invalid relative certificate life %s", timespec);
 		cert_valid_to = now + secs;
 		/*
@@ -1984,7 +1984,7 @@ parse_cert_times(char *timespec)
 		 * with poorly-synchronised clocks.
 		 */
 		cert_valid_from = ((now - 59)/ 60) * 60;
-		return;
+		ঘূৰাই;
 	}
 
 	/*
@@ -1994,112 +1994,112 @@ parse_cert_times(char *timespec)
 	 */
 	from = xstrdup(timespec);
 	to = strchr(from, ':');
-	if (to == NULL || from == to || *(to + 1) == '\0')
+	যদি (to == রিক্ত || from == to || *(to + 1) == '\0')
 		fatal("Invalid certificate life specification %s", timespec);
 	*to++ = '\0';
 
-	if (*from == '-' || *from == '+')
+	যদি (*from == '-' || *from == '+')
 		cert_valid_from = parse_relative_time(from, now);
-	else if (strcmp(from, "always") == 0)
+	অন্যথা যদি (strcmp(from, "always") == 0)
 		cert_valid_from = 0;
-	else if (strncmp(from, "0x", 2) == 0)
+	অন্যথা যদি (strncmp(from, "0x", 2) == 0)
 		parse_hex_u64(from, &cert_valid_from);
-	else if (parse_absolute_time(from, &cert_valid_from) != 0)
+	অন্যথা যদি (parse_absolute_time(from, &cert_valid_from) != 0)
 		fatal("Invalid from time \"%s\"", from);
 
-	if (*to == '-' || *to == '+')
+	যদি (*to == '-' || *to == '+')
 		cert_valid_to = parse_relative_time(to, now);
-	else if (strcmp(to, "forever") == 0)
+	অন্যথা যদি (strcmp(to, "forever") == 0)
 		cert_valid_to = ~(uint64_t)0;
-	else if (strncmp(to, "0x", 2) == 0)
+	অন্যথা যদি (strncmp(to, "0x", 2) == 0)
 		parse_hex_u64(to, &cert_valid_to);
-	else if (parse_absolute_time(to, &cert_valid_to) != 0)
+	অন্যথা যদি (parse_absolute_time(to, &cert_valid_to) != 0)
 		fatal("Invalid to time \"%s\"", to);
 
-	if (cert_valid_to <= cert_valid_from)
+	যদি (cert_valid_to <= cert_valid_from)
 		fatal("Empty certificate validity interval");
-	free(from);
+	মুক্ত(from);
 }
 
-static void
-add_cert_option(char *opt)
+স্থির শূন্য
+add_cert_option(ৱর্ণ *opt)
 {
-	char *val, *cp;
-	const char *p;
-	int iscrit = 0;
+	ৱর্ণ *val, *cp;
+	ধ্রুৱ ৱর্ণ *p;
+	পূর্ণাঙ্ক iscrit = 0;
 
-	if (strcasecmp(opt, "clear") == 0)
+	যদি (strcasecmp(opt, "clear") == 0)
 		certflags_flags = 0;
-	else if (strcasecmp(opt, "no-x11-forwarding") == 0)
+	অন্যথা যদি (strcasecmp(opt, "no-x11-forwarding") == 0)
 		certflags_flags &= ~CERTOPT_X_FWD;
-	else if (strcasecmp(opt, "permit-x11-forwarding") == 0)
+	অন্যথা যদি (strcasecmp(opt, "permit-x11-forwarding") == 0)
 		certflags_flags |= CERTOPT_X_FWD;
-	else if (strcasecmp(opt, "no-agent-forwarding") == 0)
+	অন্যথা যদি (strcasecmp(opt, "no-agent-forwarding") == 0)
 		certflags_flags &= ~CERTOPT_AGENT_FWD;
-	else if (strcasecmp(opt, "permit-agent-forwarding") == 0)
+	অন্যথা যদি (strcasecmp(opt, "permit-agent-forwarding") == 0)
 		certflags_flags |= CERTOPT_AGENT_FWD;
-	else if (strcasecmp(opt, "no-port-forwarding") == 0)
+	অন্যথা যদি (strcasecmp(opt, "no-port-forwarding") == 0)
 		certflags_flags &= ~CERTOPT_PORT_FWD;
-	else if (strcasecmp(opt, "permit-port-forwarding") == 0)
+	অন্যথা যদি (strcasecmp(opt, "permit-port-forwarding") == 0)
 		certflags_flags |= CERTOPT_PORT_FWD;
-	else if (strcasecmp(opt, "no-pty") == 0)
+	অন্যথা যদি (strcasecmp(opt, "no-pty") == 0)
 		certflags_flags &= ~CERTOPT_PTY;
-	else if (strcasecmp(opt, "permit-pty") == 0)
+	অন্যথা যদি (strcasecmp(opt, "permit-pty") == 0)
 		certflags_flags |= CERTOPT_PTY;
-	else if (strcasecmp(opt, "no-user-rc") == 0)
+	অন্যথা যদি (strcasecmp(opt, "no-user-rc") == 0)
 		certflags_flags &= ~CERTOPT_USER_RC;
-	else if (strcasecmp(opt, "permit-user-rc") == 0)
+	অন্যথা যদি (strcasecmp(opt, "permit-user-rc") == 0)
 		certflags_flags |= CERTOPT_USER_RC;
-	else if (strcasecmp(opt, "touch-required") == 0)
+	অন্যথা যদি (strcasecmp(opt, "touch-required") == 0)
 		certflags_flags &= ~CERTOPT_NO_REQUIRE_USER_PRESENCE;
-	else if (strcasecmp(opt, "no-touch-required") == 0)
+	অন্যথা যদি (strcasecmp(opt, "no-touch-required") == 0)
 		certflags_flags |= CERTOPT_NO_REQUIRE_USER_PRESENCE;
-	else if (strcasecmp(opt, "no-verify-required") == 0)
+	অন্যথা যদি (strcasecmp(opt, "no-verify-required") == 0)
 		certflags_flags &= ~CERTOPT_REQUIRE_VERIFY;
-	else if (strcasecmp(opt, "verify-required") == 0)
+	অন্যথা যদি (strcasecmp(opt, "verify-required") == 0)
 		certflags_flags |= CERTOPT_REQUIRE_VERIFY;
-	else if ((p = strprefix(opt, "force-command=", 1)) != NULL) {
-		if (*p == '\0')
+	অন্যথা যদি ((p = strprefix(opt, "force-command=", 1)) != রিক্ত) {
+		যদি (*p == '\0')
 			fatal("Empty force-command option");
-		if (certflags_command != NULL)
+		যদি (certflags_command != রিক্ত)
 			fatal("force-command already specified");
 		certflags_command = xstrdup(p);
-	} else if ((p = strprefix(opt, "source-address=", 1)) != NULL) {
-		if (*p == '\0')
+	} অন্যথা যদি ((p = strprefix(opt, "source-address=", 1)) != রিক্ত) {
+		যদি (*p == '\0')
 			fatal("Empty source-address option");
-		if (certflags_src_addr != NULL)
+		যদি (certflags_src_addr != রিক্ত)
 			fatal("source-address already specified");
-		if (addr_match_cidr_list(NULL, p) != 0)
+		যদি (addr_match_cidr_list(রিক্ত, p) != 0)
 			fatal("Invalid source-address list");
 		certflags_src_addr = xstrdup(p);
-	} else if (strprefix(opt, "extension:", 1) != NULL ||
-		    (iscrit = (strprefix(opt, "critical:", 1) != NULL))) {
+	} অন্যথা যদি (strprefix(opt, "extension:", 1) != রিক্ত ||
+		    (iscrit = (strprefix(opt, "critical:", 1) != রিক্ত))) {
 		val = xstrdup(strchr(opt, ':') + 1);
-		if ((cp = strchr(val, '=')) != NULL)
+		যদি ((cp = strchr(val, '=')) != রিক্ত)
 			*cp++ = '\0';
 		cert_ext_add(val, cp, iscrit);
-		free(val);
-	} else
+		মুক্ত(val);
+	} অন্যথা
 		fatal("Unsupported certificate option \"%s\"", opt);
 }
 
-static void
-show_options(struct sshbuf *optbuf, int in_critical)
+স্থির শূন্য
+show_options(সংরচনা sshbuf *optbuf, পূর্ণাঙ্ক in_critical)
 {
-	char *name, *arg, *hex;
-	struct sshbuf *options, *option = NULL;
-	int r;
+	ৱর্ণ *name, *arg, *hex;
+	সংরচনা sshbuf *options, *option = রিক্ত;
+	পূর্ণাঙ্ক r;
 
-	if ((options = sshbuf_fromb(optbuf)) == NULL)
+	যদি ((options = sshbuf_fromb(optbuf)) == রিক্ত)
 		fatal_f("sshbuf_fromb failed");
-	while (sshbuf_len(options) != 0) {
+	যেতিয়ালৈ (sshbuf_len(options) != 0) {
 		sshbuf_free(option);
-		option = NULL;
-		if ((r = sshbuf_get_cstring(options, &name, NULL)) != 0 ||
+		option = রিক্ত;
+		যদি ((r = sshbuf_get_cstring(options, &name, রিক্ত)) != 0 ||
 		    (r = sshbuf_froms(options, &option)) != 0)
 			fatal_fr(r, "parse option");
 		printf("                %s", name);
-		if (!in_critical &&
+		যদি (!in_critical &&
 		    (strcmp(name, "permit-X11-forwarding") == 0 ||
 		    strcmp(name, "permit-agent-forwarding") == 0 ||
 		    strcmp(name, "permit-port-forwarding") == 0 ||
@@ -2107,237 +2107,237 @@ show_options(struct sshbuf *optbuf, int in_critical)
 		    strcmp(name, "permit-user-rc") == 0 ||
 		    strcmp(name, "no-touch-required") == 0)) {
 			printf("\n");
-		} else if (in_critical &&
+		} অন্যথা যদি (in_critical &&
 		    (strcmp(name, "force-command") == 0 ||
 		    strcmp(name, "source-address") == 0)) {
-			if ((r = sshbuf_get_cstring(option, &arg, NULL)) != 0)
+			যদি ((r = sshbuf_get_cstring(option, &arg, রিক্ত)) != 0)
 				fatal_fr(r, "parse critical");
 			printf(" %s\n", arg);
-			free(arg);
-		} else if (in_critical &&
+			মুক্ত(arg);
+		} অন্যথা যদি (in_critical &&
 		    strcmp(name, "verify-required") == 0) {
 			printf("\n");
-		} else if (sshbuf_len(option) > 0) {
+		} অন্যথা যদি (sshbuf_len(option) > 0) {
 			hex = sshbuf_dtob16(option);
 			printf(" UNKNOWN OPTION: %s (len %zu)\n",
 			    hex, sshbuf_len(option));
 			sshbuf_reset(option);
-			free(hex);
-		} else
+			মুক্ত(hex);
+		} অন্যথা
 			printf(" UNKNOWN FLAG OPTION\n");
-		free(name);
-		if (sshbuf_len(option) != 0)
+		মুক্ত(name);
+		যদি (sshbuf_len(option) != 0)
 			fatal("Option corrupt: extra data at end");
 	}
 	sshbuf_free(option);
 	sshbuf_free(options);
 }
 
-static void
-print_cert(struct sshkey *key)
+স্থির শূন্য
+print_cert(সংরচনা sshkey *চাবি)
 {
-	char valid[64], *key_fp, *ca_fp;
+	ৱর্ণ valid[64], *চাবি_fp, *ca_fp;
 	u_int i;
 
-	key_fp = sshkey_fingerprint(key, fingerprint_hash, SSH_FP_DEFAULT);
-	ca_fp = sshkey_fingerprint(key->cert->signature_key,
+	চাবি_fp = sshkey_fingerprint(চাবি, fingerprint_hash, SSH_FP_DEFAULT);
+	ca_fp = sshkey_fingerprint(চাবি->cert->signature_চাবি,
 	    fingerprint_hash, SSH_FP_DEFAULT);
-	if (key_fp == NULL || ca_fp == NULL)
+	যদি (চাবি_fp == রিক্ত || ca_fp == রিক্ত)
 		fatal_f("sshkey_fingerprint fail");
-	sshkey_format_cert_validity(key->cert, valid, sizeof(valid));
+	sshkey_format_cert_validity(চাবি->cert, valid, পরিমাণ(valid));
 
-	printf("        Type: %s %s certificate\n", sshkey_ssh_name(key),
-	    sshkey_cert_type(key));
-	printf("        Public key: %s %s\n", sshkey_type(key), key_fp);
+	printf("        Type: %s %s certificate\n", sshkey_ssh_name(চাবি),
+	    sshkey_cert_type(চাবি));
+	printf("        Public key: %s %s\n", sshkey_type(চাবি), চাবি_fp);
 	printf("        Signing CA: %s %s (using %s)\n",
-	    sshkey_type(key->cert->signature_key), ca_fp,
-	    key->cert->signature_type);
-	printf("        Key ID: \"%s\"\n", key->cert->key_id);
-	printf("        Serial: %llu\n", (unsigned long long)key->cert->serial);
+	    sshkey_type(চাবি->cert->signature_চাবি), ca_fp,
+	    চাবি->cert->signature_type);
+	printf("        Key ID: \"%s\"\n", চাবি->cert->চাবি_id);
+	printf("        Serial: %llu\n", (unsigned long long)চাবি->cert->serial);
 	printf("        Valid: %s\n", valid);
 	printf("        Principals: ");
-	if (key->cert->nprincipals == 0)
+	যদি (চাবি->cert->nprincipals == 0)
 		printf("(none)\n");
-	else {
-		for (i = 0; i < key->cert->nprincipals; i++)
+	অন্যথা {
+		বাবে (i = 0; i < চাবি->cert->nprincipals; i++)
 			printf("\n                %s",
-			    key->cert->principals[i]);
+			    চাবি->cert->principals[i]);
 		printf("\n");
 	}
 	printf("        Critical Options: ");
-	if (sshbuf_len(key->cert->critical) == 0)
+	যদি (sshbuf_len(চাবি->cert->critical) == 0)
 		printf("(none)\n");
-	else {
+	অন্যথা {
 		printf("\n");
-		show_options(key->cert->critical, 1);
+		show_options(চাবি->cert->critical, 1);
 	}
 	printf("        Extensions: ");
-	if (sshbuf_len(key->cert->extensions) == 0)
+	যদি (sshbuf_len(চাবি->cert->extensions) == 0)
 		printf("(none)\n");
-	else {
+	অন্যথা {
 		printf("\n");
-		show_options(key->cert->extensions, 0);
+		show_options(চাবি->cert->extensions, 0);
 	}
-	free(key_fp);
-	free(ca_fp);
+	মুক্ত(চাবি_fp);
+	মুক্ত(ca_fp);
 }
 
-static void
-do_show_cert(struct passwd *pw)
+স্থির শূন্য
+do_show_cert(সংরচনা passwd *pw)
 {
-	struct sshkey *key = NULL;
-	struct stat st;
-	int r, is_stdin = 0, ok = 0;
+	সংরচনা sshkey *চাবি = রিক্ত;
+	সংরচনা stat st;
+	পূর্ণাঙ্ক r, is_stdin = 0, ok = 0;
 	FILE *f;
-	char *cp, *line = NULL;
-	const char *path;
+	ৱর্ণ *cp, *সাৰি = রিক্ত;
+	ধ্রুৱ ৱর্ণ *path;
 	size_t linesize = 0;
 	u_long lnum = 0;
 
-	if (!have_identity)
+	যদি (!have_identity)
 		ask_filename(pw, "Enter file in which the key is");
-	if (strcmp(identity_file, "-") != 0 && stat(identity_file, &st) == -1)
+	যদি (strcmp(identity_file, "-") != 0 && stat(identity_file, &st) == -1)
 		fatal("%s: %s: %s", __progname, identity_file, strerror(errno));
 
 	path = identity_file;
-	if (strcmp(path, "-") == 0) {
+	যদি (strcmp(path, "-") == 0) {
 		f = stdin;
 		path = "(stdin)";
 		is_stdin = 1;
-	} else if ((f = fopen(identity_file, "r")) == NULL)
+	} অন্যথা যদি ((f = fopen(identity_file, "r")) == রিক্ত)
 		fatal("fopen %s: %s", identity_file, strerror(errno));
 
-	while (getline(&line, &linesize, f) != -1) {
+	যেতিয়ালৈ (getline(&সাৰি, &linesize, f) != -1) {
 		lnum++;
-		sshkey_free(key);
-		key = NULL;
+		sshkey_free(চাবি);
+		চাবি = রিক্ত;
 		/* Trim leading space and comments */
-		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
-			continue;
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+		cp = সাৰি + strspn(সাৰি, " \t");
+		যদি (*cp == '#' || *cp == '\0')
+			অনুৱর্ত;
+		যদি ((চাবি = sshkey_new(চাবি_UNSPEC)) == রিক্ত)
 			fatal("sshkey_new");
-		if ((r = sshkey_read(key, &cp)) != 0) {
+		যদি ((r = sshkey_read(চাবি, &cp)) != 0) {
 			error_r(r, "%s:%lu: invalid key", path, lnum);
-			continue;
+			অনুৱর্ত;
 		}
-		if (!sshkey_is_cert(key)) {
+		যদি (!sshkey_is_cert(চাবি)) {
 			error("%s:%lu is not a certificate", path, lnum);
-			continue;
+			অনুৱর্ত;
 		}
 		ok = 1;
-		if (!is_stdin && lnum == 1)
+		যদি (!is_stdin && lnum == 1)
 			printf("%s:\n", path);
-		else
+		অন্যথা
 			printf("%s:%lu:\n", path, lnum);
-		print_cert(key);
+		print_cert(চাবি);
 	}
-	free(line);
-	sshkey_free(key);
+	মুক্ত(সাৰি);
+	sshkey_free(চাবি);
 	fclose(f);
 	exit(ok ? 0 : 1);
 }
 
-static void
-load_krl(const char *path, struct ssh_krl **krlp)
+স্থির শূন্য
+load_krl(ধ্রুৱ ৱর্ণ *path, সংরচনা ssh_krl **krlp)
 {
-	struct sshbuf *krlbuf;
-	int r;
+	সংরচনা sshbuf *krlbuf;
+	পূর্ণাঙ্ক r;
 
-	if ((r = sshbuf_load_file(path, &krlbuf)) != 0)
+	যদি ((r = sshbuf_load_file(path, &krlbuf)) != 0)
 		fatal_r(r, "Unable to load KRL %s", path);
 	/* XXX check sigs */
-	if ((r = ssh_krl_from_blob(krlbuf, krlp)) != 0 ||
-	    *krlp == NULL)
+	যদি ((r = ssh_krl_from_blob(krlbuf, krlp)) != 0 ||
+	    *krlp == রিক্ত)
 		fatal_r(r, "Invalid KRL file %s", path);
 	sshbuf_free(krlbuf);
 }
 
-static void
-hash_to_blob(const char *cp, u_char **blobp, size_t *lenp,
-    const char *file, u_long lnum)
+স্থির শূন্য
+hash_to_blob(ধ্রুৱ ৱর্ণ *cp, u_char **blobp, size_t *lenp,
+    ধ্রুৱ ৱর্ণ *file, u_long lnum)
 {
-	char *tmp;
+	ৱর্ণ *tmp;
 	size_t tlen;
-	struct sshbuf *b;
-	int r;
+	সংরচনা sshbuf *b;
+	পূর্ণাঙ্ক r;
 
-	if ((cp = strprefix(cp, "SHA256:", 0)) == NULL)
+	যদি ((cp = strprefix(cp, "SHA256:", 0)) == রিক্ত)
 		fatal("%s:%lu: unsupported hash algorithm", file, lnum);
 
 	/*
 	 * OpenSSH base64 hashes omit trailing '='
 	 * characters; put them back for decode.
 	 */
-	if ((tlen = strlen(cp)) >= SIZE_MAX - 5)
+	যদি ((tlen = strlen(cp)) >= SIZE_MAX - 5)
 		fatal_f("hash too long: %zu bytes", tlen);
 	tmp = xmalloc(tlen + 4 + 1);
 	strlcpy(tmp, cp, tlen + 1);
-	while ((tlen % 4) != 0) {
+	যেতিয়ালৈ ((tlen % 4) != 0) {
 		tmp[tlen++] = '=';
 		tmp[tlen] = '\0';
 	}
-	if ((b = sshbuf_new()) == NULL)
+	যদি ((b = sshbuf_new()) == রিক্ত)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_b64tod(b, tmp)) != 0)
+	যদি ((r = sshbuf_b64tod(b, tmp)) != 0)
 		fatal_r(r, "%s:%lu: decode hash failed", file, lnum);
-	free(tmp);
+	মুক্ত(tmp);
 	*lenp = sshbuf_len(b);
 	*blobp = xmalloc(*lenp);
 	memcpy(*blobp, sshbuf_ptr(b), *lenp);
 	sshbuf_free(b);
 }
 
-static void
-update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
-    const struct sshkey *ca, struct ssh_krl *krl)
+স্থির শূন্য
+update_krl_from_file(সংরচনা passwd *pw, ধ্রুৱ ৱর্ণ *file, পূর্ণাঙ্ক wild_ca,
+    ধ্রুৱ সংরচনা sshkey *ca, সংরচনা ssh_krl *krl)
 {
-	struct sshkey *key = NULL;
+	সংরচনা sshkey *চাবি = রিক্ত;
 	u_long lnum = 0;
-	char *path, *cp, *ep, *line = NULL;
-	u_char *blob = NULL;
+	ৱর্ণ *path, *cp, *ep, *সাৰি = রিক্ত;
+	u_char *blob = রিক্ত;
 	size_t blen = 0, linesize = 0;
 	unsigned long long serial, serial2;
-	int i, was_explicit_key, was_sha1, was_sha256, was_hash, r;
+	পূর্ণাঙ্ক i, was_explicit_চাবি, was_sha1, was_sha256, was_hash, r;
 	FILE *krl_spec;
 
 	path = tilde_expand_filename(file, pw->pw_uid);
-	if (strcmp(path, "-") == 0) {
+	যদি (strcmp(path, "-") == 0) {
 		krl_spec = stdin;
-		free(path);
+		মুক্ত(path);
 		path = xstrdup("(standard input)");
-	} else if ((krl_spec = fopen(path, "r")) == NULL)
+	} অন্যথা যদি ((krl_spec = fopen(path, "r")) == রিক্ত)
 		fatal("fopen %s: %s", path, strerror(errno));
 
-	if (!quiet)
+	যদি (!quiet)
 		printf("Revoking from %s\n", path);
-	while (getline(&line, &linesize, krl_spec) != -1) {
-		if (linesize >= INT_MAX) {
+	যেতিয়ালৈ (getline(&সাৰি, &linesize, krl_spec) != -1) {
+		যদি (linesize >= INT_MAX) {
 			fatal_f("%s contains unparsable line, len=%zu",
 			    path, linesize);
 		}
 		lnum++;
-		was_explicit_key = was_sha1 = was_sha256 = was_hash = 0;
-		cp = line + strspn(line, " \t");
+		was_explicit_চাবি = was_sha1 = was_sha256 = was_hash = 0;
+		cp = সাৰি + strspn(সাৰি, " \t");
 		/* Trim trailing space, comments and strip \n */
-		for (i = 0, r = -1; cp[i] != '\0'; i++) {
-			if (cp[i] == '#' || cp[i] == '\n') {
+		বাবে (i = 0, r = -1; cp[i] != '\0'; i++) {
+			যদি (cp[i] == '#' || cp[i] == '\n') {
 				cp[i] = '\0';
-				break;
+				ভঙ্গ;
 			}
-			if (cp[i] == ' ' || cp[i] == '\t') {
+			যদি (cp[i] == ' ' || cp[i] == '\t') {
 				/* Remember the start of a span of whitespace */
-				if (r == -1)
+				যদি (r == -1)
 					r = i;
-			} else
+			} অন্যথা
 				r = -1;
 		}
-		if (r != -1)
+		যদি (r != -1)
 			cp[r] = '\0';
-		if (*cp == '\0')
-			continue;
-		if (strncasecmp(cp, "serial:", 7) == 0) {
-			if (ca == NULL && !wild_ca) {
+		যদি (*cp == '\0')
+			অনুৱর্ত;
+		যদি (strncasecmp(cp, "serial:", 7) == 0) {
+			যদি (ca == রিক্ত && !wild_ca) {
 				fatal("revoking certificates by serial number "
 				    "requires specification of a CA key");
 			}
@@ -2345,62 +2345,62 @@ update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
 			cp = cp + strspn(cp, " \t");
 			errno = 0;
 			serial = strtoull(cp, &ep, 0);
-			if (*cp == '\0' || (*ep != '\0' && *ep != '-'))
+			যদি (*cp == '\0' || (*ep != '\0' && *ep != '-'))
 				fatal("%s:%lu: invalid serial \"%s\"",
 				    path, lnum, cp);
-			if (errno == ERANGE && serial == ULLONG_MAX)
+			যদি (errno == ERANGE && serial == ULLONG_MAX)
 				fatal("%s:%lu: serial out of range",
 				    path, lnum);
 			serial2 = serial;
-			if (*ep == '-') {
+			যদি (*ep == '-') {
 				cp = ep + 1;
 				errno = 0;
 				serial2 = strtoull(cp, &ep, 0);
-				if (*cp == '\0' || *ep != '\0')
+				যদি (*cp == '\0' || *ep != '\0')
 					fatal("%s:%lu: invalid serial \"%s\"",
 					    path, lnum, cp);
-				if (errno == ERANGE && serial2 == ULLONG_MAX)
+				যদি (errno == ERANGE && serial2 == ULLONG_MAX)
 					fatal("%s:%lu: serial out of range",
 					    path, lnum);
-				if (serial2 <= serial)
+				যদি (serial2 <= serial)
 					fatal("%s:%lu: invalid serial range "
 					    "%llu:%llu", path, lnum,
 					    (unsigned long long)serial,
 					    (unsigned long long)serial2);
 			}
-			if (ssh_krl_revoke_cert_by_serial_range(krl,
+			যদি (ssh_krl_revoke_cert_by_serial_range(krl,
 			    ca, serial, serial2) != 0) {
 				fatal_f("revoke serial failed");
 			}
-		} else if (strncasecmp(cp, "id:", 3) == 0) {
-			if (ca == NULL && !wild_ca) {
+		} অন্যথা যদি (strncasecmp(cp, "id:", 3) == 0) {
+			যদি (ca == রিক্ত && !wild_ca) {
 				fatal("revoking certificates by key ID "
 				    "requires specification of a CA key");
 			}
 			cp += 3;
 			cp = cp + strspn(cp, " \t");
-			if (ssh_krl_revoke_cert_by_key_id(krl, ca, cp) != 0)
+			যদি (ssh_krl_revoke_cert_by_চাবি_id(krl, ca, cp) != 0)
 				fatal_f("revoke key ID failed");
-		} else if (strncasecmp(cp, "hash:", 5) == 0) {
+		} অন্যথা যদি (strncasecmp(cp, "hash:", 5) == 0) {
 			cp += 5;
 			cp = cp + strspn(cp, " \t");
 			hash_to_blob(cp, &blob, &blen, file, lnum);
-			if ((r = ssh_krl_revoke_key_sha256(krl,
+			যদি ((r = ssh_krl_revoke_চাবি_sha256(krl,
 			    blob, blen)) != 0)
 				fatal_fr(r, "revoke key failed");
-			free(blob);
-			blob = NULL;
+			মুক্ত(blob);
+			blob = রিক্ত;
 			blen = 0;
-		} else {
-			if (strncasecmp(cp, "key:", 4) == 0) {
+		} অন্যথা {
+			যদি (strncasecmp(cp, "key:", 4) == 0) {
 				cp += 4;
 				cp = cp + strspn(cp, " \t");
-				was_explicit_key = 1;
-			} else if (strncasecmp(cp, "sha1:", 5) == 0) {
+				was_explicit_চাবি = 1;
+			} অন্যথা যদি (strncasecmp(cp, "sha1:", 5) == 0) {
 				cp += 5;
 				cp = cp + strspn(cp, " \t");
 				was_sha1 = 1;
-			} else if (strncasecmp(cp, "sha256:", 7) == 0) {
+			} অন্যথা যদি (strncasecmp(cp, "sha256:", 7) == 0) {
 				cp += 7;
 				cp = cp + strspn(cp, " \t");
 				was_sha256 = 1;
@@ -2409,262 +2409,262 @@ update_krl_from_file(struct passwd *pw, const char *file, int wild_ca,
 				 * Parsing will fail if it isn't.
 				 */
 			}
-			if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+			যদি ((চাবি = sshkey_new(চাবি_UNSPEC)) == রিক্ত)
 				fatal("sshkey_new");
-			if ((r = sshkey_read(key, &cp)) != 0)
+			যদি ((r = sshkey_read(চাবি, &cp)) != 0)
 				fatal_r(r, "%s:%lu: invalid key", path, lnum);
-			if (was_explicit_key)
-				r = ssh_krl_revoke_key_explicit(krl, key);
-			else if (was_sha1) {
-				if (sshkey_fingerprint_raw(key,
+			যদি (was_explicit_চাবি)
+				r = ssh_krl_revoke_চাবি_explicit(krl, চাবি);
+			অন্যথা যদি (was_sha1) {
+				যদি (sshkey_fingerprint_raw(চাবি,
 				    SSH_DIGEST_SHA1, &blob, &blen) != 0) {
 					fatal("%s:%lu: fingerprint failed",
 					    file, lnum);
 				}
-				r = ssh_krl_revoke_key_sha1(krl, blob, blen);
-			} else if (was_sha256) {
-				if (sshkey_fingerprint_raw(key,
+				r = ssh_krl_revoke_চাবি_sha1(krl, blob, blen);
+			} অন্যথা যদি (was_sha256) {
+				যদি (sshkey_fingerprint_raw(চাবি,
 				    SSH_DIGEST_SHA256, &blob, &blen) != 0) {
 					fatal("%s:%lu: fingerprint failed",
 					    file, lnum);
 				}
-				r = ssh_krl_revoke_key_sha256(krl, blob, blen);
-			} else
-				r = ssh_krl_revoke_key(krl, key);
-			if (r != 0)
+				r = ssh_krl_revoke_চাবি_sha256(krl, blob, blen);
+			} অন্যথা
+				r = ssh_krl_revoke_চাবি(krl, চাবি);
+			যদি (r != 0)
 				fatal_fr(r, "revoke key failed");
 			freezero(blob, blen);
-			blob = NULL;
+			blob = রিক্ত;
 			blen = 0;
-			sshkey_free(key);
+			sshkey_free(চাবি);
 		}
 	}
-	if (strcmp(path, "-") != 0)
+	যদি (strcmp(path, "-") != 0)
 		fclose(krl_spec);
-	free(line);
-	free(path);
+	মুক্ত(সাৰি);
+	মুক্ত(path);
 }
 
-static void
-do_gen_krl(struct passwd *pw, int updating, const char *ca_key_path,
-    unsigned long long krl_version, const char *krl_comment,
-    int argc, char **argv)
+স্থির শূন্য
+do_gen_krl(সংরচনা passwd *pw, পূর্ণাঙ্ক updating, ধ্রুৱ ৱর্ণ *ca_চাবি_path,
+    unsigned long long krl_version, ধ্রুৱ ৱর্ণ *krl_comment,
+    পূর্ণাঙ্ক argc, ৱর্ণ **argv)
 {
-	struct ssh_krl *krl;
-	struct stat sb;
-	struct sshkey *ca = NULL;
-	int i, r, wild_ca = 0;
-	char *tmp;
-	struct sshbuf *kbuf;
+	সংরচনা ssh_krl *krl;
+	সংরচনা stat sb;
+	সংরচনা sshkey *ca = রিক্ত;
+	পূর্ণাঙ্ক i, r, wild_ca = 0;
+	ৱর্ণ *tmp;
+	সংরচনা sshbuf *kbuf;
 
-	if (*identity_file == '\0')
+	যদি (*identity_file == '\0')
 		fatal("KRL generation requires an output file");
-	if (stat(identity_file, &sb) == -1) {
-		if (errno != ENOENT)
+	যদি (stat(identity_file, &sb) == -1) {
+		যদি (errno != ENOENT)
 			fatal("Cannot access KRL \"%s\": %s",
 			    identity_file, strerror(errno));
-		if (updating)
+		যদি (updating)
 			fatal("KRL \"%s\" does not exist", identity_file);
 	}
-	if (ca_key_path != NULL) {
-		if (strcasecmp(ca_key_path, "none") == 0)
+	যদি (ca_চাবি_path != রিক্ত) {
+		যদি (strcasecmp(ca_চাবি_path, "none") == 0)
 			wild_ca = 1;
-		else {
-			tmp = tilde_expand_filename(ca_key_path, pw->pw_uid);
-			if ((r = sshkey_load_public(tmp, &ca, NULL)) != 0)
+		অন্যথা {
+			tmp = tilde_expand_filename(ca_চাবি_path, pw->pw_uid);
+			যদি ((r = sshkey_load_public(tmp, &ca, রিক্ত)) != 0)
 				fatal_r(r, "Cannot load CA public key %s", tmp);
-			free(tmp);
+			মুক্ত(tmp);
 		}
 	}
 
-	if (updating)
+	যদি (updating)
 		load_krl(identity_file, &krl);
-	else if ((krl = ssh_krl_init()) == NULL)
+	অন্যথা যদি ((krl = ssh_krl_init()) == রিক্ত)
 		fatal("couldn't create KRL");
 
-	if (krl_version != 0)
+	যদি (krl_version != 0)
 		ssh_krl_set_version(krl, krl_version);
-	if (krl_comment != NULL)
+	যদি (krl_comment != রিক্ত)
 		ssh_krl_set_comment(krl, krl_comment);
 
-	for (i = 0; i < argc; i++)
+	বাবে (i = 0; i < argc; i++)
 		update_krl_from_file(pw, argv[i], wild_ca, ca, krl);
 
-	if ((kbuf = sshbuf_new()) == NULL)
+	যদি ((kbuf = sshbuf_new()) == রিক্ত)
 		fatal("sshbuf_new failed");
-	if (ssh_krl_to_blob(krl, kbuf) != 0)
+	যদি (ssh_krl_to_blob(krl, kbuf) != 0)
 		fatal("Couldn't generate KRL");
-	if ((r = sshbuf_write_file(identity_file, kbuf)) != 0)
+	যদি ((r = sshbuf_write_file(identity_file, kbuf)) != 0)
 		fatal("write %s: %s", identity_file, strerror(errno));
 	sshbuf_free(kbuf);
 	ssh_krl_free(krl);
 	sshkey_free(ca);
 }
 
-static void
-do_check_krl(struct passwd *pw, int print_krl, int argc, char **argv)
+স্থির শূন্য
+do_check_krl(সংরচনা passwd *pw, পূর্ণাঙ্ক print_krl, পূর্ণাঙ্ক argc, ৱর্ণ **argv)
 {
-	int i, r, ret = 0;
-	char *comment;
-	struct ssh_krl *krl;
-	struct sshkey *k;
+	পূর্ণাঙ্ক i, r, ret = 0;
+	ৱর্ণ *comment;
+	সংরচনা ssh_krl *krl;
+	সংরচনা sshkey *k;
 
-	if (*identity_file == '\0')
+	যদি (*identity_file == '\0')
 		fatal("KRL checking requires an input file");
 	load_krl(identity_file, &krl);
-	if (print_krl)
+	যদি (print_krl)
 		krl_dump(krl, stdout);
-	for (i = 0; i < argc; i++) {
-		if ((r = sshkey_load_public(argv[i], &k, &comment)) != 0)
+	বাবে (i = 0; i < argc; i++) {
+		যদি ((r = sshkey_load_public(argv[i], &k, &comment)) != 0)
 			fatal_r(r, "Cannot load public key %s", argv[i]);
-		r = ssh_krl_check_key(krl, k);
+		r = ssh_krl_check_চাবি(krl, k);
 		printf("%s%s%s%s: %s\n", argv[i],
 		    *comment ? " (" : "", comment, *comment ? ")" : "",
 		    r == 0 ? "ok" : "REVOKED");
-		if (r != 0)
+		যদি (r != 0)
 			ret = 1;
 		sshkey_free(k);
-		free(comment);
+		মুক্ত(comment);
 	}
 	ssh_krl_free(krl);
 	exit(ret);
 }
 
-static struct sshkey *
-load_sign_key(const char *keypath, const struct sshkey *pubkey)
+স্থির সংরচনা sshkey *
+load_sign_চাবি(ধ্রুৱ ৱর্ণ *keypath, ধ্রুৱ সংরচনা sshkey *pubkey)
 {
 	size_t i, slen, plen = strlen(keypath);
-	char *privpath = xstrdup(keypath);
-	static const char * const suffixes[] = { "-cert.pub", ".pub", NULL };
-	struct sshkey *ret = NULL, *privkey = NULL;
-	int r, waspub = 0;
-	struct stat st;
+	ৱর্ণ *privpath = xstrdup(keypath);
+	স্থির ধ্রুৱ ৱর্ণ * ধ্রুৱ suffixes[] = { "-cert.pub", ".pub", রিক্ত };
+	সংরচনা sshkey *ret = রিক্ত, *privkey = রিক্ত;
+	পূর্ণাঙ্ক r, waspub = 0;
+	সংরচনা stat st;
 
 	/*
 	 * If passed a public key filename, then try to locate the corresponding
 	 * private key. This lets us specify certificates on the command-line
 	 * and have ssh-keygen find the appropriate private key.
 	 */
-	for (i = 0; suffixes[i]; i++) {
+	বাবে (i = 0; suffixes[i]; i++) {
 		slen = strlen(suffixes[i]);
-		if (plen <= slen ||
+		যদি (plen <= slen ||
 		    strcmp(privpath + plen - slen, suffixes[i]) != 0)
-			continue;
+			অনুৱর্ত;
 		privpath[plen - slen] = '\0';
 		debug_f("%s looks like a public key, using private key "
 		    "path %s instead", keypath, privpath);
 		waspub = 1;
 	}
-	if (waspub && stat(privpath, &st) != 0 && errno == ENOENT)
+	যদি (waspub && stat(privpath, &st) != 0 && errno == ENOENT)
 		fatal("No private key found for public key \"%s\"", keypath);
-	if ((r = sshkey_load_private(privpath, "", &privkey, NULL)) != 0 &&
-	    (r != SSH_ERR_KEY_WRONG_PASSPHRASE)) {
+	যদি ((r = sshkey_load_private(privpath, "", &privkey, রিক্ত)) != 0 &&
+	    (r != SSH_ERR_চাবি_WRONG_PASSPHRASE)) {
 		debug_fr(r, "load private key \"%s\"", privpath);
 		fatal("No private key found for \"%s\"", privpath);
-	} else if (privkey == NULL)
-		privkey = load_identity(privpath, NULL);
+	} অন্যথা যদি (privkey == রিক্ত)
+		privkey = load_identity(privpath, রিক্ত);
 
-	if (!sshkey_equal_public(pubkey, privkey)) {
+	যদি (!sshkey_equal_public(pubkey, privkey)) {
 		error("Public key %s doesn't match private %s",
 		    keypath, privpath);
-		goto done;
+		গচ্ছ done;
 	}
-	if (sshkey_is_cert(pubkey) && !sshkey_is_cert(privkey)) {
+	যদি (sshkey_is_cert(pubkey) && !sshkey_is_cert(privkey)) {
 		/*
 		 * Graft the certificate onto the private key to make
 		 * it capable of signing.
 		 */
-		if ((r = sshkey_to_certified(privkey)) != 0) {
+		যদি ((r = sshkey_to_certified(privkey)) != 0) {
 			error_fr(r, "sshkey_to_certified");
-			goto done;
+			গচ্ছ done;
 		}
-		if ((r = sshkey_cert_copy(pubkey, privkey)) != 0) {
+		যদি ((r = sshkey_cert_copy(pubkey, privkey)) != 0) {
 			error_fr(r, "sshkey_cert_copy");
-			goto done;
+			গচ্ছ done;
 		}
 	}
 	/* success */
 	ret = privkey;
-	privkey = NULL;
+	privkey = রিক্ত;
  done:
 	sshkey_free(privkey);
-	free(privpath);
-	return ret;
+	মুক্ত(privpath);
+	ঘূৰাই ret;
 }
 
-static int
-sign_one(struct sshkey *signkey, const char *filename, int fd,
-    const char *sig_namespace, const char *hashalg, sshsig_signer *signer,
-    void *signer_ctx)
+স্থির পূর্ণাঙ্ক
+sign_one(সংরচনা sshkey *signkey, ধ্রুৱ ৱর্ণ *filename, পূর্ণাঙ্ক fd,
+    ধ্রুৱ ৱর্ণ *sig_namespace, ধ্রুৱ ৱর্ণ *hashalg, sshsig_signer *signer,
+    শূন্য *signer_ctx)
 {
-	struct sshbuf *sigbuf = NULL, *abuf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR, wfd = -1, oerrno;
-	char *wfile = NULL, *asig = NULL, *fp = NULL;
-	char *pin = NULL, *prompt = NULL;
+	সংরচনা sshbuf *sigbuf = রিক্ত, *abuf = রিক্ত;
+	পূর্ণাঙ্ক r = SSH_ERR_INTERNAL_ERROR, wfd = -1, oerrno;
+	ৱর্ণ *wfile = রিক্ত, *asig = রিক্ত, *fp = রিক্ত;
+	ৱর্ণ *pin = রিক্ত, *prompt = রিক্ত;
 
-	if (!quiet) {
-		if (fd == STDIN_FILENO)
+	যদি (!quiet) {
+		যদি (fd == STDIN_FILENO)
 			fprintf(stderr, "Signing data on standard input\n");
-		else
+		অন্যথা
 			fprintf(stderr, "Signing file %s\n", filename);
 	}
-	if (signer == NULL && sshkey_is_sk(signkey)) {
-		if ((signkey->sk_flags & SSH_SK_USER_VERIFICATION_REQD)) {
+	যদি (signer == রিক্ত && sshkey_is_sk(signkey)) {
+		যদি ((signkey->sk_flags & SSH_SK_USER_VERIFICATION_REQD)) {
 			xasprintf(&prompt, "Enter PIN for %s key: ",
 			    sshkey_type(signkey));
-			if ((pin = read_passphrase(prompt,
-			    RP_ALLOW_STDIN)) == NULL)
+			যদি ((pin = read_passphrase(prompt,
+			    RP_ALLOW_STDIN)) == রিক্ত)
 				fatal_f("couldn't read PIN");
 		}
-		if ((signkey->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
-			if ((fp = sshkey_fingerprint(signkey, fingerprint_hash,
-			    SSH_FP_DEFAULT)) == NULL)
+		যদি ((signkey->sk_flags & SSH_SK_USER_PRESENCE_REQD)) {
+			যদি ((fp = sshkey_fingerprint(signkey, fingerprint_hash,
+			    SSH_FP_DEFAULT)) == রিক্ত)
 				fatal_f("fingerprint failed");
 			fprintf(stderr, "Confirm user presence for key %s %s\n",
 			    sshkey_type(signkey), fp);
-			free(fp);
+			মুক্ত(fp);
 		}
 	}
-	if ((r = sshsig_sign_fd(signkey, hashalg, sk_provider, pin,
+	যদি ((r = sshsig_sign_fd(signkey, hashalg, sk_provider, pin,
 	    fd, sig_namespace, &sigbuf, signer, signer_ctx)) != 0) {
 		error_r(r, "Signing %s failed", filename);
-		goto out;
+		গচ্ছ out;
 	}
-	if ((r = sshsig_armor(sigbuf, &abuf)) != 0) {
+	যদি ((r = sshsig_armor(sigbuf, &abuf)) != 0) {
 		error_fr(r, "sshsig_armor");
-		goto out;
+		গচ্ছ out;
 	}
-	if ((asig = sshbuf_dup_string(abuf)) == NULL) {
+	যদি ((asig = sshbuf_dup_string(abuf)) == রিক্ত) {
 		error_f("buffer error");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		গচ্ছ out;
 	}
 
-	if (fd == STDIN_FILENO) {
+	যদি (fd == STDIN_FILENO) {
 		fputs(asig, stdout);
 		fflush(stdout);
-	} else {
+	} অন্যথা {
 		xasprintf(&wfile, "%s.sig", filename);
-		if (confirm_overwrite(wfile)) {
-			if ((wfd = open(wfile, O_WRONLY|O_CREAT|O_TRUNC,
+		যদি (confirm_overwrite(wfile)) {
+			যদি ((wfd = open(wfile, O_WRONLY|O_CREAT|O_TRUNC,
 			    0666)) == -1) {
 				oerrno = errno;
 				error("Cannot open %s: %s",
 				    wfile, strerror(errno));
 				errno = oerrno;
 				r = SSH_ERR_SYSTEM_ERROR;
-				goto out;
+				গচ্ছ out;
 			}
-			if (atomicio(vwrite, wfd, asig,
+			যদি (atomicio(vwrite, wfd, asig,
 			    strlen(asig)) != strlen(asig)) {
 				oerrno = errno;
 				error("Cannot write to %s: %s",
 				    wfile, strerror(errno));
 				errno = oerrno;
 				r = SSH_ERR_SYSTEM_ERROR;
-				goto out;
+				গচ্ছ out;
 			}
-			if (!quiet) {
+			যদি (!quiet) {
 				fprintf(stderr, "Write signature to %s\n",
 				    wfile);
 			}
@@ -2673,129 +2673,129 @@ sign_one(struct sshkey *signkey, const char *filename, int fd,
 	/* success */
 	r = 0;
  out:
-	free(wfile);
-	free(prompt);
-	free(asig);
-	if (pin != NULL)
+	মুক্ত(wfile);
+	মুক্ত(prompt);
+	মুক্ত(asig);
+	যদি (pin != রিক্ত)
 		freezero(pin, strlen(pin));
 	sshbuf_free(abuf);
 	sshbuf_free(sigbuf);
-	if (wfd != -1)
+	যদি (wfd != -1)
 		close(wfd);
-	return r;
+	ঘূৰাই r;
 }
 
-static int
-sig_process_opts(char * const *opts, size_t nopts, char **hashalgp,
-    uint64_t *verify_timep, int *print_pubkey)
+স্থির পূর্ণাঙ্ক
+sig_process_opts(ৱর্ণ * ধ্রুৱ *opts, size_t nopts, ৱর্ণ **hashalgp,
+    uint64_t *verify_timep, পূর্ণাঙ্ক *print_pubkey)
 {
 	size_t i;
 	time_t now;
-	const char *p;
+	ধ্রুৱ ৱর্ণ *p;
 
-	if (verify_timep != NULL)
+	যদি (verify_timep != রিক্ত)
 		*verify_timep = 0;
-	if (print_pubkey != NULL)
+	যদি (print_pubkey != রিক্ত)
 		*print_pubkey = 0;
-	if (hashalgp != NULL)
-		*hashalgp = NULL;
-	for (i = 0; i < nopts; i++) {
-		if (hashalgp != NULL &&
-		    (p = strprefix(opts[i], "hashalg=", 1)) != NULL) {
+	যদি (hashalgp != রিক্ত)
+		*hashalgp = রিক্ত;
+	বাবে (i = 0; i < nopts; i++) {
+		যদি (hashalgp != রিক্ত &&
+		    (p = strprefix(opts[i], "hashalg=", 1)) != রিক্ত) {
 			*hashalgp = xstrdup(p);
-		} else if (verify_timep &&
-		    (p = strprefix(opts[i], "verify-time=", 1)) != NULL) {
-			if (parse_absolute_time(p, verify_timep) != 0 ||
+		} অন্যথা যদি (verify_timep &&
+		    (p = strprefix(opts[i], "verify-time=", 1)) != রিক্ত) {
+			যদি (parse_absolute_time(p, verify_timep) != 0 ||
 			    *verify_timep == 0) {
 				error("Invalid \"verify-time\" option");
-				return SSH_ERR_INVALID_ARGUMENT;
+				ঘূৰাই SSH_ERR_INVALID_ARGUMENT;
 			}
-		} else if (print_pubkey &&
+		} অন্যথা যদি (print_pubkey &&
 		    strcasecmp(opts[i], "print-pubkey") == 0) {
 			*print_pubkey = 1;
-		} else {
+		} অন্যথা {
 			error("Invalid option \"%s\"", opts[i]);
-			return SSH_ERR_INVALID_ARGUMENT;
+			ঘূৰাই SSH_ERR_INVALID_ARGUMENT;
 		}
 	}
-	if (verify_timep && *verify_timep == 0) {
-		if ((now = time(NULL)) < 0) {
+	যদি (verify_timep && *verify_timep == 0) {
+		যদি ((now = time(রিক্ত)) < 0) {
 			error("Time is before epoch");
-			return SSH_ERR_INVALID_ARGUMENT;
+			ঘূৰাই SSH_ERR_INVALID_ARGUMENT;
 		}
 		*verify_timep = (uint64_t)now;
 	}
-	return 0;
+	ঘূৰাই 0;
 }
 
 
-static int
-sig_sign(const char *keypath, const char *sig_namespace, int require_agent,
-    int argc, char **argv, char * const *opts, size_t nopts)
+স্থির পূর্ণাঙ্ক
+sig_sign(ধ্রুৱ ৱর্ণ *keypath, ধ্রুৱ ৱর্ণ *sig_namespace, পূর্ণাঙ্ক require_agent,
+    পূর্ণাঙ্ক argc, ৱর্ণ **argv, ৱর্ণ * ধ্রুৱ *opts, size_t nopts)
 {
-	int i, fd = -1, r, ret = -1;
-	int agent_fd = -1;
-	struct sshkey *pubkey = NULL, *privkey = NULL, *signkey = NULL;
-	sshsig_signer *signer = NULL;
-	char *hashalg = NULL;
+	পূর্ণাঙ্ক i, fd = -1, r, ret = -1;
+	পূর্ণাঙ্ক agent_fd = -1;
+	সংরচনা sshkey *pubkey = রিক্ত, *privkey = রিক্ত, *signkey = রিক্ত;
+	sshsig_signer *signer = রিক্ত;
+	ৱর্ণ *hashalg = রিক্ত;
 
 	/* Check file arguments. */
-	for (i = 0; i < argc; i++) {
-		if (strcmp(argv[i], "-") != 0)
-			continue;
-		if (i > 0 || argc > 1)
+	বাবে (i = 0; i < argc; i++) {
+		যদি (strcmp(argv[i], "-") != 0)
+			অনুৱর্ত;
+		যদি (i > 0 || argc > 1)
 			fatal("Cannot sign mix of paths and standard input");
 	}
 
-	if (sig_process_opts(opts, nopts, &hashalg, NULL, NULL) != 0)
-		goto done; /* error already logged */
+	যদি (sig_process_opts(opts, nopts, &hashalg, রিক্ত, রিক্ত) != 0)
+		গচ্ছ done; /* error already logged */
 
-	if ((r = sshkey_load_public(keypath, &pubkey, NULL)) != 0) {
+	যদি ((r = sshkey_load_public(keypath, &pubkey, রিক্ত)) != 0) {
 		error_r(r, "Couldn't load public key %s", keypath);
-		goto done;
+		গচ্ছ done;
 	}
 
-	if ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
-		if (require_agent)
+	যদি ((r = ssh_get_authentication_socket(&agent_fd)) != 0) {
+		যদি (require_agent)
 			fatal("Couldn't get agent socket");
 		debug_r(r, "Couldn't get agent socket");
-	} else {
-		if ((r = ssh_agent_has_key(agent_fd, pubkey)) == 0)
+	} অন্যথা {
+		যদি ((r = ssh_agent_has_চাবি(agent_fd, pubkey)) == 0)
 			signer = agent_signer;
-		else {
-			if (require_agent)
+		অন্যথা {
+			যদি (require_agent)
 				fatal("Couldn't find key in agent");
 			debug_r(r, "Couldn't find key in agent");
 		}
 	}
 
-	if (signer == NULL) {
+	যদি (signer == রিক্ত) {
 		/* Not using agent - try to load private key */
-		if ((privkey = load_sign_key(keypath, pubkey)) == NULL)
-			goto done;
+		যদি ((privkey = load_sign_চাবি(keypath, pubkey)) == রিক্ত)
+			গচ্ছ done;
 		signkey = privkey;
-	} else {
+	} অন্যথা {
 		/* Will use key in agent */
 		signkey = pubkey;
 	}
 
-	if (argc == 0) {
-		if ((r = sign_one(signkey, "(stdin)", STDIN_FILENO,
+	যদি (argc == 0) {
+		যদি ((r = sign_one(signkey, "(stdin)", STDIN_FILENO,
 		    sig_namespace, hashalg, signer, &agent_fd)) != 0)
-			goto done;
-	} else {
-		for (i = 0; i < argc; i++) {
-			if (strcmp(argv[i], "-") == 0)
+			গচ্ছ done;
+	} অন্যথা {
+		বাবে (i = 0; i < argc; i++) {
+			যদি (strcmp(argv[i], "-") == 0)
 				fd = STDIN_FILENO;
-			else if ((fd = open(argv[i], O_RDONLY)) == -1) {
+			অন্যথা যদি ((fd = open(argv[i], O_RDONLY)) == -1) {
 				error("Cannot open %s for signing: %s",
 				    argv[i], strerror(errno));
-				goto done;
+				গচ্ছ done;
 			}
-			if ((r = sign_one(signkey, argv[i], fd, sig_namespace,
+			যদি ((r = sign_one(signkey, argv[i], fd, sig_namespace,
 			    hashalg, signer, &agent_fd)) != 0)
-				goto done;
-			if (fd != STDIN_FILENO)
+				গচ্ছ done;
+			যদি (fd != STDIN_FILENO)
 				close(fd);
 			fd = -1;
 		}
@@ -2803,304 +2803,304 @@ sig_sign(const char *keypath, const char *sig_namespace, int require_agent,
 
 	ret = 0;
 done:
-	if (fd != -1 && fd != STDIN_FILENO)
+	যদি (fd != -1 && fd != STDIN_FILENO)
 		close(fd);
 	sshkey_free(pubkey);
 	sshkey_free(privkey);
-	free(hashalg);
-	return ret;
+	মুক্ত(hashalg);
+	ঘূৰাই ret;
 }
 
-static int
-sig_verify(const char *signature, const char *sig_namespace,
-    const char *principal, const char *allowed_keys, const char *revoked_keys,
-    char * const *opts, size_t nopts)
+স্থির পূর্ণাঙ্ক
+sig_verify(ধ্রুৱ ৱর্ণ *signature, ধ্রুৱ ৱর্ণ *sig_namespace,
+    ধ্রুৱ ৱর্ণ *principal, ধ্রুৱ ৱর্ণ *allowed_চাবিগুলি, ধ্রুৱ ৱর্ণ *revoked_চাবিগুলি,
+    ৱর্ণ * ধ্রুৱ *opts, size_t nopts)
 {
-	int r, ret = -1;
-	int print_pubkey = 0;
-	struct sshbuf *sigbuf = NULL, *abuf = NULL;
-	struct sshkey *sign_key = NULL;
-	char *fp = NULL;
-	struct sshkey_sig_details *sig_details = NULL;
+	পূর্ণাঙ্ক r, ret = -1;
+	পূর্ণাঙ্ক print_pubkey = 0;
+	সংরচনা sshbuf *sigbuf = রিক্ত, *abuf = রিক্ত;
+	সংরচনা sshkey *sign_চাবি = রিক্ত;
+	ৱর্ণ *fp = রিক্ত;
+	সংরচনা sshkey_sig_details *sig_details = রিক্ত;
 	uint64_t verify_time = 0;
 
-	if (sig_process_opts(opts, nopts, NULL, &verify_time,
+	যদি (sig_process_opts(opts, nopts, রিক্ত, &verify_time,
 	    &print_pubkey) != 0)
-		goto done; /* error already logged */
+		গচ্ছ done; /* error already logged */
 
-	memset(&sig_details, 0, sizeof(sig_details));
-	if ((r = sshbuf_load_file(signature, &abuf)) != 0) {
+	memset(&sig_details, 0, পরিমাণ(sig_details));
+	যদি ((r = sshbuf_load_file(signature, &abuf)) != 0) {
 		error_r(r, "Couldn't read signature file");
-		goto done;
+		গচ্ছ done;
 	}
 
-	if ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
+	যদি ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
 		error_fr(r, "sshsig_armor");
-		goto done;
+		গচ্ছ done;
 	}
-	if ((r = sshsig_verify_fd(sigbuf, STDIN_FILENO, sig_namespace,
-	    &sign_key, &sig_details)) != 0)
-		goto done; /* sshsig_verify() prints error */
+	যদি ((r = sshsig_verify_fd(sigbuf, STDIN_FILENO, sig_namespace,
+	    &sign_চাবি, &sig_details)) != 0)
+		গচ্ছ done; /* sshsig_verify() prints error */
 
-	if ((fp = sshkey_fingerprint(sign_key, fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL)
+	যদি ((fp = sshkey_fingerprint(sign_চাবি, fingerprint_hash,
+	    SSH_FP_DEFAULT)) == রিক্ত)
 		fatal_f("sshkey_fingerprint failed");
 	debug("Valid (unverified) signature from key %s", fp);
-	if (sig_details != NULL) {
+	যদি (sig_details != রিক্ত) {
 		debug2_f("signature details: counter = %u, flags = 0x%02x",
 		    sig_details->sk_counter, sig_details->sk_flags);
 	}
-	free(fp);
-	fp = NULL;
+	মুক্ত(fp);
+	fp = রিক্ত;
 
-	if (revoked_keys != NULL) {
-		if ((r = sshkey_check_revoked(sign_key, revoked_keys)) != 0) {
+	যদি (revoked_চাবিগুলি != রিক্ত) {
+		যদি ((r = sshkey_check_revoked(sign_চাবি, revoked_চাবিগুলি)) != 0) {
 			debug3_fr(r, "sshkey_check_revoked");
-			goto done;
+			গচ্ছ done;
 		}
 	}
 
-	if (allowed_keys != NULL && (r = sshsig_check_allowed_keys(allowed_keys,
-	    sign_key, principal, sig_namespace, verify_time)) != 0) {
+	যদি (allowed_চাবিগুলি != রিক্ত && (r = sshsig_check_allowed_চাবিগুলি(allowed_চাবিগুলি,
+	    sign_চাবি, principal, sig_namespace, verify_time)) != 0) {
 		debug3_fr(r, "sshsig_check_allowed_keys");
-		goto done;
+		গচ্ছ done;
 	}
 	/* success */
 	ret = 0;
 done:
-	if (!quiet) {
-		if (ret == 0) {
-			if ((fp = sshkey_fingerprint(sign_key, fingerprint_hash,
-			    SSH_FP_DEFAULT)) == NULL)
+	যদি (!quiet) {
+		যদি (ret == 0) {
+			যদি ((fp = sshkey_fingerprint(sign_চাবি, fingerprint_hash,
+			    SSH_FP_DEFAULT)) == রিক্ত)
 				fatal_f("sshkey_fingerprint failed");
-			if (principal == NULL) {
+			যদি (principal == রিক্ত) {
 				printf("Good \"%s\" signature with %s key %s\n",
-				    sig_namespace, sshkey_type(sign_key), fp);
+				    sig_namespace, sshkey_type(sign_চাবি), fp);
 
-			} else {
+			} অন্যথা {
 				printf("Good \"%s\" signature for %s with %s key %s\n",
 				    sig_namespace, principal,
-				    sshkey_type(sign_key), fp);
+				    sshkey_type(sign_চাবি), fp);
 			}
-		} else {
+		} অন্যথা {
 			printf("Could not verify signature.\n");
 		}
 	}
 	/* Print the signature key if requested */
-	if (ret == 0 && print_pubkey && sign_key != NULL) {
-		if ((r = sshkey_write(sign_key, stdout)) == 0)
+	যদি (ret == 0 && print_pubkey && sign_চাবি != রিক্ত) {
+		যদি ((r = sshkey_write(sign_চাবি, stdout)) == 0)
 			fputc('\n', stdout);
-		else {
+		অন্যথা {
 			error_r(r, "Could not print public key.\n");
 			ret = -1;
 		}
 	}
 	sshbuf_free(sigbuf);
 	sshbuf_free(abuf);
-	sshkey_free(sign_key);
+	sshkey_free(sign_চাবি);
 	sshkey_sig_details_free(sig_details);
-	free(fp);
-	return ret;
+	মুক্ত(fp);
+	ঘূৰাই ret;
 }
 
-static int
-sig_find_principals(const char *signature, const char *allowed_keys,
-    char * const *opts, size_t nopts)
+স্থির পূর্ণাঙ্ক
+sig_find_principals(ধ্রুৱ ৱর্ণ *signature, ধ্রুৱ ৱর্ণ *allowed_চাবিগুলি,
+    ৱর্ণ * ধ্রুৱ *opts, size_t nopts)
 {
-	int r, ret = -1;
-	struct sshbuf *sigbuf = NULL, *abuf = NULL;
-	struct sshkey *sign_key = NULL;
-	char *principals = NULL, *cp, *tmp;
+	পূর্ণাঙ্ক r, ret = -1;
+	সংরচনা sshbuf *sigbuf = রিক্ত, *abuf = রিক্ত;
+	সংরচনা sshkey *sign_চাবি = রিক্ত;
+	ৱর্ণ *principals = রিক্ত, *cp, *tmp;
 	uint64_t verify_time = 0;
 
-	if (sig_process_opts(opts, nopts, NULL, &verify_time, NULL) != 0)
-		goto done; /* error already logged */
+	যদি (sig_process_opts(opts, nopts, রিক্ত, &verify_time, রিক্ত) != 0)
+		গচ্ছ done; /* error already logged */
 
-	if ((r = sshbuf_load_file(signature, &abuf)) != 0) {
+	যদি ((r = sshbuf_load_file(signature, &abuf)) != 0) {
 		error_r(r, "Couldn't read signature file");
-		goto done;
+		গচ্ছ done;
 	}
-	if ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
+	যদি ((r = sshsig_dearmor(abuf, &sigbuf)) != 0) {
 		error_fr(r, "sshsig_armor");
-		goto done;
+		গচ্ছ done;
 	}
-	if ((r = sshsig_get_pubkey(sigbuf, &sign_key)) != 0) {
+	যদি ((r = sshsig_get_pubkey(sigbuf, &sign_চাবি)) != 0) {
 		error_fr(r, "sshsig_get_pubkey");
-		goto done;
+		গচ্ছ done;
 	}
-	if ((r = sshsig_find_principals(allowed_keys, sign_key,
+	যদি ((r = sshsig_find_principals(allowed_চাবিগুলি, sign_চাবি,
 	    verify_time, &principals)) != 0) {
-		if (r != SSH_ERR_KEY_NOT_FOUND)
+		যদি (r != SSH_ERR_চাবি_NOT_FOUND)
 			error_fr(r, "sshsig_find_principal");
-		goto done;
+		গচ্ছ done;
 	}
 	ret = 0;
 done:
-	if (ret == 0 ) {
+	যদি (ret == 0 ) {
 		/* Emit matching principals one per line */
 		tmp = principals;
-		while ((cp = strsep(&tmp, ",")) != NULL && *cp != '\0')
+		যেতিয়ালৈ ((cp = strsep(&tmp, ",")) != রিক্ত && *cp != '\0')
 			puts(cp);
-	} else {
+	} অন্যথা {
 		fprintf(stderr, "No principal matched.\n");
 	}
 	sshbuf_free(sigbuf);
 	sshbuf_free(abuf);
-	sshkey_free(sign_key);
-	free(principals);
-	return ret;
+	sshkey_free(sign_চাবি);
+	মুক্ত(principals);
+	ঘূৰাই ret;
 }
 
-static int
-sig_match_principals(const char *allowed_keys, char *principal,
-	char * const *opts, size_t nopts)
+স্থির পূর্ণাঙ্ক
+sig_match_principals(ধ্রুৱ ৱর্ণ *allowed_চাবিগুলি, ৱর্ণ *principal,
+	ৱর্ণ * ধ্রুৱ *opts, size_t nopts)
 {
-	int r;
-	char **principals = NULL;
+	পূর্ণাঙ্ক r;
+	ৱর্ণ **principals = রিক্ত;
 	size_t i, nprincipals = 0;
 
-	if ((r = sig_process_opts(opts, nopts, NULL, NULL, NULL)) != 0)
-		return r; /* error already logged */
+	যদি ((r = sig_process_opts(opts, nopts, রিক্ত, রিক্ত, রিক্ত)) != 0)
+		ঘূৰাই r; /* error already logged */
 
-	if ((r = sshsig_match_principals(allowed_keys, principal,
+	যদি ((r = sshsig_match_principals(allowed_চাবিগুলি, principal,
 	    &principals, &nprincipals)) != 0) {
 		debug_f("match: %s", ssh_err(r));
 		fprintf(stderr, "No principal matched.\n");
-		return r;
+		ঘূৰাই r;
 	}
-	for (i = 0; i < nprincipals; i++) {
+	বাবে (i = 0; i < nprincipals; i++) {
 		printf("%s\n", principals[i]);
-		free(principals[i]);
+		মুক্ত(principals[i]);
 	}
-	free(principals);
+	মুক্ত(principals);
 
-	return 0;
+	ঘূৰাই 0;
 }
 
-static void
-do_moduli_gen(const char *out_file, char **opts, size_t nopts)
+স্থির শূন্য
+do_moduli_gen(ধ্রুৱ ৱর্ণ *out_file, ৱর্ণ **opts, size_t nopts)
 {
 #ifdef WITH_OPENSSL
 	/* Moduli generation/screening */
-	BIGNUM *start = NULL;
-	int moduli_bits = 0;
+	BIGNUM *start = রিক্ত;
+	পূর্ণাঙ্ক moduli_bits = 0;
 	FILE *out;
 	size_t i;
-	const char *errstr, *p;
+	ধ্রুৱ ৱর্ণ *errstr, *p;
 
 	/* Parse options */
-	for (i = 0; i < nopts; i++) {
-		if ((p = strprefix(opts[i], "start=", 0)) != NULL) {
+	বাবে (i = 0; i < nopts; i++) {
+		যদি ((p = strprefix(opts[i], "start=", 0)) != রিক্ত) {
 			/* XXX - also compare length against bits */
-			if (BN_hex2bn(&start, p) == 0)
+			যদি (BN_hex2bn(&start, p) == 0)
 				fatal("Invalid start point.");
-		} else if ((p = strprefix(opts[i], "bits=", 0)) != NULL) {
-			moduli_bits = (int)strtonum(p, 1, INT_MAX, &errstr);
-			if (errstr) {
+		} অন্যথা যদি ((p = strprefix(opts[i], "bits=", 0)) != রিক্ত) {
+			moduli_bits = (পূর্ণাঙ্ক)strtonum(p, 1, INT_MAX, &errstr);
+			যদি (errstr) {
 				fatal("Invalid number: %s (%s)", p, errstr);
 			}
-		} else {
+		} অন্যথা {
 			fatal("Option \"%s\" is unsupported for moduli "
 			    "generation", opts[i]);
 		}
 	}
 
-	if (strcmp(out_file, "-") == 0)
+	যদি (strcmp(out_file, "-") == 0)
 		out = stdout;
-	else if ((out = fopen(out_file, "w")) == NULL) {
+	অন্যথা যদি ((out = fopen(out_file, "w")) == রিক্ত) {
 		fatal("Couldn't open modulus candidate file \"%s\": %s",
 		    out_file, strerror(errno));
 	}
-	setvbuf(out, NULL, _IOLBF, 0);
+	setvbuf(out, রিক্ত, _IOLBF, 0);
 
-	if (moduli_bits == 0)
+	যদি (moduli_bits == 0)
 		moduli_bits = DEFAULT_BITS;
-	if (gen_candidates(out, moduli_bits, start) != 0)
+	যদি (gen_candidates(out, moduli_bits, start) != 0)
 		fatal("modulus candidate generation failed");
-#else /* WITH_OPENSSL */
+#অন্যথা /* WITH_OPENSSL */
 	fatal("Moduli generation is not supported");
 #endif /* WITH_OPENSSL */
 }
 
-static void
-do_moduli_screen(const char *out_file, char **opts, size_t nopts)
+স্থির শূন্য
+do_moduli_screen(ধ্রুৱ ৱর্ণ *out_file, ৱর্ণ **opts, size_t nopts)
 {
 #ifdef WITH_OPENSSL
 	/* Moduli generation/screening */
-	char *checkpoint = NULL;
+	ৱর্ণ *checkpoint = রিক্ত;
 	uint32_t generator_wanted = 0;
-	unsigned long start_lineno = 0, lines_to_process = 0;
-	int prime_tests = 0;
+	unsigned long start_lineno = 0, সাৰিগুলি_to_process = 0;
+	পূর্ণাঙ্ক মৌলিক_tests = 0;
 	FILE *out, *in = stdin;
 	size_t i;
-	const char *errstr, *p;
+	ধ্রুৱ ৱর্ণ *errstr, *p;
 
 	/* Parse options */
-	for (i = 0; i < nopts; i++) {
-		if ((p = strprefix(opts[i], "lines=", 0)) != NULL) {
-			lines_to_process = strtoul(p, NULL, 10);
-		} else if ((p = strprefix(opts[i], "start-line=", 0)) != NULL) {
-			start_lineno = strtoul(p, NULL, 10);
-		} else if ((p = strprefix(opts[i], "checkpoint=", 0)) != NULL) {
-			free(checkpoint);
+	বাবে (i = 0; i < nopts; i++) {
+		যদি ((p = strprefix(opts[i], "lines=", 0)) != রিক্ত) {
+			সাৰিগুলি_to_process = strtoul(p, রিক্ত, 10);
+		} অন্যথা যদি ((p = strprefix(opts[i], "start-line=", 0)) != রিক্ত) {
+			start_lineno = strtoul(p, রিক্ত, 10);
+		} অন্যথা যদি ((p = strprefix(opts[i], "checkpoint=", 0)) != রিক্ত) {
+			মুক্ত(checkpoint);
 			checkpoint = xstrdup(p);
-		} else if ((p = strprefix(opts[i], "generator=", 0)) != NULL) {
+		} অন্যথা যদি ((p = strprefix(opts[i], "generator=", 0)) != রিক্ত) {
 			generator_wanted = (uint32_t)strtonum(p, 1, UINT_MAX,
 			    &errstr);
-			if (errstr != NULL) {
+			যদি (errstr != রিক্ত) {
 				fatal("Generator invalid: %s (%s)", p, errstr);
 			}
-		} else if ((p = strprefix(opts[i], "prime-tests=", 0)) != NULL) {
-			prime_tests = (int)strtonum(p, 1, INT_MAX, &errstr);
-			if (errstr) {
+		} অন্যথা যদি ((p = strprefix(opts[i], "prime-tests=", 0)) != রিক্ত) {
+			মৌলিক_tests = (পূর্ণাঙ্ক)strtonum(p, 1, INT_MAX, &errstr);
+			যদি (errstr) {
 				fatal("Invalid number: %s (%s)", p, errstr);
 			}
-		} else {
+		} অন্যথা {
 			fatal("Option \"%s\" is unsupported for moduli "
 			    "screening", opts[i]);
 		}
 	}
 
-	if (have_identity && strcmp(identity_file, "-") != 0) {
-		if ((in = fopen(identity_file, "r")) == NULL) {
+	যদি (have_identity && strcmp(identity_file, "-") != 0) {
+		যদি ((in = fopen(identity_file, "r")) == রিক্ত) {
 			fatal("Couldn't open modulus candidate "
 			    "file \"%s\": %s", identity_file,
 			    strerror(errno));
 		}
 	}
 
-	if (strcmp(out_file, "-") == 0)
+	যদি (strcmp(out_file, "-") == 0)
 		out = stdout;
-	else if ((out = fopen(out_file, "a")) == NULL) {
+	অন্যথা যদি ((out = fopen(out_file, "a")) == রিক্ত) {
 		fatal("Couldn't open moduli file \"%s\": %s",
 		    out_file, strerror(errno));
 	}
-	setvbuf(out, NULL, _IOLBF, 0);
-	if (prime_test(in, out, prime_tests == 0 ? 100 : prime_tests,
+	setvbuf(out, রিক্ত, _IOLBF, 0);
+	যদি (মৌলিক_test(in, out, মৌলিক_tests == 0 ? 100 : মৌলিক_tests,
 	    generator_wanted, checkpoint,
-	    start_lineno, lines_to_process) != 0)
+	    start_lineno, সাৰিগুলি_to_process) != 0)
 		fatal("modulus screening failed");
-	if (in != stdin)
-		(void)fclose(in);
-	free(checkpoint);
-#else /* WITH_OPENSSL */
+	যদি (in != stdin)
+		(শূন্য)fclose(in);
+	মুক্ত(checkpoint);
+#অন্যথা /* WITH_OPENSSL */
 	fatal("Moduli screening is not supported");
 #endif /* WITH_OPENSSL */
 }
 
 /* Read and confirm a passphrase */
-static char *
-read_check_passphrase(const char *prompt1, const char *prompt2,
-    const char *retry_prompt)
+স্থির ৱর্ণ *
+read_check_passphrase(ধ্রুৱ ৱর্ণ *prompt1, ধ্রুৱ ৱর্ণ *prompt2,
+    ধ্রুৱ ৱর্ণ *retry_prompt)
 {
-	char *passphrase1, *passphrase2;
+	ৱর্ণ *passphrase1, *passphrase2;
 
-	for (;;) {
+	বাবে (;;) {
 		passphrase1 = read_passphrase(prompt1, RP_ALLOW_STDIN);
 		passphrase2 = read_passphrase(prompt2, RP_ALLOW_STDIN);
-		if (strcmp(passphrase1, passphrase2) == 0) {
+		যদি (strcmp(passphrase1, passphrase2) == 0) {
 			freezero(passphrase2, strlen(passphrase2));
-			return passphrase1;
+			ঘূৰাই passphrase1;
 		}
 		/* The passphrases do not match. Clear them and retry. */
 		freezero(passphrase1, strlen(passphrase1));
@@ -3110,196 +3110,196 @@ read_check_passphrase(const char *prompt1, const char *prompt2,
 		fflush(stdout);
 	}
 	/* NOTREACHED */
-	return NULL;
+	ঘূৰাই রিক্ত;
 }
 
-static char *
-private_key_passphrase(const char *path)
+স্থির ৱর্ণ *
+private_চাবি_passphrase(ধ্রুৱ ৱর্ণ *path)
 {
-	char *prompt, *ret;
+	ৱর্ণ *prompt, *ret;
 
-	if (identity_passphrase)
-		return xstrdup(identity_passphrase);
-	if (identity_new_passphrase)
-		return xstrdup(identity_new_passphrase);
+	যদি (identity_passphrase)
+		ঘূৰাই xstrdup(identity_passphrase);
+	যদি (identity_new_passphrase)
+		ঘূৰাই xstrdup(identity_new_passphrase);
 
 	xasprintf(&prompt, "Enter passphrase for \"%s\" "
 	    "(empty for no passphrase): ", path);
 	ret = read_check_passphrase(prompt,
 	    "Enter same passphrase again: ",
 	    "Passphrases do not match.  Try again.");
-	free(prompt);
-	return ret;
+	মুক্ত(prompt);
+	ঘূৰাই ret;
 }
 
-static char *
-sk_suffix(const char *application, const uint8_t *user, size_t userlen)
+স্থির ৱর্ণ *
+sk_suffix(ধ্রুৱ ৱর্ণ *application, ধ্রুৱ uint8_t *user, size_t userlen)
 {
-	char *ret, *cp;
-	const char *p;
+	ৱর্ণ *ret, *cp;
+	ধ্রুৱ ৱর্ণ *p;
 	size_t slen, i;
 
 	/* Trim off URL-like preamble */
-	if ((p = strprefix(application, "ssh://", 0)) != NULL)
+	যদি ((p = strprefix(application, "ssh://", 0)) != রিক্ত)
 		ret =  xstrdup(p);
-	else if ((p = strprefix(application, "ssh:", 0)) != NULL)
+	অন্যথা যদি ((p = strprefix(application, "ssh:", 0)) != রিক্ত)
 		ret =  xstrdup(p);
-	else
+	অন্যথা
 		ret = xstrdup(application);
 
 	/* Count trailing zeros in user */
-	for (i = 0; i < userlen; i++) {
-		if (user[userlen - i - 1] != 0)
-			break;
+	বাবে (i = 0; i < userlen; i++) {
+		যদি (user[userlen - i - 1] != 0)
+			ভঙ্গ;
 	}
-	if (i >= userlen)
-		return ret; /* user-id was default all-zeros */
+	যদি (i >= userlen)
+		ঘূৰাই ret; /* user-id was default all-zeros */
 
 	/* Append user-id, escaping non-UTF-8 characters */
 	slen = userlen - i;
-	if (asmprintf(&cp, INT_MAX, NULL, "%.*s", (int)slen, user) == -1)
+	যদি (asmprintf(&cp, INT_MAX, রিক্ত, "%.*s", (পূর্ণাঙ্ক)slen, user) == -1)
 		fatal_f("asmprintf failed");
 	/* Don't emit a user-id that contains path or control characters */
-	if (strchr(cp, '/') != NULL || strstr(cp, "..") != NULL ||
-	    strchr(cp, '\\') != NULL) {
-		free(cp);
+	যদি (strchr(cp, '/') != রিক্ত || strstr(cp, "..") != রিক্ত ||
+	    strchr(cp, '\\') != রিক্ত) {
+		মুক্ত(cp);
 		cp = tohex(user, slen);
 	}
 	xextendf(&ret, "_", "%s", cp);
-	free(cp);
-	return ret;
+	মুক্ত(cp);
+	ঘূৰাই ret;
 }
 
-static int
-do_download_sk(const char *skprovider, const char *device)
+স্থির পূর্ণাঙ্ক
+do_download_sk(ধ্রুৱ ৱর্ণ *skprovider, ধ্রুৱ ৱর্ণ *device)
 {
-	struct sshsk_resident_key **srks;
+	সংরচনা sshsk_resident_চাবি **srks;
 	size_t nsrks, i;
-	int r, ret = -1;
-	char *fp, *pin = NULL, *pass = NULL, *path, *pubpath;
-	const char *ext;
-	struct sshkey *key;
+	পূর্ণাঙ্ক r, ret = -1;
+	ৱর্ণ *fp, *pin = রিক্ত, *pass = রিক্ত, *path, *pubpath;
+	ধ্রুৱ ৱর্ণ *ext;
+	সংরচনা sshkey *চাবি;
 
-	if (skprovider == NULL)
+	যদি (skprovider == রিক্ত)
 		fatal("Cannot download keys without provider");
 
 	pin = read_passphrase("Enter PIN for authenticator: ", RP_ALLOW_STDIN);
-	if (!quiet) {
+	যদি (!quiet) {
 		printf("You may need to touch your authenticator "
 		    "to authorize key download.\n");
 	}
-	if ((r = sshsk_load_resident(skprovider, device, pin, 0,
+	যদি ((r = sshsk_load_resident(skprovider, device, pin, 0,
 	    &srks, &nsrks)) != 0) {
-		if (pin != NULL)
+		যদি (pin != রিক্ত)
 			freezero(pin, strlen(pin));
 		error_r(r, "Unable to load resident keys");
-		return -1;
+		ঘূৰাই -1;
 	}
-	if (nsrks == 0)
+	যদি (nsrks == 0)
 		logit("No keys to download");
-	if (pin != NULL)
+	যদি (pin != রিক্ত)
 		freezero(pin, strlen(pin));
 
-	for (i = 0; i < nsrks; i++) {
-		key = srks[i]->key;
-		if (key->type != KEY_ECDSA_SK && key->type != KEY_ED25519_SK) {
+	বাবে (i = 0; i < nsrks; i++) {
+		চাবি = srks[i]->চাবি;
+		যদি (চাবি->type != চাবি_ECDSA_SK && চাবি->type != চাবি_ED25519_SK) {
 			error("Unsupported key type %s (%d)",
-			    sshkey_type(key), key->type);
-			continue;
+			    sshkey_type(চাবি), চাবি->type);
+			অনুৱর্ত;
 		}
-		if ((fp = sshkey_fingerprint(key, fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+		যদি ((fp = sshkey_fingerprint(চাবি, fingerprint_hash,
+		    SSH_FP_DEFAULT)) == রিক্ত)
 			fatal_f("sshkey_fingerprint failed");
 		debug_f("key %zu: %s %s %s (flags 0x%02x)", i,
-		    sshkey_type(key), fp, key->sk_application, key->sk_flags);
-		ext = sk_suffix(key->sk_application,
+		    sshkey_type(চাবি), fp, চাবি->sk_application, চাবি->sk_flags);
+		ext = sk_suffix(চাবি->sk_application,
 		    srks[i]->user_id, srks[i]->user_id_len);
 		xasprintf(&path, "id_%s_rk%s%s",
-		    key->type == KEY_ECDSA_SK ? "ecdsa_sk" : "ed25519_sk",
+		    চাবি->type == চাবি_ECDSA_SK ? "ecdsa_sk" : "ed25519_sk",
 		    *ext == '\0' ? "" : "_", ext);
 
 		/* If the file already exists, ask the user to confirm. */
-		if (!confirm_overwrite(path)) {
-			free(path);
-			break;
+		যদি (!confirm_overwrite(path)) {
+			মুক্ত(path);
+			ভঙ্গ;
 		}
 
 		/* Save the key with the application string as the comment */
-		if (pass == NULL)
-			pass = private_key_passphrase(path);
-		if ((r = sshkey_save_private(key, path, pass,
-		    key->sk_application, private_key_format,
+		যদি (pass == রিক্ত)
+			pass = private_চাবি_passphrase(path);
+		যদি ((r = sshkey_save_private(চাবি, path, pass,
+		    চাবি->sk_application, private_চাবি_format,
 		    openssh_format_cipher, rounds)) != 0) {
 			error_r(r, "Saving key \"%s\" failed", path);
-			free(path);
-			break;
+			মুক্ত(path);
+			ভঙ্গ;
 		}
-		if (!quiet) {
-			printf("Saved %s key%s%s to %s\n", sshkey_type(key),
+		যদি (!quiet) {
+			printf("Saved %s key%s%s to %s\n", sshkey_type(চাবি),
 			    *ext != '\0' ? " " : "",
-			    *ext != '\0' ? key->sk_application : "",
+			    *ext != '\0' ? চাবি->sk_application : "",
 			    path);
 		}
 
 		/* Save public key too */
 		xasprintf(&pubpath, "%s.pub", path);
-		free(path);
-		if ((r = sshkey_save_public(key, pubpath,
-		    key->sk_application)) != 0) {
+		মুক্ত(path);
+		যদি ((r = sshkey_save_public(চাবি, pubpath,
+		    চাবি->sk_application)) != 0) {
 			error_r(r, "Saving public key \"%s\" failed", pubpath);
-			free(pubpath);
-			break;
+			মুক্ত(pubpath);
+			ভঙ্গ;
 		}
-		free(pubpath);
+		মুক্ত(pubpath);
 	}
 
-	if (i >= nsrks)
+	যদি (i >= nsrks)
 		ret = 0; /* success */
-	if (pass != NULL)
+	যদি (pass != রিক্ত)
 		freezero(pass, strlen(pass));
-	sshsk_free_resident_keys(srks, nsrks);
-	return ret;
+	sshsk_free_resident_চাবিগুলি(srks, nsrks);
+	ঘূৰাই ret;
 }
 
-static void
-save_attestation(struct sshbuf *attest, const char *path)
+স্থির শূন্য
+save_attestation(সংরচনা sshbuf *attest, ধ্রুৱ ৱর্ণ *path)
 {
 	mode_t omask;
-	int r;
+	পূর্ণাঙ্ক r;
 
-	if (path == NULL)
-		return; /* nothing to do */
-	if (attest == NULL || sshbuf_len(attest) == 0)
+	যদি (path == রিক্ত)
+		ঘূৰাই; /* nothing to do */
+	যদি (attest == রিক্ত || sshbuf_len(attest) == 0)
 		fatal("Enrollment did not return attestation data");
 	omask = umask(077);
 	r = sshbuf_write_file(path, attest);
 	umask(omask);
-	if (r != 0)
+	যদি (r != 0)
 		fatal_r(r, "Unable to write attestation data \"%s\"", path);
-	if (!quiet)
+	যদি (!quiet)
 		printf("Your FIDO attestation certificate has been saved in "
 		    "%s\n", path);
 }
 
-static int
-confirm_sk_overwrite(const char *application, const char *user)
+স্থির পূর্ণাঙ্ক
+confirm_sk_overwrite(ধ্রুৱ ৱর্ণ *application, ধ্রুৱ ৱর্ণ *user)
 {
-	char yesno[3];
+	ৱর্ণ yesno[3];
 
 	printf("A resident key scoped to '%s' with user id '%s' already "
-	    "exists.\n", application == NULL ? "ssh:" : application,
-	    user == NULL ? "null" : user);
+	    "exists.\n", application == রিক্ত ? "ssh:" : application,
+	    user == রিক্ত ? "null" : user);
 	printf("Overwrite key in token (y/n)? ");
 	fflush(stdout);
-	if (fgets(yesno, sizeof(yesno), stdin) == NULL)
-		return 0;
-	if (yesno[0] != 'y' && yesno[0] != 'Y')
-		return 0;
-	return 1;
+	যদি (fgets(yesno, পরিমাণ(yesno), stdin) == রিক্ত)
+		ঘূৰাই 0;
+	যদি (yesno[0] != 'y' && yesno[0] != 'Y')
+		ঘূৰাই 0;
+	ঘূৰাই 1;
 }
 
-static void
-usage(void)
+স্থির শূন্য
+usage(শূন্য)
 {
 	fprintf(stderr,
 	    "usage: ssh-keygen [-q] [-a rounds] [-b bits] [-C comment] [-f output_keyfile]\n"
@@ -3350,34 +3350,34 @@ usage(void)
 /*
  * Main program for key management.
  */
-int
-main(int argc, char **argv)
+পূর্ণাঙ্ক
+main(পূর্ণাঙ্ক argc, ৱর্ণ **argv)
 {
-	char comment[KEY_COMMENT_MAX], *passphrase = NULL;
-	char *rr_hostname = NULL, *ep, *fp, *ra;
-	struct sshkey *private = NULL, *public = NULL;
-	struct passwd *pw;
-	int ret = 0, r, opt, type;
-	int change_passphrase = 0, change_comment = 0, show_cert = 0;
-	int find_host = 0, delete_host = 0, hash_hosts = 0;
-	int gen_all_hostkeys = 0, gen_krl = 0, update_krl = 0, check_krl = 0;
-	int prefer_agent = 0, convert_to = 0, convert_from = 0;
-	int print_public = 0, print_generic = 0, cert_serial_autoinc = 0;
-	int do_gen_candidates = 0, do_screen_candidates = 0, download_sk = 0;
+	ৱর্ণ comment[চাবি_COMMENT_MAX], *passphrase = রিক্ত;
+	ৱর্ণ *rr_hostname = রিক্ত, *ep, *fp, *ra;
+	সংরচনা sshkey *গুপ্ত = রিক্ত, *সার্ৱজনিক = রিক্ত;
+	সংরচনা passwd *pw;
+	পূর্ণাঙ্ক ret = 0, r, opt, type;
+	পূর্ণাঙ্ক change_passphrase = 0, change_comment = 0, show_cert = 0;
+	পূর্ণাঙ্ক find_host = 0, delete_host = 0, hash_hosts = 0;
+	পূর্ণাঙ্ক gen_all_hostkeys = 0, gen_krl = 0, update_krl = 0, check_krl = 0;
+	পূর্ণাঙ্ক prefer_agent = 0, convert_to = 0, convert_from = 0;
+	পূর্ণাঙ্ক print_public = 0, print_generic = 0, cert_serial_autoinc = 0;
+	পূর্ণাঙ্ক do_gen_candidates = 0, do_screen_candidates = 0, download_sk = 0;
 	unsigned long long cert_serial = 0;
-	char *identity_comment = NULL, *ca_key_path = NULL, **opts = NULL;
-	char *sk_application = NULL, *sk_device = NULL, *sk_user = NULL;
-	char *sk_attestation_path = NULL;
-	struct sshbuf *challenge = NULL, *attest = NULL;
+	ৱর্ণ *identity_comment = রিক্ত, *ca_চাবি_path = রিক্ত, **opts = রিক্ত;
+	ৱর্ণ *sk_application = রিক্ত, *sk_device = রিক্ত, *sk_user = রিক্ত;
+	ৱর্ণ *sk_attestation_path = রিক্ত;
+	সংরচনা sshbuf *challenge = রিক্ত, *attest = রিক্ত;
 	size_t i, nopts = 0;
 	uint32_t bits = 0;
 	uint8_t sk_flags = SSH_SK_USER_PRESENCE_REQD;
-	const char *errstr, *p;
-	int log_level = SYSLOG_LEVEL_INFO;
-	char *sign_op = NULL;
+	ধ্রুৱ ৱর্ণ *errstr, *p;
+	পূর্ণাঙ্ক log_level = SYSLOG_LEVEL_INFO;
+	ৱর্ণ *sign_op = রিক্ত;
 
-	extern int optind;
-	extern char *optarg;
+	বাহ্য পূর্ণাঙ্ক optind;
+	বাহ্য ৱর্ণ *optarg;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
@@ -3392,215 +3392,215 @@ main(int argc, char **argv)
 
 	/* we need this for the home * directory.  */
 	pw = getpwuid(getuid());
-	if (!pw)
+	যদি (!pw)
 		fatal("No user exists for uid %lu", (u_long)getuid());
 	pw = pwcopy(pw);
-	if (gethostname(hostname, sizeof(hostname)) == -1)
+	যদি (gethostname(hostname, পরিমাণ(hostname)) == -1)
 		fatal("gethostname: %s", strerror(errno));
 
 	sk_provider = getenv("SSH_SK_PROVIDER");
 
 	/* Remaining characters: dGjJSTWx */
-	while ((opt = getopt(argc, argv, "ABHKLQUXceghiklopquvy"
+	যেতিয়ালৈ ((opt = getopt(argc, argv, "ABHKLQUXceghiklopquvy"
 	    "C:D:E:F:I:M:N:O:P:R:V:Y:Z:"
 	    "a:b:f:g:m:n:r:s:t:w:z:")) != -1) {
-		switch (opt) {
-		case 'A':
+		ৱিকল্প (opt) {
+		পক্ষ 'A':
 			gen_all_hostkeys = 1;
-			break;
-		case 'b':
+			ভঙ্গ;
+		পক্ষ 'b':
 			bits = (uint32_t)strtonum(optarg, 1, UINT32_MAX,
 			    &errstr);
-			if (errstr)
+			যদি (errstr)
 				fatal("Bits has bad value %s (%s)",
 					optarg, errstr);
-			break;
-		case 'E':
+			ভঙ্গ;
+		পক্ষ 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			যদি (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
-			break;
-		case 'F':
+			ভঙ্গ;
+		পক্ষ 'F':
 			find_host = 1;
 			rr_hostname = optarg;
-			break;
-		case 'H':
+			ভঙ্গ;
+		পক্ষ 'H':
 			hash_hosts = 1;
-			break;
-		case 'I':
-			cert_key_id = optarg;
-			break;
-		case 'R':
+			ভঙ্গ;
+		পক্ষ 'I':
+			cert_চাবি_id = optarg;
+			ভঙ্গ;
+		পক্ষ 'R':
 			delete_host = 1;
 			rr_hostname = optarg;
-			break;
-		case 'L':
+			ভঙ্গ;
+		পক্ষ 'L':
 			show_cert = 1;
-			break;
-		case 'l':
+			ভঙ্গ;
+		পক্ষ 'l':
 			print_fingerprint = 1;
-			break;
-		case 'B':
+			ভঙ্গ;
+		পক্ষ 'B':
 			print_bubblebabble = 1;
-			break;
-		case 'm':
-			if (strcasecmp(optarg, "RFC4716") == 0 ||
+			ভঙ্গ;
+		পক্ষ 'm':
+			যদি (strcasecmp(optarg, "RFC4716") == 0 ||
 			    strcasecmp(optarg, "ssh2") == 0) {
 				convert_format = FMT_RFC4716;
-				break;
+				ভঙ্গ;
 			}
-			if (strcasecmp(optarg, "PKCS8") == 0) {
+			যদি (strcasecmp(optarg, "PKCS8") == 0) {
 				convert_format = FMT_PKCS8;
-				private_key_format = SSHKEY_PRIVATE_PKCS8;
-				break;
+				private_চাবি_format = SSHKEY_PRIVATE_PKCS8;
+				ভঙ্গ;
 			}
-			if (strcasecmp(optarg, "PEM") == 0) {
+			যদি (strcasecmp(optarg, "PEM") == 0) {
 				convert_format = FMT_PEM;
-				private_key_format = SSHKEY_PRIVATE_PEM;
-				break;
+				private_চাবি_format = SSHKEY_PRIVATE_PEM;
+				ভঙ্গ;
 			}
-			if (strcasecmp(optarg, "hexdump") == 0) {
+			যদি (strcasecmp(optarg, "hexdump") == 0) {
 				convert_format = FMT_HEXDUMP;
-				break;
+				ভঙ্গ;
 			}
 			fatal("Unsupported conversion format \"%s\"", optarg);
-		case 'n':
+		পক্ষ 'n':
 			cert_principals = optarg;
-			break;
-		case 'o':
+			ভঙ্গ;
+		পক্ষ 'o':
 			/* no-op; new format is already the default */
-			break;
-		case 'p':
+			ভঙ্গ;
+		পক্ষ 'p':
 			change_passphrase = 1;
-			break;
-		case 'c':
+			ভঙ্গ;
+		পক্ষ 'c':
 			change_comment = 1;
-			break;
-		case 'f':
-			if (strlcpy(identity_file, optarg,
-			    sizeof(identity_file)) >= sizeof(identity_file))
+			ভঙ্গ;
+		পক্ষ 'f':
+			যদি (strlcpy(identity_file, optarg,
+			    পরিমাণ(identity_file)) >= পরিমাণ(identity_file))
 				fatal("Identity filename too long");
 			have_identity = 1;
-			break;
-		case 'g':
+			ভঙ্গ;
+		পক্ষ 'g':
 			print_generic = 1;
-			break;
-		case 'K':
+			ভঙ্গ;
+		পক্ষ 'K':
 			download_sk = 1;
-			break;
-		case 'P':
+			ভঙ্গ;
+		পক্ষ 'P':
 			identity_passphrase = optarg;
-			break;
-		case 'N':
+			ভঙ্গ;
+		পক্ষ 'N':
 			identity_new_passphrase = optarg;
-			break;
-		case 'Q':
+			ভঙ্গ;
+		পক্ষ 'Q':
 			check_krl = 1;
-			break;
-		case 'O':
+			ভঙ্গ;
+		পক্ষ 'O':
 			opts = xrecallocarray(opts, nopts, nopts + 1,
-			    sizeof(*opts));
+			    পরিমাণ(*opts));
 			opts[nopts++] = xstrdup(optarg);
-			break;
-		case 'Z':
+			ভঙ্গ;
+		পক্ষ 'Z':
 			openssh_format_cipher = optarg;
-			if (cipher_by_name(openssh_format_cipher) == NULL)
+			যদি (cipher_by_name(openssh_format_cipher) == রিক্ত)
 				fatal("Invalid OpenSSH-format cipher '%s'",
 				    openssh_format_cipher);
-			break;
-		case 'C':
+			ভঙ্গ;
+		পক্ষ 'C':
 			identity_comment = optarg;
-			break;
-		case 'q':
+			ভঙ্গ;
+		পক্ষ 'q':
 			quiet = 1;
-			break;
-		case 'e':
+			ভঙ্গ;
+		পক্ষ 'e':
 			/* export key */
 			convert_to = 1;
-			break;
-		case 'h':
-			cert_key_type = SSH2_CERT_TYPE_HOST;
+			ভঙ্গ;
+		পক্ষ 'h':
+			cert_চাবি_type = SSH2_CERT_TYPE_HOST;
 			certflags_flags = 0;
-			break;
-		case 'k':
+			ভঙ্গ;
+		পক্ষ 'k':
 			gen_krl = 1;
-			break;
-		case 'i':
-		case 'X':
+			ভঙ্গ;
+		পক্ষ 'i':
+		পক্ষ 'X':
 			/* import key */
 			convert_from = 1;
-			break;
-		case 'y':
+			ভঙ্গ;
+		পক্ষ 'y':
 			print_public = 1;
-			break;
-		case 's':
-			ca_key_path = optarg;
-			break;
-		case 't':
-			key_type_name = optarg;
-			break;
-		case 'D':
+			ভঙ্গ;
+		পক্ষ 's':
+			ca_চাবি_path = optarg;
+			ভঙ্গ;
+		পক্ষ 't':
+			চাবি_type_name = optarg;
+			ভঙ্গ;
+		পক্ষ 'D':
 			pkcs11provider = optarg;
-			break;
-		case 'U':
+			ভঙ্গ;
+		পক্ষ 'U':
 			prefer_agent = 1;
-			break;
-		case 'u':
+			ভঙ্গ;
+		পক্ষ 'u':
 			update_krl = 1;
-			break;
-		case 'v':
-			if (log_level == SYSLOG_LEVEL_INFO)
+			ভঙ্গ;
+		পক্ষ 'v':
+			যদি (log_level == SYSLOG_LEVEL_INFO)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else {
-				if (log_level >= SYSLOG_LEVEL_DEBUG1 &&
+			অন্যথা {
+				যদি (log_level >= SYSLOG_LEVEL_DEBUG1 &&
 				    log_level < SYSLOG_LEVEL_DEBUG3)
 					log_level++;
 			}
-			break;
-		case 'r':
+			ভঙ্গ;
+		পক্ষ 'r':
 			rr_hostname = optarg;
-			break;
-		case 'a':
-			rounds = (int)strtonum(optarg, 1, INT_MAX, &errstr);
-			if (errstr)
+			ভঙ্গ;
+		পক্ষ 'a':
+			rounds = (পূর্ণাঙ্ক)strtonum(optarg, 1, INT_MAX, &errstr);
+			যদি (errstr)
 				fatal("Invalid number: %s (%s)",
 					optarg, errstr);
-			break;
-		case 'V':
+			ভঙ্গ;
+		পক্ষ 'V':
 			parse_cert_times(optarg);
-			break;
-		case 'Y':
+			ভঙ্গ;
+		পক্ষ 'Y':
 			sign_op = optarg;
-			break;
-		case 'w':
+			ভঙ্গ;
+		পক্ষ 'w':
 			sk_provider = optarg;
-			break;
-		case 'z':
+			ভঙ্গ;
+		পক্ষ 'z':
 			errno = 0;
-			if (*optarg == '+') {
+			যদি (*optarg == '+') {
 				cert_serial_autoinc = 1;
 				optarg++;
 			}
 			cert_serial = strtoull(optarg, &ep, 10);
-			if (*optarg < '0' || *optarg > '9' || *ep != '\0' ||
+			যদি (*optarg < '0' || *optarg > '9' || *ep != '\0' ||
 			    (errno == ERANGE && cert_serial == ULLONG_MAX))
 				fatal("Invalid serial number \"%s\"", optarg);
-			break;
-		case 'M':
-			if (strcmp(optarg, "generate") == 0)
+			ভঙ্গ;
+		পক্ষ 'M':
+			যদি (strcmp(optarg, "generate") == 0)
 				do_gen_candidates = 1;
-			else if (strcmp(optarg, "screen") == 0)
+			অন্যথা যদি (strcmp(optarg, "screen") == 0)
 				do_screen_candidates = 1;
-			else
+			অন্যথা
 				fatal("Unsupported moduli option %s", optarg);
-			break;
-		default:
+			ভঙ্গ;
+		স্ৱভাৱ:
 			usage();
 		}
 	}
 
 #ifdef ENABLE_SK_INTERNAL
-	if (sk_provider == NULL)
+	যদি (sk_provider == রিক্ত)
 		sk_provider = "internal";
 #endif
 
@@ -3610,131 +3610,131 @@ main(int argc, char **argv)
 	argv += optind;
 	argc -= optind;
 
-	if (sign_op != NULL) {
-		if (strprefix(sign_op, "find-principals", 0) != NULL) {
-			if (ca_key_path == NULL) {
+	যদি (sign_op != রিক্ত) {
+		যদি (strprefix(sign_op, "find-principals", 0) != রিক্ত) {
+			যদি (ca_চাবি_path == রিক্ত) {
 				error("Too few arguments for find-principals:"
 				    "missing signature file");
 				exit(1);
 			}
-			if (!have_identity) {
+			যদি (!have_identity) {
 				error("Too few arguments for find-principals:"
 				    "missing allowed keys file");
 				exit(1);
 			}
-			ret = sig_find_principals(ca_key_path, identity_file,
+			ret = sig_find_principals(ca_চাবি_path, identity_file,
 			    opts, nopts);
-			goto done;
-		} else if (strprefix(sign_op, "match-principals", 0) != NULL) {
-			if (!have_identity) {
+			গচ্ছ done;
+		} অন্যথা যদি (strprefix(sign_op, "match-principals", 0) != রিক্ত) {
+			যদি (!have_identity) {
 				error("Too few arguments for match-principals:"
 				    "missing allowed keys file");
 				exit(1);
 			}
-			if (cert_key_id == NULL) {
+			যদি (cert_চাবি_id == রিক্ত) {
 				error("Too few arguments for match-principals: "
 				    "missing principal ID");
 				exit(1);
 			}
-			ret = sig_match_principals(identity_file, cert_key_id,
+			ret = sig_match_principals(identity_file, cert_চাবি_id,
 			    opts, nopts);
-			goto done;
-		} else if (strprefix(sign_op, "sign", 0) != NULL) {
+			গচ্ছ done;
+		} অন্যথা যদি (strprefix(sign_op, "sign", 0) != রিক্ত) {
 			/* NB. cert_principals is actually namespace, via -n */
-			if (cert_principals == NULL ||
+			যদি (cert_principals == রিক্ত ||
 			    *cert_principals == '\0') {
 				error("Too few arguments for sign: "
 				    "missing namespace");
 				exit(1);
 			}
-			if (!have_identity) {
+			যদি (!have_identity) {
 				error("Too few arguments for sign: "
 				    "missing key");
 				exit(1);
 			}
 			ret = sig_sign(identity_file, cert_principals,
 			    prefer_agent, argc, argv, opts, nopts);
-			goto done;
-		} else if (strprefix(sign_op, "check-novalidate", 0) != NULL) {
+			গচ্ছ done;
+		} অন্যথা যদি (strprefix(sign_op, "check-novalidate", 0) != রিক্ত) {
 			/* NB. cert_principals is actually namespace, via -n */
-			if (cert_principals == NULL ||
+			যদি (cert_principals == রিক্ত ||
 			    *cert_principals == '\0') {
 				error("Too few arguments for check-novalidate: "
 				    "missing namespace");
 				exit(1);
 			}
-			if (ca_key_path == NULL) {
+			যদি (ca_চাবি_path == রিক্ত) {
 				error("Too few arguments for check-novalidate: "
 				    "missing signature file");
 				exit(1);
 			}
-			ret = sig_verify(ca_key_path, cert_principals,
-			    NULL, NULL, NULL, opts, nopts);
-			goto done;
-		} else if (strprefix(sign_op, "verify", 0) != NULL) {
+			ret = sig_verify(ca_চাবি_path, cert_principals,
+			    রিক্ত, রিক্ত, রিক্ত, opts, nopts);
+			গচ্ছ done;
+		} অন্যথা যদি (strprefix(sign_op, "verify", 0) != রিক্ত) {
 			/* NB. cert_principals is actually namespace, via -n */
-			if (cert_principals == NULL ||
+			যদি (cert_principals == রিক্ত ||
 			    *cert_principals == '\0') {
 				error("Too few arguments for verify: "
 				    "missing namespace");
 				exit(1);
 			}
-			if (ca_key_path == NULL) {
+			যদি (ca_চাবি_path == রিক্ত) {
 				error("Too few arguments for verify: "
 				    "missing signature file");
 				exit(1);
 			}
-			if (!have_identity) {
+			যদি (!have_identity) {
 				error("Too few arguments for sign: "
 				    "missing allowed keys file");
 				exit(1);
 			}
-			if (cert_key_id == NULL) {
+			যদি (cert_চাবি_id == রিক্ত) {
 				error("Too few arguments for verify: "
 				    "missing principal identity");
 				exit(1);
 			}
-			ret = sig_verify(ca_key_path, cert_principals,
-			    cert_key_id, identity_file, rr_hostname,
+			ret = sig_verify(ca_চাবি_path, cert_principals,
+			    cert_চাবি_id, identity_file, rr_hostname,
 			    opts, nopts);
-			goto done;
+			গচ্ছ done;
 		}
 		error("Unsupported operation for -Y: \"%s\"", sign_op);
 		usage();
 		/* NOTREACHED */
 	}
 
-	if (ca_key_path != NULL) {
-		if (argc < 1 && !gen_krl) {
+	যদি (ca_চাবি_path != রিক্ত) {
+		যদি (argc < 1 && !gen_krl) {
 			error("Too few arguments.");
 			usage();
 		}
-	} else if (argc > 0 && !gen_krl && !check_krl &&
+	} অন্যথা যদি (argc > 0 && !gen_krl && !check_krl &&
 	    !do_gen_candidates && !do_screen_candidates) {
 		error("Too many arguments.");
 		usage();
 	}
-	if (change_passphrase && change_comment) {
+	যদি (change_passphrase && change_comment) {
 		error("Can only have one of -p and -c.");
 		usage();
 	}
-	if (print_fingerprint && (delete_host || hash_hosts)) {
+	যদি (print_fingerprint && (delete_host || hash_hosts)) {
 		error("Cannot use -l with -H or -R.");
 		usage();
 	}
-	if (gen_krl) {
-		do_gen_krl(pw, update_krl, ca_key_path,
+	যদি (gen_krl) {
+		do_gen_krl(pw, update_krl, ca_চাবি_path,
 		    cert_serial, identity_comment, argc, argv);
-		goto done;
+		গচ্ছ done;
 	}
-	if (check_krl) {
+	যদি (check_krl) {
 		do_check_krl(pw, print_fingerprint, argc, argv);
-		goto done;
+		গচ্ছ done;
 	}
-	if (ca_key_path != NULL) {
-		if (cert_key_id == NULL)
+	যদি (ca_চাবি_path != রিক্ত) {
+		যদি (cert_চাবি_id == রিক্ত)
 			fatal("Must specify key id (-I) when certifying");
-		if (cert_principals == NULL) {
+		যদি (cert_principals == রিক্ত) {
 			/*
 			 * Ideally this would be a fatal(), but we need to
 			 * be able to generate such certificates for testing
@@ -3743,151 +3743,151 @@ main(int argc, char **argv)
 			error("Warning: certificate will contain no "
 			    "principals (-n)");
 		}
-		for (i = 0; i < nopts; i++)
+		বাবে (i = 0; i < nopts; i++)
 			add_cert_option(opts[i]);
-		do_ca_sign(pw, ca_key_path, prefer_agent,
+		do_ca_sign(pw, ca_চাবি_path, prefer_agent,
 		    cert_serial, cert_serial_autoinc, argc, argv);
-		goto done;
+		গচ্ছ done;
 	}
-	if (show_cert)
+	যদি (show_cert)
 		do_show_cert(pw);
-	if (delete_host || hash_hosts || find_host) {
+	যদি (delete_host || hash_hosts || find_host) {
 		do_known_hosts(pw, rr_hostname, find_host,
 		    delete_host, hash_hosts);
 	}
-	if (pkcs11provider != NULL)
+	যদি (pkcs11provider != রিক্ত)
 		do_download(pw);
-	if (download_sk) {
-		for (i = 0; i < nopts; i++) {
-			if ((p = strprefix(opts[i], "device=", 1)) != NULL) {
+	যদি (download_sk) {
+		বাবে (i = 0; i < nopts; i++) {
+			যদি ((p = strprefix(opts[i], "device=", 1)) != রিক্ত) {
 				sk_device = xstrdup(p);
-			} else {
+			} অন্যথা {
 				fatal("Option \"%s\" is unsupported for "
 				    "FIDO authenticator download", opts[i]);
 			}
 		}
 		ret = do_download_sk(sk_provider, sk_device);
-		goto done;
+		গচ্ছ done;
 	}
-	if (print_fingerprint || print_bubblebabble)
+	যদি (print_fingerprint || print_bubblebabble)
 		do_fingerprint(pw);
-	if (change_passphrase)
+	যদি (change_passphrase)
 		do_change_passphrase(pw, opts, nopts);
-	if (change_comment)
+	যদি (change_comment)
 		do_change_comment(pw, identity_comment);
 #ifdef WITH_OPENSSL
-	if (convert_to) {
+	যদি (convert_to) {
 		do_convert_to(pw);
-		goto done;
+		গচ্ছ done;
 	}
-	if (convert_from) {
+	যদি (convert_from) {
 		do_convert_from(pw);
-		goto done;
+		গচ্ছ done;
 	}
-#else /* WITH_OPENSSL */
-	if (convert_to || convert_from)
+#অন্যথা /* WITH_OPENSSL */
+	যদি (convert_to || convert_from)
 		fatal("key conversion disabled at compile time");
 #endif /* WITH_OPENSSL */
-	if (print_public)
+	যদি (print_public)
 		do_print_public(pw);
-	if (rr_hostname != NULL) {
-		unsigned int n = 0;
+	যদি (rr_hostname != রিক্ত) {
+		unsigned পূর্ণাঙ্ক n = 0;
 
-		if (have_identity) {
+		যদি (have_identity) {
 			n = do_print_resource_record(pw, identity_file,
 			    rr_hostname, print_generic, opts, nopts);
-			if (n == 0)
+			যদি (n == 0)
 				fatal("%s: %s", identity_file, strerror(errno));
 			exit(0);
-		} else {
+		} অন্যথা {
 
 			n += do_print_resource_record(pw,
-			    _PATH_HOST_RSA_KEY_FILE, rr_hostname,
+			    PATH_HOST_RSA_চাবি_FILE, rr_hostname,
 			    print_generic, opts, nopts);
 			n += do_print_resource_record(pw,
-			    _PATH_HOST_ECDSA_KEY_FILE, rr_hostname,
+			    PATH_HOST_ECDSA_চাবি_FILE, rr_hostname,
 			    print_generic, opts, nopts);
 			n += do_print_resource_record(pw,
-			    _PATH_HOST_ED25519_KEY_FILE, rr_hostname,
+			    PATH_HOST_ED25519_চাবি_FILE, rr_hostname,
 			    print_generic, opts, nopts);
-			if (n == 0)
+			যদি (n == 0)
 				fatal("no keys found.");
 			exit(0);
 		}
 	}
 
-	if (do_gen_candidates || do_screen_candidates) {
-		if (argc <= 0)
+	যদি (do_gen_candidates || do_screen_candidates) {
+		যদি (argc <= 0)
 			fatal("No output file specified");
-		else if (argc > 1)
+		অন্যথা যদি (argc > 1)
 			fatal("Too many output files specified");
 	}
-	if (do_gen_candidates) {
+	যদি (do_gen_candidates) {
 		do_moduli_gen(argv[0], opts, nopts);
-		goto done;
+		গচ্ছ done;
 	}
-	if (do_screen_candidates) {
+	যদি (do_screen_candidates) {
 		do_moduli_screen(argv[0], opts, nopts);
-		goto done;
+		গচ্ছ done;
 	}
 
-	if (gen_all_hostkeys) {
+	যদি (gen_all_hostkeys) {
 		do_gen_all_hostkeys(pw);
-		goto done;
+		গচ্ছ done;
 	}
 
-	if (key_type_name == NULL)
-		key_type_name = DEFAULT_KEY_TYPE_NAME;
+	যদি (চাবি_type_name == রিক্ত)
+		চাবি_type_name = DEFAULT_চাবি_TYPE_NAME;
 
-	type = sshkey_type_from_shortname(key_type_name);
-	type_bits_valid(type, key_type_name, &bits);
+	type = sshkey_type_from_shortname(চাবি_type_name);
+	type_bits_valid(type, চাবি_type_name, &bits);
 
-	if (!quiet)
+	যদি (!quiet)
 		printf("Generating public/private %s key pair.\n",
-		    key_type_name);
-	switch (type) {
-	case KEY_ECDSA_SK:
-	case KEY_ED25519_SK:
-		for (i = 0; i < nopts; i++) {
-			if (strcasecmp(opts[i], "no-touch-required") == 0) {
+		    চাবি_type_name);
+	ৱিকল্প (type) {
+	পক্ষ চাবি_ECDSA_SK:
+	পক্ষ চাবি_ED25519_SK:
+		বাবে (i = 0; i < nopts; i++) {
+			যদি (strcasecmp(opts[i], "no-touch-required") == 0) {
 				sk_flags &= ~SSH_SK_USER_PRESENCE_REQD;
-			} else if (strcasecmp(opts[i], "verify-required") == 0) {
+			} অন্যথা যদি (strcasecmp(opts[i], "verify-required") == 0) {
 				sk_flags |= SSH_SK_USER_VERIFICATION_REQD;
-			} else if (strcasecmp(opts[i], "resident") == 0) {
-				sk_flags |= SSH_SK_RESIDENT_KEY;
-			} else if ((p = strprefix(opts[i], "device=", 1))
-			    != NULL ) {
+			} অন্যথা যদি (strcasecmp(opts[i], "resident") == 0) {
+				sk_flags |= SSH_SK_RESIDENT_চাবি;
+			} অন্যথা যদি ((p = strprefix(opts[i], "device=", 1))
+			    != রিক্ত ) {
 				sk_device = xstrdup(p);
-			} else if ((p = strprefix(opts[i], "user=", 1))
-			    != NULL) {
+			} অন্যথা যদি ((p = strprefix(opts[i], "user=", 1))
+			    != রিক্ত) {
 				sk_user = xstrdup(p);
-			} else if ((p = strprefix(opts[i], "challenge=", 1))
-			    != NULL) {
-				if ((r = sshbuf_load_file(p,
+			} অন্যথা যদি ((p = strprefix(opts[i], "challenge=", 1))
+			    != রিক্ত) {
+				যদি ((r = sshbuf_load_file(p,
 				    &challenge)) != 0) {
 					fatal_r(r, "Unable to load FIDO "
 					    "enrollment challenge \"%s\"", p);
 				}
-			} else if (strncasecmp(opts[i],
+			} অন্যথা যদি (strncasecmp(opts[i],
 			    "write-attestation=", 18) == 0) {
 				sk_attestation_path = opts[i] + 18;
-			} else if (strncasecmp(opts[i],
+			} অন্যথা যদি (strncasecmp(opts[i],
 			    "application=", 12) == 0) {
 				sk_application = xstrdup(opts[i] + 12);
-				if (strncmp(sk_application, "ssh:", 4) != 0) {
+				যদি (strncmp(sk_application, "ssh:", 4) != 0) {
 					fatal("FIDO application string must "
 					    "begin with \"ssh:\"");
 				}
-			} else {
+			} অন্যথা {
 				fatal("Option \"%s\" is unsupported for "
 				    "FIDO authenticator enrollment", opts[i]);
 			}
 		}
-		if ((attest = sshbuf_new()) == NULL)
+		যদি ((attest = sshbuf_new()) == রিক্ত)
 			fatal("sshbuf_new failed");
 		r = 0;
-		for (i = 0 ;;) {
-			if (!quiet) {
+		বাবে (i = 0 ;;) {
+			যদি (!quiet) {
 				printf("You may need to touch your "
 				    "authenticator%s to authorize key "
 				    "generation.\n",
@@ -3895,89 +3895,89 @@ main(int argc, char **argv)
 			}
 			fflush(stdout);
 			r = sshsk_enroll(type, sk_provider, sk_device,
-			    sk_application == NULL ? "ssh:" : sk_application,
+			    sk_application == রিক্ত ? "ssh:" : sk_application,
 			    sk_user, sk_flags, passphrase, challenge,
-			    &private, attest);
-			if (r == 0)
-				break;
-			if (r == SSH_ERR_KEY_BAD_PERMISSIONS &&
-			    (sk_flags & SSH_SK_RESIDENT_KEY) != 0 &&
+			    &গুপ্ত, attest);
+			যদি (r == 0)
+				ভঙ্গ;
+			যদি (r == SSH_ERR_চাবি_BAD_PERMISSIONS &&
+			    (sk_flags & SSH_SK_RESIDENT_চাবি) != 0 &&
 			    (sk_flags & SSH_SK_FORCE_OPERATION) == 0 &&
 			    confirm_sk_overwrite(sk_application, sk_user)) {
 				sk_flags |= SSH_SK_FORCE_OPERATION;
-				continue;
+				অনুৱর্ত;
 			}
-			if (r != SSH_ERR_KEY_WRONG_PASSPHRASE)
+			যদি (r != SSH_ERR_চাবি_WRONG_PASSPHRASE)
 				fatal_r(r, "Key enrollment failed");
-			else if (passphrase != NULL) {
+			অন্যথা যদি (passphrase != রিক্ত) {
 				error("PIN incorrect");
 				freezero(passphrase, strlen(passphrase));
-				passphrase = NULL;
+				passphrase = রিক্ত;
 			}
-			if (++i >= 3)
+			যদি (++i >= 3)
 				fatal("Too many incorrect PINs");
 			passphrase = read_passphrase("Enter PIN for "
 			    "authenticator: ", RP_ALLOW_STDIN);
 		}
-		if (passphrase != NULL) {
+		যদি (passphrase != রিক্ত) {
 			freezero(passphrase, strlen(passphrase));
-			passphrase = NULL;
+			passphrase = রিক্ত;
 		}
-		break;
-	default:
-		if ((r = sshkey_generate(type, bits, &private)) != 0)
+		ভঙ্গ;
+	স্ৱভাৱ:
+		যদি ((r = sshkey_generate(type, bits, &গুপ্ত)) != 0)
 			fatal("sshkey_generate failed");
-		break;
+		ভঙ্গ;
 	}
-	if ((r = sshkey_from_private(private, &public)) != 0)
+	যদি ((r = sshkey_from_private(গুপ্ত, &সার্ৱজনিক)) != 0)
 		fatal_r(r, "sshkey_from_private");
 
-	if (!have_identity)
+	যদি (!have_identity)
 		ask_filename(pw, "Enter file in which to save the key");
 
 	/* Create ~/.ssh directory if it doesn't already exist. */
 	hostfile_create_user_ssh_dir(identity_file, !quiet);
 
 	/* If the file already exists, ask the user to confirm. */
-	if (!confirm_overwrite(identity_file))
+	যদি (!confirm_overwrite(identity_file))
 		exit(1);
 
 	/* Determine the passphrase for the private key */
-	passphrase = private_key_passphrase(identity_file);
-	if (identity_comment) {
-		strlcpy(comment, identity_comment, sizeof(comment));
-	} else {
+	passphrase = private_চাবি_passphrase(identity_file);
+	যদি (identity_comment) {
+		strlcpy(comment, identity_comment, পরিমাণ(comment));
+	} অন্যথা {
 		/* Create default comment field for the passphrase. */
-		snprintf(comment, sizeof comment, "%s@%s", pw->pw_name, hostname);
+		snprintf(comment, পরিমাণ comment, "%s@%s", pw->pw_name, hostname);
 	}
 
 
 
 	/* Save the key with the given passphrase and comment. */
-	if ((r = sshkey_save_private(private, identity_file, passphrase,
-	    comment, private_key_format, openssh_format_cipher, rounds)) != 0) {
+	যদি ((r = sshkey_save_private(গুপ্ত, identity_file, passphrase,
+	    comment, private_চাবি_format, openssh_format_cipher, rounds)) != 0) {
 		error_r(r, "Saving key \"%s\" failed", identity_file);
 		freezero(passphrase, strlen(passphrase));
 		exit(1);
 	}
 	freezero(passphrase, strlen(passphrase));
-	sshkey_free(private);
+	sshkey_free(গুপ্ত);
 
-	if (!quiet) {
+	যদি (!quiet) {
 		printf("Your identification has been saved in %s\n",
 		    identity_file);
 	}
 
-	strlcat(identity_file, ".pub", sizeof(identity_file));
-	if ((r = sshkey_save_public(public, identity_file, comment)) != 0)
+	strlcat(identity_file, ".pub", পরিমাণ(identity_file));
+	যদি ((r = sshkey_save_public(সার্ৱজনিক, identity_file, comment)) != 0)
 		fatal_r(r, "Unable to save public key to %s", identity_file);
 
-	if (!quiet) {
-		fp = sshkey_fingerprint(public, fingerprint_hash,
+	যদি (!quiet) {
+		fp = sshkey_fingerprint(সার্ৱজনিক, fingerprint_hash,
 		    SSH_FP_DEFAULT);
-		ra = sshkey_fingerprint(public, fingerprint_hash,
+		ra = sshkey_fingerprint(সার্ৱজনিক, fingerprint_hash,
 		    SSH_FP_RANDOMART);
-		if (fp == NULL || ra == NULL)
+		যদি (fp == রিক্ত || ra == রিক্ত)
 			fatal("sshkey_fingerprint failed");
 		printf("Your public key has been saved in %s\n",
 		    identity_file);
@@ -3985,16 +3985,16 @@ main(int argc, char **argv)
 		printf("%s %s\n", fp, comment);
 		printf("The key's randomart image is:\n");
 		printf("%s\n", ra);
-		free(ra);
-		free(fp);
+		মুক্ত(ra);
+		মুক্ত(fp);
 	}
 
-	if (sk_attestation_path != NULL)
+	যদি (sk_attestation_path != রিক্ত)
 		save_attestation(attest, sk_attestation_path);
 
  done:
 	sshbuf_free(attest);
-	sshkey_free(public);
+	sshkey_free(সার্ৱজনিক);
 	pwfree(pw);
 	exit(ret);
 }

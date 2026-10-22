@@ -1,25 +1,25 @@
 /* Placed in the public domain */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
 #ifndef HAVE_GETPAGESIZE
 
-#include <unistd.h>
-#include <limits.h>
+#অন্তর্ভাৱ <unistd.h>
+#অন্তর্ভাৱ <limits.h>
 
-int
-getpagesize(void)
+পূর্ণাঙ্ক
+getpagesize(শূন্য)
 {
-#if defined(HAVE_SYSCONF) && defined(_SC_PAGESIZE)
+#যদি defined(HAVE_SYSCONF) && defined(_SC_PAGESIZE)
 	long r = sysconf(_SC_PAGESIZE);
-	if (r > 0 && r < INT_MAX)
-		return (int)r;
+	যদি (r > 0 && r < INT_MAX)
+		ঘূৰাই (পূর্ণাঙ্ক)r;
 #endif
 	/*
 	 * This is at the lower end of common values and appropriate for
 	 * our current use of getpagesize() in recallocarray().
 	 */
-	return 4096;
+	ঘূৰাই 4096;
 }
 
 #endif /* HAVE_GETPAGESIZE */

@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
 #ifndef HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#অন্তর্ভাৱ <sys/types.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <unistd.h>
+#অন্তর্ভাৱ <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+পূর্ণাঙ্ক
+getgrouplist(ধ্রুৱ ৱর্ণ *uname, gid_t agroup, gid_t *groups, পূর্ণাঙ্ক *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	সংরচনা group *grp;
+	পূর্ণাঙ্ক i, ngroups;
+	পূর্ণাঙ্ক ret, maxgroups;
+	পূর্ণাঙ্ক bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	যদি (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		ঘূৰাই (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	যেতিয়ালৈ ((grp = getgrent())) {
+		যদি (grp->gr_gid == agroup)
+			অনুৱর্ত;
+		বাবে (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			যদি (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		যদি (bail)
+			অনুৱর্ত;
+		বাবে (i = 0; grp->gr_mem[i]; i++) {
+			যদি (!strcmp(grp->gr_mem[i], uname)) {
+				যদি (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					গচ্ছ out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				ভঙ্গ;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	ঘূৰাই (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

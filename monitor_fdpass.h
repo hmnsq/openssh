@@ -28,7 +28,7 @@
 #ifndef _MM_FDPASS_H_
 #define _MM_FDPASS_H_
 
-int mm_send_fd(int, int);
-int mm_receive_fd(int);
+পূর্ণাঙ্ক mm_send_fd(পূর্ণাঙ্ক, পূর্ণাঙ্ক);
+পূর্ণাঙ্ক mm_receive_fd(পূর্ণাঙ্ক);
 
 #endif /* _MM_FDPASS_H_ */

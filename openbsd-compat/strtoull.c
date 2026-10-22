@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoull.c */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 #ifndef HAVE_STRTOULL
 
-#include <sys/types.h>
+#অন্তর্ভাৱ <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#অন্তর্ভাৱ <ctype.h>
+#অন্তর্ভাৱ <errno.h>
+#অন্তর্ভাৱ <limits.h>
+#অন্তর্ভাৱ <stdlib.h>
 
 /*
  * Convert a string to an unsigned long long.
@@ -47,64 +47,64 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long long
-strtoull(const char *nptr, char **endptr, int base)
+strtoull(ধ্রুৱ ৱর্ণ *nptr, ৱর্ণ **endptr, পূর্ণাঙ্ক base)
 {
-	const char *s;
+	ধ্রুৱ ৱর্ণ *s;
 	unsigned long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	পূর্ণাঙ্ক c;
+	পূর্ণাঙ্ক neg, any, cutlim;
 
 	/*
 	 * See strtoq for comments as to the logic used.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	কৰা {
+		c = (unsigned ৱর্ণ) *s++;
+	} যেতিয়ালৈ (isspace(c));
+	যদি (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else { 
+	} অন্যথা { 
 		neg = 0;
-		if (c == '+')
+		যদি (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	যদি ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	যদি (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULLONG_MAX / (unsigned long long)base;
 	cutlim = ULLONG_MAX % (unsigned long long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	বাবে (acc = 0, any = 0;; c = (unsigned ৱর্ণ) *s++) {
+		যদি (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		অন্যথা যদি (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		অন্যথা
+			ভঙ্গ;
+		যদি (c >= base)
+			ভঙ্গ;
+		যদি (any < 0)
+			অনুৱর্ত;
+		যদি (acc > cutoff || (acc == cutoff && c > cutlim)) {
 			any = -1;
 			acc = ULLONG_MAX;
 			errno = ERANGE;
-		} else {
+		} অন্যথা {
 			any = 1;
 			acc *= (unsigned long long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	যদি (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	যদি (endptr != 0)
+		*endptr = (ৱর্ণ *) (any ? s - 1 : nptr);
+	ঘূৰাই (acc);
 }
 #endif /* !HAVE_STRTOULL */

@@ -17,83 +17,83 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
 /*
  * Don't let systems with broken printf(3) avoid our replacements
  * via asprintf(3)/vasprintf(3) calling libc internally.
  */
-#if defined(BROKEN_SNPRINTF)
+#যদি defined(BROKEN_SNPRINTF)
 # undef HAVE_VASPRINTF
 # undef HAVE_ASPRINTF
 #endif
 
 #ifndef HAVE_VASPRINTF
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
+#অন্তর্ভাৱ <errno.h>
+#অন্তর্ভাৱ <stdarg.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdlib.h>
 
 #define INIT_SZ	128
 
-int
-vasprintf(char **str, const char *fmt, va_list ap)
+পূর্ণাঙ্ক
+vasprintf(ৱর্ণ **str, ধ্রুৱ ৱর্ণ *fmt, va_list ap)
 {
-	int ret = -1;
+	পূর্ণাঙ্ক ret = -1;
 	va_list ap2;
-	char *string, *newstr;
+	ৱর্ণ *string, *newstr;
 	size_t len;
 
 	VA_COPY(ap2, ap);
-	if ((string = malloc(INIT_SZ)) == NULL)
-		goto fail;
+	যদি ((string = malloc(INIT_SZ)) == রিক্ত)
+		গচ্ছ fail;
 
 	ret = vsnprintf(string, INIT_SZ, fmt, ap2);
-	if (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
+	যদি (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
 		*str = string;
-	} else if (ret == INT_MAX || ret < 0) { /* Bad length */
-		free(string);
-		goto fail;
-	} else {	/* bigger than initial, realloc allowing for nul */
+	} অন্যথা যদি (ret == INT_MAX || ret < 0) { /* Bad length */
+		মুক্ত(string);
+		গচ্ছ fail;
+	} অন্যথা {	/* bigger than initial, realloc allowing for nul */
 		len = (size_t)ret + 1;
-		if ((newstr = realloc(string, len)) == NULL) {
-			free(string);
-			goto fail;
-		} else {
+		যদি ((newstr = realloc(string, len)) == রিক্ত) {
+			মুক্ত(string);
+			গচ্ছ fail;
+		} অন্যথা {
 			va_end(ap2);
 			VA_COPY(ap2, ap);
 			ret = vsnprintf(newstr, len, fmt, ap2);
-			if (ret >= 0 && (size_t)ret < len) {
+			যদি (ret >= 0 && (size_t)ret < len) {
 				*str = newstr;
-			} else { /* failed with realloc'ed string, give up */
-				free(newstr);
-				goto fail;
+			} অন্যথা { /* failed with realloc'ed string, give up */
+				মুক্ত(newstr);
+				গচ্ছ fail;
 			}
 		}
 	}
 	va_end(ap2);
-	return (ret);
+	ঘূৰাই (ret);
 
 fail:
-	*str = NULL;
+	*str = রিক্ত;
 	errno = ENOMEM;
 	va_end(ap2);
-	return (-1);
+	ঘূৰাই (-1);
 }
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **str, const char *fmt, ...)
+পূর্ণাঙ্ক asprintf(ৱর্ণ **str, ধ্রুৱ ৱর্ণ *fmt, ...)
 {
 	va_list ap;
-	int ret;
+	পূর্ণাঙ্ক ret;
 
-	*str = NULL;
+	*str = রিক্ত;
 	va_start(ap, fmt);
 	ret = vasprintf(str, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	ঘূৰাই ret;
 }
 #endif

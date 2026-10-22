@@ -30,30 +30,30 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_ntoa.c */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+#যদি defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
 
 /*
  * Convert network-format internet address
  * to base 256 d.d.d.d representation.
  */
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <stdio.h>
+#অন্তর্ভাৱ <sys/types.h>
+#অন্তর্ভাৱ <netinet/in.h>
+#অন্তর্ভাৱ <arpa/inet.h>
+#অন্তর্ভাৱ <stdio.h>
 
-char *
-inet_ntoa(struct in_addr in)
+ৱর্ণ *
+inet_ntoa(সংরচনা in_addr in)
 {
-	static char b[18];
-	char *p;
+	স্থির ৱর্ণ b[18];
+	ৱর্ণ *p;
 
-	p = (char *)&in;
-#define	UC(b)	(((int)b)&0xff)
-	(void)snprintf(b, sizeof(b),
+	p = (ৱর্ণ *)&in;
+#define	UC(b)	(((পূর্ণাঙ্ক)b)&0xff)
+	(শূন্য)snprintf(b, পরিমাণ(b),
 	    "%u.%u.%u.%u", UC(p[0]), UC(p[1]), UC(p[2]), UC(p[3]));
-	return (b);
+	ঘূৰাই (b);
 }
 
 #endif /* defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA) */

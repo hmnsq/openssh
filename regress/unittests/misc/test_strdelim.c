@@ -5,36 +5,36 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাৱ <sys/types.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdint.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <string.h>
 
-#include "../test_helper/test_helper.h"
+#অন্তর্ভাৱ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#অন্তর্ভাৱ "log.h"
+#অন্তর্ভাৱ "misc.h"
+#অন্তর্ভাৱ "xmalloc.h"
 
-void test_strdelim(void);
+শূন্য test_strdelim(শূন্য);
 
-void
-test_strdelim(void)
+শূন্য
+test_strdelim(শূন্য)
 {
-	char *orig, *str, *cp;
+	ৱর্ণ *orig, *str, *cp;
 
 #define START_STRING(x)	orig = str = xstrdup(x)
-#define DONE_STRING()	free(orig)
+#define DONE_STRING()	মুক্ত(orig)
 
 	TEST_START("empty");
 	START_STRING("");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX arguable */
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -51,8 +51,8 @@ test_strdelim(void)
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(cp, রিক্ত);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -63,7 +63,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -74,9 +74,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -89,7 +89,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(cp, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -100,9 +100,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -116,7 +116,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");	/* XXX should (but can't) reject */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -124,9 +124,9 @@ test_strdelim(void)
 	START_STRING("blob1=blob2");
 	cp = strdelimw(&str);
 	ASSERT_STRING_EQ(cp, "blob1=blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	cp = strdelimw(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -136,7 +136,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(cp, "blob");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -147,9 +147,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -163,7 +163,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -176,14 +176,14 @@ test_strdelim(void)
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob3");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 
 	TEST_START("badquote");
 	START_STRING("\"blob");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, রিক্ত);
 	DONE_STRING();
 	TEST_DONE();
 

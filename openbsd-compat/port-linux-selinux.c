@@ -19,78 +19,78 @@
  * Linux-specific portability code: SELinux support
  */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
 #ifdef WITH_SELINUX
 
-#include <sys/socket.h>
-#include <sys/un.h>
+#অন্তর্ভাৱ <sys/socket.h>
+#অন্তর্ভাৱ <sys/un.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
+#অন্তর্ভাৱ <errno.h>
+#অন্তর্ভাৱ <stdarg.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdlib.h>
 
-#include "log.h"
-#include "xmalloc.h"
-#include "port-linux.h"
-#include "misc.h"
+#অন্তর্ভাৱ "log.h"
+#অন্তর্ভাৱ "xmalloc.h"
+#অন্তর্ভাৱ "port-linux.h"
+#অন্তর্ভাৱ "misc.h"
 
-#include <selinux/selinux.h>
-#include <selinux/label.h>
-#include <selinux/get_context_list.h>
+#অন্তর্ভাৱ <selinux/selinux.h>
+#অন্তর্ভাৱ <selinux/label.h>
+#অন্তর্ভাৱ <selinux/get_context_list.h>
 
 #ifndef SSH_SELINUX_UNCONFINED_TYPE
 # define SSH_SELINUX_UNCONFINED_TYPE ":unconfined_t:"
 #endif
 
 /* Wrapper around is_selinux_enabled() to log its return value once only */
-int
-ssh_selinux_enabled(void)
+পূর্ণাঙ্ক
+ssh_selinux_enabled(শূন্য)
 {
-	static int enabled = -1;
+	স্থির পূর্ণাঙ্ক enabled = -1;
 
-	if (enabled == -1) {
+	যদি (enabled == -1) {
 		enabled = (is_selinux_enabled() == 1);
 		debug("SELinux support %s", enabled ? "enabled" : "disabled");
 	}
 
-	return (enabled);
+	ঘূৰাই (enabled);
 }
 
 /* Return the default security context for the given username */
-static char *
-ssh_selinux_getctxbyname(char *pwname)
+স্থির ৱর্ণ *
+ssh_selinux_getctxbyname(ৱর্ণ *pwname)
 {
-	char *sc = NULL, *sename = NULL, *lvl = NULL;
-	int r;
+	ৱর্ণ *sc = রিক্ত, *sename = রিক্ত, *lvl = রিক্ত;
+	পূর্ণাঙ্ক r;
 
 #ifdef HAVE_GETSEUSERBYNAME
-	if (getseuserbyname(pwname, &sename, &lvl) != 0)
-		return NULL;
-#else
+	যদি (getseuserbyname(pwname, &sename, &lvl) != 0)
+		ঘূৰাই রিক্ত;
+#অন্যথা
 	sename = pwname;
-	lvl = NULL;
+	lvl = রিক্ত;
 #endif
 
 #ifdef HAVE_GET_DEFAULT_CONTEXT_WITH_LEVEL
-	r = get_default_context_with_level(sename, lvl, NULL, &sc);
-#else
-	r = get_default_context(sename, NULL, &sc);
+	r = get_default_context_with_level(sename, lvl, রিক্ত, &sc);
+#অন্যথা
+	r = get_default_context(sename, রিক্ত, &sc);
 #endif
 
-	if (r != 0) {
-		switch (security_getenforce()) {
-		case -1:
+	যদি (r != 0) {
+		ৱিকল্প (security_getenforce()) {
+		পক্ষ -1:
 			fatal("%s: ssh_selinux_getctxbyname: "
 			    "security_getenforce() failed", __func__);
-		case 0:
+		পক্ষ 0:
 			error("%s: Failed to get default SELinux security "
 			    "context for %s", __func__, pwname);
-			sc = NULL;
-			break;
-		default:
+			sc = রিক্ত;
+			ভঙ্গ;
+		স্ৱভাৱ:
 			fatal("%s: Failed to get default SELinux security "
 			    "context for %s (in enforcing mode)",
 			    __func__, pwname);
@@ -98,53 +98,53 @@ ssh_selinux_getctxbyname(char *pwname)
 	}
 
 #ifdef HAVE_GETSEUSERBYNAME
-	free(sename);
-	free(lvl);
+	মুক্ত(sename);
+	মুক্ত(lvl);
 #endif
 
-	return sc;
+	ঘূৰাই sc;
 }
 
 /* Set the execution context to the default for the specified user */
-void
-ssh_selinux_setup_exec_context(char *pwname)
+শূন্য
+ssh_selinux_setup_exec_context(ৱর্ণ *pwname)
 {
-	char *user_ctx = NULL;
+	ৱর্ণ *user_ctx = রিক্ত;
 
-	if (!ssh_selinux_enabled())
-		return;
+	যদি (!ssh_selinux_enabled())
+		ঘূৰাই;
 
 	debug3("%s: setting execution context", __func__);
 
 	user_ctx = ssh_selinux_getctxbyname(pwname);
-	if (setexeccon(user_ctx) != 0) {
-		switch (security_getenforce()) {
-		case -1:
+	যদি (setexeccon(user_ctx) != 0) {
+		ৱিকল্প (security_getenforce()) {
+		পক্ষ -1:
 			fatal("%s: security_getenforce() failed", __func__);
-		case 0:
+		পক্ষ 0:
 			error("%s: Failed to set SELinux execution "
 			    "context for %s", __func__, pwname);
-			break;
-		default:
+			ভঙ্গ;
+		স্ৱভাৱ:
 			fatal("%s: Failed to set SELinux execution context "
 			    "for %s (in enforcing mode)", __func__, pwname);
 		}
 	}
-	if (user_ctx != NULL)
+	যদি (user_ctx != রিক্ত)
 		freecon(user_ctx);
 
 	debug3("%s: done", __func__);
 }
 
 /* Set the TTY context for the specified user */
-void
-ssh_selinux_setup_pty(char *pwname, const char *tty)
+শূন্য
+ssh_selinux_setup_pty(ৱর্ণ *pwname, ধ্রুৱ ৱর্ণ *tty)
 {
-	char *new_tty_ctx = NULL, *user_ctx = NULL, *old_tty_ctx = NULL;
+	ৱর্ণ *new_tty_ctx = রিক্ত, *user_ctx = রিক্ত, *old_tty_ctx = রিক্ত;
 	security_class_t chrclass;
 
-	if (!ssh_selinux_enabled())
-		return;
+	যদি (!ssh_selinux_enabled())
+		ঘূৰাই;
 
 	debug3("%s: setting TTY context on %s", __func__, tty);
 
@@ -152,90 +152,90 @@ ssh_selinux_setup_pty(char *pwname, const char *tty)
 
 	/* XXX: should these calls fatal() upon failure in enforcing mode? */
 
-	if (getfilecon(tty, &old_tty_ctx) == -1) {
+	যদি (getfilecon(tty, &old_tty_ctx) == -1) {
 		error("%s: getfilecon: %s", __func__, strerror(errno));
-		goto out;
+		গচ্ছ out;
 	}
-	if ((chrclass = string_to_security_class("chr_file")) == 0) {
+	যদি ((chrclass = string_to_security_class("chr_file")) == 0) {
 		error("%s: couldn't get security class for chr_file", __func__);
-		goto out;
+		গচ্ছ out;
 	}
-	if (security_compute_relabel(user_ctx, old_tty_ctx,
+	যদি (security_compute_relabel(user_ctx, old_tty_ctx,
 	    chrclass, &new_tty_ctx) != 0) {
 		error("%s: security_compute_relabel: %s",
 		    __func__, strerror(errno));
-		goto out;
+		গচ্ছ out;
 	}
 
-	if (setfilecon(tty, new_tty_ctx) != 0)
+	যদি (setfilecon(tty, new_tty_ctx) != 0)
 		error("%s: setfilecon: %s", __func__, strerror(errno));
  out:
-	if (new_tty_ctx != NULL)
+	যদি (new_tty_ctx != রিক্ত)
 		freecon(new_tty_ctx);
-	if (old_tty_ctx != NULL)
+	যদি (old_tty_ctx != রিক্ত)
 		freecon(old_tty_ctx);
-	if (user_ctx != NULL)
+	যদি (user_ctx != রিক্ত)
 		freecon(user_ctx);
 	debug3("%s: done", __func__);
 }
 
-void
-ssh_selinux_change_context(const char *newname)
+শূন্য
+ssh_selinux_change_context(ধ্রুৱ ৱর্ণ *newname)
 {
-	char *oldctx, *newctx, *cx, *cx2;
+	ৱর্ণ *oldctx, *newctx, *cx, *cx2;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
 
-	if (!ssh_selinux_enabled())
-		return;
+	যদি (!ssh_selinux_enabled())
+		ঘূৰাই;
 
-	if (getcon(&oldctx) < 0) {
+	যদি (getcon(&oldctx) < 0) {
 		logit_f("getcon failed with %s", strerror(errno));
-		return;
+		ঘূৰাই;
 	}
-	if ((cx = strchr(oldctx, ':')) == NULL ||
-	    (cx = strchr(cx + 1, ':')) == NULL ||
+	যদি ((cx = strchr(oldctx, ':')) == রিক্ত ||
+	    (cx = strchr(cx + 1, ':')) == রিক্ত ||
 	    (cx - oldctx) >= INT_MAX) {
 		logit_f("unparsable context %s", oldctx);
-		return;
+		ঘূৰাই;
 	}
 
 	/*
 	 * Check whether we are attempting to switch away from an unconfined
 	 * security context.
 	 */
-	if (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
-	    sizeof(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
+	যদি (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
+	    পরিমাণ(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
 		log_level = SYSLOG_LEVEL_DEBUG3;
 
 	cx2 = strchr(cx + 1, ':');
-	xasprintf(&newctx, "%.*s%s%s", (int)(cx - oldctx + 1), oldctx,
-	    newname, cx2 == NULL ? "" : cx2);
+	xasprintf(&newctx, "%.*s%s%s", (পূর্ণাঙ্ক)(cx - oldctx + 1), oldctx,
+	    newname, cx2 == রিক্ত ? "" : cx2);
 
 	debug3_f("setting context from '%s' to '%s'", oldctx, newctx);
-	if (setcon(newctx) < 0)
+	যদি (setcon(newctx) < 0)
 		do_log2_f(log_level, "setcon %s from %s failed with %s",
 		    newctx, oldctx, strerror(errno));
-	free(oldctx);
-	free(newctx);
+	মুক্ত(oldctx);
+	মুক্ত(newctx);
 }
 
-void
-ssh_selinux_setfscreatecon(const char *path)
+শূন্য
+ssh_selinux_setfscreatecon(ধ্রুৱ ৱর্ণ *path)
 {
-	char *context;
-	struct selabel_handle *shandle = NULL;
+	ৱর্ণ *context;
+	সংরচনা selabel_handle *shandle = রিক্ত;
 
-	if (!ssh_selinux_enabled())
-		return;
-	if (path == NULL) {
-		setfscreatecon(NULL);
-		return;
+	যদি (!ssh_selinux_enabled())
+		ঘূৰাই;
+	যদি (path == রিক্ত) {
+		setfscreatecon(রিক্ত);
+		ঘূৰাই;
 	}
-	if ((shandle = selabel_open(SELABEL_CTX_FILE, NULL, 0)) == NULL) {
+	যদি ((shandle = selabel_open(SELABEL_CTX_FILE, রিক্ত, 0)) == রিক্ত) {
 		debug_f("selabel_open failed");
-		return;
+		ঘূৰাই;
 	}
-	if (selabel_lookup(shandle, &context, path, 0700) == 0)
+	যদি (selabel_lookup(shandle, &context, path, 0700) == 0)
 		setfscreatecon(context);
 	selabel_close(shandle);
 }

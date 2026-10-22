@@ -30,17 +30,17 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#অন্তর্ভাৱ "includes.h"
+#যদি !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
-#include <sys/types.h>
-#include <errno.h>
-#include <ctype.h>
-#include <limits.h>
-#include <string.h>
-#include <stdlib.h>
+#অন্তর্ভাৱ <sys/types.h>
+#অন্তর্ভাৱ <errno.h>
+#অন্তর্ভাৱ <ctype.h>
+#অন্তর্ভাৱ <limits.h>
+#অন্তর্ভাৱ <string.h>
+#অন্তর্ভাৱ <stdlib.h>
 
-#include "vis.h"
+#অন্তর্ভাৱ "vis.h"
 
 #define	isoctal(c)	(((u_char)(c)) >= '0' && ((u_char)(c)) <= '7')
 #define	isvisible(c,flag)						\
@@ -58,89 +58,89 @@
 /*
  * vis - visually encode characters
  */
-char *
-vis(char *dst, int c, int flag, int nextc)
+ৱর্ণ *
+vis(ৱর্ণ *dst, পূর্ণাঙ্ক c, পূর্ণাঙ্ক flag, পূর্ণাঙ্ক nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	যদি (isvisible(c, flag)) {
+		যদি ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		ঘূৰাই (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
-		switch(c) {
-		case '\n':
+	যদি (flag & VIS_CSTYLE) {
+		ৱিকল্প(c) {
+		পক্ষ '\n':
 			*dst++ = '\\';
 			*dst++ = 'n';
-			goto done;
-		case '\r':
+			গচ্ছ done;
+		পক্ষ '\r':
 			*dst++ = '\\';
 			*dst++ = 'r';
-			goto done;
-		case '\b':
+			গচ্ছ done;
+		পক্ষ '\b':
 			*dst++ = '\\';
 			*dst++ = 'b';
-			goto done;
-		case '\a':
+			গচ্ছ done;
+		পক্ষ '\a':
 			*dst++ = '\\';
 			*dst++ = 'a';
-			goto done;
-		case '\v':
+			গচ্ছ done;
+		পক্ষ '\v':
 			*dst++ = '\\';
 			*dst++ = 'v';
-			goto done;
-		case '\t':
+			গচ্ছ done;
+		পক্ষ '\t':
 			*dst++ = '\\';
 			*dst++ = 't';
-			goto done;
-		case '\f':
+			গচ্ছ done;
+		পক্ষ '\f':
 			*dst++ = '\\';
 			*dst++ = 'f';
-			goto done;
-		case ' ':
+			গচ্ছ done;
+		পক্ষ ' ':
 			*dst++ = '\\';
 			*dst++ = 's';
-			goto done;
-		case '\0':
+			গচ্ছ done;
+		পক্ষ '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			যদি (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
-			goto done;
+			গচ্ছ done;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	যদি (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
 		*dst++ = ((u_char)c >> 3 & 07) + '0';
 		*dst++ = ((u_char)c & 07) + '0';
-		goto done;
+		গচ্ছ done;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	যদি ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	যদি (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	যদি (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		যদি (c == 0177)
 			*dst++ = '?';
-		else
+		অন্যথা
 			*dst++ = c + '@';
-	} else {
+	} অন্যথা {
 		*dst++ = '-';
 		*dst++ = c;
 	}
 done:
 	*dst = '\0';
-	return (dst);
+	ঘূৰাই (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,96 +157,96 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+পূর্ণাঙ্ক
+strvis(ৱর্ণ *dst, ধ্রুৱ ৱর্ণ *src, পূর্ণাঙ্ক flag)
 {
-	char c;
-	char *start;
+	ৱর্ণ c;
+	ৱর্ণ *start;
 
-	for (start = dst; (c = *src);)
+	বাবে (start = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	ঘূৰাই (dst - start);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+পূর্ণাঙ্ক
+strnvis(ৱর্ণ *dst, ধ্রুৱ ৱর্ণ *src, size_t siz, পূর্ণাঙ্ক flag)
 {
-	char *start, *end;
-	char tbuf[5];
-	int c, i;
+	ৱর্ণ *start, *end;
+	ৱর্ণ tbuf[5];
+	পূর্ণাঙ্ক c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	বাবে (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
+		যদি (isvisible(c, flag)) {
+			যদি ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				যদি (dst + 1 >= end) {
 					i = 2;
-					break;
+					ভঙ্গ;
 				}
 				*dst++ = '\\';
 			}
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} অন্যথা {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
+			যদি (dst + i <= end) {
 				memcpy(dst, tbuf, i);
 				dst += i;
-			} else {
+			} অন্যথা {
 				src--;
-				break;
+				ভঙ্গ;
 			}
 		}
 	}
-	if (siz > 0)
+	যদি (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	যদি (dst + i > end) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		যেতিয়ালৈ ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	ঘূৰাই (dst - start);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#যদি 0 /* unused in OpenSSH */
+পূর্ণাঙ্ক
+stravis(ৱর্ণ **outp, ধ্রুৱ ৱর্ণ *src, পূর্ণাঙ্ক flag)
 {
-	char *buf;
-	int len, serrno;
+	ৱর্ণ *buf;
+	পূর্ণাঙ্ক len, serrno;
 
-	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	buf = reallocarray(রিক্ত, 4, strlen(src) + 1);
+	যদি (buf == রিক্ত)
+		ঘূৰাই -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	যদি (*outp == রিক্ত) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	ঘূৰাই (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+পূর্ণাঙ্ক
+strvisx(ৱর্ণ *dst, ধ্রুৱ ৱর্ণ *src, size_t len, পূর্ণাঙ্ক flag)
 {
-	char c;
-	char *start;
+	ৱর্ণ c;
+	ৱর্ণ *start;
 
-	for (start = dst; len > 1; len--) {
+	বাবে (start = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	যদি (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	ঘূৰাই (dst - start);
 }
 #endif /* unused */
 

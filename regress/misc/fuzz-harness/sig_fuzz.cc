@@ -1,62 +1,62 @@
 // cc_fuzz_target test for public key parsing.
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাৱ <stddef.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdint.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <string.h>
 
-extern "C" {
+বাহ্য "C" {
 
-#include "includes.h"
-#include "sshkey.h"
-#include "ssherr.h"
+#অন্তর্ভাৱ "includes.h"
+#অন্তর্ভাৱ "sshkey.h"
+#অন্তর্ভাৱ "ssherr.h"
 
-static struct sshkey *generate_or_die(int type, unsigned bits) {
-  int r;
-  struct sshkey *ret;
-  if ((r = sshkey_generate(type, bits, &ret)) != 0) {
+স্থির সংরচনা sshkey *generate_or_die(পূর্ণাঙ্ক type, unsigned bits) {
+  পূর্ণাঙ্ক r;
+  সংরচনা sshkey *ret;
+  যদি ((r = sshkey_generate(type, bits, &ret)) != 0) {
     fprintf(stderr, "generate(%d, %u): %s", type, bits, ssh_err(r));
     abort();
   }
-  return ret;
+  ঘূৰাই ret;
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+পূর্ণাঙ্ক LLVMFuzzer_Test_One_প্ৰবেশ(ধ্রুৱ uint8_t* sig, size_t slen)
 {
 #ifdef WITH_OPENSSL
-  static struct sshkey *rsa = generate_or_die(KEY_RSA, 2048);
-  static struct sshkey *ecdsa256 = generate_or_die(KEY_ECDSA, 256);
-  static struct sshkey *ecdsa384 = generate_or_die(KEY_ECDSA, 384);
-  static struct sshkey *ecdsa521 = generate_or_die(KEY_ECDSA, 521);
+  স্থির সংরচনা sshkey *rsa = generate_or_die(চাবি_RSA, 2048);
+  স্থির সংরচনা sshkey *ecdsa256 = generate_or_die(চাবি_ECDSA, 256);
+  স্থির সংরচনা sshkey *ecdsa384 = generate_or_die(চাবি_ECDSA, 384);
+  স্থির সংরচনা sshkey *ecdsa521 = generate_or_die(চাবি_ECDSA, 521);
 #endif
-  struct sshkey_sig_details *details = NULL;
-  static struct sshkey *ed25519 = generate_or_die(KEY_ED25519, 0);
-  static const char *data = "If everyone started announcing his nose had "
+  সংরচনা sshkey_sig_details *details = রিক্ত;
+  স্থির সংরচনা sshkey *ed25519 = generate_or_die(চাবি_ED25519, 0);
+  স্থির ধ্রুৱ ৱর্ণ *data = "If everyone started announcing his nose had "
       "run away, I don’t know how it would all end";
-  static const size_t dlen = strlen(data);
+  স্থির ধ্রুৱ size_t dlen = strlen(data);
 
 #ifdef WITH_OPENSSL
-  sshkey_verify(rsa, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(rsa, sig, slen, (ধ্রুৱ u_char *)data, dlen, রিক্ত, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = রিক্ত;
 
-  sshkey_verify(ecdsa256, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ecdsa256, sig, slen, (ধ্রুৱ u_char *)data, dlen, রিক্ত, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = রিক্ত;
 
-  sshkey_verify(ecdsa384, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ecdsa384, sig, slen, (ধ্রুৱ u_char *)data, dlen, রিক্ত, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = রিক্ত;
 
-  sshkey_verify(ecdsa521, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ecdsa521, sig, slen, (ধ্রুৱ u_char *)data, dlen, রিক্ত, 0, &details);
   sshkey_sig_details_free(details);
-  details = NULL;
+  details = রিক্ত;
 #endif
 
-  sshkey_verify(ed25519, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
+  sshkey_verify(ed25519, sig, slen, (ধ্রুৱ u_char *)data, dlen, রিক্ত, 0, &details);
   sshkey_sig_details_free(details);
-  return 0;
+  ঘূৰাই 0;
 }
 
 } // extern

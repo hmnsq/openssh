@@ -14,72 +14,72 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
 #ifdef WITH_OPENSSL
 
-#include <sys/types.h>
+#অন্তর্ভাৱ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <string.h>
 
-#include <openssl/evp.h>
+#অন্তর্ভাৱ <openssl/evp.h>
 
 #ifndef HAVE_EVP_CIPHER_CTX_GET_IV
-int
-EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx, unsigned char *iv, size_t len)
+পূর্ণাঙ্ক
+EVP_CIPHER_CTX_get_iv(ধ্রুৱ EVP_CIPHER_CTX *ctx, unsigned ৱর্ণ *iv, size_t len)
 {
-	if (ctx == NULL)
-		return 0;
-	if (EVP_CIPHER_CTX_iv_length(ctx) < 0)
-		return 0;
-	if (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
-		return 0;
-	if (len > EVP_MAX_IV_LENGTH)
-		return 0; /* sanity check; shouldn't happen */
+	যদি (ctx == রিক্ত)
+		ঘূৰাই 0;
+	যদি (EVP_CIPHER_CTX_iv_length(ctx) < 0)
+		ঘূৰাই 0;
+	যদি (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
+		ঘূৰাই 0;
+	যদি (len > EVP_MAX_IV_LENGTH)
+		ঘূৰাই 0; /* sanity check; shouldn't happen */
 	/*
 	 * Skip the memcpy entirely when the requested IV length is zero,
 	 * since the iv pointer may be NULL or invalid.
 	 */
-	if (len != 0) {
-		if (iv == NULL)
-			return 0;
+	যদি (len != 0) {
+		যদি (iv == রিক্ত)
+			ঘূৰাই 0;
 # ifdef HAVE_EVP_CIPHER_CTX_IV
 		memcpy(iv, EVP_CIPHER_CTX_iv(ctx), len);
-# else
+# অন্যথা
 		memcpy(iv, ctx->iv, len);
 # endif /* HAVE_EVP_CIPHER_CTX_IV */
 	}
-	return 1;
+	ঘূৰাই 1;
 }
 #endif /* HAVE_EVP_CIPHER_CTX_GET_IV */
 
 #ifndef HAVE_EVP_CIPHER_CTX_SET_IV
-int
-EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx, const unsigned char *iv, size_t len)
+পূর্ণাঙ্ক
+EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx, ধ্রুৱ unsigned ৱর্ণ *iv, size_t len)
 {
-	if (ctx == NULL)
-		return 0;
-	if (EVP_CIPHER_CTX_iv_length(ctx) < 0)
-		return 0;
-	if (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
-		return 0;
-	if (len > EVP_MAX_IV_LENGTH)
-		return 0; /* sanity check; shouldn't happen */
+	যদি (ctx == রিক্ত)
+		ঘূৰাই 0;
+	যদি (EVP_CIPHER_CTX_iv_length(ctx) < 0)
+		ঘূৰাই 0;
+	যদি (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
+		ঘূৰাই 0;
+	যদি (len > EVP_MAX_IV_LENGTH)
+		ঘূৰাই 0; /* sanity check; shouldn't happen */
 	/*
 	 * Skip the memcpy entirely when the requested IV length is zero,
 	 * since the iv pointer may be NULL or invalid.
 	 */
-	if (len != 0) {
-		if (iv == NULL)
-			return 0;
+	যদি (len != 0) {
+		যদি (iv == রিক্ত)
+			ঘূৰাই 0;
 # ifdef HAVE_EVP_CIPHER_CTX_IV_NOCONST
 		memcpy(EVP_CIPHER_CTX_iv_noconst(ctx), iv, len);
-# else
+# অন্যথা
 		memcpy(ctx->iv, iv, len);
 # endif /* HAVE_EVP_CIPHER_CTX_IV_NOCONST */
 	}
-	return 1;
+	ঘূৰাই 1;
 }
 #endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
 

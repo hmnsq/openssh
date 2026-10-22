@@ -16,46 +16,46 @@
 
 /* Roughly equivalent to "mktemp -d -t TEMPLATE", but portable. */
 
-#include "includes.h"
+#অন্তর্ভাৱ "includes.h"
 
-#include <limits.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#অন্তর্ভাৱ <limits.h>
+#অন্তর্ভাৱ <stdarg.h>
+#অন্তর্ভাৱ <stdio.h>
+#অন্তর্ভাৱ <stdlib.h>
+#অন্তর্ভাৱ <unistd.h>
 
-#include "log.h"
+#অন্তর্ভাৱ "log.h"
 
-static void
-usage(void)
+স্থির শূন্য
+usage(শূন্য)
 {
 	fprintf(stderr, "mkdtemp template\n");
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+পূর্ণাঙ্ক
+main(পূর্ণাঙ্ক argc, ৱর্ণ **argv)
 {
-	const char *base;
-	const char *tmpdir;
-	char template[PATH_MAX];
-	int r;
-	char *dir;
+	ধ্রুৱ ৱর্ণ *base;
+	ধ্রুৱ ৱর্ণ *tmpdir;
+	ৱর্ণ template[PATH_MAX];
+	পূর্ণাঙ্ক r;
+	ৱর্ণ *dir;
 
-	if (argc != 2)
+	যদি (argc != 2)
 		usage();
 	base = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	যদি ((tmpdir = getenv("TMPDIR")) == রিক্ত)
 		tmpdir = "/tmp";
-	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	r = snprintf(template, পরিমাণ(template), "%s/%s", tmpdir, base);
+	যদি (r < 0 || (size_t)r >= পরিমাণ(template))
 		fatal("template string too long");
 	dir = mkdtemp(template);
-	if (dir == NULL) {
+	যদি (dir == রিক্ত) {
 		perror("mkdtemp");
 		exit(1);
 	}
 	puts(dir);
-	return 0;
+	ঘূৰাই 0;
 }
