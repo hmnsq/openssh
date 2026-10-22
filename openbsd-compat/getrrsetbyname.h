@@ -45,66 +45,66 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _GETRRSETBYNAME_H
-#define _GETRRSETBYNAME_H
+#جے_بنا_تعریف _GETRRSETBYNAME_H
+#تعریف_کرو _GETRRSETBYNAME_H
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifndef HAVE_GETRRSETBYNAME
+#جے_بنا_تعریف HAVE_GETRRSETBYNAME
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <netdb.h>
-#include <resolv.h>
+#ضمن <sys/types.h>
+#ضمن <netinet/in.h>
+#ضمن <arpa/nameser.h>
+#ضمن <netdb.h>
+#ضمن <resolv.h>
 
-#ifndef HFIXEDSZ
-#define HFIXEDSZ 12
-#endif
+#جے_بنا_تعریف HFIXEDSZ
+#تعریف_کرو HFIXEDSZ 12
+#جے_انت
 
-#ifndef T_RRSIG
-#define T_RRSIG 46
-#endif
+#جے_بنا_تعریف T_RRSIG
+#تعریف_کرو T_RRSIG 46
+#جے_انت
 
 /*
  * Flags for getrrsetbyname()
  */
-#ifndef RRSET_VALIDATED
+#جے_بنا_تعریف RRSET_VALIDATED
 # define RRSET_VALIDATED	1
-#endif
+#جے_انت
 
 /*
  * Return codes for getrrsetbyname()
  */
-#ifndef ERRSET_SUCCESS
+#جے_بنا_تعریف ERRSET_SUCCESS
 # define ERRSET_SUCCESS		0
 # define ERRSET_NOMEMORY	1
 # define ERRSET_FAIL		2
 # define ERRSET_INVAL		3
 # define ERRSET_NONAME		4
 # define ERRSET_NODATA		5
-#endif
+#جے_انت
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+بنية rdatainfo {
+	بنانشانی صحيح		rdi_لمائی;	/* length of data */
+	بنانشانی حرف		*rdi_انکڑے;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+بنية rrsetinfo {
+	بنانشانی صحيح		rri_flags;	/* RRSET_VALIDATED ... */
+	بنانشانی صحيح		rri_rdclass;	/* class number */
+	بنانشانی صحيح		rri_rdtype;	/* RR type number */
+	بنانشانی صحيح		rri_ttl;	/* time to live */
+	بنانشانی صحيح		rri_nrdatas;	/* size of rdatas array */
+	بنانشانی صحيح		rri_nsigs;	/* size of sigs array */
+	حرف			*rri_name;	/* canonical name */
+	بنية rdatainfo	*rri_rdatas;	/* individual records */
+	بنية rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+صحيح		getrrsetbyname(ثابت حرف *, بنانشانی صحيح, بنانشانی صحيح, بنانشانی صحيح, بنية rrsetinfo **);
+فراغ		freerrset(بنية rrsetinfo *);
 
-#endif /* !defined(HAVE_GETRRSETBYNAME) */
+#جے_انت /* !defined(HAVE_GETRRSETBYNAME) */
 
-#endif /* _GETRRSETBYNAME_H */
+#جے_انت /* _GETRRSETBYNAME_H */

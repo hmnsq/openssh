@@ -35,35 +35,35 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strcasestr.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifndef HAVE_STRCASESTR
+#جے_بنا_تعریف HAVE_STRCASESTR
 
-#include <ctype.h>
-#include <string.h>
+#ضمن <ctype.h>
+#ضمن <string.h>
 
 /*
  * Find the first occurrence of find in s, ignore case.
  */
-char *
-strcasestr(const char *s, const char *find)
+حرف *
+strcasestr(ثابت حرف *s, ثابت حرف *لبھو)
 {
-	char c, sc;
-	size_t len;
+	حرف c, sc;
+	ناپ_t len;
 
-	if ((c = *find++) != 0) {
-		c = (char)tolower((unsigned char)c);
-		len = strlen(find);
-		do {
-			do {
-				if ((sc = *s++) == 0)
-					return (NULL);
-			} while ((char)tolower((unsigned char)sc) != c);
-		} while (strncasecmp(s, find, len) != 0);
+	إذا ((c = *لبھو++) != 0) {
+		c = (حرف)tolower((بنانشانی حرف)c);
+		len = لڑی_لمبائی(لبھو);
+		افعل {
+			افعل {
+				إذا ((sc = *s++) == 0)
+					أرجع (عدم);
+			} طالما ((حرف)tolower((بنانشانی حرف)sc) != c);
+		} طالما (strncasecmp(s, لبھو, len) != 0);
 		s--;
 	}
-	return ((char *)s);
+	أرجع ((حرف *)s);
 }
 DEF_WEAK(strcasestr);
 
-#endif
+#جے_انت

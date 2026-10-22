@@ -5,180 +5,180 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#ضمن "log.h"
+#ضمن "misc.h"
 
-void test_argv(void);
+فراغ test_argv(فراغ);
 
-void
-test_argv(void)
+فراغ
+test_argv(فراغ)
 {
-	char **av = NULL;
-	int ac = 0;
+	حرف **av = عدم;
+	صحيح ac = 0;
 
-#define RESET_ARGV() \
-	do { \
+#تعریف_کرو RESET_ARGV() \
+	افعل { \
 		argv_free(av, ac); \
-		av = NULL; \
+		av = عدم; \
 		ac = -1; \
-	} while (0)
+	} طالما (0)
 
-	TEST_START("empty args");
-	ASSERT_INT_EQ(argv_split("", &ac, &av, 0), 0);
+	TEST_شروع("empty args");
+	ASSERT_INT_EQ(argv_ونڈو("", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 0);
-	ASSERT_PTR_NE(av, NULL);
-	ASSERT_PTR_EQ(av[0], NULL);
+	ASSERT_PTR_NE(av, عدم);
+	ASSERT_PTR_EQ(av[0], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("    ", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("    ", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 0);
-	ASSERT_PTR_NE(av, NULL);
-	ASSERT_PTR_EQ(av[0], NULL);
+	ASSERT_PTR_NE(av, عدم);
+	ASSERT_PTR_EQ(av[0], عدم);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_پورا();
 
-	TEST_START("trivial args");
-	ASSERT_INT_EQ(argv_split("leamas", &ac, &av, 0), 0);
+	TEST_شروع("trivial args");
+	ASSERT_INT_EQ(argv_ونڈو("leamas", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("smiley leamas", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("smiley leamas", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "smiley");
 	ASSERT_STRING_EQ(av[1], "leamas");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], عدم);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_پورا();
 
-	TEST_START("quoted");
-	ASSERT_INT_EQ(argv_split("\"smiley\"", &ac, &av, 0), 0);
+	TEST_شروع("quoted");
+	ASSERT_INT_EQ(argv_ونڈو("\"smiley\"", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "smiley");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("leamas \" smiley \"", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("leamas \" smiley \"", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "leamas");
 	ASSERT_STRING_EQ(av[1], " smiley ");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("\"smiley leamas\"", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("\"smiley leamas\"", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "smiley leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("smiley\" leamas\" liz", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("smiley\" leamas\" liz", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "smiley leamas");
 	ASSERT_STRING_EQ(av[1], "liz");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], عدم);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_پورا();
 
-	TEST_START("escaped");
-	ASSERT_INT_EQ(argv_split("\\\"smiley\\'", &ac, &av, 0), 0);
+	TEST_شروع("escaped");
+	ASSERT_INT_EQ(argv_ونڈو("\\\"smiley\\'", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "\"smiley'");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("'\\'smiley\\\"'", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("'\\'smiley\\\"'", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "'smiley\"");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("smiley\\'s leamas\\'", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("smiley\\'s leamas\\'", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "smiley's");
 	ASSERT_STRING_EQ(av[1], "leamas'");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("leamas\\\\smiley", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("leamas\\\\smiley", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "leamas\\smiley");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("leamas\\\\ \\\\smiley", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("leamas\\\\ \\\\smiley", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "leamas\\");
 	ASSERT_STRING_EQ(av[1], "\\smiley");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("smiley\\ leamas", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("smiley\\ leamas", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "smiley leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_پورا();
 
-	TEST_START("quoted escaped");
-	ASSERT_INT_EQ(argv_split("'smiley\\ leamas'", &ac, &av, 0), 0);
+	TEST_شروع("quoted escaped");
+	ASSERT_INT_EQ(argv_ونڈو("'smiley\\ leamas'", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "smiley\\ leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("\"smiley\\ leamas\"", &ac, &av, 0), 0);
+	ASSERT_INT_EQ(argv_ونڈو("\"smiley\\ leamas\"", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "smiley\\ leamas");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_پورا();
 
-	TEST_START("comments");
-	ASSERT_INT_EQ(argv_split("# gold", &ac, &av, 0), 0);
+	TEST_شروع("comments");
+	ASSERT_INT_EQ(argv_ونڈو("# gold", &ac, &av, 0), 0);
 	ASSERT_INT_EQ(ac, 2);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "#");
 	ASSERT_STRING_EQ(av[1], "gold");
-	ASSERT_PTR_EQ(av[2], NULL);
+	ASSERT_PTR_EQ(av[2], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("# gold", &ac, &av, 1), 0);
+	ASSERT_INT_EQ(argv_ونڈو("# gold", &ac, &av, 1), 0);
 	ASSERT_INT_EQ(ac, 0);
-	ASSERT_PTR_NE(av, NULL);
-	ASSERT_PTR_EQ(av[0], NULL);
+	ASSERT_PTR_NE(av, عدم);
+	ASSERT_PTR_EQ(av[0], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("leamas#gold", &ac, &av, 1), 0);
+	ASSERT_INT_EQ(argv_ونڈو("leamas#gold", &ac, &av, 1), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "leamas#gold");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("\"leamas # gold\"", &ac, &av, 1), 0);
+	ASSERT_INT_EQ(argv_ونڈو("\"leamas # gold\"", &ac, &av, 1), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "leamas # gold");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	ASSERT_INT_EQ(argv_split("\"leamas\"#gold", &ac, &av, 1), 0);
+	ASSERT_INT_EQ(argv_ونڈو("\"leamas\"#gold", &ac, &av, 1), 0);
 	ASSERT_INT_EQ(ac, 1);
-	ASSERT_PTR_NE(av, NULL);
+	ASSERT_PTR_NE(av, عدم);
 	ASSERT_STRING_EQ(av[0], "leamas#gold");
-	ASSERT_PTR_EQ(av[1], NULL);
+	ASSERT_PTR_EQ(av[1], عدم);
 	RESET_ARGV();
-	TEST_DONE();
+	TEST_پورا();
 
 	/* XXX test char *argv_assemble(int argc, char **argv) */
 }

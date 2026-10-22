@@ -34,65 +34,65 @@
 
 /* OPENBSD ORIGINAL: include/vis.h */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#ضمن "includes.h"
+#إذا !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
-#ifndef _VIS_H_
-#define	_VIS_H_
+#جے_بنا_تعریف _VIS_H_
+#تعریف_کرو	_VIS_H_
 
-#include <sys/types.h>
-#include <limits.h>
+#ضمن <sys/types.h>
+#ضمن <limits.h>
 
 /*
  * to select alternate encoding format
  */
-#define	VIS_OCTAL	0x01	/* use octal \ddd format */
-#define	VIS_CSTYLE	0x02	/* use \[nrft0..] where appropriate */
+#تعریف_کرو	VIS_OCTAL	0x01	/* use octal \ddd format */
+#تعریف_کرو	VIS_CSTYLE	0x02	/* use \[nrft0..] where appropriate */
 
 /*
  * to alter set of characters encoded (default is to encode all
  * non-graphic except space, tab, and newline).
  */
-#define	VIS_SP		0x04	/* also encode space */
-#define	VIS_TAB		0x08	/* also encode tab */
-#define	VIS_NL		0x10	/* also encode newline */
-#define	VIS_WHITE	(VIS_SP | VIS_TAB | VIS_NL)
-#define	VIS_SAFE	0x20	/* only encode "unsafe" characters */
-#define	VIS_DQ		0x200	/* backslash-escape double quotes */
-#define	VIS_ALL		0x400	/* encode all characters */
+#تعریف_کرو	VIS_SP		0x04	/* also encode space */
+#تعریف_کرو	VIS_TAB		0x08	/* also encode tab */
+#تعریف_کرو	VIS_NL		0x10	/* also encode newline */
+#تعریف_کرو	VIS_WHITE	(VIS_SP | VIS_TAB | VIS_NL)
+#تعریف_کرو	VIS_محفوظ	0x20	/* only encode "unsafe" characters */
+#تعریف_کرو	VIS_DQ		0x200	/* backslash-escape double quotes */
+#تعریف_کرو	VIS_ALL		0x400	/* encode all characters */
 
 /*
  * other
  */
-#define	VIS_NOSLASH	0x40	/* inhibit printing '\' */
-#define	VIS_GLOB	0x100	/* encode glob(3) magics and '#' */
+#تعریف_کرو	VIS_NOSLASH	0x40	/* inhibit printing '\' */
+#تعریف_کرو	VIS_GLOB	0x100	/* encode glob(3) magics and '#' */
 
 /*
  * unvis return codes
  */
-#define	UNVIS_VALID	 1	/* character valid */
-#define	UNVIS_VALIDPUSH	 2	/* character valid, push back passed char */
-#define	UNVIS_NOCHAR	 3	/* valid sequence, no character produced */
-#define	UNVIS_SYNBAD	-1	/* unrecognized escape sequence */
-#define	UNVIS_ERROR	-2	/* decoder in unknown state (unrecoverable) */
+#تعریف_کرو	UNVIS_VALID	 1	/* character valid */
+#تعریف_کرو	UNVIS_VALIDPUSH	 2	/* character valid, push back passed char */
+#تعریف_کرو	UNVIS_NOCHAR	 3	/* valid sequence, no character produced */
+#تعریف_کرو	UNVIS_SYNBAD	-1	/* unrecognized escape sequence */
+#تعریف_کرو	UNVIS_ERROR	-2	/* decoder in unknown state (unrecoverable) */
 
 /*
  * unvis flags
  */
-#define	UNVIS_END	1	/* no more characters */
+#تعریف_کرو	UNVIS_سرا	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+حرف	*vis(حرف *, صحيح, صحيح, صحيح);
+صحيح	strvis(حرف *, ثابت حرف *, صحيح);
+صحيح	stravis(حرف **, ثابت حرف *, صحيح);
+صحيح	strnvis(حرف *, ثابت حرف *, ناپ_t, صحيح)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+صحيح	strvisx(حرف *, ثابت حرف *, ناپ_t, صحيح)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
-ssize_t strnunvis(char *, const char *, size_t)
+صحيح	strunvis(حرف *, ثابت حرف *);
+صحيح	unvis(حرف *, حرف, صحيح *, صحيح);
+ssize_t strnunvis(حرف *, ثابت حرف *, ناپ_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 
-#endif /* !_VIS_H_ */
+#جے_انت /* !_VIS_H_ */
 
-#endif /* !HAVE_STRNVIS || BROKEN_STRNVIS */
+#جے_انت /* !HAVE_STRNVIS || BROKEN_STRNVIS */

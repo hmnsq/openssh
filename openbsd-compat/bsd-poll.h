@@ -27,64 +27,64 @@
 
 /* OPENBSD ORIGINAL: sys/sys/poll.h */
 
-#ifndef	_COMPAT_POLL_H_
-#define	_COMPAT_POLL_H_
+#جے_بنا_تعریف	_COMPAT_POLL_H_
+#تعریف_کرو	_COMPAT_POLL_H_
 
-#include <sys/types.h>
-#include <poll.h>
+#ضمن <sys/types.h>
+#ضمن <poll.h>
 
-#ifndef HAVE_STRUCT_POLLFD_FD
-typedef struct pollfd {
-	int	fd;
-	short	events;
-	short	revents;
+#جے_بنا_تعریف HAVE_STRUCT_POLLFD_FD
+تعريفنوع بنية pollfd {
+	صحيح	fd;
+	چھوٹا	events;
+	چھوٹا	revents;
 } pollfd_t;
 
-#ifndef POLLIN
+#جے_بنا_تعریف POLLIN
 # define POLLIN		0x0001
-#endif
-#ifndef POLLPRI
+#جے_انت
+#جے_بنا_تعریف POLLPRI
 # define POLLPRI	0x0002
-#endif
-#ifndef POLLOUT
+#جے_انت
+#جے_بنا_تعریف POLLOUT
 # define POLLOUT	0x0004
-#endif
-#ifndef POLLERR
+#جے_انت
+#جے_بنا_تعریف POLLERR
 # define POLLERR	0x0008
-#endif
-#ifndef POLLHUP
+#جے_انت
+#جے_بنا_تعریف POLLHUP
 # define POLLHUP	0x0010
-#endif
-#ifndef POLLNVAL
+#جے_انت
+#جے_بنا_تعریف POLLNVAL
 # define POLLNVAL	0x0020
-#endif
+#جے_انت
 
-#if 0
+#إذا 0
 /* the following are currently not implemented */
-#define	POLLRDNORM	0x0040
-#define POLLNORM	POLLRDNORM
-#define POLLWRNORM      POLLOUT
-#define	POLLRDBAND	0x0080
-#define	POLLWRBAND	0x0100
-#endif
+#تعریف_کرو	POLLRDNORM	0x0040
+#تعریف_کرو POLLNORM	POLLRDNORM
+#تعریف_کرو POLLWRNORM      POLLOUT
+#تعریف_کرو	POLLRDBAND	0x0080
+#تعریف_کرو	POLLWRBAND	0x0100
+#جے_انت
 
-#define INFTIM		(-1)	/* not standard */
-#endif /* !HAVE_STRUCT_POLLFD_FD */
+#تعریف_کرو INFTIM		(-1)	/* not standard */
+#جے_انت /* !HAVE_STRUCT_POLLFD_FD */
 
-#ifndef HAVE_NFDS_T
+#جے_بنا_تعریف HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
-typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+تعريفنوع بنانشانی لما	nfds_t;
+# وإلا
+تعريفنوع بنانشانی صحيح	nfds_t;
 # endif
-#endif
+#جے_انت
 
-#ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
-#endif
+#جے_بنا_تعریف HAVE_POLL
+صحيح   poll(بنية pollfd *, nfds_t, صحيح);
+#جے_انت
 
-#ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
-#endif
+#جے_بنا_تعریف HAVE_PPOLL
+صحيح   ppoll(بنية pollfd *, nfds_t, ثابت بنية timespec *, ثابت sigset_t *);
+#جے_انت
 
-#endif /* !_COMPAT_POLL_H_ */
+#جے_انت /* !_COMPAT_POLL_H_ */

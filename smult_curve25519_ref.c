@@ -6,260 +6,260 @@ Public domain.
 Derived from public domain code by D. J. Bernstein.
 */
 
-int crypto_scalarmult_curve25519(unsigned char *, const unsigned char *, const unsigned char *);
+صحيح crypto_scalarmult_curve25519(بنانشانی حرف *, ثابت بنانشانی حرف *, ثابت بنانشانی حرف *);
 
-static void add(unsigned int out[32],const unsigned int a[32],const unsigned int b[32])
+ساكن فراغ جوڑو(بنانشانی صحيح باہرلا[32],ثابت بنانشانی صحيح a[32],ثابت بنانشانی صحيح b[32])
 {
-  unsigned int j;
-  unsigned int u;
+  بنانشانی صحيح j;
+  بنانشانی صحيح u;
   u = 0;
-  for (j = 0;j < 31;++j) { u += a[j] + b[j]; out[j] = u & 255; u >>= 8; }
-  u += a[31] + b[31]; out[31] = u;
+  لكل (j = 0;j < 31;++j) { u += a[j] + b[j]; باہرلا[j] = u & 255; u >>= 8; }
+  u += a[31] + b[31]; باہرلا[31] = u;
 }
 
-static void sub(unsigned int out[32],const unsigned int a[32],const unsigned int b[32])
+ساكن فراغ sub(بنانشانی صحيح باہرلا[32],ثابت بنانشانی صحيح a[32],ثابت بنانشانی صحيح b[32])
 {
-  unsigned int j;
-  unsigned int u;
+  بنانشانی صحيح j;
+  بنانشانی صحيح u;
   u = 218;
-  for (j = 0;j < 31;++j) {
+  لكل (j = 0;j < 31;++j) {
     u += a[j] + 65280 - b[j];
-    out[j] = u & 255;
+    باہرلا[j] = u & 255;
     u >>= 8;
   }
   u += a[31] - b[31];
-  out[31] = u;
+  باہرلا[31] = u;
 }
 
-static void squeeze(unsigned int a[32])
+ساكن فراغ squeeze(بنانشانی صحيح a[32])
 {
-  unsigned int j;
-  unsigned int u;
+  بنانشانی صحيح j;
+  بنانشانی صحيح u;
   u = 0;
-  for (j = 0;j < 31;++j) { u += a[j]; a[j] = u & 255; u >>= 8; }
+  لكل (j = 0;j < 31;++j) { u += a[j]; a[j] = u & 255; u >>= 8; }
   u += a[31]; a[31] = u & 127;
   u = 19 * (u >> 7);
-  for (j = 0;j < 31;++j) { u += a[j]; a[j] = u & 255; u >>= 8; }
+  لكل (j = 0;j < 31;++j) { u += a[j]; a[j] = u & 255; u >>= 8; }
   u += a[31]; a[31] = u;
 }
 
-static const unsigned int minusp[32] = {
+ساكن ثابت بنانشانی صحيح minusp[32] = {
  19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128
 } ;
 
-static void freeze(unsigned int a[32])
+ساكن فراغ freeze(بنانشانی صحيح a[32])
 {
-  unsigned int aorig[32];
-  unsigned int j;
-  unsigned int negative;
+  بنانشانی صحيح aorig[32];
+  بنانشانی صحيح j;
+  بنانشانی صحيح negative;
 
-  for (j = 0;j < 32;++j) aorig[j] = a[j];
-  add(a,a,minusp);
+  لكل (j = 0;j < 32;++j) aorig[j] = a[j];
+  جوڑو(a,a,minusp);
   negative = -((a[31] >> 7) & 1);
-  for (j = 0;j < 32;++j) a[j] ^= negative & (aorig[j] ^ a[j]);
+  لكل (j = 0;j < 32;++j) a[j] ^= negative & (aorig[j] ^ a[j]);
 }
 
-static void mult(unsigned int out[32],const unsigned int a[32],const unsigned int b[32])
+ساكن فراغ mult(بنانشانی صحيح باہرلا[32],ثابت بنانشانی صحيح a[32],ثابت بنانشانی صحيح b[32])
 {
-  unsigned int i;
-  unsigned int j;
-  unsigned int u;
+  بنانشانی صحيح i;
+  بنانشانی صحيح j;
+  بنانشانی صحيح u;
 
-  for (i = 0;i < 32;++i) {
+  لكل (i = 0;i < 32;++i) {
     u = 0;
-    for (j = 0;j <= i;++j) u += a[j] * b[i - j];
-    for (j = i + 1;j < 32;++j) u += 38 * a[j] * b[i + 32 - j];
-    out[i] = u;
+    لكل (j = 0;j <= i;++j) u += a[j] * b[i - j];
+    لكل (j = i + 1;j < 32;++j) u += 38 * a[j] * b[i + 32 - j];
+    باہرلا[i] = u;
   }
-  squeeze(out);
+  squeeze(باہرلا);
 }
 
-static void mult121665(unsigned int out[32],const unsigned int a[32])
+ساكن فراغ mult121665(بنانشانی صحيح باہرلا[32],ثابت بنانشانی صحيح a[32])
 {
-  unsigned int j;
-  unsigned int u;
+  بنانشانی صحيح j;
+  بنانشانی صحيح u;
 
   u = 0;
-  for (j = 0;j < 31;++j) { u += 121665 * a[j]; out[j] = u & 255; u >>= 8; }
-  u += 121665 * a[31]; out[31] = u & 127;
+  لكل (j = 0;j < 31;++j) { u += 121665 * a[j]; باہرلا[j] = u & 255; u >>= 8; }
+  u += 121665 * a[31]; باہرلا[31] = u & 127;
   u = 19 * (u >> 7);
-  for (j = 0;j < 31;++j) { u += out[j]; out[j] = u & 255; u >>= 8; }
-  u += out[j]; out[j] = u;
+  لكل (j = 0;j < 31;++j) { u += باہرلا[j]; باہرلا[j] = u & 255; u >>= 8; }
+  u += باہرلا[j]; باہرلا[j] = u;
 }
 
-static void square(unsigned int out[32],const unsigned int a[32])
+ساكن فراغ مربع(بنانشانی صحيح باہرلا[32],ثابت بنانشانی صحيح a[32])
 {
-  unsigned int i;
-  unsigned int j;
-  unsigned int u;
+  بنانشانی صحيح i;
+  بنانشانی صحيح j;
+  بنانشانی صحيح u;
 
-  for (i = 0;i < 32;++i) {
+  لكل (i = 0;i < 32;++i) {
     u = 0;
-    for (j = 0;j < i - j;++j) u += a[j] * a[i - j];
-    for (j = i + 1;j < i + 32 - j;++j) u += 38 * a[j] * a[i + 32 - j];
+    لكل (j = 0;j < i - j;++j) u += a[j] * a[i - j];
+    لكل (j = i + 1;j < i + 32 - j;++j) u += 38 * a[j] * a[i + 32 - j];
     u *= 2;
-    if ((i & 1) == 0) {
+    إذا ((i & 1) == 0) {
       u += a[i / 2] * a[i / 2];
       u += 38 * a[i / 2 + 16] * a[i / 2 + 16];
     }
-    out[i] = u;
+    باہرلا[i] = u;
   }
-  squeeze(out);
+  squeeze(باہرلا);
 }
 
-static void select(unsigned int p[64],unsigned int q[64],const unsigned int r[64],const unsigned int s[64],unsigned int b)
+ساكن فراغ select(بنانشانی صحيح p[64],بنانشانی صحيح q[64],ثابت بنانشانی صحيح r[64],ثابت بنانشانی صحيح s[64],بنانشانی صحيح b)
 {
-  unsigned int j;
-  unsigned int t;
-  unsigned int bminus1;
+  بنانشانی صحيح j;
+  بنانشانی صحيح t;
+  بنانشانی صحيح bminus1;
 
   bminus1 = b - 1;
-  for (j = 0;j < 64;++j) {
+  لكل (j = 0;j < 64;++j) {
     t = bminus1 & (r[j] ^ s[j]);
     p[j] = s[j] ^ t;
     q[j] = r[j] ^ t;
   }
 }
 
-static void mainloop(unsigned int work[64],const unsigned char e[32])
+ساكن فراغ mainloop(بنانشانی صحيح work[64],ثابت بنانشانی حرف e[32])
 {
-  unsigned int xzm1[64];
-  unsigned int xzm[64];
-  unsigned int xzmb[64];
-  unsigned int xzm1b[64];
-  unsigned int xznb[64];
-  unsigned int xzn1b[64];
-  unsigned int a0[64];
-  unsigned int a1[64];
-  unsigned int b0[64];
-  unsigned int b1[64];
-  unsigned int c1[64];
-  unsigned int r[32];
-  unsigned int s[32];
-  unsigned int t[32];
-  unsigned int u[32];
-  unsigned int j;
-  unsigned int b;
-  int pos;
+  بنانشانی صحيح xzm1[64];
+  بنانشانی صحيح xzm[64];
+  بنانشانی صحيح xzmb[64];
+  بنانشانی صحيح xzm1b[64];
+  بنانشانی صحيح xznb[64];
+  بنانشانی صحيح xzn1b[64];
+  بنانشانی صحيح a0[64];
+  بنانشانی صحيح a1[64];
+  بنانشانی صحيح b0[64];
+  بنانشانی صحيح b1[64];
+  بنانشانی صحيح c1[64];
+  بنانشانی صحيح r[32];
+  بنانشانی صحيح s[32];
+  بنانشانی صحيح t[32];
+  بنانشانی صحيح u[32];
+  بنانشانی صحيح j;
+  بنانشانی صحيح b;
+  صحيح pos;
 
-  for (j = 0;j < 32;++j) xzm1[j] = work[j];
+  لكل (j = 0;j < 32;++j) xzm1[j] = work[j];
   xzm1[32] = 1;
-  for (j = 33;j < 64;++j) xzm1[j] = 0;
+  لكل (j = 33;j < 64;++j) xzm1[j] = 0;
 
   xzm[0] = 1;
-  for (j = 1;j < 64;++j) xzm[j] = 0;
+  لكل (j = 1;j < 64;++j) xzm[j] = 0;
 
-  for (pos = 254;pos >= 0;--pos) {
+  لكل (pos = 254;pos >= 0;--pos) {
     b = e[pos / 8] >> (pos & 7);
     b &= 1;
     select(xzmb,xzm1b,xzm,xzm1,b);
-    add(a0,xzmb,xzmb + 32);
+    جوڑو(a0,xzmb,xzmb + 32);
     sub(a0 + 32,xzmb,xzmb + 32);
-    add(a1,xzm1b,xzm1b + 32);
+    جوڑو(a1,xzm1b,xzm1b + 32);
     sub(a1 + 32,xzm1b,xzm1b + 32);
-    square(b0,a0);
-    square(b0 + 32,a0 + 32);
+    مربع(b0,a0);
+    مربع(b0 + 32,a0 + 32);
     mult(b1,a1,a0 + 32);
     mult(b1 + 32,a1 + 32,a0);
-    add(c1,b1,b1 + 32);
+    جوڑو(c1,b1,b1 + 32);
     sub(c1 + 32,b1,b1 + 32);
-    square(r,c1 + 32);
+    مربع(r,c1 + 32);
     sub(s,b0,b0 + 32);
     mult121665(t,s);
-    add(u,t,b0);
+    جوڑو(u,t,b0);
     mult(xznb,b0,b0 + 32);
     mult(xznb + 32,s,u);
-    square(xzn1b,c1);
+    مربع(xzn1b,c1);
     mult(xzn1b + 32,r,work);
     select(xzm,xzm1,xznb,xzn1b,b);
   }
 
-  for (j = 0;j < 64;++j) work[j] = xzm[j];
+  لكل (j = 0;j < 64;++j) work[j] = xzm[j];
 }
 
-static void recip(unsigned int out[32],const unsigned int z[32])
+ساكن فراغ recip(بنانشانی صحيح باہرلا[32],ثابت بنانشانی صحيح z[32])
 {
-  unsigned int z2[32];
-  unsigned int z9[32];
-  unsigned int z11[32];
-  unsigned int z2_5_0[32];
-  unsigned int z2_10_0[32];
-  unsigned int z2_20_0[32];
-  unsigned int z2_50_0[32];
-  unsigned int z2_100_0[32];
-  unsigned int t0[32];
-  unsigned int t1[32];
-  int i;
+  بنانشانی صحيح z2[32];
+  بنانشانی صحيح z9[32];
+  بنانشانی صحيح z11[32];
+  بنانشانی صحيح z2_5_0[32];
+  بنانشانی صحيح z2_10_0[32];
+  بنانشانی صحيح z2_20_0[32];
+  بنانشانی صحيح z2_50_0[32];
+  بنانشانی صحيح z2_100_0[32];
+  بنانشانی صحيح t0[32];
+  بنانشانی صحيح t1[32];
+  صحيح i;
 
-  /* 2 */ square(z2,z);
-  /* 4 */ square(t1,z2);
-  /* 8 */ square(t0,t1);
+  /* 2 */ مربع(z2,z);
+  /* 4 */ مربع(t1,z2);
+  /* 8 */ مربع(t0,t1);
   /* 9 */ mult(z9,t0,z);
   /* 11 */ mult(z11,z9,z2);
-  /* 22 */ square(t0,z11);
+  /* 22 */ مربع(t0,z11);
   /* 2^5 - 2^0 = 31 */ mult(z2_5_0,t0,z9);
 
-  /* 2^6 - 2^1 */ square(t0,z2_5_0);
-  /* 2^7 - 2^2 */ square(t1,t0);
-  /* 2^8 - 2^3 */ square(t0,t1);
-  /* 2^9 - 2^4 */ square(t1,t0);
-  /* 2^10 - 2^5 */ square(t0,t1);
+  /* 2^6 - 2^1 */ مربع(t0,z2_5_0);
+  /* 2^7 - 2^2 */ مربع(t1,t0);
+  /* 2^8 - 2^3 */ مربع(t0,t1);
+  /* 2^9 - 2^4 */ مربع(t1,t0);
+  /* 2^10 - 2^5 */ مربع(t0,t1);
   /* 2^10 - 2^0 */ mult(z2_10_0,t0,z2_5_0);
 
-  /* 2^11 - 2^1 */ square(t0,z2_10_0);
-  /* 2^12 - 2^2 */ square(t1,t0);
-  /* 2^20 - 2^10 */ for (i = 2;i < 10;i += 2) { square(t0,t1); square(t1,t0); }
+  /* 2^11 - 2^1 */ مربع(t0,z2_10_0);
+  /* 2^12 - 2^2 */ مربع(t1,t0);
+  /* 2^20 - 2^10 */ لكل (i = 2;i < 10;i += 2) { مربع(t0,t1); مربع(t1,t0); }
   /* 2^20 - 2^0 */ mult(z2_20_0,t1,z2_10_0);
 
-  /* 2^21 - 2^1 */ square(t0,z2_20_0);
-  /* 2^22 - 2^2 */ square(t1,t0);
-  /* 2^40 - 2^20 */ for (i = 2;i < 20;i += 2) { square(t0,t1); square(t1,t0); }
+  /* 2^21 - 2^1 */ مربع(t0,z2_20_0);
+  /* 2^22 - 2^2 */ مربع(t1,t0);
+  /* 2^40 - 2^20 */ لكل (i = 2;i < 20;i += 2) { مربع(t0,t1); مربع(t1,t0); }
   /* 2^40 - 2^0 */ mult(t0,t1,z2_20_0);
 
-  /* 2^41 - 2^1 */ square(t1,t0);
-  /* 2^42 - 2^2 */ square(t0,t1);
-  /* 2^50 - 2^10 */ for (i = 2;i < 10;i += 2) { square(t1,t0); square(t0,t1); }
+  /* 2^41 - 2^1 */ مربع(t1,t0);
+  /* 2^42 - 2^2 */ مربع(t0,t1);
+  /* 2^50 - 2^10 */ لكل (i = 2;i < 10;i += 2) { مربع(t1,t0); مربع(t0,t1); }
   /* 2^50 - 2^0 */ mult(z2_50_0,t0,z2_10_0);
 
-  /* 2^51 - 2^1 */ square(t0,z2_50_0);
-  /* 2^52 - 2^2 */ square(t1,t0);
-  /* 2^100 - 2^50 */ for (i = 2;i < 50;i += 2) { square(t0,t1); square(t1,t0); }
+  /* 2^51 - 2^1 */ مربع(t0,z2_50_0);
+  /* 2^52 - 2^2 */ مربع(t1,t0);
+  /* 2^100 - 2^50 */ لكل (i = 2;i < 50;i += 2) { مربع(t0,t1); مربع(t1,t0); }
   /* 2^100 - 2^0 */ mult(z2_100_0,t1,z2_50_0);
 
-  /* 2^101 - 2^1 */ square(t1,z2_100_0);
-  /* 2^102 - 2^2 */ square(t0,t1);
-  /* 2^200 - 2^100 */ for (i = 2;i < 100;i += 2) { square(t1,t0); square(t0,t1); }
+  /* 2^101 - 2^1 */ مربع(t1,z2_100_0);
+  /* 2^102 - 2^2 */ مربع(t0,t1);
+  /* 2^200 - 2^100 */ لكل (i = 2;i < 100;i += 2) { مربع(t1,t0); مربع(t0,t1); }
   /* 2^200 - 2^0 */ mult(t1,t0,z2_100_0);
 
-  /* 2^201 - 2^1 */ square(t0,t1);
-  /* 2^202 - 2^2 */ square(t1,t0);
-  /* 2^250 - 2^50 */ for (i = 2;i < 50;i += 2) { square(t0,t1); square(t1,t0); }
+  /* 2^201 - 2^1 */ مربع(t0,t1);
+  /* 2^202 - 2^2 */ مربع(t1,t0);
+  /* 2^250 - 2^50 */ لكل (i = 2;i < 50;i += 2) { مربع(t0,t1); مربع(t1,t0); }
   /* 2^250 - 2^0 */ mult(t0,t1,z2_50_0);
 
-  /* 2^251 - 2^1 */ square(t1,t0);
-  /* 2^252 - 2^2 */ square(t0,t1);
-  /* 2^253 - 2^3 */ square(t1,t0);
-  /* 2^254 - 2^4 */ square(t0,t1);
-  /* 2^255 - 2^5 */ square(t1,t0);
-  /* 2^255 - 21 */ mult(out,t1,z11);
+  /* 2^251 - 2^1 */ مربع(t1,t0);
+  /* 2^252 - 2^2 */ مربع(t0,t1);
+  /* 2^253 - 2^3 */ مربع(t1,t0);
+  /* 2^254 - 2^4 */ مربع(t0,t1);
+  /* 2^255 - 2^5 */ مربع(t1,t0);
+  /* 2^255 - 21 */ mult(باہرلا,t1,z11);
 }
 
-int crypto_scalarmult_curve25519(unsigned char *q,
-  const unsigned char *n,
-  const unsigned char *p)
+صحيح crypto_scalarmult_curve25519(بنانشانی حرف *q,
+  ثابت بنانشانی حرف *n,
+  ثابت بنانشانی حرف *p)
 {
-  unsigned int work[96];
-  unsigned char e[32];
-  unsigned int i;
-  for (i = 0;i < 32;++i) e[i] = n[i];
+  بنانشانی صحيح work[96];
+  بنانشانی حرف e[32];
+  بنانشانی صحيح i;
+  لكل (i = 0;i < 32;++i) e[i] = n[i];
   e[0] &= 248;
   e[31] &= 127;
   e[31] |= 64;
-  for (i = 0;i < 32;++i) work[i] = p[i];
+  لكل (i = 0;i < 32;++i) work[i] = p[i];
   mainloop(work,e);
   recip(work + 32,work + 32);
   mult(work + 64,work,work + 32);
   freeze(work + 64);
-  for (i = 0;i < 32;++i) q[i] = work[64 + i];
-  return 0;
+  لكل (i = 0;i < 32;++i) q[i] = work[64 + i];
+  أرجع 0;
 }

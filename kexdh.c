@@ -23,179 +23,179 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#جے_تعریف_شدہ WITH_OPENSSL
+#ضمن "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#ضمن <stdio.h>
+#ضمن <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#ضمن <openssl/bn.h>
+#ضمن <openssl/dh.h>
 
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "dh.h"
-#include "log.h"
+#ضمن "kex.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
+#ضمن "dh.h"
+#ضمن "log.h"
 
-int
-kex_dh_keygen(struct kex *kex)
+صحيح
+kex_dh_keygen(بنية kex *kex)
 {
-	switch (kex->kex_type) {
-	case KEX_DH_GRP1_SHA1:
+	بدل (kex->kex_type) {
+	حالة KEX_DH_GRP1_SHA1:
 		kex->dh = dh_new_group1();
-		break;
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
+		اكسر;
+	حالة KEX_DH_GRP14_SHA1:
+	حالة KEX_DH_GRP14_SHA256:
 		kex->dh = dh_new_group14();
-		break;
-	case KEX_DH_GRP16_SHA512:
+		اكسر;
+	حالة KEX_DH_GRP16_SHA512:
 		kex->dh = dh_new_group16();
-		break;
-	case KEX_DH_GRP18_SHA512:
+		اكسر;
+	حالة KEX_DH_GRP18_SHA512:
 		kex->dh = dh_new_group18();
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		اكسر;
+	افتراضي:
+		أرجع SSH_ERR_INVALID_دلیل;
 	}
-	if (kex->dh == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return (dh_gen_key(kex->dh, kex->we_need * 8));
+	إذا (kex->dh == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	أرجع (dh_gen_کلید(kex->dh, kex->we_need * 8));
 }
 
-int
-kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
+صحيح
+kex_dh_compute_کلید(بنية kex *kex, BIGNUM *dh_pub, بنية sshbuf *باہرلا)
 {
-	BIGNUM *shared_secret = NULL;
-	u_char *kbuf = NULL;
-	size_t klen = 0;
-	int kout, r;
+	BIGNUM *shared_secret = عدم;
+	u_char *kbuf = عدم;
+	ناپ_t klen = 0;
+	صحيح kout, r;
 
-#ifdef DEBUG_KEXDH
+#جے_تعریف_شدہ DEBUG_KEXDH
 	fprintf(stderr, "dh_pub= ");
 	BN_print_fp(stderr, dh_pub);
 	fprintf(stderr, "\n");
-	debug("bits %d", BN_num_bits(dh_pub));
+	debug("bits %d", BN_عدد_بٹ(dh_pub));
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "\n");
-#endif
+#جے_انت
 
-	if (!dh_pub_is_valid(kex->dh, dh_pub)) {
-		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+	إذا (!dh_pub_is_valid(kex->dh, dh_pub)) {
+		r = SSH_ERR_سنیہا_INCOMPLETE;
+		اذهب باہرلا;
 	}
-	klen = DH_size(kex->dh);
-	if ((kbuf = malloc(klen)) == NULL ||
-	    (shared_secret = BN_new()) == NULL) {
+	klen = DH_ناپ(kex->dh);
+	إذا ((kbuf = حافظہ_دیو(klen)) == عدم ||
+	    (shared_secret = BN_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب باہرلا;
 	}
-	if ((kout = DH_compute_key(kbuf, dh_pub, kex->dh)) < 0 ||
-	    BN_bin2bn(kbuf, kout, shared_secret) == NULL) {
+	إذا ((kout = DH_compute_کلید(kbuf, dh_pub, kex->dh)) < 0 ||
+	    BN_bin2bn(kbuf, kout, shared_secret) == عدم) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		اذهب باہرلا;
 	}
-#ifdef DEBUG_KEXDH
+#جے_تعریف_شدہ DEBUG_KEXDH
 	dump_digest("shared secret", kbuf, kout);
-#endif
-	r = sshbuf_put_bignum2(out, shared_secret);
- out:
+#جے_انت
+	r = sshbuf_put_bignum2(باہرلا, shared_secret);
+ باہرلا:
 	freezero(kbuf, klen);
 	BN_clear_free(shared_secret);
-	return r;
+	أرجع r;
 }
 
-int
-kex_dh_keypair(struct kex *kex)
+صحيح
+kex_dh_keypair(بنية kex *kex)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	ثابت BIGNUM *pub_کلید;
+	بنية sshbuf *buf = عدم;
+	صحيح r;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		return r;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_bignum2(buf, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
-#ifdef DEBUG_KEXDH
+	إذا ((r = kex_dh_keygen(kex)) != 0)
+		أرجع r;
+	DH_get0_کلید(kex->dh, &pub_کلید, عدم);
+	إذا ((buf = sshbuf_new()) == عدم)
+		أرجع SSH_ERR_ALLOC_FAIL;
+	إذا ((r = sshbuf_put_bignum2(buf, pub_کلید)) != 0 ||
+	    (r = sshbuf_get_u32(buf, عدم)) != 0)
+		اذهب باہرلا;
+#جے_تعریف_شدہ DEBUG_KEXDH
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
+	BN_print_fp(stderr, pub_کلید);
 	fprintf(stderr, "\n");
-#endif
+#جے_انت
 	kex->client_pub = buf;
-	buf = NULL;
- out:
+	buf = عدم;
+ باہرلا:
 	sshbuf_free(buf);
-	return r;
+	أرجع r;
 }
 
-int
-kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+صحيح
+kex_dh_enc(بنية kex *kex, ثابت بنية sshbuf *client_blob,
+    بنية sshbuf **server_blobp, بنية sshbuf **shared_secretp)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	ثابت BIGNUM *pub_کلید;
+	بنية sshbuf *server_blob = عدم;
+	صحيح r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = عدم;
+	*shared_secretp = عدم;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	إذا ((r = kex_dh_keygen(kex)) != 0)
+		اذهب باہرلا;
+	DH_get0_کلید(kex->dh, &pub_کلید, عدم);
+	إذا ((server_blob = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب باہرلا;
 	}
-	if ((r = sshbuf_put_bignum2(server_blob, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
-		goto out;
+	إذا ((r = sshbuf_put_bignum2(server_blob, pub_کلید)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, عدم)) != 0)
+		اذهب باہرلا;
+	إذا ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
+		اذهب باہرلا;
 	*server_blobp = server_blob;
-	server_blob = NULL;
- out:
+	server_blob = عدم;
+ باہرلا:
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = عدم;
 	sshbuf_free(server_blob);
-	return r;
+	أرجع r;
 }
 
-int
-kex_dh_dec(struct kex *kex, const struct sshbuf *dh_blob,
-    struct sshbuf **shared_secretp)
+صحيح
+kex_dh_dec(بنية kex *kex, ثابت بنية sshbuf *dh_blob,
+    بنية sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *dh_pub = NULL;
-	int r;
+	بنية sshbuf *buf = عدم;
+	BIGNUM *dh_pub = عدم;
+	صحيح r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = عدم;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	إذا ((buf = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب باہرلا;
 	}
-	if ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
+	إذا ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
 	    (r = sshbuf_get_bignum2(buf, &dh_pub)) != 0)
-		goto out;
+		اذهب باہرلا;
 	sshbuf_reset(buf);
-	if ((r = kex_dh_compute_key(kex, dh_pub, buf)) != 0)
-		goto out;
+	إذا ((r = kex_dh_compute_کلید(kex, dh_pub, buf)) != 0)
+		اذهب باہرلا;
 	*shared_secretp = buf;
-	buf = NULL;
- out:
+	buf = عدم;
+ باہرلا:
 	BN_free(dh_pub);
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = عدم;
 	sshbuf_free(buf);
-	return r;
+	أرجع r;
 }
-#endif /* WITH_OPENSSL */
+#جے_انت /* WITH_OPENSSL */

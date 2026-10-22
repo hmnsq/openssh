@@ -13,172 +13,172 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#ifndef INCLUDES_H
-#define INCLUDES_H
+#جے_بنا_تعریف INCLUDES_H
+#تعریف_کرو INCLUDES_H
 
-#include "config.h"
+#ضمن "config.h"
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE /* activate extra prototypes for glibc */
-#endif
+#جے_بنا_تعریف GNU_سروت
+#تعریف_کرو GNU_سروت /* activate extra prototypes for glibc */
+#جے_انت
 
-#include <sys/types.h>
-#include <sys/socket.h> /* For CMSG_* */
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h> /* For CMSG_* */
 
-#ifdef HAVE_LIMITS_H
+#جے_تعریف_شدہ HAVE_LIMITS_H
 # include <limits.h> /* For PATH_MAX, _POSIX_HOST_NAME_MAX */
-#endif
-#ifdef HAVE_BSTRING_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_BSTRING_H
 # include <bstring.h>
-#endif
-#ifdef HAVE_ENDIAN_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_ENDIAN_H
 # include <endian.h>
-#endif
-#ifdef HAVE_FCNTL_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_FCNTL_H
 # include <fcntl.h>
-#endif
-#ifdef HAVE_TTYENT_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_TTYENT_H
 # include <ttyent.h>
-#endif
-#ifdef HAVE_UTIME_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_UTIME_H
 # include <utime.h>
-#endif
-#ifdef HAVE_MAILLOCK_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_MAILLOCK_H
 # include <maillock.h> /* For _PATH_MAILDIR */
-#endif
-#ifdef HAVE_NEXT
+#جے_انت
+#جے_تعریف_شدہ HAVE_اگلا
 # include <libc.h>
-#endif
-#ifdef HAVE_PATHS_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_PATHS_H
 # include <paths.h>
-#endif
-#ifdef HAVE_FCNTL_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_FCNTL_H
 # include <fcntl.h> /* For AT_FDCWD */
-#endif
+#جے_انت
 
 /*
  *-*-nto-qnx needs these headers for strcasecmp and LASTLOG_FILE respectively
  */
-#ifdef HAVE_STRINGS_H
+#جے_تعریف_شدہ HAVE_لڑیاں_H
 # include <strings.h>
-#endif
-#ifdef HAVE_LOGIN_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_LOGIN_H
 # include <login.h>
-#endif
+#جے_انت
 
-#ifdef HAVE_UTMP_H
+#جے_تعریف_شدہ HAVE_UTMP_H
 #  include <utmp.h>
-#endif
-#ifdef HAVE_UTMPX_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_UTMPX_H
 #  include <utmpx.h>
-#endif
-#ifdef HAVE_LASTLOG_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_LASTLOG_H
 #  include <lastlog.h>
-#endif
+#جے_انت
 
-#ifdef HAVE_SYS_SELECT_H
+#جے_تعریف_شدہ HAVE_SYS_SELECT_H
 # include <sys/select.h>
-#endif
-#ifdef HAVE_SYS_BSDTTY_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_SYS_BSDTTY_H
 # include <sys/bsdtty.h>
-#endif
-#ifdef HAVE_STDINT_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_STDINT_H
 # include <stdint.h>
-#endif
-#include <termios.h>
-#ifdef HAVE_SYS_BITYPES_H
+#جے_انت
+#ضمن <termios.h>
+#جے_تعریف_شدہ HAVE_SYS_BITYPES_H
 # include <sys/bitypes.h> /* For u_intXX_t */
-#endif
-#ifdef HAVE_SYS_CDEFS_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_SYS_CDEFS_H
 # include <sys/cdefs.h> /* For __P() */
-#endif
-#ifdef HAVE_SYS_STAT_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_SYS_STAT_H
 # include <sys/stat.h> /* For S_* constants and macros */
-#endif
-#ifdef HAVE_SYS_SYSMACROS_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_SYS_SYSMACROS_H
 # include <sys/sysmacros.h> /* For MIN, MAX, etc */
-#endif
-#ifdef HAVE_SYS_TIME_H
+#جے_انت
+#جے_تعریف_شدہ HAVE_SYS_ویلا_H
 # include <sys/time.h> /* for timespeccmp if present */
-#endif
-#ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h> /* for MAP_ANONYMOUS */
-#endif
-#ifdef HAVE_SYS_STRTIO_H
-#include <sys/strtio.h>	/* for TIOCCBRK on HP-UX */
-#endif
-#if defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
-# if defined(HAVE_SYS_STREAM_H)
+#جے_انت
+#جے_تعریف_شدہ HAVE_SYS_MMAN_H
+#ضمن <sys/mman.h> /* for MAP_ANONYMOUS */
+#جے_انت
+#جے_تعریف_شدہ HAVE_SYS_STRTIO_H
+#ضمن <sys/strtio.h>	/* for TIOCCBRK on HP-UX */
+#جے_انت
+#إذا defined(HAVE_SYS_PTMS_H) && defined(HAVE_DEV_PTMX)
+# إذا defined(HAVE_SYS_دھارا_H)
 #  include <sys/stream.h>	/* reqd for queue_t on Solaris 2.5.1 */
 # endif
-#include <sys/ptms.h>	/* for grantpt() and friends */
-#endif
+#ضمن <sys/ptms.h>	/* for grantpt() and friends */
+#جے_انت
 
-#include <netinet/in.h>
-#include <netinet/in_systm.h> /* For typedefs */
-#ifdef HAVE_RPC_TYPES_H
+#ضمن <netinet/in.h>
+#ضمن <netinet/in_systm.h> /* For typedefs */
+#جے_تعریف_شدہ HAVE_RPC_TYPES_H
 # include <rpc/types.h> /* For INADDR_LOOPBACK */
-#endif
-#ifdef USE_PAM
-#if defined(HAVE_SECURITY_PAM_APPL_H)
+#جے_انت
+#جے_تعریف_شدہ USE_PAM
+#إذا defined(HAVE_SECURITY_PAM_APPL_H)
 # include <security/pam_appl.h>
-#elif defined (HAVE_PAM_PAM_APPL_H)
+#وإلاإذا defined (HAVE_PAM_PAM_APPL_H)
 # include <pam/pam_appl.h>
-#endif
-#endif
-#ifdef HAVE_READPASSPHRASE_H
+#جے_انت
+#جے_انت
+#جے_تعریف_شدہ HAVE_READPASSPHRASE_H
 # include <readpassphrase.h>
-#endif
+#جے_انت
 
-#ifdef HAVE_IA_H
+#جے_تعریف_شدہ HAVE_IA_H
 # include <ia.h>
-#endif
+#جے_انت
 
-#ifdef HAVE_IAF_H
+#جے_تعریف_شدہ HAVE_IAF_H
 # include <iaf.h>
-#endif
+#جے_انت
 
-#ifdef HAVE_TMPDIR_H
+#جے_تعریف_شدہ HAVE_TMPDIR_H
 # include <tmpdir.h>
-#endif
+#جے_انت
 
-#if defined(HAVE_BSD_LIBUTIL_H)
+#إذا defined(HAVE_BSD_LIBUTIL_H)
 # include <bsd/libutil.h>
-#elif defined(HAVE_LIBUTIL_H)
+#وإلاإذا defined(HAVE_LIBUTIL_H)
 # include <libutil.h>
-#endif
+#جے_انت
 
-#if defined(KRB5) && defined(USE_AFS)
+#إذا defined(KRB5) && defined(USE_AFS)
 # include <krb5.h>
 # include <kafs.h>
-#endif
+#جے_انت
 
-#if defined(HAVE_SYS_SYSLOG_H)
+#إذا defined(HAVE_SYS_SYSLOG_H)
 # include <sys/syslog.h>
-#endif
+#جے_انت
 
-#include <errno.h>
+#ضمن <errno.h>
 
 /*
  * On HP-UX 11.11, shadow.h and prot.h provide conflicting declarations
  * of getspnam when _INCLUDE__STDC__ is defined, so we unset it here.
  */
-#ifdef GETSPNAM_CONFLICTING_DEFS
+#جے_تعریف_شدہ GETSPNAM_CONFLICTING_DEFS
 # ifdef _INCLUDE__STDC__
 #  undef _INCLUDE__STDC__
 # endif
-#endif
+#جے_انت
 
-#ifdef WITH_OPENSSL
-#include <openssl/opensslv.h> /* For OPENSSL_VERSION_NUMBER */
-#endif
+#جے_تعریف_شدہ WITH_OPENSSL
+#ضمن <openssl/opensslv.h> /* For OPENSSL_VERSION_NUMBER */
+#جے_انت
 
-#include "defines.h"
+#ضمن "defines.h"
 
-#include "platform.h"
-#include "openbsd-compat/openbsd-compat.h"
-#include "openbsd-compat/bsd-nextstep.h"
+#ضمن "platform.h"
+#ضمن "openbsd-compat/openbsd-compat.h"
+#ضمن "openbsd-compat/bsd-nextstep.h"
 
-#include "entropy.h"
+#ضمن "entropy.h"
 
-#endif /* INCLUDES_H */
+#جے_انت /* INCLUDES_H */

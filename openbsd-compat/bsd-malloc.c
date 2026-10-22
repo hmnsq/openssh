@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
-#undef malloc
-#undef calloc
-#undef realloc
+#ضمن "config.h"
+#تعریف_رد حافظہ_دیو
+#تعریف_رد صفر_حافظہ_دیو
+#تعریف_رد realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#ضمن <sys/types.h>
+#ضمن <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
-rpl_malloc(size_t size)
+#إذا defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+فراغ *
+rpl_malloc(ناپ_t ناپ)
 {
-	if (size == 0)
-		size = 1;
-	return malloc(size);
+	إذا (ناپ == 0)
+		ناپ = 1;
+	أرجع حافظہ_دیو(ناپ);
 }
-#endif
+#جے_انت
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
-rpl_calloc(size_t nmemb, size_t size)
+#إذا defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+فراغ *
+rpl_calloc(ناپ_t nmemb, ناپ_t ناپ)
 {
-	if (nmemb == 0)
+	إذا (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
-		size = 1;
-	return calloc(nmemb, size);
+	إذا (ناپ == 0)
+		ناپ = 1;
+	أرجع صفر_حافظہ_دیو(nmemb, ناپ);
 }
-#endif
+#جے_انت
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#إذا defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+فراغ *
+rpl_realloc(فراغ *ptr, ناپ_t ناپ)
 {
-	if (size == 0)
-		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	إذا (ناپ == 0)
+		ناپ = 1;
+	إذا (ptr == 0)
+		أرجع حافظہ_دیو(ناپ);
+	أرجع realloc(ptr, ناپ);
 }
-#endif
+#جے_انت

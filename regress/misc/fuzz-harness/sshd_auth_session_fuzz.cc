@@ -10,14 +10,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stddef.h>
-#include <stdint.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
 
-extern "C" void fuzz_userauth_one(const uint8_t *data, size_t size);
+خارجي "C" فراغ fuzz_userauth_one(ثابت uint8_t *انکڑے, ناپ_t ناپ);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+خارجي "C" صحيح
+LLVMFuzzer_Test_One_داخلہ(ثابت uint8_t *انکڑے, ناپ_t ناپ)
 {
-	fuzz_userauth_one(data, size);
-	return 0;
+	fuzz_userauth_one(انکڑے, ناپ);
+	أرجع 0;
 }

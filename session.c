@@ -33,71 +33,71 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/un.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
+#ضمن <sys/types.h>
+#ضمن <sys/wait.h>
+#ضمن <sys/un.h>
+#ضمن <sys/stat.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/queue.h>
 
-#include <arpa/inet.h>
+#ضمن <arpa/inet.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <grp.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <limits.h>
+#ضمن <ctype.h>
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <grp.h>
+#ضمن <netdb.h>
+#ضمن <paths.h>
+#ضمن <pwd.h>
+#ضمن <signal.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
+#ضمن <unistd.h>
+#ضمن <limits.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshpty.h"
-#include "packet.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "match.h"
-#include "uidswap.h"
-#include "channels.h"
-#include "sshkey.h"
-#include "cipher.h"
-#include "kex.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "authfd.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "sshlogin.h"
-#include "serverloop.h"
-#include "canohost.h"
-#include "session.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "sftp.h"
-#include "atomicio.h"
+#ضمن "xmalloc.h"
+#ضمن "ssh.h"
+#ضمن "ssh2.h"
+#ضمن "sshpty.h"
+#ضمن "packet.h"
+#ضمن "sshbuf.h"
+#ضمن "ssherr.h"
+#ضمن "match.h"
+#ضمن "uidswap.h"
+#ضمن "channels.h"
+#ضمن "sshkey.h"
+#ضمن "cipher.h"
+#ضمن "kex.h"
+#ضمن "hostfile.h"
+#ضمن "auth.h"
+#ضمن "auth-options.h"
+#ضمن "authfd.h"
+#ضمن "pathnames.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "servconf.h"
+#ضمن "sshlogin.h"
+#ضمن "serverloop.h"
+#ضمن "canohost.h"
+#ضمن "session.h"
+#جے_تعریف_شدہ GSSAPI
+#ضمن "ssh-gss.h"
+#جے_انت
+#ضمن "monitor_wrap.h"
+#ضمن "sftp.h"
+#ضمن "atomicio.h"
 
-#if defined(KRB5) && defined(USE_AFS)
-#include <kafs.h>
-#endif
+#إذا defined(KRB5) && defined(USE_AFS)
+#ضمن <kafs.h>
+#جے_انت
 
-#ifdef WITH_SELINUX
-#include <selinux/selinux.h>
-#endif
+#جے_تعریف_شدہ WITH_SELINUX
+#ضمن <selinux/selinux.h>
+#جے_انت
 
 /*
  * Hack for systems that do not support FD passing: allocate PTYs directly
@@ -106,215 +106,215 @@
  * sshd-session.c:privsep_postauth) or that PTY allocation doesn't require
  * privileges to begin with (e.g. Cygwin).
  */
-#ifdef DISABLE_FD_PASSING
-#define mm_pty_allocate pty_allocate
-#endif
+#جے_تعریف_شدہ DISABLE_FD_PASSING
+#تعریف_کرو mm_pty_allocate pty_allocate
+#جے_انت
 
-#define IS_INTERNAL_SFTP(c) \
-	(!strncmp(c, INTERNAL_SFTP_NAME, sizeof(INTERNAL_SFTP_NAME) - 1) && \
-	 (c[sizeof(INTERNAL_SFTP_NAME) - 1] == '\0' || \
-	  c[sizeof(INTERNAL_SFTP_NAME) - 1] == ' ' || \
-	  c[sizeof(INTERNAL_SFTP_NAME) - 1] == '\t'))
+#تعریف_کرو IS_اندرونی_SFTP(c) \
+	(!لڑی_مقابلہ(c, اندرونی_SFTP_NAME, حجم(اندرونی_SFTP_NAME) - 1) && \
+	 (c[حجم(اندرونی_SFTP_NAME) - 1] == '\0' || \
+	  c[حجم(اندرونی_SFTP_NAME) - 1] == ' ' || \
+	  c[حجم(اندرونی_SFTP_NAME) - 1] == '\t'))
 
 /* func */
 
-Session *session_new(void);
-void	session_set_fds(struct ssh *, Session *, int, int, int, int, int);
-void	session_pty_cleanup(Session *);
-void	session_proctitle(Session *);
-int	session_setup_x11fwd(struct ssh *, Session *);
-int	do_exec_pty(struct ssh *, Session *, const char *);
-int	do_exec_no_pty(struct ssh *, Session *, const char *);
-int	do_exec(struct ssh *, Session *, const char *);
-void	do_login(struct ssh *, Session *, const char *);
-void	do_child(struct ssh *, Session *, const char *);
-void	do_motd(void);
-int	check_quietlogin(Session *, const char *);
+Session *session_new(فراغ);
+فراغ	session_سیٹ_fds(بنية ssh *, Session *, صحيح, صحيح, صحيح, صحيح, صحيح);
+فراغ	session_pty_cleanup(Session *);
+فراغ	session_proctitle(Session *);
+صحيح	session_تیاری_x11fwd(بنية ssh *, Session *);
+صحيح	do_exec_pty(بنية ssh *, Session *, ثابت حرف *);
+صحيح	do_exec_no_pty(بنية ssh *, Session *, ثابت حرف *);
+صحيح	do_exec(بنية ssh *, Session *, ثابت حرف *);
+فراغ	do_login(بنية ssh *, Session *, ثابت حرف *);
+فراغ	do_بچہ(بنية ssh *, Session *, ثابت حرف *);
+فراغ	do_motd(فراغ);
+صحيح	check_quietlogin(Session *, ثابت حرف *);
 
-static void do_authenticated2(struct ssh *, Authctxt *);
+ساكن فراغ do_authenticated2(بنية ssh *, Authctxt *);
 
-static int session_pty_req(struct ssh *, Session *);
+ساكن صحيح session_pty_req(بنية ssh *, Session *);
 
 /* import */
-extern ServerOptions options;
-extern char *__progname;
-extern int debug_flag;
-extern struct sshbuf *loginmsg;
-extern struct sshauthopt *auth_opts;
-extern char *tun_fwd_ifnames; /* serverloop.c */
+خارجي ServerOptions options;
+خارجي حرف *__progname;
+خارجي صحيح debug_flag;
+خارجي بنية sshbuf *loginmsg;
+خارجي بنية sshauthopt *auth_opts;
+خارجي حرف *tun_fwd_ifnames; /* serverloop.c */
 
 /* original command from peer. */
-const char *original_command = NULL;
+ثابت حرف *original_command = عدم;
 
-/* data */
-static int sessions_first_unused = -1;
-static int sessions_nalloc = 0;
-static Session *sessions = NULL;
+/*انکڑے*/
+ساكن صحيح sessions_پہلا_بن_ورتیا = -1;
+ساكن صحيح sessions_nalloc = 0;
+ساكن Session *sessions = عدم;
 
-#define SUBSYSTEM_NONE			0
-#define SUBSYSTEM_EXT			1
-#define SUBSYSTEM_INT_SFTP		2
-#define SUBSYSTEM_INT_SFTP_ERROR	3
+#تعریف_کرو SUBSYSTEM_NONE			0
+#تعریف_کرو SUBSYSTEM_EXT			1
+#تعریف_کرو SUBSYSTEM_INT_SFTP		2
+#تعریف_کرو SUBSYSTEM_INT_SFTP_ERROR	3
 
-#ifdef HAVE_LOGIN_CAP
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
 login_cap_t *lc;
-#endif
+#جے_انت
 
-static int is_child = 0;
-static int in_chroot = 0;
+ساكن صحيح is_بچہ = 0;
+ساكن صحيح وچ_chroot = 0;
 
 /* File containing userauth info, if ExposeAuthInfo set */
-static char *auth_info_file = NULL;
+ساكن حرف *auth_info_file = عدم;
 
 /* Name and directory of socket for authentication agent forwarding. */
-static char *auth_sock_name = NULL;
-static char *auth_sock_dir = NULL; /* only set if directory needs cleanup */
+ساكن حرف *auth_sock_name = عدم;
+ساكن حرف *auth_sock_dir = عدم; /* only set if directory needs cleanup */
 
 /* removes the agent forwarding socket */
 
-static void
-auth_sock_cleanup_proc(struct passwd *pw)
+ساكن فراغ
+auth_sock_cleanup_proc(بنية passwd *pw)
 {
-	if (auth_sock_name != NULL) {
+	إذا (auth_sock_name != عدم) {
 		temporarily_use_uid(pw);
-		agent_listener_cleanup(options.agent_socket_path,
+		agent_listener_cleanup(options.agent_socket_رستہ,
 		    auth_sock_name, auth_sock_dir);
-		free(auth_sock_name);
-		auth_sock_name = NULL;
+		حرر(auth_sock_name);
+		auth_sock_name = عدم;
 		restore_uid();
 	}
 }
 
-static int
-auth_input_request_forwarding(struct ssh *ssh, struct passwd *pw, int agent_new)
+ساكن صحيح
+auth_داخلہ_request_forwarding(بنية ssh *ssh, بنية passwd *pw, صحيح agent_new)
 {
 	Channel *nc;
-	int sock = -1;
+	صحيح sock = -1;
 
-	if (auth_sock_name != NULL) {
+	إذا (auth_sock_name != عدم) {
 		error("authentication forwarding requested twice.");
-		return 0;
+		أرجع 0;
 	}
 
 	/* Temporarily drop privileged uid for mkdir/bind. */
 	temporarily_use_uid(pw);
 
-	if (agent_listener(options.agent_socket_path, pw->pw_name, pw->pw_uid,
+	إذا (agent_listener(options.agent_socket_رستہ, pw->pw_name, pw->pw_uid,
 	    pw->pw_dir, getpid(), "sshd", &sock, &auth_sock_name,
 	    &auth_sock_dir) != 0) {
 		/* a more detailed error is already logged */
 		ssh_packet_send_debug(ssh, "Agent forwarding disabled: "
 		    "couldn't create listener socket");
 		restore_uid();
-		goto authsock_err;
+		اذهب authsock_err;
 	}
 	restore_uid();
 
 	/* Allocate a channel for the authentication agent socket. */
 	nc = channel_new(ssh, "auth-listener",
 	    SSH_CHANNEL_AUTH_SOCKET, sock, sock, -1,
-	    CHAN_X11_WINDOW_DEFAULT, CHAN_X11_PACKET_DEFAULT,
+	    CHAN_X11_کھڑکی_DEFAULT, CHAN_X11_PACKET_DEFAULT,
 	    0, "auth socket", 1);
-	nc->path = xstrdup(auth_sock_name);
+	nc->رستہ = xstrdup(auth_sock_name);
 	nc->agent_new = agent_new;
-	return 1;
+	أرجع 1;
 
  authsock_err:
-	free(auth_sock_name);
-	if (sock != -1)
+	حرر(auth_sock_name);
+	إذا (sock != -1)
 		close(sock);
-	auth_sock_name = NULL;
-	return 0;
+	auth_sock_name = عدم;
+	أرجع 0;
 }
 
-static void
-display_loginmsg(void)
+ساكن فراغ
+display_loginmsg(فراغ)
 {
-	int r;
+	صحيح r;
 
-	if (sshbuf_len(loginmsg) == 0)
-		return;
-	if ((r = sshbuf_put_u8(loginmsg, 0)) != 0)
+	إذا (sshbuf_len(loginmsg) == 0)
+		أرجع;
+	إذا ((r = sshbuf_put_u8(loginmsg, 0)) != 0)
 		fatal_fr(r, "sshbuf_put_u8");
-	printf("%s", (char *)sshbuf_ptr(loginmsg));
+	لکھو("%s", (حرف *)sshbuf_ptr(loginmsg));
 	sshbuf_reset(loginmsg);
 }
 
-static void
-prepare_auth_info_file(struct passwd *pw, struct sshbuf *info)
+ساكن فراغ
+prepare_auth_info_file(بنية passwd *pw, بنية sshbuf *info)
 {
-	int fd = -1, success = 0;
+	صحيح fd = -1, success = 0;
 
-	if (!options.expose_userauth_info || info == NULL)
-		return;
+	إذا (!options.expose_userauth_info || info == عدم)
+		أرجع;
 
 	temporarily_use_uid(pw);
 	auth_info_file = xstrdup("/tmp/sshauth.XXXXXXXXXXXXXXX");
-	if ((fd = mkstemp(auth_info_file)) == -1) {
+	إذا ((fd = mkstemp(auth_info_file)) == -1) {
 		error_f("mkstemp: %s", strerror(errno));
-		goto out;
+		اذهب باہرلا;
 	}
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(info),
+	إذا (atomicio(vwrite, fd, sshbuf_mutable_ptr(info),
 	    sshbuf_len(info)) != sshbuf_len(info)) {
 		error_f("write: %s", strerror(errno));
-		goto out;
+		اذهب باہرلا;
 	}
-	if (close(fd) != 0) {
+	إذا (close(fd) != 0) {
 		error_f("close: %s", strerror(errno));
-		goto out;
+		اذهب باہرلا;
 	}
 	success = 1;
- out:
-	if (!success) {
-		if (fd != -1)
+ باہرلا:
+	إذا (!success) {
+		إذا (fd != -1)
 			close(fd);
-		free(auth_info_file);
-		auth_info_file = NULL;
+		حرر(auth_info_file);
+		auth_info_file = عدم;
 	}
 	restore_uid();
 }
 
-static void
-set_fwdpermit_from_authopts(struct ssh *ssh, const struct sshauthopt *opts)
+ساكن فراغ
+سیٹ_fwdpermit_from_authopts(بنية ssh *ssh, ثابت بنية sshauthopt *opts)
 {
-	char *tmp, *cp, *host;
-	int port;
-	size_t i;
+	حرف *tmp, *cp, *host;
+	صحيح پورٹ;
+	ناپ_t i;
 
-	if ((options.allow_tcp_forwarding & FORWARD_LOCAL) != 0) {
+	إذا ((options.allow_tcp_forwarding & FORWARD_LOCAL) != 0) {
 		channel_clear_permission(ssh, FORWARD_USER, FORWARD_LOCAL);
-		for (i = 0; i < auth_opts->npermitopen; i++) {
+		لكل (i = 0; i < auth_opts->npermitopen; i++) {
 			tmp = cp = xstrdup(auth_opts->permitopen[i]);
 			/* This shouldn't fail as it has already been checked */
-			if ((host = hpdelim2(&cp, NULL)) == NULL)
+			إذا ((host = hpdelim2(&cp, عدم)) == عدم)
 				fatal_f("internal error: hpdelim");
 			host = cleanhostname(host);
-			if (cp == NULL || (port = permitopen_port(cp)) < 0)
+			إذا (cp == عدم || (پورٹ = permitopen_پورٹ(cp)) < 0)
 				fatal_f("internal error: permitopen port");
-			channel_add_permission(ssh,
-			    FORWARD_USER, FORWARD_LOCAL, host, port);
-			free(tmp);
+			channel_جوڑو_permission(ssh,
+			    FORWARD_USER, FORWARD_LOCAL, host, پورٹ);
+			حرر(tmp);
 		}
 	}
-	if ((options.allow_tcp_forwarding & FORWARD_REMOTE) != 0) {
+	إذا ((options.allow_tcp_forwarding & FORWARD_REMOTE) != 0) {
 		channel_clear_permission(ssh, FORWARD_USER, FORWARD_REMOTE);
-		for (i = 0; i < auth_opts->npermitlisten; i++) {
+		لكل (i = 0; i < auth_opts->npermitlisten; i++) {
 			tmp = cp = xstrdup(auth_opts->permitlisten[i]);
 			/* This shouldn't fail as it has already been checked */
-			if ((host = hpdelim(&cp)) == NULL)
+			إذا ((host = hpdelim(&cp)) == عدم)
 				fatal_f("internal error: hpdelim");
 			host = cleanhostname(host);
-			if (cp == NULL || (port = permitopen_port(cp)) < 0)
+			إذا (cp == عدم || (پورٹ = permitopen_پورٹ(cp)) < 0)
 				fatal_f("internal error: permitlisten port");
-			channel_add_permission(ssh,
-			    FORWARD_USER, FORWARD_REMOTE, host, port);
-			free(tmp);
+			channel_جوڑو_permission(ssh,
+			    FORWARD_USER, FORWARD_REMOTE, host, پورٹ);
+			حرر(tmp);
 		}
 	}
 }
 
-void
-do_authenticated(struct ssh *ssh, Authctxt *authctxt)
+فراغ
+do_authenticated(بنية ssh *ssh, Authctxt *authctxt)
 {
 	setproctitle("%s", authctxt->pw->pw_name);
 
@@ -322,20 +322,20 @@ do_authenticated(struct ssh *ssh, Authctxt *authctxt)
 
 	/* set up the channel layer */
 	/* XXX - streamlocal? */
-	set_fwdpermit_from_authopts(ssh, auth_opts);
+	سیٹ_fwdpermit_from_authopts(ssh, auth_opts);
 
-	if (!auth_opts->permit_port_forwarding_flag ||
+	إذا (!auth_opts->permit_پورٹ_forwarding_flag ||
 	    options.disable_forwarding) {
 		channel_disable_admin(ssh, FORWARD_LOCAL);
 		channel_disable_admin(ssh, FORWARD_REMOTE);
-	} else {
-		if ((options.allow_tcp_forwarding & FORWARD_LOCAL) == 0)
+	} وإلا {
+		إذا ((options.allow_tcp_forwarding & FORWARD_LOCAL) == 0)
 			channel_disable_admin(ssh, FORWARD_LOCAL);
-		else
+		وإلا
 			channel_permit_all(ssh, FORWARD_LOCAL);
-		if ((options.allow_tcp_forwarding & FORWARD_REMOTE) == 0)
+		إذا ((options.allow_tcp_forwarding & FORWARD_REMOTE) == 0)
 			channel_disable_admin(ssh, FORWARD_REMOTE);
-		else
+		وإلا
 			channel_permit_all(ssh, FORWARD_REMOTE);
 	}
 	auth_debug_send(ssh);
@@ -348,126 +348,126 @@ do_authenticated(struct ssh *ssh, Authctxt *authctxt)
 }
 
 /* Check untrusted xauth strings for metacharacters */
-static int
-xauth_valid_string(const char *s)
+ساكن صحيح
+xauth_valid_string(ثابت حرف *s)
 {
-	size_t i;
+	ناپ_t i;
 
-	for (i = 0; s[i] != '\0'; i++) {
-		if (!isalnum((u_char)s[i]) &&
+	لكل (i = 0; s[i] != '\0'; i++) {
+		إذا (!حرف_یا_ہندسہ((u_char)s[i]) &&
 		    s[i] != '.' && s[i] != ':' && s[i] != '/' &&
 		    s[i] != '-' && s[i] != '_')
-			return 0;
+			أرجع 0;
 	}
-	return 1;
+	أرجع 1;
 }
 
-#define USE_PIPES 1
+#تعریف_کرو USE_PIPES 1
 /*
  * This is called to fork and execute a command when we have no tty.  This
  * will call do_child from the child, and server_loop from the parent after
  * setting up file descriptors and such.
  */
-int
-do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
+صحيح
+do_exec_no_pty(بنية ssh *ssh, Session *s, ثابت حرف *command)
 {
 	pid_t pid;
-#ifdef USE_PIPES
-	int pin[2], pout[2], perr[2];
+#جے_تعریف_شدہ USE_PIPES
+	صحيح pin[2], pout[2], perr[2];
 
-	if (s == NULL)
+	إذا (s == عدم)
 		fatal("do_exec_no_pty: no session");
 
 	/* Allocate pipes for communicating with the program. */
-	if (pipe(pin) == -1) {
+	إذا (pipe(pin) == -1) {
 		error_f("pipe in: %.100s", strerror(errno));
-		return -1;
+		أرجع -1;
 	}
-	if (pipe(pout) == -1) {
+	إذا (pipe(pout) == -1) {
 		error_f("pipe out: %.100s", strerror(errno));
 		close(pin[0]);
 		close(pin[1]);
-		return -1;
+		أرجع -1;
 	}
-	if (pipe(perr) == -1) {
+	إذا (pipe(perr) == -1) {
 		error_f("pipe err: %.100s", strerror(errno));
 		close(pin[0]);
 		close(pin[1]);
 		close(pout[0]);
 		close(pout[1]);
-		return -1;
+		أرجع -1;
 	}
-#else
-	int inout[2], err[2];
+#وإلا
+	صحيح inout[2], err[2];
 
-	if (s == NULL)
+	إذا (s == عدم)
 		fatal("do_exec_no_pty: no session");
 
 	/* Uses socket pairs to communicate with the program. */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1) {
+	إذا (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1) {
 		error_f("socketpair #1: %.100s", strerror(errno));
-		return -1;
+		أرجع -1;
 	}
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, err) == -1) {
+	إذا (socketpair(AF_UNIX, SOCK_STREAM, 0, err) == -1) {
 		error_f("socketpair #2: %.100s", strerror(errno));
 		close(inout[0]);
 		close(inout[1]);
-		return -1;
+		أرجع -1;
 	}
-#endif
+#جے_انت
 
 	session_proctitle(s);
 
 	/* Fork the child. */
-	switch ((pid = fork())) {
-	case -1:
+	بدل ((pid = fork())) {
+	حالة -1:
 		error_f("fork: %.100s", strerror(errno));
-#ifdef USE_PIPES
+#جے_تعریف_شدہ USE_PIPES
 		close(pin[0]);
 		close(pin[1]);
 		close(pout[0]);
 		close(pout[1]);
 		close(perr[0]);
 		close(perr[1]);
-#else
+#وإلا
 		close(inout[0]);
 		close(inout[1]);
 		close(err[0]);
 		close(err[1]);
-#endif
-		return -1;
-	case 0:
-		is_child = 1;
+#جے_انت
+		أرجع -1;
+	حالة 0:
+		is_بچہ = 1;
 
 		/*
 		 * Create a new session and process group since the 4.4BSD
 		 * setlogin() affects the entire process group.
 		 */
-		if (setsid() == -1)
+		إذا (setsid() == -1)
 			error("setsid failed: %.100s", strerror(errno));
 
-#ifdef USE_PIPES
+#جے_تعریف_شدہ USE_PIPES
 		/*
 		 * Redirect stdin.  We close the parent side of the socket
 		 * pair, and make the child side the standard input.
 		 */
 		close(pin[1]);
-		if (dup2(pin[0], 0) == -1)
+		إذا (dup2(pin[0], 0) == -1)
 			perror("dup2 stdin");
 		close(pin[0]);
 
 		/* Redirect stdout. */
 		close(pout[0]);
-		if (dup2(pout[1], 1) == -1)
+		إذا (dup2(pout[1], 1) == -1)
 			perror("dup2 stdout");
 		close(pout[1]);
 
 		/* Redirect stderr. */
 		close(perr[0]);
-		if (dup2(perr[1], 2) == -1)
+		إذا (dup2(perr[1], 2) == -1)
 			perror("dup2 stderr");
 		close(perr[1]);
-#else
+#وإلا
 		/*
 		 * Redirect stdin, stdout, and stderr.  Stdin and stdout will
 		 * use the same socket, as some programs (particularly rdist)
@@ -475,26 +475,26 @@ do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
 		 */
 		close(inout[1]);
 		close(err[1]);
-		if (dup2(inout[0], 0) == -1)	/* stdin */
+		إذا (dup2(inout[0], 0) == -1)	/* stdin */
 			perror("dup2 stdin");
-		if (dup2(inout[0], 1) == -1)	/* stdout (same as stdin) */
+		إذا (dup2(inout[0], 1) == -1)	/* stdout (same as stdin) */
 			perror("dup2 stdout");
 		close(inout[0]);
-		if (dup2(err[0], 2) == -1)	/* stderr */
+		إذا (dup2(err[0], 2) == -1)	/* stderr */
 			perror("dup2 stderr");
 		close(err[0]);
-#endif
+#جے_انت
 
 		/* Do processing for the child (exec command etc). */
-		do_child(ssh, s, command);
+		do_بچہ(ssh, s, command);
 		/* NOTREACHED */
-	default:
-		break;
+	افتراضي:
+		اكسر;
 	}
 
-#ifdef HAVE_CYGWIN
-	cygwin_set_impersonation_token(INVALID_HANDLE_VALUE);
-#endif
+#جے_تعریف_شدہ HAVE_CYGWIN
+	cygwin_سیٹ_impersonation_token(INVALID_HANDLE_قدر);
+#جے_انت
 
 	s->pid = pid;
 
@@ -505,15 +505,15 @@ do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
 	 */
 	sshbuf_reset(loginmsg);
 
-#ifdef USE_PIPES
+#جے_تعریف_شدہ USE_PIPES
 	/* We are the parent.  Close the child sides of the pipes. */
 	close(pin[0]);
 	close(pout[1]);
 	close(perr[1]);
 
-	session_set_fds(ssh, s, pin[1], pout[0], perr[0],
+	session_سیٹ_fds(ssh, s, pin[1], pout[0], perr[0],
 	    s->is_subsystem, 0);
-#else
+#وإلا
 	/* We are the parent.  Close the child sides of the socket pairs. */
 	close(inout[0]);
 	close(err[0]);
@@ -522,10 +522,10 @@ do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
 	 * Enter the interactive session.  Note: server_loop must be able to
 	 * handle the case that fdin and fdout are the same.
 	 */
-	session_set_fds(ssh, s, inout[1], inout[1], err[1],
+	session_سیٹ_fds(ssh, s, inout[1], inout[1], err[1],
 	    s->is_subsystem, 0);
-#endif
-	return 0;
+#جے_انت
+	أرجع 0;
 }
 
 /*
@@ -534,13 +534,13 @@ do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
  * setting up file descriptors, controlling tty, updating wtmp, utmp,
  * lastlog, and other such operations.
  */
-int
-do_exec_pty(struct ssh *ssh, Session *s, const char *command)
+صحيح
+do_exec_pty(بنية ssh *ssh, Session *s, ثابت حرف *command)
 {
-	int fdout, ptyfd, ttyfd, ptymaster;
+	صحيح fdout, ptyfd, ttyfd, ptymaster;
 	pid_t pid;
 
-	if (s == NULL)
+	إذا (s == عدم)
 		fatal("do_exec_pty: no session");
 	ptyfd = s->ptyfd;
 	ttyfd = s->ttyfd;
@@ -552,32 +552,32 @@ do_exec_pty(struct ssh *ssh, Session *s, const char *command)
 	 * Do this before forking (and cleanup in the child) so as to
 	 * detect and gracefully fail out-of-fd conditions.
 	 */
-	if ((fdout = dup(ptyfd)) == -1) {
+	إذا ((fdout = dup(ptyfd)) == -1) {
 		error_f("dup #1: %s", strerror(errno));
 		close(ttyfd);
 		close(ptyfd);
-		return -1;
+		أرجع -1;
 	}
 	/* we keep a reference to the pty master */
-	if ((ptymaster = dup(ptyfd)) == -1) {
+	إذا ((ptymaster = dup(ptyfd)) == -1) {
 		error_f("dup #2: %s", strerror(errno));
 		close(ttyfd);
 		close(ptyfd);
 		close(fdout);
-		return -1;
+		أرجع -1;
 	}
 
 	/* Fork the child. */
-	switch ((pid = fork())) {
-	case -1:
+	بدل ((pid = fork())) {
+	حالة -1:
 		error_f("fork: %.100s", strerror(errno));
 		close(fdout);
 		close(ptymaster);
 		close(ttyfd);
 		close(ptyfd);
-		return -1;
-	case 0:
-		is_child = 1;
+		أرجع -1;
+	حالة 0:
+		is_بچہ = 1;
 
 		close(fdout);
 		close(ptymaster);
@@ -589,33 +589,33 @@ do_exec_pty(struct ssh *ssh, Session *s, const char *command)
 		pty_make_controlling_tty(&ttyfd, s->tty);
 
 		/* Redirect stdin/stdout/stderr from the pseudo tty. */
-		if (dup2(ttyfd, 0) == -1)
+		إذا (dup2(ttyfd, 0) == -1)
 			error("dup2 stdin: %s", strerror(errno));
-		if (dup2(ttyfd, 1) == -1)
+		إذا (dup2(ttyfd, 1) == -1)
 			error("dup2 stdout: %s", strerror(errno));
-		if (dup2(ttyfd, 2) == -1)
+		إذا (dup2(ttyfd, 2) == -1)
 			error("dup2 stderr: %s", strerror(errno));
 
 		/* Close the extra descriptor for the pseudo tty. */
 		close(ttyfd);
 
 		/* record login, etc. similar to login(1) */
-#ifndef HAVE_OSF_SIA
+#جے_بنا_تعریف HAVE_OSF_SIA
 		do_login(ssh, s, command);
-#endif
+#جے_انت
 		/*
 		 * Do common processing for the child, such as execing
 		 * the command.
 		 */
-		do_child(ssh, s, command);
+		do_بچہ(ssh, s, command);
 		/* NOTREACHED */
-	default:
-		break;
+	افتراضي:
+		اكسر;
 	}
 
-#ifdef HAVE_CYGWIN
-	cygwin_set_impersonation_token(INVALID_HANDLE_VALUE);
-#endif
+#جے_تعریف_شدہ HAVE_CYGWIN
+	cygwin_سیٹ_impersonation_token(INVALID_HANDLE_قدر);
+#جے_انت
 
 	s->pid = pid;
 
@@ -624,82 +624,82 @@ do_exec_pty(struct ssh *ssh, Session *s, const char *command)
 
 	/* Enter interactive session. */
 	s->ptymaster = ptymaster;
-	session_set_fds(ssh, s, ptyfd, fdout, -1, 1, 1);
-	return 0;
+	session_سیٹ_fds(ssh, s, ptyfd, fdout, -1, 1, 1);
+	أرجع 0;
 }
 
 /*
  * This is called to fork and execute a command.  If another command is
  * to be forced, execute that instead.
  */
-int
-do_exec(struct ssh *ssh, Session *s, const char *command)
+صحيح
+do_exec(بنية ssh *ssh, Session *s, ثابت حرف *command)
 {
-	int ret;
-	const char *forced = NULL, *tty = NULL;
-	char session_type[1024];
+	صحيح ret;
+	ثابت حرف *forced = عدم, *tty = عدم;
+	حرف session_type[1024];
 
-	if (options.adm_forced_command) {
+	إذا (options.adm_forced_command) {
 		original_command = command;
 		command = options.adm_forced_command;
 		forced = "(config)";
-	} else if (auth_opts->force_command != NULL) {
+	} وإلا إذا (auth_opts->force_command != عدم) {
 		original_command = command;
 		command = auth_opts->force_command;
 		forced = "(key-option)";
 	}
 	s->forced = 0;
-	if (forced != NULL) {
+	إذا (forced != عدم) {
 		s->forced = 1;
-		if (IS_INTERNAL_SFTP(command)) {
+		إذا (IS_اندرونی_SFTP(command)) {
 			s->is_subsystem = s->is_subsystem ?
 			    SUBSYSTEM_INT_SFTP : SUBSYSTEM_INT_SFTP_ERROR;
-		} else if (s->is_subsystem)
+		} وإلا إذا (s->is_subsystem)
 			s->is_subsystem = SUBSYSTEM_EXT;
-		snprintf(session_type, sizeof(session_type),
+		snprintf(session_type, حجم(session_type),
 		    "forced-command %s '%.900s'", forced, command);
-	} else if (s->is_subsystem) {
-		snprintf(session_type, sizeof(session_type),
+	} وإلا إذا (s->is_subsystem) {
+		snprintf(session_type, حجم(session_type),
 		    "subsystem '%.900s'", s->subsys);
-	} else if (command == NULL) {
-		snprintf(session_type, sizeof(session_type), "shell");
-	} else {
+	} وإلا إذا (command == عدم) {
+		snprintf(session_type, حجم(session_type), "shell");
+	} وإلا {
 		/* NB. we don't log unforced commands to preserve privacy */
-		snprintf(session_type, sizeof(session_type), "command");
+		snprintf(session_type, حجم(session_type), "command");
 	}
 
-	if (s->ttyfd != -1) {
+	إذا (s->ttyfd != -1) {
 		tty = s->tty;
-		if (strncmp(tty, "/dev/", 5) == 0)
+		إذا (لڑی_مقابلہ(tty, "/dev/", 5) == 0)
 			tty += 5;
 	}
 
 	verbose("Starting session: %s%s%s for %s from %.200s port %d id %d",
 	    session_type,
-	    tty == NULL ? "" : " on ",
-	    tty == NULL ? "" : tty,
+	    tty == عدم ? "" : " on ",
+	    tty == عدم ? "" : tty,
 	    s->pw->pw_name,
 	    ssh_remote_ipaddr(ssh),
-	    ssh_remote_port(ssh),
+	    ssh_remote_پورٹ(ssh),
 	    s->self);
 
-#ifdef SSH_AUDIT_EVENTS
-	if (command != NULL)
-		mm_audit_run_command(command);
-	else if (s->ttyfd == -1) {
-		char *shell = s->pw->pw_shell;
+#جے_تعریف_شدہ SSH_AUDIT_EVENTS
+	إذا (command != عدم)
+		mm_audit_لگاتار_command(command);
+	وإلا إذا (s->ttyfd == -1) {
+		حرف *shell = s->pw->pw_shell;
 
-		if (shell[0] == '\0')	/* empty shell means /bin/sh */
+		إذا (shell[0] == '\0')	/* empty shell means /bin/sh */
 			shell =_PATH_BSHELL;
-		mm_audit_run_command(shell);
+		mm_audit_لگاتار_command(shell);
 	}
-#endif
-	if (s->ttyfd != -1)
+#جے_انت
+	إذا (s->ttyfd != -1)
 		ret = do_exec_pty(ssh, s, command);
-	else
+	وإلا
 		ret = do_exec_no_pty(ssh, s, command);
 
-	original_command = NULL;
+	original_command = عدم;
 
 	/*
 	 * Clear loginmsg: it's the child's responsibility to display
@@ -708,32 +708,32 @@ do_exec(struct ssh *ssh, Session *s, const char *command)
 	 */
 	sshbuf_reset(loginmsg);
 
-	return ret;
+	أرجع ret;
 }
 
 /* administrative, login(1)-like work */
-void
-do_login(struct ssh *ssh, Session *s, const char *command)
+فراغ
+do_login(بنية ssh *ssh, Session *s, ثابت حرف *command)
 {
 	socklen_t fromlen;
-	struct sockaddr_storage from;
+	بنية sockaddr_storage from;
 
 	/*
 	 * Get IP address of client. If the connection is not a socket, let
 	 * the address be 0.0.0.0.
 	 */
-	memset(&from, 0, sizeof(from));
-	fromlen = sizeof(from);
-	if (ssh_packet_connection_is_on_socket(ssh)) {
-		if (getpeername(ssh_packet_get_connection_in(ssh),
-		    (struct sockaddr *)&from, &fromlen) == -1) {
+	memset(&from, 0, حجم(from));
+	fromlen = حجم(from);
+	إذا (ssh_packet_connection_is_on_socket(ssh)) {
+		إذا (getpeername(ssh_packet_get_connection_وچ(ssh),
+		    (بنية sockaddr *)&from, &fromlen) == -1) {
 			debug("getpeername: %.100s", strerror(errno));
 			cleanup_exit(255);
 		}
 	}
 
-	if (check_quietlogin(s, command))
-		return;
+	إذا (check_quietlogin(s, command))
+		أرجع;
 
 	display_loginmsg();
 
@@ -743,21 +743,21 @@ do_login(struct ssh *ssh, Session *s, const char *command)
 /*
  * Display the message of the day.
  */
-void
-do_motd(void)
+فراغ
+do_motd(فراغ)
 {
 	FILE *f;
-	char buf[256];
+	حرف buf[256];
 
-	if (options.print_motd) {
-#ifdef HAVE_LOGIN_CAP
+	إذا (options.print_motd) {
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
 		f = fopen(login_getcapstr(lc, "welcome", "/etc/motd",
 		    "/etc/motd"), "r");
-#else
+#وإلا
 		f = fopen("/etc/motd", "r");
-#endif
-		if (f) {
-			while (fgets(buf, sizeof(buf), f))
+#جے_انت
+		إذا (f) {
+			طالما (fgets(buf, حجم(buf), f))
 				fputs(buf, stdout);
 			fclose(f);
 		}
@@ -768,25 +768,25 @@ do_motd(void)
 /*
  * Check for quiet login, either .hushlogin or command given.
  */
-int
-check_quietlogin(Session *s, const char *command)
+صحيح
+check_quietlogin(Session *s, ثابت حرف *command)
 {
-	char buf[256];
-	struct passwd *pw = s->pw;
-	struct stat st;
+	حرف buf[256];
+	بنية passwd *pw = s->pw;
+	بنية stat st;
 
 	/* Return 1 if .hushlogin exists or a command given. */
-	if (command != NULL)
-		return 1;
-	snprintf(buf, sizeof(buf), "%.200s/.hushlogin", pw->pw_dir);
-#ifdef HAVE_LOGIN_CAP
-	if (login_getcapbool(lc, "hushlogin", 0) || stat(buf, &st) >= 0)
-		return 1;
-#else
-	if (stat(buf, &st) >= 0)
-		return 1;
-#endif
-	return 0;
+	إذا (command != عدم)
+		أرجع 1;
+	snprintf(buf, حجم(buf), "%.200s/.hushlogin", pw->pw_dir);
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
+	إذا (login_getcapbool(lc, "hushlogin", 0) || stat(buf, &st) >= 0)
+		أرجع 1;
+#وإلا
+	إذا (stat(buf, &st) >= 0)
+		أرجع 1;
+#جے_انت
+	أرجع 0;
 }
 
 /*
@@ -797,77 +797,77 @@ check_quietlogin(Session *s, const char *command)
  * If allowlist is not NULL, then it is interpreted as a pattern list and
  * only variable names that match it will be accepted.
  */
-static void
-read_environment_file(char ***env, u_int *envsize,
-	const char *filename, const char *allowlist)
+ساكن فراغ
+read_environment_file(حرف ***env, u_int *envsize,
+	ثابت حرف *filename, ثابت حرف *allowlist)
 {
 	FILE *f;
-	char *line = NULL, *cp, *value;
-	size_t linesize = 0;
+	حرف *سطر = عدم, *cp, *قدر;
+	ناپ_t linesize = 0;
 	u_int lineno = 0;
 
 	f = fopen(filename, "r");
-	if (!f)
-		return;
+	إذا (!f)
+		أرجع;
 
-	while (getline(&line, &linesize, f) != -1) {
-		if (++lineno > 1000)
+	طالما (getline(&سطر, &linesize, f) != -1) {
+		إذا (++lineno > 1000)
 			fatal("Too many lines in environment file %s", filename);
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		لكل (cp = سطر; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (!*cp || *cp == '#' || *cp == '\n')
-			continue;
+		إذا (!*cp || *cp == '#' || *cp == '\n')
+			استمر;
 
 		cp[strcspn(cp, "\n")] = '\0';
 
-		value = strchr(cp, '=');
-		if (value == NULL) {
+		قدر = strchr(cp, '=');
+		إذا (قدر == عدم) {
 			fprintf(stderr, "Bad line %u in %.100s\n", lineno,
 			    filename);
-			continue;
+			استمر;
 		}
 		/*
 		 * Replace the equals sign by nul, and advance value to
 		 * the value string.
 		 */
-		*value = '\0';
-		value++;
-		if (allowlist != NULL &&
-		    match_pattern_list(cp, allowlist, 0) != 1)
-			continue;
-		child_set_env(env, envsize, cp, value);
+		*قدر = '\0';
+		قدر++;
+		إذا (allowlist != عدم &&
+		    میل_نمونہ_list(cp, allowlist, 0) != 1)
+			استمر;
+		بچہ_سیٹ_env(env, envsize, cp, قدر);
 	}
-	free(line);
+	حرر(سطر);
 	fclose(f);
 }
 
-#ifdef HAVE_ETC_DEFAULT_LOGIN
+#جے_تعریف_شدہ HAVE_ETC_DEFAULT_LOGIN
 /*
  * Return named variable from specified environment, or NULL if not present.
  */
-static char *
-child_get_env(char **env, const char *name)
+ساكن حرف *
+بچہ_get_env(حرف **env, ثابت حرف *name)
 {
-	int i;
-	size_t len;
+	صحيح i;
+	ناپ_t len;
 
-	len = strlen(name);
-	for (i=0; env[i] != NULL; i++)
-		if (strncmp(name, env[i], len) == 0 && env[i][len] == '=')
-			return(env[i] + len + 1);
-	return NULL;
+	len = لڑی_لمبائی(name);
+	لكل (i=0; env[i] != عدم; i++)
+		إذا (لڑی_مقابلہ(name, env[i], len) == 0 && env[i][len] == '=')
+			أرجع(env[i] + len + 1);
+	أرجع عدم;
 }
 
 /*
  * Read /etc/default/login.
  * We pick up the PATH (or SUPATH for root) and UMASK.
  */
-static void
-read_etc_default_login(char ***env, u_int *envsize, uid_t uid)
+ساكن فراغ
+read_etc_default_login(حرف ***env, u_int *envsize, uid_t uid)
 {
-	char **tmpenv = NULL, *var;
+	حرف **tmpenv = عدم, *var;
 	u_int i, tmpenvsize = 0;
-	u_long mask;
+	u_long نقاب;
 
 	/*
 	 * We don't want to copy the whole file to the child's environment,
@@ -877,118 +877,118 @@ read_etc_default_login(char ***env, u_int *envsize, uid_t uid)
 	read_environment_file(&tmpenv, &tmpenvsize, "/etc/default/login",
 	    options.permit_user_env_allowlist);
 
-	if (tmpenv == NULL)
-		return;
+	إذا (tmpenv == عدم)
+		أرجع;
 
-	if (uid == 0)
-		var = child_get_env(tmpenv, "SUPATH");
-	else
-		var = child_get_env(tmpenv, "PATH");
-	if (var != NULL)
-		child_set_env(env, envsize, "PATH", var);
+	إذا (uid == 0)
+		var = بچہ_get_env(tmpenv, "SUPATH");
+	وإلا
+		var = بچہ_get_env(tmpenv, "PATH");
+	إذا (var != عدم)
+		بچہ_سیٹ_env(env, envsize, "PATH", var);
 
-	if ((var = child_get_env(tmpenv, "UMASK")) != NULL)
-		if (sscanf(var, "%5lo", &mask) == 1)
-			umask((mode_t)mask);
+	إذا ((var = بچہ_get_env(tmpenv, "UMASK")) != عدم)
+		إذا (لڑی_توں_پڑھو(var, "%5lo", &نقاب) == 1)
+			umask((منوال_t)نقاب);
 
-	for (i = 0; tmpenv[i] != NULL; i++)
-		free(tmpenv[i]);
-	free(tmpenv);
+	لكل (i = 0; tmpenv[i] != عدم; i++)
+		حرر(tmpenv[i]);
+	حرر(tmpenv);
 }
-#endif /* HAVE_ETC_DEFAULT_LOGIN */
+#جے_انت /* HAVE_ETC_DEFAULT_LOGIN */
 
-#if defined(USE_PAM) || defined(HAVE_CYGWIN)
-static void
-copy_environment_denylist(char **source, char ***env, u_int *envsize,
-    const char *denylist)
+#إذا defined(USE_PAM) || defined(HAVE_CYGWIN)
+ساكن فراغ
+copy_environment_denylist(حرف **سروت, حرف ***env, u_int *envsize,
+    ثابت حرف *denylist)
 {
-	char *var_name, *var_val;
-	int i;
+	حرف *var_name, *var_val;
+	صحيح i;
 
-	if (source == NULL)
-		return;
+	إذا (سروت == عدم)
+		أرجع;
 
-	for(i = 0; source[i] != NULL; i++) {
-		var_name = xstrdup(source[i]);
-		if ((var_val = strstr(var_name, "=")) == NULL) {
-			free(var_name);
-			continue;
+	لكل(i = 0; سروت[i] != عدم; i++) {
+		var_name = xstrdup(سروت[i]);
+		إذا ((var_val = لڑی_کھوج(var_name, "=")) == عدم) {
+			حرر(var_name);
+			استمر;
 		}
 		*var_val++ = '\0';
 
-		if (denylist == NULL ||
-		    match_pattern_list(var_name, denylist, 0) != 1) {
+		إذا (denylist == عدم ||
+		    میل_نمونہ_list(var_name, denylist, 0) != 1) {
 			debug3("Copy environment: %s=%s", var_name, var_val);
-			child_set_env(env, envsize, var_name, var_val);
+			بچہ_سیٹ_env(env, envsize, var_name, var_val);
 		}
 
-		free(var_name);
+		حرر(var_name);
 	}
 }
-#endif /* defined(USE_PAM) || defined(HAVE_CYGWIN) */
+#جے_انت /* defined(USE_PAM) || defined(HAVE_CYGWIN) */
 
-#ifdef HAVE_CYGWIN
-static void
-copy_environment(char **source, char ***env, u_int *envsize)
+#جے_تعریف_شدہ HAVE_CYGWIN
+ساكن فراغ
+copy_environment(حرف **سروت, حرف ***env, u_int *envsize)
 {
-	copy_environment_denylist(source, env, envsize, NULL);
+	copy_environment_denylist(سروت, env, envsize, عدم);
 }
-#endif
+#جے_انت
 
-static char **
-do_setup_env(struct ssh *ssh, Session *s, const char *shell)
+ساكن حرف **
+do_تیاری_env(بنية ssh *ssh, Session *s, ثابت حرف *shell)
 {
-	char buf[256];
-	size_t n;
+	حرف buf[256];
+	ناپ_t n;
 	u_int i, envsize;
-	char *ocp, *cp, *value, **env, *laddr;
-	struct passwd *pw = s->pw;
-#if !defined (HAVE_LOGIN_CAP) && !defined (HAVE_CYGWIN)
-	char *path = NULL;
-#endif
+	حرف *ocp, *cp, *قدر, **env, *laddr;
+	بنية passwd *pw = s->pw;
+#إذا !defined (HAVE_LOGIN_CAP) && !defined (HAVE_CYGWIN)
+	حرف *رستہ = عدم;
+#جے_انت
 
 	/* Initialize the environment. */
 	envsize = 100;
-	env = xcalloc(envsize, sizeof(char *));
-	env[0] = NULL;
+	env = xcalloc(envsize, حجم(حرف *));
+	env[0] = عدم;
 
-#ifdef HAVE_CYGWIN
+#جے_تعریف_شدہ HAVE_CYGWIN
 	/*
 	 * The Windows environment contains some setting which are
 	 * important for a running system. They must not be dropped.
 	 */
 	{
-		char **p;
+		حرف **p;
 
 		p = fetch_windows_environment();
 		copy_environment(p, &env, &envsize);
 		free_windows_environment(p);
 	}
-#endif
+#جے_انت
 
-#ifdef GSSAPI
+#جے_تعریف_شدہ GSSAPI
 	/* Allow any GSSAPI methods that we've used to alter
 	 * the child's environment as they see fit
 	 */
-	ssh_gssapi_do_child(&env, &envsize);
-#endif
+	ssh_gssapi_do_بچہ(&env, &envsize);
+#جے_انت
 
 	/* Set basic environment. */
-	for (i = 0; i < s->num_env; i++)
-		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
+	لكل (i = 0; i < s->عدد_env; i++)
+		بچہ_سیٹ_env(&env, &envsize, s->env[i].name, s->env[i].val);
 
-	child_set_env(&env, &envsize, "USER", pw->pw_name);
-	child_set_env(&env, &envsize, "LOGNAME", pw->pw_name);
-#ifdef _AIX
-	child_set_env(&env, &envsize, "LOGIN", pw->pw_name);
-#endif
-	child_set_env(&env, &envsize, "HOME", pw->pw_dir);
-#ifdef HAVE_LOGIN_CAP
-	if (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETPATH) < 0)
-		child_set_env(&env, &envsize, "PATH", _PATH_STDPATH);
-	else
-		child_set_env(&env, &envsize, "PATH", getenv("PATH"));
-#else /* HAVE_LOGIN_CAP */
+	بچہ_سیٹ_env(&env, &envsize, "USER", pw->pw_name);
+	بچہ_سیٹ_env(&env, &envsize, "LOGNAME", pw->pw_name);
+#جے_تعریف_شدہ _AIX
+	بچہ_سیٹ_env(&env, &envsize, "LOGIN", pw->pw_name);
+#جے_انت
+	بچہ_سیٹ_env(&env, &envsize, "HOME", pw->pw_dir);
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
+	إذا (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETPATH) < 0)
+		بچہ_سیٹ_env(&env, &envsize, "PATH", _PATH_STDPATH);
+	وإلا
+		بچہ_سیٹ_env(&env, &envsize, "PATH", getenv("PATH"));
+#وإلا /* HAVE_LOGIN_CAP */
 # ifndef HAVE_CYGWIN
 	/*
 	 * There's no standard path on Windows. The path contains
@@ -998,36 +998,36 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
 	 */
 #  ifdef HAVE_ETC_DEFAULT_LOGIN
 	read_etc_default_login(&env, &envsize, pw->pw_uid);
-	path = child_get_env(env, "PATH");
+	رستہ = بچہ_get_env(env, "PATH");
 #  endif /* HAVE_ETC_DEFAULT_LOGIN */
-	if (path == NULL || *path == '\0') {
-		child_set_env(&env, &envsize, "PATH",
-		    s->pw->pw_uid == 0 ?  SUPERUSER_PATH : _PATH_STDPATH);
+	إذا (رستہ == عدم || *رستہ == '\0') {
+		بچہ_سیٹ_env(&env, &envsize, "PATH",
+		    s->pw->pw_uid == 0 ?  SUPERUSER_رستہ : _PATH_STDPATH);
 	}
 # endif /* HAVE_CYGWIN */
-#endif /* HAVE_LOGIN_CAP */
+#جے_انت /* HAVE_LOGIN_CAP */
 
-	if (!options.use_pam) {
-		snprintf(buf, sizeof buf, "%.200s/%.50s",
+	إذا (!options.use_pam) {
+		snprintf(buf, حجم buf, "%.200s/%.50s",
 		    _PATH_MAILDIR, pw->pw_name);
-		child_set_env(&env, &envsize, "MAIL", buf);
+		بچہ_سیٹ_env(&env, &envsize, "MAIL", buf);
 	}
 
 	/* Normal systems set SHELL by default. */
-	child_set_env(&env, &envsize, "SHELL", shell);
+	بچہ_سیٹ_env(&env, &envsize, "SHELL", shell);
 
-	if (getenv("TZ"))
-		child_set_env(&env, &envsize, "TZ", getenv("TZ"));
-#ifdef HAVE_LOGIN_CAP
-	if (getenv("XDG_RUNTIME_DIR")) {
-		child_set_env(&env, &envsize, "XDG_RUNTIME_DIR",
+	إذا (getenv("TZ"))
+		بچہ_سیٹ_env(&env, &envsize, "TZ", getenv("TZ"));
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
+	إذا (getenv("XDG_RUNTIME_DIR")) {
+		بچہ_سیٹ_env(&env, &envsize, "XDG_RUNTIME_DIR",
 		    getenv("XDG_RUNTIME_DIR"));
 	}
-#endif /* HAVE_LOGIN_CAP */
-	if (s->term)
-		child_set_env(&env, &envsize, "TERM", s->term);
-	if (s->display)
-		child_set_env(&env, &envsize, "DISPLAY", s->display);
+#جے_انت /* HAVE_LOGIN_CAP */
+	إذا (s->رکن)
+		بچہ_سیٹ_env(&env, &envsize, "TERM", s->رکن);
+	إذا (s->display)
+		بچہ_سیٹ_env(&env, &envsize, "DISPLAY", s->display);
 
 	/*
 	 * Since we clear KRB5CCNAME at startup, if it's set now then it
@@ -1035,72 +1035,72 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
 	 * SIA), so copy it to the child.
 	 */
 	{
-		char *cp;
+		حرف *cp;
 
-		if ((cp = getenv("KRB5CCNAME")) != NULL)
-			child_set_env(&env, &envsize, "KRB5CCNAME", cp);
+		إذا ((cp = getenv("KRB5CCNAME")) != عدم)
+			بچہ_سیٹ_env(&env, &envsize, "KRB5CCNAME", cp);
 	}
 
-#ifdef _AIX
+#جے_تعریف_شدہ _AIX
 	{
-		char *cp;
+		حرف *cp;
 
-		if ((cp = getenv("AUTHSTATE")) != NULL)
-			child_set_env(&env, &envsize, "AUTHSTATE", cp);
+		إذا ((cp = getenv("AUTHSTATE")) != عدم)
+			بچہ_سیٹ_env(&env, &envsize, "AUTHSTATE", cp);
 		read_environment_file(&env, &envsize, "/etc/environment",
 		    options.permit_user_env_allowlist);
 	}
-#endif
-#ifdef KRB5
-	if (s->authctxt->krb5_ccname)
-		child_set_env(&env, &envsize, "KRB5CCNAME",
+#جے_انت
+#جے_تعریف_شدہ KRB5
+	إذا (s->authctxt->krb5_ccname)
+		بچہ_سیٹ_env(&env, &envsize, "KRB5CCNAME",
 		    s->authctxt->krb5_ccname);
-#endif
-	if (auth_sock_name != NULL)
-		child_set_env(&env, &envsize, SSH_AUTHSOCKET_ENV_NAME,
+#جے_انت
+	إذا (auth_sock_name != عدم)
+		بچہ_سیٹ_env(&env, &envsize, SSH_AUTHSOCKET_ENV_NAME,
 		    auth_sock_name);
 
 
 	/* Set custom environment options from pubkey authentication. */
-	if (options.permit_user_env) {
-		for (n = 0 ; n < auth_opts->nenv; n++) {
+	إذا (options.permit_user_env) {
+		لكل (n = 0 ; n < auth_opts->nenv; n++) {
 			ocp = xstrdup(auth_opts->env[n]);
 			cp = strchr(ocp, '=');
-			if (cp != NULL) {
+			إذا (cp != عدم) {
 				*cp = '\0';
 				/* Apply PermitUserEnvironment allowlist */
-				if (options.permit_user_env_allowlist == NULL ||
-				    match_pattern_list(ocp,
+				إذا (options.permit_user_env_allowlist == عدم ||
+				    میل_نمونہ_list(ocp,
 				    options.permit_user_env_allowlist, 0) == 1)
-					child_set_env(&env, &envsize,
+					بچہ_سیٹ_env(&env, &envsize,
 					    ocp, cp + 1);
 			}
-			free(ocp);
+			حرر(ocp);
 		}
 	}
 
 	/* read $HOME/.ssh/environment. */
-	if (options.permit_user_env) {
-		snprintf(buf, sizeof buf, "%.200s/%s/environment",
-		    pw->pw_dir, _PATH_SSH_USER_DIR);
+	إذا (options.permit_user_env) {
+		snprintf(buf, حجم buf, "%.200s/%s/environment",
+		    pw->pw_dir, رستہ_SSH_USER_DIR);
 		read_environment_file(&env, &envsize, buf,
 		    options.permit_user_env_allowlist);
 	}
 
-#ifdef USE_PAM
+#جے_تعریف_شدہ USE_PAM
 	/*
 	 * Pull in any environment variables that may have
 	 * been set by PAM.
 	 */
-	if (options.use_pam) {
-		char **p;
+	إذا (options.use_pam) {
+		حرف **p;
 
 		/*
 		 * Don't allow PAM-internal env vars to leak
 		 * back into the session environment.
 		 */
-#define PAM_ENV_DENYLIST  "SSH_AUTH_INFO*,SSH_CONNECTION*"
-		p = fetch_pam_child_environment();
+#تعریف_کرو PAM_ENV_DENYLIST  "SSH_AUTH_INFO*,SSH_CONNECTION*"
+		p = fetch_pam_بچہ_environment();
 		copy_environment_denylist(p, &env, &envsize,
 		    PAM_ENV_DENYLIST);
 		free_pam_environment(p);
@@ -1110,272 +1110,272 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
 		    PAM_ENV_DENYLIST);
 		free_pam_environment(p);
 	}
-#endif /* USE_PAM */
+#جے_انت /* USE_PAM */
 
 	/* Environment specified by admin */
-	for (i = 0; i < options.num_setenv; i++) {
+	لكل (i = 0; i < options.عدد_setenv; i++) {
 		cp = xstrdup(options.setenv[i]);
-		if ((value = strchr(cp, '=')) == NULL) {
+		إذا ((قدر = strchr(cp, '=')) == عدم) {
 			/* shouldn't happen; vars are checked in servconf.c */
 			fatal("Invalid config SetEnv: %s", options.setenv[i]);
 		}
-		*value++ = '\0';
-		child_set_env(&env, &envsize, cp, value);
-		free(cp);
+		*قدر++ = '\0';
+		بچہ_سیٹ_env(&env, &envsize, cp, قدر);
+		حرر(cp);
 	}
 
 	/* SSH_CLIENT deprecated */
-	snprintf(buf, sizeof buf, "%.50s %d %d",
-	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
-	    ssh_local_port(ssh));
-	child_set_env(&env, &envsize, "SSH_CLIENT", buf);
+	snprintf(buf, حجم buf, "%.50s %d %d",
+	    ssh_remote_ipaddr(ssh), ssh_remote_پورٹ(ssh),
+	    ssh_local_پورٹ(ssh));
+	بچہ_سیٹ_env(&env, &envsize, "SSH_CLIENT", buf);
 
-	laddr = get_local_ipaddr(ssh_packet_get_connection_in(ssh));
-	snprintf(buf, sizeof buf, "%.50s %d %.50s %d",
-	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
-	    laddr, ssh_local_port(ssh));
-	free(laddr);
-	child_set_env(&env, &envsize, "SSH_CONNECTION", buf);
+	laddr = get_local_ipaddr(ssh_packet_get_connection_وچ(ssh));
+	snprintf(buf, حجم buf, "%.50s %d %.50s %d",
+	    ssh_remote_ipaddr(ssh), ssh_remote_پورٹ(ssh),
+	    laddr, ssh_local_پورٹ(ssh));
+	حرر(laddr);
+	بچہ_سیٹ_env(&env, &envsize, "SSH_CONNECTION", buf);
 
-	if (tun_fwd_ifnames != NULL)
-		child_set_env(&env, &envsize, "SSH_TUNNEL", tun_fwd_ifnames);
-	if (auth_info_file != NULL)
-		child_set_env(&env, &envsize, "SSH_USER_AUTH", auth_info_file);
-	if (s->ttyfd != -1)
-		child_set_env(&env, &envsize, "SSH_TTY", s->tty);
-	if (original_command)
-		child_set_env(&env, &envsize, "SSH_ORIGINAL_COMMAND",
+	إذا (tun_fwd_ifnames != عدم)
+		بچہ_سیٹ_env(&env, &envsize, "SSH_TUNNEL", tun_fwd_ifnames);
+	إذا (auth_info_file != عدم)
+		بچہ_سیٹ_env(&env, &envsize, "SSH_USER_AUTH", auth_info_file);
+	إذا (s->ttyfd != -1)
+		بچہ_سیٹ_env(&env, &envsize, "SSH_TTY", s->tty);
+	إذا (original_command)
+		بچہ_سیٹ_env(&env, &envsize, "SSH_ORIGINAL_COMMAND",
 		    original_command);
 
-	if (debug_flag) {
+	إذا (debug_flag) {
 		/* dump the environment */
 		fprintf(stderr, "Environment:\n");
-		for (i = 0; env[i]; i++)
+		لكل (i = 0; env[i]; i++)
 			fprintf(stderr, "  %.200s\n", env[i]);
 	}
-	return env;
+	أرجع env;
 }
 
 /*
  * Run $HOME/.ssh/rc, /etc/ssh/sshrc, or xauth (whichever is found
  * first in this order).
  */
-static void
-do_rc_files(struct ssh *ssh, Session *s, const char *shell)
+ساكن فراغ
+do_rc_files(بنية ssh *ssh, Session *s, ثابت حرف *shell)
 {
-	FILE *f = NULL;
-	char *cmd = NULL, *user_rc = NULL;
-	int do_xauth;
-	struct stat st;
+	FILE *f = عدم;
+	حرف *cmd = عدم, *user_rc = عدم;
+	صحيح do_xauth;
+	بنية stat st;
 
 	do_xauth =
-	    s->display != NULL && s->auth_proto != NULL && s->auth_data != NULL;
-	xasprintf(&user_rc, "%s/%s", s->pw->pw_dir, _PATH_SSH_USER_RC);
+	    s->display != عدم && s->auth_proto != عدم && s->auth_انکڑے != عدم;
+	xasprintf(&user_rc, "%s/%s", s->pw->pw_dir, رستہ_SSH_USER_RC);
 
 	/* ignore _PATH_SSH_USER_RC for subsystems and admin forced commands */
-	if (!s->is_subsystem && options.adm_forced_command == NULL &&
+	إذا (!s->is_subsystem && options.adm_forced_command == عدم &&
 	    auth_opts->permit_user_rc && options.permit_user_rc &&
 	    stat(user_rc, &st) >= 0) {
-		if (xasprintf(&cmd, "%s -c '%s %s'", shell, _PATH_BSHELL,
+		إذا (xasprintf(&cmd, "%s -c '%s %s'", shell, _PATH_BSHELL,
 		    user_rc) == -1)
 			fatal_f("xasprintf: %s", strerror(errno));
-		if (debug_flag)
+		إذا (debug_flag)
 			fprintf(stderr, "Running %s\n", cmd);
 		f = popen(cmd, "w");
-		if (f) {
-			if (do_xauth)
+		إذا (f) {
+			إذا (do_xauth)
 				fprintf(f, "%s %s\n", s->auth_proto,
-				    s->auth_data);
+				    s->auth_انکڑے);
 			pclose(f);
-		} else
+		} وإلا
 			fprintf(stderr, "Could not run %s\n",
 			    user_rc);
-	} else if (stat(_PATH_SSH_SYSTEM_RC, &st) >= 0) {
-		if (debug_flag)
+	} وإلا إذا (stat(رستہ_SSH_SYSTEM_RC, &st) >= 0) {
+		إذا (debug_flag)
 			fprintf(stderr, "Running %s %s\n", _PATH_BSHELL,
-			    _PATH_SSH_SYSTEM_RC);
-		f = popen(_PATH_BSHELL " " _PATH_SSH_SYSTEM_RC, "w");
-		if (f) {
-			if (do_xauth)
+			    رستہ_SSH_SYSTEM_RC);
+		f = popen(_PATH_BSHELL " " رستہ_SSH_SYSTEM_RC, "w");
+		إذا (f) {
+			إذا (do_xauth)
 				fprintf(f, "%s %s\n", s->auth_proto,
-				    s->auth_data);
+				    s->auth_انکڑے);
 			pclose(f);
-		} else
+		} وإلا
 			fprintf(stderr, "Could not run %s\n",
-			    _PATH_SSH_SYSTEM_RC);
-	} else if (do_xauth && options.xauth_location != NULL) {
+			    رستہ_SSH_SYSTEM_RC);
+	} وإلا إذا (do_xauth && options.xauth_location != عدم) {
 		/* Add authority data to .Xauthority if appropriate. */
-		if (debug_flag) {
+		إذا (debug_flag) {
 			fprintf(stderr,
 			    "Running %.500s remove %.100s\n",
 			    options.xauth_location, s->auth_display);
 			fprintf(stderr,
 			    "%.500s add %.100s %.100s %.100s\n",
 			    options.xauth_location, s->auth_display,
-			    s->auth_proto, s->auth_data);
+			    s->auth_proto, s->auth_انکڑے);
 		}
-		if (xasprintf(&cmd, "%s -q -", options.xauth_location) == -1)
+		إذا (xasprintf(&cmd, "%s -q -", options.xauth_location) == -1)
 			fatal_f("xasprintf: %s", strerror(errno));
 		f = popen(cmd, "w");
-		if (f) {
+		إذا (f) {
 			fprintf(f, "remove %s\n",
 			    s->auth_display);
 			fprintf(f, "add %s %s %s\n",
 			    s->auth_display, s->auth_proto,
-			    s->auth_data);
+			    s->auth_انکڑے);
 			pclose(f);
-		} else {
+		} وإلا {
 			fprintf(stderr, "Could not run %s\n",
 			    cmd);
 		}
 	}
-	free(cmd);
-	free(user_rc);
+	حرر(cmd);
+	حرر(user_rc);
 }
 
-static void
-do_nologin(struct passwd *pw)
+ساكن فراغ
+do_nologin(بنية passwd *pw)
 {
-	FILE *f = NULL;
-	char buf[1024], *nl, *def_nl = _PATH_NOLOGIN;
-	struct stat sb;
+	FILE *f = عدم;
+	حرف buf[1024], *nl, *def_nl = _PATH_NOLOGIN;
+	بنية stat sb;
 
-#ifdef HAVE_LOGIN_CAP
-	if (login_getcapbool(lc, "ignorenologin", 0) || pw->pw_uid == 0)
-		return;
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
+	إذا (login_getcapbool(lc, "ignorenologin", 0) || pw->pw_uid == 0)
+		أرجع;
 	nl = login_getcapstr(lc, "nologin", def_nl, def_nl);
-#else
-	if (pw->pw_uid == 0)
-		return;
+#وإلا
+	إذا (pw->pw_uid == 0)
+		أرجع;
 	nl = def_nl;
-#endif
-	if (stat(nl, &sb) == -1)
-		return;
+#جے_انت
+	إذا (stat(nl, &sb) == -1)
+		أرجع;
 
 	/* /etc/nologin exists.  Print its contents if we can and exit. */
 	logit("User %.100s not allowed because %s exists", pw->pw_name, nl);
-	if ((f = fopen(nl, "r")) != NULL) {
-		while (fgets(buf, sizeof(buf), f))
+	إذا ((f = fopen(nl, "r")) != عدم) {
+		طالما (fgets(buf, حجم(buf), f))
 			fputs(buf, stderr);
 		fclose(f);
 	}
-	exit(254);
+	باہر_نکلو(254);
 }
 
 /*
  * Chroot into a directory after checking it for safety: all path components
  * must be root-owned directories with strict permissions.
  */
-static void
-safely_chroot(const char *path, uid_t uid)
+ساكن فراغ
+safely_chroot(ثابت حرف *رستہ, uid_t uid)
 {
-	const char *cp;
-	char component[PATH_MAX];
-	struct stat st;
+	ثابت حرف *cp;
+	حرف component[PATH_MAX];
+	بنية stat st;
 
-	if (!path_absolute(path))
+	إذا (!رستہ_absolute(رستہ))
 		fatal("chroot path does not begin at root");
-	if (strlen(path) >= sizeof(component))
+	إذا (لڑی_لمبائی(رستہ) >= حجم(component))
 		fatal("chroot path too long");
 
 	/*
 	 * Descend the path, checking that each component is a
 	 * root-owned directory with strict permissions.
 	 */
-	for (cp = path; cp != NULL;) {
-		if ((cp = strchr(cp, '/')) == NULL)
-			strlcpy(component, path, sizeof(component));
-		else {
+	لكل (cp = رستہ; cp != عدم;) {
+		إذا ((cp = strchr(cp, '/')) == عدم)
+			strlcpy(component, رستہ, حجم(component));
+		وإلا {
 			cp++;
-			memcpy(component, path, cp - path);
-			component[cp - path] = '\0';
+			حافظہ_نقل(component, رستہ, cp - رستہ);
+			component[cp - رستہ] = '\0';
 		}
 
 		debug3_f("checking '%s'", component);
 
-		if (stat(component, &st) != 0)
+		إذا (stat(component, &st) != 0)
 			fatal_f("stat(\"%s\"): %s",
 			    component, strerror(errno));
-		if (st.st_uid != 0 || (st.st_mode & 022) != 0)
+		إذا (st.st_uid != 0 || (st.st_mode & 022) != 0)
 			fatal("bad ownership or modes for chroot "
 			    "directory %s\"%s\"",
-			    cp == NULL ? "" : "component ", component);
-		if (!S_ISDIR(st.st_mode))
+			    cp == عدم ? "" : "component ", component);
+		إذا (!S_ISDIR(st.st_mode))
 			fatal("chroot path %s\"%s\" is not a directory",
-			    cp == NULL ? "" : "component ", component);
+			    cp == عدم ? "" : "component ", component);
 
 	}
 
-	if (chdir(path) == -1)
+	إذا (chdir(رستہ) == -1)
 		fatal("Unable to chdir to chroot path \"%s\": "
-		    "%s", path, strerror(errno));
-	if (chroot(path) == -1)
-		fatal("chroot(\"%s\"): %s", path, strerror(errno));
-	if (chdir("/") == -1)
+		    "%s", رستہ, strerror(errno));
+	إذا (chroot(رستہ) == -1)
+		fatal("chroot(\"%s\"): %s", رستہ, strerror(errno));
+	إذا (chdir("/") == -1)
 		fatal_f("chdir(/) after chroot: %s", strerror(errno));
-	verbose("Changed root directory to \"%s\"", path);
+	verbose("Changed root directory to \"%s\"", رستہ);
 }
 
 /* Set login name, uid, gid, and groups. */
-void
-do_setusercontext(struct passwd *pw)
+فراغ
+do_setusercontext(بنية passwd *pw)
 {
-	char uidstr[32], *chroot_path, *tmp;
+	حرف uidstr[32], *chroot_رستہ, *tmp;
 
 	platform_setusercontext(pw);
 
-	if (platform_privileged_uidswap()) {
-#ifdef HAVE_LOGIN_CAP
-		if (setusercontext(lc, pw, pw->pw_uid,
+	إذا (platform_privileged_uidswap()) {
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
+		إذا (setusercontext(lc, pw, pw->pw_uid,
 		    (LOGIN_SETALL & ~(LOGIN_SETPATH|LOGIN_SETUSER))) < 0) {
 			perror("unable to set user context");
-			exit(1);
+			باہر_نکلو(1);
 		}
-#else
-		if (setlogin(pw->pw_name) < 0)
+#وإلا
+		إذا (setlogin(pw->pw_name) < 0)
 			error("setlogin failed: %s", strerror(errno));
-		if (setgid(pw->pw_gid) < 0) {
+		إذا (setgid(pw->pw_gid) < 0) {
 			perror("setgid");
-			exit(1);
+			باہر_نکلو(1);
 		}
 		/* Initialize the group list. */
-		if (initgroups(pw->pw_name, pw->pw_gid) < 0) {
+		إذا (initgroups(pw->pw_name, pw->pw_gid) < 0) {
 			perror("initgroups");
-			exit(1);
+			باہر_نکلو(1);
 		}
 		endgrent();
-#endif
+#جے_انت
 
 		platform_setusercontext_post_groups(pw);
 
-		if (!in_chroot && options.chroot_directory != NULL &&
+		إذا (!وچ_chroot && options.chroot_directory != عدم &&
 		    strcasecmp(options.chroot_directory, "none") != 0) {
 			tmp = tilde_expand_filename(options.chroot_directory,
 			    pw->pw_uid);
-			snprintf(uidstr, sizeof(uidstr), "%llu",
-			    (unsigned long long)pw->pw_uid);
-			chroot_path = percent_expand(tmp, "h", pw->pw_dir,
-			    "u", pw->pw_name, "U", uidstr, (char *)NULL);
-			safely_chroot(chroot_path, pw->pw_uid);
-			free(tmp);
-			free(chroot_path);
+			snprintf(uidstr, حجم(uidstr), "%llu",
+			    (بنانشانی لما لما)pw->pw_uid);
+			chroot_رستہ = percent_expand(tmp, "h", pw->pw_dir,
+			    "u", pw->pw_name, "U", uidstr, (حرف *)عدم);
+			safely_chroot(chroot_رستہ, pw->pw_uid);
+			حرر(tmp);
+			حرر(chroot_رستہ);
 			/* Make sure we don't attempt to chroot again */
-			free(options.chroot_directory);
-			options.chroot_directory = NULL;
-			in_chroot = 1;
+			حرر(options.chroot_directory);
+			options.chroot_directory = عدم;
+			وچ_chroot = 1;
 		}
 
-#ifdef HAVE_LOGIN_CAP
-		if (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUSER) < 0) {
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
+		إذا (setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUSER) < 0) {
 			perror("unable to set user context (setuser)");
-			exit(1);
+			باہر_نکلو(1);
 		}
 		/* 
 		 * FreeBSD's setusercontext() will not apply the user's
 		 * own umask setting unless running with the user's UID.
 		 */
-		(void) setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUMASK);
-#else
+		(فراغ) setusercontext(lc, pw, pw->pw_uid, LOGIN_SETUMASK);
+#وإلا
 # ifdef USE_LIBIAF
 		/*
 		 * In a chroot environment, the set_id() will always fail;
@@ -1385,62 +1385,62 @@ do_setusercontext(struct passwd *pw)
 		 * internal sftp chroot case.  We'll lose auditing and ACLs but
 		 * permanently_set_uid will take care of the rest.
 		 */
-		if (!in_chroot && set_id(pw->pw_name) != 0)
+		إذا (!وچ_chroot && سیٹ_id(pw->pw_name) != 0)
 			fatal("set_id(%s) Failed", pw->pw_name);
 # endif /* USE_LIBIAF */
 		/* Permanently switch to the desired uid. */
-		permanently_set_uid(pw);
-#endif
-	} else if (options.chroot_directory != NULL &&
+		permanently_سیٹ_uid(pw);
+#جے_انت
+	} وإلا إذا (options.chroot_directory != عدم &&
 	    strcasecmp(options.chroot_directory, "none") != 0) {
 		fatal("server lacks privileges to chroot to ChrootDirectory");
 	}
 
-	if (getuid() != pw->pw_uid || geteuid() != pw->pw_uid)
+	إذا (getuid() != pw->pw_uid || geteuid() != pw->pw_uid)
 		fatal("Failed to set uids to %u.", (u_int) pw->pw_uid);
 }
 
-static void
+ساكن فراغ
 do_pwchange(Session *s)
 {
-	fflush(NULL);
+	fflush(عدم);
 	fprintf(stderr, "WARNING: Your password has expired.\n");
-	if (s->ttyfd != -1) {
+	إذا (s->ttyfd != -1) {
 		fprintf(stderr,
 		    "You must change your password now and log in again!\n");
-#ifdef WITH_SELINUX
-		setexeccon(NULL);
-#endif
-#ifdef PASSWD_NEEDS_USERNAME
-		execl(_PATH_PASSWD_PROG, "passwd", s->pw->pw_name,
-		    (char *)NULL);
-#else
-		execl(_PATH_PASSWD_PROG, "passwd", (char *)NULL);
-#endif
+#جے_تعریف_شدہ WITH_SELINUX
+		setexeccon(عدم);
+#جے_انت
+#جے_تعریف_شدہ PASSWD_NEEDS_USERNAME
+		execl(رستہ_PASSWD_PROG, "passwd", s->pw->pw_name,
+		    (حرف *)عدم);
+#وإلا
+		execl(رستہ_PASSWD_PROG, "passwd", (حرف *)عدم);
+#جے_انت
 		perror("passwd");
-	} else {
+	} وإلا {
 		fprintf(stderr,
 		    "Password change required but no TTY available.\n");
 	}
-	exit(1);
+	باہر_نکلو(1);
 }
 
-static void
-child_close_fds(struct ssh *ssh)
+ساكن فراغ
+بچہ_close_fds(بنية ssh *ssh)
 {
-	extern int auth_sock;
+	خارجي صحيح auth_sock;
 
-	if (auth_sock != -1) {
+	إذا (auth_sock != -1) {
 		close(auth_sock);
 		auth_sock = -1;
 	}
 
-	if (ssh_packet_get_connection_in(ssh) ==
-	    ssh_packet_get_connection_out(ssh))
-		close(ssh_packet_get_connection_in(ssh));
-	else {
-		close(ssh_packet_get_connection_in(ssh));
-		close(ssh_packet_get_connection_out(ssh));
+	إذا (ssh_packet_get_connection_وچ(ssh) ==
+	    ssh_packet_get_connection_باہرلا(ssh))
+		close(ssh_packet_get_connection_وچ(ssh));
+	وإلا {
+		close(ssh_packet_get_connection_وچ(ssh));
+		close(ssh_packet_get_connection_باہرلا(ssh));
 	}
 	/*
 	 * Close all descriptors related to channels.  They will still remain
@@ -1456,7 +1456,7 @@ child_close_fds(struct ssh *ssh)
 	endpwent();
 
 	/* Stop directing logs to a high-numbered fd before we close it */
-	log_redirect_stderr_to(NULL);
+	log_redirect_stderr_منزل(عدم);
 
 	/*
 	 * Close any extra open file descriptors so that we don't have them
@@ -1472,40 +1472,40 @@ child_close_fds(struct ssh *ssh)
  * environment, closing extra file descriptors, setting the user and group
  * ids, and executing the command or shell.
  */
-#define ARGV_MAX 10
-void
-do_child(struct ssh *ssh, Session *s, const char *command)
+#تعریف_کرو ARGV_MAX 10
+فراغ
+do_بچہ(بنية ssh *ssh, Session *s, ثابت حرف *command)
 {
-	extern char **environ;
-	char **env, *argv[ARGV_MAX], remote_id[512];
-	const char *shell, *shell0;
-	struct passwd *pw = s->pw;
-	int r = 0;
+	خارجي حرف **environ;
+	حرف **env, *argv[ARGV_MAX], remote_id[512];
+	ثابت حرف *shell, *shell0;
+	بنية passwd *pw = s->pw;
+	صحيح r = 0;
 
-	sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
+	sshpkt_fmt_connection_id(ssh, remote_id, حجم(remote_id));
 
 	/* remove keys from memory */
-	ssh_packet_clear_keys(ssh);
+	ssh_packet_clear_کلیدیں(ssh);
 
 	/* Force a password change */
-	if (s->authctxt->force_pwchange) {
+	إذا (s->authctxt->force_pwchange) {
 		do_setusercontext(pw);
-		child_close_fds(ssh);
+		بچہ_close_fds(ssh);
 		do_pwchange(s);
-		exit(1);
+		باہر_نکلو(1);
 	}
 
 	/*
 	 * Login(1) does this as well, and it needs uid 0 for the "-h"
 	 * switch, so we let login(1) to this for us.
 	 */
-#ifdef HAVE_OSF_SIA
-	session_setup_sia(pw, s->ttyfd == -1 ? NULL : s->tty);
-	if (!check_quietlogin(s, command))
+#جے_تعریف_شدہ HAVE_OSF_SIA
+	session_تیاری_sia(pw, s->ttyfd == -1 ? عدم : s->tty);
+	إذا (!check_quietlogin(s, command))
 		do_motd();
-#else /* HAVE_OSF_SIA */
+#وإلا /* HAVE_OSF_SIA */
 	/* When PAM is enabled we rely on it to do the nologin check */
-	if (!options.use_pam)
+	إذا (!options.use_pam)
 		do_nologin(pw);
 	do_setusercontext(pw);
 	/*
@@ -1513,17 +1513,17 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 * generated messages, so if this in an interactive
 	 * login then display them too.
 	 */
-	if (!check_quietlogin(s, command))
+	إذا (!check_quietlogin(s, command))
 		display_loginmsg();
-#endif /* HAVE_OSF_SIA */
+#جے_انت /* HAVE_OSF_SIA */
 
-#ifdef USE_PAM
-	if (options.use_pam && !is_pam_session_open()) {
+#جے_تعریف_شدہ USE_PAM
+	إذا (options.use_pam && !is_pam_session_open()) {
 		debug3("PAM session not opened, exiting");
 		display_loginmsg();
-		exit(254);
+		باہر_نکلو(254);
 	}
-#endif
+#جے_انت
 
 	/*
 	 * Get the shell from the password data.  An empty shell field is
@@ -1535,11 +1535,11 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 * Make sure $SHELL points to the shell from the password file,
 	 * even if shell is overridden from login.conf
 	 */
-	env = do_setup_env(ssh, s, shell);
+	env = do_تیاری_env(ssh, s, shell);
 
-#ifdef HAVE_LOGIN_CAP
-	shell = login_getcapstr(lc, "shell", (char *)shell, (char *)shell);
-#endif
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
+	shell = login_getcapstr(lc, "shell", (حرف *)shell, (حرف *)shell);
+#جے_انت
 
 	/*
 	 * Close the connection descriptors; note that this is the child, and
@@ -1548,7 +1548,7 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 * closed before building the environment, as we call
 	 * ssh_remote_ipaddr there.
 	 */
-	child_close_fds(ssh);
+	بچہ_close_fds(ssh);
 
 	/*
 	 * Must take new environment into use so that .ssh/rc,
@@ -1556,7 +1556,7 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 */
 	environ = env;
 
-#if defined(KRB5) && defined(USE_AFS)
+#إذا defined(KRB5) && defined(USE_AFS)
 	/*
 	 * At this point, we check to see if AFS is active and if we have
 	 * a valid Kerberos 5 TGT. If so, it seems like a good idea to see
@@ -1565,36 +1565,36 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 * home directory is in AFS and it's not world-readable.
 	 */
 
-	if (options.kerberos_get_afs_token && k_hasafs() &&
-	    (s->authctxt->krb5_ctx != NULL)) {
-		char cell[64];
+	إذا (options.kerberos_get_afs_token && k_hasafs() &&
+	    (s->authctxt->krb5_ctx != عدم)) {
+		حرف cell[64];
 
 		debug("Getting AFS token");
 
 		k_setpag();
 
-		if (k_afs_cell_of_file(pw->pw_dir, cell, sizeof(cell)) == 0)
+		إذا (k_afs_cell_دا_file(pw->pw_dir, cell, حجم(cell)) == 0)
 			krb5_afslog(s->authctxt->krb5_ctx,
-			    s->authctxt->krb5_fwd_ccache, cell, NULL);
+			    s->authctxt->krb5_fwd_ccache, cell, عدم);
 
 		krb5_afslog_home(s->authctxt->krb5_ctx,
-		    s->authctxt->krb5_fwd_ccache, NULL, NULL, pw->pw_dir);
+		    s->authctxt->krb5_fwd_ccache, عدم, عدم, pw->pw_dir);
 	}
-#endif
+#جے_انت
 
 	/* Change current directory to the user's home directory. */
-	if (chdir(pw->pw_dir) == -1) {
+	إذا (chdir(pw->pw_dir) == -1) {
 		/* Suppress missing homedir warning for chroot case */
-#ifdef HAVE_LOGIN_CAP
+#جے_تعریف_شدہ HAVE_LOGIN_CAP
 		r = login_getcapbool(lc, "requirehome", 0);
-#endif
-		if (r || !in_chroot) {
+#جے_انت
+		إذا (r || !وچ_chroot) {
 			fprintf(stderr, "Could not chdir to home "
 			    "directory %s: %s\n", pw->pw_dir,
 			    strerror(errno));
 		}
-		if (r)
-			exit(1);
+		إذا (r)
+			باہر_نکلو(1);
 	}
 
 	closefrom(STDERR_FILENO + 1);
@@ -1604,38 +1604,38 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	/* restore SIGPIPE for child */
 	ssh_signal(SIGPIPE, SIG_DFL);
 
-	if (s->is_subsystem == SUBSYSTEM_INT_SFTP_ERROR) {
+	إذا (s->is_subsystem == SUBSYSTEM_INT_SFTP_ERROR) {
 		error("Connection from %s: refusing non-sftp session",
 		    remote_id);
-		printf("This service allows sftp connections only.\n");
-		fflush(NULL);
-		exit(1);
-	} else if (s->is_subsystem == SUBSYSTEM_INT_SFTP) {
-		extern int optind, optreset;
-		int sftp_argc;
-		char **sftp_argv;
+		لکھو("This service allows sftp connections only.\n");
+		fflush(عدم);
+		باہر_نکلو(1);
+	} وإلا إذا (s->is_subsystem == SUBSYSTEM_INT_SFTP) {
+		خارجي صحيح optind, optreset;
+		صحيح sftp_argc;
+		حرف **sftp_argv;
 
-		setproctitle("%s@%s", s->pw->pw_name, INTERNAL_SFTP_NAME);
-		if (argv_split(command == NULL ? "sftp-server" : command,
+		setproctitle("%s@%s", s->pw->pw_name, اندرونی_SFTP_NAME);
+		إذا (argv_ونڈو(command == عدم ? "sftp-server" : command,
 		    &sftp_argc, &sftp_argv, 1) != 0) {
 			error("internal error: can't split internal-sftp "
 			    "arguments");
-			exit(1);
+			باہر_نکلو(1);
 		}
 		optind = optreset = 1;
 		__progname = sftp_argv[0];
-#ifdef WITH_SELINUX
+#جے_تعریف_شدہ WITH_SELINUX
 		ssh_selinux_change_context("sftpd_t");
-#endif
-		exit(sftp_server_main(sftp_argc, sftp_argv, s->pw));
+#جے_انت
+		باہر_نکلو(sftp_server_main(sftp_argc, sftp_argv, s->pw));
 	}
 
-	fflush(NULL);
+	fflush(عدم);
 
 	/* Get the last component of the shell name. */
-	if ((shell0 = strrchr(shell, '/')) != NULL)
+	إذا ((shell0 = strrchr(shell, '/')) != عدم)
 		shell0++;
-	else
+	وإلا
 		shell0 = shell;
 
 	/*
@@ -1643,297 +1643,297 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	 * name to be passed in argv[0] is preceded by '-' to indicate that
 	 * this is a login shell.
 	 */
-	if (!command) {
-		char argv0[256];
+	إذا (!command) {
+		حرف argv0[256];
 
 		/* Start the shell.  Set initial character to '-'. */
 		argv0[0] = '-';
 
-		if (strlcpy(argv0 + 1, shell0, sizeof(argv0) - 1)
-		    >= sizeof(argv0) - 1) {
+		إذا (strlcpy(argv0 + 1, shell0, حجم(argv0) - 1)
+		    >= حجم(argv0) - 1) {
 			errno = EINVAL;
 			perror(shell);
-			exit(1);
+			باہر_نکلو(1);
 		}
 
 		/* Execute the shell. */
 		argv[0] = argv0;
-		argv[1] = NULL;
+		argv[1] = عدم;
 		execve(shell, argv, env);
 
 		/* Executing the shell failed. */
 		perror(shell);
-		exit(1);
+		باہر_نکلو(1);
 	}
 	/*
 	 * Execute the command using the user's shell.  This uses the -c
 	 * option to execute the command.
 	 */
-	argv[0] = (char *) shell0;
+	argv[0] = (حرف *) shell0;
 	argv[1] = "-c";
-	argv[2] = (char *) command;
-	argv[3] = NULL;
+	argv[2] = (حرف *) command;
+	argv[3] = عدم;
 	execve(shell, argv, env);
 	perror(shell);
-	exit(1);
+	باہر_نکلو(1);
 }
 
-void
-session_unused(int id)
+فراغ
+session_بن_ورتیا(صحيح id)
 {
 	debug3_f("session id %d unused", id);
-	if (id >= options.max_sessions ||
+	إذا (id >= options.max_sessions ||
 	    id >= sessions_nalloc) {
 		fatal_f("insane session id %d (max %d nalloc %d)",
 		    id, options.max_sessions, sessions_nalloc);
 	}
-	memset(&sessions[id], 0, sizeof(*sessions));
+	memset(&sessions[id], 0, حجم(*sessions));
 	sessions[id].self = id;
-	sessions[id].used = 0;
+	sessions[id].ورتیا = 0;
 	sessions[id].chanid = -1;
 	sessions[id].ptyfd = -1;
 	sessions[id].ttyfd = -1;
 	sessions[id].ptymaster = -1;
-	sessions[id].x11_chanids = NULL;
-	sessions[id].next_unused = sessions_first_unused;
-	sessions_first_unused = id;
+	sessions[id].x11_chanids = عدم;
+	sessions[id].اگلا_بن_ورتیا = sessions_پہلا_بن_ورتیا;
+	sessions_پہلا_بن_ورتیا = id;
 }
 
 Session *
-session_new(void)
+session_new(فراغ)
 {
 	Session *s, *tmp;
 
-	if (sessions_first_unused == -1) {
-		if (sessions_nalloc >= options.max_sessions)
-			return NULL;
+	إذا (sessions_پہلا_بن_ورتیا == -1) {
+		إذا (sessions_nalloc >= options.max_sessions)
+			أرجع عدم;
 		debug2_f("allocate (allocated %d max %d)",
 		    sessions_nalloc, options.max_sessions);
 		tmp = xrecallocarray(sessions, sessions_nalloc,
-		    sessions_nalloc + 1, sizeof(*sessions));
-		if (tmp == NULL) {
+		    sessions_nalloc + 1, حجم(*sessions));
+		إذا (tmp == عدم) {
 			error_f("cannot allocate %d sessions",
 			    sessions_nalloc + 1);
-			return NULL;
+			أرجع عدم;
 		}
 		sessions = tmp;
-		session_unused(sessions_nalloc++);
+		session_بن_ورتیا(sessions_nalloc++);
 	}
 
-	if (sessions_first_unused >= sessions_nalloc ||
-	    sessions_first_unused < 0) {
+	إذا (sessions_پہلا_بن_ورتیا >= sessions_nalloc ||
+	    sessions_پہلا_بن_ورتیا < 0) {
 		fatal_f("insane first_unused %d max %d nalloc %d",
-		    sessions_first_unused, options.max_sessions,
+		    sessions_پہلا_بن_ورتیا, options.max_sessions,
 		    sessions_nalloc);
 	}
 
-	s = &sessions[sessions_first_unused];
-	if (s->used)
-		fatal_f("session %d already used", sessions_first_unused);
-	sessions_first_unused = s->next_unused;
-	s->used = 1;
-	s->next_unused = -1;
+	s = &sessions[sessions_پہلا_بن_ورتیا];
+	إذا (s->ورتیا)
+		fatal_f("session %d already used", sessions_پہلا_بن_ورتیا);
+	sessions_پہلا_بن_ورتیا = s->اگلا_بن_ورتیا;
+	s->ورتیا = 1;
+	s->اگلا_بن_ورتیا = -1;
 	debug("session_new: session %d", s->self);
 
-	return s;
+	أرجع s;
 }
 
-static void
-session_dump(void)
+ساكن فراغ
+session_dump(فراغ)
 {
-	int i;
-	for (i = 0; i < sessions_nalloc; i++) {
+	صحيح i;
+	لكل (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
 
 		debug("dump: used %d next_unused %d session %d "
 		    "channel %d pid %ld",
-		    s->used,
-		    s->next_unused,
+		    s->ورتیا,
+		    s->اگلا_بن_ورتیا,
 		    s->self,
 		    s->chanid,
-		    (long)s->pid);
+		    (لما)s->pid);
 	}
 }
 
-int
-session_open(Authctxt *authctxt, int chanid)
+صحيح
+session_open(Authctxt *authctxt, صحيح chanid)
 {
 	Session *s = session_new();
 	debug("session_open: channel %d", chanid);
-	if (s == NULL) {
+	إذا (s == عدم) {
 		error("no more sessions");
-		return 0;
+		أرجع 0;
 	}
 	s->authctxt = authctxt;
 	s->pw = authctxt->pw;
-	if (s->pw == NULL || !authctxt->valid)
+	إذا (s->pw == عدم || !authctxt->valid)
 		fatal("no user for session %d", s->self);
 	debug("session_open: session %d: link with channel %d", s->self, chanid);
 	s->chanid = chanid;
-	return 1;
+	أرجع 1;
 }
 
 Session *
-session_by_tty(char *tty)
+session_by_tty(حرف *tty)
 {
-	int i;
-	for (i = 0; i < sessions_nalloc; i++) {
+	صحيح i;
+	لكل (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used && s->ttyfd != -1 && strcmp(s->tty, tty) == 0) {
+		إذا (s->ورتیا && s->ttyfd != -1 && strcmp(s->tty, tty) == 0) {
 			debug("session_by_tty: session %d tty %s", i, tty);
-			return s;
+			أرجع s;
 		}
 	}
 	debug("session_by_tty: unknown tty %.100s", tty);
 	session_dump();
-	return NULL;
+	أرجع عدم;
 }
 
-static Session *
-session_by_channel(int id)
+ساكن Session *
+session_by_channel(صحيح id)
 {
-	int i;
-	for (i = 0; i < sessions_nalloc; i++) {
+	صحيح i;
+	لكل (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used && s->chanid == id) {
+		إذا (s->ورتیا && s->chanid == id) {
 			debug("session_by_channel: session %d channel %d",
 			    i, id);
-			return s;
+			أرجع s;
 		}
 	}
 	debug("session_by_channel: unknown channel %d", id);
 	session_dump();
-	return NULL;
+	أرجع عدم;
 }
 
-static Session *
-session_by_x11_channel(int id)
+ساكن Session *
+session_by_x11_channel(صحيح id)
 {
-	int i, j;
+	صحيح i, j;
 
-	for (i = 0; i < sessions_nalloc; i++) {
+	لكل (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
 
-		if (s->x11_chanids == NULL || !s->used)
-			continue;
-		for (j = 0; s->x11_chanids[j] != -1; j++) {
-			if (s->x11_chanids[j] == id) {
+		إذا (s->x11_chanids == عدم || !s->ورتیا)
+			استمر;
+		لكل (j = 0; s->x11_chanids[j] != -1; j++) {
+			إذا (s->x11_chanids[j] == id) {
 				debug("session_by_x11_channel: session %d "
 				    "channel %d", s->self, id);
-				return s;
+				أرجع s;
 			}
 		}
 	}
 	debug("session_by_x11_channel: unknown channel %d", id);
 	session_dump();
-	return NULL;
+	أرجع عدم;
 }
 
-static Session *
+ساكن Session *
 session_by_pid(pid_t pid)
 {
-	int i;
-	debug("session_by_pid: pid %ld", (long)pid);
-	for (i = 0; i < sessions_nalloc; i++) {
+	صحيح i;
+	debug("session_by_pid: pid %ld", (لما)pid);
+	لكل (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used && s->pid == pid)
-			return s;
+		إذا (s->ورتیا && s->pid == pid)
+			أرجع s;
 	}
-	error("session_by_pid: unknown pid %ld", (long)pid);
+	error("session_by_pid: unknown pid %ld", (لما)pid);
 	session_dump();
-	return NULL;
+	أرجع عدم;
 }
 
-static int
-session_window_change_req(struct ssh *ssh, Session *s)
+ساكن صحيح
+session_کھڑکی_change_req(بنية ssh *ssh, Session *s)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshpkt_get_u32(ssh, &s->col)) != 0 ||
-	    (r = sshpkt_get_u32(ssh, &s->row)) != 0 ||
+	إذا ((r = sshpkt_get_u32(ssh, &s->خانہ)) != 0 ||
+	    (r = sshpkt_get_u32(ssh, &s->صف)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->xpixel)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->ypixel)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	    (r = sshpkt_get_سرا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
-	pty_change_window_size(s->ptyfd, s->row, s->col, s->xpixel, s->ypixel);
-	return 1;
+	pty_change_کھڑکی_ناپ(s->ptyfd, s->صف, s->خانہ, s->xpixel, s->ypixel);
+	أرجع 1;
 }
 
-static int
-session_pty_req(struct ssh *ssh, Session *s)
+ساكن صحيح
+session_pty_req(بنية ssh *ssh, Session *s)
 {
-	int r;
+	صحيح r;
 
-	if (!auth_opts->permit_pty_flag || !options.permit_tty) {
+	إذا (!auth_opts->permit_pty_flag || !options.permit_tty) {
 		debug("Allocating a pty not permitted for this connection.");
-		return 0;
+		أرجع 0;
 	}
-	if (s->ttyfd != -1) {
+	إذا (s->ttyfd != -1) {
 		ssh_packet_disconnect(ssh, "Protocol error: you already have a pty.");
-		return 0;
+		أرجع 0;
 	}
 
-	if ((r = sshpkt_get_cstring(ssh, &s->term, NULL)) != 0 ||
-	    (r = sshpkt_get_u32(ssh, &s->col)) != 0 ||
-	    (r = sshpkt_get_u32(ssh, &s->row)) != 0 ||
+	إذا ((r = sshpkt_get_cstring(ssh, &s->رکن, عدم)) != 0 ||
+	    (r = sshpkt_get_u32(ssh, &s->خانہ)) != 0 ||
+	    (r = sshpkt_get_u32(ssh, &s->صف)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->xpixel)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->ypixel)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
-	if (strcmp(s->term, "") == 0) {
-		free(s->term);
-		s->term = NULL;
+	إذا (strcmp(s->رکن, "") == 0) {
+		حرر(s->رکن);
+		s->رکن = عدم;
 	}
 
 	/* Allocate a pty and open it. */
 	debug("Allocating pty.");
-	if (!mm_pty_allocate(&s->ptyfd, &s->ttyfd, s->tty, sizeof(s->tty))) {
-		free(s->term);
-		s->term = NULL;
+	إذا (!mm_pty_allocate(&s->ptyfd, &s->ttyfd, s->tty, حجم(s->tty))) {
+		حرر(s->رکن);
+		s->رکن = عدم;
 		s->ptyfd = -1;
 		s->ttyfd = -1;
 		error("session_pty_req: session %d alloc failed", s->self);
-		return 0;
+		أرجع 0;
 	}
 	debug("session_pty_req: session %d alloc %s", s->self, s->tty);
 
 	ssh_tty_parse_modes(ssh, s->ttyfd);
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	إذا ((r = sshpkt_get_سرا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
 	/* Set window size from the packet. */
-	pty_change_window_size(s->ptyfd, s->row, s->col, s->xpixel, s->ypixel);
+	pty_change_کھڑکی_ناپ(s->ptyfd, s->صف, s->خانہ, s->xpixel, s->ypixel);
 
 	session_proctitle(s);
-	return 1;
+	أرجع 1;
 }
 
-static int
-session_subsystem_req(struct ssh *ssh, Session *s)
+ساكن صحيح
+session_subsystem_req(بنية ssh *ssh, Session *s)
 {
-	struct stat st;
-	int r, success = 0, found = 0;
-	char *prog, *cmd, *type;
+	بنية stat st;
+	صحيح r, success = 0, لبھیا = 0;
+	حرف *prog, *cmd, *type;
 	u_int i;
 
-	if ((r = sshpkt_get_cstring(ssh, &s->subsys, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	إذا ((r = sshpkt_get_cstring(ssh, &s->subsys, عدم)) != 0 ||
+	    (r = sshpkt_get_سرا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 	debug2("subsystem request for %.100s by user %s", s->subsys,
 	    s->pw->pw_name);
 
-	for (i = 0; i < options.num_subsystems; i++) {
-		if (strcmp(s->subsys, options.subsystem_name[i]) != 0)
-			continue;
-		found = 1;
+	لكل (i = 0; i < options.عدد_subsystems; i++) {
+		إذا (strcmp(s->subsys, options.subsystem_name[i]) != 0)
+			استمر;
+		لبھیا = 1;
 		prog = options.subsystem_command[i];
-		cmd = options.subsystem_args[i];
-		if (strcmp(INTERNAL_SFTP_NAME, prog) == 0) {
+		cmd = options.subsystem_دلیلاں[i];
+		إذا (strcmp(اندرونی_SFTP_NAME, prog) == 0) {
 			s->is_subsystem = SUBSYSTEM_INT_SFTP;
 			debug("subsystem: %s", prog);
-		} else {
-			if (stat(prog, &st) == -1)
+		} وإلا {
+			إذا (stat(prog, &st) == -1)
 				debug("subsystem: cannot stat %s: %s",
 				    prog, strerror(errno));
 			s->is_subsystem = SUBSYSTEM_EXT;
@@ -1941,137 +1941,137 @@ session_subsystem_req(struct ssh *ssh, Session *s)
 		}
 		xasprintf(&type, "session:subsystem:%s",
 		    options.subsystem_name[i]);
-		channel_set_xtype(ssh, s->chanid, type);
-		free(type);
+		channel_سیٹ_xtype(ssh, s->chanid, type);
+		حرر(type);
 		success = do_exec(ssh, s, cmd) == 0;
-		break;
+		اكسر;
 	}
 
-	if (!success) {
+	إذا (!success) {
 		logit("subsystem request for %.100s by user %s failed, %s",
 		    s->subsys, s->pw->pw_name,
-		    found ? "execution failed" : "subsystem not found");
+		    لبھیا ? "execution failed" : "subsystem not found");
 	}
 
-	return success;
+	أرجع success;
 }
 
-static int
-session_x11_req(struct ssh *ssh, Session *s)
+ساكن صحيح
+session_x11_req(بنية ssh *ssh, Session *s)
 {
-	int r, success;
+	صحيح r, success;
 	u_char single_connection = 0;
 
-	if (s->auth_proto != NULL || s->auth_data != NULL) {
+	إذا (s->auth_proto != عدم || s->auth_انکڑے != عدم) {
 		error("session_x11_req: session %d: "
 		    "x11 forwarding already active", s->self);
-		return 0;
+		أرجع 0;
 	}
-	if ((r = sshpkt_get_u8(ssh, &single_connection)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &s->auth_proto, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &s->auth_data, NULL)) != 0 ||
+	إذا ((r = sshpkt_get_u8(ssh, &single_connection)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &s->auth_proto, عدم)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &s->auth_انکڑے, عدم)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &s->screen)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	    (r = sshpkt_get_سرا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
 	s->single_connection = single_connection;
 
-	if (xauth_valid_string(s->auth_proto) &&
-	    xauth_valid_string(s->auth_data))
-		success = session_setup_x11fwd(ssh, s);
-	else {
+	إذا (xauth_valid_string(s->auth_proto) &&
+	    xauth_valid_string(s->auth_انکڑے))
+		success = session_تیاری_x11fwd(ssh, s);
+	وإلا {
 		success = 0;
 		error("Invalid X11 forwarding data");
 	}
-	if (!success) {
-		free(s->auth_proto);
-		free(s->auth_data);
-		s->auth_proto = NULL;
-		s->auth_data = NULL;
+	إذا (!success) {
+		حرر(s->auth_proto);
+		حرر(s->auth_انکڑے);
+		s->auth_proto = عدم;
+		s->auth_انکڑے = عدم;
 	}
-	return success;
+	أرجع success;
 }
 
-static int
-session_shell_req(struct ssh *ssh, Session *s)
+ساكن صحيح
+session_shell_req(بنية ssh *ssh, Session *s)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	إذا ((r = sshpkt_get_سرا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
-	channel_set_xtype(ssh, s->chanid, "session:shell");
+	channel_سیٹ_xtype(ssh, s->chanid, "session:shell");
 
-	return do_exec(ssh, s, NULL) == 0;
+	أرجع do_exec(ssh, s, عدم) == 0;
 }
 
-static int
-session_exec_req(struct ssh *ssh, Session *s)
+ساكن صحيح
+session_exec_req(بنية ssh *ssh, Session *s)
 {
 	u_int success;
-	int r;
-	char *command = NULL;
+	صحيح r;
+	حرف *command = عدم;
 
-	if ((r = sshpkt_get_cstring(ssh, &command, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	إذا ((r = sshpkt_get_cstring(ssh, &command, عدم)) != 0 ||
+	    (r = sshpkt_get_سرا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
-	channel_set_xtype(ssh, s->chanid, "session:command");
+	channel_سیٹ_xtype(ssh, s->chanid, "session:command");
 
 	success = do_exec(ssh, s, command) == 0;
-	free(command);
-	return success;
+	حرر(command);
+	أرجع success;
 }
 
-static int
-session_break_req(struct ssh *ssh, Session *s)
+ساكن صحيح
+session_break_req(بنية ssh *ssh, Session *s)
 {
-	int r;
+	صحيح r;
 
-	if ((r = sshpkt_get_u32(ssh, NULL)) != 0 || /* ignore */
-	    (r = sshpkt_get_end(ssh)) != 0)
+	إذا ((r = sshpkt_get_u32(ssh, عدم)) != 0 || /* ignore */
+	    (r = sshpkt_get_سرا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
-	if (s->ptymaster == -1 || tcsendbreak(s->ptymaster, 0) == -1)
-		return 0;
-	return 1;
+	إذا (s->ptymaster == -1 || tcsendbreak(s->ptymaster, 0) == -1)
+		أرجع 0;
+	أرجع 1;
 }
 
-static int
-session_env_req(struct ssh *ssh, Session *s)
+ساكن صحيح
+session_env_req(بنية ssh *ssh, Session *s)
 {
-	char *name, *val;
+	حرف *name, *val;
 	u_int i;
-	int r;
+	صحيح r;
 
-	if ((r = sshpkt_get_cstring(ssh, &name, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &val, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0)
+	إذا ((r = sshpkt_get_cstring(ssh, &name, عدم)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &val, عدم)) != 0 ||
+	    (r = sshpkt_get_سرا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
 	/* Don't set too many environment variables */
-	if (s->num_env > 128) {
+	إذا (s->عدد_env > 128) {
 		debug2("Ignoring env request %s: too many env vars", name);
-		goto fail;
+		اذهب fail;
 	}
 
-	for (i = 0; i < options.num_accept_env; i++) {
-		if (match_pattern(name, options.accept_env[i])) {
-			debug2("Setting env %d: %s=%s", s->num_env, name, val);
-			s->env = xrecallocarray(s->env, s->num_env,
-			    s->num_env + 1, sizeof(*s->env));
-			s->env[s->num_env].name = name;
-			s->env[s->num_env].val = val;
-			s->num_env++;
-			return (1);
+	لكل (i = 0; i < options.عدد_accept_env; i++) {
+		إذا (میل_نمونہ(name, options.accept_env[i])) {
+			debug2("Setting env %d: %s=%s", s->عدد_env, name, val);
+			s->env = xrecallocarray(s->env, s->عدد_env,
+			    s->عدد_env + 1, حجم(*s->env));
+			s->env[s->عدد_env].name = name;
+			s->env[s->عدد_env].val = val;
+			s->عدد_env++;
+			أرجع (1);
 		}
 	}
 	debug2("Ignoring env request %s: disallowed name", name);
 
  fail:
-	free(name);
-	free(val);
-	return (0);
+	حرر(name);
+	حرر(val);
+	أرجع (0);
 }
 
 /*
@@ -2079,97 +2079,97 @@ session_env_req(struct ssh *ssh, Session *s)
  * Subset of signals from RFC 4254 section 6.10C, with SIGINFO as
  * local extension.
  */
-static int
-name2sig(char *name)
+ساكن صحيح
+name2sig(حرف *name)
 {
-#define SSH_SIG(x) if (strcmp(name, #x) == 0) return SIG ## x
+#تعریف_کرو SSH_SIG(x) إذا (strcmp(name, #x) == 0) أرجع SIG ## x
 	SSH_SIG(HUP);
 	SSH_SIG(INT);
 	SSH_SIG(KILL);
 	SSH_SIG(QUIT);
-	SSH_SIG(TERM);
+	SSH_SIG(رکن_2);
 	SSH_SIG(USR1);
 	SSH_SIG(USR2);
-#undef	SSH_SIG
-#ifdef SIGINFO
-	if (strcmp(name, "INFO@openssh.com") == 0)
-		return SIGINFO;
-#endif
-	return -1;
+#تعریف_رد	SSH_SIG
+#جے_تعریف_شدہ SIGINFO
+	إذا (strcmp(name, "INFO@openssh.com") == 0)
+		أرجع SIGINFO;
+#جے_انت
+	أرجع -1;
 }
 
-static int
-session_signal_req(struct ssh *ssh, Session *s)
+ساكن صحيح
+session_signal_req(بنية ssh *ssh, Session *s)
 {
-	char *signame = NULL;
-	int r, sig, success = 0;
+	حرف *signame = عدم;
+	صحيح r, sig, success = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &signame, NULL)) != 0 ||
-	    (r = sshpkt_get_end(ssh)) != 0) {
+	إذا ((r = sshpkt_get_cstring(ssh, &signame, عدم)) != 0 ||
+	    (r = sshpkt_get_سرا(ssh)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		اذهب باہرلا;
 	}
-	if ((sig = name2sig(signame)) == -1) {
+	إذا ((sig = name2sig(signame)) == -1) {
 		error_f("unsupported signal \"%s\"", signame);
-		goto out;
+		اذهب باہرلا;
 	}
-	if (s->pid <= 0) {
+	إذا (s->pid <= 0) {
 		error_f("no pid for session %d", s->self);
-		goto out;
+		اذهب باہرلا;
 	}
-	if (s->forced || s->is_subsystem) {
+	إذا (s->forced || s->is_subsystem) {
 		error_f("refusing to send signal %s to %s session",
 		    signame, s->forced ? "forced-command" : "subsystem");
-		goto out;
+		اذهب باہرلا;
 	}
 
-	debug_f("signal %s, killpg(%ld, %d)", signame, (long)s->pid, sig);
+	debug_f("signal %s, killpg(%ld, %d)", signame, (لما)s->pid, sig);
 	temporarily_use_uid(s->pw);
 	r = killpg(s->pid, sig);
 	restore_uid();
-	if (r != 0) {
-		error_f("killpg(%ld, %d): %s", (long)s->pid,
+	إذا (r != 0) {
+		error_f("killpg(%ld, %d): %s", (لما)s->pid,
 		    sig, strerror(errno));
-		goto out;
+		اذهب باہرلا;
 	}
 
 	/* success */
 	success = 1;
- out:
-	free(signame);
-	return success;
+ باہرلا:
+	حرر(signame);
+	أرجع success;
 }
 
-static int
-session_auth_agent_req(struct ssh *ssh, Session *s, int agent_new)
+ساكن صحيح
+session_auth_agent_req(بنية ssh *ssh, Session *s, صحيح agent_new)
 {
-	static int called = 0;
-	int r;
+	ساكن صحيح called = 0;
+	صحيح r;
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	إذا ((r = sshpkt_get_سرا(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
-	if (!auth_opts->permit_agent_forwarding_flag ||
+	إذا (!auth_opts->permit_agent_forwarding_flag ||
 	    !options.allow_agent_forwarding ||
 	    options.disable_forwarding) {
 		debug_f("agent forwarding disabled");
-		return 0;
+		أرجع 0;
 	}
-	if (called)
-		return 0;
+	إذا (called)
+		أرجع 0;
 
 	called = 1;
-	return auth_input_request_forwarding(ssh, s->pw, agent_new);
+	أرجع auth_داخلہ_request_forwarding(ssh, s->pw, agent_new);
 }
 
-int
-session_input_channel_req(struct ssh *ssh, Channel *c, const char *rtype)
+صحيح
+session_داخلہ_channel_req(بنية ssh *ssh, Channel *c, ثابت حرف *rtype)
 {
-	int success = 0;
+	صحيح success = 0;
 	Session *s;
 
-	if ((s = session_by_channel(c->self)) == NULL) {
+	إذا ((s = session_by_channel(c->self)) == عدم) {
 		logit_f("no session %d req %.100s", c->self, rtype);
-		return 0;
+		أرجع 0;
 	}
 	debug_f("session %d req %s", s->self, rtype);
 
@@ -2177,74 +2177,74 @@ session_input_channel_req(struct ssh *ssh, Channel *c, const char *rtype)
 	 * a session is in LARVAL state until a shell, a command
 	 * or a subsystem is executed
 	 */
-	if (c->type == SSH_CHANNEL_LARVAL) {
-		if (strcmp(rtype, "shell") == 0) {
+	إذا (c->type == SSH_CHANNEL_LARVAL) {
+		إذا (strcmp(rtype, "shell") == 0) {
 			success = session_shell_req(ssh, s);
-		} else if (strcmp(rtype, "exec") == 0) {
+		} وإلا إذا (strcmp(rtype, "exec") == 0) {
 			success = session_exec_req(ssh, s);
-		} else if (strcmp(rtype, "pty-req") == 0) {
+		} وإلا إذا (strcmp(rtype, "pty-req") == 0) {
 			success = session_pty_req(ssh, s);
-		} else if (strcmp(rtype, "x11-req") == 0) {
+		} وإلا إذا (strcmp(rtype, "x11-req") == 0) {
 			success = session_x11_req(ssh, s);
-		} else if (strcmp(rtype, "auth-agent-req@openssh.com") == 0) {
+		} وإلا إذا (strcmp(rtype, "auth-agent-req@openssh.com") == 0) {
 			success = session_auth_agent_req(ssh, s, 0);
-		} else if (strcmp(rtype, "agent-req") == 0) {
+		} وإلا إذا (strcmp(rtype, "agent-req") == 0) {
 			success = session_auth_agent_req(ssh, s, 1);
-		} else if (strcmp(rtype, "subsystem") == 0) {
+		} وإلا إذا (strcmp(rtype, "subsystem") == 0) {
 			success = session_subsystem_req(ssh, s);
-		} else if (strcmp(rtype, "env") == 0) {
+		} وإلا إذا (strcmp(rtype, "env") == 0) {
 			success = session_env_req(ssh, s);
 		}
 	}
-	if (strcmp(rtype, "window-change") == 0) {
-		success = session_window_change_req(ssh, s);
-	} else if (strcmp(rtype, "break") == 0) {
+	إذا (strcmp(rtype, "window-change") == 0) {
+		success = session_کھڑکی_change_req(ssh, s);
+	} وإلا إذا (strcmp(rtype, "break") == 0) {
 		success = session_break_req(ssh, s);
-	} else if (strcmp(rtype, "signal") == 0) {
+	} وإلا إذا (strcmp(rtype, "signal") == 0) {
 		success = session_signal_req(ssh, s);
 	}
 
-	return success;
+	أرجع success;
 }
 
-void
-session_set_fds(struct ssh *ssh, Session *s,
-    int fdin, int fdout, int fderr, int ignore_fderr, int is_tty)
+فراغ
+session_سیٹ_fds(بنية ssh *ssh, Session *s,
+    صحيح fdin, صحيح fdout, صحيح fderr, صحيح ignore_fderr, صحيح is_tty)
 {
 	/*
 	 * now that have a child and a pipe to the child,
 	 * we can activate our channel and register the fd's
 	 */
-	if (s->chanid == -1)
+	إذا (s->chanid == -1)
 		fatal("no channel for session %d", s->self);
-	channel_set_fds(ssh, s->chanid,
+	channel_سیٹ_fds(ssh, s->chanid,
 	    fdout, fdin, fderr,
 	    ignore_fderr ? CHAN_EXTENDED_IGNORE : CHAN_EXTENDED_READ,
-	    1, is_tty, CHAN_SES_WINDOW_DEFAULT);
+	    1, is_tty, CHAN_SES_کھڑکی_DEFAULT);
 }
 
 /*
  * Function to perform pty cleanup. Also called if we get aborted abnormally
  * (e.g., due to a dropped connection).
  */
-void
+فراغ
 session_pty_cleanup2(Session *s)
 {
-	if (s == NULL) {
+	إذا (s == عدم) {
 		error_f("no session");
-		return;
+		أرجع;
 	}
-	if (s->ttyfd == -1)
-		return;
+	إذا (s->ttyfd == -1)
+		أرجع;
 
 	debug_f("session %d release %s", s->self, s->tty);
 
 	/* Record that the user has logged out. */
-	if (s->pid != 0)
-		record_logout(s->pid, s->tty, s->pw->pw_name);
+	إذا (s->pid != 0)
+		ریکارڈ_logout(s->pid, s->tty, s->pw->pw_name);
 
 	/* Release the pseudo-tty. */
-	if (getuid() == 0)
+	إذا (getuid() == 0)
 		pty_release(s->tty);
 
 	/*
@@ -2252,7 +2252,7 @@ session_pty_cleanup2(Session *s)
 	 * the pty cleanup, so that another process doesn't get this pty
 	 * while we're still cleaning up.
 	 */
-	if (s->ptymaster != -1 && close(s->ptymaster) == -1)
+	إذا (s->ptymaster != -1 && close(s->ptymaster) == -1)
 		error("close(s->ptymaster/%d): %s",
 		    s->ptymaster, strerror(errno));
 
@@ -2260,16 +2260,16 @@ session_pty_cleanup2(Session *s)
 	s->ttyfd = -1;
 }
 
-void
+فراغ
 session_pty_cleanup(Session *s)
 {
 	mm_session_pty_cleanup2(s);
 }
 
-static char *
-sig2name(int sig)
+ساكن حرف *
+sig2name(صحيح sig)
 {
-#define SSH_SIG(x) if (sig == SIG ## x) return #x
+#تعریف_کرو SSH_SIG(x) إذا (sig == SIG ## x) أرجع #x
 	SSH_SIG(ABRT);
 	SSH_SIG(ALRM);
 	SSH_SIG(FPE);
@@ -2280,99 +2280,99 @@ sig2name(int sig)
 	SSH_SIG(PIPE);
 	SSH_SIG(QUIT);
 	SSH_SIG(SEGV);
-	SSH_SIG(TERM);
+	SSH_SIG(رکن_2);
 	SSH_SIG(USR1);
 	SSH_SIG(USR2);
-#undef	SSH_SIG
-	return "SIG@openssh.com";
+#تعریف_رد	SSH_SIG
+	أرجع "SIG@openssh.com";
 }
 
-static void
-session_close_x11(struct ssh *ssh, int id)
+ساكن فراغ
+session_close_x11(بنية ssh *ssh, صحيح id)
 {
 	Channel *c;
 
-	if ((c = channel_by_id(ssh, id)) == NULL) {
+	إذا ((c = channel_by_id(ssh, id)) == عدم) {
 		debug_f("x11 channel %d missing", id);
-	} else {
+	} وإلا {
 		/* Detach X11 listener */
 		debug_f("detach x11 channel %d", id);
 		channel_cancel_cleanup(ssh, id);
-		if (c->ostate != CHAN_OUTPUT_CLOSED)
+		إذا (c->ostate != CHAN_OUTPUT_CLOSED)
 			chan_mark_dead(ssh, c);
 	}
 }
 
-static void
-session_close_single_x11(struct ssh *ssh, int id, int force, void *arg)
+ساكن فراغ
+session_close_single_x11(بنية ssh *ssh, صحيح id, صحيح force, فراغ *arg)
 {
 	Session *s;
 	u_int i;
 
 	debug3_f("channel %d", id);
 	channel_cancel_cleanup(ssh, id);
-	if ((s = session_by_x11_channel(id)) == NULL)
+	إذا ((s = session_by_x11_channel(id)) == عدم)
 		fatal_f("no x11 channel %d", id);
-	for (i = 0; s->x11_chanids[i] != -1; i++) {
+	لكل (i = 0; s->x11_chanids[i] != -1; i++) {
 		debug_f("session %d: closing channel %d",
 		    s->self, s->x11_chanids[i]);
 		/*
 		 * The channel "id" is already closing, but make sure we
 		 * close all of its siblings.
 		 */
-		if (s->x11_chanids[i] != id)
+		إذا (s->x11_chanids[i] != id)
 			session_close_x11(ssh, s->x11_chanids[i]);
 	}
-	free(s->x11_chanids);
-	s->x11_chanids = NULL;
-	free(s->display);
-	s->display = NULL;
-	free(s->auth_proto);
-	s->auth_proto = NULL;
-	free(s->auth_data);
-	s->auth_data = NULL;
-	free(s->auth_display);
-	s->auth_display = NULL;
+	حرر(s->x11_chanids);
+	s->x11_chanids = عدم;
+	حرر(s->display);
+	s->display = عدم;
+	حرر(s->auth_proto);
+	s->auth_proto = عدم;
+	حرر(s->auth_انکڑے);
+	s->auth_انکڑے = عدم;
+	حرر(s->auth_display);
+	s->auth_display = عدم;
 }
 
-static void
-session_exit_message(struct ssh *ssh, Session *s, int status)
+ساكن فراغ
+session_exit_سنیہا(بنية ssh *ssh, Session *s, صحيح حالت)
 {
 	Channel *c;
-	int r;
-	char *note = NULL;
+	صحيح r;
+	حرف *note = عدم;
 
-	if ((c = channel_lookup(ssh, s->chanid)) == NULL)
+	إذا ((c = channel_lookup(ssh, s->chanid)) == عدم)
 		fatal_f("session %d: no channel %d", s->self, s->chanid);
 
-	if (WIFEXITED(status)) {
-		channel_request_start(ssh, s->chanid, "exit-status", 0);
-		if ((r = sshpkt_put_u32(ssh, WEXITSTATUS(status))) != 0 ||
+	إذا (WIFEXITED(حالت)) {
+		channel_request_شروع(ssh, s->chanid, "exit-status", 0);
+		إذا ((r = sshpkt_put_u32(ssh, WEXITSTATUS(حالت))) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			sshpkt_fatal(ssh, r, "%s: exit reply", __func__);
-		xasprintf(&note, "exit %d", WEXITSTATUS(status));
-	} else if (WIFSIGNALED(status)) {
-		channel_request_start(ssh, s->chanid, "exit-signal", 0);
-#ifndef WCOREDUMP
+		xasprintf(&note, "exit %d", WEXITSTATUS(حالت));
+	} وإلا إذا (WIFSIGNALED(حالت)) {
+		channel_request_شروع(ssh, s->chanid, "exit-signal", 0);
+#جے_بنا_تعریف WCOREDUMP
 # define WCOREDUMP(x) (0)
-#endif
-		if ((r = sshpkt_put_cstring(ssh, sig2name(WTERMSIG(status)))) != 0 ||
-		    (r = sshpkt_put_u8(ssh, WCOREDUMP(status)? 1 : 0)) != 0 ||
+#جے_انت
+		إذا ((r = sshpkt_put_cstring(ssh, sig2name(WTERMSIG(حالت)))) != 0 ||
+		    (r = sshpkt_put_u8(ssh, WCOREDUMP(حالت)? 1 : 0)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, "")) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, "")) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			sshpkt_fatal(ssh, r, "%s: exit reply", __func__);
-		xasprintf(&note, "signal %d%s", WTERMSIG(status),
-		    WCOREDUMP(status) ? " core dumped" : "");
-	} else {
+		xasprintf(&note, "signal %d%s", WTERMSIG(حالت),
+		    WCOREDUMP(حالت) ? " core dumped" : "");
+	} وإلا {
 		/* Some weird exit cause.  Just exit. */
 		ssh_packet_disconnect(ssh, "wait returned status %04x.",
-		    status);
+		    حالت);
 	}
 
 	debug_f("session %d channel %d pid %ld %s", s->self, s->chanid,
-	    (long)s->pid, note == NULL ? "UNKNOWN" : note);
-	free(note);
+	    (لما)s->pid, note == عدم ? "UNKNOWN" : note);
+	حرر(note);
 
 	/* disconnect channel */
 	debug_f("release channel %d", s->chanid);
@@ -2382,7 +2382,7 @@ session_exit_message(struct ssh *ssh, Session *s, int status)
 	 * the channel gets EOF. The session will be then be closed
 	 * by session_close_by_channel when the child sessions close their fds.
 	 */
-	channel_register_cleanup(ssh, c->self, session_close_by_channel, 1);
+	channel_رجسٹر_cleanup(ssh, c->self, session_close_by_channel, 1);
 
 	/*
 	 * emulate a write failure with 'chan_write_failed', nobody will be
@@ -2390,52 +2390,52 @@ session_exit_message(struct ssh *ssh, Session *s, int status)
 	 * Note that we must not call 'chan_read_failed', since there could
 	 * be some more data waiting in the pipe.
 	 */
-	if (c->ostate != CHAN_OUTPUT_CLOSED)
+	إذا (c->ostate != CHAN_OUTPUT_CLOSED)
 		chan_write_failed(ssh, c);
 }
 
-void
-session_close(struct ssh *ssh, Session *s)
+فراغ
+session_close(بنية ssh *ssh, Session *s)
 {
 	u_int i;
 
 	verbose("Close session: user %s from %.200s port %d id %d",
 	    s->pw->pw_name,
 	    ssh_remote_ipaddr(ssh),
-	    ssh_remote_port(ssh),
+	    ssh_remote_پورٹ(ssh),
 	    s->self);
 
-	if (s->ttyfd != -1)
+	إذا (s->ttyfd != -1)
 		session_pty_cleanup(s);
-	free(s->term);
-	free(s->display);
-	free(s->x11_chanids);
-	free(s->auth_display);
-	free(s->auth_data);
-	free(s->auth_proto);
-	free(s->subsys);
-	if (s->env != NULL) {
-		for (i = 0; i < s->num_env; i++) {
-			free(s->env[i].name);
-			free(s->env[i].val);
+	حرر(s->رکن);
+	حرر(s->display);
+	حرر(s->x11_chanids);
+	حرر(s->auth_display);
+	حرر(s->auth_انکڑے);
+	حرر(s->auth_proto);
+	حرر(s->subsys);
+	إذا (s->env != عدم) {
+		لكل (i = 0; i < s->عدد_env; i++) {
+			حرر(s->env[i].name);
+			حرر(s->env[i].val);
 		}
-		free(s->env);
+		حرر(s->env);
 	}
 	session_proctitle(s);
-	session_unused(s->self);
+	session_بن_ورتیا(s->self);
 }
 
-void
-session_close_by_pid(struct ssh *ssh, pid_t pid, int status)
+فراغ
+session_close_by_pid(بنية ssh *ssh, pid_t pid, صحيح حالت)
 {
 	Session *s = session_by_pid(pid);
-	if (s == NULL) {
-		debug_f("no session for pid %ld", (long)pid);
-		return;
+	إذا (s == عدم) {
+		debug_f("no session for pid %ld", (لما)pid);
+		أرجع;
 	}
-	if (s->chanid != -1)
-		session_exit_message(ssh, s, status);
-	if (s->ttyfd != -1)
+	إذا (s->chanid != -1)
+		session_exit_سنیہا(ssh, s, حالت);
+	إذا (s->ttyfd != -1)
 		session_pty_cleanup(s);
 	s->pid = 0;
 }
@@ -2444,35 +2444,35 @@ session_close_by_pid(struct ssh *ssh, pid_t pid, int status)
  * this is called when a channel dies before
  * the session 'child' itself dies
  */
-void
-session_close_by_channel(struct ssh *ssh, int id, int force, void *arg)
+فراغ
+session_close_by_channel(بنية ssh *ssh, صحيح id, صحيح force, فراغ *arg)
 {
 	Session *s = session_by_channel(id);
 	u_int i;
 
-	if (s == NULL) {
+	إذا (s == عدم) {
 		debug_f("no session for id %d", id);
-		return;
+		أرجع;
 	}
-	debug_f("channel %d child %ld", id, (long)s->pid);
-	if (s->pid != 0) {
+	debug_f("channel %d child %ld", id, (لما)s->pid);
+	إذا (s->pid != 0) {
 		debug_f("channel %d: has child, ttyfd %d", id, s->ttyfd);
 		/*
 		 * delay detach of session (unless this is a forced close),
 		 * but release pty, since the fd's to the child are already
 		 * closed
 		 */
-		if (s->ttyfd != -1)
+		إذا (s->ttyfd != -1)
 			session_pty_cleanup(s);
-		if (!force)
-			return;
+		إذا (!force)
+			أرجع;
 	}
 	/* detach by removing callback */
 	channel_cancel_cleanup(ssh, s->chanid);
 
 	/* Close any X11 listeners associated with this session */
-	if (s->x11_chanids != NULL) {
-		for (i = 0; s->x11_chanids[i] != -1; i++) {
+	إذا (s->x11_chanids != عدم) {
+		لكل (i = 0; s->x11_chanids[i] != -1; i++) {
 			session_close_x11(ssh, s->x11_chanids[i]);
 			s->x11_chanids[i] = -1;
 		}
@@ -2482,211 +2482,211 @@ session_close_by_channel(struct ssh *ssh, int id, int force, void *arg)
 	session_close(ssh, s);
 }
 
-void
-session_destroy_all(struct ssh *ssh, void (*closefunc)(Session *))
+فراغ
+session_destroy_all(بنية ssh *ssh, فراغ (*closefunc)(Session *))
 {
-	int i;
-	for (i = 0; i < sessions_nalloc; i++) {
+	صحيح i;
+	لكل (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used) {
-			if (closefunc != NULL)
+		إذا (s->ورتیا) {
+			إذا (closefunc != عدم)
 				closefunc(s);
-			else
+			وإلا
 				session_close(ssh, s);
 		}
 	}
 }
 
-static char *
-session_tty_list(void)
+ساكن حرف *
+session_tty_list(فراغ)
 {
-	static char buf[1024];
-	int i;
-	char *cp;
+	ساكن حرف buf[1024];
+	صحيح i;
+	حرف *cp;
 
 	buf[0] = '\0';
-	for (i = 0; i < sessions_nalloc; i++) {
+	لكل (i = 0; i < sessions_nalloc; i++) {
 		Session *s = &sessions[i];
-		if (s->used && s->ttyfd != -1) {
+		إذا (s->ورتیا && s->ttyfd != -1) {
 
-			if (strncmp(s->tty, "/dev/", 5) != 0) {
+			إذا (لڑی_مقابلہ(s->tty, "/dev/", 5) != 0) {
 				cp = strrchr(s->tty, '/');
-				cp = (cp == NULL) ? s->tty : cp + 1;
-			} else
+				cp = (cp == عدم) ? s->tty : cp + 1;
+			} وإلا
 				cp = s->tty + 5;
 
-			if (buf[0] != '\0')
-				strlcat(buf, ",", sizeof buf);
-			strlcat(buf, cp, sizeof buf);
+			إذا (buf[0] != '\0')
+				strlcat(buf, ",", حجم buf);
+			strlcat(buf, cp, حجم buf);
 		}
 	}
-	if (buf[0] == '\0')
-		strlcpy(buf, "notty", sizeof buf);
-	return buf;
+	إذا (buf[0] == '\0')
+		strlcpy(buf, "notty", حجم buf);
+	أرجع buf;
 }
 
-void
+فراغ
 session_proctitle(Session *s)
 {
-	if (s->pw == NULL)
+	إذا (s->pw == عدم)
 		error("no user for session %d", s->self);
-	else
+	وإلا
 		setproctitle("%s@%s", s->pw->pw_name, session_tty_list());
 }
 
-int
-session_setup_x11fwd(struct ssh *ssh, Session *s)
+صحيح
+session_تیاری_x11fwd(بنية ssh *ssh, Session *s)
 {
-	struct stat st;
-	char display[512], auth_display[512];
-	char hostname[NI_MAXHOST];
+	بنية stat st;
+	حرف display[512], auth_display[512];
+	حرف hostname[NI_MAXHOST];
 	u_int i;
 
-	if (!auth_opts->permit_x11_forwarding_flag) {
+	إذا (!auth_opts->permit_x11_forwarding_flag) {
 		ssh_packet_send_debug(ssh, "X11 forwarding disabled by key options.");
-		return 0;
+		أرجع 0;
 	}
-	if (!options.x11_forwarding || options.disable_forwarding) {
+	إذا (!options.x11_forwarding || options.disable_forwarding) {
 		debug("X11 forwarding disabled in server configuration file.");
-		return 0;
+		أرجع 0;
 	}
-	if (options.xauth_location == NULL ||
+	إذا (options.xauth_location == عدم ||
 	    (stat(options.xauth_location, &st) == -1)) {
 		ssh_packet_send_debug(ssh, "No xauth program; cannot forward X11.");
-		return 0;
+		أرجع 0;
 	}
-	if (s->display != NULL) {
+	إذا (s->display != عدم) {
 		debug("X11 display already set.");
-		return 0;
+		أرجع 0;
 	}
-	if (x11_create_display_inet(ssh, options.x11_display_offset,
+	إذا (x11_create_display_inet(ssh, options.x11_display_وتھ,
 	    options.x11_use_localhost, s->single_connection,
-	    &s->display_number, &s->x11_chanids) == -1) {
+	    &s->display_نمبر, &s->x11_chanids) == -1) {
 		debug("x11_create_display_inet failed.");
-		return 0;
+		أرجع 0;
 	}
-	for (i = 0; s->x11_chanids[i] != -1; i++) {
-		channel_register_cleanup(ssh, s->x11_chanids[i],
+	لكل (i = 0; s->x11_chanids[i] != -1; i++) {
+		channel_رجسٹر_cleanup(ssh, s->x11_chanids[i],
 		    session_close_single_x11, 0);
 	}
 
 	/* Set up a suitable value for the DISPLAY variable. */
-	if (gethostname(hostname, sizeof(hostname)) == -1)
+	إذا (gethostname(hostname, حجم(hostname)) == -1)
 		fatal("gethostname: %.100s", strerror(errno));
 	/*
 	 * auth_display must be used as the displayname when the
 	 * authorization entry is added with xauth(1).  This will be
 	 * different than the DISPLAY string for localhost displays.
 	 */
-	if (options.x11_use_localhost) {
-		snprintf(display, sizeof display, "localhost:%u.%u",
-		    s->display_number, s->screen);
-		snprintf(auth_display, sizeof auth_display, "unix:%u.%u",
-		    s->display_number, s->screen);
+	إذا (options.x11_use_localhost) {
+		snprintf(display, حجم display, "localhost:%u.%u",
+		    s->display_نمبر, s->screen);
+		snprintf(auth_display, حجم auth_display, "unix:%u.%u",
+		    s->display_نمبر, s->screen);
 		s->display = xstrdup(display);
 		s->auth_display = xstrdup(auth_display);
-	} else {
-#ifdef IPADDR_IN_DISPLAY
-		struct hostent *he;
-		struct in_addr my_addr;
+	} وإلا {
+#جے_تعریف_شدہ IPADDR_وچ_DISPLAY
+		بنية hostent *he;
+		بنية in_addr my_addr;
 
 		he = gethostbyname(hostname);
-		if (he == NULL) {
+		إذا (he == عدم) {
 			error("Can't get IP address for X11 DISPLAY.");
 			ssh_packet_send_debug(ssh, "Can't get IP address for X11 DISPLAY.");
-			return 0;
+			أرجع 0;
 		}
-		memcpy(&my_addr, he->h_addr_list[0], sizeof(struct in_addr));
-		snprintf(display, sizeof display, "%.50s:%u.%u", inet_ntoa(my_addr),
-		    s->display_number, s->screen);
-#else
-		snprintf(display, sizeof display, "%.400s:%u.%u", hostname,
-		    s->display_number, s->screen);
-#endif
+		حافظہ_نقل(&my_addr, he->h_addr_list[0], حجم(بنية in_addr));
+		snprintf(display, حجم display, "%.50s:%u.%u", inet_ntoa(my_addr),
+		    s->display_نمبر, s->screen);
+#وإلا
+		snprintf(display, حجم display, "%.400s:%u.%u", hostname,
+		    s->display_نمبر, s->screen);
+#جے_انت
 		s->display = xstrdup(display);
 		s->auth_display = xstrdup(display);
 	}
 
-	return 1;
+	أرجع 1;
 }
 
-static void
-do_authenticated2(struct ssh *ssh, Authctxt *authctxt)
+ساكن فراغ
+do_authenticated2(بنية ssh *ssh, Authctxt *authctxt)
 {
 	server_loop2(ssh, authctxt);
 }
 
-void
-do_cleanup(struct ssh *ssh, Authctxt *authctxt)
+فراغ
+do_cleanup(بنية ssh *ssh, Authctxt *authctxt)
 {
-	static int called = 0;
+	ساكن صحيح called = 0;
 
 	debug("do_cleanup");
 
 	/* no cleanup if we're in the child for login shell */
-	if (is_child)
-		return;
+	إذا (is_بچہ)
+		أرجع;
 
 	/* avoid double cleanup */
-	if (called)
-		return;
+	إذا (called)
+		أرجع;
 	called = 1;
 
-	if (authctxt == NULL)
-		return;
+	إذا (authctxt == عدم)
+		أرجع;
 
-#ifdef USE_PAM
-	if (options.use_pam) {
+#جے_تعریف_شدہ USE_PAM
+	إذا (options.use_pam) {
 		sshpam_cleanup();
 		sshpam_thread_cleanup();
 	}
-#endif
+#جے_انت
 
-	if (!authctxt->authenticated)
-		return;
+	إذا (!authctxt->authenticated)
+		أرجع;
 
-#ifdef KRB5
-	if (options.kerberos_ticket_cleanup &&
+#جے_تعریف_شدہ KRB5
+	إذا (options.kerberos_ticket_cleanup &&
 	    authctxt->krb5_ctx)
 		krb5_cleanup_proc(authctxt);
-#endif
+#جے_انت
 
-#ifdef GSSAPI
-	if (options.gss_cleanup_creds)
+#جے_تعریف_شدہ GSSAPI
+	إذا (options.gss_cleanup_creds)
 		ssh_gssapi_cleanup_creds();
-#endif
+#جے_انت
 
 	/* remove agent socket */
 	auth_sock_cleanup_proc(authctxt->pw);
 
 	/* remove userauth info */
-	if (auth_info_file != NULL) {
+	إذا (auth_info_file != عدم) {
 		temporarily_use_uid(authctxt->pw);
 		unlink(auth_info_file);
 		restore_uid();
-		free(auth_info_file);
-		auth_info_file = NULL;
+		حرر(auth_info_file);
+		auth_info_file = عدم;
 	}
 
 	/*
 	 * Cleanup ptys/utmp only if privsep is disabled,
 	 * or if running in monitor.
 	 */
-	if (mm_is_monitor())
+	إذا (mm_is_monitor())
 		session_destroy_all(ssh, session_pty_cleanup2);
 }
 
 /* Return a name for the remote host that fits inside utmp_size */
 
-const char *
-session_get_remote_name_or_ip(struct ssh *ssh, u_int utmp_size, int use_dns)
+ثابت حرف *
+session_get_remote_name_or_ip(بنية ssh *ssh, u_int utmp_ناپ, صحيح use_dns)
 {
-	const char *remote = "";
+	ثابت حرف *remote = "";
 
-	if (utmp_size > 0)
+	إذا (utmp_ناپ > 0)
 		remote = auth_get_canonical_hostname(ssh, use_dns);
-	if (utmp_size == 0 || strlen(remote) > utmp_size)
+	إذا (utmp_ناپ == 0 || لڑی_لمبائی(remote) > utmp_ناپ)
 		remote = ssh_remote_ipaddr(ssh);
-	return remote;
+	أرجع remote;
 }
 

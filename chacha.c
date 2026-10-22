@@ -5,117 +5,117 @@ D. J. Bernstein
 Public domain.
 */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include "chacha.h"
+#ضمن "chacha.h"
 
-typedef unsigned char u8;
-typedef unsigned int u32;
+تعريفنوع بنانشانی حرف u8;
+تعريفنوع بنانشانی صحيح u32;
 
-typedef struct chacha_ctx chacha_ctx;
+تعريفنوع بنية chacha_ctx chacha_ctx;
 
-#define U8C(v) (v##U)
-#define U32C(v) (v##U)
+#تعریف_کرو U8C(v) (v##U)
+#تعریف_کرو U32C(v) (v##U)
 
-#define U8V(v) ((u8)(v) & U8C(0xFF))
-#define U32V(v) ((u32)(v) & U32C(0xFFFFFFFF))
+#تعریف_کرو U8V(v) ((u8)(v) & U8C(0xFF))
+#تعریف_کرو U32V(v) ((u32)(v) & U32C(0xFFFFFFFF))
 
-#define ROTL32(v, n) \
+#تعریف_کرو ROTL32(v, n) \
   (U32V((v) << (n)) | ((v) >> (32 - (n))))
 
-#define U8TO32_LITTLE(p) \
+#تعریف_کرو U8TO32_LITTLE(p) \
   (((u32)((p)[0])      ) | \
    ((u32)((p)[1]) <<  8) | \
    ((u32)((p)[2]) << 16) | \
    ((u32)((p)[3]) << 24))
 
-#define U32TO8_LITTLE(p, v) \
-  do { \
+#تعریف_کرو U32TO8_LITTLE(p, v) \
+  افعل { \
     (p)[0] = U8V((v)      ); \
     (p)[1] = U8V((v) >>  8); \
     (p)[2] = U8V((v) >> 16); \
     (p)[3] = U8V((v) >> 24); \
-  } while (0)
+  } طالما (0)
 
-#define ROTATE(v,c) (ROTL32(v,c))
-#define XOR(v,w) ((v) ^ (w))
-#define PLUS(v,w) (U32V((v) + (w)))
-#define PLUSONE(v) (PLUS((v),1))
+#تعریف_کرو ROTATE(v,c) (ROTL32(v,c))
+#تعریف_کرو XOR(v,w) ((v) ^ (w))
+#تعریف_کرو PLUS(v,w) (U32V((v) + (w)))
+#تعریف_کرو PLUSONE(v) (PLUS((v),1))
 
-#define QUARTERROUND(a,b,c,d) \
+#تعریف_کرو QUARTERROUND(a,b,c,d) \
   a = PLUS(a,b); d = ROTATE(XOR(d,a),16); \
   c = PLUS(c,d); b = ROTATE(XOR(b,c),12); \
   a = PLUS(a,b); d = ROTATE(XOR(d,a), 8); \
   c = PLUS(c,d); b = ROTATE(XOR(b,c), 7);
 
-static const char sigma[] = "expand 32-byte k";
-static const char tau[] = "expand 16-byte k";
+ساكن ثابت حرف sigma[] = "expand 32-byte k";
+ساكن ثابت حرف tau[] = "expand 16-byte k";
 
-void
-chacha_keysetup(chacha_ctx *x,const u8 *k,u32 kbits)
+فراغ
+chacha_keysetup(chacha_ctx *x,ثابت u8 *k,u32 kbits)
 {
-  const char *constants;
+  ثابت حرف *constants;
 
-  x->input[4] = U8TO32_LITTLE(k + 0);
-  x->input[5] = U8TO32_LITTLE(k + 4);
-  x->input[6] = U8TO32_LITTLE(k + 8);
-  x->input[7] = U8TO32_LITTLE(k + 12);
-  if (kbits == 256) { /* recommended */
+  x->داخلہ[4] = U8TO32_LITTLE(k + 0);
+  x->داخلہ[5] = U8TO32_LITTLE(k + 4);
+  x->داخلہ[6] = U8TO32_LITTLE(k + 8);
+  x->داخلہ[7] = U8TO32_LITTLE(k + 12);
+  إذا (kbits == 256) { /* recommended */
     k += 16;
     constants = sigma;
-  } else { /* kbits == 128 */
+  } وإلا { /* kbits == 128 */
     constants = tau;
   }
-  x->input[8] = U8TO32_LITTLE(k + 0);
-  x->input[9] = U8TO32_LITTLE(k + 4);
-  x->input[10] = U8TO32_LITTLE(k + 8);
-  x->input[11] = U8TO32_LITTLE(k + 12);
-  x->input[0] = U8TO32_LITTLE(constants + 0);
-  x->input[1] = U8TO32_LITTLE(constants + 4);
-  x->input[2] = U8TO32_LITTLE(constants + 8);
-  x->input[3] = U8TO32_LITTLE(constants + 12);
+  x->داخلہ[8] = U8TO32_LITTLE(k + 0);
+  x->داخلہ[9] = U8TO32_LITTLE(k + 4);
+  x->داخلہ[10] = U8TO32_LITTLE(k + 8);
+  x->داخلہ[11] = U8TO32_LITTLE(k + 12);
+  x->داخلہ[0] = U8TO32_LITTLE(constants + 0);
+  x->داخلہ[1] = U8TO32_LITTLE(constants + 4);
+  x->داخلہ[2] = U8TO32_LITTLE(constants + 8);
+  x->داخلہ[3] = U8TO32_LITTLE(constants + 12);
 }
 
-void
-chacha_ivsetup(chacha_ctx *x, const u8 *iv, const u8 *counter)
+فراغ
+chacha_ivsetup(chacha_ctx *x, ثابت u8 *iv, ثابت u8 *counter)
 {
-  x->input[12] = counter == NULL ? 0 : U8TO32_LITTLE(counter + 0);
-  x->input[13] = counter == NULL ? 0 : U8TO32_LITTLE(counter + 4);
-  x->input[14] = U8TO32_LITTLE(iv + 0);
-  x->input[15] = U8TO32_LITTLE(iv + 4);
+  x->داخلہ[12] = counter == عدم ? 0 : U8TO32_LITTLE(counter + 0);
+  x->داخلہ[13] = counter == عدم ? 0 : U8TO32_LITTLE(counter + 4);
+  x->داخلہ[14] = U8TO32_LITTLE(iv + 0);
+  x->داخلہ[15] = U8TO32_LITTLE(iv + 4);
 }
 
-void
-chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
+فراغ
+chacha_encrypt_بائٹاں(chacha_ctx *x,ثابت u8 *m,u8 *c,u32 بائٹاں)
 {
   u32 x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15;
   u32 j0, j1, j2, j3, j4, j5, j6, j7, j8, j9, j10, j11, j12, j13, j14, j15;
-  u8 *ctarget = NULL;
+  u8 *ctarget = عدم;
   u8 tmp[64];
   u_int i;
 
-  if (!bytes) return;
+  إذا (!بائٹاں) أرجع;
 
-  j0 = x->input[0];
-  j1 = x->input[1];
-  j2 = x->input[2];
-  j3 = x->input[3];
-  j4 = x->input[4];
-  j5 = x->input[5];
-  j6 = x->input[6];
-  j7 = x->input[7];
-  j8 = x->input[8];
-  j9 = x->input[9];
-  j10 = x->input[10];
-  j11 = x->input[11];
-  j12 = x->input[12];
-  j13 = x->input[13];
-  j14 = x->input[14];
-  j15 = x->input[15];
+  j0 = x->داخلہ[0];
+  j1 = x->داخلہ[1];
+  j2 = x->داخلہ[2];
+  j3 = x->داخلہ[3];
+  j4 = x->داخلہ[4];
+  j5 = x->داخلہ[5];
+  j6 = x->داخلہ[6];
+  j7 = x->داخلہ[7];
+  j8 = x->داخلہ[8];
+  j9 = x->داخلہ[9];
+  j10 = x->داخلہ[10];
+  j11 = x->داخلہ[11];
+  j12 = x->داخلہ[12];
+  j13 = x->داخلہ[13];
+  j14 = x->داخلہ[14];
+  j15 = x->داخلہ[15];
 
-  for (;;) {
-    if (bytes < 64) {
-      for (i = 0;i < bytes;++i) tmp[i] = m[i];
+  لكل (;;) {
+    إذا (بائٹاں < 64) {
+      لكل (i = 0;i < بائٹاں;++i) tmp[i] = m[i];
       m = tmp;
       ctarget = c;
       c = tmp;
@@ -136,7 +136,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     x13 = j13;
     x14 = j14;
     x15 = j15;
-    for (i = 20;i > 0;i -= 2) {
+    لكل (i = 20;i > 0;i -= 2) {
       QUARTERROUND( x0, x4, x8,x12)
       QUARTERROUND( x1, x5, x9,x13)
       QUARTERROUND( x2, x6,x10,x14)
@@ -181,7 +181,7 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     x15 = XOR(x15,U8TO32_LITTLE(m + 60));
 
     j12 = PLUSONE(j12);
-    if (!j12) {
+    إذا (!j12) {
       j13 = PLUSONE(j13);
       /* stopping at 2^70 bytes per nonce is user's responsibility */
     }
@@ -203,15 +203,15 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
     U32TO8_LITTLE(c + 56,x14);
     U32TO8_LITTLE(c + 60,x15);
 
-    if (bytes <= 64) {
-      if (bytes < 64) {
-        for (i = 0;i < bytes;++i) ctarget[i] = c[i];
+    إذا (بائٹاں <= 64) {
+      إذا (بائٹاں < 64) {
+        لكل (i = 0;i < بائٹاں;++i) ctarget[i] = c[i];
       }
-      x->input[12] = j12;
-      x->input[13] = j13;
-      return;
+      x->داخلہ[12] = j12;
+      x->داخلہ[13] = j13;
+      أرجع;
     }
-    bytes -= 64;
+    بائٹاں -= 64;
     c += 64;
     m += 64;
   }

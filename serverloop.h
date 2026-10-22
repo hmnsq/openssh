@@ -18,11 +18,11 @@
  * (of the child program), and reads from stdout and stderr (of the child
  * program).
  */
-#ifndef SERVERLOOP_H
-#define SERVERLOOP_H
+#جے_بنا_تعریف SERVERLOOP_H
+#تعریف_کرو SERVERLOOP_H
 
-struct ssh;
+بنية ssh;
 
-void    server_loop2(struct ssh *, Authctxt *);
+فراغ    server_loop2(بنية ssh *, Authctxt *);
 
-#endif
+#جے_انت

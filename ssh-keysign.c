@@ -23,286 +23,286 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <fcntl.h>
-#include <paths.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
+#ضمن <fcntl.h>
+#ضمن <paths.h>
+#ضمن <pwd.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <errno.h>
 
-#ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include <openssl/rand.h>
-#include <openssl/rsa.h>
-#include "openbsd-compat/openssl-compat.h"
-#endif
+#جے_تعریف_شدہ WITH_OPENSSL
+#ضمن <openssl/evp.h>
+#ضمن <openssl/rand.h>
+#ضمن <openssl/rsa.h>
+#ضمن "openbsd-compat/openssl-compat.h"
+#جے_انت
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshkey.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "authfile.h"
-#include "msg.h"
-#include "canohost.h"
-#include "pathnames.h"
-#include "readconf.h"
-#include "uidswap.h"
-#include "ssherr.h"
+#ضمن "xmalloc.h"
+#ضمن "log.h"
+#ضمن "sshkey.h"
+#ضمن "ssh.h"
+#ضمن "ssh2.h"
+#ضمن "misc.h"
+#ضمن "sshbuf.h"
+#ضمن "authfile.h"
+#ضمن "msg.h"
+#ضمن "canohost.h"
+#ضمن "pathnames.h"
+#ضمن "readconf.h"
+#ضمن "uidswap.h"
+#ضمن "ssherr.h"
 
-extern char *__progname;
+خارجي حرف *__progname;
 
-static int
-valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
-    u_char *data, size_t datalen)
+ساكن صحيح
+valid_request(بنية passwd *pw, حرف *host, بنية sshkey **ret, حرف **pkalgp,
+    u_char *انکڑے, ناپ_t datalen)
 {
-	struct sshbuf *b;
-	struct sshkey *key = NULL;
+	بنية sshbuf *b;
+	بنية sshkey *کلید = عدم;
 	u_char type, *pkblob;
-	char *p;
-	size_t blen, len;
-	char *pkalg, *luser;
-	int r, pktype, fail;
+	حرف *p;
+	ناپ_t blen, len;
+	حرف *pkalg, *luser;
+	صحيح r, pktype, fail;
 
-	if (ret != NULL)
-		*ret = NULL;
-	if (pkalgp != NULL)
-		*pkalgp = NULL;
+	إذا (ret != عدم)
+		*ret = عدم;
+	إذا (pkalgp != عدم)
+		*pkalgp = عدم;
 	fail = 0;
 
-	if ((b = sshbuf_from(data, datalen)) == NULL)
+	إذا ((b = sshbuf_from(انکڑے, datalen)) == عدم)
 		fatal_f("sshbuf_from failed");
 
 	/* session id */
-	if ((r = sshbuf_get_string(b, NULL, &len)) != 0)
+	إذا ((r = sshbuf_get_string(b, عدم, &len)) != 0)
 		fatal_fr(r, "parse session ID");
-	if (len != 20 && /* SHA1 */
+	إذا (len != 20 && /* SHA1 */
 	    len != 32 && /* SHA256 */
 	    len != 48 && /* SHA384 */
 	    len != 64)   /* SHA512 */
 		fail++;
 
-	if ((r = sshbuf_get_u8(b, &type)) != 0)
+	إذا ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	إذا (type != SSH2_پیغام_USERAUTH_REQUEST)
 		fail++;
 
 	/* server user */
-	if ((r = sshbuf_skip_string(b)) != 0)
+	إذا ((r = sshbuf_skip_string(b)) != 0)
 		fatal_fr(r, "parse user");
 
 	/* service */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(b, &p, عدم)) != 0)
 		fatal_fr(r, "parse service");
-	if (strcmp("ssh-connection", p) != 0)
+	إذا (strcmp("ssh-connection", p) != 0)
 		fail++;
-	free(p);
+	حرر(p);
 
-	/* method */
-	if ((r = sshbuf_get_cstring(b, &p, NULL)) != 0)
+	/*طریقہ*/
+	إذا ((r = sshbuf_get_cstring(b, &p, عدم)) != 0)
 		fatal_fr(r, "parse method");
-	if (strcmp("hostbased", p) != 0)
+	إذا (strcmp("hostbased", p) != 0)
 		fail++;
-	free(p);
+	حرر(p);
 
 	/* pubkey */
-	if ((r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 ||
+	إذا ((r = sshbuf_get_cstring(b, &pkalg, عدم)) != 0 ||
 	    (r = sshbuf_get_string(b, &pkblob, &blen)) != 0)
 		fatal_fr(r, "parse pk");
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC)
+	إذا (pktype == کلید_UNSPEC)
 		fail++;
-	else if ((r = sshkey_from_blob(pkblob, blen, &key)) != 0) {
+	وإلا إذا ((r = sshkey_from_blob(pkblob, blen, &کلید)) != 0) {
 		error_fr(r, "decode key");
 		fail++;
-	} else if (key->type != pktype)
+	} وإلا إذا (کلید->type != pktype)
 		fail++;
 
 	/* client host name, handle trailing dot */
-	if ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
+	إذا ((r = sshbuf_get_cstring(b, &p, &len)) != 0)
 		fatal_fr(r, "parse hostname");
 	debug2_f("check expect chost \"%s\" got \"%s\"", host, p);
-	if (len == 0)
+	إذا (len == 0)
 		fail++;
-	else if (strlen(host) != len - 1)
+	وإلا إذا (لڑی_لمبائی(host) != len - 1)
 		fail++;
-	else if (p[len - 1] != '.')
+	وإلا إذا (p[len - 1] != '.')
 		fail++;
-	else if (strncasecmp(host, p, len - 1) != 0)
+	وإلا إذا (strncasecmp(host, p, len - 1) != 0)
 		fail++;
-	free(p);
+	حرر(p);
 
 	/* local user */
-	if ((r = sshbuf_get_cstring(b, &luser, NULL)) != 0)
+	إذا ((r = sshbuf_get_cstring(b, &luser, عدم)) != 0)
 		fatal_fr(r, "parse luser");
 
-	if (strcmp(pw->pw_name, luser) != 0)
+	إذا (strcmp(pw->pw_name, luser) != 0)
 		fail++;
-	free(luser);
+	حرر(luser);
 
 	/* end of message */
-	if (sshbuf_len(b) != 0)
+	إذا (sshbuf_len(b) != 0)
 		fail++;
 	sshbuf_free(b);
 
 	debug3_f("fail %d", fail);
 
-	if (!fail) {
-		if (ret != NULL) {
-			*ret = key;
-			key = NULL;
+	إذا (!fail) {
+		إذا (ret != عدم) {
+			*ret = کلید;
+			کلید = عدم;
 		}
-		if (pkalgp != NULL) {
+		إذا (pkalgp != عدم) {
 			*pkalgp = pkalg;
-			pkalg = NULL;
+			pkalg = عدم;
 		}
 	}
-	sshkey_free(key);
-	free(pkalg);
-	free(pkblob);
+	sshkey_free(کلید);
+	حرر(pkalg);
+	حرر(pkblob);
 
-	return (fail ? -1 : 0);
+	أرجع (fail ? -1 : 0);
 }
 
-int
-main(int argc, char **argv)
+صحيح
+مکھ(صحيح argc, حرف **argv)
 {
-	struct sshbuf *b;
+	بنية sshbuf *b;
 	Options options;
-#define NUM_KEYTYPES 5
-	struct sshkey *keys[NUM_KEYTYPES], *key = NULL;
-	struct passwd *pw;
-	int r, key_fd[NUM_KEYTYPES], i, found, version = 2, fd;
-	u_char *signature, *data, rver;
-	char *host, *fp, *pkalg;
-	size_t slen, dlen;
+#تعریف_کرو عدد_KEYTYPES 5
+	بنية sshkey *کلیدیں[عدد_KEYTYPES], *کلید = عدم;
+	بنية passwd *pw;
+	صحيح r, کلید_fd[عدد_KEYTYPES], i, لبھیا, نسخہ = 2, fd;
+	u_char *signature, *انکڑے, rver;
+	حرف *host, *fp, *pkalg;
+	ناپ_t slen, dlen;
 
 	/* Ensure that stdin and stdout are connected */
-	if ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
-		exit(1);
+	إذا ((fd = open(_PATH_DEVNULL, O_RDWR)) < 2)
+		باہر_نکلو(1);
 	/* Leave /dev/null fd iff it is attached to stderr */
-	if (fd > 2)
+	إذا (fd > 2)
 		close(fd);
 
-	if (pledge("stdio rpath getpw dns id", NULL) != 0)
+	إذا (pledge("stdio rpath getpw dns id", عدم) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = 0; i < NUM_KEYTYPES; i++)
-		key_fd[i] = -1;
+	لكل (i = 0; i < عدد_KEYTYPES; i++)
+		کلید_fd[i] = -1;
 
 	i = 0;
 	/* XXX This really needs to read sshd_config for the paths */
-	key_fd[i++] = open(_PATH_HOST_ECDSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_ED25519_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_RSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, O_RDONLY);
+	کلید_fd[i++] = open(رستہ_HOST_ECDSA_کلید_FILE, O_RDONLY);
+	کلید_fd[i++] = open(رستہ_HOST_ED25519_کلید_FILE, O_RDONLY);
+	کلید_fd[i++] = open(رستہ_HOST_RSA_کلید_FILE, O_RDONLY);
+	کلید_fd[i++] = open(رستہ_HOST_MLDSA44_ED25519_کلید_FILE, O_RDONLY);
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	إذا ((pw = getpwuid(getuid())) == عدم)
 		fatal("getpwuid failed");
 	pw = pwcopy(pw);
 
-	permanently_set_uid(pw);
+	permanently_سیٹ_uid(pw);
 
-	seed_rng();
+	بیج_rng();
 
-#ifdef DEBUG_SSH_KEYSIGN
+#جے_تعریف_شدہ DEBUG_SSH_KEYSIGN
 	log_init("ssh-keysign", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 0);
-#endif
+#جے_انت
 
 	/* verify that ssh-keysign is enabled by the admin */
 	initialize_options(&options);
-	(void)read_config_file(_PATH_HOST_CONFIG_FILE, pw, "", "", "",
-	    &options, 0, NULL);
-	(void)fill_default_options(&options);
-	if (options.enable_ssh_keysign != 1)
+	(فراغ)read_config_file(رستہ_HOST_CONFIG_FILE, pw, "", "", "",
+	    &options, 0, عدم);
+	(فراغ)fill_default_options(&options);
+	إذا (options.enable_ssh_keysign != 1)
 		fatal("ssh-keysign not enabled in %s",
-		    _PATH_HOST_CONFIG_FILE);
+		    رستہ_HOST_CONFIG_FILE);
 
-	if (pledge("stdio dns", NULL) != 0)
+	إذا (pledge("stdio dns", عدم) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = found = 0; i < NUM_KEYTYPES; i++) {
-		if (key_fd[i] != -1)
-			found = 1;
+	لكل (i = لبھیا = 0; i < عدد_KEYTYPES; i++) {
+		إذا (کلید_fd[i] != -1)
+			لبھیا = 1;
 	}
-	if (found == 0)
+	إذا (لبھیا == 0)
 		fatal("could not open any host key");
 
-	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		keys[i] = NULL;
-		if (key_fd[i] == -1)
-			continue;
-		r = sshkey_load_private_type_fd(key_fd[i], KEY_UNSPEC,
-		    NULL, &key, NULL);
-		close(key_fd[i]);
-		if (r != 0)
+	لبھیا = 0;
+	لكل (i = 0; i < عدد_KEYTYPES; i++) {
+		کلیدیں[i] = عدم;
+		إذا (کلید_fd[i] == -1)
+			استمر;
+		r = sshkey_لدو_نجی_type_fd(کلید_fd[i], کلید_UNSPEC,
+		    عدم, &کلید, عدم);
+		close(کلید_fd[i]);
+		إذا (r != 0)
 			debug_r(r, "parse key %d", i);
-		else if (key != NULL) {
-			keys[i] = key;
-			found = 1;
+		وإلا إذا (کلید != عدم) {
+			کلیدیں[i] = کلید;
+			لبھیا = 1;
 		}
 	}
-	if (!found)
+	إذا (!لبھیا)
 		fatal("no hostkey found");
 
-	if ((b = sshbuf_new()) == NULL)
+	إذا ((b = sshbuf_new()) == عدم)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(STDIN_FILENO, b) < 0)
+	إذا (ssh_پیغام_recv(STDIN_FILENO, b) < 0)
 		fatal("%s: ssh_msg_recv failed", __progname);
-	if ((r = sshbuf_get_u8(b, &rver)) != 0)
+	إذا ((r = sshbuf_get_u8(b, &rver)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (rver != version)
+	إذا (rver != نسخہ)
 		fatal("%s: bad version: received %d, expected %d",
-		    __progname, rver, version);
-	if ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
+		    __progname, rver, نسخہ);
+	إذا ((r = sshbuf_get_u32(b, (u_int *)&fd)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (fd <= STDERR_FILENO)
+	إذا (fd <= STDERR_FILENO)
 		fatal("%s: bad fd = %d", __progname, fd);
-	if ((host = get_local_name(fd)) == NULL)
+	إذا ((host = get_local_name(fd)) == عدم)
 		fatal("%s: cannot get local name for fd", __progname);
 
-	if ((r = sshbuf_get_string(b, &data, &dlen)) != 0)
+	إذا ((r = sshbuf_get_string(b, &انکڑے, &dlen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (valid_request(pw, host, &key, &pkalg, data, dlen) < 0)
+	إذا (valid_request(pw, host, &کلید, &pkalg, انکڑے, dlen) < 0)
 		fatal("%s: not a valid request", __progname);
-	free(host);
+	حرر(host);
 
-	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		if (keys[i] != NULL &&
-		    sshkey_equal_public(key, keys[i])) {
-			found = 1;
-			break;
+	لبھیا = 0;
+	لكل (i = 0; i < عدد_KEYTYPES; i++) {
+		إذا (کلیدیں[i] != عدم &&
+		    sshkey_equal_عوامی(کلید, کلیدیں[i])) {
+			لبھیا = 1;
+			اكسر;
 		}
 	}
-	if (!found) {
-		if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
-		    SSH_FP_DEFAULT)) == NULL)
+	إذا (!لبھیا) {
+		إذا ((fp = sshkey_fingerprint(کلید, options.fingerprint_hash,
+		    SSH_FP_DEFAULT)) == عدم)
 			fatal("%s: sshkey_fingerprint failed", __progname);
 		fatal("%s: no matching hostkey found for key %s %s", __progname,
-		    sshkey_type(key), fp ? fp : "");
+		    sshkey_type(کلید), fp ? fp : "");
 	}
 
-	if ((r = sshkey_sign(keys[i], &signature, &slen, data, dlen,
-	    pkalg, NULL, NULL, 0)) != 0)
+	إذا ((r = sshkey_sign(کلیدیں[i], &signature, &slen, انکڑے, dlen,
+	    pkalg, عدم, عدم, 0)) != 0)
 		fatal_r(r, "%s: sshkey_sign failed", __progname);
-	free(data);
+	حرر(انکڑے);
 
 	/* send reply */
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
+	إذا ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (ssh_msg_send(STDOUT_FILENO, version, b) == -1)
+	إذا (ssh_پیغام_send(STDOUT_FILENO, نسخہ, b) == -1)
 		fatal("%s: ssh_msg_send failed", __progname);
 
-	return (0);
+	أرجع (0);
 }

@@ -5,31 +5,31 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
+#ضمن "log.h"
+#ضمن "misc.h"
 
-void test_parse(void);
-void test_convtime(void);
-void test_expand(void);
-void test_argv(void);
-void test_strdelim(void);
-void test_hpdelim(void);
-void test_ptimeout(void);
-void test_xextendf(void);
-void test_misc(void);
+فراغ test_parse(فراغ);
+فراغ test_convtime(فراغ);
+فراغ test_expand(فراغ);
+فراغ test_argv(فراغ);
+فراغ test_strdelim(فراغ);
+فراغ test_hpdelim(فراغ);
+فراغ test_ptimeout(فراغ);
+فراغ test_xextendf(فراغ);
+فراغ test_misc(فراغ);
 
-void
-tests(void)
+فراغ
+tests(فراغ)
 {
 	test_parse();
 	test_convtime();
@@ -42,8 +42,8 @@ tests(void)
 	test_misc();
 }
 
-void
-benchmarks(void)
+فراغ
+benchmarks(فراغ)
 {
-	printf("no benchmarks\n");
+	لکھو("no benchmarks\n");
 }

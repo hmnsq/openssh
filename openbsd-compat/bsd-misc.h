@@ -14,208 +14,208 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _BSD_MISC_H
-#define _BSD_MISC_H
+#جے_بنا_تعریف _BSD_MISC_H
+#تعریف_کرو _BSD_MISC_H
 
-#include "includes.h"
+#ضمن "includes.h"
 
-char *ssh_get_progname(char *);
-int seed_from_prngd(unsigned char *, size_t);
+حرف *ssh_get_progname(حرف *);
+صحيح بیج_from_prngd(بنانشانی حرف *, ناپ_t);
 
-#ifndef HAVE_SETSID
-#define setsid() setpgrp(0, getpid())
-#endif /* !HAVE_SETSID */
+#جے_بنا_تعریف HAVE_SETSID
+#تعریف_کرو setsid() setpgrp(0, getpid())
+#جے_انت /* !HAVE_SETSID */
 
-#ifndef HAVE_SETENV
-int setenv(const char *, const char *, int);
-#endif /* !HAVE_SETENV */
+#جے_بنا_تعریف HAVE_SETENV
+صحيح setenv(ثابت حرف *, ثابت حرف *, صحيح);
+#جے_انت /* !HAVE_SETENV */
 
-#ifndef HAVE_SETLOGIN
-int setlogin(const char *);
-#endif /* !HAVE_SETLOGIN */
+#جے_بنا_تعریف HAVE_SETLOGIN
+صحيح setlogin(ثابت حرف *);
+#جے_انت /* !HAVE_SETLOGIN */
 
-#ifndef HAVE_INNETGR
-int innetgr(const char *, const char *, const char *, const char *);
-#endif /* HAVE_INNETGR */
+#جے_بنا_تعریف HAVE_INNETGR
+صحيح innetgr(ثابت حرف *, ثابت حرف *, ثابت حرف *, ثابت حرف *);
+#جے_انت /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t);
-#endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
+#إذا !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+صحيح seteuid(uid_t);
+#جے_انت /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t);
-#endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
+#إذا !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+صحيح setegid(uid_t);
+#جے_انت /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int);
-#endif
+#إذا !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ثابت حرف *strerror(صحيح);
+#جے_انت
 
-#if !defined(HAVE_SETLINEBUF)
-#define setlinebuf(a)	(setvbuf((a), NULL, _IOLBF, 0))
-#endif
+#إذا !defined(HAVE_SETLINEBUF)
+#تعریف_کرو setlinebuf(a)	(setvbuf((a), عدم, _IOLBF, 0))
+#جے_انت
 
-#ifndef HAVE_UTIMES
-#ifndef HAVE_STRUCT_TIMEVAL
-struct timeval {
-	long tv_sec;
-	long tv_usec;
+#جے_بنا_تعریف HAVE_UTIMES
+#جے_بنا_تعریف HAVE_STRUCT_TIMEVAL
+بنية timeval {
+	لما tv_sec;
+	لما tv_usec;
 }
-#endif /* HAVE_STRUCT_TIMEVAL */
+#جے_انت /* HAVE_STRUCT_TIMEVAL */
 
-int utimes(const char *, struct timeval *);
-#endif /* HAVE_UTIMES */
+صحيح utimes(ثابت حرف *, بنية timeval *);
+#جے_انت /* HAVE_UTIMES */
 
-#ifndef HAVE_DIRFD
-int dirfd(void *);
-#endif
+#جے_بنا_تعریف HAVE_DIRFD
+صحيح dirfd(فراغ *);
+#جے_انت
 
-#ifndef AT_FDCWD
+#جے_بنا_تعریف AT_FDCWD
 # define AT_FDCWD (-2)
-#endif
+#جے_انت
 
-#ifndef HAVE_FCHMODAT
-int fchmodat(int, const char *, mode_t, int);
-#endif
+#جے_بنا_تعریف HAVE_FCHMODAT
+صحيح fchmodat(صحيح, ثابت حرف *, منوال_t, صحيح);
+#جے_انت
 
-#ifndef HAVE_FCHOWNAT
-int fchownat(int, const char *, uid_t, gid_t, int);
-#endif
+#جے_بنا_تعریف HAVE_FCHOWNAT
+صحيح fchownat(صحيح, ثابت حرف *, uid_t, gid_t, صحيح);
+#جے_انت
 
-#ifdef HAVE_FSTATAT
-int fstatat(int, const char *, struct stat *, int);
-#endif
+#جے_تعریف_شدہ HAVE_FSTATAT
+صحيح fstatat(صحيح, ثابت حرف *, بنية stat *, صحيح);
+#جے_انت
 
-#ifdef HAVE_UNLINKAT
-int unlinkat(int, const char *, int);
-#endif
+#جے_تعریف_شدہ HAVE_UNLINKAT
+صحيح unlinkat(صحيح, ثابت حرف *, صحيح);
+#جے_انت
 
-#ifndef HAVE_TRUNCATE
-int truncate (const char *, off_t);
-#endif /* HAVE_TRUNCATE */
+#جے_بنا_تعریف HAVE_TRUNCATE
+صحيح truncate (ثابت حرف *, off_t);
+#جے_انت /* HAVE_TRUNCATE */
 
-#ifndef HAVE_STRUCT_TIMESPEC
-struct timespec {
+#جے_بنا_تعریف HAVE_STRUCT_TIMESPEC
+بنية timespec {
 	time_t	tv_sec;
-	long	tv_nsec;
+	لما	tv_nsec;
 };
-#endif /* !HAVE_STRUCT_TIMESPEC */
+#جے_انت /* !HAVE_STRUCT_TIMESPEC */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+#إذا !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
 # include <time.h>
-int nanosleep(const struct timespec *, struct timespec *);
-#endif
+صحيح nanosleep(ثابت بنية timespec *, بنية timespec *);
+#جے_انت
 
-#ifndef HAVE_UTIMENSAT
+#جے_بنا_تعریف HAVE_UTIMENSAT
 # include <time.h>
 /* start with the high bits and work down to minimise risk of overlap */
 # ifndef AT_SYMLINK_NOFOLLOW
 #  define AT_SYMLINK_NOFOLLOW 0x80000000
 # endif
-int utimensat(int, const char *, const struct timespec[2], int);
-#endif /* !HAVE_UTIMENSAT */
+صحيح utimensat(صحيح, ثابت حرف *, ثابت بنية timespec[2], صحيح);
+#جے_انت /* !HAVE_UTIMENSAT */
 
-#ifndef HAVE_USLEEP
-int usleep(unsigned int useconds);
-#endif
+#جے_بنا_تعریف HAVE_USLEEP
+صحيح usleep(بنانشانی صحيح useconds);
+#جے_انت
 
-#ifndef HAVE_TCGETPGRP
-pid_t tcgetpgrp(int);
-#endif
+#جے_بنا_تعریف HAVE_TCGETPGRP
+pid_t tcgetpgrp(صحيح);
+#جے_انت
 
-#ifndef HAVE_TCSENDBREAK
-int tcsendbreak(int, int);
-#endif
+#جے_بنا_تعریف HAVE_TCSENDBREAK
+صحيح tcsendbreak(صحيح, صحيح);
+#جے_انت
 
-#ifndef HAVE_UNSETENV
-int unsetenv(const char *);
-#endif
+#جے_بنا_تعریف HAVE_UNSETENV
+صحيح unsetenv(ثابت حرف *);
+#جے_انت
 
-#ifndef HAVE_ISBLANK
-int	isblank(int);
-#endif
+#جے_بنا_تعریف HAVE_ISBLANK
+صحيح	isblank(صحيح);
+#جے_انت
 
-#ifndef HAVE_GETPGID
+#جے_بنا_تعریف HAVE_GETPGID
 pid_t getpgid(pid_t);
-#endif
+#جے_انت
 
-#ifndef HAVE_PSELECT
-int pselect(int, fd_set *, fd_set *, fd_set *, const struct timespec *,
-    const sigset_t *);
-#endif
+#جے_بنا_تعریف HAVE_PSELECT
+صحيح pselect(صحيح, fd_set *, fd_set *, fd_set *, ثابت بنية timespec *,
+    ثابت sigset_t *);
+#جے_انت
 
-#ifndef HAVE_ENDGRENT
-# define endgrent() do { } while(0)
-#endif
+#جے_بنا_تعریف HAVE_ENDGRENT
+# define endgrent() افعل { } طالما(0)
+#جے_انت
 
-#ifndef HAVE_KRB5_GET_ERROR_MESSAGE
-# define krb5_get_error_message krb5_get_err_text
-#endif
+#جے_بنا_تعریف HAVE_KRB5_GET_ERROR_سنیہا
+# define krb5_get_error_سنیہا krb5_get_err_متن
+#جے_انت
 
-#ifndef HAVE_KRB5_FREE_ERROR_MESSAGE
-# define krb5_free_error_message(a,b) do { } while(0)
-#endif
+#جے_بنا_تعریف HAVE_KRB5_FREE_ERROR_سنیہا
+# define krb5_free_error_سنیہا(a,b) افعل { } طالما(0)
+#جے_انت
 
-#ifndef HAVE_PLEDGE
-int pledge(const char *promises, const char *execpromises);
-#endif
+#جے_بنا_تعریف HAVE_PLEDGE
+صحيح pledge(ثابت حرف *promises, ثابت حرف *execpromises);
+#جے_انت
 
-#ifndef HAVE_UNVEIL
-int unveil(const char *, const char *);
-#endif
+#جے_بنا_تعریف HAVE_UNVEIL
+صحيح unveil(ثابت حرف *, ثابت حرف *);
+#جے_انت
 
 /* bsd-err.h */
-#ifndef HAVE_ERR
-void err(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_ERRX
-void errx(int, const char *, ...) __attribute__((format(printf, 2, 3)));
-#endif
-#ifndef HAVE_WARN
-void warn(const char *, ...) __attribute__((format(printf, 1, 2)));
-#endif
+#جے_بنا_تعریف HAVE_ERR
+فراغ err(صحيح, ثابت حرف *, ...) __attribute__((format(لکھو, 2, 3)));
+#جے_انت
+#جے_بنا_تعریف HAVE_ERRX
+فراغ errx(صحيح, ثابت حرف *, ...) __attribute__((format(لکھو, 2, 3)));
+#جے_انت
+#جے_بنا_تعریف HAVE_WARN
+فراغ warn(ثابت حرف *, ...) __attribute__((format(لکھو, 1, 2)));
+#جے_انت
 
-#ifndef HAVE_LLABS
-long long llabs(long long);
-#endif
+#جے_بنا_تعریف HAVE_LLABS
+لما لما llabs(لما لما);
+#جے_انت
 
-#if defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
-void bzero(void *, size_t);
-#endif
+#إذا defined(HAVE_DECL_BZERO) && HAVE_DECL_BZERO == 0
+فراغ bzero(فراغ *, ناپ_t);
+#جے_انت
 
-#ifndef HAVE_RAISE
-int raise(int);
-#endif
+#جے_بنا_تعریف HAVE_RAISE
+صحيح ارفع(صحيح);
+#جے_انت
 
-#ifndef HAVE_GETSID
+#جے_بنا_تعریف HAVE_GETSID
 pid_t getsid(pid_t);
-#endif
+#جے_انت
 
-#ifndef HAVE_FLOCK
+#جے_بنا_تعریف HAVE_FLOCK
 # define LOCK_SH		0x01
 # define LOCK_EX		0x02
 # define LOCK_NB		0x04
 # define LOCK_UN		0x08
-int flock(int, int);
-#endif
+صحيح flock(صحيح, صحيح);
+#جے_انت
 
-#ifdef FFLUSH_NULL_BUG
+#جے_تعریف_شدہ FFLUSH_NULL_BUG
 # define fflush(x)	(_ssh_compat_fflush(x))
-#endif
+#جے_انت
 
-#ifndef HAVE_LOCALTIME_R
-struct tm *localtime_r(const time_t *, struct tm *);
-#endif
+#جے_بنا_تعریف HAVE_LOCALTIME_R
+بنية tm *localtime_r(ثابت time_t *, بنية tm *);
+#جے_انت
 
-#ifndef HAVE_CLOCK_GETTIME
-typedef int clockid_t;
-#ifndef CLOCK_REALTIME
+#جے_بنا_تعریف HAVE_CLOCK_GETTIME
+تعريفنوع صحيح clockid_t;
+#جے_بنا_تعریف CLOCK_REALTIME
 # define CLOCK_REALTIME	0
-#endif
-int clock_gettime(clockid_t, struct timespec *);
-#endif
+#جے_انت
+صحيح clock_gettime(clockid_t, بنية timespec *);
+#جے_انت
 
-#ifndef HAVE_REALPATH
-#define realpath(x, y)	(sftp_realpath((x), (y)))
-#endif
+#جے_بنا_تعریف HAVE_REALPATH
+#تعریف_کرو realpath(x, y)	(sftp_realpath((x), (y)))
+#جے_انت
 
-#endif /* _BSD_MISC_H */
+#جے_انت /* _BSD_MISC_H */

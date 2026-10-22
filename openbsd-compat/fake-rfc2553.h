@@ -35,142 +35,142 @@
  * that ai_family is AF_INET. Don't use it for another purpose.
  */
 
-#ifndef _FAKE_RFC2553_H
-#define _FAKE_RFC2553_H
+#جے_بنا_تعریف _FAKE_RFC2553_H
+#تعریف_کرو _FAKE_RFC2553_H
 
-#include "includes.h"
-#include <sys/types.h>
-#if defined(HAVE_NETDB_H)
+#ضمن "includes.h"
+#ضمن <sys/types.h>
+#إذا defined(HAVE_NETDB_H)
 # include <netdb.h>
-#endif
+#جے_انت
 
 /*
  * First, socket and INET6 related definitions
  */
-#ifndef HAVE_STRUCT_SOCKADDR_STORAGE
+#جے_بنا_تعریف HAVE_STRUCT_SOCKADDR_STORAGE
 # define	_SS_MAXSIZE	128	/* Implementation specific max size */
-# define       _SS_PADSIZE     (_SS_MAXSIZE - sizeof (struct sockaddr))
-struct sockaddr_storage {
-	struct sockaddr	ss_sa;
-	char		__ss_pad2[_SS_PADSIZE];
+# define       _SS_PADSIZE     (_SS_MAXSIZE - حجم (بنية sockaddr))
+بنية sockaddr_storage {
+	بنية sockaddr	ss_sa;
+	حرف		__ss_pad2[_SS_PADSIZE];
 };
 # define ss_family ss_sa.sa_family
-#endif /* !HAVE_STRUCT_SOCKADDR_STORAGE */
+#جے_انت /* !HAVE_STRUCT_SOCKADDR_STORAGE */
 
-#ifndef IN6_IS_ADDR_LOOPBACK
+#جے_بنا_تعریف IN6_IS_ADDR_LOOPBACK
 # define IN6_IS_ADDR_LOOPBACK(a) \
 	(((u_int32_t *)(a))[0] == 0 && ((u_int32_t *)(a))[1] == 0 && \
 	 ((u_int32_t *)(a))[2] == 0 && ((u_int32_t *)(a))[3] == htonl(1))
-#endif /* !IN6_IS_ADDR_LOOPBACK */
+#جے_انت /* !IN6_IS_ADDR_LOOPBACK */
 
-#ifndef HAVE_STRUCT_IN6_ADDR
-struct in6_addr {
+#جے_بنا_تعریف HAVE_STRUCT_IN6_ADDR
+بنية in6_addr {
 	u_int8_t	s6_addr[16];
 };
-#endif /* !HAVE_STRUCT_IN6_ADDR */
+#جے_انت /* !HAVE_STRUCT_IN6_ADDR */
 
-#ifndef HAVE_STRUCT_SOCKADDR_IN6
-struct sockaddr_in6 {
-	unsigned short	sin6_family;
+#جے_بنا_تعریف HAVE_STRUCT_SOCKADDR_IN6
+بنية sockaddr_in6 {
+	بنانشانی چھوٹا	sin6_family;
 	u_int16_t	sin6_port;
 	u_int32_t	sin6_flowinfo;
-	struct in6_addr	sin6_addr;
+	بنية in6_addr	sin6_addr;
 	u_int32_t	sin6_scope_id;
 };
-#endif /* !HAVE_STRUCT_SOCKADDR_IN6 */
+#جے_انت /* !HAVE_STRUCT_SOCKADDR_IN6 */
 
-#ifndef AF_INET6
+#جے_بنا_تعریف AF_INET6
 /* Define it to something that should never appear */
-#define AF_INET6 AF_MAX
-#endif
+#تعریف_کرو AF_INET6 AF_MAX
+#جے_انت
 
 /*
  * Next, RFC2553 name / address resolution API
  */
 
-#ifndef NI_NUMERICHOST
+#جے_بنا_تعریف NI_NUMERICHOST
 # define NI_NUMERICHOST    (1)
-#endif
-#ifndef NI_NAMEREQD
+#جے_انت
+#جے_بنا_تعریف NI_NAMEREQD
 # define NI_NAMEREQD       (1<<1)
-#endif
-#ifndef NI_NUMERICSERV
+#جے_انت
+#جے_بنا_تعریف NI_NUMERICSERV
 # define NI_NUMERICSERV    (1<<2)
-#endif
+#جے_انت
 
-#ifndef AI_PASSIVE
+#جے_بنا_تعریف AI_PASSIVE
 # define AI_PASSIVE		(1)
-#endif
-#ifndef AI_CANONNAME
+#جے_انت
+#جے_بنا_تعریف AI_CANONNAME
 # define AI_CANONNAME		(1<<1)
-#endif
-#ifndef AI_NUMERICHOST
+#جے_انت
+#جے_بنا_تعریف AI_NUMERICHOST
 # define AI_NUMERICHOST		(1<<2)
-#endif
-#ifndef AI_NUMERICSERV
+#جے_انت
+#جے_بنا_تعریف AI_NUMERICSERV
 # define AI_NUMERICSERV		(1<<3)
-#endif
+#جے_انت
 
-#ifndef NI_MAXSERV
+#جے_بنا_تعریف NI_MAXSERV
 # define NI_MAXSERV 32
-#endif /* !NI_MAXSERV */
-#ifndef NI_MAXHOST
+#جے_انت /* !NI_MAXSERV */
+#جے_بنا_تعریف NI_MAXHOST
 # define NI_MAXHOST 1025
-#endif /* !NI_MAXHOST */
+#جے_انت /* !NI_MAXHOST */
 
-#ifndef EAI_NODATA
-# define EAI_NODATA	(INT_MAX - 1)
-#endif
-#ifndef EAI_MEMORY
-# define EAI_MEMORY	(INT_MAX - 2)
-#endif
-#ifndef EAI_NONAME
-# define EAI_NONAME	(INT_MAX - 3)
-#endif
-#ifndef EAI_SYSTEM
-# define EAI_SYSTEM	(INT_MAX - 4)
-#endif
-#ifndef EAI_FAMILY
-# define EAI_FAMILY	(INT_MAX - 5)
-#endif
+#جے_بنا_تعریف EAI_NODATA
+# define EAI_NODATA	(ودھ_توں_ودھ_عدد - 1)
+#جے_انت
+#جے_بنا_تعریف EAI_MEMORY
+# define EAI_MEMORY	(ودھ_توں_ودھ_عدد - 2)
+#جے_انت
+#جے_بنا_تعریف EAI_NONAME
+# define EAI_NONAME	(ودھ_توں_ودھ_عدد - 3)
+#جے_انت
+#جے_بنا_تعریف EAI_SYSTEM
+# define EAI_SYSTEM	(ودھ_توں_ودھ_عدد - 4)
+#جے_انت
+#جے_بنا_تعریف EAI_FAMILY
+# define EAI_FAMILY	(ودھ_توں_ودھ_عدد - 5)
+#جے_انت
 
-#ifndef HAVE_STRUCT_ADDRINFO
-struct addrinfo {
-	int	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
-	int	ai_family;	/* PF_xxx */
-	int	ai_socktype;	/* SOCK_xxx */
-	int	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
-	size_t	ai_addrlen;	/* length of ai_addr */
-	char	*ai_canonname;	/* canonical name for hostname */
-	struct sockaddr *ai_addr;	/* binary address */
-	struct addrinfo *ai_next;	/* next structure in linked list */
+#جے_بنا_تعریف HAVE_STRUCT_ADDRINFO
+بنية addrinfo {
+	صحيح	ai_flags;	/* AI_PASSIVE, AI_CANONNAME */
+	صحيح	ai_family;	/* PF_xxx */
+	صحيح	ai_socktype;	/* SOCK_xxx */
+	صحيح	ai_protocol;	/* 0 or IPPROTO_xxx for IPv4 and IPv6 */
+	ناپ_t	ai_addrlen;	/* length of ai_addr */
+	حرف	*ai_canonname;	/* canonical name for hostname */
+	بنية sockaddr *ai_addr;	/* binary address */
+	بنية addrinfo *ai_next;	/* next structure in linked list */
 };
-#endif /* !HAVE_STRUCT_ADDRINFO */
+#جے_انت /* !HAVE_STRUCT_ADDRINFO */
 
-#ifndef HAVE_GETADDRINFO
-#ifdef getaddrinfo
+#جے_بنا_تعریف HAVE_GETADDRINFO
+#جے_تعریف_شدہ getaddrinfo
 # undef getaddrinfo
-#endif
-#define getaddrinfo(a,b,c,d)	(ssh_getaddrinfo(a,b,c,d))
-int getaddrinfo(const char *, const char *,
-    const struct addrinfo *, struct addrinfo **);
-#endif /* !HAVE_GETADDRINFO */
+#جے_انت
+#تعریف_کرو getaddrinfo(a,b,c,d)	(ssh_getaddrinfo(a,b,c,d))
+صحيح getaddrinfo(ثابت حرف *, ثابت حرف *,
+    ثابت بنية addrinfo *, بنية addrinfo **);
+#جے_انت /* !HAVE_GETADDRINFO */
 
-#if !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
-#define gai_strerror(a)		(_ssh_compat_gai_strerror(a))
-char *gai_strerror(int);
-#endif /* !HAVE_GAI_STRERROR */
+#إذا !defined(HAVE_GAI_STRERROR) && !defined(HAVE_CONST_GAI_STRERROR_PROTO)
+#تعریف_کرو gai_strerror(a)		(_ssh_compat_gai_strerror(a))
+حرف *gai_strerror(صحيح);
+#جے_انت /* !HAVE_GAI_STRERROR */
 
-#ifndef HAVE_FREEADDRINFO
-#define freeaddrinfo(a)		(ssh_freeaddrinfo(a))
-void freeaddrinfo(struct addrinfo *);
-#endif /* !HAVE_FREEADDRINFO */
+#جے_بنا_تعریف HAVE_FREEADDRINFO
+#تعریف_کرو freeaddrinfo(a)		(ssh_freeaddrinfo(a))
+فراغ freeaddrinfo(بنية addrinfo *);
+#جے_انت /* !HAVE_FREEADDRINFO */
 
-#ifndef HAVE_GETNAMEINFO
-#define getnameinfo(a,b,c,d,e,f,g) (ssh_getnameinfo(a,b,c,d,e,f,g))
-int getnameinfo(const struct sockaddr *, size_t, char *, size_t,
-    char *, size_t, int);
-#endif /* !HAVE_GETNAMEINFO */
+#جے_بنا_تعریف HAVE_GETNAMEINFO
+#تعریف_کرو getnameinfo(a,b,c,d,e,f,g) (ssh_getnameinfo(a,b,c,d,e,f,g))
+صحيح getnameinfo(ثابت بنية sockaddr *, ناپ_t, حرف *, ناپ_t,
+    حرف *, ناپ_t, صحيح);
+#جے_انت /* !HAVE_GETNAMEINFO */
 
-#endif /* !_FAKE_RFC2553_H */
+#جے_انت /* !_FAKE_RFC2553_H */
 

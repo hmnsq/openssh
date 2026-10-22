@@ -23,57 +23,57 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#ifdef GSSAPI
-#include "ssh-gss.h"
-#endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#ضمن "packet.h"
+#ضمن "ssherr.h"
+#ضمن "log.h"
+#ضمن "sshkey.h"
+#ضمن "hostfile.h"
+#ضمن "auth.h"
+#جے_تعریف_شدہ GSSAPI
+#ضمن "ssh-gss.h"
+#جے_انت
+#ضمن "monitor_wrap.h"
+#ضمن "misc.h"
+#ضمن "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+خارجي ServerOptions options;
+خارجي بنية authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+ساكن صحيح
+userauth_passwd(بنية ssh *ssh, ثابت حرف *طریقہ)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	حرف *password = عدم;
+	صحيح authenticated = 0, r;
 	u_char change;
-	size_t len = 0;
+	ناپ_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	إذا ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
-	    (r = sshpkt_get_end(ssh)) != 0) {
+	    (change && (r = sshpkt_get_cstring(ssh, عدم, عدم)) != 0) ||
+	    (r = sshpkt_get_سرا(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	إذا (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	وإلا إذا (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	أرجع authenticated;
 }
 
-Authmethod method_passwd = {
+Authmethod طریقہ_passwd = {
 	&methodcfg_passwd,
 	userauth_passwd,
 };

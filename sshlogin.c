@@ -39,32 +39,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
 
-#include <netinet/in.h>
+#ضمن <netinet/in.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
+#ضمن <errno.h>
+#ضمن <fcntl.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <time.h>
+#ضمن <unistd.h>
+#ضمن <limits.h>
 
-#include "sshlogin.h"
-#include "ssherr.h"
-#include "loginrec.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
+#ضمن "sshlogin.h"
+#ضمن "ssherr.h"
+#ضمن "loginrec.h"
+#ضمن "log.h"
+#ضمن "sshbuf.h"
+#ضمن "misc.h"
+#ضمن "servconf.h"
 
-extern struct sshbuf *loginmsg;
-extern ServerOptions options;
+خارجي بنية sshbuf *loginmsg;
+خارجي ServerOptions options;
 
 /*
  * Returns the time when the user last logged in.  Returns 0 if the
@@ -72,102 +72,102 @@ extern ServerOptions options;
  * The host the user logged in from will be returned in buf.
  */
 time_t
-get_last_login_time(uid_t uid, const char *logname,
-    char *buf, size_t bufsize)
+get_آخری_login_ویلا(uid_t uid, ثابت حرف *logname,
+    حرف *buf, ناپ_t bufsize)
 {
-	struct logininfo li;
+	بنية logininfo li;
 
 	login_get_lastlog(&li, uid);
 	strlcpy(buf, li.hostname, bufsize);
-	return (time_t)li.tv_sec;
+	أرجع (time_t)li.tv_sec;
 }
 
 /*
  * Generate and store last login message.  This must be done before
  * login_login() is called and lastlog is updated.
  */
-static void
-store_lastlog_message(const char *user, uid_t uid)
+ساكن فراغ
+store_lastlog_سنیہا(ثابت حرف *user, uid_t uid)
 {
-#ifndef NO_SSH_LASTLOG
-# ifndef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-	char hostname[HOST_NAME_MAX+1] = "";
-	time_t last_login_time;
+#جے_بنا_تعریف NO_SSH_LASTLOG
+# ifndef CUSTOM_SYS_AUTH_GET_LASTLOGIN_پیغام
+	حرف hostname[HOST_NAME_MAX+1] = "";
+	time_t آخری_login_ویلا;
 # endif
-	char *time_string;
-	int r;
+	حرف *ویلا_string;
+	صحيح r;
 
-	if (!options.print_lastlog)
-		return;
+	إذا (!options.print_lastlog)
+		أرجع;
 
-# ifdef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-	time_string = sys_auth_get_lastlogin_msg(user, uid);
-	if (time_string != NULL) {
-		if ((r = sshbuf_put(loginmsg,
-		    time_string, strlen(time_string))) != 0)
+# ifdef CUSTOM_SYS_AUTH_GET_LASTLOGIN_پیغام
+	ویلا_string = sys_auth_get_lastlogin_پیغام(user, uid);
+	إذا (ویلا_string != عدم) {
+		إذا ((r = sshbuf_put(loginmsg,
+		    ویلا_string, لڑی_لمبائی(ویلا_string))) != 0)
 			fatal_fr(r, "buffer error");
-		free(time_string);
+		حرر(ویلا_string);
 	}
-# else
-	last_login_time = get_last_login_time(uid, user, hostname,
-	    sizeof(hostname));
+# وإلا
+	آخری_login_ویلا = get_آخری_login_ویلا(uid, user, hostname,
+	    حجم(hostname));
 
-	if (last_login_time != 0) {
-		time_string = ctime(&last_login_time);
-		time_string[strcspn(time_string, "\n")] = '\0';
-		if (strcmp(hostname, "") == 0)
+	إذا (آخری_login_ویلا != 0) {
+		ویلا_string = ctime(&آخری_login_ویلا);
+		ویلا_string[strcspn(ویلا_string, "\n")] = '\0';
+		إذا (strcmp(hostname, "") == 0)
 			r = sshbuf_putf(loginmsg, "Last login: %s\r\n",
-			    time_string);
-		else
+			    ویلا_string);
+		وإلا
 			r = sshbuf_putf(loginmsg, "Last login: %s from %s\r\n",
-			    time_string, hostname);
-		if (r != 0)
+			    ویلا_string, hostname);
+		إذا (r != 0)
 			fatal_fr(r, "sshbuf_putf");
 	}
 # endif /* CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG */
-#endif /* NO_SSH_LASTLOG */
+#جے_انت /* NO_SSH_LASTLOG */
 }
 
 /*
  * Records that the user has logged in.  I wish these parts of operating
  * systems were more standardized.
  */
-void
-record_login(pid_t pid, const char *tty, const char *user, uid_t uid,
-    const char *host, struct sockaddr *addr, socklen_t addrlen)
+فراغ
+ریکارڈ_login(pid_t pid, ثابت حرف *tty, ثابت حرف *user, uid_t uid,
+    ثابت حرف *host, بنية sockaddr *addr, socklen_t addrlen)
 {
-	struct logininfo *li;
+	بنية logininfo *li;
 
 	/* save previous login details before writing new */
-	store_lastlog_message(user, uid);
+	store_lastlog_سنیہا(user, uid);
 
-	li = login_alloc_entry(pid, user, host, tty);
-	login_set_addr(li, addr, addrlen);
+	li = login_alloc_اندراج(pid, user, host, tty);
+	login_سیٹ_addr(li, addr, addrlen);
 	login_login(li);
-	login_free_entry(li);
+	login_free_اندراج(li);
 }
 
-#ifdef LOGIN_NEEDS_UTMPX
-void
-record_utmp_only(pid_t pid, const char *ttyname, const char *user,
-		 const char *host, struct sockaddr *addr, socklen_t addrlen)
+#جے_تعریف_شدہ LOGIN_NEEDS_UTMPX
+فراغ
+ریکارڈ_utmp_only(pid_t pid, ثابت حرف *ttyname, ثابت حرف *user,
+		 ثابت حرف *host, بنية sockaddr *addr, socklen_t addrlen)
 {
-	struct logininfo *li;
+	بنية logininfo *li;
 
-	li = login_alloc_entry(pid, user, host, ttyname);
-	login_set_addr(li, addr, addrlen);
+	li = login_alloc_اندراج(pid, user, host, ttyname);
+	login_سیٹ_addr(li, addr, addrlen);
 	login_utmp_only(li);
-	login_free_entry(li);
+	login_free_اندراج(li);
 }
-#endif
+#جے_انت
 
 /* Records that the user has logged out. */
-void
-record_logout(pid_t pid, const char *tty, const char *user)
+فراغ
+ریکارڈ_logout(pid_t pid, ثابت حرف *tty, ثابت حرف *user)
 {
-	struct logininfo *li;
+	بنية logininfo *li;
 
-	li = login_alloc_entry(pid, user, NULL, tty);
+	li = login_alloc_اندراج(pid, user, عدم, tty);
 	login_logout(li);
-	login_free_entry(li);
+	login_free_اندراج(li);
 }

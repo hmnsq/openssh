@@ -26,144 +26,144 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/uio.h>
+#ضمن <sys/uio.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
+#ضمن <errno.h>
+#ضمن <poll.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <limits.h>
 
-#include "atomicio.h"
+#ضمن "atomicio.h"
 
 /*
  * ensure all of data on socket comes through. f==read || f==vwrite
  */
-size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *cb_arg)
+ناپ_t
+atomicio6(ssize_t (*f) (صحيح, فراغ *, ناپ_t), صحيح fd, فراغ *_s, ناپ_t n,
+    صحيح (*cb)(فراغ *, ناپ_t), فراغ *cb_arg)
 {
-	char *s = _s;
-	size_t pos = 0;
+	حرف *s = _s;
+	ناپ_t pos = 0;
 	ssize_t res;
-	struct pollfd pfd;
+	بنية pollfd pfd;
 
 	pfd.fd = fd;
-	pfd.events = f == read ? POLLIN : POLLOUT;
-	while (n > pos) {
+	pfd.events = f == اقرأ ? POLLIN : POLLOUT;
+	طالما (n > pos) {
 		res = (f) (fd, s + pos, n - pos);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		بدل (res) {
+		حالة -1:
+			إذا (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				إذا (cb != عدم && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					أرجع pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				استمر;
+			} وإلا إذا (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(فراغ)poll(&pfd, 1, -1);
+				استمر;
 			}
-			return 0;
-		case 0:
+			أرجع 0;
+		حالة 0:
 			errno = EPIPE;
-			return pos;
-		default:
-			pos += (size_t)res;
-			if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+			أرجع pos;
+		افتراضي:
+			pos += (ناپ_t)res;
+			إذا (cb != عدم && cb(cb_arg, (ناپ_t)res) == -1) {
 				errno = EINTR;
-				return pos;
+				أرجع pos;
 			}
 		}
 	}
-	return pos;
+	أرجع pos;
 }
 
-size_t
-atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+ناپ_t
+atomicio(ssize_t (*f) (صحيح, فراغ *, ناپ_t), صحيح fd, فراغ *_s, ناپ_t n)
 {
-	return atomicio6(f, fd, _s, n, NULL, NULL);
+	أرجع atomicio6(f, fd, _s, n, عدم, عدم);
 }
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
-size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt,
-    int (*cb)(void *, size_t), void *cb_arg)
+ناپ_t
+atomiciov6(ssize_t (*f) (صحيح, ثابت بنية iovec *, صحيح), صحيح fd,
+    ثابت بنية iovec *_iov, صحيح iovcnt,
+    صحيح (*cb)(فراغ *, ناپ_t), فراغ *cb_arg)
 {
-	size_t pos = 0, rem;
+	ناپ_t pos = 0, rem;
 	ssize_t res;
-	struct iovec iov_array[IOV_MAX], *iov = iov_array;
-	struct pollfd pfd;
+	بنية iovec iov_array[IOV_MAX], *iov = iov_array;
+	بنية pollfd pfd;
 
-	if (iovcnt < 0 || iovcnt > IOV_MAX) {
+	إذا (iovcnt < 0 || iovcnt > IOV_MAX) {
 		errno = EINVAL;
-		return 0;
+		أرجع 0;
 	}
 	/* Make a copy of the iov array because we may modify it below */
-	memcpy(iov, _iov, (size_t)iovcnt * sizeof(*_iov));
+	حافظہ_نقل(iov, _iov, (ناپ_t)iovcnt * حجم(*_iov));
 
 	pfd.fd = fd;
-#ifndef BROKEN_READV_COMPARISON
+#جے_بنا_تعریف BROKEN_READV_COMPARISON
 	pfd.events = f == readv ? POLLIN : POLLOUT;
-#else
+#وإلا
 	pfd.events = POLLIN|POLLOUT;
-#endif
-	for (; iovcnt > 0 && iov[0].iov_len > 0;) {
+#جے_انت
+	لكل (; iovcnt > 0 && iov[0].iov_len > 0;) {
 		res = (f) (fd, iov, iovcnt);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		بدل (res) {
+		حالة -1:
+			إذا (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				إذا (cb != عدم && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					أرجع pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				استمر;
+			} وإلا إذا (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(فراغ)poll(&pfd, 1, -1);
+				استمر;
 			}
-			return 0;
-		case 0:
+			أرجع 0;
+		حالة 0:
 			errno = EPIPE;
-			return pos;
-		default:
-			rem = (size_t)res;
+			أرجع pos;
+		افتراضي:
+			rem = (ناپ_t)res;
 			pos += rem;
 			/* skip completed iov entries */
-			while (iovcnt > 0 && rem >= iov[0].iov_len) {
+			طالما (iovcnt > 0 && rem >= iov[0].iov_len) {
 				rem -= iov[0].iov_len;
 				iov++;
 				iovcnt--;
 			}
 			/* This shouldn't happen... */
-			if (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
+			إذا (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
 				errno = EFAULT;
-				return 0;
+				أرجع 0;
 			}
-			if (iovcnt == 0)
-				break;
+			إذا (iovcnt == 0)
+				اكسر;
 			/* update pointer in partially complete iov */
-			iov[0].iov_base = ((char *)iov[0].iov_base) + rem;
+			iov[0].iov_base = ((حرف *)iov[0].iov_base) + rem;
 			iov[0].iov_len -= rem;
 		}
-		if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+		إذا (cb != عدم && cb(cb_arg, (ناپ_t)res) == -1) {
 			errno = EINTR;
-			return pos;
+			أرجع pos;
 		}
 	}
-	return pos;
+	أرجع pos;
 }
 
-size_t
-atomiciov(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt)
+ناپ_t
+atomiciov(ssize_t (*f) (صحيح, ثابت بنية iovec *, صحيح), صحيح fd,
+    ثابت بنية iovec *_iov, صحيح iovcnt)
 {
-	return atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
+	أرجع atomiciov6(f, fd, _iov, iovcnt, عدم, عدم);
 }

@@ -24,132 +24,132 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifdef GSSAPI
+#جے_تعریف_شدہ GSSAPI
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#include <limits.h>
-#include <stdarg.h>
-#include <string.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <unistd.h>
+#ضمن <limits.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
+#ضمن <signal.h>
+#ضمن <stdlib.h>
+#ضمن <unistd.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "ssh2.h"
+#ضمن "xmalloc.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
+#ضمن "log.h"
+#ضمن "ssh2.h"
 
-#include "ssh-gss.h"
+#ضمن "ssh-gss.h"
 
 /* sshbuf_get for gss_buffer_desc */
-int
-ssh_gssapi_get_buffer_desc(struct sshbuf *b, gss_buffer_desc *g)
+صحيح
+ssh_gssapi_get_بفر_desc(بنية sshbuf *b, gss_بفر_desc *g)
 {
-	int r;
+	صحيح r;
 	u_char *p;
-	size_t len;
+	ناپ_t len;
 
-	if ((r = sshbuf_get_string(b, &p, &len)) != 0)
-		return r;
-	g->value = p;
-	g->length = len;
-	return 0;
+	إذا ((r = sshbuf_get_string(b, &p, &len)) != 0)
+		أرجع r;
+	g->قدر = p;
+	g->لمائی = len;
+	أرجع 0;
 }
 
 /* Check that the OID in a data stream matches that in the context */
-int
-ssh_gssapi_check_oid(Gssctxt *ctx, void *data, size_t len)
+صحيح
+ssh_gssapi_check_oid(Gssctxt *ctx, فراغ *انکڑے, ناپ_t len)
 {
-	return (ctx != NULL && ctx->oid != GSS_C_NO_OID &&
-	    ctx->oid->length == len &&
-	    memcmp(ctx->oid->elements, data, len) == 0);
+	أرجع (ctx != عدم && ctx->oid != GSS_C_NO_OID &&
+	    ctx->oid->لمائی == len &&
+	    memcmp(ctx->oid->elements, انکڑے, len) == 0);
 }
 
 /* Set the contexts OID from a data stream */
-void
-ssh_gssapi_set_oid_data(Gssctxt *ctx, void *data, size_t len)
+فراغ
+ssh_gssapi_سیٹ_oid_انکڑے(Gssctxt *ctx, فراغ *انکڑے, ناپ_t len)
 {
-	if (ctx->oid != GSS_C_NO_OID) {
-		free(ctx->oid->elements);
-		free(ctx->oid);
+	إذا (ctx->oid != GSS_C_NO_OID) {
+		حرر(ctx->oid->elements);
+		حرر(ctx->oid);
 	}
-	ctx->oid = xcalloc(1, sizeof(gss_OID_desc));
-	ctx->oid->length = len;
+	ctx->oid = xcalloc(1, حجم(gss_OID_desc));
+	ctx->oid->لمائی = len;
 	ctx->oid->elements = xmalloc(len);
-	memcpy(ctx->oid->elements, data, len);
+	حافظہ_نقل(ctx->oid->elements, انکڑے, len);
 }
 
 /* Set the contexts OID */
-void
-ssh_gssapi_set_oid(Gssctxt *ctx, gss_OID oid)
+فراغ
+ssh_gssapi_سیٹ_oid(Gssctxt *ctx, gss_OID oid)
 {
-	ssh_gssapi_set_oid_data(ctx, oid->elements, oid->length);
+	ssh_gssapi_سیٹ_oid_انکڑے(ctx, oid->elements, oid->لمائی);
 }
 
 /* All this effort to report an error ... */
-void
+فراغ
 ssh_gssapi_error(Gssctxt *ctxt)
 {
-	char *s;
+	حرف *s;
 
-	s = ssh_gssapi_last_error(ctxt, NULL, NULL);
+	s = ssh_gssapi_آخری_error(ctxt, عدم, عدم);
 	debug("%s", s);
-	free(s);
+	حرر(s);
 }
 
-char *
-ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
-    OM_uint32 *minor_status)
+حرف *
+ssh_gssapi_آخری_error(Gssctxt *ctxt, OM_uint32 *major_حالت,
+    OM_uint32 *minor_حالت)
 {
 	OM_uint32 lmin;
-	gss_buffer_desc msg = GSS_C_EMPTY_BUFFER;
+	gss_بفر_desc پیغام = GSS_C_خالی_تھاواں_بفر;
 	OM_uint32 ctx;
-	struct sshbuf *b;
-	char *ret;
-	int r;
+	بنية sshbuf *b;
+	حرف *ret;
+	صحيح r;
 
-	if ((b = sshbuf_new()) == NULL)
+	إذا ((b = sshbuf_new()) == عدم)
 		fatal_f("sshbuf_new failed");
 
-	if (major_status != NULL)
-		*major_status = ctxt->major;
-	if (minor_status != NULL)
-		*minor_status = ctxt->minor;
+	إذا (major_حالت != عدم)
+		*major_حالت = ctxt->major;
+	إذا (minor_حالت != عدم)
+		*minor_حالت = ctxt->minor;
 
 	ctx = 0;
 	/* The GSSAPI error */
-	do {
-		gss_display_status(&lmin, ctxt->major,
-		    GSS_C_GSS_CODE, ctxt->oid, &ctx, &msg);
+	افعل {
+		gss_display_حالت(&lmin, ctxt->major,
+		    GSS_C_GSS_کوڈ, ctxt->oid, &ctx, &پیغام);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		إذا ((r = sshbuf_put(b, پیغام.قدر, پیغام.لمائی)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble GSS_CODE");
 
-		gss_release_buffer(&lmin, &msg);
-	} while (ctx != 0);
+		gss_release_بفر(&lmin, &پیغام);
+	} طالما (ctx != 0);
 
 	/* The mechanism specific error */
-	do {
-		gss_display_status(&lmin, ctxt->minor,
-		    GSS_C_MECH_CODE, ctxt->oid, &ctx, &msg);
+	افعل {
+		gss_display_حالت(&lmin, ctxt->minor,
+		    GSS_C_MECH_کوڈ, ctxt->oid, &ctx, &پیغام);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		إذا ((r = sshbuf_put(b, پیغام.قدر, پیغام.لمائی)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble MECH_CODE");
 
-		gss_release_buffer(&lmin, &msg);
-	} while (ctx != 0);
+		gss_release_بفر(&lmin, &پیغام);
+	} طالما (ctx != 0);
 
-	if ((r = sshbuf_put_u8(b, '\n')) != 0)
+	إذا ((r = sshbuf_put_u8(b, '\n')) != 0)
 		fatal_fr(r, "assemble newline");
-	ret = xstrdup((const char *)sshbuf_ptr(b));
+	ret = xstrdup((ثابت حرف *)sshbuf_ptr(b));
 	sshbuf_free(b);
-	return (ret);
+	أرجع (ret);
 }
 
 /*
@@ -158,10 +158,10 @@ ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
  * {accept,init}_sec_context calls, so that when we do it from the userauth
  * stuff life is a little easier
  */
-void
+فراغ
 ssh_gssapi_build_ctx(Gssctxt **ctx)
 {
-	*ctx = xcalloc(1, sizeof (Gssctxt));
+	*ctx = xcalloc(1, حجم (Gssctxt));
 	(*ctx)->context = GSS_C_NO_CONTEXT;
 	(*ctx)->name = GSS_C_NO_NAME;
 	(*ctx)->oid = GSS_C_NO_OID;
@@ -171,31 +171,31 @@ ssh_gssapi_build_ctx(Gssctxt **ctx)
 }
 
 /* Delete our context, providing it has been built correctly */
-void
+فراغ
 ssh_gssapi_delete_ctx(Gssctxt **ctx)
 {
 	OM_uint32 ms;
 
-	if ((*ctx) == NULL)
-		return;
-	if ((*ctx)->context != GSS_C_NO_CONTEXT)
-		gss_delete_sec_context(&ms, &(*ctx)->context, GSS_C_NO_BUFFER);
-	if ((*ctx)->name != GSS_C_NO_NAME)
+	إذا ((*ctx) == عدم)
+		أرجع;
+	إذا ((*ctx)->context != GSS_C_NO_CONTEXT)
+		gss_delete_sec_context(&ms, &(*ctx)->context, GSS_C_NO_بفر);
+	إذا ((*ctx)->name != GSS_C_NO_NAME)
 		gss_release_name(&ms, &(*ctx)->name);
-	if ((*ctx)->oid != GSS_C_NO_OID) {
-		free((*ctx)->oid->elements);
-		free((*ctx)->oid);
+	إذا ((*ctx)->oid != GSS_C_NO_OID) {
+		حرر((*ctx)->oid->elements);
+		حرر((*ctx)->oid);
 		(*ctx)->oid = GSS_C_NO_OID;
 	}
-	if ((*ctx)->creds != GSS_C_NO_CREDENTIAL)
+	إذا ((*ctx)->creds != GSS_C_NO_CREDENTIAL)
 		gss_release_cred(&ms, &(*ctx)->creds);
-	if ((*ctx)->client != GSS_C_NO_NAME)
+	إذا ((*ctx)->client != GSS_C_NO_NAME)
 		gss_release_name(&ms, &(*ctx)->client);
-	if ((*ctx)->client_creds != GSS_C_NO_CREDENTIAL)
+	إذا ((*ctx)->client_creds != GSS_C_NO_CREDENTIAL)
 		gss_release_cred(&ms, &(*ctx)->client_creds);
 
-	free(*ctx);
-	*ctx = NULL;
+	حرر(*ctx);
+	*ctx = عدم;
 }
 
 /*
@@ -205,12 +205,12 @@ ssh_gssapi_delete_ctx(Gssctxt **ctx)
  *	server name (from ssh_gssapi_import_name)
  */
 OM_uint32
-ssh_gssapi_init_ctx(Gssctxt *ctx, int deleg_creds, gss_buffer_desc *recv_tok,
-    gss_buffer_desc* send_tok, OM_uint32 *flags)
+ssh_gssapi_init_ctx(Gssctxt *ctx, صحيح deleg_creds, gss_بفر_desc *recv_tok,
+    gss_بفر_desc* send_tok, OM_uint32 *flags)
 {
-	int deleg_flag = 0;
+	صحيح deleg_flag = 0;
 
-	if (deleg_creds) {
+	إذا (deleg_creds) {
 		deleg_flag = GSS_C_DELEG_FLAG;
 		debug("Delegating credentials");
 	}
@@ -218,86 +218,86 @@ ssh_gssapi_init_ctx(Gssctxt *ctx, int deleg_creds, gss_buffer_desc *recv_tok,
 	ctx->major = gss_init_sec_context(&ctx->minor,
 	    GSS_C_NO_CREDENTIAL, &ctx->context, ctx->name, ctx->oid,
 	    GSS_C_MUTUAL_FLAG | GSS_C_INTEG_FLAG | deleg_flag,
-	    0, NULL, recv_tok, NULL, send_tok, flags, NULL);
+	    0, عدم, recv_tok, عدم, send_tok, flags, عدم);
 
-	if (GSS_ERROR(ctx->major))
+	إذا (GSS_ERROR(ctx->major))
 		ssh_gssapi_error(ctx);
 
-	return (ctx->major);
+	أرجع (ctx->major);
 }
 
 /* Create a service name for the given host */
 OM_uint32
-ssh_gssapi_import_name(Gssctxt *ctx, const char *host)
+ssh_gssapi_import_name(Gssctxt *ctx, ثابت حرف *host)
 {
-	gss_buffer_desc gssbuf;
-	char *val;
+	gss_بفر_desc gssbuf;
+	حرف *val;
 
 	xasprintf(&val, "host@%s", host);
-	gssbuf.value = val;
-	gssbuf.length = strlen(gssbuf.value);
+	gssbuf.قدر = val;
+	gssbuf.لمائی = لڑی_لمبائی(gssbuf.قدر);
 
-	if ((ctx->major = gss_import_name(&ctx->minor,
+	إذا ((ctx->major = gss_import_name(&ctx->minor,
 	    &gssbuf, GSS_C_NT_HOSTBASED_SERVICE, &ctx->name)))
 		ssh_gssapi_error(ctx);
 
-	free(gssbuf.value);
-	return (ctx->major);
+	حرر(gssbuf.قدر);
+	أرجع (ctx->major);
 }
 
 OM_uint32
-ssh_gssapi_sign(Gssctxt *ctx, gss_buffer_t buffer, gss_buffer_t hash)
+ssh_gssapi_sign(Gssctxt *ctx, gss_بفر_t بفر, gss_بفر_t hash)
 {
-	if ((ctx->major = gss_get_mic(&ctx->minor, ctx->context,
-	    GSS_C_QOP_DEFAULT, buffer, hash)))
+	إذا ((ctx->major = gss_get_mic(&ctx->minor, ctx->context,
+	    GSS_C_QOP_DEFAULT, بفر, hash)))
 		ssh_gssapi_error(ctx);
 
-	return (ctx->major);
+	أرجع (ctx->major);
 }
 
-void
-ssh_gssapi_buildmic(struct sshbuf *b, const char *user, const char *service,
-    const char *context, const struct sshbuf *session_id)
+فراغ
+ssh_gssapi_buildmic(بنية sshbuf *b, ثابت حرف *user, ثابت حرف *service,
+    ثابت حرف *context, ثابت بنية sshbuf *session_id)
 {
-	int r;
+	صحيح r;
 
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_stringb(b, session_id)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	إذا ((r = sshbuf_put_stringb(b, session_id)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_پیغام_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, service)) != 0 ||
 	    (r = sshbuf_put_cstring(b, context)) != 0)
 		fatal_fr(r, "assemble buildmic");
 }
 
-int
-ssh_gssapi_check_mechanism(Gssctxt **ctx, gss_OID oid, const char *host)
+صحيح
+ssh_gssapi_check_mechanism(Gssctxt **ctx, gss_OID oid, ثابت حرف *host)
 {
-	gss_buffer_desc token = GSS_C_EMPTY_BUFFER;
+	gss_بفر_desc token = GSS_C_خالی_تھاواں_بفر;
 	OM_uint32 major, minor;
-	gss_OID_desc spnego_oid = {6, (void *)"\x2B\x06\x01\x05\x05\x02"};
+	gss_OID_desc spnego_oid = {6, (فراغ *)"\x2B\x06\x01\x05\x05\x02"};
 
 	/* RFC 4462 says we MUST NOT do SPNEGO */
-	if (oid->length == spnego_oid.length &&
-	    (memcmp(oid->elements, spnego_oid.elements, oid->length) == 0))
-		return 0; /* false */
+	إذا (oid->لمائی == spnego_oid.لمائی &&
+	    (memcmp(oid->elements, spnego_oid.elements, oid->لمائی) == 0))
+		أرجع 0; /* false */
 
 	ssh_gssapi_build_ctx(ctx);
-	ssh_gssapi_set_oid(*ctx, oid);
+	ssh_gssapi_سیٹ_oid(*ctx, oid);
 	major = ssh_gssapi_import_name(*ctx, host);
-	if (!GSS_ERROR(major)) {
-		major = ssh_gssapi_init_ctx(*ctx, 0, GSS_C_NO_BUFFER, &token,
-		    NULL);
-		gss_release_buffer(&minor, &token);
-		if ((*ctx)->context != GSS_C_NO_CONTEXT)
+	إذا (!GSS_ERROR(major)) {
+		major = ssh_gssapi_init_ctx(*ctx, 0, GSS_C_NO_بفر, &token,
+		    عدم);
+		gss_release_بفر(&minor, &token);
+		إذا ((*ctx)->context != GSS_C_NO_CONTEXT)
 			gss_delete_sec_context(&minor, &(*ctx)->context,
-			    GSS_C_NO_BUFFER);
+			    GSS_C_NO_بفر);
 	}
 
-	if (GSS_ERROR(major))
+	إذا (GSS_ERROR(major))
 		ssh_gssapi_delete_ctx(ctx);
 
-	return (!GSS_ERROR(major));
+	أرجع (!GSS_ERROR(major));
 }
 
-#endif /* GSSAPI */
+#جے_انت /* GSSAPI */

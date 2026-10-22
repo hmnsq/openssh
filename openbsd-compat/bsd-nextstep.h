@@ -23,35 +23,35 @@
  *
  */
 
-#ifndef _NEXT_POSIX_H
-#define _NEXT_POSIX_H
+#جے_بنا_تعریف اگلا_POSIX_H
+#تعریف_کرو اگلا_POSIX_H
 
-#ifdef HAVE_NEXT
-#include <sys/dir.h>
+#جے_تعریف_شدہ HAVE_اگلا
+#ضمن <sys/dir.h>
 
 /* NGROUPS_MAX is behind -lposix.  Use the BSD version which is NGROUPS */
-#undef NGROUPS_MAX
-#define NGROUPS_MAX NGROUPS
+#تعریف_رد NGROUPS_MAX
+#تعریف_کرو NGROUPS_MAX NGROUPS
 
 /* NeXT's readdir() is BSD (struct direct) not POSIX (struct dirent) */
-#define dirent direct
+#تعریف_کرو dirent direct
 
 /* Swap out NeXT's BSD wait() for a more POSIX compliant one */
-pid_t posix_wait(int *);
-#define wait(a) posix_wait(a)
+pid_t posix_wait(صحيح *);
+#تعریف_کرو wait(a) posix_wait(a)
 
 /* #ifdef wrapped functions that need defining for clean compiling */
-pid_t getppid(void);
-void vhangup(void);
-int innetgr(const char *, const char *, const char *, const char *);
+pid_t getppid(فراغ);
+فراغ vhangup(فراغ);
+صحيح innetgr(ثابت حرف *, ثابت حرف *, ثابت حرف *, ثابت حرف *);
 
 /* TERMCAP */
-int tcgetattr(int, struct termios *);
-int tcsetattr(int, int, const struct termios *);
-int tcsetpgrp(int, pid_t);
-speed_t cfgetospeed(const struct termios *);
-speed_t cfgetispeed(const struct termios *);
-int cfsetospeed(struct termios *, int);
-int cfsetispeed(struct termios *, int);
-#endif /* HAVE_NEXT */
-#endif /* _NEXT_POSIX_H */
+صحيح tcgetattr(صحيح, بنية termios *);
+صحيح tcsetattr(صحيح, صحيح, ثابت بنية termios *);
+صحيح tcsetpgrp(صحيح, pid_t);
+speed_t cfgetospeed(ثابت بنية termios *);
+speed_t cfgetispeed(ثابت بنية termios *);
+صحيح cfsetospeed(بنية termios *, صحيح);
+صحيح cfsetispeed(بنية termios *, صحيح);
+#جے_انت /* HAVE_NEXT */
+#جے_انت /* _NEXT_POSIX_H */

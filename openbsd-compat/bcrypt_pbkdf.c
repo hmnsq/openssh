@@ -19,28 +19,28 @@
 
 /* This version has been modified to use SHA512 from SUPERCOP */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#ifndef HAVE_BCRYPT_PBKDF
+#جے_بنا_تعریف HAVE_BCRYPT_PBKDF
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-#ifdef HAVE_STDLIB_H
+#جے_تعریف_شدہ HAVE_STDLIB_H
 # include <stdlib.h>
-#endif
-#include <string.h>
+#جے_انت
+#ضمن <string.h>
 
-#ifdef HAVE_BLF_H
+#جے_تعریف_شدہ HAVE_BLF_H
 # include <blf.h>
-#endif
+#جے_انت
 
-#include "crypto_api.h"
-#ifdef SHA512_DIGEST_LENGTH
-# undef SHA512_DIGEST_LENGTH
-#endif
-#define SHA512_DIGEST_LENGTH crypto_hash_sha512_BYTES
+#ضمن "crypto_api.h"
+#جے_تعریف_شدہ SHA512_DIGEST_لمائی
+# undef SHA512_DIGEST_لمائی
+#جے_انت
+#تعریف_کرو SHA512_DIGEST_لمائی crypto_hash_sha512_بائٹاں
 
-#define	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
+#تعریف_کرو	MINIMUM(a,b) (((a) < (b)) ? (a) : (b))
 
 /*
  * pkcs #5 pbkdf2 implementation using the "bcrypt" hash
@@ -66,123 +66,123 @@
  * wise caller could do; we just do it for you.
  */
 
-#define BCRYPT_WORDS 8
-#define BCRYPT_HASHSIZE (BCRYPT_WORDS * 4)
+#تعریف_کرو BCRYPT_الفاظ 8
+#تعریف_کرو BCRYPT_HASHSIZE (BCRYPT_الفاظ * 4)
 
-static void
-bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *out)
+ساكن فراغ
+bcrypt_hash(uint8_t *sha2pass, uint8_t *sha2salt, uint8_t *باہرلا)
 {
 	blf_ctx state;
 	uint8_t __attribute__ ((__nonstring__)) ciphertext[BCRYPT_HASHSIZE] =
 	    "OxychromaticBlowfishSwatDynamite";
-	uint32_t cdata[BCRYPT_WORDS];
-	int i;
+	uint32_t cdata[BCRYPT_الفاظ];
+	صحيح i;
 	uint16_t j;
-	size_t shalen = SHA512_DIGEST_LENGTH;
+	ناپ_t shalen = SHA512_DIGEST_لمائی;
 
 	/* key expansion */
 	Blowfish_initstate(&state);
 	Blowfish_expandstate(&state, sha2salt, shalen, sha2pass, shalen);
-	for (i = 0; i < 64; i++) {
+	لكل (i = 0; i < 64; i++) {
 		Blowfish_expand0state(&state, sha2salt, shalen);
 		Blowfish_expand0state(&state, sha2pass, shalen);
 	}
 
 	/* encryption */
 	j = 0;
-	for (i = 0; i < BCRYPT_WORDS; i++)
-		cdata[i] = Blowfish_stream2word(ciphertext, sizeof(ciphertext),
+	لكل (i = 0; i < BCRYPT_الفاظ; i++)
+		cdata[i] = Blowfish_stream2word(ciphertext, حجم(ciphertext),
 		    &j);
-	for (i = 0; i < 64; i++)
-		blf_enc(&state, cdata, BCRYPT_WORDS / 2);
+	لكل (i = 0; i < 64; i++)
+		blf_enc(&state, cdata, BCRYPT_الفاظ / 2);
 
 	/* copy out */
-	for (i = 0; i < BCRYPT_WORDS; i++) {
-		out[4 * i + 3] = (cdata[i] >> 24) & 0xff;
-		out[4 * i + 2] = (cdata[i] >> 16) & 0xff;
-		out[4 * i + 1] = (cdata[i] >> 8) & 0xff;
-		out[4 * i + 0] = cdata[i] & 0xff;
+	لكل (i = 0; i < BCRYPT_الفاظ; i++) {
+		باہرلا[4 * i + 3] = (cdata[i] >> 24) & 0xff;
+		باہرلا[4 * i + 2] = (cdata[i] >> 16) & 0xff;
+		باہرلا[4 * i + 1] = (cdata[i] >> 8) & 0xff;
+		باہرلا[4 * i + 0] = cdata[i] & 0xff;
 	}
 
 	/* zap */
-	explicit_bzero(ciphertext, sizeof(ciphertext));
-	explicit_bzero(cdata, sizeof(cdata));
-	explicit_bzero(&state, sizeof(state));
+	explicit_bzero(ciphertext, حجم(ciphertext));
+	explicit_bzero(cdata, حجم(cdata));
+	explicit_bzero(&state, حجم(state));
 }
 
-int
-bcrypt_pbkdf(const char *pass, size_t passlen, const uint8_t *salt, size_t saltlen,
-    uint8_t *key, size_t keylen, unsigned int rounds)
+صحيح
+bcrypt_pbkdf(ثابت حرف *pass, ناپ_t passlen, ثابت uint8_t *salt, ناپ_t saltlen,
+    uint8_t *کلید, ناپ_t keylen, بنانشانی صحيح گیڑ)
 {
-	uint8_t sha2pass[SHA512_DIGEST_LENGTH];
-	uint8_t sha2salt[SHA512_DIGEST_LENGTH];
-	uint8_t out[BCRYPT_HASHSIZE];
+	uint8_t sha2pass[SHA512_DIGEST_لمائی];
+	uint8_t sha2salt[SHA512_DIGEST_لمائی];
+	uint8_t باہرلا[BCRYPT_HASHSIZE];
 	uint8_t tmpout[BCRYPT_HASHSIZE];
 	uint8_t *countsalt;
-	size_t i, j, amt, stride;
-	uint32_t count;
-	size_t origkeylen = keylen;
+	ناپ_t i, j, amt, stride;
+	uint32_t گنتی;
+	ناپ_t origkeylen = keylen;
 
 	/* nothing crazy */
-	if (rounds < 1)
-		goto bad;
-	if (passlen == 0 || saltlen == 0 || keylen == 0 ||
-	    keylen > sizeof(out) * sizeof(out) || saltlen > 1<<20)
-		goto bad;
-	if ((countsalt = calloc(1, saltlen + 4)) == NULL)
-		goto bad;
-	stride = (keylen + sizeof(out) - 1) / sizeof(out);
+	إذا (گیڑ < 1)
+		اذهب bad;
+	إذا (passlen == 0 || saltlen == 0 || keylen == 0 ||
+	    keylen > حجم(باہرلا) * حجم(باہرلا) || saltlen > 1<<20)
+		اذهب bad;
+	إذا ((countsalt = صفر_حافظہ_دیو(1, saltlen + 4)) == عدم)
+		اذهب bad;
+	stride = (keylen + حجم(باہرلا) - 1) / حجم(باہرلا);
 	amt = (keylen + stride - 1) / stride;
 
-	memcpy(countsalt, salt, saltlen);
+	حافظہ_نقل(countsalt, salt, saltlen);
 
 	/* collapse password */
 	crypto_hash_sha512(sha2pass, pass, passlen);
 
 	/* generate key, sizeof(out) at a time */
-	for (count = 1; keylen > 0; count++) {
-		countsalt[saltlen + 0] = (count >> 24) & 0xff;
-		countsalt[saltlen + 1] = (count >> 16) & 0xff;
-		countsalt[saltlen + 2] = (count >> 8) & 0xff;
-		countsalt[saltlen + 3] = count & 0xff;
+	لكل (گنتی = 1; keylen > 0; گنتی++) {
+		countsalt[saltlen + 0] = (گنتی >> 24) & 0xff;
+		countsalt[saltlen + 1] = (گنتی >> 16) & 0xff;
+		countsalt[saltlen + 2] = (گنتی >> 8) & 0xff;
+		countsalt[saltlen + 3] = گنتی & 0xff;
 
 		/* first round, salt is salt */
 		crypto_hash_sha512(sha2salt, countsalt, saltlen + 4);
 
 		bcrypt_hash(sha2pass, sha2salt, tmpout);
-		memcpy(out, tmpout, sizeof(out));
+		حافظہ_نقل(باہرلا, tmpout, حجم(باہرلا));
 
-		for (i = 1; i < rounds; i++) {
+		لكل (i = 1; i < گیڑ; i++) {
 			/* subsequent rounds, salt is previous output */
-			crypto_hash_sha512(sha2salt, tmpout, sizeof(tmpout));
+			crypto_hash_sha512(sha2salt, tmpout, حجم(tmpout));
 			bcrypt_hash(sha2pass, sha2salt, tmpout);
-			for (j = 0; j < sizeof(out); j++)
-				out[j] ^= tmpout[j];
+			لكل (j = 0; j < حجم(باہرلا); j++)
+				باہرلا[j] ^= tmpout[j];
 		}
 
 		/*
 		 * pbkdf2 deviation: output the key material non-linearly.
 		 */
 		amt = MINIMUM(amt, keylen);
-		for (i = 0; i < amt; i++) {
-			size_t dest = i * stride + (count - 1);
-			if (dest >= origkeylen)
-				break;
-			key[dest] = out[i];
+		لكل (i = 0; i < amt; i++) {
+			ناپ_t dest = i * stride + (گنتی - 1);
+			إذا (dest >= origkeylen)
+				اكسر;
+			کلید[dest] = باہرلا[i];
 		}
 		keylen -= i;
 	}
 
 	/* zap */
 	freezero(countsalt, saltlen + 4);
-	explicit_bzero(out, sizeof(out));
-	explicit_bzero(tmpout, sizeof(tmpout));
+	explicit_bzero(باہرلا, حجم(باہرلا));
+	explicit_bzero(tmpout, حجم(tmpout));
 
-	return 0;
+	أرجع 0;
 
 bad:
 	/* overwrite with random in case caller doesn't check return code */
-	arc4random_buf(key, keylen);
-	return -1;
+	arc4random_buf(کلید, keylen);
+	أرجع -1;
 }
-#endif /* HAVE_BCRYPT_PBKDF */
+#جے_انت /* HAVE_BCRYPT_PBKDF */

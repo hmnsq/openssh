@@ -33,54 +33,54 @@
 
 /* NETBSD ORIGINAL: external/bsd/file/dist/src/getline.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if 0
-#include "file.h"
-#endif
+#إذا 0
+#ضمن "file.h"
+#جے_انت
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
+#إذا !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#ضمن <stdlib.h>
+#ضمن <stdio.h>
+#ضمن <unistd.h>
+#ضمن <errno.h>
+#ضمن <string.h>
 
-static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+ساكن ssize_t
+getdelim(حرف **buf, ناپ_t *bufsiz, صحيح delimiter, FILE *fp)
 {
-	char *ptr, *eptr;
+	حرف *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
+	إذا (*buf == عدم || *bufsiz == 0) {
+		إذا ((*buf = حافظہ_دیو(BUFSIZ)) == عدم)
+			أرجع -1;
 		*bufsiz = BUFSIZ;
 	}
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+	لكل (ptr = *buf, eptr = *buf + *bufsiz;;) {
+		صحيح c = fgetc(fp);
+		إذا (c == -1) {
+			إذا (feof(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				إذا (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					أرجع diff;
 				}
 			}
-			return -1;
+			أرجع -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		إذا (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			أرجع ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
-			char *nbuf;
-			size_t nbufsiz = *bufsiz * 2;
+		إذا (ptr + 2 >= eptr) {
+			حرف *nbuf;
+			ناپ_t nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			إذا ((nbuf = realloc(*buf, nbufsiz)) == عدم)
+				أرجع -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -90,24 +90,24 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 }
 
 ssize_t
-getline(char **buf, size_t *bufsiz, FILE *fp)
+getline(حرف **buf, ناپ_t *bufsiz, FILE *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	أرجع getdelim(buf, bufsiz, '\n', fp);
 }
 
-#endif
+#جے_انت
 
-#ifdef TEST
-int
-main(int argc, char *argv[])
+#جے_تعریف_شدہ TEST
+صحيح
+مکھ(صحيح argc, حرف *argv[])
 {
-	char *p = NULL;
+	حرف *p = عدم;
 	ssize_t len;
-	size_t n = 0;
+	ناپ_t n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
-		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
-	free(p);
-	return 0;
+	طالما ((len = getline(&p, &n, stdin)) != -1)
+		(فراغ)لکھو("%" ناپ_T_FORMAT "d %s", len, p);
+	حرر(p);
+	أرجع 0;
 }
-#endif
+#جے_انت

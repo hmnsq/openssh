@@ -12,89 +12,89 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#define ETCDIR				"/etc"
+#تعریف_کرو ETCDIR				"/etc"
 
-#ifndef SSHDIR
-#define SSHDIR				ETCDIR "/ssh"
-#endif
+#جے_بنا_تعریف SSHDIR
+#تعریف_کرو SSHDIR				ETCDIR "/ssh"
+#جے_انت
 
-#ifndef _PATH_SSH_PIDDIR
-#define _PATH_SSH_PIDDIR		"/var/run"
-#endif
+#جے_بنا_تعریف رستہ_SSH_PIDDIR
+#تعریف_کرو رستہ_SSH_PIDDIR		"/var/run"
+#جے_انت
 
 /*
  * System-wide file containing host keys of known hosts.  This file should be
  * world-readable.
  */
-#define _PATH_SSH_SYSTEM_HOSTFILE	SSHDIR "/ssh_known_hosts"
+#تعریف_کرو رستہ_SSH_SYSTEM_HOSTFILE	SSHDIR "/ssh_known_hosts"
 /* backward compat for protocol 2 */
-#define _PATH_SSH_SYSTEM_HOSTFILE2	SSHDIR "/ssh_known_hosts2"
+#تعریف_کرو رستہ_SSH_SYSTEM_HOSTFILE2	SSHDIR "/ssh_known_hosts2"
 
 /*
  * Of these, ssh_host_key must be readable only by root, whereas ssh_config
  * should be world-readable.
  */
-#define _PATH_SERVER_CONFIG_FILE	SSHDIR "/sshd_config"
-#define _PATH_HOST_CONFIG_FILE		SSHDIR "/ssh_config"
-#define _PATH_HOST_ECDSA_KEY_FILE	SSHDIR "/ssh_host_ecdsa_key"
-#define _PATH_HOST_RSA_KEY_FILE		SSHDIR "/ssh_host_rsa_key"
-#define _PATH_HOST_ED25519_KEY_FILE	SSHDIR "/ssh_host_ed25519_key"
-#define _PATH_HOST_MLDSA44_ED25519_KEY_FILE SSHDIR "/ssh_host_mldsa44_ed25519_key"
-#define _PATH_DH_MODULI			SSHDIR "/moduli"
+#تعریف_کرو رستہ_SERVER_CONFIG_FILE	SSHDIR "/sshd_config"
+#تعریف_کرو رستہ_HOST_CONFIG_FILE		SSHDIR "/ssh_config"
+#تعریف_کرو رستہ_HOST_ECDSA_کلید_FILE	SSHDIR "/ssh_host_ecdsa_key"
+#تعریف_کرو رستہ_HOST_RSA_کلید_FILE		SSHDIR "/ssh_host_rsa_key"
+#تعریف_کرو رستہ_HOST_ED25519_کلید_FILE	SSHDIR "/ssh_host_ed25519_key"
+#تعریف_کرو رستہ_HOST_MLDSA44_ED25519_کلید_FILE SSHDIR "/ssh_host_mldsa44_ed25519_key"
+#تعریف_کرو رستہ_DH_MODULI			SSHDIR "/moduli"
 
-#ifndef _PATH_SSH_PROGRAM
-#define _PATH_SSH_PROGRAM		"/usr/bin/ssh"
-#endif
+#جے_بنا_تعریف رستہ_SSH_پروگرام
+#تعریف_کرو رستہ_SSH_پروگرام		"/usr/bin/ssh"
+#جے_انت
 
 /* Binary paths for the sshd components */
-#ifndef _PATH_SSHD_SESSION
-#define _PATH_SSHD_SESSION		"/usr/libexec/sshd-session"
-#endif
-#ifndef _PATH_SSHD_AUTH
-#define _PATH_SSHD_AUTH			"/usr/libexec/sshd-auth"
-#endif
+#جے_بنا_تعریف رستہ_SSHD_SESSION
+#تعریف_کرو رستہ_SSHD_SESSION		"/usr/libexec/sshd-session"
+#جے_انت
+#جے_بنا_تعریف رستہ_SSHD_AUTH
+#تعریف_کرو رستہ_SSHD_AUTH			"/usr/libexec/sshd-auth"
+#جے_انت
 
 /*
  * The process id of the daemon listening for connections is saved here to
  * make it easier to kill the correct daemon when necessary.
  */
-#define _PATH_SSH_DAEMON_PID_FILE	_PATH_SSH_PIDDIR "/sshd.pid"
+#تعریف_کرو رستہ_SSH_DAEMON_PID_FILE	رستہ_SSH_PIDDIR "/sshd.pid"
 
 /*
  * The directory in user's home directory in which the files reside. The
  * directory should be world-readable (though not all files are).
  */
-#define _PATH_SSH_USER_DIR		".ssh"
+#تعریف_کرو رستہ_SSH_USER_DIR		".ssh"
 
 
 /*
  * Directory spec for ssh-agent sockets and agent sockets forwarded by
  * sshd reside. This directory should not be world-readable.
  */
-#define _PATH_SSH_AGENT_SOCKET_DIR	"user:" _PATH_SSH_USER_DIR "/agent"
+#تعریف_کرو رستہ_SSH_AGENT_SOCKET_DIR	"user:" رستہ_SSH_USER_DIR "/agent"
 
 /* Directory spec for ssh-agent sockets in /tmp */
-#define _PATH_SSH_AGENT_SOCKET_TMPDIR	"shared:/tmp"
+#تعریف_کرو رستہ_SSH_AGENT_SOCKET_TMPDIR	"shared:/tmp"
 
 /*
  * Per-user file containing host keys of known hosts.  This file need not be
  * readable by anyone except the user him/herself, though this does not
  * contain anything particularly secret.
  */
-#define _PATH_SSH_USER_HOSTFILE		"~/" _PATH_SSH_USER_DIR "/known_hosts"
+#تعریف_کرو رستہ_SSH_USER_HOSTFILE		"~/" رستہ_SSH_USER_DIR "/known_hosts"
 /* backward compat for protocol 2 */
-#define _PATH_SSH_USER_HOSTFILE2	"~/" _PATH_SSH_USER_DIR "/known_hosts2"
+#تعریف_کرو رستہ_SSH_USER_HOSTFILE2	"~/" رستہ_SSH_USER_DIR "/known_hosts2"
 
 /*
  * Name of the default file containing client-side authentication key. This
  * file should only be readable by the user him/herself.
  */
-#define _PATH_SSH_CLIENT_ID_ECDSA	_PATH_SSH_USER_DIR "/id_ecdsa"
-#define _PATH_SSH_CLIENT_ID_RSA		_PATH_SSH_USER_DIR "/id_rsa"
-#define _PATH_SSH_CLIENT_ID_ED25519	_PATH_SSH_USER_DIR "/id_ed25519"
-#define _PATH_SSH_CLIENT_ID_ECDSA_SK	_PATH_SSH_USER_DIR "/id_ecdsa_sk"
-#define _PATH_SSH_CLIENT_ID_ED25519_SK	_PATH_SSH_USER_DIR "/id_ed25519_sk"
-#define _PATH_SSH_CLIENT_ID_MLDSA44_ED25519 _PATH_SSH_USER_DIR "/id_mldsa44_ed25519"
+#تعریف_کرو رستہ_SSH_CLIENT_ID_ECDSA	رستہ_SSH_USER_DIR "/id_ecdsa"
+#تعریف_کرو رستہ_SSH_CLIENT_ID_RSA		رستہ_SSH_USER_DIR "/id_rsa"
+#تعریف_کرو رستہ_SSH_CLIENT_ID_ED25519	رستہ_SSH_USER_DIR "/id_ed25519"
+#تعریف_کرو رستہ_SSH_CLIENT_ID_ECDSA_SK	رستہ_SSH_USER_DIR "/id_ecdsa_sk"
+#تعریف_کرو رستہ_SSH_CLIENT_ID_ED25519_SK	رستہ_SSH_USER_DIR "/id_ed25519_sk"
+#تعریف_کرو رستہ_SSH_CLIENT_ID_MLDSA44_ED25519 رستہ_SSH_USER_DIR "/id_mldsa44_ed25519"
 
 /*
  * Configuration file in user's home directory.  This file need not be
@@ -102,7 +102,7 @@
  * particularly secret.  If the user's home directory resides on an NFS
  * volume where root is mapped to nobody, this may need to be world-readable.
  */
-#define _PATH_SSH_USER_CONFFILE		_PATH_SSH_USER_DIR "/config"
+#تعریف_کرو رستہ_SSH_USER_CONFFILE		رستہ_SSH_USER_DIR "/config"
 
 /*
  * File containing a list of those rsa keys that permit logging in as this
@@ -112,10 +112,10 @@
  * may need to be world-readable.  (This file is read by the daemon which is
  * running as root.)
  */
-#define _PATH_SSH_USER_PERMITTED_KEYS	_PATH_SSH_USER_DIR "/authorized_keys"
+#تعریف_کرو رستہ_SSH_USER_PERMITTED_کلیدیں	رستہ_SSH_USER_DIR "/authorized_keys"
 
 /* backward compat for protocol v2 */
-#define _PATH_SSH_USER_PERMITTED_KEYS2	_PATH_SSH_USER_DIR "/authorized_keys2"
+#تعریف_کرو رستہ_SSH_USER_PERMITTED_KEYS2	رستہ_SSH_USER_DIR "/authorized_keys2"
 
 /*
  * Per-user and system-wide ssh "rc" files.  These files are executed with
@@ -123,72 +123,72 @@
  * passed "proto cookie" as arguments if X11 forwarding with spoofing is in
  * use.  xauth will be run if neither of these exists.
  */
-#define _PATH_SSH_USER_RC		_PATH_SSH_USER_DIR "/rc"
-#define _PATH_SSH_SYSTEM_RC		SSHDIR "/sshrc"
+#تعریف_کرو رستہ_SSH_USER_RC		رستہ_SSH_USER_DIR "/rc"
+#تعریف_کرو رستہ_SSH_SYSTEM_RC		SSHDIR "/sshrc"
 
 /*
  * Ssh-only version of /etc/hosts.equiv.  Additionally, the daemon may use
  * ~/.rhosts and /etc/hosts.equiv if rhosts authentication is enabled.
  */
-#define _PATH_SSH_HOSTS_EQUIV		SSHDIR "/shosts.equiv"
-#define _PATH_RHOSTS_EQUIV		"/etc/hosts.equiv"
+#تعریف_کرو رستہ_SSH_HOSTS_EQUIV		SSHDIR "/shosts.equiv"
+#تعریف_کرو رستہ_RHOSTS_EQUIV		"/etc/hosts.equiv"
 
 /*
  * Default location of askpass
  */
-#ifndef _PATH_SSH_ASKPASS_DEFAULT
-#define _PATH_SSH_ASKPASS_DEFAULT	"/usr/X11R6/bin/ssh-askpass"
-#endif
+#جے_بنا_تعریف رستہ_SSH_ASKPASS_DEFAULT
+#تعریف_کرو رستہ_SSH_ASKPASS_DEFAULT	"/usr/X11R6/bin/ssh-askpass"
+#جے_انت
 
 /* Location of ssh-keysign for hostbased authentication */
-#ifndef _PATH_SSH_KEY_SIGN
-#define _PATH_SSH_KEY_SIGN		"/usr/libexec/ssh-keysign"
-#endif
+#جے_بنا_تعریف رستہ_SSH_کلید_SIGN
+#تعریف_کرو رستہ_SSH_کلید_SIGN		"/usr/libexec/ssh-keysign"
+#جے_انت
 
 /* Location of ssh-pkcs11-helper to support keys in tokens */
-#ifndef _PATH_SSH_PKCS11_HELPER
-#define _PATH_SSH_PKCS11_HELPER		"/usr/libexec/ssh-pkcs11-helper"
-#endif
+#جے_بنا_تعریف رستہ_SSH_PKCS11_HELPER
+#تعریف_کرو رستہ_SSH_PKCS11_HELPER		"/usr/libexec/ssh-pkcs11-helper"
+#جے_انت
 
 /* Location of ssh-sk-helper to support keys in security keys */
-#ifndef _PATH_SSH_SK_HELPER
-#define _PATH_SSH_SK_HELPER		"/usr/libexec/ssh-sk-helper"
-#endif
+#جے_بنا_تعریف رستہ_SSH_SK_HELPER
+#تعریف_کرو رستہ_SSH_SK_HELPER		"/usr/libexec/ssh-sk-helper"
+#جے_انت
 
 /* xauth for X11 forwarding */
-#ifndef _PATH_XAUTH
-#define _PATH_XAUTH			"/usr/X11R6/bin/xauth"
-#endif
+#جے_بنا_تعریف رستہ_XAUTH
+#تعریف_کرو رستہ_XAUTH			"/usr/X11R6/bin/xauth"
+#جے_انت
 
 /* UNIX domain socket for X11 server; displaynum will replace %u */
-#ifndef _PATH_UNIX_X
-#define _PATH_UNIX_X "/tmp/.X11-unix/X%u"
-#endif
+#جے_بنا_تعریف رستہ_UNIX_X
+#تعریف_کرو رستہ_UNIX_X "/tmp/.X11-unix/X%u"
+#جے_انت
 
 /* for scp */
-#ifndef _PATH_CP
-#define _PATH_CP			"cp"
-#endif
+#جے_بنا_تعریف رستہ_CP
+#تعریف_کرو رستہ_CP			"cp"
+#جے_انت
 
 /* for sftp */
-#ifndef _PATH_SFTP_SERVER
-#define _PATH_SFTP_SERVER		"/usr/libexec/sftp-server"
-#endif
-#ifndef _PATH_LS
-#define _PATH_LS			"ls"
-#endif
+#جے_بنا_تعریف رستہ_SFTP_SERVER
+#تعریف_کرو رستہ_SFTP_SERVER		"/usr/libexec/sftp-server"
+#جے_انت
+#جے_بنا_تعریف رستہ_LS
+#تعریف_کرو رستہ_LS			"ls"
+#جے_انت
 
 /* chroot directory for unprivileged user when UsePrivilegeSeparation=yes */
-#ifndef _PATH_PRIVSEP_CHROOT_DIR
-#define _PATH_PRIVSEP_CHROOT_DIR	"/var/empty"
-#endif
+#جے_بنا_تعریف رستہ_PRIVSEP_CHROOT_DIR
+#تعریف_کرو رستہ_PRIVSEP_CHROOT_DIR	"/var/empty"
+#جے_انت
 
 /* for passwd change */
-#ifndef _PATH_PASSWD_PROG
-#define _PATH_PASSWD_PROG		"/usr/bin/passwd"
-#endif
+#جے_بنا_تعریف رستہ_PASSWD_PROG
+#تعریف_کرو رستہ_PASSWD_PROG		"/usr/bin/passwd"
+#جے_انت
 
 /* Askpass program define */
-#ifndef ASKPASS_PROGRAM
-#define ASKPASS_PROGRAM         "/usr/lib/ssh/ssh-askpass"
-#endif /* ASKPASS_PROGRAM */
+#جے_بنا_تعریف ASKPASS_پروگرام
+#تعریف_کرو ASKPASS_پروگرام         "/usr/lib/ssh/ssh-askpass"
+#جے_انت /* ASKPASS_PROGRAM */
