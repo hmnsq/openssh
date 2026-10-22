@@ -16,28 +16,28 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
-#if !defined(HAVE_STRNDUP) || defined(BROKEN_STRNDUP)
-#include <sys/types.h>
+#अन्तर्भाव "includes.h"
+#यदि !defined(HAVE_STRNDUP) || defined(BROKEN_STRNDUP)
+#अन्तर्भाव <sys/types.h>
 
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
+#अन्तर्भाव <stddef.h>
+#अन्तर्भाव <stdlib.h>
+#अन्तर्भाव <string.h>
 
-char *
-strndup(const char *str, size_t maxlen)
+वर्ण *
+strndup(ध्रुव वर्ण *str, size_t maxlen)
 {
-	char *copy;
+	वर्ण *copy;
 	size_t len;
 
 	len = strnlen(str, maxlen);
 	copy = malloc(len + 1);
-	if (copy != NULL) {
-		(void)memcpy(copy, str, len);
+	यदि (copy != रिक्त) {
+		(शून्य)memcpy(copy, str, len);
 		copy[len] = '\0';
 	}
 
-	return copy;
+	प्रत्यागम copy;
 }
 DEF_WEAK(strndup);
 #endif  /* HAVE_STRNDUP */
