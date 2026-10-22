@@ -70,7 +70,7 @@ struct Authctxt {
 
 	/* Method lists for multiple authentication */
 	char		**auth_methods;	/* modified from server config */
-	u_int		 num_auth_methods;
+	u_int		 नुमेरो_auth_methods;
 
 	/* Authentication method-specific data */
 	void		*methoddata;
@@ -88,11 +88,11 @@ struct Authctxt {
 	struct sshbuf	*loginmsg;
 
 	/* Authentication keys already used; these will be refused henceforth */
-	struct sshkey	**prev_keys;
-	u_int		 nprev_keys;
+	struct sshkey	**prev_मगा_सुसि;
+	u_int		 nprev_मगा_सुसि;
 
 	/* Last used key and ancillary information from active auth method */
-	struct sshkey	*auth_method_key;
+	struct sshkey	*auth_method_सुसि;
 	char		*auth_method_info;
 
 	/* Information exposed to session */
@@ -139,18 +139,18 @@ auth_rhosts2(struct passwd *, const char *, const char *, const char *);
 
 int      auth_password(struct ssh *, const char *);
 
-int	 hostbased_key_allowed(struct ssh *, struct passwd *,
+int	 hostbased_सुसि_allowed(struct ssh *, struct passwd *,
 	    const char *, char *, struct sshkey *);
-int	 user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *,
+int	 user_सुसि_allowed(struct ssh *ssh, struct passwd *, struct sshkey *,
     int, struct sshauthopt **);
-int	 auth2_key_already_used(Authctxt *, const struct sshkey *);
+int	 auth2_सुसि_already_used(Authctxt *, const struct sshkey *);
 
 /*
  * Handling auth method-specific information for logging and prevention
  * of key reuse during multiple authentication.
  */
 void	 auth2_authctxt_reset_info(Authctxt *);
-void	 auth2_record_key(Authctxt *, int, const struct sshkey *);
+void	 auth2_record_सुसि(Authctxt *, int, const struct sshkey *);
 void	 auth2_record_info(Authctxt *authctxt, const char *, ...)
 	    __attribute__((__format__ (printf, 2, 3)))
 	    __attribute__((__nonnull__ (2)));
@@ -176,7 +176,7 @@ void	do_authentication2(struct ssh *);
 void	auth_log(struct ssh *, int, int, const char *, const char *);
 void	auth_maxtries_exceeded(struct ssh *) __attribute__((noreturn));
 void	userauth_finish(struct ssh *, int, const char *, const char *);
-int	auth_root_allowed(struct ssh *, const char *);
+int	auth_उगात_allowed(struct ssh *, const char *);
 void	auth_failure_delay(Authctxt *, double);
 
 char	*auth2_read_banner(void);
@@ -193,15 +193,15 @@ int	bsdauth_respond(void *, u_int, char **);
 int	allowed_user(struct ssh *, struct passwd *);
 struct passwd * getpwnamallow(struct ssh *, const char *user);
 
-char	*expand_authorized_keys(const char *, struct passwd *pw);
+char	*expand_authorized_मगा_सुसि(const char *, struct passwd *pw);
 char	*authorized_principals_file(struct passwd *);
 
-int	 auth_key_is_revoked(struct sshkey *);
+int	 auth_सुसि_is_revoked(struct sshkey *);
 
 const char	*auth_get_canonical_hostname(struct ssh *, int);
 
 HostStatus
-check_key_in_hostfiles(struct passwd *, struct sshkey *, const char *,
+check_सुसि_in_hostfiles(struct passwd *, struct sshkey *, const char *,
     const char *, const char *);
 
 /* hostkey handling */
@@ -229,11 +229,11 @@ struct passwd *fakepw(void);
 /* auth2-pubkeyfile.c */
 int	 auth_authorise_keyopts(struct passwd *, struct sshauthopt *, int,
     const char *, const char *, const char *);
-int	 auth_check_principals_line(char *, const struct sshkey_cert *,
+int	 auth_check_principals_लिन्या(char *, const struct sshkey_cert *,
     const char *, struct sshauthopt **);
 int	 auth_process_principals(FILE *, const char *,
     const struct sshkey_cert *, struct sshauthopt **);
-int	 auth_check_authkey_line(struct passwd *, struct sshkey *,
+int	 auth_check_authkey_लिन्या(struct passwd *, struct sshkey *,
     char *, const char *, const char *, const char *, struct sshauthopt **);
 int	 auth_check_authkeys_file(struct passwd *, FILE *, char *,
     struct sshkey *, const char *, const char *, struct sshauthopt **);

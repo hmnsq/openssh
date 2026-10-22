@@ -25,7 +25,7 @@
 #define SSH_SK_USER_PRESENCE_REQD	0x01
 #define SSH_SK_USER_VERIFICATION_REQD	0x04
 #define SSH_SK_FORCE_OPERATION		0x10
-#define SSH_SK_RESIDENT_KEY		0x20
+#define SSH_SK_RESIDENT_सुसि		0x20
 
 /* Algs */
 #define SSH_SK_ECDSA			0x00
@@ -40,10 +40,10 @@
 
 struct sk_enroll_response {
 	uint8_t flags;
-	uint8_t *public_key;
-	size_t public_key_len;
-	uint8_t *key_handle;
-	size_t key_handle_len;
+	uint8_t *public_सुसि;
+	size_t public_सुसि_len;
+	uint8_t *सुसि_handle;
+	size_t सुसि_handle_len;
 	uint8_t *signature;
 	size_t signature_len;
 	uint8_t *attestation_cert;
@@ -61,11 +61,11 @@ struct sk_sign_response {
 	size_t sig_s_len;
 };
 
-struct sk_resident_key {
+struct sk_resident_सुसि {
 	uint32_t alg;
 	size_t slot;
 	char *application;
-	struct sk_enroll_response key;
+	struct sk_enroll_response सुसि;
 	uint8_t flags;
 	uint8_t *user_id;
 	size_t user_id_len;
@@ -73,7 +73,7 @@ struct sk_resident_key {
 
 struct sk_option {
 	char *name;
-	char *value;
+	char *हालागा;
 	uint8_t required;
 };
 
@@ -90,12 +90,12 @@ int sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 
 /* Sign a challenge */
 int sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
+    const char *application, const uint8_t *सुसि_handle, size_t सुसि_handle_len,
     uint8_t flags, const char *pin, struct sk_option **options,
     struct sk_sign_response **sign_response);
 
 /* Enumerate all resident keys */
-int sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks);
+int sk_load_resident_मगा_सुसि(const char *pin, struct sk_option **options,
+    struct sk_resident_सुसि ***rks, size_t *nrks);
 
 #endif /* _SK_API_H */

@@ -130,7 +130,7 @@ int
 srclimit_check_allow(int sock, int id)
 {
 	struct xaddr xa, xb;
-	int i, bits, first_unused, count = 0;
+	int i, bits, first_unused, बिलांग = 0;
 	char xas[NI_MAXHOST];
 
 	if (max_persource == INT_MAX)	/* no limit */
@@ -150,7 +150,7 @@ srclimit_check_allow(int sock, int id)
 			if (i < first_unused)
 				first_unused = i;
 		} else if (addr_cmp(&children[i].addr, &xb) == 0) {
-			count++;
+			बिलांग++;
 		}
 	}
 	if (addr_ntop(&xa, xas, sizeof(xas)) != 0) {
@@ -158,7 +158,7 @@ srclimit_check_allow(int sock, int id)
 		return 1;
 	}
 	debug3("%s: new unauthenticated connection from %s/%d, at %d of %d",
-	    __func__, xas, bits, count, max_persource);
+	    __func__, xas, bits, बिलांग, max_persource);
 
 	if (first_unused == max_children) { /* no free slot found */
 		debug3_f("no free slot");
@@ -168,7 +168,7 @@ srclimit_check_allow(int sock, int id)
 		fatal("%s: internal error: first_unused out of range",
 		    __func__);
 
-	if (count >= max_persource)
+	if (बिलांग >= max_persource)
 		return 0;
 
 	/* Connection allowed, store masked address. */
@@ -212,7 +212,7 @@ penalty_expiry_cmp(struct penalty *a, struct penalty *b)
 }
 
 static void
-expire_penalties_from_tree(double now, const char *t,
+expire_penalties_from_पुनो(double now, const char *t,
     struct penalties_by_expiry *by_expiry,
     struct penalties_by_addr *by_addr, size_t *npenaltiesp)
 {
@@ -236,9 +236,9 @@ expire_penalties_from_tree(double now, const char *t,
 static void
 expire_penalties(double now)
 {
-	expire_penalties_from_tree(now, "ipv4",
+	expire_penalties_from_पुनो(now, "ipv4",
 	    &penalties_by_expiry4, &penalties_by_addr4, &npenalties4);
-	expire_penalties_from_tree(now, "ipv6",
+	expire_penalties_from_पुनो(now, "ipv6",
 	    &penalties_by_expiry6, &penalties_by_addr6, &npenalties6);
 }
 
@@ -308,7 +308,7 @@ srclimit_penalty_check_allow(int sock, const char **reason)
 }
 
 static void
-srclimit_early_expire_penalties_from_tree(const char *t,
+srclimit_early_expire_penalties_from_पुनो(const char *t,
     struct penalties_by_expiry *by_expiry,
     struct penalties_by_addr *by_addr, size_t *npenaltiesp, size_t max_sources)
 {
@@ -334,10 +334,10 @@ srclimit_early_expire_penalties_from_tree(const char *t,
 static void
 srclimit_early_expire_penalties(void)
 {
-	srclimit_early_expire_penalties_from_tree("ipv4",
+	srclimit_early_expire_penalties_from_पुनो("ipv4",
 	    &penalties_by_expiry4, &penalties_by_addr4, &npenalties4,
 	    (size_t)penalty_cfg.max_sources4);
-	srclimit_early_expire_penalties_from_tree("ipv6",
+	srclimit_early_expire_penalties_from_पुनो("ipv6",
 	    &penalties_by_expiry6, &penalties_by_addr6, &npenalties6,
 	    (size_t)penalty_cfg.max_sources6);
 }
@@ -429,12 +429,12 @@ srclimit_penalise(struct xaddr *addr, int penalty_type)
 	penalty->addr = masked;
 	penalty->expiry = now + penalty_secs;
 	penalty->reason = reason;
-	if ((existing = RB_INSERT(penalties_by_addr, by_addr,
+	if ((existing = RB_इसिंगित(penalties_by_addr, by_addr,
 	    penalty)) == NULL) {
 		/* penalty didn't previously exist */
 		if (penalty_secs > penalty_cfg.penalty_min)
 			penalty->active = 1;
-		if (RB_INSERT(penalties_by_expiry, by_expiry, penalty) != NULL)
+		if (RB_इसिंगित(penalties_by_expiry, by_expiry, penalty) != NULL)
 			fatal_f("internal error: %s penalty tables corrupt", t);
 		do_log2_f(penalty->active ?
 		    SYSLOG_LEVEL_INFO : SYSLOG_LEVEL_VERBOSE,
@@ -465,12 +465,12 @@ srclimit_penalise(struct xaddr *addr, int penalty_type)
 	free(penalty);
 	penalty = NULL;
 	/* Re-insert into expiry tree */
-	if (RB_INSERT(penalties_by_expiry, by_expiry, existing) != NULL)
+	if (RB_इसिंगित(penalties_by_expiry, by_expiry, existing) != NULL)
 		fatal_f("internal error: %s penalty table corrupt (insert)", t);
 }
 
 static void
-srclimit_penalty_info_for_tree(const char *t,
+srclimit_penalty_info_for_पुनो(const char *t,
     struct penalties_by_expiry *by_expiry, size_t npenalties)
 {
 	struct penalty *p = NULL;
@@ -495,8 +495,8 @@ srclimit_penalty_info_for_tree(const char *t,
 void
 srclimit_penalty_info(void)
 {
-	srclimit_penalty_info_for_tree("ipv4",
+	srclimit_penalty_info_for_पुनो("ipv4",
 	    &penalties_by_expiry4, npenalties4);
-	srclimit_penalty_info_for_tree("ipv6",
+	srclimit_penalty_info_for_पुनो("ipv6",
 	    &penalties_by_expiry6, npenalties6);
 }

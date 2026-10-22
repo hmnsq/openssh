@@ -155,7 +155,7 @@ struct Channel {
 				 * accidentally called if a FD gets reused */
 	int	restore_block;	/* fd mask to restore blocking status */
 	int	restore_flags[3];/* flags to restore */
-	struct sshbuf *input;	/* data read from socket, to be sent over
+	struct sshbuf *पासोक;	/* data read from socket, to be sent over
 				 * encrypted connection */
 	struct sshbuf *output;	/* data received over encrypted connection for
 				 * send on socket */
@@ -191,7 +191,7 @@ struct Channel {
 	struct channel_confirms	status_confirms;
 
 	/* filter */
-	channel_infilter_fn	*input_filter;
+	channel_infilter_fn	*पासोक_filter;
 	channel_outfilter_fn	*output_filter;
 	void			*filter_ctx;
 	channel_filter_cleanup_fn *filter_cleanup;
@@ -229,10 +229,10 @@ struct Channel {
 #define CHAN_X11_WINDOW_DEFAULT	(4*CHAN_X11_PACKET_DEFAULT)
 
 /* possible input states */
-#define CHAN_INPUT_OPEN			0
-#define CHAN_INPUT_WAIT_DRAIN		1
-#define CHAN_INPUT_WAIT_OCLOSE		2
-#define CHAN_INPUT_CLOSED		3
+#define CHAN_पासोक_OPEN			0
+#define CHAN_पासोक_WAIT_DRAIN		1
+#define CHAN_पासोक_WAIT_OCLOSE		2
+#define CHAN_पासोक_CLOSED		3
 
 /* possible output states */
 #define CHAN_OUTPUT_OPEN		0
@@ -263,13 +263,13 @@ struct Channel {
 #define CHANNEL_MAX_READ	CHAN_SES_PACKET_DEFAULT
 
 /* Maximum channel input buffer size */
-#define CHAN_INPUT_MAX	(16*1024*1024)
+#define CHAN_पासोक_MAX	(16*1024*1024)
 
 /* Hard limit on number of channels */
 #define CHANNELS_MAX_CHANNELS	(16*1024)
 
 /* check whether 'efd' is still in use */
-#define CHANNEL_EFD_INPUT_ACTIVE(c) \
+#define CHANNEL_EFD_पासोक_ACTIVE(c) \
 	(c->extended_usage == CHAN_EXTENDED_READ && \
 	(c->efd != -1 || \
 	sshbuf_len(c->extended) > 0))
@@ -325,14 +325,14 @@ int	 channel_proxy_upstream(Channel *, int, uint32_t, struct ssh *);
 
 /* protocol handler */
 
-int	 channel_input_data(int, uint32_t, struct ssh *);
-int	 channel_input_extended_data(int, uint32_t, struct ssh *);
-int	 channel_input_ieof(int, uint32_t, struct ssh *);
-int	 channel_input_oclose(int, uint32_t, struct ssh *);
-int	 channel_input_open_confirmation(int, uint32_t, struct ssh *);
-int	 channel_input_open_failure(int, uint32_t, struct ssh *);
-int	 channel_input_window_adjust(int, uint32_t, struct ssh *);
-int	 channel_input_status_confirm(int, uint32_t, struct ssh *);
+int	 channel_पासोक_data(int, uint32_t, struct ssh *);
+int	 channel_पासोक_extended_data(int, uint32_t, struct ssh *);
+int	 channel_पासोक_ieof(int, uint32_t, struct ssh *);
+int	 channel_पासोक_oclose(int, uint32_t, struct ssh *);
+int	 channel_पासोक_open_confirmation(int, uint32_t, struct ssh *);
+int	 channel_पासोक_open_failure(int, uint32_t, struct ssh *);
+int	 channel_पासोक_window_adjust(int, uint32_t, struct ssh *);
+int	 channel_पासोक_status_confirm(int, uint32_t, struct ssh *);
 
 /* file descriptor handling (read/write) */
 struct pollfd;

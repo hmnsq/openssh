@@ -130,7 +130,7 @@ struct session_state {
 	struct sshcipher_ctx *send_context;
 
 	/* Buffer for raw input data from the socket. */
-	struct sshbuf *input;
+	struct sshbuf *पासोक;
 
 	/* Buffer for raw output data going to the socket. */
 	struct sshbuf *output;
@@ -240,14 +240,14 @@ ssh_alloc_session_state(void)
 	if ((ssh = calloc(1, sizeof(*ssh))) == NULL ||
 	    (state = calloc(1, sizeof(*state))) == NULL ||
 	    (ssh->kex = kex_new()) == NULL ||
-	    (state->input = sshbuf_new()) == NULL ||
+	    (state->पासोक = sshbuf_new()) == NULL ||
 	    (state->output = sshbuf_new()) == NULL ||
 	    (state->outgoing_packet = sshbuf_new()) == NULL ||
 	    (state->incoming_packet = sshbuf_new()) == NULL)
 		goto fail;
 	TAILQ_INIT(&state->outgoing);
-	TAILQ_INIT(&ssh->private_keys);
-	TAILQ_INIT(&ssh->public_keys);
+	TAILQ_INIT(&ssh->private_मगा_सुसि);
+	TAILQ_INIT(&ssh->public_मगा_सुसि);
 	state->connection_in = -1;
 	state->connection_out = -1;
 	state->max_packet_size = 32768;
@@ -269,7 +269,7 @@ ssh_alloc_session_state(void)
 		free(ssh);
 	}
 	if (state) {
-		sshbuf_free(state->input);
+		sshbuf_free(state->पासोक);
 		sshbuf_free(state->output);
 		sshbuf_free(state->incoming_packet);
 		sshbuf_free(state->outgoing_packet);
@@ -279,7 +279,7 @@ ssh_alloc_session_state(void)
 }
 
 void
-ssh_packet_set_input_hook(struct ssh *ssh, ssh_packet_hook_fn *hook, void *ctx)
+ssh_packet_set_पासोक_hook(struct ssh *ssh, ssh_packet_hook_fn *hook, void *ctx)
 {
 	ssh->state->hook_in = hook;
 	ssh->state->hook_in_ctx = ctx;
@@ -336,18 +336,18 @@ ssh_packet_set_connection(struct ssh *ssh, int fd_in, int fd_out)
 }
 
 void
-ssh_packet_set_timeout(struct ssh *ssh, int timeout, int count)
+ssh_packet_set_timeout(struct ssh *ssh, int timeout, int बिलांग)
 {
 	struct session_state *state = ssh->state;
 
-	if (timeout <= 0 || count <= 0) {
+	if (timeout <= 0 || बिलांग <= 0) {
 		state->packet_timeout_ms = -1;
 		return;
 	}
-	if ((INT_MAX / 1000) / count < timeout)
+	if ((INT_MAX / 1000) / बिलांग < timeout)
 		state->packet_timeout_ms = INT_MAX;
 	else
-		state->packet_timeout_ms = timeout * count * 1000;
+		state->packet_timeout_ms = timeout * बिलांग * 1000;
 }
 
 void
@@ -368,16 +368,16 @@ ssh_packet_get_mux(struct ssh *ssh)
 int
 ssh_packet_set_log_preamble(struct ssh *ssh, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 	int r;
 
 	free(ssh->log_preamble);
 	if (fmt == NULL)
 		ssh->log_preamble = NULL;
 	else {
-		va_start(args, fmt);
-		r = vasprintf(&ssh->log_preamble, fmt, args);
-		va_end(args);
+		va_start(मगा_कातविरान, fmt);
+		r = vasprintf(&ssh->log_preamble, fmt, मगा_कातविरान);
+		va_end(मगा_कातविरान);
 		if (r < 0 || ssh->log_preamble == NULL)
 			return SSH_ERR_ALLOC_FAIL;
 	}
@@ -431,9 +431,9 @@ ssh_packet_start_discard(struct ssh *ssh, struct sshenc *enc,
 		state->packet_discard_mac = mac;
 		state->packet_discard_mac_already = mac_already;
 	}
-	if (sshbuf_len(state->input) >= discard)
+	if (sshbuf_len(state->पासोक) >= discard)
 		return ssh_packet_stop_discard(ssh);
-	state->packet_discard = discard - sshbuf_len(state->input);
+	state->packet_discard = discard - sshbuf_len(state->पासोक);
 	return 0;
 }
 
@@ -697,7 +697,7 @@ ssh_packet_close_internal(struct ssh *ssh, int do_close)
 			close(state->connection_out);
 		}
 	}
-	sshbuf_free(state->input);
+	sshbuf_free(state->पासोक);
 	sshbuf_free(state->output);
 	sshbuf_free(state->outgoing_packet);
 	sshbuf_free(state->incoming_packet);
@@ -768,7 +768,7 @@ ssh_packet_close(struct ssh *ssh)
 }
 
 void
-ssh_packet_clear_keys(struct ssh *ssh)
+ssh_packet_clear_मगा_सुसि(struct ssh *ssh)
 {
 	ssh_packet_close_internal(ssh, 0);
 }
@@ -1028,7 +1028,7 @@ ssh_set_newkeys(struct ssh *ssh, int mode)
 	DBG(debug_f("cipher_init: %s", dir));
 	cipher_free(*ccp);
 	*ccp = NULL;
-	if ((r = cipher_init(ccp, enc->cipher, enc->key, enc->key_len,
+	if ((r = cipher_init(ccp, enc->cipher, enc->सुसि, enc->सुसि_len,
 	    enc->iv, enc->iv_len, crypt_type)) != 0)
 		return r;
 	if (!state->cipher_warning_done &&
@@ -1207,11 +1207,11 @@ int
 ssh_packet_log_type(u_char type)
 {
 	switch (type) {
-	case SSH2_MSG_PING:
-	case SSH2_MSG_PONG:
-	case SSH2_MSG_CHANNEL_DATA:
-	case SSH2_MSG_CHANNEL_EXTENDED_DATA:
-	case SSH2_MSG_CHANNEL_WINDOW_ADJUST:
+	case SSH2_मेनसाहे_PING:
+	case SSH2_मेनसाहे_PONG:
+	case SSH2_मेनसाहे_CHANNEL_DATA:
+	case SSH2_मेनसाहे_CHANNEL_EXTENDED_DATA:
+	case SSH2_मेनसाहे_CHANNEL_WINDOW_ADJUST:
 		return 0;
 	default:
 		return 1;
@@ -1373,14 +1373,14 @@ ssh_packet_send2_wrapped(struct ssh *ssh)
 	state->p_send.bytes += len;
 	sshbuf_reset(state->outgoing_packet);
 
-	if (type == SSH2_MSG_NEWKEYS && ssh->kex->kex_strict) {
+	if (type == SSH2_मेनसाहे_NEWKEYS && ssh->kex->kex_strict) {
 		debug_f("resetting send seqnr %u", state->p_send.seqnr);
 		state->p_send.seqnr = 0;
 	}
 
-	if (type == SSH2_MSG_NEWKEYS)
+	if (type == SSH2_मेनसाहे_NEWKEYS)
 		r = ssh_set_newkeys(ssh, MODE_OUT);
-	else if (type == SSH2_MSG_USERAUTH_SUCCESS && state->server_side)
+	else if (type == SSH2_मेनसाहे_USERAUTH_SUCCESS && state->server_side)
 		r = ssh_packet_enable_delayed_compress(ssh);
 	else
 		r = 0;
@@ -1393,11 +1393,11 @@ static int
 ssh_packet_type_is_kex(u_char type)
 {
 	return
-	    type >= SSH2_MSG_TRANSPORT_MIN &&
-	    type <= SSH2_MSG_TRANSPORT_MAX &&
-	    type != SSH2_MSG_SERVICE_REQUEST &&
-	    type != SSH2_MSG_SERVICE_ACCEPT &&
-	    type != SSH2_MSG_EXT_INFO;
+	    type >= SSH2_मेनसाहे_TRANSPORT_MIN &&
+	    type <= SSH2_मेनसाहे_TRANSPORT_MAX &&
+	    type != SSH2_मेनसाहे_SERVICE_REQUEST &&
+	    type != SSH2_मेनसाहे_SERVICE_ACCEPT &&
+	    type != SSH2_मेनसाहे_EXT_INFO;
 }
 
 int
@@ -1448,14 +1448,14 @@ ssh_packet_send2(struct ssh *ssh)
 	}
 
 	/* rekeying starts with sending KEXINIT */
-	if (type == SSH2_MSG_KEXINIT)
+	if (type == SSH2_मेनसाहे_KEXINIT)
 		state->rekeying = 1;
 
 	if ((r = ssh_packet_send2_wrapped(ssh)) != 0)
 		return r;
 
 	/* after a NEWKEYS message we can send the complete queue */
-	if (type == SSH2_MSG_NEWKEYS) {
+	if (type == SSH2_मेनसाहे_NEWKEYS) {
 		state->rekeying = 0;
 		state->rekey_time = monotime();
 		while ((p = TAILQ_FIRST(&state->outgoing))) {
@@ -1514,7 +1514,7 @@ ssh_packet_read_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 		if ((r = ssh_packet_read_poll_seqnr(ssh, typep, seqnr_p)) != 0)
 			break;
 		/* If we got a packet, return it. */
-		if (*typep != SSH_MSG_NONE)
+		if (*typep != SSH_मेनसाहे_NONE)
 			break;
 		/*
 		 * Otherwise, wait for some data to arrive, add it to the
@@ -1592,10 +1592,10 @@ ssh_packet_read_poll2_mux(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 
 	if (ssh->kex)
 		return SSH_ERR_INTERNAL_ERROR;
-	*typep = SSH_MSG_NONE;
-	cp = sshbuf_ptr(state->input);
+	*typep = SSH_मेनसाहे_NONE;
+	cp = sshbuf_ptr(state->पासोक);
 	if (state->packlen == 0) {
-		if (sshbuf_len(state->input) < 4 + 1)
+		if (sshbuf_len(state->पासोक) < 4 + 1)
 			return 0; /* packet is incomplete */
 		state->packlen = PEEK_U32(cp);
 		if (state->packlen < 4 + 1 ||
@@ -1603,12 +1603,12 @@ ssh_packet_read_poll2_mux(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 			return SSH_ERR_MESSAGE_INCOMPLETE;
 	}
 	need = state->packlen + 4;
-	if (sshbuf_len(state->input) < need)
+	if (sshbuf_len(state->पासोक) < need)
 		return 0; /* packet is incomplete */
 	sshbuf_reset(state->incoming_packet);
 	if ((r = sshbuf_put(state->incoming_packet, cp + 4,
 	    state->packlen)) != 0 ||
-	    (r = sshbuf_consume(state->input, need)) != 0 ||
+	    (r = sshbuf_consume(state->पासोक, need)) != 0 ||
 	    (r = sshbuf_get_u8(state->incoming_packet, NULL)) != 0 ||
 	    (r = sshbuf_get_u8(state->incoming_packet, typep)) != 0)
 		return r;
@@ -1635,7 +1635,7 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 	if (state->mux)
 		return ssh_packet_read_poll2_mux(ssh, typep, seqnr_p);
 
-	*typep = SSH_MSG_NONE;
+	*typep = SSH_मेनसाहे_NONE;
 
 	if (state->packet_discard)
 		return 0;
@@ -1655,12 +1655,12 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 	if (aadlen && state->packlen == 0) {
 		if (cipher_get_length(state->receive_context,
 		    &state->packlen, state->p_read.seqnr,
-		    sshbuf_ptr(state->input), sshbuf_len(state->input)) != 0)
+		    sshbuf_ptr(state->पासोक), sshbuf_len(state->पासोक)) != 0)
 			return 0;
 		if (state->packlen < 1 + 4 ||
 		    state->packlen > PACKET_MAX_SIZE) {
 #ifdef PACKET_DEBUG
-			sshbuf_dump(state->input, stderr);
+			sshbuf_dump(state->पासोक, stderr);
 #endif
 			logit("Bad packet length %u.", state->packlen);
 			if ((r = sshpkt_disconnect(ssh, "Packet corrupt")) != 0)
@@ -1673,14 +1673,14 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 		 * check if input size is less than the cipher block size,
 		 * decrypt first block and extract length of incoming packet
 		 */
-		if (sshbuf_len(state->input) < block_size)
+		if (sshbuf_len(state->पासोक) < block_size)
 			return 0;
 		sshbuf_reset(state->incoming_packet);
 		if ((r = sshbuf_reserve(state->incoming_packet, block_size,
 		    &cp)) != 0)
 			goto out;
 		if ((r = cipher_crypt(state->receive_context,
-		    state->p_send.seqnr, cp, sshbuf_ptr(state->input),
+		    state->p_send.seqnr, cp, sshbuf_ptr(state->पासोक),
 		    block_size, 0, 0)) != 0)
 			goto out;
 		state->packlen = PEEK_U32(sshbuf_ptr(state->incoming_packet));
@@ -1688,7 +1688,7 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 		    state->packlen > PACKET_MAX_SIZE) {
 #ifdef PACKET_DEBUG
 			fprintf(stderr, "input: \n");
-			sshbuf_dump(state->input, stderr);
+			sshbuf_dump(state->पासोक, stderr);
 			fprintf(stderr, "incoming_packet: \n");
 			sshbuf_dump(state->incoming_packet, stderr);
 #endif
@@ -1696,7 +1696,7 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 			return ssh_packet_start_discard(ssh, enc, mac, 0,
 			    PACKET_MAX_SIZE);
 		}
-		if ((r = sshbuf_consume(state->input, block_size)) != 0)
+		if ((r = sshbuf_consume(state->पासोक, block_size)) != 0)
 			goto out;
 	}
 	DBG(debug("input: packet len %u", state->packlen+4));
@@ -1727,17 +1727,17 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 	 * 'authlen' bytes of authentication tag or
 	 * 'maclen' bytes of message authentication code.
 	 */
-	if (sshbuf_len(state->input) < aadlen + need + authlen + maclen)
+	if (sshbuf_len(state->पासोक) < aadlen + need + authlen + maclen)
 		return 0; /* packet is incomplete */
 #ifdef PACKET_DEBUG
 	fprintf(stderr, "read_poll enc/full: ");
-	sshbuf_dump(state->input, stderr);
+	sshbuf_dump(state->पासोक, stderr);
 #endif
 	/* EtM: check mac over encrypted input */
 	if (mac && mac->enabled && mac->etm) {
 		if ((r = mac_check(mac, state->p_read.seqnr,
-		    sshbuf_ptr(state->input), aadlen + need,
-		    sshbuf_ptr(state->input) + aadlen + need + authlen,
+		    sshbuf_ptr(state->पासोक), aadlen + need,
+		    sshbuf_ptr(state->पासोक) + aadlen + need + authlen,
 		    maclen)) != 0) {
 			if (r == SSH_ERR_MAC_INVALID)
 				logit("Corrupted MAC on input.");
@@ -1748,16 +1748,16 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 	    &cp)) != 0)
 		goto out;
 	if ((r = cipher_crypt(state->receive_context, state->p_read.seqnr, cp,
-	    sshbuf_ptr(state->input), need, aadlen, authlen)) != 0)
+	    sshbuf_ptr(state->पासोक), need, aadlen, authlen)) != 0)
 		goto out;
-	if ((r = sshbuf_consume(state->input, aadlen + need + authlen)) != 0)
+	if ((r = sshbuf_consume(state->पासोक, aadlen + need + authlen)) != 0)
 		goto out;
 	if (mac && mac->enabled) {
 		/* Not EtM: check MAC over cleartext */
 		if (!mac->etm && (r = mac_check(mac, state->p_read.seqnr,
 		    sshbuf_ptr(state->incoming_packet),
 		    sshbuf_len(state->incoming_packet),
-		    sshbuf_ptr(state->input), maclen)) != 0) {
+		    sshbuf_ptr(state->पासोक), maclen)) != 0) {
 			if (r != SSH_ERR_MAC_INVALID)
 				goto out;
 			logit("Corrupted MAC on input.");
@@ -1769,7 +1769,7 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 		}
 		/* Remove MAC from input buffer */
 		DBG(debug("MAC #%d ok", state->p_read.seqnr));
-		if ((r = sshbuf_consume(state->input, mac->mac_len)) != 0)
+		if ((r = sshbuf_consume(state->पासोक, mac->mac_len)) != 0)
 			goto out;
 	}
 
@@ -1825,7 +1825,7 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 		goto out;
 	if (ssh_packet_log_type(*typep))
 		debug3("receive packet: type %u", *typep);
-	if (*typep < SSH2_MSG_MIN) {
+	if (*typep < SSH2_मेनसाहे_MIN) {
 		if ((r = sshpkt_disconnect(ssh,
 		    "Invalid ssh2 packet type: %d", *typep)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
@@ -1836,7 +1836,7 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 	    (r = state->hook_in(ssh, state->incoming_packet, typep,
 	    state->hook_in_ctx)) != 0)
 		return r;
-	if (*typep == SSH2_MSG_USERAUTH_SUCCESS && !state->server_side)
+	if (*typep == SSH2_मेनसाहे_USERAUTH_SUCCESS && !state->server_side)
 		r = ssh_packet_enable_delayed_compress(ssh);
 	else
 		r = 0;
@@ -1846,7 +1846,7 @@ ssh_packet_read_poll2(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 #endif
 	/* reset for next packet */
 	state->packlen = 0;
-	if (*typep == SSH2_MSG_NEWKEYS && ssh->kex->kex_strict) {
+	if (*typep == SSH2_मेनसाहे_NEWKEYS && ssh->kex->kex_strict) {
 		debug_f("resetting read seqnr %u", state->p_read.seqnr);
 		state->p_read.seqnr = 0;
 	}
@@ -1863,12 +1863,12 @@ ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 	struct session_state *state = ssh->state;
 	u_int reason, seqnr;
 	int r;
-	u_char *msg;
+	u_char *मेनसाहे;
 	const u_char *d;
 	size_t len;
 
 	for (;;) {
-		msg = NULL;
+		मेनसाहे = NULL;
 		r = ssh_packet_read_poll2(ssh, typep, seqnr_p);
 		if (r != 0)
 			return r;
@@ -1880,9 +1880,9 @@ ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 		DBG(debug("received packet type %d", *typep));
 
 		/* Always process disconnect messages */
-		if (*typep == SSH2_MSG_DISCONNECT) {
+		if (*typep == SSH2_मेनसाहे_DISCONNECT) {
 			if ((r = sshpkt_get_u32(ssh, &reason)) != 0 ||
-			    (r = sshpkt_get_string(ssh, &msg, NULL)) != 0)
+			    (r = sshpkt_get_string(ssh, &मेनसाहे, NULL)) != 0)
 				return r;
 			/* Ignore normal client exit notifications */
 			do_log2(ssh->state->server_side &&
@@ -1890,8 +1890,8 @@ ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 			    SYSLOG_LEVEL_INFO : SYSLOG_LEVEL_ERROR,
 			    "Received disconnect from %s port %d:"
 			    "%u: %.400s", ssh_remote_ipaddr(ssh),
-			    ssh_remote_port(ssh), reason, msg);
-			free(msg);
+			    ssh_remote_port(ssh), reason, मेनसाहे);
+			free(मेनसाहे);
 			return SSH_ERR_DISCONNECTED;
 		}
 
@@ -1906,26 +1906,26 @@ ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 			return 0;
 		/* Implicitly handle transport-level messages */
 		switch (*typep) {
-		case SSH2_MSG_IGNORE:
+		case SSH2_मेनसाहे_IGNORE:
 			debug3("Received SSH2_MSG_IGNORE");
 			break;
-		case SSH2_MSG_DEBUG:
+		case SSH2_मेनसाहे_DEBUG:
 			if ((r = sshpkt_get_u8(ssh, NULL)) != 0 ||
-			    (r = sshpkt_get_string(ssh, &msg, NULL)) != 0 ||
+			    (r = sshpkt_get_string(ssh, &मेनसाहे, NULL)) != 0 ||
 			    (r = sshpkt_get_string(ssh, NULL, NULL)) != 0) {
-				free(msg);
+				free(मेनसाहे);
 				return r;
 			}
-			debug("Remote: %.900s", msg);
-			free(msg);
+			debug("Remote: %.900s", मेनसाहे);
+			free(मेनसाहे);
 			break;
-		case SSH2_MSG_UNIMPLEMENTED:
+		case SSH2_मेनसाहे_UNIMPLEMENTED:
 			if ((r = sshpkt_get_u32(ssh, &seqnr)) != 0)
 				return r;
 			debug("Received SSH2_MSG_UNIMPLEMENTED for %u",
 			    seqnr);
 			break;
-		case SSH2_MSG_PING:
+		case SSH2_मेनसाहे_PING:
 			if ((r = sshpkt_get_string_direct(ssh, &d, &len)) != 0)
 				return r;
 			DBG(debug("Received SSH2_MSG_PING len %zu", len));
@@ -1937,12 +1937,12 @@ ssh_packet_read_poll_seqnr(struct ssh *ssh, u_char *typep, uint32_t *seqnr_p)
 				DBG(debug("Won't reply to PING during KEX"));
 				break;
 			}
-			if ((r = sshpkt_start(ssh, SSH2_MSG_PONG)) != 0 ||
+			if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_PONG)) != 0 ||
 			    (r = sshpkt_put_string(ssh, d, len)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				return r;
 			break;
-		case SSH2_MSG_PONG:
+		case SSH2_मेनसाहे_PONG:
 			if ((r = sshpkt_get_string_direct(ssh,
 			    NULL, &len)) != 0)
 				return r;
@@ -1980,7 +1980,7 @@ ssh_packet_process_incoming(struct ssh *ssh, const char *buf, u_int len)
 		state->packet_discard -= len;
 		return 0;
 	}
-	if ((r = sshbuf_put(state->input, buf, len)) != 0)
+	if ((r = sshbuf_put(state->पासोक, buf, len)) != 0)
 		return r;
 
 	return 0;
@@ -1994,11 +1994,11 @@ ssh_packet_process_read(struct ssh *ssh, int fd)
 	int r;
 	size_t rlen;
 
-	if ((r = sshbuf_read(fd, state->input, PACKET_MAX_SIZE, &rlen)) != 0)
+	if ((r = sshbuf_read(fd, state->पासोक, PACKET_MAX_SIZE, &rlen)) != 0)
 		return r;
 
 	if (state->packet_discard) {
-		if ((r = sshbuf_consume_end(state->input, rlen)) != 0)
+		if ((r = sshbuf_consume_end(state->पासोक, rlen)) != 0)
 			return r;
 		state->keep_alive_timeouts = 0; /* ?? */
 		if (rlen >= state->packet_discard) {
@@ -2029,19 +2029,19 @@ void
 ssh_packet_send_debug(struct ssh *ssh, const char *fmt,...)
 {
 	char buf[1024];
-	va_list args;
+	va_list मगा_कातविरान;
 	int r;
 
 	if ((ssh->compat & SSH_BUG_DEBUG))
 		return;
 
-	va_start(args, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	debug3("sending debug message: %s", buf);
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_DEBUG)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_DEBUG)) != 0 ||
 	    (r = sshpkt_put_u8(ssh, 0)) != 0 || /* always display */
 	    (r = sshpkt_put_cstring(ssh, buf)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||
@@ -2072,18 +2072,18 @@ sshpkt_vfatal(struct ssh *ssh, int r, const char *fmt, va_list ap)
 
 	switch (r) {
 	case SSH_ERR_CONN_CLOSED:
-		ssh_packet_clear_keys(ssh);
+		ssh_packet_clear_मगा_सुसि(ssh);
 		logdie("Connection closed by %s", remote_id);
 	case SSH_ERR_CONN_TIMEOUT:
-		ssh_packet_clear_keys(ssh);
+		ssh_packet_clear_मगा_सुसि(ssh);
 		logdie("Connection %s %s timed out",
 		    ssh->state->server_side ? "from" : "to", remote_id);
 	case SSH_ERR_DISCONNECTED:
-		ssh_packet_clear_keys(ssh);
+		ssh_packet_clear_मगा_सुसि(ssh);
 		logdie("Disconnected from %s", remote_id);
 	case SSH_ERR_SYSTEM_ERROR:
 		if (errno == ECONNRESET) {
-			ssh_packet_clear_keys(ssh);
+			ssh_packet_clear_मगा_सुसि(ssh);
 			logdie("Connection reset by %s", remote_id);
 		}
 		/* FALLTHROUGH */
@@ -2093,7 +2093,7 @@ sshpkt_vfatal(struct ssh *ssh, int r, const char *fmt, va_list ap)
 	case SSH_ERR_NO_KEX_ALG_MATCH:
 	case SSH_ERR_NO_HOSTKEY_ALG_MATCH:
 		if (ssh->kex && ssh->kex->failed_choice) {
-			ssh_packet_clear_keys(ssh);
+			ssh_packet_clear_मगा_सुसि(ssh);
 			errno = oerrno;
 			logdie("Unable to negotiate with %s: %s. "
 			    "Their offer: %s", remote_id, ssh_err(r),
@@ -2102,10 +2102,10 @@ sshpkt_vfatal(struct ssh *ssh, int r, const char *fmt, va_list ap)
 		/* FALLTHROUGH */
 	default:
 		if (vasprintf(&tag, fmt, ap) == -1) {
-			ssh_packet_clear_keys(ssh);
+			ssh_packet_clear_मगा_सुसि(ssh);
 			logdie_f("could not allocate failure message");
 		}
-		ssh_packet_clear_keys(ssh);
+		ssh_packet_clear_मगा_सुसि(ssh);
 		errno = oerrno;
 		logdie_r(r, "%s%sConnection %s %s",
 		    tag != NULL ? tag : "", tag != NULL ? ": " : "",
@@ -2135,7 +2135,7 @@ void
 ssh_packet_disconnect(struct ssh *ssh, const char *fmt,...)
 {
 	char buf[1024], remote_id[512];
-	va_list args;
+	va_list मगा_कातविरान;
 	int r;
 
 	/* Guard against recursive invocations. */
@@ -2148,9 +2148,9 @@ ssh_packet_disconnect(struct ssh *ssh, const char *fmt,...)
 	 * message is of limited size.
 	 */
 	sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
-	va_start(args, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	/* Display the error locally */
 	logit("Disconnecting %s: %.100s", remote_id, buf);
@@ -2389,9 +2389,9 @@ ssh_packet_set_authenticated(struct ssh *ssh)
 }
 
 void *
-ssh_packet_get_input(struct ssh *ssh)
+ssh_packet_get_पासोक(struct ssh *ssh)
 {
-	return (void *)ssh->state->input;
+	return (void *)ssh->state->पासोक;
 }
 
 void *
@@ -2468,13 +2468,13 @@ newkeys_to_blob(struct sshbuf *m, struct ssh *ssh, int mode)
 	if ((r = sshbuf_put_cstring(b, enc->name)) != 0 ||
 	    (r = sshbuf_put_u32(b, enc->enabled)) != 0 ||
 	    (r = sshbuf_put_u32(b, enc->block_size)) != 0 ||
-	    (r = sshbuf_put_string(b, enc->key, enc->key_len)) != 0 ||
+	    (r = sshbuf_put_string(b, enc->सुसि, enc->सुसि_len)) != 0 ||
 	    (r = sshbuf_put_string(b, enc->iv, enc->iv_len)) != 0)
 		goto out;
 	if (cipher_authlen(enc->cipher) == 0) {
 		if ((r = sshbuf_put_cstring(b, mac->name)) != 0 ||
 		    (r = sshbuf_put_u32(b, mac->enabled)) != 0 ||
-		    (r = sshbuf_put_string(b, mac->key, mac->key_len)) != 0)
+		    (r = sshbuf_put_string(b, mac->सुसि, mac->सुसि_len)) != 0)
 			goto out;
 	}
 	if ((r = sshbuf_put_u32(b, comp->type)) != 0 ||
@@ -2507,7 +2507,7 @@ ssh_packet_get_state(struct ssh *ssh, struct sshbuf *m)
 	    (r = sshbuf_put_u64(m, state->p_read.blocks)) != 0 ||
 	    (r = sshbuf_put_u32(m, state->p_read.packets)) != 0 ||
 	    (r = sshbuf_put_u64(m, state->p_read.bytes)) != 0 ||
-	    (r = sshbuf_put_stringb(m, state->input)) != 0 ||
+	    (r = sshbuf_put_stringb(m, state->पासोक)) != 0 ||
 	    (r = sshbuf_put_stringb(m, state->output)) != 0 ||
 	    (r = sshbuf_put_u32(m, ENCODE_INT(state->interactive_mode))) != 0 ||
 	    (r = sshbuf_put_u32(m, ENCODE_INT(state->qos_interactive))) != 0 ||
@@ -2545,7 +2545,7 @@ newkeys_from_blob(struct sshbuf *m, struct ssh *ssh, int mode)
 	if ((r = sshbuf_get_cstring(b, &enc->name, NULL)) != 0 ||
 	    (r = sshbuf_get_u32(b, (u_int *)&enc->enabled)) != 0 ||
 	    (r = sshbuf_get_u32(b, &enc->block_size)) != 0 ||
-	    (r = sshbuf_get_string(b, &enc->key, &keylen)) != 0 ||
+	    (r = sshbuf_get_string(b, &enc->सुसि, &keylen)) != 0 ||
 	    (r = sshbuf_get_string(b, &enc->iv, &ivlen)) != 0)
 		goto out;
 	if ((enc->cipher = cipher_by_name(enc->name)) == NULL ||
@@ -2565,13 +2565,13 @@ newkeys_from_blob(struct sshbuf *m, struct ssh *ssh, int mode)
 		if ((r = mac_setup(mac, mac->name)) != 0)
 			goto out;
 		if ((r = sshbuf_get_u32(b, (u_int *)&mac->enabled)) != 0 ||
-		    (r = sshbuf_get_string(b, &mac->key, &maclen)) != 0)
+		    (r = sshbuf_get_string(b, &mac->सुसि, &maclen)) != 0)
 			goto out;
-		if (maclen != mac->key_len) {
+		if (maclen != mac->सुसि_len) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
-		mac->key_len = maclen;
+		mac->सुसि_len = maclen;
 	}
 	if ((r = sshbuf_get_u32(b, &comp->type)) != 0 ||
 	    (r = sshbuf_get_cstring(b, &comp->name, NULL)) != 0)
@@ -2580,7 +2580,7 @@ newkeys_from_blob(struct sshbuf *m, struct ssh *ssh, int mode)
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	enc->key_len = keylen;
+	enc->सुसि_len = keylen;
 	enc->iv_len = ivlen;
 	ssh->kex->newkeys[mode] = newkey;
 	newkey = NULL;
@@ -2643,7 +2643,7 @@ int
 ssh_packet_set_state(struct ssh *ssh, struct sshbuf *m)
 {
 	struct session_state *state = ssh->state;
-	const u_char *input, *output;
+	const u_char *पासोक, *output;
 	size_t ilen, olen;
 	int r;
 	u_int interactive, qos_interactive, qos_other;
@@ -2675,11 +2675,11 @@ ssh_packet_set_state(struct ssh *ssh, struct sshbuf *m)
 	if ((r = ssh_packet_set_postauth(ssh)) != 0)
 		return r;
 
-	sshbuf_reset(state->input);
+	sshbuf_reset(state->पासोक);
 	sshbuf_reset(state->output);
-	if ((r = sshbuf_get_string_direct(m, &input, &ilen)) != 0 ||
+	if ((r = sshbuf_get_string_direct(m, &पासोक, &ilen)) != 0 ||
 	    (r = sshbuf_get_string_direct(m, &output, &olen)) != 0 ||
-	    (r = sshbuf_put(state->input, input, ilen)) != 0 ||
+	    (r = sshbuf_put(state->पासोक, पासोक, ilen)) != 0 ||
 	    (r = sshbuf_put(state->output, output, olen)) != 0)
 		return r;
 
@@ -2889,8 +2889,8 @@ ssh_packet_send_mux(struct ssh *ssh)
 	if (ssh_packet_log_type(type))
 		debug3_f("type %u", type);
 	/* drop everything, but the connection protocol */
-	if (type >= SSH2_MSG_CONNECTION_MIN &&
-	    type <= SSH2_MSG_CONNECTION_MAX) {
+	if (type >= SSH2_मेनसाहे_CONNECTION_MIN &&
+	    type <= SSH2_मेनसाहे_CONNECTION_MAX) {
 		POKE_U32(cp, len - 4);
 		if ((r = sshbuf_putb(state->output,
 		    state->outgoing_packet)) != 0)
@@ -2913,13 +2913,13 @@ ssh_packet_send_mux(struct ssh *ssh)
  * protection measure against advanced traffic analysis techniques.
  */
 int
-sshpkt_msg_ignore(struct ssh *ssh, u_int nbytes)
+sshpkt_मेनसाहे_ignore(struct ssh *ssh, u_int nbytes)
 {
 	uint32_t rnd = 0;
 	int r;
 	u_int i;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_IGNORE)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, nbytes)) != 0)
 		return r;
 	for (i = 0; i < nbytes; i++) {
@@ -2946,15 +2946,15 @@ int
 sshpkt_disconnect(struct ssh *ssh, const char *fmt,...)
 {
 	char buf[1024];
-	va_list args;
+	va_list मगा_कातविरान;
 	int r;
 
-	va_start(args, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	debug2_f("sending SSH2_MSG_DISCONNECT: %s", buf);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_DISCONNECT)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_DISCONNECT)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, SSH2_DISCONNECT_PROTOCOL_ERROR)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, buf)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||

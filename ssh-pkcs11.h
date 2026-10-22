@@ -33,7 +33,7 @@ int	pkcs11_del_provider(char *);
 int	pkcs11_sign(struct sshkey *, u_char **, size_t *,
 	    const u_char *, size_t, const char *, const char *,
 	    const char *, u_int);
-void	pkcs11_key_free(struct sshkey *);
+void	pkcs11_सुसि_free(struct sshkey *);
 
 #ifdef WITH_PKCS11_KEYGEN
 struct sshkey *

@@ -42,7 +42,7 @@ load_file(const char *name)
 }
 
 static struct sshkey *
-load_key(const char *name)
+load_सुसि(const char *name)
 {
 	struct sshkey *ret = NULL;
 	ASSERT_INT_EQ(sshkey_load_public(test_data_file(name), &ret, NULL), 0);
@@ -51,24 +51,24 @@ load_key(const char *name)
 }
 
 static void
-check_sig(const char *keyname, const char *signame, const struct sshbuf *msg,
+check_sig(const char *keyname, const char *signame, const struct sshbuf *मेनसाहे,
     const char *namespace)
 {
-	struct sshkey *k, *sign_key;
+	struct sshkey *k, *sign_सुसि;
 	struct sshbuf *sig, *rawsig;
 	struct sshkey_sig_details *sig_details;
 
-	k = load_key(keyname);
+	k = load_सुसि(keyname);
 	sig = load_file(signame);
-	sign_key = NULL;
+	sign_सुसि = NULL;
 	sig_details = NULL;
 	rawsig = NULL;
 	ASSERT_INT_EQ(sshsig_dearmor(sig, &rawsig), 0);
-	ASSERT_INT_EQ(sshsig_verifyb(rawsig, msg, namespace,
-	    &sign_key, &sig_details), 0);
-	ASSERT_INT_EQ(sshkey_equal(k, sign_key), 1);
+	ASSERT_INT_EQ(sshsig_verifyb(rawsig, मेनसाहे, namespace,
+	    &sign_सुसि, &sig_details), 0);
+	ASSERT_INT_EQ(sshkey_equal(k, sign_सुसि), 1);
 	sshkey_free(k);
-	sshkey_free(sign_key);
+	sshkey_free(sign_सुसि);
 	sshkey_sig_details_free(sig_details);
 	sshbuf_free(sig);
 	sshbuf_free(rawsig);
@@ -77,7 +77,7 @@ check_sig(const char *keyname, const char *signame, const struct sshbuf *msg,
 void
 tests(void)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	char *namespace;
 
 #if 0
@@ -90,52 +90,52 @@ tests(void)
 #endif
 
 	TEST_START("load data");
-	msg = load_file("namespace");
-	namespace = sshbuf_dup_string(msg);
+	मेनसाहे = load_file("namespace");
+	namespace = sshbuf_dup_string(मेनसाहे);
 	ASSERT_PTR_NE(namespace, NULL);
-	sshbuf_free(msg);
-	msg = load_file("signed-data");
+	sshbuf_free(मेनसाहे);
+	मेनसाहे = load_file("signed-data");
 	TEST_DONE();
 
 #ifdef WITH_OPENSSL
 	TEST_START("check RSA signature");
-	check_sig("rsa.pub", "rsa.sig", msg, namespace);
+	check_sig("rsa.pub", "rsa.sig", मेनसाहे, namespace);
 	TEST_DONE();
 
 
 	TEST_START("check ECDSA signature");
-	check_sig("ecdsa.pub", "ecdsa.sig", msg, namespace);
+	check_sig("ecdsa.pub", "ecdsa.sig", मेनसाहे, namespace);
 	TEST_DONE();
 #endif
 
 	TEST_START("check ED25519 signature");
-	check_sig("ed25519.pub", "ed25519.sig", msg, namespace);
+	check_sig("ed25519.pub", "ed25519.sig", मेनसाहे, namespace);
 	TEST_DONE();
 
 	TEST_START("check MLDSA44-ED25519 signature");
-	check_sig("mldsa44-ed25519.pub", "mldsa44-ed25519.sig", msg, namespace);
+	check_sig("mldsa44-ed25519.pub", "mldsa44-ed25519.sig", मेनसाहे, namespace);
 	TEST_DONE();
 
 #ifdef ENABLE_SK
 #if defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK signature");
-	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", msg, namespace);
+	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", मेनसाहे, namespace);
 	TEST_DONE();
 #endif
 
 	TEST_START("check ED25519-SK signature");
-	check_sig("ed25519_sk.pub", "ed25519_sk.sig", msg, namespace);
+	check_sig("ed25519_sk.pub", "ed25519_sk.sig", मेनसाहे, namespace);
 	TEST_DONE();
 
 #if defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK webauthn signature");
 	check_sig("ecdsa_sk_webauthn.pub", "ecdsa_sk_webauthn.sig",
-	    msg, namespace);
+	    मेनसाहे, namespace);
 	TEST_DONE();
 #endif
 #endif /* ENABLE_SK */
 
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	free(namespace);
 }
 

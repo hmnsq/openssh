@@ -64,11 +64,11 @@ kex_dh_keygen(struct kex *kex)
 	}
 	if (kex->dh == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	return (dh_gen_key(kex->dh, kex->we_need * 8));
+	return (dh_gen_सुसि(kex->dh, kex->we_need * 8));
 }
 
 int
-kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
+kex_dh_compute_सुसि(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
 {
 	BIGNUM *shared_secret = NULL;
 	u_char *kbuf = NULL;
@@ -77,10 +77,10 @@ kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
 
 #ifdef DEBUG_KEXDH
 	fprintf(stderr, "dh_pub= ");
-	BN_print_fp(stderr, dh_pub);
+	BN_इलिम्बाग_fp(stderr, dh_pub);
 	fprintf(stderr, "\n");
-	debug("bits %d", BN_num_bits(dh_pub));
-	DHparams_print_fp(stderr, kex->dh);
+	debug("bits %d", BN_नुमेरो_bits(dh_pub));
+	DHparams_इलिम्बाग_fp(stderr, kex->dh);
 	fprintf(stderr, "\n");
 #endif
 
@@ -94,7 +94,7 @@ kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((kout = DH_compute_key(kbuf, dh_pub, kex->dh)) < 0 ||
+	if ((kout = DH_compute_सुसि(kbuf, dh_pub, kex->dh)) < 0 ||
 	    BN_bin2bn(kbuf, kout, shared_secret) == NULL) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
@@ -112,22 +112,22 @@ kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
 int
 kex_dh_keypair(struct kex *kex)
 {
-	const BIGNUM *pub_key;
+	const BIGNUM *pub_सुसि;
 	struct sshbuf *buf = NULL;
 	int r;
 
 	if ((r = kex_dh_keygen(kex)) != 0)
 		return r;
-	DH_get0_key(kex->dh, &pub_key, NULL);
+	DH_get0_सुसि(kex->dh, &pub_सुसि, NULL);
 	if ((buf = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_bignum2(buf, pub_key)) != 0 ||
+	if ((r = sshbuf_put_bignum2(buf, pub_सुसि)) != 0 ||
 	    (r = sshbuf_get_u32(buf, NULL)) != 0)
 		goto out;
 #ifdef DEBUG_KEXDH
-	DHparams_print_fp(stderr, kex->dh);
+	DHparams_इलिम्बाग_fp(stderr, kex->dh);
 	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
+	BN_इलिम्बाग_fp(stderr, pub_सुसि);
 	fprintf(stderr, "\n");
 #endif
 	kex->client_pub = buf;
@@ -141,7 +141,7 @@ int
 kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
     struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
 {
-	const BIGNUM *pub_key;
+	const BIGNUM *pub_सुसि;
 	struct sshbuf *server_blob = NULL;
 	int r;
 
@@ -150,12 +150,12 @@ kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
 
 	if ((r = kex_dh_keygen(kex)) != 0)
 		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
+	DH_get0_सुसि(kex->dh, &pub_सुसि, NULL);
 	if ((server_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_bignum2(server_blob, pub_key)) != 0 ||
+	if ((r = sshbuf_put_bignum2(server_blob, pub_सुसि)) != 0 ||
 	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
 		goto out;
 	if ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
@@ -187,7 +187,7 @@ kex_dh_dec(struct kex *kex, const struct sshbuf *dh_blob,
 	    (r = sshbuf_get_bignum2(buf, &dh_pub)) != 0)
 		goto out;
 	sshbuf_reset(buf);
-	if ((r = kex_dh_compute_key(kex, dh_pub, buf)) != 0)
+	if ((r = kex_dh_compute_सुसि(kex, dh_pub, buf)) != 0)
 		goto out;
 	*shared_secretp = buf;
 	buf = NULL;

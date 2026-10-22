@@ -136,7 +136,7 @@ char *strndup(const char *s, size_t n);
 #endif
 
 #ifndef HAVE_SETENV
-int setenv(register const char *name, register const char *value, int rewrite);
+int setenv(register const char *name, register const char *हालागा, int rewrite);
 #endif
 
 #ifndef HAVE_STRMODE
@@ -167,7 +167,7 @@ char *dirname(const char *path);
 
 #ifndef HAVE_FMT_SCALED
 #define	FMT_SCALED_STRSIZE	7
-int	fmt_scaled(long long number, char *result);
+int	fmt_scaled(long long नुमेरो_2, char *result);
 #endif
 
 #ifndef HAVE_SCAN_SCALED

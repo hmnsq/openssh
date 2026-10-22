@@ -88,8 +88,8 @@ Authmethod *authmethods[] = {
 
 /* protocol */
 
-static int input_service_request(int, uint32_t, struct ssh *);
-static int input_userauth_request(int, uint32_t, struct ssh *);
+static int पासोक_service_request(int, uint32_t, struct ssh *);
+static int पासोक_userauth_request(int, uint32_t, struct ssh *);
 
 /* helper */
 static Authmethod *authmethod_byname(const char *);
@@ -136,12 +136,12 @@ auth2_read_banner(void)
 }
 
 static void
-userauth_send_banner(struct ssh *ssh, const char *msg)
+userauth_send_banner(struct ssh *ssh, const char *मेनसाहे)
 {
 	int r;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_BANNER)) != 0 ||
-	    (r = sshpkt_put_cstring(ssh, msg)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_USERAUTH_BANNER)) != 0 ||
+	    (r = sshpkt_put_cstring(ssh, मेनसाहे)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language, unused */
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
@@ -174,14 +174,14 @@ do_authentication2(struct ssh *ssh)
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_error);
 	if (ssh->kex->ext_info_c)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_REQUEST, &input_service_request);
+		ssh_dispatch_set(ssh, SSH2_मेनसाहे_EXT_INFO, &kex_पासोक_ext_info);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_SERVICE_REQUEST, &पासोक_service_request);
 	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &authctxt->success);
 	ssh->authctxt = NULL;
 }
 
 static int
-input_service_request(int type, uint32_t seq, struct ssh *ssh)
+पासोक_service_request(int type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	char *service = NULL;
@@ -198,14 +198,14 @@ input_service_request(int type, uint32_t seq, struct ssh *ssh)
 		if (!authctxt->success) {
 			acceptit = 1;
 			/* now we can handle user-auth requests */
-			ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
-			    &input_userauth_request);
+			ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_REQUEST,
+			    &पासोक_userauth_request);
 		}
 	}
 	/* XXX all other service requests are denied */
 
 	if (acceptit) {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_SERVICE_ACCEPT)) != 0 ||
+		if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_SERVICE_ACCEPT)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, service)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
@@ -214,7 +214,7 @@ input_service_request(int type, uint32_t seq, struct ssh *ssh)
 		debug("bad service request %s", service);
 		ssh_packet_disconnect(ssh, "bad service request %s", service);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &dispatch_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_EXT_INFO, &dispatch_protocol_error);
 	r = 0;
  out:
 	free(service);
@@ -272,7 +272,7 @@ auth_failure_delay(Authctxt *authctxt, double tstart)
 }
 
 static int
-input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
+पासोक_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Authmethod *m = NULL;
@@ -338,8 +338,8 @@ input_userauth_request(int type, uint32_t seq, struct ssh *ssh)
 #ifdef GSSAPI
 	ssh_gssapi_cleanup_global_client();
 	/* XXX move to auth2_gssapi_stop() */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_GSSAPI_TOKEN, NULL);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
 #endif
 
 	auth2_authctxt_reset_info(authctxt);
@@ -390,14 +390,14 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
 
 	/* Special handling for root */
 	if (authenticated && authctxt->pw->pw_uid == 0 &&
-	    !auth_root_allowed(ssh, method)) {
+	    !auth_उगात_allowed(ssh, method)) {
 		authenticated = 0;
 #ifdef SSH_AUDIT_EVENTS
-		mm_audit_event(ssh, SSH_LOGIN_ROOT_DENIED);
+		mm_audit_event(ssh, SSH_LOGIN_उगात_DENIED);
 #endif
 	}
 
-	if (authenticated && options.num_auth_methods != 0) {
+	if (authenticated && options.नुमेरो_auth_methods != 0) {
 		if (!auth2_update_methods_lists(authctxt, method, submethod)) {
 			authenticated = 0;
 			partial = 1;
@@ -438,9 +438,9 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
 
 	if (authenticated == 1) {
 		/* turn off userauth */
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_REQUEST,
+		ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_REQUEST,
 		    &dispatch_protocol_ignore);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_SUCCESS)) != 0 ||
+		if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_USERAUTH_SUCCESS)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			fatal_fr(r, "send success packet");
@@ -462,7 +462,7 @@ userauth_finish(struct ssh *ssh, int authenticated, const char *packet_method,
 		methods = authmethods_get(authctxt);
 		debug3_f("failure partial=%d next methods=\"%s\"",
 		    partial, methods);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_FAILURE)) != 0 ||
+		if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_USERAUTH_FAILURE)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, methods)) != 0 ||
 		    (r = sshpkt_put_u8(ssh, partial)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0 ||
@@ -487,9 +487,9 @@ auth2_method_allowed(Authctxt *authctxt, const char *method,
 	 * NB. authctxt->num_auth_methods might be zero as a result of
 	 * auth2_setup_methods_lists(), so check the configuration.
 	 */
-	if (options.num_auth_methods == 0)
+	if (options.नुमेरो_auth_methods == 0)
 		return 1;
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
+	for (i = 0; i < authctxt->नुमेरो_auth_methods; i++) {
 		if (list_starts_with(authctxt->auth_methods[i], method,
 		    submethod) != MATCH_NONE)
 			return 1;
@@ -575,20 +575,20 @@ auth2_setup_methods_lists(Authctxt *authctxt)
 	u_int i;
 
 	/* First, normalise away the "any" pseudo-method */
-	if (options.num_auth_methods == 1 &&
+	if (options.नुमेरो_auth_methods == 1 &&
 	    strcmp(options.auth_methods[0], "any") == 0) {
 		free(options.auth_methods[0]);
 		options.auth_methods[0] = NULL;
-		options.num_auth_methods = 0;
+		options.नुमेरो_auth_methods = 0;
 	}
 
-	if (options.num_auth_methods == 0)
+	if (options.नुमेरो_auth_methods == 0)
 		return 0;
 	debug3_f("checking methods");
-	authctxt->auth_methods = xcalloc(options.num_auth_methods,
+	authctxt->auth_methods = xcalloc(options.नुमेरो_auth_methods,
 	    sizeof(*authctxt->auth_methods));
-	authctxt->num_auth_methods = 0;
-	for (i = 0; i < options.num_auth_methods; i++) {
+	authctxt->नुमेरो_auth_methods = 0;
+	for (i = 0; i < options.नुमेरो_auth_methods; i++) {
 		if (auth2_methods_valid(options.auth_methods[i], 1) != 0) {
 			logit("Authentication methods list \"%s\" contains "
 			    "disabled method, skipping",
@@ -596,11 +596,11 @@ auth2_setup_methods_lists(Authctxt *authctxt)
 			continue;
 		}
 		debug("authentication methods list %d: %s",
-		    authctxt->num_auth_methods, options.auth_methods[i]);
-		authctxt->auth_methods[authctxt->num_auth_methods++] =
+		    authctxt->नुमेरो_auth_methods, options.auth_methods[i]);
+		authctxt->auth_methods[authctxt->नुमेरो_auth_methods++] =
 		    xstrdup(options.auth_methods[i]);
 	}
-	if (authctxt->num_auth_methods == 0) {
+	if (authctxt->नुमेरो_auth_methods == 0) {
 		error("No AuthenticationMethods left after eliminating "
 		    "disabled methods");
 		return -1;
@@ -673,7 +673,7 @@ auth2_update_methods_lists(Authctxt *authctxt, const char *method,
 	u_int i, found = 0;
 
 	debug3_f("updating methods list after \"%s\"", method);
-	for (i = 0; i < authctxt->num_auth_methods; i++) {
+	for (i = 0; i < authctxt->नुमेरो_auth_methods; i++) {
 		if (!remove_method(&(authctxt->auth_methods[i]), method,
 		    submethod))
 			continue;
@@ -694,9 +694,9 @@ auth2_update_methods_lists(Authctxt *authctxt, const char *method,
 /* Reset method-specific information */
 void auth2_authctxt_reset_info(Authctxt *authctxt)
 {
-	sshkey_free(authctxt->auth_method_key);
+	sshkey_free(authctxt->auth_method_सुसि);
 	free(authctxt->auth_method_info);
-	authctxt->auth_method_key = NULL;
+	authctxt->auth_method_सुसि = NULL;
 	authctxt->auth_method_info = NULL;
 }
 
@@ -724,46 +724,46 @@ auth2_record_info(Authctxt *authctxt, const char *fmt, ...)
  * multiple authentication.
  */
 void
-auth2_record_key(Authctxt *authctxt, int authenticated,
-    const struct sshkey *key)
+auth2_record_सुसि(Authctxt *authctxt, int authenticated,
+    const struct sshkey *सुसि)
 {
 	struct sshkey **tmp, *dup;
 	int r;
 
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	if ((r = sshkey_from_private(सुसि, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	sshkey_free(authctxt->auth_method_key);
-	authctxt->auth_method_key = dup;
+	sshkey_free(authctxt->auth_method_सुसि);
+	authctxt->auth_method_सुसि = dup;
 
 	if (!authenticated)
 		return;
 
 	/* If authenticated, make sure we don't accept this key again */
-	if ((r = sshkey_from_private(key, &dup)) != 0)
+	if ((r = sshkey_from_private(सुसि, &dup)) != 0)
 		fatal_fr(r, "copy key");
-	if (authctxt->nprev_keys >= INT_MAX ||
-	    (tmp = recallocarray(authctxt->prev_keys, authctxt->nprev_keys,
-	    authctxt->nprev_keys + 1, sizeof(*authctxt->prev_keys))) == NULL)
+	if (authctxt->nprev_मगा_सुसि >= INT_MAX ||
+	    (tmp = recallocarray(authctxt->prev_मगा_सुसि, authctxt->nprev_मगा_सुसि,
+	    authctxt->nprev_मगा_सुसि + 1, sizeof(*authctxt->prev_मगा_सुसि))) == NULL)
 		fatal_f("reallocarray failed");
-	authctxt->prev_keys = tmp;
-	authctxt->prev_keys[authctxt->nprev_keys] = dup;
-	authctxt->nprev_keys++;
+	authctxt->prev_मगा_सुसि = tmp;
+	authctxt->prev_मगा_सुसि[authctxt->nprev_मगा_सुसि] = dup;
+	authctxt->nprev_मगा_सुसि++;
 
 }
 
 /* Checks whether a key has already been previously used for authentication */
 int
-auth2_key_already_used(Authctxt *authctxt, const struct sshkey *key)
+auth2_सुसि_already_used(Authctxt *authctxt, const struct sshkey *सुसि)
 {
 	u_int i;
 	char *fp;
 
-	for (i = 0; i < authctxt->nprev_keys; i++) {
-		if (sshkey_equal_public(key, authctxt->prev_keys[i])) {
-			fp = sshkey_fingerprint(authctxt->prev_keys[i],
+	for (i = 0; i < authctxt->nprev_मगा_सुसि; i++) {
+		if (sshkey_equal_public(सुसि, authctxt->prev_मगा_सुसि[i])) {
+			fp = sshkey_fingerprint(authctxt->prev_मगा_सुसि[i],
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
 			debug3_f("key already used: %s %s",
-			    sshkey_type(authctxt->prev_keys[i]),
+			    sshkey_type(authctxt->prev_मगा_सुसि[i]),
 			    fp == NULL ? "UNKNOWN" : fp);
 			free(fp);
 			return 1;
@@ -794,9 +794,9 @@ auth2_update_session_info(Authctxt *authctxt, const char *method,
 		fatal_fr(r, "append method");
 
 	/* Append key if present */
-	if (authctxt->auth_method_key != NULL) {
+	if (authctxt->auth_method_सुसि != NULL) {
 		if ((r = sshbuf_put_u8(authctxt->session_info, ' ')) != 0 ||
-		    (r = sshkey_format_text(authctxt->auth_method_key,
+		    (r = sshkey_format_text(authctxt->auth_method_सुसि,
 		    authctxt->session_info)) != 0)
 			fatal_fr(r, "append key");
 	}

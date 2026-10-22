@@ -51,7 +51,7 @@ extern ServerOptions options;
 
 static int auth2_challenge_start(struct ssh *);
 static int send_userauth_info_request(struct ssh *);
-static int input_userauth_info_response(int, uint32_t, struct ssh *);
+static int पासोक_userauth_info_response(int, uint32_t, struct ssh *);
 
 #ifdef BSD_AUTH
 extern KbdintDevice mm_bsdauth_device;
@@ -214,7 +214,7 @@ auth2_challenge_stop(struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	/* unregister callback */
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE, NULL);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_INFO_RESPONSE, NULL);
 	if (authctxt->kbdintctxt != NULL) {
 		kbdint_free(authctxt->kbdintctxt);
 		authctxt->kbdintctxt = NULL;
@@ -246,8 +246,8 @@ auth2_challenge_start(struct ssh *ssh)
 		auth2_challenge_stop(ssh);
 		return 0;
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE,
-	    &input_userauth_info_response);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_INFO_RESPONSE,
+	    &पासोक_userauth_info_response);
 
 	authctxt->postponed = 1;
 	return 0;
@@ -266,7 +266,7 @@ send_userauth_info_request(struct ssh *ssh)
 	    &name, &instr, &kbdintctxt->nreq, &prompts, &echo_on))
 		return 0;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_USERAUTH_INFO_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, name)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, instr)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language not used */
@@ -291,7 +291,7 @@ send_userauth_info_request(struct ssh *ssh)
 }
 
 static int
-input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
+पासोक_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;

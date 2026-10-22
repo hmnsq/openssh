@@ -35,7 +35,7 @@ randombytes(unsigned char *ptr, size_t l)
 		memset(ptr, 0, l);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
+int LLVMFuzzer_Test_One_पासोक(const uint8_t* पासोक, size_t len)
 {
 	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
 	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
@@ -45,7 +45,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
 	if (len > sizeof(pk)) {
 		len = sizeof(pk);
 	}
-	memcpy(pk, input, len);
+	memcpy(pk, पासोक, len);
 
 	real_random = 0;
 	(void)crypto_kem_sntrup761_enc(ciphertext, secret, pk);

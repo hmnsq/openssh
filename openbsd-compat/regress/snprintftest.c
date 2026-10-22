@@ -34,13 +34,13 @@ fail(const char *m)
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+int x_snprintf(char *str, size_t बिलांग, const char *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, बिलांग, fmt, ap);
 	va_end(ap);
 	return ret;
 }

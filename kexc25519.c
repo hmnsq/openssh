@@ -47,45 +47,45 @@ extern int crypto_scalarmult_curve25519(u_char a[CURVE25519_SIZE],
 	__attribute__((__bounded__(__minbytes__, 3, CURVE25519_SIZE)));
 
 void
-kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
+kexc25519_keygen(u_char सुसि[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
 {
 	static const u_char basepoint[CURVE25519_SIZE] = {9};
 
-	arc4random_buf(key, CURVE25519_SIZE);
-	crypto_scalarmult_curve25519(pub, key, basepoint);
+	arc4random_buf(सुसि, CURVE25519_SIZE);
+	crypto_scalarmult_curve25519(pub, सुसि, basepoint);
 }
 
 int
-kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
+kexc25519_shared_सुसि_ext(const u_char सुसि[CURVE25519_SIZE],
     const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int raw)
 {
-	u_char shared_key[CURVE25519_SIZE];
+	u_char shared_सुसि[CURVE25519_SIZE];
 	u_char zero[CURVE25519_SIZE];
 	int r;
 
-	crypto_scalarmult_curve25519(shared_key, key, pub);
+	crypto_scalarmult_curve25519(shared_सुसि, सुसि, pub);
 
 	/* Check for all-zero shared secret */
 	explicit_bzero(zero, CURVE25519_SIZE);
-	if (timingsafe_bcmp(zero, shared_key, CURVE25519_SIZE) == 0)
-		return SSH_ERR_KEY_INVALID_EC_VALUE;
+	if (timingsafe_bcmp(zero, shared_सुसि, CURVE25519_SIZE) == 0)
+		return SSH_ERR_सुसि_INVALID_EC_हालागा;
 
 #ifdef DEBUG_KEXECDH
-	dump_digest("shared secret 25519", shared_key, CURVE25519_SIZE);
+	dump_digest("shared secret 25519", shared_सुसि, CURVE25519_SIZE);
 #endif
 	if (raw)
-		r = sshbuf_put(out, shared_key, CURVE25519_SIZE);
+		r = sshbuf_put(out, shared_सुसि, CURVE25519_SIZE);
 	else
-		r = sshbuf_put_bignum2_bytes(out, shared_key, CURVE25519_SIZE);
-	explicit_bzero(shared_key, CURVE25519_SIZE);
+		r = sshbuf_put_bignum2_bytes(out, shared_सुसि, CURVE25519_SIZE);
+	explicit_bzero(shared_सुसि, CURVE25519_SIZE);
 	return r;
 }
 
 int
-kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
+kexc25519_shared_सुसि(const u_char सुसि[CURVE25519_SIZE],
     const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
 {
-	return kexc25519_shared_key_ext(key, pub, out, 0);
+	return kexc25519_shared_सुसि_ext(सुसि, pub, out, 0);
 }
 
 int
@@ -99,7 +99,7 @@ kex_c25519_keypair(struct kex *kex)
 		return SSH_ERR_ALLOC_FAIL;
 	if ((r = sshbuf_reserve(buf, CURVE25519_SIZE, &cp)) != 0)
 		goto out;
-	kexc25519_keygen(kex->c25519_client_key, cp);
+	kexc25519_keygen(kex->c25519_client_सुसि, cp);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key c25519:", cp, CURVE25519_SIZE);
 #endif
@@ -118,7 +118,7 @@ kex_c25519_enc(struct kex *kex, const struct sshbuf *client_blob,
 	struct sshbuf *buf = NULL;
 	const u_char *client_pub;
 	u_char *server_pub;
-	u_char server_key[CURVE25519_SIZE];
+	u_char server_सुसि[CURVE25519_SIZE];
 	int r;
 
 	*server_blobp = NULL;
@@ -139,13 +139,13 @@ kex_c25519_enc(struct kex *kex, const struct sshbuf *client_blob,
 	}
 	if ((r = sshbuf_reserve(server_blob, CURVE25519_SIZE, &server_pub)) != 0)
 		goto out;
-	kexc25519_keygen(server_key, server_pub);
+	kexc25519_keygen(server_सुसि, server_pub);
 	/* allocate shared secret */
 	if ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 0)) < 0)
+	if ((r = kexc25519_shared_सुसि_ext(server_सुसि, client_pub, buf, 0)) < 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
@@ -156,7 +156,7 @@ kex_c25519_enc(struct kex *kex, const struct sshbuf *client_blob,
 	server_blob = NULL;
 	buf = NULL;
  out:
-	explicit_bzero(server_key, sizeof(server_key));
+	explicit_bzero(server_सुसि, sizeof(server_सुसि));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
 	return r;
@@ -185,7 +185,7 @@ kex_c25519_dec(struct kex *kex, const struct sshbuf *server_blob,
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	if ((r = kexc25519_shared_सुसि_ext(kex->c25519_client_सुसि, server_pub,
 	    buf, 0)) < 0)
 		goto out;
 #ifdef DEBUG_KEXECDH

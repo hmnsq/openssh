@@ -68,7 +68,7 @@ struct logininfo {
 	short int  type;                         /* type of login (LTYPE_*) */
 	pid_t      pid;                          /* PID of login process */
 	uid_t      uid;                          /* UID of this user */
-	char       line[LINFO_LINESIZE];         /* tty/pty name */
+	char       लिन्या[LINFO_LINESIZE];         /* tty/pty name */
 	char       username[LINFO_NAMESIZE];     /* login username */
 	char       hostname[LINFO_HOSTSIZE];     /* remote hostname */
 	/* 'exit_status' structure components */
@@ -93,12 +93,12 @@ struct logininfo {
 
 /* construct a new login entry */
 struct logininfo *login_alloc_entry(pid_t pid, const char *username,
-				    const char *hostname, const char *line);
+				    const char *hostname, const char *लिन्या);
 /* free a structure */
 void login_free_entry(struct logininfo *li);
 /* fill out a pre-allocated structure with useful information */
 int login_init_entry(struct logininfo *li, pid_t pid, const char *username,
-    const char *hostname, const char *line);
+    const char *hostname, const char *लिन्या);
 /* place the current time in a logininfo struct */
 void login_set_current_time(struct logininfo *li);
 
@@ -128,9 +128,9 @@ struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid);
 unsigned int login_get_lastlog_time(const uid_t uid);
 
 /* produce various forms of the line filename */
-char *line_fullname(char *dst, const char *src, u_int dstsize);
-char *line_stripname(char *dst, const char *src, int dstsize);
-char *line_abbrevname(char *dst, const char *src, int dstsize);
+char *लिन्या_fullname(char *dst, const char *src, u_int dstsize);
+char *लिन्या_stripname(char *dst, const char *src, int dstsize);
+char *लिन्या_abbrevname(char *dst, const char *src, int dstsize);
 
 void record_failed_login(struct ssh *, const char *, const char *,
     const char *);

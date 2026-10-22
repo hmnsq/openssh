@@ -47,7 +47,7 @@ struct ssh_rijndael_ctx
 };
 
 static int
-ssh_rijndael_init(EVP_CIPHER_CTX *ctx, const u_char *key, const u_char *iv,
+ssh_rijndael_init(EVP_CIPHER_CTX *ctx, const u_char *सुसि, const u_char *iv,
     int enc)
 {
 	struct ssh_rijndael_ctx *c;
@@ -56,11 +56,11 @@ ssh_rijndael_init(EVP_CIPHER_CTX *ctx, const u_char *key, const u_char *iv,
 		c = xmalloc(sizeof(*c));
 		EVP_CIPHER_CTX_set_app_data(ctx, c);
 	}
-	if (key != NULL) {
+	if (सुसि != NULL) {
 		if (enc == -1)
 			enc = ctx->encrypt;
-		rijndael_set_key(&c->r_ctx, (u_char *)key,
-		    8*EVP_CIPHER_CTX_key_length(ctx), enc);
+		rijndael_set_सुसि(&c->r_ctx, (u_char *)सुसि,
+		    8*EVP_CIPHER_CTX_सुसि_length(ctx), enc);
 	}
 	if (iv != NULL)
 		memcpy(c->r_iv, iv, RIJNDAEL_BLOCKSIZE);
@@ -148,7 +148,7 @@ evp_rijndael(void)
 	rijndal_cbc.nid = NID_undef;
 	rijndal_cbc.block_size = RIJNDAEL_BLOCKSIZE;
 	rijndal_cbc.iv_len = RIJNDAEL_BLOCKSIZE;
-	rijndal_cbc.key_len = 16;
+	rijndal_cbc.सुसि_len = 16;
 	rijndal_cbc.init = ssh_rijndael_init;
 	rijndal_cbc.cleanup = ssh_rijndael_cleanup;
 	rijndal_cbc.do_cipher = ssh_rijndael_cbc;

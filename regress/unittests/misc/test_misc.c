@@ -213,91 +213,91 @@ test_fmt_timeframe(void)
 static void
 test_arglist(void)
 {
-	arglist args;
+	arglist मगा_कातविरान;
 	u_int i;
 
-	memset(&args, 0, sizeof(args));
+	memset(&मगा_कातविरान, 0, sizeof(मगा_कातविरान));
 
 	TEST_START("addargs initial");
-	addargs(&args, "one");
-	ASSERT_U_INT_EQ(args.num, 1);
-	ASSERT_U_INT_EQ(args.nalloc, 32);
-	ASSERT_PTR_NE(args.list, NULL);
-	ASSERT_STRING_EQ(args.list[0], "one");
-	ASSERT_PTR_EQ(args.list[1], NULL);
+	addargs(&मगा_कातविरान, "one");
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 1);
+	ASSERT_U_INT_EQ(मगा_कातविरान.nalloc, 32);
+	ASSERT_PTR_NE(मगा_कातविरान.list, NULL);
+	ASSERT_STRING_EQ(मगा_कातविरान.list[0], "one");
+	ASSERT_PTR_EQ(मगा_कातविरान.list[1], NULL);
 	TEST_DONE();
 
 	TEST_START("addargs second");
-	addargs(&args, "two");
-	ASSERT_U_INT_EQ(args.num, 2);
-	ASSERT_U_INT_EQ(args.nalloc, 32);
-	ASSERT_PTR_NE(args.list, NULL);
-	ASSERT_STRING_EQ(args.list[0], "one");
-	ASSERT_STRING_EQ(args.list[1], "two");
-	ASSERT_PTR_EQ(args.list[2], NULL);
+	addargs(&मगा_कातविरान, "two");
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 2);
+	ASSERT_U_INT_EQ(मगा_कातविरान.nalloc, 32);
+	ASSERT_PTR_NE(मगा_कातविरान.list, NULL);
+	ASSERT_STRING_EQ(मगा_कातविरान.list[0], "one");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[1], "two");
+	ASSERT_PTR_EQ(मगा_कातविरान.list[2], NULL);
 	TEST_DONE();
 
 	TEST_START("addargs with format");
-	addargs(&args, "three=%d", 3);
-	ASSERT_U_INT_EQ(args.num, 3);
-	ASSERT_U_INT_EQ(args.nalloc, 32);
-	ASSERT_PTR_NE(args.list, NULL);
-	ASSERT_STRING_EQ(args.list[0], "one");
-	ASSERT_STRING_EQ(args.list[1], "two");
-	ASSERT_STRING_EQ(args.list[2], "three=3");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	addargs(&मगा_कातविरान, "three=%d", 3);
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 3);
+	ASSERT_U_INT_EQ(मगा_कातविरान.nalloc, 32);
+	ASSERT_PTR_NE(मगा_कातविरान.list, NULL);
+	ASSERT_STRING_EQ(मगा_कातविरान.list[0], "one");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[1], "two");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[2], "three=3");
+	ASSERT_PTR_EQ(मगा_कातविरान.list[3], NULL);
 	TEST_DONE();
 
 	TEST_START("replacearg middle");
-	replacearg(&args, 1, "TWO!");
-	ASSERT_U_INT_EQ(args.num, 3);
-	ASSERT_STRING_EQ(args.list[0], "one");
-	ASSERT_STRING_EQ(args.list[1], "TWO!");
-	ASSERT_STRING_EQ(args.list[2], "three=3");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	replacearg(&मगा_कातविरान, 1, "TWO!");
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 3);
+	ASSERT_STRING_EQ(मगा_कातविरान.list[0], "one");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[1], "TWO!");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[2], "three=3");
+	ASSERT_PTR_EQ(मगा_कातविरान.list[3], NULL);
 	TEST_DONE();
 
 	TEST_START("replacearg first");
-	replacearg(&args, 0, "ONE!");
-	ASSERT_U_INT_EQ(args.num, 3);
-	ASSERT_STRING_EQ(args.list[0], "ONE!");
-	ASSERT_STRING_EQ(args.list[1], "TWO!");
-	ASSERT_STRING_EQ(args.list[2], "three=3");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	replacearg(&मगा_कातविरान, 0, "ONE!");
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 3);
+	ASSERT_STRING_EQ(मगा_कातविरान.list[0], "ONE!");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[1], "TWO!");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[2], "three=3");
+	ASSERT_PTR_EQ(मगा_कातविरान.list[3], NULL);
 	TEST_DONE();
 
 	TEST_START("replacearg last");
-	replacearg(&args, 2, "THREE=3!");
-	ASSERT_U_INT_EQ(args.num, 3);
-	ASSERT_STRING_EQ(args.list[0], "ONE!");
-	ASSERT_STRING_EQ(args.list[1], "TWO!");
-	ASSERT_STRING_EQ(args.list[2], "THREE=3!");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	replacearg(&मगा_कातविरान, 2, "THREE=3!");
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 3);
+	ASSERT_STRING_EQ(मगा_कातविरान.list[0], "ONE!");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[1], "TWO!");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[2], "THREE=3!");
+	ASSERT_PTR_EQ(मगा_कातविरान.list[3], NULL);
 	TEST_DONE();
 
 	TEST_START("replacearg with format");
-	replacearg(&args, 1, "two=%d", 2);
-	ASSERT_U_INT_EQ(args.num, 3);
-	ASSERT_STRING_EQ(args.list[0], "ONE!");
-	ASSERT_STRING_EQ(args.list[1], "two=2");
-	ASSERT_STRING_EQ(args.list[2], "THREE=3!");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	replacearg(&मगा_कातविरान, 1, "two=%d", 2);
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 3);
+	ASSERT_STRING_EQ(मगा_कातविरान.list[0], "ONE!");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[1], "two=2");
+	ASSERT_STRING_EQ(मगा_कातविरान.list[2], "THREE=3!");
+	ASSERT_PTR_EQ(मगा_कातविरान.list[3], NULL);
 	TEST_DONE();
 
 	TEST_START("addargs reallocation");
-	for (i = args.num; i < 33; i++)
-		addargs(&args, "pad-%d", i);
-	ASSERT_U_INT_EQ(args.num, 33);
-	ASSERT_U_INT_GE(args.nalloc, 33);
-	ASSERT_STRING_EQ(args.list[32], "pad-32");
-	ASSERT_PTR_EQ(args.list[33], NULL);
+	for (i = मगा_कातविरान.नुमेरो; i < 33; i++)
+		addargs(&मगा_कातविरान, "pad-%d", i);
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 33);
+	ASSERT_U_INT_GE(मगा_कातविरान.nalloc, 33);
+	ASSERT_STRING_EQ(मगा_कातविरान.list[32], "pad-32");
+	ASSERT_PTR_EQ(मगा_कातविरान.list[33], NULL);
 	TEST_DONE();
 
 	TEST_START("freeargs");
-	freeargs(&args);
-	ASSERT_U_INT_EQ(args.num, 0);
-	ASSERT_U_INT_EQ(args.nalloc, 0);
-	ASSERT_PTR_EQ(args.list, NULL);
+	freeargs(&मगा_कातविरान);
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 0);
+	ASSERT_U_INT_EQ(मगा_कातविरान.nalloc, 0);
+	ASSERT_PTR_EQ(मगा_कातविरान.list, NULL);
 	TEST_DONE();
 
 	TEST_START("freeargs on NULL");
@@ -305,11 +305,11 @@ test_arglist(void)
 	TEST_DONE();
 
 	TEST_START("freeargs on empty");
-	memset(&args, 0, sizeof(args));
-	freeargs(&args);
-	ASSERT_U_INT_EQ(args.num, 0);
-	ASSERT_U_INT_EQ(args.nalloc, 0);
-	ASSERT_PTR_EQ(args.list, NULL);
+	memset(&मगा_कातविरान, 0, sizeof(मगा_कातविरान));
+	freeargs(&मगा_कातविरान);
+	ASSERT_U_INT_EQ(मगा_कातविरान.नुमेरो, 0);
+	ASSERT_U_INT_EQ(मगा_कातविरान.nalloc, 0);
+	ASSERT_PTR_EQ(मगा_कातविरान.list, NULL);
 	TEST_DONE();
 }
 

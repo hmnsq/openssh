@@ -56,7 +56,7 @@ aesctr_inc(u8 *ctr, u32 len)
 void
 aesctr_keysetup(aesctr_ctx *x,const u8 *k,u32 kbits,u32 ivbits)
 {
-	x->rounds = rijndaelKeySetupEnc(x->ek, k, kbits);
+	x->rounds = rijndael_सुसि_Setup_Enc(x->ek, k, kbits);
 }
 
 void

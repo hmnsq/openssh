@@ -34,7 +34,7 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 }
 
 int
-sshsk_sign(const char *provider_path, struct sshkey *key,
+sshsk_sign(const char *provider_path, struct sshkey *सुसि,
     u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
     u_int compat, const char *pin)
 {
@@ -43,7 +43,7 @@ sshsk_sign(const char *provider_path, struct sshkey *key,
 
 int
 sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+    const char *pin, u_int flags, struct sshsk_resident_सुसि ***srksp,
     size_t *nsrksp)
 {
 	return SSH_ERR_FEATURE_UNSUPPORTED;

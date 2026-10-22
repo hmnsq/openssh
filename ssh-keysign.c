@@ -64,7 +64,7 @@ valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
     u_char *data, size_t datalen)
 {
 	struct sshbuf *b;
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	u_char type, *pkblob;
 	char *p;
 	size_t blen, len;
@@ -91,7 +91,7 @@ valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
 
 	if ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	if (type != SSH2_मेनसाहे_USERAUTH_REQUEST)
 		fail++;
 
 	/* server user */
@@ -118,12 +118,12 @@ valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
 		fatal_fr(r, "parse pk");
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC)
+	if (pktype == सुसि_UNSPEC)
 		fail++;
-	else if ((r = sshkey_from_blob(pkblob, blen, &key)) != 0) {
+	else if ((r = sshkey_from_blob(pkblob, blen, &सुसि)) != 0) {
 		error_fr(r, "decode key");
 		fail++;
-	} else if (key->type != pktype)
+	} else if (सुसि->type != pktype)
 		fail++;
 
 	/* client host name, handle trailing dot */
@@ -157,15 +157,15 @@ valid_request(struct passwd *pw, char *host, struct sshkey **ret, char **pkalgp,
 
 	if (!fail) {
 		if (ret != NULL) {
-			*ret = key;
-			key = NULL;
+			*ret = सुसि;
+			सुसि = NULL;
 		}
 		if (pkalgp != NULL) {
 			*pkalgp = pkalg;
 			pkalg = NULL;
 		}
 	}
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	free(pkalg);
 	free(pkblob);
 
@@ -177,10 +177,10 @@ main(int argc, char **argv)
 {
 	struct sshbuf *b;
 	Options options;
-#define NUM_KEYTYPES 5
-	struct sshkey *keys[NUM_KEYTYPES], *key = NULL;
+#define नुमेरो_KEYTYPES 5
+	struct sshkey *मगा_सुसि[नुमेरो_KEYTYPES], *सुसि = NULL;
 	struct passwd *pw;
-	int r, key_fd[NUM_KEYTYPES], i, found, version = 2, fd;
+	int r, सुसि_fd[नुमेरो_KEYTYPES], i, found, version = 2, fd;
 	u_char *signature, *data, rver;
 	char *host, *fp, *pkalg;
 	size_t slen, dlen;
@@ -195,15 +195,15 @@ main(int argc, char **argv)
 	if (pledge("stdio rpath getpw dns id", NULL) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = 0; i < NUM_KEYTYPES; i++)
-		key_fd[i] = -1;
+	for (i = 0; i < नुमेरो_KEYTYPES; i++)
+		सुसि_fd[i] = -1;
 
 	i = 0;
 	/* XXX This really needs to read sshd_config for the paths */
-	key_fd[i++] = open(_PATH_HOST_ECDSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_ED25519_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_RSA_KEY_FILE, O_RDONLY);
-	key_fd[i++] = open(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, O_RDONLY);
+	सुसि_fd[i++] = open(PATH_HOST_ECDSA_सुसि_FILE, O_RDONLY);
+	सुसि_fd[i++] = open(PATH_HOST_ED25519_सुसि_FILE, O_RDONLY);
+	सुसि_fd[i++] = open(PATH_HOST_RSA_सुसि_FILE, O_RDONLY);
+	सुसि_fd[i++] = open(PATH_HOST_MLDSA44_ED25519_सुसि_FILE, O_RDONLY);
 
 	if ((pw = getpwuid(getuid())) == NULL)
 		fatal("getpwuid failed");
@@ -229,25 +229,25 @@ main(int argc, char **argv)
 	if (pledge("stdio dns", NULL) != 0)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 
-	for (i = found = 0; i < NUM_KEYTYPES; i++) {
-		if (key_fd[i] != -1)
+	for (i = found = 0; i < नुमेरो_KEYTYPES; i++) {
+		if (सुसि_fd[i] != -1)
 			found = 1;
 	}
 	if (found == 0)
 		fatal("could not open any host key");
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		keys[i] = NULL;
-		if (key_fd[i] == -1)
+	for (i = 0; i < नुमेरो_KEYTYPES; i++) {
+		मगा_सुसि[i] = NULL;
+		if (सुसि_fd[i] == -1)
 			continue;
-		r = sshkey_load_private_type_fd(key_fd[i], KEY_UNSPEC,
-		    NULL, &key, NULL);
-		close(key_fd[i]);
+		r = sshkey_load_private_type_fd(सुसि_fd[i], सुसि_UNSPEC,
+		    NULL, &सुसि, NULL);
+		close(सुसि_fd[i]);
 		if (r != 0)
 			debug_r(r, "parse key %d", i);
-		else if (key != NULL) {
-			keys[i] = key;
+		else if (सुसि != NULL) {
+			मगा_सुसि[i] = सुसि;
 			found = 1;
 		}
 	}
@@ -256,7 +256,7 @@ main(int argc, char **argv)
 
 	if ((b = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(STDIN_FILENO, b) < 0)
+	if (ssh_मेनसाहे_recv(STDIN_FILENO, b) < 0)
 		fatal("%s: ssh_msg_recv failed", __progname);
 	if ((r = sshbuf_get_u8(b, &rver)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
@@ -272,27 +272,27 @@ main(int argc, char **argv)
 
 	if ((r = sshbuf_get_string(b, &data, &dlen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (valid_request(pw, host, &key, &pkalg, data, dlen) < 0)
+	if (valid_request(pw, host, &सुसि, &pkalg, data, dlen) < 0)
 		fatal("%s: not a valid request", __progname);
 	free(host);
 
 	found = 0;
-	for (i = 0; i < NUM_KEYTYPES; i++) {
-		if (keys[i] != NULL &&
-		    sshkey_equal_public(key, keys[i])) {
+	for (i = 0; i < नुमेरो_KEYTYPES; i++) {
+		if (मगा_सुसि[i] != NULL &&
+		    sshkey_equal_public(सुसि, मगा_सुसि[i])) {
 			found = 1;
 			break;
 		}
 	}
 	if (!found) {
-		if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
+		if ((fp = sshkey_fingerprint(सुसि, options.fingerprint_hash,
 		    SSH_FP_DEFAULT)) == NULL)
 			fatal("%s: sshkey_fingerprint failed", __progname);
 		fatal("%s: no matching hostkey found for key %s %s", __progname,
-		    sshkey_type(key), fp ? fp : "");
+		    sshkey_type(सुसि), fp ? fp : "");
 	}
 
-	if ((r = sshkey_sign(keys[i], &signature, &slen, data, dlen,
+	if ((r = sshkey_sign(मगा_सुसि[i], &signature, &slen, data, dlen,
 	    pkalg, NULL, NULL, 0)) != 0)
 		fatal_r(r, "%s: sshkey_sign failed", __progname);
 	free(data);
@@ -301,7 +301,7 @@ main(int argc, char **argv)
 	sshbuf_reset(b);
 	if ((r = sshbuf_put_string(b, signature, slen)) != 0)
 		fatal_r(r, "%s: buffer error", __progname);
-	if (ssh_msg_send(STDOUT_FILENO, version, b) == -1)
+	if (ssh_मेनसाहे_send(STDOUT_FILENO, version, b) == -1)
 		fatal("%s: ssh_msg_send failed", __progname);
 
 	return (0);

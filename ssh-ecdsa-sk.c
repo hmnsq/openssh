@@ -68,31 +68,31 @@ ssh_ecdsa_sk_equal(const struct sshkey *a, const struct sshkey *b)
 }
 
 static int
-ssh_ecdsa_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
+ssh_ecdsa_sk_serialize_public(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if ((r = sshkey_ecdsa_funcs.serialize_public(key, b, opts)) != 0)
+	if ((r = sshkey_ecdsa_funcs.serialize_public(सुसि, b, opts)) != 0)
 		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
+	if ((r = sshkey_serialize_sk(सुसि, b)) != 0)
 		return r;
 
 	return 0;
 }
 
 static int
-ssh_ecdsa_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
+ssh_ecdsa_sk_serialize_private(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.serialize_public(key,
+	if (!sshkey_is_cert(सुसि)) {
+		if ((r = sshkey_ecdsa_funcs.serialize_public(सुसि,
 		    b, opts)) != 0)
 			return r;
 	}
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
+	if ((r = sshkey_serialize_private_sk(सुसि, b)) != 0)
 		return r;
 
 	return 0;
@@ -112,29 +112,29 @@ ssh_ecdsa_sk_copy_public(const struct sshkey *from, struct sshkey *to)
 
 static int
 ssh_ecdsa_sk_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	int r;
 
-	if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, key)) != 0)
+	if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, सुसि)) != 0)
 		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
+	if ((r = sshkey_deserialize_sk(b, सुसि)) != 0)
 		return r;
 	return 0;
 }
 
 static int
 ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	int r;
 
-	if (!sshkey_is_cert(key)) {
+	if (!sshkey_is_cert(सुसि)) {
 		if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype,
-		    b, key)) != 0)
+		    b, सुसि)) != 0)
 			return r;
 	}
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
+	if ((r = sshkey_private_deserialize_sk(b, सुसि)) != 0)
 		return r;
 
 	return 0;
@@ -217,7 +217,7 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 }
 
 static int
-ssh_ecdsa_sk_verify(const struct sshkey *key,
+ssh_ecdsa_sk_verify(const struct sshkey *सुसि,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
     struct sshkey_sig_details **detailsp)
@@ -240,12 +240,12 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 
 	if (detailsp != NULL)
 		*detailsp = NULL;
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA_SK ||
+	if (सुसि == NULL || सुसि->pkey == NULL ||
+	    sshkey_type_plain(सुसि->type) != सुसि_ECDSA_SK ||
 	    sig == NULL || siglen == 0)
 		return SSH_ERR_INVALID_ARGUMENT;
 
-	if (key->ecdsa_nid != NID_X9_62_prime256v1)
+	if (सुसि->ecdsa_nid != NID_X9_62_prime256v1)
 		return SSH_ERR_INTERNAL_ERROR;
 
 	/* fetch signature */
@@ -337,8 +337,8 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	    msghash, sizeof(msghash))) != 0)
 		goto out;
 	/* Application value is hashed before signature */
-	if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
-	    strlen(key->sk_application), apphash, sizeof(apphash))) != 0)
+	if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, सुसि->sk_application,
+	    strlen(सुसि->sk_application), apphash, sizeof(apphash))) != 0)
 		goto out;
 #ifdef DEBUG_SK
 	fprintf(stderr, "%s: hashed application:\n", __func__);
@@ -384,7 +384,7 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 #endif
 	/* Verify it */
 	if (EVP_DigestVerifyInit(md_ctx, NULL, EVP_sha256(), NULL,
-	    key->pkey) != 1) {
+	    सुसि->pkey) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -445,7 +445,7 @@ const struct sshkey_impl sshkey_ecdsa_sk_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK,
+	/* .type = */		सुसि_ECDSA_SK,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -457,7 +457,7 @@ const struct sshkey_impl sshkey_ecdsa_sk_cert_impl = {
 	/* .name = */		"sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK_CERT,
+	/* .type = */		सुसि_ECDSA_SK_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -469,7 +469,7 @@ const struct sshkey_impl sshkey_ecdsa_sk_webauthn_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256@openssh.com",
 	/* .shortname = */	"ECDSA-SK",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK,
+	/* .type = */		सुसि_ECDSA_SK,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	1,
@@ -481,7 +481,7 @@ const struct sshkey_impl sshkey_ecdsa_sk_webauthn_cert_impl = {
 	/* .name = */		"webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-SK-CERT",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_SK_CERT,
+	/* .type = */		सुसि_ECDSA_SK_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	1,

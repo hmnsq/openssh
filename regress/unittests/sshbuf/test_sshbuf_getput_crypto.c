@@ -61,7 +61,7 @@ sshbuf_getput_crypto_tests(void)
 		0xc8, 0xf9, 0xa3, 0x5e, 0x42, 0xbd, 0xd0, 0x47,
 		0x55, 0x0f, 0x69, 0xd8, 0x0e, 0xc2, 0x3c, 0xd4
 	};
-	EC_KEY *eck;
+	EC_सुसि *eck;
 	EC_POINT *ecp;
 	int r;
 
@@ -77,7 +77,7 @@ sshbuf_getput_crypto_tests(void)
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_bignum2(p1, bn), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(expbn1) + 4);
-	ASSERT_U32_EQ(PEEK_U32(sshbuf_ptr(p1)), (uint32_t)BN_num_bytes(bn));
+	ASSERT_U32_EQ(PEEK_U32(sshbuf_ptr(p1)), (uint32_t)BN_नुमेरो_bytes(bn));
 	ASSERT_MEM_EQ(sshbuf_ptr(p1) + 4, expbn1, sizeof(expbn1));
 	BN_free(bn);
 	sshbuf_free(p1);
@@ -101,7 +101,7 @@ sshbuf_getput_crypto_tests(void)
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_bignum2(p1, bn), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(expbn2) + 4 + 1); /* MSB */
-	ASSERT_U32_EQ(PEEK_U32(sshbuf_ptr(p1)), (uint32_t)BN_num_bytes(bn) + 1);
+	ASSERT_U32_EQ(PEEK_U32(sshbuf_ptr(p1)), (uint32_t)BN_नुमेरो_bytes(bn) + 1);
 	ASSERT_U8_EQ(*(sshbuf_ptr(p1) + 4), 0x00);
 	ASSERT_MEM_EQ(sshbuf_ptr(p1) + 5, expbn2, sizeof(expbn2));
 	BN_free(bn);
@@ -124,7 +124,7 @@ sshbuf_getput_crypto_tests(void)
 	MKBN(hexbn1, bn);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn)), 0);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_नुमेरो_bytes(bn)), 0);
 	ASSERT_INT_EQ(sshbuf_put(p1, expbn1, sizeof(expbn1)), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4 + sizeof(expbn1));
 	ASSERT_INT_EQ(sshbuf_put_u16(p1, 0xd00f), 0);
@@ -141,7 +141,7 @@ sshbuf_getput_crypto_tests(void)
 	MKBN(hexbn1, bn);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn)), 0);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_नुमेरो_bytes(bn)), 0);
 	ASSERT_INT_EQ(sshbuf_put(p1, expbn1, sizeof(expbn1) - 1), 0);
 	bn2 = NULL;
 	r = sshbuf_get_bignum2(p1, &bn2);
@@ -171,7 +171,7 @@ sshbuf_getput_crypto_tests(void)
 	MKBN(hexbn2, bn);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn) + 1), 0); /* MSB */
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_नुमेरो_bytes(bn) + 1), 0); /* MSB */
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x00), 0);
 	ASSERT_INT_EQ(sshbuf_put(p1, expbn2, sizeof(expbn2)), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4 + 1 + sizeof(expbn2));
@@ -189,7 +189,7 @@ sshbuf_getput_crypto_tests(void)
 	MKBN(hexbn2, bn);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn) + 1), 0);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_नुमेरो_bytes(bn) + 1), 0);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x00), 0);
 	ASSERT_INT_EQ(sshbuf_put(p1, expbn2, sizeof(expbn2) - 1), 0);
 	bn2 = NULL;
@@ -205,7 +205,7 @@ sshbuf_getput_crypto_tests(void)
 	MKBN(hexbn2, bn);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn)), 0);
+	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_नुमेरो_bytes(bn)), 0);
 	ASSERT_INT_EQ(sshbuf_put(p1, expbn2, sizeof(expbn2)), 0);
 	bn2 = NULL;
 	r = sshbuf_get_bignum2(p1, &bn2);
@@ -217,15 +217,15 @@ sshbuf_getput_crypto_tests(void)
 	TEST_DONE();
 
 	TEST_START("sshbuf_put_ec");
-	eck = EC_KEY_new_by_curve_name(ec256_nid);
+	eck = EC_सुसि_new_by_curve_name(ec256_nid);
 	ASSERT_PTR_NE(eck, NULL);
-	ecp = EC_POINT_new(EC_KEY_get0_group(eck));
+	ecp = EC_POINT_new(EC_सुसि_get0_group(eck));
 	ASSERT_PTR_NE(ecp, NULL);
 	MKBN(ec256_x, bn_x);
 	MKBN(ec256_y, bn_y);
 	ASSERT_INT_EQ(EC_POINT_set_affine_coordinates(
-	    EC_KEY_get0_group(eck), ecp, bn_x, bn_y, NULL), 1);
-	ASSERT_INT_EQ(EC_KEY_set_public_key(eck, ecp), 1);
+	    EC_सुसि_get0_group(eck), ecp, bn_x, bn_y, NULL), 1);
+	ASSERT_INT_EQ(EC_सुसि_set_public_सुसि(eck, ecp), 1);
 	BN_free(bn_x);
 	BN_free(bn_y);
 	EC_POINT_free(ecp);
@@ -236,11 +236,11 @@ sshbuf_getput_crypto_tests(void)
 	ASSERT_SIZE_T_EQ(s, sizeof(expec256));
 	ASSERT_MEM_EQ(d, expec256, sizeof(expec256));
 	sshbuf_free(p1);
-	EC_KEY_free(eck);
+	EC_सुसि_free(eck);
 	TEST_DONE();
 
 	TEST_START("sshbuf_get_ec");
-	eck = EC_KEY_new_by_curve_name(ec256_nid);
+	eck = EC_सुसि_new_by_curve_name(ec256_nid);
 	ASSERT_PTR_NE(eck, NULL);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
@@ -253,7 +253,7 @@ sshbuf_getput_crypto_tests(void)
 	ASSERT_PTR_NE(bn_x, NULL);
 	ASSERT_PTR_NE(bn_y, NULL);
 	ASSERT_INT_EQ(EC_POINT_get_affine_coordinates(
-	    EC_KEY_get0_group(eck), EC_KEY_get0_public_key(eck),
+	    EC_सुसि_get0_group(eck), EC_सुसि_get0_public_सुसि(eck),
 	    bn_x, bn_y, NULL), 1);
 	MKBN(ec256_x, bn);
 	MKBN(ec256_y, bn2);
@@ -261,7 +261,7 @@ sshbuf_getput_crypto_tests(void)
 	ASSERT_INT_EQ(BN_cmp(bn_y, bn2), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 1);
 	sshbuf_free(p1);
-	EC_KEY_free(eck);
+	EC_सुसि_free(eck);
 	BN_free(bn_x);
 	BN_free(bn_y);
 	BN_free(bn);

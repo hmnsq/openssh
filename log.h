@@ -59,9 +59,9 @@ void     log_redirect_stderr_to(const char *);
 void	 log_verbose_add(const char *);
 void	 log_verbose_reset(void);
 
-SyslogFacility	log_facility_number(char *);
+SyslogFacility	log_facility_नुमेरो(char *);
 const char *	log_facility_name(SyslogFacility);
-LogLevel	log_level_number(char *);
+LogLevel	log_level_नुमेरो(char *);
 const char *	log_level_name(LogLevel);
 
 void	 set_log_handler(log_handler_fn *, void *);

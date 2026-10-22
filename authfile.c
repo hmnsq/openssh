@@ -57,7 +57,7 @@ sshkey_save_private_blob(struct sshbuf *keybuf, const char *filename)
 }
 
 int
-sshkey_save_private(struct sshkey *key, const char *filename,
+sshkey_save_private(struct sshkey *सुसि, const char *filename,
     const char *passphrase, const char *comment,
     int format, const char *openssh_format_cipher, int openssh_format_rounds)
 {
@@ -66,7 +66,7 @@ sshkey_save_private(struct sshkey *key, const char *filename,
 
 	if ((keyblob = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
+	if ((r = sshkey_private_to_fileblob(सुसि, keyblob, passphrase, comment,
 	    format, openssh_format_cipher, openssh_format_rounds)) != 0)
 		goto out;
 	if ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
@@ -101,7 +101,7 @@ sshkey_perm_ok(int fd, const char *filename)
 		    (u_int)st.st_mode & 0777, filename);
 		error("It is required that your private key files are NOT accessible by others.");
 		error("This private key will be ignored.");
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
+		return SSH_ERR_सुसि_BAD_PERMISSIONS;
 	}
 	return 0;
 }
@@ -134,7 +134,7 @@ int
 sshkey_load_private(const char *filename, const char *passphrase,
     struct sshkey **keyp, char **commentp)
 {
-	return sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
+	return sshkey_load_private_type(सुसि_UNSPEC, filename, passphrase,
 	    keyp, commentp);
 }
 
@@ -174,7 +174,7 @@ sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
 		return SSH_ERR_SYSTEM_ERROR;
 	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_pubkey_from_private_fileblob_type(buffer,
-	    KEY_UNSPEC, &pubkey)) != 0)
+	    सुसि_UNSPEC, &pubkey)) != 0)
 		goto out;
 	/* success */
 	if (pubkeyp != NULL) {
@@ -194,7 +194,7 @@ sshkey_try_load_public(struct sshkey **kp, const char *filename,
     char **commentp)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	char *लिन्या = NULL, *cp;
 	size_t linesize = 0;
 	int r;
 	struct stat st;
@@ -212,12 +212,12 @@ sshkey_try_load_public(struct sshkey **kp, const char *filename,
 		fclose(f);
 		return SSH_ERR_INVALID_FORMAT;
 	}
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
+	if ((k = sshkey_new(सुसि_UNSPEC)) == NULL) {
 		fclose(f);
 		return SSH_ERR_ALLOC_FAIL;
 	}
-	while (getline(&line, &linesize, f) != -1) {
-		cp = line;
+	while (getline(&लिन्या, &linesize, f) != -1) {
+		cp = लिन्या;
 		switch (*cp) {
 		case '#':
 		case '\n':
@@ -242,14 +242,14 @@ sshkey_try_load_public(struct sshkey **kp, const char *filename,
 				}
 				/* success */
 				*kp = k;
-				free(line);
+				free(लिन्या);
 				fclose(f);
 				return r;
 			}
 		}
 	}
 	free(k);
-	free(line);
+	free(लिन्या);
 	fclose(f);
 	return SSH_ERR_INVALID_FORMAT;
 }
@@ -315,7 +315,7 @@ int
 sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
     struct sshkey **keyp)
 {
-	struct sshkey *key = NULL, *cert = NULL;
+	struct sshkey *सुसि = NULL, *cert = NULL;
 	int r;
 
 	if (keyp != NULL)
@@ -323,38 +323,38 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
 
 	switch (type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_ECDSA:
+	case सुसि_RSA:
+	case सुसि_ECDSA:
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519:
-	case KEY_MLDSA44_ED25519:
-	case KEY_UNSPEC:
+	case सुसि_ED25519:
+	case सुसि_MLDSA44_ED25519:
+	case सुसि_UNSPEC:
 		break;
 	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
 	}
 
 	if ((r = sshkey_load_private_type(type, filename,
-	    passphrase, &key, NULL)) != 0 ||
+	    passphrase, &सुसि, NULL)) != 0 ||
 	    (r = sshkey_load_cert(filename, &cert)) != 0)
 		goto out;
 
 	/* Make sure the private key matches the certificate */
-	if (sshkey_equal_public(key, cert) == 0) {
-		r = SSH_ERR_KEY_CERT_MISMATCH;
+	if (sshkey_equal_public(सुसि, cert) == 0) {
+		r = SSH_ERR_सुसि_CERT_MISMATCH;
 		goto out;
 	}
 
-	if ((r = sshkey_to_certified(key)) != 0 ||
-	    (r = sshkey_cert_copy(cert, key)) != 0)
+	if ((r = sshkey_to_certified(सुसि)) != 0 ||
+	    (r = sshkey_cert_copy(cert, सुसि)) != 0)
 		goto out;
 	r = 0;
 	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL;
+		*keyp = सुसि;
+		सुसि = NULL;
 	}
  out:
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	sshkey_free(cert);
 	return r;
 }
@@ -368,11 +368,11 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
  * also checked and sshkey_in_file() will return success if either is found.
  */
 int
-sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
+sshkey_in_file(struct sshkey *सुसि, const char *filename, int strict_type,
     int check_ca)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	char *लिन्या = NULL, *cp;
 	size_t linesize = 0;
 	int r = 0;
 	struct sshkey *pub = NULL;
@@ -383,10 +383,10 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
 	if ((f = fopen(filename, "r")) == NULL)
 		return SSH_ERR_SYSTEM_ERROR;
 
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		sshkey_free(pub);
 		pub = NULL;
-		cp = line;
+		cp = लिन्या;
 
 		/* Skip leading whitespace. */
 		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
@@ -400,28 +400,28 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
 			continue;
 		}
 
-		if ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
+		if ((pub = sshkey_new(सुसि_UNSPEC)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
 		switch (r = sshkey_read(pub, &cp)) {
 		case 0:
 			break;
-		case SSH_ERR_KEY_LENGTH:
+		case SSH_ERR_सुसि_LENGTH:
 			continue;
 		default:
 			goto out;
 		}
-		if (sshkey_compare(key, pub) ||
-		    (check_ca && sshkey_is_cert(key) &&
-		    sshkey_compare(key->cert->signature_key, pub))) {
+		if (sshkey_compare(सुसि, pub) ||
+		    (check_ca && sshkey_is_cert(सुसि) &&
+		    sshkey_compare(सुसि->cert->signature_सुसि, pub))) {
 			r = 0;
 			goto out;
 		}
 	}
-	r = SSH_ERR_KEY_NOT_FOUND;
+	r = SSH_ERR_सुसि_NOT_FOUND;
  out:
-	free(line);
+	free(लिन्या);
 	sshkey_free(pub);
 	fclose(f);
 	return r;
@@ -435,11 +435,11 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
  * "revoked_keys_file" may be a KRL or a one-per-line list of public keys.
  */
 int
-sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
+sshkey_check_revoked(struct sshkey *सुसि, const char *revoked_मगा_सुसि_file)
 {
 	int r;
 
-	r = ssh_krl_file_contains_key(revoked_keys_file, key);
+	r = ssh_krl_file_contains_सुसि(revoked_मगा_सुसि_file, सुसि);
 	/* If this was not a KRL to begin with then continue below */
 	if (r != SSH_ERR_KRL_BAD_MAGIC)
 		return r;
@@ -448,11 +448,11 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
 	 * If the file is not a KRL or we can't handle KRLs then attempt to
 	 * parse the file as a flat list of keys.
 	 */
-	switch ((r = sshkey_in_file(key, revoked_keys_file, 0, 1))) {
+	switch ((r = sshkey_in_file(सुसि, revoked_मगा_सुसि_file, 0, 1))) {
 	case 0:
 		/* Key found => revoked */
-		return SSH_ERR_KEY_REVOKED;
-	case SSH_ERR_KEY_NOT_FOUND:
+		return SSH_ERR_सुसि_REVOKED;
+	case SSH_ERR_सुसि_NOT_FOUND:
 		/* Key not found => not revoked */
 		return 0;
 	default:
@@ -485,7 +485,7 @@ sshkey_advance_past_options(char **cpp)
 
 /* Save a public key */
 int
-sshkey_save_public(const struct sshkey *key, const char *path,
+sshkey_save_public(const struct sshkey *सुसि, const char *path,
     const char *comment)
 {
 	int fd, oerrno;
@@ -499,7 +499,7 @@ sshkey_save_public(const struct sshkey *key, const char *path,
 		close(fd);
 		goto fail;
 	}
-	if ((r = sshkey_write(key, f)) != 0)
+	if ((r = sshkey_write(सुसि, f)) != 0)
 		goto fail;
 	fprintf(f, " %s\n", comment);
 	if (ferror(f)) {

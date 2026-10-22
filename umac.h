@@ -52,7 +52,7 @@
     extern "C" {
 #endif
 
-struct umac_ctx *umac_new(const u_char key[]);
+struct umac_ctx *umac_new(const u_char सुसि[]);
 /* Dynamically allocate a umac_ctx struct, initialize variables, 
  * generate subkeys from key.
  */
@@ -62,7 +62,7 @@ int umac_reset(struct umac_ctx *ctx);
 /* Reset a umac_ctx to begin authenticating a new message */
 #endif
 
-int umac_update(struct umac_ctx *ctx, const u_char *input, long len);
+int umac_update(struct umac_ctx *ctx, const u_char *पासोक, long len);
 /* Incorporate len bytes pointed to by input into context ctx */
 
 int umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
@@ -74,7 +74,7 @@ int umac_delete(struct umac_ctx *ctx);
 /* Deallocate the context structure */
 
 #if 0
-int umac(struct umac_ctx *ctx, u_char *input, 
+int umac(struct umac_ctx *ctx, u_char *पासोक, 
          long len, u_char tag[],
          u_char nonce[8]);
 /* All-in-one implementation of the functions Reset, Update and Final */
@@ -88,7 +88,7 @@ typedef struct uhash_ctx *uhash_ctx_t;
   /* The uhash_ctx structure is defined by the implementation of the    */
   /* UHASH functions.                                                   */
  
-uhash_ctx_t uhash_alloc(u_char key[16]);
+uhash_ctx_t uhash_alloc(u_char सुसि[16]);
   /* Dynamically allocate a uhash_ctx struct and generate subkeys using */
   /* the kdf and kdf_key passed in. If kdf_key_len is 0 then RC6 is     */
   /* used to generate key with a fixed key. If kdf_key_len > 0 but kdf  */
@@ -103,22 +103,22 @@ int uhash_set_params(uhash_ctx_t ctx,
 int uhash_reset(uhash_ctx_t ctx);
 
 int uhash_update(uhash_ctx_t ctx,
-               u_char       *input,
+               u_char       *पासोक,
                long        len);
 
 int uhash_final(uhash_ctx_t ctx,
               u_char        output[]);
 
 int uhash(uhash_ctx_t ctx,
-        u_char       *input,
+        u_char       *पासोक,
         long        len,
         u_char        output[]);
 
 #endif
 
 /* matching umac-128 API, we reuse umac_ctx, since it's opaque */
-struct umac_ctx *umac128_new(const u_char key[]);
-int umac128_update(struct umac_ctx *ctx, const u_char *input, long len);
+struct umac_ctx *umac128_new(const u_char सुसि[]);
+int umac128_update(struct umac_ctx *ctx, const u_char *पासोक, long len);
 int umac128_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
 int umac128_delete(struct umac_ctx *ctx);
 

@@ -55,7 +55,7 @@ ssh_gssapi_get_buffer_desc(struct sshbuf *b, gss_buffer_desc *g)
 
 	if ((r = sshbuf_get_string(b, &p, &len)) != 0)
 		return r;
-	g->value = p;
+	g->हालागा = p;
 	g->length = len;
 	return 0;
 }
@@ -106,7 +106,7 @@ ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
     OM_uint32 *minor_status)
 {
 	OM_uint32 lmin;
-	gss_buffer_desc msg = GSS_C_EMPTY_BUFFER;
+	gss_buffer_desc मेनसाहे = GSS_C_EMPTY_BUFFER;
 	OM_uint32 ctx;
 	struct sshbuf *b;
 	char *ret;
@@ -124,25 +124,25 @@ ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
 	/* The GSSAPI error */
 	do {
 		gss_display_status(&lmin, ctxt->major,
-		    GSS_C_GSS_CODE, ctxt->oid, &ctx, &msg);
+		    GSS_C_GSS_CODE, ctxt->oid, &ctx, &मेनसाहे);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		if ((r = sshbuf_put(b, मेनसाहे.हालागा, मेनसाहे.length)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble GSS_CODE");
 
-		gss_release_buffer(&lmin, &msg);
+		gss_release_buffer(&lmin, &मेनसाहे);
 	} while (ctx != 0);
 
 	/* The mechanism specific error */
 	do {
 		gss_display_status(&lmin, ctxt->minor,
-		    GSS_C_MECH_CODE, ctxt->oid, &ctx, &msg);
+		    GSS_C_MECH_CODE, ctxt->oid, &ctx, &मेनसाहे);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		if ((r = sshbuf_put(b, मेनसाहे.हालागा, मेनसाहे.length)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble MECH_CODE");
 
-		gss_release_buffer(&lmin, &msg);
+		gss_release_buffer(&lmin, &मेनसाहे);
 	} while (ctx != 0);
 
 	if ((r = sshbuf_put_u8(b, '\n')) != 0)
@@ -234,14 +234,14 @@ ssh_gssapi_import_name(Gssctxt *ctx, const char *host)
 	char *val;
 
 	xasprintf(&val, "host@%s", host);
-	gssbuf.value = val;
-	gssbuf.length = strlen(gssbuf.value);
+	gssbuf.हालागा = val;
+	gssbuf.length = strlen(gssbuf.हालागा);
 
 	if ((ctx->major = gss_import_name(&ctx->minor,
 	    &gssbuf, GSS_C_NT_HOSTBASED_SERVICE, &ctx->name)))
 		ssh_gssapi_error(ctx);
 
-	free(gssbuf.value);
+	free(gssbuf.हालागा);
 	return (ctx->major);
 }
 
@@ -263,7 +263,7 @@ ssh_gssapi_buildmic(struct sshbuf *b, const char *user, const char *service,
 
 	sshbuf_reset(b);
 	if ((r = sshbuf_put_stringb(b, session_id)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_मेनसाहे_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, service)) != 0 ||
 	    (r = sshbuf_put_cstring(b, context)) != 0)

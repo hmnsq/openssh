@@ -233,19 +233,19 @@ scan_scaled(char *scaled, long long *result)
  * Return 0 on success, -1 and errno set if error.
  */
 int
-fmt_scaled(long long number, char *result)
+fmt_scaled(long long नुमेरो_2, char *result)
 {
 	long long abval, fract = 0;
 	unsigned int i;
 	unit_type unit = NONE;
 
 	/* Not every negative long long has a positive representation. */
-	if (number == LLONG_MIN) {
+	if (नुमेरो_2 == LLONG_MIN) {
 		errno = ERANGE;
 		return -1;
 	}
 
-	abval = llabs(number);
+	abval = llabs(नुमेरो_2);
 
 	/* Also check for numbers that are just too darned big to format. */
 	if (abval / 1024 >= scale_factors[SCALE_LENGTH-1]) {
@@ -258,7 +258,7 @@ fmt_scaled(long long number, char *result)
 		if (abval/1024 < scale_factors[i]) {
 			unit = units[i];
 			fract = (i == 0) ? 0 : abval % scale_factors[i];
-			number /= scale_factors[i];
+			नुमेरो_2 /= scale_factors[i];
 			if (i > 0)
 				fract /= scale_factors[i - 1];
 			break;
@@ -268,30 +268,30 @@ fmt_scaled(long long number, char *result)
 	fract = (10 * fract + 512) / 1024;
 	/* if the result would be >= 10, round main number */
 	if (fract >= 10) {
-		if (number >= 0)
-			number++;
+		if (नुमेरो_2 >= 0)
+			नुमेरो_2++;
 		else
-			number--;
+			नुमेरो_2--;
 		fract = 0;
 	} else if (fract < 0) {
 		/* shouldn't happen */
 		fract = 0;
 	}
 
-	if (number == 0)
+	if (नुमेरो_2 == 0)
 		strlcpy(result, "0B", FMT_SCALED_STRSIZE);
-	else if (unit == NONE || number >= 100 || number <= -100) {
+	else if (unit == NONE || नुमेरो_2 >= 100 || नुमेरो_2 <= -100) {
 		if (fract >= 5) {
-			if (number >= 0)
-				number++;
+			if (नुमेरो_2 >= 0)
+				नुमेरो_2++;
 			else
-				number--;
+				नुमेरो_2--;
 		}
 		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld%c",
-			number, scale_chars[unit]);
+			नुमेरो_2, scale_chars[unit]);
 	} else
 		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld.%1lld%c",
-			number, fract, scale_chars[unit]);
+			नुमेरो_2, fract, scale_chars[unit]);
 
 	return 0;
 }

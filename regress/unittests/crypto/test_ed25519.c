@@ -21,7 +21,7 @@
 struct ed25519_kat {
 	const char *sk;
 	const char *pk;
-	const char *msg;
+	const char *मेनसाहे;
 	const char *sig;
 };
 
@@ -68,7 +68,7 @@ ed25519_tests(void)
 {
 	uint8_t pk[32], sk[64], seed[32], sig[64];
 	uint8_t expected_pk[32], expected_sig[64];
-	uint8_t *msg;
+	uint8_t *मेनसाहे;
 	size_t i, msglen;
 	unsigned long long smlen;
 
@@ -81,19 +81,19 @@ ed25519_tests(void)
 		TEST_DONE();
 
 		TEST_START("Ed25519 sign/verify KAT");
-		msglen = strlen(ed25519_kats[i].msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen == 0 ? 1 : msglen), NULL);
-		hex2bin(msg, ed25519_kats[i].msg, msglen);
+		msglen = strlen(ed25519_kats[i].मेनसाहे) / 2;
+		ASSERT_PTR_NE(मेनसाहे = malloc(msglen == 0 ? 1 : msglen), NULL);
+		hex2bin(मेनसाहे, ed25519_kats[i].मेनसाहे, msglen);
 		hex2bin(expected_sig, ed25519_kats[i].sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_detached(sig, &smlen,
-		    msg, msglen, sk), 0);
+		    मेनसाहे, msglen, sk), 0);
 		ASSERT_INT_EQ(smlen, 64);
 		ASSERT_MEM_EQ(sig, expected_sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_verify_detached(sig,
-		    msg, msglen, pk), 0);
-		free(msg);
+		    मेनसाहे, msglen, pk), 0);
+		free(मेनसाहे);
 		TEST_DONE();
 	}
 }

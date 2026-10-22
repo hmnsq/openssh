@@ -106,12 +106,12 @@
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, (_nr), 0, 6), \
 	/* load and test syscall argument, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_LO_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[(_arg_nr)]) + ARG_LO_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, \
 	    ((_arg_val) & 0xFFFFFFFF), 0, 3), \
 	/* load and test syscall argument, high word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_HI_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[(_arg_nr)]) + ARG_HI_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, \
 	    (((uint32_t)((uint64_t)(_arg_val) >> 32)) & 0xFFFFFFFF), 0, 1), \
 	BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW), \
@@ -123,12 +123,12 @@
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, (_nr), 0, 8), \
 	/* load, mask and test syscall argument, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_LO_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[(_arg_nr)]) + ARG_LO_OFFSET), \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, ~((_arg_mask) & 0xFFFFFFFF)), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 4), \
 	/* load, mask and test syscall argument, high word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_HI_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[(_arg_nr)]) + ARG_HI_OFFSET), \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, \
 	    ~(((uint32_t)((uint64_t)(_arg_mask) >> 32)) & 0xFFFFFFFF)), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 1), \
@@ -141,12 +141,12 @@
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, (_nr), 0, 8), \
 	/* load, mask and test syscall argument, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_LO_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[(_arg_nr)]) + ARG_LO_OFFSET), \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, ~((_arg_mask) & 0xFFFFFFFF)), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 3), \
 	/* load, mask and test syscall argument, high word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[(_arg_nr)]) + ARG_HI_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[(_arg_nr)]) + ARG_HI_OFFSET), \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, \
 	    ~(((uint32_t)((uint64_t)(_arg_mask) >> 32)) & 0xFFFFFFFF)), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 1, 0), \
@@ -162,14 +162,14 @@
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, (_nr), 0, 8), \
 	/* load syscall argument, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[1]) + ARG_LO_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[1]) + ARG_LO_OFFSET), \
 	/* mask off allowed bitmap values, low word */ \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, ~(SC_FUTEX_MASK & 0xFFFFFFFF)), \
 	/* test operation number, low word */ \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, ((_op) & 0xFFFFFFFF), 0, 4), \
 	/* load syscall argument, high word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[1]) + ARG_HI_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[1]) + ARG_HI_OFFSET), \
 	/* mask off allowed bitmap values, high word */ \
 	BPF_STMT(BPF_ALU+BPF_AND+BPF_K, \
 	    ~(((uint32_t)((uint64_t)SC_FUTEX_MASK >> 32)) & 0xFFFFFFFF)), \
@@ -207,21 +207,21 @@
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, __NR_setsockopt, 0, 10), \
 	/* load and test level, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[1]) + ARG_LO_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[1]) + ARG_LO_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, \
 	    ((_level) & 0xFFFFFFFF), 0, 7), \
 	/* load and test level high word is zero */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[1]) + ARG_HI_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[1]) + ARG_HI_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 5), \
 	/* load and test optname, low word */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[2]) + ARG_LO_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[2]) + ARG_LO_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, \
 	    ((_optname) & 0xFFFFFFFF), 0, 3), \
 	/* load and test level high word is zero */ \
 	BPF_STMT(BPF_LD+BPF_W+BPF_ABS, \
-	    offsetof(struct seccomp_data, args[2]) + ARG_HI_OFFSET), \
+	    offsetof(struct seccomp_data, मगा_कातविरान[2]) + ARG_HI_OFFSET), \
 	BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, 0, 0, 1), \
 	BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW), \
 	/* reload syscall number; all rules expect it in accumulator */ \
@@ -502,17 +502,17 @@ ssh_sandbox_init(struct monitor *monitor)
 
 #ifdef SANDBOX_SECCOMP_FILTER_DEBUG
 extern struct monitor *pmonitor;
-void mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx);
+void mm_log_handler(LogLevel level, int forced, const char *मेनसाहे, void *ctx);
 
 static void
 ssh_sandbox_violation(int signum, siginfo_t *info, void *void_context)
 {
-	char msg[256];
+	char मेनसाहे[256];
 
-	snprintf(msg, sizeof(msg),
+	snprintf(मेनसाहे, sizeof(मेनसाहे),
 	    "%s: unexpected system call (arch:0x%x,syscall:%d @ %p)",
 	    __func__, info->si_arch, info->si_syscall, info->si_call_addr);
-	mm_log_handler(SYSLOG_LEVEL_FATAL, 0, msg, pmonitor);
+	mm_log_handler(SYSLOG_LEVEL_FATAL, 0, मेनसाहे, pmonitor);
 	_exit(1);
 }
 

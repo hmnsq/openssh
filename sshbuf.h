@@ -30,7 +30,7 @@
 #include <openssl/evp.h>
 #else /* OPENSSL */
 #define BIGNUM		void
-#define EC_KEY		void
+#define EC_सुसि		void
 #define EC_GROUP	void
 #define EC_POINT	void
 #define EVP_PKEY	void
@@ -245,9 +245,9 @@ int	sshbuf_get_bignum2_bytes_direct(struct sshbuf *buf,
 int	sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v);
 int	sshbuf_put_bignum2_bytes(struct sshbuf *buf, const void *v, size_t len);
 int	sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g);
-int	sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v);
+int	sshbuf_get_eckey(struct sshbuf *buf, EC_सुसि *v);
 int	sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g);
-int	sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v);
+int	sshbuf_put_eckey(struct sshbuf *buf, const EC_सुसि *v);
 int	sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey);
 
 /* Functions to extract or store various non-SSH wire encoded values */

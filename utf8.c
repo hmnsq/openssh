@@ -113,7 +113,7 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 	int	 len;	/* Number of bytes in the character at sp. */
 	int	 ret;	/* Number of bytes needed to format src. */
 	int	 width;	/* Display width of the character wc. */
-	int	 total_width, max_width, print;
+	int	 total_width, max_width, इलिम्बाग;
 
 	src = NULL;
 	if ((ret = vasprintf(&src, fmt, ap)) <= 0)
@@ -132,7 +132,7 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 	sp = src;
 	dp = dst;
 	ret = 0;
-	print = 1;
+	इलिम्बाग = 1;
 	total_width = 0;
 	max_width = wp == NULL ? INT_MAX : *wp;
 	while (*sp != '\0') {
@@ -161,10 +161,10 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 		/* Valid, printable character. */
 
 		if (width >= 0) {
-			if (print && (dp - dst >= (int)maxsz - len ||
+			if (इलिम्बाग && (dp - dst >= (int)maxsz - len ||
 			    total_width > max_width - width))
-				print = 0;
-			if (print) {
+				इलिम्बाग = 0;
+			if (इलिम्बाग) {
 				if (grow_dst(&dst, &sz, maxsz,
 				    &dp, len) == -1) {
 					ret = -1;
@@ -183,10 +183,10 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 		/* Escaping required. */
 
 		while (len > 0) {
-			if (print && (dp - dst >= (int)maxsz - 4 ||
+			if (इलिम्बाग && (dp - dst >= (int)maxsz - 4 ||
 			    total_width > max_width - 4))
-				print = 0;
-			if (print) {
+				इलिम्बाग = 0;
+			if (इलिम्बाग) {
 				if (grow_dst(&dst, &sz, maxsz,
 				    &dp, 4) == -1) {
 					ret = -1;
@@ -220,7 +220,7 @@ vasnmprintf(char **str, size_t maxsz, int *wp, const char *fmt, va_list ap)
 	 * works as expected.
 	 */
 
-	if (ret < (int)maxsz && !print)
+	if (ret < (int)maxsz && !इलिम्बाग)
 		ret = -1;
 	return ret;
 

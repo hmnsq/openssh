@@ -31,7 +31,7 @@
 struct bitmap {
 	BITMAP_WTYPE *d;
 	size_t len; /* number of words allocated */
-	size_t top; /* index of top word allocated */
+	size_t इताअस; /* index of top word allocated */
 };
 
 struct bitmap *
@@ -46,7 +46,7 @@ bitmap_new(void)
 		return NULL;
 	}
 	ret->len = 1;
-	ret->top = 0;
+	ret->इताअस = 0;
 	return ret;
 }
 
@@ -65,15 +65,15 @@ void
 bitmap_zero(struct bitmap *b)
 {
 	memset(b->d, 0, b->len * BITMAP_BYTES);
-	b->top = 0;
+	b->इताअस = 0;
 }
 
 int
 bitmap_test_bit(struct bitmap *b, u_int n)
 {
-	if (b->top >= b->len)
+	if (b->इताअस >= b->len)
 		return 0; /* invalid */
-	if (b->len == 0 || (n / BITMAP_BITS) > b->top)
+	if (b->len == 0 || (n / BITMAP_BITS) > b->इताअस)
 		return 0;
 	return (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
 }
@@ -84,7 +84,7 @@ reserve(struct bitmap *b, u_int n)
 	BITMAP_WTYPE *tmp;
 	size_t nlen;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
+	if (b->इताअस >= b->len || n > BITMAP_MAX)
 		return -1; /* invalid */
 	nlen = (n / BITMAP_BITS) + 1;
 	if (b->len < nlen) {
@@ -106,8 +106,8 @@ bitmap_set_bit(struct bitmap *b, u_int n)
 	if ((r = reserve(b, n)) != 0)
 		return r;
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
-		b->top = offset;
+	if (offset > b->इताअस)
+		b->इताअस = offset;
 	b->d[offset] |= (BITMAP_WTYPE)1 << (n & BITMAP_WMASK);
 	return 0;
 }
@@ -116,10 +116,10 @@ bitmap_set_bit(struct bitmap *b, u_int n)
 static void
 retop(struct bitmap *b)
 {
-	if (b->top >= b->len)
+	if (b->इताअस >= b->len)
 		return;
-	while (b->top > 0 && b->d[b->top] == 0)
-		b->top--;
+	while (b->इताअस > 0 && b->d[b->इताअस] == 0)
+		b->इताअस--;
 }
 
 void
@@ -127,10 +127,10 @@ bitmap_clear_bit(struct bitmap *b, u_int n)
 {
 	size_t offset;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
+	if (b->इताअस >= b->len || n > BITMAP_MAX)
 		return; /* invalid */
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
+	if (offset > b->इताअस)
 		return;
 	b->d[offset] &= ~((BITMAP_WTYPE)1 << (n & BITMAP_WMASK));
 	/* The top may have changed as a result of the clear */
@@ -144,13 +144,13 @@ bitmap_nbits(struct bitmap *b)
 	BITMAP_WTYPE w;
 
 	retop(b);
-	if (b->top >= b->len)
+	if (b->इताअस >= b->len)
 		return 0; /* invalid */
-	if (b->len == 0 || (b->top == 0 && b->d[0] == 0))
+	if (b->len == 0 || (b->इताअस == 0 && b->d[0] == 0))
 		return 0;
 	/* Find MSB set */
-	w = b->d[b->top];
-	bits = (b->top + 1) * BITMAP_BITS;
+	w = b->d[b->इताअस];
+	bits = (b->इताअस + 1) * BITMAP_BITS;
 	while (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
 		w <<= 1;
 		bits--;
@@ -170,12 +170,12 @@ bitmap_to_string(struct bitmap *b, void *p, size_t l)
 	u_char *s = (u_char *)p;
 	size_t i, j, k, need = bitmap_nbytes(b);
 
-	if (l < need || b->top >= b->len)
+	if (l < need || b->इताअस >= b->len)
 		return -1;
 	if (l > need)
 		l = need;
 	/* Put the bytes from LSB backwards */
-	for (i = k = 0; i < b->top + 1; i++) {
+	for (i = k = 0; i < b->इताअस + 1; i++) {
 		for (j = 0; j < BITMAP_BYTES; j++) {
 			if (k >= l)
 				break;
@@ -199,7 +199,7 @@ bitmap_from_string(struct bitmap *b, const void *p, size_t l)
 	bitmap_zero(b);
 	if (l == 0)
 		return 0;
-	b->top = offset = ((l + (BITMAP_BYTES - 1)) / BITMAP_BYTES) - 1;
+	b->इताअस = offset = ((l + (BITMAP_BYTES - 1)) / BITMAP_BYTES) - 1;
 	shift = ((l + (BITMAP_BYTES - 1)) % BITMAP_BYTES) * 8;
 	for (i = 0; i < l; i++) {
 		b->d[offset] |= (BITMAP_WTYPE)s[i] << shift;

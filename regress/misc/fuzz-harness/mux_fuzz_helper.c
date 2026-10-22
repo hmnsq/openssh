@@ -143,7 +143,7 @@ static struct sshkey *
 load_public(const char *str)
 {
 	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
+	struct sshkey *k = sshkey_new(सुसि_UNSPEC);
 	if (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
@@ -166,7 +166,7 @@ pump(struct ssh *from, struct ssh *to, size_t *transferred)
 	buf = ssh_output_ptr(from, &len);
 	if (len == 0)
 		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
+	if ((r = ssh_पासोक_append(to, buf, len)) != 0)
 		return r;
 	if ((r = ssh_output_consume(from, len)) != 0)
 		return r;
@@ -301,14 +301,14 @@ fuzz_drive_mux(struct ssh *ssh, Channel *c)
 	sshbuf_reset(g_mux_in);
 	sshbuf_reset(g_mux_out);
 
-	if ((r = sshbuf_get_string_direct(c->input, &body, &blen)) != 0)
+	if ((r = sshbuf_get_string_direct(c->पासोक, &body, &blen)) != 0)
 		return;
 	if (sshbuf_put(g_mux_in, body, blen) != 0)
 		return;
 	if ((r = sshbuf_get_u32(g_mux_in, &type)) != 0)
 		return;
 
-	if (type == MUX_MSG_HELLO) {
+	if (type == MUX_मेनसाहे_HELLO) {
 		rid = 0;
 	} else {
 		if (!state->hello_rcvd)
@@ -355,7 +355,7 @@ init_once(void)
 	int i;
 	for (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		if (i == PROPOSAL_SERVER_HOST_सुसि_ALGS)
 			p = keyname;
 		else if (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
@@ -418,19 +418,19 @@ fuzz_mux_one(const uint8_t *data, size_t size)
 		return;
 
 	Channel *c = channel_by_id(g_client, g_mux_channel_id);
-	if (c == NULL || c->mux_ctx == NULL || c->input == NULL)
+	if (c == NULL || c->mux_ctx == NULL || c->पासोक == NULL)
 		return;
 
 	/* mux protocol: outer length-prefixed string containing the body. */
-	sshbuf_reset(c->input);
+	sshbuf_reset(c->पासोक);
 	u_char hdr[4];
 	hdr[0] = (u_char)(size >> 24);
 	hdr[1] = (u_char)(size >> 16);
 	hdr[2] = (u_char)(size >> 8);
 	hdr[3] = (u_char)size;
-	if (sshbuf_put(c->input, hdr, 4) != 0)
+	if (sshbuf_put(c->पासोक, hdr, 4) != 0)
 		return;
-	if (size > 0 && sshbuf_put(c->input, data, size) != 0)
+	if (size > 0 && sshbuf_put(c->पासोक, data, size) != 0)
 		return;
 
 	in_fuzz = 1;

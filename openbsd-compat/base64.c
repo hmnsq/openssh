@@ -133,20 +133,20 @@ int
 b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 {
 	size_t datalength = 0;
-	u_char input[3];
+	u_char पासोक[3];
 	u_char output[4];
 	u_int i;
 
 	while (2 < srclength) {
-		input[0] = *src++;
-		input[1] = *src++;
-		input[2] = *src++;
+		पासोक[0] = *src++;
+		पासोक[1] = *src++;
+		पासोक[2] = *src++;
 		srclength -= 3;
 
-		output[0] = input[0] >> 2;
-		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
-		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
-		output[3] = input[2] & 0x3f;
+		output[0] = पासोक[0] >> 2;
+		output[1] = ((पासोक[0] & 0x03) << 4) + (पासोक[1] >> 4);
+		output[2] = ((पासोक[1] & 0x0f) << 2) + (पासोक[2] >> 6);
+		output[3] = पासोक[2] & 0x3f;
 
 		if (datalength + 4 > targsize)
 			return (-1);
@@ -159,13 +159,13 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 	/* Now we worry about padding. */
 	if (0 != srclength) {
 		/* Get what's left. */
-		input[0] = input[1] = input[2] = '\0';
+		पासोक[0] = पासोक[1] = पासोक[2] = '\0';
 		for (i = 0; i < srclength; i++)
-			input[i] = *src++;
+			पासोक[i] = *src++;
 	
-		output[0] = input[0] >> 2;
-		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
-		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
+		output[0] = पासोक[0] >> 2;
+		output[1] = ((पासोक[0] & 0x03) << 4) + (पासोक[1] >> 4);
+		output[2] = ((पासोक[1] & 0x0f) << 2) + (पासोक[2] >> 6);
 
 		if (datalength + 4 > targsize)
 			return (-1);

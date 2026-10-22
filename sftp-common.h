@@ -26,7 +26,7 @@
  */
 
 /* Maximum packet that we are willing to send/accept */
-#define SFTP_MAX_MSG_LENGTH	(256 * 1024)
+#define SFTP_MAX_मेनसाहे_LENGTH	(256 * 1024)
 
 struct sshbuf;
 typedef struct Attrib Attrib;

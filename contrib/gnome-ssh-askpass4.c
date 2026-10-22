@@ -159,7 +159,7 @@ prompt_confirm_done(GObject *source_object, GAsyncResult *res,
 }
 
 static int
-command_line(GApplication* app, G_GNUC_UNUSED GApplicationCommandLine *cmdline,
+command_लिन्या(GApplication* app, G_GNUC_UNUSED GApplication_Command_लिन्या *cmdline,
     gpointer user_data)
 {
 	PromptState *state = user_data;
@@ -210,7 +210,7 @@ main(int argc, char **argv)
 {
 	g_autoptr(GApplication) app = g_application_new(
 	    "com.openssh.gnome-ssh-askpass4",
-	    G_APPLICATION_HANDLES_COMMAND_LINE);
+	    G_APPLICATION_HANDLES_COMMAND_लिन्या);
 	g_autofree char *message = NULL;
 
 	if (argc > 1) {
@@ -231,7 +231,7 @@ main(int argc, char **argv)
 
 	g_autoptr(PromptState) state = prompt_state_new(app, message, type);
 
-	g_signal_connect(app, "command-line", G_CALLBACK(command_line), state);
+	g_signal_connect(app, "command-line", G_CALLBACK(command_लिन्या), state);
 
 	/*
 	 * Since we are calling g_application_hold, we cannot use

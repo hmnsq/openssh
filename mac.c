@@ -50,7 +50,7 @@ struct macalg {
 	int		type;
 	int		alg;
 	int		truncatebits;	/* truncate digest if != 0 */
-	int		key_len;	/* just for UMAC */
+	int		सुसि_len;	/* just for UMAC */
 	int		len;		/* just for UMAC */
 	int		etm;		/* Encrypt-then-MAC */
 };
@@ -100,10 +100,10 @@ mac_setup_by_alg(struct sshmac *mac, const struct macalg *macalg)
 	if (mac->type == SSH_DIGEST) {
 		if ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == NULL)
 			return SSH_ERR_ALLOC_FAIL;
-		mac->key_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
+		mac->सुसि_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
 	} else {
 		mac->mac_len = macalg->len / 8;
-		mac->key_len = macalg->key_len / 8;
+		mac->सुसि_len = macalg->सुसि_len / 8;
 		mac->umac_ctx = NULL;
 	}
 	if (macalg->truncatebits != 0)
@@ -130,20 +130,20 @@ mac_setup(struct sshmac *mac, char *name)
 int
 mac_init(struct sshmac *mac)
 {
-	if (mac->key == NULL)
+	if (mac->सुसि == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
 	switch (mac->type) {
 	case SSH_DIGEST:
 		if (mac->hmac_ctx == NULL ||
-		    ssh_hmac_init(mac->hmac_ctx, mac->key, mac->key_len) < 0)
+		    ssh_hmac_init(mac->hmac_ctx, mac->सुसि, mac->सुसि_len) < 0)
 			return SSH_ERR_INVALID_ARGUMENT;
 		return 0;
 	case SSH_UMAC:
-		if ((mac->umac_ctx = umac_new(mac->key)) == NULL)
+		if ((mac->umac_ctx = umac_new(mac->सुसि)) == NULL)
 			return SSH_ERR_ALLOC_FAIL;
 		return 0;
 	case SSH_UMAC128:
-		if ((mac->umac_ctx = umac128_new(mac->key)) == NULL)
+		if ((mac->umac_ctx = umac128_new(mac->सुसि)) == NULL)
 			return SSH_ERR_ALLOC_FAIL;
 		return 0;
 	default:

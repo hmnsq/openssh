@@ -71,7 +71,7 @@ dump_logininfo(struct logininfo *li, char *descname)
 	    "\t}\n"
 	    "}\n",
 	    descname, li->progname, li->type,
-	    li->pid, li->uid, li->line,
+	    li->pid, li->uid, li->लिन्या,
 	    li->username, li->hostname, li->exit,
 	    li->termination, li->tv_sec, li->tv_usec,
 	    li->hostaddr.sa.sa_family);
@@ -131,7 +131,7 @@ testAPI()
 	if (nologtest)
 		return 1;
 
-	line_stripname(stripline, li1->line, sizeof(stripline));
+	लिन्या_stripname(stripline, li1->लिन्या, sizeof(stripline));
 
 	printf("Performing an invalid login attempt (no type field)\n--\n");
 	login_write(li1);
@@ -216,7 +216,7 @@ testAPI()
 
 
 void
-testLineName(char *line)
+test_लिन्या_Name(char *लिन्या)
 {
 	/* have to null-terminate - these functions are designed for
 	 * structures with fixed-length char arrays, and don't null-term.*/
@@ -226,10 +226,10 @@ testLineName(char *line)
 	memset(strip, '\0', sizeof(strip));
 	memset(abbrev, '\0', sizeof(abbrev));
 
-	line_fullname(full, line, sizeof(full)-1);
-	line_stripname(strip, full, sizeof(strip)-1);
-	line_abbrevname(abbrev, full, sizeof(abbrev)-1);
-	printf("%s: %s, %s, %s\n", line, full, strip, abbrev);
+	लिन्या_fullname(full, लिन्या, sizeof(full)-1);
+	लिन्या_stripname(strip, full, sizeof(strip)-1);
+	लिन्या_abbrevname(abbrev, full, sizeof(abbrev)-1);
+	printf("%s: %s, %s, %s\n", लिन्या, full, strip, abbrev);
 
 } /* testLineName() */
 
@@ -238,11 +238,11 @@ int
 testOutput()
 {
 	printf("**\n** Testing linename functions\n**\n");
-	testLineName("/dev/pts/1");
-	testLineName("pts/1");
-	testLineName("pts/999");
-	testLineName("/dev/ttyp00");
-	testLineName("ttyp00");
+	test_लिन्या_Name("/dev/pts/1");
+	test_लिन्या_Name("pts/1");
+	test_लिन्या_Name("pts/999");
+	test_लिन्या_Name("/dev/ttyp00");
+	test_लिन्या_Name("ttyp00");
 
 	return 1;
 } /* testOutput() */

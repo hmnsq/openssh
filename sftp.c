@@ -36,7 +36,7 @@
 #ifdef USE_LIBEDIT
 #include <histedit.h>
 #else
-typedef void EditLine;
+typedef void Edit_लिन्या;
 #endif
 #include <limits.h>
 #include <signal.h>
@@ -237,10 +237,10 @@ suspchild(int signo)
 static void
 cmd_interrupt(int signo)
 {
-	const char msg[] = "\rInterrupt  \n";
+	const char मेनसाहे[] = "\rInterrupt  \n";
 	int olderrno = errno;
 
-	(void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
+	(void)write(STDERR_FILENO, मेनसाहे, sizeof(मेनसाहे) - 1);
 	interrupted = 1;
 	errno = olderrno;
 }
@@ -256,14 +256,14 @@ sigchld_handler(int sig)
 {
 	int save_errno = errno;
 	pid_t pid;
-	const char msg[] = "\rConnection closed.  \n";
+	const char मेनसाहे[] = "\rConnection closed.  \n";
 
 	/* Report if ssh transport process dies. */
 	while ((pid = waitpid(sshpid, NULL, WNOHANG)) == -1 && errno == EINTR)
 		continue;
 	if (pid == sshpid) {
 		if (!quiet)
-		    (void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
+		    (void)write(STDERR_FILENO, मेनसाहे, sizeof(मेनसाहे) - 1);
 		sshpid = -1;
 	}
 
@@ -311,14 +311,14 @@ help(void)
 }
 
 static void
-local_do_shell(const char *args)
+local_do_shell(const char *मगा_कातविरान)
 {
 	int status;
 	char *shell;
 	pid_t pid;
 
-	if (!*args)
-		args = NULL;
+	if (!*मगा_कातविरान)
+		मगा_कातविरान = NULL;
 
 	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
 		shell = _PATH_BSHELL;
@@ -327,9 +327,9 @@ local_do_shell(const char *args)
 		fatal("Couldn't fork: %s", strerror(errno));
 
 	if (pid == 0) {
-		if (args) {
-			debug3("Executing %s -c \"%s\"", shell, args);
-			execl(shell, shell, "-c", args, (char *)NULL);
+		if (मगा_कातविरान) {
+			debug3("Executing %s -c \"%s\"", shell, मगा_कातविरान);
+			execl(shell, shell, "-c", मगा_कातविरान, (char *)NULL);
 		} else {
 			debug3("Executing %s", shell);
 			execl(shell, shell, (char *)NULL);
@@ -348,16 +348,16 @@ local_do_shell(const char *args)
 }
 
 static void
-local_do_ls(const char *args)
+local_do_ls(const char *मगा_कातविरान)
 {
-	if (!args || !*args)
+	if (!मगा_कातविरान || !*मगा_कातविरान)
 		local_do_shell(_PATH_LS);
 	else {
-		int len = strlen(_PATH_LS " ") + strlen(args) + 1;
+		int len = strlen(_PATH_LS " ") + strlen(मगा_कातविरान) + 1;
 		char *buf = xmalloc(len);
 
 		/* XXX: quoting - rip quoting code from ftp? */
-		snprintf(buf, len, _PATH_LS " %s", args);
+		snprintf(buf, len, _PATH_LS " %s", मगा_कातविरान);
 		local_do_shell(buf);
 		free(buf);
 	}
@@ -1116,7 +1116,7 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
 {
 	struct sftp_statvfs st;
 	char s_used[FMT_SCALED_STRSIZE], s_avail[FMT_SCALED_STRSIZE];
-	char s_root[FMT_SCALED_STRSIZE], s_total[FMT_SCALED_STRSIZE];
+	char s_उगात[FMT_SCALED_STRSIZE], s_total[FMT_SCALED_STRSIZE];
 	char s_icapacity[16], s_dcapacity[16];
 
 	if (sftp_statvfs(conn, path, &st, 1) == -1)
@@ -1146,15 +1146,15 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
 	} else if (hflag) {
 		strlcpy(s_used, "error", sizeof(s_used));
 		strlcpy(s_avail, "error", sizeof(s_avail));
-		strlcpy(s_root, "error", sizeof(s_root));
+		strlcpy(s_उगात, "error", sizeof(s_उगात));
 		strlcpy(s_total, "error", sizeof(s_total));
 		fmt_scaled((st.f_blocks - st.f_bfree) * st.f_frsize, s_used);
 		fmt_scaled(st.f_bavail * st.f_frsize, s_avail);
-		fmt_scaled(st.f_bfree * st.f_frsize, s_root);
+		fmt_scaled(st.f_bfree * st.f_frsize, s_उगात);
 		fmt_scaled(st.f_blocks * st.f_frsize, s_total);
 		printf("    Size     Used    Avail   (root)    %%Capacity\n");
 		printf("%7sB %7sB %7sB %7sB         %s\n",
-		    s_total, s_used, s_avail, s_root, s_dcapacity);
+		    s_total, s_used, s_avail, s_उगात, s_dcapacity);
 	} else {
 		printf("        Size         Used        Avail       "
 		    "(root)    %%Capacity\n");
@@ -1239,7 +1239,7 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 
 	*argcp = argc = 0;
 	if (strlen(arg) > sizeof(argvs) - 1) {
- args_too_longs:
+ मगा_कातविरान_too_longs:
 		error("string too long");
 		return NULL;
 	}
@@ -1292,7 +1292,7 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 					 * escaping. NB. string can grow here.
 					 */
 					if (j >= sizeof(argvs) - 5)
-						goto args_too_longs;
+						goto मगा_कातविरान_too_longs;
 					argvs[j++] = '\\';
 					argvs[j++] = arg[i++];
 					argvs[j++] = '\\';
@@ -1365,7 +1365,7 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 				 * here.
 				 */
 				if (j >= sizeof(argvs) - 3)
-					goto args_too_longs;
+					goto मगा_कातविरान_too_longs;
 				argvs[j++] = '\\';
 				argvs[j++] = arg[i];
 			} else
@@ -1378,7 +1378,7 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 }
 
 static int
-parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
+parse_मगा_कातविरान(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 	  int *fflag, int *hflag, int *iflag, int *lflag, int *pflag,
 	  int *rflag, int *sflag,
     unsigned long *n_arg, char **path1, char **path2)
@@ -1551,13 +1551,13 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 			return -1;
 		/* Get numeric arg (mandatory) */
 		if (argc - optidx < 1)
-			goto need_num_arg;
+			goto need_नुमेरो_arg;
 		errno = 0;
 		ll = strtoll(argv[optidx], &cp2, base);
 		if (cp2 == argv[optidx] || *cp2 != '\0' ||
 		    ((ll == LLONG_MIN || ll == LLONG_MAX) && errno == ERANGE) ||
 		    ll < 0 || ll > UINT32_MAX) {
- need_num_arg:
+ need_नुमेरो_arg:
 			error("You must supply a numeric argument "
 			    "to the %s command.", cmd);
 			return -1;
@@ -1607,7 +1607,7 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 	glob_t g;
 
 	path1 = path2 = NULL;
-	cmdnum = parse_args(&cmd, &ignore_errors, &disable_echo, &aflag, &fflag,
+	cmdnum = parse_मगा_कातविरान(&cmd, &ignore_errors, &disable_echo, &aflag, &fflag,
 	    &hflag, &iflag, &lflag, &pflag, &rflag, &sflag, &n_arg,
 	    &path1, &path2);
 	if (ignore_errors != 0)
@@ -1873,7 +1873,7 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 
 #ifdef USE_LIBEDIT
 static char *
-prompt(EditLine *el)
+prompt(Edit_लिन्या *el)
 {
 	return ("sftp> ");
 }
@@ -1920,7 +1920,7 @@ complete_display(char **list, u_int len)
  * characters common to all entries in "list".
  */
 static char *
-complete_ambiguous(const char *word, char **list, size_t count)
+complete_ambiguous(const char *word, char **list, size_t बिलांग)
 {
 	size_t i, j, matchlen;
 	char *tmp;
@@ -1929,12 +1929,12 @@ complete_ambiguous(const char *word, char **list, size_t count)
 	if (word == NULL)
 		return NULL;
 
-	if (count == 0)
+	if (बिलांग == 0)
 		return xstrdup(word); /* no options to complete */
 
 	/* Find length of common stem across list */
 	matchlen = strlen(list[0]);
-	for (i = 1; i < count && list[i] != NULL; i++) {
+	for (i = 1; i < बिलांग && list[i] != NULL; i++) {
 		for (j = 0; j < matchlen; j++)
 			if (list[0][j] != list[i][j])
 				break;
@@ -1967,45 +1967,45 @@ complete_ambiguous(const char *word, char **list, size_t count)
 
 /* Autocomplete a sftp command */
 static int
-complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
+complete_cmd_parse(Edit_लिन्या *el, char *cmd, int lastarg, char quote,
     int terminated)
 {
-	u_int y, count = 0, cmdlen, tmplen;
+	u_int y, बिलांग = 0, cmdlen, tmplen;
 	char *tmp, **list, argterm[3];
-	const LineInfo *lf;
+	const लिन्या_Info *lf;
 
 	list = xcalloc((sizeof(cmds) / sizeof(*cmds)) + 1, sizeof(char *));
 
 	/* No command specified: display all available commands */
 	if (cmd == NULL) {
 		for (y = 0; cmds[y].c; y++)
-			list[count++] = xstrdup(cmds[y].c);
+			list[बिलांग++] = xstrdup(cmds[y].c);
 
-		list[count] = NULL;
+		list[बिलांग] = NULL;
 		complete_display(list, 0);
 
 		for (y = 0; list[y] != NULL; y++)
 			free(list[y]);
 		free(list);
-		return count;
+		return बिलांग;
 	}
 
 	/* Prepare subset of commands that start with "cmd" */
 	cmdlen = strlen(cmd);
 	for (y = 0; cmds[y].c; y++)  {
 		if (!strncasecmp(cmd, cmds[y].c, cmdlen))
-			list[count++] = xstrdup(cmds[y].c);
+			list[बिलांग++] = xstrdup(cmds[y].c);
 	}
-	list[count] = NULL;
+	list[बिलांग] = NULL;
 
-	if (count == 0) {
+	if (बिलांग == 0) {
 		free(list);
 		return 0;
 	}
 
 	/* Complete ambiguous command */
-	tmp = complete_ambiguous(cmd, list, count);
-	if (count > 1)
+	tmp = complete_ambiguous(cmd, list, बिलांग);
+	if (बिलांग > 1)
 		complete_display(list, 0);
 
 	for (y = 0; list[y]; y++)
@@ -2019,9 +2019,9 @@ complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
 		if (tmplen > cmdlen)
 			if (el_insertstr(el, tmp + cmdlen) == -1)
 				fatal("el_insertstr failed.");
-		lf = el_line(el);
+		lf = el_लिन्या(el);
 		/* Terminate argument cleanly */
-		if (count == 1) {
+		if (बिलांग == 1) {
 			y = 0;
 			if (!terminated)
 				argterm[y++] = quote;
@@ -2034,7 +2034,7 @@ complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
 		free(tmp);
 	}
 
-	return count;
+	return बिलांग;
 }
 
 /*
@@ -2064,14 +2064,14 @@ complete_is_remote(char *cmd, int cmdarg) {
 
 /* Autocomplete a filename "file" */
 static int
-complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
+complete_match(Edit_लिन्या *el, struct sftp_conn *conn, char *remote_path,
     char *file, int remote, int lastarg, char quote, int terminated)
 {
 	glob_t g;
 	char *tmp, *tmp2, ins[8];
 	u_int i, hadglob, pwdlen, len, tmplen, filelen, cesc, isesc, isabs;
 	int clen;
-	const LineInfo *lf;
+	const लिन्या_Info *lf;
 
 	/* Glob from "file" location */
 	if (file == NULL)
@@ -2171,7 +2171,7 @@ complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
 		}
 	}
 
-	lf = el_line(el);
+	lf = el_लिन्या(el);
 	if (g.gl_matchc == 1) {
 		i = 0;
 		if (!terminated && quote != '\0')
@@ -2192,37 +2192,37 @@ complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
 
 /* tab-completion hook function, called via libedit */
 static unsigned char
-complete(EditLine *el, int ch)
+complete(Edit_लिन्या *el, int ch)
 {
-	char **argv, *line, quote;
+	char **argv, *लिन्या, quote;
 	int argc, carg;
 	u_int cursor, len, terminated, ret = CC_ERROR;
-	const LineInfo *lf;
+	const लिन्या_Info *lf;
 	struct complete_ctx *complete_ctx;
 
-	lf = el_line(el);
+	lf = el_लिन्या(el);
 	if (el_get(el, EL_CLIENTDATA, (void**)&complete_ctx) != 0)
 		fatal_f("el_get failed");
 
 	/* Figure out which argument the cursor points to */
 	cursor = lf->cursor - lf->buffer;
-	line = xmalloc(cursor + 1);
-	memcpy(line, lf->buffer, cursor);
-	line[cursor] = '\0';
-	argv = makeargv(line, &carg, 1, &quote, &terminated);
-	free(line);
+	लिन्या = xmalloc(cursor + 1);
+	memcpy(लिन्या, lf->buffer, cursor);
+	लिन्या[cursor] = '\0';
+	argv = makeargv(लिन्या, &carg, 1, &quote, &terminated);
+	free(लिन्या);
 
 	/* Get all the arguments on the line */
 	len = lf->lastchar - lf->buffer;
-	line = xmalloc(len + 1);
-	memcpy(line, lf->buffer, len);
-	line[len] = '\0';
-	argv = makeargv(line, &argc, 1, NULL, NULL);
+	लिन्या = xmalloc(len + 1);
+	memcpy(लिन्या, lf->buffer, len);
+	लिन्या[len] = '\0';
+	argv = makeargv(लिन्या, &argc, 1, NULL, NULL);
 
 	/* Ensure cursor is at EOL or a argument boundary */
-	if (line[cursor] != ' ' && line[cursor] != '\0' &&
-	    line[cursor] != '\n') {
-		free(line);
+	if (लिन्या[cursor] != ' ' && लिन्या[cursor] != '\0' &&
+	    लिन्या[cursor] != '\n') {
+		free(लिन्या);
 		return ret;
 	}
 
@@ -2230,7 +2230,7 @@ complete(EditLine *el, int ch)
 		/* Show all available commands */
 		complete_cmd_parse(el, NULL, argc == carg, '\0', 1);
 		ret = CC_REDISPLAY;
-	} else if (carg == 1 && cursor > 0 && line[cursor - 1] != ' ')  {
+	} else if (carg == 1 && cursor > 0 && लिन्या[cursor - 1] != ' ')  {
 		/* Handle the command parsing */
 		if (complete_cmd_parse(el, argv[0], argc == carg,
 		    quote, terminated) != 0)
@@ -2241,7 +2241,7 @@ complete(EditLine *el, int ch)
 		int i = 0, cmdarg = 0;
 		char *filematch = NULL;
 
-		if (carg > 1 && line[cursor-1] != ' ')
+		if (carg > 1 && लिन्या[cursor-1] != ' ')
 			filematch = argv[carg - 1];
 
 		for (i = 1; i < carg; i++) {
@@ -2254,7 +2254,7 @@ complete(EditLine *el, int ch)
 		 * If previous argument is complete, then offer completion
 		 * on the next one.
 		 */
-		if (line[cursor - 1] == ' ')
+		if (लिन्या[cursor - 1] == ' ')
 			cmdarg++;
 
 		remote = complete_is_remote(argv[0], cmdarg);
@@ -2266,7 +2266,7 @@ complete(EditLine *el, int ch)
 			ret = CC_REDISPLAY;
 	}
 
-	free(line);
+	free(लिन्या);
 	return ret;
 }
 #endif /* USE_LIBEDIT */
@@ -2278,7 +2278,7 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 	char *dir = NULL, *startdir = NULL;
 	char cmd[2048];
 	int err, interactive;
-	EditLine *el = NULL;
+	Edit_लिन्या *el = NULL;
 #ifdef USE_LIBEDIT
 	const char *editor;
 	History *hl = NULL;
@@ -2383,18 +2383,18 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 			}
 		} else {
 #ifdef USE_LIBEDIT
-			const char *line;
-			int count = 0;
+			const char *लिन्या;
+			int बिलांग = 0;
 
-			if ((line = el_gets(el, &count)) == NULL ||
-			    count <= 0) {
+			if ((लिन्या = el_gets(el, &बिलांग)) == NULL ||
+			    बिलांग <= 0) {
 				printf("\n");
 				if (interrupted)
 					continue;
 				break;
 			}
-			history(hl, &hev, H_ENTER, line);
-			if (strlcpy(cmd, line, sizeof(cmd)) >= sizeof(cmd)) {
+			history(hl, &hev, H_ENTER, लिन्या);
+			if (strlcpy(cmd, लिन्या, sizeof(cmd)) >= sizeof(cmd)) {
 				fprintf(stderr, "Error: input line too long\n");
 				continue;
 			}
@@ -2429,7 +2429,7 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 }
 
 static void
-connect_to_server(char *path, char **args, int *in, int *out)
+connect_to_server(char *path, char **मगा_कातविरान, int *in, int *out)
 {
 	int c_in, c_out;
 #ifdef USE_PIPES
@@ -2474,7 +2474,7 @@ connect_to_server(char *path, char **args, int *in, int *out)
 		 */
 		ssh_signal(SIGINT, SIG_IGN);
 		ssh_signal(SIGTERM, SIG_DFL);
-		execvp(path, args);
+		execvp(path, मगा_कातविरान);
 		fprintf(stderr, "exec: %s: %s\n", path, strerror(errno));
 		_exit(1);
 	}
@@ -2515,12 +2515,12 @@ main(int argc, char **argv)
 	char *ssh_program = _PATH_SSH_PROGRAM, *sftp_direct = NULL;
 	const char *errstr;
 	LogLevel ll = SYSLOG_LEVEL_INFO;
-	arglist args;
+	arglist मगा_कातविरान;
 	extern int optind;
 	extern char *optarg;
 	struct sftp_conn *conn;
 	size_t copy_buffer_len = 0;
-	size_t num_requests = 0;
+	size_t नुमेरो_requests = 0;
 	long long llv, limit_kbps = 0;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -2528,13 +2528,13 @@ main(int argc, char **argv)
 	msetlocale();
 
 	__progname = ssh_get_progname(argv[0]);
-	memset(&args, '\0', sizeof(args));
-	args.list = NULL;
-	addargs(&args, "%s", ssh_program);
-	addargs(&args, "-oForwardX11 no");
-	addargs(&args, "-oPermitLocalCommand no");
-	addargs(&args, "-oClearAllForwardings yes");
-	addargs(&args, "-oControlMaster no");
+	memset(&मगा_कातविरान, '\0', sizeof(मगा_कातविरान));
+	मगा_कातविरान.list = NULL;
+	addargs(&मगा_कातविरान, "%s", ssh_program);
+	addargs(&मगा_कातविरान, "-oForwardX11 no");
+	addargs(&मगा_कातविरान, "-oPermitLocalCommand no");
+	addargs(&मगा_कातविरान, "-oClearAllForwardings yes");
+	addargs(&मगा_कातविरान, "-oControlMaster no");
 
 	ll = SYSLOG_LEVEL_INFO;
 	infile = stdin;
@@ -2547,7 +2547,7 @@ main(int argc, char **argv)
 		case '4':
 		case '6':
 		case 'C':
-			addargs(&args, "-%c", ch);
+			addargs(&मगा_कातविरान, "-%c", ch);
 			break;
 		/* Passed through to ssh(1) with argument */
 		case 'F':
@@ -2555,14 +2555,14 @@ main(int argc, char **argv)
 		case 'c':
 		case 'i':
 		case 'o':
-			addargs(&args, "-%c", ch);
-			addargs(&args, "%s", optarg);
+			addargs(&मगा_कातविरान, "-%c", ch);
+			addargs(&मगा_कातविरान, "%s", optarg);
 			break;
 		case 'q':
 			ll = SYSLOG_LEVEL_ERROR;
 			quiet = 1;
 			showprogress = 0;
-			addargs(&args, "-%c", ch);
+			addargs(&मगा_कातविरान, "-%c", ch);
 			break;
 		case 'P':
 			port = a2port(optarg);
@@ -2571,7 +2571,7 @@ main(int argc, char **argv)
 			break;
 		case 'v':
 			if (debug_level < 3) {
-				addargs(&args, "-v");
+				addargs(&मगा_कातविरान, "-v");
 				ll = SYSLOG_LEVEL_DEBUG1 + debug_level;
 			}
 			debug_level++;
@@ -2600,7 +2600,7 @@ main(int argc, char **argv)
 				fatal("%s (%s).", strerror(errno), optarg);
 			showprogress = 0;
 			quiet = batchmode = 1;
-			addargs(&args, "-obatchmode yes");
+			addargs(&मगा_कातविरान, "-obatchmode yes");
 			break;
 		case 'f':
 			global_fflag = 1;
@@ -2625,8 +2625,8 @@ main(int argc, char **argv)
 			global_rflag = 1;
 			break;
 		case 'R':
-			num_requests = strtol(optarg, &cp, 10);
-			if (num_requests == 0 || *cp != '\0')
+			नुमेरो_requests = strtol(optarg, &cp, 10);
+			if (नुमेरो_requests == 0 || *cp != '\0')
 				fatal("Invalid number of requests \"%s\"",
 				    optarg);
 			break;
@@ -2635,7 +2635,7 @@ main(int argc, char **argv)
 			break;
 		case 'S':
 			ssh_program = optarg;
-			replacearg(&args, 0, "%s", ssh_program);
+			replacearg(&मगा_कातविरान, 0, "%s", ssh_program);
 			break;
 		case 'X':
 			/* Please keep in sync with ssh.c -X */
@@ -2657,7 +2657,7 @@ main(int argc, char **argv)
 					fatal("Invalid number of requests "
 					    "\"%s\": %s", optarg + 10, errstr);
 				}
-				num_requests = (size_t)llv;
+				नुमेरो_requests = (size_t)llv;
 			} else {
 				fatal("Invalid -X option");
 			}
@@ -2669,7 +2669,7 @@ main(int argc, char **argv)
 	}
 
 	/* Do this last because we want the user to be able to override it */
-	addargs(&args, "-oForwardAgent no");
+	addargs(&मगा_कातविरान, "-oForwardAgent no");
 
 	if (!isatty(STDERR_FILENO))
 		showprogress = 0;
@@ -2714,22 +2714,22 @@ main(int argc, char **argv)
 		}
 
 		if (port != -1)
-			addargs(&args, "-oPort %d", port);
+			addargs(&मगा_कातविरान, "-oPort %d", port);
 		if (user != NULL) {
-			addargs(&args, "-l");
-			addargs(&args, "%s", user);
+			addargs(&मगा_कातविरान, "-l");
+			addargs(&मगा_कातविरान, "%s", user);
 		}
 
 		/* no subsystem if the server-spec contains a '/' */
 		if (sftp_server == NULL || strchr(sftp_server, '/') == NULL)
-			addargs(&args, "-s");
+			addargs(&मगा_कातविरान, "-s");
 
-		addargs(&args, "--");
-		addargs(&args, "%s", host);
-		addargs(&args, "%s", (sftp_server != NULL ?
+		addargs(&मगा_कातविरान, "--");
+		addargs(&मगा_कातविरान, "%s", host);
+		addargs(&मगा_कातविरान, "%s", (sftp_server != NULL ?
 		    sftp_server : "sftp"));
 
-		connect_to_server(ssh_program, args.list, &in, &out);
+		connect_to_server(ssh_program, मगा_कातविरान.list, &in, &out);
 	} else {
 		if ((r = argv_split(sftp_direct, &tmp, &cpp, 1)) != 0)
 			fatal_r(r, "Parse -D arguments");
@@ -2738,9 +2738,9 @@ main(int argc, char **argv)
 		connect_to_server(cpp[0], cpp, &in, &out);
 		argv_free(cpp, tmp);
 	}
-	freeargs(&args);
+	freeargs(&मगा_कातविरान);
 
-	conn = sftp_init(in, out, copy_buffer_len, num_requests, limit_kbps);
+	conn = sftp_init(in, out, copy_buffer_len, नुमेरो_requests, limit_kbps);
 	if (conn == NULL)
 		fatal("Couldn't initialise connection to server");
 

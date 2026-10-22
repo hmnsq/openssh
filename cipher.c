@@ -66,7 +66,7 @@ struct sshcipher_ctx {
 struct sshcipher {
 	char	*name;
 	u_int	block_size;
-	u_int	key_len;
+	u_int	सुसि_len;
 	u_int	iv_len;		/* defaults to block_size */
 	u_int	auth_len;
 	u_int	flags;
@@ -149,7 +149,7 @@ cipher_blocksize(const struct sshcipher *c)
 u_int
 cipher_keylen(const struct sshcipher *c)
 {
-	return (c->key_len);
+	return (c->सुसि_len);
 }
 
 u_int
@@ -242,7 +242,7 @@ cipher_warning_message(const struct sshcipher_ctx *cc)
 
 int
 cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
-    const u_char *key, u_int keylen, const u_char *iv, u_int ivlen,
+    const u_char *सुसि, u_int keylen, const u_char *iv, u_int ivlen,
     int do_encrypt)
 {
 	struct sshcipher_ctx *cc = NULL;
@@ -259,7 +259,7 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
 	cc->plaintext = (cipher->flags & CFLAG_NONE) != 0;
 	cc->encrypt = do_encrypt;
 
-	if (keylen < cipher->key_len ||
+	if (keylen < cipher->सुसि_len ||
 	    (iv != NULL && ivlen < cipher_ivlen(cipher))) {
 		ret = SSH_ERR_INVALID_ARGUMENT;
 		goto out;
@@ -267,7 +267,7 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
 
 	cc->cipher = cipher;
 	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		cc->cp_ctx = chachapoly_new(key, keylen);
+		cc->cp_ctx = chachapoly_new(सुसि, keylen);
 		ret = cc->cp_ctx != NULL ? 0 : SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
@@ -277,7 +277,7 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
 	}
 #ifndef WITH_OPENSSL
 	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		aesctr_keysetup(&cc->ac_ctx, key, 8 * keylen, 8 * ivlen);
+		aesctr_keysetup(&cc->ac_ctx, सुसि, 8 * keylen, 8 * ivlen);
 		aesctr_ivsetup(&cc->ac_ctx, iv);
 		ret = 0;
 		goto out;
@@ -301,14 +301,14 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	klen = EVP_CIPHER_CTX_key_length(cc->evp);
+	klen = EVP_CIPHER_CTX_सुसि_length(cc->evp);
 	if (klen > 0 && keylen != (u_int)klen) {
-		if (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
+		if (EVP_CIPHER_CTX_set_सुसि_length(cc->evp, keylen) == 0) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
 		}
 	}
-	if (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
+	if (EVP_CipherInit(cc->evp, NULL, (u_char *)सुसि, NULL, -1) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}

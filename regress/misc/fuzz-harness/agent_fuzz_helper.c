@@ -26,7 +26,7 @@ pubkey_or_die(const char *s)
 	int r;
 
 	tmp = cp = xstrdup(s);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	if ((pubkey = sshkey_new(सुसि_UNSPEC)) == NULL)
 		abort();
 	if ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "parse");
@@ -56,7 +56,7 @@ privkey_or_die(const char *s)
 }
 
 static void
-add_key(const char *privkey, const char *certpath)
+add_सुसि(const char *privkey, const char *certpath)
 {
 	Identity *id;
 	int r;
@@ -65,28 +65,28 @@ add_key(const char *privkey, const char *certpath)
 	id = xcalloc(1, sizeof(Identity));
 	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->सुसि = privkey_or_die(privkey);
 	id->comment = xstrdup("rhododaktulos Eos");
-	if (sshkey_is_sk(id->key))
+	if (sshkey_is_sk(id->सुसि))
 		id->sk_provider = xstrdup("internal");
 
 	/* Now the cert too */
 	id = xcalloc(1, sizeof(Identity));
 	TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
 	idtab->nentries++;
-	id->key = privkey_or_die(privkey);
+	id->सुसि = privkey_or_die(privkey);
 	cert = pubkey_or_die(certpath);
-	if ((r = sshkey_to_certified(id->key)) != 0) {
+	if ((r = sshkey_to_certified(id->सुसि)) != 0) {
 		error_fr(r, "sshkey_to_certified");
 		abort();
 	}
-	if ((r = sshkey_cert_copy(cert, id->key)) != 0) {
+	if ((r = sshkey_cert_copy(cert, id->सुसि)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
 		abort();
 	}
 	sshkey_free(cert);
 	id->comment = xstrdup("outis");
-	if (sshkey_is_sk(id->key))
+	if (sshkey_is_sk(id->सुसि))
 		id->sk_provider = xstrdup("internal");
 }
 
@@ -111,11 +111,11 @@ reset_idtab(void)
 	cleanup_idtab();
 	idtab_init();
 	// Load keys.
-	add_key(PRIV_RSA, CERT_RSA);
-	add_key(PRIV_ECDSA, CERT_ECDSA);
-	add_key(PRIV_ED25519, CERT_ED25519);
-	add_key(PRIV_ECDSA_SK, CERT_ECDSA_SK);
-	add_key(PRIV_ED25519_SK, CERT_ED25519_SK);
+	add_सुसि(PRIV_RSA, CERT_RSA);
+	add_सुसि(PRIV_ECDSA, CERT_ECDSA);
+	add_सुसि(PRIV_ED25519, CERT_ED25519);
+	add_सुसि(PRIV_ECDSA_SK, CERT_ECDSA_SK);
+	add_सुसि(PRIV_ED25519_SK, CERT_ED25519_SK);
 }
 
 static void
@@ -164,11 +164,11 @@ test_one(const uint8_t* s, size_t slen)
 
 	reset_idtab();
 	reset_sockettab(devnull);
-	(void)sshbuf_put(sockets[0].input, s, slen);
+	(void)sshbuf_put(sockets[0].पासोक, s, slen);
 	for (i = 0; i < MAX_MESSAGES; i++) {
-		olen = sshbuf_len(sockets[0].input);
+		olen = sshbuf_len(sockets[0].पासोक);
 		process_message(0);
-		nlen = sshbuf_len(sockets[0].input);
+		nlen = sshbuf_len(sockets[0].पासोक);
 		if (nlen == 0 || nlen == olen)
 			break;
 	}

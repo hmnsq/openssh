@@ -57,7 +57,7 @@
 # define sk_api_version		ssh_sk_api_version
 # define sk_enroll		ssh_sk_enroll
 # define sk_sign		ssh_sk_sign
-# define sk_load_resident_keys	ssh_sk_load_resident_keys
+# define sk_load_resident_मगा_सुसि	ssh_sk_load_resident_मगा_सुसि
 #endif /* !SK_STANDALONE */
 
 static void skdebug(const char *func, const char *fmt, ...)
@@ -87,10 +87,10 @@ sk_api_version(void)
 }
 
 static int
-pack_key_ecdsa(struct sk_enroll_response *response)
+pack_सुसि_ecdsa(struct sk_enroll_response *response)
 {
 #ifdef WITH_OPENSSL
-	EC_KEY *key = NULL;
+	EC_सुसि *सुसि = NULL;
 	const EC_GROUP *g;
 	const EC_POINT *q;
 	int ret = -1;
@@ -98,44 +98,44 @@ pack_key_ecdsa(struct sk_enroll_response *response)
 	BIO *bio = NULL;
 	char *privptr;
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
-	response->key_handle = NULL;
-	response->key_handle_len = 0;
+	response->public_सुसि = NULL;
+	response->public_सुसि_len = 0;
+	response->सुसि_handle = NULL;
+	response->सुसि_handle_len = 0;
 
-	if ((key = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1)) == NULL) {
+	if ((सुसि = EC_सुसि_new_by_curve_name(NID_X9_62_prime256v1)) == NULL) {
 		skdebug(__func__, "EC_KEY_new_by_curve_name");
 		goto out;
 	}
-	if (EC_KEY_generate_key(key) != 1) {
+	if (EC_सुसि_generate_सुसि(सुसि) != 1) {
 		skdebug(__func__, "EC_KEY_generate_key");
 		goto out;
 	}
-	EC_KEY_set_asn1_flag(key, OPENSSL_EC_NAMED_CURVE);
+	EC_सुसि_set_asn1_flag(सुसि, OPENSSL_EC_NAMED_CURVE);
 	if ((bio = BIO_new(BIO_s_mem())) == NULL ||
-	    (g = EC_KEY_get0_group(key)) == NULL ||
-	    (q = EC_KEY_get0_public_key(key)) == NULL) {
+	    (g = EC_सुसि_get0_group(सुसि)) == NULL ||
+	    (q = EC_सुसि_get0_public_सुसि(सुसि)) == NULL) {
 		skdebug(__func__, "couldn't get key parameters");
 		goto out;
 	}
-	response->public_key_len = EC_POINT_point2oct(g, q,
+	response->public_सुसि_len = EC_POINT_point2oct(g, q,
 	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (response->public_key_len == 0 || response->public_key_len > 2048) {
+	if (response->public_सुसि_len == 0 || response->public_सुसि_len > 2048) {
 		skdebug(__func__, "bad pubkey length %zu",
-		    response->public_key_len);
+		    response->public_सुसि_len);
 		goto out;
 	}
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	if ((response->public_सुसि = malloc(response->public_सुसि_len)) == NULL) {
 		skdebug(__func__, "malloc pubkey failed");
 		goto out;
 	}
 	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
-	    response->public_key, response->public_key_len, NULL) == 0) {
+	    response->public_सुसि, response->public_सुसि_len, NULL) == 0) {
 		skdebug(__func__, "EC_POINT_point2oct failed");
 		goto out;
 	}
 	/* Key handle contains PEM encoded private key */
-	if (!PEM_write_bio_ECPrivateKey(bio, key, NULL, NULL, 0, NULL, NULL)) {
+	if (!PEM_write_bio_ECPrivate_सुसि(bio, सुसि, NULL, NULL, 0, NULL, NULL)) {
 		skdebug(__func__, "PEM_write_bio_ECPrivateKey failed");
 		goto out;
 	}
@@ -143,31 +143,31 @@ pack_key_ecdsa(struct sk_enroll_response *response)
 		skdebug(__func__, "BIO_get_mem_data failed");
 		goto out;
 	}
-	if ((response->key_handle = malloc(privlen)) == NULL) {
+	if ((response->सुसि_handle = malloc(privlen)) == NULL) {
 		skdebug(__func__, "malloc key_handle failed");
 		goto out;
 	}
-	response->key_handle_len = (size_t)privlen;
-	memcpy(response->key_handle, privptr, response->key_handle_len);
+	response->सुसि_handle_len = (size_t)privlen;
+	memcpy(response->सुसि_handle, privptr, response->सुसि_handle_len);
 	/* success */
 	ret = 0;
  out:
 	if (ret != 0) {
-		if (response->public_key != NULL) {
-			memset(response->public_key, 0,
-			    response->public_key_len);
-			free(response->public_key);
-			response->public_key = NULL;
+		if (response->public_सुसि != NULL) {
+			memset(response->public_सुसि, 0,
+			    response->public_सुसि_len);
+			free(response->public_सुसि);
+			response->public_सुसि = NULL;
 		}
-		if (response->key_handle != NULL) {
-			memset(response->key_handle, 0,
-			    response->key_handle_len);
-			free(response->key_handle);
-			response->key_handle = NULL;
+		if (response->सुसि_handle != NULL) {
+			memset(response->सुसि_handle, 0,
+			    response->सुसि_handle_len);
+			free(response->सुसि_handle);
+			response->सुसि_handle = NULL;
 		}
 	}
 	BIO_free(bio);
-	EC_KEY_free(key);
+	EC_सुसि_free(सुसि);
 	return ret;
 #else
 	return -1;
@@ -175,39 +175,39 @@ pack_key_ecdsa(struct sk_enroll_response *response)
 }
 
 static int
-pack_key_ed25519(struct sk_enroll_response *response)
+pack_सुसि_ed25519(struct sk_enroll_response *response)
 {
 	int ret = -1;
 	u_char pk[crypto_sign_ed25519_PUBLICKEYBYTES];
 	u_char sk[crypto_sign_ed25519_SECRETKEYBYTES];
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
-	response->key_handle = NULL;
-	response->key_handle_len = 0;
+	response->public_सुसि = NULL;
+	response->public_सुसि_len = 0;
+	response->सुसि_handle = NULL;
+	response->सुसि_handle_len = 0;
 
 	memset(pk, 0, sizeof(pk));
 	memset(sk, 0, sizeof(sk));
 	crypto_sign_ed25519_keypair(pk, sk);
 
-	response->public_key_len = sizeof(pk);
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	response->public_सुसि_len = sizeof(pk);
+	if ((response->public_सुसि = malloc(response->public_सुसि_len)) == NULL) {
 		skdebug(__func__, "malloc pubkey failed");
 		goto out;
 	}
-	memcpy(response->public_key, pk, sizeof(pk));
+	memcpy(response->public_सुसि, pk, sizeof(pk));
 	/* Key handle contains sk */
-	response->key_handle_len = sizeof(sk);
-	if ((response->key_handle = malloc(response->key_handle_len)) == NULL) {
+	response->सुसि_handle_len = sizeof(sk);
+	if ((response->सुसि_handle = malloc(response->सुसि_handle_len)) == NULL) {
 		skdebug(__func__, "malloc key_handle failed");
 		goto out;
 	}
-	memcpy(response->key_handle, sk, sizeof(sk));
+	memcpy(response->सुसि_handle, sk, sizeof(sk));
 	/* success */
 	ret = 0;
  out:
 	if (ret != 0)
-		free(response->public_key);
+		free(response->public_सुसि);
 	return ret;
 }
 
@@ -253,11 +253,11 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 	response->flags = flags;
 	switch(alg) {
 	case SSH_SK_ECDSA:
-		if (pack_key_ecdsa(response) != 0)
+		if (pack_सुसि_ecdsa(response) != 0)
 			goto out;
 		break;
 	case SSH_SK_ED25519:
-		if (pack_key_ed25519(response) != 0)
+		if (pack_सुसि_ed25519(response) != 0)
 			goto out;
 		break;
 	default:
@@ -276,8 +276,8 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 	ret = 0;
  out:
 	if (response != NULL) {
-		free(response->public_key);
-		free(response->key_handle);
+		free(response->public_सुसि);
+		free(response->सुसि_handle);
 		free(response->signature);
 		free(response->attestation_cert);
 		free(response);
@@ -306,7 +306,7 @@ dump(const char *preamble, const void *sv, size_t l)
 static int
 sig_ecdsa(const uint8_t *message, size_t message_len,
     const char *application, uint32_t counter, uint8_t flags,
-    const uint8_t *key_handle, size_t key_handle_len,
+    const uint8_t *सुसि_handle, size_t सुसि_handle_len,
     struct sk_sign_response *response)
 {
 #ifdef WITH_OPENSSL
@@ -315,7 +315,7 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 	int ret = -1;
 	BIO *bio = NULL;
 	EVP_PKEY *pk = NULL;
-	EC_KEY *ec = NULL;
+	EC_सुसि *ec = NULL;
 	SHA2_CTX ctx;
 	uint8_t	apphash[SHA256_DIGEST_LENGTH];
 	uint8_t	sighash[SHA256_DIGEST_LENGTH];
@@ -323,11 +323,11 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 
 	/* Decode EC_KEY from key handle */
 	if ((bio = BIO_new(BIO_s_mem())) == NULL ||
-	    BIO_write(bio, key_handle, key_handle_len) != (int)key_handle_len) {
+	    BIO_write(bio, सुसि_handle, सुसि_handle_len) != (int)सुसि_handle_len) {
 		skdebug(__func__, "BIO setup failed");
 		goto out;
 	}
-	if ((pk = PEM_read_bio_PrivateKey(bio, NULL, NULL, "")) == NULL) {
+	if ((pk = PEM_read_bio_Private_सुसि(bio, NULL, NULL, "")) == NULL) {
 		skdebug(__func__, "PEM_read_bio_PrivateKey failed");
 		goto out;
 	}
@@ -335,7 +335,7 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 		skdebug(__func__, "Not an EC key: %d", EVP_PKEY_base_id(pk));
 		goto out;
 	}
-	if ((ec = EVP_PKEY_get1_EC_KEY(pk)) == NULL) {
+	if ((ec = EVP_PKEY_get1_EC_सुसि(pk)) == NULL) {
 		skdebug(__func__, "EVP_PKEY_get1_EC_KEY failed");
 		goto out;
 	}
@@ -369,8 +369,8 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 		goto out;
 	}
 	ECDSA_SIG_get0(sig, &sig_r, &sig_s);
-	response->sig_r_len = BN_num_bytes(sig_r);
-	response->sig_s_len = BN_num_bytes(sig_s);
+	response->sig_r_len = BN_नुमेरो_bytes(sig_r);
+	response->sig_s_len = BN_नुमेरो_bytes(sig_s);
 	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL ||
 	    (response->sig_s = calloc(1, response->sig_s_len)) == NULL) {
 		skdebug(__func__, "calloc signature failed");
@@ -391,7 +391,7 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 		response->sig_s = NULL;
 	}
 	BIO_free(bio);
-	EC_KEY_free(ec);
+	EC_सुसि_free(ec);
 	EVP_PKEY_free(pk);
 	return ret;
 #else
@@ -402,7 +402,7 @@ sig_ecdsa(const uint8_t *message, size_t message_len,
 static int
 sig_ed25519(const uint8_t *message, size_t message_len,
     const char *application, uint32_t counter, uint8_t flags,
-    const uint8_t *key_handle, size_t key_handle_len,
+    const uint8_t *सुसि_handle, size_t सुसि_handle_len,
     struct sk_sign_response *response)
 {
 	size_t o;
@@ -414,8 +414,8 @@ sig_ed25519(const uint8_t *message, size_t message_len,
 	uint8_t sig[crypto_sign_ed25519_BYTES];
 	unsigned long long siglen = 0;
 
-	if (key_handle_len != crypto_sign_ed25519_SECRETKEYBYTES) {
-		skdebug(__func__, "bad key handle length %zu", key_handle_len);
+	if (सुसि_handle_len != crypto_sign_ed25519_SECRETKEYBYTES) {
+		skdebug(__func__, "bad key handle length %zu", सुसि_handle_len);
 		goto out;
 	}
 	/* Expect message to be pre-hashed */
@@ -447,7 +447,7 @@ sig_ed25519(const uint8_t *message, size_t message_len,
 	dump("signbuf", signbuf, sizeof(signbuf));
 	/* create and encode signature */
 	if (crypto_sign_ed25519_detached(sig, &siglen, signbuf, sizeof(signbuf),
-	    key_handle) != 0) {
+	    सुसि_handle) != 0) {
 		skdebug(__func__, "crypto_sign_ed25519_detached failed");
 		goto out;
 	}
@@ -477,7 +477,7 @@ sig_ed25519(const uint8_t *message, size_t message_len,
 
 int
 sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
+    const char *application, const uint8_t *सुसि_handle, size_t सुसि_handle_len,
     uint8_t flags, const char *pin, struct sk_option **options,
     struct sk_sign_response **sign_response)
 {
@@ -505,13 +505,13 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 	switch(alg) {
 	case SSH_SK_ECDSA:
 		if (sig_ecdsa(message, sizeof(message), application,
-		    response->counter, flags, key_handle, key_handle_len,
+		    response->counter, flags, सुसि_handle, सुसि_handle_len,
 		    response) != 0)
 			goto out;
 		break;
 	case SSH_SK_ED25519:
 		if (sig_ed25519(message, sizeof(message), application,
-		    response->counter, flags, key_handle, key_handle_len,
+		    response->counter, flags, सुसि_handle, सुसि_handle_len,
 		    response) != 0)
 			goto out;
 		break;
@@ -533,8 +533,8 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 }
 
 int
-sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks)
+sk_load_resident_मगा_सुसि(const char *pin, struct sk_option **options,
+    struct sk_resident_सुसि ***rks, size_t *nrks)
 {
 	return SSH_SK_ERR_UNSUPPORTED;
 }

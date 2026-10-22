@@ -418,7 +418,7 @@ Blowfish_stream2word(const u_int8_t *data, u_int16_t databytes,
 }
 
 void
-Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
+Blowfish_expand0state(blf_ctx *c, const u_int8_t *सुसि, u_int16_t keybytes)
 {
 	u_int16_t i;
 	u_int16_t j;
@@ -430,7 +430,7 @@ Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
 	j = 0;
 	for (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
-		temp = Blowfish_stream2word(key, keybytes, &j);
+		temp = Blowfish_stream2word(सुसि, keybytes, &j);
 		c->P[i] = c->P[i] ^ temp;
 	}
 
@@ -457,7 +457,7 @@ Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
 
 void
 Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
-    const u_int8_t *key, u_int16_t keybytes)
+    const u_int8_t *सुसि, u_int16_t keybytes)
 {
 	u_int16_t i;
 	u_int16_t j;
@@ -469,7 +469,7 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 	j = 0;
 	for (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
-		temp = Blowfish_stream2word(key, keybytes, &j);
+		temp = Blowfish_stream2word(सुसि, keybytes, &j);
 		c->P[i] = c->P[i] ^ temp;
 	}
 
@@ -499,7 +499,7 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 }
 
 void
-blf_key(blf_ctx *c, const u_int8_t *k, u_int16_t len)
+blf_सुसि(blf_ctx *c, const u_int8_t *k, u_int16_t len)
 {
 	/* Initialize S-boxes and subkeys with Pi */
 	Blowfish_initstate(c);
@@ -658,7 +658,7 @@ main(void)
 {
 
 	blf_ctx c;
-	char    key[] = "AAAAA";
+	char    सुसि[] = "AAAAA";
 	char    key2[] = "abcdefghijklmnopqrstuvwxyz";
 
 	u_int32_t data[10];
@@ -671,7 +671,7 @@ main(void)
 	for (i = 0; i < 10; i++)
 		data[i] = i;
 
-	blf_key(&c, (u_int8_t *) key, 5);
+	blf_सुसि(&c, (u_int8_t *) सुसि, 5);
 	blf_enc(&c, data, 5);
 	blf_dec(&c, data, 1);
 	blf_dec(&c, data + 2, 4);
@@ -679,7 +679,7 @@ main(void)
 	report(data, 10);
 
 	/* Second test */
-	blf_key(&c, (u_int8_t *) key2, strlen(key2));
+	blf_सुसि(&c, (u_int8_t *) key2, strlen(key2));
 	blf_enc(&c, data2, 1);
 	printf("\nShould read as: 0x324ed0fe 0xf413a203.\n");
 	report(data2, 2);

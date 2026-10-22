@@ -25,14 +25,14 @@ extern "C" {
 static int log_initialized = 0;
 
 static int
-noop_cb(struct hostkey_foreach_line *l, void *ctx)
+noop_cb(struct hostkey_foreach_लिन्या *l, void *ctx)
 {
 	(void)l; (void)ctx;
 	return 0;
 }
 
 int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+LLVMFuzzer_Test_One_पासोक(const uint8_t *data, size_t size)
 {
 	if (!log_initialized) {
 		log_init("hostfile_fuzz", SYSLOG_LEVEL_QUIET,
@@ -44,8 +44,8 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	static const u_int flag_combos[] = {
 		0,
 		HKF_WANT_MATCH,
-		HKF_WANT_PARSE_KEY,
-		HKF_WANT_MATCH | HKF_WANT_PARSE_KEY,
+		HKF_WANT_PARSE_सुसि,
+		HKF_WANT_MATCH | HKF_WANT_PARSE_सुसि,
 	};
 	for (size_t i = 0; i < sizeof(flag_combos)/sizeof(flag_combos[0]); i++) {
 		FILE *f = fmemopen((void *)data, size, "r");

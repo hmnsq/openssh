@@ -29,11 +29,11 @@
 #define DNS_H
 
 enum sshfp_types {
-	SSHFP_KEY_RESERVED = 0,
-	SSHFP_KEY_RSA = 1,
-	SSHFP_KEY_DSA = 2,
-	SSHFP_KEY_ECDSA = 3,
-	SSHFP_KEY_ED25519 = 4
+	SSHFP_सुसि_RESERVED = 0,
+	SSHFP_सुसि_RSA = 1,
+	SSHFP_सुसि_DSA = 2,
+	SSHFP_सुसि_ECDSA = 3,
+	SSHFP_सुसि_ED25519 = 4
 };
 
 enum sshfp_hashes {
@@ -51,7 +51,7 @@ enum sshfp_hashes {
 #define DNS_VERIFY_SECURE	0x00000004
 #define DNS_VERIFY_FAILED	0x00000008
 
-int	verify_host_key_dns(const char *, struct sockaddr *,
+int	verify_host_सुसि_dns(const char *, struct sockaddr *,
     struct sshkey *, int *);
 int	export_dns_rr(const char *, struct sshkey *, FILE *, int, int);
 

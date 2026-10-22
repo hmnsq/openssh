@@ -80,7 +80,7 @@ split_two(const uint8_t *body, size_t blen, char **a, char **b)
 }
 
 extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+LLVMFuzzer_Test_One_पासोक(const uint8_t *data, size_t size)
 {
 	if (!log_initialized) {
 		log_init("misc_parse_fuzz", SYSLOG_LEVEL_QUIET,

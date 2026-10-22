@@ -215,18 +215,18 @@ ssh_lock_agent(int sock, int lock, const char *password)
 {
 	int r;
 	u_char type = lock ? SSH_AGENTC_LOCK : SSH_AGENTC_UNLOCK;
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, password)) != 0 ||
-	    (r = ssh_request_reply_decode(sock, msg)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, type)) != 0 ||
+	    (r = sshbuf_put_cstring(मेनसाहे, password)) != 0 ||
+	    (r = ssh_request_reply_decode(sock, मेनसाहे)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return r;
 }
 
@@ -261,8 +261,8 @@ int
 ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp)
 {
 	u_char type;
-	uint32_t num, i;
-	struct sshbuf *msg;
+	uint32_t नुमेरो, i;
+	struct sshbuf *मेनसाहे;
 	struct ssh_identitylist *idl = NULL;
 	int r;
 
@@ -270,16 +270,16 @@ ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp)
 	 * Send a message to the agent requesting for a list of the
 	 * identities it can represent.
 	 */
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
 		goto out;
 
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
+	if ((r = ssh_request_reply(sock, मेनसाहे, मेनसाहे)) != 0)
 		goto out;
 
 	/* Get message type, and verify that we got a proper answer. */
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
+	if ((r = sshbuf_get_u8(मेनसाहे, &type)) != 0)
 		goto out;
 	if (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
@@ -290,42 +290,42 @@ ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp)
 	}
 
 	/* Get the number of entries in the response and check it for sanity. */
-	if ((r = sshbuf_get_u32(msg, &num)) != 0)
+	if ((r = sshbuf_get_u32(मेनसाहे, &नुमेरो)) != 0)
 		goto out;
-	if (num > MAX_AGENT_IDENTITIES) {
+	if (नुमेरो > MAX_AGENT_IDENTITIES) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (num == 0) {
+	if (नुमेरो == 0) {
 		r = SSH_ERR_AGENT_NO_IDENTITIES;
 		goto out;
 	}
 
 	/* Deserialise the response into a list of keys/comments */
 	if ((idl = calloc(1, sizeof(*idl))) == NULL ||
-	    (idl->keys = calloc(num, sizeof(*idl->keys))) == NULL ||
-	    (idl->comments = calloc(num, sizeof(*idl->comments))) == NULL) {
+	    (idl->मगा_सुसि = calloc(नुमेरो, sizeof(*idl->मगा_सुसि))) == NULL ||
+	    (idl->comments = calloc(नुमेरो, sizeof(*idl->comments))) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	for (i = 0; i < num;) {
-		if ((r = deserialise_identity2(msg, &(idl->keys[i]),
+	for (i = 0; i < नुमेरो;) {
+		if ((r = deserialise_identity2(मेनसाहे, &(idl->मगा_सुसि[i]),
 		    &(idl->comments[i]))) != 0) {
-			if (r == SSH_ERR_KEY_TYPE_UNKNOWN) {
+			if (r == SSH_ERR_सुसि_TYPE_UNKNOWN) {
 				/* Gracefully skip unknown key types */
-				num--;
+				नुमेरो--;
 				continue;
 			} else
 				goto out;
 		}
 		i++;
 	}
-	idl->nkeys = num;
+	idl->nkeys = नुमेरो;
 	*idlp = idl;
 	idl = NULL;
 	r = 0;
  out:
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	if (idl != NULL)
 		ssh_free_identitylist(idl);
 	return r;
@@ -339,12 +339,12 @@ ssh_free_identitylist(struct ssh_identitylist *idl)
 	if (idl == NULL)
 		return;
 	for (i = 0; i < idl->nkeys; i++) {
-		if (idl->keys != NULL)
-			sshkey_free(idl->keys[i]);
+		if (idl->मगा_सुसि != NULL)
+			sshkey_free(idl->मगा_सुसि[i]);
 		if (idl->comments != NULL)
 			free(idl->comments[i]);
 	}
-	free(idl->keys);
+	free(idl->मगा_सुसि);
 	free(idl->comments);
 	free(idl);
 }
@@ -354,9 +354,9 @@ ssh_free_identitylist(struct ssh_identitylist *idl)
  * Returns 0 if found, or a negative SSH_ERR_* error code on failure.
  */
 int
-ssh_agent_has_key(int sock, const struct sshkey *key)
+ssh_agent_has_सुसि(int sock, const struct sshkey *सुसि)
 {
-	int r, ret = SSH_ERR_KEY_NOT_FOUND;
+	int r, ret = SSH_ERR_सुसि_NOT_FOUND;
 	size_t i;
 	struct ssh_identitylist *idlist = NULL;
 
@@ -365,7 +365,7 @@ ssh_agent_has_key(int sock, const struct sshkey *key)
 	}
 
 	for (i = 0; i < idlist->nkeys; i++) {
-		if (sshkey_equal_public(idlist->keys[i], key)) {
+		if (sshkey_equal_public(idlist->मगा_सुसि[i], सुसि)) {
 			ret = 0;
 			break;
 		}
@@ -385,9 +385,9 @@ ssh_agent_has_key(int sock, const struct sshkey *key)
 
 /* encode signature algorithm in flag bits, so we can keep the msg format */
 static u_int
-agent_encode_alg(const struct sshkey *key, const char *alg)
+agent_encode_alg(const struct sshkey *सुसि, const char *alg)
 {
-	if (alg != NULL && sshkey_type_plain(key->type) == KEY_RSA) {
+	if (alg != NULL && sshkey_type_plain(सुसि->type) == सुसि_RSA) {
 		if (strcmp(alg, "rsa-sha2-256") == 0 ||
 		    strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
 			return SSH_AGENT_RSA_SHA2_256;
@@ -400,11 +400,11 @@ agent_encode_alg(const struct sshkey *key, const char *alg)
 
 /* ask agent to sign data, returns err.h code on error, 0 on success */
 int
-ssh_agent_sign(int sock, const struct sshkey *key,
+ssh_agent_sign(int sock, const struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen, const char *alg, u_int compat)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	u_char *sig = NULL, type = 0;
 	size_t len = 0;
 	u_int flags = 0;
@@ -413,19 +413,19 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 	*sigp = NULL;
 	*lenp = 0;
 
-	if (datalen > SSH_KEY_MAX_SIGN_DATA_SIZE)
+	if (datalen > SSH_सुसि_MAX_SIGN_DATA_SIZE)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	flags |= agent_encode_alg(key, alg);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_string(msg, data, datalen)) != 0 ||
-	    (r = sshbuf_put_u32(msg, flags)) != 0)
+	flags |= agent_encode_alg(सुसि, alg);
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
+	    (r = sshkey_puts(सुसि, मेनसाहे)) != 0 ||
+	    (r = sshbuf_put_string(मेनसाहे, data, datalen)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, flags)) != 0)
 		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
+	if ((r = ssh_request_reply(sock, मेनसाहे, मेनसाहे)) != 0)
 		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
+	if ((r = sshbuf_get_u8(मेनसाहे, &type)) != 0)
 		goto out;
 	if (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
@@ -434,7 +434,7 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if ((r = sshbuf_get_string(msg, &sig, &len)) != 0)
+	if ((r = sshbuf_get_string(मेनसाहे, &sig, &len)) != 0)
 		goto out;
 	/*
 	 * Check what we actually got back from the agent, in case it returned
@@ -443,7 +443,7 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 	 * We don't do this for FIDO signatures as webauthn vs plain are just
 	 * different signature formats and not entirely different algorithms.
 	 */
-	if (!sshkey_is_sk(key) &&
+	if (!sshkey_is_sk(सुसि) &&
 	    (r = sshkey_check_sigtype(sig, len, alg)) != 0)
 		goto out;
 	/* success */
@@ -454,7 +454,7 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 	r = 0;
  out:
 	freezero(sig, len);
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return r;
 }
 
@@ -475,8 +475,8 @@ encode_dest_constraint_hop(struct sshbuf *m,
 	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
 		goto out;
 	for (i = 0; i < dch->nkeys; i++) {
-		if ((r = sshkey_puts(dch->keys[i], b)) != 0 ||
-		    (r = sshbuf_put_u8(b, dch->key_is_ca[i] != 0)) != 0)
+		if ((r = sshkey_puts(dch->मगा_सुसि[i], b)) != 0 ||
+		    (r = sshbuf_put_u8(b, dch->सुसि_is_ca[i] != 0)) != 0)
 			goto out;
 	}
 	if ((r = sshbuf_put_stringb(m, b)) != 0)
@@ -585,39 +585,39 @@ encode_constraints(struct sshbuf *m, u_int life, u_int confirm,
  * This call is intended only for use by ssh-add(1) and like applications.
  */
 int
-ssh_add_identity_constrained(int sock, struct sshkey *key,
+ssh_add_identity_constrained(int sock, struct sshkey *सुसि,
     const char *comment, u_int life, u_int confirm,
     const char *provider, struct dest_constraint **dest_constraints,
     size_t ndest_constraints)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r, constrained = (life || confirm || provider || dest_constraints);
 	u_char type;
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
 
-	switch (key->type) {
+	switch (सुसि->type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_RSA_CERT:
-	case KEY_ECDSA:
-	case KEY_ECDSA_CERT:
-	case KEY_ECDSA_SK:
-	case KEY_ECDSA_SK_CERT:
+	case सुसि_RSA:
+	case सुसि_RSA_CERT:
+	case सुसि_ECDSA:
+	case सुसि_ECDSA_CERT:
+	case सुसि_ECDSA_SK:
+	case सुसि_ECDSA_SK_CERT:
 #endif
-	case KEY_ED25519:
-	case KEY_ED25519_CERT:
-	case KEY_MLDSA44_ED25519:
-	case KEY_MLDSA44_ED25519_CERT:
-	case KEY_ED25519_SK:
-	case KEY_ED25519_SK_CERT:
+	case सुसि_ED25519:
+	case सुसि_ED25519_CERT:
+	case सुसि_MLDSA44_ED25519:
+	case सुसि_MLDSA44_ED25519_CERT:
+	case सुसि_ED25519_SK:
+	case सुसि_ED25519_SK_CERT:
 		type = constrained ?
 		    SSH2_AGENTC_ADD_ID_CONSTRAINED :
 		    SSH2_AGENTC_ADD_IDENTITY;
-		if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-		    (r = sshkey_private_serialize(key, msg)) != 0 ||
-		    (r = sshbuf_put_cstring(msg, comment)) != 0)
+		if ((r = sshbuf_put_u8(मेनसाहे, type)) != 0 ||
+		    (r = sshkey_private_serialize(सुसि, मेनसाहे)) != 0 ||
+		    (r = sshbuf_put_cstring(मेनसाहे, comment)) != 0)
 			goto out;
 		break;
 	default:
@@ -625,15 +625,15 @@ ssh_add_identity_constrained(int sock, struct sshkey *key,
 		goto out;
 	}
 	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, provider,
+	    (r = encode_constraints(मेनसाहे, life, confirm, provider,
 	    dest_constraints, ndest_constraints, 0, NULL, 0)) != 0)
 		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	if ((r = ssh_request_reply_decode(sock, मेनसाहे)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return r;
 }
 
@@ -642,35 +642,35 @@ ssh_add_identity_constrained(int sock, struct sshkey *key,
  * This call is intended only for use by ssh-add(1) and like applications.
  */
 int
-ssh_remove_identity(int sock, const struct sshkey *key)
+ssh_remove_identity(int sock, const struct sshkey *सुसि)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r;
 	u_char *blob = NULL;
 	size_t blen;
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
 
-	if (key->type != KEY_UNSPEC) {
-		if ((r = sshkey_to_blob(key, &blob, &blen)) != 0)
+	if (सुसि->type != सुसि_UNSPEC) {
+		if ((r = sshkey_to_blob(सुसि, &blob, &blen)) != 0)
 			goto out;
-		if ((r = sshbuf_put_u8(msg,
+		if ((r = sshbuf_put_u8(मेनसाहे,
 		    SSH2_AGENTC_REMOVE_IDENTITY)) != 0 ||
-		    (r = sshbuf_put_string(msg, blob, blen)) != 0)
+		    (r = sshbuf_put_string(मेनसाहे, blob, blen)) != 0)
 			goto out;
 	} else {
 		r = SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	if ((r = ssh_request_reply_decode(sock, मेनसाहे)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	if (blob != NULL)
 		freezero(blob, blen);
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return r;
 }
 
@@ -684,34 +684,34 @@ ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
     struct dest_constraint **dest_constraints, size_t ndest_constraints,
     int cert_only, struct sshkey **certs, size_t ncerts)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r, constrained = (life || confirm || dest_constraints || certs);
 	u_char type;
 
 	if (add) {
 		type = constrained ?
-		    SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED :
-		    SSH_AGENTC_ADD_SMARTCARD_KEY;
+		    SSH_AGENTC_ADD_SMARTCARD_सुसि_CONSTRAINED :
+		    SSH_AGENTC_ADD_SMARTCARD_सुसि;
 	} else
-		type = SSH_AGENTC_REMOVE_SMARTCARD_KEY;
+		type = SSH_AGENTC_REMOVE_SMARTCARD_सुसि;
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, reader_id)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, pin)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, type)) != 0 ||
+	    (r = sshbuf_put_cstring(मेनसाहे, reader_id)) != 0 ||
+	    (r = sshbuf_put_cstring(मेनसाहे, pin)) != 0)
 		goto out;
 	if (constrained &&
-	    (r = encode_constraints(msg, life, confirm, NULL,
+	    (r = encode_constraints(मेनसाहे, life, confirm, NULL,
 	    dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) != 0)
 		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	if ((r = ssh_request_reply_decode(sock, मेनसाहे)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return r;
 }
 
@@ -726,51 +726,51 @@ ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
 int
 ssh_remove_all_identities(int sock, int version)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	u_char type = (version == 1) ?
 	    SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES :
 	    SSH2_AGENTC_REMOVE_ALL_IDENTITIES;
 	int r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, type)) != 0)
 		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	if ((r = ssh_request_reply_decode(sock, मेनसाहे)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return r;
 }
 
 /* Binds a session ID to a hostkey via the initial KEX signature. */
 int
-ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
+ssh_agent_bind_hostkey(int sock, const struct sshkey *सुसि,
     const struct sshbuf *session_id, const struct sshbuf *signature,
     int forwarding)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r;
 
-	if (key == NULL || session_id == NULL || signature == NULL)
+	if (सुसि == NULL || session_id == NULL || signature == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0 ||
-	    (r = sshkey_puts(key, msg)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, session_id)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, signature)) != 0 ||
-	    (r = sshbuf_put_u8(msg, forwarding ? 1 : 0)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(मेनसाहे, "session-bind@openssh.com")) != 0 ||
+	    (r = sshkey_puts(सुसि, मेनसाहे)) != 0 ||
+	    (r = sshbuf_put_stringb(मेनसाहे, session_id)) != 0 ||
+	    (r = sshbuf_put_stringb(मेनसाहे, signature)) != 0 ||
+	    (r = sshbuf_put_u8(मेनसाहे, forwarding ? 1 : 0)) != 0)
 		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	if ((r = ssh_request_reply_decode(sock, मेनसाहे)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return r;
 }
 
@@ -778,21 +778,21 @@ ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
 int
 ssh_agent_query_extensions(int sock, char ***exts)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r;
 	u_char type;
 	char *cp = NULL, **ret = NULL;
 	size_t i = 0;
 
 	*exts = NULL;
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "query")) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH_AGENTC_EXTENSION)) != 0 ||
+	    (r = sshbuf_put_cstring(मेनसाहे, "query")) != 0)
 		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
+	if ((r = ssh_request_reply(sock, मेनसाहे, मेनसाहे)) != 0)
 		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
+	if ((r = sshbuf_get_u8(मेनसाहे, &type)) != 0)
 		goto out;
 	if (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
@@ -800,15 +800,15 @@ ssh_agent_query_extensions(int sock, char ***exts)
 	}
 	/* Reply should start with "query" */
 	if (type != SSH_AGENT_EXTENSION_RESPONSE ||
-	   (r = sshbuf_get_cstring(msg, &cp, NULL)) != 0 ||
+	   (r = sshbuf_get_cstring(मेनसाहे, &cp, NULL)) != 0 ||
 	   strcmp(cp, "query") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
 	ret = xcalloc(1, sizeof(*ret));
-	while (sshbuf_len(msg)) {
+	while (sshbuf_len(मेनसाहे)) {
 		ret = xrecallocarray(ret, i + 1, i + 2, sizeof(*ret));
-		if ((r = sshbuf_get_cstring(msg, ret + i, NULL)) != 0) {
+		if ((r = sshbuf_get_cstring(मेनसाहे, ret + i, NULL)) != 0) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
@@ -821,6 +821,6 @@ ssh_agent_query_extensions(int sock, char ***exts)
  out:
 	free(cp);
 	stringlist_free(ret);
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return r;
 }

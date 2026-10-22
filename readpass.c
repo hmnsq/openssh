@@ -45,7 +45,7 @@
 #include "ssh.h"
 
 static char *
-ssh_askpass(char *askpass, const char *msg, const char *env_hint)
+ssh_askpass(char *askpass, const char *मेनसाहे, const char *env_hint)
 {
 	pid_t pid, ret;
 	size_t len;
@@ -74,7 +74,7 @@ ssh_askpass(char *askpass, const char *msg, const char *env_hint)
 			fatal_f("dup2: %s", strerror(errno));
 		if (env_hint != NULL)
 			setenv("SSH_ASKPASS_PROMPT", env_hint, 1);
-		execlp(askpass, askpass, msg, (char *)NULL);
+		execlp(askpass, askpass, मेनसाहे, (char *)NULL);
 		fatal_f("exec(%s): %s", askpass, strerror(errno));
 	}
 	close(p[1]);
@@ -196,13 +196,13 @@ read_passphrase(const char *prompt, int flags)
 int
 ask_permission(const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 	char *p, prompt[1024];
 	int allowed = 0;
 
-	va_start(args, fmt);
-	vsnprintf(prompt, sizeof(prompt), fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	vsnprintf(prompt, sizeof(prompt), fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	p = read_passphrase(prompt,
 	    RP_USE_ASKPASS|RP_ALLOW_EOF|RP_ASK_PERMISSION);
@@ -221,10 +221,10 @@ ask_permission(const char *fmt, ...)
 }
 
 static void
-writemsg(const char *msg)
+writemsg(const char *मेनसाहे)
 {
 	(void)write(STDERR_FILENO, "\r", 1);
-	(void)write(STDERR_FILENO, msg, strlen(msg));
+	(void)write(STDERR_FILENO, मेनसाहे, strlen(मेनसाहे));
 	(void)write(STDERR_FILENO, "\r\n", 2);
 }
 
@@ -236,16 +236,16 @@ struct notifier_ctx {
 struct notifier_ctx *
 notify_start(int force_askpass, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 	char *prompt = NULL;
 	pid_t pid = -1;
 	void (*osigchld)(int) = NULL;
 	const char *askpass, *s;
 	struct notifier_ctx *ret = NULL;
 
-	va_start(args, fmt);
-	xvasprintf(&prompt, fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	xvasprintf(&prompt, fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 
 	if (fflush(NULL) != 0)
 		error_f("fflush: %s", strerror(errno));
@@ -299,19 +299,19 @@ void
 notify_complete(struct notifier_ctx *ctx, const char *fmt, ...)
 {
 	int ret;
-	char *msg = NULL;
-	va_list args;
+	char *मेनसाहे = NULL;
+	va_list मगा_कातविरान;
 
 	if (ctx != NULL && fmt != NULL && ctx->pid == -1) {
 		/*
 		 * notify_start wrote to stderr, so send conclusion message
 		 * there too
 		*/
-		va_start(args, fmt);
-		xvasprintf(&msg, fmt, args);
-		va_end(args);
-		writemsg(msg);
-		free(msg);
+		va_start(मगा_कातविरान, fmt);
+		xvasprintf(&मेनसाहे, fmt, मगा_कातविरान);
+		va_end(मगा_कातविरान);
+		writemsg(मेनसाहे);
+		free(मेनसाहे);
 	}
 
 	if (ctx == NULL || ctx->pid <= 0) {

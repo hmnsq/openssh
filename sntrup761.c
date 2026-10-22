@@ -519,7 +519,7 @@ crypto_int16 crypto_int16_leq_01(crypto_int16 crypto_int16_x,crypto_int16 crypto
 
 __attribute__((unused))
 static inline
-int crypto_int16_ones_num(crypto_int16 crypto_int16_x) {
+int crypto_int16_ones_नुमेरो(crypto_int16 crypto_int16_x) {
   crypto_int16_unsigned crypto_int16_y = crypto_int16_x;
   const crypto_int16 C0 = 0x5555;
   const crypto_int16 C1 = 0x3333;
@@ -533,7 +533,7 @@ int crypto_int16_ones_num(crypto_int16 crypto_int16_x) {
 
 __attribute__((unused))
 static inline
-int crypto_int16_bottomzeros_num(crypto_int16 crypto_int16_x) {
+int crypto_int16_bottomzeros_नुमेरो(crypto_int16 crypto_int16_x) {
 #if defined(__GNUC__) && defined(__x86_64__)
   crypto_int16 fallback = 16;
   __asm__ ("bsfw %0,%0\n cmovew %1,%0" : "+&r"(crypto_int16_x) : "r"(fallback) : "cc");
@@ -546,7 +546,7 @@ int crypto_int16_bottomzeros_num(crypto_int16 crypto_int16_x) {
   crypto_int16 crypto_int16_y = crypto_int16_x ^ (crypto_int16_x-1);
   crypto_int16_y = ((crypto_int16) crypto_int16_y) >> 1;
   crypto_int16_y &= ~(crypto_int16_x & (((crypto_int16) 1) << (16-1)));
-  return crypto_int16_ones_num(crypto_int16_y);
+  return crypto_int16_ones_नुमेरो(crypto_int16_y);
 #endif
 }
 
@@ -1044,7 +1044,7 @@ crypto_int32 crypto_int32_leq_01(crypto_int32 crypto_int32_x,crypto_int32 crypto
 
 __attribute__((unused))
 static inline
-int crypto_int32_ones_num(crypto_int32 crypto_int32_x) {
+int crypto_int32_ones_नुमेरो(crypto_int32 crypto_int32_x) {
   crypto_int32_unsigned crypto_int32_y = crypto_int32_x;
   const crypto_int32 C0 = 0x55555555;
   const crypto_int32 C1 = 0x33333333;
@@ -1059,7 +1059,7 @@ int crypto_int32_ones_num(crypto_int32 crypto_int32_x) {
 
 __attribute__((unused))
 static inline
-int crypto_int32_bottomzeros_num(crypto_int32 crypto_int32_x) {
+int crypto_int32_bottomzeros_नुमेरो(crypto_int32 crypto_int32_x) {
 #if defined(__GNUC__) && defined(__x86_64__)
   crypto_int32 fallback = 32;
   __asm__ ("bsfl %0,%0\n cmovel %1,%0" : "+&r"(crypto_int32_x) : "r"(fallback) : "cc");
@@ -1072,7 +1072,7 @@ int crypto_int32_bottomzeros_num(crypto_int32 crypto_int32_x) {
   crypto_int32 crypto_int32_y = crypto_int32_x ^ (crypto_int32_x-1);
   crypto_int32_y = ((crypto_int32) crypto_int32_y) >> 1;
   crypto_int32_y &= ~(crypto_int32_x & (((crypto_int32) 1) << (32-1)));
-  return crypto_int32_ones_num(crypto_int32_y);
+  return crypto_int32_ones_नुमेरो(crypto_int32_y);
 #endif
 }
 
@@ -1578,7 +1578,7 @@ crypto_int64 crypto_int64_leq_01(crypto_int64 crypto_int64_x,crypto_int64 crypto
 
 __attribute__((unused))
 static inline
-int crypto_int64_ones_num(crypto_int64 crypto_int64_x) {
+int crypto_int64_ones_नुमेरो(crypto_int64 crypto_int64_x) {
   crypto_int64_unsigned crypto_int64_y = crypto_int64_x;
   const crypto_int64 C0 = 0x5555555555555555;
   const crypto_int64 C1 = 0x3333333333333333;
@@ -1594,7 +1594,7 @@ int crypto_int64_ones_num(crypto_int64 crypto_int64_x) {
 
 __attribute__((unused))
 static inline
-int crypto_int64_bottomzeros_num(crypto_int64 crypto_int64_x) {
+int crypto_int64_bottomzeros_नुमेरो(crypto_int64 crypto_int64_x) {
 #if defined(__GNUC__) && defined(__x86_64__)
   crypto_int64 fallback = 64;
   __asm__ ("bsfq %0,%0\n cmoveq %1,%0" : "+&r"(crypto_int64_x) : "r"(fallback) : "cc");
@@ -1607,7 +1607,7 @@ int crypto_int64_bottomzeros_num(crypto_int64 crypto_int64_x) {
   crypto_int64 crypto_int64_y = crypto_int64_x ^ (crypto_int64_x-1);
   crypto_int64_y = ((crypto_int64) crypto_int64_y) >> 1;
   crypto_int64_y &= ~(crypto_int64_x & (((crypto_int64) 1) << (64-1)));
-  return crypto_int64_ones_num(crypto_int64_y);
+  return crypto_int64_ones_नुमेरो(crypto_int64_y);
 #endif
 }
 
@@ -1618,14 +1618,14 @@ int crypto_int64_bottomzeros_num(crypto_int64 crypto_int64_x) {
 
 static void crypto_sort_int32(void *array,long long n)
 {
-  long long top,p,q,r,i,j;
+  long long इताअस,p,q,r,i,j;
   int32 *x = array;
 
   if (n < 2) return;
-  top = 1;
-  while (top < n - top) top += top;
+  इताअस = 1;
+  while (इताअस < n - इताअस) इताअस += इताअस;
 
-  for (p = top;p >= 1;p >>= 1) {
+  for (p = इताअस;p >= 1;p >>= 1) {
     i = 0;
     while (i + 2 * p <= n) {
       for (j = i;j < i + p;++j)
@@ -1637,7 +1637,7 @@ static void crypto_sort_int32(void *array,long long n)
 
     i = 0;
     j = 0;
-    for (q = top;q > p;q >>= 1) {
+    for (q = इताअस;q > p;q >>= 1) {
       if (j != i) for (;;) {
         if (j == n - q) goto done;
         int32 a = x[j + p];
@@ -1700,7 +1700,7 @@ typedef int16_t Fq;
 #define Hash_bytes 32
 #define Small_bytes ((p + 3) / 4)
 typedef small Inputs[p];
-#define SecretKeys_bytes (2 * Small_bytes)
+#define Secret_मगा_सुसि_bytes (2 * Small_bytes)
 #define Confirm_bytes 32
 
 static small F3_freeze(int16_t x) { return x - 3 * ((10923 * x + 16384) >> 15); }
@@ -1974,7 +1974,7 @@ static void Small_random(small *out) {
   for (i = 0; i < p; ++i) out[i] = (((L[i] & 0x3fffffff) * 3) >> 30) - 1;
   explicit_bzero(L, sizeof(L));
 }
-static void KeyGen(Fq *h, small *f, small *ginv) {
+static void सुसि_Gen(Fq *h, small *f, small *ginv) {
   small g[p];
   Fq finv[p];
   for (;;) {
@@ -2062,7 +2062,7 @@ static void Rounded_decode(Fq *r, const unsigned char *s) {
 static void ZKeyGen(unsigned char *pk, unsigned char *sk) {
   Fq h[p];
   small f[p], v[p];
-  KeyGen(h, f, v);
+  सुसि_Gen(h, f, v);
   Rq_encode(pk, h);
   Small_encode(sk, f);
   Small_encode(sk + Small_bytes, v);
@@ -2103,7 +2103,7 @@ static void HashSession(unsigned char *k, int b, const unsigned char *y, const u
 int crypto_kem_sntrup761_keypair(unsigned char *pk, unsigned char *sk) {
   int i;
   ZKeyGen(pk, sk);
-  sk += SecretKeys_bytes;
+  sk += Secret_मगा_सुसि_bytes;
   for (i = 0; i < crypto_kem_sntrup761_PUBLICKEYBYTES; ++i) *sk++ = pk[i];
   randombytes(sk, Small_bytes);
   Hash_prefix(sk + Small_bytes, 4, pk, crypto_kem_sntrup761_PUBLICKEYBYTES);
@@ -2134,7 +2134,7 @@ static int Ciphertexts_diff_mask(const unsigned char *c, const unsigned char *c2
 }
 
 int crypto_kem_sntrup761_dec(unsigned char *k, const unsigned char *c, const unsigned char *sk) {
-  const unsigned char *pk = sk + SecretKeys_bytes;
+  const unsigned char *pk = sk + Secret_मगा_सुसि_bytes;
   const unsigned char *rho = pk + crypto_kem_sntrup761_PUBLICKEYBYTES;
   const unsigned char *cache = rho + Small_bytes;
   Inputs r;

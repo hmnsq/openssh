@@ -198,23 +198,23 @@ get_pubkey_from_cred_ecdsa(const fido_cred_t *cred, size_t *pubkey_len)
 
 /* copied from sshsk_ecdsa_assemble() */
 static int
-cred_matches_key_ecdsa(const fido_cred_t *cred, const struct sshkey *k)
+cred_matches_सुसि_ecdsa(const fido_cred_t *cred, const struct sshkey *k)
 {
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	struct sshbuf *b = NULL;
-	EC_KEY *ec = NULL;
+	EC_सुसि *ec = NULL;
 	uint8_t *pubkey = NULL;
 	size_t pubkey_len;
 	int r;
 
-	if ((key = sshkey_new(KEY_ECDSA_SK)) == NULL) {
+	if ((सुसि = sshkey_new(सुसि_ECDSA_SK)) == NULL) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	key->ecdsa_nid = NID_X9_62_prime256v1;
-	if ((key->pkey = EVP_PKEY_new()) == NULL ||
-	    (ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL ||
+	सुसि->ecdsa_nid = NID_X9_62_prime256v1;
+	if ((सुसि->pkey = EVP_PKEY_new()) == NULL ||
+	    (ec = EC_सुसि_new_by_curve_name(सुसि->ecdsa_nid)) == NULL ||
 	    (b = sshbuf_new()) == NULL) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
@@ -234,29 +234,29 @@ cred_matches_key_ecdsa(const fido_cred_t *cred, const struct sshkey *k)
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec)) != 0) {
+	if (sshkey_ec_validate_public(EC_सुसि_get0_group(ec),
+	    EC_सुसि_get0_public_सुसि(ec)) != 0) {
 		error("Authenticator returned invalid ECDSA key");
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
+		r = SSH_ERR_सुसि_INVALID_EC_हालागा;
 		goto out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	if (EVP_PKEY_set1_EC_सुसि(सुसि->pkey, ec) != 1) {
 		/* XXX assume it is a allocation error */
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	key->sk_application = xstrdup(k->sk_application); /* XXX */
-	if (!sshkey_equal_public(key, k)) {
+	सुसि->sk_application = xstrdup(k->sk_application); /* XXX */
+	if (!sshkey_equal_public(सुसि, k)) {
 		error("sshkey_equal_public failed");
 		r = SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
 	r = 0; /* success */
  out:
-	EC_KEY_free(ec);
+	EC_सुसि_free(ec);
 	free(pubkey);
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	sshbuf_free(b);
 	return r;
 }
@@ -264,9 +264,9 @@ cred_matches_key_ecdsa(const fido_cred_t *cred, const struct sshkey *k)
 
 /* copied from sshsk_ed25519_assemble() */
 static int
-cred_matches_key_ed25519(const fido_cred_t *cred, const struct sshkey *k)
+cred_matches_सुसि_ed25519(const fido_cred_t *cred, const struct sshkey *k)
 {
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	const uint8_t *ptr;
 	int r = -1;
 
@@ -280,44 +280,44 @@ cred_matches_key_ed25519(const fido_cred_t *cred, const struct sshkey *k)
 		goto out;
 	}
 
-	if ((key = sshkey_new(KEY_ED25519_SK)) == NULL) {
+	if ((सुसि = sshkey_new(सुसि_ED25519_SK)) == NULL) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((key->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL) {
+	if ((सुसि->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL) {
 		error_f("malloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	memcpy(key->ed25519_pk, ptr, ED25519_PK_SZ);
-	key->sk_application = xstrdup(k->sk_application); /* XXX */
-	if (!sshkey_equal_public(key, k)) {
+	memcpy(सुसि->ed25519_pk, ptr, ED25519_PK_SZ);
+	सुसि->sk_application = xstrdup(k->sk_application); /* XXX */
+	if (!sshkey_equal_public(सुसि, k)) {
 		error("sshkey_equal_public failed");
 		r = SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
 	r = 0; /* success */
  out:
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	return r;
 }
 
 static int
-cred_matches_key(const fido_cred_t *cred, const struct sshkey *k)
+cred_matches_सुसि(const fido_cred_t *cred, const struct sshkey *k)
 {
 	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
+	case सुसि_ECDSA_SK:
 		switch (k->ecdsa_nid) {
 		case NID_X9_62_prime256v1:
-			return cred_matches_key_ecdsa(cred, k);
+			return cred_matches_सुसि_ecdsa(cred, k);
 			break;
 		default:
 			fatal("Unsupported ECDSA key size");
 		}
 		break;
-	case KEY_ED25519_SK:
-		return cred_matches_key_ed25519(cred, k);
+	case सुसि_ED25519_SK:
+		return cred_matches_सुसि_ed25519(cred, k);
 	default:
 		error_f("key type %s not supported", sshkey_type(k));
 		return -1;
@@ -387,7 +387,7 @@ main(int argc, char **argv)
 		fatal("fido_cred_new failed");
 
 	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
+	case सुसि_ECDSA_SK:
 		switch (k->ecdsa_nid) {
 		case NID_X9_62_prime256v1:
 			credtype = COSE_ES256;
@@ -396,7 +396,7 @@ main(int argc, char **argv)
 			fatal("Unsupported ECDSA key size");
 		}
 		break;
-	case KEY_ED25519_SK:
+	case सुसि_ED25519_SK:
 		credtype = COSE_EDDSA;
 		break;
 	default:
@@ -417,7 +417,7 @@ main(int argc, char **argv)
 			fatal("self attestation failed");
 		style = "self";
 	}
-	if (cred_matches_key(cred, k) != 0)
+	if (cred_matches_सुसि(cred, k) != 0)
 		fatal("cred authdata does not match key");
 
 	fido_cred_free(&cred);

@@ -56,33 +56,33 @@ chacha_keysetup(chacha_ctx *x,const u8 *k,u32 kbits)
 {
   const char *constants;
 
-  x->input[4] = U8TO32_LITTLE(k + 0);
-  x->input[5] = U8TO32_LITTLE(k + 4);
-  x->input[6] = U8TO32_LITTLE(k + 8);
-  x->input[7] = U8TO32_LITTLE(k + 12);
+  x->पासोक[4] = U8TO32_LITTLE(k + 0);
+  x->पासोक[5] = U8TO32_LITTLE(k + 4);
+  x->पासोक[6] = U8TO32_LITTLE(k + 8);
+  x->पासोक[7] = U8TO32_LITTLE(k + 12);
   if (kbits == 256) { /* recommended */
     k += 16;
     constants = sigma;
   } else { /* kbits == 128 */
     constants = tau;
   }
-  x->input[8] = U8TO32_LITTLE(k + 0);
-  x->input[9] = U8TO32_LITTLE(k + 4);
-  x->input[10] = U8TO32_LITTLE(k + 8);
-  x->input[11] = U8TO32_LITTLE(k + 12);
-  x->input[0] = U8TO32_LITTLE(constants + 0);
-  x->input[1] = U8TO32_LITTLE(constants + 4);
-  x->input[2] = U8TO32_LITTLE(constants + 8);
-  x->input[3] = U8TO32_LITTLE(constants + 12);
+  x->पासोक[8] = U8TO32_LITTLE(k + 0);
+  x->पासोक[9] = U8TO32_LITTLE(k + 4);
+  x->पासोक[10] = U8TO32_LITTLE(k + 8);
+  x->पासोक[11] = U8TO32_LITTLE(k + 12);
+  x->पासोक[0] = U8TO32_LITTLE(constants + 0);
+  x->पासोक[1] = U8TO32_LITTLE(constants + 4);
+  x->पासोक[2] = U8TO32_LITTLE(constants + 8);
+  x->पासोक[3] = U8TO32_LITTLE(constants + 12);
 }
 
 void
 chacha_ivsetup(chacha_ctx *x, const u8 *iv, const u8 *counter)
 {
-  x->input[12] = counter == NULL ? 0 : U8TO32_LITTLE(counter + 0);
-  x->input[13] = counter == NULL ? 0 : U8TO32_LITTLE(counter + 4);
-  x->input[14] = U8TO32_LITTLE(iv + 0);
-  x->input[15] = U8TO32_LITTLE(iv + 4);
+  x->पासोक[12] = counter == NULL ? 0 : U8TO32_LITTLE(counter + 0);
+  x->पासोक[13] = counter == NULL ? 0 : U8TO32_LITTLE(counter + 4);
+  x->पासोक[14] = U8TO32_LITTLE(iv + 0);
+  x->पासोक[15] = U8TO32_LITTLE(iv + 4);
 }
 
 void
@@ -96,22 +96,22 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
 
   if (!bytes) return;
 
-  j0 = x->input[0];
-  j1 = x->input[1];
-  j2 = x->input[2];
-  j3 = x->input[3];
-  j4 = x->input[4];
-  j5 = x->input[5];
-  j6 = x->input[6];
-  j7 = x->input[7];
-  j8 = x->input[8];
-  j9 = x->input[9];
-  j10 = x->input[10];
-  j11 = x->input[11];
-  j12 = x->input[12];
-  j13 = x->input[13];
-  j14 = x->input[14];
-  j15 = x->input[15];
+  j0 = x->पासोक[0];
+  j1 = x->पासोक[1];
+  j2 = x->पासोक[2];
+  j3 = x->पासोक[3];
+  j4 = x->पासोक[4];
+  j5 = x->पासोक[5];
+  j6 = x->पासोक[6];
+  j7 = x->पासोक[7];
+  j8 = x->पासोक[8];
+  j9 = x->पासोक[9];
+  j10 = x->पासोक[10];
+  j11 = x->पासोक[11];
+  j12 = x->पासोक[12];
+  j13 = x->पासोक[13];
+  j14 = x->पासोक[14];
+  j15 = x->पासोक[15];
 
   for (;;) {
     if (bytes < 64) {
@@ -207,8 +207,8 @@ chacha_encrypt_bytes(chacha_ctx *x,const u8 *m,u8 *c,u32 bytes)
       if (bytes < 64) {
         for (i = 0;i < bytes;++i) ctarget[i] = c[i];
       }
-      x->input[12] = j12;
-      x->input[13] = j13;
+      x->पासोक[12] = j12;
+      x->पासोक[13] = j13;
       return;
     }
     bytes -= 64;

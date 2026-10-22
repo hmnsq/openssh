@@ -115,9 +115,9 @@ client_alive_check(struct ssh *ssh)
 	int r, channel_id;
 
 	/* timeout, check to see how many we have had */
-	if (options.client_alive_count_max > 0 &&
+	if (options.client_alive_बिलांग_max > 0 &&
 	    ssh_packet_inc_alive_timeouts(ssh) >
-	    options.client_alive_count_max) {
+	    options.client_alive_बिलांग_max) {
 		sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
 		logit("Timeout, client not responding from %s", remote_id);
 		cleanup_exit(255);
@@ -128,7 +128,7 @@ client_alive_check(struct ssh *ssh)
 	 * we should get back a failure
 	 */
 	if ((channel_id = channel_find_open(ssh)) == -1) {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+		if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_GLOBAL_REQUEST)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, "keepalive@openssh.com"))
 		    != 0 ||
 		    (r = sshpkt_put_u8(ssh, 1)) != 0) /* boolean: want reply */
@@ -264,7 +264,7 @@ wait_until_can_do_something(struct ssh *ssh,
  * in buffers and processed later.
  */
 static int
-process_input(struct ssh *ssh, int connection_in)
+process_पासोक(struct ssh *ssh, int connection_in)
 {
 	int r;
 
@@ -309,7 +309,7 @@ process_output(struct ssh *ssh, int connection_out)
 }
 
 static void
-process_buffered_input_packets(struct ssh *ssh)
+process_buffered_पासोक_packets(struct ssh *ssh)
 {
 	ssh_dispatch_run_fatal(ssh, DISPATCH_NONBLOCK, NULL);
 }
@@ -357,7 +357,7 @@ server_loop2(struct ssh *ssh, Authctxt *authctxt)
 	server_init_dispatch(ssh);
 
 	for (;;) {
-		process_buffered_input_packets(ssh);
+		process_buffered_पासोक_packets(ssh);
 
 		if (!ssh_packet_is_rekeying(ssh) &&
 		    ssh_packet_not_very_much_data_to_write(ssh))
@@ -383,7 +383,7 @@ server_loop2(struct ssh *ssh, Authctxt *authctxt)
 
 		channel_after_poll(ssh, pfd, npfd_active);
 		if (conn_in_ready &&
-		    process_input(ssh, connection_in) < 0)
+		    process_पासोक(ssh, connection_in) < 0)
 			break;
 		/* A timeout may have triggered rekeying */
 		if ((r = ssh_packet_check_rekey(ssh)) != 0)
@@ -402,7 +402,7 @@ server_loop2(struct ssh *ssh, Authctxt *authctxt)
 }
 
 static int
-server_input_keep_alive(int type, uint32_t seq, struct ssh *ssh)
+server_पासोक_keep_alive(int type, uint32_t seq, struct ssh *ssh)
 {
 	debug("Got %d/%u for keepalive", type, seq);
 	/*
@@ -609,7 +609,7 @@ server_request_session(struct ssh *ssh)
 }
 
 static int
-server_input_channel_open(int type, uint32_t seq, struct ssh *ssh)
+server_पासोक_channel_open(int type, uint32_t seq, struct ssh *ssh)
 {
 	Channel *c = NULL;
 	char *ctype = NULL;
@@ -641,7 +641,7 @@ server_input_channel_open(int type, uint32_t seq, struct ssh *ssh)
 		c->remote_window = rwindow;
 		c->remote_maxpacket = rmaxpack;
 		if (c->type != SSH_CHANNEL_CONNECTING) {
-			if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_OPEN_CONFIRMATION)) != 0 ||
+			if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_CHANNEL_OPEN_CONFIRMATION)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->self)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->local_window)) != 0 ||
@@ -653,7 +653,7 @@ server_input_channel_open(int type, uint32_t seq, struct ssh *ssh)
 		}
 	} else {
 		debug_f("failure %s", ctype);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_OPEN_FAILURE)) != 0 ||
+		if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_CHANNEL_OPEN_FAILURE)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, rchan)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, reason)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, errmsg ? errmsg : "open failed")) != 0 ||
@@ -668,11 +668,11 @@ server_input_channel_open(int type, uint32_t seq, struct ssh *ssh)
 }
 
 static int
-server_input_hostkeys_prove(struct ssh *ssh, struct sshbuf **respp)
+server_पासोक_hostkeys_prove(struct ssh *ssh, struct sshbuf **respp)
 {
 	struct sshbuf *resp = NULL;
 	struct sshbuf *sigbuf = NULL;
-	struct sshkey *key = NULL, *key_pub = NULL, *key_prv = NULL;
+	struct sshkey *सुसि = NULL, *सुसि_pub = NULL, *सुसि_prv = NULL;
 	int r, ndx, success = 0;
 	const u_char *blob;
 	const char *sigalg, *kex_rsa_sigalg = NULL;
@@ -682,13 +682,13 @@ server_input_hostkeys_prove(struct ssh *ssh, struct sshbuf **respp)
 	if ((resp = sshbuf_new()) == NULL || (sigbuf = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new");
 	if (sshkey_type_plain(sshkey_type_from_name(
-	    ssh->kex->hostkey_alg)) == KEY_RSA)
+	    ssh->kex->hostkey_alg)) == सुसि_RSA)
 		kex_rsa_sigalg = ssh->kex->hostkey_alg;
 	while (ssh_packet_remaining(ssh) > 0) {
-		sshkey_free(key);
-		key = NULL;
+		sshkey_free(सुसि);
+		सुसि = NULL;
 		if ((r = sshpkt_get_string_direct(ssh, &blob, &blen)) != 0 ||
-		    (r = sshkey_from_blob(blob, blen, &key)) != 0) {
+		    (r = sshkey_from_blob(blob, blen, &सुसि)) != 0) {
 			error_fr(r, "parse key");
 			goto out;
 		}
@@ -696,16 +696,16 @@ server_input_hostkeys_prove(struct ssh *ssh, struct sshbuf **respp)
 		 * Better check that this is actually one of our hostkeys
 		 * before attempting to sign anything with it.
 		 */
-		if ((ndx = ssh->kex->host_key_index(key, 1, ssh)) == -1) {
-			error_f("unknown host %s key", sshkey_type(key));
+		if ((ndx = ssh->kex->host_सुसि_index(सुसि, 1, ssh)) == -1) {
+			error_f("unknown host %s key", sshkey_type(सुसि));
 			goto out;
 		}
 		/*
 		 * XXX refactor: make kex->sign just use an index rather
 		 * than passing in public and private keys
 		 */
-		if ((key_prv = get_hostkey_by_index(ndx)) == NULL &&
-		    (key_pub = get_hostkey_public_by_index(ndx, ssh)) == NULL) {
+		if ((सुसि_prv = get_hostkey_by_index(ndx)) == NULL &&
+		    (सुसि_pub = get_hostkey_public_by_index(ndx, ssh)) == NULL) {
 			error_f("can't retrieve hostkey %d", ndx);
 			goto out;
 		}
@@ -716,8 +716,8 @@ server_input_hostkeys_prove(struct ssh *ssh, struct sshbuf **respp)
 		 * For RSA keys, prefer to use the signature type negotiated
 		 * during KEX to the default (SHA1).
 		 */
-		sigalg = sshkey_ssh_name(key);
-		if (sshkey_type_plain(key->type) == KEY_RSA) {
+		sigalg = sshkey_ssh_name(सुसि);
+		if (sshkey_type_plain(सुसि->type) == सुसि_RSA) {
 			if (kex_rsa_sigalg != NULL)
 				sigalg = kex_rsa_sigalg;
 			else if (ssh->kex->flags & KEX_RSA_SHA2_512_SUPPORTED)
@@ -727,13 +727,13 @@ server_input_hostkeys_prove(struct ssh *ssh, struct sshbuf **respp)
 		}
 
 		debug3_f("sign %s key (index %d) using sigalg %s",
-		    sshkey_type(key), ndx, sigalg == NULL ? "default" : sigalg);
+		    sshkey_type(सुसि), ndx, sigalg == NULL ? "default" : sigalg);
 		if ((r = sshbuf_put_cstring(sigbuf,
 		    "hostkeys-prove-00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_stringb(sigbuf,
 		    ssh->kex->session_id)) != 0 ||
-		    (r = sshkey_puts(key, sigbuf)) != 0 ||
-		    (r = ssh->kex->sign(ssh, key_prv, key_pub, &sig, &slen,
+		    (r = sshkey_puts(सुसि, sigbuf)) != 0 ||
+		    (r = ssh->kex->sign(ssh, सुसि_prv, सुसि_pub, &sig, &slen,
 		    sshbuf_ptr(sigbuf), sshbuf_len(sigbuf), sigalg)) != 0 ||
 		    (r = sshbuf_put_string(resp, sig, slen)) != 0) {
 			error_fr(r, "assemble signature");
@@ -748,12 +748,12 @@ server_input_hostkeys_prove(struct ssh *ssh, struct sshbuf **respp)
 	free(sig);
 	sshbuf_free(resp);
 	sshbuf_free(sigbuf);
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	return success;
 }
 
 static int
-server_input_global_request(int type, uint32_t seq, struct ssh *ssh)
+server_पासोक_global_request(int type, uint32_t seq, struct ssh *ssh)
 {
 	char *rtype = NULL;
 	u_char want_reply = 0;
@@ -839,12 +839,12 @@ server_input_global_request(int type, uint32_t seq, struct ssh *ssh)
 		no_more_sessions = 1;
 		success = 1;
 	} else if (strcmp(rtype, "hostkeys-prove-00@openssh.com") == 0) {
-		success = server_input_hostkeys_prove(ssh, &resp);
+		success = server_पासोक_hostkeys_prove(ssh, &resp);
 	}
 	/* XXX sshpkt_get_end() */
 	if (want_reply) {
 		if ((r = sshpkt_start(ssh, success ?
-		    SSH2_MSG_REQUEST_SUCCESS : SSH2_MSG_REQUEST_FAILURE)) != 0 ||
+		    SSH2_मेनसाहे_REQUEST_SUCCESS : SSH2_मेनसाहे_REQUEST_FAILURE)) != 0 ||
 		    (success && resp != NULL && (r = sshpkt_putb(ssh, resp)) != 0) ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
@@ -858,7 +858,7 @@ server_input_global_request(int type, uint32_t seq, struct ssh *ssh)
 }
 
 static int
-server_input_channel_req(int type, uint32_t seq, struct ssh *ssh)
+server_पासोक_channel_req(int type, uint32_t seq, struct ssh *ssh)
 {
 	Channel *c;
 	int r, success = 0;
@@ -884,12 +884,12 @@ server_input_channel_req(int type, uint32_t seq, struct ssh *ssh)
 		chan_rcvd_eow(ssh, c);
 	} else if ((c->type == SSH_CHANNEL_LARVAL ||
 	    c->type == SSH_CHANNEL_OPEN) && strcmp(c->ctype, "session") == 0)
-		success = session_input_channel_req(ssh, c, rtype);
+		success = session_पासोक_channel_req(ssh, c, rtype);
 	if (want_reply && !(c->flags & CHAN_CLOSE_SENT)) {
 		if (!c->have_remote_id)
 			fatal_f("channel %d: no remote_id", c->self);
 		if ((r = sshpkt_start(ssh, success ?
-		    SSH2_MSG_CHANNEL_SUCCESS : SSH2_MSG_CHANNEL_FAILURE)) != 0 ||
+		    SSH2_मेनसाहे_CHANNEL_SUCCESS : SSH2_मेनसाहे_CHANNEL_FAILURE)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			sshpkt_fatal(ssh, r, "%s: send reply", __func__);
@@ -903,21 +903,21 @@ server_init_dispatch(struct ssh *ssh)
 {
 	debug("server_init_dispatch");
 	ssh_dispatch_init(ssh, &dispatch_protocol_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_CLOSE, &channel_input_oclose);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_DATA, &channel_input_data);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_EOF, &channel_input_ieof);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_EXTENDED_DATA, &channel_input_extended_data);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_OPEN, &server_input_channel_open);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_OPEN_CONFIRMATION, &channel_input_open_confirmation);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_OPEN_FAILURE, &channel_input_open_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_REQUEST, &server_input_channel_req);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_WINDOW_ADJUST, &channel_input_window_adjust);
-	ssh_dispatch_set(ssh, SSH2_MSG_GLOBAL_REQUEST, &server_input_global_request);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_CLOSE, &channel_पासोक_oclose);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_DATA, &channel_पासोक_data);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_EOF, &channel_पासोक_ieof);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_EXTENDED_DATA, &channel_पासोक_extended_data);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_OPEN, &server_पासोक_channel_open);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_OPEN_CONFIRMATION, &channel_पासोक_open_confirmation);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_OPEN_FAILURE, &channel_पासोक_open_failure);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_REQUEST, &server_पासोक_channel_req);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_WINDOW_ADJUST, &channel_पासोक_window_adjust);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_GLOBAL_REQUEST, &server_पासोक_global_request);
 	/* client_alive */
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_SUCCESS, &server_input_keep_alive);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_FAILURE, &server_input_keep_alive);
-	ssh_dispatch_set(ssh, SSH2_MSG_REQUEST_SUCCESS, &server_input_keep_alive);
-	ssh_dispatch_set(ssh, SSH2_MSG_REQUEST_FAILURE, &server_input_keep_alive);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_SUCCESS, &server_पासोक_keep_alive);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_CHANNEL_FAILURE, &server_पासोक_keep_alive);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_REQUEST_SUCCESS, &server_पासोक_keep_alive);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_REQUEST_FAILURE, &server_पासोक_keep_alive);
 	/* rekeying */
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_KEXINIT, &kex_पासोक_kexinit);
 }

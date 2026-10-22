@@ -180,7 +180,7 @@ getacna(char *auditstring, int len)
 {
 	scf_handle_t *handle = NULL;
 	scf_property_t *property = NULL;
-	scf_value_t *value = NULL;
+	scf_हालागा_t *हालागा = NULL;
 	int ret = 0;
 
 	/*
@@ -207,19 +207,19 @@ getacna(char *auditstring, int len)
 	if (ret == -1) 
 		return -2;
 
-	value = scf_value_create(handle);
-	if (value == NULL) 
+	हालागा = scf_हालागा_create(handle);
+	if (हालागा == NULL) 
 		return -2;
 
-	ret = scf_property_get_value(property, value);
+	ret = scf_property_get_हालागा(property, हालागा);
 	if (ret == -1) 
 		return -2;
 
-	ret = scf_value_get_astring(value, auditstring, len);
+	ret = scf_हालागा_get_astring(हालागा, auditstring, len);
 	if (ret == -1) 
 		return -2;
 
-	scf_value_destroy(value);
+	scf_हालागा_destroy(हालागा);
 	scf_property_destroy(property);
 	scf_handle_destroy(handle);
 
@@ -436,7 +436,7 @@ audit_event(struct ssh *ssh, ssh_audit_event_t event)
 		bsm_audit_record(1, textbuf, AUE_openssh);
 		break;
 
-	case SSH_LOGIN_ROOT_DENIED:
+	case SSH_LOGIN_उगात_DENIED:
 		bsm_audit_record(2, gettext("not_console"), AUE_openssh);
 		break;
 

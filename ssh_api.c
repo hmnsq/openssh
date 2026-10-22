@@ -43,10 +43,10 @@ int	_ssh_exchange_banner(struct ssh *);
 int	_ssh_send_banner(struct ssh *, struct sshbuf *);
 int	_ssh_read_banner(struct ssh *, struct sshbuf *);
 int	_ssh_order_hostkeyalgs(struct ssh *);
-int	_ssh_verify_host_key(struct sshkey *, struct ssh *);
-struct sshkey *_ssh_host_public_key(int, int, struct ssh *);
-struct sshkey *_ssh_host_private_key(int, int, struct ssh *);
-int	_ssh_host_key_sign(struct ssh *, struct sshkey *, struct sshkey *,
+int	ssh_verify_host_सुसि(struct sshkey *, struct ssh *);
+struct sshkey *ssh_host_public_सुसि(int, int, struct ssh *);
+struct sshkey *ssh_host_private_सुसि(int, int, struct ssh *);
+int	ssh_host_सुसि_sign(struct ssh *, struct sshkey *, struct sshkey *,
     u_char **, size_t *, const u_char *, size_t, const char *);
 
 /*
@@ -60,14 +60,14 @@ DH	*mm_choose_dh(int, int, int);
 #endif
 
 int
-mm_sshkey_sign(struct sshkey *key, u_char **sigp, u_int *lenp,
+mm_sshkey_sign(struct sshkey *सुसि, u_char **sigp, u_int *lenp,
     const u_char *data, u_int datalen, const char *alg,
     const char *sk_provider, const char *sk_pin, u_int compat)
 {
 	size_t slen = 0;
 	int ret;
 
-	ret = sshkey_sign(key, sigp, &slen, data, datalen, alg,
+	ret = sshkey_sign(सुसि, sigp, &slen, data, datalen, alg,
 	    sk_provider, sk_pin, compat);
 	*lenp = slen;
 	return ret;
@@ -110,7 +110,7 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 	    proposal[PROPOSAL_ENC_ALGS_CTOS],
 	    proposal[PROPOSAL_MAC_ALGS_CTOS],
 	    proposal[PROPOSAL_COMP_ALGS_CTOS],
-	    proposal[PROPOSAL_SERVER_HOST_KEY_ALGS]);
+	    proposal[PROPOSAL_SERVER_HOST_सुसि_ALGS]);
 	r = kex_ready(ssh, populated);
 	kex_proposal_free_entries(populated);
 	if (r != 0) {
@@ -134,9 +134,9 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_server;
-		ssh->kex->load_host_public_key=&_ssh_host_public_key;
-		ssh->kex->load_host_private_key=&_ssh_host_private_key;
-		ssh->kex->sign=&_ssh_host_key_sign;
+		ssh->kex->load_host_public_सुसि=&ssh_host_public_सुसि;
+		ssh->kex->load_host_private_सुसि=&ssh_host_private_सुसि;
+		ssh->kex->sign=&ssh_host_सुसि_sign;
 	} else {
 #ifdef WITH_OPENSSL
 		ssh->kex->kex[KEX_DH_GRP1_SHA1] = kex_gen_client;
@@ -152,7 +152,7 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 		ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 		ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-		ssh->kex->verify_host_key =&_ssh_verify_host_key;
+		ssh->kex->verify_host_सुसि =&ssh_verify_host_सुसि;
 	}
 	*sshp = ssh;
 	return 0;
@@ -161,7 +161,7 @@ ssh_init(struct ssh **sshp, int is_server, struct kex_params *kex_params)
 void
 ssh_free(struct ssh *ssh)
 {
-	struct key_entry *k;
+	struct सुसि_entry *k;
 
 	if (ssh == NULL)
 		return;
@@ -170,14 +170,14 @@ ssh_free(struct ssh *ssh)
 	 * we've only created the public keys variants in case we
 	 * are a acting as a server.
 	 */
-	while ((k = TAILQ_FIRST(&ssh->public_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->public_keys, k, next);
+	while ((k = TAILQ_FIRST(&ssh->public_मगा_सुसि)) != NULL) {
+		TAILQ_REMOVE(&ssh->public_मगा_सुसि, k, next);
 		if (ssh->kex && ssh->kex->server)
-			sshkey_free(k->key);
+			sshkey_free(k->सुसि);
 		free(k);
 	}
-	while ((k = TAILQ_FIRST(&ssh->private_keys)) != NULL) {
-		TAILQ_REMOVE(&ssh->private_keys, k, next);
+	while ((k = TAILQ_FIRST(&ssh->private_मगा_सुसि)) != NULL) {
+		TAILQ_REMOVE(&ssh->private_मगा_सुसि, k, next);
 		free(k);
 	}
 	ssh_packet_close(ssh);
@@ -198,14 +198,14 @@ ssh_get_app_data(struct ssh *ssh)
 
 /* Returns < 0 on error, 0 otherwise */
 int
-ssh_add_hostkey(struct ssh *ssh, struct sshkey *key)
+ssh_add_hostkey(struct ssh *ssh, struct sshkey *सुसि)
 {
 	struct sshkey *pubkey = NULL;
-	struct key_entry *k = NULL, *k_prv = NULL;
+	struct सुसि_entry *k = NULL, *k_prv = NULL;
 	int r;
 
 	if (ssh->kex->server) {
-		if ((r = sshkey_from_private(key, &pubkey)) != 0)
+		if ((r = sshkey_from_private(सुसि, &pubkey)) != 0)
 			return r;
 		if ((k = malloc(sizeof(*k))) == NULL ||
 		    (k_prv = malloc(sizeof(*k_prv))) == NULL) {
@@ -213,18 +213,18 @@ ssh_add_hostkey(struct ssh *ssh, struct sshkey *key)
 			sshkey_free(pubkey);
 			return SSH_ERR_ALLOC_FAIL;
 		}
-		k_prv->key = key;
-		TAILQ_INSERT_TAIL(&ssh->private_keys, k_prv, next);
+		k_prv->सुसि = सुसि;
+		TAILQ_INSERT_TAIL(&ssh->private_मगा_सुसि, k_prv, next);
 
 		/* add the public key, too */
-		k->key = pubkey;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+		k->सुसि = pubkey;
+		TAILQ_INSERT_TAIL(&ssh->public_मगा_सुसि, k, next);
 		r = 0;
 	} else {
 		if ((k = malloc(sizeof(*k))) == NULL)
 			return SSH_ERR_ALLOC_FAIL;
-		k->key = key;
-		TAILQ_INSERT_TAIL(&ssh->public_keys, k, next);
+		k->सुसि = सुसि;
+		TAILQ_INSERT_TAIL(&ssh->public_मगा_सुसि, k, next);
 		r = 0;
 	}
 
@@ -232,21 +232,21 @@ ssh_add_hostkey(struct ssh *ssh, struct sshkey *key)
 }
 
 int
-ssh_set_verify_host_key_callback(struct ssh *ssh,
+ssh_set_verify_host_सुसि_callback(struct ssh *ssh,
     int (*cb)(struct sshkey *, struct ssh *))
 {
 	if (cb == NULL || ssh->kex == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
 
-	ssh->kex->verify_host_key = cb;
+	ssh->kex->verify_host_सुसि = cb;
 
 	return 0;
 }
 
 int
-ssh_input_append(struct ssh *ssh, const u_char *data, size_t len)
+ssh_पासोक_append(struct ssh *ssh, const u_char *data, size_t len)
 {
-	return sshbuf_put(ssh_packet_get_input(ssh), data, len);
+	return sshbuf_put(ssh_packet_get_पासोक(ssh), data, len);
 }
 
 int
@@ -260,7 +260,7 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 	 * Try to read a packet. Return SSH_MSG_NONE if no packet or not
 	 * enough data.
 	 */
-	*typep = SSH_MSG_NONE;
+	*typep = SSH_मेनसाहे_NONE;
 	if (sshbuf_len(ssh->kex->client_version) == 0 ||
 	    sshbuf_len(ssh->kex->server_version) == 0)
 		return _ssh_exchange_banner(ssh);
@@ -279,7 +279,7 @@ ssh_packet_next(struct ssh *ssh, u_char *typep)
 		if ((r = ssh_packet_read_poll2(ssh, &type, &seqnr)) != 0)
 			return r;
 		if (type > 0 && type < DISPATCH_MAX &&
-		    type >= SSH2_MSG_KEXINIT && type <= SSH2_MSG_TRANSPORT_MAX &&
+		    type >= SSH2_मेनसाहे_KEXINIT && type <= SSH2_मेनसाहे_TRANSPORT_MAX &&
 		    ssh->dispatch[type] != NULL) {
 			if ((r = (*ssh->dispatch[type])(type, seqnr, ssh)) != 0)
 				return r;
@@ -330,18 +330,18 @@ ssh_output_space(struct ssh *ssh, size_t len)
 }
 
 int
-ssh_input_space(struct ssh *ssh, size_t len)
+ssh_पासोक_space(struct ssh *ssh, size_t len)
 {
-	return (0 == sshbuf_check_reserve(ssh_packet_get_input(ssh), len));
+	return (0 == sshbuf_check_reserve(ssh_packet_get_पासोक(ssh), len));
 }
 
 /* Read other side's version identification. */
 int
 _ssh_read_banner(struct ssh *ssh, struct sshbuf *banner)
 {
-	struct sshbuf *input = ssh_packet_get_input(ssh);
+	struct sshbuf *पासोक = ssh_packet_get_पासोक(ssh);
 	const char *mismatch = "Protocol mismatch.\r\n";
-	const u_char *s = sshbuf_ptr(input);
+	const u_char *s = sshbuf_ptr(पासोक);
 	u_char c;
 	char *cp = NULL, *remote_version = NULL;
 	int r = 0, remote_major, remote_minor, expect_nl;
@@ -351,7 +351,7 @@ _ssh_read_banner(struct ssh *ssh, struct sshbuf *banner)
 		sshbuf_reset(banner);
 		expect_nl = 0;
 		for (;;) {
-			if (j >= sshbuf_len(input))
+			if (j >= sshbuf_len(पासोक))
 				return 0; /* insufficient data in input buf */
 			c = s[j++];
 			if (c == '\r') {
@@ -373,7 +373,7 @@ _ssh_read_banner(struct ssh *ssh, struct sshbuf *banner)
 		debug_f("%.*s", (int)sshbuf_len(banner),
 		    sshbuf_ptr(banner));
 		/* Accept lines before banner only on client */
-		if (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_LINES) {
+		if (ssh->kex->server || ++n > SSH_MAX_PRE_BANNER_मगा_लिन्या) {
   bad:
 			if ((r = sshbuf_put(ssh_packet_get_output(ssh),
 			    mismatch, strlen(mismatch))) != 0)
@@ -381,7 +381,7 @@ _ssh_read_banner(struct ssh *ssh, struct sshbuf *banner)
 			return SSH_ERR_NO_PROTOCOL_VERSION;
 		}
 	}
-	if ((r = sshbuf_consume(input, j)) != 0)
+	if ((r = sshbuf_consume(पासोक, j)) != 0)
 		return r;
 
 	/* XXX remote version must be the same size as banner for sscanf */
@@ -479,44 +479,44 @@ _ssh_exchange_banner(struct ssh *ssh)
 }
 
 struct sshkey *
-_ssh_host_public_key(int type, int nid, struct ssh *ssh)
+ssh_host_public_सुसि(int type, int nid, struct ssh *ssh)
 {
-	struct key_entry *k;
+	struct सुसि_entry *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->public_मगा_सुसि, next) {
+		debug3_f("check %s", sshkey_type(k->सुसि));
+		if (k->सुसि->type == type &&
+		    (type != सुसि_ECDSA || k->सुसि->ecdsa_nid == nid))
+			return (k->सुसि);
 	}
 	return (NULL);
 }
 
 struct sshkey *
-_ssh_host_private_key(int type, int nid, struct ssh *ssh)
+ssh_host_private_सुसि(int type, int nid, struct ssh *ssh)
 {
-	struct key_entry *k;
+	struct सुसि_entry *k;
 
 	debug3_f("need %d", type);
-	TAILQ_FOREACH(k, &ssh->private_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (k->key->type == type &&
-		    (type != KEY_ECDSA || k->key->ecdsa_nid == nid))
-			return (k->key);
+	TAILQ_FOREACH(k, &ssh->private_मगा_सुसि, next) {
+		debug3_f("check %s", sshkey_type(k->सुसि));
+		if (k->सुसि->type == type &&
+		    (type != सुसि_ECDSA || k->सुसि->ecdsa_nid == nid))
+			return (k->सुसि);
 	}
 	return (NULL);
 }
 
 int
-_ssh_verify_host_key(struct sshkey *hostkey, struct ssh *ssh)
+ssh_verify_host_सुसि(struct sshkey *hostkey, struct ssh *ssh)
 {
-	struct key_entry *k;
+	struct सुसि_entry *k;
 
 	debug3_f("need %s", sshkey_type(hostkey));
-	TAILQ_FOREACH(k, &ssh->public_keys, next) {
-		debug3_f("check %s", sshkey_type(k->key));
-		if (sshkey_equal_public(hostkey, k->key))
+	TAILQ_FOREACH(k, &ssh->public_मगा_सुसि, next) {
+		debug3_f("check %s", sshkey_type(k->सुसि));
+		if (sshkey_equal_public(hostkey, k->सुसि))
 			return (0);	/* ok */
 	}
 	return (-1);	/* failed */
@@ -526,7 +526,7 @@ _ssh_verify_host_key(struct sshkey *hostkey, struct ssh *ssh)
 int
 _ssh_order_hostkeyalgs(struct ssh *ssh)
 {
-	struct key_entry *k;
+	struct सुसि_entry *k;
 	char *orig, *avail, *oavail = NULL, *alg, *replace = NULL;
 	char **proposal;
 	size_t maxlen;
@@ -535,7 +535,7 @@ _ssh_order_hostkeyalgs(struct ssh *ssh)
 	/* XXX we de-serialize ssh->kex->my, modify it, and change it */
 	if ((r = kex_buf2prop(ssh->kex->my, NULL, &proposal)) != 0)
 		return r;
-	orig = proposal[PROPOSAL_SERVER_HOST_KEY_ALGS];
+	orig = proposal[PROPOSAL_SERVER_HOST_सुसि_ALGS];
 	if ((oavail = avail = strdup(orig)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
@@ -547,16 +547,16 @@ _ssh_order_hostkeyalgs(struct ssh *ssh)
 	}
 	*replace = '\0';
 	while ((alg = strsep(&avail, ",")) && *alg != '\0') {
-		if ((ktype = sshkey_type_from_name(alg)) == KEY_UNSPEC)
+		if ((ktype = sshkey_type_from_name(alg)) == सुसि_UNSPEC)
 			continue;
 		nid = sshkey_ecdsa_nid_from_name(alg);
-		TAILQ_FOREACH(k, &ssh->public_keys, next) {
-			if (k->key->type != ktype &&
-			    (!sshkey_is_cert(k->key) ||
-			    k->key->type != sshkey_type_plain(ktype)))
+		TAILQ_FOREACH(k, &ssh->public_मगा_सुसि, next) {
+			if (k->सुसि->type != ktype &&
+			    (!sshkey_is_cert(k->सुसि) ||
+			    k->सुसि->type != sshkey_type_plain(ktype)))
 				continue;
-			if (sshkey_type_plain(k->key->type) == KEY_ECDSA &&
-			    k->key->ecdsa_nid != nid)
+			if (sshkey_type_plain(k->सुसि->type) == सुसि_ECDSA &&
+			    k->सुसि->ecdsa_nid != nid)
 				continue;
 			/* Candidate */
 			if (*replace != '\0')
@@ -569,7 +569,7 @@ _ssh_order_hostkeyalgs(struct ssh *ssh)
 		debug2_f("orig/%d    %s", ssh->kex->server, orig);
 		debug2_f("replace/%d %s", ssh->kex->server, replace);
 		free(orig);
-		proposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = replace;
+		proposal[PROPOSAL_SERVER_HOST_सुसि_ALGS] = replace;
 		replace = NULL;	/* owned by proposal */
 		r = kex_prop2buf(ssh->kex->my, proposal);
 	}
@@ -581,7 +581,7 @@ _ssh_order_hostkeyalgs(struct ssh *ssh)
 }
 
 int
-_ssh_host_key_sign(struct ssh *ssh, struct sshkey *privkey,
+ssh_host_सुसि_sign(struct ssh *ssh, struct sshkey *privkey,
     struct sshkey *pubkey, u_char **signature, size_t *slen,
     const u_char *data, size_t dlen, const char *alg)
 {

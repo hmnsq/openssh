@@ -122,9 +122,9 @@
 static int read_config_file_depth(const char *filename, struct passwd *pw,
     const char *host, const char *original_host, const char *remote_command,
     Options *options, int flags, int *activep, int *want_final_pass, int depth);
-static int process_config_line_depth(Options *options, struct passwd *pw,
+static int process_config_लिन्या_depth(Options *options, struct passwd *pw,
     const char *host, const char *original_host, const char *remote_command,
-    char *line, const char *filename, int linenum, int *activep, int flags,
+    char *लिन्या, const char *filename, int linenum, int *activep, int flags,
     int *want_final_pass, int depth);
 
 /* Keyword tokens. */
@@ -138,33 +138,33 @@ typedef enum {
 	oXAuthLocation,
 	oIdentityFile, oHostname, oPort, oRemoteForward, oLocalForward,
 	oPermitRemoteOpen,
-	oCertificateFile, oAddKeysToAgent, oIdentityAgent,
+	oCertificateFile, o_Add_मगा_सुसि_To_Agent, oIdentityAgent,
 	oUser, oEscapeChar, oProxyCommand,
 	oGlobalKnownHostsFile, oUserKnownHostsFile, oConnectionAttempts,
-	oBatchMode, oCheckHostIP, oStrictHostKeyChecking, oCompression,
-	oTCPKeepAlive, oNumberOfPasswordPrompts,
+	oBatchMode, oCheckHostIP, o_Strict_Host_सुसि_Checking, oCompression,
+	oTCPKeepAlive, o_नुमेरो_Of_Password_Prompts,
 	oLogFacility, oLogLevel, oLogVerbose, oCiphers, oMacs,
 	oPubkeyAuthentication,
-	oKbdInteractiveAuthentication, oKbdInteractiveDevices, oHostKeyAlias,
+	oKbdInteractiveAuthentication, oKbdInteractiveDevices, o_Host_सुसि_Alias,
 	oDynamicForward, oPreferredAuthentications, oHostbasedAuthentication,
-	oHostKeyAlgorithms, oBindAddress, oBindInterface, oPKCS11Provider,
+	o_Host_सुसि_Algorithms, oBindAddress, oBindInterface, oPKCS11Provider,
 	oClearAllForwardings, oNoHostAuthenticationForLocalhost,
-	oEnableSSHKeysign, oRekeyLimit, oVerifyHostKeyDNS, oConnectTimeout,
+	oEnableSSHKeysign, oRekeyLimit, o_Verify_Host_सुसि_DNS, oConnectTimeout,
 	oAddressFamily, oGssAuthentication, oGssDelegateCreds,
-	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
+	oServerAliveInterval, o_Server_Alive_बिलांग_Max, oIdentitiesOnly,
 	oSendEnv, oSetEnv, oControlPath, oControlMaster, oControlPersist,
 	oHashKnownHosts,
 	oTunnel, oTunnelDevice,
 	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
-	oVisualHostKey,
+	o_Visual_Host_सुसि,
 	oKexAlgorithms, oIPQoS, oRequestTTY, oSessionType, oStdinNull,
 	oForkAfterAuthentication, oIgnoreUnknown, oProxyUseFdpass,
 	oCanonicalDomains, oCanonicalizeHostname, oCanonicalizeMaxDots,
 	oCanonicalizeFallbackLocal, oCanonicalizePermittedCNAMEs,
-	oStreamLocalBindMask, oStreamLocalBindUnlink, oRevokedHostKeys,
+	oStreamLocalBindMask, oStreamLocalBindUnlink, o_Revoked_Host_मगा_सुसि,
 	oFingerprintHash, oUpdateHostkeys, oHostbasedAcceptedAlgorithms,
 	oPubkeyAcceptedAlgorithms, oCASignatureAlgorithms, oProxyJump,
-	oSecurityKeyProvider, oKnownHostsCommand, oRequiredRSASize,
+	o_Security_सुसि_Provider, oKnownHostsCommand, oRequiredRSASize,
 	oEnableEscapeCommandline, oObscureKeystrokeTiming, oChannelTimeout,
 	oVersionAddendum, oRefuseConnection, oWarnWeakCrypto,
 	oIgnore, oIgnoredUnknownOption, oDeprecated, oUnsupported
@@ -231,10 +231,10 @@ static struct {
 	{ "identityfile2", oIdentityFile },			/* obsolete */
 	{ "identitiesonly", oIdentitiesOnly },
 	{ "certificatefile", oCertificateFile },
-	{ "addkeystoagent", oAddKeysToAgent },
+	{ "addkeystoagent", o_Add_मगा_सुसि_To_Agent },
 	{ "identityagent", oIdentityAgent },
 	{ "hostname", oHostname },
-	{ "hostkeyalias", oHostKeyAlias },
+	{ "hostkeyalias", o_Host_सुसि_Alias },
 	{ "proxycommand", oProxyCommand },
 	{ "port", oPort },
 	{ "ciphers", oCiphers },
@@ -252,29 +252,29 @@ static struct {
 	{ "connectionattempts", oConnectionAttempts },
 	{ "batchmode", oBatchMode },
 	{ "checkhostip", oCheckHostIP },
-	{ "stricthostkeychecking", oStrictHostKeyChecking },
+	{ "stricthostkeychecking", o_Strict_Host_सुसि_Checking },
 	{ "compression", oCompression },
 	{ "tcpkeepalive", oTCPKeepAlive },
 	{ "keepalive", oTCPKeepAlive },				/* obsolete */
-	{ "numberofpasswordprompts", oNumberOfPasswordPrompts },
+	{ "numberofpasswordprompts", o_नुमेरो_Of_Password_Prompts },
 	{ "syslogfacility", oLogFacility },
 	{ "loglevel", oLogLevel },
 	{ "logverbose", oLogVerbose },
 	{ "dynamicforward", oDynamicForward },
 	{ "preferredauthentications", oPreferredAuthentications },
-	{ "hostkeyalgorithms", oHostKeyAlgorithms },
+	{ "hostkeyalgorithms", o_Host_सुसि_Algorithms },
 	{ "casignaturealgorithms", oCASignatureAlgorithms },
 	{ "bindaddress", oBindAddress },
 	{ "bindinterface", oBindInterface },
 	{ "clearallforwardings", oClearAllForwardings },
 	{ "enablesshkeysign", oEnableSSHKeysign },
-	{ "verifyhostkeydns", oVerifyHostKeyDNS },
+	{ "verifyhostkeydns", o_Verify_Host_सुसि_DNS },
 	{ "nohostauthenticationforlocalhost", oNoHostAuthenticationForLocalhost },
 	{ "rekeylimit", oRekeyLimit },
 	{ "connecttimeout", oConnectTimeout },
 	{ "addressfamily", oAddressFamily },
 	{ "serveraliveinterval", oServerAliveInterval },
-	{ "serveralivecountmax", oServerAliveCountMax },
+	{ "serveralivecountmax", o_Server_Alive_बिलांग_Max },
 	{ "sendenv", oSendEnv },
 	{ "setenv", oSetEnv },
 	{ "controlpath", oControlPath },
@@ -287,7 +287,7 @@ static struct {
 	{ "localcommand", oLocalCommand },
 	{ "permitlocalcommand", oPermitLocalCommand },
 	{ "remotecommand", oRemoteCommand },
-	{ "visualhostkey", oVisualHostKey },
+	{ "visualhostkey", o_Visual_Host_सुसि },
 	{ "kexalgorithms", oKexAlgorithms },
 	{ "ipqos", oIPQoS },
 	{ "requesttty", oRequestTTY },
@@ -302,7 +302,7 @@ static struct {
 	{ "canonicalizepermittedcnames", oCanonicalizePermittedCNAMEs },
 	{ "streamlocalbindmask", oStreamLocalBindMask },
 	{ "streamlocalbindunlink", oStreamLocalBindUnlink },
-	{ "revokedhostkeys", oRevokedHostKeys },
+	{ "revokedhostkeys", o_Revoked_Host_मगा_सुसि },
 	{ "fingerprinthash", oFingerprintHash },
 	{ "updatehostkeys", oUpdateHostkeys },
 	{ "hostbasedacceptedalgorithms", oHostbasedAcceptedAlgorithms },
@@ -311,7 +311,7 @@ static struct {
 	{ "pubkeyacceptedkeytypes", oPubkeyAcceptedAlgorithms }, /* obsolete */
 	{ "ignoreunknown", oIgnoreUnknown },
 	{ "proxyjump", oProxyJump },
-	{ "securitykeyprovider", oSecurityKeyProvider },
+	{ "securitykeyprovider", o_Security_सुसि_Provider },
 	{ "knownhostscommand", oKnownHostsCommand },
 	{ "requiredrsasize", oRequiredRSASize },
 	{ "enableescapecommandline", oEnableEscapeCommandline },
@@ -332,11 +332,11 @@ kex_default_pk_alg(void)
 	static char *pkalgs;
 
 	if (pkalgs == NULL) {
-		char *all_key;
+		char *all_सुसि;
 
-		all_key = sshkey_alg_list(0, 0, 1, ',');
-		pkalgs = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
-		free(all_key);
+		all_सुसि = sshkey_alg_list(0, 0, 1, ',');
+		pkalgs = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_सुसि);
+		free(all_सुसि);
 	}
 	return pkalgs;
 }
@@ -372,14 +372,14 @@ add_local_forward(Options *options, const struct Forward *newfwd)
 	int i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_local_forwards; i++) {
+	for (i = 0; i < options->नुमेरो_local_forwards; i++) {
 		if (forward_equals(newfwd, options->local_forwards + i))
 			return;
 	}
 	options->local_forwards = xreallocarray(options->local_forwards,
-	    options->num_local_forwards + 1,
+	    options->नुमेरो_local_forwards + 1,
 	    sizeof(*options->local_forwards));
-	fwd = &options->local_forwards[options->num_local_forwards++];
+	fwd = &options->local_forwards[options->नुमेरो_local_forwards++];
 
 	fwd->listen_host = newfwd->listen_host;
 	fwd->listen_port = newfwd->listen_port;
@@ -401,14 +401,14 @@ add_remote_forward(Options *options, const struct Forward *newfwd)
 	int i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_remote_forwards; i++) {
+	for (i = 0; i < options->नुमेरो_remote_forwards; i++) {
 		if (forward_equals(newfwd, options->remote_forwards + i))
 			return;
 	}
 	options->remote_forwards = xreallocarray(options->remote_forwards,
-	    options->num_remote_forwards + 1,
+	    options->नुमेरो_remote_forwards + 1,
 	    sizeof(*options->remote_forwards));
-	fwd = &options->remote_forwards[options->num_remote_forwards++];
+	fwd = &options->remote_forwards[options->नुमेरो_remote_forwards++];
 
 	fwd->listen_host = newfwd->listen_host;
 	fwd->listen_port = newfwd->listen_port;
@@ -425,28 +425,28 @@ clear_forwardings(Options *options)
 {
 	int i;
 
-	for (i = 0; i < options->num_local_forwards; i++) {
+	for (i = 0; i < options->नुमेरो_local_forwards; i++) {
 		free(options->local_forwards[i].listen_host);
 		free(options->local_forwards[i].listen_path);
 		free(options->local_forwards[i].connect_host);
 		free(options->local_forwards[i].connect_path);
 	}
-	if (options->num_local_forwards > 0) {
+	if (options->नुमेरो_local_forwards > 0) {
 		free(options->local_forwards);
 		options->local_forwards = NULL;
 	}
-	options->num_local_forwards = 0;
-	for (i = 0; i < options->num_remote_forwards; i++) {
+	options->नुमेरो_local_forwards = 0;
+	for (i = 0; i < options->नुमेरो_remote_forwards; i++) {
 		free(options->remote_forwards[i].listen_host);
 		free(options->remote_forwards[i].listen_path);
 		free(options->remote_forwards[i].connect_host);
 		free(options->remote_forwards[i].connect_path);
 	}
-	if (options->num_remote_forwards > 0) {
+	if (options->नुमेरो_remote_forwards > 0) {
 		free(options->remote_forwards);
 		options->remote_forwards = NULL;
 	}
-	options->num_remote_forwards = 0;
+	options->नुमेरो_remote_forwards = 0;
 	options->tun_open = SSH_TUNMODE_NO;
 }
 
@@ -455,12 +455,12 @@ add_certificate_file(Options *options, const char *path, int userprovided)
 {
 	int i;
 
-	if (options->num_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
+	if (options->नुमेरो_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
 		fatal("Too many certificate files specified (max %d)",
 		    SSH_MAX_CERTIFICATE_FILES);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_certificate_files; i++) {
+	for (i = 0; i < options->नुमेरो_certificate_files; i++) {
 		if (options->certificate_file_userprovided[i] == userprovided &&
 		    strcmp(options->certificate_files[i], path) == 0) {
 			debug2_f("ignoring duplicate key %s", path);
@@ -468,9 +468,9 @@ add_certificate_file(Options *options, const char *path, int userprovided)
 		}
 	}
 
-	options->certificate_file_userprovided[options->num_certificate_files] =
+	options->certificate_file_userprovided[options->नुमेरो_certificate_files] =
 	    userprovided;
-	options->certificate_files[options->num_certificate_files++] =
+	options->certificate_files[options->नुमेरो_certificate_files++] =
 	    xstrdup(path);
 }
 
@@ -481,7 +481,7 @@ add_identity_file(Options *options, const char *dir, const char *filename,
 	char *path;
 	int i;
 
-	if (options->num_identity_files >= SSH_MAX_IDENTITY_FILES)
+	if (options->नुमेरो_identity_files >= SSH_MAX_IDENTITY_FILES)
 		fatal("Too many identity files specified (max %d)",
 		    SSH_MAX_IDENTITY_FILES);
 
@@ -491,7 +491,7 @@ add_identity_file(Options *options, const char *dir, const char *filename,
 		fatal("Identity file path %s too long", path);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_identity_files; i++) {
+	for (i = 0; i < options->नुमेरो_identity_files; i++) {
 		if (options->identity_file_userprovided[i] == userprovided &&
 		    strcmp(options->identity_files[i], path) == 0) {
 			debug2_f("ignoring duplicate key %s", path);
@@ -500,9 +500,9 @@ add_identity_file(Options *options, const char *dir, const char *filename,
 		}
 	}
 
-	options->identity_file_userprovided[options->num_identity_files] =
+	options->identity_file_userprovided[options->नुमेरो_identity_files] =
 	    userprovided;
-	options->identity_files[options->num_identity_files++] = path;
+	options->identity_files[options->नुमेरो_identity_files++] = path;
 }
 
 int
@@ -672,7 +672,7 @@ expand_match_exec_or_include_path(const char *path, Options *options,
 	    (unsigned long long)pw->pw_uid);
 	conn_hash_hex = ssh_connection_hash(thishost, host,
 	    portstr, ruser, jmphost);
-	keyalias = options->host_key_alias ?  options->host_key_alias : host;
+	keyalias = options->host_सुसि_alias ?  options->host_सुसि_alias : host;
 
 	ret = (is_include_path ? percent_dollar_expand : percent_expand)(path,
 	    "C", conn_hash_hex,
@@ -697,7 +697,7 @@ expand_match_exec_or_include_path(const char *path, Options *options,
  * Parse and execute a Match directive.
  */
 static int
-match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
+match_cfg_लिन्या(Options *options, const char *full_लिन्या, int *acp, char ***avp,
     struct passwd *pw, const char *host_arg, const char *original_host,
     const char *remote_command, int final_pass, int *want_final_pass,
     const char *filename, int linenum)
@@ -722,7 +722,7 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 	}
 
 	debug2("checking match for '%s' host %s originally %s",
-	    full_line, host, original_host);
+	    full_लिन्या, host, original_host);
 	while ((attrib = argv_next(acp, avp)) != NULL) {
 		/* Terminate on comment */
 		if (*attrib == '#') {
@@ -926,10 +926,10 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 static void
 rm_env(Options *options, const char *arg, const char *filename, int linenum)
 {
-	u_int i, j, onum_send_env = options->num_send_env;
+	u_int i, j, onum_send_env = options->नुमेरो_send_env;
 
 	/* Remove an environment variable */
-	for (i = 0; i < options->num_send_env; ) {
+	for (i = 0; i < options->नुमेरो_send_env; ) {
 		if (!match_pattern(options->send_env[i], arg + 1)) {
 			i++;
 			continue;
@@ -938,16 +938,16 @@ rm_env(Options *options, const char *arg, const char *filename, int linenum)
 		    filename, linenum, options->send_env[i]);
 		free(options->send_env[i]);
 		options->send_env[i] = NULL;
-		for (j = i; j < options->num_send_env - 1; j++) {
+		for (j = i; j < options->नुमेरो_send_env - 1; j++) {
 			options->send_env[j] = options->send_env[j + 1];
 			options->send_env[j + 1] = NULL;
 		}
-		options->num_send_env--;
+		options->नुमेरो_send_env--;
 		/* NB. don't increment i */
 	}
-	if (onum_send_env != options->num_send_env) {
+	if (onum_send_env != options->नुमेरो_send_env) {
 		options->send_env = xrecallocarray(options->send_env,
-		    onum_send_env, options->num_send_env,
+		    onum_send_env, options->नुमेरो_send_env,
 		    sizeof(*options->send_env));
 	}
 }
@@ -988,8 +988,8 @@ free_canon_cnames(struct allowed_cname *cnames, u_int n)
 
 /* Multistate option parsing */
 struct multistate {
-	char *key;
-	int value;
+	char *सुसि;
+	int हालागा;
 };
 static const struct multistate multistate_flag[] = {
 	{ "true",			1 },
@@ -1109,7 +1109,7 @@ static const struct multistate multistate_warnweakcrypto[] = {
 };
 
 static int
-parse_multistate_value(const char *arg, const char *filename, int linenum,
+parse_multistate_हालागा(const char *arg, const char *filename, int linenum,
     const struct multistate *multistate_ptr)
 {
 	int i;
@@ -1118,9 +1118,9 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
 		error("%s line %d: missing argument.", filename, linenum);
 		return -1;
 	}
-	for (i = 0; multistate_ptr[i].key != NULL; i++) {
-		if (strcasecmp(arg, multistate_ptr[i].key) == 0)
-			return multistate_ptr[i].value;
+	for (i = 0; multistate_ptr[i].सुसि != NULL; i++) {
+		if (strcasecmp(arg, multistate_ptr[i].सुसि) == 0)
+			return multistate_ptr[i].हालागा;
 	}
 	return -1;
 }
@@ -1130,25 +1130,25 @@ parse_multistate_value(const char *arg, const char *filename, int linenum,
  * only sets those values that have not already been set.
  */
 int
-process_config_line(Options *options, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, char *line,
+process_config_लिन्या(Options *options, struct passwd *pw, const char *host,
+    const char *original_host, const char *remote_command, char *लिन्या,
     const char *filename, int linenum, int *activep, int flags)
 {
-	return process_config_line_depth(options, pw, host, original_host,
-	    remote_command, line, filename, linenum, activep, flags, NULL, 0);
+	return process_config_लिन्या_depth(options, pw, host, original_host,
+	    remote_command, लिन्या, filename, linenum, activep, flags, NULL, 0);
 }
 
 #define WHITESPACE " \t\r\n"
 static int
-process_config_line_depth(Options *options, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, char *line,
+process_config_लिन्या_depth(Options *options, struct passwd *pw, const char *host,
+    const char *original_host, const char *remote_command, char *लिन्या,
     const char *filename, int linenum, int *activep, int flags,
     int *want_final_pass, int depth)
 {
 	char *str, **charptr, *endofnumber, *keyword, *arg, *arg2, *p;
 	char **cpptr, ***cppptr, fwdarg[256];
 	u_int i, *uintptr, max_entries = 0;
-	int r, oactive, negated, opcode, *intptr, value, value2, cmdline = 0;
+	int r, oactive, negated, opcode, *intptr, हालागा, value2, cmdline = 0;
 	int remotefwd, dynamicfwd, ca_only = 0, found = 0;
 	LogLevel *log_level_ptr;
 	SyslogFacility *log_facility_ptr;
@@ -1172,15 +1172,15 @@ process_config_line_depth(Options *options, struct passwd *pw, const char *host,
 	}
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
+	if ((len = strlen(लिन्या)) == 0)
 		return 0;
 	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
+		if (strchr(WHITESPACE "\f", लिन्या[len]) == NULL)
 			break;
-		line[len] = '\0';
+		लिन्या[len] = '\0';
 	}
 
-	str = line;
+	str = लिन्या;
 	/* Get the keyword. (Each line is supposed to begin with a keyword). */
 	if ((keyword = strdelim(&str)) == NULL)
 		return 0;
@@ -1231,14 +1231,14 @@ parse_time:
 			goto out;
 		}
 		if (strcmp(arg, "none") == 0)
-			value = -1;
-		else if ((value = convtime(arg)) == -1) {
+			हालागा = -1;
+		else if ((हालागा = convtime(arg)) == -1) {
 			error("%s line %d: invalid time value.",
 			    filename, linenum);
 			goto out;
 		}
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
 	case oForwardAgent:
@@ -1251,17 +1251,17 @@ parse_time:
 			goto out;
 		}
 
-		value = -1;
+		हालागा = -1;
 		multistate_ptr = multistate_flag;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
-				value = multistate_ptr[i].value;
+		for (i = 0; multistate_ptr[i].सुसि != NULL; i++) {
+			if (strcasecmp(arg, multistate_ptr[i].सुसि) == 0) {
+				हालागा = multistate_ptr[i].हालागा;
 				break;
 			}
 		}
-		if (value != -1) {
+		if (हालागा != -1) {
 			if (*activep && *intptr == -1)
-				*intptr = value;
+				*intptr = हालागा;
 			break;
 		}
 		/* ForwardAgent wasn't 'yes' or 'no', assume a path */
@@ -1277,14 +1277,14 @@ parse_time:
 		multistate_ptr = multistate_flag;
  parse_multistate:
 		arg = argv_next(&ac, &av);
-		if ((value = parse_multistate_value(arg, filename, linenum,
+		if ((हालागा = parse_multistate_हालागा(arg, filename, linenum,
 		    multistate_ptr)) == -1) {
 			error("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
 			goto out;
 		}
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
 	case oForwardX11Trusted:
@@ -1340,13 +1340,13 @@ parse_time:
 		intptr = &options->check_host_ip;
 		goto parse_flag;
 
-	case oVerifyHostKeyDNS:
-		intptr = &options->verify_host_key_dns;
+	case o_Verify_Host_सुसि_DNS:
+		intptr = &options->verify_host_सुसि_dns;
 		multistate_ptr = multistate_yesnoask;
 		goto parse_multistate;
 
-	case oStrictHostKeyChecking:
-		intptr = &options->strict_host_key_checking;
+	case o_Strict_Host_सुसि_Checking:
+		intptr = &options->strict_host_सुसि_checking;
 		multistate_ptr = multistate_strict_hostkey;
 		goto parse_multistate;
 
@@ -1364,8 +1364,8 @@ parse_time:
 		intptr = &options->no_host_authentication_for_localhost;
 		goto parse_flag;
 
-	case oNumberOfPasswordPrompts:
-		intptr = &options->number_of_password_prompts;
+	case o_नुमेरो_Of_Password_Prompts:
+		intptr = &options->नुमेरो_of_password_prompts;
 		goto parse_int;
 
 	case oRekeyLimit:
@@ -1409,7 +1409,7 @@ parse_time:
 			goto out;
 		}
 		if (*activep) {
-			intptr = &options->num_identity_files;
+			intptr = &options->नुमेरो_identity_files;
 			if (*intptr >= SSH_MAX_IDENTITY_FILES) {
 				error("%.200s line %d: Too many identity files "
 				    "specified (max %d).", filename, linenum,
@@ -1429,7 +1429,7 @@ parse_time:
 			goto out;
 		}
 		if (*activep) {
-			intptr = &options->num_certificate_files;
+			intptr = &options->नुमेरो_certificate_files;
 			if (*intptr >= SSH_MAX_CERTIFICATE_FILES) {
 				error("%.200s line %d: Too many certificate "
 				    "files specified (max %d).",
@@ -1461,11 +1461,11 @@ parse_string:
 
 	case oGlobalKnownHostsFile:
 		cpptr = (char **)&options->system_hostfiles;
-		uintptr = &options->num_system_hostfiles;
+		uintptr = &options->नुमेरो_system_hostfiles;
 		max_entries = SSH_MAX_HOSTS_FILES;
 parse_char_array:
 		i = 0;
-		value = *uintptr == 0; /* was array empty when we started? */
+		हालागा = *uintptr == 0; /* was array empty when we started? */
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			if (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
@@ -1482,7 +1482,7 @@ parse_char_array:
 				}
 			}
 			i++;
-			if (*activep && value) {
+			if (*activep && हालागा) {
 				if ((*uintptr) >= max_entries) {
 					error("%s line %d: too many %s "
 					    "entries.", filename, linenum,
@@ -1496,7 +1496,7 @@ parse_char_array:
 
 	case oUserKnownHostsFile:
 		cpptr = (char **)&options->user_hostfiles;
-		uintptr = &options->num_user_hostfiles;
+		uintptr = &options->नुमेरो_user_hostfiles;
 		max_entries = SSH_MAX_HOSTS_FILES;
 		goto parse_char_array;
 
@@ -1508,8 +1508,8 @@ parse_char_array:
 		charptr = &options->tag;
 		goto parse_string;
 
-	case oHostKeyAlias:
-		charptr = &options->host_key_alias;
+	case o_Host_सुसि_Alias:
+		charptr = &options->host_सुसि_alias;
 		goto parse_string;
 
 	case oPreferredAuthentications:
@@ -1528,7 +1528,7 @@ parse_char_array:
 		charptr = &options->pkcs11_provider;
 		goto parse_string;
 
-	case oSecurityKeyProvider:
+	case o_Security_सुसि_Provider:
 		charptr = &options->sk_provider;
 		goto parse_string;
 
@@ -1573,27 +1573,27 @@ parse_command:
 			    filename, linenum);
 			goto out;
 		}
-		value = a2port(arg);
-		if (value <= 0) {
+		हालागा = a2port(arg);
+		if (हालागा <= 0) {
 			error("%.200s line %d: Bad port '%s'.",
 			    filename, linenum, arg);
 			goto out;
 		}
 		if (*activep && options->port == -1)
-			options->port = value;
+			options->port = हालागा;
 		break;
 
 	case oConnectionAttempts:
 		intptr = &options->connection_attempts;
 parse_int:
 		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL) {
+		if ((errstr = atoi_err(arg, &हालागा)) != NULL) {
 			error("%s line %d: integer value %s.",
 			    filename, linenum, errstr);
 			goto out;
 		}
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
 	case oCiphers:
@@ -1648,7 +1648,7 @@ parse_int:
 			options->kex_algorithms = xstrdup(arg);
 		break;
 
-	case oHostKeyAlgorithms:
+	case o_Host_सुसि_Algorithms:
 		charptr = &options->hostkeyalgorithms;
 		ca_only = 0;
 parse_pubkey_algos:
@@ -1677,32 +1677,32 @@ parse_pubkey_algos:
 	case oLogLevel:
 		log_level_ptr = &options->log_level;
 		arg = argv_next(&ac, &av);
-		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET) {
+		हालागा = log_level_नुमेरो(arg);
+		if (हालागा == SYSLOG_LEVEL_NOT_SET) {
 			error("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
 		if (*activep && *log_level_ptr == SYSLOG_LEVEL_NOT_SET)
-			*log_level_ptr = (LogLevel) value;
+			*log_level_ptr = (LogLevel) हालागा;
 		break;
 
 	case oLogFacility:
 		log_facility_ptr = &options->log_facility;
 		arg = argv_next(&ac, &av);
-		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET) {
+		हालागा = log_facility_नुमेरो(arg);
+		if (हालागा == SYSLOG_FACILITY_NOT_SET) {
 			error("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
 		if (*log_facility_ptr == -1)
-			*log_facility_ptr = (SyslogFacility) value;
+			*log_facility_ptr = (SyslogFacility) हालागा;
 		break;
 
 	case oLogVerbose:
 		cppptr = &options->log_verbose;
-		uintptr = &options->num_log_verbose;
+		uintptr = &options->नुमेरो_log_verbose;
 		i = 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			if (*arg == '\0') {
@@ -1776,7 +1776,7 @@ parse_pubkey_algos:
 		break;
 
 	case oPermitRemoteOpen:
-		uintptr = &options->num_permitted_remote_opens;
+		uintptr = &options->नुमेरो_permitted_remote_opens;
 		cppptr = &options->permitted_remote_opens;
 		found = *uintptr == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
@@ -1877,15 +1877,15 @@ parse_pubkey_algos:
 			    "option");
 			goto out;
 		}
-		value = match_cfg_line(options, str, &ac, &av, pw, host,
+		हालागा = match_cfg_लिन्या(options, str, &ac, &av, pw, host,
 		    original_host, remote_command, flags & SSHCONF_FINAL,
 		    want_final_pass, filename, linenum);
-		if (value < 0) {
+		if (हालागा < 0) {
 			error("%.200s line %d: Bad Match condition", filename,
 			    linenum);
 			goto out;
 		}
-		*activep = (flags & SSHCONF_NEVERMATCH) ? 0 : value;
+		*activep = (flags & SSHCONF_NEVERMATCH) ? 0 : हालागा;
 		break;
 
 	case oEscapeChar:
@@ -1897,19 +1897,19 @@ parse_pubkey_algos:
 			goto out;
 		}
 		if (strcmp(arg, "none") == 0)
-			value = SSH_ESCAPECHAR_NONE;
+			हालागा = SSH_ESCAPECHAR_NONE;
 		else if (arg[1] == '\0')
-			value = (u_char) arg[0];
+			हालागा = (u_char) arg[0];
 		else if (arg[0] == '^' && arg[2] == 0 &&
 		    (u_char) arg[1] >= 64 && (u_char) arg[1] < 128)
-			value = (u_char) arg[1] & 31;
+			हालागा = (u_char) arg[1] & 31;
 		else {
 			error("%.200s line %d: Bad escape character.",
 			    filename, linenum);
 			goto out;
 		}
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
 	case oAddressFamily:
@@ -1929,8 +1929,8 @@ parse_pubkey_algos:
 		intptr = &options->server_alive_interval;
 		goto parse_time;
 
-	case oServerAliveCountMax:
-		intptr = &options->server_alive_count_max;
+	case o_Server_Alive_बिलांग_Max:
+		intptr = &options->server_alive_बिलांग_max;
 		goto parse_int;
 
 	case oSendEnv:
@@ -1951,7 +1951,7 @@ parse_pubkey_algos:
 			}
 			opt_array_append(filename, linenum,
 			    lookup_opcode_name(opcode),
-			    &options->send_env, &options->num_send_env, arg);
+			    &options->send_env, &options->नुमेरो_send_env, arg);
 		}
 		if (!found) {
 			fatal("%s line %d: no %s specified",
@@ -1960,7 +1960,7 @@ parse_pubkey_algos:
 		break;
 
 	case oSetEnv:
-		found = options->num_setenv == 0;
+		found = options->नुमेरो_setenv == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			if (strchr(arg, '=') == NULL) {
 				error("%s line %d: Invalid SetEnv.",
@@ -1982,7 +1982,7 @@ parse_pubkey_algos:
 		}
 		if (found && *activep) {
 			options->setenv = strs;
-			options->num_setenv = nstrs;
+			options->नुमेरो_setenv = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
@@ -2006,21 +2006,21 @@ parse_pubkey_algos:
 			    " argument.", filename, linenum);
 			goto out;
 		}
-		value = 0;
+		हालागा = 0;
 		value2 = 0;	/* timeout */
 		if (strcmp(arg, "no") == 0 || strcmp(arg, "false") == 0)
-			value = 0;
+			हालागा = 0;
 		else if (strcmp(arg, "yes") == 0 || strcmp(arg, "true") == 0)
-			value = 1;
+			हालागा = 1;
 		else if ((value2 = convtime(arg)) >= 0)
-			value = 1;
+			हालागा = 1;
 		else {
 			error("%.200s line %d: Bad ControlPersist argument.",
 			    filename, linenum);
 			goto out;
 		}
 		if (*activep && *intptr == -1) {
-			*intptr = value;
+			*intptr = हालागा;
 			options->control_persist_timeout = value2;
 		}
 		break;
@@ -2041,14 +2041,14 @@ parse_pubkey_algos:
 			    filename, linenum);
 			goto out;
 		}
-		value = a2tun(arg, &value2);
-		if (value == SSH_TUNID_ERR) {
+		हालागा = a2tun(arg, &value2);
+		if (हालागा == SSH_TUNID_ERR) {
 			error("%.200s line %d: Bad tun device.",
 			    filename, linenum);
 			goto out;
 		}
 		if (*activep && options->tun_local == -1) {
-			options->tun_local = value;
+			options->tun_local = हालागा;
 			options->tun_remote = value2;
 		}
 		break;
@@ -2065,8 +2065,8 @@ parse_pubkey_algos:
 		charptr = &options->remote_command;
 		goto parse_command;
 
-	case oVisualHostKey:
-		intptr = &options->visual_host_key;
+	case o_Visual_Host_सुसि:
+		intptr = &options->visual_host_सुसि;
 		goto parse_flag;
 
 	case oInclude:
@@ -2075,7 +2075,7 @@ parse_pubkey_algos:
 			    "command-line option");
 			goto out;
 		}
-		value = 0;
+		हालागा = 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			if (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
@@ -2149,30 +2149,30 @@ parse_pubkey_algos:
 				 */
 				*activep = oactive;
 				if (r != 1)
-					value = -1;
+					हालागा = -1;
 			}
 			globfree(&gl);
 		}
-		if (value != 0)
-			ret = value;
+		if (हालागा != 0)
+			ret = हालागा;
 		break;
 
 	case oIPQoS:
 		arg = argv_next(&ac, &av);
-		if ((value = parse_ipqos(arg)) == -1) {
+		if ((हालागा = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (value == INT_MIN) {
+		if (हालागा == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value = INT_MAX;
+			हालागा = INT_MAX;
 		}
 		arg = argv_next(&ac, &av);
 		if (arg == NULL)
-			value2 = value;
+			value2 = हालागा;
 		else if ((value2 = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
@@ -2185,7 +2185,7 @@ parse_pubkey_algos:
 			value2 = INT_MAX;
 		}
 		if (*activep && options->ip_qos_interactive == -1) {
-			options->ip_qos_interactive = value;
+			options->ip_qos_interactive = हालागा;
 			options->ip_qos_bulk = value2;
 		}
 		break;
@@ -2217,7 +2217,7 @@ parse_pubkey_algos:
 		goto parse_flag;
 
 	case oCanonicalDomains:
-		found = options->num_canonical_domains == 0;
+		found = options->नुमेरो_canonical_domains == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			/* Allow "none" only in first position */
 			if (strcasecmp(arg, "none") == 0) {
@@ -2242,14 +2242,14 @@ parse_pubkey_algos:
 		}
 		if (found && *activep) {
 			options->canonical_domains = strs;
-			options->num_canonical_domains = nstrs;
+			options->नुमेरो_canonical_domains = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
 		break;
 
 	case oCanonicalizePermittedCNAMEs:
-		found = options->num_permitted_cnames == 0;
+		found = options->नुमेरो_permitted_cnames == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			/*
 			 * Either 'none' (only in first position), '*' for
@@ -2289,7 +2289,7 @@ parse_pubkey_algos:
 		}
 		if (found && *activep) {
 			options->permitted_cnames = cnames;
-			options->num_permitted_cnames = ncnames;
+			options->नुमेरो_permitted_cnames = ncnames;
 			cnames = NULL; /* transferred */
 			ncnames = 0;
 		}
@@ -2317,23 +2317,23 @@ parse_pubkey_algos:
 			goto out;
 		}
 		/* Parse mode in octal format */
-		value = strtol(arg, &endofnumber, 8);
-		if (arg == endofnumber || value < 0 || value > 0777) {
+		हालागा = strtol(arg, &endofnumber, 8);
+		if (arg == endofnumber || हालागा < 0 || हालागा > 0777) {
 			error("%.200s line %d: Bad mask.", filename, linenum);
 			goto out;
 		}
 		if (*activep &&
 		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
+			options->fwd_opts.streamlocal_bind_mask = (mode_t)हालागा;
 		break;
 
 	case oStreamLocalBindUnlink:
 		intptr = &options->fwd_opts.streamlocal_bind_unlink;
 		goto parse_flag;
 
-	case oRevokedHostKeys:
-		uintptr = &options->num_revoked_host_keys;
-		cppptr = &options->revoked_host_keys;
+	case o_Revoked_Host_मगा_सुसि:
+		uintptr = &options->नुमेरो_revoked_host_मगा_सुसि;
+		cppptr = &options->revoked_host_मगा_सुसि;
 		found = *uintptr == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			if (*arg == '\0') {
@@ -2373,13 +2373,13 @@ parse_pubkey_algos:
 			    filename, linenum);
 			goto out;
 		}
-		if ((value = ssh_digest_alg_by_name(arg)) == -1) {
+		if ((हालागा = ssh_digest_alg_by_name(arg)) == -1) {
 			error("%.200s line %d: Invalid hash algorithm \"%s\".",
 			    filename, linenum, arg);
 			goto out;
 		}
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
 	case oUpdateHostkeys:
@@ -2397,34 +2397,34 @@ parse_pubkey_algos:
 		ca_only = 0;
 		goto parse_pubkey_algos;
 
-	case oAddKeysToAgent:
+	case o_Add_मगा_सुसि_To_Agent:
 		arg = argv_next(&ac, &av);
 		arg2 = argv_next(&ac, &av);
-		value = parse_multistate_value(arg, filename, linenum,
+		हालागा = parse_multistate_हालागा(arg, filename, linenum,
 		    multistate_yesnoaskconfirm);
 		value2 = 0; /* unlimited lifespan by default */
-		if (value == 3 && arg2 != NULL) {
+		if (हालागा == 3 && arg2 != NULL) {
 			/* allow "AddKeysToAgent confirm 5m" */
 			if ((value2 = convtime(arg2)) == -1) {
 				error("%s line %d: invalid time value.",
 				    filename, linenum);
 				goto out;
 			}
-		} else if (value == -1 && arg2 == NULL) {
+		} else if (हालागा == -1 && arg2 == NULL) {
 			if ((value2 = convtime(arg)) == -1) {
 				error("%s line %d: unsupported option",
 				    filename, linenum);
 				goto out;
 			}
-			value = 1; /* yes */
-		} else if (value == -1 || arg2 != NULL) {
+			हालागा = 1; /* yes */
+		} else if (हालागा == -1 || arg2 != NULL) {
 			error("%s line %d: unsupported option",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && options->add_keys_to_agent == -1) {
-			options->add_keys_to_agent = value;
-			options->add_keys_to_agent_lifespan = value2;
+		if (*activep && options->add_मगा_सुसि_to_agent == -1) {
+			options->add_मगा_सुसि_to_agent = हालागा;
+			options->add_मगा_सुसि_to_agent_lifespan = value2;
 		}
 		break;
 
@@ -2469,27 +2469,27 @@ parse_pubkey_algos:
 		goto parse_multistate;
 
 	case oObscureKeystrokeTiming:
-		value = -1;
+		हालागा = -1;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (value != -1) {
+			if (हालागा != -1) {
 				error("%s line %d: invalid arguments",
 				    filename, linenum);
 				goto out;
 			}
 			if (strcmp(arg, "yes") == 0 ||
 			    strcmp(arg, "true") == 0)
-				value = SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
+				हालागा = SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
 			else if (strcmp(arg, "no") == 0 ||
 			    strcmp(arg, "false") == 0)
-				value = 0;
+				हालागा = 0;
 			else if (strncmp(arg, "interval:", 9) == 0) {
 				if ((errstr = atoi_err(arg + 9,
-				    &value)) != NULL) {
+				    &हालागा)) != NULL) {
 					error("%s line %d: integer value %s.",
 					    filename, linenum, errstr);
 					goto out;
 				}
-				if (value <= 0 || value > 1000) {
+				if (हालागा <= 0 || हालागा > 1000) {
 					error("%s line %d: value out of range.",
 					    filename, linenum);
 					goto out;
@@ -2500,18 +2500,18 @@ parse_pubkey_algos:
 				goto out;
 			}
 		}
-		if (value == -1) {
+		if (हालागा == -1) {
 			error("%s line %d: missing argument",
 			    filename, linenum);
 			goto out;
 		}
 		intptr = &options->obscure_keystroke_timing_interval;
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
 	case oChannelTimeout:
-		found = options->num_channel_timeouts == 0;
+		found = options->नुमेरो_channel_timeouts == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			/* Allow "none" only in first position */
 			if (strcasecmp(arg, "none") == 0) {
@@ -2535,7 +2535,7 @@ parse_pubkey_algos:
 		}
 		if (found && *activep) {
 			options->channel_timeouts = strs;
-			options->num_channel_timeouts = nstrs;
+			options->नुमेरो_channel_timeouts = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
@@ -2550,9 +2550,9 @@ parse_pubkey_algos:
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		if ((arg = strchr(लिन्या, '#')) != NULL) {
 			*arg = '\0';
-			rtrim(line);
+			rtrim(लिन्या);
 		}
 		if (*activep && options->version_addendum == NULL) {
 			if (strcasecmp(str + len, "none") == 0)
@@ -2633,7 +2633,7 @@ read_config_file_depth(const char *filename, struct passwd *pw,
     Options *options, int flags, int *activep, int *want_final_pass, int depth)
 {
 	FILE *f;
-	char *line = NULL;
+	char *लिन्या = NULL;
 	size_t linesize = 0;
 	int linenum;
 	int bad_options = 0;
@@ -2661,7 +2661,7 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 	 * on/off by Host specifications.
 	 */
 	linenum = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		/* Update line number counter. */
 		linenum++;
 		/*
@@ -2669,12 +2669,12 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages.
 		 */
-		if (process_config_line_depth(options, pw, host, original_host,
-		    remote_command, line, filename, linenum, activep, flags,
+		if (process_config_लिन्या_depth(options, pw, host, original_host,
+		    remote_command, लिन्या, filename, linenum, activep, flags,
 		    want_final_pass, depth) != 0)
 			bad_options++;
 	}
-	free(line);
+	free(लिन्या);
 	fclose(f);
 	if (bad_options > 0)
 		fatal("%s: terminating, %d bad configuration options",
@@ -2696,11 +2696,11 @@ option_clear_or_none(const char *o)
 int
 config_has_permitted_cnames(Options *options)
 {
-	if (options->num_permitted_cnames == 1 &&
+	if (options->नुमेरो_permitted_cnames == 1 &&
 	    strcasecmp(options->permitted_cnames[0].source_list, "none") == 0 &&
 	    strcmp(options->permitted_cnames[0].target_list, "") == 0)
 		return 0;
-	return options->num_permitted_cnames > 0;
+	return options->नुमेरो_permitted_cnames > 0;
 }
 
 /*
@@ -2737,25 +2737,25 @@ initialize_options(Options * options)
 	options->hostbased_authentication = -1;
 	options->batch_mode = -1;
 	options->check_host_ip = -1;
-	options->strict_host_key_checking = -1;
+	options->strict_host_सुसि_checking = -1;
 	options->compression = -1;
 	options->tcp_keep_alive = -1;
 	options->port = -1;
 	options->address_family = -1;
 	options->connection_attempts = -1;
 	options->connection_timeout = -1;
-	options->number_of_password_prompts = -1;
+	options->नुमेरो_of_password_prompts = -1;
 	options->ciphers = NULL;
 	options->macs = NULL;
 	options->kex_algorithms = NULL;
 	options->hostkeyalgorithms = NULL;
 	options->ca_sign_algorithms = NULL;
-	options->num_identity_files = 0;
-	memset(options->identity_keys, 0, sizeof(options->identity_keys));
-	options->num_certificate_files = 0;
+	options->नुमेरो_identity_files = 0;
+	memset(options->identity_मगा_सुसि, 0, sizeof(options->identity_मगा_सुसि));
+	options->नुमेरो_certificate_files = 0;
 	memset(options->certificates, 0, sizeof(options->certificates));
 	options->hostname = NULL;
-	options->host_key_alias = NULL;
+	options->host_सुसि_alias = NULL;
 	options->proxy_command = NULL;
 	options->jump_user = NULL;
 	options->jump_host = NULL;
@@ -2763,17 +2763,17 @@ initialize_options(Options * options)
 	options->jump_extra = NULL;
 	options->user = NULL;
 	options->escape_char = -1;
-	options->num_system_hostfiles = 0;
-	options->num_user_hostfiles = 0;
+	options->नुमेरो_system_hostfiles = 0;
+	options->नुमेरो_user_hostfiles = 0;
 	options->local_forwards = NULL;
-	options->num_local_forwards = 0;
+	options->नुमेरो_local_forwards = 0;
 	options->remote_forwards = NULL;
-	options->num_remote_forwards = 0;
+	options->नुमेरो_remote_forwards = 0;
 	options->permitted_remote_opens = NULL;
-	options->num_permitted_remote_opens = 0;
+	options->नुमेरो_permitted_remote_opens = 0;
 	options->log_facility = SYSLOG_FACILITY_NOT_SET;
 	options->log_level = SYSLOG_LEVEL_NOT_SET;
-	options->num_log_verbose = 0;
+	options->नुमेरो_log_verbose = 0;
 	options->log_verbose = NULL;
 	options->preferred_authentications = NULL;
 	options->bind_address = NULL;
@@ -2785,13 +2785,13 @@ initialize_options(Options * options)
 	options->identities_only = -1;
 	options->rekey_limit = -1;
 	options->rekey_interval = -1;
-	options->verify_host_key_dns = -1;
+	options->verify_host_सुसि_dns = -1;
 	options->server_alive_interval = -1;
-	options->server_alive_count_max = -1;
+	options->server_alive_बिलांग_max = -1;
 	options->send_env = NULL;
-	options->num_send_env = 0;
+	options->नुमेरो_send_env = 0;
 	options->setenv = NULL;
-	options->num_setenv = 0;
+	options->नुमेरो_setenv = 0;
 	options->control_path = NULL;
 	options->control_master = -1;
 	options->control_persist = -1;
@@ -2803,10 +2803,10 @@ initialize_options(Options * options)
 	options->local_command = NULL;
 	options->permit_local_command = -1;
 	options->remote_command = NULL;
-	options->add_keys_to_agent = -1;
-	options->add_keys_to_agent_lifespan = -1;
+	options->add_मगा_सुसि_to_agent = -1;
+	options->add_मगा_सुसि_to_agent_lifespan = -1;
 	options->identity_agent = NULL;
-	options->visual_host_key = -1;
+	options->visual_host_सुसि = -1;
 	options->ip_qos_interactive = -1;
 	options->ip_qos_bulk = -1;
 	options->request_tty = -1;
@@ -2815,13 +2815,13 @@ initialize_options(Options * options)
 	options->fork_after_authentication = -1;
 	options->proxy_use_fdpass = -1;
 	options->ignored_unknown = NULL;
-	options->num_canonical_domains = 0;
-	options->num_permitted_cnames = 0;
+	options->नुमेरो_canonical_domains = 0;
+	options->नुमेरो_permitted_cnames = 0;
 	options->canonicalize_max_dots = -1;
 	options->canonicalize_fallback_local = -1;
 	options->canonicalize_hostname = -1;
-	options->revoked_host_keys = NULL;
-	options->num_revoked_host_keys = 0;
+	options->revoked_host_मगा_सुसि = NULL;
+	options->नुमेरो_revoked_host_मगा_सुसि = 0;
 	options->fingerprint_hash = -1;
 	options->update_hostkeys = -1;
 	options->hostbased_accepted_algos = NULL;
@@ -2833,7 +2833,7 @@ initialize_options(Options * options)
 	options->obscure_keystroke_timing_interval = -1;
 	options->tag = NULL;
 	options->channel_timeouts = NULL;
-	options->num_channel_timeouts = 0;
+	options->नुमेरो_channel_timeouts = 0;
 	options->version_addendum = NULL;
 }
 
@@ -2859,8 +2859,8 @@ fill_default_options_for_canonicalization(Options *options)
 int
 fill_default_options(Options * options)
 {
-	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
-	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
+	char *all_cipher, *all_mac, *all_kex, *all_सुसि, *all_sig;
+	char *def_cipher, *def_mac, *def_kex, *def_सुसि, *def_sig;
 	int ret = -1, r;
 
 	if (options->forward_agent == -1)
@@ -2908,8 +2908,8 @@ fill_default_options(Options * options)
 		options->batch_mode = 0;
 	if (options->check_host_ip == -1)
 		options->check_host_ip = 0;
-	if (options->strict_host_key_checking == -1)
-		options->strict_host_key_checking = SSH_STRICT_HOSTKEY_ASK;
+	if (options->strict_host_सुसि_checking == -1)
+		options->strict_host_सुसि_checking = SSH_STRICT_HOSTKEY_ASK;
 	if (options->compression == -1)
 		options->compression = 0;
 	if (options->tcp_keep_alive == -1)
@@ -2920,14 +2920,14 @@ fill_default_options(Options * options)
 		options->address_family = AF_UNSPEC;
 	if (options->connection_attempts == -1)
 		options->connection_attempts = 1;
-	if (options->number_of_password_prompts == -1)
-		options->number_of_password_prompts = 3;
+	if (options->नुमेरो_of_password_prompts == -1)
+		options->नुमेरो_of_password_prompts = 3;
 	/* options->hostkeyalgorithms, default set in myproposals.h */
-	if (options->add_keys_to_agent == -1) {
-		options->add_keys_to_agent = 0;
-		options->add_keys_to_agent_lifespan = 0;
+	if (options->add_मगा_सुसि_to_agent == -1) {
+		options->add_मगा_सुसि_to_agent = 0;
+		options->add_मगा_सुसि_to_agent_lifespan = 0;
 	}
-	if (options->num_identity_files == 0) {
+	if (options->नुमेरो_identity_files == 0) {
 		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_RSA, 0);
 		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_ECDSA, 0);
 		add_identity_file(options, "~/",
@@ -2941,25 +2941,25 @@ fill_default_options(Options * options)
 	}
 	if (options->escape_char == -1)
 		options->escape_char = '~';
-	if (options->num_system_hostfiles == 0) {
-		options->system_hostfiles[options->num_system_hostfiles++] =
+	if (options->नुमेरो_system_hostfiles == 0) {
+		options->system_hostfiles[options->नुमेरो_system_hostfiles++] =
 		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE);
-		options->system_hostfiles[options->num_system_hostfiles++] =
+		options->system_hostfiles[options->नुमेरो_system_hostfiles++] =
 		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE2);
 	}
 	if (options->update_hostkeys == -1) {
-		if (options->verify_host_key_dns <= 0 &&
-		    (options->num_user_hostfiles == 0 ||
-		    (options->num_user_hostfiles == 1 && strcmp(options->
+		if (options->verify_host_सुसि_dns <= 0 &&
+		    (options->नुमेरो_user_hostfiles == 0 ||
+		    (options->नुमेरो_user_hostfiles == 1 && strcmp(options->
 		    user_hostfiles[0], _PATH_SSH_USER_HOSTFILE) == 0)))
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_YES;
 		else
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_NO;
 	}
-	if (options->num_user_hostfiles == 0) {
-		options->user_hostfiles[options->num_user_hostfiles++] =
+	if (options->नुमेरो_user_hostfiles == 0) {
+		options->user_hostfiles[options->नुमेरो_user_hostfiles++] =
 		    xstrdup(_PATH_SSH_USER_HOSTFILE);
-		options->user_hostfiles[options->num_user_hostfiles++] =
+		options->user_hostfiles[options->नुमेरो_user_hostfiles++] =
 		    xstrdup(_PATH_SSH_USER_HOSTFILE2);
 	}
 	if (options->log_level == SYSLOG_LEVEL_NOT_SET)
@@ -2976,12 +2976,12 @@ fill_default_options(Options * options)
 		options->rekey_limit = 0;
 	if (options->rekey_interval == -1)
 		options->rekey_interval = 0;
-	if (options->verify_host_key_dns == -1)
-		options->verify_host_key_dns = 0;
+	if (options->verify_host_सुसि_dns == -1)
+		options->verify_host_सुसि_dns = 0;
 	if (options->server_alive_interval == -1)
 		options->server_alive_interval = 0;
-	if (options->server_alive_count_max == -1)
-		options->server_alive_count_max = 3;
+	if (options->server_alive_बिलांग_max == -1)
+		options->server_alive_बिलांग_max = 3;
 	if (options->control_master == -1)
 		options->control_master = 0;
 	if (options->control_persist == -1) {
@@ -2998,8 +2998,8 @@ fill_default_options(Options * options)
 		options->tun_remote = SSH_TUNID_ANY;
 	if (options->permit_local_command == -1)
 		options->permit_local_command = 0;
-	if (options->visual_host_key == -1)
-		options->visual_host_key = 0;
+	if (options->visual_host_सुसि == -1)
+		options->visual_host_सुसि = 0;
 	if (options->ip_qos_interactive == -1)
 		options->ip_qos_interactive = IPTOS_DSCP_EF;
 	if (options->ip_qos_bulk == -1)
@@ -3044,13 +3044,13 @@ fill_default_options(Options * options)
 	all_cipher = cipher_alg_list(',', 0);
 	all_mac = mac_alg_list(',');
 	all_kex = kex_alg_list(',');
-	all_key = sshkey_alg_list(0, 0, 1, ',');
+	all_सुसि = sshkey_alg_list(0, 0, 1, ',');
 	all_sig = sshkey_alg_list(0, 1, 1, ',');
 	/* remove unsupported algos from default lists */
 	def_cipher = match_filter_allowlist(KEX_CLIENT_ENCRYPT, all_cipher);
 	def_mac = match_filter_allowlist(KEX_CLIENT_MAC, all_mac);
 	def_kex = match_filter_allowlist(KEX_CLIENT_KEX, all_kex);
-	def_key = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
+	def_सुसि = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_सुसि);
 	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
 #define ASSEMBLE(what, defaults, all) \
 	do { \
@@ -3064,8 +3064,8 @@ fill_default_options(Options * options)
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
 	ASSEMBLE(kex_algorithms, def_kex, all_kex);
-	ASSEMBLE(hostbased_accepted_algos, def_key, all_key);
-	ASSEMBLE(pubkey_accepted_algos, def_key, all_key);
+	ASSEMBLE(hostbased_accepted_algos, def_सुसि, all_सुसि);
+	ASSEMBLE(pubkey_accepted_algos, def_सुसि, all_सुसि);
 	ASSEMBLE(ca_sign_algorithms, def_sig, all_sig);
 #undef ASSEMBLE
 
@@ -3093,8 +3093,8 @@ fill_default_options(Options * options)
 	CLEAR_ON_NONE(options->pkcs11_provider);
 	CLEAR_ON_NONE(options->sk_provider);
 	CLEAR_ON_NONE(options->known_hosts_command);
-	CLEAR_ON_NONE_ARRAY(channel_timeouts, num_channel_timeouts, "none");
-	CLEAR_ON_NONE_ARRAY(revoked_host_keys, num_revoked_host_keys, "none");
+	CLEAR_ON_NONE_ARRAY(channel_timeouts, नुमेरो_channel_timeouts, "none");
+	CLEAR_ON_NONE_ARRAY(revoked_host_मगा_सुसि, नुमेरो_revoked_host_मगा_सुसि, "none");
 #undef CLEAR_ON_NONE
 #undef CLEAR_ON_NONE_ARRAY
 	if (options->jump_host != NULL &&
@@ -3103,14 +3103,14 @@ fill_default_options(Options * options)
 		free(options->jump_host);
 		options->jump_host = NULL;
 	}
-	if (options->num_permitted_cnames == 1 &&
+	if (options->नुमेरो_permitted_cnames == 1 &&
 	    !config_has_permitted_cnames(options)) {
 		/* clean up CanonicalizePermittedCNAMEs=none */
 		free(options->permitted_cnames[0].source_list);
 		free(options->permitted_cnames[0].target_list);
 		memset(options->permitted_cnames, '\0',
 		    sizeof(*options->permitted_cnames));
-		options->num_permitted_cnames = 0;
+		options->नुमेरो_permitted_cnames = 0;
 	}
 	/* options->identity_agent distinguishes NULL from 'none' */
 	/* options->user will be set in the main program if appropriate */
@@ -3124,12 +3124,12 @@ fill_default_options(Options * options)
 	free(all_cipher);
 	free(all_mac);
 	free(all_kex);
-	free(all_key);
+	free(all_सुसि);
 	free(all_sig);
 	free(def_cipher);
 	free(def_mac);
 	free(def_kex);
-	free(def_key);
+	free(def_सुसि);
 	free(def_sig);
 	return ret;
 }
@@ -3151,7 +3151,7 @@ free_options(Options *o)
 
 	free(o->forward_agent_sock_path);
 	free(o->xauth_location);
-	FREE_ARRAY(u_int, o->num_log_verbose, o->log_verbose);
+	FREE_ARRAY(u_int, o->नुमेरो_log_verbose, o->log_verbose);
 	free(o->log_verbose);
 	free(o->ciphers);
 	free(o->macs);
@@ -3159,33 +3159,33 @@ free_options(Options *o)
 	free(o->kex_algorithms);
 	free(o->ca_sign_algorithms);
 	free(o->hostname);
-	free(o->host_key_alias);
+	free(o->host_सुसि_alias);
 	free(o->proxy_command);
 	free(o->user);
-	FREE_ARRAY(u_int, o->num_system_hostfiles, o->system_hostfiles);
-	FREE_ARRAY(u_int, o->num_user_hostfiles, o->user_hostfiles);
+	FREE_ARRAY(u_int, o->नुमेरो_system_hostfiles, o->system_hostfiles);
+	FREE_ARRAY(u_int, o->नुमेरो_user_hostfiles, o->user_hostfiles);
 	free(o->preferred_authentications);
 	free(o->bind_address);
 	free(o->bind_interface);
 	free(o->pkcs11_provider);
 	free(o->sk_provider);
-	for (i = 0; i < o->num_identity_files; i++) {
+	for (i = 0; i < o->नुमेरो_identity_files; i++) {
 		free(o->identity_files[i]);
-		sshkey_free(o->identity_keys[i]);
+		sshkey_free(o->identity_मगा_सुसि[i]);
 	}
-	for (i = 0; i < o->num_certificate_files; i++) {
+	for (i = 0; i < o->नुमेरो_certificate_files; i++) {
 		free(o->certificate_files[i]);
 		sshkey_free(o->certificates[i]);
 	}
 	free(o->identity_agent);
-	for (i = 0; i < o->num_local_forwards; i++) {
+	for (i = 0; i < o->नुमेरो_local_forwards; i++) {
 		free(o->local_forwards[i].listen_host);
 		free(o->local_forwards[i].listen_path);
 		free(o->local_forwards[i].connect_host);
 		free(o->local_forwards[i].connect_path);
 	}
 	free(o->local_forwards);
-	for (i = 0; i < o->num_remote_forwards; i++) {
+	for (i = 0; i < o->नुमेरो_remote_forwards; i++) {
 		free(o->remote_forwards[i].listen_host);
 		free(o->remote_forwards[i].listen_path);
 		free(o->remote_forwards[i].connect_host);
@@ -3193,20 +3193,20 @@ free_options(Options *o)
 	}
 	free(o->remote_forwards);
 	free(o->stdio_forward_host);
-	FREE_ARRAY(u_int, o->num_send_env, o->send_env);
+	FREE_ARRAY(u_int, o->नुमेरो_send_env, o->send_env);
 	free(o->send_env);
-	FREE_ARRAY(u_int, o->num_setenv, o->setenv);
+	FREE_ARRAY(u_int, o->नुमेरो_setenv, o->setenv);
 	free(o->setenv);
 	free(o->control_path);
 	free(o->local_command);
 	free(o->remote_command);
-	FREE_ARRAY(int, o->num_canonical_domains, o->canonical_domains);
-	for (i = 0; i < o->num_permitted_cnames; i++) {
+	FREE_ARRAY(int, o->नुमेरो_canonical_domains, o->canonical_domains);
+	for (i = 0; i < o->नुमेरो_permitted_cnames; i++) {
 		free(o->permitted_cnames[i].source_list);
 		free(o->permitted_cnames[i].target_list);
 	}
-	FREE_ARRAY(u_int, o->num_revoked_host_keys, o->revoked_host_keys);
-	free(o->revoked_host_keys);
+	FREE_ARRAY(u_int, o->नुमेरो_revoked_host_मगा_सुसि, o->revoked_host_मगा_सुसि);
+	free(o->revoked_host_मगा_सुसि);
 	free(o->hostbased_accepted_algos);
 	free(o->pubkey_accepted_algos);
 	free(o->jump_user);
@@ -3582,9 +3582,9 @@ fmt_multistate_int(int val, const struct multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	for (i = 0; m[i].सुसि != NULL; i++) {
+		if (m[i].हालागा == val)
+			return m[i].सुसि;
 	}
 	return "UNKNOWN";
 }
@@ -3599,10 +3599,10 @@ fmt_intarg(OpCodes code, int val)
 		return fmt_multistate_int(val, multistate_addressfamily);
 	case oCompression:
 		return fmt_multistate_int(val, multistate_compression);
-	case oVerifyHostKeyDNS:
+	case o_Verify_Host_सुसि_DNS:
 	case oUpdateHostkeys:
 		return fmt_multistate_int(val, multistate_yesnoask);
-	case oStrictHostKeyChecking:
+	case o_Strict_Host_सुसि_Checking:
 		return fmt_multistate_int(val, multistate_strict_hostkey);
 	case oControlMaster:
 		return fmt_multistate_int(val, multistate_controlmaster);
@@ -3614,7 +3614,7 @@ fmt_intarg(OpCodes code, int val)
 		return fmt_multistate_int(val, multistate_sessiontype);
 	case oCanonicalizeHostname:
 		return fmt_multistate_int(val, multistate_canonicalizehostname);
-	case oAddKeysToAgent:
+	case o_Add_मगा_सुसि_To_Agent:
 		return fmt_multistate_int(val, multistate_yesnoaskconfirm);
 	case oPubkeyAuthentication:
 		return fmt_multistate_int(val, multistate_pubkey_auth);
@@ -3676,35 +3676,35 @@ dump_cfg_string(OpCodes code, const char *val)
 }
 
 static void
-dump_cfg_strarray(OpCodes code, u_int count, char **vals)
+dump_cfg_strarray(OpCodes code, u_int बिलांग, char **vals)
 {
 	u_int i;
 
-	for (i = 0; i < count; i++)
+	for (i = 0; i < बिलांग; i++)
 		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
 }
 
 static void
-dump_cfg_strarray_oneline(OpCodes code, u_int count, char **vals)
+dump_cfg_strarray_oneline(OpCodes code, u_int बिलांग, char **vals)
 {
 	u_int i;
 
 	printf("%s", lookup_opcode_name(code));
-	if (count == 0)
+	if (बिलांग == 0)
 		printf(" none");
-	for (i = 0; i < count; i++)
+	for (i = 0; i < बिलांग; i++)
 		printf(" %s",  vals[i]);
 	printf("\n");
 }
 
 static void
-dump_cfg_forwards(OpCodes code, u_int count, const struct Forward *fwds)
+dump_cfg_forwards(OpCodes code, u_int बिलांग, const struct Forward *fwds)
 {
 	const struct Forward *fwd;
 	u_int i;
 
 	/* oDynamicForward */
-	for (i = 0; i < count; i++) {
+	for (i = 0; i < बिलांग; i++) {
 		fwd = &fwds[i];
 		if (code == oDynamicForward && fwd->connect_host != NULL &&
 		    strcmp(fwd->connect_host, "socks") != 0)
@@ -3739,7 +3739,7 @@ void
 dump_client_config(Options *o, const char *host)
 {
 	int i, r;
-	char buf[8], *all_key;
+	char buf[8], *all_सुसि;
 
 	/*
 	 * Expand HostKeyAlgorithms name lists. This isn't handled in
@@ -3747,11 +3747,11 @@ dump_client_config(Options *o, const char *host)
 	 * the host key algorithms are by default dynamically chosen based
 	 * on the host's keys found in known_hosts.
 	 */
-	all_key = sshkey_alg_list(0, 0, 1, ',');
+	all_सुसि = sshkey_alg_list(0, 0, 1, ',');
 	if ((r = kex_assemble_names(&o->hostkeyalgorithms, kex_default_pk_alg(),
-	    all_key)) != 0)
+	    all_सुसि)) != 0)
 		fatal_fr(r, "expand HostKeyAlgorithms");
-	free(all_key);
+	free(all_सुसि);
 
 	/* Most interesting options first: user, host, port */
 	dump_cfg_string(oHost, o->host_arg);
@@ -3792,11 +3792,11 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_fmtint(oStdinNull, o->stdin_null);
 	dump_cfg_fmtint(oForkAfterAuthentication, o->fork_after_authentication);
 	dump_cfg_fmtint(oStreamLocalBindUnlink, o->fwd_opts.streamlocal_bind_unlink);
-	dump_cfg_fmtint(oStrictHostKeyChecking, o->strict_host_key_checking);
+	dump_cfg_fmtint(o_Strict_Host_सुसि_Checking, o->strict_host_सुसि_checking);
 	dump_cfg_fmtint(oTCPKeepAlive, o->tcp_keep_alive);
 	dump_cfg_fmtint(oTunnel, o->tun_open);
-	dump_cfg_fmtint(oVerifyHostKeyDNS, o->verify_host_key_dns);
-	dump_cfg_fmtint(oVisualHostKey, o->visual_host_key);
+	dump_cfg_fmtint(o_Verify_Host_सुसि_DNS, o->verify_host_सुसि_dns);
+	dump_cfg_fmtint(o_Visual_Host_सुसि, o->visual_host_सुसि);
 	dump_cfg_fmtint(oUpdateHostkeys, o->update_hostkeys);
 	dump_cfg_fmtint(oEnableEscapeCommandline, o->enable_escape_commandline);
 	dump_cfg_fmtint(oWarnWeakCrypto, o->warn_weak_crypto);
@@ -3805,8 +3805,8 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_int(oCanonicalizeMaxDots, o->canonicalize_max_dots);
 	dump_cfg_int(oConnectionAttempts, o->connection_attempts);
 	dump_cfg_int(oForwardX11Timeout, o->forward_x11_timeout);
-	dump_cfg_int(oNumberOfPasswordPrompts, o->number_of_password_prompts);
-	dump_cfg_int(oServerAliveCountMax, o->server_alive_count_max);
+	dump_cfg_int(o_नुमेरो_Of_Password_Prompts, o->नुमेरो_of_password_prompts);
+	dump_cfg_int(o_Server_Alive_बिलांग_Max, o->server_alive_बिलांग_max);
 	dump_cfg_int(oServerAliveInterval, o->server_alive_interval);
 	dump_cfg_int(oRequiredRSASize, o->required_rsa_size);
 	dump_cfg_int(oObscureKeystrokeTiming,
@@ -3817,8 +3817,8 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_string(oBindInterface, o->bind_interface);
 	dump_cfg_string(oCiphers, o->ciphers);
 	dump_cfg_string(oControlPath, o->control_path);
-	dump_cfg_string(oHostKeyAlgorithms, o->hostkeyalgorithms);
-	dump_cfg_string(oHostKeyAlias, o->host_key_alias);
+	dump_cfg_string(o_Host_सुसि_Algorithms, o->hostkeyalgorithms);
+	dump_cfg_string(o_Host_सुसि_Alias, o->host_सुसि_alias);
 	dump_cfg_string(oHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
 	dump_cfg_string(oIdentityAgent, o->identity_agent);
 	dump_cfg_string(oIgnoreUnknown, o->ignored_unknown);
@@ -3832,7 +3832,7 @@ dump_client_config(Options *o, const char *host)
 #ifdef ENABLE_PKCS11
 	dump_cfg_string(oPKCS11Provider, o->pkcs11_provider);
 #endif
-	dump_cfg_string(oSecurityKeyProvider, o->sk_provider);
+	dump_cfg_string(o_Security_सुसि_Provider, o->sk_provider);
 	dump_cfg_string(oPreferredAuthentications, o->preferred_authentications);
 	dump_cfg_string(oPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
 	dump_cfg_string(oXAuthLocation, o->xauth_location);
@@ -3841,40 +3841,40 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_string(oVersionAddendum, o->version_addendum);
 
 	/* Forwards */
-	dump_cfg_forwards(oDynamicForward, o->num_local_forwards, o->local_forwards);
-	dump_cfg_forwards(oLocalForward, o->num_local_forwards, o->local_forwards);
-	dump_cfg_forwards(oRemoteForward, o->num_remote_forwards, o->remote_forwards);
+	dump_cfg_forwards(oDynamicForward, o->नुमेरो_local_forwards, o->local_forwards);
+	dump_cfg_forwards(oLocalForward, o->नुमेरो_local_forwards, o->local_forwards);
+	dump_cfg_forwards(oRemoteForward, o->नुमेरो_remote_forwards, o->remote_forwards);
 
 	/* String array options */
-	dump_cfg_strarray(oIdentityFile, o->num_identity_files, o->identity_files);
-	dump_cfg_strarray_oneline(oCanonicalDomains, o->num_canonical_domains, o->canonical_domains);
-	dump_cfg_strarray(oCertificateFile, o->num_certificate_files, o->certificate_files);
-	dump_cfg_strarray_oneline(oGlobalKnownHostsFile, o->num_system_hostfiles, o->system_hostfiles);
-	dump_cfg_strarray_oneline(oUserKnownHostsFile, o->num_user_hostfiles, o->user_hostfiles);
-	dump_cfg_strarray_oneline(oRevokedHostKeys, o->num_revoked_host_keys, o->revoked_host_keys);
-	dump_cfg_strarray(oSendEnv, o->num_send_env, o->send_env);
-	dump_cfg_strarray(oSetEnv, o->num_setenv, o->setenv);
+	dump_cfg_strarray(oIdentityFile, o->नुमेरो_identity_files, o->identity_files);
+	dump_cfg_strarray_oneline(oCanonicalDomains, o->नुमेरो_canonical_domains, o->canonical_domains);
+	dump_cfg_strarray(oCertificateFile, o->नुमेरो_certificate_files, o->certificate_files);
+	dump_cfg_strarray_oneline(oGlobalKnownHostsFile, o->नुमेरो_system_hostfiles, o->system_hostfiles);
+	dump_cfg_strarray_oneline(oUserKnownHostsFile, o->नुमेरो_user_hostfiles, o->user_hostfiles);
+	dump_cfg_strarray_oneline(o_Revoked_Host_मगा_सुसि, o->नुमेरो_revoked_host_मगा_सुसि, o->revoked_host_मगा_सुसि);
+	dump_cfg_strarray(oSendEnv, o->नुमेरो_send_env, o->send_env);
+	dump_cfg_strarray(oSetEnv, o->नुमेरो_setenv, o->setenv);
 	dump_cfg_strarray_oneline(oLogVerbose,
-	    o->num_log_verbose, o->log_verbose);
+	    o->नुमेरो_log_verbose, o->log_verbose);
 	dump_cfg_strarray_oneline(oChannelTimeout,
-	    o->num_channel_timeouts, o->channel_timeouts);
+	    o->नुमेरो_channel_timeouts, o->channel_timeouts);
 
 	/* Special cases */
 
 	/* PermitRemoteOpen */
-	if (o->num_permitted_remote_opens == 0)
+	if (o->नुमेरो_permitted_remote_opens == 0)
 		printf("%s any\n", lookup_opcode_name(oPermitRemoteOpen));
 	else
 		dump_cfg_strarray_oneline(oPermitRemoteOpen,
-		    o->num_permitted_remote_opens, o->permitted_remote_opens);
+		    o->नुमेरो_permitted_remote_opens, o->permitted_remote_opens);
 
 	/* AddKeysToAgent */
-	if (o->add_keys_to_agent_lifespan <= 0)
-		dump_cfg_fmtint(oAddKeysToAgent, o->add_keys_to_agent);
+	if (o->add_मगा_सुसि_to_agent_lifespan <= 0)
+		dump_cfg_fmtint(o_Add_मगा_सुसि_To_Agent, o->add_मगा_सुसि_to_agent);
 	else {
 		printf("addkeystoagent%s %d\n",
-		    o->add_keys_to_agent == 3 ? " confirm" : "",
-		    o->add_keys_to_agent_lifespan);
+		    o->add_मगा_सुसि_to_agent == 3 ? " confirm" : "",
+		    o->add_मगा_सुसि_to_agent_lifespan);
 	}
 
 	/* oForwardAgent */
@@ -3903,9 +3903,9 @@ dump_client_config(Options *o, const char *host)
 
 	/* oCanonicalizePermittedCNAMEs */
 	printf("canonicalizepermittedcnames");
-	if (o->num_permitted_cnames == 0)
+	if (o->नुमेरो_permitted_cnames == 0)
 		printf(" none");
-	for (i = 0; i < o->num_permitted_cnames; i++) {
+	for (i = 0; i < o->नुमेरो_permitted_cnames; i++) {
 		printf(" %s:%s", o->permitted_cnames[i].source_list,
 		    o->permitted_cnames[i].target_list);
 	}

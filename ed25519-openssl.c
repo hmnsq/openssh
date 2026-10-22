@@ -39,7 +39,7 @@
 #error "crypto_sign_ed25519_SECRETKEYBYTES < crypto_sign_ed25519_PUBLICKEYBYTES"
 #endif
 
-#define SSH_ED25519_RAW_SECRET_KEY_LEN \
+#define SSH_ED25519_RAW_SECRET_सुसि_LEN \
     (crypto_sign_ed25519_SECRETKEYBYTES - crypto_sign_ed25519_PUBLICKEYBYTES)
 
 int
@@ -65,7 +65,7 @@ crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
 
 	/* Extract public key */
 	pklen = crypto_sign_ed25519_PUBLICKEYBYTES;
-	if (!EVP_PKEY_get_raw_public_key(pkey, pk, &pklen)) {
+	if (!EVP_PKEY_get_raw_public_सुसि(pkey, pk, &pklen)) {
 		debug3_f("EVP_PKEY_get_raw_public_key failed");
 		goto out;
 	}
@@ -74,13 +74,13 @@ crypto_sign_ed25519_keypair(unsigned char *pk, unsigned char *sk)
 		goto out;
 	}
 
-	sklen = SSH_ED25519_RAW_SECRET_KEY_LEN;
+	sklen = SSH_ED25519_RAW_SECRET_सुसि_LEN;
 	/* Extract private key (32 bytes seed) */
-	if (!EVP_PKEY_get_raw_private_key(pkey, sk, &sklen)) {
+	if (!EVP_PKEY_get_raw_private_सुसि(pkey, sk, &sklen)) {
 		debug3_f("EVP_PKEY_get_raw_private_key failed");
 		goto out;
 	}
-	if (sklen != SSH_ED25519_RAW_SECRET_KEY_LEN) {
+	if (sklen != SSH_ED25519_RAW_SECRET_सुसि_LEN) {
 		debug3_f("private key length mismatch: %zu", sklen);
 		goto out;
 	}
@@ -103,22 +103,22 @@ crypto_sign_ed25519_seed_keypair(unsigned char *pk, unsigned char *sk,
 	size_t pklen;
 	int ret = -1;
 
-	if ((pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL,
-	    seed, SSH_ED25519_RAW_SECRET_KEY_LEN)) == NULL) {
+	if ((pkey = EVP_PKEY_new_raw_private_सुसि(EVP_PKEY_ED25519, NULL,
+	    seed, SSH_ED25519_RAW_SECRET_सुसि_LEN)) == NULL) {
 		debug3_f("EVP_PKEY_new_raw_private_key failed");
 		goto out;
 	}
 
 	/* Extract public key */
 	pklen = crypto_sign_ed25519_PUBLICKEYBYTES;
-	if (!EVP_PKEY_get_raw_public_key(pkey, pk, &pklen)) {
+	if (!EVP_PKEY_get_raw_public_सुसि(pkey, pk, &pklen)) {
 		debug3_f("EVP_PKEY_get_raw_public_key failed");
 		goto out;
 	}
 
 	/* Build sk = seed || pk */
-	memcpy(sk, seed, SSH_ED25519_RAW_SECRET_KEY_LEN);
-	memcpy(sk + SSH_ED25519_RAW_SECRET_KEY_LEN, pk,
+	memcpy(sk, seed, SSH_ED25519_RAW_SECRET_सुसि_LEN);
+	memcpy(sk + SSH_ED25519_RAW_SECRET_सुसि_LEN, pk,
 	    crypto_sign_ed25519_PUBLICKEYBYTES);
 
 	ret = 0;
@@ -138,8 +138,8 @@ crypto_sign_ed25519_detached(unsigned char *sig, unsigned long long *siglenp,
 	int ret = -1;
 
 	/* Create EVP_PKEY from secret key (first 32 bytes are the seed) */
-	if ((pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL,
-	    sk, SSH_ED25519_RAW_SECRET_KEY_LEN)) == NULL) {
+	if ((pkey = EVP_PKEY_new_raw_private_सुसि(EVP_PKEY_ED25519, NULL,
+	    sk, SSH_ED25519_RAW_SECRET_सुसि_LEN)) == NULL) {
 		debug3_f("EVP_PKEY_new_raw_private_key failed");
 		goto out;
 	}
@@ -188,7 +188,7 @@ crypto_sign_ed25519_verify_detached(const unsigned char *sig,
 	}
 
 	/* Create EVP_PKEY from public key */
-	if ((pkey = EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, NULL,
+	if ((pkey = EVP_PKEY_new_raw_public_सुसि(EVP_PKEY_ED25519, NULL,
 	    pk, crypto_sign_ed25519_PUBLICKEYBYTES)) == NULL) {
 		debug3_f("EVP_PKEY_new_raw_public_key failed");
 		goto out;

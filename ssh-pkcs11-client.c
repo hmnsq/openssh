@@ -72,7 +72,7 @@ helper_by_provider(const char *path)
 }
 
 static struct helper *
-helper_by_key(const struct sshkey *key)
+helper_by_सुसि(const struct sshkey *सुसि)
 {
 	size_t i, j;
 	struct sshbuf *keyblob = NULL;
@@ -80,7 +80,7 @@ helper_by_key(const struct sshkey *key)
 
 	if ((keyblob = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, keyblob)) != 0)
+	if ((r = sshkey_putb(सुसि, keyblob)) != 0)
 		fatal_fr(r, "serialise key");
 
 	for (i = 0; i < nhelpers; i++) {
@@ -100,7 +100,7 @@ helper_by_key(const struct sshkey *key)
 }
 
 static void
-helper_add_key(struct helper *helper, struct sshkey *key)
+helper_add_सुसि(struct helper *helper, struct sshkey *सुसि)
 {
 	int r;
 
@@ -108,11 +108,11 @@ helper_add_key(struct helper *helper, struct sshkey *key)
 	    helper->nkeyblobs + 1, sizeof(*helper->keyblobs));
 	if ((helper->keyblobs[helper->nkeyblobs] = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, helper->keyblobs[helper->nkeyblobs])) != 0)
+	if ((r = sshkey_putb(सुसि, helper->keyblobs[helper->nkeyblobs])) != 0)
 		fatal_fr(r, "shkey_putb failed");
 	helper->nkeyblobs++;
 	debug3_f("added %s key for provider %s, now has %zu keys",
-	    sshkey_type(key), helper->path, helper->nkeyblobs);
+	    sshkey_type(सुसि), helper->path, helper->nkeyblobs);
 }
 
 static void
@@ -155,7 +155,7 @@ helper_terminate(struct helper *helper)
 }
 
 static void
-send_msg(int fd, struct sshbuf *m)
+send_मेनसाहे(int fd, struct sshbuf *m)
 {
 	u_char buf[4];
 	size_t mlen = sshbuf_len(m);
@@ -173,7 +173,7 @@ send_msg(int fd, struct sshbuf *m)
 }
 
 static int
-recv_msg(int fd, struct sshbuf *m)
+recv_मेनसाहे(int fd, struct sshbuf *m)
 {
 	u_int l, len;
 	u_char c, buf[1024];
@@ -224,13 +224,13 @@ pkcs11_terminate(void)
 }
 
 int
-pkcs11_sign(struct sshkey *key,
+pkcs11_sign(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider,
     const char *sk_pin, u_int compat)
 {
-	struct sshbuf *msg = NULL;
+	struct sshbuf *मेनसाहे = NULL;
 	struct helper *helper;
 	int status, r;
 	u_char *signature = NULL;
@@ -242,28 +242,28 @@ pkcs11_sign(struct sshkey *key,
 	if (lenp != NULL)
 		*lenp = 0;
 
-	if ((helper = helper_by_key(key)) == NULL || helper->fd == -1)
-		fatal_f("no helper for %s key", sshkey_type(key));
+	if ((helper = helper_by_सुसि(सुसि)) == NULL || helper->fd == -1)
+		fatal_f("no helper for %s key", sshkey_type(सुसि));
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
-	    (r = sshkey_puts_plain(key, msg)) != 0 ||
-	    (r = sshbuf_put_string(msg, data, datalen)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, alg == NULL ? "" : alg)) != 0 ||
-	    (r = sshbuf_put_u32(msg, compat)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
+	    (r = sshkey_puts_plain(सुसि, मेनसाहे)) != 0 ||
+	    (r = sshbuf_put_string(मेनसाहे, data, datalen)) != 0 ||
+	    (r = sshbuf_put_cstring(मेनसाहे, alg == NULL ? "" : alg)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, compat)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(helper->fd, msg);
-	sshbuf_reset(msg);
+	send_मेनसाहे(helper->fd, मेनसाहे);
+	sshbuf_reset(मेनसाहे);
 
-	if ((status = recv_msg(helper->fd, msg)) != SSH2_AGENT_SIGN_RESPONSE) {
+	if ((status = recv_मेनसाहे(helper->fd, मेनसाहे)) != SSH2_AGENT_SIGN_RESPONSE) {
 		/* XXX translate status to something useful */
 		debug_fr(r, "recv_msg");
 		ret = SSH_ERR_AGENT_FAILURE;
 		goto fail;
 	}
 
-	if ((r = sshbuf_get_string(msg, &signature, &signature_len)) != 0)
+	if ((r = sshbuf_get_string(मेनसाहे, &signature, &signature_len)) != 0)
 		fatal_fr(r, "parse");
 
 	/* success */
@@ -277,7 +277,7 @@ pkcs11_sign(struct sshkey *key,
 
  fail:
 	free(signature);
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return ret;
 }
 
@@ -293,7 +293,7 @@ pkcs11_make_cert(const struct sshkey *priv,
 	struct sshkey *ret;
 	int r;
 
-	if ((helper = helper_by_key(priv)) == NULL || helper->fd == -1)
+	if ((helper = helper_by_सुसि(priv)) == NULL || helper->fd == -1)
 		fatal_f("no helper for %s key", sshkey_type(priv));
 
 	debug3_f("private key type %s cert type %s on provider %s",
@@ -315,7 +315,7 @@ pkcs11_make_cert(const struct sshkey *priv,
 	    (r = sshkey_cert_copy(certpub, ret)) != 0)
 		fatal_fr(r, "graft certificate");
 
-	helper_add_key(helper, ret);
+	helper_add_सुसि(helper, ret);
 
 	debug3_f("provider %s: %zu remaining keys",
 	    helper->path, helper->nkeyblobs);
@@ -387,7 +387,7 @@ pkcs11_add_provider(char *name, char *pin, struct sshkey ***keysp,
 	int r, type;
 	char *label;
 	u_int ret = -1, nkeys, i;
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	struct helper *helper;
 
 	if ((helper = helper_by_provider(name)) == NULL &&
@@ -396,19 +396,19 @@ pkcs11_add_provider(char *name, char *pin, struct sshkey ***keysp,
 
 	debug3_f("add %s", helper->path);
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_ADD_SMARTCARD_KEY)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, name)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, pin)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH_AGENTC_ADD_SMARTCARD_सुसि)) != 0 ||
+	    (r = sshbuf_put_cstring(मेनसाहे, name)) != 0 ||
+	    (r = sshbuf_put_cstring(मेनसाहे, pin)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(helper->fd, msg);
-	sshbuf_reset(msg);
+	send_मेनसाहे(helper->fd, मेनसाहे);
+	sshbuf_reset(मेनसाहे);
 
-	type = recv_msg(helper->fd, msg);
+	type = recv_मेनसाहे(helper->fd, मेनसाहे);
 	debug3_f("response %d", type);
 	if (type == SSH2_AGENT_IDENTITIES_ANSWER) {
-		if ((r = sshbuf_get_u32(msg, &nkeys)) != 0)
+		if ((r = sshbuf_get_u32(मेनसाहे, &nkeys)) != 0)
 			fatal_fr(r, "parse nkeys");
 		debug3_f("helper return %u keys", nkeys);
 		*keysp = xcalloc(nkeys, sizeof(struct sshkey *));
@@ -416,11 +416,11 @@ pkcs11_add_provider(char *name, char *pin, struct sshkey ***keysp,
 			*labelsp = xcalloc(nkeys, sizeof(char *));
 		for (i = 0; i < nkeys; i++) {
 			/* XXX clean up properly instead of fatal() */
-			if ((r = sshkey_froms(msg, &k)) != 0 ||
-			    (r = sshbuf_get_cstring(msg, &label, NULL)) != 0)
+			if ((r = sshkey_froms(मेनसाहे, &k)) != 0 ||
+			    (r = sshbuf_get_cstring(मेनसाहे, &label, NULL)) != 0)
 				fatal_fr(r, "parse key");
 			k->flags |= SSHKEY_FLAG_EXT;
-			helper_add_key(helper, k);
+			helper_add_सुसि(helper, k);
 			(*keysp)[i] = k;
 			if (labelsp)
 				(*labelsp)[i] = label;
@@ -430,14 +430,14 @@ pkcs11_add_provider(char *name, char *pin, struct sshkey ***keysp,
 		/* success */
 		ret = 0;
 	} else if (type == SSH2_AGENT_FAILURE) {
-		if ((r = sshbuf_get_u32(msg, &nkeys)) != 0)
+		if ((r = sshbuf_get_u32(मेनसाहे, &nkeys)) != 0)
 			error_fr(r, "failed to parse failure response");
 	}
 	if (ret != 0) {
 		debug_f("no keys; terminate helper");
 		helper_terminate(helper);
 	}
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 	return ret == 0 ? (int)nkeys : -1;
 }
 
@@ -457,20 +457,20 @@ pkcs11_del_provider(char *name)
 }
 
 void
-pkcs11_key_free(struct sshkey *key)
+pkcs11_सुसि_free(struct sshkey *सुसि)
 {
 	struct helper *helper;
 	struct sshbuf *keyblob = NULL;
 	size_t i;
 	int r, found = 0;
 
-	debug3_f("free %s key", sshkey_type(key));
+	debug3_f("free %s key", sshkey_type(सुसि));
 
-	if ((helper = helper_by_key(key)) == NULL || helper->fd == -1)
-		fatal_f("no helper for %s key", sshkey_type(key));
+	if ((helper = helper_by_सुसि(सुसि)) == NULL || helper->fd == -1)
+		fatal_f("no helper for %s key", sshkey_type(सुसि));
 	if ((keyblob = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, keyblob)) != 0)
+	if ((r = sshkey_putb(सुसि, keyblob)) != 0)
 		fatal_fr(r, "serialise key");
 
 	/* repack keys */

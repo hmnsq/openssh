@@ -57,7 +57,7 @@ set_test_options(ServerOptions *o)
 {
 	initialize_server_options(o);
 
-	o->num_ports = 2;
+	o->नुमेरो_ports = 2;
 	o->ports[0] = 22;
 	o->ports[1] = 2022;
 	o->ip_qos_interactive = 0x10;
@@ -77,36 +77,36 @@ set_test_options(ServerOptions *o)
 	set_string(&o->banner, NULL);
 	set_string(&o->adm_forced_command, "internal-sftp");
 	set_string(&o->chroot_directory, "");
-	set_string(&o->host_key_agent, NULL);
-	set_string(&o->authorized_keys_command, "/bin/echo");
-	set_string(&o->authorized_keys_command_user, "");
+	set_string(&o->host_सुसि_agent, NULL);
+	set_string(&o->authorized_मगा_सुसि_command, "/bin/echo");
+	set_string(&o->authorized_मगा_सुसि_command_user, "");
 	set_string(&o->authorized_principals_file, NULL);
 
-	o->num_authkeys_files = 3;
-	o->authorized_keys_files = new_string_array(o->num_authkeys_files);
-	set_string(&o->authorized_keys_files[0], NULL);
-	set_string(&o->authorized_keys_files[1], "");
-	set_string(&o->authorized_keys_files[2], ".ssh/authorized_keys");
+	o->नुमेरो_authkeys_files = 3;
+	o->authorized_मगा_सुसि_files = new_string_array(o->नुमेरो_authkeys_files);
+	set_string(&o->authorized_मगा_सुसि_files[0], NULL);
+	set_string(&o->authorized_मगा_सुसि_files[1], "");
+	set_string(&o->authorized_मगा_सुसि_files[2], ".ssh/authorized_keys");
 
-	o->num_log_verbose = 2;
-	o->log_verbose = new_string_array(o->num_log_verbose);
+	o->नुमेरो_log_verbose = 2;
+	o->log_verbose = new_string_array(o->नुमेरो_log_verbose);
 	set_string(&o->log_verbose[0], NULL);
 	set_string(&o->log_verbose[1], "kex.c:*");
 
-	o->num_host_key_files = 3;
-	o->host_key_file_userprovided =
-	    xcalloc(o->num_host_key_files,
-	    sizeof(*o->host_key_file_userprovided));
-	o->host_key_files = new_string_array(o->num_host_key_files);
-	o->host_key_file_userprovided[0] = 0;
-	o->host_key_file_userprovided[1] = 1;
-	o->host_key_file_userprovided[2] = -1;
-	set_string(&o->host_key_files[0], NULL);
-	set_string(&o->host_key_files[1], "");
-	set_string(&o->host_key_files[2], "/tmp/ssh_host_ed25519_key");
+	o->नुमेरो_host_सुसि_files = 3;
+	o->host_सुसि_file_userprovided =
+	    xcalloc(o->नुमेरो_host_सुसि_files,
+	    sizeof(*o->host_सुसि_file_userprovided));
+	o->host_सुसि_files = new_string_array(o->नुमेरो_host_सुसि_files);
+	o->host_सुसि_file_userprovided[0] = 0;
+	o->host_सुसि_file_userprovided[1] = 1;
+	o->host_सुसि_file_userprovided[2] = -1;
+	set_string(&o->host_सुसि_files[0], NULL);
+	set_string(&o->host_सुसि_files[1], "");
+	set_string(&o->host_सुसि_files[2], "/tmp/ssh_host_ed25519_key");
 
-	o->num_queued_listens = 2;
-	o->queued_listen_addrs = xcalloc(o->num_queued_listens,
+	o->नुमेरो_queued_listens = 2;
+	o->queued_listen_addrs = xcalloc(o->नुमेरो_queued_listens,
 	    sizeof(*o->queued_listen_addrs));
 	set_string(&o->queued_listen_addrs[0].addr, "127.0.0.1");
 	o->queued_listen_addrs[0].port = 2222;
@@ -115,16 +115,16 @@ set_test_options(ServerOptions *o)
 	o->queued_listen_addrs[1].port = -1;
 	set_string(&o->queued_listen_addrs[1].rdomain, "");
 
-	o->num_subsystems = 2;
-	o->subsystem_name = new_string_array(o->num_subsystems);
-	o->subsystem_command = new_string_array(o->num_subsystems);
-	o->subsystem_args = new_string_array(o->num_subsystems);
+	o->नुमेरो_subsystems = 2;
+	o->subsystem_name = new_string_array(o->नुमेरो_subsystems);
+	o->subsystem_command = new_string_array(o->नुमेरो_subsystems);
+	o->subsystem_मगा_कातविरान = new_string_array(o->नुमेरो_subsystems);
 	set_string(&o->subsystem_name[0], "sftp");
 	set_string(&o->subsystem_command[0], "internal-sftp");
-	set_string(&o->subsystem_args[0], "internal-sftp -f AUTH");
+	set_string(&o->subsystem_मगा_कातविरान[0], "internal-sftp -f AUTH");
 	set_string(&o->subsystem_name[1], "echo");
 	set_string(&o->subsystem_command[1], "/bin/echo");
-	set_string(&o->subsystem_args[1], "/bin/echo hello");
+	set_string(&o->subsystem_मगा_कातविरान[1], "/bin/echo hello");
 }
 
 static void
@@ -139,7 +139,7 @@ check_roundtrip(const ServerOptions *o)
 	ASSERT_INT_EQ(deserialise_server_options(buf, &out), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(buf), 0);
 
-	ASSERT_U_INT_EQ(out.num_ports, 2);
+	ASSERT_U_INT_EQ(out.नुमेरो_ports, 2);
 	ASSERT_INT_EQ(out.ports[0], 22);
 	ASSERT_INT_EQ(out.ports[1], 2022);
 	ASSERT_INT_EQ(out.ip_qos_interactive, 0x10);
@@ -159,29 +159,29 @@ check_roundtrip(const ServerOptions *o)
 	ASSERT_PTR_EQ(out.banner, NULL);
 	ASSERT_STRING_EQ(out.adm_forced_command, "internal-sftp");
 	ASSERT_STRING_EQ(out.chroot_directory, "");
-	ASSERT_PTR_EQ(out.host_key_agent, NULL);
-	ASSERT_STRING_EQ(out.authorized_keys_command, "/bin/echo");
-	ASSERT_STRING_EQ(out.authorized_keys_command_user, "");
+	ASSERT_PTR_EQ(out.host_सुसि_agent, NULL);
+	ASSERT_STRING_EQ(out.authorized_मगा_सुसि_command, "/bin/echo");
+	ASSERT_STRING_EQ(out.authorized_मगा_सुसि_command_user, "");
 	ASSERT_PTR_EQ(out.authorized_principals_file, NULL);
 
-	ASSERT_U_INT_EQ(out.num_authkeys_files, 3);
-	ASSERT_PTR_EQ(out.authorized_keys_files[0], NULL);
-	ASSERT_STRING_EQ(out.authorized_keys_files[1], "");
-	ASSERT_STRING_EQ(out.authorized_keys_files[2], ".ssh/authorized_keys");
+	ASSERT_U_INT_EQ(out.नुमेरो_authkeys_files, 3);
+	ASSERT_PTR_EQ(out.authorized_मगा_सुसि_files[0], NULL);
+	ASSERT_STRING_EQ(out.authorized_मगा_सुसि_files[1], "");
+	ASSERT_STRING_EQ(out.authorized_मगा_सुसि_files[2], ".ssh/authorized_keys");
 
-	ASSERT_U_INT_EQ(out.num_log_verbose, 2);
+	ASSERT_U_INT_EQ(out.नुमेरो_log_verbose, 2);
 	ASSERT_PTR_EQ(out.log_verbose[0], NULL);
 	ASSERT_STRING_EQ(out.log_verbose[1], "kex.c:*");
 
-	ASSERT_U_INT_EQ(out.num_host_key_files, 3);
-	ASSERT_INT_EQ(out.host_key_file_userprovided[0], 0);
-	ASSERT_INT_EQ(out.host_key_file_userprovided[1], 1);
-	ASSERT_INT_EQ(out.host_key_file_userprovided[2], -1);
-	ASSERT_PTR_EQ(out.host_key_files[0], NULL);
-	ASSERT_STRING_EQ(out.host_key_files[1], "");
-	ASSERT_STRING_EQ(out.host_key_files[2], "/tmp/ssh_host_ed25519_key");
+	ASSERT_U_INT_EQ(out.नुमेरो_host_सुसि_files, 3);
+	ASSERT_INT_EQ(out.host_सुसि_file_userprovided[0], 0);
+	ASSERT_INT_EQ(out.host_सुसि_file_userprovided[1], 1);
+	ASSERT_INT_EQ(out.host_सुसि_file_userprovided[2], -1);
+	ASSERT_PTR_EQ(out.host_सुसि_files[0], NULL);
+	ASSERT_STRING_EQ(out.host_सुसि_files[1], "");
+	ASSERT_STRING_EQ(out.host_सुसि_files[2], "/tmp/ssh_host_ed25519_key");
 
-	ASSERT_U_INT_EQ(out.num_queued_listens, 2);
+	ASSERT_U_INT_EQ(out.नुमेरो_queued_listens, 2);
 	ASSERT_STRING_EQ(out.queued_listen_addrs[0].addr, "127.0.0.1");
 	ASSERT_INT_EQ(out.queued_listen_addrs[0].port, 2222);
 	ASSERT_PTR_EQ(out.queued_listen_addrs[0].rdomain, NULL);
@@ -189,13 +189,13 @@ check_roundtrip(const ServerOptions *o)
 	ASSERT_INT_EQ(out.queued_listen_addrs[1].port, -1);
 	ASSERT_STRING_EQ(out.queued_listen_addrs[1].rdomain, "");
 
-	ASSERT_U_INT_EQ(out.num_subsystems, 2);
+	ASSERT_U_INT_EQ(out.नुमेरो_subsystems, 2);
 	ASSERT_STRING_EQ(out.subsystem_name[0], "sftp");
 	ASSERT_STRING_EQ(out.subsystem_command[0], "internal-sftp");
-	ASSERT_STRING_EQ(out.subsystem_args[0], "internal-sftp -f AUTH");
+	ASSERT_STRING_EQ(out.subsystem_मगा_कातविरान[0], "internal-sftp -f AUTH");
 	ASSERT_STRING_EQ(out.subsystem_name[1], "echo");
 	ASSERT_STRING_EQ(out.subsystem_command[1], "/bin/echo");
-	ASSERT_STRING_EQ(out.subsystem_args[1], "/bin/echo hello");
+	ASSERT_STRING_EQ(out.subsystem_मगा_कातविरान[1], "/bin/echo hello");
 
 	free_server_options(&out);
 	sshbuf_free(buf);
@@ -237,7 +237,7 @@ check_rejects_bad_version(const ServerOptions *o)
 }
 
 static void
-check_rejects_bad_port_count(const ServerOptions *o)
+check_rejects_bad_port_बिलांग(const ServerOptions *o)
 {
 	struct sshbuf *buf = NULL;
 	ServerOptions out;
@@ -340,7 +340,7 @@ tests(void)
 
 	TEST_START("server options reject bad port count");
 	set_test_options(&o);
-	check_rejects_bad_port_count(&o);
+	check_rejects_bad_port_बिलांग(&o);
 	free_server_options(&o);
 	TEST_DONE();
 

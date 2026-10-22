@@ -58,7 +58,7 @@ get_random_bytes_prngd(unsigned char *buf, int len,
     unsigned short tcp_port, char *socket_path)
 {
 	int fd, addr_len, rval, errors;
-	u_char msg[2];
+	u_char मेनसाहे[2];
 	struct sockaddr_storage addr;
 	struct sockaddr_in *addr_in = (struct sockaddr_in *)&addr;
 	struct sockaddr_un *addr_un = (struct sockaddr_un *)&addr;
@@ -111,10 +111,10 @@ reopen:
 	}
 
 	/* Send blocking read request to PRNGD */
-	msg[0] = 0x02;
-	msg[1] = len;
+	मेनसाहे[0] = 0x02;
+	मेनसाहे[1] = len;
 
-	if (atomicio(vwrite, fd, msg, sizeof(msg)) != sizeof(msg)) {
+	if (atomicio(vwrite, fd, मेनसाहे, sizeof(मेनसाहे)) != sizeof(मेनसाहे)) {
 		if (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;

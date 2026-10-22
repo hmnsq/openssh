@@ -73,26 +73,26 @@ struct pkcs11_provider {
 
 TAILQ_HEAD(, pkcs11_provider) pkcs11_providers;
 
-struct pkcs11_key {
+struct pkcs11_सुसि {
 	struct sshbuf		*keyblob;
 	struct pkcs11_provider	*provider;
 	CK_ULONG		slotidx;
 	char			*keyid;
 	int			keyid_len;
-	TAILQ_ENTRY(pkcs11_key)	next;
+	TAILQ_ENTRY(pkcs11_सुसि)	next;
 };
 
-TAILQ_HEAD(, pkcs11_key) pkcs11_keys; /* XXX a tree would be better */
+TAILQ_HEAD(, pkcs11_सुसि) pkcs11_मगा_सुसि; /* XXX a tree would be better */
 
 int pkcs11_interactive = 0;
 
 #ifdef WITH_OPENSSL
 static void
-ossl_error(const char *msg)
+ossl_error(const char *मेनसाहे)
 {
 	unsigned long    e;
 
-	error_f("%s", msg);
+	error_f("%s", मेनसाहे);
 	while ((e = ERR_get_error()) != 0)
 		error_f("libcrypto error: %s", ERR_error_string(e, NULL));
 }
@@ -176,7 +176,7 @@ pkcs11_del_provider(char *provider_id)
 
 /* release a wrapped object */
 static void
-pkcs11_k11_free(struct pkcs11_key *k11)
+pkcs11_k11_free(struct pkcs11_सुसि *k11)
 {
 	if (k11 == NULL)
 		return;
@@ -271,7 +271,7 @@ pkcs11_login_slot(struct pkcs11_provider *provider, struct pkcs11_slotinfo *si,
 }
 
 static int
-pkcs11_login(struct pkcs11_key *k11, CK_USER_TYPE type)
+pkcs11_login(struct pkcs11_सुसि *k11, CK_USER_TYPE type)
 {
 	if (k11 == NULL || k11->provider == NULL || !k11->provider->valid) {
 		error("no pkcs11 (valid) provider found");
@@ -284,7 +284,7 @@ pkcs11_login(struct pkcs11_key *k11, CK_USER_TYPE type)
 
 
 static int
-pkcs11_check_obj_bool_attrib(struct pkcs11_key *k11, CK_OBJECT_HANDLE obj,
+pkcs11_check_obj_bool_attrib(struct pkcs11_सुसि *k11, CK_OBJECT_HANDLE obj,
     CK_ATTRIBUTE_TYPE type, int *val)
 {
 	struct pkcs11_slotinfo	*si;
@@ -304,10 +304,10 @@ pkcs11_check_obj_bool_attrib(struct pkcs11_key *k11, CK_OBJECT_HANDLE obj,
 	si = &k11->provider->slotinfo[k11->slotidx];
 
 	attr.type = type;
-	attr.pValue = &flag;
-	attr.ulValueLen = sizeof(flag);
+	attr.p_हालागा = &flag;
+	attr.ul_हालागा_Len = sizeof(flag);
 
-	rv = f->C_GetAttributeValue(si->session, obj, &attr, 1);
+	rv = f->C_Get_Attribute_हालागा(si->session, obj, &attr, 1);
 	if (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
 		return (-1);
@@ -319,16 +319,16 @@ pkcs11_check_obj_bool_attrib(struct pkcs11_key *k11, CK_OBJECT_HANDLE obj,
 }
 
 static int
-pkcs11_get_key(struct pkcs11_key *k11, CK_MECHANISM_TYPE mech_type)
+pkcs11_get_सुसि(struct pkcs11_सुसि *k11, CK_MECHANISM_TYPE mech_type)
 {
 	struct pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_OBJECT_HANDLE	 obj;
 	CK_RV			 rv;
-	CK_OBJECT_CLASS		 private_key_class;
+	CK_OBJECT_CLASS		 private_सुसि_class;
 	CK_BBOOL		 true_val;
 	CK_MECHANISM		 mech;
-	CK_ATTRIBUTE		 key_filter[3];
+	CK_ATTRIBUTE		 सुसि_filter[3];
 	int			 always_auth = 0;
 	int			 did_login = 0;
 
@@ -348,24 +348,24 @@ pkcs11_get_key(struct pkcs11_key *k11, CK_MECHANISM_TYPE mech_type)
 		did_login = 1;
 	}
 
-	memset(&key_filter, 0, sizeof(key_filter));
-	private_key_class = CKO_PRIVATE_KEY;
-	key_filter[0].type = CKA_CLASS;
-	key_filter[0].pValue = &private_key_class;
-	key_filter[0].ulValueLen = sizeof(private_key_class);
+	memset(&सुसि_filter, 0, sizeof(सुसि_filter));
+	private_सुसि_class = CKO_PRIVATE_सुसि;
+	सुसि_filter[0].type = CKA_CLASS;
+	सुसि_filter[0].p_हालागा = &private_सुसि_class;
+	सुसि_filter[0].ul_हालागा_Len = sizeof(private_सुसि_class);
 
-	key_filter[1].type = CKA_ID;
-	key_filter[1].pValue = k11->keyid;
-	key_filter[1].ulValueLen = k11->keyid_len;
+	सुसि_filter[1].type = CKA_ID;
+	सुसि_filter[1].p_हालागा = k11->keyid;
+	सुसि_filter[1].ul_हालागा_Len = k11->keyid_len;
 
 	true_val = CK_TRUE;
-	key_filter[2].type = CKA_SIGN;
-	key_filter[2].pValue = &true_val;
-	key_filter[2].ulValueLen = sizeof(true_val);
+	सुसि_filter[2].type = CKA_SIGN;
+	सुसि_filter[2].p_हालागा = &true_val;
+	सुसि_filter[2].ul_हालागा_Len = sizeof(true_val);
 
 	/* try to find object w/CKA_SIGN first, retry w/o */
-	if (pkcs11_find(k11->provider, k11->slotidx, key_filter, 3, &obj) < 0 &&
-	    pkcs11_find(k11->provider, k11->slotidx, key_filter, 2, &obj) < 0) {
+	if (pkcs11_find(k11->provider, k11->slotidx, सुसि_filter, 3, &obj) < 0 &&
+	    pkcs11_find(k11->provider, k11->slotidx, सुसि_filter, 2, &obj) < 0) {
 		error("cannot find private key");
 		return (-1);
 	}
@@ -395,26 +395,26 @@ pkcs11_get_key(struct pkcs11_key *k11, CK_MECHANISM_TYPE mech_type)
 
 /* record the key information later use lookup by keyblob */
 static int
-pkcs11_record_key(struct pkcs11_provider *provider, CK_ULONG slotidx,
-    CK_ATTRIBUTE *keyid_attrib, struct sshkey *key)
+pkcs11_record_सुसि(struct pkcs11_provider *provider, CK_ULONG slotidx,
+    CK_ATTRIBUTE *keyid_attrib, struct sshkey *सुसि)
 {
 	struct sshbuf *keyblob;
-	struct pkcs11_key *k11;
+	struct pkcs11_सुसि *k11;
 	int r;
 	char *hex;
 
-	hex = tohex(keyid_attrib->pValue, keyid_attrib->ulValueLen);
+	hex = tohex(keyid_attrib->p_हालागा, keyid_attrib->ul_हालागा_Len);
 	debug_f("%s key: provider %s slot %lu keyid %s",
-	    sshkey_type(key), provider->name, (u_long)slotidx, hex);
+	    sshkey_type(सुसि), provider->name, (u_long)slotidx, hex);
 	free(hex);
 
 	if ((keyblob = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, keyblob)) != 0)
+	if ((r = sshkey_putb(सुसि, keyblob)) != 0)
 		fatal_fr(r, "sshkey_putb");
 
 	/* Check if we've already recorded this key in a different slot */
-	TAILQ_FOREACH(k11, &pkcs11_keys, next) {
+	TAILQ_FOREACH(k11, &pkcs11_मगा_सुसि, next) {
 		if (sshbuf_equals(k11->keyblob, keyblob) == 0) {
 			hex = tohex(k11->keyid, k11->keyid_len);
 			debug_f("Already seen this key at "
@@ -432,29 +432,29 @@ pkcs11_record_key(struct pkcs11_provider *provider, CK_ULONG slotidx,
 	provider->refcount++;	/* provider referenced by RSA key */
 	k11->slotidx = slotidx;
 	/* identify key object on smartcard */
-	k11->keyid_len = keyid_attrib->ulValueLen;
+	k11->keyid_len = keyid_attrib->ul_हालागा_Len;
 	if (k11->keyid_len > 0) {
 		k11->keyid = xmalloc(k11->keyid_len);
-		memcpy(k11->keyid, keyid_attrib->pValue, k11->keyid_len);
+		memcpy(k11->keyid, keyid_attrib->p_हालागा, k11->keyid_len);
 	}
-	TAILQ_INSERT_TAIL(&pkcs11_keys, k11, next);
+	TAILQ_INSERT_TAIL(&pkcs11_मगा_सुसि, k11, next);
 
 	return 0;
 }
 
 /* retrieve the key information by keyblob */
-static struct pkcs11_key *
-pkcs11_lookup_key(struct sshkey *key)
+static struct pkcs11_सुसि *
+pkcs11_lookup_सुसि(struct sshkey *सुसि)
 {
-	struct pkcs11_key *k11, *found = NULL;
+	struct pkcs11_सुसि *k11, *found = NULL;
 	struct sshbuf *keyblob;
 	int r;
 
 	if ((keyblob = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_putb(key, keyblob)) != 0)
+	if ((r = sshkey_putb(सुसि, keyblob)) != 0)
 		fatal_fr(r, "sshkey_putb");
-	TAILQ_FOREACH(k11, &pkcs11_keys, next) {
+	TAILQ_FOREACH(k11, &pkcs11_मगा_सुसि, next) {
 		if (sshbuf_equals(k11->keyblob, keyblob) == 0) {
 			found = k11;
 			break;
@@ -534,13 +534,13 @@ rsa_hash_alg_oid(int hash_alg, const u_char **oidp, size_t *oidlenp)
 }
 
 static int
-pkcs11_sign_rsa(struct sshkey *key,
+pkcs11_sign_rsa(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider,
     const char *sk_pin, u_int compat)
 {
-	struct pkcs11_key	*k11;
+	struct pkcs11_सुसि	*k11;
 	struct pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_ULONG		slen = 0;
@@ -555,15 +555,15 @@ pkcs11_sign_rsa(struct sshkey *key,
 	if (lenp != NULL)
 		*lenp = 0;
 
-	if ((k11 = pkcs11_lookup_key(key)) == NULL) {
+	if ((k11 = pkcs11_lookup_सुसि(सुसि)) == NULL) {
 		error_f("no key found");
-		return SSH_ERR_KEY_NOT_FOUND;
+		return SSH_ERR_सुसि_NOT_FOUND;
 	}
 
 	debug3_f("sign with alg \"%s\" using provider %s slotidx %lu",
 	    alg == NULL ? "" : alg, k11->provider->name, (u_long)k11->slotidx);
 
-	if (pkcs11_get_key(k11, CKM_RSA_PKCS) == -1) {
+	if (pkcs11_get_सुसि(k11, CKM_RSA_PKCS) == -1) {
 		error("pkcs11_get_key failed");
 		return SSH_ERR_AGENT_FAILURE;
 	}
@@ -571,7 +571,7 @@ pkcs11_sign_rsa(struct sshkey *key,
 	f = k11->provider->function_list;
 	si = &k11->provider->slotinfo[k11->slotidx];
 
-	if ((siglen = EVP_PKEY_size(key->pkey)) <= 0)
+	if ((siglen = EVP_PKEY_size(सुसि->pkey)) <= 0)
 		return SSH_ERR_INVALID_ARGUMENT;
 	sig = xmalloc(siglen);
 	slen = (CK_ULONG)siglen;
@@ -623,13 +623,13 @@ pkcs11_sign_rsa(struct sshkey *key,
 }
 
 static int
-pkcs11_sign_ecdsa(struct sshkey *key,
+pkcs11_sign_ecdsa(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider,
     const char *sk_pin, u_int compat)
 {
-	struct pkcs11_key	*k11;
+	struct pkcs11_सुसि	*k11;
 	struct pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_ULONG		slen = 0, bnlen;
@@ -644,12 +644,12 @@ pkcs11_sign_ecdsa(struct sshkey *key,
 	if (lenp != NULL)
 		*lenp = 0;
 
-	if ((k11 = pkcs11_lookup_key(key)) == NULL) {
+	if ((k11 = pkcs11_lookup_सुसि(सुसि)) == NULL) {
 		error_f("no key found");
-		return SSH_ERR_KEY_NOT_FOUND;
+		return SSH_ERR_सुसि_NOT_FOUND;
 	}
 
-	if (pkcs11_get_key(k11, CKM_ECDSA) == -1) {
+	if (pkcs11_get_सुसि(k11, CKM_ECDSA) == -1) {
 		error("pkcs11_get_key failed");
 		return SSH_ERR_AGENT_FAILURE;
 	}
@@ -661,7 +661,7 @@ pkcs11_sign_ecdsa(struct sshkey *key,
 	si = &k11->provider->slotinfo[k11->slotidx];
 
 	/* Prepare digest to be signed */
-	if ((hashalg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
+	if ((hashalg = sshkey_ec_nid_to_hash_alg(सुसि->ecdsa_nid)) == -1)
 		fatal_f("couldn't determine ECDSA hash alg");
 	if ((dgst_len = ssh_digest_bytes(hashalg)) == 0)
 		fatal_f("bad hash alg %d", hashalg);
@@ -670,7 +670,7 @@ pkcs11_sign_ecdsa(struct sshkey *key,
 	    dgst, dgst_len)) == -1)
 		fatal_fr(r, "hash failed");
 
-	if ((siglen = EVP_PKEY_size(key->pkey)) <= 0)
+	if ((siglen = EVP_PKEY_size(सुसि->pkey)) <= 0)
 		return SSH_ERR_INVALID_ARGUMENT;
 	sig = xmalloc(siglen);
 	slen = (CK_ULONG)siglen;
@@ -692,7 +692,7 @@ pkcs11_sign_ecdsa(struct sshkey *key,
 		goto done;
 	}
 
-	if ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
+	if ((ret = ssh_ecdsa_encode_store_sig(सुसि, sig_r, sig_s,
 	    sigp, lenp)) != 0)
 		fatal_fr(ret, "couldn't store signature");
 
@@ -708,13 +708,13 @@ pkcs11_sign_ecdsa(struct sshkey *key,
 #endif /* WITH_OPENSSL */
 
 static int
-pkcs11_sign_ed25519(struct sshkey *key,
+pkcs11_sign_ed25519(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider,
     const char *sk_pin, u_int compat)
 {
-	struct pkcs11_key	*k11;
+	struct pkcs11_सुसि	*k11;
 	struct pkcs11_slotinfo	*si;
 	CK_FUNCTION_LIST	*f;
 	CK_ULONG		slen = 0;
@@ -728,12 +728,12 @@ pkcs11_sign_ed25519(struct sshkey *key,
 	if (lenp != NULL)
 		*lenp = 0;
 
-	if ((k11 = pkcs11_lookup_key(key)) == NULL) {
+	if ((k11 = pkcs11_lookup_सुसि(सुसि)) == NULL) {
 		error_f("no key found");
-		return SSH_ERR_KEY_NOT_FOUND;
+		return SSH_ERR_सुसि_NOT_FOUND;
 	}
 
-	if (pkcs11_get_key(k11, CKM_EDDSA) == -1) {
+	if (pkcs11_get_सुसि(k11, CKM_EDDSA) == -1) {
 		error("pkcs11_get_key failed");
 		return SSH_ERR_AGENT_FAILURE;
 	}
@@ -836,12 +836,12 @@ pkcs11_open_session(struct pkcs11_provider *p, CK_ULONG slotidx, char *pin,
 }
 
 static int
-pkcs11_key_included(struct sshkey ***keysp, int *nkeys, struct sshkey *key)
+pkcs11_सुसि_included(struct sshkey ***keysp, int *nkeys, struct sshkey *सुसि)
 {
 	int i;
 
 	for (i = 0; i < *nkeys; i++)
-		if (sshkey_equal(key, (*keysp)[i]))
+		if (sshkey_equal(सुसि, (*keysp)[i]))
 			return (1);
 	return (0);
 }
@@ -851,27 +851,27 @@ static struct sshkey *
 pkcs11_fetch_ecdsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
     CK_OBJECT_HANDLE *obj)
 {
-	CK_ATTRIBUTE		 key_attr[3];
+	CK_ATTRIBUTE		 सुसि_attr[3];
 	CK_SESSION_HANDLE	 session;
 	CK_FUNCTION_LIST	*f = NULL;
 	CK_RV			 rv;
 	ASN1_OCTET_STRING	*octet = NULL;
-	EC_KEY			*ec = NULL;
+	EC_सुसि			*ec = NULL;
 	EC_GROUP		*group = NULL;
-	struct sshkey		*key = NULL;
+	struct sshkey		*सुसि = NULL;
 	const unsigned char	*attrp = NULL;
 	int			 success = -1, r, i, nid;
 
-	memset(&key_attr, 0, sizeof(key_attr));
-	key_attr[0].type = CKA_ID;
-	key_attr[1].type = CKA_EC_POINT;
-	key_attr[2].type = CKA_EC_PARAMS;
+	memset(&सुसि_attr, 0, sizeof(सुसि_attr));
+	सुसि_attr[0].type = CKA_ID;
+	सुसि_attr[1].type = CKA_EC_POINT;
+	सुसि_attr[2].type = CKA_EC_PARAMS;
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
 	/* figure out size of the attributes */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
+	rv = f->C_Get_Attribute_हालागा(session, *obj, सुसि_attr, 3);
 	if (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
 		return (NULL);
@@ -882,128 +882,128 @@ pkcs11_fetch_ecdsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	 * ensure that none of the others are zero length.
 	 * XXX assumes CKA_ID is always first.
 	 */
-	if (key_attr[1].ulValueLen == 0 ||
-	    key_attr[2].ulValueLen == 0) {
+	if (सुसि_attr[1].ul_हालागा_Len == 0 ||
+	    सुसि_attr[2].ul_हालागा_Len == 0) {
 		error("invalid attribute length");
 		return (NULL);
 	}
 
 	/* allocate buffers for attributes */
 	for (i = 0; i < 3; i++)
-		if (key_attr[i].ulValueLen > 0)
-			key_attr[i].pValue = xcalloc(1, key_attr[i].ulValueLen);
+		if (सुसि_attr[i].ul_हालागा_Len > 0)
+			सुसि_attr[i].p_हालागा = xcalloc(1, सुसि_attr[i].ul_हालागा_Len);
 
 	/* retrieve ID, public point and curve parameters of EC key */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
+	rv = f->C_Get_Attribute_हालागा(session, *obj, सुसि_attr, 3);
 	if (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
 		goto fail;
 	}
 
-	ec = EC_KEY_new();
+	ec = EC_सुसि_new();
 	if (ec == NULL) {
 		error("EC_KEY_new failed");
 		goto fail;
 	}
 
-	attrp = key_attr[2].pValue;
-	group = d2i_ECPKParameters(NULL, &attrp, key_attr[2].ulValueLen);
+	attrp = सुसि_attr[2].p_हालागा;
+	group = d2i_ECPKParameters(NULL, &attrp, सुसि_attr[2].ul_हालागा_Len);
 	if (group == NULL) {
 		ossl_error("d2i_ECPKParameters failed");
 		goto fail;
 	}
 
-	if (EC_KEY_set_group(ec, group) == 0) {
+	if (EC_सुसि_set_group(ec, group) == 0) {
 		ossl_error("EC_KEY_set_group failed");
 		goto fail;
 	}
 
-	if (key_attr[1].ulValueLen <= 2) {
+	if (सुसि_attr[1].ul_हालागा_Len <= 2) {
 		error("CKA_EC_POINT too small");
 		goto fail;
 	}
 
-	attrp = key_attr[1].pValue;
-	octet = d2i_ASN1_OCTET_STRING(NULL, &attrp, key_attr[1].ulValueLen);
+	attrp = सुसि_attr[1].p_हालागा;
+	octet = d2i_ASN1_OCTET_STRING(NULL, &attrp, सुसि_attr[1].ul_हालागा_Len);
 	if (octet == NULL) {
 		ossl_error("d2i_ASN1_OCTET_STRING failed");
 		goto fail;
 	}
 	attrp = ASN1_STRING_get0_data(octet);
-	if (o2i_ECPublicKey(&ec, &attrp, ASN1_STRING_length(octet)) == NULL) {
+	if (o2i_ECPublic_सुसि(&ec, &attrp, ASN1_STRING_length(octet)) == NULL) {
 		ossl_error("o2i_ECPublicKey failed");
 		goto fail;
 	}
-	if ((r = sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec))) != 0) {
+	if ((r = sshkey_ec_validate_public(EC_सुसि_get0_group(ec),
+	    EC_सुसि_get0_public_सुसि(ec))) != 0) {
 		error_fr(r, "invalid EC key");
 		goto fail;
 	}
 
-	nid = sshkey_ecdsa_key_to_nid(ec);
+	nid = sshkey_ecdsa_सुसि_to_nid(ec);
 	if (nid < 0) {
 		error("couldn't get curve nid");
 		goto fail;
 	}
 
-	key = sshkey_new(KEY_UNSPEC);
-	if (key == NULL) {
+	सुसि = sshkey_new(सुसि_UNSPEC);
+	if (सुसि == NULL) {
 		error("sshkey_new failed");
 		goto fail;
 	}
 
-	EVP_PKEY_free(key->pkey);
-	if ((key->pkey = EVP_PKEY_new()) == NULL)
+	EVP_PKEY_free(सुसि->pkey);
+	if ((सुसि->pkey = EVP_PKEY_new()) == NULL)
 		fatal("EVP_PKEY_new failed");
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1)
+	if (EVP_PKEY_set1_EC_सुसि(सुसि->pkey, ec) != 1)
 		fatal("EVP_PKEY_set1_EC_KEY failed");
-	key->ecdsa_nid = nid;
-	key->type = KEY_ECDSA;
-	key->flags |= SSHKEY_FLAG_EXT;
-	if (pkcs11_record_key(p, slotidx, &key_attr[0], key))
+	सुसि->ecdsa_nid = nid;
+	सुसि->type = सुसि_ECDSA;
+	सुसि->flags |= SSHKEY_FLAG_EXT;
+	if (pkcs11_record_सुसि(p, slotidx, &सुसि_attr[0], सुसि))
 		goto fail;
 	/* success */
 	success = 0;
 fail:
 	if (success != 0) {
-		sshkey_free(key);
-		key = NULL;
+		sshkey_free(सुसि);
+		सुसि = NULL;
 	}
 	for (i = 0; i < 3; i++)
-		free(key_attr[i].pValue);
+		free(सुसि_attr[i].p_हालागा);
 	if (ec)
-		EC_KEY_free(ec);
+		EC_सुसि_free(ec);
 	if (group)
 		EC_GROUP_free(group);
 	if (octet)
 		ASN1_OCTET_STRING_free(octet);
 
-	return (key);
+	return (सुसि);
 }
 
 static struct sshkey *
 pkcs11_fetch_rsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
     CK_OBJECT_HANDLE *obj)
 {
-	CK_ATTRIBUTE		 key_attr[3];
+	CK_ATTRIBUTE		 सुसि_attr[3];
 	CK_SESSION_HANDLE	 session;
 	CK_FUNCTION_LIST	*f = NULL;
 	CK_RV			 rv;
 	RSA			*rsa = NULL;
 	BIGNUM			*rsa_n, *rsa_e;
-	struct sshkey		*key = NULL;
+	struct sshkey		*सुसि = NULL;
 	int			 i, success = -1;
 
-	memset(&key_attr, 0, sizeof(key_attr));
-	key_attr[0].type = CKA_ID;
-	key_attr[1].type = CKA_MODULUS;
-	key_attr[2].type = CKA_PUBLIC_EXPONENT;
+	memset(&सुसि_attr, 0, sizeof(सुसि_attr));
+	सुसि_attr[0].type = CKA_ID;
+	सुसि_attr[1].type = CKA_MODULUS;
+	सुसि_attr[2].type = CKA_PUBLIC_EXPONENT;
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
 	/* figure out size of the attributes */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
+	rv = f->C_Get_Attribute_हालागा(session, *obj, सुसि_attr, 3);
 	if (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
 		return (NULL);
@@ -1014,19 +1014,19 @@ pkcs11_fetch_rsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	 * ensure that none of the others are zero length.
 	 * XXX assumes CKA_ID is always first.
 	 */
-	if (key_attr[1].ulValueLen == 0 ||
-	    key_attr[2].ulValueLen == 0) {
+	if (सुसि_attr[1].ul_हालागा_Len == 0 ||
+	    सुसि_attr[2].ul_हालागा_Len == 0) {
 		error("invalid attribute length");
 		return (NULL);
 	}
 
 	/* allocate buffers for attributes */
 	for (i = 0; i < 3; i++)
-		if (key_attr[i].ulValueLen > 0)
-			key_attr[i].pValue = xcalloc(1, key_attr[i].ulValueLen);
+		if (सुसि_attr[i].ul_हालागा_Len > 0)
+			सुसि_attr[i].p_हालागा = xcalloc(1, सुसि_attr[i].ul_हालागा_Len);
 
 	/* retrieve ID, modulus and public exponent of RSA key */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
+	rv = f->C_Get_Attribute_हालागा(session, *obj, सुसि_attr, 3);
 	if (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
 		goto fail;
@@ -1038,47 +1038,47 @@ pkcs11_fetch_rsa_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 		goto fail;
 	}
 
-	rsa_n = BN_bin2bn(key_attr[1].pValue, key_attr[1].ulValueLen, NULL);
-	rsa_e = BN_bin2bn(key_attr[2].pValue, key_attr[2].ulValueLen, NULL);
+	rsa_n = BN_bin2bn(सुसि_attr[1].p_हालागा, सुसि_attr[1].ul_हालागा_Len, NULL);
+	rsa_e = BN_bin2bn(सुसि_attr[2].p_हालागा, सुसि_attr[2].ul_हालागा_Len, NULL);
 	if (rsa_n == NULL || rsa_e == NULL) {
 		error("BN_bin2bn failed");
 		goto fail;
 	}
-	if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL))
+	if (!RSA_set0_सुसि(rsa, rsa_n, rsa_e, NULL))
 		fatal_f("set key");
 	rsa_n = rsa_e = NULL; /* transferred */
 
-	key = sshkey_new(KEY_UNSPEC);
-	if (key == NULL) {
+	सुसि = sshkey_new(सुसि_UNSPEC);
+	if (सुसि == NULL) {
 		error("sshkey_new failed");
 		goto fail;
 	}
 
-	EVP_PKEY_free(key->pkey);
-	if ((key->pkey = EVP_PKEY_new()) == NULL)
+	EVP_PKEY_free(सुसि->pkey);
+	if ((सुसि->pkey = EVP_PKEY_new()) == NULL)
 		fatal("EVP_PKEY_new failed");
-	if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1)
+	if (EVP_PKEY_set1_RSA(सुसि->pkey, rsa) != 1)
 		fatal("EVP_PKEY_set1_RSA failed");
-	key->type = KEY_RSA;
-	key->flags |= SSHKEY_FLAG_EXT;
-	if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE) {
+	सुसि->type = सुसि_RSA;
+	सुसि->flags |= SSHKEY_FLAG_EXT;
+	if (EVP_PKEY_bits(सुसि->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE) {
 		error_f("RSA key too small %d < minimum %d",
-		    EVP_PKEY_bits(key->pkey), SSH_RSA_MINIMUM_MODULUS_SIZE);
+		    EVP_PKEY_bits(सुसि->pkey), SSH_RSA_MINIMUM_MODULUS_SIZE);
 		goto fail;
 	}
-	if (pkcs11_record_key(p, slotidx, &key_attr[0], key))
+	if (pkcs11_record_सुसि(p, slotidx, &सुसि_attr[0], सुसि))
 		goto fail;
 	/* success */
 	success = 0;
 fail:
 	for (i = 0; i < 3; i++)
-		free(key_attr[i].pValue);
+		free(सुसि_attr[i].p_हालागा);
 	RSA_free(rsa);
 	if (success != 0) {
-		sshkey_free(key);
-		key = NULL;
+		sshkey_free(सुसि);
+		सुसि = NULL;
 	}
-	return key;
+	return सुसि;
 }
 #endif /* WITH_OPENSSL */
 
@@ -1086,11 +1086,11 @@ static struct sshkey *
 pkcs11_fetch_ed25519_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
     CK_OBJECT_HANDLE *obj)
 {
-	CK_ATTRIBUTE		 key_attr[3];
+	CK_ATTRIBUTE		 सुसि_attr[3];
 	CK_SESSION_HANDLE	 session;
 	CK_FUNCTION_LIST	*f = NULL;
 	CK_RV			 rv;
-	struct sshkey		*key = NULL;
+	struct sshkey		*सुसि = NULL;
 	const unsigned char	*d = NULL;
 	size_t			len;
 	char			*hex = NULL;
@@ -1104,16 +1104,16 @@ pkcs11_fetch_ed25519_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 		0x06, 0x03, 0x2b, 0x65, 0x70,
 	}; /* OBJECT_IDENTIFIER { 1.3.101.112 } */
 
-	memset(&key_attr, 0, sizeof(key_attr));
-	key_attr[0].type = CKA_ID;
-	key_attr[1].type = CKA_EC_POINT; /* XXX or CKA_VALUE ? */
-	key_attr[2].type = CKA_EC_PARAMS;
+	memset(&सुसि_attr, 0, sizeof(सुसि_attr));
+	सुसि_attr[0].type = CKA_ID;
+	सुसि_attr[1].type = CKA_EC_POINT; /* XXX or CKA_VALUE ? */
+	सुसि_attr[2].type = CKA_EC_PARAMS;
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
 	/* figure out size of the attributes */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
+	rv = f->C_Get_Attribute_हालागा(session, *obj, सुसि_attr, 3);
 	if (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
 		return (NULL);
@@ -1124,28 +1124,28 @@ pkcs11_fetch_ed25519_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	 * ensure that none of the others are zero length.
 	 * XXX assumes CKA_ID is always first.
 	 */
-	if (key_attr[1].ulValueLen == 0 ||
-	    key_attr[2].ulValueLen == 0) {
+	if (सुसि_attr[1].ul_हालागा_Len == 0 ||
+	    सुसि_attr[2].ul_हालागा_Len == 0) {
 		error("invalid attribute length");
 		return (NULL);
 	}
 
 	/* allocate buffers for attributes */
 	for (i = 0; i < 3; i++) {
-		if (key_attr[i].ulValueLen > 0)
-			key_attr[i].pValue = xcalloc(1, key_attr[i].ulValueLen);
+		if (सुसि_attr[i].ul_हालागा_Len > 0)
+			सुसि_attr[i].p_हालागा = xcalloc(1, सुसि_attr[i].ul_हालागा_Len);
 	}
 
 	/* retrieve ID, public point and curve parameters of EC key */
-	rv = f->C_GetAttributeValue(session, *obj, key_attr, 3);
+	rv = f->C_Get_Attribute_हालागा(session, *obj, सुसि_attr, 3);
 	if (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
 		goto fail;
 	}
 
 	/* Expect one of the supported identifiers in CKA_EC_PARAMS */
-	d = (u_char *)key_attr[2].pValue;
-	len = key_attr[2].ulValueLen;
+	d = (u_char *)सुसि_attr[2].p_हालागा;
+	len = सुसि_attr[2].ul_हालागा_Len;
 	if ((len != sizeof(id1) || memcmp(d, id1, sizeof(id1)) != 0) &&
 	    (len != sizeof(id2) || memcmp(d, id2, sizeof(id2)) != 0)) {
 		hex = tohex(d, len);
@@ -1157,38 +1157,38 @@ pkcs11_fetch_ed25519_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	 * Expect either a raw 32 byte pubkey or an OCTET STRING with
 	 * a 32 byte pubkey in CKA_VALUE
 	 */
-	d = (u_char *)key_attr[1].pValue;
-	len = key_attr[1].ulValueLen;
+	d = (u_char *)सुसि_attr[1].p_हालागा;
+	len = सुसि_attr[1].ul_हालागा_Len;
 	if (len == ED25519_PK_SZ + 2 && d[0] == 0x04 && d[1] == ED25519_PK_SZ) {
 		d += 2;
 		len -= 2;
 	}
 	if (len != ED25519_PK_SZ) {
-		hex = tohex(key_attr[1].pValue, key_attr[1].ulValueLen);
+		hex = tohex(सुसि_attr[1].p_हालागा, सुसि_attr[1].ul_हालागा_Len);
 		logit_f("CKA_EC_POINT invalid octet str: %s (len %lu)",
-		    hex, (u_long)key_attr[1].ulValueLen);
+		    hex, (u_long)सुसि_attr[1].ul_हालागा_Len);
 		goto fail;
 	}
 
-	if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+	if ((सुसि = sshkey_new(सुसि_UNSPEC)) == NULL)
 		fatal_f("sshkey_new failed");
-	key->ed25519_pk = xmalloc(ED25519_PK_SZ);
-	memcpy(key->ed25519_pk, d, ED25519_PK_SZ);
-	key->type = KEY_ED25519;
-	key->flags |= SSHKEY_FLAG_EXT;
-	if (pkcs11_record_key(p, slotidx, &key_attr[0], key))
+	सुसि->ed25519_pk = xmalloc(ED25519_PK_SZ);
+	memcpy(सुसि->ed25519_pk, d, ED25519_PK_SZ);
+	सुसि->type = सुसि_ED25519;
+	सुसि->flags |= SSHKEY_FLAG_EXT;
+	if (pkcs11_record_सुसि(p, slotidx, &सुसि_attr[0], सुसि))
 		goto fail;
 	/* success */
 	success = 0;
  fail:
 	if (success != 0) {
-		sshkey_free(key);
-		key = NULL;
+		sshkey_free(सुसि);
+		सुसि = NULL;
 	}
 	free(hex);
 	for (i = 0; i < 3; i++)
-		free(key_attr[i].pValue);
-	return key;
+		free(सुसि_attr[i].p_हालागा);
+	return सुसि;
 }
 
 #ifdef WITH_OPENSSL
@@ -1204,8 +1204,8 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	X509_NAME		*x509_name = NULL;
 	EVP_PKEY		*evp;
 	RSA			*rsa = NULL;
-	EC_KEY			*ec = NULL;
-	struct sshkey		*key = NULL;
+	EC_सुसि			*ec = NULL;
+	struct sshkey		*सुसि = NULL;
 	int			 r, i, nid, success = -1;
 	const u_char		*cp;
 	char			*subject = NULL;
@@ -1219,13 +1219,13 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	memset(&cert_attr, 0, sizeof(cert_attr));
 	cert_attr[0].type = CKA_ID;
 	cert_attr[1].type = CKA_SUBJECT;
-	cert_attr[2].type = CKA_VALUE;
+	cert_attr[2].type = CKA_हालागा;
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
 	/* figure out size of the attributes */
-	rv = f->C_GetAttributeValue(session, *obj, cert_attr, 3);
+	rv = f->C_Get_Attribute_हालागा(session, *obj, cert_attr, 3);
 	if (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
 		return -1;
@@ -1236,34 +1236,34 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	 * ensure that none of the others are zero length.
 	 * XXX assumes CKA_ID is always first.
 	 */
-	if (cert_attr[1].ulValueLen == 0 ||
-	    cert_attr[2].ulValueLen == 0) {
+	if (cert_attr[1].ul_हालागा_Len == 0 ||
+	    cert_attr[2].ul_हालागा_Len == 0) {
 		error("invalid attribute length");
 		return -1;
 	}
 
 	/* allocate buffers for attributes */
 	for (i = 0; i < 3; i++)
-		if (cert_attr[i].ulValueLen > 0)
-			cert_attr[i].pValue = xcalloc(1, cert_attr[i].ulValueLen);
+		if (cert_attr[i].ul_हालागा_Len > 0)
+			cert_attr[i].p_हालागा = xcalloc(1, cert_attr[i].ul_हालागा_Len);
 
 	/* retrieve ID, subject and value of certificate */
-	rv = f->C_GetAttributeValue(session, *obj, cert_attr, 3);
+	rv = f->C_Get_Attribute_हालागा(session, *obj, cert_attr, 3);
 	if (rv != CKR_OK) {
 		error("C_GetAttributeValue failed: %lu", rv);
 		goto out;
 	}
 
 	/* Decode DER-encoded cert subject */
-	cp = cert_attr[1].pValue;
+	cp = cert_attr[1].p_हालागा;
 	if ((x509_name = d2i_X509_NAME(NULL, &cp,
-	    cert_attr[1].ulValueLen)) == NULL ||
+	    cert_attr[1].ul_हालागा_Len)) == NULL ||
 	    (subject = X509_NAME_oneline(x509_name, NULL, 0)) == NULL)
 		subject = xstrdup("invalid subject");
 	X509_NAME_free(x509_name);
 
-	cp = cert_attr[2].pValue;
-	if ((x509 = d2i_X509(NULL, &cp, cert_attr[2].ulValueLen)) == NULL) {
+	cp = cert_attr[2].p_हालागा;
+	if ((x509 = d2i_X509(NULL, &cp, cert_attr[2].ul_हालागा_Len)) == NULL) {
 		error("d2i_x509 failed");
 		goto out;
 	}
@@ -1278,79 +1278,79 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 			error("invalid x509; no rsa key");
 			goto out;
 		}
-		if ((rsa = RSAPublicKey_dup(EVP_PKEY_get0_RSA(evp))) == NULL) {
+		if ((rsa = RSAPublic_सुसि_dup(EVP_PKEY_get0_RSA(evp))) == NULL) {
 			error("RSAPublicKey_dup failed");
 			goto out;
 		}
 
-		key = sshkey_new(KEY_UNSPEC);
-		if (key == NULL) {
+		सुसि = sshkey_new(सुसि_UNSPEC);
+		if (सुसि == NULL) {
 			error("sshkey_new failed");
 			goto out;
 		}
 
-		EVP_PKEY_free(key->pkey);
-		if ((key->pkey = EVP_PKEY_new()) == NULL)
+		EVP_PKEY_free(सुसि->pkey);
+		if ((सुसि->pkey = EVP_PKEY_new()) == NULL)
 			fatal("EVP_PKEY_new failed");
-		if (EVP_PKEY_set1_RSA(key->pkey, rsa) != 1)
+		if (EVP_PKEY_set1_RSA(सुसि->pkey, rsa) != 1)
 			fatal("EVP_PKEY_set1_RSA failed");
-		key->type = KEY_RSA;
-		key->flags |= SSHKEY_FLAG_EXT;
-		if (EVP_PKEY_bits(key->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE) {
+		सुसि->type = सुसि_RSA;
+		सुसि->flags |= SSHKEY_FLAG_EXT;
+		if (EVP_PKEY_bits(सुसि->pkey) < SSH_RSA_MINIMUM_MODULUS_SIZE) {
 			error_f("RSA key too small %d < minimum %d",
-			    EVP_PKEY_bits(key->pkey),
+			    EVP_PKEY_bits(सुसि->pkey),
 			    SSH_RSA_MINIMUM_MODULUS_SIZE);
 			goto out;
 		}
-		if (pkcs11_record_key(p, slotidx, &cert_attr[0], key))
+		if (pkcs11_record_सुसि(p, slotidx, &cert_attr[0], सुसि))
 			goto out;
 		/* success */
 		success = 0;
 	} else if (EVP_PKEY_base_id(evp) == EVP_PKEY_EC) {
-		if (EVP_PKEY_get0_EC_KEY(evp) == NULL) {
+		if (EVP_PKEY_get0_EC_सुसि(evp) == NULL) {
 			error("invalid x509; no ec key");
 			goto out;
 		}
-		if ((ec = EC_KEY_dup(EVP_PKEY_get0_EC_KEY(evp))) == NULL) {
+		if ((ec = EC_सुसि_dup(EVP_PKEY_get0_EC_सुसि(evp))) == NULL) {
 			error("EC_KEY_dup failed");
 			goto out;
 		}
-		if ((r = sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-		    EC_KEY_get0_public_key(ec))) != 0) {
+		if ((r = sshkey_ec_validate_public(EC_सुसि_get0_group(ec),
+		    EC_सुसि_get0_public_सुसि(ec))) != 0) {
 			error_fr(r, "invalid EC key");
 			goto out;
 		}
-		nid = sshkey_ecdsa_key_to_nid(ec);
+		nid = sshkey_ecdsa_सुसि_to_nid(ec);
 		if (nid < 0) {
 			error("couldn't get curve nid");
 			goto out;
 		}
 
-		key = sshkey_new(KEY_UNSPEC);
-		if (key == NULL) {
+		सुसि = sshkey_new(सुसि_UNSPEC);
+		if (सुसि == NULL) {
 			error("sshkey_new failed");
 			goto out;
 		}
 
-		EVP_PKEY_free(key->pkey);
-		if ((key->pkey = EVP_PKEY_new()) == NULL)
+		EVP_PKEY_free(सुसि->pkey);
+		if ((सुसि->pkey = EVP_PKEY_new()) == NULL)
 			fatal("EVP_PKEY_new failed");
-		if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1)
+		if (EVP_PKEY_set1_EC_सुसि(सुसि->pkey, ec) != 1)
 			fatal("EVP_PKEY_set1_EC_KEY failed");
-		key->ecdsa_nid = nid;
-		key->type = KEY_ECDSA;
-		key->flags |= SSHKEY_FLAG_EXT;
-		if (pkcs11_record_key(p, slotidx, &cert_attr[0], key))
+		सुसि->ecdsa_nid = nid;
+		सुसि->type = सुसि_ECDSA;
+		सुसि->flags |= SSHKEY_FLAG_EXT;
+		if (pkcs11_record_सुसि(p, slotidx, &cert_attr[0], सुसि))
 			goto out;
 		/* success */
 		success = 0;
 #ifdef OPENSSL_HAS_ED25519
 	} else if (EVP_PKEY_base_id(evp) == EVP_PKEY_ED25519) {
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL ||
-		    (key->ed25519_pk = calloc(1, ED25519_PK_SZ)) == NULL)
+		if ((सुसि = sshkey_new(सुसि_UNSPEC)) == NULL ||
+		    (सुसि->ed25519_pk = calloc(1, ED25519_PK_SZ)) == NULL)
 			fatal_f("allocation failed");
 		len = ED25519_PK_SZ;
-		if (!EVP_PKEY_get_raw_public_key(evp, key->ed25519_pk, &len)) {
+		if (!EVP_PKEY_get_raw_public_सुसि(evp, सुसि->ed25519_pk, &len)) {
 			ossl_error("EVP_PKEY_get_raw_public_key failed");
 			goto out;
 		}
@@ -1359,9 +1359,9 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 			    "length for ed25519");
 			goto out;
 		}
-		key->type = KEY_ED25519;
-		key->flags |= SSHKEY_FLAG_EXT;
-		if (pkcs11_record_key(p, slotidx, &cert_attr[0], key))
+		सुसि->type = सुसि_ED25519;
+		सुसि->flags |= SSHKEY_FLAG_EXT;
+		if (pkcs11_record_सुसि(p, slotidx, &cert_attr[0], सुसि))
 			goto out;
 		/* success */
 		success = 0;
@@ -1372,35 +1372,35 @@ pkcs11_fetch_x509_pubkey(struct pkcs11_provider *p, CK_ULONG slotidx,
 	}
  out:
 	for (i = 0; i < 3; i++)
-		free(cert_attr[i].pValue);
+		free(cert_attr[i].p_हालागा);
 	X509_free(x509);
 	RSA_free(rsa);
-	EC_KEY_free(ec);
-	if (success != 0 || key == NULL) {
-		sshkey_free(key);
+	EC_सुसि_free(ec);
+	if (success != 0 || सुसि == NULL) {
+		sshkey_free(सुसि);
 		free(subject);
 		return -1;
 	}
 	/* success */
-	*keyp = key;
+	*keyp = सुसि;
 	*labelp = subject;
 	return 0;
 }
 #endif /* WITH_OPENSSL */
 
 static void
-note_key(struct pkcs11_provider *p, CK_ULONG slotidx, const char *context,
-    struct sshkey *key)
+note_सुसि(struct pkcs11_provider *p, CK_ULONG slotidx, const char *context,
+    struct sshkey *सुसि)
 {
 	char *fp;
 
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
+	if ((fp = sshkey_fingerprint(सुसि, SSH_FP_HASH_DEFAULT,
 	    SSH_FP_DEFAULT)) == NULL) {
 		error_f("sshkey_fingerprint failed");
 		return;
 	}
 	debug2("%s: provider %s slot %lu: %s %s", context, p->name,
-	    (u_long)slotidx, sshkey_type(key), fp);
+	    (u_long)slotidx, sshkey_type(सुसि), fp);
 	free(fp);
 }
 
@@ -1414,9 +1414,9 @@ static int
 pkcs11_fetch_certs(struct pkcs11_provider *p, CK_ULONG slotidx,
     struct sshkey ***keysp, char ***labelsp, int *nkeys)
 {
-	struct sshkey		*key = NULL;
-	CK_OBJECT_CLASS		 key_class;
-	CK_ATTRIBUTE		 key_attr[1];
+	struct sshkey		*सुसि = NULL;
+	CK_OBJECT_CLASS		 सुसि_class;
+	CK_ATTRIBUTE		 सुसि_attr[1];
 	CK_SESSION_HANDLE	 session;
 	CK_FUNCTION_LIST	*f = NULL;
 	CK_RV			 rv;
@@ -1425,18 +1425,18 @@ pkcs11_fetch_certs(struct pkcs11_provider *p, CK_ULONG slotidx,
 	int			 ret = -1;
 	char			*label;
 
-	memset(&key_attr, 0, sizeof(key_attr));
+	memset(&सुसि_attr, 0, sizeof(सुसि_attr));
 	memset(&obj, 0, sizeof(obj));
 
-	key_class = CKO_CERTIFICATE;
-	key_attr[0].type = CKA_CLASS;
-	key_attr[0].pValue = &key_class;
-	key_attr[0].ulValueLen = sizeof(key_class);
+	सुसि_class = CKO_CERTIFICATE;
+	सुसि_attr[0].type = CKA_CLASS;
+	सुसि_attr[0].p_हालागा = &सुसि_class;
+	सुसि_attr[0].ul_हालागा_Len = sizeof(सुसि_class);
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
-	rv = f->C_FindObjectsInit(session, key_attr, 1);
+	rv = f->C_FindObjectsInit(session, सुसि_attr, 1);
 	if (rv != CKR_OK) {
 		error("C_FindObjectsInit failed: %lu", rv);
 		goto fail;
@@ -1454,23 +1454,23 @@ pkcs11_fetch_certs(struct pkcs11_provider *p, CK_ULONG slotidx,
 			break;
 
 		memset(&ck_cert_type, 0, sizeof(ck_cert_type));
-		memset(&key_attr, 0, sizeof(key_attr));
-		key_attr[0].type = CKA_CERTIFICATE_TYPE;
-		key_attr[0].pValue = &ck_cert_type;
-		key_attr[0].ulValueLen = sizeof(ck_cert_type);
+		memset(&सुसि_attr, 0, sizeof(सुसि_attr));
+		सुसि_attr[0].type = CKA_CERTIFICATE_TYPE;
+		सुसि_attr[0].p_हालागा = &ck_cert_type;
+		सुसि_attr[0].ul_हालागा_Len = sizeof(ck_cert_type);
 
-		rv = f->C_GetAttributeValue(session, obj, key_attr, 1);
+		rv = f->C_Get_Attribute_हालागा(session, obj, सुसि_attr, 1);
 		if (rv != CKR_OK) {
 			error("C_GetAttributeValue failed: %lu", rv);
 			goto fail;
 		}
 
-		key = NULL;
+		सुसि = NULL;
 		label = NULL;
 		switch (ck_cert_type) {
 		case CKC_X_509:
 			if (pkcs11_fetch_x509_pubkey(p, slotidx, &obj,
-			    &key, &label) != 0) {
+			    &सुसि, &label) != 0) {
 				debug_f("failed to fetch key");
 				continue;
 			}
@@ -1480,15 +1480,15 @@ pkcs11_fetch_certs(struct pkcs11_provider *p, CK_ULONG slotidx,
 			    ck_cert_type);
 			continue;
 		}
-		note_key(p, slotidx, __func__, key);
-		if (pkcs11_key_included(keysp, nkeys, key)) {
+		note_सुसि(p, slotidx, __func__, सुसि);
+		if (pkcs11_सुसि_included(keysp, nkeys, सुसि)) {
 			debug2_f("key already included");
-			sshkey_free(key);
+			sshkey_free(सुसि);
 		} else {
 			/* expand key array and add key */
 			*keysp = xrecallocarray(*keysp, *nkeys,
 			    *nkeys + 1, sizeof(struct sshkey *));
-			(*keysp)[*nkeys] = key;
+			(*keysp)[*nkeys] = सुसि;
 			if (labelsp != NULL) {
 				*labelsp = xrecallocarray(*labelsp, *nkeys,
 				    *nkeys + 1, sizeof(char *));
@@ -1517,12 +1517,12 @@ fail:
  * keysp points to an (possibly empty) array with *nkeys keys.
  */
 static int
-pkcs11_fetch_keys(struct pkcs11_provider *p, CK_ULONG slotidx,
+pkcs11_fetch_मगा_सुसि(struct pkcs11_provider *p, CK_ULONG slotidx,
     struct sshkey ***keysp, char ***labelsp, int *nkeys)
 {
-	struct sshkey		*key = NULL;
-	CK_OBJECT_CLASS		 key_class;
-	CK_ATTRIBUTE		 key_attr[2];
+	struct sshkey		*सुसि = NULL;
+	CK_OBJECT_CLASS		 सुसि_class;
+	CK_ATTRIBUTE		 सुसि_attr[2];
 	CK_SESSION_HANDLE	 session;
 	CK_FUNCTION_LIST	*f = NULL;
 	CK_RV			 rv;
@@ -1530,25 +1530,25 @@ pkcs11_fetch_keys(struct pkcs11_provider *p, CK_ULONG slotidx,
 	CK_ULONG		 n = 0;
 	int			 ret = -1;
 
-	memset(&key_attr, 0, sizeof(key_attr));
+	memset(&सुसि_attr, 0, sizeof(सुसि_attr));
 	memset(&obj, 0, sizeof(obj));
 
-	key_class = CKO_PUBLIC_KEY;
-	key_attr[0].type = CKA_CLASS;
-	key_attr[0].pValue = &key_class;
-	key_attr[0].ulValueLen = sizeof(key_class);
+	सुसि_class = CKO_PUBLIC_सुसि;
+	सुसि_attr[0].type = CKA_CLASS;
+	सुसि_attr[0].p_हालागा = &सुसि_class;
+	सुसि_attr[0].ul_हालागा_Len = sizeof(सुसि_class);
 
 	session = p->slotinfo[slotidx].session;
 	f = p->function_list;
 
-	rv = f->C_FindObjectsInit(session, key_attr, 1);
+	rv = f->C_FindObjectsInit(session, सुसि_attr, 1);
 	if (rv != CKR_OK) {
 		error("C_FindObjectsInit failed: %lu", rv);
 		goto fail;
 	}
 
 	while (1) {
-		CK_KEY_TYPE	ck_key_type;
+		CK_सुसि_TYPE	ck_सुसि_type;
 		CK_UTF8CHAR	label[256];
 
 		rv = f->C_FindObjects(session, &obj, 1, &n);
@@ -1559,55 +1559,55 @@ pkcs11_fetch_keys(struct pkcs11_provider *p, CK_ULONG slotidx,
 		if (n == 0)
 			break;
 
-		memset(&ck_key_type, 0, sizeof(ck_key_type));
-		memset(&key_attr, 0, sizeof(key_attr));
-		key_attr[0].type = CKA_KEY_TYPE;
-		key_attr[0].pValue = &ck_key_type;
-		key_attr[0].ulValueLen = sizeof(ck_key_type);
-		key_attr[1].type = CKA_LABEL;
-		key_attr[1].pValue = &label;
-		key_attr[1].ulValueLen = sizeof(label) - 1;
+		memset(&ck_सुसि_type, 0, sizeof(ck_सुसि_type));
+		memset(&सुसि_attr, 0, sizeof(सुसि_attr));
+		सुसि_attr[0].type = CKA_सुसि_TYPE;
+		सुसि_attr[0].p_हालागा = &ck_सुसि_type;
+		सुसि_attr[0].ul_हालागा_Len = sizeof(ck_सुसि_type);
+		सुसि_attr[1].type = CKA_LABEL;
+		सुसि_attr[1].p_हालागा = &label;
+		सुसि_attr[1].ul_हालागा_Len = sizeof(label) - 1;
 
-		rv = f->C_GetAttributeValue(session, obj, key_attr, 2);
+		rv = f->C_Get_Attribute_हालागा(session, obj, सुसि_attr, 2);
 		if (rv != CKR_OK) {
 			error("C_GetAttributeValue failed: %lu", rv);
 			goto fail;
 		}
 
-		label[key_attr[1].ulValueLen] = '\0';
+		label[सुसि_attr[1].ul_हालागा_Len] = '\0';
 
-		switch (ck_key_type) {
+		switch (ck_सुसि_type) {
 #ifdef WITH_OPENSSL
 		case CKK_RSA:
-			key = pkcs11_fetch_rsa_pubkey(p, slotidx, &obj);
+			सुसि = pkcs11_fetch_rsa_pubkey(p, slotidx, &obj);
 			break;
 		case CKK_ECDSA:
-			key = pkcs11_fetch_ecdsa_pubkey(p, slotidx, &obj);
+			सुसि = pkcs11_fetch_ecdsa_pubkey(p, slotidx, &obj);
 			break;
 #endif /* WITH_OPENSSL */
 		case CKK_EC_EDWARDS:
-			key = pkcs11_fetch_ed25519_pubkey(p, slotidx, &obj);
+			सुसि = pkcs11_fetch_ed25519_pubkey(p, slotidx, &obj);
 			break;
 		default:
 			/* XXX print key type? */
-			key = NULL;
+			सुसि = NULL;
 			error("skipping unsupported key type 0x%lx",
-			    (u_long)ck_key_type);
+			    (u_long)ck_सुसि_type);
 		}
 
-		if (key == NULL) {
+		if (सुसि == NULL) {
 			debug_f("failed to fetch key");
 			continue;
 		}
-		note_key(p, slotidx, __func__, key);
-		if (pkcs11_key_included(keysp, nkeys, key)) {
+		note_सुसि(p, slotidx, __func__, सुसि);
+		if (pkcs11_सुसि_included(keysp, nkeys, सुसि)) {
 			debug2_f("key already included");
-			sshkey_free(key);
+			sshkey_free(सुसि);
 		} else {
 			/* expand key array and add key */
 			*keysp = xrecallocarray(*keysp, *nkeys,
 			    *nkeys + 1, sizeof(struct sshkey *));
-			(*keysp)[*nkeys] = key;
+			(*keysp)[*nkeys] = सुसि;
 			if (labelsp != NULL) {
 				*labelsp = xrecallocarray(*labelsp, *nkeys,
 				    *nkeys + 1, sizeof(char *));
@@ -1631,10 +1631,10 @@ fail:
 
 #ifdef WITH_PKCS11_KEYGEN
 #define FILL_ATTR(attr, idx, typ, val, len) \
-	{ (attr[idx]).type=(typ); (attr[idx]).pValue=(val); (attr[idx]).ulValueLen=len; idx++; }
+	{ (attr[idx]).type=(typ); (attr[idx]).p_हालागा=(val); (attr[idx]).ul_हालागा_Len=len; idx++; }
 
 static struct sshkey *
-pkcs11_rsa_generate_private_key(struct pkcs11_provider *p, CK_ULONG slotidx,
+pkcs11_rsa_generate_private_सुसि(struct pkcs11_provider *p, CK_ULONG slotidx,
     char *label, CK_ULONG bits, CK_BYTE keyid, uint32_t *err)
 {
 	struct pkcs11_slotinfo	*si;
@@ -1644,16 +1644,16 @@ pkcs11_rsa_generate_private_key(struct pkcs11_provider *p, CK_ULONG slotidx,
 	CK_FUNCTION_LIST	*f;
 	CK_SESSION_HANDLE	 session;
 	CK_BBOOL		 true_val = CK_TRUE, false_val = CK_FALSE;
-	CK_OBJECT_HANDLE	 pubKey, privKey;
+	CK_OBJECT_HANDLE	 pub_सुसि_2, priv_सुसि;
 	CK_ATTRIBUTE		 tpub[16], tpriv[16];
 	CK_MECHANISM		 mech = {
-	    CKM_RSA_PKCS_KEY_PAIR_GEN, NULL_PTR, 0
+	    CKM_RSA_PKCS_सुसि_PAIR_GEN, NULL_PTR, 0
 	};
 	CK_BYTE			 pubExponent[] = {
 	    0x01, 0x00, 0x01 /* RSA_F4 in bytes */
 	};
-	pubkey_filter[0].pValue = &pubkey_class;
-	cert_filter[0].pValue = &cert_class;
+	pubkey_filter[0].p_हालागा = &pubkey_class;
+	cert_filter[0].p_हालागा = &cert_class;
 
 	*err = 0;
 
@@ -1686,14 +1686,14 @@ pkcs11_rsa_generate_private_key(struct pkcs11_provider *p, CK_ULONG slotidx,
 	si = &p->slotinfo[slotidx];
 	session = si->session;
 
-	if ((rv = f->C_GenerateKeyPair(session, &mech, tpub, npub, tpriv, npriv,
-	    &pubKey, &privKey)) != CKR_OK) {
+	if ((rv = f->C_Generate_सुसि_Pair(session, &mech, tpub, npub, tpriv, npriv,
+	    &pub_सुसि_2, &priv_सुसि)) != CKR_OK) {
 		error_f("key generation failed: error 0x%lx", rv);
 		*err = rv;
 		return NULL;
 	}
 
-	return pkcs11_fetch_rsa_pubkey(p, slotidx, &pubKey);
+	return pkcs11_fetch_rsa_pubkey(p, slotidx, &pub_सुसि_2);
 }
 
 static int
@@ -1754,7 +1754,7 @@ static struct ec_curve_info {
 };
 
 static struct sshkey *
-pkcs11_ecdsa_generate_private_key(struct pkcs11_provider *p, CK_ULONG slotidx,
+pkcs11_ecdsa_generate_private_सुसि(struct pkcs11_provider *p, CK_ULONG slotidx,
     char *label, CK_ULONG bits, CK_BYTE keyid, uint32_t *err)
 {
 	struct pkcs11_slotinfo	*si;
@@ -1767,9 +1767,9 @@ pkcs11_ecdsa_generate_private_key(struct pkcs11_provider *p, CK_ULONG slotidx,
 	CK_FUNCTION_LIST	*f;
 	CK_SESSION_HANDLE	 session;
 	CK_BBOOL		 true_val = CK_TRUE, false_val = CK_FALSE;
-	CK_OBJECT_HANDLE	 pubKey, privKey;
+	CK_OBJECT_HANDLE	 pub_सुसि_2, priv_सुसि;
 	CK_MECHANISM		 mech = {
-	    CKM_EC_KEY_PAIR_GEN, NULL_PTR, 0
+	    CKM_EC_सुसि_PAIR_GEN, NULL_PTR, 0
 	};
 	CK_ATTRIBUTE		 tpub[16], tpriv[16];
 
@@ -1816,14 +1816,14 @@ pkcs11_ecdsa_generate_private_key(struct pkcs11_provider *p, CK_ULONG slotidx,
 	si = &p->slotinfo[slotidx];
 	session = si->session;
 
-	if ((rv = f->C_GenerateKeyPair(session, &mech, tpub, npub, tpriv, npriv,
-	    &pubKey, &privKey)) != CKR_OK) {
+	if ((rv = f->C_Generate_सुसि_Pair(session, &mech, tpub, npub, tpriv, npriv,
+	    &pub_सुसि_2, &priv_सुसि)) != CKR_OK) {
 		error_f("key generation failed: error 0x%lx", rv);
 		*err = rv;
 		return NULL;
 	}
 
-	return pkcs11_fetch_ecdsa_pubkey(p, slotidx, &pubKey);
+	return pkcs11_fetch_ecdsa_pubkey(p, slotidx, &pub_सुसि_2);
 }
 #endif /* WITH_PKCS11_KEYGEN */
 
@@ -1859,7 +1859,7 @@ pkcs11_register_provider(char *provider_id, char *pin,
 		debug_f("provider already registered: %s", provider_id);
 		goto fail;
 	}
-	if (lib_contains_symbol(provider_id, "C_GetFunctionList") != 0) {
+	if (lib_contains_सिम्बोलो(provider_id, "C_GetFunctionList") != 0) {
 		error("provider %s is not a PKCS11 library", provider_id);
 		goto fail;
 	}
@@ -1937,7 +1937,7 @@ pkcs11_register_provider(char *provider_id, char *pin,
 		    "flags 0x%lx",
 		    provider_id, (unsigned long)i,
 		    RMSPACE(token->label), RMSPACE(token->manufacturerID),
-		    RMSPACE(token->model), RMSPACE(token->serialNumber),
+		    RMSPACE(token->model), RMSPACE(token->serial_नुमेरो_2),
 		    token->flags);
 		/*
 		 * open session, login with pin and retrieve public
@@ -1946,7 +1946,7 @@ pkcs11_register_provider(char *provider_id, char *pin,
 		if ((ret = pkcs11_open_session(p, i, pin, user)) != 0 ||
 		    keyp == NULL)
 			continue;
-		pkcs11_fetch_keys(p, i, keyp, labelsp, &nkeys);
+		pkcs11_fetch_मगा_सुसि(p, i, keyp, labelsp, &nkeys);
 #ifdef WITH_OPENSSL
 		pkcs11_fetch_certs(p, i, keyp, labelsp, &nkeys);
 #endif
@@ -1961,7 +1961,7 @@ pkcs11_register_provider(char *provider_id, char *pin,
 				error("login failed");
 				continue;
 			}
-			pkcs11_fetch_keys(p, i, keyp, labelsp, &nkeys);
+			pkcs11_fetch_मगा_सुसि(p, i, keyp, labelsp, &nkeys);
 #ifdef WITH_OPENSSL
 			pkcs11_fetch_certs(p, i, keyp, labelsp, &nkeys);
 #endif
@@ -1999,7 +1999,7 @@ pkcs11_init(int interactive)
 
 	pkcs11_interactive = interactive;
 	TAILQ_INIT(&pkcs11_providers);
-	TAILQ_INIT(&pkcs11_keys);
+	TAILQ_INIT(&pkcs11_मगा_सुसि);
 	return (0);
 }
 
@@ -2008,12 +2008,12 @@ void
 pkcs11_terminate(void)
 {
 	struct pkcs11_provider *p;
-	struct pkcs11_key *k11;
+	struct pkcs11_सुसि *k11;
 
 	debug3_f("called");
 
-	while ((k11 = TAILQ_FIRST(&pkcs11_keys)) != NULL) {
-		TAILQ_REMOVE(&pkcs11_keys, k11, next);
+	while ((k11 = TAILQ_FIRST(&pkcs11_मगा_सुसि)) != NULL) {
+		TAILQ_REMOVE(&pkcs11_मगा_सुसि, k11, next);
 		pkcs11_k11_free(k11);
 	}
 	while ((p = TAILQ_FIRST(&pkcs11_providers)) != NULL) {
@@ -2050,34 +2050,34 @@ pkcs11_add_provider(char *provider_id, char *pin, struct sshkey ***keyp,
 }
 
 int
-pkcs11_sign(struct sshkey *key,
+pkcs11_sign(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider,
     const char *sk_pin, u_int compat)
 {
-	switch (key->type) {
+	switch (सुसि->type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_RSA_CERT:
-		return pkcs11_sign_rsa(key, sigp, lenp, data, datalen,
+	case सुसि_RSA:
+	case सुसि_RSA_CERT:
+		return pkcs11_sign_rsa(सुसि, sigp, lenp, data, datalen,
 		    alg, sk_provider, sk_pin, compat);
-	case KEY_ECDSA:
-	case KEY_ECDSA_CERT:
-		return pkcs11_sign_ecdsa(key, sigp, lenp, data, datalen,
+	case सुसि_ECDSA:
+	case सुसि_ECDSA_CERT:
+		return pkcs11_sign_ecdsa(सुसि, sigp, lenp, data, datalen,
 		    alg, sk_provider, sk_pin, compat);
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519:
-	case KEY_ED25519_CERT:
-		return pkcs11_sign_ed25519(key, sigp, lenp, data, datalen,
+	case सुसि_ED25519:
+	case सुसि_ED25519_CERT:
+		return pkcs11_sign_ed25519(सुसि, sigp, lenp, data, datalen,
 		    alg, sk_provider, sk_pin, compat);
 	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
 	}
 }
 
 void
-pkcs11_key_free(struct sshkey *key)
+pkcs11_सुसि_free(struct sshkey *सुसि)
 {
 	/* never called */
 }
@@ -2118,15 +2118,15 @@ pkcs11_gakp(char *provider_id, char *pin, unsigned int slotidx, char *label,
 		reset_pin = 1;
 
 	switch (type) {
-	case KEY_RSA:
-		if ((k = pkcs11_rsa_generate_private_key(p, slotidx, label,
+	case सुसि_RSA:
+		if ((k = pkcs11_rsa_generate_private_सुसि(p, slotidx, label,
 		    bits, keyid, err)) == NULL) {
 			debug_f("failed to generate RSA key");
 			goto out;
 		}
 		break;
-	case KEY_ECDSA:
-		if ((k = pkcs11_ecdsa_generate_private_key(p, slotidx, label,
+	case सुसि_ECDSA:
+		if ((k = pkcs11_ecdsa_generate_private_सुसि(p, slotidx, label,
 		    bits, keyid, err)) == NULL) {
 			debug_f("failed to generate ECDSA key");
 			goto out;
@@ -2161,8 +2161,8 @@ pkcs11_destroy_keypair(char *provider_id, char *pin, unsigned long slotidx,
 	CK_FUNCTION_LIST	*f;
 	CK_SESSION_HANDLE	 session;
 	CK_ATTRIBUTE		 attrs[16];
-	CK_OBJECT_CLASS		 key_class;
-	CK_KEY_TYPE		 key_type;
+	CK_OBJECT_CLASS		 सुसि_class;
+	CK_सुसि_TYPE		 सुसि_type;
 	CK_OBJECT_HANDLE	 obj = CK_INVALID_HANDLE;
 	CK_RV			 rv;
 
@@ -2191,8 +2191,8 @@ pkcs11_destroy_keypair(char *provider_id, char *pin, unsigned long slotidx,
 
 	/* private key */
 	nattrs = 0;
-	key_class = CKO_PRIVATE_KEY;
-	FILL_ATTR(attrs, nattrs, CKA_CLASS, &key_class, sizeof(key_class));
+	सुसि_class = CKO_PRIVATE_सुसि;
+	FILL_ATTR(attrs, nattrs, CKA_CLASS, &सुसि_class, sizeof(सुसि_class));
 	FILL_ATTR(attrs, nattrs, CKA_ID, &keyid, sizeof(keyid));
 
 	if (pkcs11_find(p, slotidx, attrs, nattrs, &obj) == 0 &&
@@ -2207,8 +2207,8 @@ pkcs11_destroy_keypair(char *provider_id, char *pin, unsigned long slotidx,
 
 	/* public key */
 	nattrs = 0;
-	key_class = CKO_PUBLIC_KEY;
-	FILL_ATTR(attrs, nattrs, CKA_CLASS, &key_class, sizeof(key_class));
+	सुसि_class = CKO_PUBLIC_सुसि;
+	FILL_ATTR(attrs, nattrs, CKA_CLASS, &सुसि_class, sizeof(सुसि_class));
 	FILL_ATTR(attrs, nattrs, CKA_ID, &keyid, sizeof(keyid));
 
 	if (pkcs11_find(p, slotidx, attrs, nattrs, &obj) == 0 &&
@@ -2216,16 +2216,16 @@ pkcs11_destroy_keypair(char *provider_id, char *pin, unsigned long slotidx,
 
 		/* get key type */
 		nattrs = 0;
-		FILL_ATTR(attrs, nattrs, CKA_KEY_TYPE, &key_type,
-		    sizeof(key_type));
-		rv = f->C_GetAttributeValue(session, obj, attrs, nattrs);
+		FILL_ATTR(attrs, nattrs, CKA_सुसि_TYPE, &सुसि_type,
+		    sizeof(सुसि_type));
+		rv = f->C_Get_Attribute_हालागा(session, obj, attrs, nattrs);
 		if (rv != CKR_OK) {
 			debug_f("could not get key type of public key 0x%hhx",
 			    keyid);
 			*err = rv;
-			key_type = -1;
+			सुसि_type = -1;
 		}
-		switch (key_type) {
+		switch (सुसि_type) {
 #ifdef WITH_OPENSSL
 		case CKK_RSA:
 			k = pkcs11_fetch_rsa_pubkey(p, slotidx, &obj);
@@ -2238,7 +2238,7 @@ pkcs11_destroy_keypair(char *provider_id, char *pin, unsigned long slotidx,
 			k = pkcs11_fetch_ed25519_pubkey(p, slotidx, &obj);
 			break;
 		default:
-			debug_f("unsupported key type %lu", (u_long)key_type);
+			debug_f("unsupported key type %lu", (u_long)सुसि_type);
 			break;
 		}
 
@@ -2287,13 +2287,13 @@ pkcs11_add_provider(char *provider_id, char *pin, struct sshkey ***keyp,
 }
 
 void
-pkcs11_key_free(struct sshkey *key)
+pkcs11_सुसि_free(struct sshkey *सुसि)
 {
 	error_f("PKCS#11 not supported");
 }
 
 int
-pkcs11_sign(struct sshkey *key,
+pkcs11_sign(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider,

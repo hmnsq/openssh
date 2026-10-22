@@ -31,8 +31,8 @@ struct sk_option;
 #define SSH_SK_HELPER_ENROLL		2
 #define SSH_SK_HELPER_LOAD_RESIDENT	3
 
-struct sshsk_resident_key {
-	struct sshkey *key;
+struct sshsk_resident_सुसि {
+	struct sshkey *सुसि;
 	uint8_t *user_id;
 	size_t user_id_len;
 };
@@ -58,7 +58,7 @@ int sshsk_enroll(int type, const char *provider_path, const char *device,
  *
  * Returns 0 on success or a ssherr.h error code on failure.
  */
-int sshsk_sign(const char *provider_path, struct sshkey *key,
+int sshsk_sign(const char *provider_path, struct sshkey *सुसि,
     u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
     u_int compat, const char *pin);
 
@@ -69,11 +69,11 @@ int sshsk_sign(const char *provider_path, struct sshkey *key,
  * Returns 0 on success or a ssherr.h error code on failure.
  */
 int sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+    const char *pin, u_int flags, struct sshsk_resident_सुसि ***srksp,
     size_t *nsrksp);
 
 /* Free an array of sshsk_resident_key (as returned from sshsk_load_resident) */
-void sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks);
+void sshsk_free_resident_मगा_सुसि(struct sshsk_resident_सुसि **srks, size_t nsrks);
 
 #endif /* _SSH_SK_H */
 

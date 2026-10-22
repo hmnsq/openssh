@@ -127,7 +127,7 @@ extern char *__progname;
 static int verbose_mode = 0;
 static int quiet_mode = 0;
 static char *active_test_name = NULL;
-static u_int test_number = 0;
+static u_int test_नुमेरो = 0;
 static test_onerror_func_t *test_onerror = NULL;
 static void *onerror_ctx = NULL;
 static const char *data_dir = NULL;
@@ -214,7 +214,7 @@ main(int argc, char **argv)
 		tests();
 
 	if (!quiet_mode && !benchmark)
-		printf(" %u tests ok\n", test_number);
+		printf(" %u tests ok\n", test_नुमेरो);
 	return 0;
 }
 
@@ -262,7 +262,7 @@ test_data_file(const char *name)
 void
 test_info(char *s, size_t len)
 {
-	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_number,
+	snprintf(s, len, "In test %u: \"%s\"%s%s\n", test_नुमेरो,
 	    active_test_name == NULL ? "<none>" : active_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 }
@@ -283,8 +283,8 @@ test_start(const char *n)
 	assert((active_test_name = strdup(n)) != NULL);
 	*subtest_info = '\0';
 	if (verbose_mode)
-		printf("test %u - \"%s\": ", test_number, active_test_name);
-	test_number++;
+		printf("test %u - \"%s\": ", test_नुमेरो, active_test_name);
+	test_नुमेरो++;
 #ifdef SIGINFO
 	signal(SIGINFO, siginfo);
 #endif
@@ -330,7 +330,7 @@ test_is_benchmark(void)
 }
 
 void
-ssl_err_check(const char *file, int line)
+ssl_err_check(const char *file, int लिन्या)
 {
 #ifdef WITH_OPENSSL
 	long openssl_error = ERR_get_error();
@@ -339,10 +339,10 @@ ssl_err_check(const char *file, int line)
 		return;
 
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error: %s",
-	    file, line, ERR_error_string(openssl_error, NULL));
+	    file, लिन्या, ERR_error_string(openssl_error, NULL));
 #else /* WITH_OPENSSL */
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error ",
-	    file, line);
+	    file, लिन्या);
 #endif /* WITH_OPENSSL */
 	abort();
 }
@@ -377,11 +377,11 @@ test_die(void)
 }
 
 static void
-test_header(const char *file, int line, const char *a1, const char *a2,
+test_header(const char *file, int लिन्या, const char *a1, const char *a2,
     const char *name, enum test_predicate pred)
 {
 	fprintf(stderr, "\n%s:%d test #%u \"%s\"%s%s\n", 
-	    file, line, test_number, active_test_name,
+	    file, लिन्या, test_नुमेरो, active_test_name,
 	    *subtest_info != '\0' ? " - " : "", subtest_info);
 	fprintf(stderr, "ASSERT_%s_%s(%s%s%s) failed:\n",
 	    name, pred_name(pred), a1,
@@ -390,13 +390,13 @@ test_header(const char *file, int line, const char *a1, const char *a2,
 
 #ifdef WITH_OPENSSL
 void
-assert_bignum(const char *file, int line, const char *a1, const char *a2,
+assert_bignum(const char *file, int लिन्या, const char *a1, const char *a2,
     const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred)
 {
 	int r = BN_cmp(aa1, aa2);
 
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "BIGNUM", pred);
+	test_header(file, लिन्या, a1, a2, "BIGNUM", pred);
 	fprintf(stderr, "%12s = 0x%s\n", a1, BN_bn2hex(aa1));
 	fprintf(stderr, "%12s = 0x%s\n", a2, BN_bn2hex(aa2));
 	test_die();
@@ -404,25 +404,25 @@ assert_bignum(const char *file, int line, const char *a1, const char *a2,
 #endif
 
 void
-assert_string(const char *file, int line, const char *a1, const char *a2,
+assert_string(const char *file, int लिन्या, const char *a1, const char *a2,
     const char *aa1, const char *aa2, enum test_predicate pred)
 {
 	int r;
 
 	/* Verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, लिन्या, a1, "NULL", aa1, NULL, TEST_NE);
+	assert_ptr(file, लिन्या, a2, "NULL", aa2, NULL, TEST_NE);
 
 	r = strcmp(aa1, aa2);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
+	test_header(file, लिन्या, a1, a2, "STRING", pred);
 	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1, strlen(aa1));
 	fprintf(stderr, "%12s = %s (len %zu)\n", a2, aa2, strlen(aa2));
 	test_die();
 }
 
 void
-assert_mem(const char *file, int line, const char *a1, const char *a2,
+assert_mem(const char *file, int लिन्या, const char *a1, const char *a2,
     const void *aa1, const void *aa2, size_t l, enum test_predicate pred)
 {
 	int r;
@@ -432,12 +432,12 @@ assert_mem(const char *file, int line, const char *a1, const char *a2,
 	if (l == 0)
 		return;
 	/* If length is >0, then verify pointers are not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
-	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
+	assert_ptr(file, लिन्या, a1, "NULL", aa1, NULL, TEST_NE);
+	assert_ptr(file, लिन्या, a2, "NULL", aa2, NULL, TEST_NE);
 
 	r = memcmp(aa1, aa2, l);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, a2, "STRING", pred);
+	test_header(file, लिन्या, a1, a2, "STRING", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 256));
 	aa2_tohex = tohex(aa2, MINIMUM(l, 256));
 	fprintf(stderr, "%12s = %s (len %zu)\n", a1, aa1_tohex, l);
@@ -462,7 +462,7 @@ memvalcmp(const uint8_t *s, u_char v, size_t l, size_t *where)
 }
 
 void
-assert_mem_filled(const char *file, int line, const char *a1,
+assert_mem_filled(const char *file, int लिन्या, const char *a1,
     const void *aa1, u_char v, size_t l, enum test_predicate pred)
 {
 	size_t where = -1;
@@ -473,11 +473,11 @@ assert_mem_filled(const char *file, int line, const char *a1,
 	if (l == 0)
 		return;
 	/* If length is >0, then verify the pointer is not NULL */
-	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
+	assert_ptr(file, लिन्या, a1, "NULL", aa1, NULL, TEST_NE);
 
 	r = memvalcmp(aa1, v, l, &where);
 	TEST_CHECK_INT(r, pred);
-	test_header(file, line, a1, NULL, "MEM_ZERO", pred);
+	test_header(file, लिन्या, a1, NULL, "MEM_ZERO", pred);
 	aa1_tohex = tohex(aa1, MINIMUM(l, 20));
 	fprintf(stderr, "%20s = %s%s (len %zu)\n", a1,
 	    aa1_tohex, l > 20 ? "..." : "", l);
@@ -489,68 +489,68 @@ assert_mem_filled(const char *file, int line, const char *a1,
 }
 
 void
-assert_int(const char *file, int line, const char *a1, const char *a2,
+assert_int(const char *file, int लिन्या, const char *a1, const char *a2,
     int aa1, int aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "INT", pred);
+	test_header(file, लिन्या, a1, a2, "INT", pred);
 	fprintf(stderr, "%12s = %d\n", a1, aa1);
 	fprintf(stderr, "%12s = %d\n", a2, aa2);
 	test_die();
 }
 
 void
-assert_size_t(const char *file, int line, const char *a1, const char *a2,
+assert_size_t(const char *file, int लिन्या, const char *a1, const char *a2,
     size_t aa1, size_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "SIZE_T", pred);
+	test_header(file, लिन्या, a1, a2, "SIZE_T", pred);
 	fprintf(stderr, "%12s = %zu\n", a1, aa1);
 	fprintf(stderr, "%12s = %zu\n", a2, aa2);
 	test_die();
 }
 
 void
-assert_u_int(const char *file, int line, const char *a1, const char *a2,
+assert_u_int(const char *file, int लिन्या, const char *a1, const char *a2,
     u_int aa1, u_int aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U_INT", pred);
+	test_header(file, लिन्या, a1, a2, "U_INT", pred);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %u / 0x%x\n", a2, aa2, aa2);
 	test_die();
 }
 
 void
-assert_long(const char *file, int line, const char *a1, const char *a2,
+assert_long(const char *file, int लिन्या, const char *a1, const char *a2,
     long aa1, long aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG", pred);
+	test_header(file, लिन्या, a1, a2, "LONG", pred);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %ld / 0x%lx\n", a2, aa2, aa2);
 	test_die();
 }
 
 void
-assert_long_long(const char *file, int line, const char *a1, const char *a2,
+assert_long_long(const char *file, int लिन्या, const char *a1, const char *a2,
     long long aa1, long long aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "LONG LONG", pred);
+	test_header(file, लिन्या, a1, a2, "LONG LONG", pred);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = %lld / 0x%llx\n", a2, aa2, aa2);
 	test_die();
 }
 
 void
-assert_char(const char *file, int line, const char *a1, const char *a2,
+assert_char(const char *file, int लिन्या, const char *a1, const char *a2,
     char aa1, char aa2, enum test_predicate pred)
 {
 	char buf[8];
 
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "CHAR", pred);
+	test_header(file, लिन्या, a1, a2, "CHAR", pred);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
 	    vis(buf, aa1, VIS_SAFE|VIS_NL|VIS_TAB|VIS_OCTAL, 0), aa1);
 	fprintf(stderr, "%12s = '%s' / 0x02%x\n", a1,
@@ -559,44 +559,44 @@ assert_char(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_u8(const char *file, int line, const char *a1, const char *a2,
+assert_u8(const char *file, int लिन्या, const char *a1, const char *a2,
     uint8_t aa1, uint8_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U8", pred);
+	test_header(file, लिन्या, a1, a2, "U8", pred);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%02x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
 void
-assert_u16(const char *file, int line, const char *a1, const char *a2,
+assert_u16(const char *file, int लिन्या, const char *a1, const char *a2,
     uint16_t aa1, uint16_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U16", pred);
+	test_header(file, लिन्या, a1, a2, "U16", pred);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%04x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
 void
-assert_u32(const char *file, int line, const char *a1, const char *a2,
+assert_u32(const char *file, int लिन्या, const char *a1, const char *a2,
     uint32_t aa1, uint32_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U32", pred);
+	test_header(file, लिन्या, a1, a2, "U32", pred);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a1, aa1, aa1);
 	fprintf(stderr, "%12s = 0x%08x %u\n", a2, aa2, aa2);
 	test_die();
 }
 
 void
-assert_u64(const char *file, int line, const char *a1, const char *a2,
+assert_u64(const char *file, int लिन्या, const char *a1, const char *a2,
     uint64_t aa1, uint64_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "U64", pred);
+	test_header(file, लिन्या, a1, a2, "U64", pred);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a1,
 	    (unsigned long long)aa1, (unsigned long long)aa1);
 	fprintf(stderr, "%12s = 0x%016llx %llu\n", a2,
@@ -605,7 +605,7 @@ assert_u64(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_double(const char *file, int line, const char *a1, const char *a2,
+assert_double(const char *file, int लिन्या, const char *a1, const char *a2,
     double aa1, double aa2, enum test_predicate pred)
 {
 	const double epsilon = 0.000000001;
@@ -639,18 +639,18 @@ assert_double(const char *file, int line, const char *a1, const char *a2,
 		abort();
 	}
 
-	test_header(file, line, a1, a2, "DOUBLE", pred);
+	test_header(file, लिन्या, a1, a2, "DOUBLE", pred);
 	fprintf(stderr, "%12s = %f\n", a1, aa1);
 	fprintf(stderr, "%12s = %f\n", a2, aa2);
 	test_die();
 }
 
 void
-assert_ptr(const char *file, int line, const char *a1, const char *a2,
+assert_ptr(const char *file, int लिन्या, const char *a1, const char *a2,
     const void *aa1, const void *aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
-	test_header(file, line, a1, a2, "PTR", pred);
+	test_header(file, लिन्या, a1, a2, "PTR", pred);
 	fprintf(stderr, "%12s = %p\n", a1, aa1);
 	fprintf(stderr, "%12s = %p\n", a2, aa2);
 	test_die();
@@ -677,14 +677,14 @@ hex2bin(uint8_t *bin, const char *hex, size_t len)
 }
 
 void
-bench_start(const char *file, int line, const char *name)
+bench_start(const char *file, int लिन्या, const char *name)
 {
 	char *cp;
 
 	if (bench_name != NULL) {
 		fprintf(stderr, "\n%s:%d internal error: BENCH_START() called "
 		    "while previous benchmark \"%s\" incomplete",
-		    file, line, bench_name);
+		    file, लिन्या, bench_name);
 		abort();
 	}
 	cp = xstrdup(name);
@@ -711,13 +711,13 @@ bench_done(void)
 }
 
 void
-bench_case_start(const char *file, int line)
+bench_case_start(const char *file, int लिन्या)
 {
 	clock_gettime(CLOCK_REALTIME, &bench_start_time);
 }
 
 void
-bench_case_finish(const char *file, int line)
+bench_case_finish(const char *file, int लिन्या)
 {
 	struct timespec ts;
 
@@ -749,7 +749,7 @@ tscmp(const void *aa, const void *bb)
 }
 
 void
-bench_finish(const char *file, int line, const char *unit)
+bench_finish(const char *file, int लिन्या, const char *unit)
 {
 	double std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
 	int i;
@@ -758,7 +758,7 @@ bench_finish(const char *file, int line, const char *unit)
 		goto done;
 
 	if (bench_nruns < 1) {
-		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, line,
+		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, लिन्या,
 		    bench_name);
 		abort();
 	}

@@ -100,7 +100,7 @@ enum {
 	API_RMDIR,
 	API_RENAME,
 	API_SYMLINK,
-	API_COUNT,
+	API_बिलांग,
 };
 
 static void
@@ -191,7 +191,7 @@ run_one(int api, const uint8_t *body, size_t bsize)
 }
 
 extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+LLVMFuzzer_Test_One_पासोक(const uint8_t *data, size_t size)
 {
 	static int initialized = 0;
 	if (!initialized) {
@@ -203,7 +203,7 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	if (size > 65536)
 		return 0;
 
-	for (int api = 0; api < API_COUNT; api++)
+	for (int api = 0; api < API_बिलांग; api++)
 		run_one(api, data, size);
 
 	return 0;

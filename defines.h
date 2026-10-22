@@ -654,7 +654,7 @@ struct winsize {
 # ifndef BIG_ENDIAN
 #  define BIG_ENDIAN     4321
 # endif /* BIG_ENDIAN */
-# ifdef WORDS_BIGENDIAN
+# ifdef मगा_सालिता_BIGENDIAN
 #  define BYTE_ORDER BIG_ENDIAN
 # else /* WORDS_BIGENDIAN */
 #  define BYTE_ORDER LITTLE_ENDIAN
@@ -679,7 +679,7 @@ struct winsize {
 	((uint64_t)(v) & 0xff0000000000ULL) >> 24 |		\
 	((uint64_t)(v) & 0xff000000000000ULL) >> 40 |		\
 	((uint64_t)(v) & 0xff00000000000000ULL) >> 56)
-# ifdef WORDS_BIGENDIAN
+# ifdef मगा_सालिता_BIGENDIAN
 #  if defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0
 #   define le32toh(v) (openssh_swap32(v))
 #  endif

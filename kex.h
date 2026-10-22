@@ -37,7 +37,7 @@
 #else /* OPENSSL */
 #define BIGNUM		void
 #define DH		void
-#define EC_KEY		void
+#define EC_सुसि		void
 #define EC_GROUP	void
 #endif /* WITH_OPENSSL */
 
@@ -67,7 +67,7 @@
 
 enum kex_init_proposals {
 	PROPOSAL_KEX_ALGS,
-	PROPOSAL_SERVER_HOST_KEY_ALGS,
+	PROPOSAL_SERVER_HOST_सुसि_ALGS,
 	PROPOSAL_ENC_ALGS_CTOS,
 	PROPOSAL_ENC_ALGS_STOC,
 	PROPOSAL_MAC_ALGS_CTOS,
@@ -120,10 +120,10 @@ struct sshenc {
 	char	*name;
 	const struct sshcipher *cipher;
 	int	enabled;
-	u_int	key_len;
+	u_int	सुसि_len;
 	u_int	iv_len;
 	u_int	block_size;
-	u_char	*key;
+	u_char	*सुसि;
 	u_char	*iv;
 };
 struct sshcomp {
@@ -170,22 +170,22 @@ struct kex {
 	int	hash_alg;
 	int	ec_nid;
 	char	*failed_choice;
-	int	(*verify_host_key)(struct sshkey *, struct ssh *);
-	struct sshkey *(*load_host_public_key)(int, int, struct ssh *);
-	struct sshkey *(*load_host_private_key)(int, int, struct ssh *);
-	int	(*host_key_index)(struct sshkey *, int, struct ssh *);
+	int	(*verify_host_सुसि)(struct sshkey *, struct ssh *);
+	struct sshkey *(*load_host_public_सुसि)(int, int, struct ssh *);
+	struct sshkey *(*load_host_private_सुसि)(int, int, struct ssh *);
+	int	(*host_सुसि_index)(struct sshkey *, int, struct ssh *);
 	int	(*sign)(struct ssh *, struct sshkey *, struct sshkey *,
 	    u_char **, size_t *, const u_char *, size_t, const char *);
 	int	(*kex[KEX_MAX])(struct ssh *);
 	/* kex specific state */
 	DH	*dh;			/* DH */
 	u_int	min, max, nbits;	/* GEX */
-	EC_KEY	*ec_client_key;		/* ECDH */
+	EC_सुसि	*ec_client_सुसि;		/* ECDH */
 	const EC_GROUP *ec_group;	/* ECDH */
-	u_char c25519_client_key[CURVE25519_SIZE]; /* 25519 + KEM */
+	u_char c25519_client_सुसि[CURVE25519_SIZE]; /* 25519 + KEM */
 	u_char c25519_client_pubkey[CURVE25519_SIZE]; /* 25519 */
-	u_char sntrup761_client_key[crypto_kem_sntrup761_SECRETKEYBYTES]; /* KEM */
-	u_char mlkem768_client_key[crypto_kem_mlkem768_SECRETKEYBYTES]; /* KEM */
+	u_char sntrup761_client_सुसि[crypto_kem_sntrup761_SECRETKEYBYTES]; /* KEM */
+	u_char mlkem768_client_सुसि[crypto_kem_mlkem768_SECRETKEYBYTES]; /* KEM */
 	struct sshbuf *client_pub;
 };
 
@@ -215,13 +215,13 @@ int	 kex_buf2prop(struct sshbuf *, int *, char ***);
 int	 kex_prop2buf(struct sshbuf *, char *proposal[PROPOSAL_MAX]);
 void	 kex_prop_free(char **);
 int	 kex_load_hostkey(struct ssh *, struct sshkey **, struct sshkey **);
-int	 kex_verify_host_key(struct ssh *, struct sshkey *);
+int	 kex_verify_host_सुसि(struct ssh *, struct sshkey *);
 
 int	 kex_send_kexinit(struct ssh *);
-int	 kex_input_kexinit(int, uint32_t, struct ssh *);
-int	 kex_input_ext_info(int, uint32_t, struct ssh *);
+int	 kex_पासोक_kexinit(int, uint32_t, struct ssh *);
+int	 kex_पासोक_ext_info(int, uint32_t, struct ssh *);
 int	 kex_protocol_error(int, uint32_t, struct ssh *);
-int	 kex_derive_keys(struct ssh *, u_char *, u_int, const struct sshbuf *);
+int	 kex_derive_मगा_सुसि(struct ssh *, u_char *, u_int, const struct sshbuf *);
 int	 kex_send_newkeys(struct ssh *);
 int	 kex_start_rekex(struct ssh *);
 int	 kex_server_update_ext_info(struct ssh *);
@@ -239,7 +239,7 @@ int	 kex_dh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
     struct sshbuf **);
 int	 kex_dh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
 
-int	 kex_ecdh_dec_key_group(struct kex *, const struct sshbuf *, EC_KEY *key,
+int	 kex_ecdh_dec_सुसि_group(struct kex *, const struct sshbuf *, EC_सुसि *सुसि,
 	    const EC_GROUP *, int, struct sshbuf **);
 
 int	 kex_ecdh_keypair(struct kex *);
@@ -271,7 +271,7 @@ int	 kex_kem_mlkem768ecdh_dec(struct kex *, const struct sshbuf *,
     struct sshbuf **);
 
 int	 kex_dh_keygen(struct kex *);
-int	 kex_dh_compute_key(struct kex *, BIGNUM *, struct sshbuf *);
+int	 kex_dh_compute_सुसि(struct kex *, BIGNUM *, struct sshbuf *);
 
 int	 kexgex_hash(int, const struct sshbuf *, const struct sshbuf *,
     const struct sshbuf *, const struct sshbuf *, const struct sshbuf *,
@@ -280,14 +280,14 @@ int	 kexgex_hash(int, const struct sshbuf *, const struct sshbuf *,
     const BIGNUM *, const u_char *, size_t,
     u_char *, size_t *);
 
-void	kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
+void	kexc25519_keygen(u_char सुसि[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
+int	kexc25519_shared_सुसि(const u_char सुसि[CURVE25519_SIZE],
     const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
+int	kexc25519_shared_सुसि_ext(const u_char सुसि[CURVE25519_SIZE],
     const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));

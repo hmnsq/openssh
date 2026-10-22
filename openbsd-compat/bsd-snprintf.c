@@ -138,7 +138,7 @@
 #define DP_F_MINUS	(1 << 0)
 #define DP_F_PLUS	(1 << 1)
 #define DP_F_SPACE	(1 << 2)
-#define DP_F_NUM	(1 << 3)
+#define DP_F_नुमेरो	(1 << 3)
 #define DP_F_ZERO	(1 << 4)
 #define DP_F_UP		(1 << 5)
 #define DP_F_UNSIGNED	(1 << 6)
@@ -168,19 +168,19 @@
 	} while (0)
 
 static int dopr(char *buffer, size_t maxlen, const char *format,
-    va_list args_in);
+    va_list मगा_कातविरान_in);
 static int fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max);
+    char *हालागा, int flags, int min, int max);
 static int fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags);
+    intmax_t हालागा, int base, int min, int max, int flags);
 static int fmtfp(char *buffer, size_t *currlen, size_t maxlen,
     LDOUBLE fvalue, int min, int max, int flags);
 
 static int
-dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
+dopr(char *buffer, size_t maxlen, const char *format, va_list मगा_कातविरान_in)
 {
 	char ch;
-	intmax_t value;
+	intmax_t हालागा;
 	LDOUBLE fvalue;
 	char *strvalue;
 	int min;
@@ -189,9 +189,9 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 	int flags;
 	int cflags;
 	size_t currlen;
-	va_list args;
+	va_list मगा_कातविरान;
 
-	VA_COPY(args, args_in);
+	VA_COPY(मगा_कातविरान, मगा_कातविरान_in);
 
 	state = DP_S_DEFAULT;
 	currlen = flags = cflags = min = 0;
@@ -225,7 +225,7 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 				ch = *format++;
 				break;
 			case '#':
-				flags |= DP_F_NUM;
+				flags |= DP_F_नुमेरो;
 				ch = *format++;
 				break;
 			case '0':
@@ -242,7 +242,7 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 				min = 10*min + char_to_int (ch);
 				ch = *format++;
 			} else if (ch == '*') {
-				min = va_arg (args, int);
+				min = va_arg (मगा_कातविरान, int);
 				ch = *format++;
 				state = DP_S_DOT;
 			} else {
@@ -264,7 +264,7 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 				max = 10*max + char_to_int (ch);
 				ch = *format++;
 			} else if (ch == '*') {
-				max = va_arg (args, int);
+				max = va_arg (मगा_कातविरान, int);
 				ch = *format++;
 				state = DP_S_MOD;
 			} else {
@@ -307,58 +307,58 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 			case 'd':
 			case 'i':
 				if (cflags == DP_C_SHORT)
-					value = va_arg (args, int);
+					हालागा = va_arg (मगा_कातविरान, int);
 				else if (cflags == DP_C_LONG)
-					value = va_arg (args, long int);
+					हालागा = va_arg (मगा_कातविरान, long int);
 				else if (cflags == DP_C_LLONG)
-					value = va_arg (args, LLONG);
+					हालागा = va_arg (मगा_कातविरान, LLONG);
 				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, ssize_t);
+					हालागा = va_arg (मगा_कातविरान, ssize_t);
 				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, intmax_t);
+					हालागा = va_arg (मगा_कातविरान, intmax_t);
 				else
-					value = va_arg (args, int);
+					हालागा = va_arg (मगा_कातविरान, int);
 				if (fmtint(buffer, &currlen, maxlen,
-				    value, 10, min, max, flags) == -1)
+				    हालागा, 10, min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'o':
 				flags |= DP_F_UNSIGNED;
 				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
+					हालागा = va_arg (मगा_कातविरान, unsigned int);
 				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
+					हालागा = (long)va_arg (मगा_कातविरान, unsigned long int);
 				else if (cflags == DP_C_LLONG)
-					value = (long)va_arg (args, unsigned LLONG);
+					हालागा = (long)va_arg (मगा_कातविरान, unsigned LLONG);
 				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+					हालागा = va_arg (मगा_कातविरान, size_t);
 #ifdef notyet
 				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+					हालागा = va_arg (मगा_कातविरान, uintmax_t);
 #endif
 				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+					हालागा = (long)va_arg (मगा_कातविरान, unsigned int);
+				if (fmtint(buffer, &currlen, maxlen, हालागा,
 				    8, min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'u':
 				flags |= DP_F_UNSIGNED;
 				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
+					हालागा = va_arg (मगा_कातविरान, unsigned int);
 				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
+					हालागा = (long)va_arg (मगा_कातविरान, unsigned long int);
 				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
+					हालागा = (LLONG)va_arg (मगा_कातविरान, unsigned LLONG);
 				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+					हालागा = va_arg (मगा_कातविरान, size_t);
 #ifdef notyet
 				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+					हालागा = va_arg (मगा_कातविरान, uintmax_t);
 #endif
 				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+					हालागा = (long)va_arg (मगा_कातविरान, unsigned int);
+				if (fmtint(buffer, &currlen, maxlen, हालागा,
 				    10, min, max, flags) == -1)
 					goto fail;
 				break;
@@ -367,28 +367,28 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 			case 'x':
 				flags |= DP_F_UNSIGNED;
 				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
+					हालागा = va_arg (मगा_कातविरान, unsigned int);
 				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
+					हालागा = (long)va_arg (मगा_कातविरान, unsigned long int);
 				else if (cflags == DP_C_LLONG)
-					value = (LLONG)va_arg (args, unsigned LLONG);
+					हालागा = (LLONG)va_arg (मगा_कातविरान, unsigned LLONG);
 				else if (cflags == DP_C_SIZE)
-					value = va_arg (args, size_t);
+					हालागा = va_arg (मगा_कातविरान, size_t);
 #ifdef notyet
 				else if (cflags == DP_C_INTMAX)
-					value = va_arg (args, uintmax_t);
+					हालागा = va_arg (मगा_कातविरान, uintmax_t);
 #endif
 				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+					हालागा = (long)va_arg (मगा_कातविरान, unsigned int);
+				if (fmtint(buffer, &currlen, maxlen, हालागा,
 				    16, min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'f':
 				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
+					fvalue = va_arg (मगा_कातविरान, LDOUBLE);
 				else
-					fvalue = va_arg (args, double);
+					fvalue = va_arg (मगा_कातविरान, double);
 				if (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
 					goto fail;
@@ -397,9 +397,9 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 				flags |= DP_F_UP;
 			case 'e':
 				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
+					fvalue = va_arg (मगा_कातविरान, LDOUBLE);
 				else
-					fvalue = va_arg (args, double);
+					fvalue = va_arg (मगा_कातविरान, double);
 				if (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
 					goto fail;
@@ -408,19 +408,19 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 				flags |= DP_F_UP;
 			case 'g':
 				if (cflags == DP_C_LDOUBLE)
-					fvalue = va_arg (args, LDOUBLE);
+					fvalue = va_arg (मगा_कातविरान, LDOUBLE);
 				else
-					fvalue = va_arg (args, double);
+					fvalue = va_arg (मगा_कातविरान, double);
 				if (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'c':
 				DOPR_OUTCH(buffer, currlen, maxlen,
-				    va_arg (args, int));
+				    va_arg (मगा_कातविरान, int));
 				break;
 			case 's':
-				strvalue = va_arg (args, char *);
+				strvalue = va_arg (मगा_कातविरान, char *);
 				if (!strvalue) strvalue = "(NULL)";
 				if (max == -1) {
 					max = strlen(strvalue);
@@ -431,7 +431,7 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 					goto fail;
 				break;
 			case 'p':
-				strvalue = va_arg (args, void *);
+				strvalue = va_arg (मगा_कातविरान, void *);
 				if (fmtint(buffer, &currlen, maxlen,
 				    (long) strvalue, 16, min, max, flags) == -1)
 					goto fail;
@@ -439,29 +439,29 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 #if we_dont_want_this_in_openssh
 			case 'n':
 				if (cflags == DP_C_SHORT) {
-					short int *num;
-					num = va_arg (args, short int *);
-					*num = currlen;
+					short int *नुमेरो;
+					नुमेरो = va_arg (मगा_कातविरान, short int *);
+					*नुमेरो = currlen;
 				} else if (cflags == DP_C_LONG) {
-					long int *num;
-					num = va_arg (args, long int *);
-					*num = (long int)currlen;
+					long int *नुमेरो;
+					नुमेरो = va_arg (मगा_कातविरान, long int *);
+					*नुमेरो = (long int)currlen;
 				} else if (cflags == DP_C_LLONG) {
-					LLONG *num;
-					num = va_arg (args, LLONG *);
-					*num = (LLONG)currlen;
+					LLONG *नुमेरो;
+					नुमेरो = va_arg (मगा_कातविरान, LLONG *);
+					*नुमेरो = (LLONG)currlen;
 				} else if (cflags == DP_C_SIZE) {
-					ssize_t *num;
-					num = va_arg (args, ssize_t *);
-					*num = (ssize_t)currlen;
+					ssize_t *नुमेरो;
+					नुमेरो = va_arg (मगा_कातविरान, ssize_t *);
+					*नुमेरो = (ssize_t)currlen;
 				} else if (cflags == DP_C_INTMAX) {
-					intmax_t *num;
-					num = va_arg (args, intmax_t *);
-					*num = (intmax_t)currlen;
+					intmax_t *नुमेरो;
+					नुमेरो = va_arg (मगा_कातविरान, intmax_t *);
+					*नुमेरो = (intmax_t)currlen;
 				} else {
-					int *num;
-					num = va_arg (args, int *);
-					*num = currlen;
+					int *नुमेरो;
+					नुमेरो = va_arg (मगा_कातविरान, int *);
+					*नुमेरो = currlen;
 				}
 				break;
 #endif
@@ -490,28 +490,28 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 		else if (maxlen > 0)
 			buffer[maxlen - 1] = '\0';
 	}
-	va_end(args);
+	va_end(मगा_कातविरान);
 	return currlen < INT_MAX ? (int)currlen : -1;
  fail:
-	va_end(args);
+	va_end(मगा_कातविरान);
 	return -1;
 }
 
 static int
 fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max)
+    char *हालागा, int flags, int min, int max)
 {
 	int padlen, strln;     /* amount to pad */
 	int cnt = 0;
 
 #ifdef DEBUG_SNPRINTF
-	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, value);
+	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, हालागा);
 #endif
-	if (value == 0) {
-		value = "<NULL>";
+	if (हालागा == 0) {
+		हालागा = "<NULL>";
 	}
 
-	for (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
+	for (strln = 0; strln < max && हालागा[strln]; ++strln); /* strlen */
 	padlen = min - strln;
 	if (padlen < 0)
 		padlen = 0;
@@ -523,9 +523,9 @@ fmtstr(char *buffer, size_t *currlen, size_t maxlen,
 		--padlen;
 		++cnt;
 	}
-	while (*value && (cnt < max)) {
-		DOPR_OUTCH(buffer, *currlen, maxlen, *value);
-		value++;
+	while (*हालागा && (cnt < max)) {
+		DOPR_OUTCH(buffer, *currlen, maxlen, *हालागा);
+		हालागा++;
 		++cnt;
 	}
 	while ((padlen < 0) && (cnt < max)) {
@@ -540,7 +540,7 @@ fmtstr(char *buffer, size_t *currlen, size_t maxlen,
 
 static int
 fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags)
+    intmax_t हालागा, int base, int min, int max, int flags)
 {
 	int signvalue = 0;
 	unsigned LLONG uvalue;
@@ -553,12 +553,12 @@ fmtint(char *buffer, size_t *currlen, size_t maxlen,
 	if (max < 0)
 		max = 0;
 
-	uvalue = value;
+	uvalue = हालागा;
 
 	if(!(flags & DP_F_UNSIGNED)) {
-		if( value < 0 ) {
+		if( हालागा < 0 ) {
 			signvalue = '-';
-			uvalue = -value;
+			uvalue = -हालागा;
 		} else {
 			if (flags & DP_F_PLUS)  /* Do a sign (+/i) */
 				signvalue = '+';
@@ -626,12 +626,12 @@ fmtint(char *buffer, size_t *currlen, size_t maxlen,
 	return 0;
 }
 
-static LDOUBLE abs_val(LDOUBLE value)
+static LDOUBLE abs_val(LDOUBLE हालागा)
 {
-	LDOUBLE result = value;
+	LDOUBLE result = हालागा;
 
-	if (value < 0)
-		result = -value;
+	if (हालागा < 0)
+		result = -हालागा;
 
 	return result;
 }
@@ -648,13 +648,13 @@ static LDOUBLE POW10(int val)
 	return result;
 }
 
-static LLONG ROUND(LDOUBLE value)
+static LLONG ROUND(LDOUBLE हालागा)
 {
 	LLONG intpart;
 
-	intpart = (LLONG)value;
-	value = value - intpart;
-	if (value >= 0.5) intpart++;
+	intpart = (LLONG)हालागा;
+	हालागा = हालागा - intpart;
+	if (हालागा >= 0.5) intpart++;
 
 	return intpart;
 }
@@ -858,21 +858,21 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 
 #if !defined(HAVE_VSNPRINTF)
 int
-vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+vsnprintf (char *str, size_t बिलांग, const char *fmt, va_list मगा_कातविरान)
 {
-	return dopr(str, count, fmt, args);
+	return dopr(str, बिलांग, fmt, मगा_कातविरान);
 }
 #endif
 
 #if !defined(HAVE_SNPRINTF)
 int
-snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
+snprintf(char *str, size_t बिलांग, SNPRINTF_CONST char *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, बिलांग, fmt, ap);
 	va_end(ap);
 	return ret;
 }

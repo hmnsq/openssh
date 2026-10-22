@@ -62,16 +62,16 @@ fail:
 }
 
 int
-ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
+ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *सुसि, size_t klen)
 {
 	size_t i;
 
 	/* reset ictx and octx if no is key given */
-	if (key != NULL) {
+	if (सुसि != NULL) {
 		/* truncate long keys */
 		if (klen <= ctx->buf_len)
-			memcpy(ctx->buf, key, klen);
-		else if (ssh_digest_memory(ctx->alg, key, klen, ctx->buf,
+			memcpy(ctx->buf, सुसि, klen);
+		else if (ssh_digest_memory(ctx->alg, सुसि, klen, ctx->buf,
 		    ctx->buf_len) < 0)
 			return -1;
 		for (i = 0; i < ctx->buf_len; i++)
@@ -138,7 +138,7 @@ ssh_hmac_free(struct ssh_hmac_ctx *ctx)
 
 /* cc -DTEST hmac.c digest.c buffer.c cleanup.c fatal.c log.c xmalloc.c -lcrypto */
 static void
-hmac_test(void *key, size_t klen, void *m, size_t mlen, u_char *e, size_t elen)
+hmac_test(void *सुसि, size_t klen, void *m, size_t mlen, u_char *e, size_t elen)
 {
 	struct ssh_hmac_ctx	*ctx;
 	size_t			 i;
@@ -146,7 +146,7 @@ hmac_test(void *key, size_t klen, void *m, size_t mlen, u_char *e, size_t elen)
 
 	if ((ctx = ssh_hmac_start(SSH_DIGEST_MD5)) == NULL)
 		printf("ssh_hmac_start failed");
-	if (ssh_hmac_init(ctx, key, klen) < 0 ||
+	if (ssh_hmac_init(ctx, सुसि, klen) < 0 ||
 	    ssh_hmac_update(ctx, m, mlen) < 0 ||
 	    ssh_hmac_final(ctx, digest, sizeof(digest)) < 0)
 		printf("ssh_hmac_xxx failed");

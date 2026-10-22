@@ -54,20 +54,20 @@
 #include "sshbuf.h"
 #include "misc.h"
 
-static int input_kex_dh_gex_request(int, uint32_t, struct ssh *);
-static int input_kex_dh_gex_init(int, uint32_t, struct ssh *);
+static int पासोक_kex_dh_gex_request(int, uint32_t, struct ssh *);
+static int पासोक_kex_dh_gex_init(int, uint32_t, struct ssh *);
 
 int
 kexgex_server(struct ssh *ssh)
 {
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST,
-	    &input_kex_dh_gex_request);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_KEX_DH_GEX_REQUEST,
+	    &पासोक_kex_dh_gex_request);
 	debug("expecting SSH2_MSG_KEX_DH_GEX_REQUEST");
 	return 0;
 }
 
 static int
-input_kex_dh_gex_request(int type, uint32_t seq, struct ssh *ssh)
+पासोक_kex_dh_gex_request(int type, uint32_t seq, struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
 	int r;
@@ -75,7 +75,7 @@ input_kex_dh_gex_request(int type, uint32_t seq, struct ssh *ssh)
 	const BIGNUM *dh_p, *dh_g;
 
 	debug("SSH2_MSG_KEX_DH_GEX_REQUEST received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_KEX_DH_GEX_REQUEST, &kex_protocol_error);
 
 	if ((r = sshpkt_get_u32(ssh, &min)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &nbits)) != 0 ||
@@ -105,31 +105,31 @@ input_kex_dh_gex_request(int type, uint32_t seq, struct ssh *ssh)
 	}
 	debug("SSH2_MSG_KEX_DH_GEX_GROUP sent");
 	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_GROUP)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_KEX_DH_GEX_GROUP)) != 0 ||
 	    (r = sshpkt_put_bignum2(ssh, dh_p)) != 0 ||
 	    (r = sshpkt_put_bignum2(ssh, dh_g)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		goto out;
 
 	/* Compute our exchange value in parallel with the client */
-	if ((r = dh_gen_key(kex->dh, kex->we_need * 8)) != 0)
+	if ((r = dh_gen_सुसि(kex->dh, kex->we_need * 8)) != 0)
 		goto out;
 
 	debug("expecting SSH2_MSG_KEX_DH_GEX_INIT");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_INIT, &input_kex_dh_gex_init);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_KEX_DH_GEX_INIT, &पासोक_kex_dh_gex_init);
 	r = 0;
  out:
 	return r;
 }
 
 static int
-input_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
+पासोक_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
 	BIGNUM *dh_client_pub = NULL;
-	const BIGNUM *pub_key, *dh_p, *dh_g;
+	const BIGNUM *pub_सुसि, *dh_p, *dh_g;
 	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *server_host_key_blob = NULL;
+	struct sshbuf *server_host_सुसि_blob = NULL;
 	struct sshkey *server_host_public, *server_host_private;
 	u_char *signature = NULL;
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
@@ -137,7 +137,7 @@ input_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
 	int r;
 
 	debug("SSH2_MSG_KEX_DH_GEX_INIT received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_INIT, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_KEX_DH_GEX_INIT, &kex_protocol_error);
 
 	if ((r = kex_load_hostkey(ssh, &server_host_private,
 	    &server_host_public)) != 0)
@@ -151,17 +151,17 @@ input_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = kex_dh_compute_key(kex, dh_client_pub, shared_secret)) != 0)
+	if ((r = kex_dh_compute_सुसि(kex, dh_client_pub, shared_secret)) != 0)
 		goto out;
-	if ((server_host_key_blob = sshbuf_new()) == NULL) {
+	if ((server_host_सुसि_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshkey_putb(server_host_public, server_host_key_blob)) != 0)
+	if ((r = sshkey_putb(server_host_public, server_host_सुसि_blob)) != 0)
 		goto out;
 
 	/* calc H */
-	DH_get0_key(kex->dh, &pub_key, NULL);
+	DH_get0_सुसि(kex->dh, &pub_सुसि, NULL);
 	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
 	hashlen = sizeof(hash);
 	if ((r = kexgex_hash(
@@ -170,11 +170,11 @@ input_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
 	    kex->server_version,
 	    kex->peer,
 	    kex->my,
-	    server_host_key_blob,
+	    server_host_सुसि_blob,
 	    kex->min, kex->nbits, kex->max,
 	    dh_p, dh_g,
 	    dh_client_pub,
-	    pub_key,
+	    pub_सुसि,
 	    sshbuf_ptr(shared_secret), sshbuf_len(shared_secret),
 	    hash, &hashlen)) != 0)
 		goto out;
@@ -185,14 +185,14 @@ input_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
 		goto out;
 
 	/* send server hostkey, DH pubkey 'f' and signed H */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_REPLY)) != 0 ||
-	    (r = sshpkt_put_stringb(ssh, server_host_key_blob)) != 0 ||
-	    (r = sshpkt_put_bignum2(ssh, pub_key)) != 0 ||     /* f */
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_KEX_DH_GEX_REPLY)) != 0 ||
+	    (r = sshpkt_put_stringb(ssh, server_host_सुसि_blob)) != 0 ||
+	    (r = sshpkt_put_bignum2(ssh, pub_सुसि)) != 0 ||     /* f */
 	    (r = sshpkt_put_string(ssh, signature, slen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		goto out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	if ((r = kex_derive_मगा_सुसि(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
 		goto out;
 
@@ -208,7 +208,7 @@ input_kex_dh_gex_init(int type, uint32_t seq, struct ssh *ssh)
 	kex->dh = NULL;
 	BN_clear_free(dh_client_pub);
 	sshbuf_free(shared_secret);
-	sshbuf_free(server_host_key_blob);
+	sshbuf_free(server_host_सुसि_blob);
 	free(signature);
 	return r;
 }

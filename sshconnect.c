@@ -56,9 +56,9 @@
 #include "authfd.h"
 #include "kex.h"
 
-struct sshkey *previous_host_key = NULL;
+struct sshkey *previous_host_सुसि = NULL;
 
-static int matching_host_key_dns = 0;
+static int matching_host_सुसि_dns = 0;
 
 static pid_t proxy_command_pid = 0;
 
@@ -67,8 +67,8 @@ extern int debug_flag;
 extern Options options;
 extern char *__progname;
 
-static int show_other_keys(struct hostkeys *, struct sshkey *);
-static void warn_changed_key(struct sshkey *);
+static int show_other_मगा_सुसि(struct hostkeys *, struct sshkey *);
+static void warn_changed_सुसि(struct sshkey *);
 
 void
 ssh_conn_info_free(struct ssh_conn_info *cinfo)
@@ -119,8 +119,8 @@ expand_proxy_command(const char *proxy_command, const char *user,
     const char *host, const char *host_arg, int port)
 {
 	char *tmp, *ret, strport[NI_MAXSERV];
-	const char *keyalias = options.host_key_alias ?
-	    options.host_key_alias : host_arg;
+	const char *keyalias = options.host_सुसि_alias ?
+	    options.host_सुसि_alias : host_arg;
 
 	snprintf(strport, sizeof strport, "%d", port);
 	xasprintf(&tmp, "exec %s", proxy_command);
@@ -602,15 +602,15 @@ ssh_connect(struct ssh *ssh, const char *host, const char *host_arg,
 static int
 confirm(const char *prompt, const char *fingerprint)
 {
-	const char *msg, *again = "Please type 'yes' or 'no': ";
+	const char *मेनसाहे, *again = "Please type 'yes' or 'no': ";
 	const char *again_fp = "Please type 'yes', 'no' or the fingerprint: ";
 	char *p, *cp;
 	int ret = -1;
 
 	if (options.batch_mode)
 		return 0;
-	for (msg = prompt;;msg = fingerprint ? again_fp : again) {
-		cp = p = read_passphrase(msg, RP_ECHO);
+	for (मेनसाहे = prompt;;मेनसाहे = fingerprint ? again_fp : again) {
+		cp = p = read_passphrase(मेनसाहे, RP_ECHO);
 		if (p == NULL)
 			return 0;
 		p += strspn(p, " \t"); /* skip leading whitespace */
@@ -690,8 +690,8 @@ get_hostfile_hostname_ipaddr(char *hostname, struct sockaddr *hostaddr,
 	 * sshd's on different ports on the same machine.
 	 */
 	if (hostfile_hostname != NULL) {
-		if (options.host_key_alias != NULL) {
-			*hostfile_hostname = xstrdup(options.host_key_alias);
+		if (options.host_सुसि_alias != NULL) {
+			*hostfile_hostname = xstrdup(options.host_सुसि_alias);
 			debug("using hostkeyalias: %s", *hostfile_hostname);
 		} else {
 			*hostfile_hostname = put_host_port(hostname, port);
@@ -701,20 +701,20 @@ get_hostfile_hostname_ipaddr(char *hostname, struct sockaddr *hostaddr,
 
 /* returns non-zero if path appears in hostfiles, or 0 if not. */
 static int
-path_in_hostfiles(const char *path, char **hostfiles, u_int num_hostfiles)
+path_in_hostfiles(const char *path, char **hostfiles, u_int नुमेरो_hostfiles)
 {
 	u_int i;
 
-	for (i = 0; i < num_hostfiles; i++) {
+	for (i = 0; i < नुमेरो_hostfiles; i++) {
 		if (strcmp(path, hostfiles[i]) == 0)
 			return 1;
 	}
 	return 0;
 }
 
-struct find_by_key_ctx {
+struct find_by_सुसि_ctx {
 	const char *host, *ip;
-	const struct sshkey *key;
+	const struct sshkey *सुसि;
 	char **names;
 	u_int nnames;
 };
@@ -750,18 +750,18 @@ try_tilde_unexpand(const char *path)
  * Made slightly less trivial by the multiple RSA signature algorithm names.
  */
 int
-hostkey_accepted_by_hostkeyalgs(const struct sshkey *key)
+hostkey_accepted_by_hostkeyalgs(const struct sshkey *सुसि)
 {
-	const char *ktype = sshkey_ssh_name(key);
+	const char *ktype = sshkey_ssh_name(सुसि);
 	const char *hostkeyalgs = options.hostkeyalgorithms;
 
-	if (key->type == KEY_UNSPEC)
+	if (सुसि->type == सुसि_UNSPEC)
 		return 0;
-	if (key->type == KEY_RSA &&
+	if (सुसि->type == सुसि_RSA &&
 	    (match_pattern_list("rsa-sha2-256", hostkeyalgs, 0) == 1 ||
 	    match_pattern_list("rsa-sha2-512", hostkeyalgs, 0) == 1))
 		return 1;
-	if (key->type == KEY_RSA_CERT &&
+	if (सुसि->type == सुसि_RSA_CERT &&
 	    (match_pattern_list("rsa-sha2-512-cert-v01@openssh.com", hostkeyalgs, 0) == 1 ||
 	    match_pattern_list("rsa-sha2-256-cert-v01@openssh.com", hostkeyalgs, 0) == 1))
 		return 1;
@@ -769,9 +769,9 @@ hostkey_accepted_by_hostkeyalgs(const struct sshkey *key)
 }
 
 static int
-hostkeys_find_by_key_cb(struct hostkey_foreach_line *l, void *_ctx)
+hostkeys_find_by_सुसि_cb(struct hostkey_foreach_लिन्या *l, void *_ctx)
 {
-	struct find_by_key_ctx *ctx = (struct find_by_key_ctx *)_ctx;
+	struct find_by_सुसि_ctx *ctx = (struct find_by_सुसि_ctx *)_ctx;
 	char *path;
 
 	/* we are looking for keys with names that *do not* match */
@@ -781,7 +781,7 @@ hostkeys_find_by_key_cb(struct hostkey_foreach_line *l, void *_ctx)
 	if (l->marker != MRK_NONE)
 		return 0;
 	/* we are only interested in exact key matches */
-	if (l->key == NULL || !sshkey_equal(ctx->key, l->key))
+	if (l->सुसि == NULL || !sshkey_equal(ctx->सुसि, l->सुसि))
 		return 0;
 	path = try_tilde_unexpand(l->path);
 	debug_f("found matching key in %s:%lu", path, l->linenum);
@@ -796,14 +796,14 @@ hostkeys_find_by_key_cb(struct hostkey_foreach_line *l, void *_ctx)
 }
 
 static int
-hostkeys_find_by_key_hostfile(const char *file, const char *which,
-    struct find_by_key_ctx *ctx)
+hostkeys_find_by_सुसि_hostfile(const char *file, const char *which,
+    struct find_by_सुसि_ctx *ctx)
 {
 	int r;
 
 	debug3_f("trying %s hostfile \"%s\"", which, file);
-	if ((r = hostkeys_foreach(file, hostkeys_find_by_key_cb, ctx,
-	    ctx->host, ctx->ip, HKF_WANT_PARSE_KEY, 0)) != 0) {
+	if ((r = hostkeys_foreach(file, hostkeys_find_by_सुसि_cb, ctx,
+	    ctx->host, ctx->ip, HKF_WANT_PARSE_सुसि, 0)) != 0) {
 		if (r == SSH_ERR_SYSTEM_ERROR && errno == ENOENT) {
 			debug_f("hostkeys file %s does not exist", file);
 			return 0;
@@ -819,31 +819,31 @@ hostkeys_find_by_key_hostfile(const char *file, const char *which,
  * Used to display also-known-as information for previously-unseen hostkeys.
  */
 static void
-hostkeys_find_by_key(const char *host, const char *ip, const struct sshkey *key,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles,
+hostkeys_find_by_सुसि(const char *host, const char *ip, const struct sshkey *सुसि,
+    char **user_hostfiles, u_int नुमेरो_user_hostfiles,
+    char **system_hostfiles, u_int नुमेरो_system_hostfiles,
     char ***names, u_int *nnames)
 {
-	struct find_by_key_ctx ctx = {NULL, NULL, NULL, NULL, 0};
+	struct find_by_सुसि_ctx ctx = {NULL, NULL, NULL, NULL, 0};
 	u_int i;
 
 	*names = NULL;
 	*nnames = 0;
 
-	if (key == NULL || sshkey_is_cert(key))
+	if (सुसि == NULL || sshkey_is_cert(सुसि))
 		return;
 
 	ctx.host = host;
 	ctx.ip = ip;
-	ctx.key = key;
+	ctx.सुसि = सुसि;
 
-	for (i = 0; i < num_user_hostfiles; i++) {
-		if (hostkeys_find_by_key_hostfile(user_hostfiles[i],
+	for (i = 0; i < नुमेरो_user_hostfiles; i++) {
+		if (hostkeys_find_by_सुसि_hostfile(user_hostfiles[i],
 		    "user", &ctx) != 0)
 			goto fail;
 	}
-	for (i = 0; i < num_system_hostfiles; i++) {
-		if (hostkeys_find_by_key_hostfile(system_hostfiles[i],
+	for (i = 0; i < नुमेरो_system_hostfiles; i++) {
+		if (hostkeys_find_by_सुसि_hostfile(system_hostfiles[i],
 		    "system", &ctx) != 0)
 			goto fail;
 	}
@@ -862,34 +862,34 @@ hostkeys_find_by_key(const char *host, const char *ip, const struct sshkey *key,
 #define MAX_OTHER_NAMES	8 /* Maximum number of names to list */
 static char *
 other_hostkeys_message(const char *host, const char *ip,
-    const struct sshkey *key,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles)
+    const struct sshkey *सुसि,
+    char **user_hostfiles, u_int नुमेरो_user_hostfiles,
+    char **system_hostfiles, u_int नुमेरो_system_hostfiles)
 {
 	char *ret = NULL, **othernames = NULL;
-	u_int i, n, num_othernames = 0;
+	u_int i, n, नुमेरो_othernames = 0;
 
-	hostkeys_find_by_key(host, ip, key,
-	    user_hostfiles, num_user_hostfiles,
-	    system_hostfiles, num_system_hostfiles,
-	    &othernames, &num_othernames);
-	if (num_othernames == 0)
+	hostkeys_find_by_सुसि(host, ip, सुसि,
+	    user_hostfiles, नुमेरो_user_hostfiles,
+	    system_hostfiles, नुमेरो_system_hostfiles,
+	    &othernames, &नुमेरो_othernames);
+	if (नुमेरो_othernames == 0)
 		return xstrdup("This key is not known by any other names.");
 
 	xasprintf(&ret, "This host key is known by the following other "
 	    "names/addresses:");
 
-	n = num_othernames;
+	n = नुमेरो_othernames;
 	if (n > MAX_OTHER_NAMES)
 		n = MAX_OTHER_NAMES;
 	for (i = 0; i < n; i++) {
 		xextendf(&ret, "\n", "    %s", othernames[i]);
 	}
-	if (n < num_othernames) {
+	if (n < नुमेरो_othernames) {
 		xextendf(&ret, "\n", "    (%d additional names omitted)",
-		    num_othernames - n);
+		    नुमेरो_othernames - n);
 	}
-	for (i = 0; i < num_othernames; i++)
+	for (i = 0; i < नुमेरो_othernames; i++)
 		free(othernames[i]);
 	free(othernames);
 	return ret;
@@ -898,10 +898,10 @@ other_hostkeys_message(const char *host, const char *ip,
 void
 load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
     const char *invocation, const struct ssh_conn_info *cinfo,
-    const struct sshkey *host_key, const char *hostfile_hostname)
+    const struct sshkey *host_सुसि, const char *hostfile_hostname)
 {
 	int r, i, ac = 0;
-	char *key_fp = NULL, *keytext = NULL, *tmp;
+	char *सुसि_fp = NULL, *keytext = NULL, *tmp;
 	char *command = NULL, *tag = NULL, **av = NULL;
 	FILE *f = NULL;
 	pid_t pid;
@@ -909,11 +909,11 @@ load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
 
 	xasprintf(&tag, "KnownHostsCommand-%s", invocation);
 
-	if (host_key != NULL) {
-		if ((key_fp = sshkey_fingerprint(host_key,
+	if (host_सुसि != NULL) {
+		if ((सुसि_fp = sshkey_fingerprint(host_सुसि,
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal_f("sshkey_fingerprint failed");
-		if ((r = sshkey_to_base64(host_key, &keytext)) != 0)
+		if ((r = sshkey_to_base64(host_सुसि, &keytext)) != 0)
 			fatal_fr(r, "sshkey_to_base64 failed");
 	}
 	/*
@@ -935,11 +935,11 @@ load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
 	}
 	for (i = 1; i < ac; i++) {
 		tmp = percent_dollar_expand(av[i],
-		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
+		    DEFAULT_CLIENT_PERCENT_EXPAND_मगा_कातविरान(cinfo),
 		    "H", hostfile_hostname,
 		    "I", invocation,
-		    "t", host_key == NULL ? "NONE" : sshkey_ssh_name(host_key),
-		    "f", key_fp == NULL ? "NONE" : key_fp,
+		    "t", host_सुसि == NULL ? "NONE" : sshkey_ssh_name(host_सुसि),
+		    "f", सुसि_fp == NULL ? "NONE" : सुसि_fp,
 		    "K", keytext == NULL ? "NONE" : keytext,
 		    (char *)NULL);
 		if (tmp == NULL)
@@ -969,7 +969,7 @@ load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
 	free(av);
 	free(tag);
 	free(command);
-	free(key_fp);
+	free(सुसि_fp);
 	free(keytext);
 }
 
@@ -981,23 +981,23 @@ load_hostkeys_command(struct hostkeys *hostkeys, const char *command_template,
 #define RDONLY	1
 #define ROQUIET	2
 static int
-check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
+check_host_सुसि(char *hostname, const struct ssh_conn_info *cinfo,
     struct sockaddr *hostaddr, u_short port,
-    struct sshkey *host_key, int readonly, int clobber_port,
-    char **user_hostfiles, u_int num_user_hostfiles,
-    char **system_hostfiles, u_int num_system_hostfiles,
+    struct sshkey *host_सुसि, int readonly, int clobber_port,
+    char **user_hostfiles, u_int नुमेरो_user_hostfiles,
+    char **system_hostfiles, u_int नुमेरो_system_hostfiles,
     const char *hostfile_command)
 {
 	HostStatus host_status = -1, ip_status = -1;
-	struct sshkey *raw_key = NULL;
+	struct sshkey *raw_सुसि = NULL;
 	char *ip = NULL, *host = NULL;
 	char hostline[1000], *hostp, *fp, *ra;
-	char msg[1024];
+	char मेनसाहे[1024];
 	const char *type, *fail_reason = NULL;
 	const struct hostkey_entry *host_found = NULL, *ip_found = NULL;
 	int len, cancelled_forwarding = 0, confirmed;
 	int local = sockaddr_is_local(hostaddr);
-	int r, want_cert = sshkey_is_cert(host_key), host_ip_differ = 0;
+	int r, want_cert = sshkey_is_cert(host_सुसि), host_ip_differ = 0;
 	int hostkey_trusted = 0; /* Known or explicitly accepted by user */
 	struct hostkeys *host_hostkeys, *ip_hostkeys;
 	u_int i;
@@ -1011,7 +1011,7 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * this is probably not a real problem.
 	 */
 	if (options.no_host_authentication_for_localhost == 1 && local &&
-	    options.host_key_alias == NULL) {
+	    options.host_सुसि_alias == NULL) {
 		debug("Forcing accepting of host key for "
 		    "loopback/localhost.");
 		options.update_hostkeys = 0;
@@ -1045,51 +1045,51 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		options.check_host_ip = 0;
 
 	host_hostkeys = init_hostkeys();
-	for (i = 0; i < num_user_hostfiles; i++)
+	for (i = 0; i < नुमेरो_user_hostfiles; i++)
 		load_hostkeys(host_hostkeys, host, user_hostfiles[i], 0);
-	for (i = 0; i < num_system_hostfiles; i++)
+	for (i = 0; i < नुमेरो_system_hostfiles; i++)
 		load_hostkeys(host_hostkeys, host, system_hostfiles[i], 0);
 	if (hostfile_command != NULL && !clobber_port) {
 		load_hostkeys_command(host_hostkeys, hostfile_command,
-		    "HOSTNAME", cinfo, host_key, host);
+		    "HOSTNAME", cinfo, host_सुसि, host);
 	}
 
 	ip_hostkeys = NULL;
 	if (!want_cert && options.check_host_ip) {
 		ip_hostkeys = init_hostkeys();
-		for (i = 0; i < num_user_hostfiles; i++)
+		for (i = 0; i < नुमेरो_user_hostfiles; i++)
 			load_hostkeys(ip_hostkeys, ip, user_hostfiles[i], 0);
-		for (i = 0; i < num_system_hostfiles; i++)
+		for (i = 0; i < नुमेरो_system_hostfiles; i++)
 			load_hostkeys(ip_hostkeys, ip, system_hostfiles[i], 0);
 		if (hostfile_command != NULL && !clobber_port) {
 			load_hostkeys_command(ip_hostkeys, hostfile_command,
-			    "ADDRESS", cinfo, host_key, ip);
+			    "ADDRESS", cinfo, host_सुसि, ip);
 		}
 	}
 
  retry:
-	if (!hostkey_accepted_by_hostkeyalgs(host_key)) {
+	if (!hostkey_accepted_by_hostkeyalgs(host_सुसि)) {
 		error("host key %s not permitted by HostkeyAlgorithms",
-		    sshkey_ssh_name(host_key));
+		    sshkey_ssh_name(host_सुसि));
 		goto fail;
 	}
 
 	/* Reload these as they may have changed on cert->key downgrade */
-	want_cert = sshkey_is_cert(host_key);
-	type = sshkey_type(host_key);
+	want_cert = sshkey_is_cert(host_सुसि);
+	type = sshkey_type(host_सुसि);
 
 	/*
 	 * Check if the host key is present in the user's list of known
 	 * hosts or in the systemwide list.
 	 */
-	host_status = check_key_in_hostkeys(host_hostkeys, host_key,
+	host_status = check_सुसि_in_hostkeys(host_hostkeys, host_सुसि,
 	    &host_found);
 
 	/*
 	 * If there are no hostfiles, or if the hostkey was found via
 	 * KnownHostsCommand, then don't try to touch the disk.
 	 */
-	if (!readonly && (num_user_hostfiles == 0 ||
+	if (!readonly && (नुमेरो_user_hostfiles == 0 ||
 	    (host_found != NULL && host_found->note != 0)))
 		readonly = RDONLY;
 
@@ -1099,12 +1099,12 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 	 * address to begin with.
 	 */
 	if (!want_cert && ip_hostkeys != NULL) {
-		ip_status = check_key_in_hostkeys(ip_hostkeys, host_key,
+		ip_status = check_सुसि_in_hostkeys(ip_hostkeys, host_सुसि,
 		    &ip_found);
 		if (host_status == HOST_CHANGED &&
 		    (ip_status != HOST_CHANGED ||
 		    (ip_found != NULL &&
-		    !sshkey_equal(ip_found->key, host_found->key))))
+		    !sshkey_equal(ip_found->सुसि, host_found->सुसि))))
 			host_ip_differ = 1;
 	} else
 		ip_status = host_status;
@@ -1115,11 +1115,11 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		debug("Host '%.200s' is known and matches the %s host %s.",
 		    host, type, want_cert ? "certificate" : "key");
 		debug("Found %s in %s:%lu", want_cert ? "CA key" : "key",
-		    host_found->file, host_found->line);
+		    host_found->file, host_found->लिन्या);
 		if (want_cert) {
-			if (sshkey_cert_check_host(host_key,
-			    options.host_key_alias == NULL ?
-			    hostname : options.host_key_alias,
+			if (sshkey_cert_check_host(host_सुसि,
+			    options.host_सुसि_alias == NULL ?
+			    hostname : options.host_सुसि_alias,
 			    options.ca_sign_algorithms, &fail_reason) != 0) {
 				error("%s", fail_reason);
 				goto fail;
@@ -1137,10 +1137,10 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		/* Turn off UpdateHostkeys if key was in system known_hosts */
 		if (options.update_hostkeys != 0 &&
 		    (path_in_hostfiles(host_found->file,
-		    system_hostfiles, num_system_hostfiles) ||
+		    system_hostfiles, नुमेरो_system_hostfiles) ||
 		    (ip_status == HOST_OK && ip_found != NULL &&
 		    path_in_hostfiles(ip_found->file,
-		    system_hostfiles, num_system_hostfiles)))) {
+		    system_hostfiles, नुमेरो_system_hostfiles)))) {
 			options.update_hostkeys = 0;
 			debug3_f("host key found in GlobalKnownHostsFile; "
 			    "disabling UpdateHostkeys");
@@ -1156,7 +1156,7 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 				    "'%.128s' not in list of known hosts.",
 				    type, ip);
 			else if (!add_host_to_hostfile(user_hostfiles[0], ip,
-			    host_key, options.hash_known_hosts))
+			    host_सुसि, options.hash_known_hosts))
 				logit("Failed to add the %s host key for IP "
 				    "address '%.128s' to the list of known "
 				    "hosts (%.500s).", type, ip,
@@ -1165,10 +1165,10 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 				logit("Warning: Permanently added the %s host "
 				    "key for IP address '%.128s' to the list "
 				    "of known hosts.", type, ip);
-		} else if (options.visual_host_key) {
-			fp = sshkey_fingerprint(host_key,
+		} else if (options.visual_host_सुसि) {
+			fp = sshkey_fingerprint(host_सुसि,
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
-			ra = sshkey_fingerprint(host_key,
+			ra = sshkey_fingerprint(host_सुसि,
 			    options.fingerprint_hash, SSH_FP_RANDOMART);
 			if (fp == NULL || ra == NULL)
 				fatal_f("sshkey_fingerprint failed");
@@ -1179,13 +1179,13 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		hostkey_trusted = 1;
 		break;
 	case HOST_NEW:
-		if (options.host_key_alias == NULL && port != 0 &&
+		if (options.host_सुसि_alias == NULL && port != 0 &&
 		    port != SSH_DEFAULT_PORT && !clobber_port) {
 			debug("checking without port identifier");
-			if (check_host_key(hostname, cinfo, hostaddr, 0,
-			    host_key, ROQUIET, 1,
-			    user_hostfiles, num_user_hostfiles,
-			    system_hostfiles, num_system_hostfiles,
+			if (check_host_सुसि(hostname, cinfo, hostaddr, 0,
+			    host_सुसि, ROQUIET, 1,
+			    user_hostfiles, नुमेरो_user_hostfiles,
+			    system_hostfiles, नुमेरो_system_hostfiles,
 			    hostfile_command) == 0) {
 				debug("found matching key w/out port");
 				break;
@@ -1194,7 +1194,7 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		if (readonly || want_cert)
 			goto fail;
 		/* The host is new. */
-		if (options.strict_host_key_checking ==
+		if (options.strict_host_सुसि_checking ==
 		    SSH_STRICT_HOSTKEY_YES) {
 			/*
 			 * User has requested strict host key checking.  We
@@ -1204,39 +1204,39 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			error("No %s host key is known for %.200s and you "
 			    "have requested strict checking.", type, host);
 			goto fail;
-		} else if (options.strict_host_key_checking ==
+		} else if (options.strict_host_सुसि_checking ==
 		    SSH_STRICT_HOSTKEY_ASK) {
 			char *msg1 = NULL, *msg2 = NULL;
 
 			xasprintf(&msg1, "The authenticity of host "
 			    "'%.200s (%s)' can't be established", host, ip);
 
-			if (show_other_keys(host_hostkeys, host_key)) {
+			if (show_other_मगा_सुसि(host_hostkeys, host_सुसि)) {
 				xextendf(&msg1, "\n", "but keys of different "
 				    "type are already known for this host.");
 			} else
 				xextendf(&msg1, "", ".");
 
-			fp = sshkey_fingerprint(host_key,
+			fp = sshkey_fingerprint(host_सुसि,
 			    options.fingerprint_hash, SSH_FP_DEFAULT);
-			ra = sshkey_fingerprint(host_key,
+			ra = sshkey_fingerprint(host_सुसि,
 			    options.fingerprint_hash, SSH_FP_RANDOMART);
 			if (fp == NULL || ra == NULL)
 				fatal_f("sshkey_fingerprint failed");
 			xextendf(&msg1, "\n", "%s key fingerprint is: %s",
 			    type, fp);
-			if (options.visual_host_key)
+			if (options.visual_host_सुसि)
 				xextendf(&msg1, "\n", "%s", ra);
-			if (options.verify_host_key_dns) {
+			if (options.verify_host_सुसि_dns) {
 				xextendf(&msg1, "\n",
 				    "%s host key fingerprint found in DNS.",
-				    matching_host_key_dns ?
+				    matching_host_सुसि_dns ?
 				    "Matching" : "No matching");
 			}
 			/* msg2 informs for other names matching this key */
-			if ((msg2 = other_hostkeys_message(host, ip, host_key,
-			    user_hostfiles, num_user_hostfiles,
-			    system_hostfiles, num_system_hostfiles)) != NULL)
+			if ((msg2 = other_hostkeys_message(host, ip, host_सुसि,
+			    user_hostfiles, नुमेरो_user_hostfiles,
+			    system_hostfiles, नुमेरो_system_hostfiles)) != NULL)
 				xextendf(&msg1, "\n", "%s", msg2);
 
 			xextendf(&msg1, "\n",
@@ -1262,18 +1262,18 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			if (options.hash_known_hosts) {
 				/* Add hash of host and IP separately */
 				r = add_host_to_hostfile(user_hostfiles[0],
-				    host, host_key, options.hash_known_hosts) &&
+				    host, host_सुसि, options.hash_known_hosts) &&
 				    add_host_to_hostfile(user_hostfiles[0], ip,
-				    host_key, options.hash_known_hosts);
+				    host_सुसि, options.hash_known_hosts);
 			} else {
 				/* Add unhashed "host,ip" */
 				r = add_host_to_hostfile(user_hostfiles[0],
-				    hostline, host_key,
+				    hostline, host_सुसि,
 				    options.hash_known_hosts);
 			}
 		} else {
 			r = add_host_to_hostfile(user_hostfiles[0], host,
-			    host_key, options.hash_known_hosts);
+			    host_सुसि, options.hash_known_hosts);
 			hostp = host;
 		}
 
@@ -1296,7 +1296,7 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		 * If strict host key checking is in use, the user will have
 		 * to edit the key manually and we can only abort.
 		 */
-		if (options.strict_host_key_checking !=
+		if (options.strict_host_सुसि_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
 			error("%s host key for %.200s was revoked and you have "
 			    "requested strict checking.", type, host);
@@ -1313,47 +1313,47 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			 */
 			debug("Host certificate authority does not "
 			    "match %s in %s:%lu", CA_MARKER,
-			    host_found->file, host_found->line);
+			    host_found->file, host_found->लिन्या);
 			goto fail;
 		}
 		if (readonly == ROQUIET)
 			goto fail;
 		if (options.check_host_ip && host_ip_differ) {
-			char *key_msg;
+			char *सुसि_मेनसाहे;
 			if (ip_status == HOST_NEW)
-				key_msg = "is unknown";
+				सुसि_मेनसाहे = "is unknown";
 			else if (ip_status == HOST_OK)
-				key_msg = "is unchanged";
+				सुसि_मेनसाहे = "is unchanged";
 			else
-				key_msg = "has a different value";
+				सुसि_मेनसाहे = "has a different value";
 			error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			error("@       WARNING: POSSIBLE DNS SPOOFING DETECTED!          @");
 			error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 			error("The %s host key for %s has changed,", type, host);
 			error("and the key for the corresponding IP address %s", ip);
-			error("%s. This could either mean that", key_msg);
+			error("%s. This could either mean that", सुसि_मेनसाहे);
 			error("DNS SPOOFING is happening or the IP address for the host");
 			error("and its host key have changed at the same time.");
 			if (ip_status != HOST_NEW)
 				error("Offending key for IP in %s:%lu",
-				    ip_found->file, ip_found->line);
+				    ip_found->file, ip_found->लिन्या);
 		}
 		/* The host key has changed. */
-		warn_changed_key(host_key);
-		if (num_user_hostfiles > 0 || num_system_hostfiles > 0) {
+		warn_changed_सुसि(host_सुसि);
+		if (नुमेरो_user_hostfiles > 0 || नुमेरो_system_hostfiles > 0) {
 			error("Add correct host key in %.100s to get rid "
-			    "of this message.", num_user_hostfiles > 0 ?
+			    "of this message.", नुमेरो_user_hostfiles > 0 ?
 			    user_hostfiles[0] : system_hostfiles[0]);
 		}
 		error("Offending %s key in %s:%lu",
-		    sshkey_type(host_found->key),
-		    host_found->file, host_found->line);
+		    sshkey_type(host_found->सुसि),
+		    host_found->file, host_found->लिन्या);
 
 		/*
 		 * If strict host key checking is in use, the user will have
 		 * to edit the key manually and we can only abort.
 		 */
-		if (options.strict_host_key_checking !=
+		if (options.strict_host_सुसि_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
 			error("Host key for %.200s has changed and you have "
 			    "requested strict checking.", host);
@@ -1390,12 +1390,12 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 			options.forward_x11 = 0;
 			cancelled_forwarding = 1;
 		}
-		if (options.num_local_forwards > 0 ||
-		    options.num_remote_forwards > 0) {
+		if (options.नुमेरो_local_forwards > 0 ||
+		    options.नुमेरो_remote_forwards > 0) {
 			error("Port forwarding is disabled to avoid "
 			    "man-in-the-middle attacks.");
-			options.num_local_forwards =
-			    options.num_remote_forwards = 0;
+			options.नुमेरो_local_forwards =
+			    options.नुमेरो_remote_forwards = 0;
 			cancelled_forwarding = 1;
 		}
 		if (options.tun_open != SSH_TUNMODE_NO) {
@@ -1428,30 +1428,30 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 
 	if (options.check_host_ip && host_status != HOST_CHANGED &&
 	    ip_status == HOST_CHANGED) {
-		snprintf(msg, sizeof(msg),
+		snprintf(मेनसाहे, sizeof(मेनसाहे),
 		    "Warning: the %s host key for '%.200s' "
 		    "differs from the key for the IP address '%.128s'"
 		    "\nOffending key for IP in %s:%lu",
-		    type, host, ip, ip_found->file, ip_found->line);
+		    type, host, ip, ip_found->file, ip_found->लिन्या);
 		if (host_status == HOST_OK) {
-			len = strlen(msg);
-			snprintf(msg + len, sizeof(msg) - len,
+			len = strlen(मेनसाहे);
+			snprintf(मेनसाहे + len, sizeof(मेनसाहे) - len,
 			    "\nMatching host key in %s:%lu",
-			    host_found->file, host_found->line);
+			    host_found->file, host_found->लिन्या);
 		}
-		if (options.strict_host_key_checking ==
+		if (options.strict_host_सुसि_checking ==
 		    SSH_STRICT_HOSTKEY_ASK) {
-			strlcat(msg, "\nAre you sure you want "
-			    "to continue connecting (yes/no)? ", sizeof(msg));
-			if (!confirm(msg, NULL))
+			strlcat(मेनसाहे, "\nAre you sure you want "
+			    "to continue connecting (yes/no)? ", sizeof(मेनसाहे));
+			if (!confirm(मेनसाहे, NULL))
 				goto fail;
-		} else if (options.strict_host_key_checking !=
+		} else if (options.strict_host_सुसि_checking !=
 		    SSH_STRICT_HOSTKEY_OFF) {
-			logit("%s", msg);
+			logit("%s", मेनसाहे);
 			error("Exiting, you have requested strict checking.");
 			goto fail;
 		} else {
-			logit("%s", msg);
+			logit("%s", मेनसाहे);
 		}
 	}
 
@@ -1461,7 +1461,7 @@ check_host_key(char *hostname, const struct ssh_conn_info *cinfo,
 		options.update_hostkeys = 0;
 	}
 
-	sshkey_free(raw_key);
+	sshkey_free(raw_सुसि);
 	free(ip);
 	free(host);
 	if (host_hostkeys != NULL)
@@ -1477,14 +1477,14 @@ fail:
 		 * search normally.
 		 */
 		debug("No matching CA found. Retry with plain key");
-		if ((r = sshkey_from_private(host_key, &raw_key)) != 0)
+		if ((r = sshkey_from_private(host_सुसि, &raw_सुसि)) != 0)
 			fatal_fr(r, "decode key");
-		if ((r = sshkey_drop_cert(raw_key)) != 0)
+		if ((r = sshkey_drop_cert(raw_सुसि)) != 0)
 			fatal_r(r, "Couldn't drop certificate");
-		host_key = raw_key;
+		host_सुसि = raw_सुसि;
 		goto retry;
 	}
-	sshkey_free(raw_key);
+	sshkey_free(raw_सुसि);
 	free(ip);
 	free(host);
 	if (host_hostkeys != NULL)
@@ -1496,7 +1496,7 @@ fail:
 
 /* returns 0 if key verifies or -1 if key does NOT verify */
 int
-verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
+verify_host_सुसि(char *host, struct sockaddr *hostaddr, struct sshkey *host_सुसि,
     const struct ssh_conn_info *cinfo)
 {
 	u_int i;
@@ -1504,87 +1504,87 @@ verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
 	char valid[64], *fp = NULL, *cafp = NULL;
 	struct sshkey *plain = NULL;
 
-	if ((fp = sshkey_fingerprint(host_key,
+	if ((fp = sshkey_fingerprint(host_सुसि,
 	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
 		error_fr(r, "fingerprint host key");
 		r = -1;
 		goto out;
 	}
 
-	if (sshkey_is_cert(host_key)) {
-		if ((cafp = sshkey_fingerprint(host_key->cert->signature_key,
+	if (sshkey_is_cert(host_सुसि)) {
+		if ((cafp = sshkey_fingerprint(host_सुसि->cert->signature_सुसि,
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
 			error_fr(r, "fingerprint CA key");
 			r = -1;
 			goto out;
 		}
-		sshkey_format_cert_validity(host_key->cert,
+		sshkey_format_cert_validity(host_सुसि->cert,
 		    valid, sizeof(valid));
 		debug("Server host certificate: %s %s, serial %llu "
 		    "ID \"%s\" CA %s %s valid %s",
-		    sshkey_ssh_name(host_key), fp,
-		    (unsigned long long)host_key->cert->serial,
-		    host_key->cert->key_id,
-		    sshkey_ssh_name(host_key->cert->signature_key), cafp,
+		    sshkey_ssh_name(host_सुसि), fp,
+		    (unsigned long long)host_सुसि->cert->serial,
+		    host_सुसि->cert->सुसि_id,
+		    sshkey_ssh_name(host_सुसि->cert->signature_सुसि), cafp,
 		    valid);
-		for (i = 0; i < host_key->cert->nprincipals; i++) {
+		for (i = 0; i < host_सुसि->cert->nprincipals; i++) {
 			debug2("Server host certificate hostname: %s",
-			    host_key->cert->principals[i]);
+			    host_सुसि->cert->principals[i]);
 		}
 	} else {
-		debug("Server host key: %s %s", sshkey_ssh_name(host_key), fp);
+		debug("Server host key: %s %s", sshkey_ssh_name(host_सुसि), fp);
 	}
 
-	if (sshkey_equal(previous_host_key, host_key)) {
+	if (sshkey_equal(previous_host_सुसि, host_सुसि)) {
 		debug2_f("server host key %s %s matches cached key",
-		    sshkey_type(host_key), fp);
+		    sshkey_type(host_सुसि), fp);
 		r = 0;
 		goto out;
 	}
 
 	/* Check in RevokedHostKeys files if specified */
-	for (i = 0; i < options.num_revoked_host_keys; i++) {
-		r = sshkey_check_revoked(host_key,
-		    options.revoked_host_keys[i]);
+	for (i = 0; i < options.नुमेरो_revoked_host_मगा_सुसि; i++) {
+		r = sshkey_check_revoked(host_सुसि,
+		    options.revoked_host_मगा_सुसि[i]);
 		switch (r) {
 		case 0:
 			break; /* not revoked */
-		case SSH_ERR_KEY_REVOKED:
+		case SSH_ERR_सुसि_REVOKED:
 			error("Host key %s %s revoked by file %s",
-			    sshkey_type(host_key), fp,
-			    options.revoked_host_keys[i]);
+			    sshkey_type(host_सुसि), fp,
+			    options.revoked_host_मगा_सुसि[i]);
 			r = -1;
 			goto out;
 		default:
 			error_r(r, "Error checking host key %s %s in "
-			    "revoked keys file %s", sshkey_type(host_key),
-			    fp, options.revoked_host_keys[i]);
+			    "revoked keys file %s", sshkey_type(host_सुसि),
+			    fp, options.revoked_host_मगा_सुसि[i]);
 			r = -1;
 			goto out;
 		}
 	}
 
-	if (options.verify_host_key_dns) {
+	if (options.verify_host_सुसि_dns) {
 		/*
 		 * XXX certs are not yet supported for DNS, so downgrade
 		 * them and try the plain key.
 		 */
-		if ((r = sshkey_from_private(host_key, &plain)) != 0)
+		if ((r = sshkey_from_private(host_सुसि, &plain)) != 0)
 			goto out;
 		if (sshkey_is_cert(plain))
 			sshkey_drop_cert(plain);
-		if (verify_host_key_dns(host, hostaddr, plain, &flags) == 0) {
+		if (verify_host_सुसि_dns(host, hostaddr, plain, &flags) == 0) {
 			if (flags & DNS_VERIFY_FOUND) {
-				if (options.verify_host_key_dns == 1 &&
+				if (options.verify_host_सुसि_dns == 1 &&
 				    flags & DNS_VERIFY_MATCH &&
 				    flags & DNS_VERIFY_SECURE) {
 					r = 0;
 					goto out;
 				}
 				if (flags & DNS_VERIFY_MATCH) {
-					matching_host_key_dns = 1;
+					matching_host_सुसि_dns = 1;
 				} else {
-					warn_changed_key(plain);
+					warn_changed_सुसि(plain);
 					error("Update the SSHFP RR in DNS "
 					    "with the new host key to get rid "
 					    "of this message.");
@@ -1592,18 +1592,18 @@ verify_host_key(char *host, struct sockaddr *hostaddr, struct sshkey *host_key,
 			}
 		}
 	}
-	r = check_host_key(host, cinfo, hostaddr, options.port, host_key,
-	    RDRW, 0, options.user_hostfiles, options.num_user_hostfiles,
-	    options.system_hostfiles, options.num_system_hostfiles,
+	r = check_host_सुसि(host, cinfo, hostaddr, options.port, host_सुसि,
+	    RDRW, 0, options.user_hostfiles, options.नुमेरो_user_hostfiles,
+	    options.system_hostfiles, options.नुमेरो_system_hostfiles,
 	    options.known_hosts_command);
 
 out:
 	sshkey_free(plain);
 	free(fp);
 	free(cafp);
-	if (r == 0 && host_key != NULL) {
-		sshkey_free(previous_host_key);
-		r = sshkey_from_private(host_key, &previous_host_key);
+	if (r == 0 && host_सुसि != NULL) {
+		sshkey_free(previous_host_सुसि);
+		r = sshkey_from_private(host_सुसि, &previous_host_सुसि);
 	}
 
 	return r;
@@ -1672,13 +1672,13 @@ ssh_login(struct ssh *ssh, Sensitive *sensitive, const char *orighost,
 
 /* print all known host keys for a given host, but skip keys of given type */
 static int
-show_other_keys(struct hostkeys *hostkeys, struct sshkey *key)
+show_other_मगा_सुसि(struct hostkeys *hostkeys, struct sshkey *सुसि)
 {
 	int type[] = {
-		KEY_RSA,
-		KEY_ECDSA,
-		KEY_ED25519,
-		KEY_MLDSA44_ED25519,
+		सुसि_RSA,
+		सुसि_ECDSA,
+		सुसि_ED25519,
+		सुसि_MLDSA44_ED25519,
 		-1
 	};
 	int i, ret = 0;
@@ -1686,24 +1686,24 @@ show_other_keys(struct hostkeys *hostkeys, struct sshkey *key)
 	const struct hostkey_entry *found;
 
 	for (i = 0; type[i] != -1; i++) {
-		if (type[i] == key->type)
+		if (type[i] == सुसि->type)
 			continue;
-		if (!lookup_key_in_hostkeys_by_type(hostkeys, type[i],
+		if (!lookup_सुसि_in_hostkeys_by_type(hostkeys, type[i],
 		    -1, &found))
 			continue;
-		fp = sshkey_fingerprint(found->key,
+		fp = sshkey_fingerprint(found->सुसि,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
-		ra = sshkey_fingerprint(found->key,
+		ra = sshkey_fingerprint(found->सुसि,
 		    options.fingerprint_hash, SSH_FP_RANDOMART);
 		if (fp == NULL || ra == NULL)
 			fatal_f("sshkey_fingerprint fail");
 		logit("WARNING: %s key found for host %s\n"
 		    "in %s:%lu\n"
 		    "%s key fingerprint %s.",
-		    sshkey_type(found->key),
-		    found->host, found->file, found->line,
-		    sshkey_type(found->key), fp);
-		if (options.visual_host_key)
+		    sshkey_type(found->सुसि),
+		    found->host, found->file, found->लिन्या,
+		    sshkey_type(found->सुसि), fp);
+		if (options.visual_host_सुसि)
 			logit("%s", ra);
 		free(ra);
 		free(fp);
@@ -1713,11 +1713,11 @@ show_other_keys(struct hostkeys *hostkeys, struct sshkey *key)
 }
 
 static void
-warn_changed_key(struct sshkey *host_key)
+warn_changed_सुसि(struct sshkey *host_सुसि)
 {
 	char *fp;
 
-	fp = sshkey_fingerprint(host_key, options.fingerprint_hash,
+	fp = sshkey_fingerprint(host_सुसि, options.fingerprint_hash,
 	    SSH_FP_DEFAULT);
 	if (fp == NULL)
 		fatal_f("sshkey_fingerprint fail");
@@ -1729,7 +1729,7 @@ warn_changed_key(struct sshkey *host_key)
 	error("Someone could be eavesdropping on you right now (man-in-the-middle attack)!");
 	error("It is also possible that a host key has just been changed.");
 	error("The fingerprint for the %s key sent by the remote host is\n%s.",
-	    sshkey_type(host_key), fp);
+	    sshkey_type(host_सुसि), fp);
 	error("Please contact your system administrator.");
 
 	free(fp);
@@ -1739,7 +1739,7 @@ warn_changed_key(struct sshkey *host_key)
  * Execute a local command
  */
 int
-ssh_local_cmd(const char *args)
+ssh_local_cmd(const char *मगा_कातविरान)
 {
 	char *shell;
 	pid_t pid;
@@ -1747,7 +1747,7 @@ ssh_local_cmd(const char *args)
 	void (*osighand)(int);
 
 	if (!options.permit_local_command ||
-	    args == NULL || !*args)
+	    मगा_कातविरान == NULL || !*मगा_कातविरान)
 		return (1);
 
 	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
@@ -1757,10 +1757,10 @@ ssh_local_cmd(const char *args)
 	pid = fork();
 	if (pid == 0) {
 		ssh_signal(SIGPIPE, SIG_DFL);
-		debug3("Executing %s -c \"%s\"", shell, args);
-		execl(shell, shell, "-c", args, (char *)NULL);
+		debug3("Executing %s -c \"%s\"", shell, मगा_कातविरान);
+		execl(shell, shell, "-c", मगा_कातविरान, (char *)NULL);
 		error("Couldn't execute %s -c \"%s\": %s",
-		    shell, args, strerror(errno));
+		    shell, मगा_कातविरान, strerror(errno));
 		_exit(1);
 	} else if (pid == -1)
 		fatal("fork failed: %.100s", strerror(errno));
@@ -1776,13 +1776,13 @@ ssh_local_cmd(const char *args)
 }
 
 void
-maybe_add_key_to_agent(const char *authfile, struct sshkey *private,
+maybe_add_सुसि_to_agent(const char *authfile, struct sshkey *private,
     const char *comment, const char *passphrase)
 {
 	int auth_sock = -1, r;
 	const char *skprovider = NULL;
 
-	if (options.add_keys_to_agent == 0)
+	if (options.add_मगा_सुसि_to_agent == 0)
 		return;
 
 	if ((r = ssh_get_authentication_socket(&auth_sock)) != 0) {
@@ -1790,7 +1790,7 @@ maybe_add_key_to_agent(const char *authfile, struct sshkey *private,
 		return;
 	}
 
-	if (options.add_keys_to_agent == 2 &&
+	if (options.add_मगा_सुसि_to_agent == 2 &&
 	    !ask_permission("Add key %s (%s) to agent?", authfile, comment)) {
 		debug3("user denied adding this key");
 		close(auth_sock);
@@ -1800,8 +1800,8 @@ maybe_add_key_to_agent(const char *authfile, struct sshkey *private,
 		skprovider = options.sk_provider;
 	if ((r = ssh_add_identity_constrained(auth_sock, private,
 	    comment == NULL ? authfile : comment,
-	    options.add_keys_to_agent_lifespan,
-	    (options.add_keys_to_agent == 3), skprovider, NULL, 0)) == 0)
+	    options.add_मगा_सुसि_to_agent_lifespan,
+	    (options.add_मगा_सुसि_to_agent == 3), skprovider, NULL, 0)) == 0)
 		debug("identity added to agent: %s", authfile);
 	else
 		debug("could not add identity to agent: %s (%d)", authfile, r);

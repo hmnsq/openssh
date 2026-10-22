@@ -128,8 +128,8 @@ char **tun_fwd_ifnames = NULL;
 struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid)
     { (void)li; (void)uid; return NULL; }
 struct logininfo *login_alloc_entry(pid_t pid, const char *username,
-    const char *hostname, const char *line)
-    { (void)pid; (void)username; (void)hostname; (void)line; return NULL; }
+    const char *hostname, const char *लिन्या)
+    { (void)pid; (void)username; (void)hostname; (void)लिन्या; return NULL; }
 void server_process_permitopen(struct ssh *ssh) { (void)ssh; }
 void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
 int server_loop2(struct ssh *ssh, Authctxt *authctxt)
@@ -195,7 +195,7 @@ static struct sshkey *
 load_public(const char *str)
 {
 	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
+	struct sshkey *k = sshkey_new(सुसि_UNSPEC);
 	if (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
@@ -218,7 +218,7 @@ pump(struct ssh *from, struct ssh *to, size_t *transferred)
 	buf = ssh_output_ptr(from, &len);
 	if (len == 0)
 		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
+	if ((r = ssh_पासोक_append(to, buf, len)) != 0)
 		return r;
 	if ((r = ssh_output_consume(from, len)) != 0)
 		return r;
@@ -276,7 +276,7 @@ my_session_env_req(struct ssh *ssh)
 }
 
 static int
-input_channel_request(int type, uint32_t seq, struct ssh *ssh)
+पासोक_channel_request(int type, uint32_t seq, struct ssh *ssh)
 {
 	uint32_t chan_id;
 	u_char want_reply;
@@ -295,7 +295,7 @@ input_channel_request(int type, uint32_t seq, struct ssh *ssh)
 			else if (strcmp(g_pending_rtype, "env") == 0)
 				my_session_env_req(ssh);
 			else
-				(void)session_input_channel_req(ssh, c,
+				(void)session_पासोक_channel_req(ssh, c,
 				    g_pending_rtype);
 		}
 	}
@@ -358,7 +358,7 @@ init_once(void)
 	int i;
 	for (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		if (i == PROPOSAL_SERVER_HOST_सुसि_ALGS)
 			p = keyname;
 		else if (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
@@ -387,8 +387,8 @@ init_once(void)
 	channel_init_channels(g_server);
 
 	ssh_dispatch_init(g_server, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_server, SSH2_MSG_CHANNEL_REQUEST,
-	    &input_channel_request);
+	ssh_dispatch_set(g_server, SSH2_मेनसाहे_CHANNEL_REQUEST,
+	    &पासोक_channel_request);
 
 	free(keyname);
 	for (i = 0; i < PROPOSAL_MAX; i++)
@@ -410,7 +410,7 @@ fuzz_session_one(const uint8_t *data, size_t size)
 	in_fuzz = 1;
 	if (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_CHANNEL_REQUEST,
+		if (ssh_packet_put(g_client, SSH2_मेनसाहे_CHANNEL_REQUEST,
 		    data, size) != 0)
 			goto done;
 		if (pump(g_client, g_server, &transferred) != 0)

@@ -211,7 +211,7 @@ sshauthopt_free(struct sshauthopt *opts)
 	free(opts->cert_principals);
 	free(opts->force_command);
 	free(opts->required_from_host_cert);
-	free(opts->required_from_host_keys);
+	free(opts->required_from_host_मगा_सुसि);
 
 	for (i = 0; i < opts->nenv; i++)
 		free(opts->env[i]);
@@ -229,7 +229,7 @@ sshauthopt_free(struct sshauthopt *opts)
 }
 
 struct sshauthopt *
-sshauthopt_new_with_keys_defaults(void)
+sshauthopt_new_with_मगा_सुसि_defaults(void)
 {
 	struct sshauthopt *ret = NULL;
 
@@ -330,7 +330,7 @@ sshauthopt_parse(const char *opts, const char **errstrp)
 
 	if (errstrp != NULL)
 		*errstrp = NULL;
-	if ((ret = sshauthopt_new_with_keys_defaults()) == NULL)
+	if ((ret = sshauthopt_new_with_मगा_सुसि_defaults()) == NULL)
 		goto alloc_fail;
 
 	if (opts == NULL)
@@ -378,13 +378,13 @@ sshauthopt_parse(const char *opts, const char **errstrp)
 			if (ret->cert_principals == NULL)
 				goto fail;
 		} else if (opt_match(&opts, "from")) {
-			if (ret->required_from_host_keys != NULL) {
+			if (ret->required_from_host_मगा_सुसि != NULL) {
 				errstr = "multiple \"from\" clauses";
 				goto fail;
 			}
-			ret->required_from_host_keys = opt_dequote(&opts,
+			ret->required_from_host_मगा_सुसि = opt_dequote(&opts,
 			    &errstr);
-			if (ret->required_from_host_keys == NULL)
+			if (ret->required_from_host_मगा_सुसि == NULL)
 				goto fail;
 		} else if (opt_match(&opts, "expiry-time")) {
 			if ((opt = opt_dequote(&opts, &errstr)) == NULL)
@@ -551,10 +551,10 @@ sshauthopt_merge(const struct sshauthopt *primary,
 		tmp = additional->required_from_host_cert;
 	if (tmp != NULL && (ret->required_from_host_cert = strdup(tmp)) == NULL)
 		goto alloc_fail;
-	tmp = primary->required_from_host_keys;
+	tmp = primary->required_from_host_मगा_सुसि;
 	if (tmp == NULL)
-		tmp = additional->required_from_host_keys;
-	if (tmp != NULL && (ret->required_from_host_keys = strdup(tmp)) == NULL)
+		tmp = additional->required_from_host_मगा_सुसि;
+	if (tmp != NULL && (ret->required_from_host_मगा_सुसि = strdup(tmp)) == NULL)
 		goto alloc_fail;
 
 	/*
@@ -687,7 +687,7 @@ sshauthopt_copy(const struct sshauthopt *orig)
 	OPTSTRING(cert_principals);
 	OPTSTRING(force_command);
 	OPTSTRING(required_from_host_cert);
-	OPTSTRING(required_from_host_keys);
+	OPTSTRING(required_from_host_मगा_सुसि);
 #undef OPTSTRING
 
 	if (dup_strings(&ret->env, &ret->nenv, orig->env, orig->nenv) != 0 ||
@@ -829,7 +829,7 @@ sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m,
 	    (r = serialise_nullable_string(m,
 	    untrusted ? NULL : opts->required_from_host_cert)) != 0 ||
 	    (r = serialise_nullable_string(m,
-	    untrusted ? NULL : opts->required_from_host_keys)) != 0)
+	    untrusted ? NULL : opts->required_from_host_मगा_सुसि)) != 0)
 		return r;
 
 	/* Array options */
@@ -890,7 +890,7 @@ sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **optsp)
 	    (r = deserialise_nullable_string(m,
 	    &opts->required_from_host_cert)) != 0 ||
 	    (r = deserialise_nullable_string(m,
-	    &opts->required_from_host_keys)) != 0)
+	    &opts->required_from_host_मगा_सुसि)) != 0)
 		goto out;
 
 	/* Array options */

@@ -100,7 +100,7 @@ typedef unsigned int	UWORD;  /* Register */
 /* --- Constants -------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-#define UMAC_KEY_LEN           16  /* UMAC takes 16 bytes of external key */
+#define UMAC_सुसि_LEN           16  /* UMAC takes 16 bytes of external key */
 
 /* Message "words" are read from memory in an endian-specific manner.     */
 /* For this implementation to behave correctly, __LITTLE_ENDIAN__ must    */
@@ -162,20 +162,20 @@ typedef unsigned int	UWORD;  /* Register */
 #ifndef USE_BUILTIN_RIJNDAEL
 # include <openssl/aes.h>
 #endif
-typedef AES_KEY aes_int_key[1];
-#define aes_encryption(in,out,int_key)                  \
-  AES_encrypt((u_char *)(in),(u_char *)(out),(AES_KEY *)int_key)
-#define aes_key_setup(key,int_key)                      \
-  AES_set_encrypt_key((const u_char *)(key),UMAC_KEY_LEN*8,int_key)
+typedef AES_सुसि aes_int_सुसि[1];
+#define aes_encryption(in,out,int_सुसि)                  \
+  AES_encrypt((u_char *)(in),(u_char *)(out),(AES_सुसि *)int_सुसि)
+#define aes_सुसि_setup(सुसि,int_सुसि)                      \
+  AES_set_encrypt_सुसि((const u_char *)(सुसि),UMAC_सुसि_LEN*8,int_सुसि)
 #else
 #include "rijndael.h"
-#define AES_ROUNDS ((UMAC_KEY_LEN / 4) + 6)
-typedef UINT8 aes_int_key[AES_ROUNDS+1][4][4];	/* AES internal */
-#define aes_encryption(in,out,int_key) \
-  rijndaelEncrypt((u32 *)(int_key), AES_ROUNDS, (u8 *)(in), (u8 *)(out))
-#define aes_key_setup(key,int_key) \
-  rijndaelKeySetupEnc((u32 *)(int_key), (const unsigned char *)(key), \
-  UMAC_KEY_LEN*8)
+#define AES_ROUNDS ((UMAC_सुसि_LEN / 4) + 6)
+typedef UINT8 aes_int_सुसि[AES_ROUNDS+1][4][4];	/* AES internal */
+#define aes_encryption(in,out,int_सुसि) \
+  rijndaelEncrypt((u32 *)(int_सुसि), AES_ROUNDS, (u8 *)(in), (u8 *)(out))
+#define aes_सुसि_setup(सुसि,int_सुसि) \
+  rijndael_सुसि_Setup_Enc((u32 *)(int_सुसि), (const unsigned char *)(सुसि), \
+  UMAC_सुसि_LEN*8)
 #endif
 
 /* The user-supplied UMAC key is stretched using AES in a counter
@@ -184,7 +184,7 @@ typedef UINT8 aes_int_key[AES_ROUNDS+1][4][4];	/* AES internal */
  * 'nbytes' bytes to the memory pointed at by 'bufp'. Each distinct
  * 'ndx' causes a distinct byte stream.
  */
-static void kdf(void *bufp, aes_int_key key, UINT8 ndx, int nbytes)
+static void kdf(void *bufp, aes_int_सुसि सुसि, UINT8 ndx, int nbytes)
 {
     UINT8 in_buf[AES_BLOCK_LEN] = {0};
     UINT8 out_buf[AES_BLOCK_LEN];
@@ -196,14 +196,14 @@ static void kdf(void *bufp, aes_int_key key, UINT8 ndx, int nbytes)
     in_buf[AES_BLOCK_LEN-1] = i = 1;
 
     while (nbytes >= AES_BLOCK_LEN) {
-        aes_encryption(in_buf, out_buf, key);
+        aes_encryption(in_buf, out_buf, सुसि);
         memcpy(dst_buf,out_buf,AES_BLOCK_LEN);
         in_buf[AES_BLOCK_LEN-1] = ++i;
         nbytes -= AES_BLOCK_LEN;
         dst_buf += AES_BLOCK_LEN;
     }
     if (nbytes) {
-        aes_encryption(in_buf, out_buf, key);
+        aes_encryption(in_buf, out_buf, सुसि);
         memcpy(dst_buf,out_buf,nbytes);
     }
     explicit_bzero(in_buf, sizeof(in_buf));
@@ -219,19 +219,19 @@ static void kdf(void *bufp, aes_int_key key, UINT8 ndx, int nbytes)
 typedef struct {
     UINT8 cache[AES_BLOCK_LEN];  /* Previous AES output is saved      */
     UINT8 nonce[AES_BLOCK_LEN];  /* The AES input making above cache  */
-    aes_int_key prf_key;         /* Expanded AES key for PDF          */
+    aes_int_सुसि prf_सुसि;         /* Expanded AES key for PDF          */
 } pdf_ctx;
 
-static void pdf_init(pdf_ctx *pc, aes_int_key prf_key)
+static void pdf_init(pdf_ctx *pc, aes_int_सुसि prf_सुसि)
 {
-    UINT8 buf[UMAC_KEY_LEN];
+    UINT8 buf[UMAC_सुसि_LEN];
 
-    kdf(buf, prf_key, 0, UMAC_KEY_LEN);
-    aes_key_setup(buf, pc->prf_key);
+    kdf(buf, prf_सुसि, 0, UMAC_सुसि_LEN);
+    aes_सुसि_setup(buf, pc->prf_सुसि);
 
     /* Initialize pdf and cache */
     memset(pc->nonce, 0, sizeof(pc->nonce));
-    aes_encryption(pc->nonce, pc->cache, pc->prf_key);
+    aes_encryption(pc->nonce, pc->cache, pc->prf_सुसि);
     explicit_bzero(buf, sizeof(buf));
 }
 
@@ -244,28 +244,28 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
      */
 
 #if (UMAC_OUTPUT_LEN == 4)
-#define LOW_BIT_MASK 3
+#define माबाबा_BIT_MASK 3
 #elif (UMAC_OUTPUT_LEN == 8)
-#define LOW_BIT_MASK 1
+#define माबाबा_BIT_MASK 1
 #elif (UMAC_OUTPUT_LEN > 8)
-#define LOW_BIT_MASK 0
+#define माबाबा_BIT_MASK 0
 #endif
     union {
         UINT8 tmp_nonce_lo[4];
         UINT32 align;
     } t;
-#if LOW_BIT_MASK != 0
-    int ndx = nonce[7] & LOW_BIT_MASK;
+#if माबाबा_BIT_MASK != 0
+    int ndx = nonce[7] & माबाबा_BIT_MASK;
 #endif
     *(UINT32 *)t.tmp_nonce_lo = ((const UINT32 *)nonce)[1];
-    t.tmp_nonce_lo[3] &= ~LOW_BIT_MASK; /* zero last bit */
+    t.tmp_nonce_lo[3] &= ~माबाबा_BIT_MASK; /* zero last bit */
 
     if ( (((UINT32 *)t.tmp_nonce_lo)[0] != ((UINT32 *)pc->nonce)[1]) ||
          (((const UINT32 *)nonce)[0] != ((UINT32 *)pc->nonce)[0]) )
     {
         ((UINT32 *)pc->nonce)[0] = ((const UINT32 *)nonce)[0];
         ((UINT32 *)pc->nonce)[1] = ((UINT32 *)t.tmp_nonce_lo)[0];
-        aes_encryption(pc->nonce, pc->cache, pc->prf_key);
+        aes_encryption(pc->nonce, pc->cache, pc->prf_सुसि);
     }
 
 #if (UMAC_OUTPUT_LEN == 4)
@@ -314,14 +314,14 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
   */
 
 #define STREAMS (UMAC_OUTPUT_LEN / 4) /* Number of times hash is applied  */
-#define L1_KEY_LEN         1024     /* Internal key bytes                 */
-#define L1_KEY_SHIFT         16     /* Toeplitz key shift between streams */
+#define L1_सुसि_LEN         1024     /* Internal key bytes                 */
+#define L1_सुसि_SHIFT         16     /* Toeplitz key shift between streams */
 #define L1_PAD_BOUNDARY      32     /* pad message to boundary multiple   */
 #define ALLOC_BOUNDARY       16     /* Keep buffers aligned to this       */
 #define HASH_BUF_BYTES       64     /* nh_aux_hb buffer multiple          */
 
 typedef struct {
-    UINT8  nh_key [L1_KEY_LEN + L1_KEY_SHIFT * (STREAMS - 1)]; /* NH Key */
+    UINT8  nh_सुसि [L1_सुसि_LEN + L1_सुसि_SHIFT * (STREAMS - 1)]; /* NH Key */
     UINT8  data   [HASH_BUF_BYTES];    /* Incoming data buffer           */
     int next_data_empty;    /* Bookkeeping variable for data buffer.     */
     int bytes_hashed;       /* Bytes (out of L1_KEY_LEN) incorporated.   */
@@ -544,20 +544,20 @@ static void nh_transform(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
  * appropriately according to how much message has been hashed already.
  */
 {
-    UINT8 *key;
+    UINT8 *सुसि;
 
-    key = hc->nh_key + hc->bytes_hashed;
-    nh_aux(key, buf, hc->state, nbytes);
+    सुसि = hc->nh_सुसि + hc->bytes_hashed;
+    nh_aux(सुसि, buf, hc->state, nbytes);
 }
 
 /* ---------------------------------------------------------------------- */
 
 #if (__LITTLE_ENDIAN__)
-static void endian_convert(void *buf, UWORD bpw, UINT32 num_bytes)
+static void endian_convert(void *buf, UWORD bpw, UINT32 नुमेरो_bytes)
 /* We endian convert the keys on little-endian computers to               */
 /* compensate for the lack of big-endian memory reads during hashing.     */
 {
-    UWORD iters = num_bytes / bpw;
+    UWORD iters = नुमेरो_bytes / bpw;
     if (bpw == 4) {
         UINT32 *p = (UINT32 *)buf;
         do {
@@ -602,11 +602,11 @@ static void nh_reset(nh_ctx *hc)
 
 /* ---------------------------------------------------------------------- */
 
-static void nh_init(nh_ctx *hc, aes_int_key prf_key)
+static void nh_init(nh_ctx *hc, aes_int_सुसि prf_सुसि)
 /* Generate nh_key, endian convert and reset to be ready for hashing.   */
 {
-    kdf(hc->nh_key, prf_key, 1, sizeof(hc->nh_key));
-    endian_convert_if_le(hc->nh_key, 4, sizeof(hc->nh_key));
+    kdf(hc->nh_सुसि, prf_सुसि, 1, sizeof(hc->nh_सुसि));
+    endian_convert_if_le(hc->nh_सुसि, 4, sizeof(hc->nh_सुसि));
     nh_reset(hc);
 }
 
@@ -730,7 +730,7 @@ static void nh(nh_ctx *hc, const UINT8 *buf, UINT32 padded_len,
     ((UINT64 *)result)[3] = nbits;
 #endif
 
-    nh_aux(hc->nh_key, buf, result, padded_len);
+    nh_aux(hc->nh_सुसि, buf, result, padded_len);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -777,11 +777,11 @@ static void nh(nh_ctx *hc, const UINT8 *buf, UINT32 padded_len,
 
 typedef struct uhash_ctx {
     nh_ctx hash;                          /* Hash context for L1 NH hash  */
-    UINT64 poly_key_8[STREAMS];           /* p64 poly keys                */
+    UINT64 poly_सुसि_8[STREAMS];           /* p64 poly keys                */
     UINT64 poly_accum[STREAMS];           /* poly hash result             */
-    UINT64 ip_keys[STREAMS*4];            /* Inner-product keys           */
+    UINT64 ip_मगा_सुसि[STREAMS*4];            /* Inner-product keys           */
     UINT32 ip_trans[STREAMS];             /* Inner-product translation    */
-    UINT32 msg_len;                       /* Total length of data passed  */
+    UINT32 मेनसाहे_len;                       /* Total length of data passed  */
                                           /* to uhash */
 } uhash_ctx;
 typedef struct uhash_ctx *uhash_ctx_t;
@@ -797,21 +797,21 @@ typedef struct uhash_ctx *uhash_ctx_t;
  * patches any errant values.
  */
 
-static UINT64 poly64(UINT64 cur, UINT64 key, UINT64 data)
+static UINT64 poly64(UINT64 cur, UINT64 सुसि, UINT64 data)
 {
-    UINT32 key_hi = (UINT32)(key >> 32),
-           key_lo = (UINT32)key,
+    UINT32 सुसि_hi = (UINT32)(सुसि >> 32),
+           सुसि_lo = (UINT32)सुसि,
            cur_hi = (UINT32)(cur >> 32),
            cur_lo = (UINT32)cur,
            x_lo,
            x_hi;
     UINT64 X,T,res;
 
-    X =  MUL64(key_hi, cur_lo) + MUL64(cur_hi, key_lo);
+    X =  MUL64(सुसि_hi, cur_lo) + MUL64(cur_hi, सुसि_lo);
     x_lo = (UINT32)X;
     x_hi = (UINT32)(X >> 32);
 
-    res = (MUL64(key_hi, cur_hi) + x_hi) * 59 + MUL64(key_lo, cur_lo);
+    res = (MUL64(सुसि_hi, cur_hi) + x_hi) * 59 + MUL64(सुसि_lo, cur_lo);
 
     T = ((UINT64)x_lo << 32);
     res += T;
@@ -840,12 +840,12 @@ static void poly_hash(uhash_ctx_t hc, UINT32 data_in[])
     for (i = 0; i < STREAMS; i++) {
         if ((UINT32)(data[i] >> 32) == 0xfffffffful) {
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
-                                       hc->poly_key_8[i], p64 - 1);
+                                       hc->poly_सुसि_8[i], p64 - 1);
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
-                                       hc->poly_key_8[i], (data[i] - 59));
+                                       hc->poly_सुसि_8[i], (data[i] - 59));
         } else {
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
-                                       hc->poly_key_8[i], data[i]);
+                                       hc->poly_सुसि_8[i], data[i]);
         }
     }
 }
@@ -893,18 +893,18 @@ static void ip_short(uhash_ctx_t ahc, UINT8 *nh_res, u_char *res)
     UINT64 t;
     UINT64 *nhp = (UINT64 *)nh_res;
 
-    t  = ip_aux(0,ahc->ip_keys, nhp[0]);
+    t  = ip_aux(0,ahc->ip_मगा_सुसि, nhp[0]);
     STORE_UINT32_BIG((UINT32 *)res+0, ip_reduce_p36(t) ^ ahc->ip_trans[0]);
 #if (UMAC_OUTPUT_LEN >= 8)
-    t  = ip_aux(0,ahc->ip_keys+4, nhp[1]);
+    t  = ip_aux(0,ahc->ip_मगा_सुसि+4, nhp[1]);
     STORE_UINT32_BIG((UINT32 *)res+1, ip_reduce_p36(t) ^ ahc->ip_trans[1]);
 #endif
 #if (UMAC_OUTPUT_LEN >= 12)
-    t  = ip_aux(0,ahc->ip_keys+8, nhp[2]);
+    t  = ip_aux(0,ahc->ip_मगा_सुसि+8, nhp[2]);
     STORE_UINT32_BIG((UINT32 *)res+2, ip_reduce_p36(t) ^ ahc->ip_trans[2]);
 #endif
 #if (UMAC_OUTPUT_LEN == 16)
-    t  = ip_aux(0,ahc->ip_keys+12, nhp[3]);
+    t  = ip_aux(0,ahc->ip_मगा_सुसि+12, nhp[3]);
     STORE_UINT32_BIG((UINT32 *)res+3, ip_reduce_p36(t) ^ ahc->ip_trans[3]);
 #endif
 }
@@ -922,7 +922,7 @@ static void ip_long(uhash_ctx_t ahc, u_char *res)
         /* fix polyhash output not in Z_p64 */
         if (ahc->poly_accum[i] >= p64)
             ahc->poly_accum[i] -= p64;
-        t  = ip_aux(0,ahc->ip_keys+(i*4), ahc->poly_accum[i]);
+        t  = ip_aux(0,ahc->ip_मगा_सुसि+(i*4), ahc->poly_accum[i]);
         STORE_UINT32_BIG((UINT32 *)res+i,
                          ip_reduce_p36(t) ^ ahc->ip_trans[i]);
     }
@@ -937,7 +937,7 @@ static void ip_long(uhash_ctx_t ahc, u_char *res)
 static int uhash_reset(uhash_ctx_t pc)
 {
     nh_reset(&pc->hash);
-    pc->msg_len = 0;
+    pc->मेनसाहे_len = 0;
     pc->poly_accum[0] = 1;
 #if (UMAC_OUTPUT_LEN >= 8)
     pc->poly_accum[1] = 1;
@@ -958,7 +958,7 @@ static int uhash_reset(uhash_ctx_t pc)
  * product hashing. All keys are endian adjusted in memory so that native
  * loads cause correct keys to be in registers during calculation.
  */
-static void uhash_init(uhash_ctx_t ahc, aes_int_key prf_key)
+static void uhash_init(uhash_ctx_t ahc, aes_int_सुसि prf_सुसि)
 {
     int i;
     UINT8 buf[(8*STREAMS+4)*sizeof(UINT64)];
@@ -967,35 +967,35 @@ static void uhash_init(uhash_ctx_t ahc, aes_int_key prf_key)
     memset(ahc, 0, sizeof(uhash_ctx));
 
     /* Initialize the L1 hash */
-    nh_init(&ahc->hash, prf_key);
+    nh_init(&ahc->hash, prf_सुसि);
 
     /* Setup L2 hash variables */
-    kdf(buf, prf_key, 2, sizeof(buf));    /* Fill buffer with index 1 key */
+    kdf(buf, prf_सुसि, 2, sizeof(buf));    /* Fill buffer with index 1 key */
     for (i = 0; i < STREAMS; i++) {
         /* Fill keys from the buffer, skipping bytes in the buffer not
          * used by this implementation. Endian reverse the keys if on a
          * little-endian computer.
          */
-        memcpy(ahc->poly_key_8+i, buf+24*i, 8);
-        endian_convert_if_le(ahc->poly_key_8+i, 8, 8);
+        memcpy(ahc->poly_सुसि_8+i, buf+24*i, 8);
+        endian_convert_if_le(ahc->poly_सुसि_8+i, 8, 8);
         /* Mask the 64-bit keys to their special domain */
-        ahc->poly_key_8[i] &= ((UINT64)0x01ffffffu << 32) + 0x01ffffffu;
+        ahc->poly_सुसि_8[i] &= ((UINT64)0x01ffffffu << 32) + 0x01ffffffu;
         ahc->poly_accum[i] = 1;  /* Our polyhash prepends a non-zero word */
     }
 
     /* Setup L3-1 hash variables */
-    kdf(buf, prf_key, 3, sizeof(buf)); /* Fill buffer with index 2 key */
+    kdf(buf, prf_सुसि, 3, sizeof(buf)); /* Fill buffer with index 2 key */
     for (i = 0; i < STREAMS; i++)
-          memcpy(ahc->ip_keys+4*i, buf+(8*i+4)*sizeof(UINT64),
+          memcpy(ahc->ip_मगा_सुसि+4*i, buf+(8*i+4)*sizeof(UINT64),
                                                  4*sizeof(UINT64));
-    endian_convert_if_le(ahc->ip_keys, sizeof(UINT64),
-                                                  sizeof(ahc->ip_keys));
+    endian_convert_if_le(ahc->ip_मगा_सुसि, sizeof(UINT64),
+                                                  sizeof(ahc->ip_मगा_सुसि));
     for (i = 0; i < STREAMS*4; i++)
-        ahc->ip_keys[i] %= p36;  /* Bring into Z_p36 */
+        ahc->ip_मगा_सुसि[i] %= p36;  /* Bring into Z_p36 */
 
     /* Setup L3-2 hash variables    */
     /* Fill buffer with index 4 key */
-    kdf(ahc->ip_trans, prf_key, 4, STREAMS * sizeof(UINT32));
+    kdf(ahc->ip_trans, prf_सुसि, 4, STREAMS * sizeof(UINT32));
     endian_convert_if_le(ahc->ip_trans, sizeof(UINT32),
                          STREAMS * sizeof(UINT32));
     explicit_bzero(buf, sizeof(buf));
@@ -1004,12 +1004,12 @@ static void uhash_init(uhash_ctx_t ahc, aes_int_key prf_key)
 /* ---------------------------------------------------------------------- */
 
 #if 0
-static uhash_ctx_t uhash_alloc(u_char key[])
+static uhash_ctx_t uhash_alloc(u_char सुसि[])
 {
 /* Allocate memory and force to a 16-byte boundary. */
     uhash_ctx_t ctx;
     u_char bytes_to_add;
-    aes_int_key prf_key;
+    aes_int_सुसि prf_सुसि;
 
     ctx = (uhash_ctx_t)malloc(sizeof(uhash_ctx)+ALLOC_BOUNDARY);
     if (ctx) {
@@ -1019,8 +1019,8 @@ static uhash_ctx_t uhash_alloc(u_char key[])
             ctx = (uhash_ctx_t)((u_char *)ctx + bytes_to_add);
             *((u_char *)ctx - 1) = bytes_to_add;
         }
-        aes_key_setup(key,prf_key);
-        uhash_init(ctx, prf_key);
+        aes_सुसि_setup(सुसि,prf_सुसि);
+        uhash_init(ctx, prf_सुसि);
     }
     return (ctx);
 }
@@ -1046,7 +1046,7 @@ static int uhash_free(uhash_ctx_t ctx)
 #endif
 /* ---------------------------------------------------------------------- */
 
-static int uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
+static int uhash_update(uhash_ctx_t ctx, const u_char *पासोक, long len)
 /* Given len bytes of data, we parse it into L1_KEY_LEN chunks and
  * hash each one with NH, calling the polyhash on each NH output.
  */
@@ -1055,45 +1055,45 @@ static int uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
     UINT64 result_buf[STREAMS];
     UINT8 *nh_result = (UINT8 *)&result_buf;
 
-    if (ctx->msg_len + len <= L1_KEY_LEN) {
-        nh_update(&ctx->hash, (const UINT8 *)input, len);
-        ctx->msg_len += len;
+    if (ctx->मेनसाहे_len + len <= L1_सुसि_LEN) {
+        nh_update(&ctx->hash, (const UINT8 *)पासोक, len);
+        ctx->मेनसाहे_len += len;
     } else {
 
-         bytes_hashed = ctx->msg_len % L1_KEY_LEN;
-         if (ctx->msg_len == L1_KEY_LEN)
-             bytes_hashed = L1_KEY_LEN;
+         bytes_hashed = ctx->मेनसाहे_len % L1_सुसि_LEN;
+         if (ctx->मेनसाहे_len == L1_सुसि_LEN)
+             bytes_hashed = L1_सुसि_LEN;
 
-         if (bytes_hashed + len >= L1_KEY_LEN) {
+         if (bytes_hashed + len >= L1_सुसि_LEN) {
 
              /* If some bytes have been passed to the hash function      */
              /* then we want to pass at most (L1_KEY_LEN - bytes_hashed) */
              /* bytes to complete the current nh_block.                  */
              if (bytes_hashed) {
-                 bytes_remaining = (L1_KEY_LEN - bytes_hashed);
-                 nh_update(&ctx->hash, (const UINT8 *)input, bytes_remaining);
+                 bytes_remaining = (L1_सुसि_LEN - bytes_hashed);
+                 nh_update(&ctx->hash, (const UINT8 *)पासोक, bytes_remaining);
                  nh_final(&ctx->hash, nh_result);
-                 ctx->msg_len += bytes_remaining;
+                 ctx->मेनसाहे_len += bytes_remaining;
                  poly_hash(ctx,(UINT32 *)nh_result);
                  len -= bytes_remaining;
-                 input += bytes_remaining;
+                 पासोक += bytes_remaining;
              }
 
              /* Hash directly from input stream if enough bytes */
-             while (len >= L1_KEY_LEN) {
-                 nh(&ctx->hash, (const UINT8 *)input, L1_KEY_LEN,
-                                   L1_KEY_LEN, nh_result);
-                 ctx->msg_len += L1_KEY_LEN;
-                 len -= L1_KEY_LEN;
-                 input += L1_KEY_LEN;
+             while (len >= L1_सुसि_LEN) {
+                 nh(&ctx->hash, (const UINT8 *)पासोक, L1_सुसि_LEN,
+                                   L1_सुसि_LEN, nh_result);
+                 ctx->मेनसाहे_len += L1_सुसि_LEN;
+                 len -= L1_सुसि_LEN;
+                 पासोक += L1_सुसि_LEN;
                  poly_hash(ctx,(UINT32 *)nh_result);
              }
          }
 
          /* pass remaining < L1_KEY_LEN bytes of input data to NH */
          if (len > 0 && (unsigned long)len <= UINT32_MAX) {
-             nh_update(&ctx->hash, (const UINT8 *)input, len);
-             ctx->msg_len += len;
+             nh_update(&ctx->hash, (const UINT8 *)पासोक, len);
+             ctx->मेनसाहे_len += len;
          }
      }
 
@@ -1108,8 +1108,8 @@ static int uhash_final(uhash_ctx_t ctx, u_char *res)
     UINT64 result_buf[STREAMS];
     UINT8 *nh_result = (UINT8 *)&result_buf;
 
-    if (ctx->msg_len > L1_KEY_LEN) {
-        if (ctx->msg_len % L1_KEY_LEN) {
+    if (ctx->मेनसाहे_len > L1_सुसि_LEN) {
+        if (ctx->मेनसाहे_len % L1_सुसि_LEN) {
             nh_final(&ctx->hash, nh_result);
             poly_hash(ctx,(UINT32 *)nh_result);
         }
@@ -1125,7 +1125,7 @@ static int uhash_final(uhash_ctx_t ctx, u_char *res)
 /* ---------------------------------------------------------------------- */
 
 #if 0
-static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
+static int uhash(uhash_ctx_t ahc, u_char *मेनसाहे, long len, u_char *res)
 /* assumes that msg is in a writable buffer of length divisible by */
 /* L1_PAD_BOUNDARY. Bytes beyond msg[len] may be zeroed.           */
 {
@@ -1136,30 +1136,30 @@ static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
     /* If the message to be hashed is no longer than L1_HASH_LEN, we skip
      * the polyhash.
      */
-    if (len <= L1_KEY_LEN) {
+    if (len <= L1_सुसि_LEN) {
 	if (len == 0)                  /* If zero length messages will not */
 		nh_len = L1_PAD_BOUNDARY;  /* be seen, comment out this case   */
 	else
 		nh_len = ((len + (L1_PAD_BOUNDARY - 1)) & ~(L1_PAD_BOUNDARY - 1));
         extra_zeroes_needed = nh_len - len;
-        zero_pad((UINT8 *)msg + len, extra_zeroes_needed);
-        nh(&ahc->hash, (UINT8 *)msg, nh_len, len, nh_result);
+        zero_pad((UINT8 *)मेनसाहे + len, extra_zeroes_needed);
+        nh(&ahc->hash, (UINT8 *)मेनसाहे, nh_len, len, nh_result);
         ip_short(ahc,nh_result, res);
     } else {
         /* Otherwise, we hash each L1_KEY_LEN chunk with NH, passing the NH
          * output to poly_hash().
          */
         do {
-            nh(&ahc->hash, (UINT8 *)msg, L1_KEY_LEN, L1_KEY_LEN, nh_result);
+            nh(&ahc->hash, (UINT8 *)मेनसाहे, L1_सुसि_LEN, L1_सुसि_LEN, nh_result);
             poly_hash(ahc,(UINT32 *)nh_result);
-            len -= L1_KEY_LEN;
-            msg += L1_KEY_LEN;
-        } while (len >= L1_KEY_LEN);
+            len -= L1_सुसि_LEN;
+            मेनसाहे += L1_सुसि_LEN;
+        } while (len >= L1_सुसि_LEN);
         if (len) {
             nh_len = ((len + (L1_PAD_BOUNDARY - 1)) & ~(L1_PAD_BOUNDARY - 1));
             extra_zeroes_needed = nh_len - len;
-            zero_pad((UINT8 *)msg + len, extra_zeroes_needed);
-            nh(&ahc->hash, (UINT8 *)msg, nh_len, len, nh_result);
+            zero_pad((UINT8 *)मेनसाहे + len, extra_zeroes_needed);
+            nh(&ahc->hash, (UINT8 *)मेनसाहे, nh_len, len, nh_result);
             poly_hash(ahc,(UINT32 *)nh_result);
         }
 
@@ -1215,14 +1215,14 @@ int umac_delete(struct umac_ctx *ctx)
 
 /* ---------------------------------------------------------------------- */
 
-struct umac_ctx *umac_new(const u_char key[])
+struct umac_ctx *umac_new(const u_char सुसि[])
 /* Dynamically allocate a umac_ctx struct, initialize variables,
  * generate subkeys from key. Align to 16-byte boundary.
  */
 {
     struct umac_ctx *ctx, *octx;
     size_t bytes_to_add;
-    aes_int_key prf_key;
+    aes_int_सुसि prf_सुसि;
 
     octx = ctx = xcalloc(1, sizeof(*ctx) + ALLOC_BOUNDARY);
     if (ctx) {
@@ -1232,10 +1232,10 @@ struct umac_ctx *umac_new(const u_char key[])
             ctx = (struct umac_ctx *)((u_char *)ctx + bytes_to_add);
         }
         ctx->free_ptr = octx;
-        aes_key_setup(key, prf_key);
-        pdf_init(&ctx->pdf, prf_key);
-        uhash_init(&ctx->hash, prf_key);
-        explicit_bzero(prf_key, sizeof(prf_key));
+        aes_सुसि_setup(सुसि, prf_सुसि);
+        pdf_init(&ctx->pdf, prf_सुसि);
+        uhash_init(&ctx->hash, prf_सुसि);
+        explicit_bzero(prf_सुसि, sizeof(prf_सुसि));
     }
 
     return (ctx);
@@ -1254,24 +1254,24 @@ int umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8])
 
 /* ---------------------------------------------------------------------- */
 
-int umac_update(struct umac_ctx *ctx, const u_char *input, long len)
+int umac_update(struct umac_ctx *ctx, const u_char *पासोक, long len)
 /* Given len bytes of data, we parse it into L1_KEY_LEN chunks and   */
 /* hash each one, calling the PDF on the hashed output whenever the hash- */
 /* output buffer is full.                                                 */
 {
-    uhash_update(&ctx->hash, input, len);
+    uhash_update(&ctx->hash, पासोक, len);
     return (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
 #if 0
-int umac(struct umac_ctx *ctx, u_char *input,
+int umac(struct umac_ctx *ctx, u_char *पासोक,
          long len, u_char tag[],
          u_char nonce[8])
 /* All-in-one version simply calls umac_update() and umac_final().        */
 {
-    uhash(&ctx->hash, input, len, (u_char *)tag);
+    uhash(&ctx->hash, पासोक, len, (u_char *)tag);
     pdf_gen_xor(&ctx->pdf, (UINT8 *)nonce, (UINT8 *)tag);
 
     return (1);

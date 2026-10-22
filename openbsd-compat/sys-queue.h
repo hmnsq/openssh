@@ -461,20 +461,20 @@ struct {								\
 	(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first);	\
 } while (0)
 
-#define XSIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
+#define XSIMPLEQ_इसिंगित_HEAD(head, elm, field) do {			\
 	if (((elm)->field.sqx_next = (head)->sqx_first) ==		\
 	    XSIMPLEQ_XOR(head, NULL))					\
 		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
 	(head)->sqx_first = XSIMPLEQ_XOR(head, (elm));			\
 } while (0)
 
-#define XSIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
+#define XSIMPLEQ_इसिंगित_TAIL(head, elm, field) do {			\
 	(elm)->field.sqx_next = XSIMPLEQ_XOR(head, NULL);		\
 	*(XSIMPLEQ_XOR(head, (head)->sqx_last)) = XSIMPLEQ_XOR(head, (elm)); \
 	(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);	\
 } while (0)
 
-#define XSIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
+#define XSIMPLEQ_इसिंगित_AFTER(head, listelm, elm, field) do {		\
 	if (((elm)->field.sqx_next = (listelm)->field.sqx_next) ==	\
 	    XSIMPLEQ_XOR(head, NULL))					\
 		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \

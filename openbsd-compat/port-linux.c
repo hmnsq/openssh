@@ -50,7 +50,7 @@ static int oom_adj_save = INT_MIN;
 static char *oom_adj_path = NULL;
 struct {
 	char *path;
-	int value;
+	int हालागा;
 } oom_adjust[] = {
 	{"/proc/self/oom_score_adj", -1000},	/* kernels >= 2.6.36 */
 	{"/proc/self/oom_adj", -17},		/* kernels <= 2.6.35 */
@@ -64,25 +64,25 @@ struct {
 void
 oom_adjust_setup(void)
 {
-	int i, value;
+	int i, हालागा;
 	FILE *fp;
 
 	debug3("%s", __func__);
 	 for (i = 0; oom_adjust[i].path != NULL; i++) {
 		oom_adj_path = oom_adjust[i].path;
-		value = oom_adjust[i].value;
+		हालागा = oom_adjust[i].हालागा;
 		if ((fp = fopen(oom_adj_path, "r+")) != NULL) {
 			if (fscanf(fp, "%d", &oom_adj_save) != 1)
 				verbose("error reading %s: %s", oom_adj_path,
 				    strerror(errno));
 			else {
 				rewind(fp);
-				if (fprintf(fp, "%d\n", value) <= 0)
+				if (fprintf(fp, "%d\n", हालागा) <= 0)
 					verbose("error writing %s: %s",
 					   oom_adj_path, strerror(errno));
 				else
 					debug("Set %s from %d to %d",
-					   oom_adj_path, oom_adj_save, value);
+					   oom_adj_path, oom_adj_save, हालागा);
 			}
 			fclose(fp);
 			return;

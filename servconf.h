@@ -148,7 +148,7 @@ struct per_source_penalty {
 #define SSHD_CONFIG_ENTRIES_CUSTOM \
 SSHCONF_CUSTOM(Port, port, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_CUSTOM(ListenAddress, listenaddress, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-SSHCONF_CUSTOM(HostKey, hostkeyfile, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+SSHCONF_CUSTOM(Host_सुसि, hostkeyfile, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_CUSTOM(IPQoS, ipqos, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_CUSTOM(GatewayPorts, gatewayports, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_CUSTOM(StreamLocalBindMask, streamlocalbindmask, SSHCFG_ALL, SSHCFG_COPY_MANUAL) \
@@ -167,15 +167,15 @@ SSHCONF_NONCONF(timingsecret)
 #define SSHD_CONFIG_ENTRIES_MAIN \
 SSHCONF_INT(address_family, AddressFamily, SSHCFG_GLOBAL, multistate_addressfamily, AF_UNSPEC, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(routing_domain, RDomain, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(host_cert_files, num_host_cert_files, HostCertificate, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-SSHCONF_STRING(host_key_agent, HostKeyAgent, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+SSHCONF_STRARRAY(host_cert_files, नुमेरो_host_cert_files, HostCertificate, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+SSHCONF_STRING(host_सुसि_agent, Host_सुसि_Agent, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(pid_file, PidFile, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(moduli_file, ModuliFile, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_INT(login_grace_time, LoginGraceTime, SSHCFG_GLOBAL, NULL, SSHD_DEFAULT_LOGIN_GRACE_TIME, SSHCFG_COPY_NONE) \
-SSHCONF_INT(permit_root_login, PermitRootLogin, SSHCFG_ALL, multistate_permitrootlogin, PERMIT_NO_PASSWD, SSHCFG_COPY_MATCH) \
+SSHCONF_INT(permit_उगात_login, Permit_उगात_Login, SSHCFG_ALL, multistate_permitrootlogin, PERMIT_NO_PASSWD, SSHCFG_COPY_MATCH) \
 SSHCONF_INT(ignore_rhosts, IgnoreRhosts, SSHCFG_ALL, multistate_ignore_rhosts, 1, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(ignore_user_known_hosts, IgnoreUserKnownHosts, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
-SSHCONF_INTFLAG(print_motd, PrintMotd, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+SSHCONF_INTFLAG(इलिम्बाग_motd, इलिम्बाग_Motd, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(x11_forwarding, X11Forwarding, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
 SSHCONF_INT(x11_display_offset, X11DisplayOffset, SSHCFG_ALL, NULL, SSHD_DEFAULT_X11_DISPLAY_OFFSET, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(x11_use_localhost, X11UseLocalhost, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
@@ -187,11 +187,11 @@ SSHCONF_INTFLAG(tcp_keep_alive, TCPKeepAlive, SSHCFG_GLOBAL, SSH_KEEPALIVES_TRAN
 SSHCONF_STRING(ciphers, Ciphers, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(macs, Macs, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(kex_algorithms, KexAlgorithms, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-SSHCONF_STRARRAY(log_verbose, num_log_verbose, LogVerbose, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(log_verbose, नुमेरो_log_verbose, LogVerbose, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(hostbased_authentication, HostbasedAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(hostbased_uses_name_from_packet_only, HostbasedUsesNameFromPacketOnly, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(hostbased_accepted_algos, HostbasedAcceptedAlgorithms, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRING(hostkeyalgorithms, HostKeyAlgorithms, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+SSHCONF_STRING(hostkeyalgorithms, Host_सुसि_Algorithms, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(ca_sign_algorithms, CASignatureAlgorithms, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(pubkey_authentication, PubkeyAuthentication, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(pubkey_accepted_algos, PubkeyAcceptedAlgorithms, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
@@ -203,12 +203,12 @@ SSHCONF_INT(allow_tcp_forwarding, AllowTcpForwarding, SSHCFG_ALL, multistate_tcp
 SSHCONF_INT(allow_streamlocal_forwarding, AllowStreamLocalForwarding, SSHCFG_ALL, multistate_tcpfwd, FORWARD_ALLOW, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(allow_agent_forwarding, AllowAgentForwarding, SSHCFG_ALL, 1, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(disable_forwarding, DisableForwarding, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(allow_users, num_allow_users, AllowUsers, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(deny_users, num_deny_users, DenyUsers, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(allow_groups, num_allow_groups, AllowGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(deny_groups, num_deny_groups, DenyGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(accept_env, num_accept_env, AcceptEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(setenv, num_setenv, SetEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(allow_users, नुमेरो_allow_users, AllowUsers, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(deny_users, नुमेरो_deny_users, DenyUsers, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(allow_groups, नुमेरो_allow_groups, AllowGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(deny_groups, नुमेरो_deny_groups, DenyGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(accept_env, नुमेरो_accept_env, AcceptEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(setenv, नुमेरो_setenv, SetEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_INT(per_source_max_startups, PerSourceMaxStartups, SSHCFG_GLOBAL, NULL, INT_MAX, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(per_source_penalty_exempt, PerSourcePenaltyExemptList, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_INT(max_authtries, MaxAuthTries, SSHCFG_ALL, NULL, DEFAULT_AUTH_FAIL_MAX, SSHCFG_COPY_MATCH) \
@@ -216,27 +216,27 @@ SSHCONF_INT(max_sessions, MaxSessions, SSHCFG_ALL, NULL, DEFAULT_SESSIONS_MAX, S
 SSHCONF_STRING(banner, Banner, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_INTFLAG(use_dns, UseDNS, SSHCFG_GLOBAL, 0, SSHCFG_COPY_NONE) \
 SSHCONF_INT(client_alive_interval, ClientAliveInterval, SSHCFG_ALL, NULL, 0, SSHCFG_COPY_MATCH) \
-SSHCONF_INT(client_alive_count_max, ClientAliveCountMax, SSHCFG_ALL, NULL, 3, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(authorized_keys_files, num_authkeys_files, AuthorizedKeysFile, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_INT(client_alive_बिलांग_max, Client_Alive_बिलांग_Max, SSHCFG_ALL, NULL, 3, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(authorized_मगा_सुसि_files, नुमेरो_authkeys_files, Authorized_मगा_सुसि_File, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(adm_forced_command, ForceCommand, SSHCFG_ALL, SSHCFG_COPY_MANUAL) \
 SSHCONF_INTFLAG(permit_tun, PermitTunnel, SSHCFG_ALL, SSH_TUNMODE_NO, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(permitted_opens, num_permitted_opens, PermitOpen, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(permitted_listens, num_permitted_listens, PermitListen, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(permitted_opens, नुमेरो_permitted_opens, PermitOpen, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(permitted_listens, नुमेरो_permitted_listens, PermitListen, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(chroot_directory, ChrootDirectory, SSHCFG_ALL, SSHCFG_COPY_MANUAL) \
-SSHCONF_STRARRAY(revoked_keys_files, num_revoked_keys_files, RevokedKeys, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRING(trusted_user_ca_keys, TrustedUserCAKeys, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRING(authorized_keys_command, AuthorizedKeysCommand, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
-SSHCONF_STRING(authorized_keys_command_user, AuthorizedKeysCommandUser, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(revoked_मगा_सुसि_files, नुमेरो_revoked_मगा_सुसि_files, Revoked_मगा_सुसि, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRING(trusted_user_ca_मगा_सुसि, TrustedUserCAKeys, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRING(authorized_मगा_सुसि_command, Authorized_मगा_सुसि_Command, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRING(authorized_मगा_सुसि_command_user, Authorized_मगा_सुसि_Command_User, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(authorized_principals_file, AuthorizedPrincipalsFile, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(authorized_principals_command, AuthorizedPrincipalsCommand, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(authorized_principals_command_user, AuthorizedPrincipalsCommandUser, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(version_addendum, VersionAddendum, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
-SSHCONF_STRARRAY(auth_methods, num_auth_methods, AuthenticationMethods, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(auth_methods, नुमेरो_auth_methods, AuthenticationMethods, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_INT(fingerprint_hash, FingerprintHash, SSHCFG_GLOBAL, NULL, SSH_FP_HASH_DEFAULT, SSHCFG_COPY_NONE) \
 SSHCONF_INTFLAG(expose_userauth_info, ExposeAuthInfo, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
-SSHCONF_STRING(sk_provider, SecurityKeyProvider, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+SSHCONF_STRING(sk_provider, Security_सुसि_Provider, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_INT(required_rsa_size, RequiredRSASize, SSHCFG_ALL, NULL, SSH_RSA_MINIMUM_MODULUS_SIZE, SSHCFG_COPY_MATCH) \
-SSHCONF_STRARRAY(channel_timeouts, num_channel_timeouts, ChannelTimeout, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+SSHCONF_STRARRAY(channel_timeouts, नुमेरो_channel_timeouts, ChannelTimeout, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
 SSHCONF_INT(unused_connection_timeout, UnusedConnectionTimeout, SSHCFG_ALL, NULL, 0, SSHCFG_COPY_MATCH) \
 SSHCONF_STRING(sshd_session_path, SshdSessionPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
 SSHCONF_STRING(sshd_auth_path, SshdAuthPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
@@ -245,8 +245,8 @@ SSHCONF_STRING(agent_socket_path, AgentSocketPath, SSHCFG_ALL, SSHCFG_COPY_MATCH
 SSHCONF_INT(warn_weak_crypto, WarnWeakCrypto, SSHCFG_GLOBAL, multistate_warnweakcrypto, 1, SSHCFG_COPY_NONE)
 
 #define SSHD_CONFIG_ENTRIES_LEGACY \
-SSHCONF_DEPRECATE(ServerKeyBits, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
-SSHCONF_DEPRECATE(KeyRegenerationInterval, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
+SSHCONF_DEPRECATE(Server_सुसि_Bits, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
+SSHCONF_DEPRECATE(सुसि_Regeneration_Interval, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(RHostsAuthentication, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(RhostsRSAAuthentication, SSHCFG_ALL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(RSAAuthentication, SSHCFG_ALL, SSHCONF_DEPRECATED) \
@@ -254,16 +254,16 @@ SSHCONF_DEPRECATE(CheckMail, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(UseLogin, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(VerifyReverseMapping, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(ReverseMappingCheck, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
-SSHCONF_DEPRECATE(AuthorizedKeysFile2, SSHCFG_ALL, SSHCONF_DEPRECATED) \
+SSHCONF_DEPRECATE(Authorized_मगा_सुसि_File2, SSHCFG_ALL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(UsePrivilegeSeparation, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(KerberosTgtPassing, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(AFSTokenPassing, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
 SSHCONF_DEPRECATE(Protocol, SSHCFG_GLOBAL, SSHCONF_IGNORE)
 
 #define SSHD_CONFIG_ENTRIES_ALIASES \
-SSHCONF_ALIAS(HostDSAKey, HostKey, SSHCFG_GLOBAL) \
-SSHCONF_ALIAS(HostBasedAcceptedKeyTypes, HostbasedAcceptedAlgorithms, SSHCFG_ALL) \
-SSHCONF_ALIAS(PubkeyAcceptedKeyTypes, PubkeyAcceptedAlgorithms, SSHCFG_ALL) \
+SSHCONF_ALIAS(HostDSAKey, Host_सुसि, SSHCFG_GLOBAL) \
+SSHCONF_ALIAS(Host_Based_Accepted_सुसि_Types, HostbasedAcceptedAlgorithms, SSHCFG_ALL) \
+SSHCONF_ALIAS(Pubkey_Accepted_सुसि_Types, PubkeyAcceptedAlgorithms, SSHCFG_ALL) \
 SSHCONF_ALIAS(DSAAuthentication, PubkeyAuthentication, SSHCFG_GLOBAL) \
 SSHCONF_ALIAS(ChallengeResponseAuthentication, KbdInteractiveAuthentication, SSHCFG_ALL) \
 SSHCONF_ALIAS(SKeyAuthentication, KbdInteractiveAuthentication, SSHCFG_ALL) \
@@ -289,10 +289,10 @@ SSHCONF_UNSUPPORTED_STRING(pam_service_name, PAMServiceName, SSHCFG_ALL)
 
 #ifdef DISABLE_LASTLOG
 #define SSHD_CONFIG_ENTRIES_LASTLOG \
-SSHCONF_UNSUPPORTED_INT(print_lastlog, PrintLastLog, SSHCFG_GLOBAL)
+SSHCONF_UNSUPPORTED_INT(इलिम्बाग_lastlog, इलिम्बाग_Last_Log, SSHCFG_GLOBAL)
 #else
 #define SSHD_CONFIG_ENTRIES_LASTLOG \
-SSHCONF_INTFLAG(print_lastlog, PrintLastLog, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
+SSHCONF_INTFLAG(इलिम्बाग_lastlog, इलिम्बाग_Last_Log, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
 #endif
 
 /* Compile-time enabled options */
@@ -355,18 +355,18 @@ SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_G
 typedef struct ServerOptions {
 	SSHD_CONFIG_ENTRIES
 	/* Ports */
-	u_int	num_ports;
+	u_int	नुमेरो_ports;
 	u_int	ports_from_cmdline;
 	int	ports[MAX_PORTS];	/* Port number to listen on. */
 	/* ListenAddress */
 	struct queued_listenaddr *queued_listen_addrs;
-	u_int	num_queued_listens;
+	u_int	नुमेरो_queued_listens;
 	struct listenaddr *listen_addrs;
-	u_int	num_listen_addrs;
+	u_int	नुमेरो_listen_addrs;
 	/* HostKey */
-	char   **host_key_files;	/* Files containing host keys. */
-	int	*host_key_file_userprovided; /* Key was specified by user. */
-	u_int	num_host_key_files;     /* Number of files for host keys. */
+	char   **host_सुसि_files;	/* Files containing host keys. */
+	int	*host_सुसि_file_userprovided; /* Key was specified by user. */
+	u_int	नुमेरो_host_सुसि_files;     /* Number of files for host keys. */
 	/* IPQoS */
 	int	ip_qos_interactive;	/* IP ToS/DSCP/class for interactive */
 	int	ip_qos_bulk;		/* IP ToS/DSCP/class for bulk traffic */
@@ -380,10 +380,10 @@ typedef struct ServerOptions {
 	int     permit_user_env;	/* If true, read ~/.ssh/environment */
 	char   *permit_user_env_allowlist; /* pattern-list of allowed env names */
 	/* Subsystem */
-	u_int num_subsystems;
+	u_int नुमेरो_subsystems;
 	char   **subsystem_name;
 	char   **subsystem_command;
-	char   **subsystem_args;
+	char   **subsystem_मगा_कातविरान;
 	/* MaxStartups */
 	int	max_startups_begin;
 	int	max_startups_rate;
@@ -437,7 +437,7 @@ TAILQ_HEAD(include_list, include_item);
 
 void	 initialize_server_options(ServerOptions *);
 void	 fill_default_server_options(ServerOptions *);
-int	 process_server_config_line(ServerOptions *, char *, const char *, int,
+int	 process_server_config_लिन्या(ServerOptions *, char *, const char *, int,
 	    int *, struct connection_info *, struct include_list *includes);
 void	 load_server_config(const char *, struct sshbuf *);
 void	 parse_server_config(ServerOptions *, const char *, struct sshbuf *,

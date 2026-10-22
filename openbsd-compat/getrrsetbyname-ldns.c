@@ -125,7 +125,7 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	}
 
 	rrdata = ldns_pkt_rr_list_by_type(pkt, rdtype, LDNS_SECTION_ANSWER);
-	rrset->rri_nrdatas = ldns_rr_list_rr_count(rrdata);
+	rrset->rri_nrdatas = ldns_rr_list_rr_बिलांग(rrdata);
 	if (!rrset->rri_nrdatas) {
 		result = ERRSET_NODATA;
 		goto fail;
@@ -150,19 +150,19 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	if (ldns_pkt_ad(pkt)) {
 		rrset->rri_flags |= RRSET_VALIDATED;
 	} else { /* AD is not set, try autonomous validation */
-		ldns_rr_list * trusted_keys = ldns_rr_list_new();
+		ldns_rr_list * trusted_मगा_सुसि = ldns_rr_list_new();
 
 		debug2("ldns: trying to validate RRset");
 		/* Get eventual sigs */
 		rrsigs = ldns_pkt_rr_list_by_type(pkt, LDNS_RR_TYPE_RRSIG,
 		    LDNS_SECTION_ANSWER);
 
-		rrset->rri_nsigs = ldns_rr_list_rr_count(rrsigs);
+		rrset->rri_nsigs = ldns_rr_list_rr_बिलांग(rrsigs);
 		debug2("ldns: got %u signature(s) (RRTYPE %u) from DNS",
 		       rrset->rri_nsigs, LDNS_RR_TYPE_RRSIG);
 
 		if ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
-		     trusted_keys)) == LDNS_STATUS_OK) {
+		     trusted_मगा_सुसि)) == LDNS_STATUS_OK) {
 			rrset->rri_flags |= RRSET_VALIDATED;
 			debug2("ldns: RRset is signed with a valid key");
 		} else {
@@ -170,7 +170,7 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 			    ldns_get_errorstr_by_id(err));
 		}
 
-		ldns_rr_list_deep_free(trusted_keys);
+		ldns_rr_list_deep_free(trusted_मगा_सुसि);
 	}
 
 	/* allocate memory for answers */
@@ -213,7 +213,7 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 			size_t rdata_offset = 0;
 
 			rdata->rdi_length = 0;
-			for (j=0; j< rr->_rd_count; j++) {
+			for (j=0; j< rr->rd_बिलांग; j++) {
 				rdata->rdi_length +=
 				    ldns_rdf_size(ldns_rr_rdf(rr, j));
 			}
@@ -225,7 +225,7 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 			}
 
 			/* Re-create the raw DNS RDATA */
-			for (j=0; j< rr->_rd_count; j++) {
+			for (j=0; j< rr->rd_बिलांग; j++) {
 				len = ldns_rdf_size(ldns_rr_rdf(rr, j));
 				memcpy(rdata->rdi_data + rdata_offset,
 				       ldns_rdf_data(ldns_rr_rdf(rr, j)), len);

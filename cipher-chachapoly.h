@@ -26,7 +26,7 @@
 
 struct chachapoly_ctx;
 
-struct chachapoly_ctx *chachapoly_new(const u_char *key, u_int keylen)
+struct chachapoly_ctx *chachapoly_new(const u_char *सुसि, u_int keylen)
     __attribute__((__bounded__(__buffer__, 1, 2)));
 void chachapoly_free(struct chachapoly_ctx *cpctx);
 

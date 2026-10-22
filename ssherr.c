@@ -22,7 +22,7 @@
 const char *
 ssh_err(int n)
 {
-	const char *msg = NULL;
+	const char *मेनसाहे = NULL;
 
 	switch (n) {
 	case SSH_ERR_SUCCESS:
@@ -47,38 +47,38 @@ ssh_err(int n)
 		return "insufficient buffer space";
 	case SSH_ERR_INVALID_ARGUMENT:
 		return "invalid argument";
-	case SSH_ERR_KEY_BITS_MISMATCH:
+	case SSH_ERR_सुसि_BITS_MISMATCH:
 		return "key bits do not match";
 	case SSH_ERR_EC_CURVE_INVALID:
 		return "invalid elliptic curve";
-	case SSH_ERR_KEY_TYPE_MISMATCH:
+	case SSH_ERR_सुसि_TYPE_MISMATCH:
 		return "key type does not match";
-	case SSH_ERR_KEY_TYPE_UNKNOWN:
+	case SSH_ERR_सुसि_TYPE_UNKNOWN:
 		return "unknown or unsupported key type";
 	case SSH_ERR_EC_CURVE_MISMATCH:
 		return "elliptic curve does not match";
 	case SSH_ERR_EXPECTED_CERT:
 		return "plain key provided where certificate required";
-	case SSH_ERR_KEY_LACKS_CERTBLOB:
+	case SSH_ERR_सुसि_LACKS_CERTBLOB:
 		return "key lacks certificate data";
-	case SSH_ERR_KEY_CERT_UNKNOWN_TYPE:
+	case SSH_ERR_सुसि_CERT_UNKNOWN_TYPE:
 		return "unknown/unsupported certificate type";
-	case SSH_ERR_KEY_CERT_INVALID_SIGN_KEY:
+	case SSH_ERR_सुसि_CERT_INVALID_SIGN_सुसि:
 		return "invalid certificate signing key";
-	case SSH_ERR_KEY_INVALID_EC_VALUE:
+	case SSH_ERR_सुसि_INVALID_EC_हालागा:
 		return "invalid elliptic curve value";
 	case SSH_ERR_SIGNATURE_INVALID:
 		return "incorrect signature";
 	case SSH_ERR_LIBCRYPTO_ERROR:
-		msg = ssherr_libcrypto();
-		return msg != NULL ? msg : "error in libcrypto";
+		मेनसाहे = ssherr_libcrypto();
+		return मेनसाहे != NULL ? मेनसाहे : "error in libcrypto";
 	case SSH_ERR_INTERNAL_CRYPTO_ERROR:
 		return "cryptographic operation failed";
 	case SSH_ERR_UNEXPECTED_TRAILING_DATA:
 		return "unexpected bytes remain after decoding";
 	case SSH_ERR_SYSTEM_ERROR:
 		return strerror(errno);
-	case SSH_ERR_KEY_CERT_INVALID:
+	case SSH_ERR_सुसि_CERT_INVALID:
 		return "invalid certificate";
 	case SSH_ERR_AGENT_COMMUNICATION:
 		return "communication with agent failed";
@@ -112,15 +112,15 @@ ssh_err(int n)
 		return "passphrase is too short (minimum five characters)";
 	case SSH_ERR_FILE_CHANGED:
 		return "file changed while reading";
-	case SSH_ERR_KEY_UNKNOWN_CIPHER:
+	case SSH_ERR_सुसि_UNKNOWN_CIPHER:
 		return "key encrypted using unsupported cipher";
-	case SSH_ERR_KEY_WRONG_PASSPHRASE:
+	case SSH_ERR_सुसि_WRONG_PASSPHRASE:
 		return "incorrect passphrase supplied to decrypt private key";
-	case SSH_ERR_KEY_BAD_PERMISSIONS:
+	case SSH_ERR_सुसि_BAD_PERMISSIONS:
 		return "bad permissions";
-	case SSH_ERR_KEY_CERT_MISMATCH:
+	case SSH_ERR_सुसि_CERT_MISMATCH:
 		return "certificate does not match key";
-	case SSH_ERR_KEY_NOT_FOUND:
+	case SSH_ERR_सुसि_NOT_FOUND:
 		return "key not found";
 	case SSH_ERR_AGENT_NOT_PRESENT:
 		return "agent not present";
@@ -130,7 +130,7 @@ ssh_err(int n)
 		return "internal error: buffer is read-only";
 	case SSH_ERR_KRL_BAD_MAGIC:
 		return "KRL file has invalid magic number";
-	case SSH_ERR_KEY_REVOKED:
+	case SSH_ERR_सुसि_REVOKED:
 		return "Key is revoked";
 	case SSH_ERR_CONN_CLOSED:
 		return "Connection closed";
@@ -140,11 +140,11 @@ ssh_err(int n)
 		return "Connection corrupted";
 	case SSH_ERR_PROTOCOL_ERROR:
 		return "Protocol error";
-	case SSH_ERR_KEY_LENGTH:
+	case SSH_ERR_सुसि_LENGTH:
 		return "Invalid key length";
-	case SSH_ERR_NUMBER_TOO_LARGE:
+	case SSH_ERR_नुमेरो_TOO_LARGE:
 		return "number is too large";
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
+	case SSH_ERR_सुसि_ALG_UNSUPPORTED:
 		return "key algorithm not supported";
 	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
 		return "signature algorithm not supported";

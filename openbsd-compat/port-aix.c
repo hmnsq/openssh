@@ -59,7 +59,7 @@
 
 #include "port-aix.h"
 
-static char *lastlogin_msg = NULL;
+static char *lastlogin_मेनसाहे = NULL;
 
 # ifdef HAVE_SETAUTHDB
 static char old_registry[REGISTRY_SIZE] = "";
@@ -176,7 +176,7 @@ int
 sys_auth_passwd(struct ssh *ssh, const char *password)
 {
 	Authctxt *ctxt = ssh->authctxt;
-	char *authmsg = NULL, *msg = NULL, *name = ctxt->pw->pw_name;
+	char *authmsg = NULL, *मेनसाहे = NULL, *name = ctxt->pw->pw_name;
 	int r, authsuccess = 0, expired, reenter, result;
 
 	do {
@@ -202,15 +202,15 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 		/*
 		 * Check if the user's password is expired.
 		 */
-		expired = passwdexpired(name, &msg);
-		if (msg && *msg) {
+		expired = passwdexpired(name, &मेनसाहे);
+		if (मेनसाहे && *मेनसाहे) {
 			if ((r = sshbuf_put(ctxt->loginmsg,
-			    msg, strlen(msg))) != 0)
+			    मेनसाहे, strlen(मेनसाहे))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			aix_remove_embedded_newlines(msg);
+			aix_remove_embedded_newlines(मेनसाहे);
 		}
-		debug3("AIX/passwdexpired returned %d msg %.100s", expired, msg);
+		debug3("AIX/passwdexpired returned %d msg %.100s", expired, मेनसाहे);
 
 		switch (expired) {
 		case 0: /* password not expired */
@@ -220,8 +220,8 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 			break;
 		default: /* user can't change(2) or other error (-1) */
 			logit("Password can't be changed for user %s: %.100s",
-			    name, msg);
-			free(msg);
+			    name, मेनसाहे);
+			free(मेनसाहे);
 			authsuccess = 0;
 		}
 
@@ -240,7 +240,7 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 int
 sys_auth_allowed_user(struct passwd *pw, struct sshbuf *loginmsg)
 {
-	char *msg = NULL;
+	char *मेनसाहे = NULL;
 	int r, result, permitted = 0;
 	struct stat st;
 
@@ -254,7 +254,7 @@ sys_auth_allowed_user(struct passwd *pw, struct sshbuf *loginmsg)
 		return 1;
 	}
 
-	result = loginrestrictions(pw->pw_name, S_RLOGIN, NULL, &msg);
+	result = loginrestrictions(pw->pw_name, S_RLOGIN, NULL, &मेनसाहे);
 	if (result == 0)
 		permitted = 1;
 	/*
@@ -264,18 +264,18 @@ sys_auth_allowed_user(struct passwd *pw, struct sshbuf *loginmsg)
 	 */
 	if (result == -1 && errno == EPERM && stat(_PATH_NOLOGIN, &st) == 0)
 		permitted = 1;
-	else if (msg != NULL) {
-		if ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
+	else if (मेनसाहे != NULL) {
+		if ((r = sshbuf_put(loginmsg, मेनसाहे, strlen(मेनसाहे))) != 0)
 			fatal("%s: buffer error: %s", __func__, ssh_err(r));
 	}
-	if (msg == NULL)
-		msg = xstrdup("(none)");
-	aix_remove_embedded_newlines(msg);
-	debug3("AIX/loginrestrictions returned %d msg %.100s", result, msg);
+	if (मेनसाहे == NULL)
+		मेनसाहे = xstrdup("(none)");
+	aix_remove_embedded_newlines(मेनसाहे);
+	debug3("AIX/loginrestrictions returned %d msg %.100s", result, मेनसाहे);
 
 	if (!permitted)
-		logit("Login restricted for %s: %.100s", pw->pw_name, msg);
-	free(msg);
+		logit("Login restricted for %s: %.100s", pw->pw_name, मेनसाहे);
+	free(मेनसाहे);
 	return permitted;
 }
 
@@ -283,16 +283,16 @@ int
 sys_auth_record_login(const char *user, const char *host, const char *ttynm,
     struct sshbuf *loginmsg)
 {
-	char *msg = NULL;
+	char *मेनसाहे = NULL;
 	int success = 0;
 
 	aix_setauthdb(user);
-	if (loginsuccess((char *)user, (char *)host, (char *)ttynm, &msg) == 0) {
+	if (loginsuccess((char *)user, (char *)host, (char *)ttynm, &मेनसाहे) == 0) {
 		success = 1;
-		if (msg != NULL) {
-			debug("AIX/loginsuccess: msg %s", msg);
-			if (lastlogin_msg == NULL)
-				lastlogin_msg = msg;
+		if (मेनसाहे != NULL) {
+			debug("AIX/loginsuccess: msg %s", मेनसाहे);
+			if (lastlogin_मेनसाहे == NULL)
+				lastlogin_मेनसाहे = मेनसाहे;
 		}
 	}
 	aix_restoreauthdb();
@@ -300,12 +300,12 @@ sys_auth_record_login(const char *user, const char *host, const char *ttynm,
 }
 
 char *
-sys_auth_get_lastlogin_msg(const char *user, uid_t uid)
+sys_auth_get_lastlogin_मेनसाहे(const char *user, uid_t uid)
 {
-	char *msg = lastlogin_msg;
+	char *मेनसाहे = lastlogin_मेनसाहे;
 
-	lastlogin_msg = NULL;
-	return msg;
+	lastlogin_मेनसाहे = NULL;
+	return मेनसाहे;
 }
 
 #  ifdef CUSTOM_FAILED_LOGIN

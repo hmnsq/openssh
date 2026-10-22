@@ -13,7 +13,7 @@ Public domain.
 #include <stdlib.h>
 
 struct chacha_ctx {
-	u_int input[16];
+	u_int पासोक[16];
 };
 
 #define CHACHA_MINKEYLEN	16

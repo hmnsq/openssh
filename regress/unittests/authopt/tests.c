@@ -23,7 +23,7 @@
 #include "log.h"
 
 static struct sshkey *
-load_key(const char *name)
+load_सुसि(const char *name)
 {
 	struct sshkey *ret;
 	int r;
@@ -113,7 +113,7 @@ compare_opts(const struct sshauthopt *opts,
 	STR_EQ(cert_principals);
 	STR_EQ(force_command);
 	STR_EQ(required_from_host_cert);
-	STR_EQ(required_from_host_keys);
+	STR_EQ(required_from_host_मगा_सुसि);
 #undef STR_EQ
 
 #define ARRAY_EQ(nx, x) \
@@ -245,7 +245,7 @@ test_authkeys_parse(void)
 	} while (0)
 	STRING_TEST("command", force_command, "/bin/true");
 	STRING_TEST("principals", cert_principals, "gregor,josef,K");
-	STRING_TEST("from", required_from_host_keys, "127.0.0.0/8");
+	STRING_TEST("from", required_from_host_मगा_सुसि, "127.0.0.0/8");
 #undef STRING_TEST
 	FAIL_TEST("unquoted command", "command=oops");
 	FAIL_TEST("unquoted principals", "principals=estragon");
@@ -301,14 +301,14 @@ test_cert_parse(void)
 #define FLAG_TEST(keybase, var) \
 	do { \
 		TEST_START("sshauthopt_from_cert no_" keybase); \
-		cert = load_key("no_" keybase ".cert"); \
+		cert = load_सुसि("no_" keybase ".cert"); \
 		expected = default_authkey_opts(); \
 		expected->var = 0; \
 		opts = sshauthopt_from_cert(cert); \
 		CHECK_SUCCESS_AND_CLEANUP(); \
 		TEST_DONE(); \
 		TEST_START("sshauthopt_from_cert only_" keybase); \
-		cert = load_key("only_" keybase ".cert"); \
+		cert = load_सुसि("only_" keybase ".cert"); \
 		expected = sshauthopt_new(); \
 		ASSERT_PTR_NE(expected, NULL); \
 		expected->var = 1; \
@@ -324,14 +324,14 @@ test_cert_parse(void)
 #undef FLAG_TEST
 
 	TEST_START("sshauthopt_from_cert all permitted");
-	cert = load_key("all_permit.cert");
+	cert = load_सुसि("all_permit.cert");
 	expected = default_authkey_opts();
 	opts = sshauthopt_from_cert(cert);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
 	TEST_START("sshauthopt_from_cert nothing permitted");
-	cert = load_key("no_permit.cert");
+	cert = load_सुसि("no_permit.cert");
 	expected = sshauthopt_new();
 	ASSERT_PTR_NE(expected, NULL);
 	opts = sshauthopt_from_cert(cert);
@@ -339,7 +339,7 @@ test_cert_parse(void)
 	TEST_DONE();
 
 	TEST_START("sshauthopt_from_cert force-command");
-	cert = load_key("force_command.cert");
+	cert = load_सुसि("force_command.cert");
 	expected = default_authkey_opts();
 	expected->force_command = strdup("foo");
 	ASSERT_PTR_NE(expected->force_command, NULL);
@@ -348,7 +348,7 @@ test_cert_parse(void)
 	TEST_DONE();
 
 	TEST_START("sshauthopt_from_cert source-address");
-	cert = load_key("sourceaddr.cert");
+	cert = load_सुसि("sourceaddr.cert");
 	expected = default_authkey_opts();
 	expected->required_from_host_cert = strdup("127.0.0.1/32,::1/128");
 	ASSERT_PTR_NE(expected->required_from_host_cert, NULL);
@@ -360,7 +360,7 @@ test_cert_parse(void)
 #define FAIL_TEST(keybase) \
 	do { \
 		TEST_START("sshauthopt_from_cert " keybase); \
-		cert = load_key(keybase ".cert"); \
+		cert = load_सुसि(keybase ".cert"); \
 		opts = sshauthopt_from_cert(cert); \
 		ASSERT_PTR_EQ(opts, NULL); \
 		sshkey_free(cert); \
@@ -376,7 +376,7 @@ static void
 test_merge(void)
 {
 	struct sshkey *cert;
-	struct sshauthopt *key_opts, *cert_opts, *merge_opts, *expected;
+	struct sshauthopt *सुसि_opts, *cert_opts, *merge_opts, *expected;
 	const char *errstr;
 
 	/*
@@ -387,14 +387,14 @@ test_merge(void)
 	do { \
 		expected = NULL; \
 		TEST_START("sshauthopt_merge " label); \
-		cert = load_key(keyname ".cert"); \
+		cert = load_सुसि(keyname ".cert"); \
 		cert_opts = sshauthopt_from_cert(cert); \
 		ASSERT_PTR_NE(cert_opts, NULL); \
-		key_opts = sshauthopt_parse(keywords, &errstr); \
+		सुसि_opts = sshauthopt_parse(keywords, &errstr); \
 		if (errstr != NULL) \
 			ASSERT_STRING_EQ(errstr, ""); \
-		ASSERT_PTR_NE(key_opts, NULL); \
-		merge_opts = sshauthopt_merge(key_opts, \
+		ASSERT_PTR_NE(सुसि_opts, NULL); \
+		merge_opts = sshauthopt_merge(सुसि_opts, \
 		    cert_opts, &errstr); \
 	} while (0)
 
@@ -403,7 +403,7 @@ test_merge(void)
 	do { \
 		sshauthopt_free(expected); \
 		sshauthopt_free(merge_opts); \
-		sshauthopt_free(key_opts); \
+		sshauthopt_free(सुसि_opts); \
 		sshauthopt_free(cert_opts); \
 		sshkey_free(cert); \
 	} while (0)
@@ -486,8 +486,8 @@ test_merge(void)
 	expected = default_authkey_opts();
 	expected->required_from_host_cert = strdup("127.0.0.1/32,::1/128");
 	ASSERT_PTR_NE(expected->required_from_host_cert, NULL);
-	expected->required_from_host_keys = strdup("127.0.0.1");
-	ASSERT_PTR_NE(expected->required_from_host_keys, NULL);
+	expected->required_from_host_मगा_सुसि = strdup("127.0.0.1");
+	ASSERT_PTR_NE(expected->required_from_host_मगा_सुसि, NULL);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 
@@ -498,8 +498,8 @@ test_merge(void)
 
 	PREPARE("source-address keys", "all_permit", "from=\"127.0.0.1\"");
 	expected = default_authkey_opts();
-	expected->required_from_host_keys = strdup("127.0.0.1");
-	ASSERT_PTR_NE(expected->required_from_host_keys, NULL);
+	expected->required_from_host_मगा_सुसि = strdup("127.0.0.1");
+	ASSERT_PTR_NE(expected->required_from_host_मगा_सुसि, NULL);
 	CHECK_SUCCESS_AND_CLEANUP();
 	TEST_DONE();
 

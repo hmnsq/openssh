@@ -56,13 +56,13 @@ kex_kem_sntrup761x25519_keypair(struct kex *kex)
 	need = crypto_kem_sntrup761_PUBLICKEYBYTES + CURVE25519_SIZE;
 	if ((r = sshbuf_reserve(buf, need, &cp)) != 0)
 		goto out;
-	crypto_kem_sntrup761_keypair(cp, kex->sntrup761_client_key);
+	crypto_kem_sntrup761_keypair(cp, kex->sntrup761_client_सुसि);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key sntrup761:", cp,
 	    crypto_kem_sntrup761_PUBLICKEYBYTES);
 #endif
 	cp += crypto_kem_sntrup761_PUBLICKEYBYTES;
-	kexc25519_keygen(kex->c25519_client_key, cp);
+	kexc25519_keygen(kex->c25519_client_सुसि, cp);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key c25519:", cp, CURVE25519_SIZE);
 #endif
@@ -81,8 +81,8 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 	struct sshbuf *server_blob = NULL;
 	struct sshbuf *buf = NULL;
 	const u_char *client_pub;
-	u_char *kem_key, *ciphertext, *server_pub;
-	u_char server_key[CURVE25519_SIZE];
+	u_char *kem_सुसि, *ciphertext, *server_pub;
+	u_char server_सुसि[CURVE25519_SIZE];
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t need;
 	int r;
@@ -111,7 +111,7 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 		goto out;
 	}
 	if ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
-	    &kem_key)) != 0)
+	    &kem_सुसि)) != 0)
 		goto out;
 	/* allocate space for encrypted KEM key and ECDH pub key */
 	if ((server_blob = sshbuf_new()) == NULL) {
@@ -122,13 +122,13 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 	if ((r = sshbuf_reserve(server_blob, need, &ciphertext)) != 0)
 		goto out;
 	/* generate and encrypt KEM key with client key */
-	crypto_kem_sntrup761_enc(ciphertext, kem_key, client_pub);
+	crypto_kem_sntrup761_enc(ciphertext, kem_सुसि, client_pub);
 	/* generate ECDH key pair, store server pubkey after ciphertext */
 	server_pub = ciphertext + crypto_kem_sntrup761_CIPHERTEXTBYTES;
-	kexc25519_keygen(server_key, server_pub);
+	kexc25519_keygen(server_सुसि, server_pub);
 	/* append ECDH shared key */
 	client_pub += crypto_kem_sntrup761_PUBLICKEYBYTES;
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 1)) < 0)
+	if ((r = kexc25519_shared_सुसि_ext(server_सुसि, client_pub, buf, 1)) < 0)
 		goto out;
 	if ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
 		goto out;
@@ -136,7 +136,7 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
 	dump_digest("server cipher text:", ciphertext,
 	    crypto_kem_sntrup761_CIPHERTEXTBYTES);
-	dump_digest("server kem key:", kem_key, crypto_kem_sntrup761_BYTES);
+	dump_digest("server kem key:", kem_सुसि, crypto_kem_sntrup761_BYTES);
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
@@ -154,7 +154,7 @@ kex_kem_sntrup761x25519_enc(struct kex *kex,
 	buf = NULL;
  out:
 	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(server_key, sizeof(server_key));
+	explicit_bzero(server_सुसि, sizeof(server_सुसि));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
 	return r;
@@ -165,7 +165,7 @@ kex_kem_sntrup761x25519_dec(struct kex *kex,
     const struct sshbuf *server_blob, struct sshbuf **shared_secretp)
 {
 	struct sshbuf *buf = NULL;
-	u_char *kem_key = NULL;
+	u_char *kem_सुसि = NULL;
 	const u_char *ciphertext, *server_pub;
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t need;
@@ -191,17 +191,17 @@ kex_kem_sntrup761x25519_dec(struct kex *kex,
 		goto out;
 	}
 	if ((r = sshbuf_reserve(buf, crypto_kem_sntrup761_BYTES,
-	    &kem_key)) != 0)
+	    &kem_सुसि)) != 0)
 		goto out;
-	decoded = crypto_kem_sntrup761_dec(kem_key, ciphertext,
-	    kex->sntrup761_client_key);
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	decoded = crypto_kem_sntrup761_dec(kem_सुसि, ciphertext,
+	    kex->sntrup761_client_सुसि);
+	if ((r = kexc25519_shared_सुसि_ext(kex->c25519_client_सुसि, server_pub,
 	    buf, 1)) < 0)
 		goto out;
 	if ((r = ssh_digest_buffer(kex->hash_alg, buf, hash, sizeof(hash))) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
-	dump_digest("client kem key:", kem_key, crypto_kem_sntrup761_BYTES);
+	dump_digest("client kem key:", kem_सुसि, crypto_kem_sntrup761_BYTES);
 	dump_digest("concatenation of KEM key and ECDH shared key:",
 	    sshbuf_ptr(buf), sshbuf_len(buf));
 #endif

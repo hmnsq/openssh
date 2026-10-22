@@ -43,7 +43,7 @@ int
 mm_send_fd(int sock, int fd)
 {
 #if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+	struct msghdr मेनसाहे;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
 	union {
 		struct cmsghdr hdr;
@@ -56,15 +56,15 @@ mm_send_fd(int sock, int fd)
 	ssize_t n;
 	struct pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&मेनसाहे, 0, sizeof(मेनसाहे));
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
+	मेनसाहे.मेनसाहे_accrights = (caddr_t)&fd;
+	मेनसाहे.मेनसाहे_accrightslen = sizeof(fd);
 #else
 	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-	cmsg = CMSG_FIRSTHDR(&msg);
+	मेनसाहे.msg_control = (caddr_t)&cmsgbuf.buf;
+	मेनसाहे.msg_controllen = sizeof(cmsgbuf.buf);
+	cmsg = CMSG_FIRSTHDR(&मेनसाहे);
 	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
@@ -73,12 +73,12 @@ mm_send_fd(int sock, int fd)
 
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	मेनसाहे.msg_iov = &vec;
+	मेनसाहे.msg_iovlen = 1;
 
 	pfd.fd = sock;
 	pfd.events = POLLOUT;
-	while ((n = sendmsg(sock, &msg, 0)) == -1 &&
+	while ((n = sendmsg(sock, &मेनसाहे, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("sendmsg(%d): %s", fd, strerror(errno));
 		(void)poll(&pfd, 1, -1);
@@ -103,7 +103,7 @@ int
 mm_receive_fd(int sock)
 {
 #if defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+	struct msghdr मेनसाहे;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
 	union {
 		struct cmsghdr hdr;
@@ -117,23 +117,23 @@ mm_receive_fd(int sock)
 	int fd;
 	struct pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&मेनसाहे, 0, sizeof(मेनसाहे));
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	मेनसाहे.msg_iov = &vec;
+	मेनसाहे.msg_iovlen = 1;
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
+	मेनसाहे.मेनसाहे_accrights = (caddr_t)&fd;
+	मेनसाहे.मेनसाहे_accrightslen = sizeof(fd);
 #else
 	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = &cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
+	मेनसाहे.msg_control = &cmsgbuf.buf;
+	मेनसाहे.msg_controllen = sizeof(cmsgbuf.buf);
 #endif
 
 	pfd.fd = sock;
 	pfd.events = POLLIN;
-	while ((n = recvmsg(sock, &msg, 0)) == -1 &&
+	while ((n = recvmsg(sock, &मेनसाहे, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("recvmsg: %s", strerror(errno));
 		(void)poll(&pfd, 1, -1);
@@ -149,12 +149,12 @@ mm_receive_fd(int sock)
 	}
 
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	if (msg.msg_accrightslen != sizeof(fd)) {
+	if (मेनसाहे.मेनसाहे_accrightslen != sizeof(fd)) {
 		error_f("no fd");
 		return -1;
 	}
 #else
-	cmsg = CMSG_FIRSTHDR(&msg);
+	cmsg = CMSG_FIRSTHDR(&मेनसाहे);
 	if (cmsg == NULL) {
 		error_f("no message header");
 		return -1;

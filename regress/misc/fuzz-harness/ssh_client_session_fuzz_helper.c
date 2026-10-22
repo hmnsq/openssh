@@ -107,7 +107,7 @@ static struct sshkey *
 load_public(const char *str)
 {
 	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
+	struct sshkey *k = sshkey_new(सुसि_UNSPEC);
 	if (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
@@ -130,7 +130,7 @@ pump(struct ssh *from, struct ssh *to, size_t *transferred)
 	buf = ssh_output_ptr(from, &len);
 	if (len == 0)
 		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
+	if ((r = ssh_पासोक_append(to, buf, len)) != 0)
 		return r;
 	if ((r = ssh_output_consume(from, len)) != 0)
 		return r;
@@ -185,7 +185,7 @@ fuzz_reset_authctxt(struct ssh *ssh)
 	g_authctxt.attempt_kbdint = 0;
 	g_authctxt.attempt_passwd = 0;
 	g_authctxt.agent_fd = -1;
-	TAILQ_INIT(&g_authctxt.keys);
+	TAILQ_INIT(&g_authctxt.मगा_सुसि);
 	ssh->authctxt = &g_authctxt;
 }
 
@@ -201,7 +201,7 @@ fuzz_setup(struct ssh *ssh)
 	options.gss_authentication = 0;
 	options.preferred_authentications = strdup("none");
 	options.user = strdup("fuzz");
-	options.number_of_password_prompts = 0;
+	options.नुमेरो_of_password_prompts = 0;
 	options.log_level = SYSLOG_LEVEL_ERROR;
 	options.fingerprint_hash = SSH_DIGEST_SHA256;
 	(void)fill_default_options(&options);
@@ -210,14 +210,14 @@ fuzz_setup(struct ssh *ssh)
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_ignore);
 
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_ACCEPT, &input_userauth_service_accept);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_SUCCESS, &input_userauth_success);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_FAILURE, &input_userauth_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_BANNER, &input_userauth_banner);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, &input_userauth_info_req);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PK_OK, &input_userauth_pk_ok);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ, &input_userauth_passwd_changereq);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_EXT_INFO, kex_पासोक_ext_info);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_SERVICE_ACCEPT, &पासोक_userauth_service_accept);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_SUCCESS, &पासोक_userauth_success);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_FAILURE, &पासोक_userauth_failure);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_BANNER, &पासोक_userauth_banner);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_INFO_REQUEST, &पासोक_userauth_info_req);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_PK_OK, &पासोक_userauth_pk_ok);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_USERAUTH_PASSWD_CHANGEREQ, &पासोक_userauth_passwd_changereq);
 }
 
 static int
@@ -238,7 +238,7 @@ init_once(void)
 	int i;
 	for (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		if (i == PROPOSAL_SERVER_HOST_सुसि_ALGS)
 			p = keyname;
 		else if (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
@@ -271,12 +271,12 @@ init_once(void)
 	return 0;
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_DISCONNECT, SSH2_MSG_IGNORE, SSH2_MSG_UNIMPLEMENTED,
-	SSH2_MSG_DEBUG, SSH2_MSG_SERVICE_ACCEPT, SSH2_MSG_EXT_INFO,
-	SSH2_MSG_USERAUTH_FAILURE, SSH2_MSG_USERAUTH_SUCCESS,
-	SSH2_MSG_USERAUTH_BANNER, SSH2_MSG_USERAUTH_INFO_REQUEST,
-	SSH2_MSG_USERAUTH_PK_OK, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
+static const uint8_t k_मेनसाहे_types[] = {
+	SSH2_मेनसाहे_DISCONNECT, SSH2_मेनसाहे_IGNORE, SSH2_मेनसाहे_UNIMPLEMENTED,
+	SSH2_मेनसाहे_DEBUG, SSH2_मेनसाहे_SERVICE_ACCEPT, SSH2_मेनसाहे_EXT_INFO,
+	SSH2_मेनसाहे_USERAUTH_FAILURE, SSH2_मेनसाहे_USERAUTH_SUCCESS,
+	SSH2_मेनसाहे_USERAUTH_BANNER, SSH2_मेनसाहे_USERAUTH_INFO_REQUEST,
+	SSH2_मेनसाहे_USERAUTH_PK_OK, SSH2_मेनसाहे_USERAUTH_PASSWD_CHANGEREQ,
 };
 
 void
@@ -291,15 +291,15 @@ fuzz_one_message(const uint8_t *data, size_t size)
 	const uint8_t *payload = size > 0 ? data + 1 : NULL;
 	size_t plen = size > 0 ? size - 1 : 0;
 
-	uint8_t msg_type = k_msg_types[selector %
-	    (sizeof(k_msg_types) / sizeof(k_msg_types[0]))];
+	uint8_t मेनसाहे_type = k_मेनसाहे_types[selector %
+	    (sizeof(k_मेनसाहे_types) / sizeof(k_मेनसाहे_types[0]))];
 
 	fuzz_reset_authctxt(g_client);
 
 	in_fuzz = 1;
 	if (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_server, msg_type, payload, plen) != 0)
+		if (ssh_packet_put(g_server, मेनसाहे_type, payload, plen) != 0)
 			goto done;
 		if (pump(g_server, g_client, &transferred) != 0)
 			goto done;

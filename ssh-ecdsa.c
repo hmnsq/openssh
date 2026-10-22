@@ -55,11 +55,11 @@ sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 	int nid = -1;
 	u_int i;
 	const EC_GROUP *g;
-	EC_KEY *ec = NULL;
+	EC_सुसि *ec = NULL;
 	EC_GROUP *eg = NULL;
 
-	if ((ec = EVP_PKEY_get1_EC_KEY(k)) == NULL ||
-	    (g = EC_KEY_get0_group(ec)) == NULL)
+	if ((ec = EVP_PKEY_get1_EC_सुसि(k)) == NULL ||
+	    (g = EC_सुसि_get0_group(ec)) == NULL)
 		goto out;
 	/*
 	 * The group may be stored in a ASN.1 encoded private key in one of two
@@ -85,21 +85,21 @@ sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 
 	/* Use the group with the NID attached */
 	EC_GROUP_set_asn1_flag(eg, OPENSSL_EC_NAMED_CURVE);
-	if (EC_KEY_set_group(ec, eg) != 1 ||
-	    EVP_PKEY_set1_EC_KEY(k, ec) != 1)
+	if (EC_सुसि_set_group(ec, eg) != 1 ||
+	    EVP_PKEY_set1_EC_सुसि(k, ec) != 1)
 		goto out;
 	/* success */
 	nid = nids[i];
  out:
-	EC_KEY_free(ec);
+	EC_सुसि_free(ec);
 	EC_GROUP_free(eg);
 	return nid;
 }
 
 static u_int
-ssh_ecdsa_size(const struct sshkey *key)
+ssh_ecdsa_size(const struct sshkey *सुसि)
 {
-	switch (key->ecdsa_nid) {
+	switch (सुसि->ecdsa_nid) {
 	case NID_X9_62_prime256v1:
 		return 256;
 	case NID_secp384r1:
@@ -127,33 +127,33 @@ ssh_ecdsa_equal(const struct sshkey *a, const struct sshkey *b)
 }
 
 static int
-ssh_ecdsa_serialize_public(const struct sshkey *key, struct sshbuf *b,
+ssh_ecdsa_serialize_public(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if (key->pkey == NULL)
+	if (सुसि->pkey == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
 	if ((r = sshbuf_put_cstring(b,
-	    sshkey_curve_nid_to_name(key->ecdsa_nid))) != 0 ||
-	    (r = sshbuf_put_ec_pkey(b, key->pkey)) != 0)
+	    sshkey_curve_nid_to_name(सुसि->ecdsa_nid))) != 0 ||
+	    (r = sshbuf_put_ec_pkey(b, सुसि->pkey)) != 0)
 		return r;
 
 	return 0;
 }
 
 static int
-ssh_ecdsa_serialize_private(const struct sshkey *key, struct sshbuf *b,
+ssh_ecdsa_serialize_private(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_serialize_public(key, b, opts)) != 0)
+	if (!sshkey_is_cert(सुसि)) {
+		if ((r = ssh_ecdsa_serialize_public(सुसि, b, opts)) != 0)
 			return r;
 	}
 	if ((r = sshbuf_put_bignum2(b,
-	    EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(key->pkey)))) != 0)
+	    EC_सुसि_get0_private_सुसि(EVP_PKEY_get0_EC_सुसि(सुसि->pkey)))) != 0)
 		return r;
 	return 0;
 }
@@ -166,7 +166,7 @@ ssh_ecdsa_generate(struct sshkey *k, int bits)
 	int ret = SSH_ERR_INTERNAL_ERROR;
 
 	if ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
-		return SSH_ERR_KEY_LENGTH;
+		return SSH_ERR_सुसि_LENGTH;
 
 	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL)) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
@@ -190,19 +190,19 @@ ssh_ecdsa_generate(struct sshkey *k, int bits)
 static int
 ssh_ecdsa_copy_public(const struct sshkey *from, struct sshkey *to)
 {
-	const EC_KEY *ec_from;
-	EC_KEY *ec_to = NULL;
+	const EC_सुसि *ec_from;
+	EC_सुसि *ec_to = NULL;
 	int ret = SSH_ERR_INTERNAL_ERROR;
 
-	ec_from = EVP_PKEY_get0_EC_KEY(from->pkey);
+	ec_from = EVP_PKEY_get0_EC_सुसि(from->pkey);
 	if (ec_from == NULL)
 		return SSH_ERR_LIBCRYPTO_ERROR;
 
 	to->ecdsa_nid = from->ecdsa_nid;
-	if ((ec_to = EC_KEY_new_by_curve_name(from->ecdsa_nid)) == NULL)
+	if ((ec_to = EC_सुसि_new_by_curve_name(from->ecdsa_nid)) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if (EC_KEY_set_public_key(ec_to,
-	    EC_KEY_get0_public_key(ec_from)) != 1) {
+	if (EC_सुसि_set_public_सुसि(ec_to,
+	    EC_सुसि_get0_public_सुसि(ec_from)) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -211,64 +211,64 @@ ssh_ecdsa_copy_public(const struct sshkey *from, struct sshkey *to)
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(to->pkey, ec_to) != 1) {
+	if (EVP_PKEY_set1_EC_सुसि(to->pkey, ec_to) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	ret = 0;
  out:
-	EC_KEY_free(ec_to);
+	EC_सुसि_free(ec_to);
 	return ret;
 }
 
 static int
 ssh_ecdsa_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	int r;
 	char *curve = NULL;
 	EVP_PKEY *pkey = NULL;
-	EC_KEY *ec = NULL;
+	EC_सुसि *ec = NULL;
 
-	if ((key->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
+	if ((सुसि->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
 		return SSH_ERR_INVALID_ARGUMENT;
 	if ((r = sshbuf_get_cstring(b, &curve, NULL)) != 0)
 		goto out;
-	if (key->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
+	if (सुसि->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
 		r = SSH_ERR_EC_CURVE_MISMATCH;
 		goto out;
 	}
-	if ((ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL) {
+	if ((ec = EC_सुसि_new_by_curve_name(सुसि->ecdsa_nid)) == NULL) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	if ((r = sshbuf_get_eckey(b, ec)) != 0)
 		goto out;
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec)) != 0) {
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
+	if (sshkey_ec_validate_public(EC_सुसि_get0_group(ec),
+	    EC_सुसि_get0_public_सुसि(ec)) != 0) {
+		r = SSH_ERR_सुसि_INVALID_EC_हालागा;
 		goto out;
 	}
 	if ((pkey = EVP_PKEY_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(pkey, ec) != 1) {
+	if (EVP_PKEY_set1_EC_सुसि(pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	EVP_PKEY_free(key->pkey);
-	key->pkey = pkey;
+	EVP_PKEY_free(सुसि->pkey);
+	सुसि->pkey = pkey;
 	pkey = NULL;
 	/* success */
 	r = 0;
 #ifdef DEBUG_PK
 	sshkey_dump_ec_point(
-	    EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(key->pkey)),
-	    EC_KEY_get0_public_key(EVP_PKEY_get0_EC_KEY(key->pkey)));
+	    EC_सुसि_get0_group(EVP_PKEY_get0_EC_सुसि(सुसि->pkey)),
+	    EC_सुसि_get0_public_सुसि(EVP_PKEY_get0_EC_सुसि(सुसि->pkey)));
 #endif
  out:
-	EC_KEY_free(ec);
+	EC_सुसि_free(ec);
 	EVP_PKEY_free(pkey);
 	free(curve);
 	return r;
@@ -276,29 +276,29 @@ ssh_ecdsa_deserialize_public(const char *ktype, struct sshbuf *b,
 
 static int
 ssh_ecdsa_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	int r;
 	BIGNUM *exponent = NULL;
-	EC_KEY *ec = NULL;
+	EC_सुसि *ec = NULL;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_deserialize_public(ktype, b, key)) != 0)
+	if (!sshkey_is_cert(सुसि)) {
+		if ((r = ssh_ecdsa_deserialize_public(ktype, b, सुसि)) != 0)
 			return r;
 	}
 	if ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
 		goto out;
-	if ((ec = EVP_PKEY_get1_EC_KEY(key->pkey)) == NULL) {
+	if ((ec = EVP_PKEY_get1_EC_सुसि(सुसि->pkey)) == NULL) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if (EC_KEY_set_private_key(ec, exponent) != 1) {
+	if (EC_सुसि_set_private_सुसि(ec, exponent) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	if ((r = sshkey_ec_validate_private(ec)) != 0)
 		goto out;
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	if (EVP_PKEY_set1_EC_सुसि(सुसि->pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -306,12 +306,12 @@ ssh_ecdsa_deserialize_private(const char *ktype, struct sshbuf *b,
 	r = 0;
  out:
 	BN_clear_free(exponent);
-	EC_KEY_free(ec);
+	EC_सुसि_free(ec);
 	return r;
 }
 
 static int
-ssh_ecdsa_sign(struct sshkey *key,
+ssh_ecdsa_sign(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t dlen,
     const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
@@ -329,14 +329,14 @@ ssh_ecdsa_sign(struct sshkey *key,
 	if (sigp != NULL)
 		*sigp = NULL;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA)
+	if (सुसि == NULL || सुसि->pkey == NULL ||
+	    sshkey_type_plain(सुसि->type) != सुसि_ECDSA)
 		return SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
+	if ((hash_alg = sshkey_ec_nid_to_hash_alg(सुसि->ecdsa_nid)) == -1)
 		return SSH_ERR_INTERNAL_ERROR;
 
-	if ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sigb, &slen,
+	if ((ret = sshkey_pkey_digest_sign(सुसि->pkey, hash_alg, &sigb, &slen,
 	    data, dlen)) != 0)
 		goto out;
 
@@ -347,7 +347,7 @@ ssh_ecdsa_sign(struct sshkey *key,
 	}
 	ECDSA_SIG_get0(esig, &sig_r, &sig_s);
 
-	if ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
+	if ((ret = ssh_ecdsa_encode_store_sig(सुसि, sig_r, sig_s,
 	    sigp, lenp)) != 0)
 		goto out;
 	/* success */
@@ -359,7 +359,7 @@ ssh_ecdsa_sign(struct sshkey *key,
 }
 
 int
-ssh_ecdsa_encode_store_sig(const struct sshkey *key,
+ssh_ecdsa_encode_store_sig(const struct sshkey *सुसि,
     const BIGNUM *sig_r, const BIGNUM *sig_s,
     u_char **sigp, size_t *lenp)
 {
@@ -379,7 +379,7 @@ ssh_ecdsa_encode_store_sig(const struct sshkey *key,
 	if ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
 	    (ret = sshbuf_put_bignum2(bb, sig_s)) != 0)
 		goto out;
-	if ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(key))) != 0 ||
+	if ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(सुसि))) != 0 ||
 	    (ret = sshbuf_put_stringb(b, bb)) != 0)
 		goto out;
 	len = sshbuf_len(b);
@@ -400,7 +400,7 @@ ssh_ecdsa_encode_store_sig(const struct sshkey *key,
 }
 
 static int
-ssh_ecdsa_verify(const struct sshkey *key,
+ssh_ecdsa_verify(const struct sshkey *सुसि,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
     struct sshkey_sig_details **detailsp)
@@ -413,12 +413,12 @@ ssh_ecdsa_verify(const struct sshkey *key,
 	char *ktype = NULL;
 	unsigned char *sigb = NULL, *cp;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA ||
+	if (सुसि == NULL || सुसि->pkey == NULL ||
+	    sshkey_type_plain(सुसि->type) != सुसि_ECDSA ||
 	    sig == NULL || siglen == 0)
 		return SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
+	if ((hash_alg = sshkey_ec_nid_to_hash_alg(सुसि->ecdsa_nid)) == -1)
 		return SSH_ERR_INTERNAL_ERROR;
 
 	/* fetch signature */
@@ -429,8 +429,8 @@ ssh_ecdsa_verify(const struct sshkey *key,
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
-		ret = SSH_ERR_KEY_TYPE_MISMATCH;
+	if (strcmp(sshkey_ssh_name_plain(सुसि), ktype) != 0) {
+		ret = SSH_ERR_सुसि_TYPE_MISMATCH;
 		goto out;
 	}
 	if (sshbuf_len(b) != 0) {
@@ -473,7 +473,7 @@ ssh_ecdsa_verify(const struct sshkey *key,
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((ret = sshkey_pkey_digest_verify(key->pkey, hash_alg,
+	if ((ret = sshkey_pkey_digest_verify(सुसि->pkey, hash_alg,
 	    data, dlen, sigb, len)) != 0)
 		goto out;
 	/* success */
@@ -508,7 +508,7 @@ const struct sshkey_impl sshkey_ecdsa_nistp256_impl = {
 	/* .name = */		"ecdsa-sha2-nistp256",
 	/* .shortname = */	"ECDSA",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .type = */		सुसि_ECDSA,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -520,7 +520,7 @@ const struct sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .type = */		सुसि_ECDSA_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -532,7 +532,7 @@ const struct sshkey_impl sshkey_ecdsa_nistp384_impl = {
 	/* .name = */		"ecdsa-sha2-nistp384",
 	/* .shortname = */	"ECDSA",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .type = */		सुसि_ECDSA,
 	/* .nid = */		NID_secp384r1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -544,7 +544,7 @@ const struct sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp384-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .type = */		सुसि_ECDSA_CERT,
 	/* .nid = */		NID_secp384r1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -556,7 +556,7 @@ const struct sshkey_impl sshkey_ecdsa_nistp521_impl = {
 	/* .name = */		"ecdsa-sha2-nistp521",
 	/* .shortname = */	"ECDSA",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .type = */		सुसि_ECDSA,
 	/* .nid = */		NID_secp521r1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -568,7 +568,7 @@ const struct sshkey_impl sshkey_ecdsa_nistp521_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp521-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .type = */		सुसि_ECDSA_CERT,
 	/* .nid = */		NID_secp521r1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

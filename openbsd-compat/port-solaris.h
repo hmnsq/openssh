@@ -28,8 +28,8 @@ void solaris_set_default_project(struct passwd *);
 #include <priv.h>
 priv_set_t *solaris_basic_privset(void);
 void solaris_drop_privs_pinfo_net_fork_exec(void);
-void solaris_drop_privs_root_pinfo_net(void);
-void solaris_drop_privs_root_pinfo_net_exec(void);
+void solaris_drop_privs_उगात_pinfo_net(void);
+void solaris_drop_privs_उगात_pinfo_net_exec(void);
 # endif /* USE_SOLARIS_PRIVS */
 
 #endif

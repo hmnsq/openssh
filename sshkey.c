@@ -177,7 +177,7 @@ sshkey_impl_from_type_nid(int type, int nid)
 }
 
 static const struct sshkey_impl *
-sshkey_impl_from_key(const struct sshkey *k)
+sshkey_impl_from_सुसि(const struct sshkey *k)
 {
 	if (k == NULL)
 		return NULL;
@@ -189,7 +189,7 @@ sshkey_type(const struct sshkey *k)
 {
 	const struct sshkey_impl *impl;
 
-	if ((impl = sshkey_impl_from_key(k)) == NULL)
+	if ((impl = sshkey_impl_from_सुसि(k)) == NULL)
 		return "unknown";
 	return impl->shortname;
 }
@@ -242,7 +242,7 @@ type_from_name(const char *name, int allow_short)
 		    strcasecmp(impl->shortname, name) == 0)
 			return impl->type;
 	}
-	return KEY_UNSPEC;
+	return सुसि_UNSPEC;
 }
 
 int
@@ -258,13 +258,13 @@ sshkey_type_from_shortname(const char *name)
 }
 
 static int
-key_type_is_ecdsa_variant(int type)
+सुसि_type_is_ecdsa_variant(int type)
 {
 	switch (type) {
-	case KEY_ECDSA:
-	case KEY_ECDSA_CERT:
-	case KEY_ECDSA_SK:
-	case KEY_ECDSA_SK_CERT:
+	case सुसि_ECDSA:
+	case सुसि_ECDSA_CERT:
+	case सुसि_ECDSA_SK:
+	case सुसि_ECDSA_SK_CERT:
 		return 1;
 	}
 	return 0;
@@ -276,7 +276,7 @@ sshkey_ecdsa_nid_from_name(const char *name)
 	int i;
 
 	for (i = 0; keyimpls[i] != NULL; i++) {
-		if (!key_type_is_ecdsa_variant(keyimpls[i]->type))
+		if (!सुसि_type_is_ecdsa_variant(keyimpls[i]->type))
 			continue;
 		if (keyimpls[i]->name != NULL &&
 		    strcmp(name, keyimpls[i]->name) == 0)
@@ -291,25 +291,25 @@ sshkey_match_keyname_to_sigalgs(const char *keyname, const char *sigalgs)
 	int ktype;
 
 	if (sigalgs == NULL || *sigalgs == '\0' ||
-	    (ktype = sshkey_type_from_name(keyname)) == KEY_UNSPEC)
+	    (ktype = sshkey_type_from_name(keyname)) == सुसि_UNSPEC)
 		return 0;
-	else if (ktype == KEY_RSA) {
+	else if (ktype == सुसि_RSA) {
 		return match_pattern_list("ssh-rsa", sigalgs, 0) == 1 ||
 		    match_pattern_list("rsa-sha2-256", sigalgs, 0) == 1 ||
 		    match_pattern_list("rsa-sha2-512", sigalgs, 0) == 1;
-	} else if (ktype == KEY_RSA_CERT) {
+	} else if (ktype == सुसि_RSA_CERT) {
 		return match_pattern_list("ssh-rsa-cert-v01@openssh.com",
 		    sigalgs, 0) == 1 ||
 		    match_pattern_list("rsa-sha2-256-cert-v01@openssh.com",
 		    sigalgs, 0) == 1 ||
 		    match_pattern_list("rsa-sha2-512-cert-v01@openssh.com",
 		    sigalgs, 0) == 1;
-	} else if (ktype == KEY_ECDSA_SK) {
+	} else if (ktype == सुसि_ECDSA_SK) {
 		return match_pattern_list("sk-ecdsa-sha2-nistp256@openssh.com",
 		    sigalgs, 0) == 1 || match_pattern_list(
 		    "webauthn-sk-ecdsa-sha2-nistp256@openssh.com",
 		    sigalgs, 0) == 1;
-	} else if (ktype == KEY_ECDSA_SK_CERT) {
+	} else if (ktype == सुसि_ECDSA_SK_CERT) {
 		return match_pattern_list(
 		    "sk-ecdsa-sha2-nistp256-cert-v01@openssh.com",
 		    sigalgs, 0) == 1 || match_pattern_list(
@@ -354,7 +354,7 @@ sshkey_names_valid2(const char *names, int allow_wildcard, int plain_only)
 	for ((p = strsep(&cp, ",")); p && *p != '\0';
 	    (p = strsep(&cp, ","))) {
 		type = sshkey_type_from_name(p);
-		if (type == KEY_UNSPEC) {
+		if (type == सुसि_UNSPEC) {
 			if (allow_wildcard) {
 				/*
 				 * Try matching key types against the string.
@@ -388,7 +388,7 @@ sshkey_size(const struct sshkey *k)
 {
 	const struct sshkey_impl *impl;
 
-	if ((impl = sshkey_impl_from_key(k)) == NULL)
+	if ((impl = sshkey_impl_from_सुसि(k)) == NULL)
 		return 0;
 	if (impl->funcs->size != NULL)
 		return impl->funcs->size(k);
@@ -420,8 +420,8 @@ sshkey_is_sk(const struct sshkey *k)
 	if (k == NULL)
 		return 0;
 	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
-	case KEY_ED25519_SK:
+	case सुसि_ECDSA_SK:
+	case सुसि_ED25519_SK:
 		return 1;
 	default:
 		return 0;
@@ -433,18 +433,18 @@ int
 sshkey_type_plain(int type)
 {
 	switch (type) {
-	case KEY_RSA_CERT:
-		return KEY_RSA;
-	case KEY_ECDSA_CERT:
-		return KEY_ECDSA;
-	case KEY_ECDSA_SK_CERT:
-		return KEY_ECDSA_SK;
-	case KEY_ED25519_CERT:
-		return KEY_ED25519;
-	case KEY_MLDSA44_ED25519_CERT:
-		return KEY_MLDSA44_ED25519;
-	case KEY_ED25519_SK_CERT:
-		return KEY_ED25519_SK;
+	case सुसि_RSA_CERT:
+		return सुसि_RSA;
+	case सुसि_ECDSA_CERT:
+		return सुसि_ECDSA;
+	case सुसि_ECDSA_SK_CERT:
+		return सुसि_ECDSA_SK;
+	case सुसि_ED25519_CERT:
+		return सुसि_ED25519;
+	case सुसि_MLDSA44_ED25519_CERT:
+		return सुसि_MLDSA44_ED25519;
+	case सुसि_ED25519_SK_CERT:
+		return सुसि_ED25519_SK;
 	default:
 		return type;
 	}
@@ -455,18 +455,18 @@ static int
 sshkey_type_certified(int type)
 {
 	switch (type) {
-	case KEY_RSA:
-		return KEY_RSA_CERT;
-	case KEY_ECDSA:
-		return KEY_ECDSA_CERT;
-	case KEY_ECDSA_SK:
-		return KEY_ECDSA_SK_CERT;
-	case KEY_ED25519:
-		return KEY_ED25519_CERT;
-	case KEY_MLDSA44_ED25519:
-		return KEY_MLDSA44_ED25519_CERT;
-	case KEY_ED25519_SK:
-		return KEY_ED25519_SK_CERT;
+	case सुसि_RSA:
+		return सुसि_RSA_CERT;
+	case सुसि_ECDSA:
+		return सुसि_ECDSA_CERT;
+	case सुसि_ECDSA_SK:
+		return सुसि_ECDSA_SK_CERT;
+	case सुसि_ED25519:
+		return सुसि_ED25519_CERT;
+	case सुसि_MLDSA44_ED25519:
+		return सुसि_MLDSA44_ED25519_CERT;
+	case सुसि_ED25519_SK:
+		return सुसि_ED25519_SK_CERT;
 	default:
 		return -1;
 	}
@@ -652,11 +652,11 @@ cert_free(struct sshkey_cert *cert)
 	sshbuf_free(cert->certblob);
 	sshbuf_free(cert->critical);
 	sshbuf_free(cert->extensions);
-	free(cert->key_id);
+	free(cert->सुसि_id);
 	for (i = 0; i < cert->nprincipals; i++)
 		free(cert->principals[i]);
 	free(cert->principals);
-	sshkey_free(cert->signature_key);
+	sshkey_free(cert->signature_सुसि);
 	free(cert->signature_type);
 	freezero(cert, sizeof(*cert));
 }
@@ -674,9 +674,9 @@ cert_new(void)
 		cert_free(cert);
 		return NULL;
 	}
-	cert->key_id = NULL;
+	cert->सुसि_id = NULL;
 	cert->principals = NULL;
-	cert->signature_key = NULL;
+	cert->signature_सुसि = NULL;
 	cert->signature_type = NULL;
 	return cert;
 }
@@ -687,7 +687,7 @@ sshkey_new(int type)
 	struct sshkey *k;
 	const struct sshkey_impl *impl = NULL;
 
-	if (type != KEY_UNSPEC &&
+	if (type != सुसि_UNSPEC &&
 	    (impl = sshkey_impl_from_type(type)) == NULL)
 		return NULL;
 
@@ -717,10 +717,10 @@ void
 sshkey_sk_cleanup(struct sshkey *k)
 {
 	free(k->sk_application);
-	sshbuf_free(k->sk_key_handle);
+	sshbuf_free(k->sk_सुसि_handle);
 	sshbuf_free(k->sk_reserved);
 	k->sk_application = NULL;
-	k->sk_key_handle = k->sk_reserved = NULL;
+	k->sk_सुसि_handle = k->sk_reserved = NULL;
 }
 
 #if defined(MAP_CONCEAL)
@@ -771,7 +771,7 @@ sshkey_free_contents(struct sshkey *k)
 	if (k == NULL)
 		return;
 	if ((k->flags & SSHKEY_FLAG_EXT) != 0)
-		pkcs11_key_free(k);
+		pkcs11_सुसि_free(k);
 	if ((impl = sshkey_impl_from_type(k->type)) != NULL &&
 	    impl->funcs->cleanup != NULL)
 		impl->funcs->cleanup(k);
@@ -846,56 +846,56 @@ sshkey_equal(const struct sshkey *a, const struct sshkey *b)
 
 /* Serialise common FIDO key parts */
 int
-sshkey_serialize_sk(const struct sshkey *key, struct sshbuf *b)
+sshkey_serialize_sk(const struct sshkey *सुसि, struct sshbuf *b)
 {
 	int r;
 
-	if ((r = sshbuf_put_cstring(b, key->sk_application)) != 0)
+	if ((r = sshbuf_put_cstring(b, सुसि->sk_application)) != 0)
 		return r;
 
 	return 0;
 }
 
 static int
-to_blob_buf(const struct sshkey *key, struct sshbuf *b, int force_plain,
+to_blob_buf(const struct sshkey *सुसि, struct sshbuf *b, int force_plain,
   enum sshkey_serialize_rep opts)
 {
 	int type, ret = SSH_ERR_INTERNAL_ERROR;
 	const char *typename;
 	const struct sshkey_impl *impl;
 
-	if (key == NULL)
+	if (सुसि == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
 
-	type = force_plain ? sshkey_type_plain(key->type) : key->type;
+	type = force_plain ? sshkey_type_plain(सुसि->type) : सुसि->type;
 
 	if (sshkey_type_is_cert(type)) {
-		if (key->cert == NULL)
+		if (सुसि->cert == NULL)
 			return SSH_ERR_EXPECTED_CERT;
-		if (sshbuf_len(key->cert->certblob) == 0)
-			return SSH_ERR_KEY_LACKS_CERTBLOB;
+		if (sshbuf_len(सुसि->cert->certblob) == 0)
+			return SSH_ERR_सुसि_LACKS_CERTBLOB;
 		/* Use the existing blob */
-		if ((ret = sshbuf_putb(b, key->cert->certblob)) != 0)
+		if ((ret = sshbuf_putb(b, सुसि->cert->certblob)) != 0)
 			return ret;
 		return 0;
 	}
 	if ((impl = sshkey_impl_from_type(type)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
 
-	typename = sshkey_ssh_name_from_type_nid(type, key->ecdsa_nid);
+	typename = sshkey_ssh_name_from_type_nid(type, सुसि->ecdsa_nid);
 	if ((ret = sshbuf_put_cstring(b, typename)) != 0)
 		return ret;
-	return impl->funcs->serialize_public(key, b, opts);
+	return impl->funcs->serialize_public(सुसि, b, opts);
 }
 
 int
-sshkey_putb(const struct sshkey *key, struct sshbuf *b)
+sshkey_putb(const struct sshkey *सुसि, struct sshbuf *b)
 {
-	return to_blob_buf(key, b, 0, SSHKEY_SERIALIZE_DEFAULT);
+	return to_blob_buf(सुसि, b, 0, SSHKEY_SERIALIZE_DEFAULT);
 }
 
 static int
-sshkey_puts_opts_internal(const struct sshkey *key, struct sshbuf *b,
+sshkey_puts_opts_internal(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts, int force_plain)
 {
 	struct sshbuf *tmp;
@@ -903,7 +903,7 @@ sshkey_puts_opts_internal(const struct sshkey *key, struct sshbuf *b,
 
 	if ((tmp = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	r = to_blob_buf(key, tmp, force_plain, opts);
+	r = to_blob_buf(सुसि, tmp, force_plain, opts);
 	if (r == 0)
 		r = sshbuf_put_stringb(b, tmp);
 	sshbuf_free(tmp);
@@ -911,25 +911,25 @@ sshkey_puts_opts_internal(const struct sshkey *key, struct sshbuf *b,
 }
 
 int
-sshkey_puts(const struct sshkey *key, struct sshbuf *b)
+sshkey_puts(const struct sshkey *सुसि, struct sshbuf *b)
 {
-	return sshkey_puts_opts_internal(key, b, SSHKEY_SERIALIZE_DEFAULT, 0);
+	return sshkey_puts_opts_internal(सुसि, b, SSHKEY_SERIALIZE_DEFAULT, 0);
 }
 
 int
-sshkey_putb_plain(const struct sshkey *key, struct sshbuf *b)
+sshkey_putb_plain(const struct sshkey *सुसि, struct sshbuf *b)
 {
-	return to_blob_buf(key, b, 1, SSHKEY_SERIALIZE_DEFAULT);
+	return to_blob_buf(सुसि, b, 1, SSHKEY_SERIALIZE_DEFAULT);
 }
 
 int
-sshkey_puts_plain(const struct sshkey *key, struct sshbuf *b)
+sshkey_puts_plain(const struct sshkey *सुसि, struct sshbuf *b)
 {
-	return sshkey_puts_opts_internal(key, b, SSHKEY_SERIALIZE_DEFAULT, 1);
+	return sshkey_puts_opts_internal(सुसि, b, SSHKEY_SERIALIZE_DEFAULT, 1);
 }
 
 static int
-to_blob(const struct sshkey *key, u_char **blobp, size_t *lenp, int force_plain,
+to_blob(const struct sshkey *सुसि, u_char **blobp, size_t *lenp, int force_plain,
     enum sshkey_serialize_rep opts)
 {
 	int ret = SSH_ERR_INTERNAL_ERROR;
@@ -942,7 +942,7 @@ to_blob(const struct sshkey *key, u_char **blobp, size_t *lenp, int force_plain,
 		*blobp = NULL;
 	if ((b = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((ret = to_blob_buf(key, b, force_plain, opts)) != 0)
+	if ((ret = to_blob_buf(सुसि, b, force_plain, opts)) != 0)
 		goto out;
 	len = sshbuf_len(b);
 	if (lenp != NULL)
@@ -961,15 +961,15 @@ to_blob(const struct sshkey *key, u_char **blobp, size_t *lenp, int force_plain,
 }
 
 int
-sshkey_to_blob(const struct sshkey *key, u_char **blobp, size_t *lenp)
+sshkey_to_blob(const struct sshkey *सुसि, u_char **blobp, size_t *lenp)
 {
-	return to_blob(key, blobp, lenp, 0, SSHKEY_SERIALIZE_DEFAULT);
+	return to_blob(सुसि, blobp, lenp, 0, SSHKEY_SERIALIZE_DEFAULT);
 }
 
 int
-sshkey_plain_to_blob(const struct sshkey *key, u_char **blobp, size_t *lenp)
+sshkey_plain_to_blob(const struct sshkey *सुसि, u_char **blobp, size_t *lenp)
 {
-	return to_blob(key, blobp, lenp, 1, SSHKEY_SERIALIZE_DEFAULT);
+	return to_blob(सुसि, blobp, lenp, 1, SSHKEY_SERIALIZE_DEFAULT);
 }
 
 int
@@ -1160,13 +1160,13 @@ fingerprint_randomart(const char *alg, u_char *dgst_raw, size_t dgst_raw_len,
 
 	/* process raw key */
 	for (i = 0; i < dgst_raw_len; i++) {
-		int input;
+		int पासोक;
 		/* each byte conveys four 2-bit move commands */
-		input = dgst_raw[i];
+		पासोक = dgst_raw[i];
 		for (b = 0; b < 4; b++) {
 			/* evaluate 2 bit, rest is shifted later */
-			x += (input & 0x1) ? 1 : -1;
-			y += (input & 0x2) ? 1 : -1;
+			x += (पासोक & 0x1) ? 1 : -1;
+			y += (पासोक & 0x2) ? 1 : -1;
 
 			/* assure we are still in bounds */
 			x = MAXIMUM(x, 0);
@@ -1177,7 +1177,7 @@ fingerprint_randomart(const char *alg, u_char *dgst_raw, size_t dgst_raw_len,
 			/* augment the field */
 			if (field[x][y] < len - 2)
 				field[x][y]++;
-			input = input >> 2;
+			पासोक = पासोक >> 2;
 		}
 	}
 
@@ -1286,12 +1286,12 @@ peek_type_nid(const char *s, size_t l, int *nid)
 			continue;
 		if (memcmp(s, impl->name, l) == 0) {
 			*nid = -1;
-			if (key_type_is_ecdsa_variant(impl->type))
+			if (सुसि_type_is_ecdsa_variant(impl->type))
 				*nid = impl->nid;
 			return impl->type;
 		}
 	}
-	return KEY_UNSPEC;
+	return सुसि_UNSPEC;
 }
 
 /* XXX this can now be made const char * */
@@ -1306,7 +1306,7 @@ sshkey_read(struct sshkey *ret, char **cpp)
 
 	if (ret == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if (ret->type != KEY_UNSPEC && sshkey_impl_from_type(ret->type) == NULL)
+	if (ret->type != सुसि_UNSPEC && sshkey_impl_from_type(ret->type) == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
 
 	/* Decode type */
@@ -1314,7 +1314,7 @@ sshkey_read(struct sshkey *ret, char **cpp)
 	space = strcspn(cp, " \t");
 	if (space == strlen(cp))
 		return SSH_ERR_INVALID_FORMAT;
-	if ((type = peek_type_nid(cp, space, &curve_nid)) == KEY_UNSPEC)
+	if ((type = peek_type_nid(cp, space, &curve_nid)) == सुसि_UNSPEC)
 		return SSH_ERR_INVALID_FORMAT;
 
 	/* skip whitespace */
@@ -1322,8 +1322,8 @@ sshkey_read(struct sshkey *ret, char **cpp)
 		;
 	if (*cp == '\0')
 		return SSH_ERR_INVALID_FORMAT;
-	if (ret->type != KEY_UNSPEC && ret->type != type)
-		return SSH_ERR_KEY_TYPE_MISMATCH;
+	if (ret->type != सुसि_UNSPEC && ret->type != type)
+		return SSH_ERR_सुसि_TYPE_MISMATCH;
 	if ((blob = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
 
@@ -1352,9 +1352,9 @@ sshkey_read(struct sshkey *ret, char **cpp)
 	/* ensure type of blob matches type at start of line */
 	if (k->type != type) {
 		sshkey_free(k);
-		return SSH_ERR_KEY_TYPE_MISMATCH;
+		return SSH_ERR_सुसि_TYPE_MISMATCH;
 	}
-	if (key_type_is_ecdsa_variant(type) && curve_nid != k->ecdsa_nid) {
+	if (सुसि_type_is_ecdsa_variant(type) && curve_nid != k->ecdsa_nid) {
 		sshkey_free(k);
 		return SSH_ERR_EC_CURVE_MISMATCH;
 	}
@@ -1370,7 +1370,7 @@ sshkey_read(struct sshkey *ret, char **cpp)
 }
 
 int
-sshkey_to_base64(const struct sshkey *key, char **b64p)
+sshkey_to_base64(const struct sshkey *सुसि, char **b64p)
 {
 	int r = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *b = NULL;
@@ -1380,7 +1380,7 @@ sshkey_to_base64(const struct sshkey *key, char **b64p)
 		*b64p = NULL;
 	if ((b = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_putb(key, b)) != 0)
+	if ((r = sshkey_putb(सुसि, b)) != 0)
 		goto out;
 	if ((uu = sshbuf_dtob64_string(b, 0)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
@@ -1399,15 +1399,15 @@ sshkey_to_base64(const struct sshkey *key, char **b64p)
 }
 
 int
-sshkey_format_text(const struct sshkey *key, struct sshbuf *b)
+sshkey_format_text(const struct sshkey *सुसि, struct sshbuf *b)
 {
 	int r = SSH_ERR_INTERNAL_ERROR;
 	char *uu = NULL;
 
-	if ((r = sshkey_to_base64(key, &uu)) != 0)
+	if ((r = sshkey_to_base64(सुसि, &uu)) != 0)
 		goto out;
 	if ((r = sshbuf_putf(b, "%s %s",
-	    sshkey_ssh_name(key), uu)) != 0)
+	    sshkey_ssh_name(सुसि), uu)) != 0)
 		goto out;
 	r = 0;
  out:
@@ -1416,14 +1416,14 @@ sshkey_format_text(const struct sshkey *key, struct sshbuf *b)
 }
 
 int
-sshkey_write(const struct sshkey *key, FILE *f)
+sshkey_write(const struct sshkey *सुसि, FILE *f)
 {
 	struct sshbuf *b = NULL;
 	int r = SSH_ERR_INTERNAL_ERROR;
 
 	if ((b = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_format_text(key, b)) != 0)
+	if ((r = sshkey_format_text(सुसि, b)) != 0)
 		goto out;
 	if (fwrite(sshbuf_ptr(b), sshbuf_len(b), 1, f) != 1) {
 		if (feof(f))
@@ -1458,24 +1458,24 @@ sshkey_check_rsa_length(const struct sshkey *k, int min_size)
 	int nbits;
 
 	if (k == NULL || k->pkey == NULL ||
-	    (k->type != KEY_RSA && k->type != KEY_RSA_CERT))
+	    (k->type != सुसि_RSA && k->type != सुसि_RSA_CERT))
 		return 0;
 	nbits = EVP_PKEY_bits(k->pkey);
 	if (nbits < SSH_RSA_MINIMUM_MODULUS_SIZE ||
 	    (min_size > 0 && nbits < min_size))
-		return SSH_ERR_KEY_LENGTH;
+		return SSH_ERR_सुसि_LENGTH;
 #endif /* WITH_OPENSSL */
 	return 0;
 }
 
 #ifdef WITH_OPENSSL
 int
-sshkey_ecdsa_key_to_nid(const EC_KEY *k)
+sshkey_ecdsa_सुसि_to_nid(const EC_सुसि *k)
 {
 	const EC_GROUP *g;
 	int nid;
 
-	if (k == NULL || (g = EC_KEY_get0_group(k)) == NULL)
+	if (k == NULL || (g = EC_सुसि_get0_group(k)) == NULL)
 		return -1;
 	if ((nid = EC_GROUP_get_curve_name(g)) <= 0)
 		return -1;
@@ -1485,7 +1485,7 @@ sshkey_ecdsa_key_to_nid(const EC_KEY *k)
 int
 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *pkey)
 {
-	return sshkey_ecdsa_key_to_nid(EVP_PKEY_get0_EC_KEY(pkey));
+	return sshkey_ecdsa_सुसि_to_nid(EVP_PKEY_get0_EC_सुसि(pkey));
 }
 #endif /* WITH_OPENSSL */
 
@@ -1500,10 +1500,10 @@ sshkey_generate(int type, u_int bits, struct sshkey **keyp)
 		return SSH_ERR_INVALID_ARGUMENT;
 	*keyp = NULL;
 	if ((impl = sshkey_impl_from_type(type)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
 	if (impl->funcs->generate == NULL)
 		return SSH_ERR_FEATURE_UNSUPPORTED;
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	if ((k = sshkey_new(सुसि_UNSPEC)) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
 	k->type = type;
 	if ((ret = impl->funcs->generate(k, bits)) != 0) {
@@ -1516,14 +1516,14 @@ sshkey_generate(int type, u_int bits, struct sshkey **keyp)
 }
 
 int
-sshkey_cert_copy(const struct sshkey *from_key, struct sshkey *to_key)
+sshkey_cert_copy(const struct sshkey *from_सुसि, struct sshkey *to_सुसि)
 {
 	u_int i;
 	const struct sshkey_cert *from;
 	struct sshkey_cert *to;
 	int r = SSH_ERR_INTERNAL_ERROR;
 
-	if (to_key == NULL || (from = from_key->cert) == NULL)
+	if (to_सुसि == NULL || (from = from_सुसि->cert) == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
 
 	if ((to = cert_new()) == NULL)
@@ -1536,18 +1536,18 @@ sshkey_cert_copy(const struct sshkey *from_key, struct sshkey *to_key)
 
 	to->serial = from->serial;
 	to->type = from->type;
-	if (from->key_id == NULL)
-		to->key_id = NULL;
-	else if ((to->key_id = strdup(from->key_id)) == NULL) {
+	if (from->सुसि_id == NULL)
+		to->सुसि_id = NULL;
+	else if ((to->सुसि_id = strdup(from->सुसि_id)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	to->valid_after = from->valid_after;
 	to->valid_before = from->valid_before;
-	if (from->signature_key == NULL)
-		to->signature_key = NULL;
-	else if ((r = sshkey_from_private(from->signature_key,
-	    &to->signature_key)) != 0)
+	if (from->signature_सुसि == NULL)
+		to->signature_सुसि = NULL;
+	else if ((r = sshkey_from_private(from->signature_सुसि,
+	    &to->signature_सुसि)) != 0)
 		goto out;
 	if (from->signature_type != NULL &&
 	    (to->signature_type = strdup(from->signature_type)) == NULL) {
@@ -1576,8 +1576,8 @@ sshkey_cert_copy(const struct sshkey *from_key, struct sshkey *to_key)
 	to->nprincipals = from->nprincipals;
 
 	/* success */
-	cert_free(to_key->cert);
-	to_key->cert = to;
+	cert_free(to_सुसि->cert);
+	to_सुसि->cert = to;
 	to = NULL;
 	r = 0;
  out:
@@ -1602,8 +1602,8 @@ sshkey_from_private(const struct sshkey *k, struct sshkey **pkp)
 	const struct sshkey_impl *impl;
 
 	*pkp = NULL;
-	if ((impl = sshkey_impl_from_key(k)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+	if ((impl = sshkey_impl_from_सुसि(k)) == NULL)
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
 	if ((n = sshkey_new(k->type)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
@@ -1851,7 +1851,7 @@ sshkey_unshield_private(struct sshkey *k)
 }
 
 static int
-cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
+cert_parse(struct sshbuf *b, struct sshkey *सुसि, struct sshbuf *certbuf,
     const char *ca_sigalg_allowlist)
 {
 	struct sshbuf *principals = NULL, *crit = NULL;
@@ -1862,16 +1862,16 @@ cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
 	int ret = SSH_ERR_INTERNAL_ERROR;
 
 	/* Copy the entire key blob for verification and later serialisation */
-	if ((ret = sshbuf_putb(key->cert->certblob, certbuf)) != 0)
+	if ((ret = sshbuf_putb(सुसि->cert->certblob, certbuf)) != 0)
 		return ret;
 
 	/* Parse body of certificate up to signature */
-	if ((ret = sshbuf_get_u64(b, &key->cert->serial)) != 0 ||
-	    (ret = sshbuf_get_u32(b, &key->cert->type)) != 0 ||
-	    (ret = sshbuf_get_cstring(b, &key->cert->key_id, &kidlen)) != 0 ||
+	if ((ret = sshbuf_get_u64(b, &सुसि->cert->serial)) != 0 ||
+	    (ret = sshbuf_get_u32(b, &सुसि->cert->type)) != 0 ||
+	    (ret = sshbuf_get_cstring(b, &सुसि->cert->सुसि_id, &kidlen)) != 0 ||
 	    (ret = sshbuf_froms(b, &principals)) != 0 ||
-	    (ret = sshbuf_get_u64(b, &key->cert->valid_after)) != 0 ||
-	    (ret = sshbuf_get_u64(b, &key->cert->valid_before)) != 0 ||
+	    (ret = sshbuf_get_u64(b, &सुसि->cert->valid_after)) != 0 ||
+	    (ret = sshbuf_get_u64(b, &सुसि->cert->valid_before)) != 0 ||
 	    (ret = sshbuf_froms(b, &crit)) != 0 ||
 	    (ret = sshbuf_froms(b, &exts)) != 0 ||
 	    (ret = sshbuf_get_string_direct(b, NULL, NULL)) != 0 ||
@@ -1882,7 +1882,7 @@ cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
 	}
 
 	/* Signature is left in the buffer so we can calculate this length */
-	signed_len = sshbuf_len(key->cert->certblob) - sshbuf_len(b);
+	signed_len = sshbuf_len(सुसि->cert->certblob) - sshbuf_len(b);
 
 	if ((ret = sshbuf_get_string(b, &sig, &slen)) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
@@ -1901,19 +1901,19 @@ cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
 	}
 
 	/* Parse CA key and check whether we might accept it */
-	if (sshkey_from_blob_internal(ca, &key->cert->signature_key, 0,
+	if (sshkey_from_blob_internal(ca, &सुसि->cert->signature_सुसि, 0,
 	    ca_sigalg_allowlist, NULL) != 0) {
-		ret = SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
+		ret = SSH_ERR_सुसि_CERT_INVALID_SIGN_सुसि;
 		goto out;
 	}
-	if (!sshkey_type_is_valid_ca(key->cert->signature_key->type)) {
-		ret = SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
+	if (!sshkey_type_is_valid_ca(सुसि->cert->signature_सुसि->type)) {
+		ret = SSH_ERR_सुसि_CERT_INVALID_SIGN_सुसि;
 		goto out;
 	}
 
-	if (key->cert->type != SSH2_CERT_TYPE_USER &&
-	    key->cert->type != SSH2_CERT_TYPE_HOST) {
-		ret = SSH_ERR_KEY_CERT_UNKNOWN_TYPE;
+	if (सुसि->cert->type != SSH2_CERT_TYPE_USER &&
+	    सुसि->cert->type != SSH2_CERT_TYPE_HOST) {
+		ret = SSH_ERR_सुसि_CERT_UNKNOWN_TYPE;
 		goto out;
 	}
 
@@ -1922,7 +1922,7 @@ cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
 		char *principal = NULL;
 		char **oprincipals = NULL;
 
-		if (key->cert->nprincipals >= SSHKEY_CERT_MAX_PRINCIPALS) {
+		if (सुसि->cert->nprincipals >= SSHKEY_CERT_MAX_PRINCIPALS) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
@@ -1931,26 +1931,26 @@ cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
 			ret = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
-		oprincipals = key->cert->principals;
-		key->cert->principals = recallocarray(key->cert->principals,
-		    key->cert->nprincipals, key->cert->nprincipals + 1,
-		    sizeof(*key->cert->principals));
-		if (key->cert->principals == NULL) {
+		oprincipals = सुसि->cert->principals;
+		सुसि->cert->principals = recallocarray(सुसि->cert->principals,
+		    सुसि->cert->nprincipals, सुसि->cert->nprincipals + 1,
+		    sizeof(*सुसि->cert->principals));
+		if (सुसि->cert->principals == NULL) {
 			free(principal);
-			key->cert->principals = oprincipals;
+			सुसि->cert->principals = oprincipals;
 			ret = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
-		key->cert->principals[key->cert->nprincipals++] = principal;
+		सुसि->cert->principals[सुसि->cert->nprincipals++] = principal;
 	}
 
 	/*
 	 * Stash a copies of the critical options and extensions sections
 	 * for later use.
 	 */
-	if ((ret = sshbuf_putb(key->cert->critical, crit)) != 0 ||
+	if ((ret = sshbuf_putb(सुसि->cert->critical, crit)) != 0 ||
 	    (exts != NULL &&
-	    (ret = sshbuf_putb(key->cert->extensions, exts)) != 0))
+	    (ret = sshbuf_putb(सुसि->cert->extensions, exts)) != 0))
 		goto out;
 
 	/*
@@ -1959,7 +1959,7 @@ cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
 	while (sshbuf_len(crit) != 0) {
 		if ((ret = sshbuf_get_string_direct(crit, NULL, NULL)) != 0 ||
 		    (ret = sshbuf_get_string_direct(crit, NULL, NULL)) != 0) {
-			sshbuf_reset(key->cert->critical);
+			sshbuf_reset(सुसि->cert->critical);
 			ret = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
@@ -1967,20 +1967,20 @@ cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
 	while (exts != NULL && sshbuf_len(exts) != 0) {
 		if ((ret = sshbuf_get_string_direct(exts, NULL, NULL)) != 0 ||
 		    (ret = sshbuf_get_string_direct(exts, NULL, NULL)) != 0) {
-			sshbuf_reset(key->cert->extensions);
+			sshbuf_reset(सुसि->cert->extensions);
 			ret = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
 	}
 
 	/* Finally, validate signature */
-	if ((ret = sshkey_verify(key->cert->signature_key, sig, slen,
-	    sshbuf_ptr(key->cert->certblob), signed_len, NULL, 0, NULL)) != 0)
+	if ((ret = sshkey_verify(सुसि->cert->signature_सुसि, sig, slen,
+	    sshbuf_ptr(सुसि->cert->certblob), signed_len, NULL, 0, NULL)) != 0)
 		goto out;
 
 	/* Success */
 	ret = 0;
-	key->cert->signature_type = sigtype;
+	सुसि->cert->signature_type = sigtype;
 	sigtype = NULL;
  out:
 	sshbuf_free(ca);
@@ -1993,10 +1993,10 @@ cert_parse(struct sshbuf *b, struct sshkey *key, struct sshbuf *certbuf,
 }
 
 int
-sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *key)
+sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *सुसि)
 {
 	/* Parse additional security-key application string */
-	if (sshbuf_get_cstring(b, &key->sk_application, NULL) != 0)
+	if (sshbuf_get_cstring(b, &सुसि->sk_application, NULL) != 0)
 		return SSH_ERR_INVALID_FORMAT;
 	return 0;
 }
@@ -2007,7 +2007,7 @@ sshkey_from_blob_internal(struct sshbuf *b, struct sshkey **keyp,
 {
 	int type, ret = SSH_ERR_INTERNAL_ERROR;
 	char *ktype = NULL;
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	struct sshbuf *copy;
 	const struct sshkey_impl *impl;
 
@@ -2027,21 +2027,21 @@ sshkey_from_blob_internal(struct sshbuf *b, struct sshkey **keyp,
 
 	type = sshkey_type_from_name(ktype);
 	if (!allow_cert && sshkey_type_is_cert(type)) {
-		ret = SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
+		ret = SSH_ERR_सुसि_CERT_INVALID_SIGN_सुसि;
 		goto out;
 	}
 
 	if (alg_allowlist != NULL &&
 	    !sshkey_match_keyname_to_sigalgs(ktype, alg_allowlist)) {
-		ret = SSH_ERR_KEY_ALG_UNSUPPORTED;
+		ret = SSH_ERR_सुसि_ALG_UNSUPPORTED;
 		goto out;
 	}
 
 	if ((impl = sshkey_impl_from_type(type)) == NULL) {
-		ret = SSH_ERR_KEY_TYPE_UNKNOWN;
+		ret = SSH_ERR_सुसि_TYPE_UNKNOWN;
 		goto out;
 	}
-	if ((key = sshkey_new(type)) == NULL) {
+	if ((सुसि = sshkey_new(type)) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
@@ -2052,26 +2052,26 @@ sshkey_from_blob_internal(struct sshbuf *b, struct sshkey **keyp,
 			goto out;
 		}
 	}
-	if ((ret = impl->funcs->deserialize_public(ktype, b, key)) != 0)
+	if ((ret = impl->funcs->deserialize_public(ktype, b, सुसि)) != 0)
 		goto out;
 
 	/* Parse certificate potion */
-	if (sshkey_is_cert(key) &&
-	    (ret = cert_parse(b, key, copy, ca_sigalg_allowlist)) != 0)
+	if (sshkey_is_cert(सुसि) &&
+	    (ret = cert_parse(b, सुसि, copy, ca_sigalg_allowlist)) != 0)
 		goto out;
 
-	if (key != NULL && sshbuf_len(b) != 0) {
+	if (सुसि != NULL && sshbuf_len(b) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
 	ret = 0;
 	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL;
+		*keyp = सुसि;
+		सुसि = NULL;
 	}
  out:
 	sshbuf_free(copy);
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	free(ktype);
 	return ret;
 }
@@ -2149,15 +2149,15 @@ sshkey_get_sigtype(const u_char *sig, size_t siglen, char **sigtypep)
  * Otherwise returns a ssherr.h code.
  */
 int
-sshkey_check_cert_sigtype(const struct sshkey *key, const char *allowed)
+sshkey_check_cert_sigtype(const struct sshkey *सुसि, const char *allowed)
 {
-	if (key == NULL || allowed == NULL)
+	if (सुसि == NULL || allowed == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if (!sshkey_type_is_cert(key->type))
+	if (!sshkey_type_is_cert(सुसि->type))
 		return 0;
-	if (key->cert == NULL || key->cert->signature_type == NULL)
+	if (सुसि->cert == NULL || सुसि->cert->signature_type == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if (match_pattern_list(key->cert->signature_type, allowed, 0) != 1)
+	if (match_pattern_list(सुसि->cert->signature_type, allowed, 0) != 1)
 		return SSH_ERR_SIGN_ALG_UNSUPPORTED;
 	return 0;
 }
@@ -2209,12 +2209,12 @@ sshkey_check_sigtype(const u_char *sig, size_t siglen,
 }
 
 int
-sshkey_sign(struct sshkey *key,
+sshkey_sign(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
 {
-	int was_shielded = sshkey_is_shielded(key);
+	int was_shielded = sshkey_is_shielded(सुसि);
 	int r2, r = SSH_ERR_INTERNAL_ERROR;
 	const struct sshkey_impl *impl;
 
@@ -2222,27 +2222,27 @@ sshkey_sign(struct sshkey *key,
 		*sigp = NULL;
 	if (lenp != NULL)
 		*lenp = 0;
-	if (datalen > SSH_KEY_MAX_SIGN_DATA_SIZE)
+	if (datalen > SSH_सुसि_MAX_SIGN_DATA_SIZE)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if ((impl = sshkey_impl_from_key(key)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
-	if ((r = sshkey_unshield_private(key)) != 0)
+	if ((impl = sshkey_impl_from_सुसि(सुसि)) == NULL)
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
+	if ((r = sshkey_unshield_private(सुसि)) != 0)
 		return r;
-	if (sshkey_is_sk(key)) {
-		r = sshsk_sign(sk_provider, key, sigp, lenp, data,
+	if (sshkey_is_sk(सुसि)) {
+		r = sshsk_sign(sk_provider, सुसि, sigp, lenp, data,
 		    datalen, compat, sk_pin);
-	} else if ((key->flags & SSHKEY_FLAG_EXT) != 0) {
-		r = pkcs11_sign(key, sigp, lenp, data, datalen,
+	} else if ((सुसि->flags & SSHKEY_FLAG_EXT) != 0) {
+		r = pkcs11_sign(सुसि, sigp, lenp, data, datalen,
 		    alg, sk_provider, sk_pin, compat);
 	} else {
 		if (impl->funcs->sign == NULL)
 			r = SSH_ERR_SIGN_ALG_UNSUPPORTED;
 		else {
-			r = impl->funcs->sign(key, sigp, lenp, data, datalen,
+			r = impl->funcs->sign(सुसि, sigp, lenp, data, datalen,
 			    alg, sk_provider, sk_pin, compat);
 		 }
 	}
-	if (was_shielded && (r2 = sshkey_shield_private(key)) != 0)
+	if (was_shielded && (r2 = sshkey_shield_private(सुसि)) != 0)
 		return r2;
 	return r;
 }
@@ -2252,7 +2252,7 @@ sshkey_sign(struct sshkey *key,
  * If "alg" specified, then the signature must use that algorithm.
  */
 int
-sshkey_verify(const struct sshkey *key,
+sshkey_verify(const struct sshkey *सुसि,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
     struct sshkey_sig_details **detailsp)
@@ -2261,11 +2261,11 @@ sshkey_verify(const struct sshkey *key,
 
 	if (detailsp != NULL)
 		*detailsp = NULL;
-	if (siglen == 0 || dlen > SSH_KEY_MAX_SIGN_DATA_SIZE)
+	if (siglen == 0 || dlen > SSH_सुसि_MAX_SIGN_DATA_SIZE)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if ((impl = sshkey_impl_from_key(key)) == NULL)
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
-	return impl->funcs->verify(key, sig, siglen, data, dlen,
+	if ((impl = sshkey_impl_from_सुसि(सुसि)) == NULL)
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
+	return impl->funcs->verify(सुसि, sig, siglen, data, dlen,
 	    alg, compat, detailsp);
 }
 
@@ -2288,7 +2288,7 @@ int
 sshkey_drop_cert(struct sshkey *k)
 {
 	if (!sshkey_type_is_cert(k->type))
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
 	cert_free(k->cert);
 	k->cert = NULL;
 	k->type = sshkey_type_plain(k->type);
@@ -2313,10 +2313,10 @@ sshkey_certify_custom(struct sshkey *k, struct sshkey *ca, const char *alg,
 	    k->cert->certblob == NULL || ca == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
 	if (!sshkey_is_cert(k))
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
 	if (!sshkey_type_is_valid_ca(ca->type))
-		return SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
-	if ((impl = sshkey_impl_from_key(k)) == NULL)
+		return SSH_ERR_सुसि_CERT_INVALID_SIGN_सुसि;
+	if ((impl = sshkey_impl_from_सुसि(k)) == NULL)
 		return SSH_ERR_INTERNAL_ERROR;
 
 	/*
@@ -2333,11 +2333,11 @@ sshkey_certify_custom(struct sshkey *k, struct sshkey *ca, const char *alg,
 	 * If no signing algorithm or signature_type was specified and we're
 	 * using a RSA key, then default to a good signature algorithm.
 	 */
-	if (alg == NULL && ca->type == KEY_RSA)
+	if (alg == NULL && ca->type == सुसि_RSA)
 		alg = "rsa-sha2-512";
 
 	if ((ret = sshkey_to_blob(ca, &ca_blob, &ca_len)) != 0)
-		return SSH_ERR_KEY_CERT_INVALID_SIGN_KEY;
+		return SSH_ERR_सुसि_CERT_INVALID_SIGN_सुसि;
 
 	cert = k->cert->certblob; /* for readability */
 	sshbuf_reset(cert);
@@ -2357,7 +2357,7 @@ sshkey_certify_custom(struct sshkey *k, struct sshkey *ca, const char *alg,
 	/* Then remaining cert fields */
 	if ((ret = sshbuf_put_u64(cert, k->cert->serial)) != 0 ||
 	    (ret = sshbuf_put_u32(cert, k->cert->type)) != 0 ||
-	    (ret = sshbuf_put_cstring(cert, k->cert->key_id)) != 0)
+	    (ret = sshbuf_put_cstring(cert, k->cert->सुसि_id)) != 0)
 		goto out;
 
 	if ((principals = sshbuf_new()) == NULL) {
@@ -2408,14 +2408,14 @@ sshkey_certify_custom(struct sshkey *k, struct sshkey *ca, const char *alg,
 }
 
 static int
-default_key_sign(struct sshkey *key, u_char **sigp, size_t *lenp,
+default_सुसि_sign(struct sshkey *सुसि, u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider, const char *sk_pin,
     u_int compat, void *ctx)
 {
 	if (ctx != NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
-	return sshkey_sign(key, sigp, lenp, data, datalen, alg,
+	return sshkey_sign(सुसि, sigp, lenp, data, datalen, alg,
 	    sk_provider, sk_pin, compat);
 }
 
@@ -2424,7 +2424,7 @@ sshkey_certify(struct sshkey *k, struct sshkey *ca, const char *alg,
     const char *sk_provider, const char *sk_pin)
 {
 	return sshkey_certify_custom(k, ca, alg, sk_provider, sk_pin,
-	    default_key_sign, NULL);
+	    default_सुसि_sign, NULL);
 }
 
 int
@@ -2438,30 +2438,30 @@ sshkey_cert_check_authority(const struct sshkey *k,
 		return SSH_ERR_INVALID_ARGUMENT;
 	if (!sshkey_is_cert(k)) {
 		*reason = "Key is not a certificate";
-		return SSH_ERR_KEY_CERT_INVALID;
+		return SSH_ERR_सुसि_CERT_INVALID;
 	}
 	if (want_host) {
 		if (k->cert->type != SSH2_CERT_TYPE_HOST) {
 			*reason = "Certificate invalid: not a host certificate";
-			return SSH_ERR_KEY_CERT_INVALID;
+			return SSH_ERR_सुसि_CERT_INVALID;
 		}
 	} else {
 		if (k->cert->type != SSH2_CERT_TYPE_USER) {
 			*reason = "Certificate invalid: not a user certificate";
-			return SSH_ERR_KEY_CERT_INVALID;
+			return SSH_ERR_सुसि_CERT_INVALID;
 		}
 	}
 	if (verify_time < k->cert->valid_after) {
 		*reason = "Certificate invalid: not yet valid";
-		return SSH_ERR_KEY_CERT_INVALID;
+		return SSH_ERR_सुसि_CERT_INVALID;
 	}
 	if (verify_time >= k->cert->valid_before) {
 		*reason = "Certificate invalid: expired";
-		return SSH_ERR_KEY_CERT_INVALID;
+		return SSH_ERR_सुसि_CERT_INVALID;
 	}
 	if (k->cert->nprincipals == 0) {
 		*reason = "Certificate lacks principal list";
-		return SSH_ERR_KEY_CERT_INVALID;
+		return SSH_ERR_सुसि_CERT_INVALID;
 	}
 	if (name == NULL)
 		return 0; /* principal matching not requested */
@@ -2481,7 +2481,7 @@ sshkey_cert_check_authority(const struct sshkey *k,
 	if (!principal_matches) {
 		*reason = "Certificate invalid: name is not a listed "
 		    "principal";
-		return SSH_ERR_KEY_CERT_INVALID;
+		return SSH_ERR_सुसि_CERT_INVALID;
 	}
 	return 0;
 }
@@ -2496,28 +2496,28 @@ sshkey_cert_check_authority_now(const struct sshkey *k,
 	if ((now = time(NULL)) < 0) {
 		/* yikes - system clock before epoch! */
 		*reason = "Certificate invalid: not yet valid";
-		return SSH_ERR_KEY_CERT_INVALID;
+		return SSH_ERR_सुसि_CERT_INVALID;
 	}
 	return sshkey_cert_check_authority(k, want_host, wildcard_pattern,
 	    (uint64_t)now, name, reason);
 }
 
 int
-sshkey_cert_check_host(const struct sshkey *key, const char *host,
+sshkey_cert_check_host(const struct sshkey *सुसि, const char *host,
     const char *ca_sign_algorithms, const char **reason)
 {
 	int r;
 
-	if ((r = sshkey_cert_check_authority_now(key, 1, 1, host, reason)) != 0)
+	if ((r = sshkey_cert_check_authority_now(सुसि, 1, 1, host, reason)) != 0)
 		return r;
-	if (sshbuf_len(key->cert->critical) != 0) {
+	if (sshbuf_len(सुसि->cert->critical) != 0) {
 		*reason = "Certificate contains unsupported critical options";
-		return SSH_ERR_KEY_CERT_INVALID;
+		return SSH_ERR_सुसि_CERT_INVALID;
 	}
 	if (ca_sign_algorithms != NULL &&
-	    (r = sshkey_check_cert_sigtype(key, ca_sign_algorithms)) != 0) {
+	    (r = sshkey_check_cert_sigtype(सुसि, ca_sign_algorithms)) != 0) {
 		*reason = "Certificate signed with disallowed algorithm";
-		return SSH_ERR_KEY_CERT_INVALID;
+		return SSH_ERR_सुसि_CERT_INVALID;
 	}
 	return 0;
 }
@@ -2549,46 +2549,46 @@ sshkey_format_cert_validity(const struct sshkey_cert *cert, char *s, size_t l)
 
 /* Common serialization for FIDO private keys */
 int
-sshkey_serialize_private_sk(const struct sshkey *key, struct sshbuf *b)
+sshkey_serialize_private_sk(const struct sshkey *सुसि, struct sshbuf *b)
 {
 	int r;
 
-	if ((r = sshbuf_put_cstring(b, key->sk_application)) != 0 ||
-	    (r = sshbuf_put_u8(b, key->sk_flags)) != 0 ||
-	    (r = sshbuf_put_stringb(b, key->sk_key_handle)) != 0 ||
-	    (r = sshbuf_put_stringb(b, key->sk_reserved)) != 0)
+	if ((r = sshbuf_put_cstring(b, सुसि->sk_application)) != 0 ||
+	    (r = sshbuf_put_u8(b, सुसि->sk_flags)) != 0 ||
+	    (r = sshbuf_put_stringb(b, सुसि->sk_सुसि_handle)) != 0 ||
+	    (r = sshbuf_put_stringb(b, सुसि->sk_reserved)) != 0)
 		return r;
 
 	return 0;
 }
 
 static int
-sshkey_private_serialize_opt(struct sshkey *key, struct sshbuf *buf,
+sshkey_private_serialize_opt(struct sshkey *सुसि, struct sshbuf *buf,
     enum sshkey_serialize_rep opts)
 {
 	int r = SSH_ERR_INTERNAL_ERROR;
-	int was_shielded = sshkey_is_shielded(key);
+	int was_shielded = sshkey_is_shielded(सुसि);
 	struct sshbuf *b = NULL;
 	const struct sshkey_impl *impl;
 
-	if ((impl = sshkey_impl_from_key(key)) == NULL)
+	if ((impl = sshkey_impl_from_सुसि(सुसि)) == NULL)
 		return SSH_ERR_INTERNAL_ERROR;
-	if ((r = sshkey_unshield_private(key)) != 0)
+	if ((r = sshkey_unshield_private(सुसि)) != 0)
 		return r;
 	if ((b = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_cstring(b, sshkey_ssh_name(key))) != 0)
+	if ((r = sshbuf_put_cstring(b, sshkey_ssh_name(सुसि))) != 0)
 		goto out;
-	if (sshkey_is_cert(key)) {
-		if (key->cert == NULL ||
-		    sshbuf_len(key->cert->certblob) == 0) {
+	if (sshkey_is_cert(सुसि)) {
+		if (सुसि->cert == NULL ||
+		    sshbuf_len(सुसि->cert->certblob) == 0) {
 			r = SSH_ERR_INVALID_ARGUMENT;
 			goto out;
 		}
-		if ((r = sshbuf_put_stringb(b, key->cert->certblob)) != 0)
+		if ((r = sshbuf_put_stringb(b, सुसि->cert->certblob)) != 0)
 			goto out;
 	}
-	if ((r = impl->funcs->serialize_private(key, b, opts)) != 0)
+	if ((r = impl->funcs->serialize_private(सुसि, b, opts)) != 0)
 		goto out;
 
 	/*
@@ -2598,7 +2598,7 @@ sshkey_private_serialize_opt(struct sshkey *key, struct sshbuf *buf,
 	r = 0;
  out:
 	if (was_shielded)
-		r = sshkey_shield_private(key);
+		r = sshkey_shield_private(सुसि);
 	if (r == 0)
 		r = sshbuf_putb(buf, b);
 	sshbuf_free(b);
@@ -2607,9 +2607,9 @@ sshkey_private_serialize_opt(struct sshkey *key, struct sshbuf *buf,
 }
 
 int
-sshkey_private_serialize(struct sshkey *key, struct sshbuf *b)
+sshkey_private_serialize(struct sshkey *सुसि, struct sshbuf *b)
 {
-	return sshkey_private_serialize_opt(key, b,
+	return sshkey_private_serialize_opt(सुसि, b,
 	    SSHKEY_SERIALIZE_DEFAULT);
 }
 
@@ -2620,12 +2620,12 @@ sshkey_private_deserialize_sk(struct sshbuf *buf, struct sshkey *k)
 {
 	int r;
 
-	if ((k->sk_key_handle = sshbuf_new()) == NULL ||
+	if ((k->sk_सुसि_handle = sshbuf_new()) == NULL ||
 	    (k->sk_reserved = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
 	if ((r = sshbuf_get_cstring(buf, &k->sk_application, NULL)) != 0 ||
 	    (r = sshbuf_get_u8(buf, &k->sk_flags)) != 0 ||
-	    (r = sshbuf_get_stringb(buf, k->sk_key_handle)) != 0 ||
+	    (r = sshbuf_get_stringb(buf, k->sk_सुसि_handle)) != 0 ||
 	    (r = sshbuf_get_stringb(buf, k->sk_reserved)) != 0)
 		return r;
 
@@ -2656,13 +2656,13 @@ sshkey_private_deserialize(struct sshbuf *buf, struct sshkey **kp)
 		if ((r = sshkey_froms(buf, &k)) != 0)
 			goto out;
 		if (k->type != type) {
-			r = SSH_ERR_KEY_CERT_MISMATCH;
+			r = SSH_ERR_सुसि_CERT_MISMATCH;
 			goto out;
 		}
 		/* For ECDSA keys, the group must match too */
-		if (k->type == KEY_ECDSA &&
+		if (k->type == सुसि_ECDSA &&
 		    k->ecdsa_nid != sshkey_ecdsa_nid_from_name(tname)) {
-			r = SSH_ERR_KEY_CERT_MISMATCH;
+			r = SSH_ERR_सुसि_CERT_MISMATCH;
 			goto out;
 		}
 		/*
@@ -2690,7 +2690,7 @@ sshkey_private_deserialize(struct sshbuf *buf, struct sshkey **kp)
 	    strcmp(expect_sk_application, k->sk_application) != 0)) ||
 	    (expect_ed25519_pk != NULL && (k->ed25519_pk == NULL ||
 	    memcmp(expect_ed25519_pk, k->ed25519_pk, ED25519_PK_SZ) != 0))) {
-		r = SSH_ERR_KEY_CERT_MISMATCH;
+		r = SSH_ERR_सुसि_CERT_MISMATCH;
 		goto out;
 	}
 	/* success */
@@ -2713,7 +2713,7 @@ sshkey_ec_validate_public(const EC_GROUP *group, const EC_POINT *public)
 {
 	EC_POINT *nq = NULL;
 	BIGNUM *order = NULL, *cofactor = NULL;
-	int ret = SSH_ERR_KEY_INVALID_EC_VALUE;
+	int ret = SSH_ERR_सुसि_INVALID_EC_हालागा;
 
 	/*
 	 * NB. This assumes OpenSSL has already verified that the public
@@ -2769,10 +2769,10 @@ sshkey_ec_validate_public(const EC_GROUP *group, const EC_POINT *public)
 }
 
 int
-sshkey_ec_validate_private(const EC_KEY *key)
+sshkey_ec_validate_private(const EC_सुसि *सुसि)
 {
 	BIGNUM *order = NULL, *tmp = NULL;
-	int ret = SSH_ERR_KEY_INVALID_EC_VALUE;
+	int ret = SSH_ERR_सुसि_INVALID_EC_हालागा;
 
 	if ((order = BN_new()) == NULL || (tmp = BN_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
@@ -2780,20 +2780,20 @@ sshkey_ec_validate_private(const EC_KEY *key)
 	}
 
 	/* log2(private) > log2(order)/2 */
-	if (EC_GROUP_get_order(EC_KEY_get0_group(key), order, NULL) != 1) {
+	if (EC_GROUP_get_order(EC_सुसि_get0_group(सुसि), order, NULL) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if (BN_num_bits(EC_KEY_get0_private_key(key)) <=
-	    BN_num_bits(order) / 2)
+	if (BN_नुमेरो_bits(EC_सुसि_get0_private_सुसि(सुसि)) <=
+	    BN_नुमेरो_bits(order) / 2)
 		goto out;
 
 	/* private < order - 1 */
-	if (!BN_sub(tmp, order, BN_value_one())) {
+	if (!BN_sub(tmp, order, BN_हालागा_one())) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if (BN_cmp(EC_KEY_get0_private_key(key), tmp) >= 0)
+	if (BN_cmp(EC_सुसि_get0_private_सुसि(सुसि), tmp) >= 0)
 		goto out;
 	ret = 0;
  out:
@@ -2821,9 +2821,9 @@ sshkey_dump_ec_point(const EC_GROUP *group, const EC_POINT *point)
 		goto out;
 	}
 	fputs("x=", stderr);
-	BN_print_fp(stderr, x);
+	BN_इलिम्बाग_fp(stderr, x);
 	fputs("\ny=", stderr);
-	BN_print_fp(stderr, y);
+	BN_इलिम्बाग_fp(stderr, y);
 	fputs("\n", stderr);
  out:
 	BN_clear_free(x);
@@ -2831,17 +2831,17 @@ sshkey_dump_ec_point(const EC_GROUP *group, const EC_POINT *point)
 }
 
 void
-sshkey_dump_ec_key(const EC_KEY *key)
+sshkey_dump_ec_सुसि(const EC_सुसि *सुसि)
 {
 	const BIGNUM *exponent;
 
-	sshkey_dump_ec_point(EC_KEY_get0_group(key),
-	    EC_KEY_get0_public_key(key));
+	sshkey_dump_ec_point(EC_सुसि_get0_group(सुसि),
+	    EC_सुसि_get0_public_सुसि(सुसि));
 	fputs("exponent=", stderr);
-	if ((exponent = EC_KEY_get0_private_key(key)) == NULL)
+	if ((exponent = EC_सुसि_get0_private_सुसि(सुसि)) == NULL)
 		fputs("(NULL)", stderr);
 	else
-		BN_print_fp(stderr, EC_KEY_get0_private_key(key));
+		BN_इलिम्बाग_fp(stderr, EC_सुसि_get0_private_सुसि(सुसि));
 	fputs("\n", stderr);
 }
 #endif /* WITH_OPENSSL */
@@ -2851,7 +2851,7 @@ sshkey_private_to_blob2(struct sshkey *prv, struct sshbuf *blob,
     const char *passphrase, const char *comment, const char *ciphername,
     int rounds)
 {
-	u_char *cp, *key = NULL, *pubkeyblob = NULL;
+	u_char *cp, *सुसि = NULL, *pubkeyblob = NULL;
 	u_char salt[SALT_LEN];
 	size_t i, pubkeylen, keylen, ivlen, blocksize, authlen;
 	u_int check;
@@ -2887,14 +2887,14 @@ sshkey_private_to_blob2(struct sshkey *prv, struct sshbuf *blob,
 	keylen = cipher_keylen(cipher);
 	ivlen = cipher_ivlen(cipher);
 	authlen = cipher_authlen(cipher);
-	if ((key = calloc(1, keylen + ivlen)) == NULL) {
+	if ((सुसि = calloc(1, keylen + ivlen)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	if (strcmp(kdfname, "bcrypt") == 0) {
 		arc4random_buf(salt, SALT_LEN);
 		if (bcrypt_pbkdf(passphrase, strlen(passphrase),
-		    salt, SALT_LEN, key, keylen + ivlen, rounds) < 0) {
+		    salt, SALT_LEN, सुसि, keylen + ivlen, rounds) < 0) {
 			r = SSH_ERR_INVALID_ARGUMENT;
 			goto out;
 		}
@@ -2903,11 +2903,11 @@ sshkey_private_to_blob2(struct sshkey *prv, struct sshbuf *blob,
 			goto out;
 	} else if (strcmp(kdfname, "none") != 0) {
 		/* Unsupported KDF type */
-		r = SSH_ERR_KEY_UNKNOWN_CIPHER;
+		r = SSH_ERR_सुसि_UNKNOWN_CIPHER;
 		goto out;
 	}
-	if ((r = cipher_init(&ciphercontext, cipher, key, keylen,
-	    key + keylen, ivlen, 1)) != 0)
+	if ((r = cipher_init(&ciphercontext, cipher, सुसि, keylen,
+	    सुसि + keylen, ivlen, 1)) != 0)
 		goto out;
 
 	if ((r = sshbuf_put(encoded, AUTH_MAGIC, sizeof(AUTH_MAGIC))) != 0 ||
@@ -2968,8 +2968,8 @@ sshkey_private_to_blob2(struct sshkey *prv, struct sshbuf *blob,
 	sshbuf_free(encrypted);
 	cipher_free(ciphercontext);
 	explicit_bzero(salt, sizeof(salt));
-	if (key != NULL)
-		freezero(key, keylen + ivlen);
+	if (सुसि != NULL)
+		freezero(सुसि, keylen + ivlen);
 	if (pubkeyblob != NULL)
 		freezero(pubkeyblob, pubkeylen);
 	return r;
@@ -3061,7 +3061,7 @@ private2_decrypt(struct sshbuf *decoded, const char *passphrase,
 	struct sshbuf *kdf = NULL, *decrypted = NULL;
 	struct sshcipher_ctx *ciphercontext = NULL;
 	struct sshkey *pubkey = NULL;
-	u_char *key = NULL, *salt = NULL, *dp;
+	u_char *सुसि = NULL, *salt = NULL, *dp;
 	u_int blocksize, rounds, nkeys, encrypted_len, check1, check2;
 
 	if (decoded == NULL || decryptedp == NULL || pubkeyp == NULL)
@@ -3094,11 +3094,11 @@ private2_decrypt(struct sshbuf *decoded, const char *passphrase,
 		goto out;
 
 	if ((cipher = cipher_by_name(ciphername)) == NULL) {
-		r = SSH_ERR_KEY_UNKNOWN_CIPHER;
+		r = SSH_ERR_सुसि_UNKNOWN_CIPHER;
 		goto out;
 	}
 	if (strcmp(kdfname, "none") != 0 && strcmp(kdfname, "bcrypt") != 0) {
-		r = SSH_ERR_KEY_UNKNOWN_CIPHER;
+		r = SSH_ERR_सुसि_UNKNOWN_CIPHER;
 		goto out;
 	}
 	if (strcmp(kdfname, "none") == 0 && strcmp(ciphername, "none") != 0) {
@@ -3108,7 +3108,7 @@ private2_decrypt(struct sshbuf *decoded, const char *passphrase,
 	if ((passphrase == NULL || strlen(passphrase) == 0) &&
 	    strcmp(kdfname, "none") != 0) {
 		/* passphrase required */
-		r = SSH_ERR_KEY_WRONG_PASSPHRASE;
+		r = SSH_ERR_सुसि_WRONG_PASSPHRASE;
 		goto out;
 	}
 
@@ -3123,7 +3123,7 @@ private2_decrypt(struct sshbuf *decoded, const char *passphrase,
 	keylen = cipher_keylen(cipher);
 	ivlen = cipher_ivlen(cipher);
 	authlen = cipher_authlen(cipher);
-	if ((key = calloc(1, keylen + ivlen)) == NULL) {
+	if ((सुसि = calloc(1, keylen + ivlen)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
@@ -3136,7 +3136,7 @@ private2_decrypt(struct sshbuf *decoded, const char *passphrase,
 			goto out;
 		}
 		if (bcrypt_pbkdf(passphrase, strlen(passphrase), salt, slen,
-		    key, keylen + ivlen, rounds) < 0) {
+		    सुसि, keylen + ivlen, rounds) < 0) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
@@ -3151,14 +3151,14 @@ private2_decrypt(struct sshbuf *decoded, const char *passphrase,
 
 	/* decrypt private portion of key */
 	if ((r = sshbuf_reserve(decrypted, encrypted_len, &dp)) != 0 ||
-	    (r = cipher_init(&ciphercontext, cipher, key, keylen,
-	    key + keylen, ivlen, 0)) != 0)
+	    (r = cipher_init(&ciphercontext, cipher, सुसि, keylen,
+	    सुसि + keylen, ivlen, 0)) != 0)
 		goto out;
 	if ((r = cipher_crypt(ciphercontext, 0, dp, sshbuf_ptr(decoded),
 	    encrypted_len, 0, authlen)) != 0) {
 		/* an integrity error here indicates an incorrect passphrase */
 		if (r == SSH_ERR_MAC_INVALID)
-			r = SSH_ERR_KEY_WRONG_PASSPHRASE;
+			r = SSH_ERR_सुसि_WRONG_PASSPHRASE;
 		goto out;
 	}
 	if ((r = sshbuf_consume(decoded, encrypted_len + authlen)) != 0)
@@ -3174,7 +3174,7 @@ private2_decrypt(struct sshbuf *decoded, const char *passphrase,
 	    (r = sshbuf_get_u32(decrypted, &check2)) != 0)
 		goto out;
 	if (check1 != check2) {
-		r = SSH_ERR_KEY_WRONG_PASSPHRASE;
+		r = SSH_ERR_सुसि_WRONG_PASSPHRASE;
 		goto out;
 	}
 	/* success */
@@ -3192,9 +3192,9 @@ private2_decrypt(struct sshbuf *decoded, const char *passphrase,
 		explicit_bzero(salt, slen);
 		free(salt);
 	}
-	if (key != NULL) {
-		explicit_bzero(key, keylen + ivlen);
-		free(key);
+	if (सुसि != NULL) {
+		explicit_bzero(सुसि, keylen + ivlen);
+		free(सुसि);
 	}
 	sshbuf_free(kdf);
 	sshbuf_free(decrypted);
@@ -3221,9 +3221,9 @@ sshkey_parse_private2(struct sshbuf *blob, int type, const char *passphrase,
 	    &decrypted, &pubkey)) != 0)
 		goto out;
 
-	if (type != KEY_UNSPEC &&
+	if (type != सुसि_UNSPEC &&
 	    sshkey_type_plain(type) != sshkey_type_plain(pubkey->type)) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
+		r = SSH_ERR_सुसि_TYPE_MISMATCH;
 		goto out;
 	}
 
@@ -3293,9 +3293,9 @@ sshkey_parse_private2_pubkey(struct sshbuf *blob, int type,
 	if ((r = sshkey_froms(decoded, &pubkey)) != 0)
 		goto out;
 
-	if (type != KEY_UNSPEC &&
+	if (type != सुसि_UNSPEC &&
 	    sshkey_type_plain(type) != sshkey_type_plain(pubkey->type)) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
+		r = SSH_ERR_सुसि_TYPE_MISMATCH;
 		goto out;
 	}
 
@@ -3314,10 +3314,10 @@ sshkey_parse_private2_pubkey(struct sshbuf *blob, int type,
 #ifdef WITH_OPENSSL
 /* convert SSH v2 key to PEM or PKCS#8 format */
 static int
-sshkey_private_to_blob_pem_pkcs8(struct sshkey *key, struct sshbuf *buf,
+sshkey_private_to_blob_pem_pkcs8(struct sshkey *सुसि, struct sshbuf *buf,
     int format, const char *_passphrase, const char *comment)
 {
-	int was_shielded = sshkey_is_shielded(key);
+	int was_shielded = sshkey_is_shielded(सुसि);
 	int success, r;
 	int blen, len = strlen(_passphrase);
 	u_char *passphrase = (len > 0) ? (u_char *)_passphrase : NULL;
@@ -3335,40 +3335,40 @@ sshkey_private_to_blob_pem_pkcs8(struct sshkey *key, struct sshbuf *buf,
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshkey_unshield_private(key)) != 0)
+	if ((r = sshkey_unshield_private(सुसि)) != 0)
 		goto out;
 
-	switch (key->type) {
-	case KEY_ECDSA:
+	switch (सुसि->type) {
+	case सुसि_ECDSA:
 		if (format == SSHKEY_PRIVATE_PEM) {
-			success = PEM_write_bio_ECPrivateKey(bio,
-			    EVP_PKEY_get0_EC_KEY(key->pkey),
+			success = PEM_write_bio_ECPrivate_सुसि(bio,
+			    EVP_PKEY_get0_EC_सुसि(सुसि->pkey),
 			    cipher, passphrase, len, NULL, NULL);
 		} else {
-			pkey = key->pkey;
-			EVP_PKEY_up_ref(key->pkey);
+			pkey = सुसि->pkey;
+			EVP_PKEY_up_ref(सुसि->pkey);
 			success = 1;
 		}
 		break;
-	case KEY_RSA:
+	case सुसि_RSA:
 		if (format == SSHKEY_PRIVATE_PEM) {
-			success = PEM_write_bio_RSAPrivateKey(bio,
-			    EVP_PKEY_get0_RSA(key->pkey),
+			success = PEM_write_bio_RSAPrivate_सुसि(bio,
+			    EVP_PKEY_get0_RSA(सुसि->pkey),
 			    cipher, passphrase, len, NULL, NULL);
 		} else {
-			pkey = key->pkey;
-			EVP_PKEY_up_ref(key->pkey);
+			pkey = सुसि->pkey;
+			EVP_PKEY_up_ref(सुसि->pkey);
 			success = 1;
 		}
 		break;
 #ifdef OPENSSL_HAS_ED25519
-	case KEY_ED25519:
+	case सुसि_ED25519:
 		if (format == SSHKEY_PRIVATE_PEM) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		} else {
-			pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519,
-			    NULL, key->ed25519_sk,
+			pkey = EVP_PKEY_new_raw_private_सुसि(EVP_PKEY_ED25519,
+			    NULL, सुसि->ed25519_sk,
 			    ED25519_SK_SZ - ED25519_PK_SZ);
 			success = pkey != NULL;
 		}
@@ -3383,7 +3383,7 @@ sshkey_private_to_blob_pem_pkcs8(struct sshkey *key, struct sshbuf *buf,
 		goto out;
 	}
 	if (format == SSHKEY_PRIVATE_PKCS8) {
-		if ((success = PEM_write_bio_PrivateKey(bio, pkey, cipher,
+		if ((success = PEM_write_bio_Private_सुसि(bio, pkey, cipher,
 		    passphrase, len, NULL, NULL)) == 0) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
@@ -3398,7 +3398,7 @@ sshkey_private_to_blob_pem_pkcs8(struct sshkey *key, struct sshbuf *buf,
 	r = 0;
  out:
 	if (was_shielded)
-		r = sshkey_shield_private(key);
+		r = sshkey_shield_private(सुसि);
 	if (r == 0)
 		r = sshbuf_putb(buf, blob);
 
@@ -3411,38 +3411,38 @@ sshkey_private_to_blob_pem_pkcs8(struct sshkey *key, struct sshbuf *buf,
 
 /* Serialise "key" to buffer "blob" */
 int
-sshkey_private_to_fileblob(struct sshkey *key, struct sshbuf *blob,
+sshkey_private_to_fileblob(struct sshkey *सुसि, struct sshbuf *blob,
     const char *passphrase, const char *comment,
     int format, const char *openssh_format_cipher, int openssh_format_rounds)
 {
-	switch (key->type) {
+	switch (सुसि->type) {
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA:
-	case KEY_RSA:
-	case KEY_ED25519:
+	case सुसि_ECDSA:
+	case सुसि_RSA:
+	case सुसि_ED25519:
 		break; /* see below */
 #else /* WITH_OPENSSL */
-	case KEY_ED25519:
+	case सुसि_ED25519:
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519_SK:
+	case सुसि_ED25519_SK:
 #ifdef WITH_OPENSSL
-	case KEY_ECDSA_SK:
+	case सुसि_ECDSA_SK:
 #endif /* WITH_OPENSSL */
-	case KEY_MLDSA44_ED25519:
-		return sshkey_private_to_blob2(key, blob, passphrase,
+	case सुसि_MLDSA44_ED25519:
+		return sshkey_private_to_blob2(सुसि, blob, passphrase,
 		    comment, openssh_format_cipher, openssh_format_rounds);
 	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+		return SSH_ERR_सुसि_TYPE_UNKNOWN;
 	}
 
 #ifdef WITH_OPENSSL
 	switch (format) {
 	case SSHKEY_PRIVATE_OPENSSH:
-		return sshkey_private_to_blob2(key, blob, passphrase,
+		return sshkey_private_to_blob2(सुसि, blob, passphrase,
 		    comment, openssh_format_cipher, openssh_format_rounds);
 	case SSHKEY_PRIVATE_PEM:
 	case SSHKEY_PRIVATE_PKCS8:
-		return sshkey_private_to_blob_pem_pkcs8(key, blob,
+		return sshkey_private_to_blob_pem_pkcs8(सुसि, blob,
 		    format, passphrase, comment);
 	default:
 		return SSH_ERR_INVALID_ARGUMENT;
@@ -3466,7 +3466,7 @@ translate_libcrypto_error(unsigned long pem_err)
 #ifdef PEM_R_BAD_DECRYPT
 		case PEM_R_BAD_DECRYPT:
 #endif
-			return SSH_ERR_KEY_WRONG_PASSPHRASE;
+			return SSH_ERR_सुसि_WRONG_PASSPHRASE;
 		default:
 			return SSH_ERR_INVALID_FORMAT;
 		}
@@ -3474,14 +3474,14 @@ translate_libcrypto_error(unsigned long pem_err)
 		switch (pem_reason) {
 #ifdef EVP_R_BAD_DECRYPT
 		case EVP_R_BAD_DECRYPT:
-			return SSH_ERR_KEY_WRONG_PASSPHRASE;
+			return SSH_ERR_सुसि_WRONG_PASSPHRASE;
 #endif
 #ifdef EVP_R_BN_DECODE_ERROR
 		case EVP_R_BN_DECODE_ERROR:
 #endif
 		case EVP_R_DECODE_ERROR:
-#ifdef EVP_R_PRIVATE_KEY_DECODE_ERROR
-		case EVP_R_PRIVATE_KEY_DECODE_ERROR:
+#ifdef EVP_R_PRIVATE_सुसि_DECODE_ERROR
+		case EVP_R_PRIVATE_सुसि_DECODE_ERROR:
 #endif
 			return SSH_ERR_INVALID_FORMAT;
 		default:
@@ -3515,8 +3515,8 @@ convert_libcrypto_error(void)
 	 * of the error queue.
 	 */
 	if (translate_libcrypto_error(ERR_peek_error()) ==
-	    SSH_ERR_KEY_WRONG_PASSPHRASE)
-		return SSH_ERR_KEY_WRONG_PASSPHRASE;
+	    SSH_ERR_सुसि_WRONG_PASSPHRASE)
+		return SSH_ERR_सुसि_WRONG_PASSPHRASE;
 	return translate_libcrypto_error(ERR_peek_last_error());
 }
 
@@ -3543,7 +3543,7 @@ sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
 	BIO *bio = NULL;
 	int r;
 	RSA *rsa = NULL;
-	EC_KEY *ecdsa = NULL;
+	EC_सुसि *ecdsa = NULL;
 
 	if (keyp != NULL)
 		*keyp = NULL;
@@ -3557,7 +3557,7 @@ sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
 	}
 
 	clear_libcrypto_errors();
-	if ((pk = PEM_read_bio_PrivateKey(bio, NULL, pem_passphrase_cb,
+	if ((pk = PEM_read_bio_Private_सुसि(bio, NULL, pem_passphrase_cb,
 	    (char *)passphrase)) == NULL) {
 		/*
 		 * libcrypto may return various ASN.1 errors when attempting
@@ -3566,14 +3566,14 @@ sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
 		 * passphrase was supplied.
 		 */
 		if (passphrase != NULL && *passphrase != '\0')
-			r = SSH_ERR_KEY_WRONG_PASSPHRASE;
+			r = SSH_ERR_सुसि_WRONG_PASSPHRASE;
 		else
 			r = convert_libcrypto_error();
 		goto out;
 	}
 	if (EVP_PKEY_base_id(pk) == EVP_PKEY_RSA &&
-	    (type == KEY_UNSPEC || type == KEY_RSA)) {
-		if ((prv = sshkey_new(KEY_UNSPEC)) == NULL) {
+	    (type == सुसि_UNSPEC || type == सुसि_RSA)) {
+		if ((prv = sshkey_new(सुसि_UNSPEC)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
@@ -3581,9 +3581,9 @@ sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
 			r = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
 		}
-		prv->type = KEY_RSA;
+		prv->type = सुसि_RSA;
 #ifdef DEBUG_PK
-		RSA_print_fp(stderr, rsa, 8);
+		RSA_इलिम्बाग_fp(stderr, rsa, 8);
 #endif
 		if (RSA_blinding_on(rsa, NULL) != 1 ||
 		    EVP_PKEY_set1_RSA(pk, rsa) != 1) {
@@ -3595,20 +3595,20 @@ sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
 		if ((r = sshkey_check_rsa_length(prv, 0)) != 0)
 			goto out;
 	} else if (EVP_PKEY_base_id(pk) == EVP_PKEY_EC &&
-	    (type == KEY_UNSPEC || type == KEY_ECDSA)) {
-		if ((prv = sshkey_new(KEY_UNSPEC)) == NULL) {
+	    (type == सुसि_UNSPEC || type == सुसि_ECDSA)) {
+		if ((prv = sshkey_new(सुसि_UNSPEC)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
 		if ((prv->ecdsa_nid = sshkey_ecdsa_fixup_group(pk)) == -1 ||
-		    (ecdsa = EVP_PKEY_get1_EC_KEY(pk)) == NULL) {
+		    (ecdsa = EVP_PKEY_get1_EC_सुसि(pk)) == NULL) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
 		}
-		prv->type = KEY_ECDSA;
+		prv->type = सुसि_ECDSA;
 		if (sshkey_curve_nid_to_name(prv->ecdsa_nid) == NULL ||
-		    sshkey_ec_validate_public(EC_KEY_get0_group(ecdsa),
-		    EC_KEY_get0_public_key(ecdsa)) != 0 ||
+		    sshkey_ec_validate_public(EC_सुसि_get0_group(ecdsa),
+		    EC_सुसि_get0_public_सुसि(ecdsa)) != 0 ||
 		    sshkey_ec_validate_private(ecdsa) != 0) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
@@ -3617,22 +3617,22 @@ sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
 		prv->pkey = pk;
 #ifdef DEBUG_PK
 		if (prv != NULL && prv->pkey != NULL)
-			sshkey_dump_ec_key(EVP_PKEY_get0_EC_KEY(prv->pkey));
+			sshkey_dump_ec_सुसि(EVP_PKEY_get0_EC_सुसि(prv->pkey));
 #endif
 #ifdef OPENSSL_HAS_ED25519
 	} else if (EVP_PKEY_base_id(pk) == EVP_PKEY_ED25519 &&
-	    (type == KEY_UNSPEC || type == KEY_ED25519)) {
+	    (type == सुसि_UNSPEC || type == सुसि_ED25519)) {
 		size_t len;
 
-		if ((prv = sshkey_new(KEY_UNSPEC)) == NULL ||
+		if ((prv = sshkey_new(सुसि_UNSPEC)) == NULL ||
 		    (prv->ed25519_sk = calloc(1, ED25519_SK_SZ)) == NULL ||
 		    (prv->ed25519_pk = calloc(1, ED25519_PK_SZ)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
-		prv->type = KEY_ED25519;
+		prv->type = सुसि_ED25519;
 		len = ED25519_PK_SZ;
-		if (!EVP_PKEY_get_raw_public_key(pk, prv->ed25519_pk, &len)) {
+		if (!EVP_PKEY_get_raw_public_सुसि(pk, prv->ed25519_pk, &len)) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
 		}
@@ -3641,7 +3641,7 @@ sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
 			goto out;
 		}
 		len = ED25519_SK_SZ - ED25519_PK_SZ;
-		if (!EVP_PKEY_get_raw_private_key(pk, prv->ed25519_sk, &len)) {
+		if (!EVP_PKEY_get_raw_private_सुसि(pk, prv->ed25519_sk, &len)) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
 		}
@@ -3669,7 +3669,7 @@ sshkey_parse_private_pem_fileblob(struct sshbuf *blob, int type,
 	BIO_free(bio);
 	EVP_PKEY_free(pk);
 	RSA_free(rsa);
-	EC_KEY_free(ecdsa);
+	EC_सुसि_free(ecdsa);
 	sshkey_free(prv);
 	return r;
 }
@@ -3707,7 +3707,7 @@ sshkey_parse_private_fileblob(struct sshbuf *buffer, const char *passphrase,
 	if (commentp != NULL)
 		*commentp = NULL;
 
-	return sshkey_parse_private_fileblob_type(buffer, KEY_UNSPEC,
+	return sshkey_parse_private_fileblob_type(buffer, सुसि_UNSPEC,
 	    passphrase, keyp, commentp);
 }
 

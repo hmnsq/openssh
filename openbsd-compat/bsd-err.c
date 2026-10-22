@@ -37,13 +37,13 @@
 void
 err(int r, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
+	va_start(मगा_कातविरान, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, मगा_कातविरान);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(मगा_कातविरान);
 	exit(r);
 }
 #endif
@@ -52,12 +52,12 @@ err(int r, const char *fmt, ...)
 void
 errx(int r, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
+	va_start(मगा_कातविरान, fmt);
+	vfprintf(stderr, fmt, मगा_कातविरान);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(मगा_कातविरान);
 	exit(r);
 }
 #endif
@@ -66,12 +66,12 @@ errx(int r, const char *fmt, ...)
 void
 warn(const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
+	va_start(मगा_कातविरान, fmt);
 	fprintf(stderr, "%s: ", strerror(errno));
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, मगा_कातविरान);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(मगा_कातविरान);
 }
 #endif

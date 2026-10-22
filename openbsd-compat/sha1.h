@@ -17,7 +17,7 @@
 
 typedef struct {
     u_int32_t state[5];
-    u_int64_t count;
+    u_int64_t बिलांग;
     u_int8_t buffer[SHA1_BLOCK_LENGTH];
 } SHA1_CTX;
 

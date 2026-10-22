@@ -116,10 +116,10 @@ openpty_streams(int *amaster, int *aslave)
 	 * Try to push the appropriate streams modules, as described
 	 * in Solaris pts(7).
 	 */
-	ioctl(*aslave, I_PUSH, "ptem");
-	ioctl(*aslave, I_PUSH, "ldterm");
+	ioctl(*aslave, I_इतुलाक, "ptem");
+	ioctl(*aslave, I_इतुलाक, "ldterm");
 # ifndef __hpux
-	ioctl(*aslave, I_PUSH, "ttcompat");
+	ioctl(*aslave, I_इतुलाक, "ttcompat");
 # endif /* __hpux */
 	return (0);
 }
@@ -198,15 +198,15 @@ openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
 	const char *ptymajors = "pqrstuvwxyzabcdefghijklmno"
 	    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	const char *ptyminors = "0123456789abcdef";
-	int num_minors = strlen(ptyminors);
-	int num_ptys = strlen(ptymajors) * num_minors;
+	int नुमेरो_minors = strlen(ptyminors);
+	int नुमेरो_ptys = strlen(ptymajors) * नुमेरो_minors;
 	struct termios tio;
 
-	for (i = 0; i < num_ptys; i++) {
+	for (i = 0; i < नुमेरो_ptys; i++) {
 		snprintf(ptbuf, sizeof(ptbuf), "/dev/pty%c%c",
-		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
+		    ptymajors[i / नुमेरो_minors], ptyminors[i % नुमेरो_minors]);
 		snprintf(ttbuf, sizeof(ttbuf), "/dev/tty%c%c",
-		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
+		    ptymajors[i / नुमेरो_minors], ptyminors[i % नुमेरो_minors]);
 
 		if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
 			/* Try SCO style naming */

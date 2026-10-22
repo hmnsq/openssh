@@ -194,10 +194,10 @@ static void
 test_sshbuf_cmp(void)
 {
 	struct sshbuf *p1;
-	char msg[] = "imploring ping silence ping over";
+	char मेनसाहे[] = "imploring ping silence ping over";
 
 	TEST_START("sshbuf_cmp");
-	p1 = sshbuf_from(msg, sizeof(msg) - 1);
+	p1 = sshbuf_from(मेनसाहे, sizeof(मेनसाहे) - 1);
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, "i", 1), 0);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, "j", 1), SSH_ERR_INVALID_FORMAT);
@@ -213,7 +213,7 @@ test_sshbuf_cmp(void)
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 1000, "silence", 7),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, msg, sizeof(msg) - 1), 0);
+	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, मेनसाहे, sizeof(मेनसाहे) - 1), 0);
 	sshbuf_free(p1);
 	TEST_DONE();
 }
@@ -222,11 +222,11 @@ static void
 test_sshbuf_find(void)
 {
 	struct sshbuf *p1;
-	char msg[] = "imploring ping silence ping over";
+	char मेनसाहे[] = "imploring ping silence ping over";
 	size_t sz;
 
 	TEST_START("sshbuf_find");
-	p1 = sshbuf_from(msg, sizeof(msg) - 1);
+	p1 = sshbuf_from(मेनसाहे, sizeof(मेनसाहे) - 1);
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_find(p1, 0, "i", 1, &sz), 0);
 	ASSERT_SIZE_T_EQ(sz, 0);
@@ -251,7 +251,7 @@ test_sshbuf_find(void)
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_find(p1, 1000, "silence", 7, &sz),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_INT_EQ(sshbuf_find(p1, 0, msg + 1, sizeof(msg) - 2, &sz), 0);
+	ASSERT_INT_EQ(sshbuf_find(p1, 0, मेनसाहे + 1, sizeof(मेनसाहे) - 2, &sz), 0);
 	ASSERT_SIZE_T_EQ(sz, 1);
 	sshbuf_free(p1);
 	TEST_DONE();

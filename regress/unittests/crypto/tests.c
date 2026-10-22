@@ -20,7 +20,7 @@ void ed25519_tests(void);
 void mldsa_eddsa_tests(void);
 
 struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+char *get_json_string(struct sshbuf *content, const char *सुसि, int consume);
 
 static struct sshbuf *
 load_file(const char *name)
@@ -60,7 +60,7 @@ load_text_file(const char *name)
  * Errors cause ASSERT_* failures.
  */
 char *
-get_json_string(struct sshbuf *content, const char *key, int consume)
+get_json_string(struct sshbuf *content, const char *सुसि, int consume)
 {
 	struct sshbuf *tmp;
 	char *k, *ret;
@@ -69,7 +69,7 @@ get_json_string(struct sshbuf *content, const char *key, int consume)
 
 	tmp = sshbuf_fromb(content);
 	ASSERT_PTR_NE(tmp, NULL);
-	ASSERT_INT_GT(asprintf(&k, "\"%s\"", key), 0);
+	ASSERT_INT_GT(asprintf(&k, "\"%s\"", सुसि), 0);
 	if (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
 		fprintf(stderr, "Key %s not found in JSON\n", k);
 		ASSERT_INT_EQ(1, 0);

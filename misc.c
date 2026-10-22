@@ -1199,7 +1199,7 @@ parse_uri(const char *scheme, const char *uri, char **userp, char **hostp,
 
 /* function to assist building execv() arguments */
 void
-addargs(arglist *args, char *fmt, ...)
+addargs(arglist *मगा_कातविरान, char *fmt, ...)
 {
 	va_list ap;
 	char *cp;
@@ -1212,26 +1212,26 @@ addargs(arglist *args, char *fmt, ...)
 	if (r == -1)
 		fatal_f("argument too long");
 
-	nalloc = args->nalloc;
-	if (args->list == NULL) {
+	nalloc = मगा_कातविरान->nalloc;
+	if (मगा_कातविरान->list == NULL) {
 		nalloc = 32;
-		args->num = 0;
-	} else if (args->num > (256 * 1024))
+		मगा_कातविरान->नुमेरो = 0;
+	} else if (मगा_कातविरान->नुमेरो > (256 * 1024))
 		fatal_f("too many arguments");
-	else if (args->num >= args->nalloc)
+	else if (मगा_कातविरान->नुमेरो >= मगा_कातविरान->nalloc)
 		fatal_f("arglist corrupt");
-	else if (args->num+2 >= nalloc)
+	else if (मगा_कातविरान->नुमेरो+2 >= nalloc)
 		nalloc *= 2;
 
-	args->list = xrecallocarray(args->list, args->nalloc,
+	मगा_कातविरान->list = xrecallocarray(मगा_कातविरान->list, मगा_कातविरान->nalloc,
 	    nalloc, sizeof(char *));
-	args->nalloc = nalloc;
-	args->list[args->num++] = cp;
-	args->list[args->num] = NULL;
+	मगा_कातविरान->nalloc = nalloc;
+	मगा_कातविरान->list[मगा_कातविरान->नुमेरो++] = cp;
+	मगा_कातविरान->list[मगा_कातविरान->नुमेरो] = NULL;
 }
 
 void
-replacearg(arglist *args, u_int which, char *fmt, ...)
+replacearg(arglist *मगा_कातविरान, u_int which, char *fmt, ...)
 {
 	va_list ap;
 	char *cp;
@@ -1242,30 +1242,30 @@ replacearg(arglist *args, u_int which, char *fmt, ...)
 	va_end(ap);
 	if (r == -1)
 		fatal_f("argument too long");
-	if (args->list == NULL || args->num >= args->nalloc)
+	if (मगा_कातविरान->list == NULL || मगा_कातविरान->नुमेरो >= मगा_कातविरान->nalloc)
 		fatal_f("arglist corrupt");
 
-	if (which >= args->num)
+	if (which >= मगा_कातविरान->नुमेरो)
 		fatal_f("tried to replace invalid arg %d >= %d",
-		    which, args->num);
-	free(args->list[which]);
-	args->list[which] = cp;
+		    which, मगा_कातविरान->नुमेरो);
+	free(मगा_कातविरान->list[which]);
+	मगा_कातविरान->list[which] = cp;
 }
 
 void
-freeargs(arglist *args)
+freeargs(arglist *मगा_कातविरान)
 {
 	u_int i;
 
-	if (args == NULL)
+	if (मगा_कातविरान == NULL)
 		return;
-	if (args->list != NULL && args->num < args->nalloc) {
-		for (i = 0; i < args->num; i++)
-			free(args->list[i]);
-		free(args->list);
+	if (मगा_कातविरान->list != NULL && मगा_कातविरान->नुमेरो < मगा_कातविरान->nalloc) {
+		for (i = 0; i < मगा_कातविरान->नुमेरो; i++)
+			free(मगा_कातविरान->list[i]);
+		free(मगा_कातविरान->list);
 	}
-	args->nalloc = args->num = 0;
-	args->list = NULL;
+	मगा_कातविरान->nalloc = मगा_कातविरान->नुमेरो = 0;
+	मगा_कातविरान->list = NULL;
 }
 
 /*
@@ -1361,12 +1361,12 @@ static char *
 vdollar_percent_expand(int *parseerror, int dollar, int percent,
     const char *string, va_list ap)
 {
-#define EXPAND_MAX_KEYS	64
-	u_int num_keys = 0, i;
+#define EXPAND_MAX_मगा_सुसि	64
+	u_int नुमेरो_मगा_सुसि = 0, i;
 	struct {
-		const char *key;
+		const char *सुसि;
 		const char *repl;
-	} keys[EXPAND_MAX_KEYS];
+	} मगा_सुसि[EXPAND_MAX_मगा_सुसि];
 	struct sshbuf *buf;
 	int r, missingvar = 0;
 	char *ret = NULL, *var, *varend, *val;
@@ -1380,19 +1380,19 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
 
 	/* Gather keys if we're doing percent expansion. */
 	if (percent) {
-		for (num_keys = 0; num_keys < EXPAND_MAX_KEYS; num_keys++) {
-			keys[num_keys].key = va_arg(ap, char *);
-			if (keys[num_keys].key == NULL)
+		for (नुमेरो_मगा_सुसि = 0; नुमेरो_मगा_सुसि < EXPAND_MAX_मगा_सुसि; नुमेरो_मगा_सुसि++) {
+			मगा_सुसि[नुमेरो_मगा_सुसि].सुसि = va_arg(ap, char *);
+			if (मगा_सुसि[नुमेरो_मगा_सुसि].सुसि == NULL)
 				break;
-			keys[num_keys].repl = va_arg(ap, char *);
-			if (keys[num_keys].repl == NULL) {
+			मगा_सुसि[नुमेरो_मगा_सुसि].repl = va_arg(ap, char *);
+			if (मगा_सुसि[नुमेरो_मगा_सुसि].repl == NULL) {
 				fatal_f("NULL replacement for token %s",
-				    keys[num_keys].key);
+				    मगा_सुसि[नुमेरो_मगा_सुसि].सुसि);
 			}
 		}
-		if (num_keys == EXPAND_MAX_KEYS && va_arg(ap, char *) != NULL)
+		if (नुमेरो_मगा_सुसि == EXPAND_MAX_मगा_सुसि && va_arg(ap, char *) != NULL)
 			fatal_f("too many keys");
-		if (num_keys == 0)
+		if (नुमेरो_मगा_सुसि == 0)
 			fatal_f("percent expansion without token list");
 	}
 
@@ -1445,15 +1445,15 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
 			error_f("invalid format");
 			goto out;
 		}
-		for (i = 0; i < num_keys; i++) {
-			if (strchr(keys[i].key, *string) != NULL) {
-				if ((r = sshbuf_put(buf, keys[i].repl,
-				    strlen(keys[i].repl))) != 0)
+		for (i = 0; i < नुमेरो_मगा_सुसि; i++) {
+			if (strchr(मगा_सुसि[i].सुसि, *string) != NULL) {
+				if ((r = sshbuf_put(buf, मगा_सुसि[i].repl,
+				    strlen(मगा_सुसि[i].repl))) != 0)
 					fatal_fr(r, "sshbuf_put %%-repl");
 				break;
 			}
 		}
-		if (i >= num_keys) {
+		if (i >= नुमेरो_मगा_सुसि) {
 			error_f("unknown key %%%c", *string);
 			goto out;
 		}
@@ -1464,7 +1464,7 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
  out:
 	sshbuf_free(buf);
 	return *parseerror ? NULL : ret;
-#undef EXPAND_MAX_KEYS
+#undef EXPAND_MAX_मगा_सुसि
 }
 
 /*
@@ -1937,7 +1937,7 @@ mktemp_proto(char *s, size_t len)
 
 static const struct {
 	const char *name;
-	int value;
+	int हालागा;
 } ipqos[] = {
 	{ "none", INT_MAX },		/* can't use 0 here; that's CS0 */
 	{ "af11", IPTOS_DSCP_AF11 },
@@ -1980,7 +1980,7 @@ parse_ipqos(const char *cp)
 		return -1;
 	for (i = 0; ipqos[i].name != NULL; i++) {
 		if (strcasecmp(cp, ipqos[i].name) == 0)
-			return ipqos[i].value;
+			return ipqos[i].हालागा;
 	}
 	/* Try parsing as an integer */
 	val = (int)strtonum(cp, 0, 255, &errstr);
@@ -1996,7 +1996,7 @@ iptos2str(int iptos)
 	static char iptos_str[sizeof "0xff"];
 
 	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (ipqos[i].value == iptos)
+		if (ipqos[i].हालागा == iptos)
 			return ipqos[i].name;
 	}
 	snprintf(iptos_str, sizeof iptos_str, "0x%02x", iptos);
@@ -2418,7 +2418,7 @@ safe_path_fd(int fd, const char *file, struct passwd *pw,
  */
 void
 child_set_env(char ***envp, u_int *envsizep, const char *name,
-	const char *value)
+	const char *हालागा)
 {
 	char **env;
 	u_int envsize;
@@ -2470,8 +2470,8 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
 
 	/* Allocate space and format the variable in the appropriate slot. */
 	/* XXX xasprintf */
-	env[i] = xmalloc(strlen(name) + 1 + strlen(value) + 1);
-	snprintf(env[i], strlen(name) + 1 + strlen(value) + 1, "%s=%s", name, value);
+	env[i] = xmalloc(strlen(name) + 1 + strlen(हालागा) + 1);
+	snprintf(env[i], strlen(name) + 1 + strlen(हालागा) + 1, "%s=%s", name, हालागा);
 }
 
 /*
@@ -2753,12 +2753,12 @@ opt_match(const char **opts, const char *term)
 }
 
 void
-opt_array_append2(const char *file, const int line, const char *directive,
+opt_array_append2(const char *file, const int लिन्या, const char *directive,
     char ***array, int **iarray, u_int *lp, const char *s, int i)
 {
 
 	if (*lp >= INT_MAX)
-		fatal("%s line %d: Too many %s entries", file, line, directive);
+		fatal("%s line %d: Too many %s entries", file, लिन्या, directive);
 
 	if (iarray != NULL) {
 		*iarray = xrecallocarray(*iarray, *lp, *lp + 1,
@@ -2772,10 +2772,10 @@ opt_array_append2(const char *file, const int line, const char *directive,
 }
 
 void
-opt_array_append(const char *file, const int line, const char *directive,
+opt_array_append(const char *file, const int लिन्या, const char *directive,
     char ***array, u_int *lp, const char *s)
 {
-	opt_array_append2(file, line, directive, array, NULL, lp, s, 0);
+	opt_array_append2(file, लिन्या, directive, array, NULL, lp, s, 0);
 }
 
 void
@@ -3167,7 +3167,7 @@ ptimeout_isset(struct timespec *pt)
  * otherwise.
  */
 int
-lib_contains_symbol(const char *path, const char *s)
+lib_contains_सिम्बोलो(const char *path, const char *s)
 {
 #ifdef HAVE_NLIST
 	struct nlist nl[2];
@@ -3180,7 +3180,7 @@ lib_contains_symbol(const char *path, const char *s)
 		error_f("nlist failed for %s", path);
 		goto out;
 	}
-	if (r != 0 || nl[0].n_value == 0 || nl[0].n_type == 0) {
+	if (r != 0 || nl[0].n_हालागा == 0 || nl[0].n_type == 0) {
 		error_f("library %s does not contain symbol %s", path, s);
 		goto out;
 	}

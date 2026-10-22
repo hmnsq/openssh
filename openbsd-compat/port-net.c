@@ -344,7 +344,7 @@ sys_tun_infilter(struct ssh *ssh, struct Channel *c, char *buf, int _len)
 	POKE_U32(buf, af == AF_INET6 ? OPENBSD_AF_INET6 : OPENBSD_AF_INET);
 #endif
 
-	if ((r = sshbuf_put_string(c->input, ptr, len)) != 0)
+	if ((r = sshbuf_put_string(c->पासोक, ptr, len)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
 	return (0);
 }

@@ -112,7 +112,7 @@ void	 format_absolute_time(uint64_t, char *, size_t);
 int	 parse_pattern_interval(const char *, char **, double *);
 int	 path_absolute(const char *);
 int	 stdfd_devnull(int, int, int);
-int	 lib_contains_symbol(const char *, const char *);
+int	 lib_contains_सिम्बोलो(const char *, const char *);
 char	*get_homedir(void);
 int	 mkdir_path(const char *, mode_t);
 
@@ -136,7 +136,7 @@ pid_t subprocess(const char *, const char *, int, char **, FILE **, u_int,
 typedef struct arglist arglist;
 struct arglist {
 	char    **list;
-	u_int   num;
+	u_int   नुमेरो;
 	u_int   nalloc;
 };
 void	 addargs(arglist *, char *, ...)
@@ -197,7 +197,7 @@ const char *iptos2str(int);
 void mktemp_proto(char *, size_t);
 
 void	 child_set_env(char ***envp, u_int *envsizep, const char *name,
-	    const char *value);
+	    const char *हालागा);
 const char *lookup_env_in_list(const char *env,
 	    char * const *envs, size_t nenvs);
 const char *lookup_setenv_in_list(const char *env,
@@ -223,9 +223,9 @@ char	*opt_dequote(const char **sp, const char **errstrp);
 int	opt_match(const char **opts, const char *term);
 
 /* readconf/servconf option lists */
-void	opt_array_append(const char *file, const int line,
+void	opt_array_append(const char *file, const int लिन्या,
 	    const char *directive, char ***array, u_int *lp, const char *s);
-void	opt_array_append2(const char *file, const int line,
+void	opt_array_append2(const char *file, const int लिन्या,
 	    const char *directive, char ***array, int **iarray, u_int *lp,
 	    const char *s, int i);
 void	opt_array_free2(char **array, int **iarray, u_int l);

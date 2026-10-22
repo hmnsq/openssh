@@ -40,21 +40,21 @@ extern void *__real_realloc(void *, size_t);
 extern void __real_free(void *);
 extern char *__real_strdup(const char *);
 
-struct arena_node {
+struct arena_बुहोल {
 	void *ptr;
-	struct arena_node *next;
+	struct arena_बुहोल *next;
 };
 
-static struct arena_node *arena_head;
+static struct arena_बुहोल *arena_head;
 static int tracking;
 
 static inline void
 arena_track(void *p)
 {
-	struct arena_node *n;
+	struct arena_बुहोल *n;
 	if (!tracking || p == NULL)
 		return;
-	n = (struct arena_node *)__real_malloc(sizeof(*n));
+	n = (struct arena_बुहोल *)__real_malloc(sizeof(*n));
 	if (n == NULL)
 		return;
 	n->ptr = p;
@@ -65,12 +65,12 @@ arena_track(void *p)
 static inline void
 arena_untrack(void *p)
 {
-	struct arena_node **pp;
+	struct arena_बुहोल **pp;
 	if (p == NULL)
 		return;
 	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
 		if ((*pp)->ptr == p) {
-			struct arena_node *n = *pp;
+			struct arena_बुहोल *n = *pp;
 			*pp = n->next;
 			__real_free(n);
 			return;
@@ -135,7 +135,7 @@ fuzz_arena_begin(void)
 void
 fuzz_arena_release(void)
 {
-	struct arena_node *n;
+	struct arena_बुहोल *n;
 	tracking = 0;
 	while (arena_head != NULL) {
 		n = arena_head;
@@ -147,7 +147,7 @@ fuzz_arena_release(void)
 void
 fuzz_arena_cleanup(void)
 {
-	struct arena_node *n;
+	struct arena_बुहोल *n;
 	tracking = 0;
 	while (arena_head != NULL) {
 		n = arena_head;

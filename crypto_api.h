@@ -118,17 +118,17 @@ int crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTE
 int crypto_sign_mldsa44_keypair(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
     uint8_t sk[MLDSA44_SECRETKEYBYTES]);
 int crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA44_SECRETKEYBYTES]);
 int crypto_sign_mldsa44_verify(const uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA44_PUBLICKEYBYTES]);
 int crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
     uint8_t sk[MLDSA44_SECRETKEYBYTES], const uint8_t seed[MLDSA44_SEEDBYTES]);
 int crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA44_SECRETKEYBYTES],
     const uint8_t seed[MLDSA44_SEEDBYTES]);
@@ -143,17 +143,17 @@ int crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
 int crypto_sign_mldsa65_keypair(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
     uint8_t sk[MLDSA65_SECRETKEYBYTES]);
 int crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA65_SECRETKEYBYTES]);
 int crypto_sign_mldsa65_verify(const uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA65_PUBLICKEYBYTES]);
 int crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
     uint8_t sk[MLDSA65_SECRETKEYBYTES], const uint8_t seed[MLDSA65_SEEDBYTES]);
 int crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA65_SECRETKEYBYTES],
     const uint8_t seed[MLDSA65_SEEDBYTES]);
@@ -168,17 +168,17 @@ int crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
 int crypto_sign_mldsa87_keypair(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
     uint8_t sk[MLDSA87_SECRETKEYBYTES]);
 int crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA87_SECRETKEYBYTES]);
 int crypto_sign_mldsa87_verify(const uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA87_PUBLICKEYBYTES]);
 int crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
     uint8_t sk[MLDSA87_SECRETKEYBYTES], const uint8_t seed[MLDSA87_SEEDBYTES]);
 int crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA87_SECRETKEYBYTES],
     const uint8_t seed[MLDSA87_SEEDBYTES]);
@@ -195,11 +195,11 @@ int crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
     const uint8_t mldsa_seed[MLDSA44_SEEDBYTES],
     const uint8_t ed25519_seed[crypto_sign_ed25519_SEEDBYTES]);
 int crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA44_ED25519_SK_SZ]);
 int crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA44_ED25519_PK_SZ]);
 

@@ -22,7 +22,7 @@
 
 /* in tests.c */
 struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+char *get_json_string(struct sshbuf *content, const char *सुसि, int consume);
 
 void mldsa_tests(void);
 
@@ -30,7 +30,7 @@ struct kat {
 	char *seed;
 	char *pk_hash;
 	char *sk_hash;
-	char *msg;
+	char *मेनसाहे;
 	char *rand;
 	char *sig_hash;
 };
@@ -51,7 +51,7 @@ load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
 		    "sha3_256_hash_of_verification_key", 1);
 		kat->sk_hash = get_json_string(json_buf,
 		    "sha3_256_hash_of_signing_key", 1);
-		kat->msg = get_json_string(json_buf, "message", 1);
+		kat->मेनसाहे = get_json_string(json_buf, "message", 1);
 		kat->rand = get_json_string(json_buf, "signing_randomness", 1);
 		kat->sig_hash = get_json_string(json_buf,
 		    "sha3_256_hash_of_signature", 1);
@@ -74,7 +74,7 @@ free_kats(struct kat **kats, size_t nkats)
 		free(kat->seed);
 		free(kat->pk_hash);
 		free(kat->sk_hash);
-		free(kat->msg);
+		free(kat->मेनसाहे);
 		free(kat->rand);
 		free(kat->sig_hash);
 		free(kat);
@@ -92,7 +92,7 @@ mldsa_tests(void)
 	uint8_t expected_pk_hash[32], expected_sk_hash[32];
 	uint8_t expected_sig_hash[32];
 	uint8_t seed[32], rand[32];
-	uint8_t *msg;
+	uint8_t *मेनसाहे;
 	size_t nkats, i, msglen;
 	struct kat **kats, *kat;
 
@@ -116,23 +116,23 @@ mldsa_tests(void)
 		ASSERT_MEM_EQ(pk_hash, expected_pk_hash, 32);
 		ASSERT_MEM_EQ(sk_hash, expected_sk_hash, 32);
 
-		msglen = strlen(kat->msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen), NULL);
-		hex2bin(msg, kat->msg, msglen);
+		msglen = strlen(kat->मेनसाहे) / 2;
+		ASSERT_PTR_NE(मेनसाहे = malloc(msglen), NULL);
+		hex2bin(मेनसाहे, kat->मेनसाहे, msglen);
 		hex2bin(rand, kat->rand, 32);
 		hex2bin(expected_sig_hash, kat->sig_hash, 32);
 
 		/* Signing */
-		ASSERT_INT_EQ(crypto_sign_mldsa44_seeded(sig, msg,
+		ASSERT_INT_EQ(crypto_sign_mldsa44_seeded(sig, मेनसाहे,
 		    msglen, NULL, 0, sk, rand), 0);
 
 		sha3_256(sig_hash, sig, sizeof(sig));
 		ASSERT_MEM_EQ(sig_hash, expected_sig_hash, 32);
 
 		/* Verification */
-		ASSERT_INT_EQ(crypto_sign_mldsa44_verify(sig, msg,
+		ASSERT_INT_EQ(crypto_sign_mldsa44_verify(sig, मेनसाहे,
 		    msglen, NULL, 0, pk), 0);
-		free(msg);
+		free(मेनसाहे);
 	}
 	free_kats(kats, nkats);
 	TEST_DONE();

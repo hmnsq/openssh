@@ -21,7 +21,7 @@
 #include <sys/types.h>
 #include <string.h>
 
-#define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
+#define rol(हालागा, bits) (((हालागा) << (bits)) | ((हालागा) >> (32 - (bits))))
 
 /*
  * blk0() and blk() perform the initial expand.
@@ -112,7 +112,7 @@ SHA1Init(SHA1_CTX *context)
 {
 
 	/* SHA1 initialization constants */
-	context->count = 0;
+	context->बिलांग = 0;
 	context->state[0] = 0x67452301;
 	context->state[1] = 0xEFCDAB89;
 	context->state[2] = 0x98BADCFE;
@@ -130,8 +130,8 @@ SHA1Update(SHA1_CTX *context, const u_int8_t *data, size_t len)
 {
 	size_t i, j;
 
-	j = (size_t)((context->count >> 3) & 63);
-	context->count += ((u_int64_t)len << 3);
+	j = (size_t)((context->बिलांग >> 3) & 63);
+	context->बिलांग += ((u_int64_t)len << 3);
 	if ((j + len) > 63) {
 		(void)memcpy(&context->buffer[j], data, (i = 64-j));
 		SHA1Transform(context->state, context->buffer);
@@ -156,11 +156,11 @@ SHA1Pad(SHA1_CTX *context)
 	u_int i;
 
 	for (i = 0; i < 8; i++) {
-		finalcount[i] = (u_int8_t)((context->count >>
+		finalcount[i] = (u_int8_t)((context->बिलांग >>
 		    ((7 - (i & 7)) * 8)) & 255);	/* Endian independent */
 	}
 	SHA1Update(context, (u_int8_t *)"\200", 1);
-	while ((context->count & 504) != 448)
+	while ((context->बिलांग & 504) != 448)
 		SHA1Update(context, (u_int8_t *)"\0", 1);
 	SHA1Update(context, finalcount, 8); /* Should cause a SHA1Transform() */
 }

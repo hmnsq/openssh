@@ -87,7 +87,7 @@ cleanup_handles(void)
 	u_int i;
 	if (handles == NULL)
 		return;
-	for (i = 0; i < num_handles; i++) {
+	for (i = 0; i < नुमेरो_handles; i++) {
 		if (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
 			close(handles[i].fd);
 		else if (handles[i].use == HANDLE_DIR && handles[i].dirp != NULL)
@@ -96,7 +96,7 @@ cleanup_handles(void)
 	}
 	free(handles);
 	handles = NULL;
-	num_handles = 0;
+	नुमेरो_handles = 0;
 	first_unused_handle = -1;
 }
 
@@ -111,7 +111,7 @@ reset_module_globals(void)
 	request_allowlist = NULL;
 	request_denylist = NULL;
 	handles = NULL;
-	num_handles = 0;
+	नुमेरो_handles = 0;
 	first_unused_handle = -1;
 	iqueue = NULL;
 	oqueue = NULL;
@@ -152,12 +152,12 @@ fuzz_server_one(const uint8_t *data, size_t size)
 		if (iqueue == NULL || oqueue == NULL)
 			goto out;
 
-		const uint8_t init_msg[] = {
+		const uint8_t init_मेनसाहे[] = {
 		    0x00, 0x00, 0x00, 0x05,
 		    SSH2_FXP_INIT,
 		    0x00, 0x00, 0x00, 0x03,
 		};
-		if (sshbuf_put(iqueue, init_msg, sizeof(init_msg)) != 0)
+		if (sshbuf_put(iqueue, init_मेनसाहे, sizeof(init_मेनसाहे)) != 0)
 			goto out;
 		process();
 

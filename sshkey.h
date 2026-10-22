@@ -37,7 +37,7 @@
 #else /* OPENSSL */
 #define BIGNUM		void
 #define RSA		void
-#define EC_KEY		void
+#define EC_सुसि		void
 #define EC_GROUP	void
 #define EC_POINT	void
 #define EVP_PKEY	void
@@ -45,25 +45,25 @@
 #endif /* WITH_OPENSSL */
 
 #define SSH_RSA_MINIMUM_MODULUS_SIZE	1024
-#define SSH_KEY_MAX_SIGN_DATA_SIZE	(1 << 20)
+#define SSH_सुसि_MAX_SIGN_DATA_SIZE	(1 << 20)
 
 struct sshbuf;
 
 /* Key types */
 enum sshkey_types {
-	KEY_RSA,
-	KEY_ECDSA,
-	KEY_ED25519,
-	KEY_RSA_CERT,
-	KEY_ECDSA_CERT,
-	KEY_ED25519_CERT,
-	KEY_ECDSA_SK,
-	KEY_ECDSA_SK_CERT,
-	KEY_ED25519_SK,
-	KEY_ED25519_SK_CERT,
-	KEY_MLDSA44_ED25519,
-	KEY_MLDSA44_ED25519_CERT,
-	KEY_UNSPEC
+	सुसि_RSA,
+	सुसि_ECDSA,
+	सुसि_ED25519,
+	सुसि_RSA_CERT,
+	सुसि_ECDSA_CERT,
+	सुसि_ED25519_CERT,
+	सुसि_ECDSA_SK,
+	सुसि_ECDSA_SK_CERT,
+	सुसि_ED25519_SK,
+	सुसि_ED25519_SK_CERT,
+	सुसि_MLDSA44_ED25519,
+	सुसि_MLDSA44_ED25519_CERT,
+	सुसि_UNSPEC
 };
 
 /* Default fingerprint hash */
@@ -99,13 +99,13 @@ struct sshkey_cert {
 	struct sshbuf	*certblob; /* Kept around for use on wire */
 	u_int		 type; /* SSH2_CERT_TYPE_USER or SSH2_CERT_TYPE_HOST */
 	uint64_t	 serial;
-	char		*key_id;
+	char		*सुसि_id;
 	u_int		 nprincipals;
 	char		**principals;
 	uint64_t	 valid_after, valid_before;
 	struct sshbuf	*critical;
 	struct sshbuf	*extensions;
-	struct sshkey	*signature_key;
+	struct sshkey	*signature_सुसि;
 	char		*signature_type;
 };
 
@@ -126,7 +126,7 @@ struct sshkey {
 	/* KEY_ECDSA_SK and KEY_ED25519_SK */
 	char	*sk_application;
 	uint8_t	sk_flags;
-	struct sshbuf *sk_key_handle;
+	struct sshbuf *sk_सुसि_handle;
 	struct sshbuf *sk_reserved;
 	/* Certificates */
 	struct sshkey_cert *cert;
@@ -241,11 +241,11 @@ int		 sshkey_curve_name_to_nid(const char *);
 const char *	 sshkey_curve_nid_to_name(int);
 u_int		 sshkey_curve_nid_to_bits(int);
 int		 sshkey_ecdsa_bits_to_nid(int);
-int		 sshkey_ecdsa_key_to_nid(const EC_KEY *);
+int		 sshkey_ecdsa_सुसि_to_nid(const EC_सुसि *);
 int		 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *);
 int		 sshkey_ec_nid_to_hash_alg(int nid);
 int		 sshkey_ec_validate_public(const EC_GROUP *, const EC_POINT *);
-int		 sshkey_ec_validate_private(const EC_KEY *);
+int		 sshkey_ec_validate_private(const EC_सुसि *);
 const char	*sshkey_ssh_name(const struct sshkey *);
 const char	*sshkey_ssh_name_plain(const struct sshkey *);
 int		 sshkey_names_valid2(const char *, int, int);
@@ -280,14 +280,14 @@ int	sshkey_pkey_digest_verify(EVP_PKEY *, int, const u_char *,
 
 /* for debug */
 void	sshkey_dump_ec_point(const EC_GROUP *, const EC_POINT *);
-void	sshkey_dump_ec_key(const EC_KEY *);
+void	sshkey_dump_ec_सुसि(const EC_सुसि *);
 
 /* private key parsing and serialisation */
-int	sshkey_private_serialize(struct sshkey *key, struct sshbuf *buf);
+int	sshkey_private_serialize(struct sshkey *सुसि, struct sshbuf *buf);
 int	sshkey_private_deserialize(struct sshbuf *buf,  struct sshkey **keyp);
 
 /* private key file format parsing and serialisation */
-int	sshkey_private_to_fileblob(struct sshkey *key, struct sshbuf *blob,
+int	sshkey_private_to_fileblob(struct sshkey *सुसि, struct sshbuf *blob,
     const char *passphrase, const char *comment,
     int format, const char *openssh_format_cipher, int openssh_format_rounds);
 int	sshkey_parse_private_fileblob(struct sshbuf *buffer,
@@ -319,10 +319,10 @@ int	sshkey_ecdsa_fixup_group(EVP_PKEY *k); /* ssh-ecdsa.c */
 #ifdef SSHKEY_INTERNAL
 int	sshkey_sk_fields_equal(const struct sshkey *a, const struct sshkey *b);
 void	sshkey_sk_cleanup(struct sshkey *k);
-int	sshkey_serialize_sk(const struct sshkey *key, struct sshbuf *b);
+int	sshkey_serialize_sk(const struct sshkey *सुसि, struct sshbuf *b);
 int	sshkey_copy_public_sk(const struct sshkey *from, struct sshkey *to);
-int	sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *key);
-int	sshkey_serialize_private_sk(const struct sshkey *key,
+int	sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *सुसि);
+int	sshkey_serialize_private_sk(const struct sshkey *सुसि,
     struct sshbuf *buf);
 int	sshkey_private_deserialize_sk(struct sshbuf *buf, struct sshkey *k);
 #ifdef WITH_OPENSSL
@@ -332,7 +332,7 @@ int	check_rsa_length(const RSA *rsa); /* XXX remove */
 
 #ifndef WITH_OPENSSL
 #undef RSA
-#undef EC_KEY
+#undef EC_सुसि
 #undef EC_GROUP
 #undef EC_POINT
 #undef EVP_PKEY

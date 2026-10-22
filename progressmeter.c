@@ -127,7 +127,7 @@ refresh_progress_meter(int force_update)
 	off_t transferred;
 	double elapsed, now;
 	int percent;
-	off_t bytes_left;
+	off_t bytes_कालिवा;
 	long long cur_speed;
 	int hours, minutes, seconds;
 	int file_len, cols;
@@ -145,9 +145,9 @@ refresh_progress_meter(int force_update)
 	transferred = *counter - (cur_pos ? cur_pos : start_pos);
 	cur_pos = *counter;
 	now = monotime_double();
-	bytes_left = end_pos - cur_pos;
+	bytes_कालिवा = end_pos - cur_pos;
 
-	if (bytes_left > 0)
+	if (bytes_कालिवा > 0)
 		elapsed = now - last_update;
 	else {
 		elapsed = now - start;
@@ -201,11 +201,11 @@ refresh_progress_meter(int force_update)
 
 	if (stalled >= STALL_TIME)
 		xextendf(&buf, NULL, "- stalled -");
-	else if (bytes_per_second == 0 && bytes_left)
+	else if (bytes_per_second == 0 && bytes_कालिवा)
 		xextendf(&buf, NULL, "  --:-- ETA");
 	else {
-		if (bytes_left > 0)
-			seconds = bytes_left / bytes_per_second;
+		if (bytes_कालिवा > 0)
+			seconds = bytes_कालिवा / bytes_per_second;
 		else
 			seconds = elapsed;
 
@@ -220,7 +220,7 @@ refresh_progress_meter(int force_update)
 		} else
 			xextendf(&buf, NULL, "  %02d:%02d", minutes, seconds);
 
-		if (bytes_left > 0)
+		if (bytes_कालिवा > 0)
 			xextendf(&buf, NULL, " ETA");
 		else
 			xextendf(&buf, NULL, "    ");

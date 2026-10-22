@@ -70,7 +70,7 @@ struct sshauthopt {
 	 * Caller must check source address matches both lists (if present).
 	 */
 	char *required_from_host_cert;
-	char *required_from_host_keys;
+	char *required_from_host_मगा_सुसि;
 
 	/* Key requires user presence asserted */
 	int no_require_user_presence;
@@ -79,7 +79,7 @@ struct sshauthopt {
 };
 
 struct sshauthopt *sshauthopt_new(void);
-struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
+struct sshauthopt *sshauthopt_new_with_मगा_सुसि_defaults(void);
 void sshauthopt_free(struct sshauthopt *opts);
 struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
 int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);

@@ -107,7 +107,7 @@ sshkey_file_tests(void)
 	TEST_START("load RSA cert with SHA1 signature");
 	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("rsa_1_sha1"), &k2), 0);
 	ASSERT_PTR_NE(k2, NULL);
-	ASSERT_INT_EQ(k2->type, KEY_RSA_CERT);
+	ASSERT_INT_EQ(k2->type, सुसि_RSA_CERT);
 	ASSERT_INT_EQ(sshkey_equal_public(k1, k2), 1);
 	ASSERT_STRING_EQ(k2->cert->signature_type, "ssh-rsa");
 	sshkey_free(k2);
@@ -116,7 +116,7 @@ sshkey_file_tests(void)
 	TEST_START("load RSA cert with SHA512 signature");
 	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("rsa_1_sha512"), &k2), 0);
 	ASSERT_PTR_NE(k2, NULL);
-	ASSERT_INT_EQ(k2->type, KEY_RSA_CERT);
+	ASSERT_INT_EQ(k2->type, सुसि_RSA_CERT);
 	ASSERT_INT_EQ(sshkey_equal_public(k1, k2), 1);
 	ASSERT_STRING_EQ(k2->cert->signature_type, "rsa-sha2-512");
 	sshkey_free(k2);
@@ -125,7 +125,7 @@ sshkey_file_tests(void)
 	TEST_START("load RSA cert");
 	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("rsa_1"), &k2), 0);
 	ASSERT_PTR_NE(k2, NULL);
-	ASSERT_INT_EQ(k2->type, KEY_RSA_CERT);
+	ASSERT_INT_EQ(k2->type, सुसि_RSA_CERT);
 	ASSERT_INT_EQ(sshkey_equal(k1, k2), 0);
 	ASSERT_INT_EQ(sshkey_equal_public(k1, k2), 1);
 	TEST_DONE();
@@ -173,12 +173,12 @@ sshkey_file_tests(void)
 #ifndef OPENSSL_IS_BORINGSSL /* lacks EC_POINT_point2bn() */
 	a = load_bignum("ecdsa_1.param.priv");
 	b = load_bignum("ecdsa_1.param.pub");
-	c = EC_POINT_point2bn(EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(k1->pkey)),
-	    EC_KEY_get0_public_key(EVP_PKEY_get0_EC_KEY(k1->pkey)),
+	c = EC_POINT_point2bn(EC_सुसि_get0_group(EVP_PKEY_get0_EC_सुसि(k1->pkey)),
+	    EC_सुसि_get0_public_सुसि(EVP_PKEY_get0_EC_सुसि(k1->pkey)),
 	    POINT_CONVERSION_UNCOMPRESSED, NULL, NULL);
 	ASSERT_PTR_NE(c, NULL);
 	ASSERT_BIGNUM_EQ(
-	    EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(k1->pkey)), a);
+	    EC_सुसि_get0_private_सुसि(EVP_PKEY_get0_EC_सुसि(k1->pkey)), a);
 	ASSERT_BIGNUM_EQ(b, c);
 	BN_free(a);
 	BN_free(b);
@@ -226,7 +226,7 @@ sshkey_file_tests(void)
 	TEST_START("load ECDSA cert");
 	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("ecdsa_1"), &k2), 0);
 	ASSERT_PTR_NE(k2, NULL);
-	ASSERT_INT_EQ(k2->type, KEY_ECDSA_CERT);
+	ASSERT_INT_EQ(k2->type, सुसि_ECDSA_CERT);
 	ASSERT_INT_EQ(sshkey_equal(k1, k2), 0);
 	ASSERT_INT_EQ(sshkey_equal_public(k1, k2), 1);
 	TEST_DONE();
@@ -267,7 +267,7 @@ sshkey_file_tests(void)
 	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(k1, NULL);
-	ASSERT_INT_EQ(k1->type, KEY_ED25519);
+	ASSERT_INT_EQ(k1->type, सुसि_ED25519);
 	/* XXX check key contents */
 	TEST_DONE();
 
@@ -292,7 +292,7 @@ sshkey_file_tests(void)
 	TEST_START("load Ed25519 cert");
 	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("ed25519_1"), &k2), 0);
 	ASSERT_PTR_NE(k2, NULL);
-	ASSERT_INT_EQ(k2->type, KEY_ED25519_CERT);
+	ASSERT_INT_EQ(k2->type, सुसि_ED25519_CERT);
 	ASSERT_INT_EQ(sshkey_equal(k1, k2), 0);
 	ASSERT_INT_EQ(sshkey_equal_public(k1, k2), 1);
 	TEST_DONE();
@@ -332,7 +332,7 @@ sshkey_file_tests(void)
 	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(k1, NULL);
-	ASSERT_INT_EQ(k1->type, KEY_MLDSA44_ED25519);
+	ASSERT_INT_EQ(k1->type, सुसि_MLDSA44_ED25519);
 	TEST_DONE();
 
 	TEST_START("parse MLDSA44-ED25519 from private w/ passphrase");
@@ -357,7 +357,7 @@ sshkey_file_tests(void)
 	ASSERT_INT_EQ(sshkey_load_cert(
 	    test_data_file("mldsa44_ed25519_1"), &k2), 0);
 	ASSERT_PTR_NE(k2, NULL);
-	ASSERT_INT_EQ(k2->type, KEY_MLDSA44_ED25519_CERT);
+	ASSERT_INT_EQ(k2->type, सुसि_MLDSA44_ED25519_CERT);
 	ASSERT_INT_EQ(sshkey_equal(k1, k2), 0);
 	ASSERT_INT_EQ(sshkey_equal_public(k1, k2), 1);
 	TEST_DONE();
@@ -399,7 +399,7 @@ sshkey_file_tests(void)
 	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(k1, NULL);
-	ASSERT_INT_EQ(k1->type, KEY_ECDSA_SK);
+	ASSERT_INT_EQ(k1->type, सुसि_ECDSA_SK);
 	TEST_DONE();
 
 	TEST_START("parse ECDSA-SK from private w/ passphrase");
@@ -423,7 +423,7 @@ sshkey_file_tests(void)
 	TEST_START("load ECDSA-SK cert");
 	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("ecdsa_sk1"), &k2), 0);
 	ASSERT_PTR_NE(k2, NULL);
-	ASSERT_INT_EQ(k2->type, KEY_ECDSA_SK_CERT);
+	ASSERT_INT_EQ(k2->type, सुसि_ECDSA_SK_CERT);
 	ASSERT_INT_EQ(sshkey_equal(k1, k2), 0);
 	ASSERT_INT_EQ(sshkey_equal_public(k1, k2), 1);
 	TEST_DONE();
@@ -464,7 +464,7 @@ sshkey_file_tests(void)
 	ASSERT_INT_EQ(sshkey_parse_private_fileblob(buf, "", &k1, NULL), 0);
 	sshbuf_free(buf);
 	ASSERT_PTR_NE(k1, NULL);
-	ASSERT_INT_EQ(k1->type, KEY_ED25519_SK);
+	ASSERT_INT_EQ(k1->type, सुसि_ED25519_SK);
 	/* XXX check key contents */
 	TEST_DONE();
 
@@ -489,7 +489,7 @@ sshkey_file_tests(void)
 	TEST_START("load Ed25519-SK cert");
 	ASSERT_INT_EQ(sshkey_load_cert(test_data_file("ed25519_sk1"), &k2), 0);
 	ASSERT_PTR_NE(k2, NULL);
-	ASSERT_INT_EQ(k2->type, KEY_ED25519_SK_CERT);
+	ASSERT_INT_EQ(k2->type, सुसि_ED25519_SK_CERT);
 	ASSERT_INT_EQ(sshkey_equal(k1, k2), 0);
 	ASSERT_INT_EQ(sshkey_equal_public(k1, k2), 1);
 	TEST_DONE();

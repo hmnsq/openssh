@@ -109,35 +109,35 @@ mm_auth_password(struct ssh *ssh, char *password)
 }
 
 int
-mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+mm_user_सुसि_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *सुसि,
     int auth_attempt, struct sshauthopt **authoptsp)
 {
 	(void)ssh;
 	(void)pw;
-	(void)key;
+	(void)सुसि;
 	(void)auth_attempt;
 	(void)authoptsp;
 	return 0;
 }
 
 int
-mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw, const char *user,
-    const char *host, struct sshkey *key)
+mm_hostbased_सुसि_allowed(struct ssh *ssh, struct passwd *pw, const char *user,
+    const char *host, struct sshkey *सुसि)
 {
 	(void)ssh;
 	(void)pw;
 	(void)user;
 	(void)host;
-	(void)key;
+	(void)सुसि;
 	return 0;
 }
 
 int
-mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
+mm_sshkey_verify(const struct sshkey *सुसि, const u_char *sig, size_t siglen,
     const u_char *data, size_t datalen, const char *alg, u_int compat,
     struct sshkey_sig_details **detailsp)
 {
-	return sshkey_verify(key, sig, siglen, data, datalen, alg, compat,
+	return sshkey_verify(सुसि, sig, siglen, data, datalen, alg, compat,
 	    detailsp);
 }
 
@@ -182,7 +182,7 @@ static struct sshkey *
 load_public(const char *str)
 {
 	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
+	struct sshkey *k = sshkey_new(सुसि_UNSPEC);
 	if (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
@@ -205,7 +205,7 @@ pump(struct ssh *from, struct ssh *to, size_t *transferred)
 	buf = ssh_output_ptr(from, &len);
 	if (len == 0)
 		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
+	if ((r = ssh_पासोक_append(to, buf, len)) != 0)
 		return r;
 	if ((r = ssh_output_consume(from, len)) != 0)
 		return r;
@@ -266,14 +266,14 @@ fuzz_reset_authctxt(struct ssh *ssh)
 	free(g_authctxt.style);
 	free(g_authctxt.auth_method_info);
 	if (g_authctxt.auth_methods != NULL) {
-		for (i = 0; i < g_authctxt.num_auth_methods; i++)
+		for (i = 0; i < g_authctxt.नुमेरो_auth_methods; i++)
 			free(g_authctxt.auth_methods[i]);
 		free(g_authctxt.auth_methods);
 	}
-	sshkey_free(g_authctxt.auth_method_key);
-	for (i = 0; i < g_authctxt.nprev_keys; i++)
-		sshkey_free(g_authctxt.prev_keys[i]);
-	free(g_authctxt.prev_keys);
+	sshkey_free(g_authctxt.auth_method_सुसि);
+	for (i = 0; i < g_authctxt.nprev_मगा_सुसि; i++)
+		sshkey_free(g_authctxt.prev_मगा_सुसि[i]);
+	free(g_authctxt.prev_मगा_सुसि);
 	sshbuf_free(g_authctxt.session_info);
 	memset(&g_authctxt, 0, sizeof(g_authctxt));
 	ssh->authctxt = &g_authctxt;
@@ -315,7 +315,7 @@ init_once(void)
 	int i;
 	for (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		if (i == PROPOSAL_SERVER_HOST_सुसि_ALGS)
 			p = keyname;
 		else if (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
@@ -342,8 +342,8 @@ init_once(void)
 	fuzz_reset_authctxt(g_server);
 
 	ssh_dispatch_init(g_server, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_server, SSH2_MSG_USERAUTH_REQUEST,
-	    &input_userauth_request);
+	ssh_dispatch_set(g_server, SSH2_मेनसाहे_USERAUTH_REQUEST,
+	    &पासोक_userauth_request);
 
 	free(keyname);
 	for (i = 0; i < PROPOSAL_MAX; i++)
@@ -365,7 +365,7 @@ fuzz_userauth_one(const uint8_t *data, size_t size)
 	in_fuzz = 1;
 	if (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_USERAUTH_REQUEST,
+		if (ssh_packet_put(g_client, SSH2_मेनसाहे_USERAUTH_REQUEST,
 		    data, size) != 0)
 			goto done;
 		if (pump(g_client, g_server, &transferred) != 0)

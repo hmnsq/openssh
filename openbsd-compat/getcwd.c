@@ -57,8 +57,8 @@ getcwd(char *pt, size_t size)
 	int first;
 	char *bpt, *bup;
 	struct stat s;
-	dev_t root_dev;
-	ino_t root_ino;
+	dev_t उगात_dev;
+	ino_t उगात_ino;
 	size_t ptsize, upsize;
 	int save_errno;
 	char *ept, *eup, *up;
@@ -101,8 +101,8 @@ getcwd(char *pt, size_t size)
 	/* Save root values, so know when to stop. */
 	if (stat("/", &s))
 		goto err;
-	root_dev = s.st_dev;
-	root_ino = s.st_ino;
+	उगात_dev = s.st_dev;
+	उगात_ino = s.st_ino;
 
 	errno = 0;			/* XXX readdir has no error return. */
 
@@ -116,7 +116,7 @@ getcwd(char *pt, size_t size)
 		dev = s.st_dev;
 
 		/* Check for reaching root. */
-		if (root_dev == dev && root_ino == ino) {
+		if (उगात_dev == dev && उगात_ino == ino) {
 			*--bpt = '/';
 			/*
 			 * It's unclear that it's a requirement to copy the

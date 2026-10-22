@@ -28,7 +28,7 @@ struct sshkey;
 
 typedef struct Sensitive Sensitive;
 struct Sensitive {
-	struct sshkey	**keys;
+	struct sshkey	**मगा_सुसि;
 	int		nkeys;
 };
 
@@ -52,7 +52,7 @@ struct ssh;
 struct hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
+#define DEFAULT_CLIENT_PERCENT_EXPAND_मगा_कातविरान_NOUSER(conn_info) \
 	"L", conn_info->shorthost, \
 	"i", conn_info->uidstr, \
 	"k", conn_info->keyalias, \
@@ -65,8 +65,8 @@ struct hostkeys;
 	"j", conn_info->jmphost
 
 /* same plus remote user and hash which has user as a component */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(conn_info) \
-	DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info), \
+#define DEFAULT_CLIENT_PERCENT_EXPAND_मगा_कातविरान(conn_info) \
+	DEFAULT_CLIENT_PERCENT_EXPAND_मगा_कातविरान_NOUSER(conn_info), \
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
@@ -79,7 +79,7 @@ void	 ssh_login(struct ssh *, Sensitive *, const char *,
     struct sockaddr_storage *, u_short, struct passwd *, int,
     const struct ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
+int	 verify_host_सुसि(char *, struct sockaddr *, struct sshkey *,
     const struct ssh_conn_info *);
 
 void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
@@ -95,7 +95,7 @@ void	 pubkey_dump(struct ssh *);
 
 int	 ssh_local_cmd(const char *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
+void	 maybe_add_सुसि_to_agent(const char *, struct sshkey *,
     const char *, const char *);
 
 void	 load_hostkeys_command(struct hostkeys *, const char *,

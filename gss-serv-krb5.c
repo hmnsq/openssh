@@ -91,7 +91,7 @@ ssh_gssapi_krb5_userok(ssh_gssapi_client *client, char *name)
 	if (ssh_gssapi_krb5_init() == 0)
 		return 0;
 
-	if ((retval = krb5_parse_name(krb_context, client->exportedname.value,
+	if ((retval = krb5_parse_name(krb_context, client->exportedname.हालागा,
 	    &princ))) {
 		errmsg = krb5_get_error_message(krb_context, retval);
 		logit("krb5_parse_name(): %.100s", errmsg);
@@ -101,7 +101,7 @@ ssh_gssapi_krb5_userok(ssh_gssapi_client *client, char *name)
 	if (krb5_kuserok(krb_context, princ, name)) {
 		retval = 1;
 		logit("Authorized to %s, krb5 principal %s (krb5_kuserok)",
-		    name, (char *)client->displayname.value);
+		    name, (char *)client->displayname.हालागा);
 	} else
 		retval = 0;
 
@@ -155,7 +155,7 @@ ssh_gssapi_krb5_storecreds(ssh_gssapi_client *client)
 #endif	/* #ifdef HEIMDAL */
 
 	if ((problem = krb5_parse_name(krb_context,
-	    client->exportedname.value, &princ))) {
+	    client->exportedname.हालागा, &princ))) {
 		errmsg = krb5_get_error_message(krb_context, problem);
 		logit("krb5_parse_name(): %.100s", errmsg);
 		krb5_free_error_message(krb_context, errmsg);

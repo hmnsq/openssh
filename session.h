@@ -44,7 +44,7 @@ struct Session {
 	char	tty[TTYSZ];
 
 	/* X11 */
-	u_int	display_number;
+	u_int	display_नुमेरो;
 	char	*display;
 	u_int	screen;
 	char	*auth_display;
@@ -56,7 +56,7 @@ struct Session {
 	int	*x11_chanids;
 	int	is_subsystem;
 	char	*subsys;
-	u_int	num_env;
+	u_int	नुमेरो_env;
 	struct {
 		char	*name;
 		char	*val;
@@ -68,7 +68,7 @@ void	 do_cleanup(struct ssh *, Authctxt *);
 
 int	 session_open(Authctxt *, int);
 void	 session_unused(int);
-int	 session_input_channel_req(struct ssh *, Channel *, const char *);
+int	 session_पासोक_channel_req(struct ssh *, Channel *, const char *);
 void	 session_close_by_pid(struct ssh *ssh, pid_t, int);
 void	 session_close_by_channel(struct ssh *, int, int, void *);
 void	 session_destroy_all(struct ssh *, void (*)(Session *));

@@ -60,7 +60,7 @@ void	*ssh_get_app_data(struct ssh *);
  * private hostkeys are required if we need to act as a server.
  * public hostkeys are used to verify the servers hostkey.
  */
-int	ssh_add_hostkey(struct ssh *ssh, struct sshkey *key);
+int	ssh_add_hostkey(struct ssh *ssh, struct sshkey *सुसि);
 
 /*
  * ssh_set_verify_host_key_callback() registers a callback function
@@ -68,7 +68,7 @@ int	ssh_add_hostkey(struct ssh *ssh, struct sshkey *key);
  * function given must return 0 if the hostkey is ok, -1 if the
  * verification has failed.
  */
-int	ssh_set_verify_host_key_callback(struct ssh *ssh,
+int	ssh_set_verify_host_सुसि_callback(struct ssh *ssh,
     int (*cb)(struct sshkey *, struct ssh *));
 
 /*
@@ -106,12 +106,12 @@ int	ssh_packet_put(struct ssh *ssh, int type, const u_char *data,
  * ssh_input_space() checks if 'len' bytes can be appended to the
  * input byte-stream.
  */
-int	ssh_input_space(struct ssh *ssh, size_t len);
+int	ssh_पासोक_space(struct ssh *ssh, size_t len);
 
 /*
  * ssh_input_append() appends data to the input byte-stream.
  */
-int	ssh_input_append(struct ssh *ssh, const u_char *data, size_t len);
+int	ssh_पासोक_append(struct ssh *ssh, const u_char *data, size_t len);
 
 /*
  * ssh_output_space() checks if 'len' bytes can be appended to the

@@ -47,11 +47,11 @@ idname_cmp(struct idname *a, struct idname *b)
 		return 0;
 	return a->id > b->id ? 1 : -1;
 }
-RB_HEAD(idname_tree, idname);
-RB_GENERATE_STATIC(idname_tree, idname, entry, idname_cmp)
+RB_HEAD(idname_पुनो, idname);
+RB_GENERATE_STATIC(idname_पुनो, idname, entry, idname_cmp)
 
-static struct idname_tree user_idname = RB_INITIALIZER(&user_idname);
-static struct idname_tree group_idname = RB_INITIALIZER(&group_idname);
+static struct idname_पुनो user_idname = RB_INITIALIZER(&user_idname);
+static struct idname_पुनो group_idname = RB_INITIALIZER(&group_idname);
 
 static void
 idname_free(struct idname *idname)
@@ -63,7 +63,7 @@ idname_free(struct idname *idname)
 }
 
 static void
-idname_enter(struct idname_tree *tree, u_int id, const char *name)
+idname_enter(struct idname_पुनो *पुनो, u_int id, const char *name)
 {
 	struct idname *idname;
 
@@ -71,18 +71,18 @@ idname_enter(struct idname_tree *tree, u_int id, const char *name)
 		fatal_f("alloc");
 	idname->id = id;
 	idname->name = xstrdup(name);
-	if (RB_INSERT(idname_tree, tree, idname) != NULL)
+	if (RB_इसिंगित(idname_पुनो, पुनो, idname) != NULL)
 		idname_free(idname);
 }
 
 static const char *
-idname_lookup(struct idname_tree *tree, u_int id)
+idname_lookup(struct idname_पुनो *पुनो, u_int id)
 {
 	struct idname idname, *found;
 
 	memset(&idname, 0, sizeof(idname));
 	idname.id = id;
-	if ((found = RB_FIND(idname_tree, tree, &idname)) != NULL)
+	if ((found = RB_FIND(idname_पुनो, पुनो, &idname)) != NULL)
 		return found->name;
 	return NULL;
 }

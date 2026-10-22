@@ -31,11 +31,11 @@
 int ssh_compatible_openssl(long, long);
 int ssh_libcrypto_init(void);
 
-#if (OPENSSL_VERSION_NUMBER < 0x10100000L)
+#if (OPENSSL_VERSION_नुमेरो < 0x10100000L)
 # error OpenSSL 1.1.0 or greater is required
 #endif
-#ifdef LIBRESSL_VERSION_NUMBER
-# if LIBRESSL_VERSION_NUMBER < 0x3010000fL
+#ifdef LIBRESSL_VERSION_नुमेरो
+# if LIBRESSL_VERSION_नुमेरो < 0x3010000fL
 #  error LibreSSL 3.1.0 or greater is required
 # endif
 #endif
@@ -44,8 +44,8 @@ int ssh_libcrypto_init(void);
 # define OPENSSL_RSA_MAX_MODULUS_BITS	16384
 #endif
 
-#ifdef LIBRESSL_VERSION_NUMBER
-# if LIBRESSL_VERSION_NUMBER < 0x3010000fL
+#ifdef LIBRESSL_VERSION_नुमेरो
+# if LIBRESSL_VERSION_नुमेरो < 0x3010000fL
 #  define HAVE_BROKEN_CHACHA20
 # endif
 #endif

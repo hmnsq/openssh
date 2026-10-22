@@ -784,7 +784,7 @@ readwrite(int net_fd)
 	size_t netinbufpos = 0;
 	unsigned char stdinbuf[BUFSIZE];
 	size_t stdinbufpos = 0;
-	int n, num_fds;
+	int n, नुमेरो_fds;
 	ssize_t ret;
 
 	/* don't read from stdin if requested */
@@ -833,16 +833,16 @@ readwrite(int net_fd)
 			sleep(iflag);
 
 		/* poll */
-		num_fds = poll(pfd, 4, timeout);
+		नुमेरो_fds = poll(pfd, 4, timeout);
 
 		/* treat poll errors */
-		if (num_fds == -1) {
+		if (नुमेरो_fds == -1) {
 			close(net_fd);
 			err(1, "polling error");
 		}
 
 		/* timeout happened */
-		if (num_fds == 0)
+		if (नुमेरो_fds == 0)
 			return;
 
 		/* treat socket error conditions */
@@ -980,10 +980,10 @@ drainbuf(int fd, unsigned char *buf, size_t *bufpos)
 ssize_t
 fillbuf(int fd, unsigned char *buf, size_t *bufpos)
 {
-	size_t num = BUFSIZE - *bufpos;
+	size_t नुमेरो = BUFSIZE - *bufpos;
 	ssize_t n;
 
-	n = read(fd, buf + *bufpos, num);
+	n = read(fd, buf + *bufpos, नुमेरो);
 	/* don't treat EAGAIN, EINTR as error */
 	if (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
@@ -1001,7 +1001,7 @@ void
 fdpass(int nfd)
 {
 #if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+	struct msghdr मेनसाहे;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
 	union {
 		struct cmsghdr hdr;
@@ -1014,15 +1014,15 @@ fdpass(int nfd)
 	struct pollfd pfd;
 	ssize_t r;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&मेनसाहे, 0, sizeof(मेनसाहे));
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&nfd;
-	msg.msg_accrightslen = sizeof(nfd);
+	मेनसाहे.मेनसाहे_accrights = (caddr_t)&nfd;
+	मेनसाहे.मेनसाहे_accrightslen = sizeof(nfd);
 #else
 	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-	cmsg = CMSG_FIRSTHDR(&msg);
+	मेनसाहे.msg_control = (caddr_t)&cmsgbuf.buf;
+	मेनसाहे.msg_controllen = sizeof(cmsgbuf.buf);
+	cmsg = CMSG_FIRSTHDR(&मेनसाहे);
 	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
@@ -1031,14 +1031,14 @@ fdpass(int nfd)
 
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	मेनसाहे.msg_iov = &vec;
+	मेनसाहे.msg_iovlen = 1;
 
 	bzero(&pfd, sizeof(pfd));
 	pfd.fd = STDOUT_FILENO;
 	pfd.events = POLLOUT;
 	for (;;) {
-		r = sendmsg(STDOUT_FILENO, &msg, 0);
+		r = sendmsg(STDOUT_FILENO, &मेनसाहे, 0);
 		if (r == -1) {
 			if (errno == EAGAIN || errno == EINTR) {
 				if (poll(&pfd, 1, -1) == -1)
@@ -1302,7 +1302,7 @@ help(void)
 	\t-F		Pass socket fd\n\
 	\t-h		This help text\n\
 	\t-I length	TCP receive buffer length\n\
-	\t-i secs\t	Delay interval for lines sent, ports scanned\n\
+	\t-i secs\t	Delay interval for मगा_लिन्या sent, ports scanned\n\
 	\t-k		Keep inbound sockets open for multiple connects\n\
 	\t-l		Listen mode, for inbound connects\n\
 	\t-N		Shutdown the network socket after EOF on stdin\n\
@@ -1429,7 +1429,7 @@ decode_addrport(const char *h, const char *p, struct sockaddr *addr,
 }
 
 static int
-proxy_read_line(int fd, char *buf, size_t bufsz)
+proxy_read_लिन्या(int fd, char *buf, size_t bufsz)
 {
 	size_t off;
 
@@ -1667,7 +1667,7 @@ socks_connect(const char *host, const char *port,
 			err(1, "write failed (2/%d)", r);
 
 		/* Read status reply */
-		proxy_read_line(proxyfd, buf, sizeof(buf));
+		proxy_read_लिन्या(proxyfd, buf, sizeof(buf));
 		if (proxyuser != NULL &&
 		    strncmp(buf, "HTTP/1.0 407 ", 12) == 0) {
 			if (authretry > 1) {
@@ -1682,7 +1682,7 @@ socks_connect(const char *host, const char *port,
 
 		/* Headers continue until we hit an empty line */
 		for (r = 0; r < HTTP_MAXHDRS; r++) {
-			proxy_read_line(proxyfd, buf, sizeof(buf));
+			proxy_read_लिन्या(proxyfd, buf, sizeof(buf));
 			if (*buf == '\0')
 				break;
 		}

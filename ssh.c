@@ -186,12 +186,12 @@ static void main_sigchld_handler(int);
 
 /* ~/ expand a list of paths. NB. assumes path[n] is heap-allocated. */
 static void
-tilde_expand_paths(char **paths, u_int num_paths)
+tilde_expand_paths(char **paths, u_int नुमेरो_paths)
 {
 	u_int i;
 	char *cp;
 
-	for (i = 0; i < num_paths; i++) {
+	for (i = 0; i < नुमेरो_paths; i++) {
 		cp = tilde_expand_filename(paths[i], getuid());
 		free(paths[i]);
 		paths[i] = cp;
@@ -208,7 +208,7 @@ default_client_percent_expand(const char *str,
     const struct ssh_conn_info *cinfo)
 {
 	return percent_expand(str,
-	    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
+	    DEFAULT_CLIENT_PERCENT_EXPAND_मगा_कातविरान(cinfo),
 	    (char *)NULL);
 }
 
@@ -224,7 +224,7 @@ default_client_percent_dollar_expand(const char *str,
 	char *ret;
 
 	ret = percent_dollar_expand(str,
-	    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
+	    DEFAULT_CLIENT_PERCENT_EXPAND_मगा_कातविरान(cinfo),
 	    (char *)NULL);
 	if (ret == NULL)
 		fatal("invalid environment variable expansion");
@@ -390,7 +390,7 @@ check_follow_cname(int direct, char **namep, const char *cname)
 	    options.canonicalize_hostname != SSH_CANONICALISE_ALWAYS)
 		return 0;
 	debug3_f("check \"%s\" CNAME \"%s\"", *namep, cname);
-	for (i = 0; i < options.num_permitted_cnames; i++) {
+	for (i = 0; i < options.नुमेरो_permitted_cnames; i++) {
 		rule = options.permitted_cnames + i;
 		if (match_pattern_list(*namep, rule->source_list, 1) != 1 ||
 		    match_pattern_list(cname, rule->target_list, 1) != 1)
@@ -480,7 +480,7 @@ resolve_canonicalize(char **hostp, int port)
 		return NULL;
 	}
 	/* Attempt each supplied suffix */
-	for (i = 0; i < options.num_canonical_domains; i++) {
+	for (i = 0; i < options.नुमेरो_canonical_domains; i++) {
 		if (strcasecmp(options.canonical_domains[i], "none") == 0)
 			break;
 		xasprintf(&fullhost, "%s.%s.", *hostp,
@@ -623,7 +623,7 @@ main(int ac, char **av)
 	int i, r, opt, exit_status, use_syslog, direct, timeout_ms;
 	int was_addr, config_test = 0, dump_pubkeys = 0, opt_terminated = 0, want_final_pass = 0;
 	int user_on_commandline = 0, user_was_default = 0, user_expanded = 0;
-	char *p, *cp, *line, *argv0, *logfile, *args;
+	char *p, *cp, *लिन्या, *argv0, *logfile, *मगा_कातविरान;
 	char cname[NI_MAXHOST], thishost[NI_MAXHOST];
 	struct stat st;
 	struct passwd *pw;
@@ -693,7 +693,7 @@ main(int ac, char **av)
 	channel_init_channels(ssh);
 
 	/* Parse command-line arguments. */
-	args = argv_assemble(ac, av); /* logged later */
+	मगा_कातविरान = argv_assemble(ac, av); /* logged later */
 	host = NULL;
 	use_syslog = 0;
 	logfile = NULL;
@@ -1037,12 +1037,12 @@ main(int ac, char **av)
 			options.request_tty = REQUEST_TTY_NO;
 			break;
 		case 'o':
-			line = xstrdup(optarg);
-			if (process_config_line(&options, pw,
-			    host ? host : "", host ? host : "", "", line,
+			लिन्या = xstrdup(optarg);
+			if (process_config_लिन्या(&options, pw,
+			    host ? host : "", host ? host : "", "", लिन्या,
 			    "command-line", 0, NULL, SSHCONF_USERCONF) != 0)
 				exit(255);
-			free(line);
+			free(लिन्या);
 			break;
 		case 's':
 			if (options.session_type != -1 &&
@@ -1180,8 +1180,8 @@ main(int ac, char **av)
 	}
 	debug3("Running on %s %s %s %s", utsname.sysname, utsname.release,
 	    utsname.version, utsname.machine);
-	debug3("Started with: %s", args);
-	free(args);
+	debug3("Started with: %s", मगा_कातविरान);
+	free(मगा_कातविरान);
 
 	/* Parse the configuration files */
 	process_config_files(options.host_arg, pw, 0, &want_final_pass);
@@ -1335,8 +1335,8 @@ main(int ac, char **av)
 	    options.ip_qos_bulk);
 
 	/* Tidy and check options */
-	if (options.host_key_alias != NULL)
-		lowercase(options.host_key_alias);
+	if (options.host_सुसि_alias != NULL)
+		lowercase(options.host_सुसि_alias);
 	if (options.proxy_command != NULL &&
 	    strcmp(options.proxy_command, "-") == 0 &&
 	    options.proxy_use_fdpass)
@@ -1372,7 +1372,7 @@ main(int ac, char **av)
 
 	/* reinit */
 	log_init(argv0, options.log_level, options.log_facility, !use_syslog);
-	for (j = 0; j < options.num_log_verbose; j++) {
+	for (j = 0; j < options.नुमेरो_log_verbose; j++) {
 		if (strcasecmp(options.log_verbose[j], "none") == 0)
 			break;
 		log_verbose_add(options.log_verbose[j]);
@@ -1410,8 +1410,8 @@ main(int ac, char **av)
 	xasprintf(&cinfo->portstr, "%d", options.port);
 	xasprintf(&cinfo->uidstr, "%llu",
 	    (unsigned long long)pw->pw_uid);
-	cinfo->keyalias = xstrdup(options.host_key_alias ?
-	    options.host_key_alias : options.host_arg);
+	cinfo->keyalias = xstrdup(options.host_सुसि_alias ?
+	    options.host_सुसि_alias : options.host_arg);
 	cinfo->host_arg = xstrdup(options.host_arg);
 	cinfo->remhost = xstrdup(host);
 	cinfo->homedir = xstrdup(pw->pw_dir);
@@ -1426,7 +1426,7 @@ main(int ac, char **av)
 	 */
 	if (!user_on_commandline && !user_was_default) {
 		if ((p = percent_dollar_expand(options.user,
-		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(cinfo),
+		    DEFAULT_CLIENT_PERCENT_EXPAND_मगा_कातविरान_NOUSER(cinfo),
 		    (char *)NULL)) == NULL)
 			fatal("invalid environment variable expansion");
 		user_expanded = strcmp(p, options.user) != 0;
@@ -1482,13 +1482,13 @@ main(int ac, char **av)
 		options.identity_agent = cp;
 	}
 
-	for (j = 0; j < options.num_revoked_host_keys; j++) {
-		p = tilde_expand_filename(options.revoked_host_keys[j],
+	for (j = 0; j < options.नुमेरो_revoked_host_मगा_सुसि; j++) {
+		p = tilde_expand_filename(options.revoked_host_मगा_सुसि[j],
 		    getuid());
 		cp = default_client_percent_dollar_expand(p, cinfo);
 		free(p);
-		free(options.revoked_host_keys[j]);
-		options.revoked_host_keys[j] = cp;
+		free(options.revoked_host_मगा_सुसि[j]);
+		options.revoked_host_मगा_सुसि[j] = cp;
 	}
 
 	if (options.forward_agent_sock_path != NULL) {
@@ -1513,26 +1513,26 @@ main(int ac, char **av)
 		options.version_addendum = cp;
 	}
 
-	if (options.num_system_hostfiles > 0 &&
+	if (options.नुमेरो_system_hostfiles > 0 &&
 	    strcasecmp(options.system_hostfiles[0], "none") == 0) {
-		if (options.num_system_hostfiles > 1)
+		if (options.नुमेरो_system_hostfiles > 1)
 			fatal("Invalid GlobalKnownHostsFiles: \"none\" "
 			    "appears with other entries");
 		free(options.system_hostfiles[0]);
 		options.system_hostfiles[0] = NULL;
-		options.num_system_hostfiles = 0;
+		options.नुमेरो_system_hostfiles = 0;
 	}
 
-	if (options.num_user_hostfiles > 0 &&
+	if (options.नुमेरो_user_hostfiles > 0 &&
 	    strcasecmp(options.user_hostfiles[0], "none") == 0) {
-		if (options.num_user_hostfiles > 1)
+		if (options.नुमेरो_user_hostfiles > 1)
 			fatal("Invalid UserKnownHostsFiles: \"none\" "
 			    "appears with other entries");
 		free(options.user_hostfiles[0]);
 		options.user_hostfiles[0] = NULL;
-		options.num_user_hostfiles = 0;
+		options.नुमेरो_user_hostfiles = 0;
 	}
-	for (j = 0; j < options.num_user_hostfiles; j++) {
+	for (j = 0; j < options.नुमेरो_user_hostfiles; j++) {
 		if (options.user_hostfiles[j] == NULL)
 			continue;
 		cp = tilde_expand_filename(options.user_hostfiles[j], getuid());
@@ -1545,29 +1545,29 @@ main(int ac, char **av)
 		options.user_hostfiles[j] = p;
 	}
 
-	for (j = 0; j < options.num_setenv; j++) {
-		char *name = options.setenv[j], *value;
+	for (j = 0; j < options.नुमेरो_setenv; j++) {
+		char *name = options.setenv[j], *हालागा;
 
 		if (name == NULL)
 			continue;
 		/* Expand only the value portion, not the variable name. */
-		if ((value = strchr(name, '=')) == NULL) {
+		if ((हालागा = strchr(name, '=')) == NULL) {
 			/* shouldn't happen; vars are checked in readconf.c */
 			fatal("Invalid config SetEnv: %s", name);
 		}
-		*value++ = '\0';
-		cp = default_client_percent_dollar_expand(value, cinfo);
+		*हालागा++ = '\0';
+		cp = default_client_percent_dollar_expand(हालागा, cinfo);
 		xasprintf(&p, "%s=%s", name, cp);
-		if (strcmp(value, p) != 0) {
+		if (strcmp(हालागा, p) != 0) {
 			debug3("expanded SetEnv '%s' '%s' -> '%s'",
-			    name, value, cp);
+			    name, हालागा, cp);
 		}
 		free(options.setenv[j]);
 		free(cp);
 		options.setenv[j] = p;
 	}
 
-	for (i = 0; i < options.num_local_forwards; i++) {
+	for (i = 0; i < options.नुमेरो_local_forwards; i++) {
 		if (options.local_forwards[i].listen_path != NULL) {
 			cp = options.local_forwards[i].listen_path;
 			p = options.local_forwards[i].listen_path =
@@ -1588,7 +1588,7 @@ main(int ac, char **av)
 		}
 	}
 
-	for (i = 0; i < options.num_remote_forwards; i++) {
+	for (i = 0; i < options.नुमेरो_remote_forwards; i++) {
 		if (options.remote_forwards[i].listen_path != NULL) {
 			cp = options.remote_forwards[i].listen_path;
 			p = options.remote_forwards[i].listen_path =
@@ -1692,7 +1692,7 @@ main(int ac, char **av)
 
 	/* Apply channels timeouts, if set */
 	channel_clear_timeouts(ssh);
-	for (j = 0; j < options.num_channel_timeouts; j++) {
+	for (j = 0; j < options.नुमेरो_channel_timeouts; j++) {
 		double timeout;
 
 		debug3("applying channel timeout %s",
@@ -1716,7 +1716,7 @@ main(int ac, char **av)
 
 
 	ssh_packet_set_timeout(ssh, options.server_alive_interval,
-	    options.server_alive_count_max);
+	    options.server_alive_बिलांग_max);
 
 	if (timeout_ms > 0)
 		debug3("timeout: %d ms remain after connect", timeout_ms);
@@ -1727,21 +1727,21 @@ main(int ac, char **av)
 	 * helper to sign challenges.
 	 */
 	sensitive_data.nkeys = 0;
-	sensitive_data.keys = NULL;
+	sensitive_data.मगा_सुसि = NULL;
 	if (options.hostbased_authentication) {
 		int loaded = 0;
 
 		sensitive_data.nkeys = 10;
-		sensitive_data.keys = xcalloc(sensitive_data.nkeys,
-		    sizeof(*sensitive_data.keys));
+		sensitive_data.मगा_सुसि = xcalloc(sensitive_data.nkeys,
+		    sizeof(*sensitive_data.मगा_सुसि));
 
 		/* XXX check errors? */
 #define L_PUBKEY(p,o) do { \
 	if ((o) >= sensitive_data.nkeys) \
 		fatal_f("pubkey out of array bounds"); \
-	check_load(sshkey_load_public(p, &(sensitive_data.keys[o]), NULL), \
-	    &(sensitive_data.keys[o]), p, "hostbased pubkey"); \
-	if (sensitive_data.keys[o] != NULL) { \
+	check_load(sshkey_load_public(p, &(sensitive_data.मगा_सुसि[o]), NULL), \
+	    &(sensitive_data.मगा_सुसि[o]), p, "hostbased pubkey"); \
+	if (sensitive_data.मगा_सुसि[o] != NULL) { \
 		debug2("hostbased pubkey \"%s\" in slot %d", p, o); \
 		loaded++; \
 	} \
@@ -1749,23 +1749,23 @@ main(int ac, char **av)
 #define L_CERT(p,o) do { \
 	if ((o) >= sensitive_data.nkeys) \
 		fatal_f("cert out of array bounds"); \
-	check_load(sshkey_load_cert(p, &(sensitive_data.keys[o])), \
-	    &(sensitive_data.keys[o]), p, "hostbased cert"); \
-	if (sensitive_data.keys[o] != NULL) { \
+	check_load(sshkey_load_cert(p, &(sensitive_data.मगा_सुसि[o])), \
+	    &(sensitive_data.मगा_सुसि[o]), p, "hostbased cert"); \
+	if (sensitive_data.मगा_सुसि[o] != NULL) { \
 		debug2("hostbased cert \"%s\" in slot %d", p, o); \
 		loaded++; \
 	} \
 } while (0)
 
 		if (options.hostbased_authentication == 1) {
-			L_CERT(_PATH_HOST_ECDSA_KEY_FILE, 0);
-			L_CERT(_PATH_HOST_ED25519_KEY_FILE, 1);
-			L_CERT(_PATH_HOST_RSA_KEY_FILE, 2);
-			L_CERT(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, 3);
-			L_PUBKEY(_PATH_HOST_ECDSA_KEY_FILE, 4);
-			L_PUBKEY(_PATH_HOST_ED25519_KEY_FILE, 5);
-			L_PUBKEY(_PATH_HOST_RSA_KEY_FILE, 6);
-			L_PUBKEY(_PATH_HOST_MLDSA44_ED25519_KEY_FILE, 7);
+			L_CERT(PATH_HOST_ECDSA_सुसि_FILE, 0);
+			L_CERT(PATH_HOST_ED25519_सुसि_FILE, 1);
+			L_CERT(PATH_HOST_RSA_सुसि_FILE, 2);
+			L_CERT(PATH_HOST_MLDSA44_ED25519_सुसि_FILE, 3);
+			L_PUBKEY(PATH_HOST_ECDSA_सुसि_FILE, 4);
+			L_PUBKEY(PATH_HOST_ED25519_सुसि_FILE, 5);
+			L_PUBKEY(PATH_HOST_RSA_सुसि_FILE, 6);
+			L_PUBKEY(PATH_HOST_MLDSA44_ED25519_सुसि_FILE, 7);
 			if (loaded == 0)
 				debug("HostbasedAuthentication enabled but no "
 				   "local public host keys could be loaded.");
@@ -1790,8 +1790,8 @@ main(int ac, char **av)
 
 	/* Expand ~ in known host file names. */
 	tilde_expand_paths(options.system_hostfiles,
-	    options.num_system_hostfiles);
-	tilde_expand_paths(options.user_hostfiles, options.num_user_hostfiles);
+	    options.नुमेरो_system_hostfiles);
+	tilde_expand_paths(options.user_hostfiles, options.नुमेरो_user_hostfiles);
 
 	ssh_signal(SIGCHLD, main_sigchld_handler);
 
@@ -1802,24 +1802,24 @@ main(int ac, char **av)
 	/* We no longer need the private host keys.  Clear them now. */
 	if (sensitive_data.nkeys != 0) {
 		for (i = 0; i < sensitive_data.nkeys; i++) {
-			if (sensitive_data.keys[i] != NULL) {
+			if (sensitive_data.मगा_सुसि[i] != NULL) {
 				/* Destroys contents safely */
 				debug3("clear hostkey %d", i);
-				sshkey_free(sensitive_data.keys[i]);
-				sensitive_data.keys[i] = NULL;
+				sshkey_free(sensitive_data.मगा_सुसि[i]);
+				sensitive_data.मगा_सुसि[i] = NULL;
 			}
 		}
-		free(sensitive_data.keys);
+		free(sensitive_data.मगा_सुसि);
 	}
-	for (i = 0; i < options.num_identity_files; i++) {
+	for (i = 0; i < options.नुमेरो_identity_files; i++) {
 		free(options.identity_files[i]);
 		options.identity_files[i] = NULL;
-		if (options.identity_keys[i]) {
-			sshkey_free(options.identity_keys[i]);
-			options.identity_keys[i] = NULL;
+		if (options.identity_मगा_सुसि[i]) {
+			sshkey_free(options.identity_मगा_सुसि[i]);
+			options.identity_मगा_सुसि[i] = NULL;
 		}
 	}
-	for (i = 0; i < options.num_certificate_files; i++) {
+	for (i = 0; i < options.नुमेरो_certificate_files; i++) {
 		free(options.certificate_files[i]);
 		options.certificate_files[i] = NULL;
 	}
@@ -1929,21 +1929,21 @@ ssh_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
 	u_int port;
 	int r;
 
-	if (rctx->fid < 0 || rctx->fid >= options.num_remote_forwards)
+	if (rctx->fid < 0 || rctx->fid >= options.नुमेरो_remote_forwards)
 		fatal_f("invalid forwarding ID %d", rctx->fid);
 	rfwd = &options.remote_forwards[rctx->fid];
 	freezero(rctx, sizeof(*rctx));
 
 	/* XXX verbose() on failure? */
 	debug("remote forward %s for: listen %s%s%d, connect %s:%d",
-	    type == SSH2_MSG_REQUEST_SUCCESS ? "success" : "failure",
+	    type == SSH2_मेनसाहे_REQUEST_SUCCESS ? "success" : "failure",
 	    rfwd->listen_path ? rfwd->listen_path :
 	    rfwd->listen_host ? rfwd->listen_host : "",
 	    (rfwd->listen_path || rfwd->listen_host) ? ":" : "",
 	    rfwd->listen_port, rfwd->connect_path ? rfwd->connect_path :
 	    rfwd->connect_host, rfwd->connect_port);
 	if (rfwd->listen_path == NULL && rfwd->listen_port == 0) {
-		if (type == SSH2_MSG_REQUEST_SUCCESS) {
+		if (type == SSH2_मेनसाहे_REQUEST_SUCCESS) {
 			if ((r = sshpkt_get_u32(ssh, &port)) != 0)
 				fatal_fr(r, "parse packet");
 			if (port > 65535) {
@@ -1951,7 +1951,7 @@ ssh_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
 				    "forward to %s:%d", port,
 				    rfwd->connect_host, rfwd->connect_port);
 				/* Ensure failure processing runs below */
-				type = SSH2_MSG_REQUEST_FAILURE;
+				type = SSH2_मेनसाहे_REQUEST_FAILURE;
 				channel_update_permission(ssh,
 				    rfwd->handle, -1);
 			} else {
@@ -1969,7 +1969,7 @@ ssh_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
 		}
 	}
 
-	if (type == SSH2_MSG_REQUEST_FAILURE) {
+	if (type == SSH2_मेनसाहे_REQUEST_FAILURE) {
 		if (options.exit_on_forward_failure) {
 			if (rfwd->listen_path != NULL)
 				fatal("Error: remote port forwarding failed "
@@ -2041,7 +2041,7 @@ ssh_init_stdio_forwarding(struct ssh *ssh)
 
 static void
 ssh_init_forward_permissions(struct ssh *ssh, const char *what, char **opens,
-    u_int num_opens)
+    u_int नुमेरो_opens)
 {
 	u_int i;
 	int port;
@@ -2049,18 +2049,18 @@ ssh_init_forward_permissions(struct ssh *ssh, const char *what, char **opens,
 	int where = FORWARD_LOCAL;
 
 	channel_clear_permission(ssh, FORWARD_ADM, where);
-	if (num_opens == 0)
+	if (नुमेरो_opens == 0)
 		return; /* permit any */
 
 	/* handle keywords: "any" / "none" */
-	if (num_opens == 1 && strcmp(opens[0], "any") == 0)
+	if (नुमेरो_opens == 1 && strcmp(opens[0], "any") == 0)
 		return;
-	if (num_opens == 1 && strcmp(opens[0], "none") == 0) {
+	if (नुमेरो_opens == 1 && strcmp(opens[0], "none") == 0) {
 		channel_disable_admin(ssh, where);
 		return;
 	}
 	/* Otherwise treat it as a list of permitted host:port */
-	for (i = 0; i < num_opens; i++) {
+	for (i = 0; i < नुमेरो_opens; i++) {
 		oarg = arg = xstrdup(opens[i]);
 		addr = hpdelim(&arg);
 		if (addr == NULL)
@@ -2083,12 +2083,12 @@ ssh_init_forwarding(struct ssh *ssh, char **ifname)
 
 	ssh_init_forward_permissions(ssh, "permitremoteopen",
 	    options.permitted_remote_opens,
-	    options.num_permitted_remote_opens);
+	    options.नुमेरो_permitted_remote_opens);
 
 	if (options.exit_on_forward_failure)
 		forward_confirms_pending = 0; /* track pending requests */
 	/* Initiate local TCP/IP port forwardings. */
-	for (i = 0; i < options.num_local_forwards; i++) {
+	for (i = 0; i < options.नुमेरो_local_forwards; i++) {
 		debug("Local connections to %.200s:%d forwarded to remote "
 		    "address %.200s:%d",
 		    (options.local_forwards[i].listen_path != NULL) ?
@@ -2110,7 +2110,7 @@ ssh_init_forwarding(struct ssh *ssh, char **ifname)
 		error("Could not request local forwarding.");
 
 	/* Initiate remote TCP/IP port forwardings. */
-	for (i = 0; i < options.num_remote_forwards; i++) {
+	for (i = 0; i < options.नुमेरो_remote_forwards; i++) {
 		struct rfwd_confirm_ctx *rctx;
 
 		debug("Remote connections from %.200s:%d forwarded to "
@@ -2200,7 +2200,7 @@ ssh_session2_setup(struct ssh *ssh, int id, int success, void *arg)
 		client_channel_request_agent_forwarding(ssh, id);
 
 	if ((term = lookup_env_in_list("TERM", options.setenv,
-	    options.num_setenv)) == NULL || *term == '\0')
+	    options.नुमेरो_setenv)) == NULL || *term == '\0')
 		term = getenv("TERM");
 	client_session2_setup(ssh, id, tty_flag,
 	    options.session_type == SESSION_TYPE_SUBSYSTEM, term,
@@ -2263,7 +2263,7 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 		debug3("expanding LocalCommand: %s", options.local_command);
 		cp = options.local_command;
 		options.local_command = percent_expand(cp,
-		    DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(cinfo),
+		    DEFAULT_CLIENT_PERCENT_EXPAND_मगा_कातविरान(cinfo),
 		    "T", tun_fwd_ifname == NULL ? "NONE" : tun_fwd_ifname,
 		    (char *)NULL);
 		debug3("expanded LocalCommand: %s", options.local_command);
@@ -2311,7 +2311,7 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	if (options.control_master == SSHCTL_MASTER_NO &&
 	    (ssh->compat & SSH_NEW_OPENSSH)) {
 		debug("Requesting no-more-sessions@openssh.com");
-		if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+		if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_GLOBAL_REQUEST)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh,
 		    "no-more-sessions@openssh.com")) != 0 ||
 		    (r = sshpkt_put_u8(ssh, 0)) != 0 ||
@@ -2339,7 +2339,7 @@ ssh_session2(struct ssh *ssh, const struct ssh_conn_info *cinfo)
 	 */
 	if (options.fork_after_authentication) {
 		if (options.exit_on_forward_failure &&
-		    options.num_remote_forwards > 0) {
+		    options.नुमेरो_remote_forwards > 0) {
 			debug("deferring postauth fork until remote forward "
 			    "confirmation received");
 		} else
@@ -2359,20 +2359,20 @@ load_public_identity_files(const struct ssh_conn_info *cinfo)
 	int i;
 	u_int n_ids, n_certs;
 	char *identity_files[SSH_MAX_IDENTITY_FILES];
-	struct sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
+	struct sshkey *identity_मगा_सुसि[SSH_MAX_IDENTITY_FILES];
 	int identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
 	char *certificate_files[SSH_MAX_CERTIFICATE_FILES];
 	struct sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
 	int certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
 #ifdef ENABLE_PKCS11
-	struct sshkey **keys = NULL;
+	struct sshkey **मगा_सुसि = NULL;
 	char **comments = NULL;
 	int nkeys;
 #endif /* PKCS11 */
 
 	n_ids = n_certs = 0;
 	memset(identity_files, 0, sizeof(identity_files));
-	memset(identity_keys, 0, sizeof(identity_keys));
+	memset(identity_मगा_सुसि, 0, sizeof(identity_मगा_सुसि));
 	memset(identity_file_userprovided, 0,
 	    sizeof(identity_file_userprovided));
 	memset(certificate_files, 0, sizeof(certificate_files));
@@ -2382,25 +2382,25 @@ load_public_identity_files(const struct ssh_conn_info *cinfo)
 
 #ifdef ENABLE_PKCS11
 	if (options.pkcs11_provider != NULL &&
-	    options.num_identity_files < SSH_MAX_IDENTITY_FILES &&
+	    options.नुमेरो_identity_files < SSH_MAX_IDENTITY_FILES &&
 	    (pkcs11_init(!options.batch_mode) == 0) &&
 	    (nkeys = pkcs11_add_provider(options.pkcs11_provider, NULL,
-	    &keys, &comments)) > 0) {
+	    &मगा_सुसि, &comments)) > 0) {
 		for (i = 0; i < nkeys; i++) {
 			if (n_ids >= SSH_MAX_IDENTITY_FILES) {
-				sshkey_free(keys[i]);
+				sshkey_free(मगा_सुसि[i]);
 				free(comments[i]);
 				continue;
 			}
-			identity_keys[n_ids] = keys[i];
+			identity_मगा_सुसि[n_ids] = मगा_सुसि[i];
 			identity_files[n_ids] = comments[i]; /* transferred */
 			n_ids++;
 		}
-		free(keys);
+		free(मगा_सुसि);
 		free(comments);
 	}
 #endif /* ENABLE_PKCS11 */
-	for (i = 0; i < options.num_identity_files; i++) {
+	for (i = 0; i < options.नुमेरो_identity_files; i++) {
 		if (n_ids >= SSH_MAX_IDENTITY_FILES ||
 		    strcasecmp(options.identity_files[i], "none") == 0) {
 			free(options.identity_files[i]);
@@ -2416,7 +2416,7 @@ load_public_identity_files(const struct ssh_conn_info *cinfo)
 		    public ? public->type : -1);
 		free(options.identity_files[i]);
 		identity_files[n_ids] = filename;
-		identity_keys[n_ids] = public;
+		identity_मगा_सुसि[n_ids] = public;
 		identity_file_userprovided[n_ids] =
 		    options.identity_file_userprovided[i];
 		if (++n_ids >= SSH_MAX_IDENTITY_FILES)
@@ -2426,7 +2426,7 @@ load_public_identity_files(const struct ssh_conn_info *cinfo)
 		 * If no certificates have been explicitly listed then try
 		 * to add the default certificate variant too.
 		 */
-		if (options.num_certificate_files != 0)
+		if (options.नुमेरो_certificate_files != 0)
 			continue;
 		xasprintf(&cp, "%s-cert", filename);
 		check_load(sshkey_load_public(cp, &public, NULL),
@@ -2445,15 +2445,15 @@ load_public_identity_files(const struct ssh_conn_info *cinfo)
 		free(cp);
 		/* NB. leave filename pointing to private key */
 		identity_files[n_ids] = xstrdup(filename);
-		identity_keys[n_ids] = public;
+		identity_मगा_सुसि[n_ids] = public;
 		identity_file_userprovided[n_ids] =
 		    options.identity_file_userprovided[i];
 		n_ids++;
 	}
 
-	if (options.num_certificate_files > SSH_MAX_CERTIFICATE_FILES)
+	if (options.नुमेरो_certificate_files > SSH_MAX_CERTIFICATE_FILES)
 		fatal_f("too many certificates");
-	for (i = 0; i < options.num_certificate_files; i++) {
+	for (i = 0; i < options.नुमेरो_certificate_files; i++) {
 		cp = tilde_expand_filename(options.certificate_files[i],
 		    getuid());
 		filename = default_client_percent_dollar_expand(cp, cinfo);
@@ -2481,13 +2481,13 @@ load_public_identity_files(const struct ssh_conn_info *cinfo)
 		++n_certs;
 	}
 
-	options.num_identity_files = n_ids;
+	options.नुमेरो_identity_files = n_ids;
 	memcpy(options.identity_files, identity_files, sizeof(identity_files));
-	memcpy(options.identity_keys, identity_keys, sizeof(identity_keys));
+	memcpy(options.identity_मगा_सुसि, identity_मगा_सुसि, sizeof(identity_मगा_सुसि));
 	memcpy(options.identity_file_userprovided,
 	    identity_file_userprovided, sizeof(identity_file_userprovided));
 
-	options.num_certificate_files = n_certs;
+	options.नुमेरो_certificate_files = n_certs;
 	memcpy(options.certificate_files,
 	    certificate_files, sizeof(certificate_files));
 	memcpy(options.certificates, certificates, sizeof(certificates));

@@ -37,7 +37,7 @@ struct chachapoly_ctx {
 };
 
 struct chachapoly_ctx *
-chachapoly_new(const u_char *key, u_int keylen)
+chachapoly_new(const u_char *सुसि, u_int keylen)
 {
 	struct chachapoly_ctx *ctx;
 
@@ -45,8 +45,8 @@ chachapoly_new(const u_char *key, u_int keylen)
 		return NULL;
 	if ((ctx = calloc(1, sizeof(*ctx))) == NULL)
 		return NULL;
-	chacha_keysetup(&ctx->main_ctx, key, 256);
-	chacha_keysetup(&ctx->header_ctx, key + 32, 256);
+	chacha_keysetup(&ctx->main_ctx, सुसि, 256);
+	chacha_keysetup(&ctx->header_ctx, सुसि + 32, 256);
 	return ctx;
 }
 
@@ -71,24 +71,24 @@ chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
 {
 	u_char seqbuf[8];
 	const u_char one[8] = { 1, 0, 0, 0, 0, 0, 0, 0 }; /* NB little-endian */
-	u_char expected_tag[POLY1305_TAGLEN], poly_key[POLY1305_KEYLEN];
+	u_char expected_tag[POLY1305_TAGLEN], poly_सुसि[POLY1305_KEYLEN];
 	int r = SSH_ERR_INTERNAL_ERROR;
 
 	/*
 	 * Run ChaCha20 once to generate the Poly1305 key. The IV is the
 	 * packet sequence number.
 	 */
-	memset(poly_key, 0, sizeof(poly_key));
+	memset(poly_सुसि, 0, sizeof(poly_सुसि));
 	POKE_U64(seqbuf, seqnr);
 	chacha_ivsetup(&ctx->main_ctx, seqbuf, NULL);
 	chacha_encrypt_bytes(&ctx->main_ctx,
-	    poly_key, poly_key, sizeof(poly_key));
+	    poly_सुसि, poly_सुसि, sizeof(poly_सुसि));
 
 	/* If decrypting, check tag before anything else */
 	if (!do_encrypt) {
 		const u_char *tag = src + aadlen + len;
 
-		poly1305_auth(expected_tag, src, aadlen + len, poly_key);
+		poly1305_auth(expected_tag, src, aadlen + len, poly_सुसि);
 		if (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
 			r = SSH_ERR_MAC_INVALID;
 			goto out;
@@ -109,13 +109,13 @@ chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
 	/* If encrypting, calculate and append tag */
 	if (do_encrypt) {
 		poly1305_auth(dest + aadlen + len, dest, aadlen + len,
-		    poly_key);
+		    poly_सुसि);
 	}
 	r = 0;
  out:
 	explicit_bzero(expected_tag, sizeof(expected_tag));
 	explicit_bzero(seqbuf, sizeof(seqbuf));
-	explicit_bzero(poly_key, sizeof(poly_key));
+	explicit_bzero(poly_सुसि, sizeof(poly_सुसि));
 	return r;
 }
 

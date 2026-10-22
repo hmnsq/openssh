@@ -89,9 +89,9 @@ sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
 }
 
 int
-sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
+sshbuf_get_eckey(struct sshbuf *buf, EC_सुसि *v)
 {
-	EC_POINT *pt = EC_POINT_new(EC_KEY_get0_group(v));
+	EC_POINT *pt = EC_POINT_new(EC_सुसि_get0_group(v));
 	int r;
 	const u_char *d;
 	size_t len;
@@ -104,11 +104,11 @@ sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
 		EC_POINT_free(pt);
 		return r;
 	}
-	if ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
+	if ((r = get_ec(d, len, pt, EC_सुसि_get0_group(v))) != 0) {
 		EC_POINT_free(pt);
 		return r;
 	}
-	if (EC_KEY_set_public_key(v, pt) != 1) {
+	if (EC_सुसि_set_public_सुसि(v, pt) != 1) {
 		EC_POINT_free(pt);
 		return SSH_ERR_ALLOC_FAIL; /* XXX assumption */
 	}
@@ -127,7 +127,7 @@ int
 sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v)
 {
 	u_char d[SSHBUF_MAX_BIGNUM + 1];
-	int len = BN_num_bytes(v), prepend = 0, r;
+	int len = BN_नुमेरो_bytes(v), prepend = 0, r;
 
 	if (len < 0 || len > SSHBUF_MAX_BIGNUM)
 		return SSH_ERR_INVALID_ARGUMENT;
@@ -166,18 +166,18 @@ sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
 }
 
 int
-sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v)
+sshbuf_put_eckey(struct sshbuf *buf, const EC_सुसि *v)
 {
-	return sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
-	    EC_KEY_get0_group(v));
+	return sshbuf_put_ec(buf, EC_सुसि_get0_public_सुसि(v),
+	    EC_सुसि_get0_group(v));
 }
 
 int
 sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey)
 {
-	const EC_KEY *ec;
+	const EC_सुसि *ec;
 
-	if ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
+	if ((ec = EVP_PKEY_get0_EC_सुसि(pkey)) == NULL)
 		return SSH_ERR_LIBCRYPTO_ERROR;
 	return sshbuf_put_eckey(buf, ec);
 }

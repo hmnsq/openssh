@@ -67,11 +67,11 @@ seed_rng(void)
 	if (ssh_libcrypto_init() != 1)
 		fatal("libcrypto failed to initialize.");
 
-	if (!ssh_compatible_openssl(OPENSSL_VERSION_NUMBER,
-	    OpenSSL_version_num()))
+	if (!ssh_compatible_openssl(OPENSSL_VERSION_नुमेरो,
+	    Open_SSL_version_नुमेरो()))
 		fatal("OpenSSL version mismatch. Built against %lx, you "
-		    "have %lx", (u_long)OPENSSL_VERSION_NUMBER,
-		    OpenSSL_version_num());
+		    "have %lx", (u_long)OPENSSL_VERSION_नुमेरो,
+		    Open_SSL_version_नुमेरो());
 
 #ifndef OPENSSL_PRNG_ONLY
 	if (RAND_status() == 1)

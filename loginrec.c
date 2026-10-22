@@ -323,12 +323,12 @@ login_get_lastlog(struct logininfo *li, const uid_t uid)
  */
 struct
 logininfo *login_alloc_entry(pid_t pid, const char *username,
-    const char *hostname, const char *line)
+    const char *hostname, const char *लिन्या)
 {
 	struct logininfo *newli;
 
 	newli = xmalloc(sizeof(*newli));
-	login_init_entry(newli, pid, username, hostname, line);
+	login_init_entry(newli, pid, username, hostname, लिन्या);
 	return (newli);
 }
 
@@ -351,7 +351,7 @@ login_free_entry(struct logininfo *li)
  */
 int
 login_init_entry(struct logininfo *li, pid_t pid, const char *username,
-    const char *hostname, const char *line)
+    const char *hostname, const char *लिन्या)
 {
 	struct passwd *pw;
 
@@ -360,8 +360,8 @@ login_init_entry(struct logininfo *li, pid_t pid, const char *username,
 	li->pid = pid;
 
 	/* set the line information */
-	if (line)
-		line_fullname(li->line, line, sizeof(li->line));
+	if (लिन्या)
+		लिन्या_fullname(li->लिन्या, लिन्या, sizeof(li->लिन्या));
 
 	if (username) {
 		strlcpy(li->username, username, sizeof(li->username));
@@ -452,7 +452,7 @@ login_write(struct logininfo *li)
 #endif
 #ifdef CUSTOM_SYS_AUTH_RECORD_LOGIN
 	if (li->type == LTYPE_LOGIN &&
-	    !sys_auth_record_login(li->username,li->hostname,li->line,
+	    !sys_auth_record_login(li->username,li->hostname,li->लिन्या,
 	    loginmsg))
 		logit("Writing login record failed for %s", li->username);
 #endif
@@ -547,7 +547,7 @@ getlast_entry(struct logininfo *li)
  * sure dst has enough space, if not just copy src (ugh)
  */
 char *
-line_fullname(char *dst, const char *src, u_int dstsize)
+लिन्या_fullname(char *dst, const char *src, u_int dstsize)
 {
 	memset(dst, '\0', dstsize);
 	if ((strncmp(src, "/dev/", 5) == 0) || (dstsize < (strlen(src) + 5)))
@@ -561,7 +561,7 @@ line_fullname(char *dst, const char *src, u_int dstsize)
 
 /* line_stripname(): strip the leading '/dev' if it exists, return dst */
 char *
-line_stripname(char *dst, const char *src, int dstsize)
+लिन्या_stripname(char *dst, const char *src, int dstsize)
 {
 	memset(dst, '\0', dstsize);
 	if (strncmp(src, "/dev/", 5) == 0)
@@ -580,7 +580,7 @@ line_stripname(char *dst, const char *src, int dstsize)
  * termination
  */
 char *
-line_abbrevname(char *dst, const char *src, int dstsize)
+लिन्या_abbrevname(char *dst, const char *src, int dstsize)
 {
 	size_t len;
 
@@ -645,7 +645,7 @@ construct_utmp(struct logininfo *li,
 	/* First fill out fields used for both logins and logouts */
 
 # ifdef HAVE_ID_IN_UTMP
-	line_abbrevname(ut->ut_id, li->line, sizeof(ut->ut_id));
+	लिन्या_abbrevname(ut->ut_id, li->लिन्या, sizeof(ut->ut_id));
 # endif
 
 # ifdef HAVE_TYPE_IN_UTMP
@@ -664,7 +664,7 @@ construct_utmp(struct logininfo *li,
 # endif
 	set_utmp_time(li, ut);
 
-	line_stripname(ut->ut_line, li->line, sizeof(ut->ut_line));
+	लिन्या_stripname(ut->ut_लिन्या, li->लिन्या, sizeof(ut->ut_लिन्या));
 
 # ifdef HAVE_PID_IN_UTMP
 	ut->ut_pid = li->pid;
@@ -736,7 +736,7 @@ construct_utmpx(struct logininfo *li, struct utmpx *utx)
 	memset(utx, '\0', sizeof(*utx));
 
 # ifdef HAVE_ID_IN_UTMPX
-	line_abbrevname(utx->ut_id, li->line, sizeof(utx->ut_id));
+	लिन्या_abbrevname(utx->ut_id, li->लिन्या, sizeof(utx->ut_id));
 # endif
 
 	/* this is done here to keep utmp constants out of loginrec.h */
@@ -748,7 +748,7 @@ construct_utmpx(struct logininfo *li, struct utmpx *utx)
 		utx->ut_type = DEAD_PROCESS;
 		break;
 	}
-	line_stripname(utx->ut_line, li->line, sizeof(utx->ut_line));
+	लिन्या_stripname(utx->ut_लिन्या, li->लिन्या, sizeof(utx->ut_लिन्या));
 	set_utmpx_time(li, utx);
 	utx->ut_pid = li->pid;
 
@@ -844,7 +844,7 @@ utmp_write_direct(struct logininfo *li, struct utmp *ut)
 	setttyent();
 	while (NULL != (ty = getttyent())) {
 		tty++;
-		if (!strncmp(ty->ty_name, ut->ut_line, sizeof(ut->ut_line)))
+		if (!strncmp(ty->ty_name, ut->ut_लिन्या, sizeof(ut->ut_लिन्या)))
 			break;
 	}
 	endttyent();
@@ -881,7 +881,7 @@ utmp_write_direct(struct logininfo *li, struct utmp *ut)
 		 */
 		if (atomicio(read, fd, &old_ut, sizeof(old_ut)) == sizeof(old_ut) &&
 		    (ut->ut_host[0] == '\0') && (old_ut.ut_host[0] != '\0') &&
-		    (strncmp(old_ut.ut_line, ut->ut_line, sizeof(ut->ut_line)) == 0) &&
+		    (strncmp(old_ut.ut_लिन्या, ut->ut_लिन्या, sizeof(ut->ut_लिन्या)) == 0) &&
 		    (strncmp(old_ut.ut_name, ut->ut_name, sizeof(ut->ut_name)) == 0))
 			memcpy(ut->ut_host, old_ut.ut_host, sizeof(ut->ut_host));
 
@@ -1038,7 +1038,7 @@ utmpx_perform_logout(struct logininfo *li)
 
 	construct_utmpx(li, &utx);
 # ifdef HAVE_ID_IN_UTMPX
-	line_abbrevname(utx.ut_id, li->line, sizeof(utx.ut_id));
+	लिन्या_abbrevname(utx.ut_id, li->लिन्या, sizeof(utx.ut_id));
 # endif
 # ifdef HAVE_TYPE_IN_UTMPX
 	utx.ut_type = DEAD_PROCESS;
@@ -1217,8 +1217,8 @@ wtmp_get_entry(struct logininfo *li)
 			li->tv_sec = ut.ut_tv.tv_sec;
 #  endif
 # endif
-			line_fullname(li->line, ut.ut_line,
-			    MIN_SIZEOF(li->line, ut.ut_line));
+			लिन्या_fullname(li->लिन्या, ut.ut_लिन्या,
+			    MIN_SIZEOF(li->लिन्या, ut.ut_लिन्या));
 # ifdef HAVE_HOST_IN_UTMP
 			strlcpy(li->hostname, ut.ut_host,
 			    MIN_SIZEOF(li->hostname, ut.ut_host));
@@ -1380,7 +1380,7 @@ wtmpx_get_entry(struct logininfo *li)
 # elif defined(HAVE_TIME_IN_UTMPX)
 			li->tv_sec = utx.ut_time;
 # endif
-			line_fullname(li->line, utx.ut_line, sizeof(li->line));
+			लिन्या_fullname(li->लिन्या, utx.ut_लिन्या, sizeof(li->लिन्या));
 # if defined(HAVE_HOST_IN_UTMPX)
 			strlcpy(li->hostname, utx.ut_host,
 			    MIN_SIZEOF(li->hostname, utx.ut_host));
@@ -1406,10 +1406,10 @@ wtmpdb_perform_login(struct logininfo *li)
 	    li->tv_usec;
 	const char *tty;
 
-	if (strncmp(li->line, "/dev/", 5) == 0)
-		tty = &(li->line[5]);
+	if (strncmp(li->लिन्या, "/dev/", 5) == 0)
+		tty = &(li->लिन्या[5]);
 	else
-		tty = li->line;
+		tty = li->लिन्या;
 
 	li->wtmpdb_id = wtmpdb_login(NULL, USER_PROCESS, li->username,
 	    login_time, tty, li->hostname, 0, 0);
@@ -1429,10 +1429,10 @@ wtmpdb_perform_logout(struct logininfo *li)
 	if (li->wtmpdb_id == 0) {
 		const char *tty;
 
-		if (strncmp(li->line, "/dev/", 5) == 0)
-			tty = &(li->line[5]);
+		if (strncmp(li->लिन्या, "/dev/", 5) == 0)
+			tty = &(li->लिन्या[5]);
 		else
-			tty = li->line;
+			tty = li->लिन्या;
 
 		li->wtmpdb_id = wtmpdb_get_id(NULL, tty, NULL);
 	}
@@ -1478,15 +1478,15 @@ static int
 syslogin_perform_logout(struct logininfo *li)
 {
 # ifdef HAVE_LOGOUT
-	char line[UT_LINESIZE];
+	char लिन्या[UT_LINESIZE];
 
-	(void)line_stripname(line, li->line, sizeof(line));
+	(void)लिन्या_stripname(लिन्या, li->लिन्या, sizeof(लिन्या));
 
-	if (!logout(line))
+	if (!logout(लिन्या))
 		logit_f("logout() returned an error");
 #  ifdef HAVE_LOGWTMP
 	else
-		logwtmp(line, "", "");
+		logwtmp(लिन्या, "", "");
 #  endif
 	/* FIXME: (ATL - if the need arises) What to do if we have
 	 * login, but no logout?  what if logout but no logwtmp? All
@@ -1590,7 +1590,7 @@ lastlog_write_entry(struct logininfo *li)
 	case LTYPE_LOGIN:
 		/* create our struct lastlog */
 		memset(&last, '\0', sizeof(last));
-		line_stripname(last.ll_line, li->line, sizeof(last.ll_line));
+		लिन्या_stripname(last.ll_लिन्या, li->लिन्या, sizeof(last.ll_लिन्या));
 		strlcpy(last.ll_host, li->hostname,
 		    MIN_SIZEOF(last.ll_host, li->hostname));
 		last.ll_time = li->tv_sec;
@@ -1625,7 +1625,7 @@ lastlog_get_entry(struct logininfo *li)
 		memset(&l, '\0', sizeof(l));
 		ll = &l;
 	}
-	line_fullname(li->line, ll->ll_line, sizeof(li->line));
+	लिन्या_fullname(li->लिन्या, ll->ll_लिन्या, sizeof(li->लिन्या));
 	strlcpy(li->hostname, ll->ll_host,
 		MIN_SIZEOF(li->hostname, ll->ll_host));
 	li->tv_sec = ll->ll_tv.tv_sec;
@@ -1650,7 +1650,7 @@ lastlog_get_entry(struct logininfo *li)
 		memset(&last, '\0', sizeof(last));
 		/* FALLTHRU */
 	case sizeof(last):
-		line_fullname(li->line, last.ll_line, sizeof(li->line));
+		लिन्या_fullname(li->लिन्या, last.ll_लिन्या, sizeof(li->लिन्या));
 		strlcpy(li->hostname, last.ll_host,
 		    MIN_SIZEOF(li->hostname, last.ll_host));
 		li->tv_sec = last.ll_time;
@@ -1686,8 +1686,8 @@ utmpx_get_entry(struct logininfo *li)
 		return (0);
 	}
 
-	line_fullname(li->line, utx->ut_line,
-	    MIN_SIZEOF(li->line, utx->ut_line));
+	लिन्या_fullname(li->लिन्या, utx->ut_लिन्या,
+	    MIN_SIZEOF(li->लिन्या, utx->ut_लिन्या));
 	strlcpy(li->hostname, utx->ut_host,
 	    MIN_SIZEOF(li->hostname, utx->ut_host));
 	li->tv_sec = utx->ut_tv.tv_sec;
@@ -1737,7 +1737,7 @@ record_failed_login(struct ssh *ssh, const char *username, const char *hostname,
 	memset(&li, 0, sizeof(li));
 	li.type = LTYPE_FAILED;
 	li.pid = getpid();
-	strlcpy(li.line, "ssh:notty", sizeof(li.line));
+	strlcpy(li.लिन्या, "ssh:notty", sizeof(li.लिन्या));
 	strlcpy(li.username, username, sizeof(li.username));
 	strlcpy(li.hostname, hostname, sizeof(li.hostname));
 	time(&t);

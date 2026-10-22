@@ -131,13 +131,13 @@ decode_attrib(struct sshbuf *b, Attrib *a)
 		char *type;
 		u_char *data;
 		size_t dlen;
-		u_int i, count;
+		u_int i, बिलांग;
 
-		if ((r = sshbuf_get_u32(b, &count)) != 0)
+		if ((r = sshbuf_get_u32(b, &बिलांग)) != 0)
 			return r;
-		if (count > 0x100000)
+		if (बिलांग > 0x100000)
 			return SSH_ERR_INVALID_FORMAT;
-		for (i = 0; i < count; i++) {
+		for (i = 0; i < बिलांग; i++) {
 			if ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
 			    (r = sshbuf_get_string(b, &data, &dlen)) != 0)
 				return r;

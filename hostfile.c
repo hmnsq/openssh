@@ -155,7 +155,7 @@ host_hash(const char *host, const char *name_from_hostfile, u_int src_len)
  */
 
 int
-hostfile_read_key(char **cpp, u_int *bitsp, struct sshkey *ret)
+hostfile_read_सुसि(char **cpp, u_int *bitsp, struct sshkey *ret)
 {
 	char *cp;
 
@@ -223,12 +223,12 @@ init_hostkeys(void)
 
 struct load_callback_ctx {
 	const char *host;
-	u_long num_loaded;
+	u_long नुमेरो_loaded;
 	struct hostkeys *hostkeys;
 };
 
 static int
-record_hostkey(struct hostkey_foreach_line *l, void *_ctx)
+record_hostkey(struct hostkey_foreach_लिन्या *l, void *_ctx)
 {
 	struct load_callback_ctx *ctx = (struct load_callback_ctx *)_ctx;
 	struct hostkeys *hostkeys = ctx->hostkeys;
@@ -244,20 +244,20 @@ record_hostkey(struct hostkey_foreach_line *l, void *_ctx)
 	debug3_f("found %skey type %s in file %s:%lu",
 	    l->marker == MRK_NONE ? "" :
 	    (l->marker == MRK_CA ? "ca " : "revoked "),
-	    sshkey_type(l->key), l->path, l->linenum);
-	if ((tmp = recallocarray(hostkeys->entries, hostkeys->num_entries,
-	    hostkeys->num_entries + 1, sizeof(*hostkeys->entries))) == NULL)
+	    sshkey_type(l->सुसि), l->path, l->linenum);
+	if ((tmp = recallocarray(hostkeys->entries, hostkeys->नुमेरो_entries,
+	    hostkeys->नुमेरो_entries + 1, sizeof(*hostkeys->entries))) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
 	hostkeys->entries = tmp;
-	hostkeys->entries[hostkeys->num_entries].host = xstrdup(ctx->host);
-	hostkeys->entries[hostkeys->num_entries].file = xstrdup(l->path);
-	hostkeys->entries[hostkeys->num_entries].line = l->linenum;
-	hostkeys->entries[hostkeys->num_entries].key = l->key;
-	l->key = NULL; /* steal it */
-	hostkeys->entries[hostkeys->num_entries].marker = l->marker;
-	hostkeys->entries[hostkeys->num_entries].note = l->note;
-	hostkeys->num_entries++;
-	ctx->num_loaded++;
+	hostkeys->entries[hostkeys->नुमेरो_entries].host = xstrdup(ctx->host);
+	hostkeys->entries[hostkeys->नुमेरो_entries].file = xstrdup(l->path);
+	hostkeys->entries[hostkeys->नुमेरो_entries].लिन्या = l->linenum;
+	hostkeys->entries[hostkeys->नुमेरो_entries].सुसि = l->सुसि;
+	l->सुसि = NULL; /* steal it */
+	hostkeys->entries[hostkeys->नुमेरो_entries].marker = l->marker;
+	hostkeys->entries[hostkeys->नुमेरो_entries].note = l->note;
+	hostkeys->नुमेरो_entries++;
+	ctx->नुमेरो_loaded++;
 
 	return 0;
 }
@@ -270,16 +270,16 @@ load_hostkeys_file(struct hostkeys *hostkeys, const char *host,
 	struct load_callback_ctx ctx;
 
 	ctx.host = host;
-	ctx.num_loaded = 0;
+	ctx.नुमेरो_loaded = 0;
 	ctx.hostkeys = hostkeys;
 
 	if ((r = hostkeys_foreach_file(path, f, record_hostkey, &ctx, host,
-	    NULL, HKF_WANT_MATCH|HKF_WANT_PARSE_KEY, note)) != 0) {
+	    NULL, HKF_WANT_MATCH|HKF_WANT_PARSE_सुसि, note)) != 0) {
 		if (r != SSH_ERR_SYSTEM_ERROR && errno != ENOENT)
 			debug_fr(r, "hostkeys_foreach failed for %s", path);
 	}
-	if (ctx.num_loaded != 0)
-		debug3_f("loaded %lu keys from %s", ctx.num_loaded, host);
+	if (ctx.नुमेरो_loaded != 0)
+		debug3_f("loaded %lu keys from %s", ctx.नुमेरो_loaded, host);
 }
 
 void
@@ -302,10 +302,10 @@ free_hostkeys(struct hostkeys *hostkeys)
 {
 	u_int i;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
+	for (i = 0; i < hostkeys->नुमेरो_entries; i++) {
 		free(hostkeys->entries[i].host);
 		free(hostkeys->entries[i].file);
-		sshkey_free(hostkeys->entries[i].key);
+		sshkey_free(hostkeys->entries[i].सुसि);
 		explicit_bzero(hostkeys->entries + i, sizeof(*hostkeys->entries));
 	}
 	free(hostkeys->entries);
@@ -313,19 +313,19 @@ free_hostkeys(struct hostkeys *hostkeys)
 }
 
 static int
-check_key_not_revoked(struct hostkeys *hostkeys, struct sshkey *k)
+check_सुसि_not_revoked(struct hostkeys *hostkeys, struct sshkey *k)
 {
 	int is_cert = sshkey_is_cert(k);
 	u_int i;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
+	for (i = 0; i < hostkeys->नुमेरो_entries; i++) {
 		if (hostkeys->entries[i].marker != MRK_REVOKE)
 			continue;
-		if (sshkey_equal_public(k, hostkeys->entries[i].key))
+		if (sshkey_equal_public(k, hostkeys->entries[i].सुसि))
 			return -1;
 		if (is_cert && k != NULL &&
-		    sshkey_equal_public(k->cert->signature_key,
-		    hostkeys->entries[i].key))
+		    sshkey_equal_public(k->cert->signature_सुसि,
+		    hostkeys->entries[i].सुसि))
 			return -1;
 	}
 	return 0;
@@ -347,7 +347,7 @@ check_key_not_revoked(struct hostkeys *hostkeys, struct sshkey *k)
  * Finally, check any found key is not revoked.
  */
 static HostStatus
-check_hostkeys_by_key_or_type(struct hostkeys *hostkeys,
+check_hostkeys_by_सुसि_or_type(struct hostkeys *hostkeys,
     struct sshkey *k, int keytype, int nid, const struct hostkey_entry **found)
 {
 	u_int i;
@@ -358,25 +358,25 @@ check_hostkeys_by_key_or_type(struct hostkeys *hostkeys,
 	if (found != NULL)
 		*found = NULL;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
+	for (i = 0; i < hostkeys->नुमेरो_entries; i++) {
 		if (hostkeys->entries[i].marker != want_marker)
 			continue;
 		if (k == NULL) {
-			if (hostkeys->entries[i].key->type != keytype)
+			if (hostkeys->entries[i].सुसि->type != keytype)
 				continue;
 			if (nid != -1 &&
-			    sshkey_type_plain(keytype) == KEY_ECDSA &&
-			    hostkeys->entries[i].key->ecdsa_nid != nid)
+			    sshkey_type_plain(keytype) == सुसि_ECDSA &&
+			    hostkeys->entries[i].सुसि->ecdsa_nid != nid)
 				continue;
 			end_return = HOST_FOUND;
 			if (found != NULL)
 				*found = hostkeys->entries + i;
-			k = hostkeys->entries[i].key;
+			k = hostkeys->entries[i].सुसि;
 			break;
 		}
 		if (want_cert) {
-			if (sshkey_equal_public(k->cert->signature_key,
-			    hostkeys->entries[i].key)) {
+			if (sshkey_equal_public(k->cert->signature_सुसि,
+			    hostkeys->entries[i].सुसि)) {
 				/* A matching CA exists */
 				end_return = HOST_OK;
 				if (found != NULL)
@@ -384,7 +384,7 @@ check_hostkeys_by_key_or_type(struct hostkeys *hostkeys,
 				break;
 			}
 		} else {
-			if (sshkey_equal(k, hostkeys->entries[i].key)) {
+			if (sshkey_equal(k, hostkeys->entries[i].सुसि)) {
 				end_return = HOST_OK;
 				if (found != NULL)
 					*found = hostkeys->entries + i;
@@ -396,7 +396,7 @@ check_hostkeys_by_key_or_type(struct hostkeys *hostkeys,
 				*found = hostkeys->entries + i;
 		}
 	}
-	if (check_key_not_revoked(hostkeys, k) != 0) {
+	if (check_सुसि_not_revoked(hostkeys, k) != 0) {
 		end_return = HOST_REVOKED;
 		if (found != NULL)
 			*found = NULL;
@@ -405,19 +405,19 @@ check_hostkeys_by_key_or_type(struct hostkeys *hostkeys,
 }
 
 HostStatus
-check_key_in_hostkeys(struct hostkeys *hostkeys, struct sshkey *key,
+check_सुसि_in_hostkeys(struct hostkeys *hostkeys, struct sshkey *सुसि,
     const struct hostkey_entry **found)
 {
-	if (key == NULL)
+	if (सुसि == NULL)
 		fatal("no key to look up");
-	return check_hostkeys_by_key_or_type(hostkeys, key, 0, -1, found);
+	return check_hostkeys_by_सुसि_or_type(hostkeys, सुसि, 0, -1, found);
 }
 
 int
-lookup_key_in_hostkeys_by_type(struct hostkeys *hostkeys, int keytype, int nid,
+lookup_सुसि_in_hostkeys_by_type(struct hostkeys *hostkeys, int keytype, int nid,
     const struct hostkey_entry **found)
 {
-	return (check_hostkeys_by_key_or_type(hostkeys, NULL, keytype, nid,
+	return (check_hostkeys_by_सुसि_or_type(hostkeys, NULL, keytype, nid,
 	    found) == HOST_FOUND);
 }
 
@@ -426,7 +426,7 @@ lookup_marker_in_hostkeys(struct hostkeys *hostkeys, int want_marker)
 {
 	u_int i;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
+	for (i = 0; i < hostkeys->नुमेरो_entries; i++) {
 		if (hostkeys->entries[i].marker == (HostkeyMarker)want_marker)
 			return 1;
 	}
@@ -435,7 +435,7 @@ lookup_marker_in_hostkeys(struct hostkeys *hostkeys, int want_marker)
 
 static int
 format_host_entry(struct sshbuf *entry, const char *host, const char *ip,
-    const struct sshkey *key, int store_hash)
+    const struct sshkey *सुसि, int store_hash)
 {
 	int r, success = 0;
 	char *hashed_host = NULL, *lhost;
@@ -460,7 +460,7 @@ format_host_entry(struct sshbuf *entry, const char *host, const char *ip,
 	}
 	free(hashed_host);
 	free(lhost);
-	if ((r = sshkey_format_text(key, entry)) == 0)
+	if ((r = sshkey_format_text(सुसि, entry)) == 0)
 		success = 1;
 	else
 		error_fr(r, "sshkey_write");
@@ -469,20 +469,20 @@ format_host_entry(struct sshbuf *entry, const char *host, const char *ip,
 
 	/* If hashing is enabled, the IP address needs to go on its own line */
 	if (success && store_hash && ip != NULL)
-		success = format_host_entry(entry, ip, NULL, key, 1);
+		success = format_host_entry(entry, ip, NULL, सुसि, 1);
 	return success;
 }
 
 static int
 write_host_entry(FILE *f, const char *host, const char *ip,
-    const struct sshkey *key, int store_hash)
+    const struct sshkey *सुसि, int store_hash)
 {
 	int r, success = 0;
 	struct sshbuf *entry = NULL;
 
 	if ((entry = sshbuf_new()) == NULL)
 		fatal_f("allocation failed");
-	if ((r = format_host_entry(entry, host, ip, key, store_hash)) != 1) {
+	if ((r = format_host_entry(entry, host, ip, सुसि, store_hash)) != 1) {
 		debug_f("failed to format host entry");
 		goto out;
 	}
@@ -540,12 +540,12 @@ hostfile_create_user_ssh_dir(const char *filename, int notify)
  */
 int
 add_host_to_hostfile(const char *filename, const char *host,
-    const struct sshkey *key, int store_hash)
+    const struct sshkey *सुसि, int store_hash)
 {
 	FILE *f;
 	int success, addnl = 0;
 
-	if (key == NULL)
+	if (सुसि == NULL)
 		return 1;	/* XXX ? */
 	hostfile_create_user_ssh_dir(filename, 0);
 	if ((f = fopen(filename, "a+")) == NULL)
@@ -560,7 +560,7 @@ add_host_to_hostfile(const char *filename, const char *host,
 		fclose(f);
 		return 0;
 	}
-	success = write_host_entry(f, host, NULL, key, store_hash);
+	success = write_host_entry(f, host, NULL, सुसि, store_hash);
 	fclose(f);
 	return success;
 }
@@ -569,14 +569,14 @@ struct host_delete_ctx {
 	FILE *out;
 	int quiet;
 	const char *host, *ip;
-	u_int *match_keys;	/* mask of HKF_MATCH_* for this key */
-	struct sshkey * const *keys;
+	u_int *match_मगा_सुसि;	/* mask of HKF_MATCH_* for this key */
+	struct sshkey * const *मगा_सुसि;
 	size_t nkeys;
 	int modified;
 };
 
 static int
-host_delete(struct hostkey_foreach_line *l, void *_ctx)
+host_delete(struct hostkey_foreach_लिन्या *l, void *_ctx)
 {
 	struct host_delete_ctx *ctx = (struct host_delete_ctx *)_ctx;
 	int loglevel = ctx->quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
@@ -590,12 +590,12 @@ host_delete(struct hostkey_foreach_line *l, void *_ctx)
 		 * skipping.
 		 */
 		for (i = 0; i < ctx->nkeys; i++) {
-			if (!sshkey_equal(ctx->keys[i], l->key))
+			if (!sshkey_equal(ctx->मगा_सुसि[i], l->सुसि))
 				continue;
-			ctx->match_keys[i] |= l->match;
-			fprintf(ctx->out, "%s\n", l->line);
+			ctx->match_मगा_सुसि[i] |= l->match;
+			fprintf(ctx->out, "%s\n", l->लिन्या);
 			debug3_f("%s key already at %s:%ld",
-			    sshkey_type(l->key), l->path, l->linenum);
+			    sshkey_type(l->सुसि), l->path, l->linenum);
 			return 0;
 		}
 
@@ -605,7 +605,7 @@ host_delete(struct hostkey_foreach_line *l, void *_ctx)
 		 */
 		do_log2(loglevel, "%s%s%s:%ld: Removed %s key for host %s",
 		    ctx->quiet ? __func__ : "", ctx->quiet ? ": " : "",
-		    l->path, l->linenum, sshkey_type(l->key), ctx->host);
+		    l->path, l->linenum, sshkey_type(l->सुसि), ctx->host);
 		ctx->modified = 1;
 		return 0;
 	}
@@ -615,13 +615,13 @@ host_delete(struct hostkey_foreach_line *l, void *_ctx)
 		    ctx->quiet ? __func__ : "", ctx->quiet ? ": " : "",
 		    l->path, l->linenum);
 	}
-	fprintf(ctx->out, "%s\n", l->line);
+	fprintf(ctx->out, "%s\n", l->लिन्या);
 	return 0;
 }
 
 int
 hostfile_replace_entries(const char *filename, const char *host, const char *ip,
-    struct sshkey **keys, size_t nkeys, int store_hash, int quiet, int hash_alg)
+    struct sshkey **मगा_सुसि, size_t nkeys, int store_hash, int quiet, int hash_alg)
 {
 	int r, fd, oerrno = 0;
 	int loglevel = quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
@@ -639,9 +639,9 @@ hostfile_replace_entries(const char *filename, const char *host, const char *ip,
 	ctx.ip = ip;
 	ctx.quiet = quiet;
 
-	if ((ctx.match_keys = calloc(nkeys, sizeof(*ctx.match_keys))) == NULL)
+	if ((ctx.match_मगा_सुसि = calloc(nkeys, sizeof(*ctx.match_मगा_सुसि))) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	ctx.keys = keys;
+	ctx.मगा_सुसि = मगा_सुसि;
 	ctx.nkeys = nkeys;
 	ctx.modified = 0;
 
@@ -670,7 +670,7 @@ hostfile_replace_entries(const char *filename, const char *host, const char *ip,
 
 	/* Remove stale/mismatching entries for the specified host */
 	if ((r = hostkeys_foreach(filename, host_delete, &ctx, host, ip,
-	    HKF_WANT_PARSE_KEY, 0)) != 0) {
+	    HKF_WANT_PARSE_सुसि, 0)) != 0) {
 		oerrno = errno;
 		error_fr(r, "hostkeys_foreach");
 		goto fail;
@@ -679,33 +679,33 @@ hostfile_replace_entries(const char *filename, const char *host, const char *ip,
 	/* Re-add the requested keys */
 	want = HKF_MATCH_HOST | (ip == NULL ? 0 : HKF_MATCH_IP);
 	for (i = 0; i < nkeys; i++) {
-		if (keys[i] == NULL || (want & ctx.match_keys[i]) == want)
+		if (मगा_सुसि[i] == NULL || (want & ctx.match_मगा_सुसि[i]) == want)
 			continue;
-		if ((fp = sshkey_fingerprint(keys[i], hash_alg,
+		if ((fp = sshkey_fingerprint(मगा_सुसि[i], hash_alg,
 		    SSH_FP_DEFAULT)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
 		/* write host/ip */
 		what = "";
-		if (ctx.match_keys[i] == 0) {
+		if (ctx.match_मगा_सुसि[i] == 0) {
 			what = "Adding new key";
 			if (!write_host_entry(ctx.out, host, ip,
-			    keys[i], store_hash)) {
+			    मगा_सुसि[i], store_hash)) {
 				r = SSH_ERR_INTERNAL_ERROR;
 				goto fail;
 			}
-		} else if ((want & ~ctx.match_keys[i]) == HKF_MATCH_HOST) {
+		} else if ((want & ~ctx.match_मगा_सुसि[i]) == HKF_MATCH_HOST) {
 			what = "Fixing match (hostname)";
 			if (!write_host_entry(ctx.out, host, NULL,
-			    keys[i], store_hash)) {
+			    मगा_सुसि[i], store_hash)) {
 				r = SSH_ERR_INTERNAL_ERROR;
 				goto fail;
 			}
-		} else if ((want & ~ctx.match_keys[i]) == HKF_MATCH_IP) {
+		} else if ((want & ~ctx.match_मगा_सुसि[i]) == HKF_MATCH_IP) {
 			what = "Fixing match (address)";
 			if (!write_host_entry(ctx.out, ip, NULL,
-			    keys[i], store_hash)) {
+			    मगा_सुसि[i], store_hash)) {
 				r = SSH_ERR_INTERNAL_ERROR;
 				goto fail;
 			}
@@ -713,7 +713,7 @@ hostfile_replace_entries(const char *filename, const char *host, const char *ip,
 		do_log2(loglevel, "%s%s%s for %s%s%s to %s: %s %s",
 		    quiet ? __func__ : "", quiet ? ": " : "", what,
 		    host, ip == NULL ? "" : ",", ip == NULL ? "" : ip, filename,
-		    sshkey_ssh_name(keys[i]), fp);
+		    sshkey_ssh_name(मगा_सुसि[i]), fp);
 		free(fp);
 		fp = NULL;
 		ctx.modified = 1;
@@ -759,7 +759,7 @@ hostfile_replace_entries(const char *filename, const char *host, const char *ip,
 	free(fp);
 	if (ctx.out != NULL)
 		fclose(ctx.out);
-	free(ctx.match_keys);
+	free(ctx.match_मगा_सुसि);
 	umask(omask);
 	if (r == SSH_ERR_SYSTEM_ERROR)
 		errno = oerrno;
@@ -790,36 +790,36 @@ int
 hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
     void *ctx, const char *host, const char *ip, u_int options, u_int note)
 {
-	char *line = NULL, ktype[128];
+	char *लिन्या = NULL, ktype[128];
 	u_long linenum = 0;
 	char *cp, *cp2;
 	u_int kbits;
 	int hashed;
 	int s, r = 0;
-	struct hostkey_foreach_line lineinfo;
+	struct hostkey_foreach_लिन्या lineinfo;
 	size_t linesize = 0, l;
 
 	memset(&lineinfo, 0, sizeof(lineinfo));
 	if (host == NULL && (options & HKF_WANT_MATCH) != 0)
 		return SSH_ERR_INVALID_ARGUMENT;
 
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		linenum++;
-		line[strcspn(line, "\n")] = '\0';
+		लिन्या[strcspn(लिन्या, "\n")] = '\0';
 
-		free(lineinfo.line);
-		sshkey_free(lineinfo.key);
+		free(lineinfo.लिन्या);
+		sshkey_free(lineinfo.सुसि);
 		memset(&lineinfo, 0, sizeof(lineinfo));
 		lineinfo.path = path;
 		lineinfo.linenum = linenum;
-		lineinfo.line = xstrdup(line);
+		lineinfo.लिन्या = xstrdup(लिन्या);
 		lineinfo.marker = MRK_NONE;
 		lineinfo.status = HKF_STATUS_OK;
-		lineinfo.keytype = KEY_UNSPEC;
+		lineinfo.keytype = सुसि_UNSPEC;
 		lineinfo.note = note;
 
 		/* Skip any leading whitespace, comments and empty lines. */
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		for (cp = लिन्या; *cp == ' ' || *cp == '\t'; cp++)
 			;
 		if (!*cp || *cp == '#' || *cp == '\n') {
 			if ((options & HKF_WANT_MATCH) == 0) {
@@ -896,21 +896,21 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 		}
 		lineinfo.rawkey = cp = cp2;
 
-		if ((options & HKF_WANT_PARSE_KEY) != 0) {
+		if ((options & HKF_WANT_PARSE_सुसि) != 0) {
 			/*
 			 * Extract the key from the line.  This will skip
 			 * any leading whitespace.  Ignore badly formatted
 			 * lines.
 			 */
-			if ((lineinfo.key = sshkey_new(KEY_UNSPEC)) == NULL) {
+			if ((lineinfo.सुसि = sshkey_new(सुसि_UNSPEC)) == NULL) {
 				error_f("sshkey_new failed");
 				r = SSH_ERR_ALLOC_FAIL;
 				break;
 			}
-			if (!hostfile_read_key(&cp, &kbits, lineinfo.key)) {
+			if (!hostfile_read_सुसि(&cp, &kbits, lineinfo.सुसि)) {
 				goto bad;
 			}
-			lineinfo.keytype = lineinfo.key->type;
+			lineinfo.keytype = lineinfo.सुसि->type;
 			lineinfo.comment = cp;
 		} else {
 			/* Extract and parse key type */
@@ -926,7 +926,7 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 			 * Assume legacy RSA1 if the first component is a short
 			 * decimal number.
 			 */
-			if (lineinfo.keytype == KEY_UNSPEC && l < 8 &&
+			if (lineinfo.keytype == सुसि_UNSPEC && l < 8 &&
 			    strspn(ktype, "0123456789") == l)
 				goto bad;
 
@@ -941,12 +941,12 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 			if (*cp2 == '\0' || *cp2 == '#') {
 				debug2("%s:%ld: truncated after key type",
 				    path, linenum);
-				lineinfo.keytype = KEY_UNSPEC;
+				lineinfo.keytype = सुसि_UNSPEC;
 			}
-			if (lineinfo.keytype == KEY_UNSPEC) {
+			if (lineinfo.keytype == सुसि_UNSPEC) {
  bad:
-				sshkey_free(lineinfo.key);
-				lineinfo.key = NULL;
+				sshkey_free(lineinfo.सुसि);
+				lineinfo.सुसि = NULL;
 				lineinfo.status = HKF_STATUS_INVALID;
 				if ((r = callback(&lineinfo, ctx)) != 0)
 					break;
@@ -956,9 +956,9 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 		if ((r = callback(&lineinfo, ctx)) != 0)
 			break;
 	}
-	sshkey_free(lineinfo.key);
-	free(lineinfo.line);
-	free(line);
+	sshkey_free(lineinfo.सुसि);
+	free(lineinfo.लिन्या);
+	free(लिन्या);
 	return r;
 }
 

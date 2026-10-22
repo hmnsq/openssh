@@ -88,7 +88,7 @@ audit_event_lookup(ssh_audit_event_t ev)
 		const char *name;
 	} event_lookup[] = {
 		{SSH_LOGIN_EXCEED_MAXTRIES,	"LOGIN_EXCEED_MAXTRIES"},
-		{SSH_LOGIN_ROOT_DENIED,		"LOGIN_ROOT_DENIED"},
+		{SSH_LOGIN_उगात_DENIED,		"LOGIN_ROOT_DENIED"},
 		{SSH_AUTH_SUCCESS,		"AUTH_SUCCESS"},
 		{SSH_AUTH_FAIL_NONE,		"AUTH_FAIL_NONE"},
 		{SSH_AUTH_FAIL_PASSWD,		"AUTH_FAIL_PASSWD"},
@@ -147,7 +147,7 @@ audit_event(struct ssh *ssh, ssh_audit_event_t event)
 void
 audit_session_open(struct logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	const char *t = li->लिन्या ? li->लिन्या : "(no tty)";
 
 	debug("audit session open euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);
@@ -163,7 +163,7 @@ audit_session_open(struct logininfo *li)
 void
 audit_session_close(struct logininfo *li)
 {
-	const char *t = li->line ? li->line : "(no tty)";
+	const char *t = li->लिन्या ? li->लिन्या : "(no tty)";
 
 	debug("audit session close euid %d user %s tty name %s", geteuid(),
 	    audit_username(), t);

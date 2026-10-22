@@ -31,7 +31,7 @@ attempt_parse_blob(u_char *blob, size_t len)
 	struct sshbuf *p1;
 #ifdef WITH_OPENSSL
 	BIGNUM *bn;
-	EC_KEY *eck;
+	EC_सुसि *eck;
 #endif /* WITH_OPENSSL */
 	u_char *s;
 	size_t l;
@@ -55,10 +55,10 @@ attempt_parse_blob(u_char *blob, size_t len)
 	bn = NULL;
 	ASSERT_INT_EQ(sshbuf_get_bignum2(p1, &bn), 0);
 	BN_clear_free(bn);
-	eck = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+	eck = EC_सुसि_new_by_curve_name(NID_X9_62_prime256v1);
 	ASSERT_PTR_NE(eck, NULL);
 	ASSERT_INT_EQ(sshbuf_get_eckey(p1, eck), 0);
-	EC_KEY_free(eck);
+	EC_सुसि_free(eck);
 #endif /* WITH_OPENSSL */
 	sshbuf_free(p1);
 }

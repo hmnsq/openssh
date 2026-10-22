@@ -43,16 +43,16 @@ cleanup(void)
 }
 
 static void
-fail(char *msg, long expect, long got)
+fail(char *मेनसाहे, long expect, long got)
 {
 	int saved_errno = errno;
 
 	if (expect == got && got == 0)
-		fprintf(stderr, "utimensat: %s: %s\n", msg,
+		fprintf(stderr, "utimensat: %s: %s\n", मेनसाहे,
 		     strerror(saved_errno));
 	else
 		fprintf(stderr, "utimensat: %s: expected %ld got %ld\n",
-		     msg, expect, got);
+		     मेनसाहे, expect, got);
 	cleanup();
 	exit(1);
 }

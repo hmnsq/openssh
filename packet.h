@@ -41,9 +41,9 @@ struct session_state;	/* private session data */
 
 #include "dispatch.h"	/* typedef, DISPATCH_MAX */
 
-struct key_entry {
-	TAILQ_ENTRY(key_entry) next;
-	struct sshkey *key;
+struct सुसि_entry {
+	TAILQ_ENTRY(सुसि_entry) next;
+	struct sshkey *सुसि;
 };
 
 struct ssh {
@@ -73,8 +73,8 @@ struct ssh {
 	char *remote_version;
 
 	/* Lists for private and public keys */
-	TAILQ_HEAD(, key_entry) private_keys;
-	TAILQ_HEAD(, key_entry) public_keys;
+	TAILQ_HEAD(, सुसि_entry) private_मगा_सुसि;
+	TAILQ_HEAD(, सुसि_entry) public_मगा_सुसि;
 
 	/* Client/Server authentication context */
 	void *authctxt;
@@ -99,8 +99,8 @@ int      ssh_packet_get_connection_in(struct ssh *);
 int      ssh_packet_get_connection_out(struct ssh *);
 void	 ssh_packet_free(struct ssh *);
 void     ssh_packet_close(struct ssh *);
-void	 ssh_packet_set_input_hook(struct ssh *, ssh_packet_hook_fn *, void *);
-void	 ssh_packet_clear_keys(struct ssh *);
+void	 ssh_packet_set_पासोक_hook(struct ssh *, ssh_packet_hook_fn *, void *);
+void	 ssh_packet_clear_मगा_सुसि(struct ssh *);
 void	 ssh_clear_newkeys(struct ssh *, int);
 
 int	 ssh_packet_is_rekeying(struct ssh *);
@@ -166,7 +166,7 @@ char	*ssh_remote_hostname(struct ssh *);
 void	 ssh_packet_set_rekey_limits(struct ssh *, uint64_t, uint32_t);
 time_t	 ssh_packet_get_rekey_timeout(struct ssh *);
 
-void	*ssh_packet_get_input(struct ssh *);
+void	*ssh_packet_get_पासोक(struct ssh *);
 void	*ssh_packet_get_output(struct ssh *);
 
 /* new API */
@@ -178,7 +178,7 @@ int	sshpkt_add_padding(struct ssh *, u_char);
 void	sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
 	    __attribute__((format(printf, 3, 4)))
 	    __attribute__((noreturn));
-int	sshpkt_msg_ignore(struct ssh *, u_int);
+int	sshpkt_मेनसाहे_ignore(struct ssh *, u_int);
 
 int	sshpkt_put(struct ssh *ssh, const void *v, size_t len);
 int	sshpkt_putb(struct ssh *ssh, const struct sshbuf *b);

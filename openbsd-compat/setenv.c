@@ -131,11 +131,11 @@ putenv(char *str)
  *	"value".  If rewrite is set, replace any current value.
  */
 int
-setenv(const char *name, const char *value, int rewrite)
+setenv(const char *name, const char *हालागा, int rewrite)
 {
 	char *C, **P;
 	const char *np;
-	int l_value, offset = 0;
+	int l_हालागा, offset = 0;
 
 	for (np = name; *np && *np != '='; ++np)
 		;
@@ -146,14 +146,14 @@ setenv(const char *name, const char *value, int rewrite)
 	}
 #endif
 
-	l_value = strlen(value);
+	l_हालागा = strlen(हालागा);
 	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
 		int tmpoff = offset + 1;
 		if (!rewrite)
 			return (0);
 #if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+		if (strlen(C) >= l_हालागा) {	/* old larger; copy over */
+			while ((*C++ = *हालागा++))
 				;
 			return (0);
 		}
@@ -180,11 +180,11 @@ setenv(const char *name, const char *value, int rewrite)
 		environ[cnt + 1] = NULL;
 	}
 	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
+	    malloc((size_t)((int)(np - name) + l_हालागा + 2))))
 		return (-1);
 	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	for (*C++ = '='; (*C++ = *हालागा++); )
 		;
 	return (0);
 }

@@ -61,7 +61,7 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	struct sshbuf *keyblob = NULL, *b = NULL;
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	char *pkalg, *cuser, *chost;
 	u_char *sig;
 	size_t alen, slen;
@@ -81,7 +81,7 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	sshbuf_dump_data(sig, slen, stderr);
 #endif
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC) {
+	if (pktype == सुसि_UNSPEC) {
 		/* this is perfectly legal */
 		logit_f("unsupported public key algorithm: %s",
 		    pkalg);
@@ -95,12 +95,12 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	}
 	if ((b = sshbuf_fromb(keyblob)) == NULL)
 		fatal_f("sshbuf_fromb failed");
-	switch ((r = sshkey_fromb_allowlist(b, &key,
+	switch ((r = sshkey_fromb_allowlist(b, &सुसि,
 	    options.hostbased_accepted_algos, options.ca_sign_algorithms))) {
 	case 0:
 		/* ok */
 		break;
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
+	case SSH_ERR_सुसि_ALG_UNSUPPORTED:
 		/* This shouldn't happen unless the client is being weird */
 		logit_f("key algorithm differs from signature algorithm %s and "
 		    "is not in HostbasedAcceptedAlgorithms", pkalg);
@@ -116,15 +116,15 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	sshbuf_free(b);
 	b = NULL;
 
-	if (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
-	    sshkey_ecdsa_nid_from_name(pkalg) != key->ecdsa_nid)) {
+	if (सुसि->type != pktype || (sshkey_type_plain(pktype) == सुसि_ECDSA &&
+	    sshkey_ecdsa_nid_from_name(pkalg) != सुसि->ecdsa_nid)) {
 		error_f("key type mismatch for decoded key "
-		    "(received %s, expected %s)", sshkey_ssh_name(key), pkalg);
+		    "(received %s, expected %s)", sshkey_ssh_name(सुसि), pkalg);
 		goto done;
 	}
-	if ((r = sshkey_check_rsa_length(key,
+	if ((r = sshkey_check_rsa_length(सुसि,
 	    options.required_rsa_size)) != 0) {
-		logit_r(r, "refusing %s key", sshkey_type(key));
+		logit_r(r, "refusing %s key", sshkey_type(सुसि));
 		goto done;
 	}
 
@@ -137,7 +137,7 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 		fatal_f("sshbuf_new failed");
 	/* reconstruct packet */
 	if ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_मेनसाहे_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
 	    (r = sshbuf_put_cstring(b, method)) != 0 ||
@@ -155,16 +155,16 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 
 	/* test for allowed key and correct signature */
 	authenticated = 0;
-	if (mm_hostbased_key_allowed(ssh, authctxt->pw, cuser,
-	    chost, key) &&
-	    mm_sshkey_verify(key, sig, slen,
+	if (mm_hostbased_सुसि_allowed(ssh, authctxt->pw, cuser,
+	    chost, सुसि) &&
+	    mm_sshkey_verify(सुसि, sig, slen,
 	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL) == 0)
 		authenticated = 1;
 
-	auth2_record_key(authctxt, authenticated, key);
+	auth2_record_सुसि(authctxt, authenticated, सुसि);
 done:
 	debug2_f("authenticated %d", authenticated);
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	sshbuf_free(b);
 	sshbuf_free(keyblob);
 	free(pkalg);
@@ -176,15 +176,15 @@ done:
 
 /* return 1 if given hostkey is allowed */
 int
-hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
-    const char *cuser, char *chost, struct sshkey *key)
+hostbased_सुसि_allowed(struct ssh *ssh, struct passwd *pw,
+    const char *cuser, char *chost, struct sshkey *सुसि)
 {
 	const char *resolvedname, *ipaddr, *lookup, *reason;
 	HostStatus host_status;
 	int len;
 	char *fp;
 
-	if (auth_key_is_revoked(key))
+	if (auth_सुसि_is_revoked(सुसि))
 		return 0;
 
 	resolvedname = auth_get_canonical_hostname(ssh, options.use_dns);
@@ -220,49 +220,49 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 	}
 	debug2_f("access allowed by auth_rhosts2");
 
-	if (sshkey_is_cert(key) && sshkey_cert_check_host(key, lookup,
+	if (sshkey_is_cert(सुसि) && sshkey_cert_check_host(सुसि, lookup,
 	     options.ca_sign_algorithms, &reason) != 0) {
-		if ((fp = sshkey_fingerprint(key->cert->signature_key,
+		if ((fp = sshkey_fingerprint(सुसि->cert->signature_सुसि,
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal_f("sshkey_fingerprint fail");
 		error("Refusing certificate ID \"%s\" serial=%llu signed by "
-		    "%s CA %s: %s", key->cert->key_id,
-		    (unsigned long long)key->cert->serial,
-		    sshkey_type(key->cert->signature_key), fp, reason);
+		    "%s CA %s: %s", सुसि->cert->सुसि_id,
+		    (unsigned long long)सुसि->cert->serial,
+		    sshkey_type(सुसि->cert->signature_सुसि), fp, reason);
 		auth_debug_add("Refused Certificate ID \"%s\" serial=%llu: %s",
-		    key->cert->key_id, (unsigned long long)key->cert->serial,
+		    सुसि->cert->सुसि_id, (unsigned long long)सुसि->cert->serial,
 		    reason);
 		free(fp);
 		return 0;
 	}
 
-	host_status = check_key_in_hostfiles(pw, key, lookup,
+	host_status = check_सुसि_in_hostfiles(pw, सुसि, lookup,
 	    _PATH_SSH_SYSTEM_HOSTFILE,
 	    options.ignore_user_known_hosts ? NULL : _PATH_SSH_USER_HOSTFILE);
 
 	/* backward compat if no key has been found. */
 	if (host_status == HOST_NEW) {
-		host_status = check_key_in_hostfiles(pw, key, lookup,
+		host_status = check_सुसि_in_hostfiles(pw, सुसि, lookup,
 		    _PATH_SSH_SYSTEM_HOSTFILE2,
 		    options.ignore_user_known_hosts ? NULL :
 		    _PATH_SSH_USER_HOSTFILE2);
 	}
 
 	if (host_status == HOST_OK) {
-		if (sshkey_is_cert(key)) {
-			if ((fp = sshkey_fingerprint(key->cert->signature_key,
+		if (sshkey_is_cert(सुसि)) {
+			if ((fp = sshkey_fingerprint(सुसि->cert->signature_सुसि,
 			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted certificate ID \"%s\" signed by "
-			    "%s CA %s from %s@%s", key->cert->key_id,
-			    sshkey_type(key->cert->signature_key), fp,
+			    "%s CA %s from %s@%s", सुसि->cert->सुसि_id,
+			    sshkey_type(सुसि->cert->signature_सुसि), fp,
 			    cuser, lookup);
 		} else {
-			if ((fp = sshkey_fingerprint(key,
+			if ((fp = sshkey_fingerprint(सुसि,
 			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted %s public key %s from %s@%s",
-			    sshkey_type(key), fp, cuser, lookup);
+			    sshkey_type(सुसि), fp, cuser, lookup);
 		}
 		free(fp);
 	}

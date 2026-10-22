@@ -34,15 +34,15 @@ void sshkey_tests(void);
 void sshkey_benchmarks(void);
 
 static void
-put_opt(struct sshbuf *b, const char *name, const char *value)
+put_opt(struct sshbuf *b, const char *name, const char *हालागा)
 {
 	struct sshbuf *sect;
 
 	sect = sshbuf_new();
 	ASSERT_PTR_NE(sect, NULL);
 	ASSERT_INT_EQ(sshbuf_put_cstring(b, name), 0);
-	if (value != NULL)
-		ASSERT_INT_EQ(sshbuf_put_cstring(sect, value), 0);
+	if (हालागा != NULL)
+		ASSERT_INT_EQ(sshbuf_put_cstring(sect, हालागा), 0);
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, sect), 0);
 	sshbuf_free(sect);
 }
@@ -50,7 +50,7 @@ put_opt(struct sshbuf *b, const char *name, const char *value)
 #ifdef WITH_OPENSSL
 static void
 build_cert(struct sshbuf *b, struct sshkey *k, const char *type,
-    struct sshkey *sign_key, struct sshkey *ca_key,
+    struct sshkey *sign_सुसि, struct sshkey *ca_सुसि,
     const char *sig_alg)
 {
 	struct sshbuf *ca_buf, *pk, *principals, *critopts, *exts;
@@ -59,7 +59,7 @@ build_cert(struct sshbuf *b, struct sshkey *k, const char *type,
 
 	ca_buf = sshbuf_new();
 	ASSERT_PTR_NE(ca_buf, NULL);
-	ASSERT_INT_EQ(sshkey_putb(ca_key, ca_buf), 0);
+	ASSERT_INT_EQ(sshkey_putb(ca_सुसि, ca_buf), 0);
 
 	/*
 	 * Get the public key serialisation by rendering the key and skipping
@@ -97,7 +97,7 @@ build_cert(struct sshbuf *b, struct sshkey *k, const char *type,
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, exts), 0); /* extensions */
 	ASSERT_INT_EQ(sshbuf_put_string(b, NULL, 0), 0); /* reserved */
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, ca_buf), 0); /* signature key */
-	ASSERT_INT_EQ(sshkey_sign(sign_key, &sigblob, &siglen,
+	ASSERT_INT_EQ(sshkey_sign(sign_सुसि, &sigblob, &siglen,
 	    sshbuf_ptr(b), sshbuf_len(b), sig_alg, NULL, NULL, 0), 0);
 	ASSERT_INT_EQ(sshbuf_put_string(b, sigblob, siglen), 0); /* signature */
 
@@ -248,7 +248,7 @@ sshkey_tests(void)
 	TEST_DONE();
 
 	TEST_START("new/free KEY_UNSPEC");
-	k1 = sshkey_new(KEY_UNSPEC);
+	k1 = sshkey_new(सुसि_UNSPEC);
 	ASSERT_PTR_NE(k1, NULL);
 	sshkey_free(k1);
 	k1 = NULL;
@@ -256,7 +256,7 @@ sshkey_tests(void)
 
 #ifdef WITH_OPENSSL
 	TEST_START("new/free KEY_RSA");
-	k1 = sshkey_new(KEY_RSA);
+	k1 = sshkey_new(सुसि_RSA);
 	ASSERT_PTR_NE(k1, NULL);
 	ASSERT_PTR_NE(k1->pkey, NULL);
 	sshkey_free(k1);
@@ -264,7 +264,7 @@ sshkey_tests(void)
 	TEST_DONE();
 
 	TEST_START("new/free KEY_ECDSA");
-	k1 = sshkey_new(KEY_ECDSA);
+	k1 = sshkey_new(सुसि_ECDSA);
 	ASSERT_PTR_NE(k1, NULL);
 	ASSERT_PTR_EQ(k1->pkey, NULL);  /* Can't allocate without NID */
 	sshkey_free(k1);
@@ -273,7 +273,7 @@ sshkey_tests(void)
 #endif /* WITH_OPENSSL */
 
 	TEST_START("new/free KEY_ED25519");
-	k1 = sshkey_new(KEY_ED25519);
+	k1 = sshkey_new(सुसि_ED25519);
 	ASSERT_PTR_NE(k1, NULL);
 	/* These should be blank until key loaded or generated */
 	ASSERT_PTR_EQ(k1->ed25519_sk, NULL);
@@ -283,7 +283,7 @@ sshkey_tests(void)
 	TEST_DONE();
 
 	TEST_START("new/free KEY_MLDSA44_ED25519");
-	k1 = sshkey_new(KEY_MLDSA44_ED25519);
+	k1 = sshkey_new(सुसि_MLDSA44_ED25519);
 	ASSERT_PTR_NE(k1, NULL);
 	ASSERT_PTR_EQ(k1->mldsa_ed25519_sk, NULL);
 	ASSERT_PTR_EQ(k1->mldsa_ed25519_pk, NULL);
@@ -293,62 +293,62 @@ sshkey_tests(void)
 
 #ifdef WITH_OPENSSL
 	TEST_START("generate KEY_RSA too small modulus");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 128, &k1),
-	    SSH_ERR_KEY_LENGTH);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_RSA, 128, &k1),
+	    SSH_ERR_सुसि_LENGTH);
 	ASSERT_PTR_EQ(k1, NULL);
 	TEST_DONE();
 
 	TEST_START("generate KEY_RSA too large modulus");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 1 << 20, &k1),
-	    SSH_ERR_KEY_LENGTH);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_RSA, 1 << 20, &k1),
+	    SSH_ERR_सुसि_LENGTH);
 	ASSERT_PTR_EQ(k1, NULL);
 	TEST_DONE();
 
 
 	TEST_START("generate KEY_ECDSA wrong bits");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 42, &k1),
-	    SSH_ERR_KEY_LENGTH);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_ECDSA, 42, &k1),
+	    SSH_ERR_सुसि_LENGTH);
 	ASSERT_PTR_EQ(k1, NULL);
 	sshkey_free(k1);
 	k1 = NULL;
 	TEST_DONE();
 
 	TEST_START("generate KEY_RSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 767, &kr),
-	    SSH_ERR_KEY_LENGTH);
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 1024, &kr), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_RSA, 767, &kr),
+	    SSH_ERR_सुसि_LENGTH);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_RSA, 1024, &kr), 0);
 	ASSERT_PTR_NE(kr, NULL);
 	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(kr->pkey), NULL);
 	ASSERT_PTR_NE(rsa_n(kr), NULL);
 	ASSERT_PTR_NE(rsa_e(kr), NULL);
 	ASSERT_PTR_NE(rsa_p(kr), NULL);
-	ASSERT_INT_EQ(BN_num_bits(rsa_n(kr)), 1024);
+	ASSERT_INT_EQ(BN_नुमेरो_bits(rsa_n(kr)), 1024);
 	TEST_DONE();
 
 
 	TEST_START("generate KEY_ECDSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 256, &ke), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_ECDSA, 256, &ke), 0);
 	ASSERT_PTR_NE(ke, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_EC_KEY(ke->pkey), NULL);
-	ASSERT_PTR_NE(EC_KEY_get0_public_key(EVP_PKEY_get0_EC_KEY(ke->pkey)),
+	ASSERT_PTR_NE(EVP_PKEY_get0_EC_सुसि(ke->pkey), NULL);
+	ASSERT_PTR_NE(EC_सुसि_get0_public_सुसि(EVP_PKEY_get0_EC_सुसि(ke->pkey)),
 	    NULL);
-	ASSERT_PTR_NE(EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(ke->pkey)),
+	ASSERT_PTR_NE(EC_सुसि_get0_private_सुसि(EVP_PKEY_get0_EC_सुसि(ke->pkey)),
 	    NULL);
 	TEST_DONE();
 #endif /* WITH_OPENSSL */
 
 	TEST_START("generate KEY_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 256, &kf), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_ED25519, 256, &kf), 0);
 	ASSERT_PTR_NE(kf, NULL);
-	ASSERT_INT_EQ(kf->type, KEY_ED25519);
+	ASSERT_INT_EQ(kf->type, सुसि_ED25519);
 	ASSERT_PTR_NE(kf->ed25519_pk, NULL);
 	ASSERT_PTR_NE(kf->ed25519_sk, NULL);
 	TEST_DONE();
 
 	TEST_START("generate KEY_MLDSA44_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k1), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_MLDSA44_ED25519, 256, &k1), 0);
 	ASSERT_PTR_NE(k1, NULL);
-	ASSERT_INT_EQ(k1->type, KEY_MLDSA44_ED25519);
+	ASSERT_INT_EQ(k1->type, सुसि_MLDSA44_ED25519);
 	ASSERT_PTR_NE(k1->mldsa_ed25519_pk, NULL);
 	ASSERT_PTR_NE(k1->mldsa_ed25519_sk, NULL);
 	sshkey_free(k1);
@@ -360,7 +360,7 @@ sshkey_tests(void)
 	ASSERT_INT_EQ(sshkey_from_private(kr, &k1), 0);
 	ASSERT_PTR_NE(k1, NULL);
 	ASSERT_PTR_NE(kr, k1);
-	ASSERT_INT_EQ(k1->type, KEY_RSA);
+	ASSERT_INT_EQ(k1->type, सुसि_RSA);
 	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k1->pkey), NULL);
 	ASSERT_PTR_NE(rsa_n(k1), NULL);
 	ASSERT_PTR_NE(rsa_e(k1), NULL);
@@ -378,12 +378,12 @@ sshkey_tests(void)
 	ASSERT_INT_EQ(sshkey_from_private(ke, &k1), 0);
 	ASSERT_PTR_NE(k1, NULL);
 	ASSERT_PTR_NE(ke, k1);
-	ASSERT_INT_EQ(k1->type, KEY_ECDSA);
-	ASSERT_PTR_NE(EVP_PKEY_get0_EC_KEY(k1->pkey), NULL);
+	ASSERT_INT_EQ(k1->type, सुसि_ECDSA);
+	ASSERT_PTR_NE(EVP_PKEY_get0_EC_सुसि(k1->pkey), NULL);
 	ASSERT_INT_EQ(k1->ecdsa_nid, ke->ecdsa_nid);
-	ASSERT_PTR_NE(EC_KEY_get0_public_key(EVP_PKEY_get0_EC_KEY(ke->pkey)),
+	ASSERT_PTR_NE(EC_सुसि_get0_public_सुसि(EVP_PKEY_get0_EC_सुसि(ke->pkey)),
 	   NULL);
-	ASSERT_PTR_EQ(EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(k1->pkey)),
+	ASSERT_PTR_EQ(EC_सुसि_get0_private_सुसि(EVP_PKEY_get0_EC_सुसि(k1->pkey)),
 	   NULL);
 	TEST_DONE();
 
@@ -398,7 +398,7 @@ sshkey_tests(void)
 	ASSERT_INT_EQ(sshkey_from_private(kf, &k1), 0);
 	ASSERT_PTR_NE(k1, NULL);
 	ASSERT_PTR_NE(kf, k1);
-	ASSERT_INT_EQ(k1->type, KEY_ED25519);
+	ASSERT_INT_EQ(k1->type, सुसि_ED25519);
 	ASSERT_PTR_NE(k1->ed25519_pk, NULL);
 	ASSERT_PTR_EQ(k1->ed25519_sk, NULL);
 	TEST_DONE();
@@ -410,11 +410,11 @@ sshkey_tests(void)
 	TEST_DONE();
 
 	TEST_START("demote KEY_MLDSA44_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k2), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_MLDSA44_ED25519, 256, &k2), 0);
 	ASSERT_INT_EQ(sshkey_from_private(k2, &k1), 0);
 	ASSERT_PTR_NE(k1, NULL);
 	ASSERT_PTR_NE(k2, k1);
-	ASSERT_INT_EQ(k1->type, KEY_MLDSA44_ED25519);
+	ASSERT_INT_EQ(k1->type, सुसि_MLDSA44_ED25519);
 	ASSERT_PTR_NE(k1->mldsa_ed25519_pk, NULL);
 	ASSERT_PTR_EQ(k1->mldsa_ed25519_sk, NULL);
 	TEST_DONE();
@@ -436,20 +436,20 @@ sshkey_tests(void)
 	TEST_DONE();
 
 	TEST_START("equal different keys");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 1024, &k1), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_RSA, 1024, &k1), 0);
 	ASSERT_INT_EQ(sshkey_equal(kr, k1), 0);
 	sshkey_free(k1);
 	k1 = NULL;
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 256, &k1), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_ECDSA, 256, &k1), 0);
 	ASSERT_INT_EQ(sshkey_equal(ke, k1), 0);
 	sshkey_free(k1);
 	k1 = NULL;
-	ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 256, &k1), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_ED25519, 256, &k1), 0);
 	ASSERT_INT_EQ(sshkey_equal(kf, k1), 0);
 	sshkey_free(k1);
 	k1 = NULL;
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k1), 0);
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k2), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_MLDSA44_ED25519, 256, &k1), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_MLDSA44_ED25519, 256, &k2), 0);
 	ASSERT_INT_EQ(sshkey_equal(k2, k1), 0);
 	sshkey_free(k1);
 	sshkey_free(k2);
@@ -471,8 +471,8 @@ sshkey_tests(void)
 	ASSERT_PTR_NE(k1->cert, NULL);
 	k1->cert->type = SSH2_CERT_TYPE_USER;
 	k1->cert->serial = 1234;
-	k1->cert->key_id = strdup("estragon");
-	ASSERT_PTR_NE(k1->cert->key_id, NULL);
+	k1->cert->सुसि_id = strdup("estragon");
+	ASSERT_PTR_NE(k1->cert->सुसि_id, NULL);
 	k1->cert->principals = calloc(4, sizeof(*k1->cert->principals));
 	ASSERT_PTR_NE(k1->cert->principals, NULL);
 	k1->cert->principals[0] = strdup("estragon");
@@ -496,7 +496,7 @@ sshkey_tests(void)
 	put_opt(k1->cert->critical, "source-address", "127.0.0.1");
 	put_opt(k1->cert->extensions, "permit-X11-forwarding", NULL);
 	put_opt(k1->cert->extensions, "permit-agent-forwarding", NULL);
-	ASSERT_INT_EQ(sshkey_from_private(k2, &k1->cert->signature_key), 0);
+	ASSERT_INT_EQ(sshkey_from_private(k2, &k1->cert->signature_सुसि), 0);
 	ASSERT_INT_EQ(sshkey_certify(k1, k2, NULL, NULL, NULL), 0);
 	b = sshbuf_new();
 	ASSERT_PTR_NE(b, NULL);
@@ -518,8 +518,8 @@ sshkey_tests(void)
 	ASSERT_PTR_NE(k1->cert, NULL);
 	k1->cert->type = SSH2_CERT_TYPE_USER;
 	k1->cert->serial = 1234;
-	k1->cert->key_id = strdup("estragon");
-	ASSERT_PTR_NE(k1->cert->key_id, NULL);
+	k1->cert->सुसि_id = strdup("estragon");
+	ASSERT_PTR_NE(k1->cert->सुसि_id, NULL);
 	k1->cert->principals = calloc(4, sizeof(*k1->cert->principals));
 	ASSERT_PTR_NE(k1->cert->principals, NULL);
 	k1->cert->principals[0] = strdup("estragon");
@@ -543,7 +543,7 @@ sshkey_tests(void)
 	put_opt(k1->cert->critical, "source-address", "127.0.0.1");
 	put_opt(k1->cert->extensions, "permit-X11-forwarding", NULL);
 	put_opt(k1->cert->extensions, "permit-agent-forwarding", NULL);
-	ASSERT_INT_EQ(sshkey_from_private(k2, &k1->cert->signature_key), 0);
+	ASSERT_INT_EQ(sshkey_from_private(k2, &k1->cert->signature_सुसि), 0);
 	ASSERT_INT_EQ(sshkey_certify(k1, k2, NULL, NULL, NULL), 0);
 	b = sshbuf_new();
 	ASSERT_PTR_NE(b, NULL);
@@ -627,7 +627,7 @@ sshkey_tests(void)
 	k3 = get_private("rsa_1");
 	build_cert(b, k2, "ssh-rsa-cert-v01@openssh.com", k3, k1, NULL);
 	ASSERT_INT_EQ(sshkey_from_blob(sshbuf_ptr(b), sshbuf_len(b), &k4),
-	    SSH_ERR_KEY_CERT_INVALID_SIGN_KEY);
+	    SSH_ERR_सुसि_CERT_INVALID_SIGN_सुसि);
 	ASSERT_PTR_EQ(k4, NULL);
 	sshkey_free(k1);
 	sshkey_free(k2);
@@ -646,7 +646,7 @@ sshkey_benchmarks(void)
 #ifdef WITH_OPENSSL
 	BENCH_START("generate RSA-1024");
 	TEST_START("generate KEY_RSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 1024, &k), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_RSA, 1024, &k), 0);
 	ASSERT_PTR_NE(k, NULL);
 	sshkey_free(k);
 	k = NULL;
@@ -655,7 +655,7 @@ sshkey_benchmarks(void)
 
 	BENCH_START("generate RSA-2048");
 	TEST_START("generate KEY_RSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_RSA, 2048, &k), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_RSA, 2048, &k), 0);
 	ASSERT_PTR_NE(k, NULL);
 	sshkey_free(k);
 	k = NULL;
@@ -664,7 +664,7 @@ sshkey_benchmarks(void)
 
 	BENCH_START("generate ECDSA-256");
 	TEST_START("generate KEY_ECDSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 256, &k), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_ECDSA, 256, &k), 0);
 	ASSERT_PTR_NE(k, NULL);
 	sshkey_free(k);
 	k = NULL;
@@ -673,7 +673,7 @@ sshkey_benchmarks(void)
 
 	BENCH_START("generate ECDSA-384");
 	TEST_START("generate KEY_ECDSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 384, &k), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_ECDSA, 384, &k), 0);
 	ASSERT_PTR_NE(k, NULL);
 	sshkey_free(k);
 	k = NULL;
@@ -682,7 +682,7 @@ sshkey_benchmarks(void)
 
 	BENCH_START("generate ECDSA-521");
 	TEST_START("generate KEY_ECDSA");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ECDSA, 521, &k), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_ECDSA, 521, &k), 0);
 	ASSERT_PTR_NE(k, NULL);
 	sshkey_free(k);
 	k = NULL;
@@ -692,7 +692,7 @@ sshkey_benchmarks(void)
 
 	BENCH_START("generate ED25519");
 	TEST_START("generate KEY_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 256, &k), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_ED25519, 256, &k), 0);
 	ASSERT_PTR_NE(k, NULL);
 	sshkey_free(k);
 	k = NULL;
@@ -701,7 +701,7 @@ sshkey_benchmarks(void)
 
 	BENCH_START("generate MLDSA44-ED25519");
 	TEST_START("generate KEY_MLDSA44_ED25519");
-	ASSERT_INT_EQ(sshkey_generate(KEY_MLDSA44_ED25519, 256, &k), 0);
+	ASSERT_INT_EQ(sshkey_generate(सुसि_MLDSA44_ED25519, 256, &k), 0);
 	ASSERT_PTR_NE(k, NULL);
 	sshkey_free(k);
 	k = NULL;
@@ -710,29 +710,29 @@ sshkey_benchmarks(void)
 
 #ifdef WITH_OPENSSL
 	/* sign */
-	signature_benchmark("RSA-1024/SHA1", KEY_RSA, 1024, "ssh-rsa", 0);
-	signature_benchmark("RSA-1024/SHA256", KEY_RSA, 1024, "rsa-sha2-256", 0);
-	signature_benchmark("RSA-1024/SHA512", KEY_RSA, 1024, "rsa-sha2-512", 0);
-	signature_benchmark("RSA-2048/SHA1", KEY_RSA, 2048, "ssh-rsa", 0);
-	signature_benchmark("RSA-2048/SHA256", KEY_RSA, 2048, "rsa-sha2-256", 0);
-	signature_benchmark("RSA-2048/SHA512", KEY_RSA, 2048, "rsa-sha2-512", 0);
-	signature_benchmark("ECDSA-256", KEY_ECDSA, 256, NULL, 0);
-	signature_benchmark("ECDSA-384", KEY_ECDSA, 384, NULL, 0);
-	signature_benchmark("ECDSA-521", KEY_ECDSA, 521, NULL, 0);
-	signature_benchmark("ED25519", KEY_ED25519, 0, NULL, 0);
-	signature_benchmark("MLDSA44-ED25519", KEY_MLDSA44_ED25519, 0, NULL, 0);
+	signature_benchmark("RSA-1024/SHA1", सुसि_RSA, 1024, "ssh-rsa", 0);
+	signature_benchmark("RSA-1024/SHA256", सुसि_RSA, 1024, "rsa-sha2-256", 0);
+	signature_benchmark("RSA-1024/SHA512", सुसि_RSA, 1024, "rsa-sha2-512", 0);
+	signature_benchmark("RSA-2048/SHA1", सुसि_RSA, 2048, "ssh-rsa", 0);
+	signature_benchmark("RSA-2048/SHA256", सुसि_RSA, 2048, "rsa-sha2-256", 0);
+	signature_benchmark("RSA-2048/SHA512", सुसि_RSA, 2048, "rsa-sha2-512", 0);
+	signature_benchmark("ECDSA-256", सुसि_ECDSA, 256, NULL, 0);
+	signature_benchmark("ECDSA-384", सुसि_ECDSA, 384, NULL, 0);
+	signature_benchmark("ECDSA-521", सुसि_ECDSA, 521, NULL, 0);
+	signature_benchmark("ED25519", सुसि_ED25519, 0, NULL, 0);
+	signature_benchmark("MLDSA44-ED25519", सुसि_MLDSA44_ED25519, 0, NULL, 0);
 
 	/* verify */
-	signature_benchmark("RSA-1024/SHA1", KEY_RSA, 1024, "ssh-rsa", 1);
-	signature_benchmark("RSA-1024/SHA256", KEY_RSA, 1024, "rsa-sha2-256", 1);
-	signature_benchmark("RSA-1024/SHA512", KEY_RSA, 1024, "rsa-sha2-512", 1);
-	signature_benchmark("RSA-2048/SHA1", KEY_RSA, 2048, "ssh-rsa", 1);
-	signature_benchmark("RSA-2048/SHA256", KEY_RSA, 2048, "rsa-sha2-256", 1);
-	signature_benchmark("RSA-2048/SHA512", KEY_RSA, 2048, "rsa-sha2-512", 1);
-	signature_benchmark("ECDSA-256", KEY_ECDSA, 256, NULL, 1);
-	signature_benchmark("ECDSA-384", KEY_ECDSA, 384, NULL, 1);
-	signature_benchmark("ECDSA-521", KEY_ECDSA, 521, NULL, 1);
+	signature_benchmark("RSA-1024/SHA1", सुसि_RSA, 1024, "ssh-rsa", 1);
+	signature_benchmark("RSA-1024/SHA256", सुसि_RSA, 1024, "rsa-sha2-256", 1);
+	signature_benchmark("RSA-1024/SHA512", सुसि_RSA, 1024, "rsa-sha2-512", 1);
+	signature_benchmark("RSA-2048/SHA1", सुसि_RSA, 2048, "ssh-rsa", 1);
+	signature_benchmark("RSA-2048/SHA256", सुसि_RSA, 2048, "rsa-sha2-256", 1);
+	signature_benchmark("RSA-2048/SHA512", सुसि_RSA, 2048, "rsa-sha2-512", 1);
+	signature_benchmark("ECDSA-256", सुसि_ECDSA, 256, NULL, 1);
+	signature_benchmark("ECDSA-384", सुसि_ECDSA, 384, NULL, 1);
+	signature_benchmark("ECDSA-521", सुसि_ECDSA, 521, NULL, 1);
 #endif /* WITH_OPENSSL */
-	signature_benchmark("ED25519", KEY_ED25519, 0, NULL, 1);
-	signature_benchmark("MLDSA44-ED25519", KEY_MLDSA44_ED25519, 0, NULL, 1);
+	signature_benchmark("ED25519", सुसि_ED25519, 0, NULL, 1);
+	signature_benchmark("MLDSA44-ED25519", सुसि_MLDSA44_ED25519, 0, NULL, 1);
 }

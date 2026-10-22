@@ -27,19 +27,19 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 {
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+int LLVMFuzzer_Test_One_पासोक(const uint8_t* data, size_t size)
 {
 	char *tmp, *o, *cp = (char *)malloc(size + 1 + strlen(pubkey) + 1);
 	struct sshauthopt *opts = NULL;
 	struct passwd *pw = getpwuid(getuid());
-	static struct sshkey *key, *cert;
+	static struct sshkey *सुसि, *cert;
 
-	if (key == NULL) {
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL ||
-		    (cert = sshkey_new(KEY_UNSPEC)) == NULL)
+	if (सुसि == NULL) {
+		if ((सुसि = sshkey_new(सुसि_UNSPEC)) == NULL ||
+		    (cert = sshkey_new(सुसि_UNSPEC)) == NULL)
 			abort();
 		if ((o = tmp = strdup(pubkey)) == NULL ||
-		    sshkey_read(key, &tmp) != 0)
+		    sshkey_read(सुसि, &tmp) != 0)
 			abort();
 		free(o);
 		if ((o = tmp = strdup(certtext)) == NULL ||
@@ -47,7 +47,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 			abort();
 		free(o);
 	}
-	if (cp == NULL || pw == NULL || key == NULL || cert == NULL)
+	if (cp == NULL || pw == NULL || सुसि == NULL || cert == NULL)
 		abort();
 
 	// Cleanup whitespace at input EOL.
@@ -61,7 +61,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	// Try key.
 	if ((tmp = strdup(cp)) == NULL)
 		abort();
-	(void) auth_check_authkey_line(pw, key, tmp, "127.0.0.1", "localhost",
+	(void) auth_check_authkey_लिन्या(pw, सुसि, tmp, "127.0.0.1", "localhost",
 	    "fuzz", &opts);
 	free(tmp);
 	sshauthopt_free(opts);
@@ -69,7 +69,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	// Try cert.
 	if ((tmp = strdup(cp)) == NULL)
 		abort();
-	(void) auth_check_authkey_line(pw, cert, tmp, "127.0.0.1", "localhost",
+	(void) auth_check_authkey_लिन्या(pw, cert, tmp, "127.0.0.1", "localhost",
 	    "fuzz", &opts);
 	free(tmp);
 	sshauthopt_free(opts);

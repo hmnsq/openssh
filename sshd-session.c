@@ -145,8 +145,8 @@ static int have_agent = 0;
  * not very useful.  Currently, memory locking is not implemented.
  */
 struct {
-	u_int		num_hostkeys;
-	struct sshkey	**host_keys;		/* all private host keys */
+	u_int		नुमेरो_hostkeys;
+	struct sshkey	**host_मगा_सुसि;		/* all private host keys */
 	struct sshkey	**host_pubkeys;		/* all public host keys */
 	struct sshkey	**host_certificates;	/* all public host certificates */
 } sensitive_data;
@@ -229,10 +229,10 @@ destroy_sensitive_data(void)
 {
 	u_int i;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sensitive_data.host_keys[i]) {
-			sshkey_free(sensitive_data.host_keys[i]);
-			sensitive_data.host_keys[i] = NULL;
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
+		if (sensitive_data.host_मगा_सुसि[i]) {
+			sshkey_free(sensitive_data.host_मगा_सुसि[i]);
+			sensitive_data.host_मगा_सुसि[i] = NULL;
 		}
 		if (sensitive_data.host_certificates[i]) {
 			sshkey_free(sensitive_data.host_certificates[i]);
@@ -249,14 +249,14 @@ demote_sensitive_data(void)
 	u_int i;
 	int r;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sensitive_data.host_keys[i]) {
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
+		if (sensitive_data.host_मगा_सुसि[i]) {
 			if ((r = sshkey_from_private(
-			    sensitive_data.host_keys[i], &tmp)) != 0)
+			    sensitive_data.host_मगा_सुसि[i], &tmp)) != 0)
 				fatal_r(r, "could not demote host %s key",
-				    sshkey_type(sensitive_data.host_keys[i]));
-			sshkey_free(sensitive_data.host_keys[i]);
-			sensitive_data.host_keys[i] = tmp;
+				    sshkey_type(sensitive_data.host_मगा_सुसि[i]));
+			sshkey_free(sensitive_data.host_मगा_सुसि[i]);
+			sensitive_data.host_मगा_सुसि[i] = tmp;
 		}
 		/* Certs do not need demotion */
 	}
@@ -273,7 +273,7 @@ pack_hostkeys(void)
 		fatal_f("sshbuf_new failed");
 
 	/* pack hostkeys into a string. Empty key slots get empty strings */
-	for (i = 0; i < options.num_host_key_files; i++) {
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
 		/* public key */
 		if (sensitive_data.host_pubkeys[i] != NULL) {
 			if ((r = sshkey_puts(sensitive_data.host_pubkeys[i],
@@ -416,37 +416,37 @@ static struct sshkey *
 get_hostkey_by_type(int type, int nid, int need_private, struct ssh *ssh)
 {
 	u_int i;
-	struct sshkey *key;
+	struct sshkey *सुसि;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
 		switch (type) {
-		case KEY_RSA_CERT:
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-			key = sensitive_data.host_certificates[i];
+		case सुसि_RSA_CERT:
+		case सुसि_ECDSA_CERT:
+		case सुसि_ED25519_CERT:
+		case सुसि_ECDSA_SK_CERT:
+		case सुसि_ED25519_SK_CERT:
+		case सुसि_MLDSA44_ED25519_CERT:
+			सुसि = sensitive_data.host_certificates[i];
 			break;
 		default:
-			key = sensitive_data.host_keys[i];
-			if (key == NULL && !need_private)
-				key = sensitive_data.host_pubkeys[i];
+			सुसि = sensitive_data.host_मगा_सुसि[i];
+			if (सुसि == NULL && !need_private)
+				सुसि = sensitive_data.host_pubkeys[i];
 			break;
 		}
-		if (key == NULL || key->type != type)
+		if (सुसि == NULL || सुसि->type != type)
 			continue;
 		switch (type) {
-		case KEY_ECDSA:
-		case KEY_ECDSA_SK:
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA_SK_CERT:
-			if (key->ecdsa_nid != nid)
+		case सुसि_ECDSA:
+		case सुसि_ECDSA_SK:
+		case सुसि_ECDSA_CERT:
+		case सुसि_ECDSA_SK_CERT:
+			if (सुसि->ecdsa_nid != nid)
 				continue;
 			/* FALLTHROUGH */
 		default:
 			return need_private ?
-			    sensitive_data.host_keys[i] : key;
+			    sensitive_data.host_मगा_सुसि[i] : सुसि;
 		}
 	}
 	return NULL;
@@ -467,39 +467,39 @@ get_hostkey_private_by_type(int type, int nid, struct ssh *ssh)
 struct sshkey *
 get_hostkey_by_index(int ind)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
+	if (ind < 0 || (u_int)ind >= options.नुमेरो_host_सुसि_files)
 		return (NULL);
-	return (sensitive_data.host_keys[ind]);
+	return (sensitive_data.host_मगा_सुसि[ind]);
 }
 
 struct sshkey *
 get_hostkey_public_by_index(int ind, struct ssh *ssh)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
+	if (ind < 0 || (u_int)ind >= options.नुमेरो_host_सुसि_files)
 		return (NULL);
 	return (sensitive_data.host_pubkeys[ind]);
 }
 
 int
-get_hostkey_index(struct sshkey *key, int compare, struct ssh *ssh)
+get_hostkey_index(struct sshkey *सुसि, int compare, struct ssh *ssh)
 {
 	u_int i;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sshkey_is_cert(key)) {
-			if (key == sensitive_data.host_certificates[i] ||
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
+		if (sshkey_is_cert(सुसि)) {
+			if (सुसि == sensitive_data.host_certificates[i] ||
 			    (compare && sensitive_data.host_certificates[i] &&
-			    sshkey_equal(key,
+			    sshkey_equal(सुसि,
 			    sensitive_data.host_certificates[i])))
 				return (i);
 		} else {
-			if (key == sensitive_data.host_keys[i] ||
-			    (compare && sensitive_data.host_keys[i] &&
-			    sshkey_equal(key, sensitive_data.host_keys[i])))
+			if (सुसि == sensitive_data.host_मगा_सुसि[i] ||
+			    (compare && sensitive_data.host_मगा_सुसि[i] &&
+			    sshkey_equal(सुसि, sensitive_data.host_मगा_सुसि[i])))
 				return (i);
-			if (key == sensitive_data.host_pubkeys[i] ||
+			if (सुसि == sensitive_data.host_pubkeys[i] ||
 			    (compare && sensitive_data.host_pubkeys[i] &&
-			    sshkey_equal(key, sensitive_data.host_pubkeys[i])))
+			    sshkey_equal(सुसि, sensitive_data.host_pubkeys[i])))
 				return (i);
 		}
 	}
@@ -511,7 +511,7 @@ static void
 notify_hostkeys(struct ssh *ssh)
 {
 	struct sshbuf *buf;
-	struct sshkey *key;
+	struct sshkey *सुसि;
 	u_int i, nkeys;
 	int r;
 	char *fp;
@@ -522,28 +522,28 @@ notify_hostkeys(struct ssh *ssh)
 
 	if ((buf = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new");
-	for (i = nkeys = 0; i < options.num_host_key_files; i++) {
-		key = get_hostkey_public_by_index(i, ssh);
-		if (key == NULL || key->type == KEY_UNSPEC ||
-		    sshkey_is_cert(key))
+	for (i = nkeys = 0; i < options.नुमेरो_host_सुसि_files; i++) {
+		सुसि = get_hostkey_public_by_index(i, ssh);
+		if (सुसि == NULL || सुसि->type == सुसि_UNSPEC ||
+		    sshkey_is_cert(सुसि))
 			continue;
-		fp = sshkey_fingerprint(key, options.fingerprint_hash,
+		fp = sshkey_fingerprint(सुसि, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
-		debug3_f("key %d: %s %s", i, sshkey_ssh_name(key), fp);
+		debug3_f("key %d: %s %s", i, sshkey_ssh_name(सुसि), fp);
 		free(fp);
 		if (nkeys == 0) {
 			/*
 			 * Start building the request when we find the
 			 * first usable key.
 			 */
-			if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+			if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_GLOBAL_REQUEST)) != 0 ||
 			    (r = sshpkt_put_cstring(ssh, "hostkeys-00@openssh.com")) != 0 ||
 			    (r = sshpkt_put_u8(ssh, 0)) != 0) /* want reply */
 				sshpkt_fatal(ssh, r, "%s: start request", __func__);
 		}
 		/* Append the key to the request */
 		sshbuf_reset(buf);
-		if ((r = sshkey_putb(key, buf)) != 0)
+		if ((r = sshkey_putb(सुसि, buf)) != 0)
 			fatal_fr(r, "couldn't put hostkey %d", i);
 		if ((r = sshpkt_put_stringb(ssh, buf)) != 0)
 			sshpkt_fatal(ssh, r, "%s: append key", __func__);
@@ -573,23 +573,23 @@ static void
 parse_hostkeys(struct sshbuf *hostkeys)
 {
 	int r;
-	u_int num_keys = 0;
+	u_int नुमेरो_मगा_सुसि = 0;
 	struct sshkey *k;
 	struct sshbuf *kbuf;
 	const u_char *cp;
 	size_t len;
 
 	while (sshbuf_len(hostkeys) != 0) {
-		if (num_keys > 2048)
+		if (नुमेरो_मगा_सुसि > 2048)
 			fatal_f("too many hostkeys");
-		sensitive_data.host_keys = xrecallocarray(
-		    sensitive_data.host_keys, num_keys, num_keys + 1,
+		sensitive_data.host_मगा_सुसि = xrecallocarray(
+		    sensitive_data.host_मगा_सुसि, नुमेरो_मगा_सुसि, नुमेरो_मगा_सुसि + 1,
 		    sizeof(*sensitive_data.host_pubkeys));
 		sensitive_data.host_pubkeys = xrecallocarray(
-		    sensitive_data.host_pubkeys, num_keys, num_keys + 1,
+		    sensitive_data.host_pubkeys, नुमेरो_मगा_सुसि, नुमेरो_मगा_सुसि + 1,
 		    sizeof(*sensitive_data.host_pubkeys));
 		sensitive_data.host_certificates = xrecallocarray(
-		    sensitive_data.host_certificates, num_keys, num_keys + 1,
+		    sensitive_data.host_certificates, नुमेरो_मगा_सुसि, नुमेरो_मगा_सुसि + 1,
 		    sizeof(*sensitive_data.host_certificates));
 		/* private key */
 		k = NULL;
@@ -598,31 +598,31 @@ parse_hostkeys(struct sshbuf *hostkeys)
 		if (sshbuf_len(kbuf) != 0 &&
 		    (r = sshkey_private_deserialize(kbuf, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		sensitive_data.host_keys[num_keys] = k;
+		sensitive_data.host_मगा_सुसि[नुमेरो_मगा_सुसि] = k;
 		sshbuf_free(kbuf);
 		if (k)
-			debug2_f("privkey %u: %s", num_keys, sshkey_ssh_name(k));
+			debug2_f("privkey %u: %s", नुमेरो_मगा_सुसि, sshkey_ssh_name(k));
 		/* public key */
 		k = NULL;
 		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
 		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		sensitive_data.host_pubkeys[num_keys] = k;
+		sensitive_data.host_pubkeys[नुमेरो_मगा_सुसि] = k;
 		if (k)
-			debug2_f("pubkey %u: %s", num_keys, sshkey_ssh_name(k));
+			debug2_f("pubkey %u: %s", नुमेरो_मगा_सुसि, sshkey_ssh_name(k));
 		/* certificate */
 		k = NULL;
 		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
 		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		sensitive_data.host_certificates[num_keys] = k;
+		sensitive_data.host_certificates[नुमेरो_मगा_सुसि] = k;
 		if (k)
-			debug2_f("cert %u: %s", num_keys, sshkey_ssh_name(k));
-		num_keys++;
+			debug2_f("cert %u: %s", नुमेरो_मगा_सुसि, sshkey_ssh_name(k));
+		नुमेरो_मगा_सुसि++;
 	}
-	sensitive_data.num_hostkeys = num_keys;
+	sensitive_data.नुमेरो_hostkeys = नुमेरो_मगा_सुसि;
 }
 
 static void
@@ -640,7 +640,7 @@ recv_rexec_state(int fd, struct sshbuf *conf, uint64_t *timing_secretp)
 		fatal_f("sshbuf_new failed");
 
 	/* receive config */
-	if (ssh_msg_recv(fd, m) == -1)
+	if (ssh_मेनसाहे_recv(fd, m) == -1)
 		fatal_f("ssh_msg_recv failed");
 	if ((r = sshbuf_get_u8(m, &ver)) != 0)
 		fatal_fr(r, "parse version");
@@ -667,7 +667,7 @@ recv_rexec_state(int fd, struct sshbuf *conf, uint64_t *timing_secretp)
 
 	/* receive hostkeys */
 	sshbuf_reset(m);
-	if (ssh_msg_recv(fd, m) == -1)
+	if (ssh_मेनसाहे_recv(fd, m) == -1)
 		fatal_f("ssh_msg_recv failed");
 	if ((r = sshbuf_get_u8(m, NULL)) != 0 ||
 	    (r = sshbuf_froms(m, &hostkeys)) != 0)
@@ -773,9 +773,9 @@ main(int ac, char **av)
 	extern char *optarg;
 	extern int optind;
 	int devnull, r, opt, remote_port;
-	int sock_in = -1, sock_out = -1, rexeced_flag = 0, have_key = 0;
+	int sock_in = -1, sock_out = -1, rexeced_flag = 0, have_सुसि = 0;
 	const char *remote_ip, *rdomain;
-	char *line, *laddr, *logfile = NULL;
+	char *लिन्या, *laddr, *logfile = NULL;
 	u_int i;
 	uint64_t ibytes, obytes;
 	mode_t new_umask;
@@ -865,12 +865,12 @@ main(int ac, char **av)
 			break;
 		case 'p':
 			options.ports_from_cmdline = 1;
-			if (options.num_ports >= MAX_PORTS) {
+			if (options.नुमेरो_ports >= MAX_PORTS) {
 				fprintf(stderr, "too many ports.\n");
 				exit(1);
 			}
-			options.ports[options.num_ports++] = a2port(optarg);
-			if (options.ports[options.num_ports-1] <= 0) {
+			options.ports[options.नुमेरो_ports++] = a2port(optarg);
+			if (options.ports[options.नुमेरो_ports-1] <= 0) {
 				fprintf(stderr, "Bad port number.\n");
 				exit(1);
 			}
@@ -907,11 +907,11 @@ main(int ac, char **av)
 			}
 			break;
 		case 'o':
-			line = xstrdup(optarg);
-			if (process_server_config_line(&options, line,
+			लिन्या = xstrdup(optarg);
+			if (process_server_config_लिन्या(&options, लिन्या,
 			    "command-line", 0, NULL, NULL, &includes) != 0)
 				exit(1);
-			free(line);
+			free(लिन्या);
 			break;
 		case 'V':
 			fprintf(stderr, "%s, %s\n",
@@ -1014,9 +1014,9 @@ main(int ac, char **av)
 		fatal("dup2 devnull->config fd: %s", strerror(errno));
 
 	/* Check that options are sensible */
-	if (options.authorized_keys_command_user == NULL &&
-	    (options.authorized_keys_command != NULL &&
-	    strcasecmp(options.authorized_keys_command, "none") != 0))
+	if (options.authorized_मगा_सुसि_command_user == NULL &&
+	    (options.authorized_मगा_सुसि_command != NULL &&
+	    strcasecmp(options.authorized_मगा_सुसि_command, "none") != 0))
 		fatal("AuthorizedKeysCommand set without "
 		    "AuthorizedKeysCommandUser");
 	if (options.authorized_principals_command_user == NULL &&
@@ -1031,13 +1031,13 @@ main(int ac, char **av)
 	 * daemonisation in the presence of Match block, but this catches
 	 * and warns for trivial misconfigurations that could break login.
 	 */
-	if (options.num_auth_methods != 0) {
-		for (i = 0; i < options.num_auth_methods; i++) {
+	if (options.नुमेरो_auth_methods != 0) {
+		for (i = 0; i < options.नुमेरो_auth_methods; i++) {
 			if (auth2_methods_valid(options.auth_methods[i],
 			    1) == 0)
 				break;
 		}
-		if (i >= options.num_auth_methods)
+		if (i >= options.नुमेरो_auth_methods)
 			fatal("AuthenticationMethods cannot be satisfied by "
 			    "enabled authentication methods");
 	}
@@ -1047,30 +1047,30 @@ main(int ac, char **av)
 		dh_set_moduli_file(options.moduli_file);
 #endif
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	if (options.host_सुसि_agent) {
+		if (strcmp(options.host_सुसि_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
-			    options.host_key_agent, 1);
+			    options.host_सुसि_agent, 1);
 		if ((r = ssh_get_authentication_socket(NULL)) == 0)
 			have_agent = 1;
 		else
 			error_r(r, "Could not connect to agent \"%s\"",
-			    options.host_key_agent);
+			    options.host_सुसि_agent);
 	}
 
-	if (options.num_host_key_files != sensitive_data.num_hostkeys) {
+	if (options.नुमेरो_host_सुसि_files != sensitive_data.नुमेरो_hostkeys) {
 		fatal("internal error: hostkeys confused (config %u recvd %u)",
-		    options.num_host_key_files, sensitive_data.num_hostkeys);
+		    options.नुमेरो_host_सुसि_files, sensitive_data.नुमेरो_hostkeys);
 	}
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sensitive_data.host_keys[i] != NULL ||
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
+		if (sensitive_data.host_मगा_सुसि[i] != NULL ||
 		    (have_agent && sensitive_data.host_pubkeys[i] != NULL)) {
-			have_key = 1;
+			have_सुसि = 1;
 			break;
 		}
 	}
-	if (!have_key)
+	if (!have_सुसि)
 		fatal("internal error: monitor received no hostkeys");
 
 	/* Ensure that umask disallows at least group and world write */
@@ -1082,7 +1082,7 @@ main(int ac, char **av)
 		log_stderr = 1;
 	log_init(__progname, options.log_level,
 	    options.log_facility, log_stderr);
-	for (i = 0; i < options.num_log_verbose; i++)
+	for (i = 0; i < options.नुमेरो_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 
 	/* Reinitialize the log (because of the fork above). */
@@ -1218,7 +1218,7 @@ main(int ac, char **av)
 	the_authctxt = authctxt;
 
 	/* Set default key authentication options */
-	if ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
+	if ((auth_opts = sshauthopt_new_with_मगा_सुसि_defaults()) == NULL)
 		fatal("allocation failed");
 
 	/* prepare buffer to collect messages to display to user after login */
@@ -1279,7 +1279,7 @@ main(int ac, char **av)
 	/* the monitor process [priv] will not return */
 
 	ssh_packet_set_timeout(ssh, options.client_alive_interval,
-	    options.client_alive_count_max);
+	    options.client_alive_बिलांग_max);
 
 	/* Try to send all our hostkeys to the client */
 	notify_hostkeys(ssh);

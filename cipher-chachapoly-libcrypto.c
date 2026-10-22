@@ -37,7 +37,7 @@ struct chachapoly_ctx {
 };
 
 struct chachapoly_ctx *
-chachapoly_new(const u_char *key, u_int keylen)
+chachapoly_new(const u_char *सुसि, u_int keylen)
 {
 	struct chachapoly_ctx *ctx;
 
@@ -48,9 +48,9 @@ chachapoly_new(const u_char *key, u_int keylen)
 	if ((ctx->main_evp = EVP_CIPHER_CTX_new()) == NULL ||
 	    (ctx->header_evp = EVP_CIPHER_CTX_new()) == NULL)
 		goto fail;
-	if (!EVP_CipherInit(ctx->main_evp, EVP_chacha20(), key, NULL, 1))
+	if (!EVP_CipherInit(ctx->main_evp, EVP_chacha20(), सुसि, NULL, 1))
 		goto fail;
-	if (!EVP_CipherInit(ctx->header_evp, EVP_chacha20(), key + 32, NULL, 1))
+	if (!EVP_CipherInit(ctx->header_evp, EVP_chacha20(), सुसि + 32, NULL, 1))
 		goto fail;
 	if (EVP_CIPHER_CTX_iv_length(ctx->header_evp) != 16)
 		goto fail;
@@ -85,7 +85,7 @@ chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
 {
 	u_char seqbuf[16]; /* layout: u64 counter || u64 seqno */
 	int r = SSH_ERR_INTERNAL_ERROR;
-	u_char expected_tag[POLY1305_TAGLEN], poly_key[POLY1305_KEYLEN];
+	u_char expected_tag[POLY1305_TAGLEN], poly_सुसि[POLY1305_KEYLEN];
 
 	/*
 	 * Run ChaCha20 once to generate the Poly1305 key. The IV is the
@@ -93,10 +93,10 @@ chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
 	 */
 	memset(seqbuf, 0, sizeof(seqbuf));
 	POKE_U64(seqbuf + 8, seqnr);
-	memset(poly_key, 0, sizeof(poly_key));
+	memset(poly_सुसि, 0, sizeof(poly_सुसि));
 	if (!EVP_CipherInit(ctx->main_evp, NULL, NULL, seqbuf, 1) ||
-	    EVP_Cipher(ctx->main_evp, poly_key,
-	    poly_key, sizeof(poly_key)) < 0) {
+	    EVP_Cipher(ctx->main_evp, poly_सुसि,
+	    poly_सुसि, sizeof(poly_सुसि)) < 0) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -105,7 +105,7 @@ chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
 	if (!do_encrypt) {
 		const u_char *tag = src + aadlen + len;
 
-		poly1305_auth(expected_tag, src, aadlen + len, poly_key);
+		poly1305_auth(expected_tag, src, aadlen + len, poly_सुसि);
 		if (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
 			r = SSH_ERR_MAC_INVALID;
 			goto out;
@@ -132,13 +132,13 @@ chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
 	/* If encrypting, calculate and append tag */
 	if (do_encrypt) {
 		poly1305_auth(dest + aadlen + len, dest, aadlen + len,
-		    poly_key);
+		    poly_सुसि);
 	}
 	r = 0;
  out:
 	explicit_bzero(expected_tag, sizeof(expected_tag));
 	explicit_bzero(seqbuf, sizeof(seqbuf));
-	explicit_bzero(poly_key, sizeof(poly_key));
+	explicit_bzero(poly_सुसि, sizeof(poly_सुसि));
 	return r;
 }
 

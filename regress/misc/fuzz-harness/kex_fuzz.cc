@@ -24,7 +24,7 @@ extern "C" {
 // Define if you want to generate traces.
 /* #define STANDALONE 1 */
 
-static int prepare_key(struct shared_state *st, int keytype, int bits);
+static int prepare_सुसि(struct shared_state *st, int keytype, int bits);
 
 struct shared_state {
 	size_t nkeys;
@@ -75,7 +75,7 @@ do_send_and_receive(struct ssh *from, struct ssh *to,
 			debug_fr(r, "sshbuf_put");
 			return r;
 		}
-		if (!clobber && (r = ssh_input_append(to, buf, len)) != 0) {
+		if (!clobber && (r = ssh_पासोक_append(to, buf, len)) != 0) {
 			debug_fr(r, "ssh_input_append");
 			return r;
 		}
@@ -90,7 +90,7 @@ run_kex(struct test_state *ts, struct ssh *client, struct ssh *server)
 
 	/* If fuzzing, replace server/client input */
 	if (ts->sin != NULL) {
-		if ((r = ssh_input_append(server, sshbuf_ptr(ts->sin),
+		if ((r = ssh_पासोक_append(server, sshbuf_ptr(ts->sin),
 		    sshbuf_len(ts->sin))) != 0) {
 			error_fr(r, "ssh_input_append");
 			return r;
@@ -98,7 +98,7 @@ run_kex(struct test_state *ts, struct ssh *client, struct ssh *server)
 		sshbuf_reset(ts->sin);
 	}
 	if (ts->cin != NULL) {
-		if ((r = ssh_input_append(client, sshbuf_ptr(ts->cin),
+		if ((r = ssh_पासोक_append(client, sshbuf_ptr(ts->cin),
 		    sshbuf_len(ts->cin))) != 0) {
 			error_fr(r, "ssh_input_append");
 			return r;
@@ -130,7 +130,7 @@ run_kex(struct test_state *ts, struct ssh *client, struct ssh *server)
 }
 
 static void
-store_key(struct shared_state *st, struct sshkey *pubkey,
+store_सुसि(struct shared_state *st, struct sshkey *pubkey,
     struct sshkey *privkey)
 {
 	if (st == NULL || pubkey->type < 0 || pubkey->type > INT_MAX ||
@@ -151,11 +151,11 @@ store_key(struct shared_state *st, struct sshkey *pubkey,
 }
 
 static int
-prepare_keys(struct shared_state *st)
+prepare_मगा_सुसि(struct shared_state *st)
 {
-	if (prepare_key(st, KEY_RSA, 2048) != 0 ||
-	    prepare_key(st, KEY_ECDSA, 256) != 0 ||
-	    prepare_key(st, KEY_ED25519, 256) != 0) {
+	if (prepare_सुसि(st, सुसि_RSA, 2048) != 0 ||
+	    prepare_सुसि(st, सुसि_ECDSA, 256) != 0 ||
+	    prepare_सुसि(st, सुसि_ED25519, 256) != 0) {
 		error_f("key prepare failed");
 		return -1;
 	}
@@ -193,7 +193,7 @@ build_proposal_side(char **out, const char *defaults[PROPOSAL_MAX],
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			ccp = "none";
 #endif
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		if (i == PROPOSAL_SERVER_HOST_सुसि_ALGS)
 			ccp = keyname;
 		else if (i == PROPOSAL_KEX_ALGS && kex != NULL)
 			ccp = kex;
@@ -213,7 +213,7 @@ build_proposal_side(char **out, const char *defaults[PROPOSAL_MAX],
 }
 
 static int
-do_kex_with_key(struct shared_state *st, struct test_state *ts,
+do_kex_with_सुसि(struct shared_state *st, struct test_state *ts,
     const char *kex, int keytype, const struct kex_overrides *ov)
 {
 	struct ssh *client = NULL, *server = NULL;
@@ -285,7 +285,7 @@ do_kex_with_key(struct shared_state *st, struct test_state *ts,
 }
 
 static int
-prepare_key(struct shared_state *st, int kt, int bits)
+prepare_सुसि(struct shared_state *st, int kt, int bits)
 {
 	const char *pubstr = NULL;
 	const char *privstr = NULL;
@@ -295,15 +295,15 @@ prepare_key(struct shared_state *st, int kt, int bits)
 	int r;
 
 	switch (kt) {
-	case KEY_RSA:
+	case सुसि_RSA:
 		pubstr = PUB_RSA;
 		privstr = PRIV_RSA;
 		break;
-	case KEY_ECDSA:
+	case सुसि_ECDSA:
 		pubstr = PUB_ECDSA;
 		privstr = PRIV_ECDSA;
 		break;
-	case KEY_ED25519:
+	case सुसि_ED25519:
 		pubstr = PUB_ED25519;
 		privstr = PRIV_ED25519;
 		break;
@@ -318,7 +318,7 @@ prepare_key(struct shared_state *st, int kt, int bits)
 	}
 	sshbuf_free(b);
 	tmp = cp = xstrdup(pubstr);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	if ((pubkey = sshkey_new(सुसि_UNSPEC)) == NULL)
 		abort();
 	if ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "pub %d", kt);
@@ -326,7 +326,7 @@ prepare_key(struct shared_state *st, int kt, int bits)
 	}
 	free(tmp);
 
-	store_key(st, pubkey, privkey);
+	store_सुसि(st, pubkey, privkey);
 	return 0;
 }
 
@@ -334,7 +334,7 @@ prepare_key(struct shared_state *st, int kt, int bits)
 
 #if 0 /* use this if generating new keys to embed above */
 static int
-prepare_key(struct shared_state *st, int keytype, int bits)
+prepare_सुसि(struct shared_state *st, int keytype, int bits)
 {
 	struct sshkey *privkey = NULL, *pubkey = NULL;
 	int r;
@@ -347,7 +347,7 @@ prepare_key(struct shared_state *st, int keytype, int bits)
 		error_fr(r, "make pubkey");
 		abort();
 	}
-	store_key(st, pubkey, privkey);
+	store_सुसि(st, pubkey, privkey);
 	return 0;
 }
 #endif
@@ -356,7 +356,7 @@ int main(void)
 {
 	static struct shared_state *st;
 	struct test_state *ts;
-	const int keytypes[] = { KEY_RSA, KEY_ECDSA, KEY_ED25519, -1 };
+	const int keytypes[] = { सुसि_RSA, सुसि_ECDSA, सुसि_ED25519, -1 };
 	static const char * const kextypes[] = {
 		"mlkem768x25519-sha256",
 		"sntrup761x25519-sha512@openssh.com",
@@ -374,7 +374,7 @@ int main(void)
 
 	if (st == NULL) {
 		st = (struct shared_state *)xcalloc(1, sizeof(*st));
-		prepare_keys(st);
+		prepare_मगा_सुसि(st);
 	}
 	/* Run each kex method for each key and save client/server packets */
 	for (i = 0; keytypes[i] != -1; i++) {
@@ -382,7 +382,7 @@ int main(void)
 			ts = (struct test_state *)xcalloc(1, sizeof(*ts));
 			ts->smsgs = sshbuf_new();
 			ts->cmsgs = sshbuf_new();
-			do_kex_with_key(st, ts, kextypes[j], keytypes[i], NULL);
+			do_kex_with_सुसि(st, ts, kextypes[j], keytypes[i], NULL);
 			xasprintf(&path, "S2C-%s-%s",
 			    kextypes[j], sshkey_type(st->pubkeys[keytypes[i]]));
 			debug_f("%s", path);
@@ -430,9 +430,9 @@ int main(void)
 static void
 do_kex(struct shared_state *st, struct test_state *ts, const char *kex)
 {
-	do_kex_with_key(st, ts, kex, KEY_RSA, NULL);
-	do_kex_with_key(st, ts, kex, KEY_ECDSA, NULL);
-	do_kex_with_key(st, ts, kex, KEY_ED25519, NULL);
+	do_kex_with_सुसि(st, ts, kex, सुसि_RSA, NULL);
+	do_kex_with_सुसि(st, ts, kex, सुसि_ECDSA, NULL);
+	do_kex_with_सुसि(st, ts, kex, सुसि_ED25519, NULL);
 }
 
 /*
@@ -467,18 +467,18 @@ kex_extras(struct shared_state *st, struct test_state *ts)
 	for (i = 0; ciphers[i] != NULL; i++) {
 		struct kex_overrides ov = { 0 };
 		ov.cipher = ciphers[i];
-		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
+		do_kex_with_सुसि(st, ts, kex, सुसि_ED25519, &ov);
 	}
 	for (i = 0; macs[i] != NULL; i++) {
 		struct kex_overrides ov = { 0 };
 		ov.cipher = "aes128-ctr";
 		ov.mac = macs[i];
-		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
+		do_kex_with_सुसि(st, ts, kex, सुसि_ED25519, &ov);
 	}
 	for (i = 0; comps[i] != NULL; i++) {
 		struct kex_overrides ov = { 0 };
 		ov.comp = comps[i];
-		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
+		do_kex_with_सुसि(st, ts, kex, सुसि_ED25519, &ov);
 	}
 }
 
@@ -494,11 +494,11 @@ kex_tests(struct shared_state *st, struct test_state *ts)
 	kex_extras(st, ts);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+int LLVMFuzzer_Test_One_पासोक(const uint8_t* data, size_t size)
 {
 	static struct shared_state *st;
 	struct test_state *ts;
-	u_char crbuf[SSH_MAX_PRE_BANNER_LINES * 4];
+	u_char crbuf[SSH_MAX_PRE_BANNER_मगा_लिन्या * 4];
 	u_char zbuf[4096] = {0};
 	static LogLevel loglevel = SYSLOG_LEVEL_INFO;
 
@@ -508,7 +508,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 		log_init("kex_fuzz",
 		    loglevel, SYSLOG_FACILITY_AUTH, 1);
 		st = (struct shared_state *)xcalloc(1, sizeof(*st));
-		prepare_keys(st);
+		prepare_मगा_सुसि(st);
 	}
 
 	/* Ensure that we can complete (fail) banner exchange at least */

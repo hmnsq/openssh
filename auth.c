@@ -136,15 +136,15 @@ allowed_user(struct ssh *ssh, struct passwd * pw)
 		free(shell);
 	}
 
-	if (options.num_deny_users > 0 || options.num_allow_users > 0 ||
-	    options.num_deny_groups > 0 || options.num_allow_groups > 0) {
+	if (options.नुमेरो_deny_users > 0 || options.नुमेरो_allow_users > 0 ||
+	    options.नुमेरो_deny_groups > 0 || options.नुमेरो_allow_groups > 0) {
 		hostname = auth_get_canonical_hostname(ssh, options.use_dns);
 		ipaddr = ssh_remote_ipaddr(ssh);
 	}
 
 	/* Return false if user is listed in DenyUsers */
-	if (options.num_deny_users > 0) {
-		for (i = 0; i < options.num_deny_users; i++) {
+	if (options.नुमेरो_deny_users > 0) {
+		for (i = 0; i < options.नुमेरो_deny_users; i++) {
 			r = match_user(pw->pw_name, hostname, ipaddr,
 			    options.deny_users[i]);
 			if (r < 0) {
@@ -159,8 +159,8 @@ allowed_user(struct ssh *ssh, struct passwd * pw)
 		}
 	}
 	/* Return false if AllowUsers isn't empty and user isn't listed there */
-	if (options.num_allow_users > 0) {
-		for (i = 0; i < options.num_allow_users; i++) {
+	if (options.नुमेरो_allow_users > 0) {
+		for (i = 0; i < options.नुमेरो_allow_users; i++) {
 			r = match_user(pw->pw_name, hostname, ipaddr,
 			    options.allow_users[i]);
 			if (r < 0) {
@@ -170,13 +170,13 @@ allowed_user(struct ssh *ssh, struct passwd * pw)
 				break;
 		}
 		/* i < options.num_allow_users iff we break for loop */
-		if (i >= options.num_allow_users) {
+		if (i >= options.नुमेरो_allow_users) {
 			logit("User %.100s from %.100s not allowed because "
 			    "not listed in AllowUsers", pw->pw_name, hostname);
 			return 0;
 		}
 	}
-	if (options.num_deny_groups > 0 || options.num_allow_groups > 0) {
+	if (options.नुमेरो_deny_groups > 0 || options.नुमेरो_allow_groups > 0) {
 		/* Get the user's group access list (primary and supplementary) */
 		if (ga_init(pw->pw_name, pw->pw_gid) == 0) {
 			logit("User %.100s from %.100s not allowed because "
@@ -185,9 +185,9 @@ allowed_user(struct ssh *ssh, struct passwd * pw)
 		}
 
 		/* Return false if one of user's groups is listed in DenyGroups */
-		if (options.num_deny_groups > 0)
+		if (options.नुमेरो_deny_groups > 0)
 			if (ga_match(options.deny_groups,
-			    options.num_deny_groups)) {
+			    options.नुमेरो_deny_groups)) {
 				ga_free();
 				logit("User %.100s from %.100s not allowed "
 				    "because a group is listed in DenyGroups",
@@ -198,9 +198,9 @@ allowed_user(struct ssh *ssh, struct passwd * pw)
 		 * Return false if AllowGroups isn't empty and one of user's groups
 		 * isn't listed there
 		 */
-		if (options.num_allow_groups > 0)
+		if (options.नुमेरो_allow_groups > 0)
 			if (!ga_match(options.allow_groups,
-			    options.num_allow_groups)) {
+			    options.नुमेरो_allow_groups)) {
 				ga_free();
 				logit("User %.100s from %.100s not allowed "
 				    "because none of user's groups are listed "
@@ -224,34 +224,34 @@ allowed_user(struct ssh *ssh, struct passwd * pw)
  * auth_log()'s message. Also includes authxtct->auth_method_info if present.
  */
 static char *
-format_method_key(Authctxt *authctxt)
+format_method_सुसि(Authctxt *authctxt)
 {
-	const struct sshkey *key = authctxt->auth_method_key;
+	const struct sshkey *सुसि = authctxt->auth_method_सुसि;
 	const char *methinfo = authctxt->auth_method_info;
 	char *fp, *cafp, *ret = NULL;
 
-	if (key == NULL)
+	if (सुसि == NULL)
 		return NULL;
 
-	if (sshkey_is_cert(key)) {
-		fp = sshkey_fingerprint(key,
+	if (sshkey_is_cert(सुसि)) {
+		fp = sshkey_fingerprint(सुसि,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
-		cafp = sshkey_fingerprint(key->cert->signature_key,
+		cafp = sshkey_fingerprint(सुसि->cert->signature_सुसि,
 		    options.fingerprint_hash, SSH_FP_DEFAULT);
 		xasprintf(&ret, "%s %s ID %s (serial %llu) CA %s %s%s%s",
-		    sshkey_type(key), fp == NULL ? "(null)" : fp,
-		    key->cert->key_id,
-		    (unsigned long long)key->cert->serial,
-		    sshkey_type(key->cert->signature_key),
+		    sshkey_type(सुसि), fp == NULL ? "(null)" : fp,
+		    सुसि->cert->सुसि_id,
+		    (unsigned long long)सुसि->cert->serial,
+		    sshkey_type(सुसि->cert->signature_सुसि),
 		    cafp == NULL ? "(null)" : cafp,
 		    methinfo == NULL ? "" : ", ",
 		    methinfo == NULL ? "" : methinfo);
 		free(fp);
 		free(cafp);
 	} else {
-		fp = sshkey_fingerprint(key, options.fingerprint_hash,
+		fp = sshkey_fingerprint(सुसि, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
-		xasprintf(&ret, "%s %s%s%s", sshkey_type(key),
+		xasprintf(&ret, "%s %s%s%s", sshkey_type(सुसि),
 		    fp == NULL ? "(null)" : fp,
 		    methinfo == NULL ? "" : ", ",
 		    methinfo == NULL ? "" : methinfo);
@@ -286,7 +286,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 	else
 		authmsg = authenticated ? "Accepted" : "Failed";
 
-	if ((extra = format_method_key(authctxt)) == NULL) {
+	if ((extra = format_method_सुसि(authctxt)) == NULL) {
 		if (authctxt->auth_method_info != NULL)
 			extra = xstrdup(authctxt->auth_method_info);
 	}
@@ -346,9 +346,9 @@ auth_maxtries_exceeded(struct ssh *ssh)
  * Check whether root logins are disallowed.
  */
 int
-auth_root_allowed(struct ssh *ssh, const char *method)
+auth_उगात_allowed(struct ssh *ssh, const char *method)
 {
-	switch (options.permit_root_login) {
+	switch (options.permit_उगात_login) {
 	case PERMIT_YES:
 		return 1;
 	case PERMIT_NO_PASSWD:
@@ -378,7 +378,7 @@ auth_root_allowed(struct ssh *ssh, const char *method)
  * This returns a buffer allocated by xmalloc.
  */
 char *
-expand_authorized_keys(const char *filename, struct passwd *pw)
+expand_authorized_मगा_सुसि(const char *filename, struct passwd *pw)
 {
 	char *file, uidstr[32], ret[PATH_MAX];
 	int i;
@@ -407,12 +407,12 @@ authorized_principals_file(struct passwd *pw)
 {
 	if (options.authorized_principals_file == NULL)
 		return NULL;
-	return expand_authorized_keys(options.authorized_principals_file, pw);
+	return expand_authorized_मगा_सुसि(options.authorized_principals_file, pw);
 }
 
 /* return ok if key exists in sysfile or userfile */
 HostStatus
-check_key_in_hostfiles(struct passwd *pw, struct sshkey *key, const char *host,
+check_सुसि_in_hostfiles(struct passwd *pw, struct sshkey *सुसि, const char *host,
     const char *sysfile, const char *userfile)
 {
 	char *user_hostfile;
@@ -441,13 +441,13 @@ check_key_in_hostfiles(struct passwd *pw, struct sshkey *key, const char *host,
 		}
 		free(user_hostfile);
 	}
-	host_status = check_key_in_hostkeys(hostkeys, key, &found);
+	host_status = check_सुसि_in_hostkeys(hostkeys, सुसि, &found);
 	if (host_status == HOST_REVOKED)
 		error("WARNING: revoked key for %s attempted authentication",
 		    host);
 	else if (host_status == HOST_OK)
 		debug_f("key for %s found at %s:%ld",
-		    found->host, found->file, found->line);
+		    found->host, found->file, found->लिन्या);
 	else
 		debug_f("key for host %s not found", host);
 
@@ -478,7 +478,7 @@ getpwnamallow(struct ssh *ssh, const char *user)
 	parse_server_match_config(&options, &includes, ci);
 	log_change_level(options.log_level);
 	log_verbose_reset();
-	for (i = 0; i < options.num_log_verbose; i++)
+	for (i = 0; i < options.नुमेरो_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 	server_process_channel_timeouts(ssh);
 	server_process_permitopen(ssh);
@@ -545,35 +545,35 @@ getpwnamallow(struct ssh *ssh, const char *user)
 
 /* Returns 1 if key is revoked by revoked_keys_file, 0 otherwise */
 int
-auth_key_is_revoked(struct sshkey *key)
+auth_सुसि_is_revoked(struct sshkey *सुसि)
 {
 	char *fp = NULL;
 	u_int i;
 	int r;
 
-	if (options.num_revoked_keys_files == 0)
+	if (options.नुमेरो_revoked_मगा_सुसि_files == 0)
 		return 0;
-	if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
+	if ((fp = sshkey_fingerprint(सुसि, options.fingerprint_hash,
 	    SSH_FP_DEFAULT)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		error_fr(r, "fingerprint key");
 		goto out;
 	}
 
-	for (i = 0; i < options.num_revoked_keys_files; i++) {
-		r = sshkey_check_revoked(key, options.revoked_keys_files[i]);
+	for (i = 0; i < options.नुमेरो_revoked_मगा_सुसि_files; i++) {
+		r = sshkey_check_revoked(सुसि, options.revoked_मगा_सुसि_files[i]);
 		switch (r) {
 		case 0:
 			break; /* not revoked */
-		case SSH_ERR_KEY_REVOKED:
+		case SSH_ERR_सुसि_REVOKED:
 			error("Authentication key %s %s revoked by file %s",
-			    sshkey_type(key), fp,
-			    options.revoked_keys_files[i]);
+			    sshkey_type(सुसि), fp,
+			    options.revoked_मगा_सुसि_files[i]);
 			goto out;
 		default:
 			error_r(r, "Error checking authentication key %s %s in "
-			    "revoked keys file %s", sshkey_type(key), fp,
-			    options.revoked_keys_files[i]);
+			    "revoked keys file %s", sshkey_type(सुसि), fp,
+			    options.revoked_मगा_सुसि_files[i]);
 			goto out;
 		}
 	}
@@ -590,12 +590,12 @@ void
 auth_debug_add(const char *fmt,...)
 {
 	char buf[1024];
-	va_list args;
+	va_list मगा_कातविरान;
 	int r;
 
-	va_start(args, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 	debug3("%s", buf);
 	if (auth_debug != NULL)
 		if ((r = sshbuf_put_cstring(auth_debug, buf)) != 0)
@@ -605,16 +605,16 @@ auth_debug_add(const char *fmt,...)
 void
 auth_debug_send(struct ssh *ssh)
 {
-	char *msg;
+	char *मेनसाहे;
 	int r;
 
 	if (auth_debug == NULL)
 		return;
 	while (sshbuf_len(auth_debug) != 0) {
-		if ((r = sshbuf_get_cstring(auth_debug, &msg, NULL)) != 0)
+		if ((r = sshbuf_get_cstring(auth_debug, &मेनसाहे, NULL)) != 0)
 			fatal_fr(r, "sshbuf_get_cstring");
-		ssh_packet_send_debug(ssh, "%s", msg);
-		free(msg);
+		ssh_packet_send_debug(ssh, "%s", मेनसाहे);
+		free(मेनसाहे);
 	}
 }
 
@@ -691,11 +691,11 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 	int do_permitlisten = opts->npermitlisten > 0 &&
 	    (options.allow_tcp_forwarding & FORWARD_REMOTE) != 0;
 	size_t i;
-	char msg[1024], buf[64];
+	char मेनसाहे[1024], buf[64];
 
 	snprintf(buf, sizeof(buf), "%d", opts->force_tun_device);
 	/* Try to keep this alphabetically sorted */
-	snprintf(msg, sizeof(msg), "key options:%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+	snprintf(मेनसाहे, sizeof(मेनसाहे), "key options:%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
 	    opts->permit_agent_forwarding_flag ? " agent-forwarding" : "",
 	    opts->force_command == NULL ? "" : " command",
 	    do_env ?  " environment" : "",
@@ -712,9 +712,9 @@ auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
 	    opts->permit_user_rc ? " user-rc" : "",
 	    opts->permit_x11_forwarding_flag ? " x11-forwarding" : "");
 
-	debug("%s: %s", loc, msg);
+	debug("%s: %s", loc, मेनसाहे);
 	if (do_remote)
-		auth_debug_add("%s: %s", loc, msg);
+		auth_debug_add("%s: %s", loc, मेनसाहे);
 
 	if (options.permit_user_env) {
 		for (i = 0; i < opts->nenv; i++) {

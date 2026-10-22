@@ -92,8 +92,8 @@ int sys_auth_allowed_user(struct passwd *, struct sshbuf *);
 # define CUSTOM_SYS_AUTH_RECORD_LOGIN 1
 int sys_auth_record_login(const char *, const char *, const char *,
     struct sshbuf *);
-# define CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-char *sys_auth_get_lastlogin_msg(const char *, uid_t);
+# define CUSTOM_SYS_AUTH_GET_LASTLOGIN_मेनसाहे
+char *sys_auth_get_lastlogin_मेनसाहे(const char *, uid_t);
 # define CUSTOM_FAILED_LOGIN 1
 # if defined(S_AUTHDOMAIN)  && defined (S_AUTHNAME)
 # define USE_AIX_KRB_NAME

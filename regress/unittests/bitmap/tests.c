@@ -77,9 +77,9 @@ tests(void)
 
 				/* Test length calculations */
 				test_subtest_info("length %d/%d/%d", i, j, k);
-				ASSERT_INT_EQ(BN_num_bits(bn),
+				ASSERT_INT_EQ(BN_नुमेरो_bits(bn),
 				    (int)bitmap_nbits(b));
-				ASSERT_INT_EQ(BN_num_bytes(bn),
+				ASSERT_INT_EQ(BN_नुमेरो_bytes(bn),
 				    (int)bitmap_nbytes(b));
 
 				/* Test serialisation */

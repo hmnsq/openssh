@@ -32,16 +32,16 @@ ssherr_libcrypto(void)
 {
 	unsigned long e;
 	static char buf[512];
-	char msg[4096];
+	char मेनसाहे[4096];
 	const char *reason = NULL, *file, *data;
 	int ln, fl;
 
 	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
+	while ((e = ERR_get_error_लिन्या_data(&file, &ln, &data, &fl)) != 0) {
 		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
+		snprintf(मेनसाहे, sizeof(मेनसाहे), "%s:%s:%d:%s", buf, file, ln,
 		    (fl & ERR_TXT_STRING) ? data : "");
-		debug("libcrypto: '%s'", msg);
+		debug("libcrypto: '%s'", मेनसाहे);
 		if ((reason = ERR_reason_error_string(e)) != NULL)
 			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
 			    reason);

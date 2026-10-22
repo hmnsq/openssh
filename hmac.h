@@ -26,7 +26,7 @@ struct ssh_hmac_ctx;
 struct ssh_hmac_ctx *ssh_hmac_start(int alg);
 
 /* Sets the state of the HMAC or resets the state if key == NULL */
-int ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
+int ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *सुसि, size_t klen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
 int ssh_hmac_update(struct ssh_hmac_ctx *ctx, const void *m, size_t mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));

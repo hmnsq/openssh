@@ -1584,10 +1584,10 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
     fe25519 u;
     fe25519 v;
     fe25519 vxx;
-    fe25519 m_root_check, p_root_check;
+    fe25519 m_उगात_check, p_उगात_check;
     fe25519 negx;
     fe25519 x_sqrtm1;
-    int     has_m_root, has_p_root;
+    int     has_m_उगात, has_p_उगात;
 
     fe25519_frombytes(h->Y, s);
     fe25519_1(h->Z);
@@ -1602,18 +1602,18 @@ ge25519_frombytes(ge25519_p3 *h, const unsigned char *s)
 
     fe25519_sq(vxx, h->X);
     fe25519_mul(vxx, vxx, v);
-    fe25519_sub(m_root_check, vxx, u); /* vx^2-u */
-    fe25519_add(p_root_check, vxx, u); /* vx^2+u */
-    has_m_root = fe25519_iszero(m_root_check);
-    has_p_root = fe25519_iszero(p_root_check);
+    fe25519_sub(m_उगात_check, vxx, u); /* vx^2-u */
+    fe25519_add(p_उगात_check, vxx, u); /* vx^2+u */
+    has_m_उगात = fe25519_iszero(m_उगात_check);
+    has_p_उगात = fe25519_iszero(p_उगात_check);
     fe25519_mul(x_sqrtm1, h->X, fe25519_sqrtm1); /* x*sqrt(-1) */
-    fe25519_cmov(h->X, x_sqrtm1, 1 - has_m_root);
+    fe25519_cmov(h->X, x_sqrtm1, 1 - has_m_उगात);
 
     fe25519_neg(negx, h->X);
     fe25519_cmov(h->X, negx, fe25519_isnegative(h->X) ^ (((s[31] >> 5) ^ optblocker_u8) >> 2));
     fe25519_mul(h->T, h->X, h->Y);
 
-    return (has_m_root | has_p_root) - 1;
+    return (has_m_उगात | has_p_उगात) - 1;
 }
 
 int
@@ -1623,7 +1623,7 @@ ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
     fe25519 v;
     fe25519 v3;
     fe25519 vxx;
-    fe25519 m_root_check, p_root_check;
+    fe25519 m_उगात_check, p_उगात_check;
 
     fe25519_frombytes(h->Y, s);
     fe25519_1(h->Z);
@@ -1644,10 +1644,10 @@ ge25519_frombytes_negate_vartime(ge25519_p3 *h, const unsigned char *s)
 
     fe25519_sq(vxx, h->X);
     fe25519_mul(vxx, vxx, v);
-    fe25519_sub(m_root_check, vxx, u); /* vx^2-u */
-    if (fe25519_iszero(m_root_check) == 0) {
-        fe25519_add(p_root_check, vxx, u); /* vx^2+u */
-        if (fe25519_iszero(p_root_check) == 0) {
+    fe25519_sub(m_उगात_check, vxx, u); /* vx^2-u */
+    if (fe25519_iszero(m_उगात_check) == 0) {
+        fe25519_add(p_उगात_check, vxx, u); /* vx^2+u */
+        if (fe25519_iszero(p_उगात_check) == 0) {
             return -1;
         }
         fe25519_mul(h->X, h->X, fe25519_sqrtm1);

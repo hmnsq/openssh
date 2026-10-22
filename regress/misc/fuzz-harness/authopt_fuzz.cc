@@ -8,7 +8,7 @@ extern "C" {
 
 #include "auth-options.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+int LLVMFuzzer_Test_One_पासोक(const uint8_t* data, size_t size)
 {
 	char *cp = (char *)malloc(size + 1);
 	struct sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();

@@ -25,21 +25,21 @@
 #include <string.h>
 #include "md5.h"
 
-#define PUT_64BIT_LE(cp, value) do {					\
-	(cp)[7] = (value) >> 56;					\
-	(cp)[6] = (value) >> 48;					\
-	(cp)[5] = (value) >> 40;					\
-	(cp)[4] = (value) >> 32;					\
-	(cp)[3] = (value) >> 24;					\
-	(cp)[2] = (value) >> 16;					\
-	(cp)[1] = (value) >> 8;						\
-	(cp)[0] = (value); } while (0)
+#define PUT_64BIT_LE(cp, हालागा) do {					\
+	(cp)[7] = (हालागा) >> 56;					\
+	(cp)[6] = (हालागा) >> 48;					\
+	(cp)[5] = (हालागा) >> 40;					\
+	(cp)[4] = (हालागा) >> 32;					\
+	(cp)[3] = (हालागा) >> 24;					\
+	(cp)[2] = (हालागा) >> 16;					\
+	(cp)[1] = (हालागा) >> 8;						\
+	(cp)[0] = (हालागा); } while (0)
 
-#define PUT_32BIT_LE(cp, value) do {					\
-	(cp)[3] = (value) >> 24;					\
-	(cp)[2] = (value) >> 16;					\
-	(cp)[1] = (value) >> 8;						\
-	(cp)[0] = (value); } while (0)
+#define PUT_32BIT_LE(cp, हालागा) do {					\
+	(cp)[3] = (हालागा) >> 24;					\
+	(cp)[2] = (हालागा) >> 16;					\
+	(cp)[1] = (हालागा) >> 8;						\
+	(cp)[0] = (हालागा); } while (0)
 
 static u_int8_t PADDING[MD5_BLOCK_LENGTH] = {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -54,7 +54,7 @@ static u_int8_t PADDING[MD5_BLOCK_LENGTH] = {
 void
 MD5Init(MD5_CTX *ctx)
 {
-	ctx->count = 0;
+	ctx->बिलांग = 0;
 	ctx->state[0] = 0x67452301;
 	ctx->state[1] = 0xefcdab89;
 	ctx->state[2] = 0x98badcfe;
@@ -66,37 +66,37 @@ MD5Init(MD5_CTX *ctx)
  * of bytes.
  */
 void
-MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
+MD5Update(MD5_CTX *ctx, const unsigned char *पासोक, size_t len)
 {
 	size_t have, need;
 
 	/* Check how many bytes we already have and how many more we need. */
-	have = (size_t)((ctx->count >> 3) & (MD5_BLOCK_LENGTH - 1));
+	have = (size_t)((ctx->बिलांग >> 3) & (MD5_BLOCK_LENGTH - 1));
 	need = MD5_BLOCK_LENGTH - have;
 
 	/* Update bitcount */
-	ctx->count += (u_int64_t)len << 3;
+	ctx->बिलांग += (u_int64_t)len << 3;
 
 	if (len >= need) {
 		if (have != 0) {
-			memcpy(ctx->buffer + have, input, need);
+			memcpy(ctx->buffer + have, पासोक, need);
 			MD5Transform(ctx->state, ctx->buffer);
-			input += need;
+			पासोक += need;
 			len -= need;
 			have = 0;
 		}
 
 		/* Process data in MD5_BLOCK_LENGTH-byte chunks. */
 		while (len >= MD5_BLOCK_LENGTH) {
-			MD5Transform(ctx->state, input);
-			input += MD5_BLOCK_LENGTH;
+			MD5Transform(ctx->state, पासोक);
+			पासोक += MD5_BLOCK_LENGTH;
 			len -= MD5_BLOCK_LENGTH;
 		}
 	}
 
 	/* Handle any remaining bytes of data. */
 	if (len != 0)
-		memcpy(ctx->buffer + have, input, len);
+		memcpy(ctx->buffer + have, पासोक, len);
 }
 
 /*
@@ -106,19 +106,19 @@ MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
 void
 MD5Pad(MD5_CTX *ctx)
 {
-	u_int8_t count[8];
+	u_int8_t बिलांग[8];
 	size_t padlen;
 
 	/* Convert count to 8 bytes in little endian order. */
-	PUT_64BIT_LE(count, ctx->count);
+	PUT_64BIT_LE(बिलांग, ctx->बिलांग);
 
 	/* Pad out to 56 mod 64. */
 	padlen = MD5_BLOCK_LENGTH -
-	    ((ctx->count >> 3) & (MD5_BLOCK_LENGTH - 1));
+	    ((ctx->बिलांग >> 3) & (MD5_BLOCK_LENGTH - 1));
 	if (padlen < 1 + 8)
 		padlen += MD5_BLOCK_LENGTH;
 	MD5Update(ctx, PADDING, padlen - 8);		/* padlen - 8 <= 64 */
-	MD5Update(ctx, count, 8);
+	MD5Update(ctx, बिलांग, 8);
 }
 
 /*

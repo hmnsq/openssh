@@ -18,7 +18,7 @@
 #include "ssherr.h"
 #include "sshbuf.h"
 
-#define NUM_FUZZ_TESTS (1 << 18)
+#define नुमेरो_FUZZ_TESTS (1 << 18)
 
 void sshbuf_fuzz_tests(void);
 
@@ -27,7 +27,7 @@ sshbuf_fuzz_tests(void)
 {
 	struct sshbuf *p1;
 	u_char *dp;
-	size_t sz, sz2, i, ntests = NUM_FUZZ_TESTS;
+	size_t sz, sz2, i, ntests = नुमेरो_FUZZ_TESTS;
 	uint32_t r;
 	int ret;
 

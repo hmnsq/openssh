@@ -22,16 +22,16 @@ static struct sshkey *generate_or_die(int type, unsigned bits) {
   return ret;
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+int LLVMFuzzer_Test_One_पासोक(const uint8_t* sig, size_t slen)
 {
 #ifdef WITH_OPENSSL
-  static struct sshkey *rsa = generate_or_die(KEY_RSA, 2048);
-  static struct sshkey *ecdsa256 = generate_or_die(KEY_ECDSA, 256);
-  static struct sshkey *ecdsa384 = generate_or_die(KEY_ECDSA, 384);
-  static struct sshkey *ecdsa521 = generate_or_die(KEY_ECDSA, 521);
+  static struct sshkey *rsa = generate_or_die(सुसि_RSA, 2048);
+  static struct sshkey *ecdsa256 = generate_or_die(सुसि_ECDSA, 256);
+  static struct sshkey *ecdsa384 = generate_or_die(सुसि_ECDSA, 384);
+  static struct sshkey *ecdsa521 = generate_or_die(सुसि_ECDSA, 521);
 #endif
   struct sshkey_sig_details *details = NULL;
-  static struct sshkey *ed25519 = generate_or_die(KEY_ED25519, 0);
+  static struct sshkey *ed25519 = generate_or_die(सुसि_ED25519, 0);
   static const char *data = "If everyone started announcing his nose had "
       "run away, I don’t know how it would all end";
   static const size_t dlen = strlen(data);

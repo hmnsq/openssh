@@ -27,7 +27,7 @@
  * binary mode on Windows systems.
  */
 
-#define NO_BINARY_OPEN	/* Avoid redefining open to binary_open for this file */
+#define NO_दालावाहान_OPEN	/* Avoid redefining open to binary_open for this file */
 #include "includes.h"
 
 #ifdef HAVE_CYGWIN
@@ -44,7 +44,7 @@
 #include "xmalloc.h"
 
 int
-binary_open(const char *filename, int flags, ...)
+दालावाहान_open(const char *filename, int flags, ...)
 {
 	va_list ap;
 	mode_t mode;
@@ -52,7 +52,7 @@ binary_open(const char *filename, int flags, ...)
 	va_start(ap, flags);
 	mode = va_arg(ap, mode_t);
 	va_end(ap);
-	return (open(filename, flags | O_BINARY, mode));
+	return (open(filename, flags | O_दालावाहान, mode));
 }
 
 int

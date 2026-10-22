@@ -16,7 +16,7 @@ limitations under the License.
 extern "C" void fuzz_mux_one(const uint8_t *data, size_t size);
 
 extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+LLVMFuzzer_Test_One_पासोक(const uint8_t *data, size_t size)
 {
 	fuzz_mux_one(data, size);
 	return 0;

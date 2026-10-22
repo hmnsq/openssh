@@ -185,7 +185,7 @@ static void free_dns_query(struct dns_query *);
 static void free_dns_rr(struct dns_rr *);
 static void free_dns_response(struct dns_response *);
 
-static int count_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
+static int बिलांग_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
 
 int
 getrrsetbyname(const char *hostname, unsigned int rdclass,
@@ -290,9 +290,9 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	}
 
 	/* count answers */
-	rrset->rri_nrdatas = count_dns_rr(response->answer, rrset->rri_rdclass,
+	rrset->rri_nrdatas = बिलांग_dns_rr(response->answer, rrset->rri_rdclass,
 	    rrset->rri_rdtype);
-	rrset->rri_nsigs = count_dns_rr(response->answer, rrset->rri_rdclass,
+	rrset->rri_nsigs = बिलांग_dns_rr(response->answer, rrset->rri_rdclass,
 	    T_RRSIG);
 
 	/* allocate memory for answers */
@@ -454,7 +454,7 @@ parse_dns_response(const u_char *answer, int size)
 }
 
 static struct dns_query *
-parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
+parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int बिलांग)
 {
 	struct dns_query *head, *curr, *prev;
 	int i, length;
@@ -466,7 +466,7 @@ parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
 			goto fail; \
 	} while (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
+	for (i = 1, head = NULL, prev = NULL; i <= बिलांग; i++, prev = curr) {
 		if (*cp >= answer + size) {
  fail:
 			free_dns_query(head);
@@ -513,7 +513,7 @@ parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
 
 static struct dns_rr *
 parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
-    int count)
+    int बिलांग)
 {
 	struct dns_rr *head, *curr, *prev;
 	int i, length;
@@ -525,7 +525,7 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 			goto fail; \
 	} while (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
+	for (i = 1, head = NULL, prev = NULL; i <= बिलांग; i++, prev = curr) {
 		if (*cp >= answer + size) {
  fail:
 			free_dns_rr(head);
@@ -633,7 +633,7 @@ free_dns_response(struct dns_response *p)
 }
 
 static int
-count_dns_rr(struct dns_rr *p, u_int16_t class, u_int16_t type)
+बिलांग_dns_rr(struct dns_rr *p, u_int16_t class, u_int16_t type)
 {
 	int n = 0;
 

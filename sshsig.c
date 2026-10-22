@@ -161,7 +161,7 @@ done:
 }
 
 static int
-sshsig_wrap_sign(struct sshkey *key, const char *hashalg,
+sshsig_wrap_sign(struct sshkey *सुसि, const char *hashalg,
     const char *sk_provider, const char *sk_pin, const struct sshbuf *h_message,
     const char *sig_namespace, struct sshbuf **out,
     sshsig_signer *signer, void *signer_ctx)
@@ -190,7 +190,7 @@ sshsig_wrap_sign(struct sshkey *key, const char *hashalg,
 	}
 
 	/* If using RSA keys then default to a good signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
+	if (sshkey_type_plain(सुसि->type) == सुसि_RSA) {
 		sign_alg = RSA_SIGN_ALG;
 		if (strcmp(hashalg, "sha256") == 0)
 			sign_alg = "rsa-sha2-256";
@@ -199,14 +199,14 @@ sshsig_wrap_sign(struct sshkey *key, const char *hashalg,
 	}
 
 	if (signer != NULL) {
-		if ((r = signer(key, &sig, &slen,
+		if ((r = signer(सुसि, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0, signer_ctx)) != 0) {
 			error_r(r, "Couldn't sign message (signer)");
 			goto done;
 		}
 	} else {
-		if ((r = sshkey_sign(key, &sig, &slen,
+		if ((r = sshkey_sign(सुसि, &sig, &slen,
 		    sshbuf_ptr(tosign), sshbuf_len(tosign),
 		    sign_alg, sk_provider, sk_pin, 0)) != 0) {
 			error_r(r, "Couldn't sign message");
@@ -216,7 +216,7 @@ sshsig_wrap_sign(struct sshkey *key, const char *hashalg,
 
 	if ((r = sshbuf_put(blob, MAGIC_PREAMBLE, MAGIC_PREAMBLE_LEN)) != 0 ||
 	    (r = sshbuf_put_u32(blob, SIG_VERSION)) != 0 ||
-	    (r = sshkey_puts(key, blob)) != 0 ||
+	    (r = sshkey_puts(सुसि, blob)) != 0 ||
 	    (r = sshbuf_put_cstring(blob, sig_namespace)) != 0 ||
 	    (r = sshbuf_put_string(blob, NULL, 0)) != 0 || /* reserved */
 	    (r = sshbuf_put_cstring(blob, hashalg)) != 0 ||
@@ -308,7 +308,7 @@ sshsig_wrap_verify(struct sshbuf *signature, const char *hashalg,
 {
 	int r = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *buf = NULL, *toverify = NULL;
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	const u_char *sig;
 	char *got_namespace = NULL, *sigtype = NULL, *sig_hashalg = NULL;
 	size_t siglen;
@@ -337,7 +337,7 @@ sshsig_wrap_verify(struct sshbuf *signature, const char *hashalg,
 	if ((r = sshsig_parse_preamble(signature)) != 0)
 		goto done;
 
-	if ((r = sshkey_froms(signature, &key)) != 0 ||
+	if ((r = sshkey_froms(signature, &सुसि)) != 0 ||
 	    (r = sshbuf_get_cstring(signature, &got_namespace, NULL)) != 0 ||
 	    (r = sshbuf_get_string(signature, NULL, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(signature, &sig_hashalg, NULL)) != 0 ||
@@ -367,7 +367,7 @@ sshsig_wrap_verify(struct sshbuf *signature, const char *hashalg,
 		goto done;
 	}
 	/* Ensure that RSA keys use an acceptable signature algorithm */
-	if (sshkey_type_plain(key->type) == KEY_RSA) {
+	if (sshkey_type_plain(सुसि->type) == सुसि_RSA) {
 		if ((r = sshkey_get_sigtype(sig, siglen, &sigtype)) != 0) {
 			error_r(r, "Couldn't verify signature: unable to get "
 			    "signature type");
@@ -380,7 +380,7 @@ sshsig_wrap_verify(struct sshbuf *signature, const char *hashalg,
 			goto done;
 		}
 	}
-	if ((r = sshkey_verify(key, sig, siglen, sshbuf_ptr(toverify),
+	if ((r = sshkey_verify(सुसि, sig, siglen, sshbuf_ptr(toverify),
 	    sshbuf_len(toverify), NULL, 0, sig_details)) != 0) {
 		error_r(r, "Signature verification failed");
 		goto done;
@@ -389,8 +389,8 @@ sshsig_wrap_verify(struct sshbuf *signature, const char *hashalg,
 	/* success */
 	r = 0;
 	if (sign_keyp != NULL) {
-		*sign_keyp = key;
-		key = NULL; /* transferred */
+		*sign_keyp = सुसि;
+		सुसि = NULL; /* transferred */
 	}
 done:
 	free(got_namespace);
@@ -398,7 +398,7 @@ done:
 	free(sig_hashalg);
 	sshbuf_free(buf);
 	sshbuf_free(toverify);
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	return r;
 }
 
@@ -445,7 +445,7 @@ hash_buffer(const struct sshbuf *m, const char *hashalg, struct sshbuf **bp)
 }
 
 int
-sshsig_signb(struct sshkey *key, const char *hashalg,
+sshsig_signb(struct sshkey *सुसि, const char *hashalg,
     const char *sk_provider, const char *sk_pin,
     const struct sshbuf *message, const char *sig_namespace,
     struct sshbuf **out, sshsig_signer *signer, void *signer_ctx)
@@ -461,7 +461,7 @@ sshsig_signb(struct sshkey *key, const char *hashalg,
 		error_fr(r, "hash buffer");
 		goto out;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
+	if ((r = sshsig_wrap_sign(सुसि, hashalg, sk_provider, sk_pin, b,
 	    sig_namespace, out, signer, signer_ctx)) != 0)
 		goto out;
 	/* success */
@@ -573,7 +573,7 @@ hash_file(int fd, const char *hashalg, struct sshbuf **bp)
 }
 
 int
-sshsig_sign_fd(struct sshkey *key, const char *hashalg,
+sshsig_sign_fd(struct sshkey *सुसि, const char *hashalg,
     const char *sk_provider, const char *sk_pin,
     int fd, const char *sig_namespace, struct sshbuf **out,
     sshsig_signer *signer, void *signer_ctx)
@@ -589,7 +589,7 @@ sshsig_sign_fd(struct sshkey *key, const char *hashalg,
 		error_fr(r, "hash_file");
 		return r;
 	}
-	if ((r = sshsig_wrap_sign(key, hashalg, sk_provider, sk_pin, b,
+	if ((r = sshsig_wrap_sign(सुसि, hashalg, sk_provider, sk_pin, b,
 	    sig_namespace, out, signer, signer_ctx)) != 0)
 		goto out;
 	/* success */
@@ -733,14 +733,14 @@ sshsigopt_free(struct sshsigopt *opts)
 }
 
 static int
-parse_principals_key_and_options(const char *path, u_long linenum, char *line,
+parse_principals_सुसि_and_options(const char *path, u_long linenum, char *लिन्या,
     const char *required_principal, char **principalsp, struct sshkey **keyp,
     struct sshsigopt **sigoptsp)
 {
 	char *opts = NULL, *tmp, *cp, *principals = NULL;
 	const char *reason = NULL;
 	struct sshsigopt *sigopts = NULL;
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	int r = SSH_ERR_INTERNAL_ERROR;
 
 	if (principalsp != NULL)
@@ -750,10 +750,10 @@ parse_principals_key_and_options(const char *path, u_long linenum, char *line,
 	if (keyp != NULL)
 		*keyp = NULL;
 
-	cp = line;
+	cp = लिन्या;
 	cp = cp + strspn(cp, " \t\n\r"); /* skip leading whitespace */
 	if (*cp == '#' || *cp == '\0')
-		return SSH_ERR_KEY_NOT_FOUND; /* blank or all-comment line */
+		return SSH_ERR_सुसि_NOT_FOUND; /* blank or all-comment line */
 
 	/* format: identity[,identity...] [option[,option...]] key */
 	if ((tmp = strdelimw(&cp)) == NULL || cp == NULL) {
@@ -774,19 +774,19 @@ parse_principals_key_and_options(const char *path, u_long linenum, char *line,
 		if (match_pattern_list(required_principal,
 		    principals, 0) != 1) {
 			/* principal didn't match */
-			r = SSH_ERR_KEY_NOT_FOUND;
+			r = SSH_ERR_सुसि_NOT_FOUND;
 			goto out;
 		}
 		debug_f("%s:%lu: matched principal \"%s\"",
 		    path, linenum, required_principal);
 	}
 
-	if ((key = sshkey_new(KEY_UNSPEC)) == NULL) {
+	if ((सुसि = sshkey_new(सुसि_UNSPEC)) == NULL) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (sshkey_read(key, &cp) != 0) {
+	if (sshkey_read(सुसि, &cp) != 0) {
 		/* no key? Check for options */
 		opts = cp;
 		if (sshkey_advance_past_options(&cp) != 0) {
@@ -801,7 +801,7 @@ parse_principals_key_and_options(const char *path, u_long linenum, char *line,
 		}
 		*cp++ = '\0';
 		skip_space(&cp);
-		if (sshkey_read(key, &cp) != 0) {
+		if (sshkey_read(सुसि, &cp) != 0) {
 			error("%s:%lu: invalid key", path, linenum);
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
@@ -823,14 +823,14 @@ parse_principals_key_and_options(const char *path, u_long linenum, char *line,
 		sigopts = NULL; /* transferred */
 	}
 	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL; /* transferred */
+		*keyp = सुसि;
+		सुसि = NULL; /* transferred */
 	}
 	r = 0;
  out:
 	free(principals);
 	sshsigopt_free(sigopts);
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	return r;
 }
 
@@ -874,7 +874,7 @@ cert_filter_principals(const char *path, u_long linenum,
 	}
 	if (sshbuf_len(nprincipals) == 0) {
 		error("%s:%lu: no valid principals found", path, linenum);
-		r = SSH_ERR_KEY_CERT_INVALID;
+		r = SSH_ERR_सुसि_CERT_INVALID;
 		goto out;
 	}
 	if ((principals = sshbuf_dup_string(nprincipals)) == NULL) {
@@ -892,11 +892,11 @@ cert_filter_principals(const char *path, u_long linenum,
 }
 
 static int
-check_allowed_keys_line(const char *path, u_long linenum, char *line,
-    const struct sshkey *sign_key, const char *principal,
+check_allowed_मगा_सुसि_लिन्या(const char *path, u_long linenum, char *लिन्या,
+    const struct sshkey *sign_सुसि, const char *principal,
     const char *sig_namespace, uint64_t verify_time, char **principalsp)
 {
-	struct sshkey *found_key = NULL;
+	struct sshkey *found_सुसि = NULL;
 	char *principals = NULL;
 	int r, success = 0;
 	const char *reason = NULL;
@@ -907,20 +907,20 @@ check_allowed_keys_line(const char *path, u_long linenum, char *line,
 		*principalsp = NULL;
 
 	/* Parse the line */
-	if ((r = parse_principals_key_and_options(path, linenum, line,
-	    principal, &principals, &found_key, &sigopts)) != 0) {
+	if ((r = parse_principals_सुसि_and_options(path, linenum, लिन्या,
+	    principal, &principals, &found_सुसि, &sigopts)) != 0) {
 		/* error already logged */
 		goto done;
 	}
 
-	if (!sigopts->ca && sshkey_equal(found_key, sign_key)) {
+	if (!sigopts->ca && sshkey_equal(found_सुसि, sign_सुसि)) {
 		/* Exact match of key */
 		debug("%s:%lu: matched key", path, linenum);
-	} else if (sigopts->ca && sshkey_is_cert(sign_key) &&
-	    sshkey_equal_public(sign_key->cert->signature_key, found_key)) {
+	} else if (sigopts->ca && sshkey_is_cert(sign_सुसि) &&
+	    sshkey_equal_public(sign_सुसि->cert->signature_सुसि, found_सुसि)) {
 		if (principal) {
 			/* Match certificate CA key with specified principal */
-			if ((r = sshkey_cert_check_authority(sign_key, 0, 0,
+			if ((r = sshkey_cert_check_authority(sign_सुसि, 0, 0,
 			    verify_time, principal, &reason)) != 0) {
 				error("%s:%lu: certificate not authorized: %s",
 				    path, linenum, reason);
@@ -931,7 +931,7 @@ check_allowed_keys_line(const char *path, u_long linenum, char *line,
 		} else {
 			/* No principal specified - find all matching ones */
 			if ((r = cert_filter_principals(path, linenum,
-			    &principals, sign_key, verify_time)) != 0) {
+			    &principals, sign_सुसि, verify_time)) != 0) {
 				/* error already displayed */
 				debug_r(r, "%s:%lu: cert_filter_principals",
 				    path, linenum);
@@ -981,20 +981,20 @@ check_allowed_keys_line(const char *path, u_long linenum, char *line,
 		principals = NULL; /* transferred */
 	}
 	free(principals);
-	sshkey_free(found_key);
+	sshkey_free(found_सुसि);
 	sshsigopt_free(sigopts);
-	return success ? 0 : SSH_ERR_KEY_NOT_FOUND;
+	return success ? 0 : SSH_ERR_सुसि_NOT_FOUND;
 }
 
 int
-sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
+sshsig_check_allowed_मगा_सुसि(const char *path, const struct sshkey *sign_सुसि,
     const char *principal, const char *sig_namespace, uint64_t verify_time)
 {
 	FILE *f = NULL;
-	char *line = NULL;
+	char *लिन्या = NULL;
 	size_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	int r = SSH_ERR_सुसि_NOT_FOUND, oerrno;
 
 	/* Check key and principal against file */
 	if ((f = fopen(path, "r")) == NULL) {
@@ -1005,14 +1005,14 @@ sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
 		return SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line, sign_key,
+		r = check_allowed_मगा_सुसि_लिन्या(path, linenum, लिन्या, sign_सुसि,
 		    principal, sig_namespace, verify_time, NULL);
-		free(line);
-		line = NULL;
+		free(लिन्या);
+		लिन्या = NULL;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
+		if (r == SSH_ERR_सुसि_NOT_FOUND)
 			continue;
 		else if (r == 0) {
 			/* success */
@@ -1023,19 +1023,19 @@ sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
 	}
 	/* Either we hit an error parsing or we simply didn't find the key */
 	fclose(f);
-	free(line);
+	free(लिन्या);
 	return r;
 }
 
 int
-sshsig_find_principals(const char *path, const struct sshkey *sign_key,
+sshsig_find_principals(const char *path, const struct sshkey *sign_सुसि,
     uint64_t verify_time, char **principals)
 {
 	FILE *f = NULL;
-	char *line = NULL;
+	char *लिन्या = NULL;
 	size_t linesize = 0;
 	u_long linenum = 0;
-	int r = SSH_ERR_KEY_NOT_FOUND, oerrno;
+	int r = SSH_ERR_सुसि_NOT_FOUND, oerrno;
 
 	if ((f = fopen(path, "r")) == NULL) {
 		oerrno = errno;
@@ -1045,14 +1045,14 @@ sshsig_find_principals(const char *path, const struct sshkey *sign_key,
 		return SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		linenum++;
-		r = check_allowed_keys_line(path, linenum, line,
-		    sign_key, NULL, NULL, verify_time, principals);
-		free(line);
-		line = NULL;
+		r = check_allowed_मगा_सुसि_लिन्या(path, linenum, लिन्या,
+		    sign_सुसि, NULL, NULL, verify_time, principals);
+		free(लिन्या);
+		लिन्या = NULL;
 		linesize = 0;
-		if (r == SSH_ERR_KEY_NOT_FOUND)
+		if (r == SSH_ERR_सुसि_NOT_FOUND)
 			continue;
 		else if (r == 0) {
 			/* success */
@@ -1061,7 +1061,7 @@ sshsig_find_principals(const char *path, const struct sshkey *sign_key,
 		} else
 			break;
 	}
-	free(line);
+	free(लिन्या);
 	/* Either we hit an error parsing or we simply didn't find the key */
 	if (ferror(f) != 0) {
 		oerrno = errno;
@@ -1080,7 +1080,7 @@ sshsig_match_principals(const char *path, const char *principal,
     char ***principalsp, size_t *nprincipalsp)
 {
 	FILE *f = NULL;
-	char *found, *line = NULL, **principals = NULL, **tmp;
+	char *found, *लिन्या = NULL, **principals = NULL, **tmp;
 	size_t i, nprincipals = 0, linesize = 0;
 	u_long linenum = 0;
 	int oerrno = 0, r, ret = 0;
@@ -1099,12 +1099,12 @@ sshsig_match_principals(const char *path, const char *principal,
 		return SSH_ERR_SYSTEM_ERROR;
 	}
 
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		linenum++;
 		/* Parse the line */
-		if ((r = parse_principals_key_and_options(path, linenum, line,
+		if ((r = parse_principals_सुसि_and_options(path, linenum, लिन्या,
 		    principal, &found, NULL, NULL)) != 0) {
-			if (r == SSH_ERR_KEY_NOT_FOUND)
+			if (r == SSH_ERR_सुसि_NOT_FOUND)
 				continue;
 			ret = r;
 			oerrno = errno;
@@ -1118,16 +1118,16 @@ sshsig_match_principals(const char *path, const char *principal,
 		}
 		principals = tmp;
 		principals[nprincipals++] = found; /* transferred */
-		free(line);
-		line = NULL;
+		free(लिन्या);
+		लिन्या = NULL;
 		linesize = 0;
 	}
 	fclose(f);
-	free(line);
+	free(लिन्या);
 
 	if (ret == 0) {
 		if (nprincipals == 0)
-			ret = SSH_ERR_KEY_NOT_FOUND;
+			ret = SSH_ERR_सुसि_NOT_FOUND;
 		if (nprincipalsp != NULL)
 			*nprincipalsp = nprincipals;
 		if (principalsp != NULL) {

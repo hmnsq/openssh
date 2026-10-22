@@ -64,7 +64,7 @@ _ssh_mkstemp(char *template)
 #define MKTEMP_DIR	2
 
 #define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#define नुमेरो_CHARS	(sizeof(TEMPCHARS) - 1)
 
 static int
 mktemp_internal(char *path, int slen, int mode)
@@ -85,14 +85,14 @@ mktemp_internal(char *path, int slen, int mode)
 
 	tries = 1;
 	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
-			tries *= NUM_CHARS;
+		if (tries < INT_MAX / नुमेरो_CHARS)
+			tries *= नुमेरो_CHARS;
 	}
 	tries *= 2;
 
 	do {
 		for (cp = start; cp != ep; cp++) {
-			r = arc4random_uniform(NUM_CHARS);
+			r = arc4random_uniform(नुमेरो_CHARS);
 			*cp = tempchars[r];
 		}
 

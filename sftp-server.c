@@ -52,7 +52,7 @@
 char *sftp_realpath(const char *, char *); /* sftp-realpath.c */
 
 /* Maximum data read that we are willing to accept */
-#define SFTP_MAX_READ_LENGTH (SFTP_MAX_MSG_LENGTH - 1024)
+#define SFTP_MAX_READ_LENGTH (SFTP_MAX_मेनसाहे_LENGTH - 1024)
 
 /* Our verbosity */
 static LogLevel log_level = SYSLOG_LEVEL_ERROR;
@@ -316,7 +316,7 @@ enum {
 };
 
 static Handle *handles = NULL;
-static u_int num_handles = 0;
+static u_int नुमेरो_handles = 0;
 static int first_unused_handle = -1;
 
 static void handle_unused(int i)
@@ -332,11 +332,11 @@ handle_new(int use, const char *name, int fd, int flags, DIR *dirp)
 	int i;
 
 	if (first_unused_handle == -1) {
-		if (num_handles + 1 <= num_handles)
+		if (नुमेरो_handles + 1 <= नुमेरो_handles)
 			return -1;
-		num_handles++;
-		handles = xreallocarray(handles, num_handles, sizeof(Handle));
-		handle_unused(num_handles - 1);
+		नुमेरो_handles++;
+		handles = xreallocarray(handles, नुमेरो_handles, sizeof(Handle));
+		handle_unused(नुमेरो_handles - 1);
 	}
 
 	i = first_unused_handle;
@@ -355,7 +355,7 @@ handle_new(int use, const char *name, int fd, int flags, DIR *dirp)
 static int
 handle_is_ok(int i, int type)
 {
-	return i >= 0 && (u_int)i < num_handles && handles[i].use == type;
+	return i >= 0 && (u_int)i < नुमेरो_handles && handles[i].use == type;
 }
 
 static int
@@ -486,7 +486,7 @@ handle_log_exit(void)
 {
 	u_int i;
 
-	for (i = 0; i < num_handles; i++)
+	for (i = 0; i < नुमेरो_handles; i++)
 		if (handles[i].use != HANDLE_UNUSED)
 			handle_log_close(i, "forced");
 }
@@ -510,7 +510,7 @@ get_handle(struct sshbuf *queue, int *hp)
 /* send replies */
 
 static void
-send_msg(struct sshbuf *m)
+send_मेनसाहे(struct sshbuf *m)
 {
 	int r;
 
@@ -540,27 +540,27 @@ status_to_message(uint32_t status)
 static void
 send_status_errmsg(uint32_t id, uint32_t status, const char *errmsg)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r;
 
 	debug3("request %u: sent status %u", id, status);
 	if (log_level > SYSLOG_LEVEL_VERBOSE ||
 	    (status != SSH2_FX_OK && status != SSH2_FX_EOF))
 		logit("sent status %s", status_to_message(status));
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_STATUS)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_u32(msg, status)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_FXP_STATUS)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, id)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, status)) != 0)
 		fatal_fr(r, "compose");
 	if (version >= 3) {
-		if ((r = sshbuf_put_cstring(msg, errmsg == NULL ?
+		if ((r = sshbuf_put_cstring(मेनसाहे, errmsg == NULL ?
 		    status_to_message(status) : errmsg)) != 0 ||
-		    (r = sshbuf_put_cstring(msg, "")) != 0)
+		    (r = sshbuf_put_cstring(मेनसाहे, "")) != 0)
 			fatal_fr(r, "compose message");
 	}
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_मेनसाहे(मेनसाहे);
+	sshbuf_free(मेनसाहे);
 }
 
 static void
@@ -572,17 +572,17 @@ send_status(uint32_t id, uint32_t status)
 static void
 send_data_or_handle(char type, uint32_t id, const u_char *data, int dlen)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_string(msg, data, dlen)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, type)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, id)) != 0 ||
+	    (r = sshbuf_put_string(मेनसाहे, data, dlen)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_मेनसाहे(मेनसाहे);
+	sshbuf_free(मेनसाहे);
 }
 
 static void
@@ -605,73 +605,73 @@ send_handle(uint32_t id, int handle)
 }
 
 static void
-send_names(uint32_t id, int count, const Stat *stats)
+send_names(uint32_t id, int बिलांग, const Stat *stats)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int i, r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_NAME)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_u32(msg, count)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_FXP_NAME)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, id)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, बिलांग)) != 0)
 		fatal_fr(r, "compose");
-	debug("request %u: sent names count %d", id, count);
-	for (i = 0; i < count; i++) {
-		if ((r = sshbuf_put_cstring(msg, stats[i].name)) != 0 ||
-		    (r = sshbuf_put_cstring(msg, stats[i].long_name)) != 0 ||
-		    (r = encode_attrib(msg, &stats[i].attrib)) != 0)
+	debug("request %u: sent names count %d", id, बिलांग);
+	for (i = 0; i < बिलांग; i++) {
+		if ((r = sshbuf_put_cstring(मेनसाहे, stats[i].name)) != 0 ||
+		    (r = sshbuf_put_cstring(मेनसाहे, stats[i].long_name)) != 0 ||
+		    (r = encode_attrib(मेनसाहे, &stats[i].attrib)) != 0)
 			fatal_fr(r, "compose filenames/attrib");
 	}
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_मेनसाहे(मेनसाहे);
+	sshbuf_free(मेनसाहे);
 }
 
 static void
 send_attrib(uint32_t id, const Attrib *a)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r;
 
 	debug("request %u: sent attrib have 0x%x", id, a->flags);
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_ATTRS)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = encode_attrib(msg, a)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_FXP_ATTRS)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, id)) != 0 ||
+	    (r = encode_attrib(मेनसाहे, a)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_मेनसाहे(मेनसाहे);
+	sshbuf_free(मेनसाहे);
 }
 
 static void
 send_statvfs(uint32_t id, struct statvfs *st)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	uint64_t flag;
 	int r;
 
 	flag = (st->f_flag & ST_RDONLY) ? SSH2_FXE_STATVFS_ST_RDONLY : 0;
 	flag |= (st->f_flag & ST_NOSUID) ? SSH2_FXE_STATVFS_ST_NOSUID : 0;
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_bsize)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_frsize)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_blocks)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_bfree)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_bavail)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_files)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_ffree)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_favail)) != 0 ||
-	    (r = sshbuf_put_u64(msg, FSID_TO_ULONG(st->f_fsid))) != 0 ||
-	    (r = sshbuf_put_u64(msg, flag)) != 0 ||
-	    (r = sshbuf_put_u64(msg, st->f_namemax)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, id)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, st->f_bsize)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, st->f_frsize)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, st->f_blocks)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, st->f_bfree)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, st->f_bavail)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, st->f_files)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, st->f_ffree)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, st->f_favail)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, FSID_TO_ULONG(st->f_fsid))) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, flag)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, st->f_namemax)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_मेनसाहे(मेनसाहे);
+	sshbuf_free(मेनसाहे);
 }
 
 /*
@@ -679,7 +679,7 @@ send_statvfs(uint32_t id, struct statvfs *st)
  * The extension is checked for permission prior to advertisement.
  */
 static int
-compose_extension(struct sshbuf *msg, const char *name, const char *ver)
+compose_extension(struct sshbuf *मेनसाहे, const char *name, const char *ver)
 {
 	int r;
 	const struct sftp_handler *exthnd;
@@ -690,8 +690,8 @@ compose_extension(struct sshbuf *msg, const char *name, const char *ver)
 		debug2_f("refusing to advertise disallowed extension %s", name);
 		return 0;
 	}
-	if ((r = sshbuf_put_cstring(msg, name)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, ver)) != 0)
+	if ((r = sshbuf_put_cstring(मेनसाहे, name)) != 0 ||
+	    (r = sshbuf_put_cstring(मेनसाहे, ver)) != 0)
 		fatal_fr(r, "compose %s", name);
 	return 0;
 }
@@ -701,33 +701,33 @@ compose_extension(struct sshbuf *msg, const char *name, const char *ver)
 static void
 process_init(void)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r;
 
 	if ((r = sshbuf_get_u32(iqueue, &version)) != 0)
 		fatal_fr(r, "parse");
 	verbose("received client version %u", version);
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_VERSION)) != 0 ||
-	    (r = sshbuf_put_u32(msg, SSH2_FILEXFER_VERSION)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_FXP_VERSION)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, SSH2_FILEXFER_VERSION)) != 0)
 		fatal_fr(r, "compose");
 
 	 /* extension advertisements */
-	compose_extension(msg, "posix-rename@openssh.com", "1");
-	compose_extension(msg, "statvfs@openssh.com", "2");
-	compose_extension(msg, "fstatvfs@openssh.com", "2");
-	compose_extension(msg, "hardlink@openssh.com", "1");
-	compose_extension(msg, "fsync@openssh.com", "1");
-	compose_extension(msg, "lsetstat@openssh.com", "1");
-	compose_extension(msg, "limits@openssh.com", "1");
-	compose_extension(msg, "expand-path@openssh.com", "1");
-	compose_extension(msg, "copy-data", "1");
-	compose_extension(msg, "home-directory", "1");
-	compose_extension(msg, "users-groups-by-id@openssh.com", "1");
+	compose_extension(मेनसाहे, "posix-rename@openssh.com", "1");
+	compose_extension(मेनसाहे, "statvfs@openssh.com", "2");
+	compose_extension(मेनसाहे, "fstatvfs@openssh.com", "2");
+	compose_extension(मेनसाहे, "hardlink@openssh.com", "1");
+	compose_extension(मेनसाहे, "fsync@openssh.com", "1");
+	compose_extension(मेनसाहे, "lsetstat@openssh.com", "1");
+	compose_extension(मेनसाहे, "limits@openssh.com", "1");
+	compose_extension(मेनसाहे, "expand-path@openssh.com", "1");
+	compose_extension(मेनसाहे, "copy-data", "1");
+	compose_extension(मेनसाहे, "home-directory", "1");
+	compose_extension(मेनसाहे, "users-groups-by-id@openssh.com", "1");
 
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_मेनसाहे(मेनसाहे);
+	sshbuf_free(मेनसाहे);
 }
 
 static void
@@ -1138,11 +1138,11 @@ process_readdir(uint32_t id)
 		struct stat st;
 		char *pathname;
 		Stat *stats;
-		int nstats = 10, count = 0, i;
+		int nstats = 10, बिलांग = 0, i;
 
 		stats = xcalloc(nstats, sizeof(Stat));
 		while ((dp = readdir(dirp)) != NULL) {
-			if (count >= nstats) {
+			if (बिलांग >= nstats) {
 				nstats *= 2;
 				stats = xreallocarray(stats, nstats, sizeof(Stat));
 			}
@@ -1152,19 +1152,19 @@ process_readdir(uint32_t id)
 			free(pathname);
 			if (r == -1)
 				continue;
-			stat_to_attrib(&st, &(stats[count].attrib));
-			stats[count].name = xstrdup(dp->d_name);
-			stats[count].long_name = ls_file(dp->d_name, &st,
+			stat_to_attrib(&st, &(stats[बिलांग].attrib));
+			stats[बिलांग].name = xstrdup(dp->d_name);
+			stats[बिलांग].long_name = ls_file(dp->d_name, &st,
 			    0, 0, NULL, NULL);
-			count++;
+			बिलांग++;
 			/* send up to 100 entries in one message */
 			/* XXX check packet size instead */
-			if (count == 100)
+			if (बिलांग == 100)
 				break;
 		}
-		if (count > 0) {
-			send_names(id, count, stats);
-			for (i = 0; i < count; i++) {
+		if (बिलांग > 0) {
+			send_names(id, बिलांग, stats);
+			for (i = 0; i < बिलांग; i++) {
 				free(stats[i].name);
 				free(stats[i].long_name);
 			}
@@ -1509,7 +1509,7 @@ process_extended_lsetstat(uint32_t id)
 static void
 process_extended_limits(uint32_t id)
 {
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	int r;
 	uint64_t nfiles = 0;
 #if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
@@ -1523,21 +1523,21 @@ process_extended_limits(uint32_t id)
 		nfiles = rlim.rlim_cur - 5; /* stdio(3) + syslog + spare */
 #endif
 
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, id)) != 0 ||
 	    /* max-packet-length */
-	    (r = sshbuf_put_u64(msg, SFTP_MAX_MSG_LENGTH)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, SFTP_MAX_मेनसाहे_LENGTH)) != 0 ||
 	    /* max-read-length */
-	    (r = sshbuf_put_u64(msg, SFTP_MAX_READ_LENGTH)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, SFTP_MAX_READ_LENGTH)) != 0 ||
 	    /* max-write-length */
-	    (r = sshbuf_put_u64(msg, SFTP_MAX_MSG_LENGTH - 1024)) != 0 ||
+	    (r = sshbuf_put_u64(मेनसाहे, SFTP_MAX_मेनसाहे_LENGTH - 1024)) != 0 ||
 	    /* max-open-handles */
-	    (r = sshbuf_put_u64(msg, nfiles)) != 0)
+	    (r = sshbuf_put_u64(मेनसाहे, nfiles)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_मेनसाहे(मेनसाहे);
+	sshbuf_free(मेनसाहे);
 }
 
 static void
@@ -1743,14 +1743,14 @@ process_extended_get_users_groups_by_id(uint32_t id)
 {
 	struct passwd *user_pw;
 	struct group *gr;
-	struct sshbuf *uids, *gids, *usernames, *groupnames, *msg;
+	struct sshbuf *uids, *gids, *usernames, *groupnames, *मेनसाहे;
 	int r;
 	u_int n, nusers = 0, ngroups = 0;
 	const char *name;
 
 	if ((usernames = sshbuf_new()) == NULL ||
 	    (groupnames = sshbuf_new()) == NULL ||
-	    (msg = sshbuf_new()) == NULL)
+	    (मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	if ((r = sshbuf_froms(iqueue, &uids)) != 0 ||
 	    (r = sshbuf_froms(iqueue, &gids)) != 0)
@@ -1779,18 +1779,18 @@ process_extended_get_users_groups_by_id(uint32_t id)
 	}
 	verbose("users-groups-by-id: %u users, %u groups", nusers, ngroups);
 
-	if ((r = sshbuf_put_u8(msg, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
-	    (r = sshbuf_put_u32(msg, id)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, usernames)) != 0 ||
-	    (r = sshbuf_put_stringb(msg, groupnames)) != 0)
+	if ((r = sshbuf_put_u8(मेनसाहे, SSH2_FXP_EXTENDED_REPLY)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, id)) != 0 ||
+	    (r = sshbuf_put_stringb(मेनसाहे, usernames)) != 0 ||
+	    (r = sshbuf_put_stringb(मेनसाहे, groupnames)) != 0)
 		fatal_fr(r, "compose");
-	send_msg(msg);
+	send_मेनसाहे(मेनसाहे);
 
 	sshbuf_free(uids);
 	sshbuf_free(gids);
 	sshbuf_free(usernames);
 	sshbuf_free(groupnames);
-	sshbuf_free(msg);
+	sshbuf_free(मेनसाहे);
 }
 
 static void
@@ -1819,7 +1819,7 @@ process_extended(uint32_t id)
 static void
 process(void)
 {
-	u_int msg_len;
+	u_int मेनसाहे_len;
 	u_int buf_len;
 	u_int consumed;
 	u_char type;
@@ -1831,13 +1831,13 @@ process(void)
 	if (buf_len < 5)
 		return;		/* Incomplete message. */
 	cp = sshbuf_ptr(iqueue);
-	msg_len = get_u32(cp);
-	if (msg_len > SFTP_MAX_MSG_LENGTH) {
+	मेनसाहे_len = get_u32(cp);
+	if (मेनसाहे_len > SFTP_MAX_मेनसाहे_LENGTH) {
 		error("bad message from %s local user %s",
 		    client_addr, pw->pw_name);
 		sftp_server_cleanup_exit(11);
 	}
-	if (buf_len < msg_len + 4)
+	if (buf_len < मेनसाहे_len + 4)
 		return;
 	if ((r = sshbuf_consume(iqueue, 4)) != 0)
 		fatal_fr(r, "consume");
@@ -1882,12 +1882,12 @@ process(void)
 		sftp_server_cleanup_exit(255);
 	}
 	consumed = buf_len - sshbuf_len(iqueue);
-	if (msg_len < consumed) {
-		error("msg_len %u < consumed %u", msg_len, consumed);
+	if (मेनसाहे_len < consumed) {
+		error("msg_len %u < consumed %u", मेनसाहे_len, consumed);
 		sftp_server_cleanup_exit(255);
 	}
-	if (msg_len > consumed &&
-	    (r = sshbuf_consume(iqueue, msg_len - consumed)) != 0)
+	if (मेनसाहे_len > consumed &&
+	    (r = sshbuf_consume(iqueue, मेनसाहे_len - consumed)) != 0)
 		fatal_fr(r, "consume");
 }
 
@@ -1962,12 +1962,12 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 			log_stderr = 1;
 			break;
 		case 'l':
-			log_level = log_level_number(optarg);
+			log_level = log_level_नुमेरो(optarg);
 			if (log_level == SYSLOG_LEVEL_NOT_SET)
 				error("Invalid log level \"%s\"", optarg);
 			break;
 		case 'f':
-			log_facility = log_facility_number(optarg);
+			log_facility = log_facility_नुमेरो(optarg);
 			if (log_facility == SYSLOG_FACILITY_NOT_SET)
 				error("Invalid log facility \"%s\"", optarg);
 			break;
@@ -2034,8 +2034,8 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 	out = STDOUT_FILENO;
 
 #ifdef HAVE_CYGWIN
-	setmode(in, O_BINARY);
-	setmode(out, O_BINARY);
+	setmode(in, O_दालावाहान);
+	setmode(out, O_दालावाहान);
 #endif
 
 	if ((iqueue = sshbuf_new()) == NULL)
@@ -2063,7 +2063,7 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 		 */
 		if ((r = sshbuf_check_reserve(iqueue, sizeof(buf))) == 0 &&
 		    (r = sshbuf_check_reserve(oqueue,
-		    SFTP_MAX_MSG_LENGTH)) == 0) {
+		    SFTP_MAX_मेनसाहे_LENGTH)) == 0) {
 			pfd[0].fd = in;
 			pfd[0].events = POLLIN;
 		}
@@ -2118,7 +2118,7 @@ sftp_server_main(int argc, char **argv, struct passwd *user_pw)
 		 * into the output buffer, otherwise stop processing input
 		 * and let the output queue drain.
 		 */
-		r = sshbuf_check_reserve(oqueue, SFTP_MAX_MSG_LENGTH);
+		r = sshbuf_check_reserve(oqueue, SFTP_MAX_मेनसाहे_LENGTH);
 		if (r == 0)
 			process();
 		else if (r != SSH_ERR_NO_BUFFER_SPACE)

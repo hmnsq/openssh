@@ -69,7 +69,7 @@ char *
 readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags)
 {
 	ssize_t nr;
-	int input, output, save_errno, i, need_restart;
+	int पासोक, output, save_errno, i, need_restart;
 	char ch, *p, *end;
 	struct termios term, oterm;
 	struct sigaction sa, savealrm, saveint, savehup, savequit, saveterm;
@@ -95,12 +95,12 @@ restart:
 # define O_CLOEXEC 0
 #endif
 	if ((flags & RPP_STDIN) ||
-	    (input = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
+	    (पासोक = output = open(_PATH_TTY, O_RDWR | O_CLOEXEC)) == -1) {
 		if (flags & RPP_REQUIRE_TTY) {
 			errno = ENOTTY;
 			return(NULL);
 		}
-		input = STDIN_FILENO;
+		पासोक = STDIN_FILENO;
 		output = STDERR_FILENO;
 	}
 
@@ -109,7 +109,7 @@ restart:
 	 * If we are using a tty but are not the foreground pgrp this will
 	 * generate SIGTTOU, so do it *before* installing the signal handlers.
 	 */
-	if (input != STDIN_FILENO && tcgetattr(input, &oterm) == 0) {
+	if (पासोक != STDIN_FILENO && tcgetattr(पासोक, &oterm) == 0) {
 		memcpy(&term, &oterm, sizeof(term));
 		if (!(flags & RPP_ECHO_ON))
 			term.c_lflag &= ~(ECHO | ECHONL);
@@ -117,7 +117,7 @@ restart:
 		if (term.c_cc[VSTATUS] != _POSIX_VDISABLE)
 			term.c_cc[VSTATUS] = _POSIX_VDISABLE;
 #endif
-		(void)tcsetattr(input, TCSAFLUSH|TCSASOFT, &term);
+		(void)tcsetattr(पासोक, TCSAFLUSH|TCSASOFT, &term);
 	} else {
 		memset(&term, 0, sizeof(term));
 		term.c_lflag |= ECHO;
@@ -147,7 +147,7 @@ restart:
 		(void)write(output, prompt, strlen(prompt));
 	end = buf + bufsiz - 1;
 	p = buf;
-	while ((nr = read(input, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
+	while ((nr = read(पासोक, &ch, 1)) == 1 && ch != '\n' && ch != '\r') {
 		if (p < end) {
 			if ((flags & RPP_SEVENBIT))
 				ch &= 0x7f;
@@ -170,7 +170,7 @@ restart:
 		const int sigttou = signo[SIGTTOU];
 
 		/* Ignore SIGTTOU generated when we are not the fg pgrp. */
-		while (tcsetattr(input, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
+		while (tcsetattr(पासोक, TCSAFLUSH|TCSASOFT, &oterm) == -1 &&
 		    errno == EINTR && !signo[SIGTTOU])
 			continue;
 		signo[SIGTTOU] = sigttou;
@@ -184,8 +184,8 @@ restart:
 	sigaction_except_ign(SIGTSTP, &savetstp, NULL);
 	sigaction_except_ign(SIGTTIN, &savettin, NULL);
 	sigaction_except_ign(SIGTTOU, &savettou, NULL);
-	if (input != STDIN_FILENO)
-		(void)close(input);
+	if (पासोक != STDIN_FILENO)
+		(void)close(पासोक);
 
 	/*
 	 * If we were interrupted by a signal, resend it to ourselves

@@ -221,7 +221,7 @@ ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 	OM_uint32 offset;
 	OM_uint32 oidl;
 
-	tok = ename->value;
+	tok = ename->हालागा;
 
 	/*
 	 * Check that ename is long enough for all of the fixed length
@@ -263,9 +263,9 @@ ssh_gssapi_parse_ename(Gssctxt *ctx, gss_buffer_t ename, gss_buffer_t name)
 	if (ename->length < offset+name->length)
 		return GSS_S_FAILURE;
 
-	name->value = xmalloc(name->length+1);
-	memcpy(name->value, tok+offset, name->length);
-	((char *)name->value)[name->length] = 0;
+	name->हालागा = xmalloc(name->length+1);
+	memcpy(name->हालागा, tok+offset, name->length);
+	((char *)name->हालागा)[name->length] = 0;
 
 	return GSS_S_COMPLETE;
 }
@@ -383,7 +383,7 @@ int
 ssh_gssapi_userok(char *user)
 {
 	if (gssapi_client.exportedname.length == 0 ||
-	    gssapi_client.exportedname.value == NULL) {
+	    gssapi_client.exportedname.हालागा == NULL) {
 		debug("No suitable client data");
 		return 0;
 	}
@@ -415,9 +415,9 @@ ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 const char *ssh_gssapi_displayname(void)
 {
 	if (gssapi_client.displayname.length == 0 ||
-	    gssapi_client.displayname.value == NULL)
+	    gssapi_client.displayname.हालागा == NULL)
 		return NULL;
-	return (char *)gssapi_client.displayname.value;
+	return (char *)gssapi_client.displayname.हालागा;
 }
 
 #endif

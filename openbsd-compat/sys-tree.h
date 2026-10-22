@@ -31,8 +31,8 @@
 # define __attribute__(x)
 #endif
 
-#ifndef	_SYS_TREE_H_
-#define	_SYS_TREE_H_
+#ifndef	SYS_पुनो_H
+#define	SYS_पुनो_H
 
 /*
  * This file defines data structures for different types of trees:
@@ -63,57 +63,57 @@
 
 #define SPLAY_HEAD(name, type)						\
 struct name {								\
-	struct type *sph_root; /* root of the tree */			\
+	struct type *sph_उगात; /* root of the tree */			\
 }
 
-#define SPLAY_INITIALIZER(root)						\
+#define SPLAY_INITIALIZER(उगात)						\
 	{ NULL }
 
-#define SPLAY_INIT(root) do {						\
-	(root)->sph_root = NULL;					\
+#define SPLAY_INIT(उगात) do {						\
+	(उगात)->sph_उगात = NULL;					\
 } while (0)
 
 #define SPLAY_ENTRY(type)						\
 struct {								\
-	struct type *spe_left; /* left element */			\
-	struct type *spe_right; /* right element */			\
+	struct type *spe_कालिवा; /* left element */			\
+	struct type *spe_कानान; /* right element */			\
 }
 
-#define SPLAY_LEFT(elm, field)		(elm)->field.spe_left
-#define SPLAY_RIGHT(elm, field)		(elm)->field.spe_right
-#define SPLAY_ROOT(head)		(head)->sph_root
-#define SPLAY_EMPTY(head)		(SPLAY_ROOT(head) == NULL)
+#define SPLAY_कालिवा(elm, field)		(elm)->field.spe_कालिवा
+#define SPLAY_कानान(elm, field)		(elm)->field.spe_कानान
+#define SPLAY_उगात(head)		(head)->sph_उगात
+#define SPLAY_EMPTY(head)		(SPLAY_उगात(head) == NULL)
 
 /* SPLAY_ROTATE_{LEFT,RIGHT} expect that tmp hold SPLAY_{RIGHT,LEFT} */
-#define SPLAY_ROTATE_RIGHT(head, tmp, field) do {			\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(tmp, field);	\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
+#define SPLAY_ROTATE_कानान(head, tmp, field) do {			\
+	SPLAY_कालिवा((head)->sph_उगात, field) = SPLAY_कानान(tmp, field);	\
+	SPLAY_कानान(tmp, field) = (head)->sph_उगात;			\
+	(head)->sph_उगात = tmp;						\
 } while (0)
 	
-#define SPLAY_ROTATE_LEFT(head, tmp, field) do {			\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(tmp, field);	\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
+#define SPLAY_ROTATE_कालिवा(head, tmp, field) do {			\
+	SPLAY_कानान((head)->sph_उगात, field) = SPLAY_कालिवा(tmp, field);	\
+	SPLAY_कालिवा(tmp, field) = (head)->sph_उगात;			\
+	(head)->sph_उगात = tmp;						\
 } while (0)
 
 #define SPLAY_LINKLEFT(head, tmp, field) do {				\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);		\
+	SPLAY_कालिवा(tmp, field) = (head)->sph_उगात;			\
+	tmp = (head)->sph_उगात;						\
+	(head)->sph_उगात = SPLAY_कालिवा((head)->sph_उगात, field);		\
 } while (0)
 
 #define SPLAY_LINKRIGHT(head, tmp, field) do {				\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);	\
+	SPLAY_कानान(tmp, field) = (head)->sph_उगात;			\
+	tmp = (head)->sph_उगात;						\
+	(head)->sph_उगात = SPLAY_कानान((head)->sph_उगात, field);	\
 } while (0)
 
-#define SPLAY_ASSEMBLE(head, node, left, right, field) do {		\
-	SPLAY_RIGHT(left, field) = SPLAY_LEFT((head)->sph_root, field);	\
-	SPLAY_LEFT(right, field) = SPLAY_RIGHT((head)->sph_root, field);\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(node, field);	\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(node, field);	\
+#define SPLAY_ASSEMBLE(head, बुहोल, कालिवा, कानान, field) do {		\
+	SPLAY_कानान(कालिवा, field) = SPLAY_कालिवा((head)->sph_उगात, field);	\
+	SPLAY_कालिवा(कानान, field) = SPLAY_कानान((head)->sph_उगात, field);\
+	SPLAY_कालिवा((head)->sph_उगात, field) = SPLAY_कानान(बुहोल, field);	\
+	SPLAY_कानान((head)->sph_उगात, field) = SPLAY_कालिवा(बुहोल, field);	\
 } while (0)
 
 /* Generates prototypes and inline functions */
@@ -131,8 +131,8 @@ name##_SPLAY_FIND(struct name *head, struct type *elm)			\
 	if (SPLAY_EMPTY(head))						\
 		return(NULL);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0)				\
-		return (head->sph_root);				\
+	if ((cmp)(elm, (head)->sph_उगात) == 0)				\
+		return (head->sph_उगात);				\
 	return (NULL);							\
 }									\
 									\
@@ -140,10 +140,10 @@ static __inline struct type *						\
 name##_SPLAY_NEXT(struct name *head, struct type *elm)			\
 {									\
 	name##_SPLAY(head, elm);					\
-	if (SPLAY_RIGHT(elm, field) != NULL) {				\
-		elm = SPLAY_RIGHT(elm, field);				\
-		while (SPLAY_LEFT(elm, field) != NULL) {		\
-			elm = SPLAY_LEFT(elm, field);			\
+	if (SPLAY_कानान(elm, field) != NULL) {				\
+		elm = SPLAY_कानान(elm, field);				\
+		while (SPLAY_कालिवा(elm, field) != NULL) {		\
+			elm = SPLAY_कालिवा(elm, field);			\
 		}							\
 	} else								\
 		elm = NULL;						\
@@ -154,7 +154,7 @@ static __inline struct type *						\
 name##_SPLAY_MIN_MAX(struct name *head, int val)			\
 {									\
 	name##_SPLAY_MINMAX(head, val);					\
-        return (SPLAY_ROOT(head));					\
+        return (SPLAY_उगात(head));					\
 }
 
 /* Main splay operation.
@@ -165,23 +165,23 @@ struct type *								\
 name##_SPLAY_INSERT(struct name *head, struct type *elm)		\
 {									\
     if (SPLAY_EMPTY(head)) {						\
-	    SPLAY_LEFT(elm, field) = SPLAY_RIGHT(elm, field) = NULL;	\
+	    SPLAY_कालिवा(elm, field) = SPLAY_कानान(elm, field) = NULL;	\
     } else {								\
 	    int __comp;							\
 	    name##_SPLAY(head, elm);					\
-	    __comp = (cmp)(elm, (head)->sph_root);			\
+	    __comp = (cmp)(elm, (head)->sph_उगात);			\
 	    if(__comp < 0) {						\
-		    SPLAY_LEFT(elm, field) = SPLAY_LEFT((head)->sph_root, field);\
-		    SPLAY_RIGHT(elm, field) = (head)->sph_root;		\
-		    SPLAY_LEFT((head)->sph_root, field) = NULL;		\
+		    SPLAY_कालिवा(elm, field) = SPLAY_कालिवा((head)->sph_उगात, field);\
+		    SPLAY_कानान(elm, field) = (head)->sph_उगात;		\
+		    SPLAY_कालिवा((head)->sph_उगात, field) = NULL;		\
 	    } else if (__comp > 0) {					\
-		    SPLAY_RIGHT(elm, field) = SPLAY_RIGHT((head)->sph_root, field);\
-		    SPLAY_LEFT(elm, field) = (head)->sph_root;		\
-		    SPLAY_RIGHT((head)->sph_root, field) = NULL;	\
+		    SPLAY_कानान(elm, field) = SPLAY_कानान((head)->sph_उगात, field);\
+		    SPLAY_कालिवा(elm, field) = (head)->sph_उगात;		\
+		    SPLAY_कानान((head)->sph_उगात, field) = NULL;	\
 	    } else							\
-		    return ((head)->sph_root);				\
+		    return ((head)->sph_उगात);				\
     }									\
-    (head)->sph_root = (elm);						\
+    (head)->sph_उगात = (elm);						\
     return (NULL);							\
 }									\
 									\
@@ -192,14 +192,14 @@ name##_SPLAY_REMOVE(struct name *head, struct type *elm)		\
 	if (SPLAY_EMPTY(head))						\
 		return (NULL);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0) {			\
-		if (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
-			(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);\
+	if ((cmp)(elm, (head)->sph_उगात) == 0) {			\
+		if (SPLAY_कालिवा((head)->sph_उगात, field) == NULL) {	\
+			(head)->sph_उगात = SPLAY_कानान((head)->sph_उगात, field);\
 		} else {						\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);\
+			__tmp = SPLAY_कानान((head)->sph_उगात, field);	\
+			(head)->sph_उगात = SPLAY_कालिवा((head)->sph_उगात, field);\
 			name##_SPLAY(head, elm);			\
-			SPLAY_RIGHT((head)->sph_root, field) = __tmp;	\
+			SPLAY_कानान((head)->sph_उगात, field) = __tmp;	\
 		}							\
 		return (elm);						\
 	}								\
@@ -212,27 +212,27 @@ name##_SPLAY(struct name *head, struct type *elm)			\
 	struct type __node, *__left, *__right, *__tmp;			\
 	int __comp;							\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_कालिवा(&__node, field) = SPLAY_कानान(&__node, field) = NULL;\
 	__left = __right = &__node;					\
 \
-	while ((__comp = (cmp)(elm, (head)->sph_root))) {		\
+	while ((__comp = (cmp)(elm, (head)->sph_उगात))) {		\
 		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
+			__tmp = SPLAY_कालिवा((head)->sph_उगात, field);	\
 			if (__tmp == NULL)				\
 				break;					\
 			if ((cmp)(elm, __tmp) < 0){			\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
+				SPLAY_ROTATE_कानान(head, __tmp, field);	\
+				if (SPLAY_कालिवा((head)->sph_उगात, field) == NULL)\
 					break;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
 		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
+			__tmp = SPLAY_कानान((head)->sph_उगात, field);	\
 			if (__tmp == NULL)				\
 				break;					\
 			if ((cmp)(elm, __tmp) > 0){			\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
+				SPLAY_ROTATE_कालिवा(head, __tmp, field);	\
+				if (SPLAY_कानान((head)->sph_उगात, field) == NULL)\
 					break;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
@@ -248,27 +248,27 @@ void name##_SPLAY_MINMAX(struct name *head, int __comp) \
 {									\
 	struct type __node, *__left, *__right, *__tmp;			\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_कालिवा(&__node, field) = SPLAY_कानान(&__node, field) = NULL;\
 	__left = __right = &__node;					\
 \
 	while (1) {							\
 		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
+			__tmp = SPLAY_कालिवा((head)->sph_उगात, field);	\
 			if (__tmp == NULL)				\
 				break;					\
 			if (__comp < 0){				\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
+				SPLAY_ROTATE_कानान(head, __tmp, field);	\
+				if (SPLAY_कालिवा((head)->sph_उगात, field) == NULL)\
 					break;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
 		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
+			__tmp = SPLAY_कानान((head)->sph_उगात, field);	\
 			if (__tmp == NULL)				\
 				break;					\
 			if (__comp > 0) {				\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
+				SPLAY_ROTATE_कालिवा(head, __tmp, field);	\
+				if (SPLAY_कानान((head)->sph_उगात, field) == NULL)\
 					break;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
@@ -280,7 +280,7 @@ void name##_SPLAY_MINMAX(struct name *head, int __comp) \
 #define SPLAY_NEGINF	-1
 #define SPLAY_INF	1
 
-#define SPLAY_INSERT(name, x, y)	name##_SPLAY_INSERT(x, y)
+#define SPLAY_इसिंगित(name, x, y)	name##_SPLAY_INSERT(x, y)
 #define SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
 #define SPLAY_FIND(name, x, y)		name##_SPLAY_FIND(x, y)
 #define SPLAY_NEXT(name, x, y)		name##_SPLAY_NEXT(x, y)
@@ -297,36 +297,36 @@ void name##_SPLAY_MINMAX(struct name *head, int __comp) \
 /* Macros that define a red-black tree */
 #define RB_HEAD(name, type)						\
 struct name {								\
-	struct type *rbh_root; /* root of the tree */			\
+	struct type *rbh_उगात; /* root of the tree */			\
 }
 
-#define RB_INITIALIZER(root)						\
+#define RB_INITIALIZER(उगात)						\
 	{ NULL }
 
-#define RB_INIT(root) do {						\
-	(root)->rbh_root = NULL;					\
+#define RB_INIT(उगात) do {						\
+	(उगात)->rbh_उगात = NULL;					\
 } while (0)
 
 #define RB_BLACK	0
 #define RB_RED		1
 #define RB_ENTRY(type)							\
 struct {								\
-	struct type *rbe_left;		/* left element */		\
-	struct type *rbe_right;		/* right element */		\
+	struct type *rbe_कालिवा;		/* left element */		\
+	struct type *rbe_कानान;		/* right element */		\
 	struct type *rbe_parent;	/* parent element */		\
 	int rbe_color;			/* node color */		\
 }
 
-#define RB_LEFT(elm, field)		(elm)->field.rbe_left
-#define RB_RIGHT(elm, field)		(elm)->field.rbe_right
+#define RB_कालिवा(elm, field)		(elm)->field.rbe_कालिवा
+#define RB_कानान(elm, field)		(elm)->field.rbe_कानान
 #define RB_PARENT(elm, field)		(elm)->field.rbe_parent
 #define RB_COLOR(elm, field)		(elm)->field.rbe_color
-#define RB_ROOT(head)			(head)->rbh_root
-#define RB_EMPTY(head)			(RB_ROOT(head) == NULL)
+#define RB_उगात(head)			(head)->rbh_उगात
+#define RB_EMPTY(head)			(RB_उगात(head) == NULL)
 
 #define RB_SET(elm, parent, field) do {					\
 	RB_PARENT(elm, field) = parent;					\
-	RB_LEFT(elm, field) = RB_RIGHT(elm, field) = NULL;		\
+	RB_कालिवा(elm, field) = RB_कानान(elm, field) = NULL;		\
 	RB_COLOR(elm, field) = RB_RED;					\
 } while (0)
 
@@ -339,40 +339,40 @@ struct {								\
 #define RB_AUGMENT(x)	do {} while (0)
 #endif
 
-#define RB_ROTATE_LEFT(head, elm, tmp, field) do {			\
-	(tmp) = RB_RIGHT(elm, field);					\
-	if ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
-		RB_PARENT(RB_LEFT(tmp, field), field) = (elm);		\
+#define RB_ROTATE_कालिवा(head, elm, tmp, field) do {			\
+	(tmp) = RB_कानान(elm, field);					\
+	if ((RB_कानान(elm, field) = RB_कालिवा(tmp, field))) {		\
+		RB_PARENT(RB_कालिवा(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
 	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
+		if ((elm) == RB_कालिवा(RB_PARENT(elm, field), field))	\
+			RB_कालिवा(RB_PARENT(elm, field), field) = (tmp);	\
 		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
+			RB_कानान(RB_PARENT(elm, field), field) = (tmp);	\
 	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_LEFT(tmp, field) = (elm);					\
+		(head)->rbh_उगात = (tmp);				\
+	RB_कालिवा(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
 	if ((RB_PARENT(tmp, field)))					\
 		RB_AUGMENT(RB_PARENT(tmp, field));			\
 } while (0)
 
-#define RB_ROTATE_RIGHT(head, elm, tmp, field) do {			\
-	(tmp) = RB_LEFT(elm, field);					\
-	if ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
-		RB_PARENT(RB_RIGHT(tmp, field), field) = (elm);		\
+#define RB_ROTATE_कानान(head, elm, tmp, field) do {			\
+	(tmp) = RB_कालिवा(elm, field);					\
+	if ((RB_कालिवा(elm, field) = RB_कानान(tmp, field))) {		\
+		RB_PARENT(RB_कानान(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
 	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
+		if ((elm) == RB_कालिवा(RB_PARENT(elm, field), field))	\
+			RB_कालिवा(RB_PARENT(elm, field), field) = (tmp);	\
 		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
+			RB_कानान(RB_PARENT(elm, field), field) = (tmp);	\
 	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_RIGHT(tmp, field) = (elm);					\
+		(head)->rbh_उगात = (tmp);				\
+	RB_कानान(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
 	if ((RB_PARENT(tmp, field)))					\
@@ -411,41 +411,41 @@ name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
 	while ((parent = RB_PARENT(elm, field)) &&			\
 	    RB_COLOR(parent, field) == RB_RED) {			\
 		gparent = RB_PARENT(parent, field);			\
-		if (parent == RB_LEFT(gparent, field)) {		\
-			tmp = RB_RIGHT(gparent, field);			\
+		if (parent == RB_कालिवा(gparent, field)) {		\
+			tmp = RB_कानान(gparent, field);			\
 			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
 				continue;				\
 			}						\
-			if (RB_RIGHT(parent, field) == elm) {		\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
+			if (RB_कानान(parent, field) == elm) {		\
+				RB_ROTATE_कालिवा(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
 			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_RIGHT(head, gparent, tmp, field);	\
+			RB_ROTATE_कानान(head, gparent, tmp, field);	\
 		} else {						\
-			tmp = RB_LEFT(gparent, field);			\
+			tmp = RB_कालिवा(gparent, field);			\
 			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
 				continue;				\
 			}						\
-			if (RB_LEFT(parent, field) == elm) {		\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
+			if (RB_कालिवा(parent, field) == elm) {		\
+				RB_ROTATE_कानान(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
 			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_LEFT(head, gparent, tmp, field);	\
+			RB_ROTATE_कालिवा(head, gparent, tmp, field);	\
 		}							\
 	}								\
-	RB_COLOR(head->rbh_root, field) = RB_BLACK;			\
+	RB_COLOR(head->rbh_उगात, field) = RB_BLACK;			\
 }									\
 									\
 attr void								\
@@ -453,69 +453,69 @@ name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm)
 {									\
 	struct type *tmp;						\
 	while ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
-	    elm != RB_ROOT(head)) {					\
-		if (RB_LEFT(parent, field) == elm) {			\
-			tmp = RB_RIGHT(parent, field);			\
+	    elm != RB_उगात(head)) {					\
+		if (RB_कालिवा(parent, field) == elm) {			\
+			tmp = RB_कानान(parent, field);			\
 			if (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = RB_RIGHT(parent, field);		\
+				RB_ROTATE_कालिवा(head, parent, tmp, field);\
+				tmp = RB_कानान(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
+			if ((RB_कालिवा(tmp, field) == NULL ||		\
+			    RB_COLOR(RB_कालिवा(tmp, field), field) == RB_BLACK) &&\
+			    (RB_कानान(tmp, field) == NULL ||		\
+			    RB_COLOR(RB_कानान(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
 			} else {					\
-				if (RB_RIGHT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK) {\
+				if (RB_कानान(tmp, field) == NULL ||	\
+				    RB_COLOR(RB_कानान(tmp, field), field) == RB_BLACK) {\
 					struct type *oleft;		\
-					if ((oleft = RB_LEFT(tmp, field)))\
+					if ((oleft = RB_कालिवा(tmp, field)))\
 						RB_COLOR(oleft, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_RIGHT(head, tmp, oleft, field);\
-					tmp = RB_RIGHT(parent, field);	\
+					RB_ROTATE_कानान(head, tmp, oleft, field);\
+					tmp = RB_कानान(parent, field);	\
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_RIGHT(tmp, field))		\
-					RB_COLOR(RB_RIGHT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
+				if (RB_कानान(tmp, field))		\
+					RB_COLOR(RB_कानान(tmp, field), field) = RB_BLACK;\
+				RB_ROTATE_कालिवा(head, parent, tmp, field);\
+				elm = RB_उगात(head);			\
 				break;					\
 			}						\
 		} else {						\
-			tmp = RB_LEFT(parent, field);			\
+			tmp = RB_कालिवा(parent, field);			\
 			if (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = RB_LEFT(parent, field);		\
+				RB_ROTATE_कानान(head, parent, tmp, field);\
+				tmp = RB_कालिवा(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
+			if ((RB_कालिवा(tmp, field) == NULL ||		\
+			    RB_COLOR(RB_कालिवा(tmp, field), field) == RB_BLACK) &&\
+			    (RB_कानान(tmp, field) == NULL ||		\
+			    RB_COLOR(RB_कानान(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
 			} else {					\
-				if (RB_LEFT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) {\
+				if (RB_कालिवा(tmp, field) == NULL ||	\
+				    RB_COLOR(RB_कालिवा(tmp, field), field) == RB_BLACK) {\
 					struct type *oright;		\
-					if ((oright = RB_RIGHT(tmp, field)))\
+					if ((oright = RB_कानान(tmp, field)))\
 						RB_COLOR(oright, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_LEFT(head, tmp, oright, field);\
-					tmp = RB_LEFT(parent, field);	\
+					RB_ROTATE_कालिवा(head, tmp, oright, field);\
+					tmp = RB_कालिवा(parent, field);	\
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_LEFT(tmp, field))		\
-					RB_COLOR(RB_LEFT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
+				if (RB_कालिवा(tmp, field))		\
+					RB_COLOR(RB_कालिवा(tmp, field), field) = RB_BLACK;\
+				RB_ROTATE_कानान(head, parent, tmp, field);\
+				elm = RB_उगात(head);			\
 				break;					\
 			}						\
 		}							\
@@ -529,47 +529,47 @@ name##_RB_REMOVE(struct name *head, struct type *elm)			\
 {									\
 	struct type *child, *parent, *old = elm;			\
 	int color;							\
-	if (RB_LEFT(elm, field) == NULL)				\
-		child = RB_RIGHT(elm, field);				\
-	else if (RB_RIGHT(elm, field) == NULL)				\
-		child = RB_LEFT(elm, field);				\
+	if (RB_कालिवा(elm, field) == NULL)				\
+		child = RB_कानान(elm, field);				\
+	else if (RB_कानान(elm, field) == NULL)				\
+		child = RB_कालिवा(elm, field);				\
 	else {								\
-		struct type *left;					\
-		elm = RB_RIGHT(elm, field);				\
-		while ((left = RB_LEFT(elm, field)))			\
-			elm = left;					\
-		child = RB_RIGHT(elm, field);				\
+		struct type *कालिवा;					\
+		elm = RB_कानान(elm, field);				\
+		while ((कालिवा = RB_कालिवा(elm, field)))			\
+			elm = कालिवा;					\
+		child = RB_कानान(elm, field);				\
 		parent = RB_PARENT(elm, field);				\
 		color = RB_COLOR(elm, field);				\
 		if (child)						\
 			RB_PARENT(child, field) = parent;		\
 		if (parent) {						\
-			if (RB_LEFT(parent, field) == elm)		\
-				RB_LEFT(parent, field) = child;		\
+			if (RB_कालिवा(parent, field) == elm)		\
+				RB_कालिवा(parent, field) = child;		\
 			else						\
-				RB_RIGHT(parent, field) = child;	\
+				RB_कानान(parent, field) = child;	\
 			RB_AUGMENT(parent);				\
 		} else							\
-			RB_ROOT(head) = child;				\
+			RB_उगात(head) = child;				\
 		if (RB_PARENT(elm, field) == old)			\
 			parent = elm;					\
 		(elm)->field = (old)->field;				\
 		if (RB_PARENT(old, field)) {				\
-			if (RB_LEFT(RB_PARENT(old, field), field) == old)\
-				RB_LEFT(RB_PARENT(old, field), field) = elm;\
+			if (RB_कालिवा(RB_PARENT(old, field), field) == old)\
+				RB_कालिवा(RB_PARENT(old, field), field) = elm;\
 			else						\
-				RB_RIGHT(RB_PARENT(old, field), field) = elm;\
+				RB_कानान(RB_PARENT(old, field), field) = elm;\
 			RB_AUGMENT(RB_PARENT(old, field));		\
 		} else							\
-			RB_ROOT(head) = elm;				\
-		RB_PARENT(RB_LEFT(old, field), field) = elm;		\
-		if (RB_RIGHT(old, field))				\
-			RB_PARENT(RB_RIGHT(old, field), field) = elm;	\
+			RB_उगात(head) = elm;				\
+		RB_PARENT(RB_कालिवा(old, field), field) = elm;		\
+		if (RB_कानान(old, field))				\
+			RB_PARENT(RB_कानान(old, field), field) = elm;	\
 		if (parent) {						\
-			left = parent;					\
+			कालिवा = parent;					\
 			do {						\
-				RB_AUGMENT(left);			\
-			} while ((left = RB_PARENT(left, field)));	\
+				RB_AUGMENT(कालिवा);			\
+			} while ((कालिवा = RB_PARENT(कालिवा, field)));	\
 		}							\
 		goto color;						\
 	}								\
@@ -578,13 +578,13 @@ name##_RB_REMOVE(struct name *head, struct type *elm)			\
 	if (child)							\
 		RB_PARENT(child, field) = parent;			\
 	if (parent) {							\
-		if (RB_LEFT(parent, field) == elm)			\
-			RB_LEFT(parent, field) = child;			\
+		if (RB_कालिवा(parent, field) == elm)			\
+			RB_कालिवा(parent, field) = child;			\
 		else							\
-			RB_RIGHT(parent, field) = child;		\
+			RB_कानान(parent, field) = child;		\
 		RB_AUGMENT(parent);					\
 	} else								\
-		RB_ROOT(head) = child;					\
+		RB_उगात(head) = child;					\
 color:									\
 	if (color == RB_BLACK)						\
 		name##_RB_REMOVE_COLOR(head, parent, child);		\
@@ -598,26 +598,26 @@ name##_RB_INSERT(struct name *head, struct type *elm)			\
 	struct type *tmp;						\
 	struct type *parent = NULL;					\
 	int comp = 0;							\
-	tmp = RB_ROOT(head);						\
+	tmp = RB_उगात(head);						\
 	while (tmp) {							\
 		parent = tmp;						\
 		comp = (cmp)(elm, parent);				\
 		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_कालिवा(tmp, field);			\
 		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
+			tmp = RB_कानान(tmp, field);			\
 		else							\
 			return (tmp);					\
 	}								\
 	RB_SET(elm, parent, field);					\
 	if (parent != NULL) {						\
 		if (comp < 0)						\
-			RB_LEFT(parent, field) = elm;			\
+			RB_कालिवा(parent, field) = elm;			\
 		else							\
-			RB_RIGHT(parent, field) = elm;			\
+			RB_कानान(parent, field) = elm;			\
 		RB_AUGMENT(parent);					\
 	} else								\
-		RB_ROOT(head) = elm;					\
+		RB_उगात(head) = elm;					\
 	name##_RB_INSERT_COLOR(head, elm);				\
 	return (NULL);							\
 }									\
@@ -626,14 +626,14 @@ name##_RB_INSERT(struct name *head, struct type *elm)			\
 attr struct type *							\
 name##_RB_FIND(struct name *head, struct type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
+	struct type *tmp = RB_उगात(head);				\
 	int comp;							\
 	while (tmp) {							\
 		comp = cmp(elm, tmp);					\
 		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_कालिवा(tmp, field);			\
 		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
+			tmp = RB_कानान(tmp, field);			\
 		else							\
 			return (tmp);					\
 	}								\
@@ -644,17 +644,17 @@ name##_RB_FIND(struct name *head, struct type *elm)			\
 attr struct type *							\
 name##_RB_NFIND(struct name *head, struct type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
+	struct type *tmp = RB_उगात(head);				\
 	struct type *res = NULL;					\
 	int comp;							\
 	while (tmp) {							\
 		comp = cmp(elm, tmp);					\
 		if (comp < 0) {						\
 			res = tmp;					\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_कालिवा(tmp, field);			\
 		}							\
 		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
+			tmp = RB_कानान(tmp, field);			\
 		else							\
 			return (tmp);					\
 	}								\
@@ -665,17 +665,17 @@ name##_RB_NFIND(struct name *head, struct type *elm)			\
 attr struct type *							\
 name##_RB_NEXT(struct type *elm)					\
 {									\
-	if (RB_RIGHT(elm, field)) {					\
-		elm = RB_RIGHT(elm, field);				\
-		while (RB_LEFT(elm, field))				\
-			elm = RB_LEFT(elm, field);			\
+	if (RB_कानान(elm, field)) {					\
+		elm = RB_कानान(elm, field);				\
+		while (RB_कालिवा(elm, field))				\
+			elm = RB_कालिवा(elm, field);			\
 	} else {							\
 		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_LEFT(RB_PARENT(elm, field), field)))	\
+		    (elm == RB_कालिवा(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
 		else {							\
 			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))\
+			    (elm == RB_कानान(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
@@ -687,17 +687,17 @@ name##_RB_NEXT(struct type *elm)					\
 attr struct type *							\
 name##_RB_PREV(struct type *elm)					\
 {									\
-	if (RB_LEFT(elm, field)) {					\
-		elm = RB_LEFT(elm, field);				\
-		while (RB_RIGHT(elm, field))				\
-			elm = RB_RIGHT(elm, field);			\
+	if (RB_कालिवा(elm, field)) {					\
+		elm = RB_कालिवा(elm, field);				\
+		while (RB_कानान(elm, field))				\
+			elm = RB_कानान(elm, field);			\
 	} else {							\
 		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))	\
+		    (elm == RB_कानान(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
 		else {							\
 			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_LEFT(RB_PARENT(elm, field), field)))\
+			    (elm == RB_कालिवा(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
@@ -708,14 +708,14 @@ name##_RB_PREV(struct type *elm)					\
 attr struct type *							\
 name##_RB_MINMAX(struct name *head, int val)				\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
+	struct type *tmp = RB_उगात(head);				\
 	struct type *parent = NULL;					\
 	while (tmp) {							\
 		parent = tmp;						\
 		if (val < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_कालिवा(tmp, field);			\
 		else							\
-			tmp = RB_RIGHT(tmp, field);			\
+			tmp = RB_कानान(tmp, field);			\
 	}								\
 	return (parent);						\
 }
@@ -723,7 +723,7 @@ name##_RB_MINMAX(struct name *head, int val)				\
 #define RB_NEGINF	-1
 #define RB_INF	1
 
-#define RB_INSERT(name, x, y)	name##_RB_INSERT(x, y)
+#define RB_इसिंगित(name, x, y)	name##_RB_INSERT(x, y)
 #define RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
 #define RB_FIND(name, x, y)	name##_RB_FIND(x, y)
 #define RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)

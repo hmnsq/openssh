@@ -51,27 +51,27 @@ ssh_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
 }
 
 static int
-ssh_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
+ssh_ed25519_serialize_public(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if (key->ed25519_pk == NULL)
+	if (सुसि->ed25519_pk == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0)
+	if ((r = sshbuf_put_string(b, सुसि->ed25519_pk, ED25519_PK_SZ)) != 0)
 		return r;
 
 	return 0;
 }
 
 static int
-ssh_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
+ssh_ed25519_serialize_private(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0 ||
-	    (r = sshbuf_put_string(b, key->ed25519_sk, ED25519_SK_SZ)) != 0)
+	if ((r = sshbuf_put_string(b, सुसि->ed25519_pk, ED25519_PK_SZ)) != 0 ||
+	    (r = sshbuf_put_string(b, सुसि->ed25519_sk, ED25519_SK_SZ)) != 0)
 		return r;
 
 	return 0;
@@ -101,7 +101,7 @@ ssh_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
 
 static int
 ssh_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	u_char *pk = NULL;
 	size_t len = 0;
@@ -113,19 +113,19 @@ ssh_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
 		freezero(pk, len);
 		return SSH_ERR_INVALID_FORMAT;
 	}
-	key->ed25519_pk = pk;
+	सुसि->ed25519_pk = pk;
 	return 0;
 }
 
 static int
 ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	int r;
 	size_t sklen = 0;
 	u_char *ed25519_sk = NULL;
 
-	if ((r = ssh_ed25519_deserialize_public(NULL, b, key)) != 0)
+	if ((r = ssh_ed25519_deserialize_public(NULL, b, सुसि)) != 0)
 		goto out;
 	if ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
 		goto out;
@@ -133,7 +133,7 @@ ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	key->ed25519_sk = ed25519_sk;
+	सुसि->ed25519_sk = ed25519_sk;
 	ed25519_sk = NULL; /* transferred */
 	/* success */
 	r = 0;
@@ -143,7 +143,7 @@ ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
 }
 
 static int
-ssh_ed25519_sign(struct sshkey *key,
+ssh_ed25519_sign(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
@@ -157,13 +157,13 @@ ssh_ed25519_sign(struct sshkey *key,
 	if (sigp != NULL)
 		*sigp = NULL;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ED25519 ||
-	    key->ed25519_sk == NULL)
+	if (सुसि == NULL ||
+	    sshkey_type_plain(सुसि->type) != सुसि_ED25519 ||
+	    सुसि->ed25519_sk == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
 
 	if ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
-	    key->ed25519_sk)) != 0 || siglen != sizeof(sig)) {
+	    सुसि->ed25519_sk)) != 0 || siglen != sizeof(sig)) {
 		r = SSH_ERR_INVALID_ARGUMENT; /* XXX better error? */
 		goto out;
 	}
@@ -220,7 +220,7 @@ ssh_ed25519_encode_store_sig(const u_char *sig, size_t slen,
 }
 
 static int
-ssh_ed25519_verify(const struct sshkey *key,
+ssh_ed25519_verify(const struct sshkey *सुसि,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
     struct sshkey_sig_details **detailsp)
@@ -231,9 +231,9 @@ ssh_ed25519_verify(const struct sshkey *key,
 	size_t len;
 	int r, ret;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ED25519 ||
-	    key->ed25519_pk == NULL ||
+	if (सुसि == NULL ||
+	    sshkey_type_plain(सुसि->type) != सुसि_ED25519 ||
+	    सुसि->ed25519_pk == NULL ||
 	    sig == NULL || siglen == 0)
 		return SSH_ERR_INVALID_ARGUMENT;
 
@@ -243,7 +243,7 @@ ssh_ed25519_verify(const struct sshkey *key,
 	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
 		goto out;
 	if (strcmp("ssh-ed25519", ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
+		r = SSH_ERR_सुसि_TYPE_MISMATCH;
 		goto out;
 	}
 	if (sshbuf_len(b) != 0) {
@@ -255,7 +255,7 @@ ssh_ed25519_verify(const struct sshkey *key,
 		goto out;
 	}
 	if ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
-	    key->ed25519_pk)) != 0) {
+	    सुसि->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
 	if (ret != 0) {
@@ -290,7 +290,7 @@ const struct sshkey_impl sshkey_ed25519_impl = {
 	/* .name = */		"ssh-ed25519",
 	/* .shortname = */	"ED25519",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519,
+	/* .type = */		सुसि_ED25519,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -302,7 +302,7 @@ const struct sshkey_impl sshkey_ed25519_cert_impl = {
 	/* .name = */		"ssh-ed25519-cert-v01@openssh.com",
 	/* .shortname = */	"ED25519-CERT",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519_CERT,
+	/* .type = */		सुसि_ED25519_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

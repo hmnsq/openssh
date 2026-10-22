@@ -59,10 +59,10 @@ sftp_realpath(const char *path, char *resolved)
 {
 	struct stat sb;
 	char *p, *q, *s;
-	size_t left_len, resolved_len;
+	size_t कालिवा_len, resolved_len;
 	unsigned symlinks;
 	int serrno, slen, mem_allocated;
-	char left[PATH_MAX], next_token[PATH_MAX], symlink[PATH_MAX];
+	char कालिवा[PATH_MAX], next_token[PATH_MAX], symlink[PATH_MAX];
 
 	if (path[0] == '\0') {
 		errno = ENOENT;
@@ -86,7 +86,7 @@ sftp_realpath(const char *path, char *resolved)
 		if (path[1] == '\0')
 			return (resolved);
 		resolved_len = 1;
-		left_len = strlcpy(left, path + 1, sizeof(left));
+		कालिवा_len = strlcpy(कालिवा, path + 1, sizeof(कालिवा));
 	} else {
 		if (getcwd(resolved, PATH_MAX) == NULL) {
 			if (mem_allocated)
@@ -96,9 +96,9 @@ sftp_realpath(const char *path, char *resolved)
 			return (NULL);
 		}
 		resolved_len = strlen(resolved);
-		left_len = strlcpy(left, path, sizeof(left));
+		कालिवा_len = strlcpy(कालिवा, path, sizeof(कालिवा));
 	}
-	if (left_len >= sizeof(left) || resolved_len >= PATH_MAX) {
+	if (कालिवा_len >= sizeof(कालिवा) || resolved_len >= PATH_MAX) {
 		errno = ENAMETOOLONG;
 		goto err;
 	}
@@ -106,22 +106,22 @@ sftp_realpath(const char *path, char *resolved)
 	/*
 	 * Iterate over path components in `left'.
 	 */
-	while (left_len != 0) {
+	while (कालिवा_len != 0) {
 		/*
 		 * Extract the next path component and adjust `left'
 		 * and its length.
 		 */
-		p = strchr(left, '/');
-		s = p ? p : left + left_len;
-		if (s - left >= (ptrdiff_t)sizeof(next_token)) {
+		p = strchr(कालिवा, '/');
+		s = p ? p : कालिवा + कालिवा_len;
+		if (s - कालिवा >= (ptrdiff_t)sizeof(next_token)) {
 			errno = ENAMETOOLONG;
 			goto err;
 		}
-		memcpy(next_token, left, s - left);
-		next_token[s - left] = '\0';
-		left_len -= s - left;
+		memcpy(next_token, कालिवा, s - कालिवा);
+		next_token[s - कालिवा] = '\0';
+		कालिवा_len -= s - कालिवा;
 		if (p != NULL)
-			memmove(left, s + 1, left_len + 1);
+			memmove(कालिवा, s + 1, कालिवा_len + 1);
 		if (resolved[resolved_len - 1] != '/') {
 			if (resolved_len + 1 >= PATH_MAX) {
 				errno = ENAMETOOLONG;
@@ -200,13 +200,13 @@ sftp_realpath(const char *path, char *resolved)
 					symlink[slen] = '/';
 					symlink[slen + 1] = 0;
 				}
-				left_len = strlcat(symlink, left, sizeof(symlink));
-				if (left_len >= sizeof(symlink)) {
+				कालिवा_len = strlcat(symlink, कालिवा, sizeof(symlink));
+				if (कालिवा_len >= sizeof(symlink)) {
 					errno = ENAMETOOLONG;
 					goto err;
 				}
 			}
-			left_len = strlcpy(left, symlink, sizeof(left));
+			कालिवा_len = strlcpy(कालिवा, symlink, sizeof(कालिवा));
 		}
 	}
 

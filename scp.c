@@ -126,8 +126,8 @@ int do_cmd(char *, char *, char *, int, int, char *, int *, int *, pid_t *);
 int do_cmd2(char *, char *, int, char *, int, int);
 
 /* Struct for addargs */
-arglist args;
-arglist remote_remote_args;
+arglist मगा_कातविरान;
+arglist remote_remote_मगा_कातविरान;
 
 /* Bandwidth limit */
 long long limit_kbps = 0;
@@ -216,11 +216,11 @@ do_local_cmd(arglist *a)
 	int status;
 	pid_t pid;
 
-	if (a->num == 0)
+	if (a->नुमेरो == 0)
 		fatal("do_local_cmd: no arguments");
 
 	if (verbose_mode) {
-		cp = argv_assemble(a->num, a->list);
+		cp = argv_assemble(a->नुमेरो, a->list);
 		fmprintf(stderr, "Executing: %s\n", cp);
 		free(cp);
 	}
@@ -314,22 +314,22 @@ do_cmd(char *program, char *host, char *remuser, int port, int subsystem,
 		close(sv[0]);
 		close(sv[1]);
 #endif
-		replacearg(&args, 0, "%s", program);
+		replacearg(&मगा_कातविरान, 0, "%s", program);
 		if (port != -1) {
-			addargs(&args, "-p");
-			addargs(&args, "%d", port);
+			addargs(&मगा_कातविरान, "-p");
+			addargs(&मगा_कातविरान, "%d", port);
 		}
 		if (remuser != NULL) {
-			addargs(&args, "-l");
-			addargs(&args, "%s", remuser);
+			addargs(&मगा_कातविरान, "-l");
+			addargs(&मगा_कातविरान, "%s", remuser);
 		}
 		if (subsystem)
-			addargs(&args, "-s");
-		addargs(&args, "--");
-		addargs(&args, "%s", host);
-		addargs(&args, "%s", cmd);
+			addargs(&मगा_कातविरान, "-s");
+		addargs(&मगा_कातविरान, "--");
+		addargs(&मगा_कातविरान, "%s", host);
+		addargs(&मगा_कातविरान, "%s", cmd);
 
-		execvp(program, args.list);
+		execvp(program, मगा_कातविरान.list);
 		perror(program);
 		_exit(1);
 	default:
@@ -380,21 +380,21 @@ do_cmd2(char *host, char *remuser, int port, char *cmd,
 		if (dup2(fdout, 1) == -1)
 			perror("dup2");
 
-		replacearg(&args, 0, "%s", ssh_program);
+		replacearg(&मगा_कातविरान, 0, "%s", ssh_program);
 		if (port != -1) {
-			addargs(&args, "-p");
-			addargs(&args, "%d", port);
+			addargs(&मगा_कातविरान, "-p");
+			addargs(&मगा_कातविरान, "%d", port);
 		}
 		if (remuser != NULL) {
-			addargs(&args, "-l");
-			addargs(&args, "%s", remuser);
+			addargs(&मगा_कातविरान, "-l");
+			addargs(&मगा_कातविरान, "%s", remuser);
 		}
-		addargs(&args, "-oBatchMode=yes");
-		addargs(&args, "--");
-		addargs(&args, "%s", host);
-		addargs(&args, "%s", cmd);
+		addargs(&मगा_कातविरान, "-oBatchMode=yes");
+		addargs(&मगा_कातविरान, "--");
+		addargs(&मगा_कातविरान, "%s", host);
+		addargs(&मगा_कातविरान, "%s", cmd);
 
-		execvp(ssh_program, args.list);
+		execvp(ssh_program, मगा_कातविरान.list);
 		perror(ssh_program);
 		exit(1);
 	} else if (pid == -1) {
@@ -475,16 +475,16 @@ main(int argc, char **argv)
 
 	log_init(argv0, log_level, SYSLOG_FACILITY_USER, 2);
 
-	memset(&args, '\0', sizeof(args));
-	memset(&remote_remote_args, '\0', sizeof(remote_remote_args));
-	args.list = remote_remote_args.list = NULL;
-	addargs(&args, "%s", ssh_program);
-	addargs(&args, "-x");
-	addargs(&args, "-oPermitLocalCommand=no");
-	addargs(&args, "-oClearAllForwardings=yes");
-	addargs(&args, "-oRemoteCommand=none");
-	addargs(&args, "-oRequestTTY=no");
-	addargs(&args, "-oControlMaster=no");
+	memset(&मगा_कातविरान, '\0', sizeof(मगा_कातविरान));
+	memset(&remote_remote_मगा_कातविरान, '\0', sizeof(remote_remote_मगा_कातविरान));
+	मगा_कातविरान.list = remote_remote_मगा_कातविरान.list = NULL;
+	addargs(&मगा_कातविरान, "%s", ssh_program);
+	addargs(&मगा_कातविरान, "-x");
+	addargs(&मगा_कातविरान, "-oPermitLocalCommand=no");
+	addargs(&मगा_कातविरान, "-oClearAllForwardings=yes");
+	addargs(&मगा_कातविरान, "-oRemoteCommand=none");
+	addargs(&मगा_कातविरान, "-oRequestTTY=no");
+	addargs(&मगा_कातविरान, "-oControlMaster=no");
 
 	fflag = Tflag = tflag = 0;
 	while ((ch = getopt(argc, argv,
@@ -501,8 +501,8 @@ main(int argc, char **argv)
 		case '4':
 		case '6':
 		case 'C':
-			addargs(&args, "-%c", ch);
-			addargs(&remote_remote_args, "-%c", ch);
+			addargs(&मगा_कातविरान, "-%c", ch);
+			addargs(&remote_remote_मगा_कातविरान, "-%c", ch);
 			break;
 		case 'D':
 			sftp_direct = optarg;
@@ -520,10 +520,10 @@ main(int argc, char **argv)
 		case 'i':
 		case 'F':
 		case 'J':
-			addargs(&remote_remote_args, "-%c", ch);
-			addargs(&remote_remote_args, "%s", optarg);
-			addargs(&args, "-%c", ch);
-			addargs(&args, "%s", optarg);
+			addargs(&remote_remote_मगा_कातविरान, "-%c", ch);
+			addargs(&remote_remote_मगा_कातविरान, "%s", optarg);
+			addargs(&मगा_कातविरान, "-%c", ch);
+			addargs(&मगा_कातविरान, "%s", optarg);
 			break;
 		case 'O':
 			mode = MODE_SCP;
@@ -537,8 +537,8 @@ main(int argc, char **argv)
 				fatal("bad port \"%s\"\n", optarg);
 			break;
 		case 'B':
-			addargs(&remote_remote_args, "-oBatchmode=yes");
-			addargs(&args, "-oBatchmode=yes");
+			addargs(&remote_remote_मगा_कातविरान, "-oBatchmode=yes");
+			addargs(&मगा_कातविरान, "-oBatchmode=yes");
 			break;
 		case 'l':
 			limit_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
@@ -558,8 +558,8 @@ main(int argc, char **argv)
 			ssh_program = xstrdup(optarg);
 			break;
 		case 'v':
-			addargs(&args, "-v");
-			addargs(&remote_remote_args, "-v");
+			addargs(&मगा_कातविरान, "-v");
+			addargs(&remote_remote_मगा_कातविरान, "-v");
 			if (verbose_mode == 0)
 				log_level = SYSLOG_LEVEL_DEBUG1;
 			else if (log_level < SYSLOG_LEVEL_DEBUG3)
@@ -567,8 +567,8 @@ main(int argc, char **argv)
 			verbose_mode = 1;
 			break;
 		case 'q':
-			addargs(&args, "-q");
-			addargs(&remote_remote_args, "-q");
+			addargs(&मगा_कातविरान, "-q");
+			addargs(&remote_remote_मगा_कातविरान, "-q");
 			showprogress = 0;
 			break;
 		case 'X':
@@ -609,7 +609,7 @@ main(int argc, char **argv)
 			iamremote = 1;
 			tflag = 1;
 #ifdef HAVE_CYGWIN
-			setmode(0, O_BINARY);
+			setmode(0, O_दालावाहान);
 #endif
 			break;
 		case 'T':
@@ -625,7 +625,7 @@ main(int argc, char **argv)
 	log_init(argv0, log_level, SYSLOG_FACILITY_USER, 2);
 
 	/* Do this last because we want the user to be able to override it */
-	addargs(&args, "-oForwardAgent=no");
+	addargs(&मगा_कातविरान, "-oForwardAgent=no");
 
 	if (iamremote)
 		mode = MODE_SCP;
@@ -1006,8 +1006,8 @@ do_sftp_connect(char *host, char *user, int port, char *sftp_direct,
 			return NULL;
 
 	} else {
-		freeargs(&args);
-		addargs(&args, "sftp-server");
+		freeargs(&मगा_कातविरान);
+		addargs(&मगा_कातविरान, "sftp-server");
 		if (do_cmd(sftp_direct, host, NULL, -1, 0, "sftp",
 		    reminp, remoutp, pidp) < 0)
 			return NULL;
@@ -1146,9 +1146,9 @@ toremote(int argc, char **argv, enum scp_mode_e mode, char *sftp_direct)
 			addargs(&alist, "-x");
 			addargs(&alist, "-oClearAllForwardings=yes");
 			addargs(&alist, "-n");
-			for (j = 0; j < remote_remote_args.num; j++) {
+			for (j = 0; j < remote_remote_मगा_कातविरान.नुमेरो; j++) {
 				addargs(&alist, "%s",
-				    remote_remote_args.list[j]);
+				    remote_remote_मगा_कातविरान.list[j]);
 			}
 
 			if (sport != -1) {
@@ -1660,7 +1660,7 @@ sink(int argc, char **argv, const char *src)
 	struct stat stb;
 	BUF *bp;
 	off_t i;
-	size_t j, count;
+	size_t j, बिलांग;
 	int amt, exists, first, ofd;
 	mode_t mode, omode, mask;
 	off_t size, statbytes;
@@ -1895,11 +1895,11 @@ bad:			run_err("%s: %s", np, strerror(errno));
 		if (showprogress)
 			start_progress_meter(curfile, size, &statbytes);
 		set_nonblock(remin);
-		for (count = i = 0; i < size; i += bp->cnt) {
+		for (बिलांग = i = 0; i < size; i += bp->cnt) {
 			amt = bp->cnt;
 			if (i + amt > size)
 				amt = size - i;
-			count += amt;
+			बिलांग += amt;
 			do {
 				j = atomicio6(read, remin, cp, amt,
 				    scpio, &statbytes);
@@ -1913,23 +1913,23 @@ bad:			run_err("%s: %s", np, strerror(errno));
 				cp += j;
 			} while (amt > 0);
 
-			if (count == bp->cnt) {
+			if (बिलांग == bp->cnt) {
 				/* Keep reading so we stay sync'd up. */
 				if (!wrerr) {
 					if (atomicio(vwrite, ofd, bp->buf,
-					    count) != count) {
+					    बिलांग) != बिलांग) {
 						note_err("%s: %s", np,
 						    strerror(errno));
 						wrerr = 1;
 					}
 				}
-				count = 0;
+				बिलांग = 0;
 				cp = bp->buf;
 			}
 		}
 		unset_nonblock(remin);
-		if (count != 0 && !wrerr &&
-		    atomicio(vwrite, ofd, bp->buf, count) != count) {
+		if (बिलांग != 0 && !wrerr &&
+		    atomicio(vwrite, ofd, bp->buf, बिलांग) != बिलांग) {
 			note_err("%s: %s", np, strerror(errno));
 			wrerr = 1;
 		}

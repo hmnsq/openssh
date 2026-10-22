@@ -87,9 +87,9 @@ auth_authorise_keyopts(struct passwd *pw, struct sshauthopt *opts,
 	}
 
 	/* Perform from= checks */
-	if (opts->required_from_host_keys != NULL) {
+	if (opts->required_from_host_मगा_सुसि != NULL) {
 		switch (match_host_and_ip(remote_host, remote_ip,
-		    opts->required_from_host_keys )) {
+		    opts->required_from_host_मगा_सुसि )) {
 		case 1:
 			/* Host name matches. */
 			break;
@@ -103,7 +103,7 @@ auth_authorise_keyopts(struct passwd *pw, struct sshauthopt *opts,
 			    "correct key but not from a permitted "
 			    "host (host=%.200s, ip=%.200s, required=%.200s).",
 			    loc, pw->pw_name, remote_host, remote_ip,
-			    opts->required_from_host_keys);
+			    opts->required_from_host_मगा_सुसि);
 			auth_debug_add("%s: Your host '%.200s' is not "
 			    "permitted to use this key for login.",
 			    loc, remote_host);
@@ -173,11 +173,11 @@ match_principals_option(const char *principal_list, struct sshkey_cert *cert)
  * log preamble for file/line information.
  */
 int
-auth_check_principals_line(char *cp, const struct sshkey_cert *cert,
+auth_check_principals_लिन्या(char *cp, const struct sshkey_cert *cert,
     const char *loc, struct sshauthopt **authoptsp)
 {
 	u_int i, found = 0;
-	char *ep, *line_opts;
+	char *ep, *लिन्या_opts;
 	const char *reason = NULL;
 	struct sshauthopt *opts = NULL;
 
@@ -193,15 +193,15 @@ auth_check_principals_line(char *cp, const struct sshkey_cert *cert,
 	 * If the line has internal whitespace then assume it has
 	 * key options.
 	 */
-	line_opts = NULL;
+	लिन्या_opts = NULL;
 	if ((ep = strrchr(cp, ' ')) != NULL ||
 	    (ep = strrchr(cp, '\t')) != NULL) {
 		for (; *ep == ' ' || *ep == '\t'; ep++)
 			;
-		line_opts = cp;
+		लिन्या_opts = cp;
 		cp = ep;
 	}
-	if ((opts = sshauthopt_parse(line_opts, &reason)) == NULL) {
+	if ((opts = sshauthopt_parse(लिन्या_opts, &reason)) == NULL) {
 		debug("%s: bad principals options: %s", loc, reason);
 		auth_debug_add("%s: bad principals options: %s", loc, reason);
 		return -1;
@@ -226,7 +226,7 @@ int
 auth_process_principals(FILE *f, const char *file,
     const struct sshkey_cert *cert, struct sshauthopt **authoptsp)
 {
-	char loc[256], *line = NULL, *cp, *ep;
+	char loc[256], *लिन्या = NULL, *cp, *ep;
 	size_t linesize = 0;
 	u_long linenum = 0, nonblank = 0;
 	u_int found_principal = 0;
@@ -234,14 +234,14 @@ auth_process_principals(FILE *f, const char *file,
 	if (authoptsp != NULL)
 		*authoptsp = NULL;
 
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		linenum++;
 		/* Always consume entire input */
 		if (found_principal)
 			continue;
 
 		/* Skip leading whitespace. */
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		for (cp = लिन्या; *cp == ' ' || *cp == '\t'; cp++)
 			;
 		/* Skip blank and comment lines. */
 		if ((ep = strchr(cp, '#')) != NULL)
@@ -251,11 +251,11 @@ auth_process_principals(FILE *f, const char *file,
 
 		nonblank++;
 		snprintf(loc, sizeof(loc), "%.200s:%lu", file, linenum);
-		if (auth_check_principals_line(cp, cert, loc, authoptsp) == 0)
+		if (auth_check_principals_लिन्या(cp, cert, loc, authoptsp) == 0)
 			found_principal = 1;
 	}
 	debug2_f("%s: processed %lu/%lu lines", file, nonblank, linenum);
-	free(line);
+	free(लिन्या);
 	return found_principal;
 }
 
@@ -265,14 +265,14 @@ auth_process_principals(FILE *f, const char *file,
  * on success. "loc" is used as file/line location in log messages.
  */
 int
-auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
+auth_check_authkey_लिन्या(struct passwd *pw, struct sshkey *सुसि,
     char *cp, const char *remote_ip, const char *remote_host, const char *loc,
     struct sshauthopt **authoptsp)
 {
-	int want_keytype = sshkey_is_cert(key) ? KEY_UNSPEC : key->type;
+	int want_keytype = sshkey_is_cert(सुसि) ? सुसि_UNSPEC : सुसि->type;
 	struct sshkey *found = NULL;
 	struct sshauthopt *keyopts = NULL, *certopts = NULL, *finalopts = NULL;
-	char *key_options = NULL, *fp = NULL;
+	char *सुसि_options = NULL, *fp = NULL;
 	const char *reason = NULL;
 	int ret = -1;
 
@@ -289,7 +289,7 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
 	if (sshkey_read(found, &cp) != 0) {
 		/* no key?  check for options */
 		debug2("%s: check options: '%s'", loc, cp);
-		key_options = cp;
+		सुसि_options = cp;
 		if (sshkey_advance_past_options(&cp) != 0) {
 			reason = "invalid key option string";
 			goto fail_reason;
@@ -302,20 +302,20 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
 		}
 	}
 	/* Parse key options now; we need to know if this is a CA key */
-	if ((keyopts = sshauthopt_parse(key_options, &reason)) == NULL) {
+	if ((keyopts = sshauthopt_parse(सुसि_options, &reason)) == NULL) {
 		debug("%s: bad key options: %s", loc, reason);
 		auth_debug_add("%s: bad key options: %s", loc, reason);
 		goto out;
 	}
 	/* Ignore keys that don't match or incorrectly marked as CAs */
-	if (sshkey_is_cert(key)) {
+	if (sshkey_is_cert(सुसि)) {
 		/* Certificate; check signature key against CA */
-		if (!sshkey_equal(found, key->cert->signature_key) ||
+		if (!sshkey_equal(found, सुसि->cert->signature_सुसि) ||
 		    !keyopts->cert_authority)
 			goto out;
 	} else {
 		/* Plain key: check it against key found in file */
-		if (!sshkey_equal(found, key) || keyopts->cert_authority)
+		if (!sshkey_equal(found, सुसि) || keyopts->cert_authority)
 			goto out;
 	}
 
@@ -325,15 +325,15 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
 		fatal_f("fingerprint failed");
 
 	debug("%s: matching %s found: %s %s", loc,
-	    sshkey_is_cert(key) ? "CA" : "key", sshkey_type(found), fp);
+	    sshkey_is_cert(सुसि) ? "CA" : "key", sshkey_type(found), fp);
 
 	if (auth_authorise_keyopts(pw, keyopts,
-	    sshkey_is_cert(key), remote_ip, remote_host, loc) != 0) {
+	    sshkey_is_cert(सुसि), remote_ip, remote_host, loc) != 0) {
 		reason = "Refused by key options";
 		goto fail_reason;
 	}
 	/* That's all we need for plain keys. */
-	if (!sshkey_is_cert(key)) {
+	if (!sshkey_is_cert(सुसि)) {
 		verbose("Accepted key %s %s found at %s",
 		    sshkey_type(found), fp, loc);
 		finalopts = keyopts;
@@ -346,7 +346,7 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
 	 */
 
 	/* Parse and check options present in certificate */
-	if ((certopts = sshauthopt_from_cert(key)) == NULL) {
+	if ((certopts = sshauthopt_from_cert(सुसि)) == NULL) {
 		reason = "Invalid certificate options";
 		goto cert_fail_reason;
 	}
@@ -364,19 +364,19 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
 	 * their username in the certificate principals list.
 	 */
 	if (keyopts->cert_principals != NULL &&
-	    !match_principals_option(keyopts->cert_principals, key->cert)) {
+	    !match_principals_option(keyopts->cert_principals, सुसि->cert)) {
 		reason = "Certificate does not contain an authorized principal";
 		goto cert_fail_reason;
 	}
-	if (sshkey_cert_check_authority_now(key, 0, 0,
+	if (sshkey_cert_check_authority_now(सुसि, 0, 0,
 	    keyopts->cert_principals == NULL ? pw->pw_name : NULL,
 	    &reason) != 0)
 		goto cert_fail_reason;
 
 	verbose("Accepted certificate ID \"%s\" (serial %llu) "
 	    "signed by CA %s %s found at %s",
-	    key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
+	    सुसि->cert->सुसि_id,
+	    (unsigned long long)सुसि->cert->serial,
 	    sshkey_type(found), fp, loc);
 
  success:
@@ -392,11 +392,11 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
 
  cert_fail_reason:
 	error("Refusing certificate ID \"%s\" serial=%llu "
-	    "signed by %s CA %s via %s: %s", key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
-	    sshkey_type(key->cert->signature_key), fp, loc, reason);
+	    "signed by %s CA %s via %s: %s", सुसि->cert->सुसि_id,
+	    (unsigned long long)सुसि->cert->serial,
+	    sshkey_type(सुसि->cert->signature_सुसि), fp, loc, reason);
 	auth_debug_add("Refused Certificate ID \"%s\" serial=%llu: %s",
-	    key->cert->key_id, (unsigned long long)key->cert->serial, reason);
+	    सुसि->cert->सुसि_id, (unsigned long long)सुसि->cert->serial, reason);
 	goto out;
 
  fail_reason:
@@ -417,45 +417,45 @@ auth_check_authkey_line(struct passwd *pw, struct sshkey *key,
  */
 int
 auth_check_authkeys_file(struct passwd *pw, FILE *f, char *file,
-    struct sshkey *key, const char *remote_ip,
+    struct sshkey *सुसि, const char *remote_ip,
     const char *remote_host, struct sshauthopt **authoptsp)
 {
-	char *cp, *line = NULL, loc[256];
+	char *cp, *लिन्या = NULL, loc[256];
 	size_t linesize = 0;
-	int found_key = 0;
+	int found_सुसि = 0;
 	u_long linenum = 0, nonblank = 0;
 
 	if (authoptsp != NULL)
 		*authoptsp = NULL;
 
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		linenum++;
 		/* Always consume entire file */
-		if (found_key)
+		if (found_सुसि)
 			continue;
 
 		/* Skip leading whitespace, empty and comment lines. */
-		cp = line;
+		cp = लिन्या;
 		skip_space(&cp);
 		if (!*cp || *cp == '\n' || *cp == '#')
 			continue;
 
 		nonblank++;
 		snprintf(loc, sizeof(loc), "%.200s:%lu", file, linenum);
-		if (auth_check_authkey_line(pw, key, cp,
+		if (auth_check_authkey_लिन्या(pw, सुसि, cp,
 		    remote_ip, remote_host, loc, authoptsp) == 0)
-			found_key = 1;
+			found_सुसि = 1;
 	}
-	free(line);
+	free(लिन्या);
 	debug2_f("%s: processed %lu/%lu lines", file, nonblank, linenum);
-	return found_key;
+	return found_सुसि;
 }
 
 static FILE *
 auth_openfile(const char *file, struct passwd *pw, int strict_modes,
     int log_missing, char *file_type)
 {
-	char line[1024];
+	char लिन्या[1024];
 	struct stat st;
 	int fd;
 	FILE *f;
@@ -487,10 +487,10 @@ auth_openfile(const char *file, struct passwd *pw, int strict_modes,
 		return NULL;
 	}
 	if (strict_modes &&
-	    safe_path_fd(fileno(f), file, pw, line, sizeof(line)) != 0) {
+	    safe_path_fd(fileno(f), file, pw, लिन्या, sizeof(लिन्या)) != 0) {
 		fclose(f);
-		logit("Authentication refused: %s", line);
-		auth_debug_add("Ignored %s: %s", file_type, line);
+		logit("Authentication refused: %s", लिन्या);
+		auth_debug_add("Ignored %s: %s", file_type, लिन्या);
 		return NULL;
 	}
 

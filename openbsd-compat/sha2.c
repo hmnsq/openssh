@@ -204,7 +204,7 @@ static const u_int32_t K256[64] = {
 };
 
 /* Initial hash value H for SHA-256: */
-static const u_int32_t sha256_initial_hash_value[8] = {
+static const u_int32_t sha256_initial_hash_हालागा[8] = {
 	0x6a09e667UL,
 	0xbb67ae85UL,
 	0x3c6ef372UL,
@@ -260,7 +260,7 @@ static const u_int64_t K512[80] = {
 };
 
 /* Initial hash value H for SHA-512 */
-static const u_int64_t sha512_initial_hash_value[8] = {
+static const u_int64_t sha512_initial_hash_हालागा[8] = {
 	0x6a09e667f3bcc908ULL,
 	0xbb67ae8584caa73bULL,
 	0x3c6ef372fe94f82bULL,
@@ -274,7 +274,7 @@ static const u_int64_t sha512_initial_hash_value[8] = {
 #if !defined(SHA2_SMALL)
 #if 0
 /* Initial hash value H for SHA-224: */
-static const u_int32_t sha224_initial_hash_value[8] = {
+static const u_int32_t sha224_initial_hash_हालागा[8] = {
 	0xc1059ed8UL,
 	0x367cd507UL,
 	0x3070dd17UL,
@@ -287,7 +287,7 @@ static const u_int32_t sha224_initial_hash_value[8] = {
 #endif /* 0 */
 
 /* Initial hash value H for SHA-384 */
-static const u_int64_t sha384_initial_hash_value[8] = {
+static const u_int64_t sha384_initial_hash_हालागा[8] = {
 	0xcbbb9d5dc1059ed8ULL,
 	0x629a292a367cd507ULL,
 	0x9159015a3070dd17ULL,
@@ -300,7 +300,7 @@ static const u_int64_t sha384_initial_hash_value[8] = {
 
 #if 0
 /* Initial hash value H for SHA-512-256 */
-static const u_int64_t sha512_256_initial_hash_value[8] = {
+static const u_int64_t sha512_256_initial_hash_हालागा[8] = {
 	0x22312194fc2bf72cULL,
 	0x9f555fa3c84c64c2ULL,
 	0x2393b86b6f53b151ULL,
@@ -315,8 +315,8 @@ static const u_int64_t sha512_256_initial_hash_value[8] = {
 void
 SHA224Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st32, sha224_initial_hash_value,
-	    sizeof(sha224_initial_hash_value));
+	memcpy(context->state.st32, sha224_initial_hash_हालागा,
+	    sizeof(sha224_initial_hash_हालागा));
 	memset(context->buffer, 0, sizeof(context->buffer));
 	context->bitcount[0] = 0;
 }
@@ -353,8 +353,8 @@ DEF_WEAK(SHA224Final);
 void
 SHA256Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st32, sha256_initial_hash_value,
-	    sizeof(sha256_initial_hash_value));
+	memcpy(context->state.st32, sha256_initial_hash_हालागा,
+	    sizeof(sha256_initial_hash_हालागा));
 	memset(context->buffer, 0, sizeof(context->buffer));
 	context->bitcount[0] = 0;
 }
@@ -633,8 +633,8 @@ DEF_WEAK(SHA256Final);
 void
 SHA512Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st64, sha512_initial_hash_value,
-	    sizeof(sha512_initial_hash_value));
+	memcpy(context->state.st64, sha512_initial_hash_हालागा,
+	    sizeof(sha512_initial_hash_हालागा));
 	memset(context->buffer, 0, sizeof(context->buffer));
 	context->bitcount[0] = context->bitcount[1] =  0;
 }
@@ -915,8 +915,8 @@ DEF_WEAK(SHA512Final);
 void
 SHA384Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st64, sha384_initial_hash_value,
-	    sizeof(sha384_initial_hash_value));
+	memcpy(context->state.st64, sha384_initial_hash_हालागा,
+	    sizeof(sha384_initial_hash_हालागा));
 	memset(context->buffer, 0, sizeof(context->buffer));
 	context->bitcount[0] = context->bitcount[1] = 0;
 }
@@ -972,8 +972,8 @@ DEF_WEAK(SHA384Final);
 void
 SHA512_256Init(SHA2_CTX *context)
 {
-	memcpy(context->state.st64, sha512_256_initial_hash_value,
-	    sizeof(sha512_256_initial_hash_value));
+	memcpy(context->state.st64, sha512_256_initial_hash_हालागा,
+	    sizeof(sha512_256_initial_hash_हालागा));
 	memset(context->buffer, 0, sizeof(context->buffer));
 	context->bitcount[0] = context->bitcount[1] = 0;
 }

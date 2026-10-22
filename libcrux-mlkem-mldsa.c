@@ -53,7 +53,7 @@ crypto_kem_mlkem768_keypair_seeded(uint8_t pk[crypto_kem_mlkem768_PUBLICKEYBYTES
 	libcrux_mlkem768_keypair_rnd rnd;
 
 	memcpy(rnd.data, seed, sizeof(rnd.data));
-	keypair = libcrux_ml_kem_mlkem768_portable_generate_key_pair(rnd);
+	keypair = libcrux_ml_kem_mlkem768_portable_generate_सुसि_pair(rnd);
 	memcpy(pk, keypair.pk.data, crypto_kem_mlkem768_PUBLICKEYBYTES);
 	memcpy(sk, keypair.sk.data, crypto_kem_mlkem768_SECRETKEYBYTES);
 
@@ -87,7 +87,7 @@ crypto_kem_mlkem768_enc_seeded(uint8_t ct[crypto_kem_mlkem768_CIPHERTEXTBYTES],
 	libcrux_mlkem768_enc_rnd rnd;
 
 	memcpy(pk_internal.data, pk, crypto_kem_mlkem768_PUBLICKEYBYTES);
-	if (!libcrux_ml_kem_mlkem768_portable_validate_public_key(&pk_internal))
+	if (!libcrux_ml_kem_mlkem768_portable_validate_public_सुसि(&pk_internal))
 		return -1;
 	memcpy(rnd.data, seed, sizeof(rnd.data));
 	enc = libcrux_ml_kem_mlkem768_portable_encapsulate(&pk_internal, rnd);
@@ -143,9 +143,9 @@ crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
 	libcrux_mldsa44_keypair keypair;
 
 	memcpy(rnd.data, seed, sizeof(rnd.data));
-	keypair = libcrux_ml_dsa_ml_dsa_44_portable_generate_key_pair(rnd);
-	memcpy(pk, keypair.verification_key.data, MLDSA44_PUBLICKEYBYTES);
-	memcpy(sk, keypair.signing_key.data, MLDSA44_SECRETKEYBYTES);
+	keypair = libcrux_ml_dsa_ml_dsa_44_portable_generate_सुसि_pair(rnd);
+	memcpy(pk, keypair.verification_सुसि.data, MLDSA44_PUBLICKEYBYTES);
+	memcpy(sk, keypair.signing_सुसि.data, MLDSA44_SECRETKEYBYTES);
 
 	explicit_bzero(&keypair, sizeof(keypair));
 	explicit_bzero(&rnd, sizeof(rnd));
@@ -154,7 +154,7 @@ crypto_sign_mldsa44_keypair_seeded(uint8_t pk[MLDSA44_PUBLICKEYBYTES],
 
 int
 crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA44_SECRETKEYBYTES])
 {
@@ -162,21 +162,21 @@ crypto_sign_mldsa44(uint8_t sig[MLDSA44_SIGBYTES],
 	int r;
 
 	arc4random_buf(rnd, sizeof(rnd));
-	r = crypto_sign_mldsa44_seeded(sig, msg, msglen, ctx, ctxlen, sk, rnd);
+	r = crypto_sign_mldsa44_seeded(sig, मेनसाहे, msglen, ctx, ctxlen, sk, rnd);
 	explicit_bzero(rnd, sizeof(rnd));
 	return r;
 }
 
 int
 crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA44_SECRETKEYBYTES],
     const uint8_t seed[MLDSA44_SEEDBYTES])
 {
 	libcrux_mldsa44_sign_rnd rnd;
 	libcrux_mldsa44_sk sk_internal;
-	libcrux_mldsa44_message message = { msg, msglen };
+	libcrux_mldsa44_message message = { मेनसाहे, msglen };
 	libcrux_mldsa44_message context = { ctx, ctxlen };
 	libcrux_mldsa44_sign_result res;
 	int r = -1;
@@ -198,13 +198,13 @@ crypto_sign_mldsa44_seeded(uint8_t sig[MLDSA44_SIGBYTES],
 
 int
 crypto_sign_mldsa44_verify(const uint8_t sig[MLDSA44_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA44_PUBLICKEYBYTES])
 {
 	libcrux_mldsa44_pk pk_internal;
 	libcrux_mldsa44_signature sig_internal;
-	libcrux_mldsa44_message message = { msg, msglen };
+	libcrux_mldsa44_message message = { मेनसाहे, msglen };
 	libcrux_mldsa44_message context = { ctx, ctxlen };
 	libcrux_mldsa44_verify_result res;
 
@@ -240,9 +240,9 @@ crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
 	libcrux_mldsa65_keypair keypair;
 
 	memcpy(rnd.data, seed, sizeof(rnd.data));
-	keypair = libcrux_ml_dsa_ml_dsa_65_portable_generate_key_pair(rnd);
-	memcpy(pk, keypair.verification_key.data, MLDSA65_PUBLICKEYBYTES);
-	memcpy(sk, keypair.signing_key.data, MLDSA65_SECRETKEYBYTES);
+	keypair = libcrux_ml_dsa_ml_dsa_65_portable_generate_सुसि_pair(rnd);
+	memcpy(pk, keypair.verification_सुसि.data, MLDSA65_PUBLICKEYBYTES);
+	memcpy(sk, keypair.signing_सुसि.data, MLDSA65_SECRETKEYBYTES);
 
 	explicit_bzero(&keypair, sizeof(keypair));
 	explicit_bzero(&rnd, sizeof(rnd));
@@ -251,7 +251,7 @@ crypto_sign_mldsa65_keypair_seeded(uint8_t pk[MLDSA65_PUBLICKEYBYTES],
 
 int
 crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA65_SECRETKEYBYTES])
 {
@@ -259,21 +259,21 @@ crypto_sign_mldsa65(uint8_t sig[MLDSA65_SIGBYTES],
 	int r;
 
 	arc4random_buf(rnd, sizeof(rnd));
-	r = crypto_sign_mldsa65_seeded(sig, msg, msglen, ctx, ctxlen, sk, rnd);
+	r = crypto_sign_mldsa65_seeded(sig, मेनसाहे, msglen, ctx, ctxlen, sk, rnd);
 	explicit_bzero(rnd, sizeof(rnd));
 	return r;
 }
 
 int
 crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA65_SECRETKEYBYTES],
     const uint8_t seed[MLDSA65_SEEDBYTES])
 {
 	libcrux_mldsa65_sign_rnd rnd;
 	libcrux_mldsa65_sk sk_internal;
-	libcrux_mldsa65_message message = { msg, msglen };
+	libcrux_mldsa65_message message = { मेनसाहे, msglen };
 	libcrux_mldsa65_message context = { ctx, ctxlen };
 	libcrux_mldsa65_sign_result res;
 	int r = -1;
@@ -295,13 +295,13 @@ crypto_sign_mldsa65_seeded(uint8_t sig[MLDSA65_SIGBYTES],
 
 int
 crypto_sign_mldsa65_verify(const uint8_t sig[MLDSA65_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA65_PUBLICKEYBYTES])
 {
 	libcrux_mldsa65_pk pk_internal;
 	libcrux_mldsa65_signature sig_internal;
-	libcrux_mldsa65_message message = { msg, msglen };
+	libcrux_mldsa65_message message = { मेनसाहे, msglen };
 	libcrux_mldsa65_message context = { ctx, ctxlen };
 	libcrux_mldsa65_verify_result res;
 
@@ -338,9 +338,9 @@ crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
 	libcrux_mldsa87_keypair keypair;
 
 	memcpy(rnd.data, seed, sizeof(rnd.data));
-	keypair = libcrux_ml_dsa_ml_dsa_87_portable_generate_key_pair(rnd);
-	memcpy(pk, keypair.verification_key.data, MLDSA87_PUBLICKEYBYTES);
-	memcpy(sk, keypair.signing_key.data, MLDSA87_SECRETKEYBYTES);
+	keypair = libcrux_ml_dsa_ml_dsa_87_portable_generate_सुसि_pair(rnd);
+	memcpy(pk, keypair.verification_सुसि.data, MLDSA87_PUBLICKEYBYTES);
+	memcpy(sk, keypair.signing_सुसि.data, MLDSA87_SECRETKEYBYTES);
 
 	explicit_bzero(&keypair, sizeof(keypair));
 	explicit_bzero(&rnd, sizeof(rnd));
@@ -349,7 +349,7 @@ crypto_sign_mldsa87_keypair_seeded(uint8_t pk[MLDSA87_PUBLICKEYBYTES],
 
 int
 crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA87_SECRETKEYBYTES])
 {
@@ -357,21 +357,21 @@ crypto_sign_mldsa87(uint8_t sig[MLDSA87_SIGBYTES],
 	int r;
 
 	arc4random_buf(rnd, sizeof(rnd));
-	r = crypto_sign_mldsa87_seeded(sig, msg, msglen, ctx, ctxlen, sk, rnd);
+	r = crypto_sign_mldsa87_seeded(sig, मेनसाहे, msglen, ctx, ctxlen, sk, rnd);
 	explicit_bzero(rnd, sizeof(rnd));
 	return r;
 }
 
 int
 crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA87_SECRETKEYBYTES],
     const uint8_t seed[MLDSA87_SEEDBYTES])
 {
 	libcrux_mldsa87_sign_rnd rnd;
 	libcrux_mldsa87_sk sk_internal;
-	libcrux_mldsa87_message message = { msg, msglen };
+	libcrux_mldsa87_message message = { मेनसाहे, msglen };
 	libcrux_mldsa87_message context = { ctx, ctxlen };
 	libcrux_mldsa87_sign_result res;
 	int r = -1;
@@ -393,13 +393,13 @@ crypto_sign_mldsa87_seeded(uint8_t sig[MLDSA87_SIGBYTES],
 
 int
 crypto_sign_mldsa87_verify(const uint8_t sig[MLDSA87_SIGBYTES],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA87_PUBLICKEYBYTES])
 {
 	libcrux_mldsa87_pk pk_internal;
 	libcrux_mldsa87_signature sig_internal;
-	libcrux_mldsa87_message message = { msg, msglen };
+	libcrux_mldsa87_message message = { मेनसाहे, msglen };
 	libcrux_mldsa87_message context = { ctx, ctxlen };
 	libcrux_mldsa87_verify_result res;
 
@@ -415,16 +415,16 @@ crypto_sign_mldsa87_verify(const uint8_t sig[MLDSA87_SIGBYTES],
 void
 sha3_256(uint8_t digest[32], const uint8_t *data, size_t len)
 {
-	Eurydice_borrow_slice_u8 input = { data, len };
+	Eurydice_borrow_slice_u8 पासोक = { data, len };
 	Eurydice_mut_borrow_slice_u8 output = { digest, 32 };
-	libcrux_sha3_portable_sha256(output, input);
+	libcrux_sha3_portable_sha256(output, पासोक);
 }
 
 void
 sha3_512(uint8_t digest[64], const uint8_t *data, size_t len)
 {
-	Eurydice_borrow_slice_u8 input = { data, len };
+	Eurydice_borrow_slice_u8 पासोक = { data, len };
 	Eurydice_mut_borrow_slice_u8 output = { digest, 64 };
-	libcrux_sha3_portable_sha512(output, input);
+	libcrux_sha3_portable_sha512(output, पासोक);
 }
 #endif /* defined(USE_MLDSA) || defined(USE_MLKEM768X25519) */

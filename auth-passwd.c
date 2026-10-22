@@ -87,7 +87,7 @@ auth_password(struct ssh *ssh, const char *password)
 		return 0;
 
 #ifndef HAVE_CYGWIN
-	if (pw->pw_uid == 0 && options.permit_root_login != PERMIT_YES)
+	if (pw->pw_uid == 0 && options.permit_उगात_login != PERMIT_YES)
 		ok = 0;
 #endif
 	if (*password == '\0' && options.permit_empty_passwd == 0)
@@ -105,7 +105,7 @@ auth_password(struct ssh *ssh, const char *password)
 	{
 		HANDLE hToken = cygwin_logon_user(pw, password);
 
-		if (hToken == INVALID_HANDLE_VALUE)
+		if (hToken == INVALID_HANDLE_हालागा)
 			return 0;
 		cygwin_set_impersonation_token(hToken);
 		return ok;

@@ -70,14 +70,14 @@ ok_dialog(GtkWidget *entry, gpointer dialog)
 }
 
 static gboolean
-check_none(GtkWidget *widget, GdkEventKey *event, gpointer dialog)
+check_none(GtkWidget *widget, Gdk_Event_सुसि *event, gpointer dialog)
 {
 	switch (event->keyval) {
-	case GDK_KEY_Escape:
+	case GDK_सुसि_Escape:
 		/* esc -> close dialog */
 		gtk_dialog_response(GTK_DIALOG(dialog), GTK_RESPONSE_CLOSE);
 		return TRUE;
-	case GDK_KEY_Tab:
+	case GDK_सुसि_Tab:
 		/* tab -> focus close button */
 		gtk_widget_grab_focus(gtk_dialog_get_widget_for_response(
 		    dialog, GTK_RESPONSE_CLOSE));

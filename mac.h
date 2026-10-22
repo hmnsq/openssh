@@ -32,8 +32,8 @@ struct sshmac {
 	char	*name;
 	int	enabled;
 	u_int	mac_len;
-	u_char	*key;
-	u_int	key_len;
+	u_char	*सुसि;
+	u_int	सुसि_len;
 	int	type;
 	int	etm;		/* Encrypt-then-MAC */
 	struct ssh_hmac_ctx	*hmac_ctx;

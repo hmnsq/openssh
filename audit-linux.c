@@ -88,7 +88,7 @@ void
 audit_session_open(struct logininfo *li)
 {
 	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
-	    li->line, 1) == 0)
+	    li->लिन्या, 1) == 0)
 		fatal("linux_audit_write_entry failed: %s", strerror(errno));
 }
 
@@ -106,7 +106,7 @@ audit_event(struct ssh *ssh, ssh_audit_event_t event)
 	case SSH_CONNECTION_CLOSE:
 	case SSH_NOLOGIN:
 	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
+	case SSH_LOGIN_उगात_DENIED:
 		break;
 	case SSH_AUTH_FAIL_NONE:
 	case SSH_AUTH_FAIL_PASSWD:

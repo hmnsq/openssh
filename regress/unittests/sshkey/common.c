@@ -85,7 +85,7 @@ rsa_n(struct sshkey *k)
 
 	ASSERT_PTR_NE(k, NULL);
 	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), &n, NULL, NULL);
+	RSA_get0_सुसि(EVP_PKEY_get0_RSA(k->pkey), &n, NULL, NULL);
 	return n;
 }
 
@@ -96,7 +96,7 @@ rsa_e(struct sshkey *k)
 
 	ASSERT_PTR_NE(k, NULL);
 	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), NULL, &e, NULL);
+	RSA_get0_सुसि(EVP_PKEY_get0_RSA(k->pkey), NULL, &e, NULL);
 	return e;
 }
 

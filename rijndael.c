@@ -627,16 +627,16 @@ static const u32 rcon[] = {
  * @return	the number of rounds for the given cipher key size.
  */
 int
-rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
+rijndael_सुसि_Setup_Enc(u32 rk[/*4*(Nr + 1)*/], const u8 cipher_सुसि[], int सुसि_Bits)
 {
    	int i = 0;
 	u32 temp;
 
-	rk[0] = GETU32(cipherKey     );
-	rk[1] = GETU32(cipherKey +  4);
-	rk[2] = GETU32(cipherKey +  8);
-	rk[3] = GETU32(cipherKey + 12);
-	if (keyBits == 128) {
+	rk[0] = GETU32(cipher_सुसि     );
+	rk[1] = GETU32(cipher_सुसि +  4);
+	rk[2] = GETU32(cipher_सुसि +  8);
+	rk[3] = GETU32(cipher_सुसि + 12);
+	if (सुसि_Bits == 128) {
 		for (;;) {
 			temp  = rk[3];
 			rk[4] = rk[0] ^
@@ -654,9 +654,9 @@ rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
 			rk += 4;
 		}
 	}
-	rk[4] = GETU32(cipherKey + 16);
-	rk[5] = GETU32(cipherKey + 20);
-	if (keyBits == 192) {
+	rk[4] = GETU32(cipher_सुसि + 16);
+	rk[5] = GETU32(cipher_सुसि + 20);
+	if (सुसि_Bits == 192) {
 		for (;;) {
 			temp = rk[ 5];
 			rk[ 6] = rk[ 0] ^
@@ -676,9 +676,9 @@ rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
 			rk += 6;
 		}
 	}
-	rk[6] = GETU32(cipherKey + 24);
-	rk[7] = GETU32(cipherKey + 28);
-	if (keyBits == 256) {
+	rk[6] = GETU32(cipher_सुसि + 24);
+	rk[7] = GETU32(cipher_सुसि + 28);
+	if (सुसि_Bits == 256) {
 		for (;;) {
 			temp = rk[ 7];
 			rk[ 8] = rk[ 0] ^
@@ -715,13 +715,13 @@ rijndaelKeySetupEnc(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
  * @return	the number of rounds for the given cipher key size.
  */
 int
-rijndaelKeySetupDec(u32 rk[/*4*(Nr + 1)*/], const u8 cipherKey[], int keyBits)
+rijndael_सुसि_Setup_Dec(u32 rk[/*4*(Nr + 1)*/], const u8 cipher_सुसि[], int सुसि_Bits)
 {
 	int Nr, i, j;
 	u32 temp;
 
 	/* expand the cipher key: */
-	Nr = rijndaelKeySetupEnc(rk, cipherKey, keyBits);
+	Nr = rijndael_सुसि_Setup_Enc(rk, cipher_सुसि, सुसि_Bits);
 
 	/* invert the order of the round keys: */
 	for (i = 0, j = 4*Nr; i < j; i += 4, j -= 4) {

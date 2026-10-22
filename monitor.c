@@ -145,10 +145,10 @@ int mm_answer_audit_command(struct ssh *, int, struct sshbuf *);
 static Authctxt *authctxt;
 
 /* local state for key verify */
-static u_char *key_blob = NULL;
-static size_t key_bloblen = 0;
-static u_int key_blobtype = MM_NOKEY;
-static struct sshauthopt *key_opts = NULL;
+static u_char *सुसि_blob = NULL;
+static size_t सुसि_bloblen = 0;
+static u_int सुसि_blobtype = MM_NOKEY;
+static struct sshauthopt *सुसि_opts = NULL;
 static char *hostbased_cuser = NULL;
 static char *hostbased_chost = NULL;
 static char *auth_method = "unknown";
@@ -304,7 +304,7 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 			auth_attempted = 1;
 
 		/* Special handling for multiple required authentications */
-		if (options.num_auth_methods != 0) {
+		if (options.नुमेरो_auth_methods != 0) {
 			if (authenticated &&
 			    !auth2_update_methods_lists(authctxt,
 			    auth_method, auth_submethod)) {
@@ -319,7 +319,7 @@ monitor_child_preauth(struct ssh *ssh, struct monitor *pmonitor)
 				fatal_f("unexpected authentication from %d",
 				    ent->type);
 			if (authctxt->pw->pw_uid == 0 &&
-			    !auth_root_allowed(ssh, auth_method))
+			    !auth_उगात_allowed(ssh, auth_method))
 				authenticated = 0;
 #ifdef USE_PAM
 			/* PAM needs to perform account checks after auth */
@@ -443,7 +443,7 @@ monitor_read_log(struct monitor *pmonitor)
 {
 	struct sshbuf *logmsg;
 	u_int len, level, forced;
-	char *msg;
+	char *मेनसाहे;
 	u_char *p;
 	int r;
 
@@ -476,17 +476,17 @@ monitor_read_log(struct monitor *pmonitor)
 		fatal_f("log fd read: %s", strerror(errno));
 	if ((r = sshbuf_get_u32(logmsg, &level)) != 0 ||
 	    (r = sshbuf_get_u32(logmsg, &forced)) != 0 ||
-	    (r = sshbuf_get_cstring(logmsg, &msg, NULL)) != 0)
+	    (r = sshbuf_get_cstring(logmsg, &मेनसाहे, NULL)) != 0)
 		fatal_fr(r, "parse");
 
 	/* Log it */
 	if (log_level_name(level) == NULL)
 		fatal_f("invalid log level %u (corrupted message?)", level);
-	sshlogdirect(level, forced, "%s [%s]", msg,
+	sshlogdirect(level, forced, "%s [%s]", मेनसाहे,
 	    mon_dispatch == mon_dispatch_postauth20 ? "postauth" : "preauth");
 
 	sshbuf_free(logmsg);
-	free(msg);
+	free(मेनसाहे);
 
 	return 0;
 }
@@ -564,27 +564,27 @@ monitor_read(struct ssh *ssh, struct monitor *pmonitor, struct mon_table *ent,
 
 /* allowed key state */
 static int
-monitor_allowed_key(const u_char *blob, u_int bloblen)
+monitor_allowed_सुसि(const u_char *blob, u_int bloblen)
 {
 	/* make sure key is allowed */
-	if (key_blob == NULL || key_bloblen != bloblen ||
-	    timingsafe_bcmp(key_blob, blob, key_bloblen))
+	if (सुसि_blob == NULL || सुसि_bloblen != bloblen ||
+	    timingsafe_bcmp(सुसि_blob, blob, सुसि_bloblen))
 		return (0);
 	return (1);
 }
 
 static void
-monitor_reset_key_state(void)
+monitor_reset_सुसि_state(void)
 {
 	/* reset state */
-	free(key_blob);
+	free(सुसि_blob);
 	free(hostbased_cuser);
 	free(hostbased_chost);
-	sshauthopt_free(key_opts);
-	key_blob = NULL;
-	key_bloblen = 0;
-	key_blobtype = MM_NOKEY;
-	key_opts = NULL;
+	sshauthopt_free(सुसि_opts);
+	सुसि_blob = NULL;
+	सुसि_bloblen = 0;
+	सुसि_blobtype = MM_NOKEY;
+	सुसि_opts = NULL;
 	hostbased_cuser = NULL;
 	hostbased_chost = NULL;
 }
@@ -708,7 +708,7 @@ int
 mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 {
 	extern int auth_sock;			/* XXX move to state struct? */
-	struct sshkey *pubkey, *key;
+	struct sshkey *pubkey, *सुसि;
 	struct sshbuf *sigbuf = NULL;
 	u_char *p = NULL, *signature = NULL;
 	char *alg = NULL;
@@ -753,7 +753,7 @@ mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 		 */
 		if (session_id2_len == 0) /* hostkeys is never first */
 			fatal_f("bad data length: %zu", datlen);
-		if ((key = get_hostkey_public_by_index(keyid, ssh)) == NULL)
+		if ((सुसि = get_hostkey_public_by_index(keyid, ssh)) == NULL)
 			fatal_f("no hostkey for index %d", keyid);
 		if (keyid >= nhostkey_proofs_done) {
 			hostkey_proofs_done = xrecallocarray(
@@ -763,7 +763,7 @@ mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 		}
 		if (hostkey_proofs_done[keyid]) {
 			fatal_f("hostkeys proof requested for %s key %d "
-			    "multiple times", sshkey_type(key), keyid);
+			    "multiple times", sshkey_type(सुसि), keyid);
 		}
 		hostkey_proofs_done[keyid] = 1;
 		if ((sigbuf = sshbuf_new()) == NULL)
@@ -771,7 +771,7 @@ mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 		if ((r = sshbuf_put_cstring(sigbuf, proof_req)) != 0 ||
 		    (r = sshbuf_put_string(sigbuf, session_id2,
 		    session_id2_len)) != 0 ||
-		    (r = sshkey_puts(key, sigbuf)) != 0)
+		    (r = sshkey_puts(सुसि, sigbuf)) != 0)
 			fatal_fr(r, "assemble private key proof");
 		if (datlen != sshbuf_len(sigbuf) ||
 		    memcmp(p, sshbuf_ptr(sigbuf), sshbuf_len(sigbuf)) != 0)
@@ -788,13 +788,13 @@ mm_answer_sign(struct ssh *ssh, int sock, struct sshbuf *m)
 		memcpy(session_id2, p, session_id2_len);
 	}
 
-	if ((key = get_hostkey_by_index(keyid)) != NULL) {
-		if ((r = sshkey_sign(key, &signature, &siglen, p, datlen, alg,
+	if ((सुसि = get_hostkey_by_index(keyid)) != NULL) {
+		if ((r = sshkey_sign(सुसि, &signature, &siglen, p, datlen, alg,
 		    options.sk_provider, NULL, compat)) != 0)
 			fatal_fr(r, "sign");
-	} else if ((key = get_hostkey_public_by_index(keyid, ssh)) != NULL &&
+	} else if ((सुसि = get_hostkey_public_by_index(keyid, ssh)) != NULL &&
 	    auth_sock > 0) {
-		if ((r = ssh_agent_sign(auth_sock, key, &signature, &siglen,
+		if ((r = ssh_agent_sign(auth_sock, सुसि, &signature, &siglen,
 		    p, datlen, alg, compat)) != 0)
 			fatal_fr(r, "agent sign");
 	} else
@@ -984,7 +984,7 @@ mm_answer_authserv(struct ssh *ssh, int sock, struct sshbuf *m)
  * Returns 1 on success, 0 otherwise.
  */
 static int
-key_base_type_match(const char *method, const struct sshkey *key,
+सुसि_base_type_match(const char *method, const struct sshkey *सुसि,
     const char *list)
 {
 	char *s, *l, *ol = xstrdup(list);
@@ -992,14 +992,14 @@ key_base_type_match(const char *method, const struct sshkey *key,
 
 	l = ol;
 	for ((s = strsep(&l, ",")); s && *s != '\0'; (s = strsep(&l, ","))) {
-		if (sshkey_type_from_name(s) == key->type) {
+		if (sshkey_type_from_name(s) == सुसि->type) {
 			found = 1;
 			break;
 		}
 	}
 	if (!found) {
 		error("%s key type %s is not in permitted list %s", method,
-		    sshkey_ssh_name(key), list);
+		    sshkey_ssh_name(सुसि), list);
 	}
 
 	free(ol);
@@ -1009,7 +1009,7 @@ key_base_type_match(const char *method, const struct sshkey *key,
 int
 mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
 {
-	static int call_count;
+	static int call_बिलांग;
 	char *passwd;
 	int r, authenticated;
 	size_t plen;
@@ -1034,8 +1034,8 @@ mm_answer_authpassword(struct ssh *ssh, int sock, struct sshbuf *m)
 	debug3_f("sending result %d", authenticated);
 	mm_request_send(sock, MONITOR_ANS_AUTHPASSWORD, m);
 
-	call_count++;
-	if (plen == 0 && call_count == 1)
+	call_बिलांग++;
+	if (plen == 0 && call_बिलांग == 1)
 		auth_method = "none";
 	else
 		auth_method = "password";
@@ -1181,7 +1181,7 @@ int
 mm_answer_pam_query(struct ssh *ssh, int sock, struct sshbuf *m)
 {
 	char *name = NULL, *info = NULL, **prompts = NULL;
-	u_int i, num = 0, *echo_on = 0;
+	u_int i, नुमेरो = 0, *echo_on = 0;
 	int r, ret;
 
 	debug3_f("entering");
@@ -1189,10 +1189,10 @@ mm_answer_pam_query(struct ssh *ssh, int sock, struct sshbuf *m)
 	if (sshpam_ctxt == NULL)
 		fatal_f("no context");
 	ret = (sshpam_device.query)(sshpam_ctxt, &name, &info,
-	    &num, &prompts, &echo_on);
-	if (ret == 0 && num == 0 && sshpam_priv_kbdint_authdone(sshpam_ctxt))
+	    &नुमेरो, &prompts, &echo_on);
+	if (ret == 0 && नुमेरो == 0 && sshpam_priv_kbdint_authdone(sshpam_ctxt))
 		sshpam_authok = sshpam_ctxt;
-	if (num > 1 || name == NULL || info == NULL)
+	if (नुमेरो > 1 || name == NULL || info == NULL)
 		fatal("sshpam_device.query failed");
 	monitor_permit(mon_dispatch, MONITOR_REQ_PAM_RESPOND, 1);
 	sshbuf_reset(m);
@@ -1200,11 +1200,11 @@ mm_answer_pam_query(struct ssh *ssh, int sock, struct sshbuf *m)
 	    (r = sshbuf_put_cstring(m, name)) != 0 ||
 	    (r = sshbuf_put_cstring(m, info)) != 0 ||
 	    (r = sshbuf_put_u32(m, sshpam_get_maxtries_reached())) != 0 ||
-	    (r = sshbuf_put_u32(m, num)) != 0)
+	    (r = sshbuf_put_u32(m, नुमेरो)) != 0)
 		fatal_fr(r, "buffer error");
 	free(name);
 	free(info);
-	for (i = 0; i < num; ++i) {
+	for (i = 0; i < नुमेरो; ++i) {
 		if ((r = sshbuf_put_cstring(m, prompts[i])) != 0 ||
 		    (r = sshbuf_put_u32(m, echo_on[i])) != 0)
 			fatal_fr(r, "buffer error");
@@ -1222,32 +1222,32 @@ int
 mm_answer_pam_respond(struct ssh *ssh, int sock, struct sshbuf *m)
 {
 	char **resp;
-	u_int i, num;
+	u_int i, नुमेरो;
 	int r, ret;
 
 	debug3_f("entering");
 	if (sshpam_ctxt == NULL)
 		fatal_f("no context");
 	sshpam_authok = NULL;
-	if ((r = sshbuf_get_u32(m, &num)) != 0)
+	if ((r = sshbuf_get_u32(m, &नुमेरो)) != 0)
 		fatal_fr(r, "buffer error");
-	if (num > PAM_MAX_NUM_MSG) {
+	if (नुमेरो > PAM_MAX_नुमेरो_मेनसाहे) {
 		fatal_f("Too many PAM messages, got %u, expected <= %u",
-		    num, (unsigned)PAM_MAX_NUM_MSG);
+		    नुमेरो, (unsigned)PAM_MAX_नुमेरो_मेनसाहे);
 	}
-	if (num > 0) {
-		resp = xcalloc(num, sizeof(char *));
-		for (i = 0; i < num; ++i) {
+	if (नुमेरो > 0) {
+		resp = xcalloc(नुमेरो, sizeof(char *));
+		for (i = 0; i < नुमेरो; ++i) {
 			if ((r = sshbuf_get_cstring(m, &(resp[i]), NULL)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
 		}
-		ret = (sshpam_device.respond)(sshpam_ctxt, num, resp);
-		for (i = 0; i < num; ++i)
+		ret = (sshpam_device.respond)(sshpam_ctxt, नुमेरो, resp);
+		for (i = 0; i < नुमेरो; ++i)
 			free(resp[i]);
 		free(resp);
 	} else {
-		ret = (sshpam_device.respond)(sshpam_ctxt, num, NULL);
+		ret = (sshpam_device.respond)(sshpam_ctxt, नुमेरो, NULL);
 	}
 	sshbuf_reset(m);
 	if ((r = sshbuf_put_u32(m, ret)) != 0)
@@ -1283,7 +1283,7 @@ mm_answer_pam_free_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
 int
 mm_answer_keyallowed(struct ssh *ssh, int sock, struct sshbuf *m)
 {
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	char *cuser, *chost;
 	u_int pubkey_auth_attempt;
 	u_int type = 0;
@@ -1294,35 +1294,35 @@ mm_answer_keyallowed(struct ssh *ssh, int sock, struct sshbuf *m)
 	if ((r = sshbuf_get_u32(m, &type)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &cuser, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &chost, NULL)) != 0 ||
-	    (r = sshkey_froms(m, &key)) != 0 ||
+	    (r = sshkey_froms(m, &सुसि)) != 0 ||
 	    (r = sshbuf_get_u32(m, &pubkey_auth_attempt)) != 0)
 		fatal_fr(r, "parse");
 
-	if (key != NULL && authctxt->valid) {
+	if (सुसि != NULL && authctxt->valid) {
 		switch (type) {
 		case MM_USERKEY:
 			auth_method = "publickey";
 			if (!options.pubkey_authentication)
 				break;
-			if (auth2_key_already_used(authctxt, key))
+			if (auth2_सुसि_already_used(authctxt, सुसि))
 				break;
-			if (!key_base_type_match(auth_method, key,
+			if (!सुसि_base_type_match(auth_method, सुसि,
 			    options.pubkey_accepted_algos))
 				break;
-			allowed = user_key_allowed(ssh, authctxt->pw, key,
+			allowed = user_सुसि_allowed(ssh, authctxt->pw, सुसि,
 			    pubkey_auth_attempt, &opts);
 			break;
 		case MM_HOSTKEY:
 			auth_method = "hostbased";
 			if (!options.hostbased_authentication)
 				break;
-			if (auth2_key_already_used(authctxt, key))
+			if (auth2_सुसि_already_used(authctxt, सुसि))
 				break;
-			if (!key_base_type_match(auth_method, key,
+			if (!सुसि_base_type_match(auth_method, सुसि,
 			    options.hostbased_accepted_algos))
 				break;
-			allowed = hostbased_key_allowed(ssh, authctxt->pw,
-			    cuser, chost, key);
+			allowed = hostbased_सुसि_allowed(ssh, authctxt->pw,
+			    cuser, chost, सुसि);
 			auth2_record_info(authctxt,
 			    "client user \"%.100s\", client host \"%.100s\"",
 			    cuser, chost);
@@ -1335,20 +1335,20 @@ mm_answer_keyallowed(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	debug3_f("%s authentication%s: %s key is %s", auth_method,
 	    pubkey_auth_attempt ? "" : " test",
-	    (key == NULL || !authctxt->valid) ? "invalid" : sshkey_type(key),
+	    (सुसि == NULL || !authctxt->valid) ? "invalid" : sshkey_type(सुसि),
 	    allowed ? "allowed" : "not allowed");
 
-	auth2_record_key(authctxt, 0, key);
+	auth2_record_सुसि(authctxt, 0, सुसि);
 
 	/* clear temporarily storage (used by verify) */
-	monitor_reset_key_state();
+	monitor_reset_सुसि_state();
 
 	if (allowed) {
 		/* Save temporarily for comparison in verify */
-		if ((r = sshkey_to_blob(key, &key_blob, &key_bloblen)) != 0)
+		if ((r = sshkey_to_blob(सुसि, &सुसि_blob, &सुसि_bloblen)) != 0)
 			fatal_fr(r, "sshkey_to_blob");
-		key_blobtype = type;
-		key_opts = opts;
+		सुसि_blobtype = type;
+		सुसि_opts = opts;
 		hostbased_cuser = cuser;
 		hostbased_chost = chost;
 	} else {
@@ -1357,7 +1357,7 @@ mm_answer_keyallowed(struct ssh *ssh, int sock, struct sshbuf *m)
 		free(cuser);
 		free(chost);
 	}
-	sshkey_free(key);
+	sshkey_free(सुसि);
 
 	sshbuf_reset(m);
 	if ((r = sshbuf_put_u32(m, allowed)) != 0)
@@ -1394,7 +1394,7 @@ monitor_valid_userblob(struct ssh *ssh, const u_char *data, u_int datalen)
 		fail++;
 	if ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	if (type != SSH2_मेनसाहे_USERAUTH_REQUEST)
 		fail++;
 	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
 		fatal_fr(r, "parse userstyle");
@@ -1465,7 +1465,7 @@ monitor_valid_hostbasedblob(const u_char *data, u_int datalen,
 
 	if ((r = sshbuf_get_u8(b, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != SSH2_MSG_USERAUTH_REQUEST)
+	if (type != SSH2_मेनसाहे_USERAUTH_REQUEST)
 		fail++;
 	if ((r = sshbuf_get_cstring(b, &cp, NULL)) != 0)
 		fatal_fr(r, "parse userstyle");
@@ -1514,7 +1514,7 @@ monitor_valid_hostbasedblob(const u_char *data, u_int datalen,
 int
 mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 {
-	struct sshkey *key;
+	struct sshkey *सुसि;
 	const u_char *signature, *data, *blob;
 	char *sigalg = NULL, *fp = NULL;
 	size_t signaturelen, datalen, bloblen;
@@ -1529,7 +1529,7 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 		fatal_fr(r, "parse");
 
 	if (hostbased_cuser == NULL || hostbased_chost == NULL ||
-	  !monitor_allowed_key(blob, bloblen))
+	  !monitor_allowed_सुसि(blob, bloblen))
 		fatal_f("bad key, not previously allowed");
 
 	/* Empty signature algorithm means NULL. */
@@ -1539,10 +1539,10 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 	}
 
 	/* XXX use sshkey_froms here; need to change key_blob, etc. */
-	if ((r = sshkey_from_blob(blob, bloblen, &key)) != 0)
+	if ((r = sshkey_from_blob(blob, bloblen, &सुसि)) != 0)
 		fatal_fr(r, "parse key");
 
-	switch (key_blobtype) {
+	switch (सुसि_blobtype) {
 	case MM_USERKEY:
 		valid_data = monitor_valid_userblob(ssh, data, datalen);
 		auth_method = "publickey";
@@ -1558,53 +1558,53 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 	}
 	if (!valid_data)
 		fatal_f("bad %s signature data blob",
-		    key_blobtype == MM_USERKEY ? "userkey" :
-		    (key_blobtype == MM_HOSTKEY ? "hostkey" : "unknown"));
+		    सुसि_blobtype == MM_USERKEY ? "userkey" :
+		    (सुसि_blobtype == MM_HOSTKEY ? "hostkey" : "unknown"));
 
-	if ((fp = sshkey_fingerprint(key, options.fingerprint_hash,
+	if ((fp = sshkey_fingerprint(सुसि, options.fingerprint_hash,
 	    SSH_FP_DEFAULT)) == NULL)
 		fatal_f("sshkey_fingerprint failed");
 
-	ret = sshkey_verify(key, signature, signaturelen, data, datalen,
+	ret = sshkey_verify(सुसि, signature, signaturelen, data, datalen,
 	    sigalg, ssh->compat, &sig_details);
 	debug3_f("%s %s signature using %s %s%s%s", auth_method,
-	    sshkey_type(key), sigalg == NULL ? "default" : sigalg,
+	    sshkey_type(सुसि), sigalg == NULL ? "default" : sigalg,
 	    (ret == 0) ? "verified" : "unverified",
 	    (ret != 0) ? ": " : "", (ret != 0) ? ssh_err(ret) : "");
 
-	if (ret == 0 && key_blobtype == MM_USERKEY && sig_details != NULL) {
+	if (ret == 0 && सुसि_blobtype == MM_USERKEY && sig_details != NULL) {
 		req_presence = (options.pubkey_auth_options &
 		    PUBKEYAUTH_TOUCH_REQUIRED) ||
-		    !key_opts->no_require_user_presence;
+		    !सुसि_opts->no_require_user_presence;
 		if (req_presence &&
 		    (sig_details->sk_flags & SSH_SK_USER_PRESENCE_REQD) == 0) {
 			error("public key %s %s signature for %s%s from %.128s "
 			    "port %d rejected: user presence "
 			    "(authenticator touch) requirement not met ",
-			    sshkey_type(key), fp,
+			    sshkey_type(सुसि), fp,
 			    authctxt->valid ? "" : "invalid user ",
 			    authctxt->user, ssh_remote_ipaddr(ssh),
 			    ssh_remote_port(ssh));
 			ret = SSH_ERR_SIGNATURE_INVALID;
 		}
 		req_verify = (options.pubkey_auth_options &
-		    PUBKEYAUTH_VERIFY_REQUIRED) || key_opts->require_verify;
+		    PUBKEYAUTH_VERIFY_REQUIRED) || सुसि_opts->require_verify;
 		if (req_verify &&
 		    (sig_details->sk_flags & SSH_SK_USER_VERIFICATION_REQD) == 0) {
 			error("public key %s %s signature for %s%s from %.128s "
 			    "port %d rejected: user verification requirement "
-			    "not met ", sshkey_type(key), fp,
+			    "not met ", sshkey_type(सुसि), fp,
 			    authctxt->valid ? "" : "invalid user ",
 			    authctxt->user, ssh_remote_ipaddr(ssh),
 			    ssh_remote_port(ssh));
 			ret = SSH_ERR_SIGNATURE_INVALID;
 		}
 	}
-	auth2_record_key(authctxt, ret == 0, key);
+	auth2_record_सुसि(authctxt, ret == 0, सुसि);
 
-	if (key_blobtype == MM_USERKEY && ret == 0)
-		auth_activate_options(ssh, key_opts);
-	monitor_reset_key_state();
+	if (सुसि_blobtype == MM_USERKEY && ret == 0)
+		auth_activate_options(ssh, सुसि_opts);
+	monitor_reset_सुसि_state();
 
 	sshbuf_reset(m);
 
@@ -1623,7 +1623,7 @@ mm_answer_keyverify(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	free(sigalg);
 	free(fp);
-	sshkey_free(key);
+	sshkey_free(सुसि);
 
 	return ret == 0;
 }
@@ -1797,7 +1797,7 @@ mm_answer_audit_event(struct ssh *ssh, int socket, struct sshbuf *m)
 	case SSH_AUTH_FAIL_HOSTBASED:
 	case SSH_AUTH_FAIL_GSSAPI:
 	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
+	case SSH_LOGIN_उगात_DENIED:
 	case SSH_CONNECTION_CLOSE:
 	case SSH_INVALID_USER:
 		audit_event(ssh, event);
@@ -1869,9 +1869,9 @@ monitor_apply_keystate(struct ssh *ssh, struct monitor *pmonitor)
 	kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 	kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 	kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
-	kex->load_host_public_key=&get_hostkey_public_by_type;
-	kex->load_host_private_key=&get_hostkey_private_by_type;
-	kex->host_key_index=&get_hostkey_index;
+	kex->load_host_public_सुसि=&get_hostkey_public_by_type;
+	kex->load_host_private_सुसि=&get_hostkey_private_by_type;
+	kex->host_सुसि_index=&get_hostkey_index;
 	kex->sign = sshd_hostkey_sign;
 }
 
@@ -2004,11 +2004,11 @@ mm_answer_gss_accept_ctx(struct ssh *ssh, int sock, struct sshbuf *m)
 	if ((r = ssh_gssapi_get_buffer_desc(m, &in)) != 0)
 		fatal_fr(r, "ssh_gssapi_get_buffer_desc");
 	major = ssh_gssapi_accept_ctx(gsscontext, &in, &out, &flags);
-	free(in.value);
+	free(in.हालागा);
 
 	sshbuf_reset(m);
 	if ((r = sshbuf_put_u32(m, major)) != 0 ||
-	    (r = sshbuf_put_string(m, out.value, out.length)) != 0 ||
+	    (r = sshbuf_put_string(m, out.हालागा, out.length)) != 0 ||
 	    (r = sshbuf_put_u32(m, flags)) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(sock, MONITOR_ANS_GSSSTEP, m);
@@ -2039,8 +2039,8 @@ mm_answer_gss_checkmic(struct ssh *ssh, int sock, struct sshbuf *m)
 
 	ret = ssh_gssapi_checkmic(gsscontext, &gssbuf, &mic);
 
-	free(gssbuf.value);
-	free(mic.value);
+	free(gssbuf.हालागा);
+	free(mic.हालागा);
 
 	sshbuf_reset(m);
 	if ((r = sshbuf_put_u32(m, ret)) != 0)

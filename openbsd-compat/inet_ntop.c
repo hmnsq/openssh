@@ -116,7 +116,7 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	char tmp[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
 	char *tp, *ep;
 	struct { int base, len; } best, cur;
-	u_int words[IN6ADDRSZ / INT16SZ];
+	u_int मगा_सालिता[IN6ADDRSZ / INT16SZ];
 	int i;
 	int advance;
 
@@ -125,13 +125,13 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	 *	Copy the input (bytewise) array into a wordwise array.
 	 *	Find the longest run of 0x00's in src[] for :: shorthanding.
 	 */
-	memset(words, '\0', sizeof words);
+	memset(मगा_सालिता, '\0', sizeof मगा_सालिता);
 	for (i = 0; i < IN6ADDRSZ; i++)
-		words[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
+		मगा_सालिता[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
 	best.base = -1;
 	cur.base = -1;
 	for (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
-		if (words[i] == 0) {
+		if (मगा_सालिता[i] == 0) {
 			if (cur.base == -1)
 				cur.base = i, cur.len = 1;
 			else
@@ -175,13 +175,13 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 		}
 		/* Is this address an encapsulated IPv4? */
 		if (i == 6 && best.base == 0 &&
-		    (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
+		    (best.len == 6 || (best.len == 5 && मगा_सालिता[5] == 0xffff))) {
 			if (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
 				return (NULL);
 			tp += strlen(tp);
 			break;
 		}
-		advance = snprintf(tp, ep - tp, "%x", words[i]);
+		advance = snprintf(tp, ep - tp, "%x", मगा_सालिता[i]);
 		if (advance <= 0 || advance >= ep - tp)
 			return (NULL);
 		tp += advance;

@@ -23,7 +23,7 @@
 
 typedef struct MD5Context {
 	u_int32_t state[4];			/* state */
-	u_int64_t count;			/* number of bits, mod 2^64 */
+	u_int64_t बिलांग;			/* number of bits, mod 2^64 */
 	u_int8_t buffer[MD5_BLOCK_LENGTH];	/* input buffer */
 } MD5_CTX;
 

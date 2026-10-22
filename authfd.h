@@ -22,7 +22,7 @@ struct sshkey;
 /* List of identities returned by ssh_fetch_identitylist() */
 struct ssh_identitylist {
 	size_t nkeys;
-	struct sshkey **keys;
+	struct sshkey **मगा_सुसि;
 	char **comments;
 };
 
@@ -32,8 +32,8 @@ struct dest_constraint_hop {
 	char *hostname; /* used to matching cert principals and for display */
 	int is_ca;
 	u_int nkeys;	/* number of entries in *both* 'keys' and 'key_is_ca' */
-	struct sshkey **keys;
-	int *key_is_ca;
+	struct sshkey **मगा_सुसि;
+	int *सुसि_is_ca;
 };
 struct dest_constraint {
 	struct dest_constraint_hop from;
@@ -47,11 +47,11 @@ void	ssh_close_authentication_socket(int sock);
 int	ssh_lock_agent(int sock, int lock, const char *password);
 int	ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp);
 void	ssh_free_identitylist(struct ssh_identitylist *idl);
-int	ssh_add_identity_constrained(int sock, struct sshkey *key,
+int	ssh_add_identity_constrained(int sock, struct sshkey *सुसि,
     const char *comment, u_int life, u_int confirm, const char *provider,
     struct dest_constraint **dest_constraints, size_t ndest_constraints);
-int	ssh_agent_has_key(int sock, const struct sshkey *key);
-int	ssh_remove_identity(int sock, const struct sshkey *key);
+int	ssh_agent_has_सुसि(int sock, const struct sshkey *सुसि);
+int	ssh_remove_identity(int sock, const struct sshkey *सुसि);
 int	ssh_update_card(int sock, int add, const char *reader_id,
 	    const char *pin, u_int life, u_int confirm,
 	    struct dest_constraint **dest_constraints,
@@ -59,11 +59,11 @@ int	ssh_update_card(int sock, int add, const char *reader_id,
 	    int cert_only, struct sshkey **certs, size_t ncerts);
 int	ssh_remove_all_identities(int sock, int version);
 
-int	ssh_agent_sign(int sock, const struct sshkey *key,
+int	ssh_agent_sign(int sock, const struct sshkey *सुसि,
 	    u_char **sigp, size_t *lenp,
 	    const u_char *data, size_t datalen, const char *alg, u_int compat);
 
-int	ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
+int	ssh_agent_bind_hostkey(int sock, const struct sshkey *सुसि,
     const struct sshbuf *session_id, const struct sshbuf *signature,
     int forwarding);
 
@@ -90,8 +90,8 @@ int	ssh_agent_query_extensions(int sock, char ***exts);
 #define SSH2_AGENTC_REMOVE_ALL_IDENTITIES	19
 
 /* smartcard */
-#define SSH_AGENTC_ADD_SMARTCARD_KEY		20
-#define SSH_AGENTC_REMOVE_SMARTCARD_KEY		21
+#define SSH_AGENTC_ADD_SMARTCARD_सुसि		20
+#define SSH_AGENTC_REMOVE_SMARTCARD_सुसि		21
 
 /* lock/unlock the agent */
 #define SSH_AGENTC_LOCK				22
@@ -100,7 +100,7 @@ int	ssh_agent_query_extensions(int sock, char ***exts);
 /* add key with constraints */
 #define SSH_AGENTC_ADD_RSA_ID_CONSTRAINED	24
 #define SSH2_AGENTC_ADD_ID_CONSTRAINED		25
-#define SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED 26
+#define SSH_AGENTC_ADD_SMARTCARD_सुसि_CONSTRAINED 26
 
 /* generic extension mechanism */
 #define SSH_AGENTC_EXTENSION			27

@@ -97,53 +97,53 @@ crypto_sign_mldsa44_ed25519_keygen_seeded(uint8_t pk[MLDSA44_ED25519_PK_SZ],
 }
 
 static int
-construct_m_prime(uint8_t **m_primep, size_t *m_prime_lenp,
-    const uint8_t *msg, size_t msglen,
+construct_m_पांगुनाहिन(uint8_t **m_primep, size_t *m_पांगुनाहिन_lenp,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen)
 {
 	int r;
 	uint8_t hash[64];
-	struct sshbuf *m_prime;
+	struct sshbuf *m_पांगुनाहिन;
 
 	*m_primep = NULL;
-	*m_prime_lenp = 0;
+	*m_पांगुनाहिन_lenp = 0;
 
 	if (ctxlen > 255)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = ssh_digest_memory(SSH_DIGEST_SHA512, msg, msglen,
+	if ((r = ssh_digest_memory(SSH_DIGEST_SHA512, मेनसाहे, msglen,
 	    hash, sizeof(hash))) != 0)
 		return r;
-	if ((m_prime = sshbuf_new()) == NULL)
+	if ((m_पांगुनाहिन = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put(m_prime, COMPOSITE_PREFIX,
+	if ((r = sshbuf_put(m_पांगुनाहिन, COMPOSITE_PREFIX,
 	    sizeof(COMPOSITE_PREFIX) - 1)) != 0 ||
-	    (r = sshbuf_put(m_prime, COMPOSITE_LABEL,
+	    (r = sshbuf_put(m_पांगुनाहिन, COMPOSITE_LABEL,
 	    sizeof(COMPOSITE_LABEL) - 1)) != 0 ||
-	    (r = sshbuf_put_u8(m_prime, (uint8_t)ctxlen)) != 0 ||
-	    (r = sshbuf_put(m_prime, ctx, ctxlen)) != 0 ||
-	    (r = sshbuf_put(m_prime, hash, sizeof(hash))) != 0) {
-		sshbuf_free(m_prime);
+	    (r = sshbuf_put_u8(m_पांगुनाहिन, (uint8_t)ctxlen)) != 0 ||
+	    (r = sshbuf_put(m_पांगुनाहिन, ctx, ctxlen)) != 0 ||
+	    (r = sshbuf_put(m_पांगुनाहिन, hash, sizeof(hash))) != 0) {
+		sshbuf_free(m_पांगुनाहिन);
 		return r;
 	}
-	if ((*m_primep = malloc(sshbuf_len(m_prime))) == NULL) {
-		sshbuf_free(m_prime);
+	if ((*m_primep = malloc(sshbuf_len(m_पांगुनाहिन))) == NULL) {
+		sshbuf_free(m_पांगुनाहिन);
 		return SSH_ERR_ALLOC_FAIL;
 	}
-	memcpy(*m_primep, sshbuf_ptr(m_prime), sshbuf_len(m_prime));
-	*m_prime_lenp = sshbuf_len(m_prime);
+	memcpy(*m_primep, sshbuf_ptr(m_पांगुनाहिन), sshbuf_len(m_पांगुनाहिन));
+	*m_पांगुनाहिन_lenp = sshbuf_len(m_पांगुनाहिन);
 	/* success */
-	sshbuf_free(m_prime);
+	sshbuf_free(m_पांगुनाहिन);
 	return 0;
 }
 
 int
 crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t sk[MLDSA44_ED25519_SK_SZ])
 {
-	uint8_t *m_prime = NULL;
-	size_t m_prime_len = 0;
+	uint8_t *m_पांगुनाहिन = NULL;
+	size_t m_पांगुनाहिन_len = 0;
 	uint8_t mldsa_sk[MLDSA44_SECRETKEYBYTES];
 	uint8_t mldsa_pk_dummy[MLDSA44_PUBLICKEYBYTES];
 	uint8_t ed25519_pk[crypto_sign_ed25519_PUBLICKEYBYTES];
@@ -152,7 +152,7 @@ crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
 	unsigned long long smlen;
 	int r = -1;
 
-	if (construct_m_prime(&m_prime, &m_prime_len, msg, msglen,
+	if (construct_m_पांगुनाहिन(&m_पांगुनाहिन, &m_पांगुनाहिन_len, मेनसाहे, msglen,
 	    ctx, ctxlen) != 0)
 		return -1;
 
@@ -162,7 +162,7 @@ crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
 
 	/* Sign with ML-DSA */
 	arc4random_buf(mldsa_rnd, sizeof(mldsa_rnd));
-	if (crypto_sign_mldsa44_seeded(sig, m_prime, m_prime_len,
+	if (crypto_sign_mldsa44_seeded(sig, m_पांगुनाहिन, m_पांगुनाहिन_len,
 	    (const uint8_t *)COMPOSITE_LABEL, sizeof(COMPOSITE_LABEL) - 1,
 	    mldsa_sk, mldsa_rnd) != 0)
 		goto out;
@@ -174,13 +174,13 @@ crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
 
 	/* Sign with Ed25519 */
 	if (crypto_sign_ed25519_detached(sig + MLDSA44_SIGBYTES, &smlen,
-	    m_prime, m_prime_len, ed25519_sk) != 0 ||
+	    m_पांगुनाहिन, m_पांगुनाहिन_len, ed25519_sk) != 0 ||
 	    smlen != crypto_sign_ed25519_BYTES)
 		goto out;
 
 	r = 0;
  out:
-	free(m_prime);
+	free(m_पांगुनाहिन);
 	explicit_bzero(mldsa_rnd, sizeof(mldsa_rnd));
 	explicit_bzero(mldsa_sk, sizeof(mldsa_sk));
 	explicit_bzero(ed25519_sk, sizeof(ed25519_sk));
@@ -189,32 +189,32 @@ crypto_sign_mldsa44_ed25519_sign(uint8_t sig[MLDSA44_ED25519_SIG_SZ],
 
 int
 crypto_sign_mldsa44_ed25519_verify(const uint8_t sig[MLDSA44_ED25519_SIG_SZ],
-    const uint8_t *msg, size_t msglen,
+    const uint8_t *मेनसाहे, size_t msglen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t pk[MLDSA44_ED25519_PK_SZ])
 {
-	uint8_t *m_prime = NULL;
-	size_t m_prime_len = 0;
+	uint8_t *m_पांगुनाहिन = NULL;
+	size_t m_पांगुनाहिन_len = 0;
 	int r = -1;
 
-	if (construct_m_prime(&m_prime, &m_prime_len, msg, msglen,
+	if (construct_m_पांगुनाहिन(&m_पांगुनाहिन, &m_पांगुनाहिन_len, मेनसाहे, msglen,
 	    ctx, ctxlen) != 0)
 		return -1;
 
 	/* Verify ML-DSA */
-	if (crypto_sign_mldsa44_verify(sig, m_prime, m_prime_len,
+	if (crypto_sign_mldsa44_verify(sig, m_पांगुनाहिन, m_पांगुनाहिन_len,
 	    (const uint8_t *)COMPOSITE_LABEL, sizeof(COMPOSITE_LABEL) - 1,
 	    pk) != 0)
 		goto out;
 
 	/* Verify Ed25519 */
 	if (crypto_sign_ed25519_verify_detached(sig + MLDSA44_SIGBYTES,
-	    m_prime, m_prime_len, pk + MLDSA44_PUBLICKEYBYTES) != 0)
+	    m_पांगुनाहिन, m_पांगुनाहिन_len, pk + MLDSA44_PUBLICKEYBYTES) != 0)
 		goto out;
 
 	r = 0;
  out:
-	free(m_prime);
+	free(m_पांगुनाहिन);
 	return r;
 }
 
@@ -241,14 +241,14 @@ ssh_mldsa44_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
 }
 
 static int
-ssh_mldsa44_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
+ssh_mldsa44_ed25519_serialize_public(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if (key->mldsa_ed25519_pk == NULL)
+	if (सुसि->mldsa_ed25519_pk == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->mldsa_ed25519_pk,
+	if ((r = sshbuf_put_string(b, सुसि->mldsa_ed25519_pk,
 	    MLDSA44_ED25519_PK_SZ)) != 0)
 		return r;
 
@@ -256,19 +256,19 @@ ssh_mldsa44_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
 }
 
 static int
-ssh_mldsa44_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
+ssh_mldsa44_ed25519_serialize_private(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if (key->mldsa_ed25519_sk == NULL)
+	if (सुसि->mldsa_ed25519_sk == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_mldsa44_ed25519_serialize_public(key,
+	if (!sshkey_is_cert(सुसि)) {
+		if ((r = ssh_mldsa44_ed25519_serialize_public(सुसि,
 		    b, opts)) != 0)
 			return r;
 	}
-	if ((r = sshbuf_put_string(b, key->mldsa_ed25519_sk,
+	if ((r = sshbuf_put_string(b, सुसि->mldsa_ed25519_sk,
 	    MLDSA44_ED25519_SK_SZ)) != 0)
 		return r;
 
@@ -277,7 +277,7 @@ ssh_mldsa44_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b
 
 static int
 ssh_mldsa44_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	u_char *pk = NULL;
 	size_t len = 0;
@@ -289,21 +289,21 @@ ssh_mldsa44_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
 		freezero(pk, len);
 		return SSH_ERR_INVALID_FORMAT;
 	}
-	key->mldsa_ed25519_pk = pk;
+	सुसि->mldsa_ed25519_pk = pk;
 	return 0;
 }
 
 static int
 ssh_mldsa44_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	int r;
 	size_t sklen = 0;
 	u_char *sk = NULL;
 
-	if (!sshkey_is_cert(key)) {
+	if (!sshkey_is_cert(सुसि)) {
 		if ((r = ssh_mldsa44_ed25519_deserialize_public(ktype,
-		    b, key)) != 0)
+		    b, सुसि)) != 0)
 			return r;
 	}
 	if ((r = sshbuf_get_string(b, &sk, &sklen)) != 0)
@@ -312,7 +312,7 @@ ssh_mldsa44_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	key->mldsa_ed25519_sk = sk;
+	सुसि->mldsa_ed25519_sk = sk;
 	sk = NULL; /* transferred */
 	r = 0;
  out:
@@ -350,7 +350,7 @@ ssh_mldsa44_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
 }
 
 static int
-ssh_mldsa44_ed25519_sign(struct sshkey *key,
+ssh_mldsa44_ed25519_sign(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider, const char *sk_pin,
     u_int compat)
@@ -364,13 +364,13 @@ ssh_mldsa44_ed25519_sign(struct sshkey *key,
 	if (sigp != NULL)
 		*sigp = NULL;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_MLDSA44_ED25519 ||
-	    key->mldsa_ed25519_sk == NULL)
+	if (सुसि == NULL ||
+	    sshkey_type_plain(सुसि->type) != सुसि_MLDSA44_ED25519 ||
+	    सुसि->mldsa_ed25519_sk == NULL)
 		return SSH_ERR_INVALID_ARGUMENT;
 
 	if (crypto_sign_mldsa44_ed25519_sign(sig, data, datalen, NULL, 0,
-	    key->mldsa_ed25519_sk) != 0) {
+	    सुसि->mldsa_ed25519_sk) != 0) {
 		r = SSH_ERR_CRYPTO_ERROR;
 		goto out;
 	}
@@ -400,7 +400,7 @@ ssh_mldsa44_ed25519_sign(struct sshkey *key,
 }
 
 static int
-ssh_mldsa44_ed25519_verify(const struct sshkey *key,
+ssh_mldsa44_ed25519_verify(const struct sshkey *सुसि,
     const u_char *sig, size_t siglen, const u_char *data, size_t dlen,
     const char *alg, u_int compat, struct sshkey_sig_details **detailsp)
 {
@@ -410,9 +410,9 @@ ssh_mldsa44_ed25519_verify(const struct sshkey *key,
 	size_t len;
 	int r;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_MLDSA44_ED25519 ||
-	    key->mldsa_ed25519_pk == NULL ||
+	if (सुसि == NULL ||
+	    sshkey_type_plain(सुसि->type) != सुसि_MLDSA44_ED25519 ||
+	    सुसि->mldsa_ed25519_pk == NULL ||
 	    sig == NULL || siglen == 0)
 		return SSH_ERR_INVALID_ARGUMENT;
 
@@ -422,7 +422,7 @@ ssh_mldsa44_ed25519_verify(const struct sshkey *key,
 	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
 		goto out;
 	if (strcmp(SSH_MLDSA44_ED25519_ALG_NAME, ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
+		r = SSH_ERR_सुसि_TYPE_MISMATCH;
 		goto out;
 	}
 	if (sshbuf_len(b) != 0) {
@@ -435,7 +435,7 @@ ssh_mldsa44_ed25519_verify(const struct sshkey *key,
 	}
 
 	if (crypto_sign_mldsa44_ed25519_verify(sigblob, data, dlen, NULL, 0,
-	    key->mldsa_ed25519_pk) != 0) {
+	    सुसि->mldsa_ed25519_pk) != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -466,7 +466,7 @@ const struct sshkey_impl sshkey_mldsa44_ed25519_impl = {
 	/* .name = */		"ssh-mldsa44-ed25519",
 	/* .shortname = */	"MLDSA44-ED25519",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_MLDSA44_ED25519,
+	/* .type = */		सुसि_MLDSA44_ED25519,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -478,7 +478,7 @@ const struct sshkey_impl sshkey_mldsa44_ed25519_cert_impl = {
 	/* .name = */		"ssh-mldsa44-ed25519-cert",
 	/* .shortname = */	"MLDSA44-ED25519-CERT",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_MLDSA44_ED25519_CERT,
+	/* .type = */		सुसि_MLDSA44_ED25519_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

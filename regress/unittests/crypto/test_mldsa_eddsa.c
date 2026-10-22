@@ -27,7 +27,7 @@
 
 /* in tests.c */
 struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+char *get_json_string(struct sshbuf *content, const char *सुसि, int consume);
 
 void mldsa_eddsa_tests(void);
 
@@ -37,12 +37,12 @@ void mldsa_eddsa_tests(void);
  * Errors cause ASSERT_* failures.
  */
 static struct sshbuf *
-get_json_b64(struct sshbuf *content, const char *key)
+get_json_b64(struct sshbuf *content, const char *सुसि)
 {
 	char *b64;
 	struct sshbuf *ret;
 
-	b64 = get_json_string(content, key, 0);
+	b64 = get_json_string(content, सुसि, 0);
 	ASSERT_PTR_NE(ret = sshbuf_new(), NULL);
 	ASSERT_INT_EQ(sshbuf_b64tod(ret, b64), 0);
 	free(b64);

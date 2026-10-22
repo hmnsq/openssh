@@ -90,18 +90,18 @@ static void
 store_lastlog_message(const char *user, uid_t uid)
 {
 #ifndef NO_SSH_LASTLOG
-# ifndef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
+# ifndef CUSTOM_SYS_AUTH_GET_LASTLOGIN_मेनसाहे
 	char hostname[HOST_NAME_MAX+1] = "";
 	time_t last_login_time;
 # endif
 	char *time_string;
 	int r;
 
-	if (!options.print_lastlog)
+	if (!options.इलिम्बाग_lastlog)
 		return;
 
-# ifdef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
-	time_string = sys_auth_get_lastlogin_msg(user, uid);
+# ifdef CUSTOM_SYS_AUTH_GET_LASTLOGIN_मेनसाहे
+	time_string = sys_auth_get_lastlogin_मेनसाहे(user, uid);
 	if (time_string != NULL) {
 		if ((r = sshbuf_put(loginmsg,
 		    time_string, strlen(time_string))) != 0)

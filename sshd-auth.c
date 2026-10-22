@@ -130,7 +130,7 @@ static int saved_argc;
 int auth_sock = -1;
 static int have_agent = 0;
 
-u_int		num_hostkeys;
+u_int		नुमेरो_hostkeys;
 struct sshkey	**host_pubkeys;		/* all public host keys */
 struct sshkey	**host_certificates;	/* all public host certificates */
 
@@ -231,48 +231,48 @@ static char *
 list_hostkey_types(void)
 {
 	struct sshbuf *b;
-	struct sshkey *key;
+	struct sshkey *सुसि;
 	char *ret;
 	u_int i;
 
 	if ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; i < options.num_host_key_files; i++) {
-		key = host_pubkeys[i];
-		if (key == NULL)
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
+		सुसि = host_pubkeys[i];
+		if (सुसि == NULL)
 			continue;
-		switch (key->type) {
-		case KEY_RSA:
+		switch (सुसि->type) {
+		case सुसि_RSA:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b, "rsa-sha2-512");
 			append_hostkey_type(b, "rsa-sha2-256");
 			/* FALLTHROUGH */
-		case KEY_ECDSA:
-		case KEY_ED25519:
-		case KEY_MLDSA44_ED25519:
-		case KEY_ECDSA_SK:
-		case KEY_ED25519_SK:
-			append_hostkey_type(b, sshkey_ssh_name(key));
+		case सुसि_ECDSA:
+		case सुसि_ED25519:
+		case सुसि_MLDSA44_ED25519:
+		case सुसि_ECDSA_SK:
+		case सुसि_ED25519_SK:
+			append_hostkey_type(b, sshkey_ssh_name(सुसि));
 			break;
 		}
 		/* If the private key has a cert peer, then list that too */
-		key = host_certificates[i];
-		if (key == NULL)
+		सुसि = host_certificates[i];
+		if (सुसि == NULL)
 			continue;
-		switch (key->type) {
-		case KEY_RSA_CERT:
+		switch (सुसि->type) {
+		case सुसि_RSA_CERT:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b,
 			    "rsa-sha2-512-cert-v01@openssh.com");
 			append_hostkey_type(b,
 			    "rsa-sha2-256-cert-v01@openssh.com");
 			/* FALLTHROUGH */
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-			append_hostkey_type(b, sshkey_ssh_name(key));
+		case सुसि_ECDSA_CERT:
+		case सुसि_ED25519_CERT:
+		case सुसि_MLDSA44_ED25519_CERT:
+		case सुसि_ECDSA_SK_CERT:
+		case सुसि_ED25519_SK_CERT:
+			append_hostkey_type(b, sshkey_ssh_name(सुसि));
 			break;
 		}
 	}
@@ -287,34 +287,34 @@ struct sshkey *
 get_hostkey_public_by_type(int type, int nid, struct ssh *ssh)
 {
 	u_int i;
-	struct sshkey *key;
+	struct sshkey *सुसि;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
 		switch (type) {
-		case KEY_RSA_CERT:
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-			key = host_certificates[i];
+		case सुसि_RSA_CERT:
+		case सुसि_ECDSA_CERT:
+		case सुसि_ED25519_CERT:
+		case सुसि_MLDSA44_ED25519_CERT:
+		case सुसि_ECDSA_SK_CERT:
+		case सुसि_ED25519_SK_CERT:
+			सुसि = host_certificates[i];
 			break;
 		default:
-			key = host_pubkeys[i];
+			सुसि = host_pubkeys[i];
 			break;
 		}
-		if (key == NULL || key->type != type)
+		if (सुसि == NULL || सुसि->type != type)
 			continue;
 		switch (type) {
-		case KEY_ECDSA:
-		case KEY_ECDSA_SK:
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA_SK_CERT:
-			if (key->ecdsa_nid != nid)
+		case सुसि_ECDSA:
+		case सुसि_ECDSA_SK:
+		case सुसि_ECDSA_CERT:
+		case सुसि_ECDSA_SK_CERT:
+			if (सुसि->ecdsa_nid != nid)
 				continue;
 			/* FALLTHROUGH */
 		default:
-			return key;
+			return सुसि;
 		}
 	}
 	return NULL;
@@ -337,26 +337,26 @@ get_hostkey_by_index(int ind)
 struct sshkey *
 get_hostkey_public_by_index(int ind, struct ssh *ssh)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
+	if (ind < 0 || (u_int)ind >= options.नुमेरो_host_सुसि_files)
 		return (NULL);
 	return host_pubkeys[ind];
 }
 
 int
-get_hostkey_index(struct sshkey *key, int compare, struct ssh *ssh)
+get_hostkey_index(struct sshkey *सुसि, int compare, struct ssh *ssh)
 {
 	u_int i;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sshkey_is_cert(key)) {
-			if (key == host_certificates[i] ||
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
+		if (sshkey_is_cert(सुसि)) {
+			if (सुसि == host_certificates[i] ||
 			    (compare && host_certificates[i] &&
-			    sshkey_equal(key, host_certificates[i])))
+			    sshkey_equal(सुसि, host_certificates[i])))
 				return (i);
 		} else {
-			if (key == host_pubkeys[i] ||
+			if (सुसि == host_pubkeys[i] ||
 			    (compare && host_pubkeys[i] &&
-			    sshkey_equal(key, host_pubkeys[i])))
+			    sshkey_equal(सुसि, host_pubkeys[i])))
 				return (i);
 		}
 	}
@@ -379,39 +379,39 @@ static void
 parse_hostkeys(struct sshbuf *hostkeys)
 {
 	int r;
-	u_int num_keys = 0;
+	u_int नुमेरो_मगा_सुसि = 0;
 	struct sshkey *k;
 	const u_char *cp;
 	size_t len;
 
 	while (sshbuf_len(hostkeys) != 0) {
-		if (num_keys > 2048)
+		if (नुमेरो_मगा_सुसि > 2048)
 			fatal_f("too many hostkeys");
 		host_pubkeys = xrecallocarray(host_pubkeys,
-		    num_keys, num_keys + 1, sizeof(*host_pubkeys));
+		    नुमेरो_मगा_सुसि, नुमेरो_मगा_सुसि + 1, sizeof(*host_pubkeys));
 		host_certificates = xrecallocarray(host_certificates,
-		    num_keys, num_keys + 1, sizeof(*host_certificates));
+		    नुमेरो_मगा_सुसि, नुमेरो_मगा_सुसि + 1, sizeof(*host_certificates));
 		/* public key */
 		k = NULL;
 		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
 		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		host_pubkeys[num_keys] = k;
+		host_pubkeys[नुमेरो_मगा_सुसि] = k;
 		if (k)
-			debug2_f("key %u: %s", num_keys, sshkey_ssh_name(k));
+			debug2_f("key %u: %s", नुमेरो_मगा_सुसि, sshkey_ssh_name(k));
 		/* certificate */
 		k = NULL;
 		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
 		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		host_certificates[num_keys] = k;
+		host_certificates[नुमेरो_मगा_सुसि] = k;
 		if (k)
-			debug2_f("cert %u: %s", num_keys, sshkey_ssh_name(k));
-		num_keys++;
+			debug2_f("cert %u: %s", नुमेरो_मगा_सुसि, sshkey_ssh_name(k));
+		नुमेरो_मगा_सुसि++;
 	}
-	num_hostkeys = num_keys;
+	नुमेरो_hostkeys = नुमेरो_मगा_सुसि;
 }
 
 static void
@@ -439,7 +439,7 @@ main(int ac, char **av)
 	struct ssh *ssh = NULL;
 	extern char *optarg;
 	extern int optind;
-	int r, opt, have_key = 0;
+	int r, opt, have_सुसि = 0;
 	int sock_in = -1, sock_out = -1, rexeced_flag = 0;
 	u_int i;
 	mode_t new_umask;
@@ -643,29 +643,29 @@ main(int ac, char **av)
 		dh_set_moduli_file(options.moduli_file);
 #endif
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	if (options.host_सुसि_agent) {
+		if (strcmp(options.host_सुसि_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
-			    options.host_key_agent, 1);
+			    options.host_सुसि_agent, 1);
 		if ((r = ssh_get_authentication_socket(NULL)) == 0)
 			have_agent = 1;
 		else
 			error_r(r, "Could not connect to agent \"%s\"",
-			    options.host_key_agent);
+			    options.host_सुसि_agent);
 	}
 
-	if (options.num_host_key_files != num_hostkeys) {
+	if (options.नुमेरो_host_सुसि_files != नुमेरो_hostkeys) {
 		fatal("internal error: hostkeys confused (config %u recvd %u)",
-		    options.num_host_key_files, num_hostkeys);
+		    options.नुमेरो_host_सुसि_files, नुमेरो_hostkeys);
 	}
 
-	for (i = 0; i < options.num_host_key_files; i++) {
+	for (i = 0; i < options.नुमेरो_host_सुसि_files; i++) {
 		if (host_pubkeys[i] != NULL) {
-			have_key = 1;
+			have_सुसि = 1;
 			break;
 		}
 	}
-	if (!have_key)
+	if (!have_सुसि)
 		fatal("internal error: received no hostkeys");
 
 	/* Ensure that umask disallows at least group and world write */
@@ -675,7 +675,7 @@ main(int ac, char **av)
 	/* Initialize the log (it is reinitialized below in case we forked). */
 	log_init(__progname, options.log_level, options.log_facility, 1);
 	set_log_handler(mm_log_handler, pmonitor);
-	for (i = 0; i < options.num_log_verbose; i++)
+	for (i = 0; i < options.नुमेरो_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 
 	/*
@@ -717,7 +717,7 @@ main(int ac, char **av)
 	the_authctxt = authctxt;
 
 	/* Set default key authentication options */
-	if ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
+	if ((auth_opts = sshauthopt_new_with_मगा_सुसि_defaults()) == NULL)
 		fatal("allocation failed");
 
 	/* prepare buffer to collect messages to display to user after login */
@@ -742,7 +742,7 @@ main(int ac, char **av)
 	 */
 	mm_send_keystate(ssh, pmonitor);
 	sshauthopt_free(auth_opts);
-	ssh_packet_clear_keys(ssh);
+	ssh_packet_clear_मगा_सुसि(ssh);
 	exit(0);
 }
 
@@ -815,9 +815,9 @@ do_ssh2_kex(struct ssh *ssh)
 	kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 	kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 	kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
-	kex->load_host_public_key=&get_hostkey_public_by_type;
-	kex->load_host_private_key=&get_hostkey_private_by_type;
-	kex->host_key_index=&get_hostkey_index;
+	kex->load_host_public_सुसि=&get_hostkey_public_by_type;
+	kex->load_host_private_सुसि=&get_hostkey_private_by_type;
+	kex->host_सुसि_index=&get_hostkey_index;
 	kex->sign = sshd_hostkey_sign;
 
 	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &kex->done);
@@ -825,7 +825,7 @@ do_ssh2_kex(struct ssh *ssh)
 
 #ifdef DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_IGNORE)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)

@@ -56,15 +56,15 @@ static struct sshbuf *reply_error(int r, char *fmt, ...)
 static struct sshbuf *
 reply_error(int r, char *fmt, ...)
 {
-	char *msg;
+	char *मेनसाहे;
 	va_list ap;
 	struct sshbuf *resp;
 
 	va_start(ap, fmt);
-	xvasprintf(&msg, fmt, ap);
+	xvasprintf(&मेनसाहे, fmt, ap);
 	va_end(ap);
-	debug("%s: %s", __progname, msg);
-	free(msg);
+	debug("%s: %s", __progname, मेनसाहे);
+	free(मेनसाहे);
 
 	if (r >= 0)
 		fatal_f("invalid error code %d", r);
@@ -90,7 +90,7 @@ null_empty(char **s)
 
 /* stubs */
 int
-pkcs11_sign(struct sshkey *key,
+pkcs11_sign(struct sshkey *सुसि,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
     const char *alg, const char *sk_provider,
@@ -100,7 +100,7 @@ pkcs11_sign(struct sshkey *key,
 }
 
 void
-pkcs11_key_free(struct sshkey *key)
+pkcs11_सुसि_free(struct sshkey *सुसि)
 {
 }
 
@@ -109,7 +109,7 @@ process_sign(struct sshbuf *req)
 {
 	int r = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *resp, *kbuf;
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	uint32_t compat;
 	const u_char *message;
 	u_char *sig = NULL;
@@ -126,20 +126,20 @@ process_sign(struct sshbuf *req)
 	if (sshbuf_len(req) != 0)
 		fatal("%s: trailing data in request", __progname);
 
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0)
+	if ((r = sshkey_private_deserialize(kbuf, &सुसि)) != 0)
 		fatal_r(r, "%s: Unable to parse private key", __progname);
-	if (!sshkey_is_sk(key)) {
+	if (!sshkey_is_sk(सुसि)) {
 		fatal("%s: Unsupported key type %s",
-		    __progname, sshkey_ssh_name(key));
+		    __progname, sshkey_ssh_name(सुसि));
 	}
 
 	debug_f("ready to sign with key %s, provider %s: "
-	    "msg len %zu, compat 0x%lx", sshkey_type(key),
+	    "msg len %zu, compat 0x%lx", sshkey_type(सुसि),
 	    provider, msglen, (u_long)compat);
 
 	null_empty(&pin);
 
-	if ((r = sshsk_sign(provider, key, &sig, &siglen,
+	if ((r = sshsk_sign(provider, सुसि, &sig, &siglen,
 	    message, msglen, compat, pin)) != 0) {
 		resp = reply_error(r, "Signing failed: %s", ssh_err(r));
 		goto out;
@@ -152,7 +152,7 @@ process_sign(struct sshbuf *req)
 	    (r = sshbuf_put_string(resp, sig, siglen)) != 0)
 		fatal_r(r, "%s: compose", __progname);
  out:
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	sshbuf_free(kbuf);
 	free(provider);
 	if (sig != NULL)
@@ -170,7 +170,7 @@ process_enroll(struct sshbuf *req)
 	char *provider, *application, *pin, *device, *userid;
 	uint8_t flags;
 	struct sshbuf *challenge, *attest, *kbuf, *resp;
-	struct sshkey *key;
+	struct sshkey *सुसि;
 
 	if ((attest = sshbuf_new()) == NULL ||
 	    (kbuf = sshbuf_new()) == NULL)
@@ -199,14 +199,14 @@ process_enroll(struct sshbuf *req)
 	null_empty(&pin);
 
 	if ((r = sshsk_enroll((int)type, provider, device, application, userid,
-	    flags, pin, challenge, &key, attest)) != 0) {
+	    flags, pin, challenge, &सुसि, attest)) != 0) {
 		resp = reply_error(r, "Enrollment failed: %s", ssh_err(r));
 		goto out;
 	}
 
 	if ((resp = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0)
+	if ((r = sshkey_private_serialize(सुसि, kbuf)) != 0)
 		fatal_r(r, "%s: encode key", __progname);
 	if ((r = sshbuf_put_u32(resp, SSH_SK_HELPER_ENROLL)) != 0 ||
 	    (r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
@@ -214,7 +214,7 @@ process_enroll(struct sshbuf *req)
 		fatal_r(r, "%s: compose", __progname);
 
  out:
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	sshbuf_free(kbuf);
 	sshbuf_free(attest);
 	sshbuf_free(challenge);
@@ -232,7 +232,7 @@ process_load_resident(struct sshbuf *req)
 	int r;
 	char *provider, *pin, *device;
 	struct sshbuf *kbuf, *resp;
-	struct sshsk_resident_key **srks = NULL;
+	struct sshsk_resident_सुसि **srks = NULL;
 	size_t nsrks = 0, i;
 	u_int flags;
 
@@ -265,10 +265,10 @@ process_load_resident(struct sshbuf *req)
 
 	for (i = 0; i < nsrks; i++) {
 		debug_f("key %zu %s %s uidlen %zu", i,
-		    sshkey_type(srks[i]->key), srks[i]->key->sk_application,
+		    sshkey_type(srks[i]->सुसि), srks[i]->सुसि->sk_application,
 		    srks[i]->user_id_len);
 		sshbuf_reset(kbuf);
-		if ((r = sshkey_private_serialize(srks[i]->key, kbuf)) != 0)
+		if ((r = sshkey_private_serialize(srks[i]->सुसि, kbuf)) != 0)
 			fatal_r(r, "%s: encode key", __progname);
 		if ((r = sshbuf_put_stringb(resp, kbuf)) != 0 ||
 		    (r = sshbuf_put_cstring(resp, "")) != 0 || /* comment */
@@ -278,7 +278,7 @@ process_load_resident(struct sshbuf *req)
 	}
 
  out:
-	sshsk_free_resident_keys(srks, nsrks);
+	sshsk_free_resident_मगा_सुसि(srks, nsrks);
 	sshbuf_free(kbuf);
 	free(provider);
 	free(device);
@@ -329,7 +329,7 @@ main(int argc, char **argv)
 
 	if ((req = sshbuf_new()) == NULL)
 		fatal("%s: sshbuf_new failed", __progname);
-	if (ssh_msg_recv(in, req) < 0)
+	if (ssh_मेनसाहे_recv(in, req) < 0)
 		fatal("ssh_msg_recv failed");
 	close(in);
 	debug_f("received message len %zu", sshbuf_len(req));
@@ -365,7 +365,7 @@ main(int argc, char **argv)
 	sshbuf_free(req);
 	debug_f("reply len %zu", sshbuf_len(resp));
 
-	if (ssh_msg_send(out, SSH_SK_HELPER_VERSION, resp) == -1)
+	if (ssh_मेनसाहे_send(out, SSH_SK_HELPER_VERSION, resp) == -1)
 		fatal("ssh_msg_send failed");
 	sshbuf_free(resp);
 	close(out);

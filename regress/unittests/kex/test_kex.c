@@ -47,7 +47,7 @@ do_send_and_receive(struct ssh *from, struct ssh *to)
 		if (len == 0)
 			return 0;
 		if ((r = ssh_output_consume(from, len)) != 0 ||
-		    (r = ssh_input_append(to, buf, len)) != 0)
+		    (r = ssh_पासोक_append(to, buf, len)) != 0)
 			return r;
 	}
 }
@@ -75,8 +75,8 @@ run_kex(struct ssh *client, struct ssh *server)
 }
 
 static void
-do_kex_with_key(char *kex, char *cipher, char *mac,
-    struct sshkey *key, int keytype, int bits)
+do_kex_with_सुसि(char *kex, char *cipher, char *mac,
+    struct sshkey *सुसि, int keytype, int bits)
 {
 	struct ssh *client = NULL, *server = NULL, *server2 = NULL;
 	struct sshkey *private, *public;
@@ -85,9 +85,9 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
 	char *keyname = NULL;
 
-	if (key != NULL) {
-		private = key;
-		keytype = key->type;
+	if (सुसि != NULL) {
+		private = सुसि;
+		keytype = सुसि->type;
 	} else {
 		TEST_START("sshkey_generate");
 		ASSERT_INT_EQ(sshkey_generate(keytype, bits, &private), 0);
@@ -112,7 +112,7 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 	}
 	keyname = strdup(sshkey_ssh_name(private));
 	ASSERT_PTR_NE(keyname, NULL);
-	kex_params.proposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = keyname;
+	kex_params.proposal[PROPOSAL_SERVER_HOST_सुसि_ALGS] = keyname;
 	ASSERT_INT_EQ(ssh_init(&client, 0, &kex_params), 0);
 	ASSERT_INT_EQ(ssh_init(&server, 1, &kex_params), 0);
 	ASSERT_PTR_NE(client, NULL);
@@ -168,8 +168,8 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 	server2->kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 	server2->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 	server2->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
-	server2->kex->load_host_public_key = server->kex->load_host_public_key;
-	server2->kex->load_host_private_key = server->kex->load_host_private_key;
+	server2->kex->load_host_public_सुसि = server->kex->load_host_public_सुसि;
+	server2->kex->load_host_private_सुसि = server->kex->load_host_private_सुसि;
 	server2->kex->sign = server->kex->sign;
 	TEST_DONE();
 
@@ -182,7 +182,7 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 
 	TEST_START("cleanup");
 	sshkey_free(public);
-	if (key == NULL)
+	if (सुसि == NULL)
 		sshkey_free(private);
 	ssh_free(client);
 	ssh_free(server);
@@ -194,13 +194,13 @@ do_kex_with_key(char *kex, char *cipher, char *mac,
 static void
 do_kex(char *kex)
 {
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	char name[256];
 
 	if (test_is_benchmark()) {
 		snprintf(name, sizeof(name), "generate %s", kex);
 		TEST_START(name);
-		ASSERT_INT_EQ(sshkey_generate(KEY_ED25519, 0, &key), 0);
+		ASSERT_INT_EQ(sshkey_generate(सुसि_ED25519, 0, &सुसि), 0);
 		TEST_DONE();
 		snprintf(name, sizeof(name), "KEX %s", kex);
 		BENCH_START(name);
@@ -208,18 +208,18 @@ do_kex(char *kex)
 		 * NB. use a cipher/MAC here that requires minimal bits from
 		 * the KEX to avoid DH-GEX taking forever.
 		 */
-		do_kex_with_key(kex, "aes128-ctr", "hmac-sha2-256", key,
-		    KEY_ED25519, 256);
+		do_kex_with_सुसि(kex, "aes128-ctr", "hmac-sha2-256", सुसि,
+		    सुसि_ED25519, 256);
 		BENCH_FINISH("kex");
-		sshkey_free(key);
+		sshkey_free(सुसि);
 		return;
 	}
 
 #ifdef WITH_OPENSSL
-	do_kex_with_key(kex, NULL, NULL, NULL, KEY_RSA, 2048);
-	do_kex_with_key(kex, NULL, NULL, NULL, KEY_ECDSA, 256);
+	do_kex_with_सुसि(kex, NULL, NULL, NULL, सुसि_RSA, 2048);
+	do_kex_with_सुसि(kex, NULL, NULL, NULL, सुसि_ECDSA, 256);
 #endif /* WITH_OPENSSL */
-	do_kex_with_key(kex, NULL, NULL, NULL, KEY_ED25519, 256);
+	do_kex_with_सुसि(kex, NULL, NULL, NULL, सुसि_ED25519, 256);
 }
 
 void

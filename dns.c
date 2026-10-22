@@ -77,24 +77,24 @@ dns_result_totext(unsigned int res)
  * Caller must free digest which is allocated by sshkey_fingerprint_raw().
  */
 static int
-dns_read_key(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, struct sshkey *key)
+dns_read_सुसि(uint8_t *algorithm, uint8_t *digest_type,
+    u_char **digest, size_t *digest_len, struct sshkey *सुसि)
 {
 	int r, success = 0;
 	int fp_alg = -1;
 
-	switch (key->type) {
-	case KEY_RSA:
-		*algorithm = SSHFP_KEY_RSA;
+	switch (सुसि->type) {
+	case सुसि_RSA:
+		*algorithm = SSHFP_सुसि_RSA;
 		break;
-	case KEY_ECDSA:
-		*algorithm = SSHFP_KEY_ECDSA;
+	case सुसि_ECDSA:
+		*algorithm = SSHFP_सुसि_ECDSA;
 		break;
-	case KEY_ED25519:
-		*algorithm = SSHFP_KEY_ED25519;
+	case सुसि_ED25519:
+		*algorithm = SSHFP_सुसि_ED25519;
 		break;
 	default:
-		*algorithm = SSHFP_KEY_RESERVED; /* 0 */
+		*algorithm = SSHFP_सुसि_RESERVED; /* 0 */
 	}
 
 	switch (*digest_type) {
@@ -109,7 +109,7 @@ dns_read_key(uint8_t *algorithm, uint8_t *digest_type,
 	}
 
 	if (*algorithm && *digest_type) {
-		if ((r = sshkey_fingerprint_raw(key, fp_alg, digest,
+		if ((r = sshkey_fingerprint_raw(सुसि, fp_alg, digest,
 		    digest_len)) != 0)
 			fatal_fr(r, "sshkey_fingerprint_raw");
 		success = 1;
@@ -130,7 +130,7 @@ dns_read_rdata(uint8_t *algorithm, uint8_t *digest_type,
 {
 	int success = 0;
 
-	*algorithm = SSHFP_KEY_RESERVED;
+	*algorithm = SSHFP_सुसि_RESERVED;
 	*digest_type = SSHFP_HASH_RESERVED;
 
 	if (rdata_len >= 2) {
@@ -186,7 +186,7 @@ is_numeric_hostname(const char *hostname)
  * Returns 0 if lookup succeeds, -1 otherwise
  */
 int
-verify_host_key_dns(const char *hostname, struct sockaddr *address,
+verify_host_सुसि_dns(const char *hostname, struct sockaddr *address,
     struct sshkey *hostkey, int *flags)
 {
 	u_int counter;
@@ -248,7 +248,7 @@ verify_host_key_dns(const char *hostname, struct sockaddr *address,
 		    dnskey_digest_type);
 
 		/* Calculate host key fingerprint. */
-		if (!dns_read_key(&hostkey_algorithm, &dnskey_digest_type,
+		if (!dns_read_सुसि(&hostkey_algorithm, &dnskey_digest_type,
 		    &hostkey_digest, &hostkey_digest_len, hostkey)) {
 			error("Error calculating key fingerprint.");
 			free(dnskey_digest);
@@ -295,7 +295,7 @@ verify_host_key_dns(const char *hostname, struct sockaddr *address,
  * Export the fingerprint of a key as a DNS resource record
  */
 int
-export_dns_rr(const char *hostname, struct sshkey *key, FILE *f, int generic,
+export_dns_rr(const char *hostname, struct sshkey *सुसि, FILE *f, int generic,
     int alg)
 {
 	uint8_t rdata_pubkey_algorithm = 0;
@@ -309,8 +309,8 @@ export_dns_rr(const char *hostname, struct sshkey *key, FILE *f, int generic,
 		if (alg != -1 && dtype != alg)
 			continue;
 		rdata_digest_type = dtype;
-		if (dns_read_key(&rdata_pubkey_algorithm, &rdata_digest_type,
-		    &rdata_digest, &rdata_digest_len, key)) {
+		if (dns_read_सुसि(&rdata_pubkey_algorithm, &rdata_digest_type,
+		    &rdata_digest, &rdata_digest_len, सुसि)) {
 			if (generic) {
 				fprintf(f, "%s IN TYPE%d \\# %zu %02x %02x ",
 				    hostname, DNS_RDATATYPE_SSHFP,

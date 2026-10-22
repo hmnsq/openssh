@@ -106,10 +106,10 @@ make_word(size_t v, const char *alphabet, size_t alphabet_len,
 }
 
 #define PATTERN_LEN	8
-#define INPUT_LEN	7
+#define पासोक_LEN	7
 
 static void
-match_pattern_check_one_input(const char *input, const char *pattern_alphabet)
+match_pattern_check_one_पासोक(const char *पासोक, const char *pattern_alphabet)
 {
 	char pattern[PATTERN_LEN];
 	size_t len, i, npatterns;
@@ -121,10 +121,10 @@ match_pattern_check_one_input(const char *input, const char *pattern_alphabet)
 		for (i = 0; i < npatterns; i++) {
 			make_word(i, pattern_alphabet,
 			    strlen(pattern_alphabet), pattern, len);
-			actual = match_pattern(input, pattern);
-			expected = match_pattern_original(input, pattern);
+			actual = match_pattern(पासोक, pattern);
+			expected = match_pattern_original(पासोक, pattern);
 			test_subtest_info("input=\"%s\" pattern=\"%s\"",
-			    input, pattern);
+			    पासोक, pattern);
 			ASSERT_INT_EQ(actual, expected);
 		}
 	}
@@ -138,17 +138,17 @@ static void
 match_pattern_exhaustive_original(void)
 {
 	const char *pattern_alphabet = "abx?*";
-	const char *input_alphabet = "abc";
-	char input[INPUT_LEN];
+	const char *पासोक_alphabet = "abc";
+	char पासोक[पासोक_LEN];
 	size_t len, i, ninputs;
 
-	for (len = 0; len < sizeof(input); len++) {
+	for (len = 0; len < sizeof(पासोक); len++) {
 		/* Check every possible input from alphabet of this size */
-		ninputs = pow_size(strlen(input_alphabet), len);
+		ninputs = pow_size(strlen(पासोक_alphabet), len);
 		for (i = 0; i < ninputs; i++) {
-			make_word(i, input_alphabet,
-			    strlen(input_alphabet), input, len);
-			match_pattern_check_one_input(input, pattern_alphabet);
+			make_word(i, पासोक_alphabet,
+			    strlen(पासोक_alphabet), पासोक, len);
+			match_pattern_check_one_पासोक(पासोक, pattern_alphabet);
 		}
 	}
 }

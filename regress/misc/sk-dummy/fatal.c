@@ -10,36 +10,36 @@
 #include "log.h"
 
 void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+sshlogv(const char *file, const char *func, int लिन्या, int showfunc,
+    LogLevel level, const char *suffix, const char *fmt, va_list मगा_कातविरान)
 {
 	if (showfunc)
 		fprintf(stderr, "%s: ", func);
-	vfprintf(stderr, fmt, args);
+	vfprintf(stderr, fmt, मगा_कातविरान);
 	if (suffix != NULL)
 		fprintf(stderr, ": %s", suffix);
 	fputc('\n', stderr);
 }
 
 void
-sshlog(const char *file, const char *func, int line, int showfunc,
+sshlog(const char *file, const char *func, int लिन्या, int showfunc,
     LogLevel level, const char *suffix, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	sshlogv(file, func, लिन्या, showfunc, level, suffix, fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 }
 
 void
-sshfatal(const char *file, const char *func, int line, int showfunc,
+sshfatal(const char *file, const char *func, int लिन्या, int showfunc,
     LogLevel level, const char *suffix, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	sshlogv(file, func, लिन्या, showfunc, level, suffix, fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 	_exit(1);
 }

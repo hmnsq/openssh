@@ -28,7 +28,7 @@
 	} while (0)
 
 void
-poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t inlen, const unsigned char key[POLY1305_KEYLEN]) {
+poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t inlen, const unsigned char सुसि[POLY1305_KEYLEN]) {
 	uint32_t t0,t1,t2,t3;
 	uint32_t h0,h1,h2,h3,h4;
 	uint32_t r0,r1,r2,r3,r4;
@@ -42,10 +42,10 @@ poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t
 	unsigned char mp[16];
 
 	/* clamp key */
-	t0 = U8TO32_LE(key+0);
-	t1 = U8TO32_LE(key+4);
-	t2 = U8TO32_LE(key+8);
-	t3 = U8TO32_LE(key+12);
+	t0 = U8TO32_LE(सुसि+0);
+	t1 = U8TO32_LE(सुसि+4);
+	t2 = U8TO32_LE(सुसि+8);
+	t3 = U8TO32_LE(सुसि+12);
 
 	/* precompute multipliers */
 	r0 = t0 & 0x3ffffff; t0 >>= 26; t0 |= t1 << 6;
@@ -145,10 +145,10 @@ poly1305_donna_finish:
 	h3 = (h3 & nb) | (g3 & b);
 	h4 = (h4 & nb) | (g4 & b);
 
-	f0 = ((h0      ) | (h1 << 26)) + (uint64_t)U8TO32_LE(&key[16]);
-	f1 = ((h1 >>  6) | (h2 << 20)) + (uint64_t)U8TO32_LE(&key[20]);
-	f2 = ((h2 >> 12) | (h3 << 14)) + (uint64_t)U8TO32_LE(&key[24]);
-	f3 = ((h3 >> 18) | (h4 <<  8)) + (uint64_t)U8TO32_LE(&key[28]);
+	f0 = ((h0      ) | (h1 << 26)) + (uint64_t)U8TO32_LE(&सुसि[16]);
+	f1 = ((h1 >>  6) | (h2 << 20)) + (uint64_t)U8TO32_LE(&सुसि[20]);
+	f2 = ((h2 >> 12) | (h3 << 14)) + (uint64_t)U8TO32_LE(&सुसि[24]);
+	f3 = ((h3 >> 18) | (h4 <<  8)) + (uint64_t)U8TO32_LE(&सुसि[28]);
 
 	U32TO8_LE(&out[ 0], f0); f1 += (f0 >> 32);
 	U32TO8_LE(&out[ 4], f1); f2 += (f1 >> 32);

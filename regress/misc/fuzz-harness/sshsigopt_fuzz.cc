@@ -8,7 +8,7 @@ extern "C" {
 
 #include "sshsig.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+int LLVMFuzzer_Test_One_पासोक(const uint8_t* data, size_t size)
 {
 	char *cp = (char *)malloc(size + 1);
 	struct sshsigopt *opts = NULL;

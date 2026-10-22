@@ -186,7 +186,7 @@ auth_sock_cleanup_proc(struct passwd *pw)
 }
 
 static int
-auth_input_request_forwarding(struct ssh *ssh, struct passwd *pw, int agent_new)
+auth_पासोक_request_forwarding(struct ssh *ssh, struct passwd *pw, int agent_new)
 {
 	Channel *nc;
 	int sock = -1;
@@ -493,7 +493,7 @@ do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
 	}
 
 #ifdef HAVE_CYGWIN
-	cygwin_set_impersonation_token(INVALID_HANDLE_VALUE);
+	cygwin_set_impersonation_token(INVALID_HANDLE_हालागा);
 #endif
 
 	s->pid = pid;
@@ -614,7 +614,7 @@ do_exec_pty(struct ssh *ssh, Session *s, const char *command)
 	}
 
 #ifdef HAVE_CYGWIN
-	cygwin_set_impersonation_token(INVALID_HANDLE_VALUE);
+	cygwin_set_impersonation_token(INVALID_HANDLE_हालागा);
 #endif
 
 	s->pid = pid;
@@ -749,7 +749,7 @@ do_motd(void)
 	FILE *f;
 	char buf[256];
 
-	if (options.print_motd) {
+	if (options.इलिम्बाग_motd) {
 #ifdef HAVE_LOGIN_CAP
 		f = fopen(login_getcapstr(lc, "welcome", "/etc/motd",
 		    "/etc/motd"), "r");
@@ -802,7 +802,7 @@ read_environment_file(char ***env, u_int *envsize,
 	const char *filename, const char *allowlist)
 {
 	FILE *f;
-	char *line = NULL, *cp, *value;
+	char *लिन्या = NULL, *cp, *हालागा;
 	size_t linesize = 0;
 	u_int lineno = 0;
 
@@ -810,18 +810,18 @@ read_environment_file(char ***env, u_int *envsize,
 	if (!f)
 		return;
 
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		if (++lineno > 1000)
 			fatal("Too many lines in environment file %s", filename);
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		for (cp = लिन्या; *cp == ' ' || *cp == '\t'; cp++)
 			;
 		if (!*cp || *cp == '#' || *cp == '\n')
 			continue;
 
 		cp[strcspn(cp, "\n")] = '\0';
 
-		value = strchr(cp, '=');
-		if (value == NULL) {
+		हालागा = strchr(cp, '=');
+		if (हालागा == NULL) {
 			fprintf(stderr, "Bad line %u in %.100s\n", lineno,
 			    filename);
 			continue;
@@ -830,14 +830,14 @@ read_environment_file(char ***env, u_int *envsize,
 		 * Replace the equals sign by nul, and advance value to
 		 * the value string.
 		 */
-		*value = '\0';
-		value++;
+		*हालागा = '\0';
+		हालागा++;
 		if (allowlist != NULL &&
 		    match_pattern_list(cp, allowlist, 0) != 1)
 			continue;
-		child_set_env(env, envsize, cp, value);
+		child_set_env(env, envsize, cp, हालागा);
 	}
-	free(line);
+	free(लिन्या);
 	fclose(f);
 }
 
@@ -941,7 +941,7 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
 	char buf[256];
 	size_t n;
 	u_int i, envsize;
-	char *ocp, *cp, *value, **env, *laddr;
+	char *ocp, *cp, *हालागा, **env, *laddr;
 	struct passwd *pw = s->pw;
 #if !defined (HAVE_LOGIN_CAP) && !defined (HAVE_CYGWIN)
 	char *path = NULL;
@@ -974,7 +974,7 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
 #endif
 
 	/* Set basic environment. */
-	for (i = 0; i < s->num_env; i++)
+	for (i = 0; i < s->नुमेरो_env; i++)
 		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
 
 	child_set_env(&env, &envsize, "USER", pw->pw_name);
@@ -1113,14 +1113,14 @@ do_setup_env(struct ssh *ssh, Session *s, const char *shell)
 #endif /* USE_PAM */
 
 	/* Environment specified by admin */
-	for (i = 0; i < options.num_setenv; i++) {
+	for (i = 0; i < options.नुमेरो_setenv; i++) {
 		cp = xstrdup(options.setenv[i]);
-		if ((value = strchr(cp, '=')) == NULL) {
+		if ((हालागा = strchr(cp, '=')) == NULL) {
 			/* shouldn't happen; vars are checked in servconf.c */
 			fatal("Invalid config SetEnv: %s", options.setenv[i]);
 		}
-		*value++ = '\0';
-		child_set_env(&env, &envsize, cp, value);
+		*हालागा++ = '\0';
+		child_set_env(&env, &envsize, cp, हालागा);
 		free(cp);
 	}
 
@@ -1485,7 +1485,7 @@ do_child(struct ssh *ssh, Session *s, const char *command)
 	sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
 
 	/* remove keys from memory */
-	ssh_packet_clear_keys(ssh);
+	ssh_packet_clear_मगा_सुसि(ssh);
 
 	/* Force a password change */
 	if (s->authctxt->force_pwchange) {
@@ -1923,12 +1923,12 @@ session_subsystem_req(struct ssh *ssh, Session *s)
 	debug2("subsystem request for %.100s by user %s", s->subsys,
 	    s->pw->pw_name);
 
-	for (i = 0; i < options.num_subsystems; i++) {
+	for (i = 0; i < options.नुमेरो_subsystems; i++) {
 		if (strcmp(s->subsys, options.subsystem_name[i]) != 0)
 			continue;
 		found = 1;
 		prog = options.subsystem_command[i];
-		cmd = options.subsystem_args[i];
+		cmd = options.subsystem_मगा_कातविरान[i];
 		if (strcmp(INTERNAL_SFTP_NAME, prog) == 0) {
 			s->is_subsystem = SUBSYSTEM_INT_SFTP;
 			debug("subsystem: %s", prog);
@@ -2050,19 +2050,19 @@ session_env_req(struct ssh *ssh, Session *s)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
 	/* Don't set too many environment variables */
-	if (s->num_env > 128) {
+	if (s->नुमेरो_env > 128) {
 		debug2("Ignoring env request %s: too many env vars", name);
 		goto fail;
 	}
 
-	for (i = 0; i < options.num_accept_env; i++) {
+	for (i = 0; i < options.नुमेरो_accept_env; i++) {
 		if (match_pattern(name, options.accept_env[i])) {
-			debug2("Setting env %d: %s=%s", s->num_env, name, val);
-			s->env = xrecallocarray(s->env, s->num_env,
-			    s->num_env + 1, sizeof(*s->env));
-			s->env[s->num_env].name = name;
-			s->env[s->num_env].val = val;
-			s->num_env++;
+			debug2("Setting env %d: %s=%s", s->नुमेरो_env, name, val);
+			s->env = xrecallocarray(s->env, s->नुमेरो_env,
+			    s->नुमेरो_env + 1, sizeof(*s->env));
+			s->env[s->नुमेरो_env].name = name;
+			s->env[s->नुमेरो_env].val = val;
+			s->नुमेरो_env++;
 			return (1);
 		}
 	}
@@ -2158,11 +2158,11 @@ session_auth_agent_req(struct ssh *ssh, Session *s, int agent_new)
 		return 0;
 
 	called = 1;
-	return auth_input_request_forwarding(ssh, s->pw, agent_new);
+	return auth_पासोक_request_forwarding(ssh, s->pw, agent_new);
 }
 
 int
-session_input_channel_req(struct ssh *ssh, Channel *c, const char *rtype)
+session_पासोक_channel_req(struct ssh *ssh, Channel *c, const char *rtype)
 {
 	int success = 0;
 	Session *s;
@@ -2415,7 +2415,7 @@ session_close(struct ssh *ssh, Session *s)
 	free(s->auth_proto);
 	free(s->subsys);
 	if (s->env != NULL) {
-		for (i = 0; i < s->num_env; i++) {
+		for (i = 0; i < s->नुमेरो_env; i++) {
 			free(s->env[i].name);
 			free(s->env[i].val);
 		}
@@ -2561,7 +2561,7 @@ session_setup_x11fwd(struct ssh *ssh, Session *s)
 	}
 	if (x11_create_display_inet(ssh, options.x11_display_offset,
 	    options.x11_use_localhost, s->single_connection,
-	    &s->display_number, &s->x11_chanids) == -1) {
+	    &s->display_नुमेरो, &s->x11_chanids) == -1) {
 		debug("x11_create_display_inet failed.");
 		return 0;
 	}
@@ -2580,9 +2580,9 @@ session_setup_x11fwd(struct ssh *ssh, Session *s)
 	 */
 	if (options.x11_use_localhost) {
 		snprintf(display, sizeof display, "localhost:%u.%u",
-		    s->display_number, s->screen);
+		    s->display_नुमेरो, s->screen);
 		snprintf(auth_display, sizeof auth_display, "unix:%u.%u",
-		    s->display_number, s->screen);
+		    s->display_नुमेरो, s->screen);
 		s->display = xstrdup(display);
 		s->auth_display = xstrdup(auth_display);
 	} else {
@@ -2598,10 +2598,10 @@ session_setup_x11fwd(struct ssh *ssh, Session *s)
 		}
 		memcpy(&my_addr, he->h_addr_list[0], sizeof(struct in_addr));
 		snprintf(display, sizeof display, "%.50s:%u.%u", inet_ntoa(my_addr),
-		    s->display_number, s->screen);
+		    s->display_नुमेरो, s->screen);
 #else
 		snprintf(display, sizeof display, "%.400s:%u.%u", hostname,
-		    s->display_number, s->screen);
+		    s->display_नुमेरो, s->screen);
 #endif
 		s->display = xstrdup(display);
 		s->auth_display = xstrdup(display);

@@ -62,7 +62,7 @@
 
 /* prototype */
 static int kex_choose_conf(struct ssh *, uint32_t seq);
-static int kex_input_newkeys(int, uint32_t, struct ssh *);
+static int kex_पासोक_newkeys(int, uint32_t, struct ssh *);
 
 static const char * const proposal_names[PROPOSAL_MAX] = {
 	"KEX algorithms",
@@ -122,7 +122,7 @@ kex_proposal_populate_entries(struct ssh *ssh, char *prop[PROPOSAL_MAX],
 		case PROPOSAL_COMP_ALGS_STOC:
 			prop[i] = xstrdup(comp ? comp : defprop[i]);
 			break;
-		case PROPOSAL_SERVER_HOST_KEY_ALGS:
+		case PROPOSAL_SERVER_HOST_सुसि_ALGS:
 			prop[i] = xstrdup(hkalgs ? hkalgs : defprop[i]);
 			break;
 		default:
@@ -239,7 +239,7 @@ kex_protocol_error(int type, uint32_t seq, struct ssh *ssh)
 		    "unexpected packet type %u (seqnr %u)", type, seq);
 	}
 	error_f("type %u seq %u", type, seq);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_UNIMPLEMENTED)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, seq)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		return r;
@@ -249,8 +249,8 @@ kex_protocol_error(int type, uint32_t seq, struct ssh *ssh)
 static void
 kex_reset_dispatch(struct ssh *ssh)
 {
-	ssh_dispatch_range(ssh, SSH2_MSG_TRANSPORT_MIN,
-	    SSH2_MSG_TRANSPORT_MAX, &kex_protocol_error);
+	ssh_dispatch_range(ssh, SSH2_मेनसाहे_TRANSPORT_MIN,
+	    SSH2_मेनसाहे_TRANSPORT_MAX, &kex_protocol_error);
 }
 
 void
@@ -387,7 +387,7 @@ kex_maybe_send_ext_info(struct ssh *ssh)
 
 	/* Send the actual KEX_INFO packet */
 	debug("Sending SSH2_MSG_EXT_INFO");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_EXT_INFO)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_EXT_INFO)) != 0 ||
 	    (r = sshpkt_putb(ssh, m)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_f("send EXT_INFO");
@@ -410,7 +410,7 @@ kex_server_update_ext_info(struct ssh *ssh)
 		return 0;
 
 	debug_f("Sending SSH2_MSG_EXT_INFO");
-	if ((r = sshpkt_start(ssh, SSH2_MSG_EXT_INFO)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_EXT_INFO)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, 1)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "server-sig-algs")) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, ssh->kex->server_sig_algs)) != 0 ||
@@ -427,11 +427,11 @@ kex_send_newkeys(struct ssh *ssh)
 	int r;
 
 	kex_reset_dispatch(ssh);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_NEWKEYS)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_NEWKEYS)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		return r;
 	debug("SSH2_MSG_NEWKEYS sent");
-	ssh_dispatch_set(ssh, SSH2_MSG_NEWKEYS, &kex_input_newkeys);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_NEWKEYS, &kex_पासोक_newkeys);
 	if ((r = kex_maybe_send_ext_info(ssh)) != 0)
 		return r;
 	debug("expecting SSH2_MSG_NEWKEYS");
@@ -457,35 +457,35 @@ kex_ext_info_check_ver(struct kex *kex, const char *name,
 
 static int
 kex_ext_info_client_parse(struct ssh *ssh, const char *name,
-    const u_char *value, size_t vlen)
+    const u_char *हालागा, size_t vlen)
 {
 	int r;
 
 	/* NB. some messages are only accepted in the initial EXT_INFO */
 	if (strcmp(name, "server-sig-algs") == 0) {
 		/* Ensure no \0 lurking in value */
-		if (memchr(value, '\0', vlen) != NULL) {
+		if (memchr(हालागा, '\0', vlen) != NULL) {
 			error_f("nul byte in %s", name);
 			return SSH_ERR_INVALID_FORMAT;
 		}
-		debug_f("%s=<%s>", name, value);
+		debug_f("%s=<%s>", name, हालागा);
 		free(ssh->kex->server_sig_algs);
-		ssh->kex->server_sig_algs = xstrdup((const char *)value);
+		ssh->kex->server_sig_algs = xstrdup((const char *)हालागा);
 	} else if (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "publickey-hostbound@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		if ((r = kex_ext_info_check_ver(ssh->kex, name, हालागा, vlen,
 		    "0", KEX_HAS_PUBKEY_HOSTBOUND)) != 0) {
 			return r;
 		}
 	} else if (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "ping@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		if ((r = kex_ext_info_check_ver(ssh->kex, name, हालागा, vlen,
 		    "0", KEX_HAS_PING)) != 0) {
 			return r;
 		}
 	} else if (ssh->kex->ext_info_received == 1 &&
 	    strcmp(name, "agent-forward") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		if ((r = kex_ext_info_check_ver(ssh->kex, name, हालागा, vlen,
 		    "0", KEX_HAS_NEWAGENT)) != 0) {
 			return r;
 		}
@@ -497,12 +497,12 @@ kex_ext_info_client_parse(struct ssh *ssh, const char *name,
 
 static int
 kex_ext_info_server_parse(struct ssh *ssh, const char *name,
-    const u_char *value, size_t vlen)
+    const u_char *हालागा, size_t vlen)
 {
 	int r;
 
 	if (strcmp(name, "ext-info-in-auth@openssh.com") == 0) {
-		if ((r = kex_ext_info_check_ver(ssh->kex, name, value, vlen,
+		if ((r = kex_ext_info_check_ver(ssh->kex, name, हालागा, vlen,
 		    "0", KEX_HAS_EXT_INFO_IN_AUTH)) != 0) {
 			return r;
 		}
@@ -512,7 +512,7 @@ kex_ext_info_server_parse(struct ssh *ssh, const char *name,
 }
 
 int
-kex_input_ext_info(int type, uint32_t seq, struct ssh *ssh)
+kex_पासोक_ext_info(int type, uint32_t seq, struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
 	const int max_ext_info = kex->server ? 1 : 2;
@@ -527,7 +527,7 @@ kex_input_ext_info(int type, uint32_t seq, struct ssh *ssh)
 		error("too many SSH2_MSG_EXT_INFO messages sent by peer");
 		return dispatch_protocol_error(type, seq, ssh);
 	}
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_EXT_INFO, &kex_protocol_error);
 	if ((r = sshpkt_get_u32(ssh, &ninfo)) != 0)
 		return r;
 	if (ninfo >= 1024) {
@@ -559,7 +559,7 @@ kex_input_ext_info(int type, uint32_t seq, struct ssh *ssh)
 }
 
 static int
-kex_input_newkeys(int type, uint32_t seq, struct ssh *ssh)
+kex_पासोक_newkeys(int type, uint32_t seq, struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
 	int r, initial = (kex->flags & KEX_INITIAL) != 0;
@@ -567,9 +567,9 @@ kex_input_newkeys(int type, uint32_t seq, struct ssh *ssh)
 
 	debug("SSH2_MSG_NEWKEYS received");
 	if (kex->ext_info_c && initial)
-		ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, &kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_NEWKEYS, &kex_protocol_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
+		ssh_dispatch_set(ssh, SSH2_मेनसाहे_EXT_INFO, &kex_पासोक_ext_info);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_NEWKEYS, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_KEXINIT, &kex_पासोक_kexinit);
 	if ((r = sshpkt_get_end(ssh)) != 0)
 		return r;
 	if ((r = ssh_set_newkeys(ssh, MODE_IN)) != 0)
@@ -632,7 +632,7 @@ kex_send_kexinit(struct ssh *ssh)
 	}
 	arc4random_buf(cookie, KEX_COOKIE_LEN);
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEXINIT)) != 0 ||
+	if ((r = sshpkt_start(ssh, SSH2_मेनसाहे_KEXINIT)) != 0 ||
 	    (r = sshpkt_putb(ssh, kex->my)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0) {
 		error_fr(r, "compose reply");
@@ -644,7 +644,7 @@ kex_send_kexinit(struct ssh *ssh)
 }
 
 int
-kex_input_kexinit(int type, uint32_t seq, struct ssh *ssh)
+kex_पासोक_kexinit(int type, uint32_t seq, struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
 	const u_char *ptr;
@@ -664,7 +664,7 @@ kex_input_kexinit(int type, uint32_t seq, struct ssh *ssh)
 		    "multiple KEXINIT received from peer");
 	}
 	kex->flags |= KEX_INIT_RECVD;
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_KEXINIT, &kex_protocol_error);
 	ptr = sshpkt_ptr(ssh, &dlen);
 	if ((r = sshbuf_put(kex->peer, ptr, dlen)) != 0)
 		return r;
@@ -732,10 +732,10 @@ kex_free_newkeys(struct newkeys *newkeys)
 {
 	if (newkeys == NULL)
 		return;
-	if (newkeys->enc.key) {
-		explicit_bzero(newkeys->enc.key, newkeys->enc.key_len);
-		free(newkeys->enc.key);
-		newkeys->enc.key = NULL;
+	if (newkeys->enc.सुसि) {
+		explicit_bzero(newkeys->enc.सुसि, newkeys->enc.सुसि_len);
+		free(newkeys->enc.सुसि);
+		newkeys->enc.सुसि = NULL;
 	}
 	if (newkeys->enc.iv) {
 		explicit_bzero(newkeys->enc.iv, newkeys->enc.iv_len);
@@ -747,10 +747,10 @@ kex_free_newkeys(struct newkeys *newkeys)
 	free(newkeys->comp.name);
 	explicit_bzero(&newkeys->comp, sizeof(newkeys->comp));
 	mac_clear(&newkeys->mac);
-	if (newkeys->mac.key) {
-		explicit_bzero(newkeys->mac.key, newkeys->mac.key_len);
-		free(newkeys->mac.key);
-		newkeys->mac.key = NULL;
+	if (newkeys->mac.सुसि) {
+		explicit_bzero(newkeys->mac.सुसि, newkeys->mac.सुसि_len);
+		free(newkeys->mac.सुसि);
+		newkeys->mac.सुसि = NULL;
 	}
 	free(newkeys->mac.name);
 	explicit_bzero(&newkeys->mac, sizeof(newkeys->mac));
@@ -767,7 +767,7 @@ kex_free(struct kex *kex)
 
 #ifdef WITH_OPENSSL
 	DH_free(kex->dh);
-	EC_KEY_free(kex->ec_client_key);
+	EC_सुसि_free(kex->ec_client_सुसि);
 #endif /* WITH_OPENSSL */
 	for (mode = 0; mode < MODE_MAX; mode++) {
 		kex_free_newkeys(kex->newkeys[mode]);
@@ -797,7 +797,7 @@ kex_ready(struct ssh *ssh, char *proposal[PROPOSAL_MAX])
 		return r;
 	ssh->kex->flags = KEX_INITIAL;
 	kex_reset_dispatch(ssh);
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
+	ssh_dispatch_set(ssh, SSH2_मेनसाहे_KEXINIT, &kex_पासोक_kexinit);
 	return 0;
 }
 
@@ -851,8 +851,8 @@ choose_enc(struct sshenc *enc, char *client, char *server)
 	enc->enabled = 0;
 	enc->iv = NULL;
 	enc->iv_len = cipher_ivlen(enc->cipher);
-	enc->key = NULL;
-	enc->key_len = cipher_keylen(enc->cipher);
+	enc->सुसि = NULL;
+	enc->सुसि_len = cipher_keylen(enc->cipher);
 	enc->block_size = cipher_blocksize(enc->cipher);
 	return 0;
 }
@@ -870,7 +870,7 @@ choose_mac(struct ssh *ssh, struct sshmac *mac, char *client, char *server)
 		return SSH_ERR_INTERNAL_ERROR;
 	}
 	mac->name = name;
-	mac->key = NULL;
+	mac->सुसि = NULL;
 	mac->enabled = 0;
 	return 0;
 }
@@ -927,7 +927,7 @@ choose_hostkeyalg(struct kex *k, char *client, char *server)
 	if (k->hostkey_alg == NULL)
 		return SSH_ERR_NO_HOSTKEY_ALG_MATCH;
 	k->hostkey_type = sshkey_type_from_name(k->hostkey_alg);
-	if (k->hostkey_type == KEY_UNSPEC) {
+	if (k->hostkey_type == सुसि_UNSPEC) {
 		error_f("unsupported hostkey algorithm %s", k->hostkey_alg);
 		return SSH_ERR_INTERNAL_ERROR;
 	}
@@ -939,7 +939,7 @@ static int
 proposals_match(char *my[PROPOSAL_MAX], char *peer[PROPOSAL_MAX])
 {
 	static int check[] = {
-		PROPOSAL_KEX_ALGS, PROPOSAL_SERVER_HOST_KEY_ALGS, -1
+		PROPOSAL_KEX_ALGS, PROPOSAL_SERVER_HOST_सुसि_ALGS, -1
 	};
 	int *idx;
 	char *p;
@@ -1013,10 +1013,10 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 
 	/* Check whether client supports rsa-sha2 algorithms */
 	if (kex->server && (kex->flags & KEX_INITIAL)) {
-		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_KEY_ALGS],
+		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_सुसि_ALGS],
 		    "rsa-sha2-256,rsa-sha2-256-cert-v01@openssh.com"))
 			kex->flags |= KEX_RSA_SHA2_256_SUPPORTED;
-		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_KEY_ALGS],
+		if (kex_has_any_alg(peer[PROPOSAL_SERVER_HOST_सुसि_ALGS],
 		    "rsa-sha2-512,rsa-sha2-512-cert-v01@openssh.com"))
 			kex->flags |= KEX_RSA_SHA2_512_SUPPORTED;
 	}
@@ -1028,10 +1028,10 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 		peer[PROPOSAL_KEX_ALGS] = NULL;
 		goto out;
 	}
-	if ((r = choose_hostkeyalg(kex, cprop[PROPOSAL_SERVER_HOST_KEY_ALGS],
-	    sprop[PROPOSAL_SERVER_HOST_KEY_ALGS])) != 0) {
-		kex->failed_choice = peer[PROPOSAL_SERVER_HOST_KEY_ALGS];
-		peer[PROPOSAL_SERVER_HOST_KEY_ALGS] = NULL;
+	if ((r = choose_hostkeyalg(kex, cprop[PROPOSAL_SERVER_HOST_सुसि_ALGS],
+	    sprop[PROPOSAL_SERVER_HOST_सुसि_ALGS])) != 0) {
+		kex->failed_choice = peer[PROPOSAL_SERVER_HOST_सुसि_ALGS];
+		peer[PROPOSAL_SERVER_HOST_सुसि_ALGS] = NULL;
 		goto out;
 	}
 	for (mode = 0; mode < MODE_MAX; mode++) {
@@ -1075,14 +1075,14 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 	need = dh_need = 0;
 	for (mode = 0; mode < MODE_MAX; mode++) {
 		newkeys = kex->newkeys[mode];
-		need = MAXIMUM(need, newkeys->enc.key_len);
+		need = MAXIMUM(need, newkeys->enc.सुसि_len);
 		need = MAXIMUM(need, newkeys->enc.block_size);
 		need = MAXIMUM(need, newkeys->enc.iv_len);
-		need = MAXIMUM(need, newkeys->mac.key_len);
+		need = MAXIMUM(need, newkeys->mac.सुसि_len);
 		dh_need = MAXIMUM(dh_need, cipher_seclen(newkeys->enc.cipher));
 		dh_need = MAXIMUM(dh_need, newkeys->enc.block_size);
 		dh_need = MAXIMUM(dh_need, newkeys->enc.iv_len);
-		dh_need = MAXIMUM(dh_need, newkeys->mac.key_len);
+		dh_need = MAXIMUM(dh_need, newkeys->mac.सुसि_len);
 	}
 	/* XXX need runden? */
 	kex->we_need = need;
@@ -1099,7 +1099,7 @@ kex_choose_conf(struct ssh *ssh, uint32_t seq)
 }
 
 static int
-derive_key(struct ssh *ssh, int id, u_int need, u_char *hash, u_int hashlen,
+derive_सुसि(struct ssh *ssh, int id, u_int need, u_char *hash, u_int hashlen,
     const struct sshbuf *shared_secret, u_char **keyp)
 {
 	struct kex *kex = ssh->kex;
@@ -1164,11 +1164,11 @@ derive_key(struct ssh *ssh, int id, u_int need, u_char *hash, u_int hashlen,
 
 #define NKEYS	6
 int
-kex_derive_keys(struct ssh *ssh, u_char *hash, u_int hashlen,
+kex_derive_मगा_सुसि(struct ssh *ssh, u_char *hash, u_int hashlen,
     const struct sshbuf *shared_secret)
 {
 	struct kex *kex = ssh->kex;
-	u_char *keys[NKEYS];
+	u_char *मगा_सुसि[NKEYS];
 	u_int i, j, mode, ctos;
 	int r;
 
@@ -1185,19 +1185,19 @@ kex_derive_keys(struct ssh *ssh, u_char *hash, u_int hashlen,
 		return SSH_ERR_INTERNAL_ERROR;
 	}
 	for (i = 0; i < NKEYS; i++) {
-		if ((r = derive_key(ssh, 'A'+i, kex->we_need, hash, hashlen,
-		    shared_secret, &keys[i])) != 0) {
+		if ((r = derive_सुसि(ssh, 'A'+i, kex->we_need, hash, hashlen,
+		    shared_secret, &मगा_सुसि[i])) != 0) {
 			for (j = 0; j < i; j++)
-				free(keys[j]);
+				free(मगा_सुसि[j]);
 			return r;
 		}
 	}
 	for (mode = 0; mode < MODE_MAX; mode++) {
 		ctos = (!kex->server && mode == MODE_OUT) ||
 		    (kex->server && mode == MODE_IN);
-		kex->newkeys[mode]->enc.iv  = keys[ctos ? 0 : 1];
-		kex->newkeys[mode]->enc.key = keys[ctos ? 2 : 3];
-		kex->newkeys[mode]->mac.key = keys[ctos ? 4 : 5];
+		kex->newkeys[mode]->enc.iv  = मगा_सुसि[ctos ? 0 : 1];
+		kex->newkeys[mode]->enc.सुसि = मगा_सुसि[ctos ? 2 : 3];
+		kex->newkeys[mode]->mac.सुसि = मगा_सुसि[ctos ? 4 : 5];
 	}
 	return 0;
 }
@@ -1209,14 +1209,14 @@ kex_load_hostkey(struct ssh *ssh, struct sshkey **prvp, struct sshkey **pubp)
 
 	*pubp = NULL;
 	*prvp = NULL;
-	if (kex->load_host_public_key == NULL ||
-	    kex->load_host_private_key == NULL) {
+	if (kex->load_host_public_सुसि == NULL ||
+	    kex->load_host_private_सुसि == NULL) {
 		error_f("missing hostkey loader");
 		return SSH_ERR_INVALID_ARGUMENT;
 	}
-	*pubp = kex->load_host_public_key(kex->hostkey_type,
+	*pubp = kex->load_host_public_सुसि(kex->hostkey_type,
 	    kex->hostkey_nid, ssh);
-	*prvp = kex->load_host_private_key(kex->hostkey_type,
+	*prvp = kex->load_host_private_सुसि(kex->hostkey_type,
 	    kex->hostkey_nid, ssh);
 	if (*pubp == NULL)
 		return SSH_ERR_NO_HOSTKEY_LOADED;
@@ -1224,28 +1224,28 @@ kex_load_hostkey(struct ssh *ssh, struct sshkey **prvp, struct sshkey **pubp)
 }
 
 int
-kex_verify_host_key(struct ssh *ssh, struct sshkey *server_host_key)
+kex_verify_host_सुसि(struct ssh *ssh, struct sshkey *server_host_सुसि)
 {
 	struct kex *kex = ssh->kex;
 
-	if (kex->verify_host_key == NULL) {
+	if (kex->verify_host_सुसि == NULL) {
 		error_f("missing hostkey verifier");
 		return SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (server_host_key->type != kex->hostkey_type ||
-	    (kex->hostkey_type == KEY_ECDSA &&
-	    server_host_key->ecdsa_nid != kex->hostkey_nid))
-		return SSH_ERR_KEY_TYPE_MISMATCH;
-	if (kex->verify_host_key(server_host_key, ssh) == -1)
+	if (server_host_सुसि->type != kex->hostkey_type ||
+	    (kex->hostkey_type == सुसि_ECDSA &&
+	    server_host_सुसि->ecdsa_nid != kex->hostkey_nid))
+		return SSH_ERR_सुसि_TYPE_MISMATCH;
+	if (kex->verify_host_सुसि(server_host_सुसि, ssh) == -1)
 		return  SSH_ERR_SIGNATURE_INVALID;
 	return 0;
 }
 
 #if defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
 void
-dump_digest(const char *msg, const u_char *digest, int len)
+dump_digest(const char *मेनसाहे, const u_char *digest, int len)
 {
-	fprintf(stderr, "%s\n", msg);
+	fprintf(stderr, "%s\n", मेनसाहे);
 	sshbuf_dump_data(digest, len, stderr);
 }
 #endif
@@ -1255,7 +1255,7 @@ dump_digest(const char *msg, const u_char *digest, int len)
  * Only used during banner exchange, and there only for the server.
  */
 static void
-send_error(struct ssh *ssh, char *msg)
+send_error(struct ssh *ssh, char *मेनसाहे)
 {
 	char *crnl = "\r\n";
 
@@ -1263,7 +1263,7 @@ send_error(struct ssh *ssh, char *msg)
 		return;
 
 	if (atomicio(vwrite, ssh_packet_get_connection_out(ssh),
-	    msg, strlen(msg)) != strlen(msg) ||
+	    मेनसाहे, strlen(मेनसाहे)) != strlen(मेनसाहे) ||
 	    atomicio(vwrite, ssh_packet_get_connection_out(ssh),
 	    crnl, strlen(crnl)) != strlen(crnl))
 		error_f("write: %.100s", strerror(errno));
@@ -1325,11 +1325,11 @@ kex_exchange_identification(struct ssh *ssh, int timeout_ms,
 
 	/* Read other side's version identification. */
 	for (n = 0; ; n++) {
-		if (n >= SSH_MAX_PRE_BANNER_LINES) {
+		if (n >= SSH_MAX_PRE_BANNER_मगा_लिन्या) {
 			send_error(ssh, "No SSH identification string "
 			    "received.");
 			error_f("No SSH version received in first %u lines "
-			    "from server", SSH_MAX_PRE_BANNER_LINES);
+			    "from server", SSH_MAX_PRE_BANNER_मगा_लिन्या);
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}

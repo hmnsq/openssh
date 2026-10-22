@@ -42,14 +42,14 @@
 
 static char *providername; /* Provider for this helper */
 
-#define MAX_MSG_LENGTH		10240 /*XXX*/
+#define MAX_मेनसाहे_LENGTH		10240 /*XXX*/
 
 /* input and output queue */
 struct sshbuf *iqueue;
 struct sshbuf *oqueue;
 
 static void
-send_msg(struct sshbuf *m)
+send_मेनसाहे(struct sshbuf *m)
 {
 	int r;
 
@@ -61,41 +61,41 @@ static void
 process_add(void)
 {
 	char *pin;
-	struct sshkey **keys = NULL;
+	struct sshkey **मगा_सुसि = NULL;
 	int r, i, nkeys;
-	struct sshbuf *msg;
+	struct sshbuf *मेनसाहे;
 	char **labels = NULL;
 
 	if (providername != NULL)
 		fatal_f("provider already set");
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	if ((r = sshbuf_get_cstring(iqueue, &providername, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(iqueue, &pin, NULL)) != 0)
 		fatal_fr(r, "parse");
 	debug3_f("add %s", providername);
 	if ((nkeys = pkcs11_add_provider(providername, pin,
-	    &keys, &labels)) > 0) {
-		if ((r = sshbuf_put_u8(msg,
+	    &मगा_सुसि, &labels)) > 0) {
+		if ((r = sshbuf_put_u8(मेनसाहे,
 		    SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-		    (r = sshbuf_put_u32(msg, nkeys)) != 0)
+		    (r = sshbuf_put_u32(मेनसाहे, nkeys)) != 0)
 			fatal_fr(r, "compose");
 		for (i = 0; i < nkeys; i++) {
-			if ((r = sshkey_puts(keys[i], msg)) != 0 ||
-			    (r = sshbuf_put_cstring(msg, labels[i])) != 0)
+			if ((r = sshkey_puts(मगा_सुसि[i], मेनसाहे)) != 0 ||
+			    (r = sshbuf_put_cstring(मेनसाहे, labels[i])) != 0)
 				fatal_fr(r, "compose key");
 			debug3_f("%s: %s \"%s\"", providername,
-			    sshkey_type(keys[i]), labels[i]);
+			    sshkey_type(मगा_सुसि[i]), labels[i]);
 			free(labels[i]);
 		}
-	} else if ((r = sshbuf_put_u8(msg, SSH_AGENT_FAILURE)) != 0 ||
-	    (r = sshbuf_put_u32(msg, -nkeys)) != 0)
+	} else if ((r = sshbuf_put_u8(मेनसाहे, SSH_AGENT_FAILURE)) != 0 ||
+	    (r = sshbuf_put_u32(मेनसाहे, -nkeys)) != 0)
 		fatal_fr(r, "compose");
 	free(labels);
-	free(keys); /* keys themselves are transferred to pkcs11_keylist */
+	free(मगा_सुसि); /* keys themselves are transferred to pkcs11_keylist */
 	free(pin);
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_मेनसाहे(मेनसाहे);
+	sshbuf_free(मेनसाहे);
 }
 
 static void
@@ -106,11 +106,11 @@ process_sign(void)
 	size_t dlen, slen = 0;
 	u_int compat;
 	int r, ok = -1;
-	struct sshkey *key = NULL;
-	struct sshbuf *msg;
+	struct sshkey *सुसि = NULL;
+	struct sshbuf *मेनसाहे;
 	char *alg = NULL;
 
-	if ((r = sshkey_froms(iqueue, &key)) != 0 ||
+	if ((r = sshkey_froms(iqueue, &सुसि)) != 0 ||
 	    (r = sshbuf_get_string_direct(iqueue, &data, &dlen)) != 0 ||
 	    (r = sshbuf_get_cstring(iqueue, &alg, NULL)) != 0 ||
 	    (r = sshbuf_get_u32(iqueue, &compat)) != 0)
@@ -121,36 +121,36 @@ process_sign(void)
 		alg = NULL;
 	}
 
-	if ((r = pkcs11_sign(key, &signature, &slen, data, dlen,
+	if ((r = pkcs11_sign(सुसि, &signature, &slen, data, dlen,
 	    alg, NULL, NULL, compat)) != 0) {
-		error_fr(r, "sign %s", sshkey_type(key));
+		error_fr(r, "sign %s", sshkey_type(सुसि));
 		goto reply;
 	}
 
 	/* success */
 	ok = 0;
  reply:
-	if ((msg = sshbuf_new()) == NULL)
+	if ((मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	if (ok == 0) {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
-		    (r = sshbuf_put_string(msg, signature, slen)) != 0)
+		if ((r = sshbuf_put_u8(मेनसाहे, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
+		    (r = sshbuf_put_string(मेनसाहे, signature, slen)) != 0)
 			fatal_fr(r, "compose response");
 	} else {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_FAILURE)) != 0)
+		if ((r = sshbuf_put_u8(मेनसाहे, SSH2_AGENT_FAILURE)) != 0)
 			fatal_fr(r, "compose failure response");
 	}
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	free(alg);
 	free(signature);
-	send_msg(msg);
-	sshbuf_free(msg);
+	send_मेनसाहे(मेनसाहे);
+	sshbuf_free(मेनसाहे);
 }
 
 static void
 process(void)
 {
-	u_int msg_len;
+	u_int मेनसाहे_len;
 	u_int buf_len;
 	u_int consumed;
 	u_char type;
@@ -161,19 +161,19 @@ process(void)
 	if (buf_len < 5)
 		return;		/* Incomplete message. */
 	cp = sshbuf_ptr(iqueue);
-	msg_len = get_u32(cp);
-	if (msg_len > MAX_MSG_LENGTH) {
-		error("bad message len %d", msg_len);
+	मेनसाहे_len = get_u32(cp);
+	if (मेनसाहे_len > MAX_मेनसाहे_LENGTH) {
+		error("bad message len %d", मेनसाहे_len);
 		cleanup_exit(11);
 	}
-	if (buf_len < msg_len + 4)
+	if (buf_len < मेनसाहे_len + 4)
 		return;
 	if ((r = sshbuf_consume(iqueue, 4)) != 0 ||
 	    (r = sshbuf_get_u8(iqueue, &type)) != 0)
 		fatal_fr(r, "parse type/len");
 	buf_len -= 4;
 	switch (type) {
-	case SSH_AGENTC_ADD_SMARTCARD_KEY:
+	case SSH_AGENTC_ADD_SMARTCARD_सुसि:
 		debug("process_add");
 		process_add();
 		break;
@@ -191,12 +191,12 @@ process(void)
 		cleanup_exit(255);
 	}
 	consumed = buf_len - sshbuf_len(iqueue);
-	if (msg_len < consumed) {
-		error("msg_len %d < consumed %d", msg_len, consumed);
+	if (मेनसाहे_len < consumed) {
+		error("msg_len %d < consumed %d", मेनसाहे_len, consumed);
 		cleanup_exit(255);
 	}
-	if (msg_len > consumed) {
-		if ((r = sshbuf_consume(iqueue, msg_len - consumed)) != 0)
+	if (मेनसाहे_len > consumed) {
+		if ((r = sshbuf_consume(iqueue, मेनसाहे_len - consumed)) != 0)
 			fatal_fr(r, "consume");
 	}
 }
@@ -263,7 +263,7 @@ main(int argc, char **argv)
 		 * otherwise apply backpressure by stopping reads.
 		 */
 		if ((r = sshbuf_check_reserve(iqueue, sizeof(buf))) == 0 &&
-		    (r = sshbuf_check_reserve(oqueue, MAX_MSG_LENGTH)) == 0)
+		    (r = sshbuf_check_reserve(oqueue, MAX_मेनसाहे_LENGTH)) == 0)
 			pfd[0].events = POLLIN;
 		else if (r != SSH_ERR_NO_BUFFER_SPACE)
 			fatal_fr(r, "reserve");
@@ -305,7 +305,7 @@ main(int argc, char **argv)
 		 * into the output buffer, otherwise stop processing input
 		 * and let the output queue drain.
 		 */
-		if ((r = sshbuf_check_reserve(oqueue, MAX_MSG_LENGTH)) == 0)
+		if ((r = sshbuf_check_reserve(oqueue, MAX_मेनसाहे_LENGTH)) == 0)
 			process();
 		else if (r != SSH_ERR_NO_BUFFER_SPACE)
 			fatal_fr(r, "reserve");

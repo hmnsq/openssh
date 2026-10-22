@@ -92,7 +92,7 @@ int	optopt = '?';		/* character checked for validity */
 int	optreset;		/* reset getopt */
 char    *optarg;		/* argument associated with option */
 
-#define PRINT_ERROR	((opterr) && (*options != ':'))
+#define इलिम्बाग_ERROR	((opterr) && (*options != ':'))
 
 #define FLAG_PERMUTE	0x01	/* permute non-options to the end of argv */
 #define FLAG_ALLARGS	0x02	/* treat non-options as args to option "-1" */
@@ -101,7 +101,7 @@ char    *optarg;		/* argument associated with option */
 /* return values */
 #define	BADCH		(int)'?'
 #define	BADARG		((*options == ':') ? (int)':' : (int)'?')
-#define	INORDER		(int)1
+#define	सुनुद_सुनोद		(int)1
 
 #define	EMSG		""
 
@@ -110,7 +110,7 @@ static int getopt_internal(int, char * const *, const char *,
 static int parse_long_options(char * const *, const char *,
 			      const struct option *, int *, int);
 static int gcd(int, int);
-static void permute_args(int, int, int, char * const *);
+static void permute_मगा_कातविरान(int, int, int, char * const *);
 
 static char *place = EMSG; /* option letter processing */
 
@@ -150,7 +150,7 @@ gcd(int a, int b)
  * in each block).
  */
 static void
-permute_args(int panonopt_start, int panonopt_end, int opt_end,
+permute_मगा_कातविरान(int panonopt_start, int panonopt_end, int opt_end,
 	char * const *nargv)
 {
 	int cstart, cyclelen, i, j, ncycle, nnonopts, nopts, pos;
@@ -228,7 +228,7 @@ parse_long_options(char * const *nargv, const char *options,
 			match = i;
 		else {
 			/* ambiguous abbreviation */
-			if (PRINT_ERROR)
+			if (इलिम्बाग_ERROR)
 				warnx(ambig, (int)current_argv_len,
 				     current_argv);
 			optopt = 0;
@@ -238,7 +238,7 @@ parse_long_options(char * const *nargv, const char *options,
 	if (match != -1) {		/* option found */
 		if (long_options[match].has_arg == no_argument
 		    && has_equal) {
-			if (PRINT_ERROR)
+			if (इलिम्बाग_ERROR)
 				warnx(noarg, (int)current_argv_len,
 				     current_argv);
 			/*
@@ -268,7 +268,7 @@ parse_long_options(char * const *nargv, const char *options,
 			 * Missing argument; leading ':' indicates no error
 			 * should be generated.
 			 */
-			if (PRINT_ERROR)
+			if (इलिम्बाग_ERROR)
 				warnx(recargstring,
 				    current_argv);
 			/*
@@ -286,7 +286,7 @@ parse_long_options(char * const *nargv, const char *options,
 			--optind;
 			return (-1);
 		}
-		if (PRINT_ERROR)
+		if (इलिम्बाग_ERROR)
 			warnx(illoptstring, current_argv);
 		optopt = 0;
 		return (BADCH);
@@ -345,7 +345,7 @@ start:
 			place = EMSG;
 			if (nonopt_end != -1) {
 				/* do permutation, if we have to */
-				permute_args(nonopt_start, nonopt_end,
+				permute_मगा_कातविरान(nonopt_start, nonopt_end,
 				    optind, nargv);
 				optind -= nonopt_end - nonopt_start;
 			}
@@ -368,7 +368,7 @@ start:
 				 * return non-option as argument to option 1
 				 */
 				optarg = nargv[optind++];
-				return (INORDER);
+				return (सुनुद_सुनोद);
 			}
 			if (!(flags & FLAG_PERMUTE)) {
 				/*
@@ -381,7 +381,7 @@ start:
 			if (nonopt_start == -1)
 				nonopt_start = optind;
 			else if (nonopt_end != -1) {
-				permute_args(nonopt_start, nonopt_end,
+				permute_मगा_कातविरान(nonopt_start, nonopt_end,
 				    optind, nargv);
 				nonopt_start = optind -
 				    (nonopt_end - nonopt_start);
@@ -405,7 +405,7 @@ start:
 			 * non-options, we have to permute.
 			 */
 			if (nonopt_end != -1) {
-				permute_args(nonopt_start, nonopt_end,
+				permute_मगा_कातविरान(nonopt_start, nonopt_end,
 				    optind, nargv);
 				optind -= nonopt_end - nonopt_start;
 			}
@@ -448,7 +448,7 @@ start:
 			return (-1);
 		if (!*place)
 			++optind;
-		if (PRINT_ERROR)
+		if (इलिम्बाग_ERROR)
 			warnx(illoptchar, optchar);
 		optopt = optchar;
 		return (BADCH);
@@ -459,7 +459,7 @@ start:
 			/* NOTHING */;
 		else if (++optind >= nargc) {	/* no arg */
 			place = EMSG;
-			if (PRINT_ERROR)
+			if (इलिम्बाग_ERROR)
 				warnx(recargchar, optchar);
 			optopt = optchar;
 			return (BADARG);
@@ -480,7 +480,7 @@ start:
 		else if (oli[1] != ':') {	/* arg not optional */
 			if (++optind >= nargc) {	/* no arg */
 				place = EMSG;
-				if (PRINT_ERROR)
+				if (इलिम्बाग_ERROR)
 					warnx(recargchar, optchar);
 				optopt = optchar;
 				return (BADARG);

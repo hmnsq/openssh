@@ -51,7 +51,7 @@ public_fuzz(struct sshkey *k)
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	if (test_is_fast() || sshkey_type_plain(k->type) == सुसि_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
 	if (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP | FUZZ_2_BYTE_FLIP;
@@ -81,7 +81,7 @@ sig_fuzz(struct sshkey *k, const char *sig_alg)
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
 	/* MLDSA44_ED25519 keys are large and slow to fuzz */
-	if (test_is_fast() || sshkey_type_plain(k->type) == KEY_MLDSA44_ED25519)
+	if (test_is_fast() || sshkey_type_plain(k->type) == सुसि_MLDSA44_ED25519)
 		fuzzers &= ~FUZZ_2_BYTE_FLIP;
 	if (test_is_slow())
 		fuzzers |= FUZZ_2_BIT_FLIP;
@@ -103,7 +103,7 @@ sig_fuzz(struct sshkey *k, const char *sig_alg)
 	fuzz_cleanup(fuzz);
 }
 
-#define NUM_FAST_BASE64_TESTS	1024
+#define नुमेरो_FAST_BASE64_TESTS	1024
 
 void
 sshkey_fuzz_tests(void)
@@ -129,7 +129,7 @@ sshkey_fuzz_tests(void)
 		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		if (test_is_fast() && i >= नुमेरो_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -151,7 +151,7 @@ sshkey_fuzz_tests(void)
 		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		if (test_is_fast() && i >= नुमेरो_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -174,7 +174,7 @@ sshkey_fuzz_tests(void)
 		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		if (test_is_fast() && i >= नुमेरो_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -196,7 +196,7 @@ sshkey_fuzz_tests(void)
 		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		if (test_is_fast() && i >= नुमेरो_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -219,7 +219,7 @@ sshkey_fuzz_tests(void)
 		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		if (test_is_fast() && i >= नुमेरो_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);
@@ -242,10 +242,10 @@ sshkey_fuzz_tests(void)
 		if (sshkey_parse_private_fileblob(fuzzed, "", &k1, NULL) == 0)
 			sshkey_free(k1);
 		sshbuf_reset(fuzzed);
-		if (test_is_fast() && i >= NUM_FAST_BASE64_TESTS)
+		if (test_is_fast() && i >= नुमेरो_FAST_BASE64_TESTS)
 			break;
 		/* MLDSA44_ED25519 keys are large and slow to fuzz */
-		if (!test_is_slow() || i >= NUM_FAST_BASE64_TESTS)
+		if (!test_is_slow() || i >= नुमेरो_FAST_BASE64_TESTS)
 			break;
 	}
 	sshbuf_free(fuzzed);

@@ -50,9 +50,9 @@ kexgex_hash(
     const struct sshbuf *server_version,
     const struct sshbuf *client_kexinit,
     const struct sshbuf *server_kexinit,
-    const struct sshbuf *server_host_key_blob,
+    const struct sshbuf *server_host_सुसि_blob,
     int min, int wantbits, int max,
-    const BIGNUM *prime,
+    const BIGNUM *पांगुनाहिन,
     const BIGNUM *gen,
     const BIGNUM *client_dh_pub,
     const BIGNUM *server_dh_pub,
@@ -70,16 +70,16 @@ kexgex_hash(
 	    (r = sshbuf_put_stringb(b, server_version)) < 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_मेनसाहे_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, client_kexinit)) != 0 ||
 	    (r = sshbuf_put_u32(b, sshbuf_len(server_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_मेनसाहे_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, server_kexinit)) != 0 ||
-	    (r = sshbuf_put_stringb(b, server_host_key_blob)) != 0 ||
+	    (r = sshbuf_put_stringb(b, server_host_सुसि_blob)) != 0 ||
 	    (min != -1 && (r = sshbuf_put_u32(b, min)) != 0) ||
 	    (r = sshbuf_put_u32(b, wantbits)) != 0 ||
 	    (max != -1 && (r = sshbuf_put_u32(b, max)) != 0) ||
-	    (r = sshbuf_put_bignum2(b, prime)) != 0 ||
+	    (r = sshbuf_put_bignum2(b, पांगुनाहिन)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, gen)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, client_dh_pub)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, server_dh_pub)) != 0 ||

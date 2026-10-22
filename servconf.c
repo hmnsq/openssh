@@ -102,23 +102,23 @@ initialize_server_options(ServerOptions *options)
 
 	/* Using macros for these is a bit overkill but forces consistency */
 #define init_hostkeyfile(options) \
-	options->host_key_files = 0; \
-	options->num_host_key_files = 0; \
-	options->host_key_file_userprovided = NULL;
+	options->host_सुसि_files = 0; \
+	options->नुमेरो_host_सुसि_files = 0; \
+	options->host_सुसि_file_userprovided = NULL;
 #define init_ipqos(options) \
 	options->ip_qos_interactive = -1; \
 	options->ip_qos_bulk = -1;
 #define init_listenaddress(options) \
 	options->queued_listen_addrs = NULL; \
-	options->num_queued_listens = 0; \
+	options->नुमेरो_queued_listens = 0; \
 	options->listen_addrs = NULL; \
-	options->num_listen_addrs = 0;
+	options->नुमेरो_listen_addrs = 0;
 #define init_logfacility(options) \
 	options->log_facility = SYSLOG_FACILITY_NOT_SET;
 #define init_loglevel(options) \
 	options->log_level = SYSLOG_LEVEL_NOT_SET;
 #define init_port(options) \
-	options->num_ports = 0; \
+	options->नुमेरो_ports = 0; \
 	options->ports_from_cmdline = 0;
 #define init_gatewayports(options) \
 	options->fwd_opts.gateway_ports = -1;
@@ -155,10 +155,10 @@ initialize_server_options(ServerOptions *options)
 	options->rekey_limit = -1; \
 	options->rekey_interval = -1;
 #define init_subsystem(options) \
-	options->num_subsystems = 0; \
+	options->नुमेरो_subsystems = 0; \
 	options->subsystem_name = NULL; \
 	options->subsystem_command = NULL; \
-	options->subsystem_args = NULL;
+	options->subsystem_मगा_कातविरान = NULL;
 #define init_pubkey_auth_options(options) \
 	options->pubkey_auth_options = -1; \
 	options->max_pubkey_ok = -1;
@@ -205,20 +205,20 @@ option_clear_or_none(const char *o)
 static void
 assemble_algorithms(ServerOptions *o)
 {
-	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
-	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
+	char *all_cipher, *all_mac, *all_kex, *all_सुसि, *all_sig;
+	char *def_cipher, *def_mac, *def_kex, *def_सुसि, *def_sig;
 	int r;
 
 	all_cipher = cipher_alg_list(',', 0);
 	all_mac = mac_alg_list(',');
 	all_kex = kex_alg_list(',');
-	all_key = sshkey_alg_list(0, 0, 1, ',');
+	all_सुसि = sshkey_alg_list(0, 0, 1, ',');
 	all_sig = sshkey_alg_list(0, 1, 1, ',');
 	/* remove unsupported algos from default lists */
 	def_cipher = match_filter_allowlist(KEX_SERVER_ENCRYPT, all_cipher);
 	def_mac = match_filter_allowlist(KEX_SERVER_MAC, all_mac);
 	def_kex = match_filter_allowlist(KEX_SERVER_KEX, all_kex);
-	def_key = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
+	def_सुसि = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_सुसि);
 	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
 #define ASSEMBLE(what, defaults, all) \
 	do { \
@@ -228,43 +228,43 @@ assemble_algorithms(ServerOptions *o)
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
 	ASSEMBLE(kex_algorithms, def_kex, all_kex);
-	ASSEMBLE(hostkeyalgorithms, def_key, all_key);
-	ASSEMBLE(hostbased_accepted_algos, def_key, all_key);
-	ASSEMBLE(pubkey_accepted_algos, def_key, all_key);
+	ASSEMBLE(hostkeyalgorithms, def_सुसि, all_सुसि);
+	ASSEMBLE(hostbased_accepted_algos, def_सुसि, all_सुसि);
+	ASSEMBLE(pubkey_accepted_algos, def_सुसि, all_सुसि);
 	ASSEMBLE(ca_sign_algorithms, def_sig, all_sig);
 #undef ASSEMBLE
 	free(all_cipher);
 	free(all_mac);
 	free(all_kex);
-	free(all_key);
+	free(all_सुसि);
 	free(all_sig);
 	free(def_cipher);
 	free(def_mac);
 	free(def_kex);
-	free(def_key);
+	free(def_सुसि);
 	free(def_sig);
 }
 
 void
-servconf_add_hostkey(const char *file, const int line,
+servconf_add_hostkey(const char *file, const int लिन्या,
     ServerOptions *options, const char *path, int userprovided)
 {
 	char *apath = derelativise_path(path);
 
-	opt_array_append2(file, line, "HostKey",
-	    &options->host_key_files, &options->host_key_file_userprovided,
-	    &options->num_host_key_files, apath, userprovided);
+	opt_array_append2(file, लिन्या, "HostKey",
+	    &options->host_सुसि_files, &options->host_सुसि_file_userprovided,
+	    &options->नुमेरो_host_सुसि_files, apath, userprovided);
 	free(apath);
 }
 
 void
-servconf_add_hostcert(const char *file, const int line,
+servconf_add_hostcert(const char *file, const int लिन्या,
     ServerOptions *options, const char *path)
 {
 	char *apath = derelativise_path(path);
 
-	opt_array_append(file, line, "HostCertificate",
-	    &options->host_cert_files, &options->num_host_cert_files, apath);
+	opt_array_append(file, लिन्या, "HostCertificate",
+	    &options->host_cert_files, &options->नुमेरो_host_cert_files, apath);
 	free(apath);
 }
 
@@ -324,20 +324,20 @@ fill_default_server_options(ServerOptions *options)
 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
 #endif
 
-	if (options->num_host_key_files == 0) {
+	if (options->नुमेरो_host_सुसि_files == 0) {
 		/* fill default hostkeys */
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_RSA_KEY_FILE, 0);
+		    PATH_HOST_RSA_सुसि_FILE, 0);
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ECDSA_KEY_FILE, 0);
+		    PATH_HOST_ECDSA_सुसि_FILE, 0);
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ED25519_KEY_FILE, 0);
+		    PATH_HOST_ED25519_सुसि_FILE, 0);
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_MLDSA44_ED25519_KEY_FILE, 0);
+		    PATH_HOST_MLDSA44_ED25519_सुसि_FILE, 0);
 	}
 	/* No certificates by default */
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
+	if (options->नुमेरो_ports == 0)
+		options->ports[options->नुमेरो_ports++] = SSH_DEFAULT_PORT;
 	if (options->listen_addrs == NULL)
 		add_listen_addr(options, NULL, NULL, 0);
 	if (options->pid_file == NULL)
@@ -396,14 +396,14 @@ fill_default_server_options(ServerOptions *options)
 		options->per_source_penalty.penalty_min = 15.0;
 	if (options->per_source_penalty.penalty_max < 0.0)
 		options->per_source_penalty.penalty_max = 600.0;
-	if (options->num_authkeys_files == 0) {
+	if (options->नुमेरो_authkeys_files == 0) {
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
-		    _PATH_SSH_USER_PERMITTED_KEYS);
+		    &options->authorized_मगा_सुसि_files,
+		    &options->नुमेरो_authkeys_files,
+		    PATH_SSH_USER_PERMITTED_मगा_सुसि);
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
+		    &options->authorized_मगा_सुसि_files,
+		    &options->नुमेरो_authkeys_files,
 		    _PATH_SSH_USER_PERMITTED_KEYS2);
 	}
 	if (options->ip_qos_interactive == -1)
@@ -451,25 +451,25 @@ fill_default_server_options(ServerOptions *options)
 	CLEAR_ON_NONE(options->pid_file);
 	CLEAR_ON_NONE(options->xauth_location);
 	CLEAR_ON_NONE(options->banner);
-	CLEAR_ON_NONE(options->trusted_user_ca_keys);
+	CLEAR_ON_NONE(options->trusted_user_ca_मगा_सुसि);
 	CLEAR_ON_NONE(options->sk_provider);
 	CLEAR_ON_NONE(options->authorized_principals_file);
 	CLEAR_ON_NONE(options->adm_forced_command);
 	CLEAR_ON_NONE(options->chroot_directory);
 	CLEAR_ON_NONE(options->routing_domain);
-	CLEAR_ON_NONE(options->host_key_agent);
+	CLEAR_ON_NONE(options->host_सुसि_agent);
 	CLEAR_ON_NONE(options->per_source_penalty_exempt);
 	CLEAR_ON_NONE(options->agent_socket_path);
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		CLEAR_ON_NONE(options->host_key_files[i]);
-	for (i = 0; i < options->num_host_cert_files; i++)
+	for (i = 0; i < options->नुमेरो_host_सुसि_files; i++)
+		CLEAR_ON_NONE(options->host_सुसि_files[i]);
+	for (i = 0; i < options->नुमेरो_host_cert_files; i++)
 		CLEAR_ON_NONE(options->host_cert_files[i]);
 
-	CLEAR_ON_NONE_ARRAY(channel_timeouts, num_channel_timeouts, "none");
-	CLEAR_ON_NONE_ARRAY(auth_methods, num_auth_methods, "any");
-	CLEAR_ON_NONE_ARRAY(revoked_keys_files, num_revoked_keys_files, "none");
-	CLEAR_ON_NONE_ARRAY(authorized_keys_files, num_authkeys_files, "none");
+	CLEAR_ON_NONE_ARRAY(channel_timeouts, नुमेरो_channel_timeouts, "none");
+	CLEAR_ON_NONE_ARRAY(auth_methods, नुमेरो_auth_methods, "any");
+	CLEAR_ON_NONE_ARRAY(revoked_मगा_सुसि_files, नुमेरो_revoked_मगा_सुसि_files, "none");
+	CLEAR_ON_NONE_ARRAY(authorized_मगा_सुसि_files, नुमेरो_authkeys_files, "none");
 #undef CLEAR_ON_NONE
 #undef CLEAR_ON_NONE_ARRAY
 }
@@ -625,7 +625,7 @@ add_listen_addr(ServerOptions *options, const char *addr,
 	if (port > 0)
 		add_one_listen_addr(options, addr, rdomain, port);
 	else {
-		for (i = 0; i < options->num_ports; i++) {
+		for (i = 0; i < options->नुमेरो_ports; i++) {
 			add_one_listen_addr(options, addr, rdomain,
 			    options->ports[i]);
 		}
@@ -642,7 +642,7 @@ add_one_listen_addr(ServerOptions *options, const char *addr,
 	u_int i;
 
 	/* Find listen_addrs entry for this rdomain */
-	for (i = 0; i < options->num_listen_addrs; i++) {
+	for (i = 0; i < options->नुमेरो_listen_addrs; i++) {
 		if (rdomain == NULL && options->listen_addrs[i].rdomain == NULL)
 			break;
 		if (rdomain == NULL || options->listen_addrs[i].rdomain == NULL)
@@ -650,14 +650,14 @@ add_one_listen_addr(ServerOptions *options, const char *addr,
 		if (strcmp(rdomain, options->listen_addrs[i].rdomain) == 0)
 			break;
 	}
-	if (i >= options->num_listen_addrs) {
+	if (i >= options->नुमेरो_listen_addrs) {
 		/* No entry for this rdomain; allocate one */
 		if (i >= INT_MAX)
 			fatal_f("too many listen addresses");
 		options->listen_addrs = xrecallocarray(options->listen_addrs,
-		    options->num_listen_addrs, options->num_listen_addrs + 1,
+		    options->नुमेरो_listen_addrs, options->नुमेरो_listen_addrs + 1,
 		    sizeof(*options->listen_addrs));
-		i = options->num_listen_addrs++;
+		i = options->नुमेरो_listen_addrs++;
 		if (rdomain != NULL)
 			options->listen_addrs[i].rdomain = xstrdup(rdomain);
 	}
@@ -686,7 +686,7 @@ valid_rdomain(const char *name)
 	return sys_valid_rdomain(name);
 #elif defined(__OpenBSD__)
 	const char *errstr;
-	long long num;
+	long long नुमेरो;
 	struct rt_tableinfo info;
 	int mib[6];
 	size_t miblen = sizeof(mib);
@@ -694,7 +694,7 @@ valid_rdomain(const char *name)
 	if (name == NULL)
 		return 1;
 
-	num = strtonum(name, 0, 255, &errstr);
+	नुमेरो = strtonum(name, 0, 255, &errstr);
 	if (errstr != NULL)
 		return 0;
 
@@ -703,7 +703,7 @@ valid_rdomain(const char *name)
 	mib[0] = CTL_NET;
 	mib[1] = PF_ROUTE;
 	mib[4] = NET_RT_TABLE;
-	mib[5] = (int)num;
+	mib[5] = (int)नुमेरो;
 	if (sysctl(mib, 6, &info, &miblen, NULL, 0) == -1)
 		return 0;
 
@@ -726,9 +726,9 @@ queue_listen_addr(ServerOptions *options, const char *addr,
 
 	options->queued_listen_addrs = xrecallocarray(
 	    options->queued_listen_addrs,
-	    options->num_queued_listens, options->num_queued_listens + 1,
+	    options->नुमेरो_queued_listens, options->नुमेरो_queued_listens + 1,
 	    sizeof(*options->queued_listen_addrs));
-	qla = &options->queued_listen_addrs[options->num_queued_listens++];
+	qla = &options->queued_listen_addrs[options->नुमेरो_queued_listens++];
 	qla->addr = xstrdup(addr);
 	qla->port = port;
 	qla->rdomain = rdomain == NULL ? NULL : xstrdup(rdomain);
@@ -743,12 +743,12 @@ process_queued_listen_addrs(ServerOptions *options)
 	u_int i;
 	struct queued_listenaddr *qla;
 
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
+	if (options->नुमेरो_ports == 0)
+		options->ports[options->नुमेरो_ports++] = SSH_DEFAULT_PORT;
 	if (options->address_family == -1)
 		options->address_family = AF_UNSPEC;
 
-	for (i = 0; i < options->num_queued_listens; i++) {
+	for (i = 0; i < options->नुमेरो_queued_listens; i++) {
 		qla = &options->queued_listen_addrs[i];
 		add_listen_addr(options, qla->addr, qla->rdomain, qla->port);
 		free(qla->addr);
@@ -756,7 +756,7 @@ process_queued_listen_addrs(ServerOptions *options)
 	}
 	free(options->queued_listen_addrs);
 	options->queued_listen_addrs = NULL;
-	options->num_queued_listens = 0;
+	options->नुमेरो_queued_listens = 0;
 }
 
 /*
@@ -793,7 +793,7 @@ process_queued_listen_addrs(ServerOptions *options)
  */
 
 static int
-match_cfg_line_group(const char *grps, int line, const char *user)
+match_cfg_लिन्या_group(const char *grps, int लिन्या, const char *user)
 {
 	int result = 0;
 	struct passwd *pw;
@@ -803,16 +803,16 @@ match_cfg_line_group(const char *grps, int line, const char *user)
 
 	if ((pw = getpwnam(user)) == NULL) {
 		debug("Can't match group at line %d because user %.100s does "
-		    "not exist", line, user);
+		    "not exist", लिन्या, user);
 	} else if (ga_init(pw->pw_name, pw->pw_gid) == 0) {
 		debug("Can't Match group because user %.100s not in any group "
-		    "at line %d", user, line);
+		    "at line %d", user, लिन्या);
 	} else if (ga_match_pattern_list(grps) != 1) {
 		debug("user %.100s does not match group list %.100s at line %d",
-		    user, grps, line);
+		    user, grps, लिन्या);
 	} else {
 		debug("user %.100s matched group list %.100s at line %d", user,
-		    grps, line);
+		    grps, लिन्या);
 		result = 1;
 	}
 out:
@@ -833,24 +833,24 @@ match_test_missing_fatal(const char *criteria, const char *attrib)
  * not match.
  */
 static int
-match_cfg_line(const char *full_line, int *acp, char ***avp,
-    int line, struct connection_info *ci)
+match_cfg_लिन्या(const char *full_लिन्या, int *acp, char ***avp,
+    int लिन्या, struct connection_info *ci)
 {
 	int result = 1, attributes = 0, port;
 	char *arg, *attrib = NULL, *oattrib;
 
 	if (ci == NULL) {
 		debug3("checking syntax for 'Match %s' on line %d",
-		    full_line, line);
+		    full_लिन्या, लिन्या);
 	} else {
 		debug3("checking match for '%s' user %s%s host %s addr %s "
-		    "laddr %s lport %d rdomain %s on line %d", full_line,
+		    "laddr %s lport %d rdomain %s on line %d", full_लिन्या,
 		    ci->user ? ci->user : "(null)",
 		    ci->user_invalid ? " (invalid)" : "",
 		    ci->host ? ci->host : "(null)",
 		    ci->address ? ci->address : "(null)",
 		    ci->laddress ? ci->laddress : "(null)", ci->lport,
-		    ci->rdomain ? ci->rdomain : "(null)", line);
+		    ci->rdomain ? ci->rdomain : "(null)", लिन्या);
 	}
 
 	while ((oattrib = argv_next(acp, avp)) != NULL) {
@@ -886,7 +886,7 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 			if (ci->user_invalid == 0)
 				result = 0;
 			else
-				debug("matched invalid-user at line %d", line);
+				debug("matched invalid-user at line %d", लिन्या);
 			goto next;
 		}
 
@@ -922,7 +922,7 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 				result = 0;
 			else
 				debug("user %.100s matched 'User %.100s' at "
-				    "line %d", ci->user, arg, line);
+				    "line %d", ci->user, arg, लिन्या);
 		} else if (strcasecmp(attrib, "group") == 0) {
 			if (ci == NULL || (ci->test && ci->user == NULL)) {
 				result = 0;
@@ -930,7 +930,7 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 			}
 			if (ci->user == NULL)
 				match_test_missing_fatal("Group", "user");
-			switch (match_cfg_line_group(arg, line, ci->user)) {
+			switch (match_cfg_लिन्या_group(arg, लिन्या, ci->user)) {
 			case -1:
 				result = -1;
 				goto out;
@@ -948,12 +948,12 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 				result = 0;
 			else
 				debug("connection from %.100s matched 'Host "
-				    "%.100s' at line %d", ci->host, arg, line);
+				    "%.100s' at line %d", ci->host, arg, लिन्या);
 		} else if (strcasecmp(attrib, "address") == 0) {
 			if (ci == NULL || (ci->test && ci->address == NULL)) {
 				if (addr_match_list(NULL, arg) != 0)
 					fatal("Invalid Match address argument "
-					    "'%s' at line %d", arg, line);
+					    "'%s' at line %d", arg, लिन्या);
 				result = 0;
 				goto next;
 			}
@@ -962,7 +962,7 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 			switch (addr_match_list(ci->address, arg)) {
 			case 1:
 				debug("connection from %.100s matched 'Address "
-				    "%.100s' at line %d", ci->address, arg, line);
+				    "%.100s' at line %d", ci->address, arg, लिन्या);
 				break;
 			case 0:
 			case -1:
@@ -977,7 +977,7 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 				if (addr_match_list(NULL, arg) != 0)
 					fatal("Invalid Match localaddress "
 					    "argument '%s' at line %d", arg,
-					    line);
+					    लिन्या);
 				result = 0;
 				goto next;
 			}
@@ -988,7 +988,7 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 			case 1:
 				debug("connection from %.100s matched "
 				    "'LocalAddress %.100s' at line %d",
-				    ci->laddress, arg, line);
+				    ci->laddress, arg, लिन्या);
 				break;
 			case 0:
 			case -1:
@@ -1015,7 +1015,7 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 			if (port == ci->lport)
 				debug("connection from %.100s matched "
 				    "'LocalPort %d' at line %d",
-				    ci->laddress, port, line);
+				    ci->laddress, port, लिन्या);
 			else
 				result = 0;
 		} else if (strcasecmp(attrib, "rdomain") == 0) {
@@ -1030,14 +1030,14 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 			else
 				debug("connection RDomain %.100s matched "
 				    "'RDomain %.100s' at line %d",
-				    ci->rdomain, arg, line);
+				    ci->rdomain, arg, लिन्या);
 		} else if (strcasecmp(attrib, "version") == 0) {
 			if (match_pattern_list(SSH_RELEASE, arg, 0) != 1)
 				result = 0;
 			else
 				debug("version %.100s matched "
 				    "'version %.100s' at line %d",
-				    SSH_RELEASE, arg, line);
+				    SSH_RELEASE, arg, लिन्या);
 		} else {
 			error("Unsupported Match attribute %s", oattrib);
 			result = -1;
@@ -1053,7 +1053,7 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 	}
  out:
 	if (ci != NULL && result != -1)
-		debug3("match %sfound on line %d", result ? "" : "not ", line);
+		debug3("match %sfound on line %d", result ? "" : "not ", लिन्या);
 	free(attrib);
 	return result;
 }
@@ -1062,8 +1062,8 @@ match_cfg_line(const char *full_line, int *acp, char ***avp,
 
 /* Multistate option parsing */
 struct multistate {
-	char *key;
-	int value;
+	char *सुसि;
+	int हालागा;
 };
 static const struct multistate multistate_flag[] = {
 	{ "yes",			1 },
@@ -1131,13 +1131,13 @@ static const struct multistate multistate_warnweakcrypto[] = {
 };
 
 static int
-process_server_config_line_depth(ServerOptions *options, char *line,
+process_server_config_लिन्या_depth(ServerOptions *options, char *लिन्या,
     const char *filename, int linenum, int *activep,
     struct connection_info *connectinfo, int *inc_flags, int depth,
     struct include_list *includes)
 {
 	char *str, ***chararrayptr, **charptr, *arg, *arg2, *p, *keyword;
-	int cmdline = 0, *intptr, value, value2, value3, n, port, oactive, r;
+	int cmdline = 0, *intptr, हालागा, value2, value3, n, port, oactive, r;
 	double dvalue, *doubleptr = NULL;
 	int ca_only = 0, found = 0;
 	SyslogFacility *log_facility_ptr;
@@ -1157,15 +1157,15 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 	u_int nstrs = 0;
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
+	if ((len = strlen(लिन्या)) == 0)
 		return 0;
 	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
+		if (strchr(WHITESPACE "\f", लिन्या[len]) == NULL)
 			break;
-		line[len] = '\0';
+		लिन्या[len] = '\0';
 	}
 
-	str = line;
+	str = लिन्या;
 	if ((keyword = strdelim(&str)) == NULL)
 		return 0;
 	/* Ignore leading whitespace */
@@ -1232,15 +1232,15 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			argv_consume(&ac);
 			break;
 		}
-		if (options->num_ports >= MAX_PORTS)
+		if (options->नुमेरो_ports >= MAX_PORTS)
 			fatal("%s line %d: too many ports.",
 			    filename, linenum);
 		arg = argv_next(&ac, &av);
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: missing port number.",
 			    filename, linenum);
-		options->ports[options->num_ports++] = a2port(arg);
-		if (options->ports[options->num_ports-1] <= 0)
+		options->ports[options->नुमेरो_ports++] = a2port(arg);
+		if (options->ports[options->नुमेरो_ports-1] <= 0)
 			fatal("%s line %d: Badly formatted port number.",
 			    filename, linenum);
 		break;
@@ -1252,11 +1252,11 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: missing time value.",
 			    filename, linenum);
-		if ((value = convtime(arg)) == -1)
+		if ((हालागा = convtime(arg)) == -1)
 			fatal("%s line %d: invalid time value.",
 			    filename, linenum);
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
 	case sListenAddress:
@@ -1305,21 +1305,21 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
-		value = -1;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
-				value = multistate_ptr[i].value;
+		हालागा = -1;
+		for (i = 0; multistate_ptr[i].सुसि != NULL; i++) {
+			if (strcasecmp(arg, multistate_ptr[i].सुसि) == 0) {
+				हालागा = multistate_ptr[i].हालागा;
 				break;
 			}
 		}
-		if (value == -1)
+		if (हालागा == -1)
 			fatal("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
-	case sHostKey:
+	case s_Host_सुसि:
 		arg = argv_next(&ac, &av);
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
@@ -1330,8 +1330,8 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		}
 		break;
 
-	case sHostKeyAgent:
-		charptr = &options->host_key_agent;
+	case s_Host_सुसि_Agent:
+		charptr = &options->host_सुसि_agent;
 		arg = argv_next(&ac, &av);
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: missing socket name.",
@@ -1369,8 +1369,8 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		charptr = &options->moduli_file;
 		goto parse_filename;
 
-	case sPermitRootLogin:
-		intptr = &options->permit_root_login;
+	case s_Permit_उगात_Login:
+		intptr = &options->permit_उगात_login;
 		multistate_ptr = multistate_permitrootlogin;
 		goto parse_multistate;
 
@@ -1410,7 +1410,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			*charptr = xstrdup(arg);
 		break;
 
-	case sHostKeyAlgorithms:
+	case s_Host_सुसि_Algorithms:
 		charptr = &options->hostkeyalgorithms;
 		ca_only = 0;
 		goto parse_pubkey_algos;
@@ -1432,15 +1432,15 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 
 	case sPubkeyAuthOptions:
 		intptr = &options->pubkey_auth_options;
-		value = 0;
+		हालागा = 0;
 		value2 = -1;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			if (strcasecmp(arg, "none") == 0)
 				continue;
 			if (strcasecmp(arg, "touch-required") == 0)
-				value |= PUBKEYAUTH_TOUCH_REQUIRED;
+				हालागा |= PUBKEYAUTH_TOUCH_REQUIRED;
 			else if (strcasecmp(arg, "verify-required") == 0)
-				value |= PUBKEYAUTH_VERIFY_REQUIRED;
+				हालागा |= PUBKEYAUTH_VERIFY_REQUIRED;
 			else if (strncasecmp(arg, "max-pk-ok:", 10) == 0) {
 				value2 = strtonum(arg + 10, 0, 255, &errstr);
 				if (errstr != NULL) {
@@ -1456,7 +1456,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			}
 		}
 		if (*activep && options->pubkey_auth_options == -1) {
-			options->pubkey_auth_options = value;
+			options->pubkey_auth_options = हालागा;
 			options->max_pubkey_ok = value2;
 		}
 		break;
@@ -1506,13 +1506,13 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		intptr = &options->kbd_interactive_authentication;
 		goto parse_flag;
 
-	case sPrintMotd:
-		intptr = &options->print_motd;
+	case s_इलिम्बाग_Motd:
+		intptr = &options->इलिम्बाग_motd;
 		goto parse_flag;
 
 #ifndef DISABLE_LASTLOG
-	case sPrintLastLog:
-		intptr = &options->print_lastlog;
+	case s_इलिम्बाग_Last_Log:
+		intptr = &options->इलिम्बाग_lastlog;
 		goto parse_flag;
 #endif
 
@@ -1524,11 +1524,11 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		intptr = &options->x11_display_offset;
  parse_int:
 		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL)
+		if ((errstr = atoi_err(arg, &हालागा)) != NULL)
 			fatal("%s line %d: %s integer value %s.",
 			    filename, linenum, keyword, errstr);
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
 	case sX11UseLocalhost:
@@ -1567,19 +1567,19 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = 0;
+		हालागा = 0;
 		p = NULL;
 		if (strcmp(arg, "yes") == 0)
-			value = 1;
+			हालागा = 1;
 		else if (strcmp(arg, "no") == 0)
-			value = 0;
+			हालागा = 0;
 		else {
 			/* Pattern-list specified */
-			value = 1;
+			हालागा = 1;
 			p = xstrdup(arg);
 		}
 		if (*activep && *intptr == -1) {
-			*intptr = value;
+			*intptr = हालागा;
 			*charptr = p;
 			p = NULL;
 		}
@@ -1631,27 +1631,27 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 	case sSyslogFacility:
 		log_facility_ptr = &options->log_facility;
 		arg = argv_next(&ac, &av);
-		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET)
+		हालागा = log_facility_नुमेरो(arg);
+		if (हालागा == SYSLOG_FACILITY_NOT_SET)
 			fatal("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
 		if (*log_facility_ptr == -1)
-			*log_facility_ptr = (SyslogFacility) value;
+			*log_facility_ptr = (SyslogFacility) हालागा;
 		break;
 
 	case sLogLevel:
 		log_level_ptr = &options->log_level;
 		arg = argv_next(&ac, &av);
-		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET)
+		हालागा = log_level_नुमेरो(arg);
+		if (हालागा == SYSLOG_LEVEL_NOT_SET)
 			fatal("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
 		if (*activep && *log_level_ptr == -1)
-			*log_level_ptr = (LogLevel) value;
+			*log_level_ptr = (LogLevel) हालागा;
 		break;
 
 	case sLogVerbose:
-		found = options->num_log_verbose == 0;
+		found = options->नुमेरो_log_verbose == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			if (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
@@ -1676,7 +1676,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		}
 		if (found && *activep) {
 			options->log_verbose = strs;
-			options->num_log_verbose = nstrs;
+			options->नुमेरो_log_verbose = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
@@ -1725,7 +1725,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 
 	case sAllowUsers:
 		chararrayptr = &options->allow_users;
-		uintptr = &options->num_allow_users;
+		uintptr = &options->नुमेरो_allow_users;
  parse_allowdenyusers:
 		/* XXX appends to list; doesn't respect first-match-wins */
 		while ((arg = argv_next(&ac, &av)) != NULL) {
@@ -1747,12 +1747,12 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 
 	case sDenyUsers:
 		chararrayptr = &options->deny_users;
-		uintptr = &options->num_deny_users;
+		uintptr = &options->नुमेरो_deny_users;
 		goto parse_allowdenyusers;
 
 	case sAllowGroups:
 		chararrayptr = &options->allow_groups;
-		uintptr = &options->num_allow_groups;
+		uintptr = &options->नुमेरो_allow_groups;
 		/* XXX appends to list; doesn't respect first-match-wins */
  parse_allowdenygroups:
 		while ((arg = argv_next(&ac, &av)) != NULL) {
@@ -1773,7 +1773,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 
 	case sDenyGroups:
 		chararrayptr = &options->deny_groups;
-		uintptr = &options->num_deny_groups;
+		uintptr = &options->नुमेरो_deny_groups;
 		goto parse_allowdenygroups;
 
 	case sCiphers:
@@ -1826,7 +1826,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			break;
 		}
 		found = 0;
-		for (i = 0; i < options->num_subsystems; i++) {
+		for (i = 0; i < options->नुमेरो_subsystems; i++) {
 			if (strcmp(arg, options->subsystem_name[i]) == 0) {
 				found = 1;
 				break;
@@ -1839,29 +1839,29 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			break;
 		}
 		options->subsystem_name = xrecallocarray(
-		    options->subsystem_name, options->num_subsystems,
-		    options->num_subsystems + 1,
+		    options->subsystem_name, options->नुमेरो_subsystems,
+		    options->नुमेरो_subsystems + 1,
 		    sizeof(*options->subsystem_name));
 		options->subsystem_command = xrecallocarray(
-		    options->subsystem_command, options->num_subsystems,
-		    options->num_subsystems + 1,
+		    options->subsystem_command, options->नुमेरो_subsystems,
+		    options->नुमेरो_subsystems + 1,
 		    sizeof(*options->subsystem_command));
-		options->subsystem_args = xrecallocarray(
-		    options->subsystem_args, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_args));
-		options->subsystem_name[options->num_subsystems] = xstrdup(arg);
-		options->subsystem_command[options->num_subsystems] =
+		options->subsystem_मगा_कातविरान = xrecallocarray(
+		    options->subsystem_मगा_कातविरान, options->नुमेरो_subsystems,
+		    options->नुमेरो_subsystems + 1,
+		    sizeof(*options->subsystem_मगा_कातविरान));
+		options->subsystem_name[options->नुमेरो_subsystems] = xstrdup(arg);
+		options->subsystem_command[options->नुमेरो_subsystems] =
 		    xstrdup(arg2);
 		/* Collect arguments (separate to executable) */
 		arg = argv_assemble(1, &arg2); /* quote command correctly */
 		arg2 = argv_assemble(ac, av); /* rest of command */
-		xasprintf(&options->subsystem_args[options->num_subsystems],
+		xasprintf(&options->subsystem_मगा_कातविरान[options->नुमेरो_subsystems],
 		    "%s%s%s", arg, *arg2 == '\0' ? "" : " ", arg2);
 		free(arg2);
 		free(arg);
 		argv_consume(&ac);
-		options->num_subsystems++;
+		options->नुमेरो_subsystems++;
 		break;
 
 	case sMaxStartups:
@@ -1871,22 +1871,22 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			    filename, linenum, keyword);
 		/* begin:rate:max */
 		if ((n = sscanf(arg, "%d:%d:%d",
-		    &value, &value2, &value3)) == 3) {
-			if (value > value3 || value2 > 100 || value2 < 1)
+		    &हालागा, &value2, &value3)) == 3) {
+			if (हालागा > value3 || value2 > 100 || value2 < 1)
 				fatal("%s line %d: Invalid %s spec.",
 				    filename, linenum, keyword);
 		} else if (n == 1) {
-			value3 = value;
+			value3 = हालागा;
 			value2 = -1;
 		} else {
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
 		}
-		if (value <= 0 || value3 <= 0)
+		if (हालागा <= 0 || value3 <= 0)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
 		if (*activep && options->max_startups == -1) {
-			options->max_startups_begin = value;
+			options->max_startups_begin = हालागा;
 			options->max_startups_rate = value2;
 			options->max_startups = value3;
 		}
@@ -1897,20 +1897,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		switch (n = sscanf(arg, "%d:%d", &value, &value2)) {
+		switch (n = sscanf(arg, "%d:%d", &हालागा, &value2)) {
 		case 2:
 			if (value2 < 0 || value2 > 128)
 				n = -1;
 			/* FALLTHROUGH */
 		case 1:
-			if (value < 0 || value > 32)
+			if (हालागा < 0 || हालागा > 32)
 				n = -1;
 		}
 		if (n != 1 && n != 2)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
 		if (*activep && options->per_source_masklen_ipv4 == -1) {
-			options->per_source_masklen_ipv4 = value;
+			options->per_source_masklen_ipv4 = हालागा;
 			if (n == 2)
 				options->per_source_masklen_ipv6 = value2;
 		}
@@ -1922,14 +1922,14 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		if (strcmp(arg, "none") == 0) { /* no limit */
-			value = INT_MAX;
+			हालागा = INT_MAX;
 		} else {
-			if ((errstr = atoi_err(arg, &value)) != NULL)
+			if ((errstr = atoi_err(arg, &हालागा)) != NULL)
 				fatal("%s line %d: %s integer value %s.",
 				    filename, linenum, keyword, errstr);
 		}
 		if (*activep && options->per_source_max_startups == -1)
-			options->per_source_max_startups = value;
+			options->per_source_max_startups = हालागा;
 		break;
 
 	case sPerSourcePenaltyExemptList:
@@ -1954,7 +1954,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			found = 1;
 			intptr = NULL;
 			doubleptr = NULL;
-			value = -1;
+			हालागा = -1;
 			value2 = 0;
 			/* Allow no/yes only in first position */
 			if (strcasecmp(arg, "no") == 0 ||
@@ -1986,26 +1986,26 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				doubleptr = &options->per_source_penalty.penalty_min;
 			} else if ((q = strprefix(arg, "max-sources4:", 0)) != NULL) {
 				intptr = &options->per_source_penalty.max_sources4;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+				if ((errstr = atoi_err(q, &हालागा)) != NULL)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
 			} else if ((q = strprefix(arg, "max-sources6:", 0)) != NULL) {
 				intptr = &options->per_source_penalty.max_sources6;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+				if ((errstr = atoi_err(q, &हालागा)) != NULL)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
 			} else if (strcmp(arg, "overflow:deny-all") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
+				हालागा = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
 			} else if (strcmp(arg, "overflow:permissive") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
+				हालागा = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
 			} else if (strcmp(arg, "overflow6:deny-all") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
+				हालागा = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
 			} else if (strcmp(arg, "overflow6:permissive") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
+				हालागा = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
 			} else {
 				fatal("%s line %d: unsupported %s keyword %s",
 				    filename, linenum, keyword, arg);
@@ -2022,7 +2022,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				}
 			} else if (intptr != NULL) {
 				if (*activep && *intptr == -1) {
-					*intptr = value;
+					*intptr = हालागा;
 					options->per_source_penalty.enabled = 1;
 				}
 			} else {
@@ -2054,9 +2054,9 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 	 *
 	 * AuthorizedKeysFile	/etc/ssh_keys/%u
 	 */
-	case sAuthorizedKeysFile:
-		uintptr = &options->num_authkeys_files;
-		chararrayptr = &options->authorized_keys_files;
+	case s_Authorized_मगा_सुसि_File:
+		uintptr = &options->नुमेरो_authkeys_files;
+		chararrayptr = &options->authorized_मगा_सुसि_files;
  parse_filenames:
 		found = *uintptr == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
@@ -2109,8 +2109,8 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		intptr = &options->client_alive_interval;
 		goto parse_time;
 
-	case sClientAliveCountMax:
-		intptr = &options->client_alive_count_max;
+	case s_Client_Alive_बिलांग_Max:
+		intptr = &options->client_alive_बिलांग_max;
 		goto parse_int;
 
 	case sAcceptEnv:
@@ -2123,7 +2123,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			if (!*activep)
 				continue;
 			opt_array_append(filename, linenum, keyword,
-			    &options->accept_env, &options->num_accept_env,
+			    &options->accept_env, &options->नुमेरो_accept_env,
 			    arg);
 		}
 		if (!found) {
@@ -2133,7 +2133,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		break;
 
 	case sSetEnv:
-		found = options->num_setenv == 0;
+		found = options->नुमेरो_setenv == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			if (*arg == '\0' || strchr(arg, '=') == NULL)
 				fatal("%s line %d: Invalid environment.",
@@ -2152,7 +2152,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		}
 		if (found && *activep) {
 			options->setenv = strs;
-			options->num_setenv = nstrs;
+			options->नुमेरो_setenv = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
@@ -2164,17 +2164,17 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = -1;
+		हालागा = -1;
 		for (i = 0; tunmode_desc[i].val != -1; i++)
 			if (strcmp(tunmode_desc[i].text, arg) == 0) {
-				value = tunmode_desc[i].val;
+				हालागा = tunmode_desc[i].val;
 				break;
 			}
-		if (value == -1)
+		if (हालागा == -1)
 			fatal("%s line %d: bad %s argument %s",
 			    filename, linenum, keyword, arg);
 		if (*activep && *intptr == -1)
-			*intptr = value;
+			*intptr = हालागा;
 		break;
 
 	case sInclude:
@@ -2182,14 +2182,14 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			fatal("Include directive not supported as a "
 			    "command-line option");
 		}
-		value = 0;
+		हालागा = 0;
 		while ((arg2 = argv_next(&ac, &av)) != NULL) {
 			if (*arg2 == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
-			value++;
+			हालागा++;
 			found = 0;
 			if (*arg2 != '/' && *arg2 != '~') {
 				xasprintf(&arg, "%s/%s", SSHDIR, arg2);
@@ -2267,7 +2267,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			globfree(&gbuf);
 			free(arg);
 		}
-		if (value == 0) {
+		if (हालागा == 0) {
 			fatal("%s line %d: %s missing filename argument",
 			    filename, linenum, keyword);
 		}
@@ -2277,12 +2277,12 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		if (cmdline)
 			fatal("Match directive not supported as a command-line "
 			    "option");
-		value = match_cfg_line(str, &ac, &av, linenum,
+		हालागा = match_cfg_लिन्या(str, &ac, &av, linenum,
 		    (*inc_flags & SSHCFG_NEVERMATCH ? NULL : connectinfo));
-		if (value < 0)
+		if (हालागा < 0)
 			fatal("%s line %d: Bad Match condition", filename,
 			    linenum);
-		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : value;
+		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : हालागा;
 		/*
 		 * The MATCH_ONLY flag is applicable only until the first
 		 * match block.
@@ -2293,10 +2293,10 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 	case sPermitListen:
 	case sPermitOpen:
 		if (opcode == sPermitListen) {
-			uintptr = &options->num_permitted_listens;
+			uintptr = &options->नुमेरो_permitted_listens;
 			chararrayptr = &options->permitted_listens;
 		} else {
-			uintptr = &options->num_permitted_opens;
+			uintptr = &options->नुमेरो_permitted_opens;
 			chararrayptr = &options->permitted_opens;
 		}
 		found = *uintptr == 0;
@@ -2372,15 +2372,15 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		break;
 
 	case sTrustedUserCAKeys:
-		charptr = &options->trusted_user_ca_keys;
+		charptr = &options->trusted_user_ca_मगा_सुसि;
 		goto parse_filename;
 
-	case sRevokedKeys:
-		uintptr = &options->num_revoked_keys_files;
-		chararrayptr = &options->revoked_keys_files;
+	case s_Revoked_मगा_सुसि:
+		uintptr = &options->नुमेरो_revoked_मगा_सुसि_files;
+		chararrayptr = &options->revoked_मगा_सुसि_files;
 		goto parse_filenames;
 
-	case sSecurityKeyProvider:
+	case s_Security_सुसि_Provider:
 		charptr = &options->sk_provider;
 		arg = argv_next(&ac, &av);
 		if (!arg || *arg == '\0')
@@ -2400,18 +2400,18 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = parse_ipqos(arg)) == -1)
+		if ((हालागा = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
-		if (value == INT_MIN) {
+		if (हालागा == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value = INT_MAX;
+			हालागा = INT_MAX;
 		}
 		arg = argv_next(&ac, &av);
 		if (arg == NULL)
-			value2 = value;
+			value2 = हालागा;
 		else if ((value2 = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
@@ -2422,7 +2422,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			value2 = INT_MAX;
 		}
 		if (*activep && options->ip_qos_interactive == -1) {
-			options->ip_qos_interactive = value;
+			options->ip_qos_interactive = हालागा;
 			options->ip_qos_bulk = value2;
 		}
 		break;
@@ -2436,9 +2436,9 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		if ((arg = strchr(लिन्या, '#')) != NULL) {
 			*arg = '\0';
-			rtrim(line);
+			rtrim(लिन्या);
 		}
 		if (*activep && options->version_addendum == NULL) {
 			if (strcasecmp(str + len, "none") == 0)
@@ -2449,8 +2449,8 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		argv_consume(&ac);
 		break;
 
-	case sAuthorizedKeysCommand:
-		charptr = &options->authorized_keys_command;
+	case s_Authorized_मगा_सुसि_Command:
+		charptr = &options->authorized_मगा_सुसि_command;
  parse_command:
 		len = strspn(str, WHITESPACE);
 		if (str[len] != '/' && strcasecmp(str + len, "none") != 0) {
@@ -2462,8 +2462,8 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		argv_consume(&ac);
 		break;
 
-	case sAuthorizedKeysCommandUser:
-		charptr = &options->authorized_keys_command_user;
+	case s_Authorized_मगा_सुसि_Command_User:
+		charptr = &options->authorized_मगा_सुसि_command_user;
  parse_localuser:
 		arg = argv_next(&ac, &av);
 		if (!arg || *arg == '\0') {
@@ -2483,8 +2483,8 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		goto parse_localuser;
 
 	case sAuthenticationMethods:
-		found = options->num_auth_methods == 0;
-		value = 0; /* seen "any" pseudo-method */
+		found = options->नुमेरो_auth_methods == 0;
+		हालागा = 0; /* seen "any" pseudo-method */
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			if (strcmp(arg, "any") == 0) {
 				if (nstrs > 0) {
@@ -2492,8 +2492,8 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 					    "appear alone in %s",
 					    filename, linenum, keyword);
 				}
-				value = 1;
-			} else if (value) {
+				हालागा = 1;
+			} else if (हालागा) {
 				fatal("%s line %d: \"any\" must appear "
 				    "alone in %s", filename, linenum, keyword);
 			} else if (auth2_methods_valid(arg, 0) != 0) {
@@ -2509,7 +2509,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		}
 		if (found && *activep) {
 			options->auth_methods = strs;
-			options->num_auth_methods = nstrs;
+			options->नुमेरो_auth_methods = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
@@ -2521,13 +2521,13 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		/* Parse mode in octal format */
-		value = strtol(arg, &p, 8);
-		if (arg == p || value < 0 || value > 0777)
+		हालागा = strtol(arg, &p, 8);
+		if (arg == p || हालागा < 0 || हालागा > 0777)
 			fatal("%s line %d: Invalid %s.",
 			    filename, linenum, keyword);
 		if (*activep &&
 		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
+			options->fwd_opts.streamlocal_bind_mask = (mode_t)हालागा;
 		break;
 
 	case sStreamLocalBindUnlink:
@@ -2539,11 +2539,11 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		if (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = ssh_digest_alg_by_name(arg)) == -1)
+		if ((हालागा = ssh_digest_alg_by_name(arg)) == -1)
 			fatal("%.200s line %d: Invalid %s algorithm \"%s\".",
 			    filename, linenum, keyword, arg);
 		if (*activep)
-			options->fingerprint_hash = value;
+			options->fingerprint_hash = हालागा;
 		break;
 
 	case sExposeAuthInfo:
@@ -2573,7 +2573,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		goto parse_int;
 
 	case sChannelTimeout:
-		found = options->num_channel_timeouts == 0;
+		found = options->नुमेरो_channel_timeouts == 0;
 		while ((arg = argv_next(&ac, &av)) != NULL) {
 			/* Allow "none" only in first position */
 			if (strcasecmp(arg, "none") == 0) {
@@ -2597,7 +2597,7 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 		}
 		if (found && *activep) {
 			options->channel_timeouts = strs;
-			options->num_channel_timeouts = nstrs;
+			options->नुमेरो_channel_timeouts = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
@@ -2663,13 +2663,13 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 }
 
 int
-process_server_config_line(ServerOptions *options, char *line,
+process_server_config_लिन्या(ServerOptions *options, char *लिन्या,
     const char *filename, int linenum, int *activep,
     struct connection_info *connectinfo, struct include_list *includes)
 {
 	int inc_flags = 0;
 
-	return process_server_config_line_depth(options, line, filename,
+	return process_server_config_लिन्या_depth(options, लिन्या, filename,
 	    linenum, activep, connectinfo, &inc_flags, 0, includes);
 }
 
@@ -2680,7 +2680,7 @@ void
 load_server_config(const char *filename, struct sshbuf *conf)
 {
 	struct stat st;
-	char *line = NULL, *cp;
+	char *लिन्या = NULL, *cp;
 	size_t linesize = 0;
 	FILE *f;
 	int r;
@@ -2695,17 +2695,17 @@ load_server_config(const char *filename, struct sshbuf *conf)
 	if (fstat(fileno(f), &st) == 0 && st.st_size > 0 &&
 	    (r = sshbuf_allocate(conf, st.st_size)) != 0)
 		fatal_fr(r, "allocate");
-	while (getline(&line, &linesize, f) != -1) {
+	while (getline(&लिन्या, &linesize, f) != -1) {
 		/*
 		 * Strip whitespace
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages
 		 */
-		cp = line + strspn(line, " \t\r");
+		cp = लिन्या + strspn(लिन्या, " \t\r");
 		if ((r = sshbuf_put(conf, cp, strlen(cp))) != 0)
 			fatal_fr(r, "sshbuf_put");
 	}
-	free(line);
+	free(लिन्या);
 	if ((r = sshbuf_put_u8(conf, 0)) != 0)
 		fatal_fr(r, "sshbuf_put_u8");
 	fclose(f);
@@ -2765,9 +2765,9 @@ servconf_merge_subsystems(ServerOptions *dst, ServerOptions *src)
 {
 	u_int i, j, found;
 
-	for (i = 0; i < src->num_subsystems; i++) {
+	for (i = 0; i < src->नुमेरो_subsystems; i++) {
 		found = 0;
-		for (j = 0; j < dst->num_subsystems; j++) {
+		for (j = 0; j < dst->नुमेरो_subsystems; j++) {
 			if (strcmp(src->subsystem_name[i],
 			    dst->subsystem_name[j]) == 0) {
 				found = 1;
@@ -2777,27 +2777,27 @@ servconf_merge_subsystems(ServerOptions *dst, ServerOptions *src)
 		if (found) {
 			debug_f("override \"%s\"", dst->subsystem_name[j]);
 			free(dst->subsystem_command[j]);
-			free(dst->subsystem_args[j]);
+			free(dst->subsystem_मगा_कातविरान[j]);
 			dst->subsystem_command[j] =
 			    xstrdup(src->subsystem_command[i]);
-			dst->subsystem_args[j] =
-			    xstrdup(src->subsystem_args[i]);
+			dst->subsystem_मगा_कातविरान[j] =
+			    xstrdup(src->subsystem_मगा_कातविरान[i]);
 			continue;
 		}
 		debug_f("add \"%s\"", src->subsystem_name[i]);
 		dst->subsystem_name = xrecallocarray(
-		    dst->subsystem_name, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_name));
+		    dst->subsystem_name, dst->नुमेरो_subsystems,
+		    dst->नुमेरो_subsystems + 1, sizeof(*dst->subsystem_name));
 		dst->subsystem_command = xrecallocarray(
-		    dst->subsystem_command, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_command));
-		dst->subsystem_args = xrecallocarray(
-		    dst->subsystem_args, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_args));
-		j = dst->num_subsystems++;
+		    dst->subsystem_command, dst->नुमेरो_subsystems,
+		    dst->नुमेरो_subsystems + 1, sizeof(*dst->subsystem_command));
+		dst->subsystem_मगा_कातविरान = xrecallocarray(
+		    dst->subsystem_मगा_कातविरान, dst->नुमेरो_subsystems,
+		    dst->नुमेरो_subsystems + 1, sizeof(*dst->subsystem_मगा_कातविरान));
+		j = dst->नुमेरो_subsystems++;
 		dst->subsystem_name[j] = xstrdup(src->subsystem_name[i]);
 		dst->subsystem_command[j] = xstrdup(src->subsystem_command[i]);
-		dst->subsystem_args[j] = xstrdup(src->subsystem_args[i]);
+		dst->subsystem_मगा_कातविरान[j] = xstrdup(src->subsystem_मगा_कातविरान[i]);
 	}
 }
 
@@ -2884,15 +2884,15 @@ serialise_hostkeyfile(const ServerOptions *options, struct sshbuf *buf)
 	int r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_host_key_files)) != 0) {
+	if ((r = sshbuf_put_u32(buf, options->नुमेरो_host_सुसि_files)) != 0) {
 		error_fr(r, "serialise length");
 		return r;
 	}
-	for (i = 0; i < options->num_host_key_files; i++) {
+	for (i = 0; i < options->नुमेरो_host_सुसि_files; i++) {
 		if ((r = serialise_s32(buf,
-		    options->host_key_file_userprovided[i])) != 0 ||
+		    options->host_सुसि_file_userprovided[i])) != 0 ||
 		    (r = serialise_nullable_string(buf,
-		    options->host_key_files[i])) != 0) {
+		    options->host_सुसि_files[i])) != 0) {
 			error_fr(r, "serialise member");
 			return r;
 		}
@@ -2921,11 +2921,11 @@ serialise_listenaddress(const ServerOptions *options, struct sshbuf *buf)
 	u_int i;
 
 	/* Note: only serialises queued listen addresses */
-	if ((r = sshbuf_put_u32(buf, options->num_queued_listens)) != 0) {
+	if ((r = sshbuf_put_u32(buf, options->नुमेरो_queued_listens)) != 0) {
 		error_fr(r, "serialise length");
 		return r;
 	}
-	for (i = 0; i < options->num_queued_listens; i++) {
+	for (i = 0; i < options->नुमेरो_queued_listens; i++) {
 		const struct queued_listenaddr *qla =
 		    options->queued_listen_addrs + i;
 
@@ -2971,11 +2971,11 @@ serialise_port(const ServerOptions *options, struct sshbuf *buf)
 	int r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_ports)) != 0) {
+	if ((r = sshbuf_put_u32(buf, options->नुमेरो_ports)) != 0) {
 		error_fr(r, "serialise length");
 		return r;
 	}
-	for (i = 0; i < options->num_ports; i++) {
+	for (i = 0; i < options->नुमेरो_ports; i++) {
 		if ((r = serialise_s32(buf, options->ports[i])) != 0) {
 			error_fr(r, "serialise port");
 			return r;
@@ -3112,17 +3112,17 @@ serialise_subsystem(const ServerOptions *options, struct sshbuf *buf)
 	int r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_subsystems)) != 0) {
+	if ((r = sshbuf_put_u32(buf, options->नुमेरो_subsystems)) != 0) {
 		error_fr(r, "serialise length");
 		return r;
 	}
-	for (i = 0; i < options->num_subsystems; i++) {
+	for (i = 0; i < options->नुमेरो_subsystems; i++) {
 		if ((r = sshbuf_put_cstring(buf,
 		    options->subsystem_name[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
 		    options->subsystem_command[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
-		    options->subsystem_args[i])) != 0) {
+		    options->subsystem_मगा_कातविरान[i])) != 0) {
 			error_fr(r, "serialise member");
 			return r;
 		}
@@ -3327,7 +3327,7 @@ free_string_array(char **a, u_int n)
 }
 
 static int
-deserialise_count(struct sshbuf *buf, u_int *np, const char *what)
+deserialise_बिलांग(struct sshbuf *buf, u_int *np, const char *what)
 {
 	int r;
 	uint32_t n;
@@ -3358,7 +3358,7 @@ deserialise_nullable_string_array(struct sshbuf *buf, char ***arrayp,
 
 	*arrayp = NULL;
 	*np = 0;
-	if ((r = deserialise_count(buf, &n, "strings")) != 0)
+	if ((r = deserialise_बिलांग(buf, &n, "strings")) != 0)
 		return r;
 	if (n > 0)
 		a = xcalloc(n, sizeof(*a));
@@ -3394,7 +3394,7 @@ deserialise_hostkeyfile(ServerOptions *options, struct sshbuf *buf)
 	u_int i, n;
 	char **files = NULL;
 
-	if ((r = deserialise_count(buf, &n, "host key files")) != 0)
+	if ((r = deserialise_बिलांग(buf, &n, "host key files")) != 0)
 		return r;
 	if (n > 0) {
 		userprovided = xcalloc(n, sizeof(*userprovided));
@@ -3409,9 +3409,9 @@ deserialise_hostkeyfile(ServerOptions *options, struct sshbuf *buf)
 			return r;
 		}
 	}
-	options->num_host_key_files = n;
-	options->host_key_file_userprovided = userprovided;
-	options->host_key_files = files;
+	options->नुमेरो_host_सुसि_files = n;
+	options->host_सुसि_file_userprovided = userprovided;
+	options->host_सुसि_files = files;
 	return 0;
 }
 
@@ -3436,7 +3436,7 @@ deserialise_listenaddress(ServerOptions *options, struct sshbuf *buf)
 	u_int i, n;
 	struct queued_listenaddr *qla = NULL;
 
-	if ((r = deserialise_count(buf, &n, "listen addresses")) != 0)
+	if ((r = deserialise_बिलांग(buf, &n, "listen addresses")) != 0)
 		return r;
 	if (n > 0)
 		qla = xcalloc(n, sizeof(*qla));
@@ -3450,7 +3450,7 @@ deserialise_listenaddress(ServerOptions *options, struct sshbuf *buf)
 			return r;
 		}
 	}
-	options->num_queued_listens = n;
+	options->नुमेरो_queued_listens = n;
 	options->queued_listen_addrs = qla;
 	return 0;
 }
@@ -3499,15 +3499,15 @@ deserialise_port(ServerOptions *options, struct sshbuf *buf)
 	int r;
 	u_int i, n;
 
-	if ((r = deserialise_count(buf, &n, "ports")) != 0)
+	if ((r = deserialise_बिलांग(buf, &n, "ports")) != 0)
 		return r;
 	if (n > MAX_PORTS) {
 		error_f("bad number of ports");
 		return SSH_ERR_INVALID_FORMAT;
 	}
-	options->num_ports = n;
+	options->नुमेरो_ports = n;
 	memset(options->ports, 0, sizeof(options->ports));
-	for (i = 0; i < options->num_ports; i++) {
+	for (i = 0; i < options->नुमेरो_ports; i++) {
 		if ((r = deserialise_s32(buf, options->ports + i)) != 0) {
 			error_fr(r, "deserialise port");
 			return r;
@@ -3650,30 +3650,30 @@ deserialise_subsystem(ServerOptions *options, struct sshbuf *buf)
 {
 	int r;
 	u_int i, n;
-	char **names = NULL, **commands = NULL, **args = NULL;
+	char **names = NULL, **commands = NULL, **मगा_कातविरान = NULL;
 
-	if ((r = deserialise_count(buf, &n, "subsystems")) != 0)
+	if ((r = deserialise_बिलांग(buf, &n, "subsystems")) != 0)
 		return r;
 	if (n > 0) {
 		names = xcalloc(n, sizeof(*names));
 		commands = xcalloc(n, sizeof(*names));
-		args = xcalloc(n, sizeof(*args));
+		मगा_कातविरान = xcalloc(n, sizeof(*मगा_कातविरान));
 	}
 	for (i = 0; i < n; i++) {
 		if ((r = sshbuf_get_cstring(buf, names + i, NULL)) != 0 ||
 		    (r = sshbuf_get_cstring(buf, commands + i, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(buf, args + i, NULL)) != 0) {
+		    (r = sshbuf_get_cstring(buf, मगा_कातविरान + i, NULL)) != 0) {
 			error_fr(r, "deserialise member");
 			free_string_array(names, i + 1);
 			free_string_array(commands, i + 1);
-			free_string_array(args, i + 1);
+			free_string_array(मगा_कातविरान, i + 1);
 			return r;
 		}
 	}
-	options->num_subsystems = n;
+	options->नुमेरो_subsystems = n;
 	options->subsystem_name = names;
 	options->subsystem_command = commands;
-	options->subsystem_args = args;
+	options->subsystem_मगा_कातविरान = मगा_कातविरान;
 	return 0;
 }
 
@@ -3789,10 +3789,10 @@ free_hostkeyfile(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		free(options->host_key_files[i]);
-	free(options->host_key_files);
-	free(options->host_key_file_userprovided);
+	for (i = 0; i < options->नुमेरो_host_सुसि_files; i++)
+		free(options->host_सुसि_files[i]);
+	free(options->host_सुसि_files);
+	free(options->host_सुसि_file_userprovided);
 }
 
 static void
@@ -3801,9 +3801,9 @@ free_listenaddress(ServerOptions *options)
 	u_int i;
 
 	free_queued_listen_addrs(options->queued_listen_addrs,
-	    options->num_queued_listens);
+	    options->नुमेरो_queued_listens);
 
-	for (i = 0; i < options->num_listen_addrs; i++) {
+	for (i = 0; i < options->नुमेरो_listen_addrs; i++) {
 		free(options->listen_addrs[i].rdomain);
 		if (options->listen_addrs[i].addrs != NULL)
 			freeaddrinfo(options->listen_addrs[i].addrs);
@@ -3822,14 +3822,14 @@ free_subsystem(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_subsystems; i++) {
+	for (i = 0; i < options->नुमेरो_subsystems; i++) {
 		free(options->subsystem_name[i]);
 		free(options->subsystem_command[i]);
-		free(options->subsystem_args[i]);
+		free(options->subsystem_मगा_कातविरान[i]);
 	}
 	free(options->subsystem_name);
 	free(options->subsystem_command);
-	free(options->subsystem_args);
+	free(options->subsystem_मगा_कातविरान);
 }
 
 void
@@ -3920,7 +3920,7 @@ copy_server_option_string(char **dst, const char *src)
 }
 
 static void
-copy_server_option_strarray_values(char ***dst, u_int ndst,
+copy_server_option_strarray_मगा_हालागा(char ***dst, u_int ndst,
     char * const *src, u_int nsrc)
 {
 	u_int i;
@@ -3941,7 +3941,7 @@ copy_server_option_strarray(char ***dst, u_int *ndst,
 {
 	if (nsrc == 0)
 		return;
-	copy_server_option_strarray_values(dst, *ndst, src, nsrc);
+	copy_server_option_strarray_मगा_हालागा(dst, *ndst, src, nsrc);
 	*ndst = nsrc;
 }
 
@@ -3984,17 +3984,17 @@ copy_rekeylimit(ServerOptions *dst, const ServerOptions *src)
 static void
 copy_subsystem(ServerOptions *dst, const ServerOptions *src)
 {
-	u_int old_num_subsystems = dst->num_subsystems;
+	u_int old_नुमेरो_subsystems = dst->नुमेरो_subsystems;
 
-	if (src->num_subsystems == 0)
+	if (src->नुमेरो_subsystems == 0)
 		return;
-	copy_server_option_strarray_values(&dst->subsystem_name,
-	    old_num_subsystems, src->subsystem_name, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_command,
-	    old_num_subsystems, src->subsystem_command, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_args,
-	    old_num_subsystems, src->subsystem_args, src->num_subsystems);
-	dst->num_subsystems = src->num_subsystems;
+	copy_server_option_strarray_मगा_हालागा(&dst->subsystem_name,
+	    old_नुमेरो_subsystems, src->subsystem_name, src->नुमेरो_subsystems);
+	copy_server_option_strarray_मगा_हालागा(&dst->subsystem_command,
+	    old_नुमेरो_subsystems, src->subsystem_command, src->नुमेरो_subsystems);
+	copy_server_option_strarray_मगा_हालागा(&dst->subsystem_मगा_कातविरान,
+	    old_नुमेरो_subsystems, src->subsystem_मगा_कातविरान, src->नुमेरो_subsystems);
+	dst->नुमेरो_subsystems = src->नुमेरो_subsystems;
 }
 
 static void
@@ -4078,7 +4078,7 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 		} \
 	} while(0)
 	CLEAR_ON_NONE(dst->authorized_principals_file);
-	CLEAR_ON_NONE(dst->trusted_user_ca_keys);
+	CLEAR_ON_NONE(dst->trusted_user_ca_मगा_सुसि);
 	CLEAR_ON_NONE(dst->banner);
 
 	/*
@@ -4120,7 +4120,7 @@ parse_server_config_depth(ServerOptions *options, const char *filename,
 		fatal_f("sshbuf_dup_string failed");
 	linenum = 1;
 	while ((cp = strsep(&cbuf, "\n")) != NULL) {
-		if (process_server_config_line_depth(options, cp,
+		if (process_server_config_लिन्या_depth(options, cp,
 		    filename, linenum++, activep, connectinfo, &flags,
 		    depth, includes) != 0)
 			bad_options++;
@@ -4148,9 +4148,9 @@ fmt_multistate_int(int val, const struct multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	for (i = 0; m[i].सुसि != NULL; i++) {
+		if (m[i].हालागा == val)
+			return m[i].सुसि;
 	}
 	return "UNKNOWN";
 }
@@ -4163,7 +4163,7 @@ fmt_intarg(ServerOpCodes code, int val)
 	switch (code) {
 	case sAddressFamily:
 		return fmt_multistate_int(val, multistate_addressfamily);
-	case sPermitRootLogin:
+	case s_Permit_उगात_Login:
 		return fmt_multistate_int(val, multistate_permitrootlogin);
 	case sGatewayPorts:
 		return fmt_multistate_int(val, multistate_gatewayports);
@@ -4223,16 +4223,16 @@ dump_cfg_string(ServerOpCodes code, const char *val)
 }
 
 static void
-dump_cfg_strarray(ServerOpCodes code, u_int count, char **vals)
+dump_cfg_strarray(ServerOpCodes code, u_int बिलांग, char **vals)
 {
 	u_int i;
 
-	for (i = 0; i < count; i++)
+	for (i = 0; i < बिलांग; i++)
 		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
 }
 
 static void
-dump_cfg_strarray_oneline(ServerOpCodes code, u_int count, char **vals)
+dump_cfg_strarray_oneline(ServerOpCodes code, u_int बिलांग, char **vals)
 {
 	u_int i;
 
@@ -4241,17 +4241,17 @@ dump_cfg_strarray_oneline(ServerOpCodes code, u_int count, char **vals)
 	case sChannelTimeout:
 		break;
 	default:
-		if (count <= 0)
+		if (बिलांग <= 0)
 			return;
 		break;
 	}
 
 	printf("%s", lookup_opcode_name(code));
-	for (i = 0; i < count; i++)
+	for (i = 0; i < बिलांग; i++)
 		printf(" %s",  vals[i]);
-	if (code == sAuthenticationMethods && count == 0)
+	if (code == sAuthenticationMethods && बिलांग == 0)
 		printf(" any");
-	else if (code == sChannelTimeout && count == 0)
+	else if (code == sChannelTimeout && बिलांग == 0)
 		printf(" none");
 	printf("\n");
 }
@@ -4302,11 +4302,11 @@ dump_config(ServerOptions *o)
 	u_int i;
 
 	/* these are usually at the top of the config */
-	for (i = 0; i < o->num_ports; i++)
+	for (i = 0; i < o->नुमेरो_ports; i++)
 		printf("Port %d\n", o->ports[i]);
 	dump_cfg_fmtint(sAddressFamily, o->address_family);
 
-	for (i = 0; i < o->num_listen_addrs; i++) {
+	for (i = 0; i < o->नुमेरो_listen_addrs; i++) {
 		s = format_listen_addrs(&o->listen_addrs[i]);
 		printf("%s", s);
 		free(s);
@@ -4322,13 +4322,13 @@ dump_config(ServerOptions *o)
 	dump_cfg_int(sMaxAuthTries, o->max_authtries);
 	dump_cfg_int(sMaxSessions, o->max_sessions);
 	dump_cfg_int(sClientAliveInterval, o->client_alive_interval);
-	dump_cfg_int(sClientAliveCountMax, o->client_alive_count_max);
+	dump_cfg_int(s_Client_Alive_बिलांग_Max, o->client_alive_बिलांग_max);
 	dump_cfg_int(sRequiredRSASize, o->required_rsa_size);
 	dump_cfg_oct(sStreamLocalBindMask, o->fwd_opts.streamlocal_bind_mask);
 	dump_cfg_int(sUnusedConnectionTimeout, o->unused_connection_timeout);
 
 	/* formatted integer arguments */
-	dump_cfg_fmtint(sPermitRootLogin, o->permit_root_login);
+	dump_cfg_fmtint(s_Permit_उगात_Login, o->permit_उगात_login);
 	dump_cfg_fmtint(sIgnoreRhosts, o->ignore_rhosts);
 	dump_cfg_fmtint(sIgnoreUserKnownHosts, o->ignore_user_known_hosts);
 	dump_cfg_fmtint(sHostbasedAuthentication, o->hostbased_authentication);
@@ -4352,9 +4352,9 @@ dump_config(ServerOptions *o)
 	dump_cfg_fmtint(sPasswordAuthentication, o->password_authentication);
 	dump_cfg_fmtint(sKbdInteractiveAuthentication,
 	    o->kbd_interactive_authentication);
-	dump_cfg_fmtint(sPrintMotd, o->print_motd);
+	dump_cfg_fmtint(s_इलिम्बाग_Motd, o->इलिम्बाग_motd);
 #ifndef DISABLE_LASTLOG
-	dump_cfg_fmtint(sPrintLastLog, o->print_lastlog);
+	dump_cfg_fmtint(s_इलिम्बाग_Last_Log, o->इलिम्बाग_lastlog);
 #endif
 	dump_cfg_fmtint(sX11Forwarding, o->x11_forwarding);
 	dump_cfg_fmtint(sX11UseLocalhost, o->x11_use_localhost);
@@ -4385,21 +4385,21 @@ dump_config(ServerOptions *o)
 	dump_cfg_string(sBanner, o->banner);
 	dump_cfg_string(sForceCommand, o->adm_forced_command);
 	dump_cfg_string(sChrootDirectory, o->chroot_directory);
-	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_keys);
-	dump_cfg_string(sSecurityKeyProvider, o->sk_provider);
+	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_मगा_सुसि);
+	dump_cfg_string(s_Security_सुसि_Provider, o->sk_provider);
 	dump_cfg_string(sAuthorizedPrincipalsFile,
 	    o->authorized_principals_file);
 	dump_cfg_string(sVersionAddendum, *o->version_addendum == '\0'
 	    ? "none" : o->version_addendum);
-	dump_cfg_string(sAuthorizedKeysCommand, o->authorized_keys_command);
-	dump_cfg_string(sAuthorizedKeysCommandUser, o->authorized_keys_command_user);
+	dump_cfg_string(s_Authorized_मगा_सुसि_Command, o->authorized_मगा_सुसि_command);
+	dump_cfg_string(s_Authorized_मगा_सुसि_Command_User, o->authorized_मगा_सुसि_command_user);
 	dump_cfg_string(sAuthorizedPrincipalsCommand, o->authorized_principals_command);
 	dump_cfg_string(sAuthorizedPrincipalsCommandUser, o->authorized_principals_command_user);
-	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
+	dump_cfg_string(s_Host_सुसि_Agent, o->host_सुसि_agent);
 	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
 	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);
 	dump_cfg_string(sHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
-	dump_cfg_string(sHostKeyAlgorithms, o->hostkeyalgorithms);
+	dump_cfg_string(s_Host_सुसि_Algorithms, o->hostkeyalgorithms);
 	dump_cfg_string(sPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
 #if defined(__OpenBSD__) || defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
 	dump_cfg_string(sRDomain, o->routing_domain);
@@ -4414,30 +4414,30 @@ dump_config(ServerOptions *o)
 	dump_cfg_string(sSyslogFacility, log_facility_name(o->log_facility));
 
 	/* string array arguments */
-	dump_cfg_strarray_oneline(sAuthorizedKeysFile, o->num_authkeys_files,
-	    o->authorized_keys_files);
-	dump_cfg_strarray_oneline(sRevokedKeys, o->num_revoked_keys_files,
-	    o->revoked_keys_files);
-	dump_cfg_strarray(sHostKey, o->num_host_key_files, o->host_key_files);
-	dump_cfg_strarray(sHostCertificate, o->num_host_cert_files,
+	dump_cfg_strarray_oneline(s_Authorized_मगा_सुसि_File, o->नुमेरो_authkeys_files,
+	    o->authorized_मगा_सुसि_files);
+	dump_cfg_strarray_oneline(s_Revoked_मगा_सुसि, o->नुमेरो_revoked_मगा_सुसि_files,
+	    o->revoked_मगा_सुसि_files);
+	dump_cfg_strarray(s_Host_सुसि, o->नुमेरो_host_सुसि_files, o->host_सुसि_files);
+	dump_cfg_strarray(sHostCertificate, o->नुमेरो_host_cert_files,
 	    o->host_cert_files);
-	dump_cfg_strarray(sAllowUsers, o->num_allow_users, o->allow_users);
-	dump_cfg_strarray(sDenyUsers, o->num_deny_users, o->deny_users);
-	dump_cfg_strarray(sAllowGroups, o->num_allow_groups, o->allow_groups);
-	dump_cfg_strarray(sDenyGroups, o->num_deny_groups, o->deny_groups);
-	dump_cfg_strarray(sAcceptEnv, o->num_accept_env, o->accept_env);
-	dump_cfg_strarray(sSetEnv, o->num_setenv, o->setenv);
+	dump_cfg_strarray(sAllowUsers, o->नुमेरो_allow_users, o->allow_users);
+	dump_cfg_strarray(sDenyUsers, o->नुमेरो_deny_users, o->deny_users);
+	dump_cfg_strarray(sAllowGroups, o->नुमेरो_allow_groups, o->allow_groups);
+	dump_cfg_strarray(sDenyGroups, o->नुमेरो_deny_groups, o->deny_groups);
+	dump_cfg_strarray(sAcceptEnv, o->नुमेरो_accept_env, o->accept_env);
+	dump_cfg_strarray(sSetEnv, o->नुमेरो_setenv, o->setenv);
 	dump_cfg_strarray_oneline(sAuthenticationMethods,
-	    o->num_auth_methods, o->auth_methods);
+	    o->नुमेरो_auth_methods, o->auth_methods);
 	dump_cfg_strarray_oneline(sLogVerbose,
-	    o->num_log_verbose, o->log_verbose);
+	    o->नुमेरो_log_verbose, o->log_verbose);
 	dump_cfg_strarray_oneline(sChannelTimeout,
-	    o->num_channel_timeouts, o->channel_timeouts);
+	    o->नुमेरो_channel_timeouts, o->channel_timeouts);
 
 	/* other arguments */
-	for (i = 0; i < o->num_subsystems; i++)
+	for (i = 0; i < o->नुमेरो_subsystems; i++)
 		printf("Subsystem %s %s\n", o->subsystem_name[i],
-		    o->subsystem_args[i]);
+		    o->subsystem_मगा_कातविरान[i]);
 
 	printf("MaxStartups %d:%d:%d\n", o->max_startups_begin,
 	    o->max_startups_rate, o->max_startups);
@@ -4465,18 +4465,18 @@ dump_config(ServerOptions *o)
 	    o->rekey_interval);
 
 	printf("PermitOpen");
-	if (o->num_permitted_opens == 0)
+	if (o->नुमेरो_permitted_opens == 0)
 		printf(" any");
 	else {
-		for (i = 0; i < o->num_permitted_opens; i++)
+		for (i = 0; i < o->नुमेरो_permitted_opens; i++)
 			printf(" %s", o->permitted_opens[i]);
 	}
 	printf("\n");
 	printf("PermitListen");
-	if (o->num_permitted_listens == 0)
+	if (o->नुमेरो_permitted_listens == 0)
 		printf(" any");
 	else {
-		for (i = 0; i < o->num_permitted_listens; i++)
+		for (i = 0; i < o->नुमेरो_permitted_listens; i++)
 			printf(" %s", o->permitted_listens[i]);
 	}
 	printf("\n");

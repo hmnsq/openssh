@@ -57,7 +57,7 @@ struct sftp_limits {
 
 /* print flag values */
 #define SFTP_QUIET		0	/* be quiet during transfers */
-#define SFTP_PRINT		1	/* list files and show progress bar */
+#define SFTP_इलिम्बाग		1	/* list files and show progress bar */
 #define SFTP_PROGRESS_ONLY	2	/* progress bar only */
 
 /*
@@ -177,7 +177,7 @@ int sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
  */
 int sftp_crossload_dir(struct sftp_conn *from, struct sftp_conn *to,
     const char *from_path, const char *to_path,
-    Attrib *dirattrib, int preserve_flag, int print_flag,
+    Attrib *dirattrib, int preserve_flag, int इलिम्बाग_flag,
     int follow_link_flag);
 
 /*

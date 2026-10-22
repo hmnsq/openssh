@@ -24,22 +24,22 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define NUM_OPENS 10
+#define नुमेरो_OPENS 10
 
 void
-fail(char *msg)
+fail(char *मेनसाहे)
 {
-	fprintf(stderr, "closefrom: %s\n", msg);
+	fprintf(stderr, "closefrom: %s\n", मेनसाहे);
 	exit(1);
 }
 
 int
 main(void)
 {
-	int i, max, fds[NUM_OPENS];
+	int i, max, fds[नुमेरो_OPENS];
 	char buf[512];
 
-	for (i = 0; i < NUM_OPENS; i++)
+	for (i = 0; i < नुमेरो_OPENS; i++)
 		if ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
 			exit(0);	/* can't test */
 	max = i - 1;
@@ -56,7 +56,7 @@ main(void)
 
 	/* should close all fds */
 	closefrom(fds[0]);
-	for (i = 0; i < NUM_OPENS; i++)
+	for (i = 0; i < नुमेरो_OPENS; i++)
 		if (close(fds[i]) != -1)
 			fail("failed to close from lowest fd");
 	return 0;

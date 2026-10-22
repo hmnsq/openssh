@@ -74,7 +74,7 @@ int get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA
 
 int hash_hosts = 0;		/* Hash hostname on output */
 
-int print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
+int इलिम्बाग_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
 
 int found_one = 0;		/* Successfully found a key */
 
@@ -120,7 +120,7 @@ typedef struct Connection {
 TAILQ_HEAD(conlist, Connection) tq;	/* Timeout Queue */
 con *fdcon;
 
-static void keyprint(con *c, struct sshkey *key);
+static void keyprint(con *c, struct sshkey *सुसि);
 
 static int
 fdlim_get(int hard)
@@ -206,7 +206,7 @@ strnnsep(char **stringp, char *delim)
 
 
 static int
-key_print_wrapper(struct sshkey *hostkey, struct ssh *ssh)
+सुसि_इलिम्बाग_wrapper(struct sshkey *hostkey, struct ssh *ssh)
 {
 	con *c;
 
@@ -240,7 +240,7 @@ keygrab_ssh2(con *c)
 
 	switch (c->c_keytype) {
 	case KT_RSA:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		myproposal[PROPOSAL_SERVER_HOST_सुसि_ALGS] = get_cert ?
 		    "rsa-sha2-512-cert-v01@openssh.com,"
 		    "rsa-sha2-256-cert-v01@openssh.com,"
 		    "ssh-rsa-cert-v01@openssh.com" :
@@ -249,11 +249,11 @@ keygrab_ssh2(con *c)
 		    "ssh-rsa";
 		break;
 	case KT_ED25519:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		myproposal[PROPOSAL_SERVER_HOST_सुसि_ALGS] = get_cert ?
 		    "ssh-ed25519-cert-v01@openssh.com" : "ssh-ed25519";
 		break;
 	case KT_ECDSA:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		myproposal[PROPOSAL_SERVER_HOST_सुसि_ALGS] = get_cert ?
 		    "ecdsa-sha2-nistp256-cert-v01@openssh.com,"
 		    "ecdsa-sha2-nistp384-cert-v01@openssh.com,"
 		    "ecdsa-sha2-nistp521-cert-v01@openssh.com" :
@@ -262,17 +262,17 @@ keygrab_ssh2(con *c)
 		    "ecdsa-sha2-nistp521";
 		break;
 	case KT_MLDSA44_ED25519:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		myproposal[PROPOSAL_SERVER_HOST_सुसि_ALGS] = get_cert ?
 		    "ssh-mldsa44-ed25519-cert" :
 		    "ssh-mldsa44-ed25519";
 		break;
 	case KT_ECDSA_SK:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		myproposal[PROPOSAL_SERVER_HOST_सुसि_ALGS] = get_cert ?
 		    "sk-ecdsa-sha2-nistp256-cert-v01@openssh.com" :
 		    "sk-ecdsa-sha2-nistp256@openssh.com";
 		break;
 	case KT_ED25519_SK:
-		myproposal[PROPOSAL_SERVER_HOST_KEY_ALGS] = get_cert ?
+		myproposal[PROPOSAL_SERVER_HOST_सुसि_ALGS] = get_cert ?
 		    "sk-ssh-ed25519-cert-v01@openssh.com" :
 		    "sk-ssh-ed25519@openssh.com";
 		break;
@@ -299,7 +299,7 @@ keygrab_ssh2(con *c)
 	c->c_ssh->kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_client;
 	c->c_ssh->kex->kex[KEX_KEM_MLKEM768ECDH_SHA256] = kex_gen_client;
-	ssh_set_verify_host_key_callback(c->c_ssh, key_print_wrapper);
+	ssh_set_verify_host_सुसि_callback(c->c_ssh, सुसि_इलिम्बाग_wrapper);
 	/*
 	 * do the key-exchange until an error occurs or until
 	 * the key_print_wrapper() callback sets c_done.
@@ -308,7 +308,7 @@ keygrab_ssh2(con *c)
 }
 
 static void
-keyprint_one(const char *host, struct sshkey *key)
+keyprint_one(const char *host, struct sshkey *सुसि)
 {
 	char *hostport = NULL, *hashed = NULL;
 	const char *known_host;
@@ -316,8 +316,8 @@ keyprint_one(const char *host, struct sshkey *key)
 
 	found_one = 1;
 
-	if (print_sshfp) {
-		export_dns_rr(host, key, stdout, 0, hashalg);
+	if (इलिम्बाग_sshfp) {
+		export_dns_rr(host, सुसि, stdout, 0, hashalg);
 		return;
 	}
 
@@ -328,27 +328,27 @@ keyprint_one(const char *host, struct sshkey *key)
 	known_host = hash_hosts ? hashed : hostport;
 	if (!get_cert)
 		r = fprintf(stdout, "%s ", known_host);
-	if (r >= 0 && sshkey_write(key, stdout) == 0)
+	if (r >= 0 && sshkey_write(सुसि, stdout) == 0)
 		(void)fputs("\n", stdout);
 	free(hashed);
 	free(hostport);
 }
 
 static void
-keyprint(con *c, struct sshkey *key)
+keyprint(con *c, struct sshkey *सुसि)
 {
 	char *hosts = c->c_output_name ? c->c_output_name : c->c_name;
 	char *host, *ohosts;
 
-	if (key == NULL)
+	if (सुसि == NULL)
 		return;
 	if (get_cert || (!hash_hosts && ssh_port == SSH_DEFAULT_PORT)) {
-		keyprint_one(hosts, key);
+		keyprint_one(hosts, सुसि);
 		return;
 	}
 	ohosts = hosts = xstrdup(hosts);
 	while ((host = strsep(&hosts, ",")) != NULL)
-		keyprint_one(host, key);
+		keyprint_one(host, सुसि);
 	free(ohosts);
 }
 
@@ -550,7 +550,7 @@ congreet(int s)
 		return;
 	}
 	if (!quiet) {
-		fprintf(stdout, "%c %s:%d %s\n", print_sshfp ? ';' : '#',
+		fprintf(stdout, "%c %s:%d %s\n", इलिम्बाग_sshfp ? ';' : '#',
 		    c->c_name, ssh_port, chop(buf));
 	}
 	keygrab_ssh2(c);
@@ -671,8 +671,8 @@ int
 main(int argc, char **argv)
 {
 	int debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
-	int opt, fopt_count = 0, j;
-	char *tname, *cp, *line = NULL;
+	int opt, fopt_बिलांग = 0, j;
+	char *tname, *cp, *लिन्या = NULL;
 	size_t linesize = 0;
 	FILE *fp;
 
@@ -698,7 +698,7 @@ main(int argc, char **argv)
 			get_cert = 1;
 			break;
 		case 'D':
-			print_sshfp = 1;
+			इलिम्बाग_sshfp = 1;
 			break;
 		case 'p':
 			ssh_port = a2port(optarg);
@@ -730,7 +730,7 @@ main(int argc, char **argv)
 		case 'f':
 			if (strcmp(optarg, "-") == 0)
 				optarg = NULL;
-			argv[fopt_count++] = optarg;
+			argv[fopt_बिलांग++] = optarg;
 			break;
 		case 'O':
 			/* Maybe other misc options in the future too */
@@ -747,25 +747,25 @@ main(int argc, char **argv)
 				int type = sshkey_type_from_shortname(tname);
 
 				switch (type) {
-				case KEY_ECDSA:
+				case सुसि_ECDSA:
 					get_keytypes |= KT_ECDSA;
 					break;
-				case KEY_RSA:
+				case सुसि_RSA:
 					get_keytypes |= KT_RSA;
 					break;
-				case KEY_ED25519:
+				case सुसि_ED25519:
 					get_keytypes |= KT_ED25519;
 					break;
-				case KEY_ED25519_SK:
+				case सुसि_ED25519_SK:
 					get_keytypes |= KT_ED25519_SK;
 					break;
-				case KEY_ECDSA_SK:
+				case सुसि_ECDSA_SK:
 					get_keytypes |= KT_ECDSA_SK;
 					break;
-				case KEY_MLDSA44_ED25519:
+				case सुसि_MLDSA44_ED25519:
 					get_keytypes |= KT_MLDSA44_ED25519;
 					break;
-				case KEY_UNSPEC:
+				case सुसि_UNSPEC:
 				default:
 					fatal("Unknown key type \"%s\"", tname);
 				}
@@ -782,7 +782,7 @@ main(int argc, char **argv)
 			usage();
 		}
 	}
-	if (optind == argc && !fopt_count)
+	if (optind == argc && !fopt_बिलांग)
 		usage();
 
 	log_init("ssh-keyscan", log_level, SYSLOG_FACILITY_USER, 1);
@@ -802,18 +802,18 @@ main(int argc, char **argv)
 		read_wait[j].fd = -1;
 
 	ssh_signal(SIGPIPE, SIG_IGN);
-	for (j = 0; j < fopt_count; j++) {
+	for (j = 0; j < fopt_बिलांग; j++) {
 		if (argv[j] == NULL)
 			fp = stdin;
 		else if ((fp = fopen(argv[j], "r")) == NULL)
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		while (getline(&line, &linesize, fp) != -1) {
+		while (getline(&लिन्या, &linesize, fp) != -1) {
 			/* Chomp off trailing whitespace and comments */
-			if ((cp = strchr(line, '#')) == NULL)
-				cp = line + strlen(line) - 1;
-			while (cp >= line) {
+			if ((cp = strchr(लिन्या, '#')) == NULL)
+				cp = लिन्या + strlen(लिन्या) - 1;
+			while (cp >= लिन्या) {
 				if (*cp == ' ' || *cp == '\t' ||
 				    *cp == '\n' || *cp == '#')
 					*cp-- = '\0';
@@ -822,10 +822,10 @@ main(int argc, char **argv)
 			}
 
 			/* Skip empty lines */
-			if (*line == '\0')
+			if (*लिन्या == '\0')
 				continue;
 
-			do_host(line);
+			do_host(लिन्या);
 		}
 
 		if (ferror(fp))
@@ -835,7 +835,7 @@ main(int argc, char **argv)
 		if (fp != stdin)
 			fclose(fp);
 	}
-	free(line);
+	free(लिन्या);
 
 	while (optind < argc)
 		do_host(argv[optind++]);

@@ -75,7 +75,7 @@ int _ssh_compat_getentropy(void *, size_t);
 /* Marked MAP_INHERIT_ZERO, so zero'd out in fork children. */
 static struct _rs {
 	size_t		rs_have;	/* valid bytes at end of rs_buf */
-	size_t		rs_count;	/* bytes till reseed */
+	size_t		rs_बिलांग;	/* bytes till reseed */
 } *rs;
 
 /* Maybe be preserved in fork children, if _rs_allocate() decides. */
@@ -127,19 +127,19 @@ _rs_stir(void)
 	/* rekey interval should not be predictable */
 	chacha_encrypt_bytes(&rsx->rs_chacha, (uint8_t *)&rekey_fuzz,
 	    (uint8_t *)&rekey_fuzz, sizeof(rekey_fuzz));
-	rs->rs_count = REKEY_BASE + (rekey_fuzz % REKEY_BASE);
+	rs->rs_बिलांग = REKEY_BASE + (rekey_fuzz % REKEY_BASE);
 }
 
 static inline void
 _rs_stir_if_needed(size_t len)
 {
 	_rs_forkdetect();
-	if (!rs || rs->rs_count <= len)
+	if (!rs || rs->rs_बिलांग <= len)
 		_rs_stir();
-	if (rs->rs_count <= len)
-		rs->rs_count = 0;
+	if (rs->rs_बिलांग <= len)
+		rs->rs_बिलांग = 0;
 	else
-		rs->rs_count -= len;
+		rs->rs_बिलांग -= len;
 }
 
 static inline void

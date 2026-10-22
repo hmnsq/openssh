@@ -67,7 +67,7 @@ void Blowfish_expandstate
 
 /* Standard Blowfish */
 
-void blf_key(blf_ctx *, const u_int8_t *, u_int16_t);
+void blf_सुसि(blf_ctx *, const u_int8_t *, u_int16_t);
 void blf_enc(blf_ctx *, u_int32_t *, u_int16_t);
 void blf_dec(blf_ctx *, u_int32_t *, u_int16_t);
 

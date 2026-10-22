@@ -104,7 +104,7 @@ struct mux_master_state {
 };
 
 /* mux protocol messages */
-#define MUX_MSG_HELLO		0x00000001
+#define MUX_मेनसाहे_HELLO		0x00000001
 #define MUX_C_NEW_SESSION	0x10000002
 #define MUX_C_ALIVE_CHECK	0x10000004
 #define MUX_C_TERMINATE		0x10000005
@@ -164,7 +164,7 @@ static const struct {
 	int (*handler)(struct ssh *, u_int, Channel *,
 	    struct sshbuf *, struct sshbuf *);
 } mux_master_handlers[] = {
-	{ MUX_MSG_HELLO, mux_master_process_hello },
+	{ MUX_मेनसाहे_HELLO, mux_master_process_hello },
 	{ MUX_C_NEW_SESSION, mux_master_process_new_session },
 	{ MUX_C_ALIVE_CHECK, mux_master_process_alive_check },
 	{ MUX_C_TERMINATE, mux_master_process_terminate },
@@ -219,7 +219,7 @@ mux_master_control_cleanup_cb(struct ssh *ssh, int cid, int force, void *unused)
 			debug2_f("channel %d: not open", sc->self);
 			chan_mark_dead(ssh, sc);
 		} else {
-			if (sc->istate == CHAN_INPUT_OPEN)
+			if (sc->istate == CHAN_पासोक_OPEN)
 				chan_read_failed(ssh, sc);
 			if (sc->ostate == CHAN_OUTPUT_OPEN)
 				chan_write_failed(ssh, sc);
@@ -244,7 +244,7 @@ env_permitted(const char *env)
 		return 0;
 	}
 
-	for (i = 0; i < options.num_send_env; i++)
+	for (i = 0; i < options.नुमेरो_send_env; i++)
 		if (match_pattern(name, options.send_env[i]))
 			return 1;
 
@@ -281,10 +281,10 @@ mux_master_process_hello(struct ssh *ssh, u_int rid,
 	/* No extensions are presently defined */
 	while (sshbuf_len(m) > 0) {
 		char *name = NULL;
-		size_t value_len = 0;
+		size_t हालागा_len = 0;
 
 		if ((r = sshbuf_get_cstring(m, &name, NULL)) != 0 ||
-		    (r = sshbuf_get_string_direct(m, NULL, &value_len)) != 0) {
+		    (r = sshbuf_get_string_direct(m, NULL, &हालागा_len)) != 0) {
 			error_fr(r, "parse extension");
 			return -1;
 		}
@@ -293,7 +293,7 @@ mux_master_process_hello(struct ssh *ssh, u_int rid,
 			extensions |= MUX_EXT_INFO;
 		} else {
 			debug2_f("Unrecognised extension \"%s\" length %zu",
-			    name, value_len);
+			    name, हालागा_len);
 		}
 		free(name);
 	}
@@ -314,13 +314,13 @@ reply_ok(struct sshbuf *reply, u_int rid)
 
 /* Enqueue an error response to the reply buffer */
 static void
-reply_error(struct sshbuf *reply, u_int type, u_int rid, const char *msg)
+reply_error(struct sshbuf *reply, u_int type, u_int rid, const char *मेनसाहे)
 {
 	int r;
 
 	if ((r = sshbuf_put_u32(reply, type)) != 0 ||
 	    (r = sshbuf_put_u32(reply, rid)) != 0 ||
-	    (r = sshbuf_put_cstring(reply, msg)) != 0)
+	    (r = sshbuf_put_cstring(reply, मेनसाहे)) != 0)
 		fatal_fr(r, "reply");
 }
 
@@ -507,7 +507,7 @@ mux_master_process_ext_info(struct ssh *ssh, u_int rid,
 {
 	int r;
 	u_int status = 0;
-	char *name = NULL, *msg = NULL;
+	char *name = NULL, *मेनसाहे = NULL;
 
 	debug2_f("channel %d: info request", c->self);
 
@@ -515,24 +515,24 @@ mux_master_process_ext_info(struct ssh *ssh, u_int rid,
 		fatal_fr(r, "parse");
 
 	if (strcmp(name, "connection") == 0) {
-		if ((msg = connection_info_message(ssh)) == NULL)
+		if ((मेनसाहे = connection_info_message(ssh)) == NULL)
 			fatal_f("connection_info_message");
 		status = 1;
 	} else if (strcmp(name, "channels") == 0) {
-		if ((msg = channel_open_message(ssh)) == NULL)
+		if ((मेनसाहे = channel_open_message(ssh)) == NULL)
 			fatal_f("channel_open_message");
 		status = 1;
 	} else {
-		msg = xstrdup("info request type not supported");
+		मेनसाहे = xstrdup("info request type not supported");
 	}
 
 	/* prepare reply */
 	if ((r = sshbuf_put_u32(reply, MUX_S_EXT_INFO)) != 0 ||
 	    (r = sshbuf_put_u32(reply, rid)) != 0 ||
 	    (r = sshbuf_put_u32(reply, status)) != 0 ||
-	    (r = sshbuf_put_cstring(reply, msg)) != 0)
+	    (r = sshbuf_put_cstring(reply, मेनसाहे)) != 0)
 		fatal_fr(r, "reply");
-	free(msg);
+	free(मेनसाहे);
 
 	return 0;
 }
@@ -643,7 +643,7 @@ mux_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
 	}
 	if ((out = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new");
-	if (fctx->fid >= options.num_remote_forwards ||
+	if (fctx->fid >= options.नुमेरो_remote_forwards ||
 	    (options.remote_forwards[fctx->fid].connect_path == NULL &&
 	    options.remote_forwards[fctx->fid].connect_host == NULL)) {
 		xasprintf(&failmsg, "unknown forwarding id %d", fctx->fid);
@@ -651,10 +651,10 @@ mux_confirm_remote_forward(struct ssh *ssh, int type, uint32_t seq, void *ctxt)
 	}
 	rfwd = &options.remote_forwards[fctx->fid];
 	debug_f("%s for: listen %d, connect %s:%d",
-	    type == SSH2_MSG_REQUEST_SUCCESS ? "success" : "failure",
+	    type == SSH2_मेनसाहे_REQUEST_SUCCESS ? "success" : "failure",
 	    rfwd->listen_port, rfwd->connect_path ? rfwd->connect_path :
 	    rfwd->connect_host, rfwd->connect_port);
-	if (type == SSH2_MSG_REQUEST_SUCCESS) {
+	if (type == SSH2_मेनसाहे_REQUEST_SUCCESS) {
 		if (rfwd->listen_port == 0) {
 			if ((r = sshpkt_get_u32(ssh, &port)) != 0)
 				fatal_fr(r, "parse port");
@@ -800,7 +800,7 @@ mux_master_process_open_fwd(struct ssh *ssh, u_int rid,
 	switch (ftype) {
 	case MUX_FWD_LOCAL:
 	case MUX_FWD_DYNAMIC:
-		for (i = 0; i < options.num_local_forwards; i++) {
+		for (i = 0; i < options.नुमेरो_local_forwards; i++) {
 			if (compare_forward(&fwd,
 			    options.local_forwards + i)) {
  exists:
@@ -811,7 +811,7 @@ mux_master_process_open_fwd(struct ssh *ssh, u_int rid,
 		}
 		break;
 	case MUX_FWD_REMOTE:
-		for (i = 0; i < options.num_remote_forwards; i++) {
+		for (i = 0; i < options.नुमेरो_remote_forwards; i++) {
 			if (!compare_forward(&fwd, options.remote_forwards + i))
 				continue;
 			if (fwd.listen_port != 0)
@@ -859,7 +859,7 @@ mux_master_process_open_fwd(struct ssh *ssh, u_int rid,
 		fctx = xcalloc(1, sizeof(*fctx));
 		fctx->cid = c->self;
 		fctx->rid = rid;
-		fctx->fid = options.num_remote_forwards - 1;
+		fctx->fid = options.नुमेरो_remote_forwards - 1;
 		client_register_global_confirm(mux_confirm_remote_forward,
 		    fctx);
 		freefwd = 0;
@@ -934,7 +934,7 @@ mux_master_process_close_fwd(struct ssh *ssh, u_int rid,
 	switch (ftype) {
 	case MUX_FWD_LOCAL:
 	case MUX_FWD_DYNAMIC:
-		for (i = 0; i < options.num_local_forwards; i++) {
+		for (i = 0; i < options.नुमेरो_local_forwards; i++) {
 			if (compare_forward(&fwd,
 			    options.local_forwards + i)) {
 				found_fwd = options.local_forwards + i;
@@ -943,7 +943,7 @@ mux_master_process_close_fwd(struct ssh *ssh, u_int rid,
 		}
 		break;
 	case MUX_FWD_REMOTE:
-		for (i = 0; i < options.num_remote_forwards; i++) {
+		for (i = 0; i < options.नुमेरो_remote_forwards; i++) {
 			if (compare_forward(&fwd,
 			    options.remote_forwards + i)) {
 				found_fwd = options.remote_forwards + i;
@@ -1210,7 +1210,7 @@ mux_master_read_cb(struct ssh *ssh, Channel *c)
 		    mux_master_control_cleanup_cb, 0);
 
 		/* Send hello */
-		if ((r = sshbuf_put_u32(out, MUX_MSG_HELLO)) != 0 ||
+		if ((r = sshbuf_put_u32(out, MUX_मेनसाहे_HELLO)) != 0 ||
 		    (r = sshbuf_put_u32(out, SSHMUX_VER)) != 0)
 			fatal_fr(r, "reply");
 		/* "info" extension */
@@ -1225,7 +1225,7 @@ mux_master_read_cb(struct ssh *ssh, Channel *c)
 	}
 
 	/* Channel code ensures that we receive whole packets */
-	if ((r = sshbuf_froms(c->input, &in)) != 0) {
+	if ((r = sshbuf_froms(c->पासोक, &in)) != 0) {
  malf:
 		error_f("malformed message");
 		goto out;
@@ -1236,12 +1236,12 @@ mux_master_read_cb(struct ssh *ssh, Channel *c)
 	debug3_f("channel %d packet type 0x%08x len %zu", c->self,
 	    type, sshbuf_len(in));
 
-	if (type == MUX_MSG_HELLO)
+	if (type == MUX_मेनसाहे_HELLO)
 		rid = 0;
 	else {
 		if (!state->hello_rcvd) {
 			error_f("expected MUX_MSG_HELLO(0x%08x), "
-			    "received 0x%08x", MUX_MSG_HELLO, type);
+			    "received 0x%08x", MUX_मेनसाहे_HELLO, type);
 			goto out;
 		}
 		if ((r = sshbuf_get_u32(in, &rid)) != 0)
@@ -1646,7 +1646,7 @@ mux_client_hello_exchange(int fd, int timeout_ms)
 
 	if ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_put_u32(m, MUX_MSG_HELLO)) != 0 ||
+	if ((r = sshbuf_put_u32(m, MUX_मेनसाहे_HELLO)) != 0 ||
 	    (r = sshbuf_put_u32(m, SSHMUX_VER)) != 0)
 		fatal_fr(r, "assemble hello");
 	/* no extensions */
@@ -1666,8 +1666,8 @@ mux_client_hello_exchange(int fd, int timeout_ms)
 
 	if ((r = sshbuf_get_u32(m, &type)) != 0)
 		fatal_fr(r, "parse type");
-	if (type != MUX_MSG_HELLO) {
-		error_f("expected HELLO (%u) got %u", MUX_MSG_HELLO, type);
+	if (type != MUX_मेनसाहे_HELLO) {
+		error_f("expected HELLO (%u) got %u", MUX_मेनसाहे_HELLO, type);
 		goto out;
 	}
 	if ((r = sshbuf_get_u32(m, &ver)) != 0)
@@ -1683,7 +1683,7 @@ mux_client_hello_exchange(int fd, int timeout_ms)
 		char *name = NULL;
 
 		if ((r = sshbuf_get_cstring(m, &name, NULL)) != 0 ||
-		    (r = sshbuf_skip_string(m)) != 0) { /* value */
+		    (r = sshbuf_skip_string(m)) != 0) { /*हालागा*/
 			error_fr(r, "parse extension");
 			goto out;
 		}
@@ -1758,7 +1758,7 @@ static char *
 mux_client_request_info(int fd, const char *name)
 {
 	struct sshbuf *m;
-	char *e, *msg;
+	char *e, *मेनसाहे;
 	u_int type, rid, status;
 	int r;
 
@@ -1796,13 +1796,13 @@ mux_client_request_info(int fd, const char *name)
 		fatal_f("out of sequence reply: my id %u theirs %u",
 		    muxclient_request_id, rid);
 	if ((r = sshbuf_get_u32(m, &status)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &msg, NULL)) != 0)
+	    (r = sshbuf_get_cstring(m, &मेनसाहे, NULL)) != 0)
 		fatal_fr(r, "parse connection info");
 	sshbuf_free(m);
 
 	muxclient_request_id++;
 
-	return msg;
+	return मेनसाहे;
 }
 
 static void
@@ -1963,17 +1963,17 @@ mux_client_forwards(int fd, int cancel_flag)
 
 	debug3_f("%s forwardings: %d local, %d remote",
 	    cancel_flag ? "cancel" : "request",
-	    options.num_local_forwards, options.num_remote_forwards);
+	    options.नुमेरो_local_forwards, options.नुमेरो_remote_forwards);
 
 	/* XXX ExitOnForwardingFailure */
-	for (i = 0; i < options.num_local_forwards; i++) {
+	for (i = 0; i < options.नुमेरो_local_forwards; i++) {
 		if (mux_client_forward(fd, cancel_flag,
 		    options.local_forwards[i].connect_port == 0 ?
 		    MUX_FWD_DYNAMIC : MUX_FWD_LOCAL,
 		    options.local_forwards + i) != 0)
 			ret = -1;
 	}
-	for (i = 0; i < options.num_remote_forwards; i++) {
+	for (i = 0; i < options.नुमेरो_remote_forwards; i++) {
 		if (mux_client_forward(fd, cancel_flag, MUX_FWD_REMOTE,
 		    options.remote_forwards + i) != 0)
 			ret = -1;
@@ -2004,7 +2004,7 @@ mux_client_request_session(int fd)
 		fatal_f("stdfd_devnull failed");
 
 	if ((term = lookup_env_in_list("TERM", options.setenv,
-	    options.num_setenv)) == NULL || *term == '\0')
+	    options.नुमेरो_setenv)) == NULL || *term == '\0')
 		term = getenv("TERM");
 
 	echar = 0xffffffff;
@@ -2026,7 +2026,7 @@ mux_client_request_session(int fd)
 		fatal_fr(r, "request");
 
 	/* Pass environment */
-	if (options.num_send_env > 0 && environ != NULL) {
+	if (options.नुमेरो_send_env > 0 && environ != NULL) {
 		for (i = 0; environ[i] != NULL; i++) {
 			if (!env_permitted(environ[i]))
 				continue;
@@ -2034,7 +2034,7 @@ mux_client_request_session(int fd)
 				fatal_fr(r, "request sendenv");
 		}
 	}
-	for (i = 0; i < options.num_setenv; i++) {
+	for (i = 0; i < options.नुमेरो_setenv; i++) {
 		if ((r = sshbuf_put_cstring(m, options.setenv[i])) != 0)
 			fatal_fr(r, "request setenv");
 	}

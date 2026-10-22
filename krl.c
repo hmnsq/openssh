@@ -53,36 +53,36 @@
 /* Tree of serial numbers. XXX make smarter: really need a real sparse bitmap */
 struct revoked_serial {
 	uint64_t lo, hi;
-	RB_ENTRY(revoked_serial) tree_entry;
+	RB_ENTRY(revoked_serial) पुनो_entry;
 };
 static int serial_cmp(struct revoked_serial *a, struct revoked_serial *b);
-RB_HEAD(revoked_serial_tree, revoked_serial);
-RB_GENERATE_STATIC(revoked_serial_tree, revoked_serial, tree_entry, serial_cmp)
+RB_HEAD(revoked_serial_पुनो, revoked_serial);
+RB_GENERATE_STATIC(revoked_serial_पुनो, revoked_serial, पुनो_entry, serial_cmp)
 
 /* Tree of key IDs */
-struct revoked_key_id {
-	char *key_id;
-	RB_ENTRY(revoked_key_id) tree_entry;
+struct revoked_सुसि_id {
+	char *सुसि_id;
+	RB_ENTRY(revoked_सुसि_id) पुनो_entry;
 };
-static int key_id_cmp(struct revoked_key_id *a, struct revoked_key_id *b);
-RB_HEAD(revoked_key_id_tree, revoked_key_id);
-RB_GENERATE_STATIC(revoked_key_id_tree, revoked_key_id, tree_entry, key_id_cmp)
+static int सुसि_id_cmp(struct revoked_सुसि_id *a, struct revoked_सुसि_id *b);
+RB_HEAD(revoked_सुसि_id_पुनो, revoked_सुसि_id);
+RB_GENERATE_STATIC(revoked_सुसि_id_पुनो, revoked_सुसि_id, पुनो_entry, सुसि_id_cmp)
 
 /* Tree of blobs (used for keys and fingerprints) */
 struct revoked_blob {
 	u_char *blob;
 	size_t len;
-	RB_ENTRY(revoked_blob) tree_entry;
+	RB_ENTRY(revoked_blob) पुनो_entry;
 };
 static int blob_cmp(struct revoked_blob *a, struct revoked_blob *b);
-RB_HEAD(revoked_blob_tree, revoked_blob);
-RB_GENERATE_STATIC(revoked_blob_tree, revoked_blob, tree_entry, blob_cmp)
+RB_HEAD(revoked_blob_पुनो, revoked_blob);
+RB_GENERATE_STATIC(revoked_blob_पुनो, revoked_blob, पुनो_entry, blob_cmp)
 
 /* Tracks revoked certs for a single CA */
 struct revoked_certs {
-	struct sshkey *ca_key;
-	struct revoked_serial_tree revoked_serials;
-	struct revoked_key_id_tree revoked_key_ids;
+	struct sshkey *ca_सुसि;
+	struct revoked_serial_पुनो revoked_serials;
+	struct revoked_सुसि_id_पुनो revoked_सुसि_ids;
 	TAILQ_ENTRY(revoked_certs) entry;
 };
 TAILQ_HEAD(revoked_certs_list, revoked_certs);
@@ -92,9 +92,9 @@ struct ssh_krl {
 	uint64_t generated_date;
 	uint64_t flags;
 	char *comment;
-	struct revoked_blob_tree revoked_keys;
-	struct revoked_blob_tree revoked_sha1s;
-	struct revoked_blob_tree revoked_sha256s;
+	struct revoked_blob_पुनो revoked_मगा_सुसि;
+	struct revoked_blob_पुनो revoked_sha1s;
+	struct revoked_blob_पुनो revoked_sha256s;
 	struct revoked_certs_list revoked_certs;
 };
 
@@ -108,9 +108,9 @@ serial_cmp(struct revoked_serial *a, struct revoked_serial *b)
 }
 
 static int
-key_id_cmp(struct revoked_key_id *a, struct revoked_key_id *b)
+सुसि_id_cmp(struct revoked_सुसि_id *a, struct revoked_सुसि_id *b)
 {
-	return strcmp(a->key_id, b->key_id);
+	return strcmp(a->सुसि_id, b->सुसि_id);
 }
 
 static int
@@ -133,7 +133,7 @@ ssh_krl_init(void)
 
 	if ((krl = calloc(1, sizeof(*krl))) == NULL)
 		return NULL;
-	RB_INIT(&krl->revoked_keys);
+	RB_INIT(&krl->revoked_मगा_सुसि);
 	RB_INIT(&krl->revoked_sha1s);
 	RB_INIT(&krl->revoked_sha256s);
 	TAILQ_INIT(&krl->revoked_certs);
@@ -144,20 +144,20 @@ static void
 revoked_certs_free(struct revoked_certs *rc)
 {
 	struct revoked_serial *rs, *trs;
-	struct revoked_key_id *rki, *trki;
+	struct revoked_सुसि_id *rki, *trki;
 
 	if (rc == NULL)
 		return;
-	RB_FOREACH_SAFE(rs, revoked_serial_tree, &rc->revoked_serials, trs) {
-		RB_REMOVE(revoked_serial_tree, &rc->revoked_serials, rs);
+	RB_FOREACH_SAFE(rs, revoked_serial_पुनो, &rc->revoked_serials, trs) {
+		RB_REMOVE(revoked_serial_पुनो, &rc->revoked_serials, rs);
 		free(rs);
 	}
-	RB_FOREACH_SAFE(rki, revoked_key_id_tree, &rc->revoked_key_ids, trki) {
-		RB_REMOVE(revoked_key_id_tree, &rc->revoked_key_ids, rki);
-		free(rki->key_id);
+	RB_FOREACH_SAFE(rki, revoked_सुसि_id_पुनो, &rc->revoked_सुसि_ids, trki) {
+		RB_REMOVE(revoked_सुसि_id_पुनो, &rc->revoked_सुसि_ids, rki);
+		free(rki->सुसि_id);
 		free(rki);
 	}
-	sshkey_free(rc->ca_key);
+	sshkey_free(rc->ca_सुसि);
 	freezero(rc, sizeof(*rc));
 }
 
@@ -171,18 +171,18 @@ ssh_krl_free(struct ssh_krl *krl)
 		return;
 
 	free(krl->comment);
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_keys, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_keys, rb);
+	RB_FOREACH_SAFE(rb, revoked_blob_पुनो, &krl->revoked_मगा_सुसि, trb) {
+		RB_REMOVE(revoked_blob_पुनो, &krl->revoked_मगा_सुसि, rb);
 		free(rb->blob);
 		free(rb);
 	}
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_sha1s, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_sha1s, rb);
+	RB_FOREACH_SAFE(rb, revoked_blob_पुनो, &krl->revoked_sha1s, trb) {
+		RB_REMOVE(revoked_blob_पुनो, &krl->revoked_sha1s, rb);
 		free(rb->blob);
 		free(rb);
 	}
-	RB_FOREACH_SAFE(rb, revoked_blob_tree, &krl->revoked_sha256s, trb) {
-		RB_REMOVE(revoked_blob_tree, &krl->revoked_sha256s, rb);
+	RB_FOREACH_SAFE(rb, revoked_blob_पुनो, &krl->revoked_sha256s, trb) {
+		RB_REMOVE(revoked_blob_पुनो, &krl->revoked_sha256s, rb);
 		free(rb->blob);
 		free(rb);
 	}
@@ -213,7 +213,7 @@ ssh_krl_set_comment(struct ssh_krl *krl, const char *comment)
  * create a new one in the tree if one did not exist already.
  */
 static int
-revoked_certs_for_ca_key(struct ssh_krl *krl, const struct sshkey *ca_key,
+revoked_certs_for_ca_सुसि(struct ssh_krl *krl, const struct sshkey *ca_सुसि,
     struct revoked_certs **rcp, int allow_create)
 {
 	struct revoked_certs *rc;
@@ -221,8 +221,8 @@ revoked_certs_for_ca_key(struct ssh_krl *krl, const struct sshkey *ca_key,
 
 	*rcp = NULL;
 	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
-		if ((ca_key == NULL && rc->ca_key == NULL) ||
-		    sshkey_equal(rc->ca_key, ca_key)) {
+		if ((ca_सुसि == NULL && rc->ca_सुसि == NULL) ||
+		    sshkey_equal(rc->ca_सुसि, ca_सुसि)) {
 			*rcp = rc;
 			return 0;
 		}
@@ -232,22 +232,22 @@ revoked_certs_for_ca_key(struct ssh_krl *krl, const struct sshkey *ca_key,
 	/* If this CA doesn't exist in the list then add it now */
 	if ((rc = calloc(1, sizeof(*rc))) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
-	if (ca_key == NULL)
-		rc->ca_key = NULL;
-	else if ((r = sshkey_from_private(ca_key, &rc->ca_key)) != 0) {
+	if (ca_सुसि == NULL)
+		rc->ca_सुसि = NULL;
+	else if ((r = sshkey_from_private(ca_सुसि, &rc->ca_सुसि)) != 0) {
 		free(rc);
 		return r;
 	}
 	RB_INIT(&rc->revoked_serials);
-	RB_INIT(&rc->revoked_key_ids);
+	RB_INIT(&rc->revoked_सुसि_ids);
 	TAILQ_INSERT_TAIL(&krl->revoked_certs, rc, entry);
-	KRL_DBG(("new CA %s", ca_key == NULL ? "*" : sshkey_type(ca_key)));
+	KRL_DBG(("new CA %s", ca_सुसि == NULL ? "*" : sshkey_type(ca_सुसि)));
 	*rcp = rc;
 	return 0;
 }
 
 static int
-insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
+इसिंगित_serial_range(struct revoked_serial_पुनो *rt, uint64_t lo, uint64_t hi)
 {
 	struct revoked_serial rs, *ers, *crs, *irs;
 
@@ -256,13 +256,13 @@ insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
 	memset(&rs, 0, sizeof(rs));
 	rs.lo = lo;
 	rs.hi = hi;
-	ers = RB_NFIND(revoked_serial_tree, rt, &rs);
+	ers = RB_NFIND(revoked_serial_पुनो, rt, &rs);
 	if (ers == NULL || serial_cmp(ers, &rs) != 0) {
 		/* No entry matches. Just insert */
 		if ((irs = malloc(sizeof(rs))) == NULL)
 			return SSH_ERR_ALLOC_FAIL;
 		memcpy(irs, &rs, sizeof(*irs));
-		ers = RB_INSERT(revoked_serial_tree, rt, irs);
+		ers = RB_इसिंगित(revoked_serial_पुनो, rt, irs);
 		if (ers != NULL) {
 			KRL_DBG(("bad: ers != NULL"));
 			/* Shouldn't happen */
@@ -289,7 +289,7 @@ insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
 	 */
 
 	/* Check predecessors */
-	while ((crs = RB_PREV(revoked_serial_tree, rt, ers)) != NULL) {
+	while ((crs = RB_PREV(revoked_serial_पुनो, rt, ers)) != NULL) {
 		KRL_DBG(("pred %llu:%llu",
 		    (unsigned long long)crs->lo, (unsigned long long)crs->hi));
 		if (ers->lo != 0 && crs->hi < ers->lo - 1)
@@ -301,11 +301,11 @@ insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
 			    (unsigned long long)ers->lo,
 			    (unsigned long long)ers->hi));
 		}
-		RB_REMOVE(revoked_serial_tree, rt, crs);
+		RB_REMOVE(revoked_serial_पुनो, rt, crs);
 		free(crs);
 	}
 	/* Check successors */
-	while ((crs = RB_NEXT(revoked_serial_tree, rt, ers)) != NULL) {
+	while ((crs = RB_NEXT(revoked_serial_पुनो, rt, ers)) != NULL) {
 		KRL_DBG(("succ %llu:%llu",
 		    (unsigned long long)crs->lo, (unsigned long long)crs->hi));
 		if (ers->hi != (uint64_t)-1 && crs->lo > ers->hi + 1)
@@ -317,7 +317,7 @@ insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
 			    (unsigned long long)ers->lo,
 			    (unsigned long long)ers->hi));
 		}
-		RB_REMOVE(revoked_serial_tree, rt, crs);
+		RB_REMOVE(revoked_serial_पुनो, rt, crs);
 		free(crs);
 	}
 	KRL_DBG(("done, final %llu:%llu",
@@ -326,46 +326,46 @@ insert_serial_range(struct revoked_serial_tree *rt, uint64_t lo, uint64_t hi)
 }
 
 int
-ssh_krl_revoke_cert_by_serial(struct ssh_krl *krl, const struct sshkey *ca_key,
+ssh_krl_revoke_cert_by_serial(struct ssh_krl *krl, const struct sshkey *ca_सुसि,
     uint64_t serial)
 {
-	return ssh_krl_revoke_cert_by_serial_range(krl, ca_key, serial, serial);
+	return ssh_krl_revoke_cert_by_serial_range(krl, ca_सुसि, serial, serial);
 }
 
 int
 ssh_krl_revoke_cert_by_serial_range(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t lo, uint64_t hi)
+    const struct sshkey *ca_सुसि, uint64_t lo, uint64_t hi)
 {
 	struct revoked_certs *rc;
 	int r;
 
 	if (lo > hi || lo == 0)
 		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = revoked_certs_for_ca_key(krl, ca_key, &rc, 1)) != 0)
+	if ((r = revoked_certs_for_ca_सुसि(krl, ca_सुसि, &rc, 1)) != 0)
 		return r;
-	return insert_serial_range(&rc->revoked_serials, lo, hi);
+	return इसिंगित_serial_range(&rc->revoked_serials, lo, hi);
 }
 
 int
-ssh_krl_revoke_cert_by_key_id(struct ssh_krl *krl, const struct sshkey *ca_key,
-    const char *key_id)
+ssh_krl_revoke_cert_by_सुसि_id(struct ssh_krl *krl, const struct sshkey *ca_सुसि,
+    const char *सुसि_id)
 {
-	struct revoked_key_id *rki, *erki;
+	struct revoked_सुसि_id *rki, *erki;
 	struct revoked_certs *rc;
 	int r;
 
-	if ((r = revoked_certs_for_ca_key(krl, ca_key, &rc, 1)) != 0)
+	if ((r = revoked_certs_for_ca_सुसि(krl, ca_सुसि, &rc, 1)) != 0)
 		return r;
 
-	KRL_DBG(("revoke %s", key_id));
+	KRL_DBG(("revoke %s", सुसि_id));
 	if ((rki = calloc(1, sizeof(*rki))) == NULL ||
-	    (rki->key_id = strdup(key_id)) == NULL) {
+	    (rki->सुसि_id = strdup(सुसि_id)) == NULL) {
 		free(rki);
 		return SSH_ERR_ALLOC_FAIL;
 	}
-	erki = RB_INSERT(revoked_key_id_tree, &rc->revoked_key_ids, rki);
+	erki = RB_इसिंगित(revoked_सुसि_id_पुनो, &rc->revoked_सुसि_ids, rki);
 	if (erki != NULL) {
-		free(rki->key_id);
+		free(rki->सुसि_id);
 		free(rki);
 	}
 	return 0;
@@ -373,12 +373,12 @@ ssh_krl_revoke_cert_by_key_id(struct ssh_krl *krl, const struct sshkey *ca_key,
 
 /* Convert "key" to a public key blob without any certificate information */
 static int
-plain_key_blob(const struct sshkey *key, u_char **blob, size_t *blen)
+plain_सुसि_blob(const struct sshkey *सुसि, u_char **blob, size_t *blen)
 {
 	struct sshkey *kcopy;
 	int r;
 
-	if ((r = sshkey_from_private(key, &kcopy)) != 0)
+	if ((r = sshkey_from_private(सुसि, &kcopy)) != 0)
 		return r;
 	if (sshkey_is_cert(kcopy)) {
 		if ((r = sshkey_drop_cert(kcopy)) != 0) {
@@ -393,7 +393,7 @@ plain_key_blob(const struct sshkey *key, u_char **blob, size_t *blen)
 
 /* Revoke a key blob. Ownership of blob is transferred to the tree */
 static int
-revoke_blob(struct revoked_blob_tree *rbt, u_char *blob, size_t len)
+revoke_blob(struct revoked_blob_पुनो *rbt, u_char *blob, size_t len)
 {
 	struct revoked_blob *rb, *erb;
 
@@ -401,7 +401,7 @@ revoke_blob(struct revoked_blob_tree *rbt, u_char *blob, size_t len)
 		return SSH_ERR_ALLOC_FAIL;
 	rb->blob = blob;
 	rb->len = len;
-	erb = RB_INSERT(revoked_blob_tree, rbt, rb);
+	erb = RB_इसिंगित(revoked_blob_पुनो, rbt, rb);
 	if (erb != NULL) {
 		free(rb->blob);
 		free(rb);
@@ -410,20 +410,20 @@ revoke_blob(struct revoked_blob_tree *rbt, u_char *blob, size_t len)
 }
 
 int
-ssh_krl_revoke_key_explicit(struct ssh_krl *krl, const struct sshkey *key)
+ssh_krl_revoke_सुसि_explicit(struct ssh_krl *krl, const struct sshkey *सुसि)
 {
 	u_char *blob;
 	size_t len;
 	int r;
 
-	debug3_f("revoke type %s", sshkey_type(key));
-	if ((r = plain_key_blob(key, &blob, &len)) != 0)
+	debug3_f("revoke type %s", sshkey_type(सुसि));
+	if ((r = plain_सुसि_blob(सुसि, &blob, &len)) != 0)
 		return r;
-	return revoke_blob(&krl->revoked_keys, blob, len);
+	return revoke_blob(&krl->revoked_मगा_सुसि, blob, len);
 }
 
 static int
-revoke_by_hash(struct revoked_blob_tree *target, const u_char *p, size_t len)
+revoke_by_hash(struct revoked_blob_पुनो *target, const u_char *p, size_t len)
 {
 	u_char *blob;
 	int r;
@@ -440,7 +440,7 @@ revoke_by_hash(struct revoked_blob_tree *target, const u_char *p, size_t len)
 }
 
 int
-ssh_krl_revoke_key_sha1(struct ssh_krl *krl, const u_char *p, size_t len)
+ssh_krl_revoke_सुसि_sha1(struct ssh_krl *krl, const u_char *p, size_t len)
 {
 	debug3_f("revoke by sha1");
 	if (len != 20)
@@ -449,7 +449,7 @@ ssh_krl_revoke_key_sha1(struct ssh_krl *krl, const u_char *p, size_t len)
 }
 
 int
-ssh_krl_revoke_key_sha256(struct ssh_krl *krl, const u_char *p, size_t len)
+ssh_krl_revoke_सुसि_sha256(struct ssh_krl *krl, const u_char *p, size_t len)
 {
 	debug3_f("revoke by sha256");
 	if (len != 32)
@@ -458,20 +458,20 @@ ssh_krl_revoke_key_sha256(struct ssh_krl *krl, const u_char *p, size_t len)
 }
 
 int
-ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key)
+ssh_krl_revoke_सुसि(struct ssh_krl *krl, const struct sshkey *सुसि)
 {
 	/* XXX replace with SHA256? */
-	if (!sshkey_is_cert(key))
-		return ssh_krl_revoke_key_explicit(krl, key);
+	if (!sshkey_is_cert(सुसि))
+		return ssh_krl_revoke_सुसि_explicit(krl, सुसि);
 
-	if (key->cert->serial == 0) {
-		return ssh_krl_revoke_cert_by_key_id(krl,
-		    key->cert->signature_key,
-		    key->cert->key_id);
+	if (सुसि->cert->serial == 0) {
+		return ssh_krl_revoke_cert_by_सुसि_id(krl,
+		    सुसि->cert->signature_सुसि,
+		    सुसि->cert->सुसि_id);
 	} else {
 		return ssh_krl_revoke_cert_by_serial(krl,
-		    key->cert->signature_key,
-		    key->cert->serial);
+		    सुसि->cert->signature_सुसि,
+		    सुसि->cert->serial);
 	}
 }
 
@@ -593,7 +593,7 @@ revoked_certs_generate(struct revoked_certs *rc, struct sshbuf *buf)
 	int final, force_new_sect, r = SSH_ERR_INTERNAL_ERROR;
 	uint64_t i, contig, gap, last = 0, bitmap_start = 0;
 	struct revoked_serial *rs, *nrs;
-	struct revoked_key_id *rki;
+	struct revoked_सुसि_id *rki;
 	int next_state, state = 0;
 	size_t bitmap_len;
 	struct sshbuf *sect;
@@ -603,26 +603,26 @@ revoked_certs_generate(struct revoked_certs *rc, struct sshbuf *buf)
 		return SSH_ERR_ALLOC_FAIL;
 
 	/* Store the header: optional CA scope key, reserved */
-	if (rc->ca_key == NULL) {
+	if (rc->ca_सुसि == NULL) {
 		if ((r = sshbuf_put_string(buf, NULL, 0)) != 0)
 			goto out;
 	} else {
-		if ((r = sshkey_puts(rc->ca_key, buf)) != 0)
+		if ((r = sshkey_puts(rc->ca_सुसि, buf)) != 0)
 			goto out;
 	}
 	if ((r = sshbuf_put_string(buf, NULL, 0)) != 0)
 		goto out;
 
 	/* Store the revoked serials.  */
-	for (rs = RB_MIN(revoked_serial_tree, &rc->revoked_serials);
+	for (rs = RB_MIN(revoked_serial_पुनो, &rc->revoked_serials);
 	     rs != NULL;
-	     rs = RB_NEXT(revoked_serial_tree, &rc->revoked_serials, rs)) {
+	     rs = RB_NEXT(revoked_serial_पुनो, &rc->revoked_serials, rs)) {
 		KRL_DBG(("serial %llu:%llu state 0x%02x",
 		    (long long unsigned)rs->lo, (long long unsigned)rs->hi,
 		    state));
 
 		/* Check contiguous length and gap to next section (if any) */
-		nrs = RB_NEXT(revoked_serial_tree, &rc->revoked_serials, rs);
+		nrs = RB_NEXT(revoked_serial_पुनो, &rc->revoked_serials, rs);
 		final = nrs == NULL;
 		gap = nrs == NULL ? 0 : nrs->lo - rs->hi;
 		contig = 1 + (rs->hi - rs->lo);
@@ -734,13 +734,13 @@ revoked_certs_generate(struct revoked_certs *rc, struct sshbuf *buf)
 
 	/* Now output a section for any revocations by key ID */
 	sshbuf_reset(sect);
-	RB_FOREACH(rki, revoked_key_id_tree, &rc->revoked_key_ids) {
-		KRL_DBG(("key ID %s", rki->key_id));
-		if ((r = sshbuf_put_cstring(sect, rki->key_id)) != 0)
+	RB_FOREACH(rki, revoked_सुसि_id_पुनो, &rc->revoked_सुसि_ids) {
+		KRL_DBG(("key ID %s", rki->सुसि_id));
+		if ((r = sshbuf_put_cstring(sect, rki->सुसि_id)) != 0)
 			goto out;
 	}
 	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_CERT_KEY_ID)) != 0 ||
+		if ((r = sshbuf_put_u8(buf, KRL_SECTION_CERT_सुसि_ID)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
 			goto out;
 	}
@@ -788,18 +788,18 @@ ssh_krl_to_blob(struct ssh_krl *krl, struct sshbuf *buf)
 
 	/* Finally, output sections for revocations by public key/hash */
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_keys) {
+	RB_FOREACH(rb, revoked_blob_पुनो, &krl->revoked_मगा_सुसि) {
 		KRL_DBG(("key len %zu ", rb->len));
 		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
 			goto out;
 	}
 	if (sshbuf_len(sect) != 0) {
-		if ((r = sshbuf_put_u8(buf, KRL_SECTION_EXPLICIT_KEY)) != 0 ||
+		if ((r = sshbuf_put_u8(buf, KRL_SECTION_EXPLICIT_सुसि)) != 0 ||
 		    (r = sshbuf_put_stringb(buf, sect)) != 0)
 			goto out;
 	}
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha1s) {
+	RB_FOREACH(rb, revoked_blob_पुनो, &krl->revoked_sha1s) {
 		KRL_DBG(("hash len %zu ", rb->len));
 		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
 			goto out;
@@ -811,7 +811,7 @@ ssh_krl_to_blob(struct ssh_krl *krl, struct sshbuf *buf)
 			goto out;
 	}
 	sshbuf_reset(sect);
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha256s) {
+	RB_FOREACH(rb, revoked_blob_पुनो, &krl->revoked_sha256s) {
 		KRL_DBG(("hash len %zu ", rb->len));
 		if ((r = sshbuf_put_string(sect, rb->blob, rb->len)) != 0)
 			goto out;
@@ -851,12 +851,12 @@ cert_extension_subsection(struct sshbuf *subsect, struct ssh_krl *krl)
 {
 	int r = SSH_ERR_INTERNAL_ERROR;
 	u_char critical = 1;
-	struct sshbuf *value = NULL;
+	struct sshbuf *हालागा = NULL;
 	char *name = NULL;
 
 	if ((r = sshbuf_get_cstring(subsect, &name, NULL)) != 0 ||
 	    (r = sshbuf_get_u8(subsect, &critical)) != 0 ||
-	    (r = sshbuf_froms(subsect, &value)) != 0) {
+	    (r = sshbuf_froms(subsect, &हालागा)) != 0) {
 		debug_fr(r, "parse");
 		error("KRL has invalid certificate extension subsection");
 		r = SSH_ERR_INVALID_FORMAT;
@@ -869,7 +869,7 @@ cert_extension_subsection(struct sshbuf *subsect, struct ssh_krl *krl)
 		goto out;
 	}
 	debug_f("cert extension %s critical %u len %zu",
-	    name, critical, sshbuf_len(value));
+	    name, critical, sshbuf_len(हालागा));
 	/* no extensions are currently supported */
 	if (critical) {
 		error("KRL contains unsupported critical certificate "
@@ -881,7 +881,7 @@ cert_extension_subsection(struct sshbuf *subsect, struct ssh_krl *krl)
 	r = 0;
  out:
 	free(name);
-	sshbuf_free(value);
+	sshbuf_free(हालागा);
 	return r;
 }
 
@@ -895,8 +895,8 @@ parse_revoked_certs(struct sshbuf *buf, struct ssh_krl *krl)
 	struct sshbuf *subsect = NULL;
 	uint64_t serial, serial_lo, serial_hi;
 	struct bitmap *bitmap = NULL;
-	char *key_id = NULL;
-	struct sshkey *ca_key = NULL;
+	char *सुसि_id = NULL;
+	struct sshkey *ca_सुसि = NULL;
 
 	if ((subsect = sshbuf_new()) == NULL)
 		return SSH_ERR_ALLOC_FAIL;
@@ -905,7 +905,7 @@ parse_revoked_certs(struct sshbuf *buf, struct ssh_krl *krl)
 	if ((r = sshbuf_get_string_direct(buf, &blob, &blen)) != 0 ||
 	    (r = sshbuf_skip_string(buf)) != 0)
 		goto out;
-	if (blen != 0 && (r = sshkey_from_blob(blob, blen, &ca_key)) != 0)
+	if (blen != 0 && (r = sshkey_from_blob(blob, blen, &ca_सुसि)) != 0)
 		goto out;
 
 	while (sshbuf_len(buf) > 0) {
@@ -923,7 +923,7 @@ parse_revoked_certs(struct sshbuf *buf, struct ssh_krl *krl)
 				if ((r = sshbuf_get_u64(subsect, &serial)) != 0)
 					goto out;
 				if ((r = ssh_krl_revoke_cert_by_serial(krl,
-				    ca_key, serial)) != 0)
+				    ca_सुसि, serial)) != 0)
 					goto out;
 			}
 			break;
@@ -932,7 +932,7 @@ parse_revoked_certs(struct sshbuf *buf, struct ssh_krl *krl)
 			    (r = sshbuf_get_u64(subsect, &serial_hi)) != 0)
 				goto out;
 			if ((r = ssh_krl_revoke_cert_by_serial_range(krl,
-			    ca_key, serial_lo, serial_hi)) != 0)
+			    ca_सुसि, serial_lo, serial_hi)) != 0)
 				goto out;
 			break;
 		case KRL_SECTION_CERT_SERIAL_BITMAP:
@@ -958,22 +958,22 @@ parse_revoked_certs(struct sshbuf *buf, struct ssh_krl *krl)
 				if (!bitmap_test_bit(bitmap, serial))
 					continue;
 				if ((r = ssh_krl_revoke_cert_by_serial(krl,
-				    ca_key, serial_lo + serial)) != 0)
+				    ca_सुसि, serial_lo + serial)) != 0)
 					goto out;
 			}
 			bitmap_free(bitmap);
 			bitmap = NULL;
 			break;
-		case KRL_SECTION_CERT_KEY_ID:
+		case KRL_SECTION_CERT_सुसि_ID:
 			while (sshbuf_len(subsect) > 0) {
 				if ((r = sshbuf_get_cstring(subsect,
-				    &key_id, NULL)) != 0)
+				    &सुसि_id, NULL)) != 0)
 					goto out;
-				if ((r = ssh_krl_revoke_cert_by_key_id(krl,
-				    ca_key, key_id)) != 0)
+				if ((r = ssh_krl_revoke_cert_by_सुसि_id(krl,
+				    ca_सुसि, सुसि_id)) != 0)
 					goto out;
-				free(key_id);
-				key_id = NULL;
+				free(सुसि_id);
+				सुसि_id = NULL;
 			}
 			break;
 		case KRL_SECTION_CERT_EXTENSION:
@@ -996,14 +996,14 @@ parse_revoked_certs(struct sshbuf *buf, struct ssh_krl *krl)
  out:
 	if (bitmap != NULL)
 		bitmap_free(bitmap);
-	free(key_id);
-	sshkey_free(ca_key);
+	free(सुसि_id);
+	sshkey_free(ca_सुसि);
 	sshbuf_free(subsect);
 	return r;
 }
 
 static int
-blob_section(struct sshbuf *sect, struct revoked_blob_tree *target_tree,
+blob_section(struct sshbuf *sect, struct revoked_blob_पुनो *target_पुनो,
     size_t expected_len)
 {
 	u_char *rdata = NULL;
@@ -1018,7 +1018,7 @@ blob_section(struct sshbuf *sect, struct revoked_blob_tree *target_tree,
 			free(rdata);
 			return SSH_ERR_INVALID_FORMAT;
 		}
-		if ((r = revoke_blob(target_tree, rdata, rlen)) != 0) {
+		if ((r = revoke_blob(target_पुनो, rdata, rlen)) != 0) {
 			free(rdata);
 			return r;
 		}
@@ -1031,12 +1031,12 @@ extension_section(struct sshbuf *sect, struct ssh_krl *krl)
 {
 	int r = SSH_ERR_INTERNAL_ERROR;
 	u_char critical = 1;
-	struct sshbuf *value = NULL;
+	struct sshbuf *हालागा = NULL;
 	char *name = NULL;
 
 	if ((r = sshbuf_get_cstring(sect, &name, NULL)) != 0 ||
 	    (r = sshbuf_get_u8(sect, &critical)) != 0 ||
-	    (r = sshbuf_froms(sect, &value)) != 0) {
+	    (r = sshbuf_froms(sect, &हालागा)) != 0) {
 		debug_fr(r, "parse");
 		error("KRL has invalid extension section");
 		r = SSH_ERR_INVALID_FORMAT;
@@ -1048,7 +1048,7 @@ extension_section(struct sshbuf *sect, struct ssh_krl *krl)
 		goto out;
 	}
 	debug_f("extension %s critical %u len %zu",
-	    name, critical, sshbuf_len(value));
+	    name, critical, sshbuf_len(हालागा));
 	/* no extensions are currently supported */
 	if (critical) {
 		error("KRL contains unsupported critical section \"%s\"", name);
@@ -1059,7 +1059,7 @@ extension_section(struct sshbuf *sect, struct ssh_krl *krl)
 	r = 0;
  out:
 	free(name);
-	sshbuf_free(value);
+	sshbuf_free(हालागा);
 	return r;
 }
 
@@ -1127,9 +1127,9 @@ ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp)
 			if ((r = parse_revoked_certs(sect, krl)) != 0)
 				goto out;
 			break;
-		case KRL_SECTION_EXPLICIT_KEY:
+		case KRL_SECTION_EXPLICIT_सुसि:
 			if ((r = blob_section(sect,
-			    &krl->revoked_keys, 0)) != 0)
+			    &krl->revoked_मगा_सुसि, 0)) != 0)
 				goto out;
 			break;
 		case KRL_SECTION_FINGERPRINT_SHA1:
@@ -1178,43 +1178,43 @@ ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp)
 
 /* Checks certificate serial number and key ID revocation */
 static int
-is_cert_revoked(const struct sshkey *key, struct revoked_certs *rc)
+is_cert_revoked(const struct sshkey *सुसि, struct revoked_certs *rc)
 {
 	struct revoked_serial rs, *ers;
-	struct revoked_key_id rki, *erki;
+	struct revoked_सुसि_id rki, *erki;
 
 	/* Check revocation by cert key ID */
 	memset(&rki, 0, sizeof(rki));
-	rki.key_id = key->cert->key_id;
-	erki = RB_FIND(revoked_key_id_tree, &rc->revoked_key_ids, &rki);
+	rki.सुसि_id = सुसि->cert->सुसि_id;
+	erki = RB_FIND(revoked_सुसि_id_पुनो, &rc->revoked_सुसि_ids, &rki);
 	if (erki != NULL) {
 		KRL_DBG(("revoked by key ID"));
-		return SSH_ERR_KEY_REVOKED;
+		return SSH_ERR_सुसि_REVOKED;
 	}
 
 	/*
 	 * Zero serials numbers are ignored (it's the default when the
 	 * CA doesn't specify one).
 	 */
-	if (key->cert->serial == 0)
+	if (सुसि->cert->serial == 0)
 		return 0;
 
 	memset(&rs, 0, sizeof(rs));
-	rs.lo = rs.hi = key->cert->serial;
-	ers = RB_FIND(revoked_serial_tree, &rc->revoked_serials, &rs);
+	rs.lo = rs.hi = सुसि->cert->serial;
+	ers = RB_FIND(revoked_serial_पुनो, &rc->revoked_serials, &rs);
 	if (ers != NULL) {
 		KRL_DBG(("revoked serial %llu matched %llu:%llu",
-		    (unsigned long long)key->cert->serial,
+		    (unsigned long long)सुसि->cert->serial,
 		    (unsigned long long)ers->lo,
 		    (unsigned long long)ers->hi));
-		return SSH_ERR_KEY_REVOKED;
+		return SSH_ERR_सुसि_REVOKED;
 	}
 	return 0;
 }
 
 /* Checks whether a given key/cert is revoked. Does not check its CA */
 static int
-is_key_revoked(struct ssh_krl *krl, const struct sshkey *key)
+is_सुसि_revoked(struct ssh_krl *krl, const struct sshkey *सुसि)
 {
 	struct revoked_blob rb, *erb;
 	struct revoked_certs *rc;
@@ -1222,71 +1222,71 @@ is_key_revoked(struct ssh_krl *krl, const struct sshkey *key)
 
 	/* Check explicitly revoked hashes first */
 	memset(&rb, 0, sizeof(rb));
-	if ((r = sshkey_fingerprint_raw(key, SSH_DIGEST_SHA1,
+	if ((r = sshkey_fingerprint_raw(सुसि, SSH_DIGEST_SHA1,
 	    &rb.blob, &rb.len)) != 0)
 		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_sha1s, &rb);
+	erb = RB_FIND(revoked_blob_पुनो, &krl->revoked_sha1s, &rb);
 	free(rb.blob);
 	if (erb != NULL) {
 		KRL_DBG(("revoked by key SHA1"));
-		return SSH_ERR_KEY_REVOKED;
+		return SSH_ERR_सुसि_REVOKED;
 	}
 	memset(&rb, 0, sizeof(rb));
-	if ((r = sshkey_fingerprint_raw(key, SSH_DIGEST_SHA256,
+	if ((r = sshkey_fingerprint_raw(सुसि, SSH_DIGEST_SHA256,
 	    &rb.blob, &rb.len)) != 0)
 		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_sha256s, &rb);
+	erb = RB_FIND(revoked_blob_पुनो, &krl->revoked_sha256s, &rb);
 	free(rb.blob);
 	if (erb != NULL) {
 		KRL_DBG(("revoked by key SHA256"));
-		return SSH_ERR_KEY_REVOKED;
+		return SSH_ERR_सुसि_REVOKED;
 	}
 
 	/* Next, explicit keys */
 	memset(&rb, 0, sizeof(rb));
-	if ((r = plain_key_blob(key, &rb.blob, &rb.len)) != 0)
+	if ((r = plain_सुसि_blob(सुसि, &rb.blob, &rb.len)) != 0)
 		return r;
-	erb = RB_FIND(revoked_blob_tree, &krl->revoked_keys, &rb);
+	erb = RB_FIND(revoked_blob_पुनो, &krl->revoked_मगा_सुसि, &rb);
 	free(rb.blob);
 	if (erb != NULL) {
 		KRL_DBG(("revoked by explicit key"));
-		return SSH_ERR_KEY_REVOKED;
+		return SSH_ERR_सुसि_REVOKED;
 	}
 
-	if (!sshkey_is_cert(key))
+	if (!sshkey_is_cert(सुसि))
 		return 0;
 
 	/* Check cert revocation for the specified CA */
-	if ((r = revoked_certs_for_ca_key(krl, key->cert->signature_key,
+	if ((r = revoked_certs_for_ca_सुसि(krl, सुसि->cert->signature_सुसि,
 	    &rc, 0)) != 0)
 		return r;
 	if (rc != NULL) {
-		if ((r = is_cert_revoked(key, rc)) != 0)
+		if ((r = is_cert_revoked(सुसि, rc)) != 0)
 			return r;
 	}
 	/* Check cert revocation for the wildcard CA */
-	if ((r = revoked_certs_for_ca_key(krl, NULL, &rc, 0)) != 0)
+	if ((r = revoked_certs_for_ca_सुसि(krl, NULL, &rc, 0)) != 0)
 		return r;
 	if (rc != NULL) {
-		if ((r = is_cert_revoked(key, rc)) != 0)
+		if ((r = is_cert_revoked(सुसि, rc)) != 0)
 			return r;
 	}
 
-	KRL_DBG(("%llu no match", (unsigned long long)key->cert->serial));
+	KRL_DBG(("%llu no match", (unsigned long long)सुसि->cert->serial));
 	return 0;
 }
 
 int
-ssh_krl_check_key(struct ssh_krl *krl, const struct sshkey *key)
+ssh_krl_check_सुसि(struct ssh_krl *krl, const struct sshkey *सुसि)
 {
 	int r;
 
 	KRL_DBG(("checking key"));
-	if ((r = is_key_revoked(krl, key)) != 0)
+	if ((r = is_सुसि_revoked(krl, सुसि)) != 0)
 		return r;
-	if (sshkey_is_cert(key)) {
+	if (sshkey_is_cert(सुसि)) {
 		debug2_f("checking CA key");
-		if ((r = is_key_revoked(krl, key->cert->signature_key)) != 0)
+		if ((r = is_सुसि_revoked(krl, सुसि->cert->signature_सुसि)) != 0)
 			return r;
 	}
 	KRL_DBG(("key okay"));
@@ -1294,7 +1294,7 @@ ssh_krl_check_key(struct ssh_krl *krl, const struct sshkey *key)
 }
 
 int
-ssh_krl_file_contains_key(const char *path, const struct sshkey *key)
+ssh_krl_file_contains_सुसि(const char *path, const struct sshkey *सुसि)
 {
 	struct sshbuf *krlbuf = NULL;
 	struct ssh_krl *krl = NULL;
@@ -1309,7 +1309,7 @@ ssh_krl_file_contains_key(const char *path, const struct sshkey *key)
 	if ((r = ssh_krl_from_blob(krlbuf, &krl)) != 0)
 		goto out;
 	debug2_f("checking KRL %s", path);
-	r = ssh_krl_check_key(krl, key);
+	r = ssh_krl_check_सुसि(krl, सुसि);
  out:
 	sshbuf_free(krlbuf);
 	ssh_krl_free(krl);
@@ -1321,11 +1321,11 @@ ssh_krl_file_contains_key(const char *path, const struct sshkey *key)
 int
 krl_dump(struct ssh_krl *krl, FILE *f)
 {
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 	struct revoked_blob *rb;
 	struct revoked_certs *rc;
 	struct revoked_serial *rs;
-	struct revoked_key_id *rki;
+	struct revoked_सुसि_id *rki;
 	int r, ret = 0;
 	char *fp, timestamp[64];
 
@@ -1341,28 +1341,28 @@ krl_dump(struct ssh_krl *krl, FILE *f)
 	}
 	fputc('\n', f);
 
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_keys) {
-		if ((r = sshkey_from_blob(rb->blob, rb->len, &key)) != 0) {
+	RB_FOREACH(rb, revoked_blob_पुनो, &krl->revoked_मगा_सुसि) {
+		if ((r = sshkey_from_blob(rb->blob, rb->len, &सुसि)) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			error_r(r, "parse KRL key");
 			continue;
 		}
-		if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
+		if ((fp = sshkey_fingerprint(सुसि, SSH_FP_HASH_DEFAULT,
 		    SSH_FP_DEFAULT)) == NULL) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			error("sshkey_fingerprint failed");
 			continue;
 		}
-		fprintf(f, "hash: %s # %s\n", fp, sshkey_ssh_name(key));
+		fprintf(f, "hash: %s # %s\n", fp, sshkey_ssh_name(सुसि));
 		free(fp);
-		free(key);
+		free(सुसि);
 	}
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha256s) {
+	RB_FOREACH(rb, revoked_blob_पुनो, &krl->revoked_sha256s) {
 		fp = tohex(rb->blob, rb->len);
 		fprintf(f, "hash: SHA256:%s\n", fp);
 		free(fp);
 	}
-	RB_FOREACH(rb, revoked_blob_tree, &krl->revoked_sha1s) {
+	RB_FOREACH(rb, revoked_blob_पुनो, &krl->revoked_sha1s) {
 		/*
 		 * There is not KRL spec keyword for raw SHA1 hashes, so
 		 * print them as comments.
@@ -1374,20 +1374,20 @@ krl_dump(struct ssh_krl *krl, FILE *f)
 
 	TAILQ_FOREACH(rc, &krl->revoked_certs, entry) {
 		fputc('\n', f);
-		if (rc->ca_key == NULL)
+		if (rc->ca_सुसि == NULL)
 			fprintf(f, "# Wildcard CA\n");
 		else {
-			if ((fp = sshkey_fingerprint(rc->ca_key,
+			if ((fp = sshkey_fingerprint(rc->ca_सुसि,
 			    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL) {
 				ret = SSH_ERR_INVALID_FORMAT;
 				error("sshkey_fingerprint failed");
 				continue;
 			}
 			fprintf(f, "# CA key %s %s\n",
-			    sshkey_ssh_name(rc->ca_key), fp);
+			    sshkey_ssh_name(rc->ca_सुसि), fp);
 			free(fp);
 		}
-		RB_FOREACH(rs, revoked_serial_tree, &rc->revoked_serials) {
+		RB_FOREACH(rs, revoked_serial_पुनो, &rc->revoked_serials) {
 			if (rs->lo == rs->hi) {
 				fprintf(f, "serial: %llu\n",
 				    (unsigned long long)rs->lo);
@@ -1397,13 +1397,13 @@ krl_dump(struct ssh_krl *krl, FILE *f)
 				    (unsigned long long)rs->hi);
 			}
 		}
-		RB_FOREACH(rki, revoked_key_id_tree, &rc->revoked_key_ids) {
+		RB_FOREACH(rki, revoked_सुसि_id_पुनो, &rc->revoked_सुसि_ids) {
 			/*
 			 * We don't want key IDs with embedded newlines to
 			 * mess up the display.
 			 */
 			r = INT_MAX;
-			asmprintf(&fp, INT_MAX, &r, "%s", rki->key_id);
+			asmprintf(&fp, INT_MAX, &r, "%s", rki->सुसि_id);
 			fprintf(f, "id: %s\n", fp);
 			free(fp);
 		}

@@ -18,16 +18,16 @@ extern "C" {
 
 static int initialised = 0;
 static FILE *null_file;
-static struct sshkey *key = NULL;
+static struct sshkey *सुसि = NULL;
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+extern "C" int LLVMFuzzer_Test_One_पासोक(const uint8_t *data, size_t size) {
     // single initialisation
     if (!initialised) {
         log_init("krl_fuzz", SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 
         if ((null_file = fopen("/dev/null", "w")) == NULL) return 0;
 
-        if (sshkey_generate(KEY_ED25519, 0, &key) != 0) return 0;
+        if (sshkey_generate(सुसि_ED25519, 0, &सुसि) != 0) return 0;
 
         initialised = 1;
     }
@@ -57,7 +57,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     krl_dump(krl, null_file);
 
     // Fuzz ssh_krl_check_key
-    ssh_krl_check_key(krl, key);
+    ssh_krl_check_सुसि(krl, सुसि);
 
     ssh_krl_free(krl);
     return 0;

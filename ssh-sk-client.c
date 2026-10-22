@@ -155,7 +155,7 @@ reap_helper(pid_t pid)
 }
 
 static int
-client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
+client_converse(struct sshbuf *मेनसाहे, struct sshbuf **respp, u_int type)
 {
 	int oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
 	u_int rtype, rerr;
@@ -177,15 +177,15 @@ client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
 	if ((r = sshbuf_put_u32(req, type)) != 0 ||
 	    (r = sshbuf_put_u8(req, log_is_on_stderr() != 0)) != 0 ||
 	    (r = sshbuf_put_u32(req, ll < 0 ? 0 : ll)) != 0 ||
-	    (r = sshbuf_putb(req, msg)) != 0) {
+	    (r = sshbuf_putb(req, मेनसाहे)) != 0) {
 		error_fr(r, "compose");
 		goto out;
 	}
-	if ((r = ssh_msg_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
+	if ((r = ssh_मेनसाहे_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
 		error_fr(r, "send");
 		goto out;
 	}
-	if ((r = ssh_msg_recv(fd, resp)) != 0) {
+	if ((r = ssh_मेनसाहे_recv(fd, resp)) != 0) {
 		error_fr(r, "receive");
 		goto out;
 	}
@@ -245,7 +245,7 @@ client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
 }
 
 int
-sshsk_sign(const char *provider, struct sshkey *key,
+sshsk_sign(const char *provider, struct sshkey *सुसि,
     u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
     u_int compat, const char *pin)
 {
@@ -256,7 +256,7 @@ sshsk_sign(const char *provider, struct sshkey *key,
 	*lenp = 0;
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	return SSH_ERR_सुसि_TYPE_UNKNOWN;
 #endif
 
 	if ((kbuf = sshbuf_new()) == NULL ||
@@ -265,7 +265,7 @@ sshsk_sign(const char *provider, struct sshkey *key,
 		goto out;
 	}
 
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0) {
+	if ((r = sshkey_private_serialize(सुसि, kbuf)) != 0) {
 		error_fr(r, "encode key");
 		goto out;
 	}
@@ -316,14 +316,14 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 {
 	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *kbuf = NULL, *abuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
+	struct sshkey *सुसि = NULL;
 
 	*keyp = NULL;
 	if (attest != NULL)
 		sshbuf_reset(attest);
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	return SSH_ERR_सुसि_TYPE_UNKNOWN;
 #endif
 
 	if (type < 0)
@@ -362,7 +362,7 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+	if ((r = sshkey_private_deserialize(kbuf, &सुसि)) != 0) {
 		error_fr(r, "encode");
 		goto out;
 	}
@@ -373,11 +373,11 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
+	*keyp = सुसि;
+	सुसि = NULL;
  out:
 	oerrno = errno;
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	sshbuf_free(kbuf);
 	sshbuf_free(abuf);
 	sshbuf_free(req);
@@ -387,18 +387,18 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 }
 
 static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+sshsk_free_resident_सुसि(struct sshsk_resident_सुसि *srk)
 {
 	if (srk == NULL)
 		return;
-	sshkey_free(srk->key);
+	sshkey_free(srk->सुसि);
 	freezero(srk->user_id, srk->user_id_len);
 	free(srk);
 }
 
 
 void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+sshsk_free_resident_मगा_सुसि(struct sshsk_resident_सुसि **srks, size_t nsrks)
 {
 	size_t i;
 
@@ -406,19 +406,19 @@ sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
 		return;
 
 	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
+		sshsk_free_resident_सुसि(srks[i]);
 	free(srks);
 }
 
 int
 sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+    const char *pin, u_int flags, struct sshsk_resident_सुसि ***srksp,
     size_t *nsrksp)
 {
 	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
+	struct sshkey *सुसि = NULL;
+	struct sshsk_resident_सुसि *srk = NULL, **srks = NULL, **tmp;
 	u_char *userid = NULL;
 	size_t userid_len = 0, nsrks = 0;
 
@@ -451,7 +451,7 @@ sshsk_load_resident(const char *provider_path, const char *device,
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
-		if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+		if ((r = sshkey_private_deserialize(kbuf, &सुसि)) != 0) {
 			error_fr(r, "decode key");
 			goto out;
 		}
@@ -460,8 +460,8 @@ sshsk_load_resident(const char *provider_path, const char *device,
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
-		srk->key = key;
-		key = NULL;
+		srk->सुसि = सुसि;
+		सुसि = NULL;
 		srk->user_id = userid;
 		srk->user_id_len = userid_len;
 		userid = NULL;
@@ -473,7 +473,7 @@ sshsk_load_resident(const char *provider_path, const char *device,
 			goto out;
 		}
 		debug_f("srks[%zu]: %s %s uidlen %zu", nsrks,
-		    sshkey_type(srk->key), srk->key->sk_application,
+		    sshkey_type(srk->सुसि), srk->सुसि->sk_application,
 		    srk->user_id_len);
 		srks = tmp;
 		srks[nsrks++] = srk;
@@ -488,10 +488,10 @@ sshsk_load_resident(const char *provider_path, const char *device,
 	nsrks = 0;
  out:
 	oerrno = errno;
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
+	sshsk_free_resident_सुसि(srk);
+	sshsk_free_resident_मगा_सुसि(srks, nsrks);
 	freezero(userid, userid_len);
-	sshkey_free(key);
+	sshkey_free(सुसि);
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);

@@ -47,7 +47,7 @@ void privkeys(unsigned char *zero_sk, unsigned char *rnd_sk)
 		errx(1, "crypto_kem_sntrup761_keypair failed");
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
+int LLVMFuzzer_Test_One_पासोक(const uint8_t* पासोक, size_t len)
 {
 	static bool once;
 	static unsigned char zero_sk[crypto_kem_sntrup761_SECRETKEYBYTES];
@@ -64,7 +64,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* input, size_t len)
 	if (len > sizeof(ciphertext)) {
 		len = sizeof(ciphertext);
 	}
-	memcpy(ciphertext, input, len);
+	memcpy(ciphertext, पासोक, len);
 
 	(void)crypto_kem_sntrup761_dec(secret, ciphertext, zero_sk);
 	(void)crypto_kem_sntrup761_dec(secret, ciphertext, rnd_sk);

@@ -7,7 +7,7 @@ extern "C" {
 #include "sshkey.h"
 #include "sshbuf.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+int LLVMFuzzer_Test_One_पासोक(const uint8_t* data, size_t size)
 {
 	struct sshkey *k = NULL;
 	struct sshbuf *b = sshbuf_from(data, size);

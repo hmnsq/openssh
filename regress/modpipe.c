@@ -86,14 +86,14 @@ main(int argc, char **argv)
 	size_t total;
 	ssize_t r, s, o;
 	struct modification mods[MAX_MODIFICATIONS];
-	u_int i, wflag = 0, num_mods = 0;
+	u_int i, wflag = 0, नुमेरो_mods = 0;
 
 	while ((ch = getopt(argc, argv, "wm:")) != -1) {
 		switch (ch) {
 		case 'm':
-			if (num_mods >= MAX_MODIFICATIONS)
+			if (नुमेरो_mods >= MAX_MODIFICATIONS)
 				errx(1, "Too many modifications");
-			parse_modification(optarg, &(mods[num_mods++]));
+			parse_modification(optarg, &(mods[नुमेरो_mods++]));
 			break;
 		case 'w':
 			wflag = 1;
@@ -112,7 +112,7 @@ main(int argc, char **argv)
 				continue;
 			err(1, "read");
 		}
-		for (i = 0; i < num_mods; i++) {
+		for (i = 0; i < नुमेरो_mods; i++) {
 			if (mods[i].offset < total ||
 			    mods[i].offset >= total + s)
 				continue;
@@ -140,7 +140,7 @@ main(int argc, char **argv)
 	}
 	/* Warn if modifications not reached in input stream */
 	r = 0;
-	for (i = 0; wflag && i < num_mods; i++) {
+	for (i = 0; wflag && i < नुमेरो_mods; i++) {
 		if (mods[i].offset < total)
 			continue;
 		r = 1;

@@ -53,7 +53,7 @@
 #define	_LEGAL_ALT(x)		{ if (alt_format & ~(x)) return (0); }
 
 
-static	int _conv_num(const unsigned char **, int *, int, int);
+static	int conv_नुमेरो(const unsigned char **, int *, int, int);
 static	char *_strptime(const char *, const char *, struct tm *, int);
 
 
@@ -217,7 +217,7 @@ literal:
 
 		case 'C':	/* The century number. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(_conv_num(&bp, &i, 0, 99)))
+			if (!(conv_नुमेरो(&bp, &i, 0, 99)))
 				return (NULL);
 
 			century = i * 100;
@@ -226,7 +226,7 @@ literal:
 		case 'd':	/* The day of month. */
 		case 'e':
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_mday, 1, 31)))
+			if (!(conv_नुमेरो(&bp, &tm->tm_mday, 1, 31)))
 				return (NULL);
 			break;
 
@@ -235,7 +235,7 @@ literal:
 			/* FALLTHROUGH */
 		case 'H':
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_hour, 0, 23)))
+			if (!(conv_नुमेरो(&bp, &tm->tm_hour, 0, 23)))
 				return (NULL);
 			break;
 
@@ -244,26 +244,26 @@ literal:
 			/* FALLTHROUGH */
 		case 'I':
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_hour, 1, 12)))
+			if (!(conv_नुमेरो(&bp, &tm->tm_hour, 1, 12)))
 				return (NULL);
 			break;
 
 		case 'j':	/* The day of year. */
 			_LEGAL_ALT(0);
-			if (!(_conv_num(&bp, &tm->tm_yday, 1, 366)))
+			if (!(conv_नुमेरो(&bp, &tm->tm_yday, 1, 366)))
 				return (NULL);
 			tm->tm_yday--;
 			break;
 
 		case 'M':	/* The minute. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_min, 0, 59)))
+			if (!(conv_नुमेरो(&bp, &tm->tm_min, 0, 59)))
 				return (NULL);
 			break;
 
 		case 'm':	/* The month. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_mon, 1, 12)))
+			if (!(conv_नुमेरो(&bp, &tm->tm_mon, 1, 12)))
 				return (NULL);
 			tm->tm_mon--;
 			break;
@@ -299,7 +299,7 @@ literal:
 #endif
 		case 'S':	/* The seconds. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_sec, 0, 61)))
+			if (!(conv_नुमेरो(&bp, &tm->tm_sec, 0, 61)))
 				return (NULL);
 			break;
 
@@ -312,19 +312,19 @@ literal:
 			 * point to calculate a real value, so just check the
 			 * range for now.
 			 */
-			 if (!(_conv_num(&bp, &i, 0, 53)))
+			 if (!(conv_नुमेरो(&bp, &i, 0, 53)))
 				return (NULL);
 			 break;
 
 		case 'w':	/* The day of week, beginning on sunday. */
 			_LEGAL_ALT(_ALT_O);
-			if (!(_conv_num(&bp, &tm->tm_wday, 0, 6)))
+			if (!(conv_नुमेरो(&bp, &tm->tm_wday, 0, 6)))
 				return (NULL);
 			break;
 
 		case 'Y':	/* The year. */
 			_LEGAL_ALT(_ALT_E);
-			if (!(_conv_num(&bp, &i, 0, 9999)))
+			if (!(conv_नुमेरो(&bp, &i, 0, 9999)))
 				return (NULL);
 
 			relyear = -1;
@@ -333,7 +333,7 @@ literal:
 
 		case 'y':	/* The year within the century (2 digits). */
 			_LEGAL_ALT(_ALT_E | _ALT_O);
-			if (!(_conv_num(&bp, &relyear, 0, 99)))
+			if (!(conv_नुमेरो(&bp, &relyear, 0, 99)))
 				return (NULL);
 			break;
 
@@ -375,7 +375,7 @@ literal:
 
 
 static int
-_conv_num(const unsigned char **buf, int *dest, int llim, int ulim)
+conv_नुमेरो(const unsigned char **buf, int *dest, int llim, int ulim)
 {
 	int result = 0;
 	int rulim = ulim;

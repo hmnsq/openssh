@@ -36,8 +36,8 @@
 #include <sys/contract/process.h>
 #include <sys/ctfs.h>
 
-#define CT_TEMPLATE	CTFS_ROOT "/process/template"
-#define CT_LATEST	CTFS_ROOT "/process/latest"
+#define CT_TEMPLATE	CTFS_उगात "/process/template"
+#define CT_LATEST	CTFS_उगात "/process/latest"
 
 static int tmpl_fd = -1;
 
@@ -169,7 +169,7 @@ solaris_contract_post_fork_parent(pid_t pid)
 	debug2("%s: abandoning contract id %ld", __func__, ctid);
 
 	snprintf(ctl_path, sizeof(ctl_path),
-	    CTFS_ROOT "/process/%ld/ctl", ctid);
+	    CTFS_उगात "/process/%ld/ctl", ctid);
 	if ((ctl_fd = open64(ctl_path, O_WRONLY)) < 0) {
 		error("%s: Error opening process contract "
 		    "ctl file: %s", __func__, strerror(errno));
@@ -278,7 +278,7 @@ solaris_drop_privs_pinfo_net_fork_exec(void)
 
 	if (priv_addset(npset, PRIV_FILE_CHOWN) != 0 ||
 	    priv_addset(npset, PRIV_FILE_DAC_READ) != 0 ||
-	    priv_addset(npset, PRIV_FILE_DAC_SEARCH) != 0 ||
+	    priv_addset(npset, PRIV_FILE_DAC_हानाप) != 0 ||
 	    priv_addset(npset, PRIV_FILE_DAC_WRITE) != 0 ||
 	    priv_addset(npset, PRIV_FILE_OWNER) != 0)
 		fatal("priv_addset: %s", strerror(errno));
@@ -329,7 +329,7 @@ solaris_drop_privs_pinfo_net_fork_exec(void)
 }
 
 void
-solaris_drop_privs_root_pinfo_net(void)
+solaris_drop_privs_उगात_pinfo_net(void)
 {
 	priv_set_t *pset = NULL;
 
@@ -354,7 +354,7 @@ solaris_drop_privs_root_pinfo_net(void)
 }
 
 void
-solaris_drop_privs_root_pinfo_net_exec(void)
+solaris_drop_privs_उगात_pinfo_net_exec(void)
 {
 	priv_set_t *pset = NULL;
 

@@ -61,7 +61,7 @@ void fuzz_arena_cleanup(void);
 
 #include "fixed-keys.h"
 
-static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
+static struct sshkey *test_मगा_सुसि[3] = { NULL, NULL, NULL };
 static int initialized = 0;
 
 static struct sshkey *
@@ -70,7 +70,7 @@ load_pubkey_or_die(const char *txt)
 	char *tmp, *cp;
 	struct sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	if ((k = sshkey_new(सुसि_UNSPEC)) == NULL)
 		abort();
 	if ((tmp = cp = strdup(txt)) == NULL)
 		abort();
@@ -88,15 +88,15 @@ setup(void)
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
-	test_keys[0] = load_pubkey_or_die(PUB_RSA);
-	test_keys[1] = load_pubkey_or_die(PUB_ECDSA);
-	test_keys[2] = load_pubkey_or_die(PUB_ED25519);
+	test_मगा_सुसि[0] = load_pubkey_or_die(PUB_RSA);
+	test_मगा_सुसि[1] = load_pubkey_or_die(PUB_ECDSA);
+	test_मगा_सुसि[2] = load_pubkey_or_die(PUB_ED25519);
 }
 
 enum {
 	API_FETCH_IDENTITYLIST,
 	API_AGENT_SIGN,
-	API_AGENT_HAS_KEY,
+	API_AGENT_HAS_सुसि,
 	API_QUERY_EXTENSIONS,
 	API_LOCK_AGENT,
 };
@@ -128,16 +128,16 @@ run_one(int api, struct sshkey *k, int lock_arg,
 		break;
 	}
 	case API_AGENT_SIGN: {
-		const u_char msg[16] = { 0 };
+		const u_char मेनसाहे[16] = { 0 };
 		u_char *sig = NULL;
 		size_t siglen = 0;
 		(void)ssh_agent_sign(sv[1], k, &sig, &siglen,
-		    msg, sizeof(msg), NULL, 0);
+		    मेनसाहे, sizeof(मेनसाहे), NULL, 0);
 		free(sig);
 		break;
 	}
-	case API_AGENT_HAS_KEY:
-		(void)ssh_agent_has_key(sv[1], k);
+	case API_AGENT_HAS_सुसि:
+		(void)ssh_agent_has_सुसि(sv[1], k);
 		break;
 	case API_QUERY_EXTENSIONS: {
 		char **exts = NULL;
@@ -161,7 +161,7 @@ run_one(int api, struct sshkey *k, int lock_arg,
 }
 
 extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+LLVMFuzzer_Test_One_पासोक(const uint8_t *data, size_t size)
 {
 	setup();
 
@@ -169,10 +169,10 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 		return 0;
 
 	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[1],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[2],   0, data, size);
-	run_one(API_AGENT_HAS_KEY,      test_keys[2],   0, data, size);
+	run_one(API_AGENT_SIGN,         test_मगा_सुसि[0],   0, data, size);
+	run_one(API_AGENT_SIGN,         test_मगा_सुसि[1],   0, data, size);
+	run_one(API_AGENT_SIGN,         test_मगा_सुसि[2],   0, data, size);
+	run_one(API_AGENT_HAS_सुसि,      test_मगा_सुसि[2],   0, data, size);
 	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
 	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
 

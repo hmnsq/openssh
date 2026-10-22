@@ -58,7 +58,7 @@ kex_kem_mlkem768x25519_keypair(struct kex *kex)
 	need = MLKEM768_PUBLICKEYBYTES + CURVE25519_SIZE;
 	if ((r = sshbuf_reserve(buf, need, &cp)) != 0)
 		goto out;
-	if (crypto_kem_mlkem768_keypair(cp, kex->mlkem768_client_key) != 0) {
+	if (crypto_kem_mlkem768_keypair(cp, kex->mlkem768_client_सुसि) != 0) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto out;
 	}
@@ -67,7 +67,7 @@ kex_kem_mlkem768x25519_keypair(struct kex *kex)
 	    MLKEM768_PUBLICKEYBYTES);
 #endif
 	cp += MLKEM768_PUBLICKEYBYTES;
-	kexc25519_keygen(kex->c25519_client_key, cp);
+	kexc25519_keygen(kex->c25519_client_सुसि, cp);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key c25519:", cp, CURVE25519_SIZE);
 #endif
@@ -88,7 +88,7 @@ kex_kem_mlkem768x25519_enc(struct kex *kex,
 	struct sshbuf *server_blob = NULL;
 	struct sshbuf *buf = NULL;
 	const u_char *client_pub;
-	u_char server_pub[CURVE25519_SIZE], server_key[CURVE25519_SIZE];
+	u_char server_pub[CURVE25519_SIZE], server_सुसि[CURVE25519_SIZE];
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	u_char ct[MLKEM768_CIPHERTEXTBYTES];
 	u_char shared_secret[MLKEM768_BYTES];
@@ -130,14 +130,14 @@ kex_kem_mlkem768x25519_enc(struct kex *kex,
 		goto out;
 	}
 	/* generate ECDH key pair, store server pubkey after ciphertext */
-	kexc25519_keygen(server_key, server_pub);
+	kexc25519_keygen(server_सुसि, server_pub);
 	if ((r = sshbuf_put(buf, shared_secret, sizeof(shared_secret))) != 0 ||
 	    (r = sshbuf_put(server_blob, ct, sizeof(ct))) != 0 ||
 	    (r = sshbuf_put(server_blob, server_pub, sizeof(server_pub))) != 0)
 		goto out;
 	/* append ECDH shared key */
 	client_pub += MLKEM768_PUBLICKEYBYTES;
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 1)) < 0)
+	if ((r = kexc25519_shared_सुसि_ext(server_सुसि, client_pub, buf, 1)) < 0)
 		goto out;
 	if ((r = ssh_digest_buffer(kex->hash_alg, buf,
 	    hash, sizeof(hash))) != 0)
@@ -165,7 +165,7 @@ kex_kem_mlkem768x25519_enc(struct kex *kex,
 	buf = NULL;
  out:
 	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(server_key, sizeof(server_key));
+	explicit_bzero(server_सुसि, sizeof(server_सुसि));
 	explicit_bzero(shared_secret, sizeof(shared_secret));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
@@ -203,13 +203,13 @@ kex_kem_mlkem768x25519_dec(struct kex *kex,
 	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
 #endif
 	if (crypto_kem_mlkem768_dec(shared_secret, ciphertext,
-	    kex->mlkem768_client_key) != 0) {
+	    kex->mlkem768_client_सुसि) != 0) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto out;
 	}
 	if ((r = sshbuf_put(buf, shared_secret, sizeof(shared_secret))) != 0)
 		goto out;
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	if ((r = kexc25519_shared_सुसि_ext(kex->c25519_client_सुसि, server_pub,
 	    buf, 1)) < 0)
 		goto out;
 	if ((r = ssh_digest_buffer(kex->hash_alg, buf,

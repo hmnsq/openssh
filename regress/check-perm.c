@@ -20,12 +20,12 @@
 static void
 fatal(const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
+	va_start(मगा_कातविरान, fmt);
+	vfprintf(stderr, fmt, मगा_कातविरान);
 	fputc('\n', stderr);
-	va_end(args);
+	va_end(मगा_कातविरान);
 	exit(1);
 }
 /* Based on session.c. NB. keep tests in sync */

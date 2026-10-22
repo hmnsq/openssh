@@ -84,9 +84,9 @@ extern struct sshbuf *loginmsg;
 extern ServerOptions options;
 
 void
-mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx)
+mm_log_handler(LogLevel level, int forced, const char *मेनसाहे, void *ctx)
 {
-	struct sshbuf *log_msg;
+	struct sshbuf *log_मेनसाहे;
 	struct monitor *mon = (struct monitor *)ctx;
 	int r;
 	size_t len;
@@ -94,26 +94,26 @@ mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx)
 	if (mon->m_log_sendfd == -1)
 		fatal_f("no log channel");
 
-	if ((log_msg = sshbuf_new()) == NULL)
+	if ((log_मेनसाहे = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
-	if ((r = sshbuf_put_u32(log_msg, 0)) != 0 || /* length; filled below */
-	    (r = sshbuf_put_u32(log_msg, level)) != 0 ||
-	    (r = sshbuf_put_u32(log_msg, forced)) != 0 ||
-	    (r = sshbuf_put_cstring(log_msg, msg)) != 0)
+	if ((r = sshbuf_put_u32(log_मेनसाहे, 0)) != 0 || /* length; filled below */
+	    (r = sshbuf_put_u32(log_मेनसाहे, level)) != 0 ||
+	    (r = sshbuf_put_u32(log_मेनसाहे, forced)) != 0 ||
+	    (r = sshbuf_put_cstring(log_मेनसाहे, मेनसाहे)) != 0)
 		fatal_fr(r, "assemble");
-	if ((len = sshbuf_len(log_msg)) < 4 || len > 0xffffffff)
+	if ((len = sshbuf_len(log_मेनसाहे)) < 4 || len > 0xffffffff)
 		fatal_f("bad length %zu", len);
-	POKE_U32(sshbuf_mutable_ptr(log_msg), len - 4);
+	POKE_U32(sshbuf_mutable_ptr(log_मेनसाहे), len - 4);
 	if (atomicio(vwrite, mon->m_log_sendfd,
-	    sshbuf_mutable_ptr(log_msg), len) != len) {
+	    sshbuf_mutable_ptr(log_मेनसाहे), len) != len) {
 		if (errno == EPIPE) {
 			debug_f("write: %s", strerror(errno));
 			cleanup_exit(255);
 		}
 		fatal_f("write: %s", strerror(errno));
 	}
-	sshbuf_free(log_msg);
+	sshbuf_free(log_मेनसाहे);
 }
 
 static void
@@ -174,7 +174,7 @@ void
 mm_request_receive(int sock, struct sshbuf *m)
 {
 	u_char buf[4], *p = NULL;
-	u_int msg_len;
+	u_int मेनसाहे_len;
 	int oerrno, r;
 
 	debug3_f("entering");
@@ -187,13 +187,13 @@ mm_request_receive(int sock, struct sshbuf *m)
 		}
 		fatal_f("read: %s", strerror(errno));
 	}
-	msg_len = PEEK_U32(buf);
-	if (msg_len > MONITOR_MAX_MSGLEN)
-		fatal_f("read: bad msg_len %d", msg_len);
+	मेनसाहे_len = PEEK_U32(buf);
+	if (मेनसाहे_len > MONITOR_MAX_MSGLEN)
+		fatal_f("read: bad msg_len %d", मेनसाहे_len);
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
+	if ((r = sshbuf_reserve(m, मेनसाहे_len, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio(read, sock, p, msg_len) != msg_len) {
+	if (atomicio(read, sock, p, मेनसाहे_len) != मेनसाहे_len) {
 		oerrno = errno;
 		error_f("read: %s", strerror(errno));
 		if (oerrno == EPIPE)
@@ -270,7 +270,7 @@ mm_sshkey_setcompat(struct ssh *ssh)
 }
 
 int
-mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
+mm_sshkey_sign(struct ssh *ssh, struct sshkey *सुसि, u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen, const char *hostkey_alg,
     const char *sk_provider, const char *sk_pin, u_int compat)
 {
@@ -280,7 +280,7 @@ mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
 	debug3_f("entering");
 	if ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	if ((r = sshkey_puts(सुसि, m)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
 	    (r = sshbuf_put_cstring(m, hostkey_alg)) != 0 ||
 	    (r = sshbuf_put_u32(m, compat)) != 0)
@@ -314,7 +314,7 @@ mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m)
 
 	log_change_level(options.log_level);
 	log_verbose_reset();
-	for (i = 0; i < options.num_log_verbose; i++)
+	for (i = 0; i < options.नुमेरो_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 }
 
@@ -482,23 +482,23 @@ mm_auth_password(struct ssh *ssh, char *password)
 }
 
 int
-mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
+mm_user_सुसि_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *सुसि,
     int pubkey_auth_attempt, struct sshauthopt **authoptp)
 {
-	return (mm_key_allowed(MM_USERKEY, NULL, NULL, key,
+	return (mm_सुसि_allowed(MM_USERKEY, NULL, NULL, सुसि,
 	    pubkey_auth_attempt, authoptp));
 }
 
 int
-mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
-    const char *user, const char *host, struct sshkey *key)
+mm_hostbased_सुसि_allowed(struct ssh *ssh, struct passwd *pw,
+    const char *user, const char *host, struct sshkey *सुसि)
 {
-	return (mm_key_allowed(MM_HOSTKEY, user, host, key, 0, NULL));
+	return (mm_सुसि_allowed(MM_HOSTKEY, user, host, सुसि, 0, NULL));
 }
 
 int
-mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
-    struct sshkey *key, int pubkey_auth_attempt, struct sshauthopt **authoptp)
+mm_सुसि_allowed(enum mm_keytype type, const char *user, const char *host,
+    struct sshkey *सुसि, int pubkey_auth_attempt, struct sshauthopt **authoptp)
 {
 	struct sshbuf *m;
 	int r, allowed = 0;
@@ -514,7 +514,7 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
 	if ((r = sshbuf_put_u32(m, type)) != 0 ||
 	    (r = sshbuf_put_cstring(m, user ? user : "")) != 0 ||
 	    (r = sshbuf_put_cstring(m, host ? host : "")) != 0 ||
-	    (r = sshkey_puts(key, m)) != 0 ||
+	    (r = sshkey_puts(सुसि, m)) != 0 ||
 	    (r = sshbuf_put_u32(m, pubkey_auth_attempt)) != 0)
 		fatal_fr(r, "assemble");
 
@@ -547,7 +547,7 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
  */
 
 int
-mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
+mm_sshkey_verify(const struct sshkey *सुसि, const u_char *sig, size_t siglen,
     const u_char *data, size_t datalen, const char *sigalg, u_int compat,
     struct sshkey_sig_details **sig_detailsp)
 {
@@ -563,7 +563,7 @@ mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
 		*sig_detailsp = NULL;
 	if ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	if ((r = sshkey_puts(सुसि, m)) != 0 ||
 	    (r = sshbuf_put_string(m, sig, siglen)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
 	    (r = sshbuf_put_cstring(m, sigalg == NULL ? "" : sigalg)) != 0)
@@ -615,7 +615,7 @@ int
 mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
 {
 	struct sshbuf *m;
-	char *p, *msg;
+	char *p, *मेनसाहे;
 	int success = 0, tmp1 = -1, tmp2 = -1, r;
 
 	/* Kludge: ensure there are fds free to receive the pty/tty */
@@ -644,16 +644,16 @@ mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
 		return (0);
 	}
 	if ((r = sshbuf_get_cstring(m, &p, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &msg, NULL)) != 0)
+	    (r = sshbuf_get_cstring(m, &मेनसाहे, NULL)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
 	strlcpy(namebuf, p, namebuflen); /* Possible truncation */
 	free(p);
 
-	if ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
+	if ((r = sshbuf_put(loginmsg, मेनसाहे, strlen(मेनसाहे))) != 0)
 		fatal_fr(r, "put loginmsg");
-	free(msg);
+	free(मेनसाहे);
 
 	if ((*ptyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1 ||
 	    (*ttyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1)
@@ -708,7 +708,7 @@ mm_do_pam_account(void)
 {
 	struct sshbuf *m;
 	u_int ret;
-	char *msg;
+	char *मेनसाहे;
 	size_t msglen;
 	int r;
 
@@ -723,11 +723,11 @@ mm_do_pam_account(void)
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_ACCOUNT, m);
 	if ((r = sshbuf_get_u32(m, &ret)) != 0 ||
-	    (r = sshbuf_get_cstring(m, &msg, &msglen)) != 0 ||
-	    (r = sshbuf_put(loginmsg, msg, msglen)) != 0)
+	    (r = sshbuf_get_cstring(m, &मेनसाहे, &msglen)) != 0 ||
+	    (r = sshbuf_put(loginmsg, मेनसाहे, msglen)) != 0)
 		fatal_fr(r, "buffer error");
 
-	free(msg);
+	free(मेनसाहे);
 	sshbuf_free(m);
 
 	debug3_f("returning %d", ret);
@@ -761,7 +761,7 @@ mm_sshpam_init_ctx(Authctxt *authctxt)
 
 int
 mm_sshpam_query(void *ctx, char **name, char **info,
-    u_int *num, char ***prompts, u_int **echo_on)
+    u_int *नुमेरो, char ***prompts, u_int **echo_on)
 {
 	struct sshbuf *m;
 	u_int i, n;
@@ -777,16 +777,16 @@ mm_sshpam_query(void *ctx, char **name, char **info,
 	    (r = sshbuf_get_cstring(m, name, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, info, NULL)) != 0 ||
 	    (r = sshbuf_get_u32(m, &n)) != 0 ||
-	    (r = sshbuf_get_u32(m, num)) != 0)
+	    (r = sshbuf_get_u32(m, नुमेरो)) != 0)
 		fatal_fr(r, "buffer error");
 	debug3_f("pam_query returned %d", ret);
 	sshpam_set_maxtries_reached(n);
-	if (*num > PAM_MAX_NUM_MSG)
+	if (*नुमेरो > PAM_MAX_नुमेरो_मेनसाहे)
 		fatal("%s: received %u PAM messages, expected <= %u",
-		    __func__, *num, PAM_MAX_NUM_MSG);
-	*prompts = xcalloc((*num + 1), sizeof(char *));
-	*echo_on = xcalloc((*num + 1), sizeof(u_int));
-	for (i = 0; i < *num; ++i) {
+		    __func__, *नुमेरो, PAM_MAX_नुमेरो_मेनसाहे);
+	*prompts = xcalloc((*नुमेरो + 1), sizeof(char *));
+	*echo_on = xcalloc((*नुमेरो + 1), sizeof(u_int));
+	for (i = 0; i < *नुमेरो; ++i) {
 		if ((r = sshbuf_get_cstring(m, &((*prompts)[i]), NULL)) != 0 ||
 		    (r = sshbuf_get_u32(m, &((*echo_on)[i]))) != 0)
 			fatal_fr(r, "buffer error");
@@ -796,7 +796,7 @@ mm_sshpam_query(void *ctx, char **name, char **info,
 }
 
 int
-mm_sshpam_respond(void *ctx, u_int num, char **resp)
+mm_sshpam_respond(void *ctx, u_int नुमेरो, char **resp)
 {
 	struct sshbuf *m;
 	u_int n, i;
@@ -805,9 +805,9 @@ mm_sshpam_respond(void *ctx, u_int num, char **resp)
 	debug3_f("entering");
 	if ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, num)) != 0)
+	if ((r = sshbuf_put_u32(m, नुमेरो)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; i < num; ++i) {
+	for (i = 0; i < नुमेरो; ++i) {
 		if ((r = sshbuf_put_cstring(m, resp[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
@@ -1050,7 +1050,7 @@ mm_ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *in,
 
 	if ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, in->value, in->length)) != 0)
+	if ((r = sshbuf_put_string(m, in->हालागा, in->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSSTEP, m);
@@ -1079,8 +1079,8 @@ mm_ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 
 	if ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, gssbuf->value, gssbuf->length)) != 0 ||
-	    (r = sshbuf_put_string(m, gssmic->value, gssmic->length)) != 0)
+	if ((r = sshbuf_put_string(m, gssbuf->हालागा, gssbuf->length)) != 0 ||
+	    (r = sshbuf_put_string(m, gssmic->हालागा, gssmic->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSCHECKMIC, m);
@@ -1121,7 +1121,7 @@ mm_ssh_gssapi_userok(char *user)
  */
 static void
 server_process_permitopen_list(struct ssh *ssh, int listen,
-    char **opens, u_int num_opens)
+    char **opens, u_int नुमेरो_opens)
 {
 	u_int i;
 	int port;
@@ -1130,18 +1130,18 @@ server_process_permitopen_list(struct ssh *ssh, int listen,
 	const char *what = listen ? "permitlisten" : "permitopen";
 
 	channel_clear_permission(ssh, FORWARD_ADM, where);
-	if (num_opens == 0)
+	if (नुमेरो_opens == 0)
 		return; /* permit any */
 
 	/* handle keywords: "any" / "none" */
-	if (num_opens == 1 && strcmp(opens[0], "any") == 0)
+	if (नुमेरो_opens == 1 && strcmp(opens[0], "any") == 0)
 		return;
-	if (num_opens == 1 && strcmp(opens[0], "none") == 0) {
+	if (नुमेरो_opens == 1 && strcmp(opens[0], "none") == 0) {
 		channel_disable_admin(ssh, where);
 		return;
 	}
 	/* Otherwise treat it as a list of permitted host:port */
-	for (i = 0; i < num_opens; i++) {
+	for (i = 0; i < नुमेरो_opens; i++) {
 		oarg = arg = xstrdup(opens[i]);
 		host = hpdelim(&arg);
 		if (host == NULL)
@@ -1163,9 +1163,9 @@ void
 server_process_permitopen(struct ssh *ssh)
 {
 	server_process_permitopen_list(ssh, 0,
-	    options.permitted_opens, options.num_permitted_opens);
+	    options.permitted_opens, options.नुमेरो_permitted_opens);
 	server_process_permitopen_list(ssh, 1,
-	    options.permitted_listens, options.num_permitted_listens);
+	    options.permitted_listens, options.नुमेरो_permitted_listens);
 }
 
 void
@@ -1175,9 +1175,9 @@ server_process_channel_timeouts(struct ssh *ssh)
 	double secs;
 	char *type;
 
-	debug3_f("setting %u timeouts", options.num_channel_timeouts);
+	debug3_f("setting %u timeouts", options.नुमेरो_channel_timeouts);
 	channel_clear_timeouts(ssh);
-	for (i = 0; i < options.num_channel_timeouts; i++) {
+	for (i = 0; i < options.नुमेरो_channel_timeouts; i++) {
 		if (parse_pattern_interval(options.channel_timeouts[i],
 		    &type, &secs) != 0) {
 			fatal_f("internal error: bad timeout %s",

@@ -79,7 +79,7 @@
 # define sk_api_version		ssh_sk_api_version
 # define sk_enroll		ssh_sk_enroll
 # define sk_sign		ssh_sk_sign
-# define sk_load_resident_keys	ssh_sk_load_resident_keys
+# define sk_load_resident_मगा_सुसि	ssh_sk_load_resident_मगा_सुसि
 #endif /* !SK_STANDALONE */
 
 #include "sk-api.h"
@@ -116,13 +116,13 @@ int sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 
 /* Sign a challenge */
 int sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len,
+    const char *application, const uint8_t *सुसि_handle, size_t सुसि_handle_len,
     uint8_t flags, const char *pin, struct sk_option **options,
     struct sk_sign_response **sign_response);
 
 /* Load resident keys */
-int sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rks, size_t *nrks);
+int sk_load_resident_मगा_सुसि(const char *pin, struct sk_option **options,
+    struct sk_resident_सुसि ***rks, size_t *nrks);
 
 static void skdebug(const char *func, const char *fmt, ...)
     __attribute__((__format__ (printf, 2, 3)));
@@ -131,14 +131,14 @@ static void
 skdebug(const char *func, const char *fmt, ...)
 {
 #if !defined(SK_STANDALONE)
-	char *msg;
+	char *मेनसाहे;
 	va_list ap;
 
 	va_start(ap, fmt);
-	xvasprintf(&msg, fmt, ap);
+	xvasprintf(&मेनसाहे, fmt, ap);
 	va_end(ap);
-	debug("%s: %s", func, msg);
-	free(msg);
+	debug("%s: %s", func, मेनसाहे);
+	free(मेनसाहे);
 #elif defined(SK_DEBUG)
 	va_list ap;
 
@@ -377,7 +377,7 @@ fido_dev_is_winhello(const fido_dev_t *fdev)
 /* Check if the specified key handle exists on a given sk. */
 static int
 sk_try(const struct sk_usbhid *sk, const char *application,
-    const uint8_t *key_handle, size_t key_handle_len)
+    const uint8_t *सुसि_handle, size_t सुसि_handle_len)
 {
 	fido_assert_t *assert = NULL;
 	int r = FIDO_ERR_INTERNAL;
@@ -399,8 +399,8 @@ sk_try(const struct sk_usbhid *sk, const char *application,
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_allow_cred(assert, key_handle,
-	    key_handle_len)) != FIDO_OK) {
+	if ((r = fido_assert_allow_cred(assert, सुसि_handle,
+	    सुसि_handle_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_allow_cred: %s", fido_strerr(r));
 		goto out;
 	}
@@ -425,7 +425,7 @@ check_sk_options(fido_dev_t *dev, const char *opt, int *ret)
 {
 	fido_cbor_info_t *info;
 	char * const *name;
-	const bool *value;
+	const bool *हालागा;
 	size_t len, i;
 	int r;
 
@@ -445,11 +445,11 @@ check_sk_options(fido_dev_t *dev, const char *opt, int *ret)
 		return -1;
 	}
 	name = fido_cbor_info_options_name_ptr(info);
-	value = fido_cbor_info_options_value_ptr(info);
+	हालागा = fido_cbor_info_options_हालागा_ptr(info);
 	len = fido_cbor_info_options_len(info);
 	for (i = 0; i < len; i++) {
 		if (!strcmp(name[i], opt)) {
-			*ret = value[i];
+			*ret = हालागा[i];
 			break;
 		}
 	}
@@ -464,7 +464,7 @@ check_sk_options(fido_dev_t *dev, const char *opt, int *ret)
 
 static struct sk_usbhid *
 sk_select_by_cred(const fido_dev_info_t *devlist, size_t ndevs,
-    const char *application, const uint8_t *key_handle, size_t key_handle_len)
+    const char *application, const uint8_t *सुसि_handle, size_t सुसि_handle_len)
 {
 	struct sk_usbhid **skv, *sk;
 	size_t skvcnt, i;
@@ -482,8 +482,8 @@ sk_select_by_cred(const fido_dev_info_t *devlist, size_t ndevs,
 	}
 	sk = NULL;
 	for (i = 0; i < skvcnt; i++) {
-		if (sk_try(skv[i], application, key_handle,
-		    key_handle_len) == 0) {
+		if (sk_try(skv[i], application, सुसि_handle,
+		    सुसि_handle_len) == 0) {
 			sk = skv[i];
 			skv[i] = NULL;
 			skdebug(__func__, "found key in %s", sk->path);
@@ -548,8 +548,8 @@ out:
 }
 
 static struct sk_usbhid *
-sk_probe(const char *application, const uint8_t *key_handle,
-    size_t key_handle_len, int probe_resident)
+sk_probe(const char *application, const uint8_t *सुसि_handle,
+    size_t सुसि_handle_len, int probe_resident)
 {
 	struct sk_usbhid *sk;
 	fido_dev_info_t *devlist;
@@ -574,10 +574,10 @@ sk_probe(const char *application, const uint8_t *key_handle,
 	skdebug(__func__, "%zu device(s) detected", ndevs);
 	if (ndevs == 0) {
 		sk = NULL;
-	} else if (application != NULL && key_handle != NULL) {
+	} else if (application != NULL && सुसि_handle != NULL) {
 		skdebug(__func__, "selecting sk by cred");
-		sk = sk_select_by_cred(devlist, ndevs, application, key_handle,
-		    key_handle_len);
+		sk = sk_select_by_cred(devlist, ndevs, application, सुसि_handle,
+		    सुसि_handle_len);
 	} else {
 		skdebug(__func__, "selecting sk by touch");
 		sk = sk_select_by_touch(devlist, ndevs);
@@ -592,7 +592,7 @@ sk_probe(const char *application, const uint8_t *key_handle,
  * but the API expects a SEC1 octet string.
  */
 static int
-pack_public_key_ecdsa(const fido_cred_t *cred,
+pack_public_सुसि_ecdsa(const fido_cred_t *cred,
     struct sk_enroll_response *response)
 {
 	const uint8_t *ptr;
@@ -601,8 +601,8 @@ pack_public_key_ecdsa(const fido_cred_t *cred,
 	EC_GROUP *g = NULL;
 	int ret = -1;
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
+	response->public_सुसि = NULL;
+	response->public_सुसि_len = 0;
 
 	if ((x = BN_new()) == NULL ||
 	    (y = BN_new()) == NULL ||
@@ -630,29 +630,29 @@ pack_public_key_ecdsa(const fido_cred_t *cred,
 		skdebug(__func__, "EC_POINT_set_affine_coordinates failed");
 		goto out;
 	}
-	response->public_key_len = EC_POINT_point2oct(g, q,
+	response->public_सुसि_len = EC_POINT_point2oct(g, q,
 	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (response->public_key_len == 0 || response->public_key_len > 2048) {
+	if (response->public_सुसि_len == 0 || response->public_सुसि_len > 2048) {
 		skdebug(__func__, "bad pubkey length %zu",
-		    response->public_key_len);
+		    response->public_सुसि_len);
 		goto out;
 	}
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	if ((response->public_सुसि = malloc(response->public_सुसि_len)) == NULL) {
 		skdebug(__func__, "malloc pubkey failed");
 		goto out;
 	}
 	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
-	    response->public_key, response->public_key_len, NULL) == 0) {
+	    response->public_सुसि, response->public_सुसि_len, NULL) == 0) {
 		skdebug(__func__, "EC_POINT_point2oct failed");
 		goto out;
 	}
 	/* success */
 	ret = 0;
  out:
-	if (ret != 0 && response->public_key != NULL) {
-		memset(response->public_key, 0, response->public_key_len);
-		free(response->public_key);
-		response->public_key = NULL;
+	if (ret != 0 && response->public_सुसि != NULL) {
+		memset(response->public_सुसि, 0, response->public_सुसि_len);
+		free(response->public_सुसि);
+		response->public_सुसि = NULL;
 	}
 	EC_POINT_free(q);
 	EC_GROUP_free(g);
@@ -663,15 +663,15 @@ pack_public_key_ecdsa(const fido_cred_t *cred,
 #endif /* WITH_OPENSSL */
 
 static int
-pack_public_key_ed25519(const fido_cred_t *cred,
+pack_public_सुसि_ed25519(const fido_cred_t *cred,
     struct sk_enroll_response *response)
 {
 	const uint8_t *ptr;
 	size_t len;
 	int ret = -1;
 
-	response->public_key = NULL;
-	response->public_key_len = 0;
+	response->public_सुसि = NULL;
+	response->public_सुसि_len = 0;
 
 	if ((len = fido_cred_pubkey_len(cred)) != 32) {
 		skdebug(__func__, "bad fido_cred_pubkey_len len %zu", len);
@@ -681,30 +681,30 @@ pack_public_key_ed25519(const fido_cred_t *cred,
 		skdebug(__func__, "fido_cred_pubkey_ptr failed");
 		goto out;
 	}
-	response->public_key_len = len;
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	response->public_सुसि_len = len;
+	if ((response->public_सुसि = malloc(response->public_सुसि_len)) == NULL) {
 		skdebug(__func__, "malloc pubkey failed");
 		goto out;
 	}
-	memcpy(response->public_key, ptr, len);
+	memcpy(response->public_सुसि, ptr, len);
 	ret = 0;
  out:
 	if (ret != 0)
-		free(response->public_key);
+		free(response->public_सुसि);
 	return ret;
 }
 
 static int
-pack_public_key(uint32_t alg, const fido_cred_t *cred,
+pack_public_सुसि(uint32_t alg, const fido_cred_t *cred,
     struct sk_enroll_response *response)
 {
 	switch(alg) {
 #ifdef WITH_OPENSSL
 	case SSH_SK_ECDSA:
-		return pack_public_key_ecdsa(cred, response);
+		return pack_public_सुसि_ecdsa(cred, response);
 #endif /* WITH_OPENSSL */
 	case SSH_SK_ED25519:
-		return pack_public_key_ed25519(cred, response);
+		return pack_public_सुसि_ed25519(cred, response);
 	default:
 		return -1;
 	}
@@ -736,13 +736,13 @@ check_enroll_options(struct sk_option **options, char **devicep,
 		return 0;
 	for (i = 0; options[i] != NULL; i++) {
 		if (strcmp(options[i]->name, "device") == 0) {
-			if ((*devicep = strdup(options[i]->value)) == NULL) {
+			if ((*devicep = strdup(options[i]->हालागा)) == NULL) {
 				skdebug(__func__, "strdup device failed");
 				return -1;
 			}
 			skdebug(__func__, "requested device %s", *devicep);
 		} else if (strcmp(options[i]->name, "user") == 0) {
-			if (strlcpy(user_id, options[i]->value, user_id_len) >=
+			if (strlcpy(user_id, options[i]->हालागा, user_id_len) >=
 			    user_id_len) {
 				skdebug(__func__, "user too long");
 				return -1;
@@ -762,7 +762,7 @@ check_enroll_options(struct sk_option **options, char **devicep,
 }
 
 static int
-key_lookup(fido_dev_t *dev, const char *application, const uint8_t *user_id,
+सुसि_lookup(fido_dev_t *dev, const char *application, const uint8_t *user_id,
     size_t user_id_len, const char *pin)
 {
 	fido_assert_t *assert = NULL;
@@ -804,8 +804,8 @@ key_lookup(fido_dev_t *dev, const char *application, const uint8_t *user_id,
 		goto out;
 	}
 	r = FIDO_ERR_NO_CREDENTIALS;
-	skdebug(__func__, "%zu signatures returned", fido_assert_count(assert));
-	for (i = 0; i < fido_assert_count(assert); i++) {
+	skdebug(__func__, "%zu signatures returned", fido_assert_बिलांग(assert));
+	for (i = 0; i < fido_assert_बिलांग(assert); i++) {
 		if (fido_assert_user_id_len(assert, i) == user_id_len &&
 		    memcmp(fido_assert_user_id_ptr(assert, i), user_id,
 		    user_id_len) == 0) {
@@ -872,9 +872,9 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 		goto out;
 	}
 	skdebug(__func__, "using device %s", sk->path);
-	if ((flags & SSH_SK_RESIDENT_KEY) != 0 &&
+	if ((flags & SSH_SK_RESIDENT_सुसि) != 0 &&
 	    (flags & SSH_SK_FORCE_OPERATION) == 0 &&
-	    (r = key_lookup(sk->dev, application, user_id, sizeof(user_id),
+	    (r = सुसि_lookup(sk->dev, application, user_id, sizeof(user_id),
 	    pin)) != FIDO_ERR_NO_CREDENTIALS) {
 		if (r != FIDO_OK) {
 			ret = fidoerr_to_skerr(r);
@@ -899,7 +899,7 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 		    fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_cred_set_rk(cred, (flags & SSH_SK_RESIDENT_KEY) != 0 ?
+	if ((r = fido_cred_set_rk(cred, (flags & SSH_SK_RESIDENT_सुसि) != 0 ?
 	    FIDO_OPT_TRUE : FIDO_OPT_OMIT)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_rk: %s", fido_strerr(r));
 		goto out;
@@ -913,7 +913,7 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 		skdebug(__func__, "fido_cred_set_rp: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((flags & (SSH_SK_RESIDENT_KEY|SSH_SK_USER_VERIFICATION_REQD)) != 0) {
+	if ((flags & (SSH_SK_RESIDENT_सुसि|SSH_SK_USER_VERIFICATION_REQD)) != 0) {
 #if !defined(HAVE_FIDO_DEV_SUPPORTS_CRED_PROT) || \
     !defined(HAVE_FIDO_CRED_SET_PROT)
 		skdebug(__func__, "libfido2 version does not support a feature required for this operation. Please upgrade to >=1.5.0");
@@ -966,18 +966,18 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 		goto out;
 	}
 	response->flags = flags;
-	if (pack_public_key(alg, cred, response) != 0) {
+	if (pack_public_सुसि(alg, cred, response) != 0) {
 		skdebug(__func__, "pack_public_key failed");
 		goto out;
 	}
 	if ((ptr = fido_cred_id_ptr(cred)) != NULL) {
 		len = fido_cred_id_len(cred);
-		if ((response->key_handle = calloc(1, len)) == NULL) {
+		if ((response->सुसि_handle = calloc(1, len)) == NULL) {
 			skdebug(__func__, "calloc key handle failed");
 			goto out;
 		}
-		memcpy(response->key_handle, ptr, len);
-		response->key_handle_len = len;
+		memcpy(response->सुसि_handle, ptr, len);
+		response->सुसि_handle_len = len;
 	}
 	if ((ptr = fido_cred_sig_ptr(cred)) != NULL) {
 		len = fido_cred_sig_len(cred);
@@ -1014,8 +1014,8 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
  out:
 	free(device);
 	if (response != NULL) {
-		free(response->public_key);
-		free(response->key_handle);
+		free(response->public_सुसि);
+		free(response->सुसि_handle);
 		free(response->signature);
 		free(response->attestation_cert);
 		free(response->authdata);
@@ -1043,8 +1043,8 @@ pack_sig_ecdsa(fido_assert_t *assert, struct sk_sign_response *response)
 		goto out;
 	}
 	ECDSA_SIG_get0(sig, &sig_r, &sig_s);
-	response->sig_r_len = BN_num_bytes(sig_r);
-	response->sig_s_len = BN_num_bytes(sig_s);
+	response->sig_r_len = BN_नुमेरो_bytes(sig_r);
+	response->sig_s_len = BN_नुमेरो_bytes(sig_s);
 	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL ||
 	    (response->sig_s = calloc(1, response->sig_s_len)) == NULL) {
 		skdebug(__func__, "calloc signature failed");
@@ -1119,7 +1119,7 @@ check_sign_load_resident_options(struct sk_option **options, char **devicep)
 		return 0;
 	for (i = 0; options[i] != NULL; i++) {
 		if (strcmp(options[i]->name, "device") == 0) {
-			if ((*devicep = strdup(options[i]->value)) == NULL) {
+			if ((*devicep = strdup(options[i]->हालागा)) == NULL) {
 				skdebug(__func__, "strdup device failed");
 				return -1;
 			}
@@ -1139,7 +1139,7 @@ check_sign_load_resident_options(struct sk_option **options, char **devicep)
 int
 sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
     const char *application,
-    const uint8_t *key_handle, size_t key_handle_len,
+    const uint8_t *सुसि_handle, size_t सुसि_handle_len,
     uint8_t flags, const char *pin, struct sk_option **options,
     struct sk_sign_response **sign_response)
 {
@@ -1164,7 +1164,7 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 	else if (pin != NULL || (flags & SSH_SK_USER_VERIFICATION_REQD))
 		sk = sk_probe(NULL, NULL, 0, 0);
 	else
-		sk = sk_probe(application, key_handle, key_handle_len, 0);
+		sk = sk_probe(application, सुसि_handle, सुसि_handle_len, 0);
 	if (sk == NULL) {
 		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
 		skdebug(__func__, "failed to find sk");
@@ -1184,8 +1184,8 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_allow_cred(assert, key_handle,
-	    key_handle_len)) != FIDO_OK) {
+	if ((r = fido_assert_allow_cred(assert, सुसि_handle,
+	    सुसि_handle_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_allow_cred: %s", fido_strerr(r));
 		goto out;
 	}
@@ -1250,7 +1250,7 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 
 static int
 read_rks(struct sk_usbhid *sk, const char *pin,
-    struct sk_resident_key ***rksp, size_t *nrksp)
+    struct sk_resident_सुसि ***rksp, size_t *nrksp)
 {
 	int ret = SSH_SK_ERR_GENERAL, r = -1;
 	uint32_t alg;
@@ -1260,7 +1260,7 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 	size_t i, j, nrp, nrk, user_id_len;
 	const fido_cred_t *cred;
 	const char *rp_id, *rp_name, *user_name;
-	struct sk_resident_key *srk = NULL, **tmp;
+	struct sk_resident_सुसि *srk = NULL, **tmp;
 	const u_char *user_id;
 
 	if (pin == NULL) {
@@ -1296,7 +1296,7 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 		    sk->path, fido_strerr(r));
 		goto out;
 	}
-	nrp = fido_credman_rp_count(rp);
+	nrp = fido_credman_rp_बिलांग(rp);
 	skdebug(__func__, "Device %s has resident keys for %zu RPs",
 	    sk->path, nrp);
 
@@ -1325,7 +1325,7 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 			    sk->path, i, fido_strerr(r));
 			goto out;
 		}
-		nrk = fido_credman_rk_count(rk);
+		nrk = fido_credman_rk_बिलांग(rk);
 		skdebug(__func__, "RP \"%s\" has %zu resident keys",
 		    fido_credman_rp_id(rp, i), nrk);
 
@@ -1361,7 +1361,7 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 
 			/* build response entry */
 			if ((srk = calloc(1, sizeof(*srk))) == NULL ||
-			    (srk->key.key_handle = calloc(1,
+			    (srk->सुसि.सुसि_handle = calloc(1,
 			    fido_cred_id_len(cred))) == NULL ||
 			    (srk->application = strdup(rp_id)) == NULL ||
 			    (user_id_len > 0 &&
@@ -1371,9 +1371,9 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 			}
 
 			srk->alg = alg;
-			srk->key.key_handle_len = fido_cred_id_len(cred);
-			memcpy(srk->key.key_handle, fido_cred_id_ptr(cred),
-			    srk->key.key_handle_len);
+			srk->सुसि.सुसि_handle_len = fido_cred_id_len(cred);
+			memcpy(srk->सुसि.सुसि_handle, fido_cred_id_ptr(cred),
+			    srk->सुसि.सुसि_handle_len);
 			srk->user_id_len = user_id_len;
 			if (srk->user_id_len != 0)
 				memcpy(srk->user_id, user_id, srk->user_id_len);
@@ -1384,8 +1384,8 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 				srk->flags |=  SSH_SK_USER_VERIFICATION_REQD;
 #endif
 
-			if ((r = pack_public_key(srk->alg, cred,
-			    &srk->key)) != 0) {
+			if ((r = pack_public_सुसि(srk->alg, cred,
+			    &srk->सुसि)) != 0) {
 				skdebug(__func__, "pack public key failed");
 				goto out;
 			}
@@ -1405,8 +1405,8 @@ read_rks(struct sk_usbhid *sk, const char *pin,
  out:
 	if (srk != NULL) {
 		free(srk->application);
-		freezero(srk->key.public_key, srk->key.public_key_len);
-		freezero(srk->key.key_handle, srk->key.key_handle_len);
+		freezero(srk->सुसि.public_सुसि, srk->सुसि.public_सुसि_len);
+		freezero(srk->सुसि.सुसि_handle, srk->सुसि.सुसि_handle_len);
 		freezero(srk->user_id, srk->user_id_len);
 		freezero(srk, sizeof(*srk));
 	}
@@ -1417,12 +1417,12 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 }
 
 int
-sk_load_resident_keys(const char *pin, struct sk_option **options,
-    struct sk_resident_key ***rksp, size_t *nrksp)
+sk_load_resident_मगा_सुसि(const char *pin, struct sk_option **options,
+    struct sk_resident_सुसि ***rksp, size_t *nrksp)
 {
 	int ret = SSH_SK_ERR_GENERAL, r = -1;
 	size_t i, nrks = 0;
-	struct sk_resident_key **rks = NULL;
+	struct sk_resident_सुसि **rks = NULL;
 	struct sk_usbhid *sk = NULL;
 	char *device = NULL;
 
@@ -1459,8 +1459,8 @@ sk_load_resident_keys(const char *pin, struct sk_option **options,
 	sk_close(sk);
 	for (i = 0; i < nrks; i++) {
 		free(rks[i]->application);
-		freezero(rks[i]->key.public_key, rks[i]->key.public_key_len);
-		freezero(rks[i]->key.key_handle, rks[i]->key.key_handle_len);
+		freezero(rks[i]->सुसि.public_सुसि, rks[i]->सुसि.public_सुसि_len);
+		freezero(rks[i]->सुसि.सुसि_handle, rks[i]->सुसि.सुसि_handle_len);
 		freezero(rks[i]->user_id, rks[i]->user_id_len);
 		freezero(rks[i], sizeof(*rks[i]));
 	}

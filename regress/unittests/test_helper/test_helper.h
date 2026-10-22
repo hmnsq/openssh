@@ -53,55 +53,55 @@ int test_is_slow(void);
 int test_is_benchmark(void);
 void test_subtest_info(const char *fmt, ...)
     __attribute__((format(printf, 1, 2)));
-void ssl_err_check(const char *file, int line);
+void ssl_err_check(const char *file, int लिन्या);
 #ifdef WITH_OPENSSL
-void assert_bignum(const char *file, int line,
+void assert_bignum(const char *file, int लिन्या,
     const char *a1, const char *a2,
     const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred);
 #endif
-void assert_string(const char *file, int line,
+void assert_string(const char *file, int लिन्या,
     const char *a1, const char *a2,
     const char *aa1, const char *aa2, enum test_predicate pred);
-void assert_mem(const char *file, int line,
+void assert_mem(const char *file, int लिन्या,
     const char *a1, const char *a2,
     const void *aa1, const void *aa2, size_t l, enum test_predicate pred);
-void assert_mem_filled(const char *file, int line,
+void assert_mem_filled(const char *file, int लिन्या,
     const char *a1,
     const void *aa1, u_char v, size_t l, enum test_predicate pred);
-void assert_int(const char *file, int line,
+void assert_int(const char *file, int लिन्या,
     const char *a1, const char *a2,
     int aa1, int aa2, enum test_predicate pred);
-void assert_size_t(const char *file, int line,
+void assert_size_t(const char *file, int लिन्या,
     const char *a1, const char *a2,
     size_t aa1, size_t aa2, enum test_predicate pred);
-void assert_u_int(const char *file, int line,
+void assert_u_int(const char *file, int लिन्या,
     const char *a1, const char *a2,
     u_int aa1, u_int aa2, enum test_predicate pred);
-void assert_long(const char *file, int line,
+void assert_long(const char *file, int लिन्या,
     const char *a1, const char *a2,
     long aa1, long aa2, enum test_predicate pred);
-void assert_long_long(const char *file, int line,
+void assert_long_long(const char *file, int लिन्या,
     const char *a1, const char *a2,
     long long aa1, long long aa2, enum test_predicate pred);
-void assert_char(const char *file, int line,
+void assert_char(const char *file, int लिन्या,
     const char *a1, const char *a2,
     char aa1, char aa2, enum test_predicate pred);
-void assert_ptr(const char *file, int line,
+void assert_ptr(const char *file, int लिन्या,
     const char *a1, const char *a2,
     const void *aa1, const void *aa2, enum test_predicate pred);
-void assert_u8(const char *file, int line,
+void assert_u8(const char *file, int लिन्या,
     const char *a1, const char *a2,
     uint8_t aa1, uint8_t aa2, enum test_predicate pred);
-void assert_u16(const char *file, int line,
+void assert_u16(const char *file, int लिन्या,
     const char *a1, const char *a2,
     uint16_t aa1, uint16_t aa2, enum test_predicate pred);
-void assert_u32(const char *file, int line,
+void assert_u32(const char *file, int लिन्या,
     const char *a1, const char *a2,
     uint32_t aa1, uint32_t aa2, enum test_predicate pred);
-void assert_u64(const char *file, int line,
+void assert_u64(const char *file, int लिन्या,
     const char *a1, const char *a2,
     uint64_t aa1, uint64_t aa2, enum test_predicate pred);
-void assert_double(const char *file, int line,
+void assert_double(const char *file, int लिन्या,
     const char *a1, const char *a2,
     double aa1, double aa2, enum test_predicate pred);
 
@@ -317,10 +317,10 @@ void assert_double(const char *file, int line,
 		bench_finish(__FILE__, __LINE__, unit); \
 	} while (0)
 
-void bench_start(const char *file, int line, const char *name);
-void bench_case_start(const char *file, int line);
-void bench_case_finish(const char *file, int line);
-void bench_finish(const char *file, int line, const char *unit);
+void bench_start(const char *file, int लिन्या, const char *name);
+void bench_case_start(const char *file, int लिन्या);
+void bench_case_finish(const char *file, int लिन्या);
+void bench_finish(const char *file, int लिन्या, const char *unit);
 int bench_done(void);
 
 /* Fuzzing support */

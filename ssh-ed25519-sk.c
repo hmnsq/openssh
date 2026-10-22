@@ -54,28 +54,28 @@ ssh_ed25519_sk_equal(const struct sshkey *a, const struct sshkey *b)
 }
 
 static int
-ssh_ed25519_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
+ssh_ed25519_sk_serialize_public(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
+	if ((r = sshkey_ed25519_funcs.serialize_public(सुसि, b, opts)) != 0)
 		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
+	if ((r = sshkey_serialize_sk(सुसि, b)) != 0)
 		return r;
 
 	return 0;
 }
 
 static int
-ssh_ed25519_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
+ssh_ed25519_sk_serialize_private(const struct sshkey *सुसि, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
 	int r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
+	if ((r = sshkey_ed25519_funcs.serialize_public(सुसि, b, opts)) != 0)
 		return r;
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
+	if ((r = sshkey_serialize_private_sk(सुसि, b)) != 0)
 		return r;
 
 	return 0;
@@ -95,32 +95,32 @@ ssh_ed25519_sk_copy_public(const struct sshkey *from, struct sshkey *to)
 
 static int
 ssh_ed25519_sk_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	int r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
+	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, सुसि)) != 0)
 		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
+	if ((r = sshkey_deserialize_sk(b, सुसि)) != 0)
 		return r;
 	return 0;
 }
 
 static int
 ssh_ed25519_sk_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+    struct sshkey *सुसि)
 {
 	int r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
+	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, सुसि)) != 0)
 		return r;
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
+	if ((r = sshkey_private_deserialize_sk(b, सुसि)) != 0)
 		return r;
 	return 0;
 }
 
 static int
-ssh_ed25519_sk_verify(const struct sshkey *key,
+ssh_ed25519_sk_verify(const struct sshkey *सुसि,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
     struct sshkey_sig_details **detailsp)
@@ -141,9 +141,9 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 	if (detailsp != NULL)
 		*detailsp = NULL;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ED25519_SK ||
-	    key->ed25519_pk == NULL ||
+	if (सुसि == NULL ||
+	    sshkey_type_plain(सुसि->type) != सुसि_ED25519_SK ||
+	    सुसि->ed25519_pk == NULL ||
 	    sig == NULL || siglen == 0)
 		return SSH_ERR_INVALID_ARGUMENT;
 
@@ -164,8 +164,8 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, sig_flags, sig_counter);
 #endif
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
+	if (strcmp(sshkey_ssh_name_plain(सुसि), ktype) != 0) {
+		r = SSH_ERR_सुसि_TYPE_MISMATCH;
 		goto out;
 	}
 	if (sshbuf_len(b) != 0) {
@@ -176,8 +176,8 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
-	    strlen(key->sk_application), apphash, sizeof(apphash)) != 0 ||
+	if (ssh_digest_memory(SSH_DIGEST_SHA256, सुसि->sk_application,
+	    strlen(सुसि->sk_application), apphash, sizeof(apphash)) != 0 ||
 	    ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
 	    msghash, sizeof(msghash)) != 0) {
 		r = SSH_ERR_INVALID_ARGUMENT;
@@ -212,7 +212,7 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 #endif
 	if ((ret = crypto_sign_ed25519_verify_detached(sigblob,
 	    sshbuf_ptr(encoded), sshbuf_len(encoded),
-	    key->ed25519_pk)) != 0) {
+	    सुसि->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
 	if (ret != 0) {
@@ -252,7 +252,7 @@ const struct sshkey_impl sshkey_ed25519_sk_impl = {
 	/* .name = */		"sk-ssh-ed25519@openssh.com",
 	/* .shortname = */	"ED25519-SK",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519_SK,
+	/* .type = */		सुसि_ED25519_SK,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -264,7 +264,7 @@ const struct sshkey_impl sshkey_ed25519_sk_cert_impl = {
 	/* .name = */		"sk-ssh-ed25519-cert-v01@openssh.com",
 	/* .shortname = */	"ED25519-SK-CERT",
 	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519_SK_CERT,
+	/* .type = */		सुसि_ED25519_SK_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

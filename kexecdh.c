@@ -44,41 +44,41 @@
 int
 kex_ecdh_keypair(struct kex *kex)
 {
-	EC_KEY *client_key = NULL;
+	EC_सुसि *client_सुसि = NULL;
 	const EC_GROUP *group;
-	const EC_POINT *public_key;
+	const EC_POINT *public_सुसि;
 	struct sshbuf *buf = NULL;
 	int r;
 
-	if ((client_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	if ((client_सुसि = EC_सुसि_new_by_curve_name(kex->ec_nid)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EC_KEY_generate_key(client_key) != 1) {
+	if (EC_सुसि_generate_सुसि(client_सुसि) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	group = EC_KEY_get0_group(client_key);
-	public_key = EC_KEY_get0_public_key(client_key);
+	group = EC_सुसि_get0_group(client_सुसि);
+	public_सुसि = EC_सुसि_get0_public_सुसि(client_सुसि);
 
 	if ((buf = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_ec(buf, public_key, group)) != 0 ||
+	if ((r = sshbuf_put_ec(buf, public_सुसि, group)) != 0 ||
 	    (r = sshbuf_get_u32(buf, NULL)) != 0)
 		goto out;
 #ifdef DEBUG_KEXECDH
 	fputs("client private key:\n", stderr);
-	sshkey_dump_ec_key(client_key);
+	sshkey_dump_ec_सुसि(client_सुसि);
 #endif
-	kex->ec_client_key = client_key;
+	kex->ec_client_सुसि = client_सुसि;
 	kex->ec_group = group;
-	client_key = NULL;	/* owned by the kex */
+	client_सुसि = NULL;	/* owned by the kex */
 	kex->client_pub = buf;
 	buf = NULL;
  out:
-	EC_KEY_free(client_key);
+	EC_सुसि_free(client_सुसि);
 	sshbuf_free(buf);
 	return r;
 }
@@ -88,50 +88,50 @@ kex_ecdh_enc(struct kex *kex, const struct sshbuf *client_blob,
     struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
 {
 	const EC_GROUP *group;
-	const EC_POINT *pub_key;
-	EC_KEY *server_key = NULL;
+	const EC_POINT *pub_सुसि;
+	EC_सुसि *server_सुसि = NULL;
 	struct sshbuf *server_blob = NULL;
 	int r;
 
 	*server_blobp = NULL;
 	*shared_secretp = NULL;
 
-	if ((server_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	if ((server_सुसि = EC_सुसि_new_by_curve_name(kex->ec_nid)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EC_KEY_generate_key(server_key) != 1) {
+	if (EC_सुसि_generate_सुसि(server_सुसि) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	group = EC_KEY_get0_group(server_key);
+	group = EC_सुसि_get0_group(server_सुसि);
 
 #ifdef DEBUG_KEXECDH
 	fputs("server private key:\n", stderr);
-	sshkey_dump_ec_key(server_key);
+	sshkey_dump_ec_सुसि(server_सुसि);
 #endif
-	pub_key = EC_KEY_get0_public_key(server_key);
+	pub_सुसि = EC_सुसि_get0_public_सुसि(server_सुसि);
 	if ((server_blob = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_ec(server_blob, pub_key, group)) != 0 ||
+	if ((r = sshbuf_put_ec(server_blob, pub_सुसि, group)) != 0 ||
 	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
 		goto out;
-	if ((r = kex_ecdh_dec_key_group(kex, client_blob, server_key, group,
+	if ((r = kex_ecdh_dec_सुसि_group(kex, client_blob, server_सुसि, group,
 	    0, shared_secretp)) != 0)
 		goto out;
 	*server_blobp = server_blob;
 	server_blob = NULL;
  out:
-	EC_KEY_free(server_key);
+	EC_सुसि_free(server_सुसि);
 	sshbuf_free(server_blob);
 	return r;
 }
 
 int
-kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
-    EC_KEY *key, const EC_GROUP *group, int raw, struct sshbuf **shared_secretp)
+kex_ecdh_dec_सुसि_group(struct kex *kex, const struct sshbuf *ec_blob,
+    EC_सुसि *सुसि, const EC_GROUP *group, int raw, struct sshbuf **shared_secretp)
 {
 	struct sshbuf *buf = NULL;
 	BIGNUM *shared_secret = NULL;
@@ -170,7 +170,7 @@ kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (ECDH_compute_key(kbuf, klen, dh_pub, key, NULL) != (int)klen) {
+	if (ECDH_compute_सुसि(kbuf, klen, dh_pub, सुसि, NULL) != (int)klen) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -208,10 +208,10 @@ kex_ecdh_dec(struct kex *kex, const struct sshbuf *server_blob,
 {
 	int r;
 
-	r = kex_ecdh_dec_key_group(kex, server_blob, kex->ec_client_key,
+	r = kex_ecdh_dec_सुसि_group(kex, server_blob, kex->ec_client_सुसि,
 	    kex->ec_group, 0, shared_secretp);
-	EC_KEY_free(kex->ec_client_key);
-	kex->ec_client_key = NULL;
+	EC_सुसि_free(kex->ec_client_सुसि);
+	kex->ec_client_सुसि = NULL;
 	return r;
 }
 

@@ -39,7 +39,7 @@
 #include "misc.h"
 
 int
-ssh_msg_send(int fd, u_char type, struct sshbuf *m)
+ssh_मेनसाहे_send(int fd, u_char type, struct sshbuf *m)
 {
 	u_char buf[5];
 	u_int mlen = sshbuf_len(m);
@@ -61,10 +61,10 @@ ssh_msg_send(int fd, u_char type, struct sshbuf *m)
 }
 
 int
-ssh_msg_recv(int fd, struct sshbuf *m)
+ssh_मेनसाहे_recv(int fd, struct sshbuf *m)
 {
 	u_char buf[4], *p;
-	u_int msg_len;
+	u_int मेनसाहे_len;
 	int r;
 
 	debug3("ssh_msg_recv entering");
@@ -74,17 +74,17 @@ ssh_msg_recv(int fd, struct sshbuf *m)
 			error_f("read header: %s", strerror(errno));
 		return (-1);
 	}
-	msg_len = get_u32(buf);
-	if (msg_len > sshbuf_max_size(m)) {
-		error_f("read: bad msg_len %u", msg_len);
+	मेनसाहे_len = get_u32(buf);
+	if (मेनसाहे_len > sshbuf_max_size(m)) {
+		error_f("read: bad msg_len %u", मेनसाहे_len);
 		return (-1);
 	}
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0) {
+	if ((r = sshbuf_reserve(m, मेनसाहे_len, &p)) != 0) {
 		error_fr(r, "reserve");
 		return -1;
 	}
-	if (atomicio(read, fd, p, msg_len) != msg_len) {
+	if (atomicio(read, fd, p, मेनसाहे_len) != मेनसाहे_len) {
 		error_f("read: %s", strerror(errno));
 		return (-1);
 	}

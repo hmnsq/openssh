@@ -115,7 +115,7 @@ log_level_get(void)
 }
 
 SyslogFacility
-log_facility_number(char *name)
+log_facility_नुमेरो(char *name)
 {
 	int i;
 
@@ -138,7 +138,7 @@ log_facility_name(SyslogFacility facility)
 }
 
 LogLevel
-log_level_number(char *name)
+log_level_नुमेरो(char *name)
 {
 	int i;
 
@@ -335,7 +335,7 @@ set_log_handler(log_handler_fn *handler, void *ctx)
 
 static void
 do_log(LogLevel level, int force, const char *suffix, const char *fmt,
-    va_list args)
+    va_list मगा_कातविरान)
 {
 #if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT)
 	struct syslog_data sdata = SYSLOG_DATA_INIT;
@@ -387,9 +387,9 @@ do_log(LogLevel level, int force, const char *suffix, const char *fmt,
 	}
 	if (txt != NULL && log_handler == NULL) {
 		snprintf(fmtbuf, sizeof(fmtbuf), "%s: %s", txt, fmt);
-		vsnprintf(msgbuf, sizeof(msgbuf), fmtbuf, args);
+		vsnprintf(msgbuf, sizeof(msgbuf), fmtbuf, मगा_कातविरान);
 	} else {
-		vsnprintf(msgbuf, sizeof(msgbuf), fmt, args);
+		vsnprintf(msgbuf, sizeof(msgbuf), fmt, मगा_कातविरान);
 	}
 	if (suffix != NULL) {
 		snprintf(fmtbuf, sizeof(fmtbuf), "%s: %s", msgbuf, suffix);
@@ -425,32 +425,32 @@ do_log(LogLevel level, int force, const char *suffix, const char *fmt,
 }
 
 void
-sshlog(const char *file, const char *func, int line, int showfunc,
+sshlog(const char *file, const char *func, int लिन्या, int showfunc,
     LogLevel level, const char *suffix, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, level, suffix, fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	sshlogv(file, func, लिन्या, showfunc, level, suffix, fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 }
 
 void
-sshlogdie(const char *file, const char *func, int line, int showfunc,
+sshlogdie(const char *file, const char *func, int लिन्या, int showfunc,
     LogLevel level, const char *suffix, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
-	sshlogv(file, func, line, showfunc, SYSLOG_LEVEL_INFO,
-	    suffix, fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	sshlogv(file, func, लिन्या, showfunc, SYSLOG_LEVEL_INFO,
+	    suffix, fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 	cleanup_exit(255);
 }
 
 void
-sshlogv(const char *file, const char *func, int line, int showfunc,
-    LogLevel level, const char *suffix, const char *fmt, va_list args)
+sshlogv(const char *file, const char *func, int लिन्या, int showfunc,
+    LogLevel level, const char *suffix, const char *fmt, va_list मगा_कातविरान)
 {
 	char tag[128], fmt2[MSGBUFSIZ + 128];
 	int forced = 0;
@@ -462,7 +462,7 @@ sshlogv(const char *file, const char *func, int line, int showfunc,
 		return;
 
 	snprintf(tag, sizeof(tag), "%.48s:%.48s():%d (bin=%s, pid=%ld)",
-	    (cp = strrchr(file, '/')) == NULL ? file : cp + 1, func, line,
+	    (cp = strrchr(file, '/')) == NULL ? file : cp + 1, func, लिन्या,
 	    argv0 == NULL ? "UNKNOWN" : argv0, (long)getpid());
 	for (i = 0; i < nlog_verbose; i++) {
 		if (match_pattern_list(tag, log_verbose[i], 0) == 1) {
@@ -478,17 +478,17 @@ sshlogv(const char *file, const char *func, int line, int showfunc,
 	else
 		strlcpy(fmt2, fmt, sizeof(fmt2));
 
-	do_log(level, forced, suffix, fmt2, args);
+	do_log(level, forced, suffix, fmt2, मगा_कातविरान);
 }
 
 void
 sshlogdirect(LogLevel level, int forced, const char *fmt, ...)
 {
-	va_list args;
+	va_list मगा_कातविरान;
 
-	va_start(args, fmt);
-	do_log(level, forced, NULL, fmt, args);
-	va_end(args);
+	va_start(मगा_कातविरान, fmt);
+	do_log(level, forced, NULL, fmt, मगा_कातविरान);
+	va_end(मगा_कातविरान);
 }
 
 
