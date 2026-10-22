@@ -15,21 +15,21 @@
  */
 
 #define SSH_DONT_OVERLOAD_OPENSSL_FUNCS
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifdef WITH_OPENSSL
 
-#include <stdarg.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
 #ifdef USE_OPENSSL_ENGINE
 # include <openssl/engine.h>
 # include <openssl/conf.h>
 #endif
 
-#include "log.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
 
-#include "openssl-compat.h"
+#ଅନ୍ତର୍ଭାଵ "openssl-compat.h"
 
 /*
  * OpenSSL version numbers: MNNFFPPS: major minor fix patch status.
@@ -40,21 +40,21 @@
  * See https://www.openssl.org/policies/releasestrat.html
  */
 
-int
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 ssh_compatible_openssl(long headerver, long libver)
 {
 	long mask, hfix, lfix;
 
 	/* exact match is always OK */
-	if (headerver == libver)
-		return 1;
+	ଯଦି (headerver == libver)
+		ଫେରନ୍ତୁ 1;
 
 	/*
 	 * For versions >= 3.0, only the major must match.
 	 */
-	if (headerver >= 0x30000000) {
+	ଯଦି (headerver >= 0x30000000) {
 		mask = 0xf0000000L; /* major only */
-		return (headerver & mask) == (libver & mask);
+		ଫେରନ୍ତୁ (headerver & mask) == (libver & mask);
 	}
 
 	/*
@@ -64,13 +64,13 @@ ssh_compatible_openssl(long headerver, long libver)
 	mask = 0xfff0000fL; /* major,minor,status */
 	hfix = (headerver & 0x000ff000) >> 12;
 	lfix = (libver & 0x000ff000) >> 12;
-	if ( (headerver & mask) == (libver & mask) && lfix >= hfix)
-		return 1;
-	return 0;
+	ଯଦି ( (headerver & mask) == (libver & mask) && lfix >= hfix)
+		ଫେରନ୍ତୁ 1;
+	ଫେରନ୍ତୁ 0;
 }
 
-int
-ssh_libcrypto_init(void)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_libcrypto_init(ଶୂନ୍ୟ)
 {
 	uint64_t opts = OPENSSL_INIT_ADD_ALL_CIPHERS |
 	    OPENSSL_INIT_ADD_ALL_DIGESTS;
@@ -84,32 +84,32 @@ ssh_libcrypto_init(void)
 	opts |= OPENSSL_INIT_LOAD_CONFIG;
 #endif /* USE_OPENSSL_ENGINE */
 
-	return OPENSSL_init_crypto(opts, NULL);
+	ଫେରନ୍ତୁ OPENSSL_init_crypto(opts, ଖାଲି);
 }
 
 #ifndef HAVE_EVP_DIGESTSIGN
-int
-EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sigret, size_t *siglen,
-    const unsigned char *tbs, size_t tbslen)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+EVP_DigestSign(EVP_MD_CTX *ctx, unsigned ଅକ୍ଷର *sigret, size_t *siglen,
+    ଅଚଳ unsigned ଅକ୍ଷର *tbs, size_t tbslen)
 {
-	if (sigret != NULL) {
-		if (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
-			return 0;
+	ଯଦି (sigret != ଖାଲି) {
+		ଯଦି (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
+			ଫେରନ୍ତୁ 0;
 	}
 
-	return EVP_DigestSignFinal(ctx, sigret, siglen);
+	ଫେରନ୍ତୁ EVP_DigestSignFinal(ctx, sigret, siglen);
 }
 #endif
 
 #ifndef HAVE_EVP_DIGESTVERIFY
-int
-EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned char *sigret, size_t siglen,
-    const unsigned char *tbs, size_t tbslen)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+EVP_DigestVerify(EVP_MD_CTX *ctx, ଅଚଳ unsigned ଅକ୍ଷର *sigret, size_t siglen,
+    ଅଚଳ unsigned ଅକ୍ଷର *tbs, size_t tbslen)
 {
-	if (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
-		return -1;
+	ଯଦି (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
+		ଫେରନ୍ତୁ -1;
 
-	return EVP_DigestVerifyFinal(ctx, sigret, siglen);
+	ଫେରନ୍ତୁ EVP_DigestVerifyFinal(ctx, sigret, siglen);
 }
 #endif
 

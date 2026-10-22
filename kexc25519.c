@@ -25,175 +25,175 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <signal.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
-#include "ssh2.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "kex.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "digest.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "ssh2.h"
 
-extern int crypto_scalarmult_curve25519(u_char a[CURVE25519_SIZE],
-    const u_char b[CURVE25519_SIZE], const u_char c[CURVE25519_SIZE])
+ବାହ୍ୟ ପୂର୍ଣ୍ଣସଂଖ୍ୟା crypto_scalarmult_curve25519(u_char a[CURVE25519_SIZE],
+    ଅଚଳ u_char b[CURVE25519_SIZE], ଅଚଳ u_char c[CURVE25519_SIZE])
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 3, CURVE25519_SIZE)));
 
-void
-kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
+ଶୂନ୍ୟ
+kexc25519_keygen(u_char ଚାବି[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
 {
-	static const u_char basepoint[CURVE25519_SIZE] = {9};
+	ସ୍ଥିର ଅଚଳ u_char basepoint[CURVE25519_SIZE] = {9};
 
-	arc4random_buf(key, CURVE25519_SIZE);
-	crypto_scalarmult_curve25519(pub, key, basepoint);
+	arc4random_buf(ଚାବି, CURVE25519_SIZE);
+	crypto_scalarmult_curve25519(pub, ଚାବି, basepoint);
 }
 
-int
-kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int raw)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+kexc25519_shared_ଚାବି_ext(ଅଚଳ u_char ଚାବି[CURVE25519_SIZE],
+    ଅଚଳ u_char pub[CURVE25519_SIZE], ସଂରଚନା sshbuf *out, ପୂର୍ଣ୍ଣସଂଖ୍ୟା raw)
 {
-	u_char shared_key[CURVE25519_SIZE];
+	u_char shared_ଚାବି[CURVE25519_SIZE];
 	u_char zero[CURVE25519_SIZE];
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	crypto_scalarmult_curve25519(shared_key, key, pub);
+	crypto_scalarmult_curve25519(shared_ଚାବି, ଚାବି, pub);
 
 	/* Check for all-zero shared secret */
 	explicit_bzero(zero, CURVE25519_SIZE);
-	if (timingsafe_bcmp(zero, shared_key, CURVE25519_SIZE) == 0)
-		return SSH_ERR_KEY_INVALID_EC_VALUE;
+	ଯଦି (timingsafe_bcmp(zero, shared_ଚାବି, CURVE25519_SIZE) == 0)
+		ଫେରନ୍ତୁ SSH_ERR_ଚାବି_INVALID_EC_ମୂଲ୍ୟ;
 
 #ifdef DEBUG_KEXECDH
-	dump_digest("shared secret 25519", shared_key, CURVE25519_SIZE);
+	dump_digest("shared secret 25519", shared_ଚାବି, CURVE25519_SIZE);
 #endif
-	if (raw)
-		r = sshbuf_put(out, shared_key, CURVE25519_SIZE);
-	else
-		r = sshbuf_put_bignum2_bytes(out, shared_key, CURVE25519_SIZE);
-	explicit_bzero(shared_key, CURVE25519_SIZE);
-	return r;
+	ଯଦି (raw)
+		r = sshbuf_put(out, shared_ଚାବି, CURVE25519_SIZE);
+	ଅନ୍ୟଥା
+		r = sshbuf_put_bignum2_bytes(out, shared_ଚାବି, CURVE25519_SIZE);
+	explicit_bzero(shared_ଚାବି, CURVE25519_SIZE);
+	ଫେରନ୍ତୁ r;
 }
 
-int
-kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+kexc25519_shared_ଚାବି(ଅଚଳ u_char ଚାବି[CURVE25519_SIZE],
+    ଅଚଳ u_char pub[CURVE25519_SIZE], ସଂରଚନା sshbuf *out)
 {
-	return kexc25519_shared_key_ext(key, pub, out, 0);
+	ଫେରନ୍ତୁ kexc25519_shared_ଚାବି_ext(ଚାବି, pub, out, 0);
 }
 
-int
-kex_c25519_keypair(struct kex *kex)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+kex_c25519_keypair(ସଂରଚନା kex *kex)
 {
-	struct sshbuf *buf = NULL;
-	u_char *cp = NULL;
-	int r;
+	ସଂରଚନା sshbuf *buf = ଖାଲି;
+	u_char *cp = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_reserve(buf, CURVE25519_SIZE, &cp)) != 0)
-		goto out;
-	kexc25519_keygen(kex->c25519_client_key, cp);
+	ଯଦି ((buf = sshbuf_new()) == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
+	ଯଦି ((r = sshbuf_reserve(buf, CURVE25519_SIZE, &cp)) != 0)
+		ଯାଅ out;
+	kexc25519_keygen(kex->c25519_client_ଚାବି, cp);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key c25519:", cp, CURVE25519_SIZE);
 #endif
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = ଖାଲି;
  out:
 	sshbuf_free(buf);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
-int
-kex_c25519_enc(struct kex *kex, const struct sshbuf *client_blob,
-   struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+kex_c25519_enc(ସଂରଚନା kex *kex, ଅଚଳ ସଂରଚନା sshbuf *client_blob,
+   ସଂରଚନା sshbuf **server_blobp, ସଂରଚନା sshbuf **shared_secretp)
 {
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *buf = NULL;
-	const u_char *client_pub;
+	ସଂରଚନା sshbuf *server_blob = ଖାଲି;
+	ସଂରଚନା sshbuf *buf = ଖାଲି;
+	ଅଚଳ u_char *client_pub;
 	u_char *server_pub;
-	u_char server_key[CURVE25519_SIZE];
-	int r;
+	u_char server_ଚାବି[CURVE25519_SIZE];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = ଖାଲି;
+	*shared_secretp = ଖାଲି;
 
-	if (sshbuf_len(client_blob) != CURVE25519_SIZE) {
+	ଯଦି (sshbuf_len(client_blob) != CURVE25519_SIZE) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		ଯାଅ out;
 	}
 	client_pub = sshbuf_ptr(client_blob);
 #ifdef DEBUG_KEXECDH
 	dump_digest("client public key 25519:", client_pub, CURVE25519_SIZE);
 #endif
 	/* allocate space for encrypted KEM key and ECDH pub key */
-	if ((server_blob = sshbuf_new()) == NULL) {
+	ଯଦି ((server_blob = sshbuf_new()) == ଖାଲି) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ଯାଅ out;
 	}
-	if ((r = sshbuf_reserve(server_blob, CURVE25519_SIZE, &server_pub)) != 0)
-		goto out;
-	kexc25519_keygen(server_key, server_pub);
+	ଯଦି ((r = sshbuf_reserve(server_blob, CURVE25519_SIZE, &server_pub)) != 0)
+		ଯାଅ out;
+	kexc25519_keygen(server_ଚାବି, server_pub);
 	/* allocate shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	ଯଦି ((buf = sshbuf_new()) == ଖାଲି) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ଯାଅ out;
 	}
-	if ((r = kexc25519_shared_key_ext(server_key, client_pub, buf, 0)) < 0)
-		goto out;
+	ଯଦି ((r = kexc25519_shared_ଚାବି_ext(server_ଚାବି, client_pub, buf, 0)) < 0)
+		ଯାଅ out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("server public key 25519:", server_pub, CURVE25519_SIZE);
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	*server_blobp = server_blob;
 	*shared_secretp = buf;
-	server_blob = NULL;
-	buf = NULL;
+	server_blob = ଖାଲି;
+	buf = ଖାଲି;
  out:
-	explicit_bzero(server_key, sizeof(server_key));
+	explicit_bzero(server_ଚାବି, ଆକାର(server_ଚାବି));
 	sshbuf_free(server_blob);
 	sshbuf_free(buf);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
-int
-kex_c25519_dec(struct kex *kex, const struct sshbuf *server_blob,
-    struct sshbuf **shared_secretp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+kex_c25519_dec(ସଂରଚନା kex *kex, ଅଚଳ ସଂରଚନା sshbuf *server_blob,
+    ସଂରଚନା sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	const u_char *server_pub;
-	int r;
+	ସଂରଚନା sshbuf *buf = ଖାଲି;
+	ଅଚଳ u_char *server_pub;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = ଖାଲି;
 
-	if (sshbuf_len(server_blob) != CURVE25519_SIZE) {
+	ଯଦି (sshbuf_len(server_blob) != CURVE25519_SIZE) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		ଯାଅ out;
 	}
 	server_pub = sshbuf_ptr(server_blob);
 #ifdef DEBUG_KEXECDH
 	dump_digest("server public key c25519:", server_pub, CURVE25519_SIZE);
 #endif
 	/* shared secret */
-	if ((buf = sshbuf_new()) == NULL) {
+	ଯଦି ((buf = sshbuf_new()) == ଖାଲି) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ଯାଅ out;
 	}
-	if ((r = kexc25519_shared_key_ext(kex->c25519_client_key, server_pub,
+	ଯଦି ((r = kexc25519_shared_ଚାବି_ext(kex->c25519_client_ଚାବି, server_pub,
 	    buf, 0)) < 0)
-		goto out;
+		ଯାଅ out;
 #ifdef DEBUG_KEXECDH
 	dump_digest("encoded shared secret:", sshbuf_ptr(buf), sshbuf_len(buf));
 #endif
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = ଖାଲି;
  out:
 	sshbuf_free(buf);
-	return r;
+	ଫେରନ୍ତୁ r;
 }

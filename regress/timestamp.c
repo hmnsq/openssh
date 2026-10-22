@@ -22,25 +22,25 @@
  * so that they'll sort into chronological order.
  */
 
-#include <sys/time.h>
+#ଅନ୍ତର୍ଭାଵ <sys/time.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <time.h>
 
-int
-main(void)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ମୁଖ୍ୟ(ଶୂନ୍ୟ)
 {
-	struct timeval tv;
-	struct tm *tm;
-	char buf[1024];
+	ସଂରଚନା timeval tv;
+	ସଂରଚନା tm *tm;
+	ଅକ୍ଷର buf[1024];
 
-	if (gettimeofday(&tv, NULL) != 0)
+	ଯଦି (gettimeofday(&tv, ଖାଲି) != 0)
 		exit(1);
-	if ((tm = localtime(&tv.tv_sec)) == NULL)
+	ଯଦି ((tm = localtime(&tv.tv_sec)) == ଖାଲି)
 		exit(2);
-	if (strftime(buf, sizeof buf, "%Y%m%dT%H%M%S", tm) <= 0)
+	ଯଦି (strftime(buf, ଆକାର buf, "%Y%m%dT%H%M%S", tm) <= 0)
 		exit(3);
-	printf("%s.%06d\n", buf, (int)tv.tv_usec);
+	printf("%s.%06d\n", buf, (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)tv.tv_usec);
 	exit(0);
 }

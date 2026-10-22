@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# ଯଦି defined __cplusplus
 #  define __THROW throw()
-# else
+# ଅନ୍ୟଥା
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#ଯଦି 0
+ସଂରଚନା option {
 	/* name of long option */
-	const char *name;
+	ଅଚଳ ଅକ୍ଷର *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 getopt_long(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅକ୍ଷର * ଅଚଳ *, ଅଚଳ ଅକ୍ଷର *,
+	    ଅଚଳ ସଂରଚନା option *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 getopt_long_only(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅକ୍ଷର * ଅଚଳ *, ଅଚଳ ଅକ୍ଷର *,
+	    ଅଚଳ ସଂରଚନା option *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 getopt(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅକ୍ଷର * ଅଚଳ *, ଅଚଳ ଅକ୍ଷର *) __THROW;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 getsubopt(ଅକ୍ଷର **, ଅକ୍ଷର * ଅଚଳ *, ଅକ୍ଷର **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+ବାହ୍ୟ   ଅକ୍ଷର *optarg;                  /* getopt(3) external variables */
+ବାହ୍ୟ   ପୂର୍ଣ୍ଣସଂଖ୍ୟା opterr;
+ବାହ୍ୟ   ପୂର୍ଣ୍ଣସଂଖ୍ୟା optind;
+ବାହ୍ୟ   ପୂର୍ଣ୍ଣସଂଖ୍ୟା optopt;
+ବାହ୍ୟ   ପୂର୍ଣ୍ଣସଂଖ୍ୟା optreset;
+ବାହ୍ୟ   ଅକ୍ଷର *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

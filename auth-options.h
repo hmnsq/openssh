@@ -19,8 +19,8 @@
 #ifndef AUTH_OPTIONS_H
 #define AUTH_OPTIONS_H
 
-struct passwd;
-struct sshkey;
+ସଂରଚନା passwd;
+ସଂରଚନା sshkey;
 
 /* Maximum number of permitopen/permitlisten directives to accept */
 #define SSH_AUTHOPT_PERMIT_MAX	4096
@@ -32,75 +32,75 @@ struct sshkey;
  * sshauthopt represents key options parsed from authorized_keys or
  * from certificate extensions/options.
  */
-struct sshauthopt {
+ସଂରଚନା sshauthopt {
 	/* Feature flags */
-	int permit_port_forwarding_flag;
-	int permit_agent_forwarding_flag;
-	int permit_x11_forwarding_flag;
-	int permit_pty_flag;
-	int permit_user_rc;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା permit_port_forwarding_flag;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା permit_agent_forwarding_flag;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା permit_x11_forwarding_flag;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା permit_pty_flag;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା permit_user_rc;
 
 	/* "restrict" keyword was invoked */
-	int restricted;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା restricted;
 
 	/* key/principal expiry date */
 	uint64_t valid_before;
 
 	/* Certificate-related options */
-	int cert_authority;
-	char *cert_principals;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା cert_authority;
+	ଅକ୍ଷର *cert_principals;
 
-	int force_tun_device;
-	char *force_command;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା force_tun_device;
+	ଅକ୍ଷର *force_command;
 
 	/* Custom environment */
 	size_t nenv;
-	char **env;
+	ଅକ୍ଷର **env;
 
 	/* Permitted port forwardings */
 	size_t npermitopen;
-	char **permitopen;
+	ଅକ୍ଷର **permitopen;
 
 	/* Permitted listens (remote forwarding) */
 	size_t npermitlisten;
-	char **permitlisten;
+	ଅକ୍ଷର **permitlisten;
 
 	/*
 	 * Permitted host/addresses (comma-separated)
 	 * Caller must check source address matches both lists (if present).
 	 */
-	char *required_from_host_cert;
-	char *required_from_host_keys;
+	ଅକ୍ଷର *required_from_host_cert;
+	ଅକ୍ଷର *required_from_host_ଚାବିଗୁଡ଼ିକ;
 
 	/* Key requires user presence asserted */
-	int no_require_user_presence;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା no_require_user_presence;
 	/* Key requires user verification (e.g. PIN) */
-	int require_verify;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା require_verify;
 };
 
-struct sshauthopt *sshauthopt_new(void);
-struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
-void sshauthopt_free(struct sshauthopt *opts);
-struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
-int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);
-int sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
+ସଂରଚନା sshauthopt *sshauthopt_new(ଶୂନ୍ୟ);
+ସଂରଚନା sshauthopt *sshauthopt_new_with_ଚାବିଗୁଡ଼ିକ_defaults(ଶୂନ୍ୟ);
+ଶୂନ୍ୟ sshauthopt_free(ସଂରଚନା sshauthopt *opts);
+ସଂରଚନା sshauthopt *sshauthopt_copy(ଅଚଳ ସଂରଚନା sshauthopt *orig);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା sshauthopt_serialise(ଅଚଳ ସଂରଚନା sshauthopt *opts, ସଂରଚନା sshbuf *m, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା sshauthopt_deserialise(ସଂରଚନା sshbuf *m, ସଂରଚନା sshauthopt **opts);
 
 /*
  * Parse authorized_keys options. Returns an options structure on success
  * or NULL on failure. Will set errstr on failure.
  */
-struct sshauthopt *sshauthopt_parse(const char *s, const char **errstr);
+ସଂରଚନା sshauthopt *sshauthopt_parse(ଅଚଳ ଅକ୍ଷର *s, ଅଚଳ ଅକ୍ଷର **errstr);
 
 /*
  * Parse certification options to a struct sshauthopt.
  * Returns options on success or NULL on failure.
  */
-struct sshauthopt *sshauthopt_from_cert(struct sshkey *k);
+ସଂରଚନା sshauthopt *sshauthopt_from_cert(ସଂରଚନା sshkey *k);
 
 /*
  * Merge key options.
  */
-struct sshauthopt *sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp);
+ସଂରଚନା sshauthopt *sshauthopt_merge(ଅଚଳ ସଂରଚନା sshauthopt *primary,
+    ଅଚଳ ସଂରଚନା sshauthopt *additional, ଅଚଳ ଅକ୍ଷର **errstrp);
 
 #endif

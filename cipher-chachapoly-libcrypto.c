@@ -15,59 +15,59 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#ଅନ୍ତର୍ଭାଵ "openbsd-compat/openssl-compat.h"
 #endif
 
-#if defined(HAVE_EVP_CHACHA20) && !defined(HAVE_BROKEN_CHACHA20)
+#ଯଦି defined(HAVE_EVP_CHACHA20) && !defined(HAVE_BROKEN_CHACHA20)
 
-#include <sys/types.h>
-#include <string.h>
-#include <stdio.h>  /* needed for misc.h */
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>  /* needed for misc.h */
 
-#include <openssl/evp.h>
+#ଅନ୍ତର୍ଭାଵ <openssl/evp.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "cipher-chachapoly.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "cipher-chachapoly.h"
 
-struct chachapoly_ctx {
+ସଂରଚନା chachapoly_ctx {
 	EVP_CIPHER_CTX *main_evp, *header_evp;
 };
 
-struct chachapoly_ctx *
-chachapoly_new(const u_char *key, u_int keylen)
+ସଂରଚନା chachapoly_ctx *
+chachapoly_new(ଅଚଳ u_char *ଚାବି, u_int keylen)
 {
-	struct chachapoly_ctx *ctx;
+	ସଂରଚନା chachapoly_ctx *ctx;
 
-	if (keylen != (32 + 32)) /* 2 x 256 bit keys */
-		return NULL;
-	if ((ctx = calloc(1, sizeof(*ctx))) == NULL)
-		return NULL;
-	if ((ctx->main_evp = EVP_CIPHER_CTX_new()) == NULL ||
-	    (ctx->header_evp = EVP_CIPHER_CTX_new()) == NULL)
-		goto fail;
-	if (!EVP_CipherInit(ctx->main_evp, EVP_chacha20(), key, NULL, 1))
-		goto fail;
-	if (!EVP_CipherInit(ctx->header_evp, EVP_chacha20(), key + 32, NULL, 1))
-		goto fail;
-	if (EVP_CIPHER_CTX_iv_length(ctx->header_evp) != 16)
-		goto fail;
-	return ctx;
+	ଯଦି (keylen != (32 + 32)) /* 2 x 256 bit keys */
+		ଫେରନ୍ତୁ ଖାଲି;
+	ଯଦି ((ctx = calloc(1, ଆକାର(*ctx))) == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
+	ଯଦି ((ctx->main_evp = EVP_CIPHER_CTX_new()) == ଖାଲି ||
+	    (ctx->header_evp = EVP_CIPHER_CTX_new()) == ଖାଲି)
+		ଯାଅ fail;
+	ଯଦି (!EVP_CipherInit(ctx->main_evp, EVP_chacha20(), ଚାବି, ଖାଲି, 1))
+		ଯାଅ fail;
+	ଯଦି (!EVP_CipherInit(ctx->header_evp, EVP_chacha20(), ଚାବି + 32, ଖାଲି, 1))
+		ଯାଅ fail;
+	ଯଦି (EVP_CIPHER_CTX_iv_length(ctx->header_evp) != 16)
+		ଯାଅ fail;
+	ଫେରନ୍ତୁ ctx;
  fail:
 	chachapoly_free(ctx);
-	return NULL;
+	ଫେରନ୍ତୁ ଖାଲି;
 }
 
-void
-chachapoly_free(struct chachapoly_ctx *cpctx)
+ଶୂନ୍ୟ
+chachapoly_free(ସଂରଚନା chachapoly_ctx *cpctx)
 {
-	if (cpctx == NULL)
-		return;
+	ଯଦି (cpctx == ଖାଲି)
+		ଫେରନ୍ତୁ;
 	EVP_CIPHER_CTX_free(cpctx->main_evp);
 	EVP_CIPHER_CTX_free(cpctx->header_evp);
-	freezero(cpctx, sizeof(*cpctx));
+	freezero(cpctx, ଆକାର(*cpctx));
 }
 
 /*
@@ -79,85 +79,85 @@ chachapoly_free(struct chachapoly_ctx *cpctx)
  * POLY1305_TAGLEN bytes at offset 'len'+'aadlen' as the authentication
  * tag. This tag is written on encryption and verified on decryption.
  */
-int
-chachapoly_crypt(struct chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
-    const u_char *src, u_int len, u_int aadlen, u_int authlen, int do_encrypt)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+chachapoly_crypt(ସଂରଚନା chachapoly_ctx *ctx, u_int seqnr, u_char *dest,
+    ଅଚଳ u_char *src, u_int len, u_int aadlen, u_int authlen, ପୂର୍ଣ୍ଣସଂଖ୍ୟା do_encrypt)
 {
 	u_char seqbuf[16]; /* layout: u64 counter || u64 seqno */
-	int r = SSH_ERR_INTERNAL_ERROR;
-	u_char expected_tag[POLY1305_TAGLEN], poly_key[POLY1305_KEYLEN];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r = SSH_ERR_INTERNAL_ERROR;
+	u_char expected_tag[POLY1305_TAGLEN], poly_ଚାବି[POLY1305_KEYLEN];
 
 	/*
 	 * Run ChaCha20 once to generate the Poly1305 key. The IV is the
 	 * packet sequence number.
 	 */
-	memset(seqbuf, 0, sizeof(seqbuf));
+	memset(seqbuf, 0, ଆକାର(seqbuf));
 	POKE_U64(seqbuf + 8, seqnr);
-	memset(poly_key, 0, sizeof(poly_key));
-	if (!EVP_CipherInit(ctx->main_evp, NULL, NULL, seqbuf, 1) ||
-	    EVP_Cipher(ctx->main_evp, poly_key,
-	    poly_key, sizeof(poly_key)) < 0) {
+	memset(poly_ଚାବି, 0, ଆକାର(poly_ଚାବି));
+	ଯଦି (!EVP_CipherInit(ctx->main_evp, ଖାଲି, ଖାଲି, seqbuf, 1) ||
+	    EVP_Cipher(ctx->main_evp, poly_ଚାବି,
+	    poly_ଚାବି, ଆକାର(poly_ଚାବି)) < 0) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		ଯାଅ out;
 	}
 
 	/* If decrypting, check tag before anything else */
-	if (!do_encrypt) {
-		const u_char *tag = src + aadlen + len;
+	ଯଦି (!do_encrypt) {
+		ଅଚଳ u_char *tag = src + aadlen + len;
 
-		poly1305_auth(expected_tag, src, aadlen + len, poly_key);
-		if (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
+		poly1305_auth(expected_tag, src, aadlen + len, poly_ଚାବି);
+		ଯଦି (timingsafe_bcmp(expected_tag, tag, POLY1305_TAGLEN) != 0) {
 			r = SSH_ERR_MAC_INVALID;
-			goto out;
+			ଯାଅ out;
 		}
 	}
 
 	/* Crypt additional data */
-	if (aadlen) {
-		if (!EVP_CipherInit(ctx->header_evp, NULL, NULL, seqbuf, 1) ||
+	ଯଦି (aadlen) {
+		ଯଦି (!EVP_CipherInit(ctx->header_evp, ଖାଲି, ଖାଲି, seqbuf, 1) ||
 		    EVP_Cipher(ctx->header_evp, dest, src, aadlen) < 0) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			ଯାଅ out;
 		}
 	}
 
 	/* Set Chacha's block counter to 1 */
 	seqbuf[0] = 1;
-	if (!EVP_CipherInit(ctx->main_evp, NULL, NULL, seqbuf, 1) ||
+	ଯଦି (!EVP_CipherInit(ctx->main_evp, ଖାଲି, ଖାଲି, seqbuf, 1) ||
 	    EVP_Cipher(ctx->main_evp, dest + aadlen, src + aadlen, len) < 0) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		ଯାଅ out;
 	}
 
 	/* If encrypting, calculate and append tag */
-	if (do_encrypt) {
+	ଯଦି (do_encrypt) {
 		poly1305_auth(dest + aadlen + len, dest, aadlen + len,
-		    poly_key);
+		    poly_ଚାବି);
 	}
 	r = 0;
  out:
-	explicit_bzero(expected_tag, sizeof(expected_tag));
-	explicit_bzero(seqbuf, sizeof(seqbuf));
-	explicit_bzero(poly_key, sizeof(poly_key));
-	return r;
+	explicit_bzero(expected_tag, ଆକାର(expected_tag));
+	explicit_bzero(seqbuf, ଆକାର(seqbuf));
+	explicit_bzero(poly_ଚାବି, ଆକାର(poly_ଚାବି));
+	ଫେରନ୍ତୁ r;
 }
 
 /* Decrypt and extract the encrypted packet length */
-int
-chachapoly_get_length(struct chachapoly_ctx *ctx,
-    u_int *plenp, u_int seqnr, const u_char *cp, u_int len)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+chachapoly_get_length(ସଂରଚନା chachapoly_ctx *ctx,
+    u_int *plenp, u_int seqnr, ଅଚଳ u_char *cp, u_int len)
 {
 	u_char buf[4], seqbuf[16];
 
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	memset(seqbuf, 0, sizeof(seqbuf));
+	ଯଦି (len < 4)
+		ଫେରନ୍ତୁ SSH_ERR_MESSAGE_INCOMPLETE;
+	memset(seqbuf, 0, ଆକାର(seqbuf));
 	POKE_U64(seqbuf + 8, seqnr);
-	if (!EVP_CipherInit(ctx->header_evp, NULL, NULL, seqbuf, 0))
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (EVP_Cipher(ctx->header_evp, buf, (u_char *)cp, sizeof(buf)) < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ଯଦି (!EVP_CipherInit(ctx->header_evp, ଖାଲି, ଖାଲି, seqbuf, 0))
+		ଫେରନ୍ତୁ SSH_ERR_LIBCRYPTO_ERROR;
+	ଯଦି (EVP_Cipher(ctx->header_evp, buf, (u_char *)cp, ଆକାର(buf)) < 0)
+		ଫେରନ୍ତୁ SSH_ERR_LIBCRYPTO_ERROR;
 	*plenp = PEEK_U32(buf);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 #endif /* defined(HAVE_EVP_CHACHA20) && !defined(HAVE_BROKEN_CHACHA20) */

@@ -35,33 +35,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <termios.h>
+#ଅନ୍ତର୍ଭାଵ <termios.h>
 
-struct ssh;
+ସଂରଚନା ssh;
 
 /* Client side main loop for the interactive session. */
-int	 client_loop(struct ssh *, int, int, int);
-int	 client_x11_get_proto(struct ssh *, const char *, const char *,
-	    u_int, u_int, char **, char **);
-void	 client_session2_setup(struct ssh *, int, int, int,
-	    const char *, struct termios *, int, struct sshbuf *, char **);
-char	 *client_request_tun_fwd(struct ssh *, int, int, int,
-    channel_open_fn *, void *);
-void	 client_stop_mux(void);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 client_loop(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 client_x11_get_proto(ସଂରଚନା ssh *, ଅଚଳ ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *,
+	    u_int, u_int, ଅକ୍ଷର **, ଅକ୍ଷର **);
+ଶୂନ୍ୟ	 client_session2_setup(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା,
+	    ଅଚଳ ଅକ୍ଷର *, ସଂରଚନା termios *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ସଂରଚନା sshbuf *, ଅକ୍ଷର **);
+ଅକ୍ଷର	 *client_request_tun_fwd(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା,
+    channel_open_fn *, ଶୂନ୍ୟ *);
+ଶୂନ୍ୟ	 client_stop_mux(ଶୂନ୍ୟ);
 
 /* Escape filter for protocol 2 sessions */
-void	*client_new_escape_filter_ctx(int);
-void	 client_filter_cleanup(struct ssh *, int, void *);
-int	 client_simple_escape_filter(struct ssh *, Channel *, char *, int);
+ଶୂନ୍ୟ	*client_new_escape_filter_ctx(ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ଶୂନ୍ୟ	 client_filter_cleanup(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଶୂନ୍ୟ *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 client_simple_escape_filter(ସଂରଚନା ssh *, Channel *, ଅକ୍ଷର *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 
 /* Global request confirmation callbacks */
-typedef void global_confirm_cb(struct ssh *, int, uint32_t, void *);
-void	 client_register_global_confirm(global_confirm_cb *, void *);
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଶୂନ୍ୟ global_confirm_cb(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, uint32_t, ଶୂନ୍ୟ *);
+ଶୂନ୍ୟ	 client_register_global_confirm(global_confirm_cb *, ଶୂନ୍ୟ *);
 
 /* Channel request confirmation callbacks */
-enum confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
-void client_expect_confirm(struct ssh *, int, const char *,
-    enum confirm_action);
+ଗଣନା confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
+ଶୂନ୍ୟ client_expect_confirm(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅଚଳ ଅକ୍ଷର *,
+    ଗଣନା confirm_action);
 
 /* Multiplexing protocol version */
 #define SSHMUX_VER			4
@@ -78,8 +78,8 @@ void client_expect_confirm(struct ssh *, int, const char *,
 #define SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
 #define SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
 
-void	muxserver_listen(struct ssh *);
-int	muxclient(const char *);
-void	mux_exit_message(struct ssh *, Channel *, int);
-void	mux_tty_alloc_failed(struct ssh *ssh, Channel *);
+ଶୂନ୍ୟ	muxserver_listen(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	muxclient(ଅଚଳ ଅକ୍ଷର *);
+ଶୂନ୍ୟ	mux_exit_message(ସଂରଚନା ssh *, Channel *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ଶୂନ୍ୟ	mux_tty_alloc_failed(ସଂରଚନା ssh *ssh, Channel *);
 

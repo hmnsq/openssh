@@ -25,9 +25,9 @@
 #ifndef _ENTROPY_H
 #define _ENTROPY_H
 
-struct sshbuf;
+ସଂରଚନା sshbuf;
 
-void seed_rng(void);
-void reseed_prngs(void);
+ଶୂନ୍ୟ seed_rng(ଶୂନ୍ୟ);
+ଶୂନ୍ୟ reseed_prngs(ଶୂନ୍ୟ);
 
 #endif /* _ENTROPY_H */

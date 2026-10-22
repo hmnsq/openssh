@@ -23,54 +23,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
 
-#include "packet.h"
-#include "ssherr.h"
-#include "log.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
+#ଅନ୍ତର୍ଭାଵ "packet.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "hostfile.h"
+#ଅନ୍ତର୍ଭାଵ "auth.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#ଅନ୍ତର୍ଭାଵ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "misc.h"
-#include "servconf.h"
+#ଅନ୍ତର୍ଭାଵ "monitor_wrap.h"
+#ଅନ୍ତର୍ଭାଵ "misc.h"
+#ଅନ୍ତର୍ଭାଵ "servconf.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_passwd;
+ବାହ୍ୟ ServerOptions options;
+ବାହ୍ୟ ସଂରଚନା authmethod_cfg methodcfg_passwd;
 
-static int
-userauth_passwd(struct ssh *ssh, const char *method)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+userauth_passwd(ସଂରଚନା ssh *ssh, ଅଚଳ ଅକ୍ଷର *method)
 {
-	char *password = NULL;
-	int authenticated = 0, r;
+	ଅକ୍ଷର *password = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା authenticated = 0, r;
 	u_char change;
 	size_t len = 0;
 
-	if ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
+	ଯଦି ((r = sshpkt_get_u8(ssh, &change)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &password, &len)) != 0 ||
-	    (change && (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0) ||
+	    (change && (r = sshpkt_get_cstring(ssh, ଖାଲି, ଖାଲି)) != 0) ||
 	    (r = sshpkt_get_end(ssh)) != 0) {
 		freezero(password, len);
 		fatal_fr(r, "parse packet");
 	}
 
-	if (change)
+	ଯଦି (change)
 		logit("password change not supported");
-	else if (mm_auth_password(ssh, password) == 1)
+	ଅନ୍ୟଥା ଯଦି (mm_auth_password(ssh, password) == 1)
 		authenticated = 1;
 	freezero(password, len);
-	return authenticated;
+	ଫେରନ୍ତୁ authenticated;
 }
 
 Authmethod method_passwd = {

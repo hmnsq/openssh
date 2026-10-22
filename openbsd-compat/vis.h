@@ -34,14 +34,14 @@
 
 /* OPENBSD ORIGINAL: include/vis.h */
 
-#include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#ଅନ୍ତର୍ଭାଵ "includes.h"
+#ଯଦି !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #ifndef _VIS_H_
 #define	_VIS_H_
 
-#include <sys/types.h>
-#include <limits.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <limits.h>
 
 /*
  * to select alternate encoding format
@@ -81,16 +81,16 @@
  */
 #define	UNVIS_END	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+ଅକ୍ଷର	*vis(ଅକ୍ଷର *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	strvis(ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	stravis(ଅକ୍ଷର **, ଅଚଳ ଅକ୍ଷର *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	strnvis(ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *, size_t, ପୂର୍ଣ୍ଣସଂଖ୍ୟା)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	strvisx(ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *, size_t, ପୂର୍ଣ୍ଣସଂଖ୍ୟା)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
-ssize_t strnunvis(char *, const char *, size_t)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	strunvis(ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	unvis(ଅକ୍ଷର *, ଅକ୍ଷର, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ssize_t strnunvis(ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 
 #endif /* !_VIS_H_ */

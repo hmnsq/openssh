@@ -35,90 +35,90 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/queue.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/wait.h>
+#ଅନ୍ତର୍ଭାଵ <sys/socket.h>
+#ଅନ୍ତର୍ଭାଵ <sys/time.h>
+#ଅନ୍ତର୍ଭାଵ <sys/queue.h>
 
-#include <netinet/in.h>
+#ଅନ୍ତର୍ଭାଵ <netinet/in.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <pwd.h>
-#include <limits.h>
-#include <poll.h>
-#include <signal.h>
-#include <string.h>
-#include <termios.h>
-#include <unistd.h>
-#include <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <pwd.h>
+#ଅନ୍ତର୍ଭାଵ <limits.h>
+#ଅନ୍ତର୍ଭାଵ <poll.h>
+#ଅନ୍ତର୍ଭାଵ <signal.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <termios.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
 
-#include "xmalloc.h"
-#include "packet.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "canohost.h"
-#include "sshpty.h"
-#include "channels.h"
-#include "ssh2.h"
-#include "sshkey.h"
-#include "cipher.h"
-#include "kex.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "session.h"
-#include "dispatch.h"
-#include "auth-options.h"
-#include "serverloop.h"
-#include "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "xmalloc.h"
+#ଅନ୍ତର୍ଭାଵ "packet.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "misc.h"
+#ଅନ୍ତର୍ଭାଵ "servconf.h"
+#ଅନ୍ତର୍ଭାଵ "canohost.h"
+#ଅନ୍ତର୍ଭାଵ "sshpty.h"
+#ଅନ୍ତର୍ଭାଵ "channels.h"
+#ଅନ୍ତର୍ଭାଵ "ssh2.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "cipher.h"
+#ଅନ୍ତର୍ଭାଵ "kex.h"
+#ଅନ୍ତର୍ଭାଵ "hostfile.h"
+#ଅନ୍ତର୍ଭାଵ "auth.h"
+#ଅନ୍ତର୍ଭାଵ "session.h"
+#ଅନ୍ତର୍ଭାଵ "dispatch.h"
+#ଅନ୍ତର୍ଭାଵ "auth-options.h"
+#ଅନ୍ତର୍ଭାଵ "serverloop.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
 
-extern ServerOptions options;
+ବାହ୍ୟ ServerOptions options;
 
 /* XXX */
-extern Authctxt *the_authctxt;
-extern struct sshauthopt *auth_opts;
+ବାହ୍ୟ Authctxt *the_authctxt;
+ବାହ୍ୟ ସଂରଚନା sshauthopt *auth_opts;
 
-static int no_more_sessions = 0; /* Disallow further sessions. */
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା no_more_sessions = 0; /* Disallow further sessions. */
 
-static volatile sig_atomic_t child_terminated = 0; /* set on SIGCHLD */
-static volatile sig_atomic_t siginfo_received = 0;
+ସ୍ଥିର ଅସ୍ଥିର sig_atomic_t child_terminated = 0; /* set on SIGCHLD */
+ସ୍ଥିର ଅସ୍ଥିର sig_atomic_t siginfo_received = 0;
 
 /* prototypes */
-static void server_init_dispatch(struct ssh *);
+ସ୍ଥିର ଶୂନ୍ୟ server_init_dispatch(ସଂରଚନା ssh *);
 
 /* requested tunnel forwarding interface(s), shared with session.c */
-char *tun_fwd_ifnames = NULL;
+ଅକ୍ଷର *tun_fwd_ifnames = ଖାଲି;
 
-static void
-sigchld_handler(int sig)
+ସ୍ଥିର ଶୂନ୍ୟ
+sigchld_handler(ପୂର୍ଣ୍ଣସଂଖ୍ୟା sig)
 {
 	child_terminated = 1;
 }
 
 #ifdef SIGINFO
-static void
-siginfo_handler(int sig)
+ସ୍ଥିର ଶୂନ୍ୟ
+siginfo_handler(ପୂର୍ଣ୍ଣସଂଖ୍ୟା sig)
 {
 	siginfo_received = 1;
 }
 #endif
 
-static void
-client_alive_check(struct ssh *ssh)
+ସ୍ଥିର ଶୂନ୍ୟ
+client_alive_check(ସଂରଚନା ssh *ssh)
 {
-	char remote_id[512];
-	int r, channel_id;
+	ଅକ୍ଷର remote_id[512];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, channel_id;
 
 	/* timeout, check to see how many we have had */
-	if (options.client_alive_count_max > 0 &&
+	ଯଦି (options.client_alive_ଗଣନା_max > 0 &&
 	    ssh_packet_inc_alive_timeouts(ssh) >
-	    options.client_alive_count_max) {
-		sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
+	    options.client_alive_ଗଣନା_max) {
+		sshpkt_fmt_connection_id(ssh, remote_id, ଆକାର(remote_id));
 		logit("Timeout, client not responding from %s", remote_id);
 		cleanup_exit(255);
 	}
@@ -127,17 +127,17 @@ client_alive_check(struct ssh *ssh)
 	 * send a bogus global/channel request with "wantreply",
 	 * we should get back a failure
 	 */
-	if ((channel_id = channel_find_open(ssh)) == -1) {
-		if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+	ଯଦି ((channel_id = channel_find_open(ssh)) == -1) {
+		ଯଦି ((r = sshpkt_start(ssh, SSH2_ସନ୍ଦେଶ_GLOBAL_REQUEST)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, "keepalive@openssh.com"))
 		    != 0 ||
 		    (r = sshpkt_put_u8(ssh, 1)) != 0) /* boolean: want reply */
 			fatal_fr(r, "compose");
-	} else {
+	} ଅନ୍ୟଥା {
 		channel_request_start(ssh, channel_id,
 		    "keepalive@openssh.com", 1);
 	}
-	if ((r = sshpkt_send(ssh)) != 0)
+	ଯଦି ((r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send");
 }
 
@@ -146,19 +146,19 @@ client_alive_check(struct ssh *ssh)
  * Optionally, a maximum time can be specified for the duration of
  * the wait (0 = infinite).
  */
-static void
-wait_until_can_do_something(struct ssh *ssh,
-    int connection_in, int connection_out, struct pollfd **pfdp,
+ସ୍ଥିର ଶୂନ୍ୟ
+wait_until_can_do_something(ସଂରଚନା ssh *ssh,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା connection_in, ପୂର୍ଣ୍ଣସଂଖ୍ୟା connection_out, ସଂରଚନା pollfd **pfdp,
     u_int *npfd_allocp, u_int *npfd_activep, sigset_t *sigsetp,
-    int *conn_in_readyp, int *conn_out_readyp)
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା *conn_in_readyp, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *conn_out_readyp)
 {
-	struct timespec timeout;
-	char remote_id[512];
-	int ret;
-	int client_alive_scheduled = 0;
+	ସଂରଚନା timespec timeout;
+	ଅକ୍ଷର remote_id[512];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା client_alive_scheduled = 0;
 	u_int p;
 	time_t now;
-	static time_t last_client_time, unused_connection_expiry;
+	ସ୍ଥିର time_t last_client_time, unused_connection_expiry;
 
 	*conn_in_readyp = *conn_out_readyp = 0;
 
@@ -166,9 +166,9 @@ wait_until_can_do_something(struct ssh *ssh,
 	ptimeout_init(&timeout);
 	channel_prepare_poll(ssh, pfdp, npfd_allocp, npfd_activep, 2, &timeout);
 	now = monotime();
-	if (*npfd_activep < 2)
+	ଯଦି (*npfd_activep < 2)
 		fatal_f("bad npfd %u", *npfd_activep); /* shouldn't happen */
-	if (options.rekey_interval > 0 && !ssh_packet_is_rekeying(ssh)) {
+	ଯଦି (options.rekey_interval > 0 && !ssh_packet_is_rekeying(ssh)) {
 		ptimeout_deadline_sec(&timeout,
 		    ssh_packet_get_rekey_timeout(ssh));
 	}
@@ -177,15 +177,15 @@ wait_until_can_do_something(struct ssh *ssh,
 	 * If no channels are open and UnusedConnectionTimeout is set, then
 	 * start the clock to terminate the connection.
 	 */
-	if (options.unused_connection_timeout != 0) {
-		if (channel_still_open(ssh))
+	ଯଦି (options.unused_connection_timeout != 0) {
+		ଯଦି (channel_still_open(ssh))
 			unused_connection_expiry = 0;
-		else if (unused_connection_expiry == 0) {
+		ଅନ୍ୟଥା ଯଦି (unused_connection_expiry == 0) {
 			unused_connection_expiry = now +
 			    options.unused_connection_timeout;
 		}
 	}
-	if (unused_connection_expiry != 0)
+	ଯଦି (unused_connection_expiry != 0)
 		ptimeout_deadline_monotime(&timeout, unused_connection_expiry);
 
 	/*
@@ -196,18 +196,18 @@ wait_until_can_do_something(struct ssh *ssh,
 	 * this could be randomized somewhat to make traffic
 	 * analysis more difficult, but we're not doing it yet.
 	 */
-	if (options.client_alive_interval) {
+	ଯଦି (options.client_alive_interval) {
 		/* Time we last heard from the client OR sent a keepalive */
-		if (last_client_time == 0)
+		ଯଦି (last_client_time == 0)
 			last_client_time = now;
 		ptimeout_deadline_sec(&timeout, options.client_alive_interval);
 		/* XXX ? deadline_monotime(last_client_time + alive_interval) */
 		client_alive_scheduled = 1;
 	}
 
-#if 0
+#ଯଦି 0
 	/* wrong: bad condition XXX */
-	if (channel_not_very_much_buffered_data())
+	ଯଦି (channel_not_very_much_buffered_data())
 #endif
 	/* Monitor client connection on reserved pollfd entries */
 	(*pfdp)[0].fd = connection_in;
@@ -219,18 +219,18 @@ wait_until_can_do_something(struct ssh *ssh,
 	 * If child has terminated and there is enough buffer space to read
 	 * from it, then read as much as is available and exit.
 	 */
-	if (child_terminated && ssh_packet_not_very_much_data_to_write(ssh))
+	ଯଦି (child_terminated && ssh_packet_not_very_much_data_to_write(ssh))
 		ptimeout_deadline_ms(&timeout, 100);
 
 	/* Wait for something to happen, or the timeout to expire. */
 	ret = ppoll(*pfdp, *npfd_activep, ptimeout_get_tsp(&timeout), sigsetp);
 
-	if (ret == -1) {
-		for (p = 0; p < *npfd_activep; p++)
+	ଯଦି (ret == -1) {
+		ପାଇଁ (p = 0; p < *npfd_activep; p++)
 			(*pfdp)[p].revents = 0;
-		if (errno != EINTR)
+		ଯଦି (errno != EINTR)
 			fatal_f("ppoll: %.100s", strerror(errno));
-		return;
+		ଫେରନ୍ତୁ;
 	}
 
 	*conn_in_readyp = (*pfdp)[0].revents != 0;
@@ -238,22 +238,22 @@ wait_until_can_do_something(struct ssh *ssh,
 
 	now = monotime(); /* need to reset after ppoll() */
 	/* ClientAliveInterval probing */
-	if (client_alive_scheduled) {
-		if (ret == 0 &&
+	ଯଦି (client_alive_scheduled) {
+		ଯଦି (ret == 0 &&
 		    now >= last_client_time + options.client_alive_interval) {
 			/* ppoll timed out and we're due to probe */
 			client_alive_check(ssh);
 			last_client_time = now;
-		} else if (ret != 0 && *conn_in_readyp) {
+		} ଅନ୍ୟଥା ଯଦି (ret != 0 && *conn_in_readyp) {
 			/* Data from peer; reset probe timer. */
 			last_client_time = now;
 		}
 	}
 
 	/* UnusedConnectionTimeout handling */
-	if (unused_connection_expiry != 0 &&
+	ଯଦି (unused_connection_expiry != 0 &&
 	    now > unused_connection_expiry && !channel_still_open(ssh)) {
-		sshpkt_fmt_connection_id(ssh, remote_id, sizeof(remote_id));
+		sshpkt_fmt_connection_id(ssh, remote_id, ଆକାର(remote_id));
 		logit("terminating inactive connection from %s", remote_id);
 		cleanup_exit(255);
 	}
@@ -263,90 +263,90 @@ wait_until_can_do_something(struct ssh *ssh,
  * Processes input from the client and the program.  Input data is stored
  * in buffers and processed later.
  */
-static int
-process_input(struct ssh *ssh, int connection_in)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+process_ନିବେଶ(ସଂରଚନା ssh *ssh, ପୂର୍ଣ୍ଣସଂଖ୍ୟା connection_in)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = ssh_packet_process_read(ssh, connection_in)) == 0)
-		return 0; /* success */
-	if (r == SSH_ERR_SYSTEM_ERROR) {
-		if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
-			return 0;
-		if (errno == EPIPE) {
+	ଯଦି ((r = ssh_packet_process_read(ssh, connection_in)) == 0)
+		ଫେରନ୍ତୁ 0; /* success */
+	ଯଦି (r == SSH_ERR_SYSTEM_ERROR) {
+		ଯଦି (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
+			ଫେରନ୍ତୁ 0;
+		ଯଦି (errno == EPIPE) {
 			logit("Connection closed by %.100s port %d",
 			    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
-			return -1;
+			ଫେରନ୍ତୁ -1;
 		}
 		logit("Read error from remote host %s port %d: %s",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    strerror(errno));
 		cleanup_exit(255);
 	}
-	return -1;
+	ଫେରନ୍ତୁ -1;
 }
 
 /*
  * Sends data from internal buffers to client program stdin.
  */
-static void
-process_output(struct ssh *ssh, int connection_out)
+ସ୍ଥିର ଶୂନ୍ୟ
+process_output(ସଂରଚନା ssh *ssh, ପୂର୍ଣ୍ଣସଂଖ୍ୟା connection_out)
 {
-	int r;
-	static int interactive = -1;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
+	ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା interactive = -1;
 
 	/* Send any buffered packet data to the client. */
-	if (interactive != !channel_has_bulk(ssh)) {
+	ଯଦି (interactive != !channel_has_bulk(ssh)) {
 		interactive = !channel_has_bulk(ssh);
 		debug2_f("session QoS is now %s", interactive ?
 		    "interactive" : "non-interactive");
 		ssh_packet_set_interactive(ssh, interactive);
 	}
-	if ((r = ssh_packet_write_poll(ssh)) != 0) {
+	ଯଦି ((r = ssh_packet_write_poll(ssh)) != 0) {
 		sshpkt_fatal(ssh, r, "%s: ssh_packet_write_poll",
 		    __func__);
 	}
 }
 
-static void
-process_buffered_input_packets(struct ssh *ssh)
+ସ୍ଥିର ଶୂନ୍ୟ
+process_buffered_ନିବେଶ_packets(ସଂରଚନା ssh *ssh)
 {
-	ssh_dispatch_run_fatal(ssh, DISPATCH_NONBLOCK, NULL);
+	ssh_dispatch_run_fatal(ssh, DISPATCH_NONBLOCK, ଖାଲି);
 }
 
-static void
-collect_children(struct ssh *ssh)
+ସ୍ଥିର ଶୂନ୍ୟ
+collect_children(ସଂରଚନା ssh *ssh)
 {
 	pid_t pid;
-	int status;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା status;
 
-	if (child_terminated) {
+	ଯଦି (child_terminated) {
 		debug("Received SIGCHLD.");
-		while ((pid = waitpid(-1, &status, WNOHANG)) > 0 ||
+		ଯେତେବେଳେ ((pid = waitpid(-1, &status, WNOHANG)) > 0 ||
 		    (pid == -1 && errno == EINTR))
-			if (pid > 0)
+			ଯଦି (pid > 0)
 				session_close_by_pid(ssh, pid, status);
 		child_terminated = 0;
 	}
 }
 
-void
-server_loop2(struct ssh *ssh, Authctxt *authctxt)
+ଶୂନ୍ୟ
+server_loop2(ସଂରଚନା ssh *ssh, Authctxt *authctxt)
 {
-	struct pollfd *pfd = NULL;
+	ସଂରଚନା pollfd *pfd = ଖାଲି;
 	u_int npfd_alloc = 0, npfd_active = 0;
-	int r, conn_in_ready, conn_out_ready;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, conn_in_ready, conn_out_ready;
 	u_int connection_in, connection_out;
 	sigset_t bsigset, osigset;
 
 	debug("Entering interactive session for SSH2.");
 
-	if (sigemptyset(&bsigset) == -1 ||
+	ଯଦି (sigemptyset(&bsigset) == -1 ||
 	    sigaddset(&bsigset, SIGCHLD) == -1)
 		error_f("bsigset setup: %s", strerror(errno));
 	ssh_signal(SIGCHLD, sigchld_handler);
 #ifdef SIGINFO
-	if (sigaddset(&bsigset, SIGINFO) == -1)
+	ଯଦି (sigaddset(&bsigset, SIGINFO) == -1)
 		error_f("bsigset setup: %s", strerror(errno));
 	ssh_signal(SIGINFO, siginfo_handler);
 #endif
@@ -356,10 +356,10 @@ server_loop2(struct ssh *ssh, Authctxt *authctxt)
 
 	server_init_dispatch(ssh);
 
-	for (;;) {
-		process_buffered_input_packets(ssh);
+	ପାଇଁ (;;) {
+		process_buffered_ନିବେଶ_packets(ssh);
 
-		if (!ssh_packet_is_rekeying(ssh) &&
+		ଯଦି (!ssh_packet_is_rekeying(ssh) &&
 		    ssh_packet_not_very_much_data_to_write(ssh))
 			channel_output_poll(ssh);
 
@@ -368,41 +368,41 @@ server_loop2(struct ssh *ssh, Authctxt *authctxt)
 		 * the old signal mask through to ppoll() so that it'll wake
 		 * up immediately if a child exits after we've called waitpid().
 		 */
-		if (sigprocmask(SIG_BLOCK, &bsigset, &osigset) == -1)
+		ଯଦି (sigprocmask(SIG_BLOCK, &bsigset, &osigset) == -1)
 			error_f("bsigset sigprocmask: %s", strerror(errno));
 		collect_children(ssh);
-		if (siginfo_received) {
+		ଯଦି (siginfo_received) {
 			siginfo_received = 0;
 			channel_report_open(ssh, SYSLOG_LEVEL_INFO);
 		}
 		wait_until_can_do_something(ssh, connection_in, connection_out,
 		    &pfd, &npfd_alloc, &npfd_active, &osigset,
 		    &conn_in_ready, &conn_out_ready);
-		if (sigprocmask(SIG_SETMASK, &osigset, NULL) == -1)
+		ଯଦି (sigprocmask(SIG_SETMASK, &osigset, ଖାଲି) == -1)
 			error_f("osigset sigprocmask: %s", strerror(errno));
 
 		channel_after_poll(ssh, pfd, npfd_active);
-		if (conn_in_ready &&
-		    process_input(ssh, connection_in) < 0)
-			break;
+		ଯଦି (conn_in_ready &&
+		    process_ନିବେଶ(ssh, connection_in) < 0)
+			ଭାଙ୍ଗ;
 		/* A timeout may have triggered rekeying */
-		if ((r = ssh_packet_check_rekey(ssh)) != 0)
+		ଯଦି ((r = ssh_packet_check_rekey(ssh)) != 0)
 			fatal_fr(r, "cannot start rekeying");
-		if (conn_out_ready)
+		ଯଦି (conn_out_ready)
 			process_output(ssh, connection_out);
 	}
 	collect_children(ssh);
-	free(pfd);
+	ମୁକ୍ତ(pfd);
 
 	/* free all channels, no more reads and writes */
 	channel_free_all(ssh);
 
 	/* free remaining sessions, e.g. remove wtmp entries */
-	session_destroy_all(ssh, NULL);
+	session_destroy_all(ssh, ଖାଲି);
 }
 
-static int
-server_input_keep_alive(int type, uint32_t seq, struct ssh *ssh)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+server_ନିବେଶ_keep_alive(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t seq, ସଂରଚନା ssh *ssh)
 {
 	debug("Got %d/%u for keepalive", type, seq);
 	/*
@@ -411,149 +411,149 @@ server_input_keep_alive(int type, uint32_t seq, struct ssh *ssh)
 	 * the bogus CHANNEL_REQUEST we send for keepalives.
 	 */
 	ssh_packet_set_alive_timeouts(ssh, 0);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static Channel *
-server_request_direct_tcpip(struct ssh *ssh, int *reason, const char **errmsg)
+ସ୍ଥିର Channel *
+server_request_direct_tcpip(ସଂରଚନା ssh *ssh, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *reason, ଅଚଳ ଅକ୍ଷର **errmsg)
 {
-	Channel *c = NULL;
-	char *target = NULL, *originator = NULL;
+	Channel *c = ଖାଲି;
+	ଅକ୍ଷର *target = ଖାଲି, *originator = ଖାଲି;
 	u_int target_port = 0, originator_port = 0;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = sshpkt_get_cstring(ssh, &target, NULL)) != 0 ||
+	ଯଦି ((r = sshpkt_get_cstring(ssh, &target, ଖାଲି)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &target_port)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &originator, NULL)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &originator, ଖାଲି)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &originator_port)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
-	if (target_port > 0xFFFF) {
+	ଯଦି (target_port > 0xFFFF) {
 		error_f("invalid target port");
 		*reason = SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED;
-		goto out;
+		ଯାଅ out;
 	}
-	if (originator_port > 0xFFFF) {
+	ଯଦି (originator_port > 0xFFFF) {
 		error_f("invalid originator port");
 		*reason = SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED;
-		goto out;
+		ଯାଅ out;
 	}
 
 	debug_f("originator %s port %u, target %s port %u",
 	    originator, originator_port, target, target_port);
 
 	/* XXX fine grained permissions */
-	if ((options.allow_tcp_forwarding & FORWARD_LOCAL) != 0 &&
+	ଯଦି ((options.allow_tcp_forwarding & FORWARD_LOCAL) != 0 &&
 	    auth_opts->permit_port_forwarding_flag &&
 	    !options.disable_forwarding) {
 		c = channel_connect_to_port(ssh, target, target_port,
 		    "direct-tcpip", "direct-tcpip", reason, errmsg);
-	} else {
+	} ଅନ୍ୟଥା {
 		logit("refused local port forward: "
 		    "originator %s port %d, target %s port %d",
 		    originator, originator_port, target, target_port);
-		if (reason != NULL)
+		ଯଦି (reason != ଖାଲି)
 			*reason = SSH2_OPEN_ADMINISTRATIVELY_PROHIBITED;
 	}
 
  out:
-	free(originator);
-	free(target);
-	return c;
+	ମୁକ୍ତ(originator);
+	ମୁକ୍ତ(target);
+	ଫେରନ୍ତୁ c;
 }
 
-static Channel *
-server_request_direct_streamlocal(struct ssh *ssh)
+ସ୍ଥିର Channel *
+server_request_direct_streamlocal(ସଂରଚନା ssh *ssh)
 {
-	Channel *c = NULL;
-	char *target = NULL, *originator = NULL;
+	Channel *c = ଖାଲି;
+	ଅକ୍ଷର *target = ଖାଲି, *originator = ଖାଲି;
 	u_int originator_port = 0;
-	struct passwd *pw = the_authctxt->pw;
-	int r;
+	ସଂରଚନା passwd *pw = the_authctxt->pw;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if (pw == NULL || !the_authctxt->valid)
+	ଯଦି (pw == ଖାଲି || !the_authctxt->valid)
 		fatal_f("no/invalid user");
 
-	if ((r = sshpkt_get_cstring(ssh, &target, NULL)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &originator, NULL)) != 0 ||
+	ଯଦି ((r = sshpkt_get_cstring(ssh, &target, ଖାଲି)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &originator, ଖାଲି)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &originator_port)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
-	if (originator_port > 0xFFFF) {
+	ଯଦି (originator_port > 0xFFFF) {
 		error_f("invalid originator port");
-		goto out;
+		ଯାଅ out;
 	}
 
 	debug_f("originator %s port %d, target %s",
 	    originator, originator_port, target);
 
 	/* XXX fine grained permissions */
-	if ((options.allow_streamlocal_forwarding & FORWARD_LOCAL) != 0 &&
+	ଯଦି ((options.allow_streamlocal_forwarding & FORWARD_LOCAL) != 0 &&
 	    auth_opts->permit_port_forwarding_flag &&
 	    !options.disable_forwarding) {
 		c = channel_connect_to_path(ssh, target,
 		    "direct-streamlocal@openssh.com", "direct-streamlocal");
-	} else {
+	} ଅନ୍ୟଥା {
 		logit("refused streamlocal port forward: "
 		    "originator %s port %d, target %s",
 		    originator, originator_port, target);
 	}
 
 out:
-	free(originator);
-	free(target);
-	return c;
+	ମୁକ୍ତ(originator);
+	ମୁକ୍ତ(target);
+	ଫେରନ୍ତୁ c;
 }
 
-static Channel *
-server_request_tun(struct ssh *ssh)
+ସ୍ଥିର Channel *
+server_request_tun(ସଂରଚନା ssh *ssh)
 {
-	Channel *c = NULL;
+	Channel *c = ଖାଲି;
 	u_int mode, tun;
-	int r, sock;
-	char *tmp, *ifname = NULL;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, sock;
+	ଅକ୍ଷର *tmp, *ifname = ଖାଲି;
 
-	if ((r = sshpkt_get_u32(ssh, &mode)) != 0)
+	ଯଦି ((r = sshpkt_get_u32(ssh, &mode)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse mode", __func__);
-	switch (mode) {
-	case SSH_TUNMODE_POINTOPOINT:
-	case SSH_TUNMODE_ETHERNET:
-		break;
-	default:
+	ବାଛ (mode) {
+	ସ୍ଥିତି SSH_TUNMODE_POINTOPOINT:
+	ସ୍ଥିତି SSH_TUNMODE_ETHERNET:
+		ଭାଙ୍ଗ;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 		ssh_packet_send_debug(ssh, "Unsupported tunnel device mode.");
-		return NULL;
+		ଫେରନ୍ତୁ ଖାଲି;
 	}
-	if ((options.permit_tun & mode) == 0 || options.disable_forwarding ||
+	ଯଦି ((options.permit_tun & mode) == 0 || options.disable_forwarding ||
 	    auth_opts->restricted) {
 		ssh_packet_send_debug(ssh, "Server has rejected tunnel device "
 		    "forwarding");
-		return NULL;
+		ଫେରନ୍ତୁ ଖାଲି;
 	}
 
-	if ((r = sshpkt_get_u32(ssh, &tun)) != 0)
+	ଯଦି ((r = sshpkt_get_u32(ssh, &tun)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse device", __func__);
-	if (tun > INT_MAX) {
+	ଯଦି (tun > INT_MAX) {
 		debug_f("invalid tun");
-		goto done;
+		ଯାଅ done;
 	}
-	if (auth_opts->force_tun_device != -1) {
-		if (tun != SSH_TUNID_ANY &&
-		    auth_opts->force_tun_device != (int)tun)
-			goto done;
+	ଯଦି (auth_opts->force_tun_device != -1) {
+		ଯଦି (tun != SSH_TUNID_ANY &&
+		    auth_opts->force_tun_device != (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)tun)
+			ଯାଅ done;
 		tun = auth_opts->force_tun_device;
 	}
 	sock = tun_open(tun, mode, &ifname);
-	if (sock < 0)
-		goto done;
+	ଯଦି (sock < 0)
+		ଯାଅ done;
 	debug("Tunnel forwarding using interface %s", ifname);
 
 	c = channel_new(ssh, "tun", SSH_CHANNEL_OPEN, sock, sock, -1,
 	    CHAN_TCP_WINDOW_DEFAULT, CHAN_TCP_PACKET_DEFAULT, 0, "tun", 1);
 	c->datagram = 1;
-#if defined(SSH_TUN_FILTER)
-	if (mode == SSH_TUNMODE_POINTOPOINT)
+#ଯଦି defined(SSH_TUN_FILTER)
+	ଯଦି (mode == SSH_TUNMODE_POINTOPOINT)
 		channel_register_filter(ssh, c->self, sys_tun_infilter,
-		    sys_tun_outfilter, NULL, NULL);
+		    sys_tun_outfilter, ଖାଲି, ଖାଲି);
 #endif
 
 	/*
@@ -563,29 +563,29 @@ server_request_tun(struct ssh *ssh)
 	 */
 	tmp = tun_fwd_ifnames;
 	xasprintf(&tun_fwd_ifnames, "%s%s%s",
-	    tun_fwd_ifnames == NULL ? "" : tun_fwd_ifnames,
-	    tun_fwd_ifnames == NULL ? "" : ",",
+	    tun_fwd_ifnames == ଖାଲି ? "" : tun_fwd_ifnames,
+	    tun_fwd_ifnames == ଖାଲି ? "" : ",",
 	    ifname);
-	free(tmp);
-	free(ifname);
+	ମୁକ୍ତ(tmp);
+	ମୁକ୍ତ(ifname);
 
  done:
-	if (c == NULL)
+	ଯଦି (c == ଖାଲି)
 		ssh_packet_send_debug(ssh, "Failed to open the tunnel device.");
-	return c;
+	ଫେରନ୍ତୁ c;
 }
 
-static Channel *
-server_request_session(struct ssh *ssh)
+ସ୍ଥିର Channel *
+server_request_session(ସଂରଚନା ssh *ssh)
 {
 	Channel *c;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
 	debug("input_session_request");
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	ଯଦି ((r = sshpkt_get_end(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
-	if (no_more_sessions) {
+	ଯଦି (no_more_sessions) {
 		ssh_packet_disconnect(ssh, "Possible attack: attempt to open a "
 		    "session after additional sessions disabled");
 	}
@@ -599,25 +599,25 @@ server_request_session(struct ssh *ssh)
 	c = channel_new(ssh, "session", SSH_CHANNEL_LARVAL,
 	    -1, -1, -1, /*window size*/0, CHAN_SES_PACKET_DEFAULT,
 	    0, "server-session", 1);
-	if (session_open(the_authctxt, c->self) != 1) {
+	ଯଦି (session_open(the_authctxt, c->self) != 1) {
 		debug("session open failed, free channel %d", c->self);
 		channel_free(ssh, c);
-		return NULL;
+		ଫେରନ୍ତୁ ଖାଲି;
 	}
 	channel_register_cleanup(ssh, c->self, session_close_by_channel, 0);
-	return c;
+	ଫେରନ୍ତୁ c;
 }
 
-static int
-server_input_channel_open(int type, uint32_t seq, struct ssh *ssh)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+server_ନିବେଶ_channel_open(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t seq, ସଂରଚନା ssh *ssh)
 {
-	Channel *c = NULL;
-	char *ctype = NULL;
-	const char *errmsg = NULL;
-	int r, reason = SSH2_OPEN_CONNECT_FAILED;
+	Channel *c = ଖାଲି;
+	ଅକ୍ଷର *ctype = ଖାଲି;
+	ଅଚଳ ଅକ୍ଷର *errmsg = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, reason = SSH2_OPEN_CONNECT_FAILED;
 	u_int rchan = 0, rmaxpack = 0, rwindow = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &ctype, NULL)) != 0 ||
+	ଯଦି ((r = sshpkt_get_cstring(ssh, &ctype, ଖାଲି)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &rchan)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &rwindow)) != 0 ||
 	    (r = sshpkt_get_u32(ssh, &rmaxpack)) != 0)
@@ -625,23 +625,23 @@ server_input_channel_open(int type, uint32_t seq, struct ssh *ssh)
 	debug_f("ctype %s rchan %u win %u max %u",
 	    ctype, rchan, rwindow, rmaxpack);
 
-	if (strcmp(ctype, "session") == 0) {
+	ଯଦି (strcmp(ctype, "session") == 0) {
 		c = server_request_session(ssh);
-	} else if (strcmp(ctype, "direct-tcpip") == 0) {
+	} ଅନ୍ୟଥା ଯଦି (strcmp(ctype, "direct-tcpip") == 0) {
 		c = server_request_direct_tcpip(ssh, &reason, &errmsg);
-	} else if (strcmp(ctype, "direct-streamlocal@openssh.com") == 0) {
+	} ଅନ୍ୟଥା ଯଦି (strcmp(ctype, "direct-streamlocal@openssh.com") == 0) {
 		c = server_request_direct_streamlocal(ssh);
-	} else if (strcmp(ctype, "tun@openssh.com") == 0) {
+	} ଅନ୍ୟଥା ଯଦି (strcmp(ctype, "tun@openssh.com") == 0) {
 		c = server_request_tun(ssh);
 	}
-	if (c != NULL) {
+	ଯଦି (c != ଖାଲି) {
 		debug_f("confirm %s", ctype);
 		c->remote_id = rchan;
 		c->have_remote_id = 1;
 		c->remote_window = rwindow;
 		c->remote_maxpacket = rmaxpack;
-		if (c->type != SSH_CHANNEL_CONNECTING) {
-			if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_OPEN_CONFIRMATION)) != 0 ||
+		ଯଦି (c->type != SSH_CHANNEL_CONNECTING) {
+			ଯଦି ((r = sshpkt_start(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_OPEN_CONFIRMATION)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->self)) != 0 ||
 			    (r = sshpkt_put_u32(ssh, c->local_window)) != 0 ||
@@ -651,9 +651,9 @@ server_input_channel_open(int type, uint32_t seq, struct ssh *ssh)
 				    "%s: send open confirm", __func__);
 			}
 		}
-	} else {
+	} ଅନ୍ୟଥା {
 		debug_f("failure %s", ctype);
-		if ((r = sshpkt_start(ssh, SSH2_MSG_CHANNEL_OPEN_FAILURE)) != 0 ||
+		ଯଦି ((r = sshpkt_start(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_OPEN_FAILURE)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, rchan)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, reason)) != 0 ||
 		    (r = sshpkt_put_cstring(ssh, errmsg ? errmsg : "open failed")) != 0 ||
@@ -663,261 +663,261 @@ server_input_channel_open(int type, uint32_t seq, struct ssh *ssh)
 			    "%s: send open failure", __func__);
 		}
 	}
-	free(ctype);
-	return 0;
+	ମୁକ୍ତ(ctype);
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-server_input_hostkeys_prove(struct ssh *ssh, struct sshbuf **respp)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+server_ନିବେଶ_hostkeys_prove(ସଂରଚନା ssh *ssh, ସଂରଚନା sshbuf **respp)
 {
-	struct sshbuf *resp = NULL;
-	struct sshbuf *sigbuf = NULL;
-	struct sshkey *key = NULL, *key_pub = NULL, *key_prv = NULL;
-	int r, ndx, success = 0;
-	const u_char *blob;
-	const char *sigalg, *kex_rsa_sigalg = NULL;
-	u_char *sig = NULL;
+	ସଂରଚନା sshbuf *resp = ଖାଲି;
+	ସଂରଚନା sshbuf *sigbuf = ଖାଲି;
+	ସଂରଚନା sshkey *ଚାବି = ଖାଲି, *ଚାବି_pub = ଖାଲି, *ଚାବି_prv = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, ndx, success = 0;
+	ଅଚଳ u_char *blob;
+	ଅଚଳ ଅକ୍ଷର *sigalg, *kex_rsa_sigalg = ଖାଲି;
+	u_char *sig = ଖାଲି;
 	size_t blen, slen;
 
-	if ((resp = sshbuf_new()) == NULL || (sigbuf = sshbuf_new()) == NULL)
+	ଯଦି ((resp = sshbuf_new()) == ଖାଲି || (sigbuf = sshbuf_new()) == ଖାଲି)
 		fatal_f("sshbuf_new");
-	if (sshkey_type_plain(sshkey_type_from_name(
-	    ssh->kex->hostkey_alg)) == KEY_RSA)
+	ଯଦି (sshkey_type_plain(sshkey_type_from_name(
+	    ssh->kex->hostkey_alg)) == ଚାବି_RSA)
 		kex_rsa_sigalg = ssh->kex->hostkey_alg;
-	while (ssh_packet_remaining(ssh) > 0) {
-		sshkey_free(key);
-		key = NULL;
-		if ((r = sshpkt_get_string_direct(ssh, &blob, &blen)) != 0 ||
-		    (r = sshkey_from_blob(blob, blen, &key)) != 0) {
+	ଯେତେବେଳେ (ssh_packet_remaining(ssh) > 0) {
+		sshkey_free(ଚାବି);
+		ଚାବି = ଖାଲି;
+		ଯଦି ((r = sshpkt_get_string_direct(ssh, &blob, &blen)) != 0 ||
+		    (r = sshkey_from_blob(blob, blen, &ଚାବି)) != 0) {
 			error_fr(r, "parse key");
-			goto out;
+			ଯାଅ out;
 		}
 		/*
 		 * Better check that this is actually one of our hostkeys
 		 * before attempting to sign anything with it.
 		 */
-		if ((ndx = ssh->kex->host_key_index(key, 1, ssh)) == -1) {
-			error_f("unknown host %s key", sshkey_type(key));
-			goto out;
+		ଯଦି ((ndx = ssh->kex->host_ଚାବି_index(ଚାବି, 1, ssh)) == -1) {
+			error_f("unknown host %s key", sshkey_type(ଚାବି));
+			ଯାଅ out;
 		}
 		/*
 		 * XXX refactor: make kex->sign just use an index rather
 		 * than passing in public and private keys
 		 */
-		if ((key_prv = get_hostkey_by_index(ndx)) == NULL &&
-		    (key_pub = get_hostkey_public_by_index(ndx, ssh)) == NULL) {
+		ଯଦି ((ଚାବି_prv = get_hostkey_by_index(ndx)) == ଖାଲି &&
+		    (ଚାବି_pub = get_hostkey_public_by_index(ndx, ssh)) == ଖାଲି) {
 			error_f("can't retrieve hostkey %d", ndx);
-			goto out;
+			ଯାଅ out;
 		}
 		sshbuf_reset(sigbuf);
-		free(sig);
-		sig = NULL;
+		ମୁକ୍ତ(sig);
+		sig = ଖାଲି;
 		/*
 		 * For RSA keys, prefer to use the signature type negotiated
 		 * during KEX to the default (SHA1).
 		 */
-		sigalg = sshkey_ssh_name(key);
-		if (sshkey_type_plain(key->type) == KEY_RSA) {
-			if (kex_rsa_sigalg != NULL)
+		sigalg = sshkey_ssh_name(ଚାବି);
+		ଯଦି (sshkey_type_plain(ଚାବି->type) == ଚାବି_RSA) {
+			ଯଦି (kex_rsa_sigalg != ଖାଲି)
 				sigalg = kex_rsa_sigalg;
-			else if (ssh->kex->flags & KEX_RSA_SHA2_512_SUPPORTED)
+			ଅନ୍ୟଥା ଯଦି (ssh->kex->flags & KEX_RSA_SHA2_512_SUPPORTED)
 				sigalg = "rsa-sha2-512";
-			else if (ssh->kex->flags & KEX_RSA_SHA2_256_SUPPORTED)
+			ଅନ୍ୟଥା ଯଦି (ssh->kex->flags & KEX_RSA_SHA2_256_SUPPORTED)
 				sigalg = "rsa-sha2-256";
 		}
 
 		debug3_f("sign %s key (index %d) using sigalg %s",
-		    sshkey_type(key), ndx, sigalg == NULL ? "default" : sigalg);
-		if ((r = sshbuf_put_cstring(sigbuf,
+		    sshkey_type(ଚାବି), ndx, sigalg == ଖାଲି ? "default" : sigalg);
+		ଯଦି ((r = sshbuf_put_cstring(sigbuf,
 		    "hostkeys-prove-00@openssh.com")) != 0 ||
 		    (r = sshbuf_put_stringb(sigbuf,
 		    ssh->kex->session_id)) != 0 ||
-		    (r = sshkey_puts(key, sigbuf)) != 0 ||
-		    (r = ssh->kex->sign(ssh, key_prv, key_pub, &sig, &slen,
+		    (r = sshkey_puts(ଚାବି, sigbuf)) != 0 ||
+		    (r = ssh->kex->sign(ssh, ଚାବି_prv, ଚାବି_pub, &sig, &slen,
 		    sshbuf_ptr(sigbuf), sshbuf_len(sigbuf), sigalg)) != 0 ||
 		    (r = sshbuf_put_string(resp, sig, slen)) != 0) {
 			error_fr(r, "assemble signature");
-			goto out;
+			ଯାଅ out;
 		}
 	}
 	/* Success */
 	*respp = resp;
-	resp = NULL; /* don't free it */
+	resp = ଖାଲି; /* don't free it */
 	success = 1;
  out:
-	free(sig);
+	ମୁକ୍ତ(sig);
 	sshbuf_free(resp);
 	sshbuf_free(sigbuf);
-	sshkey_free(key);
-	return success;
+	sshkey_free(ଚାବି);
+	ଫେରନ୍ତୁ success;
 }
 
-static int
-server_input_global_request(int type, uint32_t seq, struct ssh *ssh)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+server_ନିବେଶ_global_request(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t seq, ସଂରଚନା ssh *ssh)
 {
-	char *rtype = NULL;
+	ଅକ୍ଷର *rtype = ଖାଲି;
 	u_char want_reply = 0;
-	int r, success = 0, allocated_listen_port = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, success = 0, allocated_listen_port = 0;
 	u_int port = 0;
-	struct sshbuf *resp = NULL;
-	struct passwd *pw = the_authctxt->pw;
-	struct Forward fwd;
+	ସଂରଚନା sshbuf *resp = ଖାଲି;
+	ସଂରଚନା passwd *pw = the_authctxt->pw;
+	ସଂରଚନା Forward fwd;
 
-	memset(&fwd, 0, sizeof(fwd));
-	if (pw == NULL || !the_authctxt->valid)
+	memset(&fwd, 0, ଆକାର(fwd));
+	ଯଦି (pw == ଖାଲି || !the_authctxt->valid)
 		fatal_f("no/invalid user");
 
-	if ((r = sshpkt_get_cstring(ssh, &rtype, NULL)) != 0 ||
+	ଯଦି ((r = sshpkt_get_cstring(ssh, &rtype, ଖାଲି)) != 0 ||
 	    (r = sshpkt_get_u8(ssh, &want_reply)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 	debug_f("rtype %s want_reply %d", rtype, want_reply);
 
 	/* -R style forwarding */
-	if (strcmp(rtype, "tcpip-forward") == 0) {
-		if ((r = sshpkt_get_cstring(ssh, &fwd.listen_host, NULL)) != 0 ||
+	ଯଦି (strcmp(rtype, "tcpip-forward") == 0) {
+		ଯଦି ((r = sshpkt_get_cstring(ssh, &fwd.listen_host, ଖାଲି)) != 0 ||
 		    (r = sshpkt_get_u32(ssh, &port)) != 0)
 			sshpkt_fatal(ssh, r, "%s: parse tcpip-forward", __func__);
 		debug_f("tcpip-forward listen %s port %u",
 		    fwd.listen_host, port);
-		if (port <= INT_MAX)
-			fwd.listen_port = (int)port;
+		ଯଦି (port <= INT_MAX)
+			fwd.listen_port = (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)port;
 		/* check permissions */
-		if (port > INT_MAX ||
+		ଯଦି (port > INT_MAX ||
 		    (options.allow_tcp_forwarding & FORWARD_REMOTE) == 0 ||
 		    !auth_opts->permit_port_forwarding_flag ||
 		    options.disable_forwarding ||
 		    (!want_reply && fwd.listen_port == 0)) {
 			success = 0;
 			ssh_packet_send_debug(ssh, "Server has disabled port forwarding.");
-		} else {
+		} ଅନ୍ୟଥା {
 			/* Start listening on the port */
 			success = channel_setup_remote_fwd_listener(ssh, &fwd,
 			    &allocated_listen_port, &options.fwd_opts);
 		}
-		if ((resp = sshbuf_new()) == NULL)
+		ଯଦି ((resp = sshbuf_new()) == ଖାଲି)
 			fatal_f("sshbuf_new");
-		if (allocated_listen_port != 0 &&
+		ଯଦି (allocated_listen_port != 0 &&
 		    (r = sshbuf_put_u32(resp, allocated_listen_port)) != 0)
 			fatal_fr(r, "sshbuf_put_u32");
-	} else if (strcmp(rtype, "cancel-tcpip-forward") == 0) {
-		if ((r = sshpkt_get_cstring(ssh, &fwd.listen_host, NULL)) != 0 ||
+	} ଅନ୍ୟଥା ଯଦି (strcmp(rtype, "cancel-tcpip-forward") == 0) {
+		ଯଦି ((r = sshpkt_get_cstring(ssh, &fwd.listen_host, ଖାଲି)) != 0 ||
 		    (r = sshpkt_get_u32(ssh, &port)) != 0)
 			sshpkt_fatal(ssh, r, "%s: parse cancel-tcpip-forward", __func__);
 
 		debug_f("cancel-tcpip-forward addr %s port %d",
 		    fwd.listen_host, port);
-		if (port <= INT_MAX) {
-			fwd.listen_port = (int)port;
+		ଯଦି (port <= INT_MAX) {
+			fwd.listen_port = (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)port;
 			success = channel_cancel_rport_listener(ssh, &fwd);
 		}
-	} else if (strcmp(rtype, "streamlocal-forward@openssh.com") == 0) {
-		if ((r = sshpkt_get_cstring(ssh, &fwd.listen_path, NULL)) != 0)
+	} ଅନ୍ୟଥା ଯଦି (strcmp(rtype, "streamlocal-forward@openssh.com") == 0) {
+		ଯଦି ((r = sshpkt_get_cstring(ssh, &fwd.listen_path, ଖାଲି)) != 0)
 			sshpkt_fatal(ssh, r, "%s: parse streamlocal-forward@openssh.com", __func__);
 		debug_f("streamlocal-forward listen path %s",
 		    fwd.listen_path);
 
 		/* check permissions */
-		if ((options.allow_streamlocal_forwarding & FORWARD_REMOTE) == 0
+		ଯଦି ((options.allow_streamlocal_forwarding & FORWARD_REMOTE) == 0
 		    || !auth_opts->permit_port_forwarding_flag ||
 		    options.disable_forwarding) {
 			success = 0;
 			ssh_packet_send_debug(ssh, "Server has disabled "
 			    "streamlocal forwarding.");
-		} else {
+		} ଅନ୍ୟଥା {
 			/* Start listening on the socket */
 			success = channel_setup_remote_fwd_listener(ssh,
-			    &fwd, NULL, &options.fwd_opts);
+			    &fwd, ଖାଲି, &options.fwd_opts);
 		}
-	} else if (strcmp(rtype, "cancel-streamlocal-forward@openssh.com") == 0) {
-		if ((r = sshpkt_get_cstring(ssh, &fwd.listen_path, NULL)) != 0)
+	} ଅନ୍ୟଥା ଯଦି (strcmp(rtype, "cancel-streamlocal-forward@openssh.com") == 0) {
+		ଯଦି ((r = sshpkt_get_cstring(ssh, &fwd.listen_path, ଖାଲି)) != 0)
 			sshpkt_fatal(ssh, r, "%s: parse cancel-streamlocal-forward@openssh.com", __func__);
 		debug_f("cancel-streamlocal-forward path %s",
 		    fwd.listen_path);
 
 		success = channel_cancel_rport_listener(ssh, &fwd);
-	} else if (strcmp(rtype, "no-more-sessions@openssh.com") == 0) {
+	} ଅନ୍ୟଥା ଯଦି (strcmp(rtype, "no-more-sessions@openssh.com") == 0) {
 		no_more_sessions = 1;
 		success = 1;
-	} else if (strcmp(rtype, "hostkeys-prove-00@openssh.com") == 0) {
-		success = server_input_hostkeys_prove(ssh, &resp);
+	} ଅନ୍ୟଥା ଯଦି (strcmp(rtype, "hostkeys-prove-00@openssh.com") == 0) {
+		success = server_ନିବେଶ_hostkeys_prove(ssh, &resp);
 	}
 	/* XXX sshpkt_get_end() */
-	if (want_reply) {
-		if ((r = sshpkt_start(ssh, success ?
-		    SSH2_MSG_REQUEST_SUCCESS : SSH2_MSG_REQUEST_FAILURE)) != 0 ||
-		    (success && resp != NULL && (r = sshpkt_putb(ssh, resp)) != 0) ||
+	ଯଦି (want_reply) {
+		ଯଦି ((r = sshpkt_start(ssh, success ?
+		    SSH2_ସନ୍ଦେଶ_REQUEST_SUCCESS : SSH2_ସନ୍ଦେଶ_REQUEST_FAILURE)) != 0 ||
+		    (success && resp != ଖାଲି && (r = sshpkt_putb(ssh, resp)) != 0) ||
 		    (r = sshpkt_send(ssh)) != 0 ||
 		    (r = ssh_packet_write_wait(ssh)) != 0)
 			sshpkt_fatal(ssh, r, "%s: send reply", __func__);
 	}
-	free(fwd.listen_host);
-	free(fwd.listen_path);
-	free(rtype);
+	ମୁକ୍ତ(fwd.listen_host);
+	ମୁକ୍ତ(fwd.listen_path);
+	ମୁକ୍ତ(rtype);
 	sshbuf_free(resp);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-server_input_channel_req(int type, uint32_t seq, struct ssh *ssh)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+server_ନିବେଶ_channel_req(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t seq, ସଂରଚନା ssh *ssh)
 {
 	Channel *c;
-	int r, success = 0;
-	char *rtype = NULL;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, success = 0;
+	ଅକ୍ଷର *rtype = ଖାଲି;
 	u_char want_reply = 0;
 	u_int id = 0;
 
-	if ((r = sshpkt_get_u32(ssh, &id)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &rtype, NULL)) != 0 ||
+	ଯଦି ((r = sshpkt_get_u32(ssh, &id)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &rtype, ଖାଲି)) != 0 ||
 	    (r = sshpkt_get_u8(ssh, &want_reply)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 
 	debug("server_input_channel_req: channel %u request %s reply %d",
 	    id, rtype, want_reply);
 
-	if (id >= INT_MAX || (c = channel_lookup(ssh, (int)id)) == NULL) {
+	ଯଦି (id >= INT_MAX || (c = channel_lookup(ssh, (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)id)) == ଖାଲି) {
 		ssh_packet_disconnect(ssh, "%s: unknown channel %d",
 		    __func__, id);
 	}
-	if (!strcmp(rtype, "eow@openssh.com")) {
-		if ((r = sshpkt_get_end(ssh)) != 0)
+	ଯଦି (!strcmp(rtype, "eow@openssh.com")) {
+		ଯଦି ((r = sshpkt_get_end(ssh)) != 0)
 			sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 		chan_rcvd_eow(ssh, c);
-	} else if ((c->type == SSH_CHANNEL_LARVAL ||
+	} ଅନ୍ୟଥା ଯଦି ((c->type == SSH_CHANNEL_LARVAL ||
 	    c->type == SSH_CHANNEL_OPEN) && strcmp(c->ctype, "session") == 0)
-		success = session_input_channel_req(ssh, c, rtype);
-	if (want_reply && !(c->flags & CHAN_CLOSE_SENT)) {
-		if (!c->have_remote_id)
+		success = session_ନିବେଶ_channel_req(ssh, c, rtype);
+	ଯଦି (want_reply && !(c->flags & CHAN_CLOSE_SENT)) {
+		ଯଦି (!c->have_remote_id)
 			fatal_f("channel %d: no remote_id", c->self);
-		if ((r = sshpkt_start(ssh, success ?
-		    SSH2_MSG_CHANNEL_SUCCESS : SSH2_MSG_CHANNEL_FAILURE)) != 0 ||
+		ଯଦି ((r = sshpkt_start(ssh, success ?
+		    SSH2_ସନ୍ଦେଶ_CHANNEL_SUCCESS : SSH2_ସନ୍ଦେଶ_CHANNEL_FAILURE)) != 0 ||
 		    (r = sshpkt_put_u32(ssh, c->remote_id)) != 0 ||
 		    (r = sshpkt_send(ssh)) != 0)
 			sshpkt_fatal(ssh, r, "%s: send reply", __func__);
 	}
-	free(rtype);
-	return 0;
+	ମୁକ୍ତ(rtype);
+	ଫେରନ୍ତୁ 0;
 }
 
-static void
-server_init_dispatch(struct ssh *ssh)
+ସ୍ଥିର ଶୂନ୍ୟ
+server_init_dispatch(ସଂରଚନା ssh *ssh)
 {
 	debug("server_init_dispatch");
 	ssh_dispatch_init(ssh, &dispatch_protocol_error);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_CLOSE, &channel_input_oclose);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_DATA, &channel_input_data);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_EOF, &channel_input_ieof);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_EXTENDED_DATA, &channel_input_extended_data);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_OPEN, &server_input_channel_open);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_OPEN_CONFIRMATION, &channel_input_open_confirmation);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_OPEN_FAILURE, &channel_input_open_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_REQUEST, &server_input_channel_req);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_WINDOW_ADJUST, &channel_input_window_adjust);
-	ssh_dispatch_set(ssh, SSH2_MSG_GLOBAL_REQUEST, &server_input_global_request);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_CLOSE, &channel_ନିବେଶ_oclose);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_DATA, &channel_ନିବେଶ_data);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_EOF, &channel_ନିବେଶ_ieof);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_EXTENDED_DATA, &channel_ନିବେଶ_extended_data);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_OPEN, &server_ନିବେଶ_channel_open);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_OPEN_CONFIRMATION, &channel_ନିବେଶ_open_confirmation);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_OPEN_FAILURE, &channel_ନିବେଶ_open_failure);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_REQUEST, &server_ନିବେଶ_channel_req);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_WINDOW_ADJUST, &channel_ନିବେଶ_window_adjust);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_GLOBAL_REQUEST, &server_ନିବେଶ_global_request);
 	/* client_alive */
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_SUCCESS, &server_input_keep_alive);
-	ssh_dispatch_set(ssh, SSH2_MSG_CHANNEL_FAILURE, &server_input_keep_alive);
-	ssh_dispatch_set(ssh, SSH2_MSG_REQUEST_SUCCESS, &server_input_keep_alive);
-	ssh_dispatch_set(ssh, SSH2_MSG_REQUEST_FAILURE, &server_input_keep_alive);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_SUCCESS, &server_ନିବେଶ_keep_alive);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_CHANNEL_FAILURE, &server_ନିବେଶ_keep_alive);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_REQUEST_SUCCESS, &server_ନିବେଶ_keep_alive);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_REQUEST_FAILURE, &server_ନିବେଶ_keep_alive);
 	/* rekeying */
-	ssh_dispatch_set(ssh, SSH2_MSG_KEXINIT, &kex_input_kexinit);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_KEXINIT, &kex_ନିବେଶ_kexinit);
 }

@@ -16,196 +16,196 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-#include <sys/queue.h>
+#ଅନ୍ତର୍ଭାଵ <sys/queue.h>
 
-#include <stdint.h>
-#include <signal.h>
-#include <termios.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <signal.h>
+#ଅନ୍ତର୍ଭାଵ <termios.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
-#else /* OPENSSL */
-#define BIGNUM		void
-#define EC_GROUP	void
-#define EC_POINT	void
-#define EVP_PKEY	void
+#ଅନ୍ତର୍ଭାଵ <openssl/bn.h>
+#ଅନ୍ତର୍ଭାଵ <openssl/ec.h>
+#ଅନ୍ତର୍ଭାଵ <openssl/ecdsa.h>
+#ଅନ୍ତର୍ଭାଵ <openssl/evp.h>
+#ଅନ୍ୟଥା /* OPENSSL */
+#define BIGNUM		ଶୂନ୍ୟ
+#define EC_GROUP	ଶୂନ୍ୟ
+#define EC_POINT	ଶୂନ୍ୟ
+#define EVP_PKEY	ଶୂନ୍ୟ
 #endif /* WITH_OPENSSL */
 
-struct kex;
-struct sshkey;
-struct sshbuf;
-struct session_state;	/* private session data */
+ସଂରଚନା kex;
+ସଂରଚନା sshkey;
+ସଂରଚନା sshbuf;
+ସଂରଚନା session_state;	/* private session data */
 
-#include "dispatch.h"	/* typedef, DISPATCH_MAX */
+#ଅନ୍ତର୍ଭାଵ "dispatch.h"	/* typedef, DISPATCH_MAX */
 
-struct key_entry {
-	TAILQ_ENTRY(key_entry) next;
-	struct sshkey *key;
+ସଂରଚନା ଚାବି_entry {
+	TAILQ_ENTRY(ଚାବି_entry) next;
+	ସଂରଚନା sshkey *ଚାବି;
 };
 
-struct ssh {
+ସଂରଚନା ssh {
 	/* Session state */
-	struct session_state *state;
+	ସଂରଚନା session_state *state;
 
 	/* Key exchange */
-	struct kex *kex;
+	ସଂରଚନା kex *kex;
 
 	/* cached local and remote ip addresses and ports */
-	char *remote_ipaddr;
-	int remote_port;
-	char *local_ipaddr;
-	int local_port;
-	char *rdomain_in;
+	ଅକ୍ଷର *remote_ipaddr;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା remote_port;
+	ଅକ୍ଷର *local_ipaddr;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା local_port;
+	ଅକ୍ଷର *rdomain_in;
 
 	/* Optional preamble for log messages (e.g. username) */
-	char *log_preamble;
+	ଅକ୍ଷର *log_preamble;
 
 	/* Dispatcher table */
 	dispatch_fn *dispatch[DISPATCH_MAX];
 	/* number of packets to ignore in the dispatcher */
-	int dispatch_skip_packets;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା dispatch_skip_packets;
 
 	/* datafellows */
 	uint32_t compat;
-	char *remote_version;
+	ଅକ୍ଷର *remote_version;
 
 	/* Lists for private and public keys */
-	TAILQ_HEAD(, key_entry) private_keys;
-	TAILQ_HEAD(, key_entry) public_keys;
+	TAILQ_HEAD(, ଚାବି_entry) private_ଚାବିଗୁଡ଼ିକ;
+	TAILQ_HEAD(, ଚାବି_entry) public_ଚାବିଗୁଡ଼ିକ;
 
 	/* Client/Server authentication context */
-	void *authctxt;
+	ଶୂନ୍ୟ *authctxt;
 
 	/* Channels context */
-	struct ssh_channels *chanctxt;
+	ସଂରଚନା ssh_channels *chanctxt;
 
 	/* APP data */
-	void *app_data;
+	ଶୂନ୍ୟ *app_data;
 };
 
-typedef int (ssh_packet_hook_fn)(struct ssh *, struct sshbuf *,
-    u_char *, void *);
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ପୂର୍ଣ୍ଣସଂଖ୍ୟା (ssh_packet_hook_fn)(ସଂରଚନା ssh *, ସଂରଚନା sshbuf *,
+    u_char *, ଶୂନ୍ୟ *);
 
-struct ssh *ssh_alloc_session_state(void);
-struct ssh *ssh_packet_set_connection(struct ssh *, int, int);
-void     ssh_packet_set_timeout(struct ssh *, int, int);
-int	 ssh_packet_stop_discard(struct ssh *);
-int	 ssh_packet_connection_af(struct ssh *);
-void     ssh_packet_set_nonblocking(struct ssh *);
-int      ssh_packet_get_connection_in(struct ssh *);
-int      ssh_packet_get_connection_out(struct ssh *);
-void	 ssh_packet_free(struct ssh *);
-void     ssh_packet_close(struct ssh *);
-void	 ssh_packet_set_input_hook(struct ssh *, ssh_packet_hook_fn *, void *);
-void	 ssh_packet_clear_keys(struct ssh *);
-void	 ssh_clear_newkeys(struct ssh *, int);
+ସଂରଚନା ssh *ssh_alloc_session_state(ଶୂନ୍ୟ);
+ସଂରଚନା ssh *ssh_packet_set_connection(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ଶୂନ୍ୟ     ssh_packet_set_timeout(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_stop_discard(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_connection_af(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ     ssh_packet_set_nonblocking(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା      ssh_packet_get_connection_in(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା      ssh_packet_get_connection_out(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ	 ssh_packet_free(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ     ssh_packet_close(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ	 ssh_packet_set_ନିବେଶ_hook(ସଂରଚନା ssh *, ssh_packet_hook_fn *, ଶୂନ୍ୟ *);
+ଶୂନ୍ୟ	 ssh_packet_clear_ଚାବିଗୁଡ଼ିକ(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ	 ssh_clear_newkeys(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 
-int	 ssh_packet_is_rekeying(struct ssh *);
-int	 ssh_packet_check_rekey(struct ssh *);
-void     ssh_packet_set_protocol_flags(struct ssh *, u_int);
-u_int	 ssh_packet_get_protocol_flags(struct ssh *);
-void	 ssh_packet_set_interactive(struct ssh *, int);
-void	 ssh_packet_set_qos(struct ssh *, int, int);
-void     ssh_packet_set_server(struct ssh *);
-void     ssh_packet_set_authenticated(struct ssh *);
-void     ssh_packet_set_mux(struct ssh *);
-int	 ssh_packet_get_mux(struct ssh *);
-int	 ssh_packet_set_log_preamble(struct ssh *, const char *, ...)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_is_rekeying(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_check_rekey(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ     ssh_packet_set_protocol_flags(ସଂରଚନା ssh *, u_int);
+u_int	 ssh_packet_get_protocol_flags(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ	 ssh_packet_set_interactive(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ଶୂନ୍ୟ	 ssh_packet_set_qos(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ଶୂନ୍ୟ     ssh_packet_set_server(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ     ssh_packet_set_authenticated(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ     ssh_packet_set_mux(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_get_mux(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_set_log_preamble(ସଂରଚନା ssh *, ଅଚଳ ଅକ୍ଷର *, ...)
     __attribute__((format(printf, 2, 3)));
 
-int	 ssh_packet_log_type(u_char);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_log_type(u_char);
 
-int	 ssh_packet_send2_wrapped(struct ssh *);
-int	 ssh_packet_send2(struct ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_send2_wrapped(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_send2(ସଂରଚନା ssh *);
 
-int      ssh_packet_read(struct ssh *);
-int ssh_packet_read_poll2(struct ssh *, u_char *, uint32_t *seqnr_p);
-int	 ssh_packet_process_incoming(struct ssh *, const char *buf, u_int len);
-int	 ssh_packet_process_read(struct ssh *, int);
-int      ssh_packet_read_seqnr(struct ssh *, u_char *, uint32_t *seqnr_p);
-int      ssh_packet_read_poll_seqnr(struct ssh *, u_char *, uint32_t *seqnr_p);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା      ssh_packet_read(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ssh_packet_read_poll2(ସଂରଚନା ssh *, u_char *, uint32_t *seqnr_p);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_process_incoming(ସଂରଚନା ssh *, ଅଚଳ ଅକ୍ଷର *buf, u_int len);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_process_read(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା      ssh_packet_read_seqnr(ସଂରଚନା ssh *, u_char *, uint32_t *seqnr_p);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା      ssh_packet_read_poll_seqnr(ସଂରଚନା ssh *, u_char *, uint32_t *seqnr_p);
 
-void     ssh_packet_disconnect(struct ssh *, const char *fmt, ...)
+ଶୂନ୍ୟ     ssh_packet_disconnect(ସଂରଚନା ssh *, ଅଚଳ ଅକ୍ଷର *fmt, ...)
 	__attribute__((format(printf, 2, 3)))
 	__attribute__((noreturn));
-void     ssh_packet_send_debug(struct ssh *, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
+ଶୂନ୍ୟ     ssh_packet_send_debug(ସଂରଚନା ssh *, ଅଚଳ ଅକ୍ଷର *fmt, ...) __attribute__((format(printf, 2, 3)));
 
-int	 ssh_set_newkeys(struct ssh *, int mode);
-void	 ssh_packet_get_bytes(struct ssh *, uint64_t *, uint64_t *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_set_newkeys(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା mode);
+ଶୂନ୍ୟ	 ssh_packet_get_bytes(ସଂରଚନା ssh *, uint64_t *, uint64_t *);
 
-int	 ssh_packet_write_poll(struct ssh *);
-int	 ssh_packet_write_wait(struct ssh *);
-int      ssh_packet_have_data_to_write(struct ssh *);
-int      ssh_packet_not_very_much_data_to_write(struct ssh *);
-int	 ssh_packet_interactive_data_to_write(struct ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_write_poll(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_write_wait(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା      ssh_packet_have_data_to_write(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା      ssh_packet_not_very_much_data_to_write(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_interactive_data_to_write(ସଂରଚନା ssh *);
 
-int	 ssh_packet_connection_is_on_socket(struct ssh *);
-int	 ssh_packet_remaining(struct ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_connection_is_on_socket(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_remaining(ସଂରଚନା ssh *);
 
-void	 ssh_tty_make_modes(struct ssh *, int, struct termios *);
-void	 ssh_tty_parse_modes(struct ssh *, int);
+ଶୂନ୍ୟ	 ssh_tty_make_modes(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ସଂରଚନା termios *);
+ଶୂନ୍ୟ	 ssh_tty_parse_modes(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 
-void	 ssh_packet_set_alive_timeouts(struct ssh *, int);
-int	 ssh_packet_inc_alive_timeouts(struct ssh *);
-int	 ssh_packet_set_maxsize(struct ssh *, u_int);
-u_int	 ssh_packet_get_maxsize(struct ssh *);
+ଶୂନ୍ୟ	 ssh_packet_set_alive_timeouts(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_inc_alive_timeouts(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_set_maxsize(ସଂରଚନା ssh *, u_int);
+u_int	 ssh_packet_get_maxsize(ସଂରଚନା ssh *);
 
-int	 ssh_packet_get_state(struct ssh *, struct sshbuf *);
-int	 ssh_packet_set_state(struct ssh *, struct sshbuf *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_get_state(ସଂରଚନା ssh *, ସଂରଚନା sshbuf *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_packet_set_state(ସଂରଚନା ssh *, ସଂରଚନା sshbuf *);
 
-const char *ssh_remote_ipaddr(struct ssh *);
-int	 ssh_remote_port(struct ssh *);
-const char *ssh_local_ipaddr(struct ssh *);
-int	 ssh_local_port(struct ssh *);
-const char *ssh_packet_rdomain_in(struct ssh *);
-char	*ssh_remote_hostname(struct ssh *);
+ଅଚଳ ଅକ୍ଷର *ssh_remote_ipaddr(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_remote_port(ସଂରଚନା ssh *);
+ଅଚଳ ଅକ୍ଷର *ssh_local_ipaddr(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ssh_local_port(ସଂରଚନା ssh *);
+ଅଚଳ ଅକ୍ଷର *ssh_packet_rdomain_in(ସଂରଚନା ssh *);
+ଅକ୍ଷର	*ssh_remote_hostname(ସଂରଚନା ssh *);
 
-void	 ssh_packet_set_rekey_limits(struct ssh *, uint64_t, uint32_t);
-time_t	 ssh_packet_get_rekey_timeout(struct ssh *);
+ଶୂନ୍ୟ	 ssh_packet_set_rekey_limits(ସଂରଚନା ssh *, uint64_t, uint32_t);
+time_t	 ssh_packet_get_rekey_timeout(ସଂରଚନା ssh *);
 
-void	*ssh_packet_get_input(struct ssh *);
-void	*ssh_packet_get_output(struct ssh *);
+ଶୂନ୍ୟ	*ssh_packet_get_ନିବେଶ(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ	*ssh_packet_get_output(ସଂରଚନା ssh *);
 
 /* new API */
-int	sshpkt_start(struct ssh *ssh, u_char type);
-int	sshpkt_send(struct ssh *ssh);
-int     sshpkt_disconnect(struct ssh *, const char *fmt, ...)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_start(ସଂରଚନା ssh *ssh, u_char type);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_send(ସଂରଚନା ssh *ssh);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା     sshpkt_disconnect(ସଂରଚନା ssh *, ଅଚଳ ଅକ୍ଷର *fmt, ...)
 	    __attribute__((format(printf, 2, 3)));
-int	sshpkt_add_padding(struct ssh *, u_char);
-void	sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_add_padding(ସଂରଚନା ssh *, u_char);
+ଶୂନ୍ୟ	sshpkt_fatal(ସଂରଚନା ssh *ssh, ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, ଅଚଳ ଅକ୍ଷର *fmt, ...)
 	    __attribute__((format(printf, 3, 4)))
 	    __attribute__((noreturn));
-int	sshpkt_msg_ignore(struct ssh *, u_int);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_ସନ୍ଦେଶ_ignore(ସଂରଚନା ssh *, u_int);
 
-int	sshpkt_put(struct ssh *ssh, const void *v, size_t len);
-int	sshpkt_putb(struct ssh *ssh, const struct sshbuf *b);
-int	sshpkt_put_u8(struct ssh *ssh, u_char val);
-int	sshpkt_put_u32(struct ssh *ssh, uint32_t val);
-int	sshpkt_put_u64(struct ssh *ssh, uint64_t val);
-int	sshpkt_put_string(struct ssh *ssh, const void *v, size_t len);
-int	sshpkt_put_cstring(struct ssh *ssh, const void *v);
-int	sshpkt_put_stringb(struct ssh *ssh, const struct sshbuf *v);
-int	sshpkt_put_ec(struct ssh *ssh, const EC_POINT *v, const EC_GROUP *g);
-int	sshpkt_put_ec_pkey(struct ssh *ssh, EVP_PKEY *pkey);
-int	sshpkt_put_bignum2(struct ssh *ssh, const BIGNUM *v);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put(ସଂରଚନା ssh *ssh, ଅଚଳ ଶୂନ୍ୟ *v, size_t len);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_putb(ସଂରଚନା ssh *ssh, ଅଚଳ ସଂରଚନା sshbuf *b);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put_u8(ସଂରଚନା ssh *ssh, u_char val);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put_u32(ସଂରଚନା ssh *ssh, uint32_t val);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put_u64(ସଂରଚନା ssh *ssh, uint64_t val);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put_string(ସଂରଚନା ssh *ssh, ଅଚଳ ଶୂନ୍ୟ *v, size_t len);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put_cstring(ସଂରଚନା ssh *ssh, ଅଚଳ ଶୂନ୍ୟ *v);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put_stringb(ସଂରଚନା ssh *ssh, ଅଚଳ ସଂରଚନା sshbuf *v);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put_ec(ସଂରଚନା ssh *ssh, ଅଚଳ EC_POINT *v, ଅଚଳ EC_GROUP *g);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put_ec_pkey(ସଂରଚନା ssh *ssh, EVP_PKEY *pkey);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_put_bignum2(ସଂରଚନା ssh *ssh, ଅଚଳ BIGNUM *v);
 
-int	sshpkt_get(struct ssh *ssh, void *valp, size_t len);
-int	sshpkt_get_u8(struct ssh *ssh, u_char *valp);
-int	sshpkt_get_u32(struct ssh *ssh, uint32_t *valp);
-int	sshpkt_get_u64(struct ssh *ssh, uint64_t *valp);
-int	sshpkt_get_string(struct ssh *ssh, u_char **valp, size_t *lenp);
-int	sshpkt_get_string_direct(struct ssh *ssh, const u_char **valp, size_t *lenp);
-int	sshpkt_peek_string_direct(struct ssh *ssh, const u_char **valp, size_t *lenp);
-int	sshpkt_get_cstring(struct ssh *ssh, char **valp, size_t *lenp);
-int	sshpkt_getb_froms(struct ssh *ssh, struct sshbuf **valp);
-int	sshpkt_get_ec(struct ssh *ssh, EC_POINT *v, const EC_GROUP *g);
-int	sshpkt_get_bignum2(struct ssh *ssh, BIGNUM **valp);
-int	sshpkt_get_end(struct ssh *ssh);
-void	sshpkt_fmt_connection_id(struct ssh *ssh, char *s, size_t l);
-const u_char	*sshpkt_ptr(struct ssh *, size_t *lenp);
-char	*connection_info_message(struct ssh *ssh);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get(ସଂରଚନା ssh *ssh, ଶୂନ୍ୟ *valp, size_t len);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get_u8(ସଂରଚନା ssh *ssh, u_char *valp);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get_u32(ସଂରଚନା ssh *ssh, uint32_t *valp);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get_u64(ସଂରଚନା ssh *ssh, uint64_t *valp);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get_string(ସଂରଚନା ssh *ssh, u_char **valp, size_t *lenp);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get_string_direct(ସଂରଚନା ssh *ssh, ଅଚଳ u_char **valp, size_t *lenp);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_peek_string_direct(ସଂରଚନା ssh *ssh, ଅଚଳ u_char **valp, size_t *lenp);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get_cstring(ସଂରଚନା ssh *ssh, ଅକ୍ଷର **valp, size_t *lenp);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_getb_froms(ସଂରଚନା ssh *ssh, ସଂରଚନା sshbuf **valp);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get_ec(ସଂରଚନା ssh *ssh, EC_POINT *v, ଅଚଳ EC_GROUP *g);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get_bignum2(ସଂରଚନା ssh *ssh, BIGNUM **valp);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	sshpkt_get_end(ସଂରଚନା ssh *ssh);
+ଶୂନ୍ୟ	sshpkt_fmt_connection_id(ସଂରଚନା ssh *ssh, ଅକ୍ଷର *s, size_t l);
+ଅଚଳ u_char	*sshpkt_ptr(ସଂରଚନା ssh *, size_t *lenp);
+ଅକ୍ଷର	*connection_info_message(ସଂରଚନା ssh *ssh);
 
 #endif				/* PACKET_H */

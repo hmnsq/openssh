@@ -15,265 +15,265 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <limits.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <limits.h>
 
-#include "crypto_api.h"
+#ଅନ୍ତର୍ଭାଵ "crypto_api.h"
 
-#include <string.h>
-#include <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
 
-#include "log.h"
-#include "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
-#include "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
 
-static void
-ssh_ed25519_cleanup(struct sshkey *k)
+ସ୍ଥିର ଶୂନ୍ୟ
+ssh_ed25519_cleanup(ସଂରଚନା sshkey *k)
 {
 	freezero(k->ed25519_pk, ED25519_PK_SZ);
 	freezero(k->ed25519_sk, ED25519_SK_SZ);
-	k->ed25519_pk = NULL;
-	k->ed25519_sk = NULL;
+	k->ed25519_pk = ଖାଲି;
+	k->ed25519_sk = ଖାଲି;
 }
 
-static int
-ssh_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_equal(ଅଚଳ ସଂରଚନା sshkey *a, ଅଚଳ ସଂରଚନା sshkey *b)
 {
-	if (a->ed25519_pk == NULL || b->ed25519_pk == NULL)
-		return 0;
-	if (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
-		return 0;
-	return 1;
+	ଯଦି (a->ed25519_pk == ଖାଲି || b->ed25519_pk == ଖାଲି)
+		ଫେରନ୍ତୁ 0;
+	ଯଦି (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
+		ଫେରନ୍ତୁ 0;
+	ଫେରନ୍ତୁ 1;
 }
 
-static int
-ssh_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_serialize_public(ଅଚଳ ସଂରଚନା sshkey *ଚାବି, ସଂରଚନା sshbuf *b,
+    ଗଣନା sshkey_serialize_rep opts)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if (key->ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0)
-		return r;
+	ଯଦି (ଚାବି->ed25519_pk == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_ARGUMENT;
+	ଯଦି ((r = sshbuf_put_string(b, ଚାବି->ed25519_pk, ED25519_PK_SZ)) != 0)
+		ଫେରନ୍ତୁ r;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-ssh_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_serialize_private(ଅଚଳ ସଂରଚନା sshkey *ଚାବି, ସଂରଚନା sshbuf *b,
+    ଗଣନା sshkey_serialize_rep opts)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0 ||
-	    (r = sshbuf_put_string(b, key->ed25519_sk, ED25519_SK_SZ)) != 0)
-		return r;
+	ଯଦି ((r = sshbuf_put_string(b, ଚାବି->ed25519_pk, ED25519_PK_SZ)) != 0 ||
+	    (r = sshbuf_put_string(b, ଚାବି->ed25519_sk, ED25519_SK_SZ)) != 0)
+		ଫେରନ୍ତୁ r;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-ssh_ed25519_generate(struct sshkey *k, int bits)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_generate(ସଂରଚନା sshkey *k, ପୂର୍ଣ୍ଣସଂଖ୍ୟା bits)
 {
-	if ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL ||
-	    (k->ed25519_sk = malloc(ED25519_SK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
-		return SSH_ERR_CRYPTO_ERROR;
-	return 0;
+	ଯଦି ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == ଖାଲି ||
+	    (k->ed25519_sk = malloc(ED25519_SK_SZ)) == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
+	ଯଦି (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
+		ଫେରନ୍ତୁ SSH_ERR_CRYPTO_ERROR;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-ssh_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_copy_public(ଅଚଳ ସଂରଚନା sshkey *from, ସଂରଚନା sshkey *to)
 {
-	if (from->ed25519_pk == NULL)
-		return 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
-	if ((to->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ଯଦି (from->ed25519_pk == ଖାଲି)
+		ଫେରନ୍ତୁ 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
+	ଯଦି ((to->ed25519_pk = malloc(ED25519_PK_SZ)) == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
 	memcpy(to->ed25519_pk, from->ed25519_pk, ED25519_PK_SZ);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-ssh_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_deserialize_public(ଅଚଳ ଅକ୍ଷର *ktype, ସଂରଚନା sshbuf *b,
+    ସଂରଚନା sshkey *ଚାବି)
 {
-	u_char *pk = NULL;
+	u_char *pk = ଖାଲି;
 	size_t len = 0;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = sshbuf_get_string(b, &pk, &len)) != 0)
-		return r;
-	if (len != ED25519_PK_SZ) {
+	ଯଦି ((r = sshbuf_get_string(b, &pk, &len)) != 0)
+		ଫେରନ୍ତୁ r;
+	ଯଦି (len != ED25519_PK_SZ) {
 		freezero(pk, len);
-		return SSH_ERR_INVALID_FORMAT;
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 	}
-	key->ed25519_pk = pk;
-	return 0;
+	ଚାବି->ed25519_pk = pk;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_deserialize_private(ଅଚଳ ଅକ୍ଷର *ktype, ସଂରଚନା sshbuf *b,
+    ସଂରଚନା sshkey *ଚାବି)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	size_t sklen = 0;
-	u_char *ed25519_sk = NULL;
+	u_char *ed25519_sk = ଖାଲି;
 
-	if ((r = ssh_ed25519_deserialize_public(NULL, b, key)) != 0)
-		goto out;
-	if ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
-		goto out;
-	if (sklen != ED25519_SK_SZ) {
+	ଯଦି ((r = ssh_ed25519_deserialize_public(ଖାଲି, b, ଚାବି)) != 0)
+		ଯାଅ out;
+	ଯଦି ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
+		ଯାଅ out;
+	ଯଦି (sklen != ED25519_SK_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ଯାଅ out;
 	}
-	key->ed25519_sk = ed25519_sk;
-	ed25519_sk = NULL; /* transferred */
+	ଚାବି->ed25519_sk = ed25519_sk;
+	ed25519_sk = ଖାଲି; /* transferred */
 	/* success */
 	r = 0;
  out:
 	freezero(ed25519_sk, sklen);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
-static int
-ssh_ed25519_sign(struct sshkey *key,
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_sign(ସଂରଚନା sshkey *ଚାବି,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+    ଅଚଳ u_char *data, size_t datalen,
+    ଅଚଳ ଅକ୍ଷର *alg, ଅଚଳ ଅକ୍ଷର *sk_provider, ଅଚଳ ଅକ୍ଷର *sk_pin, u_int compat)
 {
 	u_char sig[crypto_sign_ed25519_BYTES];
 	unsigned long long siglen = 0;
-	int r, ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, ret;
 
-	if (lenp != NULL)
+	ଯଦି (lenp != ଖାଲି)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	ଯଦି (sigp != ଖାଲି)
+		*sigp = ଖାଲି;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ED25519 ||
-	    key->ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ଯଦି (ଚାବି == ଖାଲି ||
+	    sshkey_type_plain(ଚାବି->type) != ଚାବି_ED25519 ||
+	    ଚାବି->ed25519_sk == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_ARGUMENT;
 
-	if ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
-	    key->ed25519_sk)) != 0 || siglen != sizeof(sig)) {
+	ଯଦି ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
+	    ଚାବି->ed25519_sk)) != 0 || siglen != ଆକାର(sig)) {
 		r = SSH_ERR_INVALID_ARGUMENT; /* XXX better error? */
-		goto out;
+		ଯାଅ out;
 	}
-	if ((r = ssh_ed25519_encode_store_sig(sig, siglen,
+	ଯଦି ((r = ssh_ed25519_encode_store_sig(sig, siglen,
 	    sigp, lenp)) != 0)
-		goto out;
+		ଯାଅ out;
 
 	/* success */
 	r = 0;
  out:
-	explicit_bzero(sig, sizeof(sig));
-	return r;
+	explicit_bzero(sig, ଆକାର(sig));
+	ଫେରନ୍ତୁ r;
 }
 
-int
-ssh_ed25519_encode_store_sig(const u_char *sig, size_t slen,
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_encode_store_sig(ଅଚଳ u_char *sig, size_t slen,
     u_char **sigp, size_t *lenp)
 {
-	struct sshbuf *b = NULL;
-	int r = -1;
+	ସଂରଚନା sshbuf *b = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r = -1;
 	size_t len;
 
-	if (lenp != NULL)
+	ଯଦି (lenp != ଖାଲି)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	ଯଦି (sigp != ଖାଲି)
+		*sigp = ଖାଲି;
 
-	if (slen != crypto_sign_ed25519_BYTES)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ଯଦି (slen != crypto_sign_ed25519_BYTES)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_ARGUMENT;
 
 	/* encode signature */
-	if ((b = sshbuf_new()) == NULL) {
+	ଯଦି ((b = sshbuf_new()) == ଖାଲି) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		ଯାଅ out;
 	}
-	if ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
+	ଯଦି ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
 	    (r = sshbuf_put_string(b, sig, slen)) != 0)
-		goto out;
+		ଯାଅ out;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	ଯଦି (sigp != ଖାଲି) {
+		ଯଦି ((*sigp = malloc(len)) == ଖାଲି) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ଯାଅ out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	ଯଦି (lenp != ଖାଲି)
 		*lenp = len;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
-static int
-ssh_ed25519_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ed25519_verify(ଅଚଳ ସଂରଚନା sshkey *ଚାବି,
+    ଅଚଳ u_char *sig, size_t siglen,
+    ଅଚଳ u_char *data, size_t dlen, ଅଚଳ ଅକ୍ଷର *alg, u_int compat,
+    ସଂରଚନା sshkey_sig_details **detailsp)
 {
-	struct sshbuf *b = NULL;
-	char *ktype = NULL;
-	const u_char *sigblob;
+	ସଂରଚନା sshbuf *b = ଖାଲି;
+	ଅକ୍ଷର *ktype = ଖାଲି;
+	ଅଚଳ u_char *sigblob;
 	size_t len;
-	int r, ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, ret;
 
-	if (key == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ED25519 ||
-	    key->ed25519_pk == NULL ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ଯଦି (ଚାବି == ଖାଲି ||
+	    sshkey_type_plain(ଚାବି->type) != ଚାବି_ED25519 ||
+	    ଚାବି->ed25519_pk == ଖାଲି ||
+	    sig == ଖାଲି || siglen == 0)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
+	ଯଦି ((b = sshbuf_from(sig, siglen)) == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
+	ଯଦି ((r = sshbuf_get_cstring(b, &ktype, ଖାଲି)) != 0 ||
 	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
-		goto out;
-	if (strcmp("ssh-ed25519", ktype) != 0) {
-		r = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+		ଯାଅ out;
+	ଯଦି (strcmp("ssh-ed25519", ktype) != 0) {
+		r = SSH_ERR_ଚାବି_TYPE_MISMATCH;
+		ଯାଅ out;
 	}
-	if (sshbuf_len(b) != 0) {
+	ଯଦି (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		ଯାଅ out;
 	}
-	if (len != crypto_sign_ed25519_BYTES) {
+	ଯଦି (len != crypto_sign_ed25519_BYTES) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ଯାଅ out;
 	}
-	if ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
-	    key->ed25519_pk)) != 0) {
+	ଯଦି ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
+	    ଚାବି->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
-	if (ret != 0) {
+	ଯଦି (ret != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		ଯାଅ out;
 	}
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	free(ktype);
-	return r;
+	ମୁକ୍ତ(ktype);
+	ଫେରନ୍ତୁ r;
 }
 
 /* NB. not static; used by ED25519-SK */
-const struct sshkey_impl_funcs sshkey_ed25519_funcs = {
-	/* .size = */		NULL,
-	/* .alloc = */		NULL,
+ଅଚଳ ସଂରଚନା sshkey_impl_funcs sshkey_ed25519_funcs = {
+	/* .size = */		ଖାଲି,
+	/* .alloc = */		ଖାଲି,
 	/* .cleanup = */	ssh_ed25519_cleanup,
 	/* .equal = */		ssh_ed25519_equal,
 	/* .ssh_serialize_public = */ ssh_ed25519_serialize_public,
@@ -286,11 +286,11 @@ const struct sshkey_impl_funcs sshkey_ed25519_funcs = {
 	/* .verify = */		ssh_ed25519_verify,
 };
 
-const struct sshkey_impl sshkey_ed25519_impl = {
+ଅଚଳ ସଂରଚନା sshkey_impl sshkey_ed25519_impl = {
 	/* .name = */		"ssh-ed25519",
 	/* .shortname = */	"ED25519",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519,
+	/* .sigalg = */		ଖାଲି,
+	/* .type = */		ଚାବି_ED25519,
 	/* .nid = */		0,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -298,11 +298,11 @@ const struct sshkey_impl sshkey_ed25519_impl = {
 	/* .funcs = */		&sshkey_ed25519_funcs,
 };
 
-const struct sshkey_impl sshkey_ed25519_cert_impl = {
+ଅଚଳ ସଂରଚନା sshkey_impl sshkey_ed25519_cert_impl = {
 	/* .name = */		"ssh-ed25519-cert-v01@openssh.com",
 	/* .shortname = */	"ED25519-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ED25519_CERT,
+	/* .sigalg = */		ଖାଲି,
+	/* .type = */		ଚାବି_ED25519_CERT,
 	/* .nid = */		0,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

@@ -24,81 +24,81 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifdef WITH_OPENSSL
 
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 
-#include <openssl/evp.h>
-#include <signal.h>
+#ଅନ୍ତର୍ଭାଵ <openssl/evp.h>
+#ଅନ୍ତର୍ଭାଵ <signal.h>
 
-#include "openbsd-compat/openssl-compat.h"
+#ଅନ୍ତର୍ଭାଵ "openbsd-compat/openssl-compat.h"
 
-#include "sshkey.h"
-#include "cipher.h"
-#include "kex.h"
-#include "ssh2.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "cipher.h"
+#ଅନ୍ତର୍ଭାଵ "kex.h"
+#ଅନ୍ତର୍ଭାଵ "ssh2.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "digest.h"
 
-int
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 kexgex_hash(
-    int hash_alg,
-    const struct sshbuf *client_version,
-    const struct sshbuf *server_version,
-    const struct sshbuf *client_kexinit,
-    const struct sshbuf *server_kexinit,
-    const struct sshbuf *server_host_key_blob,
-    int min, int wantbits, int max,
-    const BIGNUM *prime,
-    const BIGNUM *gen,
-    const BIGNUM *client_dh_pub,
-    const BIGNUM *server_dh_pub,
-    const u_char *shared_secret, size_t secretlen,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା hash_alg,
+    ଅଚଳ ସଂରଚନା sshbuf *client_version,
+    ଅଚଳ ସଂରଚନା sshbuf *server_version,
+    ଅଚଳ ସଂରଚନା sshbuf *client_kexinit,
+    ଅଚଳ ସଂରଚନା sshbuf *server_kexinit,
+    ଅଚଳ ସଂରଚନା sshbuf *server_host_ଚାବି_blob,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା min, ପୂର୍ଣ୍ଣସଂଖ୍ୟା wantbits, ପୂର୍ଣ୍ଣସଂଖ୍ୟା max,
+    ଅଚଳ BIGNUM *ମୌଳିକ,
+    ଅଚଳ BIGNUM *gen,
+    ଅଚଳ BIGNUM *client_dh_pub,
+    ଅଚଳ BIGNUM *server_dh_pub,
+    ଅଚଳ u_char *shared_secret, size_t secretlen,
     u_char *hash, size_t *hashlen)
 {
-	struct sshbuf *b;
-	int r;
+	ସଂରଚନା sshbuf *b;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if (*hashlen < ssh_digest_bytes(SSH_DIGEST_SHA1))
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_stringb(b, client_version)) < 0 ||
+	ଯଦି (*hashlen < ssh_digest_bytes(SSH_DIGEST_SHA1))
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_ARGUMENT;
+	ଯଦି ((b = sshbuf_new()) == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
+	ଯଦି ((r = sshbuf_put_stringb(b, client_version)) < 0 ||
 	    (r = sshbuf_put_stringb(b, server_version)) < 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_ସନ୍ଦେଶ_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, client_kexinit)) != 0 ||
 	    (r = sshbuf_put_u32(b, sshbuf_len(server_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_ସନ୍ଦେଶ_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, server_kexinit)) != 0 ||
-	    (r = sshbuf_put_stringb(b, server_host_key_blob)) != 0 ||
+	    (r = sshbuf_put_stringb(b, server_host_ଚାବି_blob)) != 0 ||
 	    (min != -1 && (r = sshbuf_put_u32(b, min)) != 0) ||
 	    (r = sshbuf_put_u32(b, wantbits)) != 0 ||
 	    (max != -1 && (r = sshbuf_put_u32(b, max)) != 0) ||
-	    (r = sshbuf_put_bignum2(b, prime)) != 0 ||
+	    (r = sshbuf_put_bignum2(b, ମୌଳିକ)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, gen)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, client_dh_pub)) != 0 ||
 	    (r = sshbuf_put_bignum2(b, server_dh_pub)) != 0 ||
 	    (r = sshbuf_put(b, shared_secret, secretlen)) != 0) {
 		sshbuf_free(b);
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 #ifdef DEBUG_KEXDH
 	sshbuf_dump(b, stderr);
 #endif
-	if (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
+	ଯଦି (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
 		sshbuf_free(b);
-		return SSH_ERR_LIBCRYPTO_ERROR;
+		ଫେରନ୍ତୁ SSH_ERR_LIBCRYPTO_ERROR;
 	}
 	sshbuf_free(b);
 	*hashlen = ssh_digest_bytes(hash_alg);
 #ifdef DEBUG_KEXDH
 	dump_digest("hash", hash, *hashlen);
 #endif
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 #endif /* WITH_OPENSSL */

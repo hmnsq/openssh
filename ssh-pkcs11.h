@@ -24,26 +24,26 @@
 #define	SSH_PKCS11_ERR_PIN_REQUIRED		4
 #define	SSH_PKCS11_ERR_PIN_LOCKED		5
 
-struct sshkey;
+ସଂରଚନା sshkey;
 
-int	pkcs11_init(int);
-void	pkcs11_terminate(void);
-int	pkcs11_add_provider(char *, char *, struct sshkey ***, char ***);
-int	pkcs11_del_provider(char *);
-int	pkcs11_sign(struct sshkey *, u_char **, size_t *,
-	    const u_char *, size_t, const char *, const char *,
-	    const char *, u_int);
-void	pkcs11_key_free(struct sshkey *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	pkcs11_init(ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ଶୂନ୍ୟ	pkcs11_terminate(ଶୂନ୍ୟ);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	pkcs11_add_provider(ଅକ୍ଷର *, ଅକ୍ଷର *, ସଂରଚନା sshkey ***, ଅକ୍ଷର ***);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	pkcs11_del_provider(ଅକ୍ଷର *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	pkcs11_sign(ସଂରଚନା sshkey *, u_char **, size_t *,
+	    ଅଚଳ u_char *, size_t, ଅଚଳ ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *,
+	    ଅଚଳ ଅକ୍ଷର *, u_int);
+ଶୂନ୍ୟ	pkcs11_ଚାବି_free(ସଂରଚନା sshkey *);
 
 #ifdef WITH_PKCS11_KEYGEN
-struct sshkey *
-	pkcs11_gakp(char *, char *, unsigned int, char *, unsigned int,
-	    unsigned int, unsigned char, uint32_t *);
-struct sshkey *
-	pkcs11_destroy_keypair(char *, char *, unsigned long, unsigned char,
+ସଂରଚନା sshkey *
+	pkcs11_gakp(ଅକ୍ଷର *, ଅକ୍ଷର *, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅକ୍ଷର *, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା,
+	    unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା, unsigned ଅକ୍ଷର, uint32_t *);
+ସଂରଚନା sshkey *
+	pkcs11_destroy_keypair(ଅକ୍ଷର *, ଅକ୍ଷର *, unsigned long, unsigned ଅକ୍ଷର,
 	    uint32_t *);
 #endif
 
 /* Only available in ssh-pkcs11-client.c */
-int pkcs11_make_cert(const struct sshkey *,
-    const struct sshkey *, struct sshkey **);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା pkcs11_make_cert(ଅଚଳ ସଂରଚନା sshkey *,
+    ଅଚଳ ସଂରଚନା sshkey *, ସଂରଚନା sshkey **);

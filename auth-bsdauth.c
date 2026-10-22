@@ -23,105 +23,105 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
 
 #ifdef BSD_AUTH
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "log.h"
+#ଅନ୍ତର୍ଭାଵ "xmalloc.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "hostfile.h"
+#ଅନ୍ତର୍ଭାଵ "auth.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#ଅନ୍ତର୍ଭାଵ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
+#ଅନ୍ତର୍ଭାଵ "monitor_wrap.h"
 
-static void *
+ସ୍ଥିର ଶୂନ୍ୟ *
 bsdauth_init_ctx(Authctxt *authctxt)
 {
-	return authctxt;
+	ଫେରନ୍ତୁ authctxt;
 }
 
-int
-bsdauth_query(void *ctx, char **name, char **infotxt,
-   u_int *numprompts, char ***prompts, u_int **echo_on)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+bsdauth_query(ଶୂନ୍ୟ *ctx, ଅକ୍ଷର **name, ଅକ୍ଷର **infotxt,
+   u_int *numprompts, ଅକ୍ଷର ***prompts, u_int **echo_on)
 {
 	Authctxt *authctxt = ctx;
-	char *challenge = NULL;
+	ଅକ୍ଷର *challenge = ଖାଲି;
 
-	*infotxt = NULL;
+	*infotxt = ଖାଲି;
 	*numprompts = 0;
-	*prompts = NULL;
-	*echo_on = NULL;
+	*prompts = ଖାଲି;
+	*echo_on = ଖାଲି;
 
-	if (authctxt->as != NULL) {
+	ଯଦି (authctxt->as != ଖାଲି) {
 		debug2("bsdauth_query: try reuse session");
 		challenge = auth_getitem(authctxt->as, AUTHV_CHALLENGE);
-		if (challenge == NULL) {
+		ଯଦି (challenge == ଖାଲି) {
 			auth_close(authctxt->as);
-			authctxt->as = NULL;
+			authctxt->as = ଖାଲି;
 		}
 	}
 
-	if (challenge == NULL) {
+	ଯଦି (challenge == ଖାଲି) {
 		debug2("bsdauth_query: new bsd auth session");
 		debug3("bsdauth_query: style %s",
 		    authctxt->style ? authctxt->style : "<default>");
 		authctxt->as = auth_userchallenge(authctxt->user,
 		    authctxt->style, "auth-ssh", &challenge);
-		if (authctxt->as == NULL)
-			challenge = NULL;
+		ଯଦି (authctxt->as == ଖାଲି)
+			challenge = ଖାଲି;
 		debug2("bsdauth_query: <%s>", challenge ? challenge : "empty");
 	}
 
-	if (challenge == NULL)
-		return -1;
+	ଯଦି (challenge == ଖାଲି)
+		ଫେରନ୍ତୁ -1;
 
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
 	*numprompts = 1;
-	*prompts = xcalloc(*numprompts, sizeof(char *));
-	*echo_on = xcalloc(*numprompts, sizeof(u_int));
+	*prompts = xcalloc(*numprompts, ଆକାର(ଅକ୍ଷର *));
+	*echo_on = xcalloc(*numprompts, ଆକାର(u_int));
 	(*prompts)[0] = xstrdup(challenge);
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-int
-bsdauth_respond(void *ctx, u_int numresponses, char **responses)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+bsdauth_respond(ଶୂନ୍ୟ *ctx, u_int numresponses, ଅକ୍ଷର **responses)
 {
 	Authctxt *authctxt = ctx;
-	int authok;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା authok;
 
-	if (!authctxt->valid)
-		return -1;
+	ଯଦି (!authctxt->valid)
+		ଫେରନ୍ତୁ -1;
 
-	if (authctxt->as == NULL)
+	ଯଦି (authctxt->as == ଖାଲି)
 		error("bsdauth_respond: no bsd auth session");
 
-	if (numresponses != 1)
-		return -1;
+	ଯଦି (numresponses != 1)
+		ଫେରନ୍ତୁ -1;
 
 	authok = auth_userresponse(authctxt->as, responses[0], 0);
-	authctxt->as = NULL;
+	authctxt->as = ଖାଲି;
 	debug3("bsdauth_respond: <%s> = <%d>", responses[0], authok);
 
-	return (authok == 0) ? -1 : 0;
+	ଫେରନ୍ତୁ (authok == 0) ? -1 : 0;
 }
 
-static void
-bsdauth_free_ctx(void *ctx)
+ସ୍ଥିର ଶୂନ୍ୟ
+bsdauth_free_ctx(ଶୂନ୍ୟ *ctx)
 {
 	Authctxt *authctxt = ctx;
 
-	if (authctxt && authctxt->as) {
+	ଯଦି (authctxt && authctxt->as) {
 		auth_close(authctxt->as);
-		authctxt->as = NULL;
+		authctxt->as = ଖାଲି;
 	}
 }
 

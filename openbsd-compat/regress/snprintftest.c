@@ -17,62 +17,62 @@
 
 #define BUFSZ 2048
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-static int failed = 0;
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା failed = 0;
 
-static void
-fail(const char *m)
+ସ୍ଥିର ଶୂନ୍ୟ
+fail(ଅଚଳ ଅକ୍ଷର *m)
 {
 	fprintf(stderr, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା x_snprintf(ଅକ୍ଷର *str, size_t ଗଣନା_2, ଅଚଳ ଅକ୍ଷର *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, ଗଣନା_2, fmt, ap);
 	va_end(ap);
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
-int
-main(void)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ମୁଖ୍ୟ(ଶୂନ୍ୟ)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	ଅକ୍ଷର b[5];
+	ଅକ୍ଷର *src = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
 
-	memset(b, 'X', sizeof(b));
+	memset(b, 'X', ଆକାର(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	ଯଦି (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	ଯଦି ((src = malloc(BUFSZ)) == ଖାଲି) {
 		fail("malloc failed");
-	} else {
+	} ଅନ୍ୟଥା {
 		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+		snprintf(b, ଆକାର(b), "%.*s", 1, src);
+		ଯଦି (strcmp(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ଯଦି (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	ଯଦି (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
-	free(src);
-	return failed;
+	ମୁକ୍ତ(src);
+	ଫେରନ୍ତୁ failed;
 }

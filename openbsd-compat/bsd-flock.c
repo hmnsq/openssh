@@ -34,48 +34,48 @@
  * Otherwise, don't do locking; just pretend success.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifndef HAVE_FLOCK
-#include <errno.h>
-#include <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
 
-int
-flock(int fd, int op)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+flock(ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ପୂର୍ଣ୍ଣସଂଖ୍ୟା op)
 {
-	int rc = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
-	struct flock fl = {0};
+#ଯଦି defined(F_SETLK) && defined(F_SETLKW)
+	ସଂରଚନା flock fl = {0};
 
-	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
-	case LOCK_EX:
+	ବାଛ (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
+	ସ୍ଥିତି LOCK_EX:
 		fl.l_type = F_WRLCK;
-		break;
+		ଭାଙ୍ଗ;
 
-	case LOCK_SH:
+	ସ୍ଥିତି LOCK_SH:
 		fl.l_type = F_RDLCK;
-		break;
+		ଭାଙ୍ଗ;
 
-	case LOCK_UN:
+	ସ୍ଥିତି LOCK_UN:
 		fl.l_type = F_UNLCK;
-		break;
+		ଭାଙ୍ଗ;
 
-	default:
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 		errno = EINVAL;
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
 
 	fl.l_whence = SEEK_SET;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
+	ଯଦି (rc && (errno == EAGAIN))
 		errno = EWOULDBLOCK;
-#else
+#ଅନ୍ୟଥା
 	rc = -1;
 	errno = ENOSYS;
 #endif
 
-	return rc;
+	ଫେରନ୍ତୁ rc;
 }
 #endif

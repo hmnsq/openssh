@@ -16,114 +16,114 @@
 
 /* sftp client user/group lookup and caching */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/tree.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/tree.h>
 
-#include <glob.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <glob.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-#include "log.h"
-#include "xmalloc.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "xmalloc.h"
 
-#include "sftp-common.h"
-#include "sftp-client.h"
-#include "sftp-usergroup.h"
+#ଅନ୍ତର୍ଭାଵ "sftp-common.h"
+#ଅନ୍ତର୍ଭାଵ "sftp-client.h"
+#ଅନ୍ତର୍ଭାଵ "sftp-usergroup.h"
 
 /* Tree of id, name */
-struct idname {
+ସଂରଚନା idname {
         u_int id;
-	char *name;
+	ଅକ୍ଷର *name;
         RB_ENTRY(idname) entry;
 	/* XXX implement bounded cache as TAILQ */
 };
-static int
-idname_cmp(struct idname *a, struct idname *b)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+idname_cmp(ସଂରଚନା idname *a, ସଂରଚନା idname *b)
 {
-	if (a->id == b->id)
-		return 0;
-	return a->id > b->id ? 1 : -1;
+	ଯଦି (a->id == b->id)
+		ଫେରନ୍ତୁ 0;
+	ଫେରନ୍ତୁ a->id > b->id ? 1 : -1;
 }
-RB_HEAD(idname_tree, idname);
-RB_GENERATE_STATIC(idname_tree, idname, entry, idname_cmp)
+RB_HEAD(idname_ବୃକ୍ଷ, idname);
+RB_GENERATE_STATIC(idname_ବୃକ୍ଷ, idname, entry, idname_cmp)
 
-static struct idname_tree user_idname = RB_INITIALIZER(&user_idname);
-static struct idname_tree group_idname = RB_INITIALIZER(&group_idname);
+ସ୍ଥିର ସଂରଚନା idname_ବୃକ୍ଷ user_idname = RB_INITIALIZER(&user_idname);
+ସ୍ଥିର ସଂରଚନା idname_ବୃକ୍ଷ group_idname = RB_INITIALIZER(&group_idname);
 
-static void
-idname_free(struct idname *idname)
+ସ୍ଥିର ଶୂନ୍ୟ
+idname_free(ସଂରଚନା idname *idname)
 {
-	if (idname == NULL)
-		return;
-	free(idname->name);
-	free(idname);
+	ଯଦି (idname == ଖାଲି)
+		ଫେରନ୍ତୁ;
+	ମୁକ୍ତ(idname->name);
+	ମୁକ୍ତ(idname);
 }
 
-static void
-idname_enter(struct idname_tree *tree, u_int id, const char *name)
+ସ୍ଥିର ଶୂନ୍ୟ
+idname_enter(ସଂରଚନା idname_ବୃକ୍ଷ *ବୃକ୍ଷ, u_int id, ଅଚଳ ଅକ୍ଷର *name)
 {
-	struct idname *idname;
+	ସଂରଚନା idname *idname;
 
-	if ((idname = xcalloc(1, sizeof(*idname))) == NULL)
+	ଯଦି ((idname = xcalloc(1, ଆକାର(*idname))) == ଖାଲି)
 		fatal_f("alloc");
 	idname->id = id;
 	idname->name = xstrdup(name);
-	if (RB_INSERT(idname_tree, tree, idname) != NULL)
+	ଯଦି (RB_ଭର୍ତ୍ତି(idname_ବୃକ୍ଷ, ବୃକ୍ଷ, idname) != ଖାଲି)
 		idname_free(idname);
 }
 
-static const char *
-idname_lookup(struct idname_tree *tree, u_int id)
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *
+idname_lookup(ସଂରଚନା idname_ବୃକ୍ଷ *ବୃକ୍ଷ, u_int id)
 {
-	struct idname idname, *found;
+	ସଂରଚନା idname idname, *found;
 
-	memset(&idname, 0, sizeof(idname));
+	memset(&idname, 0, ଆକାର(idname));
 	idname.id = id;
-	if ((found = RB_FIND(idname_tree, tree, &idname)) != NULL)
-		return found->name;
-	return NULL;
+	ଯଦି ((found = RB_FIND(idname_ବୃକ୍ଷ, ବୃକ୍ଷ, &idname)) != ଖାଲି)
+		ଫେରନ୍ତୁ found->name;
+	ଫେରନ୍ତୁ ଖାଲି;
 }
 
-static void
-freenames(char **names, u_int nnames)
+ସ୍ଥିର ଶୂନ୍ୟ
+freenames(ଅକ୍ଷର **names, u_int nnames)
 {
 	u_int i;
 
-	if (names == NULL)
-		return;
-	for (i = 0; i < nnames; i++)
-		free(names[i]);
-	free(names);
+	ଯଦି (names == ଖାଲି)
+		ଫେରନ୍ତୁ;
+	ପାଇଁ (i = 0; i < nnames; i++)
+		ମୁକ୍ତ(names[i]);
+	ମୁକ୍ତ(names);
 }
 
-static void
-lookup_and_record(struct sftp_conn *conn,
+ସ୍ଥିର ଶୂନ୍ୟ
+lookup_and_record(ସଂରଚନା sftp_conn *conn,
     u_int *uids, u_int nuids, u_int *gids, u_int ngids)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i;
-	char **usernames = NULL, **groupnames = NULL;
+	ଅକ୍ଷର **usernames = ଖାଲି, **groupnames = ଖାଲି;
 
-	if ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
+	ଯଦି ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
 	    &usernames, &groupnames)) != 0) {
 		debug_fr(r, "sftp_get_users_groups_by_id");
-		return;
+		ଫେରନ୍ତୁ;
 	}
-	for (i = 0; i < nuids; i++) {
-		if (usernames[i] == NULL) {
+	ପାଇଁ (i = 0; i < nuids; i++) {
+		ଯଦି (usernames[i] == ଖାଲି) {
 			debug3_f("uid %u not resolved", uids[i]);
-			continue;
+			ଜାରି;
 		}
 		debug3_f("record uid %u => \"%s\"", uids[i], usernames[i]);
 		idname_enter(&user_idname, uids[i], usernames[i]);
 	}
-	for (i = 0; i < ngids; i++) {
-		if (groupnames[i] == NULL) {
+	ପାଇଁ (i = 0; i < ngids; i++) {
+		ଯଦି (groupnames[i] == ଖାଲି) {
 			debug3_f("gid %u not resolved", gids[i]);
-			continue;
+			ଜାରି;
 		}
 		debug3_f("record gid %u => \"%s\"", gids[i], groupnames[i]);
 		idname_enter(&group_idname, gids[i], groupnames[i]);
@@ -132,111 +132,111 @@ lookup_and_record(struct sftp_conn *conn,
 	freenames(groupnames, ngids);
 }
 
-static int
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 has_id(u_int id, u_int *ids, u_int nids)
 {
 	u_int i;
 
-	if (nids == 0)
-		return 0;
+	ଯଦି (nids == 0)
+		ଫେରନ୍ତୁ 0;
 
 	/* XXX O(N^2) */
-	for (i = 0; i < nids; i++) {
-		if (ids[i] == id)
-			break;
+	ପାଇଁ (i = 0; i < nids; i++) {
+		ଯଦି (ids[i] == id)
+			ଭାଙ୍ଗ;
 	}
-	return i < nids;
+	ଫେରନ୍ତୁ i < nids;
 }
 
-static void
-collect_ids_from_glob(glob_t *g, int user, u_int **idsp, u_int *nidsp)
+ସ୍ଥିର ଶୂନ୍ୟ
+collect_ids_from_glob(glob_t *g, ପୂର୍ଣ୍ଣସଂଖ୍ୟା user, u_int **idsp, u_int *nidsp)
 {
-	u_int id, i, n = 0, *ids = NULL;
+	u_int id, i, n = 0, *ids = ଖାଲି;
 
-	for (i = 0; g->gl_pathv[i] != NULL; i++) {
-		if (g->gl_statv[i] == NULL) /* no stat information */
-			continue;
-		if (user) {
-			if (ruser_name(g->gl_statv[i]->st_uid) != NULL)
-				continue; /* Already seen */
+	ପାଇଁ (i = 0; g->gl_pathv[i] != ଖାଲି; i++) {
+		ଯଦି (g->gl_statv[i] == ଖାଲି) /* no stat information */
+			ଜାରି;
+		ଯଦି (user) {
+			ଯଦି (ruser_name(g->gl_statv[i]->st_uid) != ଖାଲି)
+				ଜାରି; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_uid;
-		} else {
-			if (rgroup_name(g->gl_statv[i]->st_gid) != NULL)
-				continue; /* Already seen */
+		} ଅନ୍ୟଥା {
+			ଯଦି (rgroup_name(g->gl_statv[i]->st_gid) != ଖାଲି)
+				ଜାରି; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_gid;
 		}
-		if (has_id(id, ids, n))
-			continue;
-		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
+		ଯଦି (has_id(id, ids, n))
+			ଜାରି;
+		ids = xrecallocarray(ids, n, n + 1, ଆକାର(*ids));
 		ids[n++] = id;
 	}
 	*idsp = ids;
 	*nidsp = n;
 }
 
-void
-get_remote_user_groups_from_glob(struct sftp_conn *conn, glob_t *g)
+ଶୂନ୍ୟ
+get_remote_user_groups_from_glob(ସଂରଚନା sftp_conn *conn, glob_t *g)
 {
-	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
+	u_int *uids = ଖାଲି, nuids = 0, *gids = ଖାଲି, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	ଯଦି (!sftp_can_get_users_groups_by_id(conn))
+		ଫେରନ୍ତୁ;
 
 	collect_ids_from_glob(g, 1, &uids, &nuids);
 	collect_ids_from_glob(g, 0, &gids, &ngids);
 	lookup_and_record(conn, uids, nuids, gids, ngids);
-	free(uids);
-	free(gids);
+	ମୁକ୍ତ(uids);
+	ମୁକ୍ତ(gids);
 }
 
-static void
-collect_ids_from_dirents(SFTP_DIRENT **d, int user, u_int **idsp, u_int *nidsp)
+ସ୍ଥିର ଶୂନ୍ୟ
+collect_ids_from_dirents(SFTP_DIRENT **d, ପୂର୍ଣ୍ଣସଂଖ୍ୟା user, u_int **idsp, u_int *nidsp)
 {
-	u_int id, i, n = 0, *ids = NULL;
+	u_int id, i, n = 0, *ids = ଖାଲି;
 
-	for (i = 0; d[i] != NULL; i++) {
-		if (user) {
-			if (ruser_name((uid_t)(d[i]->a.uid)) != NULL)
-				continue; /* Already seen */
+	ପାଇଁ (i = 0; d[i] != ଖାଲି; i++) {
+		ଯଦି (user) {
+			ଯଦି (ruser_name((uid_t)(d[i]->a.uid)) != ଖାଲି)
+				ଜାରି; /* Already seen */
 			id = d[i]->a.uid;
-		} else {
-			if (rgroup_name((gid_t)(d[i]->a.gid)) != NULL)
-				continue; /* Already seen */
+		} ଅନ୍ୟଥା {
+			ଯଦି (rgroup_name((gid_t)(d[i]->a.gid)) != ଖାଲି)
+				ଜାରି; /* Already seen */
 			id = d[i]->a.gid;
 		}
-		if (has_id(id, ids, n))
-			continue;
-		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
+		ଯଦି (has_id(id, ids, n))
+			ଜାରି;
+		ids = xrecallocarray(ids, n, n + 1, ଆକାର(*ids));
 		ids[n++] = id;
 	}
 	*idsp = ids;
 	*nidsp = n;
 }
 
-void
-get_remote_user_groups_from_dirents(struct sftp_conn *conn, SFTP_DIRENT **d)
+ଶୂନ୍ୟ
+get_remote_user_groups_from_dirents(ସଂରଚନା sftp_conn *conn, SFTP_DIRENT **d)
 {
-	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
+	u_int *uids = ଖାଲି, nuids = 0, *gids = ଖାଲି, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	ଯଦି (!sftp_can_get_users_groups_by_id(conn))
+		ଫେରନ୍ତୁ;
 
 	collect_ids_from_dirents(d, 1, &uids, &nuids);
 	collect_ids_from_dirents(d, 0, &gids, &ngids);
 	lookup_and_record(conn, uids, nuids, gids, ngids);
-	free(uids);
-	free(gids);
+	ମୁକ୍ତ(uids);
+	ମୁକ୍ତ(gids);
 }
 
-const char *
+ଅଚଳ ଅକ୍ଷର *
 ruser_name(uid_t uid)
 {
-	return idname_lookup(&user_idname, (u_int)uid);
+	ଫେରନ୍ତୁ idname_lookup(&user_idname, (u_int)uid);
 }
 
-const char *
+ଅଚଳ ଅକ୍ଷର *
 rgroup_name(uid_t gid)
 {
-	return idname_lookup(&group_idname, (u_int)gid);
+	ଫେରନ୍ତୁ idname_lookup(&group_idname, (u_int)gid);
 }
 

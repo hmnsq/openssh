@@ -29,25 +29,25 @@
 #ifndef _ATOMICIO_H
 #define _ATOMICIO_H
 
-struct iovec;
+ସଂରଚନା iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+atomicio6(ssize_t (*f) (ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଶୂନ୍ୟ *, size_t), ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ଶୂନ୍ୟ *_s, size_t n,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା (*cb)(ଶୂନ୍ୟ *, size_t), ଶୂନ୍ୟ *);
+size_t	atomicio(ssize_t (*)(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଶୂନ୍ୟ *, size_t), ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଶୂନ୍ୟ *, size_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#define vwrite (ssize_t (*)(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଶୂନ୍ୟ *, size_t))ଲିଖ
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+atomiciov6(ssize_t (*f) (ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅଚଳ ସଂରଚନା iovec *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା), ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd,
+    ଅଚଳ ସଂରଚନା iovec *_iov, ପୂର୍ଣ୍ଣସଂଖ୍ୟା iovcnt, ପୂର୍ଣ୍ଣସଂଖ୍ୟା (*cb)(ଶୂନ୍ୟ *, size_t), ଶୂନ୍ୟ *);
+size_t	atomiciov(ssize_t (*)(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅଚଳ ସଂରଚନା iovec *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା),
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅଚଳ ସଂରଚନା iovec *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 
 #endif /* _ATOMICIO_H */

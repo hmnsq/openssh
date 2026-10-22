@@ -35,30 +35,30 @@
 #undef ERROR
 
 /* Avoid including windows headers. */
-typedef void *HANDLE;
-#define INVALID_HANDLE_VALUE ((HANDLE) -1)
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଶୂନ୍ୟ *HANDLE;
+#define INVALID_HANDLE_ମୂଲ୍ୟ ((HANDLE) -1)
 #define DNLEN 16
 #define UNLEN 256
 
 /* Cygwin functions for which declarations are only available when including
    windows headers, so we have to define them here explicitly. */
-extern HANDLE cygwin_logon_user (const struct passwd *, const char *);
-extern void cygwin_set_impersonation_token (const HANDLE);
+ବାହ୍ୟ HANDLE cygwin_logon_user (ଅଚଳ ସଂରଚନା passwd *, ଅଚଳ ଅକ୍ଷର *);
+ବାହ୍ୟ ଶୂନ୍ୟ cygwin_set_impersonation_token (ଅଚଳ HANDLE);
 
-#include <sys/cygwin.h>
-#include <io.h>
+#ଅନ୍ତର୍ଭାଵ <sys/cygwin.h>
+#ଅନ୍ତର୍ଭାଵ <io.h>
 
 #define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
-const char *cygwin_ssh_privsep_user();
+ଅଚଳ ଅକ୍ଷର *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
-char **fetch_windows_environment(void);
-void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଦ୍ୱିମିକ_open(ଅଚଳ ଅକ୍ଷର *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା , ...);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା check_ntsec(ଅଚଳ ଅକ୍ଷର *);
+ଅକ୍ଷର **fetch_windows_environment(ଶୂନ୍ୟ);
+ଶୂନ୍ୟ free_windows_environment(ଅକ୍ଷର **);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା cygwin_ug_match_pattern_list(ଅଚଳ ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *);
 
-#ifndef NO_BINARY_OPEN
-#define open binary_open
+#ifndef NO_ଦ୍ୱିମିକ_OPEN
+#define open ଦ୍ୱିମିକ_open
 #endif
 
 #endif /* HAVE_CYGWIN */

@@ -15,44 +15,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifdef SANDBOX_NULL
 
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 
-#include <errno.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 
-#include "log.h"
-#include "ssh-sandbox.h"
-#include "xmalloc.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "ssh-sandbox.h"
+#ଅନ୍ତର୍ଭାଵ "xmalloc.h"
 
 /* dummy sandbox */
 
-struct ssh_sandbox {
-	int junk;
+ସଂରଚନା ssh_sandbox {
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା junk;
 };
 
-struct ssh_sandbox *
-ssh_sandbox_init(struct monitor *monitor)
+ସଂରଚନା ssh_sandbox *
+ssh_sandbox_init(ସଂରଚନା monitor *monitor)
 {
-	struct ssh_sandbox *box;
+	ସଂରଚନା ssh_sandbox *box;
 
 	/*
 	 * Strictly, we don't need to maintain any state here but we need
 	 * to return non-NULL to satisfy the API.
 	 */
-	box = xcalloc(1, sizeof(*box));
-	return box;
+	box = xcalloc(1, ଆକାର(*box));
+	ଫେରନ୍ତୁ box;
 }
 
-void
-ssh_sandbox_child(struct ssh_sandbox *box)
+ଶୂନ୍ୟ
+ssh_sandbox_child(ସଂରଚନା ssh_sandbox *box)
 {
 	/* Nothing to do here */
 }

@@ -27,9 +27,9 @@
 #ifndef GROUPACCESS_H
 #define GROUPACCESS_H
 
-int	 ga_init(const char *, gid_t);
-int	 ga_match(char * const *, int);
-int	 ga_match_pattern_list(const char *);
-void	 ga_free(void);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ga_init(ଅଚଳ ଅକ୍ଷର *, gid_t);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ga_match(ଅକ୍ଷର * ଅଚଳ *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 ga_match_pattern_list(ଅଚଳ ଅକ୍ଷର *);
+ଶୂନ୍ୟ	 ga_free(ଶୂନ୍ୟ);
 
 #endif

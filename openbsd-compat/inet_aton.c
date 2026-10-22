@@ -51,28 +51,28 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/inet_addr.c */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#if !defined(HAVE_INET_ATON)
+#ଯଦି !defined(HAVE_INET_ATON)
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <ctype.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <netinet/in.h>
+#ଅନ୍ତର୍ଭାଵ <arpa/inet.h>
+#ଅନ୍ତର୍ଭାଵ <ctype.h>
 
-#if 0
+#ଯଦି 0
 /*
  * Ascii internet address interpretation routine.
  * The value returned is in network order.
  */
 in_addr_t
-inet_addr(const char *cp)
+inet_addr(ଅଚଳ ଅକ୍ଷର *cp)
 {
-	struct in_addr val;
+	ସଂରଚନା in_addr val;
 
-	if (inet_aton(cp, &val))
-		return (val.s_addr);
-	return (INADDR_NONE);
+	ଯଦି (inet_aton(cp, &val))
+		ଫେରନ୍ତୁ (val.s_addr);
+	ଫେରନ୍ତୁ (INADDR_NONE);
 }
 #endif
 
@@ -83,96 +83,96 @@ inet_addr(const char *cp)
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int
-inet_aton(const char *cp, struct in_addr *addr)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+inet_aton(ଅଚଳ ଅକ୍ଷର *cp, ସଂରଚନା in_addr *addr)
 {
 	u_int32_t val;
-	int base, n;
-	char c;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା base, n;
+	ଅକ୍ଷର c;
 	u_int parts[4];
 	u_int *pp = parts;
 
 	c = *cp;
-	for (;;) {
+	ପାଇଁ (;;) {
 		/*
 		 * Collect number up to ``.''.
 		 * Values are specified as for C:
 		 * 0x=hex, 0=octal, isdigit=decimal.
 		 */
-		if (!isdigit(c))
-			return (0);
+		ଯଦି (!isdigit(c))
+			ଫେରନ୍ତୁ (0);
 		val = 0; base = 10;
-		if (c == '0') {
+		ଯଦି (c == '0') {
 			c = *++cp;
-			if (c == 'x' || c == 'X')
+			ଯଦି (c == 'x' || c == 'X')
 				base = 16, c = *++cp;
-			else
+			ଅନ୍ୟଥା
 				base = 8;
 		}
-		for (;;) {
-			if (isascii(c) && isdigit(c)) {
+		ପାଇଁ (;;) {
+			ଯଦି (isascii(c) && isdigit(c)) {
 				val = (val * base) + (c - '0');
 				c = *++cp;
-			} else if (base == 16 && isascii(c) && isxdigit(c)) {
+			} ଅନ୍ୟଥା ଯଦି (base == 16 && isascii(c) && isxdigit(c)) {
 				val = (val << 4) |
 					(c + 10 - (islower(c) ? 'a' : 'A'));
 				c = *++cp;
-			} else
-				break;
+			} ଅନ୍ୟଥା
+				ଭାଙ୍ଗ;
 		}
-		if (c == '.') {
+		ଯଦି (c == '.') {
 			/*
 			 * Internet format:
 			 *	a.b.c.d
 			 *	a.b.c	(with c treated as 16 bits)
 			 *	a.b	(with b treated as 24 bits)
 			 */
-			if (pp >= parts + 3)
-				return (0);
+			ଯଦି (pp >= parts + 3)
+				ଫେରନ୍ତୁ (0);
 			*pp++ = val;
 			c = *++cp;
-		} else
-			break;
+		} ଅନ୍ୟଥା
+			ଭାଙ୍ଗ;
 	}
 	/*
 	 * Check for trailing characters.
 	 */
-	if (c != '\0' && (!isascii(c) || !isspace(c)))
-		return (0);
+	ଯଦି (c != '\0' && (!isascii(c) || !isspace(c)))
+		ଫେରନ୍ତୁ (0);
 	/*
 	 * Concoct the address according to
 	 * the number of parts specified.
 	 */
 	n = pp - parts + 1;
-	switch (n) {
+	ବାଛ (n) {
 
-	case 0:
-		return (0);		/* initial nondigit */
+	ସ୍ଥିତି 0:
+		ଫେରନ୍ତୁ (0);		/* initial nondigit */
 
-	case 1:				/* a -- 32 bits */
-		break;
+	ସ୍ଥିତି 1:				/* a -- 32 bits */
+		ଭାଙ୍ଗ;
 
-	case 2:				/* a.b -- 8.24 bits */
-		if ((val > 0xffffff) || (parts[0] > 0xff))
-			return (0);
+	ସ୍ଥିତି 2:				/* a.b -- 8.24 bits */
+		ଯଦି ((val > 0xffffff) || (parts[0] > 0xff))
+			ଫେରନ୍ତୁ (0);
 		val |= parts[0] << 24;
-		break;
+		ଭାଙ୍ଗ;
 
-	case 3:				/* a.b.c -- 8.8.16 bits */
-		if ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
-			return (0);
+	ସ୍ଥିତି 3:				/* a.b.c -- 8.8.16 bits */
+		ଯଦି ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
+			ଫେରନ୍ତୁ (0);
 		val |= (parts[0] << 24) | (parts[1] << 16);
-		break;
+		ଭାଙ୍ଗ;
 
-	case 4:				/* a.b.c.d -- 8.8.8.8 bits */
-		if ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
-			return (0);
+	ସ୍ଥିତି 4:				/* a.b.c.d -- 8.8.8.8 bits */
+		ଯଦି ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
+			ଫେରନ୍ତୁ (0);
 		val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
-		break;
+		ଭାଙ୍ଗ;
 	}
-	if (addr)
+	ଯଦି (addr)
 		addr->s_addr = htonl(val);
-	return (1);
+	ଫେରନ୍ତୁ (1);
 }
 
 #endif /* !defined(HAVE_INET_ATON) */

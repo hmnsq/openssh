@@ -14,23 +14,23 @@
  *   34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifndef WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-#define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
+#define rol(ମୂଲ୍ୟ, bits) (((ମୂଲ୍ୟ) << (bits)) | ((ମୂଲ୍ୟ) >> (32 - (bits))))
 
 /*
  * blk0() and blk() perform the initial expand.
  * I got the idea of expanding during the round function from SSLeay
  */
-#if BYTE_ORDER == LITTLE_ENDIAN
+#ଯଦି BYTE_ORDER == LITTLE_ENDIAN
 # define blk0(i) (block->l[i] = (rol(block->l[i],24)&0xFF00FF00) \
     |(rol(block->l[i],8)&0x00FF00FF))
-#else
+#ଅନ୍ୟଥା
 # define blk0(i) block->l[i]
 #endif
 #define blk(i) (block->l[i&15] = rol(block->l[(i+13)&15]^block->l[(i+8)&15] \
@@ -45,7 +45,7 @@
 #define R3(v,w,x,y,z,i) z+=(((w|x)&y)|(w&x))+blk(i)+0x8F1BBCDC+rol(v,5);w=rol(w,30);
 #define R4(v,w,x,y,z,i) z+=(w^x^y)+blk(i)+0xCA62C1D6+rol(v,5);w=rol(w,30);
 
-typedef union {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂଘ {
 	u_int8_t c[64];
 	u_int32_t l[16];
 } CHAR64LONG16;
@@ -53,14 +53,14 @@ typedef union {
 /*
  * Hash a single 512-bit block. This is the core of the algorithm.
  */
-void
-SHA1Transform(u_int32_t state[5], const u_int8_t buffer[SHA1_BLOCK_LENGTH])
+ଶୂନ୍ୟ
+SHA1Transform(u_int32_t state[5], ଅଚଳ u_int8_t buffer[SHA1_BLOCK_LENGTH])
 {
 	u_int32_t a, b, c, d, e;
 	u_int8_t workspace[SHA1_BLOCK_LENGTH];
 	CHAR64LONG16 *block = (CHAR64LONG16 *)workspace;
 
-	(void)memcpy(block, buffer, SHA1_BLOCK_LENGTH);
+	(ଶୂନ୍ୟ)memcpy(block, buffer, SHA1_BLOCK_LENGTH);
 
 	/* Copy context->state[] to working vars */
 	a = state[0];
@@ -107,12 +107,12 @@ DEF_WEAK(SHA1Transform);
 /*
  * SHA1Init - Initialize new context
  */
-void
+ଶୂନ୍ୟ
 SHA1Init(SHA1_CTX *context)
 {
 
 	/* SHA1 initialization constants */
-	context->count = 0;
+	context->ଗଣନା_2 = 0;
 	context->state[0] = 0x67452301;
 	context->state[1] = 0xEFCDAB89;
 	context->state[2] = 0x98BADCFE;
@@ -125,23 +125,23 @@ DEF_WEAK(SHA1Init);
 /*
  * Run your data through this.
  */
-void
-SHA1Update(SHA1_CTX *context, const u_int8_t *data, size_t len)
+ଶୂନ୍ୟ
+SHA1Update(SHA1_CTX *context, ଅଚଳ u_int8_t *data, size_t len)
 {
 	size_t i, j;
 
-	j = (size_t)((context->count >> 3) & 63);
-	context->count += ((u_int64_t)len << 3);
-	if ((j + len) > 63) {
-		(void)memcpy(&context->buffer[j], data, (i = 64-j));
+	j = (size_t)((context->ଗଣନା_2 >> 3) & 63);
+	context->ଗଣନା_2 += ((u_int64_t)len << 3);
+	ଯଦି ((j + len) > 63) {
+		(ଶୂନ୍ୟ)memcpy(&context->buffer[j], data, (i = 64-j));
 		SHA1Transform(context->state, context->buffer);
-		for ( ; i + 63 < len; i += 64)
+		ପାଇଁ ( ; i + 63 < len; i += 64)
 			SHA1Transform(context->state, (u_int8_t *)&data[i]);
 		j = 0;
-	} else {
+	} ଅନ୍ୟଥା {
 		i = 0;
 	}
-	(void)memcpy(&context->buffer[j], &data[i], len - i);
+	(ଶୂନ୍ୟ)memcpy(&context->buffer[j], &data[i], len - i);
 }
 DEF_WEAK(SHA1Update);
 
@@ -149,34 +149,34 @@ DEF_WEAK(SHA1Update);
 /*
  * Add padding and return the message digest.
  */
-void
+ଶୂନ୍ୟ
 SHA1Pad(SHA1_CTX *context)
 {
 	u_int8_t finalcount[8];
 	u_int i;
 
-	for (i = 0; i < 8; i++) {
-		finalcount[i] = (u_int8_t)((context->count >>
+	ପାଇଁ (i = 0; i < 8; i++) {
+		finalcount[i] = (u_int8_t)((context->ଗଣନା_2 >>
 		    ((7 - (i & 7)) * 8)) & 255);	/* Endian independent */
 	}
 	SHA1Update(context, (u_int8_t *)"\200", 1);
-	while ((context->count & 504) != 448)
+	ଯେତେବେଳେ ((context->ଗଣନା_2 & 504) != 448)
 		SHA1Update(context, (u_int8_t *)"\0", 1);
 	SHA1Update(context, finalcount, 8); /* Should cause a SHA1Transform() */
 }
 DEF_WEAK(SHA1Pad);
 
-void
+ଶୂନ୍ୟ
 SHA1Final(u_int8_t digest[SHA1_DIGEST_LENGTH], SHA1_CTX *context)
 {
 	u_int i;
 
 	SHA1Pad(context);
-	for (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
+	ପାଇଁ (i = 0; i < SHA1_DIGEST_LENGTH; i++) {
 		digest[i] = (u_int8_t)
 		   ((context->state[i>>2] >> ((3-(i & 3)) * 8) ) & 255);
 	}
-	explicit_bzero(context, sizeof(*context));
+	explicit_bzero(context, ଆକାର(*context));
 }
 DEF_WEAK(SHA1Final);
 #endif /* !WITH_OPENSSL */

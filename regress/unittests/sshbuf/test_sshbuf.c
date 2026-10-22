@@ -6,38 +6,38 @@
  */
 
 #define SSHBUF_INTERNAL 1	/* access internals for testing */
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-#include "../test_helper/test_helper.h"
+#ଅନ୍ତର୍ଭାଵ "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
 
-void sshbuf_tests(void);
+ଶୂନ୍ୟ sshbuf_tests(ଶୂନ୍ୟ);
 
 #ifndef roundup
 #define roundup(x, y)   ((((x)+((y)-1))/(y))*(y))
 #endif
 
-void
-sshbuf_tests(void)
+ଶୂନ୍ୟ
+sshbuf_tests(ଶୂନ୍ୟ)
 {
-	struct sshbuf *p1, *p2, *p3;
+	ସଂରଚନା sshbuf *p1, *p2, *p3;
 	u_int v32;
-	const u_char *cdp;
+	ଅଚଳ u_char *cdp;
 	u_char *dp;
 	size_t sz;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
 	TEST_START("allocate sshbuf");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	TEST_DONE();
 
 	TEST_START("max size on fresh buffer");
@@ -67,7 +67,7 @@ sshbuf_tests(void)
 
 	TEST_START("consume on empty buffer");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	ASSERT_INT_EQ(sshbuf_consume(p1, 0), 0);
 	ASSERT_INT_EQ(sshbuf_consume(p1, 1), SSH_ERR_MESSAGE_INCOMPLETE);
 	sshbuf_free(p1);
@@ -75,7 +75,7 @@ sshbuf_tests(void)
 
 	TEST_START("consume_end on empty buffer");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	ASSERT_INT_EQ(sshbuf_consume_end(p1, 0), 0);
 	ASSERT_INT_EQ(sshbuf_consume_end(p1, 1), SSH_ERR_MESSAGE_INCOMPLETE);
 	sshbuf_free(p1);
@@ -83,14 +83,14 @@ sshbuf_tests(void)
 
 	TEST_START("reserve space");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	r = sshbuf_reserve(p1, 1, &dp);
 	ASSERT_INT_EQ(r, 0);
-	ASSERT_PTR_NE(dp, NULL);
+	ASSERT_PTR_NE(dp, ଖାଲି);
 	*dp = 0x11;
 	r = sshbuf_reserve(p1, 3, &dp);
 	ASSERT_INT_EQ(r, 0);
-	ASSERT_PTR_NE(dp, NULL);
+	ASSERT_PTR_NE(dp, ଖାଲି);
 	*dp++ = 0x22;
 	*dp++ = 0x33;
 	*dp++ = 0x44;
@@ -102,7 +102,7 @@ sshbuf_tests(void)
 
 	TEST_START("sshbuf_ptr on filled buffer");
 	cdp = sshbuf_ptr(p1);
-	ASSERT_PTR_NE(cdp, NULL);
+	ASSERT_PTR_NE(cdp, ଖାଲି);
 	ASSERT_U8_EQ(cdp[0], 0x11);
 	ASSERT_U8_EQ(cdp[1], 0x22);
 	ASSERT_U8_EQ(cdp[2], 0x33);
@@ -119,12 +119,12 @@ sshbuf_tests(void)
 	ASSERT_INT_EQ(sshbuf_consume(p1, 1), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 3);
 	cdp = sshbuf_ptr(p1);
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	ASSERT_U8_EQ(cdp[0], 0x22);
 	ASSERT_INT_EQ(sshbuf_consume(p1, 2), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 1);
 	cdp = sshbuf_ptr(p1);
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	ASSERT_U8_EQ(cdp[0], 0x44);
 	r = sshbuf_consume(p1, 2);
 	ASSERT_INT_EQ(r, SSH_ERR_MESSAGE_INCOMPLETE);
@@ -138,10 +138,10 @@ sshbuf_tests(void)
 
 	TEST_START("consume_end on filled buffer");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	r = sshbuf_reserve(p1, 4, &dp);
 	ASSERT_INT_EQ(r, 0);
-	ASSERT_PTR_NE(dp, NULL);
+	ASSERT_PTR_NE(dp, ଖାଲି);
 	*dp++ = 0x11;
 	*dp++ = 0x22;
 	*dp++ = 0x33;
@@ -153,7 +153,7 @@ sshbuf_tests(void)
 	ASSERT_INT_EQ(sshbuf_consume_end(p1, 3), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 1);
 	cdp = sshbuf_ptr(p1);
-	ASSERT_PTR_NE(cdp, NULL);
+	ASSERT_PTR_NE(cdp, ଖାଲି);
 	ASSERT_U8_EQ(*cdp, 0x11);
 	r = sshbuf_consume_end(p1, 2);
 	ASSERT_INT_EQ(r, SSH_ERR_MESSAGE_INCOMPLETE);
@@ -164,19 +164,19 @@ sshbuf_tests(void)
 
 	TEST_START("fill limited buffer");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 1223), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_max_size(p1), 1223);
 	ASSERT_SIZE_T_EQ(sshbuf_avail(p1), 1223);
 	r = sshbuf_reserve(p1, 1223, &dp);
 	ASSERT_INT_EQ(r, 0);
-	ASSERT_PTR_NE(dp, NULL);
+	ASSERT_PTR_NE(dp, ଖାଲି);
 	memset(dp, 0xd7, 1223);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 1223);
 	ASSERT_SIZE_T_EQ(sshbuf_avail(p1), 0);
 	r = sshbuf_reserve(p1, 1, &dp);
 	ASSERT_INT_EQ(r, SSH_ERR_NO_BUFFER_SPACE);
-	ASSERT_PTR_EQ(dp, NULL);
+	ASSERT_PTR_EQ(dp, ଖାଲି);
 	TEST_DONE();
 
 	TEST_START("consume and force compaction");
@@ -185,15 +185,15 @@ sshbuf_tests(void)
 	ASSERT_SIZE_T_EQ(sshbuf_avail(p1), 223);
 	r = sshbuf_reserve(p1, 224, &dp);
 	ASSERT_INT_EQ(r, SSH_ERR_NO_BUFFER_SPACE);
-	ASSERT_PTR_EQ(dp, NULL);
+	ASSERT_PTR_EQ(dp, ଖାଲି);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 1000);
 	ASSERT_SIZE_T_EQ(sshbuf_avail(p1), 223);
 	r = sshbuf_reserve(p1, 223, &dp);
 	ASSERT_INT_EQ(r, 0);
-	ASSERT_PTR_NE(dp, NULL);
+	ASSERT_PTR_NE(dp, ଖାଲି);
 	memset(dp, 0x7d, 223);
 	cdp = sshbuf_ptr(p1);
-	ASSERT_PTR_NE(cdp, NULL);
+	ASSERT_PTR_NE(cdp, ଖାଲି);
 	ASSERT_MEM_FILLED_EQ(cdp, 0xd7, 1000);
 	ASSERT_MEM_FILLED_EQ(cdp + 1000, 0x7d, 223);
 	TEST_DONE();
@@ -212,10 +212,10 @@ sshbuf_tests(void)
 	TEST_START("alloc chunking");
 	r = sshbuf_reserve(p1, 1, &dp);
 	ASSERT_INT_EQ(r, 0);
-	ASSERT_PTR_NE(dp, NULL);
+	ASSERT_PTR_NE(dp, ଖାଲି);
 	*dp = 0xff;
 	cdp = sshbuf_ptr(p1);
-	ASSERT_PTR_NE(cdp, NULL);
+	ASSERT_PTR_NE(cdp, ଖାଲି);
 	ASSERT_MEM_FILLED_EQ(cdp, 0xd7, 1000);
 	ASSERT_MEM_FILLED_EQ(cdp + 1000, 0x7d, 223);
 	ASSERT_MEM_FILLED_EQ(cdp + 1223, 0xff, 1);
@@ -225,12 +225,12 @@ sshbuf_tests(void)
 
 	TEST_START("reset buffer");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	ASSERT_INT_EQ(sshbuf_set_max_size(p1, 1223), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_max_size(p1), 1223);
 	r = sshbuf_reserve(p1, 1223, &dp);
 	ASSERT_INT_EQ(r, 0);
-	ASSERT_PTR_NE(dp, NULL);
+	ASSERT_PTR_NE(dp, ଖାଲି);
 	memset(dp, 0xd7, 1223);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 1223);
 	sshbuf_reset(p1);
@@ -242,9 +242,9 @@ sshbuf_tests(void)
 
 	TEST_START("sshbuf_consume_upto_child");
 	p1 = sshbuf_new();
-	ASSERT_PTR_NE(p1, NULL);
+	ASSERT_PTR_NE(p1, ଖାଲି);
 	p2 = sshbuf_new();
-	ASSERT_PTR_NE(p2, NULL);
+	ASSERT_PTR_NE(p2, ଖାଲି);
 	/* Unrelated buffers */
 	ASSERT_INT_EQ(sshbuf_consume_upto_child(p1, p2),
 	    SSH_ERR_INVALID_ARGUMENT);
@@ -254,7 +254,7 @@ sshbuf_tests(void)
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, 0xfeedface), 0);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 12);
 	p3 = sshbuf_fromb(p1);
-	ASSERT_PTR_NE(p3, NULL);
+	ASSERT_PTR_NE(p3, ଖାଲି);
 	ASSERT_INT_EQ(sshbuf_get_u32(p3, &v32), 0);
 	ASSERT_U32_EQ(v32, 0xdeadbeef);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p3), 8);
@@ -264,7 +264,7 @@ sshbuf_tests(void)
 	sshbuf_free(p3);
 	/* Parent already consumed past child */
 	p3 = sshbuf_fromb(p1);
-	ASSERT_PTR_NE(p3, NULL);
+	ASSERT_PTR_NE(p3, ଖାଲି);
 	ASSERT_INT_EQ(sshbuf_get_u32(p1, &v32), 0);
 	ASSERT_U32_EQ(v32, 0x01020304);
 	ASSERT_INT_EQ(sshbuf_consume_upto_child(p1, p3),

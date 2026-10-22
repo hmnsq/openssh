@@ -15,209 +15,209 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/time.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <poll.h>
-#include <stdarg.h>
-#include <string.h>
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <poll.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "ssh-pkcs11.h"
-#include "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "xmalloc.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "misc.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "authfd.h"
+#ଅନ୍ତର୍ଭାଵ "ssh-pkcs11.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
 
 #ifdef ENABLE_PKCS11
 
 /* borrows code from sftp-server and ssh-agent */
 
-static char *providername; /* Provider for this helper */
+ସ୍ଥିର ଅକ୍ଷର *providername; /* Provider for this helper */
 
-#define MAX_MSG_LENGTH		10240 /*XXX*/
+#define MAX_ସନ୍ଦେଶ_LENGTH		10240 /*XXX*/
 
 /* input and output queue */
-struct sshbuf *iqueue;
-struct sshbuf *oqueue;
+ସଂରଚନା sshbuf *iqueue;
+ସଂରଚନା sshbuf *oqueue;
 
-static void
-send_msg(struct sshbuf *m)
+ସ୍ଥିର ଶୂନ୍ୟ
+send_ସନ୍ଦେଶ(ସଂରଚନା sshbuf *m)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = sshbuf_put_stringb(oqueue, m)) != 0)
+	ଯଦି ((r = sshbuf_put_stringb(oqueue, m)) != 0)
 		fatal_fr(r, "enqueue");
 }
 
-static void
-process_add(void)
+ସ୍ଥିର ଶୂନ୍ୟ
+process_add(ଶୂନ୍ୟ)
 {
-	char *pin;
-	struct sshkey **keys = NULL;
-	int r, i, nkeys;
-	struct sshbuf *msg;
-	char **labels = NULL;
+	ଅକ୍ଷର *pin;
+	ସଂରଚନା sshkey **ଚାବିଗୁଡ଼ିକ = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, i, nkeys;
+	ସଂରଚନା sshbuf *ସନ୍ଦେଶ;
+	ଅକ୍ଷର **labels = ଖାଲି;
 
-	if (providername != NULL)
+	ଯଦି (providername != ଖାଲି)
 		fatal_f("provider already set");
-	if ((msg = sshbuf_new()) == NULL)
+	ଯଦି ((ସନ୍ଦେଶ = sshbuf_new()) == ଖାଲି)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_get_cstring(iqueue, &providername, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &pin, NULL)) != 0)
+	ଯଦି ((r = sshbuf_get_cstring(iqueue, &providername, ଖାଲି)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &pin, ଖାଲି)) != 0)
 		fatal_fr(r, "parse");
 	debug3_f("add %s", providername);
-	if ((nkeys = pkcs11_add_provider(providername, pin,
-	    &keys, &labels)) > 0) {
-		if ((r = sshbuf_put_u8(msg,
+	ଯଦି ((nkeys = pkcs11_add_provider(providername, pin,
+	    &ଚାବିଗୁଡ଼ିକ, &labels)) > 0) {
+		ଯଦି ((r = sshbuf_put_u8(ସନ୍ଦେଶ,
 		    SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-		    (r = sshbuf_put_u32(msg, nkeys)) != 0)
+		    (r = sshbuf_put_u32(ସନ୍ଦେଶ, nkeys)) != 0)
 			fatal_fr(r, "compose");
-		for (i = 0; i < nkeys; i++) {
-			if ((r = sshkey_puts(keys[i], msg)) != 0 ||
-			    (r = sshbuf_put_cstring(msg, labels[i])) != 0)
+		ପାଇଁ (i = 0; i < nkeys; i++) {
+			ଯଦି ((r = sshkey_puts(ଚାବିଗୁଡ଼ିକ[i], ସନ୍ଦେଶ)) != 0 ||
+			    (r = sshbuf_put_cstring(ସନ୍ଦେଶ, labels[i])) != 0)
 				fatal_fr(r, "compose key");
 			debug3_f("%s: %s \"%s\"", providername,
-			    sshkey_type(keys[i]), labels[i]);
-			free(labels[i]);
+			    sshkey_type(ଚାବିଗୁଡ଼ିକ[i]), labels[i]);
+			ମୁକ୍ତ(labels[i]);
 		}
-	} else if ((r = sshbuf_put_u8(msg, SSH_AGENT_FAILURE)) != 0 ||
-	    (r = sshbuf_put_u32(msg, -nkeys)) != 0)
+	} ଅନ୍ୟଥା ଯଦି ((r = sshbuf_put_u8(ସନ୍ଦେଶ, SSH_AGENT_FAILURE)) != 0 ||
+	    (r = sshbuf_put_u32(ସନ୍ଦେଶ, -nkeys)) != 0)
 		fatal_fr(r, "compose");
-	free(labels);
-	free(keys); /* keys themselves are transferred to pkcs11_keylist */
-	free(pin);
-	send_msg(msg);
-	sshbuf_free(msg);
+	ମୁକ୍ତ(labels);
+	ମୁକ୍ତ(ଚାବିଗୁଡ଼ିକ); /* keys themselves are transferred to pkcs11_keylist */
+	ମୁକ୍ତ(pin);
+	send_ସନ୍ଦେଶ(ସନ୍ଦେଶ);
+	sshbuf_free(ସନ୍ଦେଶ);
 }
 
-static void
-process_sign(void)
+ସ୍ଥିର ଶୂନ୍ୟ
+process_sign(ଶୂନ୍ୟ)
 {
-	const u_char *data;
-	u_char *signature = NULL;
+	ଅଚଳ u_char *data;
+	u_char *signature = ଖାଲି;
 	size_t dlen, slen = 0;
 	u_int compat;
-	int r, ok = -1;
-	struct sshkey *key = NULL;
-	struct sshbuf *msg;
-	char *alg = NULL;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, ok = -1;
+	ସଂରଚନା sshkey *ଚାବି = ଖାଲି;
+	ସଂରଚନା sshbuf *ସନ୍ଦେଶ;
+	ଅକ୍ଷର *alg = ଖାଲି;
 
-	if ((r = sshkey_froms(iqueue, &key)) != 0 ||
+	ଯଦି ((r = sshkey_froms(iqueue, &ଚାବି)) != 0 ||
 	    (r = sshbuf_get_string_direct(iqueue, &data, &dlen)) != 0 ||
-	    (r = sshbuf_get_cstring(iqueue, &alg, NULL)) != 0 ||
+	    (r = sshbuf_get_cstring(iqueue, &alg, ଖାଲି)) != 0 ||
 	    (r = sshbuf_get_u32(iqueue, &compat)) != 0)
 		fatal_fr(r, "parse");
 
-	if (*alg == '\0') {
-		free(alg);
-		alg = NULL;
+	ଯଦି (*alg == '\0') {
+		ମୁକ୍ତ(alg);
+		alg = ଖାଲି;
 	}
 
-	if ((r = pkcs11_sign(key, &signature, &slen, data, dlen,
-	    alg, NULL, NULL, compat)) != 0) {
-		error_fr(r, "sign %s", sshkey_type(key));
-		goto reply;
+	ଯଦି ((r = pkcs11_sign(ଚାବି, &signature, &slen, data, dlen,
+	    alg, ଖାଲି, ଖାଲି, compat)) != 0) {
+		error_fr(r, "sign %s", sshkey_type(ଚାବି));
+		ଯାଅ reply;
 	}
 
 	/* success */
 	ok = 0;
  reply:
-	if ((msg = sshbuf_new()) == NULL)
+	ଯଦି ((ସନ୍ଦେଶ = sshbuf_new()) == ଖାଲି)
 		fatal_f("sshbuf_new failed");
-	if (ok == 0) {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
-		    (r = sshbuf_put_string(msg, signature, slen)) != 0)
+	ଯଦି (ok == 0) {
+		ଯଦି ((r = sshbuf_put_u8(ସନ୍ଦେଶ, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
+		    (r = sshbuf_put_string(ସନ୍ଦେଶ, signature, slen)) != 0)
 			fatal_fr(r, "compose response");
-	} else {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_FAILURE)) != 0)
+	} ଅନ୍ୟଥା {
+		ଯଦି ((r = sshbuf_put_u8(ସନ୍ଦେଶ, SSH2_AGENT_FAILURE)) != 0)
 			fatal_fr(r, "compose failure response");
 	}
-	sshkey_free(key);
-	free(alg);
-	free(signature);
-	send_msg(msg);
-	sshbuf_free(msg);
+	sshkey_free(ଚାବି);
+	ମୁକ୍ତ(alg);
+	ମୁକ୍ତ(signature);
+	send_ସନ୍ଦେଶ(ସନ୍ଦେଶ);
+	sshbuf_free(ସନ୍ଦେଶ);
 }
 
-static void
-process(void)
+ସ୍ଥିର ଶୂନ୍ୟ
+process(ଶୂନ୍ୟ)
 {
-	u_int msg_len;
+	u_int ସନ୍ଦେଶ_len;
 	u_int buf_len;
 	u_int consumed;
 	u_char type;
-	const u_char *cp;
-	int r;
+	ଅଚଳ u_char *cp;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
 	buf_len = sshbuf_len(iqueue);
-	if (buf_len < 5)
-		return;		/* Incomplete message. */
+	ଯଦି (buf_len < 5)
+		ଫେରନ୍ତୁ;		/* Incomplete message. */
 	cp = sshbuf_ptr(iqueue);
-	msg_len = get_u32(cp);
-	if (msg_len > MAX_MSG_LENGTH) {
-		error("bad message len %d", msg_len);
+	ସନ୍ଦେଶ_len = get_u32(cp);
+	ଯଦି (ସନ୍ଦେଶ_len > MAX_ସନ୍ଦେଶ_LENGTH) {
+		error("bad message len %d", ସନ୍ଦେଶ_len);
 		cleanup_exit(11);
 	}
-	if (buf_len < msg_len + 4)
-		return;
-	if ((r = sshbuf_consume(iqueue, 4)) != 0 ||
+	ଯଦି (buf_len < ସନ୍ଦେଶ_len + 4)
+		ଫେରନ୍ତୁ;
+	ଯଦି ((r = sshbuf_consume(iqueue, 4)) != 0 ||
 	    (r = sshbuf_get_u8(iqueue, &type)) != 0)
 		fatal_fr(r, "parse type/len");
 	buf_len -= 4;
-	switch (type) {
-	case SSH_AGENTC_ADD_SMARTCARD_KEY:
+	ବାଛ (type) {
+	ସ୍ଥିତି SSH_AGENTC_ADD_SMARTCARD_ଚାବି:
 		debug("process_add");
 		process_add();
-		break;
-	case SSH2_AGENTC_SIGN_REQUEST:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି SSH2_AGENTC_SIGN_REQUEST:
 		debug("process_sign");
 		process_sign();
-		break;
-	default:
+		ଭାଙ୍ଗ;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 		error("Unknown message %d", type);
-		break;
+		ଭାଙ୍ଗ;
 	}
 	/* discard the remaining bytes from the current packet */
-	if (buf_len < sshbuf_len(iqueue)) {
+	ଯଦି (buf_len < sshbuf_len(iqueue)) {
 		error("iqueue grew unexpectedly");
 		cleanup_exit(255);
 	}
 	consumed = buf_len - sshbuf_len(iqueue);
-	if (msg_len < consumed) {
-		error("msg_len %d < consumed %d", msg_len, consumed);
+	ଯଦି (ସନ୍ଦେଶ_len < consumed) {
+		error("msg_len %d < consumed %d", ସନ୍ଦେଶ_len, consumed);
 		cleanup_exit(255);
 	}
-	if (msg_len > consumed) {
-		if ((r = sshbuf_consume(iqueue, msg_len - consumed)) != 0)
+	ଯଦି (ସନ୍ଦେଶ_len > consumed) {
+		ଯଦି ((r = sshbuf_consume(iqueue, ସନ୍ଦେଶ_len - consumed)) != 0)
 			fatal_fr(r, "consume");
 	}
 }
 
-void
-cleanup_exit(int i)
+ଶୂନ୍ୟ
+cleanup_exit(ପୂର୍ଣ୍ଣସଂଖ୍ୟା i)
 {
 	/* XXX */
 	_exit(i);
 }
 
-int
-main(int argc, char **argv)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
-	int r, ch, in, out, log_stderr = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, ch, in, out, log_stderr = 0;
 	ssize_t len;
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_ERROR;
-	char buf[4*4096];
-	extern char *__progname;
-	struct pollfd pfd[2];
+	ଅକ୍ଷର buf[4*4096];
+	ବାହ୍ୟ ଅକ୍ଷର *__progname;
+	ସଂରଚନା pollfd pfd[2];
 
 	__progname = ssh_get_progname(argv[0]);
 	seed_rng();
@@ -226,16 +226,16 @@ main(int argc, char **argv)
 	closefrom(STDERR_FILENO + 1);
 	log_init(__progname, log_level, log_facility, log_stderr);
 
-	while ((ch = getopt(argc, argv, "v")) != -1) {
-		switch (ch) {
-		case 'v':
+	ଯେତେବେଳେ ((ch = getopt(argc, argv, "v")) != -1) {
+		ବାଛ (ch) {
+		ସ୍ଥିତି 'v':
 			log_stderr = 1;
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			ଯଦି (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			ଅନ୍ୟଥା ଯଦି (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
+			ଭାଙ୍ଗ;
+		ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 			fprintf(stderr, "usage: %s [-v]\n", __progname);
 			exit(1);
 		}
@@ -247,13 +247,13 @@ main(int argc, char **argv)
 	in = STDIN_FILENO;
 	out = STDOUT_FILENO;
 
-	if ((iqueue = sshbuf_new()) == NULL)
+	ଯଦି ((iqueue = sshbuf_new()) == ଖାଲି)
 		fatal_f("sshbuf_new failed");
-	if ((oqueue = sshbuf_new()) == NULL)
+	ଯଦି ((oqueue = sshbuf_new()) == ଖାଲି)
 		fatal_f("sshbuf_new failed");
 
-	while (1) {
-		memset(pfd, 0, sizeof(pfd));
+	ଯେତେବେଳେ (1) {
+		memset(pfd, 0, ଆକାର(pfd));
 		pfd[0].fd = in;
 		pfd[1].fd = out;
 
@@ -262,41 +262,41 @@ main(int argc, char **argv)
 		 * the worst-case length packet it can generate,
 		 * otherwise apply backpressure by stopping reads.
 		 */
-		if ((r = sshbuf_check_reserve(iqueue, sizeof(buf))) == 0 &&
-		    (r = sshbuf_check_reserve(oqueue, MAX_MSG_LENGTH)) == 0)
+		ଯଦି ((r = sshbuf_check_reserve(iqueue, ଆକାର(buf))) == 0 &&
+		    (r = sshbuf_check_reserve(oqueue, MAX_ସନ୍ଦେଶ_LENGTH)) == 0)
 			pfd[0].events = POLLIN;
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		ଅନ୍ୟଥା ଯଦି (r != SSH_ERR_NO_BUFFER_SPACE)
 			fatal_fr(r, "reserve");
 
-		if (sshbuf_len(oqueue) > 0)
+		ଯଦି (sshbuf_len(oqueue) > 0)
 			pfd[1].events = POLLOUT;
 
-		if ((r = poll(pfd, 2, -1 /* INFTIM */)) <= 0) {
-			if (r == 0 || errno == EINTR)
-				continue;
+		ଯଦି ((r = poll(pfd, 2, -1 /* INFTIM */)) <= 0) {
+			ଯଦି (r == 0 || errno == EINTR)
+				ଜାରି;
 			fatal("poll: %s", strerror(errno));
 		}
 
 		/* copy stdin to iqueue */
-		if ((pfd[0].revents & (POLLIN|POLLHUP|POLLERR)) != 0) {
-			len = read(in, buf, sizeof buf);
-			if (len == 0) {
+		ଯଦି ((pfd[0].revents & (POLLIN|POLLHUP|POLLERR)) != 0) {
+			len = ପଠ(in, buf, ଆକାର buf);
+			ଯଦି (len == 0) {
 				debug("read eof");
 				cleanup_exit(0);
-			} else if (len < 0) {
+			} ଅନ୍ୟଥା ଯଦି (len < 0) {
 				error("read: %s", strerror(errno));
 				cleanup_exit(1);
-			} else if ((r = sshbuf_put(iqueue, buf, len)) != 0)
+			} ଅନ୍ୟଥା ଯଦି ((r = sshbuf_put(iqueue, buf, len)) != 0)
 				fatal_fr(r, "sshbuf_put");
 		}
 		/* send oqueue to stdout */
-		if ((pfd[1].revents & (POLLOUT|POLLHUP)) != 0) {
-			len = write(out, sshbuf_ptr(oqueue),
+		ଯଦି ((pfd[1].revents & (POLLOUT|POLLHUP)) != 0) {
+			len = ଲିଖ(out, sshbuf_ptr(oqueue),
 			    sshbuf_len(oqueue));
-			if (len < 0) {
+			ଯଦି (len < 0) {
 				error("write: %s", strerror(errno));
 				cleanup_exit(1);
-			} else if ((r = sshbuf_consume(oqueue, len)) != 0)
+			} ଅନ୍ୟଥା ଯଦି ((r = sshbuf_consume(oqueue, len)) != 0)
 				fatal_fr(r, "consume");
 		}
 
@@ -305,17 +305,17 @@ main(int argc, char **argv)
 		 * into the output buffer, otherwise stop processing input
 		 * and let the output queue drain.
 		 */
-		if ((r = sshbuf_check_reserve(oqueue, MAX_MSG_LENGTH)) == 0)
+		ଯଦି ((r = sshbuf_check_reserve(oqueue, MAX_ସନ୍ଦେଶ_LENGTH)) == 0)
 			process();
-		else if (r != SSH_ERR_NO_BUFFER_SPACE)
+		ଅନ୍ୟଥା ଯଦି (r != SSH_ERR_NO_BUFFER_SPACE)
 			fatal_fr(r, "reserve");
 	}
 }
-#else /* ENABLE_PKCS11 */
-int
-main(int argc, char **argv)
+#ଅନ୍ୟଥା /* ENABLE_PKCS11 */
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର **argv)
 {
-	extern char *__progname;
+	ବାହ୍ୟ ଅକ୍ଷର *__progname;
 
 	__progname = ssh_get_progname(argv[0]);
 	log_init(__progname, SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);

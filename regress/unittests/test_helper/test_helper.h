@@ -20,90 +20,90 @@
 #ifndef _TEST_HELPER_H
 #define _TEST_HELPER_H
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/err.h>
+#ଅନ୍ତର୍ଭାଵ <openssl/bn.h>
+#ଅନ୍ତର୍ଭାଵ <openssl/err.h>
 #endif
 
-enum test_predicate {
+ଗଣନା test_predicate {
 	TEST_EQ, TEST_NE, TEST_LT, TEST_LE, TEST_GT, TEST_GE
 };
-typedef void (test_onerror_func_t)(void *);
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଶୂନ୍ୟ (test_onerror_func_t)(ଶୂନ୍ୟ *);
 
 /* Supplied by test suite */
-void tests(void);
-void benchmarks(void);
+ଶୂନ୍ୟ tests(ଶୂନ୍ୟ);
+ଶୂନ୍ୟ benchmarks(ଶୂନ୍ୟ);
 
-void hex2bin(uint8_t *, const char *, size_t);
+ଶୂନ୍ୟ hex2bin(uint8_t *, ଅଚଳ ଅକ୍ଷର *, size_t);
 
-const char *test_data_file(const char *name);
-void test_start(const char *n);
-void test_info(char *s, size_t len);
-void set_onerror_func(test_onerror_func_t *f, void *ctx);
-void test_done(void);
-int test_is_verbose(void);
-int test_is_quiet(void);
-int test_is_fast(void);
-int test_is_slow(void);
-int test_is_benchmark(void);
-void test_subtest_info(const char *fmt, ...)
+ଅଚଳ ଅକ୍ଷର *test_data_file(ଅଚଳ ଅକ୍ଷର *name);
+ଶୂନ୍ୟ test_start(ଅଚଳ ଅକ୍ଷର *n);
+ଶୂନ୍ୟ test_info(ଅକ୍ଷର *s, size_t len);
+ଶୂନ୍ୟ set_onerror_func(test_onerror_func_t *f, ଶୂନ୍ୟ *ctx);
+ଶୂନ୍ୟ test_done(ଶୂନ୍ୟ);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା test_is_verbose(ଶୂନ୍ୟ);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା test_is_quiet(ଶୂନ୍ୟ);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା test_is_fast(ଶୂନ୍ୟ);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା test_is_slow(ଶୂନ୍ୟ);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା test_is_benchmark(ଶୂନ୍ୟ);
+ଶୂନ୍ୟ test_subtest_info(ଅଚଳ ଅକ୍ଷର *fmt, ...)
     __attribute__((format(printf, 1, 2)));
-void ssl_err_check(const char *file, int line);
+ଶୂନ୍ୟ ssl_err_check(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି);
 #ifdef WITH_OPENSSL
-void assert_bignum(const char *file, int line,
-    const char *a1, const char *a2,
-    const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred);
+ଶୂନ୍ୟ assert_bignum(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    ଅଚଳ BIGNUM *aa1, ଅଚଳ BIGNUM *aa2, ଗଣନା test_predicate pred);
 #endif
-void assert_string(const char *file, int line,
-    const char *a1, const char *a2,
-    const char *aa1, const char *aa2, enum test_predicate pred);
-void assert_mem(const char *file, int line,
-    const char *a1, const char *a2,
-    const void *aa1, const void *aa2, size_t l, enum test_predicate pred);
-void assert_mem_filled(const char *file, int line,
-    const char *a1,
-    const void *aa1, u_char v, size_t l, enum test_predicate pred);
-void assert_int(const char *file, int line,
-    const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred);
-void assert_size_t(const char *file, int line,
-    const char *a1, const char *a2,
-    size_t aa1, size_t aa2, enum test_predicate pred);
-void assert_u_int(const char *file, int line,
-    const char *a1, const char *a2,
-    u_int aa1, u_int aa2, enum test_predicate pred);
-void assert_long(const char *file, int line,
-    const char *a1, const char *a2,
-    long aa1, long aa2, enum test_predicate pred);
-void assert_long_long(const char *file, int line,
-    const char *a1, const char *a2,
-    long long aa1, long long aa2, enum test_predicate pred);
-void assert_char(const char *file, int line,
-    const char *a1, const char *a2,
-    char aa1, char aa2, enum test_predicate pred);
-void assert_ptr(const char *file, int line,
-    const char *a1, const char *a2,
-    const void *aa1, const void *aa2, enum test_predicate pred);
-void assert_u8(const char *file, int line,
-    const char *a1, const char *a2,
-    uint8_t aa1, uint8_t aa2, enum test_predicate pred);
-void assert_u16(const char *file, int line,
-    const char *a1, const char *a2,
-    uint16_t aa1, uint16_t aa2, enum test_predicate pred);
-void assert_u32(const char *file, int line,
-    const char *a1, const char *a2,
-    uint32_t aa1, uint32_t aa2, enum test_predicate pred);
-void assert_u64(const char *file, int line,
-    const char *a1, const char *a2,
-    uint64_t aa1, uint64_t aa2, enum test_predicate pred);
-void assert_double(const char *file, int line,
-    const char *a1, const char *a2,
-    double aa1, double aa2, enum test_predicate pred);
+ଶୂନ୍ୟ assert_string(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    ଅଚଳ ଅକ୍ଷର *aa1, ଅଚଳ ଅକ୍ଷର *aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_mem(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    ଅଚଳ ଶୂନ୍ୟ *aa1, ଅଚଳ ଶୂନ୍ୟ *aa2, size_t l, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_mem_filled(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1,
+    ଅଚଳ ଶୂନ୍ୟ *aa1, u_char v, size_t l, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_int(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା aa1, ପୂର୍ଣ୍ଣସଂଖ୍ୟା aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_size_t(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    size_t aa1, size_t aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_u_int(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    u_int aa1, u_int aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_long(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    long aa1, long aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_long_long(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    long long aa1, long long aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_char(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    ଅକ୍ଷର aa1, ଅକ୍ଷର aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_ptr(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    ଅଚଳ ଶୂନ୍ୟ *aa1, ଅଚଳ ଶୂନ୍ୟ *aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_u8(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    uint8_t aa1, uint8_t aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_u16(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    uint16_t aa1, uint16_t aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_u32(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    uint32_t aa1, uint32_t aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_u64(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    uint64_t aa1, uint64_t aa2, ଗଣନା test_predicate pred);
+ଶୂନ୍ୟ assert_double(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *a1, ଅଚଳ ଅକ୍ଷର *a2,
+    ଦ୍ୱିଗୁଣ aa1, ଦ୍ୱିଗୁଣ aa2, ଗଣନା test_predicate pred);
 
 #define TEST_START(n)			test_start(n)
 #define TEST_DONE()			test_done()
@@ -305,27 +305,27 @@ void assert_double(const char *file, int line,
 
 /* Benchmarking support */
 #define BENCH_START(name)	\
-	do { \
+	କର { \
 		bench_start(__FILE__, __LINE__, name); \
-		while (!bench_done()) { \
+		ଯେତେବେଳେ (!bench_done()) { \
 			bench_case_start(__FILE__, __LINE__); \
-			do {
+			କର {
 #define BENCH_FINISH(unit) \
-			} while (0); \
+			} ଯେତେବେଳେ (0); \
 			bench_case_finish(__FILE__, __LINE__); \
 		} \
 		bench_finish(__FILE__, __LINE__, unit); \
-	} while (0)
+	} ଯେତେବେଳେ (0)
 
-void bench_start(const char *file, int line, const char *name);
-void bench_case_start(const char *file, int line);
-void bench_case_finish(const char *file, int line);
-void bench_finish(const char *file, int line, const char *unit);
-int bench_done(void);
+ଶୂନ୍ୟ bench_start(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି, ଅଚଳ ଅକ୍ଷର *name);
+ଶୂନ୍ୟ bench_case_start(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି);
+ଶୂନ୍ୟ bench_case_finish(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି);
+ଶୂନ୍ୟ bench_finish(ଅଚଳ ଅକ୍ଷର *file, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି, ଅଚଳ ଅକ୍ଷର *unit);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା bench_done(ଶୂନ୍ୟ);
 
 /* Fuzzing support */
 
-struct fuzz;
+ସଂରଚନା fuzz;
 #define FUZZ_1_BIT_FLIP		0x00000001	/* Flip one bit at a time */
 #define FUZZ_2_BIT_FLIP		0x00000002	/* Flip two bits at a time */
 #define FUZZ_1_BYTE_FLIP	0x00000004	/* Flip one byte at a time */
@@ -336,29 +336,29 @@ struct fuzz;
 #define FUZZ_MAX		FUZZ_BASE64
 
 /* Start fuzzing a blob of data with selected strategies (bitmask) */
-struct fuzz *fuzz_begin(u_int strategies, const void *p, size_t l);
+ସଂରଚନା fuzz *fuzz_begin(u_int strategies, ଅଚଳ ଶୂନ୍ୟ *p, size_t l);
 
 /* Free a fuzz context */
-void fuzz_cleanup(struct fuzz *fuzz);
+ଶୂନ୍ୟ fuzz_cleanup(ସଂରଚନା fuzz *fuzz);
 
 /* Prepare the next fuzz case in the series */
-void fuzz_next(struct fuzz *fuzz);
+ଶୂନ୍ୟ fuzz_next(ସଂରଚନା fuzz *fuzz);
 
 /*
  * Check whether this fuzz case is identical to the original
  * This is slow, but useful if the caller needs to ensure that all tests
  * generated change the input (e.g. when fuzzing signatures).
  */
-int fuzz_matches_original(struct fuzz *fuzz);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା fuzz_matches_original(ସଂରଚନା fuzz *fuzz);
 
 /* Determine whether the current fuzz sequence is exhausted (nonzero = yes) */
-int fuzz_done(struct fuzz *fuzz);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା fuzz_done(ସଂରଚନା fuzz *fuzz);
 
 /* Return the length and a pointer to the current fuzzed case */
-size_t fuzz_len(struct fuzz *fuzz);
-u_char *fuzz_ptr(struct fuzz *fuzz);
+size_t fuzz_len(ସଂରଚନା fuzz *fuzz);
+u_char *fuzz_ptr(ସଂରଚନା fuzz *fuzz);
 
 /* Dump the current fuzz case to stderr */
-void fuzz_dump(struct fuzz *fuzz);
+ଶୂନ୍ୟ fuzz_dump(ସଂରଚନା fuzz *fuzz);
 
 #endif /* _TEST_HELPER_H */

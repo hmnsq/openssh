@@ -24,68 +24,68 @@
  */
 
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
+#ଅନ୍ତର୍ଭାଵ <sys/mman.h>
 #endif
 
-#include <signal.h>
+#ଅନ୍ତର୍ଭାଵ <signal.h>
 
 /* OpenSSH isn't multithreaded */
 #define _ARC4_LOCK()
 #define _ARC4_UNLOCK()
 #define _ARC4_ATFORK(f)
 
-static inline void
-_getentropy_fail(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+_getentropy_fail(ଶୂନ୍ୟ)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+ସ୍ଥିର ଅସ୍ଥିର sig_atomic_t _rs_forked;
 
-static inline void
-_rs_forkhandler(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+_rs_forkhandler(ଶୂନ୍ୟ)
 {
 	_rs_forked = 1;
 }
 
-static inline void
-_rs_forkdetect(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+_rs_forkdetect(ଶୂନ୍ୟ)
 {
-	static pid_t _rs_pid = 0;
+	ସ୍ଥିର pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	ଯଦି (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		ଯଦି (rs)
+			memset(rs, 0, ଆକାର(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+_rs_allocate(ସଂରଚନା _rs **rsp, ସଂରଚନା _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#ଯଦି defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	ଯଦି ((*rsp = mmap(ଖାଲି, ଆକାର(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		ଫେରନ୍ତୁ (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	ଯଦି ((*rsxp = mmap(ଖାଲି, ଆକାର(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
-		*rsp = NULL;
-		return (-1);
+		munmap(*rsp, ଆକାର(**rsp));
+		*rsp = ଖାଲି;
+		ଫେରନ୍ତୁ (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
-		free(*rsp);
-		*rsp = NULL;
-		return (-1);
+#ଅନ୍ୟଥା
+	ଯଦି ((*rsp = calloc(1, ଆକାର(**rsp))) == ଖାଲି)
+		ଫେରନ୍ତୁ (-1);
+	ଯଦି ((*rsxp = calloc(1, ଆକାର(**rsxp))) == ଖାଲି) {
+		ମୁକ୍ତ(*rsp);
+		*rsp = ଖାଲି;
+		ଫେରନ୍ତୁ (-1);
 	}
 #endif /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	ଫେରନ୍ତୁ (0);
 }

@@ -26,16 +26,16 @@
  * SOFTWARE.
  */
 
-#if !defined(__GNUC__) || (__GNUC__ < 2)
+#ଯଦି !defined(__GNUC__) || (__GNUC__ < 2)
 # define __attribute__(x)
 #endif
-#define KRML_MUSTINLINE inline
+#define KRML_MUSTINLINE ଧାଡ଼ିଭିତରେ
 #define KRML_NOINLINE __attribute__((noinline, unused))
 #define KRML_HOST_EPRINTF(...)
 #define KRML_HOST_EXIT(x) fatal_f("internal error")
 #define KRML_UNION_CONSTRUCTOR(T)
 
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 store64_le(uint8_t dst[8], uint64_t src)
 {
 	dst[0] = src & 0xff;
@@ -48,7 +48,7 @@ store64_le(uint8_t dst[8], uint64_t src)
 	dst[7] = (src >> 56) & 0xff;
 }
 
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 store32_le(uint8_t dst[4], uint32_t src)
 {
 	dst[0] = src & 0xff;
@@ -57,14 +57,14 @@ store32_le(uint8_t dst[4], uint32_t src)
 	dst[3] = (src >> 24) & 0xff;
 }
 
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 store16_le(uint8_t dst[2], uint16_t src)
 {
 	dst[0] = src & 0xff;
 	dst[1] = (src >> 8) & 0xff;
 }
 
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 store32_be(uint8_t dst[4], uint32_t src)
 {
 	dst[0] = (src >> 24) & 0xff;
@@ -73,10 +73,10 @@ store32_be(uint8_t dst[4], uint32_t src)
 	dst[3] = src & 0xff;
 }
 
-static inline uint64_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t
 load64_le(uint8_t src[8])
 {
-	return (uint64_t)(src[0]) |
+	ଫେରନ୍ତୁ (uint64_t)(src[0]) |
 	    ((uint64_t)(src[1]) << 8) |
 	    ((uint64_t)(src[2]) << 16) |
 	    ((uint64_t)(src[3]) << 24) |
@@ -86,28 +86,28 @@ load64_le(uint8_t src[8])
 	    ((uint64_t)(src[7]) << 56);
 }
 
-static inline uint32_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t
 load32_le(uint8_t src[4])
 {
-	return (uint32_t)(src[0]) |
+	ଫେରନ୍ତୁ (uint32_t)(src[0]) |
 	    ((uint32_t)(src[1]) << 8) |
 	    ((uint32_t)(src[2]) << 16) |
 	    ((uint32_t)(src[3]) << 24);
 }
 
-static inline uint16_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint16_t
 load16_le(uint8_t src[4])
 {
-	return (uint16_t)(src[0]) |
+	ଫେରନ୍ତୁ (uint16_t)(src[0]) |
 	    ((uint16_t)(src[1]) << 8);
 }
 
 #ifdef MISSING_BUILTIN_POPCOUNT
-static inline unsigned int
-__builtin_popcount(unsigned int num)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+__builtin_popcount(unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଅଙ୍କ)
 {
-  const int v[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
-  return v[num & 0xf] + v[(num >> 4) & 0xf];
+  ଅଚଳ ପୂର୍ଣ୍ଣସଂଖ୍ୟା v[16] = { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
+  ଫେରନ୍ତୁ v[ଅଙ୍କ & 0xf] + v[(ଅଙ୍କ >> 4) & 0xf];
 }
 #endif
 
@@ -122,7 +122,7 @@ __builtin_popcount(unsigned int num)
 
 // C++ HELPERS
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 
 #ifndef KRML_HOST_EPRINTF
 #define KRML_HOST_EPRINTF(...) fprintf(stderr, __VA_ARGS__)
@@ -131,41 +131,41 @@ __builtin_popcount(unsigned int num)
 
 #ifndef __cpp_lib_type_identity
 template <class T>
-struct type_identity {
+ସଂରଚନା type_identity {
   using type = T;
 };
 
 template <class T>
 using type_identity_t = typename type_identity<T>::type;
-#else
+#ଅନ୍ୟଥା
 using std::type_identity_t;
 #endif
 
 #define KRML_UNION_CONSTRUCTOR(T)                              \
   template <typename V>                                        \
-  constexpr T(int t, V U::*m, type_identity_t<V> v) : tag(t) { \
+  constexpr T(ପୂର୍ଣ୍ଣସଂଖ୍ୟା t, V U::*m, type_identity_t<V> v) : tag(t) { \
     val.*m = std::move(v);                                     \
   }                                                            \
-  T() = default;
+  T() = ପୂର୍ବନିର୍ଦ୍ଧାରିତ;
 
 #endif
 
 // GENERAL-PURPOSE STUFF
 
-#define LowStar_Ignore_ignore(e, t, _ret_t) ((void)e)
+#define ତଳ_Star_Ignore_ignore(e, t, _ret_t) ((ଶୂନ୍ୟ)e)
 
-#define EURYDICE_ASSERT(test, msg)                                            \
-  do {                                                                        \
-    if (!(test)) {                                                            \
-      fprintf(stderr, "assertion \"%s\" failed: file \"%s\", line %d\n", msg, \
+#define EURYDICE_ASSERT(test, ସନ୍ଦେଶ)                                            \
+  କର {                                                                        \
+    ଯଦି (!(test)) {                                                            \
+      fprintf(stderr, "assertion \"%s\" failed: file \"%s\", line %d\n", ସନ୍ଦେଶ, \
               __FILE__, __LINE__);                                            \
       exit(255);                                                              \
     }                                                                         \
-  } while (0)
+  } ଯେତେବେଳେ (0)
 
 // SIZEOF, ALIGNOF
 
-#define Eurydice_sizeof(t) sizeof(t)
+#define Eurydice_sizeof(t) ଆକାର(t)
 
 #define Eurydice_alignof(t) alignof(t)
 
@@ -177,39 +177,39 @@ using std::type_identity_t;
 // easy to write interop code that brings those definitions in scope.
 
 // &[u8]
-typedef struct Eurydice_borrow_slice_u8_s {
-  const uint8_t *ptr;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_borrow_slice_u8_s {
+  ଅଚଳ uint8_t *ptr;
   size_t meta;
 } Eurydice_borrow_slice_u8;
 
 // &[u16]
-typedef struct Eurydice_borrow_slice_i16_s {
-  const int16_t *ptr;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_borrow_slice_i16_s {
+  ଅଚଳ int16_t *ptr;
   size_t meta;
 } Eurydice_borrow_slice_i16;
 
 // &mut [u8]
-typedef struct Eurydice_mut_borrow_slice_u8_s {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_mut_borrow_slice_u8_s {
   uint8_t *ptr;
   size_t meta;
 } Eurydice_mut_borrow_slice_u8;
 
 // &mut [u16]
-typedef struct Eurydice_mut_borrow_slice_i16_s {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_mut_borrow_slice_i16_s {
   int16_t *ptr;
   size_t meta;
 } Eurydice_mut_borrow_slice_i16;
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 #define KRML_CLITERAL(type) type
-#else
+#ଅନ୍ୟଥା
 #define KRML_CLITERAL(type) (type)
 #endif
 
-#if defined(__cplusplus) && defined(__cpp_designated_initializers) || \
+#ଯଦି defined(__cplusplus) && defined(__cpp_designated_initializers) || \
     !(defined(__cplusplus))
 #define EURYDICE_CFIELD(X) X
-#else
+#ଅନ୍ୟଥା
 #define EURYDICE_CFIELD(X)
 #endif
 
@@ -218,7 +218,7 @@ typedef struct Eurydice_mut_borrow_slice_i16_s {
 
 // Copy a slice with memcopy
 #define Eurydice_slice_copy(dst, src, t) \
-  memcpy(dst.ptr, src.ptr, dst.meta * sizeof(t))
+  memcpy(dst.ptr, src.ptr, dst.meta * ଆକାର(t))
 
 #define core_array___T__N___as_slice(len_, ptr_, t, ret_t)   \
   (KRML_CLITERAL(ret_t){EURYDICE_CFIELD(.ptr =)(ptr_)->data, \
@@ -234,10 +234,10 @@ typedef struct Eurydice_mut_borrow_slice_i16_s {
 //
 // core::cmp::PartialEq<@Array<U, N>> for @Array<T, N>
 #define Eurydice_array_eq(sz, a1, a2, t) \
-  (memcmp((a1)->data, (a2)->data, sz * sizeof(t)) == 0)
+  (memcmp((a1)->data, (a2)->data, sz * ଆକାର(t)) == 0)
 // core::cmp::PartialEq<&0 (@Slice<U>)> for @Array<T, N>
 #define Eurydice_array_eq_slice_shared(sz, a1, s2, t, _) \
-  (memcmp((a1)->data, (s2)->ptr, sz * sizeof(t)) == 0)
+  (memcmp((a1)->data, (s2)->ptr, sz * ଆକାର(t)) == 0)
 #define Eurydice_array_eq_slice_mut(sz, a1, s2, t, _) \
   Eurydice_array_eq_slice_shared(sz, a1, s2, t, _)
 
@@ -288,245 +288,245 @@ typedef struct Eurydice_mut_borrow_slice_i16_s {
 // generated by Eurydice, because Eurydice prototypes are always emitted within
 // an extern "C" block, UNLESS you use -fcxx17-compat, in which case, you must
 // pass -DKRML_CXX17_COMPAT="" to your C++ compiler.
-#if defined(__cplusplus) && !defined(KRML_CXX17_COMPAT)
-extern "C" {
+#ଯଦି defined(__cplusplus) && !defined(KRML_CXX17_COMPAT)
+ବାହ୍ୟ "C" {
 #endif
 
 #define core_hint_black_box(X, _0, _1) (X)
 
 // [ u8; 2 ]
-typedef struct Eurydice_array_u8x2_s {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_array_u8x2_s {
   uint8_t data[2];
 } Eurydice_array_u8x2;
 
 // [ u8; 4 ]
-typedef struct Eurydice_array_u8x4_s {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_array_u8x4_s {
   uint8_t data[4];
 } Eurydice_array_u8x4;
 
 // [ u8; 8 ]
-typedef struct Eurydice_array_u8x8_s {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_array_u8x8_s {
   uint8_t data[8];
 } Eurydice_array_u8x8;
 
-static inline uint16_t core_num__u16__from_le_bytes(Eurydice_array_u8x2 buf) {
-  return load16_le(buf.data);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint16_t core_ଅଙ୍କ_u16_from_le_bytes(Eurydice_array_u8x2 buf) {
+  ଫେରନ୍ତୁ load16_le(buf.data);
 }
 
-static inline Eurydice_array_u8x4 core_num__u32__to_be_bytes(uint32_t src) {
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_array_u8x4 core_ଅଙ୍କ_u32_to_be_bytes(uint32_t src) {
   // TODO: why not store32_be?
   Eurydice_array_u8x4 a;
   uint32_t x = htobe32(src);
   memcpy(a.data, &x, 4);
-  return a;
+  ଫେରନ୍ତୁ a;
 }
 
-static inline Eurydice_array_u8x4 core_num__u32__to_le_bytes(uint32_t src) {
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_array_u8x4 core_ଅଙ୍କ_u32_to_le_bytes(uint32_t src) {
   Eurydice_array_u8x4 a;
   store32_le(a.data, src);
-  return a;
+  ଫେରନ୍ତୁ a;
 }
 
-static inline uint32_t core_num__u32__from_le_bytes(Eurydice_array_u8x4 buf) {
-  return load32_le(buf.data);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t core_ଅଙ୍କ_u32_from_le_bytes(Eurydice_array_u8x4 buf) {
+  ଫେରନ୍ତୁ load32_le(buf.data);
 }
 
-static inline Eurydice_array_u8x8 core_num__u64__to_le_bytes(uint64_t v) {
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_array_u8x8 core_ଅଙ୍କ_u64_to_le_bytes(uint64_t v) {
   Eurydice_array_u8x8 a;
   store64_le(a.data, v);
-  return a;
+  ଫେରନ୍ତୁ a;
 }
 
-static inline uint64_t core_num__u64__from_le_bytes(Eurydice_array_u8x8 buf) {
-  return load64_le(buf.data);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t core_ଅଙ୍କ_u64_from_le_bytes(Eurydice_array_u8x8 buf) {
+  ଫେରନ୍ତୁ load64_le(buf.data);
 }
 
-static inline int64_t core_convert_num__core__convert__From_i32__for_i64__from(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int64_t core_convert_ଅଙ୍କ_core_convert_From_i32_for_i64_from(
     int32_t x) {
-  return x;
+  ଫେରନ୍ତୁ x;
 }
 
-static inline uint64_t core_convert_num__core__convert__From_u8__for_u64__from(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t core_convert_ଅଙ୍କ_core_convert_From_u8_for_u64_from(
     uint8_t x) {
-  return x;
+  ଫେରନ୍ତୁ x;
 }
 
-static inline uint64_t core_convert_num__core__convert__From_u16__for_u64__from(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t core_convert_ଅଙ୍କ_core_convert_From_u16_for_u64_from(
     uint16_t x) {
-  return x;
+  ଫେରନ୍ତୁ x;
 }
 
-static inline size_t core_convert_num__core__convert__From_u16__for_usize__from(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t core_convert_ଅଙ୍କ_core_convert_From_u16_for_usize_from(
     uint16_t x) {
-  return x;
+  ଫେରନ୍ତୁ x;
 }
 
-static inline uint32_t core_num__u8__count_ones(uint8_t x0) {
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t core_ଅଙ୍କ_u8_ଗଣନା_ones(uint8_t x0) {
 #ifdef _MSC_VER
-  return __popcnt(x0);
-#else
-  return __builtin_popcount(x0);
+  ଫେରନ୍ତୁ __popcnt(x0);
+#ଅନ୍ୟଥା
+  ଫେରନ୍ତୁ __builtin_popcount(x0);
 #endif
 }
 
-static inline uint32_t core_num__u32__count_ones(uint32_t x0) {
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t core_ଅଙ୍କ_u32_ଗଣନା_ones(uint32_t x0) {
 #ifdef _MSC_VER
-  return __popcnt(x0);
-#else
-  return __builtin_popcount(x0);
+  ଫେରନ୍ତୁ __popcnt(x0);
+#ଅନ୍ୟଥା
+  ଫେରନ୍ତୁ __builtin_popcount(x0);
 #endif
 }
 
-static inline uint32_t core_num__i32__count_ones(int32_t x0) {
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t core_ଅଙ୍କ_i32_ଗଣନା_ones(int32_t x0) {
 #ifdef _MSC_VER
-  return __popcnt(x0);
-#else
-  return __builtin_popcount(x0);
+  ଫେରନ୍ତୁ __popcnt(x0);
+#ଅନ୍ୟଥା
+  ଫେରନ୍ତୁ __builtin_popcount(x0);
 #endif
 }
 
-static inline size_t core_cmp_impls__core__cmp__Ord_for_usize__min(size_t a,
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t core_cmp_impls__core__cmp__Ord_for_usize__min(size_t a,
                                                                    size_t b) {
-  if (a <= b)
-    return a;
-  else
-    return b;
+  ଯଦି (a <= b)
+    ଫେରନ୍ତୁ a;
+  ଅନ୍ୟଥା
+    ଫେରନ୍ତୁ b;
 }
 
 // unsigned overflow wraparound semantics in C
-static inline uint8_t core_num__u8__wrapping_sub(uint8_t x, uint8_t y) {
-  return x - y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t core_ଅଙ୍କ_u8_wrapping_sub(uint8_t x, uint8_t y) {
+  ଫେରନ୍ତୁ x - y;
 }
-static inline uint8_t core_num__u8__wrapping_add(uint8_t x, uint8_t y) {
-  return x + y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t core_ଅଙ୍କ_u8_wrapping_add(uint8_t x, uint8_t y) {
+  ଫେରନ୍ତୁ x + y;
 }
-static inline uint8_t core_num__u8__wrapping_mul(uint8_t x, uint8_t y) {
-  return x * y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t core_ଅଙ୍କ_u8_wrapping_mul(uint8_t x, uint8_t y) {
+  ଫେରନ୍ତୁ x * y;
 }
-static inline uint16_t core_num__u16__wrapping_sub(uint16_t x, uint16_t y) {
-  return x - y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint16_t core_ଅଙ୍କ_u16_wrapping_sub(uint16_t x, uint16_t y) {
+  ଫେରନ୍ତୁ x - y;
 }
-static inline uint16_t core_num__u16__wrapping_add(uint16_t x, uint16_t y) {
-  return x + y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint16_t core_ଅଙ୍କ_u16_wrapping_add(uint16_t x, uint16_t y) {
+  ଫେରନ୍ତୁ x + y;
 }
-static inline uint16_t core_num__u16__wrapping_mul(uint16_t x, uint16_t y) {
-  return x * y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint16_t core_ଅଙ୍କ_u16_wrapping_mul(uint16_t x, uint16_t y) {
+  ଫେରନ୍ତୁ x * y;
 }
-static inline uint32_t core_num__u32__wrapping_sub(uint32_t x, uint32_t y) {
-  return x - y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t core_ଅଙ୍କ_u32_wrapping_sub(uint32_t x, uint32_t y) {
+  ଫେରନ୍ତୁ x - y;
 }
-static inline uint32_t core_num__u32__wrapping_add(uint32_t x, uint32_t y) {
-  return x + y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t core_ଅଙ୍କ_u32_wrapping_add(uint32_t x, uint32_t y) {
+  ଫେରନ୍ତୁ x + y;
 }
-static inline uint32_t core_num__u32__wrapping_mul(uint32_t x, uint32_t y) {
-  return x * y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t core_ଅଙ୍କ_u32_wrapping_mul(uint32_t x, uint32_t y) {
+  ଫେରନ୍ତୁ x * y;
 }
-static inline uint64_t core_num__u64__wrapping_sub(uint64_t x, uint64_t y) {
-  return x - y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t core_ଅଙ୍କ_u64_wrapping_sub(uint64_t x, uint64_t y) {
+  ଫେରନ୍ତୁ x - y;
 }
-static inline uint64_t core_num__u64__wrapping_add(uint64_t x, uint64_t y) {
-  return x + y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t core_ଅଙ୍କ_u64_wrapping_add(uint64_t x, uint64_t y) {
+  ଫେରନ୍ତୁ x + y;
 }
-static inline uint64_t core_num__u64__wrapping_mul(uint64_t x, uint64_t y) {
-  return x * y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t core_ଅଙ୍କ_u64_wrapping_mul(uint64_t x, uint64_t y) {
+  ଫେରନ୍ତୁ x * y;
 }
-static inline size_t core_num__usize__wrapping_sub(size_t x, size_t y) {
-  return x - y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t core_ଅଙ୍କ_usize_wrapping_sub(size_t x, size_t y) {
+  ଫେରନ୍ତୁ x - y;
 }
-static inline size_t core_num__usize__wrapping_add(size_t x, size_t y) {
-  return x + y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t core_ଅଙ୍କ_usize_wrapping_add(size_t x, size_t y) {
+  ଫେରନ୍ତୁ x + y;
 }
-static inline size_t core_num__usize__wrapping_mul(size_t x, size_t y) {
-  return x * y;
-}
-
-static inline int8_t core_num__i8__wrapping_add(int8_t x, int8_t y) {
-  return (int8_t)((uint8_t)x + (uint8_t)y);
-}
-static inline int8_t core_num__i8__wrapping_sub(int8_t x, int8_t y) {
-  return (int8_t)((uint8_t)x - (uint8_t)y);
-}
-static inline int8_t core_num__i8__wrapping_mul(int8_t x, int8_t y) {
-  return (int8_t)((uint8_t)x * (uint8_t)y);
-}
-static inline int16_t core_num__i16__wrapping_add(int16_t x, int16_t y) {
-  return (int16_t)((uint16_t)x + (uint16_t)y);
-}
-static inline int16_t core_num__i16__wrapping_sub(int16_t x, int16_t y) {
-  return (int16_t)((uint16_t)x - (uint16_t)y);
-}
-static inline int16_t core_num__i16__wrapping_mul(int16_t x, int16_t y) {
-  return (int16_t)((uint16_t)x * (uint16_t)y);
-}
-static inline int32_t core_num__i32__wrapping_add(int32_t x, int32_t y) {
-  return (int32_t)((uint32_t)x + (uint32_t)y);
-}
-static inline int32_t core_num__i32__wrapping_sub(int32_t x, int32_t y) {
-  return (int32_t)((uint32_t)x - (uint32_t)y);
-}
-static inline int32_t core_num__i32__wrapping_mul(int32_t x, int32_t y) {
-  return (int32_t)((uint32_t)x * (uint32_t)y);
-}
-static inline int64_t core_num__i64__wrapping_add(int64_t x, int64_t y) {
-  return (int64_t)((uint64_t)x + (uint64_t)y);
-}
-static inline int64_t core_num__i64__wrapping_sub(int64_t x, int64_t y) {
-  return (int64_t)((uint64_t)x - (uint64_t)y);
-}
-static inline int64_t core_num__i64__wrapping_mul(int64_t x, int64_t y) {
-  return (int64_t)((uint64_t)x * (uint64_t)y);
-}
-static inline int8_t core_num__i8__wrapping_neg(int8_t x) {
-  return (int8_t)(-(uint8_t)x);
-}
-static inline int16_t core_num__i16__wrapping_neg(int16_t x) {
-  return (int16_t)(-(uint16_t)x);
-}
-static inline int32_t core_num__i32__wrapping_neg(int32_t x) {
-  return (int32_t)(-(uint32_t)x);
-}
-static inline int64_t core_num__i64__wrapping_neg(int64_t x) {
-  return (int64_t)(-(uint64_t)x);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t core_ଅଙ୍କ_usize_wrapping_mul(size_t x, size_t y) {
+  ଫେରନ୍ତୁ x * y;
 }
 
-static inline uint64_t core_num__u64__rotate_left(uint64_t x0, uint32_t x1) {
-  return (x0 << x1) | (x0 >> ((-x1) & 63));
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int8_t core_ଅଙ୍କ_i8_wrapping_add(int8_t x, int8_t y) {
+  ଫେରନ୍ତୁ (int8_t)((uint8_t)x + (uint8_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int8_t core_ଅଙ୍କ_i8_wrapping_sub(int8_t x, int8_t y) {
+  ଫେରନ୍ତୁ (int8_t)((uint8_t)x - (uint8_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int8_t core_ଅଙ୍କ_i8_wrapping_mul(int8_t x, int8_t y) {
+  ଫେରନ୍ତୁ (int8_t)((uint8_t)x * (uint8_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int16_t core_ଅଙ୍କ_i16_wrapping_add(int16_t x, int16_t y) {
+  ଫେରନ୍ତୁ (int16_t)((uint16_t)x + (uint16_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int16_t core_ଅଙ୍କ_i16_wrapping_sub(int16_t x, int16_t y) {
+  ଫେରନ୍ତୁ (int16_t)((uint16_t)x - (uint16_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int16_t core_ଅଙ୍କ_i16_wrapping_mul(int16_t x, int16_t y) {
+  ଫେରନ୍ତୁ (int16_t)((uint16_t)x * (uint16_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int32_t core_ଅଙ୍କ_i32_wrapping_add(int32_t x, int32_t y) {
+  ଫେରନ୍ତୁ (int32_t)((uint32_t)x + (uint32_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int32_t core_ଅଙ୍କ_i32_wrapping_sub(int32_t x, int32_t y) {
+  ଫେରନ୍ତୁ (int32_t)((uint32_t)x - (uint32_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int32_t core_ଅଙ୍କ_i32_wrapping_mul(int32_t x, int32_t y) {
+  ଫେରନ୍ତୁ (int32_t)((uint32_t)x * (uint32_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int64_t core_ଅଙ୍କ_i64_wrapping_add(int64_t x, int64_t y) {
+  ଫେରନ୍ତୁ (int64_t)((uint64_t)x + (uint64_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int64_t core_ଅଙ୍କ_i64_wrapping_sub(int64_t x, int64_t y) {
+  ଫେରନ୍ତୁ (int64_t)((uint64_t)x - (uint64_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int64_t core_ଅଙ୍କ_i64_wrapping_mul(int64_t x, int64_t y) {
+  ଫେରନ୍ତୁ (int64_t)((uint64_t)x * (uint64_t)y);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int8_t core_ଅଙ୍କ_i8_wrapping_neg(int8_t x) {
+  ଫେରନ୍ତୁ (int8_t)(-(uint8_t)x);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int16_t core_ଅଙ୍କ_i16_wrapping_neg(int16_t x) {
+  ଫେରନ୍ତୁ (int16_t)(-(uint16_t)x);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int32_t core_ଅଙ୍କ_i32_wrapping_neg(int32_t x) {
+  ଫେରନ୍ତୁ (int32_t)(-(uint32_t)x);
+}
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int64_t core_ଅଙ୍କ_i64_wrapping_neg(int64_t x) {
+  ଫେରନ୍ତୁ (int64_t)(-(uint64_t)x);
 }
 
-static inline void core_ops_arith__i32__add_assign(int32_t *x0, int32_t *x1) {
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t core_ଅଙ୍କ_u64_rotate_ବାମ(uint64_t x0, uint32_t x1) {
+  ଫେରନ୍ତୁ (x0 << x1) | (x0 >> ((-x1) & 63));
+}
+
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ core_ops_arith__i32__add_assign(int32_t *x0, int32_t *x1) {
   *x0 = *x0 + *x1;
 }
 
-static inline uint8_t Eurydice_bitand_pv_u8(const uint8_t *p, uint8_t v) {
-  return (*p) & v;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t Eurydice_bitand_pv_u8(ଅଚଳ uint8_t *p, uint8_t v) {
+  ଫେରନ୍ତୁ (*p) & v;
 }
-static inline uint8_t Eurydice_shr_pv_u8(const uint8_t *p, int32_t v) {
-  return (*p) >> v;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t Eurydice_shr_pv_u8(ଅଚଳ uint8_t *p, int32_t v) {
+  ଫେରନ୍ତୁ (*p) >> v;
 }
-static inline uint32_t Eurydice_min_u32(uint32_t x, uint32_t y) {
-  return x < y ? x : y;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t Eurydice_min_u32(uint32_t x, uint32_t y) {
+  ଫେରନ୍ତୁ x < y ? x : y;
 }
 
-static inline uint8_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t
 core_ops_bit__core__ops__bit__BitAnd_u8__u8__for__0__u8___bitand(
-    const uint8_t *x0, uint8_t x1) {
-  return Eurydice_bitand_pv_u8(x0, x1);
+    ଅଚଳ uint8_t *x0, uint8_t x1) {
+  ଫେରନ୍ତୁ Eurydice_bitand_pv_u8(x0, x1);
 }
 
-static inline uint8_t
-core_ops_bit__core__ops__bit__Shr_i32__u8__for__0__u8___shr(const uint8_t *x0,
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t
+core_ops_bit__core__ops__bit__Shr_i32__u8__for__0__u8___shr(ଅଚଳ uint8_t *x0,
                                                             int32_t x1) {
-  return Eurydice_shr_pv_u8(x0, x1);
+  ଫେରନ୍ତୁ Eurydice_shr_pv_u8(x0, x1);
 }
 
-#define core_num_nonzero_private_NonZeroUsizeInner size_t
-static inline core_num_nonzero_private_NonZeroUsizeInner
-core_num_nonzero_private___core__clone__Clone_for_core__num__nonzero__private__NonZeroUsizeInner___clone(
-    core_num_nonzero_private_NonZeroUsizeInner *x0) {
-  return *x0;
+#define core_ଅଙ୍କ_nonzero_private_Non_Zero_Usize_Inner size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_ଅଙ୍କ_nonzero_private_Non_Zero_Usize_Inner
+core_ଅଙ୍କ_nonzero_private_core_clone_Clone_for_core_ଅଙ୍କ_nonzero_private_Non_Zero_Usize_Inner_clone(
+    core_ଅଙ୍କ_nonzero_private_Non_Zero_Usize_Inner *x0) {
+  ଫେରନ୍ତୁ *x0;
 }
 
-#if defined(__cplusplus) && !defined(KRML_CXX17_COMPAT)
+#ଯଦି defined(__cplusplus) && !defined(KRML_CXX17_COMPAT)
 }
 #endif
 
@@ -549,29 +549,29 @@ core_num_nonzero_private___core__clone__Clone_for_core__num__nonzero__private__N
 
 // STRINGS
 
-typedef char Eurydice_c_char_t;
-typedef const Eurydice_c_char_t *Prims_string;
-typedef void Eurydice_c_void_t;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଅକ୍ଷର Eurydice_c_char_t;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଅଚଳ Eurydice_c_char_t *Prims_string;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଶୂନ୍ୟ Eurydice_c_void_t;
 
 // UNSAFE CODE
 
 #define core_slice___Slice_T___as_mut_ptr(x, t, _) (x.ptr)
-#define core_mem_size_of(t, _) (sizeof(t))
+#define core_mem_size_of(t, _) (ଆକାର(t))
 #define core_slice_raw_from_raw_parts_mut(ptr, len, _0, _1) \
-  (KRML_CLITERAL(Eurydice_slice){(void *)(ptr), len})
+  (KRML_CLITERAL(Eurydice_slice){(ଶୂନ୍ୟ *)(ptr), len})
 #define core_slice_raw_from_raw_parts(ptr, len, _0, _1) \
-  (KRML_CLITERAL(Eurydice_slice){(void *)(ptr), len})
+  (KRML_CLITERAL(Eurydice_slice){(ଶୂନ୍ୟ *)(ptr), len})
 
 // FIXME: add dedicated extraction to extract NonNull<T> as T*
-#define core_ptr_non_null_NonNull void *
+#define core_ptr_non_null_NonNull ଶୂନ୍ୟ *
 
 // PRINTING
 //
 // This is temporary. Ultimately we want to be able to extract all of this.
 
-typedef void *core_fmt_Formatter;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଶୂନ୍ୟ *core_fmt_Formatter;
 #define core_fmt_rt__core__fmt__rt__Argument__a___new_display(x1, x2, x3, x4) \
-  NULL
+  ଖାଲି
 
 // BOXES
 
@@ -583,26 +583,26 @@ typedef void *core_fmt_Formatter;
 #define EURYDICE_REALLOC realloc
 #endif
 
-static inline char *malloc_and_init(size_t sz, char *init) {
-  char *ptr = (char *)EURYDICE_MALLOC(sz);
-  if (ptr != NULL) memcpy(ptr, init, sz);
-  return ptr;
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅକ୍ଷର *malloc_and_init(size_t sz, ଅକ୍ଷର *init) {
+  ଅକ୍ଷର *ptr = (ଅକ୍ଷର *)EURYDICE_MALLOC(sz);
+  ଯଦି (ptr != ଖାଲି) memcpy(ptr, init, sz);
+  ଫେରନ୍ତୁ ptr;
 }
 
 #define Eurydice_box_new(init, t, t_dst) \
-  ((t_dst)(malloc_and_init(sizeof(t), (char *)(&init))))
+  ((t_dst)(malloc_and_init(ଆକାର(t), (ଅକ୍ଷର *)(&init))))
 
 // Initializer for array of size zero
 #define Eurydice_empty_array(dummy, t, t_dst) ((t_dst){.data = {}})
 
 #define Eurydice_box_new_array(len, ptr, t, t_dst) \
-  ((t_dst)(malloc_and_init(len * sizeof(t), (char *)(ptr))))
+  ((t_dst)(malloc_and_init(len * ଆକାର(t), (ଅକ୍ଷର *)(ptr))))
 
 // FIXME this needs to handle allocation failure errors, but this seems hard to
 // do without evaluating malloc_and_init twice...
 #define alloc_boxed__alloc__boxed__Box_T___try_new(init, t, t_ret) \
   ((t_ret){.tag = core_result_Ok,                                  \
-           .f0 = (t *)malloc_and_init(sizeof(t), (char *)(&init))})
+           .f0 = (t *)malloc_and_init(ଆକାର(t), (ଅକ୍ଷର *)(&init))})
 
 // OPTIONS
 
@@ -630,36 +630,36 @@ static inline char *malloc_and_init(size_t sz, char *init) {
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
-static inline uint32_t core_num__i32__count_ones(int32_t x0);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t core_ଅଙ୍କ_i32_ଗଣନା_ones(int32_t x0);
 
-static inline uint16_t core_num__u16__wrapping_add(uint16_t x0, uint16_t x1);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint16_t core_ଅଙ୍କ_u16_wrapping_add(uint16_t x0, uint16_t x1);
 
-static inline uint64_t core_num__u64__from_le_bytes(Eurydice_array_u8x8 x0);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t core_ଅଙ୍କ_u64_from_le_bytes(Eurydice_array_u8x8 x0);
 
-static inline uint64_t core_num__u64__rotate_left(uint64_t x0, uint32_t x1);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint64_t core_ଅଙ୍କ_u64_rotate_ବାମ(uint64_t x0, uint32_t x1);
 
-static inline Eurydice_array_u8x8 core_num__u64__to_le_bytes(uint64_t x0);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_array_u8x8 core_ଅଙ୍କ_u64_to_le_bytes(uint64_t x0);
 
-static inline uint32_t core_num__u8__count_ones(uint8_t x0);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t core_ଅଙ୍କ_u8_ଗଣନା_ones(uint8_t x0);
 
-static inline uint8_t core_num__u8__wrapping_sub(uint8_t x0, uint8_t x1);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t core_ଅଙ୍କ_u8_wrapping_sub(uint8_t x0, uint8_t x1);
 
-static inline uint8_t
-core_ops_bit__core__ops__bit__BitAnd_u8__u8__for__0__u8___bitand(const uint8_t *x0, uint8_t x1);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t
+core_ops_bit__core__ops__bit__BitAnd_u8__u8__for__0__u8___bitand(ଅଚଳ uint8_t *x0, uint8_t x1);
 
-static inline uint8_t
-core_ops_bit__core__ops__bit__Shr_i32__u8__for__0__u8___shr(const uint8_t *x0, int32_t x1);
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t
+core_ops_bit__core__ops__bit__Shr_i32__u8__for__0__u8___shr(ଅଚଳ uint8_t *x0, int32_t x1);
 
 /**
 A monomorphic instance of core.ops.range.Range
 with types size_t
 
 */
-typedef struct core_ops_range_Range_87_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_ops_range_Range_87_s
 {
   size_t start;
   size_t end;
@@ -671,10 +671,10 @@ A monomorphic instance of Eurydice.slice_subslice_mut
 with types int16_t, core_ops_range_Range size_t, Eurydice_derefed_slice int16_t
 
 */
-static inline Eurydice_mut_borrow_slice_i16
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_i16
 Eurydice_slice_subslice_mut_a6(Eurydice_mut_borrow_slice_i16 s, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_i16){
         .ptr = s.ptr + r.start,
@@ -689,7 +689,7 @@ with types uint8_t
 with const generics
 - $16size_t
 */
-typedef struct Eurydice_arr_b2_s { uint8_t data[16U]; } Eurydice_arr_b2;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_b2_s { uint8_t data[16U]; } Eurydice_arr_b2;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -697,7 +697,7 @@ with types Eurydice_arr_b2
 with const generics
 - $256size_t
 */
-typedef struct Eurydice_arr_87_s { Eurydice_arr_b2 data[256U]; } Eurydice_arr_87;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_87_s { Eurydice_arr_b2 data[256U]; } Eurydice_arr_87;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -705,22 +705,22 @@ with types uint8_t
 with const generics
 - $24size_t
 */
-typedef struct Eurydice_arr_94_s { uint8_t data[24U]; } Eurydice_arr_94;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_94_s { uint8_t data[24U]; } Eurydice_arr_94;
 
 #define core_result_Ok 0
 #define core_result_Err 1
 
-typedef uint8_t core_result_Result_57_tags;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା uint8_t core_result_Result_57_tags;
 
 /**
 A monomorphic instance of core.result.Result
 with types Eurydice_arr_94, core_array_TryFromSliceError
 
 */
-typedef struct core_result_Result_57_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_57_s
 {
   core_result_Result_57_tags tag;
-  union {
+  ସଂଘ {
     Eurydice_arr_94 case_Ok;
     core_array_TryFromSliceError case_Err;
   }
@@ -736,13 +736,13 @@ A monomorphic instance of core.result.unwrap_26
 with types Eurydice_arr uint8_t[[$24size_t]], core_array_TryFromSliceError
 
 */
-static inline Eurydice_arr_94 core_result_unwrap_26_78(core_result_Result_57 self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_94 core_result_unwrap_26_78(core_result_Result_57 self)
 {
-  if (self.tag == core_result_Ok)
+  ଯଦି (self.tag == core_result_Ok)
   {
-    return self.val.case_Ok;
+    ଫେରନ୍ତୁ self.val.case_Ok;
   }
-  else
+  ଅନ୍ୟଥା
   {
     KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "unwrap not Ok");
     KRML_HOST_EXIT(255U);
@@ -755,7 +755,7 @@ with types int16_t
 with const generics
 - $16size_t
 */
-typedef struct Eurydice_arr_d6_s { int16_t data[16U]; } Eurydice_arr_d6;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_d6_s { int16_t data[16U]; } Eurydice_arr_d6;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -763,17 +763,17 @@ with types uint8_t
 with const generics
 - $20size_t
 */
-typedef struct Eurydice_arr_fc_s { uint8_t data[20U]; } Eurydice_arr_fc;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_fc_s { uint8_t data[20U]; } Eurydice_arr_fc;
 
 /**
 A monomorphic instance of core.result.Result
 with types Eurydice_arr_fc, core_array_TryFromSliceError
 
 */
-typedef struct core_result_Result_83_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_83_s
 {
   core_result_Result_57_tags tag;
-  union {
+  ସଂଘ {
     Eurydice_arr_fc case_Ok;
     core_array_TryFromSliceError case_Err;
   }
@@ -789,13 +789,13 @@ A monomorphic instance of core.result.unwrap_26
 with types Eurydice_arr uint8_t[[$20size_t]], core_array_TryFromSliceError
 
 */
-static inline Eurydice_arr_fc core_result_unwrap_26_7d(core_result_Result_83 self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_fc core_result_unwrap_26_7d(core_result_Result_83 self)
 {
-  if (self.tag == core_result_Ok)
+  ଯଦି (self.tag == core_result_Ok)
   {
-    return self.val.case_Ok;
+    ଫେରନ୍ତୁ self.val.case_Ok;
   }
-  else
+  ଅନ୍ୟଥା
   {
     KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "unwrap not Ok");
     KRML_HOST_EXIT(255U);
@@ -808,7 +808,7 @@ with types uint8_t
 with const generics
 - $1184size_t
 */
-typedef struct Eurydice_arr_5f_s { uint8_t data[1184U]; } Eurydice_arr_5f;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_5f_s { uint8_t data[1184U]; } Eurydice_arr_5f;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_from_shared
@@ -816,10 +816,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 1184
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_from_shared_5f2(const Eurydice_arr_5f *a, size_t r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_from_shared_5f2(ଅଚଳ Eurydice_arr_5f *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)1184U - r });
 }
 
@@ -829,13 +829,13 @@ with types uint8_t, core_ops_range_RangeTo size_t, Eurydice_derefed_slice uint8_
 with const generics
 - N= 1184
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_to_shared_210(const Eurydice_arr_5f *a, size_t r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_to_shared_210(ଅଚଳ Eurydice_arr_5f *a, size_t r)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = r;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -844,7 +844,7 @@ with types uint8_t
 with const generics
 - $2400size_t
 */
-typedef struct Eurydice_arr_7d_s { uint8_t data[2400U]; } Eurydice_arr_7d;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_7d_s { uint8_t data[2400U]; } Eurydice_arr_7d;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_shared
@@ -852,10 +852,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 2400
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d48(const Eurydice_arr_7d *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d48(ଅଚଳ Eurydice_arr_7d *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -865,7 +865,7 @@ with types uint8_t
 with const generics
 - $1152size_t
 */
-typedef struct Eurydice_arr_0e_s { uint8_t data[1152U]; } Eurydice_arr_0e;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_0e_s { uint8_t data[1152U]; } Eurydice_arr_0e;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -873,13 +873,13 @@ with types uint8_t
 with const generics
 - N= 1152
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_f4(const Eurydice_arr_0e *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_f4(ଅଚଳ Eurydice_arr_0e *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1152U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -888,10 +888,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 2400
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d417(Eurydice_arr_7d *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -906,12 +906,12 @@ with types uint8_t
 with const generics
 - N= 1152
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_f4(Eurydice_arr_0e *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_f4(Eurydice_arr_0e *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1152U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -920,10 +920,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 1184
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_from_mut_5f4(Eurydice_arr_5f *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)1184U - r });
 }
 
@@ -933,10 +933,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 1184
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d416(Eurydice_arr_5f *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -951,13 +951,13 @@ with types uint8_t
 with const generics
 - N= 24
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_ed(const Eurydice_arr_94 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_ed(ଅଚଳ Eurydice_arr_94 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)24U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -966,7 +966,7 @@ with types uint8_t
 with const generics
 - $384size_t
 */
-typedef struct Eurydice_arr_b20_s { uint8_t data[384U]; } Eurydice_arr_b20;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_b20_s { uint8_t data[384U]; } Eurydice_arr_b20;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_mut
@@ -974,10 +974,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 384
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d415(Eurydice_arr_b20 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -992,13 +992,13 @@ with types uint8_t
 with const generics
 - N= 384
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_a9(const Eurydice_arr_b20 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_a9(ଅଚଳ Eurydice_arr_b20 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)384U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1007,17 +1007,17 @@ with types uint8_t
 with const generics
 - $32size_t
 */
-typedef struct Eurydice_arr_ec_s { uint8_t data[32U]; } Eurydice_arr_ec;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_ec_s { uint8_t data[32U]; } Eurydice_arr_ec;
 
 /**
 A monomorphic instance of core.result.Result
 with types Eurydice_arr_ec, core_array_TryFromSliceError
 
 */
-typedef struct core_result_Result_07_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_07_s
 {
   core_result_Result_57_tags tag;
-  union {
+  ସଂଘ {
     Eurydice_arr_ec case_Ok;
     core_array_TryFromSliceError case_Err;
   }
@@ -1033,13 +1033,13 @@ A monomorphic instance of core.result.unwrap_26
 with types Eurydice_arr uint8_t[[$32size_t]], core_array_TryFromSliceError
 
 */
-static inline Eurydice_arr_ec core_result_unwrap_26_39(core_result_Result_07 self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ec core_result_unwrap_26_39(core_result_Result_07 self)
 {
-  if (self.tag == core_result_Ok)
+  ଯଦି (self.tag == core_result_Ok)
   {
-    return self.val.case_Ok;
+    ଫେରନ୍ତୁ self.val.case_Ok;
   }
-  else
+  ଅନ୍ୟଥା
   {
     KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "unwrap not Ok");
     KRML_HOST_EXIT(255U);
@@ -1052,7 +1052,7 @@ with types uint8_t
 with const generics
 - $64size_t
 */
-typedef struct Eurydice_arr_c7_s { uint8_t data[64U]; } Eurydice_arr_c7;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_c7_s { uint8_t data[64U]; } Eurydice_arr_c7;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_from_shared
@@ -1060,10 +1060,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 64
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_from_shared_5f1(const Eurydice_arr_c7 *a, size_t r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_from_shared_5f1(ଅଚଳ Eurydice_arr_c7 *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)64U - r });
 }
 
@@ -1073,10 +1073,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 64
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d47(const Eurydice_arr_c7 *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d47(ଅଚଳ Eurydice_arr_c7 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -1086,13 +1086,13 @@ with types uint8_t
 with const generics
 - N= 1184
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_ff(const Eurydice_arr_5f *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_ff(ଅଚଳ Eurydice_arr_5f *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1184U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1101,7 +1101,7 @@ with types uint8_t
 with const generics
 - $1088size_t
 */
-typedef struct Eurydice_arr_2b_s { uint8_t data[1088U]; } Eurydice_arr_2b;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_2b_s { uint8_t data[1088U]; } Eurydice_arr_2b;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_from_mut
@@ -1109,10 +1109,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 1088
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_from_mut_5f3(Eurydice_arr_2b *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)1088U - r });
 }
 
@@ -1122,10 +1122,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 1088
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d414(Eurydice_arr_2b *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -1140,13 +1140,13 @@ with types uint8_t
 with const generics
 - N= 20
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_8f(const Eurydice_arr_fc *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_8f(ଅଚଳ Eurydice_arr_fc *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)20U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1155,7 +1155,7 @@ with types uint8_t
 with const generics
 - $320size_t
 */
-typedef struct Eurydice_arr_b0_s { uint8_t data[320U]; } Eurydice_arr_b0;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_b0_s { uint8_t data[320U]; } Eurydice_arr_b0;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_mut
@@ -1163,10 +1163,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 320
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d413(Eurydice_arr_b0 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -1181,13 +1181,13 @@ with types uint8_t
 with const generics
 - N= 320
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_56(const Eurydice_arr_b0 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_56(ଅଚଳ Eurydice_arr_b0 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)320U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1196,7 +1196,7 @@ with types int16_t
 with const generics
 - $256size_t
 */
-typedef struct Eurydice_arr_04_s { int16_t data[256U]; } Eurydice_arr_04;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_04_s { int16_t data[256U]; } Eurydice_arr_04;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -1204,13 +1204,13 @@ with types int16_t
 with const generics
 - N= 256
 */
-static inline Eurydice_borrow_slice_i16
-Eurydice_array_to_slice_shared_99(const Eurydice_arr_04 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_i16
+Eurydice_array_to_slice_shared_99(ଅଚଳ Eurydice_arr_04 *a)
 {
   Eurydice_borrow_slice_i16 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)256U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1219,7 +1219,7 @@ with types uint8_t
 with const generics
 - $128size_t
 */
-typedef struct Eurydice_arr_89_s { uint8_t data[128U]; } Eurydice_arr_89;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_89_s { uint8_t data[128U]; } Eurydice_arr_89;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -1227,7 +1227,7 @@ with types Eurydice_arr_89
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_58_s { Eurydice_arr_89 data[3U]; } Eurydice_arr_58;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_58_s { Eurydice_arr_89 data[3U]; } Eurydice_arr_58;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -1235,7 +1235,7 @@ with types uint8_t
 with const generics
 - $33size_t
 */
-typedef struct Eurydice_arr_fa0_s { uint8_t data[33U]; } Eurydice_arr_fa0;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_fa0_s { uint8_t data[33U]; } Eurydice_arr_fa0;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -1243,13 +1243,13 @@ with types uint8_t
 with const generics
 - N= 33
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_b5(const Eurydice_arr_fa0 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_b5(ଅଚଳ Eurydice_arr_fa0 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)33U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1258,7 +1258,7 @@ with types Eurydice_arr_fa0
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_fd_s { Eurydice_arr_fa0 data[3U]; } Eurydice_arr_fd;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_fd_s { Eurydice_arr_fa0 data[3U]; } Eurydice_arr_fd;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_mut
@@ -1266,10 +1266,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 33
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d412(Eurydice_arr_fa0 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -1284,7 +1284,7 @@ with types int16_t
 with const generics
 - $272size_t
 */
-typedef struct Eurydice_arr_5b_s { int16_t data[272U]; } Eurydice_arr_5b;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_5b_s { int16_t data[272U]; } Eurydice_arr_5b;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_shared
@@ -1292,10 +1292,10 @@ with types int16_t, core_ops_range_Range size_t, Eurydice_derefed_slice int16_t
 with const generics
 - N= 272
 */
-static inline Eurydice_borrow_slice_i16
-Eurydice_array_to_subslice_shared_e70(const Eurydice_arr_5b *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_i16
+Eurydice_array_to_subslice_shared_e70(ଅଚଳ Eurydice_arr_5b *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_i16){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -1305,7 +1305,7 @@ with types uint8_t
 with const generics
 - $168size_t
 */
-typedef struct Eurydice_arr_c5_s { uint8_t data[168U]; } Eurydice_arr_c5;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_c5_s { uint8_t data[168U]; } Eurydice_arr_c5;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_shared
@@ -1313,10 +1313,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 168
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d46(const Eurydice_arr_c5 *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d46(ଅଚଳ Eurydice_arr_c5 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -1326,7 +1326,7 @@ with types Eurydice_arr_c5
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_2c_s { Eurydice_arr_c5 data[3U]; } Eurydice_arr_2c;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_2c_s { Eurydice_arr_c5 data[3U]; } Eurydice_arr_2c;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -1334,7 +1334,7 @@ with types Eurydice_arr_5b
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_b1_s { Eurydice_arr_5b data[3U]; } Eurydice_arr_b1;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_b1_s { Eurydice_arr_5b data[3U]; } Eurydice_arr_b1;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -1342,7 +1342,7 @@ with types size_t
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_eb_s { size_t data[3U]; } Eurydice_arr_eb;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_eb_s { size_t data[3U]; } Eurydice_arr_eb;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_mut
@@ -1350,10 +1350,10 @@ with types int16_t, core_ops_range_Range size_t, Eurydice_derefed_slice int16_t
 with const generics
 - N= 272
 */
-static inline Eurydice_mut_borrow_slice_i16
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_i16
 Eurydice_array_to_subslice_mut_e7(Eurydice_arr_5b *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_i16){
         .ptr = a->data + r.start,
@@ -1368,7 +1368,7 @@ with types uint8_t
 with const generics
 - $504size_t
 */
-typedef struct Eurydice_arr_79_s { uint8_t data[504U]; } Eurydice_arr_79;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_79_s { uint8_t data[504U]; } Eurydice_arr_79;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_shared
@@ -1376,10 +1376,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 504
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d45(const Eurydice_arr_79 *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d45(ଅଚଳ Eurydice_arr_79 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -1389,7 +1389,7 @@ with types Eurydice_arr_79
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_7e_s { Eurydice_arr_79 data[3U]; } Eurydice_arr_7e;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_7e_s { Eurydice_arr_79 data[3U]; } Eurydice_arr_7e;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_mut
@@ -1397,12 +1397,12 @@ with types uint8_t
 with const generics
 - N= 504
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_48(Eurydice_arr_79 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_48(Eurydice_arr_79 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)504U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1411,7 +1411,7 @@ with types uint8_t
 with const generics
 - $34size_t
 */
-typedef struct Eurydice_arr_31_s { uint8_t data[34U]; } Eurydice_arr_31;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_31_s { uint8_t data[34U]; } Eurydice_arr_31;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -1419,17 +1419,17 @@ with types Eurydice_arr_31
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_810_s { Eurydice_arr_31 data[3U]; } Eurydice_arr_810;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_810_s { Eurydice_arr_31 data[3U]; } Eurydice_arr_810;
 
 /**
 A monomorphic instance of Eurydice.slice_subslice_from_shared
 with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint8_t
 
 */
-static inline Eurydice_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
 Eurydice_slice_subslice_from_shared_6d(Eurydice_borrow_slice_u8 s, size_t r)
 {
-  return (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = s.ptr + r, .meta = s.meta - r });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = s.ptr + r, .meta = s.meta - r });
 }
 
 /**
@@ -1438,7 +1438,7 @@ with types uint8_t
 with const generics
 - $1120size_t
 */
-typedef struct Eurydice_arr_af_s { uint8_t data[1120U]; } Eurydice_arr_af;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_af_s { uint8_t data[1120U]; } Eurydice_arr_af;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -1446,13 +1446,13 @@ with types uint8_t
 with const generics
 - N= 1120
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_81(const Eurydice_arr_af *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_81(ଅଚଳ Eurydice_arr_af *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1120U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1461,13 +1461,13 @@ with types uint8_t
 with const generics
 - N= 1088
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_06(const Eurydice_arr_2b *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_06(ଅଚଳ Eurydice_arr_2b *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1088U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1476,10 +1476,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 1120
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_from_mut_5f2(Eurydice_arr_af *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)1120U - r });
 }
 
@@ -1489,10 +1489,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 1120
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d411(Eurydice_arr_af *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -1507,10 +1507,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 64
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_from_mut_5f1(Eurydice_arr_c7 *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)64U - r });
 }
 
@@ -1520,10 +1520,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 64
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d410(Eurydice_arr_c7 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -1538,10 +1538,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 1088
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_from_shared_5f0(const Eurydice_arr_2b *a, size_t r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_from_shared_5f0(ଅଚଳ Eurydice_arr_2b *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)1088U - r });
 }
 
@@ -1551,10 +1551,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 1088
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d44(const Eurydice_arr_2b *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d44(ଅଚଳ Eurydice_arr_2b *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -1564,16 +1564,16 @@ with types uint8_t
 with const generics
 - N= 2400
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_51(const Eurydice_arr_7d *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_51(ଅଚଳ Eurydice_arr_7d *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)2400U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
-typedef struct int16_t_x2_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା int16_t_x2_s
 {
   int16_t fst;
   int16_t snd;
@@ -1588,13 +1588,13 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types Eurydice_arr uint8_t[[$24size_t]]
 
 */
-static KRML_MUSTINLINE Eurydice_arr_94
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_94
 libcrux_secrets_int_public_integers_declassify_d8_40(Eurydice_arr_94 self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
-typedef struct uint8_t_x3_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା uint8_t_x3_s
 {
   uint8_t fst;
   uint8_t snd;
@@ -1610,13 +1610,13 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types Eurydice_arr uint8_t[[$20size_t]]
 
 */
-static KRML_MUSTINLINE Eurydice_arr_fc
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_fc
 libcrux_secrets_int_public_integers_declassify_d8_2b(Eurydice_arr_fc self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
-typedef struct uint8_t_x5_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା uint8_t_x5_s
 {
   uint8_t fst;
   uint8_t snd;
@@ -1634,13 +1634,13 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types Eurydice_arr uint8_t[[$8size_t]]
 
 */
-static KRML_MUSTINLINE Eurydice_array_u8x8
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_array_u8x8
 libcrux_secrets_int_public_integers_declassify_d8_52(Eurydice_array_u8x8 self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
-typedef struct uint8_t_x4_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା uint8_t_x4_s
 {
   uint8_t fst;
   uint8_t snd;
@@ -1657,10 +1657,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types Eurydice_arr uint8_t[[$2size_t]]
 
 */
-static KRML_MUSTINLINE Eurydice_array_u8x2
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_array_u8x2
 libcrux_secrets_int_public_integers_declassify_d8_75(Eurydice_array_u8x2 self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -1671,10 +1671,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.classify_27
 with types Eurydice_arr int16_t[[$16size_t]]
 
 */
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_secrets_int_public_integers_classify_27_4b(Eurydice_arr_d6 self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -1685,13 +1685,13 @@ A monomorphic instance of libcrux_secrets.int.classify_public.classify_ref_6d
 with types uint8_t
 
 */
-static KRML_MUSTINLINE Eurydice_borrow_slice_u8
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_borrow_slice_u8
 libcrux_secrets_int_classify_public_classify_ref_6d_90(Eurydice_borrow_slice_u8 self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
-typedef struct int16_t_x8_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା int16_t_x8_s
 {
   int16_t fst;
   int16_t snd;
@@ -1710,10 +1710,10 @@ with types int16_t, core_ops_range_Range size_t, Eurydice_derefed_slice int16_t
 with const generics
 - N= 16
 */
-static inline Eurydice_borrow_slice_i16
-Eurydice_array_to_subslice_shared_e7(const Eurydice_arr_d6 *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_i16
+Eurydice_array_to_subslice_shared_e7(ଅଚଳ Eurydice_arr_d6 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_i16){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -1725,10 +1725,10 @@ A monomorphic instance of libcrux_secrets.int.classify_public.classify_ref_6d
 with types int16_t
 
 */
-static KRML_MUSTINLINE Eurydice_borrow_slice_i16
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_borrow_slice_i16
 libcrux_secrets_int_classify_public_classify_ref_6d_39(Eurydice_borrow_slice_i16 self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -1736,10 +1736,10 @@ A monomorphic instance of Eurydice.slice_subslice_shared
 with types int16_t, core_ops_range_Range size_t, Eurydice_derefed_slice int16_t
 
 */
-static inline Eurydice_borrow_slice_i16
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_i16
 Eurydice_slice_subslice_shared_a6(Eurydice_borrow_slice_i16 s, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_i16){ .ptr = s.ptr + r.start, .meta = r.end - r.start });
 }
 
@@ -1748,10 +1748,10 @@ A monomorphic instance of core.result.Result
 with types Eurydice_arr_d6, core_array_TryFromSliceError
 
 */
-typedef struct core_result_Result_ec_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_ec_s
 {
   core_result_Result_57_tags tag;
-  union {
+  ସଂଘ {
     Eurydice_arr_d6 case_Ok;
     core_array_TryFromSliceError case_Err;
   }
@@ -1767,13 +1767,13 @@ A monomorphic instance of core.result.unwrap_26
 with types Eurydice_arr int16_t[[$16size_t]], core_array_TryFromSliceError
 
 */
-static inline Eurydice_arr_d6 core_result_unwrap_26_d3(core_result_Result_ec self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6 core_result_unwrap_26_d3(core_result_Result_ec self)
 {
-  if (self.tag == core_result_Ok)
+  ଯଦି (self.tag == core_result_Ok)
   {
-    return self.val.case_Ok;
+    ଫେରନ୍ତୁ self.val.case_Ok;
   }
-  else
+  ଅନ୍ୟଥା
   {
     KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "unwrap not Ok");
     KRML_HOST_EXIT(255U);
@@ -1786,7 +1786,7 @@ with types int16_t
 with const generics
 - $128size_t
 */
-typedef struct Eurydice_arr_34_s { int16_t data[128U]; } Eurydice_arr_34;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_34_s { int16_t data[128U]; } Eurydice_arr_34;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_shared
@@ -1794,10 +1794,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 24
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d43(const Eurydice_arr_94 *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d43(ଅଚଳ Eurydice_arr_94 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -1807,10 +1807,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 24
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d49(Eurydice_arr_94 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -1825,12 +1825,12 @@ with types uint8_t
 with const generics
 - N= 16
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_29(Eurydice_arr_b2 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_29(Eurydice_arr_b2 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)16U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1839,10 +1839,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 16
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d42(const Eurydice_arr_b2 *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d42(ଅଚଳ Eurydice_arr_b2 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -1852,10 +1852,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 16
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d48(Eurydice_arr_b2 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -1870,7 +1870,7 @@ with types uint8_t
 with const generics
 - $19size_t
 */
-typedef struct Eurydice_arr_38_s { uint8_t data[19U]; } Eurydice_arr_38;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_38_s { uint8_t data[19U]; } Eurydice_arr_38;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_shared
@@ -1878,10 +1878,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 19
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d41(const Eurydice_arr_38 *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d41(ଅଚଳ Eurydice_arr_38 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -1891,10 +1891,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 19
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d47(Eurydice_arr_38 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -1908,7 +1908,7 @@ A monomorphic instance of Eurydice.dst_ref_mut
 with types int32_t, size_t
 
 */
-typedef struct Eurydice_dst_ref_mut_83_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_dst_ref_mut_83_s
 {
   int32_t *ptr;
   size_t meta;
@@ -1920,10 +1920,10 @@ A monomorphic instance of Eurydice.slice_subslice_mut
 with types int32_t, core_ops_range_Range size_t, Eurydice_derefed_slice int32_t
 
 */
-static inline Eurydice_dst_ref_mut_83
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_83
 Eurydice_slice_subslice_mut_47(Eurydice_dst_ref_mut_83 s, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_dst_ref_mut_83){ .ptr = s.ptr + r.start, .meta = r.end - r.start });
 }
 
@@ -1933,13 +1933,13 @@ with types uint8_t
 with const generics
 - N= 16
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_29(const Eurydice_arr_b2 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_29(ଅଚଳ Eurydice_arr_b2 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)16U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1948,7 +1948,7 @@ with types Eurydice_arr_b2
 with const generics
 - $16size_t
 */
-typedef struct Eurydice_arr_a30_s { Eurydice_arr_b2 data[16U]; } Eurydice_arr_a30;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_a30_s { Eurydice_arr_b2 data[16U]; } Eurydice_arr_a30;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_to_mut
@@ -1956,13 +1956,13 @@ with types uint8_t, core_ops_range_RangeTo size_t, Eurydice_derefed_slice uint8_
 with const generics
 - N= 32
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_to_mut_21(Eurydice_arr_ec *a, size_t r)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = r;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1971,7 +1971,7 @@ with types uint8_t
 with const generics
 - $4627size_t
 */
-typedef struct Eurydice_arr_93_s { uint8_t data[4627U]; } Eurydice_arr_93;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_93_s { uint8_t data[4627U]; } Eurydice_arr_93;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -1979,13 +1979,13 @@ with types uint8_t
 with const generics
 - N= 4627
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_11(const Eurydice_arr_93 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_11(ଅଚଳ Eurydice_arr_93 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4627U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -1994,7 +1994,7 @@ with types uint8_t
 with const generics
 - $2592size_t
 */
-typedef struct Eurydice_arr_43_s { uint8_t data[2592U]; } Eurydice_arr_43;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_43_s { uint8_t data[2592U]; } Eurydice_arr_43;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2002,13 +2002,13 @@ with types uint8_t
 with const generics
 - N= 2592
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_fc(const Eurydice_arr_43 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_fc(ଅଚଳ Eurydice_arr_43 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)2592U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2017,7 +2017,7 @@ with types uint8_t
 with const generics
 - $4896size_t
 */
-typedef struct Eurydice_arr_e2_s { uint8_t data[4896U]; } Eurydice_arr_e2;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_e2_s { uint8_t data[4896U]; } Eurydice_arr_e2;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2025,13 +2025,13 @@ with types uint8_t
 with const generics
 - N= 4896
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_f7(const Eurydice_arr_e2 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_f7(ଅଚଳ Eurydice_arr_e2 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4896U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2040,7 +2040,7 @@ with types int32_t
 with const generics
 - $256size_t
 */
-typedef struct Eurydice_arr_6c_s { int32_t data[256U]; } Eurydice_arr_6c;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_6c_s { int32_t data[256U]; } Eurydice_arr_6c;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -2048,19 +2048,19 @@ with types Eurydice_arr_6c
 with const generics
 - $8size_t
 */
-typedef struct Eurydice_arr_81_s { Eurydice_arr_6c data[8U]; } Eurydice_arr_81;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_81_s { Eurydice_arr_6c data[8U]; } Eurydice_arr_81;
 
 #define core_option_None 0
 #define core_option_Some 1
 
-typedef uint8_t core_option_Option_45_tags;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା uint8_t core_option_Option_45_tags;
 
 /**
 A monomorphic instance of core.option.Option
 with types Eurydice_arr_81
 
 */
-typedef struct core_option_Option_45_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_45_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_81 f0;
@@ -2072,7 +2072,7 @@ A monomorphic instance of core.option.Option
 with types Eurydice_arr_c7
 
 */
-typedef struct core_option_Option_b2_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_b2_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_c7 f0;
@@ -2085,12 +2085,12 @@ with types uint8_t
 with const generics
 - N= 4627
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_11(Eurydice_arr_93 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_11(Eurydice_arr_93 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4627U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2098,9 +2098,9 @@ A monomorphic instance of Eurydice.dst_ref_shared
 with types Eurydice_arr_6c, size_t
 
 */
-typedef struct Eurydice_dst_ref_shared_20_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_dst_ref_shared_20_s
 {
-  const Eurydice_arr_6c *ptr;
+  ଅଚଳ Eurydice_arr_6c *ptr;
   size_t meta;
 }
 Eurydice_dst_ref_shared_20;
@@ -2111,13 +2111,13 @@ with types Eurydice_arr int32_t[[$256size_t]]
 with const generics
 - N= 8
 */
-static inline Eurydice_dst_ref_shared_20
-Eurydice_array_to_slice_shared_861(const Eurydice_arr_81 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_20
+Eurydice_array_to_slice_shared_861(ଅଚଳ Eurydice_arr_81 *a)
 {
   Eurydice_dst_ref_shared_20 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)8U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2125,7 +2125,7 @@ A monomorphic instance of Eurydice.dst_ref_mut
 with types Eurydice_arr_6c, size_t
 
 */
-typedef struct Eurydice_dst_ref_mut_20_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_dst_ref_mut_20_s
 {
   Eurydice_arr_6c *ptr;
   size_t meta;
@@ -2138,12 +2138,12 @@ with types Eurydice_arr int32_t[[$256size_t]]
 with const generics
 - N= 8
 */
-static inline Eurydice_dst_ref_mut_20 Eurydice_array_to_slice_mut_861(Eurydice_arr_81 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_20 Eurydice_array_to_slice_mut_861(Eurydice_arr_81 *a)
 {
   Eurydice_dst_ref_mut_20 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)8U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2156,8 +2156,8 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_declassify
 with types Eurydice_arr uint8_t[[$64size_t]]
 
 */
-static KRML_MUSTINLINE void
-libcrux_secrets_mem_requests_ct_declassify_56(const Eurydice_arr_c7 *val)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_secrets_mem_requests_ct_declassify_56(ଅଚଳ Eurydice_arr_c7 *val)
 {
 
 }
@@ -2168,7 +2168,7 @@ with types uint8_t
 with const generics
 - $1024size_t
 */
-typedef struct Eurydice_arr_1b_s { uint8_t data[1024U]; } Eurydice_arr_1b;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_1b_s { uint8_t data[1024U]; } Eurydice_arr_1b;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2176,13 +2176,13 @@ with types uint8_t
 with const generics
 - N= 1024
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_68(const Eurydice_arr_1b *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_68(ଅଚଳ Eurydice_arr_1b *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1024U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2191,12 +2191,12 @@ with types uint8_t
 with const generics
 - N= 1024
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_68(Eurydice_arr_1b *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_68(Eurydice_arr_1b *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1024U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2205,12 +2205,12 @@ with types uint8_t
 with const generics
 - N= 2592
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_fc(Eurydice_arr_43 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_fc(Eurydice_arr_43 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)2592U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2219,12 +2219,12 @@ with types uint8_t
 with const generics
 - N= 4896
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_f7(Eurydice_arr_e2 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_f7(Eurydice_arr_e2 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4896U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2233,7 +2233,7 @@ with types uint8_t
 with const generics
 - $3309size_t
 */
-typedef struct Eurydice_arr_0c_s { uint8_t data[3309U]; } Eurydice_arr_0c;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_0c_s { uint8_t data[3309U]; } Eurydice_arr_0c;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2241,13 +2241,13 @@ with types uint8_t
 with const generics
 - N= 3309
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_6b(const Eurydice_arr_0c *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_6b(ଅଚଳ Eurydice_arr_0c *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)3309U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2256,7 +2256,7 @@ with types uint8_t
 with const generics
 - $1952size_t
 */
-typedef struct Eurydice_arr_29_s { uint8_t data[1952U]; } Eurydice_arr_29;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_29_s { uint8_t data[1952U]; } Eurydice_arr_29;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2264,13 +2264,13 @@ with types uint8_t
 with const generics
 - N= 1952
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_37(const Eurydice_arr_29 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_37(ଅଚଳ Eurydice_arr_29 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1952U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2279,7 +2279,7 @@ with types uint8_t
 with const generics
 - $4032size_t
 */
-typedef struct Eurydice_arr_24_s { uint8_t data[4032U]; } Eurydice_arr_24;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_24_s { uint8_t data[4032U]; } Eurydice_arr_24;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2287,13 +2287,13 @@ with types uint8_t
 with const generics
 - N= 4032
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_98(const Eurydice_arr_24 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_98(ଅଚଳ Eurydice_arr_24 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4032U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2302,14 +2302,14 @@ with types Eurydice_arr_6c
 with const generics
 - $6size_t
 */
-typedef struct Eurydice_arr_5d0_s { Eurydice_arr_6c data[6U]; } Eurydice_arr_5d0;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_5d0_s { Eurydice_arr_6c data[6U]; } Eurydice_arr_5d0;
 
 /**
 A monomorphic instance of core.option.Option
 with types Eurydice_arr_5d0
 
 */
-typedef struct core_option_Option_05_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_05_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_5d0 f0;
@@ -2322,14 +2322,14 @@ with types uint8_t
 with const generics
 - $48size_t
 */
-typedef struct Eurydice_arr_65_s { uint8_t data[48U]; } Eurydice_arr_65;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_65_s { uint8_t data[48U]; } Eurydice_arr_65;
 
 /**
 A monomorphic instance of core.option.Option
 with types Eurydice_arr_65
 
 */
-typedef struct core_option_Option_81_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_81_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_65 f0;
@@ -2342,12 +2342,12 @@ with types uint8_t
 with const generics
 - N= 3309
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_6b(Eurydice_arr_0c *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_6b(Eurydice_arr_0c *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)3309U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2356,13 +2356,13 @@ with types Eurydice_arr int32_t[[$256size_t]]
 with const generics
 - N= 6
 */
-static inline Eurydice_dst_ref_shared_20
-Eurydice_array_to_slice_shared_860(const Eurydice_arr_5d0 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_20
+Eurydice_array_to_slice_shared_860(ଅଚଳ Eurydice_arr_5d0 *a)
 {
   Eurydice_dst_ref_shared_20 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)6U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2371,12 +2371,12 @@ with types Eurydice_arr int32_t[[$256size_t]]
 with const generics
 - N= 6
 */
-static inline Eurydice_dst_ref_mut_20 Eurydice_array_to_slice_mut_860(Eurydice_arr_5d0 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_20 Eurydice_array_to_slice_mut_860(Eurydice_arr_5d0 *a)
 {
   Eurydice_dst_ref_mut_20 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)6U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2385,13 +2385,13 @@ with types uint8_t
 with const generics
 - N= 48
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_9f0(const Eurydice_arr_65 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_9f0(ଅଚଳ Eurydice_arr_65 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)48U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2404,8 +2404,8 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_declassify
 with types Eurydice_arr uint8_t[[$48size_t]]
 
 */
-static KRML_MUSTINLINE void
-libcrux_secrets_mem_requests_ct_declassify_69(const Eurydice_arr_65 *val)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_secrets_mem_requests_ct_declassify_69(ଅଚଳ Eurydice_arr_65 *val)
 {
 
 }
@@ -2416,12 +2416,12 @@ with types uint8_t
 with const generics
 - N= 1952
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_37(Eurydice_arr_29 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_37(Eurydice_arr_29 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1952U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2430,12 +2430,12 @@ with types uint8_t
 with const generics
 - N= 4032
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_98(Eurydice_arr_24 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_98(Eurydice_arr_24 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4032U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2444,7 +2444,7 @@ with types uint8_t
 with const generics
 - $2420size_t
 */
-typedef struct Eurydice_arr_85_s { uint8_t data[2420U]; } Eurydice_arr_85;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_85_s { uint8_t data[2420U]; } Eurydice_arr_85;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2452,13 +2452,13 @@ with types uint8_t
 with const generics
 - N= 2420
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_0d(const Eurydice_arr_85 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_0d(ଅଚଳ Eurydice_arr_85 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)2420U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2467,7 +2467,7 @@ with types uint8_t
 with const generics
 - $1312size_t
 */
-typedef struct Eurydice_arr_02_s { uint8_t data[1312U]; } Eurydice_arr_02;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_02_s { uint8_t data[1312U]; } Eurydice_arr_02;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2475,13 +2475,13 @@ with types uint8_t
 with const generics
 - N= 1312
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_9f(const Eurydice_arr_02 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_9f(ଅଚଳ Eurydice_arr_02 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1312U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2490,7 +2490,7 @@ with types uint8_t
 with const generics
 - $2560size_t
 */
-typedef struct Eurydice_arr_10_s { uint8_t data[2560U]; } Eurydice_arr_10;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_10_s { uint8_t data[2560U]; } Eurydice_arr_10;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2498,13 +2498,13 @@ with types uint8_t
 with const generics
 - N= 2560
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_34(const Eurydice_arr_10 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_34(ଅଚଳ Eurydice_arr_10 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)2560U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2513,14 +2513,14 @@ with types Eurydice_arr_6c
 with const generics
 - $4size_t
 */
-typedef struct Eurydice_arr_b7_s { Eurydice_arr_6c data[4U]; } Eurydice_arr_b7;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_b7_s { Eurydice_arr_6c data[4U]; } Eurydice_arr_b7;
 
 /**
 A monomorphic instance of core.option.Option
 with types Eurydice_arr_b7
 
 */
-typedef struct core_option_Option_51_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_51_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_b7 f0;
@@ -2532,7 +2532,7 @@ A monomorphic instance of core.option.Option
 with types Eurydice_arr_ec
 
 */
-typedef struct core_option_Option_14_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_14_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_ec f0;
@@ -2545,12 +2545,12 @@ with types uint8_t
 with const generics
 - N= 2420
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_0d(Eurydice_arr_85 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_0d(Eurydice_arr_85 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)2420U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2559,13 +2559,13 @@ with types Eurydice_arr int32_t[[$256size_t]]
 with const generics
 - N= 4
 */
-static inline Eurydice_dst_ref_shared_20
-Eurydice_array_to_slice_shared_86(const Eurydice_arr_b7 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_20
+Eurydice_array_to_slice_shared_86(ଅଚଳ Eurydice_arr_b7 *a)
 {
   Eurydice_dst_ref_shared_20 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2574,12 +2574,12 @@ with types Eurydice_arr int32_t[[$256size_t]]
 with const generics
 - N= 4
 */
-static inline Eurydice_dst_ref_mut_20 Eurydice_array_to_slice_mut_86(Eurydice_arr_b7 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_20 Eurydice_array_to_slice_mut_86(Eurydice_arr_b7 *a)
 {
   Eurydice_dst_ref_mut_20 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2588,10 +2588,10 @@ with types int32_t, core_ops_range_Range size_t, Eurydice_derefed_slice int32_t
 with const generics
 - N= 256
 */
-static inline Eurydice_dst_ref_mut_83
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_83
 Eurydice_array_to_subslice_mut_44(Eurydice_arr_6c *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_dst_ref_mut_83){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -2600,9 +2600,9 @@ A monomorphic instance of Eurydice.dst_ref_shared
 with types int32_t, size_t
 
 */
-typedef struct Eurydice_dst_ref_shared_83_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_dst_ref_shared_83_s
 {
-  const int32_t *ptr;
+  ଅଚଳ int32_t *ptr;
   size_t meta;
 }
 Eurydice_dst_ref_shared_83;
@@ -2613,13 +2613,13 @@ with types int32_t
 with const generics
 - N= 256
 */
-static inline Eurydice_dst_ref_shared_83
-Eurydice_array_to_slice_shared_af(const Eurydice_arr_6c *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_83
+Eurydice_array_to_slice_shared_af(ଅଚଳ Eurydice_arr_6c *a)
 {
   Eurydice_dst_ref_shared_83 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)256U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2628,7 +2628,7 @@ with types uint8_t
 with const generics
 - $136size_t
 */
-typedef struct Eurydice_arr_ff_s { uint8_t data[136U]; } Eurydice_arr_ff;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_ff_s { uint8_t data[136U]; } Eurydice_arr_ff;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_from_shared
@@ -2636,10 +2636,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 136
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_from_shared_5f(const Eurydice_arr_ff *a, size_t r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_from_shared_5f(ଅଚଳ Eurydice_arr_ff *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)136U - r });
 }
 
@@ -2649,10 +2649,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 136
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d40(const Eurydice_arr_ff *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d40(ଅଚଳ Eurydice_arr_ff *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -2666,8 +2666,8 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_declassify
 with types Eurydice_arr uint8_t[[$32size_t]]
 
 */
-static KRML_MUSTINLINE void
-libcrux_secrets_mem_requests_ct_declassify_4b(const Eurydice_arr_ec *val)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_secrets_mem_requests_ct_declassify_4b(ଅଚଳ Eurydice_arr_ec *val)
 {
 
 }
@@ -2678,7 +2678,7 @@ with types uint8_t
 with const generics
 - $768size_t
 */
-typedef struct Eurydice_arr_d2_s { uint8_t data[768U]; } Eurydice_arr_d2;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_d2_s { uint8_t data[768U]; } Eurydice_arr_d2;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2686,13 +2686,13 @@ with types uint8_t
 with const generics
 - N= 768
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_27(const Eurydice_arr_d2 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_27(ଅଚଳ Eurydice_arr_d2 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)768U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2701,12 +2701,12 @@ with types uint8_t
 with const generics
 - N= 768
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_27(Eurydice_arr_d2 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_27(Eurydice_arr_d2 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)768U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2715,7 +2715,7 @@ with types uint8_t
 with const generics
 - $640size_t
 */
-typedef struct Eurydice_arr_20_s { uint8_t data[640U]; } Eurydice_arr_20;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_20_s { uint8_t data[640U]; } Eurydice_arr_20;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2723,13 +2723,13 @@ with types uint8_t
 with const generics
 - N= 640
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_4f(const Eurydice_arr_20 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_4f(ଅଚଳ Eurydice_arr_20 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)640U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2738,12 +2738,12 @@ with types uint8_t
 with const generics
 - N= 640
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_4f(Eurydice_arr_20 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_4f(Eurydice_arr_20 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)640U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2752,7 +2752,7 @@ with types uint8_t
 with const generics
 - $576size_t
 */
-typedef struct Eurydice_arr_220_s { uint8_t data[576U]; } Eurydice_arr_220;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_220_s { uint8_t data[576U]; } Eurydice_arr_220;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2760,13 +2760,13 @@ with types uint8_t
 with const generics
 - N= 576
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_8a(const Eurydice_arr_220 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_8a(ଅଚଳ Eurydice_arr_220 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)576U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2775,12 +2775,12 @@ with types uint8_t
 with const generics
 - N= 576
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_8a(Eurydice_arr_220 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_8a(Eurydice_arr_220 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)576U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2789,7 +2789,7 @@ with types uint8_t
 with const generics
 - $11size_t
 */
-typedef struct Eurydice_arr_c9_s { uint8_t data[11U]; } Eurydice_arr_c9;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_c9_s { uint8_t data[11U]; } Eurydice_arr_c9;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2797,13 +2797,13 @@ with types uint8_t
 with const generics
 - N= 11
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_2f(const Eurydice_arr_c9 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_2f(ଅଚଳ Eurydice_arr_c9 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)11U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2812,7 +2812,7 @@ with types uint8_t
 with const generics
 - $1size_t
 */
-typedef struct Eurydice_arr_82_s { uint8_t data[1U]; } Eurydice_arr_82;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_82_s { uint8_t data[1U]; } Eurydice_arr_82;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2820,13 +2820,13 @@ with types uint8_t
 with const generics
 - N= 1
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_79(const Eurydice_arr_82 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_79(ଅଚଳ Eurydice_arr_82 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2839,7 +2839,7 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_classify
 with types Eurydice_derefed_slice uint8_t
 
 */
-static KRML_MUSTINLINE void libcrux_secrets_mem_requests_ct_classify_45(const uint8_t (*val)[])
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ libcrux_secrets_mem_requests_ct_classify_45(ଅଚଳ uint8_t (*val)[])
 {
 
 }
@@ -2850,12 +2850,12 @@ with types uint8_t
 with const generics
 - N= 1312
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_9f0(Eurydice_arr_02 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_9f0(Eurydice_arr_02 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)1312U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2864,12 +2864,12 @@ with types uint8_t
 with const generics
 - N= 2560
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_34(Eurydice_arr_10 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_34(Eurydice_arr_10 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)2560U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2878,13 +2878,13 @@ with types uint8_t
 with const generics
 - N= 64
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_17(const Eurydice_arr_c7 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_17(ଅଚଳ Eurydice_arr_c7 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)64U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2893,14 +2893,14 @@ with types int32_t
 with const generics
 - $263size_t
 */
-typedef struct Eurydice_arr_d0_s { int32_t data[263U]; } Eurydice_arr_d0;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_d0_s { int32_t data[263U]; } Eurydice_arr_d0;
 
 /**
 A monomorphic instance of Eurydice.dst_ref_mut
 with types Eurydice_arr_d0, size_t
 
 */
-typedef struct Eurydice_dst_ref_mut_33_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_dst_ref_mut_33_s
 {
   Eurydice_arr_d0 *ptr;
   size_t meta;
@@ -2913,7 +2913,7 @@ with types Eurydice_arr_d0
 with const generics
 - $4size_t
 */
-typedef struct Eurydice_arr_930_s { Eurydice_arr_d0 data[4U]; } Eurydice_arr_930;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_930_s { Eurydice_arr_d0 data[4U]; } Eurydice_arr_930;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_mut
@@ -2921,12 +2921,12 @@ with types Eurydice_arr int32_t[[$263size_t]]
 with const generics
 - N= 4
 */
-static inline Eurydice_dst_ref_mut_33 Eurydice_array_to_slice_mut_7e(Eurydice_arr_930 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_33 Eurydice_array_to_slice_mut_7e(Eurydice_arr_930 *a)
 {
   Eurydice_dst_ref_mut_33 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2934,9 +2934,9 @@ A monomorphic instance of Eurydice.dst_ref_shared
 with types Eurydice_arr_d0, size_t
 
 */
-typedef struct Eurydice_dst_ref_shared_33_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_dst_ref_shared_33_s
 {
-  const Eurydice_arr_d0 *ptr;
+  ଅଚଳ Eurydice_arr_d0 *ptr;
   size_t meta;
 }
 Eurydice_dst_ref_shared_33;
@@ -2947,7 +2947,7 @@ with types uint8_t
 with const generics
 - $840size_t
 */
-typedef struct Eurydice_arr_d10_s { uint8_t data[840U]; } Eurydice_arr_d10;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_d10_s { uint8_t data[840U]; } Eurydice_arr_d10;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -2955,13 +2955,13 @@ with types uint8_t
 with const generics
 - N= 840
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_4c(const Eurydice_arr_d10 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_4c(ଅଚଳ Eurydice_arr_d10 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)840U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2970,13 +2970,13 @@ with types uint8_t
 with const generics
 - N= 34
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_e9(const Eurydice_arr_31 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_e9(ଅଚଳ Eurydice_arr_31 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)34U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -2989,8 +2989,8 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_declassify
 with types Eurydice_derefed_slice uint8_t
 
 */
-static KRML_MUSTINLINE void
-libcrux_secrets_mem_requests_ct_declassify_45(const uint8_t (*val)[])
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_secrets_mem_requests_ct_declassify_45(ଅଚଳ uint8_t (*val)[])
 {
 
 }
@@ -3001,13 +3001,13 @@ with types int32_t
 with const generics
 - N= 263
 */
-static inline Eurydice_dst_ref_shared_83
-Eurydice_array_to_slice_shared_2c0(const Eurydice_arr_d0 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_83
+Eurydice_array_to_slice_shared_2c0(ଅଚଳ Eurydice_arr_d0 *a)
 {
   Eurydice_dst_ref_shared_83 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)263U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3016,10 +3016,10 @@ with types int32_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice int3
 with const generics
 - N= 263
 */
-static inline Eurydice_dst_ref_mut_83
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_83
 Eurydice_array_to_subslice_from_mut_11(Eurydice_arr_d0 *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_dst_ref_mut_83){ .ptr = a->data + r, .meta = (size_t)263U - r });
 }
 
@@ -3029,7 +3029,7 @@ with types uint8_t
 with const generics
 - $66size_t
 */
-typedef struct Eurydice_arr_91_s { uint8_t data[66U]; } Eurydice_arr_91;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_91_s { uint8_t data[66U]; } Eurydice_arr_91;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -3037,13 +3037,13 @@ with types uint8_t
 with const generics
 - N= 66
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_f1(const Eurydice_arr_91 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_f1(ଅଚଳ Eurydice_arr_91 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)66U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3052,13 +3052,13 @@ with types uint8_t
 with const generics
 - N= 128
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_78(const Eurydice_arr_89 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_78(ଅଚଳ Eurydice_arr_89 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)128U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3067,12 +3067,12 @@ with types uint8_t
 with const generics
 - N= 128
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_78(Eurydice_arr_89 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_78(Eurydice_arr_89 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)128U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3081,13 +3081,13 @@ with types uint8_t
 with const generics
 - N= 2
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_82(const Eurydice_array_u8x2 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_82(ଅଚଳ Eurydice_array_u8x2 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)2U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3096,13 +3096,13 @@ with types uint8_t
 with const generics
 - N= 32
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_01(const Eurydice_arr_ec *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_01(ଅଚଳ Eurydice_arr_ec *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)32U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3115,13 +3115,13 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_classify
 with types Eurydice_arr uint8_t[[$32size_t]]
 
 */
-static KRML_MUSTINLINE void
-libcrux_secrets_mem_requests_ct_classify_4b(const Eurydice_arr_ec *val)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_secrets_mem_requests_ct_classify_4b(ଅଚଳ Eurydice_arr_ec *val)
 {
 
 }
 
-typedef struct Eurydice_arr_c5_x4_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_c5_x4_s
 {
   Eurydice_arr_c5 fst;
   Eurydice_arr_c5 snd;
@@ -3136,12 +3136,12 @@ with types uint8_t
 with const generics
 - N= 168
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_2c(Eurydice_arr_c5 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_2c(Eurydice_arr_c5 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)168U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3150,15 +3150,15 @@ with types uint8_t
 with const generics
 - N= 840
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_4c(Eurydice_arr_d10 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_4c(Eurydice_arr_d10 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)840U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
-typedef struct Eurydice_arr_ff_x4_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_ff_x4_s
 {
   Eurydice_arr_ff fst;
   Eurydice_arr_ff snd;
@@ -3173,12 +3173,12 @@ with types uint8_t
 with const generics
 - N= 136
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_58(Eurydice_arr_ff *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_58(Eurydice_arr_ff *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)136U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3187,10 +3187,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 32
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_shared_d4(const Eurydice_arr_ec *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_shared_d4(ଅଚଳ Eurydice_arr_ec *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = a->data + r.start, .meta = r.end - r.start });
 }
 
@@ -3200,7 +3200,7 @@ with types Eurydice_arr_ff
 with const generics
 - $4size_t
 */
-typedef struct Eurydice_arr_dc0_s { Eurydice_arr_ff data[4U]; } Eurydice_arr_dc0;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_dc0_s { Eurydice_arr_ff data[4U]; } Eurydice_arr_dc0;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -3208,7 +3208,7 @@ with types Eurydice_arr_c5
 with const generics
 - $4size_t
 */
-typedef struct Eurydice_arr_9c_s { Eurydice_arr_c5 data[4U]; } Eurydice_arr_9c;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_9c_s { Eurydice_arr_c5 data[4U]; } Eurydice_arr_9c;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -3216,7 +3216,7 @@ with types Eurydice_borrow_slice_u8
 with const generics
 - $4size_t
 */
-typedef struct Eurydice_arr_68_s { Eurydice_borrow_slice_u8 data[4U]; } Eurydice_arr_68;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_68_s { Eurydice_borrow_slice_u8 data[4U]; } Eurydice_arr_68;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_mut
@@ -3224,10 +3224,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 32
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d46(Eurydice_arr_ec *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -3242,10 +3242,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 168
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_from_mut_5f0(Eurydice_arr_c5 *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)168U - r });
 }
 
@@ -3255,7 +3255,7 @@ with types Eurydice_arr_c5
 with const generics
 - $1size_t
 */
-typedef struct Eurydice_arr_88_s { Eurydice_arr_c5 data[1U]; } Eurydice_arr_88;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_88_s { Eurydice_arr_c5 data[1U]; } Eurydice_arr_88;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_mut
@@ -3263,12 +3263,12 @@ with types uint8_t
 with const generics
 - N= 64
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_17(Eurydice_arr_c7 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_17(Eurydice_arr_c7 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)64U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3277,12 +3277,12 @@ with types uint8_t
 with const generics
 - N= 48
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_9f(Eurydice_arr_65 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_9f(Eurydice_arr_65 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)48U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3291,12 +3291,12 @@ with types uint8_t
 with const generics
 - N= 32
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_01(Eurydice_arr_ec *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_01(Eurydice_arr_ec *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)32U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3305,7 +3305,7 @@ with types uint8_t
 with const generics
 - $28size_t
 */
-typedef struct Eurydice_arr_a2_s { uint8_t data[28U]; } Eurydice_arr_a2;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_a2_s { uint8_t data[28U]; } Eurydice_arr_a2;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_mut
@@ -3313,12 +3313,12 @@ with types uint8_t
 with const generics
 - N= 28
 */
-static inline Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_5e(Eurydice_arr_a2 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8 Eurydice_array_to_slice_mut_5e(Eurydice_arr_a2 *a)
 {
   Eurydice_mut_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)28U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3327,7 +3327,7 @@ with types uint8_t
 with const generics
 - $104size_t
 */
-typedef struct Eurydice_arr_c4_s { uint8_t data[104U]; } Eurydice_arr_c4;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_c4_s { uint8_t data[104U]; } Eurydice_arr_c4;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -3335,13 +3335,13 @@ with types uint8_t
 with const generics
 - N= 104
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_72(const Eurydice_arr_c4 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_72(ଅଚଳ Eurydice_arr_c4 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)104U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3350,10 +3350,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 104
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d45(Eurydice_arr_c4 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -3368,7 +3368,7 @@ with types uint8_t
 with const generics
 - $144size_t
 */
-typedef struct Eurydice_arr_f4_s { uint8_t data[144U]; } Eurydice_arr_f4;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_f4_s { uint8_t data[144U]; } Eurydice_arr_f4;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -3376,13 +3376,13 @@ with types uint8_t
 with const generics
 - N= 144
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_38(const Eurydice_arr_f4 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_38(ଅଚଳ Eurydice_arr_f4 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)144U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3391,10 +3391,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 144
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d44(Eurydice_arr_f4 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -3409,7 +3409,7 @@ with types uint8_t
 with const generics
 - $72size_t
 */
-typedef struct Eurydice_arr_ab_s { uint8_t data[72U]; } Eurydice_arr_ab;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_ab_s { uint8_t data[72U]; } Eurydice_arr_ab;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -3417,13 +3417,13 @@ with types uint8_t
 with const generics
 - N= 72
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_e2(const Eurydice_arr_ab *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_e2(ଅଚଳ Eurydice_arr_ab *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)72U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3432,10 +3432,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 72
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d43(Eurydice_arr_ab *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -3449,10 +3449,10 @@ A monomorphic instance of Eurydice.slice_subslice_to_shared
 with types uint8_t, core_ops_range_RangeTo size_t, Eurydice_derefed_slice uint8_t
 
 */
-static inline Eurydice_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
 Eurydice_slice_subslice_to_shared_72(Eurydice_borrow_slice_u8 s, size_t r)
 {
-  return (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = s.ptr, .meta = r });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = s.ptr, .meta = r });
 }
 
 /**
@@ -3461,10 +3461,10 @@ with types uint8_t, core_ops_range_RangeFrom size_t, Eurydice_derefed_slice uint
 with const generics
 - N= 136
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_from_mut_5f(Eurydice_arr_ff *a, size_t r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){ .ptr = a->data + r, .meta = (size_t)136U - r });
 }
 
@@ -3474,13 +3474,13 @@ with types uint8_t, core_ops_range_RangeTo size_t, Eurydice_derefed_slice uint8_
 with const generics
 - N= 8
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_subslice_to_shared_21(const Eurydice_array_u8x8 *a, size_t r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_subslice_to_shared_21(ଅଚଳ Eurydice_array_u8x8 *a, size_t r)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = r;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3489,13 +3489,13 @@ with types uint8_t
 with const generics
 - N= 8
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_6e(const Eurydice_array_u8x8 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_6e(ଅଚଳ Eurydice_array_u8x8 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)8U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3503,10 +3503,10 @@ A monomorphic instance of Eurydice.slice_subslice_mut
 with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_slice_subslice_mut_c8(Eurydice_mut_borrow_slice_u8 s, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){ .ptr = s.ptr + r.start, .meta = r.end - r.start }
     );
@@ -3518,13 +3518,13 @@ with types uint8_t
 with const generics
 - N= 136
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_58(const Eurydice_arr_ff *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_58(ଅଚଳ Eurydice_arr_ff *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)136U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3533,10 +3533,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 136
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d42(Eurydice_arr_ff *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -3551,9 +3551,9 @@ with types uint64_t
 with const generics
 - $5size_t
 */
-typedef struct Eurydice_arr_84_s { uint64_t data[5U]; } Eurydice_arr_84;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_84_s { uint64_t data[5U]; } Eurydice_arr_84;
 
-typedef struct size_t_x2_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା size_t_x2_s
 {
   size_t fst;
   size_t snd;
@@ -3566,7 +3566,7 @@ with types Eurydice_borrow_slice_u8
 with const generics
 - $1size_t
 */
-typedef struct Eurydice_arr_dc_s { Eurydice_borrow_slice_u8 data[1U]; } Eurydice_arr_dc;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_dc_s { Eurydice_borrow_slice_u8 data[1U]; } Eurydice_arr_dc;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -3574,13 +3574,13 @@ with types uint8_t
 with const generics
 - N= 168
 */
-static inline Eurydice_borrow_slice_u8
-Eurydice_array_to_slice_shared_2c(const Eurydice_arr_c5 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+Eurydice_array_to_slice_shared_2c(ଅଚଳ Eurydice_arr_c5 *a)
 {
   Eurydice_borrow_slice_u8 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)168U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3588,10 +3588,10 @@ A monomorphic instance of core.result.Result
 with types Eurydice_array_u8x8, core_array_TryFromSliceError
 
 */
-typedef struct core_result_Result_8e_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_8e_s
 {
   core_result_Result_57_tags tag;
-  union {
+  ସଂଘ {
     Eurydice_array_u8x8 case_Ok;
     core_array_TryFromSliceError case_Err;
   }
@@ -3607,13 +3607,13 @@ A monomorphic instance of core.result.unwrap_26
 with types Eurydice_arr uint8_t[[$8size_t]], core_array_TryFromSliceError
 
 */
-static inline Eurydice_array_u8x8 core_result_unwrap_26_e0(core_result_Result_8e self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_array_u8x8 core_result_unwrap_26_e0(core_result_Result_8e self)
 {
-  if (self.tag == core_result_Ok)
+  ଯଦି (self.tag == core_result_Ok)
   {
-    return self.val.case_Ok;
+    ଫେରନ୍ତୁ self.val.case_Ok;
   }
-  else
+  ଅନ୍ୟଥା
   {
     KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "unwrap not Ok");
     KRML_HOST_EXIT(255U);
@@ -3626,10 +3626,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 168
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d41(Eurydice_arr_c5 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -3644,7 +3644,7 @@ with types uint64_t
 with const generics
 - $24size_t
 */
-typedef struct Eurydice_arr_22_s { uint64_t data[24U]; } Eurydice_arr_22;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_22_s { uint64_t data[24U]; } Eurydice_arr_22;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -3652,7 +3652,7 @@ with types Eurydice_arr_ff
 with const generics
 - $1size_t
 */
-typedef struct Eurydice_arr_0b_s { Eurydice_arr_ff data[1U]; } Eurydice_arr_0b;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_0b_s { Eurydice_arr_ff data[1U]; } Eurydice_arr_0b;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -3660,17 +3660,17 @@ with types uint64_t
 with const generics
 - $25size_t
 */
-typedef struct Eurydice_arr_7c_s { uint64_t data[25U]; } Eurydice_arr_7c;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_7c_s { uint64_t data[25U]; } Eurydice_arr_7c;
 
 /**
 A monomorphic instance of Eurydice.slice_subslice_shared
 with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 
 */
-static inline Eurydice_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
 Eurydice_slice_subslice_shared_c8(Eurydice_borrow_slice_u8 s, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_borrow_slice_u8){ .ptr = s.ptr + r.start, .meta = r.end - r.start });
 }
 
@@ -3680,7 +3680,7 @@ with types int32_t
 with const generics
 - $8size_t
 */
-typedef struct Eurydice_arr_4d_s { int32_t data[8U]; } Eurydice_arr_4d;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_4d_s { int32_t data[8U]; } Eurydice_arr_4d;
 
 /**
 A monomorphic instance of Eurydice.array_to_subslice_shared
@@ -3688,10 +3688,10 @@ with types int32_t, core_ops_range_Range size_t, Eurydice_derefed_slice int32_t
 with const generics
 - N= 8
 */
-static inline Eurydice_dst_ref_shared_83
-Eurydice_array_to_subslice_shared_44(const Eurydice_arr_4d *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_83
+Eurydice_array_to_subslice_shared_44(ଅଚଳ Eurydice_arr_4d *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_dst_ref_shared_83){ .ptr = a->data + r.start, .meta = r.end - r.start }
     );
@@ -3707,12 +3707,12 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_declassify
 with types bool
 
 */
-static KRML_MUSTINLINE void libcrux_secrets_mem_requests_ct_declassify_5f(const bool *val)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ libcrux_secrets_mem_requests_ct_declassify_5f(ଅଚଳ bool *val)
 {
 
 }
 
-typedef struct int32_t_x2_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା int32_t_x2_s
 {
   int32_t fst;
   int32_t snd;
@@ -3725,13 +3725,13 @@ with types int32_t
 with const generics
 - N= 8
 */
-static inline Eurydice_dst_ref_shared_83
-Eurydice_array_to_slice_shared_fd(const Eurydice_arr_4d *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_83
+Eurydice_array_to_slice_shared_fd(ଅଚଳ Eurydice_arr_4d *a)
 {
   Eurydice_dst_ref_shared_83 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)8U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3739,10 +3739,10 @@ A monomorphic instance of Eurydice.slice_subslice_shared
 with types int32_t, core_ops_range_Range size_t, Eurydice_derefed_slice int32_t
 
 */
-static inline Eurydice_dst_ref_shared_83
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_83
 Eurydice_slice_subslice_shared_47(Eurydice_dst_ref_shared_83 s, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_dst_ref_shared_83){ .ptr = s.ptr + r.start, .meta = r.end - r.start });
 }
 
@@ -3752,12 +3752,12 @@ with types int32_t
 with const generics
 - N= 8
 */
-static inline Eurydice_dst_ref_mut_83 Eurydice_array_to_slice_mut_fd(Eurydice_arr_4d *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_83 Eurydice_array_to_slice_mut_fd(Eurydice_arr_4d *a)
 {
   Eurydice_dst_ref_mut_83 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)8U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -3765,7 +3765,7 @@ A monomorphic instance of core.option.Option
 with types Eurydice_arr_c9
 
 */
-typedef struct core_option_Option_57_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_57_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_c9 f0;
@@ -3778,10 +3778,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 34
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d40(Eurydice_arr_31 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -3790,7 +3790,7 @@ Eurydice_array_to_subslice_mut_d40(Eurydice_arr_31 *a, core_ops_range_Range_87 r
     );
 }
 
-typedef struct uint8_t_x2_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା uint8_t_x2_s
 {
   uint8_t fst;
   uint8_t snd;
@@ -3803,10 +3803,10 @@ with types uint8_t, core_ops_range_Range size_t, Eurydice_derefed_slice uint8_t
 with const generics
 - N= 66
 */
-static inline Eurydice_mut_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_mut_borrow_slice_u8
 Eurydice_array_to_subslice_mut_d4(Eurydice_arr_91 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_mut_borrow_slice_u8){
         .ptr = a->data + r.start,
@@ -3815,7 +3815,7 @@ Eurydice_array_to_subslice_mut_d4(Eurydice_arr_91 *a, core_ops_range_Range_87 r)
     );
 }
 
-typedef struct libcrux_ml_kem_utils_extraction_helper_Keypair768_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_kem_utils_extraction_helper_Keypair768_s
 {
   Eurydice_arr_0e fst;
   Eurydice_arr_5f snd;
@@ -3830,10 +3830,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types uint64_t
 
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_secrets_int_public_integers_declassify_d8_49(uint64_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3844,10 +3844,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.classify_27
 with types uint32_t
 
 */
-static KRML_MUSTINLINE uint32_t
+ସ୍ଥିର KRML_MUSTINLINE uint32_t
 libcrux_secrets_int_public_integers_classify_27_df(uint32_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3858,10 +3858,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.classify_27
 with types uint64_t
 
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_secrets_int_public_integers_classify_27_49(uint64_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3872,10 +3872,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types uint16_t
 
 */
-static KRML_MUSTINLINE uint16_t
+ସ୍ଥିର KRML_MUSTINLINE uint16_t
 libcrux_secrets_int_public_integers_declassify_d8_de(uint16_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3886,10 +3886,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.classify_27
 with types uint16_t
 
 */
-static KRML_MUSTINLINE uint16_t
+ସ୍ଥିର KRML_MUSTINLINE uint16_t
 libcrux_secrets_int_public_integers_classify_27_de(uint16_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3900,10 +3900,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types uint32_t
 
 */
-static KRML_MUSTINLINE uint32_t
+ସ୍ଥିର KRML_MUSTINLINE uint32_t
 libcrux_secrets_int_public_integers_declassify_d8_df(uint32_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3914,10 +3914,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types int32_t
 
 */
-static KRML_MUSTINLINE int32_t
+ସ୍ଥିର KRML_MUSTINLINE int32_t
 libcrux_secrets_int_public_integers_declassify_d8_a8(int32_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3928,9 +3928,9 @@ A monomorphic instance of libcrux_secrets.int.public_integers.classify_27
 with types int32_t
 
 */
-static KRML_MUSTINLINE int32_t libcrux_secrets_int_public_integers_classify_27_a8(int32_t self)
+ସ୍ଥିର KRML_MUSTINLINE int32_t libcrux_secrets_int_public_integers_classify_27_a8(int32_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3941,10 +3941,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types uint8_t
 
 */
-static KRML_MUSTINLINE uint8_t
+ସ୍ଥିର KRML_MUSTINLINE uint8_t
 libcrux_secrets_int_public_integers_declassify_d8_90(uint8_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3955,9 +3955,9 @@ A monomorphic instance of libcrux_secrets.int.public_integers.classify_27
 with types int16_t
 
 */
-static KRML_MUSTINLINE int16_t libcrux_secrets_int_public_integers_classify_27_39(int16_t self)
+ସ୍ଥିର KRML_MUSTINLINE int16_t libcrux_secrets_int_public_integers_classify_27_39(int16_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3968,10 +3968,10 @@ A monomorphic instance of libcrux_secrets.int.public_integers.declassify_d8
 with types int16_t
 
 */
-static KRML_MUSTINLINE int16_t
+ସ୍ଥିର KRML_MUSTINLINE int16_t
 libcrux_secrets_int_public_integers_declassify_d8_39(int16_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -3982,12 +3982,12 @@ A monomorphic instance of libcrux_secrets.int.public_integers.classify_27
 with types uint8_t
 
 */
-static KRML_MUSTINLINE uint8_t libcrux_secrets_int_public_integers_classify_27_90(uint8_t self)
+ସ୍ଥିର KRML_MUSTINLINE uint8_t libcrux_secrets_int_public_integers_classify_27_90(uint8_t self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -4014,8 +4014,8 @@ static KRML_MUSTINLINE uint8_t libcrux_secrets_int_public_integers_classify_27_9
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
 
@@ -4025,9 +4025,9 @@ with types uint64_t
 with const generics
 - $1size_t
 */
-typedef Eurydice_arr_7c libcrux_sha3_generic_keccak_KeccakState_f3;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_7c libcrux_sha3_generic_keccak_KeccakState_f3;
 
-typedef libcrux_sha3_generic_keccak_KeccakState_f3 libcrux_sha3_portable_KeccakState;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_sha3_generic_keccak_KeccakState_f3 libcrux_sha3_portable_KeccakState;
 
 /**
 A monomorphic instance of libcrux_sha3.generic_keccak.xof.KeccakXofState
@@ -4036,7 +4036,7 @@ with const generics
 - $1size_t
 - $136size_t
 */
-typedef struct libcrux_sha3_generic_keccak_xof_KeccakXofState_8d_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_sha3_generic_keccak_xof_KeccakXofState_8d_s
 {
   Eurydice_arr_7c inner;
   Eurydice_arr_0b buf;
@@ -4045,18 +4045,18 @@ typedef struct libcrux_sha3_generic_keccak_xof_KeccakXofState_8d_s
 }
 libcrux_sha3_generic_keccak_xof_KeccakXofState_8d;
 
-typedef libcrux_sha3_generic_keccak_xof_KeccakXofState_8d
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_sha3_generic_keccak_xof_KeccakXofState_8d
 libcrux_sha3_portable_incremental_Shake256Xof;
 
 /**
 This function found in impl {libcrux_sha3::traits::KeccakItem<1usize> for u64}
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_zero_d2(void)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_zero_d2(ଶୂନ୍ୟ)
 {
-  return 0ULL;
+  ଫେରନ୍ତୁ 0ULL;
 }
 
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__veor5q_u64(
   uint64_t a,
   uint64_t b,
@@ -4065,16 +4065,16 @@ libcrux_sha3_simd_portable__veor5q_u64(
   uint64_t e
 )
 {
-  return (((a ^ b) ^ c) ^ d) ^ e;
+  ଫେରନ୍ତୁ (((a ^ b) ^ c) ^ d) ^ e;
 }
 
 /**
 This function found in impl {libcrux_sha3::traits::KeccakItem<1usize> for u64}
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor5_d2(uint64_t a, uint64_t b, uint64_t c, uint64_t d, uint64_t e)
 {
-  return libcrux_sha3_simd_portable__veor5q_u64(a, b, c, d, e);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__veor5q_u64(a, b, c, d, e);
 }
 
 /**
@@ -4083,60 +4083,60 @@ with const generics
 - LEFT= 1
 - RIGHT= 63
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_76(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_76(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)1);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)1);
 }
 
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable__vrax1q_u64(uint64_t a, uint64_t b)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable__vrax1q_u64(uint64_t a, uint64_t b)
 {
-  return a ^ libcrux_sha3_simd_portable_rotate_left_76(b);
+  ଫେରନ୍ତୁ a ^ libcrux_sha3_simd_portable_rotate_ବାମ_76(b);
 }
 
 /**
 This function found in impl {libcrux_sha3::traits::KeccakItem<1usize> for u64}
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_rotate_left1_and_xor_d2(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vrax1q_u64(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vrax1q_u64(a, b);
 }
 
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vbcaxq_u64(uint64_t a, uint64_t b, uint64_t c)
 {
-  return a ^ (b & ~c);
+  ଫେରନ୍ତୁ a ^ (b & ~c);
 }
 
 /**
 This function found in impl {libcrux_sha3::traits::KeccakItem<1usize> for u64}
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_and_not_xor_d2(uint64_t a, uint64_t b, uint64_t c)
 {
-  return libcrux_sha3_simd_portable__vbcaxq_u64(a, b, c);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vbcaxq_u64(a, b, c);
 }
 
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable__veorq_n_u64(uint64_t a, uint64_t c)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable__veorq_n_u64(uint64_t a, uint64_t c)
 {
-  return a ^ c;
+  ଫେରନ୍ତୁ a ^ c;
 }
 
 /**
 This function found in impl {libcrux_sha3::traits::KeccakItem<1usize> for u64}
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_constant_d2(uint64_t a, uint64_t c)
 {
-  return libcrux_sha3_simd_portable__veorq_n_u64(a, c);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__veorq_n_u64(a, c);
 }
 
 /**
 This function found in impl {libcrux_sha3::traits::KeccakItem<1usize> for u64}
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_xor_d2(uint64_t a, uint64_t b)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_xor_d2(uint64_t a, uint64_t b)
 {
-  return a ^ b;
+  ଫେରନ୍ତୁ a ^ b;
 }
 
 /**
@@ -4151,24 +4151,24 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE Eurydice_arr_7c libcrux_sha3_generic_keccak_new_80_71(void)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_7c libcrux_sha3_generic_keccak_new_80_71(ଶୂନ୍ୟ)
 {
   Eurydice_arr_7c lit;
   uint64_t repeat_expression[25U];
-  for (size_t i = (size_t)0U; i < (size_t)25U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)25U; i++)
   {
     repeat_expression[i] = libcrux_sha3_simd_portable_zero_d2();
   }
-  memcpy(lit.data, repeat_expression, (size_t)25U * sizeof (uint64_t));
-  return lit;
+  memcpy(lit.data, repeat_expression, (size_t)25U * ଆକାର (uint64_t));
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
  Create a new SHAKE-128 state object.
 */
-static KRML_MUSTINLINE Eurydice_arr_7c libcrux_sha3_portable_incremental_shake128_init(void)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_7c libcrux_sha3_portable_incremental_shake128_init(ଶୂନ୍ୟ)
 {
-  return libcrux_sha3_generic_keccak_new_80_71();
+  ଫେରନ୍ତୁ libcrux_sha3_generic_keccak_new_80_71();
 }
 
 #define LIBCRUX_SHA3_GENERIC_KECCAK_CONSTANTS_ROUNDCONSTANTS ((KRML_CLITERAL(Eurydice_arr_22){ .data = { 1ULL, 32898ULL, 9223372036854808714ULL, 9223372039002292224ULL, 32907ULL, 2147483649ULL, 9223372039002292353ULL, 9223372036854808585ULL, 138ULL, 136ULL, 2147516425ULL, 2147483658ULL, 2147516555ULL, 9223372036854775947ULL, 9223372036854808713ULL, 9223372036854808579ULL, 9223372036854808578ULL, 9223372036854775936ULL, 32778ULL, 9223372039002259466ULL, 9223372039002292353ULL, 9223372036854808704ULL, 2147483649ULL, 9223372039002292232ULL } }))
@@ -4179,11 +4179,11 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE const
+ସ୍ଥିର KRML_MUSTINLINE ଅଚଳ
 uint64_t
-*libcrux_sha3_traits_get_ij_71(const Eurydice_arr_7c *arr, size_t i, size_t j)
+*libcrux_sha3_traits_get_ij_71(ଅଚଳ Eurydice_arr_7c *arr, size_t i, size_t j)
 {
-  return &arr->data[(size_t)5U * j + i];
+  ଫେରନ୍ତୁ &arr->data[(size_t)5U * j + i];
 }
 
 /**
@@ -4192,10 +4192,10 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
-libcrux_sha3_traits_set_ij_71(Eurydice_arr_7c *arr, size_t i, size_t j, uint64_t value)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_sha3_traits_set_ij_71(Eurydice_arr_7c *arr, size_t i, size_t j, uint64_t ମୂଲ୍ୟ)
 {
-  arr->data[(size_t)5U * j + i] = value;
+  arr->data[(size_t)5U * j + i] = ମୂଲ୍ୟ;
 }
 
 /**
@@ -4203,7 +4203,7 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block
 with const generics
 - RATE= 168
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_60(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -4211,7 +4211,7 @@ libcrux_sha3_simd_portable_load_block_60(
 )
 {
   Eurydice_arr_7c state_flat = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < (size_t)168U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)168U / (size_t)8U; i++)
   {
     size_t i0 = i;
     size_t offset = start + (size_t)8U * i0;
@@ -4219,15 +4219,15 @@ libcrux_sha3_simd_portable_load_block_60(
     memcpy(arr.data,
       Eurydice_slice_subslice_shared_c8(blocks,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = offset, .end = offset + (size_t)8U })).ptr,
-      (size_t)8U * sizeof (uint8_t));
+      (size_t)8U * ଆକାର (uint8_t));
     Eurydice_array_u8x8
     uu____0 =
       core_result_unwrap_26_e0((
           KRML_CLITERAL(core_result_Result_8e){ .tag = core_result_Ok, .val = { .case_Ok = arr } }
         ));
-    state_flat.data[i0] = core_num__u64__from_le_bytes(uu____0);
+    state_flat.data[i0] = core_ଅଙ୍କ_u64_from_le_bytes(uu____0);
   }
-  for (size_t i = (size_t)0U; i < (size_t)168U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)168U / (size_t)8U; i++)
   {
     size_t i0 = i;
     libcrux_sha3_traits_set_ij_71(state,
@@ -4244,7 +4244,7 @@ with const generics
 - RATE= 168
 - DELIMITER= 31
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_37(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -4275,15 +4275,15 @@ with const generics
 - RATE= 168
 - DELIMITER= 31
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_a1_37(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_37(self, input->data[0U], start, len);
+  libcrux_sha3_simd_portable_load_last_37(self, ନିବେଶ->data[0U], start, len);
 }
 
 /**
@@ -4298,11 +4298,11 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 uint64_t
-*libcrux_sha3_generic_keccak_index_c2_71(const Eurydice_arr_7c *self, size_t_x2 index)
+*libcrux_sha3_generic_keccak_index_c2_71(ଅଚଳ Eurydice_arr_7c *self, size_t_x2 index)
 {
-  return libcrux_sha3_traits_get_ij_71(self, index.fst, index.snd);
+  ଫେରନ୍ତୁ libcrux_sha3_traits_get_ij_71(self, index.fst, index.snd);
 }
 
 /**
@@ -4314,7 +4314,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE Eurydice_arr_84
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_84
 libcrux_sha3_generic_keccak_theta_80_71(Eurydice_arr_7c *self)
 {
   Eurydice_arr_84
@@ -4373,7 +4373,7 @@ libcrux_sha3_generic_keccak_theta_80_71(Eurydice_arr_7c *self)
             (KRML_CLITERAL(size_t_x2){ .fst = (size_t)4U, .snd = (size_t)4U }))[0U])
       }
     };
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_arr_84){
         .data = {
@@ -4409,7 +4409,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_set_80_71(Eurydice_arr_7c *self, size_t i, size_t j, uint64_t v)
 {
   libcrux_sha3_traits_set_ij_71(self, i, j, v);
@@ -4421,9 +4421,9 @@ with const generics
 - LEFT= 36
 - RIGHT= 28
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_02(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_02(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)36);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)36);
 }
 
 /**
@@ -4432,10 +4432,10 @@ with const generics
 - LEFT= 36
 - RIGHT= 28
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_02(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_02(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_02(a ^ b);
 }
 
 /**
@@ -4447,10 +4447,10 @@ with const generics
 - LEFT= 36
 - RIGHT= 28
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_02(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_02(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_02(a, b);
 }
 
 /**
@@ -4459,9 +4459,9 @@ with const generics
 - LEFT= 3
 - RIGHT= 61
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_ac(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_ac(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)3);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)3);
 }
 
 /**
@@ -4470,10 +4470,10 @@ with const generics
 - LEFT= 3
 - RIGHT= 61
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_ac(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_ac(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_ac(a ^ b);
 }
 
 /**
@@ -4485,10 +4485,10 @@ with const generics
 - LEFT= 3
 - RIGHT= 61
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_ac(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_ac(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_ac(a, b);
 }
 
 /**
@@ -4497,9 +4497,9 @@ with const generics
 - LEFT= 41
 - RIGHT= 23
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_020(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_020(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)41);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)41);
 }
 
 /**
@@ -4508,10 +4508,10 @@ with const generics
 - LEFT= 41
 - RIGHT= 23
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_020(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_020(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_020(a ^ b);
 }
 
 /**
@@ -4523,10 +4523,10 @@ with const generics
 - LEFT= 41
 - RIGHT= 23
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_020(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_020(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_020(a, b);
 }
 
 /**
@@ -4535,9 +4535,9 @@ with const generics
 - LEFT= 18
 - RIGHT= 46
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_a9(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_a9(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)18);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)18);
 }
 
 /**
@@ -4546,10 +4546,10 @@ with const generics
 - LEFT= 18
 - RIGHT= 46
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_a9(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_a9(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_a9(a ^ b);
 }
 
 /**
@@ -4561,10 +4561,10 @@ with const generics
 - LEFT= 18
 - RIGHT= 46
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_a9(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_a9(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_a9(a, b);
 }
 
 /**
@@ -4576,7 +4576,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_rho_0_80_71(Eurydice_arr_7c *self, Eurydice_arr_84 t)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -4617,10 +4617,10 @@ with const generics
 - LEFT= 1
 - RIGHT= 63
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_76(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_76(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_76(a ^ b);
 }
 
 /**
@@ -4632,10 +4632,10 @@ with const generics
 - LEFT= 1
 - RIGHT= 63
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_76(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_76(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_76(a, b);
 }
 
 /**
@@ -4644,9 +4644,9 @@ with const generics
 - LEFT= 44
 - RIGHT= 20
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_58(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_58(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)44);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)44);
 }
 
 /**
@@ -4655,10 +4655,10 @@ with const generics
 - LEFT= 44
 - RIGHT= 20
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_58(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_58(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_58(a ^ b);
 }
 
 /**
@@ -4670,10 +4670,10 @@ with const generics
 - LEFT= 44
 - RIGHT= 20
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_58(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_58(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_58(a, b);
 }
 
 /**
@@ -4682,9 +4682,9 @@ with const generics
 - LEFT= 10
 - RIGHT= 54
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_e0(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_e0(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)10);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)10);
 }
 
 /**
@@ -4693,10 +4693,10 @@ with const generics
 - LEFT= 10
 - RIGHT= 54
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_e0(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_e0(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_e0(a ^ b);
 }
 
 /**
@@ -4708,10 +4708,10 @@ with const generics
 - LEFT= 10
 - RIGHT= 54
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_e0(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_e0(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_e0(a, b);
 }
 
 /**
@@ -4720,9 +4720,9 @@ with const generics
 - LEFT= 45
 - RIGHT= 19
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_63(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_63(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)45);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)45);
 }
 
 /**
@@ -4731,10 +4731,10 @@ with const generics
 - LEFT= 45
 - RIGHT= 19
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_63(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_63(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_63(a ^ b);
 }
 
 /**
@@ -4746,10 +4746,10 @@ with const generics
 - LEFT= 45
 - RIGHT= 19
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_63(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_63(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_63(a, b);
 }
 
 /**
@@ -4758,9 +4758,9 @@ with const generics
 - LEFT= 2
 - RIGHT= 62
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_6a(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_6a(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)2);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)2);
 }
 
 /**
@@ -4769,10 +4769,10 @@ with const generics
 - LEFT= 2
 - RIGHT= 62
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_6a(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_6a(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_6a(a ^ b);
 }
 
 /**
@@ -4784,10 +4784,10 @@ with const generics
 - LEFT= 2
 - RIGHT= 62
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_6a(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_6a(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_6a(a, b);
 }
 
 /**
@@ -4799,7 +4799,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_rho_1_80_71(Eurydice_arr_7c *self, Eurydice_arr_84 t)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -4840,9 +4840,9 @@ with const generics
 - LEFT= 62
 - RIGHT= 2
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_ab(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_ab(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)62);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)62);
 }
 
 /**
@@ -4851,10 +4851,10 @@ with const generics
 - LEFT= 62
 - RIGHT= 2
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_ab(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_ab(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_ab(a ^ b);
 }
 
 /**
@@ -4866,10 +4866,10 @@ with const generics
 - LEFT= 62
 - RIGHT= 2
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_ab(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_ab(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_ab(a, b);
 }
 
 /**
@@ -4878,9 +4878,9 @@ with const generics
 - LEFT= 6
 - RIGHT= 58
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_5b(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_5b(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)6);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)6);
 }
 
 /**
@@ -4889,10 +4889,10 @@ with const generics
 - LEFT= 6
 - RIGHT= 58
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_5b(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_5b(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_5b(a ^ b);
 }
 
 /**
@@ -4904,10 +4904,10 @@ with const generics
 - LEFT= 6
 - RIGHT= 58
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_5b(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_5b(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_5b(a, b);
 }
 
 /**
@@ -4916,9 +4916,9 @@ with const generics
 - LEFT= 43
 - RIGHT= 21
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_6f(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_6f(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)43);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)43);
 }
 
 /**
@@ -4927,10 +4927,10 @@ with const generics
 - LEFT= 43
 - RIGHT= 21
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_6f(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_6f(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_6f(a ^ b);
 }
 
 /**
@@ -4942,10 +4942,10 @@ with const generics
 - LEFT= 43
 - RIGHT= 21
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_6f(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_6f(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_6f(a, b);
 }
 
 /**
@@ -4954,9 +4954,9 @@ with const generics
 - LEFT= 15
 - RIGHT= 49
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_62(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_62(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)15);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)15);
 }
 
 /**
@@ -4965,10 +4965,10 @@ with const generics
 - LEFT= 15
 - RIGHT= 49
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_62(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_62(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_62(a ^ b);
 }
 
 /**
@@ -4980,10 +4980,10 @@ with const generics
 - LEFT= 15
 - RIGHT= 49
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_62(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_62(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_62(a, b);
 }
 
 /**
@@ -4992,9 +4992,9 @@ with const generics
 - LEFT= 61
 - RIGHT= 3
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_23(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_23(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)61);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)61);
 }
 
 /**
@@ -5003,10 +5003,10 @@ with const generics
 - LEFT= 61
 - RIGHT= 3
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_23(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_23(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_23(a ^ b);
 }
 
 /**
@@ -5018,10 +5018,10 @@ with const generics
 - LEFT= 61
 - RIGHT= 3
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_23(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_23(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_23(a, b);
 }
 
 /**
@@ -5033,7 +5033,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_rho_2_80_71(Eurydice_arr_7c *self, Eurydice_arr_84 t)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5074,9 +5074,9 @@ with const generics
 - LEFT= 28
 - RIGHT= 36
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_37(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_37(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)28);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)28);
 }
 
 /**
@@ -5085,10 +5085,10 @@ with const generics
 - LEFT= 28
 - RIGHT= 36
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_37(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_37(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_37(a ^ b);
 }
 
 /**
@@ -5100,10 +5100,10 @@ with const generics
 - LEFT= 28
 - RIGHT= 36
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_37(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_37(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_37(a, b);
 }
 
 /**
@@ -5112,9 +5112,9 @@ with const generics
 - LEFT= 55
 - RIGHT= 9
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_bb(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_bb(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)55);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)55);
 }
 
 /**
@@ -5123,10 +5123,10 @@ with const generics
 - LEFT= 55
 - RIGHT= 9
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_bb(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_bb(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_bb(a ^ b);
 }
 
 /**
@@ -5138,10 +5138,10 @@ with const generics
 - LEFT= 55
 - RIGHT= 9
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_bb(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_bb(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_bb(a, b);
 }
 
 /**
@@ -5150,9 +5150,9 @@ with const generics
 - LEFT= 25
 - RIGHT= 39
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_b9(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_b9(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)25);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)25);
 }
 
 /**
@@ -5161,10 +5161,10 @@ with const generics
 - LEFT= 25
 - RIGHT= 39
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_b9(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_b9(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_b9(a ^ b);
 }
 
 /**
@@ -5176,10 +5176,10 @@ with const generics
 - LEFT= 25
 - RIGHT= 39
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_b9(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_b9(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_b9(a, b);
 }
 
 /**
@@ -5188,9 +5188,9 @@ with const generics
 - LEFT= 21
 - RIGHT= 43
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_54(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_54(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)21);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)21);
 }
 
 /**
@@ -5199,10 +5199,10 @@ with const generics
 - LEFT= 21
 - RIGHT= 43
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_54(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_54(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_54(a ^ b);
 }
 
 /**
@@ -5214,10 +5214,10 @@ with const generics
 - LEFT= 21
 - RIGHT= 43
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_54(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_54(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_54(a, b);
 }
 
 /**
@@ -5226,9 +5226,9 @@ with const generics
 - LEFT= 56
 - RIGHT= 8
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_4c(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_4c(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)56);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)56);
 }
 
 /**
@@ -5237,10 +5237,10 @@ with const generics
 - LEFT= 56
 - RIGHT= 8
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_4c(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_4c(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_4c(a ^ b);
 }
 
 /**
@@ -5252,10 +5252,10 @@ with const generics
 - LEFT= 56
 - RIGHT= 8
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_4c(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_4c(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_4c(a, b);
 }
 
 /**
@@ -5267,7 +5267,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_rho_3_80_71(Eurydice_arr_7c *self, Eurydice_arr_84 t)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5308,9 +5308,9 @@ with const generics
 - LEFT= 27
 - RIGHT= 37
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_ce(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_ce(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)27);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)27);
 }
 
 /**
@@ -5319,10 +5319,10 @@ with const generics
 - LEFT= 27
 - RIGHT= 37
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_ce(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_ce(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_ce(a ^ b);
 }
 
 /**
@@ -5334,10 +5334,10 @@ with const generics
 - LEFT= 27
 - RIGHT= 37
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_ce(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_ce(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_ce(a, b);
 }
 
 /**
@@ -5346,9 +5346,9 @@ with const generics
 - LEFT= 20
 - RIGHT= 44
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_77(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_77(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)20);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)20);
 }
 
 /**
@@ -5357,10 +5357,10 @@ with const generics
 - LEFT= 20
 - RIGHT= 44
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_77(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_77(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_77(a ^ b);
 }
 
 /**
@@ -5372,10 +5372,10 @@ with const generics
 - LEFT= 20
 - RIGHT= 44
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_77(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_77(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_77(a, b);
 }
 
 /**
@@ -5384,9 +5384,9 @@ with const generics
 - LEFT= 39
 - RIGHT= 25
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_25(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_25(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)39);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)39);
 }
 
 /**
@@ -5395,10 +5395,10 @@ with const generics
 - LEFT= 39
 - RIGHT= 25
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_25(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_25(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_25(a ^ b);
 }
 
 /**
@@ -5410,10 +5410,10 @@ with const generics
 - LEFT= 39
 - RIGHT= 25
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_25(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_25(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_25(a, b);
 }
 
 /**
@@ -5422,9 +5422,9 @@ with const generics
 - LEFT= 8
 - RIGHT= 56
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_af(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_af(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)8);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)8);
 }
 
 /**
@@ -5433,10 +5433,10 @@ with const generics
 - LEFT= 8
 - RIGHT= 56
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_af(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_af(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_af(a ^ b);
 }
 
 /**
@@ -5448,10 +5448,10 @@ with const generics
 - LEFT= 8
 - RIGHT= 56
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_af(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_af(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_af(a, b);
 }
 
 /**
@@ -5460,9 +5460,9 @@ with const generics
 - LEFT= 14
 - RIGHT= 50
 */
-static KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_left_fd(uint64_t x)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_sha3_simd_portable_rotate_ବାମ_fd(uint64_t x)
 {
-  return core_num__u64__rotate_left(x, (uint32_t)14);
+  ଫେରନ୍ତୁ core_ଅଙ୍କ_u64_rotate_ବାମ(x, (uint32_t)14);
 }
 
 /**
@@ -5471,10 +5471,10 @@ with const generics
 - LEFT= 14
 - RIGHT= 50
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable__vxarq_u64_fd(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable_rotate_left_fd(a ^ b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable_rotate_ବାମ_fd(a ^ b);
 }
 
 /**
@@ -5486,10 +5486,10 @@ with const generics
 - LEFT= 14
 - RIGHT= 50
 */
-static KRML_MUSTINLINE uint64_t
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
 libcrux_sha3_simd_portable_xor_and_rotate_d2_fd(uint64_t a, uint64_t b)
 {
-  return libcrux_sha3_simd_portable__vxarq_u64_fd(a, b);
+  ଫେରନ୍ତୁ libcrux_sha3_simd_portable__vxarq_u64_fd(a, b);
 }
 
 /**
@@ -5501,7 +5501,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_rho_4_80_71(Eurydice_arr_7c *self, Eurydice_arr_84 t)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5545,7 +5545,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_rho_80_71(Eurydice_arr_7c *self, Eurydice_arr_84 t)
 {
   libcrux_sha3_generic_keccak_rho_0_80_71(self, t);
@@ -5564,7 +5564,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_pi_0_80_71(Eurydice_arr_7c *self, Eurydice_arr_7c old)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5598,7 +5598,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_pi_1_80_71(Eurydice_arr_7c *self, Eurydice_arr_7c old)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5637,7 +5637,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_pi_2_80_71(Eurydice_arr_7c *self, Eurydice_arr_7c old)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5676,7 +5676,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_pi_3_80_71(Eurydice_arr_7c *self, Eurydice_arr_7c old)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5715,7 +5715,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_pi_4_80_71(Eurydice_arr_7c *self, Eurydice_arr_7c old)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5754,7 +5754,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void libcrux_sha3_generic_keccak_pi_80_71(Eurydice_arr_7c *self)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ libcrux_sha3_generic_keccak_pi_80_71(Eurydice_arr_7c *self)
 {
   Eurydice_arr_7c old = self[0U];
   libcrux_sha3_generic_keccak_pi_0_80_71(self, old);
@@ -5773,13 +5773,13 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void libcrux_sha3_generic_keccak_chi_80_71(Eurydice_arr_7c *self)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ libcrux_sha3_generic_keccak_chi_80_71(Eurydice_arr_7c *self)
 {
   Eurydice_arr_7c old = self[0U];
-  for (size_t i0 = (size_t)0U; i0 < (size_t)5U; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < (size_t)5U; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < (size_t)5U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)5U; i++)
     {
       size_t j = i;
       libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5804,7 +5804,7 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_iota_80_71(Eurydice_arr_7c *self, size_t i)
 {
   libcrux_sha3_generic_keccak_set_80_71(self,
@@ -5824,10 +5824,10 @@ with types uint64_t
 with const generics
 - N= 1
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_keccakf1600_80_71(Eurydice_arr_7c *self)
 {
-  for (size_t i = (size_t)0U; i < (size_t)24U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)24U; i++)
   {
     size_t i0 = i;
     Eurydice_arr_84 t = libcrux_sha3_generic_keccak_theta_80_71(self);
@@ -5849,22 +5849,22 @@ with const generics
 - RATE= 168
 - DELIM= 31
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_final_80_bd(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_a1_37(self, input, start, len);
+  libcrux_sha3_simd_portable_load_last_a1_37(self, ନିବେଶ, start, len);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
 /**
  Absorb
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_shake128_absorb_final(
   Eurydice_arr_7c *s,
   Eurydice_borrow_slice_u8 data0
@@ -5878,9 +5878,9 @@ libcrux_sha3_portable_incremental_shake128_absorb_final(
 /**
  Create a new SHAKE-256 state object.
 */
-static KRML_MUSTINLINE Eurydice_arr_7c libcrux_sha3_portable_incremental_shake256_init(void)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_7c libcrux_sha3_portable_incremental_shake256_init(ଶୂନ୍ୟ)
 {
-  return libcrux_sha3_generic_keccak_new_80_71();
+  ଫେରନ୍ତୁ libcrux_sha3_generic_keccak_new_80_71();
 }
 
 /**
@@ -5888,7 +5888,7 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block
 with const generics
 - RATE= 136
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_b2(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -5896,7 +5896,7 @@ libcrux_sha3_simd_portable_load_block_b2(
 )
 {
   Eurydice_arr_7c state_flat = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < (size_t)136U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)136U / (size_t)8U; i++)
   {
     size_t i0 = i;
     size_t offset = start + (size_t)8U * i0;
@@ -5904,15 +5904,15 @@ libcrux_sha3_simd_portable_load_block_b2(
     memcpy(arr.data,
       Eurydice_slice_subslice_shared_c8(blocks,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = offset, .end = offset + (size_t)8U })).ptr,
-      (size_t)8U * sizeof (uint8_t));
+      (size_t)8U * ଆକାର (uint8_t));
     Eurydice_array_u8x8
     uu____0 =
       core_result_unwrap_26_e0((
           KRML_CLITERAL(core_result_Result_8e){ .tag = core_result_Ok, .val = { .case_Ok = arr } }
         ));
-    state_flat.data[i0] = core_num__u64__from_le_bytes(uu____0);
+    state_flat.data[i0] = core_ଅଙ୍କ_u64_from_le_bytes(uu____0);
   }
-  for (size_t i = (size_t)0U; i < (size_t)136U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)136U / (size_t)8U; i++)
   {
     size_t i0 = i;
     libcrux_sha3_traits_set_ij_71(state,
@@ -5929,7 +5929,7 @@ with const generics
 - RATE= 136
 - DELIMITER= 31
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_22(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -5960,15 +5960,15 @@ with const generics
 - RATE= 136
 - DELIMITER= 31
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_a1_22(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_22(self, input->data[0U], start, len);
+  libcrux_sha3_simd_portable_load_last_22(self, ନିବେଶ->data[0U], start, len);
 }
 
 /**
@@ -5982,22 +5982,22 @@ with const generics
 - RATE= 136
 - DELIM= 31
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_final_80_bd0(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_a1_22(self, input, start, len);
+  libcrux_sha3_simd_portable_load_last_a1_22(self, ନିବେଶ, start, len);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
 /**
  Absorb some data for SHAKE-256 for the last time
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_shake256_absorb_final(
   Eurydice_arr_7c *s,
   Eurydice_borrow_slice_u8 data
@@ -6016,14 +6016,14 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block_a1
 with const generics
 - RATE= 168
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_a1_60(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_60(self, input->data[0U], start);
+  libcrux_sha3_simd_portable_load_block_60(self, ନିବେଶ->data[0U], start);
 }
 
 /**
@@ -6036,14 +6036,14 @@ with const generics
 - N= 1
 - RATE= 168
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_block_80_e9(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_a1_60(self, input, start);
+  libcrux_sha3_simd_portable_load_block_a1_60(self, ନିବେଶ, start);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
@@ -6052,21 +6052,21 @@ A monomorphic instance of libcrux_sha3.simd.portable.store_block
 with const generics
 - RATE= 168
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_store_block_60(
-  const Eurydice_arr_7c *s,
+  ଅଚଳ Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
 )
 {
   size_t octets = len / (size_t)8U;
-  for (size_t i = (size_t)0U; i < octets; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < octets; i++)
   {
     size_t i0 = i;
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           i0 / (size_t)5U,
           i0 % (size_t)5U)[0U]);
     size_t out_pos = start + (size_t)8U * i0;
@@ -6076,11 +6076,11 @@ libcrux_sha3_simd_portable_store_block_60(
       uint8_t);
   }
   size_t remaining = len % (size_t)8U;
-  if (remaining > (size_t)0U)
+  ଯଦି (remaining > (size_t)0U)
   {
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           octets / (size_t)5U,
           octets % (size_t)5U)[0U]);
     size_t out_pos = start + len - remaining;
@@ -6102,9 +6102,9 @@ A monomorphic instance of libcrux_sha3.simd.portable.squeeze_9b
 with const generics
 - RATE= 168
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_squeeze_9b_60(
-  const Eurydice_arr_7c *self,
+  ଅଚଳ Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
@@ -6119,43 +6119,43 @@ with const generics
 - RATE= 168
 - DELIM= 31
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_keccak1_37(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_mut_borrow_slice_u8 output
 )
 {
   Eurydice_arr_7c s = libcrux_sha3_generic_keccak_new_80_71();
-  size_t input_len = input.meta;
-  size_t input_blocks = input_len / (size_t)168U;
-  size_t input_rem = input_len % (size_t)168U;
-  for (size_t i = (size_t)0U; i < input_blocks; i++)
+  size_t ନିବେଶ_len = ନିବେଶ.meta;
+  size_t ନିବେଶ_blocks = ନିବେଶ_len / (size_t)168U;
+  size_t ନିବେଶ_rem = ନିବେଶ_len % (size_t)168U;
+  ପାଇଁ (size_t i = (size_t)0U; i < ନିବେଶ_blocks; i++)
   {
     size_t i0 = i;
     /* original Rust expression is not an lvalue in C */
-    Eurydice_arr_dc lvalue = { .data = { input } };
+    Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
     libcrux_sha3_generic_keccak_absorb_block_80_e9(&s, &lvalue, i0 * (size_t)168U);
   }
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
-  libcrux_sha3_generic_keccak_absorb_final_80_bd(&s, &lvalue, input_len - input_rem, input_rem);
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
+  libcrux_sha3_generic_keccak_absorb_final_80_bd(&s, &lvalue, ନିବେଶ_len - ନିବେଶ_rem, ନିବେଶ_rem);
   size_t output_len = output.meta;
   size_t output_blocks = output_len / (size_t)168U;
   size_t output_rem = output_len % (size_t)168U;
-  if (output_blocks == (size_t)0U)
+  ଯଦି (output_blocks == (size_t)0U)
   {
     libcrux_sha3_simd_portable_squeeze_9b_60(&s, output, (size_t)0U, output_len);
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_sha3_simd_portable_squeeze_9b_60(&s, output, (size_t)0U, (size_t)168U);
-    for (size_t i = (size_t)1U; i < output_blocks; i++)
+    ପାଇଁ (size_t i = (size_t)1U; i < output_blocks; i++)
     {
       size_t i0 = i;
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_60(&s, output, i0 * (size_t)168U, (size_t)168U);
     }
-    if (output_rem != (size_t)0U)
+    ଯଦି (output_rem != (size_t)0U)
     {
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_60(&s, output, output_len - output_rem, output_rem);
@@ -6166,7 +6166,7 @@ libcrux_sha3_generic_keccak_portable_keccak1_37(
 /**
  A portable SHAKE128 implementation.
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_shake128(
   Eurydice_mut_borrow_slice_u8 digest,
   Eurydice_borrow_slice_u8 data
@@ -6183,14 +6183,14 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block_a1
 with const generics
 - RATE= 136
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_a1_b2(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_b2(self, input->data[0U], start);
+  libcrux_sha3_simd_portable_load_block_b2(self, ନିବେଶ->data[0U], start);
 }
 
 /**
@@ -6203,14 +6203,14 @@ with const generics
 - N= 1
 - RATE= 136
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_block_80_e90(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_a1_b2(self, input, start);
+  libcrux_sha3_simd_portable_load_block_a1_b2(self, ନିବେଶ, start);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
@@ -6219,21 +6219,21 @@ A monomorphic instance of libcrux_sha3.simd.portable.store_block
 with const generics
 - RATE= 136
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_store_block_b2(
-  const Eurydice_arr_7c *s,
+  ଅଚଳ Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
 )
 {
   size_t octets = len / (size_t)8U;
-  for (size_t i = (size_t)0U; i < octets; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < octets; i++)
   {
     size_t i0 = i;
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           i0 / (size_t)5U,
           i0 % (size_t)5U)[0U]);
     size_t out_pos = start + (size_t)8U * i0;
@@ -6243,11 +6243,11 @@ libcrux_sha3_simd_portable_store_block_b2(
       uint8_t);
   }
   size_t remaining = len % (size_t)8U;
-  if (remaining > (size_t)0U)
+  ଯଦି (remaining > (size_t)0U)
   {
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           octets / (size_t)5U,
           octets % (size_t)5U)[0U]);
     size_t out_pos = start + len - remaining;
@@ -6269,9 +6269,9 @@ A monomorphic instance of libcrux_sha3.simd.portable.squeeze_9b
 with const generics
 - RATE= 136
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_squeeze_9b_b2(
-  const Eurydice_arr_7c *self,
+  ଅଚଳ Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
@@ -6286,43 +6286,43 @@ with const generics
 - RATE= 136
 - DELIM= 31
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_keccak1_22(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_mut_borrow_slice_u8 output
 )
 {
   Eurydice_arr_7c s = libcrux_sha3_generic_keccak_new_80_71();
-  size_t input_len = input.meta;
-  size_t input_blocks = input_len / (size_t)136U;
-  size_t input_rem = input_len % (size_t)136U;
-  for (size_t i = (size_t)0U; i < input_blocks; i++)
+  size_t ନିବେଶ_len = ନିବେଶ.meta;
+  size_t ନିବେଶ_blocks = ନିବେଶ_len / (size_t)136U;
+  size_t ନିବେଶ_rem = ନିବେଶ_len % (size_t)136U;
+  ପାଇଁ (size_t i = (size_t)0U; i < ନିବେଶ_blocks; i++)
   {
     size_t i0 = i;
     /* original Rust expression is not an lvalue in C */
-    Eurydice_arr_dc lvalue = { .data = { input } };
+    Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
     libcrux_sha3_generic_keccak_absorb_block_80_e90(&s, &lvalue, i0 * (size_t)136U);
   }
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
-  libcrux_sha3_generic_keccak_absorb_final_80_bd0(&s, &lvalue, input_len - input_rem, input_rem);
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
+  libcrux_sha3_generic_keccak_absorb_final_80_bd0(&s, &lvalue, ନିବେଶ_len - ନିବେଶ_rem, ନିବେଶ_rem);
   size_t output_len = output.meta;
   size_t output_blocks = output_len / (size_t)136U;
   size_t output_rem = output_len % (size_t)136U;
-  if (output_blocks == (size_t)0U)
+  ଯଦି (output_blocks == (size_t)0U)
   {
     libcrux_sha3_simd_portable_squeeze_9b_b2(&s, output, (size_t)0U, output_len);
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_sha3_simd_portable_squeeze_9b_b2(&s, output, (size_t)0U, (size_t)136U);
-    for (size_t i = (size_t)1U; i < output_blocks; i++)
+    ପାଇଁ (size_t i = (size_t)1U; i < output_blocks; i++)
     {
       size_t i0 = i;
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_b2(&s, output, i0 * (size_t)136U, (size_t)136U);
     }
-    if (output_rem != (size_t)0U)
+    ଯଦି (output_rem != (size_t)0U)
     {
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_b2(&s, output, output_len - output_rem, output_rem);
@@ -6333,7 +6333,7 @@ libcrux_sha3_generic_keccak_portable_keccak1_22(
 /**
  A portable SHAKE256 implementation.
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_shake256(
   Eurydice_mut_borrow_slice_u8 digest,
   Eurydice_borrow_slice_u8 data
@@ -6350,9 +6350,9 @@ A monomorphic instance of libcrux_sha3.generic_keccak.portable.squeeze_first_blo
 with const generics
 - RATE= 136
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_squeeze_first_block_b4_b2(
-  const Eurydice_arr_7c *self,
+  ଅଚଳ Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out
 )
 {
@@ -6362,7 +6362,7 @@ libcrux_sha3_generic_keccak_portable_squeeze_first_block_b4_b2(
 /**
  Squeeze the first SHAKE-256 block
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_shake256_squeeze_first_block(
   Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out
@@ -6379,7 +6379,7 @@ A monomorphic instance of libcrux_sha3.generic_keccak.portable.squeeze_first_fiv
 with const generics
 - RATE= 168
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_squeeze_first_five_blocks_b4_60(
   Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out
@@ -6399,7 +6399,7 @@ libcrux_sha3_generic_keccak_portable_squeeze_first_five_blocks_b4_60(
 /**
  Squeeze five blocks
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_shake128_squeeze_first_five_blocks(
   Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out0
@@ -6416,7 +6416,7 @@ A monomorphic instance of libcrux_sha3.generic_keccak.portable.squeeze_next_bloc
 with const generics
 - RATE= 168
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_squeeze_next_block_b4_60(
   Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out,
@@ -6430,7 +6430,7 @@ libcrux_sha3_generic_keccak_portable_squeeze_next_block_b4_60(
 /**
  Squeeze another block
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_shake128_squeeze_next_block(
   Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out0
@@ -6447,7 +6447,7 @@ A monomorphic instance of libcrux_sha3.generic_keccak.portable.squeeze_next_bloc
 with const generics
 - RATE= 136
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_squeeze_next_block_b4_b2(
   Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out,
@@ -6461,7 +6461,7 @@ libcrux_sha3_generic_keccak_portable_squeeze_next_block_b4_b2(
 /**
  Squeeze the next SHAKE-256 block
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_shake256_squeeze_next_block(
   Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out
@@ -6500,20 +6500,20 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 136
 */
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_sha3_generic_keccak_xof_fill_buffer_35_e9(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
-  const Eurydice_arr_dc *inputs
+  ଅଚଳ Eurydice_arr_dc *inputs
 )
 {
-  size_t input_len = inputs->data->meta;
+  size_t ନିବେଶ_len = inputs->data->meta;
   size_t uu____0;
-  if (self->buf_len != (size_t)0U)
+  ଯଦି (self->buf_len != (size_t)0U)
   {
-    if (input_len >= (size_t)136U - self->buf_len)
+    ଯଦି (ନିବେଶ_len >= (size_t)136U - self->buf_len)
     {
       size_t consumed = (size_t)136U - self->buf_len;
-      for (size_t i = (size_t)0U; i < (size_t)1U; i++)
+      ପାଇଁ (size_t i = (size_t)0U; i < (size_t)1U; i++)
       {
         size_t i0 = i;
         Eurydice_slice_copy(Eurydice_array_to_subslice_from_mut_5f(&self->buf.data[i0],
@@ -6524,16 +6524,16 @@ libcrux_sha3_generic_keccak_xof_fill_buffer_35_e9(
       self->buf_len = (size_t)136U;
       uu____0 = consumed;
     }
-    else
+    ଅନ୍ୟଥା
     {
       uu____0 = (size_t)0U;
     }
   }
-  else
+  ଅନ୍ୟଥା
   {
     uu____0 = (size_t)0U;
   }
-  return uu____0;
+  ଫେରନ୍ତୁ uu____0;
 }
 
 /**
@@ -6542,7 +6542,7 @@ with const generics
 - $1size_t
 - $136size_t
 */
-typedef const Eurydice_arr_0b *libcrux_sha3_generic_keccak_xof_buf_to_slices_closure_94;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଅଚଳ Eurydice_arr_0b *libcrux_sha3_generic_keccak_xof_buf_to_slices_closure_94;
 
 /**
 This function found in impl {core::ops::function::FnMut<(usize), &'_ ([u8])> for libcrux_sha3::generic_keccak::xof::buf_to_slices::closure<0, PARALLEL_LANES, RATE>}
@@ -6553,14 +6553,14 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 136
 */
-static inline Eurydice_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
 libcrux_sha3_generic_keccak_xof_buf_to_slices_call_mut_2a_81(
-  const Eurydice_arr_0b **_,
+  ଅଚଳ Eurydice_arr_0b **_,
   size_t tupled_args
 )
 {
   size_t i = tupled_args;
-  return
+  ଫେରନ୍ତୁ
     core_array___T__N___as_slice((size_t)136U,
       &_[0U]->data[i],
       uint8_t,
@@ -6576,13 +6576,13 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 136
 */
-static inline Eurydice_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
 libcrux_sha3_generic_keccak_xof_buf_to_slices_call_once_fa_81(
-  const Eurydice_arr_0b *_,
+  ଅଚଳ Eurydice_arr_0b *_,
   size_t _0
 )
 {
-  return libcrux_sha3_generic_keccak_xof_buf_to_slices_call_mut_2a_81(&_, _0);
+  ଫେରନ୍ତୁ libcrux_sha3_generic_keccak_xof_buf_to_slices_call_mut_2a_81(&_, _0);
 }
 
 /**
@@ -6598,15 +6598,15 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 136
 */
-static KRML_MUSTINLINE Eurydice_arr_dc
-libcrux_sha3_generic_keccak_xof_buf_to_slices_81(const Eurydice_arr_0b *buf)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_dc
+libcrux_sha3_generic_keccak_xof_buf_to_slices_81(ଅଚଳ Eurydice_arr_0b *buf)
 {
   Eurydice_arr_dc arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)1U; i++)
   {
     arr_struct.data[i] = libcrux_sha3_generic_keccak_xof_buf_to_slices_call_mut_2a_81(&buf, i);
   }
-  return arr_struct;
+  ଫେରନ୍ତୁ arr_struct;
 }
 
 /**
@@ -6619,31 +6619,31 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 136
 */
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_sha3_generic_keccak_xof_absorb_full_35_e9(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
-  const Eurydice_arr_dc *inputs
+  ଅଚଳ Eurydice_arr_dc *inputs
 )
 {
   size_t consumed = libcrux_sha3_generic_keccak_xof_fill_buffer_35_e9(self, inputs);
-  if (self->buf_len == (size_t)136U)
+  ଯଦି (self->buf_len == (size_t)136U)
   {
     Eurydice_arr_dc borrowed = libcrux_sha3_generic_keccak_xof_buf_to_slices_81(&self->buf);
     libcrux_sha3_simd_portable_load_block_a1_b2(&self->inner, &borrowed, (size_t)0U);
     libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
     self->buf_len = (size_t)0U;
   }
-  size_t input_to_consume = inputs->data->meta - consumed;
-  size_t num_blocks = input_to_consume / (size_t)136U;
-  size_t remainder = input_to_consume % (size_t)136U;
-  for (size_t i = (size_t)0U; i < num_blocks; i++)
+  size_t ନିବେଶ_to_consume = inputs->data->meta - consumed;
+  size_t ଅଙ୍କ_blocks = ନିବେଶ_to_consume / (size_t)136U;
+  size_t remainder = ନିବେଶ_to_consume % (size_t)136U;
+  ପାଇଁ (size_t i = (size_t)0U; i < ଅଙ୍କ_blocks; i++)
   {
     size_t i0 = i;
     size_t start = i0 * (size_t)136U + consumed;
     libcrux_sha3_simd_portable_load_block_a1_b2(&self->inner, inputs, start);
     libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
   }
-  return remainder;
+  ଫେରନ୍ତୁ remainder;
 }
 
 /**
@@ -6667,17 +6667,17 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 136
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_xof_absorb_35_e9(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
-  const Eurydice_arr_dc *inputs
+  ଅଚଳ Eurydice_arr_dc *inputs
 )
 {
   size_t remainder = libcrux_sha3_generic_keccak_xof_absorb_full_35_e9(self, inputs);
-  if (remainder > (size_t)0U)
+  ଯଦି (remainder > (size_t)0U)
   {
-    size_t input_len = inputs->data->meta;
-    for (size_t i = (size_t)0U; i < (size_t)1U; i++)
+    size_t ନିବେଶ_len = inputs->data->meta;
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)1U; i++)
     {
       size_t i0 = i;
       Eurydice_slice_copy(Eurydice_array_to_subslice_mut_d42(&self->buf.data[i0],
@@ -6690,8 +6690,8 @@ libcrux_sha3_generic_keccak_xof_absorb_35_e9(
         Eurydice_slice_subslice_shared_c8(inputs->data[i0],
           (
             KRML_CLITERAL(core_ops_range_Range_87){
-              .start = input_len - remainder,
-              .end = input_len
+              .start = ନିବେଶ_len - remainder,
+              .end = ନିବେଶ_len
             }
           )),
         uint8_t);
@@ -6706,14 +6706,14 @@ libcrux_sha3_generic_keccak_xof_absorb_35_e9(
 /**
 This function found in impl {libcrux_sha3::portable::incremental::Xof<136usize> for libcrux_sha3::portable::incremental::Shake256Xof}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_absorb_42(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
-  Eurydice_borrow_slice_u8 input
+  Eurydice_borrow_slice_u8 ନିବେଶ
 )
 {
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
   libcrux_sha3_generic_keccak_xof_absorb_35_e9(self, &lvalue);
 }
 
@@ -6734,10 +6734,10 @@ with const generics
 - RATE= 136
 - DELIMITER= 31
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_xof_absorb_final_35_bd(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
-  const Eurydice_arr_dc *inputs
+  ଅଚଳ Eurydice_arr_dc *inputs
 )
 {
   libcrux_sha3_generic_keccak_xof_absorb_35_e9(self, inputs);
@@ -6752,14 +6752,14 @@ libcrux_sha3_generic_keccak_xof_absorb_final_35_bd(
 /**
 This function found in impl {libcrux_sha3::portable::incremental::Xof<136usize> for libcrux_sha3::portable::incremental::Shake256Xof}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_absorb_final_42(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
-  Eurydice_borrow_slice_u8 input
+  Eurydice_borrow_slice_u8 ନିବେଶ
 )
 {
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
   libcrux_sha3_generic_keccak_xof_absorb_final_35_bd(self, &lvalue);
 }
 
@@ -6776,9 +6776,9 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 136
 */
-static inline Eurydice_arr_ff libcrux_sha3_generic_keccak_xof_zero_block_35_e9(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ff libcrux_sha3_generic_keccak_xof_zero_block_35_e9(ଶୂନ୍ୟ)
 {
-  return (KRML_CLITERAL(Eurydice_arr_ff){ .data = { 0U } });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_arr_ff){ .data = { 0U } });
 }
 
 /**
@@ -6794,20 +6794,20 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 136
 */
-static inline libcrux_sha3_generic_keccak_xof_KeccakXofState_8d
-libcrux_sha3_generic_keccak_xof_new_35_e9(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_sha3_generic_keccak_xof_KeccakXofState_8d
+libcrux_sha3_generic_keccak_xof_new_35_e9(ଶୂନ୍ୟ)
 {
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d lit;
   lit.inner = libcrux_sha3_generic_keccak_new_80_71();
   Eurydice_arr_ff repeat_expression[1U];
-  for (size_t i = (size_t)0U; i < (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)1U; i++)
   {
     repeat_expression[i] = libcrux_sha3_generic_keccak_xof_zero_block_35_e9();
   }
-  memcpy(lit.buf.data, repeat_expression, (size_t)1U * sizeof (Eurydice_arr_ff));
+  memcpy(lit.buf.data, repeat_expression, (size_t)1U * ଆକାର (Eurydice_arr_ff));
   lit.buf_len = (size_t)0U;
   lit.sponge = false;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -6816,10 +6816,10 @@ libcrux_sha3_generic_keccak_xof_new_35_e9(void)
 /**
 This function found in impl {libcrux_sha3::portable::incremental::Xof<136usize> for libcrux_sha3::portable::incremental::Shake256Xof}
 */
-static inline libcrux_sha3_generic_keccak_xof_KeccakXofState_8d
-libcrux_sha3_portable_incremental_new_42(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_sha3_generic_keccak_xof_KeccakXofState_8d
+libcrux_sha3_portable_incremental_new_42(ଶୂନ୍ୟ)
 {
-  return libcrux_sha3_generic_keccak_xof_new_35_e9();
+  ଫେରନ୍ତୁ libcrux_sha3_generic_keccak_xof_new_35_e9();
 }
 
 /**
@@ -6834,31 +6834,31 @@ with types uint64_t
 with const generics
 - RATE= 136
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_xof_squeeze_85_76(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
   Eurydice_mut_borrow_slice_u8 out
 )
 {
   size_t out_len = out.meta;
-  if (!(out_len == (size_t)0U))
+  ଯଦି (!(out_len == (size_t)0U))
   {
-    if (self->sponge)
+    ଯଦି (self->sponge)
     {
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
     }
-    if (out_len > (size_t)0U)
+    ଯଦି (out_len > (size_t)0U)
     {
       size_t blocks = out_len / (size_t)136U;
       size_t last = out_len - out_len % (size_t)136U;
-      if (blocks == (size_t)0U)
+      ଯଦି (blocks == (size_t)0U)
       {
         libcrux_sha3_simd_portable_squeeze_9b_b2(&self->inner, out, (size_t)0U, out_len);
       }
-      else
+      ଅନ୍ୟଥା
       {
         libcrux_sha3_simd_portable_squeeze_9b_b2(&self->inner, out, (size_t)0U, (size_t)136U);
-        for (size_t i = (size_t)1U; i < blocks; i++)
+        ପାଇଁ (size_t i = (size_t)1U; i < blocks; i++)
         {
           size_t i0 = i;
           libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
@@ -6867,7 +6867,7 @@ libcrux_sha3_generic_keccak_xof_squeeze_85_76(
             i0 * (size_t)136U,
             (size_t)136U);
         }
-        if (last < out_len)
+        ଯଦି (last < out_len)
         {
           libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
           libcrux_sha3_simd_portable_squeeze_9b_b2(&self->inner, out, last, out_len - last);
@@ -6884,7 +6884,7 @@ libcrux_sha3_generic_keccak_xof_squeeze_85_76(
 /**
 This function found in impl {libcrux_sha3::portable::incremental::Xof<136usize> for libcrux_sha3::portable::incremental::Shake256Xof}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_squeeze_42(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
   Eurydice_mut_borrow_slice_u8 out
@@ -6898,7 +6898,7 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block
 with const generics
 - RATE= 72
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_c6(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -6906,7 +6906,7 @@ libcrux_sha3_simd_portable_load_block_c6(
 )
 {
   Eurydice_arr_7c state_flat = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < (size_t)72U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)72U / (size_t)8U; i++)
   {
     size_t i0 = i;
     size_t offset = start + (size_t)8U * i0;
@@ -6914,15 +6914,15 @@ libcrux_sha3_simd_portable_load_block_c6(
     memcpy(arr.data,
       Eurydice_slice_subslice_shared_c8(blocks,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = offset, .end = offset + (size_t)8U })).ptr,
-      (size_t)8U * sizeof (uint8_t));
+      (size_t)8U * ଆକାର (uint8_t));
     Eurydice_array_u8x8
     uu____0 =
       core_result_unwrap_26_e0((
           KRML_CLITERAL(core_result_Result_8e){ .tag = core_result_Ok, .val = { .case_Ok = arr } }
         ));
-    state_flat.data[i0] = core_num__u64__from_le_bytes(uu____0);
+    state_flat.data[i0] = core_ଅଙ୍କ_u64_from_le_bytes(uu____0);
   }
-  for (size_t i = (size_t)0U; i < (size_t)72U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)72U / (size_t)8U; i++)
   {
     size_t i0 = i;
     libcrux_sha3_traits_set_ij_71(state,
@@ -6941,14 +6941,14 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block_a1
 with const generics
 - RATE= 72
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_a1_c6(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_c6(self, input->data[0U], start);
+  libcrux_sha3_simd_portable_load_block_c6(self, ନିବେଶ->data[0U], start);
 }
 
 /**
@@ -6961,14 +6961,14 @@ with const generics
 - N= 1
 - RATE= 72
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_block_80_e91(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_a1_c6(self, input, start);
+  libcrux_sha3_simd_portable_load_block_a1_c6(self, ନିବେଶ, start);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
@@ -6978,7 +6978,7 @@ with const generics
 - RATE= 72
 - DELIMITER= 6
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_dc(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -7009,15 +7009,15 @@ with const generics
 - RATE= 72
 - DELIMITER= 6
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_a1_dc(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_dc(self, input->data[0U], start, len);
+  libcrux_sha3_simd_portable_load_last_dc(self, ନିବେଶ->data[0U], start, len);
 }
 
 /**
@@ -7031,15 +7031,15 @@ with const generics
 - RATE= 72
 - DELIM= 6
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_final_80_bd1(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_a1_dc(self, input, start, len);
+  libcrux_sha3_simd_portable_load_last_a1_dc(self, ନିବେଶ, start, len);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
@@ -7048,21 +7048,21 @@ A monomorphic instance of libcrux_sha3.simd.portable.store_block
 with const generics
 - RATE= 72
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_store_block_c6(
-  const Eurydice_arr_7c *s,
+  ଅଚଳ Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
 )
 {
   size_t octets = len / (size_t)8U;
-  for (size_t i = (size_t)0U; i < octets; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < octets; i++)
   {
     size_t i0 = i;
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           i0 / (size_t)5U,
           i0 % (size_t)5U)[0U]);
     size_t out_pos = start + (size_t)8U * i0;
@@ -7072,11 +7072,11 @@ libcrux_sha3_simd_portable_store_block_c6(
       uint8_t);
   }
   size_t remaining = len % (size_t)8U;
-  if (remaining > (size_t)0U)
+  ଯଦି (remaining > (size_t)0U)
   {
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           octets / (size_t)5U,
           octets % (size_t)5U)[0U]);
     size_t out_pos = start + len - remaining;
@@ -7098,9 +7098,9 @@ A monomorphic instance of libcrux_sha3.simd.portable.squeeze_9b
 with const generics
 - RATE= 72
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_squeeze_9b_c6(
-  const Eurydice_arr_7c *self,
+  ଅଚଳ Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
@@ -7115,43 +7115,43 @@ with const generics
 - RATE= 72
 - DELIM= 6
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_keccak1_dc(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_mut_borrow_slice_u8 output
 )
 {
   Eurydice_arr_7c s = libcrux_sha3_generic_keccak_new_80_71();
-  size_t input_len = input.meta;
-  size_t input_blocks = input_len / (size_t)72U;
-  size_t input_rem = input_len % (size_t)72U;
-  for (size_t i = (size_t)0U; i < input_blocks; i++)
+  size_t ନିବେଶ_len = ନିବେଶ.meta;
+  size_t ନିବେଶ_blocks = ନିବେଶ_len / (size_t)72U;
+  size_t ନିବେଶ_rem = ନିବେଶ_len % (size_t)72U;
+  ପାଇଁ (size_t i = (size_t)0U; i < ନିବେଶ_blocks; i++)
   {
     size_t i0 = i;
     /* original Rust expression is not an lvalue in C */
-    Eurydice_arr_dc lvalue = { .data = { input } };
+    Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
     libcrux_sha3_generic_keccak_absorb_block_80_e91(&s, &lvalue, i0 * (size_t)72U);
   }
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
-  libcrux_sha3_generic_keccak_absorb_final_80_bd1(&s, &lvalue, input_len - input_rem, input_rem);
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
+  libcrux_sha3_generic_keccak_absorb_final_80_bd1(&s, &lvalue, ନିବେଶ_len - ନିବେଶ_rem, ନିବେଶ_rem);
   size_t output_len = output.meta;
   size_t output_blocks = output_len / (size_t)72U;
   size_t output_rem = output_len % (size_t)72U;
-  if (output_blocks == (size_t)0U)
+  ଯଦି (output_blocks == (size_t)0U)
   {
     libcrux_sha3_simd_portable_squeeze_9b_c6(&s, output, (size_t)0U, output_len);
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_sha3_simd_portable_squeeze_9b_c6(&s, output, (size_t)0U, (size_t)72U);
-    for (size_t i = (size_t)1U; i < output_blocks; i++)
+    ପାଇଁ (size_t i = (size_t)1U; i < output_blocks; i++)
     {
       size_t i0 = i;
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_c6(&s, output, i0 * (size_t)72U, (size_t)72U);
     }
-    if (output_rem != (size_t)0U)
+    ଯଦି (output_rem != (size_t)0U)
     {
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_c6(&s, output, output_len - output_rem, output_rem);
@@ -7162,7 +7162,7 @@ libcrux_sha3_generic_keccak_portable_keccak1_dc(
 /**
  A portable SHA3 512 implementation.
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_sha512(
   Eurydice_mut_borrow_slice_u8 digest,
   Eurydice_borrow_slice_u8 data
@@ -7177,7 +7177,7 @@ with const generics
 - RATE= 136
 - DELIMITER= 6
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_220(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -7208,15 +7208,15 @@ with const generics
 - RATE= 136
 - DELIMITER= 6
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_a1_220(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_220(self, input->data[0U], start, len);
+  libcrux_sha3_simd_portable_load_last_220(self, ନିବେଶ->data[0U], start, len);
 }
 
 /**
@@ -7230,15 +7230,15 @@ with const generics
 - RATE= 136
 - DELIM= 6
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_final_80_bd2(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_a1_220(self, input, start, len);
+  libcrux_sha3_simd_portable_load_last_a1_220(self, ନିବେଶ, start, len);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
@@ -7248,43 +7248,43 @@ with const generics
 - RATE= 136
 - DELIM= 6
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_keccak1_220(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_mut_borrow_slice_u8 output
 )
 {
   Eurydice_arr_7c s = libcrux_sha3_generic_keccak_new_80_71();
-  size_t input_len = input.meta;
-  size_t input_blocks = input_len / (size_t)136U;
-  size_t input_rem = input_len % (size_t)136U;
-  for (size_t i = (size_t)0U; i < input_blocks; i++)
+  size_t ନିବେଶ_len = ନିବେଶ.meta;
+  size_t ନିବେଶ_blocks = ନିବେଶ_len / (size_t)136U;
+  size_t ନିବେଶ_rem = ନିବେଶ_len % (size_t)136U;
+  ପାଇଁ (size_t i = (size_t)0U; i < ନିବେଶ_blocks; i++)
   {
     size_t i0 = i;
     /* original Rust expression is not an lvalue in C */
-    Eurydice_arr_dc lvalue = { .data = { input } };
+    Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
     libcrux_sha3_generic_keccak_absorb_block_80_e90(&s, &lvalue, i0 * (size_t)136U);
   }
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
-  libcrux_sha3_generic_keccak_absorb_final_80_bd2(&s, &lvalue, input_len - input_rem, input_rem);
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
+  libcrux_sha3_generic_keccak_absorb_final_80_bd2(&s, &lvalue, ନିବେଶ_len - ନିବେଶ_rem, ନିବେଶ_rem);
   size_t output_len = output.meta;
   size_t output_blocks = output_len / (size_t)136U;
   size_t output_rem = output_len % (size_t)136U;
-  if (output_blocks == (size_t)0U)
+  ଯଦି (output_blocks == (size_t)0U)
   {
     libcrux_sha3_simd_portable_squeeze_9b_b2(&s, output, (size_t)0U, output_len);
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_sha3_simd_portable_squeeze_9b_b2(&s, output, (size_t)0U, (size_t)136U);
-    for (size_t i = (size_t)1U; i < output_blocks; i++)
+    ପାଇଁ (size_t i = (size_t)1U; i < output_blocks; i++)
     {
       size_t i0 = i;
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_b2(&s, output, i0 * (size_t)136U, (size_t)136U);
     }
-    if (output_rem != (size_t)0U)
+    ଯଦି (output_rem != (size_t)0U)
     {
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_b2(&s, output, output_len - output_rem, output_rem);
@@ -7295,7 +7295,7 @@ libcrux_sha3_generic_keccak_portable_keccak1_220(
 /**
  A portable SHA3 256 implementation.
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_sha256(
   Eurydice_mut_borrow_slice_u8 digest,
   Eurydice_borrow_slice_u8 data
@@ -7312,7 +7312,7 @@ A monomorphic instance of libcrux_sha3.generic_keccak.portable.squeeze_first_thr
 with const generics
 - RATE= 168
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_squeeze_first_three_blocks_b4_60(
   Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out
@@ -7328,7 +7328,7 @@ libcrux_sha3_generic_keccak_portable_squeeze_first_three_blocks_b4_60(
 /**
  Squeeze three blocks
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_shake128_squeeze_first_three_blocks(
   Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out0
@@ -7342,7 +7342,7 @@ libcrux_sha3_portable_incremental_shake128_squeeze_first_three_blocks(
 #define libcrux_sha3_Algorithm_Sha384 3
 #define libcrux_sha3_Algorithm_Sha512 4
 
-typedef uint8_t libcrux_sha3_Algorithm;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା uint8_t libcrux_sha3_Algorithm;
 
 #define LIBCRUX_SHA3_SHA3_224_DIGEST_SIZE ((size_t)28U)
 
@@ -7355,33 +7355,33 @@ typedef uint8_t libcrux_sha3_Algorithm;
 /**
  Returns the output size of a digest.
 */
-static inline size_t libcrux_sha3_digest_size(libcrux_sha3_Algorithm mode)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t libcrux_sha3_digest_size(libcrux_sha3_Algorithm mode)
 {
-  switch (mode)
+  ବାଛ (mode)
   {
-    case libcrux_sha3_Algorithm_Sha224:
+    ସ୍ଥିତି libcrux_sha3_Algorithm_Sha224:
       {
-        break;
+        ଭାଙ୍ଗ;
       }
-    case libcrux_sha3_Algorithm_Sha256:
+    ସ୍ଥିତି libcrux_sha3_Algorithm_Sha256:
       {
-        return LIBCRUX_SHA3_SHA3_256_DIGEST_SIZE;
+        ଫେରନ୍ତୁ LIBCRUX_SHA3_SHA3_256_DIGEST_SIZE;
       }
-    case libcrux_sha3_Algorithm_Sha384:
+    ସ୍ଥିତି libcrux_sha3_Algorithm_Sha384:
       {
-        return LIBCRUX_SHA3_SHA3_384_DIGEST_SIZE;
+        ଫେରନ୍ତୁ LIBCRUX_SHA3_SHA3_384_DIGEST_SIZE;
       }
-    case libcrux_sha3_Algorithm_Sha512:
+    ସ୍ଥିତି libcrux_sha3_Algorithm_Sha512:
       {
-        return LIBCRUX_SHA3_SHA3_512_DIGEST_SIZE;
+        ଫେରନ୍ତୁ LIBCRUX_SHA3_SHA3_512_DIGEST_SIZE;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL incomplete match at %s:%d\n", __FILE__, __LINE__);
         KRML_HOST_EXIT(253U);
       }
   }
-  return LIBCRUX_SHA3_SHA3_224_DIGEST_SIZE;
+  ଫେରନ୍ତୁ LIBCRUX_SHA3_SHA3_224_DIGEST_SIZE;
 }
 
 /**
@@ -7389,7 +7389,7 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block
 with const generics
 - RATE= 144
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_9e(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -7397,7 +7397,7 @@ libcrux_sha3_simd_portable_load_block_9e(
 )
 {
   Eurydice_arr_7c state_flat = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < (size_t)144U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)144U / (size_t)8U; i++)
   {
     size_t i0 = i;
     size_t offset = start + (size_t)8U * i0;
@@ -7405,15 +7405,15 @@ libcrux_sha3_simd_portable_load_block_9e(
     memcpy(arr.data,
       Eurydice_slice_subslice_shared_c8(blocks,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = offset, .end = offset + (size_t)8U })).ptr,
-      (size_t)8U * sizeof (uint8_t));
+      (size_t)8U * ଆକାର (uint8_t));
     Eurydice_array_u8x8
     uu____0 =
       core_result_unwrap_26_e0((
           KRML_CLITERAL(core_result_Result_8e){ .tag = core_result_Ok, .val = { .case_Ok = arr } }
         ));
-    state_flat.data[i0] = core_num__u64__from_le_bytes(uu____0);
+    state_flat.data[i0] = core_ଅଙ୍କ_u64_from_le_bytes(uu____0);
   }
-  for (size_t i = (size_t)0U; i < (size_t)144U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)144U / (size_t)8U; i++)
   {
     size_t i0 = i;
     libcrux_sha3_traits_set_ij_71(state,
@@ -7432,14 +7432,14 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block_a1
 with const generics
 - RATE= 144
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_a1_9e(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_9e(self, input->data[0U], start);
+  libcrux_sha3_simd_portable_load_block_9e(self, ନିବେଶ->data[0U], start);
 }
 
 /**
@@ -7452,14 +7452,14 @@ with const generics
 - N= 1
 - RATE= 144
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_block_80_e92(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_a1_9e(self, input, start);
+  libcrux_sha3_simd_portable_load_block_a1_9e(self, ନିବେଶ, start);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
@@ -7469,7 +7469,7 @@ with const generics
 - RATE= 144
 - DELIMITER= 6
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_3a(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -7500,15 +7500,15 @@ with const generics
 - RATE= 144
 - DELIMITER= 6
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_a1_3a(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_3a(self, input->data[0U], start, len);
+  libcrux_sha3_simd_portable_load_last_3a(self, ନିବେଶ->data[0U], start, len);
 }
 
 /**
@@ -7522,15 +7522,15 @@ with const generics
 - RATE= 144
 - DELIM= 6
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_final_80_bd3(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_a1_3a(self, input, start, len);
+  libcrux_sha3_simd_portable_load_last_a1_3a(self, ନିବେଶ, start, len);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
@@ -7539,21 +7539,21 @@ A monomorphic instance of libcrux_sha3.simd.portable.store_block
 with const generics
 - RATE= 144
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_store_block_9e(
-  const Eurydice_arr_7c *s,
+  ଅଚଳ Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
 )
 {
   size_t octets = len / (size_t)8U;
-  for (size_t i = (size_t)0U; i < octets; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < octets; i++)
   {
     size_t i0 = i;
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           i0 / (size_t)5U,
           i0 % (size_t)5U)[0U]);
     size_t out_pos = start + (size_t)8U * i0;
@@ -7563,11 +7563,11 @@ libcrux_sha3_simd_portable_store_block_9e(
       uint8_t);
   }
   size_t remaining = len % (size_t)8U;
-  if (remaining > (size_t)0U)
+  ଯଦି (remaining > (size_t)0U)
   {
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           octets / (size_t)5U,
           octets % (size_t)5U)[0U]);
     size_t out_pos = start + len - remaining;
@@ -7589,9 +7589,9 @@ A monomorphic instance of libcrux_sha3.simd.portable.squeeze_9b
 with const generics
 - RATE= 144
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_squeeze_9b_9e(
-  const Eurydice_arr_7c *self,
+  ଅଚଳ Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
@@ -7606,43 +7606,43 @@ with const generics
 - RATE= 144
 - DELIM= 6
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_keccak1_3a(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_mut_borrow_slice_u8 output
 )
 {
   Eurydice_arr_7c s = libcrux_sha3_generic_keccak_new_80_71();
-  size_t input_len = input.meta;
-  size_t input_blocks = input_len / (size_t)144U;
-  size_t input_rem = input_len % (size_t)144U;
-  for (size_t i = (size_t)0U; i < input_blocks; i++)
+  size_t ନିବେଶ_len = ନିବେଶ.meta;
+  size_t ନିବେଶ_blocks = ନିବେଶ_len / (size_t)144U;
+  size_t ନିବେଶ_rem = ନିବେଶ_len % (size_t)144U;
+  ପାଇଁ (size_t i = (size_t)0U; i < ନିବେଶ_blocks; i++)
   {
     size_t i0 = i;
     /* original Rust expression is not an lvalue in C */
-    Eurydice_arr_dc lvalue = { .data = { input } };
+    Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
     libcrux_sha3_generic_keccak_absorb_block_80_e92(&s, &lvalue, i0 * (size_t)144U);
   }
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
-  libcrux_sha3_generic_keccak_absorb_final_80_bd3(&s, &lvalue, input_len - input_rem, input_rem);
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
+  libcrux_sha3_generic_keccak_absorb_final_80_bd3(&s, &lvalue, ନିବେଶ_len - ନିବେଶ_rem, ନିବେଶ_rem);
   size_t output_len = output.meta;
   size_t output_blocks = output_len / (size_t)144U;
   size_t output_rem = output_len % (size_t)144U;
-  if (output_blocks == (size_t)0U)
+  ଯଦି (output_blocks == (size_t)0U)
   {
     libcrux_sha3_simd_portable_squeeze_9b_9e(&s, output, (size_t)0U, output_len);
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_sha3_simd_portable_squeeze_9b_9e(&s, output, (size_t)0U, (size_t)144U);
-    for (size_t i = (size_t)1U; i < output_blocks; i++)
+    ପାଇଁ (size_t i = (size_t)1U; i < output_blocks; i++)
     {
       size_t i0 = i;
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_9e(&s, output, i0 * (size_t)144U, (size_t)144U);
     }
-    if (output_rem != (size_t)0U)
+    ଯଦି (output_rem != (size_t)0U)
     {
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_9e(&s, output, output_len - output_rem, output_rem);
@@ -7653,7 +7653,7 @@ libcrux_sha3_generic_keccak_portable_keccak1_3a(
 /**
  A portable SHA3 224 implementation.
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_sha224(
   Eurydice_mut_borrow_slice_u8 digest,
   Eurydice_borrow_slice_u8 data
@@ -7667,7 +7667,7 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block
 with const generics
 - RATE= 104
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_53(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -7675,7 +7675,7 @@ libcrux_sha3_simd_portable_load_block_53(
 )
 {
   Eurydice_arr_7c state_flat = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < (size_t)104U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)104U / (size_t)8U; i++)
   {
     size_t i0 = i;
     size_t offset = start + (size_t)8U * i0;
@@ -7683,15 +7683,15 @@ libcrux_sha3_simd_portable_load_block_53(
     memcpy(arr.data,
       Eurydice_slice_subslice_shared_c8(blocks,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = offset, .end = offset + (size_t)8U })).ptr,
-      (size_t)8U * sizeof (uint8_t));
+      (size_t)8U * ଆକାର (uint8_t));
     Eurydice_array_u8x8
     uu____0 =
       core_result_unwrap_26_e0((
           KRML_CLITERAL(core_result_Result_8e){ .tag = core_result_Ok, .val = { .case_Ok = arr } }
         ));
-    state_flat.data[i0] = core_num__u64__from_le_bytes(uu____0);
+    state_flat.data[i0] = core_ଅଙ୍କ_u64_from_le_bytes(uu____0);
   }
-  for (size_t i = (size_t)0U; i < (size_t)104U / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)104U / (size_t)8U; i++)
   {
     size_t i0 = i;
     libcrux_sha3_traits_set_ij_71(state,
@@ -7710,14 +7710,14 @@ A monomorphic instance of libcrux_sha3.simd.portable.load_block_a1
 with const generics
 - RATE= 104
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_block_a1_53(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_53(self, input->data[0U], start);
+  libcrux_sha3_simd_portable_load_block_53(self, ନିବେଶ->data[0U], start);
 }
 
 /**
@@ -7730,14 +7730,14 @@ with const generics
 - N= 1
 - RATE= 104
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_block_80_e93(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start
 )
 {
-  libcrux_sha3_simd_portable_load_block_a1_53(self, input, start);
+  libcrux_sha3_simd_portable_load_block_a1_53(self, ନିବେଶ, start);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
@@ -7747,7 +7747,7 @@ with const generics
 - RATE= 104
 - DELIMITER= 6
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_dc0(
   Eurydice_arr_7c *state,
   Eurydice_borrow_slice_u8 blocks,
@@ -7778,15 +7778,15 @@ with const generics
 - RATE= 104
 - DELIMITER= 6
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_load_last_a1_dc0(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_dc0(self, input->data[0U], start, len);
+  libcrux_sha3_simd_portable_load_last_dc0(self, ନିବେଶ->data[0U], start, len);
 }
 
 /**
@@ -7800,15 +7800,15 @@ with const generics
 - RATE= 104
 - DELIM= 6
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_absorb_final_80_bd4(
   Eurydice_arr_7c *self,
-  const Eurydice_arr_dc *input,
+  ଅଚଳ Eurydice_arr_dc *ନିବେଶ,
   size_t start,
   size_t len
 )
 {
-  libcrux_sha3_simd_portable_load_last_a1_dc0(self, input, start, len);
+  libcrux_sha3_simd_portable_load_last_a1_dc0(self, ନିବେଶ, start, len);
   libcrux_sha3_generic_keccak_keccakf1600_80_71(self);
 }
 
@@ -7817,21 +7817,21 @@ A monomorphic instance of libcrux_sha3.simd.portable.store_block
 with const generics
 - RATE= 104
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_store_block_53(
-  const Eurydice_arr_7c *s,
+  ଅଚଳ Eurydice_arr_7c *s,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
 )
 {
   size_t octets = len / (size_t)8U;
-  for (size_t i = (size_t)0U; i < octets; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < octets; i++)
   {
     size_t i0 = i;
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           i0 / (size_t)5U,
           i0 % (size_t)5U)[0U]);
     size_t out_pos = start + (size_t)8U * i0;
@@ -7841,11 +7841,11 @@ libcrux_sha3_simd_portable_store_block_53(
       uint8_t);
   }
   size_t remaining = len % (size_t)8U;
-  if (remaining > (size_t)0U)
+  ଯଦି (remaining > (size_t)0U)
   {
     Eurydice_array_u8x8
     bytes =
-      core_num__u64__to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
+      core_ଅଙ୍କ_u64_to_le_bytes(libcrux_sha3_traits_get_ij_71(s,
           octets / (size_t)5U,
           octets % (size_t)5U)[0U]);
     size_t out_pos = start + len - remaining;
@@ -7867,9 +7867,9 @@ A monomorphic instance of libcrux_sha3.simd.portable.squeeze_9b
 with const generics
 - RATE= 104
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_simd_portable_squeeze_9b_53(
-  const Eurydice_arr_7c *self,
+  ଅଚଳ Eurydice_arr_7c *self,
   Eurydice_mut_borrow_slice_u8 out,
   size_t start,
   size_t len
@@ -7884,43 +7884,43 @@ with const generics
 - RATE= 104
 - DELIM= 6
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_portable_keccak1_dc0(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_mut_borrow_slice_u8 output
 )
 {
   Eurydice_arr_7c s = libcrux_sha3_generic_keccak_new_80_71();
-  size_t input_len = input.meta;
-  size_t input_blocks = input_len / (size_t)104U;
-  size_t input_rem = input_len % (size_t)104U;
-  for (size_t i = (size_t)0U; i < input_blocks; i++)
+  size_t ନିବେଶ_len = ନିବେଶ.meta;
+  size_t ନିବେଶ_blocks = ନିବେଶ_len / (size_t)104U;
+  size_t ନିବେଶ_rem = ନିବେଶ_len % (size_t)104U;
+  ପାଇଁ (size_t i = (size_t)0U; i < ନିବେଶ_blocks; i++)
   {
     size_t i0 = i;
     /* original Rust expression is not an lvalue in C */
-    Eurydice_arr_dc lvalue = { .data = { input } };
+    Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
     libcrux_sha3_generic_keccak_absorb_block_80_e93(&s, &lvalue, i0 * (size_t)104U);
   }
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
-  libcrux_sha3_generic_keccak_absorb_final_80_bd4(&s, &lvalue, input_len - input_rem, input_rem);
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
+  libcrux_sha3_generic_keccak_absorb_final_80_bd4(&s, &lvalue, ନିବେଶ_len - ନିବେଶ_rem, ନିବେଶ_rem);
   size_t output_len = output.meta;
   size_t output_blocks = output_len / (size_t)104U;
   size_t output_rem = output_len % (size_t)104U;
-  if (output_blocks == (size_t)0U)
+  ଯଦି (output_blocks == (size_t)0U)
   {
     libcrux_sha3_simd_portable_squeeze_9b_53(&s, output, (size_t)0U, output_len);
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_sha3_simd_portable_squeeze_9b_53(&s, output, (size_t)0U, (size_t)104U);
-    for (size_t i = (size_t)1U; i < output_blocks; i++)
+    ପାଇଁ (size_t i = (size_t)1U; i < output_blocks; i++)
     {
       size_t i0 = i;
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_53(&s, output, i0 * (size_t)104U, (size_t)104U);
     }
-    if (output_rem != (size_t)0U)
+    ଯଦି (output_rem != (size_t)0U)
     {
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&s);
       libcrux_sha3_simd_portable_squeeze_9b_53(&s, output, output_len - output_rem, output_rem);
@@ -7931,7 +7931,7 @@ libcrux_sha3_generic_keccak_portable_keccak1_dc0(
 /**
  A portable SHA3 384 implementation.
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_portable_sha384(
   Eurydice_mut_borrow_slice_u8 digest,
   Eurydice_borrow_slice_u8 data
@@ -7946,7 +7946,7 @@ libcrux_sha3_portable_sha384(
  Preconditions:
  - `digest.len() == 28`
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_sha224_ema(Eurydice_mut_borrow_slice_u8 digest, Eurydice_borrow_slice_u8 payload)
 {
   libcrux_sha3_portable_sha224(digest, payload);
@@ -7955,17 +7955,17 @@ libcrux_sha3_sha224_ema(Eurydice_mut_borrow_slice_u8 digest, Eurydice_borrow_sli
 /**
  SHA3 224
 */
-static inline Eurydice_arr_a2 libcrux_sha3_sha224(Eurydice_borrow_slice_u8 data)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_a2 libcrux_sha3_sha224(Eurydice_borrow_slice_u8 data)
 {
   Eurydice_arr_a2 out = { .data = { 0U } };
   libcrux_sha3_sha224_ema(Eurydice_array_to_slice_mut_5e(&out), data);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
  SHA3 256
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_sha256_ema(Eurydice_mut_borrow_slice_u8 digest, Eurydice_borrow_slice_u8 payload)
 {
   libcrux_sha3_portable_sha256(digest, payload);
@@ -7974,17 +7974,17 @@ libcrux_sha3_sha256_ema(Eurydice_mut_borrow_slice_u8 digest, Eurydice_borrow_sli
 /**
  SHA3 256
 */
-static inline Eurydice_arr_ec libcrux_sha3_sha256(Eurydice_borrow_slice_u8 data)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ec libcrux_sha3_sha256(Eurydice_borrow_slice_u8 data)
 {
   Eurydice_arr_ec out = { .data = { 0U } };
   libcrux_sha3_sha256_ema(Eurydice_array_to_slice_mut_01(&out), data);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
  SHA3 384
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_sha384_ema(Eurydice_mut_borrow_slice_u8 digest, Eurydice_borrow_slice_u8 payload)
 {
   libcrux_sha3_portable_sha384(digest, payload);
@@ -7993,17 +7993,17 @@ libcrux_sha3_sha384_ema(Eurydice_mut_borrow_slice_u8 digest, Eurydice_borrow_sli
 /**
  SHA3 384
 */
-static inline Eurydice_arr_65 libcrux_sha3_sha384(Eurydice_borrow_slice_u8 data)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_65 libcrux_sha3_sha384(Eurydice_borrow_slice_u8 data)
 {
   Eurydice_arr_65 out = { .data = { 0U } };
   libcrux_sha3_sha384_ema(Eurydice_array_to_slice_mut_9f(&out), data);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
  SHA3 512
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_sha512_ema(Eurydice_mut_borrow_slice_u8 digest, Eurydice_borrow_slice_u8 payload)
 {
   libcrux_sha3_portable_sha512(digest, payload);
@@ -8012,11 +8012,11 @@ libcrux_sha3_sha512_ema(Eurydice_mut_borrow_slice_u8 digest, Eurydice_borrow_sli
 /**
  SHA3 512
 */
-static inline Eurydice_arr_c7 libcrux_sha3_sha512(Eurydice_borrow_slice_u8 data)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_c7 libcrux_sha3_sha512(Eurydice_borrow_slice_u8 data)
 {
   Eurydice_arr_c7 out = { .data = { 0U } };
   libcrux_sha3_sha512_ema(Eurydice_array_to_slice_mut_17(&out), data);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -8024,7 +8024,7 @@ static inline Eurydice_arr_c7 libcrux_sha3_sha512(Eurydice_borrow_slice_u8 data)
 
  Writes `out.len()` bytes.
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_shake128_ema(Eurydice_mut_borrow_slice_u8 out, Eurydice_borrow_slice_u8 data)
 {
   libcrux_sha3_portable_shake128(out, data);
@@ -8035,7 +8035,7 @@ libcrux_sha3_shake128_ema(Eurydice_mut_borrow_slice_u8 out, Eurydice_borrow_slic
 
  Writes `out.len()` bytes.
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_shake256_ema(Eurydice_mut_borrow_slice_u8 out, Eurydice_borrow_slice_u8 data)
 {
   libcrux_sha3_portable_shake256(out, data);
@@ -8048,7 +8048,7 @@ with const generics
 - $1size_t
 - $168size_t
 */
-typedef struct libcrux_sha3_generic_keccak_xof_KeccakXofState_55_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_sha3_generic_keccak_xof_KeccakXofState_55_s
 {
   Eurydice_arr_7c inner;
   Eurydice_arr_88 buf;
@@ -8057,7 +8057,7 @@ typedef struct libcrux_sha3_generic_keccak_xof_KeccakXofState_55_s
 }
 libcrux_sha3_generic_keccak_xof_KeccakXofState_55;
 
-typedef libcrux_sha3_generic_keccak_xof_KeccakXofState_55
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_sha3_generic_keccak_xof_KeccakXofState_55
 libcrux_sha3_portable_incremental_Shake128Xof;
 
 /**
@@ -8090,20 +8090,20 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 168
 */
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_sha3_generic_keccak_xof_fill_buffer_35_e90(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_55 *self,
-  const Eurydice_arr_dc *inputs
+  ଅଚଳ Eurydice_arr_dc *inputs
 )
 {
-  size_t input_len = inputs->data->meta;
+  size_t ନିବେଶ_len = inputs->data->meta;
   size_t uu____0;
-  if (self->buf_len != (size_t)0U)
+  ଯଦି (self->buf_len != (size_t)0U)
   {
-    if (input_len >= (size_t)168U - self->buf_len)
+    ଯଦି (ନିବେଶ_len >= (size_t)168U - self->buf_len)
     {
       size_t consumed = (size_t)168U - self->buf_len;
-      for (size_t i = (size_t)0U; i < (size_t)1U; i++)
+      ପାଇଁ (size_t i = (size_t)0U; i < (size_t)1U; i++)
       {
         size_t i0 = i;
         Eurydice_slice_copy(Eurydice_array_to_subslice_from_mut_5f0(&self->buf.data[i0],
@@ -8114,16 +8114,16 @@ libcrux_sha3_generic_keccak_xof_fill_buffer_35_e90(
       self->buf_len = (size_t)168U;
       uu____0 = consumed;
     }
-    else
+    ଅନ୍ୟଥା
     {
       uu____0 = (size_t)0U;
     }
   }
-  else
+  ଅନ୍ୟଥା
   {
     uu____0 = (size_t)0U;
   }
-  return uu____0;
+  ଫେରନ୍ତୁ uu____0;
 }
 
 /**
@@ -8132,7 +8132,7 @@ with const generics
 - $1size_t
 - $168size_t
 */
-typedef const Eurydice_arr_88 *libcrux_sha3_generic_keccak_xof_buf_to_slices_closure_48;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଅଚଳ Eurydice_arr_88 *libcrux_sha3_generic_keccak_xof_buf_to_slices_closure_48;
 
 /**
 This function found in impl {core::ops::function::FnMut<(usize), &'_ ([u8])> for libcrux_sha3::generic_keccak::xof::buf_to_slices::closure<0, PARALLEL_LANES, RATE>}
@@ -8143,14 +8143,14 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 168
 */
-static inline Eurydice_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
 libcrux_sha3_generic_keccak_xof_buf_to_slices_call_mut_2a_810(
-  const Eurydice_arr_88 **_,
+  ଅଚଳ Eurydice_arr_88 **_,
   size_t tupled_args
 )
 {
   size_t i = tupled_args;
-  return
+  ଫେରନ୍ତୁ
     core_array___T__N___as_slice((size_t)168U,
       &_[0U]->data[i],
       uint8_t,
@@ -8166,13 +8166,13 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 168
 */
-static inline Eurydice_borrow_slice_u8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
 libcrux_sha3_generic_keccak_xof_buf_to_slices_call_once_fa_810(
-  const Eurydice_arr_88 *_,
+  ଅଚଳ Eurydice_arr_88 *_,
   size_t _0
 )
 {
-  return libcrux_sha3_generic_keccak_xof_buf_to_slices_call_mut_2a_810(&_, _0);
+  ଫେରନ୍ତୁ libcrux_sha3_generic_keccak_xof_buf_to_slices_call_mut_2a_810(&_, _0);
 }
 
 /**
@@ -8188,15 +8188,15 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 168
 */
-static KRML_MUSTINLINE Eurydice_arr_dc
-libcrux_sha3_generic_keccak_xof_buf_to_slices_810(const Eurydice_arr_88 *buf)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_dc
+libcrux_sha3_generic_keccak_xof_buf_to_slices_810(ଅଚଳ Eurydice_arr_88 *buf)
 {
   Eurydice_arr_dc arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)1U; i++)
   {
     arr_struct.data[i] = libcrux_sha3_generic_keccak_xof_buf_to_slices_call_mut_2a_810(&buf, i);
   }
-  return arr_struct;
+  ଫେରନ୍ତୁ arr_struct;
 }
 
 /**
@@ -8209,31 +8209,31 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 168
 */
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_sha3_generic_keccak_xof_absorb_full_35_e90(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_55 *self,
-  const Eurydice_arr_dc *inputs
+  ଅଚଳ Eurydice_arr_dc *inputs
 )
 {
   size_t consumed = libcrux_sha3_generic_keccak_xof_fill_buffer_35_e90(self, inputs);
-  if (self->buf_len == (size_t)168U)
+  ଯଦି (self->buf_len == (size_t)168U)
   {
     Eurydice_arr_dc borrowed = libcrux_sha3_generic_keccak_xof_buf_to_slices_810(&self->buf);
     libcrux_sha3_simd_portable_load_block_a1_60(&self->inner, &borrowed, (size_t)0U);
     libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
     self->buf_len = (size_t)0U;
   }
-  size_t input_to_consume = inputs->data->meta - consumed;
-  size_t num_blocks = input_to_consume / (size_t)168U;
-  size_t remainder = input_to_consume % (size_t)168U;
-  for (size_t i = (size_t)0U; i < num_blocks; i++)
+  size_t ନିବେଶ_to_consume = inputs->data->meta - consumed;
+  size_t ଅଙ୍କ_blocks = ନିବେଶ_to_consume / (size_t)168U;
+  size_t remainder = ନିବେଶ_to_consume % (size_t)168U;
+  ପାଇଁ (size_t i = (size_t)0U; i < ଅଙ୍କ_blocks; i++)
   {
     size_t i0 = i;
     size_t start = i0 * (size_t)168U + consumed;
     libcrux_sha3_simd_portable_load_block_a1_60(&self->inner, inputs, start);
     libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
   }
-  return remainder;
+  ଫେରନ୍ତୁ remainder;
 }
 
 /**
@@ -8257,17 +8257,17 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 168
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_xof_absorb_35_e90(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_55 *self,
-  const Eurydice_arr_dc *inputs
+  ଅଚଳ Eurydice_arr_dc *inputs
 )
 {
   size_t remainder = libcrux_sha3_generic_keccak_xof_absorb_full_35_e90(self, inputs);
-  if (remainder > (size_t)0U)
+  ଯଦି (remainder > (size_t)0U)
   {
-    size_t input_len = inputs->data->meta;
-    for (size_t i = (size_t)0U; i < (size_t)1U; i++)
+    size_t ନିବେଶ_len = inputs->data->meta;
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)1U; i++)
     {
       size_t i0 = i;
       Eurydice_slice_copy(Eurydice_array_to_subslice_mut_d41(&self->buf.data[i0],
@@ -8280,8 +8280,8 @@ libcrux_sha3_generic_keccak_xof_absorb_35_e90(
         Eurydice_slice_subslice_shared_c8(inputs->data[i0],
           (
             KRML_CLITERAL(core_ops_range_Range_87){
-              .start = input_len - remainder,
-              .end = input_len
+              .start = ନିବେଶ_len - remainder,
+              .end = ନିବେଶ_len
             }
           )),
         uint8_t);
@@ -8293,14 +8293,14 @@ libcrux_sha3_generic_keccak_xof_absorb_35_e90(
 /**
 This function found in impl {libcrux_sha3::portable::incremental::Xof<168usize> for libcrux_sha3::portable::incremental::Shake128Xof}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_absorb_26(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_55 *self,
-  Eurydice_borrow_slice_u8 input
+  Eurydice_borrow_slice_u8 ନିବେଶ
 )
 {
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
   libcrux_sha3_generic_keccak_xof_absorb_35_e90(self, &lvalue);
 }
 
@@ -8321,10 +8321,10 @@ with const generics
 - RATE= 168
 - DELIMITER= 31
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_xof_absorb_final_35_bd0(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_55 *self,
-  const Eurydice_arr_dc *inputs
+  ଅଚଳ Eurydice_arr_dc *inputs
 )
 {
   libcrux_sha3_generic_keccak_xof_absorb_35_e90(self, inputs);
@@ -8336,14 +8336,14 @@ libcrux_sha3_generic_keccak_xof_absorb_final_35_bd0(
 /**
 This function found in impl {libcrux_sha3::portable::incremental::Xof<168usize> for libcrux_sha3::portable::incremental::Shake128Xof}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_absorb_final_26(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_55 *self,
-  Eurydice_borrow_slice_u8 input
+  Eurydice_borrow_slice_u8 ନିବେଶ
 )
 {
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_dc lvalue = { .data = { input } };
+  Eurydice_arr_dc lvalue = { .data = { ନିବେଶ } };
   libcrux_sha3_generic_keccak_xof_absorb_final_35_bd0(self, &lvalue);
 }
 
@@ -8360,9 +8360,9 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 168
 */
-static inline Eurydice_arr_c5 libcrux_sha3_generic_keccak_xof_zero_block_35_e90(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_c5 libcrux_sha3_generic_keccak_xof_zero_block_35_e90(ଶୂନ୍ୟ)
 {
-  return (KRML_CLITERAL(Eurydice_arr_c5){ .data = { 0U } });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_arr_c5){ .data = { 0U } });
 }
 
 /**
@@ -8378,29 +8378,29 @@ with const generics
 - PARALLEL_LANES= 1
 - RATE= 168
 */
-static inline libcrux_sha3_generic_keccak_xof_KeccakXofState_55
-libcrux_sha3_generic_keccak_xof_new_35_e90(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_sha3_generic_keccak_xof_KeccakXofState_55
+libcrux_sha3_generic_keccak_xof_new_35_e90(ଶୂନ୍ୟ)
 {
   libcrux_sha3_generic_keccak_xof_KeccakXofState_55 lit;
   lit.inner = libcrux_sha3_generic_keccak_new_80_71();
   Eurydice_arr_c5 repeat_expression[1U];
-  for (size_t i = (size_t)0U; i < (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)1U; i++)
   {
     repeat_expression[i] = libcrux_sha3_generic_keccak_xof_zero_block_35_e90();
   }
-  memcpy(lit.buf.data, repeat_expression, (size_t)1U * sizeof (Eurydice_arr_c5));
+  memcpy(lit.buf.data, repeat_expression, (size_t)1U * ଆକାର (Eurydice_arr_c5));
   lit.buf_len = (size_t)0U;
   lit.sponge = false;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
 This function found in impl {libcrux_sha3::portable::incremental::Xof<168usize> for libcrux_sha3::portable::incremental::Shake128Xof}
 */
-static inline libcrux_sha3_generic_keccak_xof_KeccakXofState_55
-libcrux_sha3_portable_incremental_new_26(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_sha3_generic_keccak_xof_KeccakXofState_55
+libcrux_sha3_portable_incremental_new_26(ଶୂନ୍ୟ)
 {
-  return libcrux_sha3_generic_keccak_xof_new_35_e90();
+  ଫେରନ୍ତୁ libcrux_sha3_generic_keccak_xof_new_35_e90();
 }
 
 /**
@@ -8415,31 +8415,31 @@ with types uint64_t
 with const generics
 - RATE= 168
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_sha3_generic_keccak_xof_squeeze_85_2a(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_55 *self,
   Eurydice_mut_borrow_slice_u8 out
 )
 {
   size_t out_len = out.meta;
-  if (!(out_len == (size_t)0U))
+  ଯଦି (!(out_len == (size_t)0U))
   {
-    if (self->sponge)
+    ଯଦି (self->sponge)
     {
       libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
     }
-    if (out_len > (size_t)0U)
+    ଯଦି (out_len > (size_t)0U)
     {
       size_t blocks = out_len / (size_t)168U;
       size_t last = out_len - out_len % (size_t)168U;
-      if (blocks == (size_t)0U)
+      ଯଦି (blocks == (size_t)0U)
       {
         libcrux_sha3_simd_portable_squeeze_9b_60(&self->inner, out, (size_t)0U, out_len);
       }
-      else
+      ଅନ୍ୟଥା
       {
         libcrux_sha3_simd_portable_squeeze_9b_60(&self->inner, out, (size_t)0U, (size_t)168U);
-        for (size_t i = (size_t)1U; i < blocks; i++)
+        ପାଇଁ (size_t i = (size_t)1U; i < blocks; i++)
         {
           size_t i0 = i;
           libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
@@ -8448,7 +8448,7 @@ libcrux_sha3_generic_keccak_xof_squeeze_85_2a(
             i0 * (size_t)168U,
             (size_t)168U);
         }
-        if (last < out_len)
+        ଯଦି (last < out_len)
         {
           libcrux_sha3_generic_keccak_keccakf1600_80_71(&self->inner);
           libcrux_sha3_simd_portable_squeeze_9b_60(&self->inner, out, last, out_len - last);
@@ -8465,7 +8465,7 @@ libcrux_sha3_generic_keccak_xof_squeeze_85_2a(
 /**
 This function found in impl {libcrux_sha3::portable::incremental::Xof<168usize> for libcrux_sha3::portable::incremental::Shake128Xof}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_sha3_portable_incremental_squeeze_26(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_55 *self,
   Eurydice_mut_borrow_slice_u8 out
@@ -8477,49 +8477,49 @@ libcrux_sha3_portable_incremental_squeeze_26(
 /**
 This function found in impl {core::clone::Clone for libcrux_sha3::portable::KeccakState}
 */
-static inline Eurydice_arr_7c libcrux_sha3_portable_clone_fe(const Eurydice_arr_7c *self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_7c libcrux_sha3_portable_clone_fe(ଅଚଳ Eurydice_arr_7c *self)
 {
-  return self[0U];
+  ଫେରନ୍ତୁ self[0U];
 }
 
 /**
 This function found in impl {core::clone::Clone for libcrux_sha3::Algorithm}
 */
-static inline libcrux_sha3_Algorithm libcrux_sha3_clone_e6(const libcrux_sha3_Algorithm *self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_sha3_Algorithm libcrux_sha3_clone_e6(ଅଚଳ libcrux_sha3_Algorithm *self)
 {
-  return self[0U];
+  ଫେରନ୍ତୁ self[0U];
 }
 
 /**
 This function found in impl {core::convert::From<libcrux_sha3::Algorithm> for u32}
 */
-static inline uint32_t libcrux_sha3_from_6c(libcrux_sha3_Algorithm v)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint32_t libcrux_sha3_from_6c(libcrux_sha3_Algorithm v)
 {
-  switch (v)
+  ବାଛ (v)
   {
-    case libcrux_sha3_Algorithm_Sha224:
+    ସ୍ଥିତି libcrux_sha3_Algorithm_Sha224:
       {
-        break;
+        ଭାଙ୍ଗ;
       }
-    case libcrux_sha3_Algorithm_Sha256:
+    ସ୍ଥିତି libcrux_sha3_Algorithm_Sha256:
       {
-        return 2U;
+        ଫେରନ୍ତୁ 2U;
       }
-    case libcrux_sha3_Algorithm_Sha384:
+    ସ୍ଥିତି libcrux_sha3_Algorithm_Sha384:
       {
-        return 3U;
+        ଫେରନ୍ତୁ 3U;
       }
-    case libcrux_sha3_Algorithm_Sha512:
+    ସ୍ଥିତି libcrux_sha3_Algorithm_Sha512:
       {
-        return 4U;
+        ଫେରନ୍ତୁ 4U;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL incomplete match at %s:%d\n", __FILE__, __LINE__);
         KRML_HOST_EXIT(253U);
       }
   }
-  return 1U;
+  ଫେରନ୍ତୁ 1U;
 }
 
 /**
@@ -8528,9 +8528,9 @@ with types libcrux_sha3_portable_KeccakState
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_1b0_s { Eurydice_arr_7c data[3U]; } Eurydice_arr_1b0;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_1b0_s { Eurydice_arr_7c data[3U]; } Eurydice_arr_1b0;
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -8557,8 +8557,8 @@ typedef struct Eurydice_arr_1b0_s { Eurydice_arr_7c data[3U]; } Eurydice_arr_1b0
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
 
@@ -8572,7 +8572,7 @@ extern "C" {
 
 #define LIBCRUX_ML_KEM_CONSTANTS_BYTES_PER_RING_ELEMENT (LIBCRUX_ML_KEM_CONSTANTS_BITS_PER_RING_ELEMENT / (size_t)8U)
 
-#define LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE ((size_t)32U)
+#define LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_ଚାବି_GENERATION_SEED_SIZE ((size_t)32U)
 
 #define LIBCRUX_ML_KEM_CONSTANTS_G_DIGEST_SIZE ((size_t)64U)
 
@@ -8584,107 +8584,107 @@ extern "C" {
  [eurydice] Note that we can't use const generics here because that breaks
             C extraction with eurydice.
 */
-static inline size_t libcrux_ml_kem_constants_ranked_bytes_per_ring_element(size_t rank)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t libcrux_ml_kem_constants_ranked_bytes_per_ring_element(size_t rank)
 {
-  return rank * LIBCRUX_ML_KEM_CONSTANTS_BITS_PER_RING_ELEMENT / (size_t)8U;
+  ଫେରନ୍ତୁ rank * LIBCRUX_ML_KEM_CONSTANTS_BITS_PER_RING_ELEMENT / (size_t)8U;
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for i16}
 */
-static KRML_MUSTINLINE uint8_t libcrux_secrets_int_as_u8_f5(int16_t self)
+ସ୍ଥିର KRML_MUSTINLINE uint8_t libcrux_secrets_int_as_u8_f5(int16_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_90((uint8_t)libcrux_secrets_int_public_integers_declassify_d8_39(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for u8}
 */
-static KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_59(uint8_t self)
+ସ୍ଥିର KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_59(uint8_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_39((int16_t)(uint32_t)libcrux_secrets_int_public_integers_declassify_d8_90(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for i16}
 */
-static KRML_MUSTINLINE int32_t libcrux_secrets_int_as_i32_f5(int16_t self)
+ସ୍ଥିର KRML_MUSTINLINE int32_t libcrux_secrets_int_as_i32_f5(int16_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_a8((int32_t)libcrux_secrets_int_public_integers_declassify_d8_39(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for i32}
 */
-static KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_36(int32_t self)
+ସ୍ଥିର KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_36(int32_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_39((int16_t)libcrux_secrets_int_public_integers_declassify_d8_a8(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for u32}
 */
-static KRML_MUSTINLINE int32_t libcrux_secrets_int_as_i32_b8(uint32_t self)
+ସ୍ଥିର KRML_MUSTINLINE int32_t libcrux_secrets_int_as_i32_b8(uint32_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_a8((int32_t)libcrux_secrets_int_public_integers_declassify_d8_df(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for i16}
 */
-static KRML_MUSTINLINE uint16_t libcrux_secrets_int_as_u16_f5(int16_t self)
+ସ୍ଥିର KRML_MUSTINLINE uint16_t libcrux_secrets_int_as_u16_f5(int16_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_de((uint16_t)libcrux_secrets_int_public_integers_declassify_d8_39(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for u16}
 */
-static KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_ca(uint16_t self)
+ସ୍ଥିର KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_ca(uint16_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_39((int16_t)(uint32_t)libcrux_secrets_int_public_integers_declassify_d8_de(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for u16}
 */
-static KRML_MUSTINLINE uint64_t libcrux_secrets_int_as_u64_ca(uint16_t self)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t libcrux_secrets_int_as_u64_ca(uint16_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_49((uint64_t)(uint32_t)libcrux_secrets_int_public_integers_declassify_d8_de(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for u64}
 */
-static KRML_MUSTINLINE uint32_t libcrux_secrets_int_as_u32_a3(uint64_t self)
+ସ୍ଥିର KRML_MUSTINLINE uint32_t libcrux_secrets_int_as_u32_a3(uint64_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_df((uint32_t)libcrux_secrets_int_public_integers_declassify_d8_49(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for u32}
 */
-static KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_b8(uint32_t self)
+ସ୍ଥିର KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_b8(uint32_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_39((int16_t)libcrux_secrets_int_public_integers_declassify_d8_df(self));
 }
 
 /**
 This function found in impl {libcrux_secrets::int::CastOps for i16}
 */
-static KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_f5(int16_t self)
+ସ୍ଥିର KRML_MUSTINLINE int16_t libcrux_secrets_int_as_i16_f5(int16_t self)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_39(libcrux_secrets_int_public_integers_declassify_d8_39(self));
 }
 
@@ -8696,7 +8696,7 @@ A monomorphic instance of libcrux_ml_kem.utils.into_padded_array
 with const generics
 - LEN= 32
 */
-static KRML_MUSTINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ec
 libcrux_ml_kem_utils_into_padded_array_ce(Eurydice_borrow_slice_u8 slice)
 {
   Eurydice_arr_ec out = { .data = { 0U } };
@@ -8704,7 +8704,7 @@ libcrux_ml_kem_utils_into_padded_array_ce(Eurydice_borrow_slice_u8 slice)
       (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)0U, .end = slice.meta })),
     slice,
     uint8_t);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -8715,9 +8715,9 @@ A monomorphic instance of libcrux_ml_kem.types.default_d3
 with const generics
 - SIZE= 2400
 */
-static inline Eurydice_arr_7d libcrux_ml_kem_types_default_d3_79(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_7d libcrux_ml_kem_types_default_d3_79(ଶୂନ୍ୟ)
 {
-  return (KRML_CLITERAL(Eurydice_arr_7d){ .data = { 0U } });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_arr_7d){ .data = { 0U } });
 }
 
 /**
@@ -8728,17 +8728,17 @@ A monomorphic instance of libcrux_ml_kem.types.from_51
 with const generics
 - SIZE= 1184
 */
-static inline Eurydice_arr_5f libcrux_ml_kem_types_from_51_3d(Eurydice_arr_5f value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_5f libcrux_ml_kem_types_from_51_3d(Eurydice_arr_5f ମୂଲ୍ୟ)
 {
-  return value;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ;
 }
 
-typedef struct libcrux_ml_kem_mlkem768_MlKem768KeyPair_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_kem_mlkem768_Ml_Kem768_ଚାବି_Pair_s
 {
   Eurydice_arr_7d sk;
   Eurydice_arr_5f pk;
 }
-libcrux_ml_kem_mlkem768_MlKem768KeyPair;
+libcrux_ml_kem_mlkem768_Ml_Kem768_ଚାବି_Pair;
 
 /**
  Create a new [`MlKemKeyPair`] from the secret and public key.
@@ -8752,10 +8752,10 @@ with const generics
 - PRIVATE_KEY_SIZE= 2400
 - PUBLIC_KEY_SIZE= 1184
 */
-static inline libcrux_ml_kem_mlkem768_MlKem768KeyPair
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_mlkem768_Ml_Kem768_ଚାବି_Pair
 libcrux_ml_kem_types_from_17_bc(Eurydice_arr_7d sk, Eurydice_arr_5f pk)
 {
-  return (KRML_CLITERAL(libcrux_ml_kem_mlkem768_MlKem768KeyPair){ .sk = sk, .pk = pk });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(libcrux_ml_kem_mlkem768_Ml_Kem768_ଚାବି_Pair){ .sk = sk, .pk = pk });
 }
 
 /**
@@ -8766,9 +8766,9 @@ A monomorphic instance of libcrux_ml_kem.types.from_b2
 with const generics
 - SIZE= 2400
 */
-static inline Eurydice_arr_7d libcrux_ml_kem_types_from_b2_79(Eurydice_arr_7d value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_7d libcrux_ml_kem_types_from_b2_79(Eurydice_arr_7d ମୂଲ୍ୟ)
 {
-  return value;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ;
 }
 
 /**
@@ -8776,7 +8776,7 @@ A monomorphic instance of n-tuple
 with types libcrux_ml_kem_mlkem768_MlKem768Ciphertext, Eurydice_arr_ec
 
 */
-typedef struct tuple_f4_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା tuple_f4_s
 {
   Eurydice_arr_2b fst;
   Eurydice_arr_ec snd;
@@ -8791,9 +8791,9 @@ A monomorphic instance of libcrux_ml_kem.types.from_19
 with const generics
 - SIZE= 1088
 */
-static inline Eurydice_arr_2b libcrux_ml_kem_types_from_19_52(Eurydice_arr_2b value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_2b libcrux_ml_kem_types_from_19_52(Eurydice_arr_2b ମୂଲ୍ୟ)
 {
-  return value;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ;
 }
 
 /**
@@ -8807,11 +8807,11 @@ A monomorphic instance of libcrux_ml_kem.types.as_slice_e6
 with const generics
 - SIZE= 1184
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_5f
-*libcrux_ml_kem_types_as_slice_e6_3d(const Eurydice_arr_5f *self)
+*libcrux_ml_kem_types_as_slice_e6_3d(ଅଚଳ Eurydice_arr_5f *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -8825,11 +8825,11 @@ A monomorphic instance of libcrux_ml_kem.types.as_slice_a9
 with const generics
 - SIZE= 1088
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_2b
-*libcrux_ml_kem_types_as_slice_a9_52(const Eurydice_arr_2b *self)
+*libcrux_ml_kem_types_as_slice_a9_52(ଅଚଳ Eurydice_arr_2b *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -8837,16 +8837,16 @@ A monomorphic instance of libcrux_ml_kem.utils.prf_input_inc
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE uint8_t
-libcrux_ml_kem_utils_prf_input_inc_78(Eurydice_arr_fd *prf_inputs, uint8_t domain_separator)
+ସ୍ଥିର KRML_MUSTINLINE uint8_t
+libcrux_ml_kem_utils_prf_ନିବେଶ_inc_78(Eurydice_arr_fd *prf_inputs, uint8_t domain_separator)
 {
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     prf_inputs->data[i0].data[32U] = domain_separator;
     domain_separator = (uint32_t)domain_separator + 1U;
   }
-  return domain_separator;
+  ଫେରନ୍ତୁ domain_separator;
 }
 
 /**
@@ -8857,7 +8857,7 @@ A monomorphic instance of libcrux_ml_kem.utils.into_padded_array
 with const generics
 - LEN= 33
 */
-static KRML_MUSTINLINE Eurydice_arr_fa0
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_fa0
 libcrux_ml_kem_utils_into_padded_array_29(Eurydice_borrow_slice_u8 slice)
 {
   Eurydice_arr_fa0 out = { .data = { 0U } };
@@ -8865,7 +8865,7 @@ libcrux_ml_kem_utils_into_padded_array_29(Eurydice_borrow_slice_u8 slice)
       (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)0U, .end = slice.meta })),
     slice,
     uint8_t);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -8876,7 +8876,7 @@ A monomorphic instance of libcrux_ml_kem.utils.into_padded_array
 with const generics
 - LEN= 34
 */
-static KRML_MUSTINLINE Eurydice_arr_31
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_31
 libcrux_ml_kem_utils_into_padded_array_de(Eurydice_borrow_slice_u8 slice)
 {
   Eurydice_arr_31 out = { .data = { 0U } };
@@ -8884,7 +8884,7 @@ libcrux_ml_kem_utils_into_padded_array_de(Eurydice_borrow_slice_u8 slice)
       (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)0U, .end = slice.meta })),
     slice,
     uint8_t);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -8895,10 +8895,10 @@ A monomorphic instance of libcrux_ml_kem.types.as_ref_c1
 with const generics
 - SIZE= 1088
 */
-static inline Eurydice_borrow_slice_u8
-libcrux_ml_kem_types_as_ref_c1_52(const Eurydice_arr_2b *self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+libcrux_ml_kem_types_as_ref_c1_52(ଅଚଳ Eurydice_arr_2b *self)
 {
-  return Eurydice_array_to_slice_shared_06(self);
+  ଫେରନ୍ତୁ Eurydice_array_to_slice_shared_06(self);
 }
 
 /**
@@ -8909,7 +8909,7 @@ A monomorphic instance of libcrux_ml_kem.utils.into_padded_array
 with const generics
 - LEN= 1120
 */
-static KRML_MUSTINLINE Eurydice_arr_af
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_af
 libcrux_ml_kem_utils_into_padded_array_66(Eurydice_borrow_slice_u8 slice)
 {
   Eurydice_arr_af out = { .data = { 0U } };
@@ -8917,7 +8917,7 @@ libcrux_ml_kem_utils_into_padded_array_66(Eurydice_borrow_slice_u8 slice)
       (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)0U, .end = slice.meta })),
     slice,
     uint8_t);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -8928,7 +8928,7 @@ A monomorphic instance of libcrux_ml_kem.utils.into_padded_array
 with const generics
 - LEN= 64
 */
-static KRML_MUSTINLINE Eurydice_arr_c7
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_c7
 libcrux_ml_kem_utils_into_padded_array_c9(Eurydice_borrow_slice_u8 slice)
 {
   Eurydice_arr_c7 out = { .data = { 0U } };
@@ -8936,10 +8936,10 @@ libcrux_ml_kem_utils_into_padded_array_c9(Eurydice_borrow_slice_u8 slice)
       (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)0U, .end = slice.meta })),
     slice,
     uint8_t);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
-typedef struct Eurydice_borrow_slice_u8_x4_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_borrow_slice_u8_x4_s
 {
   Eurydice_borrow_slice_u8 fst;
   Eurydice_borrow_slice_u8 snd;
@@ -8948,7 +8948,7 @@ typedef struct Eurydice_borrow_slice_u8_x4_s
 }
 Eurydice_borrow_slice_u8_x4;
 
-typedef struct Eurydice_borrow_slice_u8_x2_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_borrow_slice_u8_x2_s
 {
   Eurydice_borrow_slice_u8 fst;
   Eurydice_borrow_slice_u8 snd;
@@ -8966,16 +8966,16 @@ with const generics
 - CPA_SECRET_KEY_SIZE= 1152
 - PUBLIC_KEY_SIZE= 1184
 */
-static inline Eurydice_borrow_slice_u8_x4
-libcrux_ml_kem_types_unpack_private_key_64(Eurydice_borrow_slice_u8 private_key)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8_x4
+libcrux_ml_kem_types_unpack_private_ଚାବି_64(Eurydice_borrow_slice_u8 private_ଚାବି)
 {
   Eurydice_borrow_slice_u8_x2
   uu____0 =
-    Eurydice_slice_split_at(private_key,
+    Eurydice_slice_split_at(private_ଚାବି,
       (size_t)1152U,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
-  Eurydice_borrow_slice_u8 ind_cpa_secret_key = uu____0.fst;
+  Eurydice_borrow_slice_u8 ind_cpa_secret_ଚାବି = uu____0.fst;
   Eurydice_borrow_slice_u8 secret_key0 = uu____0.snd;
   Eurydice_borrow_slice_u8_x2
   uu____1 =
@@ -8983,28 +8983,28 @@ libcrux_ml_kem_types_unpack_private_key_64(Eurydice_borrow_slice_u8 private_key)
       (size_t)1184U,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
-  Eurydice_borrow_slice_u8 ind_cpa_public_key = uu____1.fst;
-  Eurydice_borrow_slice_u8 secret_key = uu____1.snd;
+  Eurydice_borrow_slice_u8 ind_cpa_public_ଚାବି = uu____1.fst;
+  Eurydice_borrow_slice_u8 secret_ଚାବି = uu____1.snd;
   Eurydice_borrow_slice_u8_x2
   uu____2 =
-    Eurydice_slice_split_at(secret_key,
+    Eurydice_slice_split_at(secret_ଚାବି,
       LIBCRUX_ML_KEM_CONSTANTS_H_DIGEST_SIZE,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
-  Eurydice_borrow_slice_u8 ind_cpa_public_key_hash = uu____2.fst;
-  Eurydice_borrow_slice_u8 implicit_rejection_value = uu____2.snd;
-  return
+  Eurydice_borrow_slice_u8 ind_cpa_public_ଚାବି_hash = uu____2.fst;
+  Eurydice_borrow_slice_u8 implicit_rejection_ମୂଲ୍ୟ = uu____2.snd;
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_borrow_slice_u8_x4){
-        .fst = ind_cpa_secret_key,
-        .snd = ind_cpa_public_key,
-        .thd = ind_cpa_public_key_hash,
-        .f3 = implicit_rejection_value
+        .fst = ind_cpa_secret_ଚାବି,
+        .snd = ind_cpa_public_ଚାବି,
+        .thd = ind_cpa_public_ଚାବି_hash,
+        .f3 = implicit_rejection_ମୂଲ୍ୟ
       }
     );
 }
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -9031,15 +9031,15 @@ libcrux_ml_kem_types_unpack_private_key_64(Eurydice_borrow_slice_u8 private_key)
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
 
 #define libcrux_ml_dsa_constants_Eta_Two 2
 #define libcrux_ml_dsa_constants_Eta_Four 4
 
-typedef uint8_t libcrux_ml_dsa_constants_Eta;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା uint8_t libcrux_ml_dsa_constants_Eta;
 
 #define LIBCRUX_ML_DSA_SIMD_TRAITS_COEFFICIENTS_IN_SIMD_UNIT ((size_t)8U)
 
@@ -9051,7 +9051,7 @@ typedef uint8_t libcrux_ml_dsa_constants_Eta;
 
 #define LIBCRUX_ML_DSA_CONSTANTS_BITS_IN_UPPER_PART_OF_T (LIBCRUX_ML_DSA_CONSTANTS_FIELD_MODULUS_MINUS_ONE_BIT_LENGTH - LIBCRUX_ML_DSA_CONSTANTS_BITS_IN_LOWER_PART_OF_T)
 
-#define LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_KEY_HASH ((size_t)64U)
+#define LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_ଚାବି_HASH ((size_t)64U)
 
 #define LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT ((size_t)256U)
 
@@ -9063,9 +9063,9 @@ typedef uint8_t libcrux_ml_dsa_constants_Eta;
 
 #define LIBCRUX_ML_DSA_CONSTANTS_GAMMA2_V95_232 (95232)
 
-typedef int32_t libcrux_ml_dsa_constants_Gamma2;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା int32_t libcrux_ml_dsa_constants_Gamma2;
 
-#define LIBCRUX_ML_DSA_CONSTANTS_KEY_GENERATION_RANDOMNESS_SIZE ((size_t)32U)
+#define LIBCRUX_ML_DSA_CONSTANTS_ଚାବି_GENERATION_RANDOMNESS_SIZE ((size_t)32U)
 
 #define LIBCRUX_ML_DSA_CONSTANTS_MASK_SEED_SIZE ((size_t)64U)
 
@@ -9085,69 +9085,69 @@ typedef int32_t libcrux_ml_dsa_constants_Gamma2;
 
 #define LIBCRUX_ML_DSA_CONSTANTS_SIGNING_RANDOMNESS_SIZE ((size_t)32U)
 
-static inline int32_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int32_t
 libcrux_ml_dsa_constants_beta(
   size_t ones_in_verifier_challenge,
   libcrux_ml_dsa_constants_Eta eta
 )
 {
   size_t eta_val;
-  switch (eta)
+  ବାଛ (eta)
   {
-    case libcrux_ml_dsa_constants_Eta_Two:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Two:
       {
         eta_val = (size_t)2U;
-        break;
+        ଭାଙ୍ଗ;
       }
-    case libcrux_ml_dsa_constants_Eta_Four:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Four:
       {
         eta_val = (size_t)4U;
-        break;
+        ଭାଙ୍ଗ;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL incomplete match at %s:%d\n", __FILE__, __LINE__);
         KRML_HOST_EXIT(253U);
       }
   }
-  return (int32_t)(ones_in_verifier_challenge * eta_val);
+  ଫେରନ୍ତୁ (int32_t)(ones_in_verifier_challenge * eta_val);
 }
 
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_dsa_constants_commitment_ring_element_size(size_t bits_per_commitment_coefficient)
 {
-  return
+  ଫେରନ୍ତୁ
     bits_per_commitment_coefficient * LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT /
       (size_t)8U;
 }
 
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_dsa_constants_commitment_vector_size(
   size_t bits_per_commitment_coefficient,
   size_t rows_in_a
 )
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_constants_commitment_ring_element_size(bits_per_commitment_coefficient) *
       rows_in_a;
 }
 
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_dsa_constants_error_ring_element_size(size_t bits_per_error_coefficient)
 {
-  return
+  ଫେରନ୍ତୁ
     bits_per_error_coefficient * LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT / (size_t)8U;
 }
 
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_dsa_constants_gamma1_ring_element_size(size_t bits_per_gamma1_coefficient)
 {
-  return
+  ଫେରନ୍ତୁ
     bits_per_gamma1_coefficient * LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT /
       (size_t)8U;
 }
 
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_dsa_constants_signature_size(
   size_t rows_in_a,
   size_t columns_in_a,
@@ -9156,30 +9156,30 @@ libcrux_ml_dsa_constants_signature_size(
   size_t bits_per_gamma1_coefficient
 )
 {
-  return
+  ଫେରନ୍ତୁ
     commitment_hash_size +
       columns_in_a * libcrux_ml_dsa_constants_gamma1_ring_element_size(bits_per_gamma1_coefficient)
     + max_ones_in_hint
     + rows_in_a;
 }
 
-static inline size_t
-libcrux_ml_dsa_constants_signing_key_size(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
+libcrux_ml_dsa_constants_signing_ଚାବି_size(
   size_t rows_in_a,
   size_t columns_in_a,
   size_t error_ring_element_size
 )
 {
-  return
+  ଫେରନ୍ତୁ
     LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE + LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_SIGNING_SIZE +
-      LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_KEY_HASH
+      LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_ଚାବି_HASH
     + (rows_in_a + columns_in_a) * error_ring_element_size
     + rows_in_a * LIBCRUX_ML_DSA_CONSTANTS_RING_ELEMENT_OF_T0S_SIZE;
 }
 
-static inline size_t libcrux_ml_dsa_constants_verification_key_size(size_t rows_in_a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t libcrux_ml_dsa_constants_verification_ଚାବି_size(size_t rows_in_a)
 {
-  return
+  ଫେରନ୍ତୁ
     LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE +
       LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT * rows_in_a *
         (LIBCRUX_ML_DSA_CONSTANTS_FIELD_MODULUS_MINUS_ONE_BIT_LENGTH -
@@ -9256,32 +9256,32 @@ static inline size_t libcrux_ml_dsa_constants_verification_key_size(size_t rows_
 /**
 This function found in impl {core::clone::Clone for libcrux_ml_dsa::constants::Eta}
 */
-static inline libcrux_ml_dsa_constants_Eta
-libcrux_ml_dsa_constants_clone_54(const libcrux_ml_dsa_constants_Eta *self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_dsa_constants_Eta
+libcrux_ml_dsa_constants_clone_54(ଅଚଳ libcrux_ml_dsa_constants_Eta *self)
 {
-  return self[0U];
+  ଫେରନ୍ତୁ self[0U];
 }
 
-static KRML_MUSTINLINE size_t
+ସ୍ଥିର KRML_MUSTINLINE size_t
 libcrux_ml_dsa_encoding_error_chunk_size(libcrux_ml_dsa_constants_Eta eta)
 {
-  switch (eta)
+  ବାଛ (eta)
   {
-    case libcrux_ml_dsa_constants_Eta_Two:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Two:
       {
-        break;
+        ଭାଙ୍ଗ;
       }
-    case libcrux_ml_dsa_constants_Eta_Four:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Four:
       {
-        return (size_t)4U;
+        ଫେରନ୍ତୁ (size_t)4U;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL incomplete match at %s:%d\n", __FILE__, __LINE__);
         KRML_HOST_EXIT(253U);
       }
   }
-  return (size_t)3U;
+  ଫେରନ୍ତୁ (size_t)3U;
 }
 
 #define libcrux_ml_dsa_types_VerificationError_MalformedHintError 0
@@ -9289,9 +9289,9 @@ libcrux_ml_dsa_encoding_error_chunk_size(libcrux_ml_dsa_constants_Eta eta)
 #define libcrux_ml_dsa_types_VerificationError_CommitmentHashesDontMatchError 2
 #define libcrux_ml_dsa_types_VerificationError_VerificationContextTooLongError 3
 
-typedef uint8_t libcrux_ml_dsa_types_VerificationError;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା uint8_t libcrux_ml_dsa_types_VerificationError;
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_signature_set_hint(
   Eurydice_dst_ref_mut_20 out_hint,
   size_t i,
@@ -9313,7 +9313,7 @@ libcrux_ml_dsa_encoding_signature_set_hint(
 
 #define LIBCRUX_ML_DSA_HASH_FUNCTIONS_SHAKE256_BLOCK_SIZE ((size_t)136U)
 
-static KRML_MUSTINLINE Eurydice_arr_91
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_91
 libcrux_ml_dsa_sample_add_error_domain_separator(
   Eurydice_borrow_slice_u8 slice,
   uint16_t domain_separator
@@ -9326,7 +9326,7 @@ libcrux_ml_dsa_sample_add_error_domain_separator(
     uint8_t);
   out.data[64U] = (uint8_t)(uint32_t)domain_separator;
   out.data[65U] = (uint8_t)((uint32_t)domain_separator >> 8U & 0xFFFFU);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_ERROR_RING_ELEMENT_SIZE (libcrux_ml_dsa_constants_error_ring_element_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_BITS_PER_ERROR_COEFFICIENT))
@@ -9335,21 +9335,21 @@ libcrux_ml_dsa_sample_add_error_domain_separator(
 
 #define LIBCRUX_ML_DSA_SIMD_TRAITS_INVERSE_OF_MODULUS_MOD_MONTGOMERY_R (58728449ULL)
 
-static inline uint8_t_x2
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t_x2
 libcrux_ml_dsa_sample_sample_up_to_four_ring_elements_flat_xy(size_t index, size_t width)
 {
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(uint8_t_x2){ .fst = (uint8_t)(index / width), .snd = (uint8_t)(index % width) });
 }
 
-static KRML_MUSTINLINE uint16_t libcrux_ml_dsa_sample_generate_domain_separator(uint8_t_x2 _)
+ସ୍ଥିର KRML_MUSTINLINE uint16_t libcrux_ml_dsa_sample_generate_domain_separator(uint8_t_x2 _)
 {
   uint8_t row = _.fst;
   uint8_t column = _.snd;
-  return (uint32_t)(uint16_t)(uint32_t)column | (uint32_t)(uint16_t)(uint32_t)row << 8U;
+  ଫେରନ୍ତୁ (uint32_t)(uint16_t)(uint32_t)column | (uint32_t)(uint16_t)(uint32_t)row << 8U;
 }
 
-static KRML_MUSTINLINE Eurydice_arr_31
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_31
 libcrux_ml_dsa_sample_add_domain_separator(Eurydice_borrow_slice_u8 slice, uint8_t_x2 indices)
 {
   Eurydice_arr_31 out = { .data = { 0U } };
@@ -9360,15 +9360,15 @@ libcrux_ml_dsa_sample_add_domain_separator(Eurydice_borrow_slice_u8 slice, uint8
   uint16_t domain_separator = libcrux_ml_dsa_sample_generate_domain_separator(indices);
   out.data[32U] = (uint8_t)(uint32_t)domain_separator;
   out.data[33U] = (uint8_t)((uint32_t)domain_separator >> 8U & 0xFFFFU);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 #define libcrux_ml_dsa_types_SigningError_RejectionSamplingError 0
 #define libcrux_ml_dsa_types_SigningError_ContextTooLongError 1
 
-typedef uint8_t libcrux_ml_dsa_types_SigningError;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା uint8_t libcrux_ml_dsa_types_SigningError;
 
-typedef struct libcrux_ml_dsa_pre_hash_DomainSeparationContext_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_dsa_pre_hash_DomainSeparationContext_s
 {
   Eurydice_borrow_slice_u8 context;
   core_option_Option_57 pre_hash_oid;
@@ -9377,17 +9377,17 @@ libcrux_ml_dsa_pre_hash_DomainSeparationContext;
 
 #define libcrux_ml_dsa_pre_hash_DomainSeparationError_ContextTooLongError 0
 
-typedef uint8_t libcrux_ml_dsa_pre_hash_DomainSeparationError;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା uint8_t libcrux_ml_dsa_pre_hash_DomainSeparationError;
 
 /**
 A monomorphic instance of core.result.Result
 with types libcrux_ml_dsa_pre_hash_DomainSeparationContext, libcrux_ml_dsa_pre_hash_DomainSeparationError
 
 */
-typedef struct core_result_Result_a8_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_a8_s
 {
   core_result_Result_57_tags tag;
-  union {
+  ସଂଘ {
     libcrux_ml_dsa_pre_hash_DomainSeparationContext case_Ok;
     libcrux_ml_dsa_pre_hash_DomainSeparationError case_Err;
   }
@@ -9401,15 +9401,15 @@ core_result_Result_a8;
 /**
 This function found in impl {libcrux_ml_dsa::pre_hash::DomainSeparationContext<'a>}
 */
-static inline core_result_Result_a8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_a8
 libcrux_ml_dsa_pre_hash_new_88(
   Eurydice_borrow_slice_u8 context,
   core_option_Option_57 pre_hash_oid
 )
 {
-  if (!(context.meta > LIBCRUX_ML_DSA_CONSTANTS_CONTEXT_MAX_LEN))
+  ଯଦି (!(context.meta > LIBCRUX_ML_DSA_CONSTANTS_CONTEXT_MAX_LEN))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_a8){
           .tag = core_result_Ok,
@@ -9417,7 +9417,7 @@ libcrux_ml_dsa_pre_hash_new_88(
         }
       );
   }
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(core_result_Result_a8){
         .tag = core_result_Err,
@@ -9432,13 +9432,13 @@ libcrux_ml_dsa_pre_hash_new_88(
 /**
 This function found in impl {libcrux_ml_dsa::pre_hash::DomainSeparationContext<'a>}
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 core_option_Option_57
 *libcrux_ml_dsa_pre_hash_pre_hash_oid_88(
-  const libcrux_ml_dsa_pre_hash_DomainSeparationContext *self
+  ଅଚଳ libcrux_ml_dsa_pre_hash_DomainSeparationContext *self
 )
 {
-  return &self->pre_hash_oid;
+  ଫେରନ୍ତୁ &self->pre_hash_oid;
 }
 
 /**
@@ -9447,15 +9447,15 @@ core_option_Option_57
 /**
 This function found in impl {libcrux_ml_dsa::pre_hash::DomainSeparationContext<'a>}
 */
-static inline Eurydice_borrow_slice_u8
-libcrux_ml_dsa_pre_hash_context_88(const libcrux_ml_dsa_pre_hash_DomainSeparationContext *self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_borrow_slice_u8
+libcrux_ml_dsa_pre_hash_context_88(ଅଚଳ libcrux_ml_dsa_pre_hash_DomainSeparationContext *self)
 {
-  return self->context;
+  ଫେରନ୍ତୁ self->context;
 }
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_COMMITMENT_RING_ELEMENT_SIZE (libcrux_ml_dsa_constants_commitment_ring_element_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_BITS_PER_COMMITMENT_COEFFICIENT))
 
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_dsa_sample_inside_out_shuffle(
   Eurydice_borrow_slice_u8 randomness,
   size_t *out_index,
@@ -9464,14 +9464,14 @@ libcrux_ml_dsa_sample_inside_out_shuffle(
 )
 {
   bool done = false;
-  for (size_t i = (size_t)0U; i < randomness.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < randomness.meta; i++)
   {
     size_t _cloop_j = i;
-    const uint8_t *byte = &randomness.ptr[_cloop_j];
-    if (!done)
+    ଅଚଳ uint8_t *byte = &randomness.ptr[_cloop_j];
+    ଯଦି (!done)
     {
       size_t sample_at = (size_t)(uint32_t)byte[0U];
-      if (sample_at <= out_index[0U])
+      ଯଦି (sample_at <= out_index[0U])
       {
         result->data[out_index[0U]] = result->data[sample_at];
         out_index[0U]++;
@@ -9481,7 +9481,7 @@ libcrux_ml_dsa_sample_inside_out_shuffle(
       done = out_index[0U] == (size_t)256U;
     }
   }
-  return done;
+  ଫେରନ୍ତୁ done;
 }
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_BETA (libcrux_ml_dsa_constants_beta(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ONES_IN_VERIFIER_CHALLENGE, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ETA))
@@ -9493,31 +9493,31 @@ libcrux_ml_dsa_sample_inside_out_shuffle(
 /**
 This function found in impl {libcrux_ml_dsa::pre_hash::PreHash for libcrux_ml_dsa::pre_hash::SHAKE128_PH}
 */
-static inline Eurydice_arr_c9 libcrux_ml_dsa_pre_hash_oid_30(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_c9 libcrux_ml_dsa_pre_hash_oid_30(ଶୂନ୍ୟ)
 {
-  return LIBCRUX_ML_DSA_PRE_HASH_SHAKE128_OID;
+  ଫେରନ୍ତୁ LIBCRUX_ML_DSA_PRE_HASH_SHAKE128_OID;
 }
 
-#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_VERIFICATION_KEY_SIZE (libcrux_ml_dsa_constants_verification_key_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A))
+#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_VERIFICATION_ଚାବି_SIZE (libcrux_ml_dsa_constants_verification_ଚାବି_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A))
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_SIGNATURE_SIZE (libcrux_ml_dsa_constants_signature_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COLUMNS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_MAX_ONES_IN_HINT, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COMMITMENT_HASH_SIZE, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_BITS_PER_GAMMA1_COEFFICIENT))
 
-typedef Eurydice_arr_4d libcrux_ml_dsa_simd_portable_vector_type_Coefficients;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_4d libcrux_ml_dsa_simd_portable_vector_type_Coefficients;
 
-static KRML_MUSTINLINE Eurydice_arr_4d libcrux_ml_dsa_simd_portable_vector_type_zero(void)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_4d libcrux_ml_dsa_simd_portable_vector_type_zero(ଶୂନ୍ୟ)
 {
-  return (KRML_CLITERAL(Eurydice_arr_4d){ .data = { 0U } });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_arr_4d){ .data = { 0U } });
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline Eurydice_arr_4d libcrux_ml_dsa_simd_portable_zero_65(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_4d libcrux_ml_dsa_simd_portable_zero_65(ଶୂନ୍ୟ)
 {
-  return libcrux_ml_dsa_simd_portable_vector_type_zero();
+  ଫେରନ୍ତୁ libcrux_ml_dsa_simd_portable_vector_type_zero();
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_vector_type_from_coefficient_array(
   Eurydice_dst_ref_shared_83 array,
   Eurydice_arr_4d *out
@@ -9537,7 +9537,7 @@ libcrux_ml_dsa_simd_portable_vector_type_from_coefficient_array(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_from_coefficient_array_65(
   Eurydice_dst_ref_shared_83 array,
   Eurydice_arr_4d *out
@@ -9546,31 +9546,31 @@ libcrux_ml_dsa_simd_portable_from_coefficient_array_65(
   libcrux_ml_dsa_simd_portable_vector_type_from_coefficient_array(array, out);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_vector_type_to_coefficient_array(
-  const Eurydice_arr_4d *value,
+  ଅଚଳ Eurydice_arr_4d *ମୂଲ୍ୟ,
   Eurydice_dst_ref_mut_83 out
 )
 {
-  Eurydice_slice_copy(out, Eurydice_array_to_slice_shared_fd(value), int32_t);
+  Eurydice_slice_copy(out, Eurydice_array_to_slice_shared_fd(ମୂଲ୍ୟ), int32_t);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_to_coefficient_array_65(
-  const Eurydice_arr_4d *value,
+  ଅଚଳ Eurydice_arr_4d *ମୂଲ୍ୟ,
   Eurydice_dst_ref_mut_83 out
 )
 {
-  libcrux_ml_dsa_simd_portable_vector_type_to_coefficient_array(value, out);
+  libcrux_ml_dsa_simd_portable_vector_type_to_coefficient_array(ମୂଲ୍ୟ, out);
 }
 
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_simd_portable_arithmetic_add(Eurydice_arr_4d *lhs, const Eurydice_arr_4d *rhs)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_simd_portable_arithmetic_add(Eurydice_arr_4d *lhs, ଅଚଳ Eurydice_arr_4d *rhs)
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     size_t uu____0 = i0;
@@ -9581,19 +9581,19 @@ libcrux_ml_dsa_simd_portable_arithmetic_add(Eurydice_arr_4d *lhs, const Eurydice
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
-libcrux_ml_dsa_simd_portable_add_65(Eurydice_arr_4d *lhs, const Eurydice_arr_4d *rhs)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_dsa_simd_portable_add_65(Eurydice_arr_4d *lhs, ଅଚଳ Eurydice_arr_4d *rhs)
 {
   libcrux_ml_dsa_simd_portable_arithmetic_add(lhs, rhs);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_arithmetic_subtract(
   Eurydice_arr_4d *lhs,
-  const Eurydice_arr_4d *rhs
+  ଅଚଳ Eurydice_arr_4d *rhs
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     size_t uu____0 = i0;
@@ -9604,74 +9604,74 @@ libcrux_ml_dsa_simd_portable_arithmetic_subtract(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
-libcrux_ml_dsa_simd_portable_subtract_65(Eurydice_arr_4d *lhs, const Eurydice_arr_4d *rhs)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_dsa_simd_portable_subtract_65(Eurydice_arr_4d *lhs, ଅଚଳ Eurydice_arr_4d *rhs)
 {
   libcrux_ml_dsa_simd_portable_arithmetic_subtract(lhs, rhs);
 }
 
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_dsa_simd_portable_arithmetic_infinity_norm_exceeds(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   int32_t bound
 )
 {
   bool result = false;
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     int32_t coefficient = simd_unit->data[i0];
     int32_t sign = coefficient >> 31U;
     int32_t normalized = coefficient - (sign & 2 * coefficient);
     bool uu____0;
-    if (result)
+    ଯଦି (result)
     {
       uu____0 = true;
     }
-    else
+    ଅନ୍ୟଥା
     {
       uu____0 = normalized >= bound;
     }
     result = uu____0;
   }
-  return result;
+  ଫେରନ୍ତୁ result;
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline bool
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ bool
 libcrux_ml_dsa_simd_portable_infinity_norm_exceeds_65(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   int32_t bound
 )
 {
-  return libcrux_ml_dsa_simd_portable_arithmetic_infinity_norm_exceeds(simd_unit, bound);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_simd_portable_arithmetic_infinity_norm_exceeds(simd_unit, bound);
 }
 
-static KRML_MUSTINLINE int32_t_x2
+ସ୍ଥିର KRML_MUSTINLINE int32_t_x2
 libcrux_ml_dsa_simd_portable_arithmetic_decompose_element(int32_t gamma2, int32_t r)
 {
   int32_t r0 = r + (r >> 31U & LIBCRUX_ML_DSA_SIMD_TRAITS_FIELD_MODULUS);
   int32_t ceil_of_r_by_128 = (r0 + 127) >> 7U;
   int32_t r1;
-  switch (gamma2)
+  ବାଛ (gamma2)
   {
-    case 95232:
+    ସ୍ଥିତି 95232:
       {
         int32_t result = (ceil_of_r_by_128 * 11275 + (int32_t)((uint32_t)1 << 23U)) >> 24U;
         int32_t result_0 = (result ^ (43 - result) >> 31U) & result;
         r1 = result_0;
-        break;
+        ଭାଙ୍ଗ;
       }
-    case 261888:
+    ସ୍ଥିତି 261888:
       {
         int32_t result = (ceil_of_r_by_128 * 1025 + (int32_t)((uint32_t)1 << 21U)) >> 22U;
         int32_t result_0 = result & 15;
         r1 = result_0;
-        break;
+        ଭାଙ୍ଗ;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
         KRML_HOST_EXIT(255U);
@@ -9682,18 +9682,18 @@ libcrux_ml_dsa_simd_portable_arithmetic_decompose_element(int32_t gamma2, int32_
   r00 -=
     ((LIBCRUX_ML_DSA_SIMD_TRAITS_FIELD_MODULUS - 1) / 2 - r00) >> 31U &
       LIBCRUX_ML_DSA_SIMD_TRAITS_FIELD_MODULUS;
-  return (KRML_CLITERAL(int32_t_x2){ .fst = r00, .snd = r1 });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(int32_t_x2){ .fst = r00, .snd = r1 });
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_arithmetic_decompose(
   int32_t gamma2,
-  const Eurydice_arr_4d *simd_unit,
-  Eurydice_arr_4d *low,
-  Eurydice_arr_4d *high
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
+  Eurydice_arr_4d *ତଳ,
+  Eurydice_arr_4d *ଉପର
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     int32_t_x2
@@ -9701,159 +9701,159 @@ libcrux_ml_dsa_simd_portable_arithmetic_decompose(
       libcrux_ml_dsa_simd_portable_arithmetic_decompose_element(gamma2,
         simd_unit->data[i0]);
     int32_t uu____1 = uu____0.snd;
-    low->data[i0] = uu____0.fst;
-    high->data[i0] = uu____1;
+    ତଳ->data[i0] = uu____0.fst;
+    ଉପର->data[i0] = uu____1;
   }
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_decompose_65(
   int32_t gamma2,
-  const Eurydice_arr_4d *simd_unit,
-  Eurydice_arr_4d *low,
-  Eurydice_arr_4d *high
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
+  Eurydice_arr_4d *ତଳ,
+  Eurydice_arr_4d *ଉପର
 )
 {
-  libcrux_ml_dsa_simd_portable_arithmetic_decompose(gamma2, simd_unit, low, high);
+  libcrux_ml_dsa_simd_portable_arithmetic_decompose(gamma2, simd_unit, ତଳ, ଉପର);
 }
 
-static KRML_MUSTINLINE int32_t
+ସ୍ଥିର KRML_MUSTINLINE int32_t
 libcrux_ml_dsa_simd_portable_arithmetic_compute_one_hint(
-  int32_t low,
-  int32_t high,
+  int32_t ତଳ,
+  int32_t ଉପର,
   int32_t gamma2
 )
 {
   int32_t uu____0;
-  if (low > gamma2)
+  ଯଦି (ତଳ > gamma2)
   {
     uu____0 = 1;
   }
-  else if (low < -gamma2)
+  ଅନ୍ୟଥା ଯଦି (ତଳ < -gamma2)
   {
     uu____0 = 1;
   }
-  else if (low == -gamma2)
+  ଅନ୍ୟଥା ଯଦି (ତଳ == -gamma2)
   {
-    if (high != 0)
+    ଯଦି (ଉପର != 0)
     {
       uu____0 = 1;
     }
-    else
+    ଅନ୍ୟଥା
     {
       uu____0 = 0;
     }
   }
-  else
+  ଅନ୍ୟଥା
   {
     uu____0 = 0;
   }
-  return uu____0;
+  ଫେରନ୍ତୁ uu____0;
 }
 
-static KRML_MUSTINLINE size_t
+ସ୍ଥିର KRML_MUSTINLINE size_t
 libcrux_ml_dsa_simd_portable_arithmetic_compute_hint(
-  const Eurydice_arr_4d *low,
-  const Eurydice_arr_4d *high,
+  ଅଚଳ Eurydice_arr_4d *ତଳ,
+  ଅଚଳ Eurydice_arr_4d *ଉପର,
   int32_t gamma2,
   Eurydice_arr_4d *hint
 )
 {
-  size_t one_hints_count = (size_t)0U;
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  size_t one_hints_ଗଣନା = (size_t)0U;
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     hint->data[i0] =
-      libcrux_ml_dsa_simd_portable_arithmetic_compute_one_hint(low->data[i0],
-        high->data[i0],
+      libcrux_ml_dsa_simd_portable_arithmetic_compute_one_hint(ତଳ->data[i0],
+        ଉପର->data[i0],
         gamma2);
-    one_hints_count += (size_t)hint->data[i0];
+    one_hints_ଗଣନା += (size_t)hint->data[i0];
   }
-  return one_hints_count;
+  ଫେରନ୍ତୁ one_hints_ଗଣନା;
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_dsa_simd_portable_compute_hint_65(
-  const Eurydice_arr_4d *low,
-  const Eurydice_arr_4d *high,
+  ଅଚଳ Eurydice_arr_4d *ତଳ,
+  ଅଚଳ Eurydice_arr_4d *ଉପର,
   int32_t gamma2,
   Eurydice_arr_4d *hint
 )
 {
-  return libcrux_ml_dsa_simd_portable_arithmetic_compute_hint(low, high, gamma2, hint);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_simd_portable_arithmetic_compute_hint(ତଳ, ଉପର, gamma2, hint);
 }
 
-static KRML_MUSTINLINE int32_t
+ସ୍ଥିର KRML_MUSTINLINE int32_t
 libcrux_ml_dsa_simd_portable_arithmetic_use_one_hint(int32_t gamma2, int32_t r, int32_t hint)
 {
   int32_t_x2 uu____0 = libcrux_ml_dsa_simd_portable_arithmetic_decompose_element(gamma2, r);
   int32_t r0 = uu____0.fst;
   int32_t r1 = uu____0.snd;
   int32_t uu____1;
-  if (!(hint == 0))
+  ଯଦି (!(hint == 0))
   {
-    switch (gamma2)
+    ବାଛ (gamma2)
     {
-      case 95232:
+      ସ୍ଥିତି 95232:
         {
-          if (r0 > 0)
+          ଯଦି (r0 > 0)
           {
-            if (r1 == 43)
+            ଯଦି (r1 == 43)
             {
               uu____1 = 0;
             }
-            else
+            ଅନ୍ୟଥା
             {
               uu____1 = r1 + hint;
             }
           }
-          else if (r1 == 0)
+          ଅନ୍ୟଥା ଯଦି (r1 == 0)
           {
             uu____1 = 43;
           }
-          else
+          ଅନ୍ୟଥା
           {
             uu____1 = r1 - hint;
           }
-          break;
+          ଭାଙ୍ଗ;
         }
-      case 261888:
+      ସ୍ଥିତି 261888:
         {
-          if (r0 > 0)
+          ଯଦି (r0 > 0)
           {
             uu____1 = (r1 + hint) & 15;
           }
-          else
+          ଅନ୍ୟଥା
           {
             uu____1 = (r1 - hint) & 15;
           }
-          break;
+          ଭାଙ୍ଗ;
         }
-      default:
+      ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
         {
           KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
           KRML_HOST_EXIT(255U);
         }
     }
-    return uu____1;
+    ଫେରନ୍ତୁ uu____1;
   }
-  return r1;
+  ଫେରନ୍ତୁ r1;
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_arithmetic_use_hint(
   int32_t gamma2,
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_arr_4d *hint
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     int32_t
@@ -9868,31 +9868,31 @@ libcrux_ml_dsa_simd_portable_arithmetic_use_hint(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_use_hint_65(
   int32_t gamma2,
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_arr_4d *hint
 )
 {
   libcrux_ml_dsa_simd_portable_arithmetic_use_hint(gamma2, simd_unit, hint);
 }
 
-static KRML_MUSTINLINE uint64_t
-libcrux_ml_dsa_simd_portable_arithmetic_get_n_least_significant_bits(uint8_t n, uint64_t value)
+ସ୍ଥିର KRML_MUSTINLINE uint64_t
+libcrux_ml_dsa_simd_portable_arithmetic_get_n_least_significant_bits(uint8_t n, uint64_t ମୂଲ୍ୟ)
 {
-  return value & ((1ULL << (uint32_t)n) - 1ULL);
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ & ((1ULL << (uint32_t)n) - 1ULL);
 }
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ARITHMETIC_MONTGOMERY_SHIFT (32U)
 
-static KRML_MUSTINLINE int32_t
-libcrux_ml_dsa_simd_portable_arithmetic_montgomery_reduce_element(int64_t value)
+ସ୍ଥିର KRML_MUSTINLINE int32_t
+libcrux_ml_dsa_simd_portable_arithmetic_montgomery_reduce_element(int64_t ମୂଲ୍ୟ)
 {
   uint64_t
   t =
     libcrux_ml_dsa_simd_portable_arithmetic_get_n_least_significant_bits(LIBCRUX_ML_DSA_SIMD_PORTABLE_ARITHMETIC_MONTGOMERY_SHIFT,
-      (uint64_t)value)
+      (uint64_t)ମୂଲ୍ୟ)
     * LIBCRUX_ML_DSA_SIMD_TRAITS_INVERSE_OF_MODULUS_MOD_MONTGOMERY_R;
   int32_t
   k =
@@ -9903,18 +9903,18 @@ libcrux_ml_dsa_simd_portable_arithmetic_montgomery_reduce_element(int64_t value)
   c =
     (int32_t)(k_times_modulus >> (uint32_t)LIBCRUX_ML_DSA_SIMD_PORTABLE_ARITHMETIC_MONTGOMERY_SHIFT);
   int32_t
-  value_high =
-    (int32_t)(value >> (uint32_t)LIBCRUX_ML_DSA_SIMD_PORTABLE_ARITHMETIC_MONTGOMERY_SHIFT);
-  return value_high - c;
+  ମୂଲ୍ୟ_ଉପର =
+    (int32_t)(ମୂଲ୍ୟ >> (uint32_t)LIBCRUX_ML_DSA_SIMD_PORTABLE_ARITHMETIC_MONTGOMERY_SHIFT);
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ_ଉପର - c;
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_arithmetic_montgomery_multiply(
   Eurydice_arr_4d *lhs,
-  const Eurydice_arr_4d *rhs
+  ଅଚଳ Eurydice_arr_4d *rhs
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     lhs->data[i0] =
@@ -9926,26 +9926,26 @@ libcrux_ml_dsa_simd_portable_arithmetic_montgomery_multiply(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_montgomery_multiply_65(
   Eurydice_arr_4d *lhs,
-  const Eurydice_arr_4d *rhs
+  ଅଚଳ Eurydice_arr_4d *rhs
 )
 {
   libcrux_ml_dsa_simd_portable_arithmetic_montgomery_multiply(lhs, rhs);
 }
 
-static KRML_MUSTINLINE int32_t
+ସ୍ଥିର KRML_MUSTINLINE int32_t
 libcrux_ml_dsa_simd_portable_arithmetic_barrett_reduce_element(int32_t fe)
 {
   int32_t quotient = (fe + (int32_t)((uint32_t)1 << 22U)) >> 23U;
-  return fe - quotient * LIBCRUX_ML_DSA_SIMD_TRAITS_FIELD_MODULUS;
+  ଫେରନ୍ତୁ fe - quotient * LIBCRUX_ML_DSA_SIMD_TRAITS_FIELD_MODULUS;
 }
 
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_arithmetic_barrett_reduce_simd_unit(Eurydice_arr_4d *simd_unit)
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     simd_unit->data[i0] =
@@ -9953,7 +9953,7 @@ libcrux_ml_dsa_simd_portable_arithmetic_barrett_reduce_simd_unit(Eurydice_arr_4d
   }
 }
 
-static KRML_MUSTINLINE int32_t_x2
+ସ୍ଥିର KRML_MUSTINLINE int32_t_x2
 libcrux_ml_dsa_simd_portable_arithmetic_power2round_element(int32_t t)
 {
   int32_t t2 = t + (t >> 31U & LIBCRUX_ML_DSA_SIMD_TRAITS_FIELD_MODULUS);
@@ -9965,13 +9965,13 @@ libcrux_ml_dsa_simd_portable_arithmetic_power2round_element(int32_t t)
     >> (uint32_t)LIBCRUX_ML_DSA_CONSTANTS_BITS_IN_LOWER_PART_OF_T;
   int32_t
   t0 = t2 - (int32_t)((uint32_t)t1 << (uint32_t)LIBCRUX_ML_DSA_CONSTANTS_BITS_IN_LOWER_PART_OF_T);
-  return (KRML_CLITERAL(int32_t_x2){ .fst = t0, .snd = t1 });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(int32_t_x2){ .fst = t0, .snd = t1 });
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_arithmetic_power2round(Eurydice_arr_4d *t0, Eurydice_arr_4d *t1)
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     int32_t_x2 uu____0 = libcrux_ml_dsa_simd_portable_arithmetic_power2round_element(t0->data[i0]);
@@ -9984,20 +9984,20 @@ libcrux_ml_dsa_simd_portable_arithmetic_power2round(Eurydice_arr_4d *t0, Eurydic
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_power2round_65(Eurydice_arr_4d *t0, Eurydice_arr_4d *t1)
 {
   libcrux_ml_dsa_simd_portable_arithmetic_power2round(t0, t1);
 }
 
-static KRML_MUSTINLINE size_t
+ସ୍ଥିର KRML_MUSTINLINE size_t
 libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_field_modulus(
   Eurydice_borrow_slice_u8 randomness,
   Eurydice_dst_ref_mut_83 out
 )
 {
   size_t sampled = (size_t)0U;
-  for (size_t i = (size_t)0U; i < randomness.meta / (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < randomness.meta / (size_t)3U; i++)
   {
     size_t i0 = i;
     int32_t b0 = (int32_t)(uint32_t)randomness.ptr[i0 * (size_t)3U];
@@ -10005,37 +10005,37 @@ libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_field_modulus(
     int32_t b2 = (int32_t)(uint32_t)randomness.ptr[i0 * (size_t)3U + (size_t)2U];
     int32_t
     coefficient = (((int32_t)((uint32_t)b2 << 16U) | (int32_t)((uint32_t)b1 << 8U)) | b0) & 8388607;
-    if (coefficient < LIBCRUX_ML_DSA_CONSTANTS_FIELD_MODULUS)
+    ଯଦି (coefficient < LIBCRUX_ML_DSA_CONSTANTS_FIELD_MODULUS)
     {
       out.ptr[sampled] = coefficient;
       sampled++;
     }
   }
-  return sampled;
+  ଫେରନ୍ତୁ sampled;
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_dsa_simd_portable_rejection_sample_less_than_field_modulus_65(
   Eurydice_borrow_slice_u8 randomness,
   Eurydice_dst_ref_mut_83 out
 )
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_field_modulus(randomness,
       out);
 }
 
-static KRML_MUSTINLINE size_t
+ସ୍ଥିର KRML_MUSTINLINE size_t
 libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_eta_equals_2(
   Eurydice_borrow_slice_u8 randomness,
   Eurydice_dst_ref_mut_83 out
 )
 {
   size_t sampled = (size_t)0U;
-  for (size_t i = (size_t)0U; i < randomness.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < randomness.meta; i++)
   {
     size_t i0 = i;
     uint8_t byte = randomness.ptr[i0];
@@ -10043,14 +10043,14 @@ libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_eta_equals_2(
     uint8_t try_1 = (uint32_t)byte >> 4U;
     bool try_0_comp = try_0 < 15U;
     bool try_1_comp = try_1 < 15U;
-    if (try_0_comp)
+    ଯଦି (try_0_comp)
     {
       int32_t try_00 = (int32_t)(uint32_t)try_0;
       int32_t try_0_mod_5 = try_00 - (try_00 * 26 >> 7U) * 5;
       out.ptr[sampled] = 2 - try_0_mod_5;
       sampled++;
     }
-    if (try_1_comp)
+    ଯଦି (try_1_comp)
     {
       int32_t try_10 = (int32_t)(uint32_t)try_1;
       int32_t try_1_mod_5 = try_10 - (try_10 * 26 >> 7U) * 5;
@@ -10058,31 +10058,31 @@ libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_eta_equals_2(
       sampled++;
     }
   }
-  return sampled;
+  ଫେରନ୍ତୁ sampled;
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_dsa_simd_portable_rejection_sample_less_than_eta_equals_2_65(
   Eurydice_borrow_slice_u8 randomness,
   Eurydice_dst_ref_mut_83 out
 )
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_eta_equals_2(randomness,
       out);
 }
 
-static KRML_MUSTINLINE size_t
+ସ୍ଥିର KRML_MUSTINLINE size_t
 libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_eta_equals_4(
   Eurydice_borrow_slice_u8 randomness,
   Eurydice_dst_ref_mut_83 out
 )
 {
   size_t sampled = (size_t)0U;
-  for (size_t i = (size_t)0U; i < randomness.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < randomness.meta; i++)
   {
     size_t i0 = i;
     uint8_t byte = randomness.ptr[i0];
@@ -10090,43 +10090,43 @@ libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_eta_equals_4(
     uint8_t try_1 = (uint32_t)byte >> 4U;
     bool try_0_comp = try_0 < 9U;
     bool try_1_comp = try_1 < 9U;
-    if (try_0_comp)
+    ଯଦି (try_0_comp)
     {
       out.ptr[sampled] = 4 - (int32_t)(uint32_t)try_0;
       sampled++;
     }
-    if (try_1_comp)
+    ଯଦି (try_1_comp)
     {
       out.ptr[sampled] = 4 - (int32_t)(uint32_t)try_1;
       sampled++;
     }
   }
-  return sampled;
+  ଫେରନ୍ତୁ sampled;
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_dsa_simd_portable_rejection_sample_less_than_eta_equals_4_65(
   Eurydice_borrow_slice_u8 randomness,
   Eurydice_dst_ref_mut_83 out
 )
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_simd_portable_sample_rejection_sample_less_than_eta_equals_4(randomness,
       out);
 }
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_GAMMA1_SERIALIZE_WHEN_GAMMA1_IS_2_POW_19_GAMMA1 ((int32_t)((uint32_t)1 << 19U))
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_gamma1_serialize_when_gamma1_is_2_pow_19(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U / (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U / (size_t)2U; i++)
   {
     size_t i0 = i;
     Eurydice_dst_ref_shared_83
@@ -10159,13 +10159,13 @@ libcrux_ml_dsa_simd_portable_encoding_gamma1_serialize_when_gamma1_is_2_pow_19(
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_GAMMA1_SERIALIZE_WHEN_GAMMA1_IS_2_POW_17_GAMMA1 ((int32_t)((uint32_t)1 << 17U))
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_gamma1_serialize_when_gamma1_is_2_pow_17(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U / (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U / (size_t)4U; i++)
   {
     size_t i0 = i;
     Eurydice_dst_ref_shared_83
@@ -10214,26 +10214,26 @@ libcrux_ml_dsa_simd_portable_encoding_gamma1_serialize_when_gamma1_is_2_pow_17(
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_gamma1_serialize(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized,
   size_t gamma1_exponent
 )
 {
-  switch (gamma1_exponent)
+  ବାଛ (gamma1_exponent)
   {
-    case 17U:
+    ସ୍ଥିତି 17U:
       {
-        break;
+        ଭାଙ୍ଗ;
       }
-    case 19U:
+    ସ୍ଥିତି 19U:
       {
         libcrux_ml_dsa_simd_portable_encoding_gamma1_serialize_when_gamma1_is_2_pow_19(simd_unit,
           serialized);
-        return;
+        ଫେରନ୍ତୁ;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
         KRML_HOST_EXIT(255U);
@@ -10246,9 +10246,9 @@ libcrux_ml_dsa_simd_portable_encoding_gamma1_serialize(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_gamma1_serialize_65(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized,
   size_t gamma1_exponent
 )
@@ -10260,13 +10260,13 @@ libcrux_ml_dsa_simd_portable_gamma1_serialize_65(
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_GAMMA1_DESERIALIZE_WHEN_GAMMA1_IS_2_POW_19_GAMMA1_TIMES_2_BITMASK ((int32_t)((uint32_t)LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_GAMMA1_DESERIALIZE_WHEN_GAMMA1_IS_2_POW_19_GAMMA1 << 1U) - 1)
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_gamma1_deserialize_when_gamma1_is_2_pow_19(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *simd_unit
 )
 {
-  for (size_t i = (size_t)0U; i < serialized.meta / (size_t)5U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < serialized.meta / (size_t)5U; i++)
   {
     size_t i0 = i;
     Eurydice_borrow_slice_u8
@@ -10299,13 +10299,13 @@ libcrux_ml_dsa_simd_portable_encoding_gamma1_deserialize_when_gamma1_is_2_pow_19
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_GAMMA1_DESERIALIZE_WHEN_GAMMA1_IS_2_POW_17_GAMMA1_TIMES_2_BITMASK ((int32_t)((uint32_t)LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_GAMMA1_DESERIALIZE_WHEN_GAMMA1_IS_2_POW_17_GAMMA1 << 1U) - 1)
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_gamma1_deserialize_when_gamma1_is_2_pow_17(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *simd_unit
 )
 {
-  for (size_t i = (size_t)0U; i < serialized.meta / (size_t)9U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < serialized.meta / (size_t)9U; i++)
   {
     size_t i0 = i;
     Eurydice_borrow_slice_u8
@@ -10352,26 +10352,26 @@ libcrux_ml_dsa_simd_portable_encoding_gamma1_deserialize_when_gamma1_is_2_pow_17
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_gamma1_deserialize(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *out,
   size_t gamma1_exponent
 )
 {
-  switch (gamma1_exponent)
+  ବାଛ (gamma1_exponent)
   {
-    case 17U:
+    ସ୍ଥିତି 17U:
       {
-        break;
+        ଭାଙ୍ଗ;
       }
-    case 19U:
+    ସ୍ଥିତି 19U:
       {
         libcrux_ml_dsa_simd_portable_encoding_gamma1_deserialize_when_gamma1_is_2_pow_19(serialized,
           out);
-        return;
+        ଫେରନ୍ତୁ;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
         KRML_HOST_EXIT(255U);
@@ -10384,7 +10384,7 @@ libcrux_ml_dsa_simd_portable_encoding_gamma1_deserialize(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_gamma1_deserialize_65(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *out,
@@ -10394,9 +10394,9 @@ libcrux_ml_dsa_simd_portable_gamma1_deserialize_65(
   libcrux_ml_dsa_simd_portable_encoding_gamma1_deserialize(serialized, out, gamma1_exponent);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_commitment_serialize_4(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
@@ -10418,9 +10418,9 @@ libcrux_ml_dsa_simd_portable_encoding_commitment_serialize_4(
   serialized.ptr[3U] = byte3;
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_commitment_serialize_6(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
@@ -10446,25 +10446,25 @@ libcrux_ml_dsa_simd_portable_encoding_commitment_serialize_6(
   serialized.ptr[5U] = byte5;
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_commitment_serialize(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
-  switch ((uint32_t)(uint8_t)serialized.meta)
+  ବାଛ ((uint32_t)(uint8_t)serialized.meta)
   {
-    case 4U:
+    ସ୍ଥିତି 4U:
       {
         libcrux_ml_dsa_simd_portable_encoding_commitment_serialize_4(simd_unit, serialized);
-        break;
+        ଭାଙ୍ଗ;
       }
-    case 6U:
+    ସ୍ଥିତି 6U:
       {
         libcrux_ml_dsa_simd_portable_encoding_commitment_serialize_6(simd_unit, serialized);
-        break;
+        ଭାଙ୍ଗ;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
         KRML_HOST_EXIT(255U);
@@ -10475,9 +10475,9 @@ libcrux_ml_dsa_simd_portable_encoding_commitment_serialize(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_commitment_serialize_65(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
@@ -10486,13 +10486,13 @@ libcrux_ml_dsa_simd_portable_commitment_serialize_65(
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_ERROR_SERIALIZE_WHEN_ETA_IS_4_ETA (4)
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_error_serialize_when_eta_is_4(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U / (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U / (size_t)2U; i++)
   {
     size_t i0 = i;
     Eurydice_dst_ref_shared_83
@@ -10518,9 +10518,9 @@ libcrux_ml_dsa_simd_portable_encoding_error_serialize_when_eta_is_4(
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_ERROR_SERIALIZE_WHEN_ETA_IS_2_ETA (2)
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_error_serialize_when_eta_is_2(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
@@ -10565,25 +10565,25 @@ libcrux_ml_dsa_simd_portable_encoding_error_serialize_when_eta_is_2(
     ((uint32_t)coefficient7 << 5U | (uint32_t)coefficient6 << 2U) | (uint32_t)coefficient5 >> 1U;
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_error_serialize(
   libcrux_ml_dsa_constants_Eta eta,
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
-  switch (eta)
+  ବାଛ (eta)
   {
-    case libcrux_ml_dsa_constants_Eta_Two:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Two:
       {
-        break;
+        ଭାଙ୍ଗ;
       }
-    case libcrux_ml_dsa_constants_Eta_Four:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Four:
       {
         libcrux_ml_dsa_simd_portable_encoding_error_serialize_when_eta_is_4(simd_unit, serialized);
-        return;
+        ଫେରନ୍ତୁ;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL incomplete match at %s:%d\n", __FILE__, __LINE__);
         KRML_HOST_EXIT(253U);
@@ -10595,10 +10595,10 @@ libcrux_ml_dsa_simd_portable_encoding_error_serialize(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_error_serialize_65(
   libcrux_ml_dsa_constants_Eta eta,
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
@@ -10607,16 +10607,16 @@ libcrux_ml_dsa_simd_portable_error_serialize_65(
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_ERROR_DESERIALIZE_WHEN_ETA_IS_4_ETA (4)
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_error_deserialize_when_eta_is_4(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *simd_units
 )
 {
-  for (size_t i = (size_t)0U; i < serialized.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < serialized.meta; i++)
   {
     size_t i0 = i;
-    const uint8_t *byte = &serialized.ptr[i0];
+    ଅଚଳ uint8_t *byte = &serialized.ptr[i0];
     uint8_t uu____0 = core_ops_bit__core__ops__bit__BitAnd_u8__u8__for__0__u8___bitand(byte, 15U);
     simd_units->data[(size_t)2U * i0] =
       LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_ERROR_DESERIALIZE_WHEN_ETA_IS_4_ETA -
@@ -10630,7 +10630,7 @@ libcrux_ml_dsa_simd_portable_encoding_error_deserialize_when_eta_is_4(
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_ERROR_DESERIALIZE_WHEN_ETA_IS_2_ETA (2)
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_error_deserialize_when_eta_is_2(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *simd_unit
@@ -10659,25 +10659,25 @@ libcrux_ml_dsa_simd_portable_encoding_error_deserialize_when_eta_is_2(
     LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_ERROR_DESERIALIZE_WHEN_ETA_IS_2_ETA - (byte2 >> 5U & 7);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_error_deserialize(
   libcrux_ml_dsa_constants_Eta eta,
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *out
 )
 {
-  switch (eta)
+  ବାଛ (eta)
   {
-    case libcrux_ml_dsa_constants_Eta_Two:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Two:
       {
-        break;
+        ଭାଙ୍ଗ;
       }
-    case libcrux_ml_dsa_constants_Eta_Four:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Four:
       {
         libcrux_ml_dsa_simd_portable_encoding_error_deserialize_when_eta_is_4(serialized, out);
-        return;
+        ଫେରନ୍ତୁ;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL incomplete match at %s:%d\n", __FILE__, __LINE__);
         KRML_HOST_EXIT(253U);
@@ -10689,7 +10689,7 @@ libcrux_ml_dsa_simd_portable_encoding_error_deserialize(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_error_deserialize_65(
   libcrux_ml_dsa_constants_Eta eta,
   Eurydice_borrow_slice_u8 serialized,
@@ -10699,18 +10699,18 @@ libcrux_ml_dsa_simd_portable_error_deserialize_65(
   libcrux_ml_dsa_simd_portable_encoding_error_deserialize(eta, serialized, out);
 }
 
-static KRML_MUSTINLINE int32_t
+ସ୍ଥିର KRML_MUSTINLINE int32_t
 libcrux_ml_dsa_simd_portable_encoding_t0_change_t0_interval(int32_t t0)
 {
-  return
+  ଫେରନ୍ତୁ
     (int32_t)((uint32_t)1 <<
       (uint32_t)(LIBCRUX_ML_DSA_CONSTANTS_BITS_IN_LOWER_PART_OF_T - (size_t)1U))
     - t0;
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_t0_serialize(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
@@ -10762,9 +10762,9 @@ libcrux_ml_dsa_simd_portable_encoding_t0_serialize(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_t0_serialize_65(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 out
 )
 {
@@ -10773,7 +10773,7 @@ libcrux_ml_dsa_simd_portable_t0_serialize_65(
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_ENCODING_T0_DESERIALIZE_BITS_IN_LOWER_PART_OF_T_MASK ((int32_t)((uint32_t)1 << (uint32_t)(int32_t)LIBCRUX_ML_DSA_CONSTANTS_BITS_IN_LOWER_PART_OF_T) - 1)
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_t0_deserialize(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *simd_unit
@@ -10841,7 +10841,7 @@ libcrux_ml_dsa_simd_portable_encoding_t0_deserialize(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_t0_deserialize_65(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *out
@@ -10850,13 +10850,13 @@ libcrux_ml_dsa_simd_portable_t0_deserialize_65(
   libcrux_ml_dsa_simd_portable_encoding_t0_deserialize(serialized, out);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_t1_serialize(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U / (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U / (size_t)4U; i++)
   {
     size_t i0 = i;
     Eurydice_dst_ref_shared_83
@@ -10885,16 +10885,16 @@ libcrux_ml_dsa_simd_portable_encoding_t1_serialize(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_t1_serialize_65(
-  const Eurydice_arr_4d *simd_unit,
+  ଅଚଳ Eurydice_arr_4d *simd_unit,
   Eurydice_mut_borrow_slice_u8 out
 )
 {
   libcrux_ml_dsa_simd_portable_encoding_t1_serialize(simd_unit, out);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_encoding_t1_deserialize(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *simd_unit
@@ -10902,7 +10902,7 @@ libcrux_ml_dsa_simd_portable_encoding_t1_deserialize(
 {
   int32_t
   mask = (int32_t)((uint32_t)1 << (uint32_t)LIBCRUX_ML_DSA_CONSTANTS_BITS_IN_UPPER_PART_OF_T) - 1;
-  for (size_t i = (size_t)0U; i < serialized.meta / (size_t)5U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < serialized.meta / (size_t)5U; i++)
   {
     size_t i0 = i;
     Eurydice_borrow_slice_u8
@@ -10932,7 +10932,7 @@ libcrux_ml_dsa_simd_portable_encoding_t1_deserialize(
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_t1_deserialize_65(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_4d *out
@@ -10941,13 +10941,13 @@ libcrux_ml_dsa_simd_portable_t1_deserialize_65(
   libcrux_ml_dsa_simd_portable_encoding_t1_deserialize(serialized, out);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_arithmetic_montgomery_multiply_by_constant(
   Eurydice_arr_4d *simd_unit,
   int32_t c
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     simd_unit->data[i0] =
@@ -10962,9 +10962,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 - $32size_t
 */
-typedef struct Eurydice_arr_a3_s { Eurydice_arr_4d data[32U]; } Eurydice_arr_a3;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_a3_s { Eurydice_arr_4d data[32U]; } Eurydice_arr_a3;
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(
   Eurydice_arr_a3 *re,
   size_t index,
@@ -10986,17 +10986,17 @@ with const generics
 - STEP_BY= 16
 - ZETA= 25847
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_30(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)16U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)16U, 25847);
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_7(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_30(re);
@@ -11009,10 +11009,10 @@ with const generics
 - STEP_BY= 8
 - ZETA= -2608894
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_300(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)8U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)8U, -2608894);
@@ -11026,17 +11026,17 @@ with const generics
 - STEP_BY= 8
 - ZETA= -518909
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_42(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)16U; i < (size_t)16U + (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)16U; i < (size_t)16U + (size_t)8U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)8U, -518909);
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_6(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_300(re);
@@ -11050,10 +11050,10 @@ with const generics
 - STEP_BY= 4
 - ZETA= 237124
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_301(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)4U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)4U, 237124);
@@ -11067,10 +11067,10 @@ with const generics
 - STEP_BY= 4
 - ZETA= -777960
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_82(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)8U; i < (size_t)8U + (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)8U; i < (size_t)8U + (size_t)4U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)4U, -777960);
@@ -11084,10 +11084,10 @@ with const generics
 - STEP_BY= 4
 - ZETA= -876248
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_420(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)16U; i < (size_t)16U + (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)16U; i < (size_t)16U + (size_t)4U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)4U, -876248);
@@ -11101,17 +11101,17 @@ with const generics
 - STEP_BY= 4
 - ZETA= 466468
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_fe(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)24U; i < (size_t)24U + (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)24U; i < (size_t)24U + (size_t)4U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)4U, 466468);
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_5(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_301(re);
@@ -11127,10 +11127,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= 1826347
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_302(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)2U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)2U, 1826347);
@@ -11144,10 +11144,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= 2353451
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_43(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)4U; i < (size_t)4U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)4U; i < (size_t)4U + (size_t)2U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)2U, 2353451);
@@ -11161,10 +11161,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= -359251
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_820(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)8U; i < (size_t)8U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)8U; i < (size_t)8U + (size_t)2U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)2U, -359251);
@@ -11178,10 +11178,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= -2091905
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_ea(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)12U; i < (size_t)12U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)12U; i < (size_t)12U + (size_t)2U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)2U, -2091905);
@@ -11195,10 +11195,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= 3119733
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_421(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)16U; i < (size_t)16U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)16U; i < (size_t)16U + (size_t)2U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)2U, 3119733);
@@ -11212,10 +11212,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= -2884855
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_61(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)20U; i < (size_t)20U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)20U; i < (size_t)20U + (size_t)2U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)2U, -2884855);
@@ -11229,10 +11229,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= 3111497
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_fe0(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)24U; i < (size_t)24U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)24U; i < (size_t)24U + (size_t)2U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)2U, 3111497);
@@ -11246,17 +11246,17 @@ with const generics
 - STEP_BY= 2
 - ZETA= 2680103
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_38(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)28U; i < (size_t)28U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)28U; i < (size_t)28U + (size_t)2U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)2U, 2680103);
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_4(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_302(re);
@@ -11276,10 +11276,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 2725464
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_303(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, 2725464);
@@ -11293,10 +11293,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 1024112
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_25(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)2U; i < (size_t)2U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)2U; i < (size_t)2U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, 1024112);
@@ -11310,10 +11310,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -1079900
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_430(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)4U; i < (size_t)4U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)4U; i < (size_t)4U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, -1079900);
@@ -11327,10 +11327,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 3585928
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_f4(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)6U; i < (size_t)6U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)6U; i < (size_t)6U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, 3585928);
@@ -11344,10 +11344,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -549488
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_821(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)8U; i < (size_t)8U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)8U; i < (size_t)8U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, -549488);
@@ -11361,10 +11361,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -1119584
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_1d(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)10U; i < (size_t)10U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)10U; i < (size_t)10U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, -1119584);
@@ -11378,10 +11378,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 2619752
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_ea0(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)12U; i < (size_t)12U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)12U; i < (size_t)12U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, 2619752);
@@ -11395,10 +11395,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -2108549
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_d8(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)14U; i < (size_t)14U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)14U; i < (size_t)14U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, -2108549);
@@ -11412,10 +11412,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -2118186
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_422(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)16U; i < (size_t)16U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)16U; i < (size_t)16U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, -2118186);
@@ -11429,10 +11429,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -3859737
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_60(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)18U; i < (size_t)18U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)18U; i < (size_t)18U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, -3859737);
@@ -11446,10 +11446,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -1399561
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_610(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)20U; i < (size_t)20U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)20U; i < (size_t)20U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, -1399561);
@@ -11463,10 +11463,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -3277672
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_29(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)22U; i < (size_t)22U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)22U; i < (size_t)22U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, -3277672);
@@ -11480,10 +11480,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 1757237
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_fe1(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)24U; i < (size_t)24U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)24U; i < (size_t)24U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, 1757237);
@@ -11497,10 +11497,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -19422
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_9d(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)26U; i < (size_t)26U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)26U; i < (size_t)26U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, -19422);
@@ -11514,10 +11514,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 4010497
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_380(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)28U; i < (size_t)28U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)28U; i < (size_t)28U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, 4010497);
@@ -11531,17 +11531,17 @@ with const generics
 - STEP_BY= 1
 - ZETA= 280005
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_5f(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)30U; i < (size_t)30U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)30U; i < (size_t)30U + (size_t)1U; i++)
   {
     size_t j = i;
     libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_round(re, j, (size_t)1U, 280005);
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_3(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_303(re);
@@ -11562,14 +11562,14 @@ libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_3(Eurydice_arr_a3 *re)
   libcrux_ml_dsa_simd_portable_ntt_outer_3_plus_5f(re);
 }
 
-static KRML_MUSTINLINE int32_t
+ସ୍ଥିର KRML_MUSTINLINE int32_t
 libcrux_ml_dsa_simd_portable_arithmetic_montgomery_multiply_fe_by_fer(int32_t fe, int32_t fer)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_simd_portable_arithmetic_montgomery_reduce_element((int64_t)fe * (int64_t)fer);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_step(
   Eurydice_arr_4d *simd_unit,
   int32_t zeta,
@@ -11586,7 +11586,7 @@ libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_step(
   simd_unit->data[index] += t;
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_at_layer_2(
   Eurydice_arr_4d *simd_unit,
   int32_t zeta
@@ -11598,7 +11598,7 @@ libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_at_layer_2(
   libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_step(simd_unit, zeta, (size_t)3U, (size_t)4U);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_2_round(
   Eurydice_arr_a3 *re,
   size_t index,
@@ -11608,7 +11608,7 @@ libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_2_round(
   libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_at_layer_2(&re->data[index], zeta);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_2(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_2_round(re, (size_t)0U, 2706023);
@@ -11645,7 +11645,7 @@ libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_2(Eurydice_arr_a3 *re)
   libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_2_round(re, (size_t)31U, -2797779);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_at_layer_1(
   Eurydice_arr_4d *simd_unit,
   int32_t zeta1,
@@ -11658,7 +11658,7 @@ libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_at_layer_1(
   libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_step(simd_unit, zeta2, (size_t)5U, (size_t)2U);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_1_round(
   Eurydice_arr_a3 *re,
   size_t index,
@@ -11669,7 +11669,7 @@ libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_1_round(
   libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_at_layer_1(&re->data[index], zeta_0, zeta_1);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_1(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_1_round(re, (size_t)0U, -3930395, -1528703);
@@ -11706,7 +11706,7 @@ libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_1(Eurydice_arr_a3 *re)
   libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_1_round(re, (size_t)31U, -3628969, 3839961);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_at_layer_0(
   Eurydice_arr_4d *simd_unit,
   int32_t zeta0,
@@ -11721,7 +11721,7 @@ libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_at_layer_0(
   libcrux_ml_dsa_simd_portable_ntt_simd_unit_ntt_step(simd_unit, zeta3, (size_t)6U, (size_t)1U);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_0_round(
   Eurydice_arr_a3 *re,
   size_t index,
@@ -11738,7 +11738,7 @@ libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_0_round(
     zeta_3);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_0(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_0_round(re,
@@ -11935,7 +11935,7 @@ libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_0(Eurydice_arr_a3 *re)
     1976782);
 }
 
-static KRML_MUSTINLINE void libcrux_ml_dsa_simd_portable_ntt_ntt(Eurydice_arr_a3 *re)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ libcrux_ml_dsa_simd_portable_ntt_ntt(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_7(re);
   libcrux_ml_dsa_simd_portable_ntt_ntt_at_layer_6(re);
@@ -11950,12 +11950,12 @@ static KRML_MUSTINLINE void libcrux_ml_dsa_simd_portable_ntt_ntt(Eurydice_arr_a3
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void libcrux_ml_dsa_simd_portable_ntt_65(Eurydice_arr_a3 *simd_units)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ libcrux_ml_dsa_simd_portable_ntt_65(Eurydice_arr_a3 *simd_units)
 {
   libcrux_ml_dsa_simd_portable_ntt_ntt(simd_units);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_simd_unit_inv_ntt_step(
   Eurydice_arr_4d *simd_unit,
   int32_t zeta,
@@ -11970,7 +11970,7 @@ libcrux_ml_dsa_simd_portable_invntt_simd_unit_inv_ntt_step(
       zeta);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_simd_unit_invert_ntt_at_layer_0(
   Eurydice_arr_4d *simd_unit,
   int32_t zeta0,
@@ -11997,7 +11997,7 @@ libcrux_ml_dsa_simd_portable_invntt_simd_unit_invert_ntt_at_layer_0(
     (size_t)1U);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_0_round(
   Eurydice_arr_a3 *re,
   size_t index,
@@ -12014,7 +12014,7 @@ libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_0_round(
     zeta3);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_0(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_0_round(re,
@@ -12211,7 +12211,7 @@ libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_0(Eurydice_arr_a3 *re)
     2091667);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_simd_unit_invert_ntt_at_layer_1(
   Eurydice_arr_4d *simd_unit,
   int32_t zeta0,
@@ -12236,7 +12236,7 @@ libcrux_ml_dsa_simd_portable_invntt_simd_unit_invert_ntt_at_layer_1(
     (size_t)2U);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_1_round(
   Eurydice_arr_a3 *re,
   size_t index,
@@ -12249,7 +12249,7 @@ libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_1_round(
     zeta_01);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_1(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_1_round(re,
@@ -12382,7 +12382,7 @@ libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_1(Eurydice_arr_a3 *re)
     -3930395);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_simd_unit_invert_ntt_at_layer_2(
   Eurydice_arr_4d *simd_unit,
   int32_t zeta
@@ -12406,7 +12406,7 @@ libcrux_ml_dsa_simd_portable_invntt_simd_unit_invert_ntt_at_layer_2(
     (size_t)4U);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_2_round(
   Eurydice_arr_a3 *re,
   size_t index,
@@ -12416,7 +12416,7 @@ libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_2_round(
   libcrux_ml_dsa_simd_portable_invntt_simd_unit_invert_ntt_at_layer_2(&re->data[index], zeta1);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_2(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_2_round(re, (size_t)0U, -2797779);
@@ -12460,10 +12460,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 280005
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_30(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12483,10 +12483,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 4010497
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_25(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)2U; i < (size_t)2U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)2U; i < (size_t)2U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12506,10 +12506,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -19422
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_43(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)4U; i < (size_t)4U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)4U; i < (size_t)4U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12529,10 +12529,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 1757237
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_f4(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)6U; i < (size_t)6U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)6U; i < (size_t)6U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12552,10 +12552,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -3277672
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_82(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)8U; i < (size_t)8U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)8U; i < (size_t)8U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12575,10 +12575,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -1399561
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_1d(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)10U; i < (size_t)10U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)10U; i < (size_t)10U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12598,10 +12598,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -3859737
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_ea(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)12U; i < (size_t)12U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)12U; i < (size_t)12U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12621,10 +12621,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -2118186
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_d8(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)14U; i < (size_t)14U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)14U; i < (size_t)14U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12644,10 +12644,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -2108549
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_42(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)16U; i < (size_t)16U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)16U; i < (size_t)16U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12667,10 +12667,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 2619752
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_60(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)18U; i < (size_t)18U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)18U; i < (size_t)18U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12690,10 +12690,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -1119584
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_61(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)20U; i < (size_t)20U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)20U; i < (size_t)20U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12713,10 +12713,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -549488
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_29(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)22U; i < (size_t)22U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)22U; i < (size_t)22U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12736,10 +12736,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 3585928
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_fe(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)24U; i < (size_t)24U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)24U; i < (size_t)24U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12759,10 +12759,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= -1079900
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_9d(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)26U; i < (size_t)26U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)26U; i < (size_t)26U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12782,10 +12782,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 1024112
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_38(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)28U; i < (size_t)28U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)28U; i < (size_t)28U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12805,10 +12805,10 @@ with const generics
 - STEP_BY= 1
 - ZETA= 2725464
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_5f(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)30U; i < (size_t)30U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)30U; i < (size_t)30U + (size_t)1U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12821,7 +12821,7 @@ libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_5f(Eurydice_arr_a3 *re)
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_3(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_30(re);
@@ -12849,10 +12849,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= 2680103
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_300(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)2U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12872,10 +12872,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= 3111497
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_430(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)4U; i < (size_t)4U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)4U; i < (size_t)4U + (size_t)2U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12895,10 +12895,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= -2884855
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_820(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)8U; i < (size_t)8U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)8U; i < (size_t)8U + (size_t)2U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12918,10 +12918,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= 3119733
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_ea0(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)12U; i < (size_t)12U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)12U; i < (size_t)12U + (size_t)2U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12941,10 +12941,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= -2091905
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_420(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)16U; i < (size_t)16U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)16U; i < (size_t)16U + (size_t)2U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12964,10 +12964,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= -359251
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_610(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)20U; i < (size_t)20U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)20U; i < (size_t)20U + (size_t)2U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -12987,10 +12987,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= 2353451
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_fe0(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)24U; i < (size_t)24U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)24U; i < (size_t)24U + (size_t)2U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -13010,10 +13010,10 @@ with const generics
 - STEP_BY= 2
 - ZETA= 1826347
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_380(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)28U; i < (size_t)28U + (size_t)2U; i++)
+  ପାଇଁ (size_t i = (size_t)28U; i < (size_t)28U + (size_t)2U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -13026,7 +13026,7 @@ libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_380(Eurydice_arr_a3 *re)
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_4(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_300(re);
@@ -13046,10 +13046,10 @@ with const generics
 - STEP_BY= 4
 - ZETA= 466468
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_301(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)4U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -13069,10 +13069,10 @@ with const generics
 - STEP_BY= 4
 - ZETA= -876248
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_821(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)8U; i < (size_t)8U + (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)8U; i < (size_t)8U + (size_t)4U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -13092,10 +13092,10 @@ with const generics
 - STEP_BY= 4
 - ZETA= -777960
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_421(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)16U; i < (size_t)16U + (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)16U; i < (size_t)16U + (size_t)4U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -13115,10 +13115,10 @@ with const generics
 - STEP_BY= 4
 - ZETA= 237124
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_fe1(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)24U; i < (size_t)24U + (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)24U; i < (size_t)24U + (size_t)4U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -13131,7 +13131,7 @@ libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_fe1(Eurydice_arr_a3 *re)
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_5(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_301(re);
@@ -13147,10 +13147,10 @@ with const generics
 - STEP_BY= 8
 - ZETA= -518909
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_302(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)8U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -13170,10 +13170,10 @@ with const generics
 - STEP_BY= 8
 - ZETA= -2608894
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_422(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)16U; i < (size_t)16U + (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)16U; i < (size_t)16U + (size_t)8U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -13186,7 +13186,7 @@ libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_422(Eurydice_arr_a3 *re)
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_6(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_302(re);
@@ -13200,10 +13200,10 @@ with const generics
 - STEP_BY= 16
 - ZETA= 25847
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_303(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)0U + (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)0U + (size_t)16U; i++)
   {
     size_t j = i;
     Eurydice_arr_4d rej = re->data[j];
@@ -13216,13 +13216,13 @@ libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_303(Eurydice_arr_a3 *re)
   }
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_7(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invntt_outer_3_plus_303(re);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invntt_invert_ntt_montgomery(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_0(re);
@@ -13233,7 +13233,7 @@ libcrux_ml_dsa_simd_portable_invntt_invert_ntt_montgomery(Eurydice_arr_a3 *re)
   libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_5(re);
   libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_6(re);
   libcrux_ml_dsa_simd_portable_invntt_invert_ntt_at_layer_7(re);
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_arithmetic_montgomery_multiply_by_constant(&re->data[i0], 41978);
@@ -13243,7 +13243,7 @@ libcrux_ml_dsa_simd_portable_invntt_invert_ntt_montgomery(Eurydice_arr_a3 *re)
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_invert_ntt_montgomery_65(Eurydice_arr_a3 *simd_units)
 {
   libcrux_ml_dsa_simd_portable_invntt_invert_ntt_montgomery(simd_units);
@@ -13252,7 +13252,7 @@ libcrux_ml_dsa_simd_portable_invert_ntt_montgomery_65(Eurydice_arr_a3 *simd_unit
 /**
 This function found in impl {libcrux_ml_dsa::simd::traits::Operations for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_simd_portable_barrett_reduce_simd_unit_65(Eurydice_arr_4d *simd_unit)
 {
   libcrux_ml_dsa_simd_portable_arithmetic_barrett_reduce_simd_unit(simd_unit);
@@ -13266,7 +13266,7 @@ libcrux_ml_dsa_simd_portable_barrett_reduce_simd_unit_65(Eurydice_arr_4d *simd_u
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_GAMMA1_RING_ELEMENT_SIZE (libcrux_ml_dsa_constants_gamma1_ring_element_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_BITS_PER_GAMMA1_COEFFICIENT))
 
-#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_VERIFICATION_KEY_SIZE (libcrux_ml_dsa_constants_verification_key_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A))
+#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_VERIFICATION_ଚାବି_SIZE (libcrux_ml_dsa_constants_verification_ଚାବି_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A))
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_SIGNATURE_SIZE (libcrux_ml_dsa_constants_signature_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COLUMNS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_MAX_ONES_IN_HINT, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COMMITMENT_HASH_SIZE, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_BITS_PER_GAMMA1_COEFFICIENT))
 
@@ -13278,7 +13278,7 @@ libcrux_ml_dsa_simd_portable_barrett_reduce_simd_unit_65(Eurydice_arr_4d *simd_u
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_GAMMA1_RING_ELEMENT_SIZE (libcrux_ml_dsa_constants_gamma1_ring_element_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_BITS_PER_GAMMA1_COEFFICIENT))
 
-#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_VERIFICATION_KEY_SIZE (libcrux_ml_dsa_constants_verification_key_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A))
+#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_VERIFICATION_ଚାବି_SIZE (libcrux_ml_dsa_constants_verification_ଚାବି_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A))
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_SIGNATURE_SIZE (libcrux_ml_dsa_constants_signature_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COLUMNS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_MAX_ONES_IN_HINT, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COMMITMENT_HASH_SIZE, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_BITS_PER_GAMMA1_COEFFICIENT))
 
@@ -13289,24 +13289,24 @@ A monomorphic instance of libcrux_ml_dsa.types.MLDSASigningKey
 with const generics
 - $2560size_t
 */
-typedef Eurydice_arr_10 libcrux_ml_dsa_types_MLDSASigningKey_11;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_10 libcrux_ml_dsa_types_MLDSASigning_ଚାବି_11;
 
-typedef Eurydice_arr_10 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44SigningKey;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_10 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44_Signing_ଚାବି;
 
 /**
 A monomorphic instance of libcrux_ml_dsa.types.MLDSAVerificationKey
 with const generics
 - $1312size_t
 */
-typedef Eurydice_arr_02 libcrux_ml_dsa_types_MLDSAVerificationKey_1d;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_02 libcrux_ml_dsa_types_MLDSAVerification_ଚାବି_1d;
 
-typedef Eurydice_arr_02 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44VerificationKey;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_02 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44_Verification_ଚାବି;
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_ROW_COLUMN (LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A + LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COLUMNS_IN_A)
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_ROW_X_COLUMN (LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A * LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COLUMNS_IN_A)
 
-#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_SIGNING_KEY_SIZE (libcrux_ml_dsa_constants_signing_key_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COLUMNS_IN_A, LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_ERROR_RING_ELEMENT_SIZE))
+#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_SIGNING_ଚାବି_SIZE (libcrux_ml_dsa_constants_signing_ଚାବି_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COLUMNS_IN_A, LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_ERROR_RING_ELEMENT_SIZE))
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_COMMITMENT_VECTOR_SIZE (libcrux_ml_dsa_constants_commitment_vector_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_BITS_PER_COMMITMENT_COEFFICIENT, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A))
 
@@ -13315,24 +13315,24 @@ A monomorphic instance of libcrux_ml_dsa.types.MLDSASigningKey
 with const generics
 - $4032size_t
 */
-typedef Eurydice_arr_24 libcrux_ml_dsa_types_MLDSASigningKey_8e;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_24 libcrux_ml_dsa_types_MLDSASigning_ଚାବି_8e;
 
-typedef Eurydice_arr_24 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65SigningKey;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_24 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65_Signing_ଚାବି;
 
 /**
 A monomorphic instance of libcrux_ml_dsa.types.MLDSAVerificationKey
 with const generics
 - $1952size_t
 */
-typedef Eurydice_arr_29 libcrux_ml_dsa_types_MLDSAVerificationKey_c8;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_29 libcrux_ml_dsa_types_MLDSAVerification_ଚାବି_c8;
 
-typedef Eurydice_arr_29 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65VerificationKey;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_29 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65_Verification_ଚାବି;
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_ROW_COLUMN (LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A + LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COLUMNS_IN_A)
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_ROW_X_COLUMN (LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A * LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COLUMNS_IN_A)
 
-#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_SIGNING_KEY_SIZE (libcrux_ml_dsa_constants_signing_key_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COLUMNS_IN_A, LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_ERROR_RING_ELEMENT_SIZE))
+#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_SIGNING_ଚାବି_SIZE (libcrux_ml_dsa_constants_signing_ଚାବି_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COLUMNS_IN_A, LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_ERROR_RING_ELEMENT_SIZE))
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_COMMITMENT_VECTOR_SIZE (libcrux_ml_dsa_constants_commitment_vector_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_BITS_PER_COMMITMENT_COEFFICIENT, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A))
 
@@ -13341,47 +13341,47 @@ A monomorphic instance of libcrux_ml_dsa.types.MLDSASigningKey
 with const generics
 - $4896size_t
 */
-typedef Eurydice_arr_e2 libcrux_ml_dsa_types_MLDSASigningKey_b8;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_e2 libcrux_ml_dsa_types_MLDSASigning_ଚାବି_b8;
 
-typedef Eurydice_arr_e2 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87SigningKey;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_e2 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87_Signing_ଚାବି;
 
 /**
 A monomorphic instance of libcrux_ml_dsa.types.MLDSAVerificationKey
 with const generics
 - $2592size_t
 */
-typedef Eurydice_arr_43 libcrux_ml_dsa_types_MLDSAVerificationKey_e9;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_43 libcrux_ml_dsa_types_MLDSAVerification_ଚାବି_e9;
 
-typedef Eurydice_arr_43 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87VerificationKey;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_43 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87_Verification_ଚାବି;
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_ROW_COLUMN (LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A + LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COLUMNS_IN_A)
 
 #define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_ROW_X_COLUMN (LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A * LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COLUMNS_IN_A)
 
-#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_SIGNING_KEY_SIZE (libcrux_ml_dsa_constants_signing_key_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COLUMNS_IN_A, LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_ERROR_RING_ELEMENT_SIZE))
+#define LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_SIGNING_ଚାବି_SIZE (libcrux_ml_dsa_constants_signing_ଚାବି_size(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A, LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COLUMNS_IN_A, LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_ERROR_RING_ELEMENT_SIZE))
 
 #define LIBCRUX_ML_DSA_PRE_HASH_PRE_HASH_OID_LEN ((size_t)11U)
 
-typedef Eurydice_arr_c9 libcrux_ml_dsa_pre_hash_PreHashOID;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_c9 libcrux_ml_dsa_pre_hash_PreHashOID;
 
-typedef core_result_Result_a8 libcrux_ml_dsa_pre_hash_PreHashResult;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା core_result_Result_a8 libcrux_ml_dsa_pre_hash_PreHashResult;
 
 /**
 This function found in impl {core::convert::From<libcrux_ml_dsa::pre_hash::DomainSeparationError> for libcrux_ml_dsa::types::SigningError}
 */
-static inline libcrux_ml_dsa_types_SigningError
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_dsa_types_SigningError
 libcrux_ml_dsa_pre_hash_from_96(libcrux_ml_dsa_pre_hash_DomainSeparationError e)
 {
-  return libcrux_ml_dsa_types_SigningError_ContextTooLongError;
+  ଫେରନ୍ତୁ libcrux_ml_dsa_types_SigningError_ContextTooLongError;
 }
 
 /**
 This function found in impl {core::convert::From<libcrux_ml_dsa::pre_hash::DomainSeparationError> for libcrux_ml_dsa::types::VerificationError}
 */
-static inline libcrux_ml_dsa_types_VerificationError
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_dsa_types_VerificationError
 libcrux_ml_dsa_pre_hash_from_bf(libcrux_ml_dsa_pre_hash_DomainSeparationError e)
 {
-  return libcrux_ml_dsa_types_VerificationError_VerificationContextTooLongError;
+  ଫେରନ୍ତୁ libcrux_ml_dsa_types_VerificationError_VerificationContextTooLongError;
 }
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_INVNTT_INVERT_NTT_AT_LAYER_3_STEP ((size_t)8U)
@@ -13424,20 +13424,20 @@ libcrux_ml_dsa_pre_hash_from_bf(libcrux_ml_dsa_pre_hash_DomainSeparationError e)
 
 #define LIBCRUX_ML_DSA_SIMD_PORTABLE_NTT_NTT_AT_LAYER_7_STEP_BY ((size_t)16U)
 
-typedef int32_t libcrux_ml_dsa_simd_portable_vector_type_FieldElement;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା int32_t libcrux_ml_dsa_simd_portable_vector_type_FieldElement;
 
 /**
 This function found in impl {core::clone::Clone for libcrux_ml_dsa::simd::portable::vector_type::Coefficients}
 */
-static inline Eurydice_arr_4d
-libcrux_ml_dsa_simd_portable_vector_type_clone_a5(const Eurydice_arr_4d *self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_4d
+libcrux_ml_dsa_simd_portable_vector_type_clone_a5(ଅଚଳ Eurydice_arr_4d *self)
 {
-  return self[0U];
+  ଫେରନ୍ତୁ self[0U];
 }
 
-typedef int32_t libcrux_ml_dsa_simd_traits_FieldElementTimesMontgomeryR;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା int32_t libcrux_ml_dsa_simd_traits_FieldElementTimesMontgomeryR;
 
-typedef Eurydice_arr_93 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87Signature;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_93 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87Signature;
 
 /**
  A reference to the raw byte array.
@@ -13450,11 +13450,11 @@ A monomorphic instance of libcrux_ml_dsa.types.as_ref_c5
 with const generics
 - SIZE= 4627
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_93
-*libcrux_ml_dsa_types_as_ref_c5_f1(const Eurydice_arr_93 *self)
+*libcrux_ml_dsa_types_as_ref_c5_f1(ଅଚଳ Eurydice_arr_93 *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -13468,11 +13468,11 @@ A monomorphic instance of libcrux_ml_dsa.types.as_ref_7f
 with const generics
 - SIZE= 2592
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_43
-*libcrux_ml_dsa_types_as_ref_7f_c6(const Eurydice_arr_43 *self)
+*libcrux_ml_dsa_types_as_ref_7f_c6(ଅଚଳ Eurydice_arr_43 *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -13486,11 +13486,11 @@ A monomorphic instance of libcrux_ml_dsa.types.as_ref_9b
 with const generics
 - SIZE= 4896
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_e2
-*libcrux_ml_dsa_types_as_ref_9b_72(const Eurydice_arr_e2 *self)
+*libcrux_ml_dsa_types_as_ref_9b_72(ଅଚଳ Eurydice_arr_e2 *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -13504,9 +13504,9 @@ A monomorphic instance of libcrux_ml_dsa.types.new_7f
 with const generics
 - SIZE= 2592
 */
-static inline Eurydice_arr_43 libcrux_ml_dsa_types_new_7f_c6(Eurydice_arr_43 value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_43 libcrux_ml_dsa_types_new_7f_c6(Eurydice_arr_43 ମୂଲ୍ୟ)
 {
-  return value;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ;
 }
 
 /**
@@ -13520,12 +13520,12 @@ A monomorphic instance of libcrux_ml_dsa.types.new_9b
 with const generics
 - SIZE= 4896
 */
-static inline Eurydice_arr_e2 libcrux_ml_dsa_types_new_9b_72(Eurydice_arr_e2 value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_e2 libcrux_ml_dsa_types_new_9b_72(Eurydice_arr_e2 ମୂଲ୍ୟ)
 {
-  return value;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ;
 }
 
-typedef Eurydice_arr_85 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44Signature;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_85 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44Signature;
 
 /**
  A reference to the raw byte array.
@@ -13538,11 +13538,11 @@ A monomorphic instance of libcrux_ml_dsa.types.as_ref_c5
 with const generics
 - SIZE= 2420
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_85
-*libcrux_ml_dsa_types_as_ref_c5_37(const Eurydice_arr_85 *self)
+*libcrux_ml_dsa_types_as_ref_c5_37(ଅଚଳ Eurydice_arr_85 *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -13556,11 +13556,11 @@ A monomorphic instance of libcrux_ml_dsa.types.as_ref_7f
 with const generics
 - SIZE= 1312
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_02
-*libcrux_ml_dsa_types_as_ref_7f_7d(const Eurydice_arr_02 *self)
+*libcrux_ml_dsa_types_as_ref_7f_7d(ଅଚଳ Eurydice_arr_02 *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -13574,11 +13574,11 @@ A monomorphic instance of libcrux_ml_dsa.types.as_ref_9b
 with const generics
 - SIZE= 2560
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_10
-*libcrux_ml_dsa_types_as_ref_9b_ab(const Eurydice_arr_10 *self)
+*libcrux_ml_dsa_types_as_ref_9b_ab(ଅଚଳ Eurydice_arr_10 *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -13592,9 +13592,9 @@ A monomorphic instance of libcrux_ml_dsa.types.new_7f
 with const generics
 - SIZE= 1312
 */
-static inline Eurydice_arr_02 libcrux_ml_dsa_types_new_7f_7d(Eurydice_arr_02 value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_02 libcrux_ml_dsa_types_new_7f_7d(Eurydice_arr_02 ମୂଲ୍ୟ)
 {
-  return value;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ;
 }
 
 /**
@@ -13608,12 +13608,12 @@ A monomorphic instance of libcrux_ml_dsa.types.new_9b
 with const generics
 - SIZE= 2560
 */
-static inline Eurydice_arr_10 libcrux_ml_dsa_types_new_9b_ab(Eurydice_arr_10 value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_10 libcrux_ml_dsa_types_new_9b_ab(Eurydice_arr_10 ମୂଲ୍ୟ)
 {
-  return value;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ;
 }
 
-typedef Eurydice_arr_0c libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65Signature;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_0c libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65Signature;
 
 /**
  A reference to the raw byte array.
@@ -13626,11 +13626,11 @@ A monomorphic instance of libcrux_ml_dsa.types.as_ref_c5
 with const generics
 - SIZE= 3309
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_0c
-*libcrux_ml_dsa_types_as_ref_c5_5c(const Eurydice_arr_0c *self)
+*libcrux_ml_dsa_types_as_ref_c5_5c(ଅଚଳ Eurydice_arr_0c *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -13644,11 +13644,11 @@ A monomorphic instance of libcrux_ml_dsa.types.as_ref_7f
 with const generics
 - SIZE= 1952
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_29
-*libcrux_ml_dsa_types_as_ref_7f_a2(const Eurydice_arr_29 *self)
+*libcrux_ml_dsa_types_as_ref_7f_a2(ଅଚଳ Eurydice_arr_29 *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -13662,11 +13662,11 @@ A monomorphic instance of libcrux_ml_dsa.types.as_ref_9b
 with const generics
 - SIZE= 4032
 */
-static inline const
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଅଚଳ
 Eurydice_arr_24
-*libcrux_ml_dsa_types_as_ref_9b_e5(const Eurydice_arr_24 *self)
+*libcrux_ml_dsa_types_as_ref_9b_e5(ଅଚଳ Eurydice_arr_24 *self)
 {
-  return self;
+  ଫେରନ୍ତୁ self;
 }
 
 /**
@@ -13680,9 +13680,9 @@ A monomorphic instance of libcrux_ml_dsa.types.new_7f
 with const generics
 - SIZE= 1952
 */
-static inline Eurydice_arr_29 libcrux_ml_dsa_types_new_7f_a2(Eurydice_arr_29 value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_29 libcrux_ml_dsa_types_new_7f_a2(Eurydice_arr_29 ମୂଲ୍ୟ)
 {
-  return value;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ;
 }
 
 /**
@@ -13696,9 +13696,9 @@ A monomorphic instance of libcrux_ml_dsa.types.new_9b
 with const generics
 - SIZE= 4032
 */
-static inline Eurydice_arr_24 libcrux_ml_dsa_types_new_9b_e5(Eurydice_arr_24 value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_24 libcrux_ml_dsa_types_new_9b_e5(Eurydice_arr_24 ମୂଲ୍ୟ)
 {
-  return value;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ;
 }
 
 /**
@@ -13706,10 +13706,10 @@ A monomorphic instance of core.result.Result
 with types libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87Signature, libcrux_ml_dsa_types_SigningError
 
 */
-typedef struct core_result_Result_8b_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_8b_s
 {
   core_result_Result_57_tags tag;
-  union {
+  ସଂଘ {
     Eurydice_arr_93 case_Ok;
     libcrux_ml_dsa_types_SigningError case_Err;
   }
@@ -13722,7 +13722,7 @@ A monomorphic instance of libcrux_ml_dsa.polynomial.PolynomialRingElement
 with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 
 */
-typedef Eurydice_arr_a3 libcrux_ml_dsa_polynomial_PolynomialRingElement_e8;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_a3 libcrux_ml_dsa_polynomial_PolynomialRingElement_e8;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -13730,14 +13730,14 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $7size_t
 */
-typedef struct Eurydice_arr_bb_s { Eurydice_arr_a3 data[7U]; } Eurydice_arr_bb;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_bb_s { Eurydice_arr_a3 data[7U]; } Eurydice_arr_bb;
 
 /**
 A monomorphic instance of core.option.Option
 with types Eurydice_arr_bb
 
 */
-typedef struct core_option_Option_2d_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_2d_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_bb f0;
@@ -13749,9 +13749,9 @@ A monomorphic instance of Eurydice.dst_ref_shared
 with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8, size_t
 
 */
-typedef struct Eurydice_dst_ref_shared_44_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_dst_ref_shared_44_s
 {
-  const Eurydice_arr_a3 *ptr;
+  ଅଚଳ Eurydice_arr_a3 *ptr;
   size_t meta;
 }
 Eurydice_dst_ref_shared_44;
@@ -13762,7 +13762,7 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $56size_t
 */
-typedef struct Eurydice_arr_0f_s { Eurydice_arr_a3 data[56U]; } Eurydice_arr_0f;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_0f_s { Eurydice_arr_a3 data[56U]; } Eurydice_arr_0f;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -13770,13 +13770,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 56
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_208(const Eurydice_arr_0f *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_208(ଅଚଳ Eurydice_arr_0f *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)56U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -13790,9 +13790,9 @@ A monomorphic instance of libcrux_ml_dsa.types.zero_c5
 with const generics
 - SIZE= 4627
 */
-static inline Eurydice_arr_93 libcrux_ml_dsa_types_zero_c5_f1(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_93 libcrux_ml_dsa_types_zero_c5_f1(ଶୂନ୍ୟ)
 {
-  return (KRML_CLITERAL(Eurydice_arr_93){ .data = { 0U } });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_arr_93){ .data = { 0U } });
 }
 
 /**
@@ -13801,7 +13801,7 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $8size_t
 */
-typedef struct Eurydice_arr_8f_s { Eurydice_arr_a3 data[8U]; } Eurydice_arr_8f;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_8f_s { Eurydice_arr_a3 data[8U]; } Eurydice_arr_8f;
 
 /**
  Declassify secret memory.
@@ -13813,8 +13813,8 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_declassify
 with types Eurydice_arr libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_portable_vector_type_Coefficients[[$8size_t]]
 
 */
-static KRML_MUSTINLINE void
-libcrux_secrets_mem_requests_ct_declassify_6a(const Eurydice_arr_8f *val)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_secrets_mem_requests_ct_declassify_6a(ଅଚଳ Eurydice_arr_8f *val)
 {
 
 }
@@ -13825,7 +13825,7 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $15size_t
 */
-typedef struct Eurydice_arr_92_s { Eurydice_arr_a3 data[15U]; } Eurydice_arr_92;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_92_s { Eurydice_arr_a3 data[15U]; } Eurydice_arr_92;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -13833,13 +13833,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 15
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_207(const Eurydice_arr_92 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_207(ଅଚଳ Eurydice_arr_92 *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)15U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -13848,13 +13848,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 7
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_206(const Eurydice_arr_bb *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_206(ଅଚଳ Eurydice_arr_bb *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)7U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -13863,10 +13863,10 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 15
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_subslice_shared_251(const Eurydice_arr_92 *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_subslice_shared_251(ଅଚଳ Eurydice_arr_92 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_dst_ref_shared_44){ .ptr = a->data + r.start, .meta = r.end - r.start }
     );
@@ -13877,7 +13877,7 @@ A monomorphic instance of Eurydice.dst_ref_mut
 with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8, size_t
 
 */
-typedef struct Eurydice_dst_ref_mut_44_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_dst_ref_mut_44_s
 {
   Eurydice_arr_a3 *ptr;
   size_t meta;
@@ -13890,12 +13890,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 7
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_208(Eurydice_arr_bb *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_208(Eurydice_arr_bb *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)7U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -13904,12 +13904,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 56
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_207(Eurydice_arr_0f *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_207(Eurydice_arr_0f *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)56U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -13918,12 +13918,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 15
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_206(Eurydice_arr_92 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_206(Eurydice_arr_92 *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)15U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -13931,10 +13931,10 @@ A monomorphic instance of core.result.Result
 with types libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65Signature, libcrux_ml_dsa_types_SigningError
 
 */
-typedef struct core_result_Result_8c_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_8c_s
 {
   core_result_Result_57_tags tag;
-  union {
+  ସଂଘ {
     Eurydice_arr_0c case_Ok;
     libcrux_ml_dsa_types_SigningError case_Err;
   }
@@ -13948,14 +13948,14 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $5size_t
 */
-typedef struct Eurydice_arr_5d_s { Eurydice_arr_a3 data[5U]; } Eurydice_arr_5d;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_5d_s { Eurydice_arr_a3 data[5U]; } Eurydice_arr_5d;
 
 /**
 A monomorphic instance of core.option.Option
 with types Eurydice_arr_5d
 
 */
-typedef struct core_option_Option_1e_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_1e_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_5d f0;
@@ -13968,7 +13968,7 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $30size_t
 */
-typedef struct Eurydice_arr_5a_s { Eurydice_arr_a3 data[30U]; } Eurydice_arr_5a;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_5a_s { Eurydice_arr_a3 data[30U]; } Eurydice_arr_5a;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -13976,13 +13976,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 30
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_205(const Eurydice_arr_5a *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_205(ଅଚଳ Eurydice_arr_5a *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)30U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -13996,9 +13996,9 @@ A monomorphic instance of libcrux_ml_dsa.types.zero_c5
 with const generics
 - SIZE= 3309
 */
-static inline Eurydice_arr_0c libcrux_ml_dsa_types_zero_c5_5c(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_0c libcrux_ml_dsa_types_zero_c5_5c(ଶୂନ୍ୟ)
 {
-  return (KRML_CLITERAL(Eurydice_arr_0c){ .data = { 0U } });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_arr_0c){ .data = { 0U } });
 }
 
 /**
@@ -14007,7 +14007,7 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $6size_t
 */
-typedef struct Eurydice_arr_dc1_s { Eurydice_arr_a3 data[6U]; } Eurydice_arr_dc1;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_dc1_s { Eurydice_arr_a3 data[6U]; } Eurydice_arr_dc1;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -14015,13 +14015,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 6
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_204(const Eurydice_arr_dc1 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_204(ଅଚଳ Eurydice_arr_dc1 *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)6U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -14034,8 +14034,8 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_declassify
 with types Eurydice_arr libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_portable_vector_type_Coefficients[[$6size_t]]
 
 */
-static KRML_MUSTINLINE void
-libcrux_secrets_mem_requests_ct_declassify_b2(const Eurydice_arr_dc1 *val)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_secrets_mem_requests_ct_declassify_b2(ଅଚଳ Eurydice_arr_dc1 *val)
 {
 
 }
@@ -14046,12 +14046,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 6
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_205(Eurydice_arr_dc1 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_205(Eurydice_arr_dc1 *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)6U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -14060,7 +14060,7 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $11size_t
 */
-typedef struct Eurydice_arr_47_s { Eurydice_arr_a3 data[11U]; } Eurydice_arr_47;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_47_s { Eurydice_arr_a3 data[11U]; } Eurydice_arr_47;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -14068,13 +14068,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 11
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_203(const Eurydice_arr_47 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_203(ଅଚଳ Eurydice_arr_47 *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)11U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -14083,13 +14083,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 5
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_202(const Eurydice_arr_5d *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_202(ଅଚଳ Eurydice_arr_5d *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)5U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -14098,10 +14098,10 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 11
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_subslice_shared_250(const Eurydice_arr_47 *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_subslice_shared_250(ଅଚଳ Eurydice_arr_47 *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_dst_ref_shared_44){ .ptr = a->data + r.start, .meta = r.end - r.start }
     );
@@ -14113,12 +14113,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 5
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_204(Eurydice_arr_5d *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_204(Eurydice_arr_5d *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)5U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -14127,12 +14127,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 30
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_203(Eurydice_arr_5a *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_203(Eurydice_arr_5a *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)30U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -14141,12 +14141,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 11
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_202(Eurydice_arr_47 *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_202(Eurydice_arr_47 *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)11U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -14158,16 +14158,16 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static inline Eurydice_arr_a3 libcrux_ml_dsa_polynomial_zero_ff_37(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_a3 libcrux_ml_dsa_polynomial_zero_ff_37(ଶୂନ୍ୟ)
 {
   Eurydice_arr_a3 lit;
   Eurydice_arr_4d repeat_expression[32U];
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     repeat_expression[i] = libcrux_ml_dsa_simd_portable_zero_65();
   }
-  memcpy(lit.data, repeat_expression, (size_t)32U * sizeof (Eurydice_arr_4d));
-  return lit;
+  memcpy(lit.data, repeat_expression, (size_t)32U * ଆକାର (Eurydice_arr_4d));
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -14179,13 +14179,13 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_polynomial_from_i32_array_ff_37(
   Eurydice_dst_ref_shared_83 array,
   Eurydice_arr_a3 *result
 )
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_DSA_SIMD_TRAITS_SIMD_UNITS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_DSA_SIMD_TRAITS_SIMD_UNITS_IN_RING_ELEMENT; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_from_coefficient_array_65(Eurydice_slice_subslice_shared_47(array,
@@ -14205,20 +14205,20 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_arithmetic_use_hint_37(
   int32_t gamma2,
   Eurydice_dst_ref_shared_20 hint,
   Eurydice_dst_ref_mut_44 re_vector
 )
 {
-  for (size_t i0 = (size_t)0U; i0 < re_vector.meta; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < re_vector.meta; i0++)
   {
     size_t i1 = i0;
     Eurydice_arr_a3 tmp = libcrux_ml_dsa_polynomial_zero_ff_37();
     libcrux_ml_dsa_polynomial_from_i32_array_ff_37(Eurydice_array_to_slice_shared_af(&hint.ptr[i1]),
       &tmp);
-    for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
     {
       size_t j = i;
       libcrux_ml_dsa_simd_portable_use_hint_65(gamma2, &re_vector.ptr[i1].data[j], &tmp.data[j]);
@@ -14233,10 +14233,10 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_ntt_ntt_multiply_montgomery_37(Eurydice_arr_a3 *lhs, const Eurydice_arr_a3 *rhs)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_ntt_ntt_multiply_montgomery_37(Eurydice_arr_a3 *lhs, ଅଚଳ Eurydice_arr_a3 *rhs)
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_montgomery_multiply_65(&lhs->data[i0], &rhs->data[i0]);
@@ -14252,10 +14252,10 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_polynomial_add_ff_37(Eurydice_arr_a3 *self, const Eurydice_arr_a3 *rhs)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_polynomial_add_ff_37(Eurydice_arr_a3 *self, ଅଚଳ Eurydice_arr_a3 *rhs)
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_add_65(&self->data[i0], &rhs->data[i0]);
@@ -14267,10 +14267,10 @@ A monomorphic instance of libcrux_ml_dsa.simd.portable.arithmetic.shift_left_the
 with const generics
 - SHIFT_BY= 13
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_simd_portable_arithmetic_shift_left_then_reduce_84(Eurydice_arr_4d *simd_unit)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_simd_portable_arithmetic_shift_ବାମ_then_reduce_84(Eurydice_arr_4d *simd_unit)
 {
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     size_t i0 = i;
     simd_unit->data[i0] = (int32_t)((uint32_t)simd_unit->data[i0] << (uint32_t)13);
@@ -14286,10 +14286,10 @@ A monomorphic instance of libcrux_ml_dsa.simd.portable.shift_left_then_reduce_65
 with const generics
 - SHIFT_BY= 13
 */
-static inline void
-libcrux_ml_dsa_simd_portable_shift_left_then_reduce_65_84(Eurydice_arr_4d *simd_unit)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_dsa_simd_portable_shift_ବାମ_then_reduce_65_84(Eurydice_arr_4d *simd_unit)
 {
-  libcrux_ml_dsa_simd_portable_arithmetic_shift_left_then_reduce_84(simd_unit);
+  libcrux_ml_dsa_simd_portable_arithmetic_shift_ବାମ_then_reduce_84(simd_unit);
 }
 
 /**
@@ -14298,13 +14298,13 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 - SHIFT_BY= 13
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_arithmetic_shift_left_then_reduce_68(Eurydice_arr_a3 *re)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_arithmetic_shift_ବାମ_then_reduce_68(Eurydice_arr_a3 *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
-    libcrux_ml_dsa_simd_portable_shift_left_then_reduce_65_84(&re->data[i0]);
+    libcrux_ml_dsa_simd_portable_shift_ବାମ_then_reduce_65_84(&re->data[i0]);
   }
 }
 
@@ -14314,7 +14314,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void libcrux_ml_dsa_ntt_ntt_37(Eurydice_arr_a3 *re)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ libcrux_ml_dsa_ntt_ntt_37(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_ntt_65(re);
 }
@@ -14328,10 +14328,10 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_polynomial_subtract_ff_37(Eurydice_arr_a3 *self, const Eurydice_arr_a3 *rhs)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_polynomial_subtract_ff_37(Eurydice_arr_a3 *self, ଅଚଳ Eurydice_arr_a3 *rhs)
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_subtract_65(&self->data[i0], &rhs->data[i0]);
@@ -14347,10 +14347,10 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_polynomial_barrett_reduce_ff_37(Eurydice_arr_a3 *self)
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_barrett_reduce_simd_unit_65(&self->data[i0]);
@@ -14363,7 +14363,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void libcrux_ml_dsa_ntt_invert_ntt_montgomery_37(Eurydice_arr_a3 *re)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ libcrux_ml_dsa_ntt_invert_ntt_montgomery_37(Eurydice_arr_a3 *re)
 {
   libcrux_ml_dsa_simd_portable_invert_ntt_montgomery_65(re);
 }
@@ -14377,28 +14377,28 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_matrix_compute_w_approx_37(
   size_t rows_in_a,
   size_t columns_in_a,
   Eurydice_dst_ref_shared_44 matrix,
   Eurydice_dst_ref_shared_44 signer_response,
-  const Eurydice_arr_a3 *verifier_challenge_as_ntt,
+  ଅଚଳ Eurydice_arr_a3 *verifier_challenge_as_ntt,
   Eurydice_dst_ref_mut_44 t1
 )
 {
-  for (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
   {
     size_t i1 = i0;
     Eurydice_arr_a3 inner_result = libcrux_ml_dsa_polynomial_zero_ff_37();
-    for (size_t i = (size_t)0U; i < columns_in_a; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < columns_in_a; i++)
     {
       size_t j = i;
       Eurydice_arr_a3 product = matrix.ptr[i1 * columns_in_a + j];
       libcrux_ml_dsa_ntt_ntt_multiply_montgomery_37(&product, &signer_response.ptr[j]);
       libcrux_ml_dsa_polynomial_add_ff_37(&inner_result, &product);
     }
-    libcrux_ml_dsa_arithmetic_shift_left_then_reduce_68(&t1.ptr[i1]);
+    libcrux_ml_dsa_arithmetic_shift_ବାମ_then_reduce_68(&t1.ptr[i1]);
     libcrux_ml_dsa_ntt_ntt_37(&t1.ptr[i1]);
     libcrux_ml_dsa_ntt_ntt_multiply_montgomery_37(&t1.ptr[i1], verifier_challenge_as_ntt);
     libcrux_ml_dsa_polynomial_subtract_ff_37(&inner_result, &t1.ptr[i1]);
@@ -14413,7 +14413,7 @@ A monomorphic instance of core.result.Result
 with types (), libcrux_ml_dsa_types_VerificationError
 
 */
-typedef struct core_result_Result_41_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_41_s
 {
   core_result_Result_57_tags tag;
   libcrux_ml_dsa_types_VerificationError f0;
@@ -14426,14 +14426,14 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_gamma1_deserialize_37(
   size_t gamma1_exponent,
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_a3 *result
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_gamma1_deserialize_65(Eurydice_slice_subslice_shared_c8(serialized,
@@ -14454,7 +14454,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_encoding_signature_deserialize_37(
   size_t columns_in_a,
   size_t rows_in_a,
@@ -14489,7 +14489,7 @@ libcrux_ml_dsa_encoding_signature_deserialize_37(
       Eurydice_borrow_slice_u8_x2);
   Eurydice_borrow_slice_u8 signer_response_serialized = uu____1.fst;
   Eurydice_borrow_slice_u8 hint_serialized = uu____1.snd;
-  for (size_t i = (size_t)0U; i < columns_in_a; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < columns_in_a; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_encoding_gamma1_deserialize_37(gamma1_exponent,
@@ -14504,52 +14504,52 @@ libcrux_ml_dsa_encoding_signature_deserialize_37(
   }
   size_t previous_true_hints_seen = (size_t)0U;
   bool malformed_hint = false;
-  for (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
   {
     size_t i1 = i0;
     size_t current_true_hints_seen = (size_t)(uint32_t)hint_serialized.ptr[max_ones_in_hint + i1];
-    if (current_true_hints_seen < previous_true_hints_seen)
+    ଯଦି (current_true_hints_seen < previous_true_hints_seen)
     {
       malformed_hint = true;
-      break;
+      ଭାଙ୍ଗ;
     }
-    if (current_true_hints_seen > max_ones_in_hint)
+    ଯଦି (current_true_hints_seen > max_ones_in_hint)
     {
       malformed_hint = true;
-      break;
+      ଭାଙ୍ଗ;
     }
-    for (size_t i = previous_true_hints_seen; i < current_true_hints_seen; i++)
+    ପାଇଁ (size_t i = previous_true_hints_seen; i < current_true_hints_seen; i++)
     {
       size_t j = i;
-      if (j > previous_true_hints_seen)
+      ଯଦି (j > previous_true_hints_seen)
       {
-        if (hint_serialized.ptr[j] <= hint_serialized.ptr[j - (size_t)1U])
+        ଯଦି (hint_serialized.ptr[j] <= hint_serialized.ptr[j - (size_t)1U])
         {
           malformed_hint = true;
-          break;
+          ଭାଙ୍ଗ;
         }
       }
       libcrux_ml_dsa_encoding_signature_set_hint(out_hint,
         i1,
         (size_t)(uint32_t)hint_serialized.ptr[j]);
     }
-    if (malformed_hint)
+    ଯଦି (malformed_hint)
     {
-      break;
+      ଭାଙ୍ଗ;
     }
     previous_true_hints_seen = current_true_hints_seen;
   }
-  for (size_t i = previous_true_hints_seen; i < max_ones_in_hint; i++)
+  ପାଇଁ (size_t i = previous_true_hints_seen; i < max_ones_in_hint; i++)
   {
     size_t j = i;
-    if (hint_serialized.ptr[j] != 0U)
+    ଯଦି (hint_serialized.ptr[j] != 0U)
     {
       malformed_hint = true;
-      break;
+      ଭାଙ୍ଗ;
     }
   }
   core_result_Result_41 uu____2;
-  if (malformed_hint)
+  ଯଦି (malformed_hint)
   {
     uu____2 =
       (
@@ -14559,11 +14559,11 @@ libcrux_ml_dsa_encoding_signature_deserialize_37(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     uu____2 = (KRML_CLITERAL(core_result_Result_41){ .tag = core_result_Ok });
   }
-  return uu____2;
+  ଫେରନ୍ତୁ uu____2;
 }
 
 /**
@@ -14572,13 +14572,13 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_t1_deserialize_37(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_a3 *result
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_t1_deserialize_65(Eurydice_slice_subslice_shared_c8(serialized,
@@ -14598,15 +14598,15 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_encoding_verification_key_deserialize_37(
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_encoding_verification_ଚାବି_deserialize_37(
   size_t rows_in_a,
-  size_t verification_key_size,
+  size_t verification_ଚାବି_size,
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_dst_ref_mut_44 t1
 )
 {
-  for (size_t i = (size_t)0U; i < rows_in_a; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < rows_in_a; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_encoding_t1_deserialize_37(Eurydice_slice_subslice_shared_c8(serialized,
@@ -14625,10 +14625,10 @@ A monomorphic instance of core.result.Result
 with types libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44Signature, libcrux_ml_dsa_types_SigningError
 
 */
-typedef struct core_result_Result_48_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_48_s
 {
   core_result_Result_57_tags tag;
-  union {
+  ସଂଘ {
     Eurydice_arr_85 case_Ok;
     libcrux_ml_dsa_types_SigningError case_Err;
   }
@@ -14642,14 +14642,14 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $4size_t
 */
-typedef struct Eurydice_arr_9d_s { Eurydice_arr_a3 data[4U]; } Eurydice_arr_9d;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_9d_s { Eurydice_arr_a3 data[4U]; } Eurydice_arr_9d;
 
 /**
 A monomorphic instance of core.option.Option
 with types Eurydice_arr_9d
 
 */
-typedef struct core_option_Option_d9_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_d9_s
 {
   core_option_Option_45_tags tag;
   Eurydice_arr_9d f0;
@@ -14661,7 +14661,7 @@ A monomorphic instance of core.result.Result
 with types (), libcrux_ml_dsa_types_SigningError
 
 */
-typedef struct core_result_Result_53_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_result_Result_53_s
 {
   core_result_Result_57_tags tag;
   libcrux_ml_dsa_types_SigningError f0;
@@ -14674,17 +14674,17 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_gamma1_serialize_37(
-  const Eurydice_arr_a3 *re,
+  ଅଚଳ Eurydice_arr_a3 *re,
   Eurydice_mut_borrow_slice_u8 serialized,
   size_t gamma1_exponent
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
-    const Eurydice_arr_4d *simd_unit = &re->data[i0];
+    ଅଚଳ Eurydice_arr_4d *simd_unit = &re->data[i0];
     libcrux_ml_dsa_simd_portable_gamma1_serialize_65(simd_unit,
       Eurydice_slice_subslice_mut_c8(serialized,
         (
@@ -14703,7 +14703,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_signature_serialize_37(
   Eurydice_borrow_slice_u8 commitment_hash,
   Eurydice_dst_ref_shared_44 signer_response,
@@ -14728,7 +14728,7 @@ libcrux_ml_dsa_encoding_signature_serialize_37(
     commitment_hash,
     uint8_t);
   offset += commitment_hash_size;
-  for (size_t i = (size_t)0U; i < columns_in_a; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < columns_in_a; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_encoding_gamma1_serialize_37(&signer_response.ptr[i0],
@@ -14743,13 +14743,13 @@ libcrux_ml_dsa_encoding_signature_serialize_37(
     offset += gamma1_ring_element_size;
   }
   size_t true_hints_seen = (size_t)0U;
-  for (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < (size_t)256U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)256U; i++)
     {
       size_t j = i;
-      if (hint.ptr[i1].data[j] == 1)
+      ଯଦି (hint.ptr[i1].data[j] == 1)
       {
         signature.ptr[offset + true_hints_seen] = (uint8_t)j;
         true_hints_seen++;
@@ -14768,11 +14768,11 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static inline Eurydice_arr_6c
-libcrux_ml_dsa_polynomial_to_i32_array_ff_37(const Eurydice_arr_a3 *self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_6c
+libcrux_ml_dsa_polynomial_to_i32_array_ff_37(ଅଚଳ Eurydice_arr_a3 *self)
 {
   Eurydice_arr_6c result = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_to_coefficient_array_65(&self->data[i0],
@@ -14784,7 +14784,7 @@ libcrux_ml_dsa_polynomial_to_i32_array_ff_37(const Eurydice_arr_a3 *self)
           }
         )));
   }
-  return result;
+  ଫେରନ୍ତୁ result;
 }
 
 /**
@@ -14793,34 +14793,34 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE size_t
+ସ୍ଥିର KRML_MUSTINLINE size_t
 libcrux_ml_dsa_arithmetic_make_hint_37(
-  Eurydice_dst_ref_shared_44 low,
-  Eurydice_dst_ref_shared_44 high,
+  Eurydice_dst_ref_shared_44 ତଳ,
+  Eurydice_dst_ref_shared_44 ଉପର,
   int32_t gamma2,
   Eurydice_dst_ref_mut_20 hint
 )
 {
   size_t true_hints = (size_t)0U;
   Eurydice_arr_a3 hint_simd = libcrux_ml_dsa_polynomial_zero_ff_37();
-  for (size_t i0 = (size_t)0U; i0 < low.meta; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < ତଳ.meta; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
     {
       size_t j = i;
       size_t
-      one_hints_count =
-        libcrux_ml_dsa_simd_portable_compute_hint_65(&low.ptr[i1].data[j],
-          &high.ptr[i1].data[j],
+      one_hints_ଗଣନା =
+        libcrux_ml_dsa_simd_portable_compute_hint_65(&ତଳ.ptr[i1].data[j],
+          &ଉପର.ptr[i1].data[j],
           gamma2,
           &hint_simd.data[j]);
-      true_hints += one_hints_count;
+      true_hints += one_hints_ଗଣନା;
     }
     Eurydice_arr_6c uu____0 = libcrux_ml_dsa_polynomial_to_i32_array_ff_37(&hint_simd);
     hint.ptr[i1] = uu____0;
   }
-  return true_hints;
+  ଫେରନ୍ତୁ true_hints;
 }
 
 /**
@@ -14839,30 +14839,30 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_dsa_polynomial_infinity_norm_exceeds_ff_37(
-  const Eurydice_arr_a3 *self,
+  ଅଚଳ Eurydice_arr_a3 *self,
   int32_t bound
 )
 {
   bool result = false;
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     bool
     coeff_exceeds = libcrux_ml_dsa_simd_portable_infinity_norm_exceeds_65(&self->data[i0], bound);
     bool uu____0;
-    if (result)
+    ଯଦି (result)
     {
       uu____0 = true;
     }
-    else
+    ଅନ୍ୟଥା
     {
       uu____0 = coeff_exceeds;
     }
     result = uu____0;
   }
-  return result;
+  ଫେରନ୍ତୁ result;
 }
 
 /**
@@ -14878,28 +14878,28 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(
   Eurydice_dst_ref_shared_44 vector,
   int32_t bound
 )
 {
   bool result = false;
-  for (size_t i = (size_t)0U; i < vector.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < vector.meta; i++)
   {
     size_t i0 = i;
     bool uu____0;
-    if (result)
+    ଯଦି (result)
     {
       uu____0 = true;
     }
-    else
+    ଅନ୍ୟଥା
     {
       uu____0 = libcrux_ml_dsa_polynomial_infinity_norm_exceeds_ff_37(&vector.ptr[i0], bound);
     }
     result = uu____0;
   }
-  return result;
+  ଫେରନ୍ତୁ result;
 }
 
 /**
@@ -14908,14 +14908,14 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_matrix_subtract_vectors_37(
   size_t dimension,
   Eurydice_dst_ref_mut_44 lhs,
   Eurydice_dst_ref_shared_44 rhs
 )
 {
-  for (size_t i = (size_t)0U; i < dimension; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < dimension; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_polynomial_subtract_ff_37(&lhs.ptr[i0], &rhs.ptr[i0]);
@@ -14928,14 +14928,14 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_matrix_add_vectors_37(
   size_t dimension,
   Eurydice_dst_ref_mut_44 lhs,
   Eurydice_dst_ref_shared_44 rhs
 )
 {
-  for (size_t i = (size_t)0U; i < dimension; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < dimension; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_polynomial_add_ff_37(&lhs.ptr[i0], &rhs.ptr[i0]);
@@ -14948,13 +14948,13 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_matrix_vector_times_ring_element_37(
   Eurydice_dst_ref_mut_44 vector,
-  const Eurydice_arr_a3 *ring_element
+  ଅଚଳ Eurydice_arr_a3 *ring_element
 )
 {
-  for (size_t i = (size_t)0U; i < vector.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < vector.meta; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_ntt_ntt_multiply_montgomery_37(&vector.ptr[i0], ring_element);
@@ -14968,17 +14968,17 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_commitment_serialize_37(
-  const Eurydice_arr_a3 *re,
+  ଅଚଳ Eurydice_arr_a3 *re,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
   size_t output_bytes_per_simd_unit = serialized.meta / ((size_t)8U * (size_t)4U);
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
-    const Eurydice_arr_4d *simd_unit = &re->data[i0];
+    ଅଚଳ Eurydice_arr_4d *simd_unit = &re->data[i0];
     libcrux_ml_dsa_simd_portable_commitment_serialize_65(simd_unit,
       Eurydice_slice_subslice_mut_c8(serialized,
         (
@@ -14996,7 +14996,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_commitment_serialize_vector_37(
   size_t ring_element_size,
   Eurydice_dst_ref_shared_44 vector,
@@ -15004,10 +15004,10 @@ libcrux_ml_dsa_encoding_commitment_serialize_vector_37(
 )
 {
   size_t offset = (size_t)0U;
-  for (size_t i = (size_t)0U; i < vector.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < vector.meta; i++)
   {
     size_t _cloop_j = i;
-    const Eurydice_arr_a3 *ring_element = &vector.ptr[_cloop_j];
+    ଅଚଳ Eurydice_arr_a3 *ring_element = &vector.ptr[_cloop_j];
     libcrux_ml_dsa_encoding_commitment_serialize_37(ring_element,
       Eurydice_slice_subslice_mut_c8(serialized,
         (
@@ -15026,25 +15026,25 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_arithmetic_decompose_vector_37(
   size_t dimension,
   int32_t gamma2,
   Eurydice_dst_ref_shared_44 t,
-  Eurydice_dst_ref_mut_44 low,
-  Eurydice_dst_ref_mut_44 high
+  Eurydice_dst_ref_mut_44 ତଳ,
+  Eurydice_dst_ref_mut_44 ଉପର
 )
 {
-  for (size_t i0 = (size_t)0U; i0 < dimension; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < dimension; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
     {
       size_t j = i;
       libcrux_ml_dsa_simd_portable_decompose_65(gamma2,
         &t.ptr[i1].data[j],
-        &low.ptr[i1].data[j],
-        &high.ptr[i1].data[j]);
+        &ତଳ.ptr[i1].data[j],
+        &ଉପର.ptr[i1].data[j]);
     }
   }
 }
@@ -15055,7 +15055,7 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement_e8
 with const generics
 - $16size_t
 */
-typedef struct Eurydice_arr_2f_s { Eurydice_arr_a3 data[16U]; } Eurydice_arr_2f;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_2f_s { Eurydice_arr_a3 data[16U]; } Eurydice_arr_2f;
 
 /**
 A monomorphic instance of Eurydice.array_to_slice_shared
@@ -15063,13 +15063,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 16
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_201(const Eurydice_arr_2f *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_201(ଅଚଳ Eurydice_arr_2f *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)16U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -15081,7 +15081,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_matrix_compute_matrix_x_mask_37(
   size_t rows_in_a,
   size_t columns_in_a,
@@ -15090,10 +15090,10 @@ libcrux_ml_dsa_matrix_compute_matrix_x_mask_37(
   Eurydice_dst_ref_mut_44 result
 )
 {
-  for (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < columns_in_a; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < columns_in_a; i++)
     {
       size_t j = i;
       Eurydice_arr_a3 product = mask.ptr[j];
@@ -15110,7 +15110,7 @@ A monomorphic instance of core.option.Option
 with types libcrux_ml_dsa_pre_hash_DomainSeparationContext
 
 */
-typedef struct core_option_Option_84_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା core_option_Option_84_s
 {
   core_option_Option_45_tags tag;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext f0;
@@ -15123,13 +15123,13 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_t0_deserialize_37(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_arr_a3 *result
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_t0_deserialize_65(Eurydice_slice_subslice_shared_c8(serialized,
@@ -15149,13 +15149,13 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_t0_deserialize_to_vector_then_ntt_37(
   Eurydice_borrow_slice_u8 serialized,
   Eurydice_dst_ref_mut_44 ring_elements
 )
 {
-  for
+  ପାଇଁ
   (size_t
     i = (size_t)0U;
     i < serialized.meta / LIBCRUX_ML_DSA_CONSTANTS_RING_ELEMENT_OF_T0S_SIZE;
@@ -15183,7 +15183,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_error_deserialize_37(
   libcrux_ml_dsa_constants_Eta eta,
   Eurydice_borrow_slice_u8 serialized,
@@ -15191,7 +15191,7 @@ libcrux_ml_dsa_encoding_error_deserialize_37(
 )
 {
   size_t chunk_size = libcrux_ml_dsa_encoding_error_chunk_size(eta);
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_simd_portable_error_deserialize_65(eta,
@@ -15212,7 +15212,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_error_deserialize_to_vector_then_ntt_37(
   libcrux_ml_dsa_constants_Eta eta,
   size_t ring_element_size,
@@ -15220,7 +15220,7 @@ libcrux_ml_dsa_encoding_error_deserialize_to_vector_then_ntt_37(
   Eurydice_dst_ref_mut_44 ring_elements
 )
 {
-  for (size_t i = (size_t)0U; i < serialized.meta / ring_element_size; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < serialized.meta / ring_element_size; i++)
   {
     size_t i0 = i;
     Eurydice_borrow_slice_u8
@@ -15248,9 +15248,9 @@ A monomorphic instance of libcrux_ml_dsa.types.zero_c5
 with const generics
 - SIZE= 2420
 */
-static inline Eurydice_arr_85 libcrux_ml_dsa_types_zero_c5_37(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_85 libcrux_ml_dsa_types_zero_c5_37(ଶୂନ୍ୟ)
 {
-  return (KRML_CLITERAL(Eurydice_arr_85){ .data = { 0U } });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_arr_85){ .data = { 0U } });
 }
 
 /**
@@ -15259,16 +15259,16 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_t0_serialize_37(
-  const Eurydice_arr_a3 *re,
+  ଅଚଳ Eurydice_arr_a3 *re,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
-    const Eurydice_arr_4d *simd_unit = &re->data[i0];
+    ଅଚଳ Eurydice_arr_4d *simd_unit = &re->data[i0];
     libcrux_ml_dsa_simd_portable_t0_serialize_65(simd_unit,
       Eurydice_slice_subslice_mut_c8(serialized,
         (
@@ -15286,18 +15286,18 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_error_serialize_37(
   libcrux_ml_dsa_constants_Eta eta,
-  const Eurydice_arr_a3 *re,
+  ଅଚଳ Eurydice_arr_a3 *re,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
   size_t output_bytes_per_simd_unit = libcrux_ml_dsa_encoding_error_chunk_size(eta);
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
-    const Eurydice_arr_4d *simd_unit = &re->data[i0];
+    ଅଚଳ Eurydice_arr_4d *simd_unit = &re->data[i0];
     libcrux_ml_dsa_simd_portable_error_serialize_65(eta,
       simd_unit,
       Eurydice_slice_subslice_mut_c8(serialized,
@@ -15316,16 +15316,16 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_encoding_t1_serialize_37(
-  const Eurydice_arr_a3 *re,
+  ଅଚଳ Eurydice_arr_a3 *re,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
   {
     size_t i0 = i;
-    const Eurydice_arr_4d *simd_unit = &re->data[i0];
+    ଅଚଳ Eurydice_arr_4d *simd_unit = &re->data[i0];
     libcrux_ml_dsa_simd_portable_t1_serialize_65(simd_unit,
       Eurydice_slice_subslice_mut_c8(serialized,
         (
@@ -15344,14 +15344,14 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_encoding_verification_key_generate_serialized_37(
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_encoding_verification_ଚାବି_generate_serialized_37(
   Eurydice_borrow_slice_u8 seed,
   Eurydice_dst_ref_shared_44 t1,
-  Eurydice_mut_borrow_slice_u8 verification_key_serialized
+  Eurydice_mut_borrow_slice_u8 verification_ଚାବି_serialized
 )
 {
-  Eurydice_slice_copy(Eurydice_slice_subslice_mut_c8(verification_key_serialized,
+  Eurydice_slice_copy(Eurydice_slice_subslice_mut_c8(verification_ଚାବି_serialized,
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = (size_t)0U,
@@ -15360,16 +15360,16 @@ libcrux_ml_dsa_encoding_verification_key_generate_serialized_37(
       )),
     seed,
     uint8_t);
-  for (size_t i = (size_t)0U; i < t1.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < t1.meta; i++)
   {
     size_t i0 = i;
-    const Eurydice_arr_a3 *ring_element = &t1.ptr[i0];
+    ଅଚଳ Eurydice_arr_a3 *ring_element = &t1.ptr[i0];
     size_t
     offset =
       LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE +
         i0 * LIBCRUX_ML_DSA_CONSTANTS_RING_ELEMENT_OF_T1S_SIZE;
     libcrux_ml_dsa_encoding_t1_serialize_37(ring_element,
-      Eurydice_slice_subslice_mut_c8(verification_key_serialized,
+      Eurydice_slice_subslice_mut_c8(verification_ଚାବି_serialized,
         (
           KRML_CLITERAL(core_ops_range_Range_87){
             .start = offset,
@@ -15385,16 +15385,16 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_arithmetic_power2round_vector_37(
   Eurydice_dst_ref_mut_44 t,
   Eurydice_dst_ref_mut_44 t1
 )
 {
-  for (size_t i0 = (size_t)0U; i0 < t.meta; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < t.meta; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < (size_t)32U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)32U; i++)
     {
       size_t j = i;
       libcrux_ml_dsa_simd_portable_power2round_65(&t.ptr[i1].data[j], &t1.ptr[i1].data[j]);
@@ -15412,8 +15412,8 @@ A monomorphic instance of libcrux_secrets.mem_requests.ct_declassify
 with types Eurydice_arr libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_portable_vector_type_Coefficients[[$4size_t]]
 
 */
-static KRML_MUSTINLINE void
-libcrux_secrets_mem_requests_ct_declassify_f5(const Eurydice_arr_9d *val)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_secrets_mem_requests_ct_declassify_f5(ଅଚଳ Eurydice_arr_9d *val)
 {
 
 }
@@ -15424,13 +15424,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 8
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_200(const Eurydice_arr_8f *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_200(ଅଚଳ Eurydice_arr_8f *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)8U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -15439,13 +15439,13 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 4
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_slice_shared_20(const Eurydice_arr_9d *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_slice_shared_20(ଅଚଳ Eurydice_arr_9d *a)
 {
   Eurydice_dst_ref_shared_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -15457,7 +15457,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_matrix_compute_as1_plus_s2_37(
   size_t rows_in_a,
   size_t columns_in_a,
@@ -15467,10 +15467,10 @@ libcrux_ml_dsa_matrix_compute_as1_plus_s2_37(
   Eurydice_dst_ref_mut_44 result
 )
 {
-  for (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < rows_in_a; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < columns_in_a; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < columns_in_a; i++)
     {
       size_t j = i;
       libcrux_ml_dsa_ntt_ntt_multiply_montgomery_37(&a_as_ntt.ptr[i1 * columns_in_a + j],
@@ -15478,7 +15478,7 @@ libcrux_ml_dsa_matrix_compute_as1_plus_s2_37(
       libcrux_ml_dsa_polynomial_add_ff_37(&result.ptr[i1], &a_as_ntt.ptr[i1 * columns_in_a + j]);
     }
   }
-  for (size_t i = (size_t)0U; i < result.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < result.meta; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_polynomial_barrett_reduce_ff_37(&result.ptr[i0]);
@@ -15493,10 +15493,10 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 8
 */
-static inline Eurydice_dst_ref_shared_44
-Eurydice_array_to_subslice_shared_25(const Eurydice_arr_8f *a, core_ops_range_Range_87 r)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_shared_44
+Eurydice_array_to_subslice_shared_25(ଅଚଳ Eurydice_arr_8f *a, core_ops_range_Range_87 r)
 {
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_dst_ref_shared_44){ .ptr = a->data + r.start, .meta = r.end - r.start }
     );
@@ -15508,12 +15508,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 4
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_201(Eurydice_arr_9d *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_201(Eurydice_arr_9d *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)4U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -15522,12 +15522,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 16
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_200(Eurydice_arr_2f *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_200(Eurydice_arr_2f *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)16U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -15536,7 +15536,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(
   Eurydice_borrow_slice_u8 randomness,
   size_t *sampled_coefficients,
@@ -15544,7 +15544,7 @@ libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(
 )
 {
   bool done = false;
-  for (size_t i = (size_t)0U; i < randomness.meta / (size_t)24U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < randomness.meta / (size_t)24U; i++)
   {
     size_t _cloop_i = i;
     Eurydice_borrow_slice_u8
@@ -15556,20 +15556,20 @@ libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(
             .end = _cloop_i * (size_t)24U + (size_t)24U
           }
         ));
-    if (!done)
+    ଯଦି (!done)
     {
       size_t
       sampled =
         libcrux_ml_dsa_simd_portable_rejection_sample_less_than_field_modulus_65(random_bytes,
           Eurydice_array_to_subslice_from_mut_11(out, sampled_coefficients[0U]));
       sampled_coefficients[0U] += sampled;
-      if (sampled_coefficients[0U] >= LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
+      ଯଦି (sampled_coefficients[0U] >= LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
       {
         done = true;
       }
     }
   }
-  return done;
+  ଫେରନ୍ତୁ done;
 }
 
 /**
@@ -15578,12 +15578,12 @@ with types libcrux_ml_dsa_polynomial_PolynomialRingElement libcrux_ml_dsa_simd_p
 with const generics
 - N= 8
 */
-static inline Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_20(Eurydice_arr_8f *a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_dst_ref_mut_44 Eurydice_array_to_slice_mut_20(Eurydice_arr_8f *a)
 {
   Eurydice_dst_ref_mut_44 lit;
   lit.ptr = a->data;
   lit.meta = (size_t)8U;
-  return lit;
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -15592,7 +15592,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_dsa_sample_rejection_sample_less_than_eta_equals_4_37(
   Eurydice_borrow_slice_u8 randomness,
   size_t *sampled_coefficients,
@@ -15600,7 +15600,7 @@ libcrux_ml_dsa_sample_rejection_sample_less_than_eta_equals_4_37(
 )
 {
   bool done = false;
-  for (size_t i = (size_t)0U; i < randomness.meta / (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < randomness.meta / (size_t)4U; i++)
   {
     size_t _cloop_i = i;
     Eurydice_borrow_slice_u8
@@ -15612,20 +15612,20 @@ libcrux_ml_dsa_sample_rejection_sample_less_than_eta_equals_4_37(
             .end = _cloop_i * (size_t)4U + (size_t)4U
           }
         ));
-    if (!done)
+    ଯଦି (!done)
     {
       size_t
       sampled =
         libcrux_ml_dsa_simd_portable_rejection_sample_less_than_eta_equals_4_65(random_bytes,
           Eurydice_array_to_subslice_from_mut_11(out, sampled_coefficients[0U]));
       sampled_coefficients[0U] += sampled;
-      if (sampled_coefficients[0U] >= LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
+      ଯଦି (sampled_coefficients[0U] >= LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
       {
         done = true;
       }
     }
   }
-  return done;
+  ଫେରନ୍ତୁ done;
 }
 
 /**
@@ -15634,7 +15634,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_dsa_sample_rejection_sample_less_than_eta_equals_2_37(
   Eurydice_borrow_slice_u8 randomness,
   size_t *sampled_coefficients,
@@ -15642,7 +15642,7 @@ libcrux_ml_dsa_sample_rejection_sample_less_than_eta_equals_2_37(
 )
 {
   bool done = false;
-  for (size_t i = (size_t)0U; i < randomness.meta / (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < randomness.meta / (size_t)4U; i++)
   {
     size_t _cloop_i = i;
     Eurydice_borrow_slice_u8
@@ -15654,20 +15654,20 @@ libcrux_ml_dsa_sample_rejection_sample_less_than_eta_equals_2_37(
             .end = _cloop_i * (size_t)4U + (size_t)4U
           }
         ));
-    if (!done)
+    ଯଦି (!done)
     {
       size_t
       sampled =
         libcrux_ml_dsa_simd_portable_rejection_sample_less_than_eta_equals_2_65(random_bytes,
           Eurydice_array_to_subslice_from_mut_11(out, sampled_coefficients[0U]));
       sampled_coefficients[0U] += sampled;
-      if (sampled_coefficients[0U] >= LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
+      ଯଦି (sampled_coefficients[0U] >= LIBCRUX_ML_DSA_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
       {
         done = true;
       }
     }
   }
-  return done;
+  ଫେରନ୍ତୁ done;
 }
 
 /**
@@ -15676,7 +15676,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_dsa_sample_rejection_sample_less_than_eta_37(
   libcrux_ml_dsa_constants_Eta eta,
   Eurydice_borrow_slice_u8 randomness,
@@ -15684,53 +15684,53 @@ libcrux_ml_dsa_sample_rejection_sample_less_than_eta_37(
   Eurydice_arr_d0 *out
 )
 {
-  switch (eta)
+  ବାଛ (eta)
   {
-    case libcrux_ml_dsa_constants_Eta_Two:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Two:
       {
-        break;
+        ଭାଙ୍ଗ;
       }
-    case libcrux_ml_dsa_constants_Eta_Four:
+    ସ୍ଥିତି libcrux_ml_dsa_constants_Eta_Four:
       {
-        return
+        ଫେରନ୍ତୁ
           libcrux_ml_dsa_sample_rejection_sample_less_than_eta_equals_4_37(randomness,
             sampled,
             out);
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL incomplete match at %s:%d\n", __FILE__, __LINE__);
         KRML_HOST_EXIT(253U);
       }
   }
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_sample_rejection_sample_less_than_eta_equals_2_37(randomness,
       sampled,
       out);
 }
 
-typedef struct libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87KeyPair_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87_ଚାବି_Pair_s
 {
-  Eurydice_arr_e2 signing_key;
-  Eurydice_arr_43 verification_key;
+  Eurydice_arr_e2 signing_ଚାବି;
+  Eurydice_arr_43 verification_ଚାବି;
 }
-libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87KeyPair;
+libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87_ଚାବି_Pair;
 
-typedef struct libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65KeyPair_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65_ଚାବି_Pair_s
 {
-  Eurydice_arr_24 signing_key;
-  Eurydice_arr_29 verification_key;
+  Eurydice_arr_24 signing_ଚାବି;
+  Eurydice_arr_29 verification_ଚାବି;
 }
-libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65KeyPair;
+libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65_ଚାବି_Pair;
 
-typedef struct libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44KeyPair_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44_ଚାବି_Pair_s
 {
-  Eurydice_arr_10 signing_key;
-  Eurydice_arr_02 verification_key;
+  Eurydice_arr_10 signing_ଚାବି;
+  Eurydice_arr_02 verification_ଚାବି;
 }
-libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44KeyPair;
+libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44_ଚାବି_Pair;
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -15757,60 +15757,60 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44KeyPair;
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
 
 /**
  Return 1 if `value` is not zero and 0 otherwise.
 */
-static KRML_NOINLINE uint8_t libcrux_ml_kem_constant_time_ops_inz(uint8_t value)
+ସ୍ଥିର KRML_NOINLINE uint8_t libcrux_ml_kem_constant_time_ops_inz(uint8_t ମୂଲ୍ୟ)
 {
-  uint16_t value0 = (uint16_t)(uint32_t)value;
-  uint8_t result = (uint8_t)((uint32_t)core_num__u16__wrapping_add(~value0, 1U) >> 8U & 0xFFFFU);
-  return (uint32_t)result & 1U;
+  uint16_t value0 = (uint16_t)(uint32_t)ମୂଲ୍ୟ;
+  uint8_t result = (uint8_t)((uint32_t)core_ଅଙ୍କ_u16_wrapping_add(~value0, 1U) >> 8U & 0xFFFFU);
+  ଫେରନ୍ତୁ (uint32_t)result & 1U;
 }
 
-static KRML_NOINLINE uint8_t libcrux_ml_kem_constant_time_ops_is_non_zero(uint8_t value)
+ସ୍ଥିର KRML_NOINLINE uint8_t libcrux_ml_kem_constant_time_ops_is_non_zero(uint8_t ମୂଲ୍ୟ)
 {
-  return libcrux_ml_kem_constant_time_ops_inz(value);
+  ଫେରନ୍ତୁ libcrux_ml_kem_constant_time_ops_inz(ମୂଲ୍ୟ);
 }
 
 /**
  Return 1 if the bytes of `lhs` and `rhs` do not exactly
  match and 0 otherwise.
 */
-static KRML_NOINLINE uint8_t
+ସ୍ଥିର KRML_NOINLINE uint8_t
 libcrux_ml_kem_constant_time_ops_compare(
   Eurydice_borrow_slice_u8 lhs,
   Eurydice_borrow_slice_u8 rhs
 )
 {
   uint8_t r = 0U;
-  for (size_t i = (size_t)0U; i < lhs.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < lhs.meta; i++)
   {
     size_t i0 = i;
     uint8_t nr = (uint32_t)r | ((uint32_t)lhs.ptr[i0] ^ (uint32_t)rhs.ptr[i0]);
     r = nr;
   }
-  return libcrux_ml_kem_constant_time_ops_is_non_zero(r);
+  ଫେରନ୍ତୁ libcrux_ml_kem_constant_time_ops_is_non_zero(r);
 }
 
-static KRML_NOINLINE uint8_t
+ସ୍ଥିର KRML_NOINLINE uint8_t
 libcrux_ml_kem_constant_time_ops_compare_ciphertexts_in_constant_time(
   Eurydice_borrow_slice_u8 lhs,
   Eurydice_borrow_slice_u8 rhs
 )
 {
-  return libcrux_ml_kem_constant_time_ops_compare(lhs, rhs);
+  ଫେରନ୍ତୁ libcrux_ml_kem_constant_time_ops_compare(lhs, rhs);
 }
 
 /**
  If `selector` is not zero, return the bytes in `rhs`; return the bytes in
  `lhs` otherwise.
 */
-static KRML_NOINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_NOINLINE Eurydice_arr_ec
 libcrux_ml_kem_constant_time_ops_select_ct(
   Eurydice_borrow_slice_u8 lhs,
   Eurydice_borrow_slice_u8 rhs,
@@ -15818,9 +15818,9 @@ libcrux_ml_kem_constant_time_ops_select_ct(
 )
 {
   uint8_t
-  mask = core_num__u8__wrapping_sub(libcrux_ml_kem_constant_time_ops_is_non_zero(selector), 1U);
+  mask = core_ଅଙ୍କ_u8_wrapping_sub(libcrux_ml_kem_constant_time_ops_is_non_zero(selector), 1U);
   Eurydice_arr_ec out = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE; i++)
   {
     size_t i0 = i;
     uint8_t
@@ -15828,20 +15828,20 @@ libcrux_ml_kem_constant_time_ops_select_ct(
       ((uint32_t)lhs.ptr[i0] & (uint32_t)mask) | ((uint32_t)rhs.ptr[i0] & (~(uint32_t)mask & 0xFFU));
     out.data[i0] = outi;
   }
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
-static KRML_NOINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_NOINLINE Eurydice_arr_ec
 libcrux_ml_kem_constant_time_ops_select_shared_secret_in_constant_time(
   Eurydice_borrow_slice_u8 lhs,
   Eurydice_borrow_slice_u8 rhs,
   uint8_t selector
 )
 {
-  return libcrux_ml_kem_constant_time_ops_select_ct(lhs, rhs, selector);
+  ଫେରନ୍ତୁ libcrux_ml_kem_constant_time_ops_select_ct(lhs, rhs, selector);
 }
 
-static KRML_NOINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_NOINLINE Eurydice_arr_ec
 libcrux_ml_kem_constant_time_ops_compare_ciphertexts_select_shared_secret_in_constant_time(
   Eurydice_borrow_slice_u8 lhs_c,
   Eurydice_borrow_slice_u8 rhs_c,
@@ -15851,13 +15851,13 @@ libcrux_ml_kem_constant_time_ops_compare_ciphertexts_select_shared_secret_in_con
 {
   uint8_t
   selector = libcrux_ml_kem_constant_time_ops_compare_ciphertexts_in_constant_time(lhs_c, rhs_c);
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_constant_time_ops_select_shared_secret_in_constant_time(lhs_s,
       rhs_s,
       selector);
 }
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -15884,12 +15884,12 @@ libcrux_ml_kem_constant_time_ops_compare_ciphertexts_select_shared_secret_in_con
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
 
-typedef struct libcrux_ml_dsa_hash_functions_portable_Shake128X4_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_dsa_hash_functions_portable_Shake128X4_s
 {
   Eurydice_arr_7c state0;
   Eurydice_arr_7c state1;
@@ -15898,9 +15898,9 @@ typedef struct libcrux_ml_dsa_hash_functions_portable_Shake128X4_s
 }
 libcrux_ml_dsa_hash_functions_portable_Shake128X4;
 
-typedef libcrux_sha3_portable_KeccakState libcrux_ml_dsa_hash_functions_portable_Shake256;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_sha3_portable_KeccakState libcrux_ml_dsa_hash_functions_portable_Shake256;
 
-typedef struct libcrux_ml_dsa_hash_functions_portable_Shake256X4_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_dsa_hash_functions_portable_Shake256X4_s
 {
   Eurydice_arr_7c state0;
   Eurydice_arr_7c state1;
@@ -15909,10 +15909,10 @@ typedef struct libcrux_ml_dsa_hash_functions_portable_Shake256X4_s
 }
 libcrux_ml_dsa_hash_functions_portable_Shake256X4;
 
-typedef libcrux_sha3_portable_incremental_Shake256Xof
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_sha3_portable_incremental_Shake256Xof
 libcrux_ml_dsa_hash_functions_portable_Shake256Xof;
 
-static KRML_MUSTINLINE libcrux_ml_dsa_hash_functions_portable_Shake128X4
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_dsa_hash_functions_portable_Shake128X4
 libcrux_ml_dsa_hash_functions_portable_init_absorb(
   Eurydice_borrow_slice_u8 input0,
   Eurydice_borrow_slice_u8 input1,
@@ -15928,7 +15928,7 @@ libcrux_ml_dsa_hash_functions_portable_init_absorb(
   libcrux_sha3_portable_incremental_shake128_absorb_final(&state2, input2);
   Eurydice_arr_7c state3 = libcrux_sha3_portable_incremental_shake128_init();
   libcrux_sha3_portable_incremental_shake128_absorb_final(&state3, input3);
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(libcrux_ml_dsa_hash_functions_portable_Shake128X4){
         .state0 = state0,
@@ -15939,17 +15939,17 @@ libcrux_ml_dsa_hash_functions_portable_init_absorb(
     );
 }
 
-static KRML_MUSTINLINE Eurydice_arr_7c
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_7c
 libcrux_ml_dsa_hash_functions_portable_init_absorb_final_shake256(
-  Eurydice_borrow_slice_u8 input
+  Eurydice_borrow_slice_u8 ନିବେଶ
 )
 {
   Eurydice_arr_7c state = libcrux_sha3_portable_incremental_shake256_init();
-  libcrux_sha3_portable_incremental_shake256_absorb_final(&state, input);
-  return state;
+  libcrux_sha3_portable_incremental_shake256_absorb_final(&state, ନିବେଶ);
+  ଫେରନ୍ତୁ state;
 }
 
-static KRML_MUSTINLINE libcrux_ml_dsa_hash_functions_portable_Shake256X4
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_dsa_hash_functions_portable_Shake256X4
 libcrux_ml_dsa_hash_functions_portable_init_absorb_x4(
   Eurydice_borrow_slice_u8 input0,
   Eurydice_borrow_slice_u8 input1,
@@ -15965,7 +15965,7 @@ libcrux_ml_dsa_hash_functions_portable_init_absorb_x4(
   libcrux_sha3_portable_incremental_shake256_absorb_final(&state2, input2);
   Eurydice_arr_7c state3 = libcrux_sha3_portable_incremental_shake256_init();
   libcrux_sha3_portable_incremental_shake256_absorb_final(&state3, input3);
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(libcrux_ml_dsa_hash_functions_portable_Shake256X4){
         .state0 = state0,
@@ -15976,25 +15976,25 @@ libcrux_ml_dsa_hash_functions_portable_init_absorb_x4(
     );
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake128(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_mut_borrow_slice_u8 out
 )
 {
-  libcrux_sha3_portable_shake128(out, input);
+  libcrux_sha3_portable_shake128(out, ନିବେଶ);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_ff
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ff
 libcrux_ml_dsa_hash_functions_portable_squeeze_first_block_shake256(Eurydice_arr_7c *state)
 {
   Eurydice_arr_ff out = { .data = { 0U } };
   libcrux_sha3_portable_incremental_shake256_squeeze_first_block(state,
     Eurydice_array_to_slice_mut_58(&out));
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
-static KRML_MUSTINLINE Eurydice_arr_ff_x4
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ff_x4
 libcrux_ml_dsa_hash_functions_portable_squeeze_first_block_x4(
   libcrux_ml_dsa_hash_functions_portable_Shake256X4 *state
 )
@@ -16011,11 +16011,11 @@ libcrux_ml_dsa_hash_functions_portable_squeeze_first_block_x4(
   Eurydice_arr_ff out3 = { .data = { 0U } };
   libcrux_sha3_portable_incremental_shake256_squeeze_first_block(&state->state3,
     Eurydice_array_to_slice_mut_58(&out3));
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_arr_ff_x4){ .fst = out0, .snd = out1, .thd = out2, .f3 = out3 });
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_squeeze_first_five_blocks(
   libcrux_ml_dsa_hash_functions_portable_Shake128X4 *state,
   Eurydice_arr_d10 *out0,
@@ -16034,7 +16034,7 @@ libcrux_ml_dsa_hash_functions_portable_squeeze_first_five_blocks(
     Eurydice_array_to_slice_mut_4c(out3));
 }
 
-static KRML_MUSTINLINE Eurydice_arr_c5_x4
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_c5_x4
 libcrux_ml_dsa_hash_functions_portable_squeeze_next_block(
   libcrux_ml_dsa_hash_functions_portable_Shake128X4 *state
 )
@@ -16051,20 +16051,20 @@ libcrux_ml_dsa_hash_functions_portable_squeeze_next_block(
   Eurydice_arr_c5 out3 = { .data = { 0U } };
   libcrux_sha3_portable_incremental_shake128_squeeze_next_block(&state->state3,
     Eurydice_array_to_slice_mut_2c(&out3));
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_arr_c5_x4){ .fst = out0, .snd = out1, .thd = out2, .f3 = out3 });
 }
 
-static KRML_MUSTINLINE Eurydice_arr_ff
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ff
 libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_shake256(Eurydice_arr_7c *state)
 {
   Eurydice_arr_ff out = { .data = { 0U } };
   libcrux_sha3_portable_incremental_shake256_squeeze_next_block(state,
     Eurydice_array_to_slice_mut_58(&out));
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
-static KRML_MUSTINLINE Eurydice_arr_ff_x4
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ff_x4
 libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_x4(
   libcrux_ml_dsa_hash_functions_portable_Shake256X4 *state
 )
@@ -16081,26 +16081,26 @@ libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_x4(
   Eurydice_arr_ff out3 = { .data = { 0U } };
   libcrux_sha3_portable_incremental_shake256_squeeze_next_block(&state->state3,
     Eurydice_array_to_slice_mut_58(&out3));
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(Eurydice_arr_ff_x4){ .fst = out0, .snd = out1, .thd = out2, .f3 = out3 });
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake128::Xof for libcrux_ml_dsa::hash_functions::portable::Shake128}
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake128_7b(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_mut_borrow_slice_u8 out
 )
 {
-  libcrux_ml_dsa_hash_functions_portable_shake128(input, out);
+  libcrux_ml_dsa_hash_functions_portable_shake128(ନିବେଶ, out);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake128::XofX4 for libcrux_ml_dsa::hash_functions::portable::Shake128X4}
 */
-static KRML_MUSTINLINE libcrux_ml_dsa_hash_functions_portable_Shake128X4
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_dsa_hash_functions_portable_Shake128X4
 libcrux_ml_dsa_hash_functions_portable_init_absorb_11(
   Eurydice_borrow_slice_u8 input0,
   Eurydice_borrow_slice_u8 input1,
@@ -16108,13 +16108,13 @@ libcrux_ml_dsa_hash_functions_portable_init_absorb_11(
   Eurydice_borrow_slice_u8 input3
 )
 {
-  return libcrux_ml_dsa_hash_functions_portable_init_absorb(input0, input1, input2, input3);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_hash_functions_portable_init_absorb(input0, input1, input2, input3);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake128::XofX4 for libcrux_ml_dsa::hash_functions::portable::Shake128X4}
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_squeeze_first_five_blocks_11(
   libcrux_ml_dsa_hash_functions_portable_Shake128X4 *self,
   Eurydice_arr_d10 *out0,
@@ -16129,78 +16129,78 @@ libcrux_ml_dsa_hash_functions_portable_squeeze_first_five_blocks_11(
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake128::XofX4 for libcrux_ml_dsa::hash_functions::portable::Shake128X4}
 */
-static KRML_MUSTINLINE Eurydice_arr_c5_x4
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_c5_x4
 libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_11(
   libcrux_ml_dsa_hash_functions_portable_Shake128X4 *self
 )
 {
-  return libcrux_ml_dsa_hash_functions_portable_squeeze_next_block(self);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_hash_functions_portable_squeeze_next_block(self);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::DsaXof for libcrux_ml_dsa::hash_functions::portable::Shake256}
 */
-static KRML_MUSTINLINE Eurydice_arr_7c
-libcrux_ml_dsa_hash_functions_portable_init_absorb_final_61(Eurydice_borrow_slice_u8 input)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_7c
+libcrux_ml_dsa_hash_functions_portable_init_absorb_final_61(Eurydice_borrow_slice_u8 ନିବେଶ)
 {
-  return libcrux_ml_dsa_hash_functions_portable_init_absorb_final_shake256(input);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_hash_functions_portable_init_absorb_final_shake256(ନିବେଶ);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::DsaXof for libcrux_ml_dsa::hash_functions::portable::Shake256}
 */
-static KRML_MUSTINLINE Eurydice_arr_ff
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ff
 libcrux_ml_dsa_hash_functions_portable_squeeze_first_block_61(Eurydice_arr_7c *self)
 {
-  return libcrux_ml_dsa_hash_functions_portable_squeeze_first_block_shake256(self);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_hash_functions_portable_squeeze_first_block_shake256(self);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::DsaXof for libcrux_ml_dsa::hash_functions::portable::Shake256}
 */
-static KRML_MUSTINLINE Eurydice_arr_ff
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ff
 libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_61(Eurydice_arr_7c *self)
 {
-  return libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_shake256(self);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_shake256(self);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::Xof for libcrux_ml_dsa::hash_functions::portable::Shake256Xof}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_absorb_26(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
-  Eurydice_borrow_slice_u8 input
+  Eurydice_borrow_slice_u8 ନିବେଶ
 )
 {
-  libcrux_sha3_portable_incremental_absorb_42(self, input);
+  libcrux_sha3_portable_incremental_absorb_42(self, ନିବେଶ);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::Xof for libcrux_ml_dsa::hash_functions::portable::Shake256Xof}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_absorb_final_26(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
-  Eurydice_borrow_slice_u8 input
+  Eurydice_borrow_slice_u8 ନିବେଶ
 )
 {
-  libcrux_sha3_portable_incremental_absorb_final_42(self, input);
+  libcrux_sha3_portable_incremental_absorb_final_42(self, ନିବେଶ);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::Xof for libcrux_ml_dsa::hash_functions::portable::Shake256Xof}
 */
-static inline libcrux_sha3_generic_keccak_xof_KeccakXofState_8d
-libcrux_ml_dsa_hash_functions_portable_init_26(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_sha3_generic_keccak_xof_KeccakXofState_8d
+libcrux_ml_dsa_hash_functions_portable_init_26(ଶୂନ୍ୟ)
 {
-  return libcrux_sha3_portable_incremental_new_42();
+  ଫେରନ୍ତୁ libcrux_sha3_portable_incremental_new_42();
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::Xof for libcrux_ml_dsa::hash_functions::portable::Shake256Xof}
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_squeeze_26(
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *self,
   Eurydice_mut_borrow_slice_u8 out
@@ -16212,7 +16212,7 @@ libcrux_ml_dsa_hash_functions_portable_squeeze_26(
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::XofX4 for libcrux_ml_dsa::hash_functions::portable::Shake256X4}
 */
-static KRML_MUSTINLINE libcrux_ml_dsa_hash_functions_portable_Shake256X4
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_dsa_hash_functions_portable_Shake256X4
 libcrux_ml_dsa_hash_functions_portable_init_absorb_x4_9b(
   Eurydice_borrow_slice_u8 input0,
   Eurydice_borrow_slice_u8 input1,
@@ -16220,29 +16220,29 @@ libcrux_ml_dsa_hash_functions_portable_init_absorb_x4_9b(
   Eurydice_borrow_slice_u8 input3
 )
 {
-  return libcrux_ml_dsa_hash_functions_portable_init_absorb_x4(input0, input1, input2, input3);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_hash_functions_portable_init_absorb_x4(input0, input1, input2, input3);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::XofX4 for libcrux_ml_dsa::hash_functions::portable::Shake256X4}
 */
-static KRML_MUSTINLINE Eurydice_arr_ff_x4
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ff_x4
 libcrux_ml_dsa_hash_functions_portable_squeeze_first_block_x4_9b(
   libcrux_ml_dsa_hash_functions_portable_Shake256X4 *self
 )
 {
-  return libcrux_ml_dsa_hash_functions_portable_squeeze_first_block_x4(self);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_hash_functions_portable_squeeze_first_block_x4(self);
 }
 
 /**
 This function found in impl {libcrux_ml_dsa::hash_functions::shake256::XofX4 for libcrux_ml_dsa::hash_functions::portable::Shake256X4}
 */
-static KRML_MUSTINLINE Eurydice_arr_ff_x4
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ff_x4
 libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_x4_9b(
   libcrux_ml_dsa_hash_functions_portable_Shake256X4 *self
 )
 {
-  return libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_x4(self);
+  ଫେରନ୍ତୁ libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_x4(self);
 }
 
 /**
@@ -16251,7 +16251,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
   libcrux_ml_dsa_constants_Eta eta,
   Eurydice_borrow_slice_u8 seed,
@@ -16309,23 +16309,23 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
       Eurydice_array_to_slice_shared_58(&randomnesses0.f3),
       &sampled3,
       &out.data[3U]);
-  while (true)
+  ଯେତେବେଳେ (true)
   {
-    if (done0)
+    ଯଦି (done0)
     {
-      if (done1)
+      ଯଦି (done1)
       {
-        if (done2)
+        ଯଦି (done2)
         {
-          if (done3)
+          ଯଦି (done3)
           {
-            break;
+            ଭାଙ୍ଗ;
           }
-          else
+          ଅନ୍ୟଥା
           {
             Eurydice_arr_ff_x4
             randomnesses = libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_x4_9b(&state);
-            if (!done0)
+            ଯଦି (!done0)
             {
               libcrux_ml_dsa_constants_Eta uu____4 = eta;
               done0 =
@@ -16334,7 +16334,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
                   &sampled0,
                   out.data);
             }
-            if (!done1)
+            ଯଦି (!done1)
             {
               libcrux_ml_dsa_constants_Eta uu____5 = eta;
               done1 =
@@ -16343,7 +16343,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
                   &sampled1,
                   &out.data[1U]);
             }
-            if (!done2)
+            ଯଦି (!done2)
             {
               libcrux_ml_dsa_constants_Eta uu____6 = eta;
               done2 =
@@ -16352,7 +16352,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
                   &sampled2,
                   &out.data[2U]);
             }
-            if (!done3)
+            ଯଦି (!done3)
             {
               libcrux_ml_dsa_constants_Eta uu____7 = eta;
               done3 =
@@ -16363,11 +16363,11 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
             }
           }
         }
-        else
+        ଅନ୍ୟଥା
         {
           Eurydice_arr_ff_x4
           randomnesses = libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_x4_9b(&state);
-          if (!done0)
+          ଯଦି (!done0)
           {
             libcrux_ml_dsa_constants_Eta uu____8 = eta;
             done0 =
@@ -16376,7 +16376,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
                 &sampled0,
                 out.data);
           }
-          if (!done1)
+          ଯଦି (!done1)
           {
             libcrux_ml_dsa_constants_Eta uu____9 = eta;
             done1 =
@@ -16385,7 +16385,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
                 &sampled1,
                 &out.data[1U]);
           }
-          if (!done2)
+          ଯଦି (!done2)
           {
             libcrux_ml_dsa_constants_Eta uu____10 = eta;
             done2 =
@@ -16394,7 +16394,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
                 &sampled2,
                 &out.data[2U]);
           }
-          if (!done3)
+          ଯଦି (!done3)
           {
             libcrux_ml_dsa_constants_Eta uu____11 = eta;
             done3 =
@@ -16405,11 +16405,11 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
           }
         }
       }
-      else
+      ଅନ୍ୟଥା
       {
         Eurydice_arr_ff_x4
         randomnesses = libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_x4_9b(&state);
-        if (!done0)
+        ଯଦି (!done0)
         {
           libcrux_ml_dsa_constants_Eta uu____12 = eta;
           done0 =
@@ -16418,7 +16418,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
               &sampled0,
               out.data);
         }
-        if (!done1)
+        ଯଦି (!done1)
         {
           libcrux_ml_dsa_constants_Eta uu____13 = eta;
           done1 =
@@ -16427,7 +16427,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
               &sampled1,
               &out.data[1U]);
         }
-        if (!done2)
+        ଯଦି (!done2)
         {
           libcrux_ml_dsa_constants_Eta uu____14 = eta;
           done2 =
@@ -16436,7 +16436,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
               &sampled2,
               &out.data[2U]);
         }
-        if (!done3)
+        ଯଦି (!done3)
         {
           libcrux_ml_dsa_constants_Eta uu____15 = eta;
           done3 =
@@ -16447,11 +16447,11 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
         }
       }
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_ff_x4
       randomnesses = libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_x4_9b(&state);
-      if (!done0)
+      ଯଦି (!done0)
       {
         libcrux_ml_dsa_constants_Eta uu____16 = eta;
         done0 =
@@ -16460,7 +16460,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
             &sampled0,
             out.data);
       }
-      if (!done1)
+      ଯଦି (!done1)
       {
         libcrux_ml_dsa_constants_Eta uu____17 = eta;
         done1 =
@@ -16469,7 +16469,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
             &sampled1,
             &out.data[1U]);
       }
-      if (!done2)
+      ଯଦି (!done2)
       {
         libcrux_ml_dsa_constants_Eta uu____18 = eta;
         done2 =
@@ -16478,7 +16478,7 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
             &sampled2,
             &out.data[2U]);
       }
-      if (!done3)
+      ଯଦି (!done3)
       {
         libcrux_ml_dsa_constants_Eta uu____19 = eta;
         done3 =
@@ -16491,15 +16491,15 @@ libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(
   }
   size_t max0 = (size_t)(uint32_t)start_index + (size_t)4U;
   size_t max;
-  if (re.meta < max0)
+  ଯଦି (re.meta < max0)
   {
     max = re.meta;
   }
-  else
+  ଅନ୍ୟଥା
   {
     max = max0;
   }
-  for (size_t i = (size_t)(uint32_t)start_index; i < max; i++)
+  ପାଇଁ (size_t i = (size_t)(uint32_t)start_index; i < max; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_polynomial_from_i32_array_ff_37(Eurydice_array_to_slice_shared_2c0(&out.data[i0
@@ -16514,7 +16514,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_samplex4_sample_s1_and_s2_29(
   libcrux_ml_dsa_constants_Eta eta,
   Eurydice_borrow_slice_u8 seed,
@@ -16522,7 +16522,7 @@ libcrux_ml_dsa_samplex4_sample_s1_and_s2_29(
 )
 {
   size_t len = s1_s2.meta;
-  for (size_t i = (size_t)0U; i < len / (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < len / (size_t)4U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(eta,
@@ -16531,7 +16531,7 @@ libcrux_ml_dsa_samplex4_sample_s1_and_s2_29(
       s1_s2);
   }
   size_t remainder = len % (size_t)4U;
-  if (remainder != (size_t)0U)
+  ଯଦି (remainder != (size_t)0U)
   {
     libcrux_ml_dsa_sample_sample_four_error_ring_elements_29(eta,
       seed,
@@ -16556,7 +16556,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_sample_sample_up_to_four_ring_elements_flat_63(
   size_t columns,
   Eurydice_borrow_slice_u8 seed,
@@ -16565,7 +16565,7 @@ libcrux_ml_dsa_sample_sample_up_to_four_ring_elements_flat_63(
   Eurydice_arr_d10 *rand_stack1,
   Eurydice_arr_d10 *rand_stack2,
   Eurydice_arr_d10 *rand_stack3,
-  Eurydice_dst_ref_mut_33 tmp_stack,
+  Eurydice_dst_ref_mut_33 tmp_ଗଦା,
   size_t start_index,
   size_t elements_requested
 )
@@ -16608,174 +16608,174 @@ libcrux_ml_dsa_sample_sample_up_to_four_ring_elements_flat_63(
   done0 =
     libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_4c(rand_stack0),
       &sampled0,
-      tmp_stack.ptr);
+      tmp_ଗଦା.ptr);
   bool
   done1 =
     libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_4c(rand_stack1),
       &sampled1,
-      &tmp_stack.ptr[1U]);
+      &tmp_ଗଦା.ptr[1U]);
   bool
   done2 =
     libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_4c(rand_stack2),
       &sampled2,
-      &tmp_stack.ptr[2U]);
+      &tmp_ଗଦା.ptr[2U]);
   bool
   done3 =
     libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_4c(rand_stack3),
       &sampled3,
-      &tmp_stack.ptr[3U]);
-  while (true)
+      &tmp_ଗଦା.ptr[3U]);
+  ଯେତେବେଳେ (true)
   {
-    if (done0)
+    ଯଦି (done0)
     {
-      if (done1)
+      ଯଦି (done1)
       {
-        if (done2)
+        ଯଦି (done2)
         {
-          if (done3)
+          ଯଦି (done3)
           {
-            break;
+            ଭାଙ୍ଗ;
           }
-          else
+          ଅନ୍ୟଥା
           {
             Eurydice_arr_c5_x4
             randomnesses = libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_11(&state);
-            if (!done0)
+            ଯଦି (!done0)
             {
               done0 =
                 libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.fst),
                   &sampled0,
-                  tmp_stack.ptr);
+                  tmp_ଗଦା.ptr);
             }
-            if (!done1)
+            ଯଦି (!done1)
             {
               done1 =
                 libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.snd),
                   &sampled1,
-                  &tmp_stack.ptr[1U]);
+                  &tmp_ଗଦା.ptr[1U]);
             }
-            if (!done2)
+            ଯଦି (!done2)
             {
               done2 =
                 libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.thd),
                   &sampled2,
-                  &tmp_stack.ptr[2U]);
+                  &tmp_ଗଦା.ptr[2U]);
             }
-            if (!done3)
+            ଯଦି (!done3)
             {
               done3 =
                 libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.f3),
                   &sampled3,
-                  &tmp_stack.ptr[3U]);
+                  &tmp_ଗଦା.ptr[3U]);
             }
           }
         }
-        else
+        ଅନ୍ୟଥା
         {
           Eurydice_arr_c5_x4
           randomnesses = libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_11(&state);
-          if (!done0)
+          ଯଦି (!done0)
           {
             done0 =
               libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.fst),
                 &sampled0,
-                tmp_stack.ptr);
+                tmp_ଗଦା.ptr);
           }
-          if (!done1)
+          ଯଦି (!done1)
           {
             done1 =
               libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.snd),
                 &sampled1,
-                &tmp_stack.ptr[1U]);
+                &tmp_ଗଦା.ptr[1U]);
           }
-          if (!done2)
+          ଯଦି (!done2)
           {
             done2 =
               libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.thd),
                 &sampled2,
-                &tmp_stack.ptr[2U]);
+                &tmp_ଗଦା.ptr[2U]);
           }
-          if (!done3)
+          ଯଦି (!done3)
           {
             done3 =
               libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.f3),
                 &sampled3,
-                &tmp_stack.ptr[3U]);
+                &tmp_ଗଦା.ptr[3U]);
           }
         }
       }
-      else
+      ଅନ୍ୟଥା
       {
         Eurydice_arr_c5_x4
         randomnesses = libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_11(&state);
-        if (!done0)
+        ଯଦି (!done0)
         {
           done0 =
             libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.fst),
               &sampled0,
-              tmp_stack.ptr);
+              tmp_ଗଦା.ptr);
         }
-        if (!done1)
+        ଯଦି (!done1)
         {
           done1 =
             libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.snd),
               &sampled1,
-              &tmp_stack.ptr[1U]);
+              &tmp_ଗଦା.ptr[1U]);
         }
-        if (!done2)
+        ଯଦି (!done2)
         {
           done2 =
             libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.thd),
               &sampled2,
-              &tmp_stack.ptr[2U]);
+              &tmp_ଗଦା.ptr[2U]);
         }
-        if (!done3)
+        ଯଦି (!done3)
         {
           done3 =
             libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.f3),
               &sampled3,
-              &tmp_stack.ptr[3U]);
+              &tmp_ଗଦା.ptr[3U]);
         }
       }
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_c5_x4
       randomnesses = libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_11(&state);
-      if (!done0)
+      ଯଦି (!done0)
       {
         done0 =
           libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.fst),
             &sampled0,
-            tmp_stack.ptr);
+            tmp_ଗଦା.ptr);
       }
-      if (!done1)
+      ଯଦି (!done1)
       {
         done1 =
           libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.snd),
             &sampled1,
-            &tmp_stack.ptr[1U]);
+            &tmp_ଗଦା.ptr[1U]);
       }
-      if (!done2)
+      ଯଦି (!done2)
       {
         done2 =
           libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.thd),
             &sampled2,
-            &tmp_stack.ptr[2U]);
+            &tmp_ଗଦା.ptr[2U]);
       }
-      if (!done3)
+      ଯଦି (!done3)
       {
         done3 =
           libcrux_ml_dsa_sample_rejection_sample_less_than_field_modulus_37(Eurydice_array_to_slice_shared_2c(&randomnesses.f3),
             &sampled3,
-            &tmp_stack.ptr[3U]);
+            &tmp_ଗଦା.ptr[3U]);
       }
     }
   }
-  for (size_t i = (size_t)0U; i < elements_requested; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < elements_requested; i++)
   {
     size_t k = i;
-    libcrux_ml_dsa_polynomial_from_i32_array_ff_37(Eurydice_array_to_slice_shared_2c0(&tmp_stack.ptr[k]),
+    libcrux_ml_dsa_polynomial_from_i32_array_ff_37(Eurydice_array_to_slice_shared_2c0(&tmp_ଗଦା.ptr[k]),
       &matrix.ptr[start_index + k]);
   }
 }
@@ -16786,7 +16786,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_samplex4_matrix_flat_63(
   size_t columns,
   Eurydice_borrow_slice_u8 seed,
@@ -16798,22 +16798,22 @@ libcrux_ml_dsa_samplex4_matrix_flat_63(
   Eurydice_arr_d10 rand_stack2 = { .data = { 0U } };
   Eurydice_arr_d10 rand_stack3 = { .data = { 0U } };
   Eurydice_arr_930
-  tmp_stack =
+  tmp_ଗଦା =
     { .data = { { .data = { 0U } }, { .data = { 0U } }, { .data = { 0U } }, { .data = { 0U } } } };
-  for (size_t i = (size_t)0U; i < matrix.meta / (size_t)4U + (size_t)1U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < matrix.meta / (size_t)4U + (size_t)1U; i++)
   {
     size_t start_index = i;
     size_t start_index0 = start_index * (size_t)4U;
-    if (start_index0 >= matrix.meta)
+    ଯଦି (start_index0 >= matrix.meta)
     {
-      break;
+      ଭାଙ୍ଗ;
     }
     size_t elements_requested;
-    if (start_index0 + (size_t)4U <= matrix.meta)
+    ଯଦି (start_index0 + (size_t)4U <= matrix.meta)
     {
       elements_requested = (size_t)4U;
     }
-    else
+    ଅନ୍ୟଥା
     {
       elements_requested = matrix.meta - start_index0;
     }
@@ -16824,7 +16824,7 @@ libcrux_ml_dsa_samplex4_matrix_flat_63(
       &rand_stack1,
       &rand_stack2,
       &rand_stack3,
-      Eurydice_array_to_slice_mut_7e(&tmp_stack),
+      Eurydice_array_to_slice_mut_7e(&tmp_ଗଦା),
       start_index0,
       elements_requested);
   }
@@ -16839,7 +16839,7 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients
 with const generics
 
 */
-static inline void
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
 libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(
   size_t columns,
   Eurydice_borrow_slice_u8 seed,
@@ -16854,13 +16854,13 @@ A monomorphic instance of libcrux_ml_dsa.hash_functions.portable.shake256
 with const generics
 - OUTPUT_LENGTH= 64
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake256_c9(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_arr_c7 *out
 )
 {
-  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_17(out), input);
+  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_17(out), ନିବେଶ);
 }
 
 /**
@@ -16871,13 +16871,13 @@ A monomorphic instance of libcrux_ml_dsa.hash_functions.portable.shake256_61
 with const generics
 - OUTPUT_LENGTH= 64
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake256_61_c9(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_arr_c7 *out
 )
 {
-  libcrux_ml_dsa_hash_functions_portable_shake256_c9(input, out);
+  libcrux_ml_dsa_hash_functions_portable_shake256_c9(ନିବେଶ, out);
 }
 
 /**
@@ -16886,20 +16886,20 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_encoding_signing_key_generate_serialized_2e(
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_encoding_signing_ଚାବି_generate_serialized_2e(
   libcrux_ml_dsa_constants_Eta eta,
   size_t error_ring_element_size,
   Eurydice_borrow_slice_u8 seed_matrix,
   Eurydice_borrow_slice_u8 seed_signing,
-  Eurydice_borrow_slice_u8 verification_key,
+  Eurydice_borrow_slice_u8 verification_ଚାବି,
   Eurydice_dst_ref_shared_44 s1_2,
   Eurydice_dst_ref_shared_44 t0,
-  Eurydice_mut_borrow_slice_u8 signing_key_serialized
+  Eurydice_mut_borrow_slice_u8 signing_ଚାବି_serialized
 )
 {
   size_t offset = (size_t)0U;
-  Eurydice_slice_copy(Eurydice_slice_subslice_mut_c8(signing_key_serialized,
+  Eurydice_slice_copy(Eurydice_slice_subslice_mut_c8(signing_ଚାବି_serialized,
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = offset,
@@ -16909,7 +16909,7 @@ libcrux_ml_dsa_encoding_signing_key_generate_serialized_2e(
     seed_matrix,
     uint8_t);
   offset += LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE;
-  Eurydice_slice_copy(Eurydice_slice_subslice_mut_c8(signing_key_serialized,
+  Eurydice_slice_copy(Eurydice_slice_subslice_mut_c8(signing_ଚାବି_serialized,
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = offset,
@@ -16919,25 +16919,25 @@ libcrux_ml_dsa_encoding_signing_key_generate_serialized_2e(
     seed_signing,
     uint8_t);
   offset += LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_SIGNING_SIZE;
-  Eurydice_arr_c7 verification_key_hash = { .data = { 0U } };
-  libcrux_ml_dsa_hash_functions_portable_shake256_61_c9(verification_key,
-    &verification_key_hash);
-  Eurydice_slice_copy(Eurydice_slice_subslice_mut_c8(signing_key_serialized,
+  Eurydice_arr_c7 verification_ଚାବି_hash = { .data = { 0U } };
+  libcrux_ml_dsa_hash_functions_portable_shake256_61_c9(verification_ଚାବି,
+    &verification_ଚାବି_hash);
+  Eurydice_slice_copy(Eurydice_slice_subslice_mut_c8(signing_ଚାବି_serialized,
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = offset,
-          .end = offset + LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_KEY_HASH
+          .end = offset + LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_ଚାବି_HASH
         }
       )),
-    Eurydice_array_to_slice_shared_17(&verification_key_hash),
+    Eurydice_array_to_slice_shared_17(&verification_ଚାବି_hash),
     uint8_t);
-  offset += LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_KEY_HASH;
-  for (size_t i = (size_t)0U; i < s1_2.meta; i++)
+  offset += LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_ଚାବି_HASH;
+  ପାଇଁ (size_t i = (size_t)0U; i < s1_2.meta; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_encoding_error_serialize_37(eta,
       &s1_2.ptr[i0],
-      Eurydice_slice_subslice_mut_c8(signing_key_serialized,
+      Eurydice_slice_subslice_mut_c8(signing_ଚାବି_serialized,
         (
           KRML_CLITERAL(core_ops_range_Range_87){
             .start = offset,
@@ -16946,12 +16946,12 @@ libcrux_ml_dsa_encoding_signing_key_generate_serialized_2e(
         )));
     offset += error_ring_element_size;
   }
-  for (size_t i = (size_t)0U; i < t0.meta; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < t0.meta; i++)
   {
     size_t _cloop_j = i;
-    const Eurydice_arr_a3 *ring_element = &t0.ptr[_cloop_j];
+    ଅଚଳ Eurydice_arr_a3 *ring_element = &t0.ptr[_cloop_j];
     libcrux_ml_dsa_encoding_t0_serialize_37(ring_element,
-      Eurydice_slice_subslice_mut_c8(signing_key_serialized,
+      Eurydice_slice_subslice_mut_c8(signing_ଚାବି_serialized,
         (
           KRML_CLITERAL(core_ops_range_Range_87){
             .start = offset,
@@ -16968,11 +16968,11 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_generate_key_pair_5a(
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_generate_ଚାବି_pair_5a(
   Eurydice_arr_ec randomness,
-  Eurydice_mut_borrow_slice_u8 signing_key,
-  Eurydice_mut_borrow_slice_u8 verification_key
+  Eurydice_mut_borrow_slice_u8 signing_ଚାବି,
+  Eurydice_mut_borrow_slice_u8 verification_ଚାବି
 )
 {
   Eurydice_arr_89 seed_expanded0 = { .data = { 0U } };
@@ -17011,38 +17011,38 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_generate_key_pair_5a(
   Eurydice_borrow_slice_u8 seed_for_signing = uu____1.snd;
   Eurydice_arr_8f s1_s2;
   Eurydice_arr_a3 repeat_expression0[8U];
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     repeat_expression0[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s1_s2.data, repeat_expression0, (size_t)8U * sizeof (Eurydice_arr_a3));
+  memcpy(s1_s2.data, repeat_expression0, (size_t)8U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_samplex4_sample_s1_and_s2_29(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ETA,
     seed_for_error_vectors,
     Eurydice_array_to_slice_mut_20(&s1_s2));
   Eurydice_arr_9d t0;
   Eurydice_arr_a3 repeat_expression1[4U];
-  for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
   {
     repeat_expression1[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t0.data, repeat_expression1, (size_t)4U * sizeof (Eurydice_arr_a3));
+  memcpy(t0.data, repeat_expression1, (size_t)4U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_2f a_as_ntt;
   Eurydice_arr_a3 repeat_expression2[16U];
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     repeat_expression2[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(a_as_ntt.data, repeat_expression2, (size_t)16U * sizeof (Eurydice_arr_a3));
+  memcpy(a_as_ntt.data, repeat_expression2, (size_t)16U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COLUMNS_IN_A,
     seed_for_a,
     Eurydice_array_to_slice_mut_200(&a_as_ntt));
   Eurydice_arr_9d s1_ntt;
   Eurydice_arr_a3 repeat_expression3[4U];
-  for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
   {
     repeat_expression3[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s1_ntt.data, repeat_expression3, (size_t)4U * sizeof (Eurydice_arr_a3));
+  memcpy(s1_ntt.data, repeat_expression3, (size_t)4U * ଆକାର (Eurydice_arr_a3));
   Eurydice_slice_copy(Eurydice_array_to_slice_mut_201(&s1_ntt),
     Eurydice_array_to_subslice_shared_25(&s1_s2,
       (
@@ -17052,7 +17052,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_generate_key_pair_5a(
         }
       )),
     Eurydice_arr_a3);
-  for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_ntt_ntt_37(&s1_ntt.data[i0]);
@@ -17065,44 +17065,44 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_generate_key_pair_5a(
     Eurydice_array_to_slice_mut_201(&t0));
   Eurydice_arr_9d t1;
   Eurydice_arr_a3 repeat_expression[4U];
-  for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
   {
     repeat_expression[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t1.data, repeat_expression, (size_t)4U * sizeof (Eurydice_arr_a3));
+  memcpy(t1.data, repeat_expression, (size_t)4U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_arithmetic_power2round_vector_37(Eurydice_array_to_slice_mut_201(&t0),
     Eurydice_array_to_slice_mut_201(&t1));
-  libcrux_ml_dsa_encoding_verification_key_generate_serialized_37(seed_for_a,
+  libcrux_ml_dsa_encoding_verification_ଚାବି_generate_serialized_37(seed_for_a,
     Eurydice_array_to_slice_shared_20(&t1),
-    verification_key);
-  libcrux_ml_dsa_encoding_signing_key_generate_serialized_2e(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ETA,
+    verification_ଚାବି);
+  libcrux_ml_dsa_encoding_signing_ଚାବି_generate_serialized_2e(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ETA,
     LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_ERROR_RING_ELEMENT_SIZE,
     seed_for_a,
     seed_for_signing,
     (
       KRML_CLITERAL(Eurydice_borrow_slice_u8){
-        .ptr = verification_key.ptr,
-        .meta = verification_key.meta
+        .ptr = verification_ଚାବି.ptr,
+        .meta = verification_ଚାବି.meta
       }
     ),
     Eurydice_array_to_slice_shared_200(&s1_s2),
     Eurydice_array_to_slice_shared_20(&t0),
-    signing_key);
+    signing_ଚାବି);
 }
 
 /**
  Generate key pair.
 */
-static inline void
-libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_generate_key_pair(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_generate_ଚାବି_pair(
   Eurydice_arr_ec randomness,
-  Eurydice_arr_10 *signing_key,
-  Eurydice_arr_02 *verification_key
+  Eurydice_arr_10 *signing_ଚାବି,
+  Eurydice_arr_02 *verification_ଚାବି
 )
 {
-  libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_generate_key_pair_5a(randomness,
-    Eurydice_array_to_slice_mut_34(signing_key),
-    Eurydice_array_to_slice_mut_9f0(verification_key));
+  libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_generate_ଚାବି_pair_5a(randomness,
+    Eurydice_array_to_slice_mut_34(signing_ଚାବି),
+    Eurydice_array_to_slice_mut_9f0(verification_ଚାବି));
 }
 
 /**
@@ -17133,20 +17133,20 @@ with types libcrux_ml_dsa_hash_functions_portable_Shake256Xof
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(
-  Eurydice_borrow_slice_u8 verification_key_hash,
-  const core_option_Option_84 *domain_separation_context,
+  Eurydice_borrow_slice_u8 verification_ଚାବି_hash,
+  ଅଚଳ core_option_Option_84 *domain_separation_context,
   Eurydice_borrow_slice_u8 message,
   Eurydice_arr_c7 *message_representative
 )
 {
   libcrux_sha3_generic_keccak_xof_KeccakXofState_8d
   shake = libcrux_ml_dsa_hash_functions_portable_init_26();
-  libcrux_ml_dsa_hash_functions_portable_absorb_26(&shake, verification_key_hash);
-  if (domain_separation_context->tag == core_option_Some)
+  libcrux_ml_dsa_hash_functions_portable_absorb_26(&shake, verification_ଚାବି_hash);
+  ଯଦି (domain_separation_context->tag == core_option_Some)
   {
-    const
+    ଅଚଳ
     libcrux_ml_dsa_pre_hash_DomainSeparationContext
     *domain_separation_context0 = &domain_separation_context->f0;
     libcrux_sha3_generic_keccak_xof_KeccakXofState_8d *uu____0 = &shake;
@@ -17171,12 +17171,12 @@ libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(
       Eurydice_array_to_slice_shared_79(&lvalue));
     libcrux_ml_dsa_hash_functions_portable_absorb_26(&shake,
       libcrux_ml_dsa_pre_hash_context_88(domain_separation_context0));
-    const
+    ଅଚଳ
     core_option_Option_57
     *uu____2 = libcrux_ml_dsa_pre_hash_pre_hash_oid_88(domain_separation_context0);
-    if (uu____2->tag == core_option_Some)
+    ଯଦି (uu____2->tag == core_option_Some)
     {
-      const Eurydice_arr_c9 *pre_hash_oid = &uu____2->f0;
+      ଅଚଳ Eurydice_arr_c9 *pre_hash_oid = &uu____2->f0;
       libcrux_ml_dsa_hash_functions_portable_absorb_26(&shake,
         Eurydice_array_to_slice_shared_2f(pre_hash_oid));
     }
@@ -17191,13 +17191,13 @@ A monomorphic instance of libcrux_ml_dsa.hash_functions.portable.shake256
 with const generics
 - OUTPUT_LENGTH= 576
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake256_5a(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_arr_220 *out
 )
 {
-  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_8a(out), input);
+  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_8a(out), ନିବେଶ);
 }
 
 /**
@@ -17208,7 +17208,7 @@ A monomorphic instance of libcrux_ml_dsa.hash_functions.portable.shake256_x4_9b
 with const generics
 - OUT_LEN= 576
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake256_x4_9b_5a(
   Eurydice_borrow_slice_u8 input0,
   Eurydice_borrow_slice_u8 input1,
@@ -17231,13 +17231,13 @@ A monomorphic instance of libcrux_ml_dsa.hash_functions.portable.shake256
 with const generics
 - OUTPUT_LENGTH= 640
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake256_0e(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_arr_20 *out
 )
 {
-  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_4f(out), input);
+  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_4f(out), ନିବେଶ);
 }
 
 /**
@@ -17248,7 +17248,7 @@ A monomorphic instance of libcrux_ml_dsa.hash_functions.portable.shake256_x4_9b
 with const generics
 - OUT_LEN= 640
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake256_x4_9b_0e(
   Eurydice_borrow_slice_u8 input0,
   Eurydice_borrow_slice_u8 input1,
@@ -17274,13 +17274,13 @@ A monomorphic instance of libcrux_ml_dsa.hash_functions.portable.shake256_61
 with const generics
 - OUTPUT_LENGTH= 640
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake256_61_0e(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_arr_20 *out
 )
 {
-  libcrux_ml_dsa_hash_functions_portable_shake256_0e(input, out);
+  libcrux_ml_dsa_hash_functions_portable_shake256_0e(ନିବେଶ, out);
 }
 
 /**
@@ -17291,13 +17291,13 @@ A monomorphic instance of libcrux_ml_dsa.hash_functions.portable.shake256_61
 with const generics
 - OUTPUT_LENGTH= 576
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_hash_functions_portable_shake256_61_5a(
-  Eurydice_borrow_slice_u8 input,
+  Eurydice_borrow_slice_u8 ନିବେଶ,
   Eurydice_arr_220 *out
 )
 {
-  libcrux_ml_dsa_hash_functions_portable_shake256_5a(input, out);
+  libcrux_ml_dsa_hash_functions_portable_shake256_5a(ନିବେଶ, out);
 }
 
 /**
@@ -17306,20 +17306,20 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_sample_sample_mask_ring_element_2e(
-  const Eurydice_arr_91 *seed,
+  ଅଚଳ Eurydice_arr_91 *seed,
   Eurydice_arr_a3 *result,
   size_t gamma1_exponent
 )
 {
-  switch (gamma1_exponent)
+  ବାଛ (gamma1_exponent)
   {
-    case 17U:
+    ସ୍ଥିତି 17U:
       {
-        break;
+        ଭାଙ୍ଗ;
       }
-    case 19U:
+    ସ୍ଥିତି 19U:
       {
         Eurydice_arr_20 out = { .data = { 0U } };
         libcrux_ml_dsa_hash_functions_portable_shake256_61_0e(Eurydice_array_to_slice_shared_f1(seed),
@@ -17327,9 +17327,9 @@ libcrux_ml_dsa_sample_sample_mask_ring_element_2e(
         libcrux_ml_dsa_encoding_gamma1_deserialize_37(gamma1_exponent,
           Eurydice_array_to_slice_shared_4f(&out),
           result);
-        return;
+        ଫେରନ୍ତୁ;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
         KRML_HOST_EXIT(255U);
@@ -17349,11 +17349,11 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_sample_sample_mask_vector_67(
   size_t dimension,
   size_t gamma1_exponent,
-  const Eurydice_arr_c7 *seed,
+  ଅଚଳ Eurydice_arr_c7 *seed,
   uint16_t *domain_separator,
   Eurydice_dst_ref_mut_44 mask
 )
@@ -17375,9 +17375,9 @@ libcrux_ml_dsa_sample_sample_mask_vector_67(
     libcrux_ml_dsa_sample_add_error_domain_separator(Eurydice_array_to_slice_shared_17(seed),
       (uint32_t)domain_separator[0U] + 3U);
   domain_separator[0U] = (uint32_t)domain_separator[0U] + 4U;
-  switch (gamma1_exponent)
+  ବାଛ (gamma1_exponent)
   {
-    case 17U:
+    ସ୍ଥିତି 17U:
       {
         Eurydice_arr_220 out0 = { .data = { 0U } };
         Eurydice_arr_220 out1 = { .data = { 0U } };
@@ -17403,9 +17403,9 @@ libcrux_ml_dsa_sample_sample_mask_vector_67(
         libcrux_ml_dsa_encoding_gamma1_deserialize_37(gamma1_exponent,
           Eurydice_array_to_slice_shared_8a(&out3),
           &mask.ptr[3U]);
-        break;
+        ଭାଙ୍ଗ;
       }
-    case 19U:
+    ସ୍ଥିତି 19U:
       {
         Eurydice_arr_20 out0 = { .data = { 0U } };
         Eurydice_arr_20 out1 = { .data = { 0U } };
@@ -17431,15 +17431,15 @@ libcrux_ml_dsa_sample_sample_mask_vector_67(
         libcrux_ml_dsa_encoding_gamma1_deserialize_37(gamma1_exponent,
           Eurydice_array_to_slice_shared_4f(&out3),
           &mask.ptr[3U]);
-        break;
+        ଭାଙ୍ଗ;
       }
-    default:
+    ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
       {
         KRML_HOST_EPRINTF("KaRaMeL abort at %s:%d\n%s\n", __FILE__, __LINE__, "panic!");
         KRML_HOST_EXIT(255U);
       }
   }
-  for (size_t i = (size_t)4U; i < dimension; i++)
+  ପାଇଁ (size_t i = (size_t)4U; i < dimension; i++)
   {
     size_t i0 = i;
     Eurydice_arr_91
@@ -17457,10 +17457,10 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_sample_sample_challenge_ring_element_2e(
   Eurydice_borrow_slice_u8 seed,
-  size_t number_of_ones,
+  size_t ସଂଖ୍ୟା_of_ones,
   Eurydice_arr_a3 *re
 )
 {
@@ -17471,14 +17471,14 @@ libcrux_ml_dsa_sample_sample_challenge_ring_element_2e(
   memcpy(arr.data,
     Eurydice_array_to_subslice_shared_d40(&randomness0,
       (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)0U, .end = (size_t)8U })).ptr,
-    (size_t)8U * sizeof (uint8_t));
+    (size_t)8U * ଆକାର (uint8_t));
   uint64_t
   signs =
-    core_num__u64__from_le_bytes(core_result_unwrap_26_e0((
+    core_ଅଙ୍କ_u64_from_le_bytes(core_result_unwrap_26_e0((
           KRML_CLITERAL(core_result_Result_8e){ .tag = core_result_Ok, .val = { .case_Ok = arr } }
         )));
   Eurydice_arr_6c result = { .data = { 0U } };
-  size_t out_index = (size_t)256U - number_of_ones;
+  size_t out_index = (size_t)256U - ସଂଖ୍ୟା_of_ones;
   bool
   done =
     libcrux_ml_dsa_sample_inside_out_shuffle(Eurydice_array_to_subslice_from_shared_5f(&randomness0,
@@ -17486,13 +17486,13 @@ libcrux_ml_dsa_sample_sample_challenge_ring_element_2e(
       &out_index,
       &signs,
       &result);
-  while (true)
+  ଯେତେବେଳେ (true)
   {
-    if (done)
+    ଯଦି (done)
     {
-      break;
+      ଭାଙ୍ଗ;
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_ff
       randomness = libcrux_ml_dsa_hash_functions_portable_squeeze_next_block_61(&state);
@@ -17512,9 +17512,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_53
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   core_option_Option_84 domain_separation_context,
   Eurydice_arr_ec randomness,
@@ -17523,7 +17523,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
 {
   Eurydice_borrow_slice_u8_x2
   uu____0 =
-    Eurydice_slice_split_at(signing_key,
+    Eurydice_slice_split_at(signing_ଚାବି,
       LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
@@ -17540,10 +17540,10 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
   Eurydice_borrow_slice_u8_x2
   uu____2 =
     Eurydice_slice_split_at(remaining_serialized1,
-      LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_KEY_HASH,
+      LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_ଚାବି_HASH,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
-  Eurydice_borrow_slice_u8 verification_key_hash = uu____2.fst;
+  Eurydice_borrow_slice_u8 verification_ଚାବି_hash = uu____2.fst;
   Eurydice_borrow_slice_u8 remaining_serialized2 = uu____2.snd;
   Eurydice_borrow_slice_u8_x2
   uu____3 =
@@ -17565,25 +17565,25 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
   Eurydice_borrow_slice_u8 t0_serialized = uu____4.snd;
   Eurydice_arr_9d s1_as_ntt;
   Eurydice_arr_a3 repeat_expression0[4U];
-  for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
   {
     repeat_expression0[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s1_as_ntt.data, repeat_expression0, (size_t)4U * sizeof (Eurydice_arr_a3));
+  memcpy(s1_as_ntt.data, repeat_expression0, (size_t)4U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_9d s2_as_ntt;
   Eurydice_arr_a3 repeat_expression1[4U];
-  for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
   {
     repeat_expression1[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s2_as_ntt.data, repeat_expression1, (size_t)4U * sizeof (Eurydice_arr_a3));
+  memcpy(s2_as_ntt.data, repeat_expression1, (size_t)4U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_9d t0_as_ntt;
   Eurydice_arr_a3 repeat_expression2[4U];
-  for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
   {
     repeat_expression2[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t0_as_ntt.data, repeat_expression2, (size_t)4U * sizeof (Eurydice_arr_a3));
+  memcpy(t0_as_ntt.data, repeat_expression2, (size_t)4U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_encoding_error_deserialize_to_vector_then_ntt_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ETA,
     LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_ERROR_RING_ELEMENT_SIZE,
     s1_serialized,
@@ -17596,16 +17596,16 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
     Eurydice_array_to_slice_mut_201(&t0_as_ntt));
   Eurydice_arr_2f matrix;
   Eurydice_arr_a3 repeat_expression3[16U];
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     repeat_expression3[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(matrix.data, repeat_expression3, (size_t)16U * sizeof (Eurydice_arr_a3));
+  memcpy(matrix.data, repeat_expression3, (size_t)16U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COLUMNS_IN_A,
     seed_for_a,
     Eurydice_array_to_slice_mut_200(&matrix));
   Eurydice_arr_c7 message_representative = { .data = { 0U } };
-  libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(verification_key_hash,
+  libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(verification_ଚାବି_hash,
     &domain_separation_context,
     message,
     &message_representative);
@@ -17624,30 +17624,30 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
   core_option_Option_14 commitment_hash0 = { .tag = core_option_None };
   core_option_Option_d9 signer_response0 = { .tag = core_option_None };
   core_option_Option_51 hint0 = { .tag = core_option_None };
-  while (attempt < LIBCRUX_ML_DSA_CONSTANTS_REJECTION_SAMPLE_BOUND_SIGN)
+  ଯେତେବେଳେ (attempt < LIBCRUX_ML_DSA_CONSTANTS_REJECTION_SAMPLE_BOUND_SIGN)
   {
     attempt++;
     Eurydice_arr_9d mask;
     Eurydice_arr_a3 repeat_expression4[4U];
-    for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
     {
       repeat_expression4[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(mask.data, repeat_expression4, (size_t)4U * sizeof (Eurydice_arr_a3));
+    memcpy(mask.data, repeat_expression4, (size_t)4U * ଆକାର (Eurydice_arr_a3));
     Eurydice_arr_9d w0;
     Eurydice_arr_a3 repeat_expression5[4U];
-    for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
     {
       repeat_expression5[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(w0.data, repeat_expression5, (size_t)4U * sizeof (Eurydice_arr_a3));
+    memcpy(w0.data, repeat_expression5, (size_t)4U * ଆକାର (Eurydice_arr_a3));
     Eurydice_arr_9d commitment;
     Eurydice_arr_a3 repeat_expression6[4U];
-    for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
     {
       repeat_expression6[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(commitment.data, repeat_expression6, (size_t)4U * sizeof (Eurydice_arr_a3));
+    memcpy(commitment.data, repeat_expression6, (size_t)4U * ଆକାର (Eurydice_arr_a3));
     libcrux_ml_dsa_sample_sample_mask_vector_67(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COLUMNS_IN_A,
       LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_GAMMA1_EXPONENT,
       &mask_seed,
@@ -17655,18 +17655,18 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
       Eurydice_array_to_slice_mut_201(&mask));
     Eurydice_arr_9d a_x_mask;
     Eurydice_arr_a3 repeat_expression[4U];
-    for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
     {
       repeat_expression[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(a_x_mask.data, repeat_expression, (size_t)4U * sizeof (Eurydice_arr_a3));
+    memcpy(a_x_mask.data, repeat_expression, (size_t)4U * ଆକାର (Eurydice_arr_a3));
     Eurydice_arr_9d
     mask_ntt =
       core_array__core__clone__Clone_for__T__N___clone((size_t)4U,
         &mask,
         Eurydice_arr_a3,
         Eurydice_arr_9d);
-    for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
     {
       size_t i0 = i;
       libcrux_ml_dsa_ntt_ntt_37(&mask_ntt.data[i0]);
@@ -17721,14 +17721,14 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
     libcrux_ml_dsa_matrix_subtract_vectors_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A,
       Eurydice_array_to_slice_mut_201(&w0),
       Eurydice_array_to_slice_shared_20(&challenge_times_s2));
-    if
+    ଯଦି
     (
       !libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_20(&mask),
         (int32_t)((uint32_t)1 << (uint32_t)LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_GAMMA1_EXPONENT) -
           LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_BETA)
     )
     {
-      if
+      ଯଦି
       (
         !libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_20(&w0),
           LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_GAMMA2 - LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_BETA)
@@ -17742,7 +17742,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
             Eurydice_arr_9d);
         libcrux_ml_dsa_matrix_vector_times_ring_element_37(Eurydice_array_to_slice_mut_201(&challenge_times_t0),
           &verifier_challenge);
-        if
+        ଯଦି
         (
           !libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_20(&challenge_times_t0),
             LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_GAMMA2)
@@ -17767,7 +17767,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
               Eurydice_array_to_slice_shared_20(&commitment),
               LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_GAMMA2,
               Eurydice_array_to_slice_mut_86(&hint_candidate));
-          if (!(ones_in_hint > LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_MAX_ONES_IN_HINT))
+          ଯଦି (!(ones_in_hint > LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_MAX_ONES_IN_HINT))
           {
             attempt = LIBCRUX_ML_DSA_CONSTANTS_REJECTION_SAMPLE_BOUND_SIGN;
             commitment_hash0 =
@@ -17792,7 +17792,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
     }
   }
   core_result_Result_53 uu____5;
-  if (commitment_hash0.tag == core_option_None)
+  ଯଦି (commitment_hash0.tag == core_option_None)
   {
     uu____5 =
       (
@@ -17802,11 +17802,11 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     Eurydice_arr_ec commitment_hash = commitment_hash0.f0;
     Eurydice_arr_ec commitment_hash1 = commitment_hash;
-    if (signer_response0.tag == core_option_None)
+    ଯଦି (signer_response0.tag == core_option_None)
     {
       uu____5 =
         (
@@ -17816,11 +17816,11 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
           }
         );
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_9d signer_response = signer_response0.f0;
       Eurydice_arr_9d signer_response1 = signer_response;
-      if (!(hint0.tag == core_option_None))
+      ଯଦି (!(hint0.tag == core_option_None))
       {
         Eurydice_arr_b7 hint = hint0.f0;
         Eurydice_arr_b7 hint1 = hint;
@@ -17834,7 +17834,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
           LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_GAMMA1_RING_ELEMENT_SIZE,
           LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_MAX_ONES_IN_HINT,
           Eurydice_array_to_slice_mut_0d(signature));
-        return (KRML_CLITERAL(core_result_Result_53){ .tag = core_result_Ok });
+        ଫେରନ୍ତୁ (KRML_CLITERAL(core_result_Result_53){ .tag = core_result_Ok });
       }
       uu____5 =
         (
@@ -17845,7 +17845,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(
         );
     }
   }
-  return uu____5;
+  ଫେରନ୍ତୁ uu____5;
 }
 
 /**
@@ -17854,9 +17854,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_53
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_mut_5a(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness,
@@ -17867,9 +17867,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_mut_5a(
   uu____0 =
     libcrux_ml_dsa_pre_hash_new_88(context,
       (KRML_CLITERAL(core_option_Option_57){ .tag = core_option_None }));
-  if (!(uu____0.tag == core_result_Ok))
+  ଯଦି (!(uu____0.tag == core_result_Ok))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_53){
           .tag = core_result_Err,
@@ -17879,8 +17879,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_mut_5a(
   }
   libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(signing_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(signing_ଚାବି,
       message,
       (
         KRML_CLITERAL(core_option_Option_84){
@@ -17898,9 +17898,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_48
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_48
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_5a(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
@@ -17909,13 +17909,13 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_5a(
   Eurydice_arr_85 signature = libcrux_ml_dsa_types_zero_c5_37();
   core_result_Result_53
   uu____0 =
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_mut_5a(signing_key,
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_mut_5a(signing_ଚାବି,
       message,
       context,
       randomness,
       &signature);
   core_result_Result_48 uu____1;
-  if (uu____0.tag == core_result_Ok)
+  ଯଦି (uu____0.tag == core_result_Ok)
   {
     uu____1 =
       (
@@ -17925,28 +17925,28 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_5a(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_ml_dsa_types_SigningError e = uu____0.f0;
     uu____1 =
       (KRML_CLITERAL(core_result_Result_48){ .tag = core_result_Err, .val = { .case_Err = e } });
   }
-  return uu____1;
+  ଫେରନ୍ତୁ uu____1;
 }
 
 /**
  Sign.
 */
-static inline core_result_Result_48
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_48
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_sign(
-  const Eurydice_arr_10 *signing_key,
+  ଅଚଳ Eurydice_arr_10 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_5a(Eurydice_array_to_slice_shared_34(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_5a(Eurydice_array_to_slice_shared_34(signing_ଚାବି),
       message,
       context,
       randomness);
@@ -17955,17 +17955,17 @@ libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_sign(
 /**
  Sign.
 */
-static inline core_result_Result_53
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_sign_mut(
-  const Eurydice_arr_10 *signing_key,
+  ଅଚଳ Eurydice_arr_10 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness,
   Eurydice_arr_85 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_mut_5a(Eurydice_array_to_slice_shared_34(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_mut_5a(Eurydice_array_to_slice_shared_34(signing_ଚାବି),
       message,
       context,
       randomness,
@@ -17981,7 +17981,7 @@ with types libcrux_ml_dsa_hash_functions_portable_Shake128
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_dsa_pre_hash_hash_30_83(
   Eurydice_borrow_slice_u8 message,
   Eurydice_mut_borrow_slice_u8 output
@@ -17996,9 +17996,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_53
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_mut_3f(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
@@ -18006,7 +18006,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_mut_3f(
   Eurydice_arr_85 *signature
 )
 {
-  if (!(context.meta > LIBCRUX_ML_DSA_CONSTANTS_CONTEXT_MAX_LEN))
+  ଯଦି (!(context.meta > LIBCRUX_ML_DSA_CONSTANTS_CONTEXT_MAX_LEN))
   {
     libcrux_ml_dsa_pre_hash_hash_30_83(message, pre_hash_buffer);
     core_result_Result_a8
@@ -18018,9 +18018,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_mut_3f(
             .f0 = libcrux_ml_dsa_pre_hash_oid_30()
           }
         ));
-    if (!(uu____0.tag == core_result_Ok))
+    ଯଦି (!(uu____0.tag == core_result_Ok))
     {
-      return
+      ଫେରନ୍ତୁ
         (
           KRML_CLITERAL(core_result_Result_53){
             .tag = core_result_Err,
@@ -18030,8 +18030,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_mut_3f(
     }
     libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
     libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-    return
-      libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(signing_key,
+    ଫେରନ୍ତୁ
+      libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_internal_5a(signing_ଚାବି,
         (
           KRML_CLITERAL(Eurydice_borrow_slice_u8){
             .ptr = pre_hash_buffer.ptr,
@@ -18047,7 +18047,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_mut_3f(
         randomness,
         signature);
   }
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(core_result_Result_53){
         .tag = core_result_Err,
@@ -18062,9 +18062,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_48
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_48
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_3f(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
@@ -18074,14 +18074,14 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_3f(
   Eurydice_arr_85 signature = libcrux_ml_dsa_types_zero_c5_37();
   core_result_Result_53
   uu____0 =
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_mut_3f(signing_key,
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_mut_3f(signing_ଚାବି,
       message,
       context,
       pre_hash_buffer,
       randomness,
       &signature);
   core_result_Result_48 uu____1;
-  if (uu____0.tag == core_result_Ok)
+  ଯଦି (uu____0.tag == core_result_Ok)
   {
     uu____1 =
       (
@@ -18091,29 +18091,29 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_3f(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_ml_dsa_types_SigningError e = uu____0.f0;
     uu____1 =
       (KRML_CLITERAL(core_result_Result_48){ .tag = core_result_Err, .val = { .case_Err = e } });
   }
-  return uu____1;
+  ଫେରନ୍ତୁ uu____1;
 }
 
 /**
  Sign (pre-hashed).
 */
-static inline core_result_Result_48
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_48
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_sign_pre_hashed_shake128(
-  const Eurydice_arr_10 *signing_key,
+  ଅଚଳ Eurydice_arr_10 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_3f(Eurydice_array_to_slice_shared_34(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_sign_pre_hashed_3f(Eurydice_array_to_slice_shared_34(signing_ଚାବି),
       message,
       context,
       pre_hash_buffer,
@@ -18132,17 +18132,17 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(
-  const Eurydice_arr_02 *verification_key,
+  ଅଚଳ Eurydice_arr_02 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   core_option_Option_84 domain_separation_context,
-  const Eurydice_arr_85 *signature_serialized
+  ଅଚଳ Eurydice_arr_85 *signature_serialized
 )
 {
   Eurydice_borrow_slice_u8_x2
   uu____0 =
-    Eurydice_slice_split_at(Eurydice_array_to_slice_shared_9f(verification_key),
+    Eurydice_slice_split_at(Eurydice_array_to_slice_shared_9f(verification_ଚାବି),
       LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
@@ -18150,25 +18150,25 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(
   Eurydice_borrow_slice_u8 t1_serialized = uu____0.snd;
   Eurydice_arr_9d t1;
   Eurydice_arr_a3 repeat_expression0[4U];
-  for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
   {
     repeat_expression0[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t1.data, repeat_expression0, (size_t)4U * sizeof (Eurydice_arr_a3));
-  libcrux_ml_dsa_encoding_verification_key_deserialize_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A,
-    LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_VERIFICATION_KEY_SIZE,
+  memcpy(t1.data, repeat_expression0, (size_t)4U * ଆକାର (Eurydice_arr_a3));
+  libcrux_ml_dsa_encoding_verification_ଚାବି_deserialize_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ROWS_IN_A,
+    LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_44_VERIFICATION_ଚାବି_SIZE,
     t1_serialized,
     Eurydice_array_to_slice_mut_201(&t1));
   Eurydice_arr_ec deserialized_commitment_hash = { .data = { 0U } };
   Eurydice_arr_9d deserialized_signer_response;
   Eurydice_arr_a3 repeat_expression1[4U];
-  for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
   {
     repeat_expression1[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
   memcpy(deserialized_signer_response.data,
     repeat_expression1,
-    (size_t)4U * sizeof (Eurydice_arr_a3));
+    (size_t)4U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_b7
   deserialized_hint =
     { .data = { { .data = { 0U } }, { .data = { 0U } }, { .data = { 0U } }, { .data = { 0U } } } };
@@ -18186,9 +18186,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(
       Eurydice_array_to_slice_mut_201(&deserialized_signer_response),
       Eurydice_array_to_slice_mut_86(&deserialized_hint));
   core_result_Result_41 uu____2;
-  if (uu____1.tag == core_result_Ok)
+  ଯଦି (uu____1.tag == core_result_Ok)
   {
-    if
+    ଯଦି
     (
       libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_20(&deserialized_signer_response),
         (int32_t)((uint32_t)1 << (uint32_t)LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_GAMMA1_EXPONENT) -
@@ -18203,23 +18203,23 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(
           }
         );
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_2f matrix;
       Eurydice_arr_a3 repeat_expression[16U];
-      for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+      ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
       {
         repeat_expression[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
       }
-      memcpy(matrix.data, repeat_expression, (size_t)16U * sizeof (Eurydice_arr_a3));
+      memcpy(matrix.data, repeat_expression, (size_t)16U * ଆକାର (Eurydice_arr_a3));
       libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_COLUMNS_IN_A,
         seed_for_a,
         Eurydice_array_to_slice_mut_200(&matrix));
-      Eurydice_arr_c7 verification_key_hash = { .data = { 0U } };
-      libcrux_ml_dsa_hash_functions_portable_shake256_61_c9(Eurydice_array_to_slice_shared_9f(verification_key),
-        &verification_key_hash);
+      Eurydice_arr_c7 verification_ଚାବି_hash = { .data = { 0U } };
+      libcrux_ml_dsa_hash_functions_portable_shake256_61_c9(Eurydice_array_to_slice_shared_9f(verification_ଚାବି),
+        &verification_ଚାବି_hash);
       Eurydice_arr_c7 message_representative = { .data = { 0U } };
-      libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(Eurydice_array_to_slice_shared_17(&verification_key_hash),
+      libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(Eurydice_array_to_slice_shared_17(&verification_ଚାବି_hash),
         &domain_separation_context,
         message,
         &message_representative);
@@ -18228,7 +18228,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(
         LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_44_ONES_IN_VERIFIER_CHALLENGE,
         &verifier_challenge);
       libcrux_ml_dsa_ntt_ntt_37(&verifier_challenge);
-      for (size_t i = (size_t)0U; i < (size_t)4U; i++)
+      ପାଇଁ (size_t i = (size_t)0U; i < (size_t)4U; i++)
       {
         size_t i0 = i;
         libcrux_ml_dsa_ntt_ntt_37(&deserialized_signer_response.data[i0]);
@@ -18255,7 +18255,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(
         Eurydice_array_to_slice_shared_27(&commitment_serialized));
       libcrux_ml_dsa_hash_functions_portable_squeeze_26(&shake,
         Eurydice_array_to_slice_mut_01(&recomputed_commitment_hash));
-      if
+      ଯଦି
       (
         Eurydice_array_eq((size_t)32U,
           &deserialized_commitment_hash,
@@ -18265,7 +18265,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(
       {
         uu____2 = (KRML_CLITERAL(core_result_Result_41){ .tag = core_result_Ok });
       }
-      else
+      ଅନ୍ୟଥା
       {
         uu____2 =
           (
@@ -18277,12 +18277,12 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(
       }
     }
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_ml_dsa_types_VerificationError e = uu____1.f0;
     uu____2 = (KRML_CLITERAL(core_result_Result_41){ .tag = core_result_Err, .f0 = e });
   }
-  return uu____2;
+  ଫେରନ୍ତୁ uu____2;
 }
 
 /**
@@ -18291,21 +18291,21 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_5a(
-  const Eurydice_arr_02 *verification_key_serialized,
+  ଅଚଳ Eurydice_arr_02 *verification_ଚାବି_serialized,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_85 *signature_serialized
+  ଅଚଳ Eurydice_arr_85 *signature_serialized
 )
 {
   core_result_Result_a8
   uu____0 =
     libcrux_ml_dsa_pre_hash_new_88(context,
       (KRML_CLITERAL(core_option_Option_57){ .tag = core_option_None }));
-  if (!(uu____0.tag == core_result_Ok))
+  ଯଦି (!(uu____0.tag == core_result_Ok))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_41){
           .tag = core_result_Err,
@@ -18315,8 +18315,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_5a(
   }
   libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(verification_key_serialized,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(verification_ଚାବି_serialized,
       message,
       (
         KRML_CLITERAL(core_option_Option_84){
@@ -18330,16 +18330,16 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_5a(
 /**
  Verify.
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_verify(
-  const Eurydice_arr_02 *verification_key,
+  ଅଚଳ Eurydice_arr_02 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_85 *signature
+  ଅଚଳ Eurydice_arr_85 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_5a(verification_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_5a(verification_ଚାବି,
       message,
       context,
       signature);
@@ -18351,13 +18351,13 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_pre_hashed_3f(
-  const Eurydice_arr_02 *verification_key_serialized,
+  ଅଚଳ Eurydice_arr_02 *verification_ଚାବି_serialized,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
-  const Eurydice_arr_85 *signature_serialized
+  ଅଚଳ Eurydice_arr_85 *signature_serialized
 )
 {
   libcrux_ml_dsa_pre_hash_hash_30_83(message, pre_hash_buffer);
@@ -18370,9 +18370,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_pre_hashed_3f(
           .f0 = libcrux_ml_dsa_pre_hash_oid_30()
         }
       ));
-  if (!(uu____0.tag == core_result_Ok))
+  ଯଦି (!(uu____0.tag == core_result_Ok))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_41){
           .tag = core_result_Err,
@@ -18382,8 +18382,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_pre_hashed_3f(
   }
   libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(verification_key_serialized,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_internal_5a(verification_ଚାବି_serialized,
       (
         KRML_CLITERAL(Eurydice_borrow_slice_u8){
           .ptr = pre_hash_buffer.ptr,
@@ -18402,17 +18402,17 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_pre_hashed_3f(
 /**
  Verify (pre-hashed with SHAKE-128).
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_verify_pre_hashed_shake128(
-  const Eurydice_arr_02 *verification_key,
+  ଅଚଳ Eurydice_arr_02 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
-  const Eurydice_arr_85 *signature
+  ଅଚଳ Eurydice_arr_85 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_pre_hashed_3f(verification_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_verify_pre_hashed_3f(verification_ଚାବି,
       message,
       context,
       pre_hash_buffer,
@@ -18425,11 +18425,11 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_generate_key_pair_5a(
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_generate_ଚାବି_pair_5a(
   Eurydice_arr_ec randomness,
-  Eurydice_mut_borrow_slice_u8 signing_key,
-  Eurydice_mut_borrow_slice_u8 verification_key
+  Eurydice_mut_borrow_slice_u8 signing_ଚାବି,
+  Eurydice_mut_borrow_slice_u8 verification_ଚାବି
 )
 {
   Eurydice_arr_89 seed_expanded0 = { .data = { 0U } };
@@ -18468,38 +18468,38 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_generate_key_pair_5a(
   Eurydice_borrow_slice_u8 seed_for_signing = uu____1.snd;
   Eurydice_arr_47 s1_s2;
   Eurydice_arr_a3 repeat_expression0[11U];
-  for (size_t i = (size_t)0U; i < (size_t)11U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)11U; i++)
   {
     repeat_expression0[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s1_s2.data, repeat_expression0, (size_t)11U * sizeof (Eurydice_arr_a3));
+  memcpy(s1_s2.data, repeat_expression0, (size_t)11U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_samplex4_sample_s1_and_s2_29(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ETA,
     seed_for_error_vectors,
     Eurydice_array_to_slice_mut_202(&s1_s2));
   Eurydice_arr_dc1 t0;
   Eurydice_arr_a3 repeat_expression1[6U];
-  for (size_t i = (size_t)0U; i < (size_t)6U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)6U; i++)
   {
     repeat_expression1[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t0.data, repeat_expression1, (size_t)6U * sizeof (Eurydice_arr_a3));
+  memcpy(t0.data, repeat_expression1, (size_t)6U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_5a a_as_ntt;
   Eurydice_arr_a3 repeat_expression2[30U];
-  for (size_t i = (size_t)0U; i < (size_t)30U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)30U; i++)
   {
     repeat_expression2[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(a_as_ntt.data, repeat_expression2, (size_t)30U * sizeof (Eurydice_arr_a3));
+  memcpy(a_as_ntt.data, repeat_expression2, (size_t)30U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COLUMNS_IN_A,
     seed_for_a,
     Eurydice_array_to_slice_mut_203(&a_as_ntt));
   Eurydice_arr_5d s1_ntt;
   Eurydice_arr_a3 repeat_expression3[5U];
-  for (size_t i = (size_t)0U; i < (size_t)5U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)5U; i++)
   {
     repeat_expression3[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s1_ntt.data, repeat_expression3, (size_t)5U * sizeof (Eurydice_arr_a3));
+  memcpy(s1_ntt.data, repeat_expression3, (size_t)5U * ଆକାର (Eurydice_arr_a3));
   Eurydice_slice_copy(Eurydice_array_to_slice_mut_204(&s1_ntt),
     Eurydice_array_to_subslice_shared_250(&s1_s2,
       (
@@ -18509,7 +18509,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_generate_key_pair_5a(
         }
       )),
     Eurydice_arr_a3);
-  for (size_t i = (size_t)0U; i < (size_t)5U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)5U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_ntt_ntt_37(&s1_ntt.data[i0]);
@@ -18522,44 +18522,44 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_generate_key_pair_5a(
     Eurydice_array_to_slice_mut_205(&t0));
   Eurydice_arr_dc1 t1;
   Eurydice_arr_a3 repeat_expression[6U];
-  for (size_t i = (size_t)0U; i < (size_t)6U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)6U; i++)
   {
     repeat_expression[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t1.data, repeat_expression, (size_t)6U * sizeof (Eurydice_arr_a3));
+  memcpy(t1.data, repeat_expression, (size_t)6U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_arithmetic_power2round_vector_37(Eurydice_array_to_slice_mut_205(&t0),
     Eurydice_array_to_slice_mut_205(&t1));
-  libcrux_ml_dsa_encoding_verification_key_generate_serialized_37(seed_for_a,
+  libcrux_ml_dsa_encoding_verification_ଚାବି_generate_serialized_37(seed_for_a,
     Eurydice_array_to_slice_shared_204(&t1),
-    verification_key);
-  libcrux_ml_dsa_encoding_signing_key_generate_serialized_2e(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ETA,
+    verification_ଚାବି);
+  libcrux_ml_dsa_encoding_signing_ଚାବି_generate_serialized_2e(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ETA,
     LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_ERROR_RING_ELEMENT_SIZE,
     seed_for_a,
     seed_for_signing,
     (
       KRML_CLITERAL(Eurydice_borrow_slice_u8){
-        .ptr = verification_key.ptr,
-        .meta = verification_key.meta
+        .ptr = verification_ଚାବି.ptr,
+        .meta = verification_ଚାବି.meta
       }
     ),
     Eurydice_array_to_slice_shared_203(&s1_s2),
     Eurydice_array_to_slice_shared_204(&t0),
-    signing_key);
+    signing_ଚାବି);
 }
 
 /**
  Generate key pair.
 */
-static inline void
-libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_generate_key_pair(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_generate_ଚାବି_pair(
   Eurydice_arr_ec randomness,
-  Eurydice_arr_24 *signing_key,
-  Eurydice_arr_29 *verification_key
+  Eurydice_arr_24 *signing_ଚାବି,
+  Eurydice_arr_29 *verification_ଚାବି
 )
 {
-  libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_generate_key_pair_5a(randomness,
-    Eurydice_array_to_slice_mut_98(signing_key),
-    Eurydice_array_to_slice_mut_37(verification_key));
+  libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_generate_ଚାବି_pair_5a(randomness,
+    Eurydice_array_to_slice_mut_98(signing_ଚାବି),
+    Eurydice_array_to_slice_mut_37(verification_ଚାବି));
 }
 
 /**
@@ -18568,9 +18568,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_53
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   core_option_Option_84 domain_separation_context,
   Eurydice_arr_ec randomness,
@@ -18579,7 +18579,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
 {
   Eurydice_borrow_slice_u8_x2
   uu____0 =
-    Eurydice_slice_split_at(signing_key,
+    Eurydice_slice_split_at(signing_ଚାବି,
       LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
@@ -18596,10 +18596,10 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
   Eurydice_borrow_slice_u8_x2
   uu____2 =
     Eurydice_slice_split_at(remaining_serialized1,
-      LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_KEY_HASH,
+      LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_ଚାବି_HASH,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
-  Eurydice_borrow_slice_u8 verification_key_hash = uu____2.fst;
+  Eurydice_borrow_slice_u8 verification_ଚାବି_hash = uu____2.fst;
   Eurydice_borrow_slice_u8 remaining_serialized2 = uu____2.snd;
   Eurydice_borrow_slice_u8_x2
   uu____3 =
@@ -18621,25 +18621,25 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
   Eurydice_borrow_slice_u8 t0_serialized = uu____4.snd;
   Eurydice_arr_5d s1_as_ntt;
   Eurydice_arr_a3 repeat_expression0[5U];
-  for (size_t i = (size_t)0U; i < (size_t)5U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)5U; i++)
   {
     repeat_expression0[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s1_as_ntt.data, repeat_expression0, (size_t)5U * sizeof (Eurydice_arr_a3));
+  memcpy(s1_as_ntt.data, repeat_expression0, (size_t)5U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_dc1 s2_as_ntt;
   Eurydice_arr_a3 repeat_expression1[6U];
-  for (size_t i = (size_t)0U; i < (size_t)6U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)6U; i++)
   {
     repeat_expression1[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s2_as_ntt.data, repeat_expression1, (size_t)6U * sizeof (Eurydice_arr_a3));
+  memcpy(s2_as_ntt.data, repeat_expression1, (size_t)6U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_dc1 t0_as_ntt;
   Eurydice_arr_a3 repeat_expression2[6U];
-  for (size_t i = (size_t)0U; i < (size_t)6U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)6U; i++)
   {
     repeat_expression2[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t0_as_ntt.data, repeat_expression2, (size_t)6U * sizeof (Eurydice_arr_a3));
+  memcpy(t0_as_ntt.data, repeat_expression2, (size_t)6U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_encoding_error_deserialize_to_vector_then_ntt_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ETA,
     LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_ERROR_RING_ELEMENT_SIZE,
     s1_serialized,
@@ -18652,16 +18652,16 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
     Eurydice_array_to_slice_mut_205(&t0_as_ntt));
   Eurydice_arr_5a matrix;
   Eurydice_arr_a3 repeat_expression3[30U];
-  for (size_t i = (size_t)0U; i < (size_t)30U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)30U; i++)
   {
     repeat_expression3[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(matrix.data, repeat_expression3, (size_t)30U * sizeof (Eurydice_arr_a3));
+  memcpy(matrix.data, repeat_expression3, (size_t)30U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COLUMNS_IN_A,
     seed_for_a,
     Eurydice_array_to_slice_mut_203(&matrix));
   Eurydice_arr_c7 message_representative = { .data = { 0U } };
-  libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(verification_key_hash,
+  libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(verification_ଚାବି_hash,
     &domain_separation_context,
     message,
     &message_representative);
@@ -18680,30 +18680,30 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
   core_option_Option_81 commitment_hash0 = { .tag = core_option_None };
   core_option_Option_1e signer_response0 = { .tag = core_option_None };
   core_option_Option_05 hint0 = { .tag = core_option_None };
-  while (attempt < LIBCRUX_ML_DSA_CONSTANTS_REJECTION_SAMPLE_BOUND_SIGN)
+  ଯେତେବେଳେ (attempt < LIBCRUX_ML_DSA_CONSTANTS_REJECTION_SAMPLE_BOUND_SIGN)
   {
     attempt++;
     Eurydice_arr_5d mask;
     Eurydice_arr_a3 repeat_expression4[5U];
-    for (size_t i = (size_t)0U; i < (size_t)5U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)5U; i++)
     {
       repeat_expression4[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(mask.data, repeat_expression4, (size_t)5U * sizeof (Eurydice_arr_a3));
+    memcpy(mask.data, repeat_expression4, (size_t)5U * ଆକାର (Eurydice_arr_a3));
     Eurydice_arr_dc1 w0;
     Eurydice_arr_a3 repeat_expression5[6U];
-    for (size_t i = (size_t)0U; i < (size_t)6U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)6U; i++)
     {
       repeat_expression5[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(w0.data, repeat_expression5, (size_t)6U * sizeof (Eurydice_arr_a3));
+    memcpy(w0.data, repeat_expression5, (size_t)6U * ଆକାର (Eurydice_arr_a3));
     Eurydice_arr_dc1 commitment;
     Eurydice_arr_a3 repeat_expression6[6U];
-    for (size_t i = (size_t)0U; i < (size_t)6U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)6U; i++)
     {
       repeat_expression6[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(commitment.data, repeat_expression6, (size_t)6U * sizeof (Eurydice_arr_a3));
+    memcpy(commitment.data, repeat_expression6, (size_t)6U * ଆକାର (Eurydice_arr_a3));
     libcrux_ml_dsa_sample_sample_mask_vector_67(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COLUMNS_IN_A,
       LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_GAMMA1_EXPONENT,
       &mask_seed,
@@ -18711,18 +18711,18 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
       Eurydice_array_to_slice_mut_204(&mask));
     Eurydice_arr_dc1 a_x_mask;
     Eurydice_arr_a3 repeat_expression[6U];
-    for (size_t i = (size_t)0U; i < (size_t)6U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)6U; i++)
     {
       repeat_expression[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(a_x_mask.data, repeat_expression, (size_t)6U * sizeof (Eurydice_arr_a3));
+    memcpy(a_x_mask.data, repeat_expression, (size_t)6U * ଆକାର (Eurydice_arr_a3));
     Eurydice_arr_5d
     mask_ntt =
       core_array__core__clone__Clone_for__T__N___clone((size_t)5U,
         &mask,
         Eurydice_arr_a3,
         Eurydice_arr_5d);
-    for (size_t i = (size_t)0U; i < (size_t)5U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)5U; i++)
     {
       size_t i0 = i;
       libcrux_ml_dsa_ntt_ntt_37(&mask_ntt.data[i0]);
@@ -18777,14 +18777,14 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
     libcrux_ml_dsa_matrix_subtract_vectors_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A,
       Eurydice_array_to_slice_mut_205(&w0),
       Eurydice_array_to_slice_shared_204(&challenge_times_s2));
-    if
+    ଯଦି
     (
       !libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_202(&mask),
         (int32_t)((uint32_t)1 << (uint32_t)LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_GAMMA1_EXPONENT) -
           LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_BETA)
     )
     {
-      if
+      ଯଦି
       (
         !libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_204(&w0),
           LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_GAMMA2 - LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_BETA)
@@ -18798,7 +18798,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
             Eurydice_arr_dc1);
         libcrux_ml_dsa_matrix_vector_times_ring_element_37(Eurydice_array_to_slice_mut_205(&challenge_times_t0),
           &verifier_challenge);
-        if
+        ଯଦି
         (
           !libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_204(&challenge_times_t0),
             LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_GAMMA2)
@@ -18821,7 +18821,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
               Eurydice_array_to_slice_shared_204(&commitment),
               LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_GAMMA2,
               Eurydice_array_to_slice_mut_860(&hint_candidate));
-          if (!(ones_in_hint > LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_MAX_ONES_IN_HINT))
+          ଯଦି (!(ones_in_hint > LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_MAX_ONES_IN_HINT))
           {
             attempt = LIBCRUX_ML_DSA_CONSTANTS_REJECTION_SAMPLE_BOUND_SIGN;
             commitment_hash0 =
@@ -18846,7 +18846,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
     }
   }
   core_result_Result_53 uu____5;
-  if (commitment_hash0.tag == core_option_None)
+  ଯଦି (commitment_hash0.tag == core_option_None)
   {
     uu____5 =
       (
@@ -18856,11 +18856,11 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     Eurydice_arr_65 commitment_hash = commitment_hash0.f0;
     Eurydice_arr_65 commitment_hash1 = commitment_hash;
-    if (signer_response0.tag == core_option_None)
+    ଯଦି (signer_response0.tag == core_option_None)
     {
       uu____5 =
         (
@@ -18870,11 +18870,11 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
           }
         );
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_5d signer_response = signer_response0.f0;
       Eurydice_arr_5d signer_response1 = signer_response;
-      if (!(hint0.tag == core_option_None))
+      ଯଦି (!(hint0.tag == core_option_None))
       {
         Eurydice_arr_5d0 hint = hint0.f0;
         Eurydice_arr_5d0 hint1 = hint;
@@ -18888,7 +18888,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
           LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_GAMMA1_RING_ELEMENT_SIZE,
           LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_MAX_ONES_IN_HINT,
           Eurydice_array_to_slice_mut_6b(signature));
-        return (KRML_CLITERAL(core_result_Result_53){ .tag = core_result_Ok });
+        ଫେରନ୍ତୁ (KRML_CLITERAL(core_result_Result_53){ .tag = core_result_Ok });
       }
       uu____5 =
         (
@@ -18899,7 +18899,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(
         );
     }
   }
-  return uu____5;
+  ଫେରନ୍ତୁ uu____5;
 }
 
 /**
@@ -18908,9 +18908,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_53
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_mut_5a(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness,
@@ -18921,9 +18921,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_mut_5a(
   uu____0 =
     libcrux_ml_dsa_pre_hash_new_88(context,
       (KRML_CLITERAL(core_option_Option_57){ .tag = core_option_None }));
-  if (!(uu____0.tag == core_result_Ok))
+  ଯଦି (!(uu____0.tag == core_result_Ok))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_53){
           .tag = core_result_Err,
@@ -18933,8 +18933,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_mut_5a(
   }
   libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(signing_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(signing_ଚାବି,
       message,
       (
         KRML_CLITERAL(core_option_Option_84){
@@ -18952,9 +18952,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_8c
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_8c
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_5a(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
@@ -18963,13 +18963,13 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_5a(
   Eurydice_arr_0c signature = libcrux_ml_dsa_types_zero_c5_5c();
   core_result_Result_53
   uu____0 =
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_mut_5a(signing_key,
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_mut_5a(signing_ଚାବି,
       message,
       context,
       randomness,
       &signature);
   core_result_Result_8c uu____1;
-  if (uu____0.tag == core_result_Ok)
+  ଯଦି (uu____0.tag == core_result_Ok)
   {
     uu____1 =
       (
@@ -18979,28 +18979,28 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_5a(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_ml_dsa_types_SigningError e = uu____0.f0;
     uu____1 =
       (KRML_CLITERAL(core_result_Result_8c){ .tag = core_result_Err, .val = { .case_Err = e } });
   }
-  return uu____1;
+  ଫେରନ୍ତୁ uu____1;
 }
 
 /**
  Sign.
 */
-static inline core_result_Result_8c
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_8c
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_sign(
-  const Eurydice_arr_24 *signing_key,
+  ଅଚଳ Eurydice_arr_24 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_5a(Eurydice_array_to_slice_shared_98(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_5a(Eurydice_array_to_slice_shared_98(signing_ଚାବି),
       message,
       context,
       randomness);
@@ -19009,17 +19009,17 @@ libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_sign(
 /**
  Sign.
 */
-static inline core_result_Result_53
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_sign_mut(
-  const Eurydice_arr_24 *signing_key,
+  ଅଚଳ Eurydice_arr_24 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness,
   Eurydice_arr_0c *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_mut_5a(Eurydice_array_to_slice_shared_98(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_mut_5a(Eurydice_array_to_slice_shared_98(signing_ଚାବି),
       message,
       context,
       randomness,
@@ -19032,9 +19032,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_53
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_mut_3f(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
@@ -19042,7 +19042,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_mut_3f(
   Eurydice_arr_0c *signature
 )
 {
-  if (!(context.meta > LIBCRUX_ML_DSA_CONSTANTS_CONTEXT_MAX_LEN))
+  ଯଦି (!(context.meta > LIBCRUX_ML_DSA_CONSTANTS_CONTEXT_MAX_LEN))
   {
     libcrux_ml_dsa_pre_hash_hash_30_83(message, pre_hash_buffer);
     core_result_Result_a8
@@ -19054,9 +19054,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_mut_3f(
             .f0 = libcrux_ml_dsa_pre_hash_oid_30()
           }
         ));
-    if (!(uu____0.tag == core_result_Ok))
+    ଯଦି (!(uu____0.tag == core_result_Ok))
     {
-      return
+      ଫେରନ୍ତୁ
         (
           KRML_CLITERAL(core_result_Result_53){
             .tag = core_result_Err,
@@ -19066,8 +19066,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_mut_3f(
     }
     libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
     libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-    return
-      libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(signing_key,
+    ଫେରନ୍ତୁ
+      libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_internal_5a(signing_ଚାବି,
         (
           KRML_CLITERAL(Eurydice_borrow_slice_u8){
             .ptr = pre_hash_buffer.ptr,
@@ -19083,7 +19083,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_mut_3f(
         randomness,
         signature);
   }
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(core_result_Result_53){
         .tag = core_result_Err,
@@ -19098,9 +19098,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_8c
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_8c
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_3f(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
@@ -19110,14 +19110,14 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_3f(
   Eurydice_arr_0c signature = libcrux_ml_dsa_types_zero_c5_5c();
   core_result_Result_53
   uu____0 =
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_mut_3f(signing_key,
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_mut_3f(signing_ଚାବି,
       message,
       context,
       pre_hash_buffer,
       randomness,
       &signature);
   core_result_Result_8c uu____1;
-  if (uu____0.tag == core_result_Ok)
+  ଯଦି (uu____0.tag == core_result_Ok)
   {
     uu____1 =
       (
@@ -19127,29 +19127,29 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_3f(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_ml_dsa_types_SigningError e = uu____0.f0;
     uu____1 =
       (KRML_CLITERAL(core_result_Result_8c){ .tag = core_result_Err, .val = { .case_Err = e } });
   }
-  return uu____1;
+  ଫେରନ୍ତୁ uu____1;
 }
 
 /**
  Sign (pre-hashed).
 */
-static inline core_result_Result_8c
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_8c
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_sign_pre_hashed_shake128(
-  const Eurydice_arr_24 *signing_key,
+  ଅଚଳ Eurydice_arr_24 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_3f(Eurydice_array_to_slice_shared_98(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_sign_pre_hashed_3f(Eurydice_array_to_slice_shared_98(signing_ଚାବି),
       message,
       context,
       pre_hash_buffer,
@@ -19168,17 +19168,17 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(
-  const Eurydice_arr_29 *verification_key,
+  ଅଚଳ Eurydice_arr_29 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   core_option_Option_84 domain_separation_context,
-  const Eurydice_arr_0c *signature_serialized
+  ଅଚଳ Eurydice_arr_0c *signature_serialized
 )
 {
   Eurydice_borrow_slice_u8_x2
   uu____0 =
-    Eurydice_slice_split_at(Eurydice_array_to_slice_shared_37(verification_key),
+    Eurydice_slice_split_at(Eurydice_array_to_slice_shared_37(verification_ଚାବି),
       LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
@@ -19186,25 +19186,25 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(
   Eurydice_borrow_slice_u8 t1_serialized = uu____0.snd;
   Eurydice_arr_dc1 t1;
   Eurydice_arr_a3 repeat_expression0[6U];
-  for (size_t i = (size_t)0U; i < (size_t)6U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)6U; i++)
   {
     repeat_expression0[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t1.data, repeat_expression0, (size_t)6U * sizeof (Eurydice_arr_a3));
-  libcrux_ml_dsa_encoding_verification_key_deserialize_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A,
-    LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_VERIFICATION_KEY_SIZE,
+  memcpy(t1.data, repeat_expression0, (size_t)6U * ଆକାର (Eurydice_arr_a3));
+  libcrux_ml_dsa_encoding_verification_ଚାବି_deserialize_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ROWS_IN_A,
+    LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_65_VERIFICATION_ଚାବି_SIZE,
     t1_serialized,
     Eurydice_array_to_slice_mut_205(&t1));
   Eurydice_arr_65 deserialized_commitment_hash = { .data = { 0U } };
   Eurydice_arr_5d deserialized_signer_response;
   Eurydice_arr_a3 repeat_expression1[5U];
-  for (size_t i = (size_t)0U; i < (size_t)5U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)5U; i++)
   {
     repeat_expression1[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
   memcpy(deserialized_signer_response.data,
     repeat_expression1,
-    (size_t)5U * sizeof (Eurydice_arr_a3));
+    (size_t)5U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_5d0
   deserialized_hint =
     {
@@ -19227,9 +19227,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(
       Eurydice_array_to_slice_mut_204(&deserialized_signer_response),
       Eurydice_array_to_slice_mut_860(&deserialized_hint));
   core_result_Result_41 uu____2;
-  if (uu____1.tag == core_result_Ok)
+  ଯଦି (uu____1.tag == core_result_Ok)
   {
-    if
+    ଯଦି
     (
       libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_202(&deserialized_signer_response),
         (int32_t)((uint32_t)1 << (uint32_t)LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_GAMMA1_EXPONENT) -
@@ -19244,23 +19244,23 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(
           }
         );
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_5a matrix;
       Eurydice_arr_a3 repeat_expression[30U];
-      for (size_t i = (size_t)0U; i < (size_t)30U; i++)
+      ପାଇଁ (size_t i = (size_t)0U; i < (size_t)30U; i++)
       {
         repeat_expression[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
       }
-      memcpy(matrix.data, repeat_expression, (size_t)30U * sizeof (Eurydice_arr_a3));
+      memcpy(matrix.data, repeat_expression, (size_t)30U * ଆକାର (Eurydice_arr_a3));
       libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_COLUMNS_IN_A,
         seed_for_a,
         Eurydice_array_to_slice_mut_203(&matrix));
-      Eurydice_arr_c7 verification_key_hash = { .data = { 0U } };
-      libcrux_ml_dsa_hash_functions_portable_shake256_61_c9(Eurydice_array_to_slice_shared_37(verification_key),
-        &verification_key_hash);
+      Eurydice_arr_c7 verification_ଚାବି_hash = { .data = { 0U } };
+      libcrux_ml_dsa_hash_functions_portable_shake256_61_c9(Eurydice_array_to_slice_shared_37(verification_ଚାବି),
+        &verification_ଚାବି_hash);
       Eurydice_arr_c7 message_representative = { .data = { 0U } };
-      libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(Eurydice_array_to_slice_shared_17(&verification_key_hash),
+      libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(Eurydice_array_to_slice_shared_17(&verification_ଚାବି_hash),
         &domain_separation_context,
         message,
         &message_representative);
@@ -19269,7 +19269,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(
         LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_65_ONES_IN_VERIFIER_CHALLENGE,
         &verifier_challenge);
       libcrux_ml_dsa_ntt_ntt_37(&verifier_challenge);
-      for (size_t i = (size_t)0U; i < (size_t)5U; i++)
+      ପାଇଁ (size_t i = (size_t)0U; i < (size_t)5U; i++)
       {
         size_t i0 = i;
         libcrux_ml_dsa_ntt_ntt_37(&deserialized_signer_response.data[i0]);
@@ -19296,7 +19296,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(
         Eurydice_array_to_slice_shared_27(&commitment_serialized));
       libcrux_ml_dsa_hash_functions_portable_squeeze_26(&shake,
         Eurydice_array_to_slice_mut_9f(&recomputed_commitment_hash));
-      if
+      ଯଦି
       (
         Eurydice_array_eq((size_t)48U,
           &deserialized_commitment_hash,
@@ -19306,7 +19306,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(
       {
         uu____2 = (KRML_CLITERAL(core_result_Result_41){ .tag = core_result_Ok });
       }
-      else
+      ଅନ୍ୟଥା
       {
         uu____2 =
           (
@@ -19318,12 +19318,12 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(
       }
     }
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_ml_dsa_types_VerificationError e = uu____1.f0;
     uu____2 = (KRML_CLITERAL(core_result_Result_41){ .tag = core_result_Err, .f0 = e });
   }
-  return uu____2;
+  ଫେରନ୍ତୁ uu____2;
 }
 
 /**
@@ -19332,21 +19332,21 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_5a(
-  const Eurydice_arr_29 *verification_key_serialized,
+  ଅଚଳ Eurydice_arr_29 *verification_ଚାବି_serialized,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_0c *signature_serialized
+  ଅଚଳ Eurydice_arr_0c *signature_serialized
 )
 {
   core_result_Result_a8
   uu____0 =
     libcrux_ml_dsa_pre_hash_new_88(context,
       (KRML_CLITERAL(core_option_Option_57){ .tag = core_option_None }));
-  if (!(uu____0.tag == core_result_Ok))
+  ଯଦି (!(uu____0.tag == core_result_Ok))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_41){
           .tag = core_result_Err,
@@ -19356,8 +19356,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_5a(
   }
   libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(verification_key_serialized,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(verification_ଚାବି_serialized,
       message,
       (
         KRML_CLITERAL(core_option_Option_84){
@@ -19371,16 +19371,16 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_5a(
 /**
  Verify.
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_verify(
-  const Eurydice_arr_29 *verification_key,
+  ଅଚଳ Eurydice_arr_29 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_0c *signature
+  ଅଚଳ Eurydice_arr_0c *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_5a(verification_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_5a(verification_ଚାବି,
       message,
       context,
       signature);
@@ -19392,13 +19392,13 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_pre_hashed_3f(
-  const Eurydice_arr_29 *verification_key_serialized,
+  ଅଚଳ Eurydice_arr_29 *verification_ଚାବି_serialized,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
-  const Eurydice_arr_0c *signature_serialized
+  ଅଚଳ Eurydice_arr_0c *signature_serialized
 )
 {
   libcrux_ml_dsa_pre_hash_hash_30_83(message, pre_hash_buffer);
@@ -19411,9 +19411,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_pre_hashed_3f(
           .f0 = libcrux_ml_dsa_pre_hash_oid_30()
         }
       ));
-  if (!(uu____0.tag == core_result_Ok))
+  ଯଦି (!(uu____0.tag == core_result_Ok))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_41){
           .tag = core_result_Err,
@@ -19423,8 +19423,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_pre_hashed_3f(
   }
   libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(verification_key_serialized,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_internal_5a(verification_ଚାବି_serialized,
       (
         KRML_CLITERAL(Eurydice_borrow_slice_u8){
           .ptr = pre_hash_buffer.ptr,
@@ -19443,17 +19443,17 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_pre_hashed_3f(
 /**
  Verify (pre-hashed with SHAKE-128).
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_verify_pre_hashed_shake128(
-  const Eurydice_arr_29 *verification_key,
+  ଅଚଳ Eurydice_arr_29 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
-  const Eurydice_arr_0c *signature
+  ଅଚଳ Eurydice_arr_0c *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_pre_hashed_3f(verification_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_verify_pre_hashed_3f(verification_ଚାବି,
       message,
       context,
       pre_hash_buffer,
@@ -19466,11 +19466,11 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE void
-libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_generate_key_pair_5a(
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_generate_ଚାବି_pair_5a(
   Eurydice_arr_ec randomness,
-  Eurydice_mut_borrow_slice_u8 signing_key,
-  Eurydice_mut_borrow_slice_u8 verification_key
+  Eurydice_mut_borrow_slice_u8 signing_ଚାବି,
+  Eurydice_mut_borrow_slice_u8 verification_ଚାବି
 )
 {
   Eurydice_arr_89 seed_expanded0 = { .data = { 0U } };
@@ -19509,38 +19509,38 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_generate_key_pair_5a(
   Eurydice_borrow_slice_u8 seed_for_signing = uu____1.snd;
   Eurydice_arr_92 s1_s2;
   Eurydice_arr_a3 repeat_expression0[15U];
-  for (size_t i = (size_t)0U; i < (size_t)15U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)15U; i++)
   {
     repeat_expression0[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s1_s2.data, repeat_expression0, (size_t)15U * sizeof (Eurydice_arr_a3));
+  memcpy(s1_s2.data, repeat_expression0, (size_t)15U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_samplex4_sample_s1_and_s2_29(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ETA,
     seed_for_error_vectors,
     Eurydice_array_to_slice_mut_206(&s1_s2));
   Eurydice_arr_8f t0;
   Eurydice_arr_a3 repeat_expression1[8U];
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     repeat_expression1[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t0.data, repeat_expression1, (size_t)8U * sizeof (Eurydice_arr_a3));
+  memcpy(t0.data, repeat_expression1, (size_t)8U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_0f a_as_ntt;
   Eurydice_arr_a3 repeat_expression2[56U];
-  for (size_t i = (size_t)0U; i < (size_t)56U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)56U; i++)
   {
     repeat_expression2[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(a_as_ntt.data, repeat_expression2, (size_t)56U * sizeof (Eurydice_arr_a3));
+  memcpy(a_as_ntt.data, repeat_expression2, (size_t)56U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COLUMNS_IN_A,
     seed_for_a,
     Eurydice_array_to_slice_mut_207(&a_as_ntt));
   Eurydice_arr_bb s1_ntt;
   Eurydice_arr_a3 repeat_expression3[7U];
-  for (size_t i = (size_t)0U; i < (size_t)7U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)7U; i++)
   {
     repeat_expression3[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s1_ntt.data, repeat_expression3, (size_t)7U * sizeof (Eurydice_arr_a3));
+  memcpy(s1_ntt.data, repeat_expression3, (size_t)7U * ଆକାର (Eurydice_arr_a3));
   Eurydice_slice_copy(Eurydice_array_to_slice_mut_208(&s1_ntt),
     Eurydice_array_to_subslice_shared_251(&s1_s2,
       (
@@ -19550,7 +19550,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_generate_key_pair_5a(
         }
       )),
     Eurydice_arr_a3);
-  for (size_t i = (size_t)0U; i < (size_t)7U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)7U; i++)
   {
     size_t i0 = i;
     libcrux_ml_dsa_ntt_ntt_37(&s1_ntt.data[i0]);
@@ -19563,44 +19563,44 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_generate_key_pair_5a(
     Eurydice_array_to_slice_mut_20(&t0));
   Eurydice_arr_8f t1;
   Eurydice_arr_a3 repeat_expression[8U];
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     repeat_expression[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t1.data, repeat_expression, (size_t)8U * sizeof (Eurydice_arr_a3));
+  memcpy(t1.data, repeat_expression, (size_t)8U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_arithmetic_power2round_vector_37(Eurydice_array_to_slice_mut_20(&t0),
     Eurydice_array_to_slice_mut_20(&t1));
-  libcrux_ml_dsa_encoding_verification_key_generate_serialized_37(seed_for_a,
+  libcrux_ml_dsa_encoding_verification_ଚାବି_generate_serialized_37(seed_for_a,
     Eurydice_array_to_slice_shared_200(&t1),
-    verification_key);
-  libcrux_ml_dsa_encoding_signing_key_generate_serialized_2e(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ETA,
+    verification_ଚାବି);
+  libcrux_ml_dsa_encoding_signing_ଚାବି_generate_serialized_2e(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ETA,
     LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_ERROR_RING_ELEMENT_SIZE,
     seed_for_a,
     seed_for_signing,
     (
       KRML_CLITERAL(Eurydice_borrow_slice_u8){
-        .ptr = verification_key.ptr,
-        .meta = verification_key.meta
+        .ptr = verification_ଚାବି.ptr,
+        .meta = verification_ଚାବି.meta
       }
     ),
     Eurydice_array_to_slice_shared_207(&s1_s2),
     Eurydice_array_to_slice_shared_200(&t0),
-    signing_key);
+    signing_ଚାବି);
 }
 
 /**
  Generate key pair.
 */
-static inline void
-libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_generate_key_pair(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_generate_ଚାବି_pair(
   Eurydice_arr_ec randomness,
-  Eurydice_arr_e2 *signing_key,
-  Eurydice_arr_43 *verification_key
+  Eurydice_arr_e2 *signing_ଚାବି,
+  Eurydice_arr_43 *verification_ଚାବି
 )
 {
-  libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_generate_key_pair_5a(randomness,
-    Eurydice_array_to_slice_mut_f7(signing_key),
-    Eurydice_array_to_slice_mut_fc(verification_key));
+  libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_generate_ଚାବି_pair_5a(randomness,
+    Eurydice_array_to_slice_mut_f7(signing_ଚାବି),
+    Eurydice_array_to_slice_mut_fc(verification_ଚାବି));
 }
 
 /**
@@ -19609,9 +19609,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_53
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   core_option_Option_84 domain_separation_context,
   Eurydice_arr_ec randomness,
@@ -19620,7 +19620,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
 {
   Eurydice_borrow_slice_u8_x2
   uu____0 =
-    Eurydice_slice_split_at(signing_key,
+    Eurydice_slice_split_at(signing_ଚାବି,
       LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
@@ -19637,10 +19637,10 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
   Eurydice_borrow_slice_u8_x2
   uu____2 =
     Eurydice_slice_split_at(remaining_serialized1,
-      LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_KEY_HASH,
+      LIBCRUX_ML_DSA_CONSTANTS_BYTES_FOR_VERIFICATION_ଚାବି_HASH,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
-  Eurydice_borrow_slice_u8 verification_key_hash = uu____2.fst;
+  Eurydice_borrow_slice_u8 verification_ଚାବି_hash = uu____2.fst;
   Eurydice_borrow_slice_u8 remaining_serialized2 = uu____2.snd;
   Eurydice_borrow_slice_u8_x2
   uu____3 =
@@ -19662,25 +19662,25 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
   Eurydice_borrow_slice_u8 t0_serialized = uu____4.snd;
   Eurydice_arr_bb s1_as_ntt;
   Eurydice_arr_a3 repeat_expression0[7U];
-  for (size_t i = (size_t)0U; i < (size_t)7U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)7U; i++)
   {
     repeat_expression0[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s1_as_ntt.data, repeat_expression0, (size_t)7U * sizeof (Eurydice_arr_a3));
+  memcpy(s1_as_ntt.data, repeat_expression0, (size_t)7U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_8f s2_as_ntt;
   Eurydice_arr_a3 repeat_expression1[8U];
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     repeat_expression1[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(s2_as_ntt.data, repeat_expression1, (size_t)8U * sizeof (Eurydice_arr_a3));
+  memcpy(s2_as_ntt.data, repeat_expression1, (size_t)8U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_8f t0_as_ntt;
   Eurydice_arr_a3 repeat_expression2[8U];
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     repeat_expression2[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t0_as_ntt.data, repeat_expression2, (size_t)8U * sizeof (Eurydice_arr_a3));
+  memcpy(t0_as_ntt.data, repeat_expression2, (size_t)8U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_encoding_error_deserialize_to_vector_then_ntt_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ETA,
     LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_ERROR_RING_ELEMENT_SIZE,
     s1_serialized,
@@ -19693,16 +19693,16 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
     Eurydice_array_to_slice_mut_20(&t0_as_ntt));
   Eurydice_arr_0f matrix;
   Eurydice_arr_a3 repeat_expression3[56U];
-  for (size_t i = (size_t)0U; i < (size_t)56U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)56U; i++)
   {
     repeat_expression3[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(matrix.data, repeat_expression3, (size_t)56U * sizeof (Eurydice_arr_a3));
+  memcpy(matrix.data, repeat_expression3, (size_t)56U * ଆକାର (Eurydice_arr_a3));
   libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COLUMNS_IN_A,
     seed_for_a,
     Eurydice_array_to_slice_mut_207(&matrix));
   Eurydice_arr_c7 message_representative = { .data = { 0U } };
-  libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(verification_key_hash,
+  libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(verification_ଚାବି_hash,
     &domain_separation_context,
     message,
     &message_representative);
@@ -19721,30 +19721,30 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
   core_option_Option_b2 commitment_hash0 = { .tag = core_option_None };
   core_option_Option_2d signer_response0 = { .tag = core_option_None };
   core_option_Option_45 hint0 = { .tag = core_option_None };
-  while (attempt < LIBCRUX_ML_DSA_CONSTANTS_REJECTION_SAMPLE_BOUND_SIGN)
+  ଯେତେବେଳେ (attempt < LIBCRUX_ML_DSA_CONSTANTS_REJECTION_SAMPLE_BOUND_SIGN)
   {
     attempt++;
     Eurydice_arr_bb mask;
     Eurydice_arr_a3 repeat_expression4[7U];
-    for (size_t i = (size_t)0U; i < (size_t)7U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)7U; i++)
     {
       repeat_expression4[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(mask.data, repeat_expression4, (size_t)7U * sizeof (Eurydice_arr_a3));
+    memcpy(mask.data, repeat_expression4, (size_t)7U * ଆକାର (Eurydice_arr_a3));
     Eurydice_arr_8f w0;
     Eurydice_arr_a3 repeat_expression5[8U];
-    for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
     {
       repeat_expression5[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(w0.data, repeat_expression5, (size_t)8U * sizeof (Eurydice_arr_a3));
+    memcpy(w0.data, repeat_expression5, (size_t)8U * ଆକାର (Eurydice_arr_a3));
     Eurydice_arr_8f commitment;
     Eurydice_arr_a3 repeat_expression6[8U];
-    for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
     {
       repeat_expression6[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(commitment.data, repeat_expression6, (size_t)8U * sizeof (Eurydice_arr_a3));
+    memcpy(commitment.data, repeat_expression6, (size_t)8U * ଆକାର (Eurydice_arr_a3));
     libcrux_ml_dsa_sample_sample_mask_vector_67(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COLUMNS_IN_A,
       LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_GAMMA1_EXPONENT,
       &mask_seed,
@@ -19752,18 +19752,18 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
       Eurydice_array_to_slice_mut_208(&mask));
     Eurydice_arr_8f a_x_mask;
     Eurydice_arr_a3 repeat_expression[8U];
-    for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
     {
       repeat_expression[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
     }
-    memcpy(a_x_mask.data, repeat_expression, (size_t)8U * sizeof (Eurydice_arr_a3));
+    memcpy(a_x_mask.data, repeat_expression, (size_t)8U * ଆକାର (Eurydice_arr_a3));
     Eurydice_arr_bb
     mask_ntt =
       core_array__core__clone__Clone_for__T__N___clone((size_t)7U,
         &mask,
         Eurydice_arr_a3,
         Eurydice_arr_bb);
-    for (size_t i = (size_t)0U; i < (size_t)7U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)7U; i++)
     {
       size_t i0 = i;
       libcrux_ml_dsa_ntt_ntt_37(&mask_ntt.data[i0]);
@@ -19818,14 +19818,14 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
     libcrux_ml_dsa_matrix_subtract_vectors_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A,
       Eurydice_array_to_slice_mut_20(&w0),
       Eurydice_array_to_slice_shared_200(&challenge_times_s2));
-    if
+    ଯଦି
     (
       !libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_206(&mask),
         (int32_t)((uint32_t)1 << (uint32_t)LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_GAMMA1_EXPONENT) -
           LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_BETA)
     )
     {
-      if
+      ଯଦି
       (
         !libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_200(&w0),
           LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_GAMMA2 - LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_BETA)
@@ -19839,7 +19839,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
             Eurydice_arr_8f);
         libcrux_ml_dsa_matrix_vector_times_ring_element_37(Eurydice_array_to_slice_mut_20(&challenge_times_t0),
           &verifier_challenge);
-        if
+        ଯଦି
         (
           !libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_200(&challenge_times_t0),
             LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_GAMMA2)
@@ -19862,7 +19862,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
               Eurydice_array_to_slice_shared_200(&commitment),
               LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_GAMMA2,
               Eurydice_array_to_slice_mut_861(&hint_candidate));
-          if (!(ones_in_hint > LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_MAX_ONES_IN_HINT))
+          ଯଦି (!(ones_in_hint > LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_MAX_ONES_IN_HINT))
           {
             attempt = LIBCRUX_ML_DSA_CONSTANTS_REJECTION_SAMPLE_BOUND_SIGN;
             commitment_hash0 =
@@ -19887,7 +19887,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
     }
   }
   core_result_Result_53 uu____5;
-  if (commitment_hash0.tag == core_option_None)
+  ଯଦି (commitment_hash0.tag == core_option_None)
   {
     uu____5 =
       (
@@ -19897,11 +19897,11 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     Eurydice_arr_c7 commitment_hash = commitment_hash0.f0;
     Eurydice_arr_c7 commitment_hash1 = commitment_hash;
-    if (signer_response0.tag == core_option_None)
+    ଯଦି (signer_response0.tag == core_option_None)
     {
       uu____5 =
         (
@@ -19911,11 +19911,11 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
           }
         );
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_bb signer_response = signer_response0.f0;
       Eurydice_arr_bb signer_response1 = signer_response;
-      if (!(hint0.tag == core_option_None))
+      ଯଦି (!(hint0.tag == core_option_None))
       {
         Eurydice_arr_81 hint = hint0.f0;
         Eurydice_arr_81 hint1 = hint;
@@ -19929,7 +19929,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
           LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_GAMMA1_RING_ELEMENT_SIZE,
           LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_MAX_ONES_IN_HINT,
           Eurydice_array_to_slice_mut_11(signature));
-        return (KRML_CLITERAL(core_result_Result_53){ .tag = core_result_Ok });
+        ଫେରନ୍ତୁ (KRML_CLITERAL(core_result_Result_53){ .tag = core_result_Ok });
       }
       uu____5 =
         (
@@ -19940,7 +19940,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(
         );
     }
   }
-  return uu____5;
+  ଫେରନ୍ତୁ uu____5;
 }
 
 /**
@@ -19949,9 +19949,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_53
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_mut_5a(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness,
@@ -19962,9 +19962,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_mut_5a(
   uu____0 =
     libcrux_ml_dsa_pre_hash_new_88(context,
       (KRML_CLITERAL(core_option_Option_57){ .tag = core_option_None }));
-  if (!(uu____0.tag == core_result_Ok))
+  ଯଦି (!(uu____0.tag == core_result_Ok))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_53){
           .tag = core_result_Err,
@@ -19974,8 +19974,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_mut_5a(
   }
   libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(signing_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(signing_ଚାବି,
       message,
       (
         KRML_CLITERAL(core_option_Option_84){
@@ -19993,9 +19993,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_8b
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_8b
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_5a(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
@@ -20004,13 +20004,13 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_5a(
   Eurydice_arr_93 signature = libcrux_ml_dsa_types_zero_c5_f1();
   core_result_Result_53
   uu____0 =
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_mut_5a(signing_key,
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_mut_5a(signing_ଚାବି,
       message,
       context,
       randomness,
       &signature);
   core_result_Result_8b uu____1;
-  if (uu____0.tag == core_result_Ok)
+  ଯଦି (uu____0.tag == core_result_Ok)
   {
     uu____1 =
       (
@@ -20020,28 +20020,28 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_5a(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_ml_dsa_types_SigningError e = uu____0.f0;
     uu____1 =
       (KRML_CLITERAL(core_result_Result_8b){ .tag = core_result_Err, .val = { .case_Err = e } });
   }
-  return uu____1;
+  ଫେରନ୍ତୁ uu____1;
 }
 
 /**
  Sign.
 */
-static inline core_result_Result_8b
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_8b
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_sign(
-  const Eurydice_arr_e2 *signing_key,
+  ଅଚଳ Eurydice_arr_e2 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_5a(Eurydice_array_to_slice_shared_f7(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_5a(Eurydice_array_to_slice_shared_f7(signing_ଚାବି),
       message,
       context,
       randomness);
@@ -20050,17 +20050,17 @@ libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_sign(
 /**
  Sign.
 */
-static inline core_result_Result_53
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_sign_mut(
-  const Eurydice_arr_e2 *signing_key,
+  ଅଚଳ Eurydice_arr_e2 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness,
   Eurydice_arr_93 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_mut_5a(Eurydice_array_to_slice_shared_f7(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_mut_5a(Eurydice_array_to_slice_shared_f7(signing_ଚାବି),
       message,
       context,
       randomness,
@@ -20073,9 +20073,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_53
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_53
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_mut_3f(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
@@ -20083,7 +20083,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_mut_3f(
   Eurydice_arr_93 *signature
 )
 {
-  if (!(context.meta > LIBCRUX_ML_DSA_CONSTANTS_CONTEXT_MAX_LEN))
+  ଯଦି (!(context.meta > LIBCRUX_ML_DSA_CONSTANTS_CONTEXT_MAX_LEN))
   {
     libcrux_ml_dsa_pre_hash_hash_30_83(message, pre_hash_buffer);
     core_result_Result_a8
@@ -20095,9 +20095,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_mut_3f(
             .f0 = libcrux_ml_dsa_pre_hash_oid_30()
           }
         ));
-    if (!(uu____0.tag == core_result_Ok))
+    ଯଦି (!(uu____0.tag == core_result_Ok))
     {
-      return
+      ଫେରନ୍ତୁ
         (
           KRML_CLITERAL(core_result_Result_53){
             .tag = core_result_Err,
@@ -20107,8 +20107,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_mut_3f(
     }
     libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
     libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-    return
-      libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(signing_key,
+    ଫେରନ୍ତୁ
+      libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_internal_5a(signing_ଚାବି,
         (
           KRML_CLITERAL(Eurydice_borrow_slice_u8){
             .ptr = pre_hash_buffer.ptr,
@@ -20124,7 +20124,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_mut_3f(
         randomness,
         signature);
   }
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(core_result_Result_53){
         .tag = core_result_Err,
@@ -20139,9 +20139,9 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_8b
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_8b
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_3f(
-  Eurydice_borrow_slice_u8 signing_key,
+  Eurydice_borrow_slice_u8 signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
@@ -20151,14 +20151,14 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_3f(
   Eurydice_arr_93 signature = libcrux_ml_dsa_types_zero_c5_f1();
   core_result_Result_53
   uu____0 =
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_mut_3f(signing_key,
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_mut_3f(signing_ଚାବି,
       message,
       context,
       pre_hash_buffer,
       randomness,
       &signature);
   core_result_Result_8b uu____1;
-  if (uu____0.tag == core_result_Ok)
+  ଯଦି (uu____0.tag == core_result_Ok)
   {
     uu____1 =
       (
@@ -20168,29 +20168,29 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_3f(
         }
       );
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_ml_dsa_types_SigningError e = uu____0.f0;
     uu____1 =
       (KRML_CLITERAL(core_result_Result_8b){ .tag = core_result_Err, .val = { .case_Err = e } });
   }
-  return uu____1;
+  ଫେରନ୍ତୁ uu____1;
 }
 
 /**
  Sign (pre-hashed).
 */
-static inline core_result_Result_8b
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_8b
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_sign_pre_hashed_shake128(
-  const Eurydice_arr_e2 *signing_key,
+  ଅଚଳ Eurydice_arr_e2 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_3f(Eurydice_array_to_slice_shared_f7(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_sign_pre_hashed_3f(Eurydice_array_to_slice_shared_f7(signing_ଚାବି),
       message,
       context,
       pre_hash_buffer,
@@ -20209,17 +20209,17 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(
-  const Eurydice_arr_43 *verification_key,
+  ଅଚଳ Eurydice_arr_43 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   core_option_Option_84 domain_separation_context,
-  const Eurydice_arr_93 *signature_serialized
+  ଅଚଳ Eurydice_arr_93 *signature_serialized
 )
 {
   Eurydice_borrow_slice_u8_x2
   uu____0 =
-    Eurydice_slice_split_at(Eurydice_array_to_slice_shared_fc(verification_key),
+    Eurydice_slice_split_at(Eurydice_array_to_slice_shared_fc(verification_ଚାବି),
       LIBCRUX_ML_DSA_CONSTANTS_SEED_FOR_A_SIZE,
       uint8_t,
       Eurydice_borrow_slice_u8_x2);
@@ -20227,25 +20227,25 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(
   Eurydice_borrow_slice_u8 t1_serialized = uu____0.snd;
   Eurydice_arr_8f t1;
   Eurydice_arr_a3 repeat_expression0[8U];
-  for (size_t i = (size_t)0U; i < (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)8U; i++)
   {
     repeat_expression0[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
-  memcpy(t1.data, repeat_expression0, (size_t)8U * sizeof (Eurydice_arr_a3));
-  libcrux_ml_dsa_encoding_verification_key_deserialize_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A,
-    LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_VERIFICATION_KEY_SIZE,
+  memcpy(t1.data, repeat_expression0, (size_t)8U * ଆକାର (Eurydice_arr_a3));
+  libcrux_ml_dsa_encoding_verification_ଚାବି_deserialize_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ROWS_IN_A,
+    LIBCRUX_ML_DSA_ML_DSA_GENERIC_ML_DSA_87_VERIFICATION_ଚାବି_SIZE,
     t1_serialized,
     Eurydice_array_to_slice_mut_20(&t1));
   Eurydice_arr_c7 deserialized_commitment_hash = { .data = { 0U } };
   Eurydice_arr_bb deserialized_signer_response;
   Eurydice_arr_a3 repeat_expression1[7U];
-  for (size_t i = (size_t)0U; i < (size_t)7U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)7U; i++)
   {
     repeat_expression1[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
   }
   memcpy(deserialized_signer_response.data,
     repeat_expression1,
-    (size_t)7U * sizeof (Eurydice_arr_a3));
+    (size_t)7U * ଆକାର (Eurydice_arr_a3));
   Eurydice_arr_81
   deserialized_hint =
     {
@@ -20268,9 +20268,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(
       Eurydice_array_to_slice_mut_208(&deserialized_signer_response),
       Eurydice_array_to_slice_mut_861(&deserialized_hint));
   core_result_Result_41 uu____2;
-  if (uu____1.tag == core_result_Ok)
+  ଯଦି (uu____1.tag == core_result_Ok)
   {
-    if
+    ଯଦି
     (
       libcrux_ml_dsa_arithmetic_vector_infinity_norm_exceeds_37(Eurydice_array_to_slice_shared_206(&deserialized_signer_response),
         (int32_t)((uint32_t)1 << (uint32_t)LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_GAMMA1_EXPONENT) -
@@ -20285,23 +20285,23 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(
           }
         );
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_0f matrix;
       Eurydice_arr_a3 repeat_expression[56U];
-      for (size_t i = (size_t)0U; i < (size_t)56U; i++)
+      ପାଇଁ (size_t i = (size_t)0U; i < (size_t)56U; i++)
       {
         repeat_expression[i] = libcrux_ml_dsa_polynomial_zero_ff_37();
       }
-      memcpy(matrix.data, repeat_expression, (size_t)56U * sizeof (Eurydice_arr_a3));
+      memcpy(matrix.data, repeat_expression, (size_t)56U * ଆକାର (Eurydice_arr_a3));
       libcrux_ml_dsa_samplex4_portable_matrix_flat_a8_37(LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_COLUMNS_IN_A,
         seed_for_a,
         Eurydice_array_to_slice_mut_207(&matrix));
-      Eurydice_arr_c7 verification_key_hash = { .data = { 0U } };
-      libcrux_ml_dsa_hash_functions_portable_shake256_61_c9(Eurydice_array_to_slice_shared_fc(verification_key),
-        &verification_key_hash);
+      Eurydice_arr_c7 verification_ଚାବି_hash = { .data = { 0U } };
+      libcrux_ml_dsa_hash_functions_portable_shake256_61_c9(Eurydice_array_to_slice_shared_fc(verification_ଚାବି),
+        &verification_ଚାବି_hash);
       Eurydice_arr_c7 message_representative = { .data = { 0U } };
-      libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(Eurydice_array_to_slice_shared_17(&verification_key_hash),
+      libcrux_ml_dsa_ml_dsa_generic_derive_message_representative_43(Eurydice_array_to_slice_shared_17(&verification_ଚାବି_hash),
         &domain_separation_context,
         message,
         &message_representative);
@@ -20310,7 +20310,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(
         LIBCRUX_ML_DSA_CONSTANTS_ML_DSA_87_ONES_IN_VERIFIER_CHALLENGE,
         &verifier_challenge);
       libcrux_ml_dsa_ntt_ntt_37(&verifier_challenge);
-      for (size_t i = (size_t)0U; i < (size_t)7U; i++)
+      ପାଇଁ (size_t i = (size_t)0U; i < (size_t)7U; i++)
       {
         size_t i0 = i;
         libcrux_ml_dsa_ntt_ntt_37(&deserialized_signer_response.data[i0]);
@@ -20337,7 +20337,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(
         Eurydice_array_to_slice_shared_68(&commitment_serialized));
       libcrux_ml_dsa_hash_functions_portable_squeeze_26(&shake,
         Eurydice_array_to_slice_mut_17(&recomputed_commitment_hash));
-      if
+      ଯଦି
       (
         Eurydice_array_eq((size_t)64U,
           &deserialized_commitment_hash,
@@ -20347,7 +20347,7 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(
       {
         uu____2 = (KRML_CLITERAL(core_result_Result_41){ .tag = core_result_Ok });
       }
-      else
+      ଅନ୍ୟଥା
       {
         uu____2 =
           (
@@ -20359,12 +20359,12 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(
       }
     }
   }
-  else
+  ଅନ୍ୟଥା
   {
     libcrux_ml_dsa_types_VerificationError e = uu____1.f0;
     uu____2 = (KRML_CLITERAL(core_result_Result_41){ .tag = core_result_Err, .f0 = e });
   }
-  return uu____2;
+  ଫେରନ୍ତୁ uu____2;
 }
 
 /**
@@ -20373,21 +20373,21 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_5a(
-  const Eurydice_arr_43 *verification_key_serialized,
+  ଅଚଳ Eurydice_arr_43 *verification_ଚାବି_serialized,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_93 *signature_serialized
+  ଅଚଳ Eurydice_arr_93 *signature_serialized
 )
 {
   core_result_Result_a8
   uu____0 =
     libcrux_ml_dsa_pre_hash_new_88(context,
       (KRML_CLITERAL(core_option_Option_57){ .tag = core_option_None }));
-  if (!(uu____0.tag == core_result_Ok))
+  ଯଦି (!(uu____0.tag == core_result_Ok))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_41){
           .tag = core_result_Err,
@@ -20397,8 +20397,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_5a(
   }
   libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(verification_key_serialized,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(verification_ଚାବି_serialized,
       message,
       (
         KRML_CLITERAL(core_option_Option_84){
@@ -20412,16 +20412,16 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_5a(
 /**
  Verify.
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_verify(
-  const Eurydice_arr_43 *verification_key,
+  ଅଚଳ Eurydice_arr_43 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_93 *signature
+  ଅଚଳ Eurydice_arr_93 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_5a(verification_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_5a(verification_ଚାବି,
       message,
       context,
       signature);
@@ -20433,13 +20433,13 @@ with types libcrux_ml_dsa_simd_portable_vector_type_Coefficients, libcrux_ml_dsa
 with const generics
 
 */
-static KRML_MUSTINLINE core_result_Result_41
+ସ୍ଥିର KRML_MUSTINLINE core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_pre_hashed_3f(
-  const Eurydice_arr_43 *verification_key_serialized,
+  ଅଚଳ Eurydice_arr_43 *verification_ଚାବି_serialized,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
-  const Eurydice_arr_93 *signature_serialized
+  ଅଚଳ Eurydice_arr_93 *signature_serialized
 )
 {
   libcrux_ml_dsa_pre_hash_hash_30_83(message, pre_hash_buffer);
@@ -20452,9 +20452,9 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_pre_hashed_3f(
           .f0 = libcrux_ml_dsa_pre_hash_oid_30()
         }
       ));
-  if (!(uu____0.tag == core_result_Ok))
+  ଯଦି (!(uu____0.tag == core_result_Ok))
   {
-    return
+    ଫେରନ୍ତୁ
       (
         KRML_CLITERAL(core_result_Result_41){
           .tag = core_result_Err,
@@ -20464,8 +20464,8 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_pre_hashed_3f(
   }
   libcrux_ml_dsa_pre_hash_DomainSeparationContext dsc = uu____0.val.case_Ok;
   libcrux_ml_dsa_pre_hash_DomainSeparationContext domain_separation_context = dsc;
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(verification_key_serialized,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_internal_5a(verification_ଚାବି_serialized,
       (
         KRML_CLITERAL(Eurydice_borrow_slice_u8){
           .ptr = pre_hash_buffer.ptr,
@@ -20484,24 +20484,24 @@ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_pre_hashed_3f(
 /**
  Verify (pre-hashed with SHAKE-128).
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_verify_pre_hashed_shake128(
-  const Eurydice_arr_43 *verification_key,
+  ଅଚଳ Eurydice_arr_43 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_mut_borrow_slice_u8 pre_hash_buffer,
-  const Eurydice_arr_93 *signature
+  ଅଚଳ Eurydice_arr_93 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_pre_hashed_3f(verification_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_verify_pre_hashed_3f(verification_ଚାବି,
       message,
       context,
       pre_hash_buffer,
       signature);
 }
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -20528,27 +20528,27 @@ libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_verify_pre_hashe
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
 
 /**
  Generate an ML-DSA-44 Key Pair
 */
-static inline libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44KeyPair
-libcrux_ml_dsa_ml_dsa_44_portable_generate_key_pair(Eurydice_arr_ec randomness)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44_ଚାବି_Pair
+libcrux_ml_dsa_ml_dsa_44_portable_generate_ଚାବି_pair(Eurydice_arr_ec randomness)
 {
-  Eurydice_arr_10 signing_key = { .data = { 0U } };
-  Eurydice_arr_02 verification_key = { .data = { 0U } };
-  libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_generate_key_pair(randomness,
-    &signing_key,
-    &verification_key);
-  return
+  Eurydice_arr_10 signing_ଚାବି = { .data = { 0U } };
+  Eurydice_arr_02 verification_ଚାବି = { .data = { 0U } };
+  libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_generate_ଚାବି_pair(randomness,
+    &signing_ଚାବି,
+    &verification_ଚାବି);
+  ଫେରନ୍ତୁ
     (
-      KRML_CLITERAL(libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44KeyPair){
-        .signing_key = libcrux_ml_dsa_types_new_9b_ab(signing_key),
-        .verification_key = libcrux_ml_dsa_types_new_7f_7d(verification_key)
+      KRML_CLITERAL(libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44_ଚାବି_Pair){
+        .signing_ଚାବି = libcrux_ml_dsa_types_new_9b_ab(signing_ଚାବି),
+        .verification_ଚାବି = libcrux_ml_dsa_types_new_7f_7d(verification_ଚାବି)
       }
     );
 }
@@ -20560,16 +20560,16 @@ libcrux_ml_dsa_ml_dsa_44_portable_generate_key_pair(Eurydice_arr_ec randomness)
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_48
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_48
 libcrux_ml_dsa_ml_dsa_44_portable_sign(
-  const Eurydice_arr_10 *signing_key,
+  ଅଚଳ Eurydice_arr_10 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_sign(libcrux_ml_dsa_types_as_ref_9b_ab(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_sign(libcrux_ml_dsa_types_as_ref_9b_ab(signing_ଚାବି),
       message,
       context,
       randomness);
@@ -20582,17 +20582,17 @@ libcrux_ml_dsa_ml_dsa_44_portable_sign(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_53
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_53
 libcrux_ml_dsa_ml_dsa_44_portable_sign_mut(
-  const Eurydice_arr_10 *signing_key,
+  ଅଚଳ Eurydice_arr_10 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness,
   Eurydice_arr_85 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_sign_mut(libcrux_ml_dsa_types_as_ref_9b_ab(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_sign_mut(libcrux_ml_dsa_types_as_ref_9b_ab(signing_ଚାବି),
       message,
       context,
       randomness,
@@ -20606,17 +20606,17 @@ libcrux_ml_dsa_ml_dsa_44_portable_sign_mut(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_48
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_48
 libcrux_ml_dsa_ml_dsa_44_portable_sign_pre_hashed_shake128(
-  const Eurydice_arr_10 *signing_key,
+  ଅଚଳ Eurydice_arr_10 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
 )
 {
   Eurydice_arr_ec pre_hash_buffer = { .data = { 0U } };
-  const Eurydice_arr_10 *uu____0 = libcrux_ml_dsa_types_as_ref_9b_ab(signing_key);
-  return
+  ଅଚଳ Eurydice_arr_10 *uu____0 = libcrux_ml_dsa_types_as_ref_9b_ab(signing_ଚାବି);
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_sign_pre_hashed_shake128(uu____0,
       message,
       context,
@@ -20631,16 +20631,16 @@ libcrux_ml_dsa_ml_dsa_44_portable_sign_pre_hashed_shake128(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_44_portable_verify(
-  const Eurydice_arr_02 *verification_key,
+  ଅଚଳ Eurydice_arr_02 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_85 *signature
+  ଅଚଳ Eurydice_arr_85 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_verify(libcrux_ml_dsa_types_as_ref_7f_7d(verification_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_verify(libcrux_ml_dsa_types_as_ref_7f_7d(verification_ଚାବି),
       message,
       context,
       libcrux_ml_dsa_types_as_ref_c5_37(signature));
@@ -20653,20 +20653,20 @@ libcrux_ml_dsa_ml_dsa_44_portable_verify(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_44_portable_verify_pre_hashed_shake128(
-  const Eurydice_arr_02 *verification_key,
+  ଅଚଳ Eurydice_arr_02 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_85 *signature
+  ଅଚଳ Eurydice_arr_85 *signature
 )
 {
   Eurydice_arr_ec pre_hash_buffer = { .data = { 0U } };
-  const Eurydice_arr_02 *uu____0 = libcrux_ml_dsa_types_as_ref_7f_7d(verification_key);
+  ଅଚଳ Eurydice_arr_02 *uu____0 = libcrux_ml_dsa_types_as_ref_7f_7d(verification_ଚାବି);
   Eurydice_borrow_slice_u8 uu____1 = message;
   Eurydice_borrow_slice_u8 uu____2 = context;
   Eurydice_mut_borrow_slice_u8 uu____3 = Eurydice_array_to_slice_mut_01(&pre_hash_buffer);
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_44_verify_pre_hashed_shake128(uu____0,
       uu____1,
       uu____2,
@@ -20674,7 +20674,7 @@ libcrux_ml_dsa_ml_dsa_44_portable_verify_pre_hashed_shake128(
       libcrux_ml_dsa_types_as_ref_c5_37(signature));
 }
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -20701,27 +20701,27 @@ libcrux_ml_dsa_ml_dsa_44_portable_verify_pre_hashed_shake128(
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
 
 /**
  Generate an ML-DSA-65 Key Pair
 */
-static inline libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65KeyPair
-libcrux_ml_dsa_ml_dsa_65_portable_generate_key_pair(Eurydice_arr_ec randomness)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65_ଚାବି_Pair
+libcrux_ml_dsa_ml_dsa_65_portable_generate_ଚାବି_pair(Eurydice_arr_ec randomness)
 {
-  Eurydice_arr_24 signing_key = { .data = { 0U } };
-  Eurydice_arr_29 verification_key = { .data = { 0U } };
-  libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_generate_key_pair(randomness,
-    &signing_key,
-    &verification_key);
-  return
+  Eurydice_arr_24 signing_ଚାବି = { .data = { 0U } };
+  Eurydice_arr_29 verification_ଚାବି = { .data = { 0U } };
+  libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_generate_ଚାବି_pair(randomness,
+    &signing_ଚାବି,
+    &verification_ଚାବି);
+  ଫେରନ୍ତୁ
     (
-      KRML_CLITERAL(libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65KeyPair){
-        .signing_key = libcrux_ml_dsa_types_new_9b_e5(signing_key),
-        .verification_key = libcrux_ml_dsa_types_new_7f_a2(verification_key)
+      KRML_CLITERAL(libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65_ଚାବି_Pair){
+        .signing_ଚାବି = libcrux_ml_dsa_types_new_9b_e5(signing_ଚାବି),
+        .verification_ଚାବି = libcrux_ml_dsa_types_new_7f_a2(verification_ଚାବି)
       }
     );
 }
@@ -20729,16 +20729,16 @@ libcrux_ml_dsa_ml_dsa_65_portable_generate_key_pair(Eurydice_arr_ec randomness)
 /**
  Generate an ML-DSA-65 Key Pair
 */
-static inline void
-libcrux_ml_dsa_ml_dsa_65_portable_generate_key_pair_mut(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_dsa_ml_dsa_65_portable_generate_ଚାବି_pair_mut(
   Eurydice_arr_ec randomness,
-  Eurydice_arr_24 *signing_key,
-  Eurydice_arr_29 *verification_key
+  Eurydice_arr_24 *signing_ଚାବି,
+  Eurydice_arr_29 *verification_ଚାବି
 )
 {
-  libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_generate_key_pair(randomness,
-    signing_key,
-    verification_key);
+  libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_generate_ଚାବି_pair(randomness,
+    signing_ଚାବି,
+    verification_ଚାବି);
 }
 
 /**
@@ -20748,16 +20748,16 @@ libcrux_ml_dsa_ml_dsa_65_portable_generate_key_pair_mut(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_8c
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_8c
 libcrux_ml_dsa_ml_dsa_65_portable_sign(
-  const Eurydice_arr_24 *signing_key,
+  ଅଚଳ Eurydice_arr_24 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_sign(libcrux_ml_dsa_types_as_ref_9b_e5(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_sign(libcrux_ml_dsa_types_as_ref_9b_e5(signing_ଚାବି),
       message,
       context,
       randomness);
@@ -20770,17 +20770,17 @@ libcrux_ml_dsa_ml_dsa_65_portable_sign(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_53
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_53
 libcrux_ml_dsa_ml_dsa_65_portable_sign_mut(
-  const Eurydice_arr_24 *signing_key,
+  ଅଚଳ Eurydice_arr_24 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness,
   Eurydice_arr_0c *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_sign_mut(signing_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_sign_mut(signing_ଚାବି,
       message,
       context,
       randomness,
@@ -20794,17 +20794,17 @@ libcrux_ml_dsa_ml_dsa_65_portable_sign_mut(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_8c
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_8c
 libcrux_ml_dsa_ml_dsa_65_portable_sign_pre_hashed_shake128(
-  const Eurydice_arr_24 *signing_key,
+  ଅଚଳ Eurydice_arr_24 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
 )
 {
   Eurydice_arr_ec pre_hash_buffer = { .data = { 0U } };
-  const Eurydice_arr_24 *uu____0 = libcrux_ml_dsa_types_as_ref_9b_e5(signing_key);
-  return
+  ଅଚଳ Eurydice_arr_24 *uu____0 = libcrux_ml_dsa_types_as_ref_9b_e5(signing_ଚାବି);
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_sign_pre_hashed_shake128(uu____0,
       message,
       context,
@@ -20819,16 +20819,16 @@ libcrux_ml_dsa_ml_dsa_65_portable_sign_pre_hashed_shake128(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_65_portable_verify(
-  const Eurydice_arr_29 *verification_key,
+  ଅଚଳ Eurydice_arr_29 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_0c *signature
+  ଅଚଳ Eurydice_arr_0c *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_verify(libcrux_ml_dsa_types_as_ref_7f_a2(verification_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_verify(libcrux_ml_dsa_types_as_ref_7f_a2(verification_ଚାବି),
       message,
       context,
       libcrux_ml_dsa_types_as_ref_c5_5c(signature));
@@ -20841,20 +20841,20 @@ libcrux_ml_dsa_ml_dsa_65_portable_verify(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_65_portable_verify_pre_hashed_shake128(
-  const Eurydice_arr_29 *verification_key,
+  ଅଚଳ Eurydice_arr_29 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_0c *signature
+  ଅଚଳ Eurydice_arr_0c *signature
 )
 {
   Eurydice_arr_ec pre_hash_buffer = { .data = { 0U } };
-  const Eurydice_arr_29 *uu____0 = libcrux_ml_dsa_types_as_ref_7f_a2(verification_key);
+  ଅଚଳ Eurydice_arr_29 *uu____0 = libcrux_ml_dsa_types_as_ref_7f_a2(verification_ଚାବି);
   Eurydice_borrow_slice_u8 uu____1 = message;
   Eurydice_borrow_slice_u8 uu____2 = context;
   Eurydice_mut_borrow_slice_u8 uu____3 = Eurydice_array_to_slice_mut_01(&pre_hash_buffer);
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_65_verify_pre_hashed_shake128(uu____0,
       uu____1,
       uu____2,
@@ -20862,7 +20862,7 @@ libcrux_ml_dsa_ml_dsa_65_portable_verify_pre_hashed_shake128(
       libcrux_ml_dsa_types_as_ref_c5_5c(signature));
 }
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -20889,27 +20889,27 @@ libcrux_ml_dsa_ml_dsa_65_portable_verify_pre_hashed_shake128(
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
 
 /**
  Generate an ML-DSA-87 Key Pair
 */
-static inline libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87KeyPair
-libcrux_ml_dsa_ml_dsa_87_portable_generate_key_pair(Eurydice_arr_ec randomness)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87_ଚାବି_Pair
+libcrux_ml_dsa_ml_dsa_87_portable_generate_ଚାବି_pair(Eurydice_arr_ec randomness)
 {
-  Eurydice_arr_e2 signing_key = { .data = { 0U } };
-  Eurydice_arr_43 verification_key = { .data = { 0U } };
-  libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_generate_key_pair(randomness,
-    &signing_key,
-    &verification_key);
-  return
+  Eurydice_arr_e2 signing_ଚାବି = { .data = { 0U } };
+  Eurydice_arr_43 verification_ଚାବି = { .data = { 0U } };
+  libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_generate_ଚାବି_pair(randomness,
+    &signing_ଚାବି,
+    &verification_ଚାବି);
+  ଫେରନ୍ତୁ
     (
-      KRML_CLITERAL(libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87KeyPair){
-        .signing_key = libcrux_ml_dsa_types_new_9b_72(signing_key),
-        .verification_key = libcrux_ml_dsa_types_new_7f_c6(verification_key)
+      KRML_CLITERAL(libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87_ଚାବି_Pair){
+        .signing_ଚାବି = libcrux_ml_dsa_types_new_9b_72(signing_ଚାବି),
+        .verification_ଚାବି = libcrux_ml_dsa_types_new_7f_c6(verification_ଚାବି)
       }
     );
 }
@@ -20921,16 +20921,16 @@ libcrux_ml_dsa_ml_dsa_87_portable_generate_key_pair(Eurydice_arr_ec randomness)
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_8b
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_8b
 libcrux_ml_dsa_ml_dsa_87_portable_sign(
-  const Eurydice_arr_e2 *signing_key,
+  ଅଚଳ Eurydice_arr_e2 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_sign(libcrux_ml_dsa_types_as_ref_9b_72(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_sign(libcrux_ml_dsa_types_as_ref_9b_72(signing_ଚାବି),
       message,
       context,
       randomness);
@@ -20943,17 +20943,17 @@ libcrux_ml_dsa_ml_dsa_87_portable_sign(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_53
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_53
 libcrux_ml_dsa_ml_dsa_87_portable_sign_mut(
-  const Eurydice_arr_e2 *signing_key,
+  ଅଚଳ Eurydice_arr_e2 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness,
   Eurydice_arr_93 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_sign_mut(libcrux_ml_dsa_types_as_ref_9b_72(signing_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_sign_mut(libcrux_ml_dsa_types_as_ref_9b_72(signing_ଚାବି),
       message,
       context,
       randomness,
@@ -20967,17 +20967,17 @@ libcrux_ml_dsa_ml_dsa_87_portable_sign_mut(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_8b
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_8b
 libcrux_ml_dsa_ml_dsa_87_portable_sign_pre_hashed_shake128(
-  const Eurydice_arr_e2 *signing_key,
+  ଅଚଳ Eurydice_arr_e2 *signing_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
   Eurydice_arr_ec randomness
 )
 {
   Eurydice_arr_ec pre_hash_buffer = { .data = { 0U } };
-  const Eurydice_arr_e2 *uu____0 = libcrux_ml_dsa_types_as_ref_9b_72(signing_key);
-  return
+  ଅଚଳ Eurydice_arr_e2 *uu____0 = libcrux_ml_dsa_types_as_ref_9b_72(signing_ଚାବି);
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_sign_pre_hashed_shake128(uu____0,
       message,
       context,
@@ -20992,16 +20992,16 @@ libcrux_ml_dsa_ml_dsa_87_portable_sign_pre_hashed_shake128(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_87_portable_verify(
-  const Eurydice_arr_43 *verification_key,
+  ଅଚଳ Eurydice_arr_43 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_93 *signature
+  ଅଚଳ Eurydice_arr_93 *signature
 )
 {
-  return
-    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_verify(libcrux_ml_dsa_types_as_ref_7f_c6(verification_key),
+  ଫେରନ୍ତୁ
+    libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_verify(libcrux_ml_dsa_types_as_ref_7f_c6(verification_ଚାବି),
       message,
       context,
       libcrux_ml_dsa_types_as_ref_c5_f1(signature));
@@ -21014,20 +21014,20 @@ libcrux_ml_dsa_ml_dsa_87_portable_verify(
  and is a byte string of length at most 255 bytes. It
  may also be empty.
 */
-static inline core_result_Result_41
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ core_result_Result_41
 libcrux_ml_dsa_ml_dsa_87_portable_verify_pre_hashed_shake128(
-  const Eurydice_arr_43 *verification_key,
+  ଅଚଳ Eurydice_arr_43 *verification_ଚାବି,
   Eurydice_borrow_slice_u8 message,
   Eurydice_borrow_slice_u8 context,
-  const Eurydice_arr_93 *signature
+  ଅଚଳ Eurydice_arr_93 *signature
 )
 {
   Eurydice_arr_ec pre_hash_buffer = { .data = { 0U } };
-  const Eurydice_arr_43 *uu____0 = libcrux_ml_dsa_types_as_ref_7f_c6(verification_key);
+  ଅଚଳ Eurydice_arr_43 *uu____0 = libcrux_ml_dsa_types_as_ref_7f_c6(verification_ଚାବି);
   Eurydice_borrow_slice_u8 uu____1 = message;
   Eurydice_borrow_slice_u8 uu____2 = context;
   Eurydice_mut_borrow_slice_u8 uu____3 = Eurydice_array_to_slice_mut_01(&pre_hash_buffer);
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_dsa_ml_dsa_generic_instantiations_portable_ml_dsa_87_verify_pre_hashed_shake128(uu____0,
       uu____1,
       uu____2,
@@ -21035,7 +21035,7 @@ libcrux_ml_dsa_ml_dsa_87_portable_verify_pre_hashed_shake128(
       libcrux_ml_dsa_types_as_ref_c5_f1(signature));
 }
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -21062,32 +21062,32 @@ libcrux_ml_dsa_ml_dsa_87_portable_verify_pre_hashed_shake128(
 
 
 
-#if defined(__cplusplus)
-extern "C" {
+#ଯଦି defined(__cplusplus)
+ବାହ୍ୟ "C" {
 #endif
 
 
-static inline Eurydice_arr_c7
-libcrux_ml_kem_hash_functions_portable_G(Eurydice_borrow_slice_u8 input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_c7
+libcrux_ml_kem_hash_functions_portable_G(Eurydice_borrow_slice_u8 ନିବେଶ)
 {
   Eurydice_arr_c7 digest = { .data = { 0U } };
-  libcrux_sha3_portable_sha512(Eurydice_array_to_slice_mut_17(&digest), input);
-  return digest;
+  libcrux_sha3_portable_sha512(Eurydice_array_to_slice_mut_17(&digest), ନିବେଶ);
+  ଫେରନ୍ତୁ digest;
 }
 
-static inline Eurydice_arr_ec
-libcrux_ml_kem_hash_functions_portable_H(Eurydice_borrow_slice_u8 input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ec
+libcrux_ml_kem_hash_functions_portable_H(Eurydice_borrow_slice_u8 ନିବେଶ)
 {
   Eurydice_arr_ec digest = { .data = { 0U } };
-  libcrux_sha3_portable_sha256(Eurydice_array_to_slice_mut_01(&digest), input);
-  return digest;
+  libcrux_sha3_portable_sha256(Eurydice_array_to_slice_mut_01(&digest), ନିବେଶ);
+  ଫେରନ୍ତୁ digest;
 }
 
 #define LIBCRUX_ML_KEM_POLYNOMIAL_ZETAS_TIMES_MONTGOMERY_R ((KRML_CLITERAL(Eurydice_arr_34){ .data = { -1044, -758, -359, -1517, 1493, 1422, 287, 202, -171, 622, 1577, 182, 962, -1202, -1474, 1468, 573, -1325, 264, 383, -829, 1458, -1602, -130, -681, 1017, 732, 608, -1542, 411, -205, -1571, 1223, 652, -552, 1015, -1293, 1491, -282, -1544, 516, -8, -320, -666, -1618, -1162, 126, 1469, -853, -90, -271, 830, 107, -1421, -247, -951, -398, 961, -1508, -725, 448, -1065, 677, -1275, -1103, 430, 555, 843, -1251, 871, 1550, 105, 422, 587, 177, -235, -291, -460, 1574, 1653, -246, 778, 1159, -147, -777, 1483, -602, 1119, -1590, 644, -872, 349, 418, 329, -156, -75, 817, 1097, 603, 610, 1322, -1285, -1465, 384, -1215, -136, 1218, -1335, -874, 220, -1187, -1659, -1185, -1530, -1278, 794, -1510, -854, -870, 478, -108, -308, 996, 991, 958, -1460, 1522, 1628 } }))
 
-static KRML_MUSTINLINE int16_t libcrux_ml_kem_polynomial_zeta(size_t i)
+ସ୍ଥିର KRML_MUSTINLINE int16_t libcrux_ml_kem_polynomial_zeta(size_t i)
 {
-  return LIBCRUX_ML_KEM_POLYNOMIAL_ZETAS_TIMES_MONTGOMERY_R.data[i];
+  ଫେରନ୍ତୁ LIBCRUX_ML_KEM_POLYNOMIAL_ZETAS_TIMES_MONTGOMERY_R.data[i];
 }
 
 #define LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT ((size_t)16U)
@@ -21100,15 +21100,15 @@ static KRML_MUSTINLINE int16_t libcrux_ml_kem_polynomial_zeta(size_t i)
 
 #define LIBCRUX_ML_KEM_VECTOR_TRAITS_INVERSE_OF_MODULUS_MOD_MONTGOMERY_R (62209U)
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_vector_type_from_i16_array(Eurydice_borrow_slice_i16 array)
 {
   Eurydice_arr_d6 arr;
   memcpy(arr.data,
     Eurydice_slice_subslice_shared_a6(array,
       (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)0U, .end = (size_t)16U })).ptr,
-    (size_t)16U * sizeof (int16_t));
-  return
+    (size_t)16U * ଆକାର (int16_t));
+  ଫେରନ୍ତୁ
     core_result_unwrap_26_d3((
         KRML_CLITERAL(core_result_Result_ec){ .tag = core_result_Ok, .val = { .case_Ok = arr } }
       ));
@@ -21117,16 +21117,16 @@ libcrux_ml_kem_vector_portable_vector_type_from_i16_array(Eurydice_borrow_slice_
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_from_i16_array_b8(Eurydice_borrow_slice_i16 array)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_vector_portable_vector_type_from_i16_array(libcrux_secrets_int_classify_public_classify_ref_6d_39(array));
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6 libcrux_ml_kem_vector_portable_vector_type_zero(void)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6 libcrux_ml_kem_vector_portable_vector_type_zero(ଶୂନ୍ୟ)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_classify_27_4b((
         KRML_CLITERAL(Eurydice_arr_d6){ .data = { 0U } }
       ));
@@ -21135,100 +21135,100 @@ static KRML_MUSTINLINE Eurydice_arr_d6 libcrux_ml_kem_vector_portable_vector_typ
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6 libcrux_ml_kem_vector_portable_ZERO_b8(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6 libcrux_ml_kem_vector_portable_ZERO_b8(ଶୂନ୍ୟ)
 {
-  return libcrux_ml_kem_vector_portable_vector_type_zero();
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_vector_type_zero();
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
-libcrux_ml_kem_vector_portable_arithmetic_add(Eurydice_arr_d6 lhs, const Eurydice_arr_d6 *rhs)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
+libcrux_ml_kem_vector_portable_arithmetic_add(Eurydice_arr_d6 lhs, ଅଚଳ Eurydice_arr_d6 *rhs)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     size_t uu____0 = i0;
     lhs.data[uu____0] += rhs->data[i0];
   }
-  return lhs;
+  ଫେରନ୍ତୁ lhs;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
-libcrux_ml_kem_vector_portable_add_b8(Eurydice_arr_d6 lhs, const Eurydice_arr_d6 *rhs)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
+libcrux_ml_kem_vector_portable_add_b8(Eurydice_arr_d6 lhs, ଅଚଳ Eurydice_arr_d6 *rhs)
 {
-  return libcrux_ml_kem_vector_portable_arithmetic_add(lhs, rhs);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_arithmetic_add(lhs, rhs);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
-libcrux_ml_kem_vector_portable_arithmetic_sub(Eurydice_arr_d6 lhs, const Eurydice_arr_d6 *rhs)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
+libcrux_ml_kem_vector_portable_arithmetic_sub(Eurydice_arr_d6 lhs, ଅଚଳ Eurydice_arr_d6 *rhs)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     size_t uu____0 = i0;
     lhs.data[uu____0] -= rhs->data[i0];
   }
-  return lhs;
+  ଫେରନ୍ତୁ lhs;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
-libcrux_ml_kem_vector_portable_sub_b8(Eurydice_arr_d6 lhs, const Eurydice_arr_d6 *rhs)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
+libcrux_ml_kem_vector_portable_sub_b8(Eurydice_arr_d6 lhs, ଅଚଳ Eurydice_arr_d6 *rhs)
 {
-  return libcrux_ml_kem_vector_portable_arithmetic_sub(lhs, rhs);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_arithmetic_sub(lhs, rhs);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_arithmetic_multiply_by_constant(Eurydice_arr_d6 vec, int16_t c)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     size_t uu____0 = i0;
     vec.data[uu____0] *= c;
   }
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_multiply_by_constant_b8(Eurydice_arr_d6 vec, int16_t c)
 {
-  return libcrux_ml_kem_vector_portable_arithmetic_multiply_by_constant(vec, c);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_arithmetic_multiply_by_constant(vec, c);
 }
 
 /**
  Note: This function is not secret independent
  Only use with public values.
 */
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_arithmetic_cond_subtract_3329(Eurydice_arr_d6 vec)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
-    if (libcrux_secrets_int_public_integers_declassify_d8_39(vec.data[i0]) >= 3329)
+    ଯଦି (libcrux_secrets_int_public_integers_declassify_d8_39(vec.data[i0]) >= 3329)
     {
       size_t uu____0 = i0;
       vec.data[uu____0] -= 3329;
     }
   }
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_cond_subtract_3329_b8(Eurydice_arr_d6 v)
 {
-  return libcrux_ml_kem_vector_portable_arithmetic_cond_subtract_3329(v);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_arithmetic_cond_subtract_3329(v);
 }
 
 #define LIBCRUX_ML_KEM_VECTOR_PORTABLE_ARITHMETIC_BARRETT_MULTIPLIER (20159)
@@ -21251,39 +21251,39 @@ libcrux_ml_kem_vector_portable_cond_subtract_3329_b8(Eurydice_arr_d6 v)
  Note: The input bound is 28296 to prevent overflow in the multiplication of quotient by FIELD_MODULUS
 
 */
-static inline int16_t
-libcrux_ml_kem_vector_portable_arithmetic_barrett_reduce_element(int16_t value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int16_t
+libcrux_ml_kem_vector_portable_arithmetic_barrett_reduce_element(int16_t ମୂଲ୍ୟ)
 {
   int32_t
   t =
-    libcrux_secrets_int_as_i32_f5(value) *
+    libcrux_secrets_int_as_i32_f5(ମୂଲ୍ୟ) *
       LIBCRUX_ML_KEM_VECTOR_PORTABLE_ARITHMETIC_BARRETT_MULTIPLIER
     + (LIBCRUX_ML_KEM_VECTOR_TRAITS_BARRETT_R >> 1U);
   int16_t
   quotient =
     libcrux_secrets_int_as_i16_36(t >> (uint32_t)LIBCRUX_ML_KEM_VECTOR_TRAITS_BARRETT_SHIFT);
-  return value - quotient * LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_MODULUS;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ - quotient * LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_MODULUS;
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_arithmetic_barrett_reduce(Eurydice_arr_d6 vec)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     int16_t vi = libcrux_ml_kem_vector_portable_arithmetic_barrett_reduce_element(vec.data[i0]);
     vec.data[i0] = vi;
   }
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_barrett_reduce_b8(Eurydice_arr_d6 vector)
 {
-  return libcrux_ml_kem_vector_portable_arithmetic_barrett_reduce(vector);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_arithmetic_barrett_reduce(vector);
 }
 
 #define LIBCRUX_ML_KEM_VECTOR_PORTABLE_ARITHMETIC_MONTGOMERY_SHIFT (16U)
@@ -21303,12 +21303,12 @@ libcrux_ml_kem_vector_portable_barrett_reduce_b8(Eurydice_arr_d6 vector)
  And, if `|value| ≤ pow2 16 * FIELD_MODULUS-1`, then `|o| <= FIELD_MODULUS + 1664
 
 */
-static inline int16_t
-libcrux_ml_kem_vector_portable_arithmetic_montgomery_reduce_element(int32_t value)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int16_t
+libcrux_ml_kem_vector_portable_arithmetic_montgomery_reduce_element(int32_t ମୂଲ୍ୟ)
 {
   int32_t
   k =
-    libcrux_secrets_int_as_i32_f5(libcrux_secrets_int_as_i16_36(value)) *
+    libcrux_secrets_int_as_i32_f5(libcrux_secrets_int_as_i16_36(ମୂଲ୍ୟ)) *
       libcrux_secrets_int_as_i32_b8(libcrux_secrets_int_public_integers_classify_27_df(LIBCRUX_ML_KEM_VECTOR_TRAITS_INVERSE_OF_MODULUS_MOD_MONTGOMERY_R));
   int32_t
   k_times_modulus =
@@ -21319,10 +21319,10 @@ libcrux_ml_kem_vector_portable_arithmetic_montgomery_reduce_element(int32_t valu
     libcrux_secrets_int_as_i16_36(k_times_modulus >>
         (uint32_t)LIBCRUX_ML_KEM_VECTOR_PORTABLE_ARITHMETIC_MONTGOMERY_SHIFT);
   int16_t
-  value_high =
-    libcrux_secrets_int_as_i16_36(value >>
+  ମୂଲ୍ୟ_ଉପର =
+    libcrux_secrets_int_as_i16_36(ମୂଲ୍ୟ >>
         (uint32_t)LIBCRUX_ML_KEM_VECTOR_PORTABLE_ARITHMETIC_MONTGOMERY_SHIFT);
-  return value_high - c;
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ_ଉପର - c;
 }
 
 /**
@@ -21335,59 +21335,59 @@ libcrux_ml_kem_vector_portable_arithmetic_montgomery_reduce_element(int32_t valu
  `montgomery_reduce` takes the value `x · y · MONTGOMERY_R` and outputs a representative
  `x · y · MONTGOMERY_R * MONTGOMERY_R^{-1} ≡ x · y (mod FIELD_MODULUS)`.
 */
-static KRML_MUSTINLINE int16_t
+ସ୍ଥିର KRML_MUSTINLINE int16_t
 libcrux_ml_kem_vector_portable_arithmetic_montgomery_multiply_fe_by_fer(
   int16_t fe,
   int16_t fer
 )
 {
   int32_t product = libcrux_secrets_int_as_i32_f5(fe) * libcrux_secrets_int_as_i32_f5(fer);
-  return libcrux_ml_kem_vector_portable_arithmetic_montgomery_reduce_element(product);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_arithmetic_montgomery_reduce_element(product);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_arithmetic_montgomery_multiply_by_constant(
   Eurydice_arr_d6 vec,
   int16_t c
 )
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     vec.data[i0] =
       libcrux_ml_kem_vector_portable_arithmetic_montgomery_multiply_fe_by_fer(vec.data[i0],
         c);
   }
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_montgomery_multiply_by_constant_b8(
   Eurydice_arr_d6 vector,
   int16_t constant
 )
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_vector_portable_arithmetic_montgomery_multiply_by_constant(vector,
       libcrux_secrets_int_public_integers_classify_27_39(constant));
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_arithmetic_bitwise_and_with_constant(
   Eurydice_arr_d6 vec,
   int16_t c
 )
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     size_t uu____0 = i0;
     vec.data[uu____0] &= c;
   }
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
@@ -21395,35 +21395,35 @@ A monomorphic instance of libcrux_ml_kem.vector.portable.arithmetic.shift_right
 with const generics
 - SHIFT_BY= 15
 */
-static KRML_MUSTINLINE Eurydice_arr_d6
-libcrux_ml_kem_vector_portable_arithmetic_shift_right_ef(Eurydice_arr_d6 vec)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
+libcrux_ml_kem_vector_portable_arithmetic_shift_ଡାହାଣ_ef(Eurydice_arr_d6 vec)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     vec.data[i0] >>= (uint32_t)15;
   }
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_arithmetic_to_unsigned_representative(Eurydice_arr_d6 a)
 {
-  Eurydice_arr_d6 t = libcrux_ml_kem_vector_portable_arithmetic_shift_right_ef(a);
+  Eurydice_arr_d6 t = libcrux_ml_kem_vector_portable_arithmetic_shift_ଡାହାଣ_ef(a);
   Eurydice_arr_d6
   fm =
     libcrux_ml_kem_vector_portable_arithmetic_bitwise_and_with_constant(t,
       LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_MODULUS);
-  return libcrux_ml_kem_vector_portable_arithmetic_add(a, &fm);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_arithmetic_add(a, &fm);
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_to_unsigned_representative_b8(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_arithmetic_to_unsigned_representative(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_arithmetic_to_unsigned_representative(a);
 }
 
 /**
@@ -21448,7 +21448,7 @@ libcrux_ml_kem_vector_portable_to_unsigned_representative_b8(Eurydice_arr_d6 a)
  The NIST FIPS 203 standard can be found at
  <https://csrc.nist.gov/pubs/fips/203/ipd>.
 */
-static inline uint8_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ uint8_t
 libcrux_ml_kem_vector_portable_compress_compress_message_coefficient(uint16_t fe)
 {
   int16_t
@@ -21459,39 +21459,39 @@ libcrux_ml_kem_vector_portable_compress_compress_message_coefficient(uint16_t fe
   int16_t shifted_positive_in_range = shifted_to_positive - 832;
   int16_t r0 = shifted_positive_in_range >> 15U;
   int16_t r1 = r0 & 1;
-  return libcrux_secrets_int_as_u8_f5(r1);
+  ଫେରନ୍ତୁ libcrux_secrets_int_as_u8_f5(r1);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_compress_compress_1(Eurydice_arr_d6 a)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     a.data[i0] =
       libcrux_secrets_int_as_i16_59(libcrux_ml_kem_vector_portable_compress_compress_message_coefficient(libcrux_secrets_int_as_u16_f5(a.data[i0])));
   }
-  return a;
+  ଫେରନ୍ତୁ a;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6 libcrux_ml_kem_vector_portable_compress_1_b8(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6 libcrux_ml_kem_vector_portable_compress_1_b8(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_compress_compress_1(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_compress_compress_1(a);
 }
 
-static KRML_MUSTINLINE uint32_t
+ସ୍ଥିର KRML_MUSTINLINE uint32_t
 libcrux_ml_kem_vector_portable_arithmetic_get_n_least_significant_bits(
   uint8_t n,
-  uint32_t value
+  uint32_t ମୂଲ୍ୟ
 )
 {
-  return value & ((1U << (uint32_t)n) - 1U);
+  ଫେରନ୍ତୁ ମୂଲ୍ୟ & ((1U << (uint32_t)n) - 1U);
 }
 
-static inline int16_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ int16_t
 libcrux_ml_kem_vector_portable_compress_compress_ciphertext_coefficient(
   uint8_t coefficient_bits,
   uint16_t fe
@@ -21501,30 +21501,30 @@ libcrux_ml_kem_vector_portable_compress_compress_ciphertext_coefficient(
   compressed += 1664ULL;
   compressed *= 10321340ULL;
   compressed >>= 35U;
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_as_i16_b8(libcrux_ml_kem_vector_portable_arithmetic_get_n_least_significant_bits(coefficient_bits,
         libcrux_secrets_int_as_u32_a3(compressed)));
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_compress_decompress_1(Eurydice_arr_d6 a)
 {
   Eurydice_arr_d6 z = libcrux_ml_kem_vector_portable_vector_type_zero();
   Eurydice_arr_d6 s = libcrux_ml_kem_vector_portable_arithmetic_sub(z, &a);
   Eurydice_arr_d6
   res = libcrux_ml_kem_vector_portable_arithmetic_bitwise_and_with_constant(s, 1665);
-  return res;
+  ଫେରନ୍ତୁ res;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6 libcrux_ml_kem_vector_portable_decompress_1_b8(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6 libcrux_ml_kem_vector_portable_decompress_1_b8(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_compress_decompress_1(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_compress_decompress_1(a);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_vector_portable_ntt_ntt_step(
   Eurydice_arr_d6 *vec,
   int16_t zeta,
@@ -21542,7 +21542,7 @@ libcrux_ml_kem_vector_portable_ntt_ntt_step(
   vec->data[i] = a_plus_t;
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_ntt_layer_1_step(
   Eurydice_arr_d6 vec,
   int16_t zeta0,
@@ -21559,13 +21559,13 @@ libcrux_ml_kem_vector_portable_ntt_ntt_layer_1_step(
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta2, (size_t)9U, (size_t)11U);
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta3, (size_t)12U, (size_t)14U);
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta3, (size_t)13U, (size_t)15U);
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_layer_1_step_b8(
   Eurydice_arr_d6 a,
   int16_t zeta0,
@@ -21574,10 +21574,10 @@ libcrux_ml_kem_vector_portable_ntt_layer_1_step_b8(
   int16_t zeta3
 )
 {
-  return libcrux_ml_kem_vector_portable_ntt_ntt_layer_1_step(a, zeta0, zeta1, zeta2, zeta3);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_ntt_ntt_layer_1_step(a, zeta0, zeta1, zeta2, zeta3);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_ntt_layer_2_step(
   Eurydice_arr_d6 vec,
   int16_t zeta0,
@@ -21592,23 +21592,23 @@ libcrux_ml_kem_vector_portable_ntt_ntt_layer_2_step(
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta1, (size_t)9U, (size_t)13U);
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta1, (size_t)10U, (size_t)14U);
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta1, (size_t)11U, (size_t)15U);
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_layer_2_step_b8(
   Eurydice_arr_d6 a,
   int16_t zeta0,
   int16_t zeta1
 )
 {
-  return libcrux_ml_kem_vector_portable_ntt_ntt_layer_2_step(a, zeta0, zeta1);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_ntt_ntt_layer_2_step(a, zeta0, zeta1);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_ntt_layer_3_step(Eurydice_arr_d6 vec, int16_t zeta)
 {
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta, (size_t)0U, (size_t)8U);
@@ -21619,19 +21619,19 @@ libcrux_ml_kem_vector_portable_ntt_ntt_layer_3_step(Eurydice_arr_d6 vec, int16_t
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta, (size_t)5U, (size_t)13U);
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta, (size_t)6U, (size_t)14U);
   libcrux_ml_kem_vector_portable_ntt_ntt_step(&vec, zeta, (size_t)7U, (size_t)15U);
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_layer_3_step_b8(Eurydice_arr_d6 a, int16_t zeta)
 {
-  return libcrux_ml_kem_vector_portable_ntt_ntt_layer_3_step(a, zeta);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_ntt_ntt_layer_3_step(a, zeta);
 }
 
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(
   Eurydice_arr_d6 *vec,
   int16_t zeta,
@@ -21650,7 +21650,7 @@ libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(
   vec->data[j] = o1;
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_1_step(
   Eurydice_arr_d6 vec,
   int16_t zeta0,
@@ -21667,13 +21667,13 @@ libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_1_step(
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta2, (size_t)9U, (size_t)11U);
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta3, (size_t)12U, (size_t)14U);
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta3, (size_t)13U, (size_t)15U);
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_inv_ntt_layer_1_step_b8(
   Eurydice_arr_d6 a,
   int16_t zeta0,
@@ -21682,10 +21682,10 @@ libcrux_ml_kem_vector_portable_inv_ntt_layer_1_step_b8(
   int16_t zeta3
 )
 {
-  return libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_1_step(a, zeta0, zeta1, zeta2, zeta3);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_1_step(a, zeta0, zeta1, zeta2, zeta3);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_2_step(
   Eurydice_arr_d6 vec,
   int16_t zeta0,
@@ -21700,23 +21700,23 @@ libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_2_step(
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta1, (size_t)9U, (size_t)13U);
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta1, (size_t)10U, (size_t)14U);
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta1, (size_t)11U, (size_t)15U);
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_inv_ntt_layer_2_step_b8(
   Eurydice_arr_d6 a,
   int16_t zeta0,
   int16_t zeta1
 )
 {
-  return libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_2_step(a, zeta0, zeta1);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_2_step(a, zeta0, zeta1);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_3_step(Eurydice_arr_d6 vec, int16_t zeta)
 {
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta, (size_t)0U, (size_t)8U);
@@ -21727,16 +21727,16 @@ libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_3_step(Eurydice_arr_d6 vec, int
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta, (size_t)5U, (size_t)13U);
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta, (size_t)6U, (size_t)14U);
   libcrux_ml_kem_vector_portable_ntt_inv_ntt_step(&vec, zeta, (size_t)7U, (size_t)15U);
-  return vec;
+  ଫେରନ୍ତୁ vec;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_inv_ntt_layer_3_step_b8(Eurydice_arr_d6 a, int16_t zeta)
 {
-  return libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_3_step(a, zeta);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_ntt_inv_ntt_layer_3_step(a, zeta);
 }
 
 /**
@@ -21761,10 +21761,10 @@ libcrux_ml_kem_vector_portable_inv_ntt_layer_3_step_b8(Eurydice_arr_d6 a, int16_
  The NIST FIPS 203 standard can be found at
  <https://csrc.nist.gov/pubs/fips/203/ipd>.
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_vector_portable_ntt_ntt_multiply_binomials(
-  const Eurydice_arr_d6 *a,
-  const Eurydice_arr_d6 *b,
+  ଅଚଳ Eurydice_arr_d6 *a,
+  ଅଚଳ Eurydice_arr_d6 *b,
   int16_t zeta,
   size_t i,
   Eurydice_arr_d6 *out
@@ -21789,10 +21789,10 @@ libcrux_ml_kem_vector_portable_ntt_ntt_multiply_binomials(
   out->data[(size_t)2U * i + (size_t)1U] = o1;
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_ntt_multiply(
-  const Eurydice_arr_d6 *lhs,
-  const Eurydice_arr_d6 *rhs,
+  ଅଚଳ Eurydice_arr_d6 *lhs,
+  ଅଚଳ Eurydice_arr_d6 *rhs,
   int16_t zeta0,
   int16_t zeta1,
   int16_t zeta2,
@@ -21844,26 +21844,26 @@ libcrux_ml_kem_vector_portable_ntt_ntt_multiply(
     libcrux_secrets_int_public_integers_classify_27_39(nzeta3),
     (size_t)7U,
     &out);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_ntt_multiply_b8(
-  const Eurydice_arr_d6 *lhs,
-  const Eurydice_arr_d6 *rhs,
+  ଅଚଳ Eurydice_arr_d6 *lhs,
+  ଅଚଳ Eurydice_arr_d6 *rhs,
   int16_t zeta0,
   int16_t zeta1,
   int16_t zeta2,
   int16_t zeta3
 )
 {
-  return libcrux_ml_kem_vector_portable_ntt_ntt_multiply(lhs, rhs, zeta0, zeta1, zeta2, zeta3);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_ntt_ntt_multiply(lhs, rhs, zeta0, zeta1, zeta2, zeta3);
 }
 
-static KRML_MUSTINLINE Eurydice_array_u8x2
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_array_u8x2
 libcrux_ml_kem_vector_portable_serialize_serialize_1(Eurydice_arr_d6 v)
 {
   uint8_t
@@ -21886,25 +21886,25 @@ libcrux_ml_kem_vector_portable_serialize_serialize_1(Eurydice_arr_d6 v)
     | (uint32_t)libcrux_secrets_int_as_u8_f5(v.data[13U]) << 5U)
     | (uint32_t)libcrux_secrets_int_as_u8_f5(v.data[14U]) << 6U)
     | (uint32_t)libcrux_secrets_int_as_u8_f5(v.data[15U]) << 7U;
-  return (KRML_CLITERAL(Eurydice_array_u8x2){ .data = { result0, result1 } });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(Eurydice_array_u8x2){ .data = { result0, result1 } });
 }
 
-static inline Eurydice_array_u8x2 libcrux_ml_kem_vector_portable_serialize_1(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_array_u8x2 libcrux_ml_kem_vector_portable_serialize_1(Eurydice_arr_d6 a)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_declassify_d8_75(libcrux_ml_kem_vector_portable_serialize_serialize_1(a));
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_array_u8x2
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_array_u8x2
 libcrux_ml_kem_vector_portable_serialize_1_b8(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_serialize_1(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_serialize_1(a);
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_serialize_deserialize_1(Eurydice_borrow_slice_u8 v)
 {
   int16_t result0 = libcrux_secrets_int_as_i16_59((uint32_t)v.ptr[0U] & 1U);
@@ -21923,7 +21923,7 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_1(Eurydice_borrow_slice_u8 
   int16_t result13 = libcrux_secrets_int_as_i16_59((uint32_t)v.ptr[1U] >> 5U & 1U);
   int16_t result14 = libcrux_secrets_int_as_i16_59((uint32_t)v.ptr[1U] >> 6U & 1U);
   int16_t result15 = libcrux_secrets_int_as_i16_59((uint32_t)v.ptr[1U] >> 7U & 1U);
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_arr_d6){
         .data = {
@@ -21934,23 +21934,23 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_1(Eurydice_borrow_slice_u8 
     );
 }
 
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_deserialize_1(Eurydice_borrow_slice_u8 a)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_vector_portable_serialize_deserialize_1(libcrux_secrets_int_classify_public_classify_ref_6d_90(a));
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_deserialize_1_b8(Eurydice_borrow_slice_u8 a)
 {
-  return libcrux_ml_kem_vector_portable_deserialize_1(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_deserialize_1(a);
 }
 
-static KRML_MUSTINLINE uint8_t_x4
+ସ୍ଥିର KRML_MUSTINLINE uint8_t_x4
 libcrux_ml_kem_vector_portable_serialize_serialize_4_int(Eurydice_borrow_slice_i16 v)
 {
   uint8_t
@@ -21969,11 +21969,11 @@ libcrux_ml_kem_vector_portable_serialize_serialize_4_int(Eurydice_borrow_slice_i
   result3 =
     (uint32_t)libcrux_secrets_int_as_u8_f5(v.ptr[7U]) << 4U |
       (uint32_t)libcrux_secrets_int_as_u8_f5(v.ptr[6U]);
-  return
+  ଫେରନ୍ତୁ
     (KRML_CLITERAL(uint8_t_x4){ .fst = result0, .snd = result1, .thd = result2, .f3 = result3 });
 }
 
-static KRML_MUSTINLINE Eurydice_array_u8x8
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_array_u8x8
 libcrux_ml_kem_vector_portable_serialize_serialize_4(Eurydice_arr_d6 v)
 {
   uint8_t_x4
@@ -21984,7 +21984,7 @@ libcrux_ml_kem_vector_portable_serialize_serialize_4(Eurydice_arr_d6 v)
   result4_7 =
     libcrux_ml_kem_vector_portable_serialize_serialize_4_int(Eurydice_array_to_subslice_shared_e7(&v,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)8U, .end = (size_t)16U })));
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_array_u8x8){
         .data = {
@@ -21995,22 +21995,22 @@ libcrux_ml_kem_vector_portable_serialize_serialize_4(Eurydice_arr_d6 v)
     );
 }
 
-static inline Eurydice_array_u8x8 libcrux_ml_kem_vector_portable_serialize_4(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_array_u8x8 libcrux_ml_kem_vector_portable_serialize_4(Eurydice_arr_d6 a)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_declassify_d8_52(libcrux_ml_kem_vector_portable_serialize_serialize_4(a));
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_array_u8x8
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_array_u8x8
 libcrux_ml_kem_vector_portable_serialize_4_b8(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_serialize_4(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_serialize_4(a);
 }
 
-static KRML_MUSTINLINE int16_t_x8
+ସ୍ଥିର KRML_MUSTINLINE int16_t_x8
 libcrux_ml_kem_vector_portable_serialize_deserialize_4_int(Eurydice_borrow_slice_u8 bytes)
 {
   int16_t v0 = libcrux_secrets_int_as_i16_59((uint32_t)bytes.ptr[0U] & 15U);
@@ -22021,7 +22021,7 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_4_int(Eurydice_borrow_slice
   int16_t v5 = libcrux_secrets_int_as_i16_59((uint32_t)bytes.ptr[2U] >> 4U & 15U);
   int16_t v6 = libcrux_secrets_int_as_i16_59((uint32_t)bytes.ptr[3U] & 15U);
   int16_t v7 = libcrux_secrets_int_as_i16_59((uint32_t)bytes.ptr[3U] >> 4U & 15U);
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(int16_t_x8){
         .fst = v0,
@@ -22036,7 +22036,7 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_4_int(Eurydice_borrow_slice
     );
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_serialize_deserialize_4(Eurydice_borrow_slice_u8 bytes)
 {
   int16_t_x8
@@ -22047,7 +22047,7 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_4(Eurydice_borrow_slice_u8 
   v8_15 =
     libcrux_ml_kem_vector_portable_serialize_deserialize_4_int(Eurydice_slice_subslice_shared_c8(bytes,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)4U, .end = (size_t)8U })));
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_arr_d6){
         .data = {
@@ -22058,23 +22058,23 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_4(Eurydice_borrow_slice_u8 
     );
 }
 
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_deserialize_4(Eurydice_borrow_slice_u8 a)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_vector_portable_serialize_deserialize_4(libcrux_secrets_int_classify_public_classify_ref_6d_90(a));
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_deserialize_4_b8(Eurydice_borrow_slice_u8 a)
 {
-  return libcrux_ml_kem_vector_portable_deserialize_4(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_deserialize_4(a);
 }
 
-static KRML_MUSTINLINE uint8_t_x5
+ସ୍ଥିର KRML_MUSTINLINE uint8_t_x5
 libcrux_ml_kem_vector_portable_serialize_serialize_10_int(Eurydice_borrow_slice_i16 v)
 {
   uint8_t r0 = libcrux_secrets_int_as_u8_f5(v.ptr[0U] & 255);
@@ -22091,10 +22091,10 @@ libcrux_ml_kem_vector_portable_serialize_serialize_10_int(Eurydice_borrow_slice_
     (uint32_t)libcrux_secrets_int_as_u8_f5(v.ptr[3U] & 3) << 6U |
       (uint32_t)libcrux_secrets_int_as_u8_f5(v.ptr[2U] >> 4U & 63);
   uint8_t r4 = libcrux_secrets_int_as_u8_f5(v.ptr[3U] >> 2U & 255);
-  return (KRML_CLITERAL(uint8_t_x5){ .fst = r0, .snd = r1, .thd = r2, .f3 = r3, .f4 = r4 });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(uint8_t_x5){ .fst = r0, .snd = r1, .thd = r2, .f3 = r3, .f4 = r4 });
 }
 
-static KRML_MUSTINLINE Eurydice_arr_fc
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_fc
 libcrux_ml_kem_vector_portable_serialize_serialize_10(Eurydice_arr_d6 v)
 {
   uint8_t_x5
@@ -22113,7 +22113,7 @@ libcrux_ml_kem_vector_portable_serialize_serialize_10(Eurydice_arr_d6 v)
   r15_19 =
     libcrux_ml_kem_vector_portable_serialize_serialize_10_int(Eurydice_array_to_subslice_shared_e7(&v,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)12U, .end = (size_t)16U })));
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_arr_fc){
         .data = {
@@ -22125,21 +22125,21 @@ libcrux_ml_kem_vector_portable_serialize_serialize_10(Eurydice_arr_d6 v)
     );
 }
 
-static inline Eurydice_arr_fc libcrux_ml_kem_vector_portable_serialize_10(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_fc libcrux_ml_kem_vector_portable_serialize_10(Eurydice_arr_d6 a)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_declassify_d8_2b(libcrux_ml_kem_vector_portable_serialize_serialize_10(a));
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_fc libcrux_ml_kem_vector_portable_serialize_10_b8(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_fc libcrux_ml_kem_vector_portable_serialize_10_b8(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_serialize_10(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_serialize_10(a);
 }
 
-static KRML_MUSTINLINE int16_t_x8
+ସ୍ଥିର KRML_MUSTINLINE int16_t_x8
 libcrux_ml_kem_vector_portable_serialize_deserialize_10_int(Eurydice_borrow_slice_u8 bytes)
 {
   int16_t
@@ -22188,7 +22188,7 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_10_int(Eurydice_borrow_slic
     libcrux_secrets_int_as_i16_f5((int16_t)((uint32_t)libcrux_secrets_int_as_i16_59(bytes.ptr[9U])
       << 2U)
       | libcrux_secrets_int_as_i16_59(bytes.ptr[8U]) >> 6U);
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(int16_t_x8){
         .fst = r0,
@@ -22203,7 +22203,7 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_10_int(Eurydice_borrow_slic
     );
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_serialize_deserialize_10(Eurydice_borrow_slice_u8 bytes)
 {
   int16_t_x8
@@ -22214,7 +22214,7 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_10(Eurydice_borrow_slice_u8
   v8_15 =
     libcrux_ml_kem_vector_portable_serialize_deserialize_10_int(Eurydice_slice_subslice_shared_c8(bytes,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)10U, .end = (size_t)20U })));
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_arr_d6){
         .data = {
@@ -22225,23 +22225,23 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_10(Eurydice_borrow_slice_u8
     );
 }
 
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_deserialize_10(Eurydice_borrow_slice_u8 a)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_vector_portable_serialize_deserialize_10(libcrux_secrets_int_classify_public_classify_ref_6d_90(a));
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_deserialize_10_b8(Eurydice_borrow_slice_u8 a)
 {
-  return libcrux_ml_kem_vector_portable_deserialize_10(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_deserialize_10(a);
 }
 
-static KRML_MUSTINLINE uint8_t_x3
+ସ୍ଥିର KRML_MUSTINLINE uint8_t_x3
 libcrux_ml_kem_vector_portable_serialize_serialize_12_int(Eurydice_borrow_slice_i16 v)
 {
   uint8_t r0 = libcrux_secrets_int_as_u8_f5(v.ptr[0U] & 255);
@@ -22249,10 +22249,10 @@ libcrux_ml_kem_vector_portable_serialize_serialize_12_int(Eurydice_borrow_slice_
   r1 =
     libcrux_secrets_int_as_u8_f5(v.ptr[0U] >> 8U | (int16_t)((uint32_t)(v.ptr[1U] & 15) << 4U));
   uint8_t r2 = libcrux_secrets_int_as_u8_f5(v.ptr[1U] >> 4U & 255);
-  return (KRML_CLITERAL(uint8_t_x3){ .fst = r0, .snd = r1, .thd = r2 });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(uint8_t_x3){ .fst = r0, .snd = r1, .thd = r2 });
 }
 
-static KRML_MUSTINLINE Eurydice_arr_94
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_94
 libcrux_ml_kem_vector_portable_serialize_serialize_12(Eurydice_arr_d6 v)
 {
   uint8_t_x3
@@ -22287,7 +22287,7 @@ libcrux_ml_kem_vector_portable_serialize_serialize_12(Eurydice_arr_d6 v)
   r21_23 =
     libcrux_ml_kem_vector_portable_serialize_serialize_12_int(Eurydice_array_to_subslice_shared_e7(&v,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)14U, .end = (size_t)16U })));
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_arr_94){
         .data = {
@@ -22300,21 +22300,21 @@ libcrux_ml_kem_vector_portable_serialize_serialize_12(Eurydice_arr_d6 v)
     );
 }
 
-static inline Eurydice_arr_94 libcrux_ml_kem_vector_portable_serialize_12(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_94 libcrux_ml_kem_vector_portable_serialize_12(Eurydice_arr_d6 a)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_secrets_int_public_integers_declassify_d8_40(libcrux_ml_kem_vector_portable_serialize_serialize_12(a));
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_94 libcrux_ml_kem_vector_portable_serialize_12_b8(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_94 libcrux_ml_kem_vector_portable_serialize_12_b8(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_serialize_12(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_serialize_12(a);
 }
 
-static KRML_MUSTINLINE int16_t_x2
+ସ୍ଥିର KRML_MUSTINLINE int16_t_x2
 libcrux_ml_kem_vector_portable_serialize_deserialize_12_int(Eurydice_borrow_slice_u8 bytes)
 {
   int16_t byte0 = libcrux_secrets_int_as_i16_59(bytes.ptr[0U]);
@@ -22322,10 +22322,10 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_12_int(Eurydice_borrow_slic
   int16_t byte2 = libcrux_secrets_int_as_i16_59(bytes.ptr[2U]);
   int16_t r0 = (int16_t)((uint32_t)(byte1 & 15) << 8U) | (byte0 & 255);
   int16_t r1 = (int16_t)((uint32_t)byte2 << 4U) | (byte1 >> 4U & 15);
-  return (KRML_CLITERAL(int16_t_x2){ .fst = r0, .snd = r1 });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(int16_t_x2){ .fst = r0, .snd = r1 });
 }
 
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_serialize_deserialize_12(Eurydice_borrow_slice_u8 bytes)
 {
   int16_t_x2
@@ -22360,7 +22360,7 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_12(Eurydice_borrow_slice_u8
   v14_15 =
     libcrux_ml_kem_vector_portable_serialize_deserialize_12_int(Eurydice_slice_subslice_shared_c8(bytes,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)21U, .end = (size_t)24U })));
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(Eurydice_arr_d6){
         .data = {
@@ -22371,30 +22371,30 @@ libcrux_ml_kem_vector_portable_serialize_deserialize_12(Eurydice_borrow_slice_u8
     );
 }
 
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_deserialize_12(Eurydice_borrow_slice_u8 a)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_vector_portable_serialize_deserialize_12(libcrux_secrets_int_classify_public_classify_ref_6d_90(a));
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_deserialize_12_b8(Eurydice_borrow_slice_u8 a)
 {
-  return libcrux_ml_kem_vector_portable_deserialize_12(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_deserialize_12(a);
 }
 
-static KRML_MUSTINLINE size_t
+ସ୍ଥିର KRML_MUSTINLINE size_t
 libcrux_ml_kem_vector_portable_sampling_rej_sample(
   Eurydice_borrow_slice_u8 a,
   Eurydice_mut_borrow_slice_i16 result
 )
 {
   size_t sampled = (size_t)0U;
-  for (size_t i = (size_t)0U; i < a.meta / (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < a.meta / (size_t)3U; i++)
   {
     size_t i0 = i;
     int16_t b1 = (int16_t)(uint32_t)a.ptr[i0 * (size_t)3U + (size_t)0U];
@@ -22402,36 +22402,36 @@ libcrux_ml_kem_vector_portable_sampling_rej_sample(
     int16_t b3 = (int16_t)(uint32_t)a.ptr[i0 * (size_t)3U + (size_t)2U];
     int16_t d1 = (int16_t)((uint32_t)(b2 & 15) << 8U) | b1;
     int16_t d2 = (int16_t)((uint32_t)b3 << 4U) | b2 >> 4U;
-    if (d1 < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_MODULUS)
+    ଯଦି (d1 < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_MODULUS)
     {
-      if (sampled < (size_t)16U)
+      ଯଦି (sampled < (size_t)16U)
       {
         result.ptr[sampled] = d1;
         sampled++;
       }
     }
-    if (d2 < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_MODULUS)
+    ଯଦି (d2 < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_MODULUS)
     {
-      if (sampled < (size_t)16U)
+      ଯଦି (sampled < (size_t)16U)
       {
         result.ptr[sampled] = d2;
         sampled++;
       }
     }
   }
-  return sampled;
+  ଫେରନ୍ତୁ sampled;
 }
 
 /**
 This function found in impl {libcrux_ml_kem::vector::traits::Operations for libcrux_ml_kem::vector::portable::vector_type::PortableVector}
 */
-static inline size_t
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ size_t
 libcrux_ml_kem_vector_portable_rej_sample_b8(
   Eurydice_borrow_slice_u8 a,
   Eurydice_mut_borrow_slice_i16 out
 )
 {
-  return libcrux_ml_kem_vector_portable_sampling_rej_sample(a, out);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_sampling_rej_sample(a, out);
 }
 
 #define LIBCRUX_ML_KEM_MLKEM768_VECTOR_U_COMPRESSION_FACTOR ((size_t)10U)
@@ -22450,9 +22450,9 @@ libcrux_ml_kem_vector_portable_rej_sample_b8(
 
 #define LIBCRUX_ML_KEM_MLKEM768_T_AS_NTT_ENCODED_SIZE (LIBCRUX_ML_KEM_MLKEM768_RANK * LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT * LIBCRUX_ML_KEM_CONSTANTS_BITS_PER_COEFFICIENT / (size_t)8U)
 
-#define LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_PUBLIC_KEY_SIZE (LIBCRUX_ML_KEM_MLKEM768_T_AS_NTT_ENCODED_SIZE + (size_t)32U)
+#define LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_PUBLIC_ଚାବି_SIZE (LIBCRUX_ML_KEM_MLKEM768_T_AS_NTT_ENCODED_SIZE + (size_t)32U)
 
-#define LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_SECRET_KEY_SIZE (LIBCRUX_ML_KEM_MLKEM768_RANK * LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT * LIBCRUX_ML_KEM_CONSTANTS_BITS_PER_COEFFICIENT / (size_t)8U)
+#define LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_SECRET_ଚାବି_SIZE (LIBCRUX_ML_KEM_MLKEM768_RANK * LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT * LIBCRUX_ML_KEM_CONSTANTS_BITS_PER_COEFFICIENT / (size_t)8U)
 
 #define LIBCRUX_ML_KEM_MLKEM768_ETA1 ((size_t)2U)
 
@@ -22462,15 +22462,15 @@ libcrux_ml_kem_vector_portable_rej_sample_b8(
 
 #define LIBCRUX_ML_KEM_MLKEM768_ETA2_RANDOMNESS_SIZE (LIBCRUX_ML_KEM_MLKEM768_ETA2 * (size_t)64U)
 
-#define LIBCRUX_ML_KEM_MLKEM768_IMPLICIT_REJECTION_HASH_INPUT_SIZE (LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE + LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE)
+#define LIBCRUX_ML_KEM_MLKEM768_IMPLICIT_REJECTION_HASH_ନିବେଶ_SIZE (LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE + LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_CIPHERTEXT_SIZE)
 
-typedef Eurydice_arr_7d libcrux_ml_kem_mlkem768_MlKem768PrivateKey;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_7d libcrux_ml_kem_mlkem768_Ml_Kem768_Private_ଚାବି;
 
-typedef Eurydice_arr_5f libcrux_ml_kem_mlkem768_MlKem768PublicKey;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_5f libcrux_ml_kem_mlkem768_Ml_Kem768_Public_ଚାବି;
 
 #define LIBCRUX_ML_KEM_MLKEM768_RANKED_BYTES_PER_RING_ELEMENT (LIBCRUX_ML_KEM_MLKEM768_RANK * LIBCRUX_ML_KEM_CONSTANTS_BITS_PER_RING_ELEMENT / (size_t)8U)
 
-#define LIBCRUX_ML_KEM_MLKEM768_SECRET_KEY_SIZE (LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_SECRET_KEY_SIZE + LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_PUBLIC_KEY_SIZE + LIBCRUX_ML_KEM_CONSTANTS_H_DIGEST_SIZE + LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE)
+#define LIBCRUX_ML_KEM_MLKEM768_SECRET_ଚାବି_SIZE (LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_SECRET_ଚାବି_SIZE + LIBCRUX_ML_KEM_MLKEM768_CPA_PKE_PUBLIC_ଚାବି_SIZE + LIBCRUX_ML_KEM_CONSTANTS_H_DIGEST_SIZE + LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE)
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -22478,7 +22478,7 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - $16size_t
 */
-typedef struct Eurydice_arr_9e_s { Eurydice_arr_d6 data[16U]; } Eurydice_arr_9e;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_9e_s { Eurydice_arr_d6 data[16U]; } Eurydice_arr_9e;
 
 /**
 A monomorphic instance of Eurydice.arr
@@ -22486,7 +22486,7 @@ with types libcrux_ml_kem_polynomial_PolynomialRingElement_1d
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_bb0_s { Eurydice_arr_9e data[3U]; } Eurydice_arr_bb0;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_bb0_s { Eurydice_arr_9e data[3U]; } Eurydice_arr_bb0;
 
 /**
 This function found in impl {libcrux_ml_kem::polynomial::PolynomialRingElement<Vector>[TraitClause@0, TraitClause@1]}
@@ -22497,16 +22497,16 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static inline Eurydice_arr_9e libcrux_ml_kem_polynomial_ZERO_d6_ea(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e libcrux_ml_kem_polynomial_ZERO_d6_ea(ଶୂନ୍ୟ)
 {
   Eurydice_arr_9e lit;
   Eurydice_arr_d6 repeat_expression[16U];
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     repeat_expression[i] = libcrux_ml_kem_vector_portable_ZERO_b8();
   }
-  memcpy(lit.data, repeat_expression, (size_t)16U * sizeof (Eurydice_arr_d6));
-  return lit;
+  memcpy(lit.data, repeat_expression, (size_t)16U * ଆକାର (Eurydice_arr_d6));
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -22522,10 +22522,10 @@ with const generics
 - U_COMPRESSION_FACTOR= 10
 - V_COMPRESSION_FACTOR= 4
 */
-static inline Eurydice_arr_9e
-libcrux_ml_kem_ind_cpa_decrypt_call_mut_0b_01(void **_, size_t tupled_args)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
+libcrux_ml_kem_ind_cpa_decrypt_call_mut_0b_01(ଶୂନ୍ୟ **_, size_t tupled_args)
 {
-  return libcrux_ml_kem_polynomial_ZERO_d6_ea();
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_ZERO_d6_ea();
 }
 
 /**
@@ -22534,13 +22534,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_serialize_deserialize_to_uncompressed_ring_element_ea(
   Eurydice_borrow_slice_u8 serialized
 )
 {
   Eurydice_arr_9e re = libcrux_ml_kem_polynomial_ZERO_d6_ea();
-  for (size_t i = (size_t)0U; i < serialized.meta / (size_t)24U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < serialized.meta / (size_t)24U; i++)
   {
     size_t i0 = i;
     Eurydice_borrow_slice_u8
@@ -22555,7 +22555,7 @@ libcrux_ml_kem_serialize_deserialize_to_uncompressed_ring_element_ea(
     Eurydice_arr_d6 uu____0 = libcrux_ml_kem_vector_portable_deserialize_12_b8(bytes);
     re.data[i0] = uu____0;
   }
-  return re;
+  ଫେରନ୍ତୁ re;
 }
 
 /**
@@ -22567,18 +22567,18 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ind_cpa_deserialize_vector_68(
-  Eurydice_borrow_slice_u8 secret_key,
+  Eurydice_borrow_slice_u8 secret_ଚାବି,
   Eurydice_arr_bb0 *secret_as_ntt
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     Eurydice_arr_9e
     uu____0 =
-      libcrux_ml_kem_serialize_deserialize_to_uncompressed_ring_element_ea(Eurydice_slice_subslice_shared_c8(secret_key,
+      libcrux_ml_kem_serialize_deserialize_to_uncompressed_ring_element_ea(Eurydice_slice_subslice_shared_c8(secret_ଚାବି,
           (
             KRML_CLITERAL(core_ops_range_Range_87){
               .start = i0 * LIBCRUX_ML_KEM_CONSTANTS_BYTES_PER_RING_ELEMENT,
@@ -22600,13 +22600,13 @@ with const generics
 - CIPHERTEXT_SIZE= 1088
 - U_COMPRESSION_FACTOR= 10
 */
-static inline Eurydice_arr_9e
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
 libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_call_mut_35_30(
-  void **_,
+  ଶୂନ୍ୟ **_,
   size_t tupled_args
 )
 {
-  return libcrux_ml_kem_polynomial_ZERO_d6_ea();
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_ZERO_d6_ea();
 }
 
 /**
@@ -22614,10 +22614,10 @@ A monomorphic instance of libcrux_ml_kem.vector.portable.compress.decompress_cip
 with const generics
 - COEFFICIENT_BITS= 10
 */
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_compress_decompress_ciphertext_coefficient_ef(Eurydice_arr_d6 a)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     int32_t
@@ -22628,7 +22628,7 @@ libcrux_ml_kem_vector_portable_compress_decompress_ciphertext_coefficient_ef(Eur
     decompressed >>= (uint32_t)(10 + 1);
     a.data[i0] = libcrux_secrets_int_as_i16_36(decompressed);
   }
-  return a;
+  ଫେରନ୍ତୁ a;
 }
 
 /**
@@ -22639,10 +22639,10 @@ A monomorphic instance of libcrux_ml_kem.vector.portable.decompress_ciphertext_c
 with const generics
 - COEFFICIENT_BITS= 10
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_decompress_ciphertext_coefficient_b8_ef(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_compress_decompress_ciphertext_coefficient_ef(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_compress_decompress_ciphertext_coefficient_ef(a);
 }
 
 /**
@@ -22651,11 +22651,11 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_serialize_deserialize_then_decompress_10_ea(Eurydice_borrow_slice_u8 serialized)
 {
   Eurydice_arr_9e re = libcrux_ml_kem_polynomial_ZERO_d6_ea();
-  for (size_t i = (size_t)0U; i < serialized.meta / (size_t)20U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < serialized.meta / (size_t)20U; i++)
   {
     size_t i0 = i;
     Eurydice_borrow_slice_u8
@@ -22672,7 +22672,7 @@ libcrux_ml_kem_serialize_deserialize_then_decompress_10_ea(Eurydice_borrow_slice
     uu____0 = libcrux_ml_kem_vector_portable_decompress_ciphertext_coefficient_b8_ef(coefficient);
     re.data[i0] = uu____0;
   }
-  return re;
+  ଫେରନ୍ତୁ re;
 }
 
 /**
@@ -22681,15 +22681,15 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - COMPRESSION_FACTOR= 10
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_u_f7(
   Eurydice_borrow_slice_u8 serialized
 )
 {
-  return libcrux_ml_kem_serialize_deserialize_then_decompress_10_ea(serialized);
+  ଫେରନ୍ତୁ libcrux_ml_kem_serialize_deserialize_then_decompress_10_ea(serialized);
 }
 
-typedef struct libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2_s
 {
   Eurydice_arr_d6 fst;
   Eurydice_arr_d6 snd;
@@ -22702,7 +22702,7 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2
 libcrux_ml_kem_ntt_ntt_layer_int_vec_step_ea(
   Eurydice_arr_d6 a,
   Eurydice_arr_d6 b,
@@ -22713,7 +22713,7 @@ libcrux_ml_kem_ntt_ntt_layer_int_vec_step_ea(
   t = libcrux_ml_kem_vector_portable_montgomery_multiply_by_constant_b8(b, zeta_r);
   b = libcrux_ml_kem_vector_portable_sub_b8(a, &t);
   a = libcrux_ml_kem_vector_portable_add_b8(a, &t);
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2){
         .fst = a,
@@ -22728,7 +22728,7 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ntt_ntt_at_layer_4_plus_ea(
   size_t *zeta_i,
   Eurydice_arr_9e *re,
@@ -22737,14 +22737,14 @@ libcrux_ml_kem_ntt_ntt_at_layer_4_plus_ea(
 )
 {
   size_t step = (size_t)1U << (uint32_t)layer;
-  for (size_t i0 = (size_t)0U; i0 < (size_t)128U >> (uint32_t)layer; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < (size_t)128U >> (uint32_t)layer; i0++)
   {
     size_t round = i0;
     zeta_i[0U]++;
     size_t offset = round * step * (size_t)2U;
     size_t offset_vec = offset / (size_t)16U;
     size_t step_vec = step / (size_t)16U;
-    for (size_t i = offset_vec; i < offset_vec + step_vec; i++)
+    ପାଇଁ (size_t i = offset_vec; i < offset_vec + step_vec; i++)
     {
       size_t j = i;
       libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2
@@ -22766,14 +22766,14 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ntt_ntt_at_layer_3_ea(
   size_t *zeta_i,
   Eurydice_arr_9e *re,
   size_t _initial_coefficient_bound
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     size_t round = i;
     zeta_i[0U]++;
@@ -22791,14 +22791,14 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ntt_ntt_at_layer_2_ea(
   size_t *zeta_i,
   Eurydice_arr_9e *re,
   size_t _initial_coefficient_bound
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     size_t round = i;
     zeta_i[0U]++;
@@ -22816,14 +22816,14 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ntt_ntt_at_layer_1_ea(
   size_t *zeta_i,
   Eurydice_arr_9e *re,
   size_t _initial_coefficient_bound
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     size_t round = i;
     zeta_i[0U]++;
@@ -22843,10 +22843,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_polynomial_poly_barrett_reduce_ea(Eurydice_arr_9e *myself)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6 uu____0 = libcrux_ml_kem_vector_portable_barrett_reduce_b8(myself->data[i0]);
@@ -22863,7 +22863,7 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_polynomial_poly_barrett_reduce_d6_ea(Eurydice_arr_9e *self)
 {
   libcrux_ml_kem_polynomial_poly_barrett_reduce_ea(self);
@@ -22875,7 +22875,7 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - VECTOR_U_COMPRESSION_FACTOR= 10
 */
-static KRML_MUSTINLINE void libcrux_ml_kem_ntt_ntt_vector_u_f7(Eurydice_arr_9e *re)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ libcrux_ml_kem_ntt_ntt_vector_u_f7(Eurydice_arr_9e *re)
 {
   size_t zeta_i = (size_t)0U;
   libcrux_ml_kem_ntt_ntt_at_layer_4_plus_ea(&zeta_i, re, (size_t)7U, (size_t)3328U);
@@ -22900,20 +22900,20 @@ with const generics
 - CIPHERTEXT_SIZE= 1088
 - U_COMPRESSION_FACTOR= 10
 */
-static KRML_MUSTINLINE Eurydice_arr_bb0
-libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_30(const Eurydice_arr_2b *ciphertext)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_bb0
+libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_30(ଅଚଳ Eurydice_arr_2b *ciphertext)
 {
   Eurydice_arr_bb0 arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_struct.data[i] =
       libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_call_mut_35_30(&lvalue,
         i);
   }
   Eurydice_arr_bb0 u_as_ntt = arr_struct;
-  for
+  ପାଇଁ
   (size_t
     i = (size_t)0U;
     i <
@@ -22938,7 +22938,7 @@ libcrux_ml_kem_ind_cpa_deserialize_then_decompress_u_30(const Eurydice_arr_2b *c
       libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_u_f7(u_bytes);
     libcrux_ml_kem_ntt_ntt_vector_u_f7(&u_as_ntt.data[i0]);
   }
-  return u_as_ntt;
+  ଫେରନ୍ତୁ u_as_ntt;
 }
 
 /**
@@ -22946,10 +22946,10 @@ A monomorphic instance of libcrux_ml_kem.vector.portable.compress.decompress_cip
 with const generics
 - COEFFICIENT_BITS= 4
 */
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_compress_decompress_ciphertext_coefficient_d1(Eurydice_arr_d6 a)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     int32_t
@@ -22960,7 +22960,7 @@ libcrux_ml_kem_vector_portable_compress_decompress_ciphertext_coefficient_d1(Eur
     decompressed >>= (uint32_t)(4 + 1);
     a.data[i0] = libcrux_secrets_int_as_i16_36(decompressed);
   }
-  return a;
+  ଫେରନ୍ତୁ a;
 }
 
 /**
@@ -22971,10 +22971,10 @@ A monomorphic instance of libcrux_ml_kem.vector.portable.decompress_ciphertext_c
 with const generics
 - COEFFICIENT_BITS= 4
 */
-static inline Eurydice_arr_d6
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_decompress_ciphertext_coefficient_b8_d1(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_compress_decompress_ciphertext_coefficient_d1(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_compress_decompress_ciphertext_coefficient_d1(a);
 }
 
 /**
@@ -22983,11 +22983,11 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_serialize_deserialize_then_decompress_4_ea(Eurydice_borrow_slice_u8 serialized)
 {
   Eurydice_arr_9e re = libcrux_ml_kem_polynomial_ZERO_d6_ea();
-  for (size_t i = (size_t)0U; i < serialized.meta / (size_t)8U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < serialized.meta / (size_t)8U; i++)
   {
     size_t i0 = i;
     Eurydice_borrow_slice_u8
@@ -23004,7 +23004,7 @@ libcrux_ml_kem_serialize_deserialize_then_decompress_4_ea(Eurydice_borrow_slice_
     uu____0 = libcrux_ml_kem_vector_portable_decompress_ciphertext_coefficient_b8_d1(coefficient);
     re.data[i0] = uu____0;
   }
-  return re;
+  ଫେରନ୍ତୁ re;
 }
 
 /**
@@ -23014,12 +23014,12 @@ with const generics
 - K= 3
 - COMPRESSION_FACTOR= 4
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_v_b6(
   Eurydice_borrow_slice_u8 serialized
 )
 {
-  return libcrux_ml_kem_serialize_deserialize_then_decompress_4_ea(serialized);
+  ଫେରନ୍ତୁ libcrux_ml_kem_serialize_deserialize_then_decompress_4_ea(serialized);
 }
 
 /**
@@ -23028,16 +23028,16 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static inline Eurydice_arr_9e libcrux_ml_kem_polynomial_ZERO_ea(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e libcrux_ml_kem_polynomial_ZERO_ea(ଶୂନ୍ୟ)
 {
   Eurydice_arr_9e lit;
   Eurydice_arr_d6 repeat_expression[16U];
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     repeat_expression[i] = libcrux_ml_kem_vector_portable_ZERO_b8();
   }
-  memcpy(lit.data, repeat_expression, (size_t)16U * sizeof (Eurydice_arr_d6));
-  return lit;
+  memcpy(lit.data, repeat_expression, (size_t)16U * ଆକାର (Eurydice_arr_d6));
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -23073,14 +23073,14 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_polynomial_ntt_multiply_ea(
-  const Eurydice_arr_9e *myself,
-  const Eurydice_arr_9e *rhs
+  ଅଚଳ Eurydice_arr_9e *myself,
+  ଅଚଳ Eurydice_arr_9e *rhs
 )
 {
   Eurydice_arr_9e out = libcrux_ml_kem_polynomial_ZERO_ea();
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -23093,7 +23093,7 @@ libcrux_ml_kem_polynomial_ntt_multiply_ea(
         libcrux_ml_kem_polynomial_zeta((size_t)64U + (size_t)4U * i0 + (size_t)3U));
     out.data[i0] = uu____0;
   }
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -23105,13 +23105,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_polynomial_ntt_multiply_d6_ea(
-  const Eurydice_arr_9e *self,
-  const Eurydice_arr_9e *rhs
+  ଅଚଳ Eurydice_arr_9e *self,
+  ଅଚଳ Eurydice_arr_9e *rhs
 )
 {
-  return libcrux_ml_kem_polynomial_ntt_multiply_ea(self, rhs);
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_ntt_multiply_ea(self, rhs);
 }
 
 /**
@@ -23124,13 +23124,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_polynomial_add_to_ring_element_68(
   Eurydice_arr_9e *myself,
-  const Eurydice_arr_9e *rhs
+  ଅଚଳ Eurydice_arr_9e *rhs
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -23152,10 +23152,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_polynomial_add_to_ring_element_d6_68(
   Eurydice_arr_9e *self,
-  const Eurydice_arr_9e *rhs
+  ଅଚଳ Eurydice_arr_9e *rhs
 )
 {
   libcrux_ml_kem_polynomial_add_to_ring_element_68(self, rhs);
@@ -23167,10 +23167,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_1_ea(size_t *zeta_i, Eurydice_arr_9e *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     size_t round = i;
     zeta_i[0U]--;
@@ -23190,10 +23190,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_2_ea(size_t *zeta_i, Eurydice_arr_9e *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     size_t round = i;
     zeta_i[0U]--;
@@ -23211,10 +23211,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_3_ea(size_t *zeta_i, Eurydice_arr_9e *re)
 {
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     size_t round = i;
     zeta_i[0U]--;
@@ -23232,7 +23232,7 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2
 libcrux_ml_kem_invert_ntt_inv_ntt_layer_int_vec_step_reduce_ea(
   Eurydice_arr_d6 a,
   Eurydice_arr_d6 b,
@@ -23243,7 +23243,7 @@ libcrux_ml_kem_invert_ntt_inv_ntt_layer_int_vec_step_reduce_ea(
   a =
     libcrux_ml_kem_vector_portable_barrett_reduce_b8(libcrux_ml_kem_vector_portable_add_b8(a, &b));
   b = libcrux_ml_kem_vector_portable_montgomery_multiply_by_constant_b8(a_minus_b, zeta_r);
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2){
         .fst = a,
@@ -23258,7 +23258,7 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_4_plus_ea(
   size_t *zeta_i,
   Eurydice_arr_9e *re,
@@ -23266,14 +23266,14 @@ libcrux_ml_kem_invert_ntt_invert_ntt_at_layer_4_plus_ea(
 )
 {
   size_t step = (size_t)1U << (uint32_t)layer;
-  for (size_t i0 = (size_t)0U; i0 < (size_t)128U >> (uint32_t)layer; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < (size_t)128U >> (uint32_t)layer; i0++)
   {
     size_t round = i0;
     zeta_i[0U]--;
     size_t offset = round * step * (size_t)2U;
     size_t offset_vec = offset / LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR;
     size_t step_vec = step / LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR;
-    for (size_t i = offset_vec; i < offset_vec + step_vec; i++)
+    ପାଇଁ (size_t i = offset_vec; i < offset_vec + step_vec; i++)
     {
       size_t j = i;
       libcrux_ml_kem_vector_portable_vector_type_PortableVector_x2
@@ -23295,7 +23295,7 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_invert_ntt_invert_ntt_montgomery_68(Eurydice_arr_9e *re)
 {
   size_t zeta_i = LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT / (size_t)2U;
@@ -23315,10 +23315,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
-libcrux_ml_kem_polynomial_subtract_reduce_ea(const Eurydice_arr_9e *myself, Eurydice_arr_9e b)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
+libcrux_ml_kem_polynomial_subtract_reduce_ea(ଅଚଳ Eurydice_arr_9e *myself, Eurydice_arr_9e b)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -23330,7 +23330,7 @@ libcrux_ml_kem_polynomial_subtract_reduce_ea(const Eurydice_arr_9e *myself, Eury
     Eurydice_arr_d6 red = libcrux_ml_kem_vector_portable_barrett_reduce_b8(diff);
     b.data[i0] = red;
   }
-  return b;
+  ଫେରନ୍ତୁ b;
 }
 
 /**
@@ -23342,10 +23342,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
-libcrux_ml_kem_polynomial_subtract_reduce_d6_ea(const Eurydice_arr_9e *self, Eurydice_arr_9e b)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
+libcrux_ml_kem_polynomial_subtract_reduce_d6_ea(ଅଚଳ Eurydice_arr_9e *self, Eurydice_arr_9e b)
 {
-  return libcrux_ml_kem_polynomial_subtract_reduce_ea(self, b);
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_subtract_reduce_ea(self, b);
 }
 
 /**
@@ -23360,15 +23360,15 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_matrix_compute_message_68(
-  const Eurydice_arr_9e *v,
-  const Eurydice_arr_bb0 *secret_as_ntt,
-  const Eurydice_arr_bb0 *u_as_ntt
+  ଅଚଳ Eurydice_arr_9e *v,
+  ଅଚଳ Eurydice_arr_bb0 *secret_as_ntt,
+  ଅଚଳ Eurydice_arr_bb0 *u_as_ntt
 )
 {
   Eurydice_arr_9e result = libcrux_ml_kem_polynomial_ZERO_d6_ea();
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     Eurydice_arr_9e
@@ -23378,7 +23378,7 @@ libcrux_ml_kem_matrix_compute_message_68(
     libcrux_ml_kem_polynomial_add_to_ring_element_d6_68(&result, &product);
   }
   libcrux_ml_kem_invert_ntt_invert_ntt_montgomery_68(&result);
-  return libcrux_ml_kem_polynomial_subtract_reduce_d6_ea(v, result);
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_subtract_reduce_d6_ea(v, result);
 }
 
 /**
@@ -23387,10 +23387,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_serialize_to_unsigned_field_modulus_ea(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_to_unsigned_representative_b8(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_to_unsigned_representative_b8(a);
 }
 
 /**
@@ -23399,11 +23399,11 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ec
 libcrux_ml_kem_serialize_compress_then_serialize_message_ea(Eurydice_arr_9e re)
 {
   Eurydice_arr_ec serialized = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -23422,7 +23422,7 @@ libcrux_ml_kem_serialize_compress_then_serialize_message_ea(Eurydice_arr_9e re)
       Eurydice_array_to_slice_shared_82(&bytes),
       uint8_t);
   }
-  return serialized;
+  ଫେରନ୍ତୁ serialized;
 }
 
 /**
@@ -23459,10 +23459,10 @@ with const generics
 - U_COMPRESSION_FACTOR= 10
 - V_COMPRESSION_FACTOR= 4
 */
-static KRML_MUSTINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ec
 libcrux_ml_kem_ind_cpa_decrypt_unpacked_01(
-  const Eurydice_arr_bb0 *secret_key,
-  const Eurydice_arr_2b *ciphertext
+  ଅଚଳ Eurydice_arr_bb0 *secret_ଚାବି,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
   Eurydice_arr_bb0
@@ -23471,8 +23471,8 @@ libcrux_ml_kem_ind_cpa_decrypt_unpacked_01(
   v =
     libcrux_ml_kem_serialize_deserialize_then_decompress_ring_element_v_b6(Eurydice_array_to_subslice_from_shared_5f0(ciphertext,
         (size_t)960U));
-  Eurydice_arr_9e message = libcrux_ml_kem_matrix_compute_message_68(&v, secret_key, &u_as_ntt);
-  return libcrux_ml_kem_serialize_compress_then_serialize_message_ea(message);
+  Eurydice_arr_9e message = libcrux_ml_kem_matrix_compute_message_68(&v, secret_ଚାବି, &u_as_ntt);
+  ଫେରନ୍ତୁ libcrux_ml_kem_serialize_compress_then_serialize_message_ea(message);
 }
 
 /**
@@ -23485,22 +23485,22 @@ with const generics
 - U_COMPRESSION_FACTOR= 10
 - V_COMPRESSION_FACTOR= 4
 */
-static KRML_MUSTINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ec
 libcrux_ml_kem_ind_cpa_decrypt_01(
-  Eurydice_borrow_slice_u8 secret_key,
-  const Eurydice_arr_2b *ciphertext
+  Eurydice_borrow_slice_u8 secret_ଚାବି,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
   Eurydice_arr_bb0 arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_struct.data[i] = libcrux_ml_kem_ind_cpa_decrypt_call_mut_0b_01(&lvalue, i);
   }
-  Eurydice_arr_bb0 secret_key_unpacked = arr_struct;
-  libcrux_ml_kem_ind_cpa_deserialize_vector_68(secret_key, &secret_key_unpacked);
-  return libcrux_ml_kem_ind_cpa_decrypt_unpacked_01(&secret_key_unpacked, ciphertext);
+  Eurydice_arr_bb0 secret_ଚାବି_unpacked = arr_struct;
+  libcrux_ml_kem_ind_cpa_deserialize_vector_68(secret_ଚାବି, &secret_ଚାବି_unpacked);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cpa_decrypt_unpacked_01(&secret_ଚାବି_unpacked, ciphertext);
 }
 
 /**
@@ -23511,10 +23511,10 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.G_4a
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_c7
-libcrux_ml_kem_hash_functions_portable_G_4a_78(Eurydice_borrow_slice_u8 input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_c7
+libcrux_ml_kem_hash_functions_portable_G_4a_78(Eurydice_borrow_slice_u8 ନିବେଶ)
 {
-  return libcrux_ml_kem_hash_functions_portable_G(input);
+  ଫେରନ୍ତୁ libcrux_ml_kem_hash_functions_portable_G(ନିବେଶ);
 }
 
 /**
@@ -23522,12 +23522,12 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.PRF
 with const generics
 - LEN= 32
 */
-static inline Eurydice_arr_ec
-libcrux_ml_kem_hash_functions_portable_PRF_ce(Eurydice_borrow_slice_u8 input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ec
+libcrux_ml_kem_hash_functions_portable_PRF_ce(Eurydice_borrow_slice_u8 ନିବେଶ)
 {
   Eurydice_arr_ec digest = { .data = { 0U } };
-  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_01(&digest), input);
-  return digest;
+  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_01(&digest), ନିବେଶ);
+  ଫେରନ୍ତୁ digest;
 }
 
 /**
@@ -23539,10 +23539,10 @@ with const generics
 - K= 3
 - LEN= 32
 */
-static inline Eurydice_arr_ec
-libcrux_ml_kem_hash_functions_portable_PRF_4a_3b(Eurydice_borrow_slice_u8 input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ec
+libcrux_ml_kem_hash_functions_portable_PRF_4a_3b(Eurydice_borrow_slice_u8 ନିବେଶ)
 {
-  return libcrux_ml_kem_hash_functions_portable_PRF_ce(input);
+  ଫେରନ୍ତୁ libcrux_ml_kem_hash_functions_portable_PRF_ce(ନିବେଶ);
 }
 
 /**
@@ -23551,7 +23551,7 @@ with types Eurydice_arr_bb0
 with const generics
 - $3size_t
 */
-typedef struct Eurydice_arr_c10_s { Eurydice_arr_bb0 data[3U]; } Eurydice_arr_c10;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା Eurydice_arr_c10_s { Eurydice_arr_bb0 data[3U]; } Eurydice_arr_c10;
 
 /**
 A monomorphic instance of libcrux_ml_kem.ind_cpa.unpacked.IndCpaPublicKeyUnpacked
@@ -23559,13 +23559,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - $3size_t
 */
-typedef struct libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51_s
 {
   Eurydice_arr_bb0 t_as_ntt;
   Eurydice_arr_ec seed_for_A;
   Eurydice_arr_c10 A;
 }
-libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51;
+libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51;
 
 /**
 This function found in impl {core::default::Default for libcrux_ml_kem::ind_cpa::unpacked::IndCpaPublicKeyUnpacked<Vector, K>[TraitClause@0, TraitClause@1]}
@@ -23576,34 +23576,34 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static inline libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51
-libcrux_ml_kem_ind_cpa_unpacked_default_8b_68(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51
+libcrux_ml_kem_ind_cpa_unpacked_default_8b_68(ଶୂନ୍ୟ)
 {
   Eurydice_arr_bb0 uu____0;
   Eurydice_arr_9e repeat_expression0[3U];
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     repeat_expression0[i] = libcrux_ml_kem_polynomial_ZERO_d6_ea();
   }
-  memcpy(uu____0.data, repeat_expression0, (size_t)3U * sizeof (Eurydice_arr_9e));
+  memcpy(uu____0.data, repeat_expression0, (size_t)3U * ଆକାର (Eurydice_arr_9e));
   Eurydice_arr_ec uu____1 = { .data = { 0U } };
-  libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51 lit0;
+  libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51 lit0;
   lit0.t_as_ntt = uu____0;
   lit0.seed_for_A = uu____1;
   Eurydice_arr_bb0 repeat_expression1[3U];
-  for (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
   {
     Eurydice_arr_bb0 lit;
     Eurydice_arr_9e repeat_expression[3U];
-    for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
     {
       repeat_expression[i] = libcrux_ml_kem_polynomial_ZERO_d6_ea();
     }
-    memcpy(lit.data, repeat_expression, (size_t)3U * sizeof (Eurydice_arr_9e));
+    memcpy(lit.data, repeat_expression, (size_t)3U * ଆକାର (Eurydice_arr_9e));
     repeat_expression1[i0] = lit;
   }
-  memcpy(lit0.A.data, repeat_expression1, (size_t)3U * sizeof (Eurydice_arr_bb0));
-  return lit0;
+  memcpy(lit0.A.data, repeat_expression1, (size_t)3U * ଆକାର (Eurydice_arr_bb0));
+  ଫେରନ୍ତୁ lit0;
 }
 
 /**
@@ -23617,13 +23617,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_serialize_deserialize_to_reduced_ring_element_ea(
   Eurydice_borrow_slice_u8 serialized
 )
 {
   Eurydice_arr_9e re = libcrux_ml_kem_polynomial_ZERO_d6_ea();
-  for (size_t i = (size_t)0U; i < serialized.meta / (size_t)24U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < serialized.meta / (size_t)24U; i++)
   {
     size_t i0 = i;
     Eurydice_borrow_slice_u8
@@ -23639,7 +23639,7 @@ libcrux_ml_kem_serialize_deserialize_to_reduced_ring_element_ea(
     Eurydice_arr_d6 uu____0 = libcrux_ml_kem_vector_portable_cond_subtract_3329_b8(coefficient);
     re.data[i0] = uu____0;
   }
-  return re;
+  ଫେରନ୍ତୁ re;
 }
 
 /**
@@ -23651,22 +23651,22 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_68(
-  Eurydice_borrow_slice_u8 public_key,
+  Eurydice_borrow_slice_u8 public_ଚାବି,
   Eurydice_arr_bb0 *deserialized_pk
 )
 {
-  for
+  ପାଇଁ
   (size_t
     i = (size_t)0U;
-    i < public_key.meta / LIBCRUX_ML_KEM_CONSTANTS_BYTES_PER_RING_ELEMENT;
+    i < public_ଚାବି.meta / LIBCRUX_ML_KEM_CONSTANTS_BYTES_PER_RING_ELEMENT;
     i++)
   {
     size_t i0 = i;
     Eurydice_borrow_slice_u8
     ring_element =
-      Eurydice_slice_subslice_shared_c8(public_key,
+      Eurydice_slice_subslice_shared_c8(public_ଚାବି,
         (
           KRML_CLITERAL(core_ops_range_Range_87){
             .start = i0 * LIBCRUX_ML_KEM_CONSTANTS_BYTES_PER_RING_ELEMENT,
@@ -23685,25 +23685,25 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.shake128_init_a
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_1b0
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_1b0
 libcrux_ml_kem_hash_functions_portable_shake128_init_absorb_final_78(
-  const Eurydice_arr_810 *input
+  ଅଚଳ Eurydice_arr_810 *ନିବେଶ
 )
 {
   Eurydice_arr_1b0 shake128_state;
   Eurydice_arr_7c repeat_expression[3U];
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     repeat_expression[i] = libcrux_sha3_portable_incremental_shake128_init();
   }
-  memcpy(shake128_state.data, repeat_expression, (size_t)3U * sizeof (Eurydice_arr_7c));
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  memcpy(shake128_state.data, repeat_expression, (size_t)3U * ଆକାର (Eurydice_arr_7c));
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     libcrux_sha3_portable_incremental_shake128_absorb_final(&shake128_state.data[i0],
-      Eurydice_array_to_slice_shared_e9(&input->data[i0]));
+      Eurydice_array_to_slice_shared_e9(&ନିବେଶ->data[i0]));
   }
-  return shake128_state;
+  ଫେରନ୍ତୁ shake128_state;
 }
 
 /**
@@ -23714,12 +23714,12 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.shake128_init_a
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_1b0
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_1b0
 libcrux_ml_kem_hash_functions_portable_shake128_init_absorb_final_4a_78(
-  const Eurydice_arr_810 *input
+  ଅଚଳ Eurydice_arr_810 *ନିବେଶ
 )
 {
-  return libcrux_ml_kem_hash_functions_portable_shake128_init_absorb_final_78(input);
+  ଫେରନ୍ତୁ libcrux_ml_kem_hash_functions_portable_shake128_init_absorb_final_78(ନିବେଶ);
 }
 
 /**
@@ -23727,20 +23727,20 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.shake128_squeez
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_7e
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_7e
 libcrux_ml_kem_hash_functions_portable_shake128_squeeze_first_three_blocks_78(
   Eurydice_arr_1b0 *st
 )
 {
   Eurydice_arr_7e
   out = { .data = { { .data = { 0U } }, { .data = { 0U } }, { .data = { 0U } } } };
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     libcrux_sha3_portable_incremental_shake128_squeeze_first_three_blocks(&st->data[i0],
       Eurydice_array_to_slice_mut_48(&out.data[i0]));
   }
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -23751,12 +23751,12 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.shake128_squeez
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_7e
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_7e
 libcrux_ml_kem_hash_functions_portable_shake128_squeeze_first_three_blocks_4a_78(
   Eurydice_arr_1b0 *self
 )
 {
-  return libcrux_ml_kem_hash_functions_portable_shake128_squeeze_first_three_blocks_78(self);
+  ଫେରନ୍ତୁ libcrux_ml_kem_hash_functions_portable_shake128_squeeze_first_three_blocks_78(self);
 }
 
 /**
@@ -23806,20 +23806,20 @@ with const generics
 - K= 3
 - N= 504
 */
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_kem_sampling_sample_from_uniform_distribution_next_b6(
-  const Eurydice_arr_7e *randomness,
+  ଅଚଳ Eurydice_arr_7e *randomness,
   Eurydice_arr_eb *sampled_coefficients,
   Eurydice_arr_b1 *out
 )
 {
-  for (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < (size_t)504U / (size_t)24U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)504U / (size_t)24U; i++)
     {
       size_t r = i;
-      if (sampled_coefficients->data[i1] < LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
+      ଯଦି (sampled_coefficients->data[i1] < LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
       {
         size_t
         sampled =
@@ -23843,19 +23843,19 @@ libcrux_ml_kem_sampling_sample_from_uniform_distribution_next_b6(
     }
   }
   bool done = true;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
-    if (sampled_coefficients->data[i0] >= LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
+    ଯଦି (sampled_coefficients->data[i0] >= LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
     {
       sampled_coefficients->data[i0] = LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
     }
-    else
+    ଅନ୍ୟଥା
     {
       done = false;
     }
   }
-  return done;
+  ଫେରନ୍ତୁ done;
 }
 
 /**
@@ -23863,18 +23863,18 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.shake128_squeez
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_2c
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_2c
 libcrux_ml_kem_hash_functions_portable_shake128_squeeze_next_block_78(Eurydice_arr_1b0 *st)
 {
   Eurydice_arr_2c
   out = { .data = { { .data = { 0U } }, { .data = { 0U } }, { .data = { 0U } } } };
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     libcrux_sha3_portable_incremental_shake128_squeeze_next_block(&st->data[i0],
       Eurydice_array_to_slice_mut_2c(&out.data[i0]));
   }
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -23885,12 +23885,12 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.shake128_squeez
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_2c
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_2c
 libcrux_ml_kem_hash_functions_portable_shake128_squeeze_next_block_4a_78(
   Eurydice_arr_1b0 *self
 )
 {
-  return libcrux_ml_kem_hash_functions_portable_shake128_squeeze_next_block_78(self);
+  ଫେରନ୍ତୁ libcrux_ml_kem_hash_functions_portable_shake128_squeeze_next_block_78(self);
 }
 
 /**
@@ -23940,20 +23940,20 @@ with const generics
 - K= 3
 - N= 168
 */
-static KRML_MUSTINLINE bool
+ସ୍ଥିର KRML_MUSTINLINE bool
 libcrux_ml_kem_sampling_sample_from_uniform_distribution_next_b60(
-  const Eurydice_arr_2c *randomness,
+  ଅଚଳ Eurydice_arr_2c *randomness,
   Eurydice_arr_eb *sampled_coefficients,
   Eurydice_arr_b1 *out
 )
 {
-  for (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < (size_t)168U / (size_t)24U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)168U / (size_t)24U; i++)
     {
       size_t r = i;
-      if (sampled_coefficients->data[i1] < LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
+      ଯଦି (sampled_coefficients->data[i1] < LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
       {
         size_t
         sampled =
@@ -23977,19 +23977,19 @@ libcrux_ml_kem_sampling_sample_from_uniform_distribution_next_b60(
     }
   }
   bool done = true;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
-    if (sampled_coefficients->data[i0] >= LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
+    ଯଦି (sampled_coefficients->data[i0] >= LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT)
     {
       sampled_coefficients->data[i0] = LIBCRUX_ML_KEM_CONSTANTS_COEFFICIENTS_IN_RING_ELEMENT;
     }
-    else
+    ଅନ୍ୟଥା
     {
       done = false;
     }
   }
-  return done;
+  ଫେରନ୍ତୁ done;
 }
 
 /**
@@ -23998,11 +23998,11 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_polynomial_from_i16_array_ea(Eurydice_borrow_slice_i16 a)
 {
   Eurydice_arr_9e result = libcrux_ml_kem_polynomial_ZERO_ea();
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -24016,7 +24016,7 @@ libcrux_ml_kem_polynomial_from_i16_array_ea(Eurydice_borrow_slice_i16 a)
           )));
     result.data[i0] = uu____0;
   }
-  return result;
+  ଫେରନ୍ତୁ result;
 }
 
 /**
@@ -24028,10 +24028,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_polynomial_from_i16_array_d6_ea(Eurydice_borrow_slice_i16 a)
 {
-  return libcrux_ml_kem_polynomial_from_i16_array_ea(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_from_i16_array_ea(a);
 }
 
 /**
@@ -24043,11 +24043,11 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector, libcrux_ml
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_9e
-libcrux_ml_kem_sampling_sample_from_xof_call_mut_0a_91(void **_, Eurydice_arr_5b tupled_args)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
+libcrux_ml_kem_sampling_sample_from_xof_call_mut_0a_91(ଶୂନ୍ୟ **_, Eurydice_arr_5b tupled_args)
 {
   Eurydice_arr_5b s = tupled_args;
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_polynomial_from_i16_array_d6_ea(Eurydice_array_to_subslice_shared_e70(&s,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)0U, .end = (size_t)256U })));
 }
@@ -24058,8 +24058,8 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector, libcrux_ml
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE Eurydice_arr_bb0
-libcrux_ml_kem_sampling_sample_from_xof_91(const Eurydice_arr_810 *seeds)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_bb0
+libcrux_ml_kem_sampling_sample_from_xof_91(ଅଚଳ Eurydice_arr_810 *seeds)
 {
   Eurydice_arr_eb sampled_coefficients = { .data = { 0U } };
   Eurydice_arr_b1
@@ -24074,13 +24074,13 @@ libcrux_ml_kem_sampling_sample_from_xof_91(const Eurydice_arr_810 *seeds)
     libcrux_ml_kem_sampling_sample_from_uniform_distribution_next_b6(&randomness0,
       &sampled_coefficients,
       &out);
-  while (true)
+  ଯେତେବେଳେ (true)
   {
-    if (done)
+    ଯଦି (done)
     {
-      break;
+      ଭାଙ୍ଗ;
     }
-    else
+    ଅନ୍ୟଥା
     {
       Eurydice_arr_2c
       randomness =
@@ -24092,15 +24092,15 @@ libcrux_ml_kem_sampling_sample_from_xof_91(const Eurydice_arr_810 *seeds)
     }
   }
   Eurydice_arr_bb0 arr_mapped_str;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_mapped_str.data[i] =
       libcrux_ml_kem_sampling_sample_from_xof_call_mut_0a_91(&lvalue,
         out.data[i]);
   }
-  return arr_mapped_str;
+  ଫେରନ୍ତୁ arr_mapped_str;
 }
 
 /**
@@ -24109,19 +24109,19 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector, libcrux_ml
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_matrix_sample_matrix_A_91(
   Eurydice_arr_c10 *A_transpose,
-  const Eurydice_arr_31 *seed,
+  ଅଚଳ Eurydice_arr_31 *seed,
   bool transpose
 )
 {
-  for (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
   {
     size_t i1 = i0;
     Eurydice_arr_810 seeds;
     Eurydice_arr_31 repeat_expression[3U];
-    for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
     {
       repeat_expression[i] =
         core_array__core__clone__Clone_for__T__N___clone((size_t)34U,
@@ -24129,23 +24129,23 @@ libcrux_ml_kem_matrix_sample_matrix_A_91(
           uint8_t,
           Eurydice_arr_31);
     }
-    memcpy(seeds.data, repeat_expression, (size_t)3U * sizeof (Eurydice_arr_31));
-    for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+    memcpy(seeds.data, repeat_expression, (size_t)3U * ଆକାର (Eurydice_arr_31));
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
     {
       size_t j = i;
       seeds.data[j].data[32U] = (uint8_t)i1;
       seeds.data[j].data[33U] = (uint8_t)j;
     }
     Eurydice_arr_bb0 sampled = libcrux_ml_kem_sampling_sample_from_xof_91(&seeds);
-    for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
     {
       size_t j = i;
       Eurydice_arr_9e sample = sampled.data[j];
-      if (transpose)
+      ଯଦି (transpose)
       {
         A_transpose->data[j].data[i1] = sample;
       }
-      else
+      ଅନ୍ୟଥା
       {
         A_transpose->data[i1].data[j] = sample;
       }
@@ -24160,18 +24160,18 @@ with const generics
 - K= 3
 - T_AS_NTT_ENCODED_SIZE= 1152
 */
-static KRML_MUSTINLINE void
-libcrux_ml_kem_ind_cpa_build_unpacked_public_key_mut_05(
-  Eurydice_borrow_slice_u8 public_key,
-  libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51 *unpacked_public_key
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_kem_ind_cpa_build_unpacked_public_ଚାବି_mut_05(
+  Eurydice_borrow_slice_u8 public_ଚାବି,
+  libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51 *unpacked_public_ଚାବି
 )
 {
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_68(Eurydice_slice_subslice_to_shared_72(public_key,
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_68(Eurydice_slice_subslice_to_shared_72(public_ଚାବି,
       (size_t)1152U),
-    &unpacked_public_key->t_as_ntt);
+    &unpacked_public_ଚାବି->t_as_ntt);
   Eurydice_borrow_slice_u8
-  seed = Eurydice_slice_subslice_from_shared_6d(public_key, (size_t)1152U);
-  Eurydice_arr_c10 *uu____0 = &unpacked_public_key->A;
+  seed = Eurydice_slice_subslice_from_shared_6d(public_ଚାବି, (size_t)1152U);
+  Eurydice_arr_c10 *uu____0 = &unpacked_public_ଚାବି->A;
   /* original Rust expression is not an lvalue in C */
   Eurydice_arr_31 lvalue = libcrux_ml_kem_utils_into_padded_array_de(seed);
   libcrux_ml_kem_matrix_sample_matrix_A_91(uu____0, &lvalue, false);
@@ -24184,13 +24184,13 @@ with const generics
 - K= 3
 - T_AS_NTT_ENCODED_SIZE= 1152
 */
-static KRML_MUSTINLINE libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51
-libcrux_ml_kem_ind_cpa_build_unpacked_public_key_05(Eurydice_borrow_slice_u8 public_key)
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51
+libcrux_ml_kem_ind_cpa_build_unpacked_public_ଚାବି_05(Eurydice_borrow_slice_u8 public_ଚାବି)
 {
-  libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51
-  unpacked_public_key = libcrux_ml_kem_ind_cpa_unpacked_default_8b_68();
-  libcrux_ml_kem_ind_cpa_build_unpacked_public_key_mut_05(public_key, &unpacked_public_key);
-  return unpacked_public_key;
+  libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51
+  unpacked_public_ଚାବି = libcrux_ml_kem_ind_cpa_unpacked_default_8b_68();
+  libcrux_ml_kem_ind_cpa_build_unpacked_public_ଚାବି_mut_05(public_ଚାବି, &unpacked_public_ଚାବି);
+  ଫେରନ୍ତୁ unpacked_public_ଚାବି;
 }
 
 /**
@@ -24198,7 +24198,7 @@ A monomorphic instance of n-tuple
 with types Eurydice_arr_bb0, libcrux_ml_kem_polynomial_PolynomialRingElement_1d
 
 */
-typedef struct tuple_c6_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା tuple_c6_s
 {
   Eurydice_arr_bb0 fst;
   Eurydice_arr_9e snd;
@@ -24221,10 +24221,10 @@ with const generics
 - ETA2= 2
 - ETA2_RANDOMNESS_SIZE= 128
 */
-static inline Eurydice_arr_9e
-libcrux_ml_kem_ind_cpa_encrypt_c1_call_mut_f1_87(void **_, size_t tupled_args)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
+libcrux_ml_kem_ind_cpa_encrypt_c1_call_mut_f1_87(ଶୂନ୍ୟ **_, size_t tupled_args)
 {
-  return libcrux_ml_kem_polynomial_ZERO_d6_ea();
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_ZERO_d6_ea();
 }
 
 /**
@@ -24233,18 +24233,18 @@ with const generics
 - K= 3
 - LEN= 128
 */
-static inline Eurydice_arr_58
-libcrux_ml_kem_hash_functions_portable_PRFxN_3b(const Eurydice_arr_fd *input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_58
+libcrux_ml_kem_hash_functions_portable_PRFxN_3b(ଅଚଳ Eurydice_arr_fd *ନିବେଶ)
 {
   Eurydice_arr_58
   out = { .data = { { .data = { 0U } }, { .data = { 0U } }, { .data = { 0U } } } };
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_78(&out.data[i0]),
-      Eurydice_array_to_slice_shared_b5(&input->data[i0]));
+      Eurydice_array_to_slice_shared_b5(&ନିବେଶ->data[i0]));
   }
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -24256,10 +24256,10 @@ with const generics
 - K= 3
 - LEN= 128
 */
-static inline Eurydice_arr_58
-libcrux_ml_kem_hash_functions_portable_PRFxN_4a_3b(const Eurydice_arr_fd *input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_58
+libcrux_ml_kem_hash_functions_portable_PRFxN_4a_3b(ଅଚଳ Eurydice_arr_fd *ନିବେଶ)
 {
-  return libcrux_ml_kem_hash_functions_portable_PRFxN_3b(input);
+  ଫେରନ୍ତୁ libcrux_ml_kem_hash_functions_portable_PRFxN_3b(ନିବେଶ);
 }
 
 /**
@@ -24318,22 +24318,22 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_sampling_sample_from_binomial_distribution_2_ea(
   Eurydice_borrow_slice_u8 randomness
 )
 {
   Eurydice_arr_04 sampled_i16s = { .data = { 0U } };
-  for (size_t i0 = (size_t)0U; i0 < randomness.meta / (size_t)4U; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < randomness.meta / (size_t)4U; i0++)
   {
-    size_t chunk_number = i0;
+    size_t chunk_ସଂଖ୍ୟା = i0;
     Eurydice_borrow_slice_u8
     byte_chunk =
       Eurydice_slice_subslice_shared_c8(randomness,
         (
           KRML_CLITERAL(core_ops_range_Range_87){
-            .start = chunk_number * (size_t)4U,
-            .end = chunk_number * (size_t)4U + (size_t)4U
+            .start = chunk_ସଂଖ୍ୟା * (size_t)4U,
+            .end = chunk_ସଂଖ୍ୟା * (size_t)4U + (size_t)4U
           }
         ));
     uint32_t
@@ -24344,17 +24344,17 @@ libcrux_ml_kem_sampling_sample_from_binomial_distribution_2_ea(
     uint32_t even_bits = random_bits_as_u32 & 1431655765U;
     uint32_t odd_bits = random_bits_as_u32 >> 1U & 1431655765U;
     uint32_t coin_toss_outcomes = even_bits + odd_bits;
-    for (uint32_t i = 0U; i < 32U / 4U; i++)
+    ପାଇଁ (uint32_t i = 0U; i < 32U / 4U; i++)
     {
       uint32_t outcome_set = i;
       uint32_t outcome_set0 = outcome_set * 4U;
       int16_t outcome_1 = (int16_t)(coin_toss_outcomes >> (uint32_t)outcome_set0 & 3U);
       int16_t outcome_2 = (int16_t)(coin_toss_outcomes >> (uint32_t)(outcome_set0 + 2U) & 3U);
       size_t offset = (size_t)(outcome_set0 >> 2U);
-      sampled_i16s.data[(size_t)8U * chunk_number + offset] = outcome_1 - outcome_2;
+      sampled_i16s.data[(size_t)8U * chunk_ସଂଖ୍ୟା + offset] = outcome_1 - outcome_2;
     }
   }
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_polynomial_from_i16_array_d6_ea(Eurydice_array_to_slice_shared_99(&sampled_i16s));
 }
 
@@ -24364,12 +24364,12 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - ETA= 2
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_sampling_sample_from_binomial_distribution_66(
   Eurydice_borrow_slice_u8 randomness
 )
 {
-  return libcrux_ml_kem_sampling_sample_from_binomial_distribution_2_ea(randomness);
+  ଫେରନ୍ତୁ libcrux_ml_kem_sampling_sample_from_binomial_distribution_2_ea(randomness);
 }
 
 /**
@@ -24378,10 +24378,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void libcrux_ml_kem_ntt_ntt_at_layer_7_ea(Eurydice_arr_9e *re)
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ libcrux_ml_kem_ntt_ntt_at_layer_7_ea(Eurydice_arr_9e *re)
 {
   size_t step = LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT / (size_t)2U;
-  for (size_t i = (size_t)0U; i < step; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < step; i++)
   {
     size_t j = i;
     Eurydice_arr_d6
@@ -24398,7 +24398,7 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ntt_ntt_binomially_sampled_ring_element_ea(Eurydice_arr_9e *re)
 {
   libcrux_ml_kem_ntt_ntt_at_layer_7_ea(re);
@@ -24430,27 +24430,27 @@ with const generics
 - ETA= 2
 - ETA_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE uint8_t
+ସ୍ଥିର KRML_MUSTINLINE uint8_t
 libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_bf(
   Eurydice_arr_bb0 *re_as_ntt,
-  const Eurydice_arr_fa0 *prf_input,
+  ଅଚଳ Eurydice_arr_fa0 *prf_ନିବେଶ,
   uint8_t domain_separator
 )
 {
   Eurydice_arr_fd prf_inputs;
   Eurydice_arr_fa0 repeat_expression[3U];
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     repeat_expression[i] =
       core_array__core__clone__Clone_for__T__N___clone((size_t)33U,
-        prf_input,
+        prf_ନିବେଶ,
         uint8_t,
         Eurydice_arr_fa0);
   }
-  memcpy(prf_inputs.data, repeat_expression, (size_t)3U * sizeof (Eurydice_arr_fa0));
-  domain_separator = libcrux_ml_kem_utils_prf_input_inc_78(&prf_inputs, domain_separator);
+  memcpy(prf_inputs.data, repeat_expression, (size_t)3U * ଆକାର (Eurydice_arr_fa0));
+  domain_separator = libcrux_ml_kem_utils_prf_ନିବେଶ_inc_78(&prf_inputs, domain_separator);
   Eurydice_arr_58 prf_outputs = libcrux_ml_kem_hash_functions_portable_PRFxN_4a_3b(&prf_inputs);
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     Eurydice_arr_9e
@@ -24459,7 +24459,7 @@ libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_bf(
     re_as_ntt->data[i0] = uu____0;
     libcrux_ml_kem_ntt_ntt_binomially_sampled_ring_element_ea(&re_as_ntt->data[i0]);
   }
-  return domain_separator;
+  ଫେରନ୍ତୁ domain_separator;
 }
 
 /**
@@ -24478,10 +24478,10 @@ with const generics
 - ETA2= 2
 - ETA2_RANDOMNESS_SIZE= 128
 */
-static inline Eurydice_arr_9e
-libcrux_ml_kem_ind_cpa_encrypt_c1_call_mut_dd_87(void **_, size_t tupled_args)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
+libcrux_ml_kem_ind_cpa_encrypt_c1_call_mut_dd_87(ଶୂନ୍ୟ **_, size_t tupled_args)
 {
-  return libcrux_ml_kem_polynomial_ZERO_d6_ea();
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_ZERO_d6_ea();
 }
 
 /**
@@ -24495,27 +24495,27 @@ with const generics
 - ETA2_RANDOMNESS_SIZE= 128
 - ETA2= 2
 */
-static KRML_MUSTINLINE uint8_t
+ସ୍ଥିର KRML_MUSTINLINE uint8_t
 libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_bf(
-  const Eurydice_arr_fa0 *prf_input,
+  ଅଚଳ Eurydice_arr_fa0 *prf_ନିବେଶ,
   uint8_t domain_separator,
   Eurydice_arr_bb0 *error_1
 )
 {
   Eurydice_arr_fd prf_inputs;
   Eurydice_arr_fa0 repeat_expression[3U];
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     repeat_expression[i] =
       core_array__core__clone__Clone_for__T__N___clone((size_t)33U,
-        prf_input,
+        prf_ନିବେଶ,
         uint8_t,
         Eurydice_arr_fa0);
   }
-  memcpy(prf_inputs.data, repeat_expression, (size_t)3U * sizeof (Eurydice_arr_fa0));
-  domain_separator = libcrux_ml_kem_utils_prf_input_inc_78(&prf_inputs, domain_separator);
+  memcpy(prf_inputs.data, repeat_expression, (size_t)3U * ଆକାର (Eurydice_arr_fa0));
+  domain_separator = libcrux_ml_kem_utils_prf_ନିବେଶ_inc_78(&prf_inputs, domain_separator);
   Eurydice_arr_58 prf_outputs = libcrux_ml_kem_hash_functions_portable_PRFxN_4a_3b(&prf_inputs);
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     Eurydice_arr_9e
@@ -24523,7 +24523,7 @@ libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_bf(
       libcrux_ml_kem_sampling_sample_from_binomial_distribution_66(Eurydice_array_to_slice_shared_78(&prf_outputs.data[i0]));
     error_1->data[i0] = uu____0;
   }
-  return domain_separator;
+  ଫେରନ୍ତୁ domain_separator;
 }
 
 /**
@@ -24531,12 +24531,12 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.PRF
 with const generics
 - LEN= 128
 */
-static inline Eurydice_arr_89
-libcrux_ml_kem_hash_functions_portable_PRF_ec(Eurydice_borrow_slice_u8 input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_89
+libcrux_ml_kem_hash_functions_portable_PRF_ec(Eurydice_borrow_slice_u8 ନିବେଶ)
 {
   Eurydice_arr_89 digest = { .data = { 0U } };
-  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_78(&digest), input);
-  return digest;
+  libcrux_sha3_portable_shake256(Eurydice_array_to_slice_mut_78(&digest), ନିବେଶ);
+  ଫେରନ୍ତୁ digest;
 }
 
 /**
@@ -24548,10 +24548,10 @@ with const generics
 - K= 3
 - LEN= 128
 */
-static inline Eurydice_arr_89
-libcrux_ml_kem_hash_functions_portable_PRF_4a_3b0(Eurydice_borrow_slice_u8 input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_89
+libcrux_ml_kem_hash_functions_portable_PRF_4a_3b0(Eurydice_borrow_slice_u8 ନିବେଶ)
 {
-  return libcrux_ml_kem_hash_functions_portable_PRF_ec(input);
+  ଫେରନ୍ତୁ libcrux_ml_kem_hash_functions_portable_PRF_ec(ନିବେଶ);
 }
 
 /**
@@ -24563,10 +24563,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_9e
-libcrux_ml_kem_matrix_compute_vector_u_call_mut_a8_68(void **_, size_t tupled_args)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
+libcrux_ml_kem_matrix_compute_vector_u_call_mut_a8_68(ଶୂନ୍ୟ **_, size_t tupled_args)
 {
-  return libcrux_ml_kem_polynomial_ZERO_d6_ea();
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_ZERO_d6_ea();
 }
 
 /**
@@ -24575,13 +24575,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_polynomial_add_error_reduce_ea(
   Eurydice_arr_9e *myself,
-  const Eurydice_arr_9e *error
+  ଅଚଳ Eurydice_arr_9e *error
 )
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t j = i;
     Eurydice_arr_d6
@@ -24604,10 +24604,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_polynomial_add_error_reduce_d6_ea(
   Eurydice_arr_9e *self,
-  const Eurydice_arr_9e *error
+  ଅଚଳ Eurydice_arr_9e *error
 )
 {
   libcrux_ml_kem_polynomial_add_error_reduce_ea(self, error);
@@ -24622,29 +24622,29 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE Eurydice_arr_bb0
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_bb0
 libcrux_ml_kem_matrix_compute_vector_u_68(
-  const Eurydice_arr_c10 *a_as_ntt,
-  const Eurydice_arr_bb0 *r_as_ntt,
-  const Eurydice_arr_bb0 *error_1
+  ଅଚଳ Eurydice_arr_c10 *a_as_ntt,
+  ଅଚଳ Eurydice_arr_bb0 *r_as_ntt,
+  ଅଚଳ Eurydice_arr_bb0 *error_1
 )
 {
   Eurydice_arr_bb0 arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_struct.data[i] = libcrux_ml_kem_matrix_compute_vector_u_call_mut_a8_68(&lvalue, i);
   }
   Eurydice_arr_bb0 result = arr_struct;
-  for (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
   {
     size_t i1 = i0;
-    const Eurydice_arr_bb0 *row = &a_as_ntt->data[i1];
-    for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+    ଅଚଳ Eurydice_arr_bb0 *row = &a_as_ntt->data[i1];
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
     {
       size_t j = i;
-      const Eurydice_arr_9e *a_element = &row->data[j];
+      ଅଚଳ Eurydice_arr_9e *a_element = &row->data[j];
       Eurydice_arr_9e
       product = libcrux_ml_kem_polynomial_ntt_multiply_d6_ea(a_element, &r_as_ntt->data[j]);
       libcrux_ml_kem_polynomial_add_to_ring_element_d6_68(&result.data[i1], &product);
@@ -24652,7 +24652,7 @@ libcrux_ml_kem_matrix_compute_vector_u_68(
     libcrux_ml_kem_invert_ntt_invert_ntt_montgomery_68(&result.data[i1]);
     libcrux_ml_kem_polynomial_add_error_reduce_d6_ea(&result.data[i1], &error_1->data[i1]);
   }
-  return result;
+  ଫେରନ୍ତୁ result;
 }
 
 /**
@@ -24660,10 +24660,10 @@ A monomorphic instance of libcrux_ml_kem.vector.portable.compress.compress
 with const generics
 - COEFFICIENT_BITS= 10
 */
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_compress_compress_ef(Eurydice_arr_d6 a)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     int16_t
@@ -24672,7 +24672,7 @@ libcrux_ml_kem_vector_portable_compress_compress_ef(Eurydice_arr_d6 a)
           libcrux_secrets_int_as_u16_f5(a.data[i0])));
     a.data[i0] = uu____0;
   }
-  return a;
+  ଫେରନ୍ତୁ a;
 }
 
 /**
@@ -24683,9 +24683,9 @@ A monomorphic instance of libcrux_ml_kem.vector.portable.compress_b8
 with const generics
 - COEFFICIENT_BITS= 10
 */
-static inline Eurydice_arr_d6 libcrux_ml_kem_vector_portable_compress_b8_ef(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6 libcrux_ml_kem_vector_portable_compress_b8_ef(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_compress_compress_ef(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_compress_compress_ef(a);
 }
 
 /**
@@ -24694,11 +24694,11 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - OUT_LEN= 320
 */
-static KRML_MUSTINLINE Eurydice_arr_b0
-libcrux_ml_kem_serialize_compress_then_serialize_10_e1(const Eurydice_arr_9e *re)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_b0
+libcrux_ml_kem_serialize_compress_then_serialize_10_e1(ଅଚଳ Eurydice_arr_9e *re)
 {
   Eurydice_arr_b0 serialized = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -24715,7 +24715,7 @@ libcrux_ml_kem_serialize_compress_then_serialize_10_e1(const Eurydice_arr_9e *re
       Eurydice_array_to_slice_shared_8f(&bytes),
       uint8_t);
   }
-  return serialized;
+  ଫେରନ୍ତୁ serialized;
 }
 
 /**
@@ -24725,10 +24725,10 @@ with const generics
 - COMPRESSION_FACTOR= 10
 - OUT_LEN= 320
 */
-static KRML_MUSTINLINE Eurydice_arr_b0
-libcrux_ml_kem_serialize_compress_then_serialize_ring_element_u_f7(const Eurydice_arr_9e *re)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_b0
+libcrux_ml_kem_serialize_compress_then_serialize_ring_element_u_f7(ଅଚଳ Eurydice_arr_9e *re)
 {
-  return libcrux_ml_kem_serialize_compress_then_serialize_10_e1(re);
+  ଫେରନ୍ତୁ libcrux_ml_kem_serialize_compress_then_serialize_10_e1(re);
 }
 
 /**
@@ -24743,16 +24743,16 @@ with const generics
 - COMPRESSION_FACTOR= 10
 - BLOCK_LEN= 320
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ind_cpa_compress_then_serialize_u_21(
-  Eurydice_arr_bb0 input,
+  Eurydice_arr_bb0 ନିବେଶ,
   Eurydice_mut_borrow_slice_u8 out
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
-    Eurydice_arr_9e re = input.data[i0];
+    Eurydice_arr_9e re = ନିବେଶ.data[i0];
     Eurydice_mut_borrow_slice_u8
     uu____0 =
       Eurydice_slice_subslice_mut_c8(out,
@@ -24782,50 +24782,50 @@ with const generics
 - ETA2= 2
 - ETA2_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE tuple_c6
+ସ୍ଥିର KRML_MUSTINLINE tuple_c6
 libcrux_ml_kem_ind_cpa_encrypt_c1_87(
   Eurydice_borrow_slice_u8 randomness,
-  const Eurydice_arr_c10 *matrix,
+  ଅଚଳ Eurydice_arr_c10 *matrix,
   Eurydice_mut_borrow_slice_u8 ciphertext
 )
 {
-  Eurydice_arr_fa0 prf_input = libcrux_ml_kem_utils_into_padded_array_29(randomness);
+  Eurydice_arr_fa0 prf_ନିବେଶ = libcrux_ml_kem_utils_into_padded_array_29(randomness);
   Eurydice_arr_bb0 arr_struct0;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_struct0.data[i] = libcrux_ml_kem_ind_cpa_encrypt_c1_call_mut_f1_87(&lvalue, i);
   }
   Eurydice_arr_bb0 r_as_ntt = arr_struct0;
   uint8_t
   domain_separator0 =
     libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_bf(&r_as_ntt,
-      &prf_input,
+      &prf_ନିବେଶ,
       0U);
   Eurydice_arr_bb0 arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_struct.data[i] = libcrux_ml_kem_ind_cpa_encrypt_c1_call_mut_dd_87(&lvalue, i);
   }
   Eurydice_arr_bb0 error_1 = arr_struct;
   uint8_t
   domain_separator =
-    libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_bf(&prf_input,
+    libcrux_ml_kem_ind_cpa_sample_ring_element_cbd_bf(&prf_ନିବେଶ,
       domain_separator0,
       &error_1);
-  prf_input.data[32U] = domain_separator;
+  prf_ନିବେଶ.data[32U] = domain_separator;
   Eurydice_arr_89
   prf_output =
-    libcrux_ml_kem_hash_functions_portable_PRF_4a_3b0(Eurydice_array_to_slice_shared_b5(&prf_input));
+    libcrux_ml_kem_hash_functions_portable_PRF_4a_3b0(Eurydice_array_to_slice_shared_b5(&prf_ନିବେଶ));
   Eurydice_arr_9e
   error_2 =
     libcrux_ml_kem_sampling_sample_from_binomial_distribution_66(Eurydice_array_to_slice_shared_78(&prf_output));
   Eurydice_arr_bb0 u = libcrux_ml_kem_matrix_compute_vector_u_68(matrix, &r_as_ntt, &error_1);
   libcrux_ml_kem_ind_cpa_compress_then_serialize_u_21(u, ciphertext);
-  return (KRML_CLITERAL(tuple_c6){ .fst = r_as_ntt, .snd = error_2 });
+  ଫେରନ୍ତୁ (KRML_CLITERAL(tuple_c6){ .fst = r_as_ntt, .snd = error_2 });
 }
 
 /**
@@ -24834,13 +24834,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_serialize_deserialize_then_decompress_message_ea(
-  const Eurydice_arr_ec *serialized
+  ଅଚଳ Eurydice_arr_ec *serialized
 )
 {
   Eurydice_arr_9e re = libcrux_ml_kem_polynomial_ZERO_d6_ea();
-  for (size_t i = (size_t)0U; i < (size_t)16U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)16U; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -24856,7 +24856,7 @@ libcrux_ml_kem_serialize_deserialize_then_decompress_message_ea(
     uu____0 = libcrux_ml_kem_vector_portable_decompress_1_b8(coefficient_compressed);
     re.data[i0] = uu____0;
   }
-  return re;
+  ଫେରନ୍ତୁ re;
 }
 
 /**
@@ -24865,14 +24865,14 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_polynomial_add_message_error_reduce_ea(
-  const Eurydice_arr_9e *myself,
-  const Eurydice_arr_9e *message,
+  ଅଚଳ Eurydice_arr_9e *myself,
+  ଅଚଳ Eurydice_arr_9e *message,
   Eurydice_arr_9e result
 )
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -24885,7 +24885,7 @@ libcrux_ml_kem_polynomial_add_message_error_reduce_ea(
     Eurydice_arr_d6 red = libcrux_ml_kem_vector_portable_barrett_reduce_b8(sum2);
     result.data[i0] = red;
   }
-  return result;
+  ଫେରନ୍ତୁ result;
 }
 
 /**
@@ -24897,14 +24897,14 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_polynomial_add_message_error_reduce_d6_ea(
-  const Eurydice_arr_9e *self,
-  const Eurydice_arr_9e *message,
+  ଅଚଳ Eurydice_arr_9e *self,
+  ଅଚଳ Eurydice_arr_9e *message,
   Eurydice_arr_9e result
 )
 {
-  return libcrux_ml_kem_polynomial_add_message_error_reduce_ea(self, message, result);
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_add_message_error_reduce_ea(self, message, result);
 }
 
 /**
@@ -24916,16 +24916,16 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE Eurydice_arr_9e
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_9e
 libcrux_ml_kem_matrix_compute_ring_element_v_68(
-  const Eurydice_arr_bb0 *t_as_ntt,
-  const Eurydice_arr_bb0 *r_as_ntt,
-  const Eurydice_arr_9e *error_2,
-  const Eurydice_arr_9e *message
+  ଅଚଳ Eurydice_arr_bb0 *t_as_ntt,
+  ଅଚଳ Eurydice_arr_bb0 *r_as_ntt,
+  ଅଚଳ Eurydice_arr_9e *error_2,
+  ଅଚଳ Eurydice_arr_9e *message
 )
 {
   Eurydice_arr_9e result = libcrux_ml_kem_polynomial_ZERO_d6_ea();
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
     Eurydice_arr_9e
@@ -24935,7 +24935,7 @@ libcrux_ml_kem_matrix_compute_ring_element_v_68(
     libcrux_ml_kem_polynomial_add_to_ring_element_d6_68(&result, &product);
   }
   libcrux_ml_kem_invert_ntt_invert_ntt_montgomery_68(&result);
-  return libcrux_ml_kem_polynomial_add_message_error_reduce_d6_ea(error_2, message, result);
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_add_message_error_reduce_d6_ea(error_2, message, result);
 }
 
 /**
@@ -24943,10 +24943,10 @@ A monomorphic instance of libcrux_ml_kem.vector.portable.compress.compress
 with const generics
 - COEFFICIENT_BITS= 4
 */
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_vector_portable_compress_compress_d1(Eurydice_arr_d6 a)
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_VECTOR_TRAITS_FIELD_ELEMENTS_IN_VECTOR; i++)
   {
     size_t i0 = i;
     int16_t
@@ -24955,7 +24955,7 @@ libcrux_ml_kem_vector_portable_compress_compress_d1(Eurydice_arr_d6 a)
           libcrux_secrets_int_as_u16_f5(a.data[i0])));
     a.data[i0] = uu____0;
   }
-  return a;
+  ଫେରନ୍ତୁ a;
 }
 
 /**
@@ -24966,9 +24966,9 @@ A monomorphic instance of libcrux_ml_kem.vector.portable.compress_b8
 with const generics
 - COEFFICIENT_BITS= 4
 */
-static inline Eurydice_arr_d6 libcrux_ml_kem_vector_portable_compress_b8_d1(Eurydice_arr_d6 a)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_d6 libcrux_ml_kem_vector_portable_compress_b8_d1(Eurydice_arr_d6 a)
 {
-  return libcrux_ml_kem_vector_portable_compress_compress_d1(a);
+  ଫେରନ୍ତୁ libcrux_ml_kem_vector_portable_compress_compress_d1(a);
 }
 
 /**
@@ -24977,13 +24977,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_serialize_compress_then_serialize_4_ea(
   Eurydice_arr_9e re,
   Eurydice_mut_borrow_slice_u8 serialized
 )
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -25010,7 +25010,7 @@ with const generics
 - COMPRESSION_FACTOR= 4
 - OUT_LEN= 128
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_serialize_compress_then_serialize_ring_element_v_30(
   Eurydice_arr_9e re,
   Eurydice_mut_borrow_slice_u8 out
@@ -25027,12 +25027,12 @@ with const generics
 - V_COMPRESSION_FACTOR= 4
 - C2_LEN= 128
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ind_cpa_encrypt_c2_30(
-  const Eurydice_arr_bb0 *t_as_ntt,
-  const Eurydice_arr_bb0 *r_as_ntt,
-  const Eurydice_arr_9e *error_2,
-  const Eurydice_arr_ec *message,
+  ଅଚଳ Eurydice_arr_bb0 *t_as_ntt,
+  ଅଚଳ Eurydice_arr_bb0 *r_as_ntt,
+  ଅଚଳ Eurydice_arr_9e *error_2,
+  ଅଚଳ Eurydice_arr_ec *message,
   Eurydice_mut_borrow_slice_u8 ciphertext
 )
 {
@@ -25106,10 +25106,10 @@ with const generics
 - ETA2= 2
 - ETA2_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE Eurydice_arr_2b
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_2b
 libcrux_ml_kem_ind_cpa_encrypt_unpacked_d5(
-  const libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51 *public_key,
-  const Eurydice_arr_ec *message,
+  ଅଚଳ libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51 *public_ଚାବି,
+  ଅଚଳ Eurydice_arr_ec *message,
   Eurydice_borrow_slice_u8 randomness
 )
 {
@@ -25117,17 +25117,17 @@ libcrux_ml_kem_ind_cpa_encrypt_unpacked_d5(
   tuple_c6
   uu____0 =
     libcrux_ml_kem_ind_cpa_encrypt_c1_87(randomness,
-      &public_key->A,
+      &public_ଚାବି->A,
       Eurydice_array_to_subslice_mut_d414(&ciphertext,
         (KRML_CLITERAL(core_ops_range_Range_87){ .start = (size_t)0U, .end = (size_t)960U })));
   Eurydice_arr_bb0 r_as_ntt = uu____0.fst;
   Eurydice_arr_9e error_2 = uu____0.snd;
-  libcrux_ml_kem_ind_cpa_encrypt_c2_30(&public_key->t_as_ntt,
+  libcrux_ml_kem_ind_cpa_encrypt_c2_30(&public_ଚାବି->t_as_ntt,
     &r_as_ntt,
     &error_2,
     message,
     Eurydice_array_to_subslice_from_mut_5f3(&ciphertext, (size_t)960U));
-  return ciphertext;
+  ଫେରନ୍ତୁ ciphertext;
 }
 
 /**
@@ -25147,16 +25147,16 @@ with const generics
 - ETA2= 2
 - ETA2_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE Eurydice_arr_2b
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_2b
 libcrux_ml_kem_ind_cpa_encrypt_d5(
-  Eurydice_borrow_slice_u8 public_key,
-  const Eurydice_arr_ec *message,
+  Eurydice_borrow_slice_u8 public_ଚାବି,
+  ଅଚଳ Eurydice_arr_ec *message,
   Eurydice_borrow_slice_u8 randomness
 )
 {
-  libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51
-  unpacked_public_key = libcrux_ml_kem_ind_cpa_build_unpacked_public_key_05(public_key);
-  return libcrux_ml_kem_ind_cpa_encrypt_unpacked_d5(&unpacked_public_key, message, randomness);
+  libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51
+  unpacked_public_ଚାବି = libcrux_ml_kem_ind_cpa_build_unpacked_public_ଚାବି_05(public_ଚାବି);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cpa_encrypt_unpacked_d5(&unpacked_public_ଚାବି, message, randomness);
 }
 
 /**
@@ -25169,15 +25169,15 @@ with const generics
 - K= 3
 - CIPHERTEXT_SIZE= 1088
 */
-static KRML_MUSTINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ec
 libcrux_ml_kem_variant_kdf_39_52(
   Eurydice_borrow_slice_u8 shared_secret,
-  const Eurydice_arr_2b *_
+  ଅଚଳ Eurydice_arr_2b *_
 )
 {
   Eurydice_arr_ec out = { .data = { 0U } };
   Eurydice_slice_copy(Eurydice_array_to_slice_mut_01(&out), shared_secret, uint8_t);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -25204,26 +25204,26 @@ with const generics
 - ETA2_RANDOMNESS_SIZE= 128
 - IMPLICIT_REJECTION_HASH_INPUT_SIZE= 1120
 */
-static KRML_MUSTINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ec
 libcrux_ml_kem_ind_cca_decapsulate_fd(
-  const Eurydice_arr_7d *private_key,
-  const Eurydice_arr_2b *ciphertext
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
   Eurydice_borrow_slice_u8_x4
   uu____0 =
-    libcrux_ml_kem_types_unpack_private_key_64(Eurydice_array_to_slice_shared_51(private_key));
-  Eurydice_borrow_slice_u8 ind_cpa_secret_key = uu____0.fst;
-  Eurydice_borrow_slice_u8 ind_cpa_public_key = uu____0.snd;
-  Eurydice_borrow_slice_u8 ind_cpa_public_key_hash = uu____0.thd;
-  Eurydice_borrow_slice_u8 implicit_rejection_value = uu____0.f3;
-  Eurydice_arr_ec decrypted = libcrux_ml_kem_ind_cpa_decrypt_01(ind_cpa_secret_key, ciphertext);
+    libcrux_ml_kem_types_unpack_private_ଚାବି_64(Eurydice_array_to_slice_shared_51(private_ଚାବି));
+  Eurydice_borrow_slice_u8 ind_cpa_secret_ଚାବି = uu____0.fst;
+  Eurydice_borrow_slice_u8 ind_cpa_public_ଚାବି = uu____0.snd;
+  Eurydice_borrow_slice_u8 ind_cpa_public_ଚାବି_hash = uu____0.thd;
+  Eurydice_borrow_slice_u8 implicit_rejection_ମୂଲ୍ୟ = uu____0.f3;
+  Eurydice_arr_ec decrypted = libcrux_ml_kem_ind_cpa_decrypt_01(ind_cpa_secret_ଚାବି, ciphertext);
   Eurydice_arr_c7
   to_hash0 =
     libcrux_ml_kem_utils_into_padded_array_c9(Eurydice_array_to_slice_shared_01(&decrypted));
   Eurydice_slice_copy(Eurydice_array_to_subslice_from_mut_5f1(&to_hash0,
       LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE),
-    ind_cpa_public_key_hash,
+    ind_cpa_public_ଚାବି_hash,
     uint8_t);
   Eurydice_arr_c7
   hashed =
@@ -25236,7 +25236,7 @@ libcrux_ml_kem_ind_cca_decapsulate_fd(
       Eurydice_borrow_slice_u8_x2);
   Eurydice_borrow_slice_u8 shared_secret0 = uu____1.fst;
   Eurydice_borrow_slice_u8 pseudorandomness = uu____1.snd;
-  Eurydice_arr_af to_hash = libcrux_ml_kem_utils_into_padded_array_66(implicit_rejection_value);
+  Eurydice_arr_af to_hash = libcrux_ml_kem_utils_into_padded_array_66(implicit_rejection_ମୂଲ୍ୟ);
   Eurydice_mut_borrow_slice_u8
   uu____2 =
     Eurydice_array_to_subslice_from_mut_5f2(&to_hash,
@@ -25247,7 +25247,7 @@ libcrux_ml_kem_ind_cca_decapsulate_fd(
     libcrux_ml_kem_hash_functions_portable_PRF_4a_3b(Eurydice_array_to_slice_shared_81(&to_hash));
   Eurydice_arr_2b
   expected_ciphertext =
-    libcrux_ml_kem_ind_cpa_encrypt_d5(ind_cpa_public_key,
+    libcrux_ml_kem_ind_cpa_encrypt_d5(ind_cpa_public_ଚାବି,
       &decrypted,
       pseudorandomness);
   Eurydice_borrow_slice_u8
@@ -25261,7 +25261,7 @@ libcrux_ml_kem_ind_cca_decapsulate_fd(
     libcrux_ml_kem_variant_kdf_39_52(shared_secret0,
       libcrux_ml_kem_types_as_slice_a9_52(ciphertext));
   Eurydice_borrow_slice_u8 uu____4 = libcrux_ml_kem_types_as_ref_c1_52(ciphertext);
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_constant_time_ops_compare_ciphertexts_select_shared_secret_in_constant_time(uu____4,
       Eurydice_array_to_slice_shared_06(&expected_ciphertext),
       Eurydice_array_to_slice_shared_01(&shared_secret),
@@ -25291,13 +25291,13 @@ with const generics
 - ETA2_RANDOMNESS_SIZE= 128
 - IMPLICIT_REJECTION_HASH_INPUT_SIZE= 1120
 */
-static inline Eurydice_arr_ec
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ec
 libcrux_ml_kem_ind_cca_instantiations_portable_decapsulate_19(
-  const Eurydice_arr_7d *private_key,
-  const Eurydice_arr_2b *ciphertext
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
-  return libcrux_ml_kem_ind_cca_decapsulate_fd(private_key, ciphertext);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_decapsulate_fd(private_ଚାବି, ciphertext);
 }
 
 /**
@@ -25306,13 +25306,13 @@ libcrux_ml_kem_ind_cca_instantiations_portable_decapsulate_19(
  Generates an [`MlKemSharedSecret`].
  The input is a reference to an [`MlKem768PrivateKey`] and an [`MlKem768Ciphertext`].
 */
-static inline Eurydice_arr_ec
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ec
 libcrux_ml_kem_mlkem768_portable_decapsulate(
-  const Eurydice_arr_7d *private_key,
-  const Eurydice_arr_2b *ciphertext
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
-  return libcrux_ml_kem_ind_cca_instantiations_portable_decapsulate_19(private_key, ciphertext);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_instantiations_portable_decapsulate_19(private_ଚାବି, ciphertext);
 }
 
 /**
@@ -25324,12 +25324,12 @@ with types libcrux_ml_kem_hash_functions_portable_PortableHash[[$3size_t]]
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ec
 libcrux_ml_kem_variant_entropy_preprocess_39_13(Eurydice_borrow_slice_u8 randomness)
 {
   Eurydice_arr_ec out = { .data = { 0U } };
   Eurydice_slice_copy(Eurydice_array_to_slice_mut_01(&out), randomness, uint8_t);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -25340,10 +25340,10 @@ A monomorphic instance of libcrux_ml_kem.hash_functions.portable.H_4a
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_ec
-libcrux_ml_kem_hash_functions_portable_H_4a_78(Eurydice_borrow_slice_u8 input)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ec
+libcrux_ml_kem_hash_functions_portable_H_4a_78(Eurydice_borrow_slice_u8 ନିବେଶ)
 {
-  return libcrux_ml_kem_hash_functions_portable_H(input);
+  ଫେରନ୍ତୁ libcrux_ml_kem_hash_functions_portable_H(ନିବେଶ);
 }
 
 /**
@@ -25364,10 +25364,10 @@ with const generics
 - ETA2= 2
 - ETA2_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE tuple_f4
+ସ୍ଥିର KRML_MUSTINLINE tuple_f4
 libcrux_ml_kem_ind_cca_encapsulate_99(
-  const Eurydice_arr_5f *public_key,
-  const Eurydice_arr_ec *randomness
+  ଅଚଳ Eurydice_arr_5f *public_ଚାବି,
+  ଅଚଳ Eurydice_arr_ec *randomness
 )
 {
   Eurydice_arr_ec
@@ -25383,7 +25383,7 @@ libcrux_ml_kem_ind_cca_encapsulate_99(
   /* original Rust expression is not an lvalue in C */
   Eurydice_arr_ec
   lvalue =
-    libcrux_ml_kem_hash_functions_portable_H_4a_78(Eurydice_array_to_slice_shared_ff(libcrux_ml_kem_types_as_slice_e6_3d(public_key)));
+    libcrux_ml_kem_hash_functions_portable_H_4a_78(Eurydice_array_to_slice_shared_ff(libcrux_ml_kem_types_as_slice_e6_3d(public_ଚାବି)));
   Eurydice_slice_copy(uu____0, Eurydice_array_to_slice_shared_01(&lvalue), uint8_t);
   Eurydice_arr_c7
   hashed =
@@ -25398,11 +25398,11 @@ libcrux_ml_kem_ind_cca_encapsulate_99(
   Eurydice_borrow_slice_u8 pseudorandomness = uu____1.snd;
   Eurydice_arr_2b
   ciphertext =
-    libcrux_ml_kem_ind_cpa_encrypt_d5(Eurydice_array_to_slice_shared_ff(libcrux_ml_kem_types_as_slice_e6_3d(public_key)),
+    libcrux_ml_kem_ind_cpa_encrypt_d5(Eurydice_array_to_slice_shared_ff(libcrux_ml_kem_types_as_slice_e6_3d(public_ଚାବି)),
       &randomness0,
       pseudorandomness);
   Eurydice_arr_2b uu____2 = libcrux_ml_kem_types_from_19_52(ciphertext);
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(tuple_f4){
         .fst = uu____2,
@@ -25428,13 +25428,13 @@ with const generics
 - ETA2= 2
 - ETA2_RANDOMNESS_SIZE= 128
 */
-static inline tuple_f4
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ tuple_f4
 libcrux_ml_kem_ind_cca_instantiations_portable_encapsulate_26(
-  const Eurydice_arr_5f *public_key,
-  const Eurydice_arr_ec *randomness
+  ଅଚଳ Eurydice_arr_5f *public_ଚାବି,
+  ଅଚଳ Eurydice_arr_ec *randomness
 )
 {
-  return libcrux_ml_kem_ind_cca_encapsulate_99(public_key, randomness);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_encapsulate_99(public_ଚାବି, randomness);
 }
 
 /**
@@ -25444,13 +25444,13 @@ libcrux_ml_kem_ind_cca_instantiations_portable_encapsulate_26(
  The input is a reference to an [`MlKem768PublicKey`] and [`SHARED_SECRET_SIZE`]
  bytes of `randomness`.
 */
-static inline tuple_f4
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ tuple_f4
 libcrux_ml_kem_mlkem768_portable_encapsulate(
-  const Eurydice_arr_5f *public_key,
+  ଅଚଳ Eurydice_arr_5f *public_ଚାବି,
   Eurydice_arr_ec randomness
 )
 {
-  return libcrux_ml_kem_ind_cca_instantiations_portable_encapsulate_26(public_key, &randomness);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_instantiations_portable_encapsulate_26(public_ଚାବି, &randomness);
 }
 
 /**
@@ -25462,16 +25462,16 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_bb0 libcrux_ml_kem_ind_cpa_unpacked_default_70_68(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_bb0 libcrux_ml_kem_ind_cpa_unpacked_default_70_68(ଶୂନ୍ୟ)
 {
   Eurydice_arr_bb0 lit;
   Eurydice_arr_9e repeat_expression[3U];
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     repeat_expression[i] = libcrux_ml_kem_polynomial_ZERO_d6_ea();
   }
-  memcpy(lit.data, repeat_expression, (size_t)3U * sizeof (Eurydice_arr_9e));
-  return lit;
+  memcpy(lit.data, repeat_expression, (size_t)3U * ଆକାର (Eurydice_arr_9e));
+  ଫେରନ୍ତୁ lit;
 }
 
 /**
@@ -25483,21 +25483,21 @@ with types libcrux_ml_kem_hash_functions_portable_PortableHash[[$3size_t]]
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE Eurydice_arr_c7
-libcrux_ml_kem_variant_cpa_keygen_seed_39_13(Eurydice_borrow_slice_u8 key_generation_seed)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_c7
+libcrux_ml_kem_variant_cpa_keygen_seed_39_13(Eurydice_borrow_slice_u8 ଚାବି_generation_seed)
 {
   Eurydice_arr_fa0 seed = { .data = { 0U } };
   Eurydice_slice_copy(Eurydice_array_to_subslice_mut_d412(&seed,
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = (size_t)0U,
-          .end = LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE
+          .end = LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_ଚାବି_GENERATION_SEED_SIZE
         }
       )),
-    key_generation_seed,
+    ଚାବି_generation_seed,
     uint8_t);
-  seed.data[LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE] = (uint8_t)(size_t)3U;
-  return
+  seed.data[LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_ଚାବି_GENERATION_SEED_SIZE] = (uint8_t)(size_t)3U;
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_hash_functions_portable_G_4a_78(Eurydice_array_to_slice_shared_b5(&seed));
 }
 
@@ -25512,10 +25512,10 @@ with const generics
 - ETA1= 2
 - ETA1_RANDOMNESS_SIZE= 128
 */
-static inline Eurydice_arr_9e
-libcrux_ml_kem_ind_cpa_generate_keypair_unpacked_call_mut_73_39(void **_, size_t tupled_args)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
+libcrux_ml_kem_ind_cpa_generate_keypair_unpacked_call_mut_73_39(ଶୂନ୍ୟ **_, size_t tupled_args)
 {
-  return libcrux_ml_kem_polynomial_ZERO_d6_ea();
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_ZERO_d6_ea();
 }
 
 /**
@@ -25524,10 +25524,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_d6
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_d6
 libcrux_ml_kem_polynomial_to_standard_domain_ea(Eurydice_arr_d6 vector)
 {
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_vector_portable_montgomery_multiply_by_constant_b8(vector,
       LIBCRUX_ML_KEM_VECTOR_TRAITS_MONTGOMERY_R_SQUARED_MOD_FIELD_MODULUS);
 }
@@ -25538,13 +25538,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_polynomial_add_standard_error_reduce_ea(
   Eurydice_arr_9e *myself,
-  const Eurydice_arr_9e *error
+  ଅଚଳ Eurydice_arr_9e *error
 )
 {
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t j = i;
     Eurydice_arr_d6
@@ -25565,10 +25565,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_polynomial_add_standard_error_reduce_d6_ea(
   Eurydice_arr_9e *self,
-  const Eurydice_arr_9e *error
+  ଅଚଳ Eurydice_arr_9e *error
 )
 {
   libcrux_ml_kem_polynomial_add_standard_error_reduce_ea(self, error);
@@ -25583,24 +25583,24 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_matrix_compute_As_plus_e_68(
   Eurydice_arr_bb0 *t_as_ntt,
-  const Eurydice_arr_c10 *matrix_A,
-  const Eurydice_arr_bb0 *s_as_ntt,
-  const Eurydice_arr_bb0 *error_as_ntt
+  ଅଚଳ Eurydice_arr_c10 *matrix_A,
+  ଅଚଳ Eurydice_arr_bb0 *s_as_ntt,
+  ଅଚଳ Eurydice_arr_bb0 *error_as_ntt
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
-    const Eurydice_arr_bb0 *row = &matrix_A->data[i0];
+    ଅଚଳ Eurydice_arr_bb0 *row = &matrix_A->data[i0];
     Eurydice_arr_9e uu____0 = libcrux_ml_kem_polynomial_ZERO_d6_ea();
     t_as_ntt->data[i0] = uu____0;
-    for (size_t i1 = (size_t)0U; i1 < (size_t)3U; i1++)
+    ପାଇଁ (size_t i1 = (size_t)0U; i1 < (size_t)3U; i1++)
     {
       size_t j = i1;
-      const Eurydice_arr_9e *matrix_element = &row->data[j];
+      ଅଚଳ Eurydice_arr_9e *matrix_element = &row->data[j];
       Eurydice_arr_9e
       product = libcrux_ml_kem_polynomial_ntt_multiply_d6_ea(matrix_element, &s_as_ntt->data[j]);
       libcrux_ml_kem_polynomial_add_to_ring_element_d6_68(&t_as_ntt->data[i0], &product);
@@ -25658,14 +25658,14 @@ with const generics
 - ETA1= 2
 - ETA1_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ind_cpa_generate_keypair_unpacked_39(
-  Eurydice_borrow_slice_u8 key_generation_seed,
-  Eurydice_arr_bb0 *private_key,
-  libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51 *public_key
+  Eurydice_borrow_slice_u8 ଚାବି_generation_seed,
+  Eurydice_arr_bb0 *private_ଚାବି,
+  libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51 *public_ଚାବି
 )
 {
-  Eurydice_arr_c7 hashed = libcrux_ml_kem_variant_cpa_keygen_seed_39_13(key_generation_seed);
+  Eurydice_arr_c7 hashed = libcrux_ml_kem_variant_cpa_keygen_seed_39_13(ଚାବି_generation_seed);
   Eurydice_borrow_slice_u8_x2
   uu____0 =
     Eurydice_slice_split_at(Eurydice_array_to_slice_shared_17(&hashed),
@@ -25674,42 +25674,42 @@ libcrux_ml_kem_ind_cpa_generate_keypair_unpacked_39(
       Eurydice_borrow_slice_u8_x2);
   Eurydice_borrow_slice_u8 seed_for_A = uu____0.fst;
   Eurydice_borrow_slice_u8 seed_for_secret_and_error = uu____0.snd;
-  Eurydice_arr_c10 *uu____1 = &public_key->A;
+  Eurydice_arr_c10 *uu____1 = &public_ଚାବି->A;
   /* original Rust expression is not an lvalue in C */
   Eurydice_arr_31 lvalue0 = libcrux_ml_kem_utils_into_padded_array_de(seed_for_A);
   libcrux_ml_kem_matrix_sample_matrix_A_91(uu____1, &lvalue0, true);
   Eurydice_arr_fa0
-  prf_input = libcrux_ml_kem_utils_into_padded_array_29(seed_for_secret_and_error);
+  prf_ନିବେଶ = libcrux_ml_kem_utils_into_padded_array_29(seed_for_secret_and_error);
   uint8_t
   domain_separator =
-    libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_bf(private_key,
-      &prf_input,
+    libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_bf(private_ଚାବି,
+      &prf_ନିବେଶ,
       0U);
   Eurydice_arr_bb0 arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_struct.data[i] =
       libcrux_ml_kem_ind_cpa_generate_keypair_unpacked_call_mut_73_39(&lvalue,
         i);
   }
   Eurydice_arr_bb0 error_as_ntt = arr_struct;
   libcrux_ml_kem_ind_cpa_sample_vector_cbd_then_ntt_bf(&error_as_ntt,
-    &prf_input,
+    &prf_ନିବେଶ,
     domain_separator);
-  libcrux_ml_kem_matrix_compute_As_plus_e_68(&public_key->t_as_ntt,
-    &public_key->A,
-    &private_key[0U],
+  libcrux_ml_kem_matrix_compute_As_plus_e_68(&public_ଚାବି->t_as_ntt,
+    &public_ଚାବି->A,
+    &private_ଚାବି[0U],
     &error_as_ntt);
   Eurydice_arr_ec arr;
-  memcpy(arr.data, seed_for_A.ptr, (size_t)32U * sizeof (uint8_t));
+  memcpy(arr.data, seed_for_A.ptr, (size_t)32U * ଆକାର (uint8_t));
   Eurydice_arr_ec
   uu____2 =
     core_result_unwrap_26_39((
         KRML_CLITERAL(core_result_Result_07){ .tag = core_result_Ok, .val = { .case_Ok = arr } }
       ));
-  public_key->seed_for_A = uu____2;
+  public_ଚାବି->seed_for_A = uu____2;
 }
 
 /**
@@ -25718,11 +25718,11 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static KRML_MUSTINLINE Eurydice_arr_b20
-libcrux_ml_kem_serialize_serialize_uncompressed_ring_element_ea(const Eurydice_arr_9e *re)
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_b20
+libcrux_ml_kem_serialize_serialize_uncompressed_ring_element_ea(ଅଚଳ Eurydice_arr_9e *re)
 {
   Eurydice_arr_b20 serialized = { .data = { 0U } };
-  for (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < LIBCRUX_ML_KEM_POLYNOMIAL_VECTORS_IN_RING_ELEMENT; i++)
   {
     size_t i0 = i;
     Eurydice_arr_d6
@@ -25738,7 +25738,7 @@ libcrux_ml_kem_serialize_serialize_uncompressed_ring_element_ea(const Eurydice_a
       Eurydice_array_to_slice_shared_ed(&bytes),
       uint8_t);
   }
-  return serialized;
+  ଫେରନ୍ତୁ serialized;
 }
 
 /**
@@ -25750,16 +25750,16 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ind_cpa_serialize_vector_68(
-  const Eurydice_arr_bb0 *key,
+  ଅଚଳ Eurydice_arr_bb0 *ଚାବି,
   Eurydice_mut_borrow_slice_u8 out
 )
 {
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     size_t i0 = i;
-    Eurydice_arr_9e re = key->data[i0];
+    Eurydice_arr_9e re = ଚାବି->data[i0];
     Eurydice_mut_borrow_slice_u8
     uu____0 =
       Eurydice_slice_subslice_mut_c8(out,
@@ -25785,9 +25785,9 @@ with const generics
 - K= 3
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE void
-libcrux_ml_kem_ind_cpa_serialize_public_key_mut_b6(
-  const Eurydice_arr_bb0 *t_as_ntt,
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_kem_ind_cpa_serialize_public_ଚାବି_mut_b6(
+  ଅଚଳ Eurydice_arr_bb0 *t_as_ntt,
   Eurydice_borrow_slice_u8 seed_for_a,
   Eurydice_arr_5f *serialized
 )
@@ -25816,17 +25816,17 @@ with const generics
 - K= 3
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE Eurydice_arr_5f
-libcrux_ml_kem_ind_cpa_serialize_public_key_b6(
-  const Eurydice_arr_bb0 *t_as_ntt,
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_5f
+libcrux_ml_kem_ind_cpa_serialize_public_ଚାବି_b6(
+  ଅଚଳ Eurydice_arr_bb0 *t_as_ntt,
   Eurydice_borrow_slice_u8 seed_for_a
 )
 {
-  Eurydice_arr_5f public_key_serialized = { .data = { 0U } };
-  libcrux_ml_kem_ind_cpa_serialize_public_key_mut_b6(t_as_ntt,
+  Eurydice_arr_5f public_ଚାବି_serialized = { .data = { 0U } };
+  libcrux_ml_kem_ind_cpa_serialize_public_ଚାବି_mut_b6(t_as_ntt,
     seed_for_a,
-    &public_key_serialized);
-  return public_key_serialized;
+    &public_ଚାବି_serialized);
+  ଫେରନ୍ତୁ public_ଚାବି_serialized;
 }
 
 /**
@@ -25840,24 +25840,24 @@ with const generics
 - PRIVATE_KEY_SIZE= 1152
 - PUBLIC_KEY_SIZE= 1184
 */
-static inline libcrux_ml_kem_utils_extraction_helper_Keypair768
-libcrux_ml_kem_ind_cpa_serialize_unpacked_secret_key_30(
-  const libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51 *public_key,
-  const Eurydice_arr_bb0 *private_key
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_utils_extraction_helper_Keypair768
+libcrux_ml_kem_ind_cpa_serialize_unpacked_secret_ଚାବି_30(
+  ଅଚଳ libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51 *public_ଚାବି,
+  ଅଚଳ Eurydice_arr_bb0 *private_ଚାବି
 )
 {
   Eurydice_arr_5f
-  public_key_serialized =
-    libcrux_ml_kem_ind_cpa_serialize_public_key_b6(&public_key->t_as_ntt,
-      Eurydice_array_to_slice_shared_01(&public_key->seed_for_A));
-  Eurydice_arr_0e secret_key_serialized = { .data = { 0U } };
-  libcrux_ml_kem_ind_cpa_serialize_vector_68(private_key,
-    Eurydice_array_to_slice_mut_f4(&secret_key_serialized));
-  return
+  public_ଚାବି_serialized =
+    libcrux_ml_kem_ind_cpa_serialize_public_ଚାବି_b6(&public_ଚାବି->t_as_ntt,
+      Eurydice_array_to_slice_shared_01(&public_ଚାବି->seed_for_A));
+  Eurydice_arr_0e secret_ଚାବି_serialized = { .data = { 0U } };
+  libcrux_ml_kem_ind_cpa_serialize_vector_68(private_ଚାବି,
+    Eurydice_array_to_slice_mut_f4(&secret_ଚାବି_serialized));
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(libcrux_ml_kem_utils_extraction_helper_Keypair768){
-        .fst = secret_key_serialized,
-        .snd = public_key_serialized
+        .fst = secret_ଚାବି_serialized,
+        .snd = public_ଚାବି_serialized
       }
     );
 }
@@ -25872,16 +25872,16 @@ with const generics
 - ETA1= 2
 - ETA1_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE libcrux_ml_kem_utils_extraction_helper_Keypair768
-libcrux_ml_kem_ind_cpa_generate_keypair_30(Eurydice_borrow_slice_u8 key_generation_seed)
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_kem_utils_extraction_helper_Keypair768
+libcrux_ml_kem_ind_cpa_generate_keypair_30(Eurydice_borrow_slice_u8 ଚାବି_generation_seed)
 {
-  Eurydice_arr_bb0 private_key = libcrux_ml_kem_ind_cpa_unpacked_default_70_68();
-  libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51
-  public_key = libcrux_ml_kem_ind_cpa_unpacked_default_8b_68();
-  libcrux_ml_kem_ind_cpa_generate_keypair_unpacked_39(key_generation_seed,
-    &private_key,
-    &public_key);
-  return libcrux_ml_kem_ind_cpa_serialize_unpacked_secret_key_30(&public_key, &private_key);
+  Eurydice_arr_bb0 private_ଚାବି = libcrux_ml_kem_ind_cpa_unpacked_default_70_68();
+  libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51
+  public_ଚାବି = libcrux_ml_kem_ind_cpa_unpacked_default_8b_68();
+  libcrux_ml_kem_ind_cpa_generate_keypair_unpacked_39(ଚାବି_generation_seed,
+    &private_ଚାବି,
+    &public_ଚାବି);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cpa_serialize_unpacked_secret_ଚାବି_30(&public_ଚାବି, &private_ଚାବି);
 }
 
 /**
@@ -25894,11 +25894,11 @@ with const generics
 - K= 3
 - SERIALIZED_KEY_LEN= 2400
 */
-static KRML_MUSTINLINE void
-libcrux_ml_kem_ind_cca_serialize_kem_secret_key_mut_52(
-  Eurydice_borrow_slice_u8 private_key,
-  Eurydice_borrow_slice_u8 public_key,
-  Eurydice_borrow_slice_u8 implicit_rejection_value,
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_kem_ind_cca_serialize_kem_secret_ଚାବି_mut_52(
+  Eurydice_borrow_slice_u8 private_ଚାବି,
+  Eurydice_borrow_slice_u8 public_ଚାବି,
+  Eurydice_borrow_slice_u8 implicit_rejection_ମୂଲ୍ୟ,
   Eurydice_arr_7d *serialized
 )
 {
@@ -25907,17 +25907,17 @@ libcrux_ml_kem_ind_cca_serialize_kem_secret_key_mut_52(
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = pointer,
-          .end = pointer + private_key.meta
+          .end = pointer + private_ଚାବି.meta
         }
       )),
-    private_key,
+    private_ଚାବି,
     uint8_t);
-  pointer += private_key.meta;
+  pointer += private_ଚାବି.meta;
   Eurydice_slice_copy(Eurydice_array_to_subslice_mut_d417(serialized,
-      (KRML_CLITERAL(core_ops_range_Range_87){ .start = pointer, .end = pointer + public_key.meta })),
-    public_key,
+      (KRML_CLITERAL(core_ops_range_Range_87){ .start = pointer, .end = pointer + public_ଚାବି.meta })),
+    public_ଚାବି,
     uint8_t);
-  pointer += public_key.meta;
+  pointer += public_ଚାବି.meta;
   Eurydice_mut_borrow_slice_u8
   uu____0 =
     Eurydice_array_to_subslice_mut_d417(serialized,
@@ -25928,17 +25928,17 @@ libcrux_ml_kem_ind_cca_serialize_kem_secret_key_mut_52(
         }
       ));
   /* original Rust expression is not an lvalue in C */
-  Eurydice_arr_ec lvalue = libcrux_ml_kem_hash_functions_portable_H_4a_78(public_key);
+  Eurydice_arr_ec lvalue = libcrux_ml_kem_hash_functions_portable_H_4a_78(public_ଚାବି);
   Eurydice_slice_copy(uu____0, Eurydice_array_to_slice_shared_01(&lvalue), uint8_t);
   pointer += LIBCRUX_ML_KEM_CONSTANTS_H_DIGEST_SIZE;
   Eurydice_slice_copy(Eurydice_array_to_subslice_mut_d417(serialized,
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = pointer,
-          .end = pointer + implicit_rejection_value.meta
+          .end = pointer + implicit_rejection_ମୂଲ୍ୟ.meta
         }
       )),
-    implicit_rejection_value,
+    implicit_rejection_ମୂଲ୍ୟ,
     uint8_t);
 }
 
@@ -25949,19 +25949,19 @@ with const generics
 - K= 3
 - SERIALIZED_KEY_LEN= 2400
 */
-static KRML_MUSTINLINE Eurydice_arr_7d
-libcrux_ml_kem_ind_cca_serialize_kem_secret_key_52(
-  Eurydice_borrow_slice_u8 private_key,
-  Eurydice_borrow_slice_u8 public_key,
-  Eurydice_borrow_slice_u8 implicit_rejection_value
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_7d
+libcrux_ml_kem_ind_cca_serialize_kem_secret_ଚାବି_52(
+  Eurydice_borrow_slice_u8 private_ଚାବି,
+  Eurydice_borrow_slice_u8 public_ଚାବି,
+  Eurydice_borrow_slice_u8 implicit_rejection_ମୂଲ୍ୟ
 )
 {
   Eurydice_arr_7d out = { .data = { 0U } };
-  libcrux_ml_kem_ind_cca_serialize_kem_secret_key_mut_52(private_key,
-    public_key,
-    implicit_rejection_value,
+  libcrux_ml_kem_ind_cca_serialize_kem_secret_ଚାବି_mut_52(private_ଚାବି,
+    public_ଚାବି,
+    implicit_rejection_ମୂଲ୍ୟ,
     &out);
-  return out;
+  ଫେରନ୍ତୁ out;
 }
 
 /**
@@ -25983,8 +25983,8 @@ with const generics
 - ETA1= 2
 - ETA1_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE libcrux_ml_kem_mlkem768_MlKem768KeyPair
-libcrux_ml_kem_ind_cca_generate_keypair_b8(const Eurydice_arr_c7 *randomness)
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_kem_mlkem768_Ml_Kem768_ଚାବି_Pair
+libcrux_ml_kem_ind_cca_generate_keypair_b8(ଅଚଳ Eurydice_arr_c7 *randomness)
 {
   Eurydice_borrow_slice_u8
   ind_cpa_keypair_randomness =
@@ -25992,26 +25992,26 @@ libcrux_ml_kem_ind_cca_generate_keypair_b8(const Eurydice_arr_c7 *randomness)
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = (size_t)0U,
-          .end = LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE
+          .end = LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_ଚାବି_GENERATION_SEED_SIZE
         }
       ));
   Eurydice_borrow_slice_u8
-  implicit_rejection_value =
+  implicit_rejection_ମୂଲ୍ୟ =
     Eurydice_array_to_subslice_from_shared_5f1(randomness,
-      LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE);
+      LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_ଚାବି_GENERATION_SEED_SIZE);
   libcrux_ml_kem_utils_extraction_helper_Keypair768
   uu____0 = libcrux_ml_kem_ind_cpa_generate_keypair_30(ind_cpa_keypair_randomness);
-  Eurydice_arr_0e ind_cpa_private_key = uu____0.fst;
-  Eurydice_arr_5f public_key = uu____0.snd;
+  Eurydice_arr_0e ind_cpa_private_ଚାବି = uu____0.fst;
+  Eurydice_arr_5f public_ଚାବି = uu____0.snd;
   Eurydice_arr_7d
-  secret_key_serialized =
-    libcrux_ml_kem_ind_cca_serialize_kem_secret_key_52(Eurydice_array_to_slice_shared_f4(&ind_cpa_private_key),
-      Eurydice_array_to_slice_shared_ff(&public_key),
-      implicit_rejection_value);
-  Eurydice_arr_7d private_key = libcrux_ml_kem_types_from_b2_79(secret_key_serialized);
-  return
-    libcrux_ml_kem_types_from_17_bc(private_key,
-      libcrux_ml_kem_types_from_51_3d(public_key));
+  secret_ଚାବି_serialized =
+    libcrux_ml_kem_ind_cca_serialize_kem_secret_ଚାବି_52(Eurydice_array_to_slice_shared_f4(&ind_cpa_private_ଚାବି),
+      Eurydice_array_to_slice_shared_ff(&public_ଚାବି),
+      implicit_rejection_ମୂଲ୍ୟ);
+  Eurydice_arr_7d private_ଚାବି = libcrux_ml_kem_types_from_b2_79(secret_ଚାବି_serialized);
+  ଫେରନ୍ତୁ
+    libcrux_ml_kem_types_from_17_bc(private_ଚାବି,
+      libcrux_ml_kem_types_from_51_3d(public_ଚାବି));
 }
 
 /**
@@ -26027,21 +26027,21 @@ with const generics
 - ETA1= 2
 - ETA1_RANDOMNESS_SIZE= 128
 */
-static inline libcrux_ml_kem_mlkem768_MlKem768KeyPair
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_mlkem768_Ml_Kem768_ଚାବି_Pair
 libcrux_ml_kem_ind_cca_instantiations_portable_generate_keypair_e9(
-  const Eurydice_arr_c7 *randomness
+  ଅଚଳ Eurydice_arr_c7 *randomness
 )
 {
-  return libcrux_ml_kem_ind_cca_generate_keypair_b8(randomness);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_generate_keypair_b8(randomness);
 }
 
 /**
  Generate ML-KEM 768 Key Pair
 */
-static inline libcrux_ml_kem_mlkem768_MlKem768KeyPair
-libcrux_ml_kem_mlkem768_portable_generate_key_pair(Eurydice_arr_c7 randomness)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_mlkem768_Ml_Kem768_ଚାବି_Pair
+libcrux_ml_kem_mlkem768_portable_generate_ଚାବି_pair(Eurydice_arr_c7 randomness)
 {
-  return libcrux_ml_kem_ind_cca_instantiations_portable_generate_keypair_e9(&randomness);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_instantiations_portable_generate_keypair_e9(&randomness);
 }
 
 /**
@@ -26056,12 +26056,12 @@ with const generics
 - K= 3
 - SECRET_KEY_SIZE= 2400
 */
-static KRML_MUSTINLINE bool
-libcrux_ml_kem_ind_cca_validate_private_key_only_52(const Eurydice_arr_7d *private_key)
+ସ୍ଥିର KRML_MUSTINLINE bool
+libcrux_ml_kem_ind_cca_validate_private_ଚାବି_only_52(ଅଚଳ Eurydice_arr_7d *private_ଚାବି)
 {
   Eurydice_arr_ec
   t =
-    libcrux_ml_kem_hash_functions_portable_H_4a_78(Eurydice_array_to_subslice_shared_d48(private_key,
+    libcrux_ml_kem_hash_functions_portable_H_4a_78(Eurydice_array_to_subslice_shared_d48(private_ଚାବି,
         (
           KRML_CLITERAL(core_ops_range_Range_87){
             .start = (size_t)384U * (size_t)3U,
@@ -26070,14 +26070,14 @@ libcrux_ml_kem_ind_cca_validate_private_key_only_52(const Eurydice_arr_7d *priva
         )));
   Eurydice_borrow_slice_u8
   expected =
-    Eurydice_array_to_subslice_shared_d48(private_key,
+    Eurydice_array_to_subslice_shared_d48(private_ଚାବି,
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = (size_t)768U * (size_t)3U + (size_t)32U,
           .end = (size_t)768U * (size_t)3U + (size_t)64U
         }
       ));
-  return Eurydice_array_eq_slice_shared((size_t)32U, &t, &expected, uint8_t, bool);
+  ଫେରନ୍ତୁ Eurydice_array_eq_slice_shared((size_t)32U, &t, &expected, uint8_t, bool);
 }
 
 /**
@@ -26095,13 +26095,13 @@ with const generics
 - SECRET_KEY_SIZE= 2400
 - CIPHERTEXT_SIZE= 1088
 */
-static KRML_MUSTINLINE bool
-libcrux_ml_kem_ind_cca_validate_private_key_ba(
-  const Eurydice_arr_7d *private_key,
-  const Eurydice_arr_2b *_ciphertext
+ସ୍ଥିର KRML_MUSTINLINE bool
+libcrux_ml_kem_ind_cca_validate_private_ଚାବି_ba(
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି,
+  ଅଚଳ Eurydice_arr_2b *_ciphertext
 )
 {
-  return libcrux_ml_kem_ind_cca_validate_private_key_only_52(private_key);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_validate_private_ଚାବି_only_52(private_ଚାବି);
 }
 
 /**
@@ -26114,13 +26114,13 @@ with const generics
 - SECRET_KEY_SIZE= 2400
 - CIPHERTEXT_SIZE= 1088
 */
-static KRML_MUSTINLINE bool
-libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_key_d3(
-  const Eurydice_arr_7d *private_key,
-  const Eurydice_arr_2b *ciphertext
+ସ୍ଥିର KRML_MUSTINLINE bool
+libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_ଚାବି_d3(
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
-  return libcrux_ml_kem_ind_cca_validate_private_key_ba(private_key, ciphertext);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_validate_private_ଚାବି_ba(private_ଚାବି, ciphertext);
 }
 
 /**
@@ -26128,14 +26128,14 @@ libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_key_d3(
 
  Returns `true` if valid, and `false` otherwise.
 */
-static inline bool
-libcrux_ml_kem_mlkem768_portable_validate_private_key(
-  const Eurydice_arr_7d *private_key,
-  const Eurydice_arr_2b *ciphertext
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ bool
+libcrux_ml_kem_mlkem768_portable_validate_private_ଚାବି(
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
-  return
-    libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_key_d3(private_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_ଚାବି_d3(private_ଚାବି,
       ciphertext);
 }
 
@@ -26148,12 +26148,12 @@ with const generics
 - K= 3
 - SECRET_KEY_SIZE= 2400
 */
-static KRML_MUSTINLINE bool
-libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_key_only_3b(
-  const Eurydice_arr_7d *private_key
+ସ୍ଥିର KRML_MUSTINLINE bool
+libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_ଚାବି_only_3b(
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି
 )
 {
-  return libcrux_ml_kem_ind_cca_validate_private_key_only_52(private_key);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_validate_private_ଚାବି_only_52(private_ଚାବି);
 }
 
 /**
@@ -26161,11 +26161,11 @@ libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_key_only_3b(
 
  Returns `true` if valid, and `false` otherwise.
 */
-static inline bool
-libcrux_ml_kem_mlkem768_portable_validate_private_key_only(const Eurydice_arr_7d *private_key)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ bool
+libcrux_ml_kem_mlkem768_portable_validate_private_ଚାବି_only(ଅଚଳ Eurydice_arr_7d *private_ଚାବି)
 {
-  return
-    libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_key_only_3b(private_key);
+  ଫେରନ୍ତୁ
+    libcrux_ml_kem_ind_cca_instantiations_portable_validate_private_ଚାବି_only_3b(private_ଚାବି);
 }
 
 /**
@@ -26177,13 +26177,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_9e
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
 libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_out_call_mut_0b_68(
-  void **_,
+  ଶୂନ୍ୟ **_,
   size_t tupled_args
 )
 {
-  return libcrux_ml_kem_polynomial_ZERO_d6_ea();
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_ZERO_d6_ea();
 }
 
 /**
@@ -26198,23 +26198,23 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE Eurydice_arr_bb0
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_bb0
 libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_out_68(
-  Eurydice_borrow_slice_u8 public_key
+  Eurydice_borrow_slice_u8 public_ଚାବି
 )
 {
   Eurydice_arr_bb0 arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_struct.data[i] =
       libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_out_call_mut_0b_68(&lvalue,
         i);
   }
   Eurydice_arr_bb0 deserialized_pk = arr_struct;
-  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_68(public_key, &deserialized_pk);
-  return deserialized_pk;
+  libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_68(public_ଚାବି, &deserialized_pk);
+  ଫେରନ୍ତୁ deserialized_pk;
 }
 
 /**
@@ -26231,19 +26231,19 @@ with const generics
 - K= 3
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE bool
-libcrux_ml_kem_ind_cca_validate_public_key_b6(const Eurydice_arr_5f *public_key)
+ସ୍ଥିର KRML_MUSTINLINE bool
+libcrux_ml_kem_ind_cca_validate_public_ଚାବି_b6(ଅଚଳ Eurydice_arr_5f *public_ଚାବି)
 {
   Eurydice_arr_bb0
   deserialized_pk =
-    libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_out_68(Eurydice_array_to_subslice_to_shared_210(public_key,
+    libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_out_68(Eurydice_array_to_subslice_to_shared_210(public_ଚାବି,
         libcrux_ml_kem_constants_ranked_bytes_per_ring_element((size_t)3U)));
   Eurydice_arr_5f
-  public_key_serialized =
-    libcrux_ml_kem_ind_cpa_serialize_public_key_b6(&deserialized_pk,
-      Eurydice_array_to_subslice_from_shared_5f2(public_key,
+  public_ଚାବି_serialized =
+    libcrux_ml_kem_ind_cpa_serialize_public_ଚାବି_b6(&deserialized_pk,
+      Eurydice_array_to_subslice_from_shared_5f2(public_ଚାବି,
         libcrux_ml_kem_constants_ranked_bytes_per_ring_element((size_t)3U)));
-  return Eurydice_array_eq((size_t)1184U, public_key, &public_key_serialized, uint8_t);
+  ଫେରନ୍ତୁ Eurydice_array_eq((size_t)1184U, public_ଚାବି, &public_ଚାବି_serialized, uint8_t);
 }
 
 /**
@@ -26255,12 +26255,12 @@ with const generics
 - K= 3
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE bool
-libcrux_ml_kem_ind_cca_instantiations_portable_validate_public_key_3b(
-  const Eurydice_arr_5f *public_key
+ସ୍ଥିର KRML_MUSTINLINE bool
+libcrux_ml_kem_ind_cca_instantiations_portable_validate_public_ଚାବି_3b(
+  ଅଚଳ Eurydice_arr_5f *public_ଚାବି
 )
 {
-  return libcrux_ml_kem_ind_cca_validate_public_key_b6(public_key);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_validate_public_ଚାବି_b6(public_ଚାବି);
 }
 
 /**
@@ -26268,10 +26268,10 @@ libcrux_ml_kem_ind_cca_instantiations_portable_validate_public_key_3b(
 
  Returns `true` if valid, and `false` otherwise.
 */
-static inline bool
-libcrux_ml_kem_mlkem768_portable_validate_public_key(const Eurydice_arr_5f *public_key)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ bool
+libcrux_ml_kem_mlkem768_portable_validate_public_ଚାବି(ଅଚଳ Eurydice_arr_5f *public_ଚାବି)
 {
-  return libcrux_ml_kem_ind_cca_instantiations_portable_validate_public_key_3b(public_key);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_instantiations_portable_validate_public_ଚାବି_3b(public_ଚାବି);
 }
 
 /**
@@ -26280,15 +26280,15 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - $3size_t
 */
-typedef struct libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51_s
 {
-  libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51 ind_cpa_public_key;
-  Eurydice_arr_ec public_key_hash;
+  libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51 ind_cpa_public_ଚାବି;
+  Eurydice_arr_ec public_ଚାବି_hash;
 }
-libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51;
+libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51;
 
-typedef libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51
-libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768PublicKeyUnpacked;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51
+libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_Public_ଚାବି_Unpacked;
 
 /**
 A monomorphic instance of libcrux_ml_kem.ind_cca.unpacked.MlKemPrivateKeyUnpacked
@@ -26296,19 +26296,19 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - $3size_t
 */
-typedef struct libcrux_ml_kem_ind_cca_unpacked_MlKemPrivateKeyUnpacked_51_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Private_ଚାବି_Unpacked_51_s
 {
-  Eurydice_arr_bb0 ind_cpa_private_key;
-  Eurydice_arr_ec implicit_rejection_value;
+  Eurydice_arr_bb0 ind_cpa_private_ଚାବି;
+  Eurydice_arr_ec implicit_rejection_ମୂଲ୍ୟ;
 }
-libcrux_ml_kem_ind_cca_unpacked_MlKemPrivateKeyUnpacked_51;
+libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Private_ଚାବି_Unpacked_51;
 
-typedef struct libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked_s
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ସଂରଚନା libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked_s
 {
-  libcrux_ml_kem_ind_cca_unpacked_MlKemPrivateKeyUnpacked_51 private_key;
-  libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 public_key;
+  libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Private_ଚାବି_Unpacked_51 private_ଚାବି;
+  libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 public_ଚାବି;
 }
-libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked;
+libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked;
 
 /**
 A monomorphic instance of libcrux_ml_kem.ind_cca.unpacked.decapsulate
@@ -26331,15 +26331,15 @@ with const generics
 - ETA2_RANDOMNESS_SIZE= 128
 - IMPLICIT_REJECTION_HASH_INPUT_SIZE= 1120
 */
-static KRML_MUSTINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ec
 libcrux_ml_kem_ind_cca_unpacked_decapsulate_0c(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair,
-  const Eurydice_arr_2b *ciphertext
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
   Eurydice_arr_ec
   decrypted =
-    libcrux_ml_kem_ind_cpa_decrypt_unpacked_01(&key_pair->private_key.ind_cpa_private_key,
+    libcrux_ml_kem_ind_cpa_decrypt_unpacked_01(&ଚାବି_pair->private_ଚାବି.ind_cpa_private_ଚାବି,
       ciphertext);
   Eurydice_arr_c7
   to_hash0 =
@@ -26349,7 +26349,7 @@ libcrux_ml_kem_ind_cca_unpacked_decapsulate_0c(
     Eurydice_array_to_subslice_from_mut_5f1(&to_hash0,
       LIBCRUX_ML_KEM_CONSTANTS_SHARED_SECRET_SIZE);
   Eurydice_slice_copy(uu____0,
-    Eurydice_array_to_slice_shared_01(&key_pair->public_key.public_key_hash),
+    Eurydice_array_to_slice_shared_01(&ଚାବି_pair->public_ଚାବି.public_ଚାବି_hash),
     uint8_t);
   Eurydice_arr_c7
   hashed =
@@ -26364,7 +26364,7 @@ libcrux_ml_kem_ind_cca_unpacked_decapsulate_0c(
   Eurydice_borrow_slice_u8 pseudorandomness = uu____1.snd;
   Eurydice_arr_af
   to_hash =
-    libcrux_ml_kem_utils_into_padded_array_66(Eurydice_array_to_slice_shared_01(&key_pair->private_key.implicit_rejection_value));
+    libcrux_ml_kem_utils_into_padded_array_66(Eurydice_array_to_slice_shared_01(&ଚାବି_pair->private_ଚାବି.implicit_rejection_ମୂଲ୍ୟ));
   Eurydice_mut_borrow_slice_u8
   uu____2 =
     Eurydice_array_to_subslice_from_mut_5f2(&to_hash,
@@ -26375,7 +26375,7 @@ libcrux_ml_kem_ind_cca_unpacked_decapsulate_0c(
     libcrux_ml_kem_hash_functions_portable_PRF_4a_3b(Eurydice_array_to_slice_shared_81(&to_hash));
   Eurydice_arr_2b
   expected_ciphertext =
-    libcrux_ml_kem_ind_cpa_encrypt_unpacked_d5(&key_pair->public_key.ind_cpa_public_key,
+    libcrux_ml_kem_ind_cpa_encrypt_unpacked_d5(&ଚାବି_pair->public_ଚାବି.ind_cpa_public_ଚାବି,
       &decrypted,
       pseudorandomness);
   Eurydice_borrow_slice_u8 uu____3 = libcrux_ml_kem_types_as_ref_c1_52(ciphertext);
@@ -26383,7 +26383,7 @@ libcrux_ml_kem_ind_cca_unpacked_decapsulate_0c(
   selector =
     libcrux_ml_kem_constant_time_ops_compare_ciphertexts_in_constant_time(uu____3,
       Eurydice_array_to_slice_shared_06(&expected_ciphertext));
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_constant_time_ops_select_shared_secret_in_constant_time(shared_secret,
       Eurydice_array_to_slice_shared_01(&implicit_rejection_shared_secret),
       selector);
@@ -26412,13 +26412,13 @@ with const generics
 - ETA2_RANDOMNESS_SIZE= 128
 - IMPLICIT_REJECTION_HASH_INPUT_SIZE= 1120
 */
-static KRML_MUSTINLINE Eurydice_arr_ec
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_ec
 libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_decapsulate_19(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair,
-  const Eurydice_arr_2b *ciphertext
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
-  return libcrux_ml_kem_ind_cca_unpacked_decapsulate_0c(key_pair, ciphertext);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_unpacked_decapsulate_0c(ଚାବି_pair, ciphertext);
 }
 
 /**
@@ -26428,14 +26428,14 @@ libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_decapsulate_19(
  The input is a reference to an unpacked key pair of type [`MlKem768KeyPairUnpacked`]
  and an [`MlKem768Ciphertext`].
 */
-static inline Eurydice_arr_ec
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_ec
 libcrux_ml_kem_mlkem768_portable_unpacked_decapsulate(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *private_key,
-  const Eurydice_arr_2b *ciphertext
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *private_ଚାବି,
+  ଅଚଳ Eurydice_arr_2b *ciphertext
 )
 {
-  return
-    libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_decapsulate_19(private_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_decapsulate_19(private_ଚାବି,
       ciphertext);
 }
 
@@ -26445,7 +26445,7 @@ with types libcrux_ml_kem_hash_functions_portable_PortableHash[[$3size_t]]
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_c7
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_c7
 libcrux_ml_kem_ind_cca_unpacked_encaps_prepare_13(
   Eurydice_borrow_slice_u8 randomness,
   Eurydice_borrow_slice_u8 pk_hash
@@ -26456,7 +26456,7 @@ libcrux_ml_kem_ind_cca_unpacked_encaps_prepare_13(
       LIBCRUX_ML_KEM_CONSTANTS_H_DIGEST_SIZE),
     pk_hash,
     uint8_t);
-  return
+  ଫେରନ୍ତୁ
     libcrux_ml_kem_hash_functions_portable_G_4a_78(Eurydice_array_to_slice_shared_17(&to_hash));
 }
 
@@ -26478,16 +26478,16 @@ with const generics
 - ETA2= 2
 - ETA2_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE tuple_f4
+ସ୍ଥିର KRML_MUSTINLINE tuple_f4
 libcrux_ml_kem_ind_cca_unpacked_encapsulate_a7(
-  const libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *public_key,
-  const Eurydice_arr_ec *randomness
+  ଅଚଳ libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *public_ଚାବି,
+  ଅଚଳ Eurydice_arr_ec *randomness
 )
 {
   Eurydice_arr_c7
   hashed =
     libcrux_ml_kem_ind_cca_unpacked_encaps_prepare_13(Eurydice_array_to_slice_shared_01(randomness),
-      Eurydice_array_to_slice_shared_01(&public_key->public_key_hash));
+      Eurydice_array_to_slice_shared_01(&public_ଚାବି->public_ଚାବି_hash));
   Eurydice_borrow_slice_u8_x2
   uu____0 =
     Eurydice_slice_split_at(Eurydice_array_to_slice_shared_17(&hashed),
@@ -26498,14 +26498,14 @@ libcrux_ml_kem_ind_cca_unpacked_encapsulate_a7(
   Eurydice_borrow_slice_u8 pseudorandomness = uu____0.snd;
   Eurydice_arr_2b
   ciphertext =
-    libcrux_ml_kem_ind_cpa_encrypt_unpacked_d5(&public_key->ind_cpa_public_key,
+    libcrux_ml_kem_ind_cpa_encrypt_unpacked_d5(&public_ଚାବି->ind_cpa_public_ଚାବି,
       randomness,
       pseudorandomness);
   Eurydice_arr_ec shared_secret_array = { .data = { 0U } };
   Eurydice_slice_copy(Eurydice_array_to_slice_mut_01(&shared_secret_array),
     shared_secret,
     uint8_t);
-  return
+  ଫେରନ୍ତୁ
     (
       KRML_CLITERAL(tuple_f4){
         .fst = libcrux_ml_kem_types_from_19_52(ciphertext),
@@ -26534,13 +26534,13 @@ with const generics
 - ETA2= 2
 - ETA2_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE tuple_f4
+ସ୍ଥିର KRML_MUSTINLINE tuple_f4
 libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_encapsulate_26(
-  const libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *public_key,
-  const Eurydice_arr_ec *randomness
+  ଅଚଳ libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *public_ଚାବି,
+  ଅଚଳ Eurydice_arr_ec *randomness
 )
 {
-  return libcrux_ml_kem_ind_cca_unpacked_encapsulate_a7(public_key, randomness);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_unpacked_encapsulate_a7(public_ଚାବି, randomness);
 }
 
 /**
@@ -26550,14 +26550,14 @@ libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_encapsulate_26(
  The input is a reference to an unpacked public key of type [`MlKem768PublicKeyUnpacked`],
  the SHA3-256 hash of this public key, and [`SHARED_SECRET_SIZE`] bytes of `randomness`.
 */
-static inline tuple_f4
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ tuple_f4
 libcrux_ml_kem_mlkem768_portable_unpacked_encapsulate(
-  const libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *public_key,
+  ଅଚଳ libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *public_ଚାବି,
   Eurydice_arr_ec randomness
 )
 {
-  return
-    libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_encapsulate_26(public_key,
+  ଫେରନ୍ତୁ
+    libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_encapsulate_26(public_ଚାବି,
       &randomness);
 }
 
@@ -26570,13 +26570,13 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_9e
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
 libcrux_ml_kem_ind_cca_unpacked_transpose_a_closure_call_mut_b4_68(
-  void **_,
+  ଶୂନ୍ୟ **_,
   size_t tupled_args
 )
 {
-  return libcrux_ml_kem_polynomial_ZERO_d6_ea();
+  ଫେରନ୍ତୁ libcrux_ml_kem_polynomial_ZERO_d6_ea();
 }
 
 /**
@@ -26588,19 +26588,19 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_bb0
-libcrux_ml_kem_ind_cca_unpacked_transpose_a_call_mut_22_68(void **_, size_t tupled_args)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_bb0
+libcrux_ml_kem_ind_cca_unpacked_transpose_a_call_mut_22_68(ଶୂନ୍ୟ **_, size_t tupled_args)
 {
   Eurydice_arr_bb0 arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_struct.data[i] =
       libcrux_ml_kem_ind_cca_unpacked_transpose_a_closure_call_mut_b4_68(&lvalue,
         i);
   }
-  return arr_struct;
+  ଫେରନ୍ତୁ arr_struct;
 }
 
 /**
@@ -26612,10 +26612,10 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 
 */
-static inline Eurydice_arr_9e
-libcrux_ml_kem_polynomial_clone_c1_ea(const Eurydice_arr_9e *self)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_9e
+libcrux_ml_kem_polynomial_clone_c1_ea(ଅଚଳ Eurydice_arr_9e *self)
 {
-  return
+  ଫେରନ୍ତୁ
     core_array__core__clone__Clone_for__T__N___clone((size_t)16U,
       self,
       Eurydice_arr_d6,
@@ -26628,28 +26628,28 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static inline Eurydice_arr_c10
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_c10
 libcrux_ml_kem_ind_cca_unpacked_transpose_a_68(Eurydice_arr_c10 ind_cpa_a)
 {
   Eurydice_arr_c10 arr_struct;
-  for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+  ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
   {
     /* original Rust expression is not an lvalue in C */
-    void *lvalue = (void *)0U;
+    ଶୂନ୍ୟ *lvalue = (ଶୂନ୍ୟ *)0U;
     arr_struct.data[i] = libcrux_ml_kem_ind_cca_unpacked_transpose_a_call_mut_22_68(&lvalue, i);
   }
   Eurydice_arr_c10 A = arr_struct;
-  for (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
+  ପାଇଁ (size_t i0 = (size_t)0U; i0 < (size_t)3U; i0++)
   {
     size_t i1 = i0;
-    for (size_t i = (size_t)0U; i < (size_t)3U; i++)
+    ପାଇଁ (size_t i = (size_t)0U; i < (size_t)3U; i++)
     {
       size_t j = i;
       Eurydice_arr_9e uu____0 = libcrux_ml_kem_polynomial_clone_c1_ea(&ind_cpa_a.data[j].data[i1]);
       A.data[i1].data[j] = uu____0;
     }
   }
-  return A;
+  ଫେରନ୍ତୁ A;
 }
 
 /**
@@ -26666,10 +26666,10 @@ with const generics
 - ETA1= 2
 - ETA1_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ind_cca_unpacked_generate_keypair_b8(
   Eurydice_arr_c7 randomness,
-  libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *out
+  libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *out
 )
 {
   Eurydice_borrow_slice_u8
@@ -26678,35 +26678,35 @@ libcrux_ml_kem_ind_cca_unpacked_generate_keypair_b8(
       (
         KRML_CLITERAL(core_ops_range_Range_87){
           .start = (size_t)0U,
-          .end = LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE
+          .end = LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_ଚାବି_GENERATION_SEED_SIZE
         }
       ));
   Eurydice_borrow_slice_u8
-  implicit_rejection_value =
+  implicit_rejection_ମୂଲ୍ୟ =
     Eurydice_array_to_subslice_from_shared_5f1(&randomness,
-      LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_KEY_GENERATION_SEED_SIZE);
+      LIBCRUX_ML_KEM_CONSTANTS_CPA_PKE_ଚାବି_GENERATION_SEED_SIZE);
   libcrux_ml_kem_ind_cpa_generate_keypair_unpacked_39(ind_cpa_keypair_randomness,
-    &out->private_key.ind_cpa_private_key,
-    &out->public_key.ind_cpa_public_key);
+    &out->private_ଚାବି.ind_cpa_private_ଚାବି,
+    &out->public_ଚାବି.ind_cpa_public_ଚାବି);
   Eurydice_arr_c10
-  A = libcrux_ml_kem_ind_cca_unpacked_transpose_a_68(out->public_key.ind_cpa_public_key.A);
-  out->public_key.ind_cpa_public_key.A = A;
+  A = libcrux_ml_kem_ind_cca_unpacked_transpose_a_68(out->public_ଚାବି.ind_cpa_public_ଚାବି.A);
+  out->public_ଚାବି.ind_cpa_public_ଚାବି.A = A;
   Eurydice_arr_5f
   pk_serialized =
-    libcrux_ml_kem_ind_cpa_serialize_public_key_b6(&out->public_key.ind_cpa_public_key.t_as_ntt,
-      Eurydice_array_to_slice_shared_01(&out->public_key.ind_cpa_public_key.seed_for_A));
+    libcrux_ml_kem_ind_cpa_serialize_public_ଚାବି_b6(&out->public_ଚାବି.ind_cpa_public_ଚାବି.t_as_ntt,
+      Eurydice_array_to_slice_shared_01(&out->public_ଚାବି.ind_cpa_public_ଚାବି.seed_for_A));
   Eurydice_arr_ec
   uu____0 =
     libcrux_ml_kem_hash_functions_portable_H_4a_78(Eurydice_array_to_slice_shared_ff(&pk_serialized));
-  out->public_key.public_key_hash = uu____0;
+  out->public_ଚାବି.public_ଚାବି_hash = uu____0;
   Eurydice_arr_ec arr;
-  memcpy(arr.data, implicit_rejection_value.ptr, (size_t)32U * sizeof (uint8_t));
+  memcpy(arr.data, implicit_rejection_ମୂଲ୍ୟ.ptr, (size_t)32U * ଆକାର (uint8_t));
   Eurydice_arr_ec
   uu____1 =
     core_result_unwrap_26_39((
         KRML_CLITERAL(core_result_Result_07){ .tag = core_result_Ok, .val = { .case_Ok = arr } }
       ));
-  out->private_key.implicit_rejection_value = uu____1;
+  out->private_ଚାବି.implicit_rejection_ମୂଲ୍ୟ = uu____1;
 }
 
 /**
@@ -26722,10 +26722,10 @@ with const generics
 - ETA1= 2
 - ETA1_RANDOMNESS_SIZE= 128
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_generate_keypair_e9(
   Eurydice_arr_c7 randomness,
-  libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *out
+  libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *out
 )
 {
   libcrux_ml_kem_ind_cca_unpacked_generate_keypair_b8(randomness, out);
@@ -26734,14 +26734,14 @@ libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_generate_keypair_e9(
 /**
  Generate ML-KEM 768 Key Pair in "unpacked" form.
 */
-static inline void
-libcrux_ml_kem_mlkem768_portable_unpacked_generate_key_pair_mut(
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_kem_mlkem768_portable_unpacked_generate_ଚାବି_pair_mut(
   Eurydice_arr_c7 randomness,
-  libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair
+  libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair
 )
 {
   libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_generate_keypair_e9(randomness,
-    key_pair);
+    ଚାବି_pair);
 }
 
 /**
@@ -26753,14 +26753,14 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51
-libcrux_ml_kem_ind_cca_unpacked_default_30_68(void)
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51
+libcrux_ml_kem_ind_cca_unpacked_default_30_68(ଶୂନ୍ୟ)
 {
-  return
+  ଫେରନ୍ତୁ
     (
-      KRML_CLITERAL(libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51){
-        .ind_cpa_public_key = libcrux_ml_kem_ind_cpa_unpacked_default_8b_68(),
-        .public_key_hash = { .data = { 0U } }
+      KRML_CLITERAL(libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51){
+        .ind_cpa_public_ଚାବି = libcrux_ml_kem_ind_cpa_unpacked_default_8b_68(),
+        .public_ଚାବି_hash = { .data = { 0U } }
       }
     );
 }
@@ -26774,20 +26774,20 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked
-libcrux_ml_kem_ind_cca_unpacked_default_7b_68(void)
+ସ୍ଥିର KRML_MUSTINLINE libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked
+libcrux_ml_kem_ind_cca_unpacked_default_7b_68(ଶୂନ୍ୟ)
 {
-  libcrux_ml_kem_ind_cca_unpacked_MlKemPrivateKeyUnpacked_51
+  libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Private_ଚାବି_Unpacked_51
   uu____0 =
     {
-      .ind_cpa_private_key = libcrux_ml_kem_ind_cpa_unpacked_default_70_68(),
-      .implicit_rejection_value = { .data = { 0U } }
+      .ind_cpa_private_ଚାବି = libcrux_ml_kem_ind_cpa_unpacked_default_70_68(),
+      .implicit_rejection_ମୂଲ୍ୟ = { .data = { 0U } }
     };
-  return
+  ଫେରନ୍ତୁ
     (
-      KRML_CLITERAL(libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked){
-        .private_key = uu____0,
-        .public_key = libcrux_ml_kem_ind_cca_unpacked_default_30_68()
+      KRML_CLITERAL(libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked){
+        .private_ଚାବି = uu____0,
+        .public_ଚାବି = libcrux_ml_kem_ind_cca_unpacked_default_30_68()
       }
     );
 }
@@ -26795,31 +26795,31 @@ libcrux_ml_kem_ind_cca_unpacked_default_7b_68(void)
 /**
  Generate ML-KEM 768 Key Pair in "unpacked" form.
 */
-static inline libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked
-libcrux_ml_kem_mlkem768_portable_unpacked_generate_key_pair(Eurydice_arr_c7 randomness)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked
+libcrux_ml_kem_mlkem768_portable_unpacked_generate_ଚାବି_pair(Eurydice_arr_c7 randomness)
 {
-  libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked
-  key_pair = libcrux_ml_kem_ind_cca_unpacked_default_7b_68();
-  libcrux_ml_kem_mlkem768_portable_unpacked_generate_key_pair_mut(randomness, &key_pair);
-  return key_pair;
+  libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked
+  ଚାବି_pair = libcrux_ml_kem_ind_cca_unpacked_default_7b_68();
+  libcrux_ml_kem_mlkem768_portable_unpacked_generate_ଚାବି_pair_mut(randomness, &ଚାବି_pair);
+  ଫେରନ୍ତୁ ଚାବି_pair;
 }
 
 /**
  Create a new, empty unpacked key.
 */
-static inline libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked
-libcrux_ml_kem_mlkem768_portable_unpacked_init_key_pair(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked
+libcrux_ml_kem_mlkem768_portable_unpacked_init_ଚାବି_pair(ଶୂନ୍ୟ)
 {
-  return libcrux_ml_kem_ind_cca_unpacked_default_7b_68();
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_unpacked_default_7b_68();
 }
 
 /**
  Create a new, empty unpacked public key.
 */
-static inline libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51
-libcrux_ml_kem_mlkem768_portable_unpacked_init_public_key(void)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51
+libcrux_ml_kem_mlkem768_portable_unpacked_init_public_ଚାବି(ଶୂନ୍ୟ)
 {
-  return libcrux_ml_kem_ind_cca_unpacked_default_30_68();
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_unpacked_default_30_68();
 }
 
 /**
@@ -26835,31 +26835,31 @@ with const generics
 - PUBLIC_KEY_SIZE= 1184
 - T_AS_NTT_ENCODED_SIZE= 1152
 */
-static KRML_MUSTINLINE void
-libcrux_ml_kem_ind_cca_unpacked_keys_from_private_key_01(
-  const Eurydice_arr_7d *private_key,
-  libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_kem_ind_cca_unpacked_ଚାବିଗୁଡ଼ିକ_from_private_ଚାବି_01(
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି,
+  libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair
 )
 {
   Eurydice_borrow_slice_u8_x4
   uu____0 =
-    libcrux_ml_kem_types_unpack_private_key_64(Eurydice_array_to_slice_shared_51(private_key));
-  Eurydice_borrow_slice_u8 ind_cpa_secret_key = uu____0.fst;
-  Eurydice_borrow_slice_u8 ind_cpa_public_key = uu____0.snd;
-  Eurydice_borrow_slice_u8 ind_cpa_public_key_hash = uu____0.thd;
-  Eurydice_borrow_slice_u8 implicit_rejection_value = uu____0.f3;
-  libcrux_ml_kem_ind_cpa_deserialize_vector_68(ind_cpa_secret_key,
-    &key_pair->private_key.ind_cpa_private_key);
-  libcrux_ml_kem_ind_cpa_build_unpacked_public_key_mut_05(ind_cpa_public_key,
-    &key_pair->public_key.ind_cpa_public_key);
-  Eurydice_slice_copy(Eurydice_array_to_slice_mut_01(&key_pair->public_key.public_key_hash),
-    ind_cpa_public_key_hash,
+    libcrux_ml_kem_types_unpack_private_ଚାବି_64(Eurydice_array_to_slice_shared_51(private_ଚାବି));
+  Eurydice_borrow_slice_u8 ind_cpa_secret_ଚାବି = uu____0.fst;
+  Eurydice_borrow_slice_u8 ind_cpa_public_ଚାବି = uu____0.snd;
+  Eurydice_borrow_slice_u8 ind_cpa_public_ଚାବି_hash = uu____0.thd;
+  Eurydice_borrow_slice_u8 implicit_rejection_ମୂଲ୍ୟ = uu____0.f3;
+  libcrux_ml_kem_ind_cpa_deserialize_vector_68(ind_cpa_secret_ଚାବି,
+    &ଚାବି_pair->private_ଚାବି.ind_cpa_private_ଚାବି);
+  libcrux_ml_kem_ind_cpa_build_unpacked_public_ଚାବି_mut_05(ind_cpa_public_ଚାବି,
+    &ଚାବି_pair->public_ଚାବି.ind_cpa_public_ଚାବି);
+  Eurydice_slice_copy(Eurydice_array_to_slice_mut_01(&ଚାବି_pair->public_ଚାବି.public_ଚାବି_hash),
+    ind_cpa_public_ଚାବି_hash,
     uint8_t);
-  Eurydice_slice_copy(Eurydice_array_to_slice_mut_01(&key_pair->private_key.implicit_rejection_value),
-    implicit_rejection_value,
+  Eurydice_slice_copy(Eurydice_array_to_slice_mut_01(&ଚାବି_pair->private_ଚାବି.implicit_rejection_ମୂଲ୍ୟ),
+    implicit_rejection_ମୂଲ୍ୟ,
     uint8_t);
-  Eurydice_slice_copy(Eurydice_array_to_slice_mut_01(&key_pair->public_key.ind_cpa_public_key.seed_for_A),
-    Eurydice_slice_subslice_from_shared_6d(ind_cpa_public_key, (size_t)1152U),
+  Eurydice_slice_copy(Eurydice_array_to_slice_mut_01(&ଚାବି_pair->public_ଚାବି.ind_cpa_public_ଚାବି.seed_for_A),
+    Eurydice_slice_subslice_from_shared_6d(ind_cpa_public_ଚାବି, (size_t)1152U),
     uint8_t);
 }
 
@@ -26875,26 +26875,26 @@ with const generics
 - PUBLIC_KEY_SIZE= 1184
 - T_AS_NTT_ENCODED_SIZE= 1152
 */
-static KRML_MUSTINLINE void
-libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_keypair_from_private_key_71(
-  const Eurydice_arr_7d *private_key,
-  libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_keypair_from_private_ଚାବି_71(
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି,
+  libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair
 )
 {
-  libcrux_ml_kem_ind_cca_unpacked_keys_from_private_key_01(private_key, key_pair);
+  libcrux_ml_kem_ind_cca_unpacked_ଚାବିଗୁଡ଼ିକ_from_private_ଚାବି_01(private_ଚାବି, ଚାବି_pair);
 }
 
 /**
  Get an unpacked key from a private key.
 */
-static inline void
-libcrux_ml_kem_mlkem768_portable_unpacked_key_pair_from_private_mut(
-  const Eurydice_arr_7d *private_key,
-  libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_kem_mlkem768_portable_unpacked_ଚାବି_pair_from_private_mut(
+  ଅଚଳ Eurydice_arr_7d *private_ଚାବି,
+  libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair
 )
 {
-  libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_keypair_from_private_key_71(private_key,
-    key_pair);
+  libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_keypair_from_private_ଚାବି_71(private_ଚାବି,
+    ଚାବି_pair);
 }
 
 /**
@@ -26912,21 +26912,21 @@ with const generics
 - PRIVATE_KEY_SIZE= 2400
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE void
-libcrux_ml_kem_ind_cca_unpacked_serialized_private_key_mut_11_21(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *self,
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_kem_ind_cca_unpacked_serialized_private_ଚାବି_mut_11_21(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *self,
   Eurydice_arr_7d *serialized
 )
 {
   libcrux_ml_kem_utils_extraction_helper_Keypair768
   uu____0 =
-    libcrux_ml_kem_ind_cpa_serialize_unpacked_secret_key_30(&self->public_key.ind_cpa_public_key,
-      &self->private_key.ind_cpa_private_key);
-  Eurydice_arr_0e ind_cpa_private_key = uu____0.fst;
-  Eurydice_arr_5f ind_cpa_public_key = uu____0.snd;
-  libcrux_ml_kem_ind_cca_serialize_kem_secret_key_mut_52(Eurydice_array_to_slice_shared_f4(&ind_cpa_private_key),
-    Eurydice_array_to_slice_shared_ff(&ind_cpa_public_key),
-    Eurydice_array_to_slice_shared_01(&self->private_key.implicit_rejection_value),
+    libcrux_ml_kem_ind_cpa_serialize_unpacked_secret_ଚାବି_30(&self->public_ଚାବି.ind_cpa_public_ଚାବି,
+      &self->private_ଚାବି.ind_cpa_private_ଚାବି);
+  Eurydice_arr_0e ind_cpa_private_ଚାବି = uu____0.fst;
+  Eurydice_arr_5f ind_cpa_public_ଚାବି = uu____0.snd;
+  libcrux_ml_kem_ind_cca_serialize_kem_secret_ଚାବି_mut_52(Eurydice_array_to_slice_shared_f4(&ind_cpa_private_ଚାବି),
+    Eurydice_array_to_slice_shared_ff(&ind_cpa_public_ଚାବି),
+    Eurydice_array_to_slice_shared_01(&self->private_ଚାବି.implicit_rejection_ମୂଲ୍ୟ),
     serialized);
 }
 
@@ -26945,37 +26945,37 @@ with const generics
 - PRIVATE_KEY_SIZE= 2400
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE Eurydice_arr_7d
-libcrux_ml_kem_ind_cca_unpacked_serialized_private_key_11_21(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *self
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_7d
+libcrux_ml_kem_ind_cca_unpacked_serialized_private_ଚାବି_11_21(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *self
 )
 {
   Eurydice_arr_7d sk = libcrux_ml_kem_types_default_d3_79();
-  libcrux_ml_kem_ind_cca_unpacked_serialized_private_key_mut_11_21(self, &sk);
-  return sk;
+  libcrux_ml_kem_ind_cca_unpacked_serialized_private_ଚାବି_mut_11_21(self, &sk);
+  ଫେରନ୍ତୁ sk;
 }
 
 /**
  Get the serialized private key.
 */
-static inline Eurydice_arr_7d
-libcrux_ml_kem_mlkem768_portable_unpacked_key_pair_serialized_private_key(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_7d
+libcrux_ml_kem_mlkem768_portable_unpacked_ଚାବି_pair_serialized_private_ଚାବି(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair
 )
 {
-  return libcrux_ml_kem_ind_cca_unpacked_serialized_private_key_11_21(key_pair);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_unpacked_serialized_private_ଚାବି_11_21(ଚାବି_pair);
 }
 
 /**
  Get the serialized private key.
 */
-static inline void
-libcrux_ml_kem_mlkem768_portable_unpacked_key_pair_serialized_private_key_mut(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair,
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_kem_mlkem768_portable_unpacked_ଚାବି_pair_serialized_private_ଚାବି_mut(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair,
   Eurydice_arr_7d *serialized
 )
 {
-  libcrux_ml_kem_ind_cca_unpacked_serialized_private_key_mut_11_21(key_pair, serialized);
+  libcrux_ml_kem_ind_cca_unpacked_serialized_private_ଚାବି_mut_11_21(ଚାବି_pair, serialized);
 }
 
 /**
@@ -26991,14 +26991,14 @@ with const generics
 - K= 3
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE Eurydice_arr_5f
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_5f
 libcrux_ml_kem_ind_cca_unpacked_serialized_dd_b6(
-  const libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *self
+  ଅଚଳ libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *self
 )
 {
-  return
-    libcrux_ml_kem_types_from_51_3d(libcrux_ml_kem_ind_cpa_serialize_public_key_b6(&self->ind_cpa_public_key.t_as_ntt,
-        Eurydice_array_to_slice_shared_01(&self->ind_cpa_public_key.seed_for_A)));
+  ଫେରନ୍ତୁ
+    libcrux_ml_kem_types_from_51_3d(libcrux_ml_kem_ind_cpa_serialize_public_ଚାବି_b6(&self->ind_cpa_public_ଚାବି.t_as_ntt,
+        Eurydice_array_to_slice_shared_01(&self->ind_cpa_public_ଚାବି.seed_for_A)));
 }
 
 /**
@@ -27014,23 +27014,23 @@ with const generics
 - K= 3
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE Eurydice_arr_5f
-libcrux_ml_kem_ind_cca_unpacked_serialized_public_key_11_b6(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *self
+ସ୍ଥିର KRML_MUSTINLINE Eurydice_arr_5f
+libcrux_ml_kem_ind_cca_unpacked_serialized_public_ଚାବି_11_b6(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *self
 )
 {
-  return libcrux_ml_kem_ind_cca_unpacked_serialized_dd_b6(&self->public_key);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_unpacked_serialized_dd_b6(&self->public_ଚାବି);
 }
 
 /**
  Get the serialized public key.
 */
-static inline Eurydice_arr_5f
-libcrux_ml_kem_mlkem768_portable_unpacked_key_pair_serialized_public_key(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ Eurydice_arr_5f
+libcrux_ml_kem_mlkem768_portable_unpacked_ଚାବି_pair_serialized_public_ଚାବି(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair
 )
 {
-  return libcrux_ml_kem_ind_cca_unpacked_serialized_public_key_11_b6(key_pair);
+  ଫେରନ୍ତୁ libcrux_ml_kem_ind_cca_unpacked_serialized_public_ଚାବି_11_b6(ଚାବି_pair);
 }
 
 /**
@@ -27046,14 +27046,14 @@ with const generics
 - K= 3
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE void
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
 libcrux_ml_kem_ind_cca_unpacked_serialized_mut_dd_b6(
-  const libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *self,
+  ଅଚଳ libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *self,
   Eurydice_arr_5f *serialized
 )
 {
-  libcrux_ml_kem_ind_cpa_serialize_public_key_mut_b6(&self->ind_cpa_public_key.t_as_ntt,
-    Eurydice_array_to_slice_shared_01(&self->ind_cpa_public_key.seed_for_A),
+  libcrux_ml_kem_ind_cpa_serialize_public_ଚାବି_mut_b6(&self->ind_cpa_public_ଚାବି.t_as_ntt,
+    Eurydice_array_to_slice_shared_01(&self->ind_cpa_public_ଚାବି.seed_for_A),
     serialized);
 }
 
@@ -27070,25 +27070,25 @@ with const generics
 - K= 3
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE void
-libcrux_ml_kem_ind_cca_unpacked_serialized_public_key_mut_11_b6(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *self,
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_kem_ind_cca_unpacked_serialized_public_ଚାବି_mut_11_b6(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *self,
   Eurydice_arr_5f *serialized
 )
 {
-  libcrux_ml_kem_ind_cca_unpacked_serialized_mut_dd_b6(&self->public_key, serialized);
+  libcrux_ml_kem_ind_cca_unpacked_serialized_mut_dd_b6(&self->public_ଚାବି, serialized);
 }
 
 /**
  Get the serialized public key.
 */
-static inline void
-libcrux_ml_kem_mlkem768_portable_unpacked_key_pair_serialized_public_key_mut(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair,
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_kem_mlkem768_portable_unpacked_ଚାବି_pair_serialized_public_ଚାବି_mut(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair,
   Eurydice_arr_5f *serialized
 )
 {
-  libcrux_ml_kem_ind_cca_unpacked_serialized_public_key_mut_11_b6(key_pair, serialized);
+  libcrux_ml_kem_ind_cca_unpacked_serialized_public_ଚାବି_mut_11_b6(ଚାବି_pair, serialized);
 }
 
 /**
@@ -27100,9 +27100,9 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static inline libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51
 libcrux_ml_kem_ind_cpa_unpacked_clone_91_68(
-  const libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51 *self
+  ଅଚଳ libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51 *self
 )
 {
   Eurydice_arr_bb0
@@ -27117,9 +27117,9 @@ libcrux_ml_kem_ind_cpa_unpacked_clone_91_68(
       &self->seed_for_A,
       uint8_t,
       Eurydice_arr_ec);
-  return
+  ଫେରନ୍ତୁ
     (
-      KRML_CLITERAL(libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51){
+      KRML_CLITERAL(libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51){
         .t_as_ntt = uu____0,
         .seed_for_A = uu____1,
         .A = core_array__core__clone__Clone_for__T__N___clone((size_t)3U,
@@ -27139,19 +27139,19 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static inline libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51
 libcrux_ml_kem_ind_cca_unpacked_clone_d7_68(
-  const libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *self
+  ଅଚଳ libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *self
 )
 {
-  libcrux_ml_kem_ind_cpa_unpacked_IndCpaPublicKeyUnpacked_51
-  uu____0 = libcrux_ml_kem_ind_cpa_unpacked_clone_91_68(&self->ind_cpa_public_key);
-  return
+  libcrux_ml_kem_ind_cpa_unpacked_Ind_Cpa_Public_ଚାବି_Unpacked_51
+  uu____0 = libcrux_ml_kem_ind_cpa_unpacked_clone_91_68(&self->ind_cpa_public_ଚାବି);
+  ଫେରନ୍ତୁ
     (
-      KRML_CLITERAL(libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51){
-        .ind_cpa_public_key = uu____0,
-        .public_key_hash = core_array__core__clone__Clone_for__T__N___clone((size_t)32U,
-          &self->public_key_hash,
+      KRML_CLITERAL(libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51){
+        .ind_cpa_public_ଚାବି = uu____0,
+        .public_ଚାବି_hash = core_array__core__clone__Clone_for__T__N___clone((size_t)32U,
+          &self->public_ଚାବି_hash,
           uint8_t,
           Eurydice_arr_ec)
       }
@@ -27170,40 +27170,40 @@ with types libcrux_ml_kem_vector_portable_vector_type_PortableVector
 with const generics
 - K= 3
 */
-static KRML_MUSTINLINE const
-libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51
-*libcrux_ml_kem_ind_cca_unpacked_public_key_11_68(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *self
+ସ୍ଥିର KRML_MUSTINLINE ଅଚଳ
+libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51
+*libcrux_ml_kem_ind_cca_unpacked_public_ଚାବି_11_68(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *self
 )
 {
-  return &self->public_key;
+  ଫେରନ୍ତୁ &self->public_ଚାବି;
 }
 
 /**
  Get the unpacked public key.
 */
-static inline void
-libcrux_ml_kem_mlkem768_portable_unpacked_public_key(
-  const libcrux_ml_kem_mlkem768_portable_unpacked_MlKem768KeyPairUnpacked *key_pair,
-  libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *pk
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_kem_mlkem768_portable_unpacked_public_ଚାବି(
+  ଅଚଳ libcrux_ml_kem_mlkem768_portable_unpacked_Ml_Kem768_ଚାବି_Pair_Unpacked *ଚାବି_pair,
+  libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *pk
 )
 {
-  libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51
+  libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51
   uu____0 =
-    libcrux_ml_kem_ind_cca_unpacked_clone_d7_68(libcrux_ml_kem_ind_cca_unpacked_public_key_11_68(key_pair));
+    libcrux_ml_kem_ind_cca_unpacked_clone_d7_68(libcrux_ml_kem_ind_cca_unpacked_public_ଚାବି_11_68(ଚାବି_pair));
   pk[0U] = uu____0;
 }
 
 /**
  Get the serialized public key.
 */
-static inline void
-libcrux_ml_kem_mlkem768_portable_unpacked_serialized_public_key(
-  const libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *public_key,
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_kem_mlkem768_portable_unpacked_serialized_public_ଚାବି(
+  ଅଚଳ libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *public_ଚାବି,
   Eurydice_arr_5f *serialized
 )
 {
-  libcrux_ml_kem_ind_cca_unpacked_serialized_mut_dd_b6(public_key, serialized);
+  libcrux_ml_kem_ind_cca_unpacked_serialized_mut_dd_b6(public_ଚାବି, serialized);
 }
 
 /**
@@ -27217,30 +27217,30 @@ with const generics
 - T_AS_NTT_ENCODED_SIZE= 1152
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE void
-libcrux_ml_kem_ind_cca_unpacked_unpack_public_key_22(
-  const Eurydice_arr_5f *public_key,
-  libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *unpacked_public_key
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_kem_ind_cca_unpacked_unpack_public_ଚାବି_22(
+  ଅଚଳ Eurydice_arr_5f *public_ଚାବି,
+  libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *unpacked_public_ଚାବି
 )
 {
   Eurydice_borrow_slice_u8
-  uu____0 = Eurydice_array_to_subslice_to_shared_210(public_key, (size_t)1152U);
+  uu____0 = Eurydice_array_to_subslice_to_shared_210(public_ଚାବି, (size_t)1152U);
   libcrux_ml_kem_serialize_deserialize_ring_elements_reduced_68(uu____0,
-    &unpacked_public_key->ind_cpa_public_key.t_as_ntt);
-  unpacked_public_key->ind_cpa_public_key.seed_for_A =
-    libcrux_ml_kem_utils_into_padded_array_ce(Eurydice_array_to_subslice_from_shared_5f2(public_key,
+    &unpacked_public_ଚାବି->ind_cpa_public_ଚାବି.t_as_ntt);
+  unpacked_public_ଚାବି->ind_cpa_public_ଚାବି.seed_for_A =
+    libcrux_ml_kem_utils_into_padded_array_ce(Eurydice_array_to_subslice_from_shared_5f2(public_ଚାବି,
         (size_t)1152U));
-  Eurydice_arr_c10 *uu____2 = &unpacked_public_key->ind_cpa_public_key.A;
+  Eurydice_arr_c10 *uu____2 = &unpacked_public_ଚାବି->ind_cpa_public_ଚାବି.A;
   /* original Rust expression is not an lvalue in C */
   Eurydice_arr_31
   lvalue =
-    libcrux_ml_kem_utils_into_padded_array_de(Eurydice_array_to_subslice_from_shared_5f2(public_key,
+    libcrux_ml_kem_utils_into_padded_array_de(Eurydice_array_to_subslice_from_shared_5f2(public_ଚାବି,
         (size_t)1152U));
   libcrux_ml_kem_matrix_sample_matrix_A_91(uu____2, &lvalue, false);
   Eurydice_arr_ec
   uu____3 =
-    libcrux_ml_kem_hash_functions_portable_H_4a_78(Eurydice_array_to_slice_shared_ff(libcrux_ml_kem_types_as_slice_e6_3d(public_key)));
-  unpacked_public_key->public_key_hash = uu____3;
+    libcrux_ml_kem_hash_functions_portable_H_4a_78(Eurydice_array_to_slice_shared_ff(libcrux_ml_kem_types_as_slice_e6_3d(public_ଚାବି)));
+  unpacked_public_ଚାବି->public_ଚାବି_hash = uu____3;
 }
 
 /**
@@ -27253,29 +27253,29 @@ with const generics
 - T_AS_NTT_ENCODED_SIZE= 1152
 - PUBLIC_KEY_SIZE= 1184
 */
-static KRML_MUSTINLINE void
-libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_unpack_public_key_d3(
-  const Eurydice_arr_5f *public_key,
-  libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *unpacked_public_key
+ସ୍ଥିର KRML_MUSTINLINE ଶୂନ୍ୟ
+libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_unpack_public_ଚାବି_d3(
+  ଅଚଳ Eurydice_arr_5f *public_ଚାବି,
+  libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *unpacked_public_ଚାବି
 )
 {
-  libcrux_ml_kem_ind_cca_unpacked_unpack_public_key_22(public_key, unpacked_public_key);
+  libcrux_ml_kem_ind_cca_unpacked_unpack_public_ଚାବି_22(public_ଚାବି, unpacked_public_ଚାବି);
 }
 
 /**
  Get the unpacked public key.
 */
-static inline void
-libcrux_ml_kem_mlkem768_portable_unpacked_unpacked_public_key(
-  const Eurydice_arr_5f *public_key,
-  libcrux_ml_kem_ind_cca_unpacked_MlKemPublicKeyUnpacked_51 *unpacked_public_key
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+libcrux_ml_kem_mlkem768_portable_unpacked_unpacked_public_ଚାବି(
+  ଅଚଳ Eurydice_arr_5f *public_ଚାବି,
+  libcrux_ml_kem_ind_cca_unpacked_Ml_Kem_Public_ଚାବି_Unpacked_51 *unpacked_public_ଚାବି
 )
 {
-  libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_unpack_public_key_d3(public_key,
-    unpacked_public_key);
+  libcrux_ml_kem_ind_cca_instantiations_portable_unpacked_unpack_public_ଚାବି_d3(public_ଚାବି,
+    unpacked_public_ଚାବି);
 }
 
-#if defined(__cplusplus)
+#ଯଦି defined(__cplusplus)
 }
 #endif
 
@@ -27286,47 +27286,47 @@ libcrux_ml_kem_mlkem768_portable_unpacked_unpacked_public_key(
 /* rename some types to be a bit more ergonomic */
 
 /* ML-KEM 768 */
-typedef Eurydice_arr_c7 libcrux_mlkem768_keypair_rnd;
-typedef Eurydice_arr_ec libcrux_mlkem768_enc_rnd;
-typedef libcrux_ml_kem_mlkem768_MlKem768KeyPair libcrux_mlkem768_keypair;
-typedef Eurydice_arr_5f libcrux_mlkem768_pk;
-typedef Eurydice_arr_7d libcrux_mlkem768_sk;
-typedef Eurydice_arr_2b libcrux_mlkem768_ciphertext;
-typedef tuple_f4 libcrux_mlkem768_enc_result;
-typedef Eurydice_arr_ec libcrux_mlkem768_dec_result;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_c7 libcrux_mlkem768_keypair_rnd;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_ec libcrux_mlkem768_enc_rnd;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_ml_kem_mlkem768_Ml_Kem768_ଚାବି_Pair libcrux_mlkem768_keypair;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_5f libcrux_mlkem768_pk;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_7d libcrux_mlkem768_sk;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_2b libcrux_mlkem768_ciphertext;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା tuple_f4 libcrux_mlkem768_enc_result;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_ec libcrux_mlkem768_dec_result;
 /* ML-DSA 44 */
-typedef Eurydice_arr_ec libcrux_mldsa44_keypair_rnd;
-typedef libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44KeyPair
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_ec libcrux_mldsa44_keypair_rnd;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_ml_dsa_ml_dsa_generic_ml_dsa_44_MLDSA44_ଚାବି_Pair
     libcrux_mldsa44_keypair;
-typedef Eurydice_arr_10 libcrux_mldsa44_sk;
-typedef Eurydice_arr_02 libcrux_mldsa44_pk;
-typedef Eurydice_borrow_slice_u8 libcrux_mldsa44_message;
-typedef Eurydice_arr_ec libcrux_mldsa44_sign_rnd;
-typedef core_result_Result_48 libcrux_mldsa44_sign_result;
-typedef core_result_Result_41 libcrux_mldsa44_verify_result;
-typedef Eurydice_arr_85 libcrux_mldsa44_signature;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_10 libcrux_mldsa44_sk;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_02 libcrux_mldsa44_pk;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_borrow_slice_u8 libcrux_mldsa44_message;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_ec libcrux_mldsa44_sign_rnd;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା core_result_Result_48 libcrux_mldsa44_sign_result;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା core_result_Result_41 libcrux_mldsa44_verify_result;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_85 libcrux_mldsa44_signature;
 /* ML-DSA 65 */
-typedef Eurydice_arr_ec libcrux_mldsa65_keypair_rnd;
-typedef libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65KeyPair
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_ec libcrux_mldsa65_keypair_rnd;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_ml_dsa_ml_dsa_generic_ml_dsa_65_MLDSA65_ଚାବି_Pair
     libcrux_mldsa65_keypair;
-typedef Eurydice_arr_24 libcrux_mldsa65_sk;
-typedef Eurydice_arr_29 libcrux_mldsa65_pk;
-typedef Eurydice_borrow_slice_u8 libcrux_mldsa65_message;
-typedef Eurydice_arr_ec libcrux_mldsa65_sign_rnd;
-typedef core_result_Result_8c libcrux_mldsa65_sign_result;
-typedef core_result_Result_41 libcrux_mldsa65_verify_result;
-typedef Eurydice_arr_0c libcrux_mldsa65_signature;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_24 libcrux_mldsa65_sk;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_29 libcrux_mldsa65_pk;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_borrow_slice_u8 libcrux_mldsa65_message;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_ec libcrux_mldsa65_sign_rnd;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା core_result_Result_8c libcrux_mldsa65_sign_result;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା core_result_Result_41 libcrux_mldsa65_verify_result;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_0c libcrux_mldsa65_signature;
 /* ML-DSA 87 */
-typedef Eurydice_arr_ec libcrux_mldsa87_keypair_rnd;
-typedef libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87KeyPair
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_ec libcrux_mldsa87_keypair_rnd;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା libcrux_ml_dsa_ml_dsa_generic_ml_dsa_87_MLDSA87_ଚାବି_Pair
     libcrux_mldsa87_keypair;
-typedef Eurydice_arr_e2 libcrux_mldsa87_sk;
-typedef Eurydice_arr_43 libcrux_mldsa87_pk;
-typedef Eurydice_borrow_slice_u8 libcrux_mldsa87_message;
-typedef Eurydice_arr_ec libcrux_mldsa87_sign_rnd;
-typedef core_result_Result_8b libcrux_mldsa87_sign_result;
-typedef core_result_Result_41 libcrux_mldsa87_verify_result;
-typedef Eurydice_arr_93 libcrux_mldsa87_signature;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_e2 libcrux_mldsa87_sk;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_43 libcrux_mldsa87_pk;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_borrow_slice_u8 libcrux_mldsa87_message;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_ec libcrux_mldsa87_sign_rnd;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା core_result_Result_8b libcrux_mldsa87_sign_result;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା core_result_Result_41 libcrux_mldsa87_verify_result;
+ପ୍ରକାରବ୍ୟାଖ୍ୟା Eurydice_arr_93 libcrux_mldsa87_signature;
 
 #define LIBCRUX_RESULT_OK	core_result_Ok
 

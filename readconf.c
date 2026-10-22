@@ -12,51 +12,51 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <sys/un.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
+#ଅନ୍ତର୍ଭାଵ <sys/socket.h>
+#ଅନ୍ତର୍ଭାଵ <sys/wait.h>
+#ଅନ୍ତର୍ଭାଵ <sys/un.h>
 
-#include <net/if.h>
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <arpa/inet.h>
+#ଅନ୍ତର୍ଭାଵ <net/if.h>
+#ଅନ୍ତର୍ଭାଵ <netinet/in.h>
+#ଅନ୍ତର୍ଭାଵ <netinet/ip.h>
+#ଅନ୍ତର୍ଭାଵ <arpa/inet.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <glob.h>
-#include <ifaddrs.h>
-#include <limits.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <signal.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <util.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ଅନ୍ତର୍ଭାଵ <ctype.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <glob.h>
+#ଅନ୍ତର୍ଭାଵ <ifaddrs.h>
+#ଅନ୍ତର୍ଭାଵ <limits.h>
+#ଅନ୍ତର୍ଭାଵ <netdb.h>
+#ଅନ୍ତର୍ଭାଵ <paths.h>
+#ଅନ୍ତର୍ଭାଵ <pwd.h>
+#ଅନ୍ତର୍ଭାଵ <signal.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <util.h>
+#ଯଦି defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "cipher.h"
-#include "pathnames.h"
-#include "log.h"
-#include "sshkey.h"
-#include "misc.h"
-#include "readconf.h"
-#include "match.h"
-#include "kex.h"
-#include "mac.h"
-#include "myproposal.h"
-#include "digest.h"
-#include "version.h"
+#ଅନ୍ତର୍ଭାଵ "xmalloc.h"
+#ଅନ୍ତର୍ଭାଵ "ssh.h"
+#ଅନ୍ତର୍ଭାଵ "cipher.h"
+#ଅନ୍ତର୍ଭାଵ "pathnames.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "misc.h"
+#ଅନ୍ତର୍ଭାଵ "readconf.h"
+#ଅନ୍ତର୍ଭାଵ "match.h"
+#ଅନ୍ତର୍ଭାଵ "kex.h"
+#ଅନ୍ତର୍ଭାଵ "mac.h"
+#ଅନ୍ତର୍ଭାଵ "myproposal.h"
+#ଅନ୍ତର୍ଭାଵ "digest.h"
+#ଅନ୍ତର୍ଭାଵ "version.h"
 
 /* Format of the configuration file:
 
@@ -119,17 +119,17 @@
 
 */
 
-static int read_config_file_depth(const char *filename, struct passwd *pw,
-    const char *host, const char *original_host, const char *remote_command,
-    Options *options, int flags, int *activep, int *want_final_pass, int depth);
-static int process_config_line_depth(Options *options, struct passwd *pw,
-    const char *host, const char *original_host, const char *remote_command,
-    char *line, const char *filename, int linenum, int *activep, int flags,
-    int *want_final_pass, int depth);
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା read_config_file_depth(ଅଚଳ ଅକ୍ଷର *filename, ସଂରଚନା passwd *pw,
+    ଅଚଳ ଅକ୍ଷର *host, ଅଚଳ ଅକ୍ଷର *original_host, ଅଚଳ ଅକ୍ଷର *remote_command,
+    Options *options, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *activep, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *want_final_pass, ପୂର୍ଣ୍ଣସଂଖ୍ୟା depth);
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା process_config_ଧାଡ଼ି_depth(Options *options, ସଂରଚନା passwd *pw,
+    ଅଚଳ ଅକ୍ଷର *host, ଅଚଳ ଅକ୍ଷର *original_host, ଅଚଳ ଅକ୍ଷର *remote_command,
+    ଅକ୍ଷର *ଧାଡ଼ି, ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *activep, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା *want_final_pass, ପୂର୍ଣ୍ଣସଂଖ୍ୟା depth);
 
 /* Keyword tokens. */
 
-typedef enum {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଗଣନା {
 	oBadOption,
 	oHost, oMatch, oInclude, oTag,
 	oForwardAgent, oForwardX11, oForwardX11Trusted, oForwardX11Timeout,
@@ -138,33 +138,33 @@ typedef enum {
 	oXAuthLocation,
 	oIdentityFile, oHostname, oPort, oRemoteForward, oLocalForward,
 	oPermitRemoteOpen,
-	oCertificateFile, oAddKeysToAgent, oIdentityAgent,
+	oCertificateFile, o_Add_ଚାବିଗୁଡ଼ିକ_To_Agent, oIdentityAgent,
 	oUser, oEscapeChar, oProxyCommand,
 	oGlobalKnownHostsFile, oUserKnownHostsFile, oConnectionAttempts,
-	oBatchMode, oCheckHostIP, oStrictHostKeyChecking, oCompression,
-	oTCPKeepAlive, oNumberOfPasswordPrompts,
+	oBatchMode, oCheckHostIP, o_Strict_Host_ଚାବି_Checking, oCompression,
+	oTCPKeepAlive, o_ସଂଖ୍ୟା_Of_Password_Prompts,
 	oLogFacility, oLogLevel, oLogVerbose, oCiphers, oMacs,
 	oPubkeyAuthentication,
-	oKbdInteractiveAuthentication, oKbdInteractiveDevices, oHostKeyAlias,
+	oKbdInteractiveAuthentication, oKbdInteractiveDevices, o_Host_ଚାବି_Alias,
 	oDynamicForward, oPreferredAuthentications, oHostbasedAuthentication,
-	oHostKeyAlgorithms, oBindAddress, oBindInterface, oPKCS11Provider,
+	o_Host_ଚାବି_Algorithms, oBindAddress, oBindInterface, oPKCS11Provider,
 	oClearAllForwardings, oNoHostAuthenticationForLocalhost,
-	oEnableSSHKeysign, oRekeyLimit, oVerifyHostKeyDNS, oConnectTimeout,
+	oEnableSSHKeysign, oRekeyLimit, o_Verify_Host_ଚାବି_DNS, oConnectTimeout,
 	oAddressFamily, oGssAuthentication, oGssDelegateCreds,
-	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
+	oServerAliveInterval, o_Server_Alive_ଗଣନା_Max, oIdentitiesOnly,
 	oSendEnv, oSetEnv, oControlPath, oControlMaster, oControlPersist,
 	oHashKnownHosts,
 	oTunnel, oTunnelDevice,
 	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
-	oVisualHostKey,
+	o_Visual_Host_ଚାବି,
 	oKexAlgorithms, oIPQoS, oRequestTTY, oSessionType, oStdinNull,
 	oForkAfterAuthentication, oIgnoreUnknown, oProxyUseFdpass,
 	oCanonicalDomains, oCanonicalizeHostname, oCanonicalizeMaxDots,
 	oCanonicalizeFallbackLocal, oCanonicalizePermittedCNAMEs,
-	oStreamLocalBindMask, oStreamLocalBindUnlink, oRevokedHostKeys,
+	oStreamLocalBindMask, oStreamLocalBindUnlink, o_Revoked_Host_ଚାବିଗୁଡ଼ିକ,
 	oFingerprintHash, oUpdateHostkeys, oHostbasedAcceptedAlgorithms,
 	oPubkeyAcceptedAlgorithms, oCASignatureAlgorithms, oProxyJump,
-	oSecurityKeyProvider, oKnownHostsCommand, oRequiredRSASize,
+	o_Security_ଚାବି_Provider, oKnownHostsCommand, oRequiredRSASize,
 	oEnableEscapeCommandline, oObscureKeystrokeTiming, oChannelTimeout,
 	oVersionAddendum, oRefuseConnection, oWarnWeakCrypto,
 	oIgnore, oIgnoredUnknownOption, oDeprecated, oUnsupported
@@ -172,8 +172,8 @@ typedef enum {
 
 /* Textual representations of the tokens. */
 
-static struct {
-	const char *name;
+ସ୍ଥିର ସଂରଚନା {
+	ଅଚଳ ଅକ୍ଷର *name;
 	OpCodes opcode;
 } keywords[] = {
 	/* Deprecated options */
@@ -196,17 +196,17 @@ static struct {
 	{ "compressionlevel", oUnsupported },
 
 	/* Sometimes-unsupported options */
-#if defined(GSSAPI)
+#ଯଦି defined(GSSAPI)
 	{ "gssapiauthentication", oGssAuthentication },
 	{ "gssapidelegatecredentials", oGssDelegateCreds },
-# else
+# ଅନ୍ୟଥା
 	{ "gssapiauthentication", oUnsupported },
 	{ "gssapidelegatecredentials", oUnsupported },
 #endif
 #ifdef ENABLE_PKCS11
 	{ "pkcs11provider", oPKCS11Provider },
 	{ "smartcarddevice", oPKCS11Provider },
-# else
+# ଅନ୍ୟଥା
 	{ "smartcarddevice", oUnsupported },
 	{ "pkcs11provider", oUnsupported },
 #endif
@@ -231,10 +231,10 @@ static struct {
 	{ "identityfile2", oIdentityFile },			/* obsolete */
 	{ "identitiesonly", oIdentitiesOnly },
 	{ "certificatefile", oCertificateFile },
-	{ "addkeystoagent", oAddKeysToAgent },
+	{ "addkeystoagent", o_Add_ଚାବିଗୁଡ଼ିକ_To_Agent },
 	{ "identityagent", oIdentityAgent },
 	{ "hostname", oHostname },
-	{ "hostkeyalias", oHostKeyAlias },
+	{ "hostkeyalias", o_Host_ଚାବି_Alias },
 	{ "proxycommand", oProxyCommand },
 	{ "port", oPort },
 	{ "ciphers", oCiphers },
@@ -252,29 +252,29 @@ static struct {
 	{ "connectionattempts", oConnectionAttempts },
 	{ "batchmode", oBatchMode },
 	{ "checkhostip", oCheckHostIP },
-	{ "stricthostkeychecking", oStrictHostKeyChecking },
+	{ "stricthostkeychecking", o_Strict_Host_ଚାବି_Checking },
 	{ "compression", oCompression },
 	{ "tcpkeepalive", oTCPKeepAlive },
 	{ "keepalive", oTCPKeepAlive },				/* obsolete */
-	{ "numberofpasswordprompts", oNumberOfPasswordPrompts },
+	{ "numberofpasswordprompts", o_ସଂଖ୍ୟା_Of_Password_Prompts },
 	{ "syslogfacility", oLogFacility },
 	{ "loglevel", oLogLevel },
 	{ "logverbose", oLogVerbose },
 	{ "dynamicforward", oDynamicForward },
 	{ "preferredauthentications", oPreferredAuthentications },
-	{ "hostkeyalgorithms", oHostKeyAlgorithms },
+	{ "hostkeyalgorithms", o_Host_ଚାବି_Algorithms },
 	{ "casignaturealgorithms", oCASignatureAlgorithms },
 	{ "bindaddress", oBindAddress },
 	{ "bindinterface", oBindInterface },
 	{ "clearallforwardings", oClearAllForwardings },
 	{ "enablesshkeysign", oEnableSSHKeysign },
-	{ "verifyhostkeydns", oVerifyHostKeyDNS },
+	{ "verifyhostkeydns", o_Verify_Host_ଚାବି_DNS },
 	{ "nohostauthenticationforlocalhost", oNoHostAuthenticationForLocalhost },
 	{ "rekeylimit", oRekeyLimit },
 	{ "connecttimeout", oConnectTimeout },
 	{ "addressfamily", oAddressFamily },
 	{ "serveraliveinterval", oServerAliveInterval },
-	{ "serveralivecountmax", oServerAliveCountMax },
+	{ "serveralivecountmax", o_Server_Alive_ଗଣନା_Max },
 	{ "sendenv", oSendEnv },
 	{ "setenv", oSetEnv },
 	{ "controlpath", oControlPath },
@@ -287,7 +287,7 @@ static struct {
 	{ "localcommand", oLocalCommand },
 	{ "permitlocalcommand", oPermitLocalCommand },
 	{ "remotecommand", oRemoteCommand },
-	{ "visualhostkey", oVisualHostKey },
+	{ "visualhostkey", o_Visual_Host_ଚାବି },
 	{ "kexalgorithms", oKexAlgorithms },
 	{ "ipqos", oIPQoS },
 	{ "requesttty", oRequestTTY },
@@ -302,7 +302,7 @@ static struct {
 	{ "canonicalizepermittedcnames", oCanonicalizePermittedCNAMEs },
 	{ "streamlocalbindmask", oStreamLocalBindMask },
 	{ "streamlocalbindunlink", oStreamLocalBindUnlink },
-	{ "revokedhostkeys", oRevokedHostKeys },
+	{ "revokedhostkeys", o_Revoked_Host_ଚାବିଗୁଡ଼ିକ },
 	{ "fingerprinthash", oFingerprintHash },
 	{ "updatehostkeys", oUpdateHostkeys },
 	{ "hostbasedacceptedalgorithms", oHostbasedAcceptedAlgorithms },
@@ -311,7 +311,7 @@ static struct {
 	{ "pubkeyacceptedkeytypes", oPubkeyAcceptedAlgorithms }, /* obsolete */
 	{ "ignoreunknown", oIgnoreUnknown },
 	{ "proxyjump", oProxyJump },
-	{ "securitykeyprovider", oSecurityKeyProvider },
+	{ "securitykeyprovider", o_Security_ଚାବି_Provider },
 	{ "knownhostscommand", oKnownHostsCommand },
 	{ "requiredrsasize", oRequiredRSASize },
 	{ "enableescapecommandline", oEnableEscapeCommandline },
@@ -321,43 +321,43 @@ static struct {
 	{ "refuseconnection", oRefuseConnection },
 	{ "warnweakcrypto", oWarnWeakCrypto },
 
-	{ NULL, oBadOption }
+	{ ଖାଲି, oBadOption }
 };
 
-static const char *lookup_opcode_name(OpCodes code);
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *lookup_opcode_name(OpCodes code);
 
-const char *
-kex_default_pk_alg(void)
+ଅଚଳ ଅକ୍ଷର *
+kex_default_pk_alg(ଶୂନ୍ୟ)
 {
-	static char *pkalgs;
+	ସ୍ଥିର ଅକ୍ଷର *pkalgs;
 
-	if (pkalgs == NULL) {
-		char *all_key;
+	ଯଦି (pkalgs == ଖାଲି) {
+		ଅକ୍ଷର *all_ଚାବି;
 
-		all_key = sshkey_alg_list(0, 0, 1, ',');
-		pkalgs = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
-		free(all_key);
+		all_ଚାବି = sshkey_alg_list(0, 0, 1, ',');
+		pkalgs = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_ଚାବି);
+		ମୁକ୍ତ(all_ଚାବି);
 	}
-	return pkalgs;
+	ଫେରନ୍ତୁ pkalgs;
 }
 
-char *
-ssh_connection_hash(const char *thishost, const char *host, const char *portstr,
-    const char *user, const char *jumphost)
+ଅକ୍ଷର *
+ssh_connection_hash(ଅଚଳ ଅକ୍ଷର *thishost, ଅଚଳ ଅକ୍ଷର *host, ଅଚଳ ଅକ୍ଷର *portstr,
+    ଅଚଳ ଅକ୍ଷର *user, ଅଚଳ ଅକ୍ଷର *jumphost)
 {
-	struct ssh_digest_ctx *md;
+	ସଂରଚନା ssh_digest_ctx *md;
 	u_char conn_hash[SSH_DIGEST_MAX_LENGTH];
 
-	if ((md = ssh_digest_start(SSH_DIGEST_SHA1)) == NULL ||
+	ଯଦି ((md = ssh_digest_start(SSH_DIGEST_SHA1)) == ଖାଲି ||
 	    ssh_digest_update(md, thishost, strlen(thishost)) < 0 ||
 	    ssh_digest_update(md, host, strlen(host)) < 0 ||
 	    ssh_digest_update(md, portstr, strlen(portstr)) < 0 ||
 	    ssh_digest_update(md, user, strlen(user)) < 0 ||
 	    ssh_digest_update(md, jumphost, strlen(jumphost)) < 0 ||
-	    ssh_digest_final(md, conn_hash, sizeof(conn_hash)) < 0)
+	    ssh_digest_final(md, conn_hash, ଆକାର(conn_hash)) < 0)
 		fatal_f("mux digest failed");
 	ssh_digest_free(md);
-	return tohex(conn_hash, ssh_digest_bytes(SSH_DIGEST_SHA1));
+	ଫେରନ୍ତୁ tohex(conn_hash, ssh_digest_bytes(SSH_DIGEST_SHA1));
 }
 
 /*
@@ -365,21 +365,21 @@ ssh_connection_hash(const char *thishost, const char *host, const char *portstr,
  * error.
  */
 
-void
-add_local_forward(Options *options, const struct Forward *newfwd)
+ଶୂନ୍ୟ
+add_local_forward(Options *options, ଅଚଳ ସଂରଚନା Forward *newfwd)
 {
-	struct Forward *fwd;
-	int i;
+	ସଂରଚନା Forward *fwd;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_local_forwards; i++) {
-		if (forward_equals(newfwd, options->local_forwards + i))
-			return;
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_local_forwards; i++) {
+		ଯଦି (forward_equals(newfwd, options->local_forwards + i))
+			ଫେରନ୍ତୁ;
 	}
 	options->local_forwards = xreallocarray(options->local_forwards,
-	    options->num_local_forwards + 1,
-	    sizeof(*options->local_forwards));
-	fwd = &options->local_forwards[options->num_local_forwards++];
+	    options->ଅଙ୍କ_local_forwards + 1,
+	    ଆକାର(*options->local_forwards));
+	fwd = &options->local_forwards[options->ଅଙ୍କ_local_forwards++];
 
 	fwd->listen_host = newfwd->listen_host;
 	fwd->listen_port = newfwd->listen_port;
@@ -394,21 +394,21 @@ add_local_forward(Options *options, const struct Forward *newfwd)
  * an error.
  */
 
-void
-add_remote_forward(Options *options, const struct Forward *newfwd)
+ଶୂନ୍ୟ
+add_remote_forward(Options *options, ଅଚଳ ସଂରଚନା Forward *newfwd)
 {
-	struct Forward *fwd;
-	int i;
+	ସଂରଚନା Forward *fwd;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_remote_forwards; i++) {
-		if (forward_equals(newfwd, options->remote_forwards + i))
-			return;
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_remote_forwards; i++) {
+		ଯଦି (forward_equals(newfwd, options->remote_forwards + i))
+			ଫେରନ୍ତୁ;
 	}
 	options->remote_forwards = xreallocarray(options->remote_forwards,
-	    options->num_remote_forwards + 1,
-	    sizeof(*options->remote_forwards));
-	fwd = &options->remote_forwards[options->num_remote_forwards++];
+	    options->ଅଙ୍କ_remote_forwards + 1,
+	    ଆକାର(*options->remote_forwards));
+	fwd = &options->remote_forwards[options->ଅଙ୍କ_remote_forwards++];
 
 	fwd->listen_host = newfwd->listen_host;
 	fwd->listen_port = newfwd->listen_port;
@@ -420,119 +420,119 @@ add_remote_forward(Options *options, const struct Forward *newfwd)
 	fwd->allocated_port = 0;
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 clear_forwardings(Options *options)
 {
-	int i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
-	for (i = 0; i < options->num_local_forwards; i++) {
-		free(options->local_forwards[i].listen_host);
-		free(options->local_forwards[i].listen_path);
-		free(options->local_forwards[i].connect_host);
-		free(options->local_forwards[i].connect_path);
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_local_forwards; i++) {
+		ମୁକ୍ତ(options->local_forwards[i].listen_host);
+		ମୁକ୍ତ(options->local_forwards[i].listen_path);
+		ମୁକ୍ତ(options->local_forwards[i].connect_host);
+		ମୁକ୍ତ(options->local_forwards[i].connect_path);
 	}
-	if (options->num_local_forwards > 0) {
-		free(options->local_forwards);
-		options->local_forwards = NULL;
+	ଯଦି (options->ଅଙ୍କ_local_forwards > 0) {
+		ମୁକ୍ତ(options->local_forwards);
+		options->local_forwards = ଖାଲି;
 	}
-	options->num_local_forwards = 0;
-	for (i = 0; i < options->num_remote_forwards; i++) {
-		free(options->remote_forwards[i].listen_host);
-		free(options->remote_forwards[i].listen_path);
-		free(options->remote_forwards[i].connect_host);
-		free(options->remote_forwards[i].connect_path);
+	options->ଅଙ୍କ_local_forwards = 0;
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_remote_forwards; i++) {
+		ମୁକ୍ତ(options->remote_forwards[i].listen_host);
+		ମୁକ୍ତ(options->remote_forwards[i].listen_path);
+		ମୁକ୍ତ(options->remote_forwards[i].connect_host);
+		ମୁକ୍ତ(options->remote_forwards[i].connect_path);
 	}
-	if (options->num_remote_forwards > 0) {
-		free(options->remote_forwards);
-		options->remote_forwards = NULL;
+	ଯଦି (options->ଅଙ୍କ_remote_forwards > 0) {
+		ମୁକ୍ତ(options->remote_forwards);
+		options->remote_forwards = ଖାଲି;
 	}
-	options->num_remote_forwards = 0;
+	options->ଅଙ୍କ_remote_forwards = 0;
 	options->tun_open = SSH_TUNMODE_NO;
 }
 
-void
-add_certificate_file(Options *options, const char *path, int userprovided)
+ଶୂନ୍ୟ
+add_certificate_file(Options *options, ଅଚଳ ଅକ୍ଷର *path, ପୂର୍ଣ୍ଣସଂଖ୍ୟା userprovided)
 {
-	int i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
-	if (options->num_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
+	ଯଦି (options->ଅଙ୍କ_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
 		fatal("Too many certificate files specified (max %d)",
 		    SSH_MAX_CERTIFICATE_FILES);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_certificate_files; i++) {
-		if (options->certificate_file_userprovided[i] == userprovided &&
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_certificate_files; i++) {
+		ଯଦି (options->certificate_file_userprovided[i] == userprovided &&
 		    strcmp(options->certificate_files[i], path) == 0) {
 			debug2_f("ignoring duplicate key %s", path);
-			return;
+			ଫେରନ୍ତୁ;
 		}
 	}
 
-	options->certificate_file_userprovided[options->num_certificate_files] =
+	options->certificate_file_userprovided[options->ଅଙ୍କ_certificate_files] =
 	    userprovided;
-	options->certificate_files[options->num_certificate_files++] =
+	options->certificate_files[options->ଅଙ୍କ_certificate_files++] =
 	    xstrdup(path);
 }
 
-void
-add_identity_file(Options *options, const char *dir, const char *filename,
-    int userprovided)
+ଶୂନ୍ୟ
+add_identity_file(Options *options, ଅଚଳ ଅକ୍ଷର *dir, ଅଚଳ ଅକ୍ଷର *filename,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା userprovided)
 {
-	char *path;
-	int i;
+	ଅକ୍ଷର *path;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
-	if (options->num_identity_files >= SSH_MAX_IDENTITY_FILES)
+	ଯଦି (options->ଅଙ୍କ_identity_files >= SSH_MAX_IDENTITY_FILES)
 		fatal("Too many identity files specified (max %d)",
 		    SSH_MAX_IDENTITY_FILES);
 
-	if (dir == NULL) /* no dir, filename is absolute */
+	ଯଦି (dir == ଖାଲି) /* no dir, filename is absolute */
 		path = xstrdup(filename);
-	else if (xasprintf(&path, "%s%s", dir, filename) >= PATH_MAX)
+	ଅନ୍ୟଥା ଯଦି (xasprintf(&path, "%s%s", dir, filename) >= PATH_MAX)
 		fatal("Identity file path %s too long", path);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_identity_files; i++) {
-		if (options->identity_file_userprovided[i] == userprovided &&
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_identity_files; i++) {
+		ଯଦି (options->identity_file_userprovided[i] == userprovided &&
 		    strcmp(options->identity_files[i], path) == 0) {
 			debug2_f("ignoring duplicate key %s", path);
-			free(path);
-			return;
+			ମୁକ୍ତ(path);
+			ଫେରନ୍ତୁ;
 		}
 	}
 
-	options->identity_file_userprovided[options->num_identity_files] =
+	options->identity_file_userprovided[options->ଅଙ୍କ_identity_files] =
 	    userprovided;
-	options->identity_files[options->num_identity_files++] = path;
+	options->identity_files[options->ଅଙ୍କ_identity_files++] = path;
 }
 
-int
-default_ssh_port(void)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+default_ssh_port(ଶୂନ୍ୟ)
 {
-	static int port;
-	struct servent *sp;
+	ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା port;
+	ସଂରଚନା servent *sp;
 
-	if (port == 0) {
+	ଯଦି (port == 0) {
 		sp = getservbyname(SSH_SERVICE_NAME, "tcp");
 		port = sp ? ntohs(sp->s_port) : SSH_DEFAULT_PORT;
 	}
-	return port;
+	ଫେରନ୍ତୁ port;
 }
 
 /*
  * Execute a command in a shell.
  * Return its exit status or -1 on abnormal exit.
  */
-static int
-execute_in_shell(const char *cmd)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+execute_in_shell(ଅଚଳ ଅକ୍ଷର *cmd)
 {
-	char *shell;
+	ଅକ୍ଷର *shell;
 	pid_t pid;
-	int status;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା status;
 
-	if ((shell = getenv("SHELL")) == NULL)
+	ଯଦି ((shell = getenv("SHELL")) == ଖାଲି)
 		shell = _PATH_BSHELL;
 
-	if (access(shell, X_OK) == -1) {
+	ଯଦି (access(shell, X_OK) == -1) {
 		fatal("Shell \"%s\" is not executable: %s",
 		    shell, strerror(errno));
 	}
@@ -540,17 +540,17 @@ execute_in_shell(const char *cmd)
 	debug("Executing command: '%.500s'", cmd);
 
 	/* Fork and execute the command. */
-	if ((pid = fork()) == 0) {
-		char *argv[4];
+	ଯଦି ((pid = fork()) == 0) {
+		ଅକ୍ଷର *argv[4];
 
-		if (stdfd_devnull(1, 1, 0) == -1)
+		ଯଦି (stdfd_devnull(1, 1, 0) == -1)
 			fatal_f("stdfd_devnull failed");
 		closefrom(STDERR_FILENO + 1);
 
 		argv[0] = shell;
 		argv[1] = "-c";
 		argv[2] = xstrdup(cmd);
-		argv[3] = NULL;
+		argv[3] = ଖାଲି;
 
 		execv(argv[0], argv);
 		error("Unable to execute '%.100s': %s", cmd, strerror(errno));
@@ -560,79 +560,79 @@ execute_in_shell(const char *cmd)
 		_exit(1);
 	}
 	/* Parent. */
-	if (pid == -1)
+	ଯଦି (pid == -1)
 		fatal_f("fork: %.100s", strerror(errno));
 
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR && errno != EAGAIN)
+	ଯେତେବେଳେ (waitpid(pid, &status, 0) == -1) {
+		ଯଦି (errno != EINTR && errno != EAGAIN)
 			fatal_f("waitpid: %s", strerror(errno));
 	}
-	if (!WIFEXITED(status)) {
+	ଯଦି (!WIFEXITED(status)) {
 		error("command '%.100s' exited abnormally", cmd);
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
 	debug3("command returned status %d", WEXITSTATUS(status));
-	return WEXITSTATUS(status);
+	ଫେରନ୍ତୁ WEXITSTATUS(status);
 }
 
 /*
  * Check whether a local network interface address appears in CIDR pattern-
  * list 'addrlist'. Returns 1 if matched or 0 otherwise.
  */
-static int
-check_match_ifaddrs(const char *addrlist)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+check_match_ifaddrs(ଅଚଳ ଅକ୍ଷର *addrlist)
 {
 #ifdef HAVE_IFADDRS_H
-	struct ifaddrs *ifa, *ifaddrs = NULL;
-	int r, found = 0;
-	char addr[NI_MAXHOST];
+	ସଂରଚନା ifaddrs *ifa, *ifaddrs = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, found = 0;
+	ଅକ୍ଷର addr[NI_MAXHOST];
 	socklen_t salen;
 
-	if (getifaddrs(&ifaddrs) != 0) {
+	ଯଦି (getifaddrs(&ifaddrs) != 0) {
 		error("match localnetwork: getifaddrs failed: %s",
 		    strerror(errno));
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
-	for (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
-		if (ifa->ifa_addr == NULL || ifa->ifa_name == NULL ||
+	ପାଇଁ (ifa = ifaddrs; ifa != ଖାଲି; ifa = ifa->ifa_next) {
+		ଯଦି (ifa->ifa_addr == ଖାଲି || ifa->ifa_name == ଖାଲି ||
 		    (ifa->ifa_flags & IFF_UP) == 0)
-			continue;
-		switch (ifa->ifa_addr->sa_family) {
-		case AF_INET:
-			salen = sizeof(struct sockaddr_in);
-			break;
-		case AF_INET6:
-			salen = sizeof(struct sockaddr_in6);
-			break;
+			ଜାରି;
+		ବାଛ (ifa->ifa_addr->sa_family) {
+		ସ୍ଥିତି AF_INET:
+			salen = ଆକାର(ସଂରଚନା sockaddr_in);
+			ଭାଙ୍ଗ;
+		ସ୍ଥିତି AF_INET6:
+			salen = ଆକାର(ସଂରଚନା sockaddr_in6);
+			ଭାଙ୍ଗ;
 #ifdef AF_LINK
-		case AF_LINK:
+		ସ୍ଥିତି AF_LINK:
 			/* ignore */
-			continue;
+			ଜାରି;
 #endif /* AF_LINK */
-		default:
+		ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 			debug2_f("interface %s: unsupported address family %d",
 			    ifa->ifa_name, ifa->ifa_addr->sa_family);
-			continue;
+			ଜାରି;
 		}
-		if ((r = getnameinfo(ifa->ifa_addr, salen, addr, sizeof(addr),
-		    NULL, 0, NI_NUMERICHOST)) != 0) {
+		ଯଦି ((r = getnameinfo(ifa->ifa_addr, salen, addr, ଆକାର(addr),
+		    ଖାଲି, 0, NI_NUMERICHOST)) != 0) {
 			debug2_f("interface %s getnameinfo failed: %s",
 			    ifa->ifa_name, gai_strerror(r));
-			continue;
+			ଜାରି;
 		}
 		debug3_f("interface %s addr %s", ifa->ifa_name, addr);
-		if (addr_match_cidr_list(addr, addrlist) == 1) {
+		ଯଦି (addr_match_cidr_list(addr, addrlist) == 1) {
 			debug3_f("matched interface %s: address %s in %s",
 			    ifa->ifa_name, addr, addrlist);
 			found = 1;
-			break;
+			ଭାଙ୍ଗ;
 		}
 	}
 	freeifaddrs(ifaddrs);
-	return found;
-#else /* HAVE_IFADDRS_H */
+	ଫେରନ୍ତୁ found;
+#ଅନ୍ୟଥା /* HAVE_IFADDRS_H */
 	error("match localnetwork: not supported on this platform");
-	return 0;
+	ଫେରନ୍ତୁ 0;
 #endif /* HAVE_IFADDRS_H */
 }
 
@@ -640,39 +640,39 @@ check_match_ifaddrs(const char *addrlist)
  * Expand a "match exec" command or an Include path, caller must free returned
  * value.
  */
-static char *
-expand_match_exec_or_include_path(const char *path, Options *options,
-    struct passwd *pw, const char *host_arg, const char *original_host,
-    int final_pass, int is_include_path)
+ସ୍ଥିର ଅକ୍ଷର *
+expand_match_exec_or_include_path(ଅଚଳ ଅକ୍ଷର *path, Options *options,
+    ସଂରଚନା passwd *pw, ଅଚଳ ଅକ୍ଷର *host_arg, ଅଚଳ ଅକ୍ଷର *original_host,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା final_pass, ପୂର୍ଣ୍ଣସଂଖ୍ୟା is_include_path)
 {
-	char thishost[NI_MAXHOST], shorthost[NI_MAXHOST], portstr[NI_MAXSERV];
-	char uidstr[32], *conn_hash_hex, *keyalias, *jmphost, *ruser;
-	char *host, *ret;
-	int port;
+	ଅକ୍ଷର thishost[NI_MAXHOST], shorthost[NI_MAXHOST], portstr[NI_MAXSERV];
+	ଅକ୍ଷର uidstr[32], *conn_hash_hex, *keyalias, *jmphost, *ruser;
+	ଅକ୍ଷର *host, *ret;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା port;
 
 	port = options->port <= 0 ? default_ssh_port() : options->port;
-	ruser = options->user == NULL ? pw->pw_name : options->user;
-	if (final_pass) {
+	ruser = options->user == ଖାଲି ? pw->pw_name : options->user;
+	ଯଦି (final_pass) {
 		host = xstrdup(options->hostname);
-	} else if (options->hostname != NULL) {
+	} ଅନ୍ୟଥା ଯଦି (options->hostname != ଖାଲି) {
 		/* NB. Please keep in sync with ssh.c:main() */
 		host = percent_expand(options->hostname,
-		    "h", host_arg, (char *)NULL);
-	} else {
+		    "h", host_arg, (ଅକ୍ଷର *)ଖାଲି);
+	} ଅନ୍ୟଥା {
 		host = xstrdup(host_arg);
 	}
-	if (gethostname(thishost, sizeof(thishost)) == -1)
+	ଯଦି (gethostname(thishost, ଆକାର(thishost)) == -1)
 		fatal("gethostname: %s", strerror(errno));
 	jmphost = option_clear_or_none(options->jump_host) ?
 	    "" : options->jump_host;
-	strlcpy(shorthost, thishost, sizeof(shorthost));
+	strlcpy(shorthost, thishost, ଆକାର(shorthost));
 	shorthost[strcspn(thishost, ".")] = '\0';
-	snprintf(portstr, sizeof(portstr), "%d", port);
-	snprintf(uidstr, sizeof(uidstr), "%llu",
+	snprintf(portstr, ଆକାର(portstr), "%d", port);
+	snprintf(uidstr, ଆକାର(uidstr), "%llu",
 	    (unsigned long long)pw->pw_uid);
 	conn_hash_hex = ssh_connection_hash(thishost, host,
 	    portstr, ruser, jmphost);
-	keyalias = options->host_key_alias ?  options->host_key_alias : host;
+	keyalias = options->host_ଚାବି_alias ?  options->host_ଚାବି_alias : host;
 
 	ret = (is_include_path ? percent_dollar_expand : percent_expand)(path,
 	    "C", conn_hash_hex,
@@ -687,108 +687,108 @@ expand_match_exec_or_include_path(const char *path, Options *options,
 	    "u", pw->pw_name,
 	    "i", uidstr,
 	    "j", jmphost,
-	    (char *)NULL);
-	free(host);
-	free(conn_hash_hex);
-	return ret;
+	    (ଅକ୍ଷର *)ଖାଲି);
+	ମୁକ୍ତ(host);
+	ମୁକ୍ତ(conn_hash_hex);
+	ଫେରନ୍ତୁ ret;
 }
 
 /*
  * Parse and execute a Match directive.
  */
-static int
-match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
-    struct passwd *pw, const char *host_arg, const char *original_host,
-    const char *remote_command, int final_pass, int *want_final_pass,
-    const char *filename, int linenum)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+match_cfg_ଧାଡ଼ି(Options *options, ଅଚଳ ଅକ୍ଷର *full_ଧାଡ଼ି, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *acp, ଅକ୍ଷର ***avp,
+    ସଂରଚନା passwd *pw, ଅଚଳ ଅକ୍ଷର *host_arg, ଅଚଳ ଅକ୍ଷର *original_host,
+    ଅଚଳ ଅକ୍ଷର *remote_command, ପୂର୍ଣ୍ଣସଂଖ୍ୟା final_pass, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *want_final_pass,
+    ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum)
 {
-	char *arg, *oattrib = NULL, *attrib = NULL, *cmd, *host, *criteria;
-	const char *ruser;
-	int r, this_result, result = 1, attributes = 0, negate;
+	ଅକ୍ଷର *arg, *oattrib = ଖାଲି, *attrib = ଖାଲି, *cmd, *host, *criteria;
+	ଅଚଳ ଅକ୍ଷର *ruser;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, this_result, result = 1, attributes = 0, negate;
 
 	/*
 	 * Configuration is likely to be incomplete at this point so we
 	 * must be prepared to use default values.
 	 */
-	ruser = options->user == NULL ? pw->pw_name : options->user;
-	if (final_pass) {
+	ruser = options->user == ଖାଲି ? pw->pw_name : options->user;
+	ଯଦି (final_pass) {
 		host = xstrdup(options->hostname);
-	} else if (options->hostname != NULL) {
+	} ଅନ୍ୟଥା ଯଦି (options->hostname != ଖାଲି) {
 		/* NB. Please keep in sync with ssh.c:main() */
 		host = percent_expand(options->hostname,
-		    "h", host_arg, (char *)NULL);
-	} else {
+		    "h", host_arg, (ଅକ୍ଷର *)ଖାଲି);
+	} ଅନ୍ୟଥା {
 		host = xstrdup(host_arg);
 	}
 
 	debug2("checking match for '%s' host %s originally %s",
-	    full_line, host, original_host);
-	while ((attrib = argv_next(acp, avp)) != NULL) {
+	    full_ଧାଡ଼ି, host, original_host);
+	ଯେତେବେଳେ ((attrib = argv_next(acp, avp)) != ଖାଲି) {
 		/* Terminate on comment */
-		if (*attrib == '#') {
+		ଯଦି (*attrib == '#') {
 			argv_consume(acp);
-			break;
+			ଭାଙ୍ଗ;
 		}
 		attrib = oattrib = xstrdup(attrib);
-		arg = criteria = NULL;
+		arg = criteria = ଖାଲି;
 		this_result = 1;
-		if ((negate = (attrib[0] == '!')))
+		ଯଦି ((negate = (attrib[0] == '!')))
 			attrib++;
 		/* Criterion "all" has no argument and must appear alone */
-		if (strcasecmp(attrib, "all") == 0) {
-			if (attributes > 1 ||
-			    ((arg = argv_next(acp, avp)) != NULL &&
+		ଯଦି (strcasecmp(attrib, "all") == 0) {
+			ଯଦି (attributes > 1 ||
+			    ((arg = argv_next(acp, avp)) != ଖାଲି &&
 			    *arg != '\0' && *arg != '#')) {
 				error("%.200s line %d: '%s' cannot be combined "
 				    "with other Match attributes",
 				    filename, linenum, oattrib);
 				result = -1;
-				goto out;
+				ଯାଅ out;
 			}
-			if (arg != NULL && *arg == '#')
+			ଯଦି (arg != ଖାଲି && *arg == '#')
 				argv_consume(acp); /* consume remaining args */
-			if (result)
+			ଯଦି (result)
 				result = negate ? 0 : 1;
-			goto out;
+			ଯାଅ out;
 		}
 		attributes++;
 		/* criteria "final" and "canonical" have no argument */
-		if (strcasecmp(attrib, "canonical") == 0 ||
+		ଯଦି (strcasecmp(attrib, "canonical") == 0 ||
 		    strcasecmp(attrib, "final") == 0) {
 			/*
 			 * If the config requests "Match final" without
 			 * negation then remember this so we can perform a
 			 * second pass later.
 			 */
-			if (strcasecmp(attrib, "final") == 0 &&
-			    want_final_pass != NULL)
+			ଯଦି (strcasecmp(attrib, "final") == 0 &&
+			    want_final_pass != ଖାଲି)
 				*want_final_pass |= !negate;
 			r = !!final_pass;  /* force bitmask member to boolean */
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
 			debug3("%.200s line %d: %smatched '%s'",
 			    filename, linenum,
 			    this_result ? "" : "not ", oattrib);
-			goto next;
+			ଯାଅ next;
 		}
 
 		/* Keep this list in sync with below */
-		if (strprefix(attrib, "host=", 1)  != NULL ||
-		    strprefix(attrib, "originalhost=", 1) != NULL ||
-		    strprefix(attrib, "user=", 1) != NULL ||
-		    strprefix(attrib, "localuser=", 1) != NULL ||
-		    strprefix(attrib, "localnetwork=", 1) != NULL ||
-		    strprefix(attrib, "version=", 1) != NULL ||
-		    strprefix(attrib, "tagged=", 1) != NULL ||
-		    strprefix(attrib, "command=", 1) != NULL ||
-		    strprefix(attrib, "exec=", 1) != NULL) {
+		ଯଦି (strprefix(attrib, "host=", 1)  != ଖାଲି ||
+		    strprefix(attrib, "originalhost=", 1) != ଖାଲି ||
+		    strprefix(attrib, "user=", 1) != ଖାଲି ||
+		    strprefix(attrib, "localuser=", 1) != ଖାଲି ||
+		    strprefix(attrib, "localnetwork=", 1) != ଖାଲି ||
+		    strprefix(attrib, "version=", 1) != ଖାଲି ||
+		    strprefix(attrib, "tagged=", 1) != ଖାଲି ||
+		    strprefix(attrib, "command=", 1) != ଖାଲି ||
+		    strprefix(attrib, "exec=", 1) != ଖାଲି) {
 			arg = strchr(attrib, '=');
 			*(arg++) = '\0';
-		} else if ((arg = argv_next(acp, avp)) == NULL) {
+		} ଅନ୍ୟଥା ଯଦି ((arg = argv_next(acp, avp)) == ଖାଲି) {
 			error("%.200s line %d: missing argument for Match '%s'",
 			    filename, linenum, oattrib);
 			result = -1;
-			goto out;
+			ଯାଅ out;
 		}
 
 		/*
@@ -796,217 +796,217 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		 * be the empty string for the "tagged" and "command"
 		 * options.
 		 */
-		if (*arg == '\0' &&
+		ଯଦି (*arg == '\0' &&
 		    strcasecmp(attrib, "tagged") != 0 &&
 		    strcasecmp(attrib, "command") != 0)
-			arg = NULL;
-		if (arg == NULL || *arg == '#') {
+			arg = ଖାଲି;
+		ଯଦି (arg == ଖାଲି || *arg == '#') {
 			error("Missing Match criteria for %s", attrib);
 			result = -1;
-			goto out;
+			ଯାଅ out;
 		}
-		if (strcasecmp(attrib, "host") == 0) {
+		ଯଦି (strcasecmp(attrib, "host") == 0) {
 			criteria = xstrdup(host);
 			r = match_hostname(host, arg) == 1;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "originalhost") == 0) {
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "originalhost") == 0) {
 			criteria = xstrdup(original_host);
 			r = match_hostname(original_host, arg) == 1;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "user") == 0) {
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "user") == 0) {
 			criteria = xstrdup(ruser);
 			r = match_pattern_list(ruser, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "localuser") == 0) {
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "localuser") == 0) {
 			criteria = xstrdup(pw->pw_name);
 			r = match_pattern_list(pw->pw_name, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "localnetwork") == 0) {
-			if (addr_match_cidr_list(NULL, arg) == -1) {
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "localnetwork") == 0) {
+			ଯଦି (addr_match_cidr_list(ଖାଲି, arg) == -1) {
 				/* Error already printed */
 				result = -1;
-				goto out;
+				ଯାଅ out;
 			}
 			r = check_match_ifaddrs(arg) == 1;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "version") == 0) {
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "version") == 0) {
 			criteria = xstrdup(SSH_RELEASE);
 			r = match_pattern_list(SSH_RELEASE, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "tagged") == 0) {
-			criteria = xstrdup(options->tag == NULL ? "" :
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "tagged") == 0) {
+			criteria = xstrdup(options->tag == ଖାଲି ? "" :
 			    options->tag);
 			/* Special case: empty criteria matches empty arg */
 			r = (*criteria == '\0') ? *arg == '\0' :
 			    match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "command") == 0) {
-			criteria = xstrdup(remote_command == NULL ?
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "command") == 0) {
+			criteria = xstrdup(remote_command == ଖାଲି ?
 			    "" : remote_command);
 			/* Special case: empty criteria matches empty arg */
 			r = (*criteria == '\0') ? *arg == '\0' :
 			    match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "sessiontype") == 0) {
-			if (options->session_type == SESSION_TYPE_SUBSYSTEM)
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "sessiontype") == 0) {
+			ଯଦି (options->session_type == SESSION_TYPE_SUBSYSTEM)
 				criteria = xstrdup("subsystem");
-			else if (options->session_type == SESSION_TYPE_NONE)
+			ଅନ୍ୟଥା ଯଦି (options->session_type == SESSION_TYPE_NONE)
 				criteria = xstrdup("none");
-			else if (remote_command != NULL &&
+			ଅନ୍ୟଥା ଯଦି (remote_command != ଖାଲି &&
 			    *remote_command != '\0')
 				criteria = xstrdup("exec");
-			else
+			ଅନ୍ୟଥା
 				criteria = xstrdup("shell");
 			r = match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "exec") == 0) {
-			if ((cmd = expand_match_exec_or_include_path(arg,
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "exec") == 0) {
+			ଯଦି ((cmd = expand_match_exec_or_include_path(arg,
 			    options, pw, host_arg, original_host,
-			    final_pass, 0)) == NULL) {
+			    final_pass, 0)) == ଖାଲି) {
 				fatal("%.200s line %d: failed to expand match "
 				    "exec '%.100s'", filename, linenum, arg);
 			}
-			if (result != 1) {
+			ଯଦି (result != 1) {
 				/* skip execution if prior predicate failed */
 				debug3("%.200s line %d: skipped exec "
 				    "\"%.100s\"", filename, linenum, cmd);
-				free(cmd);
-				goto next;
+				ମୁକ୍ତ(cmd);
+				ଯାଅ next;
 			}
 			r = execute_in_shell(cmd);
-			if (r == -1) {
+			ଯଦି (r == -1) {
 				fatal("%.200s line %d: match exec "
 				    "'%.100s' error", filename,
 				    linenum, cmd);
 			}
 			criteria = xstrdup(cmd);
-			free(cmd);
+			ମୁକ୍ତ(cmd);
 			/* Force exit status to boolean */
 			r = r == 0;
-			if (r == (negate ? 1 : 0))
+			ଯଦି (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else {
+		} ଅନ୍ୟଥା {
 			error("Unsupported Match attribute %s", attrib);
 			result = -1;
-			goto out;
+			ଯାଅ out;
 		}
 		debug3("%.200s line %d: %smatched '%s%s%.100s%s' ",
 		    filename, linenum, this_result ? "": "not ", oattrib,
-		    criteria == NULL ? "" : " \"",
-		    criteria == NULL ? "" : criteria,
-		    criteria == NULL ? "" : "\"");
+		    criteria == ଖାଲି ? "" : " \"",
+		    criteria == ଖାଲି ? "" : criteria,
+		    criteria == ଖାଲି ? "" : "\"");
  next:
-		free(criteria);
-		free(oattrib);
-		oattrib = attrib = NULL;
+		ମୁକ୍ତ(criteria);
+		ମୁକ୍ତ(oattrib);
+		oattrib = attrib = ଖାଲି;
 	}
-	if (attributes == 0) {
+	ଯଦି (attributes == 0) {
 		error("One or more attributes required for Match");
 		result = -1;
-		goto out;
+		ଯାଅ out;
 	}
  out:
-	if (result != -1)
+	ଯଦି (result != -1)
 		debug2("match %sfound", result ? "" : "not ");
-	free(oattrib);
-	free(host);
-	return result;
+	ମୁକ୍ତ(oattrib);
+	ମୁକ୍ତ(host);
+	ଫେରନ୍ତୁ result;
 }
 
 /* Remove environment variable by pattern */
-static void
-rm_env(Options *options, const char *arg, const char *filename, int linenum)
+ସ୍ଥିର ଶୂନ୍ୟ
+rm_env(Options *options, ଅଚଳ ଅକ୍ଷର *arg, ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum)
 {
-	u_int i, j, onum_send_env = options->num_send_env;
+	u_int i, j, onum_send_env = options->ଅଙ୍କ_send_env;
 
 	/* Remove an environment variable */
-	for (i = 0; i < options->num_send_env; ) {
-		if (!match_pattern(options->send_env[i], arg + 1)) {
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_send_env; ) {
+		ଯଦି (!match_pattern(options->send_env[i], arg + 1)) {
 			i++;
-			continue;
+			ଜାରି;
 		}
 		debug3("%s line %d: removing environment %s",
 		    filename, linenum, options->send_env[i]);
-		free(options->send_env[i]);
-		options->send_env[i] = NULL;
-		for (j = i; j < options->num_send_env - 1; j++) {
+		ମୁକ୍ତ(options->send_env[i]);
+		options->send_env[i] = ଖାଲି;
+		ପାଇଁ (j = i; j < options->ଅଙ୍କ_send_env - 1; j++) {
 			options->send_env[j] = options->send_env[j + 1];
-			options->send_env[j + 1] = NULL;
+			options->send_env[j + 1] = ଖାଲି;
 		}
-		options->num_send_env--;
+		options->ଅଙ୍କ_send_env--;
 		/* NB. don't increment i */
 	}
-	if (onum_send_env != options->num_send_env) {
+	ଯଦି (onum_send_env != options->ଅଙ୍କ_send_env) {
 		options->send_env = xrecallocarray(options->send_env,
-		    onum_send_env, options->num_send_env,
-		    sizeof(*options->send_env));
+		    onum_send_env, options->ଅଙ୍କ_send_env,
+		    ଆକାର(*options->send_env));
 	}
 }
 
 /*
  * Returns the number of the token pointed to by cp or oBadOption.
  */
-static OpCodes
-parse_token(const char *cp, const char *filename, int linenum,
-    const char *ignored_unknown)
+ସ୍ଥିର OpCodes
+parse_token(ଅଚଳ ଅକ୍ଷର *cp, ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum,
+    ଅଚଳ ଅକ୍ଷର *ignored_unknown)
 {
-	int i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
-	for (i = 0; keywords[i].name; i++)
-		if (strcmp(cp, keywords[i].name) == 0)
-			return keywords[i].opcode;
-	if (ignored_unknown != NULL &&
+	ପାଇଁ (i = 0; keywords[i].name; i++)
+		ଯଦି (strcmp(cp, keywords[i].name) == 0)
+			ଫେରନ୍ତୁ keywords[i].opcode;
+	ଯଦି (ignored_unknown != ଖାଲି &&
 	    match_pattern_list(cp, ignored_unknown, 1) == 1)
-		return oIgnoredUnknownOption;
+		ଫେରନ୍ତୁ oIgnoredUnknownOption;
 	error("%s: line %d: Bad configuration option: %s",
 	    filename, linenum, cp);
-	return oBadOption;
+	ଫେରନ୍ତୁ oBadOption;
 }
 
-static void
-free_canon_cnames(struct allowed_cname *cnames, u_int n)
+ସ୍ଥିର ଶୂନ୍ୟ
+free_canon_cnames(ସଂରଚନା allowed_cname *cnames, u_int n)
 {
 	u_int i;
 
-	if (cnames == NULL || n == 0)
-		return;
-	for (i = 0; i < n; i++) {
-		free(cnames[i].source_list);
-		free(cnames[i].target_list);
+	ଯଦି (cnames == ଖାଲି || n == 0)
+		ଫେରନ୍ତୁ;
+	ପାଇଁ (i = 0; i < n; i++) {
+		ମୁକ୍ତ(cnames[i].source_list);
+		ମୁକ୍ତ(cnames[i].target_list);
 	}
-	free(cnames);
+	ମୁକ୍ତ(cnames);
 }
 
 /* Multistate option parsing */
-struct multistate {
-	char *key;
-	int value;
+ସଂରଚନା multistate {
+	ଅକ୍ଷର *ଚାବି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୂଲ୍ୟ;
 };
-static const struct multistate multistate_flag[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_flag[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_yesnoask[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_yesnoask[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "ask",			2 },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_strict_hostkey[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_strict_hostkey[] = {
 	{ "true",			SSH_STRICT_HOSTKEY_YES },
 	{ "false",			SSH_STRICT_HOSTKEY_OFF },
 	{ "yes",			SSH_STRICT_HOSTKEY_YES },
@@ -1014,24 +1014,24 @@ static const struct multistate multistate_strict_hostkey[] = {
 	{ "ask",			SSH_STRICT_HOSTKEY_ASK },
 	{ "off",			SSH_STRICT_HOSTKEY_OFF },
 	{ "accept-new",			SSH_STRICT_HOSTKEY_NEW },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_yesnoaskconfirm[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_yesnoaskconfirm[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "ask",			2 },
 	{ "confirm",			3 },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_addressfamily[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_addressfamily[] = {
 	{ "inet",			AF_INET },
 	{ "inet6",			AF_INET6 },
 	{ "any",			AF_UNSPEC },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_controlmaster[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_controlmaster[] = {
 	{ "true",			SSHCTL_MASTER_YES },
 	{ "yes",			SSHCTL_MASTER_YES },
 	{ "false",			SSHCTL_MASTER_NO },
@@ -1039,761 +1039,761 @@ static const struct multistate multistate_controlmaster[] = {
 	{ "auto",			SSHCTL_MASTER_AUTO },
 	{ "ask",			SSHCTL_MASTER_ASK },
 	{ "autoask",			SSHCTL_MASTER_AUTO_ASK },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_tunnel[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_tunnel[] = {
 	{ "ethernet",			SSH_TUNMODE_ETHERNET },
 	{ "point-to-point",		SSH_TUNMODE_POINTOPOINT },
 	{ "true",			SSH_TUNMODE_DEFAULT },
 	{ "yes",			SSH_TUNMODE_DEFAULT },
 	{ "false",			SSH_TUNMODE_NO },
 	{ "no",				SSH_TUNMODE_NO },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_requesttty[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_requesttty[] = {
 	{ "true",			REQUEST_TTY_YES },
 	{ "yes",			REQUEST_TTY_YES },
 	{ "false",			REQUEST_TTY_NO },
 	{ "no",				REQUEST_TTY_NO },
 	{ "force",			REQUEST_TTY_FORCE },
 	{ "auto",			REQUEST_TTY_AUTO },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_sessiontype[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_sessiontype[] = {
 	{ "none",			SESSION_TYPE_NONE },
 	{ "subsystem",			SESSION_TYPE_SUBSYSTEM },
 	{ "default",			SESSION_TYPE_DEFAULT },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_canonicalizehostname[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_canonicalizehostname[] = {
 	{ "true",			SSH_CANONICALISE_YES },
 	{ "false",			SSH_CANONICALISE_NO },
 	{ "yes",			SSH_CANONICALISE_YES },
 	{ "no",				SSH_CANONICALISE_NO },
 	{ "always",			SSH_CANONICALISE_ALWAYS },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_pubkey_auth[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_pubkey_auth[] = {
 	{ "true",			SSH_PUBKEY_AUTH_ALL },
 	{ "false",			SSH_PUBKEY_AUTH_NO },
 	{ "yes",			SSH_PUBKEY_AUTH_ALL },
 	{ "no",				SSH_PUBKEY_AUTH_NO },
 	{ "unbound",			SSH_PUBKEY_AUTH_UNBOUND },
 	{ "host-bound",			SSH_PUBKEY_AUTH_HBOUND },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_compression[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_compression[] = {
 #ifdef WITH_ZLIB
 	{ "yes",			COMP_DELAYED },
 #endif
 	{ "no",				COMP_NONE },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_keepalives[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_keepalives[] = {
 	{ "true",			SSH_KEEPALIVES_TRANSPORT },
 	{ "false",			SSH_KEEPALIVES_OFF },
 	{ "yes",			SSH_KEEPALIVES_TRANSPORT },
 	{ "no",				SSH_KEEPALIVES_OFF },
 	{ "transport",			SSH_KEEPALIVES_TRANSPORT },
 	{ "all",			SSH_KEEPALIVES_ALL },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
 /* XXX this will need to be replaced with a bitmask if we add more flags */
-static const struct multistate multistate_warnweakcrypto[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_warnweakcrypto[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "no-pq-kex",			0 },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
 
-static int
-parse_multistate_value(const char *arg, const char *filename, int linenum,
-    const struct multistate *multistate_ptr)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+parse_multistate_ମୂଲ୍ୟ(ଅଚଳ ଅକ୍ଷର *arg, ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum,
+    ଅଚଳ ସଂରଚନା multistate *multistate_ptr)
 {
-	int i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
-	if (!arg || *arg == '\0') {
+	ଯଦି (!arg || *arg == '\0') {
 		error("%s line %d: missing argument.", filename, linenum);
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
-	for (i = 0; multistate_ptr[i].key != NULL; i++) {
-		if (strcasecmp(arg, multistate_ptr[i].key) == 0)
-			return multistate_ptr[i].value;
+	ପାଇଁ (i = 0; multistate_ptr[i].ଚାବି != ଖାଲି; i++) {
+		ଯଦି (strcasecmp(arg, multistate_ptr[i].ଚାବି) == 0)
+			ଫେରନ୍ତୁ multistate_ptr[i].ମୂଲ୍ୟ;
 	}
-	return -1;
+	ଫେରନ୍ତୁ -1;
 }
 
 /*
  * Processes a single option line as used in the configuration files. This
  * only sets those values that have not already been set.
  */
-int
-process_config_line(Options *options, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, char *line,
-    const char *filename, int linenum, int *activep, int flags)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+process_config_ଧାଡ଼ି(Options *options, ସଂରଚନା passwd *pw, ଅଚଳ ଅକ୍ଷର *host,
+    ଅଚଳ ଅକ୍ଷର *original_host, ଅଚଳ ଅକ୍ଷର *remote_command, ଅକ୍ଷର *ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *activep, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags)
 {
-	return process_config_line_depth(options, pw, host, original_host,
-	    remote_command, line, filename, linenum, activep, flags, NULL, 0);
+	ଫେରନ୍ତୁ process_config_ଧାଡ଼ି_depth(options, pw, host, original_host,
+	    remote_command, ଧାଡ଼ି, filename, linenum, activep, flags, ଖାଲି, 0);
 }
 
 #define WHITESPACE " \t\r\n"
-static int
-process_config_line_depth(Options *options, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, char *line,
-    const char *filename, int linenum, int *activep, int flags,
-    int *want_final_pass, int depth)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+process_config_ଧାଡ଼ି_depth(Options *options, ସଂରଚନା passwd *pw, ଅଚଳ ଅକ୍ଷର *host,
+    ଅଚଳ ଅକ୍ଷର *original_host, ଅଚଳ ଅକ୍ଷର *remote_command, ଅକ୍ଷର *ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *activep, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା *want_final_pass, ପୂର୍ଣ୍ଣସଂଖ୍ୟା depth)
 {
-	char *str, **charptr, *endofnumber, *keyword, *arg, *arg2, *p;
-	char **cpptr, ***cppptr, fwdarg[256];
+	ଅକ୍ଷର *str, **charptr, *endofnumber, *keyword, *arg, *arg2, *p;
+	ଅକ୍ଷର **cpptr, ***cppptr, fwdarg[256];
 	u_int i, *uintptr, max_entries = 0;
-	int r, oactive, negated, opcode, *intptr, value, value2, cmdline = 0;
-	int remotefwd, dynamicfwd, ca_only = 0, found = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, oactive, negated, opcode, *intptr, ମୂଲ୍ୟ, value2, cmdline = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା remotefwd, dynamicfwd, ca_only = 0, found = 0;
 	LogLevel *log_level_ptr;
 	SyslogFacility *log_facility_ptr;
 	long long val64;
 	size_t len;
-	struct Forward fwd;
-	const struct multistate *multistate_ptr;
+	ସଂରଚନା Forward fwd;
+	ଅଚଳ ସଂରଚନା multistate *multistate_ptr;
 	glob_t gl;
-	const char *errstr;
-	char **oav = NULL, **av;
-	int oac = 0, ac;
-	int ret = -1;
-	struct allowed_cname *cnames = NULL;
+	ଅଚଳ ଅକ୍ଷର *errstr;
+	ଅକ୍ଷର **oav = ଖାଲି, **av;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା oac = 0, ac;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = -1;
+	ସଂରଚନା allowed_cname *cnames = ଖାଲି;
 	u_int ncnames = 0;
-	char **strs = NULL; /* string array arguments; freed implicitly */
+	ଅକ୍ଷର **strs = ଖାଲି; /* string array arguments; freed implicitly */
 	u_int nstrs = 0;
 
-	if (activep == NULL) { /* We are processing a command line directive */
+	ଯଦି (activep == ଖାଲି) { /* We are processing a command line directive */
 		cmdline = 1;
 		activep = &cmdline;
 	}
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
-		return 0;
-	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
-			break;
-		line[len] = '\0';
+	ଯଦି ((len = strlen(ଧାଡ଼ି)) == 0)
+		ଫେରନ୍ତୁ 0;
+	ପାଇଁ (len--; len > 0; len--) {
+		ଯଦି (strchr(WHITESPACE "\f", ଧାଡ଼ି[len]) == ଖାଲି)
+			ଭାଙ୍ଗ;
+		ଧାଡ଼ି[len] = '\0';
 	}
 
-	str = line;
+	str = ଧାଡ଼ି;
 	/* Get the keyword. (Each line is supposed to begin with a keyword). */
-	if ((keyword = strdelim(&str)) == NULL)
-		return 0;
+	ଯଦି ((keyword = strdelim(&str)) == ଖାଲି)
+		ଫେରନ୍ତୁ 0;
 	/* Ignore leading whitespace. */
-	if (*keyword == '\0')
+	ଯଦି (*keyword == '\0')
 		keyword = strdelim(&str);
-	if (keyword == NULL || !*keyword || *keyword == '\n' || *keyword == '#')
-		return 0;
+	ଯଦି (keyword == ଖାଲି || !*keyword || *keyword == '\n' || *keyword == '#')
+		ଫେରନ୍ତୁ 0;
 	/* Match lowercase keyword */
 	lowercase(keyword);
 
 	/* Prepare to parse remainder of line */
-	if (str != NULL)
+	ଯଦି (str != ଖାଲି)
 		str += strspn(str, WHITESPACE);
-	if (str == NULL || *str == '\0') {
+	ଯଦି (str == ଖାଲି || *str == '\0') {
 		error("%s line %d: no argument after keyword \"%s\"",
 		    filename, linenum, keyword);
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
 	opcode = parse_token(keyword, filename, linenum,
 	    options->ignored_unknown);
-	if (argv_split(str, &oac, &oav, 1) != 0) {
+	ଯଦି (argv_split(str, &oac, &oav, 1) != 0) {
 		error("%s line %d: invalid quotes", filename, linenum);
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
 	ac = oac;
 	av = oav;
 
-	switch (opcode) {
-	case oBadOption:
+	ବାଛ (opcode) {
+	ସ୍ଥିତି oBadOption:
 		/* don't panic, but count bad options */
-		goto out;
-	case oIgnore:
+		ଯାଅ out;
+	ସ୍ଥିତି oIgnore:
 		argv_consume(&ac);
-		break;
-	case oIgnoredUnknownOption:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି oIgnoredUnknownOption:
 		debug("%s line %d: Ignored unknown option \"%s\"",
 		    filename, linenum, keyword);
 		argv_consume(&ac);
-		break;
-	case oConnectTimeout:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି oConnectTimeout:
 		intptr = &options->connection_timeout;
 parse_time:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%s line %d: missing time value.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (strcmp(arg, "none") == 0)
-			value = -1;
-		else if ((value = convtime(arg)) == -1) {
+		ଯଦି (strcmp(arg, "none") == 0)
+			ମୂଲ୍ୟ = -1;
+		ଅନ୍ୟଥା ଯଦି ((ମୂଲ୍ୟ = convtime(arg)) == -1) {
 			error("%s line %d: invalid time value.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oForwardAgent:
+	ସ୍ଥିତି oForwardAgent:
 		intptr = &options->forward_agent;
 
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%s line %d: missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
 
-		value = -1;
+		ମୂଲ୍ୟ = -1;
 		multistate_ptr = multistate_flag;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
-				value = multistate_ptr[i].value;
-				break;
+		ପାଇଁ (i = 0; multistate_ptr[i].ଚାବି != ଖାଲି; i++) {
+			ଯଦି (strcasecmp(arg, multistate_ptr[i].ଚାବି) == 0) {
+				ମୂଲ୍ୟ = multistate_ptr[i].ମୂଲ୍ୟ;
+				ଭାଙ୍ଗ;
 			}
 		}
-		if (value != -1) {
-			if (*activep && *intptr == -1)
-				*intptr = value;
-			break;
+		ଯଦି (ମୂଲ୍ୟ != -1) {
+			ଯଦି (*activep && *intptr == -1)
+				*intptr = ମୂଲ୍ୟ;
+			ଭାଙ୍ଗ;
 		}
 		/* ForwardAgent wasn't 'yes' or 'no', assume a path */
-		if (*activep && *intptr == -1)
+		ଯଦି (*activep && *intptr == -1)
 			*intptr = 1;
 
 		charptr = &options->forward_agent_sock_path;
-		goto parse_agent_path;
+		ଯାଅ parse_agent_path;
 
-	case oForwardX11:
+	ସ୍ଥିତି oForwardX11:
 		intptr = &options->forward_x11;
  parse_flag:
 		multistate_ptr = multistate_flag;
  parse_multistate:
 		arg = argv_next(&ac, &av);
-		if ((value = parse_multistate_value(arg, filename, linenum,
+		ଯଦି ((ମୂଲ୍ୟ = parse_multistate_ମୂଲ୍ୟ(arg, filename, linenum,
 		    multistate_ptr)) == -1) {
 			error("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oForwardX11Trusted:
+	ସ୍ଥିତି oForwardX11Trusted:
 		intptr = &options->forward_x11_trusted;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oForwardX11Timeout:
+	ସ୍ଥିତି oForwardX11Timeout:
 		intptr = &options->forward_x11_timeout;
-		goto parse_time;
+		ଯାଅ parse_time;
 
-	case oGatewayPorts:
+	ସ୍ଥିତି oGatewayPorts:
 		intptr = &options->fwd_opts.gateway_ports;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oExitOnForwardFailure:
+	ସ୍ଥିତି oExitOnForwardFailure:
 		intptr = &options->exit_on_forward_failure;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oPasswordAuthentication:
+	ସ୍ଥିତି oPasswordAuthentication:
 		intptr = &options->password_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oKbdInteractiveAuthentication:
+	ସ୍ଥିତି oKbdInteractiveAuthentication:
 		intptr = &options->kbd_interactive_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oKbdInteractiveDevices:
+	ସ୍ଥିତି oKbdInteractiveDevices:
 		charptr = &options->kbd_interactive_devices;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oPubkeyAuthentication:
+	ସ୍ଥିତି oPubkeyAuthentication:
 		multistate_ptr = multistate_pubkey_auth;
 		intptr = &options->pubkey_authentication;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oHostbasedAuthentication:
+	ସ୍ଥିତି oHostbasedAuthentication:
 		intptr = &options->hostbased_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oGssAuthentication:
+	ସ୍ଥିତି oGssAuthentication:
 		intptr = &options->gss_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oGssDelegateCreds:
+	ସ୍ଥିତି oGssDelegateCreds:
 		intptr = &options->gss_deleg_creds;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oBatchMode:
+	ସ୍ଥିତି oBatchMode:
 		intptr = &options->batch_mode;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oCheckHostIP:
+	ସ୍ଥିତି oCheckHostIP:
 		intptr = &options->check_host_ip;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oVerifyHostKeyDNS:
-		intptr = &options->verify_host_key_dns;
+	ସ୍ଥିତି o_Verify_Host_ଚାବି_DNS:
+		intptr = &options->verify_host_ଚାବି_dns;
 		multistate_ptr = multistate_yesnoask;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oStrictHostKeyChecking:
-		intptr = &options->strict_host_key_checking;
+	ସ୍ଥିତି o_Strict_Host_ଚାବି_Checking:
+		intptr = &options->strict_host_ଚାବି_checking;
 		multistate_ptr = multistate_strict_hostkey;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oCompression:
+	ସ୍ଥିତି oCompression:
 		intptr = &options->compression;
 		multistate_ptr = multistate_compression;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oTCPKeepAlive:
+	ସ୍ଥିତି oTCPKeepAlive:
 		intptr = &options->tcp_keep_alive;
 		multistate_ptr = multistate_keepalives;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oNoHostAuthenticationForLocalhost:
+	ସ୍ଥିତି oNoHostAuthenticationForLocalhost:
 		intptr = &options->no_host_authentication_for_localhost;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oNumberOfPasswordPrompts:
-		intptr = &options->number_of_password_prompts;
-		goto parse_int;
+	ସ୍ଥିତି o_ସଂଖ୍ୟା_Of_Password_Prompts:
+		intptr = &options->ସଂଖ୍ୟା_of_password_prompts;
+		ଯାଅ parse_int;
 
-	case oRekeyLimit:
+	ସ୍ଥିତି oRekeyLimit:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.", filename,
 			    linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (strcmp(arg, "default") == 0) {
+		ଯଦି (strcmp(arg, "default") == 0) {
 			val64 = 0;
-		} else {
-			if (scan_scaled(arg, &val64) == -1) {
+		} ଅନ୍ୟଥା {
+			ଯଦି (scan_scaled(arg, &val64) == -1) {
 				error("%.200s line %d: Bad number '%s': %s",
 				    filename, linenum, arg, strerror(errno));
-				goto out;
+				ଯାଅ out;
 			}
-			if (val64 != 0 && val64 < 16) {
+			ଯଦି (val64 != 0 && val64 < 16) {
 				error("%.200s line %d: RekeyLimit too small",
 				    filename, linenum);
-				goto out;
+				ଯାଅ out;
 			}
 		}
-		if (*activep && options->rekey_limit == -1)
+		ଯଦି (*activep && options->rekey_limit == -1)
 			options->rekey_limit = val64;
-		if (ac != 0) { /* optional rekey interval present */
-			if (strcmp(av[0], "none") == 0) {
-				(void)argv_next(&ac, &av);	/* discard */
-				break;
+		ଯଦି (ac != 0) { /* optional rekey interval present */
+			ଯଦି (strcmp(av[0], "none") == 0) {
+				(ଶୂନ୍ୟ)argv_next(&ac, &av);	/* discard */
+				ଭାଙ୍ଗ;
 			}
 			intptr = &options->rekey_interval;
-			goto parse_time;
+			ଯାଅ parse_time;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oIdentityFile:
+	ସ୍ଥିତି oIdentityFile:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep) {
-			intptr = &options->num_identity_files;
-			if (*intptr >= SSH_MAX_IDENTITY_FILES) {
+		ଯଦି (*activep) {
+			intptr = &options->ଅଙ୍କ_identity_files;
+			ଯଦି (*intptr >= SSH_MAX_IDENTITY_FILES) {
 				error("%.200s line %d: Too many identity files "
 				    "specified (max %d).", filename, linenum,
 				    SSH_MAX_IDENTITY_FILES);
-				goto out;
+				ଯାଅ out;
 			}
-			add_identity_file(options, NULL,
+			add_identity_file(options, ଖାଲି,
 			    arg, flags & SSHCONF_USERCONF);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oCertificateFile:
+	ସ୍ଥିତି oCertificateFile:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep) {
-			intptr = &options->num_certificate_files;
-			if (*intptr >= SSH_MAX_CERTIFICATE_FILES) {
+		ଯଦି (*activep) {
+			intptr = &options->ଅଙ୍କ_certificate_files;
+			ଯଦି (*intptr >= SSH_MAX_CERTIFICATE_FILES) {
 				error("%.200s line %d: Too many certificate "
 				    "files specified (max %d).",
 				    filename, linenum,
 				    SSH_MAX_CERTIFICATE_FILES);
-				goto out;
+				ଯାଅ out;
 			}
 			add_certificate_file(options, arg,
 			    flags & SSHCONF_USERCONF);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oXAuthLocation:
+	ସ୍ଥିତି oXAuthLocation:
 		charptr=&options->xauth_location;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oUser:
+	ସ୍ଥିତି oUser:
 		charptr = &options->user;
 parse_string:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oGlobalKnownHostsFile:
-		cpptr = (char **)&options->system_hostfiles;
-		uintptr = &options->num_system_hostfiles;
+	ସ୍ଥିତି oGlobalKnownHostsFile:
+		cpptr = (ଅକ୍ଷର **)&options->system_hostfiles;
+		uintptr = &options->ଅଙ୍କ_system_hostfiles;
 		max_entries = SSH_MAX_HOSTS_FILES;
 parse_char_array:
 		i = 0;
-		value = *uintptr == 0; /* was array empty when we started? */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ମୂଲ୍ୟ = *uintptr == 0; /* was array empty when we started? */
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				ଯାଅ out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (i > 0 || ac > 0) {
+			ଯଦି (strcasecmp(arg, "none") == 0) {
+				ଯଦି (i > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					ଯାଅ out;
 				}
 			}
 			i++;
-			if (*activep && value) {
-				if ((*uintptr) >= max_entries) {
+			ଯଦି (*activep && ମୂଲ୍ୟ) {
+				ଯଦି ((*uintptr) >= max_entries) {
 					error("%s line %d: too many %s "
 					    "entries.", filename, linenum,
 					    keyword);
-					goto out;
+					ଯାଅ out;
 				}
 				cpptr[(*uintptr)++] = xstrdup(arg);
 			}
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oUserKnownHostsFile:
-		cpptr = (char **)&options->user_hostfiles;
-		uintptr = &options->num_user_hostfiles;
+	ସ୍ଥିତି oUserKnownHostsFile:
+		cpptr = (ଅକ୍ଷର **)&options->user_hostfiles;
+		uintptr = &options->ଅଙ୍କ_user_hostfiles;
 		max_entries = SSH_MAX_HOSTS_FILES;
-		goto parse_char_array;
+		ଯାଅ parse_char_array;
 
-	case oHostname:
+	ସ୍ଥିତି oHostname:
 		charptr = &options->hostname;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oTag:
+	ସ୍ଥିତି oTag:
 		charptr = &options->tag;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oHostKeyAlias:
-		charptr = &options->host_key_alias;
-		goto parse_string;
+	ସ୍ଥିତି o_Host_ଚାବି_Alias:
+		charptr = &options->host_ଚାବି_alias;
+		ଯାଅ parse_string;
 
-	case oPreferredAuthentications:
+	ସ୍ଥିତି oPreferredAuthentications:
 		charptr = &options->preferred_authentications;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oBindAddress:
+	ସ୍ଥିତି oBindAddress:
 		charptr = &options->bind_address;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oBindInterface:
+	ସ୍ଥିତି oBindInterface:
 		charptr = &options->bind_interface;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oPKCS11Provider:
+	ସ୍ଥିତି oPKCS11Provider:
 		charptr = &options->pkcs11_provider;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oSecurityKeyProvider:
+	ସ୍ଥିତି o_Security_ଚାବି_Provider:
 		charptr = &options->sk_provider;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oKnownHostsCommand:
+	ସ୍ଥିତି oKnownHostsCommand:
 		charptr = &options->known_hosts_command;
-		goto parse_command;
+		ଯାଅ parse_command;
 
-	case oProxyCommand:
+	ସ୍ଥିତି oProxyCommand:
 		charptr = &options->proxy_command;
 parse_command:
-		if (str == NULL) {
+		ଯଦି (str == ଖାଲି) {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
 		len = strspn(str, WHITESPACE "=");
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oProxyJump:
-		if (str == NULL) {
+	ସ୍ଥିତି oProxyJump:
+		ଯଦି (str == ଖାଲି) {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
 		len = strspn(str, WHITESPACE "=");
 		/* XXX use argv? */
-		if (parse_jump(str + len, options, cmdline, *activep) == -1) {
+		ଯଦି (parse_jump(str + len, options, cmdline, *activep) == -1) {
 			error("%.200s line %d: Invalid ProxyJump \"%s\"",
 			    filename, linenum, str + len);
-			goto out;
+			ଯାଅ out;
 		}
 		argv_consume(&ac);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oPort:
+	ସ୍ଥିତି oPort:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		value = a2port(arg);
-		if (value <= 0) {
+		ମୂଲ୍ୟ = a2port(arg);
+		ଯଦି (ମୂଲ୍ୟ <= 0) {
 			error("%.200s line %d: Bad port '%s'.",
 			    filename, linenum, arg);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && options->port == -1)
-			options->port = value;
-		break;
+		ଯଦି (*activep && options->port == -1)
+			options->port = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oConnectionAttempts:
+	ସ୍ଥିତି oConnectionAttempts:
 		intptr = &options->connection_attempts;
 parse_int:
 		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL) {
+		ଯଦି ((errstr = atoi_err(arg, &ମୂଲ୍ୟ)) != ଖାଲି) {
 			error("%s line %d: integer value %s.",
 			    filename, linenum, errstr);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oCiphers:
+	ସ୍ଥିତି oCiphers:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*arg != '-' &&
+		ଯଦି (*arg != '-' &&
 		    !ciphers_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg)){
 			error("%.200s line %d: Bad SSH2 cipher spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && options->ciphers == NULL)
+		ଯଦି (*activep && options->ciphers == ଖାଲି)
 			options->ciphers = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oMacs:
+	ସ୍ଥିତି oMacs:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*arg != '-' &&
+		ଯଦି (*arg != '-' &&
 		    !mac_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg)) {
 			error("%.200s line %d: Bad SSH2 MAC spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && options->macs == NULL)
+		ଯଦି (*activep && options->macs == ଖାଲି)
 			options->macs = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oKexAlgorithms:
+	ସ୍ଥିତି oKexAlgorithms:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*arg != '-' &&
+		ଯଦି (*arg != '-' &&
 		    !kex_names_valid(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg)) {
 			error("%.200s line %d: Bad SSH2 KexAlgorithms '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && options->kex_algorithms == NULL)
+		ଯଦି (*activep && options->kex_algorithms == ଖାଲି)
 			options->kex_algorithms = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oHostKeyAlgorithms:
+	ସ୍ଥିତି o_Host_ଚାବି_Algorithms:
 		charptr = &options->hostkeyalgorithms;
 		ca_only = 0;
 parse_pubkey_algos:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*arg != '-' &&
+		ଯଦି (*arg != '-' &&
 		    !sshkey_names_valid2(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg, 1, ca_only)) {
 			error("%s line %d: Bad key types '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oCASignatureAlgorithms:
+	ସ୍ଥିତି oCASignatureAlgorithms:
 		charptr = &options->ca_sign_algorithms;
 		ca_only = 1;
-		goto parse_pubkey_algos;
+		ଯାଅ parse_pubkey_algos;
 
-	case oLogLevel:
+	ସ୍ଥିତି oLogLevel:
 		log_level_ptr = &options->log_level;
 		arg = argv_next(&ac, &av);
-		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET) {
+		ମୂଲ୍ୟ = log_level_ସଂଖ୍ୟା(arg);
+		ଯଦି (ମୂଲ୍ୟ == SYSLOG_LEVEL_NOT_SET) {
 			error("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *log_level_ptr == SYSLOG_LEVEL_NOT_SET)
-			*log_level_ptr = (LogLevel) value;
-		break;
+		ଯଦି (*activep && *log_level_ptr == SYSLOG_LEVEL_NOT_SET)
+			*log_level_ptr = (LogLevel) ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oLogFacility:
+	ସ୍ଥିତି oLogFacility:
 		log_facility_ptr = &options->log_facility;
 		arg = argv_next(&ac, &av);
-		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET) {
+		ମୂଲ୍ୟ = log_facility_ସଂଖ୍ୟା(arg);
+		ଯଦି (ମୂଲ୍ୟ == SYSLOG_FACILITY_NOT_SET) {
 			error("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-			goto out;
+			ଯାଅ out;
 		}
-		if (*log_facility_ptr == -1)
-			*log_facility_ptr = (SyslogFacility) value;
-		break;
+		ଯଦି (*log_facility_ptr == -1)
+			*log_facility_ptr = (SyslogFacility) ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oLogVerbose:
+	ସ୍ଥିତି oLogVerbose:
 		cppptr = &options->log_verbose;
-		uintptr = &options->num_log_verbose;
+		uintptr = &options->ଅଙ୍କ_log_verbose;
 		i = 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				ଯାଅ out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (i > 0 || ac > 0) {
+			ଯଦି (strcasecmp(arg, "none") == 0) {
+				ଯଦି (i > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					ଯାଅ out;
 				}
 			}
 			i++;
-			if (*activep && *uintptr == 0) {
+			ଯଦି (*activep && *uintptr == 0) {
 				*cppptr = xrecallocarray(*cppptr, *uintptr,
-				    *uintptr + 1, sizeof(**cppptr));
+				    *uintptr + 1, ଆକାର(**cppptr));
 				(*cppptr)[(*uintptr)++] = xstrdup(arg);
 			}
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oLocalForward:
-	case oRemoteForward:
-	case oDynamicForward:
+	ସ୍ଥିତି oLocalForward:
+	ସ୍ଥିତି oRemoteForward:
+	ସ୍ଥିତି oDynamicForward:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
 
 		remotefwd = (opcode == oRemoteForward);
 		dynamicfwd = (opcode == oDynamicForward);
 
-		if (!dynamicfwd) {
+		ଯଦି (!dynamicfwd) {
 			arg2 = argv_next(&ac, &av);
-			if (arg2 == NULL || *arg2 == '\0') {
-				if (remotefwd)
+			ଯଦି (arg2 == ଖାଲି || *arg2 == '\0') {
+				ଯଦି (remotefwd)
 					dynamicfwd = 1;
-				else {
+				ଅନ୍ୟଥା {
 					error("%.200s line %d: Missing target "
 					    "argument.", filename, linenum);
-					goto out;
+					ଯାଅ out;
 				}
-			} else {
+			} ଅନ୍ୟଥା {
 				/* construct a string for parse_forward */
-				snprintf(fwdarg, sizeof(fwdarg), "%s:%s", arg,
+				snprintf(fwdarg, ଆକାର(fwdarg), "%s:%s", arg,
 				    arg2);
 			}
 		}
-		if (dynamicfwd)
-			strlcpy(fwdarg, arg, sizeof(fwdarg));
+		ଯଦି (dynamicfwd)
+			strlcpy(fwdarg, arg, ଆକାର(fwdarg));
 
-		if (parse_forward(&fwd, fwdarg, dynamicfwd, remotefwd) == 0) {
+		ଯଦି (parse_forward(&fwd, fwdarg, dynamicfwd, remotefwd) == 0) {
 			error("%.200s line %d: Bad forwarding specification.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
 
-		if (*activep) {
-			if (remotefwd) {
+		ଯଦି (*activep) {
+			ଯଦି (remotefwd) {
 				add_remote_forward(options, &fwd);
-			} else {
+			} ଅନ୍ୟଥା {
 				add_local_forward(options, &fwd);
 			}
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oPermitRemoteOpen:
-		uintptr = &options->num_permitted_remote_opens;
+	ସ୍ଥିତି oPermitRemoteOpen:
+		uintptr = &options->ଅଙ୍କ_permitted_remote_opens;
 		cppptr = &options->permitted_remote_opens;
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
 			arg2 = xstrdup(arg);
 			/* Allow any/none only in first position */
-			if (strcasecmp(arg, "none") == 0 ||
+			ଯଦି (strcasecmp(arg, "none") == 0 ||
 			    strcasecmp(arg, "any") == 0) {
-				if (nstrs > 0 || ac > 0) {
+				ଯଦି (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"%s\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword, arg);
-					free(arg2);
-					goto out;
+					ମୁକ୍ତ(arg2);
+					ଯାଅ out;
 				}
-			} else {
+			} ଅନ୍ୟଥା {
 				p = hpdelim(&arg);
-				if (p == NULL) {
+				ଯଦି (p == ଖାଲି) {
 					fatal("%s line %d: missing host in %s",
 					    filename, linenum,
 					    lookup_opcode_name(opcode));
@@ -1803,7 +1803,7 @@ parse_pubkey_algos:
 				 * don't want to use permitopen_port to avoid
 				 * dependency on channels.[ch] here.
 				 */
-				if (arg == NULL || (strcmp(arg, "*") != 0 &&
+				ଯଦି (arg == ଖାଲି || (strcmp(arg, "*") != 0 &&
 				    a2port(arg) <= 0)) {
 					fatal("%s line %d: bad port number "
 					    "in %s", filename, linenum,
@@ -1813,283 +1813,283 @@ parse_pubkey_algos:
 			opt_array_append(filename, linenum,
 			    lookup_opcode_name(opcode),
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			ମୁକ୍ତ(arg2);
 		}
-		if (nstrs == 0)
+		ଯଦି (nstrs == 0)
 			fatal("%s line %d: missing %s specification",
 			    filename, linenum, lookup_opcode_name(opcode));
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			*cppptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oClearAllForwardings:
+	ସ୍ଥିତି oClearAllForwardings:
 		intptr = &options->clear_forwardings;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oHost:
-		if (cmdline) {
+	ସ୍ଥିତି oHost:
+		ଯଦି (cmdline) {
 			error("Host directive not supported as a command-line "
 			    "option");
-			goto out;
+			ଯାଅ out;
 		}
 		*activep = 0;
-		arg2 = NULL;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		arg2 = ଖାଲି;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				ଯାଅ out;
 			}
-			if ((flags & SSHCONF_NEVERMATCH) != 0) {
+			ଯଦି ((flags & SSHCONF_NEVERMATCH) != 0) {
 				argv_consume(&ac);
-				break;
+				ଭାଙ୍ଗ;
 			}
 			negated = *arg == '!';
-			if (negated)
+			ଯଦି (negated)
 				arg++;
-			if (match_pattern(host, arg)) {
-				if (negated) {
+			ଯଦି (match_pattern(host, arg)) {
+				ଯଦି (negated) {
 					debug("%.200s line %d: Skipping Host "
 					    "block because of negated match "
 					    "for %.100s", filename, linenum,
 					    arg);
 					*activep = 0;
 					argv_consume(&ac);
-					break;
+					ଭାଙ୍ଗ;
 				}
-				if (!*activep)
+				ଯଦି (!*activep)
 					arg2 = arg; /* logged below */
 				*activep = 1;
 			}
 		}
-		if (*activep)
+		ଯଦି (*activep)
 			debug("%.200s line %d: Applying options for %.100s",
 			    filename, linenum, arg2);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oMatch:
-		if (cmdline) {
+	ସ୍ଥିତି oMatch:
+		ଯଦି (cmdline) {
 			error("Match directive not supported as a command-line "
 			    "option");
-			goto out;
+			ଯାଅ out;
 		}
-		value = match_cfg_line(options, str, &ac, &av, pw, host,
+		ମୂଲ୍ୟ = match_cfg_ଧାଡ଼ି(options, str, &ac, &av, pw, host,
 		    original_host, remote_command, flags & SSHCONF_FINAL,
 		    want_final_pass, filename, linenum);
-		if (value < 0) {
+		ଯଦି (ମୂଲ୍ୟ < 0) {
 			error("%.200s line %d: Bad Match condition", filename,
 			    linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		*activep = (flags & SSHCONF_NEVERMATCH) ? 0 : value;
-		break;
+		*activep = (flags & SSHCONF_NEVERMATCH) ? 0 : ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oEscapeChar:
+	ସ୍ଥିତି oEscapeChar:
 		intptr = &options->escape_char;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (strcmp(arg, "none") == 0)
-			value = SSH_ESCAPECHAR_NONE;
-		else if (arg[1] == '\0')
-			value = (u_char) arg[0];
-		else if (arg[0] == '^' && arg[2] == 0 &&
+		ଯଦି (strcmp(arg, "none") == 0)
+			ମୂଲ୍ୟ = SSH_ESCAPECHAR_NONE;
+		ଅନ୍ୟଥା ଯଦି (arg[1] == '\0')
+			ମୂଲ୍ୟ = (u_char) arg[0];
+		ଅନ୍ୟଥା ଯଦି (arg[0] == '^' && arg[2] == 0 &&
 		    (u_char) arg[1] >= 64 && (u_char) arg[1] < 128)
-			value = (u_char) arg[1] & 31;
-		else {
+			ମୂଲ୍ୟ = (u_char) arg[1] & 31;
+		ଅନ୍ୟଥା {
 			error("%.200s line %d: Bad escape character.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oAddressFamily:
+	ସ୍ଥିତି oAddressFamily:
 		intptr = &options->address_family;
 		multistate_ptr = multistate_addressfamily;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oEnableSSHKeysign:
+	ସ୍ଥିତି oEnableSSHKeysign:
 		intptr = &options->enable_ssh_keysign;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oIdentitiesOnly:
+	ସ୍ଥିତି oIdentitiesOnly:
 		intptr = &options->identities_only;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oServerAliveInterval:
+	ସ୍ଥିତି oServerAliveInterval:
 		intptr = &options->server_alive_interval;
-		goto parse_time;
+		ଯାଅ parse_time;
 
-	case oServerAliveCountMax:
-		intptr = &options->server_alive_count_max;
-		goto parse_int;
+	ସ୍ଥିତି o_Server_Alive_ଗଣନା_Max:
+		intptr = &options->server_alive_ଗଣନା_max;
+		ଯାଅ parse_int;
 
-	case oSendEnv:
+	ସ୍ଥିତି oSendEnv:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') != NULL) {
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0' || strchr(arg, '=') != ଖାଲି) {
 				error("%s line %d: Invalid environment name.",
 				    filename, linenum);
-				goto out;
+				ଯାଅ out;
 			}
 			found = 1;
-			if (!*activep)
-				continue;
-			if (*arg == '-') {
+			ଯଦି (!*activep)
+				ଜାରି;
+			ଯଦି (*arg == '-') {
 				/* Removing an env var */
 				rm_env(options, arg, filename, linenum);
-				continue;
+				ଜାରି;
 			}
 			opt_array_append(filename, linenum,
 			    lookup_opcode_name(opcode),
-			    &options->send_env, &options->num_send_env, arg);
+			    &options->send_env, &options->ଅଙ୍କ_send_env, arg);
 		}
-		if (!found) {
+		ଯଦି (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oSetEnv:
-		found = options->num_setenv == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strchr(arg, '=') == NULL) {
+	ସ୍ଥିତି oSetEnv:
+		found = options->ଅଙ୍କ_setenv == 0;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (strchr(arg, '=') == ଖାଲି) {
 				error("%s line %d: Invalid SetEnv.",
 				    filename, linenum);
-				goto out;
+				ଯାଅ out;
 			}
-			if (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
+			ଯଦି (lookup_setenv_in_list(arg, strs, nstrs) != ଖାଲି) {
 				debug2("%s line %d: ignoring duplicate env "
 				    "name \"%.64s\"", filename, linenum, arg);
-				continue;
+				ଜାରି;
 			}
 			opt_array_append(filename, linenum,
 			    lookup_opcode_name(opcode),
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			options->setenv = strs;
-			options->num_setenv = nstrs;
-			strs = NULL; /* transferred */
+			options->ଅଙ୍କ_setenv = nstrs;
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oControlPath:
+	ସ୍ଥିତି oControlPath:
 		charptr = &options->control_path;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oControlMaster:
+	ସ୍ଥିତି oControlMaster:
 		intptr = &options->control_master;
 		multistate_ptr = multistate_controlmaster;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oControlPersist:
+	ସ୍ଥିତି oControlPersist:
 		/* no/false/yes/true, or a time spec */
 		intptr = &options->control_persist;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing ControlPersist"
 			    " argument.", filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		value = 0;
+		ମୂଲ୍ୟ = 0;
 		value2 = 0;	/* timeout */
-		if (strcmp(arg, "no") == 0 || strcmp(arg, "false") == 0)
-			value = 0;
-		else if (strcmp(arg, "yes") == 0 || strcmp(arg, "true") == 0)
-			value = 1;
-		else if ((value2 = convtime(arg)) >= 0)
-			value = 1;
-		else {
+		ଯଦି (strcmp(arg, "no") == 0 || strcmp(arg, "false") == 0)
+			ମୂଲ୍ୟ = 0;
+		ଅନ୍ୟଥା ଯଦି (strcmp(arg, "yes") == 0 || strcmp(arg, "true") == 0)
+			ମୂଲ୍ୟ = 1;
+		ଅନ୍ୟଥା ଯଦି ((value2 = convtime(arg)) >= 0)
+			ମୂଲ୍ୟ = 1;
+		ଅନ୍ୟଥା {
 			error("%.200s line %d: Bad ControlPersist argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *intptr == -1) {
-			*intptr = value;
+		ଯଦି (*activep && *intptr == -1) {
+			*intptr = ମୂଲ୍ୟ;
 			options->control_persist_timeout = value2;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oHashKnownHosts:
+	ସ୍ଥିତି oHashKnownHosts:
 		intptr = &options->hash_known_hosts;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oTunnel:
+	ସ୍ଥିତି oTunnel:
 		intptr = &options->tun_open;
 		multistate_ptr = multistate_tunnel;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oTunnelDevice:
+	ସ୍ଥିତି oTunnelDevice:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		value = a2tun(arg, &value2);
-		if (value == SSH_TUNID_ERR) {
+		ମୂଲ୍ୟ = a2tun(arg, &value2);
+		ଯଦି (ମୂଲ୍ୟ == SSH_TUNID_ERR) {
 			error("%.200s line %d: Bad tun device.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && options->tun_local == -1) {
-			options->tun_local = value;
+		ଯଦି (*activep && options->tun_local == -1) {
+			options->tun_local = ମୂଲ୍ୟ;
 			options->tun_remote = value2;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oLocalCommand:
+	ସ୍ଥିତି oLocalCommand:
 		charptr = &options->local_command;
-		goto parse_command;
+		ଯାଅ parse_command;
 
-	case oPermitLocalCommand:
+	ସ୍ଥିତି oPermitLocalCommand:
 		intptr = &options->permit_local_command;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oRemoteCommand:
+	ସ୍ଥିତି oRemoteCommand:
 		charptr = &options->remote_command;
-		goto parse_command;
+		ଯାଅ parse_command;
 
-	case oVisualHostKey:
-		intptr = &options->visual_host_key;
-		goto parse_flag;
+	ସ୍ଥିତି o_Visual_Host_ଚାବି:
+		intptr = &options->visual_host_ଚାବି;
+		ଯାଅ parse_flag;
 
-	case oInclude:
-		if (cmdline) {
+	ସ୍ଥିତି oInclude:
+		ଯଦି (cmdline) {
 			error("Include directive not supported as a "
 			    "command-line option");
-			goto out;
+			ଯାଅ out;
 		}
-		value = 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ମୂଲ୍ୟ = 0;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				ଯାଅ out;
 			}
 			/* Expand %tokens and environment variables */
-			if ((p = expand_match_exec_or_include_path(arg,
+			ଯଦି ((p = expand_match_exec_or_include_path(arg,
 			    options, pw, host, original_host,
-			    flags & SSHCONF_FINAL, 1)) == NULL) {
+			    flags & SSHCONF_FINAL, 1)) == ଖାଲି) {
 				error("%.200s line %d: Unable to expand user "
 				    "config file '%.100s'",
 				    filename, linenum, arg);
-				continue;
+				ଜାରି;
 			}
 			/*
 			 * Ensure all paths are anchored. User configuration
@@ -2098,34 +2098,34 @@ parse_pubkey_algos:
 			 * as living in ~/.ssh for user configurations or
 			 * /etc/ssh for system ones.
 			 */
-			if (*p == '~' && (flags & SSHCONF_USERCONF) == 0) {
+			ଯଦି (*p == '~' && (flags & SSHCONF_USERCONF) == 0) {
 				error("%.200s line %d: bad include path %s.",
 				    filename, linenum, p);
-				goto out;
+				ଯାଅ out;
 			}
-			if (!path_absolute(p) && *p != '~') {
+			ଯଦି (!path_absolute(p) && *p != '~') {
 				xasprintf(&arg2, "%s/%s",
 				    (flags & SSHCONF_USERCONF) ?
 				    "~/" _PATH_SSH_USER_DIR : SSHDIR, p);
-			} else {
+			} ଅନ୍ୟଥା {
 				arg2 = xstrdup(p);
 			}
-			free(p);
-			memset(&gl, 0, sizeof(gl));
-			r = glob(arg2, GLOB_TILDE, NULL, &gl);
-			if (r == GLOB_NOMATCH) {
+			ମୁକ୍ତ(p);
+			memset(&gl, 0, ଆକାର(gl));
+			r = glob(arg2, GLOB_TILDE, ଖାଲି, &gl);
+			ଯଦି (r == GLOB_NOMATCH) {
 				debug("%.200s line %d: include %s matched no "
 				    "files",filename, linenum, arg2);
-				free(arg2);
-				continue;
-			} else if (r != 0) {
+				ମୁକ୍ତ(arg2);
+				ଜାରି;
+			} ଅନ୍ୟଥା ଯଦି (r != 0) {
 				error("%.200s line %d: glob failed for %s.",
 				    filename, linenum, arg2);
-				goto out;
+				ଯାଅ out;
 			}
-			free(arg2);
+			ମୁକ୍ତ(arg2);
 			oactive = *activep;
-			for (i = 0; i < gl.gl_pathc; i++) {
+			ପାଇଁ (i = 0; i < gl.gl_pathc; i++) {
 				debug3("%.200s line %d: Including file %s "
 				    "depth %d%s", filename, linenum,
 				    gl.gl_pathv[i], depth,
@@ -2135,479 +2135,479 @@ parse_pubkey_algos:
 				    options, flags | SSHCONF_CHECKPERM |
 				    (oactive ? 0 : SSHCONF_NEVERMATCH),
 				    activep, want_final_pass, depth + 1);
-				if (r != 1 && errno != ENOENT) {
+				ଯଦି (r != 1 && errno != ENOENT) {
 					error("%.200s line %d: Can't open user "
 					    "config file %.100s: %.100s",
 					    filename, linenum, gl.gl_pathv[i],
 					    strerror(errno));
 					globfree(&gl);
-					goto out;
+					ଯାଅ out;
 				}
 				/*
 				 * don't let Match in includes clobber the
 				 * containing file's Match state.
 				 */
 				*activep = oactive;
-				if (r != 1)
-					value = -1;
+				ଯଦି (r != 1)
+					ମୂଲ୍ୟ = -1;
 			}
 			globfree(&gl);
 		}
-		if (value != 0)
-			ret = value;
-		break;
+		ଯଦି (ମୂଲ୍ୟ != 0)
+			ret = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oIPQoS:
+	ସ୍ଥିତି oIPQoS:
 		arg = argv_next(&ac, &av);
-		if ((value = parse_ipqos(arg)) == -1) {
+		ଯଦି ((ମୂଲ୍ୟ = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
-			goto out;
+			ଯାଅ out;
 		}
-		if (value == INT_MIN) {
+		ଯଦି (ମୂଲ୍ୟ == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value = INT_MAX;
+			ମୂଲ୍ୟ = INT_MAX;
 		}
 		arg = argv_next(&ac, &av);
-		if (arg == NULL)
-			value2 = value;
-		else if ((value2 = parse_ipqos(arg)) == -1) {
+		ଯଦି (arg == ଖାଲି)
+			value2 = ମୂଲ୍ୟ;
+		ଅନ୍ୟଥା ଯଦି ((value2 = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
-			goto out;
+			ଯାଅ out;
 		}
-		if (value2 == INT_MIN) {
+		ଯଦି (value2 == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
 			value2 = INT_MAX;
 		}
-		if (*activep && options->ip_qos_interactive == -1) {
-			options->ip_qos_interactive = value;
+		ଯଦି (*activep && options->ip_qos_interactive == -1) {
+			options->ip_qos_interactive = ମୂଲ୍ୟ;
 			options->ip_qos_bulk = value2;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oRequestTTY:
+	ସ୍ଥିତି oRequestTTY:
 		intptr = &options->request_tty;
 		multistate_ptr = multistate_requesttty;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oSessionType:
+	ସ୍ଥିତି oSessionType:
 		intptr = &options->session_type;
 		multistate_ptr = multistate_sessiontype;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oStdinNull:
+	ସ୍ଥିତି oStdinNull:
 		intptr = &options->stdin_null;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oForkAfterAuthentication:
+	ସ୍ଥିତି oForkAfterAuthentication:
 		intptr = &options->fork_after_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oIgnoreUnknown:
+	ସ୍ଥିତି oIgnoreUnknown:
 		charptr = &options->ignored_unknown;
-		goto parse_string;
+		ଯାଅ parse_string;
 
-	case oProxyUseFdpass:
+	ସ୍ଥିତି oProxyUseFdpass:
 		intptr = &options->proxy_use_fdpass;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oCanonicalDomains:
-		found = options->num_canonical_domains == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	ସ୍ଥିତି oCanonicalDomains:
+		found = options->ଅଙ୍କ_canonical_domains == 0;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ଯଦି (strcasecmp(arg, "none") == 0) {
+				ଯଦି (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					ଯାଅ out;
 				}
 			}
-			if (!valid_domain(arg, 1, &errstr)) {
+			ଯଦି (!valid_domain(arg, 1, &errstr)) {
 				error("%s line %d: %s", filename, linenum,
 				    errstr);
-				goto out;
+				ଯାଅ out;
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			options->canonical_domains = strs;
-			options->num_canonical_domains = nstrs;
-			strs = NULL; /* transferred */
+			options->ଅଙ୍କ_canonical_domains = nstrs;
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oCanonicalizePermittedCNAMEs:
-		found = options->num_permitted_cnames == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	ସ୍ଥିତି oCanonicalizePermittedCNAMEs:
+		found = options->ଅଙ୍କ_permitted_cnames == 0;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
 			/*
 			 * Either 'none' (only in first position), '*' for
 			 * everything or 'list:list'
 			 */
-			if (strcasecmp(arg, "none") == 0) {
-				if (ncnames > 0 || ac > 0) {
+			ଯଦି (strcasecmp(arg, "none") == 0) {
+				ଯଦି (ncnames > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					ଯାଅ out;
 				}
 				arg2 = "";
-			} else if (strcmp(arg, "*") == 0) {
+			} ଅନ୍ୟଥା ଯଦି (strcmp(arg, "*") == 0) {
 				arg2 = arg;
-			} else {
+			} ଅନ୍ୟଥା {
 				lowercase(arg);
-				if ((arg2 = strchr(arg, ':')) == NULL ||
+				ଯଦି ((arg2 = strchr(arg, ':')) == ଖାଲି ||
 				    arg2[1] == '\0') {
 					error("%s line %d: "
 					    "Invalid permitted CNAME \"%s\"",
 					    filename, linenum, arg);
-					goto out;
+					ଯାଅ out;
 				}
 				*arg2 = '\0';
 				arg2++;
 			}
 			cnames = xrecallocarray(cnames, ncnames, ncnames + 1,
-			    sizeof(*cnames));
+			    ଆକାର(*cnames));
 			cnames[ncnames].source_list = xstrdup(arg);
 			cnames[ncnames].target_list = xstrdup(arg2);
 			ncnames++;
 		}
-		if (ncnames == 0) {
+		ଯଦି (ncnames == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			options->permitted_cnames = cnames;
-			options->num_permitted_cnames = ncnames;
-			cnames = NULL; /* transferred */
+			options->ଅଙ୍କ_permitted_cnames = ncnames;
+			cnames = ଖାଲି; /* transferred */
 			ncnames = 0;
 		}
 		/* un-transferred cnames is cleaned up before exit */
-		break;
+		ଭାଙ୍ଗ;
 
-	case oCanonicalizeHostname:
+	ସ୍ଥିତି oCanonicalizeHostname:
 		intptr = &options->canonicalize_hostname;
 		multistate_ptr = multistate_canonicalizehostname;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oCanonicalizeMaxDots:
+	ସ୍ଥିତି oCanonicalizeMaxDots:
 		intptr = &options->canonicalize_max_dots;
-		goto parse_int;
+		ଯାଅ parse_int;
 
-	case oCanonicalizeFallbackLocal:
+	ସ୍ଥିତି oCanonicalizeFallbackLocal:
 		intptr = &options->canonicalize_fallback_local;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oStreamLocalBindMask:
+	ସ୍ଥିତି oStreamLocalBindMask:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing StreamLocalBindMask "
 			    "argument.", filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
 		/* Parse mode in octal format */
-		value = strtol(arg, &endofnumber, 8);
-		if (arg == endofnumber || value < 0 || value > 0777) {
+		ମୂଲ୍ୟ = strtol(arg, &endofnumber, 8);
+		ଯଦି (arg == endofnumber || ମୂଲ୍ୟ < 0 || ମୂଲ୍ୟ > 0777) {
 			error("%.200s line %d: Bad mask.", filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep &&
+		ଯଦି (*activep &&
 		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
-		break;
+			options->fwd_opts.streamlocal_bind_mask = (mode_t)ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oStreamLocalBindUnlink:
+	ସ୍ଥିତି oStreamLocalBindUnlink:
 		intptr = &options->fwd_opts.streamlocal_bind_unlink;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oRevokedHostKeys:
-		uintptr = &options->num_revoked_host_keys;
-		cppptr = &options->revoked_host_keys;
+	ସ୍ଥିତି o_Revoked_Host_ଚାବିଗୁଡ଼ିକ:
+		uintptr = &options->ଅଙ୍କ_revoked_host_ଚାବିଗୁଡ଼ିକ;
+		cppptr = &options->revoked_host_ଚାବିଗୁଡ଼ିକ;
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				ଯାଅ out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ଯଦି (strcasecmp(arg, "none") == 0) {
+				ଯଦି (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					ଯାଅ out;
 				}
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			*cppptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oFingerprintHash:
+	ସ୍ଥିତି oFingerprintHash:
 		intptr = &options->fingerprint_hash;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if ((value = ssh_digest_alg_by_name(arg)) == -1) {
+		ଯଦି ((ମୂଲ୍ୟ = ssh_digest_alg_by_name(arg)) == -1) {
 			error("%.200s line %d: Invalid hash algorithm \"%s\".",
 			    filename, linenum, arg);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oUpdateHostkeys:
+	ସ୍ଥିତି oUpdateHostkeys:
 		intptr = &options->update_hostkeys;
 		multistate_ptr = multistate_yesnoask;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oHostbasedAcceptedAlgorithms:
+	ସ୍ଥିତି oHostbasedAcceptedAlgorithms:
 		charptr = &options->hostbased_accepted_algos;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		ଯାଅ parse_pubkey_algos;
 
-	case oPubkeyAcceptedAlgorithms:
+	ସ୍ଥିତି oPubkeyAcceptedAlgorithms:
 		charptr = &options->pubkey_accepted_algos;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		ଯାଅ parse_pubkey_algos;
 
-	case oAddKeysToAgent:
+	ସ୍ଥିତି o_Add_ଚାବିଗୁଡ଼ିକ_To_Agent:
 		arg = argv_next(&ac, &av);
 		arg2 = argv_next(&ac, &av);
-		value = parse_multistate_value(arg, filename, linenum,
+		ମୂଲ୍ୟ = parse_multistate_ମୂଲ୍ୟ(arg, filename, linenum,
 		    multistate_yesnoaskconfirm);
 		value2 = 0; /* unlimited lifespan by default */
-		if (value == 3 && arg2 != NULL) {
+		ଯଦି (ମୂଲ୍ୟ == 3 && arg2 != ଖାଲି) {
 			/* allow "AddKeysToAgent confirm 5m" */
-			if ((value2 = convtime(arg2)) == -1) {
+			ଯଦି ((value2 = convtime(arg2)) == -1) {
 				error("%s line %d: invalid time value.",
 				    filename, linenum);
-				goto out;
+				ଯାଅ out;
 			}
-		} else if (value == -1 && arg2 == NULL) {
-			if ((value2 = convtime(arg)) == -1) {
+		} ଅନ୍ୟଥା ଯଦି (ମୂଲ୍ୟ == -1 && arg2 == ଖାଲି) {
+			ଯଦି ((value2 = convtime(arg)) == -1) {
 				error("%s line %d: unsupported option",
 				    filename, linenum);
-				goto out;
+				ଯାଅ out;
 			}
-			value = 1; /* yes */
-		} else if (value == -1 || arg2 != NULL) {
+			ମୂଲ୍ୟ = 1; /* yes */
+		} ଅନ୍ୟଥା ଯଦି (ମୂଲ୍ୟ == -1 || arg2 != ଖାଲି) {
 			error("%s line %d: unsupported option",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && options->add_keys_to_agent == -1) {
-			options->add_keys_to_agent = value;
-			options->add_keys_to_agent_lifespan = value2;
+		ଯଦି (*activep && options->add_ଚାବିଗୁଡ଼ିକ_to_agent == -1) {
+			options->add_ଚାବିଗୁଡ଼ିକ_to_agent = ମୂଲ୍ୟ;
+			options->add_ଚାବିଗୁଡ଼ିକ_to_agent_lifespan = value2;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oIdentityAgent:
+	ସ୍ଥିତି oIdentityAgent:
 		charptr = &options->identity_agent;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
   parse_agent_path:
 		/* Extra validation if the string represents an env var. */
-		if ((arg2 = dollar_expand(&r, arg)) == NULL || r) {
+		ଯଦି ((arg2 = dollar_expand(&r, arg)) == ଖାଲି || r) {
 			error("%.200s line %d: Invalid environment expansion "
 			    "%s.", filename, linenum, arg);
-			goto out;
+			ଯାଅ out;
 		}
-		free(arg2);
+		ମୁକ୍ତ(arg2);
 		/* check for legacy environment format */
-		if (arg[0] == '$' && arg[1] != '{' &&
+		ଯଦି (arg[0] == '$' && arg[1] != '{' &&
 		    !valid_env_name(arg + 1)) {
 			error("%.200s line %d: Invalid environment name %s.",
 			    filename, linenum, arg);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oEnableEscapeCommandline:
+	ସ୍ଥିତି oEnableEscapeCommandline:
 		intptr = &options->enable_escape_commandline;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case oRequiredRSASize:
+	ସ୍ଥିତି oRequiredRSASize:
 		intptr = &options->required_rsa_size;
-		goto parse_int;
+		ଯାଅ parse_int;
 
-	case oWarnWeakCrypto:
+	ସ୍ଥିତି oWarnWeakCrypto:
 		intptr = &options->warn_weak_crypto;
 		multistate_ptr = multistate_warnweakcrypto;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case oObscureKeystrokeTiming:
-		value = -1;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (value != -1) {
+	ସ୍ଥିତି oObscureKeystrokeTiming:
+		ମୂଲ୍ୟ = -1;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (ମୂଲ୍ୟ != -1) {
 				error("%s line %d: invalid arguments",
 				    filename, linenum);
-				goto out;
+				ଯାଅ out;
 			}
-			if (strcmp(arg, "yes") == 0 ||
+			ଯଦି (strcmp(arg, "yes") == 0 ||
 			    strcmp(arg, "true") == 0)
-				value = SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
-			else if (strcmp(arg, "no") == 0 ||
+				ମୂଲ୍ୟ = SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
+			ଅନ୍ୟଥା ଯଦି (strcmp(arg, "no") == 0 ||
 			    strcmp(arg, "false") == 0)
-				value = 0;
-			else if (strncmp(arg, "interval:", 9) == 0) {
-				if ((errstr = atoi_err(arg + 9,
-				    &value)) != NULL) {
+				ମୂଲ୍ୟ = 0;
+			ଅନ୍ୟଥା ଯଦି (strncmp(arg, "interval:", 9) == 0) {
+				ଯଦି ((errstr = atoi_err(arg + 9,
+				    &ମୂଲ୍ୟ)) != ଖାଲି) {
 					error("%s line %d: integer value %s.",
 					    filename, linenum, errstr);
-					goto out;
+					ଯାଅ out;
 				}
-				if (value <= 0 || value > 1000) {
+				ଯଦି (ମୂଲ୍ୟ <= 0 || ମୂଲ୍ୟ > 1000) {
 					error("%s line %d: value out of range.",
 					    filename, linenum);
-					goto out;
+					ଯାଅ out;
 				}
-			} else {
+			} ଅନ୍ୟଥା {
 				error("%s line %d: unsupported argument \"%s\"",
 				    filename, linenum, arg);
-				goto out;
+				ଯାଅ out;
 			}
 		}
-		if (value == -1) {
+		ଯଦି (ମୂଲ୍ୟ == -1) {
 			error("%s line %d: missing argument",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
 		intptr = &options->obscure_keystroke_timing_interval;
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case oChannelTimeout:
-		found = options->num_channel_timeouts == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	ସ୍ଥିତି oChannelTimeout:
+		found = options->ଅଙ୍କ_channel_timeouts == 0;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ଯଦି (strcasecmp(arg, "none") == 0) {
+				ଯଦି (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					ଯାଅ out;
 				}
-			} else if (parse_pattern_interval(arg,
-			    NULL, NULL) != 0) {
+			} ଅନ୍ୟଥା ଯଦି (parse_pattern_interval(arg,
+			    ଖାଲି, ଖାଲି) != 0) {
 				fatal("%s line %d: invalid channel timeout %s",
 				    filename, linenum, arg);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			options->channel_timeouts = strs;
-			options->num_channel_timeouts = nstrs;
-			strs = NULL; /* transferred */
+			options->ଅଙ୍କ_channel_timeouts = nstrs;
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oVersionAddendum:
-		if (str == NULL || *str == '\0')
+	ସ୍ଥିତି oVersionAddendum:
+		ଯଦି (str == ଖାଲି || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (strchr(str + len, '\r') != NULL) {
+		ଯଦି (strchr(str + len, '\r') != ଖାଲି) {
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		ଯଦି ((arg = strchr(ଧାଡ଼ି, '#')) != ଖାଲି) {
 			*arg = '\0';
-			rtrim(line);
+			rtrim(ଧାଡ଼ି);
 		}
-		if (*activep && options->version_addendum == NULL) {
-			if (strcasecmp(str + len, "none") == 0)
+		ଯଦି (*activep && options->version_addendum == ଖାଲି) {
+			ଯଦି (strcasecmp(str + len, "none") == 0)
 				options->version_addendum = xstrdup("");
-			else
+			ଅନ୍ୟଥା
 				options->version_addendum = xstrdup(str + len);
 		}
 		argv_consume(&ac);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oRefuseConnection:
+	ସ୍ଥିତି oRefuseConnection:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
-			goto out;
+			ଯାଅ out;
 		}
-		if (*activep) {
+		ଯଦି (*activep) {
 			fatal("%.200s line %d: RefuseConnection: %s",
 			    filename, linenum, arg);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case oDeprecated:
+	ସ୍ଥିତି oDeprecated:
 		debug("%s line %d: Deprecated option \"%s\"",
 		    filename, linenum, keyword);
 		argv_consume(&ac);
-		break;
+		ଭାଙ୍ଗ;
 
-	case oUnsupported:
+	ସ୍ଥିତି oUnsupported:
 		error("%s line %d: Unsupported option \"%s\"",
 		    filename, linenum, keyword);
 		argv_consume(&ac);
-		break;
+		ଭାଙ୍ଗ;
 
-	default:
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 		error("%s line %d: Unimplemented opcode %d",
 		    filename, linenum, opcode);
-		goto out;
+		ଯାଅ out;
 	}
 
 	/* Check that there is no garbage at end of line. */
-	if (ac > 0) {
+	ଯଦି (ac > 0) {
 		error("%.200s line %d: keyword %s extra arguments "
 		    "at end of line", filename, linenum, keyword);
-		goto out;
+		ଯାଅ out;
 	}
 
 	/* success */
 	ret = 0;
  out:
 	free_canon_cnames(cnames, ncnames);
-	opt_array_free2(strs, NULL, nstrs);
+	opt_array_free2(strs, ଖାଲି, nstrs);
 	argv_free(oav, oac);
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
 /*
@@ -2615,41 +2615,41 @@ parse_pubkey_algos:
  * should already be initialized before this call.  This never returns if
  * there is an error.  If the file does not exist, this returns 0.
  */
-int
-read_config_file(const char *filename, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, Options *options, int flags,
-    int *want_final_pass)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+read_config_file(ଅଚଳ ଅକ୍ଷର *filename, ସଂରଚନା passwd *pw, ଅଚଳ ଅକ୍ଷର *host,
+    ଅଚଳ ଅକ୍ଷର *original_host, ଅଚଳ ଅକ୍ଷର *remote_command, Options *options, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା *want_final_pass)
 {
-	int active = 1;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା active = 1;
 
-	return read_config_file_depth(filename, pw, host, original_host,
+	ଫେରନ୍ତୁ read_config_file_depth(filename, pw, host, original_host,
 	    remote_command, options, flags, &active, want_final_pass, 0);
 }
 
 #define READCONF_MAX_DEPTH	16
-static int
-read_config_file_depth(const char *filename, struct passwd *pw,
-    const char *host, const char *original_host, const char *remote_command,
-    Options *options, int flags, int *activep, int *want_final_pass, int depth)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+read_config_file_depth(ଅଚଳ ଅକ୍ଷର *filename, ସଂରଚନା passwd *pw,
+    ଅଚଳ ଅକ୍ଷର *host, ଅଚଳ ଅକ୍ଷର *original_host, ଅଚଳ ଅକ୍ଷର *remote_command,
+    Options *options, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *activep, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *want_final_pass, ପୂର୍ଣ୍ଣସଂଖ୍ୟା depth)
 {
 	FILE *f;
-	char *line = NULL;
+	ଅକ୍ଷର *ଧାଡ଼ି = ଖାଲି;
 	size_t linesize = 0;
-	int linenum;
-	int bad_options = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା bad_options = 0;
 
-	if (depth < 0 || depth > READCONF_MAX_DEPTH)
+	ଯଦି (depth < 0 || depth > READCONF_MAX_DEPTH)
 		fatal("Too many recursive configuration includes");
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return 0;
+	ଯଦି ((f = fopen(filename, "r")) == ଖାଲି)
+		ଫେରନ୍ତୁ 0;
 
-	if (flags & SSHCONF_CHECKPERM) {
-		struct stat sb;
+	ଯଦି (flags & SSHCONF_CHECKPERM) {
+		ସଂରଚନା stat sb;
 
-		if (fstat(fileno(f), &sb) == -1)
+		ଯଦି (fstat(fileno(f), &sb) == -1)
 			fatal("fstat %s: %s", filename, strerror(errno));
-		if (((sb.st_uid != 0 && sb.st_uid != getuid()) ||
+		ଯଦି (((sb.st_uid != 0 && sb.st_uid != getuid()) ||
 		    (sb.st_mode & 022) != 0))
 			fatal("Bad owner or permissions on %s", filename);
 	}
@@ -2661,7 +2661,7 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 	 * on/off by Host specifications.
 	 */
 	linenum = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	ଯେତେବେଳେ (getline(&ଧାଡ଼ି, &linesize, f) != -1) {
 		/* Update line number counter. */
 		linenum++;
 		/*
@@ -2669,38 +2669,38 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages.
 		 */
-		if (process_config_line_depth(options, pw, host, original_host,
-		    remote_command, line, filename, linenum, activep, flags,
+		ଯଦି (process_config_ଧାଡ଼ି_depth(options, pw, host, original_host,
+		    remote_command, ଧାଡ଼ି, filename, linenum, activep, flags,
 		    want_final_pass, depth) != 0)
 			bad_options++;
 	}
-	free(line);
+	ମୁକ୍ତ(ଧାଡ଼ି);
 	fclose(f);
-	if (bad_options > 0)
+	ଯଦି (bad_options > 0)
 		fatal("%s: terminating, %d bad configuration options",
 		    filename, bad_options);
-	return 1;
+	ଫେରନ୍ତୁ 1;
 }
 
 /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-int
-option_clear_or_none(const char *o)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+option_clear_or_none(ଅଚଳ ଅକ୍ଷର *o)
 {
-	return o == NULL || strcasecmp(o, "none") == 0;
+	ଫେରନ୍ତୁ o == ଖାଲି || strcasecmp(o, "none") == 0;
 }
 
 /*
  * Returns 1 if CanonicalizePermittedCNAMEs have been specified, 0 otherwise.
  * Allowed to be called on non-final configuration.
  */
-int
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 config_has_permitted_cnames(Options *options)
 {
-	if (options->num_permitted_cnames == 1 &&
+	ଯଦି (options->ଅଙ୍କ_permitted_cnames == 1 &&
 	    strcasecmp(options->permitted_cnames[0].source_list, "none") == 0 &&
 	    strcmp(options->permitted_cnames[0].target_list, "") == 0)
-		return 0;
-	return options->num_permitted_cnames > 0;
+		ଫେରନ୍ତୁ 0;
+	ଫେରନ୍ତୁ options->ଅଙ୍କ_permitted_cnames > 0;
 }
 
 /*
@@ -2710,21 +2710,21 @@ config_has_permitted_cnames(Options *options)
  * system config file.  Last, fill_default_options is called.
  */
 
-void
+ଶୂନ୍ୟ
 initialize_options(Options * options)
 {
-	memset(options, 'X', sizeof(*options));
-	options->host_arg = NULL;
+	memset(options, 'X', ଆକାର(*options));
+	options->host_arg = ଖାଲି;
 	options->forward_agent = -1;
-	options->forward_agent_sock_path = NULL;
+	options->forward_agent_sock_path = ଖାଲି;
 	options->forward_x11 = -1;
 	options->forward_x11_trusted = -1;
 	options->forward_x11_timeout = -1;
-	options->stdio_forward_host = NULL;
+	options->stdio_forward_host = ଖାଲି;
 	options->stdio_forward_port = 0;
 	options->clear_forwardings = -1;
 	options->exit_on_forward_failure = -1;
-	options->xauth_location = NULL;
+	options->xauth_location = ଖାଲି;
 	options->fwd_opts.gateway_ports = -1;
 	options->fwd_opts.streamlocal_bind_mask = (mode_t)-1;
 	options->fwd_opts.streamlocal_bind_unlink = -1;
@@ -2733,66 +2733,66 @@ initialize_options(Options * options)
 	options->gss_deleg_creds = -1;
 	options->password_authentication = -1;
 	options->kbd_interactive_authentication = -1;
-	options->kbd_interactive_devices = NULL;
+	options->kbd_interactive_devices = ଖାଲି;
 	options->hostbased_authentication = -1;
 	options->batch_mode = -1;
 	options->check_host_ip = -1;
-	options->strict_host_key_checking = -1;
+	options->strict_host_ଚାବି_checking = -1;
 	options->compression = -1;
 	options->tcp_keep_alive = -1;
 	options->port = -1;
 	options->address_family = -1;
 	options->connection_attempts = -1;
 	options->connection_timeout = -1;
-	options->number_of_password_prompts = -1;
-	options->ciphers = NULL;
-	options->macs = NULL;
-	options->kex_algorithms = NULL;
-	options->hostkeyalgorithms = NULL;
-	options->ca_sign_algorithms = NULL;
-	options->num_identity_files = 0;
-	memset(options->identity_keys, 0, sizeof(options->identity_keys));
-	options->num_certificate_files = 0;
-	memset(options->certificates, 0, sizeof(options->certificates));
-	options->hostname = NULL;
-	options->host_key_alias = NULL;
-	options->proxy_command = NULL;
-	options->jump_user = NULL;
-	options->jump_host = NULL;
+	options->ସଂଖ୍ୟା_of_password_prompts = -1;
+	options->ciphers = ଖାଲି;
+	options->macs = ଖାଲି;
+	options->kex_algorithms = ଖାଲି;
+	options->hostkeyalgorithms = ଖାଲି;
+	options->ca_sign_algorithms = ଖାଲି;
+	options->ଅଙ୍କ_identity_files = 0;
+	memset(options->identity_ଚାବିଗୁଡ଼ିକ, 0, ଆକାର(options->identity_ଚାବିଗୁଡ଼ିକ));
+	options->ଅଙ୍କ_certificate_files = 0;
+	memset(options->certificates, 0, ଆକାର(options->certificates));
+	options->hostname = ଖାଲି;
+	options->host_ଚାବି_alias = ଖାଲି;
+	options->proxy_command = ଖାଲି;
+	options->jump_user = ଖାଲି;
+	options->jump_host = ଖାଲି;
 	options->jump_port = -1;
-	options->jump_extra = NULL;
-	options->user = NULL;
+	options->jump_extra = ଖାଲି;
+	options->user = ଖାଲି;
 	options->escape_char = -1;
-	options->num_system_hostfiles = 0;
-	options->num_user_hostfiles = 0;
-	options->local_forwards = NULL;
-	options->num_local_forwards = 0;
-	options->remote_forwards = NULL;
-	options->num_remote_forwards = 0;
-	options->permitted_remote_opens = NULL;
-	options->num_permitted_remote_opens = 0;
+	options->ଅଙ୍କ_system_hostfiles = 0;
+	options->ଅଙ୍କ_user_hostfiles = 0;
+	options->local_forwards = ଖାଲି;
+	options->ଅଙ୍କ_local_forwards = 0;
+	options->remote_forwards = ଖାଲି;
+	options->ଅଙ୍କ_remote_forwards = 0;
+	options->permitted_remote_opens = ଖାଲି;
+	options->ଅଙ୍କ_permitted_remote_opens = 0;
 	options->log_facility = SYSLOG_FACILITY_NOT_SET;
 	options->log_level = SYSLOG_LEVEL_NOT_SET;
-	options->num_log_verbose = 0;
-	options->log_verbose = NULL;
-	options->preferred_authentications = NULL;
-	options->bind_address = NULL;
-	options->bind_interface = NULL;
-	options->pkcs11_provider = NULL;
-	options->sk_provider = NULL;
+	options->ଅଙ୍କ_log_verbose = 0;
+	options->log_verbose = ଖାଲି;
+	options->preferred_authentications = ଖାଲି;
+	options->bind_address = ଖାଲି;
+	options->bind_interface = ଖାଲି;
+	options->pkcs11_provider = ଖାଲି;
+	options->sk_provider = ଖାଲି;
 	options->enable_ssh_keysign = -1;
 	options->no_host_authentication_for_localhost = -1;
 	options->identities_only = -1;
 	options->rekey_limit = -1;
 	options->rekey_interval = -1;
-	options->verify_host_key_dns = -1;
+	options->verify_host_ଚାବି_dns = -1;
 	options->server_alive_interval = -1;
-	options->server_alive_count_max = -1;
-	options->send_env = NULL;
-	options->num_send_env = 0;
-	options->setenv = NULL;
-	options->num_setenv = 0;
-	options->control_path = NULL;
+	options->server_alive_ଗଣନା_max = -1;
+	options->send_env = ଖାଲି;
+	options->ଅଙ୍କ_send_env = 0;
+	options->setenv = ଖାଲି;
+	options->ଅଙ୍କ_setenv = 0;
+	options->control_path = ଖାଲି;
 	options->control_master = -1;
 	options->control_persist = -1;
 	options->control_persist_timeout = 0;
@@ -2800,13 +2800,13 @@ initialize_options(Options * options)
 	options->tun_open = -1;
 	options->tun_local = -1;
 	options->tun_remote = -1;
-	options->local_command = NULL;
+	options->local_command = ଖାଲି;
 	options->permit_local_command = -1;
-	options->remote_command = NULL;
-	options->add_keys_to_agent = -1;
-	options->add_keys_to_agent_lifespan = -1;
-	options->identity_agent = NULL;
-	options->visual_host_key = -1;
+	options->remote_command = ଖାଲି;
+	options->add_ଚାବିଗୁଡ଼ିକ_to_agent = -1;
+	options->add_ଚାବିଗୁଡ଼ିକ_to_agent_lifespan = -1;
+	options->identity_agent = ଖାଲି;
+	options->visual_host_ଚାବି = -1;
 	options->ip_qos_interactive = -1;
 	options->ip_qos_bulk = -1;
 	options->request_tty = -1;
@@ -2814,41 +2814,41 @@ initialize_options(Options * options)
 	options->stdin_null = -1;
 	options->fork_after_authentication = -1;
 	options->proxy_use_fdpass = -1;
-	options->ignored_unknown = NULL;
-	options->num_canonical_domains = 0;
-	options->num_permitted_cnames = 0;
+	options->ignored_unknown = ଖାଲି;
+	options->ଅଙ୍କ_canonical_domains = 0;
+	options->ଅଙ୍କ_permitted_cnames = 0;
 	options->canonicalize_max_dots = -1;
 	options->canonicalize_fallback_local = -1;
 	options->canonicalize_hostname = -1;
-	options->revoked_host_keys = NULL;
-	options->num_revoked_host_keys = 0;
+	options->revoked_host_ଚାବିଗୁଡ଼ିକ = ଖାଲି;
+	options->ଅଙ୍କ_revoked_host_ଚାବିଗୁଡ଼ିକ = 0;
 	options->fingerprint_hash = -1;
 	options->update_hostkeys = -1;
-	options->hostbased_accepted_algos = NULL;
-	options->pubkey_accepted_algos = NULL;
-	options->known_hosts_command = NULL;
+	options->hostbased_accepted_algos = ଖାଲି;
+	options->pubkey_accepted_algos = ଖାଲି;
+	options->known_hosts_command = ଖାଲି;
 	options->required_rsa_size = -1;
 	options->warn_weak_crypto = -1;
 	options->enable_escape_commandline = -1;
 	options->obscure_keystroke_timing_interval = -1;
-	options->tag = NULL;
-	options->channel_timeouts = NULL;
-	options->num_channel_timeouts = 0;
-	options->version_addendum = NULL;
+	options->tag = ଖାଲି;
+	options->channel_timeouts = ଖାଲି;
+	options->ଅଙ୍କ_channel_timeouts = 0;
+	options->version_addendum = ଖାଲି;
 }
 
 /*
  * A petite version of fill_default_options() that just fills the options
  * needed for hostname canonicalization to proceed.
  */
-void
+ଶୂନ୍ୟ
 fill_default_options_for_canonicalization(Options *options)
 {
-	if (options->canonicalize_max_dots == -1)
+	ଯଦି (options->canonicalize_max_dots == -1)
 		options->canonicalize_max_dots = 1;
-	if (options->canonicalize_fallback_local == -1)
+	ଯଦି (options->canonicalize_fallback_local == -1)
 		options->canonicalize_fallback_local = 1;
-	if (options->canonicalize_hostname == -1)
+	ଯଦି (options->canonicalize_hostname == -1)
 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
 }
 
@@ -2856,78 +2856,78 @@ fill_default_options_for_canonicalization(Options *options)
  * Called after processing other sources of option data, this fills those
  * options for which no value has been specified with their default values.
  */
-int
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 fill_default_options(Options * options)
 {
-	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
-	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
-	int ret = -1, r;
+	ଅକ୍ଷର *all_cipher, *all_mac, *all_kex, *all_ଚାବି, *all_sig;
+	ଅକ୍ଷର *def_cipher, *def_mac, *def_kex, *def_ଚାବି, *def_sig;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = -1, r;
 
-	if (options->forward_agent == -1)
+	ଯଦି (options->forward_agent == -1)
 		options->forward_agent = 0;
-	if (options->forward_x11 == -1)
+	ଯଦି (options->forward_x11 == -1)
 		options->forward_x11 = 0;
-	if (options->forward_x11_trusted == -1)
+	ଯଦି (options->forward_x11_trusted == -1)
 		options->forward_x11_trusted = 0;
-	if (options->forward_x11_timeout == -1)
+	ଯଦି (options->forward_x11_timeout == -1)
 		options->forward_x11_timeout = 1200;
 	/*
 	 * stdio forwarding (-W) changes the default for these but we defer
 	 * setting the values so they can be overridden.
 	 */
-	if (options->exit_on_forward_failure == -1)
+	ଯଦି (options->exit_on_forward_failure == -1)
 		options->exit_on_forward_failure =
-		    options->stdio_forward_host != NULL ? 1 : 0;
-	if (options->clear_forwardings == -1)
+		    options->stdio_forward_host != ଖାଲି ? 1 : 0;
+	ଯଦି (options->clear_forwardings == -1)
 		options->clear_forwardings =
-		    options->stdio_forward_host != NULL ? 1 : 0;
-	if (options->clear_forwardings == 1)
+		    options->stdio_forward_host != ଖାଲି ? 1 : 0;
+	ଯଦି (options->clear_forwardings == 1)
 		clear_forwardings(options);
 
-	if (options->xauth_location == NULL)
+	ଯଦି (options->xauth_location == ଖାଲି)
 		options->xauth_location = xstrdup(_PATH_XAUTH);
-	if (options->fwd_opts.gateway_ports == -1)
+	ଯଦି (options->fwd_opts.gateway_ports == -1)
 		options->fwd_opts.gateway_ports = 0;
-	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
+	ଯଦି (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
 		options->fwd_opts.streamlocal_bind_mask = 0177;
-	if (options->fwd_opts.streamlocal_bind_unlink == -1)
+	ଯଦି (options->fwd_opts.streamlocal_bind_unlink == -1)
 		options->fwd_opts.streamlocal_bind_unlink = 0;
-	if (options->pubkey_authentication == -1)
+	ଯଦି (options->pubkey_authentication == -1)
 		options->pubkey_authentication = SSH_PUBKEY_AUTH_ALL;
-	if (options->gss_authentication == -1)
+	ଯଦି (options->gss_authentication == -1)
 		options->gss_authentication = 0;
-	if (options->gss_deleg_creds == -1)
+	ଯଦି (options->gss_deleg_creds == -1)
 		options->gss_deleg_creds = 0;
-	if (options->password_authentication == -1)
+	ଯଦି (options->password_authentication == -1)
 		options->password_authentication = 1;
-	if (options->kbd_interactive_authentication == -1)
+	ଯଦି (options->kbd_interactive_authentication == -1)
 		options->kbd_interactive_authentication = 1;
-	if (options->hostbased_authentication == -1)
+	ଯଦି (options->hostbased_authentication == -1)
 		options->hostbased_authentication = 0;
-	if (options->batch_mode == -1)
+	ଯଦି (options->batch_mode == -1)
 		options->batch_mode = 0;
-	if (options->check_host_ip == -1)
+	ଯଦି (options->check_host_ip == -1)
 		options->check_host_ip = 0;
-	if (options->strict_host_key_checking == -1)
-		options->strict_host_key_checking = SSH_STRICT_HOSTKEY_ASK;
-	if (options->compression == -1)
+	ଯଦି (options->strict_host_ଚାବି_checking == -1)
+		options->strict_host_ଚାବି_checking = SSH_STRICT_HOSTKEY_ASK;
+	ଯଦି (options->compression == -1)
 		options->compression = 0;
-	if (options->tcp_keep_alive == -1)
+	ଯଦି (options->tcp_keep_alive == -1)
 		options->tcp_keep_alive = SSH_KEEPALIVES_TRANSPORT;
-	if (options->port == -1)
+	ଯଦି (options->port == -1)
 		options->port = 0;	/* Filled in ssh_connect. */
-	if (options->address_family == -1)
+	ଯଦି (options->address_family == -1)
 		options->address_family = AF_UNSPEC;
-	if (options->connection_attempts == -1)
+	ଯଦି (options->connection_attempts == -1)
 		options->connection_attempts = 1;
-	if (options->number_of_password_prompts == -1)
-		options->number_of_password_prompts = 3;
+	ଯଦି (options->ସଂଖ୍ୟା_of_password_prompts == -1)
+		options->ସଂଖ୍ୟା_of_password_prompts = 3;
 	/* options->hostkeyalgorithms, default set in myproposals.h */
-	if (options->add_keys_to_agent == -1) {
-		options->add_keys_to_agent = 0;
-		options->add_keys_to_agent_lifespan = 0;
+	ଯଦି (options->add_ଚାବିଗୁଡ଼ିକ_to_agent == -1) {
+		options->add_ଚାବିଗୁଡ଼ିକ_to_agent = 0;
+		options->add_ଚାବିଗୁଡ଼ିକ_to_agent_lifespan = 0;
 	}
-	if (options->num_identity_files == 0) {
+	ଯଦି (options->ଅଙ୍କ_identity_files == 0) {
 		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_RSA, 0);
 		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_ECDSA, 0);
 		add_identity_file(options, "~/",
@@ -2939,103 +2939,103 @@ fill_default_options(Options * options)
 		add_identity_file(options, "~/",
 		    _PATH_SSH_CLIENT_ID_MLDSA44_ED25519, 0);
 	}
-	if (options->escape_char == -1)
+	ଯଦି (options->escape_char == -1)
 		options->escape_char = '~';
-	if (options->num_system_hostfiles == 0) {
-		options->system_hostfiles[options->num_system_hostfiles++] =
+	ଯଦି (options->ଅଙ୍କ_system_hostfiles == 0) {
+		options->system_hostfiles[options->ଅଙ୍କ_system_hostfiles++] =
 		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE);
-		options->system_hostfiles[options->num_system_hostfiles++] =
+		options->system_hostfiles[options->ଅଙ୍କ_system_hostfiles++] =
 		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE2);
 	}
-	if (options->update_hostkeys == -1) {
-		if (options->verify_host_key_dns <= 0 &&
-		    (options->num_user_hostfiles == 0 ||
-		    (options->num_user_hostfiles == 1 && strcmp(options->
+	ଯଦି (options->update_hostkeys == -1) {
+		ଯଦି (options->verify_host_ଚାବି_dns <= 0 &&
+		    (options->ଅଙ୍କ_user_hostfiles == 0 ||
+		    (options->ଅଙ୍କ_user_hostfiles == 1 && strcmp(options->
 		    user_hostfiles[0], _PATH_SSH_USER_HOSTFILE) == 0)))
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_YES;
-		else
+		ଅନ୍ୟଥା
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_NO;
 	}
-	if (options->num_user_hostfiles == 0) {
-		options->user_hostfiles[options->num_user_hostfiles++] =
+	ଯଦି (options->ଅଙ୍କ_user_hostfiles == 0) {
+		options->user_hostfiles[options->ଅଙ୍କ_user_hostfiles++] =
 		    xstrdup(_PATH_SSH_USER_HOSTFILE);
-		options->user_hostfiles[options->num_user_hostfiles++] =
+		options->user_hostfiles[options->ଅଙ୍କ_user_hostfiles++] =
 		    xstrdup(_PATH_SSH_USER_HOSTFILE2);
 	}
-	if (options->log_level == SYSLOG_LEVEL_NOT_SET)
+	ଯଦି (options->log_level == SYSLOG_LEVEL_NOT_SET)
 		options->log_level = SYSLOG_LEVEL_INFO;
-	if (options->log_facility == SYSLOG_FACILITY_NOT_SET)
+	ଯଦି (options->log_facility == SYSLOG_FACILITY_NOT_SET)
 		options->log_facility = SYSLOG_FACILITY_USER;
-	if (options->no_host_authentication_for_localhost == -1)
+	ଯଦି (options->no_host_authentication_for_localhost == -1)
 		options->no_host_authentication_for_localhost = 0;
-	if (options->identities_only == -1)
+	ଯଦି (options->identities_only == -1)
 		options->identities_only = 0;
-	if (options->enable_ssh_keysign == -1)
+	ଯଦି (options->enable_ssh_keysign == -1)
 		options->enable_ssh_keysign = 0;
-	if (options->rekey_limit == -1)
+	ଯଦି (options->rekey_limit == -1)
 		options->rekey_limit = 0;
-	if (options->rekey_interval == -1)
+	ଯଦି (options->rekey_interval == -1)
 		options->rekey_interval = 0;
-	if (options->verify_host_key_dns == -1)
-		options->verify_host_key_dns = 0;
-	if (options->server_alive_interval == -1)
+	ଯଦି (options->verify_host_ଚାବି_dns == -1)
+		options->verify_host_ଚାବି_dns = 0;
+	ଯଦି (options->server_alive_interval == -1)
 		options->server_alive_interval = 0;
-	if (options->server_alive_count_max == -1)
-		options->server_alive_count_max = 3;
-	if (options->control_master == -1)
+	ଯଦି (options->server_alive_ଗଣନା_max == -1)
+		options->server_alive_ଗଣନା_max = 3;
+	ଯଦି (options->control_master == -1)
 		options->control_master = 0;
-	if (options->control_persist == -1) {
+	ଯଦି (options->control_persist == -1) {
 		options->control_persist = 0;
 		options->control_persist_timeout = 0;
 	}
-	if (options->hash_known_hosts == -1)
+	ଯଦି (options->hash_known_hosts == -1)
 		options->hash_known_hosts = 0;
-	if (options->tun_open == -1)
+	ଯଦି (options->tun_open == -1)
 		options->tun_open = SSH_TUNMODE_NO;
-	if (options->tun_local == -1)
+	ଯଦି (options->tun_local == -1)
 		options->tun_local = SSH_TUNID_ANY;
-	if (options->tun_remote == -1)
+	ଯଦି (options->tun_remote == -1)
 		options->tun_remote = SSH_TUNID_ANY;
-	if (options->permit_local_command == -1)
+	ଯଦି (options->permit_local_command == -1)
 		options->permit_local_command = 0;
-	if (options->visual_host_key == -1)
-		options->visual_host_key = 0;
-	if (options->ip_qos_interactive == -1)
+	ଯଦି (options->visual_host_ଚାବି == -1)
+		options->visual_host_ଚାବି = 0;
+	ଯଦି (options->ip_qos_interactive == -1)
 		options->ip_qos_interactive = IPTOS_DSCP_EF;
-	if (options->ip_qos_bulk == -1)
+	ଯଦି (options->ip_qos_bulk == -1)
 		options->ip_qos_bulk = IPTOS_DSCP_CS0;
-	if (options->request_tty == -1)
+	ଯଦି (options->request_tty == -1)
 		options->request_tty = REQUEST_TTY_AUTO;
-	if (options->session_type == -1)
+	ଯଦି (options->session_type == -1)
 		options->session_type = SESSION_TYPE_DEFAULT;
-	if (options->stdin_null == -1)
+	ଯଦି (options->stdin_null == -1)
 		options->stdin_null = 0;
-	if (options->fork_after_authentication == -1)
+	ଯଦି (options->fork_after_authentication == -1)
 		options->fork_after_authentication = 0;
-	if (options->proxy_use_fdpass == -1)
+	ଯଦି (options->proxy_use_fdpass == -1)
 		options->proxy_use_fdpass = 0;
-	if (options->canonicalize_max_dots == -1)
+	ଯଦି (options->canonicalize_max_dots == -1)
 		options->canonicalize_max_dots = 1;
-	if (options->canonicalize_fallback_local == -1)
+	ଯଦି (options->canonicalize_fallback_local == -1)
 		options->canonicalize_fallback_local = 1;
-	if (options->canonicalize_hostname == -1)
+	ଯଦି (options->canonicalize_hostname == -1)
 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
-	if (options->fingerprint_hash == -1)
+	ଯଦି (options->fingerprint_hash == -1)
 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
 #ifdef ENABLE_SK_INTERNAL
-	if (options->sk_provider == NULL)
+	ଯଦି (options->sk_provider == ଖାଲି)
 		options->sk_provider = xstrdup("internal");
-#else
-	if (options->sk_provider == NULL)
+#ଅନ୍ୟଥା
+	ଯଦି (options->sk_provider == ଖାଲି)
 		options->sk_provider = xstrdup("$SSH_SK_PROVIDER");
 #endif
-	if (options->required_rsa_size == -1)
+	ଯଦି (options->required_rsa_size == -1)
 		options->required_rsa_size = SSH_RSA_MINIMUM_MODULUS_SIZE;
-	if (options->warn_weak_crypto == -1)
+	ଯଦି (options->warn_weak_crypto == -1)
 		options->warn_weak_crypto = 1;
-	if (options->enable_escape_commandline == -1)
+	ଯଦି (options->enable_escape_commandline == -1)
 		options->enable_escape_commandline = 0;
-	if (options->obscure_keystroke_timing_interval == -1) {
+	ଯଦି (options->obscure_keystroke_timing_interval == -1) {
 		options->obscure_keystroke_timing_interval =
 		    SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
 	}
@@ -3044,48 +3044,48 @@ fill_default_options(Options * options)
 	all_cipher = cipher_alg_list(',', 0);
 	all_mac = mac_alg_list(',');
 	all_kex = kex_alg_list(',');
-	all_key = sshkey_alg_list(0, 0, 1, ',');
+	all_ଚାବି = sshkey_alg_list(0, 0, 1, ',');
 	all_sig = sshkey_alg_list(0, 1, 1, ',');
 	/* remove unsupported algos from default lists */
 	def_cipher = match_filter_allowlist(KEX_CLIENT_ENCRYPT, all_cipher);
 	def_mac = match_filter_allowlist(KEX_CLIENT_MAC, all_mac);
 	def_kex = match_filter_allowlist(KEX_CLIENT_KEX, all_kex);
-	def_key = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
+	def_ଚାବି = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_ଚାବି);
 	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
 #define ASSEMBLE(what, defaults, all) \
-	do { \
-		if ((r = kex_assemble_names(&options->what, \
+	କର { \
+		ଯଦି ((r = kex_assemble_names(&options->what, \
 		    defaults, all)) != 0) { \
 			error_fr(r, "%s", #what); \
-			goto fail; \
+			ଯାଅ fail; \
 		} \
-	} while (0)
-	options->kex_algorithms_set = options->kex_algorithms != NULL;
+	} ଯେତେବେଳେ (0)
+	options->kex_algorithms_set = options->kex_algorithms != ଖାଲି;
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
 	ASSEMBLE(kex_algorithms, def_kex, all_kex);
-	ASSEMBLE(hostbased_accepted_algos, def_key, all_key);
-	ASSEMBLE(pubkey_accepted_algos, def_key, all_key);
+	ASSEMBLE(hostbased_accepted_algos, def_ଚାବି, all_ଚାବି);
+	ASSEMBLE(pubkey_accepted_algos, def_ଚାବି, all_ଚାବି);
 	ASSEMBLE(ca_sign_algorithms, def_sig, all_sig);
 #undef ASSEMBLE
 
 #define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+	କର { \
+		ଯଦି (option_clear_or_none(v)) { \
+			ମୁକ୍ତ(v); \
+			v = ଖାଲି; \
 		} \
-	} while(0)
+	} ଯେତେବେଳେ(0)
 #define CLEAR_ON_NONE_ARRAY(v, nv, none) \
-	do { \
-		if (options->nv == 1 && \
+	କର { \
+		ଯଦି (options->nv == 1 && \
 		    strcasecmp(options->v[0], none) == 0) { \
-			free(options->v[0]); \
-			free(options->v); \
-			options->v = NULL; \
+			ମୁକ୍ତ(options->v[0]); \
+			ମୁକ୍ତ(options->v); \
+			options->v = ଖାଲି; \
 			options->nv = 0; \
 		} \
-	} while (0)
+	} ଯେତେବେଳେ (0)
 	CLEAR_ON_NONE(options->local_command);
 	CLEAR_ON_NONE(options->remote_command);
 	CLEAR_ON_NONE(options->proxy_command);
@@ -3093,24 +3093,24 @@ fill_default_options(Options * options)
 	CLEAR_ON_NONE(options->pkcs11_provider);
 	CLEAR_ON_NONE(options->sk_provider);
 	CLEAR_ON_NONE(options->known_hosts_command);
-	CLEAR_ON_NONE_ARRAY(channel_timeouts, num_channel_timeouts, "none");
-	CLEAR_ON_NONE_ARRAY(revoked_host_keys, num_revoked_host_keys, "none");
+	CLEAR_ON_NONE_ARRAY(channel_timeouts, ଅଙ୍କ_channel_timeouts, "none");
+	CLEAR_ON_NONE_ARRAY(revoked_host_ଚାବିଗୁଡ଼ିକ, ଅଙ୍କ_revoked_host_ଚାବିଗୁଡ଼ିକ, "none");
 #undef CLEAR_ON_NONE
 #undef CLEAR_ON_NONE_ARRAY
-	if (options->jump_host != NULL &&
+	ଯଦି (options->jump_host != ଖାଲି &&
 	    strcmp(options->jump_host, "none") == 0 &&
-	    options->jump_port == 0 && options->jump_user == NULL) {
-		free(options->jump_host);
-		options->jump_host = NULL;
+	    options->jump_port == 0 && options->jump_user == ଖାଲି) {
+		ମୁକ୍ତ(options->jump_host);
+		options->jump_host = ଖାଲି;
 	}
-	if (options->num_permitted_cnames == 1 &&
+	ଯଦି (options->ଅଙ୍କ_permitted_cnames == 1 &&
 	    !config_has_permitted_cnames(options)) {
 		/* clean up CanonicalizePermittedCNAMEs=none */
-		free(options->permitted_cnames[0].source_list);
-		free(options->permitted_cnames[0].target_list);
+		ମୁକ୍ତ(options->permitted_cnames[0].source_list);
+		ମୁକ୍ତ(options->permitted_cnames[0].target_list);
 		memset(options->permitted_cnames, '\0',
-		    sizeof(*options->permitted_cnames));
-		options->num_permitted_cnames = 0;
+		    ଆକାର(*options->permitted_cnames));
+		options->ଅଙ୍କ_permitted_cnames = 0;
 	}
 	/* options->identity_agent distinguishes NULL from 'none' */
 	/* options->user will be set in the main program if appropriate */
@@ -3121,105 +3121,105 @@ fill_default_options(Options * options)
 	/* success */
 	ret = 0;
  fail:
-	free(all_cipher);
-	free(all_mac);
-	free(all_kex);
-	free(all_key);
-	free(all_sig);
-	free(def_cipher);
-	free(def_mac);
-	free(def_kex);
-	free(def_key);
-	free(def_sig);
-	return ret;
+	ମୁକ୍ତ(all_cipher);
+	ମୁକ୍ତ(all_mac);
+	ମୁକ୍ତ(all_kex);
+	ମୁକ୍ତ(all_ଚାବି);
+	ମୁକ୍ତ(all_sig);
+	ମୁକ୍ତ(def_cipher);
+	ମୁକ୍ତ(def_mac);
+	ମୁକ୍ତ(def_kex);
+	ମୁକ୍ତ(def_ଚାବି);
+	ମୁକ୍ତ(def_sig);
+	ଫେରନ୍ତୁ ret;
 }
 
-void
+ଶୂନ୍ୟ
 free_options(Options *o)
 {
-	int i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
-	if (o == NULL)
-		return;
+	ଯଦି (o == ଖାଲି)
+		ଫେରନ୍ତୁ;
 
 #define FREE_ARRAY(type, n, a) \
-	do { \
+	କର { \
 		type _i; \
-		for (_i = 0; _i < (n); _i++) \
-			free((a)[_i]); \
-	} while (0)
+		ପାଇଁ (_i = 0; _i < (n); _i++) \
+			ମୁକ୍ତ((a)[_i]); \
+	} ଯେତେବେଳେ (0)
 
-	free(o->forward_agent_sock_path);
-	free(o->xauth_location);
-	FREE_ARRAY(u_int, o->num_log_verbose, o->log_verbose);
-	free(o->log_verbose);
-	free(o->ciphers);
-	free(o->macs);
-	free(o->hostkeyalgorithms);
-	free(o->kex_algorithms);
-	free(o->ca_sign_algorithms);
-	free(o->hostname);
-	free(o->host_key_alias);
-	free(o->proxy_command);
-	free(o->user);
-	FREE_ARRAY(u_int, o->num_system_hostfiles, o->system_hostfiles);
-	FREE_ARRAY(u_int, o->num_user_hostfiles, o->user_hostfiles);
-	free(o->preferred_authentications);
-	free(o->bind_address);
-	free(o->bind_interface);
-	free(o->pkcs11_provider);
-	free(o->sk_provider);
-	for (i = 0; i < o->num_identity_files; i++) {
-		free(o->identity_files[i]);
-		sshkey_free(o->identity_keys[i]);
+	ମୁକ୍ତ(o->forward_agent_sock_path);
+	ମୁକ୍ତ(o->xauth_location);
+	FREE_ARRAY(u_int, o->ଅଙ୍କ_log_verbose, o->log_verbose);
+	ମୁକ୍ତ(o->log_verbose);
+	ମୁକ୍ତ(o->ciphers);
+	ମୁକ୍ତ(o->macs);
+	ମୁକ୍ତ(o->hostkeyalgorithms);
+	ମୁକ୍ତ(o->kex_algorithms);
+	ମୁକ୍ତ(o->ca_sign_algorithms);
+	ମୁକ୍ତ(o->hostname);
+	ମୁକ୍ତ(o->host_ଚାବି_alias);
+	ମୁକ୍ତ(o->proxy_command);
+	ମୁକ୍ତ(o->user);
+	FREE_ARRAY(u_int, o->ଅଙ୍କ_system_hostfiles, o->system_hostfiles);
+	FREE_ARRAY(u_int, o->ଅଙ୍କ_user_hostfiles, o->user_hostfiles);
+	ମୁକ୍ତ(o->preferred_authentications);
+	ମୁକ୍ତ(o->bind_address);
+	ମୁକ୍ତ(o->bind_interface);
+	ମୁକ୍ତ(o->pkcs11_provider);
+	ମୁକ୍ତ(o->sk_provider);
+	ପାଇଁ (i = 0; i < o->ଅଙ୍କ_identity_files; i++) {
+		ମୁକ୍ତ(o->identity_files[i]);
+		sshkey_free(o->identity_ଚାବିଗୁଡ଼ିକ[i]);
 	}
-	for (i = 0; i < o->num_certificate_files; i++) {
-		free(o->certificate_files[i]);
+	ପାଇଁ (i = 0; i < o->ଅଙ୍କ_certificate_files; i++) {
+		ମୁକ୍ତ(o->certificate_files[i]);
 		sshkey_free(o->certificates[i]);
 	}
-	free(o->identity_agent);
-	for (i = 0; i < o->num_local_forwards; i++) {
-		free(o->local_forwards[i].listen_host);
-		free(o->local_forwards[i].listen_path);
-		free(o->local_forwards[i].connect_host);
-		free(o->local_forwards[i].connect_path);
+	ମୁକ୍ତ(o->identity_agent);
+	ପାଇଁ (i = 0; i < o->ଅଙ୍କ_local_forwards; i++) {
+		ମୁକ୍ତ(o->local_forwards[i].listen_host);
+		ମୁକ୍ତ(o->local_forwards[i].listen_path);
+		ମୁକ୍ତ(o->local_forwards[i].connect_host);
+		ମୁକ୍ତ(o->local_forwards[i].connect_path);
 	}
-	free(o->local_forwards);
-	for (i = 0; i < o->num_remote_forwards; i++) {
-		free(o->remote_forwards[i].listen_host);
-		free(o->remote_forwards[i].listen_path);
-		free(o->remote_forwards[i].connect_host);
-		free(o->remote_forwards[i].connect_path);
+	ମୁକ୍ତ(o->local_forwards);
+	ପାଇଁ (i = 0; i < o->ଅଙ୍କ_remote_forwards; i++) {
+		ମୁକ୍ତ(o->remote_forwards[i].listen_host);
+		ମୁକ୍ତ(o->remote_forwards[i].listen_path);
+		ମୁକ୍ତ(o->remote_forwards[i].connect_host);
+		ମୁକ୍ତ(o->remote_forwards[i].connect_path);
 	}
-	free(o->remote_forwards);
-	free(o->stdio_forward_host);
-	FREE_ARRAY(u_int, o->num_send_env, o->send_env);
-	free(o->send_env);
-	FREE_ARRAY(u_int, o->num_setenv, o->setenv);
-	free(o->setenv);
-	free(o->control_path);
-	free(o->local_command);
-	free(o->remote_command);
-	FREE_ARRAY(int, o->num_canonical_domains, o->canonical_domains);
-	for (i = 0; i < o->num_permitted_cnames; i++) {
-		free(o->permitted_cnames[i].source_list);
-		free(o->permitted_cnames[i].target_list);
+	ମୁକ୍ତ(o->remote_forwards);
+	ମୁକ୍ତ(o->stdio_forward_host);
+	FREE_ARRAY(u_int, o->ଅଙ୍କ_send_env, o->send_env);
+	ମୁକ୍ତ(o->send_env);
+	FREE_ARRAY(u_int, o->ଅଙ୍କ_setenv, o->setenv);
+	ମୁକ୍ତ(o->setenv);
+	ମୁକ୍ତ(o->control_path);
+	ମୁକ୍ତ(o->local_command);
+	ମୁକ୍ତ(o->remote_command);
+	FREE_ARRAY(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, o->ଅଙ୍କ_canonical_domains, o->canonical_domains);
+	ପାଇଁ (i = 0; i < o->ଅଙ୍କ_permitted_cnames; i++) {
+		ମୁକ୍ତ(o->permitted_cnames[i].source_list);
+		ମୁକ୍ତ(o->permitted_cnames[i].target_list);
 	}
-	FREE_ARRAY(u_int, o->num_revoked_host_keys, o->revoked_host_keys);
-	free(o->revoked_host_keys);
-	free(o->hostbased_accepted_algos);
-	free(o->pubkey_accepted_algos);
-	free(o->jump_user);
-	free(o->jump_host);
-	free(o->jump_extra);
-	free(o->ignored_unknown);
-	explicit_bzero(o, sizeof(*o));
+	FREE_ARRAY(u_int, o->ଅଙ୍କ_revoked_host_ଚାବିଗୁଡ଼ିକ, o->revoked_host_ଚାବିଗୁଡ଼ିକ);
+	ମୁକ୍ତ(o->revoked_host_ଚାବିଗୁଡ଼ିକ);
+	ମୁକ୍ତ(o->hostbased_accepted_algos);
+	ମୁକ୍ତ(o->pubkey_accepted_algos);
+	ମୁକ୍ତ(o->jump_user);
+	ମୁକ୍ତ(o->jump_host);
+	ମୁକ୍ତ(o->jump_extra);
+	ମୁକ୍ତ(o->ignored_unknown);
+	explicit_bzero(o, ଆକାର(*o));
 #undef FREE_ARRAY
 }
 
-struct fwdarg {
-	char *arg;
-	int ispath;
+ସଂରଚନା fwdarg {
+	ଅକ୍ଷର *arg;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ispath;
 };
 
 /*
@@ -3229,60 +3229,60 @@ struct fwdarg {
  * or sets it to NULL at end of string.
  * returns 0 on success, else non-zero.
  */
-static int
-parse_fwd_field(char **p, struct fwdarg *fwd)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+parse_fwd_field(ଅକ୍ଷର **p, ସଂରଚନା fwdarg *fwd)
 {
-	char *ep, *cp = *p;
-	int ispath = 0;
+	ଅକ୍ଷର *ep, *cp = *p;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ispath = 0;
 
-	if (*cp == '\0') {
-		*p = NULL;
-		return -1;	/* end of string */
+	ଯଦି (*cp == '\0') {
+		*p = ଖାଲି;
+		ଫେରନ୍ତୁ -1;	/* end of string */
 	}
 
 	/*
 	 * A field escaped with square brackets is used literally.
 	 * XXX - allow ']' to be escaped via backslash?
 	 */
-	if (*cp == '[') {
+	ଯଦି (*cp == '[') {
 		/* find matching ']' */
-		for (ep = cp + 1; *ep != ']' && *ep != '\0'; ep++) {
-			if (*ep == '/')
+		ପାଇଁ (ep = cp + 1; *ep != ']' && *ep != '\0'; ep++) {
+			ଯଦି (*ep == '/')
 				ispath = 1;
 		}
 		/* no matching ']' or not at end of field. */
-		if (ep[0] != ']' || (ep[1] != ':' && ep[1] != '\0'))
-			return -1;
+		ଯଦି (ep[0] != ']' || (ep[1] != ':' && ep[1] != '\0'))
+			ଫେରନ୍ତୁ -1;
 		/* NUL terminate the field and advance p past the colon */
 		*ep++ = '\0';
-		if (*ep != '\0')
+		ଯଦି (*ep != '\0')
 			*ep++ = '\0';
 		fwd->arg = cp + 1;
 		fwd->ispath = ispath;
 		*p = ep;
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 
-	for (cp = *p; *cp != '\0'; cp++) {
-		switch (*cp) {
-		case '\\':
+	ପାଇଁ (cp = *p; *cp != '\0'; cp++) {
+		ବାଛ (*cp) {
+		ସ୍ଥିତି '\\':
 			memmove(cp, cp + 1, strlen(cp + 1) + 1);
-			if (*cp == '\0')
-				return -1;
-			break;
-		case '/':
+			ଯଦି (*cp == '\0')
+				ଫେରନ୍ତୁ -1;
+			ଭାଙ୍ଗ;
+		ସ୍ଥିତି '/':
 			ispath = 1;
-			break;
-		case ':':
+			ଭାଙ୍ଗ;
+		ସ୍ଥିତି ':':
 			*cp++ = '\0';
-			goto done;
+			ଯାଅ done;
 		}
 	}
 done:
 	fwd->arg = *p;
 	fwd->ispath = ispath;
 	*p = cp;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 /*
@@ -3295,15 +3295,15 @@ done:
  *	[listenhost:]listenport
  * returns number of arguments parsed or zero on error
  */
-int
-parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remotefwd)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+parse_forward(ସଂରଚନା Forward *fwd, ଅଚଳ ଅକ୍ଷର *fwdspec, ପୂର୍ଣ୍ଣସଂଖ୍ୟା dynamicfwd, ପୂର୍ଣ୍ଣସଂଖ୍ୟା remotefwd)
 {
-	struct fwdarg fwdargs[4];
-	char *p, *cp;
-	int i, err;
+	ସଂରଚନା fwdarg fwdargs[4];
+	ଅକ୍ଷର *p, *cp;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i, err;
 
-	memset(fwd, 0, sizeof(*fwd));
-	memset(fwdargs, 0, sizeof(fwdargs));
+	memset(fwd, 0, ଆକାର(*fwd));
+	memset(fwdargs, 0, ଆକାର(fwdargs));
 
 	/*
 	 * We expand environment variables before checking if we think they're
@@ -3311,422 +3311,422 @@ parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remo
 	 * treated as a path.
 	 */
 	cp = p = dollar_expand(&err, fwdspec);
-	if (p == NULL || err)
-		return 0;
+	ଯଦି (p == ଖାଲି || err)
+		ଫେରନ୍ତୁ 0;
 
 	/* skip leading spaces */
-	while (isspace((u_char)*cp))
+	ଯେତେବେଳେ (isspace((u_char)*cp))
 		cp++;
 
-	for (i = 0; i < 4; ++i) {
-		if (parse_fwd_field(&cp, &fwdargs[i]) != 0)
-			break;
+	ପାଇଁ (i = 0; i < 4; ++i) {
+		ଯଦି (parse_fwd_field(&cp, &fwdargs[i]) != 0)
+			ଭାଙ୍ଗ;
 	}
 
 	/* Check for trailing garbage */
-	if (cp != NULL && *cp != '\0') {
+	ଯଦି (cp != ଖାଲି && *cp != '\0') {
 		i = 0;	/* failure */
 	}
 
-	switch (i) {
-	case 1:
-		if (fwdargs[0].ispath) {
+	ବାଛ (i) {
+	ସ୍ଥିତି 1:
+		ଯଦି (fwdargs[0].ispath) {
 			fwd->listen_path = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = PORT_STREAMLOCAL;
-		} else {
-			fwd->listen_host = NULL;
+		} ଅନ୍ୟଥା {
+			fwd->listen_host = ଖାଲି;
 			fwd->listen_port = a2port(fwdargs[0].arg);
 		}
 		fwd->connect_host = xstrdup("socks");
-		break;
+		ଭାଙ୍ଗ;
 
-	case 2:
-		if (fwdargs[0].ispath && fwdargs[1].ispath) {
+	ସ୍ଥିତି 2:
+		ଯଦି (fwdargs[0].ispath && fwdargs[1].ispath) {
 			fwd->listen_path = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = PORT_STREAMLOCAL;
 			fwd->connect_path = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = PORT_STREAMLOCAL;
-		} else if (fwdargs[1].ispath) {
-			fwd->listen_host = NULL;
+		} ଅନ୍ୟଥା ଯଦି (fwdargs[1].ispath) {
+			fwd->listen_host = ଖାଲି;
 			fwd->listen_port = a2port(fwdargs[0].arg);
 			fwd->connect_path = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = PORT_STREAMLOCAL;
-		} else {
+		} ଅନ୍ୟଥା {
 			fwd->listen_host = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = a2port(fwdargs[1].arg);
 			fwd->connect_host = xstrdup("socks");
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case 3:
-		if (fwdargs[0].ispath) {
+	ସ୍ଥିତି 3:
+		ଯଦି (fwdargs[0].ispath) {
 			fwd->listen_path = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = PORT_STREAMLOCAL;
 			fwd->connect_host = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = a2port(fwdargs[2].arg);
-		} else if (fwdargs[2].ispath) {
+		} ଅନ୍ୟଥା ଯଦି (fwdargs[2].ispath) {
 			fwd->listen_host = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = a2port(fwdargs[1].arg);
 			fwd->connect_path = xstrdup(fwdargs[2].arg);
 			fwd->connect_port = PORT_STREAMLOCAL;
-		} else {
-			fwd->listen_host = NULL;
+		} ଅନ୍ୟଥା {
+			fwd->listen_host = ଖାଲି;
 			fwd->listen_port = a2port(fwdargs[0].arg);
 			fwd->connect_host = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = a2port(fwdargs[2].arg);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case 4:
+	ସ୍ଥିତି 4:
 		fwd->listen_host = xstrdup(fwdargs[0].arg);
 		fwd->listen_port = a2port(fwdargs[1].arg);
 		fwd->connect_host = xstrdup(fwdargs[2].arg);
 		fwd->connect_port = a2port(fwdargs[3].arg);
-		break;
-	default:
+		ଭାଙ୍ଗ;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 		i = 0; /* failure */
 	}
 
-	free(p);
+	ମୁକ୍ତ(p);
 
-	if (dynamicfwd) {
-		if (!(i == 1 || i == 2))
-			goto fail_free;
-	} else {
-		if (!(i == 3 || i == 4)) {
-			if (fwd->connect_path == NULL &&
-			    fwd->listen_path == NULL)
-				goto fail_free;
+	ଯଦି (dynamicfwd) {
+		ଯଦି (!(i == 1 || i == 2))
+			ଯାଅ fail_free;
+	} ଅନ୍ୟଥା {
+		ଯଦି (!(i == 3 || i == 4)) {
+			ଯଦି (fwd->connect_path == ଖାଲି &&
+			    fwd->listen_path == ଖାଲି)
+				ଯାଅ fail_free;
 		}
-		if (fwd->connect_port <= 0 && fwd->connect_path == NULL)
-			goto fail_free;
+		ଯଦି (fwd->connect_port <= 0 && fwd->connect_path == ଖାଲି)
+			ଯାଅ fail_free;
 	}
 
-	if ((fwd->listen_port < 0 && fwd->listen_path == NULL) ||
+	ଯଦି ((fwd->listen_port < 0 && fwd->listen_path == ଖାଲି) ||
 	    (!remotefwd && fwd->listen_port == 0))
-		goto fail_free;
-	if (fwd->connect_host != NULL &&
+		ଯାଅ fail_free;
+	ଯଦି (fwd->connect_host != ଖାଲି &&
 	    strlen(fwd->connect_host) >= NI_MAXHOST)
-		goto fail_free;
+		ଯାଅ fail_free;
 	/*
 	 * XXX - if connecting to a remote socket, max sun len may not
 	 * match this host
 	 */
-	if (fwd->connect_path != NULL &&
+	ଯଦି (fwd->connect_path != ଖାଲି &&
 	    strlen(fwd->connect_path) >= PATH_MAX_SUN)
-		goto fail_free;
-	if (fwd->listen_host != NULL &&
+		ଯାଅ fail_free;
+	ଯଦି (fwd->listen_host != ଖାଲି &&
 	    strlen(fwd->listen_host) >= NI_MAXHOST)
-		goto fail_free;
-	if (fwd->listen_path != NULL &&
+		ଯାଅ fail_free;
+	ଯଦି (fwd->listen_path != ଖାଲି &&
 	    strlen(fwd->listen_path) >= PATH_MAX_SUN)
-		goto fail_free;
+		ଯାଅ fail_free;
 
-	return (i);
+	ଫେରନ୍ତୁ (i);
 
  fail_free:
-	free(fwd->connect_host);
-	fwd->connect_host = NULL;
-	free(fwd->connect_path);
-	fwd->connect_path = NULL;
-	free(fwd->listen_host);
-	fwd->listen_host = NULL;
-	free(fwd->listen_path);
-	fwd->listen_path = NULL;
-	return (0);
+	ମୁକ୍ତ(fwd->connect_host);
+	fwd->connect_host = ଖାଲି;
+	ମୁକ୍ତ(fwd->connect_path);
+	fwd->connect_path = ଖାଲି;
+	ମୁକ୍ତ(fwd->listen_host);
+	fwd->listen_host = ଖାଲି;
+	ମୁକ୍ତ(fwd->listen_path);
+	fwd->listen_path = ଖାଲି;
+	ଫେରନ୍ତୁ (0);
 }
 
-int
-ssh_valid_hostname(const char *s)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_valid_hostname(ଅଚଳ ଅକ୍ଷର *s)
 {
 	size_t i;
 
-	if (*s == '-')
-		return 0;
-	for (i = 0; s[i] != 0; i++) {
-		if (strchr("'`\"$\\;&<>|(){},", s[i]) != NULL ||
+	ଯଦି (*s == '-')
+		ଫେରନ୍ତୁ 0;
+	ପାଇଁ (i = 0; s[i] != 0; i++) {
+		ଯଦି (strchr("'`\"$\\;&<>|(){},", s[i]) != ଖାଲି ||
 		    isspace((u_char)s[i]) || iscntrl((u_char)s[i]))
-			return 0;
+			ଫେରନ୍ତୁ 0;
 	}
-	return 1;
+	ଫେରନ୍ତୁ 1;
 }
 
-int
-ssh_valid_ruser(const char *s)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_valid_ruser(ଅଚଳ ଅକ୍ଷର *s)
 {
 	size_t i;
 
-	if (*s == '-')
-		return 0;
-	for (i = 0; s[i] != 0; i++) {
-		if (iscntrl((u_char)s[i]))
-			return 0;
-		if (strchr("'`\";&<>|(){}$\\", s[i]) != NULL)
-			return 0;
+	ଯଦି (*s == '-')
+		ଫେରନ୍ତୁ 0;
+	ପାଇଁ (i = 0; s[i] != 0; i++) {
+		ଯଦି (iscntrl((u_char)s[i]))
+			ଫେରନ୍ତୁ 0;
+		ଯଦି (strchr("'`\";&<>|(){}$\\", s[i]) != ଖାଲି)
+			ଫେରନ୍ତୁ 0;
 		/* Disallow '-' after whitespace */
-		if (isspace((u_char)s[i]) && s[i + 1] == '-')
-			return 0;
+		ଯଦି (isspace((u_char)s[i]) && s[i + 1] == '-')
+			ଫେରନ୍ତୁ 0;
 	}
-	return 1;
+	ଫେରନ୍ତୁ 1;
 }
 
-int
-parse_jump(const char *s, Options *o, int strict, int active)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+parse_jump(ଅଚଳ ଅକ୍ଷର *s, Options *o, ପୂର୍ଣ୍ଣସଂଖ୍ୟା strict, ପୂର୍ଣ୍ଣସଂଖ୍ୟା active)
 {
-	char *orig = NULL, *sdup = NULL, *cp;
-	char *tmp_user = NULL, *tmp_host = NULL, *host = NULL, *user = NULL;
-	int r, ret = -1, tmp_port = -1, port = -1, first = 1;
+	ଅକ୍ଷର *orig = ଖାଲି, *sdup = ଖାଲି, *cp;
+	ଅକ୍ଷର *tmp_user = ଖାଲି, *tmp_host = ଖାଲି, *host = ଖାଲି, *user = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, ret = -1, tmp_port = -1, port = -1, first = 1;
 
-	if (strcasecmp(s, "none") == 0) {
-		if (active && o->jump_host == NULL) {
+	ଯଦି (strcasecmp(s, "none") == 0) {
+		ଯଦି (active && o->jump_host == ଖାଲି) {
 			o->jump_host = xstrdup("none");
 			o->jump_port = 0;
 		}
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
 
 	orig = xstrdup(s);
-	if ((cp = strchr(orig, '#')) != NULL)
+	ଯଦି ((cp = strchr(orig, '#')) != ଖାଲି)
 		*cp = '\0';
 	rtrim(orig);
 
-	active &= o->proxy_command == NULL && o->jump_host == NULL;
+	active &= o->proxy_command == ଖାଲି && o->jump_host == ଖାଲି;
 	sdup = xstrdup(orig);
-	do {
+	କର {
 		/* Work backwards through string */
-		if ((cp = strrchr(sdup, ',')) == NULL)
+		ଯଦି ((cp = strrchr(sdup, ',')) == ଖାଲି)
 			cp = sdup; /* last */
-		else
+		ଅନ୍ୟଥା
 			*cp++ = '\0';
 
 		r = parse_ssh_uri(cp, &tmp_user, &tmp_host, &tmp_port);
-		if (r == -1 || (r == 1 && parse_user_host_port(cp,
+		ଯଦି (r == -1 || (r == 1 && parse_user_host_port(cp,
 		    &tmp_user, &tmp_host, &tmp_port) != 0))
-			goto out; /* error already logged */
-		if (strict) {
-			if (!ssh_valid_hostname(tmp_host)) {
+			ଯାଅ out; /* error already logged */
+		ଯଦି (strict) {
+			ଯଦି (!ssh_valid_hostname(tmp_host)) {
 				error_f("invalid hostname \"%s\"", tmp_host);
-				goto out;
+				ଯାଅ out;
 			}
-			if (tmp_user != NULL && !ssh_valid_ruser(tmp_user)) {
+			ଯଦି (tmp_user != ଖାଲି && !ssh_valid_ruser(tmp_user)) {
 				error_f("invalid username \"%s\"", tmp_user);
-				goto out;
+				ଯାଅ out;
 			}
 		}
-		if (first) {
+		ଯଦି (first) {
 			user = tmp_user;
 			host = tmp_host;
 			port = tmp_port;
-			tmp_user = tmp_host = NULL; /* transferred */
+			tmp_user = tmp_host = ଖାଲି; /* transferred */
 		}
 		first = 0; /* only check syntax for subsequent hosts */
-		free(tmp_user);
-		free(tmp_host);
-		tmp_user = tmp_host = NULL;
+		ମୁକ୍ତ(tmp_user);
+		ମୁକ୍ତ(tmp_host);
+		tmp_user = tmp_host = ଖାଲି;
 		tmp_port = -1;
-	} while (cp != sdup);
+	} ଯେତେବେଳେ (cp != sdup);
 
 	/* success */
-	if (active) {
+	ଯଦି (active) {
 		o->jump_user = user;
 		o->jump_host = host;
 		o->jump_port = port;
 		o->proxy_command = xstrdup("none");
-		user = host = NULL; /* transferred */
-		if (orig != NULL && (cp = strrchr(orig, ',')) != NULL) {
+		user = host = ଖାଲି; /* transferred */
+		ଯଦି (orig != ଖାଲି && (cp = strrchr(orig, ',')) != ଖାଲି) {
 			o->jump_extra = xstrdup(orig);
 			o->jump_extra[cp - orig] = '\0';
 		}
 	}
 	ret = 0;
  out:
-	free(orig);
-	free(sdup);
-	free(tmp_user);
-	free(tmp_host);
-	free(user);
-	free(host);
-	return ret;
+	ମୁକ୍ତ(orig);
+	ମୁକ୍ତ(sdup);
+	ମୁକ୍ତ(tmp_user);
+	ମୁକ୍ତ(tmp_host);
+	ମୁକ୍ତ(user);
+	ମୁକ୍ତ(host);
+	ଫେରନ୍ତୁ ret;
 }
 
-int
-parse_ssh_uri(const char *uri, char **userp, char **hostp, int *portp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+parse_ssh_uri(ଅଚଳ ଅକ୍ଷର *uri, ଅକ୍ଷର **userp, ଅକ୍ଷର **hostp, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *portp)
 {
-	char *user = NULL, *host = NULL, *path = NULL;
-	int r, port;
+	ଅକ୍ଷର *user = ଖାଲି, *host = ଖାଲି, *path = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, port;
 
 	r = parse_uri("ssh", uri, &user, &host, &port, &path);
-	if (r == 0 && path != NULL)
+	ଯଦି (r == 0 && path != ଖାଲି)
 		r = -1;		/* path not allowed */
-	if (r == 0) {
-		if (userp != NULL) {
+	ଯଦି (r == 0) {
+		ଯଦି (userp != ଖାଲି) {
 			*userp = user;
-			user = NULL;
+			user = ଖାଲି;
 		}
-		if (hostp != NULL) {
+		ଯଦି (hostp != ଖାଲି) {
 			*hostp = host;
-			host = NULL;
+			host = ଖାଲି;
 		}
-		if (portp != NULL)
+		ଯଦି (portp != ଖାଲି)
 			*portp = port;
 	}
-	free(user);
-	free(host);
-	free(path);
-	return r;
+	ମୁକ୍ତ(user);
+	ମୁକ୍ତ(host);
+	ମୁକ୍ତ(path);
+	ଫେରନ୍ତୁ r;
 }
 
 /* XXX the following is a near-verbatim copy from servconf.c; refactor */
-static const char *
-fmt_multistate_int(int val, const struct multistate *m)
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *
+fmt_multistate_int(ପୂର୍ଣ୍ଣସଂଖ୍ୟା val, ଅଚଳ ସଂରଚନା multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	ପାଇଁ (i = 0; m[i].ଚାବି != ଖାଲି; i++) {
+		ଯଦି (m[i].ମୂଲ୍ୟ == val)
+			ଫେରନ୍ତୁ m[i].ଚାବି;
 	}
-	return "UNKNOWN";
+	ଫେରନ୍ତୁ "UNKNOWN";
 }
 
-static const char *
-fmt_intarg(OpCodes code, int val)
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *
+fmt_intarg(OpCodes code, ପୂର୍ଣ୍ଣସଂଖ୍ୟା val)
 {
-	if (val == -1)
-		return "unset";
-	switch (code) {
-	case oAddressFamily:
-		return fmt_multistate_int(val, multistate_addressfamily);
-	case oCompression:
-		return fmt_multistate_int(val, multistate_compression);
-	case oVerifyHostKeyDNS:
-	case oUpdateHostkeys:
-		return fmt_multistate_int(val, multistate_yesnoask);
-	case oStrictHostKeyChecking:
-		return fmt_multistate_int(val, multistate_strict_hostkey);
-	case oControlMaster:
-		return fmt_multistate_int(val, multistate_controlmaster);
-	case oTunnel:
-		return fmt_multistate_int(val, multistate_tunnel);
-	case oRequestTTY:
-		return fmt_multistate_int(val, multistate_requesttty);
-	case oSessionType:
-		return fmt_multistate_int(val, multistate_sessiontype);
-	case oCanonicalizeHostname:
-		return fmt_multistate_int(val, multistate_canonicalizehostname);
-	case oAddKeysToAgent:
-		return fmt_multistate_int(val, multistate_yesnoaskconfirm);
-	case oPubkeyAuthentication:
-		return fmt_multistate_int(val, multistate_pubkey_auth);
-	case oTCPKeepAlive:
-		return fmt_multistate_int(val, multistate_keepalives);
-	case oFingerprintHash:
-		return ssh_digest_alg_name(val);
-	default:
-		switch (val) {
-		case 0:
-			return "no";
-		case 1:
-			return "yes";
-		default:
-			return "UNKNOWN";
+	ଯଦି (val == -1)
+		ଫେରନ୍ତୁ "unset";
+	ବାଛ (code) {
+	ସ୍ଥିତି oAddressFamily:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_addressfamily);
+	ସ୍ଥିତି oCompression:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_compression);
+	ସ୍ଥିତି o_Verify_Host_ଚାବି_DNS:
+	ସ୍ଥିତି oUpdateHostkeys:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_yesnoask);
+	ସ୍ଥିତି o_Strict_Host_ଚାବି_Checking:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_strict_hostkey);
+	ସ୍ଥିତି oControlMaster:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_controlmaster);
+	ସ୍ଥିତି oTunnel:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_tunnel);
+	ସ୍ଥିତି oRequestTTY:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_requesttty);
+	ସ୍ଥିତି oSessionType:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_sessiontype);
+	ସ୍ଥିତି oCanonicalizeHostname:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_canonicalizehostname);
+	ସ୍ଥିତି o_Add_ଚାବିଗୁଡ଼ିକ_To_Agent:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_yesnoaskconfirm);
+	ସ୍ଥିତି oPubkeyAuthentication:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_pubkey_auth);
+	ସ୍ଥିତି oTCPKeepAlive:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_keepalives);
+	ସ୍ଥିତି oFingerprintHash:
+		ଫେରନ୍ତୁ ssh_digest_alg_name(val);
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+		ବାଛ (val) {
+		ସ୍ଥିତି 0:
+			ଫେରନ୍ତୁ "no";
+		ସ୍ଥିତି 1:
+			ଫେରନ୍ତୁ "yes";
+		ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+			ଫେରନ୍ତୁ "UNKNOWN";
 		}
 	}
 }
 
-static const char *
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *
 lookup_opcode_name(OpCodes code)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name != NULL; i++)
-		if (keywords[i].opcode == code)
-			return(keywords[i].name);
-	return "UNKNOWN";
+	ପାଇଁ (i = 0; keywords[i].name != ଖାଲି; i++)
+		ଯଦି (keywords[i].opcode == code)
+			ଫେରନ୍ତୁ(keywords[i].name);
+	ଫେରନ୍ତୁ "UNKNOWN";
 }
 
-static void
-dump_cfg_int(OpCodes code, int val)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_int(OpCodes code, ପୂର୍ଣ୍ଣସଂଖ୍ୟା val)
 {
-	if (code == oObscureKeystrokeTiming) {
-		if (val == 0) {
+	ଯଦି (code == oObscureKeystrokeTiming) {
+		ଯଦି (val == 0) {
 			printf("%s no\n", lookup_opcode_name(code));
-			return;
-		} else if (val == SSH_KEYSTROKE_DEFAULT_INTERVAL_MS) {
+			ଫେରନ୍ତୁ;
+		} ଅନ୍ୟଥା ଯଦି (val == SSH_KEYSTROKE_DEFAULT_INTERVAL_MS) {
 			printf("%s yes\n", lookup_opcode_name(code));
-			return;
+			ଫେରନ୍ତୁ;
 		}
 		/* FALLTHROUGH */
 	}
 	printf("%s %d\n", lookup_opcode_name(code), val);
 }
 
-static void
-dump_cfg_fmtint(OpCodes code, int val)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_fmtint(OpCodes code, ପୂର୍ଣ୍ଣସଂଖ୍ୟା val)
 {
 	printf("%s %s\n", lookup_opcode_name(code), fmt_intarg(code, val));
 }
 
-static void
-dump_cfg_string(OpCodes code, const char *val)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_string(OpCodes code, ଅଚଳ ଅକ୍ଷର *val)
 {
-	if (val == NULL)
-		return;
+	ଯଦି (val == ଖାଲି)
+		ଫେରନ୍ତୁ;
 	printf("%s %s\n", lookup_opcode_name(code), val);
 }
 
-static void
-dump_cfg_strarray(OpCodes code, u_int count, char **vals)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_strarray(OpCodes code, u_int ଗଣନା_2, ଅକ୍ଷର **vals)
 {
 	u_int i;
 
-	for (i = 0; i < count; i++)
+	ପାଇଁ (i = 0; i < ଗଣନା_2; i++)
 		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
 }
 
-static void
-dump_cfg_strarray_oneline(OpCodes code, u_int count, char **vals)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_strarray_oneline(OpCodes code, u_int ଗଣନା_2, ଅକ୍ଷର **vals)
 {
 	u_int i;
 
 	printf("%s", lookup_opcode_name(code));
-	if (count == 0)
+	ଯଦି (ଗଣନା_2 == 0)
 		printf(" none");
-	for (i = 0; i < count; i++)
+	ପାଇଁ (i = 0; i < ଗଣନା_2; i++)
 		printf(" %s",  vals[i]);
 	printf("\n");
 }
 
-static void
-dump_cfg_forwards(OpCodes code, u_int count, const struct Forward *fwds)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_forwards(OpCodes code, u_int ଗଣନା_2, ଅଚଳ ସଂରଚନା Forward *fwds)
 {
-	const struct Forward *fwd;
+	ଅଚଳ ସଂରଚନା Forward *fwd;
 	u_int i;
 
 	/* oDynamicForward */
-	for (i = 0; i < count; i++) {
+	ପାଇଁ (i = 0; i < ଗଣନା_2; i++) {
 		fwd = &fwds[i];
-		if (code == oDynamicForward && fwd->connect_host != NULL &&
+		ଯଦି (code == oDynamicForward && fwd->connect_host != ଖାଲି &&
 		    strcmp(fwd->connect_host, "socks") != 0)
-			continue;
-		if (code == oLocalForward && fwd->connect_host != NULL &&
+			ଜାରି;
+		ଯଦି (code == oLocalForward && fwd->connect_host != ଖାଲି &&
 		    strcmp(fwd->connect_host, "socks") == 0)
-			continue;
+			ଜାରି;
 		printf("%s", lookup_opcode_name(code));
-		if (fwd->listen_port == PORT_STREAMLOCAL)
+		ଯଦି (fwd->listen_port == PORT_STREAMLOCAL)
 			printf(" %s", fwd->listen_path);
-		else if (fwd->listen_host == NULL)
+		ଅନ୍ୟଥା ଯଦି (fwd->listen_host == ଖାଲି)
 			printf(" %d", fwd->listen_port);
-		else {
+		ଅନ୍ୟଥା {
 			printf(" [%s]:%d",
 			    fwd->listen_host, fwd->listen_port);
 		}
-		if (code != oDynamicForward) {
-			if (fwd->connect_port == PORT_STREAMLOCAL)
+		ଯଦି (code != oDynamicForward) {
+			ଯଦି (fwd->connect_port == PORT_STREAMLOCAL)
 				printf(" %s", fwd->connect_path);
-			else if (fwd->connect_host == NULL)
+			ଅନ୍ୟଥା ଯଦି (fwd->connect_host == ଖାଲି)
 				printf(" %d", fwd->connect_port);
-			else {
+			ଅନ୍ୟଥା {
 				printf(" [%s]:%d",
 				    fwd->connect_host, fwd->connect_port);
 			}
@@ -3735,11 +3735,11 @@ dump_cfg_forwards(OpCodes code, u_int count, const struct Forward *fwds)
 	}
 }
 
-void
-dump_client_config(Options *o, const char *host)
+ଶୂନ୍ୟ
+dump_client_config(Options *o, ଅଚଳ ଅକ୍ଷର *host)
 {
-	int i, r;
-	char buf[8], *all_key;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i, r;
+	ଅକ୍ଷର buf[8], *all_ଚାବି;
 
 	/*
 	 * Expand HostKeyAlgorithms name lists. This isn't handled in
@@ -3747,11 +3747,11 @@ dump_client_config(Options *o, const char *host)
 	 * the host key algorithms are by default dynamically chosen based
 	 * on the host's keys found in known_hosts.
 	 */
-	all_key = sshkey_alg_list(0, 0, 1, ',');
-	if ((r = kex_assemble_names(&o->hostkeyalgorithms, kex_default_pk_alg(),
-	    all_key)) != 0)
+	all_ଚାବି = sshkey_alg_list(0, 0, 1, ',');
+	ଯଦି ((r = kex_assemble_names(&o->hostkeyalgorithms, kex_default_pk_alg(),
+	    all_ଚାବି)) != 0)
 		fatal_fr(r, "expand HostKeyAlgorithms");
-	free(all_key);
+	ମୁକ୍ତ(all_ଚାବି);
 
 	/* Most interesting options first: user, host, port */
 	dump_cfg_string(oHost, o->host_arg);
@@ -3792,11 +3792,11 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_fmtint(oStdinNull, o->stdin_null);
 	dump_cfg_fmtint(oForkAfterAuthentication, o->fork_after_authentication);
 	dump_cfg_fmtint(oStreamLocalBindUnlink, o->fwd_opts.streamlocal_bind_unlink);
-	dump_cfg_fmtint(oStrictHostKeyChecking, o->strict_host_key_checking);
+	dump_cfg_fmtint(o_Strict_Host_ଚାବି_Checking, o->strict_host_ଚାବି_checking);
 	dump_cfg_fmtint(oTCPKeepAlive, o->tcp_keep_alive);
 	dump_cfg_fmtint(oTunnel, o->tun_open);
-	dump_cfg_fmtint(oVerifyHostKeyDNS, o->verify_host_key_dns);
-	dump_cfg_fmtint(oVisualHostKey, o->visual_host_key);
+	dump_cfg_fmtint(o_Verify_Host_ଚାବି_DNS, o->verify_host_ଚାବି_dns);
+	dump_cfg_fmtint(o_Visual_Host_ଚାବି, o->visual_host_ଚାବି);
 	dump_cfg_fmtint(oUpdateHostkeys, o->update_hostkeys);
 	dump_cfg_fmtint(oEnableEscapeCommandline, o->enable_escape_commandline);
 	dump_cfg_fmtint(oWarnWeakCrypto, o->warn_weak_crypto);
@@ -3805,8 +3805,8 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_int(oCanonicalizeMaxDots, o->canonicalize_max_dots);
 	dump_cfg_int(oConnectionAttempts, o->connection_attempts);
 	dump_cfg_int(oForwardX11Timeout, o->forward_x11_timeout);
-	dump_cfg_int(oNumberOfPasswordPrompts, o->number_of_password_prompts);
-	dump_cfg_int(oServerAliveCountMax, o->server_alive_count_max);
+	dump_cfg_int(o_ସଂଖ୍ୟା_Of_Password_Prompts, o->ସଂଖ୍ୟା_of_password_prompts);
+	dump_cfg_int(o_Server_Alive_ଗଣନା_Max, o->server_alive_ଗଣନା_max);
 	dump_cfg_int(oServerAliveInterval, o->server_alive_interval);
 	dump_cfg_int(oRequiredRSASize, o->required_rsa_size);
 	dump_cfg_int(oObscureKeystrokeTiming,
@@ -3817,8 +3817,8 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_string(oBindInterface, o->bind_interface);
 	dump_cfg_string(oCiphers, o->ciphers);
 	dump_cfg_string(oControlPath, o->control_path);
-	dump_cfg_string(oHostKeyAlgorithms, o->hostkeyalgorithms);
-	dump_cfg_string(oHostKeyAlias, o->host_key_alias);
+	dump_cfg_string(o_Host_ଚାବି_Algorithms, o->hostkeyalgorithms);
+	dump_cfg_string(o_Host_ଚାବି_Alias, o->host_ଚାବି_alias);
 	dump_cfg_string(oHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
 	dump_cfg_string(oIdentityAgent, o->identity_agent);
 	dump_cfg_string(oIgnoreUnknown, o->ignored_unknown);
@@ -3832,7 +3832,7 @@ dump_client_config(Options *o, const char *host)
 #ifdef ENABLE_PKCS11
 	dump_cfg_string(oPKCS11Provider, o->pkcs11_provider);
 #endif
-	dump_cfg_string(oSecurityKeyProvider, o->sk_provider);
+	dump_cfg_string(o_Security_ଚାବି_Provider, o->sk_provider);
 	dump_cfg_string(oPreferredAuthentications, o->preferred_authentications);
 	dump_cfg_string(oPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
 	dump_cfg_string(oXAuthLocation, o->xauth_location);
@@ -3841,86 +3841,86 @@ dump_client_config(Options *o, const char *host)
 	dump_cfg_string(oVersionAddendum, o->version_addendum);
 
 	/* Forwards */
-	dump_cfg_forwards(oDynamicForward, o->num_local_forwards, o->local_forwards);
-	dump_cfg_forwards(oLocalForward, o->num_local_forwards, o->local_forwards);
-	dump_cfg_forwards(oRemoteForward, o->num_remote_forwards, o->remote_forwards);
+	dump_cfg_forwards(oDynamicForward, o->ଅଙ୍କ_local_forwards, o->local_forwards);
+	dump_cfg_forwards(oLocalForward, o->ଅଙ୍କ_local_forwards, o->local_forwards);
+	dump_cfg_forwards(oRemoteForward, o->ଅଙ୍କ_remote_forwards, o->remote_forwards);
 
 	/* String array options */
-	dump_cfg_strarray(oIdentityFile, o->num_identity_files, o->identity_files);
-	dump_cfg_strarray_oneline(oCanonicalDomains, o->num_canonical_domains, o->canonical_domains);
-	dump_cfg_strarray(oCertificateFile, o->num_certificate_files, o->certificate_files);
-	dump_cfg_strarray_oneline(oGlobalKnownHostsFile, o->num_system_hostfiles, o->system_hostfiles);
-	dump_cfg_strarray_oneline(oUserKnownHostsFile, o->num_user_hostfiles, o->user_hostfiles);
-	dump_cfg_strarray_oneline(oRevokedHostKeys, o->num_revoked_host_keys, o->revoked_host_keys);
-	dump_cfg_strarray(oSendEnv, o->num_send_env, o->send_env);
-	dump_cfg_strarray(oSetEnv, o->num_setenv, o->setenv);
+	dump_cfg_strarray(oIdentityFile, o->ଅଙ୍କ_identity_files, o->identity_files);
+	dump_cfg_strarray_oneline(oCanonicalDomains, o->ଅଙ୍କ_canonical_domains, o->canonical_domains);
+	dump_cfg_strarray(oCertificateFile, o->ଅଙ୍କ_certificate_files, o->certificate_files);
+	dump_cfg_strarray_oneline(oGlobalKnownHostsFile, o->ଅଙ୍କ_system_hostfiles, o->system_hostfiles);
+	dump_cfg_strarray_oneline(oUserKnownHostsFile, o->ଅଙ୍କ_user_hostfiles, o->user_hostfiles);
+	dump_cfg_strarray_oneline(o_Revoked_Host_ଚାବିଗୁଡ଼ିକ, o->ଅଙ୍କ_revoked_host_ଚାବିଗୁଡ଼ିକ, o->revoked_host_ଚାବିଗୁଡ଼ିକ);
+	dump_cfg_strarray(oSendEnv, o->ଅଙ୍କ_send_env, o->send_env);
+	dump_cfg_strarray(oSetEnv, o->ଅଙ୍କ_setenv, o->setenv);
 	dump_cfg_strarray_oneline(oLogVerbose,
-	    o->num_log_verbose, o->log_verbose);
+	    o->ଅଙ୍କ_log_verbose, o->log_verbose);
 	dump_cfg_strarray_oneline(oChannelTimeout,
-	    o->num_channel_timeouts, o->channel_timeouts);
+	    o->ଅଙ୍କ_channel_timeouts, o->channel_timeouts);
 
 	/* Special cases */
 
 	/* PermitRemoteOpen */
-	if (o->num_permitted_remote_opens == 0)
+	ଯଦି (o->ଅଙ୍କ_permitted_remote_opens == 0)
 		printf("%s any\n", lookup_opcode_name(oPermitRemoteOpen));
-	else
+	ଅନ୍ୟଥା
 		dump_cfg_strarray_oneline(oPermitRemoteOpen,
-		    o->num_permitted_remote_opens, o->permitted_remote_opens);
+		    o->ଅଙ୍କ_permitted_remote_opens, o->permitted_remote_opens);
 
 	/* AddKeysToAgent */
-	if (o->add_keys_to_agent_lifespan <= 0)
-		dump_cfg_fmtint(oAddKeysToAgent, o->add_keys_to_agent);
-	else {
+	ଯଦି (o->add_ଚାବିଗୁଡ଼ିକ_to_agent_lifespan <= 0)
+		dump_cfg_fmtint(o_Add_ଚାବିଗୁଡ଼ିକ_To_Agent, o->add_ଚାବିଗୁଡ଼ିକ_to_agent);
+	ଅନ୍ୟଥା {
 		printf("addkeystoagent%s %d\n",
-		    o->add_keys_to_agent == 3 ? " confirm" : "",
-		    o->add_keys_to_agent_lifespan);
+		    o->add_ଚାବିଗୁଡ଼ିକ_to_agent == 3 ? " confirm" : "",
+		    o->add_ଚାବିଗୁଡ଼ିକ_to_agent_lifespan);
 	}
 
 	/* oForwardAgent */
-	if (o->forward_agent_sock_path == NULL)
+	ଯଦି (o->forward_agent_sock_path == ଖାଲି)
 		dump_cfg_fmtint(oForwardAgent, o->forward_agent);
-	else
+	ଅନ୍ୟଥା
 		dump_cfg_string(oForwardAgent, o->forward_agent_sock_path);
 
 	/* oConnectTimeout */
-	if (o->connection_timeout == -1)
+	ଯଦି (o->connection_timeout == -1)
 		printf("connecttimeout none\n");
-	else
+	ଅନ୍ୟଥା
 		dump_cfg_int(oConnectTimeout, o->connection_timeout);
 
 	/* oTunnelDevice */
 	printf("tunneldevice");
-	if (o->tun_local == SSH_TUNID_ANY)
+	ଯଦି (o->tun_local == SSH_TUNID_ANY)
 		printf(" any");
-	else
+	ଅନ୍ୟଥା
 		printf(" %d", o->tun_local);
-	if (o->tun_remote == SSH_TUNID_ANY)
+	ଯଦି (o->tun_remote == SSH_TUNID_ANY)
 		printf(":any");
-	else
+	ଅନ୍ୟଥା
 		printf(":%d", o->tun_remote);
 	printf("\n");
 
 	/* oCanonicalizePermittedCNAMEs */
 	printf("canonicalizepermittedcnames");
-	if (o->num_permitted_cnames == 0)
+	ଯଦି (o->ଅଙ୍କ_permitted_cnames == 0)
 		printf(" none");
-	for (i = 0; i < o->num_permitted_cnames; i++) {
+	ପାଇଁ (i = 0; i < o->ଅଙ୍କ_permitted_cnames; i++) {
 		printf(" %s:%s", o->permitted_cnames[i].source_list,
 		    o->permitted_cnames[i].target_list);
 	}
 	printf("\n");
 
 	/* oControlPersist */
-	if (o->control_persist == 0 || o->control_persist_timeout == 0)
+	ଯଦି (o->control_persist == 0 || o->control_persist_timeout == 0)
 		dump_cfg_fmtint(oControlPersist, o->control_persist);
-	else
+	ଅନ୍ୟଥା
 		dump_cfg_int(oControlPersist, o->control_persist_timeout);
 
 	/* oEscapeChar */
-	if (o->escape_char == SSH_ESCAPECHAR_NONE)
+	ଯଦି (o->escape_char == SSH_ESCAPECHAR_NONE)
 		printf("escapechar none\n");
-	else {
+	ଅନ୍ୟଥା {
 		vis(buf, o->escape_char, VIS_WHITE, 0);
 		printf("escapechar %s\n", buf);
 	}
@@ -3941,20 +3941,20 @@ dump_client_config(Options *o, const char *host)
 	printf("syslogfacility %s\n", log_facility_name(o->log_facility));
 
 	/* oProxyCommand / oProxyJump */
-	if (o->jump_host == NULL)
+	ଯଦି (o->jump_host == ଖାଲି)
 		dump_cfg_string(oProxyCommand, o->proxy_command);
-	else {
+	ଅନ୍ୟଥା {
 		/* Check for numeric addresses */
-		i = strchr(o->jump_host, ':') != NULL ||
+		i = strchr(o->jump_host, ':') != ଖାଲି ||
 		    strspn(o->jump_host, "1234567890.") == strlen(o->jump_host);
-		snprintf(buf, sizeof(buf), "%d", o->jump_port);
+		snprintf(buf, ଆକାର(buf), "%d", o->jump_port);
 		printf("proxyjump %s%s%s%s%s%s%s%s%s\n",
 		    /* optional additional jump spec */
-		    o->jump_extra == NULL ? "" : o->jump_extra,
-		    o->jump_extra == NULL ? "" : ",",
+		    o->jump_extra == ଖାଲି ? "" : o->jump_extra,
+		    o->jump_extra == ଖାଲି ? "" : ",",
 		    /* optional user */
-		    o->jump_user == NULL ? "" : o->jump_user,
-		    o->jump_user == NULL ? "" : "@",
+		    o->jump_user == ଖାଲି ? "" : o->jump_user,
+		    o->jump_user == ଖାଲି ? "" : "@",
 		    /* opening [ if hostname is numeric */
 		    i ? "[" : "",
 		    /* mandatory hostname */

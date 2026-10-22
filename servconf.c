@@ -10,115 +10,115 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/queue.h>
-#include <sys/stat.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/socket.h>
+#ଅନ୍ତର୍ଭାଵ <sys/queue.h>
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
 #ifdef __OpenBSD__
-#include <sys/sysctl.h>
+#ଅନ୍ତର୍ଭାଵ <sys/sysctl.h>
 #endif
 
-#include <netinet/in.h>
-#include <netinet/ip.h>
+#ଅନ୍ତର୍ଭାଵ <netinet/in.h>
+#ଅନ୍ତର୍ଭାଵ <netinet/ip.h>
 #ifdef HAVE_NET_ROUTE_H
-#include <net/route.h>
+#ଅନ୍ତର୍ଭାଵ <net/route.h>
 #endif
 
-#include <ctype.h>
-#include <glob.h>
-#include <netdb.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stdarg.h>
-#include <errno.h>
-#include <util.h>
+#ଅନ୍ତର୍ଭାଵ <ctype.h>
+#ଅନ୍ତର୍ଭାଵ <glob.h>
+#ଅନ୍ତର୍ଭାଵ <netdb.h>
+#ଅନ୍ତର୍ଭାଵ <pwd.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <signal.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <limits.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <util.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "servconf.h"
-#include "pathnames.h"
-#include "cipher.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "mac.h"
-#include "match.h"
-#include "channels.h"
-#include "groupaccess.h"
-#include "canohost.h"
-#include "packet.h"
-#include "ssherr.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "myproposal.h"
-#include "digest.h"
-#include "version.h"
+#ଅନ୍ତର୍ଭାଵ "xmalloc.h"
+#ଅନ୍ତର୍ଭାଵ "ssh.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "misc.h"
+#ଅନ୍ତର୍ଭାଵ "servconf.h"
+#ଅନ୍ତର୍ଭାଵ "pathnames.h"
+#ଅନ୍ତର୍ଭାଵ "cipher.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "kex.h"
+#ଅନ୍ତର୍ଭାଵ "mac.h"
+#ଅନ୍ତର୍ଭାଵ "match.h"
+#ଅନ୍ତର୍ଭାଵ "channels.h"
+#ଅନ୍ତର୍ଭାଵ "groupaccess.h"
+#ଅନ୍ତର୍ଭାଵ "canohost.h"
+#ଅନ୍ତର୍ଭାଵ "packet.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "hostfile.h"
+#ଅନ୍ତର୍ଭାଵ "auth.h"
+#ଅନ୍ତର୍ଭାଵ "myproposal.h"
+#ଅନ୍ତର୍ଭାଵ "digest.h"
+#ଅନ୍ତର୍ଭାଵ "version.h"
 
 #define SSHD_CONFIG_BLOB_VERSION	1
 
-#if !defined(SSHD_PAM_SERVICE)
+#ଯଦି !defined(SSHD_PAM_SERVICE)
 # define SSHD_PAM_SERVICE		"sshd"
 #endif
 
-static void add_listen_addr(ServerOptions *, const char *,
-    const char *, int);
-static void add_one_listen_addr(ServerOptions *, const char *,
-    const char *, int);
-static void parse_server_config_depth(ServerOptions *options,
-    const char *filename, struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int flags, int *activep, int depth);
+ସ୍ଥିର ଶୂନ୍ୟ add_listen_addr(ServerOptions *, ଅଚଳ ଅକ୍ଷର *,
+    ଅଚଳ ଅକ୍ଷର *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ସ୍ଥିର ଶୂନ୍ୟ add_one_listen_addr(ServerOptions *, ଅଚଳ ଅକ୍ଷର *,
+    ଅଚଳ ଅକ୍ଷର *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ସ୍ଥିର ଶୂନ୍ୟ parse_server_config_depth(ServerOptions *options,
+    ଅଚଳ ଅକ୍ଷର *filename, ସଂରଚନା sshbuf *conf, ସଂରଚନା include_list *includes,
+    ସଂରଚନା connection_info *connectinfo, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *activep, ପୂର୍ଣ୍ଣସଂଖ୍ୟା depth);
 
-extern struct sshbuf *cfg;
+ବାହ୍ୟ ସଂରଚନା sshbuf *cfg;
 
 /* Initializes the server options to their default values. */
 
-void
+ଶୂନ୍ୟ
 initialize_server_options(ServerOptions *options)
 {
-	memset(options, 0, sizeof(*options));
+	memset(options, 0, ଆକାର(*options));
 #define SSHCONF_INT(var, conf, flags, ms, def, cp)	options->var = -1;
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp)	options->var = -1;
-#define SSHCONF_STRING(var, conf, flags, cp)		options->var = NULL;
+#define SSHCONF_STRING(var, conf, flags, cp)		options->var = ଖାଲି;
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	options->nvar = 0; \
-	options->var = NULL;
+	options->var = ଖାଲି;
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
 	init_##funcsuffix(options)
 #define SSHCONF_NONCONF(funcsuffix) \
 	init_##funcsuffix(options)
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
-#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	options->var = NULL;
+#define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	options->var = ଖାଲି;
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 	/* Using macros for these is a bit overkill but forces consistency */
 #define init_hostkeyfile(options) \
-	options->host_key_files = 0; \
-	options->num_host_key_files = 0; \
-	options->host_key_file_userprovided = NULL;
+	options->host_ଚାବି_files = 0; \
+	options->ଅଙ୍କ_host_ଚାବି_files = 0; \
+	options->host_ଚାବି_file_userprovided = ଖାଲି;
 #define init_ipqos(options) \
 	options->ip_qos_interactive = -1; \
 	options->ip_qos_bulk = -1;
 #define init_listenaddress(options) \
-	options->queued_listen_addrs = NULL; \
-	options->num_queued_listens = 0; \
-	options->listen_addrs = NULL; \
-	options->num_listen_addrs = 0;
+	options->queued_listen_addrs = ଖାଲି; \
+	options->ଅଙ୍କ_queued_listens = 0; \
+	options->listen_addrs = ଖାଲି; \
+	options->ଅଙ୍କ_listen_addrs = 0;
 #define init_logfacility(options) \
 	options->log_facility = SYSLOG_FACILITY_NOT_SET;
 #define init_loglevel(options) \
 	options->log_level = SYSLOG_LEVEL_NOT_SET;
 #define init_port(options) \
-	options->num_ports = 0; \
+	options->ଅଙ୍କ_ports = 0; \
 	options->ports_from_cmdline = 0;
 #define init_gatewayports(options) \
 	options->fwd_opts.gateway_ports = -1;
@@ -132,12 +132,12 @@ initialize_server_options(ServerOptions *options)
 	options->max_startups = -1;
 #define init_permituserenv(options) \
 	options->permit_user_env = -1; \
-	options->permit_user_env_allowlist = NULL;
+	options->permit_user_env_allowlist = ଖାଲି;
 #define init_persourcenetblocksize(options) \
 	options->per_source_masklen_ipv4 = -1; \
 	options->per_source_masklen_ipv6 = -1;
 #define init_persourcepenalties(options) \
-	options->per_source_penalty_exempt = NULL; \
+	options->per_source_penalty_exempt = ଖାଲି; \
 	options->per_source_penalty.enabled = -1; \
 	options->per_source_penalty.max_sources4 = -1; \
 	options->per_source_penalty.max_sources6 = -1; \
@@ -155,10 +155,10 @@ initialize_server_options(ServerOptions *options)
 	options->rekey_limit = -1; \
 	options->rekey_interval = -1;
 #define init_subsystem(options) \
-	options->num_subsystems = 0; \
-	options->subsystem_name = NULL; \
-	options->subsystem_command = NULL; \
-	options->subsystem_args = NULL;
+	options->ଅଙ୍କ_subsystems = 0; \
+	options->subsystem_name = ଖାଲି; \
+	options->subsystem_command = ଖାଲି; \
+	options->subsystem_args = ଖାଲି;
 #define init_pubkey_auth_options(options) \
 	options->pubkey_auth_options = -1; \
 	options->max_pubkey_ok = -1;
@@ -196,100 +196,100 @@ initialize_server_options(ServerOptions *options)
 }
 
 /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-static int
-option_clear_or_none(const char *o)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+option_clear_or_none(ଅଚଳ ଅକ୍ଷର *o)
 {
-	return o == NULL || strcasecmp(o, "none") == 0;
+	ଫେରନ୍ତୁ o == ଖାଲି || strcasecmp(o, "none") == 0;
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 assemble_algorithms(ServerOptions *o)
 {
-	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
-	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
-	int r;
+	ଅକ୍ଷର *all_cipher, *all_mac, *all_kex, *all_ଚାବି, *all_sig;
+	ଅକ୍ଷର *def_cipher, *def_mac, *def_kex, *def_ଚାବି, *def_sig;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
 	all_cipher = cipher_alg_list(',', 0);
 	all_mac = mac_alg_list(',');
 	all_kex = kex_alg_list(',');
-	all_key = sshkey_alg_list(0, 0, 1, ',');
+	all_ଚାବି = sshkey_alg_list(0, 0, 1, ',');
 	all_sig = sshkey_alg_list(0, 1, 1, ',');
 	/* remove unsupported algos from default lists */
 	def_cipher = match_filter_allowlist(KEX_SERVER_ENCRYPT, all_cipher);
 	def_mac = match_filter_allowlist(KEX_SERVER_MAC, all_mac);
 	def_kex = match_filter_allowlist(KEX_SERVER_KEX, all_kex);
-	def_key = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
+	def_ଚାବି = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_ଚାବି);
 	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
 #define ASSEMBLE(what, defaults, all) \
-	do { \
-		if ((r = kex_assemble_names(&o->what, defaults, all)) != 0) \
+	କର { \
+		ଯଦି ((r = kex_assemble_names(&o->what, defaults, all)) != 0) \
 			fatal_fr(r, "%s", #what); \
-	} while (0)
+	} ଯେତେବେଳେ (0)
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
 	ASSEMBLE(kex_algorithms, def_kex, all_kex);
-	ASSEMBLE(hostkeyalgorithms, def_key, all_key);
-	ASSEMBLE(hostbased_accepted_algos, def_key, all_key);
-	ASSEMBLE(pubkey_accepted_algos, def_key, all_key);
+	ASSEMBLE(hostkeyalgorithms, def_ଚାବି, all_ଚାବି);
+	ASSEMBLE(hostbased_accepted_algos, def_ଚାବି, all_ଚାବି);
+	ASSEMBLE(pubkey_accepted_algos, def_ଚାବି, all_ଚାବି);
 	ASSEMBLE(ca_sign_algorithms, def_sig, all_sig);
 #undef ASSEMBLE
-	free(all_cipher);
-	free(all_mac);
-	free(all_kex);
-	free(all_key);
-	free(all_sig);
-	free(def_cipher);
-	free(def_mac);
-	free(def_kex);
-	free(def_key);
-	free(def_sig);
+	ମୁକ୍ତ(all_cipher);
+	ମୁକ୍ତ(all_mac);
+	ମୁକ୍ତ(all_kex);
+	ମୁକ୍ତ(all_ଚାବି);
+	ମୁକ୍ତ(all_sig);
+	ମୁକ୍ତ(def_cipher);
+	ମୁକ୍ତ(def_mac);
+	ମୁକ୍ତ(def_kex);
+	ମୁକ୍ତ(def_ଚାବି);
+	ମୁକ୍ତ(def_sig);
 }
 
-void
-servconf_add_hostkey(const char *file, const int line,
-    ServerOptions *options, const char *path, int userprovided)
+ଶୂନ୍ୟ
+servconf_add_hostkey(ଅଚଳ ଅକ୍ଷର *file, ଅଚଳ ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ServerOptions *options, ଅଚଳ ଅକ୍ଷର *path, ପୂର୍ଣ୍ଣସଂଖ୍ୟା userprovided)
 {
-	char *apath = derelativise_path(path);
+	ଅକ୍ଷର *apath = derelativise_path(path);
 
-	opt_array_append2(file, line, "HostKey",
-	    &options->host_key_files, &options->host_key_file_userprovided,
-	    &options->num_host_key_files, apath, userprovided);
-	free(apath);
+	opt_array_append2(file, ଧାଡ଼ି, "HostKey",
+	    &options->host_ଚାବି_files, &options->host_ଚାବି_file_userprovided,
+	    &options->ଅଙ୍କ_host_ଚାବି_files, apath, userprovided);
+	ମୁକ୍ତ(apath);
 }
 
-void
-servconf_add_hostcert(const char *file, const int line,
-    ServerOptions *options, const char *path)
+ଶୂନ୍ୟ
+servconf_add_hostcert(ଅଚଳ ଅକ୍ଷର *file, ଅଚଳ ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି,
+    ServerOptions *options, ଅଚଳ ଅକ୍ଷର *path)
 {
-	char *apath = derelativise_path(path);
+	ଅକ୍ଷର *apath = derelativise_path(path);
 
-	opt_array_append(file, line, "HostCertificate",
-	    &options->host_cert_files, &options->num_host_cert_files, apath);
-	free(apath);
+	opt_array_append(file, ଧାଡ଼ି, "HostCertificate",
+	    &options->host_cert_files, &options->ଅଙ୍କ_host_cert_files, apath);
+	ମୁକ୍ତ(apath);
 }
 
-void
+ଶୂନ୍ୟ
 fill_default_server_options(ServerOptions *options)
 {
 	u_int i;
 
 	/* Portable-specific overrides */
 #ifdef SKIP_PRIVDROP
-	if (options->allow_streamlocal_forwarding != -1 &&
+	ଯଦି (options->allow_streamlocal_forwarding != -1 &&
 	    options->allow_streamlocal_forwarding != FORWARD_DENY)
 		logit("StreamlocalForwarding is not supported on this system");
 	options->allow_streamlocal_forwarding = 0;
-	if (options->fwd_opts.gateway_ports != -1 &&
+	ଯଦି (options->fwd_opts.gateway_ports != -1 &&
 	    options->fwd_opts.gateway_ports != 0)
 		logit("GatewayPorts is not supported on this system");
 	options->fwd_opts.gateway_ports = 0;
 #endif
 
 #define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if (options->var == -1) \
+	ଯଦି (options->var == -1) \
 		options->var = def;
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if (options->var == -1) \
+	ଯଦି (options->var == -1) \
 		options->var = def;
 #define SSHCONF_STRING(var, conf, flags, cp)		/* done manually */
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp)	/* done manually */
@@ -298,10 +298,10 @@ fill_default_server_options(ServerOptions *options)
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(options->var); \
-		options->var = NULL; \
-	} while (0);
+	କର { \
+		ମୁକ୍ତ(options->var); \
+		options->var = ଖାଲି; \
+	} ଯେତେବେଳେ (0);
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 	/* XXX maybe use macros here too to force consistency? */
@@ -320,156 +320,156 @@ fill_default_server_options(ServerOptions *options)
 #undef SSHCONF_ALIAS
 
 #ifdef USE_PAM
-	if (options->pam_service_name == NULL)
+	ଯଦି (options->pam_service_name == ଖାଲି)
 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
 #endif
 
-	if (options->num_host_key_files == 0) {
+	ଯଦି (options->ଅଙ୍କ_host_ଚାବି_files == 0) {
 		/* fill default hostkeys */
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_RSA_KEY_FILE, 0);
+		    PATH_HOST_RSA_ଚାବି_FILE, 0);
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ECDSA_KEY_FILE, 0);
+		    PATH_HOST_ECDSA_ଚାବି_FILE, 0);
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_ED25519_KEY_FILE, 0);
+		    PATH_HOST_ED25519_ଚାବି_FILE, 0);
 		servconf_add_hostkey("[default]", 0, options,
-		    _PATH_HOST_MLDSA44_ED25519_KEY_FILE, 0);
+		    PATH_HOST_MLDSA44_ED25519_ଚାବି_FILE, 0);
 	}
 	/* No certificates by default */
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
-	if (options->listen_addrs == NULL)
-		add_listen_addr(options, NULL, NULL, 0);
-	if (options->pid_file == NULL)
+	ଯଦି (options->ଅଙ୍କ_ports == 0)
+		options->ports[options->ଅଙ୍କ_ports++] = SSH_DEFAULT_PORT;
+	ଯଦି (options->listen_addrs == ଖାଲି)
+		add_listen_addr(options, ଖାଲି, ଖାଲି, 0);
+	ଯଦି (options->pid_file == ଖାଲି)
 		options->pid_file = xstrdup(_PATH_SSH_DAEMON_PID_FILE);
-	if (options->moduli_file == NULL)
+	ଯଦି (options->moduli_file == ଖାଲି)
 		options->moduli_file = xstrdup(_PATH_DH_MODULI);
-	if (options->xauth_location == NULL)
+	ଯଦି (options->xauth_location == ଖାଲି)
 		options->xauth_location = xstrdup(_PATH_XAUTH);
-	if (options->log_facility == SYSLOG_FACILITY_NOT_SET)
+	ଯଦି (options->log_facility == SYSLOG_FACILITY_NOT_SET)
 		options->log_facility = SYSLOG_FACILITY_AUTH;
-	if (options->log_level == SYSLOG_LEVEL_NOT_SET)
+	ଯଦି (options->log_level == SYSLOG_LEVEL_NOT_SET)
 		options->log_level = SYSLOG_LEVEL_INFO;
-	if (options->permit_user_env == -1) {
+	ଯଦି (options->permit_user_env == -1) {
 		options->permit_user_env = 0;
-		options->permit_user_env_allowlist = NULL;
+		options->permit_user_env_allowlist = ଖାଲି;
 	}
-	if (options->rekey_limit == -1)
+	ଯଦି (options->rekey_limit == -1)
 		options->rekey_limit = 0;
-	if (options->rekey_interval == -1)
+	ଯଦି (options->rekey_interval == -1)
 		options->rekey_interval = 0;
-	if (options->fwd_opts.gateway_ports == -1)
+	ଯଦି (options->fwd_opts.gateway_ports == -1)
 		options->fwd_opts.gateway_ports = 0;
-	if (options->max_startups == -1)
+	ଯଦି (options->max_startups == -1)
 		options->max_startups = 100;
-	if (options->max_startups_rate == -1)
+	ଯଦି (options->max_startups_rate == -1)
 		options->max_startups_rate = 30;		/* 30% */
-	if (options->max_startups_begin == -1)
+	ଯଦି (options->max_startups_begin == -1)
 		options->max_startups_begin = 10;
-	if (options->per_source_masklen_ipv4 == -1)
+	ଯଦି (options->per_source_masklen_ipv4 == -1)
 		options->per_source_masklen_ipv4 = 32;
-	if (options->per_source_masklen_ipv6 == -1)
+	ଯଦି (options->per_source_masklen_ipv6 == -1)
 		options->per_source_masklen_ipv6 = 128;
-	if (options->per_source_penalty.enabled == -1)
+	ଯଦି (options->per_source_penalty.enabled == -1)
 		options->per_source_penalty.enabled = 1;
-	if (options->per_source_penalty.max_sources4 == -1)
+	ଯଦି (options->per_source_penalty.max_sources4 == -1)
 		options->per_source_penalty.max_sources4 = 65536;
-	if (options->per_source_penalty.max_sources6 == -1)
+	ଯଦି (options->per_source_penalty.max_sources6 == -1)
 		options->per_source_penalty.max_sources6 = 65536;
-	if (options->per_source_penalty.overflow_mode == -1)
+	ଯଦି (options->per_source_penalty.overflow_mode == -1)
 		options->per_source_penalty.overflow_mode = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-	if (options->per_source_penalty.overflow_mode6 == -1)
+	ଯଦି (options->per_source_penalty.overflow_mode6 == -1)
 		options->per_source_penalty.overflow_mode6 = options->per_source_penalty.overflow_mode;
-	if (options->per_source_penalty.penalty_crash < 0.0)
+	ଯଦି (options->per_source_penalty.penalty_crash < 0.0)
 		options->per_source_penalty.penalty_crash = 90.0;
-	if (options->per_source_penalty.penalty_grace < 0.0)
+	ଯଦି (options->per_source_penalty.penalty_grace < 0.0)
 		options->per_source_penalty.penalty_grace = 10.0;
-	if (options->per_source_penalty.penalty_authfail < 0.0)
+	ଯଦି (options->per_source_penalty.penalty_authfail < 0.0)
 		options->per_source_penalty.penalty_authfail = 5.0;
-	if (options->per_source_penalty.penalty_invaliduser < 0.0)
+	ଯଦି (options->per_source_penalty.penalty_invaliduser < 0.0)
 		options->per_source_penalty.penalty_invaliduser = 5.0;
-	if (options->per_source_penalty.penalty_noauth < 0.0)
+	ଯଦି (options->per_source_penalty.penalty_noauth < 0.0)
 		options->per_source_penalty.penalty_noauth = 1.0;
-	if (options->per_source_penalty.penalty_refuseconnection < 0.0)
+	ଯଦି (options->per_source_penalty.penalty_refuseconnection < 0.0)
 		options->per_source_penalty.penalty_refuseconnection = 10.0;
-	if (options->per_source_penalty.penalty_min < 0.0)
+	ଯଦି (options->per_source_penalty.penalty_min < 0.0)
 		options->per_source_penalty.penalty_min = 15.0;
-	if (options->per_source_penalty.penalty_max < 0.0)
+	ଯଦି (options->per_source_penalty.penalty_max < 0.0)
 		options->per_source_penalty.penalty_max = 600.0;
-	if (options->num_authkeys_files == 0) {
+	ଯଦି (options->ଅଙ୍କ_authkeys_files == 0) {
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
-		    _PATH_SSH_USER_PERMITTED_KEYS);
+		    &options->authorized_ଚାବିଗୁଡ଼ିକ_files,
+		    &options->ଅଙ୍କ_authkeys_files,
+		    PATH_SSH_USER_PERMITTED_ଚାବିଗୁଡ଼ିକ);
 		opt_array_append("[default]", 0, "AuthorizedKeysFiles",
-		    &options->authorized_keys_files,
-		    &options->num_authkeys_files,
+		    &options->authorized_ଚାବିଗୁଡ଼ିକ_files,
+		    &options->ଅଙ୍କ_authkeys_files,
 		    _PATH_SSH_USER_PERMITTED_KEYS2);
 	}
-	if (options->ip_qos_interactive == -1)
+	ଯଦି (options->ip_qos_interactive == -1)
 		options->ip_qos_interactive = IPTOS_DSCP_EF;
-	if (options->ip_qos_bulk == -1)
+	ଯଦି (options->ip_qos_bulk == -1)
 		options->ip_qos_bulk = IPTOS_DSCP_CS0;
-	if (options->version_addendum == NULL)
+	ଯଦି (options->version_addendum == ଖାଲି)
 		options->version_addendum = xstrdup("");
-	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
+	ଯଦି (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
 		options->fwd_opts.streamlocal_bind_mask = 0177;
-	if (options->fwd_opts.streamlocal_bind_unlink == -1)
+	ଯଦି (options->fwd_opts.streamlocal_bind_unlink == -1)
 		options->fwd_opts.streamlocal_bind_unlink = 0;
-	if (options->sk_provider == NULL)
+	ଯଦି (options->sk_provider == ଖାଲି)
 		options->sk_provider = xstrdup("internal");
-	if (options->sshd_session_path == NULL)
+	ଯଦି (options->sshd_session_path == ଖାଲି)
 		options->sshd_session_path = xstrdup(_PATH_SSHD_SESSION);
-	if (options->sshd_auth_path == NULL)
+	ଯଦି (options->sshd_auth_path == ଖାଲି)
 		options->sshd_auth_path = xstrdup(_PATH_SSHD_AUTH);
-	if (options->pubkey_auth_options == -1) {
+	ଯଦି (options->pubkey_auth_options == -1) {
 		options->pubkey_auth_options = 0;
 		options->max_pubkey_ok = DEFAULT_AUTH_FAIL_MAX;
 	}
-	if (options->agent_socket_path == NULL)
+	ଯଦି (options->agent_socket_path == ଖାଲି)
 		options->agent_socket_path = xstrdup(_PATH_SSH_AGENT_SOCKET_DIR);
 
 	assemble_algorithms(options);
 
 #define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+	କର { \
+		ଯଦି (option_clear_or_none(v)) { \
+			ମୁକ୍ତ(v); \
+			v = ଖାଲି; \
 		} \
-	} while(0)
+	} ଯେତେବେଳେ(0)
 #define CLEAR_ON_NONE_ARRAY(v, nv, none) \
-	do { \
-		if (options->nv == 1 && \
+	କର { \
+		ଯଦି (options->nv == 1 && \
 		    strcasecmp(options->v[0], none) == 0) { \
-			free(options->v[0]); \
-			free(options->v); \
-			options->v = NULL; \
+			ମୁକ୍ତ(options->v[0]); \
+			ମୁକ୍ତ(options->v); \
+			options->v = ଖାଲି; \
 			options->nv = 0; \
 		} \
-	} while (0)
+	} ଯେତେବେଳେ (0)
 	CLEAR_ON_NONE(options->pid_file);
 	CLEAR_ON_NONE(options->xauth_location);
 	CLEAR_ON_NONE(options->banner);
-	CLEAR_ON_NONE(options->trusted_user_ca_keys);
+	CLEAR_ON_NONE(options->trusted_user_ca_ଚାବିଗୁଡ଼ିକ);
 	CLEAR_ON_NONE(options->sk_provider);
 	CLEAR_ON_NONE(options->authorized_principals_file);
 	CLEAR_ON_NONE(options->adm_forced_command);
 	CLEAR_ON_NONE(options->chroot_directory);
 	CLEAR_ON_NONE(options->routing_domain);
-	CLEAR_ON_NONE(options->host_key_agent);
+	CLEAR_ON_NONE(options->host_ଚାବି_agent);
 	CLEAR_ON_NONE(options->per_source_penalty_exempt);
 	CLEAR_ON_NONE(options->agent_socket_path);
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		CLEAR_ON_NONE(options->host_key_files[i]);
-	for (i = 0; i < options->num_host_cert_files; i++)
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_host_ଚାବି_files; i++)
+		CLEAR_ON_NONE(options->host_ଚାବି_files[i]);
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_host_cert_files; i++)
 		CLEAR_ON_NONE(options->host_cert_files[i]);
 
-	CLEAR_ON_NONE_ARRAY(channel_timeouts, num_channel_timeouts, "none");
-	CLEAR_ON_NONE_ARRAY(auth_methods, num_auth_methods, "any");
-	CLEAR_ON_NONE_ARRAY(revoked_keys_files, num_revoked_keys_files, "none");
-	CLEAR_ON_NONE_ARRAY(authorized_keys_files, num_authkeys_files, "none");
+	CLEAR_ON_NONE_ARRAY(channel_timeouts, ଅଙ୍କ_channel_timeouts, "none");
+	CLEAR_ON_NONE_ARRAY(auth_methods, ଅଙ୍କ_auth_methods, "any");
+	CLEAR_ON_NONE_ARRAY(revoked_ଚାବିଗୁଡ଼ିକ_files, ଅଙ୍କ_revoked_ଚାବିଗୁଡ଼ିକ_files, "none");
+	CLEAR_ON_NONE_ARRAY(authorized_ଚାବିଗୁଡ଼ିକ_files, ଅଙ୍କ_authkeys_files, "none");
 #undef CLEAR_ON_NONE
 #undef CLEAR_ON_NONE_ARRAY
 }
@@ -487,7 +487,7 @@ fill_default_server_options(ServerOptions *options)
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 /* Keyword tokens. */
-typedef enum {
+ପ୍ରକାରବ୍ୟାଖ୍ୟା ଗଣନା {
 	sBadOption,		/* == unknown option */
 	SSHD_CONFIG_ENTRIES
 	sMatch, sInclude,
@@ -530,15 +530,15 @@ typedef enum {
 	{ #old, s##conf, flags },
 
 /* Textual representation of the tokens. */
-static struct {
-	const char *name;
+ସ୍ଥିର ସଂରଚନା {
+	ଅଚଳ ଅକ୍ଷର *name;
 	ServerOpCodes opcode;
 	u_int flags;
 } keywords[] = {
 	SSHD_CONFIG_ENTRIES
 	{ "match", sMatch, SSHCFG_ALL },
 	{ "include", sInclude, SSHCFG_ALL },
-	{ NULL, sBadOption, 0 }
+	{ ଖାଲି, sBadOption, 0 }
 };
 #undef SSHCONF_INT
 #undef SSHCONF_INTFLAG
@@ -553,28 +553,28 @@ static struct {
 #undef SSHCONF_UNSUPPORTED_STRING
 #undef SSHCONF_ALIAS
 
-static struct {
-	int val;
-	char *text;
+ସ୍ଥିର ସଂରଚନା {
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା val;
+	ଅକ୍ଷର *text;
 } tunmode_desc[] = {
 	{ SSH_TUNMODE_NO, "no" },
 	{ SSH_TUNMODE_POINTOPOINT, "point-to-point" },
 	{ SSH_TUNMODE_ETHERNET, "ethernet" },
 	{ SSH_TUNMODE_YES, "yes" },
-	{ -1, NULL }
+	{ -1, ଖାଲି }
 };
 
 /* Returns an opcode name from its number */
 
-static const char *
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *
 lookup_opcode_name(ServerOpCodes code)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name != NULL; i++)
-		if (keywords[i].opcode == code)
-			return(keywords[i].name);
-	return "UNKNOWN";
+	ପାଇଁ (i = 0; keywords[i].name != ଖାଲି; i++)
+		ଯଦି (keywords[i].opcode == code)
+			ଫେରନ୍ତୁ(keywords[i].name);
+	ଫେରନ୍ତୁ "UNKNOWN";
 }
 
 
@@ -582,135 +582,135 @@ lookup_opcode_name(ServerOpCodes code)
  * Returns the number of the token pointed to by cp or sBadOption.
  */
 
-static ServerOpCodes
-parse_token(const char *cp, const char *filename,
-	    int linenum, u_int *flags)
+ସ୍ଥିର ServerOpCodes
+parse_token(ଅଚଳ ଅକ୍ଷର *cp, ଅଚଳ ଅକ୍ଷର *filename,
+	    ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum, u_int *flags)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name; i++)
-		if (strcasecmp(cp, keywords[i].name) == 0) {
+	ପାଇଁ (i = 0; keywords[i].name; i++)
+		ଯଦି (strcasecmp(cp, keywords[i].name) == 0) {
 			*flags = keywords[i].flags;
-			return keywords[i].opcode;
+			ଫେରନ୍ତୁ keywords[i].opcode;
 		}
 
 	error("%s: line %d: Bad configuration option: %s",
 	    filename, linenum, cp);
-	return sBadOption;
+	ଫେରନ୍ତୁ sBadOption;
 }
 
-char *
-derelativise_path(const char *path)
+ଅକ୍ଷର *
+derelativise_path(ଅଚଳ ଅକ୍ଷର *path)
 {
-	char *expanded, *ret, cwd[PATH_MAX];
+	ଅକ୍ଷର *expanded, *ret, cwd[PATH_MAX];
 
-	if (strcasecmp(path, "none") == 0)
-		return xstrdup("none");
+	ଯଦି (strcasecmp(path, "none") == 0)
+		ଫେରନ୍ତୁ xstrdup("none");
 	expanded = tilde_expand_filename(path, getuid());
-	if (path_absolute(expanded))
-		return expanded;
-	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	ଯଦି (path_absolute(expanded))
+		ଫେରନ୍ତୁ expanded;
+	ଯଦି (getcwd(cwd, ଆକାର(cwd)) == ଖାଲି)
 		fatal_f("getcwd: %s", strerror(errno));
 	xasprintf(&ret, "%s/%s", cwd, expanded);
-	free(expanded);
-	return ret;
+	ମୁକ୍ତ(expanded);
+	ଫେରନ୍ତୁ ret;
 }
 
-static void
-add_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+ସ୍ଥିର ଶୂନ୍ୟ
+add_listen_addr(ServerOptions *options, ଅଚଳ ଅକ୍ଷର *addr,
+    ଅଚଳ ଅକ୍ଷର *rdomain, ପୂର୍ଣ୍ଣସଂଖ୍ୟା port)
 {
 	u_int i;
 
-	if (port > 0)
+	ଯଦି (port > 0)
 		add_one_listen_addr(options, addr, rdomain, port);
-	else {
-		for (i = 0; i < options->num_ports; i++) {
+	ଅନ୍ୟଥା {
+		ପାଇଁ (i = 0; i < options->ଅଙ୍କ_ports; i++) {
 			add_one_listen_addr(options, addr, rdomain,
 			    options->ports[i]);
 		}
 	}
 }
 
-static void
-add_one_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+ସ୍ଥିର ଶୂନ୍ୟ
+add_one_listen_addr(ServerOptions *options, ଅଚଳ ଅକ୍ଷର *addr,
+    ଅଚଳ ଅକ୍ଷର *rdomain, ପୂର୍ଣ୍ଣସଂଖ୍ୟା port)
 {
-	struct addrinfo hints, *ai, *aitop;
-	char strport[NI_MAXSERV];
-	int gaierr;
+	ସଂରଚନା addrinfo hints, *ai, *aitop;
+	ଅକ୍ଷର strport[NI_MAXSERV];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା gaierr;
 	u_int i;
 
 	/* Find listen_addrs entry for this rdomain */
-	for (i = 0; i < options->num_listen_addrs; i++) {
-		if (rdomain == NULL && options->listen_addrs[i].rdomain == NULL)
-			break;
-		if (rdomain == NULL || options->listen_addrs[i].rdomain == NULL)
-			continue;
-		if (strcmp(rdomain, options->listen_addrs[i].rdomain) == 0)
-			break;
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_listen_addrs; i++) {
+		ଯଦି (rdomain == ଖାଲି && options->listen_addrs[i].rdomain == ଖାଲି)
+			ଭାଙ୍ଗ;
+		ଯଦି (rdomain == ଖାଲି || options->listen_addrs[i].rdomain == ଖାଲି)
+			ଜାରି;
+		ଯଦି (strcmp(rdomain, options->listen_addrs[i].rdomain) == 0)
+			ଭାଙ୍ଗ;
 	}
-	if (i >= options->num_listen_addrs) {
+	ଯଦି (i >= options->ଅଙ୍କ_listen_addrs) {
 		/* No entry for this rdomain; allocate one */
-		if (i >= INT_MAX)
+		ଯଦି (i >= INT_MAX)
 			fatal_f("too many listen addresses");
 		options->listen_addrs = xrecallocarray(options->listen_addrs,
-		    options->num_listen_addrs, options->num_listen_addrs + 1,
-		    sizeof(*options->listen_addrs));
-		i = options->num_listen_addrs++;
-		if (rdomain != NULL)
+		    options->ଅଙ୍କ_listen_addrs, options->ଅଙ୍କ_listen_addrs + 1,
+		    ଆକାର(*options->listen_addrs));
+		i = options->ଅଙ୍କ_listen_addrs++;
+		ଯଦି (rdomain != ଖାଲି)
 			options->listen_addrs[i].rdomain = xstrdup(rdomain);
 	}
 	/* options->listen_addrs[i] points to the addresses for this rdomain */
 
-	memset(&hints, 0, sizeof(hints));
+	memset(&hints, 0, ଆକାର(hints));
 	hints.ai_family = options->address_family;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = (addr == NULL) ? AI_PASSIVE : 0;
-	snprintf(strport, sizeof strport, "%d", port);
-	if ((gaierr = getaddrinfo(addr, strport, &hints, &aitop)) != 0)
+	hints.ai_flags = (addr == ଖାଲି) ? AI_PASSIVE : 0;
+	snprintf(strport, ଆକାର strport, "%d", port);
+	ଯଦି ((gaierr = getaddrinfo(addr, strport, &hints, &aitop)) != 0)
 		fatal("bad addr or host: %s (%s)",
 		    addr ? addr : "<NULL>",
 		    ssh_gai_strerror(gaierr));
-	for (ai = aitop; ai->ai_next; ai = ai->ai_next)
+	ପାଇଁ (ai = aitop; ai->ai_next; ai = ai->ai_next)
 		;
 	ai->ai_next = options->listen_addrs[i].addrs;
 	options->listen_addrs[i].addrs = aitop;
 }
 
 /* Returns nonzero if the routing domain name is valid */
-static int
-valid_rdomain(const char *name)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+valid_rdomain(ଅଚଳ ଅକ୍ଷର *name)
 {
-#if defined(HAVE_SYS_VALID_RDOMAIN)
-	return sys_valid_rdomain(name);
-#elif defined(__OpenBSD__)
-	const char *errstr;
-	long long num;
-	struct rt_tableinfo info;
-	int mib[6];
-	size_t miblen = sizeof(mib);
+#ଯଦି defined(HAVE_SYS_VALID_RDOMAIN)
+	ଫେରନ୍ତୁ sys_valid_rdomain(name);
+#ନଚେତଯଦି defined(__OpenBSD__)
+	ଅଚଳ ଅକ୍ଷର *errstr;
+	long long ଅଙ୍କ;
+	ସଂରଚନା rt_tableinfo info;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା mib[6];
+	size_t miblen = ଆକାର(mib);
 
-	if (name == NULL)
-		return 1;
+	ଯଦି (name == ଖାଲି)
+		ଫେରନ୍ତୁ 1;
 
-	num = strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL)
-		return 0;
+	ଅଙ୍କ = strtonum(name, 0, 255, &errstr);
+	ଯଦି (errstr != ଖାଲି)
+		ଫେରନ୍ତୁ 0;
 
 	/* Check whether the table actually exists */
-	memset(mib, 0, sizeof(mib));
+	memset(mib, 0, ଆକାର(mib));
 	mib[0] = CTL_NET;
 	mib[1] = PF_ROUTE;
 	mib[4] = NET_RT_TABLE;
-	mib[5] = (int)num;
-	if (sysctl(mib, 6, &info, &miblen, NULL, 0) == -1)
-		return 0;
+	mib[5] = (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)ଅଙ୍କ;
+	ଯଦି (sysctl(mib, 6, &info, &miblen, ଖାଲି, 0) == -1)
+		ଫେରନ୍ତୁ 0;
 
-	return 1;
-#else /* defined(__OpenBSD__) */
+	ଫେରନ୍ତୁ 1;
+#ଅନ୍ୟଥା /* defined(__OpenBSD__) */
 	error("Routing domains are not supported on this platform");
-	return 0;
+	ଫେରନ୍ତୁ 0;
 #endif
 }
 
@@ -718,45 +718,45 @@ valid_rdomain(const char *name)
  * Queue a ListenAddress to be processed once we have all of the Ports
  * and AddressFamily options.
  */
-static void
-queue_listen_addr(ServerOptions *options, const char *addr,
-    const char *rdomain, int port)
+ସ୍ଥିର ଶୂନ୍ୟ
+queue_listen_addr(ServerOptions *options, ଅଚଳ ଅକ୍ଷର *addr,
+    ଅଚଳ ଅକ୍ଷର *rdomain, ପୂର୍ଣ୍ଣସଂଖ୍ୟା port)
 {
-	struct queued_listenaddr *qla;
+	ସଂରଚନା queued_listenaddr *qla;
 
 	options->queued_listen_addrs = xrecallocarray(
 	    options->queued_listen_addrs,
-	    options->num_queued_listens, options->num_queued_listens + 1,
-	    sizeof(*options->queued_listen_addrs));
-	qla = &options->queued_listen_addrs[options->num_queued_listens++];
+	    options->ଅଙ୍କ_queued_listens, options->ଅଙ୍କ_queued_listens + 1,
+	    ଆକାର(*options->queued_listen_addrs));
+	qla = &options->queued_listen_addrs[options->ଅଙ୍କ_queued_listens++];
 	qla->addr = xstrdup(addr);
 	qla->port = port;
-	qla->rdomain = rdomain == NULL ? NULL : xstrdup(rdomain);
+	qla->rdomain = rdomain == ଖାଲି ? ଖାଲି : xstrdup(rdomain);
 }
 
 /*
  * Process queued (text) ListenAddress entries.
  */
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 process_queued_listen_addrs(ServerOptions *options)
 {
 	u_int i;
-	struct queued_listenaddr *qla;
+	ସଂରଚନା queued_listenaddr *qla;
 
-	if (options->num_ports == 0)
-		options->ports[options->num_ports++] = SSH_DEFAULT_PORT;
-	if (options->address_family == -1)
+	ଯଦି (options->ଅଙ୍କ_ports == 0)
+		options->ports[options->ଅଙ୍କ_ports++] = SSH_DEFAULT_PORT;
+	ଯଦି (options->address_family == -1)
 		options->address_family = AF_UNSPEC;
 
-	for (i = 0; i < options->num_queued_listens; i++) {
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_queued_listens; i++) {
 		qla = &options->queued_listen_addrs[i];
 		add_listen_addr(options, qla->addr, qla->rdomain, qla->port);
-		free(qla->addr);
-		free(qla->rdomain);
+		ମୁକ୍ତ(qla->addr);
+		ମୁକ୍ତ(qla->rdomain);
 	}
-	free(options->queued_listen_addrs);
-	options->queued_listen_addrs = NULL;
-	options->num_queued_listens = 0;
+	ମୁକ୍ତ(options->queued_listen_addrs);
+	options->queued_listen_addrs = ଖାଲି;
+	options->ଅଙ୍କ_queued_listens = 0;
 }
 
 /*
@@ -792,36 +792,36 @@ process_queued_listen_addrs(ServerOptions *options)
  *		PermittedChannelRequests session,forwarded-tcpip
  */
 
-static int
-match_cfg_line_group(const char *grps, int line, const char *user)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+match_cfg_ଧାଡ଼ି_group(ଅଚଳ ଅକ୍ଷର *grps, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି, ଅଚଳ ଅକ୍ଷର *user)
 {
-	int result = 0;
-	struct passwd *pw;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା result = 0;
+	ସଂରଚନା passwd *pw;
 
-	if (user == NULL)
-		goto out;
+	ଯଦି (user == ଖାଲି)
+		ଯାଅ out;
 
-	if ((pw = getpwnam(user)) == NULL) {
+	ଯଦି ((pw = getpwnam(user)) == ଖାଲି) {
 		debug("Can't match group at line %d because user %.100s does "
-		    "not exist", line, user);
-	} else if (ga_init(pw->pw_name, pw->pw_gid) == 0) {
+		    "not exist", ଧାଡ଼ି, user);
+	} ଅନ୍ୟଥା ଯଦି (ga_init(pw->pw_name, pw->pw_gid) == 0) {
 		debug("Can't Match group because user %.100s not in any group "
-		    "at line %d", user, line);
-	} else if (ga_match_pattern_list(grps) != 1) {
+		    "at line %d", user, ଧାଡ଼ି);
+	} ଅନ୍ୟଥା ଯଦି (ga_match_pattern_list(grps) != 1) {
 		debug("user %.100s does not match group list %.100s at line %d",
-		    user, grps, line);
-	} else {
+		    user, grps, ଧାଡ଼ି);
+	} ଅନ୍ୟଥା {
 		debug("user %.100s matched group list %.100s at line %d", user,
-		    grps, line);
+		    grps, ଧାଡ଼ି);
 		result = 1;
 	}
 out:
 	ga_free();
-	return result;
+	ଫେରନ୍ତୁ result;
 }
 
-static void
-match_test_missing_fatal(const char *criteria, const char *attrib)
+ସ୍ଥିର ଶୂନ୍ୟ
+match_test_missing_fatal(ଅଚଳ ଅକ୍ଷର *criteria, ଅଚଳ ଅକ୍ଷର *attrib)
 {
 	fatal("'Match %s' in configuration but '%s' not in connection "
 	    "test specification.", criteria, attrib);
@@ -832,1221 +832,1221 @@ match_test_missing_fatal(const char *criteria, const char *attrib)
  * to check every attribute and set the result to zero if any attribute does
  * not match.
  */
-static int
-match_cfg_line(const char *full_line, int *acp, char ***avp,
-    int line, struct connection_info *ci)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+match_cfg_ଧାଡ଼ି(ଅଚଳ ଅକ୍ଷର *full_ଧାଡ଼ି, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *acp, ଅକ୍ଷର ***avp,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଧାଡ଼ି, ସଂରଚନା connection_info *ci)
 {
-	int result = 1, attributes = 0, port;
-	char *arg, *attrib = NULL, *oattrib;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା result = 1, attributes = 0, port;
+	ଅକ୍ଷର *arg, *attrib = ଖାଲି, *oattrib;
 
-	if (ci == NULL) {
+	ଯଦି (ci == ଖାଲି) {
 		debug3("checking syntax for 'Match %s' on line %d",
-		    full_line, line);
-	} else {
+		    full_ଧାଡ଼ି, ଧାଡ଼ି);
+	} ଅନ୍ୟଥା {
 		debug3("checking match for '%s' user %s%s host %s addr %s "
-		    "laddr %s lport %d rdomain %s on line %d", full_line,
+		    "laddr %s lport %d rdomain %s on line %d", full_ଧାଡ଼ି,
 		    ci->user ? ci->user : "(null)",
 		    ci->user_invalid ? " (invalid)" : "",
 		    ci->host ? ci->host : "(null)",
 		    ci->address ? ci->address : "(null)",
 		    ci->laddress ? ci->laddress : "(null)", ci->lport,
-		    ci->rdomain ? ci->rdomain : "(null)", line);
+		    ci->rdomain ? ci->rdomain : "(null)", ଧାଡ଼ି);
 	}
 
-	while ((oattrib = argv_next(acp, avp)) != NULL) {
+	ଯେତେବେଳେ ((oattrib = argv_next(acp, avp)) != ଖାଲି) {
 		/* Terminate on comment */
-		if (*oattrib == '#') {
+		ଯଦି (*oattrib == '#') {
 			argv_consume(acp); /* mark all arguments consumed */
-			break;
+			ଭାଙ୍ଗ;
 		}
 		attrib = xstrdup(oattrib);
-		arg = NULL;
+		arg = ଖାଲି;
 		attributes++;
 		/* Criterion "all" has no argument and must appear alone */
-		if (strcasecmp(attrib, "all") == 0) {
-			if (attributes > 1 ||
-			    ((arg = argv_next(acp, avp)) != NULL &&
+		ଯଦି (strcasecmp(attrib, "all") == 0) {
+			ଯଦି (attributes > 1 ||
+			    ((arg = argv_next(acp, avp)) != ଖାଲି &&
 			    *arg != '\0' && *arg != '#')) {
 				error("'all' cannot be combined with other "
 				    "Match attributes");
 				result = -1;
-				goto out;
+				ଯାଅ out;
 			}
-			if (arg != NULL && *arg == '#')
+			ଯଦି (arg != ଖାଲି && *arg == '#')
 				argv_consume(acp); /* consume remaining args */
 			result = 1;
-			goto out;
+			ଯାଅ out;
 		}
 		/* Criterion "invalid-user" also has no argument */
-		if (strcasecmp(attrib, "invalid-user") == 0) {
-			if (ci == NULL) {
+		ଯଦି (strcasecmp(attrib, "invalid-user") == 0) {
+			ଯଦି (ci == ଖାଲି) {
 				result = 0;
-				goto next;
+				ଯାଅ next;
 			}
-			if (ci->user_invalid == 0)
+			ଯଦି (ci->user_invalid == 0)
 				result = 0;
-			else
-				debug("matched invalid-user at line %d", line);
-			goto next;
+			ଅନ୍ୟଥା
+				debug("matched invalid-user at line %d", ଧାଡ଼ି);
+			ଯାଅ next;
 		}
 
 		/* Keep this list in sync with below */
-		if (strprefix(attrib, "user=", 1) != NULL ||
-		    strprefix(attrib, "group=", 1) != NULL ||
-		    strprefix(attrib, "host=", 1) != NULL ||
-		    strprefix(attrib, "address=", 1) != NULL ||
-		    strprefix(attrib, "localaddress=", 1) != NULL ||
-		    strprefix(attrib, "localport=", 1) != NULL ||
-		    strprefix(attrib, "rdomain=", 1) != NULL ||
-		    strprefix(attrib, "version=", 1) != NULL) {
+		ଯଦି (strprefix(attrib, "user=", 1) != ଖାଲି ||
+		    strprefix(attrib, "group=", 1) != ଖାଲି ||
+		    strprefix(attrib, "host=", 1) != ଖାଲି ||
+		    strprefix(attrib, "address=", 1) != ଖାଲି ||
+		    strprefix(attrib, "localaddress=", 1) != ଖାଲି ||
+		    strprefix(attrib, "localport=", 1) != ଖାଲି ||
+		    strprefix(attrib, "rdomain=", 1) != ଖାଲି ||
+		    strprefix(attrib, "version=", 1) != ଖାଲି) {
 			arg = strchr(attrib, '=');
 			*(arg++) = '\0';
-		} else {
+		} ଅନ୍ୟଥା {
 			arg = argv_next(acp, avp);
 		}
 
 		/* All other criteria require an argument */
-		if (arg == NULL || *arg == '\0' || *arg == '#') {
+		ଯଦି (arg == ଖାଲି || *arg == '\0' || *arg == '#') {
 			error("Missing Match criteria for %s", attrib);
 			result = -1;
-			goto out;
+			ଯାଅ out;
 		}
-		if (strcasecmp(attrib, "user") == 0) {
-			if (ci == NULL || (ci->test && ci->user == NULL)) {
+		ଯଦି (strcasecmp(attrib, "user") == 0) {
+			ଯଦି (ci == ଖାଲି || (ci->test && ci->user == ଖାଲି)) {
 				result = 0;
-				goto next;
+				ଯାଅ next;
 			}
-			if (ci->user == NULL)
+			ଯଦି (ci->user == ଖାଲି)
 				match_test_missing_fatal("User", "user");
-			if (match_usergroup_pattern_list(ci->user, arg) != 1)
+			ଯଦି (match_usergroup_pattern_list(ci->user, arg) != 1)
 				result = 0;
-			else
+			ଅନ୍ୟଥା
 				debug("user %.100s matched 'User %.100s' at "
-				    "line %d", ci->user, arg, line);
-		} else if (strcasecmp(attrib, "group") == 0) {
-			if (ci == NULL || (ci->test && ci->user == NULL)) {
+				    "line %d", ci->user, arg, ଧାଡ଼ି);
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "group") == 0) {
+			ଯଦି (ci == ଖାଲି || (ci->test && ci->user == ଖାଲି)) {
 				result = 0;
-				goto next;
+				ଯାଅ next;
 			}
-			if (ci->user == NULL)
+			ଯଦି (ci->user == ଖାଲି)
 				match_test_missing_fatal("Group", "user");
-			switch (match_cfg_line_group(arg, line, ci->user)) {
-			case -1:
+			ବାଛ (match_cfg_ଧାଡ଼ି_group(arg, ଧାଡ଼ି, ci->user)) {
+			ସ୍ଥିତି -1:
 				result = -1;
-				goto out;
-			case 0:
+				ଯାଅ out;
+			ସ୍ଥିତି 0:
 				result = 0;
 			}
-		} else if (strcasecmp(attrib, "host") == 0) {
-			if (ci == NULL || (ci->test && ci->host == NULL)) {
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "host") == 0) {
+			ଯଦି (ci == ଖାଲି || (ci->test && ci->host == ଖାଲି)) {
 				result = 0;
-				goto next;
+				ଯାଅ next;
 			}
-			if (ci->host == NULL)
+			ଯଦି (ci->host == ଖାଲି)
 				match_test_missing_fatal("Host", "host");
-			if (match_hostname(ci->host, arg) != 1)
+			ଯଦି (match_hostname(ci->host, arg) != 1)
 				result = 0;
-			else
+			ଅନ୍ୟଥା
 				debug("connection from %.100s matched 'Host "
-				    "%.100s' at line %d", ci->host, arg, line);
-		} else if (strcasecmp(attrib, "address") == 0) {
-			if (ci == NULL || (ci->test && ci->address == NULL)) {
-				if (addr_match_list(NULL, arg) != 0)
+				    "%.100s' at line %d", ci->host, arg, ଧାଡ଼ି);
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "address") == 0) {
+			ଯଦି (ci == ଖାଲି || (ci->test && ci->address == ଖାଲି)) {
+				ଯଦି (addr_match_list(ଖାଲି, arg) != 0)
 					fatal("Invalid Match address argument "
-					    "'%s' at line %d", arg, line);
+					    "'%s' at line %d", arg, ଧାଡ଼ି);
 				result = 0;
-				goto next;
+				ଯାଅ next;
 			}
-			if (ci->address == NULL)
+			ଯଦି (ci->address == ଖାଲି)
 				match_test_missing_fatal("Address", "addr");
-			switch (addr_match_list(ci->address, arg)) {
-			case 1:
+			ବାଛ (addr_match_list(ci->address, arg)) {
+			ସ୍ଥିତି 1:
 				debug("connection from %.100s matched 'Address "
-				    "%.100s' at line %d", ci->address, arg, line);
-				break;
-			case 0:
-			case -1:
+				    "%.100s' at line %d", ci->address, arg, ଧାଡ଼ି);
+				ଭାଙ୍ଗ;
+			ସ୍ଥିତି 0:
+			ସ୍ଥିତି -1:
 				result = 0;
-				break;
-			case -2:
+				ଭାଙ୍ଗ;
+			ସ୍ଥିତି -2:
 				result = -1;
-				goto out;
+				ଯାଅ out;
 			}
-		} else if (strcasecmp(attrib, "localaddress") == 0){
-			if (ci == NULL || (ci->test && ci->laddress == NULL)) {
-				if (addr_match_list(NULL, arg) != 0)
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "localaddress") == 0){
+			ଯଦି (ci == ଖାଲି || (ci->test && ci->laddress == ଖାଲି)) {
+				ଯଦି (addr_match_list(ଖାଲି, arg) != 0)
 					fatal("Invalid Match localaddress "
 					    "argument '%s' at line %d", arg,
-					    line);
+					    ଧାଡ଼ି);
 				result = 0;
-				goto next;
+				ଯାଅ next;
 			}
-			if (ci->laddress == NULL)
+			ଯଦି (ci->laddress == ଖାଲି)
 				match_test_missing_fatal("LocalAddress",
 				    "laddr");
-			switch (addr_match_list(ci->laddress, arg)) {
-			case 1:
+			ବାଛ (addr_match_list(ci->laddress, arg)) {
+			ସ୍ଥିତି 1:
 				debug("connection from %.100s matched "
 				    "'LocalAddress %.100s' at line %d",
-				    ci->laddress, arg, line);
-				break;
-			case 0:
-			case -1:
+				    ci->laddress, arg, ଧାଡ଼ି);
+				ଭାଙ୍ଗ;
+			ସ୍ଥିତି 0:
+			ସ୍ଥିତି -1:
 				result = 0;
-				break;
-			case -2:
+				ଭାଙ୍ଗ;
+			ସ୍ଥିତି -2:
 				result = -1;
-				goto out;
+				ଯାଅ out;
 			}
-		} else if (strcasecmp(attrib, "localport") == 0) {
-			if ((port = a2port(arg)) == -1) {
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "localport") == 0) {
+			ଯଦି ((port = a2port(arg)) == -1) {
 				error("Invalid LocalPort '%s' on Match line",
 				    arg);
 				result = -1;
-				goto out;
+				ଯାଅ out;
 			}
-			if (ci == NULL || (ci->test && ci->lport == -1)) {
+			ଯଦି (ci == ଖାଲି || (ci->test && ci->lport == -1)) {
 				result = 0;
-				goto next;
+				ଯାଅ next;
 			}
-			if (ci->lport == 0)
+			ଯଦି (ci->lport == 0)
 				match_test_missing_fatal("LocalPort", "lport");
 			/* TODO support port lists */
-			if (port == ci->lport)
+			ଯଦି (port == ci->lport)
 				debug("connection from %.100s matched "
 				    "'LocalPort %d' at line %d",
-				    ci->laddress, port, line);
-			else
+				    ci->laddress, port, ଧାଡ଼ି);
+			ଅନ୍ୟଥା
 				result = 0;
-		} else if (strcasecmp(attrib, "rdomain") == 0) {
-			if (ci == NULL || (ci->test && ci->rdomain == NULL)) {
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "rdomain") == 0) {
+			ଯଦି (ci == ଖାଲି || (ci->test && ci->rdomain == ଖାଲି)) {
 				result = 0;
-				goto next;
+				ଯାଅ next;
 			}
-			if (ci->rdomain == NULL)
+			ଯଦି (ci->rdomain == ଖାଲି)
 				match_test_missing_fatal("RDomain", "rdomain");
-			if (match_pattern_list(ci->rdomain, arg, 0) != 1)
+			ଯଦି (match_pattern_list(ci->rdomain, arg, 0) != 1)
 				result = 0;
-			else
+			ଅନ୍ୟଥା
 				debug("connection RDomain %.100s matched "
 				    "'RDomain %.100s' at line %d",
-				    ci->rdomain, arg, line);
-		} else if (strcasecmp(attrib, "version") == 0) {
-			if (match_pattern_list(SSH_RELEASE, arg, 0) != 1)
+				    ci->rdomain, arg, ଧାଡ଼ି);
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(attrib, "version") == 0) {
+			ଯଦି (match_pattern_list(SSH_RELEASE, arg, 0) != 1)
 				result = 0;
-			else
+			ଅନ୍ୟଥା
 				debug("version %.100s matched "
 				    "'version %.100s' at line %d",
-				    SSH_RELEASE, arg, line);
-		} else {
+				    SSH_RELEASE, arg, ଧାଡ଼ି);
+		} ଅନ୍ୟଥା {
 			error("Unsupported Match attribute %s", oattrib);
 			result = -1;
-			goto out;
+			ଯାଅ out;
 		}
  next:
-		free(attrib);
-		attrib = NULL;
+		ମୁକ୍ତ(attrib);
+		attrib = ଖାଲି;
 	}
-	if (attributes == 0) {
+	ଯଦି (attributes == 0) {
 		error("One or more attributes required for Match");
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
  out:
-	if (ci != NULL && result != -1)
-		debug3("match %sfound on line %d", result ? "" : "not ", line);
-	free(attrib);
-	return result;
+	ଯଦି (ci != ଖାଲି && result != -1)
+		debug3("match %sfound on line %d", result ? "" : "not ", ଧାଡ଼ି);
+	ମୁକ୍ତ(attrib);
+	ଫେରନ୍ତୁ result;
 }
 
 #define WHITESPACE " \t\r\n"
 
 /* Multistate option parsing */
-struct multistate {
-	char *key;
-	int value;
+ସଂରଚନା multistate {
+	ଅକ୍ଷର *ଚାବି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ମୂଲ୍ୟ;
 };
-static const struct multistate multistate_flag[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_flag[] = {
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_ignore_rhosts[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_ignore_rhosts[] = {
 	{ "yes",			IGNORE_RHOSTS_YES },
 	{ "no",				IGNORE_RHOSTS_NO },
 	{ "shosts-only",		IGNORE_RHOSTS_SHOSTS },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_addressfamily[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_addressfamily[] = {
 	{ "inet",			AF_INET },
 	{ "inet6",			AF_INET6 },
 	{ "any",			AF_UNSPEC },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_permitrootlogin[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_permitrootlogin[] = {
 	{ "prohibit-password",		PERMIT_NO_PASSWD },
 	{ "without-password",		PERMIT_NO_PASSWD },
 	{ "forced-commands-only",	PERMIT_FORCED_ONLY },
 	{ "yes",			PERMIT_YES },
 	{ "no",				PERMIT_NO },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_compression[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_compression[] = {
 #ifdef WITH_ZLIB
 	{ "yes",			COMP_DELAYED },
 	{ "delayed",			COMP_DELAYED },
 #endif
 	{ "no",				COMP_NONE },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_gatewayports[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_gatewayports[] = {
 	{ "clientspecified",		2 },
 	{ "yes",			1 },
 	{ "no",				0 },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_tcpfwd[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_tcpfwd[] = {
 	{ "yes",			FORWARD_ALLOW },
 	{ "all",			FORWARD_ALLOW },
 	{ "no",				FORWARD_DENY },
 	{ "remote",			FORWARD_REMOTE },
 	{ "local",			FORWARD_LOCAL },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_keepalives[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_keepalives[] = {
 	{ "true",			SSH_KEEPALIVES_TRANSPORT },
 	{ "false",			SSH_KEEPALIVES_OFF },
 	{ "yes",			SSH_KEEPALIVES_TRANSPORT },
 	{ "no",				SSH_KEEPALIVES_OFF },
 	{ "transport",			SSH_KEEPALIVES_TRANSPORT },
 	{ "all",			SSH_KEEPALIVES_ALL },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
-static const struct multistate multistate_warnweakcrypto[] = {
+ସ୍ଥିର ଅଚଳ ସଂରଚନା multistate multistate_warnweakcrypto[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ "no-pq-kex",			0 },
-	{ NULL, -1 }
+	{ ଖାଲି, -1 }
 };
 
-static int
-process_server_config_line_depth(ServerOptions *options, char *line,
-    const char *filename, int linenum, int *activep,
-    struct connection_info *connectinfo, int *inc_flags, int depth,
-    struct include_list *includes)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+process_server_config_ଧାଡ଼ି_depth(ServerOptions *options, ଅକ୍ଷର *ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *activep,
+    ସଂରଚନା connection_info *connectinfo, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *inc_flags, ପୂର୍ଣ୍ଣସଂଖ୍ୟା depth,
+    ସଂରଚନା include_list *includes)
 {
-	char *str, ***chararrayptr, **charptr, *arg, *arg2, *p, *keyword;
-	int cmdline = 0, *intptr, value, value2, value3, n, port, oactive, r;
-	double dvalue, *doubleptr = NULL;
-	int ca_only = 0, found = 0;
+	ଅକ୍ଷର *str, ***chararrayptr, **charptr, *arg, *arg2, *p, *keyword;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା cmdline = 0, *intptr, ମୂଲ୍ୟ, value2, value3, n, port, oactive, r;
+	ଦ୍ୱିଗୁଣ dvalue, *doubleptr = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ca_only = 0, found = 0;
 	SyslogFacility *log_facility_ptr;
 	LogLevel *log_level_ptr;
 	ServerOpCodes opcode;
 	u_int i, *uintptr, flags = 0;
 	size_t len;
 	long long val64;
-	const struct multistate *multistate_ptr;
-	const char *errstr;
-	struct include_item *item;
+	ଅଚଳ ସଂରଚନା multistate *multistate_ptr;
+	ଅଚଳ ଅକ୍ଷର *errstr;
+	ସଂରଚନା include_item *item;
 	glob_t gbuf;
-	char **oav = NULL, **av;
-	int oac = 0, ac;
-	int ret = -1;
-	char **strs = NULL; /* string array arguments; freed implicitly */
+	ଅକ୍ଷର **oav = ଖାଲି, **av;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା oac = 0, ac;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret = -1;
+	ଅକ୍ଷର **strs = ଖାଲି; /* string array arguments; freed implicitly */
 	u_int nstrs = 0;
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
-		return 0;
-	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
-			break;
-		line[len] = '\0';
+	ଯଦି ((len = strlen(ଧାଡ଼ି)) == 0)
+		ଫେରନ୍ତୁ 0;
+	ପାଇଁ (len--; len > 0; len--) {
+		ଯଦି (strchr(WHITESPACE "\f", ଧାଡ଼ି[len]) == ଖାଲି)
+			ଭାଙ୍ଗ;
+		ଧାଡ଼ି[len] = '\0';
 	}
 
-	str = line;
-	if ((keyword = strdelim(&str)) == NULL)
-		return 0;
+	str = ଧାଡ଼ି;
+	ଯଦି ((keyword = strdelim(&str)) == ଖାଲି)
+		ଫେରନ୍ତୁ 0;
 	/* Ignore leading whitespace */
-	if (*keyword == '\0')
+	ଯଦି (*keyword == '\0')
 		keyword = strdelim(&str);
-	if (!keyword || !*keyword || *keyword == '#')
-		return 0;
-	if (str == NULL || *str == '\0') {
+	ଯଦି (!keyword || !*keyword || *keyword == '#')
+		ଫେରନ୍ତୁ 0;
+	ଯଦି (str == ଖାଲି || *str == '\0') {
 		error("%s line %d: no argument after keyword \"%s\"",
 		    filename, linenum, keyword);
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
-	intptr = NULL;
-	charptr = NULL;
+	intptr = ଖାଲି;
+	charptr = ଖାଲି;
 	opcode = parse_token(keyword, filename, linenum, &flags);
 
-	if (argv_split(str, &oac, &oav, 1) != 0) {
+	ଯଦି (argv_split(str, &oac, &oav, 1) != 0) {
 		error("%s line %d: invalid quotes", filename, linenum);
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
 	ac = oac;
 	av = oav;
 
-	if (activep == NULL) { /* We are processing a command line directive */
+	ଯଦି (activep == ଖାଲି) { /* We are processing a command line directive */
 		cmdline = 1;
 		activep = &cmdline;
 	}
-	if (*activep && opcode != sMatch && opcode != sInclude)
+	ଯଦି (*activep && opcode != sMatch && opcode != sInclude)
 		debug3("%s:%d setting %s %s", filename, linenum, keyword, str);
-	if (*activep == 0 && !(flags & SSHCFG_MATCH)) {
-		if (connectinfo == NULL) {
+	ଯଦି (*activep == 0 && !(flags & SSHCFG_MATCH)) {
+		ଯଦି (connectinfo == ଖାଲି) {
 			fatal("%s line %d: Directive '%s' is not allowed "
 			    "within a Match block", filename, linenum, keyword);
-		} else { /* this is a directive we have already processed */
+		} ଅନ୍ୟଥା { /* this is a directive we have already processed */
 			ret = 0;
-			goto out;
+			ଯାଅ out;
 		}
 	}
 
-	switch (opcode) {
+	ବାଛ (opcode) {
 	/* Portable-specific options */
 #ifdef USE_PAM
-	case sUsePAM:
+	ସ୍ଥିତି sUsePAM:
 		intptr = &options->use_pam;
-		goto parse_flag;
-	case sPAMServiceName:
+		ଯାଅ parse_flag;
+	ସ୍ଥିତି sPAMServiceName:
 		charptr = &options->pam_service_name;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
 		}
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 #endif
 
 	/* Standard Options */
-	case sBadOption:
-		goto out;
-	case sPort:
+	ସ୍ଥିତି sBadOption:
+		ଯାଅ out;
+	ସ୍ଥିତି sPort:
 		/* ignore ports from configfile if cmdline specifies ports */
-		if (options->ports_from_cmdline) {
+		ଯଦି (options->ports_from_cmdline) {
 			argv_consume(&ac);
-			break;
+			ଭାଙ୍ଗ;
 		}
-		if (options->num_ports >= MAX_PORTS)
+		ଯଦି (options->ଅଙ୍କ_ports >= MAX_PORTS)
 			fatal("%s line %d: too many ports.",
 			    filename, linenum);
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: missing port number.",
 			    filename, linenum);
-		options->ports[options->num_ports++] = a2port(arg);
-		if (options->ports[options->num_ports-1] <= 0)
+		options->ports[options->ଅଙ୍କ_ports++] = a2port(arg);
+		ଯଦି (options->ports[options->ଅଙ୍କ_ports-1] <= 0)
 			fatal("%s line %d: Badly formatted port number.",
 			    filename, linenum);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sLoginGraceTime:
+	ସ୍ଥିତି sLoginGraceTime:
 		intptr = &options->login_grace_time;
  parse_time:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: missing time value.",
 			    filename, linenum);
-		if ((value = convtime(arg)) == -1)
+		ଯଦି ((ମୂଲ୍ୟ = convtime(arg)) == -1)
 			fatal("%s line %d: invalid time value.",
 			    filename, linenum);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case sListenAddress:
+	ସ୍ଥିତି sListenAddress:
 		arg = argv_next(&ac, &av);
-		if (arg == NULL || *arg == '\0')
+		ଯଦି (arg == ଖାଲି || *arg == '\0')
 			fatal("%s line %d: missing address",
 			    filename, linenum);
 		/* check for bare IPv6 address: no "[]" and 2 or more ":" */
-		if (strchr(arg, '[') == NULL && (p = strchr(arg, ':')) != NULL
-		    && strchr(p+1, ':') != NULL) {
+		ଯଦି (strchr(arg, '[') == ଖାଲି && (p = strchr(arg, ':')) != ଖାଲି
+		    && strchr(p+1, ':') != ଖାଲି) {
 			port = 0;
 			p = arg;
-		} else {
-			arg2 = NULL;
+		} ଅନ୍ୟଥା {
+			arg2 = ଖାଲି;
 			p = hpdelim(&arg);
-			if (p == NULL)
+			ଯଦି (p == ଖାଲି)
 				fatal("%s line %d: bad address:port usage",
 				    filename, linenum);
 			p = cleanhostname(p);
-			if (arg == NULL)
+			ଯଦି (arg == ଖାଲି)
 				port = 0;
-			else if ((port = a2port(arg)) <= 0)
+			ଅନ୍ୟଥା ଯଦି ((port = a2port(arg)) <= 0)
 				fatal("%s line %d: bad port number",
 				    filename, linenum);
 		}
 		/* Optional routing table */
-		arg2 = NULL;
-		if ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "rdomain") != 0 ||
-			    (arg2 = argv_next(&ac, &av)) == NULL)
+		arg2 = ଖାଲି;
+		ଯଦି ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (strcmp(arg, "rdomain") != 0 ||
+			    (arg2 = argv_next(&ac, &av)) == ଖାଲି)
 				fatal("%s line %d: bad ListenAddress syntax",
 				    filename, linenum);
-			if (!valid_rdomain(arg2))
+			ଯଦି (!valid_rdomain(arg2))
 				fatal("%s line %d: bad routing domain",
 				    filename, linenum);
 		}
 		queue_listen_addr(options, p, arg2, port);
 
-		break;
+		ଭାଙ୍ଗ;
 
-	case sAddressFamily:
+	ସ୍ଥିତି sAddressFamily:
 		intptr = &options->address_family;
 		multistate_ptr = multistate_addressfamily;
  parse_multistate:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
-		value = -1;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
-				value = multistate_ptr[i].value;
-				break;
+		ମୂଲ୍ୟ = -1;
+		ପାଇଁ (i = 0; multistate_ptr[i].ଚାବି != ଖାଲି; i++) {
+			ଯଦି (strcasecmp(arg, multistate_ptr[i].ଚାବି) == 0) {
+				ମୂଲ୍ୟ = multistate_ptr[i].ମୂଲ୍ୟ;
+				ଭାଙ୍ଗ;
 			}
 		}
-		if (value == -1)
+		ଯଦି (ମୂଲ୍ୟ == -1)
 			fatal("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case sHostKey:
+	ସ୍ଥିତି s_Host_ଚାବି:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep) {
+		ଯଦି (*activep) {
 			servconf_add_hostkey(filename, linenum,
 			    options, arg, 1);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sHostKeyAgent:
-		charptr = &options->host_key_agent;
+	ସ୍ଥିତି s_Host_ଚାବି_Agent:
+		charptr = &options->host_ଚାବି_agent;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: missing socket name.",
 			    filename, linenum);
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = !strcmp(arg, SSH_AUTHSOCKET_ENV_NAME) ?
 			    xstrdup(arg) : derelativise_path(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sHostCertificate:
+	ସ୍ଥିତି sHostCertificate:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep)
+		ଯଦି (*activep)
 			servconf_add_hostcert(filename, linenum, options, arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sPidFile:
+	ସ୍ଥିତି sPidFile:
 		charptr = &options->pid_file;
  parse_filename:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: missing file name.",
 			    filename, linenum);
-		if (*activep && *charptr == NULL) {
+		ଯଦି (*activep && *charptr == ଖାଲି) {
 			*charptr = derelativise_path(arg);
 			/* increase optional counter */
-			if (intptr != NULL)
+			ଯଦି (intptr != ଖାଲି)
 				*intptr = *intptr + 1;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sModuliFile:
+	ସ୍ଥିତି sModuliFile:
 		charptr = &options->moduli_file;
-		goto parse_filename;
+		ଯାଅ parse_filename;
 
-	case sPermitRootLogin:
-		intptr = &options->permit_root_login;
+	ସ୍ଥିତି s_Permit_ମୂଳ_Login:
+		intptr = &options->permit_ମୂଳ_login;
 		multistate_ptr = multistate_permitrootlogin;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sIgnoreRhosts:
+	ସ୍ଥିତି sIgnoreRhosts:
 		intptr = &options->ignore_rhosts;
 		multistate_ptr = multistate_ignore_rhosts;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sIgnoreUserKnownHosts:
+	ସ୍ଥିତି sIgnoreUserKnownHosts:
 		intptr = &options->ignore_user_known_hosts;
  parse_flag:
 		multistate_ptr = multistate_flag;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sHostbasedAuthentication:
+	ସ୍ଥିତି sHostbasedAuthentication:
 		intptr = &options->hostbased_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sHostbasedUsesNameFromPacketOnly:
+	ସ୍ଥିତି sHostbasedUsesNameFromPacketOnly:
 		intptr = &options->hostbased_uses_name_from_packet_only;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sHostbasedAcceptedAlgorithms:
+	ସ୍ଥିତି sHostbasedAcceptedAlgorithms:
 		charptr = &options->hostbased_accepted_algos;
 		ca_only = 0;
  parse_pubkey_algos:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: Missing argument.",
 			    filename, linenum);
-		if (*arg != '-' &&
+		ଯଦି (*arg != '-' &&
 		    !sshkey_names_valid2(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg, 1, ca_only))
 			fatal("%s line %d: Bad key types '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sHostKeyAlgorithms:
+	ସ୍ଥିତି s_Host_ଚାବି_Algorithms:
 		charptr = &options->hostkeyalgorithms;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		ଯାଅ parse_pubkey_algos;
 
-	case sCASignatureAlgorithms:
+	ସ୍ଥିତି sCASignatureAlgorithms:
 		charptr = &options->ca_sign_algorithms;
 		ca_only = 1;
-		goto parse_pubkey_algos;
+		ଯାଅ parse_pubkey_algos;
 
-	case sPubkeyAuthentication:
+	ସ୍ଥିତି sPubkeyAuthentication:
 		intptr = &options->pubkey_authentication;
 		ca_only = 0;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sPubkeyAcceptedAlgorithms:
+	ସ୍ଥିତି sPubkeyAcceptedAlgorithms:
 		charptr = &options->pubkey_accepted_algos;
 		ca_only = 0;
-		goto parse_pubkey_algos;
+		ଯାଅ parse_pubkey_algos;
 
-	case sPubkeyAuthOptions:
+	ସ୍ଥିତି sPubkeyAuthOptions:
 		intptr = &options->pubkey_auth_options;
-		value = 0;
+		ମୂଲ୍ୟ = 0;
 		value2 = -1;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcasecmp(arg, "none") == 0)
-				continue;
-			if (strcasecmp(arg, "touch-required") == 0)
-				value |= PUBKEYAUTH_TOUCH_REQUIRED;
-			else if (strcasecmp(arg, "verify-required") == 0)
-				value |= PUBKEYAUTH_VERIFY_REQUIRED;
-			else if (strncasecmp(arg, "max-pk-ok:", 10) == 0) {
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (strcasecmp(arg, "none") == 0)
+				ଜାରି;
+			ଯଦି (strcasecmp(arg, "touch-required") == 0)
+				ମୂଲ୍ୟ |= PUBKEYAUTH_TOUCH_REQUIRED;
+			ଅନ୍ୟଥା ଯଦି (strcasecmp(arg, "verify-required") == 0)
+				ମୂଲ୍ୟ |= PUBKEYAUTH_VERIFY_REQUIRED;
+			ଅନ୍ୟଥା ଯଦି (strncasecmp(arg, "max-pk-ok:", 10) == 0) {
 				value2 = strtonum(arg + 10, 0, 255, &errstr);
-				if (errstr != NULL) {
+				ଯଦି (errstr != ଖାଲି) {
 					error("%s line %d: bad %s max-pk-ok "
 					    "value: %s", filename, linenum,
 					keyword, errstr);
-					goto out;
+					ଯାଅ out;
 				}
-			} else {
+			} ଅନ୍ୟଥା {
 				error("%s line %d: unsupported %s option %s",
 				    filename, linenum, keyword, arg);
-				goto out;
+				ଯାଅ out;
 			}
 		}
-		if (*activep && options->pubkey_auth_options == -1) {
-			options->pubkey_auth_options = value;
+		ଯଦି (*activep && options->pubkey_auth_options == -1) {
+			options->pubkey_auth_options = ମୂଲ୍ୟ;
 			options->max_pubkey_ok = value2;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
 #ifdef KRB5
-	case sKerberosAuthentication:
+	ସ୍ଥିତି sKerberosAuthentication:
 		intptr = &options->kerberos_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sKerberosOrLocalPasswd:
+	ସ୍ଥିତି sKerberosOrLocalPasswd:
 		intptr = &options->kerberos_or_local_passwd;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sKerberosTicketCleanup:
+	ସ୍ଥିତି sKerberosTicketCleanup:
 		intptr = &options->kerberos_ticket_cleanup;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 #ifdef USE_AFS
-	case sKerberosGetAFSToken:
+	ସ୍ଥିତି sKerberosGetAFSToken:
 		intptr = &options->kerberos_get_afs_token;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 #endif /* USE_AFS */
 #endif /* KRB5 */
 
 #ifdef GSSAPI
-	case sGSSAPIAuthentication:
+	ସ୍ଥିତି sGSSAPIAuthentication:
 		intptr = &options->gss_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sGSSAPICleanupCredentials:
+	ସ୍ଥିତି sGSSAPICleanupCredentials:
 		intptr = &options->gss_cleanup_creds;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sGSSAPIDelegateCredentials:
+	ସ୍ଥିତି sGSSAPIDelegateCredentials:
 		intptr = &options->gss_deleg_creds;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sGSSAPIStrictAcceptorCheck:
+	ସ୍ଥିତି sGSSAPIStrictAcceptorCheck:
 		intptr = &options->gss_strict_acceptor;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 #endif /* GSSAPI */
 
-	case sPasswordAuthentication:
+	ସ୍ଥିତି sPasswordAuthentication:
 		intptr = &options->password_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sKbdInteractiveAuthentication:
+	ସ୍ଥିତି sKbdInteractiveAuthentication:
 		intptr = &options->kbd_interactive_authentication;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sPrintMotd:
+	ସ୍ଥିତି sPrintMotd:
 		intptr = &options->print_motd;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
 #ifndef DISABLE_LASTLOG
-	case sPrintLastLog:
+	ସ୍ଥିତି sPrintLastLog:
 		intptr = &options->print_lastlog;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 #endif
 
-	case sX11Forwarding:
+	ସ୍ଥିତି sX11Forwarding:
 		intptr = &options->x11_forwarding;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sX11DisplayOffset:
+	ସ୍ଥିତି sX11DisplayOffset:
 		intptr = &options->x11_display_offset;
  parse_int:
 		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL)
+		ଯଦି ((errstr = atoi_err(arg, &ମୂଲ୍ୟ)) != ଖାଲି)
 			fatal("%s line %d: %s integer value %s.",
 			    filename, linenum, keyword, errstr);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case sX11UseLocalhost:
+	ସ୍ଥିତି sX11UseLocalhost:
 		intptr = &options->x11_use_localhost;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sXAuthLocation:
+	ସ୍ଥିତି sXAuthLocation:
 		charptr = &options->xauth_location;
-		goto parse_filename;
+		ଯାଅ parse_filename;
 
-	case sPermitTTY:
+	ସ୍ଥିତି sPermitTTY:
 		intptr = &options->permit_tty;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sPermitUserRC:
+	ସ୍ଥିତି sPermitUserRC:
 		intptr = &options->permit_user_rc;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sStrictModes:
+	ସ୍ଥିତି sStrictModes:
 		intptr = &options->strict_modes;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sTCPKeepAlive:
+	ସ୍ଥିତି sTCPKeepAlive:
 		intptr = &options->tcp_keep_alive;
 		multistate_ptr = multistate_keepalives;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sPermitEmptyPasswords:
+	ସ୍ଥିତି sPermitEmptyPasswords:
 		intptr = &options->permit_empty_passwd;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sPermitUserEnvironment:
+	ସ୍ଥିତି sPermitUserEnvironment:
 		intptr = &options->permit_user_env;
 		charptr = &options->permit_user_env_allowlist;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = 0;
-		p = NULL;
-		if (strcmp(arg, "yes") == 0)
-			value = 1;
-		else if (strcmp(arg, "no") == 0)
-			value = 0;
-		else {
+		ମୂଲ୍ୟ = 0;
+		p = ଖାଲି;
+		ଯଦି (strcmp(arg, "yes") == 0)
+			ମୂଲ୍ୟ = 1;
+		ଅନ୍ୟଥା ଯଦି (strcmp(arg, "no") == 0)
+			ମୂଲ୍ୟ = 0;
+		ଅନ୍ୟଥା {
 			/* Pattern-list specified */
-			value = 1;
+			ମୂଲ୍ୟ = 1;
 			p = xstrdup(arg);
 		}
-		if (*activep && *intptr == -1) {
-			*intptr = value;
+		ଯଦି (*activep && *intptr == -1) {
+			*intptr = ମୂଲ୍ୟ;
 			*charptr = p;
-			p = NULL;
+			p = ଖାଲି;
 		}
-		free(p);
-		break;
+		ମୁକ୍ତ(p);
+		ଭାଙ୍ଗ;
 
-	case sCompression:
+	ସ୍ଥିତି sCompression:
 		intptr = &options->compression;
 		multistate_ptr = multistate_compression;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sRekeyLimit:
+	ସ୍ଥିତି sRekeyLimit:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcmp(arg, "default") == 0) {
+		ଯଦି (strcmp(arg, "default") == 0) {
 			val64 = 0;
-		} else {
-			if (scan_scaled(arg, &val64) == -1)
+		} ଅନ୍ୟଥା {
+			ଯଦି (scan_scaled(arg, &val64) == -1)
 				fatal("%.200s line %d: Bad %s number '%s': %s",
 				    filename, linenum, keyword,
 				    arg, strerror(errno));
-			if (val64 != 0 && val64 < 16)
+			ଯଦି (val64 != 0 && val64 < 16)
 				fatal("%.200s line %d: %s too small",
 				    filename, linenum, keyword);
 		}
-		if (*activep && options->rekey_limit == -1)
+		ଯଦି (*activep && options->rekey_limit == -1)
 			options->rekey_limit = val64;
-		if (ac != 0) { /* optional rekey interval present */
-			if (strcmp(av[0], "none") == 0) {
-				(void)argv_next(&ac, &av);	/* discard */
-				break;
+		ଯଦି (ac != 0) { /* optional rekey interval present */
+			ଯଦି (strcmp(av[0], "none") == 0) {
+				(ଶୂନ୍ୟ)argv_next(&ac, &av);	/* discard */
+				ଭାଙ୍ଗ;
 			}
 			intptr = &options->rekey_interval;
-			goto parse_time;
+			ଯାଅ parse_time;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sGatewayPorts:
+	ସ୍ଥିତି sGatewayPorts:
 		intptr = &options->fwd_opts.gateway_ports;
 		multistate_ptr = multistate_gatewayports;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sUseDNS:
+	ସ୍ଥିତି sUseDNS:
 		intptr = &options->use_dns;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sSyslogFacility:
+	ସ୍ଥିତି sSyslogFacility:
 		log_facility_ptr = &options->log_facility;
 		arg = argv_next(&ac, &av);
-		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET)
+		ମୂଲ୍ୟ = log_facility_ସଂଖ୍ୟା(arg);
+		ଯଦି (ମୂଲ୍ୟ == SYSLOG_FACILITY_NOT_SET)
 			fatal("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*log_facility_ptr == -1)
-			*log_facility_ptr = (SyslogFacility) value;
-		break;
+		ଯଦି (*log_facility_ptr == -1)
+			*log_facility_ptr = (SyslogFacility) ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case sLogLevel:
+	ସ୍ଥିତି sLogLevel:
 		log_level_ptr = &options->log_level;
 		arg = argv_next(&ac, &av);
-		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET)
+		ମୂଲ୍ୟ = log_level_ସଂଖ୍ୟା(arg);
+		ଯଦି (ମୂଲ୍ୟ == SYSLOG_LEVEL_NOT_SET)
 			fatal("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (*activep && *log_level_ptr == -1)
-			*log_level_ptr = (LogLevel) value;
-		break;
+		ଯଦି (*activep && *log_level_ptr == -1)
+			*log_level_ptr = (LogLevel) ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case sLogVerbose:
-		found = options->num_log_verbose == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+	ସ୍ଥିତି sLogVerbose:
+		found = options->ଅଙ୍କ_log_verbose == 0;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				ଯାଅ out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ଯଦି (strcasecmp(arg, "none") == 0) {
+				ଯଦି (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					ଯାଅ out;
 				}
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			options->log_verbose = strs;
-			options->num_log_verbose = nstrs;
-			strs = NULL; /* transferred */
+			options->ଅଙ୍କ_log_verbose = nstrs;
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sAllowTcpForwarding:
+	ସ୍ଥିତି sAllowTcpForwarding:
 		intptr = &options->allow_tcp_forwarding;
 		multistate_ptr = multistate_tcpfwd;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sAllowStreamLocalForwarding:
+	ସ୍ଥିତି sAllowStreamLocalForwarding:
 		intptr = &options->allow_streamlocal_forwarding;
 		multistate_ptr = multistate_tcpfwd;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sAllowAgentForwarding:
+	ସ୍ଥିତି sAllowAgentForwarding:
 		intptr = &options->allow_agent_forwarding;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sAgentSocketPath:
+	ସ୍ଥିତି sAgentSocketPath:
 		charptr = &options->agent_socket_path;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: missing path.", filename, linenum);
-		if (strncmp(arg, "shared:", 7) == 0) {
+		ଯଦି (strncmp(arg, "shared:", 7) == 0) {
 			/* Shared paths must be absolute */
-			if (arg[7] != '/') {
+			ଯଦି (arg[7] != '/') {
 				fatal("%s line %d: invalid shared path.",
 				    filename, linenum);
 			}
-		} else if (strncmp(arg, "user:", 5) == 0) {
+		} ଅନ୍ୟଥା ଯଦି (strncmp(arg, "user:", 5) == 0) {
 			/* User paths must not be empty */
-			if (arg[5] == '\0') {
+			ଯଦି (arg[5] == '\0') {
 				fatal("%s line %d: invalid user path.",
 				    filename, linenum);
 			}
-		} else if (strcmp(arg, "none") != 0)
+		} ଅନ୍ୟଥା ଯଦି (strcmp(arg, "none") != 0)
 			fatal("%s line %d: invalid path.", filename, linenum);
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sDisableForwarding:
+	ସ୍ଥିତି sDisableForwarding:
 		intptr = &options->disable_forwarding;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sAllowUsers:
+	ସ୍ଥିତି sAllowUsers:
 		chararrayptr = &options->allow_users;
-		uintptr = &options->num_allow_users;
+		uintptr = &options->ଅଙ୍କ_allow_users;
  parse_allowdenyusers:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' ||
-			    match_user(NULL, NULL, NULL, arg) == -1)
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0' ||
+			    match_user(ଖାଲି, ଖାଲି, ଖାଲି, arg) == -1)
 				fatal("%s line %d: invalid %s pattern: \"%s\"",
 				    filename, linenum, keyword, arg);
 			found = 1;
-			if (!*activep)
-				continue;
+			ଯଦି (!*activep)
+				ଜାରି;
 			opt_array_append(filename, linenum, keyword,
 			    chararrayptr, uintptr, arg);
 		}
-		if (!found) {
+		ଯଦି (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sDenyUsers:
+	ସ୍ଥିତି sDenyUsers:
 		chararrayptr = &options->deny_users;
-		uintptr = &options->num_deny_users;
-		goto parse_allowdenyusers;
+		uintptr = &options->ଅଙ୍କ_deny_users;
+		ଯାଅ parse_allowdenyusers;
 
-	case sAllowGroups:
+	ସ୍ଥିତି sAllowGroups:
 		chararrayptr = &options->allow_groups;
-		uintptr = &options->num_allow_groups;
+		uintptr = &options->ଅଙ୍କ_allow_groups;
 		/* XXX appends to list; doesn't respect first-match-wins */
  parse_allowdenygroups:
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0')
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0')
 				fatal("%s line %d: empty %s pattern",
 				    filename, linenum, keyword);
 			found = 1;
-			if (!*activep)
-				continue;
+			ଯଦି (!*activep)
+				ଜାରି;
 			opt_array_append(filename, linenum, keyword,
 			    chararrayptr, uintptr, arg);
 		}
-		if (!found) {
+		ଯଦି (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sDenyGroups:
+	ସ୍ଥିତି sDenyGroups:
 		chararrayptr = &options->deny_groups;
-		uintptr = &options->num_deny_groups;
-		goto parse_allowdenygroups;
+		uintptr = &options->ଅଙ୍କ_deny_groups;
+		ଯାଅ parse_allowdenygroups;
 
-	case sCiphers:
+	ସ୍ଥିତି sCiphers:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		ଯଦି (*arg != '-' &&
 		    !ciphers_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 cipher spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->ciphers == NULL)
+		ଯଦି (options->ciphers == ଖାଲି)
 			options->ciphers = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sMacs:
+	ସ୍ଥିତି sMacs:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		ଯଦି (*arg != '-' &&
 		    !mac_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 mac spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->macs == NULL)
+		ଯଦି (options->macs == ଖାଲି)
 			options->macs = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sKexAlgorithms:
+	ସ୍ଥିତି sKexAlgorithms:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*arg != '-' &&
+		ଯଦି (*arg != '-' &&
 		    !kex_names_valid(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg))
 			fatal("%s line %d: Bad SSH2 KexAlgorithms '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
-		if (options->kex_algorithms == NULL)
+		ଯଦି (options->kex_algorithms == ଖାଲି)
 			options->kex_algorithms = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sSubsystem:
-		if ((arg = argv_next(&ac, &av)) == NULL || *arg == '\0' ||
-		   ((arg2 = argv_next(&ac, &av)) == NULL || *arg2 == '\0'))
+	ସ୍ଥିତି sSubsystem:
+		ଯଦି ((arg = argv_next(&ac, &av)) == ଖାଲି || *arg == '\0' ||
+		   ((arg2 = argv_next(&ac, &av)) == ଖାଲି || *arg2 == '\0'))
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (!*activep) {
+		ଯଦି (!*activep) {
 			argv_consume(&ac);
-			break;
+			ଭାଙ୍ଗ;
 		}
 		found = 0;
-		for (i = 0; i < options->num_subsystems; i++) {
-			if (strcmp(arg, options->subsystem_name[i]) == 0) {
+		ପାଇଁ (i = 0; i < options->ଅଙ୍କ_subsystems; i++) {
+			ଯଦି (strcmp(arg, options->subsystem_name[i]) == 0) {
 				found = 1;
-				break;
+				ଭାଙ୍ଗ;
 			}
 		}
-		if (found) {
+		ଯଦି (found) {
 			debug("%s line %d: Subsystem '%s' already defined.",
 			    filename, linenum, arg);
 			argv_consume(&ac);
-			break;
+			ଭାଙ୍ଗ;
 		}
 		options->subsystem_name = xrecallocarray(
-		    options->subsystem_name, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_name));
+		    options->subsystem_name, options->ଅଙ୍କ_subsystems,
+		    options->ଅଙ୍କ_subsystems + 1,
+		    ଆକାର(*options->subsystem_name));
 		options->subsystem_command = xrecallocarray(
-		    options->subsystem_command, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_command));
+		    options->subsystem_command, options->ଅଙ୍କ_subsystems,
+		    options->ଅଙ୍କ_subsystems + 1,
+		    ଆକାର(*options->subsystem_command));
 		options->subsystem_args = xrecallocarray(
-		    options->subsystem_args, options->num_subsystems,
-		    options->num_subsystems + 1,
-		    sizeof(*options->subsystem_args));
-		options->subsystem_name[options->num_subsystems] = xstrdup(arg);
-		options->subsystem_command[options->num_subsystems] =
+		    options->subsystem_args, options->ଅଙ୍କ_subsystems,
+		    options->ଅଙ୍କ_subsystems + 1,
+		    ଆକାର(*options->subsystem_args));
+		options->subsystem_name[options->ଅଙ୍କ_subsystems] = xstrdup(arg);
+		options->subsystem_command[options->ଅଙ୍କ_subsystems] =
 		    xstrdup(arg2);
 		/* Collect arguments (separate to executable) */
 		arg = argv_assemble(1, &arg2); /* quote command correctly */
 		arg2 = argv_assemble(ac, av); /* rest of command */
-		xasprintf(&options->subsystem_args[options->num_subsystems],
+		xasprintf(&options->subsystem_args[options->ଅଙ୍କ_subsystems],
 		    "%s%s%s", arg, *arg2 == '\0' ? "" : " ", arg2);
-		free(arg2);
-		free(arg);
+		ମୁକ୍ତ(arg2);
+		ମୁକ୍ତ(arg);
 		argv_consume(&ac);
-		options->num_subsystems++;
-		break;
+		options->ଅଙ୍କ_subsystems++;
+		ଭାଙ୍ଗ;
 
-	case sMaxStartups:
+	ସ୍ଥିତି sMaxStartups:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		/* begin:rate:max */
-		if ((n = sscanf(arg, "%d:%d:%d",
-		    &value, &value2, &value3)) == 3) {
-			if (value > value3 || value2 > 100 || value2 < 1)
+		ଯଦି ((n = sscanf(arg, "%d:%d:%d",
+		    &ମୂଲ୍ୟ, &value2, &value3)) == 3) {
+			ଯଦି (ମୂଲ୍ୟ > value3 || value2 > 100 || value2 < 1)
 				fatal("%s line %d: Invalid %s spec.",
 				    filename, linenum, keyword);
-		} else if (n == 1) {
-			value3 = value;
+		} ଅନ୍ୟଥା ଯଦି (n == 1) {
+			value3 = ମୂଲ୍ୟ;
 			value2 = -1;
-		} else {
+		} ଅନ୍ୟଥା {
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
 		}
-		if (value <= 0 || value3 <= 0)
+		ଯଦି (ମୂଲ୍ୟ <= 0 || value3 <= 0)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
-		if (*activep && options->max_startups == -1) {
-			options->max_startups_begin = value;
+		ଯଦି (*activep && options->max_startups == -1) {
+			options->max_startups_begin = ମୂଲ୍ୟ;
 			options->max_startups_rate = value2;
 			options->max_startups = value3;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sPerSourceNetBlockSize:
+	ସ୍ଥିତି sPerSourceNetBlockSize:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		switch (n = sscanf(arg, "%d:%d", &value, &value2)) {
-		case 2:
-			if (value2 < 0 || value2 > 128)
+		ବାଛ (n = sscanf(arg, "%d:%d", &ମୂଲ୍ୟ, &value2)) {
+		ସ୍ଥିତି 2:
+			ଯଦି (value2 < 0 || value2 > 128)
 				n = -1;
 			/* FALLTHROUGH */
-		case 1:
-			if (value < 0 || value > 32)
+		ସ୍ଥିତି 1:
+			ଯଦି (ମୂଲ୍ୟ < 0 || ମୂଲ୍ୟ > 32)
 				n = -1;
 		}
-		if (n != 1 && n != 2)
+		ଯଦି (n != 1 && n != 2)
 			fatal("%s line %d: Invalid %s spec.",
 			    filename, linenum, keyword);
-		if (*activep && options->per_source_masklen_ipv4 == -1) {
-			options->per_source_masklen_ipv4 = value;
-			if (n == 2)
+		ଯଦି (*activep && options->per_source_masklen_ipv4 == -1) {
+			options->per_source_masklen_ipv4 = ମୂଲ୍ୟ;
+			ଯଦି (n == 2)
 				options->per_source_masklen_ipv6 = value2;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sPerSourceMaxStartups:
+	ସ୍ଥିତି sPerSourceMaxStartups:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcmp(arg, "none") == 0) { /* no limit */
-			value = INT_MAX;
-		} else {
-			if ((errstr = atoi_err(arg, &value)) != NULL)
+		ଯଦି (strcmp(arg, "none") == 0) { /* no limit */
+			ମୂଲ୍ୟ = INT_MAX;
+		} ଅନ୍ୟଥା {
+			ଯଦି ((errstr = atoi_err(arg, &ମୂଲ୍ୟ)) != ଖାଲି)
 				fatal("%s line %d: %s integer value %s.",
 				    filename, linenum, keyword, errstr);
 		}
-		if (*activep && options->per_source_max_startups == -1)
-			options->per_source_max_startups = value;
-		break;
+		ଯଦି (*activep && options->per_source_max_startups == -1)
+			options->per_source_max_startups = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case sPerSourcePenaltyExemptList:
+	ସ୍ଥିତି sPerSourcePenaltyExemptList:
 		charptr = &options->per_source_penalty_exempt;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: missing argument.",
 			    filename, linenum);
-		if (addr_match_list(NULL, arg) != 0) {
+		ଯଦି (addr_match_list(ଖାଲି, arg) != 0) {
 			fatal("%s line %d: keyword %s "
 			    "invalid address argument.",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sPerSourcePenalties:
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			const char *q = NULL;
+	ସ୍ଥିତି sPerSourcePenalties:
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଅଚଳ ଅକ୍ଷର *q = ଖାଲି;
 
 			found = 1;
-			intptr = NULL;
-			doubleptr = NULL;
-			value = -1;
+			intptr = ଖାଲି;
+			doubleptr = ଖାଲି;
+			ମୂଲ୍ୟ = -1;
 			value2 = 0;
 			/* Allow no/yes only in first position */
-			if (strcasecmp(arg, "no") == 0 ||
+			ଯଦି (strcasecmp(arg, "no") == 0 ||
 			    (value2 = (strcasecmp(arg, "yes") == 0))) {
-				if (ac > 0) {
+				ଯଦି (ac > 0) {
 					fatal("%s line %d: keyword %s \"%s\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword, arg);
 				}
-				if (*activep &&
+				ଯଦି (*activep &&
 				    options->per_source_penalty.enabled == -1)
 					options->per_source_penalty.enabled = value2;
-				continue;
-			} else if ((q = strprefix(arg, "crash:", 0)) != NULL) {
+				ଜାରି;
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "crash:", 0)) != ଖାଲି) {
 				doubleptr = &options->per_source_penalty.penalty_crash;
-			} else if ((q = strprefix(arg, "authfail:", 0)) != NULL) {
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "authfail:", 0)) != ଖାଲି) {
 				doubleptr = &options->per_source_penalty.penalty_authfail;
-			} else if ((q = strprefix(arg, "invaliduser:", 0)) != NULL) {
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "invaliduser:", 0)) != ଖାଲି) {
 				doubleptr = &options->per_source_penalty.penalty_invaliduser;
-			} else if ((q = strprefix(arg, "noauth:", 0)) != NULL) {
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "noauth:", 0)) != ଖାଲି) {
 				doubleptr = &options->per_source_penalty.penalty_noauth;
-			} else if ((q = strprefix(arg, "grace-exceeded:", 0)) != NULL) {
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "grace-exceeded:", 0)) != ଖାଲି) {
 				doubleptr = &options->per_source_penalty.penalty_grace;
-			} else if ((q = strprefix(arg, "refuseconnection:", 0)) != NULL) {
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "refuseconnection:", 0)) != ଖାଲି) {
 				doubleptr = &options->per_source_penalty.penalty_refuseconnection;
-			} else if ((q = strprefix(arg, "max:", 0)) != NULL) {
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "max:", 0)) != ଖାଲି) {
 				doubleptr = &options->per_source_penalty.penalty_max;
-			} else if ((q = strprefix(arg, "min:", 0)) != NULL) {
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "min:", 0)) != ଖାଲି) {
 				doubleptr = &options->per_source_penalty.penalty_min;
-			} else if ((q = strprefix(arg, "max-sources4:", 0)) != NULL) {
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "max-sources4:", 0)) != ଖାଲି) {
 				intptr = &options->per_source_penalty.max_sources4;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+				ଯଦି ((errstr = atoi_err(q, &ମୂଲ୍ୟ)) != ଖାଲି)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
-			} else if ((q = strprefix(arg, "max-sources6:", 0)) != NULL) {
+			} ଅନ୍ୟଥା ଯଦି ((q = strprefix(arg, "max-sources6:", 0)) != ଖାଲି) {
 				intptr = &options->per_source_penalty.max_sources6;
-				if ((errstr = atoi_err(q, &value)) != NULL)
+				ଯଦି ((errstr = atoi_err(q, &ମୂଲ୍ୟ)) != ଖାଲି)
 					fatal("%s line %d: %s value %s.",
 					    filename, linenum, keyword, errstr);
-			} else if (strcmp(arg, "overflow:deny-all") == 0) {
+			} ଅନ୍ୟଥା ଯଦି (strcmp(arg, "overflow:deny-all") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
-			} else if (strcmp(arg, "overflow:permissive") == 0) {
+				ମୂଲ୍ୟ = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
+			} ଅନ୍ୟଥା ଯଦି (strcmp(arg, "overflow:permissive") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-			} else if (strcmp(arg, "overflow6:deny-all") == 0) {
+				ମୂଲ୍ୟ = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
+			} ଅନ୍ୟଥା ଯଦି (strcmp(arg, "overflow6:deny-all") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
-			} else if (strcmp(arg, "overflow6:permissive") == 0) {
+				ମୂଲ୍ୟ = PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL;
+			} ଅନ୍ୟଥା ଯଦି (strcmp(arg, "overflow6:permissive") == 0) {
 				intptr = &options->per_source_penalty.overflow_mode6;
-				value = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
-			} else {
+				ମୂଲ୍ୟ = PER_SOURCE_PENALTY_OVERFLOW_PERMISSIVE;
+			} ଅନ୍ୟଥା {
 				fatal("%s line %d: unsupported %s keyword %s",
 				    filename, linenum, keyword, arg);
 			}
 
-			if (doubleptr != NULL) {
-				if ((dvalue = convtime_double(q)) < 0) {
+			ଯଦି (doubleptr != ଖାଲି) {
+				ଯଦି ((dvalue = convtime_double(q)) < 0) {
 					fatal("%s line %d: invalid %s time value.",
 					    filename, linenum, keyword);
 				}
-				if (*activep && *doubleptr < 0.0) {
+				ଯଦି (*activep && *doubleptr < 0.0) {
 					*doubleptr = dvalue;
 					options->per_source_penalty.enabled = 1;
 				}
-			} else if (intptr != NULL) {
-				if (*activep && *intptr == -1) {
-					*intptr = value;
+			} ଅନ୍ୟଥା ଯଦି (intptr != ଖାଲି) {
+				ଯଦି (*activep && *intptr == -1) {
+					*intptr = ମୂଲ୍ୟ;
 					options->per_source_penalty.enabled = 1;
 				}
-			} else {
+			} ଅନ୍ୟଥା {
 				fatal_f("%s line %d: internal error",
 				    filename, linenum);
 			}
 		}
-		if (!found) {
+		ଯଦି (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sMaxAuthTries:
+	ସ୍ଥିତି sMaxAuthTries:
 		intptr = &options->max_authtries;
-		goto parse_int;
+		ଯାଅ parse_int;
 
-	case sMaxSessions:
+	ସ୍ଥିତି sMaxSessions:
 		intptr = &options->max_sessions;
-		goto parse_int;
+		ଯାଅ parse_int;
 
-	case sBanner:
+	ସ୍ଥିତି sBanner:
 		charptr = &options->banner;
-		goto parse_filename;
+		ଯାଅ parse_filename;
 
 	/*
 	 * These options can contain %X options expanded at
@@ -2054,146 +2054,146 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 	 *
 	 * AuthorizedKeysFile	/etc/ssh_keys/%u
 	 */
-	case sAuthorizedKeysFile:
-		uintptr = &options->num_authkeys_files;
-		chararrayptr = &options->authorized_keys_files;
+	ସ୍ଥିତି s_Authorized_ଚାବିଗୁଡ଼ିକ_File:
+		uintptr = &options->ଅଙ୍କ_authkeys_files;
+		chararrayptr = &options->authorized_ଚାବିଗୁଡ଼ିକ_files;
  parse_filenames:
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				ଯାଅ out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ଯଦି (strcasecmp(arg, "none") == 0) {
+				ଯଦି (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					ଯାଅ out;
 				}
 			}
 			arg2 = tilde_expand_filename(arg, getuid());
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			ମୁକ୍ତ(arg2);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			*chararrayptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sAuthorizedPrincipalsFile:
+	ସ୍ଥିତି sAuthorizedPrincipalsFile:
 		charptr = &options->authorized_principals_file;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL) {
+		ଯଦି (*activep && *charptr == ଖାଲି) {
 			*charptr = tilde_expand_filename(arg, getuid());
 			/* increase optional counter */
-			if (intptr != NULL)
+			ଯଦି (intptr != ଖାଲି)
 				*intptr = *intptr + 1;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sClientAliveInterval:
+	ସ୍ଥିତି sClientAliveInterval:
 		intptr = &options->client_alive_interval;
-		goto parse_time;
+		ଯାଅ parse_time;
 
-	case sClientAliveCountMax:
-		intptr = &options->client_alive_count_max;
-		goto parse_int;
+	ସ୍ଥିତି s_Client_Alive_ଗଣନା_Max:
+		intptr = &options->client_alive_ଗଣନା_max;
+		ଯାଅ parse_int;
 
-	case sAcceptEnv:
+	ସ୍ଥିତି sAcceptEnv:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') != NULL)
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0' || strchr(arg, '=') != ଖାଲି)
 				fatal("%s line %d: Invalid environment name.",
 				    filename, linenum);
 			found = 1;
-			if (!*activep)
-				continue;
+			ଯଦି (!*activep)
+				ଜାରି;
 			opt_array_append(filename, linenum, keyword,
-			    &options->accept_env, &options->num_accept_env,
+			    &options->accept_env, &options->ଅଙ୍କ_accept_env,
 			    arg);
 		}
-		if (!found) {
+		ଯଦି (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sSetEnv:
-		found = options->num_setenv == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') == NULL)
+	ସ୍ଥିତି sSetEnv:
+		found = options->ଅଙ୍କ_setenv == 0;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg == '\0' || strchr(arg, '=') == ଖାଲି)
 				fatal("%s line %d: Invalid environment.",
 				    filename, linenum);
-			if (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
+			ଯଦି (lookup_setenv_in_list(arg, strs, nstrs) != ଖାଲି) {
 				debug2("%s line %d: ignoring duplicate env "
 				    "name \"%.64s\"", filename, linenum, arg);
-				continue;
+				ଜାରି;
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			options->setenv = strs;
-			options->num_setenv = nstrs;
-			strs = NULL; /* transferred */
+			options->ଅଙ୍କ_setenv = nstrs;
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sPermitTunnel:
+	ସ୍ଥିତି sPermitTunnel:
 		intptr = &options->permit_tun;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		value = -1;
-		for (i = 0; tunmode_desc[i].val != -1; i++)
-			if (strcmp(tunmode_desc[i].text, arg) == 0) {
-				value = tunmode_desc[i].val;
-				break;
+		ମୂଲ୍ୟ = -1;
+		ପାଇଁ (i = 0; tunmode_desc[i].val != -1; i++)
+			ଯଦି (strcmp(tunmode_desc[i].text, arg) == 0) {
+				ମୂଲ୍ୟ = tunmode_desc[i].val;
+				ଭାଙ୍ଗ;
 			}
-		if (value == -1)
+		ଯଦି (ମୂଲ୍ୟ == -1)
 			fatal("%s line %d: bad %s argument %s",
 			    filename, linenum, keyword, arg);
-		if (*activep && *intptr == -1)
-			*intptr = value;
-		break;
+		ଯଦି (*activep && *intptr == -1)
+			*intptr = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case sInclude:
-		if (cmdline) {
+	ସ୍ଥିତି sInclude:
+		ଯଦି (cmdline) {
 			fatal("Include directive not supported as a "
 			    "command-line option");
 		}
-		value = 0;
-		while ((arg2 = argv_next(&ac, &av)) != NULL) {
-			if (*arg2 == '\0') {
+		ମୂଲ୍ୟ = 0;
+		ଯେତେବେଳେ ((arg2 = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (*arg2 == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
-				goto out;
+				ଯାଅ out;
 			}
-			value++;
+			ମୂଲ୍ୟ++;
 			found = 0;
-			if (*arg2 != '/' && *arg2 != '~') {
+			ଯଦି (*arg2 != '/' && *arg2 != '~') {
 				xasprintf(&arg, "%s/%s", SSHDIR, arg2);
-			} else
+			} ଅନ୍ୟଥା
 				arg = xstrdup(arg2);
 
 			/*
@@ -2204,9 +2204,9 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 
 			/* consult cache of include files */
 			TAILQ_FOREACH(item, includes, entry) {
-				if (strcmp(item->selector, arg) != 0)
-					continue;
-				if (item->filename != NULL) {
+				ଯଦି (strcmp(item->selector, arg) != 0)
+					ଜାରି;
+				ଯଦି (item->filename != ଖାଲି) {
 					parse_server_config_depth(options,
 					    item->filename, item->contents,
 					    includes, connectinfo,
@@ -2218,16 +2218,16 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				found = 1;
 				*activep = oactive;
 			}
-			if (found != 0) {
-				free(arg);
-				continue;
+			ଯଦି (found != 0) {
+				ମୁକ୍ତ(arg);
+				ଜାରି;
 			}
 
 			/* requested glob was not in cache */
 			debug2("%s line %d: new include %s",
 			    filename, linenum, arg);
-			if ((r = glob(arg, 0, NULL, &gbuf)) != 0) {
-				if (r != GLOB_NOMATCH) {
+			ଯଦି ((r = glob(arg, 0, ଖାଲି, &gbuf)) != 0) {
+				ଯଦି (r != GLOB_NOMATCH) {
 					fatal("%s line %d: include \"%s\" glob "
 					    "failed", filename, linenum, arg);
 				}
@@ -2237,20 +2237,20 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				 */
 				debug2("%s line %d: no match for %s",
 				    filename, linenum, arg);
-				item = xcalloc(1, sizeof(*item));
+				item = xcalloc(1, ଆକାର(*item));
 				item->selector = xstrdup(arg);
 				TAILQ_INSERT_TAIL(includes,
 				    item, entry);
 			}
-			if (gbuf.gl_pathc > INT_MAX)
+			ଯଦି (gbuf.gl_pathc > INT_MAX)
 				fatal_f("too many glob results");
-			for (n = 0; n < (int)gbuf.gl_pathc; n++) {
+			ପାଇଁ (n = 0; n < (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)gbuf.gl_pathc; n++) {
 				debug2("%s line %d: including %s",
 				    filename, linenum, gbuf.gl_pathv[n]);
-				item = xcalloc(1, sizeof(*item));
+				item = xcalloc(1, ଆକାର(*item));
 				item->selector = xstrdup(arg);
 				item->filename = xstrdup(gbuf.gl_pathv[n]);
-				if ((item->contents = sshbuf_new()) == NULL)
+				ଯଦି ((item->contents = sshbuf_new()) == ଖାଲି)
 					fatal_f("sshbuf_new failed");
 				load_server_config(item->filename,
 				    item->contents);
@@ -2265,456 +2265,456 @@ process_server_config_line_depth(ServerOptions *options, char *line,
 				TAILQ_INSERT_TAIL(includes, item, entry);
 			}
 			globfree(&gbuf);
-			free(arg);
+			ମୁକ୍ତ(arg);
 		}
-		if (value == 0) {
+		ଯଦି (ମୂଲ୍ୟ == 0) {
 			fatal("%s line %d: %s missing filename argument",
 			    filename, linenum, keyword);
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sMatch:
-		if (cmdline)
+	ସ୍ଥିତି sMatch:
+		ଯଦି (cmdline)
 			fatal("Match directive not supported as a command-line "
 			    "option");
-		value = match_cfg_line(str, &ac, &av, linenum,
-		    (*inc_flags & SSHCFG_NEVERMATCH ? NULL : connectinfo));
-		if (value < 0)
+		ମୂଲ୍ୟ = match_cfg_ଧାଡ଼ି(str, &ac, &av, linenum,
+		    (*inc_flags & SSHCFG_NEVERMATCH ? ଖାଲି : connectinfo));
+		ଯଦି (ମୂଲ୍ୟ < 0)
 			fatal("%s line %d: Bad Match condition", filename,
 			    linenum);
-		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : value;
+		*activep = (*inc_flags & SSHCFG_NEVERMATCH) ? 0 : ମୂଲ୍ୟ;
 		/*
 		 * The MATCH_ONLY flag is applicable only until the first
 		 * match block.
 		 */
 		*inc_flags &= ~SSHCFG_MATCH_ONLY;
-		break;
+		ଭାଙ୍ଗ;
 
-	case sPermitListen:
-	case sPermitOpen:
-		if (opcode == sPermitListen) {
-			uintptr = &options->num_permitted_listens;
+	ସ୍ଥିତି sPermitListen:
+	ସ୍ଥିତି sPermitOpen:
+		ଯଦି (opcode == sPermitListen) {
+			uintptr = &options->ଅଙ୍କ_permitted_listens;
 			chararrayptr = &options->permitted_listens;
-		} else {
-			uintptr = &options->num_permitted_opens;
+		} ଅନ୍ୟଥା {
+			uintptr = &options->ଅଙ୍କ_permitted_opens;
 			chararrayptr = &options->permitted_opens;
 		}
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "any") == 0 ||
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (strcmp(arg, "any") == 0 ||
 			    strcmp(arg, "none") == 0) {
-				if (nstrs != 0) {
+				ଯଦି (nstrs != 0) {
 					fatal("%s line %d: %s must appear "
 					    "alone on a %s line.",
 					    filename, linenum, arg, keyword);
 				}
 				opt_array_append(filename, linenum, keyword,
 				    &strs, &nstrs, arg);
-				continue;
+				ଜାରି;
 			}
 
-			if (opcode == sPermitListen &&
-			    strchr(arg, ':') == NULL) {
+			ଯଦି (opcode == sPermitListen &&
+			    strchr(arg, ':') == ଖାଲି) {
 				/*
 				 * Allow bare port number for PermitListen
 				 * to indicate a wildcard listen host.
 				 */
 				xasprintf(&arg2, "*:%s", arg);
-			} else {
+			} ଅନ୍ୟଥା {
 				arg2 = xstrdup(arg);
 				p = hpdelim(&arg);
-				if (p == NULL) {
+				ଯଦି (p == ଖାଲି) {
 					fatal("%s line %d: %s missing host",
 					    filename, linenum, keyword);
 				}
 				p = cleanhostname(p);
 			}
-			if (arg == NULL ||
+			ଯଦି (arg == ଖାଲି ||
 			    ((port = permitopen_port(arg)) < 0)) {
 				fatal("%s line %d: %s bad port number",
 				    filename, linenum, keyword);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg2);
-			free(arg2);
+			ମୁକ୍ତ(arg2);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			*chararrayptr = strs;
 			*uintptr = nstrs;
-			strs = NULL; /* transferred */
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sForceCommand:
-		if (str == NULL || *str == '\0')
+	ସ୍ଥିତି sForceCommand:
+		ଯଦି (str == ଖାଲି || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (*activep && options->adm_forced_command == NULL)
+		ଯଦି (*activep && options->adm_forced_command == ଖାଲି)
 			options->adm_forced_command = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sChrootDirectory:
+	ସ୍ଥିତି sChrootDirectory:
 		charptr = &options->chroot_directory;
 
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sTrustedUserCAKeys:
-		charptr = &options->trusted_user_ca_keys;
-		goto parse_filename;
+	ସ୍ଥିତି sTrustedUserCAKeys:
+		charptr = &options->trusted_user_ca_ଚାବିଗୁଡ଼ିକ;
+		ଯାଅ parse_filename;
 
-	case sRevokedKeys:
-		uintptr = &options->num_revoked_keys_files;
-		chararrayptr = &options->revoked_keys_files;
-		goto parse_filenames;
+	ସ୍ଥିତି s_Revoked_ଚାବିଗୁଡ଼ିକ:
+		uintptr = &options->ଅଙ୍କ_revoked_ଚାବିଗୁଡ଼ିକ_files;
+		chararrayptr = &options->revoked_ଚାବିଗୁଡ଼ିକ_files;
+		ଯାଅ parse_filenames;
 
-	case sSecurityKeyProvider:
+	ସ୍ଥିତି s_Security_ଚାବି_Provider:
 		charptr = &options->sk_provider;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (*activep && *charptr == NULL) {
+		ଯଦି (*activep && *charptr == ଖାଲି) {
 			*charptr = strcasecmp(arg, "internal") == 0 ?
 			    xstrdup(arg) : derelativise_path(arg);
 			/* increase optional counter */
-			if (intptr != NULL)
+			ଯଦି (intptr != ଖାଲି)
 				*intptr = *intptr + 1;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sIPQoS:
+	ସ୍ଥିତି sIPQoS:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = parse_ipqos(arg)) == -1)
+		ଯଦି ((ମୂଲ୍ୟ = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
-		if (value == INT_MIN) {
+		ଯଦି (ମୂଲ୍ୟ == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
-			value = INT_MAX;
+			ମୂଲ୍ୟ = INT_MAX;
 		}
 		arg = argv_next(&ac, &av);
-		if (arg == NULL)
-			value2 = value;
-		else if ((value2 = parse_ipqos(arg)) == -1)
+		ଯଦି (arg == ଖାଲି)
+			value2 = ମୂଲ୍ୟ;
+		ଅନ୍ୟଥା ଯଦି ((value2 = parse_ipqos(arg)) == -1)
 			fatal("%s line %d: Bad %s value: %s",
 			    filename, linenum, keyword, arg);
-		if (value2 == INT_MIN) {
+		ଯଦି (value2 == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
 			value2 = INT_MAX;
 		}
-		if (*activep && options->ip_qos_interactive == -1) {
-			options->ip_qos_interactive = value;
+		ଯଦି (*activep && options->ip_qos_interactive == -1) {
+			options->ip_qos_interactive = ମୂଲ୍ୟ;
 			options->ip_qos_bulk = value2;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sVersionAddendum:
-		if (str == NULL || *str == '\0')
+	ସ୍ଥିତି sVersionAddendum:
+		ଯଦି (str == ଖାଲି || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (strchr(str + len, '\r') != NULL) {
+		ଯଦି (strchr(str + len, '\r') != ଖାଲି) {
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		ଯଦି ((arg = strchr(ଧାଡ଼ି, '#')) != ଖାଲି) {
 			*arg = '\0';
-			rtrim(line);
+			rtrim(ଧାଡ଼ି);
 		}
-		if (*activep && options->version_addendum == NULL) {
-			if (strcasecmp(str + len, "none") == 0)
+		ଯଦି (*activep && options->version_addendum == ଖାଲି) {
+			ଯଦି (strcasecmp(str + len, "none") == 0)
 				options->version_addendum = xstrdup("");
-			else
+			ଅନ୍ୟଥା
 				options->version_addendum = xstrdup(str + len);
 		}
 		argv_consume(&ac);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sAuthorizedKeysCommand:
-		charptr = &options->authorized_keys_command;
+	ସ୍ଥିତି s_Authorized_ଚାବିଗୁଡ଼ିକ_Command:
+		charptr = &options->authorized_ଚାବିଗୁଡ଼ିକ_command;
  parse_command:
 		len = strspn(str, WHITESPACE);
-		if (str[len] != '/' && strcasecmp(str + len, "none") != 0) {
+		ଯଦି (str[len] != '/' && strcasecmp(str + len, "none") != 0) {
 			fatal("%.200s line %d: %s must be an absolute path",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sAuthorizedKeysCommandUser:
-		charptr = &options->authorized_keys_command_user;
+	ସ୍ଥିତି s_Authorized_ଚାବିଗୁଡ଼ିକ_Command_User:
+		charptr = &options->authorized_ଚାବିଗୁଡ଼ିକ_command_user;
  parse_localuser:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ଯଦି (!arg || *arg == '\0') {
 			fatal("%s line %d: missing %s argument.",
 			    filename, linenum, keyword);
 		}
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sAuthorizedPrincipalsCommand:
+	ସ୍ଥିତି sAuthorizedPrincipalsCommand:
 		charptr = &options->authorized_principals_command;
-		goto parse_command;
+		ଯାଅ parse_command;
 
-	case sAuthorizedPrincipalsCommandUser:
+	ସ୍ଥିତି sAuthorizedPrincipalsCommandUser:
 		charptr = &options->authorized_principals_command_user;
-		goto parse_localuser;
+		ଯାଅ parse_localuser;
 
-	case sAuthenticationMethods:
-		found = options->num_auth_methods == 0;
-		value = 0; /* seen "any" pseudo-method */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strcmp(arg, "any") == 0) {
-				if (nstrs > 0) {
+	ସ୍ଥିତି sAuthenticationMethods:
+		found = options->ଅଙ୍କ_auth_methods == 0;
+		ମୂଲ୍ୟ = 0; /* seen "any" pseudo-method */
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
+			ଯଦି (strcmp(arg, "any") == 0) {
+				ଯଦି (nstrs > 0) {
 					fatal("%s line %d: \"any\" must "
 					    "appear alone in %s",
 					    filename, linenum, keyword);
 				}
-				value = 1;
-			} else if (value) {
+				ମୂଲ୍ୟ = 1;
+			} ଅନ୍ୟଥା ଯଦି (ମୂଲ୍ୟ) {
 				fatal("%s line %d: \"any\" must appear "
 				    "alone in %s", filename, linenum, keyword);
-			} else if (auth2_methods_valid(arg, 0) != 0) {
+			} ଅନ୍ୟଥା ଯଦି (auth2_methods_valid(arg, 0) != 0) {
 				fatal("%s line %d: invalid %s method list.",
 				    filename, linenum, keyword);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			options->auth_methods = strs;
-			options->num_auth_methods = nstrs;
-			strs = NULL; /* transferred */
+			options->ଅଙ୍କ_auth_methods = nstrs;
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sStreamLocalBindMask:
+	ସ୍ଥିତି sStreamLocalBindMask:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		/* Parse mode in octal format */
-		value = strtol(arg, &p, 8);
-		if (arg == p || value < 0 || value > 0777)
+		ମୂଲ୍ୟ = strtol(arg, &p, 8);
+		ଯଦି (arg == p || ମୂଲ୍ୟ < 0 || ମୂଲ୍ୟ > 0777)
 			fatal("%s line %d: Invalid %s.",
 			    filename, linenum, keyword);
-		if (*activep &&
+		ଯଦି (*activep &&
 		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
-			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
-		break;
+			options->fwd_opts.streamlocal_bind_mask = (mode_t)ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case sStreamLocalBindUnlink:
+	ସ୍ଥିତି sStreamLocalBindUnlink:
 		intptr = &options->fwd_opts.streamlocal_bind_unlink;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sFingerprintHash:
+	ସ୍ଥିତି sFingerprintHash:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if ((value = ssh_digest_alg_by_name(arg)) == -1)
+		ଯଦି ((ମୂଲ୍ୟ = ssh_digest_alg_by_name(arg)) == -1)
 			fatal("%.200s line %d: Invalid %s algorithm \"%s\".",
 			    filename, linenum, keyword, arg);
-		if (*activep)
-			options->fingerprint_hash = value;
-		break;
+		ଯଦି (*activep)
+			options->fingerprint_hash = ମୂଲ୍ୟ;
+		ଭାଙ୍ଗ;
 
-	case sExposeAuthInfo:
+	ସ୍ଥିତି sExposeAuthInfo:
 		intptr = &options->expose_userauth_info;
-		goto parse_flag;
+		ଯାଅ parse_flag;
 
-	case sRDomain:
-#if !defined(__OpenBSD__) && !defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
+	ସ୍ଥିତି sRDomain:
+#ଯଦି !defined(__OpenBSD__) && !defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
 		fatal("%s line %d: setting RDomain not supported on this "
 		    "platform.", filename, linenum);
 #endif
 		charptr = &options->routing_domain;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0')
+		ଯଦି (!arg || *arg == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
-		if (strcasecmp(arg, "none") != 0 && strcmp(arg, "%D") != 0 &&
+		ଯଦି (strcasecmp(arg, "none") != 0 && strcmp(arg, "%D") != 0 &&
 		    !valid_rdomain(arg))
 			fatal("%s line %d: invalid routing domain",
 			    filename, linenum);
-		if (*activep && *charptr == NULL)
+		ଯଦି (*activep && *charptr == ଖାଲି)
 			*charptr = xstrdup(arg);
-		break;
+		ଭାଙ୍ଗ;
 
-	case sRequiredRSASize:
+	ସ୍ଥିତି sRequiredRSASize:
 		intptr = &options->required_rsa_size;
-		goto parse_int;
+		ଯାଅ parse_int;
 
-	case sChannelTimeout:
-		found = options->num_channel_timeouts == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+	ସ୍ଥିତି sChannelTimeout:
+		found = options->ଅଙ୍କ_channel_timeouts == 0;
+		ଯେତେବେଳେ ((arg = argv_next(&ac, &av)) != ଖାଲି) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ଯଦି (strcasecmp(arg, "none") == 0) {
+				ଯଦି (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
-					goto out;
+					ଯାଅ out;
 				}
-			} else if (parse_pattern_interval(arg,
-			    NULL, NULL) != 0) {
+			} ଅନ୍ୟଥା ଯଦି (parse_pattern_interval(arg,
+			    ଖାଲି, ଖାଲି) != 0) {
 				fatal("%s line %d: invalid channel timeout %s",
 				    filename, linenum, arg);
 			}
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ଯଦି (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ଯଦି (found && *activep) {
 			options->channel_timeouts = strs;
-			options->num_channel_timeouts = nstrs;
-			strs = NULL; /* transferred */
+			options->ଅଙ୍କ_channel_timeouts = nstrs;
+			strs = ଖାଲି; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		ଭାଙ୍ଗ;
 
-	case sUnusedConnectionTimeout:
+	ସ୍ଥିତି sUnusedConnectionTimeout:
 		intptr = &options->unused_connection_timeout;
 		/* peek at first arg for "none" so we can reuse parse_time */
-		if (av[0] != NULL && strcasecmp(av[0], "none") == 0) {
-			(void)argv_next(&ac, &av); /* consume arg */
-			if (*activep)
+		ଯଦି (av[0] != ଖାଲି && strcasecmp(av[0], "none") == 0) {
+			(ଶୂନ୍ୟ)argv_next(&ac, &av); /* consume arg */
+			ଯଦି (*activep)
 				*intptr = 0;
-			break;
+			ଭାଙ୍ଗ;
 		}
-		goto parse_time;
+		ଯାଅ parse_time;
 
-	case sSshdSessionPath:
+	ସ୍ଥିତି sSshdSessionPath:
 		charptr = &options->sshd_session_path;
-		goto parse_filename;
+		ଯାଅ parse_filename;
 
-	case sSshdAuthPath:
+	ସ୍ଥିତି sSshdAuthPath:
 		charptr = &options->sshd_auth_path;
-		goto parse_filename;
+		ଯାଅ parse_filename;
 
-	case sRefuseConnection:
+	ସ୍ଥିତି sRefuseConnection:
 		intptr = &options->refuse_connection;
 		multistate_ptr = multistate_flag;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sWarnWeakCrypto:
+	ସ୍ଥିତି sWarnWeakCrypto:
 		intptr = &options->warn_weak_crypto;
 		multistate_ptr = multistate_warnweakcrypto;
-		goto parse_multistate;
+		ଯାଅ parse_multistate;
 
-	case sDeprecated:
-	case sIgnore:
-	case sUnsupported:
+	ସ୍ଥିତି sDeprecated:
+	ସ୍ଥିତି sIgnore:
+	ସ୍ଥିତି sUnsupported:
 		do_log2(opcode == sIgnore ?
 		    SYSLOG_LEVEL_DEBUG2 : SYSLOG_LEVEL_INFO,
 		    "%s line %d: %s option %s", filename, linenum,
 		    opcode == sUnsupported ? "Unsupported" : "Deprecated",
 		    keyword);
 		argv_consume(&ac);
-		break;
+		ଭାଙ୍ଗ;
 
-	default:
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 		fatal("%s line %d: Missing handler for opcode %s (%d)",
 		    filename, linenum, keyword, opcode);
 	}
 	/* Check that there is no garbage at end of line. */
-	if (ac > 0) {
+	ଯଦି (ac > 0) {
 		error("%.200s line %d: keyword %s extra arguments "
 		    "at end of line", filename, linenum, keyword);
-		goto out;
+		ଯାଅ out;
 	}
 
 	/* success */
 	ret = 0;
  out:
-	opt_array_free2(strs, NULL, nstrs);
+	opt_array_free2(strs, ଖାଲି, nstrs);
 	argv_free(oav, oac);
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
-int
-process_server_config_line(ServerOptions *options, char *line,
-    const char *filename, int linenum, int *activep,
-    struct connection_info *connectinfo, struct include_list *includes)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+process_server_config_ଧାଡ଼ି(ServerOptions *options, ଅକ୍ଷର *ଧାଡ଼ି,
+    ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *activep,
+    ସଂରଚନା connection_info *connectinfo, ସଂରଚନା include_list *includes)
 {
-	int inc_flags = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା inc_flags = 0;
 
-	return process_server_config_line_depth(options, line, filename,
+	ଫେରନ୍ତୁ process_server_config_ଧାଡ଼ି_depth(options, ଧାଡ଼ି, filename,
 	    linenum, activep, connectinfo, &inc_flags, 0, includes);
 }
 
 
 /* Reads the server configuration file. */
 
-void
-load_server_config(const char *filename, struct sshbuf *conf)
+ଶୂନ୍ୟ
+load_server_config(ଅଚଳ ଅକ୍ଷର *filename, ସଂରଚନା sshbuf *conf)
 {
-	struct stat st;
-	char *line = NULL, *cp;
+	ସଂରଚନା stat st;
+	ଅକ୍ଷର *ଧାଡ଼ି = ଖାଲି, *cp;
 	size_t linesize = 0;
 	FILE *f;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
 	debug2_f("filename %s", filename);
-	if ((f = fopen(filename, "r")) == NULL) {
+	ଯଦି ((f = fopen(filename, "r")) == ଖାଲି) {
 		perror(filename);
 		exit(1);
 	}
 	sshbuf_reset(conf);
 	/* grow buffer, so realloc is avoided for large config files */
-	if (fstat(fileno(f), &st) == 0 && st.st_size > 0 &&
+	ଯଦି (fstat(fileno(f), &st) == 0 && st.st_size > 0 &&
 	    (r = sshbuf_allocate(conf, st.st_size)) != 0)
 		fatal_fr(r, "allocate");
-	while (getline(&line, &linesize, f) != -1) {
+	ଯେତେବେଳେ (getline(&ଧାଡ଼ି, &linesize, f) != -1) {
 		/*
 		 * Strip whitespace
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages
 		 */
-		cp = line + strspn(line, " \t\r");
-		if ((r = sshbuf_put(conf, cp, strlen(cp))) != 0)
+		cp = ଧାଡ଼ି + strspn(ଧାଡ଼ି, " \t\r");
+		ଯଦି ((r = sshbuf_put(conf, cp, strlen(cp))) != 0)
 			fatal_fr(r, "sshbuf_put");
 	}
-	free(line);
-	if ((r = sshbuf_put_u8(conf, 0)) != 0)
+	ମୁକ୍ତ(ଧାଡ଼ି);
+	ଯଦି ((r = sshbuf_put_u8(conf, 0)) != 0)
 		fatal_fr(r, "sshbuf_put_u8");
 	fclose(f);
 	debug2_f("done config len = %zu", sshbuf_len(conf));
 }
 
-void
+ଶୂନ୍ୟ
 parse_server_match_config(ServerOptions *options,
-   struct include_list *includes, struct connection_info *connectinfo)
+   ସଂରଚନା include_list *includes, ସଂରଚନା connection_info *connectinfo)
 {
 	ServerOptions mo;
 
@@ -2725,354 +2725,354 @@ parse_server_match_config(ServerOptions *options,
 	free_server_options(&mo);
 }
 
-int
-parse_server_match_testspec(struct connection_info *ci, char *spec)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+parse_server_match_testspec(ସଂରଚନା connection_info *ci, ଅକ୍ଷର *spec)
 {
-	char *p;
-	const char *val;
+	ଅକ୍ଷର *p;
+	ଅଚଳ ଅକ୍ଷର *val;
 
-	while ((p = strsep(&spec, ",")) && *p != '\0') {
-		if ((val = strprefix(p, "addr=", 0)) != NULL) {
+	ଯେତେବେଳେ ((p = strsep(&spec, ",")) && *p != '\0') {
+		ଯଦି ((val = strprefix(p, "addr=", 0)) != ଖାଲି) {
 			ci->address = xstrdup(val);
-		} else if ((val = strprefix(p, "host=", 0)) != NULL) {
+		} ଅନ୍ୟଥା ଯଦି ((val = strprefix(p, "host=", 0)) != ଖାଲି) {
 			ci->host = xstrdup(val);
-		} else if ((val = strprefix(p, "user=", 0)) != NULL) {
+		} ଅନ୍ୟଥା ଯଦି ((val = strprefix(p, "user=", 0)) != ଖାଲି) {
 			ci->user = xstrdup(val);
-		} else if ((val = strprefix(p, "laddr=", 0)) != NULL) {
+		} ଅନ୍ୟଥା ଯଦି ((val = strprefix(p, "laddr=", 0)) != ଖାଲି) {
 			ci->laddress = xstrdup(val);
-		} else if ((val = strprefix(p, "rdomain=", 0)) != NULL) {
+		} ଅନ୍ୟଥା ଯଦି ((val = strprefix(p, "rdomain=", 0)) != ଖାଲି) {
 			ci->rdomain = xstrdup(val);
-		} else if ((val = strprefix(p, "lport=", 0)) != NULL) {
+		} ଅନ୍ୟଥା ଯଦି ((val = strprefix(p, "lport=", 0)) != ଖାଲି) {
 			ci->lport = a2port(val);
-			if (ci->lport == -1) {
+			ଯଦି (ci->lport == -1) {
 				fprintf(stderr, "Invalid port '%s' in test mode"
 				    " specification %s\n", p+6, p);
-				return -1;
+				ଫେରନ୍ତୁ -1;
 			}
-		} else if (strcmp(p, "invalid-user") == 0) {
+		} ଅନ୍ୟଥା ଯଦି (strcmp(p, "invalid-user") == 0) {
 			ci->user_invalid = 1;
-		} else {
+		} ଅନ୍ୟଥା {
 			fprintf(stderr, "Invalid test mode specification %s\n",
 			    p);
-			return -1;
+			ଫେରନ୍ତୁ -1;
 		}
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-void
+ଶୂନ୍ୟ
 servconf_merge_subsystems(ServerOptions *dst, ServerOptions *src)
 {
 	u_int i, j, found;
 
-	for (i = 0; i < src->num_subsystems; i++) {
+	ପାଇଁ (i = 0; i < src->ଅଙ୍କ_subsystems; i++) {
 		found = 0;
-		for (j = 0; j < dst->num_subsystems; j++) {
-			if (strcmp(src->subsystem_name[i],
+		ପାଇଁ (j = 0; j < dst->ଅଙ୍କ_subsystems; j++) {
+			ଯଦି (strcmp(src->subsystem_name[i],
 			    dst->subsystem_name[j]) == 0) {
 				found = 1;
-				break;
+				ଭାଙ୍ଗ;
 			}
 		}
-		if (found) {
+		ଯଦି (found) {
 			debug_f("override \"%s\"", dst->subsystem_name[j]);
-			free(dst->subsystem_command[j]);
-			free(dst->subsystem_args[j]);
+			ମୁକ୍ତ(dst->subsystem_command[j]);
+			ମୁକ୍ତ(dst->subsystem_args[j]);
 			dst->subsystem_command[j] =
 			    xstrdup(src->subsystem_command[i]);
 			dst->subsystem_args[j] =
 			    xstrdup(src->subsystem_args[i]);
-			continue;
+			ଜାରି;
 		}
 		debug_f("add \"%s\"", src->subsystem_name[i]);
 		dst->subsystem_name = xrecallocarray(
-		    dst->subsystem_name, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_name));
+		    dst->subsystem_name, dst->ଅଙ୍କ_subsystems,
+		    dst->ଅଙ୍କ_subsystems + 1, ଆକାର(*dst->subsystem_name));
 		dst->subsystem_command = xrecallocarray(
-		    dst->subsystem_command, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_command));
+		    dst->subsystem_command, dst->ଅଙ୍କ_subsystems,
+		    dst->ଅଙ୍କ_subsystems + 1, ଆକାର(*dst->subsystem_command));
 		dst->subsystem_args = xrecallocarray(
-		    dst->subsystem_args, dst->num_subsystems,
-		    dst->num_subsystems + 1, sizeof(*dst->subsystem_args));
-		j = dst->num_subsystems++;
+		    dst->subsystem_args, dst->ଅଙ୍କ_subsystems,
+		    dst->ଅଙ୍କ_subsystems + 1, ଆକାର(*dst->subsystem_args));
+		j = dst->ଅଙ୍କ_subsystems++;
 		dst->subsystem_name[j] = xstrdup(src->subsystem_name[i]);
 		dst->subsystem_command[j] = xstrdup(src->subsystem_command[i]);
 		dst->subsystem_args[j] = xstrdup(src->subsystem_args[i]);
 	}
 }
 
-static int
-serialise_s32(struct sshbuf *buf, int v)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_s32(ସଂରଚନା sshbuf *buf, ପୂର୍ଣ୍ଣସଂଖ୍ୟା v)
 {
 	uint32_t uv;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
 	uv = v < 0 ? (uint32_t)(-(v + 1)) + 1 : (uint32_t)v;
-	if ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
+	ଯଦି ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
 	    (r = sshbuf_put_u32(buf, uv)) != 0)
-		return r;
-	return 0;
+		ଫେରନ୍ତୁ r;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_s64(struct sshbuf *buf, int64_t v)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_s64(ସଂରଚନା sshbuf *buf, int64_t v)
 {
 	uint64_t uv;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
 	uv = v < 0 ? (uint64_t)(-(v + 1)) + 1 : (uint64_t)v;
-	if ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
+	ଯଦି ((r = sshbuf_put_u8(buf, v < 0)) != 0 ||
 	    (r = sshbuf_put_u64(buf, uv)) != 0)
-		return r;
-	return 0;
+		ଫେରନ୍ତୁ r;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_mode(struct sshbuf *buf, mode_t v)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_mode(ସଂରଚନା sshbuf *buf, mode_t v)
 {
 	u_int uv;
 
-	if (v == (mode_t)-1)
-		return serialise_s32(buf, -1);
+	ଯଦି (v == (mode_t)-1)
+		ଫେରନ୍ତୁ serialise_s32(buf, -1);
 	uv = (u_int)v;
-	if ((mode_t)uv != v || uv > 0777)
-		return SSH_ERR_INVALID_FORMAT;
-	return serialise_s32(buf, (int)uv);
+	ଯଦି ((mode_t)uv != v || uv > 0777)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
+	ଫେରନ୍ତୁ serialise_s32(buf, (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)uv);
 }
 
-static int
-serialise_double(struct sshbuf *buf, double v)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_double(ସଂରଚନା sshbuf *buf, ଦ୍ୱିଗୁଣ v)
 {
 	/*
 	 * XXX this is no good for a wire encoding.
 	 * It's fine for passing configurations via RPC, but it would
 	 * be nicer to have an exact binary encoding here.
 	 */
-	return sshbuf_put(buf, &v, sizeof(v));
+	ଫେରନ୍ତୁ sshbuf_put(buf, &v, ଆକାର(v));
 }
 
-static int
-serialise_nullable_string(struct sshbuf *buf, const char *s)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_nullable_string(ସଂରଚନା sshbuf *buf, ଅଚଳ ଅକ୍ଷର *s)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = sshbuf_put_u8(buf, s != NULL)) != 0)
-		return r;
-	if (s == NULL)
-		return 0;
-	return sshbuf_put_cstring(buf, s);
+	ଯଦି ((r = sshbuf_put_u8(buf, s != ଖାଲି)) != 0)
+		ଫେରନ୍ତୁ r;
+	ଯଦି (s == ଖାଲି)
+		ଫେରନ୍ତୁ 0;
+	ଫେରନ୍ତୁ sshbuf_put_cstring(buf, s);
 }
 
-static int
-serialise_nullable_string_array(struct sshbuf *buf, char **a, u_int n)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_nullable_string_array(ସଂରଚନା sshbuf *buf, ଅକ୍ଷର **a, u_int n)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, n)) != 0)
-		return r;
-	for (i = 0; i < n; i++) {
-		if ((r = serialise_nullable_string(buf, a[i])) != 0)
-			return r;
+	ଯଦି ((r = sshbuf_put_u32(buf, n)) != 0)
+		ଫେରନ୍ତୁ r;
+	ପାଇଁ (i = 0; i < n; i++) {
+		ଯଦି ((r = serialise_nullable_string(buf, a[i])) != 0)
+			ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_hostkeyfile(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_hostkeyfile(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_host_key_files)) != 0) {
+	ଯଦି ((r = sshbuf_put_u32(buf, options->ଅଙ୍କ_host_ଚାବି_files)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	for (i = 0; i < options->num_host_key_files; i++) {
-		if ((r = serialise_s32(buf,
-		    options->host_key_file_userprovided[i])) != 0 ||
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_host_ଚାବି_files; i++) {
+		ଯଦି ((r = serialise_s32(buf,
+		    options->host_ଚାବି_file_userprovided[i])) != 0 ||
 		    (r = serialise_nullable_string(buf,
-		    options->host_key_files[i])) != 0) {
+		    options->host_ଚାବି_files[i])) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			ଫେରନ୍ତୁ r;
 		}
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_ipqos(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_ipqos(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s32(buf, options->ip_qos_interactive)) != 0 ||
+	ଯଦି ((r = serialise_s32(buf, options->ip_qos_interactive)) != 0 ||
 	    (r = serialise_s32(buf, options->ip_qos_bulk)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_listenaddress(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_listenaddress(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i;
 
 	/* Note: only serialises queued listen addresses */
-	if ((r = sshbuf_put_u32(buf, options->num_queued_listens)) != 0) {
+	ଯଦି ((r = sshbuf_put_u32(buf, options->ଅଙ୍କ_queued_listens)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	for (i = 0; i < options->num_queued_listens; i++) {
-		const struct queued_listenaddr *qla =
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_queued_listens; i++) {
+		ଅଚଳ ସଂରଚନା queued_listenaddr *qla =
 		    options->queued_listen_addrs + i;
 
-		if ((r = sshbuf_put_cstring(buf, qla->addr)) != 0 ||
+		ଯଦି ((r = sshbuf_put_cstring(buf, qla->addr)) != 0 ||
 		    (r = serialise_s32(buf, qla->port)) != 0 ||
 		    (r = serialise_nullable_string(buf, qla->rdomain)) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			ଫେରନ୍ତୁ r;
 		}
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_logfacility(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_logfacility(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s32(buf, (int)options->log_facility)) != 0) {
+	ଯଦି ((r = serialise_s32(buf, (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)options->log_facility)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_loglevel(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_loglevel(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s32(buf, (int)options->log_level)) != 0) {
+	ଯଦି ((r = serialise_s32(buf, (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)options->log_level)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_port(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_port(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_ports)) != 0) {
+	ଯଦି ((r = sshbuf_put_u32(buf, options->ଅଙ୍କ_ports)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	for (i = 0; i < options->num_ports; i++) {
-		if ((r = serialise_s32(buf, options->ports[i])) != 0) {
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_ports; i++) {
+		ଯଦି ((r = serialise_s32(buf, options->ports[i])) != 0) {
 			error_fr(r, "serialise port");
-			return r;
+			ଫେରନ୍ତୁ r;
 		}
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_gatewayports(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_gatewayports(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s32(buf, options->fwd_opts.gateway_ports)) != 0) {
+	ଯଦି ((r = serialise_s32(buf, options->fwd_opts.gateway_ports)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_streamlocalbindmask(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_streamlocalbindmask(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_mode(buf,
+	ଯଦି ((r = serialise_mode(buf,
 	    options->fwd_opts.streamlocal_bind_mask)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_streamlocalbindunlink(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_streamlocalbindunlink(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = sshbuf_put_u8(buf,
+	ଯଦି ((r = sshbuf_put_u8(buf,
 	    (options->fwd_opts.streamlocal_bind_unlink != 0))) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_maxstartups(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_maxstartups(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s32(buf, options->max_startups_begin)) != 0 ||
+	ଯଦି ((r = serialise_s32(buf, options->max_startups_begin)) != 0 ||
 	    (r = serialise_s32(buf, options->max_startups_rate)) != 0 ||
 	    (r = serialise_s32(buf, options->max_startups)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_permituserenv(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_permituserenv(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s32(buf, options->permit_user_env)) != 0 ||
+	ଯଦି ((r = serialise_s32(buf, options->permit_user_env)) != 0 ||
 	    (r = serialise_nullable_string(buf,
 	    options->permit_user_env_allowlist)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_persourcenetblocksize(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_persourcenetblocksize(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s32(buf, options->per_source_masklen_ipv4)) != 0 ||
+	ଯଦି ((r = serialise_s32(buf, options->per_source_masklen_ipv4)) != 0 ||
 	    (r = serialise_s32(buf, options->per_source_masklen_ipv6)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_persourcepenalties(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_persourcepenalties(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	const struct per_source_penalty *psp = &options->per_source_penalty;
-	int r;
+	ଅଚଳ ସଂରଚନା per_source_penalty *psp = &options->per_source_penalty;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s32(buf, psp->enabled)) != 0 ||
+	ଯଦି ((r = serialise_s32(buf, psp->enabled)) != 0 ||
 	    (r = serialise_s32(buf, psp->max_sources4)) != 0 ||
 	    (r = serialise_s32(buf, psp->max_sources6)) != 0 ||
 	    (r = serialise_s32(buf, psp->overflow_mode)) != 0 ||
@@ -3086,118 +3086,118 @@ serialise_persourcepenalties(const ServerOptions *options, struct sshbuf *buf)
 	    (r = serialise_double(buf, psp->penalty_max)) != 0 ||
 	    (r = serialise_double(buf, psp->penalty_min)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_rekeylimit(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_rekeylimit(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s64(buf, options->rekey_limit)) != 0 ||
+	ଯଦି ((r = serialise_s64(buf, options->rekey_limit)) != 0 ||
 	    (r = serialise_s32(buf, options->rekey_interval)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_subsystem(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_subsystem(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i;
 
-	if ((r = sshbuf_put_u32(buf, options->num_subsystems)) != 0) {
+	ଯଦି ((r = sshbuf_put_u32(buf, options->ଅଙ୍କ_subsystems)) != 0) {
 		error_fr(r, "serialise length");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	for (i = 0; i < options->num_subsystems; i++) {
-		if ((r = sshbuf_put_cstring(buf,
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_subsystems; i++) {
+		ଯଦି ((r = sshbuf_put_cstring(buf,
 		    options->subsystem_name[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
 		    options->subsystem_command[i])) != 0 ||
 		    (r = sshbuf_put_cstring(buf,
 		    options->subsystem_args[i])) != 0) {
 			error_fr(r, "serialise member");
-			return r;
+			ଫେରନ୍ତୁ r;
 		}
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_pubkey_auth_options(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_pubkey_auth_options(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = serialise_s32(buf, options->pubkey_auth_options)) != 0 ||
+	ଯଦି ((r = serialise_s32(buf, options->pubkey_auth_options)) != 0 ||
 	    (r = serialise_s32(buf, options->max_pubkey_ok)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-serialise_timingsecret(const ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_timingsecret(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = sshbuf_put_u64(buf, options->timing_secret)) != 0) {
+	ଯଦି ((r = sshbuf_put_u64(buf, options->timing_secret)) != 0) {
 		error_fr(r, "serialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
 
-int
-serialise_server_options(const ServerOptions *options, struct sshbuf **bufp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+serialise_server_options(ଅଚଳ ServerOptions *options, ସଂରଚନା sshbuf **bufp)
 {
-	struct sshbuf *buf = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ସଂରଚନା sshbuf *buf = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r = SSH_ERR_INTERNAL_ERROR;
 
-	*bufp = NULL;
+	*bufp = ଖାଲି;
 
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u32(buf, SSHD_CONFIG_BLOB_VERSION)) != 0) {
+	ଯଦି ((buf = sshbuf_new()) == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
+	ଯଦି ((r = sshbuf_put_u32(buf, SSHD_CONFIG_BLOB_VERSION)) != 0) {
 		error_fr(r, "serialise version");
-		goto out;
+		ଯାଅ out;
 	}
 
 #define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if ((r = serialise_s32(buf, options->var)) != 0) { \
+	ଯଦି ((r = serialise_s32(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		ଯାଅ out; \
 	}
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if ((r = serialise_s32(buf, options->var)) != 0) { \
+	ଯଦି ((r = serialise_s32(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		ଯାଅ out; \
 	}
 #define SSHCONF_STRING(var, conf, flags, cp) \
-	if ((r = serialise_nullable_string(buf, options->var)) != 0) { \
+	ଯଦି ((r = serialise_nullable_string(buf, options->var)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		ଯାଅ out; \
 	}
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
-	if ((r = serialise_nullable_string_array(buf, options->var, \
+	ଯଦି ((r = serialise_nullable_string_array(buf, options->var, \
 	    options->nvar)) != 0) { \
 		error_fr(r, "serialise %s", #var); \
-		goto out; \
+		ଯାଅ out; \
 	}
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
-	if ((r = serialise_##funcsuffix(options, buf)) != 0) \
-		goto out;
+	ଯଦି ((r = serialise_##funcsuffix(options, buf)) != 0) \
+		ଯାଅ out;
 #define SSHCONF_NONCONF(funcsuffix) \
-	if ((r = serialise_##funcsuffix(options, buf)) != 0) \
-		goto out;
+	ଯଦି ((r = serialise_##funcsuffix(options, buf)) != 0) \
+		ଯାଅ out;
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	/* empty */
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags)	/* empty */
@@ -3219,398 +3219,398 @@ serialise_server_options(const ServerOptions *options, struct sshbuf **bufp)
 	/* success */
 	r = 0;
 	*bufp = buf;
-	buf = NULL; /* transferred */
+	buf = ଖାଲି; /* transferred */
  out:
 	sshbuf_free(buf);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
-static int
-deserialise_s32(struct sshbuf *buf, int *v)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_s32(ସଂରଚନା sshbuf *buf, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *v)
 {
 	uint32_t tmp;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_char was_signed;
 
-	if ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
+	ଯଦି ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
 	    (r = sshbuf_get_u32(buf, &tmp)) != 0)
-		return r;
-	if (was_signed > 1)
-		return SSH_ERR_INVALID_FORMAT;
-	if (was_signed) {
-		if (tmp > (uint32_t)INT_MAX + 1)
-			return SSH_ERR_INVALID_FORMAT;
-		*v = tmp == (uint32_t)INT_MAX + 1 ? INT_MIN : -(int)tmp;
-	} else {
-		if (tmp > INT_MAX)
-			return SSH_ERR_INVALID_FORMAT;
-		*v = (int)tmp;
+		ଫେରନ୍ତୁ r;
+	ଯଦି (was_signed > 1)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
+	ଯଦି (was_signed) {
+		ଯଦି (tmp > (uint32_t)INT_MAX + 1)
+			ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
+		*v = tmp == (uint32_t)INT_MAX + 1 ? INT_MIN : -(ପୂର୍ଣ୍ଣସଂଖ୍ୟା)tmp;
+	} ଅନ୍ୟଥା {
+		ଯଦି (tmp > INT_MAX)
+			ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
+		*v = (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)tmp;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_s64(struct sshbuf *buf, int64_t *v)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_s64(ସଂରଚନା sshbuf *buf, int64_t *v)
 {
 	uint64_t tmp;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_char was_signed;
 
-	if ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
+	ଯଦି ((r = sshbuf_get_u8(buf, &was_signed)) != 0 ||
 	    (r = sshbuf_get_u64(buf, &tmp)) != 0)
-		return r;
-	if (was_signed > 1)
-		return SSH_ERR_INVALID_FORMAT;
-	if (was_signed) {
-		if (tmp > (uint64_t)INT64_MAX + 1)
-			return SSH_ERR_INVALID_FORMAT;
+		ଫେରନ୍ତୁ r;
+	ଯଦି (was_signed > 1)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
+	ଯଦି (was_signed) {
+		ଯଦି (tmp > (uint64_t)INT64_MAX + 1)
+			ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 		*v = tmp == (uint64_t)INT64_MAX + 1 ?
 		    INT64_MIN : -(int64_t)tmp;
-	} else {
-		if (tmp > INT64_MAX)
-			return SSH_ERR_INVALID_FORMAT;
+	} ଅନ୍ୟଥା {
+		ଯଦି (tmp > INT64_MAX)
+			ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 		*v = (int64_t)tmp;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_mode(struct sshbuf *buf, mode_t *v)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_mode(ସଂରଚନା sshbuf *buf, mode_t *v)
 {
-	int r, tmp;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0)
-		return r;
-	if (tmp == -1) {
+	ଯଦି ((r = deserialise_s32(buf, &tmp)) != 0)
+		ଫେରନ୍ତୁ r;
+	ଯଦି (tmp == -1) {
 		*v = (mode_t)-1;
-		return 0;
+		ଫେରନ୍ତୁ 0;
 	}
-	if (tmp < 0 || tmp > 0777)
-		return SSH_ERR_INVALID_FORMAT;
+	ଯଦି (tmp < 0 || tmp > 0777)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 	*v = (mode_t)tmp;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_double(struct sshbuf *buf, double *v)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_double(ସଂରଚନା sshbuf *buf, ଦ୍ୱିଗୁଣ *v)
 {
-	return sshbuf_get(buf, v, sizeof(*v));
+	ଫେରନ୍ତୁ sshbuf_get(buf, v, ଆକାର(*v));
 }
 
-static int
-deserialise_nullable_string(struct sshbuf *buf, char **sp)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_nullable_string(ସଂରଚନା sshbuf *buf, ଅକ୍ଷର **sp)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_char present;
 
-	if ((r = sshbuf_get_u8(buf, &present)) != 0)
-		return r;
-	if (present == 0) {
-		*sp = NULL;
-		return 0;
+	ଯଦି ((r = sshbuf_get_u8(buf, &present)) != 0)
+		ଫେରନ୍ତୁ r;
+	ଯଦି (present == 0) {
+		*sp = ଖାଲି;
+		ଫେରନ୍ତୁ 0;
 	}
-	if (present != 1)
-		return SSH_ERR_INVALID_FORMAT;
-	return sshbuf_get_cstring(buf, sp, NULL);
+	ଯଦି (present != 1)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
+	ଫେରନ୍ତୁ sshbuf_get_cstring(buf, sp, ଖାଲି);
 }
 
-static void
-free_string_array(char **a, u_int n)
+ସ୍ଥିର ଶୂନ୍ୟ
+free_string_array(ଅକ୍ଷର **a, u_int n)
 {
 	u_int i;
 
-	if (a == NULL)
-		return;
-	for (i = 0; i < n; i++)
-		free(a[i]);
-	free(a);
+	ଯଦି (a == ଖାଲି)
+		ଫେରନ୍ତୁ;
+	ପାଇଁ (i = 0; i < n; i++)
+		ମୁକ୍ତ(a[i]);
+	ମୁକ୍ତ(a);
 }
 
-static int
-deserialise_count(struct sshbuf *buf, u_int *np, const char *what)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_ଗଣନା(ସଂରଚନା sshbuf *buf, u_int *np, ଅଚଳ ଅକ୍ଷର *what)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	uint32_t n;
 
-	if ((r = sshbuf_get_u32(buf, &n)) != 0) {
+	ଯଦି ((r = sshbuf_get_u32(buf, &n)) != 0) {
 		error_fr(r, "deserialise %s length", what);
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	if (n > UINT_MAX) {
+	ଯଦି (n > UINT_MAX) {
 		error_f("bad number of %s", what);
-		return SSH_ERR_INVALID_FORMAT;
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 	}
-	if (n > sshbuf_len(buf)) {
+	ଯଦି (n > sshbuf_len(buf)) {
 		error_f("bad number of %s", what);
-		return SSH_ERR_INVALID_FORMAT;
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 	}
 	*np = n;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_nullable_string_array(struct sshbuf *buf, char ***arrayp,
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_nullable_string_array(ସଂରଚନା sshbuf *buf, ଅକ୍ଷର ***arrayp,
     u_int *np)
 {
-	char **a = NULL;
-	int r;
+	ଅକ୍ଷର **a = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i, n;
 
-	*arrayp = NULL;
+	*arrayp = ଖାଲି;
 	*np = 0;
-	if ((r = deserialise_count(buf, &n, "strings")) != 0)
-		return r;
-	if (n > 0)
-		a = xcalloc(n, sizeof(*a));
-	for (i = 0; i < n; i++) {
-		if ((r = deserialise_nullable_string(buf, a + i)) != 0) {
+	ଯଦି ((r = deserialise_ଗଣନା(buf, &n, "strings")) != 0)
+		ଫେରନ୍ତୁ r;
+	ଯଦି (n > 0)
+		a = xcalloc(n, ଆକାର(*a));
+	ପାଇଁ (i = 0; i < n; i++) {
+		ଯଦି ((r = deserialise_nullable_string(buf, a + i)) != 0) {
 			free_string_array(a, i + 1);
-			return r;
+			ଫେରନ୍ତୁ r;
 		}
 	}
 	*arrayp = a;
 	*np = n;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static void
-free_queued_listen_addrs(struct queued_listenaddr *qla, u_int n)
+ସ୍ଥିର ଶୂନ୍ୟ
+free_queued_listen_addrs(ସଂରଚନା queued_listenaddr *qla, u_int n)
 {
 	u_int i;
 
-	if (qla == NULL)
-		return;
-	for (i = 0; i < n; i++) {
-		free(qla[i].addr);
-		free(qla[i].rdomain);
+	ଯଦି (qla == ଖାଲି)
+		ଫେରନ୍ତୁ;
+	ପାଇଁ (i = 0; i < n; i++) {
+		ମୁକ୍ତ(qla[i].addr);
+		ମୁକ୍ତ(qla[i].rdomain);
 	}
-	free(qla);
+	ମୁକ୍ତ(qla);
 }
 
-static int
-deserialise_hostkeyfile(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_hostkeyfile(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r, *userprovided = NULL;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, *userprovided = ଖାଲି;
 	u_int i, n;
-	char **files = NULL;
+	ଅକ୍ଷର **files = ଖାଲି;
 
-	if ((r = deserialise_count(buf, &n, "host key files")) != 0)
-		return r;
-	if (n > 0) {
-		userprovided = xcalloc(n, sizeof(*userprovided));
-		files = xcalloc(n, sizeof(*files));
+	ଯଦି ((r = deserialise_ଗଣନା(buf, &n, "host key files")) != 0)
+		ଫେରନ୍ତୁ r;
+	ଯଦି (n > 0) {
+		userprovided = xcalloc(n, ଆକାର(*userprovided));
+		files = xcalloc(n, ଆକାର(*files));
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = deserialise_s32(buf, userprovided + i)) != 0 ||
+	ପାଇଁ (i = 0; i < n; i++) {
+		ଯଦି ((r = deserialise_s32(buf, userprovided + i)) != 0 ||
 		    (r = deserialise_nullable_string(buf, files + i)) != 0) {
 			error_fr(r, "deserialise member");
 			free_string_array(files, i + 1);
-			free(userprovided);
-			return r;
+			ମୁକ୍ତ(userprovided);
+			ଫେରନ୍ତୁ r;
 		}
 	}
-	options->num_host_key_files = n;
-	options->host_key_file_userprovided = userprovided;
-	options->host_key_files = files;
-	return 0;
+	options->ଅଙ୍କ_host_ଚାବି_files = n;
+	options->host_ଚାବି_file_userprovided = userprovided;
+	options->host_ଚାବି_files = files;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_ipqos(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_ipqos(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = deserialise_s32(buf, &options->ip_qos_interactive)) != 0 ||
+	ଯଦି ((r = deserialise_s32(buf, &options->ip_qos_interactive)) != 0 ||
 	    (r = deserialise_s32(buf, &options->ip_qos_bulk)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_listenaddress(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_listenaddress(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i, n;
-	struct queued_listenaddr *qla = NULL;
+	ସଂରଚନା queued_listenaddr *qla = ଖାଲି;
 
-	if ((r = deserialise_count(buf, &n, "listen addresses")) != 0)
-		return r;
-	if (n > 0)
-		qla = xcalloc(n, sizeof(*qla));
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(buf, &qla[i].addr, NULL)) != 0 ||
+	ଯଦି ((r = deserialise_ଗଣନା(buf, &n, "listen addresses")) != 0)
+		ଫେରନ୍ତୁ r;
+	ଯଦି (n > 0)
+		qla = xcalloc(n, ଆକାର(*qla));
+	ପାଇଁ (i = 0; i < n; i++) {
+		ଯଦି ((r = sshbuf_get_cstring(buf, &qla[i].addr, ଖାଲି)) != 0 ||
 		    (r = deserialise_s32(buf, &qla[i].port)) != 0 ||
 		    (r = deserialise_nullable_string(buf,
 		    &qla[i].rdomain)) != 0) {
 			error_fr(r, "deserialise member");
 			free_queued_listen_addrs(qla, i + 1);
-			return r;
+			ଫେରନ୍ତୁ r;
 		}
 	}
-	options->num_queued_listens = n;
+	options->ଅଙ୍କ_queued_listens = n;
 	options->queued_listen_addrs = qla;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_logfacility(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_logfacility(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r, tmp;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0) {
+	ଯଦି ((r = deserialise_s32(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	if (tmp != SYSLOG_FACILITY_NOT_SET &&
-	    log_facility_name((SyslogFacility)tmp) == NULL) {
+	ଯଦି (tmp != SYSLOG_FACILITY_NOT_SET &&
+	    log_facility_name((SyslogFacility)tmp) == ଖାଲି) {
 		error_f("bad syslog facility");
-		return SSH_ERR_INVALID_FORMAT;
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 	}
 	options->log_facility = (SyslogFacility)tmp;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_loglevel(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_loglevel(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r, tmp;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, tmp;
 
-	if ((r = deserialise_s32(buf, &tmp)) != 0) {
+	ଯଦି ((r = deserialise_s32(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	if (tmp != SYSLOG_LEVEL_NOT_SET &&
-	    log_level_name((LogLevel)tmp) == NULL) {
+	ଯଦି (tmp != SYSLOG_LEVEL_NOT_SET &&
+	    log_level_name((LogLevel)tmp) == ଖାଲି) {
 		error_f("bad log level");
-		return SSH_ERR_INVALID_FORMAT;
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 	}
 	options->log_level = (LogLevel)tmp;
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_port(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_port(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i, n;
 
-	if ((r = deserialise_count(buf, &n, "ports")) != 0)
-		return r;
-	if (n > MAX_PORTS) {
+	ଯଦି ((r = deserialise_ଗଣନା(buf, &n, "ports")) != 0)
+		ଫେରନ୍ତୁ r;
+	ଯଦି (n > MAX_PORTS) {
 		error_f("bad number of ports");
-		return SSH_ERR_INVALID_FORMAT;
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 	}
-	options->num_ports = n;
-	memset(options->ports, 0, sizeof(options->ports));
-	for (i = 0; i < options->num_ports; i++) {
-		if ((r = deserialise_s32(buf, options->ports + i)) != 0) {
+	options->ଅଙ୍କ_ports = n;
+	memset(options->ports, 0, ଆକାର(options->ports));
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_ports; i++) {
+		ଯଦି ((r = deserialise_s32(buf, options->ports + i)) != 0) {
 			error_fr(r, "deserialise port");
-			return r;
+			ଫେରନ୍ତୁ r;
 		}
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_gatewayports(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_gatewayports(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = deserialise_s32(buf, &options->fwd_opts.gateway_ports)) != 0) {
+	ଯଦି ((r = deserialise_s32(buf, &options->fwd_opts.gateway_ports)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_streamlocalbindmask(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_streamlocalbindmask(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = deserialise_mode(buf,
+	ଯଦି ((r = deserialise_mode(buf,
 	    &options->fwd_opts.streamlocal_bind_mask)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_streamlocalbindunlink(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_streamlocalbindunlink(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_char tmp;
 
-	if ((r = sshbuf_get_u8(buf, &tmp)) != 0) {
+	ଯଦି ((r = sshbuf_get_u8(buf, &tmp)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	if (tmp > 1) {
+	ଯଦି (tmp > 1) {
 		error_f("bad boolean");
-		return SSH_ERR_INVALID_FORMAT;
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 	}
 	options->fwd_opts.streamlocal_bind_unlink = tmp;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_maxstartups(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_maxstartups(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = deserialise_s32(buf, &options->max_startups_begin)) != 0 ||
+	ଯଦି ((r = deserialise_s32(buf, &options->max_startups_begin)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_startups_rate)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_startups)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_permituserenv(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_permituserenv(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = deserialise_s32(buf, &options->permit_user_env)) != 0 ||
+	ଯଦି ((r = deserialise_s32(buf, &options->permit_user_env)) != 0 ||
 	    (r = deserialise_nullable_string(buf,
 	    &options->permit_user_env_allowlist)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_persourcenetblocksize(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_persourcenetblocksize(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = deserialise_s32(buf,
+	ଯଦି ((r = deserialise_s32(buf,
 	    &options->per_source_masklen_ipv4)) != 0 ||
 	    (r = deserialise_s32(buf,
 	    &options->per_source_masklen_ipv6)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_persourcepenalties(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_persourcepenalties(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	struct per_source_penalty *psp = &options->per_source_penalty;
-	int r;
+	ସଂରଚନା per_source_penalty *psp = &options->per_source_penalty;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = deserialise_s32(buf, &psp->enabled)) != 0 ||
+	ଯଦି ((r = deserialise_s32(buf, &psp->enabled)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->max_sources4)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->max_sources6)) != 0 ||
 	    (r = deserialise_s32(buf, &psp->overflow_mode)) != 0 ||
@@ -3625,142 +3625,142 @@ deserialise_persourcepenalties(ServerOptions *options, struct sshbuf *buf)
 	    (r = deserialise_double(buf, &psp->penalty_max)) != 0 ||
 	    (r = deserialise_double(buf, &psp->penalty_min)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_rekeylimit(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_rekeylimit(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = deserialise_s64(buf, &options->rekey_limit)) != 0 ||
+	ଯଦି ((r = deserialise_s64(buf, &options->rekey_limit)) != 0 ||
 	    (r = deserialise_s32(buf, &options->rekey_interval)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_subsystem(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_subsystem(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	u_int i, n;
-	char **names = NULL, **commands = NULL, **args = NULL;
+	ଅକ୍ଷର **names = ଖାଲି, **commands = ଖାଲି, **args = ଖାଲି;
 
-	if ((r = deserialise_count(buf, &n, "subsystems")) != 0)
-		return r;
-	if (n > 0) {
-		names = xcalloc(n, sizeof(*names));
-		commands = xcalloc(n, sizeof(*names));
-		args = xcalloc(n, sizeof(*args));
+	ଯଦି ((r = deserialise_ଗଣନା(buf, &n, "subsystems")) != 0)
+		ଫେରନ୍ତୁ r;
+	ଯଦି (n > 0) {
+		names = xcalloc(n, ଆକାର(*names));
+		commands = xcalloc(n, ଆକାର(*names));
+		args = xcalloc(n, ଆକାର(*args));
 	}
-	for (i = 0; i < n; i++) {
-		if ((r = sshbuf_get_cstring(buf, names + i, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(buf, commands + i, NULL)) != 0 ||
-		    (r = sshbuf_get_cstring(buf, args + i, NULL)) != 0) {
+	ପାଇଁ (i = 0; i < n; i++) {
+		ଯଦି ((r = sshbuf_get_cstring(buf, names + i, ଖାଲି)) != 0 ||
+		    (r = sshbuf_get_cstring(buf, commands + i, ଖାଲି)) != 0 ||
+		    (r = sshbuf_get_cstring(buf, args + i, ଖାଲି)) != 0) {
 			error_fr(r, "deserialise member");
 			free_string_array(names, i + 1);
 			free_string_array(commands, i + 1);
 			free_string_array(args, i + 1);
-			return r;
+			ଫେରନ୍ତୁ r;
 		}
 	}
-	options->num_subsystems = n;
+	options->ଅଙ୍କ_subsystems = n;
 	options->subsystem_name = names;
 	options->subsystem_command = commands;
 	options->subsystem_args = args;
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_pubkey_auth_options(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_pubkey_auth_options(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = deserialise_s32(buf, &options->pubkey_auth_options)) != 0 ||
+	ଯଦି ((r = deserialise_s32(buf, &options->pubkey_auth_options)) != 0 ||
 	    (r = deserialise_s32(buf, &options->max_pubkey_ok)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-deserialise_timingsecret(ServerOptions *options, struct sshbuf *buf)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_timingsecret(ServerOptions *options, ସଂରଚନା sshbuf *buf)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((r = sshbuf_get_u64(buf, &options->timing_secret)) != 0) {
+	ଯଦି ((r = sshbuf_get_u64(buf, &options->timing_secret)) != 0) {
 		error_fr(r, "deserialise");
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-int
-deserialise_server_options(struct sshbuf *buf, ServerOptions *options)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+deserialise_server_options(ସଂରଚନା sshbuf *buf, ServerOptions *options)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r = SSH_ERR_INTERNAL_ERROR;
 	uint32_t version;
 	ServerOptions new_options;
 
 	initialize_server_options(&new_options);
-	if ((r = sshbuf_get_u32(buf, &version)) != 0) {
+	ଯଦି ((r = sshbuf_get_u32(buf, &version)) != 0) {
 		error_fr(r, "deserialise version");
-		goto out;
+		ଯାଅ out;
 	}
-	if (version != SSHD_CONFIG_BLOB_VERSION) {
+	ଯଦି (version != SSHD_CONFIG_BLOB_VERSION) {
 		error_f("unsupported config blob version %u", version);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ଯାଅ out;
 	}
 #define SSHCONF_INT(var, conf, flags, ms, def, cp) \
-	if ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
+	ଯଦି ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		ଯାଅ out; \
 	}
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp) \
-	if ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
+	ଯଦି ((r = deserialise_s32(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		ଯାଅ out; \
 	}
 #define SSHCONF_STRING(var, conf, flags, cp) \
-	if ((r = deserialise_nullable_string(buf, &new_options.var)) != 0) { \
+	ଯଦି ((r = deserialise_nullable_string(buf, &new_options.var)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		ଯାଅ out; \
 	}
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
-	if ((r = deserialise_nullable_string_array(buf, &new_options.var, \
+	ଯଦି ((r = deserialise_nullable_string_array(buf, &new_options.var, \
 	    &new_options.nvar)) != 0) { \
 		error_fr(r, "deserialise %s", #var); \
-		goto out; \
+		ଯାଅ out; \
 	}
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
-	if ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
-		goto out;
+	ଯଦି ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
+		ଯାଅ out;
 #define SSHCONF_NONCONF(funcsuffix) \
-	if ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
-		goto out;
+	ଯଦି ((r = deserialise_##funcsuffix(&new_options, buf)) != 0) \
+		ଯାଅ out;
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	new_options.var = 0;
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(new_options.var); \
-		new_options.var = NULL; \
-	} while (0);
+	କର { \
+		ମୁକ୍ତ(new_options.var); \
+		new_options.var = ଖାଲି; \
+	} ଯେତେବେଳେ (0);
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 	SSHD_CONFIG_ENTRIES
 
-	if (sshbuf_len(buf) != 0) {
+	ଯଦି (sshbuf_len(buf) != 0) {
 		error_f("trailing data in config blob");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		ଯାଅ out;
 	}
 
 #undef SSHCONF_INT
@@ -3778,66 +3778,66 @@ deserialise_server_options(struct sshbuf *buf, ServerOptions *options)
 	r = 0;
 	free_server_options(options);
 	*options = new_options;
-	memset(&new_options, 0, sizeof(new_options));
+	memset(&new_options, 0, ଆକାର(new_options));
  out:
 	free_server_options(&new_options);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 free_hostkeyfile(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_host_key_files; i++)
-		free(options->host_key_files[i]);
-	free(options->host_key_files);
-	free(options->host_key_file_userprovided);
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_host_ଚାବି_files; i++)
+		ମୁକ୍ତ(options->host_ଚାବି_files[i]);
+	ମୁକ୍ତ(options->host_ଚାବି_files);
+	ମୁକ୍ତ(options->host_ଚାବି_file_userprovided);
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 free_listenaddress(ServerOptions *options)
 {
 	u_int i;
 
 	free_queued_listen_addrs(options->queued_listen_addrs,
-	    options->num_queued_listens);
+	    options->ଅଙ୍କ_queued_listens);
 
-	for (i = 0; i < options->num_listen_addrs; i++) {
-		free(options->listen_addrs[i].rdomain);
-		if (options->listen_addrs[i].addrs != NULL)
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_listen_addrs; i++) {
+		ମୁକ୍ତ(options->listen_addrs[i].rdomain);
+		ଯଦି (options->listen_addrs[i].addrs != ଖାଲି)
 			freeaddrinfo(options->listen_addrs[i].addrs);
 	}
-	free(options->listen_addrs);
+	ମୁକ୍ତ(options->listen_addrs);
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 free_permituserenv(ServerOptions *options)
 {
-	free(options->permit_user_env_allowlist);
+	ମୁକ୍ତ(options->permit_user_env_allowlist);
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 free_subsystem(ServerOptions *options)
 {
 	u_int i;
 
-	for (i = 0; i < options->num_subsystems; i++) {
-		free(options->subsystem_name[i]);
-		free(options->subsystem_command[i]);
-		free(options->subsystem_args[i]);
+	ପାଇଁ (i = 0; i < options->ଅଙ୍କ_subsystems; i++) {
+		ମୁକ୍ତ(options->subsystem_name[i]);
+		ମୁକ୍ତ(options->subsystem_command[i]);
+		ମୁକ୍ତ(options->subsystem_args[i]);
 	}
-	free(options->subsystem_name);
-	free(options->subsystem_command);
-	free(options->subsystem_args);
+	ମୁକ୍ତ(options->subsystem_name);
+	ମୁକ୍ତ(options->subsystem_command);
+	ମୁକ୍ତ(options->subsystem_args);
 }
 
-void
+ଶୂନ୍ୟ
 free_server_options(ServerOptions *options)
 {
 #define SSHCONF_INT(var, conf, flags, ms, def, cp)	/* empty */
 #define SSHCONF_INTFLAG(var, conf, flags, def, cp)	/* empty */
-#define SSHCONF_STRING(var, conf, flags, cp)		free(options->var);
+#define SSHCONF_STRING(var, conf, flags, cp)		ମୁକ୍ତ(options->var);
 #define SSHCONF_STRARRAY(var, nvar, conf, flags, cp) \
 	free_string_array(options->var, options->nvar);
 #define SSHCONF_CUSTOM(conf, funcsuffix, flags, cp) \
@@ -3847,10 +3847,10 @@ free_server_options(ServerOptions *options)
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	options->var = 0;
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(options->var); \
-		options->var = NULL; \
-	} while (0);
+	କର { \
+		ମୁକ୍ତ(options->var); \
+		options->var = ଖାଲି; \
+	} ଯେତେବେଳେ (0);
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 #define free_ipqos(options)
@@ -3896,111 +3896,111 @@ free_server_options(ServerOptions *options)
 	initialize_server_options(options);
 }
 
-static void
-copy_server_option_int(int *dst, int src)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_server_option_int(ପୂର୍ଣ୍ଣସଂଖ୍ୟା *dst, ପୂର୍ଣ୍ଣସଂଖ୍ୟା src)
 {
-	if (src != -1)
+	ଯଦି (src != -1)
 		*dst = src;
 }
 
-static void
+ସ୍ଥିର ଶୂନ୍ୟ
 copy_server_option_int64(int64_t *dst, int64_t src)
 {
-	if (src != -1)
+	ଯଦି (src != -1)
 		*dst = src;
 }
 
-static void
-copy_server_option_string(char **dst, const char *src)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_server_option_string(ଅକ୍ଷର **dst, ଅଚଳ ଅକ୍ଷର *src)
 {
-	if (src != NULL && *dst != src) {
-		free(*dst);
+	ଯଦି (src != ଖାଲି && *dst != src) {
+		ମୁକ୍ତ(*dst);
 		*dst = xstrdup(src);
 	}
 }
 
-static void
-copy_server_option_strarray_values(char ***dst, u_int ndst,
-    char * const *src, u_int nsrc)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_server_option_strarray_ମୂଲ୍ୟଗୁଡ଼ିକ(ଅକ୍ଷର ***dst, u_int ndst,
+    ଅକ୍ଷର * ଅଚଳ *src, u_int nsrc)
 {
 	u_int i;
 
-	if (nsrc == 0)
-		return;
-	for (i = 0; i < ndst; i++)
-		free((*dst)[i]);
-	free(*dst);
-	*dst = xcalloc(nsrc, sizeof(**dst));
-	for (i = 0; i < nsrc; i++)
-		(*dst)[i] = src[i] == NULL ? NULL : xstrdup(src[i]);
+	ଯଦି (nsrc == 0)
+		ଫେରନ୍ତୁ;
+	ପାଇଁ (i = 0; i < ndst; i++)
+		ମୁକ୍ତ((*dst)[i]);
+	ମୁକ୍ତ(*dst);
+	*dst = xcalloc(nsrc, ଆକାର(**dst));
+	ପାଇଁ (i = 0; i < nsrc; i++)
+		(*dst)[i] = src[i] == ଖାଲି ? ଖାଲି : xstrdup(src[i]);
 }
 
-static void
-copy_server_option_strarray(char ***dst, u_int *ndst,
-    char * const *src, u_int nsrc)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_server_option_strarray(ଅକ୍ଷର ***dst, u_int *ndst,
+    ଅକ୍ଷର * ଅଚଳ *src, u_int nsrc)
 {
-	if (nsrc == 0)
-		return;
-	copy_server_option_strarray_values(dst, *ndst, src, nsrc);
+	ଯଦି (nsrc == 0)
+		ଫେରନ୍ତୁ;
+	copy_server_option_strarray_ମୂଲ୍ୟଗୁଡ଼ିକ(dst, *ndst, src, nsrc);
 	*ndst = nsrc;
 }
 
-static void
-copy_ipqos(ServerOptions *dst, const ServerOptions *src)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_ipqos(ServerOptions *dst, ଅଚଳ ServerOptions *src)
 {
 	copy_server_option_int(&dst->ip_qos_interactive,
 	    src->ip_qos_interactive);
 	copy_server_option_int(&dst->ip_qos_bulk, src->ip_qos_bulk);
 }
 
-static void
-copy_gatewayports(ServerOptions *dst, const ServerOptions *src)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_gatewayports(ServerOptions *dst, ଅଚଳ ServerOptions *src)
 {
 	copy_server_option_int(&dst->fwd_opts.gateway_ports,
 	    src->fwd_opts.gateway_ports);
 }
 
-static void
-copy_streamlocalbindunlink(ServerOptions *dst, const ServerOptions *src)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_streamlocalbindunlink(ServerOptions *dst, ଅଚଳ ServerOptions *src)
 {
 	copy_server_option_int(&dst->fwd_opts.streamlocal_bind_unlink,
 	    src->fwd_opts.streamlocal_bind_unlink);
 }
 
-static void
-copy_loglevel(ServerOptions *dst, const ServerOptions *src)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_loglevel(ServerOptions *dst, ଅଚଳ ServerOptions *src)
 {
-	if (src->log_level != -1)
+	ଯଦି (src->log_level != -1)
 		dst->log_level = src->log_level;
 }
 
-static void
-copy_rekeylimit(ServerOptions *dst, const ServerOptions *src)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_rekeylimit(ServerOptions *dst, ଅଚଳ ServerOptions *src)
 {
 	copy_server_option_int64(&dst->rekey_limit, src->rekey_limit);
 	copy_server_option_int(&dst->rekey_interval, src->rekey_interval);
 }
 
-static void
-copy_subsystem(ServerOptions *dst, const ServerOptions *src)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_subsystem(ServerOptions *dst, ଅଚଳ ServerOptions *src)
 {
-	u_int old_num_subsystems = dst->num_subsystems;
+	u_int old_ଅଙ୍କ_subsystems = dst->ଅଙ୍କ_subsystems;
 
-	if (src->num_subsystems == 0)
-		return;
-	copy_server_option_strarray_values(&dst->subsystem_name,
-	    old_num_subsystems, src->subsystem_name, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_command,
-	    old_num_subsystems, src->subsystem_command, src->num_subsystems);
-	copy_server_option_strarray_values(&dst->subsystem_args,
-	    old_num_subsystems, src->subsystem_args, src->num_subsystems);
-	dst->num_subsystems = src->num_subsystems;
+	ଯଦି (src->ଅଙ୍କ_subsystems == 0)
+		ଫେରନ୍ତୁ;
+	copy_server_option_strarray_ମୂଲ୍ୟଗୁଡ଼ିକ(&dst->subsystem_name,
+	    old_ଅଙ୍କ_subsystems, src->subsystem_name, src->ଅଙ୍କ_subsystems);
+	copy_server_option_strarray_ମୂଲ୍ୟଗୁଡ଼ିକ(&dst->subsystem_command,
+	    old_ଅଙ୍କ_subsystems, src->subsystem_command, src->ଅଙ୍କ_subsystems);
+	copy_server_option_strarray_ମୂଲ୍ୟଗୁଡ଼ିକ(&dst->subsystem_args,
+	    old_ଅଙ୍କ_subsystems, src->subsystem_args, src->ଅଙ୍କ_subsystems);
+	dst->ଅଙ୍କ_subsystems = src->ଅଙ୍କ_subsystems;
 }
 
-static void
-copy_pubkey_auth_options(ServerOptions *dst, const ServerOptions *src)
+ସ୍ଥିର ଶୂନ୍ୟ
+copy_pubkey_auth_options(ServerOptions *dst, ଅଚଳ ServerOptions *src)
 {
-	if (src->pubkey_auth_options != -1) {
+	ଯଦି (src->pubkey_auth_options != -1) {
 		dst->pubkey_auth_options = src->pubkey_auth_options;
 		dst->max_pubkey_ok = src->max_pubkey_ok;
 	}
@@ -4012,11 +4012,11 @@ copy_pubkey_auth_options(ServerOptions *dst, const ServerOptions *src)
  * If the preauth flag is set, skip the post-authentication-only manual
  * string cleanup and subsystem merge below.
  */
-void
-copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
+ଶୂନ୍ୟ
+copy_set_server_options(ServerOptions *dst, ServerOptions *src, ପୂର୍ଣ୍ଣସଂଖ୍ୟା preauth)
 {
-	if (dst == src)
-		return;
+	ଯଦି (dst == src)
+		ଫେରନ୍ତୁ;
 
 #define SSHCONF_INT(var, conf, flags, ms, def, cp) \
 	cp(copy_server_option_int(&dst->var, src->var);)
@@ -4033,10 +4033,10 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 #define SSHCONF_DEPRECATE(conf, flags, opcode)		/* empty */
 #define SSHCONF_UNSUPPORTED_INT(var, conf, flags)	dst->var = 0;
 #define SSHCONF_UNSUPPORTED_STRING(var, conf, flags) \
-	do { \
-		free(dst->var); \
-		dst->var = NULL; \
-	} while (0);
+	କର { \
+		ମୁକ୍ତ(dst->var); \
+		dst->var = ଖାଲି; \
+	} ଯେତେବେଳେ (0);
 #define SSHCONF_ALIAS(old, conf, flags)			/* empty */
 
 	SSHD_CONFIG_ENTRIES
@@ -4057,7 +4057,7 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 	 * copy_server_option_int - it does a signed comparison that causes
 	 * compiler warnings.
 	 */
-	if (src->fwd_opts.streamlocal_bind_mask != (mode_t)-1) {
+	ଯଦି (src->fwd_opts.streamlocal_bind_mask != (mode_t)-1) {
 		dst->fwd_opts.streamlocal_bind_mask =
 		    src->fwd_opts.streamlocal_bind_mask;
 	}
@@ -4071,22 +4071,22 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 	 * rather than in the post-auth section below.
 	 */
 #define CLEAR_ON_NONE(v) \
-	do { \
-		if (option_clear_or_none(v)) { \
-			free(v); \
-			v = NULL; \
+	କର { \
+		ଯଦି (option_clear_or_none(v)) { \
+			ମୁକ୍ତ(v); \
+			v = ଖାଲି; \
 		} \
-	} while(0)
+	} ଯେତେବେଳେ(0)
 	CLEAR_ON_NONE(dst->authorized_principals_file);
-	CLEAR_ON_NONE(dst->trusted_user_ca_keys);
+	CLEAR_ON_NONE(dst->trusted_user_ca_ଚାବିଗୁଡ଼ିକ);
 	CLEAR_ON_NONE(dst->banner);
 
 	/*
 	 * The only things that should be below this point are string options
 	 * which are only used after authentication.
 	 */
-	if (preauth)
-		return;
+	ଯଦି (preauth)
+		ଫେରନ୍ତୁ;
 
 	/* These options may be "none" to clear a global setting */
 	copy_server_option_string(&dst->adm_forced_command,
@@ -4102,214 +4102,214 @@ copy_set_server_options(ServerOptions *dst, ServerOptions *src, int preauth)
 }
 
 #define SERVCONF_MAX_DEPTH	16
-static void
-parse_server_config_depth(ServerOptions *options, const char *filename,
-    struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int flags, int *activep, int depth)
+ସ୍ଥିର ଶୂନ୍ୟ
+parse_server_config_depth(ServerOptions *options, ଅଚଳ ଅକ୍ଷର *filename,
+    ସଂରଚନା sshbuf *conf, ସଂରଚନା include_list *includes,
+    ସଂରଚନା connection_info *connectinfo, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *activep, ପୂର୍ଣ୍ଣସଂଖ୍ୟା depth)
 {
-	int linenum, bad_options = 0;
-	char *cp, *obuf, *cbuf;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା linenum, bad_options = 0;
+	ଅକ୍ଷର *cp, *obuf, *cbuf;
 
-	if (depth < 0 || depth > SERVCONF_MAX_DEPTH)
+	ଯଦି (depth < 0 || depth > SERVCONF_MAX_DEPTH)
 		fatal("Too many recursive configuration includes");
 
 	debug2_f("config %s len %zu%s", filename, sshbuf_len(conf),
 	    (flags & SSHCFG_NEVERMATCH ? " [checking syntax only]" : ""));
 
-	if ((obuf = cbuf = sshbuf_dup_string(conf)) == NULL)
+	ଯଦି ((obuf = cbuf = sshbuf_dup_string(conf)) == ଖାଲି)
 		fatal_f("sshbuf_dup_string failed");
 	linenum = 1;
-	while ((cp = strsep(&cbuf, "\n")) != NULL) {
-		if (process_server_config_line_depth(options, cp,
+	ଯେତେବେଳେ ((cp = strsep(&cbuf, "\n")) != ଖାଲି) {
+		ଯଦି (process_server_config_ଧାଡ଼ି_depth(options, cp,
 		    filename, linenum++, activep, connectinfo, &flags,
 		    depth, includes) != 0)
 			bad_options++;
 	}
-	free(obuf);
-	if (bad_options > 0)
+	ମୁକ୍ତ(obuf);
+	ଯଦି (bad_options > 0)
 		fatal("%s: terminating, %d bad configuration options",
 		    filename, bad_options);
 }
 
-void
-parse_server_config(ServerOptions *options, const char *filename,
-    struct sshbuf *conf, struct include_list *includes,
-    struct connection_info *connectinfo, int reexec)
+ଶୂନ୍ୟ
+parse_server_config(ServerOptions *options, ଅଚଳ ଅକ୍ଷର *filename,
+    ସଂରଚନା sshbuf *conf, ସଂରଚନା include_list *includes,
+    ସଂରଚନା connection_info *connectinfo, ପୂର୍ଣ୍ଣସଂଖ୍ୟା reexec)
 {
-	int active = connectinfo ? 0 : 1;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା active = connectinfo ? 0 : 1;
 	parse_server_config_depth(options, filename, conf, includes,
 	    connectinfo, (connectinfo ? SSHCFG_MATCH_ONLY : 0), &active, 0);
-	if (!reexec)
+	ଯଦି (!reexec)
 		process_queued_listen_addrs(options);
 }
 
-static const char *
-fmt_multistate_int(int val, const struct multistate *m)
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *
+fmt_multistate_int(ପୂର୍ଣ୍ଣସଂଖ୍ୟା val, ଅଚଳ ସଂରଚନା multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	ପାଇଁ (i = 0; m[i].ଚାବି != ଖାଲି; i++) {
+		ଯଦି (m[i].ମୂଲ୍ୟ == val)
+			ଫେରନ୍ତୁ m[i].ଚାବି;
 	}
-	return "UNKNOWN";
+	ଫେରନ୍ତୁ "UNKNOWN";
 }
 
-static const char *
-fmt_intarg(ServerOpCodes code, int val)
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *
+fmt_intarg(ServerOpCodes code, ପୂର୍ଣ୍ଣସଂଖ୍ୟା val)
 {
-	if (val == -1)
-		return "unset";
-	switch (code) {
-	case sAddressFamily:
-		return fmt_multistate_int(val, multistate_addressfamily);
-	case sPermitRootLogin:
-		return fmt_multistate_int(val, multistate_permitrootlogin);
-	case sGatewayPorts:
-		return fmt_multistate_int(val, multistate_gatewayports);
-	case sCompression:
-		return fmt_multistate_int(val, multistate_compression);
-	case sAllowTcpForwarding:
-		return fmt_multistate_int(val, multistate_tcpfwd);
-	case sAllowStreamLocalForwarding:
-		return fmt_multistate_int(val, multistate_tcpfwd);
-	case sIgnoreRhosts:
-		return fmt_multistate_int(val, multistate_ignore_rhosts);
-	case sTCPKeepAlive:
-		return fmt_multistate_int(val, multistate_keepalives);
-	case sWarnWeakCrypto:
-		return fmt_multistate_int(val, multistate_warnweakcrypto);
-	case sFingerprintHash:
-		return ssh_digest_alg_name(val);
-	default:
-		switch (val) {
-		case 0:
-			return "no";
-		case 1:
-			return "yes";
-		default:
-			return "UNKNOWN";
+	ଯଦି (val == -1)
+		ଫେରନ୍ତୁ "unset";
+	ବାଛ (code) {
+	ସ୍ଥିତି sAddressFamily:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_addressfamily);
+	ସ୍ଥିତି s_Permit_ମୂଳ_Login:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_permitrootlogin);
+	ସ୍ଥିତି sGatewayPorts:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_gatewayports);
+	ସ୍ଥିତି sCompression:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_compression);
+	ସ୍ଥିତି sAllowTcpForwarding:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_tcpfwd);
+	ସ୍ଥିତି sAllowStreamLocalForwarding:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_tcpfwd);
+	ସ୍ଥିତି sIgnoreRhosts:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_ignore_rhosts);
+	ସ୍ଥିତି sTCPKeepAlive:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_keepalives);
+	ସ୍ଥିତି sWarnWeakCrypto:
+		ଫେରନ୍ତୁ fmt_multistate_int(val, multistate_warnweakcrypto);
+	ସ୍ଥିତି sFingerprintHash:
+		ଫେରନ୍ତୁ ssh_digest_alg_name(val);
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+		ବାଛ (val) {
+		ସ୍ଥିତି 0:
+			ଫେରନ୍ତୁ "no";
+		ସ୍ଥିତି 1:
+			ଫେରନ୍ତୁ "yes";
+		ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+			ଫେରନ୍ତୁ "UNKNOWN";
 		}
 	}
 }
 
-static void
-dump_cfg_int(ServerOpCodes code, int val)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_int(ServerOpCodes code, ପୂର୍ଣ୍ଣସଂଖ୍ୟା val)
 {
-	if (code == sUnusedConnectionTimeout && val == 0) {
+	ଯଦି (code == sUnusedConnectionTimeout && val == 0) {
 		printf("%s none\n", lookup_opcode_name(code));
-		return;
+		ଫେରନ୍ତୁ;
 	}
 	printf("%s %d\n", lookup_opcode_name(code), val);
 }
 
-static void
-dump_cfg_oct(ServerOpCodes code, int val)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_oct(ServerOpCodes code, ପୂର୍ଣ୍ଣସଂଖ୍ୟା val)
 {
 	printf("%s 0%o\n", lookup_opcode_name(code), val);
 }
 
-static void
-dump_cfg_fmtint(ServerOpCodes code, int val)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_fmtint(ServerOpCodes code, ପୂର୍ଣ୍ଣସଂଖ୍ୟା val)
 {
 	printf("%s %s\n", lookup_opcode_name(code), fmt_intarg(code, val));
 }
 
-static void
-dump_cfg_string(ServerOpCodes code, const char *val)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_string(ServerOpCodes code, ଅଚଳ ଅକ୍ଷର *val)
 {
 	printf("%s %s\n", lookup_opcode_name(code),
-	    val == NULL ? "none" : val);
+	    val == ଖାଲି ? "none" : val);
 }
 
-static void
-dump_cfg_strarray(ServerOpCodes code, u_int count, char **vals)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_strarray(ServerOpCodes code, u_int ଗଣନା_2, ଅକ୍ଷର **vals)
 {
 	u_int i;
 
-	for (i = 0; i < count; i++)
+	ପାଇଁ (i = 0; i < ଗଣନା_2; i++)
 		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
 }
 
-static void
-dump_cfg_strarray_oneline(ServerOpCodes code, u_int count, char **vals)
+ସ୍ଥିର ଶୂନ୍ୟ
+dump_cfg_strarray_oneline(ServerOpCodes code, u_int ଗଣନା_2, ଅକ୍ଷର **vals)
 {
 	u_int i;
 
-	switch (code) {
-	case sAuthenticationMethods:
-	case sChannelTimeout:
-		break;
-	default:
-		if (count <= 0)
-			return;
-		break;
+	ବାଛ (code) {
+	ସ୍ଥିତି sAuthenticationMethods:
+	ସ୍ଥିତି sChannelTimeout:
+		ଭାଙ୍ଗ;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+		ଯଦି (ଗଣନା_2 <= 0)
+			ଫେରନ୍ତୁ;
+		ଭାଙ୍ଗ;
 	}
 
 	printf("%s", lookup_opcode_name(code));
-	for (i = 0; i < count; i++)
+	ପାଇଁ (i = 0; i < ଗଣନା_2; i++)
 		printf(" %s",  vals[i]);
-	if (code == sAuthenticationMethods && count == 0)
+	ଯଦି (code == sAuthenticationMethods && ଗଣନା_2 == 0)
 		printf(" any");
-	else if (code == sChannelTimeout && count == 0)
+	ଅନ୍ୟଥା ଯଦି (code == sChannelTimeout && ଗଣନା_2 == 0)
 		printf(" none");
 	printf("\n");
 }
 
-static char *
-format_listen_addrs(struct listenaddr *la)
+ସ୍ଥିର ଅକ୍ଷର *
+format_listen_addrs(ସଂରଚନା listenaddr *la)
 {
-	int r;
-	struct addrinfo *ai;
-	char addr[NI_MAXHOST], port[NI_MAXSERV];
-	char *laddr1 = xstrdup(""), *laddr2 = NULL;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
+	ସଂରଚନା addrinfo *ai;
+	ଅକ୍ଷର addr[NI_MAXHOST], port[NI_MAXSERV];
+	ଅକ୍ଷର *laddr1 = xstrdup(""), *laddr2 = ଖାଲି;
 
 	/*
 	 * ListenAddress must be after Port.  add_one_listen_addr pushes
 	 * addresses onto a stack, so to maintain ordering we need to
 	 * print these in reverse order.
 	 */
-	for (ai = la->addrs; ai; ai = ai->ai_next) {
-		if ((r = getnameinfo(ai->ai_addr, ai->ai_addrlen, addr,
-		    sizeof(addr), port, sizeof(port),
+	ପାଇଁ (ai = la->addrs; ai; ai = ai->ai_next) {
+		ଯଦି ((r = getnameinfo(ai->ai_addr, ai->ai_addrlen, addr,
+		    ଆକାର(addr), port, ଆକାର(port),
 		    NI_NUMERICHOST|NI_NUMERICSERV)) != 0) {
 			error("getnameinfo: %.100s", ssh_gai_strerror(r));
-			continue;
+			ଜାରି;
 		}
 		laddr2 = laddr1;
-		if (ai->ai_family == AF_INET6) {
+		ଯଦି (ai->ai_family == AF_INET6) {
 			xasprintf(&laddr1, "ListenAddress [%s]:%s%s%s\n%s",
 			    addr, port,
-			    la->rdomain == NULL ? "" : " rdomain ",
-			    la->rdomain == NULL ? "" : la->rdomain,
+			    la->rdomain == ଖାଲି ? "" : " rdomain ",
+			    la->rdomain == ଖାଲି ? "" : la->rdomain,
 			    laddr2);
-		} else {
+		} ଅନ୍ୟଥା {
 			xasprintf(&laddr1, "ListenAddress %s:%s%s%s\n%s",
 			    addr, port,
-			    la->rdomain == NULL ? "" : " rdomain ",
-			    la->rdomain == NULL ? "" : la->rdomain,
+			    la->rdomain == ଖାଲି ? "" : " rdomain ",
+			    la->rdomain == ଖାଲି ? "" : la->rdomain,
 			    laddr2);
 		}
-		free(laddr2);
+		ମୁକ୍ତ(laddr2);
 	}
-	return laddr1;
+	ଫେରନ୍ତୁ laddr1;
 }
 
-void
+ଶୂନ୍ୟ
 dump_config(ServerOptions *o)
 {
-	char *s;
+	ଅକ୍ଷର *s;
 	u_int i;
 
 	/* these are usually at the top of the config */
-	for (i = 0; i < o->num_ports; i++)
+	ପାଇଁ (i = 0; i < o->ଅଙ୍କ_ports; i++)
 		printf("Port %d\n", o->ports[i]);
 	dump_cfg_fmtint(sAddressFamily, o->address_family);
 
-	for (i = 0; i < o->num_listen_addrs; i++) {
+	ପାଇଁ (i = 0; i < o->ଅଙ୍କ_listen_addrs; i++) {
 		s = format_listen_addrs(&o->listen_addrs[i]);
 		printf("%s", s);
-		free(s);
+		ମୁକ୍ତ(s);
 	}
 
 	/* integer arguments */
@@ -4322,13 +4322,13 @@ dump_config(ServerOptions *o)
 	dump_cfg_int(sMaxAuthTries, o->max_authtries);
 	dump_cfg_int(sMaxSessions, o->max_sessions);
 	dump_cfg_int(sClientAliveInterval, o->client_alive_interval);
-	dump_cfg_int(sClientAliveCountMax, o->client_alive_count_max);
+	dump_cfg_int(s_Client_Alive_ଗଣନା_Max, o->client_alive_ଗଣନା_max);
 	dump_cfg_int(sRequiredRSASize, o->required_rsa_size);
 	dump_cfg_oct(sStreamLocalBindMask, o->fwd_opts.streamlocal_bind_mask);
 	dump_cfg_int(sUnusedConnectionTimeout, o->unused_connection_timeout);
 
 	/* formatted integer arguments */
-	dump_cfg_fmtint(sPermitRootLogin, o->permit_root_login);
+	dump_cfg_fmtint(s_Permit_ମୂଳ_Login, o->permit_ମୂଳ_login);
 	dump_cfg_fmtint(sIgnoreRhosts, o->ignore_rhosts);
 	dump_cfg_fmtint(sIgnoreUserKnownHosts, o->ignore_user_known_hosts);
 	dump_cfg_fmtint(sHostbasedAuthentication, o->hostbased_authentication);
@@ -4385,23 +4385,23 @@ dump_config(ServerOptions *o)
 	dump_cfg_string(sBanner, o->banner);
 	dump_cfg_string(sForceCommand, o->adm_forced_command);
 	dump_cfg_string(sChrootDirectory, o->chroot_directory);
-	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_keys);
-	dump_cfg_string(sSecurityKeyProvider, o->sk_provider);
+	dump_cfg_string(sTrustedUserCAKeys, o->trusted_user_ca_ଚାବିଗୁଡ଼ିକ);
+	dump_cfg_string(s_Security_ଚାବି_Provider, o->sk_provider);
 	dump_cfg_string(sAuthorizedPrincipalsFile,
 	    o->authorized_principals_file);
 	dump_cfg_string(sVersionAddendum, *o->version_addendum == '\0'
 	    ? "none" : o->version_addendum);
-	dump_cfg_string(sAuthorizedKeysCommand, o->authorized_keys_command);
-	dump_cfg_string(sAuthorizedKeysCommandUser, o->authorized_keys_command_user);
+	dump_cfg_string(s_Authorized_ଚାବିଗୁଡ଼ିକ_Command, o->authorized_ଚାବିଗୁଡ଼ିକ_command);
+	dump_cfg_string(s_Authorized_ଚାବିଗୁଡ଼ିକ_Command_User, o->authorized_ଚାବିଗୁଡ଼ିକ_command_user);
 	dump_cfg_string(sAuthorizedPrincipalsCommand, o->authorized_principals_command);
 	dump_cfg_string(sAuthorizedPrincipalsCommandUser, o->authorized_principals_command_user);
-	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
+	dump_cfg_string(s_Host_ଚାବି_Agent, o->host_ଚାବି_agent);
 	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
 	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);
 	dump_cfg_string(sHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
-	dump_cfg_string(sHostKeyAlgorithms, o->hostkeyalgorithms);
+	dump_cfg_string(s_Host_ଚାବି_Algorithms, o->hostkeyalgorithms);
 	dump_cfg_string(sPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
-#if defined(__OpenBSD__) || defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
+#ଯଦି defined(__OpenBSD__) || defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
 	dump_cfg_string(sRDomain, o->routing_domain);
 #endif
 	dump_cfg_string(sSshdSessionPath, o->sshd_session_path);
@@ -4414,46 +4414,46 @@ dump_config(ServerOptions *o)
 	dump_cfg_string(sSyslogFacility, log_facility_name(o->log_facility));
 
 	/* string array arguments */
-	dump_cfg_strarray_oneline(sAuthorizedKeysFile, o->num_authkeys_files,
-	    o->authorized_keys_files);
-	dump_cfg_strarray_oneline(sRevokedKeys, o->num_revoked_keys_files,
-	    o->revoked_keys_files);
-	dump_cfg_strarray(sHostKey, o->num_host_key_files, o->host_key_files);
-	dump_cfg_strarray(sHostCertificate, o->num_host_cert_files,
+	dump_cfg_strarray_oneline(s_Authorized_ଚାବିଗୁଡ଼ିକ_File, o->ଅଙ୍କ_authkeys_files,
+	    o->authorized_ଚାବିଗୁଡ଼ିକ_files);
+	dump_cfg_strarray_oneline(s_Revoked_ଚାବିଗୁଡ଼ିକ, o->ଅଙ୍କ_revoked_ଚାବିଗୁଡ଼ିକ_files,
+	    o->revoked_ଚାବିଗୁଡ଼ିକ_files);
+	dump_cfg_strarray(s_Host_ଚାବି, o->ଅଙ୍କ_host_ଚାବି_files, o->host_ଚାବି_files);
+	dump_cfg_strarray(sHostCertificate, o->ଅଙ୍କ_host_cert_files,
 	    o->host_cert_files);
-	dump_cfg_strarray(sAllowUsers, o->num_allow_users, o->allow_users);
-	dump_cfg_strarray(sDenyUsers, o->num_deny_users, o->deny_users);
-	dump_cfg_strarray(sAllowGroups, o->num_allow_groups, o->allow_groups);
-	dump_cfg_strarray(sDenyGroups, o->num_deny_groups, o->deny_groups);
-	dump_cfg_strarray(sAcceptEnv, o->num_accept_env, o->accept_env);
-	dump_cfg_strarray(sSetEnv, o->num_setenv, o->setenv);
+	dump_cfg_strarray(sAllowUsers, o->ଅଙ୍କ_allow_users, o->allow_users);
+	dump_cfg_strarray(sDenyUsers, o->ଅଙ୍କ_deny_users, o->deny_users);
+	dump_cfg_strarray(sAllowGroups, o->ଅଙ୍କ_allow_groups, o->allow_groups);
+	dump_cfg_strarray(sDenyGroups, o->ଅଙ୍କ_deny_groups, o->deny_groups);
+	dump_cfg_strarray(sAcceptEnv, o->ଅଙ୍କ_accept_env, o->accept_env);
+	dump_cfg_strarray(sSetEnv, o->ଅଙ୍କ_setenv, o->setenv);
 	dump_cfg_strarray_oneline(sAuthenticationMethods,
-	    o->num_auth_methods, o->auth_methods);
+	    o->ଅଙ୍କ_auth_methods, o->auth_methods);
 	dump_cfg_strarray_oneline(sLogVerbose,
-	    o->num_log_verbose, o->log_verbose);
+	    o->ଅଙ୍କ_log_verbose, o->log_verbose);
 	dump_cfg_strarray_oneline(sChannelTimeout,
-	    o->num_channel_timeouts, o->channel_timeouts);
+	    o->ଅଙ୍କ_channel_timeouts, o->channel_timeouts);
 
 	/* other arguments */
-	for (i = 0; i < o->num_subsystems; i++)
+	ପାଇଁ (i = 0; i < o->ଅଙ୍କ_subsystems; i++)
 		printf("Subsystem %s %s\n", o->subsystem_name[i],
 		    o->subsystem_args[i]);
 
 	printf("MaxStartups %d:%d:%d\n", o->max_startups_begin,
 	    o->max_startups_rate, o->max_startups);
 	printf("PerSourceMaxStartups ");
-	if (o->per_source_max_startups == INT_MAX)
+	ଯଦି (o->per_source_max_startups == INT_MAX)
 		printf("none\n");
-	else
+	ଅନ୍ୟଥା
 		printf("%d\n", o->per_source_max_startups);
 	printf("PerSourceNetBlockSize %d:%d\n", o->per_source_masklen_ipv4,
 	    o->per_source_masklen_ipv6);
 
-	s = NULL;
-	for (i = 0; tunmode_desc[i].val != -1; i++) {
-		if (tunmode_desc[i].val == o->permit_tun) {
+	s = ଖାଲି;
+	ପାଇଁ (i = 0; tunmode_desc[i].val != -1; i++) {
+		ଯଦି (tunmode_desc[i].val == o->permit_tun) {
 			s = tunmode_desc[i].text;
-			break;
+			ଭାଙ୍ଗ;
 		}
 	}
 	dump_cfg_string(sPermitTunnel, s);
@@ -4465,41 +4465,41 @@ dump_config(ServerOptions *o)
 	    o->rekey_interval);
 
 	printf("PermitOpen");
-	if (o->num_permitted_opens == 0)
+	ଯଦି (o->ଅଙ୍କ_permitted_opens == 0)
 		printf(" any");
-	else {
-		for (i = 0; i < o->num_permitted_opens; i++)
+	ଅନ୍ୟଥା {
+		ପାଇଁ (i = 0; i < o->ଅଙ୍କ_permitted_opens; i++)
 			printf(" %s", o->permitted_opens[i]);
 	}
 	printf("\n");
 	printf("PermitListen");
-	if (o->num_permitted_listens == 0)
+	ଯଦି (o->ଅଙ୍କ_permitted_listens == 0)
 		printf(" any");
-	else {
-		for (i = 0; i < o->num_permitted_listens; i++)
+	ଅନ୍ୟଥା {
+		ପାଇଁ (i = 0; i < o->ଅଙ୍କ_permitted_listens; i++)
 			printf(" %s", o->permitted_listens[i]);
 	}
 	printf("\n");
 
-	if (o->permit_user_env_allowlist == NULL) {
+	ଯଦି (o->permit_user_env_allowlist == ଖାଲି) {
 		dump_cfg_fmtint(sPermitUserEnvironment, o->permit_user_env);
-	} else {
+	} ଅନ୍ୟଥା {
 		printf("PermitUserEnvironment %s\n",
 		    o->permit_user_env_allowlist);
 	}
 
 	printf("PubkeyAuthOptions");
-	if (o->pubkey_auth_options == 0)
+	ଯଦି (o->pubkey_auth_options == 0)
 		printf(" none");
-	if (o->pubkey_auth_options & PUBKEYAUTH_TOUCH_REQUIRED)
+	ଯଦି (o->pubkey_auth_options & PUBKEYAUTH_TOUCH_REQUIRED)
 		printf(" touch-required");
-	if (o->pubkey_auth_options & PUBKEYAUTH_VERIFY_REQUIRED)
+	ଯଦି (o->pubkey_auth_options & PUBKEYAUTH_VERIFY_REQUIRED)
 		printf(" verify-required");
-	if (o->max_pubkey_ok != -1)
+	ଯଦି (o->max_pubkey_ok != -1)
 		printf(" max-pk-ok:%d", o->max_pubkey_ok);
 	printf("\n");
 
-	if (o->per_source_penalty.enabled) {
+	ଯଦି (o->per_source_penalty.enabled) {
 		printf("PerSourcePenalties crash:%f authfail:%f noauth:%f "
 		    "invaliduser:%f "
 		    "grace-exceeded:%f refuseconnection:%f max:%f min:%f "
@@ -4521,6 +4521,6 @@ dump_config(ServerOptions *o)
 		    o->per_source_penalty.overflow_mode6 ==
 		    PER_SOURCE_PENALTY_OVERFLOW_DENY_ALL ?
 		    "deny-all" : "permissive");
-	} else
+	} ଅନ୍ୟଥା
 		printf("PerSourcePenalties no\n");
 }

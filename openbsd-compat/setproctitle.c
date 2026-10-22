@@ -31,20 +31,20 @@
  * SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifndef HAVE_SETPROCTITLE
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 #ifdef HAVE_SYS_PSTAT_H
-#include <sys/pstat.h>
+#ଅନ୍ତର୍ଭାଵ <sys/pstat.h>
 #endif
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-#include <vis.h>
+#ଅନ୍ତର୍ଭାଵ <vis.h>
 
 #define SPT_NONE	0	/* don't use it at all */
 #define SPT_PSTAT	1	/* use pstat(PSTAT_SETCMD, ...) */
@@ -58,22 +58,22 @@
 # define SPT_PADCHAR	'\0'
 #endif
 
-#if SPT_TYPE == SPT_REUSEARGV
-static char *argv_start = NULL;
-static size_t argv_env_len = 0;
+#ଯଦି SPT_TYPE == SPT_REUSEARGV
+ସ୍ଥିର ଅକ୍ଷର *argv_start = ଖାଲି;
+ସ୍ଥିର size_t argv_env_len = 0;
 #endif
 
 #endif /* HAVE_SETPROCTITLE */
 
-void
-compat_init_setproctitle(int argc, char *argv[])
+ଶୂନ୍ୟ
+compat_init_setproctitle(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର *argv[])
 {
-#if !defined(HAVE_SETPROCTITLE) && \
+#ଯଦି !defined(HAVE_SETPROCTITLE) && \
     defined(SPT_TYPE) && SPT_TYPE == SPT_REUSEARGV
-	extern char **environ;
-	char *lastargv = NULL;
-	char **envp = environ;
-	int i;
+	ବାହ୍ୟ ଅକ୍ଷର **environ;
+	ଅକ୍ଷର *lastargv = ଖାଲି;
+	ଅକ୍ଷର **envp = environ;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
 	/*
 	 * NB: This assumes that argv has already been copied out of the
@@ -81,31 +81,31 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * programs. Beware.
 	 */
 
-	if (argc == 0 || argv[0] == NULL)
-		return;
+	ଯଦି (argc == 0 || argv[0] == ଖାଲି)
+		ଫେରନ୍ତୁ;
 
 	/* Fail if we can't allocate room for the new environment */
-	for (i = 0; envp[i] != NULL; i++)
+	ପାଇଁ (i = 0; envp[i] != ଖାଲି; i++)
 		;
-	if ((environ = calloc(i + 1, sizeof(*environ))) == NULL) {
+	ଯଦି ((environ = calloc(i + 1, ଆକାର(*environ))) == ଖାଲି) {
 		environ = envp;	/* put it back */
-		return;
+		ଫେରନ୍ତୁ;
 	}
 
 	/*
 	 * Find the last argv string or environment variable within
 	 * our process memory area.
 	 */
-	for (i = 0; i < argc; i++) {
-		if (lastargv == NULL || lastargv + 1 == argv[i])
+	ପାଇଁ (i = 0; i < argc; i++) {
+		ଯଦି (lastargv == ଖାଲି || lastargv + 1 == argv[i])
 			lastargv = argv[i] + strlen(argv[i]);
 	}
-	for (i = 0; envp[i] != NULL; i++) {
-		if (lastargv + 1 == envp[i])
+	ପାଇଁ (i = 0; envp[i] != ଖାଲି; i++) {
+		ଯଦି (lastargv + 1 == envp[i])
 			lastargv = envp[i] + strlen(envp[i]);
 	}
 
-	argv[1] = NULL;
+	argv[1] = ଖାଲି;
 	argv_start = argv[0];
 	argv_env_len = lastargv - argv[0] - 1;
 
@@ -113,54 +113,54 @@ compat_init_setproctitle(int argc, char *argv[])
 	 * Copy environment
 	 * XXX - will truncate env on strdup fail
 	 */
-	for (i = 0; envp[i] != NULL; i++)
+	ପାଇଁ (i = 0; envp[i] != ଖାଲି; i++)
 		environ[i] = strdup(envp[i]);
-	environ[i] = NULL;
+	environ[i] = ଖାଲି;
 #endif /* SPT_REUSEARGV */
 }
 
 #ifndef HAVE_SETPROCTITLE
-void
-setproctitle(const char *fmt, ...)
+ଶୂନ୍ୟ
+setproctitle(ଅଚଳ ଅକ୍ଷର *fmt, ...)
 {
-#if SPT_TYPE != SPT_NONE
+#ଯଦି SPT_TYPE != SPT_NONE
 	va_list ap;
-	char buf[1024], ptitle[1024];
+	ଅକ୍ଷର buf[1024], ptitle[1024];
 	size_t len = 0;
-	int r;
-	extern char *__progname;
-#if SPT_TYPE == SPT_PSTAT
-	union pstun pst;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
+	ବାହ୍ୟ ଅକ୍ଷର *__progname;
+#ଯଦି SPT_TYPE == SPT_PSTAT
+	ସଂଘ pstun pst;
 #endif
 
-#if SPT_TYPE == SPT_REUSEARGV
-	if (argv_env_len <= 0)
-		return;
+#ଯଦି SPT_TYPE == SPT_REUSEARGV
+	ଯଦି (argv_env_len <= 0)
+		ଫେରନ୍ତୁ;
 #endif
 
-	strlcpy(buf, __progname, sizeof(buf));
+	strlcpy(buf, __progname, ଆକାର(buf));
 
 	r = -1;
 	va_start(ap, fmt);
-	if (fmt != NULL) {
-		len = strlcat(buf, ": ", sizeof(buf));
-		if (len < sizeof(buf))
-			r = vsnprintf(buf + len, sizeof(buf) - len , fmt, ap);
+	ଯଦି (fmt != ଖାଲି) {
+		len = strlcat(buf, ": ", ଆକାର(buf));
+		ଯଦି (len < ଆକାର(buf))
+			r = vsnprintf(buf + len, ଆକାର(buf) - len , fmt, ap);
 	}
 	va_end(ap);
-	if (r == -1 || (size_t)r >= sizeof(buf) - len)
-		return;
-	strnvis(ptitle, buf, sizeof(ptitle),
+	ଯଦି (r == -1 || (size_t)r >= ଆକାର(buf) - len)
+		ଫେରନ୍ତୁ;
+	strnvis(ptitle, buf, ଆକାର(ptitle),
 	    VIS_CSTYLE|VIS_NL|VIS_TAB|VIS_OCTAL);
 
-#if SPT_TYPE == SPT_PSTAT
+#ଯଦି SPT_TYPE == SPT_PSTAT
 	pst.pst_command = ptitle;
 	pstat(PSTAT_SETCMD, pst, strlen(ptitle), 0, 0);
-#elif SPT_TYPE == SPT_REUSEARGV
+#ନଚେତଯଦି SPT_TYPE == SPT_REUSEARGV
 /*	debug("setproctitle: copy \"%s\" into len %d",
 	    buf, argv_env_len); */
 	len = strlcpy(argv_start, ptitle, argv_env_len);
-	for(; len < argv_env_len; len++)
+	ପାଇଁ(; len < argv_env_len; len++)
 		argv_start[len] = SPT_PADCHAR;
 #endif
 

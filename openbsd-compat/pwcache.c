@@ -30,85 +30,85 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/pwcache.c */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <grp.h>
+#ଅନ୍ତର୍ଭାଵ <pwd.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
 #define	NCACHE	64			/* power of 2 */
 #define	MASK	(NCACHE - 1)		/* bits to store with */
 
 #ifndef HAVE_USER_FROM_UID
-char *
-user_from_uid(uid_t uid, int nouser)
+ଅକ୍ଷର *
+user_from_uid(uid_t uid, ପୂର୍ଣ୍ଣସଂଖ୍ୟା nouser)
 {
-	static struct ncache {
+	ସ୍ଥିର ସଂରଚନା ncache {
 		uid_t	uid;
-		char	*name;
+		ଅକ୍ଷର	*name;
 	} c_uid[NCACHE];
-	static int pwopen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct passwd *pw;
-	struct ncache *cp;
+	ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା pwopen;
+	ସ୍ଥିର ଅକ୍ଷର nbuf[15];		/* 32 bits == 10 digits */
+	ସଂରଚନା passwd *pw;
+	ସଂରଚନା ncache *cp;
 
 	cp = c_uid + (uid & MASK);
-	if (cp->uid != uid || cp->name == NULL) {
-		if (pwopen == 0) {
+	ଯଦି (cp->uid != uid || cp->name == ଖାଲି) {
+		ଯଦି (pwopen == 0) {
 #ifdef HAVE_SETPASSENT
 			setpassent(1);
 #endif
 			pwopen = 1;
 		}
-		if ((pw = getpwuid(uid)) == NULL) {
-			if (nouser)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)uid);
+		ଯଦି ((pw = getpwuid(uid)) == ଖାଲି) {
+			ଯଦି (nouser)
+				ଫେରନ୍ତୁ (ଖାଲି);
+			(ଶୂନ୍ୟ)snprintf(nbuf, ଆକାର(nbuf), "%lu", (u_long)uid);
 		}
 		cp->uid = uid;
-		if (cp->name != NULL)
-			free(cp->name);
+		ଯଦି (cp->name != ଖାଲି)
+			ମୁକ୍ତ(cp->name);
 		cp->name = strdup(pw ? pw->pw_name : nbuf);
 	}
-	return (cp->name);
+	ଫେରନ୍ତୁ (cp->name);
 }
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *
-group_from_gid(gid_t gid, int nogroup)
+ଅକ୍ଷର *
+group_from_gid(gid_t gid, ପୂର୍ଣ୍ଣସଂଖ୍ୟା nogroup)
 {
-	static struct ncache {
+	ସ୍ଥିର ସଂରଚନା ncache {
 		gid_t	gid;
-		char	*name;
+		ଅକ୍ଷର	*name;
 	} c_gid[NCACHE];
-	static int gropen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct group *gr;
-	struct ncache *cp;
+	ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା gropen;
+	ସ୍ଥିର ଅକ୍ଷର nbuf[15];		/* 32 bits == 10 digits */
+	ସଂରଚନା group *gr;
+	ସଂରଚନା ncache *cp;
 
 	cp = c_gid + (gid & MASK);
-	if (cp->gid != gid || cp->name == NULL) {
-		if (gropen == 0) {
+	ଯଦି (cp->gid != gid || cp->name == ଖାଲି) {
+		ଯଦି (gropen == 0) {
 #ifdef HAVE_SETGROUPENT
 			setgroupent(1);
 #endif
 			gropen = 1;
 		}
-		if ((gr = getgrgid(gid)) == NULL) {
-			if (nogroup)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)gid);
+		ଯଦି ((gr = getgrgid(gid)) == ଖାଲି) {
+			ଯଦି (nogroup)
+				ଫେରନ୍ତୁ (ଖାଲି);
+			(ଶୂନ୍ୟ)snprintf(nbuf, ଆକାର(nbuf), "%lu", (u_long)gid);
 		}
 		cp->gid = gid;
-		if (cp->name != NULL)
-			free(cp->name);
+		ଯଦି (cp->name != ଖାଲି)
+			ମୁକ୍ତ(cp->name);
 		cp->name = strdup(gr ? gr->gr_name : nbuf);
 	}
-	return (cp->name);
+	ଫେରନ୍ତୁ (cp->name);
 }
 #endif

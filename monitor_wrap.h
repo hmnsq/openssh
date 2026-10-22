@@ -32,83 +32,83 @@
 /* The configuration has to fit in a monitor message along with other state */
 #define MONITOR_MAX_CFGLEN		(MONITOR_MAX_MSGLEN - (64 * 1024))
 
-enum mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
+ଗଣନା mm_keytype { MM_NOKEY, MM_HOSTKEY, MM_USERKEY };
 
-struct ssh;
-struct monitor;
-struct Authctxt;
-struct sshkey;
-struct sshauthopt;
-struct sshkey_sig_details;
+ସଂରଚନା ssh;
+ସଂରଚନା monitor;
+ସଂରଚନା Authctxt;
+ସଂରଚନା sshkey;
+ସଂରଚନା sshauthopt;
+ସଂରଚନା sshkey_sig_details;
 
-void mm_log_handler(LogLevel, int, const char *, void *);
-int mm_is_monitor(void);
+ଶୂନ୍ୟ mm_log_handler(LogLevel, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅଚଳ ଅକ୍ଷର *, ଶୂନ୍ୟ *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_is_monitor(ଶୂନ୍ୟ);
 #ifdef WITH_OPENSSL
-DH *mm_choose_dh(int, int, int);
+DH *mm_choose_dh(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 #endif
-void mm_sshkey_setcompat(struct ssh *);
-int mm_sshkey_sign(struct ssh *, struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *,
-    const char *, u_int compat);
-void mm_inform_authserv(char *, char *);
-struct passwd *mm_getpwnamallow(struct ssh *, const char *);
-char *mm_auth2_read_banner(void);
-int mm_auth_password(struct ssh *, char *);
-int mm_key_allowed(enum mm_keytype, const char *, const char *, struct sshkey *,
-    int, struct sshauthopt **);
-int mm_user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *, int,
-    struct sshauthopt **);
-int mm_hostbased_key_allowed(struct ssh *, struct passwd *, const char *,
-    const char *, struct sshkey *);
-int mm_sshkey_verify(const struct sshkey *, const u_char *, size_t,
-    const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
+ଶୂନ୍ୟ mm_sshkey_setcompat(ସଂରଚନା ssh *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_sshkey_sign(ସଂରଚନା ssh *, ସଂରଚନା sshkey *, u_char **, size_t *,
+    ଅଚଳ u_char *, size_t, ଅଚଳ ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *,
+    ଅଚଳ ଅକ୍ଷର *, u_int compat);
+ଶୂନ୍ୟ mm_inform_authserv(ଅକ୍ଷର *, ଅକ୍ଷର *);
+ସଂରଚନା passwd *mm_getpwnamallow(ସଂରଚନା ssh *, ଅଚଳ ଅକ୍ଷର *);
+ଅକ୍ଷର *mm_auth2_read_banner(ଶୂନ୍ୟ);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_auth_password(ସଂରଚନା ssh *, ଅକ୍ଷର *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_ଚାବି_allowed(ଗଣନା mm_keytype, ଅଚଳ ଅକ୍ଷର *, ଅଚଳ ଅକ୍ଷର *, ସଂରଚନା sshkey *,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ସଂରଚନା sshauthopt **);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_user_ଚାବି_allowed(ସଂରଚନା ssh *ssh, ସଂରଚନା passwd *, ସଂରଚନା sshkey *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା,
+    ସଂରଚନା sshauthopt **);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_hostbased_ଚାବି_allowed(ସଂରଚନା ssh *, ସଂରଚନା passwd *, ଅଚଳ ଅକ୍ଷର *,
+    ଅଚଳ ଅକ୍ଷର *, ସଂରଚନା sshkey *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_sshkey_verify(ଅଚଳ ସଂରଚନା sshkey *, ଅଚଳ u_char *, size_t,
+    ଅଚଳ u_char *, size_t, ଅଚଳ ଅକ୍ଷର *, u_int, ସଂରଚନା sshkey_sig_details **);
 
-void mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m);
+ଶୂନ୍ୟ mm_decode_activate_server_options(ସଂରଚନା ssh *ssh, ସଂରଚନା sshbuf *m);
 
 #ifdef GSSAPI
 OM_uint32 mm_ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
 OM_uint32 mm_ssh_gssapi_accept_ctx(Gssctxt *,
    gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
-int mm_ssh_gssapi_userok(char *user);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_ssh_gssapi_userok(ଅକ୍ଷର *user);
 OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
 #endif
 
 #ifdef USE_PAM
-void mm_start_pam(struct ssh *ssh);
-u_int mm_do_pam_account(void);
-void *mm_sshpam_init_ctx(struct Authctxt *);
-int mm_sshpam_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_sshpam_respond(void *, u_int, char **);
-void mm_sshpam_free_ctx(void *);
+ଶୂନ୍ୟ mm_start_pam(ସଂରଚନା ssh *ssh);
+u_int mm_do_pam_account(ଶୂନ୍ୟ);
+ଶୂନ୍ୟ *mm_sshpam_init_ctx(ସଂରଚନା Authctxt *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_sshpam_query(ଶୂନ୍ୟ *, ଅକ୍ଷର **, ଅକ୍ଷର **, u_int *, ଅକ୍ଷର ***, u_int **);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_sshpam_respond(ଶୂନ୍ୟ *, u_int, ଅକ୍ଷର **);
+ଶୂନ୍ୟ mm_sshpam_free_ctx(ଶୂନ୍ୟ *);
 #endif
 
 #ifdef SSH_AUDIT_EVENTS
-#include "audit.h"
-void mm_audit_event(struct ssh *, ssh_audit_event_t);
-void mm_audit_run_command(const char *);
+#ଅନ୍ତର୍ଭାଵ "audit.h"
+ଶୂନ୍ୟ mm_audit_event(ସଂରଚନା ssh *, ssh_audit_event_t);
+ଶୂନ୍ୟ mm_audit_run_command(ଅଚଳ ଅକ୍ଷର *);
 #endif
 
-struct Session;
-void mm_terminate(void);
-int mm_pty_allocate(int *, int *, char *, size_t);
-void mm_session_pty_cleanup2(struct Session *);
+ସଂରଚନା Session;
+ଶୂନ୍ୟ mm_terminate(ଶୂନ୍ୟ);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_pty_allocate(ପୂର୍ଣ୍ଣସଂଖ୍ୟା *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *, ଅକ୍ଷର *, size_t);
+ଶୂନ୍ୟ mm_session_pty_cleanup2(ସଂରଚନା Session *);
 
-void mm_send_keystate(struct ssh *, struct monitor*);
+ଶୂନ୍ୟ mm_send_keystate(ସଂରଚନା ssh *, ସଂରଚନା monitor*);
 
 /* state */
-struct ServerOptions;
-void mm_get_state(struct ssh *, struct ServerOptions *,
-    struct sshbuf **, uint64_t *, struct sshbuf **, struct sshbuf **,
-    u_char **, struct sshbuf **, struct sshbuf **);
+ସଂରଚନା ServerOptions;
+ଶୂନ୍ୟ mm_get_state(ସଂରଚନା ssh *, ସଂରଚନା ServerOptions *,
+    ସଂରଚନା sshbuf **, uint64_t *, ସଂରଚନା sshbuf **, ସଂରଚନା sshbuf **,
+    u_char **, ସଂରଚନା sshbuf **, ସଂରଚନା sshbuf **);
 
 /* bsdauth */
-int mm_bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_bsdauth_respond(void *, u_int, char **);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_bsdauth_query(ଶୂନ୍ୟ *, ଅକ୍ଷର **, ଅକ୍ଷର **, u_int *, ଅକ୍ଷର ***, u_int **);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା mm_bsdauth_respond(ଶୂନ୍ୟ *, u_int, ଅକ୍ଷର **);
 
 /* config / channels glue */
-void	 server_process_permitopen(struct ssh *);
-void	 server_process_channel_timeouts(struct ssh *ssh);
-struct connection_info *
-	 server_get_connection_info(struct ssh *, int, int);
+ଶୂନ୍ୟ	 server_process_permitopen(ସଂରଚନା ssh *);
+ଶୂନ୍ୟ	 server_process_channel_timeouts(ସଂରଚନା ssh *ssh);
+ସଂରଚନା connection_info *
+	 server_get_connection_info(ସଂରଚନା ssh *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 
 #endif /* _MM_WRAP_H_ */

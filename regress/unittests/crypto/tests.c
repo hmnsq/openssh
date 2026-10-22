@@ -5,52 +5,52 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <ctype.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "../test_helper/test_helper.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
 
-void mldsa_tests(void);
-void mlkem_tests(void);
-void ed25519_tests(void);
-void mldsa_eddsa_tests(void);
+ଶୂନ୍ୟ mldsa_tests(ଶୂନ୍ୟ);
+ଶୂନ୍ୟ mlkem_tests(ଶୂନ୍ୟ);
+ଶୂନ୍ୟ ed25519_tests(ଶୂନ୍ୟ);
+ଶୂନ୍ୟ mldsa_eddsa_tests(ଶୂନ୍ୟ);
 
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+ସଂରଚନା sshbuf *load_text_file(ଅଚଳ ଅକ୍ଷର *name);
+ଅକ୍ଷର *get_json_string(ସଂରଚନା sshbuf *content, ଅଚଳ ଅକ୍ଷର *ଚାବି, ପୂର୍ଣ୍ଣସଂଖ୍ୟା consume);
 
-static struct sshbuf *
-load_file(const char *name)
+ସ୍ଥିର ସଂରଚନା sshbuf *
+load_file(ଅଚଳ ଅକ୍ଷର *name)
 {
-	struct sshbuf *ret = NULL;
+	ସଂରଚନା sshbuf *ret = ଖାଲି;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_PTR_NE(ret, ଖାଲି);
+	ଫେରନ୍ତୁ ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+ସଂରଚନା sshbuf *
+load_text_file(ଅଚଳ ଅକ୍ଷର *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
+	ସଂରଚନା sshbuf *ret = load_file(name);
+	ଅଚଳ u_char *p;
 	size_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	ପାଇଁ (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		ଯଦି (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
 			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+		ଅନ୍ୟଥା
+			ଭାଙ୍ଗ;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
 
@@ -59,50 +59,50 @@ load_text_file(const char *name)
  * Extracts the value for a given key.
  * Errors cause ASSERT_* failures.
  */
-char *
-get_json_string(struct sshbuf *content, const char *key, int consume)
+ଅକ୍ଷର *
+get_json_string(ସଂରଚନା sshbuf *content, ଅଚଳ ଅକ୍ଷର *ଚାବି, ପୂର୍ଣ୍ଣସଂଖ୍ୟା consume)
 {
-	struct sshbuf *tmp;
-	char *k, *ret;
+	ସଂରଚନା sshbuf *tmp;
+	ଅକ୍ଷର *k, *ret;
 	size_t off, end_off;
 	u_char c;
 
 	tmp = sshbuf_fromb(content);
-	ASSERT_PTR_NE(tmp, NULL);
-	ASSERT_INT_GT(asprintf(&k, "\"%s\"", key), 0);
-	if (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
+	ASSERT_PTR_NE(tmp, ଖାଲି);
+	ASSERT_INT_GT(asprintf(&k, "\"%s\"", ଚାବି), 0);
+	ଯଦି (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
 		fprintf(stderr, "Key %s not found in JSON\n", k);
 		ASSERT_INT_EQ(1, 0);
 	}
 	ASSERT_INT_EQ(sshbuf_consume(tmp, off + strlen(k)), 0);
-	free(k);
+	ମୁକ୍ତ(k);
 
 	/* Skip colon, spaces, commas */
-	while (sshbuf_len(tmp) > 0) {
+	ଯେତେବେଳେ (sshbuf_len(tmp) > 0) {
 		c = *sshbuf_ptr(tmp);
-		if (isspace(c) || c == ':' || c == ',')
+		ଯଦି (isspace(c) || c == ':' || c == ',')
 			ASSERT_INT_EQ(sshbuf_consume(tmp, 1), 0);
-		else
-			break;
+		ଅନ୍ୟଥା
+			ଭାଙ୍ଗ;
 	}
 	/* Expect opening quote */
 	ASSERT_INT_EQ(sshbuf_get_u8(tmp, &c), 0);
 	ASSERT_CHAR_EQ(c, '"');
 	/* Find closing quote */
 	ASSERT_INT_EQ(sshbuf_find(tmp, 0, "\"", 1, &end_off), 0);
-	ASSERT_PTR_NE(ret = malloc(end_off + 1), NULL);
+	ASSERT_PTR_NE(ret = malloc(end_off + 1), ଖାଲି);
 	memcpy(ret, sshbuf_ptr(tmp), end_off);
 	ret[end_off] = '\0';
-	if (consume) {
+	ଯଦି (consume) {
 		ASSERT_INT_EQ(sshbuf_consume(tmp, end_off), 0);
 		ASSERT_INT_EQ(sshbuf_consume_upto_child(content, tmp), 0);
 	}
 	sshbuf_free(tmp);
-	return ret;
+	ଫେରନ୍ତୁ ret;
 }
 
-void
-tests(void)
+ଶୂନ୍ୟ
+tests(ଶୂନ୍ୟ)
 {
 #ifdef USE_MLDSA
 	mldsa_tests();
@@ -116,8 +116,8 @@ tests(void)
 #endif
 }
 
-void
-benchmarks(void)
+ଶୂନ୍ୟ
+benchmarks(ଶୂନ୍ୟ)
 {
 	/* none */
 }

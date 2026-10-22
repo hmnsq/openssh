@@ -14,17 +14,17 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 
 #define TMPFILE "utimensat.tmp"
 #define TMPFILE2 "utimensat.tmp2"
@@ -33,39 +33,39 @@
 # define AT_SYMLINK_NOFOLLOW 0x80000000
 #endif
 
-int utimensat(int, const char *, const struct timespec[2], int);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା utimensat(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅଚଳ ଅକ୍ଷର *, ଅଚଳ ସଂରଚନା timespec[2], ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 
-static void
-cleanup(void)
+ସ୍ଥିର ଶୂନ୍ୟ
+cleanup(ଶୂନ୍ୟ)
 {
-	(void)unlink(TMPFILE);
-	(void)unlink(TMPFILE2);
+	(ଶୂନ୍ୟ)unlink(TMPFILE);
+	(ଶୂନ୍ୟ)unlink(TMPFILE2);
 }
 
-static void
-fail(char *msg, long expect, long got)
+ସ୍ଥିର ଶୂନ୍ୟ
+fail(ଅକ୍ଷର *ସନ୍ଦେଶ, long expect, long got)
 {
-	int saved_errno = errno;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା saved_errno = errno;
 
-	if (expect == got && got == 0)
-		fprintf(stderr, "utimensat: %s: %s\n", msg,
+	ଯଦି (expect == got && got == 0)
+		fprintf(stderr, "utimensat: %s: %s\n", ସନ୍ଦେଶ,
 		     strerror(saved_errno));
-	else
+	ଅନ୍ୟଥା
 		fprintf(stderr, "utimensat: %s: expected %ld got %ld\n",
-		     msg, expect, got);
+		     ସନ୍ଦେଶ, expect, got);
 	cleanup();
 	exit(1);
 }
 
-int
-main(void)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ମୁଖ୍ୟ(ଶୂନ୍ୟ)
 {
-	int fd;
-	struct stat sb;
-	struct timespec ts[2];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd;
+	ସଂରଚନା stat sb;
+	ସଂରଚନା timespec ts[2];
 
 	cleanup();
-	if ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
+	ଯଦି ((fd = open(TMPFILE, O_CREAT, 0600)) == -1)
 		fail("open", 0, 0);
 	close(fd);
 
@@ -73,30 +73,30 @@ main(void)
 	ts[0].tv_nsec = 23456789;
 	ts[1].tv_sec = 34567890;
 	ts[1].tv_nsec = 45678901;
-	if (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
+	ଯଦି (utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW) == -1)
 		fail("utimensat", 0, 0);
 
-	if (stat(TMPFILE, &sb) == -1)
+	ଯଦି (stat(TMPFILE, &sb) == -1)
 		fail("stat", 0, 0);
-#if 0
+#ଯଦି 0
 	/*
 	 * This test only works on filesystems mounted 'noatime', otherwise the
 	 * stat() above resets atime. Skip by default.
 	 */
-	if (sb.st_atime != 12345678)
+	ଯଦି (sb.st_atime != 12345678)
 		fail("st_atime", 0, 0);
 #endif
-	if (sb.st_mtime != 34567890)
+	ଯଦି (sb.st_mtime != 34567890)
 		fail("st_mtime", 0, 0);
-#if 0
+#ଯଦି 0
 	/*
 	 * Results expected to be rounded to the nearest microsecond.
 	 * Depends on timestamp precision in kernel and filesystem so
 	 * disabled by default.
 	 */
-	if (sb.st_atim.tv_nsec != 23456000)
+	ଯଦି (sb.st_atim.tv_nsec != 23456000)
 		fail("atim.tv_nsec", 23456000, sb.st_atim.tv_nsec);
-	if (sb.st_mtim.tv_nsec != 45678000)
+	ଯଦି (sb.st_mtim.tv_nsec != 45678000)
 		fail("mtim.tv_nsec", 45678000, sb.st_mtim.tv_nsec);
 #endif
 
@@ -107,18 +107,18 @@ main(void)
 	 * with instead of following a symlink when explicitly asked not to.
 	 * Here we just test that it does not update the destination.
 	 */
-	if (rename(TMPFILE, TMPFILE2) == -1)
+	ଯଦି (rename(TMPFILE, TMPFILE2) == -1)
 		fail("rename", 0, 0);
-	if (symlink(TMPFILE2, TMPFILE) == -1)
+	ଯଦି (symlink(TMPFILE2, TMPFILE) == -1)
 		fail("symlink", 0, 0);
 	ts[0].tv_sec = 11223344;
 	ts[1].tv_sec = 55667788;
-	(void)utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW);
-	if (stat(TMPFILE2, &sb) == -1)
+	(ଶୂନ୍ୟ)utimensat(AT_FDCWD, TMPFILE, ts, AT_SYMLINK_NOFOLLOW);
+	ଯଦି (stat(TMPFILE2, &sb) == -1)
 		fail("stat", 0, 0 );
-	if (sb.st_atime == 11223344)
+	ଯଦି (sb.st_atime == 11223344)
 		fail("utimensat symlink st_atime", 0, 0 );
-	if (sb.st_mtime == 55667788)
+	ଯଦି (sb.st_mtime == 55667788)
 		fail("utimensat symlink st_mtime", 0, 0 );
 
 	cleanup();

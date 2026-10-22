@@ -45,20 +45,20 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/getrrsetbyname.c */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
+#ଯଦି !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS)
 
-#include <stdlib.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ଅନ୍ତର୍ଭାଵ <netinet/in.h>
+#ଅନ୍ତର୍ଭାଵ <arpa/inet.h>
 
-#include "getrrsetbyname.h"
+#ଅନ୍ତର୍ଭାଵ "getrrsetbyname.h"
 
-#if defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
-extern int h_errno;
+#ଯଦି defined(HAVE_DECL_H_ERRNO) && !HAVE_DECL_H_ERRNO
+ବାହ୍ୟ ପୂର୍ଣ୍ଣସଂଖ୍ୟା h_errno;
 #endif
 
 /* We don't need multithread support here */
@@ -68,7 +68,7 @@ extern int h_errno;
 #define _THREAD_PRIVATE(a,b,c) (c)
 
 #ifndef HAVE__RES_EXTERN
-struct __res_state _res;
+ସଂରଚନା __res_state _res;
 #endif
 
 /* Necessary functions and macros */
@@ -113,7 +113,7 @@ struct __res_state _res;
  * If the system doesn't have _getshort/_getlong or that are not exactly what
  * we need then use local replacements, avoiding name collisions.
  */
-#if !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
+#ଯଦି !defined(HAVE__GETSHORT) || !defined(HAVE__GETLONG) || \
     !defined(HAVE_DECL__GETSHORT) || HAVE_DECL__GETSHORT == 0 || \
     !defined(HAVE_DECL__GETLONG) || HAVE_DECL__GETLONG == 0
 # ifdef _getshort
@@ -127,22 +127,22 @@ struct __res_state _res;
 /*
  * Routines to insert/extract short/long's.
  */
-static u_int16_t
-_getshort(const u_char *msgp)
+ସ୍ଥିର u_int16_t
+_getshort(ଅଚଳ u_char *msgp)
 {
 	u_int16_t u;
 
 	GETSHORT(u, msgp);
-	return (u);
+	ଫେରନ୍ତୁ (u);
 }
 
-static u_int32_t
-_getlong(const u_char *msgp)
+ସ୍ଥିର u_int32_t
+_getlong(ଅଚଳ u_char *msgp)
 {
 	u_int32_t u;
 
 	GETLONG(u, msgp);
-	return (u);
+	ଫେରନ୍ତୁ (u);
 }
 #endif /* missing _getshort/_getlong */
 
@@ -150,80 +150,80 @@ _getlong(const u_char *msgp)
 
 #define ANSWER_BUFFER_SIZE 0xffff
 
-struct dns_query {
-	char			*name;
+ସଂରଚନା dns_query {
+	ଅକ୍ଷର			*name;
 	u_int16_t		type;
 	u_int16_t		class;
-	struct dns_query	*next;
+	ସଂରଚନା dns_query	*next;
 };
 
-struct dns_rr {
-	char			*name;
+ସଂରଚନା dns_rr {
+	ଅକ୍ଷର			*name;
 	u_int16_t		type;
 	u_int16_t		class;
 	u_int16_t		ttl;
 	u_int16_t		size;
-	void			*rdata;
-	struct dns_rr		*next;
+	ଶୂନ୍ୟ			*rdata;
+	ସଂରଚନା dns_rr		*next;
 };
 
-struct dns_response {
+ସଂରଚନା dns_response {
 	HEADER			header;
-	struct dns_query	*query;
-	struct dns_rr		*answer;
-	struct dns_rr		*authority;
-	struct dns_rr		*additional;
+	ସଂରଚନା dns_query	*query;
+	ସଂରଚନା dns_rr		*answer;
+	ସଂରଚନା dns_rr		*authority;
+	ସଂରଚନା dns_rr		*additional;
 };
 
-static struct dns_response *parse_dns_response(const u_char *, int);
-static struct dns_query *parse_dns_qsection(const u_char *, int,
-    const u_char **, int);
-static struct dns_rr *parse_dns_rrsection(const u_char *, int, const u_char **,
-    int);
+ସ୍ଥିର ସଂରଚନା dns_response *parse_dns_response(ଅଚଳ u_char *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ସ୍ଥିର ସଂରଚନା dns_query *parse_dns_qsection(ଅଚଳ u_char *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା,
+    ଅଚଳ u_char **, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
+ସ୍ଥିର ସଂରଚନା dns_rr *parse_dns_rrsection(ଅଚଳ u_char *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ଅଚଳ u_char **,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 
-static void free_dns_query(struct dns_query *);
-static void free_dns_rr(struct dns_rr *);
-static void free_dns_response(struct dns_response *);
+ସ୍ଥିର ଶୂନ୍ୟ free_dns_query(ସଂରଚନା dns_query *);
+ସ୍ଥିର ଶୂନ୍ୟ free_dns_rr(ସଂରଚନା dns_rr *);
+ସ୍ଥିର ଶୂନ୍ୟ free_dns_response(ସଂରଚନା dns_response *);
 
-static int count_dns_rr(struct dns_rr *, u_int16_t, u_int16_t);
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣନା_dns_rr(ସଂରଚନା dns_rr *, u_int16_t, u_int16_t);
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-    unsigned int rdtype, unsigned int flags,
-    struct rrsetinfo **res)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+getrrsetbyname(ଅଚଳ ଅକ୍ଷର *hostname, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା rdclass,
+    unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା rdtype, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags,
+    ସଂରଚନା rrsetinfo **res)
 {
-	struct __res_state *_resp = _THREAD_PRIVATE(_res, _res, &_res);
-	int result;
-	struct rrsetinfo *rrset = NULL;
-	struct dns_response *response = NULL;
-	struct dns_rr *rr;
-	struct rdatainfo *rdata;
-	int length;
-	unsigned int index_ans, index_sig;
+	ସଂରଚନା __res_state *_resp = _THREAD_PRIVATE(_res, _res, &_res);
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା result;
+	ସଂରଚନା rrsetinfo *rrset = ଖାଲି;
+	ସଂରଚନା dns_response *response = ଖାଲି;
+	ସଂରଚନା dns_rr *rr;
+	ସଂରଚନା rdatainfo *rdata;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା length;
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା index_ans, index_sig;
 	u_char answer[ANSWER_BUFFER_SIZE];
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
+	ଯଦି (rdclass > 0xffff || rdtype > 0xffff) {
 		result = ERRSET_INVAL;
-		goto fail;
+		ଯାଅ fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
+	ଯଦି (rdclass == 0xff || rdtype == 0xff) {
 		result = ERRSET_INVAL;
-		goto fail;
+		ଯାଅ fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
+	ଯଦି (flags) {
 		result = ERRSET_INVAL;
-		goto fail;
+		ଯାଅ fail;
 	}
 
 	/* initialize resolver */
-	if ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
+	ଯଦି ((_resp->options & RES_INIT) == 0 && res_init() == -1) {
 		result = ERRSET_FAIL;
-		goto fail;
+		ଯାଅ fail;
 	}
 
 #ifdef DEBUG
@@ -232,44 +232,44 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef RES_USE_DNSSEC
 	/* turn on DNSSEC if EDNS0 is configured */
-	if (_resp->options & RES_USE_EDNS0)
+	ଯଦି (_resp->options & RES_USE_EDNS0)
 		_resp->options |= RES_USE_DNSSEC;
 #endif /* RES_USE_DNSEC */
 
 	/* make query */
-	length = res_query(hostname, (signed int) rdclass, (signed int) rdtype,
-	    answer, sizeof(answer));
-	if (length < 0) {
-		switch(h_errno) {
-		case HOST_NOT_FOUND:
+	length = res_query(hostname, (signed ପୂର୍ଣ୍ଣସଂଖ୍ୟା) rdclass, (signed ପୂର୍ଣ୍ଣସଂଖ୍ୟା) rdtype,
+	    answer, ଆକାର(answer));
+	ଯଦି (length < 0) {
+		ବାଛ(h_errno) {
+		ସ୍ଥିତି HOST_NOT_FOUND:
 			result = ERRSET_NONAME;
-			goto fail;
-		case NO_DATA:
+			ଯାଅ fail;
+		ସ୍ଥିତି NO_DATA:
 			result = ERRSET_NODATA;
-			goto fail;
-		default:
+			ଯାଅ fail;
+		ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 			result = ERRSET_FAIL;
-			goto fail;
+			ଯାଅ fail;
 		}
 	}
 
 	/* parse result */
 	response = parse_dns_response(answer, length);
-	if (response == NULL) {
+	ଯଦି (response == ଖାଲି) {
 		result = ERRSET_FAIL;
-		goto fail;
+		ଯାଅ fail;
 	}
 
-	if (response->header.qdcount != 1) {
+	ଯଦି (response->header.qdcount != 1) {
 		result = ERRSET_FAIL;
-		goto fail;
+		ଯାଅ fail;
 	}
 
 	/* initialize rrset */
-	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
+	rrset = calloc(1, ଆକାର(ସଂରଚନା rrsetinfo));
+	ଯଦି (rrset == ଖାଲି) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		ଯାଅ fail;
 	}
 	rrset->rri_rdclass = response->query->class;
 	rrset->rri_rdtype = response->query->type;
@@ -278,61 +278,61 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 
 #ifdef HAVE_HEADER_AD
 	/* check for authenticated data */
-	if (response->header.ad == 1)
+	ଯଦି (response->header.ad == 1)
 		rrset->rri_flags |= RRSET_VALIDATED;
 #endif
 
 	/* copy name from answer section */
 	rrset->rri_name = strdup(response->answer->name);
-	if (rrset->rri_name == NULL) {
+	ଯଦି (rrset->rri_name == ଖାଲି) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		ଯାଅ fail;
 	}
 
 	/* count answers */
-	rrset->rri_nrdatas = count_dns_rr(response->answer, rrset->rri_rdclass,
+	rrset->rri_nrdatas = ଗଣନା_dns_rr(response->answer, rrset->rri_rdclass,
 	    rrset->rri_rdtype);
-	rrset->rri_nsigs = count_dns_rr(response->answer, rrset->rri_rdclass,
+	rrset->rri_nsigs = ଗଣନା_dns_rr(response->answer, rrset->rri_rdclass,
 	    T_RRSIG);
 
 	/* allocate memory for answers */
 	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
-	    sizeof(struct rdatainfo));
-	if (rrset->rri_rdatas == NULL) {
+	    ଆକାର(ସଂରଚନା rdatainfo));
+	ଯଦି (rrset->rri_rdatas == ଖାଲି) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		ଯାଅ fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
-		rrset->rri_sigs = calloc(rrset->rri_nsigs, sizeof(struct rdatainfo));
-		if (rrset->rri_sigs == NULL) {
+	ଯଦି (rrset->rri_nsigs > 0) {
+		rrset->rri_sigs = calloc(rrset->rri_nsigs, ଆକାର(ସଂରଚନା rdatainfo));
+		ଯଦି (rrset->rri_sigs == ଖାଲି) {
 			result = ERRSET_NOMEMORY;
-			goto fail;
+			ଯାଅ fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (rr = response->answer, index_ans = 0, index_sig = 0;
+	ପାଇଁ (rr = response->answer, index_ans = 0, index_sig = 0;
 	    rr; rr = rr->next) {
 
-		rdata = NULL;
+		rdata = ଖାଲି;
 
-		if (rr->class == rrset->rri_rdclass &&
+		ଯଦି (rr->class == rrset->rri_rdclass &&
 		    rr->type  == rrset->rri_rdtype)
 			rdata = &rrset->rri_rdatas[index_ans++];
 
-		if (rr->class == rrset->rri_rdclass &&
+		ଯଦି (rr->class == rrset->rri_rdclass &&
 		    rr->type  == T_RRSIG)
 			rdata = &rrset->rri_sigs[index_sig++];
 
-		if (rdata) {
+		ଯଦି (rdata) {
 			rdata->rdi_length = rr->size;
-			if (rr->size != 0) {
+			ଯଦି (rr->size != 0) {
 				rdata->rdi_data   = malloc(rr->size);
-				if (rdata->rdi_data == NULL) {
+				ଯଦି (rdata->rdi_data == ଖାଲି) {
 					result = ERRSET_NOMEMORY;
-					goto fail;
+					ଯାଅ fail;
 				}
 				memcpy(rdata->rdi_data, rr->rdata, rr->size);
 			}
@@ -341,63 +341,63 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	free_dns_response(response);
 
 	*res = rrset;
-	return (ERRSET_SUCCESS);
+	ଫେରନ୍ତୁ (ERRSET_SUCCESS);
 
 fail:
-	if (rrset != NULL)
+	ଯଦି (rrset != ଖାଲି)
 		freerrset(rrset);
-	if (response != NULL)
+	ଯଦି (response != ଖାଲି)
 		free_dns_response(response);
-	return (result);
+	ଫେରନ୍ତୁ (result);
 }
 
-void
-freerrset(struct rrsetinfo *rrset)
+ଶୂନ୍ୟ
+freerrset(ସଂରଚନା rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	ଯଦି (rrset == ଖାଲି)
+		ଫେରନ୍ତୁ;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_rdatas[i].rdi_data);
+	ଯଦି (rrset->rri_rdatas) {
+		ପାଇଁ (i = 0; i < rrset->rri_nrdatas; i++) {
+			ଯଦି (rrset->rri_rdatas[i].rdi_data == ଖାଲି)
+				ଭାଙ୍ଗ;
+			ମୁକ୍ତ(rrset->rri_rdatas[i].rdi_data);
 		}
-		free(rrset->rri_rdatas);
+		ମୁକ୍ତ(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_sigs[i].rdi_data);
+	ଯଦି (rrset->rri_sigs) {
+		ପାଇଁ (i = 0; i < rrset->rri_nsigs; i++) {
+			ଯଦି (rrset->rri_sigs[i].rdi_data == ଖାଲି)
+				ଭାଙ୍ଗ;
+			ମୁକ୍ତ(rrset->rri_sigs[i].rdi_data);
 		}
-		free(rrset->rri_sigs);
+		ମୁକ୍ତ(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
-		free(rrset->rri_name);
-	free(rrset);
+	ଯଦି (rrset->rri_name)
+		ମୁକ୍ତ(rrset->rri_name);
+	ମୁକ୍ତ(rrset);
 }
 
 /*
  * DNS response parsing routines
  */
-static struct dns_response *
-parse_dns_response(const u_char *answer, int size)
+ସ୍ଥିର ସଂରଚନା dns_response *
+parse_dns_response(ଅଚଳ u_char *answer, ପୂର୍ଣ୍ଣସଂଖ୍ୟା size)
 {
-	struct dns_response *resp;
-	const u_char *cp;
+	ସଂରଚନା dns_response *resp;
+	ଅଚଳ u_char *cp;
 
-	if (size < HFIXEDSZ)
-		return (NULL);
+	ଯଦି (size < HFIXEDSZ)
+		ଫେରନ୍ତୁ (ଖାଲି);
 
 	/* allocate memory for the response */
-	resp = calloc(1, sizeof(*resp));
-	if (resp == NULL)
-		return (NULL);
+	resp = calloc(1, ଆକାର(*resp));
+	ଯଦି (resp == ଖାଲି)
+		ଫେରନ୍ତୁ (ଖାଲି);
 
 	/* initialize current pointer */
 	cp = answer;
@@ -413,85 +413,85 @@ parse_dns_response(const u_char *answer, int size)
 	resp->header.arcount = ntohs(resp->header.arcount);
 
 	/* there must be at least one query */
-	if (resp->header.qdcount < 1) {
+	ଯଦି (resp->header.qdcount < 1) {
 		free_dns_response(resp);
-		return (NULL);
+		ଫେରନ୍ତୁ (ଖାଲି);
 	}
 
 	/* parse query section */
 	resp->query = parse_dns_qsection(answer, size, &cp,
 	    resp->header.qdcount);
-	if (resp->header.qdcount && resp->query == NULL) {
+	ଯଦି (resp->header.qdcount && resp->query == ଖାଲି) {
 		free_dns_response(resp);
-		return (NULL);
+		ଫେରନ୍ତୁ (ଖାଲି);
 	}
 
 	/* parse answer section */
 	resp->answer = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.ancount);
-	if (resp->header.ancount && resp->answer == NULL) {
+	ଯଦି (resp->header.ancount && resp->answer == ଖାଲି) {
 		free_dns_response(resp);
-		return (NULL);
+		ଫେରନ୍ତୁ (ଖାଲି);
 	}
 
 	/* parse authority section */
 	resp->authority = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.nscount);
-	if (resp->header.nscount && resp->authority == NULL) {
+	ଯଦି (resp->header.nscount && resp->authority == ଖାଲି) {
 		free_dns_response(resp);
-		return (NULL);
+		ଫେରନ୍ତୁ (ଖାଲି);
 	}
 
 	/* parse additional section */
 	resp->additional = parse_dns_rrsection(answer, size, &cp,
 	    resp->header.arcount);
-	if (resp->header.arcount && resp->additional == NULL) {
+	ଯଦି (resp->header.arcount && resp->additional == ଖାଲି) {
 		free_dns_response(resp);
-		return (NULL);
+		ଫେରନ୍ତୁ (ଖାଲି);
 	}
 
-	return (resp);
+	ଫେରନ୍ତୁ (resp);
 }
 
-static struct dns_query *
-parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
+ସ୍ଥିର ସଂରଚନା dns_query *
+parse_dns_qsection(ଅଚଳ u_char *answer, ପୂର୍ଣ୍ଣସଂଖ୍ୟା size, ଅଚଳ u_char **cp, ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣନା_2)
 {
-	struct dns_query *head, *curr, *prev;
-	int i, length;
-	char name[MAXDNAME];
+	ସଂରଚନା dns_query *head, *curr, *prev;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i, length;
+	ଅକ୍ଷର name[MAXDNAME];
 
 #define NEED(need) \
-	do { \
-		if (*cp + need > answer + size) \
-			goto fail; \
-	} while (0)
+	କର { \
+		ଯଦି (*cp + need > answer + size) \
+			ଯାଅ fail; \
+	} ଯେତେବେଳେ (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	ପାଇଁ (i = 1, head = ଖାଲି, prev = ଖାଲି; i <= ଗଣନା_2; i++, prev = curr) {
+		ଯଦି (*cp >= answer + size) {
  fail:
 			free_dns_query(head);
-			return (NULL);
+			ଫେରନ୍ତୁ (ଖାଲି);
 		}
 		/* allocate and initialize struct */
-		curr = calloc(1, sizeof(struct dns_query));
-		if (curr == NULL)
-			goto fail;
-		if (head == NULL)
+		curr = calloc(1, ଆକାର(ସଂରଚନା dns_query));
+		ଯଦି (curr == ଖାଲି)
+			ଯାଅ fail;
+		ଯଦି (head == ଖାଲି)
 			head = curr;
-		if (prev != NULL)
+		ଯଦି (prev != ଖାଲି)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
-		    sizeof(name));
-		if (length < 0) {
+		    ଆକାର(name));
+		ଯଦି (length < 0) {
 			free_dns_query(head);
-			return (NULL);
+			ଫେରନ୍ତୁ (ଖାଲି);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		ଯଦି (curr->name == ଖାଲି) {
 			free_dns_query(head);
-			return (NULL);
+			ଫେରନ୍ତୁ (ଖାଲି);
 		}
 		NEED(length);
 		*cp += length;
@@ -508,50 +508,50 @@ parse_dns_qsection(const u_char *answer, int size, const u_char **cp, int count)
 	}
 #undef NEED
 
-	return (head);
+	ଫେରନ୍ତୁ (head);
 }
 
-static struct dns_rr *
-parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
-    int count)
+ସ୍ଥିର ସଂରଚନା dns_rr *
+parse_dns_rrsection(ଅଚଳ u_char *answer, ପୂର୍ଣ୍ଣସଂଖ୍ୟା size, ଅଚଳ u_char **cp,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା ଗଣନା_2)
 {
-	struct dns_rr *head, *curr, *prev;
-	int i, length;
-	char name[MAXDNAME];
+	ସଂରଚନା dns_rr *head, *curr, *prev;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i, length;
+	ଅକ୍ଷର name[MAXDNAME];
 
 #define NEED(need) \
-	do { \
-		if (*cp + need > answer + size) \
-			goto fail; \
-	} while (0)
+	କର { \
+		ଯଦି (*cp + need > answer + size) \
+			ଯାଅ fail; \
+	} ଯେତେବେଳେ (0)
 
-	for (i = 1, head = NULL, prev = NULL; i <= count; i++, prev = curr) {
-		if (*cp >= answer + size) {
+	ପାଇଁ (i = 1, head = ଖାଲି, prev = ଖାଲି; i <= ଗଣନା_2; i++, prev = curr) {
+		ଯଦି (*cp >= answer + size) {
  fail:
 			free_dns_rr(head);
-			return (NULL);
+			ଫେରନ୍ତୁ (ଖାଲି);
 		}
 
 		/* allocate and initialize struct */
-		curr = calloc(1, sizeof(struct dns_rr));
-		if (curr == NULL)
-			goto fail;
-		if (head == NULL)
+		curr = calloc(1, ଆକାର(ସଂରଚନା dns_rr));
+		ଯଦି (curr == ଖାଲି)
+			ଯାଅ fail;
+		ଯଦି (head == ଖାଲି)
 			head = curr;
-		if (prev != NULL)
+		ଯଦି (prev != ଖାଲି)
 			prev->next = curr;
 
 		/* name */
 		length = dn_expand(answer, answer + size, *cp, name,
-		    sizeof(name));
-		if (length < 0) {
+		    ଆକାର(name));
+		ଯଦି (length < 0) {
 			free_dns_rr(head);
-			return (NULL);
+			ଫେରନ୍ତୁ (ଖାଲି);
 		}
 		curr->name = strdup(name);
-		if (curr->name == NULL) {
+		ଯଦି (curr->name == ଖାଲି) {
 			free_dns_rr(head);
-			return (NULL);
+			ଫେରନ୍ତୁ (ଖାଲି);
 		}
 		NEED(length);
 		*cp += length;
@@ -578,10 +578,10 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 
 		/* rdata itself */
 		NEED(curr->size);
-		if (curr->size != 0) {
-			if ((curr->rdata = malloc(curr->size)) == NULL) {
+		ଯଦି (curr->size != 0) {
+			ଯଦି ((curr->rdata = malloc(curr->size)) == ଖାଲି) {
 				free_dns_rr(head);
-				return (NULL);
+				ଫେରନ୍ତୁ (ଖାଲି);
 			}
 			memcpy(curr->rdata, *cp, curr->size);
 		}
@@ -589,61 +589,61 @@ parse_dns_rrsection(const u_char *answer, int size, const u_char **cp,
 	}
 #undef NEED
 
-	return (head);
+	ଫେରନ୍ତୁ (head);
 }
 
-static void
-free_dns_query(struct dns_query *p)
+ସ୍ଥିର ଶୂନ୍ୟ
+free_dns_query(ସଂରଚନା dns_query *p)
 {
-	struct dns_query *next;
+	ସଂରଚନା dns_query *next;
 
-	while (p != NULL) {
+	ଯେତେବେଳେ (p != ଖାଲି) {
 		next = p->next;
-		free(p->name);
-		free(p);
+		ମୁକ୍ତ(p->name);
+		ମୁକ୍ତ(p);
 		p = next;
 	}
 }
 
-static void
-free_dns_rr(struct dns_rr *p)
+ସ୍ଥିର ଶୂନ୍ୟ
+free_dns_rr(ସଂରଚନା dns_rr *p)
 {
-	struct dns_rr *next;
+	ସଂରଚନା dns_rr *next;
 
-	while (p != NULL) {
+	ଯେତେବେଳେ (p != ଖାଲି) {
 		next = p->next;
-		free(p->name);
-		free(p->rdata);
-		free(p);
+		ମୁକ୍ତ(p->name);
+		ମୁକ୍ତ(p->rdata);
+		ମୁକ୍ତ(p);
 		p = next;
 	}
 }
 
-static void
-free_dns_response(struct dns_response *p)
+ସ୍ଥିର ଶୂନ୍ୟ
+free_dns_response(ସଂରଚନା dns_response *p)
 {
-	if (p == NULL)
-		return;
+	ଯଦି (p == ଖାଲି)
+		ଫେରନ୍ତୁ;
 
 	free_dns_query(p->query);
 	free_dns_rr(p->answer);
 	free_dns_rr(p->authority);
 	free_dns_rr(p->additional);
-	free(p);
+	ମୁକ୍ତ(p);
 }
 
-static int
-count_dns_rr(struct dns_rr *p, u_int16_t class, u_int16_t type)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ଗଣନା_dns_rr(ସଂରଚନା dns_rr *p, u_int16_t class, u_int16_t type)
 {
-	int n = 0;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା n = 0;
 
-	while(p) {
-		if (p->class == class && p->type == type)
+	ଯେତେବେଳେ(p) {
+		ଯଦି (p->class == class && p->type == type)
 			n++;
 		p = p->next;
 	}
 
-	return (n);
+	ଫେରନ୍ତୁ (n);
 }
 
 #endif /*  !defined (HAVE_GETRRSETBYNAME) && !defined (HAVE_LDNS) */

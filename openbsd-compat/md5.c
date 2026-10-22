@@ -17,31 +17,31 @@
  * will fill a supplied 16-byte array with the digest.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifndef WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
-#include "md5.h"
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ "md5.h"
 
-#define PUT_64BIT_LE(cp, value) do {					\
-	(cp)[7] = (value) >> 56;					\
-	(cp)[6] = (value) >> 48;					\
-	(cp)[5] = (value) >> 40;					\
-	(cp)[4] = (value) >> 32;					\
-	(cp)[3] = (value) >> 24;					\
-	(cp)[2] = (value) >> 16;					\
-	(cp)[1] = (value) >> 8;						\
-	(cp)[0] = (value); } while (0)
+#define PUT_64BIT_LE(cp, ମୂଲ୍ୟ) କର {					\
+	(cp)[7] = (ମୂଲ୍ୟ) >> 56;					\
+	(cp)[6] = (ମୂଲ୍ୟ) >> 48;					\
+	(cp)[5] = (ମୂଲ୍ୟ) >> 40;					\
+	(cp)[4] = (ମୂଲ୍ୟ) >> 32;					\
+	(cp)[3] = (ମୂଲ୍ୟ) >> 24;					\
+	(cp)[2] = (ମୂଲ୍ୟ) >> 16;					\
+	(cp)[1] = (ମୂଲ୍ୟ) >> 8;						\
+	(cp)[0] = (ମୂଲ୍ୟ); } ଯେତେବେଳେ (0)
 
-#define PUT_32BIT_LE(cp, value) do {					\
-	(cp)[3] = (value) >> 24;					\
-	(cp)[2] = (value) >> 16;					\
-	(cp)[1] = (value) >> 8;						\
-	(cp)[0] = (value); } while (0)
+#define PUT_32BIT_LE(cp, ମୂଲ୍ୟ) କର {					\
+	(cp)[3] = (ମୂଲ୍ୟ) >> 24;					\
+	(cp)[2] = (ମୂଲ୍ୟ) >> 16;					\
+	(cp)[1] = (ମୂଲ୍ୟ) >> 8;						\
+	(cp)[0] = (ମୂଲ୍ୟ); } ଯେତେବେଳେ (0)
 
-static u_int8_t PADDING[MD5_BLOCK_LENGTH] = {
+ସ୍ଥିର u_int8_t PADDING[MD5_BLOCK_LENGTH] = {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -51,10 +51,10 @@ static u_int8_t PADDING[MD5_BLOCK_LENGTH] = {
  * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
  * initialization constants.
  */
-void
+ଶୂନ୍ୟ
 MD5Init(MD5_CTX *ctx)
 {
-	ctx->count = 0;
+	ctx->ଗଣନା_2 = 0;
 	ctx->state[0] = 0x67452301;
 	ctx->state[1] = 0xefcdab89;
 	ctx->state[2] = 0x98badcfe;
@@ -65,74 +65,74 @@ MD5Init(MD5_CTX *ctx)
  * Update context to reflect the concatenation of another buffer full
  * of bytes.
  */
-void
-MD5Update(MD5_CTX *ctx, const unsigned char *input, size_t len)
+ଶୂନ୍ୟ
+MD5Update(MD5_CTX *ctx, ଅଚଳ unsigned ଅକ୍ଷର *ନିବେଶ, size_t len)
 {
 	size_t have, need;
 
 	/* Check how many bytes we already have and how many more we need. */
-	have = (size_t)((ctx->count >> 3) & (MD5_BLOCK_LENGTH - 1));
+	have = (size_t)((ctx->ଗଣନା_2 >> 3) & (MD5_BLOCK_LENGTH - 1));
 	need = MD5_BLOCK_LENGTH - have;
 
 	/* Update bitcount */
-	ctx->count += (u_int64_t)len << 3;
+	ctx->ଗଣନା_2 += (u_int64_t)len << 3;
 
-	if (len >= need) {
-		if (have != 0) {
-			memcpy(ctx->buffer + have, input, need);
+	ଯଦି (len >= need) {
+		ଯଦି (have != 0) {
+			memcpy(ctx->buffer + have, ନିବେଶ, need);
 			MD5Transform(ctx->state, ctx->buffer);
-			input += need;
+			ନିବେଶ += need;
 			len -= need;
 			have = 0;
 		}
 
 		/* Process data in MD5_BLOCK_LENGTH-byte chunks. */
-		while (len >= MD5_BLOCK_LENGTH) {
-			MD5Transform(ctx->state, input);
-			input += MD5_BLOCK_LENGTH;
+		ଯେତେବେଳେ (len >= MD5_BLOCK_LENGTH) {
+			MD5Transform(ctx->state, ନିବେଶ);
+			ନିବେଶ += MD5_BLOCK_LENGTH;
 			len -= MD5_BLOCK_LENGTH;
 		}
 	}
 
 	/* Handle any remaining bytes of data. */
-	if (len != 0)
-		memcpy(ctx->buffer + have, input, len);
+	ଯଦି (len != 0)
+		memcpy(ctx->buffer + have, ନିବେଶ, len);
 }
 
 /*
  * Pad pad to 64-byte boundary with the bit pattern
  * 1 0* (64-bit count of bits processed, MSB-first)
  */
-void
+ଶୂନ୍ୟ
 MD5Pad(MD5_CTX *ctx)
 {
-	u_int8_t count[8];
+	u_int8_t ଗଣନା_2[8];
 	size_t padlen;
 
 	/* Convert count to 8 bytes in little endian order. */
-	PUT_64BIT_LE(count, ctx->count);
+	PUT_64BIT_LE(ଗଣନା_2, ctx->ଗଣନା_2);
 
 	/* Pad out to 56 mod 64. */
 	padlen = MD5_BLOCK_LENGTH -
-	    ((ctx->count >> 3) & (MD5_BLOCK_LENGTH - 1));
-	if (padlen < 1 + 8)
+	    ((ctx->ଗଣନା_2 >> 3) & (MD5_BLOCK_LENGTH - 1));
+	ଯଦି (padlen < 1 + 8)
 		padlen += MD5_BLOCK_LENGTH;
 	MD5Update(ctx, PADDING, padlen - 8);		/* padlen - 8 <= 64 */
-	MD5Update(ctx, count, 8);
+	MD5Update(ctx, ଗଣନା_2, 8);
 }
 
 /*
  * Final wrapup--call MD5Pad, fill in digest and zero out ctx.
  */
-void
-MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5_CTX *ctx)
+ଶୂନ୍ୟ
+MD5Final(unsigned ଅକ୍ଷର digest[MD5_DIGEST_LENGTH], MD5_CTX *ctx)
 {
-	int i;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i;
 
 	MD5Pad(ctx);
-	for (i = 0; i < 4; i++)
+	ପାଇଁ (i = 0; i < 4; i++)
 		PUT_32BIT_LE(digest + i * 4, ctx->state[i]);
-	memset(ctx, 0, sizeof(*ctx));
+	memset(ctx, 0, ଆକାର(*ctx));
 }
 
 
@@ -153,15 +153,15 @@ MD5Final(unsigned char digest[MD5_DIGEST_LENGTH], MD5_CTX *ctx)
  * reflect the addition of 16 longwords of new data.  MD5Update blocks
  * the data and converts bytes into longwords for this routine.
  */
-void
-MD5Transform(u_int32_t state[4], const u_int8_t block[MD5_BLOCK_LENGTH])
+ଶୂନ୍ୟ
+MD5Transform(u_int32_t state[4], ଅଚଳ u_int8_t block[MD5_BLOCK_LENGTH])
 {
 	u_int32_t a, b, c, d, in[MD5_BLOCK_LENGTH / 4];
 
-#if BYTE_ORDER == LITTLE_ENDIAN
-	memcpy(in, block, sizeof(in));
-#else
-	for (a = 0; a < MD5_BLOCK_LENGTH / 4; a++) {
+#ଯଦି BYTE_ORDER == LITTLE_ENDIAN
+	memcpy(in, block, ଆକାର(in));
+#ଅନ୍ୟଥା
+	ପାଇଁ (a = 0; a < MD5_BLOCK_LENGTH / 4; a++) {
 		in[a] = (u_int32_t)(
 		    (u_int32_t)(block[a * 4 + 0]) |
 		    (u_int32_t)(block[a * 4 + 1]) <<  8 |

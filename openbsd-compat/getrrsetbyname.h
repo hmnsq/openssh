@@ -48,15 +48,15 @@
 #ifndef _GETRRSETBYNAME_H
 #define _GETRRSETBYNAME_H
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifndef HAVE_GETRRSETBYNAME
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <netdb.h>
-#include <resolv.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <netinet/in.h>
+#ଅନ୍ତର୍ଭାଵ <arpa/nameser.h>
+#ଅନ୍ତର୍ଭାଵ <netdb.h>
+#ଅନ୍ତର୍ଭାଵ <resolv.h>
 
 #ifndef HFIXEDSZ
 #define HFIXEDSZ 12
@@ -85,25 +85,25 @@
 # define ERRSET_NODATA		5
 #endif
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+ସଂରଚନା rdatainfo {
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା		rdi_length;	/* length of data */
+	unsigned ଅକ୍ଷର		*rdi_data;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+ସଂରଚନା rrsetinfo {
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା		rri_rdclass;	/* class number */
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା		rri_rdtype;	/* RR type number */
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା		rri_ttl;	/* time to live */
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା		rri_nrdatas;	/* size of rdatas array */
+	unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା		rri_nsigs;	/* size of sigs array */
+	ଅକ୍ଷର			*rri_name;	/* canonical name */
+	ସଂରଚନା rdatainfo	*rri_rdatas;	/* individual records */
+	ସଂରଚନା rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା		getrrsetbyname(ଅଚଳ ଅକ୍ଷର *, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା, unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା, ସଂରଚନା rrsetinfo **);
+ଶୂନ୍ୟ		freerrset(ସଂରଚନା rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */
 

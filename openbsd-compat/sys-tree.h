@@ -26,13 +26,13 @@
 
 /* OPENBSD ORIGINAL: sys/sys/tree.h */
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 #ifdef NO_ATTRIBUTE_ON_RETURN_TYPE
 # define __attribute__(x)
 #endif
 
-#ifndef	_SYS_TREE_H_
-#define	_SYS_TREE_H_
+#ifndef	SYS_ବୃକ୍ଷ_H
+#define	SYS_ବୃକ୍ଷ_H
 
 /*
  * This file defines data structures for different types of trees:
@@ -62,178 +62,178 @@
  */
 
 #define SPLAY_HEAD(name, type)						\
-struct name {								\
-	struct type *sph_root; /* root of the tree */			\
+ସଂରଚନା name {								\
+	ସଂରଚନା type *sph_ମୂଳ; /* root of the tree */			\
 }
 
-#define SPLAY_INITIALIZER(root)						\
-	{ NULL }
+#define SPLAY_INITIALIZER(ମୂଳ)						\
+	{ ଖାଲି }
 
-#define SPLAY_INIT(root) do {						\
-	(root)->sph_root = NULL;					\
-} while (0)
+#define SPLAY_INIT(ମୂଳ) କର {						\
+	(ମୂଳ)->sph_ମୂଳ = ଖାଲି;					\
+} ଯେତେବେଳେ (0)
 
 #define SPLAY_ENTRY(type)						\
-struct {								\
-	struct type *spe_left; /* left element */			\
-	struct type *spe_right; /* right element */			\
+ସଂରଚନା {								\
+	ସଂରଚନା type *spe_ବାମ; /* left element */			\
+	ସଂରଚନା type *spe_ଡାହାଣ; /* right element */			\
 }
 
-#define SPLAY_LEFT(elm, field)		(elm)->field.spe_left
-#define SPLAY_RIGHT(elm, field)		(elm)->field.spe_right
-#define SPLAY_ROOT(head)		(head)->sph_root
-#define SPLAY_EMPTY(head)		(SPLAY_ROOT(head) == NULL)
+#define SPLAY_ବାମ(elm, field)		(elm)->field.spe_ବାମ
+#define SPLAY_ଡାହାଣ(elm, field)		(elm)->field.spe_ଡାହାଣ
+#define SPLAY_ମୂଳ(head)		(head)->sph_ମୂଳ
+#define SPLAY_EMPTY(head)		(SPLAY_ମୂଳ(head) == ଖାଲି)
 
 /* SPLAY_ROTATE_{LEFT,RIGHT} expect that tmp hold SPLAY_{RIGHT,LEFT} */
-#define SPLAY_ROTATE_RIGHT(head, tmp, field) do {			\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(tmp, field);	\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#define SPLAY_ROTATE_ଡାହାଣ(head, tmp, field) କର {			\
+	SPLAY_ବାମ((head)->sph_ମୂଳ, field) = SPLAY_ଡାହାଣ(tmp, field);	\
+	SPLAY_ଡାହାଣ(tmp, field) = (head)->sph_ମୂଳ;			\
+	(head)->sph_ମୂଳ = tmp;						\
+} ଯେତେବେଳେ (0)
 	
-#define SPLAY_ROTATE_LEFT(head, tmp, field) do {			\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(tmp, field);	\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#define SPLAY_ROTATE_ବାମ(head, tmp, field) କର {			\
+	SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field) = SPLAY_ବାମ(tmp, field);	\
+	SPLAY_ବାମ(tmp, field) = (head)->sph_ମୂଳ;			\
+	(head)->sph_ମୂଳ = tmp;						\
+} ଯେତେବେଳେ (0)
 
-#define SPLAY_LINKLEFT(head, tmp, field) do {				\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);		\
-} while (0)
+#define SPLAY_LINKLEFT(head, tmp, field) କର {				\
+	SPLAY_ବାମ(tmp, field) = (head)->sph_ମୂଳ;			\
+	tmp = (head)->sph_ମୂଳ;						\
+	(head)->sph_ମୂଳ = SPLAY_ବାମ((head)->sph_ମୂଳ, field);		\
+} ଯେତେବେଳେ (0)
 
-#define SPLAY_LINKRIGHT(head, tmp, field) do {				\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);	\
-} while (0)
+#define SPLAY_LINKRIGHT(head, tmp, field) କର {				\
+	SPLAY_ଡାହାଣ(tmp, field) = (head)->sph_ମୂଳ;			\
+	tmp = (head)->sph_ମୂଳ;						\
+	(head)->sph_ମୂଳ = SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field);	\
+} ଯେତେବେଳେ (0)
 
-#define SPLAY_ASSEMBLE(head, node, left, right, field) do {		\
-	SPLAY_RIGHT(left, field) = SPLAY_LEFT((head)->sph_root, field);	\
-	SPLAY_LEFT(right, field) = SPLAY_RIGHT((head)->sph_root, field);\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(node, field);	\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(node, field);	\
-} while (0)
+#define SPLAY_ASSEMBLE(head, ଗଣ୍ଠି, ବାମ, ଡାହାଣ, field) କର {		\
+	SPLAY_ଡାହାଣ(ବାମ, field) = SPLAY_ବାମ((head)->sph_ମୂଳ, field);	\
+	SPLAY_ବାମ(ଡାହାଣ, field) = SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field);\
+	SPLAY_ବାମ((head)->sph_ମୂଳ, field) = SPLAY_ଡାହାଣ(ଗଣ୍ଠି, field);	\
+	SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field) = SPLAY_ବାମ(ଗଣ୍ଠି, field);	\
+} ଯେତେବେଳେ (0)
 
 /* Generates prototypes and inline functions */
 
 #define SPLAY_PROTOTYPE(name, type, field, cmp)				\
-void name##_SPLAY(struct name *, struct type *);			\
-void name##_SPLAY_MINMAX(struct name *, int);				\
-struct type *name##_SPLAY_INSERT(struct name *, struct type *);		\
-struct type *name##_SPLAY_REMOVE(struct name *, struct type *);		\
+ଶୂନ୍ୟ name##_SPLAY(ସଂରଚନା name *, ସଂରଚନା type *);			\
+ଶୂନ୍ୟ name##_SPLAY_MINMAX(ସଂରଚନା name *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);				\
+ସଂରଚନା type *name##_SPLAY_INSERT(ସଂରଚନା name *, ସଂରଚନା type *);		\
+ସଂରଚନା type *name##_SPLAY_REMOVE(ସଂରଚନା name *, ସଂରଚନା type *);		\
 									\
 /* Finds the node with the same key as elm */				\
-static __inline struct type *						\
-name##_SPLAY_FIND(struct name *head, struct type *elm)			\
+ସ୍ଥିର __inline ସଂରଚନା type *						\
+name##_SPLAY_FIND(ସଂରଚନା name *head, ସଂରଚନା type *elm)			\
 {									\
-	if (SPLAY_EMPTY(head))						\
-		return(NULL);						\
+	ଯଦି (SPLAY_EMPTY(head))						\
+		ଫେରନ୍ତୁ(ଖାଲି);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0)				\
-		return (head->sph_root);				\
-	return (NULL);							\
+	ଯଦି ((cmp)(elm, (head)->sph_ମୂଳ) == 0)				\
+		ଫେରନ୍ତୁ (head->sph_ମୂଳ);				\
+	ଫେରନ୍ତୁ (ଖାଲି);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_NEXT(struct name *head, struct type *elm)			\
+ସ୍ଥିର __inline ସଂରଚନା type *						\
+name##_SPLAY_NEXT(ସଂରଚନା name *head, ସଂରଚନା type *elm)			\
 {									\
 	name##_SPLAY(head, elm);					\
-	if (SPLAY_RIGHT(elm, field) != NULL) {				\
-		elm = SPLAY_RIGHT(elm, field);				\
-		while (SPLAY_LEFT(elm, field) != NULL) {		\
-			elm = SPLAY_LEFT(elm, field);			\
+	ଯଦି (SPLAY_ଡାହାଣ(elm, field) != ଖାଲି) {				\
+		elm = SPLAY_ଡାହାଣ(elm, field);				\
+		ଯେତେବେଳେ (SPLAY_ବାମ(elm, field) != ଖାଲି) {		\
+			elm = SPLAY_ବାମ(elm, field);			\
 		}							\
-	} else								\
-		elm = NULL;						\
-	return (elm);							\
+	} ଅନ୍ୟଥା								\
+		elm = ଖାଲି;						\
+	ଫେରନ୍ତୁ (elm);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_MIN_MAX(struct name *head, int val)			\
+ସ୍ଥିର __inline ସଂରଚନା type *						\
+name##_SPLAY_MIN_MAX(ସଂରଚନା name *head, ପୂର୍ଣ୍ଣସଂଖ୍ୟା val)			\
 {									\
 	name##_SPLAY_MINMAX(head, val);					\
-        return (SPLAY_ROOT(head));					\
+        ଫେରନ୍ତୁ (SPLAY_ମୂଳ(head));					\
 }
 
 /* Main splay operation.
  * Moves node close to the key of elm to top
  */
 #define SPLAY_GENERATE(name, type, field, cmp)				\
-struct type *								\
-name##_SPLAY_INSERT(struct name *head, struct type *elm)		\
+ସଂରଚନା type *								\
+name##_SPLAY_INSERT(ସଂରଚନା name *head, ସଂରଚନା type *elm)		\
 {									\
-    if (SPLAY_EMPTY(head)) {						\
-	    SPLAY_LEFT(elm, field) = SPLAY_RIGHT(elm, field) = NULL;	\
-    } else {								\
-	    int __comp;							\
+    ଯଦି (SPLAY_EMPTY(head)) {						\
+	    SPLAY_ବାମ(elm, field) = SPLAY_ଡାହାଣ(elm, field) = ଖାଲି;	\
+    } ଅନ୍ୟଥା {								\
+	    ପୂର୍ଣ୍ଣସଂଖ୍ୟା __comp;							\
 	    name##_SPLAY(head, elm);					\
-	    __comp = (cmp)(elm, (head)->sph_root);			\
-	    if(__comp < 0) {						\
-		    SPLAY_LEFT(elm, field) = SPLAY_LEFT((head)->sph_root, field);\
-		    SPLAY_RIGHT(elm, field) = (head)->sph_root;		\
-		    SPLAY_LEFT((head)->sph_root, field) = NULL;		\
-	    } else if (__comp > 0) {					\
-		    SPLAY_RIGHT(elm, field) = SPLAY_RIGHT((head)->sph_root, field);\
-		    SPLAY_LEFT(elm, field) = (head)->sph_root;		\
-		    SPLAY_RIGHT((head)->sph_root, field) = NULL;	\
-	    } else							\
-		    return ((head)->sph_root);				\
+	    __comp = (cmp)(elm, (head)->sph_ମୂଳ);			\
+	    ଯଦି(__comp < 0) {						\
+		    SPLAY_ବାମ(elm, field) = SPLAY_ବାମ((head)->sph_ମୂଳ, field);\
+		    SPLAY_ଡାହାଣ(elm, field) = (head)->sph_ମୂଳ;		\
+		    SPLAY_ବାମ((head)->sph_ମୂଳ, field) = ଖାଲି;		\
+	    } ଅନ୍ୟଥା ଯଦି (__comp > 0) {					\
+		    SPLAY_ଡାହାଣ(elm, field) = SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field);\
+		    SPLAY_ବାମ(elm, field) = (head)->sph_ମୂଳ;		\
+		    SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field) = ଖାଲି;	\
+	    } ଅନ୍ୟଥା							\
+		    ଫେରନ୍ତୁ ((head)->sph_ମୂଳ);				\
     }									\
-    (head)->sph_root = (elm);						\
-    return (NULL);							\
+    (head)->sph_ମୂଳ = (elm);						\
+    ଫେରନ୍ତୁ (ଖାଲି);							\
 }									\
 									\
-struct type *								\
-name##_SPLAY_REMOVE(struct name *head, struct type *elm)		\
+ସଂରଚନା type *								\
+name##_SPLAY_REMOVE(ସଂରଚନା name *head, ସଂରଚନା type *elm)		\
 {									\
-	struct type *__tmp;						\
-	if (SPLAY_EMPTY(head))						\
-		return (NULL);						\
+	ସଂରଚନା type *__tmp;						\
+	ଯଦି (SPLAY_EMPTY(head))						\
+		ଫେରନ୍ତୁ (ଖାଲି);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0) {			\
-		if (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
-			(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);\
-		} else {						\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);\
+	ଯଦି ((cmp)(elm, (head)->sph_ମୂଳ) == 0) {			\
+		ଯଦି (SPLAY_ବାମ((head)->sph_ମୂଳ, field) == ଖାଲି) {	\
+			(head)->sph_ମୂଳ = SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field);\
+		} ଅନ୍ୟଥା {						\
+			__tmp = SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field);	\
+			(head)->sph_ମୂଳ = SPLAY_ବାମ((head)->sph_ମୂଳ, field);\
 			name##_SPLAY(head, elm);			\
-			SPLAY_RIGHT((head)->sph_root, field) = __tmp;	\
+			SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field) = __tmp;	\
 		}							\
-		return (elm);						\
+		ଫେରନ୍ତୁ (elm);						\
 	}								\
-	return (NULL);							\
+	ଫେରନ୍ତୁ (ଖାଲି);							\
 }									\
 									\
-void									\
-name##_SPLAY(struct name *head, struct type *elm)			\
+ଶୂନ୍ୟ									\
+name##_SPLAY(ସଂରଚନା name *head, ସଂରଚନା type *elm)			\
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
-	int __comp;							\
+	ସଂରଚନା type __node, *__left, *__right, *__tmp;			\
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା __comp;							\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ବାମ(&__node, field) = SPLAY_ଡାହାଣ(&__node, field) = ଖାଲି;\
 	__left = __right = &__node;					\
 \
-	while ((__comp = (cmp)(elm, (head)->sph_root))) {		\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) < 0){			\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	ଯେତେବେଳେ ((__comp = (cmp)(elm, (head)->sph_ମୂଳ))) {		\
+		ଯଦି (__comp < 0) {					\
+			__tmp = SPLAY_ବାମ((head)->sph_ମୂଳ, field);	\
+			ଯଦି (__tmp == ଖାଲି)				\
+				ଭାଙ୍ଗ;					\
+			ଯଦି ((cmp)(elm, __tmp) < 0){			\
+				SPLAY_ROTATE_ଡାହାଣ(head, __tmp, field);	\
+				ଯଦି (SPLAY_ବାମ((head)->sph_ମୂଳ, field) == ଖାଲି)\
+					ଭାଙ୍ଗ;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) > 0){			\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+		} ଅନ୍ୟଥା ଯଦି (__comp > 0) {				\
+			__tmp = SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field);	\
+			ଯଦି (__tmp == ଖାଲି)				\
+				ଭାଙ୍ଗ;					\
+			ଯଦି ((cmp)(elm, __tmp) > 0){			\
+				SPLAY_ROTATE_ବାମ(head, __tmp, field);	\
+				ଯଦି (SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field) == ଖାଲି)\
+					ଭାଙ୍ଗ;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
 		}							\
@@ -244,32 +244,32 @@ name##_SPLAY(struct name *head, struct type *elm)			\
 /* Splay with either the minimum or the maximum element			\
  * Used to find minimum or maximum element in tree.			\
  */									\
-void name##_SPLAY_MINMAX(struct name *head, int __comp) \
+ଶୂନ୍ୟ name##_SPLAY_MINMAX(ସଂରଚନା name *head, ପୂର୍ଣ୍ଣସଂଖ୍ୟା __comp) \
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
+	ସଂରଚନା type __node, *__left, *__right, *__tmp;			\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ବାମ(&__node, field) = SPLAY_ଡାହାଣ(&__node, field) = ଖାଲି;\
 	__left = __right = &__node;					\
 \
-	while (1) {							\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp < 0){				\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	ଯେତେବେଳେ (1) {							\
+		ଯଦି (__comp < 0) {					\
+			__tmp = SPLAY_ବାମ((head)->sph_ମୂଳ, field);	\
+			ଯଦି (__tmp == ଖାଲି)				\
+				ଭାଙ୍ଗ;					\
+			ଯଦି (__comp < 0){				\
+				SPLAY_ROTATE_ଡାହାଣ(head, __tmp, field);	\
+				ଯଦି (SPLAY_ବାମ((head)->sph_ମୂଳ, field) == ଖାଲି)\
+					ଭାଙ୍ଗ;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp > 0) {				\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+		} ଅନ୍ୟଥା ଯଦି (__comp > 0) {				\
+			__tmp = SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field);	\
+			ଯଦି (__tmp == ଖାଲି)				\
+				ଭାଙ୍ଗ;					\
+			ଯଦି (__comp > 0) {				\
+				SPLAY_ROTATE_ବାମ(head, __tmp, field);	\
+				ଯଦି (SPLAY_ଡାହାଣ((head)->sph_ମୂଳ, field) == ଖାଲି)\
+					ଭାଙ୍ଗ;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
 		}							\
@@ -280,120 +280,120 @@ void name##_SPLAY_MINMAX(struct name *head, int __comp) \
 #define SPLAY_NEGINF	-1
 #define SPLAY_INF	1
 
-#define SPLAY_INSERT(name, x, y)	name##_SPLAY_INSERT(x, y)
+#define SPLAY_ଭର୍ତ୍ତି(name, x, y)	name##_SPLAY_INSERT(x, y)
 #define SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
 #define SPLAY_FIND(name, x, y)		name##_SPLAY_FIND(x, y)
 #define SPLAY_NEXT(name, x, y)		name##_SPLAY_NEXT(x, y)
-#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? ଖାଲି	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_NEGINF))
-#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? ଖାଲି	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_INF))
 
 #define SPLAY_FOREACH(x, name, head)					\
-	for ((x) = SPLAY_MIN(name, head);				\
-	     (x) != NULL;						\
+	ପାଇଁ ((x) = SPLAY_MIN(name, head);				\
+	     (x) != ଖାଲି;						\
 	     (x) = SPLAY_NEXT(name, head, x))
 
 /* Macros that define a red-black tree */
 #define RB_HEAD(name, type)						\
-struct name {								\
-	struct type *rbh_root; /* root of the tree */			\
+ସଂରଚନା name {								\
+	ସଂରଚନା type *rbh_ମୂଳ; /* root of the tree */			\
 }
 
-#define RB_INITIALIZER(root)						\
-	{ NULL }
+#define RB_INITIALIZER(ମୂଳ)						\
+	{ ଖାଲି }
 
-#define RB_INIT(root) do {						\
-	(root)->rbh_root = NULL;					\
-} while (0)
+#define RB_INIT(ମୂଳ) କର {						\
+	(ମୂଳ)->rbh_ମୂଳ = ଖାଲି;					\
+} ଯେତେବେଳେ (0)
 
 #define RB_BLACK	0
 #define RB_RED		1
 #define RB_ENTRY(type)							\
-struct {								\
-	struct type *rbe_left;		/* left element */		\
-	struct type *rbe_right;		/* right element */		\
-	struct type *rbe_parent;	/* parent element */		\
-	int rbe_color;			/* node color */		\
+ସଂରଚନା {								\
+	ସଂରଚନା type *rbe_ବାମ;		/* left element */		\
+	ସଂରଚନା type *rbe_ଡାହାଣ;		/* right element */		\
+	ସଂରଚନା type *rbe_parent;	/* parent element */		\
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା rbe_color;			/* node color */		\
 }
 
-#define RB_LEFT(elm, field)		(elm)->field.rbe_left
-#define RB_RIGHT(elm, field)		(elm)->field.rbe_right
+#define RB_ବାମ(elm, field)		(elm)->field.rbe_ବାମ
+#define RB_ଡାହାଣ(elm, field)		(elm)->field.rbe_ଡାହାଣ
 #define RB_PARENT(elm, field)		(elm)->field.rbe_parent
 #define RB_COLOR(elm, field)		(elm)->field.rbe_color
-#define RB_ROOT(head)			(head)->rbh_root
-#define RB_EMPTY(head)			(RB_ROOT(head) == NULL)
+#define RB_ମୂଳ(head)			(head)->rbh_ମୂଳ
+#define RB_EMPTY(head)			(RB_ମୂଳ(head) == ଖାଲି)
 
-#define RB_SET(elm, parent, field) do {					\
+#define RB_SET(elm, parent, field) କର {					\
 	RB_PARENT(elm, field) = parent;					\
-	RB_LEFT(elm, field) = RB_RIGHT(elm, field) = NULL;		\
+	RB_ବାମ(elm, field) = RB_ଡାହାଣ(elm, field) = ଖାଲି;		\
 	RB_COLOR(elm, field) = RB_RED;					\
-} while (0)
+} ଯେତେବେଳେ (0)
 
-#define RB_SET_BLACKRED(black, red, field) do {				\
+#define RB_SET_BLACKRED(black, red, field) କର {				\
 	RB_COLOR(black, field) = RB_BLACK;				\
 	RB_COLOR(red, field) = RB_RED;					\
-} while (0)
+} ଯେତେବେଳେ (0)
 
 #ifndef RB_AUGMENT
-#define RB_AUGMENT(x)	do {} while (0)
+#define RB_AUGMENT(x)	କର {} ଯେତେବେଳେ (0)
 #endif
 
-#define RB_ROTATE_LEFT(head, elm, tmp, field) do {			\
-	(tmp) = RB_RIGHT(elm, field);					\
-	if ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
-		RB_PARENT(RB_LEFT(tmp, field), field) = (elm);		\
+#define RB_ROTATE_ବାମ(head, elm, tmp, field) କର {			\
+	(tmp) = RB_ଡାହାଣ(elm, field);					\
+	ଯଦି ((RB_ଡାହାଣ(elm, field) = RB_ବାମ(tmp, field))) {		\
+		RB_PARENT(RB_ବାମ(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_LEFT(tmp, field) = (elm);					\
+	ଯଦି ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
+		ଯଦି ((elm) == RB_ବାମ(RB_PARENT(elm, field), field))	\
+			RB_ବାମ(RB_PARENT(elm, field), field) = (tmp);	\
+		ଅନ୍ୟଥା							\
+			RB_ଡାହାଣ(RB_PARENT(elm, field), field) = (tmp);	\
+	} ଅନ୍ୟଥା								\
+		(head)->rbh_ମୂଳ = (tmp);				\
+	RB_ବାମ(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
+	ଯଦି ((RB_PARENT(tmp, field)))					\
 		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+} ଯେତେବେଳେ (0)
 
-#define RB_ROTATE_RIGHT(head, elm, tmp, field) do {			\
-	(tmp) = RB_LEFT(elm, field);					\
-	if ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
-		RB_PARENT(RB_RIGHT(tmp, field), field) = (elm);		\
+#define RB_ROTATE_ଡାହାଣ(head, elm, tmp, field) କର {			\
+	(tmp) = RB_ବାମ(elm, field);					\
+	ଯଦି ((RB_ବାମ(elm, field) = RB_ଡାହାଣ(tmp, field))) {		\
+		RB_PARENT(RB_ଡାହାଣ(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_RIGHT(tmp, field) = (elm);					\
+	ଯଦି ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
+		ଯଦି ((elm) == RB_ବାମ(RB_PARENT(elm, field), field))	\
+			RB_ବାମ(RB_PARENT(elm, field), field) = (tmp);	\
+		ଅନ୍ୟଥା							\
+			RB_ଡାହାଣ(RB_PARENT(elm, field), field) = (tmp);	\
+	} ଅନ୍ୟଥା								\
+		(head)->rbh_ମୂଳ = (tmp);				\
+	RB_ଡାହାଣ(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
+	ଯଦି ((RB_PARENT(tmp, field)))					\
 		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+} ଯେତେବେଳେ (0)
 
 /* Generates prototypes and inline functions */
 #define	RB_PROTOTYPE(name, type, field, cmp)				\
 	RB_PROTOTYPE_INTERNAL(name, type, field, cmp,)
 #define	RB_PROTOTYPE_STATIC(name, type, field, cmp)			\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
+	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) ସ୍ଥିର)
 #define RB_PROTOTYPE_INTERNAL(name, type, field, cmp, attr)		\
-attr void name##_RB_INSERT_COLOR(struct name *, struct type *);		\
-attr void name##_RB_REMOVE_COLOR(struct name *, struct type *, struct type *);\
-attr struct type *name##_RB_REMOVE(struct name *, struct type *);	\
-attr struct type *name##_RB_INSERT(struct name *, struct type *);	\
-attr struct type *name##_RB_FIND(struct name *, struct type *);		\
-attr struct type *name##_RB_NFIND(struct name *, struct type *);	\
-attr struct type *name##_RB_NEXT(struct type *);			\
-attr struct type *name##_RB_PREV(struct type *);			\
-attr struct type *name##_RB_MINMAX(struct name *, int);			\
+attr ଶୂନ୍ୟ name##_RB_INSERT_COLOR(ସଂରଚନା name *, ସଂରଚନା type *);		\
+attr ଶୂନ୍ୟ name##_RB_REMOVE_COLOR(ସଂରଚନା name *, ସଂରଚନା type *, ସଂରଚନା type *);\
+attr ସଂରଚନା type *name##_RB_REMOVE(ସଂରଚନା name *, ସଂରଚନା type *);	\
+attr ସଂରଚନା type *name##_RB_INSERT(ସଂରଚନା name *, ସଂରଚନା type *);	\
+attr ସଂରଚନା type *name##_RB_FIND(ସଂରଚନା name *, ସଂରଚନା type *);		\
+attr ସଂରଚନା type *name##_RB_NFIND(ସଂରଚନା name *, ସଂରଚନା type *);	\
+attr ସଂରଚନା type *name##_RB_NEXT(ସଂରଚନା type *);			\
+attr ସଂରଚନା type *name##_RB_PREV(ସଂରଚନା type *);			\
+attr ସଂରଚନା type *name##_RB_MINMAX(ସଂରଚନା name *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା);			\
 									\
 
 /* Main rb operation.
@@ -402,328 +402,328 @@ attr struct type *name##_RB_MINMAX(struct name *, int);			\
 #define	RB_GENERATE(name, type, field, cmp)				\
 	RB_GENERATE_INTERNAL(name, type, field, cmp,)
 #define	RB_GENERATE_STATIC(name, type, field, cmp)			\
-	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
+	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) ସ୍ଥିର)
 #define RB_GENERATE_INTERNAL(name, type, field, cmp, attr)		\
-attr void								\
-name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
+attr ଶୂନ୍ୟ								\
+name##_RB_INSERT_COLOR(ସଂରଚନା name *head, ସଂରଚନା type *elm)		\
 {									\
-	struct type *parent, *gparent, *tmp;				\
-	while ((parent = RB_PARENT(elm, field)) &&			\
+	ସଂରଚନା type *parent, *gparent, *tmp;				\
+	ଯେତେବେଳେ ((parent = RB_PARENT(elm, field)) &&			\
 	    RB_COLOR(parent, field) == RB_RED) {			\
 		gparent = RB_PARENT(parent, field);			\
-		if (parent == RB_LEFT(gparent, field)) {		\
-			tmp = RB_RIGHT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
+		ଯଦି (parent == RB_ବାମ(gparent, field)) {		\
+			tmp = RB_ଡାହାଣ(gparent, field);			\
+			ଯଦି (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
-				continue;				\
+				ଜାରି;				\
 			}						\
-			if (RB_RIGHT(parent, field) == elm) {		\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
+			ଯଦି (RB_ଡାହାଣ(parent, field) == elm) {		\
+				RB_ROTATE_ବାମ(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
 			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_RIGHT(head, gparent, tmp, field);	\
-		} else {						\
-			tmp = RB_LEFT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
+			RB_ROTATE_ଡାହାଣ(head, gparent, tmp, field);	\
+		} ଅନ୍ୟଥା {						\
+			tmp = RB_ବାମ(gparent, field);			\
+			ଯଦି (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
-				continue;				\
+				ଜାରି;				\
 			}						\
-			if (RB_LEFT(parent, field) == elm) {		\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
+			ଯଦି (RB_ବାମ(parent, field) == elm) {		\
+				RB_ROTATE_ଡାହାଣ(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
 			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_LEFT(head, gparent, tmp, field);	\
+			RB_ROTATE_ବାମ(head, gparent, tmp, field);	\
 		}							\
 	}								\
-	RB_COLOR(head->rbh_root, field) = RB_BLACK;			\
+	RB_COLOR(head->rbh_ମୂଳ, field) = RB_BLACK;			\
 }									\
 									\
-attr void								\
-name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm) \
+attr ଶୂନ୍ୟ								\
+name##_RB_REMOVE_COLOR(ସଂରଚନା name *head, ସଂରଚନା type *parent, ସଂରଚନା type *elm) \
 {									\
-	struct type *tmp;						\
-	while ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
-	    elm != RB_ROOT(head)) {					\
-		if (RB_LEFT(parent, field) == elm) {			\
-			tmp = RB_RIGHT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
+	ସଂରଚନା type *tmp;						\
+	ଯେତେବେଳେ ((elm == ଖାଲି || RB_COLOR(elm, field) == RB_BLACK) &&	\
+	    elm != RB_ମୂଳ(head)) {					\
+		ଯଦି (RB_ବାମ(parent, field) == elm) {			\
+			tmp = RB_ଡାହାଣ(parent, field);			\
+			ଯଦି (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = RB_RIGHT(parent, field);		\
+				RB_ROTATE_ବାମ(head, parent, tmp, field);\
+				tmp = RB_ଡାହାଣ(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
+			ଯଦି ((RB_ବାମ(tmp, field) == ଖାଲି ||		\
+			    RB_COLOR(RB_ବାମ(tmp, field), field) == RB_BLACK) &&\
+			    (RB_ଡାହାଣ(tmp, field) == ଖାଲି ||		\
+			    RB_COLOR(RB_ଡାହାଣ(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_RIGHT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK) {\
-					struct type *oleft;		\
-					if ((oleft = RB_LEFT(tmp, field)))\
+			} ଅନ୍ୟଥା {					\
+				ଯଦି (RB_ଡାହାଣ(tmp, field) == ଖାଲି ||	\
+				    RB_COLOR(RB_ଡାହାଣ(tmp, field), field) == RB_BLACK) {\
+					ସଂରଚନା type *oleft;		\
+					ଯଦି ((oleft = RB_ବାମ(tmp, field)))\
 						RB_COLOR(oleft, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_RIGHT(head, tmp, oleft, field);\
-					tmp = RB_RIGHT(parent, field);	\
+					RB_ROTATE_ଡାହାଣ(head, tmp, oleft, field);\
+					tmp = RB_ଡାହାଣ(parent, field);	\
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_RIGHT(tmp, field))		\
-					RB_COLOR(RB_RIGHT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				ଯଦି (RB_ଡାହାଣ(tmp, field))		\
+					RB_COLOR(RB_ଡାହାଣ(tmp, field), field) = RB_BLACK;\
+				RB_ROTATE_ବାମ(head, parent, tmp, field);\
+				elm = RB_ମୂଳ(head);			\
+				ଭାଙ୍ଗ;					\
 			}						\
-		} else {						\
-			tmp = RB_LEFT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
+		} ଅନ୍ୟଥା {						\
+			tmp = RB_ବାମ(parent, field);			\
+			ଯଦି (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = RB_LEFT(parent, field);		\
+				RB_ROTATE_ଡାହାଣ(head, parent, tmp, field);\
+				tmp = RB_ବାମ(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
+			ଯଦି ((RB_ବାମ(tmp, field) == ଖାଲି ||		\
+			    RB_COLOR(RB_ବାମ(tmp, field), field) == RB_BLACK) &&\
+			    (RB_ଡାହାଣ(tmp, field) == ଖାଲି ||		\
+			    RB_COLOR(RB_ଡାହାଣ(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_LEFT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) {\
-					struct type *oright;		\
-					if ((oright = RB_RIGHT(tmp, field)))\
+			} ଅନ୍ୟଥା {					\
+				ଯଦି (RB_ବାମ(tmp, field) == ଖାଲି ||	\
+				    RB_COLOR(RB_ବାମ(tmp, field), field) == RB_BLACK) {\
+					ସଂରଚନା type *oright;		\
+					ଯଦି ((oright = RB_ଡାହାଣ(tmp, field)))\
 						RB_COLOR(oright, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_LEFT(head, tmp, oright, field);\
-					tmp = RB_LEFT(parent, field);	\
+					RB_ROTATE_ବାମ(head, tmp, oright, field);\
+					tmp = RB_ବାମ(parent, field);	\
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_LEFT(tmp, field))		\
-					RB_COLOR(RB_LEFT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				ଯଦି (RB_ବାମ(tmp, field))		\
+					RB_COLOR(RB_ବାମ(tmp, field), field) = RB_BLACK;\
+				RB_ROTATE_ଡାହାଣ(head, parent, tmp, field);\
+				elm = RB_ମୂଳ(head);			\
+				ଭାଙ୍ଗ;					\
 			}						\
 		}							\
 	}								\
-	if (elm)							\
+	ଯଦି (elm)							\
 		RB_COLOR(elm, field) = RB_BLACK;			\
 }									\
 									\
-attr struct type *							\
-name##_RB_REMOVE(struct name *head, struct type *elm)			\
+attr ସଂରଚନା type *							\
+name##_RB_REMOVE(ସଂରଚନା name *head, ସଂରଚନା type *elm)			\
 {									\
-	struct type *child, *parent, *old = elm;			\
-	int color;							\
-	if (RB_LEFT(elm, field) == NULL)				\
-		child = RB_RIGHT(elm, field);				\
-	else if (RB_RIGHT(elm, field) == NULL)				\
-		child = RB_LEFT(elm, field);				\
-	else {								\
-		struct type *left;					\
-		elm = RB_RIGHT(elm, field);				\
-		while ((left = RB_LEFT(elm, field)))			\
-			elm = left;					\
-		child = RB_RIGHT(elm, field);				\
+	ସଂରଚନା type *child, *parent, *old = elm;			\
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା color;							\
+	ଯଦି (RB_ବାମ(elm, field) == ଖାଲି)				\
+		child = RB_ଡାହାଣ(elm, field);				\
+	ଅନ୍ୟଥା ଯଦି (RB_ଡାହାଣ(elm, field) == ଖାଲି)				\
+		child = RB_ବାମ(elm, field);				\
+	ଅନ୍ୟଥା {								\
+		ସଂରଚନା type *ବାମ;					\
+		elm = RB_ଡାହାଣ(elm, field);				\
+		ଯେତେବେଳେ ((ବାମ = RB_ବାମ(elm, field)))			\
+			elm = ବାମ;					\
+		child = RB_ଡାହାଣ(elm, field);				\
 		parent = RB_PARENT(elm, field);				\
 		color = RB_COLOR(elm, field);				\
-		if (child)						\
+		ଯଦି (child)						\
 			RB_PARENT(child, field) = parent;		\
-		if (parent) {						\
-			if (RB_LEFT(parent, field) == elm)		\
-				RB_LEFT(parent, field) = child;		\
-			else						\
-				RB_RIGHT(parent, field) = child;	\
+		ଯଦି (parent) {						\
+			ଯଦି (RB_ବାମ(parent, field) == elm)		\
+				RB_ବାମ(parent, field) = child;		\
+			ଅନ୍ୟଥା						\
+				RB_ଡାହାଣ(parent, field) = child;	\
 			RB_AUGMENT(parent);				\
-		} else							\
-			RB_ROOT(head) = child;				\
-		if (RB_PARENT(elm, field) == old)			\
+		} ଅନ୍ୟଥା							\
+			RB_ମୂଳ(head) = child;				\
+		ଯଦି (RB_PARENT(elm, field) == old)			\
 			parent = elm;					\
 		(elm)->field = (old)->field;				\
-		if (RB_PARENT(old, field)) {				\
-			if (RB_LEFT(RB_PARENT(old, field), field) == old)\
-				RB_LEFT(RB_PARENT(old, field), field) = elm;\
-			else						\
-				RB_RIGHT(RB_PARENT(old, field), field) = elm;\
+		ଯଦି (RB_PARENT(old, field)) {				\
+			ଯଦି (RB_ବାମ(RB_PARENT(old, field), field) == old)\
+				RB_ବାମ(RB_PARENT(old, field), field) = elm;\
+			ଅନ୍ୟଥା						\
+				RB_ଡାହାଣ(RB_PARENT(old, field), field) = elm;\
 			RB_AUGMENT(RB_PARENT(old, field));		\
-		} else							\
-			RB_ROOT(head) = elm;				\
-		RB_PARENT(RB_LEFT(old, field), field) = elm;		\
-		if (RB_RIGHT(old, field))				\
-			RB_PARENT(RB_RIGHT(old, field), field) = elm;	\
-		if (parent) {						\
-			left = parent;					\
-			do {						\
-				RB_AUGMENT(left);			\
-			} while ((left = RB_PARENT(left, field)));	\
+		} ଅନ୍ୟଥା							\
+			RB_ମୂଳ(head) = elm;				\
+		RB_PARENT(RB_ବାମ(old, field), field) = elm;		\
+		ଯଦି (RB_ଡାହାଣ(old, field))				\
+			RB_PARENT(RB_ଡାହାଣ(old, field), field) = elm;	\
+		ଯଦି (parent) {						\
+			ବାମ = parent;					\
+			କର {						\
+				RB_AUGMENT(ବାମ);			\
+			} ଯେତେବେଳେ ((ବାମ = RB_PARENT(ବାମ, field)));	\
 		}							\
-		goto color;						\
+		ଯାଅ color;						\
 	}								\
 	parent = RB_PARENT(elm, field);					\
 	color = RB_COLOR(elm, field);					\
-	if (child)							\
+	ଯଦି (child)							\
 		RB_PARENT(child, field) = parent;			\
-	if (parent) {							\
-		if (RB_LEFT(parent, field) == elm)			\
-			RB_LEFT(parent, field) = child;			\
-		else							\
-			RB_RIGHT(parent, field) = child;		\
+	ଯଦି (parent) {							\
+		ଯଦି (RB_ବାମ(parent, field) == elm)			\
+			RB_ବାମ(parent, field) = child;			\
+		ଅନ୍ୟଥା							\
+			RB_ଡାହାଣ(parent, field) = child;		\
 		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = child;					\
+	} ଅନ୍ୟଥା								\
+		RB_ମୂଳ(head) = child;					\
 color:									\
-	if (color == RB_BLACK)						\
+	ଯଦି (color == RB_BLACK)						\
 		name##_RB_REMOVE_COLOR(head, parent, child);		\
-	return (old);							\
+	ଫେରନ୍ତୁ (old);							\
 }									\
 									\
 /* Inserts a node into the RB tree */					\
-attr struct type *							\
-name##_RB_INSERT(struct name *head, struct type *elm)			\
+attr ସଂରଚନା type *							\
+name##_RB_INSERT(ସଂରଚନା name *head, ସଂରଚନା type *elm)			\
 {									\
-	struct type *tmp;						\
-	struct type *parent = NULL;					\
-	int comp = 0;							\
-	tmp = RB_ROOT(head);						\
-	while (tmp) {							\
+	ସଂରଚନା type *tmp;						\
+	ସଂରଚନା type *parent = ଖାଲି;					\
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା comp = 0;							\
+	tmp = RB_ମୂଳ(head);						\
+	ଯେତେବେଳେ (tmp) {							\
 		parent = tmp;						\
 		comp = (cmp)(elm, parent);				\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ଯଦି (comp < 0)						\
+			tmp = RB_ବାମ(tmp, field);			\
+		ଅନ୍ୟଥା ଯଦି (comp > 0)					\
+			tmp = RB_ଡାହାଣ(tmp, field);			\
+		ଅନ୍ୟଥା							\
+			ଫେରନ୍ତୁ (tmp);					\
 	}								\
 	RB_SET(elm, parent, field);					\
-	if (parent != NULL) {						\
-		if (comp < 0)						\
-			RB_LEFT(parent, field) = elm;			\
-		else							\
-			RB_RIGHT(parent, field) = elm;			\
+	ଯଦି (parent != ଖାଲି) {						\
+		ଯଦି (comp < 0)						\
+			RB_ବାମ(parent, field) = elm;			\
+		ଅନ୍ୟଥା							\
+			RB_ଡାହାଣ(parent, field) = elm;			\
 		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = elm;					\
+	} ଅନ୍ୟଥା								\
+		RB_ମୂଳ(head) = elm;					\
 	name##_RB_INSERT_COLOR(head, elm);				\
-	return (NULL);							\
+	ଫେରନ୍ତୁ (ଖାଲି);							\
 }									\
 									\
 /* Finds the node with the same key as elm */				\
-attr struct type *							\
-name##_RB_FIND(struct name *head, struct type *elm)			\
+attr ସଂରଚନା type *							\
+name##_RB_FIND(ସଂରଚନା name *head, ସଂରଚନା type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	int comp;							\
-	while (tmp) {							\
+	ସଂରଚନା type *tmp = RB_ମୂଳ(head);				\
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା comp;							\
+	ଯେତେବେଳେ (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ଯଦି (comp < 0)						\
+			tmp = RB_ବାମ(tmp, field);			\
+		ଅନ୍ୟଥା ଯଦି (comp > 0)					\
+			tmp = RB_ଡାହାଣ(tmp, field);			\
+		ଅନ୍ୟଥା							\
+			ଫେରନ୍ତୁ (tmp);					\
 	}								\
-	return (NULL);							\
+	ଫେରନ୍ତୁ (ଖାଲି);							\
 }									\
 									\
 /* Finds the first node greater than or equal to the search key */	\
-attr struct type *							\
-name##_RB_NFIND(struct name *head, struct type *elm)			\
+attr ସଂରଚନା type *							\
+name##_RB_NFIND(ସଂରଚନା name *head, ସଂରଚନା type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *res = NULL;					\
-	int comp;							\
-	while (tmp) {							\
+	ସଂରଚନା type *tmp = RB_ମୂଳ(head);				\
+	ସଂରଚନା type *res = ଖାଲି;					\
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା comp;							\
+	ଯେତେବେଳେ (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0) {						\
+		ଯଦି (comp < 0) {						\
 			res = tmp;					\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_ବାମ(tmp, field);			\
 		}							\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		ଅନ୍ୟଥା ଯଦି (comp > 0)					\
+			tmp = RB_ଡାହାଣ(tmp, field);			\
+		ଅନ୍ୟଥା							\
+			ଫେରନ୍ତୁ (tmp);					\
 	}								\
-	return (res);							\
+	ଫେରନ୍ତୁ (res);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_NEXT(struct type *elm)					\
+attr ସଂରଚନା type *							\
+name##_RB_NEXT(ସଂରଚନା type *elm)					\
 {									\
-	if (RB_RIGHT(elm, field)) {					\
-		elm = RB_RIGHT(elm, field);				\
-		while (RB_LEFT(elm, field))				\
-			elm = RB_LEFT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_LEFT(RB_PARENT(elm, field), field)))	\
+	ଯଦି (RB_ଡାହାଣ(elm, field)) {					\
+		elm = RB_ଡାହାଣ(elm, field);				\
+		ଯେତେବେଳେ (RB_ବାମ(elm, field))				\
+			elm = RB_ବାମ(elm, field);			\
+	} ଅନ୍ୟଥା {							\
+		ଯଦି (RB_PARENT(elm, field) &&				\
+		    (elm == RB_ବାମ(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))\
+		ଅନ୍ୟଥା {							\
+			ଯେତେବେଳେ (RB_PARENT(elm, field) &&			\
+			    (elm == RB_ଡାହାଣ(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
 	}								\
-	return (elm);							\
+	ଫେରନ୍ତୁ (elm);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_PREV(struct type *elm)					\
+attr ସଂରଚନା type *							\
+name##_RB_PREV(ସଂରଚନା type *elm)					\
 {									\
-	if (RB_LEFT(elm, field)) {					\
-		elm = RB_LEFT(elm, field);				\
-		while (RB_RIGHT(elm, field))				\
-			elm = RB_RIGHT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))	\
+	ଯଦି (RB_ବାମ(elm, field)) {					\
+		elm = RB_ବାମ(elm, field);				\
+		ଯେତେବେଳେ (RB_ଡାହାଣ(elm, field))				\
+			elm = RB_ଡାହାଣ(elm, field);			\
+	} ଅନ୍ୟଥା {							\
+		ଯଦି (RB_PARENT(elm, field) &&				\
+		    (elm == RB_ଡାହାଣ(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_LEFT(RB_PARENT(elm, field), field)))\
+		ଅନ୍ୟଥା {							\
+			ଯେତେବେଳେ (RB_PARENT(elm, field) &&			\
+			    (elm == RB_ବାମ(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
 	}								\
-	return (elm);							\
+	ଫେରନ୍ତୁ (elm);							\
 }									\
 									\
-attr struct type *							\
-name##_RB_MINMAX(struct name *head, int val)				\
+attr ସଂରଚନା type *							\
+name##_RB_MINMAX(ସଂରଚନା name *head, ପୂର୍ଣ୍ଣସଂଖ୍ୟା val)				\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *parent = NULL;					\
-	while (tmp) {							\
+	ସଂରଚନା type *tmp = RB_ମୂଳ(head);				\
+	ସଂରଚନା type *parent = ଖାଲି;					\
+	ଯେତେବେଳେ (tmp) {							\
 		parent = tmp;						\
-		if (val < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else							\
-			tmp = RB_RIGHT(tmp, field);			\
+		ଯଦି (val < 0)						\
+			tmp = RB_ବାମ(tmp, field);			\
+		ଅନ୍ୟଥା							\
+			tmp = RB_ଡାହାଣ(tmp, field);			\
 	}								\
-	return (parent);						\
+	ଫେରନ୍ତୁ (parent);						\
 }
 
 #define RB_NEGINF	-1
 #define RB_INF	1
 
-#define RB_INSERT(name, x, y)	name##_RB_INSERT(x, y)
+#define RB_ଭର୍ତ୍ତି(name, x, y)	name##_RB_INSERT(x, y)
 #define RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
 #define RB_FIND(name, x, y)	name##_RB_FIND(x, y)
 #define RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
@@ -733,23 +733,23 @@ name##_RB_MINMAX(struct name *head, int val)				\
 #define RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
 
 #define RB_FOREACH(x, name, head)					\
-	for ((x) = RB_MIN(name, head);					\
-	     (x) != NULL;						\
+	ପାଇଁ ((x) = RB_MIN(name, head);					\
+	     (x) != ଖାଲି;						\
 	     (x) = name##_RB_NEXT(x))
 
 #define RB_FOREACH_SAFE(x, name, head, y)				\
-	for ((x) = RB_MIN(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_NEXT(x), 1);		\
+	ପାଇଁ ((x) = RB_MIN(name, head);					\
+	    ((x) != ଖାଲି) && ((y) = name##_RB_NEXT(x), 1);		\
 	     (x) = (y))
 
 #define RB_FOREACH_REVERSE(x, name, head)				\
-	for ((x) = RB_MAX(name, head);					\
-	     (x) != NULL;						\
+	ପାଇଁ ((x) = RB_MAX(name, head);					\
+	     (x) != ଖାଲି;						\
 	     (x) = name##_RB_PREV(x))
 
 #define RB_FOREACH_REVERSE_SAFE(x, name, head, y)			\
-	for ((x) = RB_MAX(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_PREV(x), 1);		\
+	ପାଇଁ ((x) = RB_MAX(name, head);					\
+	    ((x) != ଖାଲି) && ((y) = name##_RB_PREV(x), 1);		\
 	     (x) = (y))
 
 #endif	/* _SYS_TREE_H_ */

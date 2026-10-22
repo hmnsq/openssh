@@ -24,120 +24,120 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifdef GSSAPI
 
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 
-#include <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "ssh2.h"
-#include "log.h"
-#include "dispatch.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "misc.h"
-#include "servconf.h"
-#include "packet.h"
-#include "kex.h"
-#include "ssh-gss.h"
-#include "monitor_wrap.h"
+#ଅନ୍ତର୍ଭାଵ "xmalloc.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "hostfile.h"
+#ଅନ୍ତର୍ଭାଵ "auth.h"
+#ଅନ୍ତର୍ଭାଵ "ssh2.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "dispatch.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "misc.h"
+#ଅନ୍ତର୍ଭାଵ "servconf.h"
+#ଅନ୍ତର୍ଭାଵ "packet.h"
+#ଅନ୍ତର୍ଭାଵ "kex.h"
+#ଅନ୍ତର୍ଭାଵ "ssh-gss.h"
+#ଅନ୍ତର୍ଭାଵ "monitor_wrap.h"
 
 #define SSH_GSSAPI_MAX_MECHS	2048
 
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_gssapi;
+ବାହ୍ୟ ServerOptions options;
+ବାହ୍ୟ ସଂରଚନା authmethod_cfg methodcfg_gssapi;
 
-static int input_gssapi_token(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_mic(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh);
-static int input_gssapi_errtok(int, uint32_t, struct ssh *);
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା ନିବେଶ_gssapi_token(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t plen, ସଂରଚନା ssh *ssh);
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା ନିବେଶ_gssapi_mic(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t plen, ସଂରଚନା ssh *ssh);
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା ନିବେଶ_gssapi_exchange_complete(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t plen, ସଂରଚନା ssh *ssh);
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା ନିବେଶ_gssapi_errtok(ପୂର୍ଣ୍ଣସଂଖ୍ୟା, uint32_t, ସଂରଚନା ssh *);
 
 /*
  * We only support those mechanisms that we know about (ie ones that we know
  * how to check local user kuserok and the like)
  */
-static int
-userauth_gssapi(struct ssh *ssh, const char *method)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+userauth_gssapi(ସଂରଚନା ssh *ssh, ଅଚଳ ଅକ୍ଷର *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	gss_OID_desc goid = {0, NULL};
-	Gssctxt *ctxt = NULL;
-	int r, present;
+	gss_OID_desc goid = {0, ଖାଲି};
+	Gssctxt *ctxt = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, present;
 	u_int mechs;
 	OM_uint32 ms;
 	size_t len;
-	u_char *doid = NULL;
+	u_char *doid = ଖାଲି;
 
-	if ((r = sshpkt_get_u32(ssh, &mechs)) != 0)
+	ଯଦି ((r = sshpkt_get_u32(ssh, &mechs)) != 0)
 		fatal_fr(r, "parse packet");
 
-	if (mechs == 0) {
+	ଯଦି (mechs == 0) {
 		logit_f("mechanism negotiation is not supported");
-		return (0);
-	} else if (mechs > SSH_GSSAPI_MAX_MECHS) {
+		ଫେରନ୍ତୁ (0);
+	} ଅନ୍ୟଥା ଯଦି (mechs > SSH_GSSAPI_MAX_MECHS) {
 		logit_f("too many mechanisms requested %u > %u", mechs,
 		    SSH_GSSAPI_MAX_MECHS);
-		return (0);
+		ଫେରନ୍ତୁ (0);
 	}
 
-	do {
+	କର {
 		mechs--;
 
-		free(doid);
+		ମୁକ୍ତ(doid);
 
 		present = 0;
-		if ((r = sshpkt_get_string(ssh, &doid, &len)) != 0)
+		ଯଦି ((r = sshpkt_get_string(ssh, &doid, &len)) != 0)
 			fatal_fr(r, "parse oid");
 
-		if (len > 2 && doid[0] == SSH_GSS_OIDTYPE &&
+		ଯଦି (len > 2 && doid[0] == SSH_GSS_OIDTYPE &&
 		    doid[1] == len - 2) {
 			goid.elements = doid + 2;
 			goid.length   = len - 2;
 			ssh_gssapi_test_oid_supported(&ms, &goid, &present);
-		} else {
+		} ଅନ୍ୟଥା {
 			logit_f("badly formed OID received");
 		}
-	} while (mechs > 0 && !present);
+	} ଯେତେବେଳେ (mechs > 0 && !present);
 
-	if (!present) {
-		free(doid);
+	ଯଦି (!present) {
+		ମୁକ୍ତ(doid);
 		authctxt->server_caused_failure = 1;
-		return (0);
+		ଫେରନ୍ତୁ (0);
 	}
 
-	if (GSS_ERROR(mm_ssh_gssapi_server_ctx(&ctxt, &goid))) {
-		if (ctxt != NULL)
+	ଯଦି (GSS_ERROR(mm_ssh_gssapi_server_ctx(&ctxt, &goid))) {
+		ଯଦି (ctxt != ଖାଲି)
 			ssh_gssapi_delete_ctx(&ctxt);
-		free(doid);
+		ମୁକ୍ତ(doid);
 		authctxt->server_caused_failure = 1;
-		return (0);
+		ଫେରନ୍ତୁ (0);
 	}
 
-	authctxt->methoddata = (void *)ctxt;
+	authctxt->methoddata = (ଶୂନ୍ୟ *)ctxt;
 
 	/* Return the OID that we received */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_GSSAPI_RESPONSE)) != 0 ||
+	ଯଦି ((r = sshpkt_start(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_RESPONSE)) != 0 ||
 	    (r = sshpkt_put_string(ssh, doid, len)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	free(doid);
+	ମୁକ୍ତ(doid);
 
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, &input_gssapi_token);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, &input_gssapi_errtok);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_TOKEN, &ନିବେଶ_gssapi_token);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_ERRTOK, &ନିବେଶ_gssapi_errtok);
 	authctxt->postponed = 1;
 
-	return (0);
+	ଫେରନ୍ତୁ (0);
 }
 
-static int
-input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ନିବେଶ_gssapi_token(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t plen, ସଂରଚନା ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
@@ -146,28 +146,28 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 	OM_uint32 maj_status, min_status, flags;
 	u_char *p;
 	size_t len;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if (authctxt == NULL)
+	ଯଦି (authctxt == ଖାଲି)
 		fatal("No authentication or GSSAPI context");
 
 	gssctxt = authctxt->methoddata;
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
+	ଯଦି ((r = sshpkt_get_string(ssh, &p, &len)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
-	recv_tok.value = p;
+	recv_tok.ମୂଲ୍ୟ = p;
 	recv_tok.length = len;
 	maj_status = mm_ssh_gssapi_accept_ctx(gssctxt, &recv_tok,
 	    &send_tok, &flags);
 
-	free(p);
+	ମୁକ୍ତ(p);
 
-	if (GSS_ERROR(maj_status)) {
-		if (send_tok.length != 0) {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_ERRTOK)) != 0 ||
-			    (r = sshpkt_put_string(ssh, send_tok.value,
+	ଯଦି (GSS_ERROR(maj_status)) {
+		ଯଦି (send_tok.length != 0) {
+			ଯଦି ((r = sshpkt_start(ssh,
+			    SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_ERRTOK)) != 0 ||
+			    (r = sshpkt_put_string(ssh, send_tok.ମୂଲ୍ୟ,
 			    send_tok.length)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send ERRTOK packet");
@@ -178,49 +178,49 @@ input_gssapi_token(int type, uint32_t plen, struct ssh *ssh)
 		    authctxt->user,
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 		authctxt->postponed = 0;
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-		ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-		userauth_finish(ssh, 0, "gssapi-with-mic", NULL);
-	} else {
-		if (send_tok.length != 0) {
-			if ((r = sshpkt_start(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_TOKEN)) != 0 ||
-			    (r = sshpkt_put_string(ssh, send_tok.value,
+		ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_TOKEN, ଖାଲି);
+		ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_ERRTOK, ଖାଲି);
+		userauth_finish(ssh, 0, "gssapi-with-mic", ଖାଲି);
+	} ଅନ୍ୟଥା {
+		ଯଦି (send_tok.length != 0) {
+			ଯଦି ((r = sshpkt_start(ssh,
+			    SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_TOKEN)) != 0 ||
+			    (r = sshpkt_put_string(ssh, send_tok.ମୂଲ୍ୟ,
 			    send_tok.length)) != 0 ||
 			    (r = sshpkt_send(ssh)) != 0)
 				fatal_fr(r, "send TOKEN packet");
 		}
-		if (maj_status == GSS_S_COMPLETE) {
+		ଯଦି (maj_status == GSS_S_COMPLETE) {
 			ssh_dispatch_set(ssh,
-			    SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
+			    SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_TOKEN, ଖାଲି);
 			/* note: keep ERRTOK handler as per RFC 4462 s3.4 */
-			if (flags & GSS_C_INTEG_FLAG) {
+			ଯଦି (flags & GSS_C_INTEG_FLAG) {
 				ssh_dispatch_set(ssh,
-				    SSH2_MSG_USERAUTH_GSSAPI_MIC,
-				    &input_gssapi_mic);
-			} else {
+				    SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_MIC,
+				    &ନିବେଶ_gssapi_mic);
+			} ଅନ୍ୟଥା {
 				ssh_dispatch_set(ssh,
-				    SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE,
-				    &input_gssapi_exchange_complete);
+				    SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_EXCHANGE_COMPLETE,
+				    &ନିବେଶ_gssapi_exchange_complete);
 			}
 		}
 	}
 
 	gss_release_buffer(&min_status, &send_tok);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ନିବେଶ_gssapi_errtok(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t plen, ସଂରଚନା ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if (authctxt == NULL)
+	ଯଦି (authctxt == ଖାଲି)
 		fatal("No authentication or GSSAPI context");
 
 	/* Minimal error handling - just cancel auth and return FAILURE */
-	if ((r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
+	ଯଦି ((r = sshpkt_get_string_direct(ssh, ଖାଲି, ଖାଲି)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
@@ -229,12 +229,12 @@ input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
 	    authctxt->user,
 	    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 	authctxt->postponed = 0;
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-	userauth_finish(ssh, 0, "gssapi-with-mic", NULL);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_TOKEN, ଖାଲି);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_ERRTOK, ଖାଲି);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_MIC, ଖାଲି);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ଖାଲି);
+	userauth_finish(ssh, 0, "gssapi-with-mic", ଖାଲି);
+	ଫେରନ୍ତୁ 0;
 }
 
 /*
@@ -243,14 +243,14 @@ input_gssapi_errtok(int type, uint32_t plen, struct ssh *ssh)
  * which only enables it once the GSSAPI exchange is complete.
  */
 
-static int
-input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ନିବେଶ_gssapi_exchange_complete(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t plen, ସଂରଚନା ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	int r, authenticated;
-	double tstart = monotime_double();
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, authenticated;
+	ଦ୍ୱିଗୁଣ tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ଯଦି (authctxt == ଖାଲି)
 		fatal("No authentication or GSSAPI context");
 
 	/*
@@ -258,70 +258,70 @@ input_gssapi_exchange_complete(int type, uint32_t plen, struct ssh *ssh)
 	 * the dispatcher once the exchange is complete
 	 */
 
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	ଯଦି ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	authenticated = mm_ssh_gssapi_userok(authctxt->user);
-	if (!authenticated)
+	ଯଦି (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 
 	authctxt->postponed = 0;
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-	userauth_finish(ssh, authenticated, "gssapi-with-mic", NULL);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_TOKEN, ଖାଲି);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_ERRTOK, ଖାଲି);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_MIC, ଖାଲି);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ଖାଲି);
+	userauth_finish(ssh, authenticated, "gssapi-with-mic", ଖାଲି);
+	ଫେରନ୍ତୁ 0;
 }
 
-static int
-input_gssapi_mic(int type, uint32_t plen, struct ssh *ssh)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ନିବେଶ_gssapi_mic(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, uint32_t plen, ସଂରଚନା ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	Gssctxt *gssctxt;
-	int r, authenticated = 0;
-	struct sshbuf *b;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, authenticated = 0;
+	ସଂରଚନା sshbuf *b;
 	gss_buffer_desc mic, gssbuf;
 	u_char *p;
 	size_t len;
-	double tstart = monotime_double();
+	ଦ୍ୱିଗୁଣ tstart = monotime_double();
 
-	if (authctxt == NULL)
+	ଯଦି (authctxt == ଖାଲି)
 		fatal("No authentication or GSSAPI context");
 
 	gssctxt = authctxt->methoddata;
 
-	if ((r = sshpkt_get_string(ssh, &p, &len)) != 0)
+	ଯଦି ((r = sshpkt_get_string(ssh, &p, &len)) != 0)
 		fatal_fr(r, "parse packet");
-	if ((b = sshbuf_new()) == NULL)
+	ଯଦି ((b = sshbuf_new()) == ଖାଲି)
 		fatal_f("sshbuf_new failed");
-	mic.value = p;
+	mic.ମୂଲ୍ୟ = p;
 	mic.length = len;
 	ssh_gssapi_buildmic(b, authctxt->user, authctxt->service,
 	    "gssapi-with-mic", ssh->kex->session_id);
 
-	if ((gssbuf.value = sshbuf_mutable_ptr(b)) == NULL)
+	ଯଦି ((gssbuf.ମୂଲ୍ୟ = sshbuf_mutable_ptr(b)) == ଖାଲି)
 		fatal_f("sshbuf_mutable_ptr failed");
 	gssbuf.length = sshbuf_len(b);
 
-	if (!GSS_ERROR(mm_ssh_gssapi_checkmic(gssctxt, &gssbuf, &mic)))
+	ଯଦି (!GSS_ERROR(mm_ssh_gssapi_checkmic(gssctxt, &gssbuf, &mic)))
 		authenticated = mm_ssh_gssapi_userok(authctxt->user);
-	else
+	ଅନ୍ୟଥା
 		logit("GSSAPI MIC check failed");
 
 	sshbuf_free(b);
-	free(mic.value);
+	ମୁକ୍ତ(mic.ମୂଲ୍ୟ);
 
-	if (!authenticated)
+	ଯଦି (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 
 	authctxt->postponed = 0;
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_TOKEN, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_ERRTOK, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_MIC, NULL);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, NULL);
-	userauth_finish(ssh, authenticated, "gssapi-with-mic", NULL);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_TOKEN, ଖାଲି);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_ERRTOK, ଖାଲି);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_MIC, ଖାଲି);
+	ssh_dispatch_set(ssh, SSH2_ସନ୍ଦେଶ_USERAUTH_GSSAPI_EXCHANGE_COMPLETE, ଖାଲି);
+	userauth_finish(ssh, authenticated, "gssapi-with-mic", ଖାଲି);
+	ଫେରନ୍ତୁ 0;
 }
 
 Authmethod method_gssapi = {

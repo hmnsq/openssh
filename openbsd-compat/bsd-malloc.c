@@ -14,44 +14,44 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "config.h"
+#ଅନ୍ତର୍ଭାଵ "config.h"
 #undef malloc
 #undef calloc
 #undef realloc
 
-#include <sys/types.h>
-#include <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
 
-#if defined(HAVE_MALLOC) && HAVE_MALLOC == 0
-void *
+#ଯଦି defined(HAVE_MALLOC) && HAVE_MALLOC == 0
+ଶୂନ୍ୟ *
 rpl_malloc(size_t size)
 {
-	if (size == 0)
+	ଯଦି (size == 0)
 		size = 1;
-	return malloc(size);
+	ଫେରନ୍ତୁ malloc(size);
 }
 #endif
 
-#if defined(HAVE_CALLOC) && HAVE_CALLOC == 0
-void *
+#ଯଦି defined(HAVE_CALLOC) && HAVE_CALLOC == 0
+ଶୂନ୍ୟ *
 rpl_calloc(size_t nmemb, size_t size)
 {
-	if (nmemb == 0)
+	ଯଦି (nmemb == 0)
 		nmemb = 1;
-	if (size == 0)
+	ଯଦି (size == 0)
 		size = 1;
-	return calloc(nmemb, size);
+	ଫେରନ୍ତୁ calloc(nmemb, size);
 }
 #endif
 
-#if defined (HAVE_REALLOC) && HAVE_REALLOC == 0
-void *
-rpl_realloc(void *ptr, size_t size)
+#ଯଦି defined (HAVE_REALLOC) && HAVE_REALLOC == 0
+ଶୂନ୍ୟ *
+rpl_realloc(ଶୂନ୍ୟ *ptr, size_t size)
 {
-	if (size == 0)
+	ଯଦି (size == 0)
 		size = 1;
-	if (ptr == 0)
-		return malloc(size);
-	return realloc(ptr, size);
+	ଯଦି (ptr == 0)
+		ଫେରନ୍ତୁ malloc(size);
+	ଫେରନ୍ତୁ realloc(ptr, size);
 }
 #endif

@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
 #ifndef HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+getgrouplist(ଅଚଳ ଅକ୍ଷର *uname, gid_t agroup, gid_t *groups, ପୂର୍ଣ୍ଣସଂଖ୍ୟା *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	ସଂରଚନା group *grp;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା i, ngroups;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret, maxgroups;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	ଯଦି (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		ଫେରନ୍ତୁ (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	ଯେତେବେଳେ ((grp = getgrent())) {
+		ଯଦି (grp->gr_gid == agroup)
+			ଜାରି;
+		ପାଇଁ (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			ଯଦି (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		ଯଦି (bail)
+			ଜାରି;
+		ପାଇଁ (i = 0; grp->gr_mem[i]; i++) {
+			ଯଦି (!strcmp(grp->gr_mem[i], uname)) {
+				ଯଦି (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					ଯାଅ out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				ଭାଙ୍ଗ;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	ଫେରନ୍ତୁ (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

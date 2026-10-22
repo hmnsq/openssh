@@ -26,28 +26,28 @@
 #ifndef SSHMAC_H
 #define SSHMAC_H
 
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 
-struct sshmac {
-	char	*name;
-	int	enabled;
+ସଂରଚନା sshmac {
+	ଅକ୍ଷର	*name;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	enabled;
 	u_int	mac_len;
-	u_char	*key;
-	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
-	struct ssh_hmac_ctx	*hmac_ctx;
-	struct umac_ctx		*umac_ctx;
+	u_char	*ଚାବି;
+	u_int	ଚାବି_len;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	type;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା	etm;		/* Encrypt-then-MAC */
+	ସଂରଚନା ssh_hmac_ctx	*hmac_ctx;
+	ସଂରଚନା umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
-char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 mac_valid(ଅଚଳ ଅକ୍ଷର *);
+ଅକ୍ଷର	*mac_alg_list(ଅକ୍ଷର);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 mac_setup(ସଂରଚନା sshmac *, ଅକ୍ଷର *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 mac_init(ସଂରଚନା sshmac *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 mac_compute(ସଂରଚନା sshmac *, uint32_t, ଅଚଳ u_char *, ପୂର୍ଣ୍ଣସଂଖ୍ୟା,
     u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
-    const u_char *, size_t);
-void	 mac_clear(struct sshmac *);
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା	 mac_check(ସଂରଚନା sshmac *, uint32_t, ଅଚଳ u_char *, size_t,
+    ଅଚଳ u_char *, size_t);
+ଶୂନ୍ୟ	 mac_clear(ସଂରଚନା sshmac *);
 
 #endif /* SSHMAC_H */

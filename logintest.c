@@ -27,36 +27,36 @@
  **               and lastlog retrieval
  **/
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/socket.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/wait.h>
+#ଅନ୍ତର୍ଭାଵ <sys/socket.h>
 
-#include <netinet/in.h>
+#ଅନ୍ତର୍ଭାଵ <netinet/in.h>
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <pwd.h>
-#include <netdb.h>
-#include <time.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <pwd.h>
+#ଅନ୍ତର୍ଭାଵ <netdb.h>
+#ଅନ୍ତର୍ଭାଵ <time.h>
 
-#include "loginrec.h"
+#ଅନ୍ତର୍ଭାଵ "loginrec.h"
 
-extern char *__progname;
+ବାହ୍ୟ ଅକ୍ଷର *__progname;
 
 #define PAUSE_BEFORE_LOGOUT 3
 
-int nologtest = 0;
-int compile_opts_only = 0;
-int be_verbose = 0;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା nologtest = 0;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା compile_opts_only = 0;
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା be_verbose = 0;
 
 
 /* Dump a logininfo to stdout. Assumes a tab size of 8 chars. */
-void
-dump_logininfo(struct logininfo *li, char *descname)
+ଶୂନ୍ୟ
+dump_logininfo(ସଂରଚନା logininfo *li, ଅକ୍ଷର *descname)
 {
 	/* yes I know how nasty this is */
 	printf("struct logininfo %s = {\n\t"
@@ -71,92 +71,92 @@ dump_logininfo(struct logininfo *li, char *descname)
 	    "\t}\n"
 	    "}\n",
 	    descname, li->progname, li->type,
-	    li->pid, li->uid, li->line,
+	    li->pid, li->uid, li->ଧାଡ଼ି,
 	    li->username, li->hostname, li->exit,
 	    li->termination, li->tv_sec, li->tv_usec,
 	    li->hostaddr.sa.sa_family);
 }
 
 
-int
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 testAPI()
 {
-	struct logininfo *li1;
-	struct passwd *pw;
-	struct hostent *he;
-	struct sockaddr_in sa_in4;
-	char cmdstring[256], stripline[8];
-	char username[32];
+	ସଂରଚନା logininfo *li1;
+	ସଂରଚନା passwd *pw;
+	ସଂରଚନା hostent *he;
+	ସଂରଚନା sockaddr_in sa_in4;
+	ଅକ୍ଷର cmdstring[256], stripline[8];
+	ଅକ୍ଷର username[32];
 #ifdef HAVE_TIME_H
 	time_t t0, t1, t2, logintime, logouttime;
-	char s_t0[64],s_t1[64],s_t2[64];
-	char s_logintime[64], s_logouttime[64]; /* ctime() strings */
+	ଅକ୍ଷର s_t0[64],s_t1[64],s_t2[64];
+	ଅକ୍ଷର s_logintime[64], s_logouttime[64]; /* ctime() strings */
 #endif
 
 	printf("**\n** Testing the API...\n**\n");
 
 	pw = getpwuid(getuid());
-	strlcpy(username, pw->pw_name, sizeof(username));
+	strlcpy(username, pw->pw_name, ଆକାର(username));
 
 	/* gethostname(hostname, sizeof(hostname)); */
 
 	printf("login_alloc_entry test (no host info):\n");
 
 	/* FIXME fake tty more effectively - this could upset some platforms */
-	li1 = login_alloc_entry((int)getpid(), username, NULL, ttyname(0));
-	strlcpy(li1->progname, "OpenSSH-logintest", sizeof(li1->progname));
+	li1 = login_alloc_entry((ପୂର୍ଣ୍ଣସଂଖ୍ୟା)getpid(), username, ଖାଲି, ttyname(0));
+	strlcpy(li1->progname, "OpenSSH-logintest", ଆକାର(li1->progname));
 
-	if (be_verbose)
+	ଯଦି (be_verbose)
 		dump_logininfo(li1, "li1");
 
 	printf("Setting host address info for 'localhost' (may call out):\n");
-	if (! (he = gethostbyname("localhost"))) {
+	ଯଦି (! (he = gethostbyname("localhost"))) {
 		printf("Couldn't set hostname(lookup failed)\n");
-	} else {
+	} ଅନ୍ୟଥା {
 		/* NOTE: this is messy, but typically a program wouldn't have to set
 		 *  any of this, a sockaddr_in* would be already prepared */
-		memcpy((void *)&(sa_in4.sin_addr), (void *)&(he->h_addr_list[0][0]),
-		    sizeof(struct in_addr));
-		login_set_addr(li1, (struct sockaddr *) &sa_in4, sizeof(sa_in4));
-		strlcpy(li1->hostname, "localhost", sizeof(li1->hostname));
+		memcpy((ଶୂନ୍ୟ *)&(sa_in4.sin_addr), (ଶୂନ୍ୟ *)&(he->h_addr_list[0][0]),
+		    ଆକାର(ସଂରଚନା in_addr));
+		login_set_addr(li1, (ସଂରଚନା sockaddr *) &sa_in4, ଆକାର(sa_in4));
+		strlcpy(li1->hostname, "localhost", ଆକାର(li1->hostname));
 	}
-	if (be_verbose)
+	ଯଦି (be_verbose)
 		dump_logininfo(li1, "li1");
 
-	if ((int)geteuid() != 0) {
+	ଯଦି ((ପୂର୍ଣ୍ଣସଂଖ୍ୟା)geteuid() != 0) {
 		printf("NOT RUNNING LOGIN TESTS - you are not root!\n");
-		return 1;
+		ଫେରନ୍ତୁ 1;
 	}
 
-	if (nologtest)
-		return 1;
+	ଯଦି (nologtest)
+		ଫେରନ୍ତୁ 1;
 
-	line_stripname(stripline, li1->line, sizeof(stripline));
+	ଧାଡ଼ି_stripname(stripline, li1->ଧାଡ଼ି, ଆକାର(stripline));
 
 	printf("Performing an invalid login attempt (no type field)\n--\n");
 	login_write(li1);
 	printf("--\n(Should have written errors to stderr)\n");
 
 #ifdef HAVE_TIME_H
-	(void)time(&t0);
-	strlcpy(s_t0, ctime(&t0), sizeof(s_t0));
+	(ଶୂନ୍ୟ)time(&t0);
+	strlcpy(s_t0, ctime(&t0), ଆକାର(s_t0));
 	t1 = login_get_lastlog_time(getuid());
-	strlcpy(s_t1, ctime(&t1), sizeof(s_t1));
+	strlcpy(s_t1, ctime(&t1), ଆକାର(s_t1));
 	printf("Before logging in:\n\tcurrent time is %d - %s\t"
 	    "lastlog time is %d - %s\n",
-	    (int)t0, s_t0, (int)t1, s_t1);
+	    (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)t0, s_t0, (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)t1, s_t1);
 #endif
 
 	printf("Performing a login on line %s ", stripline);
 #ifdef HAVE_TIME_H
-	(void)time(&logintime);
-	strlcpy(s_logintime, ctime(&logintime), sizeof(s_logintime));
-	printf("at %d - %s", (int)logintime, s_logintime);
+	(ଶୂନ୍ୟ)time(&logintime);
+	strlcpy(s_logintime, ctime(&logintime), ଆକାର(s_logintime));
+	printf("at %d - %s", (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)logintime, s_logintime);
 #endif
 	printf("--\n");
 	login_login(li1);
 
-	snprintf(cmdstring, sizeof(cmdstring), "who | grep '%s '",
+	snprintf(cmdstring, ଆକାର(cmdstring), "who | grep '%s '",
 		 stripline);
 	system(cmdstring);
 
@@ -165,9 +165,9 @@ testAPI()
 
 	printf("Performing a logout ");
 #ifdef HAVE_TIME_H
-	(void)time(&logouttime);
-	strlcpy(s_logouttime, ctime(&logouttime), sizeof(s_logouttime));
-	printf("at %d - %s", (int)logouttime, s_logouttime);
+	(ଶୂନ୍ୟ)time(&logouttime);
+	strlcpy(s_logouttime, ctime(&logouttime), ଆକାର(s_logouttime));
+	printf("at %d - %s", (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)logouttime, s_logouttime);
 #endif
 	printf("\nThe root login shown above should be gone.\n"
 	    "If the root login hasn't gone, but another user on the same\n"
@@ -181,13 +181,13 @@ testAPI()
 
 #ifdef HAVE_TIME_H
 	t2 = login_get_lastlog_time(getuid());
-	strlcpy(s_t2, ctime(&t2), sizeof(s_t2));
-	printf("After logging in, lastlog time is %d - %s\n", (int)t2, s_t2);
-	if (t1 == t2)
+	strlcpy(s_t2, ctime(&t2), ଆକାର(s_t2));
+	printf("After logging in, lastlog time is %d - %s\n", (ପୂର୍ଣ୍ଣସଂଖ୍ୟା)t2, s_t2);
+	ଯଦି (t1 == t2)
 		printf("The lastlog times before and after logging in are the "
 		    "same.\nThis indicates that lastlog is ** NOT WORKING "
 		    "CORRECTLY **\n");
-	else if (t0 != t2)
+	ଅନ୍ୟଥା ଯଦି (t0 != t2)
 		/* We can be off by a second or so, even when recording works fine.
 		 * I'm not 100% sure why, but it's true. */
 		printf("** The login time and the lastlog time differ.\n"
@@ -195,7 +195,7 @@ testAPI()
 		    "wrong time,\n** or retrieving the wrong entry.\n"
 		    "If it's off by less than %d second(s) "
 		    "run the test again.\n", PAUSE_BEFORE_LOGOUT);
-	else
+	ଅନ୍ୟଥା
 		printf("lastlog agrees with the login time. This is a good thing.\n");
 
 #endif
@@ -203,7 +203,7 @@ testAPI()
 	printf("--\nThe output of 'last' shown next should have "
 	    "an entry for root \n  on %s for the time shown above:\n--\n",
 	    stripline);
-	snprintf(cmdstring, sizeof(cmdstring), "last | grep '%s ' | head -3",
+	snprintf(cmdstring, ଆକାର(cmdstring), "last | grep '%s ' | head -3",
 		 stripline);
 	system(cmdstring);
 
@@ -211,46 +211,46 @@ testAPI()
 
 	login_free_entry(li1);
 
-	return 1;
+	ଫେରନ୍ତୁ 1;
 } /* testAPI() */
 
 
-void
-testLineName(char *line)
+ଶୂନ୍ୟ
+test_ଧାଡ଼ି_Name(ଅକ୍ଷର *ଧାଡ଼ି)
 {
 	/* have to null-terminate - these functions are designed for
 	 * structures with fixed-length char arrays, and don't null-term.*/
-	char full[17], strip[9], abbrev[5];
+	ଅକ୍ଷର full[17], strip[9], abbrev[5];
 
-	memset(full, '\0', sizeof(full));
-	memset(strip, '\0', sizeof(strip));
-	memset(abbrev, '\0', sizeof(abbrev));
+	memset(full, '\0', ଆକାର(full));
+	memset(strip, '\0', ଆକାର(strip));
+	memset(abbrev, '\0', ଆକାର(abbrev));
 
-	line_fullname(full, line, sizeof(full)-1);
-	line_stripname(strip, full, sizeof(strip)-1);
-	line_abbrevname(abbrev, full, sizeof(abbrev)-1);
-	printf("%s: %s, %s, %s\n", line, full, strip, abbrev);
+	ଧାଡ଼ି_fullname(full, ଧାଡ଼ି, ଆକାର(full)-1);
+	ଧାଡ଼ି_stripname(strip, full, ଆକାର(strip)-1);
+	ଧାଡ଼ି_abbrevname(abbrev, full, ଆକାର(abbrev)-1);
+	printf("%s: %s, %s, %s\n", ଧାଡ଼ି, full, strip, abbrev);
 
 } /* testLineName() */
 
 
-int
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
 testOutput()
 {
 	printf("**\n** Testing linename functions\n**\n");
-	testLineName("/dev/pts/1");
-	testLineName("pts/1");
-	testLineName("pts/999");
-	testLineName("/dev/ttyp00");
-	testLineName("ttyp00");
+	test_ଧାଡ଼ି_Name("/dev/pts/1");
+	test_ଧାଡ଼ି_Name("pts/1");
+	test_ଧାଡ଼ି_Name("pts/999");
+	test_ଧାଡ଼ି_Name("/dev/ttyp00");
+	test_ଧାଡ଼ି_Name("ttyp00");
 
-	return 1;
+	ଫେରନ୍ତୁ 1;
 } /* testOutput() */
 
 
 /* show which options got compiled in */
-void
-showOptions(void)
+ଶୂନ୍ୟ
+showOptions(ଶୂନ୍ୟ)
 {
 	printf("**\n** Compile-time options\n**\n");
 
@@ -278,29 +278,29 @@ showOptions(void)
 } /* showOptions() */
 
 
-int
-main(int argc, char *argv[])
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ମୁଖ୍ୟ(ପୂର୍ଣ୍ଣସଂଖ୍ୟା argc, ଅକ୍ଷର *argv[])
 {
 	printf("Platform-independent login recording test driver\n");
 
 	__progname = ssh_get_progname(argv[0]);
-	if (argc == 2) {
-		if (strncmp(argv[1], "-i", 3) == 0)
+	ଯଦି (argc == 2) {
+		ଯଦି (strncmp(argv[1], "-i", 3) == 0)
 			compile_opts_only = 1;
-		else if (strncmp(argv[1], "-v", 3) == 0)
+		ଅନ୍ୟଥା ଯଦି (strncmp(argv[1], "-v", 3) == 0)
 			be_verbose=1;
 	}
 
-	if (!compile_opts_only) {
-		if (be_verbose && !testOutput())
-			return 1;
+	ଯଦି (!compile_opts_only) {
+		ଯଦି (be_verbose && !testOutput())
+			ଫେରନ୍ତୁ 1;
 
-		if (!testAPI())
-			return 1;
+		ଯଦି (!testAPI())
+			ଫେରନ୍ତୁ 1;
 	}
 
 	showOptions();
 
-	return 0;
+	ଫେରନ୍ତୁ 0;
 } /* main() */
 

@@ -10,14 +10,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stddef.h>
-#include <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <stddef.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
 
-extern "C" void fuzz_one_message(const uint8_t *data, size_t size);
+ବାହ୍ୟ "C" ଶୂନ୍ୟ fuzz_one_message(ଅଚଳ uint8_t *data, size_t size);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+ବାହ୍ୟ "C" ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+LLVMFuzzer_Test_One_ନିବେଶ(ଅଚଳ uint8_t *data, size_t size)
 {
 	fuzz_one_message(data, size);
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }

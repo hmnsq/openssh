@@ -30,117 +30,117 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strmode.c */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 #ifndef HAVE_STRMODE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
 /* XXX mode should be mode_t */
 
-void
-strmode(int mode, char *p)
+ଶୂନ୍ୟ
+strmode(ପୂର୍ଣ୍ଣସଂଖ୍ୟା mode, ଅକ୍ଷର *p)
 {
 	 /* print type */
-	switch (mode & S_IFMT) {
-	case S_IFDIR:			/* directory */
+	ବାଛ (mode & S_IFMT) {
+	ସ୍ଥିତି S_IFDIR:			/* directory */
 		*p++ = 'd';
-		break;
-	case S_IFCHR:			/* character special */
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IFCHR:			/* character special */
 		*p++ = 'c';
-		break;
-	case S_IFBLK:			/* block special */
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IFBLK:			/* block special */
 		*p++ = 'b';
-		break;
-	case S_IFREG:			/* regular */
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IFREG:			/* regular */
 		*p++ = '-';
-		break;
-	case S_IFLNK:			/* symbolic link */
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
-		break;
+		ଭାଙ୍ଗ;
 #ifdef S_IFSOCK
-	case S_IFSOCK:			/* socket */
+	ସ୍ଥିତି S_IFSOCK:			/* socket */
 		*p++ = 's';
-		break;
+		ଭାଙ୍ଗ;
 #endif
 #ifdef S_IFIFO
-	case S_IFIFO:			/* fifo */
+	ସ୍ଥିତି S_IFIFO:			/* fifo */
 		*p++ = 'p';
-		break;
+		ଭାଙ୍ଗ;
 #endif
-	default:			/* unknown */
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:			/* unknown */
 		*p++ = '?';
-		break;
+		ଭାଙ୍ଗ;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	ଯଦି (mode & S_IRUSR)
 		*p++ = 'r';
-	else
+	ଅନ୍ୟଥା
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	ଯଦି (mode & S_IWUSR)
 		*p++ = 'w';
-	else
+	ଅନ୍ୟଥା
 		*p++ = '-';
-	switch (mode & (S_IXUSR | S_ISUID)) {
-	case 0:
+	ବାଛ (mode & (S_IXUSR | S_ISUID)) {
+	ସ୍ଥିତି 0:
 		*p++ = '-';
-		break;
-	case S_IXUSR:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IXUSR:
 		*p++ = 'x';
-		break;
-	case S_ISUID:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_ISUID:
 		*p++ = 'S';
-		break;
-	case S_IXUSR | S_ISUID:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IXUSR | S_ISUID:
 		*p++ = 's';
-		break;
+		ଭାଙ୍ଗ;
 	}
 	/* group */
-	if (mode & S_IRGRP)
+	ଯଦି (mode & S_IRGRP)
 		*p++ = 'r';
-	else
+	ଅନ୍ୟଥା
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	ଯଦି (mode & S_IWGRP)
 		*p++ = 'w';
-	else
+	ଅନ୍ୟଥା
 		*p++ = '-';
-	switch (mode & (S_IXGRP | S_ISGID)) {
-	case 0:
+	ବାଛ (mode & (S_IXGRP | S_ISGID)) {
+	ସ୍ଥିତି 0:
 		*p++ = '-';
-		break;
-	case S_IXGRP:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IXGRP:
 		*p++ = 'x';
-		break;
-	case S_ISGID:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_ISGID:
 		*p++ = 'S';
-		break;
-	case S_IXGRP | S_ISGID:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IXGRP | S_ISGID:
 		*p++ = 's';
-		break;
+		ଭାଙ୍ଗ;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	ଯଦି (mode & S_IROTH)
 		*p++ = 'r';
-	else
+	ଅନ୍ୟଥା
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	ଯଦି (mode & S_IWOTH)
 		*p++ = 'w';
-	else
+	ଅନ୍ୟଥା
 		*p++ = '-';
-	switch (mode & (S_IXOTH | S_ISVTX)) {
-	case 0:
+	ବାଛ (mode & (S_IXOTH | S_ISVTX)) {
+	ସ୍ଥିତି 0:
 		*p++ = '-';
-		break;
-	case S_IXOTH:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IXOTH:
 		*p++ = 'x';
-		break;
-	case S_ISVTX:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_ISVTX:
 		*p++ = 'T';
-		break;
-	case S_IXOTH | S_ISVTX:
+		ଭାଙ୍ଗ;
+	ସ୍ଥିତି S_IXOTH | S_ISVTX:
 		*p++ = 't';
-		break;
+		ଭାଙ୍ଗ;
 	}
 	*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';

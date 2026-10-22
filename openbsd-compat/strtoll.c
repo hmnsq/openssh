@@ -30,15 +30,15 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/strtoll.c */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 #ifndef HAVE_STRTOLL
 
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <ctype.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <limits.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
 
 /*
  * Convert a string to a long long.
@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(ଅଚଳ ଅକ୍ଷର *nptr, ଅକ୍ଷର **endptr, ପୂର୍ଣ୍ଣସଂଖ୍ୟା base)
 {
-	const char *s;
+	ଅଚଳ ଅକ୍ଷର *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା c;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -60,24 +60,24 @@ strtoll(const char *nptr, char **endptr, int base)
 	 * assume decimal; if base is already 16, allow 0x.
 	 */
 	s = nptr;
-	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	କର {
+		c = (unsigned ଅକ୍ଷର) *s++;
+	} ଯେତେବେଳେ (isspace(c));
+	ଯଦି (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} ଅନ୍ୟଥା {
 		neg = 0;
-		if (c == '+')
+		ଯଦି (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	ଯଦି ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	ଯଦି (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	ଯଦି (neg) {
+		ଯଦି (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	ପାଇଁ (acc = 0, any = 0;; c = (unsigned ଅକ୍ଷର) *s++) {
+		ଯଦି (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		ଅନ୍ୟଥା ଯଦି (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
-			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		ଅନ୍ୟଥା
+			ଭାଙ୍ଗ;
+		ଯଦି (c >= base)
+			ଭାଙ୍ଗ;
+		ଯଦି (any < 0)
+			ଜାରି;
+		ଯଦି (neg) {
+			ଯଦି (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} ଅନ୍ୟଥା {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} ଅନ୍ୟଥା {
+			ଯଦି (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} ଅନ୍ୟଥା {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	ଯଦି (endptr != 0)
+		*endptr = (ଅକ୍ଷର *) (any ? s - 1 : nptr);
+	ଫେରନ୍ତୁ (acc);
 }
 #endif /* HAVE_STRTOLL */

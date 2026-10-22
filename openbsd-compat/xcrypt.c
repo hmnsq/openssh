@@ -22,14 +22,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <pwd.h>
 
-# if defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
+# ଯଦି defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
 #  include <crypt.h>
 # endif
 
@@ -44,17 +44,17 @@
 #  include <prot.h>
 # endif
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+# ଯଦି defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 #  include <shadow.h>
 # endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+# ଯଦି defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
 #  include <sys/label.h>
 #  include <sys/audit.h>
 #  include <pwdadj.h>
 # endif
 
-# if defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
+# ଯଦି defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
 #  include <openssl/des.h>
 #  define crypt DES_crypt
 # endif
@@ -67,57 +67,57 @@
  * salt.  Usually this will be root unless the root account is locked out.
  * If we don't find one we return a traditional DES-based salt.
  */
-static const char *
-pick_salt(void)
+ସ୍ଥିର ଅଚଳ ଅକ୍ଷର *
+pick_salt(ଶୂନ୍ୟ)
 {
-	struct passwd *pw;
-	char *passwd, *p;
+	ସଂରଚନା passwd *pw;
+	ଅକ୍ଷର *passwd, *p;
 	size_t typelen;
-	static char salt[32];
+	ସ୍ଥିର ଅକ୍ଷର salt[32];
 
-	if (salt[0] != '\0')
-		return salt;
-	strlcpy(salt, "xx", sizeof(salt));
+	ଯଦି (salt[0] != '\0')
+		ଫେରନ୍ତୁ salt;
+	strlcpy(salt, "xx", ଆକାର(salt));
 	setpwent();
-	while ((pw = getpwent()) != NULL) {
-		if ((passwd = shadow_pw(pw)) == NULL)
-			continue;
-		if (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != NULL) {
+	ଯେତେବେଳେ ((pw = getpwent()) != ଖାଲି) {
+		ଯଦି ((passwd = shadow_pw(pw)) == ଖାଲି)
+			ଜାରି;
+		ଯଦି (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != ଖାଲି) {
 			typelen = p - passwd + 1;
-			strlcpy(salt, passwd, MINIMUM(typelen, sizeof(salt)));
+			strlcpy(salt, passwd, MINIMUM(typelen, ଆକାର(salt)));
 			explicit_bzero(passwd, strlen(passwd));
-			goto out;
+			ଯାଅ out;
 		}
 	}
  out:
 	endpwent();
-	return salt;
+	ଫେରନ୍ତୁ salt;
 }
 
-char *
-xcrypt(const char *password, const char *salt)
+ଅକ୍ଷର *
+xcrypt(ଅଚଳ ଅକ୍ଷର *password, ଅଚଳ ଅକ୍ଷର *salt)
 {
-	char *crypted;
+	ଅକ୍ଷର *crypted;
 
 	/*
 	 * If we don't have a salt we are encrypting a fake password for
 	 * for timing purposes.  Pick an appropriate salt.
 	 */
-	if (salt == NULL)
+	ଯଦି (salt == ଖାଲି)
 		salt = pick_salt();
 
-#if defined(__hpux) && !defined(HAVE_SECUREWARE)
-	if (iscomsec())
+#ଯଦି defined(__hpux) && !defined(HAVE_SECUREWARE)
+	ଯଦି (iscomsec())
 		crypted = bigcrypt(password, salt);
-	else
+	ଅନ୍ୟଥା
 		crypted = crypt(password, salt);
 # elif defined(HAVE_SECUREWARE)
 	crypted = bigcrypt(password, salt);
-# else
+# ଅନ୍ୟଥା
 	crypted = crypt(password, salt);
 #endif
 
-	return crypted;
+	ଫେରନ୍ତୁ crypted;
 }
 
 /*
@@ -125,32 +125,32 @@ xcrypt(const char *password, const char *salt)
  * version.
  */
 
-char *
-shadow_pw(struct passwd *pw)
+ଅକ୍ଷର *
+shadow_pw(ସଂରଚନା passwd *pw)
 {
-	char *pw_password = pw->pw_passwd;
+	ଅକ୍ଷର *pw_password = pw->pw_passwd;
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
-	struct spwd *spw = getspnam(pw->pw_name);
+# ଯଦି defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+	ସଂରଚନା spwd *spw = getspnam(pw->pw_name);
 
-	if (spw != NULL)
+	ଯଦି (spw != ଖାଲି)
 		pw_password = spw->sp_pwdp;
 # endif
 
 #ifdef USE_LIBIAF
-	return(get_iaf_password(pw));
+	ଫେରନ୍ତୁ(get_iaf_password(pw));
 #endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
-	struct passwd_adjunct *spw;
-	if (issecure() && (spw = getpwanam(pw->pw_name)) != NULL)
+# ଯଦି defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+	ସଂରଚନା passwd_adjunct *spw;
+	ଯଦି (issecure() && (spw = getpwanam(pw->pw_name)) != ଖାଲି)
 		pw_password = spw->pwa_passwd;
 # elif defined(HAVE_SECUREWARE)
-	struct pr_passwd *spw = getprpwnam(pw->pw_name);
+	ସଂରଚନା pr_passwd *spw = getprpwnam(pw->pw_name);
 
-	if (spw != NULL)
+	ଯଦି (spw != ଖାଲି)
 		pw_password = spw->ufld.fd_encrypt;
 # endif
 
-	return pw_password;
+	ଫେରନ୍ତୁ pw_password;
 }

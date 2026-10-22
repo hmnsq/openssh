@@ -14,21 +14,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 
-#include "log.h"
-#include "misc.h"
-#include "platform.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "misc.h"
+#ଅନ୍ତର୍ଭାଵ "platform.h"
 
-#include "openbsd-compat/openbsd-compat.h"
+#ଅନ୍ତର୍ଭାଵ "openbsd-compat/openbsd-compat.h"
 
-void
-platform_pre_listen(void)
+ଶୂନ୍ୟ
+platform_pre_listen(ଶୂନ୍ୟ)
 {
 #ifdef LINUX_OOM_ADJUST
 	/* Adjust out-of-memory killer so listening process is not killed */
@@ -43,24 +43,24 @@ platform_pre_listen(void)
 #endif
 }
 
-void
-platform_post_listen(void)
+ଶୂନ୍ୟ
+platform_post_listen(ଶୂନ୍ୟ)
 {
 #ifdef SYSTEMD_NOTIFY
 	ssh_systemd_notify_ready();
 #endif
 }
 
-void
-platform_pre_fork(void)
+ଶୂନ୍ୟ
+platform_pre_fork(ଶୂନ୍ୟ)
 {
 #ifdef USE_SOLARIS_PROCESS_CONTRACTS
 	solaris_contract_pre_fork();
 #endif
 }
 
-void
-platform_pre_restart(void)
+ଶୂନ୍ୟ
+platform_pre_restart(ଶୂନ୍ୟ)
 {
 #ifdef SYSTEMD_NOTIFY
 	ssh_systemd_notify_reload();
@@ -70,7 +70,7 @@ platform_pre_restart(void)
 #endif
 }
 
-void
+ଶୂନ୍ୟ
 platform_post_fork_parent(pid_t child_pid)
 {
 #ifdef USE_SOLARIS_PROCESS_CONTRACTS
@@ -78,8 +78,8 @@ platform_post_fork_parent(pid_t child_pid)
 #endif
 }
 
-void
-platform_post_fork_child(void)
+ଶୂନ୍ୟ
+platform_post_fork_child(ଶୂନ୍ୟ)
 {
 #ifdef USE_SOLARIS_PROCESS_CONTRACTS
 	solaris_contract_post_fork_child();
@@ -89,7 +89,7 @@ platform_post_fork_child(void)
 #endif
 }
 
-void platform_pre_session_start(void)
+ଶୂନ୍ୟ platform_pre_session_start(ଶୂନ୍ୟ)
 {
 #ifdef LINUX_MEMLOCK_ONFAULT
 	/*

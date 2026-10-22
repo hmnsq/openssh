@@ -23,88 +23,88 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/wait.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/wait.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <paths.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <paths.h>
+#ଅନ୍ତର୍ଭାଵ <signal.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 
-#include "xmalloc.h"
-#include "misc.h"
-#include "pathnames.h"
-#include "log.h"
-#include "ssh.h"
+#ଅନ୍ତର୍ଭାଵ "xmalloc.h"
+#ଅନ୍ତର୍ଭାଵ "misc.h"
+#ଅନ୍ତର୍ଭାଵ "pathnames.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "ssh.h"
 
-static char *
-ssh_askpass(char *askpass, const char *msg, const char *env_hint)
+ସ୍ଥିର ଅକ୍ଷର *
+ssh_askpass(ଅକ୍ଷର *askpass, ଅଚଳ ଅକ୍ଷର *ସନ୍ଦେଶ, ଅଚଳ ଅକ୍ଷର *env_hint)
 {
 	pid_t pid, ret;
 	size_t len;
-	char *pass;
-	int p[2], status;
-	char buf[1024];
-	void (*osigchld)(int);
+	ଅକ୍ଷର *pass;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା p[2], status;
+	ଅକ୍ଷର buf[1024];
+	ଶୂନ୍ୟ (*osigchld)(ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 
-	if (fflush(stdout) != 0)
+	ଯଦି (fflush(stdout) != 0)
 		error_f("fflush: %s", strerror(errno));
-	if (askpass == NULL)
+	ଯଦି (askpass == ଖାଲି)
 		fatal("internal error: askpass undefined");
-	if (pipe(p) == -1) {
+	ଯଦି (pipe(p) == -1) {
 		error_f("pipe: %s", strerror(errno));
-		return NULL;
+		ଫେରନ୍ତୁ ଖାଲି;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	ଯଦି ((pid = fork()) == -1) {
 		error_f("fork: %s", strerror(errno));
 		ssh_signal(SIGCHLD, osigchld);
-		return NULL;
+		ଫେରନ୍ତୁ ଖାଲି;
 	}
-	if (pid == 0) {
+	ଯଦି (pid == 0) {
 		close(p[0]);
-		if (dup2(p[1], STDOUT_FILENO) == -1)
+		ଯଦି (dup2(p[1], STDOUT_FILENO) == -1)
 			fatal_f("dup2: %s", strerror(errno));
-		if (env_hint != NULL)
+		ଯଦି (env_hint != ଖାଲି)
 			setenv("SSH_ASKPASS_PROMPT", env_hint, 1);
-		execlp(askpass, askpass, msg, (char *)NULL);
+		execlp(askpass, askpass, ସନ୍ଦେଶ, (ଅକ୍ଷର *)ଖାଲି);
 		fatal_f("exec(%s): %s", askpass, strerror(errno));
 	}
 	close(p[1]);
 
 	len = 0;
-	do {
-		ssize_t r = read(p[0], buf + len, sizeof(buf) - 1 - len);
+	କର {
+		ssize_t r = ପଠ(p[0], buf + len, ଆକାର(buf) - 1 - len);
 
-		if (r == -1 && errno == EINTR)
-			continue;
-		if (r <= 0)
-			break;
+		ଯଦି (r == -1 && errno == EINTR)
+			ଜାରି;
+		ଯଦି (r <= 0)
+			ଭାଙ୍ଗ;
 		len += r;
-	} while (len < sizeof(buf) - 1);
+	} ଯେତେବେଳେ (len < ଆକାର(buf) - 1);
 	buf[len] = '\0';
 
 	close(p[0]);
-	while ((ret = waitpid(pid, &status, 0)) == -1)
-		if (errno != EINTR)
-			break;
+	ଯେତେବେଳେ ((ret = waitpid(pid, &status, 0)) == -1)
+		ଯଦି (errno != EINTR)
+			ଭାଙ୍ଗ;
 	ssh_signal(SIGCHLD, osigchld);
-	if (ret == -1 || !WIFEXITED(status) || WEXITSTATUS(status) != 0) {
-		explicit_bzero(buf, sizeof(buf));
-		return NULL;
+	ଯଦି (ret == -1 || !WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+		explicit_bzero(buf, ଆକାର(buf));
+		ଫେରନ୍ତୁ ଖାଲି;
 	}
 
 	buf[strcspn(buf, "\r\n")] = '\0';
 	pass = xstrdup(buf);
-	explicit_bzero(buf, sizeof(buf));
-	return pass;
+	explicit_bzero(buf, ଆକାର(buf));
+	ଫେରନ୍ତୁ pass;
 }
 
 /* private/internal read_passphrase flags */
@@ -116,215 +116,215 @@ ssh_askpass(char *askpass, const char *msg, const char *env_hint)
  * RP_ALLOW_STDIN is set, the passphrase will be read from stdin if no
  * tty is or askpass program is available
  */
-char *
-read_passphrase(const char *prompt, int flags)
+ଅକ୍ଷର *
+read_passphrase(ଅଚଳ ଅକ୍ଷର *prompt, ପୂର୍ଣ୍ଣସଂଖ୍ୟା flags)
 {
-	char cr = '\r', *askpass = NULL, *ret, buf[1024];
-	int rppflags, ttyfd, use_askpass = 0, allow_askpass = 0;
-	const char *askpass_hint = NULL;
-	const char *s;
+	ଅକ୍ଷର cr = '\r', *askpass = ଖାଲି, *ret, buf[1024];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା rppflags, ttyfd, use_askpass = 0, allow_askpass = 0;
+	ଅଚଳ ଅକ୍ଷର *askpass_hint = ଖାଲି;
+	ଅଚଳ ଅକ୍ଷର *s;
 
-	if (((s = getenv("DISPLAY")) != NULL && *s != '\0') ||
-	    ((s = getenv("WAYLAND_DISPLAY")) != NULL && *s != '\0'))
+	ଯଦି (((s = getenv("DISPLAY")) != ଖାଲି && *s != '\0') ||
+	    ((s = getenv("WAYLAND_DISPLAY")) != ଖାଲି && *s != '\0'))
 		allow_askpass = 1;
-	if ((s = getenv(SSH_ASKPASS_REQUIRE_ENV)) != NULL) {
-		if (strcasecmp(s, "force") == 0) {
+	ଯଦି ((s = getenv(SSH_ASKPASS_REQUIRE_ENV)) != ଖାଲି) {
+		ଯଦି (strcasecmp(s, "force") == 0) {
 			use_askpass = 1;
 			allow_askpass = 1;
-		} else if (strcasecmp(s, "prefer") == 0)
+		} ଅନ୍ୟଥା ଯଦି (strcasecmp(s, "prefer") == 0)
 			use_askpass = allow_askpass;
-		else if (strcasecmp(s, "never") == 0)
+		ଅନ୍ୟଥା ଯଦି (strcasecmp(s, "never") == 0)
 			allow_askpass = 0;
 	}
 
 	rppflags = (flags & RP_ECHO) ? RPP_ECHO_ON : RPP_ECHO_OFF;
-	if (use_askpass)
+	ଯଦି (use_askpass)
 		debug_f("requested to askpass");
-	else if (flags & RP_USE_ASKPASS)
+	ଅନ୍ୟଥା ଯଦି (flags & RP_USE_ASKPASS)
 		use_askpass = 1;
-	else if (flags & RP_ALLOW_STDIN) {
-		if (!isatty(STDIN_FILENO)) {
+	ଅନ୍ୟଥା ଯଦି (flags & RP_ALLOW_STDIN) {
+		ଯଦି (!isatty(STDIN_FILENO)) {
 			debug_f("stdin is not a tty");
 			use_askpass = 1;
 		}
-	} else {
+	} ଅନ୍ୟଥା {
 		rppflags |= RPP_REQUIRE_TTY;
 		ttyfd = open(_PATH_TTY, O_RDWR);
-		if (ttyfd >= 0) {
+		ଯଦି (ttyfd >= 0) {
 			/*
 			 * If we're on a tty, ensure that show the prompt at
 			 * the beginning of the line. This will hopefully
 			 * clobber any password characters the user has
 			 * optimistically typed before echo is disabled.
 			 */
-			(void)write(ttyfd, &cr, 1);
+			(ଶୂନ୍ୟ)ଲିଖ(ttyfd, &cr, 1);
 			close(ttyfd);
-		} else {
+		} ଅନ୍ୟଥା {
 			debug_f("can't open %s: %s", _PATH_TTY,
 			    strerror(errno));
 			use_askpass = 1;
 		}
 	}
 
-	if ((flags & RP_USE_ASKPASS) && !allow_askpass)
-		return (flags & RP_ALLOW_EOF) ? NULL : xstrdup("");
+	ଯଦି ((flags & RP_USE_ASKPASS) && !allow_askpass)
+		ଫେରନ୍ତୁ (flags & RP_ALLOW_EOF) ? ଖାଲି : xstrdup("");
 
-	if (use_askpass && allow_askpass) {
-		if (getenv(SSH_ASKPASS_ENV))
+	ଯଦି (use_askpass && allow_askpass) {
+		ଯଦି (getenv(SSH_ASKPASS_ENV))
 			askpass = getenv(SSH_ASKPASS_ENV);
-		else
+		ଅନ୍ୟଥା
 			askpass = _PATH_SSH_ASKPASS_DEFAULT;
-		if ((flags & RP_ASK_PERMISSION) != 0)
+		ଯଦି ((flags & RP_ASK_PERMISSION) != 0)
 			askpass_hint = "confirm";
-		if ((ret = ssh_askpass(askpass, prompt, askpass_hint)) == NULL)
-			if (!(flags & RP_ALLOW_EOF))
-				return xstrdup("");
-		return ret;
+		ଯଦି ((ret = ssh_askpass(askpass, prompt, askpass_hint)) == ଖାଲି)
+			ଯଦି (!(flags & RP_ALLOW_EOF))
+				ଫେରନ୍ତୁ xstrdup("");
+		ଫେରନ୍ତୁ ret;
 	}
 
-	if (readpassphrase(prompt, buf, sizeof buf, rppflags) == NULL) {
-		if (flags & RP_ALLOW_EOF)
-			return NULL;
-		return xstrdup("");
+	ଯଦି (readpassphrase(prompt, buf, ଆକାର buf, rppflags) == ଖାଲି) {
+		ଯଦି (flags & RP_ALLOW_EOF)
+			ଫେରନ୍ତୁ ଖାଲି;
+		ଫେରନ୍ତୁ xstrdup("");
 	}
 
 	ret = xstrdup(buf);
-	explicit_bzero(buf, sizeof(buf));
-	return ret;
+	explicit_bzero(buf, ଆକାର(buf));
+	ଫେରନ୍ତୁ ret;
 }
 
-int
-ask_permission(const char *fmt, ...)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ask_permission(ଅଚଳ ଅକ୍ଷର *fmt, ...)
 {
 	va_list args;
-	char *p, prompt[1024];
-	int allowed = 0;
+	ଅକ୍ଷର *p, prompt[1024];
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା allowed = 0;
 
 	va_start(args, fmt);
-	vsnprintf(prompt, sizeof(prompt), fmt, args);
+	vsnprintf(prompt, ଆକାର(prompt), fmt, args);
 	va_end(args);
 
 	p = read_passphrase(prompt,
 	    RP_USE_ASKPASS|RP_ALLOW_EOF|RP_ASK_PERMISSION);
-	if (p != NULL) {
+	ଯଦି (p != ଖାଲି) {
 		/*
 		 * Accept empty responses and responses consisting
 		 * of the word "yes" as affirmative.
 		 */
-		if (*p == '\0' || *p == '\n' ||
+		ଯଦି (*p == '\0' || *p == '\n' ||
 		    strcasecmp(p, "yes") == 0)
 			allowed = 1;
-		free(p);
+		ମୁକ୍ତ(p);
 	}
 
-	return (allowed);
+	ଫେରନ୍ତୁ (allowed);
 }
 
-static void
-writemsg(const char *msg)
+ସ୍ଥିର ଶୂନ୍ୟ
+writemsg(ଅଚଳ ଅକ୍ଷର *ସନ୍ଦେଶ)
 {
-	(void)write(STDERR_FILENO, "\r", 1);
-	(void)write(STDERR_FILENO, msg, strlen(msg));
-	(void)write(STDERR_FILENO, "\r\n", 2);
+	(ଶୂନ୍ୟ)ଲିଖ(STDERR_FILENO, "\r", 1);
+	(ଶୂନ୍ୟ)ଲିଖ(STDERR_FILENO, ସନ୍ଦେଶ, strlen(ସନ୍ଦେଶ));
+	(ଶୂନ୍ୟ)ଲିଖ(STDERR_FILENO, "\r\n", 2);
 }
 
-struct notifier_ctx {
+ସଂରଚନା notifier_ctx {
 	pid_t pid;
-	void (*osigchld)(int);
+	ଶୂନ୍ୟ (*osigchld)(ପୂର୍ଣ୍ଣସଂଖ୍ୟା);
 };
 
-struct notifier_ctx *
-notify_start(int force_askpass, const char *fmt, ...)
+ସଂରଚନା notifier_ctx *
+notify_start(ପୂର୍ଣ୍ଣସଂଖ୍ୟା force_askpass, ଅଚଳ ଅକ୍ଷର *fmt, ...)
 {
 	va_list args;
-	char *prompt = NULL;
+	ଅକ୍ଷର *prompt = ଖାଲି;
 	pid_t pid = -1;
-	void (*osigchld)(int) = NULL;
-	const char *askpass, *s;
-	struct notifier_ctx *ret = NULL;
+	ଶୂନ୍ୟ (*osigchld)(ପୂର୍ଣ୍ଣସଂଖ୍ୟା) = ଖାଲି;
+	ଅଚଳ ଅକ୍ଷର *askpass, *s;
+	ସଂରଚନା notifier_ctx *ret = ଖାଲି;
 
 	va_start(args, fmt);
 	xvasprintf(&prompt, fmt, args);
 	va_end(args);
 
-	if (fflush(NULL) != 0)
+	ଯଦି (fflush(ଖାଲି) != 0)
 		error_f("fflush: %s", strerror(errno));
-	if (!force_askpass && isatty(STDERR_FILENO)) {
+	ଯଦି (!force_askpass && isatty(STDERR_FILENO)) {
 		writemsg(prompt);
-		goto out_ctx;
+		ଯାଅ out_ctx;
 	}
-	if ((askpass = getenv("SSH_ASKPASS")) == NULL)
+	ଯଦି ((askpass = getenv("SSH_ASKPASS")) == ଖାଲି)
 		askpass = _PATH_SSH_ASKPASS_DEFAULT;
-	if (*askpass == '\0') {
+	ଯଦି (*askpass == '\0') {
 		debug3_f("cannot notify: no askpass");
-		goto out;
+		ଯାଅ out;
 	}
-	if (getenv("DISPLAY") == NULL && getenv("WAYLAND_DISPLAY") == NULL &&
-	    ((s = getenv(SSH_ASKPASS_REQUIRE_ENV)) == NULL ||
+	ଯଦି (getenv("DISPLAY") == ଖାଲି && getenv("WAYLAND_DISPLAY") == ଖାଲି &&
+	    ((s = getenv(SSH_ASKPASS_REQUIRE_ENV)) == ଖାଲି ||
 	    strcmp(s, "force") != 0)) {
 		debug3_f("cannot notify: no display");
-		goto out;
+		ଯାଅ out;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	ଯଦି ((pid = fork()) == -1) {
 		error_f("fork: %s", strerror(errno));
 		ssh_signal(SIGCHLD, osigchld);
-		free(prompt);
-		return NULL;
+		ମୁକ୍ତ(prompt);
+		ଫେରନ୍ତୁ ଖାଲି;
 	}
-	if (pid == 0) {
-		if (stdfd_devnull(1, 1, 0) == -1)
+	ଯଦି (pid == 0) {
+		ଯଦି (stdfd_devnull(1, 1, 0) == -1)
 			fatal_f("stdfd_devnull failed");
 		closefrom(STDERR_FILENO + 1);
 		setenv("SSH_ASKPASS_PROMPT", "none", 1); /* hint to UI */
-		execlp(askpass, askpass, prompt, (char *)NULL);
+		execlp(askpass, askpass, prompt, (ଅକ୍ଷର *)ଖାଲି);
 		error_f("exec(%s): %s", askpass, strerror(errno));
 		_exit(1);
 		/* NOTREACHED */
 	}
  out_ctx:
-	if ((ret = calloc(1, sizeof(*ret))) == NULL) {
-		if (pid != -1)
+	ଯଦି ((ret = calloc(1, ଆକାର(*ret))) == ଖାଲି) {
+		ଯଦି (pid != -1)
 			kill(pid, SIGTERM);
 		fatal_f("calloc failed");
 	}
 	ret->pid = pid;
 	ret->osigchld = osigchld;
  out:
-	free(prompt);
-	return ret;
+	ମୁକ୍ତ(prompt);
+	ଫେରନ୍ତୁ ret;
 }
 
-void
-notify_complete(struct notifier_ctx *ctx, const char *fmt, ...)
+ଶୂନ୍ୟ
+notify_complete(ସଂରଚନା notifier_ctx *ctx, ଅଚଳ ଅକ୍ଷର *fmt, ...)
 {
-	int ret;
-	char *msg = NULL;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା ret;
+	ଅକ୍ଷର *ସନ୍ଦେଶ = ଖାଲି;
 	va_list args;
 
-	if (ctx != NULL && fmt != NULL && ctx->pid == -1) {
+	ଯଦି (ctx != ଖାଲି && fmt != ଖାଲି && ctx->pid == -1) {
 		/*
 		 * notify_start wrote to stderr, so send conclusion message
 		 * there too
 		*/
 		va_start(args, fmt);
-		xvasprintf(&msg, fmt, args);
+		xvasprintf(&ସନ୍ଦେଶ, fmt, args);
 		va_end(args);
-		writemsg(msg);
-		free(msg);
+		writemsg(ସନ୍ଦେଶ);
+		ମୁକ୍ତ(ସନ୍ଦେଶ);
 	}
 
-	if (ctx == NULL || ctx->pid <= 0) {
-		free(ctx);
-		return;
+	ଯଦି (ctx == ଖାଲି || ctx->pid <= 0) {
+		ମୁକ୍ତ(ctx);
+		ଫେରନ୍ତୁ;
 	}
 	kill(ctx->pid, SIGTERM);
-	while ((ret = waitpid(ctx->pid, NULL, 0)) == -1) {
-		if (errno != EINTR)
-			break;
+	ଯେତେବେଳେ ((ret = waitpid(ctx->pid, ଖାଲି, 0)) == -1) {
+		ଯଦି (errno != EINTR)
+			ଭାଙ୍ଗ;
 	}
-	if (ret == -1)
+	ଯଦି (ret == -1)
 		fatal_f("waitpid: %s", strerror(errno));
 	ssh_signal(SIGCHLD, ctx->osigchld);
-	free(ctx);
+	ମୁକ୍ତ(ctx);
 }

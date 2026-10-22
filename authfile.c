@@ -23,77 +23,77 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <fcntl.h>
+#ଅନ୍ତର୍ଭାଵ <stdio.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
 
-#include "log.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "krl.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "authfile.h"
+#ଅନ୍ତର୍ଭାଵ "sshkey.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "ssherr.h"
+#ଅନ୍ତର୍ଭାଵ "krl.h"
 
 /* Save a key blob to a file */
-static int
-sshkey_save_private_blob(struct sshbuf *keybuf, const char *filename)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_save_private_blob(ସଂରଚନା sshbuf *keybuf, ଅଚଳ ଅକ୍ଷର *filename)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 	mode_t omask;
 
 	omask = umask(077);
 	r = sshbuf_write_file(filename, keybuf);
 	umask(omask);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
-int
-sshkey_save_private(struct sshkey *key, const char *filename,
-    const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_save_private(ସଂରଚନା sshkey *ଚାବି, ଅଚଳ ଅକ୍ଷର *filename,
+    ଅଚଳ ଅକ୍ଷର *passphrase, ଅଚଳ ଅକ୍ଷର *comment,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା format, ଅଚଳ ଅକ୍ଷର *openssh_format_cipher, ପୂର୍ଣ୍ଣସଂଖ୍ୟା openssh_format_rounds)
 {
-	struct sshbuf *keyblob = NULL;
-	int r;
+	ସଂରଚନା sshbuf *keyblob = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if ((keyblob = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_private_to_fileblob(key, keyblob, passphrase, comment,
+	ଯଦି ((keyblob = sshbuf_new()) == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
+	ଯଦି ((r = sshkey_private_to_fileblob(ଚାବି, keyblob, passphrase, comment,
 	    format, openssh_format_cipher, openssh_format_rounds)) != 0)
-		goto out;
-	if ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
-		goto out;
+		ଯାଅ out;
+	ଯଦି ((r = sshkey_save_private_blob(keyblob, filename)) != 0)
+		ଯାଅ out;
 	r = 0;
  out:
 	sshbuf_free(keyblob);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
 /* XXX remove error() calls from here? */
-int
-sshkey_perm_ok(int fd, const char *filename)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_perm_ok(ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ଅଚଳ ଅକ୍ଷର *filename)
 {
-	struct stat st;
+	ସଂରଚନା stat st;
 
-	if (fstat(fd, &st) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	ଯଦି (fstat(fd, &st) == -1)
+		ଫେରନ୍ତୁ SSH_ERR_SYSTEM_ERROR;
 	/*
 	 * if a key owned by the user is accessed, then we check the
 	 * permissions of the file. if the key owned by a different user,
 	 * then we don't care.
 	 */
 #ifdef HAVE_CYGWIN
-	if (check_ntsec(filename))
+	ଯଦି (check_ntsec(filename))
 #endif
-	if ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
+	ଯଦି ((st.st_uid == getuid()) && (st.st_mode & 077) != 0) {
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		error("@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @");
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -101,183 +101,183 @@ sshkey_perm_ok(int fd, const char *filename)
 		    (u_int)st.st_mode & 0777, filename);
 		error("It is required that your private key files are NOT accessible by others.");
 		error("This private key will be ignored.");
-		return SSH_ERR_KEY_BAD_PERMISSIONS;
+		ଫେରନ୍ତୁ SSH_ERR_ଚାବି_BAD_PERMISSIONS;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }
 
-int
-sshkey_load_private_type(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_load_private_type(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, ଅଚଳ ଅକ୍ଷର *filename, ଅଚଳ ଅକ୍ଷର *passphrase,
+    ସଂରଚନା sshkey **keyp, ଅକ୍ଷର **commentp)
 {
-	int fd, r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	ଯଦି (keyp != ଖାଲି)
+		*keyp = ଖାଲି;
+	ଯଦି (commentp != ଖାଲି)
+		*commentp = ଖାଲି;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	ଯଦି ((fd = open(filename, O_RDONLY)) == -1)
+		ଫେରନ୍ତୁ SSH_ERR_SYSTEM_ERROR;
 
 	r = sshkey_perm_ok(fd, filename);
-	if (r != 0)
-		goto out;
+	ଯଦି (r != 0)
+		ଯାଅ out;
 
 	r = sshkey_load_private_type_fd(fd, type, passphrase, keyp, commentp);
  out:
 	close(fd);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
-int
-sshkey_load_private(const char *filename, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_load_private(ଅଚଳ ଅକ୍ଷର *filename, ଅଚଳ ଅକ୍ଷର *passphrase,
+    ସଂରଚନା sshkey **keyp, ଅକ୍ଷର **commentp)
 {
-	return sshkey_load_private_type(KEY_UNSPEC, filename, passphrase,
+	ଫେରନ୍ତୁ sshkey_load_private_type(ଚାବି_UNSPEC, filename, passphrase,
 	    keyp, commentp);
 }
 
-int
-sshkey_load_private_type_fd(int fd, int type, const char *passphrase,
-    struct sshkey **keyp, char **commentp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_load_private_type_fd(ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, ଅଚଳ ଅକ୍ଷର *passphrase,
+    ସଂରଚନା sshkey **keyp, ଅକ୍ଷର **commentp)
 {
-	struct sshbuf *buffer = NULL;
-	int r;
+	ସଂରଚନା sshbuf *buffer = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	ଯଦି (keyp != ଖାଲି)
+		*keyp = ଖାଲି;
+	ଯଦି ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_private_fileblob_type(buffer, type,
 	    passphrase, keyp, commentp)) != 0)
-		goto out;
+		ଯାଅ out;
 
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(buffer);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
 /* Load a pubkey from the unencrypted envelope of a new-format private key */
-static int
-sshkey_load_pubkey_from_private(const char *filename, struct sshkey **pubkeyp)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_load_pubkey_from_private(ଅଚଳ ଅକ୍ଷର *filename, ସଂରଚନା sshkey **pubkeyp)
 {
-	struct sshbuf *buffer = NULL;
-	struct sshkey *pubkey = NULL;
-	int r, fd;
+	ସଂରଚନା sshbuf *buffer = ଖାଲି;
+	ସଂରଚନା sshkey *pubkey = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, fd;
 
-	if (pubkeyp != NULL)
-		*pubkeyp = NULL;
+	ଯଦି (pubkeyp != ଖାଲି)
+		*pubkeyp = ଖାଲି;
 
-	if ((fd = open(filename, O_RDONLY)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
+	ଯଦି ((fd = open(filename, O_RDONLY)) == -1)
+		ଫେରନ୍ତୁ SSH_ERR_SYSTEM_ERROR;
+	ଯଦି ((r = sshbuf_load_fd(fd, &buffer)) != 0 ||
 	    (r = sshkey_parse_pubkey_from_private_fileblob_type(buffer,
-	    KEY_UNSPEC, &pubkey)) != 0)
-		goto out;
+	    ଚାବି_UNSPEC, &pubkey)) != 0)
+		ଯାଅ out;
 	/* success */
-	if (pubkeyp != NULL) {
+	ଯଦି (pubkeyp != ଖାଲି) {
 		*pubkeyp = pubkey;
-		pubkey = NULL;
+		pubkey = ଖାଲି;
 	}
 	r = 0;
  out:
 	close(fd);
 	sshbuf_free(buffer);
 	sshkey_free(pubkey);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
-static int
-sshkey_try_load_public(struct sshkey **kp, const char *filename,
-    char **commentp)
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_try_load_public(ସଂରଚନା sshkey **kp, ଅଚଳ ଅକ୍ଷର *filename,
+    ଅକ୍ଷର **commentp)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	ଅକ୍ଷର *ଧାଡ଼ି = ଖାଲି, *cp;
 	size_t linesize = 0;
-	int r;
-	struct stat st;
-	struct sshkey *k = NULL;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
+	ସଂରଚନା stat st;
+	ସଂରଚନା sshkey *k = ଖାଲି;
 
-	if (kp == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	*kp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
-	if (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
+	ଯଦି (kp == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_ARGUMENT;
+	*kp = ଖାଲି;
+	ଯଦି (commentp != ଖାଲି)
+		*commentp = ଖାଲି;
+	ଯଦି ((f = fopen(filename, "r")) == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_SYSTEM_ERROR;
+	ଯଦି (fstat(fileno(f), &st) == 0 && S_ISREG(st.st_mode) &&
 	    st.st_size > SSHBUF_SIZE_MAX) {
 		fclose(f);
-		return SSH_ERR_INVALID_FORMAT;
+		ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 	}
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL) {
+	ଯଦି ((k = sshkey_new(ଚାବି_UNSPEC)) == ଖାଲି) {
 		fclose(f);
-		return SSH_ERR_ALLOC_FAIL;
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
 	}
-	while (getline(&line, &linesize, f) != -1) {
-		cp = line;
-		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
-			continue;
+	ଯେତେବେଳେ (getline(&ଧାଡ଼ି, &linesize, f) != -1) {
+		cp = ଧାଡ଼ି;
+		ବାଛ (*cp) {
+		ସ୍ଥିତି '#':
+		ସ୍ଥିତି '\n':
+		ସ୍ଥିତି '\0':
+			ଜାରି;
 		}
 		/* Abort loading if this looks like a private key */
-		if (strncmp(cp, "-----BEGIN", 10) == 0 ||
+		ଯଦି (strncmp(cp, "-----BEGIN", 10) == 0 ||
 		    strcmp(cp, "SSH PRIVATE KEY FILE") == 0)
-			break;
+			ଭାଙ୍ଗ;
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		ପାଇଁ (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
-		if (*cp) {
-			if ((r = sshkey_read(k, &cp)) == 0) {
+		ଯଦି (*cp) {
+			ଯଦି ((r = sshkey_read(k, &cp)) == 0) {
 				cp[strcspn(cp, "\r\n")] = '\0';
-				if (commentp) {
+				ଯଦି (commentp) {
 					*commentp = strdup(*cp ?
 					    cp : filename);
-					if (*commentp == NULL)
+					ଯଦି (*commentp == ଖାଲି)
 						r = SSH_ERR_ALLOC_FAIL;
 				}
 				/* success */
 				*kp = k;
-				free(line);
+				ମୁକ୍ତ(ଧାଡ଼ି);
 				fclose(f);
-				return r;
+				ଫେରନ୍ତୁ r;
 			}
 		}
 	}
-	free(k);
-	free(line);
+	ମୁକ୍ତ(k);
+	ମୁକ୍ତ(ଧାଡ଼ି);
 	fclose(f);
-	return SSH_ERR_INVALID_FORMAT;
+	ଫେରନ୍ତୁ SSH_ERR_INVALID_FORMAT;
 }
 
 /* load public key from any pubkey file */
-int
-sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_load_public(ଅଚଳ ଅକ୍ଷର *filename, ସଂରଚନା sshkey **keyp, ଅକ୍ଷର **commentp)
 {
-	char *pubfile = NULL;
-	int r, oerrno;
+	ଅକ୍ଷର *pubfile = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r, oerrno;
 
-	if (keyp != NULL)
-		*keyp = NULL;
-	if (commentp != NULL)
-		*commentp = NULL;
+	ଯଦି (keyp != ଖାଲି)
+		*keyp = ଖାଲି;
+	ଯଦି (commentp != ଖାଲି)
+		*commentp = ଖାଲି;
 
-	if ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
-		goto out;
+	ଯଦି ((r = sshkey_try_load_public(keyp, filename, commentp)) == 0)
+		ଯାଅ out;
 
 	/* try .pub suffix */
-	if (asprintf(&pubfile, "%s.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
-		goto out;
+	ଯଦି (asprintf(&pubfile, "%s.pub", filename) == -1)
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
+	ଯଦି ((r = sshkey_try_load_public(keyp, pubfile, commentp)) == 0)
+		ଯାଅ out;
 
 	/* finally, try to extract public key from private key file */
-	if ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
-		goto out;
+	ଯଦି ((r = sshkey_load_pubkey_from_private(filename, keyp)) == 0)
+		ଯାଅ out;
 
 	/* Pretend we couldn't find the key */
 	r = SSH_ERR_SYSTEM_ERROR;
@@ -285,78 +285,78 @@ sshkey_load_public(const char *filename, struct sshkey **keyp, char **commentp)
 
  out:
 	oerrno = errno;
-	free(pubfile);
+	ମୁକ୍ତ(pubfile);
 	errno = oerrno;
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
 /* Load the certificate associated with the named private key */
-int
-sshkey_load_cert(const char *filename, struct sshkey **keyp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_load_cert(ଅଚଳ ଅକ୍ଷର *filename, ସଂରଚନା sshkey **keyp)
 {
-	struct sshkey *pub = NULL;
-	char *file = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ସଂରଚନା sshkey *pub = ଖାଲି;
+	ଅକ୍ଷର *file = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r = SSH_ERR_INTERNAL_ERROR;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	ଯଦି (keyp != ଖାଲି)
+		*keyp = ଖାଲି;
 
-	if (asprintf(&file, "%s-cert.pub", filename) == -1)
-		return SSH_ERR_ALLOC_FAIL;
+	ଯଦି (asprintf(&file, "%s-cert.pub", filename) == -1)
+		ଫେରନ୍ତୁ SSH_ERR_ALLOC_FAIL;
 
-	r = sshkey_try_load_public(keyp, file, NULL);
-	free(file);
+	r = sshkey_try_load_public(keyp, file, ଖାଲି);
+	ମୁକ୍ତ(file);
 	sshkey_free(pub);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
 /* Load private key and certificate */
-int
-sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
-    struct sshkey **keyp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_load_private_cert(ପୂର୍ଣ୍ଣସଂଖ୍ୟା type, ଅଚଳ ଅକ୍ଷର *filename, ଅଚଳ ଅକ୍ଷର *passphrase,
+    ସଂରଚନା sshkey **keyp)
 {
-	struct sshkey *key = NULL, *cert = NULL;
-	int r;
+	ସଂରଚନା sshkey *ଚାବି = ଖାଲି, *cert = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	if (keyp != NULL)
-		*keyp = NULL;
+	ଯଦି (keyp != ଖାଲି)
+		*keyp = ଖାଲି;
 
-	switch (type) {
+	ବାଛ (type) {
 #ifdef WITH_OPENSSL
-	case KEY_RSA:
-	case KEY_ECDSA:
+	ସ୍ଥିତି ଚାବି_RSA:
+	ସ୍ଥିତି ଚାବି_ECDSA:
 #endif /* WITH_OPENSSL */
-	case KEY_ED25519:
-	case KEY_MLDSA44_ED25519:
-	case KEY_UNSPEC:
-		break;
-	default:
-		return SSH_ERR_KEY_TYPE_UNKNOWN;
+	ସ୍ଥିତି ଚାବି_ED25519:
+	ସ୍ଥିତି ଚାବି_MLDSA44_ED25519:
+	ସ୍ଥିତି ଚାବି_UNSPEC:
+		ଭାଙ୍ଗ;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+		ଫେରନ୍ତୁ SSH_ERR_ଚାବି_TYPE_UNKNOWN;
 	}
 
-	if ((r = sshkey_load_private_type(type, filename,
-	    passphrase, &key, NULL)) != 0 ||
+	ଯଦି ((r = sshkey_load_private_type(type, filename,
+	    passphrase, &ଚାବି, ଖାଲି)) != 0 ||
 	    (r = sshkey_load_cert(filename, &cert)) != 0)
-		goto out;
+		ଯାଅ out;
 
 	/* Make sure the private key matches the certificate */
-	if (sshkey_equal_public(key, cert) == 0) {
-		r = SSH_ERR_KEY_CERT_MISMATCH;
-		goto out;
+	ଯଦି (sshkey_equal_public(ଚାବି, cert) == 0) {
+		r = SSH_ERR_ଚାବି_CERT_MISMATCH;
+		ଯାଅ out;
 	}
 
-	if ((r = sshkey_to_certified(key)) != 0 ||
-	    (r = sshkey_cert_copy(cert, key)) != 0)
-		goto out;
+	ଯଦି ((r = sshkey_to_certified(ଚାବି)) != 0 ||
+	    (r = sshkey_cert_copy(cert, ଚାବି)) != 0)
+		ଯାଅ out;
 	r = 0;
-	if (keyp != NULL) {
-		*keyp = key;
-		key = NULL;
+	ଯଦି (keyp != ଖାଲି) {
+		*keyp = ଚାବି;
+		ଚାବି = ଖାଲି;
 	}
  out:
-	sshkey_free(key);
+	sshkey_free(ଚାବି);
 	sshkey_free(cert);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
 /*
@@ -367,64 +367,64 @@ sshkey_load_private_cert(int type, const char *filename, const char *passphrase,
  * If "check_ca" is set and "key" is a certificate, then its CA key is
  * also checked and sshkey_in_file() will return success if either is found.
  */
-int
-sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
-    int check_ca)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_in_file(ସଂରଚନା sshkey *ଚାବି, ଅଚଳ ଅକ୍ଷର *filename, ପୂର୍ଣ୍ଣସଂଖ୍ୟା strict_type,
+    ପୂର୍ଣ୍ଣସଂଖ୍ୟା check_ca)
 {
 	FILE *f;
-	char *line = NULL, *cp;
+	ଅକ୍ଷର *ଧାଡ଼ି = ଖାଲି, *cp;
 	size_t linesize = 0;
-	int r = 0;
-	struct sshkey *pub = NULL;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r = 0;
+	ସଂରଚନା sshkey *pub = ଖାଲି;
 
-	int (*sshkey_compare)(const struct sshkey *, const struct sshkey *) =
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା (*sshkey_compare)(ଅଚଳ ସଂରଚନା sshkey *, ଅଚଳ ସଂରଚନା sshkey *) =
 	    strict_type ?  sshkey_equal : sshkey_equal_public;
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	ଯଦି ((f = fopen(filename, "r")) == ଖାଲି)
+		ଫେରନ୍ତୁ SSH_ERR_SYSTEM_ERROR;
 
-	while (getline(&line, &linesize, f) != -1) {
+	ଯେତେବେଳେ (getline(&ଧାଡ଼ି, &linesize, f) != -1) {
 		sshkey_free(pub);
-		pub = NULL;
-		cp = line;
+		pub = ଖାଲି;
+		cp = ଧାଡ଼ି;
 
 		/* Skip leading whitespace. */
-		for (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
+		ପାଇଁ (; *cp && (*cp == ' ' || *cp == '\t'); cp++)
 			;
 
 		/* Skip comments and empty lines */
-		switch (*cp) {
-		case '#':
-		case '\n':
-		case '\0':
-			continue;
+		ବାଛ (*cp) {
+		ସ୍ଥିତି '#':
+		ସ୍ଥିତି '\n':
+		ସ୍ଥିତି '\0':
+			ଜାରି;
 		}
 
-		if ((pub = sshkey_new(KEY_UNSPEC)) == NULL) {
+		ଯଦି ((pub = sshkey_new(ଚାବି_UNSPEC)) == ଖାଲି) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			ଯାଅ out;
 		}
-		switch (r = sshkey_read(pub, &cp)) {
-		case 0:
-			break;
-		case SSH_ERR_KEY_LENGTH:
-			continue;
-		default:
-			goto out;
+		ବାଛ (r = sshkey_read(pub, &cp)) {
+		ସ୍ଥିତି 0:
+			ଭାଙ୍ଗ;
+		ସ୍ଥିତି SSH_ERR_ଚାବି_LENGTH:
+			ଜାରି;
+		ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
+			ଯାଅ out;
 		}
-		if (sshkey_compare(key, pub) ||
-		    (check_ca && sshkey_is_cert(key) &&
-		    sshkey_compare(key->cert->signature_key, pub))) {
+		ଯଦି (sshkey_compare(ଚାବି, pub) ||
+		    (check_ca && sshkey_is_cert(ଚାବି) &&
+		    sshkey_compare(ଚାବି->cert->signature_ଚାବି, pub))) {
 			r = 0;
-			goto out;
+			ଯାଅ out;
 		}
 	}
-	r = SSH_ERR_KEY_NOT_FOUND;
+	r = SSH_ERR_ଚାବି_NOT_FOUND;
  out:
-	free(line);
+	ମୁକ୍ତ(ଧାଡ଼ି);
 	sshkey_free(pub);
 	fclose(f);
-	return r;
+	ଫେରନ୍ତୁ r;
 }
 
 /*
@@ -434,30 +434,30 @@ sshkey_in_file(struct sshkey *key, const char *filename, int strict_type,
  * This will check both the key and, if it is a certificate, its CA key too.
  * "revoked_keys_file" may be a KRL or a one-per-line list of public keys.
  */
-int
-sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_check_revoked(ସଂରଚନା sshkey *ଚାବି, ଅଚଳ ଅକ୍ଷର *revoked_ଚାବିଗୁଡ଼ିକ_file)
 {
-	int r;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
-	r = ssh_krl_file_contains_key(revoked_keys_file, key);
+	r = ssh_krl_file_contains_ଚାବି(revoked_ଚାବିଗୁଡ଼ିକ_file, ଚାବି);
 	/* If this was not a KRL to begin with then continue below */
-	if (r != SSH_ERR_KRL_BAD_MAGIC)
-		return r;
+	ଯଦି (r != SSH_ERR_KRL_BAD_MAGIC)
+		ଫେରନ୍ତୁ r;
 
 	/*
 	 * If the file is not a KRL or we can't handle KRLs then attempt to
 	 * parse the file as a flat list of keys.
 	 */
-	switch ((r = sshkey_in_file(key, revoked_keys_file, 0, 1))) {
-	case 0:
+	ବାଛ ((r = sshkey_in_file(ଚାବି, revoked_ଚାବିଗୁଡ଼ିକ_file, 0, 1))) {
+	ସ୍ଥିତି 0:
 		/* Key found => revoked */
-		return SSH_ERR_KEY_REVOKED;
-	case SSH_ERR_KEY_NOT_FOUND:
+		ଫେରନ୍ତୁ SSH_ERR_ଚାବି_REVOKED;
+	ସ୍ଥିତି SSH_ERR_ଚାବି_NOT_FOUND:
 		/* Key not found => not revoked */
-		return 0;
-	default:
+		ଫେରନ୍ତୁ 0;
+	ପୂର୍ବନିର୍ଦ୍ଧାରିତ:
 		/* Some other error occurred */
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
 }
 
@@ -466,56 +466,56 @@ sshkey_check_revoked(struct sshkey *key, const char *revoked_keys_file)
  * whitespace character. Returns 0 on success or -1 on failure (e.g.
  * unterminated quotes).
  */
-int
-sshkey_advance_past_options(char **cpp)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_advance_past_options(ଅକ୍ଷର **cpp)
 {
-	char *cp = *cpp;
-	int quoted = 0;
+	ଅକ୍ଷର *cp = *cpp;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା quoted = 0;
 
-	for (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
-		if (*cp == '\\' && cp[1] == '"')
+	ପାଇଁ (; *cp && (quoted || (*cp != ' ' && *cp != '\t')); cp++) {
+		ଯଦି (*cp == '\\' && cp[1] == '"')
 			cp++;	/* Skip both */
-		else if (*cp == '"')
+		ଅନ୍ୟଥା ଯଦି (*cp == '"')
 			quoted = !quoted;
 	}
 	*cpp = cp;
 	/* return failure for unterminated quotes */
-	return (*cp == '\0' && quoted) ? -1 : 0;
+	ଫେରନ୍ତୁ (*cp == '\0' && quoted) ? -1 : 0;
 }
 
 /* Save a public key */
-int
-sshkey_save_public(const struct sshkey *key, const char *path,
-    const char *comment)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+sshkey_save_public(ଅଚଳ ସଂରଚନା sshkey *ଚାବି, ଅଚଳ ଅକ୍ଷର *path,
+    ଅଚଳ ଅକ୍ଷର *comment)
 {
-	int fd, oerrno;
-	FILE *f = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, oerrno;
+	FILE *f = ଖାଲି;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r = SSH_ERR_INTERNAL_ERROR;
 
-	if ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
-	if ((f = fdopen(fd, "w")) == NULL) {
+	ଯଦି ((fd = open(path, O_WRONLY|O_CREAT|O_TRUNC, 0644)) == -1)
+		ଫେରନ୍ତୁ SSH_ERR_SYSTEM_ERROR;
+	ଯଦି ((f = fdopen(fd, "w")) == ଖାଲି) {
 		r = SSH_ERR_SYSTEM_ERROR;
 		close(fd);
-		goto fail;
+		ଯାଅ fail;
 	}
-	if ((r = sshkey_write(key, f)) != 0)
-		goto fail;
+	ଯଦି ((r = sshkey_write(ଚାବି, f)) != 0)
+		ଯାଅ fail;
 	fprintf(f, " %s\n", comment);
-	if (ferror(f)) {
+	ଯଦି (ferror(f)) {
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto fail;
+		ଯାଅ fail;
 	}
-	if (fclose(f) != 0) {
+	ଯଦି (fclose(f) != 0) {
 		r = SSH_ERR_SYSTEM_ERROR;
-		f = NULL;
+		f = ଖାଲି;
  fail:
-		if (f != NULL) {
+		ଯଦି (f != ଖାଲି) {
 			oerrno = errno;
 			fclose(f);
 			errno = oerrno;
 		}
-		return r;
+		ଫେରନ୍ତୁ r;
 	}
-	return 0;
+	ଫେରନ୍ତୁ 0;
 }

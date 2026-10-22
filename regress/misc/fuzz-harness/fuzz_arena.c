@@ -29,127 +29,127 @@ limitations under the License.
  * implementation is single-threaded.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ଅନ୍ତର୍ଭାଵ <stddef.h>
+#ଅନ୍ତର୍ଭାଵ <stdint.h>
+#ଅନ୍ତର୍ଭାଵ <stdlib.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
 
-extern void *__real_malloc(size_t);
-extern void *__real_calloc(size_t, size_t);
-extern void *__real_realloc(void *, size_t);
-extern void __real_free(void *);
-extern char *__real_strdup(const char *);
+ବାହ୍ୟ ଶୂନ୍ୟ *__real_malloc(size_t);
+ବାହ୍ୟ ଶୂନ୍ୟ *__real_calloc(size_t, size_t);
+ବାହ୍ୟ ଶୂନ୍ୟ *__real_realloc(ଶୂନ୍ୟ *, size_t);
+ବାହ୍ୟ ଶୂନ୍ୟ __real_free(ଶୂନ୍ୟ *);
+ବାହ୍ୟ ଅକ୍ଷର *__real_strdup(ଅଚଳ ଅକ୍ଷର *);
 
-struct arena_node {
-	void *ptr;
-	struct arena_node *next;
+ସଂରଚନା arena_ଗଣ୍ଠି {
+	ଶୂନ୍ୟ *ptr;
+	ସଂରଚନା arena_ଗଣ୍ଠି *next;
 };
 
-static struct arena_node *arena_head;
-static int tracking;
+ସ୍ଥିର ସଂରଚନା arena_ଗଣ୍ଠି *arena_head;
+ସ୍ଥିର ପୂର୍ଣ୍ଣସଂଖ୍ୟା tracking;
 
-static inline void
-arena_track(void *p)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+arena_track(ଶୂନ୍ୟ *p)
 {
-	struct arena_node *n;
-	if (!tracking || p == NULL)
-		return;
-	n = (struct arena_node *)__real_malloc(sizeof(*n));
-	if (n == NULL)
-		return;
+	ସଂରଚନା arena_ଗଣ୍ଠି *n;
+	ଯଦି (!tracking || p == ଖାଲି)
+		ଫେରନ୍ତୁ;
+	n = (ସଂରଚନା arena_ଗଣ୍ଠି *)__real_malloc(ଆକାର(*n));
+	ଯଦି (n == ଖାଲି)
+		ଫେରନ୍ତୁ;
 	n->ptr = p;
 	n->next = arena_head;
 	arena_head = n;
 }
 
-static inline void
-arena_untrack(void *p)
+ସ୍ଥିର ଧାଡ଼ିଭିତରେ ଶୂନ୍ୟ
+arena_untrack(ଶୂନ୍ୟ *p)
 {
-	struct arena_node **pp;
-	if (p == NULL)
-		return;
-	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
-		if ((*pp)->ptr == p) {
-			struct arena_node *n = *pp;
+	ସଂରଚନା arena_ଗଣ୍ଠି **pp;
+	ଯଦି (p == ଖାଲି)
+		ଫେରନ୍ତୁ;
+	ପାଇଁ (pp = &arena_head; *pp != ଖାଲି; pp = &(*pp)->next) {
+		ଯଦି ((*pp)->ptr == p) {
+			ସଂରଚନା arena_ଗଣ୍ଠି *n = *pp;
 			*pp = n->next;
 			__real_free(n);
-			return;
+			ଫେରନ୍ତୁ;
 		}
 	}
 }
 
-void *
+ଶୂନ୍ୟ *
 __wrap_malloc(size_t size)
 {
-	void *p = __real_malloc(size);
+	ଶୂନ୍ୟ *p = __real_malloc(size);
 	arena_track(p);
-	return p;
+	ଫେରନ୍ତୁ p;
 }
 
-void *
+ଶୂନ୍ୟ *
 __wrap_calloc(size_t nmemb, size_t size)
 {
-	void *p = __real_calloc(nmemb, size);
+	ଶୂନ୍ୟ *p = __real_calloc(nmemb, size);
 	arena_track(p);
-	return p;
+	ଫେରନ୍ତୁ p;
 }
 
-void *
-__wrap_realloc(void *ptr, size_t size)
+ଶୂନ୍ୟ *
+__wrap_realloc(ଶୂନ୍ୟ *ptr, size_t size)
 {
 	arena_untrack(ptr);
-	void *p = __real_realloc(ptr, size);
+	ଶୂନ୍ୟ *p = __real_realloc(ptr, size);
 	arena_track(p);
-	return p;
+	ଫେରନ୍ତୁ p;
 }
 
-void
-__wrap_free(void *ptr)
+ଶୂନ୍ୟ
+__wrap_free(ଶୂନ୍ୟ *ptr)
 {
 	arena_untrack(ptr);
 	__real_free(ptr);
 }
 
-char *
-__wrap_strdup(const char *s)
+ଅକ୍ଷର *
+__wrap_strdup(ଅଚଳ ଅକ୍ଷର *s)
 {
 	size_t len;
-	char *p;
-	if (s == NULL)
-		return NULL;
+	ଅକ୍ଷର *p;
+	ଯଦି (s == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 	len = strlen(s) + 1;
-	p = (char *)__real_malloc(len);
-	if (p == NULL)
-		return NULL;
+	p = (ଅକ୍ଷର *)__real_malloc(len);
+	ଯଦି (p == ଖାଲି)
+		ଫେରନ୍ତୁ ଖାଲି;
 	memcpy(p, s, len);
 	arena_track(p);
-	return p;
+	ଫେରନ୍ତୁ p;
 }
 
-void
-fuzz_arena_begin(void)
+ଶୂନ୍ୟ
+fuzz_arena_begin(ଶୂନ୍ୟ)
 {
 	tracking = 1;
 }
 
-void
-fuzz_arena_release(void)
+ଶୂନ୍ୟ
+fuzz_arena_release(ଶୂନ୍ୟ)
 {
-	struct arena_node *n;
+	ସଂରଚନା arena_ଗଣ୍ଠି *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	ଯେତେବେଳେ (arena_head != ଖାଲି) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n);
 	}
 }
 
-void
-fuzz_arena_cleanup(void)
+ଶୂନ୍ୟ
+fuzz_arena_cleanup(ଶୂନ୍ୟ)
 {
-	struct arena_node *n;
+	ସଂରଚନା arena_ଗଣ୍ଠି *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	ଯେତେବେଳେ (arena_head != ଖାଲି) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n->ptr);

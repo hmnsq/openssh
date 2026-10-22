@@ -23,70 +23,70 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ଅନ୍ତର୍ଭାଵ "includes.h"
 
-#include <sys/types.h>
+#ଅନ୍ତର୍ଭାଵ <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
+#ଅନ୍ତର୍ଭାଵ <errno.h>
+#ଅନ୍ତର୍ଭାଵ <string.h>
+#ଅନ୍ତର୍ଭାଵ <unistd.h>
+#ଅନ୍ତର୍ଭାଵ <stdarg.h>
 
-#include "sshbuf.h"
-#include "log.h"
-#include "atomicio.h"
-#include "msg.h"
-#include "misc.h"
+#ଅନ୍ତର୍ଭାଵ "sshbuf.h"
+#ଅନ୍ତର୍ଭାଵ "log.h"
+#ଅନ୍ତର୍ଭାଵ "atomicio.h"
+#ଅନ୍ତର୍ଭାଵ "msg.h"
+#ଅନ୍ତର୍ଭାଵ "misc.h"
 
-int
-ssh_msg_send(int fd, u_char type, struct sshbuf *m)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ସନ୍ଦେଶ_send(ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, u_char type, ସଂରଚନା sshbuf *m)
 {
 	u_char buf[5];
 	u_int mlen = sshbuf_len(m);
 
-	debug3_f("type %u len %zu", (unsigned int)type & 0xff, sshbuf_len(m));
+	debug3_f("type %u len %zu", (unsigned ପୂର୍ଣ୍ଣସଂଖ୍ୟା)type & 0xff, sshbuf_len(m));
 
 	put_u32(buf, mlen + 1);
 	buf[4] = type;		/* 1st byte of payload is mesg-type */
-	if (atomicio(vwrite, fd, buf, sizeof(buf)) != sizeof(buf)) {
+	ଯଦି (atomicio(vwrite, fd, buf, ଆକାର(buf)) != ଆକାର(buf)) {
 		error_f("write: %s", strerror(errno));
-		return (-1);
+		ଫେରନ୍ତୁ (-1);
 	}
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(m), mlen) != mlen) {
+	ଯଦି (atomicio(vwrite, fd, sshbuf_mutable_ptr(m), mlen) != mlen) {
 		error_f("write: %s", strerror(errno));
-		return (-1);
+		ଫେରନ୍ତୁ (-1);
 	}
 	debug3_f("done");
-	return (0);
+	ଫେରନ୍ତୁ (0);
 }
 
-int
-ssh_msg_recv(int fd, struct sshbuf *m)
+ପୂର୍ଣ୍ଣସଂଖ୍ୟା
+ssh_ସନ୍ଦେଶ_recv(ପୂର୍ଣ୍ଣସଂଖ୍ୟା fd, ସଂରଚନା sshbuf *m)
 {
 	u_char buf[4], *p;
-	u_int msg_len;
-	int r;
+	u_int ସନ୍ଦେଶ_len;
+	ପୂର୍ଣ୍ଣସଂଖ୍ୟା r;
 
 	debug3("ssh_msg_recv entering");
 
-	if (atomicio(read, fd, buf, sizeof(buf)) != sizeof(buf)) {
-		if (errno != EPIPE)
+	ଯଦି (atomicio(ପଠ, fd, buf, ଆକାର(buf)) != ଆକାର(buf)) {
+		ଯଦି (errno != EPIPE)
 			error_f("read header: %s", strerror(errno));
-		return (-1);
+		ଫେରନ୍ତୁ (-1);
 	}
-	msg_len = get_u32(buf);
-	if (msg_len > sshbuf_max_size(m)) {
-		error_f("read: bad msg_len %u", msg_len);
-		return (-1);
+	ସନ୍ଦେଶ_len = get_u32(buf);
+	ଯଦି (ସନ୍ଦେଶ_len > sshbuf_max_size(m)) {
+		error_f("read: bad msg_len %u", ସନ୍ଦେଶ_len);
+		ଫେରନ୍ତୁ (-1);
 	}
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0) {
+	ଯଦି ((r = sshbuf_reserve(m, ସନ୍ଦେଶ_len, &p)) != 0) {
 		error_fr(r, "reserve");
-		return -1;
+		ଫେରନ୍ତୁ -1;
 	}
-	if (atomicio(read, fd, p, msg_len) != msg_len) {
+	ଯଦି (atomicio(ପଠ, fd, p, ସନ୍ଦେଶ_len) != ସନ୍ଦେଶ_len) {
 		error_f("read: %s", strerror(errno));
-		return (-1);
+		ଫେରନ୍ତୁ (-1);
 	}
-	return (0);
+	ଫେରନ୍ତୁ (0);
 }
