@@ -40,96 +40,96 @@ ssh_ed25519_cleanup(struct sshkey *k)
 	k->ed25519_sk = NULL;
 }
 
-static int
+static целое
 ssh_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
 {
-	if (a->ed25519_pk == NULL || b->ed25519_pk == NULL)
-		return 0;
-	if (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
-		return 0;
-	return 1;
+	если (a->ed25519_pk == NULL || b->ed25519_pk == NULL)
+		вернуть 0;
+	если (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
+		вернуть 0;
+	вернуть 1;
 }
 
-static int
+static целое
 ssh_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	целое r;
 
-	if (key->ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0)
-		return r;
+	если (key->ed25519_pk == NULL)
+		вернуть SSH_ERR_INVALID_ARGUMENT;
+	если ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0)
+		вернуть r;
 
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 ssh_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	целое r;
 
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0 ||
+	если ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0 ||
 	    (r = sshbuf_put_string(b, key->ed25519_sk, ED25519_SK_SZ)) != 0)
-		return r;
+		вернуть r;
 
-	return 0;
+	вернуть 0;
 }
 
-static int
-ssh_ed25519_generate(struct sshkey *k, int bits)
+static целое
+ssh_ed25519_generate(struct sshkey *k, целое bits)
 {
-	if ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL ||
+	если ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL ||
 	    (k->ed25519_sk = malloc(ED25519_SK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
-		return SSH_ERR_CRYPTO_ERROR;
-	return 0;
+		вернуть SSH_ERR_ALLOC_FAIL;
+	если (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
+		вернуть SSH_ERR_CRYPTO_ERROR;
+	вернуть 0;
 }
 
-static int
+static целое
 ssh_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
 {
-	if (from->ed25519_pk == NULL)
-		return 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
-	if ((to->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	если (from->ed25519_pk == NULL)
+		вернуть 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
+	если ((to->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL)
+		вернуть SSH_ERR_ALLOC_FAIL;
 	memcpy(to->ed25519_pk, from->ed25519_pk, ED25519_PK_SZ);
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 ssh_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
 	u_char *pk = NULL;
 	size_t len = 0;
-	int r;
+	целое r;
 
-	if ((r = sshbuf_get_string(b, &pk, &len)) != 0)
-		return r;
-	if (len != ED25519_PK_SZ) {
+	если ((r = sshbuf_get_string(b, &pk, &len)) != 0)
+		вернуть r;
+	если (len != ED25519_PK_SZ) {
 		freezero(pk, len);
-		return SSH_ERR_INVALID_FORMAT;
+		вернуть SSH_ERR_INVALID_FORMAT;
 	}
 	key->ed25519_pk = pk;
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	целое r;
 	size_t sklen = 0;
 	u_char *ed25519_sk = NULL;
 
-	if ((r = ssh_ed25519_deserialize_public(NULL, b, key)) != 0)
+	если ((r = ssh_ed25519_deserialize_public(NULL, b, key)) != 0)
 		goto out;
-	if ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
+	если ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
 		goto out;
-	if (sklen != ED25519_SK_SZ) {
+	если (sklen != ED25519_SK_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
@@ -139,10 +139,10 @@ ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
 	r = 0;
  out:
 	freezero(ed25519_sk, sklen);
-	return r;
+	вернуть r;
 }
 
-static int
+static целое
 ssh_ed25519_sign(struct sshkey *key,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
@@ -150,24 +150,24 @@ ssh_ed25519_sign(struct sshkey *key,
 {
 	u_char sig[crypto_sign_ed25519_BYTES];
 	unsigned long long siglen = 0;
-	int r, ret;
+	целое r, ret;
 
-	if (lenp != NULL)
+	если (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	если (sigp != NULL)
 		*sigp = NULL;
 
-	if (key == NULL ||
+	если (key == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ED25519 ||
 	    key->ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+		вернуть SSH_ERR_INVALID_ARGUMENT;
 
-	if ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
+	если ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
 	    key->ed25519_sk)) != 0 || siglen != sizeof(sig)) {
 		r = SSH_ERR_INVALID_ARGUMENT; /* XXX better error? */
 		goto out;
 	}
-	if ((r = ssh_ed25519_encode_store_sig(sig, siglen,
+	если ((r = ssh_ed25519_encode_store_sig(sig, siglen,
 	    sigp, lenp)) != 0)
 		goto out;
 
@@ -175,51 +175,51 @@ ssh_ed25519_sign(struct sshkey *key,
 	r = 0;
  out:
 	explicit_bzero(sig, sizeof(sig));
-	return r;
+	вернуть r;
 }
 
-int
+целое
 ssh_ed25519_encode_store_sig(const u_char *sig, size_t slen,
     u_char **sigp, size_t *lenp)
 {
 	struct sshbuf *b = NULL;
-	int r = -1;
+	целое r = -1;
 	size_t len;
 
-	if (lenp != NULL)
+	если (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	если (sigp != NULL)
 		*sigp = NULL;
 
-	if (slen != crypto_sign_ed25519_BYTES)
-		return SSH_ERR_INVALID_ARGUMENT;
+	если (slen != crypto_sign_ed25519_BYTES)
+		вернуть SSH_ERR_INVALID_ARGUMENT;
 
 	/* encode signature */
-	if ((b = sshbuf_new()) == NULL) {
+	если ((b = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
+	если ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
 	    (r = sshbuf_put_string(b, sig, slen)) != 0)
 		goto out;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	если (sigp != NULL) {
+		если ((*sigp = malloc(len)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	если (lenp != NULL)
 		*lenp = len;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	вернуть r;
 }
 
-static int
+static целое
 ssh_ed25519_verify(const struct sshkey *key,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
@@ -229,36 +229,36 @@ ssh_ed25519_verify(const struct sshkey *key,
 	char *ktype = NULL;
 	const u_char *sigblob;
 	size_t len;
-	int r, ret;
+	целое r, ret;
 
-	if (key == NULL ||
+	если (key == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ED25519 ||
 	    key->ed25519_pk == NULL ||
 	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+		вернуть SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
+	если ((b = sshbuf_from(sig, siglen)) == NULL)
+		вернуть SSH_ERR_ALLOC_FAIL;
+	если ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
 	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
 		goto out;
-	if (strcmp("ssh-ed25519", ktype) != 0) {
+	если (strcmp("ssh-ed25519", ktype) != 0) {
 		r = SSH_ERR_KEY_TYPE_MISMATCH;
 		goto out;
 	}
-	if (sshbuf_len(b) != 0) {
+	если (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
-	if (len != crypto_sign_ed25519_BYTES) {
+	если (len != crypto_sign_ed25519_BYTES) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
+	если ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
 	    key->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
-	if (ret != 0) {
+	если (ret != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -267,7 +267,7 @@ ssh_ed25519_verify(const struct sshkey *key,
  out:
 	sshbuf_free(b);
 	free(ktype);
-	return r;
+	вернуть r;
 }
 
 /* NB. not static; used by ED25519-SK */

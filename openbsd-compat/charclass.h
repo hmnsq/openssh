@@ -11,7 +11,7 @@
  */
 static struct cclass {
 	const char *name;
-	int (*isctype)(int);
+	целое (*isctype)(целое);
 } cclasses[] = {
 	{ "alnum",	isalnum },
 	{ "alpha",	isalpha },

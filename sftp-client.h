@@ -64,49 +64,49 @@ struct sftp_limits {
  * Initialise a SSH filexfer connection. Returns NULL on error or
  * a pointer to a initialized sftp_conn struct on success.
  */
-struct sftp_conn *sftp_init(int, int, u_int, u_int, uint64_t);
+struct sftp_conn *sftp_init(целое, целое, u_int, u_int, uint64_t);
 void sftp_free(struct sftp_conn *);
 
 u_int sftp_proto_version(struct sftp_conn *);
 
 /* Query server limits */
-int sftp_get_limits(struct sftp_conn *, struct sftp_limits *);
+целое sftp_get_limits(struct sftp_conn *, struct sftp_limits *);
 
 /* Close file referred to by 'handle' */
-int sftp_close(struct sftp_conn *, const u_char *, u_int);
+целое sftp_close(struct sftp_conn *, const u_char *, u_int);
 
 /* Read contents of 'path' to NULL-terminated array 'dir' */
-int sftp_readdir(struct sftp_conn *, const char *, SFTP_DIRENT ***);
+целое sftp_readdir(struct sftp_conn *, const char *, SFTP_DIRENT ***);
 
 /* Frees a NULL-terminated array of SFTP_DIRENTs (eg. from sftp_readdir) */
 void sftp_free_dirents(SFTP_DIRENT **);
 
 /* Delete file 'path' */
-int sftp_rm(struct sftp_conn *, const char *);
+целое sftp_rm(struct sftp_conn *, const char *);
 
 /* Create directory 'path' */
-int sftp_mkdir(struct sftp_conn *, const char *, Attrib *, int);
+целое sftp_mkdir(struct sftp_conn *, const char *, Attrib *, целое);
 
 /* Create directory 'path' and intermediate directories as required */
-int sftp_mkpath(struct sftp_conn *, const char *, Attrib *, int);
+целое sftp_mkpath(struct sftp_conn *, const char *, Attrib *, целое);
 
 /* Remove directory 'path' */
-int sftp_rmdir(struct sftp_conn *, const char *);
+целое sftp_rmdir(struct sftp_conn *, const char *);
 
 /* Get file attributes of 'path' (follows symlinks) */
-int sftp_stat(struct sftp_conn *, const char *, int, Attrib *);
+целое sftp_stat(struct sftp_conn *, const char *, целое, Attrib *);
 
 /* Get file attributes of 'path' (does not follow symlinks) */
-int sftp_lstat(struct sftp_conn *, const char *, int, Attrib *);
+целое sftp_lstat(struct sftp_conn *, const char *, целое, Attrib *);
 
 /* Set file attributes of 'path' */
-int sftp_setstat(struct sftp_conn *, const char *, Attrib *);
+целое sftp_setstat(struct sftp_conn *, const char *, Attrib *);
 
 /* Set file attributes of open file 'handle' */
-int sftp_fsetstat(struct sftp_conn *, const u_char *, u_int, Attrib *);
+целое sftp_fsetstat(struct sftp_conn *, const u_char *, u_int, Attrib *);
 
 /* Set file attributes of 'path', not following symlinks */
-int sftp_lsetstat(struct sftp_conn *conn, const char *path, Attrib *a);
+целое sftp_lsetstat(struct sftp_conn *conn, const char *path, Attrib *a);
 
 /* Canonicalise 'path' - caller must free result */
 char *sftp_realpath(struct sftp_conn *, const char *);
@@ -115,76 +115,76 @@ char *sftp_realpath(struct sftp_conn *, const char *);
 char *sftp_expand_path(struct sftp_conn *, const char *);
 
 /* Returns non-zero if server can tilde-expand paths */
-int sftp_can_expand_path(struct sftp_conn *);
+целое sftp_can_expand_path(struct sftp_conn *);
 
 /* Get statistics for filesystem hosting file at "path" */
-int sftp_statvfs(struct sftp_conn *, const char *, struct sftp_statvfs *, int);
+целое sftp_statvfs(struct sftp_conn *, const char *, struct sftp_statvfs *, целое);
 
 /* Rename 'oldpath' to 'newpath' */
-int sftp_rename(struct sftp_conn *, const char *, const char *, int);
+целое sftp_rename(struct sftp_conn *, const char *, const char *, целое);
 
 /* Copy 'oldpath' to 'newpath' */
-int sftp_copy(struct sftp_conn *, const char *, const char *);
+целое sftp_copy(struct sftp_conn *, const char *, const char *);
 
 /* Link 'oldpath' to 'newpath' */
-int sftp_hardlink(struct sftp_conn *, const char *, const char *);
+целое sftp_hardlink(struct sftp_conn *, const char *, const char *);
 
 /* Rename 'oldpath' to 'newpath' */
-int sftp_symlink(struct sftp_conn *, const char *, const char *);
+целое sftp_symlink(struct sftp_conn *, const char *, const char *);
 
 /* Call fsync() on open file 'handle' */
-int sftp_fsync(struct sftp_conn *conn, u_char *, u_int);
+целое sftp_fsync(struct sftp_conn *conn, u_char *, u_int);
 
 /*
  * Download 'remote_path' to 'local_path'. Preserve permissions and times
  * if 'pflag' is set
  */
-int sftp_download(struct sftp_conn *, const char *, const char *, Attrib *,
-    int, int, int, int);
+целое sftp_download(struct sftp_conn *, const char *, const char *, Attrib *,
+    целое, целое, целое, целое);
 
 /*
  * Recursively download 'remote_directory' to 'local_directory'. Preserve
  * times if 'pflag' is set
  */
-int sftp_download_dir(struct sftp_conn *, const char *, const char *, Attrib *,
-    int, int, int, int, int, int);
+целое sftp_download_dir(struct sftp_conn *, const char *, const char *, Attrib *,
+    целое, целое, целое, целое, целое, целое);
 
 /*
  * Upload 'local_path' to 'remote_path'. Preserve permissions and times
  * if 'pflag' is set
  */
-int sftp_upload(struct sftp_conn *, const char *, const char *,
-    int, int, int, int);
+целое sftp_upload(struct sftp_conn *, const char *, const char *,
+    целое, целое, целое, целое);
 
 /*
  * Recursively upload 'local_directory' to 'remote_directory'. Preserve
  * times if 'pflag' is set
  */
-int sftp_upload_dir(struct sftp_conn *, const char *, const char *,
-    int, int, int, int, int, int);
+целое sftp_upload_dir(struct sftp_conn *, const char *, const char *,
+    целое, целое, целое, целое, целое, целое);
 
 /*
  * Download a 'from_path' from the 'from' connection and upload it to
  * to 'to' connection at 'to_path'.
  */
-int sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
+целое sftp_crossload(struct sftp_conn *from, struct sftp_conn *to,
     const char *from_path, const char *to_path,
-    Attrib *a, int preserve_flag);
+    Attrib *a, целое preserve_flag);
 
 /*
  * Recursively download a directory from 'from_path' from the 'from'
  * connection and upload it to 'to' connection at 'to_path'.
  */
-int sftp_crossload_dir(struct sftp_conn *from, struct sftp_conn *to,
+целое sftp_crossload_dir(struct sftp_conn *from, struct sftp_conn *to,
     const char *from_path, const char *to_path,
-    Attrib *dirattrib, int preserve_flag, int print_flag,
-    int follow_link_flag);
+    Attrib *dirattrib, целое preserve_flag, целое print_flag,
+    целое follow_link_flag);
 
 /*
  * User/group ID to name translation.
  */
-int sftp_can_get_users_groups_by_id(struct sftp_conn *conn);
-int sftp_get_users_groups_by_id(struct sftp_conn *conn,
+целое sftp_can_get_users_groups_by_id(struct sftp_conn *conn);
+целое sftp_get_users_groups_by_id(struct sftp_conn *conn,
     const u_int *uids, u_int nuids,
     const u_int *gids, u_int ngids,
     char ***usernamesp, char ***groupnamesp);
@@ -197,9 +197,9 @@ char *sftp_path_append(const char *, const char *);
 char *sftp_make_absolute(char *, const char *);
 
 /* Check if remote path is directory */
-int sftp_remote_is_dir(struct sftp_conn *conn, const char *path);
+целое sftp_remote_is_dir(struct sftp_conn *conn, const char *path);
 
 /* Check whether path returned from glob(..., GLOB_MARK, ...) is a directory */
-int sftp_globpath_is_dir(const char *pathname);
+целое sftp_globpath_is_dir(const char *pathname);
 
 #endif

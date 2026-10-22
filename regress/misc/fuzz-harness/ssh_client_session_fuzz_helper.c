@@ -59,35 +59,35 @@ limitations under the License.
 #include "readconf.h"
 
 Options options;
-int debug_flag = 0;
+целое debug_flag = 0;
 
 struct ssh;
 
-int
+целое
 __wrap_ssh_packet_write_wait(struct ssh *ssh)
 {
 	(void)ssh;
-	return 0;
+	вернуть 0;
 }
 
 char *
-__wrap_read_passphrase(const char *prompt, int flags)
+__wrap_read_passphrase(const char *prompt, целое flags)
 {
 	(void)prompt;
 	(void)flags;
-	return strdup("fuzz");
+	вернуть strdup("fuzz");
 }
 
 #include "../../../sshconnect2.c"
 #include "fixed-keys.h"
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static volatile целое in_fuzz = 0;
 
 void
-cleanup_exit(int code)
+cleanup_exit(целое code)
 {
-	if (in_fuzz)
+	если (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
@@ -97,10 +97,10 @@ load_private(const char *str)
 {
 	struct sshbuf *b = sshbuf_from(str, strlen(str));
 	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	если (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	вернуть k;
 }
 
 static struct sshkey *
@@ -108,64 +108,64 @@ load_public(const char *str)
 {
 	char *tmp, *cp;
 	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	если (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	если (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	вернуть k;
 }
 
-static int
+static целое
 pump(struct ssh *from, struct ssh *to, size_t *transferred)
 {
 	const u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	целое r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	если ((r = ssh_packet_next(from, &type)) != 0)
+		вернуть r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	если (len == 0)
+		вернуть 0;
+	если ((r = ssh_input_append(to, buf, len)) != 0)
+		вернуть r;
+	если ((r = ssh_output_consume(from, len)) != 0)
+		вернуть r;
 	*transferred = len;
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 run_kex(struct ssh *client, struct ssh *server)
 {
-	int r;
+	целое r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	для (целое i = 0; i < 100; i++) {
+		если ((r = pump(server, client, &sn)) != 0) вернуть r;
+		если ((r = pump(client, server, &cn)) != 0) вернуть r;
+		если (server->kex->done && client->kex->done)
+			вернуть 0;
+		если (cn == 0 && sn == 0)
+			вернуть SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	вернуть SSH_ERR_PROTOCOL_ERROR;
 }
 
 static Sensitive g_sensitive = { NULL, 0 };
 static Authctxt g_authctxt;
 static struct ssh *g_client = NULL;
 static struct ssh *g_server = NULL;
-static int g_init = 0;
+static целое g_init = 0;
 
 static void
 fuzz_reset_authctxt(struct ssh *ssh)
 {
 	free(g_authctxt.authlist);
 	g_authctxt.authlist = NULL;
-	if (ssh->authctxt == &g_authctxt)
+	если (ssh->authctxt == &g_authctxt)
 		pubkey_cleanup(ssh);
 
 	memset(&g_authctxt, 0, sizeof(g_authctxt));
@@ -220,11 +220,11 @@ fuzz_setup(struct ssh *ssh)
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ, &input_userauth_passwd_changereq);
 }
 
-static int
+static целое
 init_once(void)
 {
-	if (g_init)
-		return 0;
+	если (g_init)
+		вернуть 0;
 	signal(SIGPIPE, SIG_IGN);
 	log_init("ssh_client_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
@@ -235,17 +235,17 @@ init_once(void)
 
 	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
 	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
+	целое i;
+	для (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		если (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		иначе если (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		иначе если (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		иначе если (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
@@ -253,22 +253,22 @@ init_once(void)
 	struct kex_params kp;
 	memcpy(kp.proposal, proposal, sizeof(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	если (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		вернуть -1;
+	если (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		вернуть -1;
+	если (run_kex(g_client, g_server) != 0)
+		вернуть -1;
 
 	fuzz_setup(g_client);
 
 	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
+	для (i = 0; i < PROPOSAL_MAX; i++)
 		free(proposal[i]);
 	g_init = 1;
-	return 0;
+	вернуть 0;
 }
 
 static const uint8_t k_msg_types[] = {
@@ -282,10 +282,10 @@ static const uint8_t k_msg_types[] = {
 void
 fuzz_one_message(const uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	если (init_once() != 0)
+		вернуть;
+	если (size > 65000)
+		вернуть;
 
 	uint8_t selector = size > 0 ? data[0] : 0;
 	const uint8_t *payload = size > 0 ? data + 1 : NULL;
@@ -297,11 +297,11 @@ fuzz_one_message(const uint8_t *data, size_t size)
 	fuzz_reset_authctxt(g_client);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	если (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_server, msg_type, payload, plen) != 0)
+		если (ssh_packet_put(g_server, msg_type, payload, plen) != 0)
 			goto done;
-		if (pump(g_server, g_client, &transferred) != 0)
+		если (pump(g_server, g_client, &transferred) != 0)
 			goto done;
 		(void)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, NULL);
 	done:

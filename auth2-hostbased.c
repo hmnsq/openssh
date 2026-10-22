@@ -56,7 +56,7 @@
 extern ServerOptions options;
 extern struct authmethod_cfg methodcfg_hostbased;
 
-static int
+static целое
 userauth_hostbased(struct ssh *ssh, const char *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
@@ -65,9 +65,9 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	char *pkalg, *cuser, *chost;
 	u_char *sig;
 	size_t alen, slen;
-	int r, pktype, authenticated = 0;
+	целое r, pktype, authenticated = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &pkalg, &alen)) != 0 ||
+	если ((r = sshpkt_get_cstring(ssh, &pkalg, &alen)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &chost, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &cuser, NULL)) != 0 ||
@@ -81,19 +81,19 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	sshbuf_dump_data(sig, slen, stderr);
 #endif
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC) {
+	если (pktype == KEY_UNSPEC) {
 		/* this is perfectly legal */
 		logit_f("unsupported public key algorithm: %s",
 		    pkalg);
 		goto done;
 	}
-	if (match_pattern_list(pkalg,
+	если (match_pattern_list(pkalg,
 	    options.hostbased_accepted_algos, 0) != 1) {
 		logit_f("signature algorithm %s not in "
 		    "HostbasedAcceptedAlgorithms", pkalg);
 		goto done;
 	}
-	if ((b = sshbuf_fromb(keyblob)) == NULL)
+	если ((b = sshbuf_fromb(keyblob)) == NULL)
 		fatal_f("sshbuf_fromb failed");
 	switch ((r = sshkey_fromb_allowlist(b, &key,
 	    options.hostbased_accepted_algos, options.ca_sign_algorithms))) {
@@ -116,27 +116,27 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	sshbuf_free(b);
 	b = NULL;
 
-	if (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
+	если (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
 	    sshkey_ecdsa_nid_from_name(pkalg) != key->ecdsa_nid)) {
 		error_f("key type mismatch for decoded key "
 		    "(received %s, expected %s)", sshkey_ssh_name(key), pkalg);
 		goto done;
 	}
-	if ((r = sshkey_check_rsa_length(key,
+	если ((r = sshkey_check_rsa_length(key,
 	    options.required_rsa_size)) != 0) {
 		logit_r(r, "refusing %s key", sshkey_type(key));
 		goto done;
 	}
 
-	if (!authctxt->valid || authctxt->user == NULL) {
+	если (!authctxt->valid || authctxt->user == NULL) {
 		debug2_f("disabled because of invalid user");
 		goto done;
 	}
 
-	if ((b = sshbuf_new()) == NULL)
+	если ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	/* reconstruct packet */
-	if ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
+	если ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
 	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
@@ -155,7 +155,7 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 
 	/* test for allowed key and correct signature */
 	authenticated = 0;
-	if (mm_hostbased_key_allowed(ssh, authctxt->pw, cuser,
+	если (mm_hostbased_key_allowed(ssh, authctxt->pw, cuser,
 	    chost, key) &&
 	    mm_sshkey_verify(key, sig, slen,
 	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL) == 0)
@@ -171,21 +171,21 @@ done:
 	free(cuser);
 	free(chost);
 	free(sig);
-	return authenticated;
+	вернуть authenticated;
 }
 
 /* return 1 if given hostkey is allowed */
-int
+целое
 hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
     const char *cuser, char *chost, struct sshkey *key)
 {
 	const char *resolvedname, *ipaddr, *lookup, *reason;
 	HostStatus host_status;
-	int len;
+	целое len;
 	char *fp;
 
-	if (auth_key_is_revoked(key))
-		return 0;
+	если (auth_key_is_revoked(key))
+		вернуть 0;
 
 	resolvedname = auth_get_canonical_hostname(ssh, options.use_dns);
 	ipaddr = ssh_remote_ipaddr(ssh);
@@ -193,36 +193,36 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 	debug2_f("chost %s resolvedname %s ipaddr %s",
 	    chost, resolvedname, ipaddr);
 
-	if (((len = strlen(chost)) > 0) && chost[len - 1] == '.') {
+	если (((len = strlen(chost)) > 0) && chost[len - 1] == '.') {
 		debug2("stripping trailing dot from chost %s", chost);
 		chost[len - 1] = '\0';
 	}
 
-	if (options.hostbased_uses_name_from_packet_only) {
-		if (auth_rhosts2(pw, cuser, chost, chost) == 0) {
+	если (options.hostbased_uses_name_from_packet_only) {
+		если (auth_rhosts2(pw, cuser, chost, chost) == 0) {
 			debug2_f("auth_rhosts2 refused user \"%.100s\" "
 			    "host \"%.100s\" (from packet)", cuser, chost);
-			return 0;
+			вернуть 0;
 		}
 		lookup = chost;
-	} else {
-		if (strcasecmp(resolvedname, chost) != 0)
+	} иначе {
+		если (strcasecmp(resolvedname, chost) != 0)
 			logit("userauth_hostbased mismatch: "
 			    "client sends %s, but we resolve %s to %s",
 			    chost, ipaddr, resolvedname);
-		if (auth_rhosts2(pw, cuser, resolvedname, ipaddr) == 0) {
+		если (auth_rhosts2(pw, cuser, resolvedname, ipaddr) == 0) {
 			debug2_f("auth_rhosts2 refused "
 			    "user \"%.100s\" host \"%.100s\" addr \"%.100s\"",
 			    cuser, resolvedname, ipaddr);
-			return 0;
+			вернуть 0;
 		}
 		lookup = resolvedname;
 	}
 	debug2_f("access allowed by auth_rhosts2");
 
-	if (sshkey_is_cert(key) && sshkey_cert_check_host(key, lookup,
+	если (sshkey_is_cert(key) && sshkey_cert_check_host(key, lookup,
 	     options.ca_sign_algorithms, &reason) != 0) {
-		if ((fp = sshkey_fingerprint(key->cert->signature_key,
+		если ((fp = sshkey_fingerprint(key->cert->signature_key,
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal_f("sshkey_fingerprint fail");
 		error("Refusing certificate ID \"%s\" serial=%llu signed by "
@@ -233,7 +233,7 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 		    key->cert->key_id, (unsigned long long)key->cert->serial,
 		    reason);
 		free(fp);
-		return 0;
+		вернуть 0;
 	}
 
 	host_status = check_key_in_hostfiles(pw, key, lookup,
@@ -241,24 +241,24 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 	    options.ignore_user_known_hosts ? NULL : _PATH_SSH_USER_HOSTFILE);
 
 	/* backward compat if no key has been found. */
-	if (host_status == HOST_NEW) {
+	если (host_status == HOST_NEW) {
 		host_status = check_key_in_hostfiles(pw, key, lookup,
 		    _PATH_SSH_SYSTEM_HOSTFILE2,
 		    options.ignore_user_known_hosts ? NULL :
 		    _PATH_SSH_USER_HOSTFILE2);
 	}
 
-	if (host_status == HOST_OK) {
-		if (sshkey_is_cert(key)) {
-			if ((fp = sshkey_fingerprint(key->cert->signature_key,
+	если (host_status == HOST_OK) {
+		если (sshkey_is_cert(key)) {
+			если ((fp = sshkey_fingerprint(key->cert->signature_key,
 			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted certificate ID \"%s\" signed by "
 			    "%s CA %s from %s@%s", key->cert->key_id,
 			    sshkey_type(key->cert->signature_key), fp,
 			    cuser, lookup);
-		} else {
-			if ((fp = sshkey_fingerprint(key,
+		} иначе {
+			если ((fp = sshkey_fingerprint(key,
 			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted %s public key %s from %s@%s",
@@ -267,7 +267,7 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 		free(fp);
 	}
 
-	return (host_status == HOST_OK);
+	вернуть (host_status == HOST_OK);
 }
 
 Authmethod method_hostbased = {

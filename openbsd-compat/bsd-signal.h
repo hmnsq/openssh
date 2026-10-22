@@ -24,13 +24,13 @@
 #ifndef _NSIG
 # ifdef NSIG
 #  define _NSIG NSIG
-# else
+# иначе
 #  define _NSIG 128
 # endif
 #endif
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int);
+#если !defined(HAVE_STRSIGNAL)
+char *strsignal(целое);
 #endif
 
 #endif /* _BSD_SIGNAL_H */

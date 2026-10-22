@@ -46,34 +46,34 @@
 # include <unistd.h>
 #endif
 
-int
-daemon(int nochdir, int noclose)
+целое
+daemon(целое nochdir, целое noclose)
 {
-	int fd;
+	целое fd;
 
 	switch (fork()) {
 	case -1:
-		return (-1);
+		вернуть (-1);
 	case 0:
 		break;
 	default:
 		_exit(0);
 	}
 
-	if (setsid() == -1)
-		return (-1);
+	если (setsid() == -1)
+		вернуть (-1);
 
-	if (!nochdir)
+	если (!nochdir)
 		(void)chdir("/");
 
-	if (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
+	если (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
 		(void)dup2(fd, STDIN_FILENO);
 		(void)dup2(fd, STDOUT_FILENO);
 		(void)dup2(fd, STDERR_FILENO);
-		if (fd > 2)
+		если (fd > 2)
 			(void)close (fd);
 	}
-	return (0);
+	вернуть (0);
 }
 
 #endif /* !HAVE_DAEMON */

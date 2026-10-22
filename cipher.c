@@ -55,8 +55,8 @@
 #endif
 
 struct sshcipher_ctx {
-	int	plaintext;
-	int	encrypt;
+	целое	plaintext;
+	целое	encrypt;
 	EVP_CIPHER_CTX *evp;
 	struct chachapoly_ctx *cp_ctx;
 	struct aesctr_ctx ac_ctx; /* XXX union with evp? */
@@ -77,7 +77,7 @@ struct sshcipher {
 #define CFLAG_INTERNAL		CFLAG_NONE /* Don't use "none" for packets */
 #ifdef WITH_OPENSSL
 	const EVP_CIPHER	*(*evptype)(void);
-#else
+#иначе
 	void	*ignored;
 #endif
 };
@@ -97,7 +97,7 @@ static const struct sshcipher ciphers[] = {
 				16, 16, 12, 16, 0, EVP_aes_128_gcm },
 	{ "aes256-gcm@openssh.com",
 				16, 32, 12, 16, 0, EVP_aes_256_gcm },
-#else
+#иначе
 	{ "aes128-ctr",		16, 16, 0, 0, CFLAG_AESCTR, NULL },
 	{ "aes192-ctr",		16, 24, 0, 0, CFLAG_AESCTR, NULL },
 	{ "aes256-ctr",		16, 32, 0, 0, CFLAG_AESCTR, NULL },
@@ -113,57 +113,57 @@ static const struct sshcipher ciphers[] = {
 
 /* Returns a comma-separated list of supported ciphers. */
 char *
-cipher_alg_list(char sep, int auth_only)
+cipher_alg_list(char sep, целое auth_only)
 {
 	char *ret = NULL;
 	const struct sshcipher *c;
 	char sep_str[2] = {sep, '\0'};
 
-	for (c = ciphers; c->name != NULL; c++) {
-		if ((c->flags & CFLAG_INTERNAL) != 0)
+	для (c = ciphers; c->name != NULL; c++) {
+		если ((c->flags & CFLAG_INTERNAL) != 0)
 			continue;
-		if (auth_only && c->auth_len == 0)
+		если (auth_only && c->auth_len == 0)
 			continue;
 		xextendf(&ret, sep_str, "%s", c->name);
 	}
-	return ret;
+	вернуть ret;
 }
 
 const char *
-compression_alg_list(int compression)
+compression_alg_list(целое compression)
 {
 #ifdef WITH_ZLIB
-	return compression ? "zlib@openssh.com,none" :
+	вернуть compression ? "zlib@openssh.com,none" :
 	    "none,zlib@openssh.com";
-#else
-	return "none";
+#иначе
+	вернуть "none";
 #endif
 }
 
 u_int
 cipher_blocksize(const struct sshcipher *c)
 {
-	return (c->block_size);
+	вернуть (c->block_size);
 }
 
 u_int
 cipher_keylen(const struct sshcipher *c)
 {
-	return (c->key_len);
+	вернуть (c->key_len);
 }
 
 u_int
 cipher_seclen(const struct sshcipher *c)
 {
-	if (strcmp("3des-cbc", c->name) == 0)
-		return 14;
-	return cipher_keylen(c);
+	если (strcmp("3des-cbc", c->name) == 0)
+		вернуть 14;
+	вернуть cipher_keylen(c);
 }
 
 u_int
 cipher_authlen(const struct sshcipher *c)
 {
-	return (c->auth_len);
+	вернуть (c->auth_len);
 }
 
 u_int
@@ -173,110 +173,110 @@ cipher_ivlen(const struct sshcipher *c)
 	 * Default is cipher block size, except for chacha20+poly1305 that
 	 * needs no IV. XXX make iv_len == -1 default?
 	 */
-	return (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
+	вернуть (c->iv_len != 0 || (c->flags & CFLAG_CHACHAPOLY) != 0) ?
 	    c->iv_len : c->block_size;
 }
 
 u_int
 cipher_is_cbc(const struct sshcipher *c)
 {
-	return (c->flags & CFLAG_CBC) != 0;
+	вернуть (c->flags & CFLAG_CBC) != 0;
 }
 
 u_int
 cipher_is_internal(const struct sshcipher *c)
 {
-	return (c->flags & CFLAG_INTERNAL) != 0;
+	вернуть (c->flags & CFLAG_INTERNAL) != 0;
 }
 
 u_int
 cipher_ctx_is_plaintext(struct sshcipher_ctx *cc)
 {
-	return cc->plaintext;
+	вернуть cc->plaintext;
 }
 
 const struct sshcipher *
 cipher_by_name(const char *name)
 {
 	const struct sshcipher *c;
-	for (c = ciphers; c->name != NULL; c++)
-		if (strcmp(c->name, name) == 0)
-			return c;
-	return NULL;
+	для (c = ciphers; c->name != NULL; c++)
+		если (strcmp(c->name, name) == 0)
+			вернуть c;
+	вернуть NULL;
 }
 
 #define	CIPHER_SEP	","
-int
+целое
 ciphers_valid(const char *names)
 {
 	const struct sshcipher *c;
 	char *cipher_list, *cp;
 	char *p;
-	int found = 0;
+	целое found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((cipher_list = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
+	если (names == NULL || strcmp(names, "") == 0)
+		вернуть 0;
+	если ((cipher_list = cp = strdup(names)) == NULL)
+		вернуть 0;
+	для ((p = strsep(&cp, CIPHER_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, CIPHER_SEP))) {
 		c = cipher_by_name(p);
-		if (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
+		если (c == NULL || (c->flags & CFLAG_INTERNAL) != 0) {
 			free(cipher_list);
-			return 0;
-		} else
+			вернуть 0;
+		} иначе
 			found = 1;
 	}
 	free(cipher_list);
-	return found;
+	вернуть found;
 }
 
 const char *
 cipher_warning_message(const struct sshcipher_ctx *cc)
 {
-	if (cc == NULL || cc->cipher == NULL)
-		return NULL;
+	если (cc == NULL || cc->cipher == NULL)
+		вернуть NULL;
 	/* XXX repurpose for CBC warning */
-	return NULL;
+	вернуть NULL;
 }
 
-int
+целое
 cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
     const u_char *key, u_int keylen, const u_char *iv, u_int ivlen,
-    int do_encrypt)
+    целое do_encrypt)
 {
 	struct sshcipher_ctx *cc = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	целое ret = SSH_ERR_INTERNAL_ERROR;
 #ifdef WITH_OPENSSL
 	const EVP_CIPHER *type;
-	int klen;
+	целое klen;
 #endif
 
 	*ccp = NULL;
-	if ((cc = calloc(1, sizeof(*cc))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	если ((cc = calloc(1, sizeof(*cc))) == NULL)
+		вернуть SSH_ERR_ALLOC_FAIL;
 
 	cc->plaintext = (cipher->flags & CFLAG_NONE) != 0;
 	cc->encrypt = do_encrypt;
 
-	if (keylen < cipher->key_len ||
+	если (keylen < cipher->key_len ||
 	    (iv != NULL && ivlen < cipher_ivlen(cipher))) {
 		ret = SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
 
 	cc->cipher = cipher;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	если ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		cc->cp_ctx = chachapoly_new(key, keylen);
 		ret = cc->cp_ctx != NULL ? 0 : SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	если ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		ret = 0;
 		goto out;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+	если ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
 		aesctr_keysetup(&cc->ac_ctx, key, 8 * keylen, 8 * ivlen);
 		aesctr_ivsetup(&cc->ac_ctx, iv);
 		ret = 0;
@@ -284,49 +284,49 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
 	}
 	ret = SSH_ERR_INVALID_ARGUMENT;
 	goto out;
-#else /* WITH_OPENSSL */
+#иначе /* WITH_OPENSSL */
 	type = (*cipher->evptype)();
-	if ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
+	если ((cc->evp = EVP_CIPHER_CTX_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
+	если (EVP_CipherInit(cc->evp, type, NULL, (u_char *)iv,
 	    (do_encrypt == CIPHER_ENCRYPT)) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if (cipher_authlen(cipher) &&
+	если (cipher_authlen(cipher) &&
 	    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_IV_FIXED,
 	    -1, (u_char *)iv) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	klen = EVP_CIPHER_CTX_key_length(cc->evp);
-	if (klen > 0 && keylen != (u_int)klen) {
-		if (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
+	если (klen > 0 && keylen != (u_int)klen) {
+		если (EVP_CIPHER_CTX_set_key_length(cc->evp, keylen) == 0) {
 			ret = SSH_ERR_LIBCRYPTO_ERROR;
 			goto out;
 		}
 	}
-	if (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
+	если (EVP_CipherInit(cc->evp, NULL, (u_char *)key, NULL, -1) == 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	ret = 0;
 #endif /* WITH_OPENSSL */
  out:
-	if (ret == 0) {
+	если (ret == 0) {
 		/* success */
 		*ccp = cc;
-	} else {
-		if (cc != NULL) {
+	} иначе {
+		если (cc != NULL) {
 #ifdef WITH_OPENSSL
 			EVP_CIPHER_CTX_free(cc->evp);
 #endif /* WITH_OPENSSL */
 			freezero(cc, sizeof(*cc));
 		}
 	}
-	return ret;
+	вернуть ret;
 }
 
 /*
@@ -339,91 +339,91 @@ cipher_init(struct sshcipher_ctx **ccp, const struct sshcipher *cipher,
  * This tag is written on encryption and verified on decryption.
  * Both 'aadlen' and 'authlen' can be set to 0.
  */
-int
+целое
 cipher_crypt(struct sshcipher_ctx *cc, u_int seqnr, u_char *dest,
    const u_char *src, u_int len, u_int aadlen, u_int authlen)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		return chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
+	если ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		вернуть chachapoly_crypt(cc->cp_ctx, seqnr, dest, src,
 		    len, aadlen, authlen, cc->encrypt);
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0) {
+	если ((cc->cipher->flags & CFLAG_NONE) != 0) {
 		memcpy(dest, src, aadlen + len);
-		return 0;
+		вернуть 0;
 	}
 #ifndef WITH_OPENSSL
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (aadlen)
+	если ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		если (aadlen)
 			memcpy(dest, src, aadlen);
 		aesctr_encrypt_bytes(&cc->ac_ctx, src + aadlen,
 		    dest + aadlen, len);
-		return 0;
+		вернуть 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
-#else
-	if (authlen) {
+	вернуть SSH_ERR_INVALID_ARGUMENT;
+#иначе
+	если (authlen) {
 		u_char lastiv[1];
 
-		if (authlen != cipher_authlen(cc->cipher))
-			return SSH_ERR_INVALID_ARGUMENT;
+		если (authlen != cipher_authlen(cc->cipher))
+			вернуть SSH_ERR_INVALID_ARGUMENT;
 		/* increment IV */
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
+		если (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN,
 		    1, lastiv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			вернуть SSH_ERR_LIBCRYPTO_ERROR;
 		/* set tag on decryption */
-		if (!cc->encrypt &&
+		если (!cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_SET_TAG,
 		    authlen, (u_char *)src + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			вернуть SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	if (aadlen) {
-		if (authlen &&
+	если (aadlen) {
+		если (authlen &&
 		    EVP_Cipher(cc->evp, NULL, (u_char *)src, aadlen) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			вернуть SSH_ERR_LIBCRYPTO_ERROR;
 		memcpy(dest, src, aadlen);
 	}
-	if (len % cc->cipher->block_size)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
+	если (len % cc->cipher->block_size)
+		вернуть SSH_ERR_INVALID_ARGUMENT;
+	если (EVP_Cipher(cc->evp, dest + aadlen, (u_char *)src + aadlen,
 	    len) < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if (authlen) {
+		вернуть SSH_ERR_LIBCRYPTO_ERROR;
+	если (authlen) {
 		/* compute tag (on encrypt) or verify tag (on decrypt) */
-		if (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
-			return cc->encrypt ?
+		если (EVP_Cipher(cc->evp, NULL, NULL, 0) < 0)
+			вернуть cc->encrypt ?
 			    SSH_ERR_LIBCRYPTO_ERROR : SSH_ERR_MAC_INVALID;
-		if (cc->encrypt &&
+		если (cc->encrypt &&
 		    EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_GET_TAG,
 		    authlen, dest + aadlen + len) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			вернуть SSH_ERR_LIBCRYPTO_ERROR;
 	}
-	return 0;
+	вернуть 0;
 #endif
 }
 
 /* Extract the packet length, including any decryption necessary beforehand */
-int
+целое
 cipher_get_length(struct sshcipher_ctx *cc, u_int *plenp, u_int seqnr,
     const u_char *cp, u_int len)
 {
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
-		return chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
+	если ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0)
+		вернуть chachapoly_get_length(cc->cp_ctx, plenp, seqnr,
 		    cp, len);
-	if (len < 4)
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	если (len < 4)
+		вернуть SSH_ERR_MESSAGE_INCOMPLETE;
 	*plenp = PEEK_U32(cp);
-	return 0;
+	вернуть 0;
 }
 
 void
 cipher_free(struct sshcipher_ctx *cc)
 {
-	if (cc == NULL)
-		return;
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+	если (cc == NULL)
+		вернуть;
+	если ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
 		chachapoly_free(cc->cp_ctx);
 		cc->cp_ctx = NULL;
-	} else if ((cc->cipher->flags & CFLAG_AESCTR) != 0)
+	} иначе если ((cc->cipher->flags & CFLAG_AESCTR) != 0)
 		explicit_bzero(&cc->ac_ctx, sizeof(cc->ac_ctx));
 #ifdef WITH_OPENSSL
 	EVP_CIPHER_CTX_free(cc->evp);
@@ -432,42 +432,42 @@ cipher_free(struct sshcipher_ctx *cc)
 	freezero(cc, sizeof(*cc));
 }
 
-int
+целое
 cipher_get_keyiv(struct sshcipher_ctx *cc, u_char *iv, size_t len)
 {
 #ifdef WITH_OPENSSL
 	const struct sshcipher *c = cc->cipher;
-	int evplen;
+	целое evplen;
 #endif
 
-	if ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
-		if (len != 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
+	если ((cc->cipher->flags & CFLAG_CHACHAPOLY) != 0) {
+		если (len != 0)
+			вернуть SSH_ERR_INVALID_ARGUMENT;
+		вернуть 0;
 	}
-	if ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
-		if (len != sizeof(cc->ac_ctx.ctr))
-			return SSH_ERR_INVALID_ARGUMENT;
+	если ((cc->cipher->flags & CFLAG_AESCTR) != 0) {
+		если (len != sizeof(cc->ac_ctx.ctr))
+			вернуть SSH_ERR_INVALID_ARGUMENT;
 		memcpy(iv, cc->ac_ctx.ctr, len);
-		return 0;
+		вернуть 0;
 	}
-	if ((cc->cipher->flags & CFLAG_NONE) != 0)
-		return 0;
+	если ((cc->cipher->flags & CFLAG_NONE) != 0)
+		вернуть 0;
 
 #ifdef WITH_OPENSSL
 	evplen = EVP_CIPHER_CTX_iv_length(cc->evp);
-	if (evplen == 0)
-		return 0;
-	else if (evplen < 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	if ((size_t)evplen != len)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (cipher_authlen(c)) {
-		if (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
+	если (evplen == 0)
+		вернуть 0;
+	иначе если (evplen < 0)
+		вернуть SSH_ERR_LIBCRYPTO_ERROR;
+	если ((size_t)evplen != len)
+		вернуть SSH_ERR_INVALID_ARGUMENT;
+	если (cipher_authlen(c)) {
+		если (EVP_CIPHER_CTX_ctrl(cc->evp, EVP_CTRL_GCM_IV_GEN, len,
 		    iv) <= 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
-	} else if (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+			вернуть SSH_ERR_LIBCRYPTO_ERROR;
+	} иначе если (EVP_CIPHER_CTX_get_iv(cc->evp, iv, len) <= 0)
+		вернуть SSH_ERR_LIBCRYPTO_ERROR;
 #endif
-	return 0;
+	вернуть 0;
 }

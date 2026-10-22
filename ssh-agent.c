@@ -116,18 +116,18 @@ typedef enum {
 struct hostkey_sid {
 	struct sshkey *key;
 	struct sshbuf *sid;
-	int forwarded;
+	целое forwarded;
 };
 
 typedef struct socket_entry {
-	int fd;
+	целое fd;
 	sock_type type;
 	struct sshbuf *input;
 	struct sshbuf *output;
 	struct sshbuf *request;
 	size_t nsession_ids;
 	struct hostkey_sid *session_ids;
-	int session_bind_attempted;
+	целое session_bind_attempted;
 } SocketEntry;
 
 u_int sockets_alloc = 0;
@@ -146,14 +146,14 @@ typedef struct identity {
 } Identity;
 
 struct idtable {
-	int nentries;
+	целое nentries;
 	TAILQ_HEAD(idqueue, identity) idlist;
 };
 
 /* private key table */
 struct idtable *idtab;
 
-int max_fd = 0;
+целое max_fd = 0;
 
 /* pid of shell == parent of agent */
 pid_t parent_pid = -1;
@@ -177,25 +177,25 @@ static char *allowed_providers;
  * Allows PKCS11 providers or SK keys that use non-internal providers to
  * be added over a remote connection (identified by session-bind@openssh.com).
  */
-static int remote_add_provider;
+static целое remote_add_provider;
 
 /* locking */
 #define LOCK_SIZE	32
 #define LOCK_SALT_SIZE	16
 #define LOCK_ROUNDS	1
-int locked = 0;
+целое locked = 0;
 u_char lock_pwhash[LOCK_SIZE];
 u_char lock_salt[LOCK_SALT_SIZE];
 
 extern char *__progname;
 
 /* Default lifetime in seconds (0 == forever) */
-static int lifetime = 0;
+static целое lifetime = 0;
 
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+static целое fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* Refuse signing of non-SSH messages for web-origin FIDO keys */
-static int restrict_websafe = 1;
+static целое restrict_websafe = 1;
 static char *websafe_allowlist;
 
 static void
@@ -207,7 +207,7 @@ close_socket(SocketEntry *e)
 	sshbuf_free(e->input);
 	sshbuf_free(e->output);
 	sshbuf_free(e->request);
-	for (i = 0; i < e->nsession_ids; i++) {
+	для (i = 0; i < e->nsession_ids; i++) {
 		sshkey_free(e->session_ids[i].key);
 		sshbuf_free(e->session_ids[i].sid);
 	}
@@ -230,11 +230,11 @@ free_dest_constraint_hop(struct dest_constraint_hop *dch)
 {
 	u_int i;
 
-	if (dch == NULL)
-		return;
+	если (dch == NULL)
+		вернуть;
 	free(dch->user);
 	free(dch->hostname);
-	for (i = 0; i < dch->nkeys; i++)
+	для (i = 0; i < dch->nkeys; i++)
 		sshkey_free(dch->keys[i]);
 	free(dch->keys);
 	free(dch->key_is_ca);
@@ -245,7 +245,7 @@ free_dest_constraints(struct dest_constraint *dcs, size_t ndcs)
 {
 	size_t i;
 
-	for (i = 0; i < ndcs; i++) {
+	для (i = 0; i < ndcs; i++) {
 		free_dest_constraint_hop(&dcs[i].from);
 		free_dest_constraint_hop(&dcs[i].to);
 	}
@@ -258,7 +258,7 @@ dup_dest_constraint_hop(const struct dest_constraint_hop *dch,
     struct dest_constraint_hop *out)
 {
 	u_int i;
-	int r;
+	целое r;
 
 	out->user = dch->user == NULL ? NULL : xstrdup(dch->user);
 	out->hostname = dch->hostname == NULL ? NULL : xstrdup(dch->hostname);
@@ -268,8 +268,8 @@ dup_dest_constraint_hop(const struct dest_constraint_hop *dch,
 	    xcalloc(out->nkeys, sizeof(*out->keys));
 	out->key_is_ca = out->nkeys == 0 ? NULL :
 	    xcalloc(out->nkeys, sizeof(*out->key_is_ca));
-	for (i = 0; i < dch->nkeys; i++) {
-		if (dch->keys[i] != NULL &&
+	для (i = 0; i < dch->nkeys; i++) {
+		если (dch->keys[i] != NULL &&
 		    (r = sshkey_from_private(dch->keys[i],
 		    &(out->keys[i]))) != 0)
 			fatal_fr(r, "copy key");
@@ -283,14 +283,14 @@ dup_dest_constraints(const struct dest_constraint *dcs, size_t ndcs)
 	size_t i;
 	struct dest_constraint *ret;
 
-	if (ndcs == 0)
-		return NULL;
+	если (ndcs == 0)
+		вернуть NULL;
 	ret = xcalloc(ndcs, sizeof(*ret));
-	for (i = 0; i < ndcs; i++) {
+	для (i = 0; i < ndcs; i++) {
 		dup_dest_constraint_hop(&dcs[i].from, &ret[i].from);
 		dup_dest_constraint_hop(&dcs[i].to, &ret[i].to);
 	}
-	return ret;
+	вернуть ret;
 }
 #endif /* ENABLE_PKCS11 */
 
@@ -305,9 +305,9 @@ dump_dest_constraint_hop(const struct dest_constraint_hop *dch)
 	    dch->user == NULL ? "(null)" : dch->user,
 	    dch->hostname == NULL ? "(null)" : dch->hostname,
 	    dch->is_ca, dch->nkeys);
-	for (i = 0; i < dch->nkeys; i++) {
+	для (i = 0; i < dch->nkeys; i++) {
 		fp = NULL;
-		if (dch->keys[i] != NULL &&
+		если (dch->keys[i] != NULL &&
 		    (fp = sshkey_fingerprint(dch->keys[i],
 		    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL)
 			fatal_f("fingerprint failed");
@@ -329,7 +329,7 @@ dump_dest_constraints(const char *context,
 	size_t i;
 
 	debug_f("%s: %zu constraints", context, ndcs);
-	for (i = 0; i < ndcs; i++) {
+	для (i = 0; i < ndcs; i++) {
 		debug_f("constraint %zu / %zu: from: ", i, ndcs);
 		dump_dest_constraint_hop(&dcs[i].from);
 		debug_f("constraint %zu / %zu: to: ", i, ndcs);
@@ -354,7 +354,7 @@ free_identity(Identity *id)
  * Match 'key' against the key/CA list in a destination constraint hop
  * Returns 0 on success or -1 otherwise.
  */
-static int
+static целое
 match_key_hop(const char *tag, const struct sshkey *key,
     const struct dest_constraint_hop *dch)
 {
@@ -363,53 +363,53 @@ match_key_hop(const char *tag, const struct sshkey *key,
 	u_int i;
 	char *fp;
 
-	if (key == NULL)
-		return -1;
+	если (key == NULL)
+		вернуть -1;
 	/* XXX logspam */
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
+	если ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
 	    SSH_FP_DEFAULT)) == NULL)
 		fatal_f("fingerprint failed");
 	debug3_f("%s: entering hostname %s, requested key %s %s, %u keys avail",
 	    tag, hostname, sshkey_type(key), fp, dch->nkeys);
 	free(fp);
-	for (i = 0; i < dch->nkeys; i++) {
-		if (dch->keys[i] == NULL)
-			return -1;
+	для (i = 0; i < dch->nkeys; i++) {
+		если (dch->keys[i] == NULL)
+			вернуть -1;
 		/* XXX logspam */
-		if ((fp = sshkey_fingerprint(dch->keys[i], SSH_FP_HASH_DEFAULT,
+		если ((fp = sshkey_fingerprint(dch->keys[i], SSH_FP_HASH_DEFAULT,
 		    SSH_FP_DEFAULT)) == NULL)
 			fatal_f("fingerprint failed");
 		debug3_f("%s: key %u: %s%s %s", tag, i,
 		    dch->key_is_ca[i] ? "CA " : "",
 		    sshkey_type(dch->keys[i]), fp);
 		free(fp);
-		if (!sshkey_is_cert(key)) {
+		если (!sshkey_is_cert(key)) {
 			/* plain key */
-			if (dch->key_is_ca[i] ||
+			если (dch->key_is_ca[i] ||
 			    !sshkey_equal(key, dch->keys[i]))
 				continue;
-			return 0;
+			вернуть 0;
 		}
 		/* certificate */
-		if (!dch->key_is_ca[i])
+		если (!dch->key_is_ca[i])
 			continue;
-		if (key->cert == NULL || key->cert->signature_key == NULL)
-			return -1; /* shouldn't happen */
-		if (!sshkey_equal(key->cert->signature_key, dch->keys[i]))
+		если (key->cert == NULL || key->cert->signature_key == NULL)
+			вернуть -1; /* shouldn't happen */
+		если (!sshkey_equal(key->cert->signature_key, dch->keys[i]))
 			continue;
-		if (sshkey_cert_check_host(key, hostname,
+		если (sshkey_cert_check_host(key, hostname,
 		    SSH_ALLOWED_CA_SIGALGS, &reason) != 0) {
 			debug_f("cert %s / hostname %s rejected: %s",
 			    key->cert->key_id, hostname, reason);
 			continue;
 		}
-		return 0;
+		вернуть 0;
 	}
-	return -1;
+	вернуть -1;
 }
 
 /* Check destination constraints on an identity against the hostkey/user */
-static int
+static целое
 permitted_by_dest_constraints(const struct sshkey *fromkey,
     const struct sshkey *tokey, Identity *id, const char *user,
     const char **hostnamep)
@@ -417,9 +417,9 @@ permitted_by_dest_constraints(const struct sshkey *fromkey,
 	size_t i;
 	struct dest_constraint *d;
 
-	if (hostnamep != NULL)
+	если (hostnamep != NULL)
 		*hostnamep = NULL;
-	for (i = 0; i < id->ndest_constraints; i++) {
+	для (i = 0; i < id->ndest_constraints; i++) {
 		d = id->dest_constraints + i;
 		/* XXX remove logspam */
 		debug2_f("constraint %zu %s%s%s (%u keys) > %s%s%s (%u keys)",
@@ -431,33 +431,33 @@ permitted_by_dest_constraints(const struct sshkey *fromkey,
 		    d->to.hostname ? d->to.hostname : "(ANY)", d->to.nkeys);
 
 		/* Match 'from' key */
-		if (fromkey == NULL) {
+		если (fromkey == NULL) {
 			/* We are matching the first hop */
-			if (d->from.hostname != NULL || d->from.nkeys != 0)
+			если (d->from.hostname != NULL || d->from.nkeys != 0)
 				continue;
-		} else if (match_key_hop("from", fromkey, &d->from) != 0)
+		} иначе если (match_key_hop("from", fromkey, &d->from) != 0)
 			continue;
 
 		/* Match 'to' key */
-		if (tokey != NULL && match_key_hop("to", tokey, &d->to) != 0)
+		если (tokey != NULL && match_key_hop("to", tokey, &d->to) != 0)
 			continue;
 
 		/* Match user if specified */
-		if (d->to.user != NULL && user != NULL &&
+		если (d->to.user != NULL && user != NULL &&
 		    !match_pattern(user, d->to.user))
 			continue;
 
 		/* successfully matched this constraint */
-		if (hostnamep != NULL)
+		если (hostnamep != NULL)
 			*hostnamep = d->to.hostname;
 		debug2_f("allowed for hostname %s",
 		    d->to.hostname == NULL ? "*" : d->to.hostname);
-		return 0;
+		вернуть 0;
 	}
 	/* no match */
 	debug2_f("%s identity \"%s\" not permitted for this destination",
 	    sshkey_type(id->key), id->comment);
-	return -1;
+	вернуть -1;
 }
 
 /*
@@ -465,7 +465,7 @@ permitted_by_dest_constraints(const struct sshkey *fromkey,
  * are permitted by the destination constraints on the Identity.
  * Returns 0 on success or -1 otherwise.
  */
-static int
+static целое
 identity_permitted(Identity *id, SocketEntry *e, char *user,
     const char **forward_hostnamep, const char **last_hostnamep)
 {
@@ -480,29 +480,29 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 	debug3_f("entering: key %s comment \"%s\", %zu socket bindings, "
 	    "%zu constraints", sshkey_type(id->key), id->comment,
 	    e->nsession_ids, id->ndest_constraints);
-	if (id->ndest_constraints == 0)
-		return 0; /* unconstrained */
-	if (e->session_bind_attempted && e->nsession_ids == 0) {
+	если (id->ndest_constraints == 0)
+		вернуть 0; /* unconstrained */
+	если (e->session_bind_attempted && e->nsession_ids == 0) {
 		error_f("previous session bind failed on socket");
-		return -1;
+		вернуть -1;
 	}
-	if (e->nsession_ids == 0)
-		return 0; /* local use */
+	если (e->nsession_ids == 0)
+		вернуть 0; /* local use */
 	/*
 	 * Walk through the hops recorded by session_id and try to find a
 	 * constraint that satisfies each.
 	 */
-	for (i = 0; i < e->nsession_ids; i++) {
+	для (i = 0; i < e->nsession_ids; i++) {
 		hks = e->session_ids + i;
-		if (hks->key == NULL)
+		если (hks->key == NULL)
 			fatal_f("internal error: no bound key");
 		/* XXX remove logspam */
 		fp1 = fp2 = NULL;
-		if (fromkey != NULL &&
+		если (fromkey != NULL &&
 		    (fp1 = sshkey_fingerprint(fromkey, SSH_FP_HASH_DEFAULT,
 		    SSH_FP_DEFAULT)) == NULL)
 			fatal_f("fingerprint failed");
-		if ((fp2 = sshkey_fingerprint(hks->key, SSH_FP_HASH_DEFAULT,
+		если ((fp2 = sshkey_fingerprint(hks->key, SSH_FP_HASH_DEFAULT,
 		    SSH_FP_DEFAULT)) == NULL)
 			fatal_f("fingerprint failed");
 		debug3_f("socketentry fd=%d, entry %zu %s, "
@@ -518,13 +518,13 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 		 * the final destination.
 		 */
 		hp = NULL;
-		if (i == e->nsession_ids - 1)
+		если (i == e->nsession_ids - 1)
 			hp = last_hostnamep;
-		else if (i == 0)
+		иначе если (i == 0)
 			hp = forward_hostnamep;
 		/* Special handling for final recorded binding */
 		test_user = NULL;
-		if (i == e->nsession_ids - 1) {
+		если (i == e->nsession_ids - 1) {
 			/* Can only check user at final hop */
 			test_user = user;
 			/*
@@ -532,17 +532,17 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 			 * If this is the case, make sure last binding is not
 			 * for a forwarding.
 			 */
-			if (hks->forwarded && user != NULL) {
+			если (hks->forwarded && user != NULL) {
 				error_f("tried to sign on forwarding hop");
-				return -1;
+				вернуть -1;
 			}
-		} else if (!hks->forwarded) {
+		} иначе если (!hks->forwarded) {
 			error_f("tried to forward though signing bind");
-			return -1;
+			вернуть -1;
 		}
-		if (permitted_by_dest_constraints(fromkey, hks->key, id,
+		если (permitted_by_dest_constraints(fromkey, hks->key, id,
 		    test_user, hp) != 0)
-			return -1;
+			вернуть -1;
 		fromkey = hks->key;
 	}
 	/*
@@ -554,21 +554,21 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 	 * authenticate *to* a host but not permitted for *use* beyond it.
 	 */
 	hks = &e->session_ids[e->nsession_ids - 1];
-	if (hks->forwarded && user == NULL &&
+	если (hks->forwarded && user == NULL &&
 	    permitted_by_dest_constraints(hks->key, NULL, id,
 	    NULL, NULL) != 0) {
 		debug3_f("key permitted at host but not after");
-		return -1;
+		вернуть -1;
 	}
 
 	/* success */
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 socket_is_remote(SocketEntry *e)
 {
-	return e->session_bind_attempted || (e->nsession_ids != 0);
+	вернуть e->session_bind_attempted || (e->nsession_ids != 0);
 }
 
 /* return matching private key for given public key */
@@ -578,42 +578,42 @@ lookup_identity(struct sshkey *key)
 	Identity *id;
 
 	TAILQ_FOREACH(id, &idtab->idlist, next) {
-		if (sshkey_equal(key, id->key))
-			return (id);
+		если (sshkey_equal(key, id->key))
+			вернуть (id);
 	}
-	return (NULL);
+	вернуть (NULL);
 }
 
 /* Check confirmation of keysign request */
-static int
+static целое
 confirm_key(Identity *id, const char *extra)
 {
 	char *p;
-	int ret = -1;
+	целое ret = -1;
 
 	p = sshkey_fingerprint(id->key, fingerprint_hash, SSH_FP_DEFAULT);
-	if (p != NULL &&
+	если (p != NULL &&
 	    ask_permission("Allow use of key %s?\nKey fingerprint %s.%s%s",
 	    id->comment, p,
 	    extra == NULL ? "" : "\n", extra == NULL ? "" : extra))
 		ret = 0;
 	free(p);
 
-	return (ret);
+	вернуть (ret);
 }
 
 static void
 send_status_generic(SocketEntry *e, u_int code)
 {
-	int r;
+	целое r;
 
-	if ((r = sshbuf_put_u32(e->output, 1)) != 0 ||
+	если ((r = sshbuf_put_u32(e->output, 1)) != 0 ||
 	    (r = sshbuf_put_u8(e->output, code)) != 0)
 		fatal_fr(r, "compose");
 }
 
 static void
-send_status(SocketEntry *e, int success)
+send_status(SocketEntry *e, целое success)
 {
 	send_status_generic(e,
 	    success ? SSH_AGENT_SUCCESS : SSH_AGENT_FAILURE);
@@ -625,16 +625,16 @@ process_request_identities(SocketEntry *e)
 {
 	Identity *id;
 	struct sshbuf *msg, *keys;
-	int r;
+	целое r;
 	u_int i = 0, nentries = 0;
 	char *fp;
 
 	debug2_f("entering");
 
-	if ((msg = sshbuf_new()) == NULL || (keys = sshbuf_new()) == NULL)
+	если ((msg = sshbuf_new()) == NULL || (keys = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	TAILQ_FOREACH(id, &idtab->idlist, next) {
-		if ((fp = sshkey_fingerprint(id->key, SSH_FP_HASH_DEFAULT,
+		если ((fp = sshkey_fingerprint(id->key, SSH_FP_HASH_DEFAULT,
 		    SSH_FP_DEFAULT)) == NULL)
 			fatal_f("fingerprint failed");
 		debug_f("key %u / %u: %s %s", i++, idtab->nentries,
@@ -643,9 +643,9 @@ process_request_identities(SocketEntry *e)
 		    id->dest_constraints, id->ndest_constraints);
 		free(fp);
 		/* identity not visible, don't include in response */
-		if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
+		если (identity_permitted(id, e, NULL, NULL, NULL) != 0)
 			continue;
-		if ((r = sshkey_puts(id->key, keys)) != 0 ||
+		если ((r = sshkey_puts(id->key, keys)) != 0 ||
 		    (r = sshbuf_put_cstring(keys, id->comment)) != 0) {
 			error_fr(r, "compose key/comment");
 			continue;
@@ -654,11 +654,11 @@ process_request_identities(SocketEntry *e)
 	}
 	debug2_f("replying with %u allowed of %u available keys",
 	    nentries, idtab->nentries);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
+	если ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
 	    (r = sshbuf_put_u32(msg, nentries)) != 0 ||
 	    (r = sshbuf_putb(msg, keys)) != 0)
 		fatal_fr(r, "compose");
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	если ((r = sshbuf_put_stringb(e->output, msg)) != 0)
 		fatal_fr(r, "enqueue");
 	sshbuf_free(msg);
 	sshbuf_free(keys);
@@ -668,18 +668,18 @@ process_request_identities(SocketEntry *e)
 static char *
 agent_decode_alg(struct sshkey *key, u_int flags)
 {
-	if (key->type == KEY_RSA) {
-		if (flags & SSH_AGENT_RSA_SHA2_256)
-			return "rsa-sha2-256";
-		else if (flags & SSH_AGENT_RSA_SHA2_512)
-			return "rsa-sha2-512";
-	} else if (key->type == KEY_RSA_CERT) {
-		if (flags & SSH_AGENT_RSA_SHA2_256)
-			return "rsa-sha2-256-cert-v01@openssh.com";
-		else if (flags & SSH_AGENT_RSA_SHA2_512)
-			return "rsa-sha2-512-cert-v01@openssh.com";
+	если (key->type == KEY_RSA) {
+		если (flags & SSH_AGENT_RSA_SHA2_256)
+			вернуть "rsa-sha2-256";
+		иначе если (flags & SSH_AGENT_RSA_SHA2_512)
+			вернуть "rsa-sha2-512";
+	} иначе если (key->type == KEY_RSA_CERT) {
+		если (flags & SSH_AGENT_RSA_SHA2_256)
+			вернуть "rsa-sha2-256-cert-v01@openssh.com";
+		иначе если (flags & SSH_AGENT_RSA_SHA2_512)
+			вернуть "rsa-sha2-512-cert-v01@openssh.com";
 	}
-	return NULL;
+	вернуть NULL;
 }
 
 /*
@@ -689,33 +689,33 @@ agent_decode_alg(struct sshkey *key, u_int flags)
  * Note: does not modify msg buffer.
  * Optionally extract the username, session ID and/or hostkey from the request.
  */
-static int
+static целое
 parse_userauth_request(struct sshbuf *msg, const struct sshkey *expected_key,
     char **userp, struct sshbuf **sess_idp, struct sshkey **hostkeyp)
 {
 	struct sshbuf *b = NULL, *sess_id = NULL;
 	char *user = NULL, *service = NULL, *method = NULL, *pkalg = NULL;
-	int r;
+	целое r;
 	u_char t, sig_follows;
 	struct sshkey *mkey = NULL, *hostkey = NULL;
 
-	if (userp != NULL)
+	если (userp != NULL)
 		*userp = NULL;
-	if (sess_idp != NULL)
+	если (sess_idp != NULL)
 		*sess_idp = NULL;
-	if (hostkeyp != NULL)
+	если (hostkeyp != NULL)
 		*hostkeyp = NULL;
-	if ((b = sshbuf_fromb(msg)) == NULL)
+	если ((b = sshbuf_fromb(msg)) == NULL)
 		fatal_f("sshbuf_fromb");
 
 	/* SSH userauth request */
-	if ((r = sshbuf_froms(b, &sess_id)) != 0)
+	если ((r = sshbuf_froms(b, &sess_id)) != 0)
 		goto out;
-	if (sshbuf_len(sess_id) == 0) {
+	если (sshbuf_len(sess_id) == 0) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if ((r = sshbuf_get_u8(b, &t)) != 0 || /* SSH2_MSG_USERAUTH_REQUEST */
+	если ((r = sshbuf_get_u8(b, &t)) != 0 || /* SSH2_MSG_USERAUTH_REQUEST */
 	    (r = sshbuf_get_cstring(b, &user, NULL)) != 0 || /* server user */
 	    (r = sshbuf_get_cstring(b, &service, NULL)) != 0 || /* service */
 	    (r = sshbuf_get_cstring(b, &method, NULL)) != 0 || /* method */
@@ -723,7 +723,7 @@ parse_userauth_request(struct sshbuf *msg, const struct sshkey *expected_key,
 	    (r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 || /* alg */
 	    (r = sshkey_froms(b, &mkey)) != 0) /* key */
 		goto out;
-	if (t != SSH2_MSG_USERAUTH_REQUEST ||
+	если (t != SSH2_MSG_USERAUTH_REQUEST ||
 	    sig_follows != 1 ||
 	    strcmp(service, "ssh-connection") != 0 ||
 	    !sshkey_equal(expected_key, mkey) ||
@@ -731,29 +731,29 @@ parse_userauth_request(struct sshbuf *msg, const struct sshkey *expected_key,
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (strcmp(method, "publickey-hostbound-v00@openssh.com") == 0) {
-		if ((r = sshkey_froms(b, &hostkey)) != 0)
+	если (strcmp(method, "publickey-hostbound-v00@openssh.com") == 0) {
+		если ((r = sshkey_froms(b, &hostkey)) != 0)
 			goto out;
-	} else if (strcmp(method, "publickey") != 0) {
+	} иначе если (strcmp(method, "publickey") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshbuf_len(b) != 0) {
+	если (sshbuf_len(b) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
 	/* success */
 	r = 0;
 	debug3_f("well formed userauth");
-	if (userp != NULL) {
+	если (userp != NULL) {
 		*userp = user;
 		user = NULL;
 	}
-	if (sess_idp != NULL) {
+	если (sess_idp != NULL) {
 		*sess_idp = sess_id;
 		sess_id = NULL;
 	}
-	if (hostkeyp != NULL) {
+	если (hostkeyp != NULL) {
 		*hostkeyp = hostkey;
 		hostkey = NULL;
 	}
@@ -766,30 +766,30 @@ parse_userauth_request(struct sshbuf *msg, const struct sshkey *expected_key,
 	free(pkalg);
 	sshkey_free(mkey);
 	sshkey_free(hostkey);
-	return r;
+	вернуть r;
 }
 
 /*
  * Attempt to parse the contents of a buffer as a SSHSIG signature request.
  * Note: does not modify buffer.
  */
-static int
+static целое
 parse_sshsig_request(struct sshbuf *msg)
 {
-	int r;
+	целое r;
 	struct sshbuf *b;
 
-	if ((b = sshbuf_fromb(msg)) == NULL)
+	если ((b = sshbuf_fromb(msg)) == NULL)
 		fatal_f("sshbuf_fromb");
 
-	if ((r = sshbuf_cmp(b, 0, "SSHSIG", 6)) != 0 ||
+	если ((r = sshbuf_cmp(b, 0, "SSHSIG", 6)) != 0 ||
 	    (r = sshbuf_consume(b, 6)) != 0 ||
 	    (r = sshbuf_get_cstring(b, NULL, NULL)) != 0 || /* namespace */
 	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0 || /* reserved */
 	    (r = sshbuf_get_cstring(b, NULL, NULL)) != 0 || /* hashalg */
 	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0) /* H(msg) */
 		goto out;
-	if (sshbuf_len(b) != 0) {
+	если (sshbuf_len(b) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
@@ -797,7 +797,7 @@ parse_sshsig_request(struct sshbuf *msg)
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	вернуть r;
 }
 
 /*
@@ -807,34 +807,34 @@ parse_sshsig_request(struct sshbuf *msg)
  * (pubkey userauth, sshsig, CA key signing) to exclude signing challenges
  * for the web.
  */
-static int
+static целое
 check_websafe_message_contents(struct sshkey *key, struct sshbuf *data)
 {
-	if (parse_userauth_request(data, key, NULL, NULL, NULL) == 0) {
+	если (parse_userauth_request(data, key, NULL, NULL, NULL) == 0) {
 		debug_f("signed data matches public key userauth request");
-		return 1;
+		вернуть 1;
 	}
-	if (parse_sshsig_request(data) == 0) {
+	если (parse_sshsig_request(data) == 0) {
 		debug_f("signed data matches SSHSIG signature request");
-		return 1;
+		вернуть 1;
 	}
 
 	/* XXX check CA signature operation */
 
 	error("web-origin key attempting to sign non-SSH message");
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 buf_equal(const struct sshbuf *a, const struct sshbuf *b)
 {
-	if (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (sshbuf_len(a) != sshbuf_len(b))
-		return SSH_ERR_INVALID_FORMAT;
-	if (timingsafe_bcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	если (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
+		вернуть SSH_ERR_INVALID_ARGUMENT;
+	если (sshbuf_len(a) != sshbuf_len(b))
+		вернуть SSH_ERR_INVALID_FORMAT;
+	если (timingsafe_bcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
+		вернуть SSH_ERR_INVALID_FORMAT;
+	вернуть 0;
 }
 
 /* ssh2 only */
@@ -844,7 +844,7 @@ process_sign_request2(SocketEntry *e)
 	u_char *signature = NULL;
 	size_t slen = 0;
 	u_int compat = 0, flags;
-	int r, ok = -1, retried = 0;
+	целое r, ok = -1, retried = 0;
 	char *fp = NULL, *pin = NULL, *prompt = NULL;
 	char *user = NULL, *sig_dest = NULL;
 	const char *fwd_host = NULL, *dest_host = NULL;
@@ -855,30 +855,30 @@ process_sign_request2(SocketEntry *e)
 
 	debug_f("entering");
 
-	if ((msg = sshbuf_new()) == NULL || (data = sshbuf_new()) == NULL)
+	если ((msg = sshbuf_new()) == NULL || (data = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_froms(e->request, &key)) != 0 ||
+	если ((r = sshkey_froms(e->request, &key)) != 0 ||
 	    (r = sshbuf_get_stringb(e->request, data)) != 0 ||
 	    (r = sshbuf_get_u32(e->request, &flags)) != 0) {
 		error_fr(r, "parse");
 		goto send;
 	}
 
-	if ((id = lookup_identity(key)) == NULL) {
+	если ((id = lookup_identity(key)) == NULL) {
 		verbose_f("%s key not found", sshkey_type(key));
 		goto send;
 	}
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
+	если ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
 	    SSH_FP_DEFAULT)) == NULL)
 		fatal_f("fingerprint failed");
 
-	if (id->ndest_constraints != 0) {
-		if (e->nsession_ids == 0) {
+	если (id->ndest_constraints != 0) {
+		если (e->nsession_ids == 0) {
 			logit_f("refusing use of destination-constrained key "
 			    "to sign on unbound connection");
 			goto send;
 		}
-		if (parse_userauth_request(data, key, &user, &sid,
+		если (parse_userauth_request(data, key, &user, &sid,
 		    &hostkey) != 0) {
 			logit_f("refusing use of destination-constrained key "
 			   "to sign an unidentified signature");
@@ -886,7 +886,7 @@ process_sign_request2(SocketEntry *e)
 		}
 		/* XXX logspam */
 		debug_f("user=%s", user);
-		if (identity_permitted(id, e, user, &fwd_host, &dest_host) != 0)
+		если (identity_permitted(id, e, user, &fwd_host, &dest_host) != 0)
 			goto send;
 		/* XXX display fwd_host/dest_host in askpass UI */
 		/*
@@ -894,7 +894,7 @@ process_sign_request2(SocketEntry *e)
 		 * registered on the socket - it should have been bound by
 		 * ssh immediately before userauth.
 		 */
-		if (buf_equal(sid,
+		если (buf_equal(sid,
 		    e->session_ids[e->nsession_ids - 1].sid) != 0) {
 			error_f("unexpected session ID (%zu listed) on "
 			    "signature request for target user %s with "
@@ -907,13 +907,13 @@ process_sign_request2(SocketEntry *e)
 		 * the one most recently bound to the socket. An exception is
 		 * made for the initial forwarding hop.
 		 */
-		if (e->nsession_ids > 1 && hostkey == NULL) {
+		если (e->nsession_ids > 1 && hostkey == NULL) {
 			error_f("refusing use of destination-constrained key: "
 			    "no hostkey recorded in signature for forwarded "
 			    "connection");
 			goto send;
 		}
-		if (hostkey != NULL && !sshkey_equal(hostkey,
+		если (hostkey != NULL && !sshkey_equal(hostkey,
 		    e->session_ids[e->nsession_ids - 1].key)) {
 			error_f("refusing use of destination-constrained key: "
 			    "mismatch between hostkey in request and most "
@@ -923,19 +923,19 @@ process_sign_request2(SocketEntry *e)
 		xasprintf(&sig_dest, "public key authentication request for "
 		    "user \"%s\" to listed host", user);
 	}
-	if (id->confirm && confirm_key(id, sig_dest) != 0) {
+	если (id->confirm && confirm_key(id, sig_dest) != 0) {
 		verbose_f("user refused key");
 		goto send;
 	}
-	if (sshkey_is_sk(id->key)) {
-		if (restrict_websafe &&
+	если (sshkey_is_sk(id->key)) {
+		если (restrict_websafe &&
 		    match_pattern_list(id->key->sk_application,
 		    websafe_allowlist, 0) != 1 &&
 		    !check_websafe_message_contents(key, data)) {
 			/* error already logged */
 			goto send;
 		}
-		if (id->key->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
+		если (id->key->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
 			notifier = notify_start(0,
 			    "Confirm user presence for key %s %s%s%s",
 			    sshkey_type(id->key), fp,
@@ -944,11 +944,11 @@ process_sign_request2(SocketEntry *e)
 		}
 	}
  retry_pin:
-	if ((r = sshkey_sign(id->key, &signature, &slen,
+	если ((r = sshkey_sign(id->key, &signature, &slen,
 	    sshbuf_ptr(data), sshbuf_len(data), agent_decode_alg(key, flags),
 	    id->sk_provider, pin, compat)) != 0) {
 		debug_fr(r, "sshkey_sign");
-		if (pin == NULL && !retried && sshkey_is_sk(id->key) &&
+		если (pin == NULL && !retried && sshkey_is_sk(id->key) &&
 		    r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
 			notify_complete(notifier, NULL);
 			notifier = NULL;
@@ -970,14 +970,14 @@ process_sign_request2(SocketEntry *e)
  send:
 	notify_complete(notifier, "User presence confirmed");
 
-	if (ok == 0) {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
+	если (ok == 0) {
+		если ((r = sshbuf_put_u8(msg, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
 		    (r = sshbuf_put_string(msg, signature, slen)) != 0)
 			fatal_fr(r, "compose");
-	} else if ((r = sshbuf_put_u8(msg, SSH_AGENT_FAILURE)) != 0)
+	} иначе если ((r = sshbuf_put_u8(msg, SSH_AGENT_FAILURE)) != 0)
 		fatal_fr(r, "compose failure");
 
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	если ((r = sshbuf_put_stringb(e->output, msg)) != 0)
 		fatal_fr(r, "enqueue");
 
 	sshbuf_free(sid);
@@ -990,7 +990,7 @@ process_sign_request2(SocketEntry *e)
 	free(sig_dest);
 	free(user);
 	free(prompt);
-	if (pin != NULL)
+	если (pin != NULL)
 		freezero(pin, strlen(pin));
 }
 
@@ -998,24 +998,24 @@ process_sign_request2(SocketEntry *e)
 static void
 process_remove_identity(SocketEntry *e)
 {
-	int r, success = 0;
+	целое r, success = 0;
 	struct sshkey *key = NULL;
 	Identity *id;
 
 	debug2_f("entering");
-	if ((r = sshkey_froms(e->request, &key)) != 0) {
+	если ((r = sshkey_froms(e->request, &key)) != 0) {
 		error_fr(r, "parse key");
 		goto done;
 	}
-	if ((id = lookup_identity(key)) == NULL) {
+	если ((id = lookup_identity(key)) == NULL) {
 		debug_f("key not found");
 		goto done;
 	}
 	/* identity not visible, cannot be removed */
-	if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
+	если (identity_permitted(id, e, NULL, NULL, NULL) != 0)
 		goto done; /* error already logged */
 	/* We have this key, free it. */
-	if (idtab->nentries < 1)
+	если (idtab->nentries < 1)
 		fatal_f("internal error: nentries %d", idtab->nentries);
 	TAILQ_REMOVE(&idtab->idlist, id, next);
 	free_identity(id);
@@ -1033,7 +1033,7 @@ remove_all_identities(void)
 
 	debug2_f("entering");
 	/* Loop over all identities and clear the keys. */
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	для (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
 		TAILQ_REMOVE(&idtab->idlist, id, next);
 		free_identity(id);
@@ -1059,67 +1059,67 @@ reaper(void)
 	time_t deadline = 0, now = monotime();
 	Identity *id, *nxt;
 
-	for (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
+	для (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
 		nxt = TAILQ_NEXT(id, next);
-		if (id->death == 0)
+		если (id->death == 0)
 			continue;
-		if (now >= id->death) {
+		если (now >= id->death) {
 			debug("expiring key '%s'", id->comment);
 			TAILQ_REMOVE(&idtab->idlist, id, next);
 			free_identity(id);
 			idtab->nentries--;
-		} else
+		} иначе
 			deadline = (deadline == 0) ? id->death :
 			    MINIMUM(deadline, id->death);
 	}
-	if (deadline == 0 || deadline <= now)
-		return 0;
-	else
-		return (deadline - now);
+	если (deadline == 0 || deadline <= now)
+		вернуть 0;
+	иначе
+		вернуть (deadline - now);
 }
 
-static int
+static целое
 parse_dest_constraint_hop(struct sshbuf *b, struct dest_constraint_hop *dch)
 {
 	u_char key_is_ca;
 	size_t elen = 0, userlen = 0;
-	int r;
+	целое r;
 	struct sshkey *k = NULL;
 	char *fp;
 
 	memset(dch, '\0', sizeof(*dch));
-	if ((r = sshbuf_get_cstring(b, &dch->user, &userlen)) != 0 ||
+	если ((r = sshbuf_get_cstring(b, &dch->user, &userlen)) != 0 ||
 	    (r = sshbuf_get_cstring(b, &dch->hostname, NULL)) != 0 ||
 	    (r = sshbuf_get_string_direct(b, NULL, &elen)) != 0) {
 		error_fr(r, "parse");
 		goto out;
 	}
-	if (elen != 0) {
+	если (elen != 0) {
 		error_f("unsupported extensions (len %zu)", elen);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
 		goto out;
 	}
-	if (*dch->hostname == '\0') {
+	если (*dch->hostname == '\0') {
 		free(dch->hostname);
 		dch->hostname = NULL;
 	}
-	if (*dch->user == '\0') {
+	если (*dch->user == '\0') {
 		free(dch->user);
 		dch->user = NULL;
-	} else if (userlen > AGENT_USER_CONSTRAINT_MAX_LEN) {
+	} иначе если (userlen > AGENT_USER_CONSTRAINT_MAX_LEN) {
 		error_f("user match pattern too long");
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	while (sshbuf_len(b) != 0) {
+	пока (sshbuf_len(b) != 0) {
 		dch->keys = xrecallocarray(dch->keys, dch->nkeys,
 		    dch->nkeys + 1, sizeof(*dch->keys));
 		dch->key_is_ca = xrecallocarray(dch->key_is_ca, dch->nkeys,
 		    dch->nkeys + 1, sizeof(*dch->key_is_ca));
-		if ((r = sshkey_froms(b, &k)) != 0 ||
+		если ((r = sshkey_froms(b, &k)) != 0 ||
 		    (r = sshbuf_get_u8(b, &key_is_ca)) != 0)
 			goto out;
-		if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+		если ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
 		    SSH_FP_DEFAULT)) == NULL)
 			fatal_f("fingerprint failed");
 		debug3_f("%s%s%s: adding %skey %s %s",
@@ -1136,30 +1136,30 @@ parse_dest_constraint_hop(struct sshbuf *b, struct dest_constraint_hop *dch)
 	r = 0;
  out:
 	sshkey_free(k);
-	return r;
+	вернуть r;
 }
 
-static int
+static целое
 parse_dest_constraint(struct sshbuf *m, struct dest_constraint *dc)
 {
 	struct sshbuf *b = NULL, *frombuf = NULL, *tobuf = NULL;
-	int r;
+	целое r;
 	size_t elen = 0;
 
 	debug3_f("entering");
 
 	memset(dc, '\0', sizeof(*dc));
-	if ((r = sshbuf_froms(m, &b)) != 0 ||
+	если ((r = sshbuf_froms(m, &b)) != 0 ||
 	    (r = sshbuf_froms(b, &frombuf)) != 0 ||
 	    (r = sshbuf_froms(b, &tobuf)) != 0 ||
 	    (r = sshbuf_get_string_direct(b, NULL, &elen)) != 0) {
 		error_fr(r, "parse");
 		goto out;
 	}
-	if ((r = parse_dest_constraint_hop(frombuf, &dc->from)) != 0 ||
+	если ((r = parse_dest_constraint_hop(frombuf, &dc->from)) != 0 ||
 	    (r = parse_dest_constraint_hop(tobuf, &dc->to)) != 0)
 		goto out; /* already logged */
-	if (elen != 0) {
+	если (elen != 0) {
 		error_f("unsupported extensions (len %zu)", elen);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
 		goto out;
@@ -1169,13 +1169,13 @@ parse_dest_constraint(struct sshbuf *m, struct dest_constraint *dc)
 	    dc->to.user ? dc->to.user : "", dc->to.user ? "@" : "",
 	    dc->to.hostname ? dc->to.hostname : "(ANY)", dc->to.nkeys);
 	/* check consistency */
-	if ((dc->from.hostname == NULL) != (dc->from.nkeys == 0) ||
+	если ((dc->from.hostname == NULL) != (dc->from.nkeys == 0) ||
 	    dc->from.user != NULL) {
 		error_f("inconsistent \"from\" specification");
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (dc->to.hostname == NULL || dc->to.nkeys == 0) {
+	если (dc->to.hostname == NULL || dc->to.nkeys == 0) {
 		error_f("incomplete \"to\" specification");
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
@@ -1186,96 +1186,96 @@ parse_dest_constraint(struct sshbuf *m, struct dest_constraint *dc)
 	sshbuf_free(b);
 	sshbuf_free(frombuf);
 	sshbuf_free(tobuf);
-	return r;
+	вернуть r;
 }
 
-static int
+static целое
 parse_key_constraint_extension(struct sshbuf *m, char **sk_providerp,
-    struct dest_constraint **dcsp, size_t *ndcsp, int *cert_onlyp,
+    struct dest_constraint **dcsp, size_t *ndcsp, целое *cert_onlyp,
     struct sshkey ***certs, size_t *ncerts)
 {
 	char *ext_name = NULL;
-	int r;
+	целое r;
 	struct sshbuf *b = NULL;
 	u_char v;
 	struct sshkey *k;
 
-	if ((r = sshbuf_get_cstring(m, &ext_name, NULL)) != 0) {
+	если ((r = sshbuf_get_cstring(m, &ext_name, NULL)) != 0) {
 		error_fr(r, "parse constraint extension");
 		goto out;
 	}
 	debug_f("constraint ext %s", ext_name);
-	if (strcmp(ext_name, "sk-provider@openssh.com") == 0) {
-		if (sk_providerp == NULL) {
+	если (strcmp(ext_name, "sk-provider@openssh.com") == 0) {
+		если (sk_providerp == NULL) {
 			error_f("%s not valid here", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
-		if (*sk_providerp != NULL) {
+		если (*sk_providerp != NULL) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
-		if ((r = sshbuf_get_cstring(m, sk_providerp, NULL)) != 0) {
+		если ((r = sshbuf_get_cstring(m, sk_providerp, NULL)) != 0) {
 			error_fr(r, "parse %s", ext_name);
 			goto out;
 		}
-	} else if (strcmp(ext_name,
+	} иначе если (strcmp(ext_name,
 	    "restrict-destination-v00@openssh.com") == 0) {
-		if (*dcsp != NULL) {
+		если (*dcsp != NULL) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
-		if ((r = sshbuf_froms(m, &b)) != 0) {
+		если ((r = sshbuf_froms(m, &b)) != 0) {
 			error_fr(r, "parse %s outer", ext_name);
 			goto out;
 		}
-		while (sshbuf_len(b) != 0) {
-			if (*ndcsp >= AGENT_MAX_DEST_CONSTRAINTS) {
+		пока (sshbuf_len(b) != 0) {
+			если (*ndcsp >= AGENT_MAX_DEST_CONSTRAINTS) {
 				error_f("too many %s constraints", ext_name);
 				r = SSH_ERR_INVALID_FORMAT;
 				goto out;
 			}
 			*dcsp = xrecallocarray(*dcsp, *ndcsp, *ndcsp + 1,
 			    sizeof(**dcsp));
-			if ((r = parse_dest_constraint(b,
+			если ((r = parse_dest_constraint(b,
 			    *dcsp + (*ndcsp)++)) != 0)
 				goto out; /* error already logged */
 		}
-	} else if (strcmp(ext_name,
+	} иначе если (strcmp(ext_name,
 	    "associated-certs-v00@openssh.com") == 0) {
-		if (certs == NULL || ncerts == NULL || cert_onlyp == NULL) {
+		если (certs == NULL || ncerts == NULL || cert_onlyp == NULL) {
 			error_f("%s not valid here", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
-		if (*certs != NULL) {
+		если (*certs != NULL) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
-		if ((r = sshbuf_get_u8(m, &v)) != 0 ||
+		если ((r = sshbuf_get_u8(m, &v)) != 0 ||
 		    (r = sshbuf_froms(m, &b)) != 0) {
 			error_fr(r, "parse %s", ext_name);
 			goto out;
 		}
 		*cert_onlyp = v != 0;
-		while (sshbuf_len(b) != 0) {
-			if (*ncerts >= AGENT_MAX_EXT_CERTS) {
+		пока (sshbuf_len(b) != 0) {
+			если (*ncerts >= AGENT_MAX_EXT_CERTS) {
 				error_f("too many %s constraints", ext_name);
 				r = SSH_ERR_INVALID_FORMAT;
 				goto out;
 			}
 			*certs = xrecallocarray(*certs, *ncerts, *ncerts + 1,
 			    sizeof(**certs));
-			if ((r = sshkey_froms(b, &k)) != 0) {
+			если ((r = sshkey_froms(b, &k)) != 0) {
 				error_fr(r, "parse key");
 				goto out;
 			}
 			(*certs)[(*ncerts)++] = k;
 		}
-	} else {
+	} иначе {
 		error_f("unsupported constraint \"%s\"", ext_name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
 		goto out;
@@ -1285,32 +1285,32 @@ parse_key_constraint_extension(struct sshbuf *m, char **sk_providerp,
  out:
 	free(ext_name);
 	sshbuf_free(b);
-	return r;
+	вернуть r;
 }
 
-static int
+static целое
 parse_key_constraints(struct sshbuf *m, struct sshkey *k, time_t *deathp,
-    u_int *secondsp, int *confirmp, char **sk_providerp,
+    u_int *secondsp, целое *confirmp, char **sk_providerp,
     struct dest_constraint **dcsp, size_t *ndcsp,
-    int *cert_onlyp, size_t *ncerts, struct sshkey ***certs)
+    целое *cert_onlyp, size_t *ncerts, struct sshkey ***certs)
 {
 	u_char ctype;
-	int r;
+	целое r;
 	u_int seconds;
 
-	while (sshbuf_len(m)) {
-		if ((r = sshbuf_get_u8(m, &ctype)) != 0) {
+	пока (sshbuf_len(m)) {
+		если ((r = sshbuf_get_u8(m, &ctype)) != 0) {
 			error_fr(r, "parse constraint type");
 			goto out;
 		}
 		switch (ctype) {
 		case SSH_AGENT_CONSTRAIN_LIFETIME:
-			if (*deathp != 0) {
+			если (*deathp != 0) {
 				error_f("lifetime already set");
 				r = SSH_ERR_INVALID_FORMAT;
 				goto out;
 			}
-			if ((r = sshbuf_get_u32(m, &seconds)) != 0) {
+			если ((r = sshbuf_get_u32(m, &seconds)) != 0) {
 				error_fr(r, "parse lifetime constraint");
 				goto out;
 			}
@@ -1318,7 +1318,7 @@ parse_key_constraints(struct sshbuf *m, struct sshkey *k, time_t *deathp,
 			*secondsp = seconds;
 			break;
 		case SSH_AGENT_CONSTRAIN_CONFIRM:
-			if (*confirmp != 0) {
+			если (*confirmp != 0) {
 				error_f("confirm already set");
 				r = SSH_ERR_INVALID_FORMAT;
 				goto out;
@@ -1326,7 +1326,7 @@ parse_key_constraints(struct sshbuf *m, struct sshkey *k, time_t *deathp,
 			*confirmp = 1;
 			break;
 		case SSH_AGENT_CONSTRAIN_EXTENSION:
-			if ((r = parse_key_constraint_extension(m,
+			если ((r = parse_key_constraint_extension(m,
 			    sk_providerp, dcsp, ndcsp,
 			    cert_onlyp, certs, ncerts)) != 0)
 				goto out; /* error already logged */
@@ -1340,14 +1340,14 @@ parse_key_constraints(struct sshbuf *m, struct sshkey *k, time_t *deathp,
 	/* success */
 	r = 0;
  out:
-	return r;
+	вернуть r;
 }
 
 static void
 process_add_identity(SocketEntry *e)
 {
 	Identity *id;
-	int success = 0, confirm = 0;
+	целое success = 0, confirm = 0;
 	char *fp, *comment = NULL, *sk_provider = NULL;
 	char canonical_provider[PATH_MAX];
 	time_t death = 0;
@@ -1355,16 +1355,16 @@ process_add_identity(SocketEntry *e)
 	struct dest_constraint *dest_constraints = NULL;
 	size_t ndest_constraints = 0;
 	struct sshkey *k = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	целое r = SSH_ERR_INTERNAL_ERROR;
 
 	debug2_f("entering");
-	if ((r = sshkey_private_deserialize(e->request, &k)) != 0 ||
+	если ((r = sshkey_private_deserialize(e->request, &k)) != 0 ||
 	    k == NULL ||
 	    (r = sshbuf_get_cstring(e->request, &comment, NULL)) != 0) {
 		error_fr(r, "parse");
 		goto out;
 	}
-	if (parse_key_constraints(e->request, k, &death, &seconds, &confirm,
+	если (parse_key_constraints(e->request, k, &death, &seconds, &confirm,
 	    &sk_provider, &dest_constraints, &ndest_constraints,
 	    NULL, NULL, NULL) != 0) {
 		error_f("failed to parse constraints");
@@ -1373,22 +1373,22 @@ process_add_identity(SocketEntry *e)
 	}
 	dump_dest_constraints(__func__, dest_constraints, ndest_constraints);
 
-	if (sk_provider != NULL) {
-		if (!sshkey_is_sk(k)) {
+	если (sk_provider != NULL) {
+		если (!sshkey_is_sk(k)) {
 			error("Cannot add provider: %s is not an "
 			    "authenticator-hosted key", sshkey_type(k));
 			goto out;
 		}
-		if (strcasecmp(sk_provider, "internal") == 0) {
+		если (strcasecmp(sk_provider, "internal") == 0) {
 			debug_f("internal provider");
-		} else {
-			if (socket_is_remote(e) && !remote_add_provider) {
+		} иначе {
+			если (socket_is_remote(e) && !remote_add_provider) {
 				verbose("failed add of SK provider \"%.100s\": "
 				    "remote addition of providers is disabled",
 				    sk_provider);
 				goto out;
 			}
-			if (realpath(sk_provider, canonical_provider) == NULL) {
+			если (realpath(sk_provider, canonical_provider) == NULL) {
 				verbose("failed provider \"%.100s\": "
 				    "realpath: %s", sk_provider,
 				    strerror(errno));
@@ -1396,7 +1396,7 @@ process_add_identity(SocketEntry *e)
 			}
 			free(sk_provider);
 			sk_provider = xstrdup(canonical_provider);
-			if (match_pattern_list(sk_provider,
+			если (match_pattern_list(sk_provider,
 			    allowed_providers, 0) != 1) {
 				error("Refusing add key: "
 				    "provider %s not allowed", sk_provider);
@@ -1404,20 +1404,20 @@ process_add_identity(SocketEntry *e)
 			}
 		}
 	}
-	if ((r = sshkey_shield_private(k)) != 0) {
+	если ((r = sshkey_shield_private(k)) != 0) {
 		error_fr(r, "shield private");
 		goto out;
 	}
-	if (lifetime && !death)
+	если (lifetime && !death)
 		death = monotime() + lifetime;
-	if ((id = lookup_identity(k)) == NULL) {
+	если ((id = lookup_identity(k)) == NULL) {
 		id = xcalloc(1, sizeof(Identity));
 		TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
 		/* Increment the number of identities. */
 		idtab->nentries++;
-	} else {
+	} иначе {
 		/* identity not visible, do not update */
-		if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
+		если (identity_permitted(id, e, NULL, NULL, NULL) != 0)
 			goto out; /* error already logged */
 		/* key state might have been updated */
 		sshkey_free(id->key);
@@ -1435,7 +1435,7 @@ process_add_identity(SocketEntry *e)
 	id->dest_constraints = dest_constraints;
 	id->ndest_constraints = ndest_constraints;
 
-	if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+	если ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
 	    SSH_FP_DEFAULT)) == NULL)
 		fatal_f("sshkey_fingerprint failed");
 	debug_f("add %s %s \"%.100s\" (life: %u) (confirm: %u) "
@@ -1460,9 +1460,9 @@ process_add_identity(SocketEntry *e)
 
 /* XXX todo: encrypt sensitive data with passphrase */
 static void
-process_lock_agent(SocketEntry *e, int lock)
+process_lock_agent(SocketEntry *e, целое lock)
 {
-	int r, success = 0, delay;
+	целое r, success = 0, delay;
 	char *passwd;
 	u_char passwdhash[LOCK_SIZE];
 	static u_int fail_count = 0;
@@ -1474,23 +1474,23 @@ process_lock_agent(SocketEntry *e, int lock)
 	 * but we can't parse their request properly. The only safe thing to
 	 * do is abort.
 	 */
-	if ((r = sshbuf_get_cstring(e->request, &passwd, &pwlen)) != 0)
+	если ((r = sshbuf_get_cstring(e->request, &passwd, &pwlen)) != 0)
 		fatal_fr(r, "parse");
-	if (pwlen == 0) {
+	если (pwlen == 0) {
 		debug("empty password not supported");
-	} else if (locked && !lock) {
-		if (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
+	} иначе если (locked && !lock) {
+		если (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
 		    passwdhash, sizeof(passwdhash), LOCK_ROUNDS) < 0)
 			fatal("bcrypt_pbkdf");
-		if (timingsafe_bcmp(passwdhash, lock_pwhash, LOCK_SIZE) == 0) {
+		если (timingsafe_bcmp(passwdhash, lock_pwhash, LOCK_SIZE) == 0) {
 			debug("agent unlocked");
 			locked = 0;
 			fail_count = 0;
 			explicit_bzero(lock_pwhash, sizeof(lock_pwhash));
 			success = 1;
-		} else {
+		} иначе {
 			/* delay in 0.1s increments up to 10s */
-			if (fail_count < 100)
+			если (fail_count < 100)
 				fail_count++;
 			delay = 100000 * fail_count;
 			debug("unlock failed, delaying %0.1lf seconds",
@@ -1498,11 +1498,11 @@ process_lock_agent(SocketEntry *e, int lock)
 			usleep(delay);
 		}
 		explicit_bzero(passwdhash, sizeof(passwdhash));
-	} else if (!locked && lock) {
+	} иначе если (!locked && lock) {
 		debug("agent locked");
 		locked = 1;
 		arc4random_buf(lock_salt, sizeof(lock_salt));
-		if (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
+		если (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
 		    lock_pwhash, sizeof(lock_pwhash), LOCK_ROUNDS) < 0)
 			fatal("bcrypt_pbkdf");
 		success = 1;
@@ -1515,11 +1515,11 @@ static void
 no_identities(SocketEntry *e)
 {
 	struct sshbuf *msg;
-	int r;
+	целое r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	если ((msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
+	если ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
 	    (r = sshbuf_put_u32(msg, 0)) != 0 ||
 	    (r = sshbuf_put_stringb(e->output, msg)) != 0)
 		fatal_fr(r, "compose");
@@ -1535,10 +1535,10 @@ add_p11_identity(struct sshkey *key, char *comment, const char *provider,
 {
 	Identity *id;
 
-	if (lookup_identity(key) != NULL) {
+	если (lookup_identity(key) != NULL) {
 		sshkey_free(key);
 		free(comment);
-		return;
+		вернуть;
 	}
 	id = xcalloc(1, sizeof(Identity));
 	id->key = key;
@@ -1558,66 +1558,66 @@ process_add_smartcard_key(SocketEntry *e)
 {
 	char *provider = NULL, *pin = NULL, canonical_provider[PATH_MAX];
 	char **comments = NULL;
-	int r, i, count = 0, success = 0, confirm = 0;
+	целое r, i, count = 0, success = 0, confirm = 0;
 	u_int seconds = 0;
 	time_t death = 0;
 	struct sshkey **keys = NULL, *k;
 	struct dest_constraint *dest_constraints = NULL;
 	size_t j, ndest_constraints = 0, ncerts = 0;
 	struct sshkey **certs = NULL;
-	int cert_only = 0;
+	целое cert_only = 0;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
+	если ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(e->request, &pin, NULL)) != 0) {
 		error_fr(r, "parse");
 		goto send;
 	}
-	if (parse_key_constraints(e->request, NULL, &death, &seconds, &confirm,
+	если (parse_key_constraints(e->request, NULL, &death, &seconds, &confirm,
 	    NULL, &dest_constraints, &ndest_constraints, &cert_only,
 	    &ncerts, &certs) != 0) {
 		error_f("failed to parse constraints");
 		goto send;
 	}
 	dump_dest_constraints(__func__, dest_constraints, ndest_constraints);
-	if (socket_is_remote(e) && !remote_add_provider) {
+	если (socket_is_remote(e) && !remote_add_provider) {
 		verbose("failed PKCS#11 add of \"%.100s\": remote addition of "
 		    "providers is disabled", provider);
 		goto send;
 	}
-	if (realpath(provider, canonical_provider) == NULL) {
+	если (realpath(provider, canonical_provider) == NULL) {
 		verbose("failed PKCS#11 add of \"%.100s\": realpath: %s",
 		    provider, strerror(errno));
 		goto send;
 	}
-	if (match_pattern_list(canonical_provider, allowed_providers, 0) != 1) {
+	если (match_pattern_list(canonical_provider, allowed_providers, 0) != 1) {
 		verbose("refusing PKCS#11 add of \"%.100s\": "
 		    "provider not allowed", canonical_provider);
 		goto send;
 	}
 	debug_f("add %.100s", canonical_provider);
-	if (lifetime && !death)
+	если (lifetime && !death)
 		death = monotime() + lifetime;
 
 	count = pkcs11_add_provider(canonical_provider, pin, &keys, &comments);
-	for (i = 0; i < count; i++) {
-		if (comments[i] == NULL || comments[i][0] == '\0') {
+	для (i = 0; i < count; i++) {
+		если (comments[i] == NULL || comments[i][0] == '\0') {
 			free(comments[i]);
 			comments[i] = xstrdup(canonical_provider);
 		}
-		for (j = 0; j < ncerts; j++) {
-			if (!sshkey_is_cert(certs[j]))
+		для (j = 0; j < ncerts; j++) {
+			если (!sshkey_is_cert(certs[j]))
 				continue;
-			if (!sshkey_equal_public(keys[i], certs[j]))
+			если (!sshkey_equal_public(keys[i], certs[j]))
 				continue;
-			if (pkcs11_make_cert(keys[i], certs[j], &k) != 0)
+			если (pkcs11_make_cert(keys[i], certs[j], &k) != 0)
 				continue;
 			add_p11_identity(k, xstrdup(comments[i]),
 			    canonical_provider, death, confirm,
 			    dest_constraints, ndest_constraints);
 			success = 1;
 		}
-		if (!cert_only && lookup_identity(keys[i]) == NULL) {
+		если (!cert_only && lookup_identity(keys[i]) == NULL) {
 			add_p11_identity(keys[i], comments[i],
 			    canonical_provider, death, confirm,
 			    dest_constraints, ndest_constraints);
@@ -1635,7 +1635,7 @@ send:
 	free(keys);
 	free(comments);
 	free_dest_constraints(dest_constraints, ndest_constraints);
-	for (j = 0; j < ncerts; j++)
+	для (j = 0; j < ncerts; j++)
 		sshkey_free(certs[j]);
 	free(certs);
 	send_status(e, success);
@@ -1645,38 +1645,38 @@ static void
 process_remove_smartcard_key(SocketEntry *e)
 {
 	char *provider = NULL, *pin = NULL, canonical_provider[PATH_MAX];
-	int r, success = 0;
+	целое r, success = 0;
 	Identity *id, *nxt;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
+	если ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(e->request, &pin, NULL)) != 0) {
 		error_fr(r, "parse");
 		goto send;
 	}
 	free(pin);
 
-	if (realpath(provider, canonical_provider) == NULL) {
+	если (realpath(provider, canonical_provider) == NULL) {
 		verbose("failed PKCS#11 add of \"%.100s\": realpath: %s",
 		    provider, strerror(errno));
 		goto send;
 	}
 
 	debug_f("remove %.100s", canonical_provider);
-	for (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
+	для (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
 		nxt = TAILQ_NEXT(id, next);
 		/* Skip file--based keys */
-		if (id->provider == NULL)
+		если (id->provider == NULL)
 			continue;
-		if (!strcmp(canonical_provider, id->provider)) {
+		если (!strcmp(canonical_provider, id->provider)) {
 			TAILQ_REMOVE(&idtab->idlist, id, next);
 			free_identity(id);
 			idtab->nentries--;
 		}
 	}
-	if (pkcs11_del_provider(canonical_provider) == 0)
+	если (pkcs11_del_provider(canonical_provider) == 0)
 		success = 1;
-	else
+	иначе
 		error_f("pkcs11_del_provider failed");
 send:
 	free(provider);
@@ -1684,10 +1684,10 @@ send:
 }
 #endif /* ENABLE_PKCS11 */
 
-static int
+static целое
 process_ext_session_bind(SocketEntry *e)
 {
-	int r, sid_match, key_match;
+	целое r, sid_match, key_match;
 	struct sshkey *key = NULL;
 	struct sshbuf *sid = NULL, *sig = NULL;
 	char *fp = NULL;
@@ -1696,29 +1696,29 @@ process_ext_session_bind(SocketEntry *e)
 
 	debug2_f("entering");
 	e->session_bind_attempted = 1;
-	if ((r = sshkey_froms(e->request, &key)) != 0 ||
+	если ((r = sshkey_froms(e->request, &key)) != 0 ||
 	    (r = sshbuf_froms(e->request, &sid)) != 0 ||
 	    (r = sshbuf_froms(e->request, &sig)) != 0 ||
 	    (r = sshbuf_get_u8(e->request, &fwd)) != 0) {
 		error_fr(r, "parse");
 		goto out;
 	}
-	if (sshbuf_len(sid) > AGENT_MAX_SID_LEN) {
+	если (sshbuf_len(sid) > AGENT_MAX_SID_LEN) {
 		error_f("session ID too long");
 		goto out;
 	}
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
+	если ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
 	    SSH_FP_DEFAULT)) == NULL)
 		fatal_f("fingerprint failed");
 	/* check signature with hostkey on session ID */
-	if ((r = sshkey_verify(key, sshbuf_ptr(sig), sshbuf_len(sig),
+	если ((r = sshkey_verify(key, sshbuf_ptr(sig), sshbuf_len(sig),
 	    sshbuf_ptr(sid), sshbuf_len(sid), NULL, 0, NULL)) != 0) {
 		error_fr(r, "sshkey_verify for %s %s", sshkey_type(key), fp);
 		goto out;
 	}
 	/* check whether sid/key already recorded */
-	for (i = 0; i < e->nsession_ids; i++) {
-		if (!e->session_ids[i].forwarded) {
+	для (i = 0; i < e->nsession_ids; i++) {
+		если (!e->session_ids[i].forwarded) {
 			error_f("attempt to bind session ID to socket "
 			    "previously bound for authentication attempt");
 			r = -1;
@@ -1726,12 +1726,12 @@ process_ext_session_bind(SocketEntry *e)
 		}
 		sid_match = buf_equal(sid, e->session_ids[i].sid) == 0;
 		key_match = sshkey_equal(key, e->session_ids[i].key);
-		if (sid_match && key_match) {
+		если (sid_match && key_match) {
 			debug_f("session ID already recorded for %s %s",
 			    sshkey_type(key), fp);
 			r = 0;
 			goto out;
-		} else if (sid_match) {
+		} иначе если (sid_match) {
 			error_f("session ID recorded against different key "
 			    "for %s %s", sshkey_type(key), fp);
 			r = -1;
@@ -1743,7 +1743,7 @@ process_ext_session_bind(SocketEntry *e)
 		 */
 	}
 	/* record new key/sid */
-	if (e->nsession_ids >= AGENT_MAX_SESSION_IDS) {
+	если (e->nsession_ids >= AGENT_MAX_SESSION_IDS) {
 		error_f("too many session IDs recorded");
 		r = -1;
 		goto out;
@@ -1757,9 +1757,9 @@ process_ext_session_bind(SocketEntry *e)
 	e->session_ids[i].forwarded = fwd != 0;
 	key = NULL; /* transferred */
 	/* can't transfer sid; it's refcounted and scoped to request's life */
-	if ((e->session_ids[i].sid = sshbuf_new()) == NULL)
+	если ((e->session_ids[i].sid = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_putb(e->session_ids[i].sid, sid)) != 0)
+	если ((r = sshbuf_putb(e->session_ids[i].sid, sid)) != 0)
 		fatal_fr(r, "sshbuf_putb session ID");
 	/* success */
 	r = 0;
@@ -1768,40 +1768,40 @@ process_ext_session_bind(SocketEntry *e)
 	sshkey_free(key);
 	sshbuf_free(sid);
 	sshbuf_free(sig);
-	return r == 0 ? 1 : 0;
+	вернуть r == 0 ? 1 : 0;
 }
 
-static int
+static целое
 process_ext_query(SocketEntry *e)
 {
-	int r;
+	целое r;
 	struct sshbuf *msg = NULL;
 
 	debug2_f("entering");
-	if ((msg = sshbuf_new()) == NULL)
+	если ((msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH_AGENT_EXTENSION_RESPONSE)) != 0 ||
+	если ((r = sshbuf_put_u8(msg, SSH_AGENT_EXTENSION_RESPONSE)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "query")) != 0 ||
 	    /* string[]     supported extension types */
 	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0)
 		fatal_fr(r, "compose");
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	если ((r = sshbuf_put_stringb(e->output, msg)) != 0)
 		fatal_fr(r, "enqueue");
 	sshbuf_free(msg);
-	return 1;
+	вернуть 1;
 }
 
 static void
 process_extension(SocketEntry *e)
 {
-	int r, replied = 0, success = 0;
+	целое r, replied = 0, success = 0;
 	char *name;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &name, NULL)) != 0) {
+	если ((r = sshbuf_get_cstring(e->request, &name, NULL)) != 0) {
 		error_fr(r, "parse");
 		send_status(e, 0);
-		return;
+		вернуть;
 	}
 
 	/*
@@ -1810,23 +1810,23 @@ process_extension(SocketEntry *e)
 	 * Other operations should be refused when locked.
 	 */
 
-	if (strcmp(name, "session-bind@openssh.com") == 0) {
+	если (strcmp(name, "session-bind@openssh.com") == 0) {
 		success = process_ext_session_bind(e);
-	} else if (locked) {
+	} иначе если (locked) {
 		debug_f("attempt to use extension \"%s\" while locked", name);
 		goto generic_fail;
-	} else if (strcmp(name, "query") == 0) {
+	} иначе если (strcmp(name, "query") == 0) {
 		replied = success = process_ext_query(e);
-	} else {
+	} иначе {
 		debug_f("unsupported extension \"%s\"", name);
  generic_fail:
 		free(name);
 		send_status(e, 0);
-		return;
+		вернуть;
 	}
 	free(name);
 	/* Agent failures are signalled with a different error code */
-	if (!replied) {
+	если (!replied) {
 		send_status_generic(e,
 		    success ? SSH_AGENT_SUCCESS : SSH_AGENT_EXTENSION_FAILURE);
 	}
@@ -1836,39 +1836,39 @@ process_extension(SocketEntry *e)
  * dispatch incoming message.
  * returns 1 on success, 0 for incomplete messages or -1 on error.
  */
-static int
+static целое
 process_message(u_int socknum)
 {
 	u_int msg_len;
 	u_char type;
 	const u_char *cp;
-	int r;
+	целое r;
 	SocketEntry *e;
 
-	if (socknum >= sockets_alloc)
+	если (socknum >= sockets_alloc)
 		fatal_f("sock %u >= allocated %u", socknum, sockets_alloc);
 	e = &sockets[socknum];
 
-	if (sshbuf_len(e->input) < 5)
-		return 0;		/* Incomplete message header. */
+	если (sshbuf_len(e->input) < 5)
+		вернуть 0;		/* Incomplete message header. */
 	cp = sshbuf_ptr(e->input);
 	msg_len = PEEK_U32(cp);
-	if (msg_len > AGENT_MAX_LEN) {
+	если (msg_len > AGENT_MAX_LEN) {
 		debug_f("socket %u (fd=%d) message too long %u > %u",
 		    socknum, e->fd, msg_len, AGENT_MAX_LEN);
-		return -1;
+		вернуть -1;
 	}
-	if (sshbuf_len(e->input) < msg_len + 4)
-		return 0;		/* Incomplete message body. */
+	если (sshbuf_len(e->input) < msg_len + 4)
+		вернуть 0;		/* Incomplete message body. */
 
 	/* move the current input to e->request */
 	sshbuf_reset(e->request);
-	if ((r = sshbuf_get_stringb(e->input, e->request)) != 0 ||
+	если ((r = sshbuf_get_stringb(e->input, e->request)) != 0 ||
 	    (r = sshbuf_get_u8(e->request, &type)) != 0) {
-		if (r == SSH_ERR_MESSAGE_INCOMPLETE ||
+		если (r == SSH_ERR_MESSAGE_INCOMPLETE ||
 		    r == SSH_ERR_STRING_TOO_LARGE) {
 			error_fr(r, "parse");
-			return -1;
+			вернуть -1;
 		}
 		fatal_fr(r, "parse");
 	}
@@ -1876,7 +1876,7 @@ process_message(u_int socknum)
 	debug_f("socket %u (fd=%d) type %d", socknum, e->fd, type);
 
 	/* check whether agent is locked */
-	if (locked && type != SSH_AGENTC_UNLOCK) {
+	если (locked && type != SSH_AGENTC_UNLOCK) {
 		switch (type) {
 		case SSH2_AGENTC_REQUEST_IDENTITIES:
 			/* send empty lists */
@@ -1890,7 +1890,7 @@ process_message(u_int socknum)
 			send_status(e, 0);
 		}
 		sshbuf_reset(e->request);
-		return 1;
+		вернуть 1;
 	}
 
 	switch (type) {
@@ -1937,11 +1937,11 @@ process_message(u_int socknum)
 		send_status(e, 0);
 		break;
 	}
-	return 1;
+	вернуть 1;
 }
 
 static void
-new_socket(sock_type type, int fd)
+new_socket(sock_type type, целое fd)
 {
 	u_int i, old_alloc, new_alloc;
 
@@ -1949,114 +1949,114 @@ new_socket(sock_type type, int fd)
 	    (type == AUTH_SOCKET ? "SOCKET" : "UNKNOWN"));
 	set_nonblock(fd);
 
-	if (fd > max_fd)
+	если (fd > max_fd)
 		max_fd = fd;
 
-	for (i = 0; i < sockets_alloc; i++)
-		if (sockets[i].type == AUTH_UNUSED) {
+	для (i = 0; i < sockets_alloc; i++)
+		если (sockets[i].type == AUTH_UNUSED) {
 			sockets[i].fd = fd;
-			if ((sockets[i].input = sshbuf_new()) == NULL ||
+			если ((sockets[i].input = sshbuf_new()) == NULL ||
 			    (sockets[i].output = sshbuf_new()) == NULL ||
 			    (sockets[i].request = sshbuf_new()) == NULL)
 				fatal_f("sshbuf_new failed");
 			sockets[i].type = type;
-			return;
+			вернуть;
 		}
 	old_alloc = sockets_alloc;
 	new_alloc = sockets_alloc + 10;
 	sockets = xrecallocarray(sockets, old_alloc, new_alloc,
 	    sizeof(sockets[0]));
-	for (i = old_alloc; i < new_alloc; i++)
+	для (i = old_alloc; i < new_alloc; i++)
 		sockets[i].type = AUTH_UNUSED;
 	sockets_alloc = new_alloc;
 	sockets[old_alloc].fd = fd;
-	if ((sockets[old_alloc].input = sshbuf_new()) == NULL ||
+	если ((sockets[old_alloc].input = sshbuf_new()) == NULL ||
 	    (sockets[old_alloc].output = sshbuf_new()) == NULL ||
 	    (sockets[old_alloc].request = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	sockets[old_alloc].type = type;
 }
 
-static int
+static целое
 handle_socket_read(u_int socknum)
 {
 	struct sockaddr_un sunaddr;
 	socklen_t slen;
 	uid_t euid;
 	gid_t egid;
-	int fd;
+	целое fd;
 
 	slen = sizeof(sunaddr);
 	fd = accept(sockets[socknum].fd, (struct sockaddr *)&sunaddr, &slen);
-	if (fd == -1) {
+	если (fd == -1) {
 		error("accept from AUTH_SOCKET: %s", strerror(errno));
-		return -1;
+		вернуть -1;
 	}
-	if (getpeereid(fd, &euid, &egid) == -1) {
+	если (getpeereid(fd, &euid, &egid) == -1) {
 		error("getpeereid %d failed: %s", fd, strerror(errno));
 		close(fd);
-		return -1;
+		вернуть -1;
 	}
-	if ((euid != 0) && (getuid() != euid)) {
+	если ((euid != 0) && (getuid() != euid)) {
 		error("uid mismatch: peer euid %u != uid %u",
 		    (u_int) euid, (u_int) getuid());
 		close(fd);
-		return -1;
+		вернуть -1;
 	}
 	new_socket(AUTH_CONNECTION, fd);
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 handle_conn_read(u_int socknum)
 {
 	char buf[AGENT_RBUF_LEN];
 	ssize_t len;
-	int r;
+	целое r;
 
-	if ((len = read(sockets[socknum].fd, buf, sizeof(buf))) <= 0) {
-		if (len == -1) {
-			if (errno == EAGAIN || errno == EINTR)
-				return 0;
+	если ((len = read(sockets[socknum].fd, buf, sizeof(buf))) <= 0) {
+		если (len == -1) {
+			если (errno == EAGAIN || errno == EINTR)
+				вернуть 0;
 			error_f("read error on socket %u (fd %d): %s",
 			    socknum, sockets[socknum].fd, strerror(errno));
 		}
-		return -1;
+		вернуть -1;
 	}
-	if ((r = sshbuf_put(sockets[socknum].input, buf, len)) != 0)
+	если ((r = sshbuf_put(sockets[socknum].input, buf, len)) != 0)
 		fatal_fr(r, "compose");
 	explicit_bzero(buf, sizeof(buf));
-	for (;;) {
-		if ((r = process_message(socknum)) == -1)
-			return -1;
-		else if (r == 0)
+	для (;;) {
+		если ((r = process_message(socknum)) == -1)
+			вернуть -1;
+		иначе если (r == 0)
 			break;
 	}
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 handle_conn_write(u_int socknum)
 {
 	ssize_t len;
-	int r;
+	целое r;
 
-	if (sshbuf_len(sockets[socknum].output) == 0)
-		return 0; /* shouldn't happen */
-	if ((len = write(sockets[socknum].fd,
+	если (sshbuf_len(sockets[socknum].output) == 0)
+		вернуть 0; /* shouldn't happen */
+	если ((len = write(sockets[socknum].fd,
 	    sshbuf_ptr(sockets[socknum].output),
 	    sshbuf_len(sockets[socknum].output))) <= 0) {
-		if (len == -1) {
-			if (errno == EAGAIN || errno == EINTR)
-				return 0;
+		если (len == -1) {
+			если (errno == EAGAIN || errno == EINTR)
+				вернуть 0;
 			error_f("read error on socket %u (fd %d): %s",
 			    socknum, sockets[socknum].fd, strerror(errno));
 		}
-		return -1;
+		вернуть -1;
 	}
-	if ((r = sshbuf_consume(sockets[socknum].output, len)) != 0)
+	если ((r = sshbuf_consume(sockets[socknum].output, len)) != 0)
 		fatal_fr(r, "consume");
-	return 0;
+	вернуть 0;
 }
 
 static void
@@ -2065,42 +2065,42 @@ after_poll(struct pollfd *pfd, size_t npfd, u_int maxfds)
 	size_t i;
 	u_int socknum, activefds = npfd;
 
-	for (i = 0; i < npfd; i++) {
-		if (pfd[i].revents == 0)
+	для (i = 0; i < npfd; i++) {
+		если (pfd[i].revents == 0)
 			continue;
 		/* Find sockets entry */
-		for (socknum = 0; socknum < sockets_alloc; socknum++) {
-			if (sockets[socknum].type != AUTH_SOCKET &&
+		для (socknum = 0; socknum < sockets_alloc; socknum++) {
+			если (sockets[socknum].type != AUTH_SOCKET &&
 			    sockets[socknum].type != AUTH_CONNECTION)
 				continue;
-			if (pfd[i].fd == sockets[socknum].fd)
+			если (pfd[i].fd == sockets[socknum].fd)
 				break;
 		}
-		if (socknum >= sockets_alloc) {
+		если (socknum >= sockets_alloc) {
 			error_f("no socket for fd %d", pfd[i].fd);
 			continue;
 		}
 		/* Process events */
 		switch (sockets[socknum].type) {
 		case AUTH_SOCKET:
-			if ((pfd[i].revents & (POLLIN|POLLERR)) == 0)
+			если ((pfd[i].revents & (POLLIN|POLLERR)) == 0)
 				break;
-			if (npfd > maxfds) {
+			если (npfd > maxfds) {
 				debug3("out of fds (active %u >= limit %u); "
 				    "skipping accept", activefds, maxfds);
 				break;
 			}
-			if (handle_socket_read(socknum) == 0)
+			если (handle_socket_read(socknum) == 0)
 				activefds++;
 			break;
 		case AUTH_CONNECTION:
-			if ((pfd[i].revents & (POLLIN|POLLHUP|POLLERR)) != 0 &&
+			если ((pfd[i].revents & (POLLIN|POLLHUP|POLLERR)) != 0 &&
 			    handle_conn_read(socknum) != 0)
 				goto close_sock;
-			if ((pfd[i].revents & (POLLOUT|POLLHUP)) != 0 &&
+			если ((pfd[i].revents & (POLLOUT|POLLHUP)) != 0 &&
 			    handle_conn_write(socknum) != 0) {
  close_sock:
-				if (activefds == 0)
+				если (activefds == 0)
 					fatal("activefds == 0 at close_sock");
 				close_socket(&sockets[socknum]);
 				activefds--;
@@ -2113,16 +2113,16 @@ after_poll(struct pollfd *pfd, size_t npfd, u_int maxfds)
 	}
 }
 
-static int
+static целое
 prepare_poll(struct pollfd **pfdp, size_t *npfdp, struct timespec *timeoutp, u_int maxfds)
 {
 	struct pollfd *pfd = *pfdp;
 	size_t i, j, npfd = 0;
 	time_t deadline;
-	int r;
+	целое r;
 
 	/* Count active sockets */
-	for (i = 0; i < sockets_alloc; i++) {
+	для (i = 0; i < sockets_alloc; i++) {
 		switch (sockets[i].type) {
 		case AUTH_SOCKET:
 		case AUTH_CONNECTION:
@@ -2135,16 +2135,16 @@ prepare_poll(struct pollfd **pfdp, size_t *npfdp, struct timespec *timeoutp, u_i
 			break;
 		}
 	}
-	if (npfd != *npfdp &&
+	если (npfd != *npfdp &&
 	    (pfd = recallocarray(pfd, *npfdp, npfd, sizeof(*pfd))) == NULL)
 		fatal_f("recallocarray failed");
 	*pfdp = pfd;
 	*npfdp = npfd;
 
-	for (i = j = 0; i < sockets_alloc; i++) {
+	для (i = j = 0; i < sockets_alloc; i++) {
 		switch (sockets[i].type) {
 		case AUTH_SOCKET:
-			if (npfd > maxfds) {
+			если (npfd > maxfds) {
 				debug3("out of fds (active %zu >= limit %u); "
 				    "skipping arming listener", npfd, maxfds);
 				break;
@@ -2161,14 +2161,14 @@ prepare_poll(struct pollfd **pfdp, size_t *npfdp, struct timespec *timeoutp, u_i
 			 * Only prepare to read if we can handle a full-size
 			 * input read buffer and enqueue a max size reply..
 			 */
-			if ((r = sshbuf_check_reserve(sockets[i].input,
+			если ((r = sshbuf_check_reserve(sockets[i].input,
 			    AGENT_RBUF_LEN)) == 0 &&
 			    (r = sshbuf_check_reserve(sockets[i].output,
 			    AGENT_MAX_LEN)) == 0)
 				pfd[j].events = POLLIN;
-			else if (r != SSH_ERR_NO_BUFFER_SPACE)
+			иначе если (r != SSH_ERR_NO_BUFFER_SPACE)
 				fatal_fr(r, "reserve");
-			if (sshbuf_len(sockets[i].output) > 0)
+			если (sshbuf_len(sockets[i].output) > 0)
 				pfd[j].events |= POLLOUT;
 			j++;
 			break;
@@ -2177,21 +2177,21 @@ prepare_poll(struct pollfd **pfdp, size_t *npfdp, struct timespec *timeoutp, u_i
 		}
 	}
 	deadline = reaper();
-	if (parent_alive_interval != 0)
+	если (parent_alive_interval != 0)
 		deadline = (deadline == 0) ? parent_alive_interval :
 		    MINIMUM(deadline, parent_alive_interval);
-	if (deadline != 0)
+	если (deadline != 0)
 		ptimeout_deadline_sec(timeoutp, deadline);
-	return (1);
+	вернуть (1);
 }
 
 static void
 cleanup_socket(void)
 {
-	if (cleanup_pid != 0 && getpid() != cleanup_pid)
-		return;
+	если (cleanup_pid != 0 && getpid() != cleanup_pid)
+		вернуть;
 	debug_f("cleanup");
-	if (socket_name != NULL) {
+	если (socket_name != NULL) {
 		agent_listener_cleanup(socket_dirspec, socket_name, socket_dir);
 		free(socket_name);
 		socket_name = NULL;
@@ -2201,7 +2201,7 @@ cleanup_socket(void)
 }
 
 void
-cleanup_exit(int i)
+cleanup_exit(целое i)
 {
 	cleanup_socket();
 #ifdef ENABLE_PKCS11
@@ -2211,13 +2211,13 @@ cleanup_exit(int i)
 }
 
 static void
-cleanup_handler(int sig)
+cleanup_handler(целое sig)
 {
 	signalled_exit = sig;
 }
 
 static void
-keydrop_handler(int sig)
+keydrop_handler(целое sig)
 {
 	signalled_keydrop = sig;
 }
@@ -2229,7 +2229,7 @@ check_parent_exists(void)
 	 * If our parent has exited then getppid() will return (pid_t)1,
 	 * so testing for that should be safe.
 	 */
-	if (parent_pid != -1 && getppid() != parent_pid) {
+	если (parent_pid != -1 && getppid() != parent_pid) {
 		/* printf("Parent has died - Authentication agent exiting.\n"); */
 		cleanup_socket();
 		_exit(2);
@@ -2252,12 +2252,12 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int ac, char **av)
+целое
+основной(целое ac, char **av)
 {
-	int c_flag = 0, d_flag = 0, D_flag = 0, k_flag = 0;
-	int s_flag = 0, T_flag = 0, u_flag = 0, U_flag = 0;
-	int sock = -1, ch, result, saved_errno;
+	целое c_flag = 0, d_flag = 0, D_flag = 0, k_flag = 0;
+	целое s_flag = 0, T_flag = 0, u_flag = 0, U_flag = 0;
+	целое sock = -1, ch, result, saved_errno;
 	pid_t pid;
  	char *homedir = NULL, *shell, *format, *pidstr, *agentsocket = NULL;
 	char *cp, pidstrbuf[1 + 3 * sizeof pid];
@@ -2267,7 +2267,7 @@ main(int ac, char **av)
 #ifdef HAVE_SETRLIMIT
 	struct rlimit rlim;
 #endif
-	extern int optind;
+	extern целое optind;
 	extern char *optarg;
 	size_t len;
 	mode_t prev_mask;
@@ -2276,7 +2276,7 @@ main(int ac, char **av)
 	size_t npfd = 0;
 	u_int maxfds;
 	sigset_t nsigset, osigset;
-	int socket_activated = 0;
+	целое socket_activated = 0;
 	struct passwd *pw;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -2288,27 +2288,27 @@ main(int ac, char **av)
 
 	platform_disable_tracing(0);	/* strict=no */
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	если ((pw = getpwuid(getuid())) == NULL)
 		fatal("No user exists for uid %lu", (u_long)getuid());
 	pw = pwcopy(pw);
 
 #ifdef RLIMIT_NOFILE
-	if (getrlimit(RLIMIT_NOFILE, &rlim) == -1)
+	если (getrlimit(RLIMIT_NOFILE, &rlim) == -1)
 		fatal("%s: getrlimit: %s", __progname, strerror(errno));
 #endif
 
 	__progname = ssh_get_progname(av[0]);
 	seed_rng();
 
-	while ((ch = getopt(ac, av, "cDdksTuUVA:E:a:O:P:t:")) != -1) {
+	пока ((ch = getopt(ac, av, "cDdksTuUVA:E:a:O:P:t:")) != -1) {
 		switch (ch) {
 		case 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			если (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
 			break;
 		case 'c':
-			if (s_flag)
+			если (s_flag)
 				usage();
 			c_flag++;
 			break;
@@ -2316,35 +2316,35 @@ main(int ac, char **av)
 			k_flag++;
 			break;
 		case 'O':
-			if (strcmp(optarg, "no-restrict-websafe") == 0)
+			если (strcmp(optarg, "no-restrict-websafe") == 0)
 				restrict_websafe = 0;
-			else if (strcmp(optarg, "allow-remote-pkcs11") == 0)
+			иначе если (strcmp(optarg, "allow-remote-pkcs11") == 0)
 				remote_add_provider = 1;
-			else if ((ccp = strprefix(optarg,
+			иначе если ((ccp = strprefix(optarg,
 			    "websafe-allow=", 0)) != NULL) {
-				if (websafe_allowlist != NULL)
+				если (websafe_allowlist != NULL)
 					fatal("websafe-allow already set");
 				websafe_allowlist = xstrdup(ccp);
-			} else
+			} иначе
 				fatal("Unknown -O option");
 			break;
 		case 'P':
-			if (allowed_providers != NULL)
+			если (allowed_providers != NULL)
 				fatal("-P option already specified");
 			allowed_providers = xstrdup(optarg);
 			break;
 		case 's':
-			if (c_flag)
+			если (c_flag)
 				usage();
 			s_flag++;
 			break;
 		case 'd':
-			if (d_flag || D_flag)
+			если (d_flag || D_flag)
 				usage();
 			d_flag++;
 			break;
 		case 'D':
-			if (d_flag || D_flag)
+			если (d_flag || D_flag)
 				usage();
 			D_flag++;
 			break;
@@ -2355,7 +2355,7 @@ main(int ac, char **av)
 			socket_dirspec = xstrdup(optarg);
 			break;
 		case 't':
-			if ((lifetime = convtime(optarg)) == -1) {
+			если ((lifetime = convtime(optarg)) == -1) {
 				fprintf(stderr, "Invalid lifetime\n");
 				usage();
 			}
@@ -2380,48 +2380,48 @@ main(int ac, char **av)
 	ac -= optind;
 	av += optind;
 
-	if (ac > 0 &&
+	если (ac > 0 &&
 	    (c_flag || k_flag || s_flag || d_flag || D_flag || u_flag))
 		usage();
 	/* only one of -a, -A and -T allowed */
-	if (((socket_dirspec != NULL) + (agentsocket != NULL) + T_flag) > 1)
+	если (((socket_dirspec != NULL) + (agentsocket != NULL) + T_flag) > 1)
 		usage();
 
 	log_init(__progname,
 	    d_flag ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 	    SYSLOG_FACILITY_AUTH, 1);
 
-	if (allowed_providers == NULL)
+	если (allowed_providers == NULL)
 		allowed_providers = xstrdup(DEFAULT_ALLOWED_PROVIDERS);
-	if (websafe_allowlist == NULL)
+	если (websafe_allowlist == NULL)
 		websafe_allowlist = xstrdup(DEFAULT_WEBSAFE_ALLOWLIST);
 
-	if (T_flag)
+	если (T_flag)
 		socket_dirspec = xstrdup(_PATH_SSH_AGENT_SOCKET_TMPDIR);
-	else if (socket_dirspec == NULL && agentsocket == NULL)
+	иначе если (socket_dirspec == NULL && agentsocket == NULL)
 		socket_dirspec = xstrdup(_PATH_SSH_AGENT_SOCKET_DIR);
 
-	if (ac == 0 && !c_flag && !s_flag) {
+	если (ac == 0 && !c_flag && !s_flag) {
 		shell = getenv("SHELL");
-		if (shell != NULL && (len = strlen(shell)) > 2 &&
+		если (shell != NULL && (len = strlen(shell)) > 2 &&
 		    strncmp(shell + len - 3, "csh", 3) == 0)
 			c_flag = 1;
 	}
-	if (k_flag) {
+	если (k_flag) {
 		pidstr = getenv(SSH_AGENTPID_ENV_NAME);
-		if (pidstr == NULL) {
+		если (pidstr == NULL) {
 			fprintf(stderr, "%s not set, cannot kill agent\n",
 			    SSH_AGENTPID_ENV_NAME);
 			exit(1);
 		}
-		pid = (int)strtonum(pidstr, 2, INT_MAX, &errstr);
-		if (errstr) {
+		pid = (целое)strtonum(pidstr, 2, INT_MAX, &errstr);
+		если (errstr) {
 			fprintf(stderr,
 			    "%s=\"%s\", which is not a good PID: %s\n",
 			    SSH_AGENTPID_ENV_NAME, pidstr, errstr);
 			exit(1);
 		}
-		if (kill(pid, SIGTERM) == -1) {
+		если (kill(pid, SIGTERM) == -1) {
 			perror("kill");
 			exit(1);
 		}
@@ -2431,8 +2431,8 @@ main(int ac, char **av)
 		printf("echo Agent pid %ld killed;\n", (long)pid);
 		exit(0);
 	}
-	if (u_flag) {
-		if ((homedir = get_homedir()) == NULL)
+	если (u_flag) {
+		если ((homedir = get_homedir()) == NULL)
 			fatal("Couldn't determine home directory");
 		agent_cleanup_stale(socket_dirspec,
 		    pw->pw_name, pw->pw_uid, homedir, u_flag > 1);
@@ -2447,7 +2447,7 @@ main(int ac, char **av)
 	 * a few spare for libc / stack protectors / sanitisers, etc.
 	 */
 #define SSH_AGENT_MIN_FDS (3+1+1+1+4)
-	if (rlim.rlim_cur < SSH_AGENT_MIN_FDS)
+	если (rlim.rlim_cur < SSH_AGENT_MIN_FDS)
 		fatal("%s: file descriptor rlimit %lld too low (minimum %u)",
 		    __progname, (long long)rlim.rlim_cur, SSH_AGENT_MIN_FDS);
 	maxfds = rlim.rlim_cur - SSH_AGENT_MIN_FDS;
@@ -2455,43 +2455,43 @@ main(int ac, char **av)
 	parent_pid = getpid();
 
 	/* Has the socket been provided via socket activation? */
-	if (agentsocket == NULL && ac == 0 && (d_flag || D_flag) &&
+	если (agentsocket == NULL && ac == 0 && (d_flag || D_flag) &&
 	    (pidstr = getenv("LISTEN_PID")) != NULL &&
 	    (fdstr = getenv("LISTEN_FDS")) != NULL) {
-		if (strcmp(fdstr, "1") != 0) {
+		если (strcmp(fdstr, "1") != 0) {
 			fatal("unexpected LISTEN_FDS contents "
 			    "(want: \"1\" got\"%s\"", fdstr);
 		}
-		if (fcntl(3, F_GETFL) == -1)
+		если (fcntl(3, F_GETFL) == -1)
 			fatal("LISTEN_FDS set but fd 3 unavailable");
-		pid = (int)strtonum(pidstr, 1, INT_MAX, &errstr);
-		if (errstr != NULL)
+		pid = (целое)strtonum(pidstr, 1, INT_MAX, &errstr);
+		если (errstr != NULL)
 			fatal("invalid LISTEN_PID: %s", errstr);
-		if (pid != getpid())
+		если (pid != getpid())
 			fatal("bad LISTEN_PID: %d vs pid %d", pid, getpid());
 		debug("using socket activation on fd=3");
 		sock = 3;
 		socket_activated = 1;
 	}
 
-	if (sock == -1 && agentsocket == NULL) {
+	если (sock == -1 && agentsocket == NULL) {
 		/* Listen on a socket in/under a given directory */
-		if ((homedir = get_homedir()) == NULL)
+		если ((homedir = get_homedir()) == NULL)
 			fatal("Couldn't determine home directory");
-		if (!U_flag) {
+		если (!U_flag) {
 			agent_cleanup_stale(socket_dirspec,
 			    pw->pw_name, pw->pw_uid, homedir, 0);
 		}
-		if (agent_listener(socket_dirspec, pw->pw_name, pw->pw_uid,
+		если (agent_listener(socket_dirspec, pw->pw_name, pw->pw_uid,
 		    homedir, getpid(), "local", &sock, &socket_name,
 		    &socket_dir) != 0)
 			fatal_f("Couldn't prepare agent socket");
 		free(homedir);
-	} else if (sock == -1) {
+	} иначе если (sock == -1) {
 		/* Listen on explicit socket path */
 		prev_mask = umask(0177);
 		socket_name = xstrdup(agentsocket);
-		if ((sock = unix_listener(socket_name,
+		если ((sock = unix_listener(socket_name,
 		    SSH_LISTEN_BACKLOG, 0)) < 0) {
 			free(socket_name);
 			socket_name = NULL; /* Don't unlink existing file */
@@ -2506,10 +2506,10 @@ main(int ac, char **av)
 	 * Create socket early so it will exist before command gets run from
 	 * the parent.
 	 */
-	if (sock == -1) {
+	если (sock == -1) {
 		prev_mask = umask(0177);
 		sock = unix_listener(socket_name, SSH_LISTEN_BACKLOG, 0);
-		if (sock < 0) {
+		если (sock < 0) {
 			/* XXX - unix_listener() calls error() not perror() */
 			*socket_name = '\0'; /* Don't unlink existing file */
 			cleanup_exit(1);
@@ -2521,11 +2521,11 @@ main(int ac, char **av)
 	 * Fork, and have the parent execute the command, if any, or present
 	 * the socket data.  The child continues as the authentication agent.
 	 */
-	if (D_flag || d_flag) {
+	если (D_flag || d_flag) {
 		log_init(__progname,
 		    d_flag ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 		    SYSLOG_FACILITY_AUTH, 1);
-		if (socket_name != NULL) {
+		если (socket_name != NULL) {
 			cp = argv_assemble(1, &socket_name);
 			format = c_flag ?
 			    "setenv %s %s;\n" : "%s=%s; export %s;\n";
@@ -2538,14 +2538,14 @@ main(int ac, char **av)
 		goto skip;
 	}
 	pid = fork();
-	if (pid == -1) {
+	если (pid == -1) {
 		perror("fork");
 		cleanup_exit(1);
 	}
-	if (pid != 0) {		/* Parent - execute the given command. */
+	если (pid != 0) {		/* Parent - execute the given command. */
 		close(sock);
 		snprintf(pidstrbuf, sizeof pidstrbuf, "%ld", (long)pid);
-		if (ac == 0) {
+		если (ac == 0) {
 			format = c_flag ? "setenv %s %s;\n" : "%s=%s; export %s;\n";
 			cp = argv_assemble(1, &socket_name);
 			printf(format, SSH_AUTHSOCKET_ENV_NAME, cp,
@@ -2556,7 +2556,7 @@ main(int ac, char **av)
 			printf("echo Agent pid %ld;\n", (long)pid);
 			exit(0);
 		}
-		if (setenv(SSH_AUTHSOCKET_ENV_NAME, socket_name, 1) == -1 ||
+		если (setenv(SSH_AUTHSOCKET_ENV_NAME, socket_name, 1) == -1 ||
 		    setenv(SSH_AGENTPID_ENV_NAME, pidstrbuf, 1) == -1) {
 			perror("setenv");
 			exit(1);
@@ -2568,19 +2568,19 @@ main(int ac, char **av)
 	/* child */
 	log_init(__progname, SYSLOG_LEVEL_INFO, SYSLOG_FACILITY_AUTH, 0);
 
-	if (setsid() == -1) {
+	если (setsid() == -1) {
 		error("setsid: %s", strerror(errno));
 		cleanup_exit(1);
 	}
 
 	(void)chdir("/");
-	if (stdfd_devnull(1, 1, 1) == -1)
+	если (stdfd_devnull(1, 1, 1) == -1)
 		error_f("stdfd_devnull failed");
 
 #ifdef HAVE_SETRLIMIT
 	/* deny core dumps, since memory contains unencrypted private keys */
 	rlim.rlim_cur = rlim.rlim_max = 0;
-	if (setrlimit(RLIMIT_CORE, &rlim) == -1) {
+	если (setrlimit(RLIMIT_CORE, &rlim) == -1) {
 		error("setrlimit RLIMIT_CORE: %s", strerror(errno));
 		cleanup_exit(1);
 	}
@@ -2594,7 +2594,7 @@ skip:
 	pkcs11_init(0);
 #endif
 	new_socket(AUTH_SOCKET, sock);
-	if (ac > 0)
+	если (ac > 0)
 		parent_alive_interval = 10;
 	idtab_init();
 	ssh_signal(SIGPIPE, SIG_IGN);
@@ -2609,44 +2609,44 @@ skip:
 	sigaddset(&nsigset, SIGTERM);
 	sigaddset(&nsigset, SIGUSR1);
 
-	if (socket_name != NULL && unveil(socket_name, "c") == -1) {
+	если (socket_name != NULL && unveil(socket_name, "c") == -1) {
 		fatal("%s: unveil %s %s", __progname, socket_name,
 		    strerror(errno));
 	}
-	if (socket_dir != NULL && unveil(socket_dir, "c") == -1) {
+	если (socket_dir != NULL && unveil(socket_dir, "c") == -1) {
 		fatal("%s: unveil %s %s", __progname, socket_dir,
 		    strerror(errno));
 	}
-	if (unveil("/", "r") == -1)
+	если (unveil("/", "r") == -1)
 		fatal("%s: unveil /: %s", __progname, strerror(errno));
-	if ((ccp = getenv("SSH_SK_HELPER")) == NULL || *ccp == '\0')
+	если ((ccp = getenv("SSH_SK_HELPER")) == NULL || *ccp == '\0')
 		ccp = _PATH_SSH_SK_HELPER;
-	if (unveil(ccp, "x") == -1)
+	если (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if ((ccp = getenv("SSH_PKCS11_HELPER")) == NULL || *ccp == '\0')
+	если ((ccp = getenv("SSH_PKCS11_HELPER")) == NULL || *ccp == '\0')
 		ccp = _PATH_SSH_PKCS11_HELPER;
-	if (unveil(ccp, "x") == -1)
+	если (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if ((ccp = getenv("SSH_ASKPASS")) == NULL || *ccp == '\0')
+	если ((ccp = getenv("SSH_ASKPASS")) == NULL || *ccp == '\0')
 		ccp = _PATH_SSH_ASKPASS_DEFAULT;
-	if (unveil(ccp, "x") == -1)
+	если (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if (unveil("/dev/null", "rw") == -1)
+	если (unveil("/dev/null", "rw") == -1)
 		fatal("%s: unveil /dev/null: %s", __progname, strerror(errno));
-	if (pledge("stdio rpath cpath wpath unix id proc exec", NULL) == -1)
+	если (pledge("stdio rpath cpath wpath unix id proc exec", NULL) == -1)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 	platform_pledge_agent();
 
-	while (1) {
+	пока (1) {
 		sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-		if (signalled_exit != 0) {
-			logit("exiting on signal %d", (int)signalled_exit);
+		если (signalled_exit != 0) {
+			logit("exiting on signal %d", (целое)signalled_exit);
 			cleanup_exit((signalled_exit == SIGTERM &&
 			    socket_activated) ? 0 : 2);
 		}
-		if (signalled_keydrop) {
+		если (signalled_keydrop) {
 			logit("signal %d received; removing all keys",
-			    (int)signalled_keydrop);
+			    (целое)signalled_keydrop);
 			remove_all_identities();
 			signalled_keydrop = 0;
 		}
@@ -2655,14 +2655,14 @@ skip:
 		result = ppoll(pfd, npfd, ptimeout_get_tsp(&timeout), &osigset);
 		sigprocmask(SIG_SETMASK, &osigset, NULL);
 		saved_errno = errno;
-		if (parent_alive_interval != 0)
+		если (parent_alive_interval != 0)
 			check_parent_exists();
 		(void) reaper();	/* remove expired keys */
-		if (result == -1) {
-			if (saved_errno == EINTR)
+		если (result == -1) {
+			если (saved_errno == EINTR)
 				continue;
 			fatal("poll: %s", strerror(saved_errno));
-		} else if (result > 0)
+		} иначе если (result > 0)
 			after_poll(pfd, npfd, maxfds);
 	}
 	/* NOTREACHED */

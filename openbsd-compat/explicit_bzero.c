@@ -28,12 +28,12 @@ explicit_bzero(void *p, size_t n)
 void
 explicit_bzero(void *p, size_t n)
 {
-	if (n == 0)
-		return;
+	если (n == 0)
+		вернуть;
 	(void)memset_s(p, n, 0, n);
 }
 
-#else /* HAVE_MEMSET_S */
+#иначе /* HAVE_MEMSET_S */
 
 /*
  * Indirect bzero through a volatile pointer to hopefully avoid
@@ -44,15 +44,15 @@ static void (* volatile ssh_bzero)(void *, size_t) = bzero;
 void
 explicit_bzero(void *p, size_t n)
 {
-	if (n == 0)
-		return;
+	если (n == 0)
+		вернуть;
 	/*
 	 * clang -fsanitize=memory needs to intercept memset-like functions
 	 * to correctly detect memory initialisation. Make sure one is called
 	 * directly since our indirection trick above successfully confuses it.
 	 */
-#if defined(__has_feature)
-# if __has_feature(memory_sanitizer)
+#если defined(__has_feature)
+# если __has_feature(memory_sanitizer)
 	memset(p, 0, n);
 # endif
 #endif

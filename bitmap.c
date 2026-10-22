@@ -39,21 +39,21 @@ bitmap_new(void)
 {
 	struct bitmap *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if ((ret->d = calloc(1, BITMAP_BYTES)) == NULL) {
+	если ((ret = calloc(1, sizeof(*ret))) == NULL)
+		вернуть NULL;
+	если ((ret->d = calloc(1, BITMAP_BYTES)) == NULL) {
 		free(ret);
-		return NULL;
+		вернуть NULL;
 	}
 	ret->len = 1;
 	ret->top = 0;
-	return ret;
+	вернуть ret;
 }
 
 void
 bitmap_free(struct bitmap *b)
 {
-	if (b != NULL && b->d != NULL) {
+	если (b != NULL && b->d != NULL) {
 		bitmap_zero(b);
 		free(b->d);
 		b->d = NULL;
@@ -68,57 +68,57 @@ bitmap_zero(struct bitmap *b)
 	b->top = 0;
 }
 
-int
+целое
 bitmap_test_bit(struct bitmap *b, u_int n)
 {
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (n / BITMAP_BITS) > b->top)
-		return 0;
-	return (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
+	если (b->top >= b->len)
+		вернуть 0; /* invalid */
+	если (b->len == 0 || (n / BITMAP_BITS) > b->top)
+		вернуть 0;
+	вернуть (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
 }
 
-static int
+static целое
 reserve(struct bitmap *b, u_int n)
 {
 	BITMAP_WTYPE *tmp;
 	size_t nlen;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return -1; /* invalid */
+	если (b->top >= b->len || n > BITMAP_MAX)
+		вернуть -1; /* invalid */
 	nlen = (n / BITMAP_BITS) + 1;
-	if (b->len < nlen) {
-		if ((tmp = recallocarray(b->d, b->len,
+	если (b->len < nlen) {
+		если ((tmp = recallocarray(b->d, b->len,
 		    nlen, BITMAP_BYTES)) == NULL)
-			return -1;
+			вернуть -1;
 		b->d = tmp;
 		b->len = nlen;
 	}
-	return 0;
+	вернуть 0;
 }
 
-int
+целое
 bitmap_set_bit(struct bitmap *b, u_int n)
 {
-	int r;
+	целое r;
 	size_t offset;
 
-	if ((r = reserve(b, n)) != 0)
-		return r;
+	если ((r = reserve(b, n)) != 0)
+		вернуть r;
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
+	если (offset > b->top)
 		b->top = offset;
 	b->d[offset] |= (BITMAP_WTYPE)1 << (n & BITMAP_WMASK);
-	return 0;
+	вернуть 0;
 }
 
 /* Resets b->top to point to the most significant bit set in b->d */
 static void
 retop(struct bitmap *b)
 {
-	if (b->top >= b->len)
-		return;
-	while (b->top > 0 && b->d[b->top] == 0)
+	если (b->top >= b->len)
+		вернуть;
+	пока (b->top > 0 && b->d[b->top] == 0)
 		b->top--;
 }
 
@@ -127,11 +127,11 @@ bitmap_clear_bit(struct bitmap *b, u_int n)
 {
 	size_t offset;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return; /* invalid */
+	если (b->top >= b->len || n > BITMAP_MAX)
+		вернуть; /* invalid */
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
-		return;
+	если (offset > b->top)
+		вернуть;
 	b->d[offset] &= ~((BITMAP_WTYPE)1 << (n & BITMAP_WMASK));
 	/* The top may have changed as a result of the clear */
 	retop(b);
@@ -144,71 +144,71 @@ bitmap_nbits(struct bitmap *b)
 	BITMAP_WTYPE w;
 
 	retop(b);
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (b->top == 0 && b->d[0] == 0))
-		return 0;
+	если (b->top >= b->len)
+		вернуть 0; /* invalid */
+	если (b->len == 0 || (b->top == 0 && b->d[0] == 0))
+		вернуть 0;
 	/* Find MSB set */
 	w = b->d[b->top];
 	bits = (b->top + 1) * BITMAP_BITS;
-	while (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
+	пока (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
 		w <<= 1;
 		bits--;
 	}
-	return bits;
+	вернуть bits;
 }
 
 size_t
 bitmap_nbytes(struct bitmap *b)
 {
-	return (bitmap_nbits(b) + 7) / 8;
+	вернуть (bitmap_nbits(b) + 7) / 8;
 }
 
-int
+целое
 bitmap_to_string(struct bitmap *b, void *p, size_t l)
 {
 	u_char *s = (u_char *)p;
 	size_t i, j, k, need = bitmap_nbytes(b);
 
-	if (l < need || b->top >= b->len)
-		return -1;
-	if (l > need)
+	если (l < need || b->top >= b->len)
+		вернуть -1;
+	если (l > need)
 		l = need;
 	/* Put the bytes from LSB backwards */
-	for (i = k = 0; i < b->top + 1; i++) {
-		for (j = 0; j < BITMAP_BYTES; j++) {
-			if (k >= l)
+	для (i = k = 0; i < b->top + 1; i++) {
+		для (j = 0; j < BITMAP_BYTES; j++) {
+			если (k >= l)
 				break;
 			s[need - 1 - k++] = (b->d[i] >> (j * 8)) & 0xff;
 		}
 	}
-	return 0;
+	вернуть 0;
 }
 
-int
+целое
 bitmap_from_string(struct bitmap *b, const void *p, size_t l)
 {
-	int r;
+	целое r;
 	size_t i, offset, shift;
 	const u_char *s = (const u_char *)p;
 
-	if (l > BITMAP_MAX / 8)
-		return -1;
-	if ((r = reserve(b, l * 8)) != 0)
-		return r;
+	если (l > BITMAP_MAX / 8)
+		вернуть -1;
+	если ((r = reserve(b, l * 8)) != 0)
+		вернуть r;
 	bitmap_zero(b);
-	if (l == 0)
-		return 0;
+	если (l == 0)
+		вернуть 0;
 	b->top = offset = ((l + (BITMAP_BYTES - 1)) / BITMAP_BYTES) - 1;
 	shift = ((l + (BITMAP_BYTES - 1)) % BITMAP_BYTES) * 8;
-	for (i = 0; i < l; i++) {
+	для (i = 0; i < l; i++) {
 		b->d[offset] |= (BITMAP_WTYPE)s[i] << shift;
-		if (shift == 0) {
+		если (shift == 0) {
 			offset--;
 			shift = BITMAP_BITS - 8;
-		} else
+		} иначе
 			shift -= 8;
 	}
 	retop(b);
-	return 0;
+	вернуть 0;
 }

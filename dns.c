@@ -52,23 +52,23 @@ static const char * const errset_text[] = {
 };
 
 static const char *
-dns_result_totext(unsigned int res)
+dns_result_totext(unsigned целое res)
 {
 	switch (res) {
 	case ERRSET_SUCCESS:
-		return errset_text[ERRSET_SUCCESS];
+		вернуть errset_text[ERRSET_SUCCESS];
 	case ERRSET_NOMEMORY:
-		return errset_text[ERRSET_NOMEMORY];
+		вернуть errset_text[ERRSET_NOMEMORY];
 	case ERRSET_FAIL:
-		return errset_text[ERRSET_FAIL];
+		вернуть errset_text[ERRSET_FAIL];
 	case ERRSET_INVAL:
-		return errset_text[ERRSET_INVAL];
+		вернуть errset_text[ERRSET_INVAL];
 	case ERRSET_NONAME:
-		return errset_text[ERRSET_NONAME];
+		вернуть errset_text[ERRSET_NONAME];
 	case ERRSET_NODATA:
-		return errset_text[ERRSET_NODATA];
+		вернуть errset_text[ERRSET_NODATA];
 	default:
-		return "unknown error";
+		вернуть "unknown error";
 	}
 }
 
@@ -76,12 +76,12 @@ dns_result_totext(unsigned int res)
  * Read SSHFP parameters from key buffer.
  * Caller must free digest which is allocated by sshkey_fingerprint_raw().
  */
-static int
+static целое
 dns_read_key(uint8_t *algorithm, uint8_t *digest_type,
     u_char **digest, size_t *digest_len, struct sshkey *key)
 {
-	int r, success = 0;
-	int fp_alg = -1;
+	целое r, success = 0;
+	целое fp_alg = -1;
 
 	switch (key->type) {
 	case KEY_RSA:
@@ -108,54 +108,54 @@ dns_read_key(uint8_t *algorithm, uint8_t *digest_type,
 		*digest_type = SSHFP_HASH_RESERVED; /* 0 */
 	}
 
-	if (*algorithm && *digest_type) {
-		if ((r = sshkey_fingerprint_raw(key, fp_alg, digest,
+	если (*algorithm && *digest_type) {
+		если ((r = sshkey_fingerprint_raw(key, fp_alg, digest,
 		    digest_len)) != 0)
 			fatal_fr(r, "sshkey_fingerprint_raw");
 		success = 1;
-	} else {
+	} иначе {
 		*digest = NULL;
 		*digest_len = 0;
 	}
 
-	return success;
+	вернуть success;
 }
 
 /*
  * Read SSHFP parameters from rdata buffer.
  */
-static int
+static целое
 dns_read_rdata(uint8_t *algorithm, uint8_t *digest_type,
-    u_char **digest, size_t *digest_len, u_char *rdata, int rdata_len)
+    u_char **digest, size_t *digest_len, u_char *rdata, целое rdata_len)
 {
-	int success = 0;
+	целое success = 0;
 
 	*algorithm = SSHFP_KEY_RESERVED;
 	*digest_type = SSHFP_HASH_RESERVED;
 
-	if (rdata_len >= 2) {
+	если (rdata_len >= 2) {
 		*algorithm = rdata[0];
 		*digest_type = rdata[1];
 		*digest_len = rdata_len - 2;
 
-		if (*digest_len > 0) {
+		если (*digest_len > 0) {
 			*digest = xmalloc(*digest_len);
 			memcpy(*digest, rdata + 2, *digest_len);
-		} else {
+		} иначе {
 			*digest = (u_char *)xstrdup("");
 		}
 
 		success = 1;
 	}
 
-	return success;
+	вернуть success;
 }
 
 /*
  * Check if hostname is numerical.
  * Returns -1 if hostname is numeric, 0 otherwise
  */
-static int
+static целое
 is_numeric_hostname(const char *hostname)
 {
 	struct addrinfo hints, *ai;
@@ -164,33 +164,33 @@ is_numeric_hostname(const char *hostname)
 	 * We shouldn't ever get a null host but if we do then log an error
 	 * and return -1 which stops DNS key fingerprint processing.
 	 */
-	if (hostname == NULL) {
+	если (hostname == NULL) {
 		error("is_numeric_hostname called with NULL hostname");
-		return -1;
+		вернуть -1;
 	}
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_socktype = SOCK_DGRAM;
 	hints.ai_flags = AI_NUMERICHOST;
 
-	if (getaddrinfo(hostname, NULL, &hints, &ai) == 0) {
+	если (getaddrinfo(hostname, NULL, &hints, &ai) == 0) {
 		freeaddrinfo(ai);
-		return -1;
+		вернуть -1;
 	}
 
-	return 0;
+	вернуть 0;
 }
 
 /*
  * Verify the given hostname, address and host key using DNS.
  * Returns 0 if lookup succeeds, -1 otherwise
  */
-int
+целое
 verify_host_key_dns(const char *hostname, struct sockaddr *address,
-    struct sshkey *hostkey, int *flags)
+    struct sshkey *hostkey, целое *flags)
 {
 	u_int counter;
-	int result;
+	целое result;
 	struct rrsetinfo *fingerprints = NULL;
 
 	uint8_t hostkey_algorithm;
@@ -205,39 +205,39 @@ verify_host_key_dns(const char *hostname, struct sockaddr *address,
 	*flags = 0;
 
 	debug3("verify_host_key_dns");
-	if (hostkey == NULL)
+	если (hostkey == NULL)
 		fatal("No key to look up!");
 
-	if (is_numeric_hostname(hostname)) {
+	если (is_numeric_hostname(hostname)) {
 		debug("skipped DNS lookup for numerical hostname");
-		return -1;
+		вернуть -1;
 	}
 
 	result = getrrsetbyname(hostname, DNS_RDATACLASS_IN,
 	    DNS_RDATATYPE_SSHFP, 0, &fingerprints);
-	if (result) {
+	если (result) {
 		verbose("DNS lookup error: %s", dns_result_totext(result));
-		return -1;
+		вернуть -1;
 	}
 
-	if (fingerprints->rri_flags & RRSET_VALIDATED) {
+	если (fingerprints->rri_flags & RRSET_VALIDATED) {
 		*flags |= DNS_VERIFY_SECURE;
 		debug("found %d secure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
-	} else {
+	} иначе {
 		debug("found %d insecure fingerprints in DNS",
 		    fingerprints->rri_nrdatas);
 	}
 
-	if (fingerprints->rri_nrdatas)
+	если (fingerprints->rri_nrdatas)
 		*flags |= DNS_VERIFY_FOUND;
 
-	for (counter = 0; counter < fingerprints->rri_nrdatas; counter++) {
+	для (counter = 0; counter < fingerprints->rri_nrdatas; counter++) {
 		/*
 		 * Extract the key from the answer. Ignore any badly
 		 * formatted fingerprints.
 		 */
-		if (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
+		если (!dns_read_rdata(&dnskey_algorithm, &dnskey_digest_type,
 		    &dnskey_digest, &dnskey_digest_len,
 		    fingerprints->rri_rdatas[counter].rdi_data,
 		    fingerprints->rri_rdatas[counter].rdi_length)) {
@@ -248,23 +248,23 @@ verify_host_key_dns(const char *hostname, struct sockaddr *address,
 		    dnskey_digest_type);
 
 		/* Calculate host key fingerprint. */
-		if (!dns_read_key(&hostkey_algorithm, &dnskey_digest_type,
+		если (!dns_read_key(&hostkey_algorithm, &dnskey_digest_type,
 		    &hostkey_digest, &hostkey_digest_len, hostkey)) {
 			error("Error calculating key fingerprint.");
 			free(dnskey_digest);
 			freerrset(fingerprints);
-			return -1;
+			вернуть -1;
 		}
 
 		/* Check if the current key is the same as the given key */
-		if (hostkey_algorithm == dnskey_algorithm &&
+		если (hostkey_algorithm == dnskey_algorithm &&
 		    hostkey_digest_len == dnskey_digest_len) {
-			if (timingsafe_bcmp(hostkey_digest, dnskey_digest,
+			если (timingsafe_bcmp(hostkey_digest, dnskey_digest,
 			    hostkey_digest_len) == 0) {
 				debug_f("matched SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
 				*flags |= DNS_VERIFY_MATCH;
-			} else {
+			} иначе {
 				debug_f("failed SSHFP type %d fptype %d",
 				    dnskey_algorithm, dnskey_digest_type);
 				*flags |= DNS_VERIFY_FAILED;
@@ -277,50 +277,50 @@ verify_host_key_dns(const char *hostname, struct sockaddr *address,
 	freerrset(fingerprints);
 
 	/* If any fingerprint failed to validate, return failure. */
-	if (*flags & DNS_VERIFY_FAILED)
+	если (*flags & DNS_VERIFY_FAILED)
 		*flags &= ~DNS_VERIFY_MATCH;
 
-	if (*flags & DNS_VERIFY_FOUND)
-		if (*flags & DNS_VERIFY_MATCH)
+	если (*flags & DNS_VERIFY_FOUND)
+		если (*flags & DNS_VERIFY_MATCH)
 			debug("matching host key fingerprint found in DNS");
-		else
+		иначе
 			debug("mismatching host key fingerprint found in DNS");
-	else
+	иначе
 		debug("no host key fingerprint found in DNS");
 
-	return 0;
+	вернуть 0;
 }
 
 /*
  * Export the fingerprint of a key as a DNS resource record
  */
-int
-export_dns_rr(const char *hostname, struct sshkey *key, FILE *f, int generic,
-    int alg)
+целое
+export_dns_rr(const char *hostname, struct sshkey *key, FILE *f, целое generic,
+    целое alg)
 {
 	uint8_t rdata_pubkey_algorithm = 0;
 	uint8_t rdata_digest_type = SSHFP_HASH_RESERVED;
 	uint8_t dtype;
 	u_char *rdata_digest;
 	size_t i, rdata_digest_len;
-	int success = 0;
+	целое success = 0;
 
-	for (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
-		if (alg != -1 && dtype != alg)
+	для (dtype = SSHFP_HASH_SHA1; dtype < SSHFP_HASH_MAX; dtype++) {
+		если (alg != -1 && dtype != alg)
 			continue;
 		rdata_digest_type = dtype;
-		if (dns_read_key(&rdata_pubkey_algorithm, &rdata_digest_type,
+		если (dns_read_key(&rdata_pubkey_algorithm, &rdata_digest_type,
 		    &rdata_digest, &rdata_digest_len, key)) {
-			if (generic) {
+			если (generic) {
 				fprintf(f, "%s IN TYPE%d \\# %zu %02x %02x ",
 				    hostname, DNS_RDATATYPE_SSHFP,
 				    2 + rdata_digest_len,
 				    rdata_pubkey_algorithm, rdata_digest_type);
-			} else {
+			} иначе {
 				fprintf(f, "%s IN SSHFP %d %d ", hostname,
 				    rdata_pubkey_algorithm, rdata_digest_type);
 			}
-			for (i = 0; i < rdata_digest_len; i++)
+			для (i = 0; i < rdata_digest_len; i++)
 				fprintf(f, "%02x", rdata_digest[i]);
 			fprintf(f, "\n");
 			free(rdata_digest); /* from sshkey_fingerprint_raw() */
@@ -329,9 +329,9 @@ export_dns_rr(const char *hostname, struct sshkey *key, FILE *f, int generic,
 	}
 
 	/* No SSHFP record was generated at all */
-	if (success == 0) {
+	если (success == 0) {
 		error_f("unsupported algorithm and/or digest_type");
 	}
 
-	return success;
+	вернуть success;
 }

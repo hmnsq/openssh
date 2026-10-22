@@ -41,26 +41,26 @@ struct sshkey;
 struct sshauthopt;
 struct sshkey_sig_details;
 
-void mm_log_handler(LogLevel, int, const char *, void *);
-int mm_is_monitor(void);
+void mm_log_handler(LogLevel, целое, const char *, void *);
+целое mm_is_monitor(void);
 #ifdef WITH_OPENSSL
-DH *mm_choose_dh(int, int, int);
+DH *mm_choose_dh(целое, целое, целое);
 #endif
 void mm_sshkey_setcompat(struct ssh *);
-int mm_sshkey_sign(struct ssh *, struct sshkey *, u_char **, size_t *,
+целое mm_sshkey_sign(struct ssh *, struct sshkey *, u_char **, size_t *,
     const u_char *, size_t, const char *, const char *,
     const char *, u_int compat);
 void mm_inform_authserv(char *, char *);
 struct passwd *mm_getpwnamallow(struct ssh *, const char *);
 char *mm_auth2_read_banner(void);
-int mm_auth_password(struct ssh *, char *);
-int mm_key_allowed(enum mm_keytype, const char *, const char *, struct sshkey *,
-    int, struct sshauthopt **);
-int mm_user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *, int,
+целое mm_auth_password(struct ssh *, char *);
+целое mm_key_allowed(enum mm_keytype, const char *, const char *, struct sshkey *,
+    целое, struct sshauthopt **);
+целое mm_user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *, целое,
     struct sshauthopt **);
-int mm_hostbased_key_allowed(struct ssh *, struct passwd *, const char *,
+целое mm_hostbased_key_allowed(struct ssh *, struct passwd *, const char *,
     const char *, struct sshkey *);
-int mm_sshkey_verify(const struct sshkey *, const u_char *, size_t,
+целое mm_sshkey_verify(const struct sshkey *, const u_char *, size_t,
     const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
 
 void mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m);
@@ -69,7 +69,7 @@ void mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m);
 OM_uint32 mm_ssh_gssapi_server_ctx(Gssctxt **, gss_OID);
 OM_uint32 mm_ssh_gssapi_accept_ctx(Gssctxt *,
    gss_buffer_desc *, gss_buffer_desc *, OM_uint32 *);
-int mm_ssh_gssapi_userok(char *user);
+целое mm_ssh_gssapi_userok(char *user);
 OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
 #endif
 
@@ -77,8 +77,8 @@ OM_uint32 mm_ssh_gssapi_checkmic(Gssctxt *, gss_buffer_t, gss_buffer_t);
 void mm_start_pam(struct ssh *ssh);
 u_int mm_do_pam_account(void);
 void *mm_sshpam_init_ctx(struct Authctxt *);
-int mm_sshpam_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_sshpam_respond(void *, u_int, char **);
+целое mm_sshpam_query(void *, char **, char **, u_int *, char ***, u_int **);
+целое mm_sshpam_respond(void *, u_int, char **);
 void mm_sshpam_free_ctx(void *);
 #endif
 
@@ -90,7 +90,7 @@ void mm_audit_run_command(const char *);
 
 struct Session;
 void mm_terminate(void);
-int mm_pty_allocate(int *, int *, char *, size_t);
+целое mm_pty_allocate(целое *, целое *, char *, size_t);
 void mm_session_pty_cleanup2(struct Session *);
 
 void mm_send_keystate(struct ssh *, struct monitor*);
@@ -102,13 +102,13 @@ void mm_get_state(struct ssh *, struct ServerOptions *,
     u_char **, struct sshbuf **, struct sshbuf **);
 
 /* bsdauth */
-int mm_bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int mm_bsdauth_respond(void *, u_int, char **);
+целое mm_bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
+целое mm_bsdauth_respond(void *, u_int, char **);
 
 /* config / channels glue */
 void	 server_process_permitopen(struct ssh *);
 void	 server_process_channel_timeouts(struct ssh *ssh);
 struct connection_info *
-	 server_get_connection_info(struct ssh *, int, int);
+	 server_get_connection_info(struct ssh *, целое, целое);
 
 #endif /* _MM_WRAP_H_ */

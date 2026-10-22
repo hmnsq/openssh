@@ -46,17 +46,17 @@
 #endif
 
 /* Wrapper around is_selinux_enabled() to log its return value once only */
-int
+целое
 ssh_selinux_enabled(void)
 {
-	static int enabled = -1;
+	static целое enabled = -1;
 
-	if (enabled == -1) {
+	если (enabled == -1) {
 		enabled = (is_selinux_enabled() == 1);
 		debug("SELinux support %s", enabled ? "enabled" : "disabled");
 	}
 
-	return (enabled);
+	вернуть (enabled);
 }
 
 /* Return the default security context for the given username */
@@ -64,23 +64,23 @@ static char *
 ssh_selinux_getctxbyname(char *pwname)
 {
 	char *sc = NULL, *sename = NULL, *lvl = NULL;
-	int r;
+	целое r;
 
 #ifdef HAVE_GETSEUSERBYNAME
-	if (getseuserbyname(pwname, &sename, &lvl) != 0)
-		return NULL;
-#else
+	если (getseuserbyname(pwname, &sename, &lvl) != 0)
+		вернуть NULL;
+#иначе
 	sename = pwname;
 	lvl = NULL;
 #endif
 
 #ifdef HAVE_GET_DEFAULT_CONTEXT_WITH_LEVEL
 	r = get_default_context_with_level(sename, lvl, NULL, &sc);
-#else
+#иначе
 	r = get_default_context(sename, NULL, &sc);
 #endif
 
-	if (r != 0) {
+	если (r != 0) {
 		switch (security_getenforce()) {
 		case -1:
 			fatal("%s: ssh_selinux_getctxbyname: "
@@ -102,7 +102,7 @@ ssh_selinux_getctxbyname(char *pwname)
 	free(lvl);
 #endif
 
-	return sc;
+	вернуть sc;
 }
 
 /* Set the execution context to the default for the specified user */
@@ -111,13 +111,13 @@ ssh_selinux_setup_exec_context(char *pwname)
 {
 	char *user_ctx = NULL;
 
-	if (!ssh_selinux_enabled())
-		return;
+	если (!ssh_selinux_enabled())
+		вернуть;
 
 	debug3("%s: setting execution context", __func__);
 
 	user_ctx = ssh_selinux_getctxbyname(pwname);
-	if (setexeccon(user_ctx) != 0) {
+	если (setexeccon(user_ctx) != 0) {
 		switch (security_getenforce()) {
 		case -1:
 			fatal("%s: security_getenforce() failed", __func__);
@@ -130,7 +130,7 @@ ssh_selinux_setup_exec_context(char *pwname)
 			    "for %s (in enforcing mode)", __func__, pwname);
 		}
 	}
-	if (user_ctx != NULL)
+	если (user_ctx != NULL)
 		freecon(user_ctx);
 
 	debug3("%s: done", __func__);
@@ -143,8 +143,8 @@ ssh_selinux_setup_pty(char *pwname, const char *tty)
 	char *new_tty_ctx = NULL, *user_ctx = NULL, *old_tty_ctx = NULL;
 	security_class_t chrclass;
 
-	if (!ssh_selinux_enabled())
-		return;
+	если (!ssh_selinux_enabled())
+		вернуть;
 
 	debug3("%s: setting TTY context on %s", __func__, tty);
 
@@ -152,29 +152,29 @@ ssh_selinux_setup_pty(char *pwname, const char *tty)
 
 	/* XXX: should these calls fatal() upon failure in enforcing mode? */
 
-	if (getfilecon(tty, &old_tty_ctx) == -1) {
+	если (getfilecon(tty, &old_tty_ctx) == -1) {
 		error("%s: getfilecon: %s", __func__, strerror(errno));
 		goto out;
 	}
-	if ((chrclass = string_to_security_class("chr_file")) == 0) {
+	если ((chrclass = string_to_security_class("chr_file")) == 0) {
 		error("%s: couldn't get security class for chr_file", __func__);
 		goto out;
 	}
-	if (security_compute_relabel(user_ctx, old_tty_ctx,
+	если (security_compute_relabel(user_ctx, old_tty_ctx,
 	    chrclass, &new_tty_ctx) != 0) {
 		error("%s: security_compute_relabel: %s",
 		    __func__, strerror(errno));
 		goto out;
 	}
 
-	if (setfilecon(tty, new_tty_ctx) != 0)
+	если (setfilecon(tty, new_tty_ctx) != 0)
 		error("%s: setfilecon: %s", __func__, strerror(errno));
  out:
-	if (new_tty_ctx != NULL)
+	если (new_tty_ctx != NULL)
 		freecon(new_tty_ctx);
-	if (old_tty_ctx != NULL)
+	если (old_tty_ctx != NULL)
 		freecon(old_tty_ctx);
-	if (user_ctx != NULL)
+	если (user_ctx != NULL)
 		freecon(user_ctx);
 	debug3("%s: done", __func__);
 }
@@ -185,34 +185,34 @@ ssh_selinux_change_context(const char *newname)
 	char *oldctx, *newctx, *cx, *cx2;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
 
-	if (!ssh_selinux_enabled())
-		return;
+	если (!ssh_selinux_enabled())
+		вернуть;
 
-	if (getcon(&oldctx) < 0) {
+	если (getcon(&oldctx) < 0) {
 		logit_f("getcon failed with %s", strerror(errno));
-		return;
+		вернуть;
 	}
-	if ((cx = strchr(oldctx, ':')) == NULL ||
+	если ((cx = strchr(oldctx, ':')) == NULL ||
 	    (cx = strchr(cx + 1, ':')) == NULL ||
 	    (cx - oldctx) >= INT_MAX) {
 		logit_f("unparsable context %s", oldctx);
-		return;
+		вернуть;
 	}
 
 	/*
 	 * Check whether we are attempting to switch away from an unconfined
 	 * security context.
 	 */
-	if (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
+	если (strncmp(cx, SSH_SELINUX_UNCONFINED_TYPE,
 	    sizeof(SSH_SELINUX_UNCONFINED_TYPE) - 1) == 0)
 		log_level = SYSLOG_LEVEL_DEBUG3;
 
 	cx2 = strchr(cx + 1, ':');
-	xasprintf(&newctx, "%.*s%s%s", (int)(cx - oldctx + 1), oldctx,
+	xasprintf(&newctx, "%.*s%s%s", (целое)(cx - oldctx + 1), oldctx,
 	    newname, cx2 == NULL ? "" : cx2);
 
 	debug3_f("setting context from '%s' to '%s'", oldctx, newctx);
-	if (setcon(newctx) < 0)
+	если (setcon(newctx) < 0)
 		do_log2_f(log_level, "setcon %s from %s failed with %s",
 		    newctx, oldctx, strerror(errno));
 	free(oldctx);
@@ -225,17 +225,17 @@ ssh_selinux_setfscreatecon(const char *path)
 	char *context;
 	struct selabel_handle *shandle = NULL;
 
-	if (!ssh_selinux_enabled())
-		return;
-	if (path == NULL) {
+	если (!ssh_selinux_enabled())
+		вернуть;
+	если (path == NULL) {
 		setfscreatecon(NULL);
-		return;
+		вернуть;
 	}
-	if ((shandle = selabel_open(SELABEL_CTX_FILE, NULL, 0)) == NULL) {
+	если ((shandle = selabel_open(SELABEL_CTX_FILE, NULL, 0)) == NULL) {
 		debug_f("selabel_open failed");
-		return;
+		вернуть;
 	}
-	if (selabel_lookup(shandle, &context, path, 0700) == 0)
+	если (selabel_lookup(shandle, &context, path, 0700) == 0)
 		setfscreatecon(context);
 	selabel_close(shandle);
 }

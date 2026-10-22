@@ -41,7 +41,7 @@
 #include <openssl/err.h>
 #endif
 
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#если defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 
@@ -63,91 +63,91 @@
 #define TEST_CHECK_INT(r, pred) do {		\
 		switch (pred) {			\
 		case TEST_EQ:			\
-			if (r == 0)		\
-				return;		\
+			если (r == 0)		\
+				вернуть;		\
 			break;			\
 		case TEST_NE:			\
-			if (r != 0)		\
-				return;		\
+			если (r != 0)		\
+				вернуть;		\
 			break;			\
 		case TEST_LT:			\
-			if (r < 0)		\
-				return;		\
+			если (r < 0)		\
+				вернуть;		\
 			break;			\
 		case TEST_LE:			\
-			if (r <= 0)		\
-				return;		\
+			если (r <= 0)		\
+				вернуть;		\
 			break;			\
 		case TEST_GT:			\
-			if (r > 0)		\
-				return;		\
+			если (r > 0)		\
+				вернуть;		\
 			break;			\
 		case TEST_GE:			\
-			if (r >= 0)		\
-				return;		\
+			если (r >= 0)		\
+				вернуть;		\
 			break;			\
 		default:			\
 			abort();		\
 		}				\
-	} while (0)
+	} пока (0)
 
 #define TEST_CHECK(x1, x2, pred) do {		\
 		switch (pred) {			\
 		case TEST_EQ:			\
-			if (x1 == x2)		\
-				return;		\
+			если (x1 == x2)		\
+				вернуть;		\
 			break;			\
 		case TEST_NE:			\
-			if (x1 != x2)		\
-				return;		\
+			если (x1 != x2)		\
+				вернуть;		\
 			break;			\
 		case TEST_LT:			\
-			if (x1 < x2)		\
-				return;		\
+			если (x1 < x2)		\
+				вернуть;		\
 			break;			\
 		case TEST_LE:			\
-			if (x1 <= x2)		\
-				return;		\
+			если (x1 <= x2)		\
+				вернуть;		\
 			break;			\
 		case TEST_GT:			\
-			if (x1 > x2)		\
-				return;		\
+			если (x1 > x2)		\
+				вернуть;		\
 			break;			\
 		case TEST_GE:			\
-			if (x1 >= x2)		\
-				return;		\
+			если (x1 >= x2)		\
+				вернуть;		\
 			break;			\
 		default:			\
 			abort();		\
 		}				\
-	} while (0)
+	} пока (0)
 
 extern char *__progname;
 
-static int verbose_mode = 0;
-static int quiet_mode = 0;
+static целое verbose_mode = 0;
+static целое quiet_mode = 0;
 static char *active_test_name = NULL;
 static u_int test_number = 0;
 static test_onerror_func_t *test_onerror = NULL;
 static void *onerror_ctx = NULL;
 static const char *data_dir = NULL;
 static char subtest_info[512];
-static int fast = 0;
-static int slow = 0;
-static int benchmark_detail_statistics = 0;
+static целое fast = 0;
+static целое slow = 0;
+static целое benchmark_detail_statistics = 0;
 
-static int benchmark = 0;
+static целое benchmark = 0;
 static const char *bench_name = NULL;
 static char *benchmark_pattern = NULL;
 static struct timespec bench_start_time, bench_finish_time;
 static struct timespec *bench_samples;
-static int bench_skip, bench_nruns, bench_nalloc;
+static целое bench_skip, bench_nruns, bench_nalloc;
 double bench_accum_secs;
 
-int
-main(int argc, char **argv)
+целое
+основной(целое argc, char **argv)
 {
-	int ch;
+	целое ch;
 
 	seed_rng();
 #ifdef WITH_OPENSSL
@@ -155,19 +155,19 @@ main(int argc, char **argv)
 #endif
 
 	/* Handle systems without __progname */
-	if (__progname == NULL) {
+	если (__progname == NULL) {
 		__progname = strrchr(argv[0], '/');
-		if (__progname == NULL || __progname[1] == '\0')
+		если (__progname == NULL || __progname[1] == '\0')
 			__progname = argv[0];	
-		else
+		иначе
 			__progname++;
-		if ((__progname = strdup(__progname)) == NULL) {
+		если ((__progname = strdup(__progname)) == NULL) {
 			fprintf(stderr, "strdup failed\n");
 			exit(1);
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
+	пока ((ch = getopt(argc, argv, "O:bBFfvqd:")) != -1) {
 		switch (ch) {
 		case 'b':
 			benchmark = 1;
@@ -203,43 +203,43 @@ main(int argc, char **argv)
 		}
 	}
 	setvbuf(stdout, NULL, _IONBF, 0);
-	if (!quiet_mode)
+	если (!quiet_mode)
 		printf("%s: ", __progname);
-	if (verbose_mode)
+	если (verbose_mode)
 		printf("\n");
 
-	if (benchmark)
+	если (benchmark)
 		benchmarks();
-	else
+	иначе
 		tests();
 
-	if (!quiet_mode && !benchmark)
+	если (!quiet_mode && !benchmark)
 		printf(" %u tests ok\n", test_number);
-	return 0;
+	вернуть 0;
 }
 
-int
+целое
 test_is_verbose(void)
 {
-	return verbose_mode;
+	вернуть verbose_mode;
 }
 
-int
+целое
 test_is_quiet(void)
 {
-	return quiet_mode;
+	вернуть quiet_mode;
 }
 
-int
+целое
 test_is_fast(void)
 {
-	return fast;
+	вернуть fast;
 }
 
-int
+целое
 test_is_slow(void)
 {
-	return slow;
+	вернуть slow;
 }
 
 const char *
@@ -247,16 +247,16 @@ test_data_file(const char *name)
 {
 	static char ret[PATH_MAX];
 
-	if (data_dir != NULL)
+	если (data_dir != NULL)
 		snprintf(ret, sizeof(ret), "%s/%s", data_dir, name);
-	else
+	иначе
 		strlcpy(ret, name, sizeof(ret));
-	if (access(ret, F_OK) != 0) {
+	если (access(ret, F_OK) != 0) {
 		fprintf(stderr, "Cannot access data file %s: %s\n",
 		    ret, strerror(errno));
 		exit(1);
 	}
-	return ret;
+	вернуть ret;
 }
 
 void
@@ -268,7 +268,7 @@ test_info(char *s, size_t len)
 }
 
 static void
-siginfo(int unused __attribute__((__unused__)))
+siginfo(целое unused __attribute__((__unused__)))
 {
 	char buf[256];
 
@@ -282,7 +282,7 @@ test_start(const char *n)
 	assert(active_test_name == NULL);
 	assert((active_test_name = strdup(n)) != NULL);
 	*subtest_info = '\0';
-	if (verbose_mode)
+	если (verbose_mode)
 		printf("test %u - \"%s\": ", test_number, active_test_name);
 	test_number++;
 #ifdef SIGINFO
@@ -305,9 +305,9 @@ test_done(void)
 	assert(active_test_name != NULL);
 	free(active_test_name);
 	active_test_name = NULL;
-	if (verbose_mode)
+	если (verbose_mode)
 		printf("OK\n");
-	else if (!quiet_mode && !benchmark) {
+	иначе если (!quiet_mode && !benchmark) {
 		printf(".");
 		fflush(stdout);
 	}
@@ -323,24 +323,24 @@ test_subtest_info(const char *fmt, ...)
 	va_end(ap);
 }
 
-int
+целое
 test_is_benchmark(void)
 {
-	return benchmark;
+	вернуть benchmark;
 }
 
 void
-ssl_err_check(const char *file, int line)
+ssl_err_check(const char *file, целое line)
 {
 #ifdef WITH_OPENSSL
 	long openssl_error = ERR_get_error();
 
-	if (openssl_error == 0)
-		return;
+	если (openssl_error == 0)
+		вернуть;
 
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error: %s",
 	    file, line, ERR_error_string(openssl_error, NULL));
-#else /* WITH_OPENSSL */
+#иначе /* WITH_OPENSSL */
 	fprintf(stderr, "\n%s:%d: uncaught OpenSSL error ",
 	    file, line);
 #endif /* WITH_OPENSSL */
@@ -352,32 +352,32 @@ pred_name(enum test_predicate p)
 {
 	switch (p) {
 	case TEST_EQ:
-		return "EQ";
+		вернуть "EQ";
 	case TEST_NE:
-		return "NE";
+		вернуть "NE";
 	case TEST_LT:
-		return "LT";
+		вернуть "LT";
 	case TEST_LE:
-		return "LE";
+		вернуть "LE";
 	case TEST_GT:
-		return "GT";
+		вернуть "GT";
 	case TEST_GE:
-		return "GE";
+		вернуть "GE";
 	default:
-		return "UNKNOWN";
+		вернуть "UNKNOWN";
 	}
 }
 
 static void
 test_die(void)
 {
-	if (test_onerror != NULL)
+	если (test_onerror != NULL)
 		test_onerror(onerror_ctx);
 	abort();
 }
 
 static void
-test_header(const char *file, int line, const char *a1, const char *a2,
+test_header(const char *file, целое line, const char *a1, const char *a2,
     const char *name, enum test_predicate pred)
 {
 	fprintf(stderr, "\n%s:%d test #%u \"%s\"%s%s\n", 
@@ -390,10 +390,10 @@ test_header(const char *file, int line, const char *a1, const char *a2,
 
 #ifdef WITH_OPENSSL
 void
-assert_bignum(const char *file, int line, const char *a1, const char *a2,
+assert_bignum(const char *file, целое line, const char *a1, const char *a2,
     const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred)
 {
-	int r = BN_cmp(aa1, aa2);
+	целое r = BN_cmp(aa1, aa2);
 
 	TEST_CHECK_INT(r, pred);
 	test_header(file, line, a1, a2, "BIGNUM", pred);
@@ -404,10 +404,10 @@ assert_bignum(const char *file, int line, const char *a1, const char *a2,
 #endif
 
 void
-assert_string(const char *file, int line, const char *a1, const char *a2,
+assert_string(const char *file, целое line, const char *a1, const char *a2,
     const char *aa1, const char *aa2, enum test_predicate pred)
 {
-	int r;
+	целое r;
 
 	/* Verify pointers are not NULL */
 	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
@@ -422,15 +422,15 @@ assert_string(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_mem(const char *file, int line, const char *a1, const char *a2,
+assert_mem(const char *file, целое line, const char *a1, const char *a2,
     const void *aa1, const void *aa2, size_t l, enum test_predicate pred)
 {
-	int r;
+	целое r;
 	char *aa1_tohex = NULL;
 	char *aa2_tohex = NULL;
 
-	if (l == 0)
-		return;
+	если (l == 0)
+		вернуть;
 	/* If length is >0, then verify pointers are not NULL */
 	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
 	assert_ptr(file, line, a2, "NULL", aa2, NULL, TEST_NE);
@@ -447,31 +447,31 @@ assert_mem(const char *file, int line, const char *a1, const char *a2,
 	test_die();
 }
 
-static int
+static целое
 memvalcmp(const uint8_t *s, u_char v, size_t l, size_t *where)
 {
 	size_t i;
 
-	for (i = 0; i < l; i++) {
-		if (s[i] != v) {
+	для (i = 0; i < l; i++) {
+		если (s[i] != v) {
 			*where = i;
-			return 1;
+			вернуть 1;
 		}
 	}
-	return 0;
+	вернуть 0;
 }
 
 void
-assert_mem_filled(const char *file, int line, const char *a1,
+assert_mem_filled(const char *file, целое line, const char *a1,
     const void *aa1, u_char v, size_t l, enum test_predicate pred)
 {
 	size_t where = -1;
-	int r;
+	целое r;
 	char tmp[64];
 	char *aa1_tohex = NULL;
 
-	if (l == 0)
-		return;
+	если (l == 0)
+		вернуть;
 	/* If length is >0, then verify the pointer is not NULL */
 	assert_ptr(file, line, a1, "NULL", aa1, NULL, TEST_NE);
 
@@ -489,8 +489,8 @@ assert_mem_filled(const char *file, int line, const char *a1,
 }
 
 void
-assert_int(const char *file, int line, const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred)
+assert_int(const char *file, целое line, const char *a1, const char *a2,
+    целое aa1, целое aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
 	test_header(file, line, a1, a2, "INT", pred);
@@ -500,7 +500,7 @@ assert_int(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_size_t(const char *file, int line, const char *a1, const char *a2,
+assert_size_t(const char *file, целое line, const char *a1, const char *a2,
     size_t aa1, size_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
@@ -511,7 +511,7 @@ assert_size_t(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_u_int(const char *file, int line, const char *a1, const char *a2,
+assert_u_int(const char *file, целое line, const char *a1, const char *a2,
     u_int aa1, u_int aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
@@ -522,7 +522,7 @@ assert_u_int(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_long(const char *file, int line, const char *a1, const char *a2,
+assert_long(const char *file, целое line, const char *a1, const char *a2,
     long aa1, long aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
@@ -533,7 +533,7 @@ assert_long(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_long_long(const char *file, int line, const char *a1, const char *a2,
+assert_long_long(const char *file, целое line, const char *a1, const char *a2,
     long long aa1, long long aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
@@ -544,7 +544,7 @@ assert_long_long(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_char(const char *file, int line, const char *a1, const char *a2,
+assert_char(const char *file, целое line, const char *a1, const char *a2,
     char aa1, char aa2, enum test_predicate pred)
 {
 	char buf[8];
@@ -559,7 +559,7 @@ assert_char(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_u8(const char *file, int line, const char *a1, const char *a2,
+assert_u8(const char *file, целое line, const char *a1, const char *a2,
     uint8_t aa1, uint8_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
@@ -570,7 +570,7 @@ assert_u8(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_u16(const char *file, int line, const char *a1, const char *a2,
+assert_u16(const char *file, целое line, const char *a1, const char *a2,
     uint16_t aa1, uint16_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
@@ -581,7 +581,7 @@ assert_u16(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_u32(const char *file, int line, const char *a1, const char *a2,
+assert_u32(const char *file, целое line, const char *a1, const char *a2,
     uint32_t aa1, uint32_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
@@ -592,7 +592,7 @@ assert_u32(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_u64(const char *file, int line, const char *a1, const char *a2,
+assert_u64(const char *file, целое line, const char *a1, const char *a2,
     uint64_t aa1, uint64_t aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
@@ -605,35 +605,35 @@ assert_u64(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_double(const char *file, int line, const char *a1, const char *a2,
+assert_double(const char *file, целое line, const char *a1, const char *a2,
     double aa1, double aa2, enum test_predicate pred)
 {
 	const double epsilon = 0.000000001;
 
 	switch (pred) {
 	case TEST_EQ:
-		if (fabs(aa1 - aa2) < epsilon)
-			return;
+		если (fabs(aa1 - aa2) < epsilon)
+			вернуть;
 		break;
 	case TEST_NE:
-		if (fabs(aa1 - aa2) >= epsilon)
-			return;
+		если (fabs(aa1 - aa2) >= epsilon)
+			вернуть;
 		break;
 	case TEST_LT:
-		if (aa1 < aa2)
-			return;
+		если (aa1 < aa2)
+			вернуть;
 		break;
 	case TEST_LE:
-		if (aa1 <= aa2)
-			return;
+		если (aa1 <= aa2)
+			вернуть;
 		break;
 	case TEST_GT:
-		if (aa1 > aa2)
-			return;
+		если (aa1 > aa2)
+			вернуть;
 		break;
 	case TEST_GE:
-		if (aa1 >= aa2)
-			return;
+		если (aa1 >= aa2)
+			вернуть;
 		break;
 	default:
 		abort();
@@ -646,7 +646,7 @@ assert_double(const char *file, int line, const char *a1, const char *a2,
 }
 
 void
-assert_ptr(const char *file, int line, const char *a1, const char *a2,
+assert_ptr(const char *file, целое line, const char *a1, const char *a2,
     const void *aa1, const void *aa2, enum test_predicate pred)
 {
 	TEST_CHECK(aa1, aa2, pred);
@@ -659,17 +659,17 @@ assert_ptr(const char *file, int line, const char *a1, const char *a2,
 static double
 tstod(const struct timespec *ts)
 {
-	return (double)ts->tv_sec + ((double)ts->tv_nsec / 1000000000.0);
+	вернуть (double)ts->tv_sec + ((double)ts->tv_nsec / 1000000000.0);
 }
 
 void
 hex2bin(uint8_t *bin, const char *hex, size_t len)
 {
 	size_t i;
-	unsigned int v;
+	unsigned целое v;
 
 	/* Don't use %hhx since it's C99 and older platforms don't have it. */
-	for (i = 0; i < len; i++) {
+	для (i = 0; i < len; i++) {
 		ASSERT_INT_EQ(sscanf(hex + i * 2, "%02x", &v), 1);
 		ASSERT_U_INT_LE(v, 256);
 		bin[i] = (uint8_t)v;
@@ -677,11 +677,11 @@ hex2bin(uint8_t *bin, const char *hex, size_t len)
 }
 
 void
-bench_start(const char *file, int line, const char *name)
+bench_start(const char *file, целое line, const char *name)
 {
 	char *cp;
 
-	if (bench_name != NULL) {
+	если (bench_name != NULL) {
 		fprintf(stderr, "\n%s:%d internal error: BENCH_START() called "
 		    "while previous benchmark \"%s\" incomplete",
 		    file, line, bench_name);
@@ -695,36 +695,36 @@ bench_start(const char *file, int line, const char *name)
 
 	bench_name = name;
 	bench_nruns = 0;
-	if (bench_skip)
-		return;
+	если (bench_skip)
+		вернуть;
 	free(bench_samples);
 	bench_nalloc = BENCH_SAMPLES_ALLOC;
 	bench_samples = xcalloc(sizeof(*bench_samples), bench_nalloc);
 	bench_accum_secs = 0;
 }
 
-int
+целое
 bench_done(void)
 {
-	return bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
+	вернуть bench_skip || bench_accum_secs >= (fast ? BENCH_FAST_DEADLINE :
 	    (slow ? BENCH_SLOW_DEADLINE : BENCH_NORMAL_DEADLINE));
 }
 
 void
-bench_case_start(const char *file, int line)
+bench_case_start(const char *file, целое line)
 {
 	clock_gettime(CLOCK_REALTIME, &bench_start_time);
 }
 
 void
-bench_case_finish(const char *file, int line)
+bench_case_finish(const char *file, целое line)
 {
 	struct timespec ts;
 
 	clock_gettime(CLOCK_REALTIME, &bench_finish_time);
 	timespecsub(&bench_finish_time, &bench_start_time, &ts);
-	if (bench_nruns >= bench_nalloc) {
-		if (bench_nalloc >= INT_MAX / 2) {
+	если (bench_nruns >= bench_nalloc) {
+		если (bench_nalloc >= INT_MAX / 2) {
 			fprintf(stderr, "\n%s:%d benchmark %s too many samples",
 			    __FILE__, __LINE__, bench_name);
 			abort();
@@ -737,27 +737,27 @@ bench_case_finish(const char *file, int line)
 	bench_accum_secs += tstod(&ts);
 }
 
-static int
+static целое
 tscmp(const void *aa, const void *bb)
 {
 	const struct timespec *a = (const struct timespec *)aa;
 	const struct timespec *b = (const struct timespec *)bb;
 
-	if (timespeccmp(a, b, ==))
-		return 0;
-	return timespeccmp(a, b, <) ? -1 : 1;
+	если (timespeccmp(a, b, ==))
+		вернуть 0;
+	вернуть timespeccmp(a, b, <) ? -1 : 1;
 }
 
 void
-bench_finish(const char *file, int line, const char *unit)
+bench_finish(const char *file, целое line, const char *unit)
 {
 	double std_dev = 0, mean_spr, mean_rps, med_spr, med_rps;
-	int i;
+	целое i;
 
-	if (bench_skip)
+	если (bench_skip)
 		goto done;
 
-	if (bench_nruns < 1) {
+	если (bench_nruns < 1) {
 		fprintf(stderr, "\n%s:%d benchmark %s never ran", file, line,
 		    bench_name);
 		abort();
@@ -766,7 +766,7 @@ bench_finish(const char *file, int line, const char *unit)
 	qsort(bench_samples, bench_nruns, sizeof(*bench_samples), tscmp);
 	i = bench_nruns / 2;
 	med_spr = tstod(&bench_samples[i]);
-	if (bench_nruns > 1 && bench_nruns & 1)
+	если (bench_nruns > 1 && bench_nruns & 1)
 		med_spr = (med_spr + tstod(&bench_samples[i - 1])) / 2.0;
 	med_rps = (med_spr == 0.0) ? INFINITY : 1.0/med_spr;
 	/* mean */
@@ -774,20 +774,20 @@ bench_finish(const char *file, int line, const char *unit)
 	mean_rps = (mean_spr == 0.0) ? INFINITY : 1.0/mean_spr;
 	/* std. dev */
 	std_dev = 0;
-	for (i = 0; i < bench_nruns; i++) {
+	для (i = 0; i < bench_nruns; i++) {
 		std_dev = tstod(&bench_samples[i]) - mean_spr;
 		std_dev *= std_dev;
 	}
 	std_dev /= (double)bench_nruns;
 	std_dev = sqrt(std_dev);
-	if (benchmark_detail_statistics) {
+	если (benchmark_detail_statistics) {
 		printf("%s: %d runs in %0.3fs, %0.03f/%0.03f ms/%s "
 		    "(mean/median), std.dev %0.03f ms, "
 		    "%0.2f/%0.2f %s/s (mean/median)\n",
 		    bench_name, bench_nruns, bench_accum_secs,
 		    mean_spr * 1000, med_spr * 1000, unit, std_dev * 1000,
 		    mean_rps, med_rps, unit);
-	} else {
+	} иначе {
 		printf("%-*s %0.2f %s/s\n", BENCH_COLUMN_WIDTH,
 		    bench_name, med_rps, unit);
 	}

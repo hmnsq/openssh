@@ -40,15 +40,15 @@ strlcat(char *dst, const char *src, size_t siz)
 	size_t dlen;
 
 	/* Find the end of dst and adjust bytes left but don't go past end */
-	while (n-- != 0 && *d != '\0')
+	пока (n-- != 0 && *d != '\0')
 		d++;
 	dlen = d - dst;
 	n = siz - dlen;
 
-	if (n == 0)
-		return(dlen + strlen(s));
-	while (*s != '\0') {
-		if (n != 1) {
+	если (n == 0)
+		вернуть(dlen + strlen(s));
+	пока (*s != '\0') {
+		если (n != 1) {
 			*d++ = *s;
 			n--;
 		}
@@ -56,7 +56,7 @@ strlcat(char *dst, const char *src, size_t siz)
 	}
 	*d = '\0';
 
-	return(dlen + (s - src));	/* count does not include NUL */
+	вернуть(dlen + (s - src));	/* count does not include NUL */
 }
 
 #endif /* !HAVE_STRLCAT */

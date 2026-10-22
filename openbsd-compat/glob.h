@@ -37,7 +37,7 @@
 
 /* OPENBSD ORIGINAL: include/glob.h */
 
-#if !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#если !defined(HAVE_GLOB_H) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
@@ -57,11 +57,11 @@ typedef struct {
 	size_t gl_pathc;	/* Count of total paths so far. */
 	size_t gl_matchc;	/* Count of paths matching pattern. */
 	size_t gl_offs;		/* Reserved at beginning of gl_pathv. */
-	int gl_flags;		/* Copy of flags parameter to glob. */
+	целое gl_flags;		/* Copy of flags parameter to glob. */
 	char **gl_pathv;	/* List of paths matching pattern. */
 	struct stat **gl_statv;	/* Stat entries corresponding to gl_pathv */
 				/* Copy of errfunc parameter to glob. */
-	int (*gl_errfunc)(const char *, int);
+	целое (*gl_errfunc)(const char *, целое);
 
 	/*
 	 * Alternate filesystem access methods for glob; replacement
@@ -71,8 +71,8 @@ typedef struct {
 	void (*gl_closedir)(void *);
 	struct dirent *(*gl_readdir)(void *);	
 	void *(*gl_opendir)(const char *);
-	int (*gl_lstat)(const char *, struct stat *);
-	int (*gl_stat)(const char *, struct stat *);
+	целое (*gl_lstat)(const char *, struct stat *);
+	целое (*gl_stat)(const char *, struct stat *);
 } glob_t;
 
 #define	GLOB_APPEND	0x0001	/* Append to output from previous call. */
@@ -98,7 +98,7 @@ typedef struct {
 #define	GLOB_KEEPSTAT	0x4000	/* Retain stat data for paths in gl_statv. */
 #define GLOB_ABEND	GLOB_ABORTED /* backward compatibility */
 
-int	glob(const char *, int, int (*)(const char *, int), glob_t *);
+целое	glob(const char *, целое, целое (*)(const char *, целое), glob_t *);
 void	globfree(glob_t *);
 
 #endif /* !_GLOB_H_ */

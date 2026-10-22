@@ -35,7 +35,7 @@
 
 #ifndef HAVE_ERR
 void
-err(int r, const char *fmt, ...)
+err(целое r, const char *fmt, ...)
 {
 	va_list args;
 
@@ -50,7 +50,7 @@ err(int r, const char *fmt, ...)
 
 #ifndef HAVE_ERRX
 void
-errx(int r, const char *fmt, ...)
+errx(целое r, const char *fmt, ...)
 {
 	va_list args;
 

@@ -56,16 +56,16 @@ static const char *inet_ntop6(const u_char *src, char *dst, size_t size);
  *	Paul Vixie, 1996.
  */
 const char *
-inet_ntop(int af, const void *src, char *dst, socklen_t size)
+inet_ntop(целое af, const void *src, char *dst, socklen_t size)
 {
 	switch (af) {
 	case AF_INET:
-		return (inet_ntop4(src, dst, (size_t)size));
+		вернуть (inet_ntop4(src, dst, (size_t)size));
 	case AF_INET6:
-		return (inet_ntop6(src, dst, (size_t)size));
+		вернуть (inet_ntop6(src, dst, (size_t)size));
 	default:
 		errno = EAFNOSUPPORT;
-		return (NULL);
+		вернуть (NULL);
 	}
 	/* NOTREACHED */
 }
@@ -86,15 +86,15 @@ inet_ntop4(const u_char *src, char *dst, size_t size)
 {
 	static const char fmt[] = "%u.%u.%u.%u";
 	char tmp[sizeof "255.255.255.255"];
-	int l;
+	целое l;
 
 	l = snprintf(tmp, size, fmt, src[0], src[1], src[2], src[3]);
-	if (l <= 0 || l >= size) {
+	если (l <= 0 || l >= size) {
 		errno = ENOSPC;
-		return (NULL);
+		вернуть (NULL);
 	}
 	strlcpy(dst, tmp, size);
-	return (dst);
+	вернуть (dst);
 }
 
 /* const char *
@@ -115,10 +115,10 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	 */
 	char tmp[sizeof "ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"];
 	char *tp, *ep;
-	struct { int base, len; } best, cur;
+	struct { целое base, len; } best, cur;
 	u_int words[IN6ADDRSZ / INT16SZ];
-	int i;
-	int advance;
+	целое i;
+	целое advance;
 
 	/*
 	 * Preprocess:
@@ -126,29 +126,29 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	 *	Find the longest run of 0x00's in src[] for :: shorthanding.
 	 */
 	memset(words, '\0', sizeof words);
-	for (i = 0; i < IN6ADDRSZ; i++)
+	для (i = 0; i < IN6ADDRSZ; i++)
 		words[i / 2] |= (src[i] << ((1 - (i % 2)) << 3));
 	best.base = -1;
 	cur.base = -1;
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
-		if (words[i] == 0) {
-			if (cur.base == -1)
+	для (i = 0; i < (IN6ADDRSZ / INT16SZ); i++) {
+		если (words[i] == 0) {
+			если (cur.base == -1)
 				cur.base = i, cur.len = 1;
-			else
+			иначе
 				cur.len++;
-		} else {
-			if (cur.base != -1) {
-				if (best.base == -1 || cur.len > best.len)
+		} иначе {
+			если (cur.base != -1) {
+				если (best.base == -1 || cur.len > best.len)
 					best = cur;
 				cur.base = -1;
 			}
 		}
 	}
-	if (cur.base != -1) {
-		if (best.base == -1 || cur.len > best.len)
+	если (cur.base != -1) {
+		если (best.base == -1 || cur.len > best.len)
 			best = cur;
 	}
-	if (best.base != -1 && best.len < 2)
+	если (best.base != -1 && best.len < 2)
 		best.base = -1;
 
 	/*
@@ -156,55 +156,55 @@ inet_ntop6(const u_char *src, char *dst, size_t size)
 	 */
 	tp = tmp;
 	ep = tmp + sizeof(tmp);
-	for (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
+	для (i = 0; i < (IN6ADDRSZ / INT16SZ) && tp < ep; i++) {
 		/* Are we inside the best run of 0x00's? */
-		if (best.base != -1 && i >= best.base &&
+		если (best.base != -1 && i >= best.base &&
 		    i < (best.base + best.len)) {
-			if (i == best.base) {
-				if (tp + 1 >= ep)
-					return (NULL);
+			если (i == best.base) {
+				если (tp + 1 >= ep)
+					вернуть (NULL);
 				*tp++ = ':';
 			}
 			continue;
 		}
 		/* Are we following an initial run of 0x00s or any real hex? */
-		if (i != 0) {
-			if (tp + 1 >= ep)
-				return (NULL);
+		если (i != 0) {
+			если (tp + 1 >= ep)
+				вернуть (NULL);
 			*tp++ = ':';
 		}
 		/* Is this address an encapsulated IPv4? */
-		if (i == 6 && best.base == 0 &&
+		если (i == 6 && best.base == 0 &&
 		    (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
-			if (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
-				return (NULL);
+			если (!inet_ntop4(src+12, tp, (size_t)(ep - tp)))
+				вернуть (NULL);
 			tp += strlen(tp);
 			break;
 		}
 		advance = snprintf(tp, ep - tp, "%x", words[i]);
-		if (advance <= 0 || advance >= ep - tp)
-			return (NULL);
+		если (advance <= 0 || advance >= ep - tp)
+			вернуть (NULL);
 		tp += advance;
 	}
 	/* Was it a trailing run of 0x00's? */
-	if (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
-		if (tp + 1 >= ep)
-			return (NULL);
+	если (best.base != -1 && (best.base + best.len) == (IN6ADDRSZ / INT16SZ)) {
+		если (tp + 1 >= ep)
+			вернуть (NULL);
 		*tp++ = ':';
 	}
-	if (tp + 1 >= ep)
-		return (NULL);
+	если (tp + 1 >= ep)
+		вернуть (NULL);
 	*tp++ = '\0';
 
 	/*
 	 * Check for overflow, copy, and we're done.
 	 */
-	if ((size_t)(tp - tmp) > size) {
+	если ((size_t)(tp - tmp) > size) {
 		errno = ENOSPC;
-		return (NULL);
+		вернуть (NULL);
 	}
 	strlcpy(dst, tmp, size);
-	return (dst);
+	вернуть (dst);
 }
 
 #endif /* !HAVE_INET_NTOP */

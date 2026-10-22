@@ -56,7 +56,7 @@
 #define UMAC_OUTPUT_LEN     8  /* Allowable: 4, 8, 12, 16                  */
 #endif
 
-#if UMAC_OUTPUT_LEN != 4 && UMAC_OUTPUT_LEN != 8 && \
+#если UMAC_OUTPUT_LEN != 4 && UMAC_OUTPUT_LEN != 8 && \
     UMAC_OUTPUT_LEN != 12 && UMAC_OUTPUT_LEN != 16
 # error UMAC_OUTPUT_LEN must be defined to 4, 8, 12 or 16
 #endif
@@ -94,7 +94,7 @@ typedef uint8_t	UINT8;  /* 1 byte   */
 typedef uint16_t	UINT16; /* 2 byte   */
 typedef uint32_t	UINT32; /* 4 byte   */
 typedef uint64_t	UINT64; /* 8 bytes  */
-typedef unsigned int	UWORD;  /* Register */
+typedef unsigned целое	UWORD;  /* Register */
 
 /* ---------------------------------------------------------------------- */
 /* --- Constants -------------------------------------------------------- */
@@ -106,9 +106,9 @@ typedef unsigned int	UWORD;  /* Register */
 /* For this implementation to behave correctly, __LITTLE_ENDIAN__ must    */
 /* be set true if the host computer is little-endian.                     */
 
-#if BYTE_ORDER == LITTLE_ENDIAN
+#если BYTE_ORDER == LITTLE_ENDIAN
 #define __LITTLE_ENDIAN__ 1
-#else
+#иначе
 #define __LITTLE_ENDIAN__ 0
 #endif
 
@@ -136,10 +136,10 @@ typedef unsigned int	UWORD;  /* Register */
 /* --- Endian Conversion --- Forcing assembly on some platforms           */
 /* ---------------------------------------------------------------------- */
 
-#if (__LITTLE_ENDIAN__)
+#если (__LITTLE_ENDIAN__)
 #define LOAD_UINT32_REVERSED(p)		get_u32(p)
 #define STORE_UINT32_REVERSED(p,v)	put_u32(p,v)
-#else
+#иначе
 #define LOAD_UINT32_REVERSED(p)		get_u32_le(p)
 #define STORE_UINT32_REVERSED(p,v)	put_u32_le(p,v)
 #endif
@@ -167,7 +167,7 @@ typedef AES_KEY aes_int_key[1];
   AES_encrypt((u_char *)(in),(u_char *)(out),(AES_KEY *)int_key)
 #define aes_key_setup(key,int_key)                      \
   AES_set_encrypt_key((const u_char *)(key),UMAC_KEY_LEN*8,int_key)
-#else
+#иначе
 #include "rijndael.h"
 #define AES_ROUNDS ((UMAC_KEY_LEN / 4) + 6)
 typedef UINT8 aes_int_key[AES_ROUNDS+1][4][4];	/* AES internal */
@@ -184,25 +184,25 @@ typedef UINT8 aes_int_key[AES_ROUNDS+1][4][4];	/* AES internal */
  * 'nbytes' bytes to the memory pointed at by 'bufp'. Each distinct
  * 'ndx' causes a distinct byte stream.
  */
-static void kdf(void *bufp, aes_int_key key, UINT8 ndx, int nbytes)
+static void kdf(void *bufp, aes_int_key key, UINT8 ndx, целое nbytes)
 {
     UINT8 in_buf[AES_BLOCK_LEN] = {0};
     UINT8 out_buf[AES_BLOCK_LEN];
     UINT8 *dst_buf = (UINT8 *)bufp;
-    int i;
+    целое i;
 
     /* Setup the initial value */
     in_buf[AES_BLOCK_LEN-9] = ndx;
     in_buf[AES_BLOCK_LEN-1] = i = 1;
 
-    while (nbytes >= AES_BLOCK_LEN) {
+    пока (nbytes >= AES_BLOCK_LEN) {
         aes_encryption(in_buf, out_buf, key);
         memcpy(dst_buf,out_buf,AES_BLOCK_LEN);
         in_buf[AES_BLOCK_LEN-1] = ++i;
         nbytes -= AES_BLOCK_LEN;
         dst_buf += AES_BLOCK_LEN;
     }
-    if (nbytes) {
+    если (nbytes) {
         aes_encryption(in_buf, out_buf, key);
         memcpy(dst_buf,out_buf,nbytes);
     }
@@ -243,7 +243,7 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
      * element, then we may have the result in the cache already.
      */
 
-#if (UMAC_OUTPUT_LEN == 4)
+#если (UMAC_OUTPUT_LEN == 4)
 #define LOW_BIT_MASK 3
 #elif (UMAC_OUTPUT_LEN == 8)
 #define LOW_BIT_MASK 1
@@ -254,13 +254,13 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
         UINT8 tmp_nonce_lo[4];
         UINT32 align;
     } t;
-#if LOW_BIT_MASK != 0
-    int ndx = nonce[7] & LOW_BIT_MASK;
+#если LOW_BIT_MASK != 0
+    целое ndx = nonce[7] & LOW_BIT_MASK;
 #endif
     *(UINT32 *)t.tmp_nonce_lo = ((const UINT32 *)nonce)[1];
     t.tmp_nonce_lo[3] &= ~LOW_BIT_MASK; /* zero last bit */
 
-    if ( (((UINT32 *)t.tmp_nonce_lo)[0] != ((UINT32 *)pc->nonce)[1]) ||
+    если ( (((UINT32 *)t.tmp_nonce_lo)[0] != ((UINT32 *)pc->nonce)[1]) ||
          (((const UINT32 *)nonce)[0] != ((UINT32 *)pc->nonce)[0]) )
     {
         ((UINT32 *)pc->nonce)[0] = ((const UINT32 *)nonce)[0];
@@ -268,7 +268,7 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
         aes_encryption(pc->nonce, pc->cache, pc->prf_key);
     }
 
-#if (UMAC_OUTPUT_LEN == 4)
+#если (UMAC_OUTPUT_LEN == 4)
     *((UINT32 *)buf) ^= ((UINT32 *)pc->cache)[ndx];
 #elif (UMAC_OUTPUT_LEN == 8)
     *((UINT64 *)buf) ^= ((UINT64 *)pc->cache)[ndx];
@@ -323,13 +323,13 @@ static void pdf_gen_xor(pdf_ctx *pc, const UINT8 nonce[8],
 typedef struct {
     UINT8  nh_key [L1_KEY_LEN + L1_KEY_SHIFT * (STREAMS - 1)]; /* NH Key */
     UINT8  data   [HASH_BUF_BYTES];    /* Incoming data buffer           */
-    int next_data_empty;    /* Bookkeeping variable for data buffer.     */
-    int bytes_hashed;       /* Bytes (out of L1_KEY_LEN) incorporated.   */
+    целое next_data_empty;    /* Bookkeeping variable for data buffer.     */
+    целое bytes_hashed;       /* Bytes (out of L1_KEY_LEN) incorporated.   */
     UINT64 state[STREAMS];               /* on-line state     */
 } nh_ctx;
 
 
-#if (UMAC_OUTPUT_LEN == 4)
+#если (UMAC_OUTPUT_LEN == 4)
 
 static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 /* NH hashing primitive. Previous (partial) hash result is loaded and
@@ -360,7 +360,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
         d += 8;
         k += 8;
-    } while (--c);
+    } пока (--c);
   *((UINT64 *)hp) = h;
 }
 
@@ -406,7 +406,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
     d += 8;
     k += 8;
-  } while (--c);
+  } пока (--c);
   ((UINT64 *)hp)[0] = h1;
   ((UINT64 *)hp)[1] = h2;
 }
@@ -460,7 +460,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
         d += 8;
         k += 8;
-    } while (--c);
+    } пока (--c);
     ((UINT64 *)hp)[0] = h1;
     ((UINT64 *)hp)[1] = h2;
     ((UINT64 *)hp)[2] = h3;
@@ -523,7 +523,7 @@ static void nh_aux(void *kp, const void *dp, void *hp, UINT32 dlen)
 
         d += 8;
         k += 8;
-    } while (--c);
+    } пока (--c);
     ((UINT64 *)hp)[0] = h1;
     ((UINT64 *)hp)[1] = h2;
     ((UINT64 *)hp)[2] = h3;
@@ -552,19 +552,19 @@ static void nh_transform(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
 
 /* ---------------------------------------------------------------------- */
 
-#if (__LITTLE_ENDIAN__)
+#если (__LITTLE_ENDIAN__)
 static void endian_convert(void *buf, UWORD bpw, UINT32 num_bytes)
 /* We endian convert the keys on little-endian computers to               */
 /* compensate for the lack of big-endian memory reads during hashing.     */
 {
     UWORD iters = num_bytes / bpw;
-    if (bpw == 4) {
+    если (bpw == 4) {
         UINT32 *p = (UINT32 *)buf;
         do {
             *p = LOAD_UINT32_REVERSED(p);
             p++;
-        } while (--iters);
-    } else if (bpw == 8) {
+        } пока (--iters);
+    } иначе если (bpw == 8) {
         UINT32 *p = (UINT32 *)buf;
         UINT32 t;
         do {
@@ -572,12 +572,12 @@ static void endian_convert(void *buf, UWORD bpw, UINT32 num_bytes)
             p[1] = LOAD_UINT32_REVERSED(p);
             p[0] = t;
             p += 2;
-        } while (--iters);
+        } пока (--iters);
     }
 }
 #define endian_convert_if_le(x,y,z) endian_convert((x),(y),(z))
-#else
-#define endian_convert_if_le(x,y,z) do{}while(0)  /* Do nothing */
+#иначе
+#define endian_convert_if_le(x,y,z) do{}пока(0)  /* Do nothing */
 #endif
 
 /* ---------------------------------------------------------------------- */
@@ -588,13 +588,13 @@ static void nh_reset(nh_ctx *hc)
     hc->bytes_hashed = 0;
     hc->next_data_empty = 0;
     hc->state[0] = 0;
-#if (UMAC_OUTPUT_LEN >= 8)
+#если (UMAC_OUTPUT_LEN >= 8)
     hc->state[1] = 0;
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#если (UMAC_OUTPUT_LEN >= 12)
     hc->state[2] = 0;
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
+#если (UMAC_OUTPUT_LEN == 16)
     hc->state[3] = 0;
 #endif
 
@@ -619,8 +619,8 @@ static void nh_update(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
     UINT32 i,j;
 
     j = hc->next_data_empty;
-    if ((j + nbytes) >= HASH_BUF_BYTES) {
-        if (j) {
+    если ((j + nbytes) >= HASH_BUF_BYTES) {
+        если (j) {
             i = HASH_BUF_BYTES - j;
             memcpy(hc->data+j, buf, i);
             nh_transform(hc,hc->data,HASH_BUF_BYTES);
@@ -628,7 +628,7 @@ static void nh_update(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
             buf += i;
             hc->bytes_hashed += HASH_BUF_BYTES;
         }
-        if (nbytes >= HASH_BUF_BYTES) {
+        если (nbytes >= HASH_BUF_BYTES) {
             i = nbytes & ~(HASH_BUF_BYTES - 1);
             nh_transform(hc, buf, i);
             nbytes -= i;
@@ -643,22 +643,22 @@ static void nh_update(nh_ctx *hc, const UINT8 *buf, UINT32 nbytes)
 
 /* ---------------------------------------------------------------------- */
 
-static void zero_pad(UINT8 *p, int nbytes)
+static void zero_pad(UINT8 *p, целое nbytes)
 {
 /* Write "nbytes" of zeroes, beginning at "p" */
-    if (nbytes >= (int)sizeof(UWORD)) {
-        while ((ptrdiff_t)p % sizeof(UWORD)) {
+    если (nbytes >= (целое)sizeof(UWORD)) {
+        пока ((ptrdiff_t)p % sizeof(UWORD)) {
             *p = 0;
             nbytes--;
             p++;
         }
-        while (nbytes >= (int)sizeof(UWORD)) {
+        пока (nbytes >= (целое)sizeof(UWORD)) {
             *(UWORD *)p = 0;
             nbytes -= sizeof(UWORD);
             p += sizeof(UWORD);
         }
     }
-    while (nbytes) {
+    пока (nbytes) {
         *p = 0;
         nbytes--;
         p++;
@@ -676,16 +676,16 @@ static void nh_final(nh_ctx *hc, UINT8 *result)
  * If nh_update was never called, L1_PAD_BOUNDARY zeroes are incorporated.
  */
 {
-    int nh_len, nbits;
+    целое nh_len, nbits;
 
-    if (hc->next_data_empty != 0) {
+    если (hc->next_data_empty != 0) {
         nh_len = ((hc->next_data_empty + (L1_PAD_BOUNDARY - 1)) &
                                                 ~(L1_PAD_BOUNDARY - 1));
         zero_pad(hc->data + hc->next_data_empty,
                                           nh_len - hc->next_data_empty);
         nh_transform(hc, hc->data, nh_len);
         hc->bytes_hashed += hc->next_data_empty;
-    } else if (hc->bytes_hashed == 0) {
+    } иначе если (hc->bytes_hashed == 0) {
 	nh_len = L1_PAD_BOUNDARY;
         zero_pad(hc->data, L1_PAD_BOUNDARY);
         nh_transform(hc, hc->data, nh_len);
@@ -693,13 +693,13 @@ static void nh_final(nh_ctx *hc, UINT8 *result)
 
     nbits = (hc->bytes_hashed << 3);
     ((UINT64 *)result)[0] = ((UINT64 *)hc->state)[0] + nbits;
-#if (UMAC_OUTPUT_LEN >= 8)
+#если (UMAC_OUTPUT_LEN >= 8)
     ((UINT64 *)result)[1] = ((UINT64 *)hc->state)[1] + nbits;
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#если (UMAC_OUTPUT_LEN >= 12)
     ((UINT64 *)result)[2] = ((UINT64 *)hc->state)[2] + nbits;
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
+#если (UMAC_OUTPUT_LEN == 16)
     ((UINT64 *)result)[3] = ((UINT64 *)hc->state)[3] + nbits;
 #endif
     nh_reset(hc);
@@ -720,13 +720,13 @@ static void nh(nh_ctx *hc, const UINT8 *buf, UINT32 padded_len,
     nbits = (unpadded_len << 3);
 
     ((UINT64 *)result)[0] = nbits;
-#if (UMAC_OUTPUT_LEN >= 8)
+#если (UMAC_OUTPUT_LEN >= 8)
     ((UINT64 *)result)[1] = nbits;
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#если (UMAC_OUTPUT_LEN >= 12)
     ((UINT64 *)result)[2] = nbits;
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
+#если (UMAC_OUTPUT_LEN == 16)
     ((UINT64 *)result)[3] = nbits;
 #endif
 
@@ -815,14 +815,14 @@ static UINT64 poly64(UINT64 cur, UINT64 key, UINT64 data)
 
     T = ((UINT64)x_lo << 32);
     res += T;
-    if (res < T)
+    если (res < T)
         res += 59;
 
     res += data;
-    if (res < data)
+    если (res < data)
         res += 59;
 
-    return res;
+    вернуть res;
 }
 
 
@@ -834,16 +834,16 @@ static UINT64 poly64(UINT64 cur, UINT64 key, UINT64 data)
  */
 static void poly_hash(uhash_ctx_t hc, UINT32 data_in[])
 {
-    int i;
+    целое i;
     UINT64 *data=(UINT64*)data_in;
 
-    for (i = 0; i < STREAMS; i++) {
-        if ((UINT32)(data[i] >> 32) == 0xfffffffful) {
+    для (i = 0; i < STREAMS; i++) {
+        если ((UINT32)(data[i] >> 32) == 0xfffffffful) {
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
                                        hc->poly_key_8[i], p64 - 1);
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
                                        hc->poly_key_8[i], (data[i] - 59));
-        } else {
+        } иначе {
             hc->poly_accum[i] = poly64(hc->poly_accum[i],
                                        hc->poly_key_8[i], data[i]);
         }
@@ -867,7 +867,7 @@ static UINT64 ip_aux(UINT64 t, UINT64 *ipkp, UINT64 data)
     t = t + ipkp[2] * (UINT64)(UINT16)(data >> 16);
     t = t + ipkp[3] * (UINT64)(UINT16)(data);
 
-    return t;
+    вернуть t;
 }
 
 static UINT32 ip_reduce_p36(UINT64 t)
@@ -876,11 +876,11 @@ static UINT32 ip_reduce_p36(UINT64 t)
     UINT64 ret;
 
     ret = (t & m36) + 5 * (t >> 36);
-    if (ret >= p36)
+    если (ret >= p36)
         ret -= p36;
 
     /* return least significant 32 bits */
-    return (UINT32)(ret);
+    вернуть (UINT32)(ret);
 }
 
 
@@ -895,15 +895,15 @@ static void ip_short(uhash_ctx_t ahc, UINT8 *nh_res, u_char *res)
 
     t  = ip_aux(0,ahc->ip_keys, nhp[0]);
     STORE_UINT32_BIG((UINT32 *)res+0, ip_reduce_p36(t) ^ ahc->ip_trans[0]);
-#if (UMAC_OUTPUT_LEN >= 8)
+#если (UMAC_OUTPUT_LEN >= 8)
     t  = ip_aux(0,ahc->ip_keys+4, nhp[1]);
     STORE_UINT32_BIG((UINT32 *)res+1, ip_reduce_p36(t) ^ ahc->ip_trans[1]);
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#если (UMAC_OUTPUT_LEN >= 12)
     t  = ip_aux(0,ahc->ip_keys+8, nhp[2]);
     STORE_UINT32_BIG((UINT32 *)res+2, ip_reduce_p36(t) ^ ahc->ip_trans[2]);
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
+#если (UMAC_OUTPUT_LEN == 16)
     t  = ip_aux(0,ahc->ip_keys+12, nhp[3]);
     STORE_UINT32_BIG((UINT32 *)res+3, ip_reduce_p36(t) ^ ahc->ip_trans[3]);
 #endif
@@ -915,12 +915,12 @@ static void ip_short(uhash_ctx_t ahc, UINT8 *nh_res, u_char *res)
  */
 static void ip_long(uhash_ctx_t ahc, u_char *res)
 {
-    int i;
+    целое i;
     UINT64 t;
 
-    for (i = 0; i < STREAMS; i++) {
+    для (i = 0; i < STREAMS; i++) {
         /* fix polyhash output not in Z_p64 */
-        if (ahc->poly_accum[i] >= p64)
+        если (ahc->poly_accum[i] >= p64)
             ahc->poly_accum[i] -= p64;
         t  = ip_aux(0,ahc->ip_keys+(i*4), ahc->poly_accum[i]);
         STORE_UINT32_BIG((UINT32 *)res+i,
@@ -934,21 +934,21 @@ static void ip_long(uhash_ctx_t ahc, u_char *res)
 /* ---------------------------------------------------------------------- */
 
 /* Reset uhash context for next hash session */
-static int uhash_reset(uhash_ctx_t pc)
+static целое uhash_reset(uhash_ctx_t pc)
 {
     nh_reset(&pc->hash);
     pc->msg_len = 0;
     pc->poly_accum[0] = 1;
-#if (UMAC_OUTPUT_LEN >= 8)
+#если (UMAC_OUTPUT_LEN >= 8)
     pc->poly_accum[1] = 1;
 #endif
-#if (UMAC_OUTPUT_LEN >= 12)
+#если (UMAC_OUTPUT_LEN >= 12)
     pc->poly_accum[2] = 1;
 #endif
-#if (UMAC_OUTPUT_LEN == 16)
+#если (UMAC_OUTPUT_LEN == 16)
     pc->poly_accum[3] = 1;
 #endif
-    return 1;
+    вернуть 1;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -960,7 +960,7 @@ static int uhash_reset(uhash_ctx_t pc)
  */
 static void uhash_init(uhash_ctx_t ahc, aes_int_key prf_key)
 {
-    int i;
+    целое i;
     UINT8 buf[(8*STREAMS+4)*sizeof(UINT64)];
 
     /* Zero the entire uhash context */
@@ -971,7 +971,7 @@ static void uhash_init(uhash_ctx_t ahc, aes_int_key prf_key)
 
     /* Setup L2 hash variables */
     kdf(buf, prf_key, 2, sizeof(buf));    /* Fill buffer with index 1 key */
-    for (i = 0; i < STREAMS; i++) {
+    для (i = 0; i < STREAMS; i++) {
         /* Fill keys from the buffer, skipping bytes in the buffer not
          * used by this implementation. Endian reverse the keys if on a
          * little-endian computer.
@@ -985,12 +985,12 @@ static void uhash_init(uhash_ctx_t ahc, aes_int_key prf_key)
 
     /* Setup L3-1 hash variables */
     kdf(buf, prf_key, 3, sizeof(buf)); /* Fill buffer with index 2 key */
-    for (i = 0; i < STREAMS; i++)
+    для (i = 0; i < STREAMS; i++)
           memcpy(ahc->ip_keys+4*i, buf+(8*i+4)*sizeof(UINT64),
                                                  4*sizeof(UINT64));
     endian_convert_if_le(ahc->ip_keys, sizeof(UINT64),
                                                   sizeof(ahc->ip_keys));
-    for (i = 0; i < STREAMS*4; i++)
+    для (i = 0; i < STREAMS*4; i++)
         ahc->ip_keys[i] %= p36;  /* Bring into Z_p36 */
 
     /* Setup L3-2 hash variables    */
@@ -1003,7 +1003,7 @@ static void uhash_init(uhash_ctx_t ahc, aes_int_key prf_key)
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
+#если 0
 static uhash_ctx_t uhash_alloc(u_char key[])
 {
 /* Allocate memory and force to a 16-byte boundary. */
@@ -1012,8 +1012,8 @@ static uhash_ctx_t uhash_alloc(u_char key[])
     aes_int_key prf_key;
 
     ctx = (uhash_ctx_t)malloc(sizeof(uhash_ctx)+ALLOC_BOUNDARY);
-    if (ctx) {
-        if (ALLOC_BOUNDARY) {
+    если (ctx) {
+        если (ALLOC_BOUNDARY) {
             bytes_to_add = ALLOC_BOUNDARY -
                               ((ptrdiff_t)ctx & (ALLOC_BOUNDARY -1));
             ctx = (uhash_ctx_t)((u_char *)ctx + bytes_to_add);
@@ -1022,31 +1022,31 @@ static uhash_ctx_t uhash_alloc(u_char key[])
         aes_key_setup(key,prf_key);
         uhash_init(ctx, prf_key);
     }
-    return (ctx);
+    вернуть (ctx);
 }
 #endif
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-static int uhash_free(uhash_ctx_t ctx)
+#если 0
+static целое uhash_free(uhash_ctx_t ctx)
 {
 /* Free memory allocated by uhash_alloc */
     u_char bytes_to_sub;
 
-    if (ctx) {
-        if (ALLOC_BOUNDARY) {
+    если (ctx) {
+        если (ALLOC_BOUNDARY) {
             bytes_to_sub = *((u_char *)ctx - 1);
             ctx = (uhash_ctx_t)((u_char *)ctx - bytes_to_sub);
         }
         free(ctx);
     }
-    return (1);
+    вернуть (1);
 }
 #endif
 /* ---------------------------------------------------------------------- */
 
-static int uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
+static целое uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
 /* Given len bytes of data, we parse it into L1_KEY_LEN chunks and
  * hash each one with NH, calling the polyhash on each NH output.
  */
@@ -1055,21 +1055,21 @@ static int uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
     UINT64 result_buf[STREAMS];
     UINT8 *nh_result = (UINT8 *)&result_buf;
 
-    if (ctx->msg_len + len <= L1_KEY_LEN) {
+    если (ctx->msg_len + len <= L1_KEY_LEN) {
         nh_update(&ctx->hash, (const UINT8 *)input, len);
         ctx->msg_len += len;
-    } else {
+    } иначе {
 
          bytes_hashed = ctx->msg_len % L1_KEY_LEN;
-         if (ctx->msg_len == L1_KEY_LEN)
+         если (ctx->msg_len == L1_KEY_LEN)
              bytes_hashed = L1_KEY_LEN;
 
-         if (bytes_hashed + len >= L1_KEY_LEN) {
+         если (bytes_hashed + len >= L1_KEY_LEN) {
 
              /* If some bytes have been passed to the hash function      */
              /* then we want to pass at most (L1_KEY_LEN - bytes_hashed) */
              /* bytes to complete the current nh_block.                  */
-             if (bytes_hashed) {
+             если (bytes_hashed) {
                  bytes_remaining = (L1_KEY_LEN - bytes_hashed);
                  nh_update(&ctx->hash, (const UINT8 *)input, bytes_remaining);
                  nh_final(&ctx->hash, nh_result);
@@ -1080,7 +1080,7 @@ static int uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
              }
 
              /* Hash directly from input stream if enough bytes */
-             while (len >= L1_KEY_LEN) {
+             пока (len >= L1_KEY_LEN) {
                  nh(&ctx->hash, (const UINT8 *)input, L1_KEY_LEN,
                                    L1_KEY_LEN, nh_result);
                  ctx->msg_len += L1_KEY_LEN;
@@ -1091,61 +1091,61 @@ static int uhash_update(uhash_ctx_t ctx, const u_char *input, long len)
          }
 
          /* pass remaining < L1_KEY_LEN bytes of input data to NH */
-         if (len > 0 && (unsigned long)len <= UINT32_MAX) {
+         если (len > 0 && (unsigned long)len <= UINT32_MAX) {
              nh_update(&ctx->hash, (const UINT8 *)input, len);
              ctx->msg_len += len;
          }
      }
 
-    return (1);
+    вернуть (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-static int uhash_final(uhash_ctx_t ctx, u_char *res)
+static целое uhash_final(uhash_ctx_t ctx, u_char *res)
 /* Incorporate any pending data, pad, and generate tag */
 {
     UINT64 result_buf[STREAMS];
     UINT8 *nh_result = (UINT8 *)&result_buf;
 
-    if (ctx->msg_len > L1_KEY_LEN) {
-        if (ctx->msg_len % L1_KEY_LEN) {
+    если (ctx->msg_len > L1_KEY_LEN) {
+        если (ctx->msg_len % L1_KEY_LEN) {
             nh_final(&ctx->hash, nh_result);
             poly_hash(ctx,(UINT32 *)nh_result);
         }
         ip_long(ctx, res);
-    } else {
+    } иначе {
         nh_final(&ctx->hash, nh_result);
         ip_short(ctx,nh_result, res);
     }
     uhash_reset(ctx);
-    return (1);
+    вернуть (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
+#если 0
+static целое uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
 /* assumes that msg is in a writable buffer of length divisible by */
 /* L1_PAD_BOUNDARY. Bytes beyond msg[len] may be zeroed.           */
 {
     UINT8 nh_result[STREAMS*sizeof(UINT64)];
     UINT32 nh_len;
-    int extra_zeroes_needed;
+    целое extra_zeroes_needed;
 
     /* If the message to be hashed is no longer than L1_HASH_LEN, we skip
      * the polyhash.
      */
-    if (len <= L1_KEY_LEN) {
-	if (len == 0)                  /* If zero length messages will not */
+    если (len <= L1_KEY_LEN) {
+	если (len == 0)                  /* If zero length messages will not */
 		nh_len = L1_PAD_BOUNDARY;  /* be seen, comment out this case   */
-	else
+	иначе
 		nh_len = ((len + (L1_PAD_BOUNDARY - 1)) & ~(L1_PAD_BOUNDARY - 1));
         extra_zeroes_needed = nh_len - len;
         zero_pad((UINT8 *)msg + len, extra_zeroes_needed);
         nh(&ahc->hash, (UINT8 *)msg, nh_len, len, nh_result);
         ip_short(ahc,nh_result, res);
-    } else {
+    } иначе {
         /* Otherwise, we hash each L1_KEY_LEN chunk with NH, passing the NH
          * output to poly_hash().
          */
@@ -1154,8 +1154,8 @@ static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
             poly_hash(ahc,(UINT32 *)nh_result);
             len -= L1_KEY_LEN;
             msg += L1_KEY_LEN;
-        } while (len >= L1_KEY_LEN);
-        if (len) {
+        } пока (len >= L1_KEY_LEN);
+        если (len) {
             nh_len = ((len + (L1_PAD_BOUNDARY - 1)) & ~(L1_PAD_BOUNDARY - 1));
             extra_zeroes_needed = nh_len - len;
             zero_pad((UINT8 *)msg + len, extra_zeroes_needed);
@@ -1167,7 +1167,7 @@ static int uhash(uhash_ctx_t ahc, u_char *msg, long len, u_char *res)
     }
 
     uhash_reset(ahc);
-    return 1;
+    вернуть 1;
 }
 #endif
 
@@ -1191,26 +1191,26 @@ struct umac_ctx {
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-int umac_reset(struct umac_ctx *ctx)
+#если 0
+целое umac_reset(struct umac_ctx *ctx)
 /* Reset the hash function to begin a new authentication.        */
 {
     uhash_reset(&ctx->hash);
-    return (1);
+    вернуть (1);
 }
 #endif
 
 /* ---------------------------------------------------------------------- */
 
-int umac_delete(struct umac_ctx *ctx)
+целое umac_delete(struct umac_ctx *ctx)
 /* Deallocate the ctx structure */
 {
-    if (ctx) {
-        if (ALLOC_BOUNDARY)
+    если (ctx) {
+        если (ALLOC_BOUNDARY)
             ctx = (struct umac_ctx *)ctx->free_ptr;
         freezero(ctx, sizeof(*ctx) + ALLOC_BOUNDARY);
     }
-    return (1);
+    вернуть (1);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1225,8 +1225,8 @@ struct umac_ctx *umac_new(const u_char key[])
     aes_int_key prf_key;
 
     octx = ctx = xcalloc(1, sizeof(*ctx) + ALLOC_BOUNDARY);
-    if (ctx) {
-        if (ALLOC_BOUNDARY) {
+    если (ctx) {
+        если (ALLOC_BOUNDARY) {
             bytes_to_add = ALLOC_BOUNDARY -
                               ((ptrdiff_t)ctx & (ALLOC_BOUNDARY - 1));
             ctx = (struct umac_ctx *)((u_char *)ctx + bytes_to_add);
@@ -1238,35 +1238,35 @@ struct umac_ctx *umac_new(const u_char key[])
         explicit_bzero(prf_key, sizeof(prf_key));
     }
 
-    return (ctx);
+    вернуть (ctx);
 }
 
 /* ---------------------------------------------------------------------- */
 
-int umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8])
+целое umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8])
 /* Incorporate any pending data, pad, and generate tag */
 {
     uhash_final(&ctx->hash, (u_char *)tag);
     pdf_gen_xor(&ctx->pdf, (const UINT8 *)nonce, (UINT8 *)tag);
 
-    return (1);
+    вернуть (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-int umac_update(struct umac_ctx *ctx, const u_char *input, long len)
+целое umac_update(struct umac_ctx *ctx, const u_char *input, long len)
 /* Given len bytes of data, we parse it into L1_KEY_LEN chunks and   */
 /* hash each one, calling the PDF on the hashed output whenever the hash- */
 /* output buffer is full.                                                 */
 {
     uhash_update(&ctx->hash, input, len);
-    return (1);
+    вернуть (1);
 }
 
 /* ---------------------------------------------------------------------- */
 
-#if 0
-int umac(struct umac_ctx *ctx, u_char *input,
+#если 0
+целое umac(struct umac_ctx *ctx, u_char *input,
          long len, u_char tag[],
          u_char nonce[8])
 /* All-in-one version simply calls umac_update() and umac_final().        */
@@ -1274,7 +1274,7 @@ int umac(struct umac_ctx *ctx, u_char *input,
     uhash(&ctx->hash, input, len, (u_char *)tag);
     pdf_gen_xor(&ctx->pdf, (UINT8 *)nonce, (UINT8 *)tag);
 
-    return (1);
+    вернуть (1);
 }
 #endif
 

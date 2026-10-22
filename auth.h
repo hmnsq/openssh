@@ -54,15 +54,15 @@ typedef struct KbdintDevice KbdintDevice;
 
 struct Authctxt {
 	sig_atomic_t	 success;
-	int		 authenticated;	/* authenticated and alarms cancelled */
-	int		 postponed;	/* authentication needs another step */
-	int		 valid;		/* user exists and is allowed to login */
-	int		 attempt;
-	int		 failures;
-	int		 pk_ok_failures;
-	int		 auth_failure_already_counted;
-	int		 server_caused_failure;
-	int		 force_pwchange;
+	целое		 authenticated;	/* authenticated and alarms cancelled */
+	целое		 postponed;	/* authentication needs another step */
+	целое		 valid;		/* user exists and is allowed to login */
+	целое		 attempt;
+	целое		 failures;
+	целое		 pk_ok_failures;
+	целое		 auth_failure_already_counted;
+	целое		 server_caused_failure;
+	целое		 force_pwchange;
 	char		*user;		/* username sent by the client */
 	char		*service;
 	struct passwd	*pw;		/* set if 'valid' */
@@ -109,12 +109,12 @@ struct Authctxt {
 struct authmethod_cfg {
 	const char *name;
 	const char *synonym;
-	int *enabled;
+	целое *enabled;
 };
 
 struct Authmethod {
 	struct authmethod_cfg *cfg;
-	int	(*userauth)(struct ssh *, const char *);
+	целое	(*userauth)(struct ssh *, const char *);
 };
 
 /*
@@ -128,43 +128,43 @@ struct KbdintDevice
 {
 	const char *name;
 	void*	(*init_ctx)(Authctxt*);
-	int	(*query)(void *ctx, char **name, char **infotxt,
+	целое	(*query)(void *ctx, char **name, char **infotxt,
 		    u_int *numprompts, char ***prompts, u_int **echo_on);
-	int	(*respond)(void *ctx, u_int numresp, char **responses);
+	целое	(*respond)(void *ctx, u_int numresp, char **responses);
 	void	(*free_ctx)(void *ctx);
 };
 
-int
+целое
 auth_rhosts2(struct passwd *, const char *, const char *, const char *);
 
-int      auth_password(struct ssh *, const char *);
+целое      auth_password(struct ssh *, const char *);
 
-int	 hostbased_key_allowed(struct ssh *, struct passwd *,
+целое	 hostbased_key_allowed(struct ssh *, struct passwd *,
 	    const char *, char *, struct sshkey *);
-int	 user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *,
-    int, struct sshauthopt **);
-int	 auth2_key_already_used(Authctxt *, const struct sshkey *);
+целое	 user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *,
+    целое, struct sshauthopt **);
+целое	 auth2_key_already_used(Authctxt *, const struct sshkey *);
 
 /*
  * Handling auth method-specific information for logging and prevention
  * of key reuse during multiple authentication.
  */
 void	 auth2_authctxt_reset_info(Authctxt *);
-void	 auth2_record_key(Authctxt *, int, const struct sshkey *);
+void	 auth2_record_key(Authctxt *, целое, const struct sshkey *);
 void	 auth2_record_info(Authctxt *authctxt, const char *, ...)
 	    __attribute__((__format__ (printf, 2, 3)))
 	    __attribute__((__nonnull__ (2)));
 void	 auth2_update_session_info(Authctxt *, const char *, const char *);
 
 #ifdef KRB5
-int	auth_krb5_password(Authctxt *authctxt, const char *password);
+целое	auth_krb5_password(Authctxt *authctxt, const char *password);
 void	krb5_cleanup_proc(Authctxt *authctxt);
 #endif /* KRB5 */
 
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+#если defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
 #include <shadow.h>
-int auth_shadow_acctexpired(struct spwd *);
-int auth_shadow_pwexpired(Authctxt *);
+целое auth_shadow_acctexpired(struct spwd *);
+целое auth_shadow_pwexpired(Authctxt *);
 #endif
 
 #include "auth-pam.h"
@@ -173,50 +173,50 @@ void remove_kbdint_device(const char *);
 
 void	do_authentication2(struct ssh *);
 
-void	auth_log(struct ssh *, int, int, const char *, const char *);
+void	auth_log(struct ssh *, целое, целое, const char *, const char *);
 void	auth_maxtries_exceeded(struct ssh *) __attribute__((noreturn));
-void	userauth_finish(struct ssh *, int, const char *, const char *);
-int	auth_root_allowed(struct ssh *, const char *);
+void	userauth_finish(struct ssh *, целое, const char *, const char *);
+целое	auth_root_allowed(struct ssh *, const char *);
 void	auth_failure_delay(Authctxt *, double);
 
 char	*auth2_read_banner(void);
-int	 auth2_methods_valid(const char *, int);
-int	 auth2_update_methods_lists(Authctxt *, const char *, const char *);
-int	 auth2_setup_methods_lists(Authctxt *);
-int	 auth2_method_allowed(Authctxt *, const char *, const char *);
+целое	 auth2_methods_valid(const char *, целое);
+целое	 auth2_update_methods_lists(Authctxt *, const char *, const char *);
+целое	 auth2_setup_methods_lists(Authctxt *);
+целое	 auth2_method_allowed(Authctxt *, const char *, const char *);
 
-int	auth2_challenge(struct ssh *, char *);
+целое	auth2_challenge(struct ssh *, char *);
 void	auth2_challenge_stop(struct ssh *);
-int	bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int	bsdauth_respond(void *, u_int, char **);
+целое	bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
+целое	bsdauth_respond(void *, u_int, char **);
 
-int	allowed_user(struct ssh *, struct passwd *);
+целое	allowed_user(struct ssh *, struct passwd *);
 struct passwd * getpwnamallow(struct ssh *, const char *user);
 
 char	*expand_authorized_keys(const char *, struct passwd *pw);
 char	*authorized_principals_file(struct passwd *);
 
-int	 auth_key_is_revoked(struct sshkey *);
+целое	 auth_key_is_revoked(struct sshkey *);
 
-const char	*auth_get_canonical_hostname(struct ssh *, int);
+const char	*auth_get_canonical_hostname(struct ssh *, целое);
 
 HostStatus
 check_key_in_hostfiles(struct passwd *, struct sshkey *, const char *,
     const char *, const char *);
 
 /* hostkey handling */
-struct sshkey	*get_hostkey_by_index(int);
-struct sshkey	*get_hostkey_public_by_index(int, struct ssh *);
-struct sshkey	*get_hostkey_public_by_type(int, int, struct ssh *);
-struct sshkey	*get_hostkey_private_by_type(int, int, struct ssh *);
-int	 get_hostkey_index(struct sshkey *, int, struct ssh *);
-int	 sshd_hostkey_sign(struct ssh *, struct sshkey *, struct sshkey *,
+struct sshkey	*get_hostkey_by_index(целое);
+struct sshkey	*get_hostkey_public_by_index(целое, struct ssh *);
+struct sshkey	*get_hostkey_public_by_type(целое, целое, struct ssh *);
+struct sshkey	*get_hostkey_private_by_type(целое, целое, struct ssh *);
+целое	 get_hostkey_index(struct sshkey *, целое, struct ssh *);
+целое	 sshd_hostkey_sign(struct ssh *, struct sshkey *, struct sshkey *,
     u_char **, size_t *, const u_char *, size_t, const char *);
 
 /* Key / cert options linkage to auth layer */
-int	 auth_activate_options(struct ssh *, struct sshauthopt *);
+целое	 auth_activate_options(struct ssh *, struct sshauthopt *);
 void	 auth_restrict_session(struct ssh *);
-void	 auth_log_authopts(const char *, const struct sshauthopt *, int);
+void	 auth_log_authopts(const char *, const struct sshauthopt *, целое);
 
 /* debug messages during authentication */
 void	 auth_debug_add(const char *fmt,...)
@@ -227,22 +227,22 @@ void	 auth_debug_reset(void);
 struct passwd *fakepw(void);
 
 /* auth2-pubkeyfile.c */
-int	 auth_authorise_keyopts(struct passwd *, struct sshauthopt *, int,
+целое	 auth_authorise_keyopts(struct passwd *, struct sshauthopt *, целое,
     const char *, const char *, const char *);
-int	 auth_check_principals_line(char *, const struct sshkey_cert *,
+целое	 auth_check_principals_line(char *, const struct sshkey_cert *,
     const char *, struct sshauthopt **);
-int	 auth_process_principals(FILE *, const char *,
+целое	 auth_process_principals(FILE *, const char *,
     const struct sshkey_cert *, struct sshauthopt **);
-int	 auth_check_authkey_line(struct passwd *, struct sshkey *,
+целое	 auth_check_authkey_line(struct passwd *, struct sshkey *,
     char *, const char *, const char *, const char *, struct sshauthopt **);
-int	 auth_check_authkeys_file(struct passwd *, FILE *, char *,
+целое	 auth_check_authkeys_file(struct passwd *, FILE *, char *,
     struct sshkey *, const char *, const char *, struct sshauthopt **);
-FILE	*auth_openkeyfile(const char *, struct passwd *, int);
-FILE	*auth_openprincipals(const char *, struct passwd *, int);
+FILE	*auth_openkeyfile(const char *, struct passwd *, целое);
+FILE	*auth_openprincipals(const char *, struct passwd *, целое);
 
-int	 sys_auth_passwd(struct ssh *, const char *);
+целое	 sys_auth_passwd(struct ssh *, const char *);
 
-#if defined(KRB5) && !defined(HEIMDAL)
+#если defined(KRB5) && !defined(HEIMDAL)
 krb5_error_code ssh_krb5_cc_gen(krb5_context, krb5_ccache *);
 #endif
 

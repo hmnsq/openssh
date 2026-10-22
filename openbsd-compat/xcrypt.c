@@ -29,7 +29,7 @@
 #include <unistd.h>
 #include <pwd.h>
 
-# if defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
+# если defined(HAVE_CRYPT_H) && !defined(HAVE_SECUREWARE)
 #  include <crypt.h>
 # endif
 
@@ -44,17 +44,17 @@
 #  include <prot.h>
 # endif
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+# если defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 #  include <shadow.h>
 # endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+# если defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
 #  include <sys/label.h>
 #  include <sys/audit.h>
 #  include <pwdadj.h>
 # endif
 
-# if defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
+# если defined(WITH_OPENSSL) && !defined(HAVE_CRYPT) && defined(HAVE_DES_CRYPT)
 #  include <openssl/des.h>
 #  define crypt DES_crypt
 # endif
@@ -75,14 +75,14 @@ pick_salt(void)
 	size_t typelen;
 	static char salt[32];
 
-	if (salt[0] != '\0')
-		return salt;
+	если (salt[0] != '\0')
+		вернуть salt;
 	strlcpy(salt, "xx", sizeof(salt));
 	setpwent();
-	while ((pw = getpwent()) != NULL) {
-		if ((passwd = shadow_pw(pw)) == NULL)
+	пока ((pw = getpwent()) != NULL) {
+		если ((passwd = shadow_pw(pw)) == NULL)
 			continue;
-		if (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != NULL) {
+		если (passwd[0] == '$' && (p = strrchr(passwd+1, '$')) != NULL) {
 			typelen = p - passwd + 1;
 			strlcpy(salt, passwd, MINIMUM(typelen, sizeof(salt)));
 			explicit_bzero(passwd, strlen(passwd));
@@ -91,7 +91,7 @@ pick_salt(void)
 	}
  out:
 	endpwent();
-	return salt;
+	вернуть salt;
 }
 
 char *
@@ -103,21 +103,21 @@ xcrypt(const char *password, const char *salt)
 	 * If we don't have a salt we are encrypting a fake password for
 	 * for timing purposes.  Pick an appropriate salt.
 	 */
-	if (salt == NULL)
+	если (salt == NULL)
 		salt = pick_salt();
 
-#if defined(__hpux) && !defined(HAVE_SECUREWARE)
-	if (iscomsec())
+#если defined(__hpux) && !defined(HAVE_SECUREWARE)
+	если (iscomsec())
 		crypted = bigcrypt(password, salt);
-	else
+	иначе
 		crypted = crypt(password, salt);
 # elif defined(HAVE_SECUREWARE)
 	crypted = bigcrypt(password, salt);
-# else
+# иначе
 	crypted = crypt(password, salt);
 #endif
 
-	return crypted;
+	вернуть crypted;
 }
 
 /*
@@ -130,27 +130,27 @@ shadow_pw(struct passwd *pw)
 {
 	char *pw_password = pw->pw_passwd;
 
-# if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+# если defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 	struct spwd *spw = getspnam(pw->pw_name);
 
-	if (spw != NULL)
+	если (spw != NULL)
 		pw_password = spw->sp_pwdp;
 # endif
 
 #ifdef USE_LIBIAF
-	return(get_iaf_password(pw));
+	вернуть(get_iaf_password(pw));
 #endif
 
-# if defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
+# если defined(HAVE_GETPWANAM) && !defined(DISABLE_SHADOW)
 	struct passwd_adjunct *spw;
-	if (issecure() && (spw = getpwanam(pw->pw_name)) != NULL)
+	если (issecure() && (spw = getpwanam(pw->pw_name)) != NULL)
 		pw_password = spw->pwa_passwd;
 # elif defined(HAVE_SECUREWARE)
 	struct pr_passwd *spw = getprpwnam(pw->pw_name);
 
-	if (spw != NULL)
+	если (spw != NULL)
 		pw_password = spw->ufld.fd_encrypt;
 # endif
 
-	return pw_password;
+	вернуть pw_password;
 }

@@ -35,7 +35,7 @@
 #endif
 #ifdef USE_LIBEDIT
 #include <histedit.h>
-#else
+#иначе
 typedef void EditLine;
 #endif
 #include <limits.h>
@@ -64,34 +64,34 @@ typedef void EditLine;
 FILE* infile;
 
 /* Are we in batchfile mode? */
-int batchmode = 0;
+целое batchmode = 0;
 
 /* PID of ssh transport process */
 static volatile pid_t sshpid = -1;
 
 /* Suppress diagnostic messages */
-int quiet = 0;
+целое quiet = 0;
 
 /* This is set to 0 if the progressmeter is not desired. */
-int showprogress = 1;
+целое showprogress = 1;
 
 /* When this option is set, we always recursively download/upload directories */
-int global_rflag = 0;
+целое global_rflag = 0;
 
 /* When this option is set, we resume download or upload if possible */
-int global_aflag = 0;
+целое global_aflag = 0;
 
 /* When this option is set, the file transfers will always preserve times */
-int global_pflag = 0;
+целое global_pflag = 0;
 
 /* When this option is set, transfers will have fsync() called on each file */
-int global_fflag = 0;
+целое global_fflag = 0;
 
 /* SIGINT received during command processing */
 volatile sig_atomic_t interrupted = 0;
 
 /* I wish qsort() took a separate ctx for the comparison function...*/
-int sort_flag;
+целое sort_flag;
 glob_t *sort_glob;
 
 /* Context used for commandline completion */
@@ -100,8 +100,8 @@ struct complete_ctx {
 	char **remote_pathp;
 };
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *); /* proto for sftp-glob.c */
+целое sftp_glob(struct sftp_conn *, const char *, целое,
+    целое (*)(const char *, целое), glob_t *); /* proto for sftp-glob.c */
 
 extern char *__progname;
 
@@ -156,9 +156,9 @@ enum sftp_command {
 
 struct CMD {
 	const char *c;
-	const int n;
-	const int t;	/* Completion type for the first argument */
-	const int t2;	/* completion type for the optional second argument */
+	const целое n;
+	const целое t;	/* Completion type for the first argument */
+	const целое t2;	/* completion type for the optional second argument */
 };
 
 /* Type of completion */
@@ -208,12 +208,12 @@ static const struct CMD cmds[] = {
 };
 
 static void
-killchild(int signo)
+killchild(целое signo)
 {
 	pid_t pid;
 
 	pid = sshpid;
-	if (pid > 1) {
+	если (pid > 1) {
 		kill(pid, SIGTERM);
 		(void)waitpid(pid, NULL, 0);
 	}
@@ -222,12 +222,12 @@ killchild(int signo)
 }
 
 static void
-suspchild(int signo)
+suspchild(целое signo)
 {
-	int save_errno = errno;
-	if (sshpid > 1) {
+	целое save_errno = errno;
+	если (sshpid > 1) {
 		kill(sshpid, signo);
-		while (waitpid(sshpid, NULL, WUNTRACED) == -1 && errno == EINTR)
+		пока (waitpid(sshpid, NULL, WUNTRACED) == -1 && errno == EINTR)
 			continue;
 	}
 	kill(getpid(), SIGSTOP);
@@ -235,10 +235,10 @@ suspchild(int signo)
 }
 
 static void
-cmd_interrupt(int signo)
+cmd_interrupt(целое signo)
 {
 	const char msg[] = "\rInterrupt  \n";
-	int olderrno = errno;
+	целое olderrno = errno;
 
 	(void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
 	interrupted = 1;
@@ -246,23 +246,23 @@ cmd_interrupt(int signo)
 }
 
 static void
-read_interrupt(int signo)
+read_interrupt(целое signo)
 {
 	interrupted = 1;
 }
 
 static void
-sigchld_handler(int sig)
+sigchld_handler(целое sig)
 {
-	int save_errno = errno;
+	целое save_errno = errno;
 	pid_t pid;
 	const char msg[] = "\rConnection closed.  \n";
 
 	/* Report if ssh transport process dies. */
-	while ((pid = waitpid(sshpid, NULL, WNOHANG)) == -1 && errno == EINTR)
+	пока ((pid = waitpid(sshpid, NULL, WNOHANG)) == -1 && errno == EINTR)
 		continue;
-	if (pid == sshpid) {
-		if (!quiet)
+	если (pid == sshpid) {
+		если (!quiet)
 		    (void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
 		sshpid = -1;
 	}
@@ -313,24 +313,24 @@ help(void)
 static void
 local_do_shell(const char *args)
 {
-	int status;
+	целое status;
 	char *shell;
 	pid_t pid;
 
-	if (!*args)
+	если (!*args)
 		args = NULL;
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	если ((shell = getenv("SHELL")) == NULL || *shell == '\0')
 		shell = _PATH_BSHELL;
 
-	if ((pid = fork()) == -1)
+	если ((pid = fork()) == -1)
 		fatal("Couldn't fork: %s", strerror(errno));
 
-	if (pid == 0) {
-		if (args) {
+	если (pid == 0) {
+		если (args) {
 			debug3("Executing %s -c \"%s\"", shell, args);
 			execl(shell, shell, "-c", args, (char *)NULL);
-		} else {
+		} иначе {
 			debug3("Executing %s", shell);
 			execl(shell, shell, (char *)NULL);
 		}
@@ -338,22 +338,22 @@ local_do_shell(const char *args)
 		    strerror(errno));
 		_exit(1);
 	}
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	пока (waitpid(pid, &status, 0) == -1)
+		если (errno != EINTR)
 			fatal("Couldn't wait for child: %s", strerror(errno));
-	if (!WIFEXITED(status))
+	если (!WIFEXITED(status))
 		error("Shell exited abnormally");
-	else if (WEXITSTATUS(status))
+	иначе если (WEXITSTATUS(status))
 		error("Shell exited with status %d", WEXITSTATUS(status));
 }
 
 static void
 local_do_ls(const char *args)
 {
-	if (!args || !*args)
+	если (!args || !*args)
 		local_do_shell(_PATH_LS);
-	else {
-		int len = strlen(_PATH_LS " ") + strlen(args) + 1;
+	иначе {
+		целое len = strlen(_PATH_LS " ") + strlen(args) + 1;
 		char *buf = xmalloc(len);
 
 		/* XXX: quoting - rip quoting code from ftp? */
@@ -369,30 +369,30 @@ path_strip(const char *path, const char *strip)
 {
 	size_t len;
 
-	if (strip == NULL || (len = strlen(strip)) == 0)
-		return (xstrdup(path));
+	если (strip == NULL || (len = strlen(strip)) == 0)
+		вернуть (xstrdup(path));
 
-	if (strncmp(path, strip, len) == 0) {
-		if (strip[len - 1] != '/' && path[len] == '/')
+	если (strncmp(path, strip, len) == 0) {
+		если (strip[len - 1] != '/' && path[len] == '/')
 			len++;
-		return (xstrdup(path + len));
+		вернуть (xstrdup(path + len));
 	}
 
-	return (xstrdup(path));
+	вернуть (xstrdup(path));
 }
 
-static int
-parse_getput_flags(const char *cmd, char **argv, int argc,
-    int *aflag, int *fflag, int *pflag, int *rflag)
+static целое
+parse_getput_flags(const char *cmd, char **argv, целое argc,
+    целое *aflag, целое *fflag, целое *pflag, целое *rflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	extern целое opterr, optind, optopt, optreset;
+	целое ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*aflag = *fflag = *rflag = *pflag = 0;
-	while ((ch = getopt(argc, argv, "afPpRr")) != -1) {
+	пока ((ch = getopt(argc, argv, "afPpRr")) != -1) {
 		switch (ch) {
 		case 'a':
 			*aflag = 1;
@@ -410,96 +410,96 @@ parse_getput_flags(const char *cmd, char **argv, int argc,
 			break;
 		default:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			вернуть -1;
 		}
 	}
 
-	return optind;
+	вернуть optind;
 }
 
-static int
-parse_mkdir_flags(const char *cmd, char **argv, int argc, int *pflag)
+static целое
+parse_mkdir_flags(const char *cmd, char **argv, целое argc, целое *pflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	extern целое opterr, optind, optopt, optreset;
+	целое ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*pflag = 0;
-	while ((ch = getopt(argc, argv, "p")) != -1) {
+	пока ((ch = getopt(argc, argv, "p")) != -1) {
 		switch (ch) {
 		case 'p':
 			*pflag = 1;
 			break;
 		default:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			вернуть -1;
 		}
 	}
 
-	return optind;
+	вернуть optind;
 }
 
-static int
-parse_link_flags(const char *cmd, char **argv, int argc, int *sflag)
+static целое
+parse_link_flags(const char *cmd, char **argv, целое argc, целое *sflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	extern целое opterr, optind, optopt, optreset;
+	целое ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*sflag = 0;
-	while ((ch = getopt(argc, argv, "s")) != -1) {
+	пока ((ch = getopt(argc, argv, "s")) != -1) {
 		switch (ch) {
 		case 's':
 			*sflag = 1;
 			break;
 		default:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			вернуть -1;
 		}
 	}
 
-	return optind;
+	вернуть optind;
 }
 
-static int
-parse_rename_flags(const char *cmd, char **argv, int argc, int *lflag)
+static целое
+parse_rename_flags(const char *cmd, char **argv, целое argc, целое *lflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	extern целое opterr, optind, optopt, optreset;
+	целое ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*lflag = 0;
-	while ((ch = getopt(argc, argv, "l")) != -1) {
+	пока ((ch = getopt(argc, argv, "l")) != -1) {
 		switch (ch) {
 		case 'l':
 			*lflag = 1;
 			break;
 		default:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			вернуть -1;
 		}
 	}
 
-	return optind;
+	вернуть optind;
 }
 
-static int
-parse_ls_flags(char **argv, int argc, int *lflag)
+static целое
+parse_ls_flags(char **argv, целое argc, целое *lflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	extern целое opterr, optind, optopt, optreset;
+	целое ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*lflag = LS_NAME_SORT;
-	while ((ch = getopt(argc, argv, "1Safhlnrt")) != -1) {
+	пока ((ch = getopt(argc, argv, "1Safhlnrt")) != -1) {
 		switch (ch) {
 		case '1':
 			*lflag &= ~VIEW_FLAGS;
@@ -535,24 +535,24 @@ parse_ls_flags(char **argv, int argc, int *lflag)
 			break;
 		default:
 			error("ls: Invalid flag -%c", optopt);
-			return -1;
+			вернуть -1;
 		}
 	}
 
-	return optind;
+	вернуть optind;
 }
 
-static int
-parse_df_flags(const char *cmd, char **argv, int argc, int *hflag, int *iflag)
+static целое
+parse_df_flags(const char *cmd, char **argv, целое argc, целое *hflag, целое *iflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	extern целое opterr, optind, optopt, optreset;
+	целое ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*hflag = *iflag = 0;
-	while ((ch = getopt(argc, argv, "hi")) != -1) {
+	пока ((ch = getopt(argc, argv, "hi")) != -1) {
 		switch (ch) {
 		case 'h':
 			*hflag = 1;
@@ -562,55 +562,55 @@ parse_df_flags(const char *cmd, char **argv, int argc, int *hflag, int *iflag)
 			break;
 		default:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			вернуть -1;
 		}
 	}
 
-	return optind;
+	вернуть optind;
 }
 
-static int
-parse_ch_flags(const char *cmd, char **argv, int argc, int *hflag)
+static целое
+parse_ch_flags(const char *cmd, char **argv, целое argc, целое *hflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	extern целое opterr, optind, optopt, optreset;
+	целое ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*hflag = 0;
-	while ((ch = getopt(argc, argv, "h")) != -1) {
+	пока ((ch = getopt(argc, argv, "h")) != -1) {
 		switch (ch) {
 		case 'h':
 			*hflag = 1;
 			break;
 		default:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			вернуть -1;
 		}
 	}
 
-	return optind;
+	вернуть optind;
 }
 
-static int
-parse_no_flags(const char *cmd, char **argv, int argc)
+static целое
+parse_no_flags(const char *cmd, char **argv, целое argc)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	extern целое opterr, optind, optopt, optreset;
+	целое ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
-	while ((ch = getopt(argc, argv, "")) != -1) {
+	пока ((ch = getopt(argc, argv, "")) != -1) {
 		switch (ch) {
 		default:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			вернуть -1;
 		}
 	}
 
-	return optind;
+	вернуть optind;
 }
 
 static char *
@@ -621,13 +621,13 @@ escape_glob(const char *s)
 
 	len = strlen(s);
 	ret = xcalloc(2, len + 1);
-	for (i = o = 0; i < len; i++) {
-		if (strchr("[]?*\\", s[i]) != NULL)
+	для (i = o = 0; i < len; i++) {
+		если (strchr("[]?*\\", s[i]) != NULL)
 			ret[o++] = '\\';
 		ret[o++] = s[i];
 	}
 	ret[o++] = '\0';
-	return ret;
+	вернуть ret;
 }
 
 /*
@@ -640,39 +640,39 @@ make_absolute_pwd_glob(char *p, const char *pwd)
 	char *ret, *escpwd;
 
 	escpwd = escape_glob(pwd);
-	if (p == NULL)
-		return escpwd;
+	если (p == NULL)
+		вернуть escpwd;
 	ret = sftp_make_absolute(p, escpwd);
 	free(escpwd);
-	return ret;
+	вернуть ret;
 }
 
-static int
+static целое
 local_is_dir(const char *path)
 {
 	struct stat sb;
 
-	if (stat(path, &sb) == -1)
-		return 0;
-	return S_ISDIR(sb.st_mode);
+	если (stat(path, &sb) == -1)
+		вернуть 0;
+	вернуть S_ISDIR(sb.st_mode);
 }
 
-static int
+static целое
 process_get(struct sftp_conn *conn, const char *src, const char *dst,
-    const char *pwd, int pflag, int rflag, int resume, int fflag)
+    const char *pwd, целое pflag, целое rflag, целое resume, целое fflag)
 {
 	char *filename, *abs_src = NULL, *abs_dst = NULL, *tmp = NULL;
 	glob_t g;
-	int i, r, err = 0;
+	целое i, r, err = 0;
 
 	abs_src = make_absolute_pwd_glob(xstrdup(src), pwd);
 	memset(&g, 0, sizeof(g));
 
 	debug3("Looking up %s", abs_src);
-	if ((r = sftp_glob(conn, abs_src, GLOB_MARK, NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE) {
+	если ((r = sftp_glob(conn, abs_src, GLOB_MARK, NULL, &g)) != 0) {
+		если (r == GLOB_NOSPACE) {
 			error("Too many matches for \"%s\".", abs_src);
-		} else {
+		} иначе {
 			error("File \"%s\" not found.", abs_src);
 		}
 		err = -1;
@@ -683,16 +683,16 @@ process_get(struct sftp_conn *conn, const char *src, const char *dst,
 	 * If multiple matches then dst must be a directory or
 	 * unspecified.
 	 */
-	if (g.gl_matchc > 1 && dst != NULL && !local_is_dir(dst)) {
+	если (g.gl_matchc > 1 && dst != NULL && !local_is_dir(dst)) {
 		error("Multiple source paths, but destination "
 		    "\"%s\" is not a directory", dst);
 		err = -1;
 		goto out;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	для (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		если ((filename = basename(tmp)) == NULL) {
 			error("basename %s: %s", tmp, strerror(errno));
 			free(tmp);
 			err = -1;
@@ -704,40 +704,40 @@ process_get(struct sftp_conn *conn, const char *src, const char *dst,
 		 * In particular, never select the local root as an implicit
 		 * destination for a remote root.
 		 */
-		if (strcmp(filename, "..") == 0 ||
+		если (strcmp(filename, "..") == 0 ||
 		    (filename[0] != '\0' &&
 		    filename[strspn(filename, "/")] == '\0'))
 			filename = ".";
 
-		if (g.gl_matchc == 1 && dst) {
-			if (local_is_dir(dst)) {
+		если (g.gl_matchc == 1 && dst) {
+			если (local_is_dir(dst)) {
 				abs_dst = sftp_path_append(dst, filename);
-			} else {
+			} иначе {
 				abs_dst = xstrdup(dst);
 			}
-		} else if (dst) {
+		} иначе если (dst) {
 			abs_dst = sftp_path_append(dst, filename);
-		} else {
+		} иначе {
 			abs_dst = xstrdup(filename);
 		}
 		free(tmp);
 
 		resume |= global_aflag;
-		if (!quiet && resume)
+		если (!quiet && resume)
 			mprintf("Resuming %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
-		else if (!quiet && !resume)
+		иначе если (!quiet && !resume)
 			mprintf("Fetching %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
 		/* XXX follow link flag */
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) &&
+		если (sftp_globpath_is_dir(g.gl_pathv[i]) &&
 		    (rflag || global_rflag)) {
-			if (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
+			если (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
 			    NULL, pflag || global_pflag, 1, resume,
 			    fflag || global_fflag, 0, 0) == -1)
 				err = -1;
-		} else {
-			if (sftp_download(conn, g.gl_pathv[i], abs_dst, NULL,
+		} иначе {
+			если (sftp_download(conn, g.gl_pathv[i], abs_dst, NULL,
 			    pflag || global_pflag, resume,
 			    fflag || global_fflag, 0) == -1)
 				err = -1;
@@ -749,95 +749,95 @@ process_get(struct sftp_conn *conn, const char *src, const char *dst,
 out:
 	free(abs_src);
 	globfree(&g);
-	return(err);
+	вернуть(err);
 }
 
-static int
+static целое
 process_put(struct sftp_conn *conn, const char *src, const char *dst,
-    const char *pwd, int pflag, int rflag, int resume, int fflag)
+    const char *pwd, целое pflag, целое rflag, целое resume, целое fflag)
 {
 	char *tmp_dst = NULL;
 	char *abs_dst = NULL;
 	char *tmp = NULL, *filename = NULL;
 	glob_t g;
-	int err = 0;
-	int i, dst_is_dir = 1;
+	целое err = 0;
+	целое i, dst_is_dir = 1;
 	struct stat sb;
 
-	if (dst) {
+	если (dst) {
 		tmp_dst = xstrdup(dst);
 		tmp_dst = sftp_make_absolute(tmp_dst, pwd);
 	}
 
 	memset(&g, 0, sizeof(g));
 	debug3("Looking up %s", src);
-	if (glob(src, GLOB_NOCHECK | GLOB_MARK, NULL, &g)) {
+	если (glob(src, GLOB_NOCHECK | GLOB_MARK, NULL, &g)) {
 		error("File \"%s\" not found.", src);
 		err = -1;
 		goto out;
 	}
 
 	/* If we aren't fetching to pwd then stash this status for later */
-	if (tmp_dst != NULL)
+	если (tmp_dst != NULL)
 		dst_is_dir = sftp_remote_is_dir(conn, tmp_dst);
 
 	/* If multiple matches, dst may be directory or unspecified */
-	if (g.gl_matchc > 1 && tmp_dst && !dst_is_dir) {
+	если (g.gl_matchc > 1 && tmp_dst && !dst_is_dir) {
 		error("Multiple paths match, but destination "
 		    "\"%s\" is not a directory", tmp_dst);
 		err = -1;
 		goto out;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-		if (stat(g.gl_pathv[i], &sb) == -1) {
+	для (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+		если (stat(g.gl_pathv[i], &sb) == -1) {
 			err = -1;
 			error("stat %s: %s", g.gl_pathv[i], strerror(errno));
 			continue;
 		}
 
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		если ((filename = basename(tmp)) == NULL) {
 			error("basename %s: %s", tmp, strerror(errno));
 			free(tmp);
 			err = -1;
 			goto out;
 		}
 		/* Special handling for source of '..' */
-		if (strcmp(filename, "..") == 0)
+		если (strcmp(filename, "..") == 0)
 			filename = "."; /* Upload to dest, not dest/.. */
 
 		free(abs_dst);
 		abs_dst = NULL;
-		if (g.gl_matchc == 1 && tmp_dst) {
+		если (g.gl_matchc == 1 && tmp_dst) {
 			/* If directory specified, append filename */
-			if (dst_is_dir)
+			если (dst_is_dir)
 				abs_dst = sftp_path_append(tmp_dst, filename);
-			else
+			иначе
 				abs_dst = xstrdup(tmp_dst);
-		} else if (tmp_dst) {
+		} иначе если (tmp_dst) {
 			abs_dst = sftp_path_append(tmp_dst, filename);
-		} else {
+		} иначе {
 			abs_dst = sftp_make_absolute(xstrdup(filename), pwd);
 		}
 		free(tmp);
 
 		resume |= global_aflag;
-		if (!quiet && resume)
+		если (!quiet && resume)
 			mprintf("Resuming upload of %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
-		else if (!quiet && !resume)
+		иначе если (!quiet && !resume)
 			mprintf("Uploading %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
 		/* XXX follow_link_flag */
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) &&
+		если (sftp_globpath_is_dir(g.gl_pathv[i]) &&
 		    (rflag || global_rflag)) {
-			if (sftp_upload_dir(conn, g.gl_pathv[i], abs_dst,
+			если (sftp_upload_dir(conn, g.gl_pathv[i], abs_dst,
 			    pflag || global_pflag, 1, resume,
 			    fflag || global_fflag, 0, 0) == -1)
 				err = -1;
-		} else {
-			if (sftp_upload(conn, g.gl_pathv[i], abs_dst,
+		} иначе {
+			если (sftp_upload(conn, g.gl_pathv[i], abs_dst,
 			    pflag || global_pflag, resume,
 			    fflag || global_fflag, 0) == -1)
 				err = -1;
@@ -848,47 +848,47 @@ out:
 	free(abs_dst);
 	free(tmp_dst);
 	globfree(&g);
-	return(err);
+	вернуть(err);
 }
 
-static int
+static целое
 sdirent_comp(const void *aa, const void *bb)
 {
 	SFTP_DIRENT *a = *(SFTP_DIRENT **)aa;
 	SFTP_DIRENT *b = *(SFTP_DIRENT **)bb;
-	int rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
+	целое rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
 
 #define NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
-	if (sort_flag & LS_NAME_SORT)
-		return (rmul * strcmp(a->filename, b->filename));
-	else if (sort_flag & LS_TIME_SORT)
-		return (rmul * NCMP(a->a.mtime, b->a.mtime));
-	else if (sort_flag & LS_SIZE_SORT)
-		return (rmul * NCMP(a->a.size, b->a.size));
+	если (sort_flag & LS_NAME_SORT)
+		вернуть (rmul * strcmp(a->filename, b->filename));
+	иначе если (sort_flag & LS_TIME_SORT)
+		вернуть (rmul * NCMP(a->a.mtime, b->a.mtime));
+	иначе если (sort_flag & LS_SIZE_SORT)
+		вернуть (rmul * NCMP(a->a.size, b->a.size));
 
 	fatal("Unknown ls sort type");
 }
 
 /* sftp ls.1 replacement for directories */
-static int
+static целое
 do_ls_dir(struct sftp_conn *conn, const char *path,
-    const char *strip_path, int lflag)
+    const char *strip_path, целое lflag)
 {
-	int n;
+	целое n;
 	u_int c = 1, colspace = 0, columns = 1;
 	SFTP_DIRENT **d;
 
-	if ((n = sftp_readdir(conn, path, &d)) != 0)
-		return (n);
+	если ((n = sftp_readdir(conn, path, &d)) != 0)
+		вернуть (n);
 
-	if (!(lflag & LS_SHORT_VIEW)) {
+	если (!(lflag & LS_SHORT_VIEW)) {
 		u_int m = 0, width = 80;
 		struct winsize ws;
 		char *tmp;
 
 		/* Count entries for sort and find longest filename */
-		for (n = 0; d[n] != NULL; n++) {
-			if (d[n]->filename[0] != '.' || (lflag & LS_SHOW_ALL))
+		для (n = 0; d[n] != NULL; n++) {
+			если (d[n]->filename[0] != '.' || (lflag & LS_SHOW_ALL))
 				m = MAXIMUM(m, strlen(d[n]->filename));
 		}
 
@@ -897,7 +897,7 @@ do_ls_dir(struct sftp_conn *conn, const char *path,
 		m += strlen(tmp);
 		free(tmp);
 
-		if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+		если (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
 			width = ws.ws_col;
 
 		columns = width / (m + 2);
@@ -906,26 +906,26 @@ do_ls_dir(struct sftp_conn *conn, const char *path,
 		colspace = MINIMUM(colspace, width);
 	}
 
-	if (lflag & SORT_FLAGS) {
-		for (n = 0; d[n] != NULL; n++)
+	если (lflag & SORT_FLAGS) {
+		для (n = 0; d[n] != NULL; n++)
 			;	/* count entries */
 		sort_flag = lflag & (SORT_FLAGS|LS_REVERSE_SORT);
 		qsort(d, n, sizeof(*d), sdirent_comp);
 	}
 
 	get_remote_user_groups_from_dirents(conn, d);
-	for (n = 0; d[n] != NULL && !interrupted; n++) {
+	для (n = 0; d[n] != NULL && !interrupted; n++) {
 		char *tmp, *fname;
 
-		if (d[n]->filename[0] == '.' && !(lflag & LS_SHOW_ALL))
+		если (d[n]->filename[0] == '.' && !(lflag & LS_SHOW_ALL))
 			continue;
 
 		tmp = sftp_path_append(path, d[n]->filename);
 		fname = path_strip(tmp, strip_path);
 		free(tmp);
 
-		if (lflag & LS_LONG_VIEW) {
-			if ((lflag & (LS_NUMERIC_VIEW|LS_SI_UNITS)) != 0 ||
+		если (lflag & LS_LONG_VIEW) {
+			если ((lflag & (LS_NUMERIC_VIEW|LS_SI_UNITS)) != 0 ||
 			    sftp_can_get_users_groups_by_id(conn)) {
 				char *lname;
 				struct stat sb;
@@ -933,7 +933,7 @@ do_ls_dir(struct sftp_conn *conn, const char *path,
 
 				memset(&sb, 0, sizeof(sb));
 				attrib_to_stat(&d[n]->a, &sb);
-				if ((lflag & LS_NUMERIC_VIEW) == 0) {
+				если ((lflag & LS_NUMERIC_VIEW) == 0) {
 					user = ruser_name(sb.st_uid);
 					group = rgroup_name(sb.st_gid);
 				}
@@ -941,28 +941,28 @@ do_ls_dir(struct sftp_conn *conn, const char *path,
 				    (lflag & LS_SI_UNITS), user, group);
 				mprintf("%s\n", lname);
 				free(lname);
-			} else
+			} иначе
 				mprintf("%s\n", d[n]->longname);
-		} else {
+		} иначе {
 			mprintf("%-*s", colspace, fname);
-			if (c >= columns) {
+			если (c >= columns) {
 				printf("\n");
 				c = 1;
-			} else
+			} иначе
 				c++;
 		}
 
 		free(fname);
 	}
 
-	if (!(lflag & LS_LONG_VIEW) && (c != 1))
+	если (!(lflag & LS_LONG_VIEW) && (c != 1))
 		printf("\n");
 
 	sftp_free_dirents(d);
-	return (0);
+	вернуть (0);
 }
 
-static int
+static целое
 sglob_comp(const void *aa, const void *bb)
 {
 	u_int a = *(const u_int *)aa;
@@ -971,79 +971,79 @@ sglob_comp(const void *aa, const void *bb)
 	const char *bp = sort_glob->gl_pathv[b];
 	const struct stat *as = sort_glob->gl_statv[a];
 	const struct stat *bs = sort_glob->gl_statv[b];
-	int rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
+	целое rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
 
 #define NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
 	/* order entries without stat information last */
-	if (as == NULL || bs == NULL)
-		return (as == bs) ? 0 : (as == NULL ? rmul : -rmul);
-	if (sort_flag & LS_NAME_SORT)
-		return (rmul * strcmp(ap, bp));
-	else if (sort_flag & LS_TIME_SORT) {
-#if defined(HAVE_STRUCT_STAT_ST_MTIM)
-		if (timespeccmp(&as->st_mtim, &bs->st_mtim, ==))
-			return 0;
-		return timespeccmp(&as->st_mtim, &bs->st_mtim, <) ?
+	если (as == NULL || bs == NULL)
+		вернуть (as == bs) ? 0 : (as == NULL ? rmul : -rmul);
+	если (sort_flag & LS_NAME_SORT)
+		вернуть (rmul * strcmp(ap, bp));
+	иначе если (sort_flag & LS_TIME_SORT) {
+#если defined(HAVE_STRUCT_STAT_ST_MTIM)
+		если (timespeccmp(&as->st_mtim, &bs->st_mtim, ==))
+			вернуть 0;
+		вернуть timespeccmp(&as->st_mtim, &bs->st_mtim, <) ?
 		    rmul : -rmul;
 #elif defined(HAVE_STRUCT_STAT_ST_MTIME)
-		return (rmul * NCMP(as->st_mtime, bs->st_mtime));
-#else
-	return rmul * 1;
+		вернуть (rmul * NCMP(as->st_mtime, bs->st_mtime));
+#иначе
+	вернуть rmul * 1;
 #endif
-	} else if (sort_flag & LS_SIZE_SORT)
-		return (rmul * NCMP(as->st_size, bs->st_size));
+	} иначе если (sort_flag & LS_SIZE_SORT)
+		вернуть (rmul * NCMP(as->st_size, bs->st_size));
 
 	fatal("Unknown ls sort type");
 }
 
 /* sftp ls.1 replacement which handles path globs */
-static int
+static целое
 do_globbed_ls(struct sftp_conn *conn, const char *path,
-    const char *strip_path, int lflag)
+    const char *strip_path, целое lflag)
 {
 	char *fname, *lname;
 	glob_t g;
-	int err, r;
+	целое err, r;
 	struct winsize ws;
 	u_int i, j, nentries, *indices = NULL, c = 1;
 	u_int colspace = 0, columns = 1, m = 0, width = 80;
 
 	memset(&g, 0, sizeof(g));
 
-	if ((r = sftp_glob(conn, path,
+	если ((r = sftp_glob(conn, path,
 	    GLOB_MARK|GLOB_NOCHECK|GLOB_BRACE|GLOB_KEEPSTAT|GLOB_NOSORT,
 	    NULL, &g)) != 0 ||
 	    (g.gl_pathc && !g.gl_matchc)) {
-		if (g.gl_pathc)
+		если (g.gl_pathc)
 			globfree(&g);
-		if (r == GLOB_NOSPACE) {
+		если (r == GLOB_NOSPACE) {
 			error("Can't ls: Too many matches for \"%s\"", path);
-		} else {
+		} иначе {
 			error("Can't ls: \"%s\" not found", path);
 		}
-		return -1;
+		вернуть -1;
 	}
 
-	if (interrupted)
+	если (interrupted)
 		goto out;
 
 	/*
 	 * If the glob returns a single match and it is a directory,
 	 * then just list its contents.
 	 */
-	if (g.gl_matchc == 1 && g.gl_statv[0] != NULL &&
+	если (g.gl_matchc == 1 && g.gl_statv[0] != NULL &&
 	    S_ISDIR(g.gl_statv[0]->st_mode)) {
 		err = do_ls_dir(conn, g.gl_pathv[0], strip_path, lflag);
 		globfree(&g);
-		return err;
+		вернуть err;
 	}
 
-	if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+	если (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
 		width = ws.ws_col;
 
-	if (!(lflag & LS_SHORT_VIEW)) {
+	если (!(lflag & LS_SHORT_VIEW)) {
 		/* Count entries for sort and find longest filename */
-		for (i = 0; g.gl_pathv[i]; i++)
+		для (i = 0; g.gl_pathv[i]; i++)
 			m = MAXIMUM(m, strlen(g.gl_pathv[i]));
 
 		columns = width / (m + 2);
@@ -1056,13 +1056,13 @@ do_globbed_ls(struct sftp_conn *conn, const char *path,
 	 * an array of indices into it and sort that. For the usual
 	 * unsorted case, the indices are just the identity 1=1, 2=2, etc.
 	 */
-	for (nentries = 0; g.gl_pathv[nentries] != NULL; nentries++)
+	для (nentries = 0; g.gl_pathv[nentries] != NULL; nentries++)
 		;	/* count entries */
 	indices = xcalloc(nentries, sizeof(*indices));
-	for (i = 0; i < nentries; i++)
+	для (i = 0; i < nentries; i++)
 		indices[i] = i;
 
-	if (lflag & SORT_FLAGS) {
+	если (lflag & SORT_FLAGS) {
 		sort_glob = &g;
 		sort_flag = lflag & (SORT_FLAGS|LS_REVERSE_SORT);
 		qsort(indices, nentries, sizeof(*indices), sglob_comp);
@@ -1070,18 +1070,18 @@ do_globbed_ls(struct sftp_conn *conn, const char *path,
 	}
 
 	get_remote_user_groups_from_glob(conn, &g);
-	for (j = 0; j < nentries && !interrupted; j++) {
+	для (j = 0; j < nentries && !interrupted; j++) {
 		i = indices[j];
 		fname = path_strip(g.gl_pathv[i], strip_path);
-		if (lflag & LS_LONG_VIEW) {
+		если (lflag & LS_LONG_VIEW) {
 			const char *user = NULL, *group = NULL;
 
-			if (g.gl_statv[i] == NULL) {
+			если (g.gl_statv[i] == NULL) {
 				error("no stat information for %s", fname);
 				free(fname);
 				continue;
 			}
-			if ((lflag & LS_NUMERIC_VIEW) == 0) {
+			если ((lflag & LS_NUMERIC_VIEW) == 0) {
 				user = ruser_name(g.gl_statv[i]->st_uid);
 				group = rgroup_name(g.gl_statv[i]->st_gid);
 			}
@@ -1089,53 +1089,53 @@ do_globbed_ls(struct sftp_conn *conn, const char *path,
 			    (lflag & LS_SI_UNITS), user, group);
 			mprintf("%s\n", lname);
 			free(lname);
-		} else {
+		} иначе {
 			mprintf("%-*s", colspace, fname);
-			if (c >= columns) {
+			если (c >= columns) {
 				printf("\n");
 				c = 1;
-			} else
+			} иначе
 				c++;
 		}
 		free(fname);
 	}
 
-	if (!(lflag & LS_LONG_VIEW) && (c != 1))
+	если (!(lflag & LS_LONG_VIEW) && (c != 1))
 		printf("\n");
 
  out:
-	if (g.gl_pathc)
+	если (g.gl_pathc)
 		globfree(&g);
 	free(indices);
 
-	return 0;
+	вернуть 0;
 }
 
-static int
-do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
+static целое
+do_df(struct sftp_conn *conn, const char *path, целое hflag, целое iflag)
 {
 	struct sftp_statvfs st;
 	char s_used[FMT_SCALED_STRSIZE], s_avail[FMT_SCALED_STRSIZE];
 	char s_root[FMT_SCALED_STRSIZE], s_total[FMT_SCALED_STRSIZE];
 	char s_icapacity[16], s_dcapacity[16];
 
-	if (sftp_statvfs(conn, path, &st, 1) == -1)
-		return -1;
-	if (st.f_files == 0)
+	если (sftp_statvfs(conn, path, &st, 1) == -1)
+		вернуть -1;
+	если (st.f_files == 0)
 		strlcpy(s_icapacity, "ERR", sizeof(s_icapacity));
-	else {
+	иначе {
 		snprintf(s_icapacity, sizeof(s_icapacity), "%3llu%%",
 		    (unsigned long long)(100 * (st.f_files - st.f_ffree) /
 		    st.f_files));
 	}
-	if (st.f_blocks == 0)
+	если (st.f_blocks == 0)
 		strlcpy(s_dcapacity, "ERR", sizeof(s_dcapacity));
-	else {
+	иначе {
 		snprintf(s_dcapacity, sizeof(s_dcapacity), "%3llu%%",
 		    (unsigned long long)(100 * (st.f_blocks - st.f_bfree) /
 		    st.f_blocks));
 	}
-	if (iflag) {
+	если (iflag) {
 		printf("     Inodes        Used       Avail      "
 		    "(root)    %%Capacity\n");
 		printf("%11llu %11llu %11llu %11llu         %s\n",
@@ -1143,7 +1143,7 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
 		    (unsigned long long)(st.f_files - st.f_ffree),
 		    (unsigned long long)st.f_favail,
 		    (unsigned long long)st.f_ffree, s_icapacity);
-	} else if (hflag) {
+	} иначе если (hflag) {
 		strlcpy(s_used, "error", sizeof(s_used));
 		strlcpy(s_avail, "error", sizeof(s_avail));
 		strlcpy(s_root, "error", sizeof(s_root));
@@ -1155,7 +1155,7 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
 		printf("    Size     Used    Avail   (root)    %%Capacity\n");
 		printf("%7sB %7sB %7sB %7sB         %s\n",
 		    s_total, s_used, s_avail, s_root, s_dcapacity);
-	} else {
+	} иначе {
 		printf("        Size         Used        Avail       "
 		    "(root)    %%Capacity\n");
 		printf("%12llu %12llu %12llu %12llu         %s\n",
@@ -1166,7 +1166,7 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
 		    (unsigned long long)(st.f_frsize * st.f_bfree / 1024),
 		    s_dcapacity);
 	}
-	return 0;
+	вернуть 0;
 }
 
 /*
@@ -1179,12 +1179,12 @@ undo_glob_escape(char *s)
 {
 	size_t i, j;
 
-	for (i = j = 0;;) {
-		if (s[i] == '\0') {
+	для (i = j = 0;;) {
+		если (s[i] == '\0') {
 			s[j] = '\0';
-			return;
+			вернуть;
 		}
-		if (s[i] != '\\') {
+		если (s[i] != '\\') {
 			s[j++] = s[i++];
 			continue;
 		}
@@ -1200,7 +1200,7 @@ undo_glob_escape(char *s)
 		case '\0':
 			s[j++] = '\\';
 			s[j] = '\0';
-			return;
+			вернуть;
 		default:
 			s[j++] = '\\';
 			s[j++] = s[i++];
@@ -1228,62 +1228,62 @@ undo_glob_escape(char *s)
 #define MAXARGS		128
 #define MAXARGLEN	8192
 static char **
-makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
+makeargv(const char *arg, целое *argcp, целое sloppy, char *lastquote,
     u_int *terminated)
 {
-	int argc, quot;
+	целое argc, quot;
 	size_t i, j;
 	static char argvs[MAXARGLEN];
 	static char *argv[MAXARGS + 1];
 	enum { MA_START, MA_SQUOTE, MA_DQUOTE, MA_UNQUOTED } state, q;
 
 	*argcp = argc = 0;
-	if (strlen(arg) > sizeof(argvs) - 1) {
+	если (strlen(arg) > sizeof(argvs) - 1) {
  args_too_longs:
 		error("string too long");
-		return NULL;
+		вернуть NULL;
 	}
-	if (terminated != NULL)
+	если (terminated != NULL)
 		*terminated = 1;
-	if (lastquote != NULL)
+	если (lastquote != NULL)
 		*lastquote = '\0';
 	state = MA_START;
 	i = j = 0;
-	for (;;) {
-		if ((size_t)argc >= sizeof(argv) / sizeof(*argv)){
+	для (;;) {
+		если ((size_t)argc >= sizeof(argv) / sizeof(*argv)){
 			error("Too many arguments.");
-			return NULL;
+			вернуть NULL;
 		}
-		if (isspace((unsigned char)arg[i])) {
-			if (state == MA_UNQUOTED) {
+		если (isspace((unsigned char)arg[i])) {
+			если (state == MA_UNQUOTED) {
 				/* Terminate current argument */
 				argvs[j++] = '\0';
 				argc++;
 				state = MA_START;
-			} else if (state != MA_START)
+			} иначе если (state != MA_START)
 				argvs[j++] = arg[i];
-		} else if (arg[i] == '"' || arg[i] == '\'') {
+		} иначе если (arg[i] == '"' || arg[i] == '\'') {
 			q = arg[i] == '"' ? MA_DQUOTE : MA_SQUOTE;
-			if (state == MA_START) {
+			если (state == MA_START) {
 				argv[argc] = argvs + j;
 				state = q;
-				if (lastquote != NULL)
+				если (lastquote != NULL)
 					*lastquote = arg[i];
-			} else if (state == MA_UNQUOTED)
+			} иначе если (state == MA_UNQUOTED)
 				state = q;
-			else if (state == q)
+			иначе если (state == q)
 				state = MA_UNQUOTED;
-			else
+			иначе
 				argvs[j++] = arg[i];
-		} else if (arg[i] == '\\') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE) {
+		} иначе если (arg[i] == '\\') {
+			если (state == MA_SQUOTE || state == MA_DQUOTE) {
 				quot = state == MA_SQUOTE ? '\'' : '"';
 				/* Unescape quote we are in */
 				/* XXX support \n and friends? */
-				if (arg[i + 1] == quot) {
+				если (arg[i + 1] == quot) {
 					i++;
 					argvs[j++] = arg[i];
-				} else if (arg[i + 1] == '?' ||
+				} иначе если (arg[i + 1] == '?' ||
 				    arg[i + 1] == '[' || arg[i + 1] == '*') {
 					/*
 					 * Special case for sftp: append
@@ -1291,24 +1291,24 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 					 * glob will undo one level of
 					 * escaping. NB. string can grow here.
 					 */
-					if (j >= sizeof(argvs) - 5)
+					если (j >= sizeof(argvs) - 5)
 						goto args_too_longs;
 					argvs[j++] = '\\';
 					argvs[j++] = arg[i++];
 					argvs[j++] = '\\';
 					argvs[j++] = arg[i];
-				} else {
+				} иначе {
 					argvs[j++] = arg[i++];
 					argvs[j++] = arg[i];
 				}
-			} else {
-				if (state == MA_START) {
+			} иначе {
+				если (state == MA_START) {
 					argv[argc] = argvs + j;
 					state = MA_UNQUOTED;
-					if (lastquote != NULL)
+					если (lastquote != NULL)
 						*lastquote = '\0';
 				}
-				if (arg[i + 1] == '?' || arg[i + 1] == '[' ||
+				если (arg[i + 1] == '?' || arg[i + 1] == '[' ||
 				    arg[i + 1] == '*' || arg[i + 1] == '\\') {
 					/*
 					 * Special case for sftp: append
@@ -1318,76 +1318,76 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 					 */
 					argvs[j++] = arg[i++];
 					argvs[j++] = arg[i];
-				} else {
+				} иначе {
 					/* Unescape everything */
 					/* XXX support \n and friends? */
 					i++;
-					if (arg[i] == '\0')
+					если (arg[i] == '\0')
 						goto early_nul;
 					argvs[j++] = arg[i];
 				}
 			}
-		} else if (arg[i] == '#') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE)
+		} иначе если (arg[i] == '#') {
+			если (state == MA_SQUOTE || state == MA_DQUOTE)
 				argvs[j++] = arg[i];
-			else
+			иначе
 				goto string_done;
-		} else if (arg[i] == '\0') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE) {
+		} иначе если (arg[i] == '\0') {
+			если (state == MA_SQUOTE || state == MA_DQUOTE) {
  early_nul:
-				if (sloppy) {
+				если (sloppy) {
 					state = MA_UNQUOTED;
-					if (terminated != NULL)
+					если (terminated != NULL)
 						*terminated = 0;
 					goto string_done;
 				}
 				error("Unterminated quoted argument");
-				return NULL;
+				вернуть NULL;
 			}
  string_done:
-			if (state == MA_UNQUOTED) {
+			если (state == MA_UNQUOTED) {
 				argvs[j++] = '\0';
 				argc++;
 			}
 			break;
-		} else {
-			if (state == MA_START) {
+		} иначе {
+			если (state == MA_START) {
 				argv[argc] = argvs + j;
 				state = MA_UNQUOTED;
-				if (lastquote != NULL)
+				если (lastquote != NULL)
 					*lastquote = '\0';
 			}
-			if ((state == MA_SQUOTE || state == MA_DQUOTE) &&
+			если ((state == MA_SQUOTE || state == MA_DQUOTE) &&
 			    (arg[i] == '?' || arg[i] == '[' || arg[i] == '*')) {
 				/*
 				 * Special case for sftp: escape quoted
 				 * glob(3) wildcards. NB. string can grow
 				 * here.
 				 */
-				if (j >= sizeof(argvs) - 3)
+				если (j >= sizeof(argvs) - 3)
 					goto args_too_longs;
 				argvs[j++] = '\\';
 				argvs[j++] = arg[i];
-			} else
+			} иначе
 				argvs[j++] = arg[i];
 		}
 		i++;
 	}
 	*argcp = argc;
-	return argv;
+	вернуть argv;
 }
 
-static int
-parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
-	  int *fflag, int *hflag, int *iflag, int *lflag, int *pflag,
-	  int *rflag, int *sflag,
+static целое
+parse_args(const char **cpp, целое *ignore_errors, целое *disable_echo, целое *aflag,
+	  целое *fflag, целое *hflag, целое *iflag, целое *lflag, целое *pflag,
+	  целое *rflag, целое *sflag,
     unsigned long *n_arg, char **path1, char **path2)
 {
 	const char *cmd, *cp = *cpp;
 	char *cp2, **argv;
-	int base = 0;
+	целое base = 0;
 	long long ll;
-	int path1_mandatory = 0, i, cmdnum, optidx, argc;
+	целое path1_mandatory = 0, i, cmdnum, optidx, argc;
 
 	/* Skip leading whitespace */
 	cp = cp + strspn(cp, WHITESPACE);
@@ -1398,12 +1398,12 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 	 */
 	*ignore_errors = 0;
 	*disable_echo = 0;
-	for (;*cp != '\0'; cp++) {
-		if (*cp == '-') {
+	для (;*cp != '\0'; cp++) {
+		если (*cp == '-') {
 			*ignore_errors = 1;
-		} else if (*cp == '@') {
+		} иначе если (*cp == '@') {
 			*disable_echo = 1;
-		} else {
+		} иначе {
 			/* all other characters terminate prefix processing */
 			break;
 		}
@@ -1411,27 +1411,27 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 	cp = cp + strspn(cp, WHITESPACE);
 
 	/* Ignore blank lines and lines which begin with comment '#' char */
-	if (*cp == '\0' || *cp == '#')
-		return (0);
+	если (*cp == '\0' || *cp == '#')
+		вернуть (0);
 
-	if ((argv = makeargv(cp, &argc, 0, NULL, NULL)) == NULL)
-		return -1;
+	если ((argv = makeargv(cp, &argc, 0, NULL, NULL)) == NULL)
+		вернуть -1;
 
 	/* Figure out which command we have */
-	for (i = 0; cmds[i].c != NULL; i++) {
-		if (argv[0] != NULL && strcasecmp(cmds[i].c, argv[0]) == 0)
+	для (i = 0; cmds[i].c != NULL; i++) {
+		если (argv[0] != NULL && strcasecmp(cmds[i].c, argv[0]) == 0)
 			break;
 	}
 	cmdnum = cmds[i].n;
 	cmd = cmds[i].c;
 
 	/* Special case */
-	if (*cp == '!') {
+	если (*cp == '!') {
 		cp++;
 		cmdnum = I_SHELL;
-	} else if (cmdnum == -1) {
+	} иначе если (cmdnum == -1) {
 		error("Invalid command.");
-		return -1;
+		вернуть -1;
 	}
 
 	/* Get arguments and parse flags */
@@ -1444,43 +1444,43 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 	case I_REGET:
 	case I_REPUT:
 	case I_PUT:
-		if ((optidx = parse_getput_flags(cmd, argv, argc,
+		если ((optidx = parse_getput_flags(cmd, argv, argc,
 		    aflag, fflag, pflag, rflag)) == -1)
-			return -1;
+			вернуть -1;
 		/* Get first pathname (mandatory) */
-		if (argc - optidx < 1) {
+		если (argc - optidx < 1) {
 			error("You must specify at least one path after a "
 			    "%s command.", cmd);
-			return -1;
+			вернуть -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		/* Get second pathname (optional) */
-		if (argc - optidx > 1) {
+		если (argc - optidx > 1) {
 			*path2 = xstrdup(argv[optidx + 1]);
 			/* Destination is not globbed */
 			undo_glob_escape(*path2);
 		}
 		break;
 	case I_LINK:
-		if ((optidx = parse_link_flags(cmd, argv, argc, sflag)) == -1)
-			return -1;
+		если ((optidx = parse_link_flags(cmd, argv, argc, sflag)) == -1)
+			вернуть -1;
 		goto parse_two_paths;
 	case I_COPY:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
+		если ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			вернуть -1;
 		goto parse_two_paths;
 	case I_RENAME:
-		if ((optidx = parse_rename_flags(cmd, argv, argc, lflag)) == -1)
-			return -1;
+		если ((optidx = parse_rename_flags(cmd, argv, argc, lflag)) == -1)
+			вернуть -1;
 		goto parse_two_paths;
 	case I_SYMLINK:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
+		если ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			вернуть -1;
  parse_two_paths:
-		if (argc - optidx < 2) {
+		если (argc - optidx < 2) {
 			error("You must specify two paths after a %s "
 			    "command.", cmd);
-			return -1;
+			вернуть -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		*path2 = xstrdup(argv[optidx + 1]);
@@ -1490,8 +1490,8 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 		break;
 	case I_MKDIR:
 	case I_LMKDIR:
-		if ((optidx = parse_mkdir_flags(cmd, argv, argc, pflag)) == -1)
-			return -1;
+		если ((optidx = parse_mkdir_flags(cmd, argv, argc, pflag)) == -1)
+			вернуть -1;
 		path1_mandatory = 1;
 		goto parse_one_path;
 	case I_RM:
@@ -1500,39 +1500,39 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 		/* FALLTHROUGH */
 	case I_CHDIR:
 	case I_LCHDIR:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
+		если ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			вернуть -1;
  parse_one_path:
 		/* Get pathname (mandatory) */
-		if (argc - optidx < 1) {
-			if (!path1_mandatory)
+		если (argc - optidx < 1) {
+			если (!path1_mandatory)
 				break; /* return a NULL path1 */
 			error("You must specify a path after a %s command.",
 			    cmd);
-			return -1;
+			вернуть -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		/* Only "rm" globs */
-		if (cmdnum != I_RM)
+		если (cmdnum != I_RM)
 			undo_glob_escape(*path1);
 		break;
 	case I_DF:
-		if ((optidx = parse_df_flags(cmd, argv, argc, hflag,
+		если ((optidx = parse_df_flags(cmd, argv, argc, hflag,
 		    iflag)) == -1)
-			return -1;
+			вернуть -1;
 		/* Default to current directory if no path specified */
-		if (argc - optidx < 1)
+		если (argc - optidx < 1)
 			*path1 = NULL;
-		else {
+		иначе {
 			*path1 = xstrdup(argv[optidx]);
 			undo_glob_escape(*path1);
 		}
 		break;
 	case I_LS:
-		if ((optidx = parse_ls_flags(argv, argc, lflag)) == -1)
-			return(-1);
+		если ((optidx = parse_ls_flags(argv, argc, lflag)) == -1)
+			вернуть(-1);
 		/* Path is optional */
-		if (argc - optidx > 0)
+		если (argc - optidx > 0)
 			*path1 = xstrdup(argv[optidx]);
 		break;
 	case I_LLS:
@@ -1547,29 +1547,29 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 		/* FALLTHROUGH */
 	case I_CHOWN:
 	case I_CHGRP:
-		if ((optidx = parse_ch_flags(cmd, argv, argc, hflag)) == -1)
-			return -1;
+		если ((optidx = parse_ch_flags(cmd, argv, argc, hflag)) == -1)
+			вернуть -1;
 		/* Get numeric arg (mandatory) */
-		if (argc - optidx < 1)
+		если (argc - optidx < 1)
 			goto need_num_arg;
 		errno = 0;
 		ll = strtoll(argv[optidx], &cp2, base);
-		if (cp2 == argv[optidx] || *cp2 != '\0' ||
+		если (cp2 == argv[optidx] || *cp2 != '\0' ||
 		    ((ll == LLONG_MIN || ll == LLONG_MAX) && errno == ERANGE) ||
 		    ll < 0 || ll > UINT32_MAX) {
  need_num_arg:
 			error("You must supply a numeric argument "
 			    "to the %s command.", cmd);
-			return -1;
+			вернуть -1;
 		}
 		*n_arg = ll;
-		if (cmdnum == I_LUMASK)
+		если (cmdnum == I_LUMASK)
 			break;
 		/* Get pathname (mandatory) */
-		if (argc - optidx < 2) {
+		если (argc - optidx < 2) {
 			error("You must specify a path after a %s command.",
 			    cmd);
-			return -1;
+			вернуть -1;
 		}
 		*path1 = xstrdup(argv[optidx + 1]);
 		break;
@@ -1579,41 +1579,41 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 	case I_HELP:
 	case I_VERSION:
 	case I_PROGRESS:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
+		если ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			вернуть -1;
 		break;
 	default:
 		fatal("Command not implemented");
 	}
 
 	*cpp = cp;
-	return(cmdnum);
+	вернуть(cmdnum);
 }
 
-static int
+static целое
 parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
-    const char *startdir, int err_abort, int echo_command)
+    const char *startdir, целое err_abort, целое echo_command)
 {
 	const char *ocmd = cmd;
 	char *path1, *path2, *tmp;
-	int ignore_errors = 0, disable_echo = 1;
-	int aflag = 0, fflag = 0, hflag = 0, iflag = 0;
-	int lflag = 0, pflag = 0, rflag = 0, sflag = 0;
-	int cmdnum, i;
+	целое ignore_errors = 0, disable_echo = 1;
+	целое aflag = 0, fflag = 0, hflag = 0, iflag = 0;
+	целое lflag = 0, pflag = 0, rflag = 0, sflag = 0;
+	целое cmdnum, i;
 	unsigned long n_arg = 0;
 	Attrib a, aa;
 	char path_buf[PATH_MAX];
-	int err = 0;
+	целое err = 0;
 	glob_t g;
 
 	path1 = path2 = NULL;
 	cmdnum = parse_args(&cmd, &ignore_errors, &disable_echo, &aflag, &fflag,
 	    &hflag, &iflag, &lflag, &pflag, &rflag, &sflag, &n_arg,
 	    &path1, &path2);
-	if (ignore_errors != 0)
+	если (ignore_errors != 0)
 		err_abort = 0;
 
-	if (echo_command && !disable_echo)
+	если (echo_command && !disable_echo)
 		mprintf("sftp> %s\n", ocmd);
 
 	memset(&g, 0, sizeof(g));
@@ -1655,7 +1655,7 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 		sflag = 1;
 		/* FALLTHROUGH */
 	case I_LINK:
-		if (!sflag)
+		если (!sflag)
 			path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = (sflag ? sftp_symlink : sftp_hardlink)(conn,
@@ -1664,11 +1664,11 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 	case I_RM:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
 		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if (!quiet)
+		для (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			если (!quiet)
 				mprintf("Removing %s\n", g.gl_pathv[i]);
 			err = sftp_rm(conn, g.gl_pathv[i]);
-			if (err != 0 && err_abort)
+			если (err != 0 && err_abort)
 				break;
 		}
 		break;
@@ -1677,9 +1677,9 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 		attrib_clear(&a);
 		a.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = 0777;
-		if (pflag)
+		если (pflag)
 			err = sftp_mkpath(conn, path1, &a, 1);
-		else
+		иначе
 			err = sftp_mkdir(conn, path1, &a, 1);
 		break;
 	case I_RMDIR:
@@ -1687,25 +1687,25 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 		err = sftp_rmdir(conn, path1);
 		break;
 	case I_CHDIR:
-		if (path1 == NULL || *path1 == '\0')
+		если (path1 == NULL || *path1 == '\0')
 			path1 = xstrdup(startdir);
 		path1 = sftp_make_absolute(path1, *pwd);
-		if ((tmp = sftp_realpath(conn, path1)) == NULL) {
+		если ((tmp = sftp_realpath(conn, path1)) == NULL) {
 			err = 1;
 			break;
 		}
-		if (sftp_stat(conn, tmp, 0, &aa) != 0) {
+		если (sftp_stat(conn, tmp, 0, &aa) != 0) {
 			free(tmp);
 			err = 1;
 			break;
 		}
-		if (!(aa.flags & SSH2_FILEXFER_ATTR_PERMISSIONS)) {
+		если (!(aa.flags & SSH2_FILEXFER_ATTR_PERMISSIONS)) {
 			error("Can't change directory: Can't check target");
 			free(tmp);
 			err = 1;
 			break;
 		}
-		if (!S_ISDIR(aa.perm)) {
+		если (!S_ISDIR(aa.perm)) {
 			error("Can't change directory: \"%s\" is not "
 			    "a directory", tmp);
 			free(tmp);
@@ -1716,14 +1716,14 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 		*pwd = tmp;
 		break;
 	case I_LS:
-		if (!path1) {
+		если (!path1) {
 			do_ls_dir(conn, *pwd, *pwd, lflag);
 			break;
 		}
 
 		/* Strip pwd off beginning of non-absolute paths */
 		tmp = NULL;
-		if (!path_absolute(path1))
+		если (!path_absolute(path1))
 			tmp = *pwd;
 
 		path1 = make_absolute_pwd_glob(path1, *pwd);
@@ -1731,30 +1731,30 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 		break;
 	case I_DF:
 		/* Default to current directory if no path specified */
-		if (path1 == NULL)
+		если (path1 == NULL)
 			path1 = xstrdup(*pwd);
 		path1 = sftp_make_absolute(path1, *pwd);
 		err = do_df(conn, path1, hflag, iflag);
 		break;
 	case I_LCHDIR:
-		if (path1 == NULL || *path1 == '\0')
+		если (path1 == NULL || *path1 == '\0')
 			path1 = xstrdup("~");
 		tmp = tilde_expand_filename(path1, getuid());
 		free(path1);
 		path1 = tmp;
-		if (chdir(path1) == -1) {
+		если (chdir(path1) == -1) {
 			error("Couldn't change local directory to "
 			    "\"%s\": %s", path1, strerror(errno));
 			err = 1;
 		}
 		break;
 	case I_LMKDIR:
-		if (pflag) {
-			if (mkdir_path(path1, 0777) != 0)
+		если (pflag) {
+			если (mkdir_path(path1, 0777) != 0)
 				err = 1;
 			break;
 		}
-		if (mkdir(path1, 0777) == -1) {
+		если (mkdir(path1, 0777) == -1) {
 			error("Couldn't create local directory "
 			    "\"%s\": %s", path1, strerror(errno));
 			err = 1;
@@ -1776,13 +1776,13 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 		a.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = n_arg;
 		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if (!quiet)
+		для (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			если (!quiet)
 				mprintf("Changing mode on %s\n",
 				    g.gl_pathv[i]);
 			err = (hflag ? sftp_lsetstat : sftp_setstat)(conn,
 			    g.gl_pathv[i], &a);
-			if (err != 0 && err_abort)
+			если (err != 0 && err_abort)
 				break;
 		}
 		break;
@@ -1790,39 +1790,39 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 	case I_CHGRP:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
 		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if ((hflag ? sftp_lstat : sftp_stat)(conn,
+		для (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			если ((hflag ? sftp_lstat : sftp_stat)(conn,
 			    g.gl_pathv[i], 0, &aa) != 0) {
-				if (err_abort) {
+				если (err_abort) {
 					err = -1;
 					break;
-				} else
+				} иначе
 					continue;
 			}
-			if (!(aa.flags & SSH2_FILEXFER_ATTR_UIDGID)) {
+			если (!(aa.flags & SSH2_FILEXFER_ATTR_UIDGID)) {
 				error("Can't get current ownership of "
 				    "remote file \"%s\"", g.gl_pathv[i]);
-				if (err_abort) {
+				если (err_abort) {
 					err = -1;
 					break;
-				} else
+				} иначе
 					continue;
 			}
 			aa.flags &= SSH2_FILEXFER_ATTR_UIDGID;
-			if (cmdnum == I_CHOWN) {
-				if (!quiet)
+			если (cmdnum == I_CHOWN) {
+				если (!quiet)
 					mprintf("Changing owner on %s\n",
 					    g.gl_pathv[i]);
 				aa.uid = n_arg;
-			} else {
-				if (!quiet)
+			} иначе {
+				если (!quiet)
 					mprintf("Changing group on %s\n",
 					    g.gl_pathv[i]);
 				aa.gid = n_arg;
 			}
 			err = (hflag ? sftp_lsetstat : sftp_setstat)(conn,
 			    g.gl_pathv[i], &aa);
-			if (err != 0 && err_abort)
+			если (err != 0 && err_abort)
 				break;
 		}
 		break;
@@ -1830,7 +1830,7 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 		mprintf("Remote working directory: %s\n", *pwd);
 		break;
 	case I_LPWD:
-		if (!getcwd(path_buf, sizeof(path_buf))) {
+		если (!getcwd(path_buf, sizeof(path_buf))) {
 			error("Couldn't get local cwd: %s", strerror(errno));
 			err = -1;
 			break;
@@ -1848,34 +1848,34 @@ parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
 		break;
 	case I_PROGRESS:
 		showprogress = !showprogress;
-		if (showprogress)
+		если (showprogress)
 			printf("Progress meter enabled\n");
-		else
+		иначе
 			printf("Progress meter disabled\n");
 		break;
 	default:
 		fatal("%d is not implemented", cmdnum);
 	}
 
-	if (g.gl_pathc)
+	если (g.gl_pathc)
 		globfree(&g);
 	free(path1);
 	free(path2);
 
 	/* If an unignored error occurs in batch mode we should abort. */
-	if (err_abort && err != 0)
-		return (-1);
-	else if (cmdnum == I_QUIT)
-		return (1);
+	если (err_abort && err != 0)
+		вернуть (-1);
+	иначе если (cmdnum == I_QUIT)
+		вернуть (1);
 
-	return (0);
+	вернуть (0);
 }
 
 #ifdef USE_LIBEDIT
 static char *
 prompt(EditLine *el)
 {
-	return ("sftp> ");
+	вернуть ("sftp> ");
 }
 
 /* Display entries in 'list' after skipping the first 'len' chars */
@@ -1887,10 +1887,10 @@ complete_display(char **list, u_int len)
 	char *tmp;
 
 	/* Count entries for sort and find longest */
-	for (y = 0; list[y]; y++)
+	для (y = 0; list[y]; y++)
 		m = MAXIMUM(m, strlen(list[y]));
 
-	if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+	если (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
 		width = ws.ws_col;
 
 	m = m > len ? m - len : 0;
@@ -1901,14 +1901,14 @@ complete_display(char **list, u_int len)
 
 	printf("\n");
 	m = 1;
-	for (y = 0; list[y]; y++) {
+	для (y = 0; list[y]; y++) {
 		llen = strlen(list[y]);
 		tmp = llen > len ? list[y] + len : "";
 		mprintf("%-*s", colspace, tmp);
-		if (m >= columns) {
+		если (m >= columns) {
 			printf("\n");
 			m = 1;
-		} else
+		} иначе
 			m++;
 	}
 	printf("\n");
@@ -1924,19 +1924,19 @@ complete_ambiguous(const char *word, char **list, size_t count)
 {
 	size_t i, j, matchlen;
 	char *tmp;
-	int len;
+	целое len;
 
-	if (word == NULL)
-		return NULL;
+	если (word == NULL)
+		вернуть NULL;
 
-	if (count == 0)
-		return xstrdup(word); /* no options to complete */
+	если (count == 0)
+		вернуть xstrdup(word); /* no options to complete */
 
 	/* Find length of common stem across list */
 	matchlen = strlen(list[0]);
-	for (i = 1; i < count && list[i] != NULL; i++) {
-		for (j = 0; j < matchlen; j++)
-			if (list[0][j] != list[i][j])
+	для (i = 1; i < count && list[i] != NULL; i++) {
+		для (j = 0; j < matchlen; j++)
+			если (list[0][j] != list[i][j])
 				break;
 		matchlen = j;
 	}
@@ -1946,29 +1946,29 @@ complete_ambiguous(const char *word, char **list, size_t count)
 	 * a multibyte character.
 	 */
 	mblen(NULL, 0);
-	for (i = 0; i < matchlen;) {
+	для (i = 0; i < matchlen;) {
 		len = mblen(list[0] + i, matchlen - i);
-		if (len <= 0 || i + (size_t)len > matchlen)
+		если (len <= 0 || i + (size_t)len > matchlen)
 			break;
 		i += (size_t)len;
 	}
 	/* If so, truncate */
-	if (i < matchlen)
+	если (i < matchlen)
 		matchlen = i;
 
-	if (matchlen > strlen(word)) {
+	если (matchlen > strlen(word)) {
 		tmp = xstrdup(list[0]);
 		tmp[matchlen] = '\0';
-		return tmp;
+		вернуть tmp;
 	}
 
-	return xstrdup(word);
+	вернуть xstrdup(word);
 }
 
 /* Autocomplete a sftp command */
-static int
-complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
-    int terminated)
+static целое
+complete_cmd_parse(EditLine *el, char *cmd, целое lastarg, char quote,
+    целое terminated)
 {
 	u_int y, count = 0, cmdlen, tmplen;
 	char *tmp, **list, argterm[3];
@@ -1977,64 +1977,64 @@ complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
 	list = xcalloc((sizeof(cmds) / sizeof(*cmds)) + 1, sizeof(char *));
 
 	/* No command specified: display all available commands */
-	if (cmd == NULL) {
-		for (y = 0; cmds[y].c; y++)
+	если (cmd == NULL) {
+		для (y = 0; cmds[y].c; y++)
 			list[count++] = xstrdup(cmds[y].c);
 
 		list[count] = NULL;
 		complete_display(list, 0);
 
-		for (y = 0; list[y] != NULL; y++)
+		для (y = 0; list[y] != NULL; y++)
 			free(list[y]);
 		free(list);
-		return count;
+		вернуть count;
 	}
 
 	/* Prepare subset of commands that start with "cmd" */
 	cmdlen = strlen(cmd);
-	for (y = 0; cmds[y].c; y++)  {
-		if (!strncasecmp(cmd, cmds[y].c, cmdlen))
+	для (y = 0; cmds[y].c; y++)  {
+		если (!strncasecmp(cmd, cmds[y].c, cmdlen))
 			list[count++] = xstrdup(cmds[y].c);
 	}
 	list[count] = NULL;
 
-	if (count == 0) {
+	если (count == 0) {
 		free(list);
-		return 0;
+		вернуть 0;
 	}
 
 	/* Complete ambiguous command */
 	tmp = complete_ambiguous(cmd, list, count);
-	if (count > 1)
+	если (count > 1)
 		complete_display(list, 0);
 
-	for (y = 0; list[y]; y++)
+	для (y = 0; list[y]; y++)
 		free(list[y]);
 	free(list);
 
-	if (tmp != NULL) {
+	если (tmp != NULL) {
 		tmplen = strlen(tmp);
 		cmdlen = strlen(cmd);
 		/* If cmd may be extended then do so */
-		if (tmplen > cmdlen)
-			if (el_insertstr(el, tmp + cmdlen) == -1)
+		если (tmplen > cmdlen)
+			если (el_insertstr(el, tmp + cmdlen) == -1)
 				fatal("el_insertstr failed.");
 		lf = el_line(el);
 		/* Terminate argument cleanly */
-		if (count == 1) {
+		если (count == 1) {
 			y = 0;
-			if (!terminated)
+			если (!terminated)
 				argterm[y++] = quote;
-			if (lastarg || *(lf->cursor) != ' ')
+			если (lastarg || *(lf->cursor) != ' ')
 				argterm[y++] = ' ';
 			argterm[y] = '\0';
-			if (y > 0 && el_insertstr(el, argterm) == -1)
+			если (y > 0 && el_insertstr(el, argterm) == -1)
 				fatal("el_insertstr failed.");
 		}
 		free(tmp);
 	}
 
-	return count;
+	вернуть count;
 }
 
 /*
@@ -2042,84 +2042,84 @@ complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
  * local or remote files. The "cmdarg" argument specifies the actual argument
  * and accepts values 1 or 2.
  */
-static int
-complete_is_remote(char *cmd, int cmdarg) {
-	int i;
+static целое
+complete_is_remote(char *cmd, целое cmdarg) {
+	целое i;
 
-	if (cmd == NULL)
-		return -1;
+	если (cmd == NULL)
+		вернуть -1;
 
-	for (i = 0; cmds[i].c; i++) {
-		if (!strncasecmp(cmd, cmds[i].c, strlen(cmds[i].c))) {
-			if (cmdarg == 1)
-				return cmds[i].t;
-			else if (cmdarg == 2)
-				return cmds[i].t2;
+	для (i = 0; cmds[i].c; i++) {
+		если (!strncasecmp(cmd, cmds[i].c, strlen(cmds[i].c))) {
+			если (cmdarg == 1)
+				вернуть cmds[i].t;
+			иначе если (cmdarg == 2)
+				вернуть cmds[i].t2;
 			break;
 		}
 	}
 
-	return -1;
+	вернуть -1;
 }
 
 /* Autocomplete a filename "file" */
-static int
+static целое
 complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
-    char *file, int remote, int lastarg, char quote, int terminated)
+    char *file, целое remote, целое lastarg, char quote, целое terminated)
 {
 	glob_t g;
 	char *tmp, *tmp2, ins[8];
 	u_int i, hadglob, pwdlen, len, tmplen, filelen, cesc, isesc, isabs;
-	int clen;
+	целое clen;
 	const LineInfo *lf;
 
 	/* Glob from "file" location */
-	if (file == NULL)
+	если (file == NULL)
 		tmp = xstrdup("*");
-	else
+	иначе
 		xasprintf(&tmp, "%s*", file);
 
 	/* Check if the path is absolute. */
 	isabs = path_absolute(tmp);
 
 	memset(&g, 0, sizeof(g));
-	if (remote != LOCAL) {
+	если (remote != LOCAL) {
 		tmp = make_absolute_pwd_glob(tmp, remote_path);
 		sftp_glob(conn, tmp, GLOB_DOOFFS|GLOB_MARK, NULL, &g);
-	} else
+	} иначе
 		(void)glob(tmp, GLOB_DOOFFS|GLOB_MARK, NULL, &g);
 
 	/* Determine length of pwd so we can trim completion display */
-	for (hadglob = tmplen = pwdlen = 0; tmp[tmplen] != 0; tmplen++) {
+	для (hadglob = tmplen = pwdlen = 0; tmp[tmplen] != 0; tmplen++) {
 		/* Terminate counting on first unescaped glob metacharacter */
-		if (tmp[tmplen] == '*' || tmp[tmplen] == '?') {
-			if (tmp[tmplen] != '*' || tmp[tmplen + 1] != '\0')
+		если (tmp[tmplen] == '*' || tmp[tmplen] == '?') {
+			если (tmp[tmplen] != '*' || tmp[tmplen + 1] != '\0')
 				hadglob = 1;
 			break;
 		}
-		if (tmp[tmplen] == '\\' && tmp[tmplen + 1] != '\0')
+		если (tmp[tmplen] == '\\' && tmp[tmplen + 1] != '\0')
 			tmplen++;
-		if (tmp[tmplen] == '/')
+		если (tmp[tmplen] == '/')
 			pwdlen = tmplen + 1;	/* track last seen '/' */
 	}
 	free(tmp);
 	tmp = NULL;
 
-	if (g.gl_matchc == 0)
+	если (g.gl_matchc == 0)
 		goto out;
 
-	if (g.gl_matchc > 1)
+	если (g.gl_matchc > 1)
 		complete_display(g.gl_pathv, pwdlen);
 
 	/* Don't try to extend globs */
-	if (file == NULL || hadglob)
+	если (file == NULL || hadglob)
 		goto out;
 
 	tmp2 = complete_ambiguous(file, g.gl_pathv, g.gl_matchc);
 	tmp = path_strip(tmp2, isabs ? NULL : remote_path);
 	free(tmp2);
 
-	if (tmp == NULL)
+	если (tmp == NULL)
 		goto out;
 
 	tmplen = strlen(tmp);
@@ -2127,21 +2127,21 @@ complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
 
 	/* Count the number of escaped characters in the input string. */
 	cesc = isesc = 0;
-	for (i = 0; i < filelen; i++) {
-		if (!isesc && file[i] == '\\' && i + 1 < filelen){
+	для (i = 0; i < filelen; i++) {
+		если (!isesc && file[i] == '\\' && i + 1 < filelen){
 			isesc = 1;
 			cesc++;
-		} else
+		} иначе
 			isesc = 0;
 	}
 
-	if (tmplen > (filelen - cesc)) {
+	если (tmplen > (filelen - cesc)) {
 		tmp2 = tmp + filelen - cesc;
 		len = strlen(tmp2);
 		/* quote argument on way out */
 		mblen(NULL, 0);
-		for (i = 0; i < len; i += clen) {
-			if ((clen = mblen(tmp2 + i, len - i)) < 0 ||
+		для (i = 0; i < len; i += clen) {
+			если ((clen = mblen(tmp2 + i, len - i)) < 0 ||
 			    (size_t)clen > sizeof(ins) - 2)
 				fatal("invalid multibyte character");
 			ins[0] = '\\';
@@ -2156,15 +2156,15 @@ complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
 			case ' ':
 			case '#':
 			case '*':
-				if (quote == '\0' || tmp2[i] == quote) {
-					if (el_insertstr(el, ins) == -1)
+				если (quote == '\0' || tmp2[i] == quote) {
+					если (el_insertstr(el, ins) == -1)
 						fatal("el_insertstr "
 						    "failed.");
 					break;
 				}
 				/* FALLTHROUGH */
 			default:
-				if (el_insertstr(el, ins + 1) == -1)
+				если (el_insertstr(el, ins + 1) == -1)
 					fatal("el_insertstr failed.");
 				break;
 			}
@@ -2172,36 +2172,36 @@ complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
 	}
 
 	lf = el_line(el);
-	if (g.gl_matchc == 1) {
+	если (g.gl_matchc == 1) {
 		i = 0;
-		if (!terminated && quote != '\0')
+		если (!terminated && quote != '\0')
 			ins[i++] = quote;
-		if (*(lf->cursor - 1) != '/' &&
+		если (*(lf->cursor - 1) != '/' &&
 		    (lastarg || *(lf->cursor) != ' '))
 			ins[i++] = ' ';
 		ins[i] = '\0';
-		if (i > 0 && el_insertstr(el, ins) == -1)
+		если (i > 0 && el_insertstr(el, ins) == -1)
 			fatal("el_insertstr failed.");
 	}
 	free(tmp);
 
  out:
 	globfree(&g);
-	return g.gl_matchc;
+	вернуть g.gl_matchc;
 }
 
 /* tab-completion hook function, called via libedit */
 static unsigned char
-complete(EditLine *el, int ch)
+complete(EditLine *el, целое ch)
 {
 	char **argv, *line, quote;
-	int argc, carg;
+	целое argc, carg;
 	u_int cursor, len, terminated, ret = CC_ERROR;
 	const LineInfo *lf;
 	struct complete_ctx *complete_ctx;
 
 	lf = el_line(el);
-	if (el_get(el, EL_CLIENTDATA, (void**)&complete_ctx) != 0)
+	если (el_get(el, EL_CLIENTDATA, (void**)&complete_ctx) != 0)
 		fatal_f("el_get failed");
 
 	/* Figure out which argument the cursor points to */
@@ -2220,33 +2220,33 @@ complete(EditLine *el, int ch)
 	argv = makeargv(line, &argc, 1, NULL, NULL);
 
 	/* Ensure cursor is at EOL or a argument boundary */
-	if (line[cursor] != ' ' && line[cursor] != '\0' &&
+	если (line[cursor] != ' ' && line[cursor] != '\0' &&
 	    line[cursor] != '\n') {
 		free(line);
-		return ret;
+		вернуть ret;
 	}
 
-	if (carg == 0) {
+	если (carg == 0) {
 		/* Show all available commands */
 		complete_cmd_parse(el, NULL, argc == carg, '\0', 1);
 		ret = CC_REDISPLAY;
-	} else if (carg == 1 && cursor > 0 && line[cursor - 1] != ' ')  {
+	} иначе если (carg == 1 && cursor > 0 && line[cursor - 1] != ' ')  {
 		/* Handle the command parsing */
-		if (complete_cmd_parse(el, argv[0], argc == carg,
+		если (complete_cmd_parse(el, argv[0], argc == carg,
 		    quote, terminated) != 0)
 			ret = CC_REDISPLAY;
-	} else if (carg >= 1) {
+	} иначе если (carg >= 1) {
 		/* Handle file parsing */
-		int remote = 0;
-		int i = 0, cmdarg = 0;
+		целое remote = 0;
+		целое i = 0, cmdarg = 0;
 		char *filematch = NULL;
 
-		if (carg > 1 && line[cursor-1] != ' ')
+		если (carg > 1 && line[cursor-1] != ' ')
 			filematch = argv[carg - 1];
 
-		for (i = 1; i < carg; i++) {
+		для (i = 1; i < carg; i++) {
 			/* Skip flags */
-			if (argv[i][0] != '-')
+			если (argv[i][0] != '-')
 				cmdarg++;
 		}
 
@@ -2254,12 +2254,12 @@ complete(EditLine *el, int ch)
 		 * If previous argument is complete, then offer completion
 		 * on the next one.
 		 */
-		if (line[cursor - 1] == ' ')
+		если (line[cursor - 1] == ' ')
 			cmdarg++;
 
 		remote = complete_is_remote(argv[0], cmdarg);
 
-		if ((remote == REMOTE || remote == LOCAL) &&
+		если ((remote == REMOTE || remote == LOCAL) &&
 		    complete_match(el, complete_ctx->conn,
 		    *complete_ctx->remote_pathp, filematch,
 		    remote, carg == argc, quote, terminated) != 0)
@@ -2267,17 +2267,17 @@ complete(EditLine *el, int ch)
 	}
 
 	free(line);
-	return ret;
+	вернуть ret;
 }
 #endif /* USE_LIBEDIT */
 
-static int
+static целое
 interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 {
 	char *remote_path;
 	char *dir = NULL, *startdir = NULL;
 	char cmd[2048];
-	int err, interactive;
+	целое err, interactive;
 	EditLine *el = NULL;
 #ifdef USE_LIBEDIT
 	const char *editor;
@@ -2286,10 +2286,10 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 	extern char *__progname;
 	struct complete_ctx complete_ctx;
 
-	if (!batchmode && isatty(STDIN_FILENO)) {
-		if ((el = el_init(__progname, stdin, stdout, stderr)) == NULL)
+	если (!batchmode && isatty(STDIN_FILENO)) {
+		если ((el = el_init(__progname, stdin, stdout, stderr)) == NULL)
 			fatal("Couldn't initialise editline");
-		if ((hl = history_init()) == NULL)
+		если ((hl = history_init()) == NULL)
 			fatal("Couldn't initialise editline history");
 		history(hl, &hev, H_SETSIZE, 100);
 		el_set(el, EL_HIST, history, hl);
@@ -2316,39 +2316,39 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 		el_set(el, EL_BIND, "^w", "ed-delete-prev-word", NULL);
 
 		/* el_source() may have changed EL_EDITOR to vi */
-		if (el_get(el, EL_EDITOR, &editor) == 0 && editor[0] == 'v')
+		если (el_get(el, EL_EDITOR, &editor) == 0 && editor[0] == 'v')
 			el_set(el, EL_BIND, "^[", "vi-command-mode", NULL);
 	}
 #endif /* USE_LIBEDIT */
 
-	if ((remote_path = sftp_realpath(conn, ".")) == NULL)
+	если ((remote_path = sftp_realpath(conn, ".")) == NULL)
 		fatal("Need cwd");
 	startdir = xstrdup(remote_path);
 
-	if (file1 != NULL) {
+	если (file1 != NULL) {
 		dir = xstrdup(file1);
 		dir = sftp_make_absolute(dir, remote_path);
 
-		if (sftp_remote_is_dir(conn, dir) && file2 == NULL) {
-			if (!quiet)
+		если (sftp_remote_is_dir(conn, dir) && file2 == NULL) {
+			если (!quiet)
 				mprintf("Changing to: %s\n", dir);
 			snprintf(cmd, sizeof cmd, "cd \"%s\"", dir);
-			if (parse_dispatch_command(conn, cmd,
+			если (parse_dispatch_command(conn, cmd,
 			    &remote_path, startdir, 1, 0) != 0) {
 				free(dir);
 				free(startdir);
 				free(remote_path);
 				free(conn);
-				return (-1);
+				вернуть (-1);
 			}
-		} else {
+		} иначе {
 			err = process_get(conn, dir, file2, remote_path, 0, 0,
 			    global_aflag, 0);
 			free(dir);
 			free(startdir);
 			free(remote_path);
 			free(conn);
-			return (err);
+			вернуть (err);
 		}
 		free(dir);
 	}
@@ -2358,43 +2358,43 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 
 	interactive = !batchmode && isatty(STDIN_FILENO);
 	err = 0;
-	for (;;) {
+	для (;;) {
 		struct sigaction sa;
 
 		interrupted = 0;
 		memset(&sa, 0, sizeof(sa));
 		sa.sa_handler = interactive ? read_interrupt : killchild;
-		if (sigaction(SIGINT, &sa, NULL) == -1) {
+		если (sigaction(SIGINT, &sa, NULL) == -1) {
 			debug3("sigaction(%s): %s", strsignal(SIGINT),
 			    strerror(errno));
 			break;
 		}
-		if (el == NULL) {
-			if (interactive) {
+		если (el == NULL) {
+			если (interactive) {
 				printf("sftp> ");
 				fflush(stdout);
 			}
-			if (fgets(cmd, sizeof(cmd), infile) == NULL) {
-				if (interactive)
+			если (fgets(cmd, sizeof(cmd), infile) == NULL) {
+				если (interactive)
 					printf("\n");
-				if (interrupted)
+				если (interrupted)
 					continue;
 				break;
 			}
-		} else {
+		} иначе {
 #ifdef USE_LIBEDIT
 			const char *line;
-			int count = 0;
+			целое count = 0;
 
-			if ((line = el_gets(el, &count)) == NULL ||
+			если ((line = el_gets(el, &count)) == NULL ||
 			    count <= 0) {
 				printf("\n");
-				if (interrupted)
+				если (interrupted)
 					continue;
 				break;
 			}
 			history(hl, &hev, H_ENTER, line);
-			if (strlcpy(cmd, line, sizeof(cmd)) >= sizeof(cmd)) {
+			если (strlcpy(cmd, line, sizeof(cmd)) >= sizeof(cmd)) {
 				fprintf(stderr, "Error: input line too long\n");
 				continue;
 			}
@@ -2409,7 +2409,7 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 
 		err = parse_dispatch_command(conn, cmd, &remote_path,
 		    startdir, batchmode, !interactive && el == NULL);
-		if (err != 0)
+		если (err != 0)
 			break;
 	}
 	ssh_signal(SIGCHLD, SIG_DFL);
@@ -2418,33 +2418,33 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 	free(conn);
 
 #ifdef USE_LIBEDIT
-	if (hl != NULL)
+	если (hl != NULL)
 		history_end(hl);
-	if (el != NULL)
+	если (el != NULL)
 		el_end(el);
 #endif /* USE_LIBEDIT */
 
 	/* err == 1 signifies normal "quit" exit */
-	return (err >= 0 ? 0 : -1);
+	вернуть (err >= 0 ? 0 : -1);
 }
 
 static void
-connect_to_server(char *path, char **args, int *in, int *out)
+connect_to_server(char *path, char **args, целое *in, целое *out)
 {
-	int c_in, c_out;
+	целое c_in, c_out;
 #ifdef USE_PIPES
-	int pin[2], pout[2];
+	целое pin[2], pout[2];
 
-	if ((pipe(pin) == -1) || (pipe(pout) == -1))
+	если ((pipe(pin) == -1) || (pipe(pout) == -1))
 		fatal("pipe: %s", strerror(errno));
 	*in = pin[0];
 	*out = pout[1];
 	c_in = pout[0];
 	c_out = pin[1];
-#else /* USE_PIPES */
-	int inout[2];
+#иначе /* USE_PIPES */
+	целое inout[2];
 
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1)
+	если (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1)
 		fatal("socketpair: %s", strerror(errno));
 	*in = *out = inout[0];
 	c_in = c_out = inout[1];
@@ -2452,10 +2452,10 @@ connect_to_server(char *path, char **args, int *in, int *out)
 	FD_CLOSEONEXEC(*in);
 	FD_CLOSEONEXEC(*out);
 
-	if ((sshpid = fork()) == -1)
+	если ((sshpid = fork()) == -1)
 		fatal("fork: %s", strerror(errno));
-	else if (sshpid == 0) {
-		if ((dup2(c_in, STDIN_FILENO) == -1) ||
+	иначе если (sshpid == 0) {
+		если ((dup2(c_in, STDIN_FILENO) == -1) ||
 		    (dup2(c_out, STDOUT_FILENO) == -1)) {
 			fprintf(stderr, "dup2: %s\n", strerror(errno));
 			_exit(1);
@@ -2505,18 +2505,18 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+целое
+основной(целое argc, char **argv)
 {
-	int r, in, out, ch, err, tmp, port = -1, noisy = 0;
+	целое r, in, out, ch, err, tmp, port = -1, noisy = 0;
 	char *host = NULL, *user, *cp, **cpp, *file2 = NULL;
-	int debug_level = 0;
+	целое debug_level = 0;
 	char *file1 = NULL, *sftp_server = NULL;
 	char *ssh_program = _PATH_SSH_PROGRAM, *sftp_direct = NULL;
 	const char *errstr;
 	LogLevel ll = SYSLOG_LEVEL_INFO;
 	arglist args;
-	extern int optind;
+	extern целое optind;
 	extern char *optarg;
 	struct sftp_conn *conn;
 	size_t copy_buffer_len = 0;
@@ -2539,7 +2539,7 @@ main(int argc, char **argv)
 	ll = SYSLOG_LEVEL_INFO;
 	infile = stdin;
 
-	while ((ch = getopt(argc, argv,
+	пока ((ch = getopt(argc, argv,
 	    "1246AafhNpqrvCc:D:i:l:o:s:S:b:B:F:J:P:R:X:")) != -1) {
 		switch (ch) {
 		/* Passed through to ssh(1) */
@@ -2566,11 +2566,11 @@ main(int argc, char **argv)
 			break;
 		case 'P':
 			port = a2port(optarg);
-			if (port <= 0)
+			если (port <= 0)
 				fatal("Bad port \"%s\"\n", optarg);
 			break;
 		case 'v':
-			if (debug_level < 3) {
+			если (debug_level < 3) {
 				addargs(&args, "-v");
 				ll = SYSLOG_LEVEL_DEBUG1 + debug_level;
 			}
@@ -2587,15 +2587,15 @@ main(int argc, char **argv)
 			break;
 		case 'B':
 			copy_buffer_len = strtol(optarg, &cp, 10);
-			if (copy_buffer_len == 0 || *cp != '\0')
+			если (copy_buffer_len == 0 || *cp != '\0')
 				fatal("Invalid buffer size \"%s\"", optarg);
 			break;
 		case 'b':
-			if (batchmode)
+			если (batchmode)
 				fatal("Batch file already specified.");
 
 			/* Allow "-" as stdin */
-			if (strcmp(optarg, "-") != 0 &&
+			если (strcmp(optarg, "-") != 0 &&
 			    (infile = fopen(optarg, "r")) == NULL)
 				fatal("%s (%s).", strerror(errno), optarg);
 			showprogress = 0;
@@ -2617,7 +2617,7 @@ main(int argc, char **argv)
 		case 'l':
 			limit_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
 			    &errstr);
-			if (errstr != NULL)
+			если (errstr != NULL)
 				usage();
 			limit_kbps *= 1024; /* kbps */
 			break;
@@ -2626,7 +2626,7 @@ main(int argc, char **argv)
 			break;
 		case 'R':
 			num_requests = strtol(optarg, &cp, 10);
-			if (num_requests == 0 || *cp != '\0')
+			если (num_requests == 0 || *cp != '\0')
 				fatal("Invalid number of requests \"%s\"",
 				    optarg);
 			break;
@@ -2639,26 +2639,26 @@ main(int argc, char **argv)
 			break;
 		case 'X':
 			/* Please keep in sync with ssh.c -X */
-			if (strncmp(optarg, "buffer=", 7) == 0) {
+			если (strncmp(optarg, "buffer=", 7) == 0) {
 				r = scan_scaled(optarg + 7, &llv);
-				if (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
+				если (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
 					r = -1;
 					errno = EINVAL;
 				}
-				if (r == -1) {
+				если (r == -1) {
 					fatal("Invalid buffer size \"%s\": %s",
 					     optarg + 7, strerror(errno));
 				}
 				copy_buffer_len = (size_t)llv;
-			} else if (strncmp(optarg, "nrequests=", 10) == 0) {
+			} иначе если (strncmp(optarg, "nrequests=", 10) == 0) {
 				llv = strtonum(optarg + 10, 1, 256 * 1024,
 				    &errstr);
-				if (errstr != NULL) {
+				если (errstr != NULL) {
 					fatal("Invalid number of requests "
 					    "\"%s\": %s", optarg + 10, errstr);
 				}
 				num_requests = (size_t)llv;
-			} else {
+			} иначе {
 				fatal("Invalid -X option");
 			}
 			break;
@@ -2671,16 +2671,16 @@ main(int argc, char **argv)
 	/* Do this last because we want the user to be able to override it */
 	addargs(&args, "-oForwardAgent no");
 
-	if (!isatty(STDERR_FILENO))
+	если (!isatty(STDERR_FILENO))
 		showprogress = 0;
 
-	if (noisy)
+	если (noisy)
 		quiet = 0;
 
 	log_init(argv[0], ll, SYSLOG_FACILITY_USER, 1);
 
-	if (sftp_direct == NULL) {
-		if (optind == argc || argc > (optind + 2))
+	если (sftp_direct == NULL) {
+		если (optind == argc || argc > (optind + 2))
 			usage();
 		argv += optind;
 
@@ -2689,16 +2689,16 @@ main(int argc, char **argv)
 			usage();
 			break;
 		case 0:
-			if (tmp != -1)
+			если (tmp != -1)
 				port = tmp;
 			break;
 		default:
 			/* Try with user, host and path. */
-			if (parse_user_host_path(*argv, &user, &host,
+			если (parse_user_host_path(*argv, &user, &host,
 			    &file1) == 0)
 				break;
 			/* Try with user and host. */
-			if (parse_user_host_port(*argv, &user, &host, NULL)
+			если (parse_user_host_port(*argv, &user, &host, NULL)
 			    == 0)
 				break;
 			/* Treat as a plain hostname. */
@@ -2708,20 +2708,20 @@ main(int argc, char **argv)
 		}
 		file2 = *(argv + 1);
 
-		if (!*host) {
+		если (!*host) {
 			fprintf(stderr, "Missing hostname\n");
 			usage();
 		}
 
-		if (port != -1)
+		если (port != -1)
 			addargs(&args, "-oPort %d", port);
-		if (user != NULL) {
+		если (user != NULL) {
 			addargs(&args, "-l");
 			addargs(&args, "%s", user);
 		}
 
 		/* no subsystem if the server-spec contains a '/' */
-		if (sftp_server == NULL || strchr(sftp_server, '/') == NULL)
+		если (sftp_server == NULL || strchr(sftp_server, '/') == NULL)
 			addargs(&args, "-s");
 
 		addargs(&args, "--");
@@ -2730,10 +2730,10 @@ main(int argc, char **argv)
 		    sftp_server : "sftp"));
 
 		connect_to_server(ssh_program, args.list, &in, &out);
-	} else {
-		if ((r = argv_split(sftp_direct, &tmp, &cpp, 1)) != 0)
+	} иначе {
+		если ((r = argv_split(sftp_direct, &tmp, &cpp, 1)) != 0)
 			fatal_r(r, "Parse -D arguments");
-		if (cpp[0] == NULL)
+		если (cpp[0] == NULL)
 			fatal("No sftp server specified via -D");
 		connect_to_server(cpp[0], cpp, &in, &out);
 		argv_free(cpp, tmp);
@@ -2741,30 +2741,30 @@ main(int argc, char **argv)
 	freeargs(&args);
 
 	conn = sftp_init(in, out, copy_buffer_len, num_requests, limit_kbps);
-	if (conn == NULL)
+	если (conn == NULL)
 		fatal("Couldn't initialise connection to server");
 
-	if (!quiet) {
-		if (sftp_direct == NULL)
+	если (!quiet) {
+		если (sftp_direct == NULL)
 			fprintf(stderr, "Connected to %s.\n", host);
-		else
+		иначе
 			fprintf(stderr, "Attached to %s.\n", sftp_direct);
 	}
 
 	err = interactive_loop(conn, file1, file2);
 
-#if !defined(USE_PIPES)
+#если !defined(USE_PIPES)
 	shutdown(in, SHUT_RDWR);
 	shutdown(out, SHUT_RDWR);
 #endif
 
 	close(in);
 	close(out);
-	if (batchmode)
+	если (batchmode)
 		fclose(infile);
 
-	while (waitpid(sshpid, NULL, 0) == -1 && sshpid > 1)
-		if (errno != EINTR)
+	пока (waitpid(sshpid, NULL, 0) == -1 && sshpid > 1)
+		если (errno != EINTR)
 			fatal("Couldn't wait for ssh process: %s",
 			    strerror(errno));
 

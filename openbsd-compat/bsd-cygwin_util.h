@@ -51,11 +51,11 @@ extern void cygwin_set_impersonation_token (const HANDLE);
 #define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
 const char *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
+целое binary_open(const char *, целое , ...);
+целое check_ntsec(const char *);
 char **fetch_windows_environment(void);
 void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+целое cygwin_ug_match_pattern_list(const char *, const char *);
 
 #ifndef NO_BINARY_OPEN
 #define open binary_open

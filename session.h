@@ -29,17 +29,17 @@
 #define TTYSZ 64
 typedef struct Session Session;
 struct Session {
-	int	used;
-	int	self;
-	int	next_unused;
+	целое	used;
+	целое	self;
+	целое	next_unused;
 	struct passwd *pw;
 	Authctxt *authctxt;
 	pid_t	pid;
-	int	forced;
+	целое	forced;
 
 	/* tty */
 	char	*term;
-	int	ptyfd, ttyfd, ptymaster;
+	целое	ptyfd, ttyfd, ptymaster;
 	u_int	row, col, xpixel, ypixel;
 	char	tty[TTYSZ];
 
@@ -50,11 +50,11 @@ struct Session {
 	char	*auth_display;
 	char	*auth_proto;
 	char	*auth_data;
-	int	single_connection;
+	целое	single_connection;
 
-	int	chanid;
-	int	*x11_chanids;
-	int	is_subsystem;
+	целое	chanid;
+	целое	*x11_chanids;
+	целое	is_subsystem;
 	char	*subsys;
 	u_int	num_env;
 	struct {
@@ -66,11 +66,11 @@ struct Session {
 void	 do_authenticated(struct ssh *, Authctxt *);
 void	 do_cleanup(struct ssh *, Authctxt *);
 
-int	 session_open(Authctxt *, int);
-void	 session_unused(int);
-int	 session_input_channel_req(struct ssh *, Channel *, const char *);
-void	 session_close_by_pid(struct ssh *ssh, pid_t, int);
-void	 session_close_by_channel(struct ssh *, int, int, void *);
+целое	 session_open(Authctxt *, целое);
+void	 session_unused(целое);
+целое	 session_input_channel_req(struct ssh *, Channel *, const char *);
+void	 session_close_by_pid(struct ssh *ssh, pid_t, целое);
+void	 session_close_by_channel(struct ssh *, целое, целое, void *);
 void	 session_destroy_all(struct ssh *, void (*)(Session *));
 void	 session_pty_cleanup2(Session *);
 
@@ -79,6 +79,6 @@ Session	*session_by_tty(char *);
 void	 session_close(struct ssh *, Session *);
 void	 do_setusercontext(struct passwd *);
 
-const char	*session_get_remote_name_or_ip(struct ssh *, u_int, int);
+const char	*session_get_remote_name_or_ip(struct ssh *, u_int, целое);
 
 #endif

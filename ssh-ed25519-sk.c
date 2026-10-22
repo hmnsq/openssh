@@ -43,83 +43,83 @@ ssh_ed25519_sk_cleanup(struct sshkey *k)
 	sshkey_ed25519_funcs.cleanup(k);
 }
 
-static int
+static целое
 ssh_ed25519_sk_equal(const struct sshkey *a, const struct sshkey *b)
 {
-	if (!sshkey_sk_fields_equal(a, b))
-		return 0;
-	if (!sshkey_ed25519_funcs.equal(a, b))
-		return 0;
-	return 1;
+	если (!sshkey_sk_fields_equal(a, b))
+		вернуть 0;
+	если (!sshkey_ed25519_funcs.equal(a, b))
+		вернуть 0;
+	вернуть 1;
 }
 
-static int
+static целое
 ssh_ed25519_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	целое r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
-		return r;
+	если ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
+		вернуть r;
+	если ((r = sshkey_serialize_sk(key, b)) != 0)
+		вернуть r;
 
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 ssh_ed25519_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	целое r;
 
-	if ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
-		return r;
+	если ((r = sshkey_ed25519_funcs.serialize_public(key, b, opts)) != 0)
+		вернуть r;
+	если ((r = sshkey_serialize_private_sk(key, b)) != 0)
+		вернуть r;
 
-	return 0;
+	вернуть 0;
 }
 
-static int
+static целое
 ssh_ed25519_sk_copy_public(const struct sshkey *from, struct sshkey *to)
 {
-	int r;
+	целое r;
 
-	if ((r = sshkey_ed25519_funcs.copy_public(from, to)) != 0)
-		return r;
-	if ((r = sshkey_copy_public_sk(from, to)) != 0)
-		return r;
-	return 0;
+	если ((r = sshkey_ed25519_funcs.copy_public(from, to)) != 0)
+		вернуть r;
+	если ((r = sshkey_copy_public_sk(from, to)) != 0)
+		вернуть r;
+	вернуть 0;
 }
 
-static int
+static целое
 ssh_ed25519_sk_deserialize_public(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	целое r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	если ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
+		вернуть r;
+	если ((r = sshkey_deserialize_sk(b, key)) != 0)
+		вернуть r;
+	вернуть 0;
 }
 
-static int
+static целое
 ssh_ed25519_sk_deserialize_private(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	целое r;
 
-	if ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	если ((r = sshkey_ed25519_funcs.deserialize_public(ktype, b, key)) != 0)
+		вернуть r;
+	если ((r = sshkey_private_deserialize_sk(b, key)) != 0)
+		вернуть r;
+	вернуть 0;
 }
 
-static int
+static целое
 ssh_ed25519_sk_verify(const struct sshkey *key,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
@@ -134,22 +134,22 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 	u_char sig_flags;
 	u_int sig_counter;
 	size_t len;
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int ret;
+	целое r = SSH_ERR_INTERNAL_ERROR;
+	целое ret;
 	struct sshkey_sig_details *details = NULL;
 
-	if (detailsp != NULL)
+	если (detailsp != NULL)
 		*detailsp = NULL;
 
-	if (key == NULL ||
+	если (key == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ED25519_SK ||
 	    key->ed25519_pk == NULL ||
 	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+		вернуть SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
+	если ((b = sshbuf_from(sig, siglen)) == NULL)
+		вернуть SSH_ERR_ALLOC_FAIL;
+	если (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
 	    sshbuf_get_string_direct(b, &sigblob, &len) != 0 ||
 	    sshbuf_get_u8(b, &sig_flags) != 0 ||
 	    sshbuf_get_u32(b, &sig_counter) != 0) {
@@ -164,19 +164,19 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, sig_flags, sig_counter);
 #endif
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
+	если (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
 		r = SSH_ERR_KEY_TYPE_MISMATCH;
 		goto out;
 	}
-	if (sshbuf_len(b) != 0) {
+	если (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
-	if (len != crypto_sign_ed25519_BYTES) {
+	если (len != crypto_sign_ed25519_BYTES) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
+	если (ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
 	    strlen(key->sk_application), apphash, sizeof(apphash)) != 0 ||
 	    ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
 	    msghash, sizeof(msghash)) != 0) {
@@ -189,17 +189,17 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 	fprintf(stderr, "%s: hashed message:\n", __func__);
 	sshbuf_dump_data(msghash, sizeof(msghash), stderr);
 #endif
-	if ((details = calloc(1, sizeof(*details))) == NULL) {
+	если ((details = calloc(1, sizeof(*details))) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	details->sk_counter = sig_counter;
 	details->sk_flags = sig_flags;
-	if ((encoded = sshbuf_new()) == NULL) {
+	если ((encoded = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (sshbuf_put(encoded, apphash, sizeof(apphash)) != 0 ||
+	если (sshbuf_put(encoded, apphash, sizeof(apphash)) != 0 ||
 	    sshbuf_put_u8(encoded, sig_flags) != 0 ||
 	    sshbuf_put_u32(encoded, sig_counter) != 0 ||
 	    sshbuf_put(encoded, msghash, sizeof(msghash)) != 0) {
@@ -210,18 +210,18 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 	fprintf(stderr, "%s: signed buf:\n", __func__);
 	sshbuf_dump(encoded, stderr);
 #endif
-	if ((ret = crypto_sign_ed25519_verify_detached(sigblob,
+	если ((ret = crypto_sign_ed25519_verify_detached(sigblob,
 	    sshbuf_ptr(encoded), sshbuf_len(encoded),
 	    key->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
-	if (ret != 0) {
+	если (ret != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
 	/* success */
 	r = 0;
-	if (detailsp != NULL) {
+	если (detailsp != NULL) {
 		*detailsp = details;
 		details = NULL;
 	}
@@ -230,7 +230,7 @@ ssh_ed25519_sk_verify(const struct sshkey *key,
 	sshbuf_free(b);
 	sshbuf_free(encoded);
 	free(ktype);
-	return r;
+	вернуть r;
 }
 
 static const struct sshkey_impl_funcs sshkey_ed25519_sk_funcs = {

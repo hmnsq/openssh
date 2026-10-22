@@ -22,7 +22,7 @@
 
 /* in tests.c */
 struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+char *get_json_string(struct sshbuf *content, const char *key, целое consume);
 
 void mldsa_tests(void);
 
@@ -43,7 +43,7 @@ load_kats(const char *file, struct kat ***katsp, size_t *nkatsp)
 	size_t nkats = 0;
 
 	json_buf = load_text_file(file);
-	while (sshbuf_find(json_buf, 0, "key_generation_seed",
+	пока (sshbuf_find(json_buf, 0, "key_generation_seed",
 	    strlen("key_generation_seed"), NULL) == 0) {
 		kat = xcalloc(1, sizeof(*kat));
 		kat->seed = get_json_string(json_buf, "key_generation_seed", 1);
@@ -69,7 +69,7 @@ free_kats(struct kat **kats, size_t nkats)
 	size_t i;
 	struct kat *kat;
 
-	for (i = 0; i < nkats; i++) {
+	для (i = 0; i < nkats; i++) {
 		kat = kats[i];
 		free(kat->seed);
 		free(kat->pk_hash);
@@ -98,7 +98,7 @@ mldsa_tests(void)
 
 	TEST_START("ML-DSA 44 KATs");
 	load_kats("nistkats-44.json", &kats, &nkats);
-	for (i = 0; i < nkats; i++) {
+	для (i = 0; i < nkats; i++) {
 		kat = kats[i];
 		test_subtest_info("vector %zu", i);
 

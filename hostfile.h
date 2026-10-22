@@ -44,17 +44,17 @@ void	 free_hostkeys(struct hostkeys *);
 
 HostStatus check_key_in_hostkeys(struct hostkeys *, struct sshkey *,
     const struct hostkey_entry **);
-int	 lookup_key_in_hostkeys_by_type(struct hostkeys *, int, int,
+целое	 lookup_key_in_hostkeys_by_type(struct hostkeys *, целое, целое,
     const struct hostkey_entry **);
-int	 lookup_marker_in_hostkeys(struct hostkeys *, int);
+целое	 lookup_marker_in_hostkeys(struct hostkeys *, целое);
 
-int	 hostfile_read_key(char **, u_int *, struct sshkey *);
-int	 add_host_to_hostfile(const char *, const char *,
-    const struct sshkey *, int);
+целое	 hostfile_read_key(char **, u_int *, struct sshkey *);
+целое	 add_host_to_hostfile(const char *, const char *,
+    const struct sshkey *, целое);
 
-int	 hostfile_replace_entries(const char *filename,
+целое	 hostfile_replace_entries(const char *filename,
     const char *host, const char *ip, struct sshkey **keys, size_t nkeys,
-    int store_hash, int quiet, int hash_alg);
+    целое store_hash, целое quiet, целое hash_alg);
 
 #define HASH_MAGIC	"|1|"
 #define HASH_DELIM	'|'
@@ -94,10 +94,10 @@ struct hostkey_foreach_line {
 	u_int status;	/* One of HKF_STATUS_* */
 	u_int match;	/* Zero or more of HKF_MATCH_* OR'd together */
 	char *line;	/* Entire key line; mutable by callback */
-	int marker;	/* CA/revocation markers; indicated by MRK_* value */
+	целое marker;	/* CA/revocation markers; indicated by MRK_* value */
 	const char *hosts; /* Raw hosts text, may be hashed or list multiple */
 	const char *rawkey; /* Text of key and any comment following it */
-	int keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
+	целое keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
 	struct sshkey *key; /* Key, if parsed ok and HKF_WANT_MATCH_HOST set */
 	const char *comment; /* Any comment following the key */
 	u_int note;	/* caller-specified note copied from arguments */
@@ -108,16 +108,16 @@ struct hostkey_foreach_line {
  * is set). The foreach loop will terminate if the callback returns a non-
  * zero exit status.
  */
-typedef int hostkeys_foreach_fn(struct hostkey_foreach_line *l, void *ctx);
+typedef целое hostkeys_foreach_fn(struct hostkey_foreach_line *l, void *ctx);
 
 /* Iterate over a hostkeys file */
-int hostkeys_foreach(const char *path,
+целое hostkeys_foreach(const char *path,
     hostkeys_foreach_fn *callback, void *ctx,
     const char *host, const char *ip, u_int options, u_int note);
-int hostkeys_foreach_file(const char *path, FILE *f,
+целое hostkeys_foreach_file(const char *path, FILE *f,
     hostkeys_foreach_fn *callback, void *ctx,
     const char *host, const char *ip, u_int options, u_int note);
 
-void hostfile_create_user_ssh_dir(const char *, int);
+void hostfile_create_user_ssh_dir(const char *, целое);
 
 #endif

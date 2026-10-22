@@ -39,39 +39,39 @@
 #include "match.h"
 #include "log.h"
 
-static int ngroups;
+static целое ngroups;
 static char **groups_byname;
 
 /*
  * Initialize group access list for user with primary (base) and
  * supplementary groups.  Return the number of groups in the list.
  */
-int
+целое
 ga_init(const char *user, gid_t base)
 {
 	gid_t *groups_bygid;
-	int ongroups, i, j, retry = 0;
+	целое ongroups, i, j, retry = 0;
 	struct group *gr;
 
-	if (ngroups > 0)
+	если (ngroups > 0)
 		ga_free();
 
 	ongroups = ngroups = NGROUPS_MAX;
-#if defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
+#если defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
 	ongroups = ngroups = MAX(NGROUPS_MAX, sysconf(_SC_NGROUPS_MAX));
 #endif
 
 	groups_bygid = xcalloc(ngroups, sizeof(*groups_bygid));
-	while (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
-		if (ngroups <= ongroups) {
+	пока (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
+		если (ngroups <= ongroups) {
 			error("getgrouplist(\"%s\", %ld): failed",
 			    user, (long)base);
 			free(groups_bygid);
 			groups_bygid = NULL;
 			ngroups = 0;
-			return 0;
+			вернуть 0;
 		}
-		if (retry++ > 0) {
+		если (retry++ > 0) {
 			fatal("getgrouplist(\"%s\", %ld): groups list too big "
 			    "(have %ld, need %ld)", user, (long)base,
 			    (long)ongroups, (long)ngroups);
@@ -81,50 +81,50 @@ ga_init(const char *user, gid_t base)
 	}
 	groups_byname = xcalloc(ngroups, sizeof(*groups_byname));
 
-	for (i = 0, j = 0; i < ngroups; i++)
-		if ((gr = getgrgid(groups_bygid[i])) != NULL)
+	для (i = 0, j = 0; i < ngroups; i++)
+		если ((gr = getgrgid(groups_bygid[i])) != NULL)
 			groups_byname[j++] = xstrdup(gr->gr_name);
 	free(groups_bygid);
-	return (ngroups = j);
+	вернуть (ngroups = j);
 }
 
 /*
  * Return 1 if one of user's groups is contained in groups.
  * Return 0 otherwise.  Use match_pattern() for string comparison.
  */
-int
-ga_match(char * const *groups, int n)
+целое
+ga_match(char * const *groups, целое n)
 {
-	int i, j;
+	целое i, j;
 
-	for (i = 0; i < ngroups; i++)
-		for (j = 0; j < n; j++)
-			if (match_pattern(groups_byname[i], groups[j]))
-				return 1;
-	return 0;
+	для (i = 0; i < ngroups; i++)
+		для (j = 0; j < n; j++)
+			если (match_pattern(groups_byname[i], groups[j]))
+				вернуть 1;
+	вернуть 0;
 }
 
 /*
  * Return 1 if one of user's groups matches group_pattern list.
  * Return 0 on negated or no match.
  */
-int
+целое
 ga_match_pattern_list(const char *group_pattern)
 {
-	int i, found = 0;
+	целое i, found = 0;
 
-	for (i = 0; i < ngroups; i++) {
+	для (i = 0; i < ngroups; i++) {
 		switch (match_usergroup_pattern_list(groups_byname[i],
 		    group_pattern)) {
 		case -1:
-			return 0;	/* Negated match wins */
+			вернуть 0;	/* Negated match wins */
 		case 0:
 			continue;
 		case 1:
 			found = 1;
 		}
 	}
-	return found;
+	вернуть found;
 }
 
 /*
@@ -133,10 +133,10 @@ ga_match_pattern_list(const char *group_pattern)
 void
 ga_free(void)
 {
-	int i;
+	целое i;
 
-	if (ngroups > 0) {
-		for (i = 0; i < ngroups; i++)
+	если (ngroups > 0) {
+		для (i = 0; i < ngroups; i++)
 			free(groups_byname[i]);
 		ngroups = 0;
 		free(groups_byname);

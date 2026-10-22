@@ -45,7 +45,7 @@ sshbuf_getput_crypto_tests(void)
 		0x70, 0x60, 0x50, 0x40, 0x30, 0x20, 0x10, 0x00,
 		0x7f, 0xff, 0x11
 	};
-	int ec256_nid = NID_X9_62_prime256v1;
+	целое ec256_nid = NID_X9_62_prime256v1;
 	char *ec256_x = "0C828004839D0106AA59575216191357"
 		        "34B451459DADB586677EF9DF55784999";
 	char *ec256_y = "4D196B50F0B4E94B3C73E3A9D4CD9DF2"
@@ -63,13 +63,13 @@ sshbuf_getput_crypto_tests(void)
 	};
 	EC_KEY *eck;
 	EC_POINT *ecp;
-	int r;
+	целое r;
 
 #define MKBN(b, bnn) \
 	do { \
 		bnn = NULL; \
 		ASSERT_INT_GT(BN_hex2bn(&bnn, b), 0); \
-	} while (0)
+	} пока (0)
 
 	TEST_START("sshbuf_put_bignum2");
 	MKBN(hexbn1, bn);

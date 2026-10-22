@@ -35,11 +35,11 @@
 
 #include "includes.h"
 
-#if 0
+#если 0
 #include "file.h"
 #endif
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#если !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -47,40 +47,40 @@
 #include <string.h>
 
 static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+getdelim(char **buf, size_t *bufsiz, целое delimiter, FILE *fp)
 {
 	char *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
+	если (*buf == NULL || *bufsiz == 0) {
+		если ((*buf = malloc(BUFSIZ)) == NULL)
+			вернуть -1;
 		*bufsiz = BUFSIZ;
 	}
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+	для (ptr = *buf, eptr = *buf + *bufsiz;;) {
+		целое c = fgetc(fp);
+		если (c == -1) {
+			если (feof(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				если (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					вернуть diff;
 				}
 			}
-			return -1;
+			вернуть -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		если (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			вернуть ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
+		если (ptr + 2 >= eptr) {
 			char *nbuf;
 			size_t nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			если ((nbuf = realloc(*buf, nbufsiz)) == NULL)
+				вернуть -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -92,22 +92,22 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 ssize_t
 getline(char **buf, size_t *bufsiz, FILE *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	вернуть getdelim(buf, bufsiz, '\n', fp);
 }
 
 #endif
 
 #ifdef TEST
-int
-main(int argc, char *argv[])
+целое
+основной(целое argc, char *argv[])
 {
 	char *p = NULL;
 	ssize_t len;
 	size_t n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
+	пока ((len = getline(&p, &n, stdin)) != -1)
 		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
 	free(p);
-	return 0;
+	вернуть 0;
 }
 #endif

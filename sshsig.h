@@ -23,7 +23,7 @@ struct sshkey;
 struct sshsigopt;
 struct sshkey_sig_details;
 
-typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
+typedef целое sshsig_signer(struct sshkey *, u_char **, size_t *,
     const u_char *, size_t, const char *, const char *, const char *,
     u_int, void *);
 
@@ -34,7 +34,7 @@ typedef int sshsig_signer(struct sshkey *, u_char **, size_t *,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_signb(struct sshkey *key, const char *hashalg,
+целое sshsig_signb(struct sshkey *key, const char *hashalg,
     const char *sk_provider, const char *sk_pin, const struct sshbuf *message,
     const char *sig_namespace, struct sshbuf **out,
     sshsig_signer *signer, void *signer_ctx);
@@ -44,7 +44,7 @@ int sshsig_signb(struct sshkey *key, const char *hashalg,
  * used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verifyb(struct sshbuf *signature,
+целое sshsig_verifyb(struct sshbuf *signature,
     const struct sshbuf *message, const char *sig_namespace,
     struct sshkey **sign_keyp, struct sshkey_sig_details **sig_details);
 
@@ -55,9 +55,9 @@ int sshsig_verifyb(struct sshbuf *signature,
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  * out is populated with the detached signature, or NULL on failure.
  */
-int sshsig_sign_fd(struct sshkey *key, const char *hashalg,
+целое sshsig_sign_fd(struct sshkey *key, const char *hashalg,
     const char *sk_provider, const char *sk_pin,
-    int fd, const char *sig_namespace,
+    целое fd, const char *sig_namespace,
     struct sshbuf **out, sshsig_signer *signer, void *signer_ctx);
 
 /*
@@ -65,7 +65,7 @@ int sshsig_sign_fd(struct sshkey *key, const char *hashalg,
  * returns key used to sign via argument.
  * Returns 0 on success or a negative SSH_ERR_* error code on failure.
  */
-int sshsig_verify_fd(struct sshbuf *signature, int fd,
+целое sshsig_verify_fd(struct sshbuf *signature, целое fd,
     const char *sig_namespace, struct sshkey **sign_keyp,
     struct sshkey_sig_details **sig_details);
 
@@ -74,18 +74,18 @@ int sshsig_verify_fd(struct sshbuf *signature, int fd,
 /*
  * Return a base64 encoded "ASCII armoured" version of a raw signature.
  */
-int sshsig_armor(const struct sshbuf *blob, struct sshbuf **out);
+целое sshsig_armor(const struct sshbuf *blob, struct sshbuf **out);
 
 /*
  * Decode a base64 encoded armoured signature to a raw signature.
  */
-int sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out);
+целое sshsig_dearmor(struct sshbuf *sig, struct sshbuf **out);
 
 /*
  * Checks whether a particular key/principal/namespace is permitted by
  * an allowed_keys file. Returns 0 on success.
  */
-int sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
+целое sshsig_check_allowed_keys(const char *path, const struct sshkey *sign_key,
     const char *principal, const char *ns, uint64_t verify_time);
 
 /* Parse zero or more allowed_keys signature options */
@@ -96,16 +96,16 @@ struct sshsigopt *sshsigopt_parse(const char *opts,
 void sshsigopt_free(struct sshsigopt *opts);
 
 /* Get public key from signature */
-int sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey);
+целое sshsig_get_pubkey(struct sshbuf *signature, struct sshkey **pubkey);
 
 /* Find principal in allowed_keys file, given a sshkey. Returns
  * 0 on success.
  */
-int sshsig_find_principals(const char *path, const struct sshkey *sign_key,
+целое sshsig_find_principals(const char *path, const struct sshkey *sign_key,
     uint64_t verify_time, char **principal);
 
 /* Find all principals in allowed_keys file matching *principal */
-int sshsig_match_principals(const char *path,
+целое sshsig_match_principals(const char *path,
 	const char *principal, char ***principalsp, size_t *nprincipalsp);
 
 #endif /* SSHSIG_H */

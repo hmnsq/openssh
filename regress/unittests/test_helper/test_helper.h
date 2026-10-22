@@ -46,62 +46,62 @@ void test_start(const char *n);
 void test_info(char *s, size_t len);
 void set_onerror_func(test_onerror_func_t *f, void *ctx);
 void test_done(void);
-int test_is_verbose(void);
-int test_is_quiet(void);
-int test_is_fast(void);
-int test_is_slow(void);
-int test_is_benchmark(void);
+целое test_is_verbose(void);
+целое test_is_quiet(void);
+целое test_is_fast(void);
+целое test_is_slow(void);
+целое test_is_benchmark(void);
 void test_subtest_info(const char *fmt, ...)
     __attribute__((format(printf, 1, 2)));
-void ssl_err_check(const char *file, int line);
+void ssl_err_check(const char *file, целое line);
 #ifdef WITH_OPENSSL
-void assert_bignum(const char *file, int line,
+void assert_bignum(const char *file, целое line,
     const char *a1, const char *a2,
     const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred);
 #endif
-void assert_string(const char *file, int line,
+void assert_string(const char *file, целое line,
     const char *a1, const char *a2,
     const char *aa1, const char *aa2, enum test_predicate pred);
-void assert_mem(const char *file, int line,
+void assert_mem(const char *file, целое line,
     const char *a1, const char *a2,
     const void *aa1, const void *aa2, size_t l, enum test_predicate pred);
-void assert_mem_filled(const char *file, int line,
+void assert_mem_filled(const char *file, целое line,
     const char *a1,
     const void *aa1, u_char v, size_t l, enum test_predicate pred);
-void assert_int(const char *file, int line,
+void assert_int(const char *file, целое line,
     const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred);
-void assert_size_t(const char *file, int line,
+    целое aa1, целое aa2, enum test_predicate pred);
+void assert_size_t(const char *file, целое line,
     const char *a1, const char *a2,
     size_t aa1, size_t aa2, enum test_predicate pred);
-void assert_u_int(const char *file, int line,
+void assert_u_int(const char *file, целое line,
     const char *a1, const char *a2,
     u_int aa1, u_int aa2, enum test_predicate pred);
-void assert_long(const char *file, int line,
+void assert_long(const char *file, целое line,
     const char *a1, const char *a2,
     long aa1, long aa2, enum test_predicate pred);
-void assert_long_long(const char *file, int line,
+void assert_long_long(const char *file, целое line,
     const char *a1, const char *a2,
     long long aa1, long long aa2, enum test_predicate pred);
-void assert_char(const char *file, int line,
+void assert_char(const char *file, целое line,
     const char *a1, const char *a2,
     char aa1, char aa2, enum test_predicate pred);
-void assert_ptr(const char *file, int line,
+void assert_ptr(const char *file, целое line,
     const char *a1, const char *a2,
     const void *aa1, const void *aa2, enum test_predicate pred);
-void assert_u8(const char *file, int line,
+void assert_u8(const char *file, целое line,
     const char *a1, const char *a2,
     uint8_t aa1, uint8_t aa2, enum test_predicate pred);
-void assert_u16(const char *file, int line,
+void assert_u16(const char *file, целое line,
     const char *a1, const char *a2,
     uint16_t aa1, uint16_t aa2, enum test_predicate pred);
-void assert_u32(const char *file, int line,
+void assert_u32(const char *file, целое line,
     const char *a1, const char *a2,
     uint32_t aa1, uint32_t aa2, enum test_predicate pred);
-void assert_u64(const char *file, int line,
+void assert_u64(const char *file, целое line,
     const char *a1, const char *a2,
     uint64_t aa1, uint64_t aa2, enum test_predicate pred);
-void assert_double(const char *file, int line,
+void assert_double(const char *file, целое line,
     const char *a1, const char *a2,
     double aa1, double aa2, enum test_predicate pred);
 
@@ -307,21 +307,21 @@ void assert_double(const char *file, int line,
 #define BENCH_START(name)	\
 	do { \
 		bench_start(__FILE__, __LINE__, name); \
-		while (!bench_done()) { \
+		пока (!bench_done()) { \
 			bench_case_start(__FILE__, __LINE__); \
 			do {
 #define BENCH_FINISH(unit) \
-			} while (0); \
+			} пока (0); \
 			bench_case_finish(__FILE__, __LINE__); \
 		} \
 		bench_finish(__FILE__, __LINE__, unit); \
-	} while (0)
+	} пока (0)
 
-void bench_start(const char *file, int line, const char *name);
-void bench_case_start(const char *file, int line);
-void bench_case_finish(const char *file, int line);
-void bench_finish(const char *file, int line, const char *unit);
-int bench_done(void);
+void bench_start(const char *file, целое line, const char *name);
+void bench_case_start(const char *file, целое line);
+void bench_case_finish(const char *file, целое line);
+void bench_finish(const char *file, целое line, const char *unit);
+целое bench_done(void);
 
 /* Fuzzing support */
 
@@ -349,10 +349,10 @@ void fuzz_next(struct fuzz *fuzz);
  * This is slow, but useful if the caller needs to ensure that all tests
  * generated change the input (e.g. when fuzzing signatures).
  */
-int fuzz_matches_original(struct fuzz *fuzz);
+целое fuzz_matches_original(struct fuzz *fuzz);
 
 /* Determine whether the current fuzz sequence is exhausted (nonzero = yes) */
-int fuzz_done(struct fuzz *fuzz);
+целое fuzz_done(struct fuzz *fuzz);
 
 /* Return the length and a pointer to the current fuzzed case */
 size_t fuzz_len(struct fuzz *fuzz);

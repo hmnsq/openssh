@@ -45,12 +45,12 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+strtoul(const char *nptr, char **endptr, целое base)
 {
 	const char *s;
 	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	целое c;
+	целое neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
@@ -58,51 +58,51 @@ strtoul(const char *nptr, char **endptr, int base)
 	s = nptr;
 	do {
 		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	} пока (isspace(c));
+	если (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} иначе {
 		neg = 0;
-		if (c == '+')
+		если (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	если ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	если (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULONG_MAX / (unsigned long)base;
 	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	для (acc = 0, any = 0;; c = (unsigned char) *s++) {
+		если (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		иначе если (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
+		иначе
 			break;
-		if (c >= base)
+		если (c >= base)
 			break;
-		if (any < 0)
+		если (any < 0)
 			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		если (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} иначе {
 			any = 1;
 			acc *= (unsigned long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	если (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
+	если (endptr != 0)
 		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	вернуть (acc);
 }
 #endif /* !HAVE_STRTOUL */

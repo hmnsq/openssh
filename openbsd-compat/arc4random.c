@@ -46,7 +46,7 @@
  * will call a native getentropy if available then fall back as required.
  * We use a different name so that OpenSSL cannot call the wrong getentropy.
  */
-int _ssh_compat_getentropy(void *, size_t);
+целое _ssh_compat_getentropy(void *, size_t);
 #ifdef getentropy
 # undef getentropy
 #endif
@@ -59,9 +59,9 @@ int _ssh_compat_getentropy(void *, size_t);
 
 #define minimum(a, b) ((a) < (b) ? (a) : (b))
 
-#if defined(__GNUC__) || defined(_MSC_VER)
+#если defined(__GNUC__) || defined(_MSC_VER)
 #define inline __inline
-#else				/* __GNUC__ || _MSC_VER */
+#иначе				/* __GNUC__ || _MSC_VER */
 #define inline
 #endif				/* !__GNUC__ && !_MSC_VER */
 
@@ -84,7 +84,7 @@ static struct _rsx {
 	u_char		rs_buf[RSBUFSZ];	/* keystream blocks */
 } *rsx;
 
-static inline int _rs_allocate(struct _rs **, struct _rsx **);
+static inline целое _rs_allocate(struct _rs **, struct _rsx **);
 static inline void _rs_forkdetect(void);
 #include "arc4random.h"
 
@@ -93,11 +93,11 @@ static inline void _rs_rekey(u_char *dat, size_t datlen);
 static inline void
 _rs_init(u_char *buf, size_t n)
 {
-	if (n < KEYSZ + IVSZ)
-		return;
+	если (n < KEYSZ + IVSZ)
+		вернуть;
 
-	if (rs == NULL) {
-		if (_rs_allocate(&rs, &rsx) == -1)
+	если (rs == NULL) {
+		если (_rs_allocate(&rs, &rsx) == -1)
 			_exit(1);
 	}
 
@@ -111,12 +111,12 @@ _rs_stir(void)
 	u_char rnd[KEYSZ + IVSZ];
 	uint32_t rekey_fuzz = 0;
 
-	if (getentropy(rnd, sizeof rnd) == -1)
+	если (getentropy(rnd, sizeof rnd) == -1)
 		_getentropy_fail();
 
-	if (!rs)
+	если (!rs)
 		_rs_init(rnd, sizeof(rnd));
-	else
+	иначе
 		_rs_rekey(rnd, sizeof(rnd));
 	explicit_bzero(rnd, sizeof(rnd));	/* discard source seed */
 
@@ -134,11 +134,11 @@ static inline void
 _rs_stir_if_needed(size_t len)
 {
 	_rs_forkdetect();
-	if (!rs || rs->rs_count <= len)
+	если (!rs || rs->rs_count <= len)
 		_rs_stir();
-	if (rs->rs_count <= len)
+	если (rs->rs_count <= len)
 		rs->rs_count = 0;
-	else
+	иначе
 		rs->rs_count -= len;
 }
 
@@ -152,11 +152,11 @@ _rs_rekey(u_char *dat, size_t datlen)
 	chacha_encrypt_bytes(&rsx->rs_chacha, rsx->rs_buf,
 	    rsx->rs_buf, sizeof(rsx->rs_buf));
 	/* mix in optional user provided data */
-	if (dat) {
+	если (dat) {
 		size_t i, m;
 
 		m = minimum(datlen, KEYSZ + IVSZ);
-		for (i = 0; i < m; i++)
+		для (i = 0; i < m; i++)
 			rsx->rs_buf[i] ^= dat[i];
 	}
 	/* immediately reinit for backtracking resistance */
@@ -173,8 +173,8 @@ _rs_random_buf(void *_buf, size_t n)
 	size_t m;
 
 	_rs_stir_if_needed(n);
-	while (n > 0) {
-		if (rs->rs_have > 0) {
+	пока (n > 0) {
+		если (rs->rs_have > 0) {
 			m = minimum(n, rs->rs_have);
 			keystream = rsx->rs_buf + sizeof(rsx->rs_buf)
 			    - rs->rs_have;
@@ -184,7 +184,7 @@ _rs_random_buf(void *_buf, size_t n)
 			n -= m;
 			rs->rs_have -= m;
 		}
-		if (rs->rs_have == 0)
+		если (rs->rs_have == 0)
 			_rs_rekey(NULL, 0);
 	}
 }
@@ -195,7 +195,7 @@ _rs_random_u32(uint32_t *val)
 	u_char *keystream;
 
 	_rs_stir_if_needed(sizeof(*val));
-	if (rs->rs_have < sizeof(*val))
+	если (rs->rs_have < sizeof(*val))
 		_rs_rekey(NULL, 0);
 	keystream = rsx->rs_buf + sizeof(rsx->rs_buf) - rs->rs_have;
 	memcpy(val, keystream, sizeof(*val));
@@ -211,7 +211,7 @@ arc4random(void)
 	_ARC4_LOCK();
 	_rs_random_u32(&val);
 	_ARC4_UNLOCK();
-	return val;
+	вернуть val;
 }
 DEF_WEAK(arc4random);
 
@@ -232,7 +232,7 @@ DEF_WEAK(arc4random_buf);
 #endif /* !HAVE_ARC4RANDOM */
 
 /* arc4random_buf() that uses platform arc4random() */
-#if !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
+#если !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
 void
 arc4random_buf(void *_buf, size_t n)
 {
@@ -240,8 +240,8 @@ arc4random_buf(void *_buf, size_t n)
 	u_int32_t r = 0;
 	char *buf = (char *)_buf;
 
-	for (i = 0; i < n; i++) {
-		if (i % 4 == 0)
+	для (i = 0; i < n; i++) {
+		если (i % 4 == 0)
 			r = arc4random();
 		buf[i] = r & 0xff;
 		r >>= 8;

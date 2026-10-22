@@ -15,14 +15,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-int	 vasnmprintf(char **, size_t, int *, const char *, va_list);
-int	 mprintf(const char *, ...)
+целое	 vasnmprintf(char **, size_t, целое *, const char *, va_list);
+целое	 mprintf(const char *, ...)
 	    __attribute__((format(printf, 1, 2)));
-int	 fmprintf(FILE *, const char *, ...)
+целое	 fmprintf(FILE *, const char *, ...)
 	    __attribute__((format(printf, 2, 3)));
-int	 vfmprintf(FILE *, const char *, va_list);
-int	 snmprintf(char *, size_t, int *, const char *, ...)
+целое	 vfmprintf(FILE *, const char *, va_list);
+целое	 snmprintf(char *, size_t, целое *, const char *, ...)
 	    __attribute__((format(printf, 4, 5)));
-int	 asmprintf(char **, size_t, int *, const char *, ...)
+целое	 asmprintf(char **, size_t, целое *, const char *, ...)
 	    __attribute__((format(printf, 4, 5)));
 void	 msetlocale(void);

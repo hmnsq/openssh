@@ -26,24 +26,24 @@
 
 struct sshkey;
 
-int	pkcs11_init(int);
+целое	pkcs11_init(целое);
 void	pkcs11_terminate(void);
-int	pkcs11_add_provider(char *, char *, struct sshkey ***, char ***);
-int	pkcs11_del_provider(char *);
-int	pkcs11_sign(struct sshkey *, u_char **, size_t *,
+целое	pkcs11_add_provider(char *, char *, struct sshkey ***, char ***);
+целое	pkcs11_del_provider(char *);
+целое	pkcs11_sign(struct sshkey *, u_char **, size_t *,
 	    const u_char *, size_t, const char *, const char *,
 	    const char *, u_int);
 void	pkcs11_key_free(struct sshkey *);
 
 #ifdef WITH_PKCS11_KEYGEN
 struct sshkey *
-	pkcs11_gakp(char *, char *, unsigned int, char *, unsigned int,
-	    unsigned int, unsigned char, uint32_t *);
+	pkcs11_gakp(char *, char *, unsigned целое, char *, unsigned целое,
+	    unsigned целое, unsigned char, uint32_t *);
 struct sshkey *
 	pkcs11_destroy_keypair(char *, char *, unsigned long, unsigned char,
 	    uint32_t *);
 #endif
 
 /* Only available in ssh-pkcs11-client.c */
-int pkcs11_make_cert(const struct sshkey *,
+целое pkcs11_make_cert(const struct sshkey *,
     const struct sshkey *, struct sshkey **);

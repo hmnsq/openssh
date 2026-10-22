@@ -49,9 +49,9 @@ extern char *__progname;
 
 #define PAUSE_BEFORE_LOGOUT 3
 
-int nologtest = 0;
-int compile_opts_only = 0;
-int be_verbose = 0;
+целое nologtest = 0;
+целое compile_opts_only = 0;
+целое be_verbose = 0;
 
 
 /* Dump a logininfo to stdout. Assumes a tab size of 8 chars. */
@@ -78,7 +78,7 @@ dump_logininfo(struct logininfo *li, char *descname)
 }
 
 
-int
+целое
 testAPI()
 {
 	struct logininfo *li1;
@@ -103,16 +103,16 @@ testAPI()
 	printf("login_alloc_entry test (no host info):\n");
 
 	/* FIXME fake tty more effectively - this could upset some platforms */
-	li1 = login_alloc_entry((int)getpid(), username, NULL, ttyname(0));
+	li1 = login_alloc_entry((целое)getpid(), username, NULL, ttyname(0));
 	strlcpy(li1->progname, "OpenSSH-logintest", sizeof(li1->progname));
 
-	if (be_verbose)
+	если (be_verbose)
 		dump_logininfo(li1, "li1");
 
 	printf("Setting host address info for 'localhost' (may call out):\n");
-	if (! (he = gethostbyname("localhost"))) {
+	если (! (he = gethostbyname("localhost"))) {
 		printf("Couldn't set hostname(lookup failed)\n");
-	} else {
+	} иначе {
 		/* NOTE: this is messy, but typically a program wouldn't have to set
 		 *  any of this, a sockaddr_in* would be already prepared */
 		memcpy((void *)&(sa_in4.sin_addr), (void *)&(he->h_addr_list[0][0]),
@@ -120,16 +120,16 @@ testAPI()
 		login_set_addr(li1, (struct sockaddr *) &sa_in4, sizeof(sa_in4));
 		strlcpy(li1->hostname, "localhost", sizeof(li1->hostname));
 	}
-	if (be_verbose)
+	если (be_verbose)
 		dump_logininfo(li1, "li1");
 
-	if ((int)geteuid() != 0) {
+	если ((целое)geteuid() != 0) {
 		printf("NOT RUNNING LOGIN TESTS - you are not root!\n");
-		return 1;
+		вернуть 1;
 	}
 
-	if (nologtest)
-		return 1;
+	если (nologtest)
+		вернуть 1;
 
 	line_stripname(stripline, li1->line, sizeof(stripline));
 
@@ -144,14 +144,14 @@ testAPI()
 	strlcpy(s_t1, ctime(&t1), sizeof(s_t1));
 	printf("Before logging in:\n\tcurrent time is %d - %s\t"
 	    "lastlog time is %d - %s\n",
-	    (int)t0, s_t0, (int)t1, s_t1);
+	    (целое)t0, s_t0, (целое)t1, s_t1);
 #endif
 
 	printf("Performing a login on line %s ", stripline);
 #ifdef HAVE_TIME_H
 	(void)time(&logintime);
 	strlcpy(s_logintime, ctime(&logintime), sizeof(s_logintime));
-	printf("at %d - %s", (int)logintime, s_logintime);
+	printf("at %d - %s", (целое)logintime, s_logintime);
 #endif
 	printf("--\n");
 	login_login(li1);
@@ -167,7 +167,7 @@ testAPI()
 #ifdef HAVE_TIME_H
 	(void)time(&logouttime);
 	strlcpy(s_logouttime, ctime(&logouttime), sizeof(s_logouttime));
-	printf("at %d - %s", (int)logouttime, s_logouttime);
+	printf("at %d - %s", (целое)logouttime, s_logouttime);
 #endif
 	printf("\nThe root login shown above should be gone.\n"
 	    "If the root login hasn't gone, but another user on the same\n"
@@ -182,12 +182,12 @@ testAPI()
 #ifdef HAVE_TIME_H
 	t2 = login_get_lastlog_time(getuid());
 	strlcpy(s_t2, ctime(&t2), sizeof(s_t2));
-	printf("After logging in, lastlog time is %d - %s\n", (int)t2, s_t2);
-	if (t1 == t2)
+	printf("After logging in, lastlog time is %d - %s\n", (целое)t2, s_t2);
+	если (t1 == t2)
 		printf("The lastlog times before and after logging in are the "
 		    "same.\nThis indicates that lastlog is ** NOT WORKING "
 		    "CORRECTLY **\n");
-	else if (t0 != t2)
+	иначе если (t0 != t2)
 		/* We can be off by a second or so, even when recording works fine.
 		 * I'm not 100% sure why, but it's true. */
 		printf("** The login time and the lastlog time differ.\n"
@@ -195,7 +195,7 @@ testAPI()
 		    "wrong time,\n** or retrieving the wrong entry.\n"
 		    "If it's off by less than %d second(s) "
 		    "run the test again.\n", PAUSE_BEFORE_LOGOUT);
-	else
+	иначе
 		printf("lastlog agrees with the login time. This is a good thing.\n");
 
 #endif
@@ -211,7 +211,7 @@ testAPI()
 
 	login_free_entry(li1);
 
-	return 1;
+	вернуть 1;
 } /* testAPI() */
 
 
@@ -234,7 +234,7 @@ testLineName(char *line)
 } /* testLineName() */
 
 
-int
+целое
 testOutput()
 {
 	printf("**\n** Testing linename functions\n**\n");
@@ -244,7 +244,7 @@ testOutput()
 	testLineName("/dev/ttyp00");
 	testLineName("ttyp00");
 
-	return 1;
+	вернуть 1;
 } /* testOutput() */
 
 
@@ -278,29 +278,29 @@ showOptions(void)
 } /* showOptions() */
 
 
-int
-main(int argc, char *argv[])
+целое
+основной(целое argc, char *argv[])
 {
 	printf("Platform-independent login recording test driver\n");
 
 	__progname = ssh_get_progname(argv[0]);
-	if (argc == 2) {
-		if (strncmp(argv[1], "-i", 3) == 0)
+	если (argc == 2) {
+		если (strncmp(argv[1], "-i", 3) == 0)
 			compile_opts_only = 1;
-		else if (strncmp(argv[1], "-v", 3) == 0)
+		иначе если (strncmp(argv[1], "-v", 3) == 0)
 			be_verbose=1;
 	}
 
-	if (!compile_opts_only) {
-		if (be_verbose && !testOutput())
-			return 1;
+	если (!compile_opts_only) {
+		если (be_verbose && !testOutput())
+			вернуть 1;
 
-		if (!testAPI())
-			return 1;
+		если (!testAPI())
+			вернуть 1;
 	}
 
 	showOptions();
 
-	return 0;
+	вернуть 0;
 } /* main() */
 

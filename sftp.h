@@ -97,5 +97,5 @@
 
 struct passwd;
 
-int	sftp_server_main(int, char **, struct passwd *);
-void	sftp_server_cleanup_exit(int) __attribute__((noreturn));
+целое	sftp_server_main(целое, char **, struct passwd *);
+void	sftp_server_cleanup_exit(целое) __attribute__((noreturn));

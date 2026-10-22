@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(const char *nptr, char **endptr, целое base)
 {
 	const char *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	целое c;
+	целое neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -62,22 +62,22 @@ strtoll(const char *nptr, char **endptr, int base)
 	s = nptr;
 	do {
 		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	} пока (isspace(c));
+	если (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} иначе {
 		neg = 0;
-		if (c == '+')
+		если (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	если ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	если (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	если (neg) {
+		если (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	для (acc = 0, any = 0;; c = (unsigned char) *s++) {
+		если (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		иначе если (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
+		иначе
 			break;
-		if (c >= base)
+		если (c >= base)
 			break;
-		if (any < 0)
+		если (any < 0)
 			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		если (neg) {
+			если (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} иначе {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} иначе {
+			если (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} иначе {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
+	если (endptr != 0)
 		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	вернуть (acc);
 }
 #endif /* HAVE_STRTOLL */
