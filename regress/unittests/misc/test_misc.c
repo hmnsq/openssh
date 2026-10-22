@@ -285,7 +285,7 @@ test_arglist(void)
 	TEST_DONE();
 
 	TEST_START("addargs reallocation");
-	for (i = args.num; i < 33; i++)
+	为 (i = args.num; i < 33; i++)
 		addargs(&args, "pad-%d", i);
 	ASSERT_U_INT_EQ(args.num, 33);
 	ASSERT_U_INT_GE(args.nalloc, 33);

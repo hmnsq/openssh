@@ -26,7 +26,7 @@
 
 #include "includes.h"
 
-#if defined(WITH_OPENSSL)
+#如果 defined(WITH_OPENSSL)
 #include "openbsd-compat/openssl-compat.h"
 
 #include <sys/types.h>
@@ -43,22 +43,22 @@
 #define SSHKEY_INTERNAL
 #include "sshkey.h"
 
-int
+整数
 sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 {
-	int nids[] = {
+	整数 nids[] = {
 		NID_X9_62_prime256v1,
 		NID_secp384r1,
 		NID_secp521r1,
 		-1
 	};
-	int nid = -1;
+	整数 nid = -1;
 	u_int i;
 	const EC_GROUP *g;
 	EC_KEY *ec = NULL;
 	EC_GROUP *eg = NULL;
 
-	if ((ec = EVP_PKEY_get1_EC_KEY(k)) == NULL ||
+	如果 ((ec = EVP_PKEY_get1_EC_KEY(k)) == NULL ||
 	    (g = EC_KEY_get0_group(ec)) == NULL)
 		goto out;
 	/*
@@ -69,23 +69,23 @@ sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 	 * it out for the other case by comparing against all the groups that
 	 * are supported.
 	 */
-	if ((nid = EC_GROUP_get_curve_name(g)) > 0)
+	如果 ((nid = EC_GROUP_get_curve_name(g)) > 0)
 		goto out;
 	nid = -1;
-	for (i = 0; nids[i] != -1; i++) {
-		if ((eg = EC_GROUP_new_by_curve_name(nids[i])) == NULL)
+	为 (i = 0; nids[i] != -1; i++) {
+		如果 ((eg = EC_GROUP_new_by_curve_name(nids[i])) == NULL)
 			goto out;
-		if (EC_GROUP_cmp(g, eg, NULL) == 0)
+		如果 (EC_GROUP_cmp(g, eg, NULL) == 0)
 			break;
 		EC_GROUP_free(eg);
 		eg = NULL;
 	}
-	if (nids[i] == -1)
+	如果 (nids[i] == -1)
 		goto out;
 
 	/* Use the group with the NID attached */
 	EC_GROUP_set_asn1_flag(eg, OPENSSL_EC_NAMED_CURVE);
-	if (EC_KEY_set_group(ec, eg) != 1 ||
+	如果 (EC_KEY_set_group(ec, eg) != 1 ||
 	    EVP_PKEY_set1_EC_KEY(k, ec) != 1)
 		goto out;
 	/* success */
@@ -93,7 +93,7 @@ sshkey_ecdsa_fixup_group(EVP_PKEY *k)
  out:
 	EC_KEY_free(ec);
 	EC_GROUP_free(eg);
-	return nid;
+	返回 nid;
 }
 
 static u_int
@@ -101,13 +101,13 @@ ssh_ecdsa_size(const struct sshkey *key)
 {
 	switch (key->ecdsa_nid) {
 	case NID_X9_62_prime256v1:
-		return 256;
+		返回 256;
 	case NID_secp384r1:
-		return 384;
+		返回 384;
 	case NID_secp521r1:
-		return 521;
+		返回 521;
 	default:
-		return 0;
+		返回 0;
 	}
 }
 
@@ -118,60 +118,60 @@ ssh_ecdsa_cleanup(struct sshkey *k)
 	k->pkey = NULL;
 }
 
-static int
+static 整数
 ssh_ecdsa_equal(const struct sshkey *a, const struct sshkey *b)
 {
-	if (a->pkey == NULL || b->pkey == NULL)
-		return 0;
-	return EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
+	如果 (a->pkey == NULL || b->pkey == NULL)
+		返回 0;
+	返回 EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
 }
 
-static int
+static 整数
 ssh_ecdsa_serialize_public(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	整数 r;
 
-	if (key->pkey == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_cstring(b,
+	如果 (key->pkey == NULL)
+		返回 SSH_ERR_INVALID_ARGUMENT;
+	如果 ((r = sshbuf_put_cstring(b,
 	    sshkey_curve_nid_to_name(key->ecdsa_nid))) != 0 ||
 	    (r = sshbuf_put_ec_pkey(b, key->pkey)) != 0)
-		return r;
+		返回 r;
 
-	return 0;
+	返回 0;
 }
 
-static int
+static 整数
 ssh_ecdsa_serialize_private(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	整数 r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_serialize_public(key, b, opts)) != 0)
-			return r;
+	如果 (!sshkey_is_cert(key)) {
+		如果 ((r = ssh_ecdsa_serialize_public(key, b, opts)) != 0)
+			返回 r;
 	}
-	if ((r = sshbuf_put_bignum2(b,
+	如果 ((r = sshbuf_put_bignum2(b,
 	    EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(key->pkey)))) != 0)
-		return r;
-	return 0;
+		返回 r;
+	返回 0;
 }
 
-static int
-ssh_ecdsa_generate(struct sshkey *k, int bits)
+static 整数
+ssh_ecdsa_generate(struct sshkey *k, 整数 bits)
 {
 	EVP_PKEY *res = NULL;
 	EVP_PKEY_CTX *ctx = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	整数 ret = SSH_ERR_INTERNAL_ERROR;
 
-	if ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
-		return SSH_ERR_KEY_LENGTH;
+	如果 ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
+		返回 SSH_ERR_KEY_LENGTH;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	如果 ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL)) == NULL)
+		返回 SSH_ERR_ALLOC_FAIL;
 
-	if (EVP_PKEY_keygen_init(ctx) <= 0 ||
+	如果 (EVP_PKEY_keygen_init(ctx) <= 0 ||
 	    EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, k->ecdsa_nid) <= 0 ||
 	    EVP_PKEY_keygen(ctx, &res) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
@@ -184,76 +184,76 @@ ssh_ecdsa_generate(struct sshkey *k, int bits)
  out:
 	EVP_PKEY_free(res);
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	返回 ret;
 }
 
-static int
+static 整数
 ssh_ecdsa_copy_public(const struct sshkey *from, struct sshkey *to)
 {
 	const EC_KEY *ec_from;
 	EC_KEY *ec_to = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	整数 ret = SSH_ERR_INTERNAL_ERROR;
 
 	ec_from = EVP_PKEY_get0_EC_KEY(from->pkey);
-	if (ec_from == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	如果 (ec_from == NULL)
+		返回 SSH_ERR_LIBCRYPTO_ERROR;
 
 	to->ecdsa_nid = from->ecdsa_nid;
-	if ((ec_to = EC_KEY_new_by_curve_name(from->ecdsa_nid)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (EC_KEY_set_public_key(ec_to,
+	如果 ((ec_to = EC_KEY_new_by_curve_name(from->ecdsa_nid)) == NULL)
+		返回 SSH_ERR_ALLOC_FAIL;
+	如果 (EC_KEY_set_public_key(ec_to,
 	    EC_KEY_get0_public_key(ec_from)) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	EVP_PKEY_free(to->pkey);
-	if ((to->pkey = EVP_PKEY_new()) == NULL) {
+	如果 ((to->pkey = EVP_PKEY_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(to->pkey, ec_to) != 1) {
+	如果 (EVP_PKEY_set1_EC_KEY(to->pkey, ec_to) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	ret = 0;
  out:
 	EC_KEY_free(ec_to);
-	return ret;
+	返回 ret;
 }
 
-static int
+static 整数
 ssh_ecdsa_deserialize_public(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	整数 r;
 	char *curve = NULL;
 	EVP_PKEY *pkey = NULL;
 	EC_KEY *ec = NULL;
 
-	if ((key->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_get_cstring(b, &curve, NULL)) != 0)
+	如果 ((key->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
+		返回 SSH_ERR_INVALID_ARGUMENT;
+	如果 ((r = sshbuf_get_cstring(b, &curve, NULL)) != 0)
 		goto out;
-	if (key->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
+	如果 (key->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
 		r = SSH_ERR_EC_CURVE_MISMATCH;
 		goto out;
 	}
-	if ((ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL) {
+	如果 ((ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((r = sshbuf_get_eckey(b, ec)) != 0)
+	如果 ((r = sshbuf_get_eckey(b, ec)) != 0)
 		goto out;
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
+	如果 (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
 	    EC_KEY_get0_public_key(ec)) != 0) {
 		r = SSH_ERR_KEY_INVALID_EC_VALUE;
 		goto out;
 	}
-	if ((pkey = EVP_PKEY_new()) == NULL) {
+	如果 ((pkey = EVP_PKEY_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(pkey, ec) != 1) {
+	如果 (EVP_PKEY_set1_EC_KEY(pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -271,34 +271,34 @@ ssh_ecdsa_deserialize_public(const char *ktype, struct sshbuf *b,
 	EC_KEY_free(ec);
 	EVP_PKEY_free(pkey);
 	free(curve);
-	return r;
+	返回 r;
 }
 
-static int
+static 整数
 ssh_ecdsa_deserialize_private(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	整数 r;
 	BIGNUM *exponent = NULL;
 	EC_KEY *ec = NULL;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_deserialize_public(ktype, b, key)) != 0)
-			return r;
+	如果 (!sshkey_is_cert(key)) {
+		如果 ((r = ssh_ecdsa_deserialize_public(ktype, b, key)) != 0)
+			返回 r;
 	}
-	if ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
+	如果 ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
 		goto out;
-	if ((ec = EVP_PKEY_get1_EC_KEY(key->pkey)) == NULL) {
+	如果 ((ec = EVP_PKEY_get1_EC_KEY(key->pkey)) == NULL) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if (EC_KEY_set_private_key(ec, exponent) != 1) {
+	如果 (EC_KEY_set_private_key(ec, exponent) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((r = sshkey_ec_validate_private(ec)) != 0)
+	如果 ((r = sshkey_ec_validate_private(ec)) != 0)
 		goto out;
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	如果 (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -307,10 +307,10 @@ ssh_ecdsa_deserialize_private(const char *ktype, struct sshbuf *b,
  out:
 	BN_clear_free(exponent);
 	EC_KEY_free(ec);
-	return r;
+	返回 r;
 }
 
-static int
+static 整数
 ssh_ecdsa_sign(struct sshkey *key,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t dlen,
@@ -320,34 +320,34 @@ ssh_ecdsa_sign(struct sshkey *key,
 	unsigned char *sigb = NULL;
 	const unsigned char *psig;
 	const BIGNUM *sig_r, *sig_s;
-	int hash_alg;
+	整数 hash_alg;
 	size_t slen = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	整数 ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (lenp != NULL)
+	如果 (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	如果 (sigp != NULL)
 		*sigp = NULL;
 
-	if (key == NULL || key->pkey == NULL ||
+	如果 (key == NULL || key->pkey == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ECDSA)
-		return SSH_ERR_INVALID_ARGUMENT;
+		返回 SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	如果 ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
+		返回 SSH_ERR_INTERNAL_ERROR;
 
-	if ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sigb, &slen,
+	如果 ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sigb, &slen,
 	    data, dlen)) != 0)
 		goto out;
 
 	psig = sigb;
-	if ((esig = d2i_ECDSA_SIG(NULL, &psig, slen)) == NULL) {
+	如果 ((esig = d2i_ECDSA_SIG(NULL, &psig, slen)) == NULL) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	ECDSA_SIG_get0(esig, &sig_r, &sig_s);
 
-	if ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
+	如果 ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
 	    sigp, lenp)) != 0)
 		goto out;
 	/* success */
@@ -355,51 +355,51 @@ ssh_ecdsa_sign(struct sshkey *key,
  out:
 	freezero(sigb, slen);
 	ECDSA_SIG_free(esig);
-	return ret;
+	返回 ret;
 }
 
-int
+整数
 ssh_ecdsa_encode_store_sig(const struct sshkey *key,
     const BIGNUM *sig_r, const BIGNUM *sig_s,
     u_char **sigp, size_t *lenp)
 {
 	struct sshbuf *b = NULL, *bb = NULL;
-	int ret;
+	整数 ret;
 	size_t len;
 
-	if (lenp != NULL)
+	如果 (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	如果 (sigp != NULL)
 		*sigp = NULL;
 
-	if ((bb = sshbuf_new()) == NULL || (b = sshbuf_new()) == NULL) {
+	如果 ((bb = sshbuf_new()) == NULL || (b = sshbuf_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
+	如果 ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
 	    (ret = sshbuf_put_bignum2(bb, sig_s)) != 0)
 		goto out;
-	if ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(key))) != 0 ||
+	如果 ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(key))) != 0 ||
 	    (ret = sshbuf_put_stringb(b, bb)) != 0)
 		goto out;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	如果 (sigp != NULL) {
+		如果 ((*sigp = malloc(len)) == NULL) {
 			ret = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	如果 (lenp != NULL)
 		*lenp = len;
 	ret = 0;
  out:
 	sshbuf_free(b);
 	sshbuf_free(bb);
-	return ret;
+	返回 ret;
 }
 
-static int
+static 整数
 ssh_ecdsa_verify(const struct sshkey *key,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
@@ -407,73 +407,73 @@ ssh_ecdsa_verify(const struct sshkey *key,
 {
 	ECDSA_SIG *esig = NULL;
 	BIGNUM *sig_r = NULL, *sig_s = NULL;
-	int hash_alg, len = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	整数 hash_alg, len = 0;
+	整数 ret = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *b = NULL, *sigbuf = NULL;
 	char *ktype = NULL;
 	unsigned char *sigb = NULL, *cp;
 
-	if (key == NULL || key->pkey == NULL ||
+	如果 (key == NULL || key->pkey == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ECDSA ||
 	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+		返回 SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	如果 ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
+		返回 SSH_ERR_INTERNAL_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
+	如果 ((b = sshbuf_from(sig, siglen)) == NULL)
+		返回 SSH_ERR_ALLOC_FAIL;
+	如果 (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
 	    sshbuf_froms(b, &sigbuf) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
+	如果 (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
 		ret = SSH_ERR_KEY_TYPE_MISMATCH;
 		goto out;
 	}
-	if (sshbuf_len(b) != 0) {
+	如果 (sshbuf_len(b) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	如果 (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
+	如果 (sshbuf_len(sigbuf) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
 
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+	如果 ((esig = ECDSA_SIG_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	如果 (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	sig_r = sig_s = NULL; /* transferred */
 
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	如果 ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	如果 ((sigb = calloc(1, len)) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	如果 (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((ret = sshkey_pkey_digest_verify(key->pkey, hash_alg,
+	如果 ((ret = sshkey_pkey_digest_verify(key->pkey, hash_alg,
 	    data, dlen, sigb, len)) != 0)
 		goto out;
 	/* success */
@@ -485,7 +485,7 @@ ssh_ecdsa_verify(const struct sshkey *key,
 	BN_clear_free(sig_r);
 	BN_clear_free(sig_s);
 	free(ktype);
-	return ret;
+	返回 ret;
 }
 
 /* NB. not static; used by ECDSA-SK */

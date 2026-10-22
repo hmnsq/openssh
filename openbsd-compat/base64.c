@@ -46,7 +46,7 @@
 
 #include "includes.h"
 
-#if (!defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP)) || (!defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON))
+#如果 (!defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP)) || (!defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON))
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -128,8 +128,8 @@ static const char Pad64 = '=';
 	   characters followed by one "=" padding character.
    */
 
-#if !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) 
-int
+#如果 !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) 
+整数
 b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 {
 	size_t datalength = 0;
@@ -137,7 +137,7 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 	u_char output[4];
 	u_int i;
 
-	while (2 < srclength) {
+	当 (2 < srclength) {
 		input[0] = *src++;
 		input[1] = *src++;
 		input[2] = *src++;
@@ -148,8 +148,8 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
 		output[3] = input[2] & 0x3f;
 
-		if (datalength + 4 > targsize)
-			return (-1);
+		如果 (datalength + 4 > targsize)
+			返回 (-1);
 		target[datalength++] = Base64[output[0]];
 		target[datalength++] = Base64[output[1]];
 		target[datalength++] = Base64[output[2]];
@@ -157,34 +157,34 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 	}
     
 	/* Now we worry about padding. */
-	if (0 != srclength) {
+	如果 (0 != srclength) {
 		/* Get what's left. */
 		input[0] = input[1] = input[2] = '\0';
-		for (i = 0; i < srclength; i++)
+		为 (i = 0; i < srclength; i++)
 			input[i] = *src++;
 	
 		output[0] = input[0] >> 2;
 		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
 		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
 
-		if (datalength + 4 > targsize)
-			return (-1);
+		如果 (datalength + 4 > targsize)
+			返回 (-1);
 		target[datalength++] = Base64[output[0]];
 		target[datalength++] = Base64[output[1]];
-		if (srclength == 1)
+		如果 (srclength == 1)
 			target[datalength++] = Pad64;
-		else
+		否则
 			target[datalength++] = Base64[output[2]];
 		target[datalength++] = Pad64;
 	}
-	if (datalength >= targsize)
-		return (-1);
+	如果 (datalength >= targsize)
+		返回 (-1);
 	target[datalength] = '\0';	/* Returned value doesn't count \0. */
-	return (datalength);
+	返回 (datalength);
 }
 #endif /* !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) */
 
-#if !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON)
+#如果 !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON)
 
 /* skips all whitespace anywhere.
    converts characters, four at a time, starting at (or after)
@@ -192,40 +192,40 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
    it returns the number of data bytes stored at the target, or -1 on error.
  */
 
-int
+整数
 b64_pton(char const *src, u_char *target, size_t targsize)
 {
 	u_int tarindex, state;
-	int ch;
+	整数 ch;
 	char *pos;
 
 	state = 0;
 	tarindex = 0;
 
-	while ((ch = *src++) != '\0') {
-		if (isspace(ch))	/* Skip whitespace anywhere. */
+	当 ((ch = *src++) != '\0') {
+		如果 (isspace(ch))	/* Skip whitespace anywhere. */
 			continue;
 
-		if (ch == Pad64)
+		如果 (ch == Pad64)
 			break;
 
 		pos = strchr(Base64, ch);
-		if (pos == 0)		/* A non-base64 character. */
-			return (-1);
+		如果 (pos == 0)		/* A non-base64 character. */
+			返回 (-1);
 
 		switch (state) {
 		case 0:
-			if (target) {
-				if (tarindex >= targsize)
-					return (-1);
+			如果 (target) {
+				如果 (tarindex >= targsize)
+					返回 (-1);
 				target[tarindex] = (pos - Base64) << 2;
 			}
 			state = 1;
 			break;
 		case 1:
-			if (target) {
-				if (tarindex + 1 >= targsize)
-					return (-1);
+			如果 (target) {
+				如果 (tarindex + 1 >= targsize)
+					返回 (-1);
 				target[tarindex]   |=  (pos - Base64) >> 4;
 				target[tarindex+1]  = ((pos - Base64) & 0x0f)
 							<< 4 ;
@@ -234,9 +234,9 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 			state = 2;
 			break;
 		case 2:
-			if (target) {
-				if (tarindex + 1 >= targsize)
-					return (-1);
+			如果 (target) {
+				如果 (tarindex + 1 >= targsize)
+					返回 (-1);
 				target[tarindex]   |=  (pos - Base64) >> 2;
 				target[tarindex+1]  = ((pos - Base64) & 0x03)
 							<< 6;
@@ -245,9 +245,9 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 			state = 3;
 			break;
 		case 3:
-			if (target) {
-				if (tarindex >= targsize)
-					return (-1);
+			如果 (target) {
+				如果 (tarindex >= targsize)
+					返回 (-1);
 				target[tarindex] |= (pos - Base64);
 			}
 			tarindex++;
@@ -261,21 +261,21 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 	 * on a byte boundary, and/or with erroneous trailing characters.
 	 */
 
-	if (ch == Pad64) {		/* We got a pad char. */
+	如果 (ch == Pad64) {		/* We got a pad char. */
 		ch = *src++;		/* Skip it, get next. */
 		switch (state) {
 		case 0:		/* Invalid = in first position */
 		case 1:		/* Invalid = in second position */
-			return (-1);
+			返回 (-1);
 
 		case 2:		/* Valid, means one byte of info */
 			/* Skip any number of spaces. */
-			for (; ch != '\0'; ch = *src++)
-				if (!isspace(ch))
+			为 (; ch != '\0'; ch = *src++)
+				如果 (!isspace(ch))
 					break;
 			/* Make sure there is another trailing = sign. */
-			if (ch != Pad64)
-				return (-1);
+			如果 (ch != Pad64)
+				返回 (-1);
 			ch = *src++;		/* Skip the = */
 			/* Fall through to "single trailing =" case. */
 			/* FALLTHROUGH */
@@ -285,9 +285,9 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 			 * We know this char is an =.  Is there anything but
 			 * whitespace after it?
 			 */
-			for (; ch != '\0'; ch = *src++)
-				if (!isspace(ch))
-					return (-1);
+			为 (; ch != '\0'; ch = *src++)
+				如果 (!isspace(ch))
+					返回 (-1);
 
 			/*
 			 * Now make sure for cases 2 and 3 that the "extra"
@@ -295,19 +295,19 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 			 * zeros.  If we don't check them, they become a
 			 * subliminal channel.
 			 */
-			if (target && target[tarindex] != 0)
-				return (-1);
+			如果 (target && target[tarindex] != 0)
+				返回 (-1);
 		}
-	} else {
+	} 否则 {
 		/*
 		 * We ended by seeing the end of the string.  Make sure we
 		 * have no partial bytes lying around.
 		 */
-		if (state != 0)
-			return (-1);
+		如果 (state != 0)
+			返回 (-1);
 	}
 
-	return (tarindex);
+	返回 (tarindex);
 }
 
 #endif /* !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON) */

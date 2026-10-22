@@ -16,7 +16,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#如果 !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
 #ifdef HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
@@ -47,7 +47,7 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 	to->f_fsid = 0;			/* XXX fix me */
 #ifdef HAVE_STRUCT_STATFS_F_FLAGS
 	to->f_flag = from->f_flags;
-#else
+#否则
 	to->f_flag = 0;
 #endif
 	to->f_namemax = MNAMELEN;
@@ -55,37 +55,37 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 #endif
 
 # ifndef HAVE_STATVFS
-int statvfs(const char *path, struct statvfs *buf)
+整数 statvfs(const char *path, struct statvfs *buf)
 {
-#  if defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
+#  如果 defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
 	struct statfs fs;
 
 	memset(&fs, 0, sizeof(fs));
-	if (statfs(path, &fs) == -1)
-		return -1;
+	如果 (statfs(path, &fs) == -1)
+		返回 -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	返回 0;
+#  否则
 	errno = ENOSYS;
-	return -1;
+	返回 -1;
 #  endif
 }
 # endif
 
 # ifndef HAVE_FSTATVFS
-int fstatvfs(int fd, struct statvfs *buf)
+整数 fstatvfs(整数 fd, struct statvfs *buf)
 {
-#  if defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
+#  如果 defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
 	struct statfs fs;
 
 	memset(&fs, 0, sizeof(fs));
-	if (fstatfs(fd, &fs) == -1)
-		return -1;
+	如果 (fstatfs(fd, &fs) == -1)
+		返回 -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	返回 0;
+#  否则
 	errno = ENOSYS;
-	return -1;
+	返回 -1;
 #  endif
 }
 # endif

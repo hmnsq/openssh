@@ -24,13 +24,13 @@
 #ifndef _NSIG
 # ifdef NSIG
 #  define _NSIG NSIG
-# else
+# 否则
 #  define _NSIG 128
 # endif
 #endif
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int);
+#如果 !defined(HAVE_STRSIGNAL)
+char *strsignal(整数);
 #endif
 
 #endif /* _BSD_SIGNAL_H */

@@ -36,32 +36,32 @@
 #include "packet.h"
 #include "ssherr.h"
 
-int
-dispatch_protocol_error(int type, uint32_t seq, struct ssh *ssh)
+整数
+dispatch_protocol_error(整数 type, uint32_t seq, struct ssh *ssh)
 {
-	int r;
+	整数 r;
 
 	logit_f("type %d seq %u", type, seq);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
+	如果 ((r = sshpkt_start(ssh, SSH2_MSG_UNIMPLEMENTED)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, seq)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
-	return 0;
+	返回 0;
 }
 
-int
-dispatch_protocol_ignore(int type, uint32_t seq, struct ssh *ssh)
+整数
+dispatch_protocol_ignore(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	logit_f("type %d seq %u", type, seq);
-	return 0;
+	返回 0;
 }
 
 void
 ssh_dispatch_init(struct ssh *ssh, dispatch_fn *dflt)
 {
 	u_int i;
-	for (i = 0; i < DISPATCH_MAX; i++)
+	为 (i = 0; i < DISPATCH_MAX; i++)
 		ssh->dispatch[i] = dflt;
 }
 
@@ -70,65 +70,65 @@ ssh_dispatch_range(struct ssh *ssh, u_int from, u_int to, dispatch_fn *fn)
 {
 	u_int i;
 
-	for (i = from; i <= to; i++) {
-		if (i >= DISPATCH_MAX)
+	为 (i = from; i <= to; i++) {
+		如果 (i >= DISPATCH_MAX)
 			break;
 		ssh->dispatch[i] = fn;
 	}
 }
 
 void
-ssh_dispatch_set(struct ssh *ssh, int type, dispatch_fn *fn)
+ssh_dispatch_set(struct ssh *ssh, 整数 type, dispatch_fn *fn)
 {
 	ssh->dispatch[type] = fn;
 }
 
-int
-ssh_dispatch_run(struct ssh *ssh, int mode, volatile sig_atomic_t *done)
+整数
+ssh_dispatch_run(struct ssh *ssh, 整数 mode, volatile sig_atomic_t *done)
 {
-	int r;
+	整数 r;
 	u_char type;
 	uint32_t seqnr;
 
-	for (;;) {
-		if (mode == DISPATCH_BLOCK) {
+	为 (;;) {
+		如果 (mode == DISPATCH_BLOCK) {
 			r = ssh_packet_read_seqnr(ssh, &type, &seqnr);
-			if (r != 0)
-				return r;
-		} else {
+			如果 (r != 0)
+				返回 r;
+		} 否则 {
 			r = ssh_packet_read_poll_seqnr(ssh, &type, &seqnr);
-			if (r != 0)
-				return r;
-			if (type == SSH_MSG_NONE)
-				return 0;
+			如果 (r != 0)
+				返回 r;
+			如果 (type == SSH_MSG_NONE)
+				返回 0;
 		}
-		if (type > 0 && type < DISPATCH_MAX &&
+		如果 (type > 0 && type < DISPATCH_MAX &&
 		    ssh->dispatch[type] != NULL) {
-			if (ssh->dispatch_skip_packets) {
+			如果 (ssh->dispatch_skip_packets) {
 				debug2("skipped packet (type %u)", type);
 				ssh->dispatch_skip_packets--;
 				continue;
 			}
 			r = (*ssh->dispatch[type])(type, seqnr, ssh);
-			if (r != 0)
-				return r;
-		} else {
+			如果 (r != 0)
+				返回 r;
+		} 否则 {
 			r = sshpkt_disconnect(ssh,
 			    "protocol error: rcvd type %d", type);
-			if (r != 0)
-				return r;
-			return SSH_ERR_DISCONNECTED;
+			如果 (r != 0)
+				返回 r;
+			返回 SSH_ERR_DISCONNECTED;
 		}
-		if (done != NULL && *done)
-			return 0;
+		如果 (done != NULL && *done)
+			返回 0;
 	}
 }
 
 void
-ssh_dispatch_run_fatal(struct ssh *ssh, int mode, volatile sig_atomic_t *done)
+ssh_dispatch_run_fatal(struct ssh *ssh, 整数 mode, volatile sig_atomic_t *done)
 {
-	int r;
+	整数 r;
 
-	if ((r = ssh_dispatch_run(ssh, mode, done)) != 0)
+	如果 ((r = ssh_dispatch_run(ssh, mode, done)) != 0)
 		sshpkt_fatal(ssh, r, "%s", __func__);
 }

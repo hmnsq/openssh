@@ -32,7 +32,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_GETCWD)
+#如果 !defined(HAVE_GETCWD)
 
 #include <sys/stat.h>
 #include <errno.h>
@@ -54,13 +54,13 @@ getcwd(char *pt, size_t size)
 	DIR *dir = NULL;
 	dev_t dev;
 	ino_t ino;
-	int first;
+	整数 first;
 	char *bpt, *bup;
 	struct stat s;
 	dev_t root_dev;
 	ino_t root_ino;
 	size_t ptsize, upsize;
-	int save_errno;
+	整数 save_errno;
 	char *ept, *eup, *up;
 
 	/*
@@ -68,19 +68,19 @@ getcwd(char *pt, size_t size)
 	 * If a buffer is specified, the size has to be non-zero.  The path
 	 * is built from the end of the buffer backwards.
 	 */
-	if (pt) {
+	如果 (pt) {
 		ptsize = 0;
-		if (size == 0) {
+		如果 (size == 0) {
 			errno = EINVAL;
-			return (NULL);
-		} else if (size == 1) {
+			返回 (NULL);
+		} 否则 如果 (size == 1) {
 			errno = ERANGE;
-			return (NULL);
+			返回 (NULL);
 		}
 		ept = pt + size;
-	} else {
-		if ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
-			return (NULL);
+	} 否则 {
+		如果 ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
+			返回 (NULL);
 		ept = pt + ptsize;
 	}
 	bpt = ept - 1;
@@ -91,7 +91,7 @@ getcwd(char *pt, size_t size)
 	 * Should always be enough (it's 340 levels).  If it's not, allocate
 	 * as necessary.  Special * case the first stat, it's ".", not "..".
 	 */
-	if ((up = malloc(upsize = MAXPATHLEN)) == NULL)
+	如果 ((up = malloc(upsize = MAXPATHLEN)) == NULL)
 		goto err;
 	eup = up + upsize;
 	bup = up;
@@ -99,16 +99,16 @@ getcwd(char *pt, size_t size)
 	up[1] = '\0';
 
 	/* Save root values, so know when to stop. */
-	if (stat("/", &s))
+	如果 (stat("/", &s))
 		goto err;
 	root_dev = s.st_dev;
 	root_ino = s.st_ino;
 
 	errno = 0;			/* XXX readdir has no error return. */
 
-	for (first = 1;; first = 0) {
+	为 (first = 1;; first = 0) {
 		/* Stat the current level. */
-		if (lstat(up, &s))
+		如果 (lstat(up, &s))
 			goto err;
 
 		/* Save current node values. */
@@ -116,7 +116,7 @@ getcwd(char *pt, size_t size)
 		dev = s.st_dev;
 
 		/* Check for reaching root. */
-		if (root_dev == dev && root_ino == ino) {
+		如果 (root_dev == dev && root_ino == ino) {
 			*--bpt = '/';
 			/*
 			 * It's unclear that it's a requirement to copy the
@@ -125,7 +125,7 @@ getcwd(char *pt, size_t size)
 			 */
 			memmove(pt, bpt, ept - bpt);
 			free(up);
-			return (pt);
+			返回 (pt);
 		}
 
 		/*
@@ -133,10 +133,10 @@ getcwd(char *pt, size_t size)
 		 * as necessary.  Max length is 3 for "../", the largest
 		 * possible component name, plus a trailing NUL.
 		 */
-		if (bup + 3  + MAXNAMLEN + 1 >= eup) {
+		如果 (bup + 3  + MAXNAMLEN + 1 >= eup) {
 			char *nup;
 
-			if ((nup = realloc(up, upsize *= 2)) == NULL)
+			如果 ((nup = realloc(up, upsize *= 2)) == NULL)
 				goto err;
 			bup = nup + (bup - up);
 			up = nup;
@@ -147,7 +147,7 @@ getcwd(char *pt, size_t size)
 		*bup = '\0';
 
 		/* Open and stat parent directory. */
-		if (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
+		如果 (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
 			goto err;
 
 		/* Add trailing slash for next directory. */
@@ -159,29 +159,29 @@ getcwd(char *pt, size_t size)
 		 * parent directory, not the inode number of the mounted file.
 		 */
 		save_errno = 0;
-		if (s.st_dev == dev) {
-			for (;;) {
-				if (!(dp = readdir(dir)))
+		如果 (s.st_dev == dev) {
+			为 (;;) {
+				如果 (!(dp = readdir(dir)))
 					goto notfound;
-				if (dp->d_fileno == ino)
+				如果 (dp->d_fileno == ino)
 					break;
 			}
-		} else
-			for (;;) {
-				if (!(dp = readdir(dir)))
+		} 否则
+			为 (;;) {
+				如果 (!(dp = readdir(dir)))
 					goto notfound;
-				if (ISDOT(dp))
+				如果 (ISDOT(dp))
 					continue;
 				memcpy(bup, dp->d_name, dp->d_namlen + 1);
 
 				/* Save the first error for later. */
-				if (lstat(up, &s)) {
-					if (!save_errno)
+				如果 (lstat(up, &s)) {
+					如果 (!save_errno)
 						save_errno = errno;
 					errno = 0;
 					continue;
 				}
-				if (s.st_dev == dev && s.st_ino == ino)
+				如果 (s.st_dev == dev && s.st_ino == ino)
 					break;
 			}
 
@@ -189,16 +189,16 @@ getcwd(char *pt, size_t size)
 		 * Check for length of the current name, preceding slash,
 		 * leading slash.
 		 */
-		if (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
+		如果 (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
 			size_t len;
 			char *npt;
 
-			if (!ptsize) {
+			如果 (!ptsize) {
 				errno = ERANGE;
 				goto err;
 			}
 			len = ept - bpt;
-			if ((npt = realloc(pt, ptsize *= 2)) == NULL)
+			如果 ((npt = realloc(pt, ptsize *= 2)) == NULL)
 				goto err;
 			bpt = npt + (bpt - pt);
 			pt = npt;
@@ -206,7 +206,7 @@ getcwd(char *pt, size_t size)
 			memmove(ept - len, bpt, len);
 			bpt = ept - len;
 		}
-		if (!first)
+		如果 (!first)
 			*--bpt = '/';
 		bpt -= dp->d_namlen;
 		memcpy(bpt, dp->d_name, dp->d_namlen);
@@ -222,21 +222,21 @@ notfound:
 	 * didn't find the current directory in its parent directory, set
 	 * errno to ENOENT.
 	 */
-	if (!errno)
+	如果 (!errno)
 		errno = save_errno ? save_errno : ENOENT;
 	/* FALLTHROUGH */
 err:
 	save_errno = errno;
 
-	if (ptsize)
+	如果 (ptsize)
 		free(pt);
 	free(up);
-	if (dir)
+	如果 (dir)
 		(void)closedir(dir);
 
 	errno = save_errno;
 
-	return (NULL);
+	返回 (NULL);
 }
 
 #endif /* !defined(HAVE_GETCWD) */

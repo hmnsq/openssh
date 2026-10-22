@@ -71,10 +71,10 @@ struct ssh;
 struct sshbuf;
 
 struct monitor {
-	int			 m_recvfd;
-	int			 m_sendfd;
-	int			 m_log_recvfd;
-	int			 m_log_sendfd;
+	整数			 m_recvfd;
+	整数			 m_sendfd;
+	整数			 m_log_recvfd;
+	整数			 m_log_sendfd;
 	struct kex		**m_pkex;
 	pid_t			 m_pid;
 };
@@ -89,13 +89,13 @@ void monitor_child_postauth(struct ssh *, struct monitor *);
 void monitor_clear_keystate(struct ssh *, struct monitor *);
 void monitor_apply_keystate(struct ssh *, struct monitor *);
 
-int  monitor_auth_attempted(void);
-int  monitor_invalid_user(void);
+整数  monitor_auth_attempted(void);
+整数  monitor_invalid_user(void);
 
 /* Prototypes for request sending and receiving */
-void mm_request_send(int, enum monitor_reqtype, struct sshbuf *);
-void mm_request_receive(int, struct sshbuf *);
-void mm_request_receive_expect(int, enum monitor_reqtype, struct sshbuf *);
+void mm_request_send(整数, enum monitor_reqtype, struct sshbuf *);
+void mm_request_receive(整数, struct sshbuf *);
+void mm_request_receive_expect(整数, enum monitor_reqtype, struct sshbuf *);
 void mm_get_keystate(struct ssh *, struct monitor *);
 
 /* XXX: should be returned via a monitor call rather than config_fd */

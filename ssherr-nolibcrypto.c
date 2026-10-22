@@ -22,5 +22,5 @@
 const char *
 ssherr_libcrypto(void)
 {
-	return NULL;
+	返回 NULL;
 }

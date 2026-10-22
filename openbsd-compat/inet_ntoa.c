@@ -32,7 +32,7 @@
 
 #include "includes.h"
 
-#if defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
+#如果 defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA)
 
 /*
  * Convert network-format internet address
@@ -50,10 +50,10 @@ inet_ntoa(struct in_addr in)
 	char *p;
 
 	p = (char *)&in;
-#define	UC(b)	(((int)b)&0xff)
+#define	UC(b)	(((整数)b)&0xff)
 	(void)snprintf(b, sizeof(b),
 	    "%u.%u.%u.%u", UC(p[0]), UC(p[1]), UC(p[2]), UC(p[3]));
-	return (b);
+	返回 (b);
 }
 
 #endif /* defined(BROKEN_INET_NTOA) || !defined(HAVE_INET_NTOA) */

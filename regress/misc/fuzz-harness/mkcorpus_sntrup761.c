@@ -26,57 +26,57 @@ volatile crypto_int64 crypto_int64_optblocker = 0;
 
 #define NSEEDS 1000
 
-static int real_random;
+static 整数 real_random;
 
 void
 randombytes(unsigned char *ptr, size_t l)
 {
-	if (real_random)
+	如果 (real_random)
 		arc4random_buf(ptr, l);
-	else
+	否则
 		memset(ptr, 0, l);
 }
 
-void write_blob(const char *path, int n, const char *suffix,
+void write_blob(const char *path, 整数 n, const char *suffix,
     const void *ptr, size_t l)
 {
 	char name[256];
 	FILE *f;
 
 	snprintf(name, sizeof(name), "%s/%06d.%s", path, n, suffix);
-	if ((f = fopen(name, "wb+")) == NULL)
+	如果 ((f = fopen(name, "wb+")) == NULL)
 		err(1, "fopen %s", name);
-	if (fwrite(ptr, l, 1, f) != 1)
+	如果 (fwrite(ptr, l, 1, f) != 1)
 		err(1, "write %s", name);
 	fclose(f);
 }
 
-int main(void)
+整数 主要(void)
 {
-	int i;
+	整数 i;
 	unsigned char pk[crypto_kem_sntrup761_PUBLICKEYBYTES];
 	unsigned char sk[crypto_kem_sntrup761_SECRETKEYBYTES];
 	unsigned char ciphertext[crypto_kem_sntrup761_CIPHERTEXTBYTES];
 	unsigned char secret[crypto_kem_sntrup761_BYTES];
 
-	if (mkdir("sntrup761_pubkey_corpus", 0777) != 0 && errno != EEXIST)
+	如果 (mkdir("sntrup761_pubkey_corpus", 0777) != 0 && errno != EEXIST)
 		err(1, "mkdir sntrup761_pubkey_corpus");
-	if (mkdir("sntrup761_ciphertext_corpus", 0777) != 0 && errno != EEXIST)
+	如果 (mkdir("sntrup761_ciphertext_corpus", 0777) != 0 && errno != EEXIST)
 		err(1, "mkdir sntrup761_ciphertext_corpus");
 
 	fprintf(stderr, "making: ");
-	for (i = 0; i < NSEEDS; i++) {
+	为 (i = 0; i < NSEEDS; i++) {
 		real_random = i != 0;
-		if (crypto_kem_sntrup761_keypair(pk, sk) != 0)
+		如果 (crypto_kem_sntrup761_keypair(pk, sk) != 0)
 			errx(1, "crypto_kem_sntrup761_keypair failed");
 		write_blob("sntrup761_pubkey_corpus", i, "pk", pk, sizeof(pk));
-		if (crypto_kem_sntrup761_enc(ciphertext, secret, pk) != 0)
+		如果 (crypto_kem_sntrup761_enc(ciphertext, secret, pk) != 0)
 			errx(1, "crypto_kem_sntrup761_enc failed");
 		write_blob("sntrup761_ciphertext_corpus", i, "ct",
 		    ciphertext, sizeof(ciphertext));
-		if (i % 20 == 0)
+		如果 (i % 20 == 0)
 			fprintf(stderr, ".");
 	}
 	fprintf(stderr, "\n");
-	return 0;
+	返回 0;
 }

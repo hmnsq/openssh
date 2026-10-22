@@ -35,11 +35,11 @@
 
 #include "includes.h"
 
-#if 0
+#如果 0
 #include "file.h"
 #endif
 
-#if !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
+#如果 !defined(HAVE_GETLINE) || defined(BROKEN_GETLINE)
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -47,40 +47,40 @@
 #include <string.h>
 
 static ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+getdelim(char **buf, size_t *bufsiz, 整数 delimiter, FILE *fp)
 {
 	char *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		if ((*buf = malloc(BUFSIZ)) == NULL)
-			return -1;
+	如果 (*buf == NULL || *bufsiz == 0) {
+		如果 ((*buf = malloc(BUFSIZ)) == NULL)
+			返回 -1;
 		*bufsiz = BUFSIZ;
 	}
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp)) {
+	为 (ptr = *buf, eptr = *buf + *bufsiz;;) {
+		整数 c = fgetc(fp);
+		如果 (c == -1) {
+			如果 (feof(fp)) {
 				ssize_t diff = (ssize_t)(ptr - *buf);
-				if (diff != 0) {
+				如果 (diff != 0) {
 					*ptr = '\0';
-					return diff;
+					返回 diff;
 				}
 			}
-			return -1;
+			返回 -1;
 		}
 		*ptr++ = c;
-		if (c == delimiter) {
+		如果 (c == delimiter) {
 			*ptr = '\0';
-			return ptr - *buf;
+			返回 ptr - *buf;
 		}
-		if (ptr + 2 >= eptr) {
+		如果 (ptr + 2 >= eptr) {
 			char *nbuf;
 			size_t nbufsiz = *bufsiz * 2;
 			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
+			如果 ((nbuf = realloc(*buf, nbufsiz)) == NULL)
+				返回 -1;
 			*buf = nbuf;
 			*bufsiz = nbufsiz;
 			eptr = nbuf + nbufsiz;
@@ -92,22 +92,22 @@ getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
 ssize_t
 getline(char **buf, size_t *bufsiz, FILE *fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+	返回 getdelim(buf, bufsiz, '\n', fp);
 }
 
 #endif
 
 #ifdef TEST
-int
-main(int argc, char *argv[])
+整数
+主要(整数 argc, char *argv[])
 {
 	char *p = NULL;
 	ssize_t len;
 	size_t n = 0;
 
-	while ((len = getline(&p, &n, stdin)) != -1)
+	当 ((len = getline(&p, &n, stdin)) != -1)
 		(void)printf("%" SIZE_T_FORMAT "d %s", len, p);
 	free(p);
-	return 0;
+	返回 0;
 }
 #endif

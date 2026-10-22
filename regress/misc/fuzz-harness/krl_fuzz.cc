@@ -16,34 +16,34 @@ extern "C" {
 #include "authfile.h"
 }
 
-static int initialised = 0;
+static 整数 initialised = 0;
 static FILE *null_file;
 static struct sshkey *key = NULL;
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+extern "C" 整数 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     // single initialisation
-    if (!initialised) {
+    如果 (!initialised) {
         log_init("krl_fuzz", SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 
-        if ((null_file = fopen("/dev/null", "w")) == NULL) return 0;
+        如果 ((null_file = fopen("/dev/null", "w")) == NULL) 返回 0;
 
-        if (sshkey_generate(KEY_ED25519, 0, &key) != 0) return 0;
+        如果 (sshkey_generate(KEY_ED25519, 0, &key) != 0) 返回 0;
 
         initialised = 1;
     }
 
     // Reject empty corpus
-    if (size < 4) return 0;
+    如果 (size < 4) 返回 0;
 
     // Convert fuzzer data to ssh buffer
     struct sshbuf *buf = sshbuf_from(data, size);
-    if (!buf) return 0;
+    如果 (!buf) 返回 0;
 
     // Parse the ssh buffer as krl, early exit if failed
     struct ssh_krl *krl = NULL;
-    int ret = ssh_krl_from_blob(buf, &krl);
+    整数 ret = ssh_krl_from_blob(buf, &krl);
     sshbuf_free(buf);
-    if (ret != 0) return 0;
+    如果 (ret != 0) 返回 0;
 
     // Fuzz serailisation roundtrip
     struct sshbuf *output = sshbuf_new();
@@ -60,5 +60,5 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
     ssh_krl_check_key(krl, key);
 
     ssh_krl_free(krl);
-    return 0;
+    返回 0;
 }

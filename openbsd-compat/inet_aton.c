@@ -53,14 +53,14 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_INET_ATON)
+#如果 !defined(HAVE_INET_ATON)
 
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <ctype.h>
 
-#if 0
+#如果 0
 /*
  * Ascii internet address interpretation routine.
  * The value returned is in network order.
@@ -70,9 +70,9 @@ inet_addr(const char *cp)
 {
 	struct in_addr val;
 
-	if (inet_aton(cp, &val))
-		return (val.s_addr);
-	return (INADDR_NONE);
+	如果 (inet_aton(cp, &val))
+		返回 (val.s_addr);
+	返回 (INADDR_NONE);
 }
 #endif
 
@@ -83,62 +83,62 @@ inet_addr(const char *cp)
  * This replaces inet_addr, the return value from which
  * cannot distinguish between failure and a local broadcast address.
  */
-int
+整数
 inet_aton(const char *cp, struct in_addr *addr)
 {
 	u_int32_t val;
-	int base, n;
+	整数 base, n;
 	char c;
 	u_int parts[4];
 	u_int *pp = parts;
 
 	c = *cp;
-	for (;;) {
+	为 (;;) {
 		/*
 		 * Collect number up to ``.''.
 		 * Values are specified as for C:
 		 * 0x=hex, 0=octal, isdigit=decimal.
 		 */
-		if (!isdigit(c))
-			return (0);
+		如果 (!isdigit(c))
+			返回 (0);
 		val = 0; base = 10;
-		if (c == '0') {
+		如果 (c == '0') {
 			c = *++cp;
-			if (c == 'x' || c == 'X')
+			如果 (c == 'x' || c == 'X')
 				base = 16, c = *++cp;
-			else
+			否则
 				base = 8;
 		}
-		for (;;) {
-			if (isascii(c) && isdigit(c)) {
+		为 (;;) {
+			如果 (isascii(c) && isdigit(c)) {
 				val = (val * base) + (c - '0');
 				c = *++cp;
-			} else if (base == 16 && isascii(c) && isxdigit(c)) {
+			} 否则 如果 (base == 16 && isascii(c) && isxdigit(c)) {
 				val = (val << 4) |
 					(c + 10 - (islower(c) ? 'a' : 'A'));
 				c = *++cp;
-			} else
+			} 否则
 				break;
 		}
-		if (c == '.') {
+		如果 (c == '.') {
 			/*
 			 * Internet format:
 			 *	a.b.c.d
 			 *	a.b.c	(with c treated as 16 bits)
 			 *	a.b	(with b treated as 24 bits)
 			 */
-			if (pp >= parts + 3)
-				return (0);
+			如果 (pp >= parts + 3)
+				返回 (0);
 			*pp++ = val;
 			c = *++cp;
-		} else
+		} 否则
 			break;
 	}
 	/*
 	 * Check for trailing characters.
 	 */
-	if (c != '\0' && (!isascii(c) || !isspace(c)))
-		return (0);
+	如果 (c != '\0' && (!isascii(c) || !isspace(c)))
+		返回 (0);
 	/*
 	 * Concoct the address according to
 	 * the number of parts specified.
@@ -147,32 +147,32 @@ inet_aton(const char *cp, struct in_addr *addr)
 	switch (n) {
 
 	case 0:
-		return (0);		/* initial nondigit */
+		返回 (0);		/* initial nondigit */
 
 	case 1:				/* a -- 32 bits */
 		break;
 
 	case 2:				/* a.b -- 8.24 bits */
-		if ((val > 0xffffff) || (parts[0] > 0xff))
-			return (0);
+		如果 ((val > 0xffffff) || (parts[0] > 0xff))
+			返回 (0);
 		val |= parts[0] << 24;
 		break;
 
 	case 3:				/* a.b.c -- 8.8.16 bits */
-		if ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
-			return (0);
+		如果 ((val > 0xffff) || (parts[0] > 0xff) || (parts[1] > 0xff))
+			返回 (0);
 		val |= (parts[0] << 24) | (parts[1] << 16);
 		break;
 
 	case 4:				/* a.b.c.d -- 8.8.8.8 bits */
-		if ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
-			return (0);
+		如果 ((val > 0xff) || (parts[0] > 0xff) || (parts[1] > 0xff) || (parts[2] > 0xff))
+			返回 (0);
 		val |= (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8);
 		break;
 	}
-	if (addr)
+	如果 (addr)
 		addr->s_addr = htonl(val);
-	return (1);
+	返回 (1);
 }
 
 #endif /* !defined(HAVE_INET_ATON) */

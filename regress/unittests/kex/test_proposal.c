@@ -41,7 +41,7 @@ kex_proposal_tests(void)
 	struct {
 		char *in;	/* TODO: make this const */
 		char *out;
-		int compat;
+		整数 compat;
 	} tests[] = {
 		{ KEXALGOS, KEXALGOS, 0},
 		{ KEXALGOS, DHGEX256","DHGEX1, SSH_BUG_CURVE25519PAD },
@@ -52,7 +52,7 @@ kex_proposal_tests(void)
 	};
 
 	TEST_START("compat_kex_proposal");
-	for (i = 0; i < sizeof(tests) / sizeof(*tests); i++) {
+	为 (i = 0; i < sizeof(tests) / sizeof(*tests); i++) {
 		ssh.compat = tests[i].compat;
 		/* match entire string */
 		result = compat_kex_proposal(&ssh, tests[i].in);
@@ -72,9 +72,9 @@ kex_proposal_tests(void)
 		free(result); free(in); free(out);
 		/* match in middle */
 		xasprintf(&in, "a,%s,b", tests[i].in);
-		if (*(tests[i].out) == '\0')
+		如果 (*(tests[i].out) == '\0')
 			out = xstrdup("a,b");
-		else
+		否则
 			xasprintf(&out, "a,%s,b", tests[i].out);
 		result = compat_kex_proposal(&ssh, in);
 		ASSERT_STRING_EQ(result, out);
@@ -88,7 +88,7 @@ kex_proposal_populate_tests(void)
 {
 	char *prop[PROPOSAL_MAX], *kexalgs, *ciphers, *macs, *hkalgs;
 	const char *comp = compression_alg_list(0);
-	int i;
+	整数 i;
 	struct ssh ssh;
 	struct kex kex;
 
@@ -99,18 +99,18 @@ kex_proposal_populate_tests(void)
 
 	ssh.kex = &kex;
 	TEST_START("compat_kex_proposal_populate");
-	for (i = 0; i <= 1; i++) {
+	为 (i = 0; i <= 1; i++) {
 		kex.server = i;
-		for (ssh.compat = 0; ssh.compat < 0x40000000; ) {
+		为 (ssh.compat = 0; ssh.compat < 0x40000000; ) {
 			kex_proposal_populate_entries(&ssh, prop, NULL, NULL,
 			    NULL, NULL, NULL);
 			kex_proposal_free_entries(prop);
 			kex_proposal_populate_entries(&ssh, prop, kexalgs,
 			    ciphers, macs, hkalgs, comp);
 			kex_proposal_free_entries(prop);
-			if (ssh.compat == 0)
+			如果 (ssh.compat == 0)
 				ssh.compat = 1;
-			else
+			否则
 				ssh.compat <<= 1;
 		}
 	}

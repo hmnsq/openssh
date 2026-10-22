@@ -35,14 +35,14 @@
 extern ServerOptions options;
 
 /* return 1 if we are running with privilege to swap UIDs, 0 otherwise */
-int
+整数
 platform_privileged_uidswap(void)
 {
 #ifdef HAVE_CYGWIN
 	/* uid 0 is not special on Cygwin so always try */
-	return 1;
-#else
-	return (getuid() == 0 || geteuid() == 0);
+	返回 1;
+#否则
+	返回 (getuid() == 0 || geteuid() == 0);
 #endif
 }
 
@@ -64,31 +64,31 @@ platform_setusercontext(struct passwd *pw)
 	 * we are using PAM in which case it is the responsibility of the
 	 * PAM stack.
 	 */
-	if (!options.use_pam && (getuid() == 0 || geteuid() == 0))
+	如果 (!options.use_pam && (getuid() == 0 || geteuid() == 0))
 		solaris_set_default_project(pw);
 #endif
 
-#if defined(HAVE_LOGIN_CAP) && defined (__bsdi__)
-	if (getuid() == 0 || geteuid() == 0)
+#如果 defined(HAVE_LOGIN_CAP) && defined (__bsdi__)
+	如果 (getuid() == 0 || geteuid() == 0)
 		setpgid(0, 0);
 # endif
 
-#if defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
+#如果 defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
 	/*
 	 * If we have both LOGIN_CAP and PAM, we want to establish creds
 	 * before calling setusercontext (in session.c:do_setusercontext).
 	 */
-	if (getuid() == 0 || geteuid() == 0) {
-		if (options.use_pam) {
+	如果 (getuid() == 0 || geteuid() == 0) {
+		如果 (options.use_pam) {
 			do_pam_setcred();
 		}
 	}
 # endif /* USE_PAM */
 
-#if !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
-	if (getuid() == 0 || geteuid() == 0) {
+#如果 !defined(HAVE_LOGIN_CAP) && defined(HAVE_GETLUID) && defined(HAVE_SETLUID)
+	如果 (getuid() == 0 || geteuid() == 0) {
 		/* Sets login uid for accounting */
-		if (getluid() == -1 && setluid(pw->pw_uid) == -1)
+		如果 (getluid() == -1 && setluid(pw->pw_uid) == -1)
 			error("setluid: %s", strerror(errno));
 	}
 #endif
@@ -101,18 +101,18 @@ platform_setusercontext(struct passwd *pw)
 void
 platform_setusercontext_post_groups(struct passwd *pw)
 {
-#if !defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
+#如果 !defined(HAVE_LOGIN_CAP) && defined(USE_PAM)
 	/*
 	 * PAM credentials may take the form of supplementary groups.
 	 * These will have been wiped by the above initgroups() call.
 	 * Reestablish them here.
 	 */
-	if (options.use_pam) {
+	如果 (options.use_pam) {
 		do_pam_setcred();
 	}
 #endif /* USE_PAM */
 
-#if !defined(HAVE_LOGIN_CAP) && (defined(WITH_IRIX_PROJECT) || \
+#如果 !defined(HAVE_LOGIN_CAP) && (defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY))
 	irix_setusercontext(pw);
 #endif /* defined(WITH_IRIX_PROJECT) || defined(WITH_IRIX_JOBS) || defined(WITH_IRIX_ARRAY) */
@@ -131,11 +131,11 @@ platform_setusercontext_post_groups(struct passwd *pw)
 		char **creds = NULL, *chroot_creds[] =
 		    { "REAL_USER=root", NULL };
 
-		if (options.chroot_directory != NULL &&
+		如果 (options.chroot_directory != NULL &&
 		    strcasecmp(options.chroot_directory, "none") != 0)
 			creds = chroot_creds;
 
-		if (setpcred(pw->pw_name, creds) == -1)
+		如果 (setpcred(pw->pw_name, creds) == -1)
 			fatal("Failed to set process credentials");
 	}
 #endif /* HAVE_SETPCRED */
@@ -148,17 +148,17 @@ char *
 platform_krb5_get_principal_name(const char *pw_name)
 {
 #ifdef USE_AIX_KRB_NAME
-	return aix_krb5_get_principal_name(pw_name);
-#else
-	return NULL;
+	返回 aix_krb5_get_principal_name(pw_name);
+#否则
+	返回 NULL;
 #endif
 }
 
 /* returns 1 if account is locked */
-int
+整数
 platform_locked_account(struct passwd *pw)
 {
-	int locked = 0;
+	整数 locked = 0;
 	char *passwd = pw->pw_passwd;
 #ifdef USE_SHADOW
 	struct spwd *spw = NULL;
@@ -168,29 +168,29 @@ platform_locked_account(struct passwd *pw)
 
 	spw = getspnam(pw->pw_name);
 #ifdef HAS_SHADOW_EXPIRE
-	if (spw != NULL && auth_shadow_acctexpired(spw))
-		return 1;
+	如果 (spw != NULL && auth_shadow_acctexpired(spw))
+		返回 1;
 #endif /* HAS_SHADOW_EXPIRE */
 
-	if (spw != NULL)
+	如果 (spw != NULL)
 #ifdef USE_LIBIAF
 		iaf_passwd = passwd = get_iaf_password(pw);
-#else
+#否则
 		passwd = spw->sp_pwdp;
 #endif /* USE_LIBIAF */
 #endif
 
 	/* check for locked account */
-	if (passwd && *passwd) {
+	如果 (passwd && *passwd) {
 #ifdef LOCKED_PASSWD_STRING
-		if (strcmp(passwd, LOCKED_PASSWD_STRING) == 0) {
+		如果 (strcmp(passwd, LOCKED_PASSWD_STRING) == 0) {
 			debug3_f("password matches locked string '%s'",
 			    LOCKED_PASSWD_STRING);
 			locked = 1;
 		}
 #endif
 #ifdef LOCKED_PASSWD_PREFIX
-		if (strncmp(passwd, LOCKED_PASSWD_PREFIX,
+		如果 (strncmp(passwd, LOCKED_PASSWD_PREFIX,
 		    strlen(LOCKED_PASSWD_PREFIX)) == 0) {
 			debug3_f("password matches locked prefix '%s'",
 			    LOCKED_PASSWD_PREFIX);
@@ -198,7 +198,7 @@ platform_locked_account(struct passwd *pw)
 		}
 #endif
 #ifdef LOCKED_PASSWD_SUBSTR
-		if (strstr(passwd, LOCKED_PASSWD_SUBSTR)) {
+		如果 (strstr(passwd, LOCKED_PASSWD_SUBSTR)) {
 			debug3_f("password matches locked substring '%s'",
 			   LOCKED_PASSWD_SUBSTR);
 			locked = 1;
@@ -206,9 +206,9 @@ platform_locked_account(struct passwd *pw)
 #endif
 	}
 #ifdef USE_LIBIAF
-	if (iaf_passwd != NULL)
+	如果 (iaf_passwd != NULL)
 		freezero(iaf_passwd, strlen(iaf_passwd));
 #endif /* USE_LIBIAF */
 
-	return locked;
+	返回 locked;
 }

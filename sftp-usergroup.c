@@ -40,12 +40,12 @@ struct idname {
         RB_ENTRY(idname) entry;
 	/* XXX implement bounded cache as TAILQ */
 };
-static int
+static 整数
 idname_cmp(struct idname *a, struct idname *b)
 {
-	if (a->id == b->id)
-		return 0;
-	return a->id > b->id ? 1 : -1;
+	如果 (a->id == b->id)
+		返回 0;
+	返回 a->id > b->id ? 1 : -1;
 }
 RB_HEAD(idname_tree, idname);
 RB_GENERATE_STATIC(idname_tree, idname, entry, idname_cmp)
@@ -56,8 +56,8 @@ static struct idname_tree group_idname = RB_INITIALIZER(&group_idname);
 static void
 idname_free(struct idname *idname)
 {
-	if (idname == NULL)
-		return;
+	如果 (idname == NULL)
+		返回;
 	free(idname->name);
 	free(idname);
 }
@@ -67,11 +67,11 @@ idname_enter(struct idname_tree *tree, u_int id, const char *name)
 {
 	struct idname *idname;
 
-	if ((idname = xcalloc(1, sizeof(*idname))) == NULL)
+	如果 ((idname = xcalloc(1, sizeof(*idname))) == NULL)
 		fatal_f("alloc");
 	idname->id = id;
 	idname->name = xstrdup(name);
-	if (RB_INSERT(idname_tree, tree, idname) != NULL)
+	如果 (RB_INSERT(idname_tree, tree, idname) != NULL)
 		idname_free(idname);
 }
 
@@ -82,9 +82,9 @@ idname_lookup(struct idname_tree *tree, u_int id)
 
 	memset(&idname, 0, sizeof(idname));
 	idname.id = id;
-	if ((found = RB_FIND(idname_tree, tree, &idname)) != NULL)
-		return found->name;
-	return NULL;
+	如果 ((found = RB_FIND(idname_tree, tree, &idname)) != NULL)
+		返回 found->name;
+	返回 NULL;
 }
 
 static void
@@ -92,9 +92,9 @@ freenames(char **names, u_int nnames)
 {
 	u_int i;
 
-	if (names == NULL)
-		return;
-	for (i = 0; i < nnames; i++)
+	如果 (names == NULL)
+		返回;
+	为 (i = 0; i < nnames; i++)
 		free(names[i]);
 	free(names);
 }
@@ -103,25 +103,25 @@ static void
 lookup_and_record(struct sftp_conn *conn,
     u_int *uids, u_int nuids, u_int *gids, u_int ngids)
 {
-	int r;
+	整数 r;
 	u_int i;
 	char **usernames = NULL, **groupnames = NULL;
 
-	if ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
+	如果 ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
 	    &usernames, &groupnames)) != 0) {
 		debug_fr(r, "sftp_get_users_groups_by_id");
-		return;
+		返回;
 	}
-	for (i = 0; i < nuids; i++) {
-		if (usernames[i] == NULL) {
+	为 (i = 0; i < nuids; i++) {
+		如果 (usernames[i] == NULL) {
 			debug3_f("uid %u not resolved", uids[i]);
 			continue;
 		}
 		debug3_f("record uid %u => \"%s\"", uids[i], usernames[i]);
 		idname_enter(&user_idname, uids[i], usernames[i]);
 	}
-	for (i = 0; i < ngids; i++) {
-		if (groupnames[i] == NULL) {
+	为 (i = 0; i < ngids; i++) {
+		如果 (groupnames[i] == NULL) {
 			debug3_f("gid %u not resolved", gids[i]);
 			continue;
 		}
@@ -132,40 +132,40 @@ lookup_and_record(struct sftp_conn *conn,
 	freenames(groupnames, ngids);
 }
 
-static int
+static 整数
 has_id(u_int id, u_int *ids, u_int nids)
 {
 	u_int i;
 
-	if (nids == 0)
-		return 0;
+	如果 (nids == 0)
+		返回 0;
 
 	/* XXX O(N^2) */
-	for (i = 0; i < nids; i++) {
-		if (ids[i] == id)
+	为 (i = 0; i < nids; i++) {
+		如果 (ids[i] == id)
 			break;
 	}
-	return i < nids;
+	返回 i < nids;
 }
 
 static void
-collect_ids_from_glob(glob_t *g, int user, u_int **idsp, u_int *nidsp)
+collect_ids_from_glob(glob_t *g, 整数 user, u_int **idsp, u_int *nidsp)
 {
 	u_int id, i, n = 0, *ids = NULL;
 
-	for (i = 0; g->gl_pathv[i] != NULL; i++) {
-		if (g->gl_statv[i] == NULL) /* no stat information */
+	为 (i = 0; g->gl_pathv[i] != NULL; i++) {
+		如果 (g->gl_statv[i] == NULL) /* no stat information */
 			continue;
-		if (user) {
-			if (ruser_name(g->gl_statv[i]->st_uid) != NULL)
+		如果 (user) {
+			如果 (ruser_name(g->gl_statv[i]->st_uid) != NULL)
 				continue; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_uid;
-		} else {
-			if (rgroup_name(g->gl_statv[i]->st_gid) != NULL)
+		} 否则 {
+			如果 (rgroup_name(g->gl_statv[i]->st_gid) != NULL)
 				continue; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_gid;
 		}
-		if (has_id(id, ids, n))
+		如果 (has_id(id, ids, n))
 			continue;
 		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
 		ids[n++] = id;
@@ -179,8 +179,8 @@ get_remote_user_groups_from_glob(struct sftp_conn *conn, glob_t *g)
 {
 	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	如果 (!sftp_can_get_users_groups_by_id(conn))
+		返回;
 
 	collect_ids_from_glob(g, 1, &uids, &nuids);
 	collect_ids_from_glob(g, 0, &gids, &ngids);
@@ -190,21 +190,21 @@ get_remote_user_groups_from_glob(struct sftp_conn *conn, glob_t *g)
 }
 
 static void
-collect_ids_from_dirents(SFTP_DIRENT **d, int user, u_int **idsp, u_int *nidsp)
+collect_ids_from_dirents(SFTP_DIRENT **d, 整数 user, u_int **idsp, u_int *nidsp)
 {
 	u_int id, i, n = 0, *ids = NULL;
 
-	for (i = 0; d[i] != NULL; i++) {
-		if (user) {
-			if (ruser_name((uid_t)(d[i]->a.uid)) != NULL)
+	为 (i = 0; d[i] != NULL; i++) {
+		如果 (user) {
+			如果 (ruser_name((uid_t)(d[i]->a.uid)) != NULL)
 				continue; /* Already seen */
 			id = d[i]->a.uid;
-		} else {
-			if (rgroup_name((gid_t)(d[i]->a.gid)) != NULL)
+		} 否则 {
+			如果 (rgroup_name((gid_t)(d[i]->a.gid)) != NULL)
 				continue; /* Already seen */
 			id = d[i]->a.gid;
 		}
-		if (has_id(id, ids, n))
+		如果 (has_id(id, ids, n))
 			continue;
 		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
 		ids[n++] = id;
@@ -218,8 +218,8 @@ get_remote_user_groups_from_dirents(struct sftp_conn *conn, SFTP_DIRENT **d)
 {
 	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	如果 (!sftp_can_get_users_groups_by_id(conn))
+		返回;
 
 	collect_ids_from_dirents(d, 1, &uids, &nuids);
 	collect_ids_from_dirents(d, 0, &gids, &ngids);
@@ -231,12 +231,12 @@ get_remote_user_groups_from_dirents(struct sftp_conn *conn, SFTP_DIRENT **d)
 const char *
 ruser_name(uid_t uid)
 {
-	return idname_lookup(&user_idname, (u_int)uid);
+	返回 idname_lookup(&user_idname, (u_int)uid);
 }
 
 const char *
 rgroup_name(uid_t gid)
 {
-	return idname_lookup(&group_idname, (u_int)gid);
+	返回 idname_lookup(&group_idname, (u_int)gid);
 }
 

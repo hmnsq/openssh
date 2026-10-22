@@ -31,12 +31,12 @@
 #include "sftp-common.h"
 #include "sftp-client.h"
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *);
+整数 sftp_glob(struct sftp_conn *, const char *, 整数,
+    整数 (*)(const char *, 整数), glob_t *);
 
 struct SFTP_OPENDIR {
 	SFTP_DIRENT **dir;
-	int offset;
+	整数 offset;
 };
 
 static struct {
@@ -50,14 +50,14 @@ fudge_opendir(const char *path)
 
 	r = xcalloc(1, sizeof(*r));
 
-	if (sftp_readdir(cur.conn, path, &r->dir)) {
+	如果 (sftp_readdir(cur.conn, path, &r->dir)) {
 		free(r);
-		return(NULL);
+		返回(NULL);
 	}
 
 	r->offset = 0;
 
-	return((void *)r);
+	返回((void *)r);
 }
 
 static struct dirent *
@@ -67,11 +67,11 @@ fudge_readdir(struct SFTP_OPENDIR *od)
 	static char buf[sizeof(struct dirent) + MAXPATHLEN];
 	struct dirent *ret = (struct dirent *)buf;
 #ifdef __GNU_LIBRARY__
-	static int inum = 1;
+	static 整数 inum = 1;
 #endif /* __GNU_LIBRARY__ */
 
-	if (od->dir[od->offset] == NULL)
-		return(NULL);
+	如果 (od->dir[od->offset] == NULL)
+		返回(NULL);
 
 	memset(buf, 0, sizeof(buf));
 
@@ -81,7 +81,7 @@ fudge_readdir(struct SFTP_OPENDIR *od)
 	 */
 #ifdef BROKEN_ONE_BYTE_DIRENT_D_NAME
 	strlcpy(ret->d_name, od->dir[od->offset++]->filename, MAXPATHLEN);
-#else
+#否则
 	strlcpy(ret->d_name, od->dir[od->offset++]->filename,
 	    sizeof(ret->d_name));
 #endif
@@ -92,11 +92,11 @@ fudge_readdir(struct SFTP_OPENDIR *od)
 	 * source... Fake an inode number to appease it.
 	 */
 	ret->d_ino = inum++;
-	if (!inum)
+	如果 (!inum)
 		inum = 1;
 #endif /* __GNU_LIBRARY__ */
 
-	return(ret);
+	返回(ret);
 }
 
 static void
@@ -106,37 +106,37 @@ fudge_closedir(struct SFTP_OPENDIR *od)
 	free(od);
 }
 
-static int
+static 整数
 fudge_lstat(const char *path, struct stat *st)
 {
 	Attrib a;
 
-	if (sftp_lstat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	如果 (sftp_lstat(cur.conn, path, 1, &a) != 0)
+		返回 -1;
 
 	attrib_to_stat(&a, st);
 
-	return 0;
+	返回 0;
 }
 
-static int
+static 整数
 fudge_stat(const char *path, struct stat *st)
 {
 	Attrib a;
 
-	if (sftp_stat(cur.conn, path, 1, &a) != 0)
-		return -1;
+	如果 (sftp_stat(cur.conn, path, 1, &a) != 0)
+		返回 -1;
 
 	attrib_to_stat(&a, st);
 
-	return(0);
+	返回(0);
 }
 
-int
-sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
-    int (*errfunc)(const char *, int), glob_t *pglob)
+整数
+sftp_glob(struct sftp_conn *conn, const char *pattern, 整数 flags,
+    整数 (*errfunc)(const char *, 整数), glob_t *pglob)
 {
-	int r;
+	整数 r;
 	size_t l;
 	char *s;
 	struct stat sb;
@@ -150,8 +150,8 @@ sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
 	memset(&cur, 0, sizeof(cur));
 	cur.conn = conn;
 
-	if ((r = glob(pattern, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
-		return r;
+	如果 ((r = glob(pattern, flags | GLOB_ALTDIRFUNC, errfunc, pglob)) != 0)
+		返回 r;
 	/*
 	 * When both GLOB_NOCHECK and GLOB_MARK are active, a single gl_pathv
 	 * entry has been returned and that entry has not already been marked,
@@ -163,17 +163,17 @@ sftp_glob(struct sftp_conn *conn, const char *pattern, int flags,
 	 *
 	 * XXX doesn't try to handle gl_offs.
 	 */
-	if ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
+	如果 ((flags & (GLOB_NOCHECK|GLOB_MARK)) == (GLOB_NOCHECK|GLOB_MARK) &&
 	    pglob->gl_matchc == 0 && pglob->gl_offs == 0 &&
 	    pglob->gl_pathc == 1 && (s = pglob->gl_pathv[0]) != NULL &&
 	    (l = strlen(s)) > 0 && s[l-1] != '/') {
-		if (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+		如果 (fudge_stat(s, &sb) == 0 && S_ISDIR(sb.st_mode)) {
 			/* NOCHECK on a directory; annotate */
-			if ((s = realloc(s, l + 2)) != NULL) {
+			如果 ((s = realloc(s, l + 2)) != NULL) {
 				memcpy(s + l, "/", 2);
 				pglob->gl_pathv[0] = s;
 			}
 		}
 	}
-	return 0;
+	返回 0;
 }

@@ -40,27 +40,27 @@
 struct ssh;
 
 /* Client side main loop for the interactive session. */
-int	 client_loop(struct ssh *, int, int, int);
-int	 client_x11_get_proto(struct ssh *, const char *, const char *,
+整数	 client_loop(struct ssh *, 整数, 整数, 整数);
+整数	 client_x11_get_proto(struct ssh *, const char *, const char *,
 	    u_int, u_int, char **, char **);
-void	 client_session2_setup(struct ssh *, int, int, int,
-	    const char *, struct termios *, int, struct sshbuf *, char **);
-char	 *client_request_tun_fwd(struct ssh *, int, int, int,
+void	 client_session2_setup(struct ssh *, 整数, 整数, 整数,
+	    const char *, struct termios *, 整数, struct sshbuf *, char **);
+char	 *client_request_tun_fwd(struct ssh *, 整数, 整数, 整数,
     channel_open_fn *, void *);
 void	 client_stop_mux(void);
 
 /* Escape filter for protocol 2 sessions */
-void	*client_new_escape_filter_ctx(int);
-void	 client_filter_cleanup(struct ssh *, int, void *);
-int	 client_simple_escape_filter(struct ssh *, Channel *, char *, int);
+void	*client_new_escape_filter_ctx(整数);
+void	 client_filter_cleanup(struct ssh *, 整数, void *);
+整数	 client_simple_escape_filter(struct ssh *, Channel *, char *, 整数);
 
 /* Global request confirmation callbacks */
-typedef void global_confirm_cb(struct ssh *, int, uint32_t, void *);
+typedef void global_confirm_cb(struct ssh *, 整数, uint32_t, void *);
 void	 client_register_global_confirm(global_confirm_cb *, void *);
 
 /* Channel request confirmation callbacks */
 enum confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
-void client_expect_confirm(struct ssh *, int, const char *,
+void client_expect_confirm(struct ssh *, 整数, const char *,
     enum confirm_action);
 
 /* Multiplexing protocol version */
@@ -79,7 +79,7 @@ void client_expect_confirm(struct ssh *, int, const char *,
 #define SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
 
 void	muxserver_listen(struct ssh *);
-int	muxclient(const char *);
-void	mux_exit_message(struct ssh *, Channel *, int);
+整数	muxclient(const char *);
+void	mux_exit_message(struct ssh *, Channel *, 整数);
 void	mux_tty_alloc_failed(struct ssh *ssh, Channel *);
 

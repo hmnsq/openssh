@@ -46,34 +46,34 @@
 # include <unistd.h>
 #endif
 
-int
-daemon(int nochdir, int noclose)
+整数
+daemon(整数 nochdir, 整数 noclose)
 {
-	int fd;
+	整数 fd;
 
 	switch (fork()) {
 	case -1:
-		return (-1);
+		返回 (-1);
 	case 0:
 		break;
 	default:
 		_exit(0);
 	}
 
-	if (setsid() == -1)
-		return (-1);
+	如果 (setsid() == -1)
+		返回 (-1);
 
-	if (!nochdir)
+	如果 (!nochdir)
 		(void)chdir("/");
 
-	if (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
+	如果 (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
 		(void)dup2(fd, STDIN_FILENO);
 		(void)dup2(fd, STDOUT_FILENO);
 		(void)dup2(fd, STDERR_FILENO);
-		if (fd > 2)
+		如果 (fd > 2)
 			(void)close (fd);
 	}
-	return (0);
+	返回 (0);
 }
 
 #endif /* !HAVE_DAEMON */

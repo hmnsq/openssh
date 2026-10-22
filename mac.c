@@ -47,12 +47,12 @@
 
 struct macalg {
 	char		*name;
-	int		type;
-	int		alg;
-	int		truncatebits;	/* truncate digest if != 0 */
-	int		key_len;	/* just for UMAC */
-	int		len;		/* just for UMAC */
-	int		etm;		/* Encrypt-then-MAC */
+	整数		type;
+	整数		alg;
+	整数		truncatebits;	/* truncate digest if != 0 */
+	整数		key_len;	/* just for UMAC */
+	整数		len;		/* just for UMAC */
+	整数		etm;		/* Encrypt-then-MAC */
 };
 
 static const struct macalg macs[] = {
@@ -87,73 +87,73 @@ mac_alg_list(char sep)
 	const struct macalg *m;
 	char sep_str[2] = {sep, '\0'};
 
-	for (m = macs; m->name != NULL; m++)
+	为 (m = macs; m->name != NULL; m++)
 		xextendf(&ret, sep_str, "%s", m->name);
 
-	return ret;
+	返回 ret;
 }
 
-static int
+static 整数
 mac_setup_by_alg(struct sshmac *mac, const struct macalg *macalg)
 {
 	mac->type = macalg->type;
-	if (mac->type == SSH_DIGEST) {
-		if ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
+	如果 (mac->type == SSH_DIGEST) {
+		如果 ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == NULL)
+			返回 SSH_ERR_ALLOC_FAIL;
 		mac->key_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
-	} else {
+	} 否则 {
 		mac->mac_len = macalg->len / 8;
 		mac->key_len = macalg->key_len / 8;
 		mac->umac_ctx = NULL;
 	}
-	if (macalg->truncatebits != 0)
+	如果 (macalg->truncatebits != 0)
 		mac->mac_len = macalg->truncatebits / 8;
 	mac->etm = macalg->etm;
-	return 0;
+	返回 0;
 }
 
-int
+整数
 mac_setup(struct sshmac *mac, char *name)
 {
 	const struct macalg *m;
 
-	for (m = macs; m->name != NULL; m++) {
-		if (strcmp(name, m->name) != 0)
+	为 (m = macs; m->name != NULL; m++) {
+		如果 (strcmp(name, m->name) != 0)
 			continue;
-		if (mac != NULL)
-			return mac_setup_by_alg(mac, m);
-		return 0;
+		如果 (mac != NULL)
+			返回 mac_setup_by_alg(mac, m);
+		返回 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
+	返回 SSH_ERR_INVALID_ARGUMENT;
 }
 
-int
+整数
 mac_init(struct sshmac *mac)
 {
-	if (mac->key == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	如果 (mac->key == NULL)
+		返回 SSH_ERR_INVALID_ARGUMENT;
 	switch (mac->type) {
 	case SSH_DIGEST:
-		if (mac->hmac_ctx == NULL ||
+		如果 (mac->hmac_ctx == NULL ||
 		    ssh_hmac_init(mac->hmac_ctx, mac->key, mac->key_len) < 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
+			返回 SSH_ERR_INVALID_ARGUMENT;
+		返回 0;
 	case SSH_UMAC:
-		if ((mac->umac_ctx = umac_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+		如果 ((mac->umac_ctx = umac_new(mac->key)) == NULL)
+			返回 SSH_ERR_ALLOC_FAIL;
+		返回 0;
 	case SSH_UMAC128:
-		if ((mac->umac_ctx = umac128_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+		如果 ((mac->umac_ctx = umac128_new(mac->key)) == NULL)
+			返回 SSH_ERR_ALLOC_FAIL;
+		返回 0;
 	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		返回 SSH_ERR_INVALID_ARGUMENT;
 	}
 }
 
-int
+整数
 mac_compute(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, int datalen,
+    const u_char *data, 整数 datalen,
     u_char *digest, size_t dlen)
 {
 	static union {
@@ -163,18 +163,18 @@ mac_compute(struct sshmac *mac, uint32_t seqno,
 	u_char b[4];
 	u_char nonce[8];
 
-	if (mac->mac_len > sizeof(u))
-		return SSH_ERR_INTERNAL_ERROR;
+	如果 (mac->mac_len > sizeof(u))
+		返回 SSH_ERR_INTERNAL_ERROR;
 
 	switch (mac->type) {
 	case SSH_DIGEST:
 		put_u32(b, seqno);
 		/* reset HMAC context */
-		if (ssh_hmac_init(mac->hmac_ctx, NULL, 0) < 0 ||
+		如果 (ssh_hmac_init(mac->hmac_ctx, NULL, 0) < 0 ||
 		    ssh_hmac_update(mac->hmac_ctx, b, sizeof(b)) < 0 ||
 		    ssh_hmac_update(mac->hmac_ctx, data, datalen) < 0 ||
 		    ssh_hmac_final(mac->hmac_ctx, u.m, sizeof(u.m)) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			返回 SSH_ERR_LIBCRYPTO_ERROR;
 		break;
 	case SSH_UMAC:
 		POKE_U64(nonce, seqno);
@@ -187,44 +187,44 @@ mac_compute(struct sshmac *mac, uint32_t seqno,
 		umac128_final(mac->umac_ctx, u.m, nonce);
 		break;
 	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		返回 SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (digest != NULL) {
-		if (dlen > mac->mac_len)
+	如果 (digest != NULL) {
+		如果 (dlen > mac->mac_len)
 			dlen = mac->mac_len;
 		memcpy(digest, u.m, dlen);
 	}
-	return 0;
+	返回 0;
 }
 
-int
+整数
 mac_check(struct sshmac *mac, uint32_t seqno,
     const u_char *data, size_t dlen,
     const u_char *theirmac, size_t mlen)
 {
 	u_char ourmac[SSH_DIGEST_MAX_LENGTH];
-	int r;
+	整数 r;
 
-	if (mac->mac_len > mlen)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = mac_compute(mac, seqno, data, dlen,
+	如果 (mac->mac_len > mlen)
+		返回 SSH_ERR_INVALID_ARGUMENT;
+	如果 ((r = mac_compute(mac, seqno, data, dlen,
 	    ourmac, sizeof(ourmac))) != 0)
-		return r;
-	if (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
-		return SSH_ERR_MAC_INVALID;
-	return 0;
+		返回 r;
+	如果 (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
+		返回 SSH_ERR_MAC_INVALID;
+	返回 0;
 }
 
 void
 mac_clear(struct sshmac *mac)
 {
-	if (mac->type == SSH_UMAC) {
-		if (mac->umac_ctx != NULL)
+	如果 (mac->type == SSH_UMAC) {
+		如果 (mac->umac_ctx != NULL)
 			umac_delete(mac->umac_ctx);
-	} else if (mac->type == SSH_UMAC128) {
-		if (mac->umac_ctx != NULL)
+	} 否则 如果 (mac->type == SSH_UMAC128) {
+		如果 (mac->umac_ctx != NULL)
 			umac128_delete(mac->umac_ctx);
-	} else if (mac->hmac_ctx != NULL)
+	} 否则 如果 (mac->hmac_ctx != NULL)
 		ssh_hmac_free(mac->hmac_ctx);
 	mac->hmac_ctx = NULL;
 	mac->umac_ctx = NULL;
@@ -232,24 +232,24 @@ mac_clear(struct sshmac *mac)
 
 /* XXX copied from ciphers_valid */
 #define	MAC_SEP	","
-int
+整数
 mac_valid(const char *names)
 {
 	char *maclist, *cp, *p;
-	int found = 0;
+	整数 found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((maclist = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
+	如果 (names == NULL || strcmp(names, "") == 0)
+		返回 0;
+	如果 ((maclist = cp = strdup(names)) == NULL)
+		返回 0;
+	为 ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, MAC_SEP))) {
-		if (mac_setup(NULL, p) < 0) {
+		如果 (mac_setup(NULL, p) < 0) {
 			free(maclist);
-			return 0;
-		} else
+			返回 0;
+		} 否则
 			found = 1;
 	}
 	free(maclist);
-	return found;
+	返回 found;
 }

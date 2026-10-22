@@ -21,7 +21,7 @@
 
 #include "includes.h"
 
-#if defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
+#如果 defined(LINUX_OOM_ADJUST) || defined(SYSTEMD_NOTIFY)
 #include <sys/socket.h>
 #include <sys/un.h>
 
@@ -46,11 +46,11 @@
  * http://lxr.linux.no/#linux+v2.6.36/Documentation/filesystems/proc.txt
  */
 
-static int oom_adj_save = INT_MIN;
+static 整数 oom_adj_save = INT_MIN;
 static char *oom_adj_path = NULL;
 struct {
 	char *path;
-	int value;
+	整数 value;
 } oom_adjust[] = {
 	{"/proc/self/oom_score_adj", -1000},	/* kernels >= 2.6.36 */
 	{"/proc/self/oom_adj", -17},		/* kernels <= 2.6.35 */
@@ -64,28 +64,28 @@ struct {
 void
 oom_adjust_setup(void)
 {
-	int i, value;
+	整数 i, value;
 	FILE *fp;
 
 	debug3("%s", __func__);
-	 for (i = 0; oom_adjust[i].path != NULL; i++) {
+	 为 (i = 0; oom_adjust[i].path != NULL; i++) {
 		oom_adj_path = oom_adjust[i].path;
 		value = oom_adjust[i].value;
-		if ((fp = fopen(oom_adj_path, "r+")) != NULL) {
-			if (fscanf(fp, "%d", &oom_adj_save) != 1)
+		如果 ((fp = fopen(oom_adj_path, "r+")) != NULL) {
+			如果 (fscanf(fp, "%d", &oom_adj_save) != 1)
 				verbose("error reading %s: %s", oom_adj_path,
 				    strerror(errno));
-			else {
+			否则 {
 				rewind(fp);
-				if (fprintf(fp, "%d\n", value) <= 0)
+				如果 (fprintf(fp, "%d\n", value) <= 0)
 					verbose("error writing %s: %s",
 					   oom_adj_path, strerror(errno));
-				else
+				否则
 					debug("Set %s from %d to %d",
 					   oom_adj_path, oom_adj_save, value);
 			}
 			fclose(fp);
-			return;
+			返回;
 		}
 	}
 	oom_adj_path = NULL;
@@ -98,17 +98,17 @@ oom_adjust_restore(void)
 	FILE *fp;
 
 	debug3("%s", __func__);
-	if (oom_adj_save == INT_MIN || oom_adj_path == NULL ||
+	如果 (oom_adj_save == INT_MIN || oom_adj_path == NULL ||
 	    (fp = fopen(oom_adj_path, "w")) == NULL)
-		return;
+		返回;
 
-	if (fprintf(fp, "%d\n", oom_adj_save) <= 0)
+	如果 (fprintf(fp, "%d\n", oom_adj_save) <= 0)
 		verbose("error writing %s: %s", oom_adj_path, strerror(errno));
-	else
+	否则
 		debug("Set %s to %d", oom_adj_path, oom_adj_save);
 
 	fclose(fp);
-	return;
+	返回;
 }
 #endif /* LINUX_OOM_ADJUST */
 
@@ -118,9 +118,9 @@ oom_adjust_restore(void)
 void
 memlock_onfault_setup(void)
 {
-	if (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
+	如果 (mlockall(MCL_CURRENT | MCL_FUTURE | MCL_ONFAULT) < 0)
 		verbose("unable to lock memory: %s", strerror(errno));
-	else
+	否则
 		debug("memory locked");
 }
 #endif /* LINUX_MEMLOCK_ONFAULT */
@@ -137,52 +137,52 @@ ssh_systemd_notify(const char *fmt, ...)
 	const char *path;
 	struct stat sb;
 	struct sockaddr_un addr;
-	int fd = -1;
+	整数 fd = -1;
 	va_list ap;
 
-	if ((path = getenv("NOTIFY_SOCKET")) == NULL || strlen(path) == 0)
-		return;
+	如果 ((path = getenv("NOTIFY_SOCKET")) == NULL || strlen(path) == 0)
+		返回;
 
 	va_start(ap, fmt);
 	xvasprintf(&s, fmt, ap);
 	va_end(ap);
 
 	/* Only AF_UNIX is supported, with path or abstract sockets */
-	if (path[0] != '/' && path[0] != '@') {
+	如果 (path[0] != '/' && path[0] != '@') {
 		error_f("socket \"%s\" is not compatible with AF_UNIX", path);
 		goto out;
 	}
 
-	if (path[0] == '/' && stat(path, &sb) != 0) {
+	如果 (path[0] == '/' && stat(path, &sb) != 0) {
 		error_f("socket \"%s\" stat: %s", path, strerror(errno));
 		goto out;
 	}
 
 	memset(&addr, 0, sizeof(addr));
 	addr.sun_family = AF_UNIX;
-	if (strlcpy(addr.sun_path, path,
+	如果 (strlcpy(addr.sun_path, path,
 	    sizeof(addr.sun_path)) >= sizeof(addr.sun_path)) {
 		error_f("socket path \"%s\" too long", path);
 		goto out;
 	}
 	/* Support for abstract socket */
-	if (addr.sun_path[0] == '@')
+	如果 (addr.sun_path[0] == '@')
 		addr.sun_path[0] = 0;
-	if ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
+	如果 ((fd = socket(PF_UNIX, SOCK_DGRAM, 0)) == -1) {
 		error_f("socket \"%s\": %s", path, strerror(errno));
 		goto out;
 	}
-	if (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
+	如果 (connect(fd, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
 		error_f("socket \"%s\" connect: %s", path, strerror(errno));
 		goto out;
 	}
-	if (write(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
+	如果 (write(fd, s, strlen(s)) != (ssize_t)strlen(s)) {
 		error_f("socket \"%s\" write: %s", path, strerror(errno));
 		goto out;
 	}
 	debug_f("socket \"%s\" notified %s", path, s);
  out:
-	if (fd != -1)
+	如果 (fd != -1)
 		close(fd);
 	free(s);
 }
@@ -199,10 +199,10 @@ ssh_systemd_notify_reload(void)
 	struct timespec now;
 
 	monotime_ts(&now);
-	if (now.tv_sec < 0 || now.tv_nsec < 0) {
+	如果 (now.tv_sec < 0 || now.tv_nsec < 0) {
 		error_f("monotime returned negative value");
 		ssh_systemd_notify("RELOADING=1");
-	} else {
+	} 否则 {
 		ssh_systemd_notify("RELOADING=1\nMONOTONIC_USEC=%llu",
 		    ((uint64_t)now.tv_sec * 1000000ULL) +
 		    ((uint64_t)now.tv_nsec / 1000ULL));

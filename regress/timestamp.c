@@ -28,19 +28,19 @@
 #include <stdlib.h>
 #include <time.h>
 
-int
-main(void)
+整数
+主要(void)
 {
 	struct timeval tv;
 	struct tm *tm;
 	char buf[1024];
 
-	if (gettimeofday(&tv, NULL) != 0)
+	如果 (gettimeofday(&tv, NULL) != 0)
 		exit(1);
-	if ((tm = localtime(&tv.tv_sec)) == NULL)
+	如果 ((tm = localtime(&tv.tv_sec)) == NULL)
 		exit(2);
-	if (strftime(buf, sizeof buf, "%Y%m%dT%H%M%S", tm) <= 0)
+	如果 (strftime(buf, sizeof buf, "%Y%m%dT%H%M%S", tm) <= 0)
 		exit(3);
-	printf("%s.%06d\n", buf, (int)tv.tv_usec);
+	printf("%s.%06d\n", buf, (整数)tv.tv_usec);
 	exit(0);
 }

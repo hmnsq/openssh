@@ -26,7 +26,7 @@
 #ifndef _PORT_IRIX_H
 #define _PORT_IRIX_H
 
-#if defined(WITH_IRIX_PROJECT) || \
+#如果 defined(WITH_IRIX_PROJECT) || \
     defined(WITH_IRIX_JOBS) || \
     defined(WITH_IRIX_ARRAY)
 

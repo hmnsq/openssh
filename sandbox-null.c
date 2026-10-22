@@ -35,7 +35,7 @@
 /* dummy sandbox */
 
 struct ssh_sandbox {
-	int junk;
+	整数 junk;
 };
 
 struct ssh_sandbox *
@@ -48,7 +48,7 @@ ssh_sandbox_init(struct monitor *monitor)
 	 * to return non-NULL to satisfy the API.
 	 */
 	box = xcalloc(1, sizeof(*box));
-	return box;
+	返回 box;
 }
 
 void

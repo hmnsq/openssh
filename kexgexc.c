@@ -52,14 +52,14 @@
 #include "sshbuf.h"
 #include "misc.h"
 
-static int input_kex_dh_gex_group(int, uint32_t, struct ssh *);
-static int input_kex_dh_gex_reply(int, uint32_t, struct ssh *);
+static 整数 input_kex_dh_gex_group(整数, uint32_t, struct ssh *);
+static 整数 input_kex_dh_gex_reply(整数, uint32_t, struct ssh *);
 
-int
+整数
 kexgex_client(struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
-	int r;
+	整数 r;
 	u_int nbits;
 
 	nbits = dh_estimate(kex->dh_need * 8);
@@ -67,10 +67,10 @@ kexgex_client(struct ssh *ssh)
 	kex->min = DH_GRP_MIN;
 	kex->max = DH_GRP_MAX;
 	kex->nbits = nbits;
-	if (ssh->compat & SSH_BUG_DHGEX_LARGE)
+	如果 (ssh->compat & SSH_BUG_DHGEX_LARGE)
 		kex->nbits = MINIMUM(kex->nbits, 4096);
 	/* New GEX request */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST)) != 0 ||
+	如果 ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_REQUEST)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->min)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->nbits)) != 0 ||
 	    (r = sshpkt_put_u32(ssh, kex->max)) != 0 ||
@@ -87,40 +87,40 @@ kexgex_client(struct ssh *ssh)
 	    &input_kex_dh_gex_group);
 	r = 0;
  out:
-	return r;
+	返回 r;
 }
 
-static int
-input_kex_dh_gex_group(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_kex_dh_gex_group(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
 	BIGNUM *p = NULL, *g = NULL;
 	const BIGNUM *pub_key;
-	int r, bits;
+	整数 r, bits;
 
 	debug("SSH2_MSG_KEX_DH_GEX_GROUP received");
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_GROUP, &kex_protocol_error);
 
-	if ((r = sshpkt_get_bignum2(ssh, &p)) != 0 ||
+	如果 ((r = sshpkt_get_bignum2(ssh, &p)) != 0 ||
 	    (r = sshpkt_get_bignum2(ssh, &g)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		goto out;
-	if ((bits = BN_num_bits(p)) < 0 ||
+	如果 ((bits = BN_num_bits(p)) < 0 ||
 	    (u_int)bits < kex->min || (u_int)bits > kex->max) {
 		r = SSH_ERR_DH_GEX_OUT_OF_RANGE;
 		goto out;
 	}
-	if ((kex->dh = dh_new_group(g, p)) == NULL) {
+	如果 ((kex->dh = dh_new_group(g, p)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	p = g = NULL; /* belong to kex->dh now */
 
 	/* generate and send 'e', client DH public key */
-	if ((r = dh_gen_key(kex->dh, kex->we_need * 8)) != 0)
+	如果 ((r = dh_gen_key(kex->dh, kex->we_need * 8)) != 0)
 		goto out;
 	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_INIT)) != 0 ||
+	如果 ((r = sshpkt_start(ssh, SSH2_MSG_KEX_DH_GEX_INIT)) != 0 ||
 	    (r = sshpkt_put_bignum2(ssh, pub_key)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
 		goto out;
@@ -137,11 +137,11 @@ input_kex_dh_gex_group(int type, uint32_t seq, struct ssh *ssh)
 out:
 	BN_clear_free(p);
 	BN_clear_free(g);
-	return r;
+	返回 r;
 }
 
-static int
-input_kex_dh_gex_reply(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_kex_dh_gex_reply(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	struct kex *kex = ssh->kex;
 	BIGNUM *dh_server_pub = NULL;
@@ -152,42 +152,42 @@ input_kex_dh_gex_reply(int type, uint32_t seq, struct ssh *ssh)
 	u_char *signature = NULL;
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t slen, hashlen;
-	int r;
+	整数 r;
 
 	debug("SSH2_MSG_KEX_DH_GEX_REPLY received");
 	ssh_dispatch_set(ssh, SSH2_MSG_KEX_DH_GEX_REPLY, &kex_protocol_error);
 
 	/* key, cert */
-	if ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
+	如果 ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
 		goto out;
 	/* sshkey_fromb() consumes its buffer, so make a copy */
-	if ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
+	如果 ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
+	如果 ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
 	    kex->hostkey_alg, NULL)) != 0 ||
 	    (r = kex_verify_host_key(ssh, server_host_key)) != 0)
 		goto out;
 	/* DH parameter f, server public DH key, signed H */
-	if ((r = sshpkt_get_bignum2(ssh, &dh_server_pub)) != 0 ||
+	如果 ((r = sshpkt_get_bignum2(ssh, &dh_server_pub)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &signature, &slen)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		goto out;
-	if ((shared_secret = sshbuf_new()) == NULL) {
+	如果 ((shared_secret = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = kex_dh_compute_key(kex, dh_server_pub, shared_secret)) != 0)
+	如果 ((r = kex_dh_compute_key(kex, dh_server_pub, shared_secret)) != 0)
 		goto out;
-	if (ssh->compat & SSH_OLD_DHGEX)
+	如果 (ssh->compat & SSH_OLD_DHGEX)
 		kex->min = kex->max = -1;
 
 	/* calc and verify H */
 	DH_get0_key(kex->dh, &pub_key, NULL);
 	DH_get0_pqg(kex->dh, &dh_p, NULL, &dh_g);
 	hashlen = sizeof(hash);
-	if ((r = kexgex_hash(
+	如果 ((r = kexgex_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
@@ -202,25 +202,25 @@ input_kex_dh_gex_reply(int type, uint32_t seq, struct ssh *ssh)
 	    hash, &hashlen)) != 0)
 		goto out;
 
-	if ((r = sshkey_verify(server_host_key, signature, slen, hash,
+	如果 ((r = sshkey_verify(server_host_key, signature, slen, hash,
 	    hashlen, kex->hostkey_alg, ssh->compat, NULL)) != 0)
 		goto out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	如果 ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
 		goto out;
 
 	/* save initial signature and hostkey */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
+	如果 ((kex->flags & KEX_INITIAL) != 0) {
+		如果 (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
 			r = SSH_ERR_INTERNAL_ERROR;
 			goto out;
 		}
-		if ((kex->initial_sig = sshbuf_new()) == NULL) {
+		如果 ((kex->initial_sig = sshbuf_new()) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
-		if ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
+		如果 ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
 			goto out;
 		kex->initial_hostkey = server_host_key;
 		server_host_key = NULL;
@@ -236,6 +236,6 @@ input_kex_dh_gex_reply(int type, uint32_t seq, struct ssh *ssh)
 	sshbuf_free(tmp);
 	sshbuf_free(server_host_key_blob);
 	free(signature);
-	return r;
+	返回 r;
 }
 #endif /* WITH_OPENSSL */

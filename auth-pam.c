@@ -61,7 +61,7 @@
 #include <unistd.h>
 
 #ifdef USE_PAM
-#if defined(HAVE_SECURITY_PAM_APPL_H)
+#如果 defined(HAVE_SECURITY_PAM_APPL_H)
 #include <security/pam_appl.h>
 #elif defined (HAVE_PAM_PAM_APPL_H)
 #include <pam/pam_appl.h>
@@ -70,14 +70,14 @@
 /* OpenGroup RFC86.0 and XSSO specify no "const" on arguments */
 #ifdef PAM_SUN_CODEBASE
 # define sshpam_const		/* Solaris, HP-UX, SunOS */
-#else
+#否则
 # define sshpam_const	const	/* LinuxPAM, OpenPAM, AIX */
 #endif
 
 /* Ambiguity in spec: is it an array of pointers or a pointer to an array? */
 #ifdef PAM_SUN_CODEBASE
 # define PAM_MSG_MEMBER(msg, n, member) ((*(msg))[(n)].member)
-#else
+#否则
 # define PAM_MSG_MEMBER(msg, n, member) ((msg)[(n)]->member)
 #endif
 
@@ -123,7 +123,7 @@ extern u_int utmp_len;
  * (e.g. Linux)
  */
 typedef pthread_t sp_pthread_t;
-#else
+#否则
 typedef pid_t sp_pthread_t;
 #define pthread_exit	fake_pthread_exit
 #define pthread_create	fake_pthread_create
@@ -131,7 +131,7 @@ typedef pid_t sp_pthread_t;
 #define pthread_join	fake_pthread_join
 #endif
 
-typedef int SshPamDone;
+typedef 整数 SshPamDone;
 #define SshPamError -1
 #define SshPamNone 0
 #define SshPamAuthenticated 1
@@ -139,8 +139,8 @@ typedef int SshPamDone;
 
 struct pam_ctxt {
 	sp_pthread_t	 pam_thread;
-	int		 pam_psock;
-	int		 pam_csock;
+	整数		 pam_psock;
+	整数		 pam_csock;
 	SshPamDone	 pam_done;
 };
 
@@ -152,32 +152,32 @@ static struct pam_ctxt *cleanup_ctxt;
  * Simulate threads with processes.
  */
 
-static int sshpam_thread_status = -1;
+static 整数 sshpam_thread_status = -1;
 static sshsig_t sshpam_oldsig;
 
 static void
-sshpam_sigchld_handler(int sig)
+sshpam_sigchld_handler(整数 sig)
 {
 	ssh_signal(SIGCHLD, SIG_DFL);
-	if (cleanup_ctxt == NULL)
-		return;	/* handler called after PAM cleanup, shouldn't happen */
-	if (waitpid(cleanup_ctxt->pam_thread, &sshpam_thread_status, WNOHANG)
+	如果 (cleanup_ctxt == NULL)
+		返回;	/* handler called after PAM cleanup, shouldn't happen */
+	如果 (waitpid(cleanup_ctxt->pam_thread, &sshpam_thread_status, WNOHANG)
 	    <= 0) {
 		/* PAM thread has not exited, privsep slave must have */
 		kill(cleanup_ctxt->pam_thread, SIGTERM);
-		while (waitpid(cleanup_ctxt->pam_thread,
+		当 (waitpid(cleanup_ctxt->pam_thread,
 		    &sshpam_thread_status, 0) == -1) {
-			if (errno == EINTR)
+			如果 (errno == EINTR)
 				continue;
-			return;
+			返回;
 		}
 	}
-	if (sshpam_thread_status == -1)
-		return;
-	if (WIFSIGNALED(sshpam_thread_status)) {
-		if (signal_is_crash(WTERMSIG(sshpam_thread_status)))
+	如果 (sshpam_thread_status == -1)
+		返回;
+	如果 (WIFSIGNALED(sshpam_thread_status)) {
+		如果 (signal_is_crash(WTERMSIG(sshpam_thread_status)))
 			_exit(EXIT_CHILD_CRASH);
-	} else if (!WIFEXITED(sshpam_thread_status))
+	} 否则 如果 (!WIFEXITED(sshpam_thread_status))
 		_exit(EXIT_CHILD_CRASH);
 }
 
@@ -189,7 +189,7 @@ pthread_exit(void *value)
 }
 
 /* ARGSUSED */
-static int
+static 整数
 pthread_create(sp_pthread_t *thread, const void *attr,
     void *(*thread_start)(void *), void *arg)
 {
@@ -200,7 +200,7 @@ pthread_create(sp_pthread_t *thread, const void *attr,
 	switch ((pid = fork())) {
 	case -1:
 		error("fork(): %s", strerror(errno));
-		return errno;
+		返回 errno;
 	case 0:
 		close(ctx->pam_psock);
 		ctx->pam_psock = -1;
@@ -211,44 +211,44 @@ pthread_create(sp_pthread_t *thread, const void *attr,
 		close(ctx->pam_csock);
 		ctx->pam_csock = -1;
 		sshpam_oldsig = ssh_signal(SIGCHLD, sshpam_sigchld_handler);
-		return (0);
+		返回 (0);
 	}
 }
 
-static int
+static 整数
 pthread_cancel(sp_pthread_t thread)
 {
 	ssh_signal(SIGCHLD, sshpam_oldsig);
-	return (kill(thread, SIGTERM));
+	返回 (kill(thread, SIGTERM));
 }
 
 /* ARGSUSED */
-static int
+static 整数
 pthread_join(sp_pthread_t thread, void **value)
 {
-	int status;
+	整数 status;
 
-	if (sshpam_thread_status != -1)
-		return (sshpam_thread_status);
+	如果 (sshpam_thread_status != -1)
+		返回 (sshpam_thread_status);
 	ssh_signal(SIGCHLD, sshpam_oldsig);
-	while (waitpid(thread, &status, 0) == -1) {
-		if (errno == EINTR)
+	当 (waitpid(thread, &status, 0) == -1) {
+		如果 (errno == EINTR)
 			continue;
 		fatal_f("waitpid: %s", strerror(errno));
 	}
-	return (status);
+	返回 (status);
 }
 #endif
 
 
 static pam_handle_t *sshpam_handle = NULL;
 static char *sshpam_initial_user;
-static int sshpam_err = 0;
-static int sshpam_authenticated = 0;
-static int sshpam_session_open = 0;
-static int sshpam_cred_established = 0;
-static int sshpam_account_status = -1;
-static int sshpam_maxtries_reached = 0;
+static 整数 sshpam_err = 0;
+static 整数 sshpam_authenticated = 0;
+static 整数 sshpam_session_open = 0;
+static 整数 sshpam_cred_established = 0;
+static 整数 sshpam_account_status = -1;
+static 整数 sshpam_maxtries_reached = 0;
 static char **sshpam_env = NULL;
 static Authctxt *sshpam_authctxt = NULL;
 static const char *sshpam_password = NULL;
@@ -265,41 +265,41 @@ pam_getenvlist(pam_handle_t *pamh)
 	 * for platforms without pam_getenvlist by searching for known
 	 * env vars (e.g. KRB5CCNAME) from the PAM environment.
 	 */
-	 return NULL;
+	 返回 NULL;
 }
 #endif
 
 #ifndef HAVE_PAM_PUTENV
-static int
+static 整数
 pam_putenv(pam_handle_t *pamh, const char *name_value)
 {
-	return PAM_SUCCESS;
+	返回 PAM_SUCCESS;
 }
 #endif /* HAVE_PAM_PUTENV */
 
 static void
-sshpam_password_change_required(int reqd)
+sshpam_password_change_required(整数 reqd)
 {
 	extern struct sshauthopt *auth_opts;
-	static int saved_port, saved_agent, saved_x11;
+	static 整数 saved_port, saved_agent, saved_x11;
 
 	debug3_f("reqd=%d", reqd);
-	if (sshpam_authctxt == NULL)
+	如果 (sshpam_authctxt == NULL)
 		fatal_f("PAM authctxt not initialized");
 	sshpam_authctxt->force_pwchange = reqd;
-	if (reqd) {
+	如果 (reqd) {
 		saved_port = auth_opts->permit_port_forwarding_flag;
 		saved_agent = auth_opts->permit_agent_forwarding_flag;
 		saved_x11 = auth_opts->permit_x11_forwarding_flag;
 		auth_opts->permit_port_forwarding_flag = 0;
 		auth_opts->permit_agent_forwarding_flag = 0;
 		auth_opts->permit_x11_forwarding_flag = 0;
-	} else {
-		if (saved_port)
+	} 否则 {
+		如果 (saved_port)
 			auth_opts->permit_port_forwarding_flag = saved_port;
-		if (saved_agent)
+		如果 (saved_agent)
 			auth_opts->permit_agent_forwarding_flag = saved_agent;
-		if (saved_x11)
+		如果 (saved_x11)
 			auth_opts->permit_x11_forwarding_flag = saved_x11;
 	}
 }
@@ -310,49 +310,49 @@ import_environments(struct sshbuf *b)
 {
 	char *env;
 	u_int n, i, num_env;
-	int r;
+	整数 r;
 
 	debug3_f("entering");
 
 #ifndef UNSUPPORTED_POSIX_THREADS_HACK
 	/* Import variables set by do_pam_account */
-	if ((r = sshbuf_get_u32(b, &n)) != 0)
+	如果 ((r = sshbuf_get_u32(b, &n)) != 0)
 		fatal_fr(r, "buffer error");
-	if (n > INT_MAX)
+	如果 (n > INT_MAX)
 		fatal_f("invalid PAM account status %u", n);
-	sshpam_account_status = (int)n;
-	if ((r = sshbuf_get_u32(b, &n)) != 0)
+	sshpam_account_status = (整数)n;
+	如果 ((r = sshbuf_get_u32(b, &n)) != 0)
 		fatal_fr(r, "buffer error");
 	sshpam_password_change_required(n != 0);
 
 	/* Import environment from subprocess */
-	if ((r = sshbuf_get_u32(b, &num_env)) != 0)
+	如果 ((r = sshbuf_get_u32(b, &num_env)) != 0)
 		fatal_fr(r, "buffer error");
-	if (num_env > 1024) {
+	如果 (num_env > 1024) {
 		fatal_f("received %u environment variables, expected <= 1024",
 		    num_env);
 	}
 	sshpam_env = xcalloc(num_env + 1, sizeof(*sshpam_env));
 	debug3("PAM: num env strings %u", num_env);
-	for(i = 0; i < num_env; i++) {
-		if ((r = sshbuf_get_cstring(b, &(sshpam_env[i]), NULL)) != 0)
+	为(i = 0; i < num_env; i++) {
+		如果 ((r = sshbuf_get_cstring(b, &(sshpam_env[i]), NULL)) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	sshpam_env[num_env] = NULL;
 
 	/* Import PAM environment from subprocess */
-	if ((r = sshbuf_get_u32(b, &num_env)) != 0)
+	如果 ((r = sshbuf_get_u32(b, &num_env)) != 0)
 		fatal_fr(r, "buffer error");
-	if (num_env > 1024) {
+	如果 (num_env > 1024) {
 		fatal_f("received %u PAM env variables, expected <= 1024",
 		    num_env);
 	}
 	debug("PAM: num PAM env strings %u", num_env);
-	for (i = 0; i < num_env; i++) {
-		if ((r = sshbuf_get_cstring(b, &env, NULL)) != 0)
+	为 (i = 0; i < num_env; i++) {
+		如果 ((r = sshbuf_get_cstring(b, &env, NULL)) != 0)
 			fatal_fr(r, "buffer error");
 		/* Errors are not fatal here */
-		if ((r = pam_putenv(sshpam_handle, env)) != PAM_SUCCESS) {
+		如果 ((r = pam_putenv(sshpam_handle, env)) != PAM_SUCCESS) {
 			error("PAM: pam_putenv: %s",
 			    pam_strerror(sshpam_handle, r));
 		}
@@ -368,54 +368,54 @@ import_environments(struct sshbuf *b)
 /*
  * Conversation function for authentication thread.
  */
-static int
-sshpam_thread_conv(int n, sshpam_const struct pam_message **msg,
+static 整数
+sshpam_thread_conv(整数 n, sshpam_const struct pam_message **msg,
     struct pam_response **resp, void *data)
 {
 	struct sshbuf *buffer;
 	struct pam_ctxt *ctxt;
 	struct pam_response *reply;
-	int r, i;
+	整数 r, i;
 	u_char status;
 
 	debug3_f("PAM: entering, %d messages", n);
 	*resp = NULL;
 
-	if (data == NULL) {
+	如果 (data == NULL) {
 		error("PAM: conversation function passed a null context");
-		return (PAM_CONV_ERR);
+		返回 (PAM_CONV_ERR);
 	}
 	ctxt = data;
-	if (n <= 0 || n > PAM_MAX_NUM_MSG)
-		return (PAM_CONV_ERR);
+	如果 (n <= 0 || n > PAM_MAX_NUM_MSG)
+		返回 (PAM_CONV_ERR);
 
-	if ((reply = calloc(n, sizeof(*reply))) == NULL)
-		return PAM_CONV_ERR;
-	if ((buffer = sshbuf_new()) == NULL) {
+	如果 ((reply = calloc(n, sizeof(*reply))) == NULL)
+		返回 PAM_CONV_ERR;
+	如果 ((buffer = sshbuf_new()) == NULL) {
 		free(reply);
-		return PAM_CONV_ERR;
+		返回 PAM_CONV_ERR;
 	}
 
-	for (i = 0; i < n; ++i) {
+	为 (i = 0; i < n; ++i) {
 		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
 		case PAM_PROMPT_ECHO_OFF:
 		case PAM_PROMPT_ECHO_ON:
-			if ((r = sshbuf_put_cstring(buffer,
+			如果 ((r = sshbuf_put_cstring(buffer,
 			    PAM_MSG_MEMBER(msg, i, msg))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			if (ssh_msg_send(ctxt->pam_csock,
+			如果 (ssh_msg_send(ctxt->pam_csock,
 			    PAM_MSG_MEMBER(msg, i, msg_style), buffer) == -1)
 				goto fail;
 
-			if (ssh_msg_recv(ctxt->pam_csock, buffer) == -1)
+			如果 (ssh_msg_recv(ctxt->pam_csock, buffer) == -1)
 				goto fail;
-			if ((r = sshbuf_get_u8(buffer, &status)) != 0)
+			如果 ((r = sshbuf_get_u8(buffer, &status)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			if (status != PAM_AUTHTOK)
+			如果 (status != PAM_AUTHTOK)
 				goto fail;
-			if ((r = sshbuf_get_cstring(buffer,
+			如果 ((r = sshbuf_get_cstring(buffer,
 			    &reply[i].resp, NULL)) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
@@ -425,11 +425,11 @@ sshpam_thread_conv(int n, sshpam_const struct pam_message **msg,
 			debug3("PAM: Got message of type %d: %s",
 			       PAM_MSG_MEMBER(msg, i, msg_style),
 			       PAM_MSG_MEMBER(msg, i, msg));
-			if ((r = sshbuf_put_cstring(buffer,
+			如果 ((r = sshbuf_put_cstring(buffer,
 			    PAM_MSG_MEMBER(msg, i, msg))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
-			if (ssh_msg_send(ctxt->pam_csock,
+			如果 (ssh_msg_send(ctxt->pam_csock,
 			    PAM_MSG_MEMBER(msg, i, msg_style), buffer) == -1)
 				goto fail;
 			break;
@@ -440,43 +440,43 @@ sshpam_thread_conv(int n, sshpam_const struct pam_message **msg,
 	}
 	sshbuf_free(buffer);
 	*resp = reply;
-	return (PAM_SUCCESS);
+	返回 (PAM_SUCCESS);
 
  fail:
-	for(i = 0; i < n; i++) {
+	为(i = 0; i < n; i++) {
 		free(reply[i].resp);
 	}
 	free(reply);
 	sshbuf_free(buffer);
-	return (PAM_CONV_ERR);
+	返回 (PAM_CONV_ERR);
 }
 
-static int
+static 整数
 check_pam_user(Authctxt *authctxt)
 {
 	const char *pam_user;
 
-	if (authctxt == NULL || authctxt->pw == NULL ||
+	如果 (authctxt == NULL || authctxt->pw == NULL ||
 	    authctxt->pw->pw_name == NULL)
 		fatal_f("PAM authctxt user not initialized");
 
-	if ((sshpam_err = pam_get_item(sshpam_handle, PAM_USER,
+	如果 ((sshpam_err = pam_get_item(sshpam_handle, PAM_USER,
 	    (sshpam_const void **) &pam_user)) != PAM_SUCCESS)
-		return sshpam_err;
+		返回 sshpam_err;
 
-	if (pam_user == NULL) {
+	如果 (pam_user == NULL) {
 		debug("PAM error: PAM_USER is NULL");
-		return PAM_USER_UNKNOWN;
+		返回 PAM_USER_UNKNOWN;
 	}
 
-	if (sshpam_initial_user == NULL)
+	如果 (sshpam_initial_user == NULL)
 		fatal_f("internal error: sshpam_initial_user NULL");
-	if (strcmp(sshpam_initial_user, pam_user) != 0) {
+	如果 (strcmp(sshpam_initial_user, pam_user) != 0) {
 		error_f("PAM user \"%s\" does not match previous \"%s\"",
 		      pam_user, sshpam_initial_user);
-		return PAM_USER_UNKNOWN;
+		返回 PAM_USER_UNKNOWN;
 	}
-	return PAM_SUCCESS;
+	返回 PAM_SUCCESS;
 }
 
 /*
@@ -488,7 +488,7 @@ sshpam_thread(void *ctxtp)
 	struct pam_ctxt *ctxt = ctxtp;
 	struct sshbuf *buffer = NULL;
 	struct pam_conv sshpam_conv;
-	int r, flags = (options.permit_empty_passwd == 0 ?
+	整数 r, flags = (options.permit_empty_passwd == 0 ?
 	    PAM_DISALLOW_NULL_AUTHTOK : 0);
 #ifndef UNSUPPORTED_POSIX_THREADS_HACK
 	extern char **environ;
@@ -500,16 +500,16 @@ sshpam_thread(void *ctxtp)
 
 	sshpam_err = pam_get_item(sshpam_handle, PAM_USER,
 	    (sshpam_const void **)ptr_pam_user);
-	if (sshpam_err != PAM_SUCCESS)
+	如果 (sshpam_err != PAM_SUCCESS)
 		goto auth_fail;
 
 	environ[0] = NULL;
-	if (tz != NULL)
-		if (setenv("TZ", tz, 1) == -1)
+	如果 (tz != NULL)
+		如果 (setenv("TZ", tz, 1) == -1)
 			error("PAM: could not set TZ environment: %s",
 			    strerror(errno));
 
-	if (sshpam_authctxt != NULL) {
+	如果 (sshpam_authctxt != NULL) {
 		setproctitle("%s [pam]",
 		    sshpam_authctxt->valid ? pam_user : "unknown");
 	}
@@ -518,68 +518,68 @@ sshpam_thread(void *ctxtp)
 	sshpam_conv.conv = sshpam_thread_conv;
 	sshpam_conv.appdata_ptr = ctxt;
 
-	if (sshpam_authctxt == NULL)
+	如果 (sshpam_authctxt == NULL)
 		fatal_f("PAM authctxt not initialized");
 
-	if ((buffer = sshbuf_new()) == NULL)
+	如果 ((buffer = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
 	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
 	    (const void *)&sshpam_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	如果 (sshpam_err != PAM_SUCCESS)
 		goto auth_fail;
 	sshpam_err = pam_authenticate(sshpam_handle, flags);
-	if (sshpam_err == PAM_MAXTRIES)
+	如果 (sshpam_err == PAM_MAXTRIES)
 		sshpam_set_maxtries_reached(1);
-	if (sshpam_err != PAM_SUCCESS)
+	如果 (sshpam_err != PAM_SUCCESS)
 		goto auth_fail;
-	if ((sshpam_err = check_pam_user(sshpam_authctxt)) != PAM_SUCCESS)
+	如果 ((sshpam_err = check_pam_user(sshpam_authctxt)) != PAM_SUCCESS)
 		goto auth_fail;
 
-	if (!do_pam_account()) {
+	如果 (!do_pam_account()) {
 		sshpam_err = PAM_ACCT_EXPIRED;
 		goto auth_fail;
 	}
-	if (sshpam_authctxt->force_pwchange) {
+	如果 (sshpam_authctxt->force_pwchange) {
 		sshpam_err = pam_chauthtok(sshpam_handle,
 		    PAM_CHANGE_EXPIRED_AUTHTOK);
-		if (sshpam_err != PAM_SUCCESS)
+		如果 (sshpam_err != PAM_SUCCESS)
 			goto auth_fail;
 		sshpam_password_change_required(0);
 	}
 
-	if ((r = sshbuf_put_cstring(buffer, "OK")) != 0)
+	如果 ((r = sshbuf_put_cstring(buffer, "OK")) != 0)
 		fatal_fr(r, "buffer error");
 
 #ifndef UNSUPPORTED_POSIX_THREADS_HACK
 	/* Export variables set by do_pam_account */
-	if ((r = sshbuf_put_u32(buffer, sshpam_account_status)) != 0 ||
+	如果 ((r = sshbuf_put_u32(buffer, sshpam_account_status)) != 0 ||
 	    (r = sshbuf_put_u32(buffer, sshpam_authctxt->force_pwchange)) != 0)
 		fatal_fr(r, "buffer error");
 
 	/* Export any environment strings set in child */
-	for (i = 0; environ[i] != NULL; i++) {
+	为 (i = 0; environ[i] != NULL; i++) {
 		/* Count */
-		if (i > INT_MAX)
+		如果 (i > INT_MAX)
 			fatal_f("too many environment strings");
 	}
-	if ((r = sshbuf_put_u32(buffer, i)) != 0)
+	如果 ((r = sshbuf_put_u32(buffer, i)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; environ[i] != NULL; i++) {
-		if ((r = sshbuf_put_cstring(buffer, environ[i])) != 0)
+	为 (i = 0; environ[i] != NULL; i++) {
+		如果 ((r = sshbuf_put_cstring(buffer, environ[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	/* Export any environment strings set by PAM in child */
 	env_from_pam = pam_getenvlist(sshpam_handle);
-	for (i = 0; env_from_pam != NULL && env_from_pam[i] != NULL; i++) {
+	为 (i = 0; env_from_pam != NULL && env_from_pam[i] != NULL; i++) {
 		/* Count */
-		if (i > INT_MAX)
+		如果 (i > INT_MAX)
 			fatal_f("too many PAM environment strings");
 	}
-	if ((r = sshbuf_put_u32(buffer, i)) != 0)
+	如果 ((r = sshbuf_put_u32(buffer, i)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; env_from_pam != NULL && env_from_pam[i] != NULL; i++) {
-		if ((r = sshbuf_put_cstring(buffer, env_from_pam[i])) != 0)
+	为 (i = 0; env_from_pam != NULL && env_from_pam[i] != NULL; i++) {
+		如果 ((r = sshbuf_put_cstring(buffer, env_from_pam[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
 #endif /* UNSUPPORTED_POSIX_THREADS_HACK */
@@ -590,20 +590,20 @@ sshpam_thread(void *ctxtp)
 	pthread_exit(NULL);
 
  auth_fail:
-	if ((r = sshbuf_put_cstring(buffer,
+	如果 ((r = sshbuf_put_cstring(buffer,
 	    pam_strerror(sshpam_handle, sshpam_err))) != 0)
 		fatal_fr(r, "buffer error");
 	/* XXX - can't do much about an error here */
-	if (sshpam_err == PAM_ACCT_EXPIRED)
+	如果 (sshpam_err == PAM_ACCT_EXPIRED)
 		ssh_msg_send(ctxt->pam_csock, PAM_ACCT_EXPIRED, buffer);
-	else if (sshpam_maxtries_reached)
+	否则 如果 (sshpam_maxtries_reached)
 		ssh_msg_send(ctxt->pam_csock, PAM_MAXTRIES, buffer);
-	else
+	否则
 		ssh_msg_send(ctxt->pam_csock, PAM_AUTH_ERR, buffer);
 	sshbuf_free(buffer);
 	pthread_exit(NULL);
 
-	return (NULL); /* Avoid warning for non-pthread case */
+	返回 (NULL); /* Avoid warning for non-pthread case */
 }
 
 void
@@ -612,7 +612,7 @@ sshpam_thread_cleanup(void)
 	struct pam_ctxt *ctxt = cleanup_ctxt;
 
 	debug3_f("entering");
-	if (ctxt != NULL && ctxt->pam_thread != 0) {
+	如果 (ctxt != NULL && ctxt->pam_thread != 0) {
 		pthread_cancel(ctxt->pam_thread);
 		pthread_join(ctxt->pam_thread, NULL);
 		close(ctxt->pam_psock);
@@ -622,37 +622,37 @@ sshpam_thread_cleanup(void)
 	}
 }
 
-static int
-sshpam_null_conv(int n, sshpam_const struct pam_message **msg,
+static 整数
+sshpam_null_conv(整数 n, sshpam_const struct pam_message **msg,
     struct pam_response **resp, void *data)
 {
 	debug3_f("PAM: entering, %d messages", n);
-	return (PAM_CONV_ERR);
+	返回 (PAM_CONV_ERR);
 }
 
 static struct pam_conv null_conv = { sshpam_null_conv, NULL };
 
-static int
-sshpam_store_conv(int n, sshpam_const struct pam_message **msg,
+static 整数
+sshpam_store_conv(整数 n, sshpam_const struct pam_message **msg,
     struct pam_response **resp, void *data)
 {
 	struct pam_response *reply;
-	int r, i;
+	整数 r, i;
 
 	debug3_f("PAM: called with %d messages", n);
 	*resp = NULL;
 
-	if (n <= 0 || n > PAM_MAX_NUM_MSG)
-		return (PAM_CONV_ERR);
+	如果 (n <= 0 || n > PAM_MAX_NUM_MSG)
+		返回 (PAM_CONV_ERR);
 
-	if ((reply = calloc(n, sizeof(*reply))) == NULL)
-		return (PAM_CONV_ERR);
+	如果 ((reply = calloc(n, sizeof(*reply))) == NULL)
+		返回 (PAM_CONV_ERR);
 
-	for (i = 0; i < n; ++i) {
+	为 (i = 0; i < n; ++i) {
 		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
 		case PAM_ERROR_MSG:
 		case PAM_TEXT_INFO:
-			if ((r = sshbuf_putf(loginmsg, "%s\n",
+			如果 ((r = sshbuf_putf(loginmsg, "%s\n",
 			    PAM_MSG_MEMBER(msg, i, msg))) != 0)
 				fatal("%s: buffer error: %s",
 				    __func__, ssh_err(r));
@@ -663,14 +663,14 @@ sshpam_store_conv(int n, sshpam_const struct pam_message **msg,
 		}
 	}
 	*resp = reply;
-	return (PAM_SUCCESS);
+	返回 (PAM_SUCCESS);
 
  fail:
-	for(i = 0; i < n; i++) {
+	为(i = 0; i < n; i++) {
 		free(reply[i].resp);
 	}
 	free(reply);
-	return (PAM_CONV_ERR);
+	返回 (PAM_CONV_ERR);
 }
 
 static struct pam_conv store_conv = { sshpam_store_conv, NULL };
@@ -678,16 +678,16 @@ static struct pam_conv store_conv = { sshpam_store_conv, NULL };
 void
 sshpam_cleanup(void)
 {
-	if (sshpam_handle == NULL || !mm_is_monitor())
-		return;
+	如果 (sshpam_handle == NULL || !mm_is_monitor())
+		返回;
 	debug("PAM: cleanup");
 	pam_set_item(sshpam_handle, PAM_CONV, (const void *)&null_conv);
-	if (sshpam_session_open) {
+	如果 (sshpam_session_open) {
 		debug("PAM: closing session");
 		pam_close_session(sshpam_handle, PAM_SILENT);
 		sshpam_session_open = 0;
 	}
-	if (sshpam_cred_established) {
+	如果 (sshpam_cred_established) {
 		debug("PAM: deleting credentials");
 		pam_setcred(sshpam_handle, PAM_DELETE_CRED);
 		sshpam_cred_established = 0;
@@ -699,27 +699,27 @@ sshpam_cleanup(void)
 	sshpam_initial_user = NULL;
 }
 
-static int
+static 整数
 sshpam_init(struct ssh *ssh, Authctxt *authctxt)
 {
 	const char *user = authctxt->user;
-	int r;
+	整数 r;
 
-	if (options.pam_service_name == NULL)
+	如果 (options.pam_service_name == NULL)
 		fatal_f("internal error: NULL PAM service name");
-#if defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_SIZE)
+#如果 defined(PAM_SUN_CODEBASE) && defined(PAM_MAX_RESP_SIZE)
 	/* Protect buggy PAM implementations from excessively long usernames */
-	if (strlen(user) >= PAM_MAX_RESP_SIZE)
+	如果 (strlen(user) >= PAM_MAX_RESP_SIZE)
 		fatal("Username too long from %s port %d",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 #endif
-	if (sshpam_handle == NULL && ssh == NULL)
+	如果 (sshpam_handle == NULL && ssh == NULL)
 		fatal("%s: called initially with no packet context", __func__);
-	if (sshpam_handle != NULL) {
+	如果 (sshpam_handle != NULL) {
 		/* We already have a PAM context; check if the user matches */
-		if ((sshpam_err = check_pam_user(authctxt)) != PAM_SUCCESS)
+		如果 ((sshpam_err = check_pam_user(authctxt)) != PAM_SUCCESS)
 			fatal("PAM user mismatch");
-		return 0;
+		返回 0;
 	}
 	debug("PAM: initializing for \"%s\" with service \"%s\"", user,
 	    options.pam_service_name);
@@ -728,13 +728,13 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
 	sshpam_initial_user = xstrdup(user);
 	sshpam_authctxt = authctxt;
 
-	if (sshpam_err != PAM_SUCCESS) {
+	如果 (sshpam_err != PAM_SUCCESS) {
 		pam_end(sshpam_handle, sshpam_err);
 		sshpam_handle = NULL;
-		return (-1);
+		返回 (-1);
 	}
 
-	if (ssh != NULL && sshpam_rhost == NULL) {
+	如果 (ssh != NULL && sshpam_rhost == NULL) {
 		/*
 		 * We need to cache these as we don't have packet context
 		 * during the kbdint flow.
@@ -744,24 +744,24 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
 		sshpam_laddr = get_local_ipaddr(
 		    ssh_packet_get_connection_in(ssh));
 	}
-	if (sshpam_rhost != NULL && strcmp(sshpam_rhost, "UNKNOWN") != 0) {
+	如果 (sshpam_rhost != NULL && strcmp(sshpam_rhost, "UNKNOWN") != 0) {
 		debug("PAM: setting PAM_RHOST to \"%s\"", sshpam_rhost);
 		sshpam_err = pam_set_item(sshpam_handle, PAM_RHOST,
 		    sshpam_rhost);
-		if (sshpam_err != PAM_SUCCESS) {
+		如果 (sshpam_err != PAM_SUCCESS) {
 			pam_end(sshpam_handle, sshpam_err);
 			sshpam_handle = NULL;
-			return (-1);
+			返回 (-1);
 		}
 	}
-	if (ssh != NULL && sshpam_laddr != NULL) {
+	如果 (ssh != NULL && sshpam_laddr != NULL) {
 		char *conninfo;
 
 		/* Put SSH_CONNECTION in the PAM environment too */
 		xasprintf(&conninfo, "SSH_CONNECTION=%.50s %d %.50s %d",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh),
 		    sshpam_laddr, ssh_local_port(ssh));
-		if ((r = pam_putenv(sshpam_handle, conninfo)) != PAM_SUCCESS)
+		如果 ((r = pam_putenv(sshpam_handle, conninfo)) != PAM_SUCCESS)
 			logit("pam_putenv: %s", pam_strerror(sshpam_handle, r));
 		free(conninfo);
 	}
@@ -774,13 +774,13 @@ sshpam_init(struct ssh *ssh, Authctxt *authctxt)
 	 */
 	debug("PAM: setting PAM_TTY to \"ssh\"");
 	sshpam_err = pam_set_item(sshpam_handle, PAM_TTY, "ssh");
-	if (sshpam_err != PAM_SUCCESS) {
+	如果 (sshpam_err != PAM_SUCCESS) {
 		pam_end(sshpam_handle, sshpam_err);
 		sshpam_handle = NULL;
-		return (-1);
+		返回 (-1);
 	}
 #endif
-	return (0);
+	返回 (0);
 }
 
 static void
@@ -793,9 +793,9 @@ expose_authinfo(const char *caller)
 	 * The environment variable is versioned. Please increment the
 	 * version suffix if the format of session_info changes.
 	 */
-	if (sshpam_authctxt->session_info == NULL)
+	如果 (sshpam_authctxt->session_info == NULL)
 		auth_info = xstrdup("");
-	else if ((auth_info = sshbuf_dup_string(
+	否则 如果 ((auth_info = sshbuf_dup_string(
 	    sshpam_authctxt->session_info)) == NULL)
 		fatal_f("sshbuf_dup_string failed");
 
@@ -808,47 +808,47 @@ static void *
 sshpam_init_ctx(Authctxt *authctxt)
 {
 	struct pam_ctxt *ctxt;
-	int result, socks[2];
+	整数 result, socks[2];
 
 	debug3_f("entering");
 	/*
 	 * Refuse to start if we don't have PAM enabled or do_pam_account
 	 * has previously failed.
 	 */
-	if (!options.use_pam || sshpam_account_status == 0)
-		return NULL;
+	如果 (!options.use_pam || sshpam_account_status == 0)
+		返回 NULL;
 
 	/* Initialize PAM */
-	if (sshpam_init(NULL, authctxt) == -1) {
+	如果 (sshpam_init(NULL, authctxt) == -1) {
 		error("PAM: initialization failed");
-		return (NULL);
+		返回 (NULL);
 	}
 
 	expose_authinfo(__func__);
 	ctxt = xcalloc(1, sizeof *ctxt);
 
 	/* Start the authentication thread */
-	if (socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC, socks) == -1) {
+	如果 (socketpair(AF_UNIX, SOCK_STREAM, PF_UNSPEC, socks) == -1) {
 		error("PAM: failed create sockets: %s", strerror(errno));
 		free(ctxt);
-		return (NULL);
+		返回 (NULL);
 	}
 	ctxt->pam_psock = socks[0];
 	ctxt->pam_csock = socks[1];
 	result = pthread_create(&ctxt->pam_thread, NULL, sshpam_thread, ctxt);
-	if (result != 0) {
+	如果 (result != 0) {
 		error("PAM: failed to start authentication thread: %s",
 		    strerror(result));
 		close(socks[0]);
 		close(socks[1]);
 		free(ctxt);
-		return (NULL);
+		返回 (NULL);
 	}
 	cleanup_ctxt = ctxt;
-	return (ctxt);
+	返回 (ctxt);
 }
 
-static int
+static 整数
 sshpam_query(void *ctx, char **name, char **info,
     u_int *num, char ***prompts, u_int **echo_on)
 {
@@ -857,10 +857,10 @@ sshpam_query(void *ctx, char **name, char **info,
 	u_char type;
 	char *msg;
 	size_t mlen, nmesg = 0;
-	int r;
+	整数 r;
 
 	debug3_f("entering");
-	if ((buffer = sshbuf_new()) == NULL)
+	如果 ((buffer = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	*name = xstrdup("");
 	*info = xstrdup("");
@@ -868,10 +868,10 @@ sshpam_query(void *ctx, char **name, char **info,
 	*num = 0;
 	ctxt->pam_done = SshPamNone;
 
-	while (ssh_msg_recv(ctxt->pam_psock, buffer) == 0) {
-		if (++nmesg > PAM_MAX_NUM_MSG)
+	当 (ssh_msg_recv(ctxt->pam_psock, buffer) == 0) {
+		如果 (++nmesg > PAM_MAX_NUM_MSG)
 			fatal_f("too many query messages");
-		if ((r = sshbuf_get_u8(buffer, &type)) != 0 ||
+		如果 ((r = sshbuf_get_u8(buffer, &type)) != 0 ||
 		    (r = sshbuf_get_cstring(buffer, &msg, &mlen)) != 0)
 			fatal_fr(r, "buffer error");
 		switch (type) {
@@ -883,7 +883,7 @@ sshpam_query(void *ctx, char **name, char **info,
 			(*echo_on)[0] = (type == PAM_PROMPT_ECHO_ON);
 			*num = 1;
 			sshbuf_free(buffer);
-			return (0);
+			返回 (0);
 		case PAM_ERROR_MSG:
 		case PAM_TEXT_INFO:
 			free(*info);
@@ -891,20 +891,20 @@ sshpam_query(void *ctx, char **name, char **info,
 			msg = NULL;
 			ctxt->pam_done = SshPamAgain;
 			sshbuf_free(buffer);
-			return (0);
+			返回 (0);
 		case PAM_ACCT_EXPIRED:
 		case PAM_MAXTRIES:
-			if (type == PAM_ACCT_EXPIRED)
+			如果 (type == PAM_ACCT_EXPIRED)
 				sshpam_account_status = 0;
-			if (type == PAM_MAXTRIES)
+			如果 (type == PAM_MAXTRIES)
 				sshpam_set_maxtries_reached(1);
 			/* FALLTHROUGH */
 		case PAM_AUTH_ERR:
 			debug3("PAM: %s", pam_strerror(sshpam_handle, type));
 			/* FALLTHROUGH */
 		case PAM_SUCCESS:
-			if (type == PAM_SUCCESS) {
-				if (!sshpam_authctxt->valid ||
+			如果 (type == PAM_SUCCESS) {
+				如果 (!sshpam_authctxt->valid ||
 				    (sshpam_authctxt->pw->pw_uid == 0 &&
 				    options.permit_root_login != PERMIT_YES))
 					fatal("Internal error: PAM auth "
@@ -914,7 +914,7 @@ sshpam_query(void *ctx, char **name, char **info,
 				ctxt->pam_done = SshPamAuthenticated;
 				free(msg);
 				sshbuf_free(buffer);
-				return (0);
+				返回 (0);
 			}
 			error("PAM: %s for %s%.100s from %.100s", msg,
 			    sshpam_authctxt->valid ? "" : "illegal user ",
@@ -924,11 +924,11 @@ sshpam_query(void *ctx, char **name, char **info,
 			free(msg);
 			ctxt->pam_done = SshPamError;
 			sshbuf_free(buffer);
-			return (-1);
+			返回 (-1);
 		}
 	}
 	sshbuf_free(buffer);
-	return (-1);
+	返回 (-1);
 }
 
 /*
@@ -943,61 +943,61 @@ fake_password(const char *wire_password)
 	char *ret = NULL;
 	size_t i, l = wire_password != NULL ? strlen(wire_password) : 0;
 
-	if (l >= INT_MAX)
+	如果 (l >= INT_MAX)
 		fatal_f("password length too long: %zu", l);
 
 	ret = malloc(l + 1);
-	if (ret == NULL)
-		return NULL;
-	for (i = 0; i < l; i++)
+	如果 (ret == NULL)
+		返回 NULL;
+	为 (i = 0; i < l; i++)
 		ret[i] = junk[i % (sizeof(junk) - 1)];
 	ret[i] = '\0';
-	return ret;
+	返回 ret;
 }
 
-static int
+static 整数
 sshpam_respond(void *ctx, u_int num, char **resp)
 {
 	struct sshbuf *buffer;
 	struct pam_ctxt *ctxt = ctx;
 	char *fake;
-	int r;
+	整数 r;
 
 	debug2_f("PAM: entering, %u responses", num);
 	switch (ctxt->pam_done) {
 	case SshPamAuthenticated:
 		sshpam_authenticated = 1;
-		return (0);
+		返回 (0);
 	case SshPamNone:
 		break;
 	case SshPamAgain:
-		return 1;	/* KbdintResultAgain */
+		返回 1;	/* KbdintResultAgain */
 	default:
-		return (-1);
+		返回 (-1);
 	}
-	if (num != 1) {
+	如果 (num != 1) {
 		error("PAM: expected one response, got %u", num);
-		return (-1);
+		返回 (-1);
 	}
-	if ((buffer = sshbuf_new()) == NULL)
+	如果 ((buffer = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if (sshpam_authctxt->valid &&
+	如果 (sshpam_authctxt->valid &&
 	    (sshpam_authctxt->pw->pw_uid != 0 ||
 	    options.permit_root_login == PERMIT_YES)) {
-		if ((r = sshbuf_put_cstring(buffer, *resp)) != 0)
+		如果 ((r = sshbuf_put_cstring(buffer, *resp)) != 0)
 			fatal_fr(r, "buffer error");
-	} else {
+	} 否则 {
 		fake = fake_password(*resp);
-		if ((r = sshbuf_put_cstring(buffer, fake)) != 0)
+		如果 ((r = sshbuf_put_cstring(buffer, fake)) != 0)
 			fatal_fr(r, "buffer error");
 		free(fake);
 	}
-	if (ssh_msg_send(ctxt->pam_psock, PAM_AUTHTOK, buffer) == -1) {
+	如果 (ssh_msg_send(ctxt->pam_psock, PAM_AUTHTOK, buffer) == -1) {
 		sshbuf_free(buffer);
-		return (-1);
+		返回 (-1);
 	}
 	sshbuf_free(buffer);
-	return (1);
+	返回 (1);
 }
 
 static void
@@ -1016,12 +1016,12 @@ sshpam_free_ctx(void *ctxtp)
 	 */
 }
 
-int
+整数
 sshpam_priv_kbdint_authdone(void *ctxtp)
 {
 	struct pam_ctxt *ctxt = ctxtp;
 
-	return ctxt->pam_done == SshPamAuthenticated;
+	返回 ctxt->pam_done == SshPamAuthenticated;
 }
 
 KbdintDevice sshpam_device = {
@@ -1048,10 +1048,10 @@ start_pam(struct ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
-	if (!options.use_pam)
+	如果 (!options.use_pam)
 		fatal("PAM: initialisation requested when UsePAM=no");
 
-	if (sshpam_init(ssh, authctxt) == -1)
+	如果 (sshpam_init(ssh, authctxt) == -1)
 		fatal("PAM: initialisation failed");
 }
 
@@ -1066,8 +1066,8 @@ u_int
 do_pam_account(void)
 {
 	debug_f("called");
-	if (sshpam_account_status != -1)
-		return (sshpam_account_status);
+	如果 (sshpam_account_status != -1)
+		返回 (sshpam_account_status);
 
 	expose_authinfo(__func__);
 
@@ -1075,16 +1075,16 @@ do_pam_account(void)
 	debug3("PAM: %s pam_acct_mgmt = %d (%s)", __func__, sshpam_err,
 	    pam_strerror(sshpam_handle, sshpam_err));
 
-	if (sshpam_err != PAM_SUCCESS && sshpam_err != PAM_NEW_AUTHTOK_REQD) {
+	如果 (sshpam_err != PAM_SUCCESS && sshpam_err != PAM_NEW_AUTHTOK_REQD) {
 		sshpam_account_status = 0;
-		return (sshpam_account_status);
+		返回 (sshpam_account_status);
 	}
 
-	if (sshpam_err == PAM_NEW_AUTHTOK_REQD)
+	如果 (sshpam_err == PAM_NEW_AUTHTOK_REQD)
 		sshpam_password_change_required(1);
 
 	sshpam_account_status = 1;
-	return (sshpam_account_status);
+	返回 (sshpam_account_status);
 }
 
 void
@@ -1092,19 +1092,19 @@ do_pam_setcred(void)
 {
 	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
 	    (const void *)&store_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	如果 (sshpam_err != PAM_SUCCESS)
 		fatal("PAM: failed to set PAM_CONV: %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
 	debug("PAM: establishing credentials");
 	sshpam_err = pam_setcred(sshpam_handle, PAM_ESTABLISH_CRED);
-	if (sshpam_err == PAM_SUCCESS) {
+	如果 (sshpam_err == PAM_SUCCESS) {
 		sshpam_cred_established = 1;
-		return;
+		返回;
 	}
-	if (sshpam_authenticated)
+	如果 (sshpam_authenticated)
 		fatal("PAM: pam_setcred(): %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
-	else
+	否则
 		debug("PAM: pam_setcred(): %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
 }
@@ -1118,13 +1118,13 @@ do_pam_session(struct ssh *ssh)
 
 	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
 	    (const void *)&store_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	如果 (sshpam_err != PAM_SUCCESS)
 		fatal("PAM: failed to set PAM_CONV: %s",
 		    pam_strerror(sshpam_handle, sshpam_err));
 	sshpam_err = pam_open_session(sshpam_handle, 0);
-	if (sshpam_err == PAM_SUCCESS)
+	如果 (sshpam_err == PAM_SUCCESS)
 		sshpam_session_open = 1;
-	else {
+	否则 {
 		sshpam_session_open = 0;
 		auth_restrict_session(ssh);
 		error("PAM: pam_open_session(): %s",
@@ -1133,10 +1133,10 @@ do_pam_session(struct ssh *ssh)
 
 }
 
-int
+整数
 is_pam_session_open(void)
 {
-	return sshpam_session_open;
+	返回 sshpam_session_open;
 }
 
 /*
@@ -1144,10 +1144,10 @@ is_pam_session_open(void)
  * modules can handle things like Kerberos/GSI credentials that appear
  * during the ssh authentication process.
  */
-int
+整数
 do_pam_putenv(char *name, char *value)
 {
-	int ret = 1;
+	整数 ret = 1;
 	char *compound;
 	size_t len;
 
@@ -1158,19 +1158,19 @@ do_pam_putenv(char *name, char *value)
 	ret = pam_putenv(sshpam_handle, compound);
 	free(compound);
 
-	return (ret);
+	返回 (ret);
 }
 
 char **
 fetch_pam_child_environment(void)
 {
-	return sshpam_env;
+	返回 sshpam_env;
 }
 
 char **
 fetch_pam_environment(void)
 {
-	return (pam_getenvlist(sshpam_handle));
+	返回 (pam_getenvlist(sshpam_handle));
 }
 
 void
@@ -1178,10 +1178,10 @@ free_pam_environment(char **env)
 {
 	char **envp;
 
-	if (env == NULL)
-		return;
+	如果 (env == NULL)
+		返回;
 
-	for (envp = env; *envp; envp++)
+	为 (envp = env; *envp; envp++)
 		free(*envp);
 	free(env);
 }
@@ -1191,43 +1191,43 @@ free_pam_environment(char **env)
  * echo-off prompts are for the password and stores messages for later
  * display.
  */
-static int
-sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
+static 整数
+sshpam_passwd_conv(整数 n, sshpam_const struct pam_message **msg,
     struct pam_response **resp, void *data)
 {
 	struct pam_response *reply;
-	int r, i;
+	整数 r, i;
 	size_t len;
 
 	debug3_f("PAM: called with %d messages", n);
 
 	*resp = NULL;
 
-	if (n <= 0 || n > PAM_MAX_NUM_MSG)
-		return (PAM_CONV_ERR);
+	如果 (n <= 0 || n > PAM_MAX_NUM_MSG)
+		返回 (PAM_CONV_ERR);
 
-	if ((reply = calloc(n, sizeof(*reply))) == NULL)
-		return (PAM_CONV_ERR);
+	如果 ((reply = calloc(n, sizeof(*reply))) == NULL)
+		返回 (PAM_CONV_ERR);
 
-	for (i = 0; i < n; ++i) {
+	为 (i = 0; i < n; ++i) {
 		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
 		case PAM_PROMPT_ECHO_OFF:
-			if (sshpam_password == NULL)
+			如果 (sshpam_password == NULL)
 				goto fail;
-			if ((reply[i].resp = strdup(sshpam_password)) == NULL)
+			如果 ((reply[i].resp = strdup(sshpam_password)) == NULL)
 				goto fail;
 			reply[i].resp_retcode = PAM_SUCCESS;
 			break;
 		case PAM_ERROR_MSG:
 		case PAM_TEXT_INFO:
 			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
-			if (len > 0) {
-				if ((r = sshbuf_putf(loginmsg, "%s\n",
+			如果 (len > 0) {
+				如果 ((r = sshbuf_putf(loginmsg, "%s\n",
 				    PAM_MSG_MEMBER(msg, i, msg))) != 0)
 					fatal("%s: buffer error: %s",
 					    __func__, ssh_err(r));
 			}
-			if ((reply[i].resp = strdup("")) == NULL)
+			如果 ((reply[i].resp = strdup("")) == NULL)
 				goto fail;
 			reply[i].resp_retcode = PAM_SUCCESS;
 			break;
@@ -1236,14 +1236,14 @@ sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
 		}
 	}
 	*resp = reply;
-	return (PAM_SUCCESS);
+	返回 (PAM_SUCCESS);
 
  fail:
-	for(i = 0; i < n; i++) {
+	为(i = 0; i < n; i++) {
 		free(reply[i].resp);
 	}
 	free(reply);
-	return (PAM_CONV_ERR);
+	返回 (PAM_CONV_ERR);
 }
 
 static struct pam_conv passwd_conv = { sshpam_passwd_conv, NULL };
@@ -1251,14 +1251,14 @@ static struct pam_conv passwd_conv = { sshpam_passwd_conv, NULL };
 /*
  * Attempt password authentication via PAM
  */
-int
+整数
 sshpam_auth_passwd(Authctxt *authctxt, const char *password)
 {
-	int flags = (options.permit_empty_passwd == 0 ?
+	整数 flags = (options.permit_empty_passwd == 0 ?
 	    PAM_DISALLOW_NULL_AUTHTOK : 0);
 	char *fake = NULL;
 
-	if (!options.use_pam || sshpam_handle == NULL)
+	如果 (!options.use_pam || sshpam_handle == NULL)
 		fatal("PAM: %s called when PAM disabled or failed to "
 		    "initialise.", __func__);
 
@@ -1270,13 +1270,13 @@ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
 	 * by PermitRootLogin, use an invalid password to prevent leaking
 	 * information via timing (eg if the PAM config has a delay on fail).
 	 */
-	if (!authctxt->valid || (authctxt->pw->pw_uid == 0 &&
+	如果 (!authctxt->valid || (authctxt->pw->pw_uid == 0 &&
 	    options.permit_root_login != PERMIT_YES))
 		sshpam_password = fake = fake_password(password);
 
 	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
 	    (const void *)&passwd_conv);
-	if (sshpam_err != PAM_SUCCESS)
+	如果 (sshpam_err != PAM_SUCCESS)
 		fatal("PAM: %s: failed to set PAM_CONV: %s", __func__,
 		    pam_strerror(sshpam_handle, sshpam_err));
 
@@ -1285,33 +1285,33 @@ sshpam_auth_passwd(Authctxt *authctxt, const char *password)
 	sshpam_err = pam_authenticate(sshpam_handle, flags);
 	sshpam_password = NULL;
 	free(fake);
-	if (sshpam_err == PAM_SUCCESS)
+	如果 (sshpam_err == PAM_SUCCESS)
 		sshpam_err = check_pam_user(authctxt);
-	if (sshpam_err == PAM_MAXTRIES)
+	如果 (sshpam_err == PAM_MAXTRIES)
 		sshpam_set_maxtries_reached(1);
-	if (sshpam_err == PAM_SUCCESS && authctxt->valid) {
+	如果 (sshpam_err == PAM_SUCCESS && authctxt->valid) {
 		debug("PAM: password authentication accepted for %.100s",
 		    authctxt->user);
-		return 1;
-	} else {
+		返回 1;
+	} 否则 {
 		debug("PAM: password authentication failed for %.100s: %s",
 		    authctxt->valid ? authctxt->user : "an illegal user",
 		    pam_strerror(sshpam_handle, sshpam_err));
-		return 0;
+		返回 0;
 	}
 }
 
-int
+整数
 sshpam_get_maxtries_reached(void)
 {
-	return sshpam_maxtries_reached;
+	返回 sshpam_maxtries_reached;
 }
 
 void
-sshpam_set_maxtries_reached(int reached)
+sshpam_set_maxtries_reached(整数 reached)
 {
-	if (reached == 0 || sshpam_maxtries_reached)
-		return;
+	如果 (reached == 0 || sshpam_maxtries_reached)
+		返回;
 	sshpam_maxtries_reached = 1;
 	options.password_authentication = 0;
 	options.kbd_interactive_authentication = 0;

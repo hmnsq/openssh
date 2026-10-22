@@ -89,60 +89,60 @@
 #define BUFSIZE 16384
 
 /* Command Line Options */
-int	dflag;					/* detached, no stdin */
-int	Fflag;					/* fdpass sock to stdout */
-unsigned int iflag;				/* Interval Flag */
-int	kflag;					/* More than one connect */
-int	lflag;					/* Bind to local port */
-int	Nflag;					/* shutdown() network socket */
-int	nflag;					/* Don't do name look up */
+整数	dflag;					/* detached, no stdin */
+整数	Fflag;					/* fdpass sock to stdout */
+unsigned 整数 iflag;				/* Interval Flag */
+整数	kflag;					/* More than one connect */
+整数	lflag;					/* Bind to local port */
+整数	Nflag;					/* shutdown() network socket */
+整数	nflag;					/* Don't do name look up */
 char   *Pflag;					/* Proxy username */
 char   *pflag;					/* Localport flag */
-int	rflag;					/* Random ports flag */
+整数	rflag;					/* Random ports flag */
 char   *sflag;					/* Source Address */
-int	tflag;					/* Telnet Emulation */
-int	uflag;					/* UDP - Default to TCP */
-int	vflag;					/* Verbosity */
-int	xflag;					/* Socks proxy */
-int	zflag;					/* Port Scan Flag */
-int	Dflag;					/* sodebug */
-int	Iflag;					/* TCP receive buffer size */
-int	Oflag;					/* TCP send buffer size */
-int	Sflag;					/* TCP MD5 signature option */
-int	Tflag = -1;				/* IP Type of Service */
-int	rtableid = -1;
+整数	tflag;					/* Telnet Emulation */
+整数	uflag;					/* UDP - Default to TCP */
+整数	vflag;					/* Verbosity */
+整数	xflag;					/* Socks proxy */
+整数	zflag;					/* Port Scan Flag */
+整数	Dflag;					/* sodebug */
+整数	Iflag;					/* TCP receive buffer size */
+整数	Oflag;					/* TCP send buffer size */
+整数	Sflag;					/* TCP MD5 signature option */
+整数	Tflag = -1;				/* IP Type of Service */
+整数	rtableid = -1;
 
-int timeout = -1;
-int family = AF_UNSPEC;
+整数 timeout = -1;
+整数 family = AF_UNSPEC;
 char *portlist[PORT_MAX+1];
 char *unix_dg_tmp_socket;
 
-void	atelnet(int, unsigned char *, unsigned int);
+void	atelnet(整数, unsigned char *, unsigned 整数);
 void	build_ports(char *);
 void	help(void);
-int	local_listen(char *, char *, struct addrinfo);
-void	readwrite(int);
-void	fdpass(int nfd) __attribute__((noreturn));
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	timeout_connect(int, const struct sockaddr *, socklen_t);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int, const char *);
-int	udptest(int);
-int	unix_bind(char *);
-int	unix_connect(char *);
-int	unix_listen(char *);
-void	set_common_sockopts(int, int);
-int	map_tos(char *, int *);
+整数	local_listen(char *, char *, struct addrinfo);
+void	readwrite(整数);
+void	fdpass(整数 nfd) __attribute__((noreturn));
+整数	remote_connect(const char *, const char *, struct addrinfo);
+整数	timeout_connect(整数, const struct sockaddr *, socklen_t);
+整数	socks_connect(const char *, const char *, struct addrinfo,
+	    const char *, const char *, struct addrinfo, 整数, const char *);
+整数	udptest(整数);
+整数	unix_bind(char *);
+整数	unix_connect(char *);
+整数	unix_listen(char *);
+void	set_common_sockopts(整数, 整数);
+整数	map_tos(char *, 整数 *);
 void	report_connect(const struct sockaddr *, socklen_t);
-void	usage(int);
-ssize_t drainbuf(int, unsigned char *, size_t *);
-ssize_t fillbuf(int, unsigned char *, size_t *);
+void	usage(整数);
+ssize_t drainbuf(整数, unsigned char *, size_t *);
+ssize_t fillbuf(整数, unsigned char *, size_t *);
 
 
-int
-main(int argc, char *argv[])
+整数
+主要(整数 argc, char *argv[])
 {
-	int ch, s, ret, socksv;
+	整数 ch, s, ret, socksv;
 	char *host, *uport;
 	struct addrinfo hints;
 	struct servent *sv;
@@ -162,7 +162,7 @@ main(int argc, char *argv[])
 
 	signal(SIGPIPE, SIG_IGN);
 
-	while ((ch = getopt(argc, argv,
+	当 ((ch = getopt(argc, argv,
 	    "46DdFhI:i:klNnO:P:p:rSs:tT:UuV:vw:X:x:z")) != -1) {
 		switch (ch) {
 		case '4':
@@ -175,15 +175,15 @@ main(int argc, char *argv[])
 			family = AF_UNIX;
 			break;
 		case 'X':
-			if (strcasecmp(optarg, "connect") == 0)
+			如果 (strcasecmp(optarg, "connect") == 0)
 				socksv = -1; /* HTTP proxy CONNECT */
-			else if (strcmp(optarg, "4") == 0)
+			否则 如果 (strcmp(optarg, "4") == 0)
 				socksv = 4; /* SOCKS v.4 */
-			else if (strcasecmp(optarg, "4A") == 0)
+			否则 如果 (strcasecmp(optarg, "4A") == 0)
 				socksv = 44; /* SOCKS v.4A */
-			else if (strcmp(optarg, "5") == 0)
+			否则 如果 (strcmp(optarg, "5") == 0)
 				socksv = 5; /* SOCKS v.5 */
-			else
+			否则
 				errx(1, "unsupported proxy protocol");
 			break;
 		case 'd':
@@ -197,7 +197,7 @@ main(int argc, char *argv[])
 			break;
 		case 'i':
 			iflag = strtonum(optarg, 0, UINT_MAX, &errstr);
-			if (errstr)
+			如果 (errstr)
 				errx(1, "interval %s: %s", errstr, optarg);
 			break;
 		case 'k':
@@ -232,9 +232,9 @@ main(int argc, char *argv[])
 			break;
 #ifdef SO_RTABLE
 		case 'V':
-			rtableid = (int)strtonum(optarg, 0,
+			rtableid = (整数)strtonum(optarg, 0,
 			    RT_TABLEID_MAX, &errstr);
-			if (errstr)
+			如果 (errstr)
 				errx(1, "rtable %s: %s", errstr, optarg);
 			break;
 #endif
@@ -243,13 +243,13 @@ main(int argc, char *argv[])
 			break;
 		case 'w':
 			timeout = strtonum(optarg, 0, INT_MAX / 1000, &errstr);
-			if (errstr)
+			如果 (errstr)
 				errx(1, "timeout %s: %s", errstr, optarg);
 			timeout *= 1000;
 			break;
 		case 'x':
 			xflag = 1;
-			if ((proxy = strdup(optarg)) == NULL)
+			如果 ((proxy = strdup(optarg)) == NULL)
 				errx(1, "strdup");
 			break;
 		case 'z':
@@ -260,13 +260,13 @@ main(int argc, char *argv[])
 			break;
 		case 'I':
 			Iflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			如果 (errstr != NULL)
 				errx(1, "TCP receive window %s: %s",
 				    errstr, optarg);
 			break;
 		case 'O':
 			Oflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			如果 (errstr != NULL)
 				errx(1, "TCP send window %s: %s",
 				    errstr, optarg);
 			break;
@@ -276,15 +276,15 @@ main(int argc, char *argv[])
 		case 'T':
 			errstr = NULL;
 			errno = 0;
-			if (map_tos(optarg, &Tflag))
+			如果 (map_tos(optarg, &Tflag))
 				break;
-			if (strlen(optarg) > 1 && optarg[0] == '0' &&
+			如果 (strlen(optarg) > 1 && optarg[0] == '0' &&
 			    optarg[1] == 'x')
-				Tflag = (int)strtol(optarg, NULL, 16);
-			else
-				Tflag = (int)strtonum(optarg, 0, 255,
+				Tflag = (整数)strtol(optarg, NULL, 16);
+			否则
+				Tflag = (整数)strtonum(optarg, 0, 255,
 				    &errstr);
-			if (Tflag < 0 || Tflag > 255 || errstr || errno)
+			如果 (Tflag < 0 || Tflag > 255 || errstr || errno)
 				errx(1, "illegal tos value %s", optarg);
 			break;
 		default:
@@ -295,67 +295,67 @@ main(int argc, char *argv[])
 	argv += optind;
 
 	/* Cruft to make sure options are clean, and used properly. */
-	if (argv[0] && !argv[1] && family == AF_UNIX) {
+	如果 (argv[0] && !argv[1] && family == AF_UNIX) {
 		host = argv[0];
 		uport = NULL;
-	} else if (argv[0] && !argv[1]) {
-		if  (!lflag)
+	} 否则 如果 (argv[0] && !argv[1]) {
+		如果  (!lflag)
 			usage(1);
 		uport = argv[0];
 		host = NULL;
-	} else if (argv[0] && argv[1]) {
+	} 否则 如果 (argv[0] && argv[1]) {
 		host = argv[0];
 		uport = argv[1];
-	} else
+	} 否则
 		usage(1);
 
-	if (lflag && sflag)
+	如果 (lflag && sflag)
 		errx(1, "cannot use -s and -l");
-	if (lflag && pflag)
+	如果 (lflag && pflag)
 		errx(1, "cannot use -p and -l");
-	if (lflag && zflag)
+	如果 (lflag && zflag)
 		errx(1, "cannot use -z and -l");
-	if (!lflag && kflag)
+	如果 (!lflag && kflag)
 		errx(1, "must use -l with -k");
 
 	/* Get name of temporary socket for unix datagram client */
-	if ((family == AF_UNIX) && uflag && !lflag) {
-		if (sflag) {
+	如果 ((family == AF_UNIX) && uflag && !lflag) {
+		如果 (sflag) {
 			unix_dg_tmp_socket = sflag;
-		} else {
+		} 否则 {
 			strlcpy(unix_dg_tmp_socket_buf, "/tmp/nc.XXXXXXXXXX",
 				UNIX_DG_TMP_SOCKET_SIZE);
-			if (mktemp(unix_dg_tmp_socket_buf) == NULL)
+			如果 (mktemp(unix_dg_tmp_socket_buf) == NULL)
 				err(1, "mktemp");
 			unix_dg_tmp_socket = unix_dg_tmp_socket_buf;
 		}
 	}
 
 	/* Initialize addrinfo structure. */
-	if (family != AF_UNIX) {
+	如果 (family != AF_UNIX) {
 		memset(&hints, 0, sizeof(struct addrinfo));
 		hints.ai_family = family;
 		hints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 		hints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
-		if (nflag)
+		如果 (nflag)
 			hints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (xflag) {
-		if (uflag)
+	如果 (xflag) {
+		如果 (uflag)
 			errx(1, "no proxy support for UDP mode");
 
-		if (lflag)
+		如果 (lflag)
 			errx(1, "no proxy support for listen");
 
-		if (family == AF_UNIX)
+		如果 (family == AF_UNIX)
 			errx(1, "no proxy support for unix sockets");
 
 		/* XXX IPv6 transport to proxy would probably work */
-		if (family == AF_INET6)
+		如果 (family == AF_INET6)
 			errx(1, "no proxy support for IPv6");
 
-		if (sflag)
+		如果 (sflag)
 			errx(1, "no proxy support for local source address");
 
 		proxyhost = strsep(&proxy, ":");
@@ -365,40 +365,40 @@ main(int argc, char *argv[])
 		proxyhints.ai_family = family;
 		proxyhints.ai_socktype = SOCK_STREAM;
 		proxyhints.ai_protocol = IPPROTO_TCP;
-		if (nflag)
+		如果 (nflag)
 			proxyhints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (lflag) {
-		int connfd;
+	如果 (lflag) {
+		整数 connfd;
 		ret = 0;
 
-		if (family == AF_UNIX) {
-			if (uflag)
+		如果 (family == AF_UNIX) {
+			如果 (uflag)
 				s = unix_bind(host);
-			else
+			否则
 				s = unix_listen(host);
 		}
 
 		/* Allow only one connection at a time, but stay alive. */
-		for (;;) {
-			if (family != AF_UNIX)
+		为 (;;) {
+			如果 (family != AF_UNIX)
 				s = local_listen(host, uport, hints);
-			if (s < 0)
+			如果 (s < 0)
 				err(1, "local_listen");
 			/*
 			 * For UDP and -k, don't connect the socket, let it
 			 * receive datagrams from multiple socket pairs.
 			 */
-			if (uflag && kflag)
+			如果 (uflag && kflag)
 				readwrite(s);
 			/*
 			 * For UDP and not -k, we will use recvfrom() initially
 			 * to wait for a caller, then use the regular functions
 			 * to talk to the caller.
 			 */
-			else if (uflag && !kflag) {
-				int rv, plen;
+			否则 如果 (uflag && !kflag) {
+				整数 rv, plen;
 				char buf[16384];
 				struct sockaddr_storage z;
 
@@ -406,90 +406,90 @@ main(int argc, char *argv[])
 				plen = 2048;
 				rv = recvfrom(s, buf, plen, MSG_PEEK,
 				    (struct sockaddr *)&z, &len);
-				if (rv < 0)
+				如果 (rv < 0)
 					err(1, "recvfrom");
 
 				rv = connect(s, (struct sockaddr *)&z, len);
-				if (rv < 0)
+				如果 (rv < 0)
 					err(1, "connect");
 
-				if (vflag)
+				如果 (vflag)
 					report_connect((struct sockaddr *)&z, len);
 
 				readwrite(s);
-			} else {
+			} 否则 {
 				len = sizeof(cliaddr);
 				connfd = accept(s, (struct sockaddr *)&cliaddr,
 				    &len);
-				if (connfd == -1) {
+				如果 (connfd == -1) {
 					/* For now, all errnos are fatal */
 					err(1, "accept");
 				}
-				if (vflag)
+				如果 (vflag)
 					report_connect((struct sockaddr *)&cliaddr, len);
 
 				readwrite(connfd);
 				close(connfd);
 			}
 
-			if (family != AF_UNIX)
+			如果 (family != AF_UNIX)
 				close(s);
-			else if (uflag) {
-				if (connect(s, NULL, 0) < 0)
+			否则 如果 (uflag) {
+				如果 (connect(s, NULL, 0) < 0)
 					err(1, "connect");
 			}
 
-			if (!kflag)
+			如果 (!kflag)
 				break;
 		}
-	} else if (family == AF_UNIX) {
+	} 否则 如果 (family == AF_UNIX) {
 		ret = 0;
 
-		if ((s = unix_connect(host)) > 0 && !zflag) {
+		如果 ((s = unix_connect(host)) > 0 && !zflag) {
 			readwrite(s);
 			close(s);
-		} else
+		} 否则
 			ret = 1;
 
-		if (uflag)
+		如果 (uflag)
 			unlink(unix_dg_tmp_socket);
 		exit(ret);
 
-	} else {
-		int i = 0;
+	} 否则 {
+		整数 i = 0;
 
 		/* Construct the portlist[] array. */
 		build_ports(uport);
 
 		/* Cycle through portlist, connecting to each port. */
-		for (i = 0; portlist[i] != NULL; i++) {
-			if (s)
+		为 (i = 0; portlist[i] != NULL; i++) {
+			如果 (s)
 				close(s);
 
-			if (xflag)
+			如果 (xflag)
 				s = socks_connect(host, portlist[i], hints,
 				    proxyhost, proxyport, proxyhints, socksv,
 				    Pflag);
-			else
+			否则
 				s = remote_connect(host, portlist[i], hints);
 
-			if (s < 0)
+			如果 (s < 0)
 				continue;
 
 			ret = 0;
-			if (vflag || zflag) {
+			如果 (vflag || zflag) {
 				/* For UDP, make sure we are connected. */
-				if (uflag) {
-					if (udptest(s) == -1) {
+				如果 (uflag) {
+					如果 (udptest(s) == -1) {
 						ret = 1;
 						continue;
 					}
 				}
 
 				/* Don't look up port if -n. */
-				if (nflag)
+				如果 (nflag)
 					sv = NULL;
-				else {
+				否则 {
 					sv = getservbyport(
 					    ntohs(atoi(portlist[i])),
 					    uflag ? "udp" : "tcp");
@@ -501,14 +501,14 @@ main(int argc, char *argv[])
 				    uflag ? "udp" : "tcp",
 				    sv ? sv->s_name : "*");
 			}
-			if (Fflag)
+			如果 (Fflag)
 				fdpass(s);
-			else if (!zflag)
+			否则 如果 (!zflag)
 				readwrite(s);
 		}
 	}
 
-	if (s)
+	如果 (s)
 		close(s);
 
 	exit(ret);
@@ -518,67 +518,67 @@ main(int argc, char *argv[])
  * unix_bind()
  * Returns a unix socket bound to the given path
  */
-int
+整数
 unix_bind(char *path)
 {
 	struct sockaddr_un sun_sa;
-	int s;
+	整数 s;
 
 	/* Create unix domain socket. */
-	if ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
+	如果 ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
 	     0)) < 0)
-		return (-1);
+		返回 (-1);
 
 	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
+	如果 (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
 	    sizeof(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		返回 (-1);
 	}
 
-	if (bind(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	如果 (bind(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		返回 (-1);
 	}
-	return (s);
+	返回 (s);
 }
 
 /*
  * unix_connect()
  * Returns a socket connected to a local unix socket. Returns -1 on failure.
  */
-int
+整数
 unix_connect(char *path)
 {
 	struct sockaddr_un sun_sa;
-	int s;
+	整数 s;
 
-	if (uflag) {
-		if ((s = unix_bind(unix_dg_tmp_socket)) < 0)
-			return (-1);
-	} else {
-		if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-			return (-1);
+	如果 (uflag) {
+		如果 ((s = unix_bind(unix_dg_tmp_socket)) < 0)
+			返回 (-1);
+	} 否则 {
+		如果 ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+			返回 (-1);
 	}
 	(void)fcntl(s, F_SETFD, FD_CLOEXEC);
 
 	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
+	如果 (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
 	    sizeof(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		返回 (-1);
 	}
-	if (connect(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	如果 (connect(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		返回 (-1);
 	}
-	return (s);
+	返回 (s);
 
 }
 
@@ -586,18 +586,18 @@ unix_connect(char *path)
  * unix_listen()
  * Create a unix domain socket, and listen on it.
  */
-int
+整数
 unix_listen(char *path)
 {
-	int s;
-	if ((s = unix_bind(path)) < 0)
-		return (-1);
+	整数 s;
+	如果 ((s = unix_bind(path)) < 0)
+		返回 (-1);
 
-	if (listen(s, 5) < 0) {
+	如果 (listen(s, 5) < 0) {
 		close(s);
-		return (-1);
+		返回 (-1);
 	}
-	return (s);
+	返回 (s);
 }
 
 /*
@@ -605,31 +605,31 @@ unix_listen(char *path)
  * Returns a socket connected to a remote host. Properly binds to a local
  * port or source address if needed. Returns -1 on failure.
  */
-int
+整数
 remote_connect(const char *host, const char *port, struct addrinfo hints)
 {
 	struct addrinfo *res, *res0;
-	int s, error;
-#if defined(SO_RTABLE) || defined(SO_BINDANY)
-	int on = 1;
+	整数 s, error;
+#如果 defined(SO_RTABLE) || defined(SO_BINDANY)
+	整数 on = 1;
 #endif
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	如果 ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
 	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+		如果 ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
 			continue;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		如果 (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
 		    &rtableid, sizeof(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 		/* Bind to a local port or source address if specified. */
-		if (sflag || pflag) {
+		如果 (sflag || pflag) {
 			struct addrinfo ahints, *ares;
 
 #ifdef SO_BINDANY
@@ -641,10 +641,10 @@ remote_connect(const char *host, const char *port, struct addrinfo hints)
 			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
 			ahints.ai_flags = AI_PASSIVE;
-			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
+			如果 ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
 				errx(1, "getaddrinfo: %s", gai_strerror(error));
 
-			if (bind(s, (struct sockaddr *)ares->ai_addr,
+			如果 (bind(s, (struct sockaddr *)ares->ai_addr,
 			    ares->ai_addrlen) < 0)
 				err(1, "bind failed");
 			freeaddrinfo(ares);
@@ -652,56 +652,56 @@ remote_connect(const char *host, const char *port, struct addrinfo hints)
 
 		set_common_sockopts(s, res0->ai_family);
 
-		if (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
+		如果 (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
 			break;
-		else if (vflag)
+		否则 如果 (vflag)
 			warn("connect to %s port %s (%s) failed", host, port,
 			    uflag ? "udp" : "tcp");
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} 当 ((res0 = res0->ai_next) != NULL);
 
 	freeaddrinfo(res);
 
-	return (s);
+	返回 (s);
 }
 
-int
-timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
+整数
+timeout_connect(整数 s, const struct sockaddr *name, socklen_t namelen)
 {
 	struct pollfd pfd;
 	socklen_t optlen;
-	int flags = 0, optval;
-	int ret;
+	整数 flags = 0, optval;
+	整数 ret;
 
-	if (timeout != -1) {
+	如果 (timeout != -1) {
 		flags = fcntl(s, F_GETFL, 0);
-		if (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
+		如果 (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
 			err(1, "set non-blocking mode");
 	}
 
-	if ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
+	如果 ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
 		pfd.fd = s;
 		pfd.events = POLLOUT;
-		if ((ret = poll(&pfd, 1, timeout)) == 1) {
+		如果 ((ret = poll(&pfd, 1, timeout)) == 1) {
 			optlen = sizeof(optval);
-			if ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
+			如果 ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
 			    &optval, &optlen)) == 0) {
 				errno = optval;
 				ret = optval == 0 ? 0 : -1;
 			}
-		} else if (ret == 0) {
+		} 否则 如果 (ret == 0) {
 			errno = ETIMEDOUT;
 			ret = -1;
-		} else
+		} 否则
 			err(1, "poll failed");
 	}
 
-	if (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
+	如果 (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
 		err(1, "restoring flags");
 
-	return (ret);
+	返回 (ret);
 }
 
 /*
@@ -709,12 +709,12 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
  * Returns a socket listening on a local port, binds to specified source
  * address. Returns -1 on failure.
  */
-int
+整数
 local_listen(char *host, char *port, struct addrinfo hints)
 {
 	struct addrinfo *res, *res0;
-	int s, ret, x = 1;
-	int error;
+	整数 s, ret, x = 1;
+	整数 error;
 
 	/* Allow nodename to be null. */
 	hints.ai_flags |= AI_PASSIVE;
@@ -723,51 +723,51 @@ local_listen(char *host, char *port, struct addrinfo hints)
 	 * In the case of binding to a wildcard address
 	 * default to binding to an ipv4 address.
 	 */
-	if (host == NULL && hints.ai_family == AF_UNSPEC)
+	如果 (host == NULL && hints.ai_family == AF_UNSPEC)
 		hints.ai_family = AF_INET;
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	如果 ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
 	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+		如果 ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
 			continue;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		如果 (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
 		    &rtableid, sizeof(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 #ifdef SO_REUSEPORT
 		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
-		if (ret == -1)
+		如果 (ret == -1)
 			err(1, "setsockopt SO_REUSEPORT");
 #endif
 #ifdef SO_REUSEADDR
 		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(x));
-		if (ret == -1)
+		如果 (ret == -1)
 			err(1, "setsockopt SO_REUSEADDR");
 #endif
 		set_common_sockopts(s, res0->ai_family);
 
-		if (bind(s, (struct sockaddr *)res0->ai_addr,
+		如果 (bind(s, (struct sockaddr *)res0->ai_addr,
 		    res0->ai_addrlen) == 0)
 			break;
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} 当 ((res0 = res0->ai_next) != NULL);
 
-	if (!uflag && s != -1) {
-		if (listen(s, 1) < 0)
+	如果 (!uflag && s != -1) {
+		如果 (listen(s, 1) < 0)
 			err(1, "listen");
 	}
 
 	freeaddrinfo(res);
 
-	return (s);
+	返回 (s);
 }
 
 /*
@@ -775,20 +775,20 @@ local_listen(char *host, char *port, struct addrinfo hints)
  * Loop that polls on the network file descriptor and stdin.
  */
 void
-readwrite(int net_fd)
+readwrite(整数 net_fd)
 {
 	struct pollfd pfd[4];
-	int stdin_fd = STDIN_FILENO;
-	int stdout_fd = STDOUT_FILENO;
+	整数 stdin_fd = STDIN_FILENO;
+	整数 stdout_fd = STDOUT_FILENO;
 	unsigned char netinbuf[BUFSIZE];
 	size_t netinbufpos = 0;
 	unsigned char stdinbuf[BUFSIZE];
 	size_t stdinbufpos = 0;
-	int n, num_fds;
+	整数 n, num_fds;
 	ssize_t ret;
 
 	/* don't read from stdin if requested */
-	if (dflag)
+	如果 (dflag)
 		stdin_fd = -1;
 
 	/* stdin */
@@ -807,190 +807,190 @@ readwrite(int net_fd)
 	pfd[POLL_STDOUT].fd = stdout_fd;
 	pfd[POLL_STDOUT].events = 0;
 
-	while (1) {
+	当 (1) {
 		/* both inputs are gone, buffers are empty, we are done */
-		if (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
+		如果 (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			返回;
 		}
 		/* both outputs are gone, we can't continue */
-		if (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
+		如果 (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
 			close(net_fd);
-			return;
+			返回;
 		}
 		/* listen and net in gone, queues empty, done */
-		if (lflag && pfd[POLL_NETIN].fd == -1
+		如果 (lflag && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			返回;
 		}
 
 		/* help says -i is for "wait between lines sent". We read and
 		 * write arbitrary amounts of data, and we don't want to start
 		 * scanning for newlines, so this is as good as it gets */
-		if (iflag)
+		如果 (iflag)
 			sleep(iflag);
 
 		/* poll */
 		num_fds = poll(pfd, 4, timeout);
 
 		/* treat poll errors */
-		if (num_fds == -1) {
+		如果 (num_fds == -1) {
 			close(net_fd);
 			err(1, "polling error");
 		}
 
 		/* timeout happened */
-		if (num_fds == 0)
-			return;
+		如果 (num_fds == 0)
+			返回;
 
 		/* treat socket error conditions */
-		for (n = 0; n < 4; n++) {
-			if (pfd[n].revents & (POLLERR|POLLNVAL)) {
+		为 (n = 0; n < 4; n++) {
+			如果 (pfd[n].revents & (POLLERR|POLLNVAL)) {
 				pfd[n].fd = -1;
 			}
 		}
 		/* reading is possible after HUP */
-		if (pfd[POLL_STDIN].events & POLLIN &&
+		如果 (pfd[POLL_STDIN].events & POLLIN &&
 		    pfd[POLL_STDIN].revents & POLLHUP &&
 		    ! (pfd[POLL_STDIN].revents & POLLIN))
 				pfd[POLL_STDIN].fd = -1;
 
-		if (pfd[POLL_NETIN].events & POLLIN &&
+		如果 (pfd[POLL_NETIN].events & POLLIN &&
 		    pfd[POLL_NETIN].revents & POLLHUP &&
 		    ! (pfd[POLL_NETIN].revents & POLLIN))
 				pfd[POLL_NETIN].fd = -1;
 
-		if (pfd[POLL_NETOUT].revents & POLLHUP) {
-			if (Nflag)
+		如果 (pfd[POLL_NETOUT].revents & POLLHUP) {
+			如果 (Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* if HUP, stop watching stdout */
-		if (pfd[POLL_STDOUT].revents & POLLHUP)
+		如果 (pfd[POLL_STDOUT].revents & POLLHUP)
 			pfd[POLL_STDOUT].fd = -1;
 		/* if no net out, stop watching stdin */
-		if (pfd[POLL_NETOUT].fd == -1)
+		如果 (pfd[POLL_NETOUT].fd == -1)
 			pfd[POLL_STDIN].fd = -1;
 		/* if no stdout, stop watching net in */
-		if (pfd[POLL_STDOUT].fd == -1) {
-			if (pfd[POLL_NETIN].fd != -1)
+		如果 (pfd[POLL_STDOUT].fd == -1) {
+			如果 (pfd[POLL_NETIN].fd != -1)
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 			pfd[POLL_NETIN].fd = -1;
 		}
 
 		/* try to read from stdin */
-		if (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
+		如果 (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_STDIN].fd, stdinbuf,
 			    &stdinbufpos);
 			/* error or eof on stdin - remove from pfd */
-			if (ret == 0 || ret == -1)
+			如果 (ret == 0 || ret == -1)
 				pfd[POLL_STDIN].fd = -1;
 			/* read something - poll net out */
-			if (stdinbufpos > 0)
+			如果 (stdinbufpos > 0)
 				pfd[POLL_NETOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (stdinbufpos == BUFSIZE)
+			如果 (stdinbufpos == BUFSIZE)
 				pfd[POLL_STDIN].events = 0;
 		}
 		/* try to write to network */
-		if (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
+		如果 (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_NETOUT].fd, stdinbuf,
 			    &stdinbufpos);
-			if (ret == -1)
+			如果 (ret == -1)
 				pfd[POLL_NETOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (stdinbufpos == 0)
+			如果 (stdinbufpos == 0)
 				pfd[POLL_NETOUT].events = 0;
 			/* buffer no longer full - poll stdin again */
-			if (stdinbufpos < BUFSIZE)
+			如果 (stdinbufpos < BUFSIZE)
 				pfd[POLL_STDIN].events = POLLIN;
 		}
 		/* try to read from network */
-		if (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
+		如果 (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_NETIN].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			如果 (ret == -1)
 				pfd[POLL_NETIN].fd = -1;
 			/* eof on net in - remove from pfd */
-			if (ret == 0) {
+			如果 (ret == 0) {
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 				pfd[POLL_NETIN].fd = -1;
 			}
 			/* read something - poll stdout */
-			if (netinbufpos > 0)
+			如果 (netinbufpos > 0)
 				pfd[POLL_STDOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (netinbufpos == BUFSIZE)
+			如果 (netinbufpos == BUFSIZE)
 				pfd[POLL_NETIN].events = 0;
 			/* handle telnet */
-			if (tflag)
+			如果 (tflag)
 				atelnet(pfd[POLL_NETIN].fd, netinbuf,
 				    netinbufpos);
 		}
 		/* try to write to stdout */
-		if (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
+		如果 (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_STDOUT].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			如果 (ret == -1)
 				pfd[POLL_STDOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (netinbufpos == 0)
+			如果 (netinbufpos == 0)
 				pfd[POLL_STDOUT].events = 0;
 			/* buffer no longer full - poll net in again */
-			if (netinbufpos < BUFSIZE)
+			如果 (netinbufpos < BUFSIZE)
 				pfd[POLL_NETIN].events = POLLIN;
 		}
 
 		/* stdin gone and queue empty? */
-		if (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
-			if (pfd[POLL_NETOUT].fd != -1 && Nflag)
+		如果 (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
+			如果 (pfd[POLL_NETOUT].fd != -1 && Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* net in gone and queue empty? */
-		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
+		如果 (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
 			pfd[POLL_STDOUT].fd = -1;
 		}
 	}
 }
 
 ssize_t
-drainbuf(int fd, unsigned char *buf, size_t *bufpos)
+drainbuf(整数 fd, unsigned char *buf, size_t *bufpos)
 {
 	ssize_t n;
 	ssize_t adjust;
 
 	n = write(fd, buf, *bufpos);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	如果 (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	如果 (n <= 0)
+		返回 n;
 	/* adjust buffer */
 	adjust = *bufpos - n;
-	if (adjust > 0)
+	如果 (adjust > 0)
 		memmove(buf, buf + n, adjust);
 	*bufpos -= n;
-	return n;
+	返回 n;
 }
 
 
 ssize_t
-fillbuf(int fd, unsigned char *buf, size_t *bufpos)
+fillbuf(整数 fd, unsigned char *buf, size_t *bufpos)
 {
 	size_t num = BUFSIZE - *bufpos;
 	ssize_t n;
 
 	n = read(fd, buf + *bufpos, num);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	如果 (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	如果 (n <= 0)
+		返回 n;
 	*bufpos += n;
-	return n;
+	返回 n;
 }
 
 /*
@@ -998,14 +998,14 @@ fillbuf(int fd, unsigned char *buf, size_t *bufpos)
  * Pass the connected file descriptor to stdout and exit.
  */
 void
-fdpass(int nfd)
+fdpass(整数 nfd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+#如果 defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
 	struct msghdr msg;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
 	union {
 		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+		char buf[CMSG_SPACE(sizeof(整数))];
 	} cmsgbuf;
 	struct cmsghdr *cmsg;
 #endif
@@ -1018,15 +1018,15 @@ fdpass(int nfd)
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
 	msg.msg_accrights = (caddr_t)&nfd;
 	msg.msg_accrightslen = sizeof(nfd);
-#else
+#否则
 	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
 	msg.msg_control = (caddr_t)&cmsgbuf.buf;
 	msg.msg_controllen = sizeof(cmsgbuf.buf);
 	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	cmsg->cmsg_len = CMSG_LEN(sizeof(整数));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = nfd;
+	*(整数 *)CMSG_DATA(cmsg) = nfd;
 #endif
 
 	vec.iov_base = &ch;
@@ -1037,53 +1037,53 @@ fdpass(int nfd)
 	bzero(&pfd, sizeof(pfd));
 	pfd.fd = STDOUT_FILENO;
 	pfd.events = POLLOUT;
-	for (;;) {
+	为 (;;) {
 		r = sendmsg(STDOUT_FILENO, &msg, 0);
-		if (r == -1) {
-			if (errno == EAGAIN || errno == EINTR) {
-				if (poll(&pfd, 1, -1) == -1)
+		如果 (r == -1) {
+			如果 (errno == EAGAIN || errno == EINTR) {
+				如果 (poll(&pfd, 1, -1) == -1)
 					err(1, "poll");
 				continue;
 			}
 			err(1, "sendmsg");
-		} else if (r != 1)
+		} 否则 如果 (r != 1)
 			errx(1, "sendmsg: unexpected return value %zd", r);
-		else
+		否则
 			break;
 	}
 	exit(0);
-#else
+#否则
 	errx(1, "%s: file descriptor passing not supported", __func__);
 #endif
 }
 
 /* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
 void
-atelnet(int nfd, unsigned char *buf, unsigned int size)
+atelnet(整数 nfd, unsigned char *buf, unsigned 整数 size)
 {
 	unsigned char *p, *end;
 	unsigned char obuf[4];
 
-	if (size < 3)
-		return;
+	如果 (size < 3)
+		返回;
 	end = buf + size - 2;
 
-	for (p = buf; p < end; p++) {
-		if (*p != IAC)
+	为 (p = buf; p < end; p++) {
+		如果 (*p != IAC)
 			continue;
 
 		obuf[0] = IAC;
 		p++;
-		if ((*p == WILL) || (*p == WONT))
+		如果 ((*p == WILL) || (*p == WONT))
 			obuf[1] = DONT;
-		else if ((*p == DO) || (*p == DONT))
+		否则 如果 ((*p == DO) || (*p == DONT))
 			obuf[1] = WONT;
-		else
+		否则
 			continue;
 
 		p++;
 		obuf[2] = *p;
-		if (atomicio(vwrite, nfd, obuf, 3) != 3)
+		如果 (atomicio(vwrite, nfd, obuf, 3) != 3)
 			warn("Write Error!");
 	}
 }
@@ -1098,54 +1098,54 @@ build_ports(char *p)
 {
 	const char *errstr;
 	char *n;
-	int hi, lo, cp;
-	int x = 0;
+	整数 hi, lo, cp;
+	整数 x = 0;
 
-	if ((n = strchr(p, '-')) != NULL) {
+	如果 ((n = strchr(p, '-')) != NULL) {
 		*n = '\0';
 		n++;
 
 		/* Make sure the ports are in order: lowest->highest. */
 		hi = strtonum(n, 1, PORT_MAX, &errstr);
-		if (errstr)
+		如果 (errstr)
 			errx(1, "port number %s: %s", errstr, n);
 		lo = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		如果 (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 
-		if (lo > hi) {
+		如果 (lo > hi) {
 			cp = hi;
 			hi = lo;
 			lo = cp;
 		}
 
 		/* Load ports sequentially. */
-		for (cp = lo; cp <= hi; cp++) {
+		为 (cp = lo; cp <= hi; cp++) {
 			portlist[x] = calloc(1, PORT_MAX_LEN);
-			if (portlist[x] == NULL)
+			如果 (portlist[x] == NULL)
 				errx(1, "calloc");
 			snprintf(portlist[x], PORT_MAX_LEN, "%d", cp);
 			x++;
 		}
 
 		/* Randomly swap ports. */
-		if (rflag) {
-			int y;
+		如果 (rflag) {
+			整数 y;
 			char *c;
 
-			for (x = 0; x <= (hi - lo); x++) {
+			为 (x = 0; x <= (hi - lo); x++) {
 				y = arc4random_uniform(hi - lo);
 				c = portlist[x];
 				portlist[x] = portlist[y];
 				portlist[y] = c;
 			}
 		}
-	} else {
+	} 否则 {
 		hi = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		如果 (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 		portlist[0] = strdup(p);
-		if (portlist[0] == NULL)
+		如果 (portlist[0] == NULL)
 			errx(1, "strdup");
 	}
 }
@@ -1155,73 +1155,73 @@ build_ports(char *p)
  * Do a few writes to see if the UDP port is there.
  * Fails once PF state table is full.
  */
-int
-udptest(int s)
+整数
+udptest(整数 s)
 {
-	int i, ret;
+	整数 i, ret;
 
-	for (i = 0; i <= 3; i++) {
-		if (write(s, "X", 1) == 1)
+	为 (i = 0; i <= 3; i++) {
+		如果 (write(s, "X", 1) == 1)
 			ret = 1;
-		else
+		否则
 			ret = -1;
 	}
-	return (ret);
+	返回 (ret);
 }
 
 void
-set_common_sockopts(int s, int af)
+set_common_sockopts(整数 s, 整数 af)
 {
-	int x = 1;
+	整数 x = 1;
 
 #ifdef TCP_MD5SIG
-	if (Sflag) {
-		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
+	如果 (Sflag) {
+		如果 (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
 			&x, sizeof(x)) == -1)
 			err(1, "setsockopt");
 	}
 #endif
-	if (Dflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
+	如果 (Dflag) {
+		如果 (setsockopt(s, SOL_SOCKET, SO_DEBUG,
 			&x, sizeof(x)) == -1)
 			err(1, "setsockopt");
 	}
-#if defined(IP_TOS) && defined(IPV6_TCLASS)
-	if (Tflag != -1) {
-		int proto, option;
+#如果 defined(IP_TOS) && defined(IPV6_TCLASS)
+	如果 (Tflag != -1) {
+		整数 proto, option;
 
-		if (af == AF_INET6) {
+		如果 (af == AF_INET6) {
 			proto = IPPROTO_IPV6;
 			option = IPV6_TCLASS;
-		} else {
+		} 否则 {
 			proto = IPPROTO_IP;
 			option = IP_TOS;
 		}
 
-		if (setsockopt(s, proto, option, &Tflag, sizeof(Tflag)) == -1)
+		如果 (setsockopt(s, proto, option, &Tflag, sizeof(Tflag)) == -1)
 			err(1, "set IP ToS");
 	}
 #endif
-	if (Iflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
+	如果 (Iflag) {
+		如果 (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
 		    &Iflag, sizeof(Iflag)) == -1)
 			err(1, "set TCP receive buffer size");
 	}
-	if (Oflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
+	如果 (Oflag) {
+		如果 (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
 		    &Oflag, sizeof(Oflag)) == -1)
 			err(1, "set TCP send buffer size");
 	}
 }
 
-int
-map_tos(char *s, int *val)
+整数
+map_tos(char *s, 整数 *val)
 {
 #ifdef IP_TOS
 	/* DiffServ Codepoints and other TOS mappings */
 	const struct toskeywords {
 		const char	*keyword;
-		int		 val;
+		整数		 val;
 	} *t, toskeywords[] = {
 		{ "af11",		IPTOS_DSCP_AF11 },
 		{ "af12",		IPTOS_DSCP_AF12 },
@@ -1253,15 +1253,15 @@ map_tos(char *s, int *val)
 		{ NULL, 		-1 },
 	};
 
-	for (t = toskeywords; t->keyword != NULL; t++) {
-		if (strcmp(s, t->keyword) == 0) {
+	为 (t = toskeywords; t->keyword != NULL; t++) {
+		如果 (strcmp(s, t->keyword) == 0) {
 			*val = t->val;
-			return (1);
+			返回 (1);
 		}
 	}
 #endif
 
-	return (0);
+	返回 (0);
 }
 
 void
@@ -1269,19 +1269,19 @@ report_connect(const struct sockaddr *sa, socklen_t salen)
 {
 	char remote_host[NI_MAXHOST];
 	char remote_port[NI_MAXSERV];
-	int herr;
-	int flags = NI_NUMERICSERV;
+	整数 herr;
+	整数 flags = NI_NUMERICSERV;
 	
-	if (nflag)
+	如果 (nflag)
 		flags |= NI_NUMERICHOST;
 	
-	if ((herr = getnameinfo(sa, salen,
+	如果 ((herr = getnameinfo(sa, salen,
 	    remote_host, sizeof(remote_host),
 	    remote_port, sizeof(remote_port),
 	    flags)) != 0) {
-		if (herr == EAI_SYSTEM)
+		如果 (herr == EAI_SYSTEM)
 			err(1, "getnameinfo");
-		else
+		否则
 			errx(1, "getnameinfo: %s", gai_strerror(herr));
 	}
 	
@@ -1302,14 +1302,14 @@ help(void)
 	\t-F		Pass socket fd\n\
 	\t-h		This help text\n\
 	\t-I length	TCP receive buffer length\n\
-	\t-i secs\t	Delay interval for lines sent, ports scanned\n\
-	\t-k		Keep inbound sockets open for multiple connects\n\
-	\t-l		Listen mode, for inbound connects\n\
+	\t-i secs\t	Delay interval 为 lines sent, ports scanned\n\
+	\t-k		Keep inbound sockets open 为 multiple connects\n\
+	\t-l		Listen mode, 为 inbound connects\n\
 	\t-N		Shutdown the network socket after EOF on stdin\n\
 	\t-n		Suppress name/port resolutions\n\
 	\t-O length	TCP send buffer length\n\
-	\t-P proxyuser\tUsername for proxy authentication\n\
-	\t-p port\t	Specify local port for remote connects\n\
+	\t-P proxyuser\tUsername 为 proxy authentication\n\
+	\t-p port\t	Specify local port 为 remote connects\n\
 	\t-r		Randomize remote ports\n\
 	\t-S		Enable the TCP MD5 signature option\n\
 	\t-s addr\t	Local source address\n\
@@ -1319,23 +1319,23 @@ help(void)
 	\t-u		UDP mode\n\
 	\t-V rtable	Specify alternate routing table\n\
 	\t-v		Verbose\n\
-	\t-w secs\t	Timeout for connects and final net reads\n\
+	\t-w secs\t	Timeout 为 connects and final net reads\n\
 	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
 	\t-x addr[:port]\tSpecify proxy address and port\n\
-	\t-z		Zero-I/O mode [used for scanning]\n\
+	\t-z		Zero-I/O mode [used 为 scanning]\n\
 	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
 	exit(1);
 }
 
 void
-usage(int ret)
+usage(整数 ret)
 {
 	fprintf(stderr,
 	    "usage: nc [-46DdFhklNnrStUuvz] [-I length] [-i interval] [-O length]\n"
 	    "\t  [-P proxy_username] [-p source_port] [-s source] [-T toskeyword]\n"
 	    "\t  [-V rtable] [-w timeout] [-X proxy_protocol]\n"
 	    "\t  [-x proxy_address[:port]] [destination] [port]\n");
-	if (ret)
+	如果 (ret)
 		exit(1);
 }
 
@@ -1394,16 +1394,16 @@ usage(int ret)
 #define SOCKS_DOMAIN	3
 #define SOCKS_IPV6	4
 
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int,
+整数	remote_connect(const char *, const char *, struct addrinfo);
+整数	socks_connect(const char *, const char *, struct addrinfo,
+	    const char *, const char *, struct addrinfo, 整数,
 	    const char *);
 
-static int
+static 整数
 decode_addrport(const char *h, const char *p, struct sockaddr *addr,
-    socklen_t addrlen, int v4only, int numeric)
+    socklen_t addrlen, 整数 v4only, 整数 numeric)
 {
-	int r;
+	整数 r;
 	struct addrinfo hints, *res;
 
 	bzero(&hints, sizeof(hints));
@@ -1412,42 +1412,42 @@ decode_addrport(const char *h, const char *p, struct sockaddr *addr,
 	hints.ai_socktype = SOCK_STREAM;
 	r = getaddrinfo(h, p, &hints, &res);
 	/* Don't fatal when attempting to convert a numeric address */
-	if (r != 0) {
-		if (!numeric) {
+	如果 (r != 0) {
+		如果 (!numeric) {
 			errx(1, "getaddrinfo(\"%.64s\", \"%.64s\"): %s", h, p,
 			    gai_strerror(r));
 		}
-		return (-1);
+		返回 (-1);
 	}
-	if (addrlen < res->ai_addrlen) {
+	如果 (addrlen < res->ai_addrlen) {
 		freeaddrinfo(res);
 		errx(1, "internal error: addrlen < res->ai_addrlen");
 	}
 	memcpy(addr, res->ai_addr, res->ai_addrlen);
 	freeaddrinfo(res);
-	return (0);
+	返回 (0);
 }
 
-static int
-proxy_read_line(int fd, char *buf, size_t bufsz)
+static 整数
+proxy_read_line(整数 fd, char *buf, size_t bufsz)
 {
 	size_t off;
 
-	for(off = 0;;) {
-		if (off >= bufsz)
+	为(off = 0;;) {
+		如果 (off >= bufsz)
 			errx(1, "proxy read too long");
-		if (atomicio(read, fd, buf + off, 1) != 1)
+		如果 (atomicio(read, fd, buf + off, 1) != 1)
 			err(1, "proxy read");
 		/* Skip CR */
-		if (buf[off] == '\r')
+		如果 (buf[off] == '\r')
 			continue;
-		if (buf[off] == '\n') {
+		如果 (buf[off] == '\n') {
 			buf[off] = '\0';
 			break;
 		}
 		off++;
 	}
-	return (off);
+	返回 (off);
 }
 
 static const char *
@@ -1458,18 +1458,18 @@ getproxypass(const char *proxyuser, const char *proxyhost)
 
 	snprintf(prompt, sizeof(prompt), "Proxy password for %s@%s: ",
 	   proxyuser, proxyhost);
-	if (readpassphrase(prompt, pw, sizeof(pw), RPP_REQUIRE_TTY) == NULL)
+	如果 (readpassphrase(prompt, pw, sizeof(pw), RPP_REQUIRE_TTY) == NULL)
 		errx(1, "Unable to read proxy passphrase");
-	return (pw);
+	返回 (pw);
 }
 
-int
+整数
 socks_connect(const char *host, const char *port,
     struct addrinfo hints __attribute__ ((__unused__)),
     const char *proxyhost, const char *proxyport, struct addrinfo proxyhints,
-    int socksv, const char *proxyuser)
+    整数 socksv, const char *proxyuser)
 {
-	int proxyfd, r, authretry = 0;
+	整数 proxyfd, r, authretry = 0;
 	size_t hlen, wlen = 0;
 	unsigned char buf[1024];
 	size_t cnt;
@@ -1479,26 +1479,26 @@ socks_connect(const char *host, const char *port,
 	in_port_t serverport;
 	const char *proxypass = NULL;
 
-	if (proxyport == NULL)
+	如果 (proxyport == NULL)
 		proxyport = (socksv == -1) ? HTTP_PROXY_PORT : SOCKS_PORT;
 
 	/* Abuse API to lookup port */
-	if (decode_addrport("0.0.0.0", port, (struct sockaddr *)&addr,
+	如果 (decode_addrport("0.0.0.0", port, (struct sockaddr *)&addr,
 	    sizeof(addr), 1, 1) == -1)
 		errx(1, "unknown port \"%.64s\"", port);
 	serverport = in4->sin_port;
 
  again:
-	if (authretry++ > 3)
+	如果 (authretry++ > 3)
 		errx(1, "Too many authentication failures");
 
 	proxyfd = remote_connect(proxyhost, proxyport, proxyhints);
 
-	if (proxyfd < 0)
-		return (-1);
+	如果 (proxyfd < 0)
+		返回 (-1);
 
-	if (socksv == 5) {
-		if (decode_addrport(host, port, (struct sockaddr *)&addr,
+	如果 (socksv == 5) {
+		如果 (decode_addrport(host, port, (struct sockaddr *)&addr,
 		    sizeof(addr), 0, 1) == -1)
 			addr.ss_family = 0; /* used in switch below */
 
@@ -1507,14 +1507,14 @@ socks_connect(const char *host, const char *port,
 		buf[1] = 1;
 		buf[2] = SOCKS_NOAUTH;
 		cnt = atomicio(vwrite, proxyfd, buf, 3);
-		if (cnt != 3)
+		如果 (cnt != 3)
 			err(1, "write failed (%zu/3)", cnt);
 
 		cnt = atomicio(read, proxyfd, buf, 2);
-		if (cnt != 2)
+		如果 (cnt != 2)
 			err(1, "read failed (%zu/3)", cnt);
 
-		if (buf[1] == SOCKS_NOMETHOD)
+		如果 (buf[1] == SOCKS_NOMETHOD)
 			errx(1, "authentication method negotiation failed");
 
 		switch (addr.ss_family) {
@@ -1523,7 +1523,7 @@ socks_connect(const char *host, const char *port,
 
 			/* Max domain name length is 255 bytes */
 			hlen = strlen(host);
-			if (hlen > 255)
+			如果 (hlen > 255)
 				errx(1, "host name too long for SOCKS5");
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
@@ -1560,30 +1560,30 @@ socks_connect(const char *host, const char *port,
 		}
 
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		如果 (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
 		cnt = atomicio(read, proxyfd, buf, 4);
-		if (cnt != 4)
+		如果 (cnt != 4)
 			err(1, "read failed (%zu/4)", cnt);
-		if (buf[1] != 0)
+		如果 (buf[1] != 0)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
 		switch (buf[3]) {
 		case SOCKS_IPV4:
 			cnt = atomicio(read, proxyfd, buf + 4, 6);
-			if (cnt != 6)
+			如果 (cnt != 6)
 				err(1, "read failed (%zu/6)", cnt);
 			break;
 		case SOCKS_IPV6:
 			cnt = atomicio(read, proxyfd, buf + 4, 18);
-			if (cnt != 18)
+			如果 (cnt != 18)
 				err(1, "read failed (%zu/18)", cnt);
 			break;
 		default:
 			errx(1, "connection failed, unsupported address type");
 		}
-	} else if (socksv == 4 || socksv == 44) {
-		if (socksv == 4) {
+	} 否则 如果 (socksv == 4 || socksv == 44) {
+		如果 (socksv == 4) {
 			/* This will exit on lookup failure */
 			decode_addrport(host, port, (struct sockaddr *)&addr,
 			    sizeof(addr), 1, 0);
@@ -1593,104 +1593,104 @@ socks_connect(const char *host, const char *port,
 		buf[0] = SOCKS_V4;
 		buf[1] = SOCKS_CONNECT;	/* connect */
 		memcpy(buf + 2, &in4->sin_port, sizeof in4->sin_port);
-		if (socksv == 4) {
+		如果 (socksv == 4) {
 			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-		} else {
+		} 否则 {
 			/* SOCKS4A uses addr of 0.0.0.x, and hostname later */
 			buf[4] = buf[5] = buf[6] = 0;
 			buf[7] = 1;
 		}
 		buf[8] = 0;	/* empty username */
 		wlen = 9;
-		if (socksv == 44) {
+		如果 (socksv == 44) {
 			/* SOCKS4A has nul-terminated hostname after user */
-			if (strlcpy(buf + 9, host,
+			如果 (strlcpy(buf + 9, host,
 			    sizeof(buf) - 9) >= sizeof(buf) - 9)
 				errx(1, "hostname too big");
 			wlen = 9 + strlen(host) + 1;
 		}
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		如果 (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
 		cnt = atomicio(read, proxyfd, buf, 8);
-		if (cnt != 8)
+		如果 (cnt != 8)
 			err(1, "read failed (%zu/8)", cnt);
-		if (buf[1] != 90)
+		如果 (buf[1] != 90)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-	} else if (socksv == -1) {
+	} 否则 如果 (socksv == -1) {
 		/* HTTP proxy CONNECT */
 
 		/* Disallow bad chars in hostname */
-		if (strcspn(host, "\r\n\t []:") != strlen(host))
+		如果 (strcspn(host, "\r\n\t []:") != strlen(host))
 			errx(1, "Invalid hostname");
 
 		/* Try to be sane about numeric IPv6 addresses */
-		if (strchr(host, ':') != NULL) {
+		如果 (strchr(host, ':') != NULL) {
 			r = snprintf(buf, sizeof(buf),
 			    "CONNECT [%s]:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
-		} else {
+		} 否则 {
 			r = snprintf(buf, sizeof(buf),
 			    "CONNECT %s:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
 		}
-		if (r == -1 || (size_t)r >= sizeof(buf))
+		如果 (r == -1 || (size_t)r >= sizeof(buf))
 			errx(1, "hostname too long");
 		r = strlen(buf);
 
 		cnt = atomicio(vwrite, proxyfd, buf, r);
-		if (cnt != (size_t)r)
+		如果 (cnt != (size_t)r)
 			err(1, "write failed (%zu/%d)", cnt, r);
 
-		if (authretry > 1) {
+		如果 (authretry > 1) {
 			char resp[1024];
 
 			proxypass = getproxypass(proxyuser, proxyhost);
 			r = snprintf(buf, sizeof(buf), "%s:%s",
 			    proxyuser, proxypass);
-			if (r == -1 || (size_t)r >= sizeof(buf) ||
+			如果 (r == -1 || (size_t)r >= sizeof(buf) ||
 			    b64_ntop(buf, strlen(buf), resp,
 			    sizeof(resp)) == -1)
 				errx(1, "Proxy username/password too long");
 			r = snprintf(buf, sizeof(buf), "Proxy-Authorization: "
 			    "Basic %s\r\n", resp);
-			if (r == -1 || (size_t)r >= sizeof(buf))
+			如果 (r == -1 || (size_t)r >= sizeof(buf))
 				errx(1, "Proxy auth response too long");
 			r = strlen(buf);
-			if ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
+			如果 ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
 				err(1, "write failed (%zu/%d)", cnt, r);
 		}
 
 		/* Terminate headers */
-		if ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
+		如果 ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
 			err(1, "write failed (2/%d)", r);
 
 		/* Read status reply */
 		proxy_read_line(proxyfd, buf, sizeof(buf));
-		if (proxyuser != NULL &&
+		如果 (proxyuser != NULL &&
 		    strncmp(buf, "HTTP/1.0 407 ", 12) == 0) {
-			if (authretry > 1) {
+			如果 (authretry > 1) {
 				fprintf(stderr, "Proxy authentication "
 				    "failed\n");
 			}
 			close(proxyfd);
 			goto again;
-		} else if (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
+		} 否则 如果 (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
 		    strncmp(buf, "HTTP/1.1 200 ", 12) != 0)
 			errx(1, "Proxy error: \"%s\"", buf);
 
 		/* Headers continue until we hit an empty line */
-		for (r = 0; r < HTTP_MAXHDRS; r++) {
+		为 (r = 0; r < HTTP_MAXHDRS; r++) {
 			proxy_read_line(proxyfd, buf, sizeof(buf));
-			if (*buf == '\0')
+			如果 (*buf == '\0')
 				break;
 		}
-		if (*buf != '\0')
+		如果 (*buf != '\0')
 			errx(1, "Too many proxy headers received");
-	} else
+	} 否则
 		errx(1, "Unknown proxy protocol %d", socksv);
 
-	return (proxyfd);
+	返回 (proxyfd);
 }
 

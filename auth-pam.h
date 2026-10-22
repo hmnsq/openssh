@@ -32,16 +32,16 @@ void finish_pam(void);
 u_int do_pam_account(void);
 void do_pam_session(struct ssh *);
 void do_pam_setcred(void);
-int do_pam_putenv(char *, char *);
+整数 do_pam_putenv(char *, char *);
 char ** fetch_pam_environment(void);
 char ** fetch_pam_child_environment(void);
 void free_pam_environment(char **);
 void sshpam_thread_cleanup(void);
 void sshpam_cleanup(void);
-int sshpam_auth_passwd(Authctxt *, const char *);
-int sshpam_get_maxtries_reached(void);
-void sshpam_set_maxtries_reached(int);
-int is_pam_session_open(void);
-int sshpam_priv_kbdint_authdone(void *ctxtp);
+整数 sshpam_auth_passwd(Authctxt *, const char *);
+整数 sshpam_get_maxtries_reached(void);
+void sshpam_set_maxtries_reached(整数);
+整数 is_pam_session_open(void);
+整数 sshpam_priv_kbdint_authdone(void *ctxtp);
 
 #endif /* USE_PAM */

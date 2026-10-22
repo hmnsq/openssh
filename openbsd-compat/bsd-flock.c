@@ -40,12 +40,12 @@
 #include <errno.h>
 #include <fcntl.h>
 
-int
-flock(int fd, int op)
+整数
+flock(整数 fd, 整数 op)
 {
-	int rc = 0;
+	整数 rc = 0;
 
-#if defined(F_SETLK) && defined(F_SETLKW)
+#如果 defined(F_SETLK) && defined(F_SETLKW)
 	struct flock fl = {0};
 
 	switch (op & (LOCK_EX|LOCK_SH|LOCK_UN)) {
@@ -63,19 +63,19 @@ flock(int fd, int op)
 
 	default:
 		errno = EINVAL;
-		return -1;
+		返回 -1;
 	}
 
 	fl.l_whence = SEEK_SET;
 	rc = fcntl(fd, op & LOCK_NB ? F_SETLK : F_SETLKW, &fl);
 
-	if (rc && (errno == EAGAIN))
+	如果 (rc && (errno == EAGAIN))
 		errno = EWOULDBLOCK;
-#else
+#否则
 	rc = -1;
 	errno = ENOSYS;
 #endif
 
-	return rc;
+	返回 rc;
 }
 #endif

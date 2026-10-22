@@ -21,13 +21,13 @@
 
 struct expected {
 	const char *key_file;		/* Path for key, NULL for none */
-	int no_parse_status;		/* Expected status w/o key parsing */
-	int no_parse_keytype;		/* Expected keytype w/o key parsing */
-	int match_host_p;		/* Match 'prometheus.example.com' */
-	int match_host_s;		/* Match 'sisyphus.example.com' */
-	int match_ipv4;			/* Match '192.0.2.1' */
-	int match_ipv6;			/* Match '2001:db8::1' */
-	int match_flags;		/* Expected flags from match */
+	整数 no_parse_status;		/* Expected status w/o key parsing */
+	整数 no_parse_keytype;		/* Expected keytype w/o key parsing */
+	整数 match_host_p;		/* Match 'prometheus.example.com' */
+	整数 match_host_s;		/* Match 'sisyphus.example.com' */
+	整数 match_ipv4;			/* Match '192.0.2.1' */
+	整数 match_ipv6;			/* Match '2001:db8::1' */
+	整数 match_flags;		/* Expected flags from match */
 	struct hostkey_foreach_line l;	/* Expected line contents */
 };
 
@@ -35,66 +35,66 @@ struct cbctx {
 	const struct expected *expected;
 	size_t nexpected;
 	size_t i;
-	int flags;
-	int match_host_p;
-	int match_host_s;
-	int match_ipv4;
-	int match_ipv6;
+	整数 flags;
+	整数 match_host_p;
+	整数 match_host_s;
+	整数 match_ipv4;
+	整数 match_ipv6;
 };
 
 /*
  * hostkeys_foreach() iterator callback that verifies the line passed
  * against an array of expected entries.
  */
-static int
+static 整数
 check(struct hostkey_foreach_line *l, void *_ctx)
 {
 	struct cbctx *ctx = (struct cbctx *)_ctx;
 	const struct expected *expected;
-	int parse_key = (ctx->flags & HKF_WANT_PARSE_KEY) != 0;
-	const int matching = (ctx->flags & HKF_WANT_MATCH) != 0;
+	整数 parse_key = (ctx->flags & HKF_WANT_PARSE_KEY) != 0;
+	const 整数 matching = (ctx->flags & HKF_WANT_MATCH) != 0;
 	u_int expected_status, expected_match;
-	int expected_keytype, skip = 0;
+	整数 expected_keytype, skip = 0;
 
 	test_subtest_info("entry %zu/%zu, file line %ld",
 	    ctx->i + 1, ctx->nexpected, l->linenum);
 
-	for (;;) {
+	为 (;;) {
 		ASSERT_SIZE_T_LT(ctx->i, ctx->nexpected);
 		expected = ctx->expected + ctx->i++;
 		/* If we are matching host/IP then skip entries that don't */
-		if (!matching)
+		如果 (!matching)
 			break;
-		if (ctx->match_host_p && expected->match_host_p)
+		如果 (ctx->match_host_p && expected->match_host_p)
 			break;
-		if (ctx->match_host_s && expected->match_host_s)
+		如果 (ctx->match_host_s && expected->match_host_s)
 			break;
-		if (ctx->match_ipv4 && expected->match_ipv4)
+		如果 (ctx->match_ipv4 && expected->match_ipv4)
 			break;
-		if (ctx->match_ipv6 && expected->match_ipv6)
+		如果 (ctx->match_ipv6 && expected->match_ipv6)
 			break;
 	}
 	expected_status = (parse_key || expected->no_parse_status < 0) ?
 	    expected->l.status : (u_int)expected->no_parse_status;
 	expected_match = expected->l.match;
 #define UPDATE_MATCH_STATUS(x) do { \
-		if (ctx->x && expected->x) { \
+		如果 (ctx->x && expected->x) { \
 			expected_match |= expected->x; \
-			if (expected_status == HKF_STATUS_OK) \
+			如果 (expected_status == HKF_STATUS_OK) \
 				expected_status = HKF_STATUS_MATCHED; \
 		} \
-	} while (0)
+	} 当 (0)
 	expected_keytype = (parse_key || expected->no_parse_keytype < 0) ?
 	    expected->l.keytype : expected->no_parse_keytype;
 
 #ifndef WITH_OPENSSL
-	if (expected->l.keytype == KEY_RSA ||
+	如果 (expected->l.keytype == KEY_RSA ||
 	    expected->no_parse_keytype == KEY_RSA ||
 	    expected->l.keytype == KEY_ECDSA ||
 	    expected->no_parse_keytype == KEY_ECDSA)
 		skip = 1;
 #endif /* WITH_OPENSSL */
-	if (skip) {
+	如果 (skip) {
 		expected_status = HKF_STATUS_INVALID;
 		expected_keytype = KEY_UNSPEC;
 		parse_key = 0;
@@ -109,28 +109,28 @@ check(struct hostkey_foreach_line *l, void *_ctx)
 	ASSERT_U_INT_EQ(l->status, expected_status);
 	ASSERT_U_INT_EQ(l->match, expected_match);
 	/* Not all test entries contain fulltext */
-	if (expected->l.line != NULL)
+	如果 (expected->l.line != NULL)
 		ASSERT_STRING_EQ(l->line, expected->l.line);
 	ASSERT_INT_EQ(l->marker, expected->l.marker);
 	/* XXX we skip hashed hostnames for now; implement checking */
-	if (expected->l.hosts != NULL)
+	如果 (expected->l.hosts != NULL)
 		ASSERT_STRING_EQ(l->hosts, expected->l.hosts);
 	/* Not all test entries contain raw keys */
-	if (expected->l.rawkey != NULL)
+	如果 (expected->l.rawkey != NULL)
 		ASSERT_STRING_EQ(l->rawkey, expected->l.rawkey);
 	/* XXX synthesise raw key for cases lacking and compare */
 	ASSERT_INT_EQ(l->keytype, expected_keytype);
-	if (parse_key) {
-		if (expected->l.key == NULL)
+	如果 (parse_key) {
+		如果 (expected->l.key == NULL)
 			ASSERT_PTR_EQ(l->key, NULL);
-		if (expected->l.key != NULL) {
+		如果 (expected->l.key != NULL) {
 			ASSERT_PTR_NE(l->key, NULL);
 			ASSERT_INT_EQ(sshkey_equal(l->key, expected->l.key), 1);
 		}
 	}
-	if (parse_key && l->comment != NULL && expected->l.comment != NULL)
+	如果 (parse_key && l->comment != NULL && expected->l.comment != NULL)
 		ASSERT_STRING_EQ(l->comment, expected->l.comment);
-	return 0;
+	返回 0;
 }
 
 /* Loads public keys for a set of expected results */
@@ -139,8 +139,8 @@ prepare_expected(struct expected *expected, size_t n)
 {
 	size_t i;
 
-	for (i = 0; i < n; i++) {
-		if (expected[i].key_file == NULL)
+	为 (i = 0; i < n; i++) {
+		如果 (expected[i].key_file == NULL)
 			continue;
 #ifndef WITH_OPENSSL
 		switch (expected[i].l.keytype) {
@@ -160,7 +160,7 @@ cleanup_expected(struct expected *expected, size_t n)
 {
 	size_t i;
 
-	for (i = 0; i < n; i++) {
+	为 (i = 0; i < n; i++) {
 		sshkey_free(expected[i].l.key);
 		expected[i].l.key = NULL;
 	}

@@ -126,7 +126,7 @@ mlkem_tests(void)
 	size_t i;
 
 	TEST_START("ML-KEM 768 KATs");
-	for (i = 0; i < sizeof(mlkem768_kats) / sizeof(mlkem768_kats[0]); i++) {
+	为 (i = 0; i < sizeof(mlkem768_kats) / sizeof(mlkem768_kats[0]); i++) {
 		test_subtest_info("vector %zu", i);
 
 		hex2bin(seed, mlkem768_kats[i].seed, 64);

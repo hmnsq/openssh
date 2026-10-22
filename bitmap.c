@@ -39,21 +39,21 @@ bitmap_new(void)
 {
 	struct bitmap *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if ((ret->d = calloc(1, BITMAP_BYTES)) == NULL) {
+	如果 ((ret = calloc(1, sizeof(*ret))) == NULL)
+		返回 NULL;
+	如果 ((ret->d = calloc(1, BITMAP_BYTES)) == NULL) {
 		free(ret);
-		return NULL;
+		返回 NULL;
 	}
 	ret->len = 1;
 	ret->top = 0;
-	return ret;
+	返回 ret;
 }
 
 void
 bitmap_free(struct bitmap *b)
 {
-	if (b != NULL && b->d != NULL) {
+	如果 (b != NULL && b->d != NULL) {
 		bitmap_zero(b);
 		free(b->d);
 		b->d = NULL;
@@ -68,57 +68,57 @@ bitmap_zero(struct bitmap *b)
 	b->top = 0;
 }
 
-int
+整数
 bitmap_test_bit(struct bitmap *b, u_int n)
 {
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (n / BITMAP_BITS) > b->top)
-		return 0;
-	return (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
+	如果 (b->top >= b->len)
+		返回 0; /* invalid */
+	如果 (b->len == 0 || (n / BITMAP_BITS) > b->top)
+		返回 0;
+	返回 (b->d[n / BITMAP_BITS] >> (n & BITMAP_WMASK)) & 1;
 }
 
-static int
+static 整数
 reserve(struct bitmap *b, u_int n)
 {
 	BITMAP_WTYPE *tmp;
 	size_t nlen;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return -1; /* invalid */
+	如果 (b->top >= b->len || n > BITMAP_MAX)
+		返回 -1; /* invalid */
 	nlen = (n / BITMAP_BITS) + 1;
-	if (b->len < nlen) {
-		if ((tmp = recallocarray(b->d, b->len,
+	如果 (b->len < nlen) {
+		如果 ((tmp = recallocarray(b->d, b->len,
 		    nlen, BITMAP_BYTES)) == NULL)
-			return -1;
+			返回 -1;
 		b->d = tmp;
 		b->len = nlen;
 	}
-	return 0;
+	返回 0;
 }
 
-int
+整数
 bitmap_set_bit(struct bitmap *b, u_int n)
 {
-	int r;
+	整数 r;
 	size_t offset;
 
-	if ((r = reserve(b, n)) != 0)
-		return r;
+	如果 ((r = reserve(b, n)) != 0)
+		返回 r;
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
+	如果 (offset > b->top)
 		b->top = offset;
 	b->d[offset] |= (BITMAP_WTYPE)1 << (n & BITMAP_WMASK);
-	return 0;
+	返回 0;
 }
 
 /* Resets b->top to point to the most significant bit set in b->d */
 static void
 retop(struct bitmap *b)
 {
-	if (b->top >= b->len)
-		return;
-	while (b->top > 0 && b->d[b->top] == 0)
+	如果 (b->top >= b->len)
+		返回;
+	当 (b->top > 0 && b->d[b->top] == 0)
 		b->top--;
 }
 
@@ -127,11 +127,11 @@ bitmap_clear_bit(struct bitmap *b, u_int n)
 {
 	size_t offset;
 
-	if (b->top >= b->len || n > BITMAP_MAX)
-		return; /* invalid */
+	如果 (b->top >= b->len || n > BITMAP_MAX)
+		返回; /* invalid */
 	offset = n / BITMAP_BITS;
-	if (offset > b->top)
-		return;
+	如果 (offset > b->top)
+		返回;
 	b->d[offset] &= ~((BITMAP_WTYPE)1 << (n & BITMAP_WMASK));
 	/* The top may have changed as a result of the clear */
 	retop(b);
@@ -144,71 +144,71 @@ bitmap_nbits(struct bitmap *b)
 	BITMAP_WTYPE w;
 
 	retop(b);
-	if (b->top >= b->len)
-		return 0; /* invalid */
-	if (b->len == 0 || (b->top == 0 && b->d[0] == 0))
-		return 0;
+	如果 (b->top >= b->len)
+		返回 0; /* invalid */
+	如果 (b->len == 0 || (b->top == 0 && b->d[0] == 0))
+		返回 0;
 	/* Find MSB set */
 	w = b->d[b->top];
 	bits = (b->top + 1) * BITMAP_BITS;
-	while (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
+	当 (!(w & ((BITMAP_WTYPE)1 << (BITMAP_BITS - 1)))) {
 		w <<= 1;
 		bits--;
 	}
-	return bits;
+	返回 bits;
 }
 
 size_t
 bitmap_nbytes(struct bitmap *b)
 {
-	return (bitmap_nbits(b) + 7) / 8;
+	返回 (bitmap_nbits(b) + 7) / 8;
 }
 
-int
+整数
 bitmap_to_string(struct bitmap *b, void *p, size_t l)
 {
 	u_char *s = (u_char *)p;
 	size_t i, j, k, need = bitmap_nbytes(b);
 
-	if (l < need || b->top >= b->len)
-		return -1;
-	if (l > need)
+	如果 (l < need || b->top >= b->len)
+		返回 -1;
+	如果 (l > need)
 		l = need;
 	/* Put the bytes from LSB backwards */
-	for (i = k = 0; i < b->top + 1; i++) {
-		for (j = 0; j < BITMAP_BYTES; j++) {
-			if (k >= l)
+	为 (i = k = 0; i < b->top + 1; i++) {
+		为 (j = 0; j < BITMAP_BYTES; j++) {
+			如果 (k >= l)
 				break;
 			s[need - 1 - k++] = (b->d[i] >> (j * 8)) & 0xff;
 		}
 	}
-	return 0;
+	返回 0;
 }
 
-int
+整数
 bitmap_from_string(struct bitmap *b, const void *p, size_t l)
 {
-	int r;
+	整数 r;
 	size_t i, offset, shift;
 	const u_char *s = (const u_char *)p;
 
-	if (l > BITMAP_MAX / 8)
-		return -1;
-	if ((r = reserve(b, l * 8)) != 0)
-		return r;
+	如果 (l > BITMAP_MAX / 8)
+		返回 -1;
+	如果 ((r = reserve(b, l * 8)) != 0)
+		返回 r;
 	bitmap_zero(b);
-	if (l == 0)
-		return 0;
+	如果 (l == 0)
+		返回 0;
 	b->top = offset = ((l + (BITMAP_BYTES - 1)) / BITMAP_BYTES) - 1;
 	shift = ((l + (BITMAP_BYTES - 1)) % BITMAP_BYTES) * 8;
-	for (i = 0; i < l; i++) {
+	为 (i = 0; i < l; i++) {
 		b->d[offset] |= (BITMAP_WTYPE)s[i] << shift;
-		if (shift == 0) {
+		如果 (shift == 0) {
 			offset--;
 			shift = BITMAP_BITS - 8;
-		} else
+		} 否则
 			shift -= 8;
 	}
 	retop(b);
-	return 0;
+	返回 0;
 }

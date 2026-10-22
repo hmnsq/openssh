@@ -55,12 +55,12 @@ struct sshauthopt *auth_opts = &g_auth_opts_storage;
 struct passwd *privsep_pw = NULL;
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static volatile 整数 in_fuzz = 0;
 
 void
-cleanup_exit(int code)
+cleanup_exit(整数 code)
 {
-	if (in_fuzz)
+	如果 (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
@@ -70,25 +70,25 @@ __wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	如果 (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+整数
+__wrap_sshpkt_fatal(struct ssh *ssh, 整数 r, const char *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	如果 (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
-int
+整数
 mm_is_monitor(void)
 {
-	return 0;
+	返回 0;
 }
 
 void
@@ -97,87 +97,87 @@ mm_audit_run_command(const char *cmd)
 	(void)cmd;
 }
 
-int
-mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
+整数
+mm_pty_allocate(整数 *ptyfd, 整数 *ttyfd, char *namebuf, size_t namebuflen)
 {
 	*ptyfd = -1;
 	*ttyfd = -1;
-	if (namebuf != NULL && namebuflen > 0)
+	如果 (namebuf != NULL && namebuflen > 0)
 		namebuf[0] = '\0';
-	return 0;
+	返回 0;
 }
 
 void mm_session_pty_cleanup2(Session *s) { (void)s; }
-int platform_locked_account(struct passwd *pw) { (void)pw; return 0; }
+整数 platform_locked_account(struct passwd *pw) { (void)pw; 返回 0; }
 void record_failed_login(struct ssh *ssh, const char *user,
     const char *hostname, const char *ttyname) { (void)ssh; (void)user;
     (void)hostname; (void)ttyname; }
-int temporarily_use_uid(struct passwd *pw) { (void)pw; return 0; }
+整数 temporarily_use_uid(struct passwd *pw) { (void)pw; 返回 0; }
 void restore_uid(void) { }
 void platform_setusercontext(struct passwd *pw) { (void)pw; }
 void platform_setusercontext_post_groups(struct passwd *pw) { (void)pw; }
 struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
-    { (void)ssh; (void)populate; (void)use_dns; return NULL; }
-int auth2_methods_valid(const char *list, int allow_unknown)
-    { (void)list; (void)allow_unknown; return 0; }
+server_get_connection_info(struct ssh *ssh, 整数 populate, 整数 use_dns)
+    { (void)ssh; (void)populate; (void)use_dns; 返回 NULL; }
+整数 auth2_methods_valid(const char *list, 整数 allow_unknown)
+    { (void)list; (void)allow_unknown; 返回 0; }
 struct sshbuf *cfg = NULL;
-int auth_sock = -1;
+整数 auth_sock = -1;
 char **tun_fwd_ifnames = NULL;
 
 struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid)
-    { (void)li; (void)uid; return NULL; }
+    { (void)li; (void)uid; 返回 NULL; }
 struct logininfo *login_alloc_entry(pid_t pid, const char *username,
     const char *hostname, const char *line)
-    { (void)pid; (void)username; (void)hostname; (void)line; return NULL; }
+    { (void)pid; (void)username; (void)hostname; (void)line; 返回 NULL; }
 void server_process_permitopen(struct ssh *ssh) { (void)ssh; }
 void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
-int server_loop2(struct ssh *ssh, Authctxt *authctxt)
-    { (void)ssh; (void)authctxt; return 0; }
-int platform_privileged_uidswap(void) { return 0; }
-int sftp_server_main(int argc, char **argv, struct passwd *user_pw)
-    { (void)argc; (void)argv; (void)user_pw; return 0; }
-int debug_flag = 0;
+整数 server_loop2(struct ssh *ssh, Authctxt *authctxt)
+    { (void)ssh; (void)authctxt; 返回 0; }
+整数 platform_privileged_uidswap(void) { 返回 0; }
+整数 sftp_server_main(整数 argc, char **argv, struct passwd *user_pw)
+    { (void)argc; (void)argv; (void)user_pw; 返回 0; }
+整数 debug_flag = 0;
 void permanently_set_uid(struct passwd *pw) { (void)pw; }
-int login_login(struct logininfo *li) { (void)li; return 0; }
-int login_logout(struct logininfo *li) { (void)li; return 0; }
+整数 login_login(struct logininfo *li) { (void)li; 返回 0; }
+整数 login_logout(struct logininfo *li) { (void)li; 返回 0; }
 void login_free_entry(struct logininfo *li) { (void)li; }
 void login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-    const unsigned int sa_size) { (void)li; (void)sa; (void)sa_size; }
-int openpty(int *amaster, int *aslave, char *name,
+    const unsigned 整数 sa_size) { (void)li; (void)sa; (void)sa_size; }
+整数 openpty(整数 *amaster, 整数 *aslave, char *name,
     const struct termios *termp, const struct winsize *winp)
     { (void)termp; (void)winp; *amaster = -1; *aslave = -1;
-    if (name) name[0] = '\0'; return -1; }
+    如果 (name) name[0] = '\0'; 返回 -1; }
 
-extern int __real_do_exec(struct ssh *, Session *, const char *);
-extern int __real_do_exec_pty(struct ssh *, Session *, const char *);
-extern int __real_do_exec_no_pty(struct ssh *, Session *, const char *);
+extern 整数 __real_do_exec(struct ssh *, Session *, const char *);
+extern 整数 __real_do_exec_pty(struct ssh *, Session *, const char *);
+extern 整数 __real_do_exec_no_pty(struct ssh *, Session *, const char *);
 
-int
+整数
 __wrap_do_exec(struct ssh *ssh, Session *s, const char *command)
 {
 	(void)ssh;
 	(void)s;
 	(void)command;
-	return 0;
+	返回 0;
 }
 
-int
+整数
 __wrap_do_exec_pty(struct ssh *ssh, Session *s, const char *command)
 {
 	(void)ssh;
 	(void)s;
 	(void)command;
-	return 0;
+	返回 0;
 }
 
-int
+整数
 __wrap_do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
 {
 	(void)ssh;
 	(void)s;
 	(void)command;
-	return 0;
+	返回 0;
 }
 
 static struct sshkey *
@@ -185,10 +185,10 @@ load_private(const char *str)
 {
 	struct sshbuf *b = sshbuf_from(str, strlen(str));
 	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	如果 (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	返回 k;
 }
 
 static struct sshkey *
@@ -196,58 +196,58 @@ load_public(const char *str)
 {
 	char *tmp, *cp;
 	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	如果 (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	如果 (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	返回 k;
 }
 
-static int
+static 整数
 pump(struct ssh *from, struct ssh *to, size_t *transferred)
 {
 	const u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	整数 r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	如果 ((r = ssh_packet_next(from, &type)) != 0)
+		返回 r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	如果 (len == 0)
+		返回 0;
+	如果 ((r = ssh_input_append(to, buf, len)) != 0)
+		返回 r;
+	如果 ((r = ssh_output_consume(from, len)) != 0)
+		返回 r;
 	*transferred = len;
-	return 0;
+	返回 0;
 }
 
-static int
+static 整数
 run_kex(struct ssh *client, struct ssh *server)
 {
-	int r;
+	整数 r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	为 (整数 i = 0; i < 100; i++) {
+		如果 ((r = pump(server, client, &sn)) != 0) 返回 r;
+		如果 ((r = pump(client, server, &cn)) != 0) 返回 r;
+		如果 (server->kex->done && client->kex->done)
+			返回 0;
+		如果 (cn == 0 && sn == 0)
+			返回 SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	返回 SSH_ERR_PROTOCOL_ERROR;
 }
 
 #include "fixed-keys.h"
 
 static struct ssh *g_client = NULL;
 static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_channel_id = -1;
+static 整数 g_init = 0;
+static 整数 g_channel_id = -1;
 static Authctxt g_authctxt;
 static struct passwd g_fake_pw;
 
@@ -259,8 +259,8 @@ static char *g_pending_env_val = NULL;
 static void
 my_session_exec_req(struct ssh *ssh)
 {
-	int r;
-	if ((r = sshpkt_get_cstring(ssh, &g_pending_exec_cmd, NULL)) != 0 ||
+	整数 r;
+	如果 ((r = sshpkt_get_cstring(ssh, &g_pending_exec_cmd, NULL)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 }
@@ -268,66 +268,66 @@ my_session_exec_req(struct ssh *ssh)
 static void
 my_session_env_req(struct ssh *ssh)
 {
-	int r;
-	if ((r = sshpkt_get_cstring(ssh, &g_pending_env_name, NULL)) != 0 ||
+	整数 r;
+	如果 ((r = sshpkt_get_cstring(ssh, &g_pending_env_name, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &g_pending_env_val, NULL)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 }
 
-static int
-input_channel_request(int type, uint32_t seq, struct ssh *ssh)
+static 整数
+input_channel_request(整数 type, uint32_t seq, struct ssh *ssh)
 {
 	uint32_t chan_id;
 	u_char want_reply;
 
 	(void)type;
 	(void)seq;
-	if (sshpkt_get_u32(ssh, &chan_id) != 0 ||
+	如果 (sshpkt_get_u32(ssh, &chan_id) != 0 ||
 	    sshpkt_get_cstring(ssh, &g_pending_rtype, NULL) != 0 ||
 	    sshpkt_get_u8(ssh, &want_reply) != 0)
-		return 0;
-	if (g_channel_id >= 0 && g_pending_rtype != NULL) {
+		返回 0;
+	如果 (g_channel_id >= 0 && g_pending_rtype != NULL) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL) {
-			if (strcmp(g_pending_rtype, "exec") == 0)
+		如果 (c != NULL) {
+			如果 (strcmp(g_pending_rtype, "exec") == 0)
 				my_session_exec_req(ssh);
-			else if (strcmp(g_pending_rtype, "env") == 0)
+			否则 如果 (strcmp(g_pending_rtype, "env") == 0)
 				my_session_env_req(ssh);
-			else
+			否则
 				(void)session_input_channel_req(ssh, c,
 				    g_pending_rtype);
 		}
 	}
-	return 0;
+	返回 0;
 }
 
 static void
 reset_channel(struct ssh *ssh)
 {
-	if (g_channel_id >= 0) {
+	如果 (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		如果 (c != NULL)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
 	Channel *c = channel_new(ssh, (char *)"session", SSH_CHANNEL_LARVAL,
 	    -1, -1, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	如果 (c == NULL)
+		返回;
 	g_channel_id = c->self;
 	Session *s = session_new();
-	if (s != NULL) {
+	如果 (s != NULL) {
 		s->chanid = c->self;
 		s->pw = &g_fake_pw;
 	}
 }
 
-static int
+static 整数
 init_once(void)
 {
-	if (g_init)
-		return 0;
+	如果 (g_init)
+		返回 0;
 	signal(SIGPIPE, SIG_IGN);
 	log_init("session_channel_req_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
@@ -355,17 +355,17 @@ init_once(void)
 
 	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
 	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
+	整数 i;
+	为 (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		如果 (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		否则 如果 (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		否则 如果 (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		否则 如果 (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
@@ -373,14 +373,14 @@ init_once(void)
 	struct kex_params kp;
 	memcpy(kp.proposal, proposal, sizeof(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	如果 (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		返回 -1;
+	如果 (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		返回 -1;
+	如果 (run_kex(g_client, g_server) != 0)
+		返回 -1;
 
 	g_server->authctxt = &g_authctxt;
 
@@ -391,29 +391,29 @@ init_once(void)
 	    &input_channel_request);
 
 	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
+	为 (i = 0; i < PROPOSAL_MAX; i++)
 		free(proposal[i]);
 	g_init = 1;
-	return 0;
+	返回 0;
 }
 
 void
 fuzz_session_one(const uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	如果 (init_once() != 0)
+		返回;
+	如果 (size > 65000)
+		返回;
 
 	reset_channel(g_server);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	如果 (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_CHANNEL_REQUEST,
+		如果 (ssh_packet_put(g_client, SSH2_MSG_CHANNEL_REQUEST,
 		    data, size) != 0)
 			goto done;
-		if (pump(g_client, g_server, &transferred) != 0)
+		如果 (pump(g_client, g_server, &transferred) != 0)
 			goto done;
 		(void)ssh_dispatch_run(g_server, DISPATCH_NONBLOCK, NULL);
 	done:

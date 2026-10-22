@@ -46,21 +46,21 @@
 #include <string.h>
 #include <unistd.h>
 
-#if 0
-int
-rresvport(int *alport)
+#如果 0
+整数
+rresvport(整数 *alport)
 {
-	return rresvport_af(alport, AF_INET);
+	返回 rresvport_af(alport, AF_INET);
 }
 #endif
 
-int
-rresvport_af(int *alport, sa_family_t af)
+整数
+rresvport_af(整数 *alport, sa_family_t af)
 {
 	struct sockaddr_storage ss;
 	struct sockaddr *sa;
 	u_int16_t *portp;
-	int s;
+	整数 s;
 	socklen_t salen;
 
 	memset(&ss, '\0', sizeof ss);
@@ -77,32 +77,32 @@ rresvport_af(int *alport, sa_family_t af)
 		break;
 	default:
 		errno = EPFNOSUPPORT;
-		return (-1);
+		返回 (-1);
 	}
 	sa->sa_family = af;
 	
 	s = socket(af, SOCK_STREAM, 0);
-	if (s < 0)
-		return (-1);
+	如果 (s < 0)
+		返回 (-1);
 
 	*portp = htons(*alport);
-	if (*alport < IPPORT_RESERVED - 1) {
-		if (bind(s, sa, salen) >= 0)
-			return (s);
-		if (errno != EADDRINUSE) {
+	如果 (*alport < IPPORT_RESERVED - 1) {
+		如果 (bind(s, sa, salen) >= 0)
+			返回 (s);
+		如果 (errno != EADDRINUSE) {
 			(void)close(s);
-			return (-1);
+			返回 (-1);
 		}
 	}
 
 	*portp = 0;
 	sa->sa_family = af;
-	if (bindresvport_sa(s, sa) == -1) {
+	如果 (bindresvport_sa(s, sa) == -1) {
 		(void)close(s);
-		return (-1);
+		返回 (-1);
 	}
 	*alport = ntohs(*portp);
-	return (s);
+	返回 (s);
 }
 
 #endif /* HAVE_RRESVPORT_AF */

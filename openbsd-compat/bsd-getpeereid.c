@@ -16,26 +16,26 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_GETPEEREID)
+#如果 !defined(HAVE_GETPEEREID)
 
 #include <sys/types.h>
 #include <sys/socket.h>
 
 #include <unistd.h>
 
-#if defined(SO_PEERCRED)
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#如果 defined(SO_PEERCRED)
+整数
+getpeereid(整数 s, uid_t *euid, gid_t *gid)
 {
 	struct ucred cred;
 	socklen_t len = sizeof(cred);
 
-	if (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
-		return (-1);
+	如果 (getsockopt(s, SOL_SOCKET, SO_PEERCRED, &cred, &len) < 0)
+		返回 (-1);
 	*euid = cred.uid;
 	*gid = cred.gid;
 
-	return (0);
+	返回 (0);
 }
 #elif defined(HAVE_GETPEERUCRED)
 
@@ -43,30 +43,30 @@ getpeereid(int s, uid_t *euid, gid_t *gid)
 # include <ucred.h>
 #endif
 
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+整数
+getpeereid(整数 s, uid_t *euid, gid_t *gid)
 {
 	ucred_t *ucred = NULL;
 
-	if (getpeerucred(s, &ucred) == -1)
-		return (-1);
-	if ((*euid = ucred_geteuid(ucred)) == -1)
-		return (-1);
-	if ((*gid = ucred_getrgid(ucred)) == -1)
-		return (-1);
+	如果 (getpeerucred(s, &ucred) == -1)
+		返回 (-1);
+	如果 ((*euid = ucred_geteuid(ucred)) == -1)
+		返回 (-1);
+	如果 ((*gid = ucred_getrgid(ucred)) == -1)
+		返回 (-1);
 
 	ucred_free(ucred);
 
-	return (0);
+	返回 (0);
 }
-#else
-int
-getpeereid(int s, uid_t *euid, gid_t *gid)
+#否则
+整数
+getpeereid(整数 s, uid_t *euid, gid_t *gid)
 {
 	*euid = geteuid();
 	*gid = getgid();
 
-	return (0);
+	返回 (0);
 }
 #endif /* defined(SO_PEERCRED) */
 

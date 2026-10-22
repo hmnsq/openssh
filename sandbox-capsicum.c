@@ -45,8 +45,8 @@
  */
 
 struct ssh_sandbox {
-	int m_recvfd;
-	int m_log_sendfd;
+	整数 m_recvfd;
+	整数 m_log_sendfd;
 };
 
 struct ssh_sandbox *
@@ -58,7 +58,7 @@ ssh_sandbox_init(struct monitor *monitor)
 	box = xcalloc(1, sizeof(*box));
 	box->m_recvfd = monitor->m_recvfd;
 	box->m_log_sendfd = monitor->m_log_sendfd;
-	return box;
+	返回 box;
 }
 
 void
@@ -73,36 +73,36 @@ ssh_sandbox_child(struct ssh_sandbox *box)
 
 	rl_zero.rlim_cur = rl_zero.rlim_max = 0;
 
-	if (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
+	如果 (setrlimit(RLIMIT_FSIZE, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_FSIZE, { 0, 0 }): %s",
 			__func__, strerror(errno));
 #ifndef SANDBOX_SKIP_RLIMIT_NOFILE
-	if (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
+	如果 (setrlimit(RLIMIT_NOFILE, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_NOFILE, { 0, 0 }): %s",
 			__func__, strerror(errno));
 #endif
-	if (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
+	如果 (setrlimit(RLIMIT_NPROC, &rl_zero) == -1)
 		fatal("%s: setrlimit(RLIMIT_NPROC, { 0, 0 }): %s",
 			__func__, strerror(errno));
 
 	cap_rights_init(&rights);
 
-	if (cap_rights_limit(STDIN_FILENO, &rights) < 0 && errno != ENOSYS)
+	如果 (cap_rights_limit(STDIN_FILENO, &rights) < 0 && errno != ENOSYS)
 		fatal("can't limit stdin: %m");
-	if (cap_rights_limit(STDOUT_FILENO, &rights) < 0 && errno != ENOSYS)
+	如果 (cap_rights_limit(STDOUT_FILENO, &rights) < 0 && errno != ENOSYS)
 		fatal("can't limit stdout: %m");
-	if (cap_rights_limit(STDERR_FILENO, &rights) < 0 && errno != ENOSYS)
+	如果 (cap_rights_limit(STDERR_FILENO, &rights) < 0 && errno != ENOSYS)
 		fatal("can't limit stderr: %m");
 
 	cap_rights_init(&rights, CAP_READ, CAP_WRITE);
-	if (cap_rights_limit(box->m_recvfd, &rights) < 0 &&
+	如果 (cap_rights_limit(box->m_recvfd, &rights) < 0 &&
 	    errno != ENOSYS)
 		fatal_f("failed to limit the network socket");
 	cap_rights_init(&rights, CAP_WRITE);
-	if (cap_rights_limit(box->m_log_sendfd, &rights) < 0 &&
+	如果 (cap_rights_limit(box->m_log_sendfd, &rights) < 0 &&
 	    errno != ENOSYS)
 		fatal_f("failed to limit the logging socket");
-	if (cap_enter() < 0 && errno != ENOSYS)
+	如果 (cap_enter() < 0 && errno != ENOSYS)
 		fatal_f("failed to enter capability mode");
 
 }

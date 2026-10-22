@@ -44,64 +44,64 @@
 #include <arpa/inet.h>
 
 #ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-		size_t hostlen, char *serv, size_t servlen, int flags)
+整数 getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
+		size_t hostlen, char *serv, size_t servlen, 整数 flags)
 {
 	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
 	struct hostent *hp;
 	char tmpserv[16];
 
-	if ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
+	如果 ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
 	    salen < sizeof(struct sockaddr_in))
-		return (EAI_FAMILY);
-	if (serv != NULL) {
+		返回 (EAI_FAMILY);
+	如果 (serv != NULL) {
 		snprintf(tmpserv, sizeof(tmpserv), "%d", ntohs(sin->sin_port));
-		if (strlcpy(serv, tmpserv, servlen) >= servlen)
-			return (EAI_MEMORY);
+		如果 (strlcpy(serv, tmpserv, servlen) >= servlen)
+			返回 (EAI_MEMORY);
 	}
 
-	if (host != NULL) {
-		if (flags & NI_NUMERICHOST) {
-			if (strlcpy(host, inet_ntoa(sin->sin_addr),
+	如果 (host != NULL) {
+		如果 (flags & NI_NUMERICHOST) {
+			如果 (strlcpy(host, inet_ntoa(sin->sin_addr),
 			    hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
-		} else {
+				返回 (EAI_MEMORY);
+			否则
+				返回 (0);
+		} 否则 {
 			hp = gethostbyaddr((char *)&sin->sin_addr,
 			    sizeof(struct in_addr), AF_INET);
-			if (hp == NULL)
-				return (EAI_NODATA);
+			如果 (hp == NULL)
+				返回 (EAI_NODATA);
 
-			if (strlcpy(host, hp->h_name, hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
+			如果 (strlcpy(host, hp->h_name, hostlen) >= hostlen)
+				返回 (EAI_MEMORY);
+			否则
+				返回 (0);
 		}
 	}
-	return (0);
+	返回 (0);
 }
 #endif /* !HAVE_GETNAMEINFO */
 
 #ifndef HAVE_GAI_STRERROR
 #ifdef HAVE_CONST_GAI_STRERROR_PROTO
 const char *
-#else
+#否则
 char *
 #endif
-gai_strerror(int err)
+gai_strerror(整数 err)
 {
 	switch (err) {
 	case EAI_NODATA:
-		return ("no address associated with name");
+		返回 ("no address associated with name");
 	case EAI_MEMORY:
-		return ("memory allocation failure");
+		返回 ("memory allocation failure");
 	case EAI_NONAME:
-		return ("name or service is not known");
+		返回 ("name or service is not known");
 	case EAI_FAMILY:
-		return ("ai_family not supported");
+		返回 ("ai_family not supported");
 	default:
-		return ("unknown/invalid error");
+		返回 ("unknown/invalid error");
 	}
 }
 #endif /* !HAVE_GAI_STRERROR */
@@ -112,7 +112,7 @@ freeaddrinfo(struct addrinfo *ai)
 {
 	struct addrinfo *next;
 
-	for(; ai != NULL;) {
+	为(; ai != NULL;) {
 		next = ai->ai_next;
 		free(ai);
 		ai = next;
@@ -122,13 +122,13 @@ freeaddrinfo(struct addrinfo *ai)
 
 #ifndef HAVE_GETADDRINFO
 static struct
-addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
+addrinfo *malloc_ai(整数 port, u_long addr, const struct addrinfo *hints)
 {
 	struct addrinfo *ai;
 
 	ai = malloc(sizeof(*ai) + sizeof(struct sockaddr_in));
-	if (ai == NULL)
-		return (NULL);
+	如果 (ai == NULL)
+		返回 (NULL);
 
 	memset(ai, '\0', sizeof(*ai) + sizeof(struct sockaddr_in));
 
@@ -141,96 +141,96 @@ addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
 	((struct sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
 
 	/* XXX: the following is not generally correct, but does what we want */
-	if (hints->ai_socktype)
+	如果 (hints->ai_socktype)
 		ai->ai_socktype = hints->ai_socktype;
-	else
+	否则
 		ai->ai_socktype = SOCK_STREAM;
 
-	if (hints->ai_protocol)
+	如果 (hints->ai_protocol)
 		ai->ai_protocol = hints->ai_protocol;
 
-	return (ai);
+	返回 (ai);
 }
 
-int
+整数
 getaddrinfo(const char *hostname, const char *servname,
     const struct addrinfo *hints, struct addrinfo **res)
 {
 	struct hostent *hp;
 	struct servent *sp;
 	struct in_addr in;
-	int i;
-	long int port;
+	整数 i;
+	long 整数 port;
 	u_long addr;
 
 	port = 0;
-	if (hints && hints->ai_family != AF_UNSPEC &&
+	如果 (hints && hints->ai_family != AF_UNSPEC &&
 	    hints->ai_family != AF_INET)
-		return (EAI_FAMILY);
-	if (servname != NULL) {
+		返回 (EAI_FAMILY);
+	如果 (servname != NULL) {
 		char *cp;
 
 		port = strtol(servname, &cp, 10);
-		if (port > 0 && port <= 65535 && *cp == '\0')
+		如果 (port > 0 && port <= 65535 && *cp == '\0')
 			port = htons(port);
-		else if ((sp = getservbyname(servname, NULL)) != NULL)
+		否则 如果 ((sp = getservbyname(servname, NULL)) != NULL)
 			port = sp->s_port;
-		else
+		否则
 			port = 0;
 	}
 
-	if (hints && hints->ai_flags & AI_PASSIVE) {
+	如果 (hints && hints->ai_flags & AI_PASSIVE) {
 		addr = htonl(0x00000000);
-		if (hostname && inet_aton(hostname, &in) != 0)
+		如果 (hostname && inet_aton(hostname, &in) != 0)
 			addr = in.s_addr;
 		*res = malloc_ai(port, addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		如果 (*res == NULL)
+			返回 (EAI_MEMORY);
+		返回 (0);
 	}
 
-	if (!hostname) {
+	如果 (!hostname) {
 		*res = malloc_ai(port, htonl(0x7f000001), hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		如果 (*res == NULL)
+			返回 (EAI_MEMORY);
+		返回 (0);
 	}
 
-	if (inet_aton(hostname, &in)) {
+	如果 (inet_aton(hostname, &in)) {
 		*res = malloc_ai(port, in.s_addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		如果 (*res == NULL)
+			返回 (EAI_MEMORY);
+		返回 (0);
 	}
 
 	/* Don't try DNS if AI_NUMERICHOST is set */
-	if (hints && hints->ai_flags & AI_NUMERICHOST)
-		return (EAI_NONAME);
+	如果 (hints && hints->ai_flags & AI_NUMERICHOST)
+		返回 (EAI_NONAME);
 
 	hp = gethostbyname(hostname);
-	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
+	如果 (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
 		struct addrinfo *cur, *prev;
 
 		cur = prev = *res = NULL;
-		for (i = 0; hp->h_addr_list[i]; i++) {
+		为 (i = 0; hp->h_addr_list[i]; i++) {
 			struct in_addr *in = (struct in_addr *)hp->h_addr_list[i];
 
 			cur = malloc_ai(port, in->s_addr, hints);
-			if (cur == NULL) {
-				if (*res != NULL)
+			如果 (cur == NULL) {
+				如果 (*res != NULL)
 					freeaddrinfo(*res);
-				return (EAI_MEMORY);
+				返回 (EAI_MEMORY);
 			}
-			if (prev)
+			如果 (prev)
 				prev->ai_next = cur;
-			else
+			否则
 				*res = cur;
 
 			prev = cur;
 		}
-		return (0);
+		返回 (0);
 	}
 
-	return (EAI_NODATA);
+	返回 (EAI_NODATA);
 }
 #endif /* !HAVE_GETADDRINFO */
