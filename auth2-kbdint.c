@@ -44,25 +44,25 @@
 extern ServerOptions options;
 extern struct authmethod_cfg methodcfg_kbdint;
 
-static int
+static цео
 userauth_kbdint(struct ssh *ssh, const char *method)
 {
-	int r, authenticated = 0;
+	цео r, authenticated = 0;
 	char *lang, *devs;
 
-	if ((r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0 ||
+	ако ((r = sshpkt_get_cstring(ssh, &lang, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &devs, NULL)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	debug("keyboard-interactive devs %s", devs);
 
-	if (options.kbd_interactive_authentication)
+	ако (options.kbd_interactive_authentication)
 		authenticated = auth2_challenge(ssh, devs);
 
 	free(devs);
 	free(lang);
-	return authenticated;
+	врати authenticated;
 }
 
 Authmethod method_kbdint = {

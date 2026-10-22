@@ -15,7 +15,7 @@ extern "C" {
 #include "sshsig.h"
 #include "log.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+цео LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
 {
   static const char *data = "If everyone started announcing his nose had "
       "run away, I don’t know how it would all end";
@@ -31,7 +31,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
   sshkey_free(k);
   sshbuf_free(signature);
   sshbuf_free(message);
-  return 0;
+  врати 0;
 }
 
 } // extern

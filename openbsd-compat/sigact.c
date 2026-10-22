@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#ако !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+цео
+sigaction(цео sig, struct sigaction *sigact, struct sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	врати sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+цео
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	ако (!mask) {
 		errno = EINVAL;
-		return -1;
+		врати -1;
 	}
 	*mask = 0;
-	return 0;
+	врати 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+цео
+sigprocmask (цео mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	ако (!mask) {
 		errno = EINVAL;
-		return -1;
+		врати -1;
 	}
 
-	if (omask)
+	ако (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	ако (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	инако ако (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	инако ако (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	врати 0;
 }
 
-int
+цео
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	ако (!mask) {
 		errno = EINVAL;
-		return -1;
+		врати -1;
 	}
-	return sigpause(*mask);
+	врати sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+цео
+sigdelset (sigset_t *mask, цео sig)
 {
-	if (!mask) {
+	ако (!mask) {
 		errno = EINVAL;
-		return -1;
+		врати -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	врати 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+цео
+sigaddset (sigset_t *mask, цео sig)
 {
-	if (!mask) {
+	ако (!mask) {
 		errno = EINVAL;
-		return -1;
+		врати -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	врати 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+цео
+sigismember (sigset_t *mask, цео sig)
 {
-	if (!mask) {
+	ако (!mask) {
 		errno = EINVAL;
-		return -1;
+		врати -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	врати (*mask & sigmask(sig)) != 0;
 }
 
 #endif

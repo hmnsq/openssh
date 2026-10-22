@@ -18,58 +18,58 @@
 #include "match.h"
 
 /* Original match_pattern() implementation; has bad worst-case behaviour */
-static int
+static цео
 match_pattern_original(const char *s, const char *pattern)
 {
-	for (;;) {
+	за (;;) {
 		/* If at end of pattern, accept if also at end of string. */
-		if (!*pattern)
-			return !*s;
+		ако (!*pattern)
+			врати !*s;
 
-		if (*pattern == '*') {
+		ако (*pattern == '*') {
 			/* Skip this and any consecutive asterisks. */
-			while (*pattern == '*')
+			док (*pattern == '*')
 				pattern++;
 
 			/* If at end of pattern, accept immediately. */
-			if (!*pattern)
-				return 1;
+			ако (!*pattern)
+				врати 1;
 
 			/* If next character in pattern is known, optimize. */
-			if (*pattern != '?' && *pattern != '*') {
+			ако (*pattern != '?' && *pattern != '*') {
 				/*
 				 * Look instances of the next character in
 				 * pattern, and try to match starting from
 				 * those.
 				 */
-				for (; *s; s++)
-					if (*s == *pattern &&
+				за (; *s; s++)
+					ако (*s == *pattern &&
 					    match_pattern_original(s + 1,
 					    pattern + 1))
-						return 1;
+						врати 1;
 				/* Failed. */
-				return 0;
+				врати 0;
 			}
 			/*
 			 * Move ahead one character at a time and try to
 			 * match at each position.
 			 */
-			for (; *s; s++)
-				if (match_pattern_original(s, pattern))
-					return 1;
+			за (; *s; s++)
+				ако (match_pattern_original(s, pattern))
+					врати 1;
 			/* Failed. */
-			return 0;
+			врати 0;
 		}
 		/*
 		 * There must be at least one more character in the string.
 		 * If we are at the end, fail.
 		 */
-		if (!*s)
-			return 0;
+		ако (!*s)
+			врати 0;
 
 		/* Check if the next character of the string is acceptable. */
-		if (*pattern != '?' && *pattern != *s)
-			return 0;
+		ако (*pattern != '?' && *pattern != *s)
+			врати 0;
 
 		/* Move to the next character, both in string and in pattern. */
 		s++;
@@ -85,11 +85,11 @@ pow_size(size_t base, size_t exp)
 	size_t r = 1;
 
 	ASSERT_SIZE_T_NE(base, 0);
-	while (exp-- != 0) {
+	док (exp-- != 0) {
 		ASSERT_SIZE_T_LE(r, SIZE_MAX / base);
 		r *= base;
 	}
-	return r;
+	врати r;
 }
 
 static void
@@ -98,7 +98,7 @@ make_word(size_t v, const char *alphabet, size_t alphabet_len,
 {
 	size_t i;
 
-	for (i = 0; i < wordlen; i++) {
+	за (i = 0; i < wordlen; i++) {
 		word[i] = alphabet[v % alphabet_len];
 		v /= alphabet_len;
 	}
@@ -113,12 +113,12 @@ match_pattern_check_one_input(const char *input, const char *pattern_alphabet)
 {
 	char pattern[PATTERN_LEN];
 	size_t len, i, npatterns;
-	int actual, expected;
+	цео actual, expected;
 
-	for (len = 0; len < sizeof(pattern); len++) {
+	за (len = 0; len < sizeof(pattern); len++) {
 		/* Check with all patterns of this size using alphabet */
 		npatterns = pow_size(strlen(pattern_alphabet), len);
-		for (i = 0; i < npatterns; i++) {
+		за (i = 0; i < npatterns; i++) {
 			make_word(i, pattern_alphabet,
 			    strlen(pattern_alphabet), pattern, len);
 			actual = match_pattern(input, pattern);
@@ -142,10 +142,10 @@ match_pattern_exhaustive_original(void)
 	char input[INPUT_LEN];
 	size_t len, i, ninputs;
 
-	for (len = 0; len < sizeof(input); len++) {
+	за (len = 0; len < sizeof(input); len++) {
 		/* Check every possible input from alphabet of this size */
 		ninputs = pow_size(strlen(input_alphabet), len);
-		for (i = 0; i < ninputs; i++) {
+		за (i = 0; i < ninputs; i++) {
 			make_word(i, input_alphabet,
 			    strlen(input_alphabet), input, len);
 			match_pattern_check_one_input(input, pattern_alphabet);
@@ -303,7 +303,7 @@ tests(void)
 		char *result = match_filter_denylist((string), (filter)); \
 		ASSERT_STRING_EQ(result, expected); \
 		free(result); \
-	} while (0)
+	} док (0)
 
 	TEST_START("match_filter_list");
 	CHECK_FILTER("a,b,c", "", "a,b,c");

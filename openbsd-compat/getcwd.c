@@ -32,7 +32,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_GETCWD)
+#ако !defined(HAVE_GETCWD)
 
 #include <sys/stat.h>
 #include <errno.h>
@@ -54,13 +54,13 @@ getcwd(char *pt, size_t size)
 	DIR *dir = NULL;
 	dev_t dev;
 	ino_t ino;
-	int first;
+	цео first;
 	char *bpt, *bup;
 	struct stat s;
 	dev_t root_dev;
 	ino_t root_ino;
 	size_t ptsize, upsize;
-	int save_errno;
+	цео save_errno;
 	char *ept, *eup, *up;
 
 	/*
@@ -68,19 +68,19 @@ getcwd(char *pt, size_t size)
 	 * If a buffer is specified, the size has to be non-zero.  The path
 	 * is built from the end of the buffer backwards.
 	 */
-	if (pt) {
+	ако (pt) {
 		ptsize = 0;
-		if (size == 0) {
+		ако (size == 0) {
 			errno = EINVAL;
-			return (NULL);
-		} else if (size == 1) {
+			врати (NULL);
+		} инако ако (size == 1) {
 			errno = ERANGE;
-			return (NULL);
+			врати (NULL);
 		}
 		ept = pt + size;
-	} else {
-		if ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
-			return (NULL);
+	} инако {
+		ако ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
+			врати (NULL);
 		ept = pt + ptsize;
 	}
 	bpt = ept - 1;
@@ -91,7 +91,7 @@ getcwd(char *pt, size_t size)
 	 * Should always be enough (it's 340 levels).  If it's not, allocate
 	 * as necessary.  Special * case the first stat, it's ".", not "..".
 	 */
-	if ((up = malloc(upsize = MAXPATHLEN)) == NULL)
+	ако ((up = malloc(upsize = MAXPATHLEN)) == NULL)
 		goto err;
 	eup = up + upsize;
 	bup = up;
@@ -99,16 +99,16 @@ getcwd(char *pt, size_t size)
 	up[1] = '\0';
 
 	/* Save root values, so know when to stop. */
-	if (stat("/", &s))
+	ако (stat("/", &s))
 		goto err;
 	root_dev = s.st_dev;
 	root_ino = s.st_ino;
 
 	errno = 0;			/* XXX readdir has no error return. */
 
-	for (first = 1;; first = 0) {
+	за (first = 1;; first = 0) {
 		/* Stat the current level. */
-		if (lstat(up, &s))
+		ако (lstat(up, &s))
 			goto err;
 
 		/* Save current node values. */
@@ -116,7 +116,7 @@ getcwd(char *pt, size_t size)
 		dev = s.st_dev;
 
 		/* Check for reaching root. */
-		if (root_dev == dev && root_ino == ino) {
+		ако (root_dev == dev && root_ino == ino) {
 			*--bpt = '/';
 			/*
 			 * It's unclear that it's a requirement to copy the
@@ -125,7 +125,7 @@ getcwd(char *pt, size_t size)
 			 */
 			memmove(pt, bpt, ept - bpt);
 			free(up);
-			return (pt);
+			врати (pt);
 		}
 
 		/*
@@ -133,10 +133,10 @@ getcwd(char *pt, size_t size)
 		 * as necessary.  Max length is 3 for "../", the largest
 		 * possible component name, plus a trailing NUL.
 		 */
-		if (bup + 3  + MAXNAMLEN + 1 >= eup) {
+		ако (bup + 3  + MAXNAMLEN + 1 >= eup) {
 			char *nup;
 
-			if ((nup = realloc(up, upsize *= 2)) == NULL)
+			ако ((nup = realloc(up, upsize *= 2)) == NULL)
 				goto err;
 			bup = nup + (bup - up);
 			up = nup;
@@ -147,7 +147,7 @@ getcwd(char *pt, size_t size)
 		*bup = '\0';
 
 		/* Open and stat parent directory. */
-		if (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
+		ако (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
 			goto err;
 
 		/* Add trailing slash for next directory. */
@@ -159,29 +159,29 @@ getcwd(char *pt, size_t size)
 		 * parent directory, not the inode number of the mounted file.
 		 */
 		save_errno = 0;
-		if (s.st_dev == dev) {
-			for (;;) {
-				if (!(dp = readdir(dir)))
+		ако (s.st_dev == dev) {
+			за (;;) {
+				ако (!(dp = readdir(dir)))
 					goto notfound;
-				if (dp->d_fileno == ino)
+				ако (dp->d_fileno == ino)
 					break;
 			}
-		} else
-			for (;;) {
-				if (!(dp = readdir(dir)))
+		} инако
+			за (;;) {
+				ако (!(dp = readdir(dir)))
 					goto notfound;
-				if (ISDOT(dp))
+				ако (ISDOT(dp))
 					continue;
 				memcpy(bup, dp->d_name, dp->d_namlen + 1);
 
 				/* Save the first error for later. */
-				if (lstat(up, &s)) {
-					if (!save_errno)
+				ако (lstat(up, &s)) {
+					ако (!save_errno)
 						save_errno = errno;
 					errno = 0;
 					continue;
 				}
-				if (s.st_dev == dev && s.st_ino == ino)
+				ако (s.st_dev == dev && s.st_ino == ino)
 					break;
 			}
 
@@ -189,16 +189,16 @@ getcwd(char *pt, size_t size)
 		 * Check for length of the current name, preceding slash,
 		 * leading slash.
 		 */
-		if (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
+		ако (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
 			size_t len;
 			char *npt;
 
-			if (!ptsize) {
+			ако (!ptsize) {
 				errno = ERANGE;
 				goto err;
 			}
 			len = ept - bpt;
-			if ((npt = realloc(pt, ptsize *= 2)) == NULL)
+			ако ((npt = realloc(pt, ptsize *= 2)) == NULL)
 				goto err;
 			bpt = npt + (bpt - pt);
 			pt = npt;
@@ -206,7 +206,7 @@ getcwd(char *pt, size_t size)
 			memmove(ept - len, bpt, len);
 			bpt = ept - len;
 		}
-		if (!first)
+		ако (!first)
 			*--bpt = '/';
 		bpt -= dp->d_namlen;
 		memcpy(bpt, dp->d_name, dp->d_namlen);
@@ -222,21 +222,21 @@ notfound:
 	 * didn't find the current directory in its parent directory, set
 	 * errno to ENOENT.
 	 */
-	if (!errno)
+	ако (!errno)
 		errno = save_errno ? save_errno : ENOENT;
 	/* FALLTHROUGH */
 err:
 	save_errno = errno;
 
-	if (ptsize)
+	ако (ptsize)
 		free(pt);
 	free(up);
-	if (dir)
+	ако (dir)
 		(void)closedir(dir);
 
 	errno = save_errno;
 
-	return (NULL);
+	врати (NULL);
 }
 
 #endif /* !defined(HAVE_GETCWD) */

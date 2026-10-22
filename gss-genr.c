@@ -46,25 +46,25 @@
 #include "ssh-gss.h"
 
 /* sshbuf_get for gss_buffer_desc */
-int
+цео
 ssh_gssapi_get_buffer_desc(struct sshbuf *b, gss_buffer_desc *g)
 {
-	int r;
+	цео r;
 	u_char *p;
 	size_t len;
 
-	if ((r = sshbuf_get_string(b, &p, &len)) != 0)
-		return r;
+	ако ((r = sshbuf_get_string(b, &p, &len)) != 0)
+		врати r;
 	g->value = p;
 	g->length = len;
-	return 0;
+	врати 0;
 }
 
 /* Check that the OID in a data stream matches that in the context */
-int
+цео
 ssh_gssapi_check_oid(Gssctxt *ctx, void *data, size_t len)
 {
-	return (ctx != NULL && ctx->oid != GSS_C_NO_OID &&
+	врати (ctx != NULL && ctx->oid != GSS_C_NO_OID &&
 	    ctx->oid->length == len &&
 	    memcmp(ctx->oid->elements, data, len) == 0);
 }
@@ -73,7 +73,7 @@ ssh_gssapi_check_oid(Gssctxt *ctx, void *data, size_t len)
 void
 ssh_gssapi_set_oid_data(Gssctxt *ctx, void *data, size_t len)
 {
-	if (ctx->oid != GSS_C_NO_OID) {
+	ако (ctx->oid != GSS_C_NO_OID) {
 		free(ctx->oid->elements);
 		free(ctx->oid);
 	}
@@ -110,14 +110,14 @@ ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
 	OM_uint32 ctx;
 	struct sshbuf *b;
 	char *ret;
-	int r;
+	цео r;
 
-	if ((b = sshbuf_new()) == NULL)
+	ако ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
-	if (major_status != NULL)
+	ако (major_status != NULL)
 		*major_status = ctxt->major;
-	if (minor_status != NULL)
+	ако (minor_status != NULL)
 		*minor_status = ctxt->minor;
 
 	ctx = 0;
@@ -126,30 +126,30 @@ ssh_gssapi_last_error(Gssctxt *ctxt, OM_uint32 *major_status,
 		gss_display_status(&lmin, ctxt->major,
 		    GSS_C_GSS_CODE, ctxt->oid, &ctx, &msg);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		ако ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble GSS_CODE");
 
 		gss_release_buffer(&lmin, &msg);
-	} while (ctx != 0);
+	} док (ctx != 0);
 
 	/* The mechanism specific error */
 	do {
 		gss_display_status(&lmin, ctxt->minor,
 		    GSS_C_MECH_CODE, ctxt->oid, &ctx, &msg);
 
-		if ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
+		ако ((r = sshbuf_put(b, msg.value, msg.length)) != 0 ||
 		    (r = sshbuf_put_u8(b, '\n')) != 0)
 			fatal_fr(r, "assemble MECH_CODE");
 
 		gss_release_buffer(&lmin, &msg);
-	} while (ctx != 0);
+	} док (ctx != 0);
 
-	if ((r = sshbuf_put_u8(b, '\n')) != 0)
+	ако ((r = sshbuf_put_u8(b, '\n')) != 0)
 		fatal_fr(r, "assemble newline");
 	ret = xstrdup((const char *)sshbuf_ptr(b));
 	sshbuf_free(b);
-	return (ret);
+	врати (ret);
 }
 
 /*
@@ -176,22 +176,22 @@ ssh_gssapi_delete_ctx(Gssctxt **ctx)
 {
 	OM_uint32 ms;
 
-	if ((*ctx) == NULL)
-		return;
-	if ((*ctx)->context != GSS_C_NO_CONTEXT)
+	ако ((*ctx) == NULL)
+		врати;
+	ако ((*ctx)->context != GSS_C_NO_CONTEXT)
 		gss_delete_sec_context(&ms, &(*ctx)->context, GSS_C_NO_BUFFER);
-	if ((*ctx)->name != GSS_C_NO_NAME)
+	ако ((*ctx)->name != GSS_C_NO_NAME)
 		gss_release_name(&ms, &(*ctx)->name);
-	if ((*ctx)->oid != GSS_C_NO_OID) {
+	ако ((*ctx)->oid != GSS_C_NO_OID) {
 		free((*ctx)->oid->elements);
 		free((*ctx)->oid);
 		(*ctx)->oid = GSS_C_NO_OID;
 	}
-	if ((*ctx)->creds != GSS_C_NO_CREDENTIAL)
+	ако ((*ctx)->creds != GSS_C_NO_CREDENTIAL)
 		gss_release_cred(&ms, &(*ctx)->creds);
-	if ((*ctx)->client != GSS_C_NO_NAME)
+	ако ((*ctx)->client != GSS_C_NO_NAME)
 		gss_release_name(&ms, &(*ctx)->client);
-	if ((*ctx)->client_creds != GSS_C_NO_CREDENTIAL)
+	ако ((*ctx)->client_creds != GSS_C_NO_CREDENTIAL)
 		gss_release_cred(&ms, &(*ctx)->client_creds);
 
 	free(*ctx);
@@ -205,12 +205,12 @@ ssh_gssapi_delete_ctx(Gssctxt **ctx)
  *	server name (from ssh_gssapi_import_name)
  */
 OM_uint32
-ssh_gssapi_init_ctx(Gssctxt *ctx, int deleg_creds, gss_buffer_desc *recv_tok,
+ssh_gssapi_init_ctx(Gssctxt *ctx, цео deleg_creds, gss_buffer_desc *recv_tok,
     gss_buffer_desc* send_tok, OM_uint32 *flags)
 {
-	int deleg_flag = 0;
+	цео deleg_flag = 0;
 
-	if (deleg_creds) {
+	ако (deleg_creds) {
 		deleg_flag = GSS_C_DELEG_FLAG;
 		debug("Delegating credentials");
 	}
@@ -220,10 +220,10 @@ ssh_gssapi_init_ctx(Gssctxt *ctx, int deleg_creds, gss_buffer_desc *recv_tok,
 	    GSS_C_MUTUAL_FLAG | GSS_C_INTEG_FLAG | deleg_flag,
 	    0, NULL, recv_tok, NULL, send_tok, flags, NULL);
 
-	if (GSS_ERROR(ctx->major))
+	ако (GSS_ERROR(ctx->major))
 		ssh_gssapi_error(ctx);
 
-	return (ctx->major);
+	врати (ctx->major);
 }
 
 /* Create a service name for the given host */
@@ -237,32 +237,32 @@ ssh_gssapi_import_name(Gssctxt *ctx, const char *host)
 	gssbuf.value = val;
 	gssbuf.length = strlen(gssbuf.value);
 
-	if ((ctx->major = gss_import_name(&ctx->minor,
+	ако ((ctx->major = gss_import_name(&ctx->minor,
 	    &gssbuf, GSS_C_NT_HOSTBASED_SERVICE, &ctx->name)))
 		ssh_gssapi_error(ctx);
 
 	free(gssbuf.value);
-	return (ctx->major);
+	врати (ctx->major);
 }
 
 OM_uint32
 ssh_gssapi_sign(Gssctxt *ctx, gss_buffer_t buffer, gss_buffer_t hash)
 {
-	if ((ctx->major = gss_get_mic(&ctx->minor, ctx->context,
+	ако ((ctx->major = gss_get_mic(&ctx->minor, ctx->context,
 	    GSS_C_QOP_DEFAULT, buffer, hash)))
 		ssh_gssapi_error(ctx);
 
-	return (ctx->major);
+	врати (ctx->major);
 }
 
 void
 ssh_gssapi_buildmic(struct sshbuf *b, const char *user, const char *service,
     const char *context, const struct sshbuf *session_id)
 {
-	int r;
+	цео r;
 
 	sshbuf_reset(b);
-	if ((r = sshbuf_put_stringb(b, session_id)) != 0 ||
+	ако ((r = sshbuf_put_stringb(b, session_id)) != 0 ||
 	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, service)) != 0 ||
@@ -270,7 +270,7 @@ ssh_gssapi_buildmic(struct sshbuf *b, const char *user, const char *service,
 		fatal_fr(r, "assemble buildmic");
 }
 
-int
+цео
 ssh_gssapi_check_mechanism(Gssctxt **ctx, gss_OID oid, const char *host)
 {
 	gss_buffer_desc token = GSS_C_EMPTY_BUFFER;
@@ -278,26 +278,26 @@ ssh_gssapi_check_mechanism(Gssctxt **ctx, gss_OID oid, const char *host)
 	gss_OID_desc spnego_oid = {6, (void *)"\x2B\x06\x01\x05\x05\x02"};
 
 	/* RFC 4462 says we MUST NOT do SPNEGO */
-	if (oid->length == spnego_oid.length &&
+	ако (oid->length == spnego_oid.length &&
 	    (memcmp(oid->elements, spnego_oid.elements, oid->length) == 0))
-		return 0; /* false */
+		врати 0; /* false */
 
 	ssh_gssapi_build_ctx(ctx);
 	ssh_gssapi_set_oid(*ctx, oid);
 	major = ssh_gssapi_import_name(*ctx, host);
-	if (!GSS_ERROR(major)) {
+	ако (!GSS_ERROR(major)) {
 		major = ssh_gssapi_init_ctx(*ctx, 0, GSS_C_NO_BUFFER, &token,
 		    NULL);
 		gss_release_buffer(&minor, &token);
-		if ((*ctx)->context != GSS_C_NO_CONTEXT)
+		ако ((*ctx)->context != GSS_C_NO_CONTEXT)
 			gss_delete_sec_context(&minor, &(*ctx)->context,
 			    GSS_C_NO_BUFFER);
 	}
 
-	if (GSS_ERROR(major))
+	ако (GSS_ERROR(major))
 		ssh_gssapi_delete_ctx(ctx);
 
-	return (!GSS_ERROR(major));
+	врати (!GSS_ERROR(major));
 }
 
 #endif /* GSSAPI */

@@ -86,23 +86,23 @@
 #endif
 
 struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
+	unsigned цео		rdi_length;	/* length of data */
 	unsigned char		*rdi_data;	/* record data */
 };
 
 struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
+	unsigned цео		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned цео		rri_rdclass;	/* class number */
+	unsigned цео		rri_rdtype;	/* RR type number */
+	unsigned цео		rri_ttl;	/* time to live */
+	unsigned цео		rri_nrdatas;	/* size of rdatas array */
+	unsigned цео		rri_nsigs;	/* size of sigs array */
 	char			*rri_name;	/* canonical name */
 	struct rdatainfo	*rri_rdatas;	/* individual records */
 	struct rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
+цео		getrrsetbyname(const char *, unsigned цео, unsigned цео, unsigned цео, struct rrsetinfo **);
 void		freerrset(struct rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */

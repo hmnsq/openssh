@@ -84,30 +84,30 @@ extern struct sshbuf *loginmsg;
 extern ServerOptions options;
 
 void
-mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx)
+mm_log_handler(LogLevel level, цео forced, const char *msg, void *ctx)
 {
 	struct sshbuf *log_msg;
 	struct monitor *mon = (struct monitor *)ctx;
-	int r;
+	цео r;
 	size_t len;
 
-	if (mon->m_log_sendfd == -1)
+	ако (mon->m_log_sendfd == -1)
 		fatal_f("no log channel");
 
-	if ((log_msg = sshbuf_new()) == NULL)
+	ако ((log_msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
-	if ((r = sshbuf_put_u32(log_msg, 0)) != 0 || /* length; filled below */
+	ако ((r = sshbuf_put_u32(log_msg, 0)) != 0 || /* length; filled below */
 	    (r = sshbuf_put_u32(log_msg, level)) != 0 ||
 	    (r = sshbuf_put_u32(log_msg, forced)) != 0 ||
 	    (r = sshbuf_put_cstring(log_msg, msg)) != 0)
 		fatal_fr(r, "assemble");
-	if ((len = sshbuf_len(log_msg)) < 4 || len > 0xffffffff)
+	ако ((len = sshbuf_len(log_msg)) < 4 || len > 0xffffffff)
 		fatal_f("bad length %zu", len);
 	POKE_U32(sshbuf_mutable_ptr(log_msg), len - 4);
-	if (atomicio(vwrite, mon->m_log_sendfd,
+	ако (atomicio(vwrite, mon->m_log_sendfd,
 	    sshbuf_mutable_ptr(log_msg), len) != len) {
-		if (errno == EPIPE) {
+		ако (errno == EPIPE) {
 			debug_f("write: %s", strerror(errno));
 			cleanup_exit(255);
 		}
@@ -119,28 +119,28 @@ mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx)
 static void
 mm_reap(void)
 {
-	int status = -1;
+	цео status = -1;
 
-	if (!mm_is_monitor())
-		return;
-	while (waitpid(pmonitor->m_pid, &status, 0) == -1) {
-		if (errno == EINTR)
+	ако (!mm_is_monitor())
+		врати;
+	док (waitpid(pmonitor->m_pid, &status, 0) == -1) {
+		ако (errno == EINTR)
 			continue;
 		pmonitor->m_pid = -1;
 		fatal_f("waitpid: %s", strerror(errno));
 	}
-	if (WIFEXITED(status)) {
-		if (WEXITSTATUS(status) != 0) {
+	ако (WIFEXITED(status)) {
+		ако (WEXITSTATUS(status) != 0) {
 			debug_f("child exited with status %d",
 			    WEXITSTATUS(status));
 			cleanup_exit(255);
 		}
-	} else if (WIFSIGNALED(status)) {
+	} инако ако (WIFSIGNALED(status)) {
 		error_f("child terminated by signal %d",
 		    WTERMSIG(status));
 		cleanup_exit(signal_is_crash(WTERMSIG(status)) ?
 		    EXIT_CHILD_CRASH : 255);
-	} else {
+	} инако {
 		error_f("child terminated abnormally (status=0x%x)",
 		    status);
 		cleanup_exit(EXIT_CHILD_CRASH);
@@ -148,20 +148,20 @@ mm_reap(void)
 }
 
 void
-mm_request_send(int sock, enum monitor_reqtype type, struct sshbuf *m)
+mm_request_send(цео sock, enum monitor_reqtype type, struct sshbuf *m)
 {
 	size_t mlen = sshbuf_len(m);
 	u_char buf[5];
 
 	debug3_f("entering, type %d", type);
 
-	if (mlen >= MONITOR_MAX_MSGLEN)
+	ако (mlen >= MONITOR_MAX_MSGLEN)
 		fatal_f("bad length %zu", mlen);
 	POKE_U32(buf, mlen + 1);
 	buf[4] = (u_char) type;		/* 1st byte of payload is mesg-type */
-	if (atomicio(vwrite, sock, buf, sizeof(buf)) != sizeof(buf) ||
+	ако (atomicio(vwrite, sock, buf, sizeof(buf)) != sizeof(buf) ||
 	    atomicio(vwrite, sock, sshbuf_mutable_ptr(m), mlen) != mlen) {
-		if (errno == EPIPE) {
+		ако (errno == EPIPE) {
 			debug3_f("monitor fd closed");
 			mm_reap();
 			cleanup_exit(255);
@@ -171,16 +171,16 @@ mm_request_send(int sock, enum monitor_reqtype type, struct sshbuf *m)
 }
 
 void
-mm_request_receive(int sock, struct sshbuf *m)
+mm_request_receive(цео sock, struct sshbuf *m)
 {
 	u_char buf[4], *p = NULL;
 	u_int msg_len;
-	int oerrno, r;
+	цео oerrno, r;
 
 	debug3_f("entering");
 
-	if (atomicio(read, sock, buf, sizeof(buf)) != sizeof(buf)) {
-		if (errno == EPIPE) {
+	ако (atomicio(read, sock, buf, sizeof(buf)) != sizeof(buf)) {
+		ако (errno == EPIPE) {
 			debug3_f("monitor fd closed");
 			mm_reap();
 			cleanup_exit(255);
@@ -188,47 +188,47 @@ mm_request_receive(int sock, struct sshbuf *m)
 		fatal_f("read: %s", strerror(errno));
 	}
 	msg_len = PEEK_U32(buf);
-	if (msg_len > MONITOR_MAX_MSGLEN)
+	ако (msg_len > MONITOR_MAX_MSGLEN)
 		fatal_f("read: bad msg_len %d", msg_len);
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
+	ако ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio(read, sock, p, msg_len) != msg_len) {
+	ако (atomicio(read, sock, p, msg_len) != msg_len) {
 		oerrno = errno;
 		error_f("read: %s", strerror(errno));
-		if (oerrno == EPIPE)
+		ако (oerrno == EPIPE)
 			mm_reap();
 		cleanup_exit(255);
 	}
 }
 
 void
-mm_request_receive_expect(int sock, enum monitor_reqtype type, struct sshbuf *m)
+mm_request_receive_expect(цео sock, enum monitor_reqtype type, struct sshbuf *m)
 {
 	u_char rtype;
-	int r;
+	цео r;
 
 	debug3_f("entering, type %d", type);
 
 	mm_request_receive(sock, m);
-	if ((r = sshbuf_get_u8(m, &rtype)) != 0)
+	ако ((r = sshbuf_get_u8(m, &rtype)) != 0)
 		fatal_fr(r, "parse");
-	if (rtype != type)
+	ако (rtype != type)
 		fatal_f("read: rtype %d != type %d", rtype, type);
 }
 
 #ifdef WITH_OPENSSL
 DH *
-mm_choose_dh(int min, int nbits, int max)
+mm_choose_dh(цео min, цео nbits, цео max)
 {
 	BIGNUM *p, *g;
-	int r;
+	цео r;
 	u_char success = 0;
 	struct sshbuf *m;
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, min)) != 0 ||
+	ако ((r = sshbuf_put_u32(m, min)) != 0 ||
 	    (r = sshbuf_put_u32(m, nbits)) != 0 ||
 	    (r = sshbuf_put_u32(m, max)) != 0)
 		fatal_fr(r, "assemble");
@@ -238,19 +238,19 @@ mm_choose_dh(int min, int nbits, int max)
 	debug3_f("waiting for MONITOR_ANS_MODULI");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_MODULI, m);
 
-	if ((r = sshbuf_get_u8(m, &success)) != 0)
+	ако ((r = sshbuf_get_u8(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0)
+	ако (success == 0)
 		fatal_f("MONITOR_ANS_MODULI failed");
 
-	if ((r = sshbuf_get_bignum2(m, &p)) != 0 ||
+	ако ((r = sshbuf_get_bignum2(m, &p)) != 0 ||
 	    (r = sshbuf_get_bignum2(m, &g)) != 0)
 		fatal_fr(r, "parse group");
 
 	debug3_f("remaining %zu", sshbuf_len(m));
 	sshbuf_free(m);
 
-	return (dh_new_group(g, p));
+	врати (dh_new_group(g, p));
 }
 #endif
 
@@ -258,29 +258,29 @@ void
 mm_sshkey_setcompat(struct ssh *ssh)
 {
 	struct sshbuf *m;
-	int r;
+	цео r;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, ssh->compat)) != 0)
+	ако ((r = sshbuf_put_u32(m, ssh->compat)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_SETCOMPAT, m);
 }
 
-int
+цео
 mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen, const char *hostkey_alg,
     const char *sk_provider, const char *sk_pin, u_int compat)
 {
 	struct sshbuf *m;
-	int r;
+	цео r;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	ако ((r = sshkey_puts(key, m)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
 	    (r = sshbuf_put_cstring(m, hostkey_alg)) != 0 ||
 	    (r = sshbuf_put_u32(m, compat)) != 0)
@@ -290,42 +290,42 @@ mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
 
 	debug3_f("waiting for MONITOR_ANS_SIGN");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_SIGN, m);
-	if ((r = sshbuf_get_string(m, sigp, lenp)) != 0)
+	ако ((r = sshbuf_get_string(m, sigp, lenp)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 	debug3_f("%s signature len=%zu", hostkey_alg ? hostkey_alg : "(null)",
 	    *lenp);
 
-	return (0);
+	врати (0);
 }
 
 void
 mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m)
 {
 	struct sshbuf *config;
-	int r;
+	цео r;
 	u_int i;
 
-	if ((r = sshbuf_froms(m, &config)) != 0)
+	ако ((r = sshbuf_froms(m, &config)) != 0)
 		fatal_fr(r, "parse opts");
-	if ((r = deserialise_server_options(config, &options)) != 0)
+	ако ((r = deserialise_server_options(config, &options)) != 0)
 		fatal_fr(r, "deserialise_server_options");
 	sshbuf_free(config);
 
 	log_change_level(options.log_level);
 	log_verbose_reset();
-	for (i = 0; i < options.num_log_verbose; i++)
+	за (i = 0; i < options.num_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 }
 
 #define GETPW(b, id) \
 	do { \
-		if ((r = sshbuf_get_string_direct(b, &p, &len)) != 0) \
+		ако ((r = sshbuf_get_string_direct(b, &p, &len)) != 0) \
 			fatal_fr(r, "parse pw %s", #id); \
-		if (len != sizeof(pw->id)) \
+		ако (len != sizeof(pw->id)) \
 			fatal_fr(r, "bad length for %s", #id); \
 		memcpy(&pw->id, p, len); \
-	} while (0)
+	} док (0)
 
 struct passwd *
 mm_getpwnamallow(struct ssh *ssh, const char *username)
@@ -333,15 +333,15 @@ mm_getpwnamallow(struct ssh *ssh, const char *username)
 	struct sshbuf *m;
 	struct passwd *pw;
 	size_t len;
-	int r;
+	цео r;
 	u_char ok;
 	const u_char *p;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, username)) != 0)
+	ако ((r = sshbuf_put_cstring(m, username)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PWNAM, m);
@@ -349,9 +349,9 @@ mm_getpwnamallow(struct ssh *ssh, const char *username)
 	debug3_f("waiting for MONITOR_ANS_PWNAM");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PWNAM, m);
 
-	if ((r = sshbuf_get_u8(m, &ok)) != 0)
+	ако ((r = sshbuf_get_u8(m, &ok)) != 0)
 		fatal_fr(r, "parse success");
-	if (ok == 0) {
+	ако (ok == 0) {
 		pw = NULL;
 		goto out;
 	}
@@ -366,7 +366,7 @@ mm_getpwnamallow(struct ssh *ssh, const char *username)
 #ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
 	GETPW(m, pw_expire);
 #endif
-	if ((r = sshbuf_get_cstring(m, &pw->pw_name, NULL)) != 0 ||
+	ако ((r = sshbuf_get_cstring(m, &pw->pw_name, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &pw->pw_passwd, NULL)) != 0 ||
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
 	    (r = sshbuf_get_cstring(m, &pw->pw_gecos, NULL)) != 0 ||
@@ -391,7 +391,7 @@ out:
 	    options.rekey_interval);
 	sshbuf_free(m);
 
-	return (pw);
+	врати (pw);
 }
 
 char *
@@ -399,27 +399,27 @@ mm_auth2_read_banner(void)
 {
 	struct sshbuf *m;
 	char *banner;
-	int r;
+	цео r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUTH2_READ_BANNER, m);
 	sshbuf_reset(m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_AUTH2_READ_BANNER, m);
-	if ((r = sshbuf_get_cstring(m, &banner, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(m, &banner, NULL)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
 	/* treat empty banner as missing banner */
-	if (strlen(banner) == 0) {
+	ако (strlen(banner) == 0) {
 		free(banner);
 		banner = NULL;
 	}
-	return (banner);
+	врати (banner);
 }
 
 /* Inform the privileged process about service and style */
@@ -428,13 +428,13 @@ void
 mm_inform_authserv(char *service, char *style)
 {
 	struct sshbuf *m;
-	int r;
+	цео r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, service)) != 0 ||
+	ако ((r = sshbuf_put_cstring(m, service)) != 0 ||
 	    (r = sshbuf_put_cstring(m, style ? style : "")) != 0)
 		fatal_fr(r, "assemble");
 
@@ -444,20 +444,20 @@ mm_inform_authserv(char *service, char *style)
 }
 
 /* Do the password authentication */
-int
+цео
 mm_auth_password(struct ssh *ssh, char *password)
 {
 	struct sshbuf *m;
-	int r, authenticated = 0;
+	цео r, authenticated = 0;
 #ifdef USE_PAM
 	u_int maxtries = 0;
 #endif
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, password)) != 0)
+	ако ((r = sshbuf_put_cstring(m, password)) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUTHPASSWORD, m);
 
@@ -465,12 +465,12 @@ mm_auth_password(struct ssh *ssh, char *password)
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_AUTHPASSWORD, m);
 
-	if ((r = sshbuf_get_u32(m, &authenticated)) != 0)
+	ако ((r = sshbuf_get_u32(m, &authenticated)) != 0)
 		fatal_fr(r, "parse");
 #ifdef USE_PAM
-	if ((r = sshbuf_get_u32(m, &maxtries)) != 0)
+	ако ((r = sshbuf_get_u32(m, &maxtries)) != 0)
 		fatal_fr(r, "parse PAM");
-	if (maxtries > INT_MAX)
+	ако (maxtries > INT_MAX)
 		fatal_fr(r, "bad maxtries");
 	sshpam_set_maxtries_reached(maxtries);
 #endif
@@ -478,40 +478,40 @@ mm_auth_password(struct ssh *ssh, char *password)
 	sshbuf_free(m);
 
 	debug3_f("user %sauthenticated", authenticated ? "" : "not ");
-	return (authenticated);
+	врати (authenticated);
 }
 
-int
+цео
 mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int pubkey_auth_attempt, struct sshauthopt **authoptp)
+    цео pubkey_auth_attempt, struct sshauthopt **authoptp)
 {
-	return (mm_key_allowed(MM_USERKEY, NULL, NULL, key,
+	врати (mm_key_allowed(MM_USERKEY, NULL, NULL, key,
 	    pubkey_auth_attempt, authoptp));
 }
 
-int
+цео
 mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
     const char *user, const char *host, struct sshkey *key)
 {
-	return (mm_key_allowed(MM_HOSTKEY, user, host, key, 0, NULL));
+	врати (mm_key_allowed(MM_HOSTKEY, user, host, key, 0, NULL));
 }
 
-int
+цео
 mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
-    struct sshkey *key, int pubkey_auth_attempt, struct sshauthopt **authoptp)
+    struct sshkey *key, цео pubkey_auth_attempt, struct sshauthopt **authoptp)
 {
 	struct sshbuf *m;
-	int r, allowed = 0;
+	цео r, allowed = 0;
 	struct sshauthopt *opts = NULL;
 
 	debug3_f("entering");
 
-	if (authoptp != NULL)
+	ако (authoptp != NULL)
 		*authoptp = NULL;
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, type)) != 0 ||
+	ако ((r = sshbuf_put_u32(m, type)) != 0 ||
 	    (r = sshbuf_put_cstring(m, user ? user : "")) != 0 ||
 	    (r = sshbuf_put_cstring(m, host ? host : "")) != 0 ||
 	    (r = sshkey_puts(key, m)) != 0 ||
@@ -524,20 +524,20 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_KEYALLOWED, m);
 
-	if ((r = sshbuf_get_u32(m, &allowed)) != 0)
+	ако ((r = sshbuf_get_u32(m, &allowed)) != 0)
 		fatal_fr(r, "parse");
-	if (allowed && type == MM_USERKEY &&
+	ако (allowed && type == MM_USERKEY &&
 	    (r = sshauthopt_deserialise(m, &opts)) != 0)
 		fatal_fr(r, "sshauthopt_deserialise");
 	sshbuf_free(m);
 
-	if (authoptp != NULL) {
+	ако (authoptp != NULL) {
 		*authoptp = opts;
 		opts = NULL;
 	}
 	sshauthopt_free(opts);
 
-	return allowed;
+	врати allowed;
 }
 
 /*
@@ -546,24 +546,24 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
  * for authentication.
  */
 
-int
+цео
 mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
     const u_char *data, size_t datalen, const char *sigalg, u_int compat,
     struct sshkey_sig_details **sig_detailsp)
 {
 	struct sshbuf *m;
 	u_int encoded_ret = 0;
-	int r;
+	цео r;
 	u_char sig_details_present, flags;
 	u_int counter;
 
 	debug3_f("entering");
 
-	if (sig_detailsp != NULL)
+	ако (sig_detailsp != NULL)
 		*sig_detailsp = NULL;
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	ако ((r = sshkey_puts(key, m)) != 0 ||
 	    (r = sshbuf_put_string(m, sig, siglen)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
 	    (r = sshbuf_put_cstring(m, sigalg == NULL ? "" : sigalg)) != 0)
@@ -575,14 +575,14 @@ mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_KEYVERIFY, m);
 
-	if ((r = sshbuf_get_u32(m, &encoded_ret)) != 0 ||
+	ако ((r = sshbuf_get_u32(m, &encoded_ret)) != 0 ||
 	    (r = sshbuf_get_u8(m, &sig_details_present)) != 0)
 		fatal_fr(r, "parse");
-	if (sig_details_present && encoded_ret == 0) {
-		if ((r = sshbuf_get_u32(m, &counter)) != 0 ||
+	ако (sig_details_present && encoded_ret == 0) {
+		ако ((r = sshbuf_get_u32(m, &counter)) != 0 ||
 		    (r = sshbuf_get_u8(m, &flags)) != 0)
 			fatal_fr(r, "parse sig_details");
-		if (sig_detailsp != NULL) {
+		ако (sig_detailsp != NULL) {
 			*sig_detailsp = xcalloc(1, sizeof(**sig_detailsp));
 			(*sig_detailsp)->sk_counter = counter;
 			(*sig_detailsp)->sk_flags = flags;
@@ -591,59 +591,59 @@ mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
 
 	sshbuf_free(m);
 
-	if (encoded_ret != 0)
-		return SSH_ERR_SIGNATURE_INVALID;
-	return 0;
+	ако (encoded_ret != 0)
+		врати SSH_ERR_SIGNATURE_INVALID;
+	врати 0;
 }
 
 void
 mm_send_keystate(struct ssh *ssh, struct monitor *monitor)
 {
 	struct sshbuf *m;
-	int r;
+	цео r;
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = ssh_packet_get_state(ssh, m)) != 0)
+	ако ((r = ssh_packet_get_state(ssh, m)) != 0)
 		fatal_fr(r, "ssh_packet_get_state");
 	mm_request_send(monitor->m_recvfd, MONITOR_REQ_KEYEXPORT, m);
 	debug3_f("Finished sending state");
 	sshbuf_free(m);
 }
 
-int
-mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
+цео
+mm_pty_allocate(цео *ptyfd, цео *ttyfd, char *namebuf, size_t namebuflen)
 {
 	struct sshbuf *m;
 	char *p, *msg;
-	int success = 0, tmp1 = -1, tmp2 = -1, r;
+	цео success = 0, tmp1 = -1, tmp2 = -1, r;
 
 	/* Kludge: ensure there are fds free to receive the pty/tty */
-	if ((tmp1 = dup(pmonitor->m_recvfd)) == -1 ||
+	ако ((tmp1 = dup(pmonitor->m_recvfd)) == -1 ||
 	    (tmp2 = dup(pmonitor->m_recvfd)) == -1) {
 		error_f("cannot allocate fds for pty");
-		if (tmp1 >= 0)
+		ако (tmp1 >= 0)
 			close(tmp1);
-		return 0;
+		врати 0;
 	}
 	close(tmp1);
 	close(tmp2);
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PTY, m);
 
 	debug3_f("waiting for MONITOR_ANS_PTY");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PTY, m);
 
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	ако ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0) {
+	ако (success == 0) {
 		debug3_f("pty alloc failed");
 		sshbuf_free(m);
-		return (0);
+		врати (0);
 	}
-	if ((r = sshbuf_get_cstring(m, &p, NULL)) != 0 ||
+	ако ((r = sshbuf_get_cstring(m, &p, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &msg, NULL)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
@@ -651,35 +651,35 @@ mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
 	strlcpy(namebuf, p, namebuflen); /* Possible truncation */
 	free(p);
 
-	if ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
+	ако ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
 		fatal_fr(r, "put loginmsg");
 	free(msg);
 
-	if ((*ptyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1 ||
+	ако ((*ptyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1 ||
 	    (*ttyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1)
 		fatal_f("receive fds failed");
 
 	/* Success */
-	return (1);
+	врати (1);
 }
 
 void
 mm_session_pty_cleanup2(Session *s)
 {
 	struct sshbuf *m;
-	int r;
+	цео r;
 
-	if (s->ttyfd == -1)
-		return;
-	if ((m = sshbuf_new()) == NULL)
+	ако (s->ttyfd == -1)
+		врати;
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, s->tty)) != 0)
+	ако ((r = sshbuf_put_cstring(m, s->tty)) != 0)
 		fatal_fr(r, "assmble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PTYCLEANUP, m);
 	sshbuf_free(m);
 
 	/* closed dup'ed master */
-	if (s->ptymaster != -1 && close(s->ptymaster) == -1)
+	ако (s->ptymaster != -1 && close(s->ptymaster) == -1)
 		error("close(s->ptymaster/%d): %s",
 		    s->ptymaster, strerror(errno));
 
@@ -694,9 +694,9 @@ mm_start_pam(struct ssh *ssh)
 	struct sshbuf *m;
 
 	debug3_f("entering");
-	if (!options.use_pam)
+	ако (!options.use_pam)
 		fatal_f("UsePAM=no, but ended up in %s anyway", __func__);
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_START, m);
 
@@ -710,19 +710,19 @@ mm_do_pam_account(void)
 	u_int ret;
 	char *msg;
 	size_t msglen;
-	int r;
+	цео r;
 
 	debug3_f("entering");
-	if (!options.use_pam)
+	ако (!options.use_pam)
 		fatal_f("UsePAM=no, but ended up in %s anyway", __func__);
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_ACCOUNT, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_ACCOUNT, m);
-	if ((r = sshbuf_get_u32(m, &ret)) != 0 ||
+	ако ((r = sshbuf_get_u32(m, &ret)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &msg, &msglen)) != 0 ||
 	    (r = sshbuf_put(loginmsg, msg, msglen)) != 0)
 		fatal_fr(r, "buffer error");
@@ -732,48 +732,48 @@ mm_do_pam_account(void)
 
 	debug3_f("returning %d", ret);
 
-	return (ret);
+	врати (ret);
 }
 
 void *
 mm_sshpam_init_ctx(Authctxt *authctxt)
 {
 	struct sshbuf *m;
-	int r, success;
+	цео r, success;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_INIT_CTX, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_INIT_CTX");
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_INIT_CTX, m);
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	ако ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "buffer error");
-	if (success == 0) {
+	ако (success == 0) {
 		debug3_f("pam_init_ctx failed");
 		sshbuf_free(m);
-		return (NULL);
+		врати (NULL);
 	}
 	sshbuf_free(m);
-	return (authctxt);
+	врати (authctxt);
 }
 
-int
+цео
 mm_sshpam_query(void *ctx, char **name, char **info,
     u_int *num, char ***prompts, u_int **echo_on)
 {
 	struct sshbuf *m;
 	u_int i, n;
-	int r, ret;
+	цео r, ret;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_QUERY, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_QUERY");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PAM_QUERY, m);
-	if ((r = sshbuf_get_u32(m, &ret)) != 0 ||
+	ако ((r = sshbuf_get_u32(m, &ret)) != 0 ||
 	    (r = sshbuf_get_cstring(m, name, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, info, NULL)) != 0 ||
 	    (r = sshbuf_get_u32(m, &n)) != 0 ||
@@ -781,46 +781,46 @@ mm_sshpam_query(void *ctx, char **name, char **info,
 		fatal_fr(r, "buffer error");
 	debug3_f("pam_query returned %d", ret);
 	sshpam_set_maxtries_reached(n);
-	if (*num > PAM_MAX_NUM_MSG)
+	ако (*num > PAM_MAX_NUM_MSG)
 		fatal("%s: received %u PAM messages, expected <= %u",
 		    __func__, *num, PAM_MAX_NUM_MSG);
 	*prompts = xcalloc((*num + 1), sizeof(char *));
 	*echo_on = xcalloc((*num + 1), sizeof(u_int));
-	for (i = 0; i < *num; ++i) {
-		if ((r = sshbuf_get_cstring(m, &((*prompts)[i]), NULL)) != 0 ||
+	за (i = 0; i < *num; ++i) {
+		ако ((r = sshbuf_get_cstring(m, &((*prompts)[i]), NULL)) != 0 ||
 		    (r = sshbuf_get_u32(m, &((*echo_on)[i]))) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	sshbuf_free(m);
-	return (ret);
+	врати (ret);
 }
 
-int
+цео
 mm_sshpam_respond(void *ctx, u_int num, char **resp)
 {
 	struct sshbuf *m;
 	u_int n, i;
-	int r, ret;
+	цео r, ret;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, num)) != 0)
+	ако ((r = sshbuf_put_u32(m, num)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; i < num; ++i) {
-		if ((r = sshbuf_put_cstring(m, resp[i])) != 0)
+	за (i = 0; i < num; ++i) {
+		ако ((r = sshbuf_put_cstring(m, resp[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_RESPOND, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_RESPOND");
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_RESPOND, m);
-	if ((r = sshbuf_get_u32(m, &n)) != 0)
+	ако ((r = sshbuf_get_u32(m, &n)) != 0)
 		fatal_fr(r, "buffer error");
-	ret = (int)n; /* XXX */
+	ret = (цео)n; /* XXX */
 	debug3_f("pam_respond returned %d", ret);
 	sshbuf_free(m);
-	return (ret);
+	врати (ret);
 }
 
 void
@@ -829,7 +829,7 @@ mm_sshpam_free_ctx(void *ctxtp)
 	struct sshbuf *m;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_FREE_CTX, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_FREE_CTX");
@@ -846,7 +846,7 @@ mm_terminate(void)
 {
 	struct sshbuf *m;
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_TERM, m);
 	sshbuf_free(m);
@@ -863,11 +863,11 @@ mm_get_state(struct ssh *ssh,
     struct sshbuf **authinfop, struct sshbuf **auth_optsp)
 {
 	struct sshbuf *m, *config;
-	int r;
+	цео r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL || (config = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL || (config = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_STATE, m);
@@ -876,7 +876,7 @@ mm_get_state(struct ssh *ssh,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_STATE, m);
 
-	if ((r = sshbuf_froms(m, &config)) != 0 ||
+	ако ((r = sshbuf_froms(m, &config)) != 0 ||
 	    (r = sshbuf_get_u64(m, timing_secretp)) != 0 ||
 	    (r = sshbuf_froms(m, hostkeysp)) != 0 ||
 	    (r = sshbuf_get_stringb(m, ssh->kex->server_version)) != 0 ||
@@ -884,15 +884,15 @@ mm_get_state(struct ssh *ssh,
 		fatal_fr(r, "parse config");
 
 	/* postauth */
-	if (confdatap) {
-		if ((r = sshbuf_froms(m, confdatap)) != 0 ||
+	ако (confdatap) {
+		ако ((r = sshbuf_froms(m, confdatap)) != 0 ||
 		    (r = sshbuf_froms(m, keystatep)) != 0 ||
 		    (r = sshbuf_get_string(m, pw_namep, NULL)) != 0 ||
 		    (r = sshbuf_froms(m, authinfop)) != 0 ||
 		    (r = sshbuf_froms(m, auth_optsp)) != 0)
 			fatal_fr(r, "parse config postauth");
 	}
-	if ((r = deserialise_server_options(config, opts)) != 0)
+	ако ((r = deserialise_server_options(config, opts)) != 0)
 		fatal_fr(r, "deserialise_server_options");
 
 	sshbuf_free(m);
@@ -913,33 +913,33 @@ mm_chall_setup(char **name, char **infotxt, u_int *numprompts,
 	(*echo_on)[0] = 0;
 }
 
-int
+цео
 mm_bsdauth_query(void *ctx, char **name, char **infotxt,
    u_int *numprompts, char ***prompts, u_int **echo_on)
 {
 	struct sshbuf *m;
 	u_int success;
 	char *challenge;
-	int r;
+	цео r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_BSDAUTHQUERY, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_BSDAUTHQUERY, m);
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	ако ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0) {
+	ако (success == 0) {
 		debug3_f("no challenge");
 		sshbuf_free(m);
-		return (-1);
+		врати (-1);
 	}
 
 	/* Get the challenge, and format the response */
-	if ((r = sshbuf_get_cstring(m, &challenge, NULL)) != 0)
+	ако ((r = sshbuf_get_cstring(m, &challenge, NULL)) != 0)
 		fatal_fr(r, "parse challenge");
 	sshbuf_free(m);
 
@@ -948,33 +948,33 @@ mm_bsdauth_query(void *ctx, char **name, char **infotxt,
 
 	debug3_f("received challenge: %s", challenge);
 
-	return (0);
+	врати (0);
 }
 
-int
+цео
 mm_bsdauth_respond(void *ctx, u_int numresponses, char **responses)
 {
 	struct sshbuf *m;
-	int r, authok;
+	цео r, authok;
 
 	debug3_f("entering");
-	if (numresponses != 1)
-		return (-1);
+	ако (numresponses != 1)
+		врати (-1);
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, responses[0])) != 0)
+	ако ((r = sshbuf_put_cstring(m, responses[0])) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_BSDAUTHRESPOND, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_BSDAUTHRESPOND, m);
 
-	if ((r = sshbuf_get_u32(m, &authok)) != 0)
+	ако ((r = sshbuf_get_u32(m, &authok)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
-	return ((authok == 0) ? -1 : 0);
+	врати ((authok == 0) ? -1 : 0);
 }
 
 #ifdef SSH_AUDIT_EVENTS
@@ -982,13 +982,13 @@ void
 mm_audit_event(struct ssh *ssh, ssh_audit_event_t event)
 {
 	struct sshbuf *m;
-	int r;
+	цео r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, event)) != 0)
+	ако ((r = sshbuf_put_u32(m, event)) != 0)
 		fatal_fr(r, "buffer error");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUDIT_EVENT, m);
@@ -999,13 +999,13 @@ void
 mm_audit_run_command(const char *command)
 {
 	struct sshbuf *m;
-	int r;
+	цео r;
 
 	debug3_f("entering command %s", command);
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, command)) != 0)
+	ако ((r = sshbuf_put_cstring(m, command)) != 0)
 		fatal_fr(r, "buffer error");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUDIT_COMMAND, m);
@@ -1019,24 +1019,24 @@ mm_ssh_gssapi_server_ctx(Gssctxt **ctx, gss_OID goid)
 {
 	struct sshbuf *m;
 	OM_uint32 major;
-	int r;
+	цео r;
 
 	/* Client doesn't get to see the context */
 	*ctx = NULL;
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, goid->elements, goid->length)) != 0)
+	ако ((r = sshbuf_put_string(m, goid->elements, goid->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSSETUP, m);
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_GSSSETUP, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0)
+	ако ((r = sshbuf_get_u32(m, &major)) != 0)
 		fatal_fr(r, "parse");
 
 	sshbuf_free(m);
-	return (major);
+	врати (major);
 }
 
 OM_uint32
@@ -1046,28 +1046,28 @@ mm_ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *in,
 	struct sshbuf *m;
 	OM_uint32 major;
 	u_int flags;
-	int r;
+	цео r;
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, in->value, in->length)) != 0)
+	ако ((r = sshbuf_put_string(m, in->value, in->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSSTEP, m);
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_GSSSTEP, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0 ||
+	ако ((r = sshbuf_get_u32(m, &major)) != 0 ||
 	    (r = ssh_gssapi_get_buffer_desc(m, out)) != 0)
 		fatal_fr(r, "parse");
-	if (flagsp != NULL) {
-		if ((r = sshbuf_get_u32(m, &flags)) != 0)
+	ако (flagsp != NULL) {
+		ако ((r = sshbuf_get_u32(m, &flags)) != 0)
 			fatal_fr(r, "parse flags");
 		*flagsp = flags;
 	}
 
 	sshbuf_free(m);
 
-	return (major);
+	врати (major);
 }
 
 OM_uint32
@@ -1075,11 +1075,11 @@ mm_ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 {
 	struct sshbuf *m;
 	OM_uint32 major;
-	int r;
+	цео r;
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, gssbuf->value, gssbuf->length)) != 0 ||
+	ако ((r = sshbuf_put_string(m, gssbuf->value, gssbuf->length)) != 0 ||
 	    (r = sshbuf_put_string(m, gssmic->value, gssmic->length)) != 0)
 		fatal_fr(r, "assemble");
 
@@ -1087,31 +1087,31 @@ mm_ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_GSSCHECKMIC, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0)
+	ако ((r = sshbuf_get_u32(m, &major)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
-	return(major);
+	врати(major);
 }
 
-int
+цео
 mm_ssh_gssapi_userok(char *user)
 {
 	struct sshbuf *m;
-	int r, authenticated = 0;
+	цео r, authenticated = 0;
 
-	if ((m = sshbuf_new()) == NULL)
+	ако ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSUSEROK, m);
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_GSSUSEROK, m);
 
-	if ((r = sshbuf_get_u32(m, &authenticated)) != 0)
+	ако ((r = sshbuf_get_u32(m, &authenticated)) != 0)
 		fatal_fr(r, "parse");
 
 	sshbuf_free(m);
 	debug3_f("user %sauthenticated", authenticated ? "" : "not ");
-	return (authenticated);
+	врати (authenticated);
 }
 #endif /* GSSAPI */
 
@@ -1120,34 +1120,34 @@ mm_ssh_gssapi_userok(char *user)
  * direction (local/remote).
  */
 static void
-server_process_permitopen_list(struct ssh *ssh, int listen,
+server_process_permitopen_list(struct ssh *ssh, цео listen,
     char **opens, u_int num_opens)
 {
 	u_int i;
-	int port;
+	цео port;
 	char *host, *arg, *oarg;
-	int where = listen ? FORWARD_REMOTE : FORWARD_LOCAL;
+	цео where = listen ? FORWARD_REMOTE : FORWARD_LOCAL;
 	const char *what = listen ? "permitlisten" : "permitopen";
 
 	channel_clear_permission(ssh, FORWARD_ADM, where);
-	if (num_opens == 0)
-		return; /* permit any */
+	ако (num_opens == 0)
+		врати; /* permit any */
 
 	/* handle keywords: "any" / "none" */
-	if (num_opens == 1 && strcmp(opens[0], "any") == 0)
-		return;
-	if (num_opens == 1 && strcmp(opens[0], "none") == 0) {
+	ако (num_opens == 1 && strcmp(opens[0], "any") == 0)
+		врати;
+	ако (num_opens == 1 && strcmp(opens[0], "none") == 0) {
 		channel_disable_admin(ssh, where);
-		return;
+		врати;
 	}
 	/* Otherwise treat it as a list of permitted host:port */
-	for (i = 0; i < num_opens; i++) {
+	за (i = 0; i < num_opens; i++) {
 		oarg = arg = xstrdup(opens[i]);
 		host = hpdelim(&arg);
-		if (host == NULL)
+		ако (host == NULL)
 			fatal_f("missing host in %s", what);
 		host = cleanhostname(host);
-		if (arg == NULL || ((port = permitopen_port(arg)) < 0))
+		ако (arg == NULL || ((port = permitopen_port(arg)) < 0))
 			fatal_f("bad port number in %s", what);
 		/* Send it to channels layer */
 		channel_add_permission(ssh, FORWARD_ADM,
@@ -1177,8 +1177,8 @@ server_process_channel_timeouts(struct ssh *ssh)
 
 	debug3_f("setting %u timeouts", options.num_channel_timeouts);
 	channel_clear_timeouts(ssh);
-	for (i = 0; i < options.num_channel_timeouts; i++) {
-		if (parse_pattern_interval(options.channel_timeouts[i],
+	за (i = 0; i < options.num_channel_timeouts; i++) {
+		ако (parse_pattern_interval(options.channel_timeouts[i],
 		    &type, &secs) != 0) {
 			fatal_f("internal error: bad timeout %s",
 			    options.channel_timeouts[i]);
@@ -1189,17 +1189,17 @@ server_process_channel_timeouts(struct ssh *ssh)
 }
 
 struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
+server_get_connection_info(struct ssh *ssh, цео populate, цео use_dns)
 {
 	static struct connection_info ci;
 
-	if (ssh == NULL || !populate)
-		return &ci;
+	ако (ssh == NULL || !populate)
+		врати &ci;
 	ci.host = use_dns ? ssh_remote_hostname(ssh) : ssh_remote_ipaddr(ssh);
 	ci.address = ssh_remote_ipaddr(ssh);
 	ci.laddress = ssh_local_ipaddr(ssh);
 	ci.lport = ssh_local_port(ssh);
 	ci.rdomain = ssh_packet_rdomain_in(ssh);
-	return &ci;
+	врати &ci;
 }
 

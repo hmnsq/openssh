@@ -40,7 +40,7 @@
 /* XXX mode should be mode_t */
 
 void
-strmode(int mode, char *p)
+strmode(цео mode, char *p)
 {
 	 /* print type */
 	switch (mode & S_IFMT) {
@@ -74,13 +74,13 @@ strmode(int mode, char *p)
 		break;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	ако (mode & S_IRUSR)
 		*p++ = 'r';
-	else
+	инако
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	ако (mode & S_IWUSR)
 		*p++ = 'w';
-	else
+	инако
 		*p++ = '-';
 	switch (mode & (S_IXUSR | S_ISUID)) {
 	case 0:
@@ -97,13 +97,13 @@ strmode(int mode, char *p)
 		break;
 	}
 	/* group */
-	if (mode & S_IRGRP)
+	ако (mode & S_IRGRP)
 		*p++ = 'r';
-	else
+	инако
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	ако (mode & S_IWGRP)
 		*p++ = 'w';
-	else
+	инако
 		*p++ = '-';
 	switch (mode & (S_IXGRP | S_ISGID)) {
 	case 0:
@@ -120,13 +120,13 @@ strmode(int mode, char *p)
 		break;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	ако (mode & S_IROTH)
 		*p++ = 'r';
-	else
+	инако
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	ако (mode & S_IWOTH)
 		*p++ = 'w';
-	else
+	инако
 		*p++ = '-';
 	switch (mode & (S_IXOTH | S_ISVTX)) {
 	case 0:

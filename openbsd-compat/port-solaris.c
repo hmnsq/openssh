@@ -39,27 +39,27 @@
 #define CT_TEMPLATE	CTFS_ROOT "/process/template"
 #define CT_LATEST	CTFS_ROOT "/process/latest"
 
-static int tmpl_fd = -1;
+static цео tmpl_fd = -1;
 
 /* Lookup the latest process contract */
 static ctid_t
 get_active_process_contract_id(void)
 {
-	int stat_fd;
+	цео stat_fd;
 	ctid_t ctid = -1;
 	ct_stathdl_t stathdl;
 
-	if ((stat_fd = open64(CT_LATEST, O_RDONLY)) == -1) {
+	ако ((stat_fd = open64(CT_LATEST, O_RDONLY)) == -1) {
 		error("%s: Error opening 'latest' process "
 		    "contract: %s", __func__, strerror(errno));
-		return -1;
+		врати -1;
 	}
-	if (ct_status_read(stat_fd, CTD_COMMON, &stathdl) != 0) {
+	ако (ct_status_read(stat_fd, CTD_COMMON, &stathdl) != 0) {
 		error("%s: Error reading process contract "
 		    "status: %s", __func__, strerror(errno));
 		goto out;
 	}
-	if ((ctid = ct_status_get_id(stathdl)) < 0) {
+	ако ((ctid = ct_status_get_id(stathdl)) < 0) {
 		error("%s: Error getting process contract id: %s",
 		    __func__, strerror(errno));
 		goto out;
@@ -68,53 +68,53 @@ get_active_process_contract_id(void)
 	ct_status_free(stathdl);
  out:
 	close(stat_fd);
-	return ctid;
+	врати ctid;
 }
 
 void
 solaris_contract_pre_fork(void)
 {
-	if ((tmpl_fd = open64(CT_TEMPLATE, O_RDWR)) == -1) {
+	ако ((tmpl_fd = open64(CT_TEMPLATE, O_RDWR)) == -1) {
 		error("%s: open %s: %s", __func__,
 		    CT_TEMPLATE, strerror(errno));
-		return;
+		врати;
 	}
 
 	debug2("%s: setting up process contract template on fd %d",
 	    __func__, tmpl_fd);
 
 	/* First we set the template parameters and event sets. */
-	if (ct_pr_tmpl_set_param(tmpl_fd, CT_PR_PGRPONLY) != 0) {
+	ако (ct_pr_tmpl_set_param(tmpl_fd, CT_PR_PGRPONLY) != 0) {
 		error("%s: Error setting process contract parameter set "
 		    "(pgrponly): %s", __func__, strerror(errno));
 		goto fail;
 	}
-	if (ct_pr_tmpl_set_fatal(tmpl_fd, CT_PR_EV_HWERR) != 0) {
+	ако (ct_pr_tmpl_set_fatal(tmpl_fd, CT_PR_EV_HWERR) != 0) {
 		error("%s: Error setting process contract template "
 		    "fatal events: %s", __func__, strerror(errno));
 		goto fail;
 	}
-	if (ct_tmpl_set_critical(tmpl_fd, 0) != 0) {
+	ако (ct_tmpl_set_critical(tmpl_fd, 0) != 0) {
 		error("%s: Error setting process contract template "
 		    "critical events: %s", __func__, strerror(errno));
 		goto fail;
 	}
-	if (ct_tmpl_set_informative(tmpl_fd, CT_PR_EV_HWERR) != 0) {
+	ако (ct_tmpl_set_informative(tmpl_fd, CT_PR_EV_HWERR) != 0) {
 		error("%s: Error setting process contract template "
 		    "informative events: %s", __func__, strerror(errno));
 		goto fail;
 	}
 
 	/* Now make this the active template for this process. */
-	if (ct_tmpl_activate(tmpl_fd) != 0) {
+	ако (ct_tmpl_activate(tmpl_fd) != 0) {
 		error("%s: Error activating process contract "
 		    "template: %s", __func__, strerror(errno));
 		goto fail;
 	}
-	return;
+	врати;
 
  fail:
-	if (tmpl_fd != -1) {
+	ако (tmpl_fd != -1) {
 		close(tmpl_fd);
 		tmpl_fd = -1;
 	}
@@ -127,7 +127,7 @@ solaris_contract_post_fork_child()
 	    __func__, tmpl_fd);
 
 	/* Clear the active template. */
-	if (ct_tmpl_clear(tmpl_fd) != 0)
+	ако (ct_tmpl_clear(tmpl_fd) != 0)
 		error("%s: Error clearing active process contract "
 		    "template: %s", __func__, strerror(errno));
 
@@ -140,15 +140,15 @@ solaris_contract_post_fork_parent(pid_t pid)
 {
 	ctid_t ctid;
 	char ctl_path[256];
-	int r, ctl_fd = -1, stat_fd = -1;
+	цео r, ctl_fd = -1, stat_fd = -1;
 
 	debug2("%s: clearing template (fd %d)", __func__, tmpl_fd);
 
-	if (tmpl_fd == -1)
-		return;
+	ако (tmpl_fd == -1)
+		врати;
 
 	/* First clear the active template. */
-	if ((r = ct_tmpl_clear(tmpl_fd)) != 0)
+	ако ((r = ct_tmpl_clear(tmpl_fd)) != 0)
 		error("%s: Error clearing active process contract "
 		    "template: %s", __func__, strerror(errno));
 
@@ -160,8 +160,8 @@ solaris_contract_post_fork_parent(pid_t pid)
 	 * th active contract failed (r != 0), then we have nothing
 	 * more do.
 	 */
-	if (r != 0 || pid <= 0)
-		return;
+	ако (r != 0 || pid <= 0)
+		врати;
 
 	/* Now lookup and abandon the contract we've created. */
 	ctid = get_active_process_contract_id();
@@ -170,27 +170,27 @@ solaris_contract_post_fork_parent(pid_t pid)
 
 	snprintf(ctl_path, sizeof(ctl_path),
 	    CTFS_ROOT "/process/%ld/ctl", ctid);
-	if ((ctl_fd = open64(ctl_path, O_WRONLY)) < 0) {
+	ако ((ctl_fd = open64(ctl_path, O_WRONLY)) < 0) {
 		error("%s: Error opening process contract "
 		    "ctl file: %s", __func__, strerror(errno));
 		goto fail;
 	}
-	if (ct_ctl_abandon(ctl_fd) < 0) {
+	ако (ct_ctl_abandon(ctl_fd) < 0) {
 		error("%s: Error abandoning process contract: %s",
 		    __func__, strerror(errno));
 		goto fail;
 	}
 	close(ctl_fd);
-	return;
+	врати;
 
  fail:
-	if (tmpl_fd != -1) {
+	ако (tmpl_fd != -1) {
 		close(tmpl_fd);
 		tmpl_fd = -1;
 	}
-	if (stat_fd != -1)
+	ако (stat_fd != -1)
 		close(stat_fd);
-	if (ctl_fd != -1)
+	ако (ctl_fd != -1)
 		close(ctl_fd);
 }
 #endif
@@ -211,14 +211,14 @@ solaris_set_default_project(struct passwd *pw)
 	char buf[1024];
 
 	/* get default project, if we fail just return gracefully  */
-	if ((defaultproject = getdefaultproj(pw->pw_name, &tempproject, &buf,
+	ако ((defaultproject = getdefaultproj(pw->pw_name, &tempproject, &buf,
 	    sizeof(buf))) != NULL) {
 		/* set default project */
-		if (setproject(defaultproject->pj_name, pw->pw_name,
+		ако (setproject(defaultproject->pj_name, pw->pw_name,
 		    TASK_NORMAL) != 0)
 			debug("setproject(%s): %s", defaultproject->pj_name,
 			    strerror(errno));
-	} else {
+	} инако {
 		/* debug on getdefaultproj() error */
 		debug("getdefaultproj(%s): %s", pw->pw_name, strerror(errno));
 	}
@@ -236,18 +236,18 @@ solaris_basic_privset(void)
 	priv_set_t *pset;
 
 #ifdef HAVE_PRIV_BASICSET
-	if ((pset = priv_allocset()) == NULL) {
+	ако ((pset = priv_allocset()) == NULL) {
 		error("priv_allocset: %s", strerror(errno));
-		return NULL;
+		врати NULL;
 	}
 	priv_basicset(pset);
-#else
-	if ((pset = priv_str_to_set("basic", ",", NULL)) == NULL) {
+#инако
+	ако ((pset = priv_str_to_set("basic", ",", NULL)) == NULL) {
 		error("priv_str_to_set: %s", strerror(errno));
-		return NULL;
+		врати NULL;
 	}
 #endif
-	return pset;
+	врати pset;
 }
 
 void
@@ -271,19 +271,19 @@ solaris_drop_privs_pinfo_net_fork_exec(void)
 	 * etc etc).
 	 */
 
-	if ((pset = priv_allocset()) == NULL)
+	ако ((pset = priv_allocset()) == NULL)
 		fatal("priv_allocset: %s", strerror(errno));
-	if ((npset = solaris_basic_privset()) == NULL)
+	ако ((npset = solaris_basic_privset()) == NULL)
 		fatal("solaris_basic_privset: %s", strerror(errno));
 
-	if (priv_addset(npset, PRIV_FILE_CHOWN) != 0 ||
+	ако (priv_addset(npset, PRIV_FILE_CHOWN) != 0 ||
 	    priv_addset(npset, PRIV_FILE_DAC_READ) != 0 ||
 	    priv_addset(npset, PRIV_FILE_DAC_SEARCH) != 0 ||
 	    priv_addset(npset, PRIV_FILE_DAC_WRITE) != 0 ||
 	    priv_addset(npset, PRIV_FILE_OWNER) != 0)
 		fatal("priv_addset: %s", strerror(errno));
 
-	if (priv_delset(npset, PRIV_PROC_EXEC) != 0 ||
+	ако (priv_delset(npset, PRIV_PROC_EXEC) != 0 ||
 #ifdef PRIV_NET_ACCESS
 	    priv_delset(npset, PRIV_NET_ACCESS) != 0 ||
 #endif
@@ -300,27 +300,27 @@ solaris_drop_privs_pinfo_net_fork_exec(void)
 	 * PRIV_XPOLICY is newly defined in Solaris 11 though the extended
 	 * policy was not implemented until Solaris 11.1.
 	 */
-	if (getpflags(PRIV_XPOLICY) == 1) {
-		if (getppriv(PRIV_LIMIT, pset) != 0)
+	ако (getpflags(PRIV_XPOLICY) == 1) {
+		ако (getppriv(PRIV_LIMIT, pset) != 0)
 			fatal("getppriv: %s", strerror(errno));
 		priv_intersect(pset, npset);
-		if (setppriv(PRIV_SET, PRIV_LIMIT, npset) != 0)
+		ако (setppriv(PRIV_SET, PRIV_LIMIT, npset) != 0)
 			fatal("setppriv: %s", strerror(errno));
-	} else
+	} инако
 #endif
 	{
 		/* Cannot exec, so we can kill the limit set. */
 		priv_emptyset(pset);
-		if (setppriv(PRIV_SET, PRIV_LIMIT, pset) != 0)
+		ако (setppriv(PRIV_SET, PRIV_LIMIT, pset) != 0)
 			fatal("setppriv: %s", strerror(errno));
 	}
 
-	if (getppriv(PRIV_PERMITTED, pset) != 0)
+	ако (getppriv(PRIV_PERMITTED, pset) != 0)
 		fatal("getppriv: %s", strerror(errno));
 
 	priv_intersect(pset, npset);
 
-	if (setppriv(PRIV_SET, PRIV_PERMITTED, npset) != 0 ||
+	ако (setppriv(PRIV_SET, PRIV_PERMITTED, npset) != 0 ||
 	    setppriv(PRIV_SET, PRIV_INHERITABLE, npset) != 0)
 		fatal("setppriv: %s", strerror(errno));
 
@@ -334,10 +334,10 @@ solaris_drop_privs_root_pinfo_net(void)
 	priv_set_t *pset = NULL;
 
 	/* Start with "basic" and drop everything we don't need. */
-	if ((pset = solaris_basic_privset()) == NULL)
+	ако ((pset = solaris_basic_privset()) == NULL)
 		fatal("solaris_basic_privset: %s", strerror(errno));
 
-	if (priv_delset(pset, PRIV_FILE_LINK_ANY) != 0 ||
+	ако (priv_delset(pset, PRIV_FILE_LINK_ANY) != 0 ||
 #ifdef PRIV_NET_ACCESS
 	    priv_delset(pset, PRIV_NET_ACCESS) != 0 ||
 #endif
@@ -345,7 +345,7 @@ solaris_drop_privs_root_pinfo_net(void)
 	    priv_delset(pset, PRIV_PROC_SESSION) != 0)
 		fatal("priv_delset: %s", strerror(errno));
 
-	if (setppriv(PRIV_SET, PRIV_PERMITTED, pset) != 0 ||
+	ако (setppriv(PRIV_SET, PRIV_PERMITTED, pset) != 0 ||
 	    setppriv(PRIV_SET, PRIV_LIMIT, pset) != 0 ||
 	    setppriv(PRIV_SET, PRIV_INHERITABLE, pset) != 0)
 		fatal("setppriv: %s", strerror(errno));
@@ -360,10 +360,10 @@ solaris_drop_privs_root_pinfo_net_exec(void)
 
 
 	/* Start with "basic" and drop everything we don't need. */
-	if ((pset = solaris_basic_privset()) == NULL)
+	ако ((pset = solaris_basic_privset()) == NULL)
 		fatal("solaris_basic_privset: %s", strerror(errno));
 
-	if (priv_delset(pset, PRIV_FILE_LINK_ANY) != 0 ||
+	ако (priv_delset(pset, PRIV_FILE_LINK_ANY) != 0 ||
 #ifdef PRIV_NET_ACCESS
 	    priv_delset(pset, PRIV_NET_ACCESS) != 0 ||
 #endif
@@ -371,7 +371,7 @@ solaris_drop_privs_root_pinfo_net_exec(void)
 	    priv_delset(pset, PRIV_PROC_INFO) != 0)
 		fatal("priv_delset: %s", strerror(errno));
 
-	if (setppriv(PRIV_SET, PRIV_PERMITTED, pset) != 0 ||
+	ако (setppriv(PRIV_SET, PRIV_PERMITTED, pset) != 0 ||
 	    setppriv(PRIV_SET, PRIV_LIMIT, pset) != 0 ||
 	    setppriv(PRIV_SET, PRIV_INHERITABLE, pset) != 0)
 		fatal("setppriv: %s", strerror(errno));

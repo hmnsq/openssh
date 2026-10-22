@@ -116,19 +116,19 @@ char *config_file_name = _PATH_SERVER_CONFIG_FILE;
  * log, the daemon will not go to background, and will exit after processing
  * the first connection.
  */
-int debug_flag = 0;
+цео debug_flag = 0;
 
 /* Flag indicating that the daemon is being started from inetd. */
-static int inetd_flag = 0;
+static цео inetd_flag = 0;
 
 /* Saved arguments to main(). */
 static char **saved_argv;
-static int saved_argc;
+static цео saved_argc;
 
 
 /* Daemon's agent connection */
-int auth_sock = -1;
-static int have_agent = 0;
+цео auth_sock = -1;
+static цео have_agent = 0;
 
 u_int		num_hostkeys;
 struct sshkey	**host_pubkeys;		/* all public host keys */
@@ -139,8 +139,8 @@ u_int utmp_len = HOST_NAME_MAX+1;
 
 /* variables used for privilege separation */
 struct monitor *pmonitor = NULL;
-int privsep_is_preauth = 1;
-static int privsep_chroot = 1;
+цео privsep_is_preauth = 1;
+static цео privsep_chroot = 1;
 
 /* global connection state and authentication contexts */
 Authctxt *the_authctxt = NULL;
@@ -169,10 +169,10 @@ static struct ssh_sandbox *box;
 #endif
 
 /* XXX stub */
-int
+цео
 mm_is_monitor(void)
 {
-	return 0;
+	врати 0;
 }
 
 static void
@@ -181,16 +181,16 @@ privsep_child_demote(void)
 	gid_t gidset[1];
 
 #ifndef HAVE_PLEDGE
-	if ((box = ssh_sandbox_init(pmonitor)) == NULL)
+	ако ((box = ssh_sandbox_init(pmonitor)) == NULL)
 		fatal_f("ssh_sandbox_init failed");
 #endif
 	/* Demote the child */
-	if (privsep_chroot) {
+	ако (privsep_chroot) {
 		/* Change our root directory */
-		if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
+		ако (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
 			fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,
 			    strerror(errno));
-		if (chdir("/") == -1)
+		ако (chdir("/") == -1)
 			fatal("chdir(\"/\"): %s", strerror(errno));
 
 		/*
@@ -200,16 +200,16 @@ privsep_child_demote(void)
 		debug3("privsep user:group %u:%u", (u_int)privsep_pw->pw_uid,
 		    (u_int)privsep_pw->pw_gid);
 		gidset[0] = privsep_pw->pw_gid;
-		if (setgroups(1, gidset) == -1)
+		ако (setgroups(1, gidset) == -1)
 			fatal("setgroups: %.100s", strerror(errno));
 		permanently_set_uid(privsep_pw);
 	}
 
 	/* sandbox ourselves */
 #ifdef HAVE_PLEDGE
-	if (pledge("stdio", NULL) == -1)
+	ако (pledge("stdio", NULL) == -1)
 		fatal_f("pledge()");
-#else
+#инако
 	ssh_sandbox_child(box);
 #endif
 }
@@ -217,13 +217,13 @@ privsep_child_demote(void)
 static void
 append_hostkey_type(struct sshbuf *b, const char *s)
 {
-	int r;
+	цео r;
 
-	if (match_pattern_list(s, options.hostkeyalgorithms, 0) != 1) {
+	ако (match_pattern_list(s, options.hostkeyalgorithms, 0) != 1) {
 		debug3_f("%s key not permitted by HostkeyAlgorithms", s);
-		return;
+		врати;
 	}
-	if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
+	ако ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
 		fatal_fr(r, "sshbuf_putf");
 }
 
@@ -235,11 +235,11 @@ list_hostkey_types(void)
 	char *ret;
 	u_int i;
 
-	if ((b = sshbuf_new()) == NULL)
+	ако ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; i < options.num_host_key_files; i++) {
+	за (i = 0; i < options.num_host_key_files; i++) {
 		key = host_pubkeys[i];
-		if (key == NULL)
+		ако (key == NULL)
 			continue;
 		switch (key->type) {
 		case KEY_RSA:
@@ -257,7 +257,7 @@ list_hostkey_types(void)
 		}
 		/* If the private key has a cert peer, then list that too */
 		key = host_certificates[i];
-		if (key == NULL)
+		ако (key == NULL)
 			continue;
 		switch (key->type) {
 		case KEY_RSA_CERT:
@@ -276,20 +276,20 @@ list_hostkey_types(void)
 			break;
 		}
 	}
-	if ((ret = sshbuf_dup_string(b)) == NULL)
+	ако ((ret = sshbuf_dup_string(b)) == NULL)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
 	debug_f("%s", ret);
-	return ret;
+	врати ret;
 }
 
 struct sshkey *
-get_hostkey_public_by_type(int type, int nid, struct ssh *ssh)
+get_hostkey_public_by_type(цео type, цео nid, struct ssh *ssh)
 {
 	u_int i;
 	struct sshkey *key;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
+	за (i = 0; i < options.num_host_key_files; i++) {
 		switch (type) {
 		case KEY_RSA_CERT:
 		case KEY_ECDSA_CERT:
@@ -303,64 +303,64 @@ get_hostkey_public_by_type(int type, int nid, struct ssh *ssh)
 			key = host_pubkeys[i];
 			break;
 		}
-		if (key == NULL || key->type != type)
+		ако (key == NULL || key->type != type)
 			continue;
 		switch (type) {
 		case KEY_ECDSA:
 		case KEY_ECDSA_SK:
 		case KEY_ECDSA_CERT:
 		case KEY_ECDSA_SK_CERT:
-			if (key->ecdsa_nid != nid)
+			ако (key->ecdsa_nid != nid)
 				continue;
 			/* FALLTHROUGH */
 		default:
-			return key;
+			врати key;
 		}
 	}
-	return NULL;
+	врати NULL;
 }
 
 /* XXX remove */
 struct sshkey *
-get_hostkey_private_by_type(int type, int nid, struct ssh *ssh)
+get_hostkey_private_by_type(цео type, цео nid, struct ssh *ssh)
 {
-	return NULL;
+	врати NULL;
 }
 
 /* XXX remove */
 struct sshkey *
-get_hostkey_by_index(int ind)
+get_hostkey_by_index(цео ind)
 {
-	return NULL;
+	врати NULL;
 }
 
 struct sshkey *
-get_hostkey_public_by_index(int ind, struct ssh *ssh)
+get_hostkey_public_by_index(цео ind, struct ssh *ssh)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
-		return (NULL);
-	return host_pubkeys[ind];
+	ако (ind < 0 || (u_int)ind >= options.num_host_key_files)
+		врати (NULL);
+	врати host_pubkeys[ind];
 }
 
-int
-get_hostkey_index(struct sshkey *key, int compare, struct ssh *ssh)
+цео
+get_hostkey_index(struct sshkey *key, цео compare, struct ssh *ssh)
 {
 	u_int i;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sshkey_is_cert(key)) {
-			if (key == host_certificates[i] ||
+	за (i = 0; i < options.num_host_key_files; i++) {
+		ако (sshkey_is_cert(key)) {
+			ако (key == host_certificates[i] ||
 			    (compare && host_certificates[i] &&
 			    sshkey_equal(key, host_certificates[i])))
-				return (i);
-		} else {
-			if (key == host_pubkeys[i] ||
+				врати (i);
+		} инако {
+			ако (key == host_pubkeys[i] ||
 			    (compare && host_pubkeys[i] &&
 			    sshkey_equal(key, host_pubkeys[i])))
-				return (i);
+				врати (i);
 		}
 	}
-	return (-1);
+	врати (-1);
 }
 
 static void
@@ -378,14 +378,14 @@ usage(void)
 static void
 parse_hostkeys(struct sshbuf *hostkeys)
 {
-	int r;
+	цео r;
 	u_int num_keys = 0;
 	struct sshkey *k;
 	const u_char *cp;
 	size_t len;
 
-	while (sshbuf_len(hostkeys) != 0) {
-		if (num_keys > 2048)
+	док (sshbuf_len(hostkeys) != 0) {
+		ако (num_keys > 2048)
 			fatal_f("too many hostkeys");
 		host_pubkeys = xrecallocarray(host_pubkeys,
 		    num_keys, num_keys + 1, sizeof(*host_pubkeys));
@@ -393,21 +393,21 @@ parse_hostkeys(struct sshbuf *hostkeys)
 		    num_keys, num_keys + 1, sizeof(*host_certificates));
 		/* public key */
 		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		ако ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		ако (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
 		host_pubkeys[num_keys] = k;
-		if (k)
+		ако (k)
 			debug2_f("key %u: %s", num_keys, sshkey_ssh_name(k));
 		/* certificate */
 		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		ако ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		ако (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
 		host_certificates[num_keys] = k;
-		if (k)
+		ако (k)
 			debug2_f("cert %u: %s", num_keys, sshkey_ssh_name(k));
 		num_keys++;
 	}
@@ -433,14 +433,14 @@ recv_privsep_state(struct ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
 /*
  * Main program for the daemon.
  */
-int
-main(int ac, char **av)
+цео
+main(цео ac, char **av)
 {
 	struct ssh *ssh = NULL;
 	extern char *optarg;
-	extern int optind;
-	int r, opt, have_key = 0;
-	int sock_in = -1, sock_out = -1, rexeced_flag = 0;
+	extern цео optind;
+	цео r, opt, have_key = 0;
+	цео sock_in = -1, sock_out = -1, rexeced_flag = 0;
 	u_int i;
 	mode_t new_umask;
 	Authctxt *authctxt;
@@ -459,7 +459,7 @@ main(int ac, char **av)
 	/* Save argv. Duplicate so setproctitle emulation doesn't clobber it */
 	saved_argc = ac;
 	saved_argv = xcalloc(ac + 1, sizeof(*saved_argv));
-	for (i = 0; (int)i < ac; i++)
+	за (i = 0; (цео)i < ac; i++)
 		saved_argv[i] = xstrdup(av[i]);
 	saved_argv[i] = NULL;
 
@@ -478,7 +478,7 @@ main(int ac, char **av)
 	initialize_server_options(&options);
 
 	/* Parse command-line arguments. */
-	while ((opt = getopt(ac, av,
+	док ((opt = getopt(ac, av,
 	    "C:E:b:c:f:g:h:k:o:p:u:46DGQRTdeiqrtV")) != -1) {
 		switch (opt) {
 		case '4':
@@ -494,10 +494,10 @@ main(int ac, char **av)
 			/* ignore */
 			break;
 		case 'd':
-			if (debug_flag == 0) {
+			ако (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else if (options.log_level < SYSLOG_LEVEL_DEBUG3)
+			} инако ако (options.log_level < SYSLOG_LEVEL_DEBUG3)
 				options.log_level++;
 			break;
 		case 'D':
@@ -543,7 +543,7 @@ main(int ac, char **av)
 			break;
 		case 'u':
 			utmp_len = (u_int)strtonum(optarg, 0, HOST_NAME_MAX+1+1, NULL);
-			if (utmp_len > HOST_NAME_MAX+1) {
+			ако (utmp_len > HOST_NAME_MAX+1) {
 				fprintf(stderr, "Invalid utmp length.\n");
 				exit(1);
 			}
@@ -561,7 +561,7 @@ main(int ac, char **av)
 		}
 	}
 
-	if (!rexeced_flag)
+	ако (!rexeced_flag)
 		fatal("sshd-auth should not be executed directly");
 
 	log_init(__progname,
@@ -578,25 +578,25 @@ main(int ac, char **av)
 	set_log_handler(mm_log_handler, pmonitor);
 
 	/* Check that there are no remaining arguments. */
-	if (optind < ac) {
+	ако (optind < ac) {
 		fprintf(stderr, "Extra argument %s.\n", av[optind]);
 		exit(1);
 	}
 
 	/* Connection passed by stdin/out */
-	if (inetd_flag) {
+	ако (inetd_flag) {
 		/*
 		 * NB. must be different fd numbers for the !socket case,
 		 * as packet_connection_is_on_socket() depends on this.
 		 */
 		sock_in = dup(STDIN_FILENO);
 		sock_out = dup(STDOUT_FILENO);
-	} else {
+	} инако {
 		/* rexec case; accept()ed socket in ancestor listener */
 		sock_in = sock_out = dup(STDIN_FILENO);
 	}
 
-	if (stdfd_devnull(1, 1, 0) == -1)
+	ако (stdfd_devnull(1, 1, 0) == -1)
 		error("stdfd_devnull failed");
 	debug("network sockets: %d, %d", sock_in, sock_out);
 
@@ -604,14 +604,14 @@ main(int ac, char **av)
 	 * Register our connection.  This turns encryption off because we do
 	 * not have a key.
 	 */
-	if ((ssh = ssh_packet_set_connection(NULL, sock_in, sock_out)) == NULL)
+	ако ((ssh = ssh_packet_set_connection(NULL, sock_in, sock_out)) == NULL)
 		fatal("Unable to create connection");
 	the_active_state = ssh;
 	ssh_packet_set_server(ssh);
 	pmonitor->m_pkex = &ssh->kex;
 
 	/* Fetch our configuration */
-	if ((cfg = sshbuf_new()) == NULL)
+	ако ((cfg = sshbuf_new()) == NULL)
 		fatal("sshbuf_new config buf failed");
 	setproctitle("%s", "[session-auth early]");
 	recv_privsep_state(ssh, &options, &timing_secret);
@@ -627,11 +627,11 @@ main(int ac, char **av)
 
 	/* Store privilege separation user for later use if required. */
 	privsep_chroot = (getuid() == 0 || geteuid() == 0);
-	if ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
-		if (privsep_chroot || options.kerberos_authentication)
+	ако ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
+		ако (privsep_chroot || options.kerberos_authentication)
 			fatal("Privilege separation user %s does not exist",
 			    SSH_PRIVSEP_USER);
-	} else {
+	} инако {
 		privsep_pw = pwcopy(privsep_pw);
 		freezero(privsep_pw->pw_passwd, strlen(privsep_pw->pw_passwd));
 		privsep_pw->pw_passwd = xstrdup("*");
@@ -639,33 +639,33 @@ main(int ac, char **av)
 	endpwent();
 
 #ifdef WITH_OPENSSL
-	if (options.moduli_file != NULL)
+	ако (options.moduli_file != NULL)
 		dh_set_moduli_file(options.moduli_file);
 #endif
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	ако (options.host_key_agent) {
+		ако (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
 			    options.host_key_agent, 1);
-		if ((r = ssh_get_authentication_socket(NULL)) == 0)
+		ако ((r = ssh_get_authentication_socket(NULL)) == 0)
 			have_agent = 1;
-		else
+		инако
 			error_r(r, "Could not connect to agent \"%s\"",
 			    options.host_key_agent);
 	}
 
-	if (options.num_host_key_files != num_hostkeys) {
+	ако (options.num_host_key_files != num_hostkeys) {
 		fatal("internal error: hostkeys confused (config %u recvd %u)",
 		    options.num_host_key_files, num_hostkeys);
 	}
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (host_pubkeys[i] != NULL) {
+	за (i = 0; i < options.num_host_key_files; i++) {
+		ако (host_pubkeys[i] != NULL) {
 			have_key = 1;
 			break;
 		}
 	}
-	if (!have_key)
+	ако (!have_key)
 		fatal("internal error: received no hostkeys");
 
 	/* Ensure that umask disallows at least group and world write */
@@ -675,14 +675,14 @@ main(int ac, char **av)
 	/* Initialize the log (it is reinitialized below in case we forked). */
 	log_init(__progname, options.log_level, options.log_facility, 1);
 	set_log_handler(mm_log_handler, pmonitor);
-	for (i = 0; i < options.num_log_verbose; i++)
+	за (i = 0; i < options.num_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 
 	/*
 	 * Chdir to the root directory so that the current disk can be
 	 * unmounted if desired.
 	 */
-	if (chdir("/") == -1)
+	ако (chdir("/") == -1)
 		error("chdir(\"/\"): %s", strerror(errno));
 
 	/* This is the child authenticating a new connection. */
@@ -717,11 +717,11 @@ main(int ac, char **av)
 	the_authctxt = authctxt;
 
 	/* Set default key authentication options */
-	if ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
+	ако ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
 		fatal("allocation failed");
 
 	/* prepare buffer to collect messages to display to user after login */
-	if ((loginmsg = sshbuf_new()) == NULL)
+	ако ((loginmsg = sshbuf_new()) == NULL)
 		fatal("sshbuf_new loginmsg failed");
 	auth_debug_reset();
 
@@ -746,23 +746,23 @@ main(int ac, char **av)
 	exit(0);
 }
 
-int
+цео
 sshd_hostkey_sign(struct ssh *ssh, struct sshkey *privkey,
     struct sshkey *pubkey, u_char **signature, size_t *slenp,
     const u_char *data, size_t dlen, const char *alg)
 {
-	if (privkey) {
-		if (mm_sshkey_sign(ssh, privkey, signature, slenp,
+	ако (privkey) {
+		ако (mm_sshkey_sign(ssh, privkey, signature, slenp,
 		    data, dlen, alg, options.sk_provider, NULL,
 		    ssh->compat) < 0)
 			fatal_f("privkey sign failed");
-	} else {
-		if (mm_sshkey_sign(ssh, pubkey, signature, slenp,
+	} инако {
+		ако (mm_sshkey_sign(ssh, pubkey, signature, slenp,
 		    data, dlen, alg, options.sk_provider, NULL,
 		    ssh->compat) < 0)
 			fatal_f("pubkey sign failed");
 	}
-	return 0;
+	врати 0;
 }
 
 /* SSH2 key exchange */
@@ -772,12 +772,12 @@ do_ssh2_kex(struct ssh *ssh)
 	char *hkalgs = NULL, *myproposal[PROPOSAL_MAX];
 	const char *compression = NULL;
 	struct kex *kex;
-	int r;
+	цео r;
 
 	ssh_packet_set_rekey_limits(ssh, options.rekey_limit,
 	    options.rekey_interval);
 
-	if (options.compression == COMP_NONE)
+	ако (options.compression == COMP_NONE)
 		compression = "none";
 	hkalgs = list_hostkey_types();
 
@@ -786,16 +786,16 @@ do_ssh2_kex(struct ssh *ssh)
 
 	free(hkalgs);
 
-	if ((r = kex_exchange_identification(ssh, -1,
+	ако ((r = kex_exchange_identification(ssh, -1,
 	    options.version_addendum)) != 0)
 		sshpkt_fatal(ssh, r, "banner exchange");
 	mm_sshkey_setcompat(ssh); /* tell monitor */
 
-	if ((ssh->compat & SSH_BUG_NOREKEY))
+	ако ((ssh->compat & SSH_BUG_NOREKEY))
 		debug("client does not support rekeying");
 
 	/* start key exchange */
-	if ((r = kex_setup(ssh, myproposal)) != 0)
+	ако ((r = kex_setup(ssh, myproposal)) != 0)
 		fatal_r(r, "kex_setup");
 	kex_set_server_sig_algs(ssh, options.pubkey_accepted_algos);
 	kex_set_warn_weak_crypto(ssh, options.warn_weak_crypto);
@@ -825,7 +825,7 @@ do_ssh2_kex(struct ssh *ssh)
 
 #ifdef DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	ако ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
@@ -836,7 +836,7 @@ do_ssh2_kex(struct ssh *ssh)
 
 /* server specific fatal cleanup */
 void
-cleanup_exit(int i)
+cleanup_exit(цео i)
 {
 	_exit(i);
 }

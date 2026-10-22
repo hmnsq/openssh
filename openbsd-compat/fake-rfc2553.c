@@ -44,64 +44,64 @@
 #include <arpa/inet.h>
 
 #ifndef HAVE_GETNAMEINFO
-int getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
-		size_t hostlen, char *serv, size_t servlen, int flags)
+цео getnameinfo(const struct sockaddr *sa, size_t salen, char *host,
+		size_t hostlen, char *serv, size_t servlen, цео flags)
 {
 	struct sockaddr_in *sin = (struct sockaddr_in *)sa;
 	struct hostent *hp;
 	char tmpserv[16];
 
-	if ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
+	ако ((sa->sa_family != AF_UNSPEC && sa->sa_family != AF_INET) ||
 	    salen < sizeof(struct sockaddr_in))
-		return (EAI_FAMILY);
-	if (serv != NULL) {
+		врати (EAI_FAMILY);
+	ако (serv != NULL) {
 		snprintf(tmpserv, sizeof(tmpserv), "%d", ntohs(sin->sin_port));
-		if (strlcpy(serv, tmpserv, servlen) >= servlen)
-			return (EAI_MEMORY);
+		ако (strlcpy(serv, tmpserv, servlen) >= servlen)
+			врати (EAI_MEMORY);
 	}
 
-	if (host != NULL) {
-		if (flags & NI_NUMERICHOST) {
-			if (strlcpy(host, inet_ntoa(sin->sin_addr),
+	ако (host != NULL) {
+		ако (flags & NI_NUMERICHOST) {
+			ако (strlcpy(host, inet_ntoa(sin->sin_addr),
 			    hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
-		} else {
+				врати (EAI_MEMORY);
+			инако
+				врати (0);
+		} инако {
 			hp = gethostbyaddr((char *)&sin->sin_addr,
 			    sizeof(struct in_addr), AF_INET);
-			if (hp == NULL)
-				return (EAI_NODATA);
+			ако (hp == NULL)
+				врати (EAI_NODATA);
 
-			if (strlcpy(host, hp->h_name, hostlen) >= hostlen)
-				return (EAI_MEMORY);
-			else
-				return (0);
+			ако (strlcpy(host, hp->h_name, hostlen) >= hostlen)
+				врати (EAI_MEMORY);
+			инако
+				врати (0);
 		}
 	}
-	return (0);
+	врати (0);
 }
 #endif /* !HAVE_GETNAMEINFO */
 
 #ifndef HAVE_GAI_STRERROR
 #ifdef HAVE_CONST_GAI_STRERROR_PROTO
 const char *
-#else
+#инако
 char *
 #endif
-gai_strerror(int err)
+gai_strerror(цео err)
 {
 	switch (err) {
 	case EAI_NODATA:
-		return ("no address associated with name");
+		врати ("no address associated with name");
 	case EAI_MEMORY:
-		return ("memory allocation failure");
+		врати ("memory allocation failure");
 	case EAI_NONAME:
-		return ("name or service is not known");
+		врати ("name or service is not known");
 	case EAI_FAMILY:
-		return ("ai_family not supported");
+		врати ("ai_family not supported");
 	default:
-		return ("unknown/invalid error");
+		врати ("unknown/invalid error");
 	}
 }
 #endif /* !HAVE_GAI_STRERROR */
@@ -112,7 +112,7 @@ freeaddrinfo(struct addrinfo *ai)
 {
 	struct addrinfo *next;
 
-	for(; ai != NULL;) {
+	за(; ai != NULL;) {
 		next = ai->ai_next;
 		free(ai);
 		ai = next;
@@ -122,13 +122,13 @@ freeaddrinfo(struct addrinfo *ai)
 
 #ifndef HAVE_GETADDRINFO
 static struct
-addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
+addrinfo *malloc_ai(цео port, u_long addr, const struct addrinfo *hints)
 {
 	struct addrinfo *ai;
 
 	ai = malloc(sizeof(*ai) + sizeof(struct sockaddr_in));
-	if (ai == NULL)
-		return (NULL);
+	ако (ai == NULL)
+		врати (NULL);
 
 	memset(ai, '\0', sizeof(*ai) + sizeof(struct sockaddr_in));
 
@@ -141,96 +141,96 @@ addrinfo *malloc_ai(int port, u_long addr, const struct addrinfo *hints)
 	((struct sockaddr_in *)(ai)->ai_addr)->sin_addr.s_addr = addr;
 
 	/* XXX: the following is not generally correct, but does what we want */
-	if (hints->ai_socktype)
+	ако (hints->ai_socktype)
 		ai->ai_socktype = hints->ai_socktype;
-	else
+	инако
 		ai->ai_socktype = SOCK_STREAM;
 
-	if (hints->ai_protocol)
+	ако (hints->ai_protocol)
 		ai->ai_protocol = hints->ai_protocol;
 
-	return (ai);
+	врати (ai);
 }
 
-int
+цео
 getaddrinfo(const char *hostname, const char *servname,
     const struct addrinfo *hints, struct addrinfo **res)
 {
 	struct hostent *hp;
 	struct servent *sp;
 	struct in_addr in;
-	int i;
-	long int port;
+	цео i;
+	long цео port;
 	u_long addr;
 
 	port = 0;
-	if (hints && hints->ai_family != AF_UNSPEC &&
+	ако (hints && hints->ai_family != AF_UNSPEC &&
 	    hints->ai_family != AF_INET)
-		return (EAI_FAMILY);
-	if (servname != NULL) {
+		врати (EAI_FAMILY);
+	ако (servname != NULL) {
 		char *cp;
 
 		port = strtol(servname, &cp, 10);
-		if (port > 0 && port <= 65535 && *cp == '\0')
+		ако (port > 0 && port <= 65535 && *cp == '\0')
 			port = htons(port);
-		else if ((sp = getservbyname(servname, NULL)) != NULL)
+		инако ако ((sp = getservbyname(servname, NULL)) != NULL)
 			port = sp->s_port;
-		else
+		инако
 			port = 0;
 	}
 
-	if (hints && hints->ai_flags & AI_PASSIVE) {
+	ако (hints && hints->ai_flags & AI_PASSIVE) {
 		addr = htonl(0x00000000);
-		if (hostname && inet_aton(hostname, &in) != 0)
+		ако (hostname && inet_aton(hostname, &in) != 0)
 			addr = in.s_addr;
 		*res = malloc_ai(port, addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		ако (*res == NULL)
+			врати (EAI_MEMORY);
+		врати (0);
 	}
 
-	if (!hostname) {
+	ако (!hostname) {
 		*res = malloc_ai(port, htonl(0x7f000001), hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		ако (*res == NULL)
+			врати (EAI_MEMORY);
+		врати (0);
 	}
 
-	if (inet_aton(hostname, &in)) {
+	ако (inet_aton(hostname, &in)) {
 		*res = malloc_ai(port, in.s_addr, hints);
-		if (*res == NULL)
-			return (EAI_MEMORY);
-		return (0);
+		ако (*res == NULL)
+			врати (EAI_MEMORY);
+		врати (0);
 	}
 
 	/* Don't try DNS if AI_NUMERICHOST is set */
-	if (hints && hints->ai_flags & AI_NUMERICHOST)
-		return (EAI_NONAME);
+	ако (hints && hints->ai_flags & AI_NUMERICHOST)
+		врати (EAI_NONAME);
 
 	hp = gethostbyname(hostname);
-	if (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
+	ако (hp && hp->h_name && hp->h_name[0] && hp->h_addr_list[0]) {
 		struct addrinfo *cur, *prev;
 
 		cur = prev = *res = NULL;
-		for (i = 0; hp->h_addr_list[i]; i++) {
+		за (i = 0; hp->h_addr_list[i]; i++) {
 			struct in_addr *in = (struct in_addr *)hp->h_addr_list[i];
 
 			cur = malloc_ai(port, in->s_addr, hints);
-			if (cur == NULL) {
-				if (*res != NULL)
+			ако (cur == NULL) {
+				ако (*res != NULL)
 					freeaddrinfo(*res);
-				return (EAI_MEMORY);
+				врати (EAI_MEMORY);
 			}
-			if (prev)
+			ако (prev)
 				prev->ai_next = cur;
-			else
+			инако
 				*res = cur;
 
 			prev = cur;
 		}
-		return (0);
+		врати (0);
 	}
 
-	return (EAI_NODATA);
+	врати (EAI_NODATA);
 }
 #endif /* !HAVE_GETADDRINFO */

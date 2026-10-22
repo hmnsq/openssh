@@ -27,7 +27,7 @@
 
 /* in tests.c */
 struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+char *get_json_string(struct sshbuf *content, const char *key, цео consume);
 
 void mldsa_eddsa_tests(void);
 
@@ -46,7 +46,7 @@ get_json_b64(struct sshbuf *content, const char *key)
 	ASSERT_PTR_NE(ret = sshbuf_new(), NULL);
 	ASSERT_INT_EQ(sshbuf_b64tod(ret, b64), 0);
 	free(b64);
-	return ret;
+	врати ret;
 }
 
 static void
@@ -63,18 +63,18 @@ sig_fuzz(const uint8_t *m, size_t m_len, const uint8_t *ctx, size_t ctx_len,
 	struct fuzz *fuzz;
 	u_int fuzzers = FUZZ_1_BIT_FLIP | FUZZ_1_BYTE_FLIP;
 
-	if (test_is_fast())
+	ако (test_is_fast())
 		fuzzers &= ~FUZZ_1_BIT_FLIP;
-	if (test_is_slow())
+	ако (test_is_slow())
 		fuzzers |= FUZZ_2_BYTE_FLIP; /* FUZZ_2_BIT_FLIP much too slow */
 
 	ASSERT_INT_EQ(crypto_sign_mldsa44_ed25519_verify(s, m, m_len,
 	    ctx, ctx_len, pk), 0);
 	fuzz = fuzz_begin(fuzzers, s, MLDSA44_ED25519_SIG_SZ);
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
+	за(; !fuzz_done(fuzz); fuzz_next(fuzz)) {
 		/* Ensure 1-bit difference at least */
-		if (fuzz_matches_original(fuzz))
+		ако (fuzz_matches_original(fuzz))
 			continue;
 		ASSERT_INT_NE(crypto_sign_mldsa44_ed25519_verify(fuzz_ptr(fuzz),
 		    m, m_len, ctx, ctx_len, pk), 0);

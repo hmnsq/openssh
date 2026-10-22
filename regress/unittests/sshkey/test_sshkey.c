@@ -41,7 +41,7 @@ put_opt(struct sshbuf *b, const char *name, const char *value)
 	sect = sshbuf_new();
 	ASSERT_PTR_NE(sect, NULL);
 	ASSERT_INT_EQ(sshbuf_put_cstring(b, name), 0);
-	if (value != NULL)
+	ако (value != NULL)
 		ASSERT_INT_EQ(sshbuf_put_cstring(sect, value), 0);
 	ASSERT_INT_EQ(sshbuf_put_stringb(b, sect), 0);
 	sshbuf_free(sect);
@@ -130,7 +130,7 @@ signature_test(struct sshkey *k, struct sshkey *bad, const char *sig_alg,
 }
 
 static void
-signature_bench(const char *name, int ktype, int bits, const char *sig_alg,
+signature_bench(const char *name, цео ktype, цео bits, const char *sig_alg,
     const u_char *d, size_t l)
 {
 	struct sshkey *k;
@@ -154,7 +154,7 @@ signature_bench(const char *name, int ktype, int bits, const char *sig_alg,
 }
 
 static void
-verify_bench(const char *name, int ktype, int bits, const char *sig_alg,
+verify_bench(const char *name, цео ktype, цео bits, const char *sig_alg,
     const u_char *d, size_t l)
 {
 	struct sshkey *k;
@@ -184,8 +184,8 @@ banana(u_char *s, size_t l)
 	size_t o;
 	const u_char the_banana[] = { 'b', 'a', 'n', 'a', 'n', 'a' };
 
-	for (o = 0; o < l; o += sizeof(the_banana)) {
-		if (l - o < sizeof(the_banana)) {
+	за (o = 0; o < l; o += sizeof(the_banana)) {
+		ако (l - o < sizeof(the_banana)) {
 			memcpy(s + o, "nanananana", l - o);
 			break;
 		}
@@ -202,7 +202,7 @@ signature_tests(struct sshkey *k, struct sshkey *bad, const char *sig_alg)
 		255, 256, 257, 1023, 1024, 1025, 2047, 2048, 2049
 	};
 
-	for (i = 0; i < (sizeof(lens)/sizeof(lens[0])); i++) {
+	за (i = 0; i < (sizeof(lens)/sizeof(lens[0])); i++) {
 		test_subtest_info("%s key, banana length %zu",
 		    sshkey_type(k), lens[i]);
 		banana(buf, lens[i]);
@@ -211,15 +211,15 @@ signature_tests(struct sshkey *k, struct sshkey *bad, const char *sig_alg)
 }
 
 static void
-signature_benchmark(const char *name, int ktype, int bits,
-    const char *sig_alg, int bench_verify)
+signature_benchmark(const char *name, цео ktype, цео bits,
+    const char *sig_alg, цео bench_verify)
 {
 	u_char buf[256];
 
 	banana(buf, sizeof(buf));
-	if (bench_verify)
+	ако (bench_verify)
 		verify_bench(name, ktype, bits, sig_alg, buf, sizeof(buf));
-	else
+	инако
 		signature_bench(name, ktype, bits, sig_alg, buf, sizeof(buf));
 }
 
@@ -232,7 +232,7 @@ get_private(const char *n)
 	b = load_file(n);
 	ASSERT_INT_EQ(sshkey_parse_private_fileblob(b, "", &ret, NULL), 0);
 	sshbuf_free(b);
-	return ret;
+	врати ret;
 }
 
 void

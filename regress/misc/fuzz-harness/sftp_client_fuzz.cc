@@ -64,19 +64,19 @@ void fuzz_arena_cleanup(void);
 }
 
 extern "C" volatile sig_atomic_t interrupted = 0;
-extern "C" int showprogress = 0;
+extern "C" цео showprogress = 0;
 extern "C" void start_progress_meter(const char *file, off_t filesize,
     off_t *ctr) { (void)file; (void)filesize; (void)ctr; }
-extern "C" void refresh_progress_meter(int force_update) { (void)force_update; }
+extern "C" void refresh_progress_meter(цео force_update) { (void)force_update; }
 extern "C" void stop_progress_meter(void) { }
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static volatile цео in_fuzz = 0;
 
 extern "C" void
-cleanup_exit(int code)
+cleanup_exit(цео code)
 {
-	if (in_fuzz)
+	ако (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
@@ -104,24 +104,24 @@ enum {
 };
 
 static void
-run_one(int api, const uint8_t *body, size_t bsize)
+run_one(цео api, const uint8_t *body, size_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	цео sv[2] = { -1, -1 };
+	ако (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		врати;
 
 	ssize_t w = write(sv[0], k_version_reply, sizeof(k_version_reply));
 	(void)w;
-	if (bsize > 0)
+	ако (bsize > 0)
 		w = write(sv[0], body, bsize);
 	(void)w;
 	shutdown(sv[0], SHUT_WR);
 
 	fuzz_arena_begin();
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	ако (setjmp(fuzz_env) == 0) {
 		struct sftp_conn *conn = sftp_init(sv[1], sv[1], 32768, 64, 0);
-		if (conn != NULL) {
+		ако (conn != NULL) {
 			Attrib attr;
 			attrib_clear(&attr);
 
@@ -149,7 +149,7 @@ run_one(int api, const uint8_t *body, size_t bsize)
 			case API_READDIR: {
 				SFTP_DIRENT **dir = NULL;
 				(void)sftp_readdir(conn, "/fuzz", &dir);
-				if (dir != NULL)
+				ако (dir != NULL)
 					sftp_free_dirents(dir);
 				break;
 			}
@@ -190,21 +190,21 @@ run_one(int api, const uint8_t *body, size_t bsize)
 	close(sv[1]);
 }
 
-extern "C" int
+extern "C" цео
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-	static int initialized = 0;
-	if (!initialized) {
+	static цео initialized = 0;
+	ако (!initialized) {
 		initialized = 1;
 		log_init("sftp_client_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 	}
 
-	if (size > 65536)
-		return 0;
+	ако (size > 65536)
+		врати 0;
 
-	for (int api = 0; api < API_COUNT; api++)
+	за (цео api = 0; api < API_COUNT; api++)
 		run_one(api, data, size);
 
-	return 0;
+	врати 0;
 }

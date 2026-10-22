@@ -88,7 +88,7 @@
 
 #ifdef SK_DEBUG
 #define SSH_FIDO_INIT_ARG	FIDO_DEBUG
-#else
+#инако
 #define SSH_FIDO_INIT_ARG	0
 #endif
 
@@ -110,18 +110,18 @@ struct sk_usbhid {
 uint32_t sk_api_version(void);
 
 /* Enroll a U2F key (private key generation) */
-int sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
+цео sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
     const char *application, uint8_t flags, const char *pin,
     struct sk_option **options, struct sk_enroll_response **enroll_response);
 
 /* Sign a challenge */
-int sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
+цео sk_sign(uint32_t alg, const uint8_t *data, size_t data_len,
     const char *application, const uint8_t *key_handle, size_t key_handle_len,
     uint8_t flags, const char *pin, struct sk_option **options,
     struct sk_sign_response **sign_response);
 
 /* Load resident keys */
-int sk_load_resident_keys(const char *pin, struct sk_option **options,
+цео sk_load_resident_keys(const char *pin, struct sk_option **options,
     struct sk_resident_key ***rks, size_t *nrks);
 
 static void skdebug(const char *func, const char *fmt, ...)
@@ -130,7 +130,7 @@ static void skdebug(const char *func, const char *fmt, ...)
 static void
 skdebug(const char *func, const char *fmt, ...)
 {
-#if !defined(SK_STANDALONE)
+#ако !defined(SK_STANDALONE)
 	char *msg;
 	va_list ap;
 
@@ -147,7 +147,7 @@ skdebug(const char *func, const char *fmt, ...)
 	vfprintf(stderr, fmt, ap);
 	fputc('\n', stderr);
 	va_end(ap);
-#else
+#инако
 	(void)func; /* XXX */
 	(void)fmt; /* XXX */
 #endif
@@ -156,50 +156,50 @@ skdebug(const char *func, const char *fmt, ...)
 uint32_t
 sk_api_version(void)
 {
-	return SSH_SK_VERSION_MAJOR;
+	врати SSH_SK_VERSION_MAJOR;
 }
 
 static struct sk_usbhid *
 sk_open(const char *path)
 {
 	struct sk_usbhid *sk;
-	int r;
+	цео r;
 
-	if (path == NULL) {
+	ако (path == NULL) {
 		skdebug(__func__, "path == NULL");
-		return NULL;
+		врати NULL;
 	}
-	if ((sk = calloc(1, sizeof(*sk))) == NULL) {
+	ако ((sk = calloc(1, sizeof(*sk))) == NULL) {
 		skdebug(__func__, "calloc sk failed");
-		return NULL;
+		врати NULL;
 	}
-	if ((sk->path = strdup(path)) == NULL) {
+	ако ((sk->path = strdup(path)) == NULL) {
 		skdebug(__func__, "strdup path failed");
 		free(sk);
-		return NULL;
+		врати NULL;
 	}
-	if ((sk->dev = fido_dev_new()) == NULL) {
+	ако ((sk->dev = fido_dev_new()) == NULL) {
 		skdebug(__func__, "fido_dev_new failed");
 		free(sk->path);
 		free(sk);
-		return NULL;
+		врати NULL;
 	}
-	if ((r = fido_dev_open(sk->dev, sk->path)) != FIDO_OK) {
+	ако ((r = fido_dev_open(sk->dev, sk->path)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_open %s failed: %s", sk->path,
 		    fido_strerr(r));
 		fido_dev_free(&sk->dev);
 		free(sk->path);
 		free(sk);
-		return NULL;
+		врати NULL;
 	}
-	return sk;
+	врати sk;
 }
 
 static void
 sk_close(struct sk_usbhid *sk)
 {
-	if (sk == NULL)
-		return;
+	ако (sk == NULL)
+		врати;
 	fido_dev_cancel(sk->dev); /* cancel any pending operation */
 	fido_dev_close(sk->dev);
 	fido_dev_free(&sk->dev);
@@ -215,26 +215,26 @@ sk_openv(const fido_dev_info_t *devlist, size_t ndevs, size_t *nopen)
 	size_t i;
 
 	*nopen = 0;
-	if ((skv = calloc(ndevs, sizeof(*skv))) == NULL) {
+	ако ((skv = calloc(ndevs, sizeof(*skv))) == NULL) {
 		skdebug(__func__, "calloc skv failed");
-		return NULL;
+		врати NULL;
 	}
-	for (i = 0; i < ndevs; i++) {
-		if ((di = fido_dev_info_ptr(devlist, i)) == NULL)
+	за (i = 0; i < ndevs; i++) {
+		ако ((di = fido_dev_info_ptr(devlist, i)) == NULL)
 			skdebug(__func__, "fido_dev_info_ptr failed");
-		else if ((skv[*nopen] = sk_open(fido_dev_info_path(di))) == NULL)
+		инако ако ((skv[*nopen] = sk_open(fido_dev_info_path(di))) == NULL)
 			skdebug(__func__, "sk_open failed");
-		else
+		инако
 			(*nopen)++;
 	}
-	if (*nopen == 0) {
-		for (i = 0; i < ndevs; i++)
+	ако (*nopen == 0) {
+		за (i = 0; i < ndevs; i++)
 			sk_close(skv[i]);
 		free(skv);
 		skv = NULL;
 	}
 
-	return skv;
+	врати skv;
 }
 
 static void
@@ -242,127 +242,127 @@ sk_closev(struct sk_usbhid **skv, size_t nsk)
 {
 	size_t i;
 
-	for (i = 0; i < nsk; i++)
+	за (i = 0; i < nsk; i++)
 		sk_close(skv[i]);
 	free(skv);
 }
 
-static int
+static цео
 sk_touch_begin(struct sk_usbhid **skv, size_t nsk)
 {
 	size_t i, ok = 0;
-	int r;
+	цео r;
 
-	for (i = 0; i < nsk; i++)
-		if ((r = fido_dev_get_touch_begin(skv[i]->dev)) != FIDO_OK)
+	за (i = 0; i < nsk; i++)
+		ако ((r = fido_dev_get_touch_begin(skv[i]->dev)) != FIDO_OK)
 			skdebug(__func__, "fido_dev_get_touch_begin %s failed:"
 			    " %s", skv[i]->path, fido_strerr(r));
-		else
+		инако
 			ok++;
 
-	return ok ? 0 : -1;
+	врати ok ? 0 : -1;
 }
 
-static int
-sk_touch_poll(struct sk_usbhid **skv, size_t nsk, int *touch, size_t *idx)
+static цео
+sk_touch_poll(struct sk_usbhid **skv, size_t nsk, цео *touch, size_t *idx)
 {
 	struct timespec ts_pause;
 	size_t npoll, i;
-	int r;
+	цео r;
 
 	ts_pause.tv_sec = 0;
 	ts_pause.tv_nsec = POLL_SLEEP_NS;
 	nanosleep(&ts_pause, NULL);
 	npoll = nsk;
-	for (i = 0; i < nsk; i++) {
-		if (skv[i] == NULL)
+	за (i = 0; i < nsk; i++) {
+		ако (skv[i] == NULL)
 			continue; /* device discarded */
 		skdebug(__func__, "polling %s", skv[i]->path);
-		if ((r = fido_dev_get_touch_status(skv[i]->dev, touch,
+		ако ((r = fido_dev_get_touch_status(skv[i]->dev, touch,
 		    FIDO_POLL_MS)) != FIDO_OK) {
 			skdebug(__func__, "fido_dev_get_touch_status %s: %s",
 			    skv[i]->path, fido_strerr(r));
 			sk_close(skv[i]); /* discard device */
 			skv[i] = NULL;
-			if (--npoll == 0) {
+			ако (--npoll == 0) {
 				skdebug(__func__, "no device left to poll");
-				return -1;
+				врати -1;
 			}
-		} else if (*touch) {
+		} инако ако (*touch) {
 			*idx = i;
-			return 0;
+			врати 0;
 		}
 	}
 	*touch = 0;
-	return 0;
+	врати 0;
 }
 
-#if !defined(HAVE_FIDO_ASSERT_SET_CLIENTDATA) || \
+#ако !defined(HAVE_FIDO_ASSERT_SET_CLIENTDATA) || \
     !defined(HAVE_FIDO_CRED_SET_CLIENTDATA)
 /* Calculate SHA256(m) */
-static int
+static цео
 sha256_mem(const void *m, size_t mlen, u_char *d, size_t dlen)
 {
 #ifdef WITH_OPENSSL
 	u_int mdlen;
-#else
+#инако
 	SHA2_CTX ctx;
 #endif
 
-	if (dlen != 32)
-		return -1;
+	ако (dlen != 32)
+		врати -1;
 #ifdef WITH_OPENSSL
 	mdlen = dlen;
-	if (!EVP_Digest(m, mlen, d, &mdlen, EVP_sha256(), NULL))
-		return -1;
-#else
+	ако (!EVP_Digest(m, mlen, d, &mdlen, EVP_sha256(), NULL))
+		врати -1;
+#инако
 	SHA256Init(&ctx);
 	SHA256Update(&ctx, (const uint8_t *)m, mlen);
 	SHA256Final(d, &ctx);
 #endif
-	return 0;
+	врати 0;
 }
 #endif /* !HAVE_FIDO_ASSERT_SET_CLIENTDATA || !HAVE_FIDO_CRED_SET_CLIENTDATA */
 
 #ifndef HAVE_FIDO_CRED_SET_CLIENTDATA
-static int
+static цео
 fido_cred_set_clientdata(fido_cred_t *cred, const u_char *ptr, size_t len)
 {
 	uint8_t d[32];
-	int r;
+	цео r;
 
-	if (sha256_mem(ptr, len, d, sizeof(d)) != 0) {
+	ако (sha256_mem(ptr, len, d, sizeof(d)) != 0) {
 		skdebug(__func__, "hash challenge failed");
-		return FIDO_ERR_INTERNAL;
+		врати FIDO_ERR_INTERNAL;
 	}
 	r = fido_cred_set_clientdata_hash(cred, d, sizeof(d));
 	explicit_bzero(d, sizeof(d));
-	if (r != FIDO_OK) {
+	ако (r != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_clientdata_hash failed: %s",
 		    fido_strerr(r));
 	}
-	return r;
+	врати r;
 }
 #endif /* HAVE_FIDO_CRED_SET_CLIENTDATA */
 
 #ifndef HAVE_FIDO_ASSERT_SET_CLIENTDATA
-static int
+static цео
 fido_assert_set_clientdata(fido_assert_t *assert, const u_char *ptr, size_t len)
 {
 	uint8_t d[32];
-	int r;
+	цео r;
 
-	if (sha256_mem(ptr, len, d, sizeof(d)) != 0) {
+	ако (sha256_mem(ptr, len, d, sizeof(d)) != 0) {
 		skdebug(__func__, "hash challenge failed");
-		return FIDO_ERR_INTERNAL;
+		врати FIDO_ERR_INTERNAL;
 	}
 	r = fido_assert_set_clientdata_hash(assert, d, sizeof(d));
 	explicit_bzero(d, sizeof(d));
-	if (r != FIDO_OK) {
+	ако (r != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_clientdata_hash failed: %s",
 		    fido_strerr(r));
 	}
-	return r;
+	врати r;
 }
 #endif /* HAVE_FIDO_ASSERT_SET_CLIENTDATA */
 
@@ -370,96 +370,96 @@ fido_assert_set_clientdata(fido_assert_t *assert, const u_char *ptr, size_t len)
 static bool
 fido_dev_is_winhello(const fido_dev_t *fdev)
 {
-	return 0;
+	врати 0;
 }
 #endif /* HAVE_FIDO_DEV_IS_WINHELLO */
 
 /* Check if the specified key handle exists on a given sk. */
-static int
+static цео
 sk_try(const struct sk_usbhid *sk, const char *application,
     const uint8_t *key_handle, size_t key_handle_len)
 {
 	fido_assert_t *assert = NULL;
-	int r = FIDO_ERR_INTERNAL;
+	цео r = FIDO_ERR_INTERNAL;
 	uint8_t message[32];
 
 	memset(message, '\0', sizeof(message));
-	if ((assert = fido_assert_new()) == NULL) {
+	ако ((assert = fido_assert_new()) == NULL) {
 		skdebug(__func__, "fido_assert_new failed");
 		goto out;
 	}
 	/* generate an invalid signature on FIDO2 tokens */
-	if ((r = fido_assert_set_clientdata(assert, message,
+	ако ((r = fido_assert_set_clientdata(assert, message,
 	    sizeof(message))) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_clientdata: %s",
 		    fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
+	ако ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_allow_cred(assert, key_handle,
+	ако ((r = fido_assert_allow_cred(assert, key_handle,
 	    key_handle_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_allow_cred: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_set_up(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
+	ако ((r = fido_assert_set_up(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_up: %s", fido_strerr(r));
 		goto out;
 	}
 	r = fido_dev_get_assert(sk->dev, assert, NULL);
 	skdebug(__func__, "fido_dev_get_assert: %s", fido_strerr(r));
-	if (r == FIDO_ERR_USER_PRESENCE_REQUIRED) {
+	ако (r == FIDO_ERR_USER_PRESENCE_REQUIRED) {
 		/* U2F tokens may return this */
 		r = FIDO_OK;
 	}
  out:
 	fido_assert_free(&assert);
 
-	return r != FIDO_OK ? -1 : 0;
+	врати r != FIDO_OK ? -1 : 0;
 }
 
-static int
-check_sk_options(fido_dev_t *dev, const char *opt, int *ret)
+static цео
+check_sk_options(fido_dev_t *dev, const char *opt, цео *ret)
 {
 	fido_cbor_info_t *info;
 	char * const *name;
 	const bool *value;
 	size_t len, i;
-	int r;
+	цео r;
 
 	*ret = -1;
 
-	if (!fido_dev_is_fido2(dev)) {
+	ако (!fido_dev_is_fido2(dev)) {
 		skdebug(__func__, "device is not fido2");
-		return 0;
+		врати 0;
 	}
-	if ((info = fido_cbor_info_new()) == NULL) {
+	ако ((info = fido_cbor_info_new()) == NULL) {
 		skdebug(__func__, "fido_cbor_info_new failed");
-		return -1;
+		врати -1;
 	}
-	if ((r = fido_dev_get_cbor_info(dev, info)) != FIDO_OK) {
+	ако ((r = fido_dev_get_cbor_info(dev, info)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_get_cbor_info: %s", fido_strerr(r));
 		fido_cbor_info_free(&info);
-		return -1;
+		врати -1;
 	}
 	name = fido_cbor_info_options_name_ptr(info);
 	value = fido_cbor_info_options_value_ptr(info);
 	len = fido_cbor_info_options_len(info);
-	for (i = 0; i < len; i++) {
-		if (!strcmp(name[i], opt)) {
+	за (i = 0; i < len; i++) {
+		ако (!strcmp(name[i], opt)) {
 			*ret = value[i];
 			break;
 		}
 	}
 	fido_cbor_info_free(&info);
-	if (*ret == -1)
+	ако (*ret == -1)
 		skdebug(__func__, "option %s is unknown", opt);
-	else
+	инако
 		skdebug(__func__, "option %s is %s", opt, *ret ? "on" : "off");
 
-	return 0;
+	врати 0;
 }
 
 static struct sk_usbhid *
@@ -468,21 +468,21 @@ sk_select_by_cred(const fido_dev_info_t *devlist, size_t ndevs,
 {
 	struct sk_usbhid **skv, *sk;
 	size_t skvcnt, i;
-	int internal_uv;
+	цео internal_uv;
 
-	if ((skv = sk_openv(devlist, ndevs, &skvcnt)) == NULL) {
+	ако ((skv = sk_openv(devlist, ndevs, &skvcnt)) == NULL) {
 		skdebug(__func__, "sk_openv failed");
-		return NULL;
+		врати NULL;
 	}
-	if (skvcnt == 1 && check_sk_options(skv[0]->dev, "uv",
+	ако (skvcnt == 1 && check_sk_options(skv[0]->dev, "uv",
 	    &internal_uv) == 0 && internal_uv != -1) {
 		sk = skv[0];
 		skv[0] = NULL;
 		goto out;
 	}
 	sk = NULL;
-	for (i = 0; i < skvcnt; i++) {
-		if (sk_try(skv[i], application, key_handle,
+	за (i = 0; i < skvcnt; i++) {
+		ако (sk_try(skv[i], application, key_handle,
 		    key_handle_len) == 0) {
 			sk = skv[i];
 			skv[i] = NULL;
@@ -492,7 +492,7 @@ sk_select_by_cred(const fido_dev_info_t *devlist, size_t ndevs,
 	}
  out:
 	sk_closev(skv, skvcnt);
-	return sk;
+	врати sk;
 }
 
 static struct sk_usbhid *
@@ -501,15 +501,15 @@ sk_select_by_touch(const fido_dev_info_t *devlist, size_t ndevs)
 	struct sk_usbhid **skv, *sk;
 	struct timeval tv_start, tv_now, tv_delta;
 	size_t skvcnt, idx;
-	int touch, ms_remain;
+	цео touch, ms_remain;
 
-	if ((skv = sk_openv(devlist, ndevs, &skvcnt)) == NULL) {
+	ако ((skv = sk_openv(devlist, ndevs, &skvcnt)) == NULL) {
 		skdebug(__func__, "sk_openv failed");
-		return NULL;
+		врати NULL;
 	}
 	sk = NULL;
-	if (skvcnt < 2) {
-		if (skvcnt == 1) {
+	ако (skvcnt < 2) {
+		ако (skvcnt == 1) {
 			/* single candidate */
 			sk = skv[0];
 			skv[0] = NULL;
@@ -521,17 +521,17 @@ sk_select_by_touch(const fido_dev_info_t *devlist, size_t ndevs)
 	goto out;
 #endif
 
-	if (sk_touch_begin(skv, skvcnt) == -1) {
+	ако (sk_touch_begin(skv, skvcnt) == -1) {
 		skdebug(__func__, "sk_touch_begin failed");
 		goto out;
 	}
 	monotime_tv(&tv_start);
 	do {
-		if (sk_touch_poll(skv, skvcnt, &touch, &idx) == -1) {
+		ако (sk_touch_poll(skv, skvcnt, &touch, &idx) == -1) {
 			skdebug(__func__, "sk_touch_poll failed");
 			goto out;
 		}
-		if (touch) {
+		ако (touch) {
 			sk = skv[idx];
 			skv[idx] = NULL;
 			goto out;
@@ -540,50 +540,50 @@ sk_select_by_touch(const fido_dev_info_t *devlist, size_t ndevs)
 		timersub(&tv_now, &tv_start, &tv_delta);
 		ms_remain = SELECT_MS - tv_delta.tv_sec * 1000 -
 		    tv_delta.tv_usec / 1000;
-	} while (ms_remain >= FIDO_POLL_MS);
+	} док (ms_remain >= FIDO_POLL_MS);
 	skdebug(__func__, "timeout");
 out:
 	sk_closev(skv, skvcnt);
-	return sk;
+	врати sk;
 }
 
 static struct sk_usbhid *
 sk_probe(const char *application, const uint8_t *key_handle,
-    size_t key_handle_len, int probe_resident)
+    size_t key_handle_len, цео probe_resident)
 {
 	struct sk_usbhid *sk;
 	fido_dev_info_t *devlist;
 	size_t ndevs;
-	int r;
+	цео r;
 
 #ifdef HAVE_CYGWIN
-	if (!probe_resident && (sk = sk_open("windows://hello")) != NULL)
-		return sk;
+	ако (!probe_resident && (sk = sk_open("windows://hello")) != NULL)
+		врати sk;
 #endif /* HAVE_CYGWIN */
-	if ((devlist = fido_dev_info_new(MAX_FIDO_DEVICES)) == NULL) {
+	ако ((devlist = fido_dev_info_new(MAX_FIDO_DEVICES)) == NULL) {
 		skdebug(__func__, "fido_dev_info_new failed");
-		return NULL;
+		врати NULL;
 	}
-	if ((r = fido_dev_info_manifest(devlist, MAX_FIDO_DEVICES,
+	ако ((r = fido_dev_info_manifest(devlist, MAX_FIDO_DEVICES,
 	    &ndevs)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_info_manifest failed: %s",
 		    fido_strerr(r));
 		fido_dev_info_free(&devlist, MAX_FIDO_DEVICES);
-		return NULL;
+		врати NULL;
 	}
 	skdebug(__func__, "%zu device(s) detected", ndevs);
-	if (ndevs == 0) {
+	ако (ndevs == 0) {
 		sk = NULL;
-	} else if (application != NULL && key_handle != NULL) {
+	} инако ако (application != NULL && key_handle != NULL) {
 		skdebug(__func__, "selecting sk by cred");
 		sk = sk_select_by_cred(devlist, ndevs, application, key_handle,
 		    key_handle_len);
-	} else {
+	} инако {
 		skdebug(__func__, "selecting sk by touch");
 		sk = sk_select_by_touch(devlist, ndevs);
 	}
 	fido_dev_info_free(&devlist, MAX_FIDO_DEVICES);
-	return sk;
+	врати sk;
 }
 
 #ifdef WITH_OPENSSL
@@ -591,7 +591,7 @@ sk_probe(const char *application, const uint8_t *key_handle,
  * The key returned via fido_cred_pubkey_ptr() is in affine coordinates,
  * but the API expects a SEC1 octet string.
  */
-static int
+static цео
 pack_public_key_ecdsa(const fido_cred_t *cred,
     struct sk_enroll_response *response)
 {
@@ -599,49 +599,49 @@ pack_public_key_ecdsa(const fido_cred_t *cred,
 	BIGNUM *x = NULL, *y = NULL;
 	EC_POINT *q = NULL;
 	EC_GROUP *g = NULL;
-	int ret = -1;
+	цео ret = -1;
 
 	response->public_key = NULL;
 	response->public_key_len = 0;
 
-	if ((x = BN_new()) == NULL ||
+	ако ((x = BN_new()) == NULL ||
 	    (y = BN_new()) == NULL ||
 	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == NULL ||
 	    (q = EC_POINT_new(g)) == NULL) {
 		skdebug(__func__, "libcrypto setup failed");
 		goto out;
 	}
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	ако ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
 		skdebug(__func__, "fido_cred_pubkey_ptr failed");
 		goto out;
 	}
-	if (fido_cred_pubkey_len(cred) != 64) {
+	ако (fido_cred_pubkey_len(cred) != 64) {
 		skdebug(__func__, "bad fido_cred_pubkey_len %zu",
 		    fido_cred_pubkey_len(cred));
 		goto out;
 	}
 
-	if (BN_bin2bn(ptr, 32, x) == NULL ||
+	ако (BN_bin2bn(ptr, 32, x) == NULL ||
 	    BN_bin2bn(ptr + 32, 32, y) == NULL) {
 		skdebug(__func__, "BN_bin2bn failed");
 		goto out;
 	}
-	if (EC_POINT_set_affine_coordinates(g, q, x, y, NULL) != 1) {
+	ако (EC_POINT_set_affine_coordinates(g, q, x, y, NULL) != 1) {
 		skdebug(__func__, "EC_POINT_set_affine_coordinates failed");
 		goto out;
 	}
 	response->public_key_len = EC_POINT_point2oct(g, q,
 	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (response->public_key_len == 0 || response->public_key_len > 2048) {
+	ако (response->public_key_len == 0 || response->public_key_len > 2048) {
 		skdebug(__func__, "bad pubkey length %zu",
 		    response->public_key_len);
 		goto out;
 	}
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	ако ((response->public_key = malloc(response->public_key_len)) == NULL) {
 		skdebug(__func__, "malloc pubkey failed");
 		goto out;
 	}
-	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
+	ако (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
 	    response->public_key, response->public_key_len, NULL) == 0) {
 		skdebug(__func__, "EC_POINT_point2oct failed");
 		goto out;
@@ -649,7 +649,7 @@ pack_public_key_ecdsa(const fido_cred_t *cred,
 	/* success */
 	ret = 0;
  out:
-	if (ret != 0 && response->public_key != NULL) {
+	ако (ret != 0 && response->public_key != NULL) {
 		memset(response->public_key, 0, response->public_key_len);
 		free(response->public_key);
 		response->public_key = NULL;
@@ -658,155 +658,155 @@ pack_public_key_ecdsa(const fido_cred_t *cred,
 	EC_GROUP_free(g);
 	BN_clear_free(x);
 	BN_clear_free(y);
-	return ret;
+	врати ret;
 }
 #endif /* WITH_OPENSSL */
 
-static int
+static цео
 pack_public_key_ed25519(const fido_cred_t *cred,
     struct sk_enroll_response *response)
 {
 	const uint8_t *ptr;
 	size_t len;
-	int ret = -1;
+	цео ret = -1;
 
 	response->public_key = NULL;
 	response->public_key_len = 0;
 
-	if ((len = fido_cred_pubkey_len(cred)) != 32) {
+	ако ((len = fido_cred_pubkey_len(cred)) != 32) {
 		skdebug(__func__, "bad fido_cred_pubkey_len len %zu", len);
 		goto out;
 	}
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	ако ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
 		skdebug(__func__, "fido_cred_pubkey_ptr failed");
 		goto out;
 	}
 	response->public_key_len = len;
-	if ((response->public_key = malloc(response->public_key_len)) == NULL) {
+	ако ((response->public_key = malloc(response->public_key_len)) == NULL) {
 		skdebug(__func__, "malloc pubkey failed");
 		goto out;
 	}
 	memcpy(response->public_key, ptr, len);
 	ret = 0;
  out:
-	if (ret != 0)
+	ако (ret != 0)
 		free(response->public_key);
-	return ret;
+	врати ret;
 }
 
-static int
+static цео
 pack_public_key(uint32_t alg, const fido_cred_t *cred,
     struct sk_enroll_response *response)
 {
 	switch(alg) {
 #ifdef WITH_OPENSSL
 	case SSH_SK_ECDSA:
-		return pack_public_key_ecdsa(cred, response);
+		врати pack_public_key_ecdsa(cred, response);
 #endif /* WITH_OPENSSL */
 	case SSH_SK_ED25519:
-		return pack_public_key_ed25519(cred, response);
+		врати pack_public_key_ed25519(cred, response);
 	default:
-		return -1;
+		врати -1;
 	}
 }
 
-static int
-fidoerr_to_skerr(int fidoerr)
+static цео
+fidoerr_to_skerr(цео fidoerr)
 {
 	switch (fidoerr) {
 	case FIDO_ERR_UNSUPPORTED_OPTION:
 	case FIDO_ERR_UNSUPPORTED_ALGORITHM:
-		return SSH_SK_ERR_UNSUPPORTED;
+		врати SSH_SK_ERR_UNSUPPORTED;
 	case FIDO_ERR_PIN_REQUIRED:
 	case FIDO_ERR_PIN_INVALID:
 	case FIDO_ERR_OPERATION_DENIED:
-		return SSH_SK_ERR_PIN_REQUIRED;
+		врати SSH_SK_ERR_PIN_REQUIRED;
 	default:
-		return -1;
+		врати -1;
 	}
 }
 
-static int
+static цео
 check_enroll_options(struct sk_option **options, char **devicep,
     uint8_t *user_id, size_t user_id_len)
 {
 	size_t i;
 
-	if (options == NULL)
-		return 0;
-	for (i = 0; options[i] != NULL; i++) {
-		if (strcmp(options[i]->name, "device") == 0) {
-			if ((*devicep = strdup(options[i]->value)) == NULL) {
+	ако (options == NULL)
+		врати 0;
+	за (i = 0; options[i] != NULL; i++) {
+		ако (strcmp(options[i]->name, "device") == 0) {
+			ако ((*devicep = strdup(options[i]->value)) == NULL) {
 				skdebug(__func__, "strdup device failed");
-				return -1;
+				врати -1;
 			}
 			skdebug(__func__, "requested device %s", *devicep);
-		} else if (strcmp(options[i]->name, "user") == 0) {
-			if (strlcpy(user_id, options[i]->value, user_id_len) >=
+		} инако ако (strcmp(options[i]->name, "user") == 0) {
+			ако (strlcpy(user_id, options[i]->value, user_id_len) >=
 			    user_id_len) {
 				skdebug(__func__, "user too long");
-				return -1;
+				врати -1;
 			}
 			skdebug(__func__, "requested user %s",
 			    (char *)user_id);
-		} else {
+		} инако {
 			skdebug(__func__, "requested unsupported option %s",
 			    options[i]->name);
-			if (options[i]->required) {
+			ако (options[i]->required) {
 				skdebug(__func__, "unknown required option");
-				return -1;
+				врати -1;
 			}
 		}
 	}
-	return 0;
+	врати 0;
 }
 
-static int
+static цео
 key_lookup(fido_dev_t *dev, const char *application, const uint8_t *user_id,
     size_t user_id_len, const char *pin)
 {
 	fido_assert_t *assert = NULL;
 	uint8_t message[32];
-	int r = FIDO_ERR_INTERNAL;
-	int sk_supports_uv, uv;
+	цео r = FIDO_ERR_INTERNAL;
+	цео sk_supports_uv, uv;
 	size_t i;
 
 	memset(message, '\0', sizeof(message));
-	if ((assert = fido_assert_new()) == NULL) {
+	ако ((assert = fido_assert_new()) == NULL) {
 		skdebug(__func__, "fido_assert_new failed");
 		goto out;
 	}
 	/* generate an invalid signature on FIDO2 tokens */
-	if ((r = fido_assert_set_clientdata(assert, message,
+	ако ((r = fido_assert_set_clientdata(assert, message,
 	    sizeof(message))) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_clientdata: %s",
 		    fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
+	ако ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_set_up(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
+	ако ((r = fido_assert_set_up(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_up: %s", fido_strerr(r));
 		goto out;
 	}
 	uv = FIDO_OPT_OMIT;
-	if (pin == NULL && check_sk_options(dev, "uv", &sk_supports_uv) == 0 &&
+	ако (pin == NULL && check_sk_options(dev, "uv", &sk_supports_uv) == 0 &&
 	    sk_supports_uv != -1)
 		uv = FIDO_OPT_TRUE;
-	if ((r = fido_assert_set_uv(assert, uv)) != FIDO_OK) {
+	ако ((r = fido_assert_set_uv(assert, uv)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_uv: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_dev_get_assert(dev, assert, pin)) != FIDO_OK) {
+	ако ((r = fido_dev_get_assert(dev, assert, pin)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_get_assert: %s", fido_strerr(r));
 		goto out;
 	}
 	r = FIDO_ERR_NO_CREDENTIALS;
 	skdebug(__func__, "%zu signatures returned", fido_assert_count(assert));
-	for (i = 0; i < fido_assert_count(assert); i++) {
-		if (fido_assert_user_id_len(assert, i) == user_id_len &&
+	за (i = 0; i < fido_assert_count(assert); i++) {
+		ако (fido_assert_user_id_len(assert, i) == user_id_len &&
 		    memcmp(fido_assert_user_id_ptr(assert, i), user_id,
 		    user_id_len) == 0) {
 			skdebug(__func__, "credential exists");
@@ -817,10 +817,10 @@ key_lookup(fido_dev_t *dev, const char *application, const uint8_t *user_id,
  out:
 	fido_assert_free(&assert);
 
-	return r;
+	врати r;
 }
 
-int
+цео
 sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
     const char *application, uint8_t flags, const char *pin,
     struct sk_option **options, struct sk_enroll_response **enroll_response)
@@ -831,21 +831,21 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 	struct sk_usbhid *sk = NULL;
 	struct sk_enroll_response *response = NULL;
 	size_t len;
-	int credprot;
-	int cose_alg;
-	int ret = SSH_SK_ERR_GENERAL;
-	int r;
+	цео credprot;
+	цео cose_alg;
+	цео ret = SSH_SK_ERR_GENERAL;
+	цео r;
 	char *device = NULL;
 
 	fido_init(SSH_FIDO_INIT_ARG);
 
-	if (enroll_response == NULL) {
+	ако (enroll_response == NULL) {
 		skdebug(__func__, "enroll_response == NULL");
 		goto out;
 	}
 	*enroll_response = NULL;
 	memset(user_id, 0, sizeof(user_id));
-	if (check_enroll_options(options, &device, user_id,
+	ако (check_enroll_options(options, &device, user_id,
 	    sizeof(user_id)) != 0)
 		goto out; /* error already logged */
 
@@ -862,146 +862,146 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 		skdebug(__func__, "unsupported key type %d", alg);
 		goto out;
 	}
-	if (device != NULL)
+	ако (device != NULL)
 		sk = sk_open(device);
-	else
+	инако
 		sk = sk_probe(NULL, NULL, 0, 0);
-	if (sk == NULL) {
+	ако (sk == NULL) {
 		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
 		skdebug(__func__, "failed to find sk");
 		goto out;
 	}
 	skdebug(__func__, "using device %s", sk->path);
-	if ((flags & SSH_SK_RESIDENT_KEY) != 0 &&
+	ако ((flags & SSH_SK_RESIDENT_KEY) != 0 &&
 	    (flags & SSH_SK_FORCE_OPERATION) == 0 &&
 	    (r = key_lookup(sk->dev, application, user_id, sizeof(user_id),
 	    pin)) != FIDO_ERR_NO_CREDENTIALS) {
-		if (r != FIDO_OK) {
+		ако (r != FIDO_OK) {
 			ret = fidoerr_to_skerr(r);
 			skdebug(__func__, "key_lookup failed");
-		} else {
+		} инако {
 			ret = SSH_SK_ERR_CREDENTIAL_EXISTS;
 			skdebug(__func__, "key exists");
 		}
 		goto out;
 	}
-	if ((cred = fido_cred_new()) == NULL) {
+	ако ((cred = fido_cred_new()) == NULL) {
 		skdebug(__func__, "fido_cred_new failed");
 		goto out;
 	}
-	if ((r = fido_cred_set_type(cred, cose_alg)) != FIDO_OK) {
+	ако ((r = fido_cred_set_type(cred, cose_alg)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_type: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_cred_set_clientdata(cred,
+	ако ((r = fido_cred_set_clientdata(cred,
 	    challenge, challenge_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_clientdata: %s",
 		    fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_cred_set_rk(cred, (flags & SSH_SK_RESIDENT_KEY) != 0 ?
+	ако ((r = fido_cred_set_rk(cred, (flags & SSH_SK_RESIDENT_KEY) != 0 ?
 	    FIDO_OPT_TRUE : FIDO_OPT_OMIT)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_rk: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_cred_set_user(cred, user_id, sizeof(user_id),
+	ако ((r = fido_cred_set_user(cred, user_id, sizeof(user_id),
 	    "openssh", "openssh", NULL)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_user: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_cred_set_rp(cred, application, NULL)) != FIDO_OK) {
+	ако ((r = fido_cred_set_rp(cred, application, NULL)) != FIDO_OK) {
 		skdebug(__func__, "fido_cred_set_rp: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((flags & (SSH_SK_RESIDENT_KEY|SSH_SK_USER_VERIFICATION_REQD)) != 0) {
-#if !defined(HAVE_FIDO_DEV_SUPPORTS_CRED_PROT) || \
+	ако ((flags & (SSH_SK_RESIDENT_KEY|SSH_SK_USER_VERIFICATION_REQD)) != 0) {
+#ако !defined(HAVE_FIDO_DEV_SUPPORTS_CRED_PROT) || \
     !defined(HAVE_FIDO_CRED_SET_PROT)
 		skdebug(__func__, "libfido2 version does not support a feature required for this operation. Please upgrade to >=1.5.0");
 		ret = SSH_SK_ERR_UNSUPPORTED;
 		goto out;
 		credprot = 0; (void)credprot; /* avoid warning */
 #endif
-		if (!fido_dev_supports_cred_prot(sk->dev)) {
+		ако (!fido_dev_supports_cred_prot(sk->dev)) {
 			skdebug(__func__, "%s does not support credprot, "
 			    "refusing to create unprotected "
 			    "resident/verify-required key", sk->path);
 			ret = SSH_SK_ERR_UNSUPPORTED;
 			goto out;
 		}
-		if ((flags & SSH_SK_USER_VERIFICATION_REQD))
+		ако ((flags & SSH_SK_USER_VERIFICATION_REQD))
 			credprot = FIDO_CRED_PROT_UV_REQUIRED;
-		else
+		инако
 			credprot = FIDO_CRED_PROT_UV_OPTIONAL_WITH_ID;
 
-		if ((r = fido_cred_set_prot(cred, credprot)) != FIDO_OK) {
+		ако ((r = fido_cred_set_prot(cred, credprot)) != FIDO_OK) {
 			skdebug(__func__, "fido_cred_set_prot: %s",
 			    fido_strerr(r));
 			ret = fidoerr_to_skerr(r);
 			goto out;
 		}
 	}
-	if ((r = fido_dev_make_cred(sk->dev, cred, pin)) != FIDO_OK) {
+	ако ((r = fido_dev_make_cred(sk->dev, cred, pin)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_make_cred: %s", fido_strerr(r));
 		ret = fidoerr_to_skerr(r);
 		goto out;
 	}
-	if (fido_cred_x5c_ptr(cred) != NULL) {
-		if ((r = fido_cred_verify(cred)) != FIDO_OK) {
+	ако (fido_cred_x5c_ptr(cred) != NULL) {
+		ако ((r = fido_cred_verify(cred)) != FIDO_OK) {
 			skdebug(__func__, "fido_cred_verify: %s",
 			    fido_strerr(r));
 			goto out;
 		}
-	} else if (strcmp(fido_cred_fmt(cred), "none") != 0) {
+	} инако ако (strcmp(fido_cred_fmt(cred), "none") != 0) {
 		skdebug(__func__, "self-attested credential");
-		if ((r = fido_cred_verify_self(cred)) != FIDO_OK) {
+		ако ((r = fido_cred_verify_self(cred)) != FIDO_OK) {
 			skdebug(__func__, "fido_cred_verify_self: %s",
 			    fido_strerr(r));
 			goto out;
 		}
-	} else {
+	} инако {
 		skdebug(__func__, "no attestation data");
 	}
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	ако ((response = calloc(1, sizeof(*response))) == NULL) {
 		skdebug(__func__, "calloc response failed");
 		goto out;
 	}
 	response->flags = flags;
-	if (pack_public_key(alg, cred, response) != 0) {
+	ако (pack_public_key(alg, cred, response) != 0) {
 		skdebug(__func__, "pack_public_key failed");
 		goto out;
 	}
-	if ((ptr = fido_cred_id_ptr(cred)) != NULL) {
+	ако ((ptr = fido_cred_id_ptr(cred)) != NULL) {
 		len = fido_cred_id_len(cred);
-		if ((response->key_handle = calloc(1, len)) == NULL) {
+		ако ((response->key_handle = calloc(1, len)) == NULL) {
 			skdebug(__func__, "calloc key handle failed");
 			goto out;
 		}
 		memcpy(response->key_handle, ptr, len);
 		response->key_handle_len = len;
 	}
-	if ((ptr = fido_cred_sig_ptr(cred)) != NULL) {
+	ако ((ptr = fido_cred_sig_ptr(cred)) != NULL) {
 		len = fido_cred_sig_len(cred);
-		if ((response->signature = calloc(1, len)) == NULL) {
+		ако ((response->signature = calloc(1, len)) == NULL) {
 			skdebug(__func__, "calloc signature failed");
 			goto out;
 		}
 		memcpy(response->signature, ptr, len);
 		response->signature_len = len;
 	}
-	if ((ptr = fido_cred_x5c_ptr(cred)) != NULL) {
+	ако ((ptr = fido_cred_x5c_ptr(cred)) != NULL) {
 		len = fido_cred_x5c_len(cred);
 		skdebug(__func__, "attestation cert len=%zu", len);
-		if ((response->attestation_cert = calloc(1, len)) == NULL) {
+		ако ((response->attestation_cert = calloc(1, len)) == NULL) {
 			skdebug(__func__, "calloc attestation cert failed");
 			goto out;
 		}
 		memcpy(response->attestation_cert, ptr, len);
 		response->attestation_cert_len = len;
 	}
-	if ((ptr = fido_cred_authdata_ptr(cred)) != NULL) {
+	ако ((ptr = fido_cred_authdata_ptr(cred)) != NULL) {
 		len = fido_cred_authdata_len(cred);
 		skdebug(__func__, "authdata len=%zu", len);
-		if ((response->authdata = calloc(1, len)) == NULL) {
+		ако ((response->authdata = calloc(1, len)) == NULL) {
 			skdebug(__func__, "calloc authdata failed");
 			goto out;
 		}
@@ -1013,7 +1013,7 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 	ret = 0;
  out:
 	free(device);
-	if (response != NULL) {
+	ако (response != NULL) {
 		free(response->public_key);
 		free(response->key_handle);
 		free(response->signature);
@@ -1023,29 +1023,29 @@ sk_enroll(uint32_t alg, const uint8_t *challenge, size_t challenge_len,
 	}
 	sk_close(sk);
 	fido_cred_free(&cred);
-	return ret;
+	врати ret;
 }
 
 #ifdef WITH_OPENSSL
-static int
+static цео
 pack_sig_ecdsa(fido_assert_t *assert, struct sk_sign_response *response)
 {
 	ECDSA_SIG *sig = NULL;
 	const BIGNUM *sig_r, *sig_s;
 	const unsigned char *cp;
 	size_t sig_len;
-	int ret = -1;
+	цео ret = -1;
 
 	cp = fido_assert_sig_ptr(assert, 0);
 	sig_len = fido_assert_sig_len(assert, 0);
-	if ((sig = d2i_ECDSA_SIG(NULL, &cp, sig_len)) == NULL) {
+	ако ((sig = d2i_ECDSA_SIG(NULL, &cp, sig_len)) == NULL) {
 		skdebug(__func__, "d2i_ECDSA_SIG failed");
 		goto out;
 	}
 	ECDSA_SIG_get0(sig, &sig_r, &sig_s);
 	response->sig_r_len = BN_num_bytes(sig_r);
 	response->sig_s_len = BN_num_bytes(sig_s);
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL ||
+	ако ((response->sig_r = calloc(1, response->sig_r_len)) == NULL ||
 	    (response->sig_s = calloc(1, response->sig_s_len)) == NULL) {
 		skdebug(__func__, "calloc signature failed");
 		goto out;
@@ -1055,88 +1055,88 @@ pack_sig_ecdsa(fido_assert_t *assert, struct sk_sign_response *response)
 	ret = 0;
  out:
 	ECDSA_SIG_free(sig);
-	if (ret != 0) {
+	ако (ret != 0) {
 		free(response->sig_r);
 		free(response->sig_s);
 		response->sig_r = NULL;
 		response->sig_s = NULL;
 	}
-	return ret;
+	врати ret;
 }
 #endif /* WITH_OPENSSL */
 
-static int
+static цео
 pack_sig_ed25519(fido_assert_t *assert, struct sk_sign_response *response)
 {
 	const unsigned char *ptr;
 	size_t len;
-	int ret = -1;
+	цео ret = -1;
 
 	ptr = fido_assert_sig_ptr(assert, 0);
 	len = fido_assert_sig_len(assert, 0);
-	if (len != 64) {
+	ако (len != 64) {
 		skdebug(__func__, "bad length %zu", len);
 		goto out;
 	}
 	response->sig_r_len = len;
-	if ((response->sig_r = calloc(1, response->sig_r_len)) == NULL) {
+	ако ((response->sig_r = calloc(1, response->sig_r_len)) == NULL) {
 		skdebug(__func__, "calloc signature failed");
 		goto out;
 	}
 	memcpy(response->sig_r, ptr, len);
 	ret = 0;
  out:
-	if (ret != 0) {
+	ако (ret != 0) {
 		free(response->sig_r);
 		response->sig_r = NULL;
 	}
-	return ret;
+	врати ret;
 }
 
-static int
+static цео
 pack_sig(uint32_t  alg, fido_assert_t *assert,
     struct sk_sign_response *response)
 {
 	switch(alg) {
 #ifdef WITH_OPENSSL
 	case SSH_SK_ECDSA:
-		return pack_sig_ecdsa(assert, response);
+		врати pack_sig_ecdsa(assert, response);
 #endif /* WITH_OPENSSL */
 	case SSH_SK_ED25519:
-		return pack_sig_ed25519(assert, response);
+		врати pack_sig_ed25519(assert, response);
 	default:
-		return -1;
+		врати -1;
 	}
 }
 
 /* Checks sk_options for sk_sign() and sk_load_resident_keys() */
-static int
+static цео
 check_sign_load_resident_options(struct sk_option **options, char **devicep)
 {
 	size_t i;
 
-	if (options == NULL)
-		return 0;
-	for (i = 0; options[i] != NULL; i++) {
-		if (strcmp(options[i]->name, "device") == 0) {
-			if ((*devicep = strdup(options[i]->value)) == NULL) {
+	ако (options == NULL)
+		врати 0;
+	за (i = 0; options[i] != NULL; i++) {
+		ако (strcmp(options[i]->name, "device") == 0) {
+			ако ((*devicep = strdup(options[i]->value)) == NULL) {
 				skdebug(__func__, "strdup device failed");
-				return -1;
+				врати -1;
 			}
 			skdebug(__func__, "requested device %s", *devicep);
-		} else {
+		} инако {
 			skdebug(__func__, "requested unsupported option %s",
 			    options[i]->name);
-			if (options[i]->required) {
+			ако (options[i]->required) {
 				skdebug(__func__, "unknown required option");
-				return -1;
+				врати -1;
 			}
 		}
 	}
-	return 0;
+	врати 0;
 }
 
-int
+цео
 sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
     const char *application,
     const uint8_t *key_handle, size_t key_handle_len,
@@ -1147,49 +1147,49 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 	char *device = NULL;
 	struct sk_usbhid *sk = NULL;
 	struct sk_sign_response *response = NULL;
-	int ret = SSH_SK_ERR_GENERAL, internal_uv;
-	int r;
+	цео ret = SSH_SK_ERR_GENERAL, internal_uv;
+	цео r;
 
 	fido_init(SSH_FIDO_INIT_ARG);
 
-	if (sign_response == NULL) {
+	ако (sign_response == NULL) {
 		skdebug(__func__, "sign_response == NULL");
 		goto out;
 	}
 	*sign_response = NULL;
-	if (check_sign_load_resident_options(options, &device) != 0)
+	ако (check_sign_load_resident_options(options, &device) != 0)
 		goto out; /* error already logged */
-	if (device != NULL)
+	ако (device != NULL)
 		sk = sk_open(device);
-	else if (pin != NULL || (flags & SSH_SK_USER_VERIFICATION_REQD))
+	инако ако (pin != NULL || (flags & SSH_SK_USER_VERIFICATION_REQD))
 		sk = sk_probe(NULL, NULL, 0, 0);
-	else
+	инако
 		sk = sk_probe(application, key_handle, key_handle_len, 0);
-	if (sk == NULL) {
+	ако (sk == NULL) {
 		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
 		skdebug(__func__, "failed to find sk");
 		goto out;
 	}
-	if ((assert = fido_assert_new()) == NULL) {
+	ако ((assert = fido_assert_new()) == NULL) {
 		skdebug(__func__, "fido_assert_new failed");
 		goto out;
 	}
-	if ((r = fido_assert_set_clientdata(assert,
+	ако ((r = fido_assert_set_clientdata(assert,
 	    data, datalen)) != FIDO_OK)  {
 		skdebug(__func__, "fido_assert_set_clientdata: %s",
 		    fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
+	ако ((r = fido_assert_set_rp(assert, application)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_rp: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_allow_cred(assert, key_handle,
+	ако ((r = fido_assert_allow_cred(assert, key_handle,
 	    key_handle_len)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_allow_cred: %s", fido_strerr(r));
 		goto out;
 	}
-	if ((r = fido_assert_set_up(assert,
+	ако ((r = fido_assert_set_up(assert,
 	    (flags & SSH_SK_USER_PRESENCE_REQD) ?
 	    FIDO_OPT_TRUE : FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_up: %s", fido_strerr(r));
@@ -1199,18 +1199,18 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 	 * WinHello requests the PIN by default.  Make "uv" request explicit
 	 * to allow keys with and without -O verify-required to make sense.
 	 */
-	if (pin == NULL && fido_dev_is_winhello (sk->dev) &&
+	ако (pin == NULL && fido_dev_is_winhello (sk->dev) &&
 	    (r = fido_assert_set_uv(assert, FIDO_OPT_FALSE)) != FIDO_OK) {
 		skdebug(__func__, "fido_assert_set_uv: %s", fido_strerr(r));
 	}
-	if (pin == NULL && (flags & SSH_SK_USER_VERIFICATION_REQD)) {
-		if (check_sk_options(sk->dev, "uv", &internal_uv) < 0 ||
+	ако (pin == NULL && (flags & SSH_SK_USER_VERIFICATION_REQD)) {
+		ако (check_sk_options(sk->dev, "uv", &internal_uv) < 0 ||
 		    internal_uv != 1) {
 			skdebug(__func__, "check_sk_options uv");
 			ret = SSH_SK_ERR_PIN_REQUIRED;
 			goto out;
 		}
-		if ((r = fido_assert_set_uv(assert,
+		ако ((r = fido_assert_set_uv(assert,
 		    FIDO_OPT_TRUE)) != FIDO_OK) {
 			skdebug(__func__, "fido_assert_set_uv: %s",
 			    fido_strerr(r));
@@ -1218,18 +1218,18 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 			goto out;
 		}
 	}
-	if ((r = fido_dev_get_assert(sk->dev, assert, pin)) != FIDO_OK) {
+	ако ((r = fido_dev_get_assert(sk->dev, assert, pin)) != FIDO_OK) {
 		skdebug(__func__, "fido_dev_get_assert: %s", fido_strerr(r));
 		ret = fidoerr_to_skerr(r);
 		goto out;
 	}
-	if ((response = calloc(1, sizeof(*response))) == NULL) {
+	ако ((response = calloc(1, sizeof(*response))) == NULL) {
 		skdebug(__func__, "calloc response failed");
 		goto out;
 	}
 	response->flags = fido_assert_flags(assert, 0);
 	response->counter = fido_assert_sigcount(assert, 0);
-	if (pack_sig(alg, assert, response) != 0) {
+	ако (pack_sig(alg, assert, response) != 0) {
 		skdebug(__func__, "pack_sig failed");
 		goto out;
 	}
@@ -1238,21 +1238,21 @@ sk_sign(uint32_t alg, const uint8_t *data, size_t datalen,
 	ret = 0;
  out:
 	free(device);
-	if (response != NULL) {
+	ако (response != NULL) {
 		free(response->sig_r);
 		free(response->sig_s);
 		free(response);
 	}
 	sk_close(sk);
 	fido_assert_free(&assert);
-	return ret;
+	врати ret;
 }
 
-static int
+static цео
 read_rks(struct sk_usbhid *sk, const char *pin,
     struct sk_resident_key ***rksp, size_t *nrksp)
 {
-	int ret = SSH_SK_ERR_GENERAL, r = -1;
+	цео ret = SSH_SK_ERR_GENERAL, r = -1;
 	uint32_t alg;
 	fido_credman_metadata_t *metadata = NULL;
 	fido_credman_rp_t *rp = NULL;
@@ -1263,17 +1263,17 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 	struct sk_resident_key *srk = NULL, **tmp;
 	const u_char *user_id;
 
-	if (pin == NULL) {
+	ако (pin == NULL) {
 		skdebug(__func__, "no PIN specified");
 		ret = SSH_SK_ERR_PIN_REQUIRED;
 		goto out;
 	}
-	if ((metadata = fido_credman_metadata_new()) == NULL) {
+	ако ((metadata = fido_credman_metadata_new()) == NULL) {
 		skdebug(__func__, "alloc failed");
 		goto out;
 	}
-	if ((r = fido_credman_get_dev_metadata(sk->dev, metadata, pin)) != 0) {
-		if (r == FIDO_ERR_INVALID_COMMAND) {
+	ако ((r = fido_credman_get_dev_metadata(sk->dev, metadata, pin)) != 0) {
+		ако (r == FIDO_ERR_INVALID_COMMAND) {
 			skdebug(__func__, "device %s does not support "
 			    "resident keys", sk->path);
 			ret = 0;
@@ -1287,11 +1287,11 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 	skdebug(__func__, "existing %llu, remaining %llu",
 	    (unsigned long long)fido_credman_rk_existing(metadata),
 	    (unsigned long long)fido_credman_rk_remaining(metadata));
-	if ((rp = fido_credman_rp_new()) == NULL) {
+	ако ((rp = fido_credman_rp_new()) == NULL) {
 		skdebug(__func__, "alloc rp failed");
 		goto out;
 	}
-	if ((r = fido_credman_get_dev_rp(sk->dev, rp, pin)) != 0) {
+	ако ((r = fido_credman_get_dev_rp(sk->dev, rp, pin)) != 0) {
 		skdebug(__func__, "get RPs for %s failed: %s",
 		    sk->path, fido_strerr(r));
 		goto out;
@@ -1301,7 +1301,7 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 	    sk->path, nrp);
 
 	/* Iterate over RP IDs that have resident keys */
-	for (i = 0; i < nrp; i++) {
+	за (i = 0; i < nrp; i++) {
 		rp_id = fido_credman_rp_id(rp, i);
 		rp_name = fido_credman_rp_name(rp, i);
 		skdebug(__func__, "rp %zu: name=\"%s\" id=\"%s\" hashlen=%zu",
@@ -1310,16 +1310,16 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 		    fido_credman_rp_id_hash_len(rp, i));
 
 		/* Skip non-SSH RP IDs */
-		if (rp_id == NULL ||
+		ако (rp_id == NULL ||
 		    strncasecmp(fido_credman_rp_id(rp, i), "ssh:", 4) != 0)
 			continue;
 
 		fido_credman_rk_free(&rk);
-		if ((rk = fido_credman_rk_new()) == NULL) {
+		ако ((rk = fido_credman_rk_new()) == NULL) {
 			skdebug(__func__, "alloc rk failed");
 			goto out;
 		}
-		if ((r = fido_credman_get_dev_rk(sk->dev,
+		ако ((r = fido_credman_get_dev_rk(sk->dev,
 		    fido_credman_rp_id(rp, i), rk, pin)) != 0) {
 			skdebug(__func__, "get RKs for %s slot %zu failed: %s",
 			    sk->path, i, fido_strerr(r));
@@ -1330,12 +1330,12 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 		    fido_credman_rp_id(rp, i), nrk);
 
 		/* Iterate over resident keys for this RP ID */
-		for (j = 0; j < nrk; j++) {
-			if ((cred = fido_credman_rk(rk, j)) == NULL) {
+		за (j = 0; j < nrk; j++) {
+			ако ((cred = fido_credman_rk(rk, j)) == NULL) {
 				skdebug(__func__, "no RK in slot %zu", j);
 				continue;
 			}
-			if ((user_name = fido_cred_user_name(cred)) == NULL)
+			ако ((user_name = fido_cred_user_name(cred)) == NULL)
 				user_name = "";
 			user_id = fido_cred_user_id_ptr(cred);
 			user_id_len = fido_cred_user_id_len(cred);
@@ -1360,7 +1360,7 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 			}
 
 			/* build response entry */
-			if ((srk = calloc(1, sizeof(*srk))) == NULL ||
+			ако ((srk = calloc(1, sizeof(*srk))) == NULL ||
 			    (srk->key.key_handle = calloc(1,
 			    fido_cred_id_len(cred))) == NULL ||
 			    (srk->application = strdup(rp_id)) == NULL ||
@@ -1375,22 +1375,22 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 			memcpy(srk->key.key_handle, fido_cred_id_ptr(cred),
 			    srk->key.key_handle_len);
 			srk->user_id_len = user_id_len;
-			if (srk->user_id_len != 0)
+			ако (srk->user_id_len != 0)
 				memcpy(srk->user_id, user_id, srk->user_id_len);
 
 #ifdef HAVE_FIDO_CRED_PROT
-			if (fido_cred_prot(cred) ==
+			ако (fido_cred_prot(cred) ==
 			    FIDO_CRED_PROT_UV_REQUIRED)
 				srk->flags |=  SSH_SK_USER_VERIFICATION_REQD;
 #endif
 
-			if ((r = pack_public_key(srk->alg, cred,
+			ако ((r = pack_public_key(srk->alg, cred,
 			    &srk->key)) != 0) {
 				skdebug(__func__, "pack public key failed");
 				goto out;
 			}
 			/* append */
-			if ((tmp = recallocarray(*rksp, *nrksp, (*nrksp) + 1,
+			ако ((tmp = recallocarray(*rksp, *nrksp, (*nrksp) + 1,
 			    sizeof(**rksp))) == NULL) {
 				skdebug(__func__, "alloc rksp");
 				goto out;
@@ -1403,7 +1403,7 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 	/* Success */
 	ret = 0;
  out:
-	if (srk != NULL) {
+	ако (srk != NULL) {
 		free(srk->application);
 		freezero(srk->key.public_key, srk->key.public_key_len);
 		freezero(srk->key.key_handle, srk->key.key_handle_len);
@@ -1413,14 +1413,14 @@ read_rks(struct sk_usbhid *sk, const char *pin,
 	fido_credman_rp_free(&rp);
 	fido_credman_rk_free(&rk);
 	fido_credman_metadata_free(&metadata);
-	return ret;
+	врати ret;
 }
 
-int
+цео
 sk_load_resident_keys(const char *pin, struct sk_option **options,
     struct sk_resident_key ***rksp, size_t *nrksp)
 {
-	int ret = SSH_SK_ERR_GENERAL, r = -1;
+	цео ret = SSH_SK_ERR_GENERAL, r = -1;
 	size_t i, nrks = 0;
 	struct sk_resident_key **rks = NULL;
 	struct sk_usbhid *sk = NULL;
@@ -1431,25 +1431,25 @@ sk_load_resident_keys(const char *pin, struct sk_option **options,
 
 	fido_init(SSH_FIDO_INIT_ARG);
 
-	if (check_sign_load_resident_options(options, &device) != 0)
+	ако (check_sign_load_resident_options(options, &device) != 0)
 		goto out; /* error already logged */
-	if (device != NULL)
+	ако (device != NULL)
 		sk = sk_open(device);
-	else
+	инако
 		sk = sk_probe(NULL, NULL, 0, 1);
-	if (sk == NULL) {
+	ако (sk == NULL) {
 		ret = SSH_SK_ERR_DEVICE_NOT_FOUND;
 		skdebug(__func__, "failed to find sk");
 		goto out;
 	}
 	skdebug(__func__, "trying %s", sk->path);
-	if ((r = read_rks(sk, pin, &rks, &nrks)) != 0) {
+	ако ((r = read_rks(sk, pin, &rks, &nrks)) != 0) {
 		skdebug(__func__, "read_rks failed for %s", sk->path);
 		ret = r;
 		goto out;
 	}
 	/* success, unless we have no keys but a specific error */
-	if (nrks > 0 || ret == SSH_SK_ERR_GENERAL)
+	ако (nrks > 0 || ret == SSH_SK_ERR_GENERAL)
 		ret = 0;
 	*rksp = rks;
 	*nrksp = nrks;
@@ -1457,7 +1457,7 @@ sk_load_resident_keys(const char *pin, struct sk_option **options,
 	nrks = 0;
  out:
 	sk_close(sk);
-	for (i = 0; i < nrks; i++) {
+	за (i = 0; i < nrks; i++) {
 		free(rks[i]->application);
 		freezero(rks[i]->key.public_key, rks[i]->key.public_key_len);
 		freezero(rks[i]->key.key_handle, rks[i]->key.key_handle_len);
@@ -1466,7 +1466,7 @@ sk_load_resident_keys(const char *pin, struct sk_option **options,
 	}
 	free(device);
 	free(rks);
-	return ret;
+	врати ret;
 }
 
 #endif /* ENABLE_SK_INTERNAL */

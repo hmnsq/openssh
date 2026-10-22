@@ -15,11 +15,11 @@
 #ifndef _CANOHOST_H
 #define _CANOHOST_H
 
-char		*get_peer_ipaddr(int);
-int		 get_peer_port(int);
-char		*get_local_ipaddr(int);
-char		*get_local_name(int);
-int		get_local_port(int);
+char		*get_peer_ipaddr(цео);
+цео		 get_peer_port(цео);
+char		*get_local_ipaddr(цео);
+char		*get_local_name(цео);
+цео		get_local_port(цео);
 
 #endif /* _CANOHOST_H */
 

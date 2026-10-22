@@ -34,26 +34,26 @@ ssherr_libcrypto(void)
 	static char buf[512];
 	char msg[4096];
 	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	цео ln, fl;
 
 	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
+	док ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
 		ERR_error_string_n(e, buf, sizeof(buf));
 		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
 		    (fl & ERR_TXT_STRING) ? data : "");
 		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
+		ако ((reason = ERR_reason_error_string(e)) != NULL)
 			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	ако (reason == NULL)
+		врати NULL;
+	врати buf;
 }
-#else
+#инако
 const char *
 ssherr_libcrypto(void)
 {
-	return NULL;
+	врати NULL;
 }
 #endif

@@ -25,7 +25,7 @@
 		(p)[1] = (uint8_t)((v) >>  8); \
 		(p)[2] = (uint8_t)((v) >> 16); \
 		(p)[3] = (uint8_t)((v) >> 24); \
-	} while (0)
+	} док (0)
 
 void
 poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t inlen, const unsigned char key[POLY1305_KEYLEN]) {
@@ -67,7 +67,7 @@ poly1305_auth(unsigned char out[POLY1305_TAGLEN], const unsigned char *m, size_t
 	h4 = 0;
 
 	/* full blocks */
-	if (inlen < 16) goto poly1305_donna_atmost15bytes;
+	ако (inlen < 16) goto poly1305_donna_atmost15bytes;
 poly1305_donna_16bytes:
 	m += 16;
 	inlen -= 16;
@@ -98,15 +98,15 @@ poly1305_donna_mul:
 	t[4] += b;      h4 = (uint32_t)t[4] & 0x3ffffff; b = (uint32_t)(t[4] >> 26);
 	h0 += b * 5;
 
-	if (inlen >= 16) goto poly1305_donna_16bytes;
+	ако (inlen >= 16) goto poly1305_donna_16bytes;
 
 	/* final bytes */
 poly1305_donna_atmost15bytes:
-	if (!inlen) goto poly1305_donna_finish;
+	ако (!inlen) goto poly1305_donna_finish;
 
-	for (j = 0; j < inlen; j++) mp[j] = m[j];
+	за (j = 0; j < inlen; j++) mp[j] = m[j];
 	mp[j++] = 1;
-	for (; j < 16; j++)	mp[j] = 0;
+	за (; j < 16; j++)	mp[j] = 0;
 	inlen = 0;
 
 	t0 = U8TO32_LE(mp+0);

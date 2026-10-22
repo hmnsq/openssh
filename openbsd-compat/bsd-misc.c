@@ -47,73 +47,73 @@ char *ssh_get_progname(char *argv0)
 	extern char *__progname;
 
 	p = __progname;
-#else
-	if (argv0 == NULL)
-		return ("unknown");	/* XXX */
+#инако
+	ако (argv0 == NULL)
+		врати ("unknown");	/* XXX */
 	p = strrchr(argv0, '/');
-	if (p == NULL)
+	ако (p == NULL)
 		p = argv0;
-	else
+	инако
 		p++;
 #endif
-	if ((q = strdup(p)) == NULL) {
+	ако ((q = strdup(p)) == NULL) {
 		perror("strdup");
 		exit(1);
 	}
-	return q;
+	врати q;
 }
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *name)
+цео setlogin(const char *name)
 {
-	return (0);
+	врати (0);
 }
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *netgroup, const char *host,
+цео innetgr(const char *netgroup, const char *host,
 	    const char *user, const char *domain)
 {
-	return (0);
+	врати (0);
 }
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t euid)
+#ако !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+цео seteuid(uid_t euid)
 {
-	return (setreuid(-1, euid));
+	врати (setreuid(-1, euid));
 }
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t egid)
+#ако !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+цео setegid(uid_t egid)
 {
-	return(setresgid(-1, egid, -1));
+	врати(setresgid(-1, egid, -1));
 }
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int e)
+#ако !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+const char *strerror(цео e)
 {
-	extern int sys_nerr;
+	extern цео sys_nerr;
 	extern char *sys_errlist[];
 
-	if ((e >= 0) && (e < sys_nerr))
-		return (sys_errlist[e]);
+	ако ((e >= 0) && (e < sys_nerr))
+		врати (sys_errlist[e]);
 
-	return ("unlisted error");
+	врати ("unlisted error");
 }
 #endif
 
 #ifndef HAVE_UTIMES
-int utimes(const char *filename, struct timeval *tvp)
+цео utimes(const char *filename, struct timeval *tvp)
 {
 	struct utimbuf ub;
 
 	ub.actime = tvp[0].tv_sec;
 	ub.modtime = tvp[1].tv_sec;
 
-	return (utime(filename, &ub));
+	врати (utime(filename, &ub));
 }
 #endif
 
@@ -123,13 +123,13 @@ int utimes(const char *filename, struct timeval *tvp)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-utimensat(int fd, const char *path, const struct timespec times[2],
-    int flag)
+цео
+utimensat(цео fd, const char *path, const struct timespec times[2],
+    цео flag)
 {
 	struct timeval tv[2];
 # ifdef HAVE_FUTIMES
-	int ret, oflags = O_WRONLY;
+	цео ret, oflags = O_WRONLY;
 # endif
 
 	tv[0].tv_sec = times[0].tv_sec;
@@ -137,32 +137,32 @@ utimensat(int fd, const char *path, const struct timespec times[2],
 	tv[1].tv_sec = times[1].tv_sec;
 	tv[1].tv_usec = times[1].tv_nsec / 1000;
 
-	if (fd != AT_FDCWD) {
+	ако (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		врати -1;
 	}
 # ifndef HAVE_FUTIMES
-	return utimes(path, tv);
-# else
+	врати utimes(path, tv);
+# инако
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ако (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ако ((fd = open(path, oflags)) == -1)
+		врати -1;
 	ret = futimes(fd, tv);
 	close(fd);
-	return ret;
+	врати ret;
 # endif
 }
 #endif
 
 #ifndef HAVE_DIRFD
-int
+цео
 dirfd(void *dir)
 {
 	errno = ENOSYS;
-	return -1;
+	врати -1;
 }
 #endif
 
@@ -172,27 +172,27 @@ dirfd(void *dir)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
+цео
+fchownat(цео fd, const char *path, uid_t owner, gid_t group, цео flag)
 {
-	int ret, oflags = O_WRONLY;
+	цео ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	ако (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		врати -1;
 	}
 # ifndef HAVE_FCHOWN
-	return chown(path, owner, group);
-# else
+	врати chown(path, owner, group);
+# инако
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ако (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ако ((fd = open(path, oflags)) == -1)
+		врати -1;
 	ret = fchown(fd, owner, group);
 	close(fd);
-	return ret;
+	врати ret;
 # endif
 }
 #endif
@@ -203,27 +203,27 @@ fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchmodat(int fd, const char *path, mode_t mode, int flag)
+цео
+fchmodat(цео fd, const char *path, mode_t mode, цео flag)
 {
-	int ret, oflags = O_WRONLY;
+	цео ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	ако (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		врати -1;
 	}
 # ifndef HAVE_FCHMOD
-	return chmod(path, mode);
-# else
+	врати chmod(path, mode);
+# инако
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ако (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ако ((fd = open(path, oflags)) == -1)
+		врати -1;
 	ret = fchmod(fd, mode);
 	close(fd);
-	return ret;
+	врати ret;
 # endif
 }
 #endif
@@ -233,19 +233,19 @@ fchmodat(int fd, const char *path, mode_t mode, int flag)
  * A limited implementation of fstatat that just has what OpenSSH uses:
  * cwd-relative and absolute paths, with or without following symlinks.
  */
-int
-fstatat(int dirfd, const char *path, struct stat *sb, int flag)
+цео
+fstatat(цео dirfd, const char *path, struct stat *sb, цео flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	ако (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		врати -1;
 	}
-	if (flag == 0)
-		return stat(path, sb);
-	else if (flag == AT_SYMLINK_NOFOLLOW)
-		return lstat(path, sb);
+	ако (flag == 0)
+		врати stat(path, sb);
+	инако ако (flag == AT_SYMLINK_NOFOLLOW)
+		врати lstat(path, sb);
 	errno = ENOSYS;
-	return -1;
+	врати -1;
 }
 #endif
 
@@ -254,50 +254,50 @@ fstatat(int dirfd, const char *path, struct stat *sb, int flag)
  * A limited implementation of unlinkat that just has what OpenSSH uses:
  * cwd-relative and absolute paths.
  */
-int
-unlinkat(int dirfd, const char *path, int flag)
+цео
+unlinkat(цео dirfd, const char *path, цео flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	ако (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		врати -1;
 	}
-	if (flag == 0)
-		return unlink(path);
+	ако (flag == 0)
+		врати unlink(path);
 	errno = ENOSYS;
-	return -1;
+	врати -1;
 }
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate(const char *path, off_t length)
+цео truncate(const char *path, off_t length)
 {
-	int fd, ret, saverrno;
+	цео fd, ret, saverrno;
 
 	fd = open(path, O_WRONLY);
-	if (fd < 0)
-		return (-1);
+	ако (fd < 0)
+		врати (-1);
 
 	ret = ftruncate(fd, length);
 	saverrno = errno;
 	close(fd);
-	if (ret == -1)
+	ако (ret == -1)
 		errno = saverrno;
 
-	return(ret);
+	врати(ret);
 }
 #endif /* HAVE_TRUNCATE */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
-int nanosleep(const struct timespec *req, struct timespec *rem)
+#ако !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+цео nanosleep(const struct timespec *req, struct timespec *rem)
 {
-	int rc, saverrno;
-	extern int errno;
+	цео rc, saverrno;
+	extern цео errno;
 	struct timeval tstart, tstop, tremain, time2wait;
 
 	TIMESPEC_TO_TIMEVAL(&time2wait, req)
 	(void) gettimeofday(&tstart, NULL);
 	rc = select(0, NULL, NULL, NULL, &time2wait);
-	if (rc == -1) {
+	ако (rc == -1) {
 		saverrno = errno;
 		(void) gettimeofday (&tstop, NULL);
 		errno = saverrno;
@@ -307,58 +307,58 @@ int nanosleep(const struct timespec *req, struct timespec *rem)
 			(tstop.tv_usec - tstart.tv_usec);
 		tremain.tv_sec += tremain.tv_usec / 1000000L;
 		tremain.tv_usec %= 1000000L;
-	} else {
+	} инако {
 		tremain.tv_sec = 0;
 		tremain.tv_usec = 0;
 	}
-	if (rem != NULL)
+	ако (rem != NULL)
 		TIMEVAL_TO_TIMESPEC(&tremain, rem)
 
-	return(rc);
+	врати(rc);
 }
 #endif
 
-#if !defined(HAVE_USLEEP)
-int usleep(unsigned int useconds)
+#ако !defined(HAVE_USLEEP)
+цео usleep(unsigned цео useconds)
 {
 	struct timespec ts;
 
 	ts.tv_sec = useconds / 1000000;
 	ts.tv_nsec = (useconds % 1000000) * 1000;
-	return nanosleep(&ts, NULL);
+	врати nanosleep(&ts, NULL);
 }
 #endif
 
 #ifndef HAVE_TCGETPGRP
 pid_t
-tcgetpgrp(int fd)
+tcgetpgrp(цео fd)
 {
-	int ctty_pgrp;
+	цео ctty_pgrp;
 
-	if (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
-		return(-1);
-	else
-		return(ctty_pgrp);
+	ако (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
+		врати(-1);
+	инако
+		врати(ctty_pgrp);
 }
 #endif /* HAVE_TCGETPGRP */
 
 #ifndef HAVE_TCSENDBREAK
-int
-tcsendbreak(int fd, int duration)
+цео
+tcsendbreak(цео fd, цео duration)
 {
-# if defined(TIOCSBRK) && defined(TIOCCBRK)
+# ако defined(TIOCSBRK) && defined(TIOCCBRK)
 	struct timeval sleepytime;
 
 	sleepytime.tv_sec = 0;
 	sleepytime.tv_usec = 400000;
-	if (ioctl(fd, TIOCSBRK, 0) == -1)
-		return (-1);
+	ако (ioctl(fd, TIOCSBRK, 0) == -1)
+		врати (-1);
 	(void)select(0, 0, 0, 0, &sleepytime);
-	if (ioctl(fd, TIOCCBRK, 0) == -1)
-		return (-1);
-	return (0);
-# else
-	return -1;
+	ако (ioctl(fd, TIOCCBRK, 0) == -1)
+		врати (-1);
+	врати (0);
+# инако
+	врати -1;
 # endif
 }
 #endif /* HAVE_TCSENDBREAK */
@@ -372,17 +372,17 @@ strdup(const char *str)
 
 	len = strlen(str) + 1;
 	cp = malloc(len);
-	if (cp != NULL)
-		return(memcpy(cp, str, len));
-	return NULL;
+	ако (cp != NULL)
+		врати(memcpy(cp, str, len));
+	врати NULL;
 }
 #endif
 
 #ifndef HAVE_ISBLANK
-int
-isblank(int c)
+цео
+isblank(цео c)
 {
-	return (c == ' ' || c == '\t');
+	врати (c == ' ' || c == '\t');
 }
 #endif
 
@@ -390,48 +390,48 @@ isblank(int c)
 pid_t
 getpgid(pid_t pid)
 {
-#if defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
-	return getpgrp(pid);
+#ако defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
+	врати getpgrp(pid);
 #elif defined(HAVE_GETPGRP)
-	if (pid == 0)
-		return getpgrp();
+	ако (pid == 0)
+		врати getpgrp();
 #endif
 
 	errno = ESRCH;
-	return -1;
+	врати -1;
 }
 #endif
 
 #ifndef HAVE_PLEDGE
-int
+цео
 pledge(const char *promises, const char *execpromises)
 {
-	return 0;
+	врати 0;
 }
 #endif
 
 #ifndef HAVE_UNVEIL
-int
+цео
 unveil(const char *path, const char *permissions)
 {
-	return 0;
+	врати 0;
 }
 #endif
 
 #ifndef HAVE_MBTOWC
 /* a mbtowc that only supports ASCII */
-int
+цео
 mbtowc(wchar_t *pwc, const char *s, size_t n)
 {
-	if (s == NULL || *s == '\0')
-		return 0;	/* ASCII is not state-dependent */
-	if (*s < 0 || *s > 0x7f || n < 1) {
+	ако (s == NULL || *s == '\0')
+		врати 0;	/* ASCII is not state-dependent */
+	ако (*s < 0 || *s > 0x7f || n < 1) {
 		errno = EOPNOTSUPP;
-		return -1;
+		врати -1;
 	}
-	if (pwc != NULL)
+	ако (pwc != NULL)
 		*pwc = *s;
-	return 1;
+	врати 1;
 }
 #endif
 
@@ -439,7 +439,7 @@ mbtowc(wchar_t *pwc, const char *s, size_t n)
 long long
 llabs(long long j)
 {
-	return (j < 0 ? -j : j);
+	врати (j < 0 ? -j : j);
 }
 #endif
 
@@ -452,10 +452,10 @@ bzero(void *b, size_t n)
 #endif
 
 #ifndef HAVE_RAISE
-int
-raise(int sig)
+цео
+raise(цео sig)
 {
-	return kill(getpid(), sig);
+	врати kill(getpid(), sig);
 }
 #endif
 
@@ -464,32 +464,32 @@ pid_t
 getsid(pid_t pid)
 {
 	errno = ENOSYS;
-	return -1;
+	врати -1;
 }
 #endif
 
 #ifndef HAVE_KILLPG
-int
-killpg(pid_t pgrp, int sig)
+цео
+killpg(pid_t pgrp, цео sig)
 {
-	return kill(pgrp, sig);
+	врати kill(pgrp, sig);
 }
 #endif
 
 #ifdef FFLUSH_NULL_BUG
 #undef fflush
-int _ssh_compat_fflush(FILE *f)
+цео _ssh_compat_fflush(FILE *f)
 {
-	int r1, r2;
+	цео r1, r2;
 
-	if (f == NULL) {
+	ако (f == NULL) {
 		r1 = fflush(stdout);
 		r2 = fflush(stderr);
-		if (r1 == -1 || r2 == -1)
-			return -1;
-		return 0;
+		ако (r1 == -1 || r2 == -1)
+			врати -1;
+		врати 0;
 	}
-	return fflush(f);
+	врати fflush(f);
 }
 #endif
 
@@ -499,42 +499,42 @@ localtime_r(const time_t *timep, struct tm *result)
 {
 	struct tm *tm = localtime(timep);
 	*result = *tm;
-	return result;
+	врати result;
 }
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-int
+цео
 clock_gettime(clockid_t clockid, struct timespec *ts)
 {
 	struct timeval tv;
 
-	if (clockid != CLOCK_REALTIME) {
+	ако (clockid != CLOCK_REALTIME) {
 		errno = ENOSYS;
-		return -1;
+		врати -1;
 	}
-	if (ts == NULL) {
+	ако (ts == NULL) {
 		errno = EFAULT;
-		return -1;
+		врати -1;
 	}
 
-	if (gettimeofday(&tv, NULL) == -1)
-		return -1;
+	ако (gettimeofday(&tv, NULL) == -1)
+		врати -1;
 
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
-	return 0;
+	врати 0;
 }
 #endif
 
 #ifdef ASAN_OPTIONS
 const char *__asan_default_options(void) {
-	return ASAN_OPTIONS;
+	врати ASAN_OPTIONS;
 }
 #endif
 
 #ifdef MSAN_OPTIONS
 const char *__msan_default_options(void) {
-	return MSAN_OPTIONS;
+	врати MSAN_OPTIONS;
 }
 #endif

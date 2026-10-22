@@ -47,12 +47,12 @@
 
 struct macalg {
 	char		*name;
-	int		type;
-	int		alg;
-	int		truncatebits;	/* truncate digest if != 0 */
-	int		key_len;	/* just for UMAC */
-	int		len;		/* just for UMAC */
-	int		etm;		/* Encrypt-then-MAC */
+	цео		type;
+	цео		alg;
+	цео		truncatebits;	/* truncate digest if != 0 */
+	цео		key_len;	/* just for UMAC */
+	цео		len;		/* just for UMAC */
+	цео		etm;		/* Encrypt-then-MAC */
 };
 
 static const struct macalg macs[] = {
@@ -87,73 +87,73 @@ mac_alg_list(char sep)
 	const struct macalg *m;
 	char sep_str[2] = {sep, '\0'};
 
-	for (m = macs; m->name != NULL; m++)
+	за (m = macs; m->name != NULL; m++)
 		xextendf(&ret, sep_str, "%s", m->name);
 
-	return ret;
+	врати ret;
 }
 
-static int
+static цео
 mac_setup_by_alg(struct sshmac *mac, const struct macalg *macalg)
 {
 	mac->type = macalg->type;
-	if (mac->type == SSH_DIGEST) {
-		if ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
+	ако (mac->type == SSH_DIGEST) {
+		ако ((mac->hmac_ctx = ssh_hmac_start(macalg->alg)) == NULL)
+			врати SSH_ERR_ALLOC_FAIL;
 		mac->key_len = mac->mac_len = ssh_hmac_bytes(macalg->alg);
-	} else {
+	} инако {
 		mac->mac_len = macalg->len / 8;
 		mac->key_len = macalg->key_len / 8;
 		mac->umac_ctx = NULL;
 	}
-	if (macalg->truncatebits != 0)
+	ако (macalg->truncatebits != 0)
 		mac->mac_len = macalg->truncatebits / 8;
 	mac->etm = macalg->etm;
-	return 0;
+	врати 0;
 }
 
-int
+цео
 mac_setup(struct sshmac *mac, char *name)
 {
 	const struct macalg *m;
 
-	for (m = macs; m->name != NULL; m++) {
-		if (strcmp(name, m->name) != 0)
+	за (m = macs; m->name != NULL; m++) {
+		ако (strcmp(name, m->name) != 0)
 			continue;
-		if (mac != NULL)
-			return mac_setup_by_alg(mac, m);
-		return 0;
+		ако (mac != NULL)
+			врати mac_setup_by_alg(mac, m);
+		врати 0;
 	}
-	return SSH_ERR_INVALID_ARGUMENT;
+	врати SSH_ERR_INVALID_ARGUMENT;
 }
 
-int
+цео
 mac_init(struct sshmac *mac)
 {
-	if (mac->key == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ако (mac->key == NULL)
+		врати SSH_ERR_INVALID_ARGUMENT;
 	switch (mac->type) {
 	case SSH_DIGEST:
-		if (mac->hmac_ctx == NULL ||
+		ако (mac->hmac_ctx == NULL ||
 		    ssh_hmac_init(mac->hmac_ctx, mac->key, mac->key_len) < 0)
-			return SSH_ERR_INVALID_ARGUMENT;
-		return 0;
+			врати SSH_ERR_INVALID_ARGUMENT;
+		врати 0;
 	case SSH_UMAC:
-		if ((mac->umac_ctx = umac_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+		ако ((mac->umac_ctx = umac_new(mac->key)) == NULL)
+			врати SSH_ERR_ALLOC_FAIL;
+		врати 0;
 	case SSH_UMAC128:
-		if ((mac->umac_ctx = umac128_new(mac->key)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+		ако ((mac->umac_ctx = umac128_new(mac->key)) == NULL)
+			врати SSH_ERR_ALLOC_FAIL;
+		врати 0;
 	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		врати SSH_ERR_INVALID_ARGUMENT;
 	}
 }
 
-int
+цео
 mac_compute(struct sshmac *mac, uint32_t seqno,
-    const u_char *data, int datalen,
+    const u_char *data, цео datalen,
     u_char *digest, size_t dlen)
 {
 	static union {
@@ -163,18 +163,18 @@ mac_compute(struct sshmac *mac, uint32_t seqno,
 	u_char b[4];
 	u_char nonce[8];
 
-	if (mac->mac_len > sizeof(u))
-		return SSH_ERR_INTERNAL_ERROR;
+	ако (mac->mac_len > sizeof(u))
+		врати SSH_ERR_INTERNAL_ERROR;
 
 	switch (mac->type) {
 	case SSH_DIGEST:
 		put_u32(b, seqno);
 		/* reset HMAC context */
-		if (ssh_hmac_init(mac->hmac_ctx, NULL, 0) < 0 ||
+		ако (ssh_hmac_init(mac->hmac_ctx, NULL, 0) < 0 ||
 		    ssh_hmac_update(mac->hmac_ctx, b, sizeof(b)) < 0 ||
 		    ssh_hmac_update(mac->hmac_ctx, data, datalen) < 0 ||
 		    ssh_hmac_final(mac->hmac_ctx, u.m, sizeof(u.m)) < 0)
-			return SSH_ERR_LIBCRYPTO_ERROR;
+			врати SSH_ERR_LIBCRYPTO_ERROR;
 		break;
 	case SSH_UMAC:
 		POKE_U64(nonce, seqno);
@@ -187,44 +187,44 @@ mac_compute(struct sshmac *mac, uint32_t seqno,
 		umac128_final(mac->umac_ctx, u.m, nonce);
 		break;
 	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		врати SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (digest != NULL) {
-		if (dlen > mac->mac_len)
+	ако (digest != NULL) {
+		ако (dlen > mac->mac_len)
 			dlen = mac->mac_len;
 		memcpy(digest, u.m, dlen);
 	}
-	return 0;
+	врати 0;
 }
 
-int
+цео
 mac_check(struct sshmac *mac, uint32_t seqno,
     const u_char *data, size_t dlen,
     const u_char *theirmac, size_t mlen)
 {
 	u_char ourmac[SSH_DIGEST_MAX_LENGTH];
-	int r;
+	цео r;
 
-	if (mac->mac_len > mlen)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = mac_compute(mac, seqno, data, dlen,
+	ако (mac->mac_len > mlen)
+		врати SSH_ERR_INVALID_ARGUMENT;
+	ако ((r = mac_compute(mac, seqno, data, dlen,
 	    ourmac, sizeof(ourmac))) != 0)
-		return r;
-	if (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
-		return SSH_ERR_MAC_INVALID;
-	return 0;
+		врати r;
+	ако (timingsafe_bcmp(ourmac, theirmac, mac->mac_len) != 0)
+		врати SSH_ERR_MAC_INVALID;
+	врати 0;
 }
 
 void
 mac_clear(struct sshmac *mac)
 {
-	if (mac->type == SSH_UMAC) {
-		if (mac->umac_ctx != NULL)
+	ако (mac->type == SSH_UMAC) {
+		ако (mac->umac_ctx != NULL)
 			umac_delete(mac->umac_ctx);
-	} else if (mac->type == SSH_UMAC128) {
-		if (mac->umac_ctx != NULL)
+	} инако ако (mac->type == SSH_UMAC128) {
+		ако (mac->umac_ctx != NULL)
 			umac128_delete(mac->umac_ctx);
-	} else if (mac->hmac_ctx != NULL)
+	} инако ако (mac->hmac_ctx != NULL)
 		ssh_hmac_free(mac->hmac_ctx);
 	mac->hmac_ctx = NULL;
 	mac->umac_ctx = NULL;
@@ -232,24 +232,24 @@ mac_clear(struct sshmac *mac)
 
 /* XXX copied from ciphers_valid */
 #define	MAC_SEP	","
-int
+цео
 mac_valid(const char *names)
 {
 	char *maclist, *cp, *p;
-	int found = 0;
+	цео found = 0;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((maclist = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
+	ако (names == NULL || strcmp(names, "") == 0)
+		врати 0;
+	ако ((maclist = cp = strdup(names)) == NULL)
+		врати 0;
+	за ((p = strsep(&cp, MAC_SEP)); p && *p != '\0';
 	    (p = strsep(&cp, MAC_SEP))) {
-		if (mac_setup(NULL, p) < 0) {
+		ако (mac_setup(NULL, p) < 0) {
 			free(maclist);
-			return 0;
-		} else
+			врати 0;
+		} инако
 			found = 1;
 	}
 	free(maclist);
-	return found;
+	врати found;
 }

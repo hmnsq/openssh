@@ -55,9 +55,9 @@
 
 /* Flag indicating whether IPv4 or IPv6.  This can be set on the command line.
    Default value is AF_UNSPEC means both IPv4 and IPv6. */
-int IPv4or6 = AF_UNSPEC;
+цео IPv4or6 = AF_UNSPEC;
 
-int ssh_port = SSH_DEFAULT_PORT;
+цео ssh_port = SSH_DEFAULT_PORT;
 
 #define KT_RSA		(1)
 #define KT_ECDSA	(1<<1)
@@ -69,30 +69,30 @@ int ssh_port = SSH_DEFAULT_PORT;
 #define KT_MIN		KT_RSA
 #define KT_MAX		KT_MLDSA44_ED25519
 
-int get_cert = 0;
-int get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
+цео get_cert = 0;
+цео get_keytypes = KT_RSA|KT_ECDSA|KT_ED25519|KT_ECDSA_SK|KT_ED25519_SK|KT_MLDSA44_ED25519;
 
-int hash_hosts = 0;		/* Hash hostname on output */
+цео hash_hosts = 0;		/* Hash hostname on output */
 
-int print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
+цео print_sshfp = 0;		/* Print SSHFP records instead of known_hosts */
 
-int found_one = 0;		/* Successfully found a key */
+цео found_one = 0;		/* Successfully found a key */
 
-int hashalg = -1;		/* Hash for SSHFP records or -1 for all */
+цео hashalg = -1;		/* Hash for SSHFP records or -1 for all */
 
-int quiet = 0;			/* Don't print key comment lines */
+цео quiet = 0;			/* Don't print key comment lines */
 
 #define MAXMAXFD 256
 
 /* The number of seconds after which to give up on a TCP connection */
-int timeout = 5;
+цео timeout = 5;
 
-int maxfd;
+цео maxfd;
 #define MAXCON (maxfd - 10)
 
 extern char *__progname;
 struct pollfd *read_wait;
-int ncon;
+цео ncon;
 
 /*
  * Keep a connection structure for each file descriptor.  The state
@@ -102,8 +102,8 @@ typedef struct Connection {
 	u_char c_status;	/* State of connection on this file desc. */
 #define CS_UNUSED 0		/* File descriptor unused */
 #define CS_CON 1		/* Waiting to connect/read greeting */
-	int c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
-	int c_keytype;		/* Only one of KT_* */
+	цео c_fd;		/* Quick lookup: c->c_fd == c - fdcon */
+	цео c_keytype;		/* Only one of KT_* */
 	sig_atomic_t c_done;	/* SSH2 done */
 	char *c_namebase;	/* Address to free for c_name and c_namelist */
 	char *c_name;		/* Hostname of connection for errors */
@@ -112,7 +112,7 @@ typedef struct Connection {
 	struct ssh *c_ssh;	/* SSH-connection */
 	char c_banner[256];	/* Partial server greeting */
 	size_t c_banner_len;	/* Length of partial server greeting */
-	int c_banner_sent;	/* Client greeting has been sent */
+	цео c_banner_sent;	/* Client greeting has been sent */
 	struct timespec c_ts;	/* Time at which connection gets aborted */
 	TAILQ_ENTRY(Connection) c_link;	/* List of connections in timeout order. */
 } con;
@@ -122,48 +122,48 @@ con *fdcon;
 
 static void keyprint(con *c, struct sshkey *key);
 
-static int
-fdlim_get(int hard)
+static цео
+fdlim_get(цео hard)
 {
-#if defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+#ако defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
 	struct rlimit rlfd;
 	rlim_t lim;
 
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return -1;
+	ако (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		врати -1;
 	lim = hard ? rlfd.rlim_max : rlfd.rlim_cur;
-	if (lim <= 0)
-		return -1;
-	if (lim == RLIM_INFINITY)
+	ако (lim <= 0)
+		врати -1;
+	ако (lim == RLIM_INFINITY)
 		lim = SSH_SYSFDMAX;
-	if (lim >= INT_MAX)
+	ако (lim >= INT_MAX)
 		lim = INT_MAX;
-	return lim;
-#else
-	return (SSH_SYSFDMAX <= 0) ? -1 :
+	врати lim;
+#инако
+	врати (SSH_SYSFDMAX <= 0) ? -1 :
 	    ((SSH_SYSFDMAX >= INT_MAX) ? INT_MAX : SSH_SYSFDMAX);
 #endif
 }
 
-static int
-fdlim_set(int lim)
+static цео
+fdlim_set(цео lim)
 {
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+#ако defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
 	struct rlimit rlfd;
 #endif
 
-	if (lim <= 0)
-		return (-1);
-#if defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
-	if (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
+	ако (lim <= 0)
+		врати (-1);
+#ако defined(HAVE_SETRLIMIT) && defined(RLIMIT_NOFILE)
+	ако (getrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		врати (-1);
 	rlfd.rlim_cur = lim;
-	if (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
-		return (-1);
+	ако (setrlimit(RLIMIT_NOFILE, &rlfd) == -1)
+		врати (-1);
 #elif defined (HAVE_SETDTABLESIZE)
 	setdtablesize(lim);
 #endif
-	return (0);
+	врати (0);
 }
 
 /*
@@ -176,17 +176,17 @@ xstrsep(char **str, const char *delim)
 {
 	char *s, *e;
 
-	if (!**str)
-		return (NULL);
+	ако (!**str)
+		врати (NULL);
 
 	s = *str;
 	e = s + strcspn(s, delim);
 
-	if (*e != '\0')
+	ако (*e != '\0')
 		*e++ = '\0';
 	*str = e;
 
-	return (s);
+	врати (s);
 }
 
 /*
@@ -200,43 +200,43 @@ strnnsep(char **stringp, char *delim)
 
 	do {
 		tok = xstrsep(stringp, delim);
-	} while (tok && *tok == '\0');
-	return (tok);
+	} док (tok && *tok == '\0');
+	врати (tok);
 }
 
 
-static int
+static цео
 key_print_wrapper(struct sshkey *hostkey, struct ssh *ssh)
 {
 	con *c;
 
-	if ((c = ssh_get_app_data(ssh)) != NULL)
+	ако ((c = ssh_get_app_data(ssh)) != NULL)
 		keyprint(c, hostkey);
 	/* always abort key exchange */
-	return -1;
+	врати -1;
 }
 
-static int
-ssh2_capable(int remote_major, int remote_minor)
+static цео
+ssh2_capable(цео remote_major, цео remote_minor)
 {
 	switch (remote_major) {
 	case 1:
-		if (remote_minor == 99)
-			return 1;
+		ако (remote_minor == 99)
+			врати 1;
 		break;
 	case 2:
-		return 1;
+		врати 1;
 	default:
 		break;
 	}
-	return 0;
+	врати 0;
 }
 
 static void
 keygrab_ssh2(con *c)
 {
 	char *myproposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	int r;
+	цео r;
 
 	switch (c->c_keytype) {
 	case KT_RSA:
@@ -280,7 +280,7 @@ keygrab_ssh2(con *c)
 		fatal("unknown key type %d", c->c_keytype);
 		break;
 	}
-	if ((r = kex_setup(c->c_ssh, myproposal)) != 0) {
+	ако ((r = kex_setup(c->c_ssh, myproposal)) != 0) {
 		free(c->c_ssh);
 		fprintf(stderr, "kex_setup: %s\n", ssh_err(r));
 		exit(1);
@@ -312,23 +312,23 @@ keyprint_one(const char *host, struct sshkey *key)
 {
 	char *hostport = NULL, *hashed = NULL;
 	const char *known_host;
-	int r = 0;
+	цео r = 0;
 
 	found_one = 1;
 
-	if (print_sshfp) {
+	ако (print_sshfp) {
 		export_dns_rr(host, key, stdout, 0, hashalg);
-		return;
+		врати;
 	}
 
 	hostport = put_host_port(host, ssh_port);
 	lowercase(hostport);
-	if (hash_hosts && (hashed = host_hash(hostport, NULL, 0)) == NULL)
+	ако (hash_hosts && (hashed = host_hash(hostport, NULL, 0)) == NULL)
 		fatal("host_hash failed");
 	known_host = hash_hosts ? hashed : hostport;
-	if (!get_cert)
+	ако (!get_cert)
 		r = fprintf(stdout, "%s ", known_host);
-	if (r >= 0 && sshkey_write(key, stdout) == 0)
+	ако (r >= 0 && sshkey_write(key, stdout) == 0)
 		(void)fputs("\n", stdout);
 	free(hashed);
 	free(hostport);
@@ -340,72 +340,72 @@ keyprint(con *c, struct sshkey *key)
 	char *hosts = c->c_output_name ? c->c_output_name : c->c_name;
 	char *host, *ohosts;
 
-	if (key == NULL)
-		return;
-	if (get_cert || (!hash_hosts && ssh_port == SSH_DEFAULT_PORT)) {
+	ако (key == NULL)
+		врати;
+	ако (get_cert || (!hash_hosts && ssh_port == SSH_DEFAULT_PORT)) {
 		keyprint_one(hosts, key);
-		return;
+		врати;
 	}
 	ohosts = hosts = xstrdup(hosts);
-	while ((host = strsep(&hosts, ",")) != NULL)
+	док ((host = strsep(&hosts, ",")) != NULL)
 		keyprint_one(host, key);
 	free(ohosts);
 }
 
-static int
+static цео
 tcpconnect(char *host)
 {
 	struct addrinfo hints, *ai, *aitop;
 	char strport[NI_MAXSERV];
-	int gaierr, s = -1;
+	цео gaierr, s = -1;
 
 	snprintf(strport, sizeof strport, "%d", ssh_port);
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = IPv4or6;
 	hints.ai_socktype = SOCK_STREAM;
-	if ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
+	ако ((gaierr = getaddrinfo(host, strport, &hints, &aitop)) != 0) {
 		error("getaddrinfo %s: %s", host, ssh_gai_strerror(gaierr));
-		return -1;
+		врати -1;
 	}
-	for (ai = aitop; ai; ai = ai->ai_next) {
+	за (ai = aitop; ai; ai = ai->ai_next) {
 		s = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-		if (s == -1) {
+		ако (s == -1) {
 			error("socket: %s", strerror(errno));
 			continue;
 		}
-		if (set_nonblock(s) == -1)
+		ако (set_nonblock(s) == -1)
 			fatal_f("set_nonblock(%d)", s);
-		if (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
+		ако (connect(s, ai->ai_addr, ai->ai_addrlen) == -1 &&
 		    errno != EINPROGRESS)
 			error("connect (`%s'): %s", host, strerror(errno));
-		else
+		инако
 			break;
 		close(s);
 		s = -1;
 	}
 	freeaddrinfo(aitop);
-	return s;
+	врати s;
 }
 
-static int
-conalloc(const char *iname, const char *oname, int keytype)
+static цео
+conalloc(const char *iname, const char *oname, цео keytype)
 {
 	char *namebase, *name, *namelist;
-	int s;
+	цео s;
 
 	namebase = namelist = xstrdup(iname);
 
 	do {
 		name = xstrsep(&namelist, ",");
-		if (!name) {
+		ако (!name) {
 			free(namebase);
-			return (-1);
+			врати (-1);
 		}
-	} while ((s = tcpconnect(name)) < 0);
+	} док ((s = tcpconnect(name)) < 0);
 
-	if (s >= maxfd)
+	ако (s >= maxfd)
 		fatal("conalloc: fdno %d too high", s);
-	if (fdcon[s].c_status)
+	ако (fdcon[s].c_status)
 		fatal("conalloc: attempt to reuse fdno %d", s);
 
 	debug3_f("oname %s kt %d", oname, keytype);
@@ -424,23 +424,23 @@ conalloc(const char *iname, const char *oname, int keytype)
 	read_wait[s].fd = s;
 	read_wait[s].events = POLLIN;
 	ncon++;
-	return (s);
+	врати (s);
 }
 
 static void
-confree(int s)
+confree(цео s)
 {
-	if (s >= maxfd || fdcon[s].c_status == CS_UNUSED)
+	ако (s >= maxfd || fdcon[s].c_status == CS_UNUSED)
 		fatal("confree: attempt to free bad fdno %d", s);
 	free(fdcon[s].c_namebase);
 	free(fdcon[s].c_output_name);
 	fdcon[s].c_status = CS_UNUSED;
 	fdcon[s].c_keytype = 0;
-	if (fdcon[s].c_ssh) {
+	ако (fdcon[s].c_ssh) {
 		ssh_packet_close(fdcon[s].c_ssh);
 		free(fdcon[s].c_ssh);
 		fdcon[s].c_ssh = NULL;
-	} else
+	} инако
 		close(s);
 	TAILQ_REMOVE(&tq, &fdcon[s], c_link);
 	read_wait[s].fd = -1;
@@ -448,39 +448,39 @@ confree(int s)
 	ncon--;
 }
 
-static int
-conrecycle(int s)
+static цео
+conrecycle(цео s)
 {
 	con *c = &fdcon[s];
-	int ret;
+	цео ret;
 
 	ret = conalloc(c->c_namelist, c->c_output_name, c->c_keytype);
 	confree(s);
-	return (ret);
+	врати (ret);
 }
 
 static void
-congreet(int s)
+congreet(цео s)
 {
-	int remote_major = 0, remote_minor = 0;
+	цео remote_major = 0, remote_minor = 0;
 	ssize_t n;
 	char buf[256], ch;
 	char remote_version[sizeof buf];
 	con *c = &fdcon[s];
 
-	if (!c->c_banner_sent) {
+	ако (!c->c_banner_sent) {
 		/* send client banner */
 		n = snprintf(buf, sizeof buf, "SSH-%d.%d-OpenSSH-keyscan\r\n",
 		    PROTOCOL_MAJOR_2, PROTOCOL_MINOR_2);
-		if (n < 0 || (size_t)n >= sizeof(buf)) {
+		ако (n < 0 || (size_t)n >= sizeof(buf)) {
 			error("snprintf: buffer too small");
 			confree(s);
-			return;
+			врати;
 		}
-		if (atomicio(vwrite, s, buf, n) != (size_t)n) {
+		ако (atomicio(vwrite, s, buf, n) != (size_t)n) {
 			error("write (%s): %s", c->c_name, strerror(errno));
 			confree(s);
-			return;
+			врати;
 		}
 		c->c_banner_sent = 1;
 	}
@@ -494,11 +494,11 @@ congreet(int s)
 	 * between calls.
 	 */
 	n = read(s, &ch, sizeof(ch));
-	if (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
+	ако (n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK ||
 	    errno == EINTR))
-		return;
-	if (n != 1) {
-		if (n == 0)
+		врати;
+	ако (n != 1) {
+		ако (n == 0)
 			errno = EPIPE;
 		switch (errno) {
 		case EPIPE:
@@ -512,44 +512,44 @@ congreet(int s)
 			break;
 		}
 		conrecycle(s);
-		return;
+		врати;
 	}
 	c->c_banner[c->c_banner_len++] = ch == '\r' ? '\n' : ch;
-	if (ch != '\n') {
-		if (c->c_banner_len < sizeof(c->c_banner) - 1)
-			return; /* incomplete line */
-		if (strncmp(c->c_banner, "SSH-", 4) == 0) {
+	ако (ch != '\n') {
+		ако (c->c_banner_len < sizeof(c->c_banner) - 1)
+			врати; /* incomplete line */
+		ако (strncmp(c->c_banner, "SSH-", 4) == 0) {
 			/* banner exceeds RFC 4253 s4.2 length limit */
 			error("%s: greeting exceeds allowable length",
 			    c->c_name);
 			confree(s);
-			return;
+			врати;
 		}
 		/* Discard an oversized pre-identification banner chunk. */
 		c->c_banner_len = 0;
-		return;
+		врати;
 	}
-	if (strncmp(c->c_banner, "SSH-", 4) != 0) {
+	ако (strncmp(c->c_banner, "SSH-", 4) != 0) {
 		/* Ignore non-banner lines */
 		c->c_banner_len = 0;
-		return;
+		врати;
 	}
 	c->c_banner[c->c_banner_len++] = '\0';
 	memcpy(buf, c->c_banner, c->c_banner_len);
-	if ((c->c_ssh = ssh_packet_set_connection(NULL, s, s)) == NULL)
+	ако ((c->c_ssh = ssh_packet_set_connection(NULL, s, s)) == NULL)
 		fatal("ssh_packet_set_connection failed");
 	ssh_packet_set_timeout(c->c_ssh, timeout, 1);
 	ssh_set_app_data(c->c_ssh, c);	/* back link */
 	c->c_ssh->compat = 0;
-	if (sscanf(buf, "SSH-%d.%d-%[^\n]\n",
+	ако (sscanf(buf, "SSH-%d.%d-%[^\n]\n",
 	    &remote_major, &remote_minor, remote_version) == 3)
 		compat_banner(c->c_ssh, remote_version);
-	if (!ssh2_capable(remote_major, remote_minor)) {
+	ако (!ssh2_capable(remote_major, remote_minor)) {
 		debug("%s doesn't support ssh2", c->c_name);
 		confree(s);
-		return;
+		врати;
 	}
-	if (!quiet) {
+	ако (!quiet) {
 		fprintf(stdout, "%c %s:%d %s\n", print_sshfp ? ';' : '#',
 		    c->c_name, ssh_port, chop(buf));
 	}
@@ -558,11 +558,11 @@ congreet(int s)
 }
 
 static void
-conread(int s)
+conread(цео s)
 {
 	con *c = &fdcon[s];
 
-	if (c->c_status != CS_CON)
+	ако (c->c_status != CS_CON)
 		fatal("conread: invalid status %d", c->c_status);
 
 	congreet(s);
@@ -573,32 +573,32 @@ conloop(void)
 {
 	struct timespec seltime, now;
 	con *c;
-	int i;
+	цео i;
 
 	monotime_ts(&now);
 	c = TAILQ_FIRST(&tq);
 
-	if (c && timespeccmp(&c->c_ts, &now, >))
+	ако (c && timespeccmp(&c->c_ts, &now, >))
 		timespecsub(&c->c_ts, &now, &seltime);
-	else
+	инако
 		timespecclear(&seltime);
 
-	while (ppoll(read_wait, maxfd, &seltime, NULL) == -1) {
-		if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
+	док (ppoll(read_wait, maxfd, &seltime, NULL) == -1) {
+		ако (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK)
 			continue;
 		error("poll error");
 	}
 
-	for (i = 0; i < maxfd; i++) {
-		if (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
+	за (i = 0; i < maxfd; i++) {
+		ако (read_wait[i].revents & (POLLHUP|POLLERR|POLLNVAL))
 			confree(i);
-		else if (read_wait[i].revents & (POLLIN))
+		инако ако (read_wait[i].revents & (POLLIN))
 			conread(i);
 	}
 
 	c = TAILQ_FIRST(&tq);
-	while (c && timespeccmp(&c->c_ts, &now, <)) {
-		int s = c->c_fd;
+	док (c && timespeccmp(&c->c_ts, &now, <)) {
+		цео s = c->c_fd;
 
 		c = TAILQ_NEXT(c, c_link);
 		conrecycle(s);
@@ -609,13 +609,13 @@ static void
 do_one_host(char *host)
 {
 	char *name = strnnsep(&host, " \t\n");
-	int j;
+	цео j;
 
-	if (name == NULL)
-		return;
-	for (j = KT_MIN; j <= KT_MAX; j *= 2) {
-		if (get_keytypes & j) {
-			while (ncon >= MAXCON)
+	ако (name == NULL)
+		врати;
+	за (j = KT_MIN; j <= KT_MAX; j *= 2) {
+		ако (get_keytypes & j) {
+			док (ncon >= MAXCON)
 				conloop();
 			conalloc(name, *host ? host : name, j);
 		}
@@ -629,29 +629,29 @@ do_host(char *host)
 	struct xaddr addr, end_addr;
 	u_int masklen;
 
-	if (host == NULL)
-		return;
-	if (addr_pton_cidr(host, &addr, &masklen) != 0) {
+	ако (host == NULL)
+		врати;
+	ако (addr_pton_cidr(host, &addr, &masklen) != 0) {
 		/* Assume argument is a hostname */
 		do_one_host(host);
-	} else {
+	} инако {
 		/* Argument is a CIDR range */
 		debug("CIDR range %s", host);
 		end_addr = addr;
-		if (addr_host_to_all1s(&end_addr, masklen) != 0)
+		ако (addr_host_to_all1s(&end_addr, masklen) != 0)
 			goto badaddr;
 		/*
 		 * Note: we deliberately include the all-zero/ones addresses.
 		 */
-		for (;;) {
-			if (addr_ntop(&addr, daddr, sizeof(daddr)) != 0) {
+		за (;;) {
+			ако (addr_ntop(&addr, daddr, sizeof(daddr)) != 0) {
  badaddr:
 				error("Invalid address %s", host);
-				return;
+				врати;
 			}
 			debug("CIDR expand: address %s", daddr);
 			do_one_host(daddr);
-			if (addr_cmp(&addr, &end_addr) == 0)
+			ако (addr_cmp(&addr, &end_addr) == 0)
 				break;
 			addr_increment(&addr);
 		}
@@ -667,16 +667,16 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+цео
+main(цео argc, char **argv)
 {
-	int debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
-	int opt, fopt_count = 0, j;
+	цео debug_flag = 0, log_level = SYSLOG_LEVEL_INFO;
+	цео opt, fopt_count = 0, j;
 	char *tname, *cp, *line = NULL;
 	size_t linesize = 0;
 	FILE *fp;
 
-	extern int optind;
+	extern цео optind;
 	extern char *optarg;
 
 	__progname = ssh_get_progname(argv[0]);
@@ -686,10 +686,10 @@ main(int argc, char **argv)
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
-	if (argc <= 1)
+	ако (argc <= 1)
 		usage();
 
-	while ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
+	док ((opt = getopt(argc, argv, "cDHqv46O:p:T:t:f:")) != -1) {
 		switch (opt) {
 		case 'H':
 			hash_hosts = 1;
@@ -702,49 +702,49 @@ main(int argc, char **argv)
 			break;
 		case 'p':
 			ssh_port = a2port(optarg);
-			if (ssh_port <= 0) {
+			ако (ssh_port <= 0) {
 				fprintf(stderr, "Bad port '%s'\n", optarg);
 				exit(1);
 			}
 			break;
 		case 'T':
 			timeout = convtime(optarg);
-			if (timeout == -1 || timeout == 0) {
+			ако (timeout == -1 || timeout == 0) {
 				fprintf(stderr, "Bad timeout '%s'\n", optarg);
 				usage();
 			}
 			break;
 		case 'v':
-			if (!debug_flag) {
+			ако (!debug_flag) {
 				debug_flag = 1;
 				log_level = SYSLOG_LEVEL_DEBUG1;
 			}
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			инако ако (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			else
+			инако
 				fatal("Too high debugging level.");
 			break;
 		case 'q':
 			quiet = 1;
 			break;
 		case 'f':
-			if (strcmp(optarg, "-") == 0)
+			ако (strcmp(optarg, "-") == 0)
 				optarg = NULL;
 			argv[fopt_count++] = optarg;
 			break;
 		case 'O':
 			/* Maybe other misc options in the future too */
-			if (strncmp(optarg, "hashalg=", 8) != 0)
+			ако (strncmp(optarg, "hashalg=", 8) != 0)
 				fatal("Unsupported -O option");
-			if ((hashalg = ssh_digest_alg_by_name(
+			ако ((hashalg = ssh_digest_alg_by_name(
 			    optarg + 8)) == -1)
 				fatal("Unsupported hash algorithm");
 			break;
 		case 't':
 			get_keytypes = 0;
 			tname = strtok(optarg, ",");
-			while (tname) {
-				int type = sshkey_type_from_shortname(tname);
+			док (tname) {
+				цео type = sshkey_type_from_shortname(tname);
 
 				switch (type) {
 				case KEY_ECDSA:
@@ -782,66 +782,66 @@ main(int argc, char **argv)
 			usage();
 		}
 	}
-	if (optind == argc && !fopt_count)
+	ако (optind == argc && !fopt_count)
 		usage();
 
 	log_init("ssh-keyscan", log_level, SYSLOG_FACILITY_USER, 1);
 
 	maxfd = fdlim_get(1);
-	if (maxfd < 0)
+	ако (maxfd < 0)
 		fatal("%s: fdlim_get: bad value", __progname);
-	if (maxfd > MAXMAXFD)
+	ако (maxfd > MAXMAXFD)
 		maxfd = MAXMAXFD;
-	if (MAXCON <= 0)
+	ако (MAXCON <= 0)
 		fatal("%s: not enough file descriptors", __progname);
-	if (maxfd > fdlim_get(0))
+	ако (maxfd > fdlim_get(0))
 		fdlim_set(maxfd);
 	fdcon = xcalloc(maxfd, sizeof(con));
 	read_wait = xcalloc(maxfd, sizeof(struct pollfd));
-	for (j = 0; j < maxfd; j++)
+	за (j = 0; j < maxfd; j++)
 		read_wait[j].fd = -1;
 
 	ssh_signal(SIGPIPE, SIG_IGN);
-	for (j = 0; j < fopt_count; j++) {
-		if (argv[j] == NULL)
+	за (j = 0; j < fopt_count; j++) {
+		ако (argv[j] == NULL)
 			fp = stdin;
-		else if ((fp = fopen(argv[j], "r")) == NULL)
+		инако ако ((fp = fopen(argv[j], "r")) == NULL)
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		while (getline(&line, &linesize, fp) != -1) {
+		док (getline(&line, &linesize, fp) != -1) {
 			/* Chomp off trailing whitespace and comments */
-			if ((cp = strchr(line, '#')) == NULL)
+			ако ((cp = strchr(line, '#')) == NULL)
 				cp = line + strlen(line) - 1;
-			while (cp >= line) {
-				if (*cp == ' ' || *cp == '\t' ||
+			док (cp >= line) {
+				ако (*cp == ' ' || *cp == '\t' ||
 				    *cp == '\n' || *cp == '#')
 					*cp-- = '\0';
-				else
+				инако
 					break;
 			}
 
 			/* Skip empty lines */
-			if (*line == '\0')
+			ако (*line == '\0')
 				continue;
 
 			do_host(line);
 		}
 
-		if (ferror(fp))
+		ако (ferror(fp))
 			fatal("%s: %s: %s", __progname,
 			    fp == stdin ? "<stdin>" : argv[j], strerror(errno));
 
-		if (fp != stdin)
+		ако (fp != stdin)
 			fclose(fp);
 	}
 	free(line);
 
-	while (optind < argc)
+	док (optind < argc)
 		do_host(argv[optind++]);
 
-	while (ncon > 0)
+	док (ncon > 0)
 		conloop();
 
-	return found_one ? 0 : 1;
+	врати found_one ? 0 : 1;
 }

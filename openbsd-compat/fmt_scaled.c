@@ -72,31 +72,31 @@ static const long long scale_factors[] = {
 /* Convert the given input string "scaled" into numeric in "result".
  * Return 0 on success, -1 and errno set on error.
  */
-int
+цео
 scan_scaled(char *scaled, long long *result)
 {
 	char *p = scaled;
-	int sign = 0;
-	unsigned int i, ndigits = 0, fract_digits = 0, muls = 0, divs = 0;
+	цео sign = 0;
+	unsigned цео i, ndigits = 0, fract_digits = 0, muls = 0, divs = 0;
 	long long scale_fact = 1, whole = 0, fpart = 0;
 
 	/* Skip leading whitespace */
-	while (isascii((unsigned char)*p) && isspace((unsigned char)*p))
+	док (isascii((unsigned char)*p) && isspace((unsigned char)*p))
 		++p;
 
 	/* Then at most one leading + or - */
-	while (*p == '-' || *p == '+') {
-		if (*p == '-') {
-			if (sign) {
+	док (*p == '-' || *p == '+') {
+		ако (*p == '-') {
+			ако (sign) {
 				errno = EINVAL;
-				return -1;
+				врати -1;
 			}
 			sign = -1;
 			++p;
-		} else if (*p == '+') {
-			if (sign) {
+		} инако ако (*p == '+') {
+			ако (sign) {
 				errno = EINVAL;
-				return -1;
+				врати -1;
 			}
 			sign = +1;
 			++p;
@@ -108,79 +108,79 @@ scan_scaled(char *scaled, long long *result)
 	 * (but note that E for Exa might look like e to some!).
 	 * Advance 'p' to end, to get scale factor.
 	 */
-	for (; isascii((unsigned char)*p) &&
+	за (; isascii((unsigned char)*p) &&
 	    (isdigit((unsigned char)*p) || *p=='.'); ++p) {
-		if (*p == '.') {
-			if (fract_digits > 0) {	/* oops, more than one '.' */
+		ако (*p == '.') {
+			ако (fract_digits > 0) {	/* oops, more than one '.' */
 				errno = EINVAL;
-				return -1;
+				врати -1;
 			}
 			fract_digits = 1;
 			continue;
 		}
 
 		i = (*p) - '0';			/* whew! finally a digit we can use */
-		if (fract_digits > 0) {
-			if (fract_digits >= MAX_DIGITS-1)
+		ако (fract_digits > 0) {
+			ако (fract_digits >= MAX_DIGITS-1)
 				/* ignore extra fractional digits */
 				continue;
 			fract_digits++;		/* for later scaling */
-			if (fpart > LLONG_MAX / 10) {
+			ако (fpart > LLONG_MAX / 10) {
 				errno = ERANGE;
-				return -1;
+				врати -1;
 			}
 			fpart *= 10;
-			if (i > LLONG_MAX - fpart) {
+			ако (i > LLONG_MAX - fpart) {
 				errno = ERANGE;
-				return -1;
+				врати -1;
 			}
 			fpart += i;
-		} else {				/* normal digit */
-			if (++ndigits >= MAX_DIGITS) {
+		} инако {				/* normal digit */
+			ако (++ndigits >= MAX_DIGITS) {
 				errno = ERANGE;
-				return -1;
+				врати -1;
 			}
-			if (whole > LLONG_MAX / 10) {
+			ако (whole > LLONG_MAX / 10) {
 				errno = ERANGE;
-				return -1;
+				врати -1;
 			}
 			whole *= 10;
-			if (i > LLONG_MAX - whole) {
+			ако (i > LLONG_MAX - whole) {
 				errno = ERANGE;
-				return -1;
+				врати -1;
 			}
 			whole += i;
 		}
 	}
 
-	if (sign)
+	ако (sign)
 		whole *= sign;
 
 	/* If no scale factor given, we're done. fraction is discarded. */
-	if (!*p) {
+	ако (!*p) {
 		*result = whole;
-		return 0;
+		врати 0;
 	}
 
 	/* Validate scale factor, and scale whole and fraction by it. */
-	for (i = 0; i < SCALE_LENGTH; i++) {
+	за (i = 0; i < SCALE_LENGTH; i++) {
 
 		/* Are we there yet? */
-		if (*p == scale_chars[i] ||
+		ако (*p == scale_chars[i] ||
 			*p == tolower((unsigned char)scale_chars[i])) {
 
 			/* If it ends with alphanumerics after the scale char, bad. */
-			if (isalnum((unsigned char)*(p+1))) {
+			ако (isalnum((unsigned char)*(p+1))) {
 				errno = EINVAL;
-				return -1;
+				врати -1;
 			}
 			scale_fact = scale_factors[i];
 
 			/* check for overflow and underflow after scaling */
-			if (whole > LLONG_MAX / scale_fact ||
+			ако (whole > LLONG_MAX / scale_fact ||
 			    whole < LLONG_MIN / scale_fact) {
 				errno = ERANGE;
-				return -1;
+				врати -1;
 			}
 
 			/* scale whole part */
@@ -197,69 +197,69 @@ scan_scaled(char *scaled, long long *result)
 			 */
 			muls = i;
 			divs = fract_digits > 0 ?  fract_digits - 1 : 0;
-			while (muls > 0 && divs > 0) {
-				if (fpart <= LLONG_MAX / 1024) {
+			док (muls > 0 && divs > 0) {
+				ако (fpart <= LLONG_MAX / 1024) {
 					fpart *= 1024;
 					muls--;
-				} else {
+				} инако {
 					fpart /= 10;
 					divs--;
 				}
 			}
-			while (muls > 0) {
+			док (muls > 0) {
 				fpart *= 1024;
 				muls--;
 			}
-			while (divs > 0) {
+			док (divs > 0) {
 				fpart /= 10;
 				divs--;
 			}
-			if (sign == -1)
+			ако (sign == -1)
 				whole -= fpart;
-			else
+			инако
 				whole += fpart;
 			*result = whole;
-			return 0;
+			врати 0;
 		}
 	}
 
 	/* Invalid unit or character */
 	errno = EINVAL;
-	return -1;
+	врати -1;
 }
 
 /* Format the given "number" into human-readable form in "result".
  * Result must point to an allocated buffer of length FMT_SCALED_STRSIZE.
  * Return 0 on success, -1 and errno set if error.
  */
-int
+цео
 fmt_scaled(long long number, char *result)
 {
 	long long abval, fract = 0;
-	unsigned int i;
+	unsigned цео i;
 	unit_type unit = NONE;
 
 	/* Not every negative long long has a positive representation. */
-	if (number == LLONG_MIN) {
+	ако (number == LLONG_MIN) {
 		errno = ERANGE;
-		return -1;
+		врати -1;
 	}
 
 	abval = llabs(number);
 
 	/* Also check for numbers that are just too darned big to format. */
-	if (abval / 1024 >= scale_factors[SCALE_LENGTH-1]) {
+	ако (abval / 1024 >= scale_factors[SCALE_LENGTH-1]) {
 		errno = ERANGE;
-		return -1;
+		врати -1;
 	}
 
 	/* scale whole part; get unscaled fraction */
-	for (i = 0; i < SCALE_LENGTH; i++) {
-		if (abval/1024 < scale_factors[i]) {
+	за (i = 0; i < SCALE_LENGTH; i++) {
+		ако (abval/1024 < scale_factors[i]) {
 			unit = units[i];
 			fract = (i == 0) ? 0 : abval % scale_factors[i];
 			number /= scale_factors[i];
-			if (i > 0)
+			ако (i > 0)
 				fract /= scale_factors[i - 1];
 			break;
 		}
@@ -267,33 +267,33 @@ fmt_scaled(long long number, char *result)
 
 	fract = (10 * fract + 512) / 1024;
 	/* if the result would be >= 10, round main number */
-	if (fract >= 10) {
-		if (number >= 0)
+	ако (fract >= 10) {
+		ако (number >= 0)
 			number++;
-		else
+		инако
 			number--;
 		fract = 0;
-	} else if (fract < 0) {
+	} инако ако (fract < 0) {
 		/* shouldn't happen */
 		fract = 0;
 	}
 
-	if (number == 0)
+	ако (number == 0)
 		strlcpy(result, "0B", FMT_SCALED_STRSIZE);
-	else if (unit == NONE || number >= 100 || number <= -100) {
-		if (fract >= 5) {
-			if (number >= 0)
+	инако ако (unit == NONE || number >= 100 || number <= -100) {
+		ако (fract >= 5) {
+			ако (number >= 0)
 				number++;
-			else
+			инако
 				number--;
 		}
 		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld%c",
 			number, scale_chars[unit]);
-	} else
+	} инако
 		(void)snprintf(result, FMT_SCALED_STRSIZE, "%lld.%1lld%c",
 			number, fract, scale_chars[unit]);
 
-	return 0;
+	врати 0;
 }
 
 #ifdef	MAIN
@@ -301,23 +301,23 @@ fmt_scaled(long long number, char *result)
  * This is the original version of the program in the man page.
  * Copy-and-paste whatever you need from it.
  */
-int
-main(int argc, char **argv)
+цео
+main(цео argc, char **argv)
 {
 	char *cinput = "1.5K", buf[FMT_SCALED_STRSIZE];
 	long long ninput = 10483892, result;
 
-	if (scan_scaled(cinput, &result) == 0)
+	ако (scan_scaled(cinput, &result) == 0)
 		printf("\"%s\" -> %lld\n", cinput, result);
-	else
+	инако
 		perror(cinput);
 
-	if (fmt_scaled(ninput, buf) == 0)
+	ако (fmt_scaled(ninput, buf) == 0)
 		printf("%lld -> \"%s\"\n", ninput, buf);
-	else
+	инако
 		fprintf(stderr, "%lld invalid (%s)\n", ninput, strerror(errno));
 
-	return 0;
+	врати 0;
 }
 #endif
 

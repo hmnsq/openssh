@@ -57,24 +57,24 @@ struct umac_ctx *umac_new(const u_char key[]);
  * generate subkeys from key.
  */
 
-#if 0
-int umac_reset(struct umac_ctx *ctx);
+#ако 0
+цео umac_reset(struct umac_ctx *ctx);
 /* Reset a umac_ctx to begin authenticating a new message */
 #endif
 
-int umac_update(struct umac_ctx *ctx, const u_char *input, long len);
+цео umac_update(struct umac_ctx *ctx, const u_char *input, long len);
 /* Incorporate len bytes pointed to by input into context ctx */
 
-int umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
+цео umac_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
 /* Incorporate any pending data and the ctr value, and return tag. 
  * This function returns error code if ctr < 0. 
  */
 
-int umac_delete(struct umac_ctx *ctx);
+цео umac_delete(struct umac_ctx *ctx);
 /* Deallocate the context structure */
 
-#if 0
-int umac(struct umac_ctx *ctx, u_char *input, 
+#ако 0
+цео umac(struct umac_ctx *ctx, u_char *input, 
          long len, u_char tag[],
          u_char nonce[8]);
 /* All-in-one implementation of the functions Reset, Update and Final */
@@ -83,7 +83,7 @@ int umac(struct umac_ctx *ctx, u_char *input,
 /* uhash.h */
 
 
-#if 0
+#ако 0
 typedef struct uhash_ctx *uhash_ctx_t;
   /* The uhash_ctx structure is defined by the implementation of the    */
   /* UHASH functions.                                                   */
@@ -95,21 +95,21 @@ uhash_ctx_t uhash_alloc(u_char key[16]);
   /* is NULL then the first 16 bytes pointed at by kdf_key is used as a */
   /* key for an RC6 based KDF.                                          */
   
-int uhash_free(uhash_ctx_t ctx);
+цео uhash_free(uhash_ctx_t ctx);
 
-int uhash_set_params(uhash_ctx_t ctx,
+цео uhash_set_params(uhash_ctx_t ctx,
                    void       *params);
 
-int uhash_reset(uhash_ctx_t ctx);
+цео uhash_reset(uhash_ctx_t ctx);
 
-int uhash_update(uhash_ctx_t ctx,
+цео uhash_update(uhash_ctx_t ctx,
                u_char       *input,
                long        len);
 
-int uhash_final(uhash_ctx_t ctx,
+цео uhash_final(uhash_ctx_t ctx,
               u_char        output[]);
 
-int uhash(uhash_ctx_t ctx,
+цео uhash(uhash_ctx_t ctx,
         u_char       *input,
         long        len,
         u_char        output[]);
@@ -118,9 +118,9 @@ int uhash(uhash_ctx_t ctx,
 
 /* matching umac-128 API, we reuse umac_ctx, since it's opaque */
 struct umac_ctx *umac128_new(const u_char key[]);
-int umac128_update(struct umac_ctx *ctx, const u_char *input, long len);
-int umac128_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
-int umac128_delete(struct umac_ctx *ctx);
+цео umac128_update(struct umac_ctx *ctx, const u_char *input, long len);
+цео umac128_final(struct umac_ctx *ctx, u_char tag[], const u_char nonce[8]);
+цео umac128_delete(struct umac_ctx *ctx);
 
 #ifdef __cplusplus
     }

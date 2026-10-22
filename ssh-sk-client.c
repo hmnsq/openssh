@@ -42,11 +42,11 @@
 
 /* #define DEBUG_SK 1 */
 
-static int
-start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
+static цео
+start_helper(цео *fdp, pid_t *pidp, void (**osigchldp)(цео))
 {
-	void (*osigchld)(int);
-	int oerrno, pair[2], execpipe[2];
+	void (*osigchld)(цео);
+	цео oerrno, pair[2], execpipe[2];
 	ssize_t n;
 	pid_t pid;
 	char execbuf[100], *helper, *verbosity = NULL;
@@ -56,26 +56,26 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 	*osigchldp = SIG_DFL;
 
 	helper = getenv("SSH_SK_HELPER");
-	if (helper == NULL || strlen(helper) == 0)
+	ако (helper == NULL || strlen(helper) == 0)
 		helper = _PATH_SSH_SK_HELPER;
 #ifdef DEBUG_SK
 	verbosity = "-vvv";
 #endif
 
 	/* Create a O_CLOEXEC pipe to capture the execve() failure */
-	if (pipe(execpipe) == -1) {
+	ако (pipe(execpipe) == -1) {
 		error("pipe:  %s", strerror(errno));
-		return SSH_ERR_SYSTEM_ERROR;
+		врати SSH_ERR_SYSTEM_ERROR;
 	}
 	/* Start helper */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
+	ако (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
 		error("socketpair: %s", strerror(errno));
 		close(execpipe[0]);
 		close(execpipe[1]);
-		return SSH_ERR_SYSTEM_ERROR;
+		врати SSH_ERR_SYSTEM_ERROR;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	ако ((pid = fork()) == -1) {
 		oerrno = errno;
 		error("fork: %s", strerror(errno));
 		close(pair[0]);
@@ -84,12 +84,12 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 		close(execpipe[1]);
 		ssh_signal(SIGCHLD, osigchld);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		врати SSH_ERR_SYSTEM_ERROR;
 	}
-	if (pid == 0) {
+	ако (pid == 0) {
 		close(execpipe[0]);
 		FD_CLOSEONEXEC(execpipe[1]);
-		if ((dup2(pair[1], STDIN_FILENO) == -1) ||
+		ако ((dup2(pair[1], STDIN_FILENO) == -1) ||
 		    (dup2(pair[1], STDOUT_FILENO) == -1)) {
 			snprintf(execbuf, sizeof execbuf,
 			    "dup2: %s", strerror(errno));
@@ -112,10 +112,10 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 	close(execpipe[1]);
 	n = read(execpipe[0], execbuf, sizeof execbuf);
 	close(execpipe[0]);
-	if (n > 0) {
+	ако (n > 0) {
 		execbuf[n - 1] = '\0';
 		error_f("%s", execbuf);
-		return SSH_ERR_AGENT_FAILURE;
+		врати SSH_ERR_AGENT_FAILURE;
 	}
 
 	/* success */
@@ -123,99 +123,99 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 	*fdp = pair[0];
 	*pidp = pid;
 	*osigchldp = osigchld;
-	return 0;
+	врати 0;
 }
 
-static int
+static цео
 reap_helper(pid_t pid)
 {
-	int status, oerrno;
+	цео status, oerrno;
 
 	debug3_f("pid=%ld", (long)pid);
 
 	errno = 0;
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno == EINTR) {
+	док (waitpid(pid, &status, 0) == -1) {
+		ако (errno == EINTR) {
 			errno = 0;
 			continue;
 		}
 		oerrno = errno;
 		error_f("waitpid: %s", strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		врати SSH_ERR_SYSTEM_ERROR;
 	}
-	if (!WIFEXITED(status)) {
+	ако (!WIFEXITED(status)) {
 		error_f("helper exited abnormally");
-		return SSH_ERR_AGENT_FAILURE;
-	} else if (WEXITSTATUS(status) != 0) {
+		врати SSH_ERR_AGENT_FAILURE;
+	} инако ако (WEXITSTATUS(status) != 0) {
 		error_f("helper exited with non-zero exit status");
-		return SSH_ERR_AGENT_FAILURE;
+		врати SSH_ERR_AGENT_FAILURE;
 	}
-	return 0;
+	врати 0;
 }
 
-static int
+static цео
 client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
 {
-	int oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
+	цео oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
 	u_int rtype, rerr;
 	pid_t pid;
 	u_char version;
-	void (*osigchld)(int);
+	void (*osigchld)(цео);
 	struct sshbuf *req = NULL, *resp = NULL;
 	*respp = NULL;
 
-	if ((r = start_helper(&fd, &pid, &osigchld)) != 0)
-		return r;
+	ако ((r = start_helper(&fd, &pid, &osigchld)) != 0)
+		врати r;
 
-	if ((req = sshbuf_new()) == NULL || (resp = sshbuf_new()) == NULL) {
+	ако ((req = sshbuf_new()) == NULL || (resp = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	/* Request preamble: type, log_on_stderr, log_level */
 	ll = log_level_get();
-	if ((r = sshbuf_put_u32(req, type)) != 0 ||
+	ако ((r = sshbuf_put_u32(req, type)) != 0 ||
 	    (r = sshbuf_put_u8(req, log_is_on_stderr() != 0)) != 0 ||
 	    (r = sshbuf_put_u32(req, ll < 0 ? 0 : ll)) != 0 ||
 	    (r = sshbuf_putb(req, msg)) != 0) {
 		error_fr(r, "compose");
 		goto out;
 	}
-	if ((r = ssh_msg_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
+	ако ((r = ssh_msg_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
 		error_fr(r, "send");
 		goto out;
 	}
-	if ((r = ssh_msg_recv(fd, resp)) != 0) {
+	ако ((r = ssh_msg_recv(fd, resp)) != 0) {
 		error_fr(r, "receive");
 		goto out;
 	}
-	if ((r = sshbuf_get_u8(resp, &version)) != 0) {
+	ако ((r = sshbuf_get_u8(resp, &version)) != 0) {
 		error_fr(r, "parse version");
 		goto out;
 	}
-	if (version != SSH_SK_HELPER_VERSION) {
+	ако (version != SSH_SK_HELPER_VERSION) {
 		error_f("unsupported version: got %u, expected %u",
 		    version, SSH_SK_HELPER_VERSION);
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
+	ако ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
 		error_fr(r, "parse message type");
 		goto out;
 	}
-	if (rtype == SSH_SK_HELPER_ERROR) {
-		if ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
+	ако (rtype == SSH_SK_HELPER_ERROR) {
+		ако ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
 			error_fr(r, "parse");
 			goto out;
 		}
 		debug_f("helper returned error -%u", rerr);
 		/* OpenSSH error values are negative; encoded as -err on wire */
-		if (rerr == 0 || rerr >= INT_MAX)
+		ако (rerr == 0 || rerr >= INT_MAX)
 			r = SSH_ERR_INTERNAL_ERROR;
-		else
-			r = -(int)rerr;
+		инако
+			r = -(цео)rerr;
 		goto out;
-	} else if (rtype != type) {
+	} инако ако (rtype != type) {
 		error_f("helper returned incorrect message type %u, "
 		    "expecting %u", rtype, type);
 		r = SSH_ERR_INTERNAL_ERROR;
@@ -226,13 +226,13 @@ client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
  out:
 	oerrno = errno;
 	close(fd);
-	if ((r2 = reap_helper(pid)) != 0) {
-		if (r == 0) {
+	ако ((r2 = reap_helper(pid)) != 0) {
+		ако (r == 0) {
 			r = r2;
 			oerrno = errno;
 		}
 	}
-	if (r == 0) {
+	ако (r == 0) {
 		*respp = resp;
 		resp = NULL;
 	}
@@ -240,36 +240,36 @@ client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
 	sshbuf_free(resp);
 	ssh_signal(SIGCHLD, osigchld);
 	errno = oerrno;
-	return r;
+	врати r;
 
 }
 
-int
+цео
 sshsk_sign(const char *provider, struct sshkey *key,
     u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
     u_int compat, const char *pin)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	цео oerrno, r = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
 
 	*sigp = NULL;
 	*lenp = 0;
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	врати SSH_ERR_KEY_TYPE_UNKNOWN;
 #endif
 
-	if ((kbuf = sshbuf_new()) == NULL ||
+	ако ((kbuf = sshbuf_new()) == NULL ||
 	    (req = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0) {
+	ако ((r = sshkey_private_serialize(key, kbuf)) != 0) {
 		error_fr(r, "encode key");
 		goto out;
 	}
-	if ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
+	ако ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider)) != 0 ||
 	    (r = sshbuf_put_string(req, data, datalen)) != 0 ||
 	    (r = sshbuf_put_cstring(req, NULL)) != 0 || /* alg */
@@ -279,15 +279,15 @@ sshsk_sign(const char *provider, struct sshkey *key,
 		goto out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
+	ако ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
 		goto out;
 
-	if ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
+	ако ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
 		error_fr(r, "parse signature");
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	ако (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
@@ -296,7 +296,7 @@ sshsk_sign(const char *provider, struct sshkey *key,
 	r = 0;
  out:
 	oerrno = errno;
-	if (r != 0) {
+	ако (r != 0) {
 		freezero(*sigp, *lenp);
 		*sigp = NULL;
 		*lenp = 0;
@@ -305,38 +305,38 @@ sshsk_sign(const char *provider, struct sshkey *key,
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	врати r;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
+цео
+sshsk_enroll(цео type, const char *provider_path, const char *device,
     const char *application, const char *userid, uint8_t flags,
     const char *pin, struct sshbuf *challenge_buf,
     struct sshkey **keyp, struct sshbuf *attest)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	цео oerrno, r = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *kbuf = NULL, *abuf = NULL, *req = NULL, *resp = NULL;
 	struct sshkey *key = NULL;
 
 	*keyp = NULL;
-	if (attest != NULL)
+	ако (attest != NULL)
 		sshbuf_reset(attest);
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	врати SSH_ERR_KEY_TYPE_UNKNOWN;
 #endif
 
-	if (type < 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	ако (type < 0)
+		врати SSH_ERR_INVALID_ARGUMENT;
 
-	if ((abuf = sshbuf_new()) == NULL ||
+	ако ((abuf = sshbuf_new()) == NULL ||
 	    (kbuf = sshbuf_new()) == NULL ||
 	    (req = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 
-	if ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
+	ако ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, application)) != 0 ||
@@ -348,25 +348,25 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 		goto out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
+	ако ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
 		goto out;
 
-	if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+	ако ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_get_stringb(resp, abuf)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	ако (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+	ако ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
 		error_fr(r, "encode");
 		goto out;
 	}
-	if (attest != NULL && (r = sshbuf_putb(attest, abuf)) != 0) {
+	ако (attest != NULL && (r = sshbuf_putb(attest, abuf)) != 0) {
 		error_fr(r, "encode attestation information");
 		goto out;
 	}
@@ -383,14 +383,14 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	врати r;
 }
 
 static void
 sshsk_free_resident_key(struct sshsk_resident_key *srk)
 {
-	if (srk == NULL)
-		return;
+	ако (srk == NULL)
+		врати;
 	sshkey_free(srk->key);
 	freezero(srk->user_id, srk->user_id_len);
 	free(srk);
@@ -402,20 +402,20 @@ sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
 {
 	size_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	ако (srks == NULL || nsrks == 0)
+		врати;
 
-	for (i = 0; i < nsrks; i++)
+	за (i = 0; i < nsrks; i++)
 		sshsk_free_resident_key(srks[i]);
 	free(srks);
 }
 
-int
+цео
 sshsk_load_resident(const char *provider_path, const char *device,
     const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
     size_t *nsrksp)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	цео oerrno, r = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
 	struct sshkey *key = NULL;
 	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
@@ -425,13 +425,13 @@ sshsk_load_resident(const char *provider_path, const char *device,
 	*srksp = NULL;
 	*nsrksp = 0;
 
-	if ((kbuf = sshbuf_new()) == NULL ||
+	ако ((kbuf = sshbuf_new()) == NULL ||
 	    (req = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 
-	if ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
+	ако ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_u32(req, flags)) != 0) {
@@ -439,23 +439,23 @@ sshsk_load_resident(const char *provider_path, const char *device,
 		goto out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+	ако ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
 		goto out;
 
-	while (sshbuf_len(resp) != 0) {
+	док (sshbuf_len(resp) != 0) {
 		/* key, comment, user_id */
-		if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+		ако ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
 		    (r = sshbuf_get_cstring(resp, NULL, NULL)) != 0 ||
 		    (r = sshbuf_get_string(resp, &userid, &userid_len)) != 0) {
 			error_fr(r, "parse");
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
-		if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+		ако ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
 			error_fr(r, "decode key");
 			goto out;
 		}
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		ако ((srk = calloc(1, sizeof(*srk))) == NULL) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
@@ -466,7 +466,7 @@ sshsk_load_resident(const char *provider_path, const char *device,
 		srk->user_id_len = userid_len;
 		userid = NULL;
 		userid_len = 0;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		ако ((tmp = recallocarray(srks, nsrks, nsrks + 1,
 		    sizeof(*srks))) == NULL) {
 			error_f("recallocarray keys failed");
 			r = SSH_ERR_ALLOC_FAIL;
@@ -496,5 +496,5 @@ sshsk_load_resident(const char *provider_path, const char *device,
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	врати r;
 }

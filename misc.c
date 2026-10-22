@@ -71,14 +71,14 @@ char *
 chop(char *s)
 {
 	char *t = s;
-	while (*t) {
-		if (*t == '\n' || *t == '\r') {
+	док (*t) {
+		ако (*t == '\n' || *t == '\r') {
 			*t = '\0';
-			return s;
+			врати s;
 		}
 		t++;
 	}
-	return s;
+	врати s;
 
 }
 
@@ -88,15 +88,15 @@ rtrim(char *s)
 {
 	size_t i;
 
-	if ((i = strlen(s)) == 0)
-		return;
+	ако ((i = strlen(s)) == 0)
+		врати;
 	do {
 		i--;
-		if (isspace((unsigned char)s[i]))
+		ако (isspace((unsigned char)s[i]))
 			s[i] = '\0';
-		else
+		инако
 			break;
-	} while (i > 0);
+	} док (i > 0);
 }
 
 /*
@@ -104,20 +104,20 @@ rtrim(char *s)
  * if the prefix is not present.
  */
 const char *
-strprefix(const char *s, const char *prefix, int ignorecase)
+strprefix(const char *s, const char *prefix, цео ignorecase)
 {
 	size_t prefixlen;
 
-	if ((prefixlen = strlen(prefix)) == 0)
-		return s;
-	if (ignorecase) {
-		if (strncasecmp(s, prefix, prefixlen) != 0)
-			return NULL;
-	} else {
-		if (strncmp(s, prefix, prefixlen) != 0)
-			return NULL;
+	ако ((prefixlen = strlen(prefix)) == 0)
+		врати s;
+	ако (ignorecase) {
+		ако (strncasecmp(s, prefix, prefixlen) != 0)
+			врати NULL;
+	} инако {
+		ако (strncmp(s, prefix, prefixlen) != 0)
+			врати NULL;
 	}
-	return s + prefixlen;
+	врати s + prefixlen;
 }
 
 /* Append string 's' to a NULL-terminated array of strings */
@@ -126,10 +126,10 @@ stringlist_append(char ***listp, const char *s)
 {
 	size_t i = 0;
 
-	if (*listp == NULL)
+	ако (*listp == NULL)
 		*listp = xcalloc(2, sizeof(**listp));
-	else {
-		for (i = 0; (*listp)[i] != NULL; i++)
+	инако {
+		за (i = 0; (*listp)[i] != NULL; i++)
 			; /* count */
 		*listp = xrecallocarray(*listp, i + 1, i + 2, sizeof(**listp));
 	}
@@ -141,198 +141,198 @@ stringlist_free(char **list)
 {
 	size_t i = 0;
 
-	if (list == NULL)
-		return;
-	for (i = 0; list[i] != NULL; i++)
+	ако (list == NULL)
+		врати;
+	за (i = 0; list[i] != NULL; i++)
 		free(list[i]);
 	free(list);
 }
 
 /* set/unset filedescriptor to non-blocking */
-int
-set_nonblock(int fd)
+цео
+set_nonblock(цео fd)
 {
-	int val;
+	цео val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
+	ако (val == -1) {
 		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+		врати (-1);
 	}
-	if (val & O_NONBLOCK) {
+	ако (val & O_NONBLOCK) {
 		debug3("fd %d is O_NONBLOCK", fd);
-		return (0);
+		врати (0);
 	}
 	debug2("fd %d setting O_NONBLOCK", fd);
 	val |= O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	ако (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, O_NONBLOCK): %s", fd,
 		    strerror(errno));
-		return (-1);
+		врати (-1);
 	}
-	return (0);
+	врати (0);
 }
 
-int
-unset_nonblock(int fd)
+цео
+unset_nonblock(цео fd)
 {
-	int val;
+	цео val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
+	ако (val == -1) {
 		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+		врати (-1);
 	}
-	if (!(val & O_NONBLOCK)) {
+	ако (!(val & O_NONBLOCK)) {
 		debug3("fd %d is not O_NONBLOCK", fd);
-		return (0);
+		врати (0);
 	}
 	debug("fd %d clearing O_NONBLOCK", fd);
 	val &= ~O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	ако (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, ~O_NONBLOCK): %s",
 		    fd, strerror(errno));
-		return (-1);
+		врати (-1);
 	}
-	return (0);
+	врати (0);
 }
 
 const char *
-ssh_gai_strerror(int gaierr)
+ssh_gai_strerror(цео gaierr)
 {
-	if (gaierr == EAI_SYSTEM && errno != 0)
-		return strerror(errno);
-	return gai_strerror(gaierr);
+	ако (gaierr == EAI_SYSTEM && errno != 0)
+		врати strerror(errno);
+	врати gai_strerror(gaierr);
 }
 
 /* disable nagle on socket */
 void
-set_nodelay(int fd)
+set_nodelay(цео fd)
 {
-	int opt;
+	цео opt;
 	socklen_t optlen;
 
 	optlen = sizeof opt;
-	if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
+	ако (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
 		debug("getsockopt TCP_NODELAY: %.100s", strerror(errno));
-		return;
+		врати;
 	}
-	if (opt == 1) {
+	ако (opt == 1) {
 		debug2("fd %d is TCP_NODELAY", fd);
-		return;
+		врати;
 	}
 	opt = 1;
 	debug2("fd %d setting TCP_NODELAY", fd);
-	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof opt) == -1)
+	ако (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof opt) == -1)
 		error("setsockopt TCP_NODELAY: %.100s", strerror(errno));
 }
 
 /* Allow local port reuse in TIME_WAIT */
-int
-set_reuseaddr(int fd)
+цео
+set_reuseaddr(цео fd)
 {
-	int on = 1;
+	цео on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
+	ако (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
 		error("setsockopt SO_REUSEADDR fd %d: %s", fd, strerror(errno));
-		return -1;
+		врати -1;
 	}
-	return 0;
+	врати 0;
 }
 
 /* Set TCP keepalives */
-int
-set_keepalive(int fd)
+цео
+set_keepalive(цео fd)
 {
-	int on = 1;
+	цео on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on)) == -1) {
+	ако (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on)) == -1) {
 		error("setsockopt SO_KEEPALIVE fd %d: %s", fd, strerror(errno));
-		return -1;
+		врати -1;
 	}
-	return 0;
+	врати 0;
 }
 
 /* Get/set routing domain */
 char *
-get_rdomain(int fd)
+get_rdomain(цео fd)
 {
-#if defined(HAVE_SYS_GET_RDOMAIN)
-	return sys_get_rdomain(fd);
+#ако defined(HAVE_SYS_GET_RDOMAIN)
+	врати sys_get_rdomain(fd);
 #elif defined(__OpenBSD__)
-	int rtable;
+	цео rtable;
 	char *ret;
 	socklen_t len = sizeof(rtable);
 
-	if (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
+	ако (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
 		error("Failed to get routing domain for fd %d: %s",
 		    fd, strerror(errno));
-		return NULL;
+		врати NULL;
 	}
 	xasprintf(&ret, "%d", rtable);
-	return ret;
-#else /* defined(__OpenBSD__) */
-	return NULL;
+	врати ret;
+#инако /* defined(__OpenBSD__) */
+	врати NULL;
 #endif
 }
 
-int
-set_rdomain(int fd, const char *name)
+цео
+set_rdomain(цео fd, const char *name)
 {
-#if defined(HAVE_SYS_SET_RDOMAIN)
-	return sys_set_rdomain(fd, name);
+#ако defined(HAVE_SYS_SET_RDOMAIN)
+	врати sys_set_rdomain(fd, name);
 #elif defined(__OpenBSD__)
-	int rtable;
+	цео rtable;
 	const char *errstr;
 
-	if (name == NULL)
-		return 0; /* default table */
+	ако (name == NULL)
+		врати 0; /* default table */
 
-	rtable = (int)strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL) {
+	rtable = (цео)strtonum(name, 0, 255, &errstr);
+	ако (errstr != NULL) {
 		/* Shouldn't happen */
 		error("Invalid routing domain \"%s\": %s", name, errstr);
-		return -1;
+		врати -1;
 	}
-	if (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
+	ако (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
 	    &rtable, sizeof(rtable)) == -1) {
 		error("Failed to set routing domain %d on fd %d: %s",
 		    rtable, fd, strerror(errno));
-		return -1;
+		врати -1;
 	}
-	return 0;
-#else /* defined(__OpenBSD__) */
+	врати 0;
+#инако /* defined(__OpenBSD__) */
 	error("Setting routing domain is not supported on this platform");
-	return -1;
+	врати -1;
 #endif
 }
 
-int
-get_sock_af(int fd)
+цео
+get_sock_af(цео fd)
 {
 	struct sockaddr_storage to;
 	socklen_t tolen = sizeof(to);
 
 	memset(&to, 0, sizeof(to));
-	if (getsockname(fd, (struct sockaddr *)&to, &tolen) == -1)
-		return -1;
+	ако (getsockname(fd, (struct sockaddr *)&to, &tolen) == -1)
+		врати -1;
 #ifdef IPV4_IN_IPV6
-	if (to.ss_family == AF_INET6 &&
+	ако (to.ss_family == AF_INET6 &&
 	    IN6_IS_ADDR_V4MAPPED(&((struct sockaddr_in6 *)&to)->sin6_addr))
-		return AF_INET;
+		врати AF_INET;
 #endif
-	return to.ss_family;
+	врати to.ss_family;
 }
 
 void
-set_sock_tos(int fd, int tos)
+set_sock_tos(цео fd, цео tos)
 {
 #ifndef IP_TOS_IS_BROKEN
-	int af;
+	цео af;
 
-	if (tos < 0 || tos == INT_MAX) {
+	ако (tos < 0 || tos == INT_MAX) {
 		debug_f("invalid TOS %d", tos);
-		return;
+		врати;
 	}
 	switch ((af = get_sock_af(fd))) {
 	case -1:
@@ -341,7 +341,7 @@ set_sock_tos(int fd, int tos)
 	case AF_INET:
 # ifdef IP_TOS
 		debug3_f("set socket %d IP_TOS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IP, IP_TOS,
+		ако (setsockopt(fd, IPPROTO_IP, IP_TOS,
 		    &tos, sizeof(tos)) == -1) {
 			error("setsockopt socket %d IP_TOS %d: %s",
 			    fd, tos, strerror(errno));
@@ -351,7 +351,7 @@ set_sock_tos(int fd, int tos)
 	case AF_INET6:
 # ifdef IPV6_TCLASS
 		debug3_f("set socket %d IPV6_TCLASS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
+		ако (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
 		    &tos, sizeof(tos)) == -1) {
 			error("setsockopt socket %d IPV6_TCLASS %d: %s",
 			    fd, tos, strerror(errno));
@@ -370,50 +370,50 @@ set_sock_tos(int fd, int tos)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-static int
-waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
+static цео
+waitfd(цео fd, цео *timeoutp, short events, volatile sig_atomic_t *stop)
 {
 	struct pollfd pfd;
 	struct timespec timeout;
-	int oerrno, r;
+	цео oerrno, r;
 	sigset_t nsigset, osigset;
 
-	if (timeoutp && *timeoutp == -1)
+	ако (timeoutp && *timeoutp == -1)
 		timeoutp = NULL;
 	pfd.fd = fd;
 	pfd.events = events;
 	ptimeout_init(&timeout);
-	if (timeoutp != NULL)
+	ако (timeoutp != NULL)
 		ptimeout_deadline_ms(&timeout, *timeoutp);
-	if (stop != NULL)
+	ако (stop != NULL)
 		sigfillset(&nsigset);
-	for (; timeoutp == NULL || *timeoutp >= 0;) {
-		if (stop != NULL) {
+	за (; timeoutp == NULL || *timeoutp >= 0;) {
+		ако (stop != NULL) {
 			sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-			if (*stop) {
+			ако (*stop) {
 				sigprocmask(SIG_SETMASK, &osigset, NULL);
 				errno = EINTR;
-				return -1;
+				врати -1;
 			}
 		}
 		r = ppoll(&pfd, 1, ptimeout_get_tsp(&timeout),
 		    stop != NULL ? &osigset : NULL);
 		oerrno = errno;
-		if (stop != NULL)
+		ако (stop != NULL)
 			sigprocmask(SIG_SETMASK, &osigset, NULL);
-		if (timeoutp)
+		ако (timeoutp)
 			*timeoutp = ptimeout_get_ms(&timeout);
 		errno = oerrno;
-		if (r > 0)
-			return 0;
-		else if (r == -1 && errno != EAGAIN && errno != EINTR)
-			return -1;
-		else if (r == 0)
+		ако (r > 0)
+			врати 0;
+		инако ако (r == -1 && errno != EAGAIN && errno != EINTR)
+			врати -1;
+		инако ако (r == 0)
 			break;
 	}
 	/* timeout */
 	errno = ETIMEDOUT;
-	return -1;
+	врати -1;
 }
 
 /*
@@ -421,9 +421,9 @@ waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-int
-waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
-	return waitfd(fd, timeoutp, POLLIN, stop);
+цео
+waitrfd(цео fd, цео *timeoutp, volatile sig_atomic_t *stop) {
+	врати waitfd(fd, timeoutp, POLLIN, stop);
 }
 
 /*
@@ -433,44 +433,44 @@ waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
  *
  * Returns 0 on success or -1 on failure.
  */
-int
-timeout_connect(int sockfd, const struct sockaddr *serv_addr,
-    socklen_t addrlen, int *timeoutp)
+цео
+timeout_connect(цео sockfd, const struct sockaddr *serv_addr,
+    socklen_t addrlen, цео *timeoutp)
 {
-	int optval = 0;
+	цео optval = 0;
 	socklen_t optlen = sizeof(optval);
 
 	/* No timeout: just do a blocking connect() */
-	if (timeoutp == NULL || *timeoutp <= 0)
-		return connect(sockfd, serv_addr, addrlen);
+	ако (timeoutp == NULL || *timeoutp <= 0)
+		врати connect(sockfd, serv_addr, addrlen);
 
 	set_nonblock(sockfd);
-	for (;;) {
-		if (connect(sockfd, serv_addr, addrlen) == 0) {
+	за (;;) {
+		ако (connect(sockfd, serv_addr, addrlen) == 0) {
 			/* Succeeded already? */
 			unset_nonblock(sockfd);
-			return 0;
-		} else if (errno == EINTR)
+			врати 0;
+		} инако ако (errno == EINTR)
 			continue;
-		else if (errno != EINPROGRESS)
-			return -1;
+		инако ако (errno != EINPROGRESS)
+			врати -1;
 		break;
 	}
 
-	if (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, NULL) == -1)
-		return -1;
+	ако (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, NULL) == -1)
+		врати -1;
 
 	/* Completed or failed */
-	if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
+	ако (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
 		debug("getsockopt: %s", strerror(errno));
-		return -1;
+		врати -1;
 	}
-	if (optval != 0) {
+	ако (optval != 0) {
 		errno = optval;
-		return -1;
+		врати -1;
 	}
 	unset_nonblock(sockfd);
-	return 0;
+	врати 0;
 }
 
 /* Characters considered whitespace in strsep calls. */
@@ -479,44 +479,44 @@ timeout_connect(int sockfd, const struct sockaddr *serv_addr,
 
 /* return next token in configuration line */
 static char *
-strdelim_internal(char **s, int split_equals)
+strdelim_internal(char **s, цео split_equals)
 {
 	char *old;
-	int wspace = 0;
+	цео wspace = 0;
 
-	if (*s == NULL)
-		return NULL;
+	ако (*s == NULL)
+		врати NULL;
 
 	old = *s;
 
 	*s = strpbrk(*s,
 	    split_equals ? WHITESPACE QUOTE "=" : WHITESPACE QUOTE);
-	if (*s == NULL)
-		return (old);
+	ако (*s == NULL)
+		врати (old);
 
-	if (*s[0] == '\"') {
+	ако (*s[0] == '\"') {
 		memmove(*s, *s + 1, strlen(*s)); /* move nul too */
 		/* Find matching quote */
-		if ((*s = strpbrk(*s, QUOTE)) == NULL) {
-			return (NULL);		/* no matching quote */
-		} else {
+		ако ((*s = strpbrk(*s, QUOTE)) == NULL) {
+			врати (NULL);		/* no matching quote */
+		} инако {
 			*s[0] = '\0';
 			*s += strspn(*s + 1, WHITESPACE) + 1;
-			return (old);
+			врати (old);
 		}
 	}
 
 	/* Allow only one '=' to be skipped */
-	if (split_equals && *s[0] == '=')
+	ако (split_equals && *s[0] == '=')
 		wspace = 1;
 	*s[0] = '\0';
 
 	/* Skip any extra whitespace after first token */
 	*s += strspn(*s + 1, WHITESPACE) + 1;
-	if (split_equals && *s[0] == '=' && !wspace)
+	ако (split_equals && *s[0] == '=' && !wspace)
 		*s += strspn(*s + 1, WHITESPACE) + 1;
 
-	return (old);
+	врати (old);
 }
 
 /*
@@ -526,7 +526,7 @@ strdelim_internal(char **s, int split_equals)
 char *
 strdelim(char **s)
 {
-	return strdelim_internal(s, 1);
+	врати strdelim_internal(s, 1);
 }
 
 /*
@@ -535,7 +535,7 @@ strdelim(char **s)
 char *
 strdelimw(char **s)
 {
-	return strdelim_internal(s, 0);
+	врати strdelim_internal(s, 0);
 }
 
 struct passwd *
@@ -561,14 +561,14 @@ pwcopy(struct passwd *pw)
 #endif
 	copy->pw_dir = xstrdup(pw->pw_dir == NULL ? "" : pw->pw_dir);
 	copy->pw_shell = xstrdup(pw->pw_shell == NULL ? "" : pw->pw_shell);
-	return copy;
+	врати copy;
 }
 
 void
 pwfree(struct passwd *pw)
 {
-	if (pw == NULL)
-		return;
+	ако (pw == NULL)
+		врати;
 	free(pw->pw_name);
 	freezero(pw->pw_passwd,
 	    pw->pw_passwd == NULL ? 0 : strlen(pw->pw_passwd));
@@ -588,7 +588,7 @@ pwfree(struct passwd *pw)
  * Port must be >=0 and <=65535.
  * Return -1 if invalid.
  */
-int
+цео
 a2port(const char *s)
 {
 	struct servent *se;
@@ -596,42 +596,42 @@ a2port(const char *s)
 	const char *errstr;
 
 	port = strtonum(s, 0, 65535, &errstr);
-	if (errstr == NULL)
-		return (int)port;
-	if ((se = getservbyname(s, "tcp")) != NULL)
-		return ntohs(se->s_port);
-	return -1;
+	ако (errstr == NULL)
+		врати (цео)port;
+	ако ((se = getservbyname(s, "tcp")) != NULL)
+		врати ntohs(se->s_port);
+	врати -1;
 }
 
-int
-a2tun(const char *s, int *remote)
+цео
+a2tun(const char *s, цео *remote)
 {
 	const char *errstr = NULL;
 	char *sp, *ep;
-	int tun;
+	цео tun;
 
-	if (remote != NULL) {
+	ако (remote != NULL) {
 		*remote = SSH_TUNID_ANY;
 		sp = xstrdup(s);
-		if ((ep = strchr(sp, ':')) == NULL) {
+		ако ((ep = strchr(sp, ':')) == NULL) {
 			free(sp);
-			return (a2tun(s, NULL));
+			врати (a2tun(s, NULL));
 		}
 		ep[0] = '\0'; ep++;
 		*remote = a2tun(ep, NULL);
 		tun = a2tun(sp, NULL);
 		free(sp);
-		return (*remote == SSH_TUNID_ERR ? *remote : tun);
+		врати (*remote == SSH_TUNID_ERR ? *remote : tun);
 	}
 
-	if (strcasecmp(s, "any") == 0)
-		return (SSH_TUNID_ANY);
+	ако (strcasecmp(s, "any") == 0)
+		врати (SSH_TUNID_ANY);
 
 	tun = strtonum(s, 0, SSH_TUNID_MAX, &errstr);
-	if (errstr != NULL)
-		return (SSH_TUNID_ERR);
+	ако (errstr != NULL)
+		врати (SSH_TUNID_ERR);
 
-	return (tun);
+	врати (tun);
 }
 
 #define SECONDS		1.0
@@ -673,21 +673,21 @@ convtime_double(const char *s)
 	double val, total_sec = 0.0, multiplier;
 	const char *p, *start_p;
 	char *endp;
-	int seen_seconds = 0;
+	цео seen_seconds = 0;
 
-	if (s == NULL || *s == '\0')
-		return -1.0;
+	ако (s == NULL || *s == '\0')
+		врати -1.0;
 
-	for (p = s; *p != '\0';) {
-		if (!isdigit((unsigned char)*p) && *p != '.')
-			return -1.0;
+	за (p = s; *p != '\0';) {
+		ако (!isdigit((unsigned char)*p) && *p != '.')
+			врати -1.0;
 
 		errno = 0;
-		if ((val = strtod(p, &endp)) < 0 || errno != 0 || p == endp)
-			return -1.0;
+		ако ((val = strtod(p, &endp)) < 0 || errno != 0 || p == endp)
+			врати -1.0;
 		/* Allow only decimal forms */
-		if (p + strspn(p, "0123456789.") != endp)
-			return -1.0;
+		ако (p + strspn(p, "0123456789.") != endp)
+			врати -1.0;
 		start_p = p;
 		p = endp;
 
@@ -696,8 +696,8 @@ convtime_double(const char *s)
 			/* FALLTHROUGH */
 		case 's':
 		case 'S':
-			if (seen_seconds++)
-				return -1.0;
+			ако (seen_seconds++)
+				врати -1.0;
 			multiplier = SECONDS;
 			break;
 		case 'm':
@@ -717,44 +717,44 @@ convtime_double(const char *s)
 			multiplier = WEEKS;
 			break;
 		default:
-			return -1.0;
+			врати -1.0;
 		}
 
 		/* Special handling if this was a decimal */
-		if (memchr(start_p, '.', endp - start_p) != NULL) {
+		ако (memchr(start_p, '.', endp - start_p) != NULL) {
 			/* Decimal point present */
-			if (multiplier > 1.0)
-				return -1.0; /* No fractionals for non-seconds */
+			ако (multiplier > 1.0)
+				врати -1.0; /* No fractionals for non-seconds */
 			/* For seconds, ensure digits follow */
-			if (!isdigit((unsigned char)*(endp - 1)))
-				return -1.0;
+			ако (!isdigit((unsigned char)*(endp - 1)))
+				врати -1.0;
 		}
 
 		total_sec += val * multiplier;
 
-		if (*p != '\0')
+		ако (*p != '\0')
 			p++;
 	}
-	return total_sec;
+	врати total_sec;
 }
 
 /*
  * Same as convtime_double() above but fractional seconds are ignored.
  * Return -1 if time string is invalid.
  */
-int
+цео
 convtime(const char *s)
 {
 	double sec_val;
 
-	if ((sec_val = convtime_double(s)) < 0.0)
-		return -1;
+	ако ((sec_val = convtime_double(s)) < 0.0)
+		врати -1;
 
 	/* Check for overflow into int */
-	if (sec_val < 0 || sec_val > INT_MAX)
-		return -1;
+	ако (sec_val < 0 || sec_val > INT_MAX)
+		врати -1;
 
-	return (int)sec_val;
+	врати (цео)sec_val;
 }
 
 #define TF_BUFS	8
@@ -765,12 +765,12 @@ fmt_timeframe(time_t t)
 {
 	char		*buf;
 	static char	 tfbuf[TF_BUFS][TF_LEN];	/* ring buffer */
-	static int	 idx = 0;
-	unsigned int	 sec, min, hrs, day;
+	static цео	 idx = 0;
+	unsigned цео	 sec, min, hrs, day;
 	unsigned long long	week;
 
 	buf = tfbuf[idx++];
-	if (idx == TF_BUFS)
+	ако (idx == TF_BUFS)
 		idx = 0;
 
 	week = t;
@@ -784,14 +784,14 @@ fmt_timeframe(time_t t)
 	day = week % 7;
 	week /= 7;
 
-	if (week > 0)
+	ако (week > 0)
 		snprintf(buf, TF_LEN, "%02lluw%01ud%02uh", week, day, hrs);
-	else if (day > 0)
+	инако ако (day > 0)
 		snprintf(buf, TF_LEN, "%01ud%02uh%02um", day, hrs, min);
-	else
+	инако
 		snprintf(buf, TF_LEN, "%02u:%02u:%02u", hrs, min, sec);
 
-	return (buf);
+	врати (buf);
 }
 
 /*
@@ -803,12 +803,12 @@ put_host_port(const char *host, u_short port)
 {
 	char *hoststr;
 
-	if (port == 0 || port == SSH_DEFAULT_PORT)
-		return(xstrdup(host));
-	if (asprintf(&hoststr, "[%s]:%d", host, (int)port) == -1)
+	ако (port == 0 || port == SSH_DEFAULT_PORT)
+		врати(xstrdup(host));
+	ако (asprintf(&hoststr, "[%s]:%d", host, (цео)port) == -1)
 		fatal("put_host_port: asprintf: %s", strerror(errno));
 	debug3("put_host_port: %s", hoststr);
-	return hoststr;
+	врати hoststr;
 }
 
 /*
@@ -824,16 +824,16 @@ hpdelim2(char **cp, char *delim)
 {
 	char *s, *old;
 
-	if (cp == NULL || *cp == NULL)
-		return NULL;
+	ако (cp == NULL || *cp == NULL)
+		врати NULL;
 
 	old = s = *cp;
-	if (*s == '[') {
-		if ((s = strchr(s, ']')) == NULL)
-			return NULL;
-		else
+	ако (*s == '[') {
+		ако ((s = strchr(s, ']')) == NULL)
+			врати NULL;
+		инако
 			s++;
-	} else if ((s = strpbrk(s, ":/")) == NULL)
+	} инако ако ((s = strpbrk(s, ":/")) == NULL)
 		s = *cp + strlen(*cp); /* skip to end (see first case below) */
 
 	switch (*s) {
@@ -843,17 +843,17 @@ hpdelim2(char **cp, char *delim)
 
 	case ':':
 	case '/':
-		if (delim != NULL)
+		ако (delim != NULL)
 			*delim = *s;
 		*s = '\0';	/* terminate */
 		*cp = s + 1;
 		break;
 
 	default:
-		return NULL;
+		врати NULL;
 	}
 
-	return old;
+	врати old;
 }
 
 /* The common case: only accept colon as delimiter. */
@@ -863,42 +863,42 @@ hpdelim(char **cp)
 	char *r, delim = '\0';
 
 	r =  hpdelim2(cp, &delim);
-	if (delim == '/')
-		return NULL;
-	return r;
+	ако (delim == '/')
+		врати NULL;
+	врати r;
 }
 
 char *
 cleanhostname(char *host)
 {
-	if (*host == '[' && host[strlen(host) - 1] == ']') {
+	ако (*host == '[' && host[strlen(host) - 1] == ']') {
 		host[strlen(host) - 1] = '\0';
-		return (host + 1);
-	} else
-		return host;
+		врати (host + 1);
+	} инако
+		врати host;
 }
 
 char *
 colon(char *cp)
 {
-	int flag = 0;
+	цео flag = 0;
 
-	if (*cp == ':')		/* Leading colon is part of file name. */
-		return NULL;
-	if (*cp == '[')
+	ако (*cp == ':')		/* Leading colon is part of file name. */
+		врати NULL;
+	ако (*cp == '[')
 		flag = 1;
 
-	for (; *cp; ++cp) {
-		if (*cp == '@' && *(cp+1) == '[')
+	за (; *cp; ++cp) {
+		ако (*cp == '@' && *(cp+1) == '[')
 			flag = 1;
-		if (*cp == ']' && *(cp+1) == ':' && flag)
-			return (cp+1);
-		if (*cp == ':' && !flag)
-			return (cp);
-		if (*cp == '/')
-			return NULL;
+		ако (*cp == ']' && *(cp+1) == ':' && flag)
+			врати (cp+1);
+		ако (*cp == ':' && !flag)
+			врати (cp);
+		ако (*cp == '/')
+			врати NULL;
 	}
-	return NULL;
+	врати NULL;
 }
 
 /*
@@ -910,54 +910,54 @@ colon(char *cp)
  * If path was not specified then *pathp will be set to ".".
  * Returns 0 on success, -1 on failure.
  */
-int
+цео
 parse_user_host_path(const char *s, char **userp, char **hostp, char **pathp)
 {
 	char *user = NULL, *host = NULL, *path = NULL;
 	char *sdup, *tmp;
-	int ret = -1;
+	цео ret = -1;
 
-	if (userp != NULL)
+	ако (userp != NULL)
 		*userp = NULL;
-	if (hostp != NULL)
+	ако (hostp != NULL)
 		*hostp = NULL;
-	if (pathp != NULL)
+	ако (pathp != NULL)
 		*pathp = NULL;
 
 	sdup = xstrdup(s);
 
 	/* Check for remote syntax: [user@]host:[path] */
-	if ((tmp = colon(sdup)) == NULL)
+	ако ((tmp = colon(sdup)) == NULL)
 		goto out;
 
 	/* Extract optional path */
 	*tmp++ = '\0';
-	if (*tmp == '\0')
+	ако (*tmp == '\0')
 		tmp = ".";
 	path = xstrdup(tmp);
 
 	/* Extract optional user and mandatory host */
 	tmp = strrchr(sdup, '@');
-	if (tmp != NULL) {
+	ако (tmp != NULL) {
 		*tmp++ = '\0';
 		host = xstrdup(cleanhostname(tmp));
-		if (*sdup != '\0')
+		ако (*sdup != '\0')
 			user = xstrdup(sdup);
-	} else {
+	} инако {
 		host = xstrdup(cleanhostname(sdup));
 		user = NULL;
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	ако (userp != NULL) {
 		*userp = user;
 		user = NULL;
 	}
-	if (hostp != NULL) {
+	ако (hostp != NULL) {
 		*hostp = host;
 		host = NULL;
 	}
-	if (pathp != NULL) {
+	ако (pathp != NULL) {
 		*pathp = path;
 		path = NULL;
 	}
@@ -967,7 +967,7 @@ out:
 	free(user);
 	free(host);
 	free(path);
-	return ret;
+	врати ret;
 }
 
 /*
@@ -978,80 +978,80 @@ out:
  * If port was not specified then *portp will be -1.
  * Returns 0 on success, -1 on failure.
  */
-int
-parse_user_host_port(const char *s, char **userp, char **hostp, int *portp)
+цео
+parse_user_host_port(const char *s, char **userp, char **hostp, цео *portp)
 {
 	char *sdup, *cp, *tmp;
 	char *user = NULL, *host = NULL;
-	int port = -1, ret = -1;
+	цео port = -1, ret = -1;
 
-	if (userp != NULL)
+	ако (userp != NULL)
 		*userp = NULL;
-	if (hostp != NULL)
+	ако (hostp != NULL)
 		*hostp = NULL;
-	if (portp != NULL)
+	ако (portp != NULL)
 		*portp = -1;
 
-	if ((sdup = tmp = strdup(s)) == NULL)
-		return -1;
+	ако ((sdup = tmp = strdup(s)) == NULL)
+		врати -1;
 	/* Extract optional username */
-	if ((cp = strrchr(tmp, '@')) != NULL) {
+	ако ((cp = strrchr(tmp, '@')) != NULL) {
 		*cp = '\0';
-		if (*tmp == '\0')
+		ако (*tmp == '\0')
 			goto out;
-		if ((user = strdup(tmp)) == NULL)
+		ако ((user = strdup(tmp)) == NULL)
 			goto out;
 		tmp = cp + 1;
 	}
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim(&tmp)) == NULL || *cp == '\0')
+	ако ((cp = hpdelim(&tmp)) == NULL || *cp == '\0')
 		goto out;
 	host = xstrdup(cleanhostname(cp));
 	/* Convert and verify optional port */
-	if (tmp != NULL && *tmp != '\0') {
-		if ((port = a2port(tmp)) <= 0)
+	ако (tmp != NULL && *tmp != '\0') {
+		ако ((port = a2port(tmp)) <= 0)
 			goto out;
 	}
 	/* Success */
-	if (userp != NULL) {
+	ако (userp != NULL) {
 		*userp = user;
 		user = NULL;
 	}
-	if (hostp != NULL) {
+	ако (hostp != NULL) {
 		*hostp = host;
 		host = NULL;
 	}
-	if (portp != NULL)
+	ако (portp != NULL)
 		*portp = port;
 	ret = 0;
  out:
 	free(sdup);
 	free(user);
 	free(host);
-	return ret;
+	врати ret;
 }
 
 /*
  * Converts a two-byte hex string to decimal.
  * Returns the decimal value or -1 for invalid input.
  */
-static int
+static цео
 hexchar(const char *s)
 {
 	unsigned char result[2];
-	int i;
+	цео i;
 
-	for (i = 0; i < 2; i++) {
-		if (s[i] >= '0' && s[i] <= '9')
+	за (i = 0; i < 2; i++) {
+		ако (s[i] >= '0' && s[i] <= '9')
 			result[i] = (unsigned char)(s[i] - '0');
-		else if (s[i] >= 'a' && s[i] <= 'f')
+		инако ако (s[i] >= 'a' && s[i] <= 'f')
 			result[i] = (unsigned char)(s[i] - 'a') + 10;
-		else if (s[i] >= 'A' && s[i] <= 'F')
+		инако ако (s[i] >= 'A' && s[i] <= 'F')
 			result[i] = (unsigned char)(s[i] - 'A') + 10;
-		else
-			return -1;
+		инако
+			врати -1;
 	}
-	return (result[0] << 4) | result[1];
+	врати (result[0] << 4) | result[1];
 }
 
 /*
@@ -1062,24 +1062,24 @@ static char *
 urldecode(const char *src)
 {
 	char *ret, *dst;
-	int ch;
+	цео ch;
 	size_t srclen;
 
-	if ((srclen = strlen(src)) >= SIZE_MAX)
-		return NULL;
+	ако ((srclen = strlen(src)) >= SIZE_MAX)
+		врати NULL;
 	ret = xmalloc(srclen + 1);
-	for (dst = ret; *src != '\0'; src++) {
+	за (dst = ret; *src != '\0'; src++) {
 		switch (*src) {
 		case '+':
 			*dst++ = ' ';
 			break;
 		case '%':
 			/* note: don't allow \0 characters */
-			if (!isxdigit((unsigned char)src[1]) ||
+			ако (!isxdigit((unsigned char)src[1]) ||
 			    !isxdigit((unsigned char)src[2]) ||
 			    (ch = hexchar(src + 1)) == -1 || ch == 0) {
 				free(ret);
-				return NULL;
+				врати NULL;
 			}
 			*dst++ = ch;
 			src += 2;
@@ -1091,7 +1091,7 @@ urldecode(const char *src)
 	}
 	*dst = '\0';
 
-	return ret;
+	врати ret;
 }
 
 /*
@@ -1106,85 +1106,85 @@ urldecode(const char *src)
  * If path was not specified then *pathp will be set to NULL.
  * Returns 0 on success, 1 if non-uri/wrong scheme, -1 on error/invalid uri.
  */
-int
+цео
 parse_uri(const char *scheme, const char *uri, char **userp, char **hostp,
-    int *portp, char **pathp)
+    цео *portp, char **pathp)
 {
 	char *uridup, *cp, *tmp, ch;
 	char *user = NULL, *host = NULL, *path = NULL;
-	int port = -1, ret = -1;
+	цео port = -1, ret = -1;
 	size_t len;
 
 	len = strlen(scheme);
-	if (strncmp(uri, scheme, len) != 0 || strncmp(uri + len, "://", 3) != 0)
-		return 1;
+	ако (strncmp(uri, scheme, len) != 0 || strncmp(uri + len, "://", 3) != 0)
+		врати 1;
 	uri += len + 3;
 
-	if (userp != NULL)
+	ако (userp != NULL)
 		*userp = NULL;
-	if (hostp != NULL)
+	ако (hostp != NULL)
 		*hostp = NULL;
-	if (portp != NULL)
+	ако (portp != NULL)
 		*portp = -1;
-	if (pathp != NULL)
+	ако (pathp != NULL)
 		*pathp = NULL;
 
 	uridup = tmp = xstrdup(uri);
 
 	/* Extract optional ssh-info (username + connection params) */
-	if ((cp = strchr(tmp, '@')) != NULL) {
+	ако ((cp = strchr(tmp, '@')) != NULL) {
 		char *delim;
 
 		*cp = '\0';
 		/* Extract username and connection params */
-		if ((delim = strchr(tmp, ';')) != NULL) {
+		ако ((delim = strchr(tmp, ';')) != NULL) {
 			/* Just ignore connection params for now */
 			*delim = '\0';
 		}
-		if (*tmp == '\0') {
+		ако (*tmp == '\0') {
 			/* Empty username */
 			goto out;
 		}
-		if ((user = urldecode(tmp)) == NULL)
+		ако ((user = urldecode(tmp)) == NULL)
 			goto out;
 		tmp = cp + 1;
 	}
 
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim2(&tmp, &ch)) == NULL || *cp == '\0')
+	ако ((cp = hpdelim2(&tmp, &ch)) == NULL || *cp == '\0')
 		goto out;
 	host = xstrdup(cleanhostname(cp));
-	if (!valid_domain(host, 0, NULL))
+	ако (!valid_domain(host, 0, NULL))
 		goto out;
 
-	if (tmp != NULL && *tmp != '\0') {
-		if (ch == ':') {
+	ако (tmp != NULL && *tmp != '\0') {
+		ако (ch == ':') {
 			/* Convert and verify port. */
-			if ((cp = strchr(tmp, '/')) != NULL)
+			ако ((cp = strchr(tmp, '/')) != NULL)
 				*cp = '\0';
-			if ((port = a2port(tmp)) <= 0)
+			ако ((port = a2port(tmp)) <= 0)
 				goto out;
 			tmp = cp ? cp + 1 : NULL;
 		}
-		if (tmp != NULL && *tmp != '\0') {
+		ако (tmp != NULL && *tmp != '\0') {
 			/* Extract optional path */
-			if ((path = urldecode(tmp)) == NULL)
+			ако ((path = urldecode(tmp)) == NULL)
 				goto out;
 		}
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	ако (userp != NULL) {
 		*userp = user;
 		user = NULL;
 	}
-	if (hostp != NULL) {
+	ако (hostp != NULL) {
 		*hostp = host;
 		host = NULL;
 	}
-	if (portp != NULL)
+	ако (portp != NULL)
 		*portp = port;
-	if (pathp != NULL) {
+	ако (pathp != NULL) {
 		*pathp = path;
 		path = NULL;
 	}
@@ -1194,7 +1194,7 @@ parse_uri(const char *scheme, const char *uri, char **userp, char **hostp,
 	free(user);
 	free(host);
 	free(path);
-	return ret;
+	врати ret;
 }
 
 /* function to assist building execv() arguments */
@@ -1204,23 +1204,23 @@ addargs(arglist *args, char *fmt, ...)
 	va_list ap;
 	char *cp;
 	u_int nalloc;
-	int r;
+	цео r;
 
 	va_start(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
 	va_end(ap);
-	if (r == -1)
+	ако (r == -1)
 		fatal_f("argument too long");
 
 	nalloc = args->nalloc;
-	if (args->list == NULL) {
+	ако (args->list == NULL) {
 		nalloc = 32;
 		args->num = 0;
-	} else if (args->num > (256 * 1024))
+	} инако ако (args->num > (256 * 1024))
 		fatal_f("too many arguments");
-	else if (args->num >= args->nalloc)
+	инако ако (args->num >= args->nalloc)
 		fatal_f("arglist corrupt");
-	else if (args->num+2 >= nalloc)
+	инако ако (args->num+2 >= nalloc)
 		nalloc *= 2;
 
 	args->list = xrecallocarray(args->list, args->nalloc,
@@ -1235,17 +1235,17 @@ replacearg(arglist *args, u_int which, char *fmt, ...)
 {
 	va_list ap;
 	char *cp;
-	int r;
+	цео r;
 
 	va_start(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
 	va_end(ap);
-	if (r == -1)
+	ако (r == -1)
 		fatal_f("argument too long");
-	if (args->list == NULL || args->num >= args->nalloc)
+	ако (args->list == NULL || args->num >= args->nalloc)
 		fatal_f("arglist corrupt");
 
-	if (which >= args->num)
+	ако (which >= args->num)
 		fatal_f("tried to replace invalid arg %d >= %d",
 		    which, args->num);
 	free(args->list[which]);
@@ -1257,10 +1257,10 @@ freeargs(arglist *args)
 {
 	u_int i;
 
-	if (args == NULL)
-		return;
-	if (args->list != NULL && args->num < args->nalloc) {
-		for (i = 0; i < args->num; i++)
+	ако (args == NULL)
+		врати;
+	ако (args->list != NULL && args->num < args->nalloc) {
+		за (i = 0; i < args->num; i++)
 			free(args->list[i]);
 		free(args->list);
 	}
@@ -1272,48 +1272,48 @@ freeargs(arglist *args)
  * Expands tildes in the file name.  Returns data allocated by xmalloc.
  * Warning: this calls getpw*.
  */
-int
+цео
 tilde_expand(const char *filename, uid_t uid, char **retp)
 {
 	char *ocopy = NULL, *copy, *s = NULL;
 	const char *path = NULL, *user = NULL;
 	struct passwd *pw;
 	size_t len;
-	int ret = -1, r, slash;
+	цео ret = -1, r, slash;
 
 	*retp = NULL;
-	if (*filename != '~') {
+	ако (*filename != '~') {
 		*retp = xstrdup(filename);
-		return 0;
+		врати 0;
 	}
 	ocopy = copy = xstrdup(filename + 1);
 
-	if (*copy == '\0')				/* ~ */
+	ако (*copy == '\0')				/* ~ */
 		path = NULL;
-	else if (*copy == '/') {
+	инако ако (*copy == '/') {
 		copy += strspn(copy, "/");
-		if (*copy == '\0')
+		ако (*copy == '\0')
 			path = NULL;			/* ~/ */
-		else
+		инако
 			path = copy;			/* ~/path */
-	} else {
+	} инако {
 		user = copy;
-		if ((path = strchr(copy, '/')) != NULL) {
+		ако ((path = strchr(copy, '/')) != NULL) {
 			copy[path - copy] = '\0';
 			path++;
 			path += strspn(path, "/");
-			if (*path == '\0')		/* ~user/ */
+			ако (*path == '\0')		/* ~user/ */
 				path = NULL;
 			/* else				 ~user/path */
 		}
 		/* else					~user */
 	}
-	if (user != NULL) {
-		if ((pw = getpwnam(user)) == NULL) {
+	ако (user != NULL) {
+		ако ((pw = getpwnam(user)) == NULL) {
 			error_f("No such user %s", user);
 			goto out;
 		}
-	} else if ((pw = getpwuid(uid)) == NULL) {
+	} инако ако ((pw = getpwuid(uid)) == NULL) {
 		error_f("No such uid %ld", (long)uid);
 		goto out;
 	}
@@ -1321,12 +1321,12 @@ tilde_expand(const char *filename, uid_t uid, char **retp)
 	/* Make sure directory has a trailing '/' */
 	slash = (len = strlen(pw->pw_dir)) == 0 || pw->pw_dir[len - 1] != '/';
 
-	if ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
+	ако ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
 	    slash ? "/" : "", path != NULL ? path : "")) <= 0) {
 		error_f("xasprintf failed");
 		goto out;
 	}
-	if (r >= PATH_MAX) {
+	ако (r >= PATH_MAX) {
 		error_f("Path too long");
 		goto out;
 	}
@@ -1337,7 +1337,7 @@ tilde_expand(const char *filename, uid_t uid, char **retp)
  out:
 	free(s);
 	free(ocopy);
-	return ret;
+	врати ret;
 }
 
 char *
@@ -1345,9 +1345,9 @@ tilde_expand_filename(const char *filename, uid_t uid)
 {
 	char *ret;
 
-	if (tilde_expand(filename, uid, &ret) != 0)
+	ако (tilde_expand(filename, uid, &ret) != 0)
 		cleanup_exit(255);
-	return ret;
+	врати ret;
 }
 
 /*
@@ -1358,7 +1358,7 @@ tilde_expand_filename(const char *filename, uid_t uid)
  * xmalloc which the caller must free.
  */
 static char *
-vdollar_percent_expand(int *parseerror, int dollar, int percent,
+vdollar_percent_expand(цео *parseerror, цео dollar, цео percent,
     const char *string, va_list ap)
 {
 #define EXPAND_MAX_KEYS	64
@@ -1368,57 +1368,57 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
 		const char *repl;
 	} keys[EXPAND_MAX_KEYS];
 	struct sshbuf *buf;
-	int r, missingvar = 0;
+	цео r, missingvar = 0;
 	char *ret = NULL, *var, *varend, *val;
 	size_t len;
 
-	if ((buf = sshbuf_new()) == NULL)
+	ако ((buf = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if (parseerror == NULL)
+	ако (parseerror == NULL)
 		fatal_f("null parseerror arg");
 	*parseerror = 1;
 
 	/* Gather keys if we're doing percent expansion. */
-	if (percent) {
-		for (num_keys = 0; num_keys < EXPAND_MAX_KEYS; num_keys++) {
+	ако (percent) {
+		за (num_keys = 0; num_keys < EXPAND_MAX_KEYS; num_keys++) {
 			keys[num_keys].key = va_arg(ap, char *);
-			if (keys[num_keys].key == NULL)
+			ако (keys[num_keys].key == NULL)
 				break;
 			keys[num_keys].repl = va_arg(ap, char *);
-			if (keys[num_keys].repl == NULL) {
+			ако (keys[num_keys].repl == NULL) {
 				fatal_f("NULL replacement for token %s",
 				    keys[num_keys].key);
 			}
 		}
-		if (num_keys == EXPAND_MAX_KEYS && va_arg(ap, char *) != NULL)
+		ако (num_keys == EXPAND_MAX_KEYS && va_arg(ap, char *) != NULL)
 			fatal_f("too many keys");
-		if (num_keys == 0)
+		ако (num_keys == 0)
 			fatal_f("percent expansion without token list");
 	}
 
 	/* Expand string */
-	for (i = 0; *string != '\0'; string++) {
+	за (i = 0; *string != '\0'; string++) {
 		/* Optionally process ${ENVIRONMENT} expansions. */
-		if (dollar && string[0] == '$' && string[1] == '{') {
+		ако (dollar && string[0] == '$' && string[1] == '{') {
 			string += 2;  /* skip over '${' */
-			if ((varend = strchr(string, '}')) == NULL) {
+			ако ((varend = strchr(string, '}')) == NULL) {
 				error_f("environment variable '%s' missing "
 				    "closing '}'", string);
 				goto out;
 			}
 			len = varend - string;
-			if (len == 0) {
+			ако (len == 0) {
 				error_f("zero-length environment variable");
 				goto out;
 			}
 			var = xmalloc(len + 1);
 			(void)strlcpy(var, string, len + 1);
-			if ((val = getenv(var)) == NULL) {
+			ако ((val = getenv(var)) == NULL) {
 				error_f("env var ${%s} has no value", var);
 				missingvar = 1;
-			} else {
+			} инако {
 				debug3_f("expand ${%s} -> '%s'", var, val);
-				if ((r = sshbuf_put(buf, val, strlen(val))) !=0)
+				ако ((r = sshbuf_put(buf, val, strlen(val))) !=0)
 					fatal_fr(r, "sshbuf_put ${}");
 			}
 			free(var);
@@ -1431,39 +1431,39 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
 		 * If we're not doing percent expansion everything just gets
 		 * appended here.
 		 */
-		if (*string != '%' || !percent) {
+		ако (*string != '%' || !percent) {
  append:
-			if ((r = sshbuf_put_u8(buf, *string)) != 0)
+			ако ((r = sshbuf_put_u8(buf, *string)) != 0)
 				fatal_fr(r, "sshbuf_put_u8 %%");
 			continue;
 		}
 		string++;
 		/* %% case */
-		if (*string == '%')
+		ако (*string == '%')
 			goto append;
-		if (*string == '\0') {
+		ако (*string == '\0') {
 			error_f("invalid format");
 			goto out;
 		}
-		for (i = 0; i < num_keys; i++) {
-			if (strchr(keys[i].key, *string) != NULL) {
-				if ((r = sshbuf_put(buf, keys[i].repl,
+		за (i = 0; i < num_keys; i++) {
+			ако (strchr(keys[i].key, *string) != NULL) {
+				ако ((r = sshbuf_put(buf, keys[i].repl,
 				    strlen(keys[i].repl))) != 0)
 					fatal_fr(r, "sshbuf_put %%-repl");
 				break;
 			}
 		}
-		if (i >= num_keys) {
+		ако (i >= num_keys) {
 			error_f("unknown key %%%c", *string);
 			goto out;
 		}
 	}
-	if (!missingvar && (ret = sshbuf_dup_string(buf)) == NULL)
+	ако (!missingvar && (ret = sshbuf_dup_string(buf)) == NULL)
 		fatal_f("sshbuf_dup_string failed");
 	*parseerror = 0;
  out:
 	sshbuf_free(buf);
-	return *parseerror ? NULL : ret;
+	врати *parseerror ? NULL : ret;
 #undef EXPAND_MAX_KEYS
 }
 
@@ -1474,18 +1474,18 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
  */
 
 char *
-dollar_expand(int *parseerr, const char *string, ...)
+dollar_expand(цео *parseerr, const char *string, ...)
 {
 	char *ret;
-	int err;
+	цео err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 0, string, ap);
 	va_end(ap);
-	if (parseerr != NULL)
+	ако (parseerr != NULL)
 		*parseerr = err;
-	return ret;
+	врати ret;
 }
 
 /*
@@ -1496,15 +1496,15 @@ char *
 percent_expand(const char *string, ...)
 {
 	char *ret;
-	int err;
+	цео err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 0, 1, string, ap);
 	va_end(ap);
-	if (err)
+	ако (err)
 		fatal_f("failed");
-	return ret;
+	врати ret;
 }
 
 /*
@@ -1515,115 +1515,115 @@ char *
 percent_dollar_expand(const char *string, ...)
 {
 	char *ret;
-	int err;
+	цео err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 1, string, ap);
 	va_end(ap);
-	if (err)
+	ако (err)
 		fatal_f("failed");
-	return ret;
+	врати ret;
 }
 
-int
-tun_open(int tun, int mode, char **ifname)
+цео
+tun_open(цео tun, цео mode, char **ifname)
 {
-#if defined(CUSTOM_SYS_TUN_OPEN)
-	return (sys_tun_open(tun, mode, ifname));
+#ако defined(CUSTOM_SYS_TUN_OPEN)
+	врати (sys_tun_open(tun, mode, ifname));
 #elif defined(SSH_TUN_OPENBSD)
 	struct ifreq ifr;
 	char name[100];
-	int fd = -1, sock;
+	цео fd = -1, sock;
 	const char *tunbase = "tun";
 
-	if (ifname != NULL)
+	ако (ifname != NULL)
 		*ifname = NULL;
 
-	if (mode == SSH_TUNMODE_ETHERNET)
+	ако (mode == SSH_TUNMODE_ETHERNET)
 		tunbase = "tap";
 
 	/* Open the tunnel device */
-	if (tun <= SSH_TUNID_MAX) {
+	ако (tun <= SSH_TUNID_MAX) {
 		snprintf(name, sizeof(name), "/dev/%s%d", tunbase, tun);
 		fd = open(name, O_RDWR);
-	} else if (tun == SSH_TUNID_ANY) {
-		for (tun = 100; tun >= 0; tun--) {
+	} инако ако (tun == SSH_TUNID_ANY) {
+		за (tun = 100; tun >= 0; tun--) {
 			snprintf(name, sizeof(name), "/dev/%s%d",
 			    tunbase, tun);
-			if ((fd = open(name, O_RDWR)) >= 0)
+			ако ((fd = open(name, O_RDWR)) >= 0)
 				break;
 		}
-	} else {
+	} инако {
 		debug_f("invalid tunnel %u", tun);
-		return -1;
+		врати -1;
 	}
 
-	if (fd == -1) {
+	ако (fd == -1) {
 		debug_f("%s open: %s", name, strerror(errno));
-		return -1;
+		врати -1;
 	}
 
 	debug_f("%s mode %d fd %d", name, mode, fd);
 
 	/* Bring interface up if it is not already */
 	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s%d", tunbase, tun);
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+	ако ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
 		goto failed;
 
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
+	ако (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
 		debug_f("get interface %s flags: %s", ifr.ifr_name,
 		    strerror(errno));
 		goto failed;
 	}
 
-	if (!(ifr.ifr_flags & IFF_UP)) {
+	ако (!(ifr.ifr_flags & IFF_UP)) {
 		ifr.ifr_flags |= IFF_UP;
-		if (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
+		ако (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
 			debug_f("activate interface %s: %s", ifr.ifr_name,
 			    strerror(errno));
 			goto failed;
 		}
 	}
 
-	if (ifname != NULL)
+	ако (ifname != NULL)
 		*ifname = xstrdup(ifr.ifr_name);
 
 	close(sock);
-	return fd;
+	врати fd;
 
  failed:
-	if (fd >= 0)
+	ако (fd >= 0)
 		close(fd);
-	if (sock >= 0)
+	ако (sock >= 0)
 		close(sock);
-	return -1;
-#else
+	врати -1;
+#инако
 	error("Tunnel interfaces are not supported on this platform");
-	return (-1);
+	врати (-1);
 #endif
 }
 
 void
 sanitise_stdfd(void)
 {
-	int nullfd, dupfd;
+	цео nullfd, dupfd;
 
-	if ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	ако ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 		fprintf(stderr, "Couldn't open /dev/null: %s\n",
 		    strerror(errno));
 		exit(1);
 	}
-	while (++dupfd <= STDERR_FILENO) {
+	док (++dupfd <= STDERR_FILENO) {
 		/* Only populate closed fds. */
-		if (fcntl(dupfd, F_GETFL) == -1 && errno == EBADF) {
-			if (dup2(nullfd, dupfd) == -1) {
+		ако (fcntl(dupfd, F_GETFL) == -1 && errno == EBADF) {
+			ако (dup2(nullfd, dupfd) == -1) {
 				fprintf(stderr, "dup2: %s\n", strerror(errno));
 				exit(1);
 			}
 		}
 	}
-	if (nullfd > STDERR_FILENO)
+	ако (nullfd > STDERR_FILENO)
 		close(nullfd);
 }
 
@@ -1634,16 +1634,16 @@ tohex(const void *vp, size_t l)
 	char b[3], *r;
 	size_t i, hl;
 
-	if (l > 65536)
-		return xstrdup("tohex: length > 65536");
+	ако (l > 65536)
+		врати xstrdup("tohex: length > 65536");
 
 	hl = l * 2 + 1;
 	r = xcalloc(1, hl);
-	for (i = 0; i < l; i++) {
+	за (i = 0; i < l; i++) {
 		snprintf(b, sizeof(b), "%02x", p[i]);
 		strlcat(r, b, hl);
 	}
-	return (r);
+	врати (r);
 }
 
 /*
@@ -1661,10 +1661,10 @@ xextendf(char **sp, const char *sep, const char *fmt, ...)
 	xvasprintf(&tmp1, fmt, ap);
 	va_end(ap);
 
-	if (*sp == NULL || **sp == '\0') {
+	ако (*sp == NULL || **sp == '\0') {
 		free(*sp);
 		*sp = tmp1;
-		return;
+		врати;
 	}
 	xasprintf(&tmp2, "%s%s%s", *sp, sep == NULL ? "" : sep, tmp1);
 	free(tmp1);
@@ -1688,7 +1688,7 @@ get_u64(const void *vp)
 	v |= (uint64_t)p[6] << 8;
 	v |= (uint64_t)p[7];
 
-	return (v);
+	врати (v);
 }
 
 uint32_t
@@ -1702,7 +1702,7 @@ get_u32(const void *vp)
 	v |= (uint32_t)p[2] << 8;
 	v |= (uint32_t)p[3];
 
-	return (v);
+	врати (v);
 }
 
 uint32_t
@@ -1716,7 +1716,7 @@ get_u32_le(const void *vp)
 	v |= (uint32_t)p[2] << 16;
 	v |= (uint32_t)p[3] << 24;
 
-	return (v);
+	врати (v);
 }
 
 uint16_t
@@ -1728,7 +1728,7 @@ get_u16(const void *vp)
 	v  = (uint16_t)p[0] << 8;
 	v |= (uint16_t)p[1];
 
-	return (v);
+	врати (v);
 }
 
 void
@@ -1778,7 +1778,7 @@ put_u16(void *vp, uint16_t v)
 }
 
 void
-ms_subtract_diff(struct timeval *start, int *ms)
+ms_subtract_diff(struct timeval *start, цео *ms)
 {
 	struct timeval diff, finish;
 
@@ -1788,9 +1788,9 @@ ms_subtract_diff(struct timeval *start, int *ms)
 }
 
 void
-ms_to_timespec(struct timespec *ts, int ms)
+ms_to_timespec(struct timespec *ts, цео ms)
 {
-	if (ms < 0)
+	ако (ms < 0)
 		ms = 0;
 	ts->tv_sec = ms / 1000;
 	ts->tv_nsec = (ms % 1000) * 1000 * 1000;
@@ -1800,23 +1800,23 @@ void
 monotime_ts(struct timespec *ts)
 {
 	struct timeval tv;
-#if defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
+#ако defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
     defined(CLOCK_MONOTONIC) || defined(CLOCK_REALTIME))
-	static int gettime_failed = 0;
+	static цео gettime_failed = 0;
 
-	if (!gettime_failed) {
+	ако (!gettime_failed) {
 # ifdef CLOCK_BOOTTIME
-		if (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
-			return;
+		ако (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
+			врати;
 # endif /* CLOCK_BOOTTIME */
 # ifdef CLOCK_MONOTONIC
-		if (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
-			return;
+		ако (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
+			врати;
 # endif /* CLOCK_MONOTONIC */
 # ifdef CLOCK_REALTIME
 		/* Not monotonic, but we're almost out of options here. */
-		if (clock_gettime(CLOCK_REALTIME, ts) == 0)
-			return;
+		ако (clock_gettime(CLOCK_REALTIME, ts) == 0)
+			врати;
 # endif /* CLOCK_REALTIME */
 		debug3("clock_gettime: %s", strerror(errno));
 		gettime_failed = 1;
@@ -1843,7 +1843,7 @@ monotime(void)
 	struct timespec ts;
 
 	monotime_ts(&ts);
-	return (ts.tv_sec);
+	врати (ts.tv_sec);
 }
 
 double
@@ -1852,7 +1852,7 @@ monotime_double(void)
 	struct timespec ts;
 
 	monotime_ts(&ts);
-	return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
+	врати (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
 }
 
 void
@@ -1874,17 +1874,17 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
 	struct timespec ts, rm;
 
 	bw->lamt += read_len;
-	if (!timerisset(&bw->bwstart)) {
+	ако (!timerisset(&bw->bwstart)) {
 		monotime_tv(&bw->bwstart);
-		return;
+		врати;
 	}
-	if (bw->lamt < bw->thresh)
-		return;
+	ако (bw->lamt < bw->thresh)
+		врати;
 
 	monotime_tv(&bw->bwend);
 	timersub(&bw->bwend, &bw->bwstart, &bw->bwend);
-	if (!timerisset(&bw->bwend))
-		return;
+	ако (!timerisset(&bw->bwend))
+		врати;
 
 	bw->lamt *= 8;
 	waitlen = (double)1000000L * bw->lamt / bw->rate;
@@ -1892,23 +1892,23 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
 	bw->bwstart.tv_sec = waitlen / 1000000L;
 	bw->bwstart.tv_usec = waitlen % 1000000L;
 
-	if (timercmp(&bw->bwstart, &bw->bwend, >)) {
+	ако (timercmp(&bw->bwstart, &bw->bwend, >)) {
 		timersub(&bw->bwstart, &bw->bwend, &bw->bwend);
 
 		/* Adjust the wait time */
-		if (bw->bwend.tv_sec) {
+		ако (bw->bwend.tv_sec) {
 			bw->thresh /= 2;
-			if (bw->thresh < bw->buflen / 4)
+			ако (bw->thresh < bw->buflen / 4)
 				bw->thresh = bw->buflen / 4;
-		} else if (bw->bwend.tv_usec < 10000) {
+		} инако ако (bw->bwend.tv_usec < 10000) {
 			bw->thresh *= 2;
-			if (bw->thresh > bw->buflen * 8)
+			ако (bw->thresh > bw->buflen * 8)
 				bw->thresh = bw->buflen * 8;
 		}
 
 		TIMEVAL_TO_TIMESPEC(&bw->bwend, &ts);
-		while (nanosleep(&ts, &rm) == -1) {
-			if (errno != EINTR)
+		док (nanosleep(&ts, &rm) == -1) {
+			ако (errno != EINTR)
 				break;
 			ts = rm;
 		}
@@ -1923,21 +1923,21 @@ void
 mktemp_proto(char *s, size_t len)
 {
 	const char *tmpdir;
-	int r;
+	цео r;
 
-	if ((tmpdir = getenv("TMPDIR")) != NULL) {
+	ако ((tmpdir = getenv("TMPDIR")) != NULL) {
 		r = snprintf(s, len, "%s/ssh-XXXXXXXXXXXX", tmpdir);
-		if (r > 0 && (size_t)r < len)
-			return;
+		ако (r > 0 && (size_t)r < len)
+			врати;
 	}
 	r = snprintf(s, len, "/tmp/ssh-XXXXXXXXXXXX");
-	if (r < 0 || (size_t)r >= len)
+	ако (r < 0 || (size_t)r >= len)
 		fatal_f("template string too short");
 }
 
 static const struct {
 	const char *name;
-	int value;
+	цео value;
 } ipqos[] = {
 	{ "none", INT_MAX },		/* can't use 0 here; that's CS0 */
 	{ "af11", IPTOS_DSCP_AF11 },
@@ -1969,99 +1969,99 @@ static const struct {
 	{ NULL, -1 }
 };
 
-int
+цео
 parse_ipqos(const char *cp)
 {
 	const char *errstr;
 	u_int i;
-	int val;
+	цео val;
 
-	if (cp == NULL)
-		return -1;
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (strcasecmp(cp, ipqos[i].name) == 0)
-			return ipqos[i].value;
+	ако (cp == NULL)
+		врати -1;
+	за (i = 0; ipqos[i].name != NULL; i++) {
+		ако (strcasecmp(cp, ipqos[i].name) == 0)
+			врати ipqos[i].value;
 	}
 	/* Try parsing as an integer */
-	val = (int)strtonum(cp, 0, 255, &errstr);
-	if (errstr)
-		return -1;
-	return val;
+	val = (цео)strtonum(cp, 0, 255, &errstr);
+	ако (errstr)
+		врати -1;
+	врати val;
 }
 
 const char *
-iptos2str(int iptos)
+iptos2str(цео iptos)
 {
-	int i;
+	цео i;
 	static char iptos_str[sizeof "0xff"];
 
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (ipqos[i].value == iptos)
-			return ipqos[i].name;
+	за (i = 0; ipqos[i].name != NULL; i++) {
+		ако (ipqos[i].value == iptos)
+			врати ipqos[i].name;
 	}
 	snprintf(iptos_str, sizeof iptos_str, "0x%02x", iptos);
-	return iptos_str;
+	врати iptos_str;
 }
 
 void
 lowercase(char *s)
 {
-	for (; *s; s++)
+	за (; *s; s++)
 		*s = tolower((u_char)*s);
 }
 
-int
-unix_listener(const char *path, int backlog, int unlink_first)
+цео
+unix_listener(const char *path, цео backlog, цео unlink_first)
 {
 	struct sockaddr_un sunaddr;
-	int saved_errno, sock;
+	цео saved_errno, sock;
 
 	memset(&sunaddr, 0, sizeof(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	if (strlcpy(sunaddr.sun_path, path,
+	ако (strlcpy(sunaddr.sun_path, path,
 	    sizeof(sunaddr.sun_path)) >= sizeof(sunaddr.sun_path)) {
 		error_f("path \"%s\" too long for Unix domain socket", path);
 		errno = ENAMETOOLONG;
-		return -1;
+		врати -1;
 	}
 
 	sock = socket(PF_UNIX, SOCK_STREAM, 0);
-	if (sock == -1) {
+	ако (sock == -1) {
 		saved_errno = errno;
 		error_f("socket: %.100s", strerror(errno));
 		errno = saved_errno;
-		return -1;
+		врати -1;
 	}
-	if (unlink_first == 1) {
-		if (unlink(path) != 0 && errno != ENOENT)
+	ако (unlink_first == 1) {
+		ако (unlink(path) != 0 && errno != ENOENT)
 			error("unlink(%s): %.100s", path, strerror(errno));
 	}
-	if (bind(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
+	ако (bind(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
 		saved_errno = errno;
 		error_f("cannot bind to path %s: %s", path, strerror(errno));
 		close(sock);
 		errno = saved_errno;
-		return -1;
+		врати -1;
 	}
-	if (listen(sock, backlog) == -1) {
+	ако (listen(sock, backlog) == -1) {
 		saved_errno = errno;
 		error_f("cannot listen on path %s: %s", path, strerror(errno));
 		close(sock);
 		unlink(path);
 		errno = saved_errno;
-		return -1;
+		врати -1;
 	}
-	return sock;
+	врати sock;
 }
 
 void
-sock_set_v6only(int s)
+sock_set_v6only(цео s)
 {
-#if defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
-	int on = 1;
+#ако defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
+	цео on = 1;
 
 	debug3_f("set socket %d IPV6_V6ONLY", s);
-	if (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) == -1)
+	ако (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) == -1)
 		error("setsockopt IPV6_V6ONLY: %s", strerror(errno));
 #endif
 }
@@ -2070,68 +2070,68 @@ sock_set_v6only(int s)
  * Compares two strings that maybe be NULL. Returns non-zero if strings
  * are both NULL or are identical, returns zero otherwise.
  */
-static int
+static цео
 strcmp_maybe_null(const char *a, const char *b)
 {
-	if ((a == NULL && b != NULL) || (a != NULL && b == NULL))
-		return 0;
-	if (a != NULL && strcmp(a, b) != 0)
-		return 0;
-	return 1;
+	ако ((a == NULL && b != NULL) || (a != NULL && b == NULL))
+		врати 0;
+	ако (a != NULL && strcmp(a, b) != 0)
+		врати 0;
+	врати 1;
 }
 
 /*
  * Compare two forwards, returning non-zero if they are identical or
  * zero otherwise.
  */
-int
+цео
 forward_equals(const struct Forward *a, const struct Forward *b)
 {
-	if (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
-		return 0;
-	if (a->listen_port != b->listen_port)
-		return 0;
-	if (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
-		return 0;
-	if (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
-		return 0;
-	if (a->connect_port != b->connect_port)
-		return 0;
-	if (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
-		return 0;
+	ако (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
+		врати 0;
+	ако (a->listen_port != b->listen_port)
+		врати 0;
+	ако (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
+		врати 0;
+	ако (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
+		врати 0;
+	ако (a->connect_port != b->connect_port)
+		врати 0;
+	ако (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
+		врати 0;
 	/* allocated_port and handle are not checked */
-	return 1;
+	врати 1;
 }
 
 /* returns port number, FWD_PERMIT_ANY_PORT or -1 on error */
-int
+цео
 permitopen_port(const char *p)
 {
-	int port;
+	цео port;
 
-	if (strcmp(p, "*") == 0)
-		return FWD_PERMIT_ANY_PORT;
-	if ((port = a2port(p)) > 0)
-		return port;
-	return -1;
+	ако (strcmp(p, "*") == 0)
+		врати FWD_PERMIT_ANY_PORT;
+	ако ((port = a2port(p)) > 0)
+		врати port;
+	врати -1;
 }
 
 /* returns 1 if process is already daemonized, 0 otherwise */
-int
+цео
 daemonized(void)
 {
-	int fd;
+	цео fd;
 
-	if ((fd = open(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
+	ако ((fd = open(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
 		close(fd);
-		return 0;	/* have controlling terminal */
+		врати 0;	/* have controlling terminal */
 	}
-	if (getppid() != 1)
-		return 0;	/* parent is not init */
-	if (getsid(0) != getpid())
-		return 0;	/* not session leader */
+	ако (getppid() != 1)
+		врати 0;	/* parent is not init */
+	ако (getsid(0) != getpid())
+		врати 0;	/* not session leader */
 	debug3("already daemonized");
-	return 1;
+	врати 1;
 }
 
 /*
@@ -2139,21 +2139,21 @@ daemonized(void)
  * escape characters (\\, \", \'). Caller must free the argument vector
  * and its members.
  */
-int
-argv_split(const char *s, int *argcp, char ***argvp, int terminate_on_comment)
+цео
+argv_split(const char *s, цео *argcp, char ***argvp, цео terminate_on_comment)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int argc = 0, quote, i, j;
+	цео r = SSH_ERR_INTERNAL_ERROR;
+	цео argc = 0, quote, i, j;
 	char *arg, **argv = xcalloc(1, sizeof(*argv));
 
 	*argvp = NULL;
 	*argcp = 0;
 
-	for (i = 0; s[i] != '\0'; i++) {
+	за (i = 0; s[i] != '\0'; i++) {
 		/* Skip leading whitespace */
-		if (s[i] == ' ' || s[i] == '\t')
+		ако (s[i] == ' ' || s[i] == '\t')
 			continue;
-		if (terminate_on_comment && s[i] == '#')
+		ако (terminate_on_comment && s[i] == '#')
 			break;
 		/* Start of a token */
 		quote = 0;
@@ -2163,29 +2163,29 @@ argv_split(const char *s, int *argcp, char ***argvp, int terminate_on_comment)
 		argv[argc] = NULL;
 
 		/* Copy the token in, removing escapes */
-		for (j = 0; s[i] != '\0'; i++) {
-			if (s[i] == '\\') {
-				if (s[i + 1] == '\'' ||
+		за (j = 0; s[i] != '\0'; i++) {
+			ако (s[i] == '\\') {
+				ако (s[i + 1] == '\'' ||
 				    s[i + 1] == '\"' ||
 				    s[i + 1] == '\\' ||
 				    (quote == 0 && s[i + 1] == ' ')) {
 					i++; /* Skip '\' */
 					arg[j++] = s[i];
-				} else {
+				} инако {
 					/* Unrecognised escape */
 					arg[j++] = s[i];
 				}
-			} else if (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
+			} инако ако (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
 				break; /* done */
-			else if (quote == 0 && (s[i] == '\"' || s[i] == '\''))
+			инако ако (quote == 0 && (s[i] == '\"' || s[i] == '\''))
 				quote = s[i]; /* quote start */
-			else if (quote != 0 && s[i] == quote)
+			инако ако (quote != 0 && s[i] == quote)
 				quote = 0; /* quote end */
-			else
+			инако
 				arg[j++] = s[i];
 		}
-		if (s[i] == '\0') {
-			if (quote != 0) {
+		ако (s[i] == '\0') {
+			ако (quote != 0) {
 				/* Ran out of string looking for close quote */
 				r = SSH_ERR_INVALID_FORMAT;
 				goto out;
@@ -2200,12 +2200,12 @@ argv_split(const char *s, int *argcp, char ***argvp, int terminate_on_comment)
 	argv = NULL;
 	r = 0;
  out:
-	if (argc != 0 && argv != NULL) {
-		for (i = 0; i < argc; i++)
+	ако (argc != 0 && argv != NULL) {
+		за (i = 0; i < argc; i++)
 			free(argv[i]);
 		free(argv);
 	}
-	return r;
+	врати r;
 }
 
 /*
@@ -2213,19 +2213,19 @@ argv_split(const char *s, int *argcp, char ***argvp, int terminate_on_comment)
  * necessary. Caller must free returned string.
  */
 char *
-argv_assemble(int argc, char **argv)
+argv_assemble(цео argc, char **argv)
 {
-	int i, j, ws, r;
+	цео i, j, ws, r;
 	char c, *ret;
 	struct sshbuf *buf, *arg;
 
-	if ((buf = sshbuf_new()) == NULL || (arg = sshbuf_new()) == NULL)
+	ако ((buf = sshbuf_new()) == NULL || (arg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
-	for (i = 0; i < argc; i++) {
+	за (i = 0; i < argc; i++) {
 		ws = 0;
 		sshbuf_reset(arg);
-		for (j = 0; argv[i][j] != '\0'; j++) {
+		за (j = 0; argv[i][j] != '\0'; j++) {
 			r = 0;
 			c = argv[i][j];
 			switch (c) {
@@ -2237,82 +2237,82 @@ argv_assemble(int argc, char **argv)
 			case '\\':
 			case '\'':
 			case '"':
-				if ((r = sshbuf_put_u8(arg, '\\')) != 0)
+				ако ((r = sshbuf_put_u8(arg, '\\')) != 0)
 					break;
 				/* FALLTHROUGH */
 			default:
 				r = sshbuf_put_u8(arg, c);
 				break;
 			}
-			if (r != 0)
+			ако (r != 0)
 				fatal_fr(r, "sshbuf_put_u8");
 		}
-		if ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
+		ако ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0) ||
 		    (r = sshbuf_putb(buf, arg)) != 0 ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0))
 			fatal_fr(r, "assemble");
 	}
-	if ((ret = malloc(sshbuf_len(buf) + 1)) == NULL)
+	ако ((ret = malloc(sshbuf_len(buf) + 1)) == NULL)
 		fatal_f("malloc failed");
 	memcpy(ret, sshbuf_ptr(buf), sshbuf_len(buf));
 	ret[sshbuf_len(buf)] = '\0';
 	sshbuf_free(buf);
 	sshbuf_free(arg);
-	return ret;
+	врати ret;
 }
 
 char *
-argv_next(int *argcp, char ***argvp)
+argv_next(цео *argcp, char ***argvp)
 {
 	char *ret = (*argvp)[0];
 
-	if (*argcp > 0 && ret != NULL) {
+	ако (*argcp > 0 && ret != NULL) {
 		(*argcp)--;
 		(*argvp)++;
 	}
-	return ret;
+	врати ret;
 }
 
 void
-argv_consume(int *argcp)
+argv_consume(цео *argcp)
 {
 	*argcp = 0;
 }
 
 void
-argv_free(char **av, int ac)
+argv_free(char **av, цео ac)
 {
-	int i;
+	цео i;
 
-	if (av == NULL)
-		return;
-	for (i = 0; i < ac; i++)
+	ако (av == NULL)
+		врати;
+	за (i = 0; i < ac; i++)
 		free(av[i]);
 	free(av);
 }
 
 /* Returns 0 if pid exited cleanly, non-zero otherwise */
-int
-exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
+цео
+exited_cleanly(pid_t pid, const char *tag, const char *cmd, цео quiet)
 {
-	int status;
+	цео status;
 
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR) {
+	док (waitpid(pid, &status, 0) == -1) {
+		ако (errno != EINTR) {
 			error("%s waitpid: %s", tag, strerror(errno));
-			return -1;
+			врати -1;
 		}
 	}
-	if (WIFSIGNALED(status)) {
+	ако (WIFSIGNALED(status)) {
 		error("%s %s exited on signal %d", tag, cmd, WTERMSIG(status));
-		return -1;
-	} else if (WEXITSTATUS(status) != 0) {
+		врати -1;
+	} инако ако (WEXITSTATUS(status) != 0) {
 		do_log2(quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_INFO,
 		    "%s %s failed, status %d", tag, cmd, WEXITSTATUS(status));
-		return -1;
+		врати -1;
 	}
-	return 0;
+	врати 0;
 }
 
 /*
@@ -2328,67 +2328,67 @@ exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
  *
  * Returns 0 on success and -1 on failure
  */
-int
+цео
 safe_path(const char *name, struct stat *stp, const char *pw_dir,
     uid_t uid, char *err, size_t errlen)
 {
 	char buf[PATH_MAX], buf2[PATH_MAX], homedir[PATH_MAX];
 	char *cp;
-	int comparehome = 0;
+	цео comparehome = 0;
 	struct stat st;
 
-	if (realpath(name, buf) == NULL) {
+	ако (realpath(name, buf) == NULL) {
 		snprintf(err, errlen, "realpath %s failed: %s", name,
 		    strerror(errno));
-		return -1;
+		врати -1;
 	}
-	if (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
+	ако (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
 		comparehome = 1;
 
-	if (!S_ISREG(stp->st_mode)) {
+	ако (!S_ISREG(stp->st_mode)) {
 		snprintf(err, errlen, "%s is not a regular file", buf);
-		return -1;
+		врати -1;
 	}
-	if ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
+	ако ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
 	    (stp->st_mode & 022) != 0) {
 		snprintf(err, errlen, "bad ownership or modes for file %s",
 		    buf);
-		return -1;
+		врати -1;
 	}
 
 	/* for each component of the canonical path, walking upwards */
-	for (;;) {
+	за (;;) {
 		/*
 		 * POSIX allows dirname to modify its argument and return a
 		 * pointer into it, so make a copy to avoid overlapping strlcpy.
 		 */
 		strlcpy(buf2, buf, sizeof(buf2));
-		if ((cp = dirname(buf2)) == NULL) {
+		ако ((cp = dirname(buf2)) == NULL) {
 			snprintf(err, errlen, "dirname() failed");
-			return -1;
+			врати -1;
 		}
 		strlcpy(buf, cp, sizeof(buf));
 
-		if (stat(buf, &st) == -1 ||
+		ако (stat(buf, &st) == -1 ||
 		    (!platform_sys_dir_uid(st.st_uid) && st.st_uid != uid) ||
 		    (st.st_mode & 022) != 0) {
 			snprintf(err, errlen,
 			    "bad ownership or modes for directory %s", buf);
-			return -1;
+			врати -1;
 		}
 
 		/* If are past the homedir then we can stop */
-		if (comparehome && strcmp(homedir, buf) == 0)
+		ако (comparehome && strcmp(homedir, buf) == 0)
 			break;
 
 		/*
 		 * dirname should always complete with a "/" path,
 		 * but we can be paranoid and check for "." too
 		 */
-		if ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
+		ако ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
 			break;
 	}
-	return 0;
+	врати 0;
 }
 
 /*
@@ -2397,19 +2397,19 @@ safe_path(const char *name, struct stat *stp, const char *pw_dir,
  *
  * Returns 0 on success and -1 on failure
  */
-int
-safe_path_fd(int fd, const char *file, struct passwd *pw,
+цео
+safe_path_fd(цео fd, const char *file, struct passwd *pw,
     char *err, size_t errlen)
 {
 	struct stat st;
 
 	/* check the open file to avoid races */
-	if (fstat(fd, &st) == -1) {
+	ако (fstat(fd, &st) == -1) {
 		snprintf(err, errlen, "cannot stat file %s: %s",
 		    file, strerror(errno));
-		return -1;
+		врати -1;
 	}
-	return safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
+	врати safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
 }
 
 /*
@@ -2424,18 +2424,18 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
 	u_int envsize;
 	u_int i, namelen;
 
-	if (strchr(name, '=') != NULL) {
+	ако (strchr(name, '=') != NULL) {
 		error("Invalid environment variable \"%.100s\"", name);
-		return;
+		врати;
 	}
 
 	/*
 	 * If we're passed an uninitialized list, allocate a single null
 	 * entry before continuing.
 	 */
-	if ((*envp == NULL) != (*envsizep == 0))
+	ако ((*envp == NULL) != (*envsizep == 0))
 		fatal_f("environment size mismatch");
-	if (*envp == NULL && *envsizep == 0) {
+	ако (*envp == NULL && *envsizep == 0) {
 		*envp = xmalloc(sizeof(char *));
 		*envp[0] = NULL;
 		*envsizep = 1;
@@ -2448,17 +2448,17 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
 	 */
 	env = *envp;
 	namelen = strlen(name);
-	for (i = 0; env[i]; i++)
-		if (strncmp(env[i], name, namelen) == 0 && env[i][namelen] == '=')
+	за (i = 0; env[i]; i++)
+		ако (strncmp(env[i], name, namelen) == 0 && env[i][namelen] == '=')
 			break;
-	if (env[i]) {
+	ако (env[i]) {
 		/* Reuse the slot. */
 		free(env[i]);
-	} else {
+	} инако {
 		/* New variable.  Expand if necessary. */
 		envsize = *envsizep;
-		if (i >= envsize - 1) {
-			if (envsize >= 1000)
+		ако (i >= envsize - 1) {
+			ако (envsize >= 1000)
 				fatal("child_set_env: too many env vars");
 			envsize += 50;
 			env = (*envp) = xreallocarray(env, envsize, sizeof(char *));
@@ -2478,33 +2478,33 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
  * Check and optionally lowercase a domain name, also removes trailing '.'
  * Returns 1 on success and 0 on failure, storing an error message in errstr.
  */
-int
-valid_domain(char *name, int makelower, const char **errstr)
+цео
+valid_domain(char *name, цео makelower, const char **errstr)
 {
 	size_t i, l = strlen(name);
 	u_char c, last = '\0';
 	static char errbuf[256];
 
-	if (l == 0) {
+	ако (l == 0) {
 		strlcpy(errbuf, "empty domain name", sizeof(errbuf));
 		goto bad;
 	}
-	if (!isalpha((u_char)name[0]) && !isdigit((u_char)name[0]) &&
+	ако (!isalpha((u_char)name[0]) && !isdigit((u_char)name[0]) &&
 	   name[0] != '_' /* technically invalid, but common */) {
 		snprintf(errbuf, sizeof(errbuf), "domain name \"%.100s\" "
 		    "starts with invalid character", name);
 		goto bad;
 	}
-	for (i = 0; i < l; i++) {
+	за (i = 0; i < l; i++) {
 		c = tolower((u_char)name[i]);
-		if (makelower)
+		ако (makelower)
 			name[i] = (char)c;
-		if (last == '.' && c == '.') {
+		ако (last == '.' && c == '.') {
 			snprintf(errbuf, sizeof(errbuf), "domain name "
 			    "\"%.100s\" contains consecutive separators", name);
 			goto bad;
 		}
-		if (c != '.' && c != '-' && !isalnum(c) &&
+		ако (c != '.' && c != '-' && !isalnum(c) &&
 		    c != '_') /* technically invalid, but common */ {
 			snprintf(errbuf, sizeof(errbuf), "domain name "
 			    "\"%.100s\" contains invalid characters", name);
@@ -2512,15 +2512,15 @@ valid_domain(char *name, int makelower, const char **errstr)
 		}
 		last = c;
 	}
-	if (name[l - 1] == '.')
+	ако (name[l - 1] == '.')
 		name[l - 1] = '\0';
-	if (errstr != NULL)
+	ако (errstr != NULL)
 		*errstr = NULL;
-	return 1;
+	врати 1;
 bad:
-	if (errstr != NULL)
+	ако (errstr != NULL)
 		*errstr = errbuf;
-	return 0;
+	врати 0;
 }
 
 /*
@@ -2528,32 +2528,32 @@ bad:
  * valid; consisting of one or more alphanumeric or underscore characters only.
  * Returns 1 on valid, 0 otherwise.
  */
-int
+цео
 valid_env_name(const char *name)
 {
 	const char *cp;
 
-	if (name[0] == '\0')
-		return 0;
-	for (cp = name; *cp != '\0'; cp++) {
-		if (!isalnum((u_char)*cp) && *cp != '_')
-			return 0;
+	ако (name[0] == '\0')
+		врати 0;
+	за (cp = name; *cp != '\0'; cp++) {
+		ако (!isalnum((u_char)*cp) && *cp != '_')
+			врати 0;
 	}
-	return 1;
+	врати 1;
 }
 
 const char *
-atoi_err(const char *nptr, int *val)
+atoi_err(const char *nptr, цео *val)
 {
 	const char *errstr = NULL;
 
-	if (nptr == NULL || *nptr == '\0')
-		return "missing";
+	ако (nptr == NULL || *nptr == '\0')
+		врати "missing";
 	*val = strtonum(nptr, 0, INT_MAX, &errstr);
-	return errstr;
+	врати errstr;
 }
 
-int
+цео
 parse_absolute_time(const char *s, uint64_t *tp)
 {
 	struct tm tm;
@@ -2561,15 +2561,15 @@ parse_absolute_time(const char *s, uint64_t *tp)
 	char buf[32], *fmt;
 	const char *cp;
 	size_t l;
-	int is_utc = 0;
+	цео is_utc = 0;
 
 	*tp = 0;
 
 	l = strlen(s);
-	if (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
+	ако (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
 		is_utc = 1;
 		l--;
-	} else if (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
+	} инако ако (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
 		is_utc = 1;
 		l -= 3;
 	}
@@ -2594,25 +2594,25 @@ parse_absolute_time(const char *s, uint64_t *tp)
 		    s, s + 4, s + 6, s + 8, s + 10, s + 12);
 		break;
 	default:
-		return SSH_ERR_INVALID_FORMAT;
+		врати SSH_ERR_INVALID_FORMAT;
 	}
 
 	memset(&tm, 0, sizeof(tm));
-	if ((cp = strptime(buf, fmt, &tm)) == NULL || *cp != '\0')
-		return SSH_ERR_INVALID_FORMAT;
-	if (is_utc) {
+	ако ((cp = strptime(buf, fmt, &tm)) == NULL || *cp != '\0')
+		врати SSH_ERR_INVALID_FORMAT;
+	ако (is_utc) {
 		tm.tm_wday = -1;	/* sentinel for error */
-		if ((tt = timegm(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
-	} else {
+		ако ((tt = timegm(&tm)) == -1 && tm.tm_wday == -1)
+			врати SSH_ERR_INVALID_FORMAT;
+	} инако {
 		tm.tm_wday = -1;	/* sentinel for error */
 		tm.tm_isdst = -1;	/* mktime decides DST */
-		if ((tt = mktime(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
+		ако ((tt = mktime(&tm)) == -1 && tm.tm_wday == -1)
+			врати SSH_ERR_INVALID_FORMAT;
 	}
 	/* success */
 	*tp = (uint64_t)tt;
-	return 0;
+	врати 0;
 }
 
 void
@@ -2621,9 +2621,9 @@ format_absolute_time(uint64_t t, char *buf, size_t len)
 	time_t tt = t > SSH_TIME_T_MAX ? SSH_TIME_T_MAX : t;
 	struct tm tm;
 
-	if (localtime_r(&tt, &tm) == NULL)
+	ако (localtime_r(&tt, &tm) == NULL)
 		strlcpy(buf, "UNKNOWN-TIME", len);
-	else
+	инако
 		strftime(buf, len, "%Y-%m-%dT%H:%M:%S", &tm);
 }
 
@@ -2632,43 +2632,43 @@ format_absolute_time(uint64_t t, char *buf, size_t len)
  * Returns 0 on success or non-zero on failure.
  * Caller must free *typep.
  */
-int
+цео
 parse_pattern_interval(const char *s, char **typep, double *secsp)
 {
 	char *cp, *sdup;
 	double secs;
 
-	if (typep != NULL)
+	ако (typep != NULL)
 		*typep = NULL;
-	if (secsp != NULL)
+	ако (secsp != NULL)
 		*secsp = 0;
-	if (s == NULL)
-		return -1;
+	ако (s == NULL)
+		врати -1;
 	sdup = xstrdup(s);
 
-	if ((cp = strchr(sdup, '=')) == NULL || cp == sdup) {
+	ако ((cp = strchr(sdup, '=')) == NULL || cp == sdup) {
 		free(sdup);
-		return -1;
+		врати -1;
 	}
 	*cp++ = '\0';
-	if ((secs = convtime_double(cp)) < 0.0) {
+	ако ((secs = convtime_double(cp)) < 0.0) {
 		free(sdup);
-		return -1;
+		врати -1;
 	}
 	/* success */
-	if (typep != NULL)
+	ако (typep != NULL)
 		*typep = xstrdup(sdup);
-	if (secsp != NULL)
+	ако (secsp != NULL)
 		*secsp = secs;
 	free(sdup);
-	return 0;
+	врати 0;
 }
 
 /* check if path is absolute */
-int
+цео
 path_absolute(const char *path)
 {
-	return (*path == '/') ? 1 : 0;
+	врати (*path == '/') ? 1 : 0;
 }
 
 void
@@ -2676,7 +2676,7 @@ skip_space(char **cpp)
 {
 	char *cp;
 
-	for (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
+	за (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
 		;
 	*cpp = cp;
 }
@@ -2690,22 +2690,22 @@ skip_space(char **cpp)
  * If the option or negated option matches, then *optsp is updated to
  * point to the first character after the option.
  */
-int
-opt_flag(const char *opt, int allow_negate, const char **optsp)
+цео
+opt_flag(const char *opt, цео allow_negate, const char **optsp)
 {
 	size_t opt_len = strlen(opt);
 	const char *opts = *optsp;
-	int negate = 0;
+	цео negate = 0;
 
-	if (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
+	ако (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
 		opts += 3;
 		negate = 1;
 	}
-	if (strncasecmp(opts, opt, opt_len) == 0) {
+	ако (strncasecmp(opts, opt, opt_len) == 0) {
 		*optsp = opts + opt_len;
-		return negate ? 0 : 1;
+		врати negate ? 0 : 1;
 	}
-	return -1;
+	врати -1;
 }
 
 char *
@@ -2716,51 +2716,51 @@ opt_dequote(const char **sp, const char **errstrp)
 	size_t i;
 
 	*errstrp = NULL;
-	if (*s != '"') {
+	ако (*s != '"') {
 		*errstrp = "missing start quote";
-		return NULL;
+		врати NULL;
 	}
 	s++;
-	if ((ret = malloc(strlen((s)) + 1)) == NULL) {
+	ако ((ret = malloc(strlen((s)) + 1)) == NULL) {
 		*errstrp = "memory allocation failed";
-		return NULL;
+		врати NULL;
 	}
-	for (i = 0; *s != '\0' && *s != '"';) {
-		if (s[0] == '\\' && s[1] == '"')
+	за (i = 0; *s != '\0' && *s != '"';) {
+		ако (s[0] == '\\' && s[1] == '"')
 			s++;
 		ret[i++] = *s++;
 	}
-	if (*s == '\0') {
+	ако (*s == '\0') {
 		*errstrp = "missing end quote";
 		free(ret);
-		return NULL;
+		врати NULL;
 	}
 	ret[i] = '\0';
 	s++;
 	*sp = s;
-	return ret;
+	врати ret;
 }
 
-int
+цео
 opt_match(const char **opts, const char *term)
 {
-	if (strncasecmp((*opts), term, strlen(term)) == 0 &&
+	ако (strncasecmp((*opts), term, strlen(term)) == 0 &&
 	    (*opts)[strlen(term)] == '=') {
 		*opts += strlen(term) + 1;
-		return 1;
+		врати 1;
 	}
-	return 0;
+	врати 0;
 }
 
 void
-opt_array_append2(const char *file, const int line, const char *directive,
-    char ***array, int **iarray, u_int *lp, const char *s, int i)
+opt_array_append2(const char *file, const цео line, const char *directive,
+    char ***array, цео **iarray, u_int *lp, const char *s, цео i)
 {
 
-	if (*lp >= INT_MAX)
+	ако (*lp >= INT_MAX)
 		fatal("%s line %d: Too many %s entries", file, line, directive);
 
-	if (iarray != NULL) {
+	ако (iarray != NULL) {
 		*iarray = xrecallocarray(*iarray, *lp, *lp + 1,
 		    sizeof(**iarray));
 		(*iarray)[*lp] = i;
@@ -2772,27 +2772,27 @@ opt_array_append2(const char *file, const int line, const char *directive,
 }
 
 void
-opt_array_append(const char *file, const int line, const char *directive,
+opt_array_append(const char *file, const цео line, const char *directive,
     char ***array, u_int *lp, const char *s)
 {
 	opt_array_append2(file, line, directive, array, NULL, lp, s, 0);
 }
 
 void
-opt_array_free2(char **array, int **iarray, u_int l)
+opt_array_free2(char **array, цео **iarray, u_int l)
 {
 	u_int i;
 
-	if (array == NULL || l == 0)
-		return;
-	for (i = 0; i < l; i++)
+	ако (array == NULL || l == 0)
+		врати;
+	за (i = 0; i < l; i++)
 		free(array[i]);
 	free(array);
 	free(iarray);
 }
 
 sshsig_t
-ssh_signal(int signum, sshsig_t handler)
+ssh_signal(цео signum, sshsig_t handler)
 {
 	struct sigaction sa, osa;
 
@@ -2800,36 +2800,36 @@ ssh_signal(int signum, sshsig_t handler)
 	memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = handler;
 	sigfillset(&sa.sa_mask);
-#if defined(SA_RESTART) && !defined(NO_SA_RESTART)
-	if (signum != SIGALRM)
+#ако defined(SA_RESTART) && !defined(NO_SA_RESTART)
+	ако (signum != SIGALRM)
 		sa.sa_flags = SA_RESTART;
 #endif
-	if (sigaction(signum, &sa, &osa) == -1) {
+	ако (sigaction(signum, &sa, &osa) == -1) {
 		debug3("sigaction(%s): %s", strsignal(signum), strerror(errno));
-		return SIG_ERR;
+		врати SIG_ERR;
 	}
-	return osa.sa_handler;
+	врати osa.sa_handler;
 }
 
-int
-stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
+цео
+stdfd_devnull(цео do_stdin, цео do_stdout, цео do_stderr)
 {
-	int devnull, ret = 0;
+	цео devnull, ret = 0;
 
-	if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	ако ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 		error_f("open %s: %s", _PATH_DEVNULL,
 		    strerror(errno));
-		return -1;
+		врати -1;
 	}
-	if ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
+	ако ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
 	    (do_stdout && dup2(devnull, STDOUT_FILENO) == -1) ||
 	    (do_stderr && dup2(devnull, STDERR_FILENO) == -1)) {
 		error_f("dup2: %s", strerror(errno));
 		ret = -1;
 	}
-	if (devnull > STDERR_FILENO)
+	ако (devnull > STDERR_FILENO)
 		close(devnull);
-	return ret;
+	врати ret;
 }
 
 /*
@@ -2843,72 +2843,72 @@ stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
  */
 pid_t
 subprocess(const char *tag, const char *command,
-    int ac, char **av, FILE **child, u_int flags,
+    цео ac, char **av, FILE **child, u_int flags,
     struct passwd *pw, privdrop_fn *drop_privs, privrestore_fn *restore_privs)
 {
 	FILE *f = NULL;
 	struct stat st;
-	int fd, devnull, p[2], i;
+	цео fd, devnull, p[2], i;
 	pid_t pid;
 	char *cp, errmsg[512];
 	u_int nenv = 0;
 	char **env = NULL;
 
 	/* If dropping privs, then must specify user and restore function */
-	if (drop_privs != NULL && (pw == NULL || restore_privs == NULL)) {
+	ако (drop_privs != NULL && (pw == NULL || restore_privs == NULL)) {
 		error("%s: inconsistent arguments", tag); /* XXX fatal? */
-		return 0;
+		врати 0;
 	}
-	if (pw == NULL && (pw = getpwuid(getuid())) == NULL) {
+	ако (pw == NULL && (pw = getpwuid(getuid())) == NULL) {
 		error("%s: no user for current uid", tag);
-		return 0;
+		врати 0;
 	}
-	if (child != NULL)
+	ако (child != NULL)
 		*child = NULL;
 
 	debug3_f("%s command \"%s\" running as %s (flags 0x%x)",
 	    tag, command, pw->pw_name, flags);
 
 	/* Check consistency */
-	if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+	ако ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 	    (flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0) {
 		error_f("inconsistent flags");
-		return 0;
+		врати 0;
 	}
-	if (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == NULL)) {
+	ако (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == NULL)) {
 		error_f("inconsistent flags/output");
-		return 0;
+		врати 0;
 	}
 
 	/*
 	 * If executing an explicit binary, then verify the it exists
 	 * and appears safe-ish to execute
 	 */
-	if (!path_absolute(av[0])) {
+	ако (!path_absolute(av[0])) {
 		error("%s path is not absolute", tag);
-		return 0;
+		врати 0;
 	}
-	if (drop_privs != NULL)
+	ако (drop_privs != NULL)
 		drop_privs(pw);
-	if (stat(av[0], &st) == -1) {
+	ако (stat(av[0], &st) == -1) {
 		error("Could not stat %s \"%s\": %s", tag,
 		    av[0], strerror(errno));
 		goto restore_return;
 	}
-	if ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
+	ако ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
 	    safe_path(av[0], &st, NULL, 0, errmsg, sizeof(errmsg)) != 0) {
 		error("Unsafe %s \"%s\": %s", tag, av[0], errmsg);
 		goto restore_return;
 	}
 	/* Prepare to keep the child's stdout if requested */
-	if (pipe(p) == -1) {
+	ако (pipe(p) == -1) {
 		error("%s: pipe: %s", tag, strerror(errno));
  restore_return:
-		if (restore_privs != NULL)
+		ако (restore_privs != NULL)
 			restore_privs();
-		return 0;
+		врати 0;
 	}
-	if (restore_privs != NULL)
+	ако (restore_privs != NULL)
 		restore_privs();
 
 	switch ((pid = fork())) {
@@ -2916,70 +2916,70 @@ subprocess(const char *tag, const char *command,
 		error("%s: fork: %s", tag, strerror(errno));
 		close(p[0]);
 		close(p[1]);
-		return 0;
+		врати 0;
 	case 0: /* child */
 		/* Prepare a minimal environment for the child. */
-		if ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
+		ако ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
 			nenv = 5;
 			env = xcalloc(sizeof(*env), nenv);
 			child_set_env(&env, &nenv, "PATH", _PATH_STDPATH);
 			child_set_env(&env, &nenv, "USER", pw->pw_name);
 			child_set_env(&env, &nenv, "LOGNAME", pw->pw_name);
 			child_set_env(&env, &nenv, "HOME", pw->pw_dir);
-			if ((cp = getenv("LANG")) != NULL)
+			ако ((cp = getenv("LANG")) != NULL)
 				child_set_env(&env, &nenv, "LANG", cp);
 		}
 
-		for (i = 1; i < NSIG; i++)
+		за (i = 1; i < NSIG; i++)
 			ssh_signal(i, SIG_DFL);
 
-		if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+		ако ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 			error("%s: open %s: %s", tag, _PATH_DEVNULL,
 			    strerror(errno));
 			_exit(1);
 		}
-		if (dup2(devnull, STDIN_FILENO) == -1) {
+		ако (dup2(devnull, STDIN_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
 
 		/* Set up stdout as requested; leave stderr in place for now. */
 		fd = -1;
-		if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
+		ако ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
 			fd = p[1];
-		else if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
+		инако ако ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
 			fd = devnull;
-		if (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
+		ако (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
 		closefrom(STDERR_FILENO + 1);
 
-		if (geteuid() == 0 &&
+		ако (geteuid() == 0 &&
 		    initgroups(pw->pw_name, pw->pw_gid) == -1) {
 			error("%s: initgroups(%s, %u): %s", tag,
 			    pw->pw_name, (u_int)pw->pw_gid, strerror(errno));
 			_exit(1);
 		}
-		if (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
+		ако (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
 			error("%s: setresgid %u: %s", tag, (u_int)pw->pw_gid,
 			    strerror(errno));
 			_exit(1);
 		}
-		if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
+		ако (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
 			error("%s: setresuid %u: %s", tag, (u_int)pw->pw_uid,
 			    strerror(errno));
 			_exit(1);
 		}
 		/* stdin is pointed to /dev/null at this point */
-		if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+		ако ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 		    dup2(STDIN_FILENO, STDERR_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
-		if (env != NULL)
+		ако (env != NULL)
 			execve(av[0], av, env);
-		else
+		инако
 			execv(av[0], av);
 		error("%s %s \"%s\": %s", tag, env == NULL ? "execv" : "execve",
 		    command, strerror(errno));
@@ -2989,22 +2989,22 @@ subprocess(const char *tag, const char *command,
 	}
 
 	close(p[1]);
-	if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
+	ако ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
 		close(p[0]);
-	else if ((f = fdopen(p[0], "r")) == NULL) {
+	инако ако ((f = fdopen(p[0], "r")) == NULL) {
 		error("%s: fdopen: %s", tag, strerror(errno));
 		close(p[0]);
 		/* Don't leave zombie child */
 		kill(pid, SIGTERM);
-		while (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
+		док (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
 			;
-		return 0;
+		врати 0;
 	}
 	/* Success */
 	debug3_f("%s pid %ld", tag, (long)pid);
-	if (child != NULL)
+	ако (child != NULL)
 		*child = f;
-	return pid;
+	врати pid;
 }
 
 const char *
@@ -3013,13 +3013,13 @@ lookup_env_in_list(const char *env, char * const *envs, size_t nenvs)
 	size_t i, envlen;
 
 	envlen = strlen(env);
-	for (i = 0; i < nenvs; i++) {
-		if (strncmp(envs[i], env, envlen) == 0 &&
+	за (i = 0; i < nenvs; i++) {
+		ако (strncmp(envs[i], env, envlen) == 0 &&
 		    envs[i][envlen] == '=') {
-			return envs[i] + envlen + 1;
+			врати envs[i] + envlen + 1;
 		}
 	}
-	return NULL;
+	врати NULL;
 }
 
 const char *
@@ -3029,14 +3029,14 @@ lookup_setenv_in_list(const char *env, char * const *envs, size_t nenvs)
 	const char *ret;
 
 	name = xstrdup(env);
-	if ((cp = strchr(name, '=')) == NULL) {
+	ако ((cp = strchr(name, '=')) == NULL) {
 		free(name);
-		return NULL; /* not env=val */
+		врати NULL; /* not env=val */
 	}
 	*cp = '\0';
 	ret = lookup_env_in_list(name, envs, nenvs);
 	free(name);
-	return ret;
+	врати ret;
 }
 
 /*
@@ -3060,7 +3060,7 @@ ptimeout_init(struct timespec *pt)
 void
 ptimeout_deadline_sec(struct timespec *pt, long sec)
 {
-	if (pt->tv_sec == -1 || pt->tv_sec >= sec) {
+	ако (pt->tv_sec == -1 || pt->tv_sec >= sec) {
 		pt->tv_sec = sec;
 		pt->tv_nsec = 0;
 	}
@@ -3070,7 +3070,7 @@ ptimeout_deadline_sec(struct timespec *pt, long sec)
 static void
 ptimeout_deadline_tsp(struct timespec *pt, struct timespec *p)
 {
-	if (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
+	ако (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
 		*pt = *p;
 }
 
@@ -3092,9 +3092,9 @@ ptimeout_deadline_sec_double(struct timespec *pt, double sec)
 	struct timespec t;
 
 	memset(&t, 0, sizeof(t));
-	if ((int64_t)sec >= SSH_TIME_T_MAX)
+	ако ((int64_t)sec >= SSH_TIME_T_MAX)
 		t.tv_sec = SSH_TIME_T_MAX;
-	else if (sec > 0) {
+	инако ако (sec > 0) {
 		t.tv_sec = sec;
 		t.tv_nsec = (sec - (double)t.tv_sec) * 1000000000.0;
 	}
@@ -3109,11 +3109,11 @@ ptimeout_deadline_monotime_tsp(struct timespec *pt, struct timespec *when)
 
 	monotime_ts(&now);
 
-	if (timespeccmp(&now, when, >=)) {
+	ако (timespeccmp(&now, when, >=)) {
 		/* 'when' is now or in the past. Timeout ASAP */
 		pt->tv_sec = 0;
 		pt->tv_nsec = 0;
-	} else {
+	} инако {
 		timespecsub(when, &now, &t);
 		ptimeout_deadline_tsp(pt, &t);
 	}
@@ -3138,49 +3138,49 @@ ptimeout_deadline_monotime(struct timespec *pt, time_t when)
 }
 
 /* Get a poll(2) timeout value in milliseconds */
-int
+цео
 ptimeout_get_ms(struct timespec *pt)
 {
-	if (pt->tv_sec == -1)
-		return -1;
-	if (pt->tv_sec >= (INT_MAX - (pt->tv_nsec / 1000000)) / 1000)
-		return INT_MAX;
-	return (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
+	ако (pt->tv_sec == -1)
+		врати -1;
+	ако (pt->tv_sec >= (INT_MAX - (pt->tv_nsec / 1000000)) / 1000)
+		врати INT_MAX;
+	врати (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
 }
 
 /* Get a ppoll(2) timeout value as a timespec pointer */
 struct timespec *
 ptimeout_get_tsp(struct timespec *pt)
 {
-	return pt->tv_sec == -1 ? NULL : pt;
+	врати pt->tv_sec == -1 ? NULL : pt;
 }
 
 /* Returns non-zero if a timeout has been set (i.e. is not indefinite) */
-int
+цео
 ptimeout_isset(struct timespec *pt)
 {
-	return pt->tv_sec != -1;
+	врати pt->tv_sec != -1;
 }
 
 /*
  * Returns zero if the library at 'path' contains symbol 's', nonzero
  * otherwise.
  */
-int
+цео
 lib_contains_symbol(const char *path, const char *s)
 {
 #ifdef HAVE_NLIST
 	struct nlist nl[2];
-	int ret = -1, r;
+	цео ret = -1, r;
 
 	memset(nl, 0, sizeof(nl));
 	nl[0].n_name = xstrdup(s);
 	nl[1].n_name = NULL;
-	if ((r = nlist(path, nl)) == -1) {
+	ако ((r = nlist(path, nl)) == -1) {
 		error_f("nlist failed for %s", path);
 		goto out;
 	}
-	if (r != 0 || nl[0].n_value == 0 || nl[0].n_type == 0) {
+	ако (r != 0 || nl[0].n_value == 0 || nl[0].n_type == 0) {
 		error_f("library %s does not contain symbol %s", path, s);
 		goto out;
 	}
@@ -3188,54 +3188,54 @@ lib_contains_symbol(const char *path, const char *s)
 	ret = 0;
  out:
 	free(nl[0].n_name);
-	return ret;
-#else /* HAVE_NLIST */
-	int fd, ret = -1;
+	врати ret;
+#инако /* HAVE_NLIST */
+	цео fd, ret = -1;
 	struct stat st;
 	void *m = NULL;
 	size_t sz = 0;
 
 	memset(&st, 0, sizeof(st));
-	if ((fd = open(path, O_RDONLY)) < 0) {
+	ако ((fd = open(path, O_RDONLY)) < 0) {
 		error_f("open %s: %s", path, strerror(errno));
-		return -1;
+		врати -1;
 	}
-	if (fstat(fd, &st) != 0) {
+	ако (fstat(fd, &st) != 0) {
 		error_f("fstat %s: %s", path, strerror(errno));
 		goto out;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	ако (!S_ISREG(st.st_mode)) {
 		error_f("%s is not a regular file", path);
 		goto out;
 	}
-	if (st.st_size < 0 ||
+	ако (st.st_size < 0 ||
 	    (size_t)st.st_size < strlen(s) ||
 	    st.st_size >= INT_MAX/2) {
 		error_f("%s bad size %lld", path, (long long)st.st_size);
 		goto out;
 	}
 	sz = (size_t)st.st_size;
-	if ((m = mmap(NULL, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
+	ако ((m = mmap(NULL, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
 	    m == NULL) {
 		error_f("mmap %s: %s", path, strerror(errno));
 		goto out;
 	}
-	if (memmem(m, sz, s, strlen(s)) == NULL) {
+	ако (memmem(m, sz, s, strlen(s)) == NULL) {
 		error_f("%s does not contain expected string %s", path, s);
 		goto out;
 	}
 	/* success */
 	ret = 0;
  out:
-	if (m != NULL && m != MAP_FAILED)
+	ако (m != NULL && m != MAP_FAILED)
 		munmap(m, sz);
 	close(fd);
-	return ret;
+	врати ret;
 #endif /* HAVE_NLIST */
 }
 
-int
-signal_is_crash(int sig)
+цео
+signal_is_crash(цео sig)
 {
 	switch (sig) {
 	case SIGSEGV:
@@ -3245,9 +3245,9 @@ signal_is_crash(int sig)
 	case SIGFPE:
 	case SIGILL:
 	case SIGABRT:
-		return 1;
+		врати 1;
 	}
-	return 0;
+	врати 0;
 }
 
 char *
@@ -3256,52 +3256,52 @@ get_homedir(void)
 	char *cp;
 	struct passwd *pw;
 
-	if ((cp = getenv("HOME")) != NULL && *cp != '\0')
-		return xstrdup(cp);
+	ако ((cp = getenv("HOME")) != NULL && *cp != '\0')
+		врати xstrdup(cp);
 
-	if ((pw = getpwuid(getuid())) != NULL && *pw->pw_dir != '\0')
-		return xstrdup(pw->pw_dir);
+	ако ((pw = getpwuid(getuid())) != NULL && *pw->pw_dir != '\0')
+		врати xstrdup(pw->pw_dir);
 
-	return NULL;
+	врати NULL;
 }
 
-int
+цео
 mkdir_path(const char *target, mode_t mode)
 {
-#if defined(HAVE_OPENAT) && defined(O_DIRECTORY)
+#ако defined(HAVE_OPENAT) && defined(O_DIRECTORY)
 	char *dir, *odir = NULL, *next;
-	int fd = AT_FDCWD, fd2, subpath_len, ret = -1;
+	цео fd = AT_FDCWD, fd2, subpath_len, ret = -1;
 
 	dir = odir = xstrdup(target);
 
-	if (*dir == '/' &&
+	ако (*dir == '/' &&
 	    (fd = open("/", O_RDONLY|O_DIRECTORY)) == -1) {
 		error_f("open(\"/\"): %s", strerror(errno));
 		free(odir);
-		return -1;
+		врати -1;
 	}
 	/* Work through the path, component-wise */
-	for (; dir != NULL && *dir != '\0'; dir = next) {
-		if ((next = strchr(dir, '/')) != NULL)
+	за (; dir != NULL && *dir != '\0'; dir = next) {
+		ако ((next = strchr(dir, '/')) != NULL)
 			*(next++) = '\0';
-		if (*dir == '\0')
+		ако (*dir == '\0')
 			continue;
 		subpath_len = (next == NULL) ? INT_MAX : next - odir - 1;
-		if (mkdirat(fd, dir, mode) == 0)
+		ако (mkdirat(fd, dir, mode) == 0)
 			debug_f("created directory %.*s", subpath_len, target);
-		else if (errno != EEXIST) {
+		инако ако (errno != EEXIST) {
 			error_f("mkdir(\"%.*s\"): %s",
 			    subpath_len, target, strerror(errno));
 			goto out;
 		}
 
 		/* descend */
-		if ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
+		ако ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
 			error_f("open(\"%.*s\"): %s",
 			    subpath_len, target, strerror(errno));
 			goto out;
 		}
-		if (fd != AT_FDCWD)
+		ако (fd != AT_FDCWD)
 			close(fd);
 		fd = fd2;
 	}
@@ -3309,36 +3309,36 @@ mkdir_path(const char *target, mode_t mode)
 	ret = 0;
  out:
 	free(odir);
-	if (fd != AT_FDCWD)
+	ако (fd != AT_FDCWD)
 		close(fd);
-	return ret;
-#else
+	врати ret;
+#инако
 	/*
 	 * If we don't have openat (which was added in POSIX.1-2008), fall back
 	 * to the possibly racy way.
 	 */
 	char *dir, *odir, *p, path[PATH_MAX] = "";
-	int ret = -1;
+	цео ret = -1;
 	size_t plen = sizeof(path);
 
 	dir = odir = xstrdup(target);
 
 	/* If the dir is relative, start with cwd. */
-	if (*dir != '/' && getcwd(path, plen) == NULL) {
+	ако (*dir != '/' && getcwd(path, plen) == NULL) {
 		error_f("getcwd: %s", strerror(errno));
 		goto out;
 	}
 
 	/* Work through the path, component-wise */
-	while ((p = strsep(&dir, "/"))) {
-		if (*p == '\0')
+	док ((p = strsep(&dir, "/"))) {
+		ако (*p == '\0')
 			continue;
-		if (strlcat(path, "/", plen) >= plen ||
+		ако (strlcat(path, "/", plen) >= plen ||
 		    strlcat(path, p, plen) >= plen)
 			goto out;
-		if (mkdir(path, mode) == 0)
+		ако (mkdir(path, mode) == 0)
 			debug_f("created directory %s", path);
-		else if (errno != EEXIST && errno != EISDIR) {
+		инако ако (errno != EEXIST && errno != EISDIR) {
 			error_f("mkdir(\"%s\"): %s", path, strerror(errno));
 			goto out;
 		}
@@ -3347,6 +3347,6 @@ mkdir_path(const char *target, mode_t mode)
 	ret = 0;
  out:
 	free(odir);
-	return ret;
+	врати ret;
 #endif
 }

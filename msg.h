@@ -26,7 +26,7 @@
 #define SSH_MSG_H
 
 struct sshbuf;
-int	 ssh_msg_send(int, u_char, struct sshbuf *);
-int	 ssh_msg_recv(int, struct sshbuf *);
+цео	 ssh_msg_send(цео, u_char, struct sshbuf *);
+цео	 ssh_msg_recv(цео, struct sshbuf *);
 
 #endif

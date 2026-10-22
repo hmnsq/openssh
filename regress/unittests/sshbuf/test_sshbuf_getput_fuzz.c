@@ -47,7 +47,7 @@ attempt_parse_blob(u_char *blob, size_t len)
 	ASSERT_INT_EQ(sshbuf_get_u16(p1, &u16), 0);
 	ASSERT_INT_EQ(sshbuf_get_u32(p1, &u32), 0);
 	ASSERT_INT_EQ(sshbuf_get_u64(p1, &u64), 0);
-	if (sshbuf_get_string(p1, &s, &l) == 0) {
+	ако (sshbuf_get_string(p1, &s, &l) == 0) {
 		bzero(s, l);
 		free(s);
 	}
@@ -109,13 +109,13 @@ sshbuf_getput_fuzz_tests(void)
 	    FUZZ_1_BYTE_FLIP | FUZZ_2_BYTE_FLIP |
 	    FUZZ_TRUNCATE_START | FUZZ_TRUNCATE_END;
 
-	if (test_is_fast())
+	ако (test_is_fast())
 		fuzzers &= ~(FUZZ_2_BYTE_FLIP|FUZZ_2_BIT_FLIP);
 
 	TEST_START("fuzz blob parsing");
 	fuzz = fuzz_begin(fuzzers, blob, sizeof(blob));
 	TEST_ONERROR(onerror, fuzz);
-	for(; !fuzz_done(fuzz); fuzz_next(fuzz))
+	за(; !fuzz_done(fuzz); fuzz_next(fuzz))
 		attempt_parse_blob(blob, sizeof(blob));
 	fuzz_cleanup(fuzz);
 	TEST_DONE();
