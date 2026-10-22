@@ -29,127 +29,127 @@ limitations under the License.
  * implementation is single-threaded.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <stddef.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-extern void *__real_malloc(size_t);
-extern void *__real_calloc(size_t, size_t);
-extern void *__real_realloc(void *, size_t);
-extern void __real_free(void *);
-extern char *__real_strdup(const char *);
+خارجي فراغ *__real_malloc(size_t);
+خارجي فراغ *__real_calloc(size_t, size_t);
+خارجي فراغ *__real_realloc(فراغ *, size_t);
+خارجي فراغ __real_free(فراغ *);
+خارجي حرف *__real_strdup(ثابت حرف *);
 
-struct arena_node {
-	void *ptr;
-	struct arena_node *next;
+بنية arena_عقدة {
+	فراغ *ptr;
+	بنية arena_عقدة *next;
 };
 
-static struct arena_node *arena_head;
-static int tracking;
+ساكن بنية arena_عقدة *arena_head;
+ساكن صحيح tracking;
 
-static inline void
-arena_track(void *p)
+ساكن مضمن فراغ
+arena_track(فراغ *p)
 {
-	struct arena_node *n;
-	if (!tracking || p == NULL)
-		return;
-	n = (struct arena_node *)__real_malloc(sizeof(*n));
-	if (n == NULL)
-		return;
+	بنية arena_عقدة *n;
+	إذا (!tracking || p == عدم)
+		أرجع;
+	n = (بنية arena_عقدة *)__real_malloc(حجم(*n));
+	إذا (n == عدم)
+		أرجع;
 	n->ptr = p;
 	n->next = arena_head;
 	arena_head = n;
 }
 
-static inline void
-arena_untrack(void *p)
+ساكن مضمن فراغ
+arena_untrack(فراغ *p)
 {
-	struct arena_node **pp;
-	if (p == NULL)
-		return;
-	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
-		if ((*pp)->ptr == p) {
-			struct arena_node *n = *pp;
+	بنية arena_عقدة **pp;
+	إذا (p == عدم)
+		أرجع;
+	لكل (pp = &arena_head; *pp != عدم; pp = &(*pp)->next) {
+		إذا ((*pp)->ptr == p) {
+			بنية arena_عقدة *n = *pp;
 			*pp = n->next;
 			__real_free(n);
-			return;
+			أرجع;
 		}
 	}
 }
 
-void *
+فراغ *
 __wrap_malloc(size_t size)
 {
-	void *p = __real_malloc(size);
+	فراغ *p = __real_malloc(size);
 	arena_track(p);
-	return p;
+	أرجع p;
 }
 
-void *
+فراغ *
 __wrap_calloc(size_t nmemb, size_t size)
 {
-	void *p = __real_calloc(nmemb, size);
+	فراغ *p = __real_calloc(nmemb, size);
 	arena_track(p);
-	return p;
+	أرجع p;
 }
 
-void *
-__wrap_realloc(void *ptr, size_t size)
+فراغ *
+__wrap_realloc(فراغ *ptr, size_t size)
 {
 	arena_untrack(ptr);
-	void *p = __real_realloc(ptr, size);
+	فراغ *p = __real_realloc(ptr, size);
 	arena_track(p);
-	return p;
+	أرجع p;
 }
 
-void
-__wrap_free(void *ptr)
+فراغ
+__wrap_free(فراغ *ptr)
 {
 	arena_untrack(ptr);
 	__real_free(ptr);
 }
 
-char *
-__wrap_strdup(const char *s)
+حرف *
+__wrap_strdup(ثابت حرف *s)
 {
 	size_t len;
-	char *p;
-	if (s == NULL)
-		return NULL;
+	حرف *p;
+	إذا (s == عدم)
+		أرجع عدم;
 	len = strlen(s) + 1;
-	p = (char *)__real_malloc(len);
-	if (p == NULL)
-		return NULL;
+	p = (حرف *)__real_malloc(len);
+	إذا (p == عدم)
+		أرجع عدم;
 	memcpy(p, s, len);
 	arena_track(p);
-	return p;
+	أرجع p;
 }
 
-void
-fuzz_arena_begin(void)
+فراغ
+fuzz_arena_begin(فراغ)
 {
 	tracking = 1;
 }
 
-void
-fuzz_arena_release(void)
+فراغ
+fuzz_arena_release(فراغ)
 {
-	struct arena_node *n;
+	بنية arena_عقدة *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	طالما (arena_head != عدم) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n);
 	}
 }
 
-void
-fuzz_arena_cleanup(void)
+فراغ
+fuzz_arena_cleanup(فراغ)
 {
-	struct arena_node *n;
+	بنية arena_عقدة *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	طالما (arena_head != عدم) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n->ptr);

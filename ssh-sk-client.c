@@ -15,67 +15,67 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/wait.h>
 
-#include <limits.h>
-#include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
+#ضمن <limits.h>
+#ضمن <errno.h>
+#ضمن <signal.h>
+#ضمن <stdarg.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <fcntl.h>
 
-#include "log.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "ssh-sk.h"
-#include "misc.h"
+#ضمن "log.h"
+#ضمن "ssherr.h"
+#ضمن "sshbuf.h"
+#ضمن "sshkey.h"
+#ضمن "msg.h"
+#ضمن "pathnames.h"
+#ضمن "ssh-sk.h"
+#ضمن "misc.h"
 
 /* #define DEBUG_SK 1 */
 
-static int
-start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
+ساكن صحيح
+start_helper(صحيح *fdp, pid_t *pidp, فراغ (**osigchldp)(صحيح))
 {
-	void (*osigchld)(int);
-	int oerrno, pair[2], execpipe[2];
+	فراغ (*osigchld)(صحيح);
+	صحيح oerrno, pair[2], execpipe[2];
 	ssize_t n;
 	pid_t pid;
-	char execbuf[100], *helper, *verbosity = NULL;
+	حرف execbuf[100], *helper, *verbosity = عدم;
 
 	*fdp = -1;
 	*pidp = 0;
 	*osigchldp = SIG_DFL;
 
 	helper = getenv("SSH_SK_HELPER");
-	if (helper == NULL || strlen(helper) == 0)
+	إذا (helper == عدم || strlen(helper) == 0)
 		helper = _PATH_SSH_SK_HELPER;
 #ifdef DEBUG_SK
 	verbosity = "-vvv";
 #endif
 
 	/* Create a O_CLOEXEC pipe to capture the execve() failure */
-	if (pipe(execpipe) == -1) {
+	إذا (pipe(execpipe) == -1) {
 		error("pipe:  %s", strerror(errno));
-		return SSH_ERR_SYSTEM_ERROR;
+		أرجع SSH_ERR_SYSTEM_ERROR;
 	}
 	/* Start helper */
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
+	إذا (socketpair(AF_UNIX, SOCK_STREAM, 0, pair) == -1) {
 		error("socketpair: %s", strerror(errno));
 		close(execpipe[0]);
 		close(execpipe[1]);
-		return SSH_ERR_SYSTEM_ERROR;
+		أرجع SSH_ERR_SYSTEM_ERROR;
 	}
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
-	if ((pid = fork()) == -1) {
+	إذا ((pid = fork()) == -1) {
 		oerrno = errno;
 		error("fork: %s", strerror(errno));
 		close(pair[0]);
@@ -84,38 +84,38 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 		close(execpipe[1]);
 		ssh_signal(SIGCHLD, osigchld);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		أرجع SSH_ERR_SYSTEM_ERROR;
 	}
-	if (pid == 0) {
+	إذا (pid == 0) {
 		close(execpipe[0]);
 		FD_CLOSEONEXEC(execpipe[1]);
-		if ((dup2(pair[1], STDIN_FILENO) == -1) ||
+		إذا ((dup2(pair[1], STDIN_FILENO) == -1) ||
 		    (dup2(pair[1], STDOUT_FILENO) == -1)) {
-			snprintf(execbuf, sizeof execbuf,
+			snprintf(execbuf, حجم execbuf,
 			    "dup2: %s", strerror(errno));
-			write(execpipe[1], execbuf, strlen(execbuf)+1);
+			اكتب(execpipe[1], execbuf, strlen(execbuf)+1);
 			_exit(1);
 		}
 		close(pair[0]);
 		close(pair[1]);
 		closefrom(STDERR_FILENO + 1);
 		debug_f("starting %s %s", helper,
-		    verbosity == NULL ? "" : verbosity);
-		execlp(helper, helper, verbosity, (char *)NULL);
-		snprintf(execbuf, sizeof execbuf,
+		    verbosity == عدم ? "" : verbosity);
+		execlp(helper, helper, verbosity, (حرف *)عدم);
+		snprintf(execbuf, حجم execbuf,
 		    "execlp: %s", strerror(errno));
-		write(execpipe[1], execbuf, strlen(execbuf)+1);
+		اكتب(execpipe[1], execbuf, strlen(execbuf)+1);
 		_exit(1);
 	}
 	close(pair[1]);
 
 	close(execpipe[1]);
-	n = read(execpipe[0], execbuf, sizeof execbuf);
+	n = اقرأ(execpipe[0], execbuf, حجم execbuf);
 	close(execpipe[0]);
-	if (n > 0) {
+	إذا (n > 0) {
 		execbuf[n - 1] = '\0';
 		error_f("%s", execbuf);
-		return SSH_ERR_AGENT_FAILURE;
+		أرجع SSH_ERR_AGENT_FAILURE;
 	}
 
 	/* success */
@@ -123,220 +123,220 @@ start_helper(int *fdp, pid_t *pidp, void (**osigchldp)(int))
 	*fdp = pair[0];
 	*pidp = pid;
 	*osigchldp = osigchld;
-	return 0;
+	أرجع 0;
 }
 
-static int
+ساكن صحيح
 reap_helper(pid_t pid)
 {
-	int status, oerrno;
+	صحيح status, oerrno;
 
 	debug3_f("pid=%ld", (long)pid);
 
 	errno = 0;
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno == EINTR) {
+	طالما (waitpid(pid, &status, 0) == -1) {
+		إذا (errno == EINTR) {
 			errno = 0;
-			continue;
+			استمر;
 		}
 		oerrno = errno;
 		error_f("waitpid: %s", strerror(errno));
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		أرجع SSH_ERR_SYSTEM_ERROR;
 	}
-	if (!WIFEXITED(status)) {
+	إذا (!WIFEXITED(status)) {
 		error_f("helper exited abnormally");
-		return SSH_ERR_AGENT_FAILURE;
-	} else if (WEXITSTATUS(status) != 0) {
+		أرجع SSH_ERR_AGENT_FAILURE;
+	} وإلا إذا (WEXITSTATUS(status) != 0) {
 		error_f("helper exited with non-zero exit status");
-		return SSH_ERR_AGENT_FAILURE;
+		أرجع SSH_ERR_AGENT_FAILURE;
 	}
-	return 0;
+	أرجع 0;
 }
 
-static int
-client_converse(struct sshbuf *msg, struct sshbuf **respp, u_int type)
+ساكن صحيح
+client_converse(بنية sshbuf *رسالة, بنية sshbuf **respp, u_int type)
 {
-	int oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
+	صحيح oerrno, fd, r2, ll, r = SSH_ERR_INTERNAL_ERROR;
 	u_int rtype, rerr;
 	pid_t pid;
 	u_char version;
-	void (*osigchld)(int);
-	struct sshbuf *req = NULL, *resp = NULL;
-	*respp = NULL;
+	فراغ (*osigchld)(صحيح);
+	بنية sshbuf *req = عدم, *resp = عدم;
+	*respp = عدم;
 
-	if ((r = start_helper(&fd, &pid, &osigchld)) != 0)
-		return r;
+	إذا ((r = start_helper(&fd, &pid, &osigchld)) != 0)
+		أرجع r;
 
-	if ((req = sshbuf_new()) == NULL || (resp = sshbuf_new()) == NULL) {
+	إذا ((req = sshbuf_new()) == عدم || (resp = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
 	/* Request preamble: type, log_on_stderr, log_level */
 	ll = log_level_get();
-	if ((r = sshbuf_put_u32(req, type)) != 0 ||
+	إذا ((r = sshbuf_put_u32(req, type)) != 0 ||
 	    (r = sshbuf_put_u8(req, log_is_on_stderr() != 0)) != 0 ||
 	    (r = sshbuf_put_u32(req, ll < 0 ? 0 : ll)) != 0 ||
-	    (r = sshbuf_putb(req, msg)) != 0) {
+	    (r = sshbuf_putb(req, رسالة)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		اذهب out;
 	}
-	if ((r = ssh_msg_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
+	إذا ((r = ssh_رسالة_send(fd, SSH_SK_HELPER_VERSION, req)) != 0) {
 		error_fr(r, "send");
-		goto out;
+		اذهب out;
 	}
-	if ((r = ssh_msg_recv(fd, resp)) != 0) {
+	إذا ((r = ssh_رسالة_recv(fd, resp)) != 0) {
 		error_fr(r, "receive");
-		goto out;
+		اذهب out;
 	}
-	if ((r = sshbuf_get_u8(resp, &version)) != 0) {
+	إذا ((r = sshbuf_get_u8(resp, &version)) != 0) {
 		error_fr(r, "parse version");
-		goto out;
+		اذهب out;
 	}
-	if (version != SSH_SK_HELPER_VERSION) {
+	إذا (version != SSH_SK_HELPER_VERSION) {
 		error_f("unsupported version: got %u, expected %u",
 		    version, SSH_SK_HELPER_VERSION);
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
-	if ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
+	إذا ((r = sshbuf_get_u32(resp, &rtype)) != 0) {
 		error_fr(r, "parse message type");
-		goto out;
+		اذهب out;
 	}
-	if (rtype == SSH_SK_HELPER_ERROR) {
-		if ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
+	إذا (rtype == SSH_SK_HELPER_ERROR) {
+		إذا ((r = sshbuf_get_u32(resp, &rerr)) != 0) {
 			error_fr(r, "parse");
-			goto out;
+			اذهب out;
 		}
 		debug_f("helper returned error -%u", rerr);
 		/* OpenSSH error values are negative; encoded as -err on wire */
-		if (rerr == 0 || rerr >= INT_MAX)
+		إذا (rerr == 0 || rerr >= INT_MAX)
 			r = SSH_ERR_INTERNAL_ERROR;
-		else
-			r = -(int)rerr;
-		goto out;
-	} else if (rtype != type) {
+		وإلا
+			r = -(صحيح)rerr;
+		اذهب out;
+	} وإلا إذا (rtype != type) {
 		error_f("helper returned incorrect message type %u, "
 		    "expecting %u", rtype, type);
 		r = SSH_ERR_INTERNAL_ERROR;
-		goto out;
+		اذهب out;
 	}
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
 	close(fd);
-	if ((r2 = reap_helper(pid)) != 0) {
-		if (r == 0) {
+	إذا ((r2 = reap_helper(pid)) != 0) {
+		إذا (r == 0) {
 			r = r2;
 			oerrno = errno;
 		}
 	}
-	if (r == 0) {
+	إذا (r == 0) {
 		*respp = resp;
-		resp = NULL;
+		resp = عدم;
 	}
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	ssh_signal(SIGCHLD, osigchld);
 	errno = oerrno;
-	return r;
+	أرجع r;
 
 }
 
-int
-sshsk_sign(const char *provider, struct sshkey *key,
-    u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
-    u_int compat, const char *pin)
+صحيح
+sshsk_sign(ثابت حرف *provider, بنية sshkey *مفتاح,
+    u_char **sigp, size_t *lenp, ثابت u_char *data, size_t datalen,
+    u_int compat, ثابت حرف *pin)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
+	صحيح oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	بنية sshbuf *kbuf = عدم, *req = عدم, *resp = عدم;
 
-	*sigp = NULL;
+	*sigp = عدم;
 	*lenp = 0;
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	أرجع SSH_ERR_مفتاح_TYPE_UNKNOWN;
 #endif
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	إذا ((kbuf = sshbuf_new()) == عدم ||
+	    (req = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
 
-	if ((r = sshkey_private_serialize(key, kbuf)) != 0) {
+	إذا ((r = sshkey_private_serialize(مفتاح, kbuf)) != 0) {
 		error_fr(r, "encode key");
-		goto out;
+		اذهب out;
 	}
-	if ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
+	إذا ((r = sshbuf_put_stringb(req, kbuf)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider)) != 0 ||
 	    (r = sshbuf_put_string(req, data, datalen)) != 0 ||
-	    (r = sshbuf_put_cstring(req, NULL)) != 0 || /* alg */
+	    (r = sshbuf_put_cstring(req, عدم)) != 0 || /* alg */
 	    (r = sshbuf_put_u32(req, compat)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		اذهب out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
-		goto out;
+	إذا ((r = client_converse(req, &resp, SSH_SK_HELPER_SIGN)) != 0)
+		اذهب out;
 
-	if ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
+	إذا ((r = sshbuf_get_string(resp, sigp, lenp)) != 0) {
 		error_fr(r, "parse signature");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	إذا (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
 	/* success */
 	r = 0;
  out:
 	oerrno = errno;
-	if (r != 0) {
+	إذا (r != 0) {
 		freezero(*sigp, *lenp);
-		*sigp = NULL;
+		*sigp = عدم;
 		*lenp = 0;
 	}
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	أرجع r;
 }
 
-int
-sshsk_enroll(int type, const char *provider_path, const char *device,
-    const char *application, const char *userid, uint8_t flags,
-    const char *pin, struct sshbuf *challenge_buf,
-    struct sshkey **keyp, struct sshbuf *attest)
+صحيح
+sshsk_enroll(صحيح type, ثابت حرف *provider_path, ثابت حرف *device,
+    ثابت حرف *application, ثابت حرف *userid, uint8_t flags,
+    ثابت حرف *pin, بنية sshbuf *challenge_buf,
+    بنية sshkey **keyp, بنية sshbuf *attest)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *abuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
+	صحيح oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	بنية sshbuf *kbuf = عدم, *abuf = عدم, *req = عدم, *resp = عدم;
+	بنية sshkey *مفتاح = عدم;
 
-	*keyp = NULL;
-	if (attest != NULL)
+	*keyp = عدم;
+	إذا (attest != عدم)
 		sshbuf_reset(attest);
 
 #ifndef ENABLE_SK
-	return SSH_ERR_KEY_TYPE_UNKNOWN;
+	أرجع SSH_ERR_مفتاح_TYPE_UNKNOWN;
 #endif
 
-	if (type < 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	إذا (type < 0)
+		أرجع SSH_ERR_INVALID_ARGUMENT;
 
-	if ((abuf = sshbuf_new()) == NULL ||
-	    (kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	إذا ((abuf = sshbuf_new()) == عدم ||
+	    (kbuf = sshbuf_new()) == عدم ||
+	    (req = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
 
-	if ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
+	إذا ((r = sshbuf_put_u32(req, (u_int)type)) != 0 ||
 	    (r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, application)) != 0 ||
@@ -345,156 +345,156 @@ sshsk_enroll(int type, const char *provider_path, const char *device,
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_stringb(req, challenge_buf)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		اذهب out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
-		goto out;
+	إذا ((r = client_converse(req, &resp, SSH_SK_HELPER_ENROLL)) != 0)
+		اذهب out;
 
-	if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+	إذا ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
 	    (r = sshbuf_get_stringb(resp, abuf)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
-	if (sshbuf_len(resp) != 0) {
+	إذا (sshbuf_len(resp) != 0) {
 		error_f("trailing data in response");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		اذهب out;
 	}
-	if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+	إذا ((r = sshkey_private_deserialize(kbuf, &مفتاح)) != 0) {
 		error_fr(r, "encode");
-		goto out;
+		اذهب out;
 	}
-	if (attest != NULL && (r = sshbuf_putb(attest, abuf)) != 0) {
+	إذا (attest != عدم && (r = sshbuf_putb(attest, abuf)) != 0) {
 		error_fr(r, "encode attestation information");
-		goto out;
+		اذهب out;
 	}
 
 	/* success */
 	r = 0;
-	*keyp = key;
-	key = NULL;
+	*keyp = مفتاح;
+	مفتاح = عدم;
  out:
 	oerrno = errno;
-	sshkey_free(key);
+	sshkey_free(مفتاح);
 	sshbuf_free(kbuf);
 	sshbuf_free(abuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	أرجع r;
 }
 
-static void
-sshsk_free_resident_key(struct sshsk_resident_key *srk)
+ساكن فراغ
+sshsk_free_resident_مفتاح(بنية sshsk_resident_مفتاح *srk)
 {
-	if (srk == NULL)
-		return;
-	sshkey_free(srk->key);
+	إذا (srk == عدم)
+		أرجع;
+	sshkey_free(srk->مفتاح);
 	freezero(srk->user_id, srk->user_id_len);
-	free(srk);
+	حرر(srk);
 }
 
 
-void
-sshsk_free_resident_keys(struct sshsk_resident_key **srks, size_t nsrks)
+فراغ
+sshsk_free_resident_مفاتيح(بنية sshsk_resident_مفتاح **srks, size_t nsrks)
 {
 	size_t i;
 
-	if (srks == NULL || nsrks == 0)
-		return;
+	إذا (srks == عدم || nsrks == 0)
+		أرجع;
 
-	for (i = 0; i < nsrks; i++)
-		sshsk_free_resident_key(srks[i]);
-	free(srks);
+	لكل (i = 0; i < nsrks; i++)
+		sshsk_free_resident_مفتاح(srks[i]);
+	حرر(srks);
 }
 
-int
-sshsk_load_resident(const char *provider_path, const char *device,
-    const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
+صحيح
+sshsk_load_resident(ثابت حرف *provider_path, ثابت حرف *device,
+    ثابت حرف *pin, u_int flags, بنية sshsk_resident_مفتاح ***srksp,
     size_t *nsrksp)
 {
-	int oerrno, r = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *kbuf = NULL, *req = NULL, *resp = NULL;
-	struct sshkey *key = NULL;
-	struct sshsk_resident_key *srk = NULL, **srks = NULL, **tmp;
-	u_char *userid = NULL;
+	صحيح oerrno, r = SSH_ERR_INTERNAL_ERROR;
+	بنية sshbuf *kbuf = عدم, *req = عدم, *resp = عدم;
+	بنية sshkey *مفتاح = عدم;
+	بنية sshsk_resident_مفتاح *srk = عدم, **srks = عدم, **tmp;
+	u_char *userid = عدم;
 	size_t userid_len = 0, nsrks = 0;
 
-	*srksp = NULL;
+	*srksp = عدم;
 	*nsrksp = 0;
 
-	if ((kbuf = sshbuf_new()) == NULL ||
-	    (req = sshbuf_new()) == NULL) {
+	إذا ((kbuf = sshbuf_new()) == عدم ||
+	    (req = sshbuf_new()) == عدم) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		اذهب out;
 	}
 
-	if ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
+	إذا ((r = sshbuf_put_cstring(req, provider_path)) != 0 ||
 	    (r = sshbuf_put_cstring(req, device)) != 0 ||
 	    (r = sshbuf_put_cstring(req, pin)) != 0 ||
 	    (r = sshbuf_put_u32(req, flags)) != 0) {
 		error_fr(r, "compose");
-		goto out;
+		اذهب out;
 	}
 
-	if ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
-		goto out;
+	إذا ((r = client_converse(req, &resp, SSH_SK_HELPER_LOAD_RESIDENT)) != 0)
+		اذهب out;
 
-	while (sshbuf_len(resp) != 0) {
+	طالما (sshbuf_len(resp) != 0) {
 		/* key, comment, user_id */
-		if ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
-		    (r = sshbuf_get_cstring(resp, NULL, NULL)) != 0 ||
+		إذا ((r = sshbuf_get_stringb(resp, kbuf)) != 0 ||
+		    (r = sshbuf_get_cstring(resp, عدم, عدم)) != 0 ||
 		    (r = sshbuf_get_string(resp, &userid, &userid_len)) != 0) {
 			error_fr(r, "parse");
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			اذهب out;
 		}
-		if ((r = sshkey_private_deserialize(kbuf, &key)) != 0) {
+		إذا ((r = sshkey_private_deserialize(kbuf, &مفتاح)) != 0) {
 			error_fr(r, "decode key");
-			goto out;
+			اذهب out;
 		}
-		if ((srk = calloc(1, sizeof(*srk))) == NULL) {
+		إذا ((srk = calloc(1, حجم(*srk))) == عدم) {
 			error_f("calloc failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			اذهب out;
 		}
-		srk->key = key;
-		key = NULL;
+		srk->مفتاح = مفتاح;
+		مفتاح = عدم;
 		srk->user_id = userid;
 		srk->user_id_len = userid_len;
-		userid = NULL;
+		userid = عدم;
 		userid_len = 0;
-		if ((tmp = recallocarray(srks, nsrks, nsrks + 1,
-		    sizeof(*srks))) == NULL) {
+		إذا ((tmp = recallocarray(srks, nsrks, nsrks + 1,
+		    حجم(*srks))) == عدم) {
 			error_f("recallocarray keys failed");
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			اذهب out;
 		}
 		debug_f("srks[%zu]: %s %s uidlen %zu", nsrks,
-		    sshkey_type(srk->key), srk->key->sk_application,
+		    sshkey_type(srk->مفتاح), srk->مفتاح->sk_application,
 		    srk->user_id_len);
 		srks = tmp;
 		srks[nsrks++] = srk;
-		srk = NULL;
+		srk = عدم;
 	}
 
 	/* success */
 	r = 0;
 	*srksp = srks;
 	*nsrksp = nsrks;
-	srks = NULL;
+	srks = عدم;
 	nsrks = 0;
  out:
 	oerrno = errno;
-	sshsk_free_resident_key(srk);
-	sshsk_free_resident_keys(srks, nsrks);
+	sshsk_free_resident_مفتاح(srk);
+	sshsk_free_resident_مفاتيح(srks, nsrks);
 	freezero(userid, userid_len);
-	sshkey_free(key);
+	sshkey_free(مفتاح);
 	sshbuf_free(kbuf);
 	sshbuf_free(req);
 	sshbuf_free(resp);
 	errno = oerrno;
-	return r;
+	أرجع r;
 }

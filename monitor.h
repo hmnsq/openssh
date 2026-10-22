@@ -29,7 +29,7 @@
 #define _MONITOR_H_
 
 /* Please keep *_REQ_* values on even numbers and *_ANS_* on odd numbers */
-enum monitor_reqtype {
+تعداد monitor_reqtype {
 	MONITOR_REQ_MODULI = 0, MONITOR_ANS_MODULI = 1,
 	MONITOR_REQ_FREE = 2,
 	MONITOR_REQ_AUTHSERV = 4,
@@ -67,40 +67,40 @@ enum monitor_reqtype {
 
 };
 
-struct ssh;
-struct sshbuf;
+بنية ssh;
+بنية sshbuf;
 
-struct monitor {
-	int			 m_recvfd;
-	int			 m_sendfd;
-	int			 m_log_recvfd;
-	int			 m_log_sendfd;
-	struct kex		**m_pkex;
+بنية monitor {
+	صحيح			 m_recvfd;
+	صحيح			 m_sendfd;
+	صحيح			 m_log_recvfd;
+	صحيح			 m_log_sendfd;
+	بنية kex		**m_pkex;
 	pid_t			 m_pid;
 };
 
-struct monitor *monitor_init(void);
-void monitor_reinit(struct monitor *);
+بنية monitor *monitor_init(فراغ);
+فراغ monitor_reinit(بنية monitor *);
 
-struct Authctxt;
-void monitor_child_preauth(struct ssh *, struct monitor *);
-void monitor_child_postauth(struct ssh *, struct monitor *);
+بنية Authctxt;
+فراغ monitor_child_preauth(بنية ssh *, بنية monitor *);
+فراغ monitor_child_postauth(بنية ssh *, بنية monitor *);
 
-void monitor_clear_keystate(struct ssh *, struct monitor *);
-void monitor_apply_keystate(struct ssh *, struct monitor *);
+فراغ monitor_clear_keystate(بنية ssh *, بنية monitor *);
+فراغ monitor_apply_keystate(بنية ssh *, بنية monitor *);
 
-int  monitor_auth_attempted(void);
-int  monitor_invalid_user(void);
+صحيح  monitor_auth_attempted(فراغ);
+صحيح  monitor_invalid_user(فراغ);
 
 /* Prototypes for request sending and receiving */
-void mm_request_send(int, enum monitor_reqtype, struct sshbuf *);
-void mm_request_receive(int, struct sshbuf *);
-void mm_request_receive_expect(int, enum monitor_reqtype, struct sshbuf *);
-void mm_get_keystate(struct ssh *, struct monitor *);
+فراغ mm_request_send(صحيح, تعداد monitor_reqtype, بنية sshbuf *);
+فراغ mm_request_receive(صحيح, بنية sshbuf *);
+فراغ mm_request_receive_expect(صحيح, تعداد monitor_reqtype, بنية sshbuf *);
+فراغ mm_get_keystate(بنية ssh *, بنية monitor *);
 
 /* XXX: should be returned via a monitor call rather than config_fd */
-void mm_encode_server_options(struct sshbuf *);
+فراغ mm_encode_server_options(بنية sshbuf *);
 
-struct sshbuf *pack_hostkeys(void);
+بنية sshbuf *pack_hostkeys(فراغ);
 
 #endif /* _MONITOR_H_ */

@@ -24,35 +24,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+بنية sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+تعريفنوع بنية Sensitive Sensitive;
+بنية Sensitive {
+	بنية sshkey	**مفاتيح;
+	صحيح		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+بنية ssh_conn_info {
+	حرف *conn_hash_hex;
+	حرف *shorthost;
+	حرف *uidstr;
+	حرف *keyalias;
+	حرف *thishost;
+	حرف *host_arg;
+	حرف *portstr;
+	حرف *remhost;
+	حرف *remuser;
+	حرف *homedir;
+	حرف *locuser;
+	حرف *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+بنية addrinfo;
+بنية ssh;
+بنية hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
+#define DEFAULT_CLIENT_PERCENT_EXPAND_وسائط_NOUSER(conn_info) \
 	"L", conn_info->shorthost, \
 	"i", conn_info->uidstr, \
 	"k", conn_info->keyalias, \
@@ -65,44 +65,44 @@ struct hostkeys;
 	"j", conn_info->jmphost
 
 /* same plus remote user and hash which has user as a component */
-#define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS(conn_info) \
-	DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info), \
+#define DEFAULT_CLIENT_PERCENT_EXPAND_وسائط(conn_info) \
+	DEFAULT_CLIENT_PERCENT_EXPAND_وسائط_NOUSER(conn_info), \
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
-void	 ssh_kill_proxy_command(void);
+صحيح	 ssh_connect(بنية ssh *, ثابت حرف *, ثابت حرف *,
+	    بنية addrinfo *, بنية sockaddr_storage *, u_short,
+	    صحيح, صحيح *, صحيح);
+فراغ	 ssh_kill_proxy_command(فراغ);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+فراغ	 ssh_login(بنية ssh *, Sensitive *, ثابت حرف *,
+    بنية sockaddr_storage *, u_short, بنية passwd *, صحيح,
+    ثابت بنية ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+صحيح	 verify_host_مفتاح(حرف *, بنية sockaddr *, بنية sshkey *,
+    ثابت بنية ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+فراغ	 get_hostfile_hostname_ipaddr(حرف *, بنية sockaddr *, u_short,
+    حرف **, حرف **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+فراغ	 ssh_kex2(بنية ssh *ssh, حرف *, بنية sockaddr_storage *, u_short,
+    ثابت بنية ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+فراغ	 ssh_userauth2(بنية ssh *ssh, ثابت حرف *, ثابت حرف *,
+    حرف *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+فراغ	 pubkey_dump(بنية ssh *);
 
-int	 ssh_local_cmd(const char *);
+صحيح	 ssh_local_cmd(ثابت حرف *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+فراغ	 maybe_add_مفتاح_to_agent(ثابت حرف *, بنية sshkey *,
+    ثابت حرف *, ثابت حرف *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+فراغ	 load_hostkeys_command(بنية hostkeys *, ثابت حرف *,
+    ثابت حرف *, ثابت بنية ssh_conn_info *,
+    ثابت بنية sshkey *, ثابت حرف *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+صحيح hostkey_accepted_by_hostkeyalgs(ثابت بنية sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+فراغ ssh_conn_info_free(بنية ssh_conn_info *);
+بنية ssh_conn_info *ssh_conn_info_dup(ثابت بنية ssh_conn_info *);
