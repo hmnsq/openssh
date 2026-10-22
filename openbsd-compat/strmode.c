@@ -40,7 +40,7 @@
 /* XXX mode should be mode_t */
 
 void
-strmode(int mode, char *p)
+strmode(số_nguyên mode, char *p)
 {
 	 /* print type */
 	switch (mode & S_IFMT) {
@@ -74,13 +74,13 @@ strmode(int mode, char *p)
 		break;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	nếu (mode & S_IRUSR)
 		*p++ = 'r';
-	else
+	không_thì
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	nếu (mode & S_IWUSR)
 		*p++ = 'w';
-	else
+	không_thì
 		*p++ = '-';
 	switch (mode & (S_IXUSR | S_ISUID)) {
 	case 0:
@@ -97,13 +97,13 @@ strmode(int mode, char *p)
 		break;
 	}
 	/* group */
-	if (mode & S_IRGRP)
+	nếu (mode & S_IRGRP)
 		*p++ = 'r';
-	else
+	không_thì
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	nếu (mode & S_IWGRP)
 		*p++ = 'w';
-	else
+	không_thì
 		*p++ = '-';
 	switch (mode & (S_IXGRP | S_ISGID)) {
 	case 0:
@@ -120,13 +120,13 @@ strmode(int mode, char *p)
 		break;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	nếu (mode & S_IROTH)
 		*p++ = 'r';
-	else
+	không_thì
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	nếu (mode & S_IWOTH)
 		*p++ = 'w';
-	else
+	không_thì
 		*p++ = '-';
 	switch (mode & (S_IXOTH | S_ISVTX)) {
 	case 0:

@@ -47,7 +47,7 @@ struct sshsk_resident_key {
  * If successful and the attest_data buffer is not NULL then attestation
  * information is placed there.
  */
-int sshsk_enroll(int type, const char *provider_path, const char *device,
+số_nguyên sshsk_enroll(số_nguyên type, const char *provider_path, const char *device,
     const char *application, const char *userid, uint8_t flags,
     const char *pin, struct sshbuf *challenge_buf,
     struct sshkey **keyp, struct sshbuf *attest);
@@ -58,7 +58,7 @@ int sshsk_enroll(int type, const char *provider_path, const char *device,
  *
  * Returns 0 on success or a ssherr.h error code on failure.
  */
-int sshsk_sign(const char *provider_path, struct sshkey *key,
+số_nguyên sshsk_sign(const char *provider_path, struct sshkey *key,
     u_char **sigp, size_t *lenp, const u_char *data, size_t datalen,
     u_int compat, const char *pin);
 
@@ -68,7 +68,7 @@ int sshsk_sign(const char *provider_path, struct sshkey *key,
  *
  * Returns 0 on success or a ssherr.h error code on failure.
  */
-int sshsk_load_resident(const char *provider_path, const char *device,
+số_nguyên sshsk_load_resident(const char *provider_path, const char *device,
     const char *pin, u_int flags, struct sshsk_resident_key ***srksp,
     size_t *nsrksp);
 

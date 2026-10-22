@@ -40,96 +40,96 @@ ssh_ed25519_cleanup(struct sshkey *k)
 	k->ed25519_sk = NULL;
 }
 
-static int
+static số_nguyên
 ssh_ed25519_equal(const struct sshkey *a, const struct sshkey *b)
 {
-	if (a->ed25519_pk == NULL || b->ed25519_pk == NULL)
-		return 0;
-	if (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
-		return 0;
-	return 1;
+	nếu (a->ed25519_pk == NULL || b->ed25519_pk == NULL)
+		trả_về 0;
+	nếu (memcmp(a->ed25519_pk, b->ed25519_pk, ED25519_PK_SZ) != 0)
+		trả_về 0;
+	trả_về 1;
 }
 
-static int
+static số_nguyên
 ssh_ed25519_serialize_public(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	số_nguyên r;
 
-	if (key->ed25519_pk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0)
-		return r;
+	nếu (key->ed25519_pk == NULL)
+		trả_về SSH_ERR_INVALID_ARGUMENT;
+	nếu ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0)
+		trả_về r;
 
-	return 0;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 ssh_ed25519_serialize_private(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	số_nguyên r;
 
-	if ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0 ||
+	nếu ((r = sshbuf_put_string(b, key->ed25519_pk, ED25519_PK_SZ)) != 0 ||
 	    (r = sshbuf_put_string(b, key->ed25519_sk, ED25519_SK_SZ)) != 0)
-		return r;
+		trả_về r;
 
-	return 0;
+	trả_về 0;
 }
 
-static int
-ssh_ed25519_generate(struct sshkey *k, int bits)
+static số_nguyên
+ssh_ed25519_generate(struct sshkey *k, số_nguyên bits)
 {
-	if ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL ||
+	nếu ((k->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL ||
 	    (k->ed25519_sk = malloc(ED25519_SK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
-		return SSH_ERR_CRYPTO_ERROR;
-	return 0;
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu (crypto_sign_ed25519_keypair(k->ed25519_pk, k->ed25519_sk) != 0)
+		trả_về SSH_ERR_CRYPTO_ERROR;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 ssh_ed25519_copy_public(const struct sshkey *from, struct sshkey *to)
 {
-	if (from->ed25519_pk == NULL)
-		return 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
-	if ((to->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	nếu (from->ed25519_pk == NULL)
+		trả_về 0; /* XXX SSH_ERR_INTERNAL_ERROR ? */
+	nếu ((to->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
 	memcpy(to->ed25519_pk, from->ed25519_pk, ED25519_PK_SZ);
-	return 0;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 ssh_ed25519_deserialize_public(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
 	u_char *pk = NULL;
 	size_t len = 0;
-	int r;
+	số_nguyên r;
 
-	if ((r = sshbuf_get_string(b, &pk, &len)) != 0)
-		return r;
-	if (len != ED25519_PK_SZ) {
+	nếu ((r = sshbuf_get_string(b, &pk, &len)) != 0)
+		trả_về r;
+	nếu (len != ED25519_PK_SZ) {
 		freezero(pk, len);
-		return SSH_ERR_INVALID_FORMAT;
+		trả_về SSH_ERR_INVALID_FORMAT;
 	}
 	key->ed25519_pk = pk;
-	return 0;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	số_nguyên r;
 	size_t sklen = 0;
 	u_char *ed25519_sk = NULL;
 
-	if ((r = ssh_ed25519_deserialize_public(NULL, b, key)) != 0)
+	nếu ((r = ssh_ed25519_deserialize_public(NULL, b, key)) != 0)
 		goto out;
-	if ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
+	nếu ((r = sshbuf_get_string(b, &ed25519_sk, &sklen)) != 0)
 		goto out;
-	if (sklen != ED25519_SK_SZ) {
+	nếu (sklen != ED25519_SK_SZ) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
@@ -139,10 +139,10 @@ ssh_ed25519_deserialize_private(const char *ktype, struct sshbuf *b,
 	r = 0;
  out:
 	freezero(ed25519_sk, sklen);
-	return r;
+	trả_về r;
 }
 
-static int
+static số_nguyên
 ssh_ed25519_sign(struct sshkey *key,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen,
@@ -150,24 +150,24 @@ ssh_ed25519_sign(struct sshkey *key,
 {
 	u_char sig[crypto_sign_ed25519_BYTES];
 	unsigned long long siglen = 0;
-	int r, ret;
+	số_nguyên r, ret;
 
-	if (lenp != NULL)
+	nếu (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	nếu (sigp != NULL)
 		*sigp = NULL;
 
-	if (key == NULL ||
+	nếu (key == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ED25519 ||
 	    key->ed25519_sk == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+		trả_về SSH_ERR_INVALID_ARGUMENT;
 
-	if ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
+	nếu ((ret = crypto_sign_ed25519_detached(sig, &siglen, data, datalen,
 	    key->ed25519_sk)) != 0 || siglen != sizeof(sig)) {
 		r = SSH_ERR_INVALID_ARGUMENT; /* XXX better error? */
 		goto out;
 	}
-	if ((r = ssh_ed25519_encode_store_sig(sig, siglen,
+	nếu ((r = ssh_ed25519_encode_store_sig(sig, siglen,
 	    sigp, lenp)) != 0)
 		goto out;
 
@@ -175,51 +175,51 @@ ssh_ed25519_sign(struct sshkey *key,
 	r = 0;
  out:
 	explicit_bzero(sig, sizeof(sig));
-	return r;
+	trả_về r;
 }
 
-int
+số_nguyên
 ssh_ed25519_encode_store_sig(const u_char *sig, size_t slen,
     u_char **sigp, size_t *lenp)
 {
 	struct sshbuf *b = NULL;
-	int r = -1;
+	số_nguyên r = -1;
 	size_t len;
 
-	if (lenp != NULL)
+	nếu (lenp != NULL)
 		*lenp = 0;
-	if (sigp != NULL)
+	nếu (sigp != NULL)
 		*sigp = NULL;
 
-	if (slen != crypto_sign_ed25519_BYTES)
-		return SSH_ERR_INVALID_ARGUMENT;
+	nếu (slen != crypto_sign_ed25519_BYTES)
+		trả_về SSH_ERR_INVALID_ARGUMENT;
 
 	/* encode signature */
-	if ((b = sshbuf_new()) == NULL) {
+	nếu ((b = sshbuf_new()) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
+	nếu ((r = sshbuf_put_cstring(b, "ssh-ed25519")) != 0 ||
 	    (r = sshbuf_put_string(b, sig, slen)) != 0)
 		goto out;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	nếu (sigp != NULL) {
+		nếu ((*sigp = malloc(len)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	nếu (lenp != NULL)
 		*lenp = len;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	trả_về r;
 }
 
-static int
+static số_nguyên
 ssh_ed25519_verify(const struct sshkey *key,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
@@ -229,36 +229,36 @@ ssh_ed25519_verify(const struct sshkey *key,
 	char *ktype = NULL;
 	const u_char *sigblob;
 	size_t len;
-	int r, ret;
+	số_nguyên r, ret;
 
-	if (key == NULL ||
+	nếu (key == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ED25519 ||
 	    key->ed25519_pk == NULL ||
 	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+		trả_về SSH_ERR_INVALID_ARGUMENT;
 
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
+	nếu ((b = sshbuf_from(sig, siglen)) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = sshbuf_get_cstring(b, &ktype, NULL)) != 0 ||
 	    (r = sshbuf_get_string_direct(b, &sigblob, &len)) != 0)
 		goto out;
-	if (strcmp("ssh-ed25519", ktype) != 0) {
+	nếu (strcmp("ssh-ed25519", ktype) != 0) {
 		r = SSH_ERR_KEY_TYPE_MISMATCH;
 		goto out;
 	}
-	if (sshbuf_len(b) != 0) {
+	nếu (sshbuf_len(b) != 0) {
 		r = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
-	if (len != crypto_sign_ed25519_BYTES) {
+	nếu (len != crypto_sign_ed25519_BYTES) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
+	nếu ((ret = crypto_sign_ed25519_verify_detached(sigblob, data, dlen,
 	    key->ed25519_pk)) != 0) {
 		debug2_f("crypto_sign_ed25519_verify_detached failed: %d", ret);
 	}
-	if (ret != 0) {
+	nếu (ret != 0) {
 		r = SSH_ERR_SIGNATURE_INVALID;
 		goto out;
 	}
@@ -267,7 +267,7 @@ ssh_ed25519_verify(const struct sshkey *key,
  out:
 	sshbuf_free(b);
 	free(ktype);
-	return r;
+	trả_về r;
 }
 
 /* NB. not static; used by ED25519-SK */

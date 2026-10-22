@@ -57,87 +57,87 @@ ssh_ecdsa_sk_cleanup(struct sshkey *k)
 	sshkey_ecdsa_funcs.cleanup(k);
 }
 
-static int
+static số_nguyên
 ssh_ecdsa_sk_equal(const struct sshkey *a, const struct sshkey *b)
 {
-	if (!sshkey_sk_fields_equal(a, b))
-		return 0;
-	if (!sshkey_ecdsa_funcs.equal(a, b))
-		return 0;
-	return 1;
+	nếu (!sshkey_sk_fields_equal(a, b))
+		trả_về 0;
+	nếu (!sshkey_ecdsa_funcs.equal(a, b))
+		trả_về 0;
+	trả_về 1;
 }
 
-static int
+static số_nguyên
 ssh_ecdsa_sk_serialize_public(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	số_nguyên r;
 
-	if ((r = sshkey_ecdsa_funcs.serialize_public(key, b, opts)) != 0)
-		return r;
-	if ((r = sshkey_serialize_sk(key, b)) != 0)
-		return r;
+	nếu ((r = sshkey_ecdsa_funcs.serialize_public(key, b, opts)) != 0)
+		trả_về r;
+	nếu ((r = sshkey_serialize_sk(key, b)) != 0)
+		trả_về r;
 
-	return 0;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 ssh_ecdsa_sk_serialize_private(const struct sshkey *key, struct sshbuf *b,
     enum sshkey_serialize_rep opts)
 {
-	int r;
+	số_nguyên r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.serialize_public(key,
+	nếu (!sshkey_is_cert(key)) {
+		nếu ((r = sshkey_ecdsa_funcs.serialize_public(key,
 		    b, opts)) != 0)
-			return r;
+			trả_về r;
 	}
-	if ((r = sshkey_serialize_private_sk(key, b)) != 0)
-		return r;
+	nếu ((r = sshkey_serialize_private_sk(key, b)) != 0)
+		trả_về r;
 
-	return 0;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 ssh_ecdsa_sk_copy_public(const struct sshkey *from, struct sshkey *to)
 {
-	int r;
+	số_nguyên r;
 
-	if ((r = sshkey_ecdsa_funcs.copy_public(from, to)) != 0)
-		return r;
-	if ((r = sshkey_copy_public_sk(from, to)) != 0)
-		return r;
-	return 0;
+	nếu ((r = sshkey_ecdsa_funcs.copy_public(from, to)) != 0)
+		trả_về r;
+	nếu ((r = sshkey_copy_public_sk(from, to)) != 0)
+		trả_về r;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 ssh_ecdsa_sk_deserialize_public(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	số_nguyên r;
 
-	if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, key)) != 0)
-		return r;
-	if ((r = sshkey_deserialize_sk(b, key)) != 0)
-		return r;
-	return 0;
+	nếu ((r = sshkey_ecdsa_funcs.deserialize_public(ktype, b, key)) != 0)
+		trả_về r;
+	nếu ((r = sshkey_deserialize_sk(b, key)) != 0)
+		trả_về r;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
     struct sshkey *key)
 {
-	int r;
+	số_nguyên r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = sshkey_ecdsa_funcs.deserialize_public(ktype,
+	nếu (!sshkey_is_cert(key)) {
+		nếu ((r = sshkey_ecdsa_funcs.deserialize_public(ktype,
 		    b, key)) != 0)
-			return r;
+			trả_về r;
 	}
-	if ((r = sshkey_private_deserialize_sk(b, key)) != 0)
-		return r;
+	nếu ((r = sshkey_private_deserialize_sk(b, key)) != 0)
+		trả_về r;
 
-	return 0;
+	trả_về 0;
 }
 
 /*
@@ -152,16 +152,16 @@ ssh_ecdsa_sk_deserialize_private(const char *ktype, struct sshbuf *b,
  * that the hash of the signed message is present within the clientData
  * structure without needing to implement any JSON parsing.
  */
-static int
+static số_nguyên
 webauthn_check_prepare_hash(const u_char *data, size_t datalen,
     const char *origin, const struct sshbuf *wrapper,
     uint8_t flags, const struct sshbuf *extensions,
     u_char *msghash, size_t msghashlen)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	số_nguyên r = SSH_ERR_INTERNAL_ERROR;
 	struct sshbuf *chall = NULL, *m = NULL;
 
-	if ((m = sshbuf_new()) == NULL ||
+	nếu ((m = sshbuf_new()) == NULL ||
 	    (chall = sshbuf_from(data, datalen)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
@@ -170,7 +170,7 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 	 * Ensure origin contains no quote character and that the flags are
 	 * consistent with what we received
 	 */
-	if (strchr(origin, '\"') != NULL ||
+	nếu (strchr(origin, '\"') != NULL ||
 	    (flags & 0x40) != 0 /* AD */ ||
 	    ((flags & 0x80) == 0 /* ED */) != (sshbuf_len(extensions) == 0)) {
 		r = SSH_ERR_INVALID_FORMAT;
@@ -186,7 +186,7 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 #define WEBAUTHN_0	"{\"type\":\"webauthn.get\",\"challenge\":\""
 #define WEBAUTHN_1	"\",\"origin\":\""
 #define WEBAUTHN_2	"\""
-	if ((r = sshbuf_put(m, WEBAUTHN_0, sizeof(WEBAUTHN_0) - 1)) != 0 ||
+	nếu ((r = sshbuf_put(m, WEBAUTHN_0, sizeof(WEBAUTHN_0) - 1)) != 0 ||
 	    (r = sshbuf_dtourlb64(chall, m, 0)) != 0 ||
 	    (r = sshbuf_put(m, WEBAUTHN_1, sizeof(WEBAUTHN_1) - 1)) != 0 ||
 	    (r = sshbuf_put(m, origin, strlen(origin))) != 0 ||
@@ -200,11 +200,11 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
 	sshbuf_dump(m, stderr);
 #endif
 	/* Check that the supplied clientData has the preamble we expect */
-	if ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
+	nếu ((r = sshbuf_cmp(wrapper, 0, sshbuf_ptr(m), sshbuf_len(m))) != 0)
 		goto out;
 
 	/* Prepare hash of clientData */
-	if ((r = ssh_digest_buffer(SSH_DIGEST_SHA256, wrapper,
+	nếu ((r = ssh_digest_buffer(SSH_DIGEST_SHA256, wrapper,
 	    msghash, msghashlen)) != 0)
 		goto out;
 
@@ -213,10 +213,10 @@ webauthn_check_prepare_hash(const u_char *data, size_t datalen,
  out:
 	sshbuf_free(chall);
 	sshbuf_free(m);
-	return r;
+	trả_về r;
 }
 
-static int
+static số_nguyên
 ssh_ecdsa_sk_verify(const struct sshkey *key,
     const u_char *sig, size_t siglen,
     const u_char *data, size_t dlen, const char *alg, u_int compat,
@@ -229,7 +229,7 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	u_char msghash[32], apphash[32];
 	u_int sig_counter;
 	u_char *sigb = NULL, *cp;
-	int is_webauthn = 0, ret = SSH_ERR_INTERNAL_ERROR, len = 0;
+	số_nguyên is_webauthn = 0, ret = SSH_ERR_INTERNAL_ERROR, len = 0;
 	struct sshbuf *b = NULL, *sigbuf = NULL, *original_signed = NULL;
 	struct sshbuf *webauthn_wrapper = NULL, *webauthn_exts = NULL;
 	char *ktype = NULL, *webauthn_origin = NULL;
@@ -238,61 +238,61 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	char *tmp = NULL;
 #endif
 
-	if (detailsp != NULL)
+	nếu (detailsp != NULL)
 		*detailsp = NULL;
-	if (key == NULL || key->pkey == NULL ||
+	nếu (key == NULL || key->pkey == NULL ||
 	    sshkey_type_plain(key->type) != KEY_ECDSA_SK ||
 	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+		trả_về SSH_ERR_INVALID_ARGUMENT;
 
-	if (key->ecdsa_nid != NID_X9_62_prime256v1)
-		return SSH_ERR_INTERNAL_ERROR;
+	nếu (key->ecdsa_nid != NID_X9_62_prime256v1)
+		trả_về SSH_ERR_INTERNAL_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((details = calloc(1, sizeof(*details))) == NULL) {
+	nếu ((b = sshbuf_from(sig, siglen)) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((details = calloc(1, sizeof(*details))) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0) {
+	nếu (sshbuf_get_cstring(b, &ktype, NULL) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
+	nếu (strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com") == 0 ||
 	    strcmp(ktype, "webauthn-sk-ecdsa-sha2-nistp256-cert-v01@openssh.com")
 	      == 0)
 		is_webauthn = 1;
-	else if (strcmp(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
+	không_thì nếu (strcmp(ktype, "sk-ecdsa-sha2-nistp256@openssh.com") != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshbuf_froms(b, &sigbuf) != 0 ||
+	nếu (sshbuf_froms(b, &sigbuf) != 0 ||
 	    sshbuf_get_u8(b, &sig_flags) != 0 ||
 	    sshbuf_get_u32(b, &sig_counter) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (is_webauthn) {
-		if (sshbuf_get_cstring(b, &webauthn_origin, NULL) != 0 ||
+	nếu (is_webauthn) {
+		nếu (sshbuf_get_cstring(b, &webauthn_origin, NULL) != 0 ||
 		    sshbuf_froms(b, &webauthn_wrapper) != 0 ||
 		    sshbuf_froms(b, &webauthn_exts) != 0) {
 			ret = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
 	}
-	if (sshbuf_len(b) != 0) {
+	nếu (sshbuf_len(b) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	nếu (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
+	nếu (sshbuf_len(sigbuf) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
 		goto out;
 	}
@@ -306,38 +306,38 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	free(tmp);
 	fprintf(stderr, "%s: sig_flags = 0x%02x, sig_counter = %u\n",
 	    __func__, sig_flags, sig_counter);
-	if (is_webauthn) {
+	nếu (is_webauthn) {
 		fprintf(stderr, "%s: webauthn origin: %s\n", __func__,
 		    webauthn_origin);
 		fprintf(stderr, "%s: webauthn_wrapper:\n", __func__);
 		sshbuf_dump(webauthn_wrapper, stderr);
 	}
 #endif
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+	nếu ((esig = ECDSA_SIG_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	nếu (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
 	sig_r = sig_s = NULL; /* transferred */
 
 	/* Reconstruct data that was supposedly signed */
-	if ((original_signed = sshbuf_new()) == NULL) {
+	nếu ((original_signed = sshbuf_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if (is_webauthn) {
-		if ((ret = webauthn_check_prepare_hash(data, dlen,
+	nếu (is_webauthn) {
+		nếu ((ret = webauthn_check_prepare_hash(data, dlen,
 		    webauthn_origin, webauthn_wrapper, sig_flags, webauthn_exts,
 		    msghash, sizeof(msghash))) != 0)
 			goto out;
-	} else if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
+	} không_thì nếu ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, data, dlen,
 	    msghash, sizeof(msghash))) != 0)
 		goto out;
 	/* Application value is hashed before signature */
-	if ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
+	nếu ((ret = ssh_digest_memory(SSH_DIGEST_SHA256, key->sk_application,
 	    strlen(key->sk_application), apphash, sizeof(apphash))) != 0)
 		goto out;
 #ifdef DEBUG_SK
@@ -346,7 +346,7 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	fprintf(stderr, "%s: hashed message:\n", __func__);
 	sshbuf_dump_data(msghash, sizeof(msghash), stderr);
 #endif
-	if ((ret = sshbuf_put(original_signed,
+	nếu ((ret = sshbuf_put(original_signed,
 	    apphash, sizeof(apphash))) != 0 ||
 	    (ret = sshbuf_put_u8(original_signed, sig_flags)) != 0 ||
 	    (ret = sshbuf_put_u32(original_signed, sig_counter)) != 0 ||
@@ -360,21 +360,21 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	sshbuf_dump(original_signed, stderr);
 #endif
 
-	if ((md_ctx = EVP_MD_CTX_new()) == NULL) {
+	nếu ((md_ctx = EVP_MD_CTX_new()) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	nếu ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	nếu ((sigb = calloc(1, len)) == NULL) {
 		ret = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	nếu (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
 	}
@@ -383,7 +383,7 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	sshbuf_dump_data(sigb, len, stderr);
 #endif
 	/* Verify it */
-	if (EVP_DigestVerifyInit(md_ctx, NULL, EVP_sha256(), NULL,
+	nếu (EVP_DigestVerifyInit(md_ctx, NULL, EVP_sha256(), NULL,
 	    key->pkey) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
 		goto out;
@@ -401,7 +401,7 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 		goto out;
 	}
 	/* success */
-	if (detailsp != NULL) {
+	nếu (detailsp != NULL) {
 		*detailsp = details;
 		details = NULL;
 	}
@@ -423,7 +423,7 @@ ssh_ecdsa_sk_verify(const struct sshkey *key,
 	free(ktype);
 	freezero(sigb, len);
 	EVP_MD_CTX_free(md_ctx);
-	return ret;
+	trả_về ret;
 }
 
 static const struct sshkey_impl_funcs sshkey_ecdsa_sk_funcs = {

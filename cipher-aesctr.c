@@ -35,13 +35,13 @@ aesctr_inc(u8 *ctr, u32 len)
 	ssize_t i;
 
 #ifndef CONSTANT_TIME_INCREMENT
-	for (i = len - 1; i >= 0; i--)
-		if (++ctr[i])	/* continue on overflow */
-			return;
-#else
+	cho (i = len - 1; i >= 0; i--)
+		nếu (++ctr[i])	/* continue on overflow */
+			trả_về;
+#không_thì
 	u8 x, add = 1;
 
-	for (i = len - 1; i >= 0; i--) {
+	cho (i = len - 1; i >= 0; i--) {
 		ctr[i] += add;
 		/* constant time for: x = ctr[i] ? 1 : 0 */
 		x = ctr[i];
@@ -71,8 +71,8 @@ aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes)
 	u32 n = 0;
 	u8 buf[AES_BLOCK_SIZE];
 
-	while ((bytes--) > 0) {
-		if (n == 0) {
+	trong_khi ((bytes--) > 0) {
+		nếu (n == 0) {
 			rijndaelEncrypt(x->ek, x->rounds, x->ctr, buf);
 			aesctr_inc(x->ctr, AES_BLOCK_SIZE);
 		}

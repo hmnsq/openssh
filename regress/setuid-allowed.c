@@ -34,25 +34,25 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+số_nguyên
+main(số_nguyên argc, char **argv)
 {
 	const char *path = ".";
 	struct statvfs sb;
 
-	if (argc > 2)
+	nếu (argc > 2)
 		usage();
-	else if (argc == 2)
+	không_thì nếu (argc == 2)
 		path = argv[1];
 
-	if (statvfs(path, &sb) != 0) {
+	nếu (statvfs(path, &sb) != 0) {
 		/* Don't return an error if the host doesn't support statvfs */
-		if (errno == ENOSYS)
-			return 0;
+		nếu (errno == ENOSYS)
+			trả_về 0;
 		fprintf(stderr, "statvfs for \"%s\" failed: %s\n",
 		     path, strerror(errno));
 	}
-	return (sb.f_flag & ST_NOSUID) ? 1 : 0;
+	trả_về (sb.f_flag & ST_NOSUID) ? 1 : 0;
 }
 
 

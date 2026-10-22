@@ -7,19 +7,19 @@
 #include <unistd.h>
 #include <limits.h>
 
-int
+số_nguyên
 getpagesize(void)
 {
-#if defined(HAVE_SYSCONF) && defined(_SC_PAGESIZE)
+#nếu defined(HAVE_SYSCONF) && defined(_SC_PAGESIZE)
 	long r = sysconf(_SC_PAGESIZE);
-	if (r > 0 && r < INT_MAX)
-		return (int)r;
+	nếu (r > 0 && r < INT_MAX)
+		trả_về (số_nguyên)r;
 #endif
 	/*
 	 * This is at the lower end of common values and appropriate for
 	 * our current use of getpagesize() in recallocarray().
 	 */
-	return 4096;
+	trả_về 4096;
 }
 
 #endif /* HAVE_GETPAGESIZE */

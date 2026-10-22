@@ -23,7 +23,7 @@
  * Don't let systems with broken printf(3) avoid our replacements
  * via asprintf(3)/vasprintf(3) calling libc internally.
  */
-#if defined(BROKEN_SNPRINTF)
+#nếu defined(BROKEN_SNPRINTF)
 # undef HAVE_VASPRINTF
 # undef HAVE_ASPRINTF
 #endif
@@ -37,63 +37,63 @@
 
 #define INIT_SZ	128
 
-int
+số_nguyên
 vasprintf(char **str, const char *fmt, va_list ap)
 {
-	int ret = -1;
+	số_nguyên ret = -1;
 	va_list ap2;
 	char *string, *newstr;
 	size_t len;
 
 	VA_COPY(ap2, ap);
-	if ((string = malloc(INIT_SZ)) == NULL)
+	nếu ((string = malloc(INIT_SZ)) == NULL)
 		goto fail;
 
 	ret = vsnprintf(string, INIT_SZ, fmt, ap2);
-	if (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
+	nếu (ret >= 0 && ret < INIT_SZ) { /* succeeded with initial alloc */
 		*str = string;
-	} else if (ret == INT_MAX || ret < 0) { /* Bad length */
+	} không_thì nếu (ret == INT_MAX || ret < 0) { /* Bad length */
 		free(string);
 		goto fail;
-	} else {	/* bigger than initial, realloc allowing for nul */
+	} không_thì {	/* bigger than initial, realloc allowing for nul */
 		len = (size_t)ret + 1;
-		if ((newstr = realloc(string, len)) == NULL) {
+		nếu ((newstr = realloc(string, len)) == NULL) {
 			free(string);
 			goto fail;
-		} else {
+		} không_thì {
 			va_end(ap2);
 			VA_COPY(ap2, ap);
 			ret = vsnprintf(newstr, len, fmt, ap2);
-			if (ret >= 0 && (size_t)ret < len) {
+			nếu (ret >= 0 && (size_t)ret < len) {
 				*str = newstr;
-			} else { /* failed with realloc'ed string, give up */
+			} không_thì { /* failed with realloc'ed string, give up */
 				free(newstr);
 				goto fail;
 			}
 		}
 	}
 	va_end(ap2);
-	return (ret);
+	trả_về (ret);
 
 fail:
 	*str = NULL;
 	errno = ENOMEM;
 	va_end(ap2);
-	return (-1);
+	trả_về (-1);
 }
 #endif
 
 #ifndef HAVE_ASPRINTF
-int asprintf(char **str, const char *fmt, ...)
+số_nguyên asprintf(char **str, const char *fmt, ...)
 {
 	va_list ap;
-	int ret;
+	số_nguyên ret;
 
 	*str = NULL;
 	va_start(ap, fmt);
 	ret = vasprintf(str, fmt, ap);
 	va_end(ap);
 
-	return ret;
+	trả_về ret;
 }
 #endif

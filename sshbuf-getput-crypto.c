@@ -30,155 +30,155 @@
 #define SSHBUF_INTERNAL
 #include "sshbuf.h"
 
-int
+số_nguyên
 sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp)
 {
 	BIGNUM *v;
 	const u_char *d;
 	size_t len;
-	int r;
+	số_nguyên r;
 
-	if (valp != NULL)
+	nếu (valp != NULL)
 		*valp = NULL;
-	if ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
-		return r;
-	if (valp != NULL) {
-		if ((v = BN_new()) == NULL ||
+	nếu ((r = sshbuf_get_bignum2_bytes_direct(buf, &d, &len)) != 0)
+		trả_về r;
+	nếu (valp != NULL) {
+		nếu ((v = BN_new()) == NULL ||
 		    BN_bin2bn(d, len, v) == NULL) {
 			BN_clear_free(v);
-			return SSH_ERR_ALLOC_FAIL;
+			trả_về SSH_ERR_ALLOC_FAIL;
 		}
 		*valp = v;
 	}
-	return 0;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 get_ec(const u_char *d, size_t len, EC_POINT *v, const EC_GROUP *g)
 {
 	/* Refuse overlong bignums */
-	if (len == 0 || len > SSHBUF_MAX_ECPOINT)
-		return SSH_ERR_ECPOINT_TOO_LARGE;
+	nếu (len == 0 || len > SSHBUF_MAX_ECPOINT)
+		trả_về SSH_ERR_ECPOINT_TOO_LARGE;
 	/* Only handle uncompressed points */
-	if (*d != POINT_CONVERSION_UNCOMPRESSED)
-		return SSH_ERR_INVALID_FORMAT;
-	if (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
-		return SSH_ERR_INVALID_FORMAT; /* XXX assumption */
-	return 0;
+	nếu (*d != POINT_CONVERSION_UNCOMPRESSED)
+		trả_về SSH_ERR_INVALID_FORMAT;
+	nếu (v != NULL && EC_POINT_oct2point(g, v, d, len, NULL) != 1)
+		trả_về SSH_ERR_INVALID_FORMAT; /* XXX assumption */
+	trả_về 0;
 }
 
-int
+số_nguyên
 sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g)
 {
 	const u_char *d;
 	size_t len;
-	int r;
+	số_nguyên r;
 
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
-		return r;
-	if ((r = get_ec(d, len, v, g)) != 0)
-		return r;
+	nếu ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0)
+		trả_về r;
+	nếu ((r = get_ec(d, len, v, g)) != 0)
+		trả_về r;
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	nếu (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		trả_về SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	trả_về 0;
 }
 
-int
+số_nguyên
 sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v)
 {
 	EC_POINT *pt = EC_POINT_new(EC_KEY_get0_group(v));
-	int r;
+	số_nguyên r;
 	const u_char *d;
 	size_t len;
 
-	if (pt == NULL) {
+	nếu (pt == NULL) {
 		SSHBUF_DBG(("SSH_ERR_ALLOC_FAIL"));
-		return SSH_ERR_ALLOC_FAIL;
+		trả_về SSH_ERR_ALLOC_FAIL;
 	}
-	if ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
+	nếu ((r = sshbuf_peek_string_direct(buf, &d, &len)) < 0) {
 		EC_POINT_free(pt);
-		return r;
+		trả_về r;
 	}
-	if ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
+	nếu ((r = get_ec(d, len, pt, EC_KEY_get0_group(v))) != 0) {
 		EC_POINT_free(pt);
-		return r;
+		trả_về r;
 	}
-	if (EC_KEY_set_public_key(v, pt) != 1) {
+	nếu (EC_KEY_set_public_key(v, pt) != 1) {
 		EC_POINT_free(pt);
-		return SSH_ERR_ALLOC_FAIL; /* XXX assumption */
+		trả_về SSH_ERR_ALLOC_FAIL; /* XXX assumption */
 	}
 	EC_POINT_free(pt);
 	/* Skip string */
-	if (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
+	nếu (sshbuf_get_string_direct(buf, NULL, NULL) != 0) {
 		/* Shouldn't happen */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		SSHBUF_ABORT();
-		return SSH_ERR_INTERNAL_ERROR;
+		trả_về SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	trả_về 0;
 }
 
-int
+số_nguyên
 sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v)
 {
 	u_char d[SSHBUF_MAX_BIGNUM + 1];
-	int len = BN_num_bytes(v), prepend = 0, r;
+	số_nguyên len = BN_num_bytes(v), prepend = 0, r;
 
-	if (len < 0 || len > SSHBUF_MAX_BIGNUM)
-		return SSH_ERR_INVALID_ARGUMENT;
+	nếu (len < 0 || len > SSHBUF_MAX_BIGNUM)
+		trả_về SSH_ERR_INVALID_ARGUMENT;
 	*d = '\0';
-	if (BN_bn2bin(v, d + 1) != len)
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+	nếu (BN_bn2bin(v, d + 1) != len)
+		trả_về SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	/* If MSB is set, prepend a \0 */
-	if (len > 0 && (d[1] & 0x80) != 0)
+	nếu (len > 0 && (d[1] & 0x80) != 0)
 		prepend = 1;
-	if ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
+	nếu ((r = sshbuf_put_string(buf, d + 1 - prepend, len + prepend)) < 0) {
 		explicit_bzero(d, sizeof(d));
-		return r;
+		trả_về r;
 	}
 	explicit_bzero(d, sizeof(d));
-	return 0;
+	trả_về 0;
 }
 
-int
+số_nguyên
 sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g)
 {
 	u_char d[SSHBUF_MAX_ECPOINT];
 	size_t len;
-	int ret;
+	số_nguyên ret;
 
-	if ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	nếu ((len = EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
 	    NULL, 0, NULL)) > SSHBUF_MAX_ECPOINT) {
-		return SSH_ERR_INVALID_ARGUMENT;
+		trả_về SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
+	nếu (EC_POINT_point2oct(g, v, POINT_CONVERSION_UNCOMPRESSED,
 	    d, len, NULL) != len) {
-		return SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
+		trả_về SSH_ERR_INTERNAL_ERROR; /* Shouldn't happen */
 	}
 	ret = sshbuf_put_string(buf, d, len);
 	explicit_bzero(d, len);
-	return ret;
+	trả_về ret;
 }
 
-int
+số_nguyên
 sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v)
 {
-	return sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
+	trả_về sshbuf_put_ec(buf, EC_KEY_get0_public_key(v),
 	    EC_KEY_get0_group(v));
 }
 
-int
+số_nguyên
 sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey)
 {
 	const EC_KEY *ec;
 
-	if ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
-	return sshbuf_put_eckey(buf, ec);
+	nếu ((ec = EVP_PKEY_get0_EC_KEY(pkey)) == NULL)
+		trả_về SSH_ERR_LIBCRYPTO_ERROR;
+	trả_về sshbuf_put_eckey(buf, ec);
 }
 #endif /* WITH_OPENSSL */

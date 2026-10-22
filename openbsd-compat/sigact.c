@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#nếu !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+số_nguyên
+sigaction(số_nguyên sig, struct sigaction *sigact, struct sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	trả_về sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+số_nguyên
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	nếu (!mask) {
 		errno = EINVAL;
-		return -1;
+		trả_về -1;
 	}
 	*mask = 0;
-	return 0;
+	trả_về 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+số_nguyên
+sigprocmask (số_nguyên mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	nếu (!mask) {
 		errno = EINVAL;
-		return -1;
+		trả_về -1;
 	}
 
-	if (omask)
+	nếu (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	nếu (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	không_thì nếu (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	không_thì nếu (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	trả_về 0;
 }
 
-int
+số_nguyên
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	nếu (!mask) {
 		errno = EINVAL;
-		return -1;
+		trả_về -1;
 	}
-	return sigpause(*mask);
+	trả_về sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+số_nguyên
+sigdelset (sigset_t *mask, số_nguyên sig)
 {
-	if (!mask) {
+	nếu (!mask) {
 		errno = EINVAL;
-		return -1;
+		trả_về -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	trả_về 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+số_nguyên
+sigaddset (sigset_t *mask, số_nguyên sig)
 {
-	if (!mask) {
+	nếu (!mask) {
 		errno = EINVAL;
-		return -1;
+		trả_về -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	trả_về 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+số_nguyên
+sigismember (sigset_t *mask, số_nguyên sig)
 {
-	if (!mask) {
+	nếu (!mask) {
 		errno = EINVAL;
-		return -1;
+		trả_về -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	trả_về (*mask & sigmask(sig)) != 0;
 }
 
 #endif

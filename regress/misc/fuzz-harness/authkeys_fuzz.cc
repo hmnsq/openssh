@@ -23,35 +23,35 @@ void auth_debug_add(const char *fmt,...)
 }
 
 void
-auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
+auth_log_authopts(const char *loc, const struct sshauthopt *opts, số_nguyên do_remote)
 {
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+số_nguyên LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
 	char *tmp, *o, *cp = (char *)malloc(size + 1 + strlen(pubkey) + 1);
 	struct sshauthopt *opts = NULL;
 	struct passwd *pw = getpwuid(getuid());
 	static struct sshkey *key, *cert;
 
-	if (key == NULL) {
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL ||
+	nếu (key == NULL) {
+		nếu ((key = sshkey_new(KEY_UNSPEC)) == NULL ||
 		    (cert = sshkey_new(KEY_UNSPEC)) == NULL)
 			abort();
-		if ((o = tmp = strdup(pubkey)) == NULL ||
+		nếu ((o = tmp = strdup(pubkey)) == NULL ||
 		    sshkey_read(key, &tmp) != 0)
 			abort();
 		free(o);
-		if ((o = tmp = strdup(certtext)) == NULL ||
+		nếu ((o = tmp = strdup(certtext)) == NULL ||
 		    sshkey_read(cert, &tmp) != 0)
 			abort();
 		free(o);
 	}
-	if (cp == NULL || pw == NULL || key == NULL || cert == NULL)
+	nếu (cp == NULL || pw == NULL || key == NULL || cert == NULL)
 		abort();
 
 	// Cleanup whitespace at input EOL.
-	for (; size > 0 && strchr(" \t\r\n", data[size - 1]) != NULL; size--) ;
+	cho (; size > 0 && strchr(" \t\r\n", data[size - 1]) != NULL; size--) ;
 
 	// Append a pubkey that will match.
 	memcpy(cp, data, size);
@@ -59,7 +59,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	memcpy(cp + size + 1, pubkey, strlen(pubkey) + 1);
 
 	// Try key.
-	if ((tmp = strdup(cp)) == NULL)
+	nếu ((tmp = strdup(cp)) == NULL)
 		abort();
 	(void) auth_check_authkey_line(pw, key, tmp, "127.0.0.1", "localhost",
 	    "fuzz", &opts);
@@ -67,7 +67,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	sshauthopt_free(opts);
 
 	// Try cert.
-	if ((tmp = strdup(cp)) == NULL)
+	nếu ((tmp = strdup(cp)) == NULL)
 		abort();
 	(void) auth_check_authkey_line(pw, cert, tmp, "127.0.0.1", "localhost",
 	    "fuzz", &opts);
@@ -75,7 +75,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	sshauthopt_free(opts);
 
 	free(cp);
-	return 0;
+	trả_về 0;
 }
 
 } // extern "C"

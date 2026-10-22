@@ -24,7 +24,7 @@ extern "C" {
 // Define if you want to generate traces.
 /* #define STANDALONE 1 */
 
-static int prepare_key(struct shared_state *st, int keytype, int bits);
+static số_nguyên prepare_key(struct shared_state *st, số_nguyên keytype, số_nguyên bits);
 
 struct shared_state {
 	size_t nkeys;
@@ -47,98 +47,98 @@ struct kex_overrides {
 	const char *comp;
 };
 
-static int
+static số_nguyên
 do_send_and_receive(struct ssh *from, struct ssh *to,
-    struct sshbuf *store, int clobber, size_t *n)
+    struct sshbuf *store, số_nguyên clobber, size_t *n)
 {
 	u_char type;
 	size_t len;
 	const u_char *buf;
-	int r;
+	số_nguyên r;
 
-	for (*n = 0;; (*n)++) {
-		if ((r = ssh_packet_next(from, &type)) != 0) {
+	cho (*n = 0;; (*n)++) {
+		nếu ((r = ssh_packet_next(from, &type)) != 0) {
 			debug_fr(r, "ssh_packet_next");
-			return r;
+			trả_về r;
 		}
-		if (type != 0)
-			return 0;
+		nếu (type != 0)
+			trả_về 0;
 		buf = ssh_output_ptr(from, &len);
 		debug_f("%zu%s", len, clobber ? " ignore" : "");
-		if (len == 0)
-			return 0;
-		if ((r = ssh_output_consume(from, len)) != 0) {
+		nếu (len == 0)
+			trả_về 0;
+		nếu ((r = ssh_output_consume(from, len)) != 0) {
 			debug_fr(r, "ssh_output_consume");
-			return r;
+			trả_về r;
 		}
-		if (store != NULL && (r = sshbuf_put(store, buf, len)) != 0) {
+		nếu (store != NULL && (r = sshbuf_put(store, buf, len)) != 0) {
 			debug_fr(r, "sshbuf_put");
-			return r;
+			trả_về r;
 		}
-		if (!clobber && (r = ssh_input_append(to, buf, len)) != 0) {
+		nếu (!clobber && (r = ssh_input_append(to, buf, len)) != 0) {
 			debug_fr(r, "ssh_input_append");
-			return r;
+			trả_về r;
 		}
 	}
 }
 
-static int
+static số_nguyên
 run_kex(struct test_state *ts, struct ssh *client, struct ssh *server)
 {
-	int r = 0;
+	số_nguyên r = 0;
 	size_t cn, sn;
 
 	/* If fuzzing, replace server/client input */
-	if (ts->sin != NULL) {
-		if ((r = ssh_input_append(server, sshbuf_ptr(ts->sin),
+	nếu (ts->sin != NULL) {
+		nếu ((r = ssh_input_append(server, sshbuf_ptr(ts->sin),
 		    sshbuf_len(ts->sin))) != 0) {
 			error_fr(r, "ssh_input_append");
-			return r;
+			trả_về r;
 		}
 		sshbuf_reset(ts->sin);
 	}
-	if (ts->cin != NULL) {
-		if ((r = ssh_input_append(client, sshbuf_ptr(ts->cin),
+	nếu (ts->cin != NULL) {
+		nếu ((r = ssh_input_append(client, sshbuf_ptr(ts->cin),
 		    sshbuf_len(ts->cin))) != 0) {
 			error_fr(r, "ssh_input_append");
-			return r;
+			trả_về r;
 		}
 		sshbuf_reset(ts->cin);
 	}
-	while (!server->kex->done || !client->kex->done) {
+	trong_khi (!server->kex->done || !client->kex->done) {
 		cn = sn = 0;
 		debug_f("S:");
-		if ((r = do_send_and_receive(server, client,
+		nếu ((r = do_send_and_receive(server, client,
 		    ts->smsgs, ts->cin != NULL, &sn)) != 0) {
 			debug_fr(r, "S->C");
 			break;
 		}
 		debug_f("C:");
-		if ((r = do_send_and_receive(client, server,
+		nếu ((r = do_send_and_receive(client, server,
 		    ts->cmsgs, ts->sin != NULL, &cn)) != 0) {
 			debug_fr(r, "C->S");
 			break;
 		}
-		if (cn == 0 && sn == 0) {
+		nếu (cn == 0 && sn == 0) {
 			debug_f("kex stalled");
 			r = SSH_ERR_PROTOCOL_ERROR;
 			break;
 		}
 	}
 	debug_fr(r, "done");
-	return r;
+	trả_về r;
 }
 
 static void
 store_key(struct shared_state *st, struct sshkey *pubkey,
     struct sshkey *privkey)
 {
-	if (st == NULL || pubkey->type < 0 || pubkey->type > INT_MAX ||
+	nếu (st == NULL || pubkey->type < 0 || pubkey->type > INT_MAX ||
 	    privkey->type != pubkey->type ||
 	    ((size_t)pubkey->type < st->nkeys &&
 	     st->pubkeys[pubkey->type] != NULL))
 		abort();
-	if ((size_t)pubkey->type >= st->nkeys) {
+	nếu ((size_t)pubkey->type >= st->nkeys) {
 		st->pubkeys = (struct sshkey **)xrecallocarray(st->pubkeys,
 		    st->nkeys, pubkey->type + 1, sizeof(*st->pubkeys));
 		st->privkeys = (struct sshkey **)xrecallocarray(st->privkeys,
@@ -150,71 +150,71 @@ store_key(struct shared_state *st, struct sshkey *pubkey,
 	st->privkeys[privkey->type] = privkey;
 }
 
-static int
+static số_nguyên
 prepare_keys(struct shared_state *st)
 {
-	if (prepare_key(st, KEY_RSA, 2048) != 0 ||
+	nếu (prepare_key(st, KEY_RSA, 2048) != 0 ||
 	    prepare_key(st, KEY_ECDSA, 256) != 0 ||
 	    prepare_key(st, KEY_ED25519, 256) != 0) {
 		error_f("key prepare failed");
-		return -1;
+		trả_về -1;
 	}
-	return 0;
+	trả_về 0;
 }
 
 static struct sshkey *
-get_pubkey(struct shared_state *st, int keytype)
+get_pubkey(struct shared_state *st, số_nguyên keytype)
 {
-	if (st == NULL || keytype < 0 || (size_t)keytype >= st->nkeys ||
+	nếu (st == NULL || keytype < 0 || (size_t)keytype >= st->nkeys ||
 	    st->pubkeys == NULL || st->pubkeys[keytype] == NULL)
 		abort();
-	return st->pubkeys[keytype];
+	trả_về st->pubkeys[keytype];
 }
 
 static struct sshkey *
-get_privkey(struct shared_state *st, int keytype)
+get_privkey(struct shared_state *st, số_nguyên keytype)
 {
-	if (st == NULL || keytype < 0 || (size_t)keytype >= st->nkeys ||
+	nếu (st == NULL || keytype < 0 || (size_t)keytype >= st->nkeys ||
 	    st->privkeys == NULL || st->privkeys[keytype] == NULL)
 		abort();
-	return st->privkeys[keytype];
+	trả_về st->privkeys[keytype];
 }
 
-static int
+static số_nguyên
 build_proposal_side(char **out, const char *defaults[PROPOSAL_MAX],
     const char *kex, const char *keyname,
     const char *cipher, const char *mac, const char *comp)
 {
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
+	số_nguyên i;
+	cho (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *ccp = defaults[i];
 #ifdef CIPHER_NONE_AVAIL
-		if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		nếu (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			ccp = "none";
 #endif
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		nếu (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			ccp = keyname;
-		else if (i == PROPOSAL_KEX_ALGS && kex != NULL)
+		không_thì nếu (i == PROPOSAL_KEX_ALGS && kex != NULL)
 			ccp = kex;
-		else if ((i == PROPOSAL_ENC_ALGS_CTOS ||
+		không_thì nếu ((i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC) && cipher != NULL)
 			ccp = cipher;
-		else if ((i == PROPOSAL_MAC_ALGS_CTOS ||
+		không_thì nếu ((i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC) && mac != NULL)
 			ccp = mac;
-		else if ((i == PROPOSAL_COMP_ALGS_CTOS ||
+		không_thì nếu ((i == PROPOSAL_COMP_ALGS_CTOS ||
 		    i == PROPOSAL_COMP_ALGS_STOC) && comp != NULL)
 			ccp = comp;
-		if ((out[i] = strdup(ccp)) == NULL)
-			return -1;
+		nếu ((out[i] = strdup(ccp)) == NULL)
+			trả_về -1;
 	}
-	return 0;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 do_kex_with_key(struct shared_state *st, struct test_state *ts,
-    const char *kex, int keytype, const struct kex_overrides *ov)
+    const char *kex, số_nguyên keytype, const struct kex_overrides *ov)
 {
 	struct ssh *client = NULL, *server = NULL;
 	struct sshkey *privkey = NULL, *pubkey = NULL;
@@ -223,29 +223,29 @@ do_kex_with_key(struct shared_state *st, struct test_state *ts,
 	const char *proposal[PROPOSAL_MAX] = { KEX_CLIENT };
 	char *myproposal[PROPOSAL_MAX] = {0};
 	char *keyname = NULL;
-	int i, r;
+	số_nguyên i, r;
 
 	ts->cin = ts->sin = NULL;
-	if (ts->c_template != NULL &&
+	nếu (ts->c_template != NULL &&
 	    (ts->cin = sshbuf_fromb(ts->c_template)) == NULL)
 		abort();
-	if (ts->s_template != NULL &&
+	nếu (ts->s_template != NULL &&
 	    (ts->sin = sshbuf_fromb(ts->s_template)) == NULL)
 		abort();
 
 	pubkey = get_pubkey(st, keytype);
 	privkey = get_privkey(st, keytype);
 	keyname = xstrdup(sshkey_ssh_name(privkey));
-	if (ts->cin != NULL) {
+	nếu (ts->cin != NULL) {
 		debug_f("%s %s clobber client %zu", kex, keyname,
 		    sshbuf_len(ts->cin));
-	} else if (ts->sin != NULL) {
+	} không_thì nếu (ts->sin != NULL) {
 		debug_f("%s %s clobber server %zu", kex, keyname,
 		    sshbuf_len(ts->sin));
-	} else
+	} không_thì
 		debug_f("%s %s noclobber", kex, keyname);
 
-	if (build_proposal_side(myproposal, proposal, kex, keyname,
+	nếu (build_proposal_side(myproposal, proposal, kex, keyname,
 	    ov ? ov->cipher : NULL,
 	    ov ? ov->mac : NULL,
 	    ov ? ov->comp : NULL) != 0) {
@@ -254,26 +254,26 @@ do_kex_with_key(struct shared_state *st, struct test_state *ts,
 		goto fail;
 	}
 	memcpy(kex_params.proposal, myproposal, sizeof(myproposal));
-	if ((r = ssh_init(&client, 0, &kex_params)) != 0) {
+	nếu ((r = ssh_init(&client, 0, &kex_params)) != 0) {
 		error_fr(r, "init client");
 		goto fail;
 	}
-	if ((r = ssh_init(&server, 1, &kex_params)) != 0) {
+	nếu ((r = ssh_init(&server, 1, &kex_params)) != 0) {
 		error_fr(r, "init server");
 		goto fail;
 	}
-	if ((r = ssh_add_hostkey(server, privkey)) != 0 ||
+	nếu ((r = ssh_add_hostkey(server, privkey)) != 0 ||
 	    (r = ssh_add_hostkey(client, pubkey)) != 0) {
 		error_fr(r, "add hostkeys");
 		goto fail;
 	}
-	if ((r = run_kex(ts, client, server)) != 0) {
+	nếu ((r = run_kex(ts, client, server)) != 0) {
 		error_fr(r, "kex");
 		goto fail;
 	}
 	/* XXX rekex, set_state, etc */
  fail:
-	for (i = 0; i < PROPOSAL_MAX; i++)
+	cho (i = 0; i < PROPOSAL_MAX; i++)
 		free(myproposal[i]);
 	sshbuf_free(ts->sin);
 	sshbuf_free(ts->cin);
@@ -281,18 +281,18 @@ do_kex_with_key(struct shared_state *st, struct test_state *ts,
 	ssh_free(client);
 	ssh_free(server);
 	free(keyname);
-	return r;
+	trả_về r;
 }
 
-static int
-prepare_key(struct shared_state *st, int kt, int bits)
+static số_nguyên
+prepare_key(struct shared_state *st, số_nguyên kt, số_nguyên bits)
 {
 	const char *pubstr = NULL;
 	const char *privstr = NULL;
 	char *tmp, *cp;
 	struct sshkey *privkey = NULL, *pubkey = NULL;
 	struct sshbuf *b = NULL;
-	int r;
+	số_nguyên r;
 
 	switch (kt) {
 	case KEY_RSA:
@@ -310,53 +310,53 @@ prepare_key(struct shared_state *st, int kt, int bits)
 	default:
 		abort();
 	}
-	if ((b = sshbuf_from(privstr, strlen(privstr))) == NULL)
+	nếu ((b = sshbuf_from(privstr, strlen(privstr))) == NULL)
 		abort();
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	nếu ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
 		error_fr(r, "priv %d", kt);
 		abort();
 	}
 	sshbuf_free(b);
 	tmp = cp = xstrdup(pubstr);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	nếu ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
 		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	nếu ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "pub %d", kt);
 		abort();
 	}
 	free(tmp);
 
 	store_key(st, pubkey, privkey);
-	return 0;
+	trả_về 0;
 }
 
-#if defined(STANDALONE)
+#nếu defined(STANDALONE)
 
-#if 0 /* use this if generating new keys to embed above */
-static int
-prepare_key(struct shared_state *st, int keytype, int bits)
+#nếu 0 /* use this if generating new keys to embed above */
+static số_nguyên
+prepare_key(struct shared_state *st, số_nguyên keytype, số_nguyên bits)
 {
 	struct sshkey *privkey = NULL, *pubkey = NULL;
-	int r;
+	số_nguyên r;
 
-	if ((r = sshkey_generate(keytype, bits, &privkey)) != 0) {
+	nếu ((r = sshkey_generate(keytype, bits, &privkey)) != 0) {
 		error_fr(r, "generate");
 		abort();
 	}
-	if ((r = sshkey_from_private(privkey, &pubkey)) != 0) {
+	nếu ((r = sshkey_from_private(privkey, &pubkey)) != 0) {
 		error_fr(r, "make pubkey");
 		abort();
 	}
 	store_key(st, pubkey, privkey);
-	return 0;
+	trả_về 0;
 }
 #endif
 
-int main(void)
+số_nguyên main(void)
 {
 	static struct shared_state *st;
 	struct test_state *ts;
-	const int keytypes[] = { KEY_RSA, KEY_ECDSA, KEY_ED25519, -1 };
+	const số_nguyên keytypes[] = { KEY_RSA, KEY_ECDSA, KEY_ED25519, -1 };
 	static const char * const kextypes[] = {
 		"mlkem768x25519-sha256",
 		"sntrup761x25519-sha512@openssh.com",
@@ -366,19 +366,19 @@ int main(void)
 		"diffie-hellman-group-exchange-sha1",
 		NULL,
 	};
-	int i, j;
+	số_nguyên i, j;
 	char *path;
 	FILE *f;
 
 	log_init("kex_fuzz", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 1);
 
-	if (st == NULL) {
+	nếu (st == NULL) {
 		st = (struct shared_state *)xcalloc(1, sizeof(*st));
 		prepare_keys(st);
 	}
 	/* Run each kex method for each key and save client/server packets */
-	for (i = 0; keytypes[i] != -1; i++) {
-		for (j = 0; kextypes[j] != NULL; j++) {
+	cho (i = 0; keytypes[i] != -1; i++) {
+		cho (j = 0; kextypes[j] != NULL; j++) {
 			ts = (struct test_state *)xcalloc(1, sizeof(*ts));
 			ts->smsgs = sshbuf_new();
 			ts->cmsgs = sshbuf_new();
@@ -386,9 +386,9 @@ int main(void)
 			xasprintf(&path, "S2C-%s-%s",
 			    kextypes[j], sshkey_type(st->pubkeys[keytypes[i]]));
 			debug_f("%s", path);
-			if ((f = fopen(path, "wb+")) == NULL)
+			nếu ((f = fopen(path, "wb+")) == NULL)
 				abort();
-			if (fwrite(sshbuf_ptr(ts->smsgs), 1,
+			nếu (fwrite(sshbuf_ptr(ts->smsgs), 1,
 			    sshbuf_len(ts->smsgs), f) != sshbuf_len(ts->smsgs))
 				abort();
 			fclose(f);
@@ -397,9 +397,9 @@ int main(void)
 			xasprintf(&path, "C2S-%s-%s",
 			    kextypes[j], sshkey_type(st->pubkeys[keytypes[i]]));
 			debug_f("%s", path);
-			if ((f = fopen(path, "wb+")) == NULL)
+			nếu ((f = fopen(path, "wb+")) == NULL)
 				abort();
-			if (fwrite(sshbuf_ptr(ts->cmsgs), 1,
+			nếu (fwrite(sshbuf_ptr(ts->cmsgs), 1,
 			    sshbuf_len(ts->cmsgs), f) != sshbuf_len(ts->cmsgs))
 				abort();
 			fclose(f);
@@ -410,23 +410,23 @@ int main(void)
 			free(ts);
 		}
 	}
-	for (i = 0; keytypes[i] != -1; i++) {
+	cho (i = 0; keytypes[i] != -1; i++) {
 		xasprintf(&path, "%s.priv",
 		    sshkey_type(st->privkeys[keytypes[i]]));
 		debug_f("%s", path);
-		if (sshkey_save_private(st->privkeys[keytypes[i]], path,
+		nếu (sshkey_save_private(st->privkeys[keytypes[i]], path,
 		    "", "", SSHKEY_PRIVATE_OPENSSH, NULL, 0) != 0)
 			abort();
 		free(path);
 		xasprintf(&path, "%s.pub",
 		    sshkey_type(st->pubkeys[keytypes[i]]));
 		debug_f("%s", path);
-		if (sshkey_save_public(st->pubkeys[keytypes[i]], path, "") != 0)
+		nếu (sshkey_save_public(st->pubkeys[keytypes[i]], path, "") != 0)
 			abort();
 		free(path);
 	}
 }
-#else /* !STANDALONE */
+#không_thì /* !STANDALONE */
 static void
 do_kex(struct shared_state *st, struct test_state *ts, const char *kex)
 {
@@ -462,20 +462,20 @@ kex_extras(struct shared_state *st, struct test_state *ts)
 		NULL,
 	};
 	const char *kex = "curve25519-sha256@libssh.org";
-	int i;
+	số_nguyên i;
 
-	for (i = 0; ciphers[i] != NULL; i++) {
+	cho (i = 0; ciphers[i] != NULL; i++) {
 		struct kex_overrides ov = { 0 };
 		ov.cipher = ciphers[i];
 		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
 	}
-	for (i = 0; macs[i] != NULL; i++) {
+	cho (i = 0; macs[i] != NULL; i++) {
 		struct kex_overrides ov = { 0 };
 		ov.cipher = "aes128-ctr";
 		ov.mac = macs[i];
 		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
 	}
-	for (i = 0; comps[i] != NULL; i++) {
+	cho (i = 0; comps[i] != NULL; i++) {
 		struct kex_overrides ov = { 0 };
 		ov.comp = comps[i];
 		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
@@ -494,7 +494,7 @@ kex_tests(struct shared_state *st, struct test_state *ts)
 	kex_extras(st, ts);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+số_nguyên LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
 	static struct shared_state *st;
 	struct test_state *ts;
@@ -502,8 +502,8 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	u_char zbuf[4096] = {0};
 	static LogLevel loglevel = SYSLOG_LEVEL_INFO;
 
-	if (st == NULL) {
-		if (getenv("DEBUG") != NULL || getenv("KEX_FUZZ_DEBUG") != NULL)
+	nếu (st == NULL) {
+		nếu (getenv("DEBUG") != NULL || getenv("KEX_FUZZ_DEBUG") != NULL)
 			loglevel = SYSLOG_LEVEL_DEBUG3;
 		log_init("kex_fuzz",
 		    loglevel, SYSLOG_FACILITY_AUTH, 1);
@@ -515,7 +515,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	memset(crbuf, '\n', sizeof(crbuf));
 
 	ts = (struct test_state *)xcalloc(1, sizeof(*ts));
-	if ((ts->s_template = sshbuf_new()) == NULL ||
+	nếu ((ts->s_template = sshbuf_new()) == NULL ||
 	    sshbuf_put(ts->s_template, data, size) != 0 ||
 	    sshbuf_put(ts->s_template, crbuf, sizeof(crbuf)) != 0 ||
 	    sshbuf_put(ts->s_template, zbuf, sizeof(zbuf)) != 0)
@@ -525,7 +525,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	free(ts);
 
 	ts = (struct test_state *)xcalloc(1, sizeof(*ts));
-	if ((ts->c_template = sshbuf_new()) == NULL ||
+	nếu ((ts->c_template = sshbuf_new()) == NULL ||
 	    sshbuf_put(ts->c_template, data, size) != 0 ||
 	    sshbuf_put(ts->c_template, crbuf, sizeof(crbuf)) != 0 ||
 	    sshbuf_put(ts->c_template, zbuf, sizeof(zbuf)) != 0)
@@ -534,7 +534,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	sshbuf_free(ts->c_template);
 	free(ts);
 
-	return 0;
+	trả_về 0;
 }
 #endif /* STANDALONE */
 } /* extern "C" */

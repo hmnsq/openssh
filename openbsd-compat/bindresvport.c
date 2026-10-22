@@ -50,71 +50,71 @@
 /*
  * Bind a socket to a privileged IP port
  */
-int
-bindresvport_sa(int sd, struct sockaddr *sa)
+số_nguyên
+bindresvport_sa(số_nguyên sd, struct sockaddr *sa)
 {
-	int error, af;
+	số_nguyên error, af;
 	struct sockaddr_storage myaddr;
 	struct sockaddr_in *in;
 	struct sockaddr_in6 *in6;
 	u_int16_t *portp;
 	u_int16_t port;
 	socklen_t salen;
-	int i;
+	số_nguyên i;
 
-	if (sa == NULL) {
+	nếu (sa == NULL) {
 		memset(&myaddr, 0, sizeof(myaddr));
 		sa = (struct sockaddr *)&myaddr;
 		salen = sizeof(myaddr);
 
-		if (getsockname(sd, sa, &salen) == -1)
-			return -1;	/* errno is correctly set */
+		nếu (getsockname(sd, sa, &salen) == -1)
+			trả_về -1;	/* errno is correctly set */
 
 		af = sa->sa_family;
 		memset(&myaddr, 0, salen);
-	} else
+	} không_thì
 		af = sa->sa_family;
 
-	if (af == AF_INET) {
+	nếu (af == AF_INET) {
 		in = (struct sockaddr_in *)sa;
 		salen = sizeof(struct sockaddr_in);
 		portp = &in->sin_port;
-	} else if (af == AF_INET6) {
+	} không_thì nếu (af == AF_INET6) {
 		in6 = (struct sockaddr_in6 *)sa;
 		salen = sizeof(struct sockaddr_in6);
 		portp = &in6->sin6_port;
-	} else {
+	} không_thì {
 		errno = EPFNOSUPPORT;
-		return (-1);
+		trả_về (-1);
 	}
 	sa->sa_family = af;
 
 	port = ntohs(*portp);
-	if (port == 0)
+	nếu (port == 0)
 		port = arc4random_uniform(NPORTS) + STARTPORT;
 
 	/* Avoid warning */
 	error = -1;
 
-	for(i = 0; i < NPORTS; i++) {
+	cho(i = 0; i < NPORTS; i++) {
 		*portp = htons(port);
 		
 		error = bind(sd, sa, salen);
 
 		/* Terminate on success */
-		if (error == 0)
+		nếu (error == 0)
 			break;
 			
 		/* Terminate on errors, except "address already in use" */
-		if ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
+		nếu ((error < 0) && !((errno == EADDRINUSE) || (errno == EINVAL)))
 			break;
 			
 		port++;
-		if (port > ENDPORT)
+		nếu (port > ENDPORT)
 			port = STARTPORT;
 	}
 
-	return (error);
+	trả_về (error);
 }
 
 #endif /* HAVE_BINDRESVPORT_SA */

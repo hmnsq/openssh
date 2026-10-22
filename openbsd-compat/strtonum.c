@@ -36,10 +36,10 @@ strtonum(const char *numstr, long long minval, long long maxval,
 {
 	long long ll = 0;
 	char *ep;
-	int error = 0;
+	số_nguyên error = 0;
 	struct errval {
 		const char *errstr;
-		int err;
+		số_nguyên err;
 	} ev[4] = {
 		{ NULL,		0 },
 		{ "invalid",	EINVAL },
@@ -49,24 +49,24 @@ strtonum(const char *numstr, long long minval, long long maxval,
 
 	ev[0].err = errno;
 	errno = 0;
-	if (minval > maxval)
+	nếu (minval > maxval)
 		error = INVALID;
-	else {
+	không_thì {
 		ll = strtoll(numstr, &ep, 10);
-		if (numstr == ep || *ep != '\0')
+		nếu (numstr == ep || *ep != '\0')
 			error = INVALID;
-		else if ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
+		không_thì nếu ((ll == LLONG_MIN && errno == ERANGE) || ll < minval)
 			error = TOOSMALL;
-		else if ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
+		không_thì nếu ((ll == LLONG_MAX && errno == ERANGE) || ll > maxval)
 			error = TOOLARGE;
 	}
-	if (errstrp != NULL)
+	nếu (errstrp != NULL)
 		*errstrp = ev[error].errstr;
 	errno = ev[error].err;
-	if (error)
+	nếu (error)
 		ll = 0;
 
-	return (ll);
+	trả_về (ll);
 }
 
 #endif /* HAVE_STRTONUM */

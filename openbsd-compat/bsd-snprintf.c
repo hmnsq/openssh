@@ -94,12 +94,12 @@
 
 #include "includes.h"
 
-#if defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
+#nếu defined(BROKEN_SNPRINTF)		/* For those with broken snprintf() */
 # undef HAVE_SNPRINTF
 # undef HAVE_VSNPRINTF
 #endif
 
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
+#nếu !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF)
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -110,13 +110,13 @@
 
 #ifdef HAVE_LONG_DOUBLE
 # define LDOUBLE long double
-#else
+#không_thì
 # define LDOUBLE double
 #endif
 
 #ifdef HAVE_LONG_LONG
 # define LLONG long long
-#else
+#không_thì
 # define LLONG long
 #endif
 
@@ -158,36 +158,36 @@
 
 #define DOPR_OUTCH(buf, pos, buflen, thechar) \
 	do { \
-		if (pos + 1 >= INT_MAX) { \
+		nếu (pos + 1 >= INT_MAX) { \
 			errno = ERANGE; \
-			return -1; \
+			trả_về -1; \
 		} \
-		if (pos < buflen) \
+		nếu (pos < buflen) \
 			buf[pos] = thechar; \
 		(pos)++; \
-	} while (0)
+	} trong_khi (0)
 
-static int dopr(char *buffer, size_t maxlen, const char *format,
+static số_nguyên dopr(char *buffer, size_t maxlen, const char *format,
     va_list args_in);
-static int fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max);
-static int fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags);
-static int fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags);
+static số_nguyên fmtstr(char *buffer, size_t *currlen, size_t maxlen,
+    char *value, số_nguyên flags, số_nguyên min, số_nguyên max);
+static số_nguyên fmtint(char *buffer, size_t *currlen, size_t maxlen,
+    intmax_t value, số_nguyên base, số_nguyên min, số_nguyên max, số_nguyên flags);
+static số_nguyên fmtfp(char *buffer, size_t *currlen, size_t maxlen,
+    LDOUBLE fvalue, số_nguyên min, số_nguyên max, số_nguyên flags);
 
-static int
+static số_nguyên
 dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 {
 	char ch;
 	intmax_t value;
 	LDOUBLE fvalue;
 	char *strvalue;
-	int min;
-	int max;
-	int state;
-	int flags;
-	int cflags;
+	số_nguyên min;
+	số_nguyên max;
+	số_nguyên state;
+	số_nguyên flags;
+	số_nguyên cflags;
 	size_t currlen;
 	va_list args;
 
@@ -198,15 +198,15 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 	max = -1;
 	ch = *format++;
 
-	while (state != DP_S_DONE) {
-		if (ch == '\0')
+	trong_khi (state != DP_S_DONE) {
+		nếu (ch == '\0')
 			state = DP_S_DONE;
 
 		switch(state) {
 		case DP_S_DEFAULT:
-			if (ch == '%')
+			nếu (ch == '%')
 				state = DP_S_FLAGS;
-			else
+			không_thì
 				DOPR_OUTCH(buffer, currlen, maxlen, ch);
 			ch = *format++;
 			break;
@@ -238,36 +238,36 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 			}
 			break;
 		case DP_S_MIN:
-			if (isdigit((unsigned char)ch)) {
+			nếu (isdigit((unsigned char)ch)) {
 				min = 10*min + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				min = va_arg (args, int);
+			} không_thì nếu (ch == '*') {
+				min = va_arg (args, số_nguyên);
 				ch = *format++;
 				state = DP_S_DOT;
-			} else {
+			} không_thì {
 				state = DP_S_DOT;
 			}
 			break;
 		case DP_S_DOT:
-			if (ch == '.') {
+			nếu (ch == '.') {
 				state = DP_S_MAX;
 				ch = *format++;
-			} else {
+			} không_thì {
 				state = DP_S_MOD;
 			}
 			break;
 		case DP_S_MAX:
-			if (isdigit((unsigned char)ch)) {
-				if (max < 0)
+			nếu (isdigit((unsigned char)ch)) {
+				nếu (max < 0)
 					max = 0;
 				max = 10*max + char_to_int (ch);
 				ch = *format++;
-			} else if (ch == '*') {
-				max = va_arg (args, int);
+			} không_thì nếu (ch == '*') {
+				max = va_arg (args, số_nguyên);
 				ch = *format++;
 				state = DP_S_MOD;
-			} else {
+			} không_thì {
 				state = DP_S_MOD;
 			}
 			break;
@@ -284,7 +284,7 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 			case 'l':
 				cflags = DP_C_LONG;
 				ch = *format++;
-				if (ch == 'l') {	/* It's a long long */
+				nếu (ch == 'l') {	/* It's a long long */
 					cflags = DP_C_LLONG;
 					ch = *format++;
 				}
@@ -306,59 +306,59 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 			switch (ch) {
 			case 'd':
 			case 'i':
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, int);
-				else if (cflags == DP_C_LONG)
-					value = va_arg (args, long int);
-				else if (cflags == DP_C_LLONG)
+				nếu (cflags == DP_C_SHORT)
+					value = va_arg (args, số_nguyên);
+				không_thì nếu (cflags == DP_C_LONG)
+					value = va_arg (args, long số_nguyên);
+				không_thì nếu (cflags == DP_C_LLONG)
 					value = va_arg (args, LLONG);
-				else if (cflags == DP_C_SIZE)
+				không_thì nếu (cflags == DP_C_SIZE)
 					value = va_arg (args, ssize_t);
-				else if (cflags == DP_C_INTMAX)
+				không_thì nếu (cflags == DP_C_INTMAX)
 					value = va_arg (args, intmax_t);
-				else
-					value = va_arg (args, int);
-				if (fmtint(buffer, &currlen, maxlen,
+				không_thì
+					value = va_arg (args, số_nguyên);
+				nếu (fmtint(buffer, &currlen, maxlen,
 				    value, 10, min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'o':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
+				nếu (cflags == DP_C_SHORT)
+					value = va_arg (args, unsigned số_nguyên);
+				không_thì nếu (cflags == DP_C_LONG)
+					value = (long)va_arg (args, unsigned long số_nguyên);
+				không_thì nếu (cflags == DP_C_LLONG)
 					value = (long)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
+				không_thì nếu (cflags == DP_C_SIZE)
 					value = va_arg (args, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
+				không_thì nếu (cflags == DP_C_INTMAX)
 					value = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				không_thì
+					value = (long)va_arg (args, unsigned số_nguyên);
+				nếu (fmtint(buffer, &currlen, maxlen, value,
 				    8, min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'u':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
+				nếu (cflags == DP_C_SHORT)
+					value = va_arg (args, unsigned số_nguyên);
+				không_thì nếu (cflags == DP_C_LONG)
+					value = (long)va_arg (args, unsigned long số_nguyên);
+				không_thì nếu (cflags == DP_C_LLONG)
 					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
+				không_thì nếu (cflags == DP_C_SIZE)
 					value = va_arg (args, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
+				không_thì nếu (cflags == DP_C_INTMAX)
 					value = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				không_thì
+					value = (long)va_arg (args, unsigned số_nguyên);
+				nếu (fmtint(buffer, &currlen, maxlen, value,
 				    10, min, max, flags) == -1)
 					goto fail;
 				break;
@@ -366,101 +366,101 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 				flags |= DP_F_UP;
 			case 'x':
 				flags |= DP_F_UNSIGNED;
-				if (cflags == DP_C_SHORT)
-					value = va_arg (args, unsigned int);
-				else if (cflags == DP_C_LONG)
-					value = (long)va_arg (args, unsigned long int);
-				else if (cflags == DP_C_LLONG)
+				nếu (cflags == DP_C_SHORT)
+					value = va_arg (args, unsigned số_nguyên);
+				không_thì nếu (cflags == DP_C_LONG)
+					value = (long)va_arg (args, unsigned long số_nguyên);
+				không_thì nếu (cflags == DP_C_LLONG)
 					value = (LLONG)va_arg (args, unsigned LLONG);
-				else if (cflags == DP_C_SIZE)
+				không_thì nếu (cflags == DP_C_SIZE)
 					value = va_arg (args, size_t);
 #ifdef notyet
-				else if (cflags == DP_C_INTMAX)
+				không_thì nếu (cflags == DP_C_INTMAX)
 					value = va_arg (args, uintmax_t);
 #endif
-				else
-					value = (long)va_arg (args, unsigned int);
-				if (fmtint(buffer, &currlen, maxlen, value,
+				không_thì
+					value = (long)va_arg (args, unsigned số_nguyên);
+				nếu (fmtint(buffer, &currlen, maxlen, value,
 				    16, min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'f':
-				if (cflags == DP_C_LDOUBLE)
+				nếu (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
+				không_thì
 					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				nếu (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'E':
 				flags |= DP_F_UP;
 			case 'e':
-				if (cflags == DP_C_LDOUBLE)
+				nếu (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
+				không_thì
 					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				nếu (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'G':
 				flags |= DP_F_UP;
 			case 'g':
-				if (cflags == DP_C_LDOUBLE)
+				nếu (cflags == DP_C_LDOUBLE)
 					fvalue = va_arg (args, LDOUBLE);
-				else
+				không_thì
 					fvalue = va_arg (args, double);
-				if (fmtfp(buffer, &currlen, maxlen, fvalue,
+				nếu (fmtfp(buffer, &currlen, maxlen, fvalue,
 				    min, max, flags) == -1)
 					goto fail;
 				break;
 			case 'c':
 				DOPR_OUTCH(buffer, currlen, maxlen,
-				    va_arg (args, int));
+				    va_arg (args, số_nguyên));
 				break;
 			case 's':
 				strvalue = va_arg (args, char *);
-				if (!strvalue) strvalue = "(NULL)";
-				if (max == -1) {
+				nếu (!strvalue) strvalue = "(NULL)";
+				nếu (max == -1) {
 					max = strlen(strvalue);
 				}
-				if (min > 0 && max >= 0 && min > max) max = min;
-				if (fmtstr(buffer, &currlen, maxlen,
+				nếu (min > 0 && max >= 0 && min > max) max = min;
+				nếu (fmtstr(buffer, &currlen, maxlen,
 				    strvalue, flags, min, max) == -1)
 					goto fail;
 				break;
 			case 'p':
 				strvalue = va_arg (args, void *);
-				if (fmtint(buffer, &currlen, maxlen,
+				nếu (fmtint(buffer, &currlen, maxlen,
 				    (long) strvalue, 16, min, max, flags) == -1)
 					goto fail;
 				break;
-#if we_dont_want_this_in_openssh
+#nếu we_dont_want_this_in_openssh
 			case 'n':
-				if (cflags == DP_C_SHORT) {
-					short int *num;
-					num = va_arg (args, short int *);
+				nếu (cflags == DP_C_SHORT) {
+					short số_nguyên *num;
+					num = va_arg (args, short số_nguyên *);
 					*num = currlen;
-				} else if (cflags == DP_C_LONG) {
-					long int *num;
-					num = va_arg (args, long int *);
-					*num = (long int)currlen;
-				} else if (cflags == DP_C_LLONG) {
+				} không_thì nếu (cflags == DP_C_LONG) {
+					long số_nguyên *num;
+					num = va_arg (args, long số_nguyên *);
+					*num = (long số_nguyên)currlen;
+				} không_thì nếu (cflags == DP_C_LLONG) {
 					LLONG *num;
 					num = va_arg (args, LLONG *);
 					*num = (LLONG)currlen;
-				} else if (cflags == DP_C_SIZE) {
+				} không_thì nếu (cflags == DP_C_SIZE) {
 					ssize_t *num;
 					num = va_arg (args, ssize_t *);
 					*num = (ssize_t)currlen;
-				} else if (cflags == DP_C_INTMAX) {
+				} không_thì nếu (cflags == DP_C_INTMAX) {
 					intmax_t *num;
 					num = va_arg (args, intmax_t *);
 					*num = (intmax_t)currlen;
-				} else {
-					int *num;
-					num = va_arg (args, int *);
+				} không_thì {
+					số_nguyên *num;
+					num = va_arg (args, số_nguyên *);
 					*num = currlen;
 				}
 				break;
@@ -484,109 +484,109 @@ dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 			break; /* some picky compilers need this */
 		}
 	}
-	if (maxlen != 0) {
-		if (currlen < maxlen - 1)
+	nếu (maxlen != 0) {
+		nếu (currlen < maxlen - 1)
 			buffer[currlen] = '\0';
-		else if (maxlen > 0)
+		không_thì nếu (maxlen > 0)
 			buffer[maxlen - 1] = '\0';
 	}
 	va_end(args);
-	return currlen < INT_MAX ? (int)currlen : -1;
+	trả_về currlen < INT_MAX ? (số_nguyên)currlen : -1;
  fail:
 	va_end(args);
-	return -1;
+	trả_về -1;
 }
 
-static int
+static số_nguyên
 fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-    char *value, int flags, int min, int max)
+    char *value, số_nguyên flags, số_nguyên min, số_nguyên max)
 {
-	int padlen, strln;     /* amount to pad */
-	int cnt = 0;
+	số_nguyên padlen, strln;     /* amount to pad */
+	số_nguyên cnt = 0;
 
 #ifdef DEBUG_SNPRINTF
 	printf("fmtstr min=%d max=%d s=[%s]\n", min, max, value);
 #endif
-	if (value == 0) {
+	nếu (value == 0) {
 		value = "<NULL>";
 	}
 
-	for (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
+	cho (strln = 0; strln < max && value[strln]; ++strln); /* strlen */
 	padlen = min - strln;
-	if (padlen < 0)
+	nếu (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	nếu (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justify */
 
-	while ((padlen > 0) && (cnt < max)) {
+	trong_khi ((padlen > 0) && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--padlen;
 		++cnt;
 	}
-	while (*value && (cnt < max)) {
+	trong_khi (*value && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, *value);
 		value++;
 		++cnt;
 	}
-	while ((padlen < 0) && (cnt < max)) {
+	trong_khi ((padlen < 0) && (cnt < max)) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++padlen;
 		++cnt;
 	}
-	return 0;
+	trả_về 0;
 }
 
 /* Have to handle DP_F_NUM (ie 0x and 0 alternates) */
 
-static int
+static số_nguyên
 fmtint(char *buffer, size_t *currlen, size_t maxlen,
-    intmax_t value, int base, int min, int max, int flags)
+    intmax_t value, số_nguyên base, số_nguyên min, số_nguyên max, số_nguyên flags)
 {
-	int signvalue = 0;
+	số_nguyên signvalue = 0;
 	unsigned LLONG uvalue;
 	char convert[20];
-	int place = 0;
-	int spadlen = 0; /* amount to space pad */
-	int zpadlen = 0; /* amount to zero pad */
-	int caps = 0;
+	số_nguyên place = 0;
+	số_nguyên spadlen = 0; /* amount to space pad */
+	số_nguyên zpadlen = 0; /* amount to zero pad */
+	số_nguyên caps = 0;
 
-	if (max < 0)
+	nếu (max < 0)
 		max = 0;
 
 	uvalue = value;
 
-	if(!(flags & DP_F_UNSIGNED)) {
-		if( value < 0 ) {
+	nếu(!(flags & DP_F_UNSIGNED)) {
+		nếu( value < 0 ) {
 			signvalue = '-';
 			uvalue = -value;
-		} else {
-			if (flags & DP_F_PLUS)  /* Do a sign (+/i) */
+		} không_thì {
+			nếu (flags & DP_F_PLUS)  /* Do a sign (+/i) */
 				signvalue = '+';
-			else if (flags & DP_F_SPACE)
+			không_thì nếu (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+	nếu (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 
 	do {
 		convert[place++] =
 			(caps? "0123456789ABCDEF":"0123456789abcdef")
 			[uvalue % (unsigned)base  ];
 		uvalue = (uvalue / (unsigned)base );
-	} while(uvalue && (place < 20));
-	if (place == 20) place--;
+	} trong_khi(uvalue && (place < 20));
+	nếu (place == 20) place--;
 	convert[place] = 0;
 
 	zpadlen = max - place;
 	spadlen = min - MAX (max, place) - (signvalue ? 1 : 0);
-	if (zpadlen < 0) zpadlen = 0;
-	if (spadlen < 0) spadlen = 0;
-	if (flags & DP_F_ZERO) {
+	nếu (zpadlen < 0) zpadlen = 0;
+	nếu (spadlen < 0) spadlen = 0;
+	nếu (flags & DP_F_ZERO) {
 		zpadlen = MAX(zpadlen, spadlen);
 		spadlen = 0;
 	}
-	if (flags & DP_F_MINUS)
+	nếu (flags & DP_F_MINUS)
 		spadlen = -spadlen; /* Left Justifty */
 
 #ifdef DEBUG_SNPRINTF
@@ -595,57 +595,57 @@ fmtint(char *buffer, size_t *currlen, size_t maxlen,
 #endif
 
 	/* Spaces */
-	while (spadlen > 0) {
+	trong_khi (spadlen > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--spadlen;
 	}
 
 	/* Sign */
-	if (signvalue)
+	nếu (signvalue)
 		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 
 	/* Zeros */
-	if (zpadlen > 0) {
-		while (zpadlen > 0) {
+	nếu (zpadlen > 0) {
+		trong_khi (zpadlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 	}
 
 	/* Digits */
-	while (place > 0) {
+	trong_khi (place > 0) {
 		--place;
 		DOPR_OUTCH(buffer, *currlen, maxlen, convert[place]);
 	}
 
 	/* Left Justified spaces */
-	while (spadlen < 0) {
+	trong_khi (spadlen < 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++spadlen;
 	}
-	return 0;
+	trả_về 0;
 }
 
 static LDOUBLE abs_val(LDOUBLE value)
 {
 	LDOUBLE result = value;
 
-	if (value < 0)
+	nếu (value < 0)
 		result = -value;
 
-	return result;
+	trả_về result;
 }
 
-static LDOUBLE POW10(int val)
+static LDOUBLE POW10(số_nguyên val)
 {
 	LDOUBLE result = 1;
 
-	while (val) {
+	trong_khi (val) {
 		result *= 10;
 		val--;
 	}
 
-	return result;
+	trả_về result;
 }
 
 static LLONG ROUND(LDOUBLE value)
@@ -654,66 +654,66 @@ static LLONG ROUND(LDOUBLE value)
 
 	intpart = (LLONG)value;
 	value = value - intpart;
-	if (value >= 0.5) intpart++;
+	nếu (value >= 0.5) intpart++;
 
-	return intpart;
+	trả_về intpart;
 }
 
 /* a replacement for modf that doesn't need the math library. Should
    be portable, but slow */
 static double my_modf(double x0, double *iptr)
 {
-	int i;
+	số_nguyên i;
 	long l;
 	double x = x0;
 	double f = 1.0;
 
-	for (i=0;i<100;i++) {
+	cho (i=0;i<100;i++) {
 		l = (long)x;
-		if (l <= (x+1) && l >= (x-1)) break;
+		nếu (l <= (x+1) && l >= (x-1)) break;
 		x *= 0.1;
 		f *= 10.0;
 	}
 
-	if (i == 100) {
+	nếu (i == 100) {
 		/*
 		 * yikes! the number is beyond what we can handle.
 		 * What do we do?
 		 */
 		(*iptr) = 0;
-		return 0;
+		trả_về 0;
 	}
 
-	if (i != 0) {
+	nếu (i != 0) {
 		double i2;
 		double ret;
 
 		ret = my_modf(x0-l*f, &i2);
 		(*iptr) = l*f + i2;
-		return ret;
+		trả_về ret;
 	}
 
 	(*iptr) = l;
-	return x - (*iptr);
+	trả_về x - (*iptr);
 }
 
 
-static int
+static số_nguyên
 fmtfp (char *buffer, size_t *currlen, size_t maxlen,
-    LDOUBLE fvalue, int min, int max, int flags)
+    LDOUBLE fvalue, số_nguyên min, số_nguyên max, số_nguyên flags)
 {
-	int signvalue = 0;
+	số_nguyên signvalue = 0;
 	double ufvalue;
 	char iconvert[311];
 	char fconvert[311];
-	int iplace = 0;
-	int fplace = 0;
-	int padlen = 0; /* amount to pad */
-	int zpadlen = 0;
-#if 0
-	int caps = 0;
+	số_nguyên iplace = 0;
+	số_nguyên fplace = 0;
+	số_nguyên padlen = 0; /* amount to pad */
+	số_nguyên zpadlen = 0;
+#nếu 0
+	số_nguyên caps = 0;
 #endif
-	int idx;
+	số_nguyên idx;
 	double intpart;
 	double fracpart;
 	double temp;
@@ -722,35 +722,35 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	 * AIX manpage says the default is 0, but Solaris says the default
 	 * is 6, and sprintf on AIX defaults to 6
 	 */
-	if (max < 0)
+	nếu (max < 0)
 		max = 6;
 
 	ufvalue = abs_val (fvalue);
 
-	if (fvalue < 0) {
+	nếu (fvalue < 0) {
 		signvalue = '-';
-	} else {
-		if (flags & DP_F_PLUS) { /* Do a sign (+/i) */
+	} không_thì {
+		nếu (flags & DP_F_PLUS) { /* Do a sign (+/i) */
 			signvalue = '+';
-		} else {
-			if (flags & DP_F_SPACE)
+		} không_thì {
+			nếu (flags & DP_F_SPACE)
 				signvalue = ' ';
 		}
 	}
 
-#if 0
-	if (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
+#nếu 0
+	nếu (flags & DP_F_UP) caps = 1; /* Should characters be upper case? */
 #endif
 
-#if 0
-	 if (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
+#nếu 0
+	 nếu (max == 0) ufvalue += 0.5; /* if max = 0 we must round */
 #endif
 
 	/*
 	 * Sorry, we only support 16 digits past the decimal because of our
 	 * conversion method
 	 */
-	if (max > 16)
+	nếu (max > 16)
 		max = 16;
 
 	/* We "cheat" by converting the fractional part to integer by
@@ -762,7 +762,7 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 
 	fracpart = ROUND((POW10(max)) * (ufvalue - intpart));
 
-	if (fracpart >= POW10(max)) {
+	nếu (fracpart >= POW10(max)) {
 		intpart++;
 		fracpart -= POW10(max);
 	}
@@ -771,57 +771,57 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	do {
 		temp = intpart*0.1;
 		my_modf(temp, &intpart);
-		idx = (int) ((temp -intpart +0.05)* 10.0);
+		idx = (số_nguyên) ((temp -intpart +0.05)* 10.0);
 		/* idx = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
 		/* printf ("%llf, %f, %x\n", temp, intpart, idx); */
 		iconvert[iplace++] = "0123456789"[idx];
-	} while (intpart && (iplace < 311));
-	if (iplace == 311) iplace--;
+	} trong_khi (intpart && (iplace < 311));
+	nếu (iplace == 311) iplace--;
 	iconvert[iplace] = 0;
 
 	/* Convert fractional part */
-	if (fracpart)
+	nếu (fracpart)
 	{
 		do {
 			temp = fracpart*0.1;
 			my_modf(temp, &fracpart);
-			idx = (int) ((temp -fracpart +0.05)* 10.0);
+			idx = (số_nguyên) ((temp -fracpart +0.05)* 10.0);
 			/* idx = (int) ((((temp/10) -fracpart) +0.05) *10); */
 			/* printf ("%lf, %lf, %ld\n", temp, fracpart, idx ); */
 			fconvert[fplace++] = "0123456789"[idx];
-		} while(fracpart && (fplace < 311));
-		if (fplace == 311) fplace--;
+		} trong_khi(fracpart && (fplace < 311));
+		nếu (fplace == 311) fplace--;
 	}
 	fconvert[fplace] = 0;
 
 	/* -1 for decimal point, another -1 if we are printing a sign */
 	padlen = min - iplace - max - 1 - ((signvalue) ? 1 : 0);
 	zpadlen = max - fplace;
-	if (zpadlen < 0) zpadlen = 0;
-	if (padlen < 0)
+	nếu (zpadlen < 0) zpadlen = 0;
+	nếu (padlen < 0)
 		padlen = 0;
-	if (flags & DP_F_MINUS)
+	nếu (flags & DP_F_MINUS)
 		padlen = -padlen; /* Left Justifty */
 
-	if ((flags & DP_F_ZERO) && (padlen > 0)) {
-		if (signvalue) {
+	nếu ((flags & DP_F_ZERO) && (padlen > 0)) {
+		nếu (signvalue) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 			--padlen;
 			signvalue = 0;
 		}
-		while (padlen > 0) {
+		trong_khi (padlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--padlen;
 		}
 	}
-	while (padlen > 0) {
+	trong_khi (padlen > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		--padlen;
 	}
-	if (signvalue)
+	nếu (signvalue)
 		DOPR_OUTCH(buffer, *currlen, maxlen, signvalue);
 
-	while (iplace > 0) {
+	trong_khi (iplace > 0) {
 		--iplace;
 		DOPR_OUTCH(buffer, *currlen, maxlen, iconvert[iplace]);
 	}
@@ -834,38 +834,38 @@ fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	 * Decimal point.  This should probably use locale to find the correct
 	 * char to print out.
 	 */
-	if (max > 0) {
+	nếu (max > 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, '.');
 
-		while (zpadlen > 0) {
+		trong_khi (zpadlen > 0) {
 			DOPR_OUTCH(buffer, *currlen, maxlen, '0');
 			--zpadlen;
 		}
 
-		while (fplace > 0) {
+		trong_khi (fplace > 0) {
 			--fplace;
 			DOPR_OUTCH(buffer, *currlen, maxlen, fconvert[fplace]);
 		}
 	}
 
-	while (padlen < 0) {
+	trong_khi (padlen < 0) {
 		DOPR_OUTCH(buffer, *currlen, maxlen, ' ');
 		++padlen;
 	}
-	return 0;
+	trả_về 0;
 }
 #endif /* !defined(HAVE_SNPRINTF) || !defined(HAVE_VSNPRINTF) */
 
-#if !defined(HAVE_VSNPRINTF)
-int
+#nếu !defined(HAVE_VSNPRINTF)
+số_nguyên
 vsnprintf (char *str, size_t count, const char *fmt, va_list args)
 {
-	return dopr(str, count, fmt, args);
+	trả_về dopr(str, count, fmt, args);
 }
 #endif
 
-#if !defined(HAVE_SNPRINTF)
-int
+#nếu !defined(HAVE_SNPRINTF)
+số_nguyên
 snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
 {
 	size_t ret;
@@ -874,6 +874,6 @@ snprintf(char *str, size_t count, SNPRINTF_CONST char *fmt, ...)
 	va_start(ap, fmt);
 	ret = vsnprintf(str, count, fmt, ap);
 	va_end(ap);
-	return ret;
+	trả_về ret;
 }
 #endif

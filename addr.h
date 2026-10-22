@@ -39,15 +39,15 @@ struct xaddr {
 #define addr32	xa.addr32
 };
 
-int addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
-int addr_netmask(int af, u_int l, struct xaddr *n);
-int addr_pton(const char *p, struct xaddr *n);
-int addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
-int addr_ntop(const struct xaddr *n, char *p, size_t len);
-int addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
-int addr_cmp(const struct xaddr *a, const struct xaddr *b);
-int addr_host_to_all1s(struct xaddr *a, u_int masklen);
-int addr_netmatch(const struct xaddr *host, const struct xaddr *net,
+số_nguyên addr_sa_to_xaddr(struct sockaddr *sa, socklen_t slen, struct xaddr *xa);
+số_nguyên addr_netmask(số_nguyên af, u_int l, struct xaddr *n);
+số_nguyên addr_pton(const char *p, struct xaddr *n);
+số_nguyên addr_pton_cidr(const char *p, struct xaddr *n, u_int *l);
+số_nguyên addr_ntop(const struct xaddr *n, char *p, size_t len);
+số_nguyên addr_and(struct xaddr *dst, const struct xaddr *a, const struct xaddr *b);
+số_nguyên addr_cmp(const struct xaddr *a, const struct xaddr *b);
+số_nguyên addr_host_to_all1s(struct xaddr *a, u_int masklen);
+số_nguyên addr_netmatch(const struct xaddr *host, const struct xaddr *net,
     u_int masklen);
 void addr_increment(struct xaddr *a);
 #endif /* _ADDR_H */

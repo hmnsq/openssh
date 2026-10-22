@@ -68,89 +68,89 @@
  * Converts POSIX speed_t to a baud rate.  The values of the
  * constants for speed_t are not themselves portable.
  */
-static int
+static số_nguyên
 speed_to_baud(speed_t speed)
 {
 	switch (speed) {
 	case B0:
-		return 0;
+		trả_về 0;
 	case B50:
-		return 50;
+		trả_về 50;
 	case B75:
-		return 75;
+		trả_về 75;
 	case B110:
-		return 110;
+		trả_về 110;
 	case B134:
-		return 134;
+		trả_về 134;
 	case B150:
-		return 150;
+		trả_về 150;
 	case B200:
-		return 200;
+		trả_về 200;
 	case B300:
-		return 300;
+		trả_về 300;
 	case B600:
-		return 600;
+		trả_về 600;
 	case B1200:
-		return 1200;
+		trả_về 1200;
 	case B1800:
-		return 1800;
+		trả_về 1800;
 	case B2400:
-		return 2400;
+		trả_về 2400;
 	case B4800:
-		return 4800;
+		trả_về 4800;
 	case B9600:
-		return 9600;
+		trả_về 9600;
 
 #ifdef B19200
 	case B19200:
-		return 19200;
-#else /* B19200 */
+		trả_về 19200;
+#không_thì /* B19200 */
 #ifdef EXTA
 	case EXTA:
-		return 19200;
+		trả_về 19200;
 #endif /* EXTA */
 #endif /* B19200 */
 
 #ifdef B38400
 	case B38400:
-		return 38400;
-#else /* B38400 */
+		trả_về 38400;
+#không_thì /* B38400 */
 #ifdef EXTB
 	case EXTB:
-		return 38400;
+		trả_về 38400;
 #endif /* EXTB */
 #endif /* B38400 */
 
 #ifdef B7200
 	case B7200:
-		return 7200;
+		trả_về 7200;
 #endif /* B7200 */
 #ifdef B14400
 	case B14400:
-		return 14400;
+		trả_về 14400;
 #endif /* B14400 */
 #ifdef B28800
 	case B28800:
-		return 28800;
+		trả_về 28800;
 #endif /* B28800 */
 #ifdef B57600
 	case B57600:
-		return 57600;
+		trả_về 57600;
 #endif /* B57600 */
 #ifdef B76800
 	case B76800:
-		return 76800;
+		trả_về 76800;
 #endif /* B76800 */
 #ifdef B115200
 	case B115200:
-		return 115200;
+		trả_về 115200;
 #endif /* B115200 */
 #ifdef B230400
 	case B230400:
-		return 230400;
+		trả_về 230400;
 #endif /* B230400 */
 	default:
-		return 9600;
+		trả_về 9600;
 	}
 }
 
@@ -158,88 +158,88 @@ speed_to_baud(speed_t speed)
  * Converts a numeric baud rate to a POSIX speed_t.
  */
 static speed_t
-baud_to_speed(int baud)
+baud_to_speed(số_nguyên baud)
 {
 	switch (baud) {
 	case 0:
-		return B0;
+		trả_về B0;
 	case 50:
-		return B50;
+		trả_về B50;
 	case 75:
-		return B75;
+		trả_về B75;
 	case 110:
-		return B110;
+		trả_về B110;
 	case 134:
-		return B134;
+		trả_về B134;
 	case 150:
-		return B150;
+		trả_về B150;
 	case 200:
-		return B200;
+		trả_về B200;
 	case 300:
-		return B300;
+		trả_về B300;
 	case 600:
-		return B600;
+		trả_về B600;
 	case 1200:
-		return B1200;
+		trả_về B1200;
 	case 1800:
-		return B1800;
+		trả_về B1800;
 	case 2400:
-		return B2400;
+		trả_về B2400;
 	case 4800:
-		return B4800;
+		trả_về B4800;
 	case 9600:
-		return B9600;
+		trả_về B9600;
 
 #ifdef B19200
 	case 19200:
-		return B19200;
-#else /* B19200 */
+		trả_về B19200;
+#không_thì /* B19200 */
 #ifdef EXTA
 	case 19200:
-		return EXTA;
+		trả_về EXTA;
 #endif /* EXTA */
 #endif /* B19200 */
 
 #ifdef B38400
 	case 38400:
-		return B38400;
-#else /* B38400 */
+		trả_về B38400;
+#không_thì /* B38400 */
 #ifdef EXTB
 	case 38400:
-		return EXTB;
+		trả_về EXTB;
 #endif /* EXTB */
 #endif /* B38400 */
 
 #ifdef B7200
 	case 7200:
-		return B7200;
+		trả_về B7200;
 #endif /* B7200 */
 #ifdef B14400
 	case 14400:
-		return B14400;
+		trả_về B14400;
 #endif /* B14400 */
 #ifdef B28800
 	case 28800:
-		return B28800;
+		trả_về B28800;
 #endif /* B28800 */
 #ifdef B57600
 	case 57600:
-		return B57600;
+		trả_về B57600;
 #endif /* B57600 */
 #ifdef B76800
 	case 76800:
-		return B76800;
+		trả_về B76800;
 #endif /* B76800 */
 #ifdef B115200
 	case 115200:
-		return B115200;
+		trả_về B115200;
 #endif /* B115200 */
 #ifdef B230400
 	case 230400:
-		return B230400;
+		trả_về B230400;
 #endif /* B230400 */
 	default:
-		return B9600;
+		trả_về B9600;
 	}
 }
 
@@ -250,10 +250,10 @@ static u_int
 special_char_encode(cc_t c)
 {
 #ifdef _POSIX_VDISABLE
-	if (c == _POSIX_VDISABLE)
-		return 255;
+	nếu (c == _POSIX_VDISABLE)
+		trả_về 255;
 #endif /* _POSIX_VDISABLE */
-	return c;
+	trả_về c;
 }
 
 /*
@@ -263,10 +263,10 @@ static cc_t
 special_char_decode(u_int c)
 {
 #ifdef _POSIX_VDISABLE
-	if (c == 255)
-		return _POSIX_VDISABLE;
+	nếu (c == 255)
+		trả_về _POSIX_VDISABLE;
 #endif /* _POSIX_VDISABLE */
-	return c;
+	trả_về c;
 }
 
 /*
@@ -275,31 +275,31 @@ special_char_decode(u_int c)
  * being constructed.
  */
 void
-ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
+ssh_tty_make_modes(struct ssh *ssh, số_nguyên fd, struct termios *tiop)
 {
 	struct termios tio;
 	struct sshbuf *buf;
-	int r, ibaud, obaud;
+	số_nguyên r, ibaud, obaud;
 
-	if ((buf = sshbuf_new()) == NULL)
+	nếu ((buf = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
-	if (tiop == NULL) {
-		if (fd == -1) {
+	nếu (tiop == NULL) {
+		nếu (fd == -1) {
 			debug_f("no fd or tio");
 			goto end;
 		}
-		if (tcgetattr(fd, &tio) == -1) {
+		nếu (tcgetattr(fd, &tio) == -1) {
 			logit("tcgetattr: %.100s", strerror(errno));
 			goto end;
 		}
-	} else
+	} không_thì
 		tio = *tiop;
 
 	/* Store input and output baud rates. */
 	obaud = speed_to_baud(cfgetospeed(&tio));
 	ibaud = speed_to_baud(cfgetispeed(&tio));
-	if ((r = sshbuf_put_u8(buf, TTY_OP_OSPEED)) != 0 ||
+	nếu ((r = sshbuf_put_u8(buf, TTY_OP_OSPEED)) != 0 ||
 	    (r = sshbuf_put_u32(buf, obaud)) != 0 ||
 	    (r = sshbuf_put_u8(buf, TTY_OP_ISPEED)) != 0 ||
 	    (r = sshbuf_put_u32(buf, ibaud)) != 0)
@@ -307,7 +307,7 @@ ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
 
 	/* Store values of mode flags. */
 #define TTYCHAR(NAME, OP) \
-	if ((r = sshbuf_put_u8(buf, OP)) != 0 || \
+	nếu ((r = sshbuf_put_u8(buf, OP)) != 0 || \
 	    (r = sshbuf_put_u32(buf, \
 	    special_char_encode(tio.c_cc[NAME]))) != 0) \
 		fatal_fr(r, "compose %s", #NAME);
@@ -315,9 +315,9 @@ ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
 #define SSH_TTYMODE_IUTF8 42  /* for SSH_BUG_UTF8TTYMODE */
 
 #define TTYMODE(NAME, FIELD, OP) \
-	if (OP == SSH_TTYMODE_IUTF8 && (ssh->compat & SSH_BUG_UTF8TTYMODE)) { \
+	nếu (OP == SSH_TTYMODE_IUTF8 && (ssh->compat & SSH_BUG_UTF8TTYMODE)) { \
 		debug3_f("SSH_BUG_UTF8TTYMODE"); \
-	} else if ((r = sshbuf_put_u8(buf, OP)) != 0 || \
+	} không_thì nếu ((r = sshbuf_put_u8(buf, OP)) != 0 || \
 	    (r = sshbuf_put_u32(buf, ((tio.FIELD & NAME) != 0))) != 0) \
 		fatal_fr(r, "compose %s", #NAME);
 
@@ -328,7 +328,7 @@ ssh_tty_make_modes(struct ssh *ssh, int fd, struct termios *tiop)
 
 end:
 	/* Mark end of mode data. */
-	if ((r = sshbuf_put_u8(buf, TTY_OP_END)) != 0 ||
+	nếu ((r = sshbuf_put_u8(buf, TTY_OP_END)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, buf)) != 0)
 		fatal_fr(r, "compose end");
 	sshbuf_free(buf);
@@ -339,23 +339,23 @@ end:
  * manner from a packet being read.
  */
 void
-ssh_tty_parse_modes(struct ssh *ssh, int fd)
+ssh_tty_parse_modes(struct ssh *ssh, số_nguyên fd)
 {
 	struct termios tio;
 	struct sshbuf *buf;
 	const u_char *data;
 	u_char opcode;
 	u_int baud, u;
-	int r, failure = 0;
+	số_nguyên r, failure = 0;
 	size_t len;
 
-	if ((r = sshpkt_get_string_direct(ssh, &data, &len)) != 0)
+	nếu ((r = sshpkt_get_string_direct(ssh, &data, &len)) != 0)
 		fatal_fr(r, "parse");
-	if (len == 0)
-		return;
-	if ((buf = sshbuf_from(data, len)) == NULL) {
+	nếu (len == 0)
+		trả_về;
+	nếu ((buf = sshbuf_from(data, len)) == NULL) {
 		error_f("sshbuf_from failed");
-		return;
+		trả_về;
 	}
 
 	/*
@@ -363,47 +363,47 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 	 * flags. I am hoping that if there are any machine-specific
 	 * modes, they will initially have reasonable values.
 	 */
-	if (tcgetattr(fd, &tio) == -1) {
+	nếu (tcgetattr(fd, &tio) == -1) {
 		logit("tcgetattr: %.100s", strerror(errno));
 		failure = -1;
 	}
 
-	while (sshbuf_len(buf) > 0) {
-		if ((r = sshbuf_get_u8(buf, &opcode)) != 0)
+	trong_khi (sshbuf_len(buf) > 0) {
+		nếu ((r = sshbuf_get_u8(buf, &opcode)) != 0)
 			fatal_fr(r, "parse opcode");
 		switch (opcode) {
 		case TTY_OP_END:
 			goto set;
 
 		case TTY_OP_ISPEED:
-			if ((r = sshbuf_get_u32(buf, &baud)) != 0)
+			nếu ((r = sshbuf_get_u32(buf, &baud)) != 0)
 				fatal_fr(r, "parse ispeed");
-			if (failure != -1 &&
+			nếu (failure != -1 &&
 			    cfsetispeed(&tio, baud_to_speed(baud)) == -1)
 				error("cfsetispeed failed for %d", baud);
 			break;
 
 		case TTY_OP_OSPEED:
-			if ((r = sshbuf_get_u32(buf, &baud)) != 0)
+			nếu ((r = sshbuf_get_u32(buf, &baud)) != 0)
 				fatal_fr(r, "parse ospeed");
-			if (failure != -1 &&
+			nếu (failure != -1 &&
 			    cfsetospeed(&tio, baud_to_speed(baud)) == -1)
 				error("cfsetospeed failed for %d", baud);
 			break;
 
 #define TTYCHAR(NAME, OP) \
 		case OP: \
-			if ((r = sshbuf_get_u32(buf, &u)) != 0) \
+			nếu ((r = sshbuf_get_u32(buf, &u)) != 0) \
 				fatal_fr(r, "parse %s", #NAME); \
 			tio.c_cc[NAME] = special_char_decode(u); \
 			break;
 #define TTYMODE(NAME, FIELD, OP) \
 		case OP: \
-			if ((r = sshbuf_get_u32(buf, &u)) != 0) \
+			nếu ((r = sshbuf_get_u32(buf, &u)) != 0) \
 				fatal_fr(r, "parse %s", #NAME); \
-			if (u) \
+			nếu (u) \
 				tio.FIELD |= NAME; \
-			else \
+			không_thì \
 				tio.FIELD &= ~NAME; \
 			break;
 
@@ -422,11 +422,11 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 			 * Opcodes 160 to 255 are undefined and cause parsing
 			 * to stop.
 			 */
-			if (opcode > 0 && opcode < 160) {
-				if ((r = sshbuf_get_u32(buf, NULL)) != 0)
+			nếu (opcode > 0 && opcode < 160) {
+				nếu ((r = sshbuf_get_u32(buf, NULL)) != 0)
 					fatal_fr(r, "parse arg");
 				break;
-			} else {
+			} không_thì {
 				logit_f("unknown opcode %d", opcode);
 				goto set;
 			}
@@ -436,14 +436,14 @@ ssh_tty_parse_modes(struct ssh *ssh, int fd)
 set:
 	len = sshbuf_len(buf);
 	sshbuf_free(buf);
-	if (len > 0) {
+	nếu (len > 0) {
 		logit_f("%zu bytes left", len);
-		return;		/* Don't process bytes passed */
+		trả_về;		/* Don't process bytes passed */
 	}
-	if (failure == -1)
-		return;		/* Packet parsed ok but tcgetattr() failed */
+	nếu (failure == -1)
+		trả_về;		/* Packet parsed ok but tcgetattr() failed */
 
 	/* Set the new modes for the terminal. */
-	if (tcsetattr(fd, TCSANOW, &tio) == -1)
+	nếu (tcsetattr(fd, TCSANOW, &tio) == -1)
 		logit("Setting tty modes failed: %.100s", strerror(errno));
 }

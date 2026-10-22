@@ -79,7 +79,7 @@ get_last_login_time(uid_t uid, const char *logname,
 
 	login_get_lastlog(&li, uid);
 	strlcpy(buf, li.hostname, bufsize);
-	return (time_t)li.tv_sec;
+	trả_về (time_t)li.tv_sec;
 }
 
 /*
@@ -95,33 +95,33 @@ store_lastlog_message(const char *user, uid_t uid)
 	time_t last_login_time;
 # endif
 	char *time_string;
-	int r;
+	số_nguyên r;
 
-	if (!options.print_lastlog)
-		return;
+	nếu (!options.print_lastlog)
+		trả_về;
 
 # ifdef CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG
 	time_string = sys_auth_get_lastlogin_msg(user, uid);
-	if (time_string != NULL) {
-		if ((r = sshbuf_put(loginmsg,
+	nếu (time_string != NULL) {
+		nếu ((r = sshbuf_put(loginmsg,
 		    time_string, strlen(time_string))) != 0)
 			fatal_fr(r, "buffer error");
 		free(time_string);
 	}
-# else
+# không_thì
 	last_login_time = get_last_login_time(uid, user, hostname,
 	    sizeof(hostname));
 
-	if (last_login_time != 0) {
+	nếu (last_login_time != 0) {
 		time_string = ctime(&last_login_time);
 		time_string[strcspn(time_string, "\n")] = '\0';
-		if (strcmp(hostname, "") == 0)
+		nếu (strcmp(hostname, "") == 0)
 			r = sshbuf_putf(loginmsg, "Last login: %s\r\n",
 			    time_string);
-		else
+		không_thì
 			r = sshbuf_putf(loginmsg, "Last login: %s from %s\r\n",
 			    time_string, hostname);
-		if (r != 0)
+		nếu (r != 0)
 			fatal_fr(r, "sshbuf_putf");
 	}
 # endif /* CUSTOM_SYS_AUTH_GET_LASTLOGIN_MSG */

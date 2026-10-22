@@ -46,9 +46,9 @@
 struct kexalg {
 	char *name;
 	u_int type;
-	int ec_nid;
-	int hash_alg;
-	int pq_alg;
+	số_nguyên ec_nid;
+	số_nguyên hash_alg;
+	số_nguyên pq_alg;
 };
 static const struct kexalg kexalgs[] = {
 #ifdef WITH_OPENSSL
@@ -70,7 +70,7 @@ static const struct kexalg kexalgs[] = {
 	{ KEX_MLKEM768NISTP256_SHA256, KEX_KEM_MLKEM768ECDH_SHA256,
 	    NID_X9_62_prime256v1, SSH_DIGEST_SHA256, KEX_IS_PQ },
 #endif /* WITH_OPENSSL */
-#if defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
+#nếu defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
 	{ KEX_CURVE25519_SHA256, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 	{ KEX_CURVE25519_SHA256_OLD, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 #ifdef USE_SNTRUP761X25519
@@ -94,10 +94,10 @@ kex_alg_list(char sep)
 	const struct kexalg *k;
 	char sep_str[2] = {sep, '\0'};
 
-	for (k = kexalgs; k->name != NULL; k++)
+	cho (k = kexalgs; k->name != NULL; k++)
 		xextendf(&ret, sep_str, "%s", k->name);
 
-	return ret;
+	trả_về ret;
 }
 
 static const struct kexalg *
@@ -105,27 +105,27 @@ kex_alg_by_name(const char *name)
 {
 	const struct kexalg *k;
 
-	for (k = kexalgs; k->name != NULL; k++) {
-		if (strcmp(k->name, name) == 0)
-			return k;
+	cho (k = kexalgs; k->name != NULL; k++) {
+		nếu (strcmp(k->name, name) == 0)
+			trả_về k;
 	}
-	return NULL;
+	trả_về NULL;
 }
 
-int
+số_nguyên
 kex_name_valid(const char *name)
 {
-	return kex_alg_by_name(name) != NULL;
+	trả_về kex_alg_by_name(name) != NULL;
 }
 
-int
+số_nguyên
 kex_is_pq_from_name(const char *name)
 {
 	const struct kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->pq_alg == KEX_IS_PQ;
+	nếu ((k = kex_alg_by_name(name)) == NULL)
+		trả_về 0;
+	trả_về k->pq_alg == KEX_IS_PQ;
 }
 
 u_int
@@ -133,64 +133,64 @@ kex_type_from_name(const char *name)
 {
 	const struct kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->type;
+	nếu ((k = kex_alg_by_name(name)) == NULL)
+		trả_về 0;
+	trả_về k->type;
 }
 
-int
+số_nguyên
 kex_hash_from_name(const char *name)
 {
 	const struct kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->hash_alg;
+	nếu ((k = kex_alg_by_name(name)) == NULL)
+		trả_về -1;
+	trả_về k->hash_alg;
 }
 
-int
+số_nguyên
 kex_nid_from_name(const char *name)
 {
 	const struct kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->ec_nid;
+	nếu ((k = kex_alg_by_name(name)) == NULL)
+		trả_về -1;
+	trả_về k->ec_nid;
 }
 
 /* Validate KEX method name list */
-int
+số_nguyên
 kex_names_valid(const char *names)
 {
 	char *s, *cp, *p;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((s = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, ",")); p && *p != '\0';
+	nếu (names == NULL || strcmp(names, "") == 0)
+		trả_về 0;
+	nếu ((s = cp = strdup(names)) == NULL)
+		trả_về 0;
+	cho ((p = strsep(&cp, ",")); p && *p != '\0';
 	    (p = strsep(&cp, ","))) {
-		if (kex_alg_by_name(p) == NULL) {
+		nếu (kex_alg_by_name(p) == NULL) {
 			error("Unsupported KEX algorithm \"%.100s\"", p);
 			free(s);
-			return 0;
+			trả_về 0;
 		}
 	}
 	debug3("kex names ok: [%s]", names);
 	free(s);
-	return 1;
+	trả_về 1;
 }
 
 /* returns non-zero if proposal contains any algorithm from algs */
-int
+số_nguyên
 kex_has_any_alg(const char *proposal, const char *algs)
 {
 	char *cp;
 
-	if ((cp = match_list(proposal, algs, NULL)) == NULL)
-		return 0;
+	nếu ((cp = match_list(proposal, algs, NULL)) == NULL)
+		trả_về 0;
 	free(cp);
-	return 1;
+	trả_về 1;
 }
 
 /*
@@ -203,31 +203,31 @@ kex_names_cat(const char *a, const char *b)
 	char *ret = NULL, *tmp = NULL, *cp, *p;
 	size_t len;
 
-	if (a == NULL || *a == '\0')
-		return strdup(b);
-	if (b == NULL || *b == '\0')
-		return strdup(a);
-	if (strlen(b) > 1024*1024)
-		return NULL;
+	nếu (a == NULL || *a == '\0')
+		trả_về strdup(b);
+	nếu (b == NULL || *b == '\0')
+		trả_về strdup(a);
+	nếu (strlen(b) > 1024*1024)
+		trả_về NULL;
 	len = strlen(a) + strlen(b) + 2;
-	if ((tmp = cp = strdup(b)) == NULL ||
+	nếu ((tmp = cp = strdup(b)) == NULL ||
 	    (ret = calloc(1, len)) == NULL) {
 		free(tmp);
-		return NULL;
+		trả_về NULL;
 	}
 	strlcpy(ret, a, len);
-	for ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
-		if (kex_has_any_alg(ret, p))
+	cho ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
+		nếu (kex_has_any_alg(ret, p))
 			continue; /* Algorithm already present */
-		if (strlcat(ret, ",", len) >= len ||
+		nếu (strlcat(ret, ",", len) >= len ||
 		    strlcat(ret, p, len) >= len) {
 			free(tmp);
 			free(ret);
-			return NULL; /* Shouldn't happen */
+			trả_về NULL; /* Shouldn't happen */
 		}
 	}
 	free(tmp);
-	return ret;
+	trả_về ret;
 }
 
 /*
@@ -237,50 +237,50 @@ kex_names_cat(const char *a, const char *b)
  * specified names should be removed, or '^' that they should be placed
  * at the head.
  */
-int
+số_nguyên
 kex_assemble_names(char **listp, const char *def, const char *all)
 {
 	char *cp, *tmp, *patterns;
 	char *list = NULL, *ret = NULL, *matching = NULL, *opatterns = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	số_nguyên r = SSH_ERR_INTERNAL_ERROR;
 
-	if (listp == NULL || def == NULL || all == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	nếu (listp == NULL || def == NULL || all == NULL)
+		trả_về SSH_ERR_INVALID_ARGUMENT;
 
-	if (*listp == NULL || **listp == '\0') {
-		if ((*listp = strdup(def)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+	nếu (*listp == NULL || **listp == '\0') {
+		nếu ((*listp = strdup(def)) == NULL)
+			trả_về SSH_ERR_ALLOC_FAIL;
+		trả_về 0;
 	}
 
 	list = *listp;
 	*listp = NULL;
-	if (*list == '+') {
+	nếu (*list == '+') {
 		/* Append names to default list */
-		if ((tmp = kex_names_cat(def, list + 1)) == NULL) {
+		nếu ((tmp = kex_names_cat(def, list + 1)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
 		free(list);
 		list = tmp;
-	} else if (*list == '-') {
+	} không_thì nếu (*list == '-') {
 		/* Remove names from default list */
-		if ((*listp = match_filter_denylist(def, list + 1)) == NULL) {
+		nếu ((*listp = match_filter_denylist(def, list + 1)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
 		free(list);
 		/* filtering has already been done */
-		return 0;
-	} else if (*list == '^') {
+		trả_về 0;
+	} không_thì nếu (*list == '^') {
 		/* Place names at head of default list */
-		if ((tmp = kex_names_cat(list + 1, def)) == NULL) {
+		nếu ((tmp = kex_names_cat(list + 1, def)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
 		free(list);
 		list = tmp;
-	} else {
+	} không_thì {
 		/* Explicit list, overrides default - just use "list" as is */
 	}
 
@@ -290,30 +290,30 @@ kex_assemble_names(char **listp, const char *def, const char *all)
 	 * cases we need to do it now.
 	 */
 	ret = NULL;
-	if ((patterns = opatterns = strdup(list)) == NULL) {
+	nếu ((patterns = opatterns = strdup(list)) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto fail;
 	}
 	/* Apply positive (i.e. non-negated) patterns from the list */
-	while ((cp = strsep(&patterns, ",")) != NULL) {
-		if (*cp == '!') {
+	trong_khi ((cp = strsep(&patterns, ",")) != NULL) {
+		nếu (*cp == '!') {
 			/* negated matches are not supported here */
 			r = SSH_ERR_INVALID_ARGUMENT;
 			goto fail;
 		}
 		free(matching);
-		if ((matching = match_filter_allowlist(all, cp)) == NULL) {
+		nếu ((matching = match_filter_allowlist(all, cp)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
-		if ((tmp = kex_names_cat(ret, matching)) == NULL) {
+		nếu ((tmp = kex_names_cat(ret, matching)) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto fail;
 		}
 		free(ret);
 		ret = tmp;
 	}
-	if (ret == NULL || *ret == '\0') {
+	nếu (ret == NULL || *ret == '\0') {
 		/* An empty name-list is an error */
 		/* XXX better error code? */
 		r = SSH_ERR_INVALID_ARGUMENT;
@@ -330,5 +330,5 @@ kex_assemble_names(char **listp, const char *def, const char *all)
 	free(opatterns);
 	free(list);
 	free(ret);
-	return r;
+	trả_về r;
 }

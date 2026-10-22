@@ -69,25 +69,25 @@
     (x == SSH2_AGENT_FAILURE))
 
 /* Convert success/failure response from agent to a err.h status */
-static int
+static số_nguyên
 decode_reply(u_char type)
 {
-	if (agent_failed(type))
-		return SSH_ERR_AGENT_FAILURE;
-	else if (type == SSH_AGENT_SUCCESS)
-		return 0;
-	else
-		return SSH_ERR_INVALID_FORMAT;
+	nếu (agent_failed(type))
+		trả_về SSH_ERR_AGENT_FAILURE;
+	không_thì nếu (type == SSH_AGENT_SUCCESS)
+		trả_về 0;
+	không_thì
+		trả_về SSH_ERR_INVALID_FORMAT;
 }
 
 /*
  * Opens an authentication socket at the provided path and stores the file
  * descriptor in fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket_path(const char *authsocket, int *fdp)
+số_nguyên
+ssh_get_authentication_socket_path(const char *authsocket, số_nguyên *fdp)
 {
-	int sock, oerrno;
+	số_nguyên sock, oerrno;
 	struct sockaddr_un sunaddr;
 
 	debug3_f("path '%s'", authsocket);
@@ -95,48 +95,48 @@ ssh_get_authentication_socket_path(const char *authsocket, int *fdp)
 	sunaddr.sun_family = AF_UNIX;
 	strlcpy(sunaddr.sun_path, authsocket, sizeof(sunaddr.sun_path));
 
-	if ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
-		return SSH_ERR_SYSTEM_ERROR;
+	nếu ((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+		trả_về SSH_ERR_SYSTEM_ERROR;
 
 	/* close on exec */
-	if (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
+	nếu (fcntl(sock, F_SETFD, FD_CLOEXEC) == -1 ||
 	    connect(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
 		oerrno = errno;
 		close(sock);
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
+		trả_về SSH_ERR_SYSTEM_ERROR;
 	}
-	if (fdp != NULL)
+	nếu (fdp != NULL)
 		*fdp = sock;
-	else
+	không_thì
 		close(sock);
-	return 0;
+	trả_về 0;
 }
 
 /*
  * Opens the default authentication socket and stores the file descriptor in
  * fdp. Returns 0 on success and an error on failure.
  */
-int
-ssh_get_authentication_socket(int *fdp)
+số_nguyên
+ssh_get_authentication_socket(số_nguyên *fdp)
 {
 	const char *authsocket;
 
-	if (fdp != NULL)
+	nếu (fdp != NULL)
 		*fdp = -1;
 
 	authsocket = getenv(SSH_AUTHSOCKET_ENV_NAME);
-	if (authsocket == NULL || *authsocket == '\0')
-		return SSH_ERR_AGENT_NOT_PRESENT;
+	nếu (authsocket == NULL || *authsocket == '\0')
+		trả_về SSH_ERR_AGENT_NOT_PRESENT;
 
-	return ssh_get_authentication_socket_path(authsocket, fdp);
+	trả_về ssh_get_authentication_socket_path(authsocket, fdp);
 }
 
 /* Communicate with agent: send request and read reply */
-static int
-ssh_request_reply(int sock, struct sshbuf *request, struct sshbuf *reply)
+static số_nguyên
+ssh_request_reply(số_nguyên sock, struct sshbuf *request, struct sshbuf *reply)
 {
-	int r;
+	số_nguyên r;
 	size_t l, len;
 	char buf[1024];
 
@@ -145,48 +145,48 @@ ssh_request_reply(int sock, struct sshbuf *request, struct sshbuf *reply)
 	POKE_U32(buf, len);
 
 	/* Send the length and then the packet to the agent. */
-	if (atomicio(vwrite, sock, buf, 4) != 4 ||
+	nếu (atomicio(vwrite, sock, buf, 4) != 4 ||
 	    atomicio(vwrite, sock, sshbuf_mutable_ptr(request),
 	    sshbuf_len(request)) != sshbuf_len(request))
-		return SSH_ERR_AGENT_COMMUNICATION;
+		trả_về SSH_ERR_AGENT_COMMUNICATION;
 	/*
 	 * Wait for response from the agent.  First read the length of the
 	 * response packet.
 	 */
-	if (atomicio(read, sock, buf, 4) != 4)
-	    return SSH_ERR_AGENT_COMMUNICATION;
+	nếu (atomicio(read, sock, buf, 4) != 4)
+	    trả_về SSH_ERR_AGENT_COMMUNICATION;
 
 	/* Extract the length, and check it for sanity. */
 	len = PEEK_U32(buf);
-	if (len > MAX_AGENT_REPLY_LEN)
-		return SSH_ERR_INVALID_FORMAT;
+	nếu (len > MAX_AGENT_REPLY_LEN)
+		trả_về SSH_ERR_INVALID_FORMAT;
 
 	/* Read the rest of the response in to the buffer. */
 	sshbuf_reset(reply);
-	while (len > 0) {
+	trong_khi (len > 0) {
 		l = len;
-		if (l > sizeof(buf))
+		nếu (l > sizeof(buf))
 			l = sizeof(buf);
-		if (atomicio(read, sock, buf, l) != l)
-			return SSH_ERR_AGENT_COMMUNICATION;
-		if ((r = sshbuf_put(reply, buf, l)) != 0)
-			return r;
+		nếu (atomicio(read, sock, buf, l) != l)
+			trả_về SSH_ERR_AGENT_COMMUNICATION;
+		nếu ((r = sshbuf_put(reply, buf, l)) != 0)
+			trả_về r;
 		len -= l;
 	}
-	return 0;
+	trả_về 0;
 }
 
 /* Communicate with agent: sent request, read and decode status reply */
-static int
-ssh_request_reply_decode(int sock, struct sshbuf *request)
+static số_nguyên
+ssh_request_reply_decode(số_nguyên sock, struct sshbuf *request)
 {
 	struct sshbuf *reply;
-	int r;
+	số_nguyên r;
 	u_char type;
 
-	if ((reply = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = ssh_request_reply(sock, request, reply)) != 0 ||
+	nếu ((reply = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = ssh_request_reply(sock, request, reply)) != 0 ||
 	    (r = sshbuf_get_u8(reply, &type)) != 0 ||
 	    (r = decode_reply(type)) != 0)
 		goto out;
@@ -194,7 +194,7 @@ ssh_request_reply_decode(int sock, struct sshbuf *request)
 	r = 0;
  out:
 	sshbuf_free(reply);
-	return r;
+	trả_về r;
 }
 
 /*
@@ -203,23 +203,23 @@ ssh_request_reply_decode(int sock, struct sshbuf *request)
  * ssh_get_authentication_socket().
  */
 void
-ssh_close_authentication_socket(int sock)
+ssh_close_authentication_socket(số_nguyên sock)
 {
-	if (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != NULL)
+	nếu (sock != -1 && getenv(SSH_AUTHSOCKET_ENV_NAME) != NULL)
 		close(sock);
 }
 
 /* Lock/unlock agent */
-int
-ssh_lock_agent(int sock, int lock, const char *password)
+số_nguyên
+ssh_lock_agent(số_nguyên sock, số_nguyên lock, const char *password)
 {
-	int r;
+	số_nguyên r;
 	u_char type = lock ? SSH_AGENTC_LOCK : SSH_AGENTC_UNLOCK;
 	struct sshbuf *msg;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
+	nếu ((msg = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = sshbuf_put_u8(msg, type)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, password)) != 0 ||
 	    (r = ssh_request_reply_decode(sock, msg)) != 0)
 		goto out;
@@ -227,95 +227,95 @@ ssh_lock_agent(int sock, int lock, const char *password)
 	r = 0;
  out:
 	sshbuf_free(msg);
-	return r;
+	trả_về r;
 }
 
 
-static int
+static số_nguyên
 deserialise_identity2(struct sshbuf *ids, struct sshkey **keyp, char **commentp)
 {
-	int r;
+	số_nguyên r;
 	char *comment = NULL;
 	const u_char *blob;
 	size_t blen;
 
-	if ((r = sshbuf_get_string_direct(ids, &blob, &blen)) != 0 ||
+	nếu ((r = sshbuf_get_string_direct(ids, &blob, &blen)) != 0 ||
 	    (r = sshbuf_get_cstring(ids, &comment, NULL)) != 0)
 		goto out;
-	if ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
+	nếu ((r = sshkey_from_blob(blob, blen, keyp)) != 0)
 		goto out;
-	if (commentp != NULL) {
+	nếu (commentp != NULL) {
 		*commentp = comment;
 		comment = NULL;
 	}
 	r = 0;
  out:
 	free(comment);
-	return r;
+	trả_về r;
 }
 
 /*
  * Fetch list of identities held by the agent.
  */
-int
-ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp)
+số_nguyên
+ssh_fetch_identitylist(số_nguyên sock, struct ssh_identitylist **idlp)
 {
 	u_char type;
 	uint32_t num, i;
 	struct sshbuf *msg;
 	struct ssh_identitylist *idl = NULL;
-	int r;
+	số_nguyên r;
 
 	/*
 	 * Send a message to the agent requesting for a list of the
 	 * identities it can represent.
 	 */
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
+	nếu ((msg = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = sshbuf_put_u8(msg, SSH2_AGENTC_REQUEST_IDENTITIES)) != 0)
 		goto out;
 
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
+	nếu ((r = ssh_request_reply(sock, msg, msg)) != 0)
 		goto out;
 
 	/* Get message type, and verify that we got a proper answer. */
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
+	nếu ((r = sshbuf_get_u8(msg, &type)) != 0)
 		goto out;
-	if (agent_failed(type)) {
+	nếu (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
 		goto out;
-	} else if (type != SSH2_AGENT_IDENTITIES_ANSWER) {
+	} không_thì nếu (type != SSH2_AGENT_IDENTITIES_ANSWER) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
 
 	/* Get the number of entries in the response and check it for sanity. */
-	if ((r = sshbuf_get_u32(msg, &num)) != 0)
+	nếu ((r = sshbuf_get_u32(msg, &num)) != 0)
 		goto out;
-	if (num > MAX_AGENT_IDENTITIES) {
+	nếu (num > MAX_AGENT_IDENTITIES) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if (num == 0) {
+	nếu (num == 0) {
 		r = SSH_ERR_AGENT_NO_IDENTITIES;
 		goto out;
 	}
 
 	/* Deserialise the response into a list of keys/comments */
-	if ((idl = calloc(1, sizeof(*idl))) == NULL ||
+	nếu ((idl = calloc(1, sizeof(*idl))) == NULL ||
 	    (idl->keys = calloc(num, sizeof(*idl->keys))) == NULL ||
 	    (idl->comments = calloc(num, sizeof(*idl->comments))) == NULL) {
 		r = SSH_ERR_ALLOC_FAIL;
 		goto out;
 	}
-	for (i = 0; i < num;) {
-		if ((r = deserialise_identity2(msg, &(idl->keys[i]),
+	cho (i = 0; i < num;) {
+		nếu ((r = deserialise_identity2(msg, &(idl->keys[i]),
 		    &(idl->comments[i]))) != 0) {
-			if (r == SSH_ERR_KEY_TYPE_UNKNOWN) {
+			nếu (r == SSH_ERR_KEY_TYPE_UNKNOWN) {
 				/* Gracefully skip unknown key types */
 				num--;
 				continue;
-			} else
+			} không_thì
 				goto out;
 		}
 		i++;
@@ -326,9 +326,9 @@ ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp)
 	r = 0;
  out:
 	sshbuf_free(msg);
-	if (idl != NULL)
+	nếu (idl != NULL)
 		ssh_free_identitylist(idl);
-	return r;
+	trả_về r;
 }
 
 void
@@ -336,12 +336,12 @@ ssh_free_identitylist(struct ssh_identitylist *idl)
 {
 	size_t i;
 
-	if (idl == NULL)
-		return;
-	for (i = 0; i < idl->nkeys; i++) {
-		if (idl->keys != NULL)
+	nếu (idl == NULL)
+		trả_về;
+	cho (i = 0; i < idl->nkeys; i++) {
+		nếu (idl->keys != NULL)
 			sshkey_free(idl->keys[i]);
-		if (idl->comments != NULL)
+		nếu (idl->comments != NULL)
 			free(idl->comments[i]);
 	}
 	free(idl->keys);
@@ -353,26 +353,26 @@ ssh_free_identitylist(struct ssh_identitylist *idl)
  * Check if the ssh agent has a given key.
  * Returns 0 if found, or a negative SSH_ERR_* error code on failure.
  */
-int
-ssh_agent_has_key(int sock, const struct sshkey *key)
+số_nguyên
+ssh_agent_has_key(số_nguyên sock, const struct sshkey *key)
 {
-	int r, ret = SSH_ERR_KEY_NOT_FOUND;
+	số_nguyên r, ret = SSH_ERR_KEY_NOT_FOUND;
 	size_t i;
 	struct ssh_identitylist *idlist = NULL;
 
-	if ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
-		return r;
+	nếu ((r = ssh_fetch_identitylist(sock, &idlist)) != 0) {
+		trả_về r;
 	}
 
-	for (i = 0; i < idlist->nkeys; i++) {
-		if (sshkey_equal_public(idlist->keys[i], key)) {
+	cho (i = 0; i < idlist->nkeys; i++) {
+		nếu (sshkey_equal_public(idlist->keys[i], key)) {
 			ret = 0;
 			break;
 		}
 	}
 
 	ssh_free_identitylist(idlist);
-	return ret;
+	trả_về ret;
 }
 
 /*
@@ -387,20 +387,20 @@ ssh_agent_has_key(int sock, const struct sshkey *key)
 static u_int
 agent_encode_alg(const struct sshkey *key, const char *alg)
 {
-	if (alg != NULL && sshkey_type_plain(key->type) == KEY_RSA) {
-		if (strcmp(alg, "rsa-sha2-256") == 0 ||
+	nếu (alg != NULL && sshkey_type_plain(key->type) == KEY_RSA) {
+		nếu (strcmp(alg, "rsa-sha2-256") == 0 ||
 		    strcmp(alg, "rsa-sha2-256-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_256;
-		if (strcmp(alg, "rsa-sha2-512") == 0 ||
+			trả_về SSH_AGENT_RSA_SHA2_256;
+		nếu (strcmp(alg, "rsa-sha2-512") == 0 ||
 		    strcmp(alg, "rsa-sha2-512-cert-v01@openssh.com") == 0)
-			return SSH_AGENT_RSA_SHA2_512;
+			trả_về SSH_AGENT_RSA_SHA2_512;
 	}
-	return 0;
+	trả_về 0;
 }
 
 /* ask agent to sign data, returns err.h code on error, 0 on success */
-int
-ssh_agent_sign(int sock, const struct sshkey *key,
+số_nguyên
+ssh_agent_sign(số_nguyên sock, const struct sshkey *key,
     u_char **sigp, size_t *lenp,
     const u_char *data, size_t datalen, const char *alg, u_int compat)
 {
@@ -408,33 +408,33 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 	u_char *sig = NULL, type = 0;
 	size_t len = 0;
 	u_int flags = 0;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	số_nguyên r = SSH_ERR_INTERNAL_ERROR;
 
 	*sigp = NULL;
 	*lenp = 0;
 
-	if (datalen > SSH_KEY_MAX_SIGN_DATA_SIZE)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	nếu (datalen > SSH_KEY_MAX_SIGN_DATA_SIZE)
+		trả_về SSH_ERR_INVALID_ARGUMENT;
+	nếu ((msg = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
 	flags |= agent_encode_alg(key, alg);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
+	nếu ((r = sshbuf_put_u8(msg, SSH2_AGENTC_SIGN_REQUEST)) != 0 ||
 	    (r = sshkey_puts(key, msg)) != 0 ||
 	    (r = sshbuf_put_string(msg, data, datalen)) != 0 ||
 	    (r = sshbuf_put_u32(msg, flags)) != 0)
 		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
+	nếu ((r = ssh_request_reply(sock, msg, msg)) != 0)
 		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
+	nếu ((r = sshbuf_get_u8(msg, &type)) != 0)
 		goto out;
-	if (agent_failed(type)) {
+	nếu (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
 		goto out;
-	} else if (type != SSH2_AGENT_SIGN_RESPONSE) {
+	} không_thì nếu (type != SSH2_AGENT_SIGN_RESPONSE) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
-	if ((r = sshbuf_get_string(msg, &sig, &len)) != 0)
+	nếu ((r = sshbuf_get_string(msg, &sig, &len)) != 0)
 		goto out;
 	/*
 	 * Check what we actually got back from the agent, in case it returned
@@ -443,7 +443,7 @@ ssh_agent_sign(int sock, const struct sshkey *key,
 	 * We don't do this for FIDO signatures as webauthn vs plain are just
 	 * different signature formats and not entirely different algorithms.
 	 */
-	if (!sshkey_is_sk(key) &&
+	nếu (!sshkey_is_sk(key) &&
 	    (r = sshkey_check_sigtype(sig, len, alg)) != 0)
 		goto out;
 	/* success */
@@ -455,98 +455,98 @@ ssh_agent_sign(int sock, const struct sshkey *key,
  out:
 	freezero(sig, len);
 	sshbuf_free(msg);
-	return r;
+	trả_về r;
 }
 
 /* Encode key for a message to the agent. */
 
-static int
+static số_nguyên
 encode_dest_constraint_hop(struct sshbuf *m,
     const struct dest_constraint_hop *dch)
 {
 	struct sshbuf *b;
 	u_int i;
-	int r;
+	số_nguyên r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
+	nếu ((b = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = sshbuf_put_cstring(b, dch->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, dch->hostname)) != 0 ||
 	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
 		goto out;
-	for (i = 0; i < dch->nkeys; i++) {
-		if ((r = sshkey_puts(dch->keys[i], b)) != 0 ||
+	cho (i = 0; i < dch->nkeys; i++) {
+		nếu ((r = sshkey_puts(dch->keys[i], b)) != 0 ||
 		    (r = sshbuf_put_u8(b, dch->key_is_ca[i] != 0)) != 0)
 			goto out;
 	}
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
+	nếu ((r = sshbuf_put_stringb(m, b)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	trả_về r;
 }
 
-static int
+static số_nguyên
 encode_dest_constraint(struct sshbuf *m, const struct dest_constraint *dc)
 {
 	struct sshbuf *b;
-	int r;
+	số_nguyên r;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
+	nếu ((b = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = encode_dest_constraint_hop(b, &dc->from)) != 0 ||
 	    (r = encode_dest_constraint_hop(b, &dc->to)) != 0 ||
 	    (r = sshbuf_put_string(b, NULL, 0)) != 0) /* reserved */
 		goto out;
-	if ((r = sshbuf_put_stringb(m, b)) != 0)
+	nếu ((r = sshbuf_put_stringb(m, b)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	trả_về r;
 }
 
-static int
+static số_nguyên
 encode_constraints(struct sshbuf *m, u_int life, u_int confirm,
     const char *provider,
     struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+    số_nguyên cert_only, struct sshkey **certs, size_t ncerts)
 {
-	int r;
+	số_nguyên r;
 	struct sshbuf *b = NULL;
 	size_t i;
 
-	if (life != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
+	nếu (life != 0) {
+		nếu ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_LIFETIME)) != 0 ||
 		    (r = sshbuf_put_u32(m, life)) != 0)
 			goto out;
 	}
-	if (confirm != 0) {
-		if ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
+	nếu (confirm != 0) {
+		nếu ((r = sshbuf_put_u8(m, SSH_AGENT_CONSTRAIN_CONFIRM)) != 0)
 			goto out;
 	}
-	if (provider != NULL) {
-		if ((r = sshbuf_put_u8(m,
+	nếu (provider != NULL) {
+		nếu ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "sk-provider@openssh.com")) != 0 ||
 		    (r = sshbuf_put_cstring(m, provider)) != 0)
 			goto out;
 	}
-	if (dest_constraints != NULL && ndest_constraints > 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	nếu (dest_constraints != NULL && ndest_constraints > 0) {
+		nếu ((b = sshbuf_new()) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
-		for (i = 0; i < ndest_constraints; i++) {
-			if ((r = encode_dest_constraint(b,
+		cho (i = 0; i < ndest_constraints; i++) {
+			nếu ((r = encode_dest_constraint(b,
 			    dest_constraints[i])) != 0)
 				goto out;
 		}
-		if ((r = sshbuf_put_u8(m,
+		nếu ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "restrict-destination-v00@openssh.com")) != 0 ||
@@ -555,16 +555,16 @@ encode_constraints(struct sshbuf *m, u_int life, u_int confirm,
 		sshbuf_free(b);
 		b = NULL;
 	}
-	if (ncerts != 0) {
-		if ((b = sshbuf_new()) == NULL) {
+	nếu (ncerts != 0) {
+		nếu ((b = sshbuf_new()) == NULL) {
 			r = SSH_ERR_ALLOC_FAIL;
 			goto out;
 		}
-		for (i = 0; i < ncerts; i++) {
-			if ((r = sshkey_puts(certs[i], b)) != 0)
+		cho (i = 0; i < ncerts; i++) {
+			nếu ((r = sshkey_puts(certs[i], b)) != 0)
 				goto out;
 		}
-		if ((r = sshbuf_put_u8(m,
+		nếu ((r = sshbuf_put_u8(m,
 		    SSH_AGENT_CONSTRAIN_EXTENSION)) != 0 ||
 		    (r = sshbuf_put_cstring(m,
 		    "associated-certs-v00@openssh.com")) != 0 ||
@@ -577,25 +577,25 @@ encode_constraints(struct sshbuf *m, u_int life, u_int confirm,
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	trả_về r;
 }
 
 /*
  * Adds an identity to the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_add_identity_constrained(int sock, struct sshkey *key,
+số_nguyên
+ssh_add_identity_constrained(số_nguyên sock, struct sshkey *key,
     const char *comment, u_int life, u_int confirm,
     const char *provider, struct dest_constraint **dest_constraints,
     size_t ndest_constraints)
 {
 	struct sshbuf *msg;
-	int r, constrained = (life || confirm || provider || dest_constraints);
+	số_nguyên r, constrained = (life || confirm || provider || dest_constraints);
 	u_char type;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	nếu ((msg = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
 
 	switch (key->type) {
 #ifdef WITH_OPENSSL
@@ -615,7 +615,7 @@ ssh_add_identity_constrained(int sock, struct sshkey *key,
 		type = constrained ?
 		    SSH2_AGENTC_ADD_ID_CONSTRAINED :
 		    SSH2_AGENTC_ADD_IDENTITY;
-		if ((r = sshbuf_put_u8(msg, type)) != 0 ||
+		nếu ((r = sshbuf_put_u8(msg, type)) != 0 ||
 		    (r = sshkey_private_serialize(key, msg)) != 0 ||
 		    (r = sshbuf_put_cstring(msg, comment)) != 0)
 			goto out;
@@ -624,95 +624,95 @@ ssh_add_identity_constrained(int sock, struct sshkey *key,
 		r = SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
-	if (constrained &&
+	nếu (constrained &&
 	    (r = encode_constraints(msg, life, confirm, provider,
 	    dest_constraints, ndest_constraints, 0, NULL, 0)) != 0)
 		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	nếu ((r = ssh_request_reply_decode(sock, msg)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(msg);
-	return r;
+	trả_về r;
 }
 
 /*
  * Removes an identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_remove_identity(int sock, const struct sshkey *key)
+số_nguyên
+ssh_remove_identity(số_nguyên sock, const struct sshkey *key)
 {
 	struct sshbuf *msg;
-	int r;
+	số_nguyên r;
 	u_char *blob = NULL;
 	size_t blen;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	nếu ((msg = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
 
-	if (key->type != KEY_UNSPEC) {
-		if ((r = sshkey_to_blob(key, &blob, &blen)) != 0)
+	nếu (key->type != KEY_UNSPEC) {
+		nếu ((r = sshkey_to_blob(key, &blob, &blen)) != 0)
 			goto out;
-		if ((r = sshbuf_put_u8(msg,
+		nếu ((r = sshbuf_put_u8(msg,
 		    SSH2_AGENTC_REMOVE_IDENTITY)) != 0 ||
 		    (r = sshbuf_put_string(msg, blob, blen)) != 0)
 			goto out;
-	} else {
+	} không_thì {
 		r = SSH_ERR_INVALID_ARGUMENT;
 		goto out;
 	}
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	nếu ((r = ssh_request_reply_decode(sock, msg)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
-	if (blob != NULL)
+	nếu (blob != NULL)
 		freezero(blob, blen);
 	sshbuf_free(msg);
-	return r;
+	trả_về r;
 }
 
 /*
  * Add/remove an token-based identity from the authentication server.
  * This call is intended only for use by ssh-add(1) and like applications.
  */
-int
-ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
+số_nguyên
+ssh_update_card(số_nguyên sock, số_nguyên add, const char *reader_id, const char *pin,
     u_int life, u_int confirm,
     struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    int cert_only, struct sshkey **certs, size_t ncerts)
+    số_nguyên cert_only, struct sshkey **certs, size_t ncerts)
 {
 	struct sshbuf *msg;
-	int r, constrained = (life || confirm || dest_constraints || certs);
+	số_nguyên r, constrained = (life || confirm || dest_constraints || certs);
 	u_char type;
 
-	if (add) {
+	nếu (add) {
 		type = constrained ?
 		    SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED :
 		    SSH_AGENTC_ADD_SMARTCARD_KEY;
-	} else
+	} không_thì
 		type = SSH_AGENTC_REMOVE_SMARTCARD_KEY;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0 ||
+	nếu ((msg = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = sshbuf_put_u8(msg, type)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, reader_id)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, pin)) != 0)
 		goto out;
-	if (constrained &&
+	nếu (constrained &&
 	    (r = encode_constraints(msg, life, confirm, NULL,
 	    dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) != 0)
 		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	nếu ((r = ssh_request_reply_decode(sock, msg)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(msg);
-	return r;
+	trả_về r;
 }
 
 /*
@@ -723,92 +723,92 @@ ssh_update_card(int sock, int add, const char *reader_id, const char *pin,
  * keys from an agent, we generally want to clear both protocol v1 and v2
  * keys.
  */
-int
-ssh_remove_all_identities(int sock, int version)
+số_nguyên
+ssh_remove_all_identities(số_nguyên sock, số_nguyên version)
 {
 	struct sshbuf *msg;
 	u_char type = (version == 1) ?
 	    SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES :
 	    SSH2_AGENTC_REMOVE_ALL_IDENTITIES;
-	int r;
+	số_nguyên r;
 
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, type)) != 0)
+	nếu ((msg = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = sshbuf_put_u8(msg, type)) != 0)
 		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	nếu ((r = ssh_request_reply_decode(sock, msg)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(msg);
-	return r;
+	trả_về r;
 }
 
 /* Binds a session ID to a hostkey via the initial KEX signature. */
-int
-ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
+số_nguyên
+ssh_agent_bind_hostkey(số_nguyên sock, const struct sshkey *key,
     const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding)
+    số_nguyên forwarding)
 {
 	struct sshbuf *msg;
-	int r;
+	số_nguyên r;
 
-	if (key == NULL || session_id == NULL || signature == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
+	nếu (key == NULL || session_id == NULL || signature == NULL)
+		trả_về SSH_ERR_INVALID_ARGUMENT;
+	nếu ((msg = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0 ||
 	    (r = sshkey_puts(key, msg)) != 0 ||
 	    (r = sshbuf_put_stringb(msg, session_id)) != 0 ||
 	    (r = sshbuf_put_stringb(msg, signature)) != 0 ||
 	    (r = sshbuf_put_u8(msg, forwarding ? 1 : 0)) != 0)
 		goto out;
-	if ((r = ssh_request_reply_decode(sock, msg)) != 0)
+	nếu ((r = ssh_request_reply_decode(sock, msg)) != 0)
 		goto out;
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(msg);
-	return r;
+	trả_về r;
 }
 
 /* Queries supported extension request types */
-int
-ssh_agent_query_extensions(int sock, char ***exts)
+số_nguyên
+ssh_agent_query_extensions(số_nguyên sock, char ***exts)
 {
 	struct sshbuf *msg;
-	int r;
+	số_nguyên r;
 	u_char type;
 	char *cp = NULL, **ret = NULL;
 	size_t i = 0;
 
 	*exts = NULL;
-	if ((msg = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
+	nếu ((msg = sshbuf_new()) == NULL)
+		trả_về SSH_ERR_ALLOC_FAIL;
+	nếu ((r = sshbuf_put_u8(msg, SSH_AGENTC_EXTENSION)) != 0 ||
 	    (r = sshbuf_put_cstring(msg, "query")) != 0)
 		goto out;
-	if ((r = ssh_request_reply(sock, msg, msg)) != 0)
+	nếu ((r = ssh_request_reply(sock, msg, msg)) != 0)
 		goto out;
-	if ((r = sshbuf_get_u8(msg, &type)) != 0)
+	nếu ((r = sshbuf_get_u8(msg, &type)) != 0)
 		goto out;
-	if (agent_failed(type)) {
+	nếu (agent_failed(type)) {
 		r = SSH_ERR_AGENT_FAILURE;
 		goto out;
 	}
 	/* Reply should start with "query" */
-	if (type != SSH_AGENT_EXTENSION_RESPONSE ||
+	nếu (type != SSH_AGENT_EXTENSION_RESPONSE ||
 	   (r = sshbuf_get_cstring(msg, &cp, NULL)) != 0 ||
 	   strcmp(cp, "query") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
 		goto out;
 	}
 	ret = xcalloc(1, sizeof(*ret));
-	while (sshbuf_len(msg)) {
+	trong_khi (sshbuf_len(msg)) {
 		ret = xrecallocarray(ret, i + 1, i + 2, sizeof(*ret));
-		if ((r = sshbuf_get_cstring(msg, ret + i, NULL)) != 0) {
+		nếu ((r = sshbuf_get_cstring(msg, ret + i, NULL)) != 0) {
 			r = SSH_ERR_INVALID_FORMAT;
 			goto out;
 		}
@@ -822,5 +822,5 @@ ssh_agent_query_extensions(int sock, char ***exts)
 	free(cp);
 	stringlist_free(ret);
 	sshbuf_free(msg);
-	return r;
+	trả_về r;
 }

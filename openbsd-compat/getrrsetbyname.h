@@ -86,23 +86,23 @@
 #endif
 
 struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
+	unsigned số_nguyên		rdi_length;	/* length of data */
 	unsigned char		*rdi_data;	/* record data */
 };
 
 struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
+	unsigned số_nguyên		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned số_nguyên		rri_rdclass;	/* class number */
+	unsigned số_nguyên		rri_rdtype;	/* RR type number */
+	unsigned số_nguyên		rri_ttl;	/* time to live */
+	unsigned số_nguyên		rri_nrdatas;	/* size of rdatas array */
+	unsigned số_nguyên		rri_nsigs;	/* size of sigs array */
 	char			*rri_name;	/* canonical name */
 	struct rdatainfo	*rri_rdatas;	/* individual records */
 	struct rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
+số_nguyên		getrrsetbyname(const char *, unsigned số_nguyên, unsigned số_nguyên, unsigned số_nguyên, struct rrsetinfo **);
 void		freerrset(struct rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */

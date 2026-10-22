@@ -55,12 +55,12 @@ struct sshauthopt *auth_opts = &g_auth_opts_storage;
 struct passwd *privsep_pw = NULL;
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static volatile số_nguyên in_fuzz = 0;
 
 void
-cleanup_exit(int code)
+cleanup_exit(số_nguyên code)
 {
-	if (in_fuzz)
+	nếu (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
@@ -70,25 +70,25 @@ __wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	nếu (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+số_nguyên
+__wrap_sshpkt_fatal(struct ssh *ssh, số_nguyên r, const char *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	nếu (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
-int
+số_nguyên
 mm_is_monitor(void)
 {
-	return 0;
+	trả_về 0;
 }
 
 void
@@ -97,87 +97,87 @@ mm_audit_run_command(const char *cmd)
 	(void)cmd;
 }
 
-int
-mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
+số_nguyên
+mm_pty_allocate(số_nguyên *ptyfd, số_nguyên *ttyfd, char *namebuf, size_t namebuflen)
 {
 	*ptyfd = -1;
 	*ttyfd = -1;
-	if (namebuf != NULL && namebuflen > 0)
+	nếu (namebuf != NULL && namebuflen > 0)
 		namebuf[0] = '\0';
-	return 0;
+	trả_về 0;
 }
 
 void mm_session_pty_cleanup2(Session *s) { (void)s; }
-int platform_locked_account(struct passwd *pw) { (void)pw; return 0; }
+số_nguyên platform_locked_account(struct passwd *pw) { (void)pw; trả_về 0; }
 void record_failed_login(struct ssh *ssh, const char *user,
     const char *hostname, const char *ttyname) { (void)ssh; (void)user;
     (void)hostname; (void)ttyname; }
-int temporarily_use_uid(struct passwd *pw) { (void)pw; return 0; }
+số_nguyên temporarily_use_uid(struct passwd *pw) { (void)pw; trả_về 0; }
 void restore_uid(void) { }
 void platform_setusercontext(struct passwd *pw) { (void)pw; }
 void platform_setusercontext_post_groups(struct passwd *pw) { (void)pw; }
 struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
-    { (void)ssh; (void)populate; (void)use_dns; return NULL; }
-int auth2_methods_valid(const char *list, int allow_unknown)
-    { (void)list; (void)allow_unknown; return 0; }
+server_get_connection_info(struct ssh *ssh, số_nguyên populate, số_nguyên use_dns)
+    { (void)ssh; (void)populate; (void)use_dns; trả_về NULL; }
+số_nguyên auth2_methods_valid(const char *list, số_nguyên allow_unknown)
+    { (void)list; (void)allow_unknown; trả_về 0; }
 struct sshbuf *cfg = NULL;
-int auth_sock = -1;
+số_nguyên auth_sock = -1;
 char **tun_fwd_ifnames = NULL;
 
 struct logininfo *login_get_lastlog(struct logininfo *li, const uid_t uid)
-    { (void)li; (void)uid; return NULL; }
+    { (void)li; (void)uid; trả_về NULL; }
 struct logininfo *login_alloc_entry(pid_t pid, const char *username,
     const char *hostname, const char *line)
-    { (void)pid; (void)username; (void)hostname; (void)line; return NULL; }
+    { (void)pid; (void)username; (void)hostname; (void)line; trả_về NULL; }
 void server_process_permitopen(struct ssh *ssh) { (void)ssh; }
 void server_process_channel_timeouts(struct ssh *ssh) { (void)ssh; }
-int server_loop2(struct ssh *ssh, Authctxt *authctxt)
-    { (void)ssh; (void)authctxt; return 0; }
-int platform_privileged_uidswap(void) { return 0; }
-int sftp_server_main(int argc, char **argv, struct passwd *user_pw)
-    { (void)argc; (void)argv; (void)user_pw; return 0; }
-int debug_flag = 0;
+số_nguyên server_loop2(struct ssh *ssh, Authctxt *authctxt)
+    { (void)ssh; (void)authctxt; trả_về 0; }
+số_nguyên platform_privileged_uidswap(void) { trả_về 0; }
+số_nguyên sftp_server_main(số_nguyên argc, char **argv, struct passwd *user_pw)
+    { (void)argc; (void)argv; (void)user_pw; trả_về 0; }
+số_nguyên debug_flag = 0;
 void permanently_set_uid(struct passwd *pw) { (void)pw; }
-int login_login(struct logininfo *li) { (void)li; return 0; }
-int login_logout(struct logininfo *li) { (void)li; return 0; }
+số_nguyên login_login(struct logininfo *li) { (void)li; trả_về 0; }
+số_nguyên login_logout(struct logininfo *li) { (void)li; trả_về 0; }
 void login_free_entry(struct logininfo *li) { (void)li; }
 void login_set_addr(struct logininfo *li, const struct sockaddr *sa,
-    const unsigned int sa_size) { (void)li; (void)sa; (void)sa_size; }
-int openpty(int *amaster, int *aslave, char *name,
+    const unsigned số_nguyên sa_size) { (void)li; (void)sa; (void)sa_size; }
+số_nguyên openpty(số_nguyên *amaster, số_nguyên *aslave, char *name,
     const struct termios *termp, const struct winsize *winp)
     { (void)termp; (void)winp; *amaster = -1; *aslave = -1;
-    if (name) name[0] = '\0'; return -1; }
+    nếu (name) name[0] = '\0'; trả_về -1; }
 
-extern int __real_do_exec(struct ssh *, Session *, const char *);
-extern int __real_do_exec_pty(struct ssh *, Session *, const char *);
-extern int __real_do_exec_no_pty(struct ssh *, Session *, const char *);
+extern số_nguyên __real_do_exec(struct ssh *, Session *, const char *);
+extern số_nguyên __real_do_exec_pty(struct ssh *, Session *, const char *);
+extern số_nguyên __real_do_exec_no_pty(struct ssh *, Session *, const char *);
 
-int
+số_nguyên
 __wrap_do_exec(struct ssh *ssh, Session *s, const char *command)
 {
 	(void)ssh;
 	(void)s;
 	(void)command;
-	return 0;
+	trả_về 0;
 }
 
-int
+số_nguyên
 __wrap_do_exec_pty(struct ssh *ssh, Session *s, const char *command)
 {
 	(void)ssh;
 	(void)s;
 	(void)command;
-	return 0;
+	trả_về 0;
 }
 
-int
+số_nguyên
 __wrap_do_exec_no_pty(struct ssh *ssh, Session *s, const char *command)
 {
 	(void)ssh;
 	(void)s;
 	(void)command;
-	return 0;
+	trả_về 0;
 }
 
 static struct sshkey *
@@ -185,10 +185,10 @@ load_private(const char *str)
 {
 	struct sshbuf *b = sshbuf_from(str, strlen(str));
 	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	nếu (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	trả_về k;
 }
 
 static struct sshkey *
@@ -196,58 +196,58 @@ load_public(const char *str)
 {
 	char *tmp, *cp;
 	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	nếu (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	nếu (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	trả_về k;
 }
 
-static int
+static số_nguyên
 pump(struct ssh *from, struct ssh *to, size_t *transferred)
 {
 	const u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	số_nguyên r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	nếu ((r = ssh_packet_next(from, &type)) != 0)
+		trả_về r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	nếu (len == 0)
+		trả_về 0;
+	nếu ((r = ssh_input_append(to, buf, len)) != 0)
+		trả_về r;
+	nếu ((r = ssh_output_consume(from, len)) != 0)
+		trả_về r;
 	*transferred = len;
-	return 0;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 run_kex(struct ssh *client, struct ssh *server)
 {
-	int r;
+	số_nguyên r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	cho (số_nguyên i = 0; i < 100; i++) {
+		nếu ((r = pump(server, client, &sn)) != 0) trả_về r;
+		nếu ((r = pump(client, server, &cn)) != 0) trả_về r;
+		nếu (server->kex->done && client->kex->done)
+			trả_về 0;
+		nếu (cn == 0 && sn == 0)
+			trả_về SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	trả_về SSH_ERR_PROTOCOL_ERROR;
 }
 
 #include "fixed-keys.h"
 
 static struct ssh *g_client = NULL;
 static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_channel_id = -1;
+static số_nguyên g_init = 0;
+static số_nguyên g_channel_id = -1;
 static Authctxt g_authctxt;
 static struct passwd g_fake_pw;
 
@@ -259,8 +259,8 @@ static char *g_pending_env_val = NULL;
 static void
 my_session_exec_req(struct ssh *ssh)
 {
-	int r;
-	if ((r = sshpkt_get_cstring(ssh, &g_pending_exec_cmd, NULL)) != 0 ||
+	số_nguyên r;
+	nếu ((r = sshpkt_get_cstring(ssh, &g_pending_exec_cmd, NULL)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 }
@@ -268,66 +268,66 @@ my_session_exec_req(struct ssh *ssh)
 static void
 my_session_env_req(struct ssh *ssh)
 {
-	int r;
-	if ((r = sshpkt_get_cstring(ssh, &g_pending_env_name, NULL)) != 0 ||
+	số_nguyên r;
+	nếu ((r = sshpkt_get_cstring(ssh, &g_pending_env_name, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &g_pending_env_val, NULL)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: parse packet", __func__);
 }
 
-static int
-input_channel_request(int type, uint32_t seq, struct ssh *ssh)
+static số_nguyên
+input_channel_request(số_nguyên type, uint32_t seq, struct ssh *ssh)
 {
 	uint32_t chan_id;
 	u_char want_reply;
 
 	(void)type;
 	(void)seq;
-	if (sshpkt_get_u32(ssh, &chan_id) != 0 ||
+	nếu (sshpkt_get_u32(ssh, &chan_id) != 0 ||
 	    sshpkt_get_cstring(ssh, &g_pending_rtype, NULL) != 0 ||
 	    sshpkt_get_u8(ssh, &want_reply) != 0)
-		return 0;
-	if (g_channel_id >= 0 && g_pending_rtype != NULL) {
+		trả_về 0;
+	nếu (g_channel_id >= 0 && g_pending_rtype != NULL) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL) {
-			if (strcmp(g_pending_rtype, "exec") == 0)
+		nếu (c != NULL) {
+			nếu (strcmp(g_pending_rtype, "exec") == 0)
 				my_session_exec_req(ssh);
-			else if (strcmp(g_pending_rtype, "env") == 0)
+			không_thì nếu (strcmp(g_pending_rtype, "env") == 0)
 				my_session_env_req(ssh);
-			else
+			không_thì
 				(void)session_input_channel_req(ssh, c,
 				    g_pending_rtype);
 		}
 	}
-	return 0;
+	trả_về 0;
 }
 
 static void
 reset_channel(struct ssh *ssh)
 {
-	if (g_channel_id >= 0) {
+	nếu (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		nếu (c != NULL)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
 	Channel *c = channel_new(ssh, (char *)"session", SSH_CHANNEL_LARVAL,
 	    -1, -1, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	nếu (c == NULL)
+		trả_về;
 	g_channel_id = c->self;
 	Session *s = session_new();
-	if (s != NULL) {
+	nếu (s != NULL) {
 		s->chanid = c->self;
 		s->pw = &g_fake_pw;
 	}
 }
 
-static int
+static số_nguyên
 init_once(void)
 {
-	if (g_init)
-		return 0;
+	nếu (g_init)
+		trả_về 0;
 	signal(SIGPIPE, SIG_IGN);
 	log_init("session_channel_req_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
@@ -355,17 +355,17 @@ init_once(void)
 
 	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
 	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
+	số_nguyên i;
+	cho (i = 0; i < PROPOSAL_MAX; i++) {
 		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		nếu (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		không_thì nếu (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		không_thì nếu (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		không_thì nếu (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
@@ -373,14 +373,14 @@ init_once(void)
 	struct kex_params kp;
 	memcpy(kp.proposal, proposal, sizeof(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	nếu (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		trả_về -1;
+	nếu (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		trả_về -1;
+	nếu (run_kex(g_client, g_server) != 0)
+		trả_về -1;
 
 	g_server->authctxt = &g_authctxt;
 
@@ -391,29 +391,29 @@ init_once(void)
 	    &input_channel_request);
 
 	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
+	cho (i = 0; i < PROPOSAL_MAX; i++)
 		free(proposal[i]);
 	g_init = 1;
-	return 0;
+	trả_về 0;
 }
 
 void
 fuzz_session_one(const uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	nếu (init_once() != 0)
+		trả_về;
+	nếu (size > 65000)
+		trả_về;
 
 	reset_channel(g_server);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	nếu (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_client, SSH2_MSG_CHANNEL_REQUEST,
+		nếu (ssh_packet_put(g_client, SSH2_MSG_CHANNEL_REQUEST,
 		    data, size) != 0)
 			goto done;
-		if (pump(g_client, g_server, &transferred) != 0)
+		nếu (pump(g_client, g_server, &transferred) != 0)
 			goto done;
 		(void)ssh_dispatch_run(g_server, DISPATCH_NONBLOCK, NULL);
 	done:

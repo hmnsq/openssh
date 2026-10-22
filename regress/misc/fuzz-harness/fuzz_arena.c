@@ -46,17 +46,17 @@ struct arena_node {
 };
 
 static struct arena_node *arena_head;
-static int tracking;
+static số_nguyên tracking;
 
 static inline void
 arena_track(void *p)
 {
 	struct arena_node *n;
-	if (!tracking || p == NULL)
-		return;
+	nếu (!tracking || p == NULL)
+		trả_về;
 	n = (struct arena_node *)__real_malloc(sizeof(*n));
-	if (n == NULL)
-		return;
+	nếu (n == NULL)
+		trả_về;
 	n->ptr = p;
 	n->next = arena_head;
 	arena_head = n;
@@ -66,14 +66,14 @@ static inline void
 arena_untrack(void *p)
 {
 	struct arena_node **pp;
-	if (p == NULL)
-		return;
-	for (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
-		if ((*pp)->ptr == p) {
+	nếu (p == NULL)
+		trả_về;
+	cho (pp = &arena_head; *pp != NULL; pp = &(*pp)->next) {
+		nếu ((*pp)->ptr == p) {
 			struct arena_node *n = *pp;
 			*pp = n->next;
 			__real_free(n);
-			return;
+			trả_về;
 		}
 	}
 }
@@ -83,7 +83,7 @@ __wrap_malloc(size_t size)
 {
 	void *p = __real_malloc(size);
 	arena_track(p);
-	return p;
+	trả_về p;
 }
 
 void *
@@ -91,7 +91,7 @@ __wrap_calloc(size_t nmemb, size_t size)
 {
 	void *p = __real_calloc(nmemb, size);
 	arena_track(p);
-	return p;
+	trả_về p;
 }
 
 void *
@@ -100,7 +100,7 @@ __wrap_realloc(void *ptr, size_t size)
 	arena_untrack(ptr);
 	void *p = __real_realloc(ptr, size);
 	arena_track(p);
-	return p;
+	trả_về p;
 }
 
 void
@@ -115,15 +115,15 @@ __wrap_strdup(const char *s)
 {
 	size_t len;
 	char *p;
-	if (s == NULL)
-		return NULL;
+	nếu (s == NULL)
+		trả_về NULL;
 	len = strlen(s) + 1;
 	p = (char *)__real_malloc(len);
-	if (p == NULL)
-		return NULL;
+	nếu (p == NULL)
+		trả_về NULL;
 	memcpy(p, s, len);
 	arena_track(p);
-	return p;
+	trả_về p;
 }
 
 void
@@ -137,7 +137,7 @@ fuzz_arena_release(void)
 {
 	struct arena_node *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	trong_khi (arena_head != NULL) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n);
@@ -149,7 +149,7 @@ fuzz_arena_cleanup(void)
 {
 	struct arena_node *n;
 	tracking = 0;
-	while (arena_head != NULL) {
+	trong_khi (arena_head != NULL) {
 		n = arena_head;
 		arena_head = n->next;
 		__real_free(n->ptr);

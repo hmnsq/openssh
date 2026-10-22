@@ -48,19 +48,19 @@
 extern ServerOptions options;
 extern struct authmethod_cfg methodcfg_none;
 
-extern int none_enabled;
+extern số_nguyên none_enabled;
 
-static int
+static số_nguyên
 userauth_none(struct ssh *ssh, const char *method)
 {
-	int r;
+	số_nguyên r;
 
 	none_enabled = 0;
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	nếu ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
-	if (options.permit_empty_passwd && options.password_authentication)
-		return mm_auth_password(ssh, "");
-	return (0);
+	nếu (options.permit_empty_passwd && options.password_authentication)
+		trả_về mm_auth_password(ssh, "");
+	trả_về (0);
 }
 
 Authmethod method_none = {

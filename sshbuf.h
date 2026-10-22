@@ -28,7 +28,7 @@
 #include <openssl/ec.h>
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
-#else /* OPENSSL */
+#không_thì /* OPENSSL */
 #define BIGNUM		void
 #define EC_KEY		void
 #define EC_GROUP	void
@@ -71,7 +71,7 @@ struct sshbuf *sshbuf_fromb(struct sshbuf *buf);
  * On success, a pointer to the newly allocated buffer is placed in *bufp.
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_froms(struct sshbuf *buf, struct sshbuf **bufp);
+số_nguyên	sshbuf_froms(struct sshbuf *buf, struct sshbuf **bufp);
 
 /*
  * Clear and free buf
@@ -92,7 +92,7 @@ size_t	sshbuf_max_size(const struct sshbuf *buf);
  * Set the maximum size of buf
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_set_max_size(struct sshbuf *buf, size_t max_size);
+số_nguyên	sshbuf_set_max_size(struct sshbuf *buf, size_t max_size);
 
 /*
  * Returns the length of data in buf
@@ -121,7 +121,7 @@ u_char *sshbuf_mutable_ptr(const struct sshbuf *buf);
  * with unsigned overflows correctly.
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_check_reserve(const struct sshbuf *buf, size_t len);
+số_nguyên	sshbuf_check_reserve(const struct sshbuf *buf, size_t len);
 
 /*
  * Preallocates len additional bytes in buf.
@@ -129,26 +129,26 @@ int	sshbuf_check_reserve(const struct sshbuf *buf, size_t len);
  * required to avoid realloc in the buffer code.
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_allocate(struct sshbuf *buf, size_t len);
+số_nguyên	sshbuf_allocate(struct sshbuf *buf, size_t len);
 
 /*
  * Reserve len bytes in buf.
  * Returns 0 on success and a pointer to the first reserved byte via the
  * optional dpp parameter or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_reserve(struct sshbuf *buf, size_t len, u_char **dpp);
+số_nguyên	sshbuf_reserve(struct sshbuf *buf, size_t len, u_char **dpp);
 
 /*
  * Consume len bytes from the start of buf
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_consume(struct sshbuf *buf, size_t len);
+số_nguyên	sshbuf_consume(struct sshbuf *buf, size_t len);
 
 /*
  * Consume len bytes from the end of buf
  * Returns 0 on success, or a negative SSH_ERR_* error code on failure.
  */
-int	sshbuf_consume_end(struct sshbuf *buf, size_t len);
+số_nguyên	sshbuf_consume_end(struct sshbuf *buf, size_t len);
 
 /*
  * Consume data from a parent buffer up to that of a child buffer (i.e.
@@ -166,92 +166,92 @@ int	sshbuf_consume_end(struct sshbuf *buf, size_t len);
  * "child" must be a direct child of "buf" (i.e. neither an unrelated buffer
  * nor a grandchild) which has consumed data past that of "buf".
  */
-int	sshbuf_consume_upto_child(struct sshbuf *buf, const struct sshbuf *child);
+số_nguyên	sshbuf_consume_upto_child(struct sshbuf *buf, const struct sshbuf *child);
 
 /* Extract or deposit some bytes */
-int	sshbuf_get(struct sshbuf *buf, void *v, size_t len);
-int	sshbuf_put(struct sshbuf *buf, const void *v, size_t len);
-int	sshbuf_putb(struct sshbuf *buf, const struct sshbuf *v);
+số_nguyên	sshbuf_get(struct sshbuf *buf, void *v, size_t len);
+số_nguyên	sshbuf_put(struct sshbuf *buf, const void *v, size_t len);
+số_nguyên	sshbuf_putb(struct sshbuf *buf, const struct sshbuf *v);
 
 /* Append using a printf(3) format */
-int	sshbuf_putf(struct sshbuf *buf, const char *fmt, ...)
+số_nguyên	sshbuf_putf(struct sshbuf *buf, const char *fmt, ...)
 	    __attribute__((format(printf, 2, 3)));
-int	sshbuf_putfv(struct sshbuf *buf, const char *fmt, va_list ap);
+số_nguyên	sshbuf_putfv(struct sshbuf *buf, const char *fmt, va_list ap);
 
 /* Functions to extract or store big-endian words of various sizes */
-int	sshbuf_get_u64(struct sshbuf *buf, uint64_t *valp);
-int	sshbuf_get_u32(struct sshbuf *buf, uint32_t *valp);
-int	sshbuf_get_u16(struct sshbuf *buf, uint16_t *valp);
-int	sshbuf_get_u8(struct sshbuf *buf, u_char *valp);
-int	sshbuf_put_u64(struct sshbuf *buf, uint64_t val);
-int	sshbuf_put_u32(struct sshbuf *buf, uint32_t val);
-int	sshbuf_put_u16(struct sshbuf *buf, uint16_t val);
-int	sshbuf_put_u8(struct sshbuf *buf, u_char val);
+số_nguyên	sshbuf_get_u64(struct sshbuf *buf, uint64_t *valp);
+số_nguyên	sshbuf_get_u32(struct sshbuf *buf, uint32_t *valp);
+số_nguyên	sshbuf_get_u16(struct sshbuf *buf, uint16_t *valp);
+số_nguyên	sshbuf_get_u8(struct sshbuf *buf, u_char *valp);
+số_nguyên	sshbuf_put_u64(struct sshbuf *buf, uint64_t val);
+số_nguyên	sshbuf_put_u32(struct sshbuf *buf, uint32_t val);
+số_nguyên	sshbuf_put_u16(struct sshbuf *buf, uint16_t val);
+số_nguyên	sshbuf_put_u8(struct sshbuf *buf, u_char val);
 
 /* Functions to peek at the contents of a buffer without modifying it. */
-int	sshbuf_peek_u64(const struct sshbuf *buf, size_t offset,
+số_nguyên	sshbuf_peek_u64(const struct sshbuf *buf, size_t offset,
     uint64_t *valp);
-int	sshbuf_peek_u32(const struct sshbuf *buf, size_t offset,
+số_nguyên	sshbuf_peek_u32(const struct sshbuf *buf, size_t offset,
     uint32_t *valp);
-int	sshbuf_peek_u16(const struct sshbuf *buf, size_t offset,
+số_nguyên	sshbuf_peek_u16(const struct sshbuf *buf, size_t offset,
     uint16_t *valp);
-int	sshbuf_peek_u8(const struct sshbuf *buf, size_t offset,
+số_nguyên	sshbuf_peek_u8(const struct sshbuf *buf, size_t offset,
     u_char *valp);
 
 /*
  * Functions to poke values into an existing buffer (e.g. a length header
  * to a packet). The destination bytes must already exist in the buffer.
  */
-int sshbuf_poke_u64(struct sshbuf *buf, size_t offset, uint64_t val);
-int sshbuf_poke_u32(struct sshbuf *buf, size_t offset, uint32_t val);
-int sshbuf_poke_u16(struct sshbuf *buf, size_t offset, uint16_t val);
-int sshbuf_poke_u8(struct sshbuf *buf, size_t offset, u_char val);
-int sshbuf_poke(struct sshbuf *buf, size_t offset, void *v, size_t len);
+số_nguyên sshbuf_poke_u64(struct sshbuf *buf, size_t offset, uint64_t val);
+số_nguyên sshbuf_poke_u32(struct sshbuf *buf, size_t offset, uint32_t val);
+số_nguyên sshbuf_poke_u16(struct sshbuf *buf, size_t offset, uint16_t val);
+số_nguyên sshbuf_poke_u8(struct sshbuf *buf, size_t offset, u_char val);
+số_nguyên sshbuf_poke(struct sshbuf *buf, size_t offset, void *v, size_t len);
 
 /*
  * Functions to extract or store SSH wire encoded strings (u32 len || data)
  * The "cstring" variants admit no \0 characters in the string contents.
  * Caller must free *valp.
  */
-int	sshbuf_get_string(struct sshbuf *buf, u_char **valp, size_t *lenp);
-int	sshbuf_get_cstring(struct sshbuf *buf, char **valp, size_t *lenp);
-int	sshbuf_get_stringb(struct sshbuf *buf, struct sshbuf *v);
-int	sshbuf_put_string(struct sshbuf *buf, const void *v, size_t len);
-int	sshbuf_put_cstring(struct sshbuf *buf, const char *v);
-int	sshbuf_put_stringb(struct sshbuf *buf, const struct sshbuf *v);
+số_nguyên	sshbuf_get_string(struct sshbuf *buf, u_char **valp, size_t *lenp);
+số_nguyên	sshbuf_get_cstring(struct sshbuf *buf, char **valp, size_t *lenp);
+số_nguyên	sshbuf_get_stringb(struct sshbuf *buf, struct sshbuf *v);
+số_nguyên	sshbuf_put_string(struct sshbuf *buf, const void *v, size_t len);
+số_nguyên	sshbuf_put_cstring(struct sshbuf *buf, const char *v);
+số_nguyên	sshbuf_put_stringb(struct sshbuf *buf, const struct sshbuf *v);
 
 /*
  * "Direct" variant of sshbuf_get_string, returns pointer into the sshbuf to
  * avoid an malloc+memcpy. The pointer is guaranteed to be valid until the
  * next sshbuf-modifying function call. Caller does not free.
  */
-int	sshbuf_get_string_direct(struct sshbuf *buf, const u_char **valp,
+số_nguyên	sshbuf_get_string_direct(struct sshbuf *buf, const u_char **valp,
 	    size_t *lenp);
 
 /* Skip past a string */
 #define sshbuf_skip_string(buf) sshbuf_get_string_direct(buf, NULL, NULL)
 
 /* Another variant: "peeks" into the buffer without modifying it */
-int	sshbuf_peek_string_direct(const struct sshbuf *buf, const u_char **valp,
+số_nguyên	sshbuf_peek_string_direct(const struct sshbuf *buf, const u_char **valp,
 	    size_t *lenp);
 
 /*
  * Functions to extract or store SSH wire encoded bignums and elliptic
  * curve points.
  */
-int	sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp);
-int	sshbuf_get_bignum2_bytes_direct(struct sshbuf *buf,
+số_nguyên	sshbuf_get_bignum2(struct sshbuf *buf, BIGNUM **valp);
+số_nguyên	sshbuf_get_bignum2_bytes_direct(struct sshbuf *buf,
 	    const u_char **valp, size_t *lenp);
-int	sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v);
-int	sshbuf_put_bignum2_bytes(struct sshbuf *buf, const void *v, size_t len);
-int	sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g);
-int	sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v);
-int	sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g);
-int	sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v);
-int	sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey);
+số_nguyên	sshbuf_put_bignum2(struct sshbuf *buf, const BIGNUM *v);
+số_nguyên	sshbuf_put_bignum2_bytes(struct sshbuf *buf, const void *v, size_t len);
+số_nguyên	sshbuf_get_ec(struct sshbuf *buf, EC_POINT *v, const EC_GROUP *g);
+số_nguyên	sshbuf_get_eckey(struct sshbuf *buf, EC_KEY *v);
+số_nguyên	sshbuf_put_ec(struct sshbuf *buf, const EC_POINT *v, const EC_GROUP *g);
+số_nguyên	sshbuf_put_eckey(struct sshbuf *buf, const EC_KEY *v);
+số_nguyên	sshbuf_put_ec_pkey(struct sshbuf *buf, EVP_PKEY *pkey);
 
 /* Functions to extract or store various non-SSH wire encoded values */
-int	sshbuf_get_nulterminated_string(struct sshbuf *buf, size_t maxlen,
+số_nguyên	sshbuf_get_nulterminated_string(struct sshbuf *buf, size_t maxlen,
 	    char **valp, size_t *lenp);
 
 /* Dump the contents of the buffer in a human-readable format */
@@ -266,13 +266,13 @@ char	*sshbuf_dtob16(const struct sshbuf *buf);
 struct sshbuf *sshbuf_b16tod(const char *b16);
 
 /* Encode the contents of the buffer as base64 */
-char	*sshbuf_dtob64_string(const struct sshbuf *buf, int wrap);
-int	sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, int wrap);
+char	*sshbuf_dtob64_string(const struct sshbuf *buf, số_nguyên wrap);
+số_nguyên	sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, số_nguyên wrap);
 /* RFC4648 "base64url" encoding variant */
-int	sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, int wrap);
+số_nguyên	sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, số_nguyên wrap);
 
 /* Decode base64 data and append it to the buffer */
-int	sshbuf_b64tod(struct sshbuf *buf, const char *b64);
+số_nguyên	sshbuf_b64tod(struct sshbuf *buf, const char *b64);
 
 /*
  * Tests whether the buffer contains the specified byte sequence at the
@@ -286,7 +286,7 @@ int	sshbuf_b64tod(struct sshbuf *buf, const char *b64);
  * insufficient data is present then the comparison is not attempted at
  * all.
  */
-int	sshbuf_cmp(const struct sshbuf *b, size_t offset,
+số_nguyên	sshbuf_cmp(const struct sshbuf *b, size_t offset,
     const void *s, size_t len);
 
 /*
@@ -296,7 +296,7 @@ int	sshbuf_cmp(const struct sshbuf *b, size_t offset,
  * had differing contents.
  * Returns 0 on successful compare (comparing two empty buffers returns 0).
  */
-int sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b);
+số_nguyên sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b);
 
 /*
  * Searches the buffer for the specified string. Returns 0 on success
@@ -306,7 +306,7 @@ int sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b);
  * present in the buffer for a match to be possible but none was found.
  * Searches for zero-length data are not allowed.
  */
-int
+số_nguyên
 sshbuf_find(const struct sshbuf *b, size_t start_offset,
     const void *s, size_t len, size_t *offsetp);
 
@@ -321,20 +321,20 @@ char *sshbuf_dup_string(struct sshbuf *buf);
  * Fill a buffer from a file descriptor or filename. Both allocate the
  * buffer for the caller.
  */
-int sshbuf_load_fd(int, struct sshbuf **)
+số_nguyên sshbuf_load_fd(số_nguyên, struct sshbuf **)
     __attribute__((__nonnull__ (2)));
-int sshbuf_load_file(const char *, struct sshbuf **)
+số_nguyên sshbuf_load_file(const char *, struct sshbuf **)
     __attribute__((__nonnull__ (2)));
 
 /*
  * Write a buffer to a path, creating/truncating as needed (mode 0644,
  * subject to umask). The buffer contents are not modified.
  */
-int sshbuf_write_file(const char *path, struct sshbuf *buf)
+số_nguyên sshbuf_write_file(const char *path, struct sshbuf *buf)
     __attribute__((__nonnull__ (2)));
 
 /* Read up to maxlen bytes from a fd directly to a buffer */
-int sshbuf_read(int, struct sshbuf *, size_t, size_t *)
+số_nguyên sshbuf_read(số_nguyên, struct sshbuf *, size_t, size_t *)
     __attribute__((__nonnull__ (2)));
 
 /* Macros for decoding/encoding integers */
@@ -367,7 +367,7 @@ int sshbuf_read(int, struct sshbuf *, size_t, size_t *)
 		((u_char *)(p))[5] = (__v >> 16) & 0xff; \
 		((u_char *)(p))[6] = (__v >> 8) & 0xff; \
 		((u_char *)(p))[7] = __v & 0xff; \
-	} while (0)
+	} trong_khi (0)
 #define POKE_U32(p, v) \
 	do { \
 		const uint32_t __v = (v); \
@@ -375,13 +375,13 @@ int sshbuf_read(int, struct sshbuf *, size_t, size_t *)
 		((u_char *)(p))[1] = (__v >> 16) & 0xff; \
 		((u_char *)(p))[2] = (__v >> 8) & 0xff; \
 		((u_char *)(p))[3] = __v & 0xff; \
-	} while (0)
+	} trong_khi (0)
 #define POKE_U16(p, v) \
 	do { \
 		const uint16_t __v = (v); \
 		((u_char *)(p))[0] = (__v >> 8) & 0xff; \
 		((u_char *)(p))[1] = __v & 0xff; \
-	} while (0)
+	} trong_khi (0)
 
 /* Internal definitions follow. Exposed for regress tests */
 #ifdef SSHBUF_INTERNAL
@@ -394,7 +394,7 @@ size_t	sshbuf_alloc(const struct sshbuf *buf);
 /*
  * Increment the reference count of buf.
  */
-int	sshbuf_set_parent(struct sshbuf *child, struct sshbuf *parent);
+số_nguyên	sshbuf_set_parent(struct sshbuf *child, struct sshbuf *parent);
 
 /*
  * Return the parent buffer of buf, or NULL if it has no parent.
@@ -423,8 +423,8 @@ u_int	sshbuf_refcount(const struct sshbuf *buf);
 		printf x; \
 		printf("\n"); \
 		fflush(stdout); \
-	} while (0)
-# else
+	} trong_khi (0)
+# không_thì
 #  define SSHBUF_DBG(x)
 # endif
 #endif /* SSHBUF_INTERNAL */

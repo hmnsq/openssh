@@ -27,7 +27,7 @@
 
 /* Constants */
 
-#if defined(HAVE_DECL_SHUT_RD) && HAVE_DECL_SHUT_RD == 0
+#nếu defined(HAVE_DECL_SHUT_RD) && HAVE_DECL_SHUT_RD == 0
 enum
 {
   SHUT_RD = 0,		/* No more receptions.  */
@@ -122,23 +122,23 @@ enum
 #ifndef MAXPATHLEN
 # ifdef PATH_MAX
 #  define MAXPATHLEN PATH_MAX
-# else /* PATH_MAX */
+# không_thì /* PATH_MAX */
 #  define MAXPATHLEN 64
 # endif /* PATH_MAX */
 #endif /* MAXPATHLEN */
 
 #ifndef HOST_NAME_MAX
 # include "netdb.h" /* for MAXHOSTNAMELEN */
-# if defined(_POSIX_HOST_NAME_MAX)
+# nếu defined(_POSIX_HOST_NAME_MAX)
 #  define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
 # elif defined(MAXHOSTNAMELEN)
 #  define HOST_NAME_MAX MAXHOSTNAMELEN
-# else
+# không_thì
 #  define HOST_NAME_MAX	255
 # endif
 #endif /* HOST_NAME_MAX */
 
-#if defined(HAVE_DECL_MAXSYMLINKS) && HAVE_DECL_MAXSYMLINKS == 0
+#nếu defined(HAVE_DECL_MAXSYMLINKS) && HAVE_DECL_MAXSYMLINKS == 0
 # define MAXSYMLINKS 5
 #endif
 
@@ -155,12 +155,12 @@ enum
 #ifndef NGROUPS_MAX	/* Disable groupaccess if NGROUP_MAX is not set */
 #ifdef NGROUPS
 #define NGROUPS_MAX NGROUPS
-#else
+#không_thì
 #define NGROUPS_MAX 0
 #endif
 #endif
 
-#if defined(HAVE_DECL_O_NONBLOCK) && HAVE_DECL_O_NONBLOCK == 0
+#nếu defined(HAVE_DECL_O_NONBLOCK) && HAVE_DECL_O_NONBLOCK == 0
 # define O_NONBLOCK      00004	/* Non Blocking Open */
 #endif
 
@@ -196,7 +196,7 @@ enum
 # define S_IRWXO			0000007	/* read, write, execute */
 #endif /* S_IXUSR */
 
-#if !defined(MAP_ANON) && defined(MAP_ANONYMOUS)
+#nếu !defined(MAP_ANON) && defined(MAP_ANONYMOUS)
 #define MAP_ANON MAP_ANONYMOUS
 #endif
 
@@ -219,20 +219,20 @@ including rpc/rpc.h breaks Solaris 6
 
 #ifndef HAVE_U_INT
 typedef unsigned short u_short;
-typedef unsigned int u_int;
+typedef unsigned số_nguyên u_int;
 typedef unsigned long u_long;
 #endif
 
 #ifndef HAVE_INTXX_T
 typedef signed char int8_t;
-# if (SIZEOF_SHORT_INT == 2)
-typedef short int int16_t;
-# else
+# nếu (SIZEOF_SHORT_INT == 2)
+typedef short số_nguyên int16_t;
+# không_thì
 #   error "16 bit int type not found."
 # endif
-# if (SIZEOF_INT == 4)
-typedef int int32_t;
-# else
+# nếu (SIZEOF_INT == 4)
+typedef số_nguyên int32_t;
+# không_thì
 #   error "32 bit int type not found."
 # endif
 #endif
@@ -244,32 +244,32 @@ typedef uint8_t u_int8_t;
 typedef uint16_t u_int16_t;
 typedef uint32_t u_int32_t;
 # define HAVE_U_INTXX_T 1
-# else
+# không_thì
 typedef unsigned char u_int8_t;
-#  if (SIZEOF_SHORT_INT == 2)
-typedef unsigned short int u_int16_t;
-#  else
+#  nếu (SIZEOF_SHORT_INT == 2)
+typedef unsigned short số_nguyên u_int16_t;
+#  không_thì
 #    error "16 bit int type not found."
 #  endif
-#  if (SIZEOF_INT == 4)
-typedef unsigned int u_int32_t;
-#  else
+#  nếu (SIZEOF_INT == 4)
+typedef unsigned số_nguyên u_int32_t;
+#  không_thì
 #    error "32 bit int type not found."
 #  endif
 # endif
 #define __BIT_TYPES_DEFINED__
 #endif
 
-#if !defined(LLONG_MIN) && defined(LONG_LONG_MIN)
+#nếu !defined(LLONG_MIN) && defined(LONG_LONG_MIN)
 #define LLONG_MIN LONG_LONG_MIN
 #endif
-#if !defined(LLONG_MAX) && defined(LONG_LONG_MAX)
+#nếu !defined(LLONG_MAX) && defined(LONG_LONG_MAX)
 #define LLONG_MAX LONG_LONG_MAX
 #endif
 
 #ifndef UINT32_MAX
-# if defined(HAVE_DECL_UINT32_MAX) && (HAVE_DECL_UINT32_MAX == 0)
-#  if (SIZEOF_INT == 4)
+# nếu defined(HAVE_DECL_UINT32_MAX) && (HAVE_DECL_UINT32_MAX == 0)
+#  nếu (SIZEOF_INT == 4)
 #    define UINT32_MAX	UINT_MAX
 #  endif
 # endif
@@ -277,20 +277,20 @@ typedef unsigned int u_int32_t;
 
 /* 64-bit types */
 #ifndef HAVE_INT64_T
-# if (SIZEOF_LONG_INT == 8)
-typedef long int int64_t;
-# else
-#  if (SIZEOF_LONG_LONG_INT == 8)
-typedef long long int int64_t;
+# nếu (SIZEOF_LONG_INT == 8)
+typedef long số_nguyên int64_t;
+# không_thì
+#  nếu (SIZEOF_LONG_LONG_INT == 8)
+typedef long long số_nguyên int64_t;
 #  endif
 # endif
 #endif
 #ifndef HAVE_U_INT64_T
-# if (SIZEOF_LONG_INT == 8)
-typedef unsigned long int u_int64_t;
-# else
-#  if (SIZEOF_LONG_LONG_INT == 8)
-typedef unsigned long long int u_int64_t;
+# nếu (SIZEOF_LONG_INT == 8)
+typedef unsigned long số_nguyên u_int64_t;
+# không_thì
+#  nếu (SIZEOF_LONG_LONG_INT == 8)
+typedef unsigned long long số_nguyên u_int64_t;
 #  endif
 # endif
 #endif
@@ -310,9 +310,9 @@ typedef long long intmax_t;
 typedef unsigned long long uintmax_t;
 #endif
 
-#if SIZEOF_TIME_T == SIZEOF_LONG_LONG_INT
+#nếu SIZEOF_TIME_T == SIZEOF_LONG_LONG_INT
 # define SSH_TIME_T_MAX LLONG_MAX
-#else
+#không_thì
 # define SSH_TIME_T_MAX INT_MAX
 #endif
 
@@ -330,7 +330,7 @@ typedef unsigned char u_char;
 #endif /* SIZE_T_MAX */
 
 #ifndef HAVE_SIZE_T
-typedef unsigned int size_t;
+typedef unsigned số_nguyên size_t;
 # define HAVE_SIZE_T
 # define SIZE_T_MAX UINT_MAX
 #endif /* HAVE_SIZE_T */
@@ -340,29 +340,29 @@ typedef unsigned int size_t;
 #endif
 
 #ifndef INT32_MAX
-# if (SIZEOF_INT == 4)
+# nếu (SIZEOF_INT == 4)
 #  define INT32_MAX INT_MAX
 # elif (SIZEOF_LONG == 4)
 #  define INT32_MAX LONG_MAX
-# else
+# không_thì
 #  error "need INT32_MAX"
 # endif
 #endif
 
 #ifndef INT64_MAX
-# if (SIZEOF_INT == 8)
+# nếu (SIZEOF_INT == 8)
 #  define INT64_MAX INT_MAX
 # elif (SIZEOF_LONG == 8)
 #  define INT64_MAX LONG_MAX
 # elif (SIZEOF_LONG_LONG_INT == 8)
 #  define INT64_MAX LLONG_MAX
-# else
+# không_thì
 #  error "need INT64_MAX"
 # endif
 #endif
 
 #ifndef HAVE_SSIZE_T
-typedef int ssize_t;
+typedef số_nguyên ssize_t;
 #define SSIZE_MAX INT_MAX
 # define HAVE_SSIZE_T
 #endif /* HAVE_SSIZE_T */
@@ -373,26 +373,26 @@ typedef long clock_t;
 #endif /* HAVE_CLOCK_T */
 
 #ifndef HAVE_SA_FAMILY_T
-typedef int sa_family_t;
+typedef số_nguyên sa_family_t;
 # define HAVE_SA_FAMILY_T
 #endif /* HAVE_SA_FAMILY_T */
 
 #ifndef HAVE_PID_T
-typedef int pid_t;
+typedef số_nguyên pid_t;
 # define HAVE_PID_T
 #endif /* HAVE_PID_T */
 
 #ifndef HAVE_SIG_ATOMIC_T
-typedef int sig_atomic_t;
+typedef số_nguyên sig_atomic_t;
 # define HAVE_SIG_ATOMIC_T
 #endif /* HAVE_SIG_ATOMIC_T */
 
 #ifndef HAVE_MODE_T
-typedef int mode_t;
+typedef số_nguyên mode_t;
 # define HAVE_MODE_T
 #endif /* HAVE_MODE_T */
 
-#if !defined(HAVE_SS_FAMILY_IN_SS) && defined(HAVE___SS_FAMILY_IN_SS)
+#nếu !defined(HAVE_SS_FAMILY_IN_SS) && defined(HAVE___SS_FAMILY_IN_SS)
 # define ss_family __ss_family
 #endif /* !defined(HAVE_SS_FAMILY_IN_SS) && defined(HAVE_SA_FAMILY_IN_SS) */
 
@@ -410,7 +410,7 @@ typedef u_int32_t	in_addr_t;
 typedef u_int16_t	in_port_t;
 #endif
 
-#if defined(BROKEN_SYS_TERMIO_H) && !defined(_STRUCT_WINSIZE)
+#nếu defined(BROKEN_SYS_TERMIO_H) && !defined(_STRUCT_WINSIZE)
 #define _STRUCT_WINSIZE
 struct winsize {
       unsigned short ws_row;          /* rows, in characters */
@@ -422,14 +422,14 @@ struct winsize {
 
 /* bits needed for select that may not be in the system headers */
 #ifndef HAVE_FD_MASK
- typedef unsigned long int	fd_mask;
+ typedef unsigned long số_nguyên	fd_mask;
 #endif
 
-#if defined(HAVE_DECL_NFDBITS) && HAVE_DECL_NFDBITS == 0
+#nếu defined(HAVE_DECL_NFDBITS) && HAVE_DECL_NFDBITS == 0
 # define	NFDBITS (8 * sizeof(unsigned long))
 #endif
 
-#if defined(HAVE_DECL_HOWMANY) && HAVE_DECL_HOWMANY == 0
+#nếu defined(HAVE_DECL_HOWMANY) && HAVE_DECL_HOWMANY == 0
 # define howmany(x,y)	(((x)+((y)-1))/(y))
 #endif
 
@@ -459,7 +459,7 @@ struct winsize {
 #endif
 
 /* user may have set a different path */
-#if defined(_PATH_MAILDIR) && defined(MAIL_DIRECTORY)
+#nếu defined(_PATH_MAILDIR) && defined(MAIL_DIRECTORY)
 # undef _PATH_MAILDIR
 #endif /* defined(_PATH_MAILDIR) && defined(MAIL_DIRECTORY) */
 
@@ -480,7 +480,7 @@ struct winsize {
 #ifndef X_UNIX_PATH
 #  ifdef __hpux
 #    define X_UNIX_PATH "/var/spool/sockets/X11/%u"
-#  else
+#  không_thì
 #    define X_UNIX_PATH "/tmp/.X11-unix/X%u"
 #  endif
 #endif /* X_UNIX_PATH */
@@ -492,7 +492,7 @@ struct winsize {
 
 /* Macros */
 
-#if defined(HAVE_LOGIN_GETCAPBOOL) && defined(HAVE_LOGIN_CAP_H)
+#nếu defined(HAVE_LOGIN_GETCAPBOOL) && defined(HAVE_LOGIN_CAP_H)
 # define HAVE_LOGIN_CAP
 #endif
 
@@ -510,11 +510,11 @@ struct winsize {
    do {								\
       (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;		\
       (result)->tv_usec = (a)->tv_usec - (b)->tv_usec;		\
-      if ((result)->tv_usec < 0) {				\
+      nếu ((result)->tv_usec < 0) {				\
 	 --(result)->tv_sec;					\
 	 (result)->tv_usec += 1000000;				\
       }								\
-   } while (0)
+   } trong_khi (0)
 #endif
 
 #ifndef timespeccmp
@@ -560,56 +560,56 @@ struct winsize {
 	do {								\
 		(vsp)->tv_sec = (tsp)->tv_sec + (usp)->tv_sec;		\
 		(vsp)->tv_nsec = (tsp)->tv_nsec + (usp)->tv_nsec;	\
-		if ((vsp)->tv_nsec >= 1000000000L) {			\
+		nếu ((vsp)->tv_nsec >= 1000000000L) {			\
 			(vsp)->tv_sec++;				\
 			(vsp)->tv_nsec -= 1000000000L;			\
 		}							\
-	} while (0)
+	} trong_khi (0)
 #endif
 #ifndef timespecsub
 #define	timespecsub(tsp, usp, vsp)					\
 	do {								\
 		(vsp)->tv_sec = (tsp)->tv_sec - (usp)->tv_sec;		\
 		(vsp)->tv_nsec = (tsp)->tv_nsec - (usp)->tv_nsec;	\
-		if ((vsp)->tv_nsec < 0) {				\
+		nếu ((vsp)->tv_nsec < 0) {				\
 			(vsp)->tv_sec--;				\
 			(vsp)->tv_nsec += 1000000000L;			\
 		}							\
-	} while (0)
+	} trong_khi (0)
 #endif
 
 #ifndef __P
 # define __P(x) x
 #endif
 
-#if !defined(IN6_IS_ADDR_V4MAPPED)
+#nếu !defined(IN6_IS_ADDR_V4MAPPED)
 # define IN6_IS_ADDR_V4MAPPED(a) \
 	((((u_int32_t *) (a))[0] == 0) && (((u_int32_t *) (a))[1] == 0) && \
 	 (((u_int32_t *) (a))[2] == htonl (0xffff)))
 #endif /* !defined(IN6_IS_ADDR_V4MAPPED) */
 
-#if !defined(__GNUC__) || (__GNUC__ < 2)
+#nếu !defined(__GNUC__) || (__GNUC__ < 2)
 # define __attribute__(x)
 #endif /* !defined(__GNUC__) || (__GNUC__ < 2) */
 
-#if !defined(HAVE_ATTRIBUTE__SENTINEL__) && !defined(__sentinel__)
+#nếu !defined(HAVE_ATTRIBUTE__SENTINEL__) && !defined(__sentinel__)
 # define __sentinel__
 #endif
 
-#if !defined(HAVE_ATTRIBUTE__BOUNDED__) && !defined(__bounded__)
+#nếu !defined(HAVE_ATTRIBUTE__BOUNDED__) && !defined(__bounded__)
 # define __bounded__(x, y, z)
 #endif
 
-#if !defined(HAVE_ATTRIBUTE__NONNULL__) && !defined(__nonnull__)
+#nếu !defined(HAVE_ATTRIBUTE__NONNULL__) && !defined(__nonnull__)
 # define __nonnull__(x)
 #endif
 
-#if !defined(HAVE_ATTRIBUTE__NONSTRING__) && !defined(__nonstring__)
+#nếu !defined(HAVE_ATTRIBUTE__NONSTRING__) && !defined(__nonstring__)
 # define __nonstring__
 #endif
 
 #ifndef OSSH_ALIGNBYTES
-#define OSSH_ALIGNBYTES	(sizeof(int) - 1)
+#define OSSH_ALIGNBYTES	(sizeof(số_nguyên) - 1)
 #endif
 #ifndef __CMSG_ALIGN
 #define	__CMSG_ALIGN(p) (((u_int)(p) + OSSH_ALIGNBYTES) &~ OSSH_ALIGNBYTES)
@@ -641,7 +641,7 @@ struct winsize {
 	 (struct cmsghdr *)NULL)
 #endif /* CMSG_FIRSTHDR */
 
-#if defined(HAVE_DECL_OFFSETOF) && HAVE_DECL_OFFSETOF == 0
+#nếu defined(HAVE_DECL_OFFSETOF) && HAVE_DECL_OFFSETOF == 0
 # define offsetof(type, member) ((size_t) &((type *)0)->member)
 #endif
 
@@ -656,12 +656,12 @@ struct winsize {
 # endif /* BIG_ENDIAN */
 # ifdef WORDS_BIGENDIAN
 #  define BYTE_ORDER BIG_ENDIAN
-# else /* WORDS_BIGENDIAN */
+# không_thì /* WORDS_BIGENDIAN */
 #  define BYTE_ORDER LITTLE_ENDIAN
 # endif /* WORDS_BIGENDIAN */
 #endif /* BYTE_ORDER */
 
-#if (defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0) || \
+#nếu (defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0) || \
     (defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0) || \
     (defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0) || \
     (defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0)
@@ -680,29 +680,29 @@ struct winsize {
 	((uint64_t)(v) & 0xff000000000000ULL) >> 40 |		\
 	((uint64_t)(v) & 0xff00000000000000ULL) >> 56)
 # ifdef WORDS_BIGENDIAN
-#  if defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0
+#  nếu defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0
 #   define le32toh(v) (openssh_swap32(v))
 #  endif
-#  if defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0
+#  nếu defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0
 #   define le64toh(v) (openssh_swap64(v))
 #  endif
-#  if defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0
+#  nếu defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0
 #   define htole64(v) (openssh_swap64(v))
 #  endif
-#  if defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0
+#  nếu defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0
 #   define htobe32(v) ((uint32_t)v)
 #  endif
-# else
-#  if defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0
+# không_thì
+#  nếu defined(HAVE_DECL_LE32TOH) && HAVE_DECL_LE32TOH == 0
 #   define le32toh(v) ((uint32_t)v)
 #  endif
-#  if defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0
+#  nếu defined(HAVE_DECL_LE64TOH) && HAVE_DECL_LE64TOH == 0
 #    define le64toh(v) ((uint64_t)v)
 #  endif
-#  if defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0
+#  nếu defined(HAVE_DECL_HTOLE64) && HAVE_DECL_HTOLE64 == 0
 #   define htole64(v) ((uint64_t)v)
 #  endif
-#  if defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0
+#  nếu defined(HAVE_DECL_HTOBE32) && HAVE_DECL_HTOBE32 == 0
 #   define htobe32(v) (openssh_swap32(v))
 #  endif
 # endif
@@ -710,7 +710,7 @@ struct winsize {
 
 /* Function replacement / compatibility hacks */
 
-#if !defined(HAVE_GETADDRINFO) && (defined(HAVE_OGETADDRINFO) || defined(HAVE_NGETADDRINFO))
+#nếu !defined(HAVE_GETADDRINFO) && (defined(HAVE_OGETADDRINFO) || defined(HAVE_NGETADDRINFO))
 # define HAVE_GETADDRINFO
 #endif
 
@@ -729,36 +729,36 @@ struct winsize {
 # define optarg             BSDoptarg
 #endif
 
-#if defined(BROKEN_GETADDRINFO) && defined(HAVE_GETADDRINFO)
+#nếu defined(BROKEN_GETADDRINFO) && defined(HAVE_GETADDRINFO)
 # undef HAVE_GETADDRINFO
 #endif
-#if defined(BROKEN_GETADDRINFO) && defined(HAVE_FREEADDRINFO)
+#nếu defined(BROKEN_GETADDRINFO) && defined(HAVE_FREEADDRINFO)
 # undef HAVE_FREEADDRINFO
 #endif
-#if defined(BROKEN_GETADDRINFO) && defined(HAVE_GAI_STRERROR)
+#nếu defined(BROKEN_GETADDRINFO) && defined(HAVE_GAI_STRERROR)
 # undef HAVE_GAI_STRERROR
 #endif
 
-#if defined(HAVE_GETADDRINFO)
-# if defined(HAVE_DECL_AI_NUMERICSERV) && HAVE_DECL_AI_NUMERICSERV == 0
+#nếu defined(HAVE_GETADDRINFO)
+# nếu defined(HAVE_DECL_AI_NUMERICSERV) && HAVE_DECL_AI_NUMERICSERV == 0
 #   define AI_NUMERICSERV	0
 # endif
 #endif
 
-#if defined(BROKEN_UPDWTMPX) && defined(HAVE_UPDWTMPX)
+#nếu defined(BROKEN_UPDWTMPX) && defined(HAVE_UPDWTMPX)
 # undef HAVE_UPDWTMPX
 #endif
 
-#if defined(BROKEN_SHADOW_EXPIRE) && defined(HAS_SHADOW_EXPIRE)
+#nếu defined(BROKEN_SHADOW_EXPIRE) && defined(HAS_SHADOW_EXPIRE)
 # undef HAS_SHADOW_EXPIRE
 #endif
 
-#if defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT) && \
+#nếu defined(HAVE_OPENLOG_R) && defined(SYSLOG_DATA_INIT) && \
     defined(SYSLOG_R_SAFE_IN_SIGHAND)
 # define DO_LOG_SAFE_IN_SIGHAND
 #endif
 
-#if !defined(HAVE_MEMMOVE) && defined(HAVE_BCOPY)
+#nếu !defined(HAVE_MEMMOVE) && defined(HAVE_BCOPY)
 # define memmove(s1, s2, n) bcopy((s2), (s1), (n))
 #endif /* !defined(HAVE_MEMMOVE) && defined(HAVE_BCOPY) */
 
@@ -777,20 +777,20 @@ struct winsize {
 # define CUSTOM_SSH_AUDIT_EVENTS
 #endif
 
-#if !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
+#nếu !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
 #  define __func__ __FUNCTION__
 #elif !defined(HAVE___func__)
 #  define __func__ ""
 #endif
 
-#if defined(KRB5) && !defined(HEIMDAL)
+#nếu defined(KRB5) && !defined(HEIMDAL)
 #  define krb5_get_err_text(context,code) error_message(code)
 #endif
 
 /* Maximum number of file descriptors available */
 #ifdef HAVE_SYSCONF
 # define SSH_SYSFDMAX sysconf(_SC_OPEN_MAX)
-#else
+#không_thì
 # define SSH_SYSFDMAX 10000
 #endif
 
@@ -803,26 +803,26 @@ struct winsize {
 #define FSID_TO_ULONG(f) \
 	((((u_int64_t)(f).__val[0] & 0xffffffffUL) << 32) | \
 	    ((f).__val[1] & 0xffffffffUL))
-#else
+#không_thì
 # define FSID_TO_ULONG(f) ((f))
 #endif
 
-#if defined(__Lynx__)
+#nếu defined(__Lynx__)
  /*
   * LynxOS defines these in param.h which we do not want to include since
   * it will also pull in a bunch of kernel definitions.
   */
-# define ALIGNBYTES (sizeof(int) - 1)
+# define ALIGNBYTES (sizeof(số_nguyên) - 1)
 # define ALIGN(p) (((unsigned)p + ALIGNBYTES) & ~ALIGNBYTES)
   /* Missing prototypes on LynxOS */
-  int snprintf (char *, size_t, const char *, ...);
-  int mkstemp (char *);
+  số_nguyên snprintf (char *, size_t, const char *, ...);
+  số_nguyên mkstemp (char *);
   char *crypt (const char *, const char *);
-  int seteuid (uid_t);
-  int setegid (gid_t);
+  số_nguyên seteuid (uid_t);
+  số_nguyên setegid (gid_t);
   char *mkdtemp (char *);
-  int rresvport_af (int *, sa_family_t);
-  int innetgr (const char *, const char *, const char *, const char *);
+  số_nguyên rresvport_af (số_nguyên *, sa_family_t);
+  số_nguyên innetgr (const char *, const char *, const char *, const char *);
 #endif
 
 /*
@@ -842,7 +842,7 @@ struct winsize {
 #ifndef UTMP_FILE
 #  ifdef _PATH_UTMP
 #    define UTMP_FILE _PATH_UTMP
-#  else
+#  không_thì
 #    ifdef CONF_UTMP_FILE
 #      define UTMP_FILE CONF_UTMP_FILE
 #    endif
@@ -851,7 +851,7 @@ struct winsize {
 #ifndef WTMP_FILE
 #  ifdef _PATH_WTMP
 #    define WTMP_FILE _PATH_WTMP
-#  else
+#  không_thì
 #    ifdef CONF_WTMP_FILE
 #      define WTMP_FILE CONF_WTMP_FILE
 #    endif
@@ -861,34 +861,34 @@ struct winsize {
 #ifndef LASTLOG_FILE
 #  ifdef _PATH_LASTLOG
 #    define LASTLOG_FILE _PATH_LASTLOG
-#  else
+#  không_thì
 #    ifdef CONF_LASTLOG_FILE
 #      define LASTLOG_FILE CONF_LASTLOG_FILE
 #    endif
 #  endif
 #endif
 
-#if defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
+#nếu defined(HAVE_SHADOW_H) && !defined(DISABLE_SHADOW)
 # define USE_SHADOW
 #endif
 
 /* The login() library function in libutil is first choice */
-#if defined(HAVE_LOGIN) && !defined(DISABLE_LOGIN)
+#nếu defined(HAVE_LOGIN) && !defined(DISABLE_LOGIN)
 #  define USE_LOGIN
 
-#else
+#không_thì
 /* Simply select your favourite login types. */
 /* Can't do if-else because some systems use several... <sigh> */
-#  if !defined(DISABLE_UTMPX)
+#  nếu !defined(DISABLE_UTMPX)
 #    define USE_UTMPX
 #  endif
-#  if defined(UTMP_FILE) && !defined(DISABLE_UTMP)
+#  nếu defined(UTMP_FILE) && !defined(DISABLE_UTMP)
 #    define USE_UTMP
 #  endif
-#  if defined(WTMPX_FILE) && !defined(DISABLE_WTMPX)
+#  nếu defined(WTMPX_FILE) && !defined(DISABLE_WTMPX)
 #    define USE_WTMPX
 #  endif
-#  if defined(WTMP_FILE) && !defined(DISABLE_WTMP)
+#  nếu defined(WTMP_FILE) && !defined(DISABLE_WTMP)
 #    define USE_WTMP
 #  endif
 
@@ -899,7 +899,7 @@ struct winsize {
 #endif
 
 /* I hope that the presence of LASTLOG_FILE is enough to detect this */
-#if defined(LASTLOG_FILE) && !defined(DISABLE_LASTLOG)
+#nếu defined(LASTLOG_FILE) && !defined(DISABLE_LASTLOG)
 #  define USE_LASTLOG
 #endif
 
@@ -910,10 +910,10 @@ struct winsize {
 # define CUSTOM_SYS_AUTH_PASSWD 1
 #endif
 
-#if defined(HAVE_LIBIAF) && defined(HAVE_SET_ID) && !defined(HAVE_SECUREWARE)
+#nếu defined(HAVE_LIBIAF) && defined(HAVE_SET_ID) && !defined(HAVE_SECUREWARE)
 # define CUSTOM_SYS_AUTH_PASSWD 1
 #endif
-#if defined(HAVE_LIBIAF) && defined(HAVE_SET_ID) && !defined(BROKEN_LIBIAF)
+#nếu defined(HAVE_LIBIAF) && defined(HAVE_SET_ID) && !defined(BROKEN_LIBIAF)
 # define USE_LIBIAF
 #endif
 
@@ -922,7 +922,7 @@ struct winsize {
 # define _PATH_BTMP BTMP_FILE
 #endif
 
-#if defined(USE_BTMP) && defined(_PATH_BTMP)
+#nếu defined(USE_BTMP) && defined(_PATH_BTMP)
 # define CUSTOM_FAILED_LOGIN
 #endif
 
@@ -933,11 +933,11 @@ struct winsize {
 #endif
 
 #ifndef IOV_MAX
-# if defined(_XOPEN_IOV_MAX)
+# nếu defined(_XOPEN_IOV_MAX)
 #  define	IOV_MAX		_XOPEN_IOV_MAX
 # elif defined(DEF_IOV_MAX)
 #  define	IOV_MAX		DEF_IOV_MAX
-# else
+# không_thì
 #  define	IOV_MAX		16
 # endif
 #endif
@@ -966,7 +966,7 @@ struct winsize {
  * Platforms that have arc4random_uniform() and not arc4random_stir()
  * shouldn't need the latter.
  */
-#if defined(HAVE_ARC4RANDOM) && defined(HAVE_ARC4RANDOM_UNIFORM) && \
+#nếu defined(HAVE_ARC4RANDOM) && defined(HAVE_ARC4RANDOM_UNIFORM) && \
     !defined(HAVE_ARC4RANDOM_STIR)
 # define arc4random_stir()
 #endif
@@ -974,17 +974,17 @@ struct winsize {
 #ifndef HAVE_VA_COPY
 # ifdef HAVE___VA_COPY
 #  define va_copy(dest, src) __va_copy(dest, src)
-# else
+# không_thì
 #  define va_copy(dest, src) (dest) = (src)
 # endif
 #endif
 
 #ifndef __predict_true
-# if defined(__GNUC__) && \
+# nếu defined(__GNUC__) && \
      ((__GNUC__ > (2)) || (__GNUC__ == (2) && __GNUC_MINOR__ >= (96)))
 #  define __predict_true(exp)     __builtin_expect(((exp) != 0), 1)
 #  define __predict_false(exp)    __builtin_expect(((exp) != 0), 0)
-# else
+# không_thì
 #  define __predict_true(exp)     ((exp) != 0)
 #  define __predict_false(exp)    ((exp) != 0)
 # endif /* gcc version */
@@ -994,15 +994,15 @@ struct winsize {
  * sntrup761 uses variable length arrays and c99-style declarations after code,
  * so only enable if the compiler supports them.
  */
-#if defined(VARIABLE_LENGTH_ARRAYS) && defined(VARIABLE_DECLARATION_AFTER_CODE)
+#nếu defined(VARIABLE_LENGTH_ARRAYS) && defined(VARIABLE_DECLARATION_AFTER_CODE)
 # define USE_SNTRUP761X25519	1
 /* The ML-KEM768 and ML-DSA implementations also uses C89 features */
 # define USE_MLKEM768X25519	1
 # define USE_MLDSA		1
 #endif
 
-#if defined(HAVE_DECL_INFINITY) && HAVE_DECL_INFINITY == 0
-# if defined(HAVE_DECL___BUILTIN_INFF) && HAVE_DECL___BUILTIN_INFF == 1
+#nếu defined(HAVE_DECL_INFINITY) && HAVE_DECL_INFINITY == 0
+# nếu defined(HAVE_DECL___BUILTIN_INFF) && HAVE_DECL___BUILTIN_INFF == 1
 #  define INFINITY __builtin_inff()
 # endif
 #endif
@@ -1019,7 +1019,7 @@ struct winsize {
  * fd passing, as AFAIK PTY allocation on this platform doesn't require
  * special privileges to begin with.
  */
-#if defined(DISABLE_FD_PASSING) && !defined(HAVE_CYGWIN)
+#nếu defined(DISABLE_FD_PASSING) && !defined(HAVE_CYGWIN)
 # define SKIP_PRIVDROP 1
 #endif
 

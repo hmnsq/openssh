@@ -49,12 +49,12 @@ typedef enum {
 	SYSLOG_LEVEL_NOT_SET = -1
 }       LogLevel;
 
-typedef void (log_handler_fn)(LogLevel, int, const char *, void *);
+typedef void (log_handler_fn)(LogLevel, số_nguyên, const char *, void *);
 
-void     log_init(const char *, LogLevel, SyslogFacility, int);
+void     log_init(const char *, LogLevel, SyslogFacility, số_nguyên);
 LogLevel log_level_get(void);
-int      log_change_level(LogLevel);
-int      log_is_on_stderr(void);
+số_nguyên      log_change_level(LogLevel);
+số_nguyên      log_is_on_stderr(void);
 void     log_redirect_stderr_to(const char *);
 void	 log_verbose_add(const char *);
 void	 log_verbose_reset(void);
@@ -65,20 +65,20 @@ LogLevel	log_level_number(char *);
 const char *	log_level_name(LogLevel);
 
 void	 set_log_handler(log_handler_fn *, void *);
-void	 cleanup_exit(int) __attribute__((noreturn));
+void	 cleanup_exit(số_nguyên) __attribute__((noreturn));
 
-void	 sshlog(const char *, const char *, int, int,
+void	 sshlog(const char *, const char *, số_nguyên, số_nguyên,
     LogLevel, const char *, const char *, ...)
     __attribute__((format(printf, 7, 8)));
-void	 sshlogv(const char *, const char *, int, int,
+void	 sshlogv(const char *, const char *, số_nguyên, số_nguyên,
     LogLevel, const char *, const char *, va_list);
-void	 sshlogdie(const char *, const char *, int, int,
+void	 sshlogdie(const char *, const char *, số_nguyên, số_nguyên,
     LogLevel, const char *, const char *, ...) __attribute__((noreturn))
     __attribute__((format(printf, 7, 8)));
-void	 sshfatal(const char *, const char *, int, int,
+void	 sshfatal(const char *, const char *, số_nguyên, số_nguyên,
     LogLevel, const char *, const char *, ...) __attribute__((noreturn))
     __attribute__((format(printf, 7, 8)));
-void	 sshlogdirect(LogLevel, int, const char *, ...)
+void	 sshlogdirect(LogLevel, số_nguyên, const char *, ...)
     __attribute__((format(printf, 3, 4)));
 
 struct log_ratelimit_ctx {
@@ -93,7 +93,7 @@ struct log_ratelimit_ctx {
 	u_int accumulated_events; /* used for threshold comparisons */
 
 	/* state while actively rate-limiting */
-	int ratelimit_active;
+	số_nguyên ratelimit_active;
 	time_t ratelimit_start;
 	time_t last_log;
 	time_t hysteresis_start;
@@ -102,7 +102,7 @@ struct log_ratelimit_ctx {
 
 void log_ratelimit_init(struct log_ratelimit_ctx *rl, u_int threshold,
     u_int max_accum, u_int hysteresis, u_int log_every);
-int log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, int *active,
+số_nguyên log_ratelimit(struct log_ratelimit_ctx *rl, time_t now, số_nguyên *active,
     u_int *events_dropped);
 
 #define do_log2(level, ...)	sshlog(__FILE__, __func__, __LINE__, 0, level, NULL, __VA_ARGS__)

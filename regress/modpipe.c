@@ -51,47 +51,47 @@ static void
 parse_modification(const char *s, struct modification *m)
 {
 	char what[16+1];
-	int n, m1, m2;
+	số_nguyên n, m1, m2;
 
 	bzero(m, sizeof(*m));
-	if ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
+	nếu ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
 	    what, &m->offset, &m1, &m2)) < 3)
 		errx(1, "Invalid modification spec \"%s\"", s);
-	if (strcasecmp(what, "xor") == 0) {
-		if (n > 3)
+	nếu (strcasecmp(what, "xor") == 0) {
+		nếu (n > 3)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		nếu (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid XOR modification value");
 		m->what = MOD_XOR;
 		m->m1 = m1;
-	} else if (strcasecmp(what, "andor") == 0) {
-		if (n != 4)
+	} không_thì nếu (strcasecmp(what, "andor") == 0) {
+		nếu (n != 4)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		nếu (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid AND modification value");
-		if (m2 < 0 || m2 > 0xff)
+		nếu (m2 < 0 || m2 > 0xff)
 			errx(1, "Invalid OR modification value");
 		m->what = MOD_AND_OR;
 		m->m1 = m1;
 		m->m2 = m2;
-	} else
+	} không_thì
 		errx(1, "Invalid modification type \"%s\"", what);
 }
 
-int
-main(int argc, char **argv)
+số_nguyên
+main(số_nguyên argc, char **argv)
 {
-	int ch;
+	số_nguyên ch;
 	u_char buf[8192];
 	size_t total;
 	ssize_t r, s, o;
 	struct modification mods[MAX_MODIFICATIONS];
 	u_int i, wflag = 0, num_mods = 0;
 
-	while ((ch = getopt(argc, argv, "wm:")) != -1) {
+	trong_khi ((ch = getopt(argc, argv, "wm:")) != -1) {
 		switch (ch) {
 		case 'm':
-			if (num_mods >= MAX_MODIFICATIONS)
+			nếu (num_mods >= MAX_MODIFICATIONS)
 				errx(1, "Too many modifications");
 			parse_modification(optarg, &(mods[num_mods++]));
 			break;
@@ -103,17 +103,17 @@ main(int argc, char **argv)
 			/* NOTREACHED */
 		}
 	}
-	for (total = 0;;) {
+	cho (total = 0;;) {
 		r = s = read(STDIN_FILENO, buf, sizeof(buf));
-		if (r == 0)
+		nếu (r == 0)
 			break;
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR)
+		nếu (r < 0) {
+			nếu (errno == EAGAIN || errno == EINTR)
 				continue;
 			err(1, "read");
 		}
-		for (i = 0; i < num_mods; i++) {
-			if (mods[i].offset < total ||
+		cho (i = 0; i < num_mods; i++) {
+			nếu (mods[i].offset < total ||
 			    mods[i].offset >= total + s)
 				continue;
 			switch (mods[i].what) {
@@ -126,12 +126,12 @@ main(int argc, char **argv)
 				break;
 			}
 		}
-		for (o = 0; o < s; o += r) {
+		cho (o = 0; o < s; o += r) {
 			r = write(STDOUT_FILENO, buf + o, s - o);
-			if (r == 0)
+			nếu (r == 0)
 				break;
-			if (r < 0) {
-				if (errno == EAGAIN || errno == EINTR)
+			nếu (r < 0) {
+				nếu (errno == EAGAIN || errno == EINTR)
 					continue;
 				err(1, "write");
 			}
@@ -140,11 +140,11 @@ main(int argc, char **argv)
 	}
 	/* Warn if modifications not reached in input stream */
 	r = 0;
-	for (i = 0; wflag && i < num_mods; i++) {
-		if (mods[i].offset < total)
+	cho (i = 0; wflag && i < num_mods; i++) {
+		nếu (mods[i].offset < total)
 			continue;
 		r = 1;
 		fprintf(stderr, "modpipe: warning - mod %u not reached\n", i);
 	}
-	return r;
+	trả_về r;
 }

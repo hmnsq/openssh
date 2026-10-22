@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fail = 0;
+static số_nguyên fail = 0;
 
 void
 test(const char *a)
@@ -27,21 +27,21 @@ test(const char *a)
 	char *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	nếu (b == 0) {
 		fail = 1;
-		return;
+		trả_về;
 	}
-	if (strcmp(a, b) != 0)
+	nếu (strcmp(a, b) != 0)
 		fail = 1;
 	free(b);
 }
 
-int
+số_nguyên
 main(void)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	trả_về fail;
 }

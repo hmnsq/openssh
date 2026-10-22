@@ -61,44 +61,44 @@ sftp_realpath(const char *path, char *resolved)
 	char *p, *q, *s;
 	size_t left_len, resolved_len;
 	unsigned symlinks;
-	int serrno, slen, mem_allocated;
+	số_nguyên serrno, slen, mem_allocated;
 	char left[PATH_MAX], next_token[PATH_MAX], symlink[PATH_MAX];
 
-	if (path[0] == '\0') {
+	nếu (path[0] == '\0') {
 		errno = ENOENT;
-		return (NULL);
+		trả_về (NULL);
 	}
 
 	serrno = errno;
 
-	if (resolved == NULL) {
+	nếu (resolved == NULL) {
 		resolved = malloc(PATH_MAX);
-		if (resolved == NULL)
-			return (NULL);
+		nếu (resolved == NULL)
+			trả_về (NULL);
 		mem_allocated = 1;
-	} else
+	} không_thì
 		mem_allocated = 0;
 
 	symlinks = 0;
-	if (path[0] == '/') {
+	nếu (path[0] == '/') {
 		resolved[0] = '/';
 		resolved[1] = '\0';
-		if (path[1] == '\0')
-			return (resolved);
+		nếu (path[1] == '\0')
+			trả_về (resolved);
 		resolved_len = 1;
 		left_len = strlcpy(left, path + 1, sizeof(left));
-	} else {
-		if (getcwd(resolved, PATH_MAX) == NULL) {
-			if (mem_allocated)
+	} không_thì {
+		nếu (getcwd(resolved, PATH_MAX) == NULL) {
+			nếu (mem_allocated)
 				free(resolved);
-			else
+			không_thì
 				strlcpy(resolved, ".", PATH_MAX);
-			return (NULL);
+			trả_về (NULL);
 		}
 		resolved_len = strlen(resolved);
 		left_len = strlcpy(left, path, sizeof(left));
 	}
-	if (left_len >= sizeof(left) || resolved_len >= PATH_MAX) {
+	nếu (left_len >= sizeof(left) || resolved_len >= PATH_MAX) {
 		errno = ENAMETOOLONG;
 		goto err;
 	}
@@ -106,40 +106,40 @@ sftp_realpath(const char *path, char *resolved)
 	/*
 	 * Iterate over path components in `left'.
 	 */
-	while (left_len != 0) {
+	trong_khi (left_len != 0) {
 		/*
 		 * Extract the next path component and adjust `left'
 		 * and its length.
 		 */
 		p = strchr(left, '/');
 		s = p ? p : left + left_len;
-		if (s - left >= (ptrdiff_t)sizeof(next_token)) {
+		nếu (s - left >= (ptrdiff_t)sizeof(next_token)) {
 			errno = ENAMETOOLONG;
 			goto err;
 		}
 		memcpy(next_token, left, s - left);
 		next_token[s - left] = '\0';
 		left_len -= s - left;
-		if (p != NULL)
+		nếu (p != NULL)
 			memmove(left, s + 1, left_len + 1);
-		if (resolved[resolved_len - 1] != '/') {
-			if (resolved_len + 1 >= PATH_MAX) {
+		nếu (resolved[resolved_len - 1] != '/') {
+			nếu (resolved_len + 1 >= PATH_MAX) {
 				errno = ENAMETOOLONG;
 				goto err;
 			}
 			resolved[resolved_len++] = '/';
 			resolved[resolved_len] = '\0';
 		}
-		if (next_token[0] == '\0')
+		nếu (next_token[0] == '\0')
 			continue;
-		else if (strcmp(next_token, ".") == 0)
+		không_thì nếu (strcmp(next_token, ".") == 0)
 			continue;
-		else if (strcmp(next_token, "..") == 0) {
+		không_thì nếu (strcmp(next_token, "..") == 0) {
 			/*
 			 * Strip the last path component except when we have
 			 * single "/"
 			 */
-			if (resolved_len > 1) {
+			nếu (resolved_len > 1) {
 				resolved[resolved_len - 1] = '\0';
 				q = strrchr(resolved, '/') + 1;
 				*q = '\0';
@@ -154,30 +154,30 @@ sftp_realpath(const char *path, char *resolved)
 		 * there are no more path components left.
 		 */
 		resolved_len = strlcat(resolved, next_token, PATH_MAX);
-		if (resolved_len >= PATH_MAX) {
+		nếu (resolved_len >= PATH_MAX) {
 			errno = ENAMETOOLONG;
 			goto err;
 		}
-		if (lstat(resolved, &sb) != 0) {
-			if (errno == ENOENT && p == NULL) {
+		nếu (lstat(resolved, &sb) != 0) {
+			nếu (errno == ENOENT && p == NULL) {
 				errno = serrno;
-				return (resolved);
+				trả_về (resolved);
 			}
 			goto err;
 		}
-		if (S_ISLNK(sb.st_mode)) {
-			if (symlinks++ > SYMLOOP_MAX) {
+		nếu (S_ISLNK(sb.st_mode)) {
+			nếu (symlinks++ > SYMLOOP_MAX) {
 				errno = ELOOP;
 				goto err;
 			}
 			slen = readlink(resolved, symlink, sizeof(symlink) - 1);
-			if (slen < 0)
+			nếu (slen < 0)
 				goto err;
 			symlink[slen] = '\0';
-			if (symlink[0] == '/') {
+			nếu (symlink[0] == '/') {
 				resolved[1] = 0;
 				resolved_len = 1;
-			} else if (resolved_len > 1) {
+			} không_thì nếu (resolved_len > 1) {
 				/* Strip the last path component. */
 				resolved[resolved_len - 1] = '\0';
 				q = strrchr(resolved, '/') + 1;
@@ -190,9 +190,9 @@ sftp_realpath(const char *path, char *resolved)
 			 * append them to symlink. The result is placed
 			 * in `left'.
 			 */
-			if (p != NULL) {
-				if (symlink[slen - 1] != '/') {
-					if (slen + 1 >=
+			nếu (p != NULL) {
+				nếu (symlink[slen - 1] != '/') {
+					nếu (slen + 1 >=
 					    (ptrdiff_t)sizeof(symlink)) {
 						errno = ENAMETOOLONG;
 						goto err;
@@ -201,7 +201,7 @@ sftp_realpath(const char *path, char *resolved)
 					symlink[slen + 1] = 0;
 				}
 				left_len = strlcat(symlink, left, sizeof(symlink));
-				if (left_len >= sizeof(symlink)) {
+				nếu (left_len >= sizeof(symlink)) {
 					errno = ENAMETOOLONG;
 					goto err;
 				}
@@ -214,12 +214,12 @@ sftp_realpath(const char *path, char *resolved)
 	 * Remove trailing slash except when the resolved pathname
 	 * is a single "/".
 	 */
-	if (resolved_len > 1 && resolved[resolved_len - 1] == '/')
+	nếu (resolved_len > 1 && resolved[resolved_len - 1] == '/')
 		resolved[resolved_len - 1] = '\0';
-	return (resolved);
+	trả_về (resolved);
 
 err:
-	if (mem_allocated)
+	nếu (mem_allocated)
 		free(resolved);
-	return (NULL);
+	trả_về (NULL);
 }

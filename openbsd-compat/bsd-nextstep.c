@@ -30,74 +30,74 @@
 #include "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(số_nguyên *status)
 {
 	union wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	nếu (status)
+		*status = (số_nguyên) statusp.w_status;
 
-	return (wait_pid);
+	trả_về (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+số_nguyên
+tcgetattr(số_nguyên fd, struct termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	trả_về (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+số_nguyên
+tcsetattr(số_nguyên fd, số_nguyên opt, const struct termios *t)
 {
 	struct termios localterm;
 
-	if (opt & TCSASOFT) {
+	nếu (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
 	switch (opt & ~TCSASOFT) {
 	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
+		trả_về (ioctl(fd, TIOCSETA, t));
 	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
+		trả_về (ioctl(fd, TIOCSETAW, t));
 	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
+		trả_về (ioctl(fd, TIOCSETAF, t));
 	default:
 		errno = EINVAL;
-		return (-1);
+		trả_về (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+số_nguyên tcsetpgrp(số_nguyên fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	trả_về (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
 speed_t cfgetospeed(const struct termios *t)
 {
-	return (t->c_ospeed);
+	trả_về (t->c_ospeed);
 }
 
 speed_t cfgetispeed(const struct termios *t)
 {
-	return (t->c_ispeed);
+	trả_về (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+số_nguyên
+cfsetospeed(struct termios *t,số_nguyên speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	trả_về (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+số_nguyên
+cfsetispeed(struct termios *t, số_nguyên speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	trả_về (0);
 }
 #endif /* HAVE_NEXT */

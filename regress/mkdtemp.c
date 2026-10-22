@@ -33,29 +33,29 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+số_nguyên
+main(số_nguyên argc, char **argv)
 {
 	const char *base;
 	const char *tmpdir;
 	char template[PATH_MAX];
-	int r;
+	số_nguyên r;
 	char *dir;
 
-	if (argc != 2)
+	nếu (argc != 2)
 		usage();
 	base = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	nếu ((tmpdir = getenv("TMPDIR")) == NULL)
 		tmpdir = "/tmp";
 	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	nếu (r < 0 || (size_t)r >= sizeof(template))
 		fatal("template string too long");
 	dir = mkdtemp(template);
-	if (dir == NULL) {
+	nếu (dir == NULL) {
 		perror("mkdtemp");
 		exit(1);
 	}
 	puts(dir);
-	return 0;
+	trả_về 0;
 }

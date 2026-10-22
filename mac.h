@@ -30,23 +30,23 @@
 
 struct sshmac {
 	char	*name;
-	int	enabled;
+	số_nguyên	enabled;
 	u_int	mac_len;
 	u_char	*key;
 	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
+	số_nguyên	type;
+	số_nguyên	etm;		/* Encrypt-then-MAC */
 	struct ssh_hmac_ctx	*hmac_ctx;
 	struct umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
+số_nguyên	 mac_valid(const char *);
 char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
+số_nguyên	 mac_setup(struct sshmac *, char *);
+số_nguyên	 mac_init(struct sshmac *);
+số_nguyên	 mac_compute(struct sshmac *, uint32_t, const u_char *, số_nguyên,
     u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
+số_nguyên	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
     const u_char *, size_t);
 void	 mac_clear(struct sshmac *);
 

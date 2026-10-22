@@ -39,7 +39,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <util.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#nếu defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 
@@ -119,13 +119,13 @@
 
 */
 
-static int read_config_file_depth(const char *filename, struct passwd *pw,
+static số_nguyên read_config_file_depth(const char *filename, struct passwd *pw,
     const char *host, const char *original_host, const char *remote_command,
-    Options *options, int flags, int *activep, int *want_final_pass, int depth);
-static int process_config_line_depth(Options *options, struct passwd *pw,
+    Options *options, số_nguyên flags, số_nguyên *activep, số_nguyên *want_final_pass, số_nguyên depth);
+static số_nguyên process_config_line_depth(Options *options, struct passwd *pw,
     const char *host, const char *original_host, const char *remote_command,
-    char *line, const char *filename, int linenum, int *activep, int flags,
-    int *want_final_pass, int depth);
+    char *line, const char *filename, số_nguyên linenum, số_nguyên *activep, số_nguyên flags,
+    số_nguyên *want_final_pass, số_nguyên depth);
 
 /* Keyword tokens. */
 
@@ -196,17 +196,17 @@ static struct {
 	{ "compressionlevel", oUnsupported },
 
 	/* Sometimes-unsupported options */
-#if defined(GSSAPI)
+#nếu defined(GSSAPI)
 	{ "gssapiauthentication", oGssAuthentication },
 	{ "gssapidelegatecredentials", oGssDelegateCreds },
-# else
+# không_thì
 	{ "gssapiauthentication", oUnsupported },
 	{ "gssapidelegatecredentials", oUnsupported },
 #endif
 #ifdef ENABLE_PKCS11
 	{ "pkcs11provider", oPKCS11Provider },
 	{ "smartcarddevice", oPKCS11Provider },
-# else
+# không_thì
 	{ "smartcarddevice", oUnsupported },
 	{ "pkcs11provider", oUnsupported },
 #endif
@@ -331,14 +331,14 @@ kex_default_pk_alg(void)
 {
 	static char *pkalgs;
 
-	if (pkalgs == NULL) {
+	nếu (pkalgs == NULL) {
 		char *all_key;
 
 		all_key = sshkey_alg_list(0, 0, 1, ',');
 		pkalgs = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
 		free(all_key);
 	}
-	return pkalgs;
+	trả_về pkalgs;
 }
 
 char *
@@ -348,7 +348,7 @@ ssh_connection_hash(const char *thishost, const char *host, const char *portstr,
 	struct ssh_digest_ctx *md;
 	u_char conn_hash[SSH_DIGEST_MAX_LENGTH];
 
-	if ((md = ssh_digest_start(SSH_DIGEST_SHA1)) == NULL ||
+	nếu ((md = ssh_digest_start(SSH_DIGEST_SHA1)) == NULL ||
 	    ssh_digest_update(md, thishost, strlen(thishost)) < 0 ||
 	    ssh_digest_update(md, host, strlen(host)) < 0 ||
 	    ssh_digest_update(md, portstr, strlen(portstr)) < 0 ||
@@ -357,7 +357,7 @@ ssh_connection_hash(const char *thishost, const char *host, const char *portstr,
 	    ssh_digest_final(md, conn_hash, sizeof(conn_hash)) < 0)
 		fatal_f("mux digest failed");
 	ssh_digest_free(md);
-	return tohex(conn_hash, ssh_digest_bytes(SSH_DIGEST_SHA1));
+	trả_về tohex(conn_hash, ssh_digest_bytes(SSH_DIGEST_SHA1));
 }
 
 /*
@@ -369,12 +369,12 @@ void
 add_local_forward(Options *options, const struct Forward *newfwd)
 {
 	struct Forward *fwd;
-	int i;
+	số_nguyên i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_local_forwards; i++) {
-		if (forward_equals(newfwd, options->local_forwards + i))
-			return;
+	cho (i = 0; i < options->num_local_forwards; i++) {
+		nếu (forward_equals(newfwd, options->local_forwards + i))
+			trả_về;
 	}
 	options->local_forwards = xreallocarray(options->local_forwards,
 	    options->num_local_forwards + 1,
@@ -398,12 +398,12 @@ void
 add_remote_forward(Options *options, const struct Forward *newfwd)
 {
 	struct Forward *fwd;
-	int i;
+	số_nguyên i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_remote_forwards; i++) {
-		if (forward_equals(newfwd, options->remote_forwards + i))
-			return;
+	cho (i = 0; i < options->num_remote_forwards; i++) {
+		nếu (forward_equals(newfwd, options->remote_forwards + i))
+			trả_về;
 	}
 	options->remote_forwards = xreallocarray(options->remote_forwards,
 	    options->num_remote_forwards + 1,
@@ -423,26 +423,26 @@ add_remote_forward(Options *options, const struct Forward *newfwd)
 static void
 clear_forwardings(Options *options)
 {
-	int i;
+	số_nguyên i;
 
-	for (i = 0; i < options->num_local_forwards; i++) {
+	cho (i = 0; i < options->num_local_forwards; i++) {
 		free(options->local_forwards[i].listen_host);
 		free(options->local_forwards[i].listen_path);
 		free(options->local_forwards[i].connect_host);
 		free(options->local_forwards[i].connect_path);
 	}
-	if (options->num_local_forwards > 0) {
+	nếu (options->num_local_forwards > 0) {
 		free(options->local_forwards);
 		options->local_forwards = NULL;
 	}
 	options->num_local_forwards = 0;
-	for (i = 0; i < options->num_remote_forwards; i++) {
+	cho (i = 0; i < options->num_remote_forwards; i++) {
 		free(options->remote_forwards[i].listen_host);
 		free(options->remote_forwards[i].listen_path);
 		free(options->remote_forwards[i].connect_host);
 		free(options->remote_forwards[i].connect_path);
 	}
-	if (options->num_remote_forwards > 0) {
+	nếu (options->num_remote_forwards > 0) {
 		free(options->remote_forwards);
 		options->remote_forwards = NULL;
 	}
@@ -451,20 +451,20 @@ clear_forwardings(Options *options)
 }
 
 void
-add_certificate_file(Options *options, const char *path, int userprovided)
+add_certificate_file(Options *options, const char *path, số_nguyên userprovided)
 {
-	int i;
+	số_nguyên i;
 
-	if (options->num_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
+	nếu (options->num_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
 		fatal("Too many certificate files specified (max %d)",
 		    SSH_MAX_CERTIFICATE_FILES);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_certificate_files; i++) {
-		if (options->certificate_file_userprovided[i] == userprovided &&
+	cho (i = 0; i < options->num_certificate_files; i++) {
+		nếu (options->certificate_file_userprovided[i] == userprovided &&
 		    strcmp(options->certificate_files[i], path) == 0) {
 			debug2_f("ignoring duplicate key %s", path);
-			return;
+			trả_về;
 		}
 	}
 
@@ -476,27 +476,27 @@ add_certificate_file(Options *options, const char *path, int userprovided)
 
 void
 add_identity_file(Options *options, const char *dir, const char *filename,
-    int userprovided)
+    số_nguyên userprovided)
 {
 	char *path;
-	int i;
+	số_nguyên i;
 
-	if (options->num_identity_files >= SSH_MAX_IDENTITY_FILES)
+	nếu (options->num_identity_files >= SSH_MAX_IDENTITY_FILES)
 		fatal("Too many identity files specified (max %d)",
 		    SSH_MAX_IDENTITY_FILES);
 
-	if (dir == NULL) /* no dir, filename is absolute */
+	nếu (dir == NULL) /* no dir, filename is absolute */
 		path = xstrdup(filename);
-	else if (xasprintf(&path, "%s%s", dir, filename) >= PATH_MAX)
+	không_thì nếu (xasprintf(&path, "%s%s", dir, filename) >= PATH_MAX)
 		fatal("Identity file path %s too long", path);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_identity_files; i++) {
-		if (options->identity_file_userprovided[i] == userprovided &&
+	cho (i = 0; i < options->num_identity_files; i++) {
+		nếu (options->identity_file_userprovided[i] == userprovided &&
 		    strcmp(options->identity_files[i], path) == 0) {
 			debug2_f("ignoring duplicate key %s", path);
 			free(path);
-			return;
+			trả_về;
 		}
 	}
 
@@ -505,34 +505,34 @@ add_identity_file(Options *options, const char *dir, const char *filename,
 	options->identity_files[options->num_identity_files++] = path;
 }
 
-int
+số_nguyên
 default_ssh_port(void)
 {
-	static int port;
+	static số_nguyên port;
 	struct servent *sp;
 
-	if (port == 0) {
+	nếu (port == 0) {
 		sp = getservbyname(SSH_SERVICE_NAME, "tcp");
 		port = sp ? ntohs(sp->s_port) : SSH_DEFAULT_PORT;
 	}
-	return port;
+	trả_về port;
 }
 
 /*
  * Execute a command in a shell.
  * Return its exit status or -1 on abnormal exit.
  */
-static int
+static số_nguyên
 execute_in_shell(const char *cmd)
 {
 	char *shell;
 	pid_t pid;
-	int status;
+	số_nguyên status;
 
-	if ((shell = getenv("SHELL")) == NULL)
+	nếu ((shell = getenv("SHELL")) == NULL)
 		shell = _PATH_BSHELL;
 
-	if (access(shell, X_OK) == -1) {
+	nếu (access(shell, X_OK) == -1) {
 		fatal("Shell \"%s\" is not executable: %s",
 		    shell, strerror(errno));
 	}
@@ -540,10 +540,10 @@ execute_in_shell(const char *cmd)
 	debug("Executing command: '%.500s'", cmd);
 
 	/* Fork and execute the command. */
-	if ((pid = fork()) == 0) {
+	nếu ((pid = fork()) == 0) {
 		char *argv[4];
 
-		if (stdfd_devnull(1, 1, 0) == -1)
+		nếu (stdfd_devnull(1, 1, 0) == -1)
 			fatal_f("stdfd_devnull failed");
 		closefrom(STDERR_FILENO + 1);
 
@@ -560,41 +560,41 @@ execute_in_shell(const char *cmd)
 		_exit(1);
 	}
 	/* Parent. */
-	if (pid == -1)
+	nếu (pid == -1)
 		fatal_f("fork: %.100s", strerror(errno));
 
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR && errno != EAGAIN)
+	trong_khi (waitpid(pid, &status, 0) == -1) {
+		nếu (errno != EINTR && errno != EAGAIN)
 			fatal_f("waitpid: %s", strerror(errno));
 	}
-	if (!WIFEXITED(status)) {
+	nếu (!WIFEXITED(status)) {
 		error("command '%.100s' exited abnormally", cmd);
-		return -1;
+		trả_về -1;
 	}
 	debug3("command returned status %d", WEXITSTATUS(status));
-	return WEXITSTATUS(status);
+	trả_về WEXITSTATUS(status);
 }
 
 /*
  * Check whether a local network interface address appears in CIDR pattern-
  * list 'addrlist'. Returns 1 if matched or 0 otherwise.
  */
-static int
+static số_nguyên
 check_match_ifaddrs(const char *addrlist)
 {
 #ifdef HAVE_IFADDRS_H
 	struct ifaddrs *ifa, *ifaddrs = NULL;
-	int r, found = 0;
+	số_nguyên r, found = 0;
 	char addr[NI_MAXHOST];
 	socklen_t salen;
 
-	if (getifaddrs(&ifaddrs) != 0) {
+	nếu (getifaddrs(&ifaddrs) != 0) {
 		error("match localnetwork: getifaddrs failed: %s",
 		    strerror(errno));
-		return 0;
+		trả_về 0;
 	}
-	for (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
-		if (ifa->ifa_addr == NULL || ifa->ifa_name == NULL ||
+	cho (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
+		nếu (ifa->ifa_addr == NULL || ifa->ifa_name == NULL ||
 		    (ifa->ifa_flags & IFF_UP) == 0)
 			continue;
 		switch (ifa->ifa_addr->sa_family) {
@@ -614,14 +614,14 @@ check_match_ifaddrs(const char *addrlist)
 			    ifa->ifa_name, ifa->ifa_addr->sa_family);
 			continue;
 		}
-		if ((r = getnameinfo(ifa->ifa_addr, salen, addr, sizeof(addr),
+		nếu ((r = getnameinfo(ifa->ifa_addr, salen, addr, sizeof(addr),
 		    NULL, 0, NI_NUMERICHOST)) != 0) {
 			debug2_f("interface %s getnameinfo failed: %s",
 			    ifa->ifa_name, gai_strerror(r));
 			continue;
 		}
 		debug3_f("interface %s addr %s", ifa->ifa_name, addr);
-		if (addr_match_cidr_list(addr, addrlist) == 1) {
+		nếu (addr_match_cidr_list(addr, addrlist) == 1) {
 			debug3_f("matched interface %s: address %s in %s",
 			    ifa->ifa_name, addr, addrlist);
 			found = 1;
@@ -629,10 +629,10 @@ check_match_ifaddrs(const char *addrlist)
 		}
 	}
 	freeifaddrs(ifaddrs);
-	return found;
-#else /* HAVE_IFADDRS_H */
+	trả_về found;
+#không_thì /* HAVE_IFADDRS_H */
 	error("match localnetwork: not supported on this platform");
-	return 0;
+	trả_về 0;
 #endif /* HAVE_IFADDRS_H */
 }
 
@@ -643,25 +643,25 @@ check_match_ifaddrs(const char *addrlist)
 static char *
 expand_match_exec_or_include_path(const char *path, Options *options,
     struct passwd *pw, const char *host_arg, const char *original_host,
-    int final_pass, int is_include_path)
+    số_nguyên final_pass, số_nguyên is_include_path)
 {
 	char thishost[NI_MAXHOST], shorthost[NI_MAXHOST], portstr[NI_MAXSERV];
 	char uidstr[32], *conn_hash_hex, *keyalias, *jmphost, *ruser;
 	char *host, *ret;
-	int port;
+	số_nguyên port;
 
 	port = options->port <= 0 ? default_ssh_port() : options->port;
 	ruser = options->user == NULL ? pw->pw_name : options->user;
-	if (final_pass) {
+	nếu (final_pass) {
 		host = xstrdup(options->hostname);
-	} else if (options->hostname != NULL) {
+	} không_thì nếu (options->hostname != NULL) {
 		/* NB. Please keep in sync with ssh.c:main() */
 		host = percent_expand(options->hostname,
 		    "h", host_arg, (char *)NULL);
-	} else {
+	} không_thì {
 		host = xstrdup(host_arg);
 	}
-	if (gethostname(thishost, sizeof(thishost)) == -1)
+	nếu (gethostname(thishost, sizeof(thishost)) == -1)
 		fatal("gethostname: %s", strerror(errno));
 	jmphost = option_clear_or_none(options->jump_host) ?
 	    "" : options->jump_host;
@@ -690,53 +690,53 @@ expand_match_exec_or_include_path(const char *path, Options *options,
 	    (char *)NULL);
 	free(host);
 	free(conn_hash_hex);
-	return ret;
+	trả_về ret;
 }
 
 /*
  * Parse and execute a Match directive.
  */
-static int
-match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
+static số_nguyên
+match_cfg_line(Options *options, const char *full_line, số_nguyên *acp, char ***avp,
     struct passwd *pw, const char *host_arg, const char *original_host,
-    const char *remote_command, int final_pass, int *want_final_pass,
-    const char *filename, int linenum)
+    const char *remote_command, số_nguyên final_pass, số_nguyên *want_final_pass,
+    const char *filename, số_nguyên linenum)
 {
 	char *arg, *oattrib = NULL, *attrib = NULL, *cmd, *host, *criteria;
 	const char *ruser;
-	int r, this_result, result = 1, attributes = 0, negate;
+	số_nguyên r, this_result, result = 1, attributes = 0, negate;
 
 	/*
 	 * Configuration is likely to be incomplete at this point so we
 	 * must be prepared to use default values.
 	 */
 	ruser = options->user == NULL ? pw->pw_name : options->user;
-	if (final_pass) {
+	nếu (final_pass) {
 		host = xstrdup(options->hostname);
-	} else if (options->hostname != NULL) {
+	} không_thì nếu (options->hostname != NULL) {
 		/* NB. Please keep in sync with ssh.c:main() */
 		host = percent_expand(options->hostname,
 		    "h", host_arg, (char *)NULL);
-	} else {
+	} không_thì {
 		host = xstrdup(host_arg);
 	}
 
 	debug2("checking match for '%s' host %s originally %s",
 	    full_line, host, original_host);
-	while ((attrib = argv_next(acp, avp)) != NULL) {
+	trong_khi ((attrib = argv_next(acp, avp)) != NULL) {
 		/* Terminate on comment */
-		if (*attrib == '#') {
+		nếu (*attrib == '#') {
 			argv_consume(acp);
 			break;
 		}
 		attrib = oattrib = xstrdup(attrib);
 		arg = criteria = NULL;
 		this_result = 1;
-		if ((negate = (attrib[0] == '!')))
+		nếu ((negate = (attrib[0] == '!')))
 			attrib++;
 		/* Criterion "all" has no argument and must appear alone */
-		if (strcasecmp(attrib, "all") == 0) {
-			if (attributes > 1 ||
+		nếu (strcasecmp(attrib, "all") == 0) {
+			nếu (attributes > 1 ||
 			    ((arg = argv_next(acp, avp)) != NULL &&
 			    *arg != '\0' && *arg != '#')) {
 				error("%.200s line %d: '%s' cannot be combined "
@@ -745,26 +745,26 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 				result = -1;
 				goto out;
 			}
-			if (arg != NULL && *arg == '#')
+			nếu (arg != NULL && *arg == '#')
 				argv_consume(acp); /* consume remaining args */
-			if (result)
+			nếu (result)
 				result = negate ? 0 : 1;
 			goto out;
 		}
 		attributes++;
 		/* criteria "final" and "canonical" have no argument */
-		if (strcasecmp(attrib, "canonical") == 0 ||
+		nếu (strcasecmp(attrib, "canonical") == 0 ||
 		    strcasecmp(attrib, "final") == 0) {
 			/*
 			 * If the config requests "Match final" without
 			 * negation then remember this so we can perform a
 			 * second pass later.
 			 */
-			if (strcasecmp(attrib, "final") == 0 &&
+			nếu (strcasecmp(attrib, "final") == 0 &&
 			    want_final_pass != NULL)
 				*want_final_pass |= !negate;
 			r = !!final_pass;  /* force bitmask member to boolean */
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
 			debug3("%.200s line %d: %smatched '%s'",
 			    filename, linenum,
@@ -773,7 +773,7 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		}
 
 		/* Keep this list in sync with below */
-		if (strprefix(attrib, "host=", 1)  != NULL ||
+		nếu (strprefix(attrib, "host=", 1)  != NULL ||
 		    strprefix(attrib, "originalhost=", 1) != NULL ||
 		    strprefix(attrib, "user=", 1) != NULL ||
 		    strprefix(attrib, "localuser=", 1) != NULL ||
@@ -784,7 +784,7 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		    strprefix(attrib, "exec=", 1) != NULL) {
 			arg = strchr(attrib, '=');
 			*(arg++) = '\0';
-		} else if ((arg = argv_next(acp, avp)) == NULL) {
+		} không_thì nếu ((arg = argv_next(acp, avp)) == NULL) {
 			error("%.200s line %d: missing argument for Match '%s'",
 			    filename, linenum, oattrib);
 			result = -1;
@@ -796,86 +796,86 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		 * be the empty string for the "tagged" and "command"
 		 * options.
 		 */
-		if (*arg == '\0' &&
+		nếu (*arg == '\0' &&
 		    strcasecmp(attrib, "tagged") != 0 &&
 		    strcasecmp(attrib, "command") != 0)
 			arg = NULL;
-		if (arg == NULL || *arg == '#') {
+		nếu (arg == NULL || *arg == '#') {
 			error("Missing Match criteria for %s", attrib);
 			result = -1;
 			goto out;
 		}
-		if (strcasecmp(attrib, "host") == 0) {
+		nếu (strcasecmp(attrib, "host") == 0) {
 			criteria = xstrdup(host);
 			r = match_hostname(host, arg) == 1;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "originalhost") == 0) {
+		} không_thì nếu (strcasecmp(attrib, "originalhost") == 0) {
 			criteria = xstrdup(original_host);
 			r = match_hostname(original_host, arg) == 1;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "user") == 0) {
+		} không_thì nếu (strcasecmp(attrib, "user") == 0) {
 			criteria = xstrdup(ruser);
 			r = match_pattern_list(ruser, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "localuser") == 0) {
+		} không_thì nếu (strcasecmp(attrib, "localuser") == 0) {
 			criteria = xstrdup(pw->pw_name);
 			r = match_pattern_list(pw->pw_name, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "localnetwork") == 0) {
-			if (addr_match_cidr_list(NULL, arg) == -1) {
+		} không_thì nếu (strcasecmp(attrib, "localnetwork") == 0) {
+			nếu (addr_match_cidr_list(NULL, arg) == -1) {
 				/* Error already printed */
 				result = -1;
 				goto out;
 			}
 			r = check_match_ifaddrs(arg) == 1;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "version") == 0) {
+		} không_thì nếu (strcasecmp(attrib, "version") == 0) {
 			criteria = xstrdup(SSH_RELEASE);
 			r = match_pattern_list(SSH_RELEASE, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "tagged") == 0) {
+		} không_thì nếu (strcasecmp(attrib, "tagged") == 0) {
 			criteria = xstrdup(options->tag == NULL ? "" :
 			    options->tag);
 			/* Special case: empty criteria matches empty arg */
 			r = (*criteria == '\0') ? *arg == '\0' :
 			    match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "command") == 0) {
+		} không_thì nếu (strcasecmp(attrib, "command") == 0) {
 			criteria = xstrdup(remote_command == NULL ?
 			    "" : remote_command);
 			/* Special case: empty criteria matches empty arg */
 			r = (*criteria == '\0') ? *arg == '\0' :
 			    match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "sessiontype") == 0) {
-			if (options->session_type == SESSION_TYPE_SUBSYSTEM)
+		} không_thì nếu (strcasecmp(attrib, "sessiontype") == 0) {
+			nếu (options->session_type == SESSION_TYPE_SUBSYSTEM)
 				criteria = xstrdup("subsystem");
-			else if (options->session_type == SESSION_TYPE_NONE)
+			không_thì nếu (options->session_type == SESSION_TYPE_NONE)
 				criteria = xstrdup("none");
-			else if (remote_command != NULL &&
+			không_thì nếu (remote_command != NULL &&
 			    *remote_command != '\0')
 				criteria = xstrdup("exec");
-			else
+			không_thì
 				criteria = xstrdup("shell");
 			r = match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "exec") == 0) {
-			if ((cmd = expand_match_exec_or_include_path(arg,
+		} không_thì nếu (strcasecmp(attrib, "exec") == 0) {
+			nếu ((cmd = expand_match_exec_or_include_path(arg,
 			    options, pw, host_arg, original_host,
 			    final_pass, 0)) == NULL) {
 				fatal("%.200s line %d: failed to expand match "
 				    "exec '%.100s'", filename, linenum, arg);
 			}
-			if (result != 1) {
+			nếu (result != 1) {
 				/* skip execution if prior predicate failed */
 				debug3("%.200s line %d: skipped exec "
 				    "\"%.100s\"", filename, linenum, cmd);
@@ -883,7 +883,7 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 				goto next;
 			}
 			r = execute_in_shell(cmd);
-			if (r == -1) {
+			nếu (r == -1) {
 				fatal("%.200s line %d: match exec "
 				    "'%.100s' error", filename,
 				    linenum, cmd);
@@ -892,9 +892,9 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 			free(cmd);
 			/* Force exit status to boolean */
 			r = r == 0;
-			if (r == (negate ? 1 : 0))
+			nếu (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else {
+		} không_thì {
 			error("Unsupported Match attribute %s", attrib);
 			result = -1;
 			goto out;
@@ -909,28 +909,28 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		free(oattrib);
 		oattrib = attrib = NULL;
 	}
-	if (attributes == 0) {
+	nếu (attributes == 0) {
 		error("One or more attributes required for Match");
 		result = -1;
 		goto out;
 	}
  out:
-	if (result != -1)
+	nếu (result != -1)
 		debug2("match %sfound", result ? "" : "not ");
 	free(oattrib);
 	free(host);
-	return result;
+	trả_về result;
 }
 
 /* Remove environment variable by pattern */
 static void
-rm_env(Options *options, const char *arg, const char *filename, int linenum)
+rm_env(Options *options, const char *arg, const char *filename, số_nguyên linenum)
 {
 	u_int i, j, onum_send_env = options->num_send_env;
 
 	/* Remove an environment variable */
-	for (i = 0; i < options->num_send_env; ) {
-		if (!match_pattern(options->send_env[i], arg + 1)) {
+	cho (i = 0; i < options->num_send_env; ) {
+		nếu (!match_pattern(options->send_env[i], arg + 1)) {
 			i++;
 			continue;
 		}
@@ -938,14 +938,14 @@ rm_env(Options *options, const char *arg, const char *filename, int linenum)
 		    filename, linenum, options->send_env[i]);
 		free(options->send_env[i]);
 		options->send_env[i] = NULL;
-		for (j = i; j < options->num_send_env - 1; j++) {
+		cho (j = i; j < options->num_send_env - 1; j++) {
 			options->send_env[j] = options->send_env[j + 1];
 			options->send_env[j + 1] = NULL;
 		}
 		options->num_send_env--;
 		/* NB. don't increment i */
 	}
-	if (onum_send_env != options->num_send_env) {
+	nếu (onum_send_env != options->num_send_env) {
 		options->send_env = xrecallocarray(options->send_env,
 		    onum_send_env, options->num_send_env,
 		    sizeof(*options->send_env));
@@ -956,20 +956,20 @@ rm_env(Options *options, const char *arg, const char *filename, int linenum)
  * Returns the number of the token pointed to by cp or oBadOption.
  */
 static OpCodes
-parse_token(const char *cp, const char *filename, int linenum,
+parse_token(const char *cp, const char *filename, số_nguyên linenum,
     const char *ignored_unknown)
 {
-	int i;
+	số_nguyên i;
 
-	for (i = 0; keywords[i].name; i++)
-		if (strcmp(cp, keywords[i].name) == 0)
-			return keywords[i].opcode;
-	if (ignored_unknown != NULL &&
+	cho (i = 0; keywords[i].name; i++)
+		nếu (strcmp(cp, keywords[i].name) == 0)
+			trả_về keywords[i].opcode;
+	nếu (ignored_unknown != NULL &&
 	    match_pattern_list(cp, ignored_unknown, 1) == 1)
-		return oIgnoredUnknownOption;
+		trả_về oIgnoredUnknownOption;
 	error("%s: line %d: Bad configuration option: %s",
 	    filename, linenum, cp);
-	return oBadOption;
+	trả_về oBadOption;
 }
 
 static void
@@ -977,9 +977,9 @@ free_canon_cnames(struct allowed_cname *cnames, u_int n)
 {
 	u_int i;
 
-	if (cnames == NULL || n == 0)
-		return;
-	for (i = 0; i < n; i++) {
+	nếu (cnames == NULL || n == 0)
+		trả_về;
+	cho (i = 0; i < n; i++) {
 		free(cnames[i].source_list);
 		free(cnames[i].target_list);
 	}
@@ -989,7 +989,7 @@ free_canon_cnames(struct allowed_cname *cnames, u_int n)
 /* Multistate option parsing */
 struct multistate {
 	char *key;
-	int value;
+	số_nguyên value;
 };
 static const struct multistate multistate_flag[] = {
 	{ "true",			1 },
@@ -1108,48 +1108,48 @@ static const struct multistate multistate_warnweakcrypto[] = {
 	{ NULL, -1 }
 };
 
-static int
-parse_multistate_value(const char *arg, const char *filename, int linenum,
+static số_nguyên
+parse_multistate_value(const char *arg, const char *filename, số_nguyên linenum,
     const struct multistate *multistate_ptr)
 {
-	int i;
+	số_nguyên i;
 
-	if (!arg || *arg == '\0') {
+	nếu (!arg || *arg == '\0') {
 		error("%s line %d: missing argument.", filename, linenum);
-		return -1;
+		trả_về -1;
 	}
-	for (i = 0; multistate_ptr[i].key != NULL; i++) {
-		if (strcasecmp(arg, multistate_ptr[i].key) == 0)
-			return multistate_ptr[i].value;
+	cho (i = 0; multistate_ptr[i].key != NULL; i++) {
+		nếu (strcasecmp(arg, multistate_ptr[i].key) == 0)
+			trả_về multistate_ptr[i].value;
 	}
-	return -1;
+	trả_về -1;
 }
 
 /*
  * Processes a single option line as used in the configuration files. This
  * only sets those values that have not already been set.
  */
-int
+số_nguyên
 process_config_line(Options *options, struct passwd *pw, const char *host,
     const char *original_host, const char *remote_command, char *line,
-    const char *filename, int linenum, int *activep, int flags)
+    const char *filename, số_nguyên linenum, số_nguyên *activep, số_nguyên flags)
 {
-	return process_config_line_depth(options, pw, host, original_host,
+	trả_về process_config_line_depth(options, pw, host, original_host,
 	    remote_command, line, filename, linenum, activep, flags, NULL, 0);
 }
 
 #define WHITESPACE " \t\r\n"
-static int
+static số_nguyên
 process_config_line_depth(Options *options, struct passwd *pw, const char *host,
     const char *original_host, const char *remote_command, char *line,
-    const char *filename, int linenum, int *activep, int flags,
-    int *want_final_pass, int depth)
+    const char *filename, số_nguyên linenum, số_nguyên *activep, số_nguyên flags,
+    số_nguyên *want_final_pass, số_nguyên depth)
 {
 	char *str, **charptr, *endofnumber, *keyword, *arg, *arg2, *p;
 	char **cpptr, ***cppptr, fwdarg[256];
 	u_int i, *uintptr, max_entries = 0;
-	int r, oactive, negated, opcode, *intptr, value, value2, cmdline = 0;
-	int remotefwd, dynamicfwd, ca_only = 0, found = 0;
+	số_nguyên r, oactive, negated, opcode, *intptr, value, value2, cmdline = 0;
+	số_nguyên remotefwd, dynamicfwd, ca_only = 0, found = 0;
 	LogLevel *log_level_ptr;
 	SyslogFacility *log_facility_ptr;
 	long long val64;
@@ -1159,52 +1159,52 @@ process_config_line_depth(Options *options, struct passwd *pw, const char *host,
 	glob_t gl;
 	const char *errstr;
 	char **oav = NULL, **av;
-	int oac = 0, ac;
-	int ret = -1;
+	số_nguyên oac = 0, ac;
+	số_nguyên ret = -1;
 	struct allowed_cname *cnames = NULL;
 	u_int ncnames = 0;
 	char **strs = NULL; /* string array arguments; freed implicitly */
 	u_int nstrs = 0;
 
-	if (activep == NULL) { /* We are processing a command line directive */
+	nếu (activep == NULL) { /* We are processing a command line directive */
 		cmdline = 1;
 		activep = &cmdline;
 	}
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
-		return 0;
-	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
+	nếu ((len = strlen(line)) == 0)
+		trả_về 0;
+	cho (len--; len > 0; len--) {
+		nếu (strchr(WHITESPACE "\f", line[len]) == NULL)
 			break;
 		line[len] = '\0';
 	}
 
 	str = line;
 	/* Get the keyword. (Each line is supposed to begin with a keyword). */
-	if ((keyword = strdelim(&str)) == NULL)
-		return 0;
+	nếu ((keyword = strdelim(&str)) == NULL)
+		trả_về 0;
 	/* Ignore leading whitespace. */
-	if (*keyword == '\0')
+	nếu (*keyword == '\0')
 		keyword = strdelim(&str);
-	if (keyword == NULL || !*keyword || *keyword == '\n' || *keyword == '#')
-		return 0;
+	nếu (keyword == NULL || !*keyword || *keyword == '\n' || *keyword == '#')
+		trả_về 0;
 	/* Match lowercase keyword */
 	lowercase(keyword);
 
 	/* Prepare to parse remainder of line */
-	if (str != NULL)
+	nếu (str != NULL)
 		str += strspn(str, WHITESPACE);
-	if (str == NULL || *str == '\0') {
+	nếu (str == NULL || *str == '\0') {
 		error("%s line %d: no argument after keyword \"%s\"",
 		    filename, linenum, keyword);
-		return -1;
+		trả_về -1;
 	}
 	opcode = parse_token(keyword, filename, linenum,
 	    options->ignored_unknown);
-	if (argv_split(str, &oac, &oav, 1) != 0) {
+	nếu (argv_split(str, &oac, &oav, 1) != 0) {
 		error("%s line %d: invalid quotes", filename, linenum);
-		return -1;
+		trả_về -1;
 	}
 	ac = oac;
 	av = oav;
@@ -1225,19 +1225,19 @@ process_config_line_depth(Options *options, struct passwd *pw, const char *host,
 		intptr = &options->connection_timeout;
 parse_time:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%s line %d: missing time value.",
 			    filename, linenum);
 			goto out;
 		}
-		if (strcmp(arg, "none") == 0)
+		nếu (strcmp(arg, "none") == 0)
 			value = -1;
-		else if ((value = convtime(arg)) == -1) {
+		không_thì nếu ((value = convtime(arg)) == -1) {
 			error("%s line %d: invalid time value.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		nếu (*activep && *intptr == -1)
 			*intptr = value;
 		break;
 
@@ -1245,7 +1245,7 @@ parse_time:
 		intptr = &options->forward_agent;
 
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%s line %d: missing argument.",
 			    filename, linenum);
 			goto out;
@@ -1253,19 +1253,19 @@ parse_time:
 
 		value = -1;
 		multistate_ptr = multistate_flag;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
+		cho (i = 0; multistate_ptr[i].key != NULL; i++) {
+			nếu (strcasecmp(arg, multistate_ptr[i].key) == 0) {
 				value = multistate_ptr[i].value;
 				break;
 			}
 		}
-		if (value != -1) {
-			if (*activep && *intptr == -1)
+		nếu (value != -1) {
+			nếu (*activep && *intptr == -1)
 				*intptr = value;
 			break;
 		}
 		/* ForwardAgent wasn't 'yes' or 'no', assume a path */
-		if (*activep && *intptr == -1)
+		nếu (*activep && *intptr == -1)
 			*intptr = 1;
 
 		charptr = &options->forward_agent_sock_path;
@@ -1277,13 +1277,13 @@ parse_time:
 		multistate_ptr = multistate_flag;
  parse_multistate:
 		arg = argv_next(&ac, &av);
-		if ((value = parse_multistate_value(arg, filename, linenum,
+		nếu ((value = parse_multistate_value(arg, filename, linenum,
 		    multistate_ptr)) == -1) {
 			error("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		nếu (*activep && *intptr == -1)
 			*intptr = value;
 		break;
 
@@ -1370,29 +1370,29 @@ parse_time:
 
 	case oRekeyLimit:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.", filename,
 			    linenum);
 			goto out;
 		}
-		if (strcmp(arg, "default") == 0) {
+		nếu (strcmp(arg, "default") == 0) {
 			val64 = 0;
-		} else {
-			if (scan_scaled(arg, &val64) == -1) {
+		} không_thì {
+			nếu (scan_scaled(arg, &val64) == -1) {
 				error("%.200s line %d: Bad number '%s': %s",
 				    filename, linenum, arg, strerror(errno));
 				goto out;
 			}
-			if (val64 != 0 && val64 < 16) {
+			nếu (val64 != 0 && val64 < 16) {
 				error("%.200s line %d: RekeyLimit too small",
 				    filename, linenum);
 				goto out;
 			}
 		}
-		if (*activep && options->rekey_limit == -1)
+		nếu (*activep && options->rekey_limit == -1)
 			options->rekey_limit = val64;
-		if (ac != 0) { /* optional rekey interval present */
-			if (strcmp(av[0], "none") == 0) {
+		nếu (ac != 0) { /* optional rekey interval present */
+			nếu (strcmp(av[0], "none") == 0) {
 				(void)argv_next(&ac, &av);	/* discard */
 				break;
 			}
@@ -1403,14 +1403,14 @@ parse_time:
 
 	case oIdentityFile:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep) {
+		nếu (*activep) {
 			intptr = &options->num_identity_files;
-			if (*intptr >= SSH_MAX_IDENTITY_FILES) {
+			nếu (*intptr >= SSH_MAX_IDENTITY_FILES) {
 				error("%.200s line %d: Too many identity files "
 				    "specified (max %d).", filename, linenum,
 				    SSH_MAX_IDENTITY_FILES);
@@ -1423,14 +1423,14 @@ parse_time:
 
 	case oCertificateFile:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep) {
+		nếu (*activep) {
 			intptr = &options->num_certificate_files;
-			if (*intptr >= SSH_MAX_CERTIFICATE_FILES) {
+			nếu (*intptr >= SSH_MAX_CERTIFICATE_FILES) {
 				error("%.200s line %d: Too many certificate "
 				    "files specified (max %d).",
 				    filename, linenum,
@@ -1450,12 +1450,12 @@ parse_time:
 		charptr = &options->user;
 parse_string:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && *charptr == NULL)
+		nếu (*activep && *charptr == NULL)
 			*charptr = xstrdup(arg);
 		break;
 
@@ -1466,15 +1466,15 @@ parse_string:
 parse_char_array:
 		i = 0;
 		value = *uintptr == 0; /* was array empty when we started? */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
+			nếu (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (i > 0 || ac > 0) {
+			nếu (strcasecmp(arg, "none") == 0) {
+				nếu (i > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
@@ -1482,8 +1482,8 @@ parse_char_array:
 				}
 			}
 			i++;
-			if (*activep && value) {
-				if ((*uintptr) >= max_entries) {
+			nếu (*activep && value) {
+				nếu ((*uintptr) >= max_entries) {
 					error("%s line %d: too many %s "
 					    "entries.", filename, linenum,
 					    keyword);
@@ -1539,26 +1539,26 @@ parse_char_array:
 	case oProxyCommand:
 		charptr = &options->proxy_command;
 parse_command:
-		if (str == NULL) {
+		nếu (str == NULL) {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
 		len = strspn(str, WHITESPACE "=");
-		if (*activep && *charptr == NULL)
+		nếu (*activep && *charptr == NULL)
 			*charptr = xstrdup(str + len);
 		argv_consume(&ac);
 		break;
 
 	case oProxyJump:
-		if (str == NULL) {
+		nếu (str == NULL) {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
 		len = strspn(str, WHITESPACE "=");
 		/* XXX use argv? */
-		if (parse_jump(str + len, options, cmdline, *activep) == -1) {
+		nếu (parse_jump(str + len, options, cmdline, *activep) == -1) {
 			error("%.200s line %d: Invalid ProxyJump \"%s\"",
 			    filename, linenum, str + len);
 			goto out;
@@ -1568,18 +1568,18 @@ parse_command:
 
 	case oPort:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
 		value = a2port(arg);
-		if (value <= 0) {
+		nếu (value <= 0) {
 			error("%.200s line %d: Bad port '%s'.",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (*activep && options->port == -1)
+		nếu (*activep && options->port == -1)
 			options->port = value;
 		break;
 
@@ -1587,64 +1587,64 @@ parse_command:
 		intptr = &options->connection_attempts;
 parse_int:
 		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL) {
+		nếu ((errstr = atoi_err(arg, &value)) != NULL) {
 			error("%s line %d: integer value %s.",
 			    filename, linenum, errstr);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		nếu (*activep && *intptr == -1)
 			*intptr = value;
 		break;
 
 	case oCiphers:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*arg != '-' &&
+		nếu (*arg != '-' &&
 		    !ciphers_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg)){
 			error("%.200s line %d: Bad SSH2 cipher spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && options->ciphers == NULL)
+		nếu (*activep && options->ciphers == NULL)
 			options->ciphers = xstrdup(arg);
 		break;
 
 	case oMacs:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*arg != '-' &&
+		nếu (*arg != '-' &&
 		    !mac_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg)) {
 			error("%.200s line %d: Bad SSH2 MAC spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && options->macs == NULL)
+		nếu (*activep && options->macs == NULL)
 			options->macs = xstrdup(arg);
 		break;
 
 	case oKexAlgorithms:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*arg != '-' &&
+		nếu (*arg != '-' &&
 		    !kex_names_valid(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg)) {
 			error("%.200s line %d: Bad SSH2 KexAlgorithms '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && options->kex_algorithms == NULL)
+		nếu (*activep && options->kex_algorithms == NULL)
 			options->kex_algorithms = xstrdup(arg);
 		break;
 
@@ -1653,19 +1653,19 @@ parse_int:
 		ca_only = 0;
 parse_pubkey_algos:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*arg != '-' &&
+		nếu (*arg != '-' &&
 		    !sshkey_names_valid2(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg, 1, ca_only)) {
 			error("%s line %d: Bad key types '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && *charptr == NULL)
+		nếu (*activep && *charptr == NULL)
 			*charptr = xstrdup(arg);
 		break;
 
@@ -1678,12 +1678,12 @@ parse_pubkey_algos:
 		log_level_ptr = &options->log_level;
 		arg = argv_next(&ac, &av);
 		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET) {
+		nếu (value == SYSLOG_LEVEL_NOT_SET) {
 			error("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && *log_level_ptr == SYSLOG_LEVEL_NOT_SET)
+		nếu (*activep && *log_level_ptr == SYSLOG_LEVEL_NOT_SET)
 			*log_level_ptr = (LogLevel) value;
 		break;
 
@@ -1691,12 +1691,12 @@ parse_pubkey_algos:
 		log_facility_ptr = &options->log_facility;
 		arg = argv_next(&ac, &av);
 		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET) {
+		nếu (value == SYSLOG_FACILITY_NOT_SET) {
 			error("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*log_facility_ptr == -1)
+		nếu (*log_facility_ptr == -1)
 			*log_facility_ptr = (SyslogFacility) value;
 		break;
 
@@ -1704,15 +1704,15 @@ parse_pubkey_algos:
 		cppptr = &options->log_verbose;
 		uintptr = &options->num_log_verbose;
 		i = 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
+			nếu (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (i > 0 || ac > 0) {
+			nếu (strcasecmp(arg, "none") == 0) {
+				nếu (i > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
@@ -1720,7 +1720,7 @@ parse_pubkey_algos:
 				}
 			}
 			i++;
-			if (*activep && *uintptr == 0) {
+			nếu (*activep && *uintptr == 0) {
 				*cppptr = xrecallocarray(*cppptr, *uintptr,
 				    *uintptr + 1, sizeof(**cppptr));
 				(*cppptr)[(*uintptr)++] = xstrdup(arg);
@@ -1732,7 +1732,7 @@ parse_pubkey_algos:
 	case oRemoteForward:
 	case oDynamicForward:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
@@ -1741,35 +1741,35 @@ parse_pubkey_algos:
 		remotefwd = (opcode == oRemoteForward);
 		dynamicfwd = (opcode == oDynamicForward);
 
-		if (!dynamicfwd) {
+		nếu (!dynamicfwd) {
 			arg2 = argv_next(&ac, &av);
-			if (arg2 == NULL || *arg2 == '\0') {
-				if (remotefwd)
+			nếu (arg2 == NULL || *arg2 == '\0') {
+				nếu (remotefwd)
 					dynamicfwd = 1;
-				else {
+				không_thì {
 					error("%.200s line %d: Missing target "
 					    "argument.", filename, linenum);
 					goto out;
 				}
-			} else {
+			} không_thì {
 				/* construct a string for parse_forward */
 				snprintf(fwdarg, sizeof(fwdarg), "%s:%s", arg,
 				    arg2);
 			}
 		}
-		if (dynamicfwd)
+		nếu (dynamicfwd)
 			strlcpy(fwdarg, arg, sizeof(fwdarg));
 
-		if (parse_forward(&fwd, fwdarg, dynamicfwd, remotefwd) == 0) {
+		nếu (parse_forward(&fwd, fwdarg, dynamicfwd, remotefwd) == 0) {
 			error("%.200s line %d: Bad forwarding specification.",
 			    filename, linenum);
 			goto out;
 		}
 
-		if (*activep) {
-			if (remotefwd) {
+		nếu (*activep) {
+			nếu (remotefwd) {
 				add_remote_forward(options, &fwd);
-			} else {
+			} không_thì {
 				add_local_forward(options, &fwd);
 			}
 		}
@@ -1779,21 +1779,21 @@ parse_pubkey_algos:
 		uintptr = &options->num_permitted_remote_opens;
 		cppptr = &options->permitted_remote_opens;
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
 			arg2 = xstrdup(arg);
 			/* Allow any/none only in first position */
-			if (strcasecmp(arg, "none") == 0 ||
+			nếu (strcasecmp(arg, "none") == 0 ||
 			    strcasecmp(arg, "any") == 0) {
-				if (nstrs > 0 || ac > 0) {
+				nếu (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"%s\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword, arg);
 					free(arg2);
 					goto out;
 				}
-			} else {
+			} không_thì {
 				p = hpdelim(&arg);
-				if (p == NULL) {
+				nếu (p == NULL) {
 					fatal("%s line %d: missing host in %s",
 					    filename, linenum,
 					    lookup_opcode_name(opcode));
@@ -1803,7 +1803,7 @@ parse_pubkey_algos:
 				 * don't want to use permitopen_port to avoid
 				 * dependency on channels.[ch] here.
 				 */
-				if (arg == NULL || (strcmp(arg, "*") != 0 &&
+				nếu (arg == NULL || (strcmp(arg, "*") != 0 &&
 				    a2port(arg) <= 0)) {
 					fatal("%s line %d: bad port number "
 					    "in %s", filename, linenum,
@@ -1815,10 +1815,10 @@ parse_pubkey_algos:
 			    &strs, &nstrs, arg2);
 			free(arg2);
 		}
-		if (nstrs == 0)
+		nếu (nstrs == 0)
 			fatal("%s line %d: missing %s specification",
 			    filename, linenum, lookup_opcode_name(opcode));
-		if (found && *activep) {
+		nếu (found && *activep) {
 			*cppptr = strs;
 			*uintptr = nstrs;
 			strs = NULL; /* transferred */
@@ -1831,28 +1831,28 @@ parse_pubkey_algos:
 		goto parse_flag;
 
 	case oHost:
-		if (cmdline) {
+		nếu (cmdline) {
 			error("Host directive not supported as a command-line "
 			    "option");
 			goto out;
 		}
 		*activep = 0;
 		arg2 = NULL;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
+			nếu (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
-			if ((flags & SSHCONF_NEVERMATCH) != 0) {
+			nếu ((flags & SSHCONF_NEVERMATCH) != 0) {
 				argv_consume(&ac);
 				break;
 			}
 			negated = *arg == '!';
-			if (negated)
+			nếu (negated)
 				arg++;
-			if (match_pattern(host, arg)) {
-				if (negated) {
+			nếu (match_pattern(host, arg)) {
+				nếu (negated) {
 					debug("%.200s line %d: Skipping Host "
 					    "block because of negated match "
 					    "for %.100s", filename, linenum,
@@ -1861,18 +1861,18 @@ parse_pubkey_algos:
 					argv_consume(&ac);
 					break;
 				}
-				if (!*activep)
+				nếu (!*activep)
 					arg2 = arg; /* logged below */
 				*activep = 1;
 			}
 		}
-		if (*activep)
+		nếu (*activep)
 			debug("%.200s line %d: Applying options for %.100s",
 			    filename, linenum, arg2);
 		break;
 
 	case oMatch:
-		if (cmdline) {
+		nếu (cmdline) {
 			error("Match directive not supported as a command-line "
 			    "option");
 			goto out;
@@ -1880,7 +1880,7 @@ parse_pubkey_algos:
 		value = match_cfg_line(options, str, &ac, &av, pw, host,
 		    original_host, remote_command, flags & SSHCONF_FINAL,
 		    want_final_pass, filename, linenum);
-		if (value < 0) {
+		nếu (value < 0) {
 			error("%.200s line %d: Bad Match condition", filename,
 			    linenum);
 			goto out;
@@ -1891,24 +1891,24 @@ parse_pubkey_algos:
 	case oEscapeChar:
 		intptr = &options->escape_char;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (strcmp(arg, "none") == 0)
+		nếu (strcmp(arg, "none") == 0)
 			value = SSH_ESCAPECHAR_NONE;
-		else if (arg[1] == '\0')
+		không_thì nếu (arg[1] == '\0')
 			value = (u_char) arg[0];
-		else if (arg[0] == '^' && arg[2] == 0 &&
+		không_thì nếu (arg[0] == '^' && arg[2] == 0 &&
 		    (u_char) arg[1] >= 64 && (u_char) arg[1] < 128)
 			value = (u_char) arg[1] & 31;
-		else {
+		không_thì {
 			error("%.200s line %d: Bad escape character.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		nếu (*activep && *intptr == -1)
 			*intptr = value;
 		break;
 
@@ -1935,16 +1935,16 @@ parse_pubkey_algos:
 
 	case oSendEnv:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') != NULL) {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
+			nếu (*arg == '\0' || strchr(arg, '=') != NULL) {
 				error("%s line %d: Invalid environment name.",
 				    filename, linenum);
 				goto out;
 			}
 			found = 1;
-			if (!*activep)
+			nếu (!*activep)
 				continue;
-			if (*arg == '-') {
+			nếu (*arg == '-') {
 				/* Removing an env var */
 				rm_env(options, arg, filename, linenum);
 				continue;
@@ -1953,7 +1953,7 @@ parse_pubkey_algos:
 			    lookup_opcode_name(opcode),
 			    &options->send_env, &options->num_send_env, arg);
 		}
-		if (!found) {
+		nếu (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
@@ -1961,13 +1961,13 @@ parse_pubkey_algos:
 
 	case oSetEnv:
 		found = options->num_setenv == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strchr(arg, '=') == NULL) {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
+			nếu (strchr(arg, '=') == NULL) {
 				error("%s line %d: Invalid SetEnv.",
 				    filename, linenum);
 				goto out;
 			}
-			if (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
+			nếu (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
 				debug2("%s line %d: ignoring duplicate env "
 				    "name \"%.64s\"", filename, linenum, arg);
 				continue;
@@ -1976,11 +1976,11 @@ parse_pubkey_algos:
 			    lookup_opcode_name(opcode),
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		nếu (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		nếu (found && *activep) {
 			options->setenv = strs;
 			options->num_setenv = nstrs;
 			strs = NULL; /* transferred */
@@ -2001,25 +2001,25 @@ parse_pubkey_algos:
 		/* no/false/yes/true, or a time spec */
 		intptr = &options->control_persist;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing ControlPersist"
 			    " argument.", filename, linenum);
 			goto out;
 		}
 		value = 0;
 		value2 = 0;	/* timeout */
-		if (strcmp(arg, "no") == 0 || strcmp(arg, "false") == 0)
+		nếu (strcmp(arg, "no") == 0 || strcmp(arg, "false") == 0)
 			value = 0;
-		else if (strcmp(arg, "yes") == 0 || strcmp(arg, "true") == 0)
+		không_thì nếu (strcmp(arg, "yes") == 0 || strcmp(arg, "true") == 0)
 			value = 1;
-		else if ((value2 = convtime(arg)) >= 0)
+		không_thì nếu ((value2 = convtime(arg)) >= 0)
 			value = 1;
-		else {
+		không_thì {
 			error("%.200s line %d: Bad ControlPersist argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && *intptr == -1) {
+		nếu (*activep && *intptr == -1) {
 			*intptr = value;
 			options->control_persist_timeout = value2;
 		}
@@ -2036,18 +2036,18 @@ parse_pubkey_algos:
 
 	case oTunnelDevice:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
 		value = a2tun(arg, &value2);
-		if (value == SSH_TUNID_ERR) {
+		nếu (value == SSH_TUNID_ERR) {
 			error("%.200s line %d: Bad tun device.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && options->tun_local == -1) {
+		nếu (*activep && options->tun_local == -1) {
 			options->tun_local = value;
 			options->tun_remote = value2;
 		}
@@ -2070,20 +2070,20 @@ parse_pubkey_algos:
 		goto parse_flag;
 
 	case oInclude:
-		if (cmdline) {
+		nếu (cmdline) {
 			error("Include directive not supported as a "
 			    "command-line option");
 			goto out;
 		}
 		value = 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
+			nếu (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
 			/* Expand %tokens and environment variables */
-			if ((p = expand_match_exec_or_include_path(arg,
+			nếu ((p = expand_match_exec_or_include_path(arg,
 			    options, pw, host, original_host,
 			    flags & SSHCONF_FINAL, 1)) == NULL) {
 				error("%.200s line %d: Unable to expand user "
@@ -2098,34 +2098,34 @@ parse_pubkey_algos:
 			 * as living in ~/.ssh for user configurations or
 			 * /etc/ssh for system ones.
 			 */
-			if (*p == '~' && (flags & SSHCONF_USERCONF) == 0) {
+			nếu (*p == '~' && (flags & SSHCONF_USERCONF) == 0) {
 				error("%.200s line %d: bad include path %s.",
 				    filename, linenum, p);
 				goto out;
 			}
-			if (!path_absolute(p) && *p != '~') {
+			nếu (!path_absolute(p) && *p != '~') {
 				xasprintf(&arg2, "%s/%s",
 				    (flags & SSHCONF_USERCONF) ?
 				    "~/" _PATH_SSH_USER_DIR : SSHDIR, p);
-			} else {
+			} không_thì {
 				arg2 = xstrdup(p);
 			}
 			free(p);
 			memset(&gl, 0, sizeof(gl));
 			r = glob(arg2, GLOB_TILDE, NULL, &gl);
-			if (r == GLOB_NOMATCH) {
+			nếu (r == GLOB_NOMATCH) {
 				debug("%.200s line %d: include %s matched no "
 				    "files",filename, linenum, arg2);
 				free(arg2);
 				continue;
-			} else if (r != 0) {
+			} không_thì nếu (r != 0) {
 				error("%.200s line %d: glob failed for %s.",
 				    filename, linenum, arg2);
 				goto out;
 			}
 			free(arg2);
 			oactive = *activep;
-			for (i = 0; i < gl.gl_pathc; i++) {
+			cho (i = 0; i < gl.gl_pathc; i++) {
 				debug3("%.200s line %d: Including file %s "
 				    "depth %d%s", filename, linenum,
 				    gl.gl_pathv[i], depth,
@@ -2135,7 +2135,7 @@ parse_pubkey_algos:
 				    options, flags | SSHCONF_CHECKPERM |
 				    (oactive ? 0 : SSHCONF_NEVERMATCH),
 				    activep, want_final_pass, depth + 1);
-				if (r != 1 && errno != ENOENT) {
+				nếu (r != 1 && errno != ENOENT) {
 					error("%.200s line %d: Can't open user "
 					    "config file %.100s: %.100s",
 					    filename, linenum, gl.gl_pathv[i],
@@ -2148,43 +2148,43 @@ parse_pubkey_algos:
 				 * containing file's Match state.
 				 */
 				*activep = oactive;
-				if (r != 1)
+				nếu (r != 1)
 					value = -1;
 			}
 			globfree(&gl);
 		}
-		if (value != 0)
+		nếu (value != 0)
 			ret = value;
 		break;
 
 	case oIPQoS:
 		arg = argv_next(&ac, &av);
-		if ((value = parse_ipqos(arg)) == -1) {
+		nếu ((value = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (value == INT_MIN) {
+		nếu (value == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
 			value = INT_MAX;
 		}
 		arg = argv_next(&ac, &av);
-		if (arg == NULL)
+		nếu (arg == NULL)
 			value2 = value;
-		else if ((value2 = parse_ipqos(arg)) == -1) {
+		không_thì nếu ((value2 = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (value2 == INT_MIN) {
+		nếu (value2 == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
 			value2 = INT_MAX;
 		}
-		if (*activep && options->ip_qos_interactive == -1) {
+		nếu (*activep && options->ip_qos_interactive == -1) {
 			options->ip_qos_interactive = value;
 			options->ip_qos_bulk = value2;
 		}
@@ -2218,17 +2218,17 @@ parse_pubkey_algos:
 
 	case oCanonicalDomains:
 		found = options->num_canonical_domains == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			nếu (strcasecmp(arg, "none") == 0) {
+				nếu (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
 					goto out;
 				}
 			}
-			if (!valid_domain(arg, 1, &errstr)) {
+			nếu (!valid_domain(arg, 1, &errstr)) {
 				error("%s line %d: %s", filename, linenum,
 				    errstr);
 				goto out;
@@ -2236,11 +2236,11 @@ parse_pubkey_algos:
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		nếu (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		nếu (found && *activep) {
 			options->canonical_domains = strs;
 			options->num_canonical_domains = nstrs;
 			strs = NULL; /* transferred */
@@ -2250,24 +2250,24 @@ parse_pubkey_algos:
 
 	case oCanonicalizePermittedCNAMEs:
 		found = options->num_permitted_cnames == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
 			/*
 			 * Either 'none' (only in first position), '*' for
 			 * everything or 'list:list'
 			 */
-			if (strcasecmp(arg, "none") == 0) {
-				if (ncnames > 0 || ac > 0) {
+			nếu (strcasecmp(arg, "none") == 0) {
+				nếu (ncnames > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
 					goto out;
 				}
 				arg2 = "";
-			} else if (strcmp(arg, "*") == 0) {
+			} không_thì nếu (strcmp(arg, "*") == 0) {
 				arg2 = arg;
-			} else {
+			} không_thì {
 				lowercase(arg);
-				if ((arg2 = strchr(arg, ':')) == NULL ||
+				nếu ((arg2 = strchr(arg, ':')) == NULL ||
 				    arg2[1] == '\0') {
 					error("%s line %d: "
 					    "Invalid permitted CNAME \"%s\"",
@@ -2283,11 +2283,11 @@ parse_pubkey_algos:
 			cnames[ncnames].target_list = xstrdup(arg2);
 			ncnames++;
 		}
-		if (ncnames == 0) {
+		nếu (ncnames == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		nếu (found && *activep) {
 			options->permitted_cnames = cnames;
 			options->num_permitted_cnames = ncnames;
 			cnames = NULL; /* transferred */
@@ -2311,18 +2311,18 @@ parse_pubkey_algos:
 
 	case oStreamLocalBindMask:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing StreamLocalBindMask "
 			    "argument.", filename, linenum);
 			goto out;
 		}
 		/* Parse mode in octal format */
 		value = strtol(arg, &endofnumber, 8);
-		if (arg == endofnumber || value < 0 || value > 0777) {
+		nếu (arg == endofnumber || value < 0 || value > 0777) {
 			error("%.200s line %d: Bad mask.", filename, linenum);
 			goto out;
 		}
-		if (*activep &&
+		nếu (*activep &&
 		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
 			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
 		break;
@@ -2335,15 +2335,15 @@ parse_pubkey_algos:
 		uintptr = &options->num_revoked_host_keys;
 		cppptr = &options->revoked_host_keys;
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
+			nếu (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			nếu (strcasecmp(arg, "none") == 0) {
+				nếu (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
@@ -2353,11 +2353,11 @@ parse_pubkey_algos:
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		nếu (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		nếu (found && *activep) {
 			*cppptr = strs;
 			*uintptr = nstrs;
 			strs = NULL; /* transferred */
@@ -2368,17 +2368,17 @@ parse_pubkey_algos:
 	case oFingerprintHash:
 		intptr = &options->fingerprint_hash;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if ((value = ssh_digest_alg_by_name(arg)) == -1) {
+		nếu ((value = ssh_digest_alg_by_name(arg)) == -1) {
 			error("%.200s line %d: Invalid hash algorithm \"%s\".",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		nếu (*activep && *intptr == -1)
 			*intptr = value;
 		break;
 
@@ -2403,26 +2403,26 @@ parse_pubkey_algos:
 		value = parse_multistate_value(arg, filename, linenum,
 		    multistate_yesnoaskconfirm);
 		value2 = 0; /* unlimited lifespan by default */
-		if (value == 3 && arg2 != NULL) {
+		nếu (value == 3 && arg2 != NULL) {
 			/* allow "AddKeysToAgent confirm 5m" */
-			if ((value2 = convtime(arg2)) == -1) {
+			nếu ((value2 = convtime(arg2)) == -1) {
 				error("%s line %d: invalid time value.",
 				    filename, linenum);
 				goto out;
 			}
-		} else if (value == -1 && arg2 == NULL) {
-			if ((value2 = convtime(arg)) == -1) {
+		} không_thì nếu (value == -1 && arg2 == NULL) {
+			nếu ((value2 = convtime(arg)) == -1) {
 				error("%s line %d: unsupported option",
 				    filename, linenum);
 				goto out;
 			}
 			value = 1; /* yes */
-		} else if (value == -1 || arg2 != NULL) {
+		} không_thì nếu (value == -1 || arg2 != NULL) {
 			error("%s line %d: unsupported option",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && options->add_keys_to_agent == -1) {
+		nếu (*activep && options->add_keys_to_agent == -1) {
 			options->add_keys_to_agent = value;
 			options->add_keys_to_agent_lifespan = value2;
 		}
@@ -2431,27 +2431,27 @@ parse_pubkey_algos:
 	case oIdentityAgent:
 		charptr = &options->identity_agent;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
   parse_agent_path:
 		/* Extra validation if the string represents an env var. */
-		if ((arg2 = dollar_expand(&r, arg)) == NULL || r) {
+		nếu ((arg2 = dollar_expand(&r, arg)) == NULL || r) {
 			error("%.200s line %d: Invalid environment expansion "
 			    "%s.", filename, linenum, arg);
 			goto out;
 		}
 		free(arg2);
 		/* check for legacy environment format */
-		if (arg[0] == '$' && arg[1] != '{' &&
+		nếu (arg[0] == '$' && arg[1] != '{' &&
 		    !valid_env_name(arg + 1)) {
 			error("%.200s line %d: Invalid environment name %s.",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (*activep && *charptr == NULL)
+		nếu (*activep && *charptr == NULL)
 			*charptr = xstrdup(arg);
 		break;
 
@@ -2470,58 +2470,58 @@ parse_pubkey_algos:
 
 	case oObscureKeystrokeTiming:
 		value = -1;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (value != -1) {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
+			nếu (value != -1) {
 				error("%s line %d: invalid arguments",
 				    filename, linenum);
 				goto out;
 			}
-			if (strcmp(arg, "yes") == 0 ||
+			nếu (strcmp(arg, "yes") == 0 ||
 			    strcmp(arg, "true") == 0)
 				value = SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
-			else if (strcmp(arg, "no") == 0 ||
+			không_thì nếu (strcmp(arg, "no") == 0 ||
 			    strcmp(arg, "false") == 0)
 				value = 0;
-			else if (strncmp(arg, "interval:", 9) == 0) {
-				if ((errstr = atoi_err(arg + 9,
+			không_thì nếu (strncmp(arg, "interval:", 9) == 0) {
+				nếu ((errstr = atoi_err(arg + 9,
 				    &value)) != NULL) {
 					error("%s line %d: integer value %s.",
 					    filename, linenum, errstr);
 					goto out;
 				}
-				if (value <= 0 || value > 1000) {
+				nếu (value <= 0 || value > 1000) {
 					error("%s line %d: value out of range.",
 					    filename, linenum);
 					goto out;
 				}
-			} else {
+			} không_thì {
 				error("%s line %d: unsupported argument \"%s\"",
 				    filename, linenum, arg);
 				goto out;
 			}
 		}
-		if (value == -1) {
+		nếu (value == -1) {
 			error("%s line %d: missing argument",
 			    filename, linenum);
 			goto out;
 		}
 		intptr = &options->obscure_keystroke_timing_interval;
-		if (*activep && *intptr == -1)
+		nếu (*activep && *intptr == -1)
 			*intptr = value;
 		break;
 
 	case oChannelTimeout:
 		found = options->num_channel_timeouts == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		trong_khi ((arg = argv_next(&ac, &av)) != NULL) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			nếu (strcasecmp(arg, "none") == 0) {
+				nếu (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
 					goto out;
 				}
-			} else if (parse_pattern_interval(arg,
+			} không_thì nếu (parse_pattern_interval(arg,
 			    NULL, NULL) != 0) {
 				fatal("%s line %d: invalid channel timeout %s",
 				    filename, linenum, arg);
@@ -2529,11 +2529,11 @@ parse_pubkey_algos:
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		nếu (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		nếu (found && *activep) {
 			options->channel_timeouts = strs;
 			options->num_channel_timeouts = nstrs;
 			strs = NULL; /* transferred */
@@ -2542,22 +2542,22 @@ parse_pubkey_algos:
 		break;
 
 	case oVersionAddendum:
-		if (str == NULL || *str == '\0')
+		nếu (str == NULL || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (strchr(str + len, '\r') != NULL) {
+		nếu (strchr(str + len, '\r') != NULL) {
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		nếu ((arg = strchr(line, '#')) != NULL) {
 			*arg = '\0';
 			rtrim(line);
 		}
-		if (*activep && options->version_addendum == NULL) {
-			if (strcasecmp(str + len, "none") == 0)
+		nếu (*activep && options->version_addendum == NULL) {
+			nếu (strcasecmp(str + len, "none") == 0)
 				options->version_addendum = xstrdup("");
-			else
+			không_thì
 				options->version_addendum = xstrdup(str + len);
 		}
 		argv_consume(&ac);
@@ -2565,12 +2565,12 @@ parse_pubkey_algos:
 
 	case oRefuseConnection:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		nếu (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep) {
+		nếu (*activep) {
 			fatal("%.200s line %d: RefuseConnection: %s",
 			    filename, linenum, arg);
 		}
@@ -2595,7 +2595,7 @@ parse_pubkey_algos:
 	}
 
 	/* Check that there is no garbage at end of line. */
-	if (ac > 0) {
+	nếu (ac > 0) {
 		error("%.200s line %d: keyword %s extra arguments "
 		    "at end of line", filename, linenum, keyword);
 		goto out;
@@ -2607,7 +2607,7 @@ parse_pubkey_algos:
 	free_canon_cnames(cnames, ncnames);
 	opt_array_free2(strs, NULL, nstrs);
 	argv_free(oav, oac);
-	return ret;
+	trả_về ret;
 }
 
 /*
@@ -2615,41 +2615,41 @@ parse_pubkey_algos:
  * should already be initialized before this call.  This never returns if
  * there is an error.  If the file does not exist, this returns 0.
  */
-int
+số_nguyên
 read_config_file(const char *filename, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, Options *options, int flags,
-    int *want_final_pass)
+    const char *original_host, const char *remote_command, Options *options, số_nguyên flags,
+    số_nguyên *want_final_pass)
 {
-	int active = 1;
+	số_nguyên active = 1;
 
-	return read_config_file_depth(filename, pw, host, original_host,
+	trả_về read_config_file_depth(filename, pw, host, original_host,
 	    remote_command, options, flags, &active, want_final_pass, 0);
 }
 
 #define READCONF_MAX_DEPTH	16
-static int
+static số_nguyên
 read_config_file_depth(const char *filename, struct passwd *pw,
     const char *host, const char *original_host, const char *remote_command,
-    Options *options, int flags, int *activep, int *want_final_pass, int depth)
+    Options *options, số_nguyên flags, số_nguyên *activep, số_nguyên *want_final_pass, số_nguyên depth)
 {
 	FILE *f;
 	char *line = NULL;
 	size_t linesize = 0;
-	int linenum;
-	int bad_options = 0;
+	số_nguyên linenum;
+	số_nguyên bad_options = 0;
 
-	if (depth < 0 || depth > READCONF_MAX_DEPTH)
+	nếu (depth < 0 || depth > READCONF_MAX_DEPTH)
 		fatal("Too many recursive configuration includes");
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return 0;
+	nếu ((f = fopen(filename, "r")) == NULL)
+		trả_về 0;
 
-	if (flags & SSHCONF_CHECKPERM) {
+	nếu (flags & SSHCONF_CHECKPERM) {
 		struct stat sb;
 
-		if (fstat(fileno(f), &sb) == -1)
+		nếu (fstat(fileno(f), &sb) == -1)
 			fatal("fstat %s: %s", filename, strerror(errno));
-		if (((sb.st_uid != 0 && sb.st_uid != getuid()) ||
+		nếu (((sb.st_uid != 0 && sb.st_uid != getuid()) ||
 		    (sb.st_mode & 022) != 0))
 			fatal("Bad owner or permissions on %s", filename);
 	}
@@ -2661,7 +2661,7 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 	 * on/off by Host specifications.
 	 */
 	linenum = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	trong_khi (getline(&line, &linesize, f) != -1) {
 		/* Update line number counter. */
 		linenum++;
 		/*
@@ -2669,38 +2669,38 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages.
 		 */
-		if (process_config_line_depth(options, pw, host, original_host,
+		nếu (process_config_line_depth(options, pw, host, original_host,
 		    remote_command, line, filename, linenum, activep, flags,
 		    want_final_pass, depth) != 0)
 			bad_options++;
 	}
 	free(line);
 	fclose(f);
-	if (bad_options > 0)
+	nếu (bad_options > 0)
 		fatal("%s: terminating, %d bad configuration options",
 		    filename, bad_options);
-	return 1;
+	trả_về 1;
 }
 
 /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-int
+số_nguyên
 option_clear_or_none(const char *o)
 {
-	return o == NULL || strcasecmp(o, "none") == 0;
+	trả_về o == NULL || strcasecmp(o, "none") == 0;
 }
 
 /*
  * Returns 1 if CanonicalizePermittedCNAMEs have been specified, 0 otherwise.
  * Allowed to be called on non-final configuration.
  */
-int
+số_nguyên
 config_has_permitted_cnames(Options *options)
 {
-	if (options->num_permitted_cnames == 1 &&
+	nếu (options->num_permitted_cnames == 1 &&
 	    strcasecmp(options->permitted_cnames[0].source_list, "none") == 0 &&
 	    strcmp(options->permitted_cnames[0].target_list, "") == 0)
-		return 0;
-	return options->num_permitted_cnames > 0;
+		trả_về 0;
+	trả_về options->num_permitted_cnames > 0;
 }
 
 /*
@@ -2844,11 +2844,11 @@ initialize_options(Options * options)
 void
 fill_default_options_for_canonicalization(Options *options)
 {
-	if (options->canonicalize_max_dots == -1)
+	nếu (options->canonicalize_max_dots == -1)
 		options->canonicalize_max_dots = 1;
-	if (options->canonicalize_fallback_local == -1)
+	nếu (options->canonicalize_fallback_local == -1)
 		options->canonicalize_fallback_local = 1;
-	if (options->canonicalize_hostname == -1)
+	nếu (options->canonicalize_hostname == -1)
 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
 }
 
@@ -2856,78 +2856,78 @@ fill_default_options_for_canonicalization(Options *options)
  * Called after processing other sources of option data, this fills those
  * options for which no value has been specified with their default values.
  */
-int
+số_nguyên
 fill_default_options(Options * options)
 {
 	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
 	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
-	int ret = -1, r;
+	số_nguyên ret = -1, r;
 
-	if (options->forward_agent == -1)
+	nếu (options->forward_agent == -1)
 		options->forward_agent = 0;
-	if (options->forward_x11 == -1)
+	nếu (options->forward_x11 == -1)
 		options->forward_x11 = 0;
-	if (options->forward_x11_trusted == -1)
+	nếu (options->forward_x11_trusted == -1)
 		options->forward_x11_trusted = 0;
-	if (options->forward_x11_timeout == -1)
+	nếu (options->forward_x11_timeout == -1)
 		options->forward_x11_timeout = 1200;
 	/*
 	 * stdio forwarding (-W) changes the default for these but we defer
 	 * setting the values so they can be overridden.
 	 */
-	if (options->exit_on_forward_failure == -1)
+	nếu (options->exit_on_forward_failure == -1)
 		options->exit_on_forward_failure =
 		    options->stdio_forward_host != NULL ? 1 : 0;
-	if (options->clear_forwardings == -1)
+	nếu (options->clear_forwardings == -1)
 		options->clear_forwardings =
 		    options->stdio_forward_host != NULL ? 1 : 0;
-	if (options->clear_forwardings == 1)
+	nếu (options->clear_forwardings == 1)
 		clear_forwardings(options);
 
-	if (options->xauth_location == NULL)
+	nếu (options->xauth_location == NULL)
 		options->xauth_location = xstrdup(_PATH_XAUTH);
-	if (options->fwd_opts.gateway_ports == -1)
+	nếu (options->fwd_opts.gateway_ports == -1)
 		options->fwd_opts.gateway_ports = 0;
-	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
+	nếu (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
 		options->fwd_opts.streamlocal_bind_mask = 0177;
-	if (options->fwd_opts.streamlocal_bind_unlink == -1)
+	nếu (options->fwd_opts.streamlocal_bind_unlink == -1)
 		options->fwd_opts.streamlocal_bind_unlink = 0;
-	if (options->pubkey_authentication == -1)
+	nếu (options->pubkey_authentication == -1)
 		options->pubkey_authentication = SSH_PUBKEY_AUTH_ALL;
-	if (options->gss_authentication == -1)
+	nếu (options->gss_authentication == -1)
 		options->gss_authentication = 0;
-	if (options->gss_deleg_creds == -1)
+	nếu (options->gss_deleg_creds == -1)
 		options->gss_deleg_creds = 0;
-	if (options->password_authentication == -1)
+	nếu (options->password_authentication == -1)
 		options->password_authentication = 1;
-	if (options->kbd_interactive_authentication == -1)
+	nếu (options->kbd_interactive_authentication == -1)
 		options->kbd_interactive_authentication = 1;
-	if (options->hostbased_authentication == -1)
+	nếu (options->hostbased_authentication == -1)
 		options->hostbased_authentication = 0;
-	if (options->batch_mode == -1)
+	nếu (options->batch_mode == -1)
 		options->batch_mode = 0;
-	if (options->check_host_ip == -1)
+	nếu (options->check_host_ip == -1)
 		options->check_host_ip = 0;
-	if (options->strict_host_key_checking == -1)
+	nếu (options->strict_host_key_checking == -1)
 		options->strict_host_key_checking = SSH_STRICT_HOSTKEY_ASK;
-	if (options->compression == -1)
+	nếu (options->compression == -1)
 		options->compression = 0;
-	if (options->tcp_keep_alive == -1)
+	nếu (options->tcp_keep_alive == -1)
 		options->tcp_keep_alive = SSH_KEEPALIVES_TRANSPORT;
-	if (options->port == -1)
+	nếu (options->port == -1)
 		options->port = 0;	/* Filled in ssh_connect. */
-	if (options->address_family == -1)
+	nếu (options->address_family == -1)
 		options->address_family = AF_UNSPEC;
-	if (options->connection_attempts == -1)
+	nếu (options->connection_attempts == -1)
 		options->connection_attempts = 1;
-	if (options->number_of_password_prompts == -1)
+	nếu (options->number_of_password_prompts == -1)
 		options->number_of_password_prompts = 3;
 	/* options->hostkeyalgorithms, default set in myproposals.h */
-	if (options->add_keys_to_agent == -1) {
+	nếu (options->add_keys_to_agent == -1) {
 		options->add_keys_to_agent = 0;
 		options->add_keys_to_agent_lifespan = 0;
 	}
-	if (options->num_identity_files == 0) {
+	nếu (options->num_identity_files == 0) {
 		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_RSA, 0);
 		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_ECDSA, 0);
 		add_identity_file(options, "~/",
@@ -2939,103 +2939,103 @@ fill_default_options(Options * options)
 		add_identity_file(options, "~/",
 		    _PATH_SSH_CLIENT_ID_MLDSA44_ED25519, 0);
 	}
-	if (options->escape_char == -1)
+	nếu (options->escape_char == -1)
 		options->escape_char = '~';
-	if (options->num_system_hostfiles == 0) {
+	nếu (options->num_system_hostfiles == 0) {
 		options->system_hostfiles[options->num_system_hostfiles++] =
 		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE);
 		options->system_hostfiles[options->num_system_hostfiles++] =
 		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE2);
 	}
-	if (options->update_hostkeys == -1) {
-		if (options->verify_host_key_dns <= 0 &&
+	nếu (options->update_hostkeys == -1) {
+		nếu (options->verify_host_key_dns <= 0 &&
 		    (options->num_user_hostfiles == 0 ||
 		    (options->num_user_hostfiles == 1 && strcmp(options->
 		    user_hostfiles[0], _PATH_SSH_USER_HOSTFILE) == 0)))
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_YES;
-		else
+		không_thì
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_NO;
 	}
-	if (options->num_user_hostfiles == 0) {
+	nếu (options->num_user_hostfiles == 0) {
 		options->user_hostfiles[options->num_user_hostfiles++] =
 		    xstrdup(_PATH_SSH_USER_HOSTFILE);
 		options->user_hostfiles[options->num_user_hostfiles++] =
 		    xstrdup(_PATH_SSH_USER_HOSTFILE2);
 	}
-	if (options->log_level == SYSLOG_LEVEL_NOT_SET)
+	nếu (options->log_level == SYSLOG_LEVEL_NOT_SET)
 		options->log_level = SYSLOG_LEVEL_INFO;
-	if (options->log_facility == SYSLOG_FACILITY_NOT_SET)
+	nếu (options->log_facility == SYSLOG_FACILITY_NOT_SET)
 		options->log_facility = SYSLOG_FACILITY_USER;
-	if (options->no_host_authentication_for_localhost == -1)
+	nếu (options->no_host_authentication_for_localhost == -1)
 		options->no_host_authentication_for_localhost = 0;
-	if (options->identities_only == -1)
+	nếu (options->identities_only == -1)
 		options->identities_only = 0;
-	if (options->enable_ssh_keysign == -1)
+	nếu (options->enable_ssh_keysign == -1)
 		options->enable_ssh_keysign = 0;
-	if (options->rekey_limit == -1)
+	nếu (options->rekey_limit == -1)
 		options->rekey_limit = 0;
-	if (options->rekey_interval == -1)
+	nếu (options->rekey_interval == -1)
 		options->rekey_interval = 0;
-	if (options->verify_host_key_dns == -1)
+	nếu (options->verify_host_key_dns == -1)
 		options->verify_host_key_dns = 0;
-	if (options->server_alive_interval == -1)
+	nếu (options->server_alive_interval == -1)
 		options->server_alive_interval = 0;
-	if (options->server_alive_count_max == -1)
+	nếu (options->server_alive_count_max == -1)
 		options->server_alive_count_max = 3;
-	if (options->control_master == -1)
+	nếu (options->control_master == -1)
 		options->control_master = 0;
-	if (options->control_persist == -1) {
+	nếu (options->control_persist == -1) {
 		options->control_persist = 0;
 		options->control_persist_timeout = 0;
 	}
-	if (options->hash_known_hosts == -1)
+	nếu (options->hash_known_hosts == -1)
 		options->hash_known_hosts = 0;
-	if (options->tun_open == -1)
+	nếu (options->tun_open == -1)
 		options->tun_open = SSH_TUNMODE_NO;
-	if (options->tun_local == -1)
+	nếu (options->tun_local == -1)
 		options->tun_local = SSH_TUNID_ANY;
-	if (options->tun_remote == -1)
+	nếu (options->tun_remote == -1)
 		options->tun_remote = SSH_TUNID_ANY;
-	if (options->permit_local_command == -1)
+	nếu (options->permit_local_command == -1)
 		options->permit_local_command = 0;
-	if (options->visual_host_key == -1)
+	nếu (options->visual_host_key == -1)
 		options->visual_host_key = 0;
-	if (options->ip_qos_interactive == -1)
+	nếu (options->ip_qos_interactive == -1)
 		options->ip_qos_interactive = IPTOS_DSCP_EF;
-	if (options->ip_qos_bulk == -1)
+	nếu (options->ip_qos_bulk == -1)
 		options->ip_qos_bulk = IPTOS_DSCP_CS0;
-	if (options->request_tty == -1)
+	nếu (options->request_tty == -1)
 		options->request_tty = REQUEST_TTY_AUTO;
-	if (options->session_type == -1)
+	nếu (options->session_type == -1)
 		options->session_type = SESSION_TYPE_DEFAULT;
-	if (options->stdin_null == -1)
+	nếu (options->stdin_null == -1)
 		options->stdin_null = 0;
-	if (options->fork_after_authentication == -1)
+	nếu (options->fork_after_authentication == -1)
 		options->fork_after_authentication = 0;
-	if (options->proxy_use_fdpass == -1)
+	nếu (options->proxy_use_fdpass == -1)
 		options->proxy_use_fdpass = 0;
-	if (options->canonicalize_max_dots == -1)
+	nếu (options->canonicalize_max_dots == -1)
 		options->canonicalize_max_dots = 1;
-	if (options->canonicalize_fallback_local == -1)
+	nếu (options->canonicalize_fallback_local == -1)
 		options->canonicalize_fallback_local = 1;
-	if (options->canonicalize_hostname == -1)
+	nếu (options->canonicalize_hostname == -1)
 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
-	if (options->fingerprint_hash == -1)
+	nếu (options->fingerprint_hash == -1)
 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
 #ifdef ENABLE_SK_INTERNAL
-	if (options->sk_provider == NULL)
+	nếu (options->sk_provider == NULL)
 		options->sk_provider = xstrdup("internal");
-#else
-	if (options->sk_provider == NULL)
+#không_thì
+	nếu (options->sk_provider == NULL)
 		options->sk_provider = xstrdup("$SSH_SK_PROVIDER");
 #endif
-	if (options->required_rsa_size == -1)
+	nếu (options->required_rsa_size == -1)
 		options->required_rsa_size = SSH_RSA_MINIMUM_MODULUS_SIZE;
-	if (options->warn_weak_crypto == -1)
+	nếu (options->warn_weak_crypto == -1)
 		options->warn_weak_crypto = 1;
-	if (options->enable_escape_commandline == -1)
+	nếu (options->enable_escape_commandline == -1)
 		options->enable_escape_commandline = 0;
-	if (options->obscure_keystroke_timing_interval == -1) {
+	nếu (options->obscure_keystroke_timing_interval == -1) {
 		options->obscure_keystroke_timing_interval =
 		    SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
 	}
@@ -3054,12 +3054,12 @@ fill_default_options(Options * options)
 	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
 #define ASSEMBLE(what, defaults, all) \
 	do { \
-		if ((r = kex_assemble_names(&options->what, \
+		nếu ((r = kex_assemble_names(&options->what, \
 		    defaults, all)) != 0) { \
 			error_fr(r, "%s", #what); \
 			goto fail; \
 		} \
-	} while (0)
+	} trong_khi (0)
 	options->kex_algorithms_set = options->kex_algorithms != NULL;
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
@@ -3071,21 +3071,21 @@ fill_default_options(Options * options)
 
 #define CLEAR_ON_NONE(v) \
 	do { \
-		if (option_clear_or_none(v)) { \
+		nếu (option_clear_or_none(v)) { \
 			free(v); \
 			v = NULL; \
 		} \
-	} while(0)
+	} trong_khi(0)
 #define CLEAR_ON_NONE_ARRAY(v, nv, none) \
 	do { \
-		if (options->nv == 1 && \
+		nếu (options->nv == 1 && \
 		    strcasecmp(options->v[0], none) == 0) { \
 			free(options->v[0]); \
 			free(options->v); \
 			options->v = NULL; \
 			options->nv = 0; \
 		} \
-	} while (0)
+	} trong_khi (0)
 	CLEAR_ON_NONE(options->local_command);
 	CLEAR_ON_NONE(options->remote_command);
 	CLEAR_ON_NONE(options->proxy_command);
@@ -3097,13 +3097,13 @@ fill_default_options(Options * options)
 	CLEAR_ON_NONE_ARRAY(revoked_host_keys, num_revoked_host_keys, "none");
 #undef CLEAR_ON_NONE
 #undef CLEAR_ON_NONE_ARRAY
-	if (options->jump_host != NULL &&
+	nếu (options->jump_host != NULL &&
 	    strcmp(options->jump_host, "none") == 0 &&
 	    options->jump_port == 0 && options->jump_user == NULL) {
 		free(options->jump_host);
 		options->jump_host = NULL;
 	}
-	if (options->num_permitted_cnames == 1 &&
+	nếu (options->num_permitted_cnames == 1 &&
 	    !config_has_permitted_cnames(options)) {
 		/* clean up CanonicalizePermittedCNAMEs=none */
 		free(options->permitted_cnames[0].source_list);
@@ -3131,23 +3131,23 @@ fill_default_options(Options * options)
 	free(def_kex);
 	free(def_key);
 	free(def_sig);
-	return ret;
+	trả_về ret;
 }
 
 void
 free_options(Options *o)
 {
-	int i;
+	số_nguyên i;
 
-	if (o == NULL)
-		return;
+	nếu (o == NULL)
+		trả_về;
 
 #define FREE_ARRAY(type, n, a) \
 	do { \
 		type _i; \
-		for (_i = 0; _i < (n); _i++) \
+		cho (_i = 0; _i < (n); _i++) \
 			free((a)[_i]); \
-	} while (0)
+	} trong_khi (0)
 
 	free(o->forward_agent_sock_path);
 	free(o->xauth_location);
@@ -3169,23 +3169,23 @@ free_options(Options *o)
 	free(o->bind_interface);
 	free(o->pkcs11_provider);
 	free(o->sk_provider);
-	for (i = 0; i < o->num_identity_files; i++) {
+	cho (i = 0; i < o->num_identity_files; i++) {
 		free(o->identity_files[i]);
 		sshkey_free(o->identity_keys[i]);
 	}
-	for (i = 0; i < o->num_certificate_files; i++) {
+	cho (i = 0; i < o->num_certificate_files; i++) {
 		free(o->certificate_files[i]);
 		sshkey_free(o->certificates[i]);
 	}
 	free(o->identity_agent);
-	for (i = 0; i < o->num_local_forwards; i++) {
+	cho (i = 0; i < o->num_local_forwards; i++) {
 		free(o->local_forwards[i].listen_host);
 		free(o->local_forwards[i].listen_path);
 		free(o->local_forwards[i].connect_host);
 		free(o->local_forwards[i].connect_path);
 	}
 	free(o->local_forwards);
-	for (i = 0; i < o->num_remote_forwards; i++) {
+	cho (i = 0; i < o->num_remote_forwards; i++) {
 		free(o->remote_forwards[i].listen_host);
 		free(o->remote_forwards[i].listen_path);
 		free(o->remote_forwards[i].connect_host);
@@ -3200,8 +3200,8 @@ free_options(Options *o)
 	free(o->control_path);
 	free(o->local_command);
 	free(o->remote_command);
-	FREE_ARRAY(int, o->num_canonical_domains, o->canonical_domains);
-	for (i = 0; i < o->num_permitted_cnames; i++) {
+	FREE_ARRAY(số_nguyên, o->num_canonical_domains, o->canonical_domains);
+	cho (i = 0; i < o->num_permitted_cnames; i++) {
 		free(o->permitted_cnames[i].source_list);
 		free(o->permitted_cnames[i].target_list);
 	}
@@ -3219,7 +3219,7 @@ free_options(Options *o)
 
 struct fwdarg {
 	char *arg;
-	int ispath;
+	số_nguyên ispath;
 };
 
 /*
@@ -3229,46 +3229,46 @@ struct fwdarg {
  * or sets it to NULL at end of string.
  * returns 0 on success, else non-zero.
  */
-static int
+static số_nguyên
 parse_fwd_field(char **p, struct fwdarg *fwd)
 {
 	char *ep, *cp = *p;
-	int ispath = 0;
+	số_nguyên ispath = 0;
 
-	if (*cp == '\0') {
+	nếu (*cp == '\0') {
 		*p = NULL;
-		return -1;	/* end of string */
+		trả_về -1;	/* end of string */
 	}
 
 	/*
 	 * A field escaped with square brackets is used literally.
 	 * XXX - allow ']' to be escaped via backslash?
 	 */
-	if (*cp == '[') {
+	nếu (*cp == '[') {
 		/* find matching ']' */
-		for (ep = cp + 1; *ep != ']' && *ep != '\0'; ep++) {
-			if (*ep == '/')
+		cho (ep = cp + 1; *ep != ']' && *ep != '\0'; ep++) {
+			nếu (*ep == '/')
 				ispath = 1;
 		}
 		/* no matching ']' or not at end of field. */
-		if (ep[0] != ']' || (ep[1] != ':' && ep[1] != '\0'))
-			return -1;
+		nếu (ep[0] != ']' || (ep[1] != ':' && ep[1] != '\0'))
+			trả_về -1;
 		/* NUL terminate the field and advance p past the colon */
 		*ep++ = '\0';
-		if (*ep != '\0')
+		nếu (*ep != '\0')
 			*ep++ = '\0';
 		fwd->arg = cp + 1;
 		fwd->ispath = ispath;
 		*p = ep;
-		return 0;
+		trả_về 0;
 	}
 
-	for (cp = *p; *cp != '\0'; cp++) {
+	cho (cp = *p; *cp != '\0'; cp++) {
 		switch (*cp) {
 		case '\\':
 			memmove(cp, cp + 1, strlen(cp + 1) + 1);
-			if (*cp == '\0')
-				return -1;
+			nếu (*cp == '\0')
+				trả_về -1;
 			break;
 		case '/':
 			ispath = 1;
@@ -3282,7 +3282,7 @@ done:
 	fwd->arg = *p;
 	fwd->ispath = ispath;
 	*p = cp;
-	return 0;
+	trả_về 0;
 }
 
 /*
@@ -3295,12 +3295,12 @@ done:
  *	[listenhost:]listenport
  * returns number of arguments parsed or zero on error
  */
-int
-parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remotefwd)
+số_nguyên
+parse_forward(struct Forward *fwd, const char *fwdspec, số_nguyên dynamicfwd, số_nguyên remotefwd)
 {
 	struct fwdarg fwdargs[4];
 	char *p, *cp;
-	int i, err;
+	số_nguyên i, err;
 
 	memset(fwd, 0, sizeof(*fwd));
 	memset(fwdargs, 0, sizeof(fwdargs));
@@ -3311,29 +3311,29 @@ parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remo
 	 * treated as a path.
 	 */
 	cp = p = dollar_expand(&err, fwdspec);
-	if (p == NULL || err)
-		return 0;
+	nếu (p == NULL || err)
+		trả_về 0;
 
 	/* skip leading spaces */
-	while (isspace((u_char)*cp))
+	trong_khi (isspace((u_char)*cp))
 		cp++;
 
-	for (i = 0; i < 4; ++i) {
-		if (parse_fwd_field(&cp, &fwdargs[i]) != 0)
+	cho (i = 0; i < 4; ++i) {
+		nếu (parse_fwd_field(&cp, &fwdargs[i]) != 0)
 			break;
 	}
 
 	/* Check for trailing garbage */
-	if (cp != NULL && *cp != '\0') {
+	nếu (cp != NULL && *cp != '\0') {
 		i = 0;	/* failure */
 	}
 
 	switch (i) {
 	case 1:
-		if (fwdargs[0].ispath) {
+		nếu (fwdargs[0].ispath) {
 			fwd->listen_path = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = PORT_STREAMLOCAL;
-		} else {
+		} không_thì {
 			fwd->listen_host = NULL;
 			fwd->listen_port = a2port(fwdargs[0].arg);
 		}
@@ -3341,17 +3341,17 @@ parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remo
 		break;
 
 	case 2:
-		if (fwdargs[0].ispath && fwdargs[1].ispath) {
+		nếu (fwdargs[0].ispath && fwdargs[1].ispath) {
 			fwd->listen_path = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = PORT_STREAMLOCAL;
 			fwd->connect_path = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = PORT_STREAMLOCAL;
-		} else if (fwdargs[1].ispath) {
+		} không_thì nếu (fwdargs[1].ispath) {
 			fwd->listen_host = NULL;
 			fwd->listen_port = a2port(fwdargs[0].arg);
 			fwd->connect_path = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = PORT_STREAMLOCAL;
-		} else {
+		} không_thì {
 			fwd->listen_host = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = a2port(fwdargs[1].arg);
 			fwd->connect_host = xstrdup("socks");
@@ -3359,17 +3359,17 @@ parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remo
 		break;
 
 	case 3:
-		if (fwdargs[0].ispath) {
+		nếu (fwdargs[0].ispath) {
 			fwd->listen_path = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = PORT_STREAMLOCAL;
 			fwd->connect_host = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = a2port(fwdargs[2].arg);
-		} else if (fwdargs[2].ispath) {
+		} không_thì nếu (fwdargs[2].ispath) {
 			fwd->listen_host = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = a2port(fwdargs[1].arg);
 			fwd->connect_path = xstrdup(fwdargs[2].arg);
 			fwd->connect_port = PORT_STREAMLOCAL;
-		} else {
+		} không_thì {
 			fwd->listen_host = NULL;
 			fwd->listen_port = a2port(fwdargs[0].arg);
 			fwd->connect_host = xstrdup(fwdargs[1].arg);
@@ -3389,40 +3389,40 @@ parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remo
 
 	free(p);
 
-	if (dynamicfwd) {
-		if (!(i == 1 || i == 2))
+	nếu (dynamicfwd) {
+		nếu (!(i == 1 || i == 2))
 			goto fail_free;
-	} else {
-		if (!(i == 3 || i == 4)) {
-			if (fwd->connect_path == NULL &&
+	} không_thì {
+		nếu (!(i == 3 || i == 4)) {
+			nếu (fwd->connect_path == NULL &&
 			    fwd->listen_path == NULL)
 				goto fail_free;
 		}
-		if (fwd->connect_port <= 0 && fwd->connect_path == NULL)
+		nếu (fwd->connect_port <= 0 && fwd->connect_path == NULL)
 			goto fail_free;
 	}
 
-	if ((fwd->listen_port < 0 && fwd->listen_path == NULL) ||
+	nếu ((fwd->listen_port < 0 && fwd->listen_path == NULL) ||
 	    (!remotefwd && fwd->listen_port == 0))
 		goto fail_free;
-	if (fwd->connect_host != NULL &&
+	nếu (fwd->connect_host != NULL &&
 	    strlen(fwd->connect_host) >= NI_MAXHOST)
 		goto fail_free;
 	/*
 	 * XXX - if connecting to a remote socket, max sun len may not
 	 * match this host
 	 */
-	if (fwd->connect_path != NULL &&
+	nếu (fwd->connect_path != NULL &&
 	    strlen(fwd->connect_path) >= PATH_MAX_SUN)
 		goto fail_free;
-	if (fwd->listen_host != NULL &&
+	nếu (fwd->listen_host != NULL &&
 	    strlen(fwd->listen_host) >= NI_MAXHOST)
 		goto fail_free;
-	if (fwd->listen_path != NULL &&
+	nếu (fwd->listen_path != NULL &&
 	    strlen(fwd->listen_path) >= PATH_MAX_SUN)
 		goto fail_free;
 
-	return (i);
+	trả_về (i);
 
  fail_free:
 	free(fwd->connect_host);
@@ -3433,60 +3433,60 @@ parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remo
 	fwd->listen_host = NULL;
 	free(fwd->listen_path);
 	fwd->listen_path = NULL;
-	return (0);
+	trả_về (0);
 }
 
-int
+số_nguyên
 ssh_valid_hostname(const char *s)
 {
 	size_t i;
 
-	if (*s == '-')
-		return 0;
-	for (i = 0; s[i] != 0; i++) {
-		if (strchr("'`\"$\\;&<>|(){},", s[i]) != NULL ||
+	nếu (*s == '-')
+		trả_về 0;
+	cho (i = 0; s[i] != 0; i++) {
+		nếu (strchr("'`\"$\\;&<>|(){},", s[i]) != NULL ||
 		    isspace((u_char)s[i]) || iscntrl((u_char)s[i]))
-			return 0;
+			trả_về 0;
 	}
-	return 1;
+	trả_về 1;
 }
 
-int
+số_nguyên
 ssh_valid_ruser(const char *s)
 {
 	size_t i;
 
-	if (*s == '-')
-		return 0;
-	for (i = 0; s[i] != 0; i++) {
-		if (iscntrl((u_char)s[i]))
-			return 0;
-		if (strchr("'`\";&<>|(){}$\\", s[i]) != NULL)
-			return 0;
+	nếu (*s == '-')
+		trả_về 0;
+	cho (i = 0; s[i] != 0; i++) {
+		nếu (iscntrl((u_char)s[i]))
+			trả_về 0;
+		nếu (strchr("'`\";&<>|(){}$\\", s[i]) != NULL)
+			trả_về 0;
 		/* Disallow '-' after whitespace */
-		if (isspace((u_char)s[i]) && s[i + 1] == '-')
-			return 0;
+		nếu (isspace((u_char)s[i]) && s[i + 1] == '-')
+			trả_về 0;
 	}
-	return 1;
+	trả_về 1;
 }
 
-int
-parse_jump(const char *s, Options *o, int strict, int active)
+số_nguyên
+parse_jump(const char *s, Options *o, số_nguyên strict, số_nguyên active)
 {
 	char *orig = NULL, *sdup = NULL, *cp;
 	char *tmp_user = NULL, *tmp_host = NULL, *host = NULL, *user = NULL;
-	int r, ret = -1, tmp_port = -1, port = -1, first = 1;
+	số_nguyên r, ret = -1, tmp_port = -1, port = -1, first = 1;
 
-	if (strcasecmp(s, "none") == 0) {
-		if (active && o->jump_host == NULL) {
+	nếu (strcasecmp(s, "none") == 0) {
+		nếu (active && o->jump_host == NULL) {
 			o->jump_host = xstrdup("none");
 			o->jump_port = 0;
 		}
-		return 0;
+		trả_về 0;
 	}
 
 	orig = xstrdup(s);
-	if ((cp = strchr(orig, '#')) != NULL)
+	nếu ((cp = strchr(orig, '#')) != NULL)
 		*cp = '\0';
 	rtrim(orig);
 
@@ -3494,26 +3494,26 @@ parse_jump(const char *s, Options *o, int strict, int active)
 	sdup = xstrdup(orig);
 	do {
 		/* Work backwards through string */
-		if ((cp = strrchr(sdup, ',')) == NULL)
+		nếu ((cp = strrchr(sdup, ',')) == NULL)
 			cp = sdup; /* last */
-		else
+		không_thì
 			*cp++ = '\0';
 
 		r = parse_ssh_uri(cp, &tmp_user, &tmp_host, &tmp_port);
-		if (r == -1 || (r == 1 && parse_user_host_port(cp,
+		nếu (r == -1 || (r == 1 && parse_user_host_port(cp,
 		    &tmp_user, &tmp_host, &tmp_port) != 0))
 			goto out; /* error already logged */
-		if (strict) {
-			if (!ssh_valid_hostname(tmp_host)) {
+		nếu (strict) {
+			nếu (!ssh_valid_hostname(tmp_host)) {
 				error_f("invalid hostname \"%s\"", tmp_host);
 				goto out;
 			}
-			if (tmp_user != NULL && !ssh_valid_ruser(tmp_user)) {
+			nếu (tmp_user != NULL && !ssh_valid_ruser(tmp_user)) {
 				error_f("invalid username \"%s\"", tmp_user);
 				goto out;
 			}
 		}
-		if (first) {
+		nếu (first) {
 			user = tmp_user;
 			host = tmp_host;
 			port = tmp_port;
@@ -3524,16 +3524,16 @@ parse_jump(const char *s, Options *o, int strict, int active)
 		free(tmp_host);
 		tmp_user = tmp_host = NULL;
 		tmp_port = -1;
-	} while (cp != sdup);
+	} trong_khi (cp != sdup);
 
 	/* success */
-	if (active) {
+	nếu (active) {
 		o->jump_user = user;
 		o->jump_host = host;
 		o->jump_port = port;
 		o->proxy_command = xstrdup("none");
 		user = host = NULL; /* transferred */
-		if (orig != NULL && (cp = strrchr(orig, ',')) != NULL) {
+		nếu (orig != NULL && (cp = strrchr(orig, ',')) != NULL) {
 			o->jump_extra = xstrdup(orig);
 			o->jump_extra[cp - orig] = '\0';
 		}
@@ -3546,90 +3546,90 @@ parse_jump(const char *s, Options *o, int strict, int active)
 	free(tmp_host);
 	free(user);
 	free(host);
-	return ret;
+	trả_về ret;
 }
 
-int
-parse_ssh_uri(const char *uri, char **userp, char **hostp, int *portp)
+số_nguyên
+parse_ssh_uri(const char *uri, char **userp, char **hostp, số_nguyên *portp)
 {
 	char *user = NULL, *host = NULL, *path = NULL;
-	int r, port;
+	số_nguyên r, port;
 
 	r = parse_uri("ssh", uri, &user, &host, &port, &path);
-	if (r == 0 && path != NULL)
+	nếu (r == 0 && path != NULL)
 		r = -1;		/* path not allowed */
-	if (r == 0) {
-		if (userp != NULL) {
+	nếu (r == 0) {
+		nếu (userp != NULL) {
 			*userp = user;
 			user = NULL;
 		}
-		if (hostp != NULL) {
+		nếu (hostp != NULL) {
 			*hostp = host;
 			host = NULL;
 		}
-		if (portp != NULL)
+		nếu (portp != NULL)
 			*portp = port;
 	}
 	free(user);
 	free(host);
 	free(path);
-	return r;
+	trả_về r;
 }
 
 /* XXX the following is a near-verbatim copy from servconf.c; refactor */
 static const char *
-fmt_multistate_int(int val, const struct multistate *m)
+fmt_multistate_int(số_nguyên val, const struct multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	cho (i = 0; m[i].key != NULL; i++) {
+		nếu (m[i].value == val)
+			trả_về m[i].key;
 	}
-	return "UNKNOWN";
+	trả_về "UNKNOWN";
 }
 
 static const char *
-fmt_intarg(OpCodes code, int val)
+fmt_intarg(OpCodes code, số_nguyên val)
 {
-	if (val == -1)
-		return "unset";
+	nếu (val == -1)
+		trả_về "unset";
 	switch (code) {
 	case oAddressFamily:
-		return fmt_multistate_int(val, multistate_addressfamily);
+		trả_về fmt_multistate_int(val, multistate_addressfamily);
 	case oCompression:
-		return fmt_multistate_int(val, multistate_compression);
+		trả_về fmt_multistate_int(val, multistate_compression);
 	case oVerifyHostKeyDNS:
 	case oUpdateHostkeys:
-		return fmt_multistate_int(val, multistate_yesnoask);
+		trả_về fmt_multistate_int(val, multistate_yesnoask);
 	case oStrictHostKeyChecking:
-		return fmt_multistate_int(val, multistate_strict_hostkey);
+		trả_về fmt_multistate_int(val, multistate_strict_hostkey);
 	case oControlMaster:
-		return fmt_multistate_int(val, multistate_controlmaster);
+		trả_về fmt_multistate_int(val, multistate_controlmaster);
 	case oTunnel:
-		return fmt_multistate_int(val, multistate_tunnel);
+		trả_về fmt_multistate_int(val, multistate_tunnel);
 	case oRequestTTY:
-		return fmt_multistate_int(val, multistate_requesttty);
+		trả_về fmt_multistate_int(val, multistate_requesttty);
 	case oSessionType:
-		return fmt_multistate_int(val, multistate_sessiontype);
+		trả_về fmt_multistate_int(val, multistate_sessiontype);
 	case oCanonicalizeHostname:
-		return fmt_multistate_int(val, multistate_canonicalizehostname);
+		trả_về fmt_multistate_int(val, multistate_canonicalizehostname);
 	case oAddKeysToAgent:
-		return fmt_multistate_int(val, multistate_yesnoaskconfirm);
+		trả_về fmt_multistate_int(val, multistate_yesnoaskconfirm);
 	case oPubkeyAuthentication:
-		return fmt_multistate_int(val, multistate_pubkey_auth);
+		trả_về fmt_multistate_int(val, multistate_pubkey_auth);
 	case oTCPKeepAlive:
-		return fmt_multistate_int(val, multistate_keepalives);
+		trả_về fmt_multistate_int(val, multistate_keepalives);
 	case oFingerprintHash:
-		return ssh_digest_alg_name(val);
+		trả_về ssh_digest_alg_name(val);
 	default:
 		switch (val) {
 		case 0:
-			return "no";
+			trả_về "no";
 		case 1:
-			return "yes";
+			trả_về "yes";
 		default:
-			return "UNKNOWN";
+			trả_về "UNKNOWN";
 		}
 	}
 }
@@ -3639,22 +3639,22 @@ lookup_opcode_name(OpCodes code)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name != NULL; i++)
-		if (keywords[i].opcode == code)
-			return(keywords[i].name);
-	return "UNKNOWN";
+	cho (i = 0; keywords[i].name != NULL; i++)
+		nếu (keywords[i].opcode == code)
+			trả_về(keywords[i].name);
+	trả_về "UNKNOWN";
 }
 
 static void
-dump_cfg_int(OpCodes code, int val)
+dump_cfg_int(OpCodes code, số_nguyên val)
 {
-	if (code == oObscureKeystrokeTiming) {
-		if (val == 0) {
+	nếu (code == oObscureKeystrokeTiming) {
+		nếu (val == 0) {
 			printf("%s no\n", lookup_opcode_name(code));
-			return;
-		} else if (val == SSH_KEYSTROKE_DEFAULT_INTERVAL_MS) {
+			trả_về;
+		} không_thì nếu (val == SSH_KEYSTROKE_DEFAULT_INTERVAL_MS) {
 			printf("%s yes\n", lookup_opcode_name(code));
-			return;
+			trả_về;
 		}
 		/* FALLTHROUGH */
 	}
@@ -3662,7 +3662,7 @@ dump_cfg_int(OpCodes code, int val)
 }
 
 static void
-dump_cfg_fmtint(OpCodes code, int val)
+dump_cfg_fmtint(OpCodes code, số_nguyên val)
 {
 	printf("%s %s\n", lookup_opcode_name(code), fmt_intarg(code, val));
 }
@@ -3670,8 +3670,8 @@ dump_cfg_fmtint(OpCodes code, int val)
 static void
 dump_cfg_string(OpCodes code, const char *val)
 {
-	if (val == NULL)
-		return;
+	nếu (val == NULL)
+		trả_về;
 	printf("%s %s\n", lookup_opcode_name(code), val);
 }
 
@@ -3680,7 +3680,7 @@ dump_cfg_strarray(OpCodes code, u_int count, char **vals)
 {
 	u_int i;
 
-	for (i = 0; i < count; i++)
+	cho (i = 0; i < count; i++)
 		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
 }
 
@@ -3690,9 +3690,9 @@ dump_cfg_strarray_oneline(OpCodes code, u_int count, char **vals)
 	u_int i;
 
 	printf("%s", lookup_opcode_name(code));
-	if (count == 0)
+	nếu (count == 0)
 		printf(" none");
-	for (i = 0; i < count; i++)
+	cho (i = 0; i < count; i++)
 		printf(" %s",  vals[i]);
 	printf("\n");
 }
@@ -3704,29 +3704,29 @@ dump_cfg_forwards(OpCodes code, u_int count, const struct Forward *fwds)
 	u_int i;
 
 	/* oDynamicForward */
-	for (i = 0; i < count; i++) {
+	cho (i = 0; i < count; i++) {
 		fwd = &fwds[i];
-		if (code == oDynamicForward && fwd->connect_host != NULL &&
+		nếu (code == oDynamicForward && fwd->connect_host != NULL &&
 		    strcmp(fwd->connect_host, "socks") != 0)
 			continue;
-		if (code == oLocalForward && fwd->connect_host != NULL &&
+		nếu (code == oLocalForward && fwd->connect_host != NULL &&
 		    strcmp(fwd->connect_host, "socks") == 0)
 			continue;
 		printf("%s", lookup_opcode_name(code));
-		if (fwd->listen_port == PORT_STREAMLOCAL)
+		nếu (fwd->listen_port == PORT_STREAMLOCAL)
 			printf(" %s", fwd->listen_path);
-		else if (fwd->listen_host == NULL)
+		không_thì nếu (fwd->listen_host == NULL)
 			printf(" %d", fwd->listen_port);
-		else {
+		không_thì {
 			printf(" [%s]:%d",
 			    fwd->listen_host, fwd->listen_port);
 		}
-		if (code != oDynamicForward) {
-			if (fwd->connect_port == PORT_STREAMLOCAL)
+		nếu (code != oDynamicForward) {
+			nếu (fwd->connect_port == PORT_STREAMLOCAL)
 				printf(" %s", fwd->connect_path);
-			else if (fwd->connect_host == NULL)
+			không_thì nếu (fwd->connect_host == NULL)
 				printf(" %d", fwd->connect_port);
-			else {
+			không_thì {
 				printf(" [%s]:%d",
 				    fwd->connect_host, fwd->connect_port);
 			}
@@ -3738,7 +3738,7 @@ dump_cfg_forwards(OpCodes code, u_int count, const struct Forward *fwds)
 void
 dump_client_config(Options *o, const char *host)
 {
-	int i, r;
+	số_nguyên i, r;
 	char buf[8], *all_key;
 
 	/*
@@ -3748,7 +3748,7 @@ dump_client_config(Options *o, const char *host)
 	 * on the host's keys found in known_hosts.
 	 */
 	all_key = sshkey_alg_list(0, 0, 1, ',');
-	if ((r = kex_assemble_names(&o->hostkeyalgorithms, kex_default_pk_alg(),
+	nếu ((r = kex_assemble_names(&o->hostkeyalgorithms, kex_default_pk_alg(),
 	    all_key)) != 0)
 		fatal_fr(r, "expand HostKeyAlgorithms");
 	free(all_key);
@@ -3862,65 +3862,65 @@ dump_client_config(Options *o, const char *host)
 	/* Special cases */
 
 	/* PermitRemoteOpen */
-	if (o->num_permitted_remote_opens == 0)
+	nếu (o->num_permitted_remote_opens == 0)
 		printf("%s any\n", lookup_opcode_name(oPermitRemoteOpen));
-	else
+	không_thì
 		dump_cfg_strarray_oneline(oPermitRemoteOpen,
 		    o->num_permitted_remote_opens, o->permitted_remote_opens);
 
 	/* AddKeysToAgent */
-	if (o->add_keys_to_agent_lifespan <= 0)
+	nếu (o->add_keys_to_agent_lifespan <= 0)
 		dump_cfg_fmtint(oAddKeysToAgent, o->add_keys_to_agent);
-	else {
+	không_thì {
 		printf("addkeystoagent%s %d\n",
 		    o->add_keys_to_agent == 3 ? " confirm" : "",
 		    o->add_keys_to_agent_lifespan);
 	}
 
 	/* oForwardAgent */
-	if (o->forward_agent_sock_path == NULL)
+	nếu (o->forward_agent_sock_path == NULL)
 		dump_cfg_fmtint(oForwardAgent, o->forward_agent);
-	else
+	không_thì
 		dump_cfg_string(oForwardAgent, o->forward_agent_sock_path);
 
 	/* oConnectTimeout */
-	if (o->connection_timeout == -1)
+	nếu (o->connection_timeout == -1)
 		printf("connecttimeout none\n");
-	else
+	không_thì
 		dump_cfg_int(oConnectTimeout, o->connection_timeout);
 
 	/* oTunnelDevice */
 	printf("tunneldevice");
-	if (o->tun_local == SSH_TUNID_ANY)
+	nếu (o->tun_local == SSH_TUNID_ANY)
 		printf(" any");
-	else
+	không_thì
 		printf(" %d", o->tun_local);
-	if (o->tun_remote == SSH_TUNID_ANY)
+	nếu (o->tun_remote == SSH_TUNID_ANY)
 		printf(":any");
-	else
+	không_thì
 		printf(":%d", o->tun_remote);
 	printf("\n");
 
 	/* oCanonicalizePermittedCNAMEs */
 	printf("canonicalizepermittedcnames");
-	if (o->num_permitted_cnames == 0)
+	nếu (o->num_permitted_cnames == 0)
 		printf(" none");
-	for (i = 0; i < o->num_permitted_cnames; i++) {
+	cho (i = 0; i < o->num_permitted_cnames; i++) {
 		printf(" %s:%s", o->permitted_cnames[i].source_list,
 		    o->permitted_cnames[i].target_list);
 	}
 	printf("\n");
 
 	/* oControlPersist */
-	if (o->control_persist == 0 || o->control_persist_timeout == 0)
+	nếu (o->control_persist == 0 || o->control_persist_timeout == 0)
 		dump_cfg_fmtint(oControlPersist, o->control_persist);
-	else
+	không_thì
 		dump_cfg_int(oControlPersist, o->control_persist_timeout);
 
 	/* oEscapeChar */
-	if (o->escape_char == SSH_ESCAPECHAR_NONE)
+	nếu (o->escape_char == SSH_ESCAPECHAR_NONE)
 		printf("escapechar none\n");
-	else {
+	không_thì {
 		vis(buf, o->escape_char, VIS_WHITE, 0);
 		printf("escapechar %s\n", buf);
 	}
@@ -3941,9 +3941,9 @@ dump_client_config(Options *o, const char *host)
 	printf("syslogfacility %s\n", log_facility_name(o->log_facility));
 
 	/* oProxyCommand / oProxyJump */
-	if (o->jump_host == NULL)
+	nếu (o->jump_host == NULL)
 		dump_cfg_string(oProxyCommand, o->proxy_command);
-	else {
+	không_thì {
 		/* Check for numeric addresses */
 		i = strchr(o->jump_host, ':') != NULL ||
 		    strspn(o->jump_host, "1234567890.") == strlen(o->jump_host);

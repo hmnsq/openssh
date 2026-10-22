@@ -28,53 +28,53 @@ struct allowed_cname {
 
 typedef struct {
 	char   *host_arg;	/* Host arg as specified on command line. */
-	int     forward_agent;	/* Forward authentication agent. */
+	số_nguyên     forward_agent;	/* Forward authentication agent. */
 	char   *forward_agent_sock_path; /* Optional path of the agent. */
-	int     forward_x11;	/* Forward X11 display. */
-	int     forward_x11_timeout;	/* Expiration for Cookies */
-	int     forward_x11_trusted;	/* Trust Forward X11 display. */
-	int     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
+	số_nguyên     forward_x11;	/* Forward X11 display. */
+	số_nguyên     forward_x11_timeout;	/* Expiration for Cookies */
+	số_nguyên     forward_x11_trusted;	/* Trust Forward X11 display. */
+	số_nguyên     exit_on_forward_failure;	/* Exit if bind(2) fails for -L/-R */
 	char   *xauth_location;	/* Location for xauth program */
 	struct ForwardOptions fwd_opts;	/* forwarding options */
-	int     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
-	int     hostbased_authentication;	/* ssh2's rhosts_rsa */
-	int     gss_authentication;	/* Try GSS authentication */
-	int     gss_deleg_creds;	/* Delegate GSS credentials */
-	int     password_authentication;	/* Try password
+	số_nguyên     pubkey_authentication;	/* Try ssh2 pubkey authentication. */
+	số_nguyên     hostbased_authentication;	/* ssh2's rhosts_rsa */
+	số_nguyên     gss_authentication;	/* Try GSS authentication */
+	số_nguyên     gss_deleg_creds;	/* Delegate GSS credentials */
+	số_nguyên     password_authentication;	/* Try password
 						 * authentication. */
-	int     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
+	số_nguyên     kbd_interactive_authentication; /* Try keyboard-interactive auth. */
 	char	*kbd_interactive_devices; /* Keyboard-interactive auth devices. */
-	int     batch_mode;	/* Batch mode: do not ask for passwords. */
-	int     check_host_ip;	/* Also keep track of keys for IP address */
-	int     strict_host_key_checking;	/* Strict host key checking. */
-	int     compression;	/* Compress packets in both directions. */
-	int     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
-	int	ip_qos_interactive;	/* DSCP value for interactive */
-	int	ip_qos_bulk;		/* DSCP value for bulk traffic */
+	số_nguyên     batch_mode;	/* Batch mode: do not ask for passwords. */
+	số_nguyên     check_host_ip;	/* Also keep track of keys for IP address */
+	số_nguyên     strict_host_key_checking;	/* Strict host key checking. */
+	số_nguyên     compression;	/* Compress packets in both directions. */
+	số_nguyên     tcp_keep_alive;	/* Set SO_KEEPALIVE. */
+	số_nguyên	ip_qos_interactive;	/* DSCP value for interactive */
+	số_nguyên	ip_qos_bulk;		/* DSCP value for bulk traffic */
 	SyslogFacility log_facility;	/* Facility for system logging. */
 	LogLevel log_level;	/* Level for logging. */
 	u_int	num_log_verbose;	/* Verbose log overrides */
 	char   **log_verbose;
-	int     port;		/* Port to connect. */
-	int     address_family;
-	int     connection_attempts;	/* Max attempts (seconds) before
+	số_nguyên     port;		/* Port to connect. */
+	số_nguyên     address_family;
+	số_nguyên     connection_attempts;	/* Max attempts (seconds) before
 					 * giving up */
-	int     connection_timeout;	/* Max time (seconds) before
+	số_nguyên     connection_timeout;	/* Max time (seconds) before
 					 * aborting connection attempt */
-	int     number_of_password_prompts;	/* Max number of password
+	số_nguyên     number_of_password_prompts;	/* Max number of password
 						 * prompts. */
 	char   *ciphers;	/* SSH2 ciphers in order of preference. */
 	char   *macs;		/* SSH2 macs in order of preference. */
 	char   *hostkeyalgorithms;	/* SSH2 server key types in order of preference. */
 	char   *kex_algorithms;	/* SSH2 kex methods in order of preference. */
-	int	kex_algorithms_set; /* KexAlgorithms was set by the user */
+	số_nguyên	kex_algorithms_set; /* KexAlgorithms was set by the user */
 	char   *ca_sign_algorithms;	/* Allowed CA signature algorithms */
 	char   *hostname;	/* Real host to connect. */
 	char   *tag;		/* Configuration tag name. */
 	char   *host_key_alias;	/* hostname alias for .ssh/known_hosts */
 	char   *proxy_command;	/* Proxy command for connecting the host. */
 	char   *user;		/* User to log in as. */
-	int     escape_char;	/* Escape character; -2 = none */
+	số_nguyên     escape_char;	/* Escape character; -2 = none */
 
 	u_int	num_system_hostfiles;	/* Paths for /etc/ssh/ssh_known_hosts */
 	char   *system_hostfiles[SSH_MAX_HOSTS_FILES];
@@ -85,30 +85,30 @@ typedef struct {
 	char   *bind_interface;	/* local interface for bind address */
 	char   *pkcs11_provider; /* PKCS#11 provider */
 	char   *sk_provider; /* Security key provider */
-	int	verify_host_key_dns;	/* Verify host key using DNS */
+	số_nguyên	verify_host_key_dns;	/* Verify host key using DNS */
 
-	int     num_identity_files;	/* Number of files for identities. */
+	số_nguyên     num_identity_files;	/* Number of files for identities. */
 	char   *identity_files[SSH_MAX_IDENTITY_FILES];
-	int    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
+	số_nguyên    identity_file_userprovided[SSH_MAX_IDENTITY_FILES];
 	struct sshkey *identity_keys[SSH_MAX_IDENTITY_FILES];
 
-	int	num_certificate_files; /* Number of extra certificates for ssh. */
+	số_nguyên	num_certificate_files; /* Number of extra certificates for ssh. */
 	char	*certificate_files[SSH_MAX_CERTIFICATE_FILES];
-	int	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
+	số_nguyên	certificate_file_userprovided[SSH_MAX_CERTIFICATE_FILES];
 	struct sshkey *certificates[SSH_MAX_CERTIFICATE_FILES];
 
-	int	add_keys_to_agent;
-	int	add_keys_to_agent_lifespan;
+	số_nguyên	add_keys_to_agent;
+	số_nguyên	add_keys_to_agent_lifespan;
 	char   *identity_agent;		/* Optional path to ssh-agent socket */
 
 	/* Local TCP/IP forward requests. */
-	int     num_local_forwards;
+	số_nguyên     num_local_forwards;
 	struct Forward *local_forwards;
 
 	/* Remote TCP/IP forward requests. */
-	int     num_remote_forwards;
+	số_nguyên     num_remote_forwards;
 	struct Forward *remote_forwards;
-	int	clear_forwardings;
+	số_nguyên	clear_forwardings;
 
 	/* Restrict remote dynamic forwarding */
 	char  **permitted_remote_opens;
@@ -116,15 +116,15 @@ typedef struct {
 
 	/* stdio forwarding (-W) host and port */
 	char   *stdio_forward_host;
-	int	stdio_forward_port;
+	số_nguyên	stdio_forward_port;
 
-	int	enable_ssh_keysign;
+	số_nguyên	enable_ssh_keysign;
 	int64_t rekey_limit;
-	int	rekey_interval;
-	int	no_host_authentication_for_localhost;
-	int	identities_only;
-	int	server_alive_interval;
-	int	server_alive_count_max;
+	số_nguyên	rekey_interval;
+	số_nguyên	no_host_authentication_for_localhost;
+	số_nguyên	identities_only;
+	số_nguyên	server_alive_interval;
+	số_nguyên	server_alive_count_max;
 
 	u_int	num_send_env;
 	char	**send_env;
@@ -132,57 +132,57 @@ typedef struct {
 	char	**setenv;
 
 	char	*control_path;
-	int	control_master;
-	int     control_persist; /* ControlPersist flag */
-	int     control_persist_timeout; /* ControlPersist timeout (seconds) */
+	số_nguyên	control_master;
+	số_nguyên     control_persist; /* ControlPersist flag */
+	số_nguyên     control_persist_timeout; /* ControlPersist timeout (seconds) */
 
-	int	hash_known_hosts;
+	số_nguyên	hash_known_hosts;
 
-	int	tun_open;	/* tun(4) */
-	int     tun_local;	/* force tun device (optional) */
-	int     tun_remote;	/* force tun device (optional) */
+	số_nguyên	tun_open;	/* tun(4) */
+	số_nguyên     tun_local;	/* force tun device (optional) */
+	số_nguyên     tun_remote;	/* force tun device (optional) */
 
 	char	*local_command;
-	int	permit_local_command;
+	số_nguyên	permit_local_command;
 	char	*remote_command;
-	int	visual_host_key;
+	số_nguyên	visual_host_key;
 
-	int	request_tty;
-	int	session_type;
-	int	stdin_null;
-	int	fork_after_authentication;
+	số_nguyên	request_tty;
+	số_nguyên	session_type;
+	số_nguyên	stdin_null;
+	số_nguyên	fork_after_authentication;
 
-	int	proxy_use_fdpass;
+	số_nguyên	proxy_use_fdpass;
 
-	int	num_canonical_domains;
+	số_nguyên	num_canonical_domains;
 	char	**canonical_domains;
-	int	canonicalize_hostname;
-	int	canonicalize_max_dots;
-	int	canonicalize_fallback_local;
-	int	num_permitted_cnames;
+	số_nguyên	canonicalize_hostname;
+	số_nguyên	canonicalize_max_dots;
+	số_nguyên	canonicalize_fallback_local;
+	số_nguyên	num_permitted_cnames;
 	struct allowed_cname *permitted_cnames;
 
 	u_int	num_revoked_host_keys;
 	char	**revoked_host_keys;
 
-	int	 fingerprint_hash;
+	số_nguyên	 fingerprint_hash;
 
-	int	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
+	số_nguyên	 update_hostkeys; /* one of SSH_UPDATE_HOSTKEYS_* */
 
 	char   *hostbased_accepted_algos;
 	char   *pubkey_accepted_algos;
 
 	char   *jump_user;
 	char   *jump_host;
-	int	jump_port;
+	số_nguyên	jump_port;
 	char   *jump_extra;
 
 	char   *known_hosts_command;
 
-	int	required_rsa_size;	/* minimum size of RSA keys */
-	int	enable_escape_commandline;	/* ~C commandline */
-	int	obscure_keystroke_timing_interval;
-	int	warn_weak_crypto;
+	số_nguyên	required_rsa_size;	/* minimum size of RSA keys */
+	số_nguyên	enable_escape_commandline;	/* ~C commandline */
+	số_nguyên	obscure_keystroke_timing_interval;
+	số_nguyên	warn_weak_crypto;
 
 	char	**channel_timeouts;	/* inactivity timeout by channel type */
 	u_int	num_channel_timeouts;
@@ -243,26 +243,26 @@ const char *kex_default_pk_alg(void);
 char	*ssh_connection_hash(const char *thishost, const char *host,
     const char *portstr, const char *user, const char *jump_host);
 void     initialize_options(Options *);
-int      fill_default_options(Options *);
+số_nguyên      fill_default_options(Options *);
 void	 fill_default_options_for_canonicalization(Options *);
 void	 free_options(Options *o);
-int	 process_config_line(Options *, struct passwd *, const char *,
-    const char *, const char *, char *, const char *, int, int *, int);
-int	 read_config_file(const char *, struct passwd *, const char *,
-    const char *, const char *, Options *, int, int *);
-int	 parse_forward(struct Forward *, const char *, int, int);
-int	 ssh_valid_hostname(const char *);
-int	 ssh_valid_ruser(const char *);
-int	 parse_jump(const char *, Options *, int, int);
-int	 parse_ssh_uri(const char *, char **, char **, int *);
-int	 default_ssh_port(void);
-int	 option_clear_or_none(const char *);
-int	 config_has_permitted_cnames(Options *);
+số_nguyên	 process_config_line(Options *, struct passwd *, const char *,
+    const char *, const char *, char *, const char *, số_nguyên, số_nguyên *, số_nguyên);
+số_nguyên	 read_config_file(const char *, struct passwd *, const char *,
+    const char *, const char *, Options *, số_nguyên, số_nguyên *);
+số_nguyên	 parse_forward(struct Forward *, const char *, số_nguyên, số_nguyên);
+số_nguyên	 ssh_valid_hostname(const char *);
+số_nguyên	 ssh_valid_ruser(const char *);
+số_nguyên	 parse_jump(const char *, Options *, số_nguyên, số_nguyên);
+số_nguyên	 parse_ssh_uri(const char *, char **, char **, số_nguyên *);
+số_nguyên	 default_ssh_port(void);
+số_nguyên	 option_clear_or_none(const char *);
+số_nguyên	 config_has_permitted_cnames(Options *);
 void	 dump_client_config(Options *o, const char *host);
 
 void	 add_local_forward(Options *, const struct Forward *);
 void	 add_remote_forward(Options *, const struct Forward *);
-void	 add_identity_file(Options *, const char *, const char *, int);
-void	 add_certificate_file(Options *, const char *, int);
+void	 add_identity_file(Options *, const char *, const char *, số_nguyên);
+void	 add_certificate_file(Options *, const char *, số_nguyên);
 
 #endif				/* READCONF_H */

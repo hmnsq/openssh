@@ -34,7 +34,7 @@
 #include <openssl/ecdsa.h>
 #include <openssl/evp.h>
 #define SSH_OPENSSL_VERSION OpenSSL_version(OPENSSL_VERSION)
-#else /* OPENSSL */
+#không_thì /* OPENSSL */
 #define BIGNUM		void
 #define RSA		void
 #define EC_KEY		void
@@ -111,10 +111,10 @@ struct sshkey_cert {
 
 /* XXX opacify? */
 struct sshkey {
-	int	 type;
-	int	 flags;
+	số_nguyên	 type;
+	số_nguyên	 flags;
 	/* KEY_ECDSA and KEY_ECDSA_SK */
-	int	 ecdsa_nid;	/* NID of curve */
+	số_nguyên	 ecdsa_nid;	/* NID of curve */
 	/* libcrypto-backed keys */
 	EVP_PKEY *pkey;
 	/* KEY_ED25519 and KEY_ED25519_SK */
@@ -148,23 +148,23 @@ struct sshkey_sig_details {
 
 struct sshkey_impl_funcs {
 	u_int (*size)(const struct sshkey *);	/* optional */
-	int (*alloc)(struct sshkey *);		/* optional */
+	số_nguyên (*alloc)(struct sshkey *);		/* optional */
 	void (*cleanup)(struct sshkey *);	/* optional */
-	int (*equal)(const struct sshkey *, const struct sshkey *);
-	int (*serialize_public)(const struct sshkey *, struct sshbuf *,
+	số_nguyên (*equal)(const struct sshkey *, const struct sshkey *);
+	số_nguyên (*serialize_public)(const struct sshkey *, struct sshbuf *,
 	    enum sshkey_serialize_rep);
-	int (*deserialize_public)(const char *, struct sshbuf *,
+	số_nguyên (*deserialize_public)(const char *, struct sshbuf *,
 	    struct sshkey *);
-	int (*serialize_private)(const struct sshkey *, struct sshbuf *,
+	số_nguyên (*serialize_private)(const struct sshkey *, struct sshbuf *,
 	    enum sshkey_serialize_rep);
-	int (*deserialize_private)(const char *, struct sshbuf *,
+	số_nguyên (*deserialize_private)(const char *, struct sshbuf *,
 	    struct sshkey *);
-	int (*generate)(struct sshkey *, int);	/* optional */
-	int (*copy_public)(const struct sshkey *, struct sshkey *);
-	int (*sign)(struct sshkey *, u_char **, size_t *,
+	số_nguyên (*generate)(struct sshkey *, số_nguyên);	/* optional */
+	số_nguyên (*copy_public)(const struct sshkey *, struct sshkey *);
+	số_nguyên (*sign)(struct sshkey *, u_char **, size_t *,
 	    const u_char *, size_t, const char *,
 	    const char *, const char *, u_int); /* optional */
-	int (*verify)(const struct sshkey *, const u_char *, size_t,
+	số_nguyên (*verify)(const struct sshkey *, const u_char *, size_t,
 	    const u_char *, size_t, const char *, u_int,
 	    struct sshkey_sig_details **);
 };
@@ -173,109 +173,109 @@ struct sshkey_impl {
 	const char *name;
 	const char *shortname;
 	const char *sigalg;
-	int type;
-	int nid;
-	int cert;
-	int sigonly;
-	int keybits;
+	số_nguyên type;
+	số_nguyên nid;
+	số_nguyên cert;
+	số_nguyên sigonly;
+	số_nguyên keybits;
 	const struct sshkey_impl_funcs *funcs;
 };
 
-struct sshkey	*sshkey_new(int);
+struct sshkey	*sshkey_new(số_nguyên);
 void		 sshkey_free(struct sshkey *);
-int		 sshkey_equal_public(const struct sshkey *,
+số_nguyên		 sshkey_equal_public(const struct sshkey *,
     const struct sshkey *);
-int		 sshkey_equal(const struct sshkey *, const struct sshkey *);
+số_nguyên		 sshkey_equal(const struct sshkey *, const struct sshkey *);
 char		*sshkey_fingerprint(const struct sshkey *,
-    int, enum sshkey_fp_rep);
-int		 sshkey_fingerprint_raw(const struct sshkey *k,
-    int, u_char **retp, size_t *lenp);
+    số_nguyên, enum sshkey_fp_rep);
+số_nguyên		 sshkey_fingerprint_raw(const struct sshkey *k,
+    số_nguyên, u_char **retp, size_t *lenp);
 const char	*sshkey_type(const struct sshkey *);
 const char	*sshkey_cert_type(const struct sshkey *);
-int		 sshkey_format_text(const struct sshkey *, struct sshbuf *);
-int		 sshkey_write(const struct sshkey *, FILE *);
-int		 sshkey_read(struct sshkey *, char **);
+số_nguyên		 sshkey_format_text(const struct sshkey *, struct sshbuf *);
+số_nguyên		 sshkey_write(const struct sshkey *, FILE *);
+số_nguyên		 sshkey_read(struct sshkey *, char **);
 u_int		 sshkey_size(const struct sshkey *);
 
-int		 sshkey_generate(int type, u_int bits, struct sshkey **keyp);
-int		 sshkey_from_private(const struct sshkey *, struct sshkey **);
+số_nguyên		 sshkey_generate(số_nguyên type, u_int bits, struct sshkey **keyp);
+số_nguyên		 sshkey_from_private(const struct sshkey *, struct sshkey **);
 
-int		 sshkey_is_shielded(struct sshkey *);
-int		 sshkey_shield_private(struct sshkey *);
-int		 sshkey_unshield_private(struct sshkey *);
+số_nguyên		 sshkey_is_shielded(struct sshkey *);
+số_nguyên		 sshkey_shield_private(struct sshkey *);
+số_nguyên		 sshkey_unshield_private(struct sshkey *);
 
-int	 sshkey_type_from_name(const char *);
-int	 sshkey_type_from_shortname(const char *);
-int	 sshkey_is_cert(const struct sshkey *);
-int	 sshkey_is_sk(const struct sshkey *);
-int	 sshkey_type_is_cert(int);
-int	 sshkey_type_plain(int);
+số_nguyên	 sshkey_type_from_name(const char *);
+số_nguyên	 sshkey_type_from_shortname(const char *);
+số_nguyên	 sshkey_is_cert(const struct sshkey *);
+số_nguyên	 sshkey_is_sk(const struct sshkey *);
+số_nguyên	 sshkey_type_is_cert(số_nguyên);
+số_nguyên	 sshkey_type_plain(số_nguyên);
 
 /* Returns non-zero if key name match sigalgs pattern list. (handles RSA) */
-int	 sshkey_match_keyname_to_sigalgs(const char *, const char *);
+số_nguyên	 sshkey_match_keyname_to_sigalgs(const char *, const char *);
 
-int	 sshkey_to_certified(struct sshkey *);
-int	 sshkey_drop_cert(struct sshkey *);
-int	 sshkey_cert_copy(const struct sshkey *, struct sshkey *);
-int	 sshkey_cert_check_authority(const struct sshkey *, int, int,
+số_nguyên	 sshkey_to_certified(struct sshkey *);
+số_nguyên	 sshkey_drop_cert(struct sshkey *);
+số_nguyên	 sshkey_cert_copy(const struct sshkey *, struct sshkey *);
+số_nguyên	 sshkey_cert_check_authority(const struct sshkey *, số_nguyên, số_nguyên,
     uint64_t, const char *, const char **);
-int	 sshkey_cert_check_authority_now(const struct sshkey *, int, int,
+số_nguyên	 sshkey_cert_check_authority_now(const struct sshkey *, số_nguyên, số_nguyên,
     const char *, const char **);
-int	 sshkey_cert_check_host(const struct sshkey *, const char *,
+số_nguyên	 sshkey_cert_check_host(const struct sshkey *, const char *,
     const char *, const char **);
 size_t	 sshkey_format_cert_validity(const struct sshkey_cert *,
     char *, size_t) __attribute__((__bounded__(__string__, 2, 3)));
-int	 sshkey_check_cert_sigtype(const struct sshkey *, const char *);
+số_nguyên	 sshkey_check_cert_sigtype(const struct sshkey *, const char *);
 
-int	 sshkey_certify(struct sshkey *, struct sshkey *,
+số_nguyên	 sshkey_certify(struct sshkey *, struct sshkey *,
     const char *, const char *, const char *);
 /* Variant allowing use of a custom signature function (e.g. for ssh-agent) */
-typedef int sshkey_certify_signer(struct sshkey *, u_char **, size_t *,
+typedef số_nguyên sshkey_certify_signer(struct sshkey *, u_char **, size_t *,
     const u_char *, size_t, const char *, const char *, const char *,
     u_int, void *);
-int	 sshkey_certify_custom(struct sshkey *, struct sshkey *, const char *,
+số_nguyên	 sshkey_certify_custom(struct sshkey *, struct sshkey *, const char *,
     const char *, const char *, sshkey_certify_signer *, void *);
 
-int		 sshkey_ecdsa_nid_from_name(const char *);
-int		 sshkey_curve_name_to_nid(const char *);
-const char *	 sshkey_curve_nid_to_name(int);
-u_int		 sshkey_curve_nid_to_bits(int);
-int		 sshkey_ecdsa_bits_to_nid(int);
-int		 sshkey_ecdsa_key_to_nid(const EC_KEY *);
-int		 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *);
-int		 sshkey_ec_nid_to_hash_alg(int nid);
-int		 sshkey_ec_validate_public(const EC_GROUP *, const EC_POINT *);
-int		 sshkey_ec_validate_private(const EC_KEY *);
+số_nguyên		 sshkey_ecdsa_nid_from_name(const char *);
+số_nguyên		 sshkey_curve_name_to_nid(const char *);
+const char *	 sshkey_curve_nid_to_name(số_nguyên);
+u_int		 sshkey_curve_nid_to_bits(số_nguyên);
+số_nguyên		 sshkey_ecdsa_bits_to_nid(số_nguyên);
+số_nguyên		 sshkey_ecdsa_key_to_nid(const EC_KEY *);
+số_nguyên		 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *);
+số_nguyên		 sshkey_ec_nid_to_hash_alg(số_nguyên nid);
+số_nguyên		 sshkey_ec_validate_public(const EC_GROUP *, const EC_POINT *);
+số_nguyên		 sshkey_ec_validate_private(const EC_KEY *);
 const char	*sshkey_ssh_name(const struct sshkey *);
 const char	*sshkey_ssh_name_plain(const struct sshkey *);
-int		 sshkey_names_valid2(const char *, int, int);
-char		*sshkey_alg_list(int, int, int, char);
+số_nguyên		 sshkey_names_valid2(const char *, số_nguyên, số_nguyên);
+char		*sshkey_alg_list(số_nguyên, số_nguyên, số_nguyên, char);
 
-int	 sshkey_from_blob(const u_char *, size_t, struct sshkey **);
-int	 sshkey_fromb(struct sshbuf *, struct sshkey **);
-int	 sshkey_fromb_allowlist(struct sshbuf *, struct sshkey **,
+số_nguyên	 sshkey_from_blob(const u_char *, size_t, struct sshkey **);
+số_nguyên	 sshkey_fromb(struct sshbuf *, struct sshkey **);
+số_nguyên	 sshkey_fromb_allowlist(struct sshbuf *, struct sshkey **,
     const char *, const char *);
-int	 sshkey_froms(struct sshbuf *, struct sshkey **);
-int	 sshkey_to_blob(const struct sshkey *, u_char **, size_t *);
-int	 sshkey_to_base64(const struct sshkey *, char **);
-int	 sshkey_putb(const struct sshkey *, struct sshbuf *);
-int	 sshkey_puts(const struct sshkey *, struct sshbuf *);
-int	 sshkey_plain_to_blob(const struct sshkey *, u_char **, size_t *);
-int	 sshkey_putb_plain(const struct sshkey *, struct sshbuf *);
-int	 sshkey_puts_plain(const struct sshkey *, struct sshbuf *);
+số_nguyên	 sshkey_froms(struct sshbuf *, struct sshkey **);
+số_nguyên	 sshkey_to_blob(const struct sshkey *, u_char **, size_t *);
+số_nguyên	 sshkey_to_base64(const struct sshkey *, char **);
+số_nguyên	 sshkey_putb(const struct sshkey *, struct sshbuf *);
+số_nguyên	 sshkey_puts(const struct sshkey *, struct sshbuf *);
+số_nguyên	 sshkey_plain_to_blob(const struct sshkey *, u_char **, size_t *);
+số_nguyên	 sshkey_putb_plain(const struct sshkey *, struct sshbuf *);
+số_nguyên	 sshkey_puts_plain(const struct sshkey *, struct sshbuf *);
 
-int	 sshkey_sign(struct sshkey *, u_char **, size_t *,
+số_nguyên	 sshkey_sign(struct sshkey *, u_char **, size_t *,
     const u_char *, size_t, const char *, const char *, const char *, u_int);
-int	 sshkey_verify(const struct sshkey *, const u_char *, size_t,
+số_nguyên	 sshkey_verify(const struct sshkey *, const u_char *, size_t,
     const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
-int	 sshkey_check_sigtype(const u_char *, size_t, const char *);
+số_nguyên	 sshkey_check_sigtype(const u_char *, size_t, const char *);
 const char *sshkey_sigalg_by_name(const char *);
-int	 sshkey_get_sigtype(const u_char *, size_t, char **);
+số_nguyên	 sshkey_get_sigtype(const u_char *, size_t, char **);
 
 /* Signing and verification backend for libcrypto-backed keys */
-int	sshkey_pkey_digest_sign(EVP_PKEY*, int, u_char **,
+số_nguyên	sshkey_pkey_digest_sign(EVP_PKEY*, số_nguyên, u_char **,
     size_t *, const u_char *, size_t);
-int	sshkey_pkey_digest_verify(EVP_PKEY *, int, const u_char *,
+số_nguyên	sshkey_pkey_digest_verify(EVP_PKEY *, số_nguyên, const u_char *,
     size_t, u_char *, size_t);
 
 /* for debug */
@@ -283,50 +283,50 @@ void	sshkey_dump_ec_point(const EC_GROUP *, const EC_POINT *);
 void	sshkey_dump_ec_key(const EC_KEY *);
 
 /* private key parsing and serialisation */
-int	sshkey_private_serialize(struct sshkey *key, struct sshbuf *buf);
-int	sshkey_private_deserialize(struct sshbuf *buf,  struct sshkey **keyp);
+số_nguyên	sshkey_private_serialize(struct sshkey *key, struct sshbuf *buf);
+số_nguyên	sshkey_private_deserialize(struct sshbuf *buf,  struct sshkey **keyp);
 
 /* private key file format parsing and serialisation */
-int	sshkey_private_to_fileblob(struct sshkey *key, struct sshbuf *blob,
+số_nguyên	sshkey_private_to_fileblob(struct sshkey *key, struct sshbuf *blob,
     const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds);
-int	sshkey_parse_private_fileblob(struct sshbuf *buffer,
+    số_nguyên format, const char *openssh_format_cipher, số_nguyên openssh_format_rounds);
+số_nguyên	sshkey_parse_private_fileblob(struct sshbuf *buffer,
     const char *passphrase, struct sshkey **keyp, char **commentp);
-int	sshkey_parse_private_fileblob_type(struct sshbuf *blob, int type,
+số_nguyên	sshkey_parse_private_fileblob_type(struct sshbuf *blob, số_nguyên type,
     const char *passphrase, struct sshkey **keyp, char **commentp);
-int	sshkey_parse_pubkey_from_private_fileblob_type(struct sshbuf *blob,
-    int type, struct sshkey **pubkeyp);
+số_nguyên	sshkey_parse_pubkey_from_private_fileblob_type(struct sshbuf *blob,
+    số_nguyên type, struct sshkey **pubkeyp);
 
-int sshkey_check_rsa_length(const struct sshkey *, int);
-int	ssh_rsa_hash_id_from_keyname(const char *);
-const char *ssh_rsa_hash_alg_ident(int);
-int	ssh_rsa_encode_store_sig(int, const u_char *, size_t,
+số_nguyên sshkey_check_rsa_length(const struct sshkey *, số_nguyên);
+số_nguyên	ssh_rsa_hash_id_from_keyname(const char *);
+const char *ssh_rsa_hash_alg_ident(số_nguyên);
+số_nguyên	ssh_rsa_encode_store_sig(số_nguyên, const u_char *, size_t,
 	    u_char **, size_t *);
-int	ssh_ecdsa_encode_store_sig(const struct sshkey *,
+số_nguyên	ssh_ecdsa_encode_store_sig(const struct sshkey *,
 	    const BIGNUM *, const BIGNUM *, u_char **, size_t *);
-int	ssh_ed25519_encode_store_sig(const u_char *, size_t,
+số_nguyên	ssh_ed25519_encode_store_sig(const u_char *, size_t,
 	    u_char **, size_t *);
 /* XXX should be internal, but used by ssh-keygen */
-int ssh_rsa_complete_crt_parameters(const BIGNUM *, const BIGNUM *,
+số_nguyên ssh_rsa_complete_crt_parameters(const BIGNUM *, const BIGNUM *,
     const BIGNUM *, const BIGNUM *, BIGNUM **, BIGNUM **);
 
 void	 sshkey_sig_details_free(struct sshkey_sig_details *);
 
 #ifdef WITH_OPENSSL
-int	sshkey_ecdsa_fixup_group(EVP_PKEY *k); /* ssh-ecdsa.c */
+số_nguyên	sshkey_ecdsa_fixup_group(EVP_PKEY *k); /* ssh-ecdsa.c */
 #endif
 
 #ifdef SSHKEY_INTERNAL
-int	sshkey_sk_fields_equal(const struct sshkey *a, const struct sshkey *b);
+số_nguyên	sshkey_sk_fields_equal(const struct sshkey *a, const struct sshkey *b);
 void	sshkey_sk_cleanup(struct sshkey *k);
-int	sshkey_serialize_sk(const struct sshkey *key, struct sshbuf *b);
-int	sshkey_copy_public_sk(const struct sshkey *from, struct sshkey *to);
-int	sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *key);
-int	sshkey_serialize_private_sk(const struct sshkey *key,
+số_nguyên	sshkey_serialize_sk(const struct sshkey *key, struct sshbuf *b);
+số_nguyên	sshkey_copy_public_sk(const struct sshkey *from, struct sshkey *to);
+số_nguyên	sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *key);
+số_nguyên	sshkey_serialize_private_sk(const struct sshkey *key,
     struct sshbuf *buf);
-int	sshkey_private_deserialize_sk(struct sshbuf *buf, struct sshkey *k);
+số_nguyên	sshkey_private_deserialize_sk(struct sshbuf *buf, struct sshkey *k);
 #ifdef WITH_OPENSSL
-int	check_rsa_length(const RSA *rsa); /* XXX remove */
+số_nguyên	check_rsa_length(const RSA *rsa); /* XXX remove */
 #endif
 #endif
 

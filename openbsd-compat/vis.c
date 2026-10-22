@@ -31,7 +31,7 @@
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
 #include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#nếu !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #include <sys/types.h>
 #include <errno.h>
@@ -59,18 +59,18 @@
  * vis - visually encode characters
  */
 char *
-vis(char *dst, int c, int flag, int nextc)
+vis(char *dst, số_nguyên c, số_nguyên flag, số_nguyên nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	nếu (isvisible(c, flag)) {
+		nếu ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		trả_về (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
+	nếu (flag & VIS_CSTYLE) {
 		switch(c) {
 		case '\n':
 			*dst++ = '\\';
@@ -107,14 +107,14 @@ vis(char *dst, int c, int flag, int nextc)
 		case '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			nếu (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
 			goto done;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	nếu (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
@@ -122,25 +122,25 @@ vis(char *dst, int c, int flag, int nextc)
 		*dst++ = ((u_char)c & 07) + '0';
 		goto done;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	nếu ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	nếu (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	nếu (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		nếu (c == 0177)
 			*dst++ = '?';
-		else
+		không_thì
 			*dst++ = c + '@';
-	} else {
+	} không_thì {
 		*dst++ = '-';
 		*dst++ = c;
 	}
 done:
 	*dst = '\0';
-	return (dst);
+	trả_về (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,33 +157,33 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+số_nguyên
+strvis(char *dst, const char *src, số_nguyên flag)
 {
 	char c;
 	char *start;
 
-	for (start = dst; (c = *src);)
+	cho (start = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	trả_về (dst - start);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+số_nguyên
+strnvis(char *dst, const char *src, size_t siz, số_nguyên flag)
 {
 	char *start, *end;
 	char tbuf[5];
-	int c, i;
+	số_nguyên c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	cho (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
+		nếu (isvisible(c, flag)) {
+			nếu ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				nếu (dst + 1 >= end) {
 					i = 2;
 					break;
 				}
@@ -192,61 +192,61 @@ strnvis(char *dst, const char *src, size_t siz, int flag)
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} không_thì {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
+			nếu (dst + i <= end) {
 				memcpy(dst, tbuf, i);
 				dst += i;
-			} else {
+			} không_thì {
 				src--;
 				break;
 			}
 		}
 	}
-	if (siz > 0)
+	nếu (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	nếu (dst + i > end) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		trong_khi ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	trả_về (dst - start);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#nếu 0 /* unused in OpenSSH */
+số_nguyên
+stravis(char **outp, const char *src, số_nguyên flag)
 {
 	char *buf;
-	int len, serrno;
+	số_nguyên len, serrno;
 
 	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	nếu (buf == NULL)
+		trả_về -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	nếu (*outp == NULL) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	trả_về (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+số_nguyên
+strvisx(char *dst, const char *src, size_t len, số_nguyên flag)
 {
 	char c;
 	char *start;
 
-	for (start = dst; len > 1; len--) {
+	cho (start = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	nếu (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	trả_về (dst - start);
 }
 #endif /* unused */
 

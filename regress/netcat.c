@@ -89,60 +89,60 @@
 #define BUFSIZE 16384
 
 /* Command Line Options */
-int	dflag;					/* detached, no stdin */
-int	Fflag;					/* fdpass sock to stdout */
-unsigned int iflag;				/* Interval Flag */
-int	kflag;					/* More than one connect */
-int	lflag;					/* Bind to local port */
-int	Nflag;					/* shutdown() network socket */
-int	nflag;					/* Don't do name look up */
+số_nguyên	dflag;					/* detached, no stdin */
+số_nguyên	Fflag;					/* fdpass sock to stdout */
+unsigned số_nguyên iflag;				/* Interval Flag */
+số_nguyên	kflag;					/* More than one connect */
+số_nguyên	lflag;					/* Bind to local port */
+số_nguyên	Nflag;					/* shutdown() network socket */
+số_nguyên	nflag;					/* Don't do name look up */
 char   *Pflag;					/* Proxy username */
 char   *pflag;					/* Localport flag */
-int	rflag;					/* Random ports flag */
+số_nguyên	rflag;					/* Random ports flag */
 char   *sflag;					/* Source Address */
-int	tflag;					/* Telnet Emulation */
-int	uflag;					/* UDP - Default to TCP */
-int	vflag;					/* Verbosity */
-int	xflag;					/* Socks proxy */
-int	zflag;					/* Port Scan Flag */
-int	Dflag;					/* sodebug */
-int	Iflag;					/* TCP receive buffer size */
-int	Oflag;					/* TCP send buffer size */
-int	Sflag;					/* TCP MD5 signature option */
-int	Tflag = -1;				/* IP Type of Service */
-int	rtableid = -1;
+số_nguyên	tflag;					/* Telnet Emulation */
+số_nguyên	uflag;					/* UDP - Default to TCP */
+số_nguyên	vflag;					/* Verbosity */
+số_nguyên	xflag;					/* Socks proxy */
+số_nguyên	zflag;					/* Port Scan Flag */
+số_nguyên	Dflag;					/* sodebug */
+số_nguyên	Iflag;					/* TCP receive buffer size */
+số_nguyên	Oflag;					/* TCP send buffer size */
+số_nguyên	Sflag;					/* TCP MD5 signature option */
+số_nguyên	Tflag = -1;				/* IP Type of Service */
+số_nguyên	rtableid = -1;
 
-int timeout = -1;
-int family = AF_UNSPEC;
+số_nguyên timeout = -1;
+số_nguyên family = AF_UNSPEC;
 char *portlist[PORT_MAX+1];
 char *unix_dg_tmp_socket;
 
-void	atelnet(int, unsigned char *, unsigned int);
+void	atelnet(số_nguyên, unsigned char *, unsigned số_nguyên);
 void	build_ports(char *);
 void	help(void);
-int	local_listen(char *, char *, struct addrinfo);
-void	readwrite(int);
-void	fdpass(int nfd) __attribute__((noreturn));
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	timeout_connect(int, const struct sockaddr *, socklen_t);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int, const char *);
-int	udptest(int);
-int	unix_bind(char *);
-int	unix_connect(char *);
-int	unix_listen(char *);
-void	set_common_sockopts(int, int);
-int	map_tos(char *, int *);
+số_nguyên	local_listen(char *, char *, struct addrinfo);
+void	readwrite(số_nguyên);
+void	fdpass(số_nguyên nfd) __attribute__((noreturn));
+số_nguyên	remote_connect(const char *, const char *, struct addrinfo);
+số_nguyên	timeout_connect(số_nguyên, const struct sockaddr *, socklen_t);
+số_nguyên	socks_connect(const char *, const char *, struct addrinfo,
+	    const char *, const char *, struct addrinfo, số_nguyên, const char *);
+số_nguyên	udptest(số_nguyên);
+số_nguyên	unix_bind(char *);
+số_nguyên	unix_connect(char *);
+số_nguyên	unix_listen(char *);
+void	set_common_sockopts(số_nguyên, số_nguyên);
+số_nguyên	map_tos(char *, số_nguyên *);
 void	report_connect(const struct sockaddr *, socklen_t);
-void	usage(int);
-ssize_t drainbuf(int, unsigned char *, size_t *);
-ssize_t fillbuf(int, unsigned char *, size_t *);
+void	usage(số_nguyên);
+ssize_t drainbuf(số_nguyên, unsigned char *, size_t *);
+ssize_t fillbuf(số_nguyên, unsigned char *, size_t *);
 
 
-int
-main(int argc, char *argv[])
+số_nguyên
+main(số_nguyên argc, char *argv[])
 {
-	int ch, s, ret, socksv;
+	số_nguyên ch, s, ret, socksv;
 	char *host, *uport;
 	struct addrinfo hints;
 	struct servent *sv;
@@ -162,7 +162,7 @@ main(int argc, char *argv[])
 
 	signal(SIGPIPE, SIG_IGN);
 
-	while ((ch = getopt(argc, argv,
+	trong_khi ((ch = getopt(argc, argv,
 	    "46DdFhI:i:klNnO:P:p:rSs:tT:UuV:vw:X:x:z")) != -1) {
 		switch (ch) {
 		case '4':
@@ -175,15 +175,15 @@ main(int argc, char *argv[])
 			family = AF_UNIX;
 			break;
 		case 'X':
-			if (strcasecmp(optarg, "connect") == 0)
+			nếu (strcasecmp(optarg, "connect") == 0)
 				socksv = -1; /* HTTP proxy CONNECT */
-			else if (strcmp(optarg, "4") == 0)
+			không_thì nếu (strcmp(optarg, "4") == 0)
 				socksv = 4; /* SOCKS v.4 */
-			else if (strcasecmp(optarg, "4A") == 0)
+			không_thì nếu (strcasecmp(optarg, "4A") == 0)
 				socksv = 44; /* SOCKS v.4A */
-			else if (strcmp(optarg, "5") == 0)
+			không_thì nếu (strcmp(optarg, "5") == 0)
 				socksv = 5; /* SOCKS v.5 */
-			else
+			không_thì
 				errx(1, "unsupported proxy protocol");
 			break;
 		case 'd':
@@ -197,7 +197,7 @@ main(int argc, char *argv[])
 			break;
 		case 'i':
 			iflag = strtonum(optarg, 0, UINT_MAX, &errstr);
-			if (errstr)
+			nếu (errstr)
 				errx(1, "interval %s: %s", errstr, optarg);
 			break;
 		case 'k':
@@ -232,9 +232,9 @@ main(int argc, char *argv[])
 			break;
 #ifdef SO_RTABLE
 		case 'V':
-			rtableid = (int)strtonum(optarg, 0,
+			rtableid = (số_nguyên)strtonum(optarg, 0,
 			    RT_TABLEID_MAX, &errstr);
-			if (errstr)
+			nếu (errstr)
 				errx(1, "rtable %s: %s", errstr, optarg);
 			break;
 #endif
@@ -243,13 +243,13 @@ main(int argc, char *argv[])
 			break;
 		case 'w':
 			timeout = strtonum(optarg, 0, INT_MAX / 1000, &errstr);
-			if (errstr)
+			nếu (errstr)
 				errx(1, "timeout %s: %s", errstr, optarg);
 			timeout *= 1000;
 			break;
 		case 'x':
 			xflag = 1;
-			if ((proxy = strdup(optarg)) == NULL)
+			nếu ((proxy = strdup(optarg)) == NULL)
 				errx(1, "strdup");
 			break;
 		case 'z':
@@ -260,13 +260,13 @@ main(int argc, char *argv[])
 			break;
 		case 'I':
 			Iflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			nếu (errstr != NULL)
 				errx(1, "TCP receive window %s: %s",
 				    errstr, optarg);
 			break;
 		case 'O':
 			Oflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			nếu (errstr != NULL)
 				errx(1, "TCP send window %s: %s",
 				    errstr, optarg);
 			break;
@@ -276,15 +276,15 @@ main(int argc, char *argv[])
 		case 'T':
 			errstr = NULL;
 			errno = 0;
-			if (map_tos(optarg, &Tflag))
+			nếu (map_tos(optarg, &Tflag))
 				break;
-			if (strlen(optarg) > 1 && optarg[0] == '0' &&
+			nếu (strlen(optarg) > 1 && optarg[0] == '0' &&
 			    optarg[1] == 'x')
-				Tflag = (int)strtol(optarg, NULL, 16);
-			else
-				Tflag = (int)strtonum(optarg, 0, 255,
+				Tflag = (số_nguyên)strtol(optarg, NULL, 16);
+			không_thì
+				Tflag = (số_nguyên)strtonum(optarg, 0, 255,
 				    &errstr);
-			if (Tflag < 0 || Tflag > 255 || errstr || errno)
+			nếu (Tflag < 0 || Tflag > 255 || errstr || errno)
 				errx(1, "illegal tos value %s", optarg);
 			break;
 		default:
@@ -295,67 +295,67 @@ main(int argc, char *argv[])
 	argv += optind;
 
 	/* Cruft to make sure options are clean, and used properly. */
-	if (argv[0] && !argv[1] && family == AF_UNIX) {
+	nếu (argv[0] && !argv[1] && family == AF_UNIX) {
 		host = argv[0];
 		uport = NULL;
-	} else if (argv[0] && !argv[1]) {
-		if  (!lflag)
+	} không_thì nếu (argv[0] && !argv[1]) {
+		nếu  (!lflag)
 			usage(1);
 		uport = argv[0];
 		host = NULL;
-	} else if (argv[0] && argv[1]) {
+	} không_thì nếu (argv[0] && argv[1]) {
 		host = argv[0];
 		uport = argv[1];
-	} else
+	} không_thì
 		usage(1);
 
-	if (lflag && sflag)
+	nếu (lflag && sflag)
 		errx(1, "cannot use -s and -l");
-	if (lflag && pflag)
+	nếu (lflag && pflag)
 		errx(1, "cannot use -p and -l");
-	if (lflag && zflag)
+	nếu (lflag && zflag)
 		errx(1, "cannot use -z and -l");
-	if (!lflag && kflag)
+	nếu (!lflag && kflag)
 		errx(1, "must use -l with -k");
 
 	/* Get name of temporary socket for unix datagram client */
-	if ((family == AF_UNIX) && uflag && !lflag) {
-		if (sflag) {
+	nếu ((family == AF_UNIX) && uflag && !lflag) {
+		nếu (sflag) {
 			unix_dg_tmp_socket = sflag;
-		} else {
+		} không_thì {
 			strlcpy(unix_dg_tmp_socket_buf, "/tmp/nc.XXXXXXXXXX",
 				UNIX_DG_TMP_SOCKET_SIZE);
-			if (mktemp(unix_dg_tmp_socket_buf) == NULL)
+			nếu (mktemp(unix_dg_tmp_socket_buf) == NULL)
 				err(1, "mktemp");
 			unix_dg_tmp_socket = unix_dg_tmp_socket_buf;
 		}
 	}
 
 	/* Initialize addrinfo structure. */
-	if (family != AF_UNIX) {
+	nếu (family != AF_UNIX) {
 		memset(&hints, 0, sizeof(struct addrinfo));
 		hints.ai_family = family;
 		hints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 		hints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
-		if (nflag)
+		nếu (nflag)
 			hints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (xflag) {
-		if (uflag)
+	nếu (xflag) {
+		nếu (uflag)
 			errx(1, "no proxy support for UDP mode");
 
-		if (lflag)
+		nếu (lflag)
 			errx(1, "no proxy support for listen");
 
-		if (family == AF_UNIX)
+		nếu (family == AF_UNIX)
 			errx(1, "no proxy support for unix sockets");
 
 		/* XXX IPv6 transport to proxy would probably work */
-		if (family == AF_INET6)
+		nếu (family == AF_INET6)
 			errx(1, "no proxy support for IPv6");
 
-		if (sflag)
+		nếu (sflag)
 			errx(1, "no proxy support for local source address");
 
 		proxyhost = strsep(&proxy, ":");
@@ -365,40 +365,40 @@ main(int argc, char *argv[])
 		proxyhints.ai_family = family;
 		proxyhints.ai_socktype = SOCK_STREAM;
 		proxyhints.ai_protocol = IPPROTO_TCP;
-		if (nflag)
+		nếu (nflag)
 			proxyhints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (lflag) {
-		int connfd;
+	nếu (lflag) {
+		số_nguyên connfd;
 		ret = 0;
 
-		if (family == AF_UNIX) {
-			if (uflag)
+		nếu (family == AF_UNIX) {
+			nếu (uflag)
 				s = unix_bind(host);
-			else
+			không_thì
 				s = unix_listen(host);
 		}
 
 		/* Allow only one connection at a time, but stay alive. */
-		for (;;) {
-			if (family != AF_UNIX)
+		cho (;;) {
+			nếu (family != AF_UNIX)
 				s = local_listen(host, uport, hints);
-			if (s < 0)
+			nếu (s < 0)
 				err(1, "local_listen");
 			/*
 			 * For UDP and -k, don't connect the socket, let it
 			 * receive datagrams from multiple socket pairs.
 			 */
-			if (uflag && kflag)
+			nếu (uflag && kflag)
 				readwrite(s);
 			/*
 			 * For UDP and not -k, we will use recvfrom() initially
 			 * to wait for a caller, then use the regular functions
 			 * to talk to the caller.
 			 */
-			else if (uflag && !kflag) {
-				int rv, plen;
+			không_thì nếu (uflag && !kflag) {
+				số_nguyên rv, plen;
 				char buf[16384];
 				struct sockaddr_storage z;
 
@@ -406,90 +406,90 @@ main(int argc, char *argv[])
 				plen = 2048;
 				rv = recvfrom(s, buf, plen, MSG_PEEK,
 				    (struct sockaddr *)&z, &len);
-				if (rv < 0)
+				nếu (rv < 0)
 					err(1, "recvfrom");
 
 				rv = connect(s, (struct sockaddr *)&z, len);
-				if (rv < 0)
+				nếu (rv < 0)
 					err(1, "connect");
 
-				if (vflag)
+				nếu (vflag)
 					report_connect((struct sockaddr *)&z, len);
 
 				readwrite(s);
-			} else {
+			} không_thì {
 				len = sizeof(cliaddr);
 				connfd = accept(s, (struct sockaddr *)&cliaddr,
 				    &len);
-				if (connfd == -1) {
+				nếu (connfd == -1) {
 					/* For now, all errnos are fatal */
 					err(1, "accept");
 				}
-				if (vflag)
+				nếu (vflag)
 					report_connect((struct sockaddr *)&cliaddr, len);
 
 				readwrite(connfd);
 				close(connfd);
 			}
 
-			if (family != AF_UNIX)
+			nếu (family != AF_UNIX)
 				close(s);
-			else if (uflag) {
-				if (connect(s, NULL, 0) < 0)
+			không_thì nếu (uflag) {
+				nếu (connect(s, NULL, 0) < 0)
 					err(1, "connect");
 			}
 
-			if (!kflag)
+			nếu (!kflag)
 				break;
 		}
-	} else if (family == AF_UNIX) {
+	} không_thì nếu (family == AF_UNIX) {
 		ret = 0;
 
-		if ((s = unix_connect(host)) > 0 && !zflag) {
+		nếu ((s = unix_connect(host)) > 0 && !zflag) {
 			readwrite(s);
 			close(s);
-		} else
+		} không_thì
 			ret = 1;
 
-		if (uflag)
+		nếu (uflag)
 			unlink(unix_dg_tmp_socket);
 		exit(ret);
 
-	} else {
-		int i = 0;
+	} không_thì {
+		số_nguyên i = 0;
 
 		/* Construct the portlist[] array. */
 		build_ports(uport);
 
 		/* Cycle through portlist, connecting to each port. */
-		for (i = 0; portlist[i] != NULL; i++) {
-			if (s)
+		cho (i = 0; portlist[i] != NULL; i++) {
+			nếu (s)
 				close(s);
 
-			if (xflag)
+			nếu (xflag)
 				s = socks_connect(host, portlist[i], hints,
 				    proxyhost, proxyport, proxyhints, socksv,
 				    Pflag);
-			else
+			không_thì
 				s = remote_connect(host, portlist[i], hints);
 
-			if (s < 0)
+			nếu (s < 0)
 				continue;
 
 			ret = 0;
-			if (vflag || zflag) {
+			nếu (vflag || zflag) {
 				/* For UDP, make sure we are connected. */
-				if (uflag) {
-					if (udptest(s) == -1) {
+				nếu (uflag) {
+					nếu (udptest(s) == -1) {
 						ret = 1;
 						continue;
 					}
 				}
 
 				/* Don't look up port if -n. */
-				if (nflag)
+				nếu (nflag)
 					sv = NULL;
-				else {
+				không_thì {
 					sv = getservbyport(
 					    ntohs(atoi(portlist[i])),
 					    uflag ? "udp" : "tcp");
@@ -501,14 +501,14 @@ main(int argc, char *argv[])
 				    uflag ? "udp" : "tcp",
 				    sv ? sv->s_name : "*");
 			}
-			if (Fflag)
+			nếu (Fflag)
 				fdpass(s);
-			else if (!zflag)
+			không_thì nếu (!zflag)
 				readwrite(s);
 		}
 	}
 
-	if (s)
+	nếu (s)
 		close(s);
 
 	exit(ret);
@@ -518,67 +518,67 @@ main(int argc, char *argv[])
  * unix_bind()
  * Returns a unix socket bound to the given path
  */
-int
+số_nguyên
 unix_bind(char *path)
 {
 	struct sockaddr_un sun_sa;
-	int s;
+	số_nguyên s;
 
 	/* Create unix domain socket. */
-	if ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
+	nếu ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
 	     0)) < 0)
-		return (-1);
+		trả_về (-1);
 
 	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
+	nếu (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
 	    sizeof(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		trả_về (-1);
 	}
 
-	if (bind(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	nếu (bind(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		trả_về (-1);
 	}
-	return (s);
+	trả_về (s);
 }
 
 /*
  * unix_connect()
  * Returns a socket connected to a local unix socket. Returns -1 on failure.
  */
-int
+số_nguyên
 unix_connect(char *path)
 {
 	struct sockaddr_un sun_sa;
-	int s;
+	số_nguyên s;
 
-	if (uflag) {
-		if ((s = unix_bind(unix_dg_tmp_socket)) < 0)
-			return (-1);
-	} else {
-		if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-			return (-1);
+	nếu (uflag) {
+		nếu ((s = unix_bind(unix_dg_tmp_socket)) < 0)
+			trả_về (-1);
+	} không_thì {
+		nếu ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+			trả_về (-1);
 	}
 	(void)fcntl(s, F_SETFD, FD_CLOEXEC);
 
 	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
+	nếu (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
 	    sizeof(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		trả_về (-1);
 	}
-	if (connect(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	nếu (connect(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		trả_về (-1);
 	}
-	return (s);
+	trả_về (s);
 
 }
 
@@ -586,18 +586,18 @@ unix_connect(char *path)
  * unix_listen()
  * Create a unix domain socket, and listen on it.
  */
-int
+số_nguyên
 unix_listen(char *path)
 {
-	int s;
-	if ((s = unix_bind(path)) < 0)
-		return (-1);
+	số_nguyên s;
+	nếu ((s = unix_bind(path)) < 0)
+		trả_về (-1);
 
-	if (listen(s, 5) < 0) {
+	nếu (listen(s, 5) < 0) {
 		close(s);
-		return (-1);
+		trả_về (-1);
 	}
-	return (s);
+	trả_về (s);
 }
 
 /*
@@ -605,31 +605,31 @@ unix_listen(char *path)
  * Returns a socket connected to a remote host. Properly binds to a local
  * port or source address if needed. Returns -1 on failure.
  */
-int
+số_nguyên
 remote_connect(const char *host, const char *port, struct addrinfo hints)
 {
 	struct addrinfo *res, *res0;
-	int s, error;
-#if defined(SO_RTABLE) || defined(SO_BINDANY)
-	int on = 1;
+	số_nguyên s, error;
+#nếu defined(SO_RTABLE) || defined(SO_BINDANY)
+	số_nguyên on = 1;
 #endif
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	nếu ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
 	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+		nếu ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
 			continue;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		nếu (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
 		    &rtableid, sizeof(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 		/* Bind to a local port or source address if specified. */
-		if (sflag || pflag) {
+		nếu (sflag || pflag) {
 			struct addrinfo ahints, *ares;
 
 #ifdef SO_BINDANY
@@ -641,10 +641,10 @@ remote_connect(const char *host, const char *port, struct addrinfo hints)
 			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
 			ahints.ai_flags = AI_PASSIVE;
-			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
+			nếu ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
 				errx(1, "getaddrinfo: %s", gai_strerror(error));
 
-			if (bind(s, (struct sockaddr *)ares->ai_addr,
+			nếu (bind(s, (struct sockaddr *)ares->ai_addr,
 			    ares->ai_addrlen) < 0)
 				err(1, "bind failed");
 			freeaddrinfo(ares);
@@ -652,56 +652,56 @@ remote_connect(const char *host, const char *port, struct addrinfo hints)
 
 		set_common_sockopts(s, res0->ai_family);
 
-		if (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
+		nếu (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
 			break;
-		else if (vflag)
+		không_thì nếu (vflag)
 			warn("connect to %s port %s (%s) failed", host, port,
 			    uflag ? "udp" : "tcp");
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} trong_khi ((res0 = res0->ai_next) != NULL);
 
 	freeaddrinfo(res);
 
-	return (s);
+	trả_về (s);
 }
 
-int
-timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
+số_nguyên
+timeout_connect(số_nguyên s, const struct sockaddr *name, socklen_t namelen)
 {
 	struct pollfd pfd;
 	socklen_t optlen;
-	int flags = 0, optval;
-	int ret;
+	số_nguyên flags = 0, optval;
+	số_nguyên ret;
 
-	if (timeout != -1) {
+	nếu (timeout != -1) {
 		flags = fcntl(s, F_GETFL, 0);
-		if (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
+		nếu (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
 			err(1, "set non-blocking mode");
 	}
 
-	if ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
+	nếu ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
 		pfd.fd = s;
 		pfd.events = POLLOUT;
-		if ((ret = poll(&pfd, 1, timeout)) == 1) {
+		nếu ((ret = poll(&pfd, 1, timeout)) == 1) {
 			optlen = sizeof(optval);
-			if ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
+			nếu ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
 			    &optval, &optlen)) == 0) {
 				errno = optval;
 				ret = optval == 0 ? 0 : -1;
 			}
-		} else if (ret == 0) {
+		} không_thì nếu (ret == 0) {
 			errno = ETIMEDOUT;
 			ret = -1;
-		} else
+		} không_thì
 			err(1, "poll failed");
 	}
 
-	if (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
+	nếu (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
 		err(1, "restoring flags");
 
-	return (ret);
+	trả_về (ret);
 }
 
 /*
@@ -709,12 +709,12 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
  * Returns a socket listening on a local port, binds to specified source
  * address. Returns -1 on failure.
  */
-int
+số_nguyên
 local_listen(char *host, char *port, struct addrinfo hints)
 {
 	struct addrinfo *res, *res0;
-	int s, ret, x = 1;
-	int error;
+	số_nguyên s, ret, x = 1;
+	số_nguyên error;
 
 	/* Allow nodename to be null. */
 	hints.ai_flags |= AI_PASSIVE;
@@ -723,51 +723,51 @@ local_listen(char *host, char *port, struct addrinfo hints)
 	 * In the case of binding to a wildcard address
 	 * default to binding to an ipv4 address.
 	 */
-	if (host == NULL && hints.ai_family == AF_UNSPEC)
+	nếu (host == NULL && hints.ai_family == AF_UNSPEC)
 		hints.ai_family = AF_INET;
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	nếu ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
 	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+		nếu ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
 			continue;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		nếu (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
 		    &rtableid, sizeof(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 #ifdef SO_REUSEPORT
 		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
-		if (ret == -1)
+		nếu (ret == -1)
 			err(1, "setsockopt SO_REUSEPORT");
 #endif
 #ifdef SO_REUSEADDR
 		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(x));
-		if (ret == -1)
+		nếu (ret == -1)
 			err(1, "setsockopt SO_REUSEADDR");
 #endif
 		set_common_sockopts(s, res0->ai_family);
 
-		if (bind(s, (struct sockaddr *)res0->ai_addr,
+		nếu (bind(s, (struct sockaddr *)res0->ai_addr,
 		    res0->ai_addrlen) == 0)
 			break;
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} trong_khi ((res0 = res0->ai_next) != NULL);
 
-	if (!uflag && s != -1) {
-		if (listen(s, 1) < 0)
+	nếu (!uflag && s != -1) {
+		nếu (listen(s, 1) < 0)
 			err(1, "listen");
 	}
 
 	freeaddrinfo(res);
 
-	return (s);
+	trả_về (s);
 }
 
 /*
@@ -775,20 +775,20 @@ local_listen(char *host, char *port, struct addrinfo hints)
  * Loop that polls on the network file descriptor and stdin.
  */
 void
-readwrite(int net_fd)
+readwrite(số_nguyên net_fd)
 {
 	struct pollfd pfd[4];
-	int stdin_fd = STDIN_FILENO;
-	int stdout_fd = STDOUT_FILENO;
+	số_nguyên stdin_fd = STDIN_FILENO;
+	số_nguyên stdout_fd = STDOUT_FILENO;
 	unsigned char netinbuf[BUFSIZE];
 	size_t netinbufpos = 0;
 	unsigned char stdinbuf[BUFSIZE];
 	size_t stdinbufpos = 0;
-	int n, num_fds;
+	số_nguyên n, num_fds;
 	ssize_t ret;
 
 	/* don't read from stdin if requested */
-	if (dflag)
+	nếu (dflag)
 		stdin_fd = -1;
 
 	/* stdin */
@@ -807,190 +807,190 @@ readwrite(int net_fd)
 	pfd[POLL_STDOUT].fd = stdout_fd;
 	pfd[POLL_STDOUT].events = 0;
 
-	while (1) {
+	trong_khi (1) {
 		/* both inputs are gone, buffers are empty, we are done */
-		if (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
+		nếu (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			trả_về;
 		}
 		/* both outputs are gone, we can't continue */
-		if (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
+		nếu (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
 			close(net_fd);
-			return;
+			trả_về;
 		}
 		/* listen and net in gone, queues empty, done */
-		if (lflag && pfd[POLL_NETIN].fd == -1
+		nếu (lflag && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			trả_về;
 		}
 
 		/* help says -i is for "wait between lines sent". We read and
 		 * write arbitrary amounts of data, and we don't want to start
 		 * scanning for newlines, so this is as good as it gets */
-		if (iflag)
+		nếu (iflag)
 			sleep(iflag);
 
 		/* poll */
 		num_fds = poll(pfd, 4, timeout);
 
 		/* treat poll errors */
-		if (num_fds == -1) {
+		nếu (num_fds == -1) {
 			close(net_fd);
 			err(1, "polling error");
 		}
 
 		/* timeout happened */
-		if (num_fds == 0)
-			return;
+		nếu (num_fds == 0)
+			trả_về;
 
 		/* treat socket error conditions */
-		for (n = 0; n < 4; n++) {
-			if (pfd[n].revents & (POLLERR|POLLNVAL)) {
+		cho (n = 0; n < 4; n++) {
+			nếu (pfd[n].revents & (POLLERR|POLLNVAL)) {
 				pfd[n].fd = -1;
 			}
 		}
 		/* reading is possible after HUP */
-		if (pfd[POLL_STDIN].events & POLLIN &&
+		nếu (pfd[POLL_STDIN].events & POLLIN &&
 		    pfd[POLL_STDIN].revents & POLLHUP &&
 		    ! (pfd[POLL_STDIN].revents & POLLIN))
 				pfd[POLL_STDIN].fd = -1;
 
-		if (pfd[POLL_NETIN].events & POLLIN &&
+		nếu (pfd[POLL_NETIN].events & POLLIN &&
 		    pfd[POLL_NETIN].revents & POLLHUP &&
 		    ! (pfd[POLL_NETIN].revents & POLLIN))
 				pfd[POLL_NETIN].fd = -1;
 
-		if (pfd[POLL_NETOUT].revents & POLLHUP) {
-			if (Nflag)
+		nếu (pfd[POLL_NETOUT].revents & POLLHUP) {
+			nếu (Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* if HUP, stop watching stdout */
-		if (pfd[POLL_STDOUT].revents & POLLHUP)
+		nếu (pfd[POLL_STDOUT].revents & POLLHUP)
 			pfd[POLL_STDOUT].fd = -1;
 		/* if no net out, stop watching stdin */
-		if (pfd[POLL_NETOUT].fd == -1)
+		nếu (pfd[POLL_NETOUT].fd == -1)
 			pfd[POLL_STDIN].fd = -1;
 		/* if no stdout, stop watching net in */
-		if (pfd[POLL_STDOUT].fd == -1) {
-			if (pfd[POLL_NETIN].fd != -1)
+		nếu (pfd[POLL_STDOUT].fd == -1) {
+			nếu (pfd[POLL_NETIN].fd != -1)
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 			pfd[POLL_NETIN].fd = -1;
 		}
 
 		/* try to read from stdin */
-		if (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
+		nếu (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_STDIN].fd, stdinbuf,
 			    &stdinbufpos);
 			/* error or eof on stdin - remove from pfd */
-			if (ret == 0 || ret == -1)
+			nếu (ret == 0 || ret == -1)
 				pfd[POLL_STDIN].fd = -1;
 			/* read something - poll net out */
-			if (stdinbufpos > 0)
+			nếu (stdinbufpos > 0)
 				pfd[POLL_NETOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (stdinbufpos == BUFSIZE)
+			nếu (stdinbufpos == BUFSIZE)
 				pfd[POLL_STDIN].events = 0;
 		}
 		/* try to write to network */
-		if (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
+		nếu (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_NETOUT].fd, stdinbuf,
 			    &stdinbufpos);
-			if (ret == -1)
+			nếu (ret == -1)
 				pfd[POLL_NETOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (stdinbufpos == 0)
+			nếu (stdinbufpos == 0)
 				pfd[POLL_NETOUT].events = 0;
 			/* buffer no longer full - poll stdin again */
-			if (stdinbufpos < BUFSIZE)
+			nếu (stdinbufpos < BUFSIZE)
 				pfd[POLL_STDIN].events = POLLIN;
 		}
 		/* try to read from network */
-		if (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
+		nếu (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_NETIN].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			nếu (ret == -1)
 				pfd[POLL_NETIN].fd = -1;
 			/* eof on net in - remove from pfd */
-			if (ret == 0) {
+			nếu (ret == 0) {
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 				pfd[POLL_NETIN].fd = -1;
 			}
 			/* read something - poll stdout */
-			if (netinbufpos > 0)
+			nếu (netinbufpos > 0)
 				pfd[POLL_STDOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (netinbufpos == BUFSIZE)
+			nếu (netinbufpos == BUFSIZE)
 				pfd[POLL_NETIN].events = 0;
 			/* handle telnet */
-			if (tflag)
+			nếu (tflag)
 				atelnet(pfd[POLL_NETIN].fd, netinbuf,
 				    netinbufpos);
 		}
 		/* try to write to stdout */
-		if (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
+		nếu (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_STDOUT].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			nếu (ret == -1)
 				pfd[POLL_STDOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (netinbufpos == 0)
+			nếu (netinbufpos == 0)
 				pfd[POLL_STDOUT].events = 0;
 			/* buffer no longer full - poll net in again */
-			if (netinbufpos < BUFSIZE)
+			nếu (netinbufpos < BUFSIZE)
 				pfd[POLL_NETIN].events = POLLIN;
 		}
 
 		/* stdin gone and queue empty? */
-		if (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
-			if (pfd[POLL_NETOUT].fd != -1 && Nflag)
+		nếu (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
+			nếu (pfd[POLL_NETOUT].fd != -1 && Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* net in gone and queue empty? */
-		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
+		nếu (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
 			pfd[POLL_STDOUT].fd = -1;
 		}
 	}
 }
 
 ssize_t
-drainbuf(int fd, unsigned char *buf, size_t *bufpos)
+drainbuf(số_nguyên fd, unsigned char *buf, size_t *bufpos)
 {
 	ssize_t n;
 	ssize_t adjust;
 
 	n = write(fd, buf, *bufpos);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	nếu (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	nếu (n <= 0)
+		trả_về n;
 	/* adjust buffer */
 	adjust = *bufpos - n;
-	if (adjust > 0)
+	nếu (adjust > 0)
 		memmove(buf, buf + n, adjust);
 	*bufpos -= n;
-	return n;
+	trả_về n;
 }
 
 
 ssize_t
-fillbuf(int fd, unsigned char *buf, size_t *bufpos)
+fillbuf(số_nguyên fd, unsigned char *buf, size_t *bufpos)
 {
 	size_t num = BUFSIZE - *bufpos;
 	ssize_t n;
 
 	n = read(fd, buf + *bufpos, num);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	nếu (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	nếu (n <= 0)
+		trả_về n;
 	*bufpos += n;
-	return n;
+	trả_về n;
 }
 
 /*
@@ -998,14 +998,14 @@ fillbuf(int fd, unsigned char *buf, size_t *bufpos)
  * Pass the connected file descriptor to stdout and exit.
  */
 void
-fdpass(int nfd)
+fdpass(số_nguyên nfd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+#nếu defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
 	struct msghdr msg;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
 	union {
 		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+		char buf[CMSG_SPACE(sizeof(số_nguyên))];
 	} cmsgbuf;
 	struct cmsghdr *cmsg;
 #endif
@@ -1018,15 +1018,15 @@ fdpass(int nfd)
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
 	msg.msg_accrights = (caddr_t)&nfd;
 	msg.msg_accrightslen = sizeof(nfd);
-#else
+#không_thì
 	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
 	msg.msg_control = (caddr_t)&cmsgbuf.buf;
 	msg.msg_controllen = sizeof(cmsgbuf.buf);
 	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	cmsg->cmsg_len = CMSG_LEN(sizeof(số_nguyên));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = nfd;
+	*(số_nguyên *)CMSG_DATA(cmsg) = nfd;
 #endif
 
 	vec.iov_base = &ch;
@@ -1037,53 +1037,53 @@ fdpass(int nfd)
 	bzero(&pfd, sizeof(pfd));
 	pfd.fd = STDOUT_FILENO;
 	pfd.events = POLLOUT;
-	for (;;) {
+	cho (;;) {
 		r = sendmsg(STDOUT_FILENO, &msg, 0);
-		if (r == -1) {
-			if (errno == EAGAIN || errno == EINTR) {
-				if (poll(&pfd, 1, -1) == -1)
+		nếu (r == -1) {
+			nếu (errno == EAGAIN || errno == EINTR) {
+				nếu (poll(&pfd, 1, -1) == -1)
 					err(1, "poll");
 				continue;
 			}
 			err(1, "sendmsg");
-		} else if (r != 1)
+		} không_thì nếu (r != 1)
 			errx(1, "sendmsg: unexpected return value %zd", r);
-		else
+		không_thì
 			break;
 	}
 	exit(0);
-#else
+#không_thì
 	errx(1, "%s: file descriptor passing not supported", __func__);
 #endif
 }
 
 /* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
 void
-atelnet(int nfd, unsigned char *buf, unsigned int size)
+atelnet(số_nguyên nfd, unsigned char *buf, unsigned số_nguyên size)
 {
 	unsigned char *p, *end;
 	unsigned char obuf[4];
 
-	if (size < 3)
-		return;
+	nếu (size < 3)
+		trả_về;
 	end = buf + size - 2;
 
-	for (p = buf; p < end; p++) {
-		if (*p != IAC)
+	cho (p = buf; p < end; p++) {
+		nếu (*p != IAC)
 			continue;
 
 		obuf[0] = IAC;
 		p++;
-		if ((*p == WILL) || (*p == WONT))
+		nếu ((*p == WILL) || (*p == WONT))
 			obuf[1] = DONT;
-		else if ((*p == DO) || (*p == DONT))
+		không_thì nếu ((*p == DO) || (*p == DONT))
 			obuf[1] = WONT;
-		else
+		không_thì
 			continue;
 
 		p++;
 		obuf[2] = *p;
-		if (atomicio(vwrite, nfd, obuf, 3) != 3)
+		nếu (atomicio(vwrite, nfd, obuf, 3) != 3)
 			warn("Write Error!");
 	}
 }
@@ -1098,54 +1098,54 @@ build_ports(char *p)
 {
 	const char *errstr;
 	char *n;
-	int hi, lo, cp;
-	int x = 0;
+	số_nguyên hi, lo, cp;
+	số_nguyên x = 0;
 
-	if ((n = strchr(p, '-')) != NULL) {
+	nếu ((n = strchr(p, '-')) != NULL) {
 		*n = '\0';
 		n++;
 
 		/* Make sure the ports are in order: lowest->highest. */
 		hi = strtonum(n, 1, PORT_MAX, &errstr);
-		if (errstr)
+		nếu (errstr)
 			errx(1, "port number %s: %s", errstr, n);
 		lo = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		nếu (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 
-		if (lo > hi) {
+		nếu (lo > hi) {
 			cp = hi;
 			hi = lo;
 			lo = cp;
 		}
 
 		/* Load ports sequentially. */
-		for (cp = lo; cp <= hi; cp++) {
+		cho (cp = lo; cp <= hi; cp++) {
 			portlist[x] = calloc(1, PORT_MAX_LEN);
-			if (portlist[x] == NULL)
+			nếu (portlist[x] == NULL)
 				errx(1, "calloc");
 			snprintf(portlist[x], PORT_MAX_LEN, "%d", cp);
 			x++;
 		}
 
 		/* Randomly swap ports. */
-		if (rflag) {
-			int y;
+		nếu (rflag) {
+			số_nguyên y;
 			char *c;
 
-			for (x = 0; x <= (hi - lo); x++) {
+			cho (x = 0; x <= (hi - lo); x++) {
 				y = arc4random_uniform(hi - lo);
 				c = portlist[x];
 				portlist[x] = portlist[y];
 				portlist[y] = c;
 			}
 		}
-	} else {
+	} không_thì {
 		hi = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		nếu (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 		portlist[0] = strdup(p);
-		if (portlist[0] == NULL)
+		nếu (portlist[0] == NULL)
 			errx(1, "strdup");
 	}
 }
@@ -1155,73 +1155,73 @@ build_ports(char *p)
  * Do a few writes to see if the UDP port is there.
  * Fails once PF state table is full.
  */
-int
-udptest(int s)
+số_nguyên
+udptest(số_nguyên s)
 {
-	int i, ret;
+	số_nguyên i, ret;
 
-	for (i = 0; i <= 3; i++) {
-		if (write(s, "X", 1) == 1)
+	cho (i = 0; i <= 3; i++) {
+		nếu (write(s, "X", 1) == 1)
 			ret = 1;
-		else
+		không_thì
 			ret = -1;
 	}
-	return (ret);
+	trả_về (ret);
 }
 
 void
-set_common_sockopts(int s, int af)
+set_common_sockopts(số_nguyên s, số_nguyên af)
 {
-	int x = 1;
+	số_nguyên x = 1;
 
 #ifdef TCP_MD5SIG
-	if (Sflag) {
-		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
+	nếu (Sflag) {
+		nếu (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
 			&x, sizeof(x)) == -1)
 			err(1, "setsockopt");
 	}
 #endif
-	if (Dflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
+	nếu (Dflag) {
+		nếu (setsockopt(s, SOL_SOCKET, SO_DEBUG,
 			&x, sizeof(x)) == -1)
 			err(1, "setsockopt");
 	}
-#if defined(IP_TOS) && defined(IPV6_TCLASS)
-	if (Tflag != -1) {
-		int proto, option;
+#nếu defined(IP_TOS) && defined(IPV6_TCLASS)
+	nếu (Tflag != -1) {
+		số_nguyên proto, option;
 
-		if (af == AF_INET6) {
+		nếu (af == AF_INET6) {
 			proto = IPPROTO_IPV6;
 			option = IPV6_TCLASS;
-		} else {
+		} không_thì {
 			proto = IPPROTO_IP;
 			option = IP_TOS;
 		}
 
-		if (setsockopt(s, proto, option, &Tflag, sizeof(Tflag)) == -1)
+		nếu (setsockopt(s, proto, option, &Tflag, sizeof(Tflag)) == -1)
 			err(1, "set IP ToS");
 	}
 #endif
-	if (Iflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
+	nếu (Iflag) {
+		nếu (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
 		    &Iflag, sizeof(Iflag)) == -1)
 			err(1, "set TCP receive buffer size");
 	}
-	if (Oflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
+	nếu (Oflag) {
+		nếu (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
 		    &Oflag, sizeof(Oflag)) == -1)
 			err(1, "set TCP send buffer size");
 	}
 }
 
-int
-map_tos(char *s, int *val)
+số_nguyên
+map_tos(char *s, số_nguyên *val)
 {
 #ifdef IP_TOS
 	/* DiffServ Codepoints and other TOS mappings */
 	const struct toskeywords {
 		const char	*keyword;
-		int		 val;
+		số_nguyên		 val;
 	} *t, toskeywords[] = {
 		{ "af11",		IPTOS_DSCP_AF11 },
 		{ "af12",		IPTOS_DSCP_AF12 },
@@ -1253,15 +1253,15 @@ map_tos(char *s, int *val)
 		{ NULL, 		-1 },
 	};
 
-	for (t = toskeywords; t->keyword != NULL; t++) {
-		if (strcmp(s, t->keyword) == 0) {
+	cho (t = toskeywords; t->keyword != NULL; t++) {
+		nếu (strcmp(s, t->keyword) == 0) {
 			*val = t->val;
-			return (1);
+			trả_về (1);
 		}
 	}
 #endif
 
-	return (0);
+	trả_về (0);
 }
 
 void
@@ -1269,19 +1269,19 @@ report_connect(const struct sockaddr *sa, socklen_t salen)
 {
 	char remote_host[NI_MAXHOST];
 	char remote_port[NI_MAXSERV];
-	int herr;
-	int flags = NI_NUMERICSERV;
+	số_nguyên herr;
+	số_nguyên flags = NI_NUMERICSERV;
 	
-	if (nflag)
+	nếu (nflag)
 		flags |= NI_NUMERICHOST;
 	
-	if ((herr = getnameinfo(sa, salen,
+	nếu ((herr = getnameinfo(sa, salen,
 	    remote_host, sizeof(remote_host),
 	    remote_port, sizeof(remote_port),
 	    flags)) != 0) {
-		if (herr == EAI_SYSTEM)
+		nếu (herr == EAI_SYSTEM)
 			err(1, "getnameinfo");
-		else
+		không_thì
 			errx(1, "getnameinfo: %s", gai_strerror(herr));
 	}
 	
@@ -1302,14 +1302,14 @@ help(void)
 	\t-F		Pass socket fd\n\
 	\t-h		This help text\n\
 	\t-I length	TCP receive buffer length\n\
-	\t-i secs\t	Delay interval for lines sent, ports scanned\n\
-	\t-k		Keep inbound sockets open for multiple connects\n\
-	\t-l		Listen mode, for inbound connects\n\
+	\t-i secs\t	Delay interval cho lines sent, ports scanned\n\
+	\t-k		Keep inbound sockets open cho multiple connects\n\
+	\t-l		Listen mode, cho inbound connects\n\
 	\t-N		Shutdown the network socket after EOF on stdin\n\
 	\t-n		Suppress name/port resolutions\n\
 	\t-O length	TCP send buffer length\n\
-	\t-P proxyuser\tUsername for proxy authentication\n\
-	\t-p port\t	Specify local port for remote connects\n\
+	\t-P proxyuser\tUsername cho proxy authentication\n\
+	\t-p port\t	Specify local port cho remote connects\n\
 	\t-r		Randomize remote ports\n\
 	\t-S		Enable the TCP MD5 signature option\n\
 	\t-s addr\t	Local source address\n\
@@ -1319,23 +1319,23 @@ help(void)
 	\t-u		UDP mode\n\
 	\t-V rtable	Specify alternate routing table\n\
 	\t-v		Verbose\n\
-	\t-w secs\t	Timeout for connects and final net reads\n\
+	\t-w secs\t	Timeout cho connects and final net reads\n\
 	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
 	\t-x addr[:port]\tSpecify proxy address and port\n\
-	\t-z		Zero-I/O mode [used for scanning]\n\
+	\t-z		Zero-I/O mode [used cho scanning]\n\
 	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
 	exit(1);
 }
 
 void
-usage(int ret)
+usage(số_nguyên ret)
 {
 	fprintf(stderr,
 	    "usage: nc [-46DdFhklNnrStUuvz] [-I length] [-i interval] [-O length]\n"
 	    "\t  [-P proxy_username] [-p source_port] [-s source] [-T toskeyword]\n"
 	    "\t  [-V rtable] [-w timeout] [-X proxy_protocol]\n"
 	    "\t  [-x proxy_address[:port]] [destination] [port]\n");
-	if (ret)
+	nếu (ret)
 		exit(1);
 }
 
@@ -1394,16 +1394,16 @@ usage(int ret)
 #define SOCKS_DOMAIN	3
 #define SOCKS_IPV6	4
 
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int,
+số_nguyên	remote_connect(const char *, const char *, struct addrinfo);
+số_nguyên	socks_connect(const char *, const char *, struct addrinfo,
+	    const char *, const char *, struct addrinfo, số_nguyên,
 	    const char *);
 
-static int
+static số_nguyên
 decode_addrport(const char *h, const char *p, struct sockaddr *addr,
-    socklen_t addrlen, int v4only, int numeric)
+    socklen_t addrlen, số_nguyên v4only, số_nguyên numeric)
 {
-	int r;
+	số_nguyên r;
 	struct addrinfo hints, *res;
 
 	bzero(&hints, sizeof(hints));
@@ -1412,42 +1412,42 @@ decode_addrport(const char *h, const char *p, struct sockaddr *addr,
 	hints.ai_socktype = SOCK_STREAM;
 	r = getaddrinfo(h, p, &hints, &res);
 	/* Don't fatal when attempting to convert a numeric address */
-	if (r != 0) {
-		if (!numeric) {
+	nếu (r != 0) {
+		nếu (!numeric) {
 			errx(1, "getaddrinfo(\"%.64s\", \"%.64s\"): %s", h, p,
 			    gai_strerror(r));
 		}
-		return (-1);
+		trả_về (-1);
 	}
-	if (addrlen < res->ai_addrlen) {
+	nếu (addrlen < res->ai_addrlen) {
 		freeaddrinfo(res);
 		errx(1, "internal error: addrlen < res->ai_addrlen");
 	}
 	memcpy(addr, res->ai_addr, res->ai_addrlen);
 	freeaddrinfo(res);
-	return (0);
+	trả_về (0);
 }
 
-static int
-proxy_read_line(int fd, char *buf, size_t bufsz)
+static số_nguyên
+proxy_read_line(số_nguyên fd, char *buf, size_t bufsz)
 {
 	size_t off;
 
-	for(off = 0;;) {
-		if (off >= bufsz)
+	cho(off = 0;;) {
+		nếu (off >= bufsz)
 			errx(1, "proxy read too long");
-		if (atomicio(read, fd, buf + off, 1) != 1)
+		nếu (atomicio(read, fd, buf + off, 1) != 1)
 			err(1, "proxy read");
 		/* Skip CR */
-		if (buf[off] == '\r')
+		nếu (buf[off] == '\r')
 			continue;
-		if (buf[off] == '\n') {
+		nếu (buf[off] == '\n') {
 			buf[off] = '\0';
 			break;
 		}
 		off++;
 	}
-	return (off);
+	trả_về (off);
 }
 
 static const char *
@@ -1458,18 +1458,18 @@ getproxypass(const char *proxyuser, const char *proxyhost)
 
 	snprintf(prompt, sizeof(prompt), "Proxy password for %s@%s: ",
 	   proxyuser, proxyhost);
-	if (readpassphrase(prompt, pw, sizeof(pw), RPP_REQUIRE_TTY) == NULL)
+	nếu (readpassphrase(prompt, pw, sizeof(pw), RPP_REQUIRE_TTY) == NULL)
 		errx(1, "Unable to read proxy passphrase");
-	return (pw);
+	trả_về (pw);
 }
 
-int
+số_nguyên
 socks_connect(const char *host, const char *port,
     struct addrinfo hints __attribute__ ((__unused__)),
     const char *proxyhost, const char *proxyport, struct addrinfo proxyhints,
-    int socksv, const char *proxyuser)
+    số_nguyên socksv, const char *proxyuser)
 {
-	int proxyfd, r, authretry = 0;
+	số_nguyên proxyfd, r, authretry = 0;
 	size_t hlen, wlen = 0;
 	unsigned char buf[1024];
 	size_t cnt;
@@ -1479,26 +1479,26 @@ socks_connect(const char *host, const char *port,
 	in_port_t serverport;
 	const char *proxypass = NULL;
 
-	if (proxyport == NULL)
+	nếu (proxyport == NULL)
 		proxyport = (socksv == -1) ? HTTP_PROXY_PORT : SOCKS_PORT;
 
 	/* Abuse API to lookup port */
-	if (decode_addrport("0.0.0.0", port, (struct sockaddr *)&addr,
+	nếu (decode_addrport("0.0.0.0", port, (struct sockaddr *)&addr,
 	    sizeof(addr), 1, 1) == -1)
 		errx(1, "unknown port \"%.64s\"", port);
 	serverport = in4->sin_port;
 
  again:
-	if (authretry++ > 3)
+	nếu (authretry++ > 3)
 		errx(1, "Too many authentication failures");
 
 	proxyfd = remote_connect(proxyhost, proxyport, proxyhints);
 
-	if (proxyfd < 0)
-		return (-1);
+	nếu (proxyfd < 0)
+		trả_về (-1);
 
-	if (socksv == 5) {
-		if (decode_addrport(host, port, (struct sockaddr *)&addr,
+	nếu (socksv == 5) {
+		nếu (decode_addrport(host, port, (struct sockaddr *)&addr,
 		    sizeof(addr), 0, 1) == -1)
 			addr.ss_family = 0; /* used in switch below */
 
@@ -1507,14 +1507,14 @@ socks_connect(const char *host, const char *port,
 		buf[1] = 1;
 		buf[2] = SOCKS_NOAUTH;
 		cnt = atomicio(vwrite, proxyfd, buf, 3);
-		if (cnt != 3)
+		nếu (cnt != 3)
 			err(1, "write failed (%zu/3)", cnt);
 
 		cnt = atomicio(read, proxyfd, buf, 2);
-		if (cnt != 2)
+		nếu (cnt != 2)
 			err(1, "read failed (%zu/3)", cnt);
 
-		if (buf[1] == SOCKS_NOMETHOD)
+		nếu (buf[1] == SOCKS_NOMETHOD)
 			errx(1, "authentication method negotiation failed");
 
 		switch (addr.ss_family) {
@@ -1523,7 +1523,7 @@ socks_connect(const char *host, const char *port,
 
 			/* Max domain name length is 255 bytes */
 			hlen = strlen(host);
-			if (hlen > 255)
+			nếu (hlen > 255)
 				errx(1, "host name too long for SOCKS5");
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
@@ -1560,30 +1560,30 @@ socks_connect(const char *host, const char *port,
 		}
 
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		nếu (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
 		cnt = atomicio(read, proxyfd, buf, 4);
-		if (cnt != 4)
+		nếu (cnt != 4)
 			err(1, "read failed (%zu/4)", cnt);
-		if (buf[1] != 0)
+		nếu (buf[1] != 0)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
 		switch (buf[3]) {
 		case SOCKS_IPV4:
 			cnt = atomicio(read, proxyfd, buf + 4, 6);
-			if (cnt != 6)
+			nếu (cnt != 6)
 				err(1, "read failed (%zu/6)", cnt);
 			break;
 		case SOCKS_IPV6:
 			cnt = atomicio(read, proxyfd, buf + 4, 18);
-			if (cnt != 18)
+			nếu (cnt != 18)
 				err(1, "read failed (%zu/18)", cnt);
 			break;
 		default:
 			errx(1, "connection failed, unsupported address type");
 		}
-	} else if (socksv == 4 || socksv == 44) {
-		if (socksv == 4) {
+	} không_thì nếu (socksv == 4 || socksv == 44) {
+		nếu (socksv == 4) {
 			/* This will exit on lookup failure */
 			decode_addrport(host, port, (struct sockaddr *)&addr,
 			    sizeof(addr), 1, 0);
@@ -1593,104 +1593,104 @@ socks_connect(const char *host, const char *port,
 		buf[0] = SOCKS_V4;
 		buf[1] = SOCKS_CONNECT;	/* connect */
 		memcpy(buf + 2, &in4->sin_port, sizeof in4->sin_port);
-		if (socksv == 4) {
+		nếu (socksv == 4) {
 			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-		} else {
+		} không_thì {
 			/* SOCKS4A uses addr of 0.0.0.x, and hostname later */
 			buf[4] = buf[5] = buf[6] = 0;
 			buf[7] = 1;
 		}
 		buf[8] = 0;	/* empty username */
 		wlen = 9;
-		if (socksv == 44) {
+		nếu (socksv == 44) {
 			/* SOCKS4A has nul-terminated hostname after user */
-			if (strlcpy(buf + 9, host,
+			nếu (strlcpy(buf + 9, host,
 			    sizeof(buf) - 9) >= sizeof(buf) - 9)
 				errx(1, "hostname too big");
 			wlen = 9 + strlen(host) + 1;
 		}
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		nếu (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
 		cnt = atomicio(read, proxyfd, buf, 8);
-		if (cnt != 8)
+		nếu (cnt != 8)
 			err(1, "read failed (%zu/8)", cnt);
-		if (buf[1] != 90)
+		nếu (buf[1] != 90)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-	} else if (socksv == -1) {
+	} không_thì nếu (socksv == -1) {
 		/* HTTP proxy CONNECT */
 
 		/* Disallow bad chars in hostname */
-		if (strcspn(host, "\r\n\t []:") != strlen(host))
+		nếu (strcspn(host, "\r\n\t []:") != strlen(host))
 			errx(1, "Invalid hostname");
 
 		/* Try to be sane about numeric IPv6 addresses */
-		if (strchr(host, ':') != NULL) {
+		nếu (strchr(host, ':') != NULL) {
 			r = snprintf(buf, sizeof(buf),
 			    "CONNECT [%s]:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
-		} else {
+		} không_thì {
 			r = snprintf(buf, sizeof(buf),
 			    "CONNECT %s:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
 		}
-		if (r == -1 || (size_t)r >= sizeof(buf))
+		nếu (r == -1 || (size_t)r >= sizeof(buf))
 			errx(1, "hostname too long");
 		r = strlen(buf);
 
 		cnt = atomicio(vwrite, proxyfd, buf, r);
-		if (cnt != (size_t)r)
+		nếu (cnt != (size_t)r)
 			err(1, "write failed (%zu/%d)", cnt, r);
 
-		if (authretry > 1) {
+		nếu (authretry > 1) {
 			char resp[1024];
 
 			proxypass = getproxypass(proxyuser, proxyhost);
 			r = snprintf(buf, sizeof(buf), "%s:%s",
 			    proxyuser, proxypass);
-			if (r == -1 || (size_t)r >= sizeof(buf) ||
+			nếu (r == -1 || (size_t)r >= sizeof(buf) ||
 			    b64_ntop(buf, strlen(buf), resp,
 			    sizeof(resp)) == -1)
 				errx(1, "Proxy username/password too long");
 			r = snprintf(buf, sizeof(buf), "Proxy-Authorization: "
 			    "Basic %s\r\n", resp);
-			if (r == -1 || (size_t)r >= sizeof(buf))
+			nếu (r == -1 || (size_t)r >= sizeof(buf))
 				errx(1, "Proxy auth response too long");
 			r = strlen(buf);
-			if ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
+			nếu ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
 				err(1, "write failed (%zu/%d)", cnt, r);
 		}
 
 		/* Terminate headers */
-		if ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
+		nếu ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
 			err(1, "write failed (2/%d)", r);
 
 		/* Read status reply */
 		proxy_read_line(proxyfd, buf, sizeof(buf));
-		if (proxyuser != NULL &&
+		nếu (proxyuser != NULL &&
 		    strncmp(buf, "HTTP/1.0 407 ", 12) == 0) {
-			if (authretry > 1) {
+			nếu (authretry > 1) {
 				fprintf(stderr, "Proxy authentication "
 				    "failed\n");
 			}
 			close(proxyfd);
 			goto again;
-		} else if (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
+		} không_thì nếu (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
 		    strncmp(buf, "HTTP/1.1 200 ", 12) != 0)
 			errx(1, "Proxy error: \"%s\"", buf);
 
 		/* Headers continue until we hit an empty line */
-		for (r = 0; r < HTTP_MAXHDRS; r++) {
+		cho (r = 0; r < HTTP_MAXHDRS; r++) {
 			proxy_read_line(proxyfd, buf, sizeof(buf));
-			if (*buf == '\0')
+			nếu (*buf == '\0')
 				break;
 		}
-		if (*buf != '\0')
+		nếu (*buf != '\0')
 			errx(1, "Too many proxy headers received");
-	} else
+	} không_thì
 		errx(1, "Unknown proxy protocol %d", socksv);
 
-	return (proxyfd);
+	trả_về (proxyfd);
 }
 

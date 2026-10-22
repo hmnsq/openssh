@@ -41,7 +41,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
+#nếu !defined(HAVE_SHA256UPDATE) || !defined(HAVE_SHA384UPDATE) || \
     !defined(HAVE_SHA512UPDATE)
 
 /*** SHA-256/384/512 Various Length Definitions ***********************/
@@ -72,7 +72,7 @@ typedef struct _SHA2_CTX {
 	u_int8_t	buffer[SHA512_BLOCK_LENGTH];
 } SHA2_CTX;
 
-#if 0
+#nếu 0
 __BEGIN_DECLS
 void SHA224Init(SHA2_CTX *);
 void SHA224Transform(u_int32_t state[8], const u_int8_t [SHA224_BLOCK_LENGTH]);
@@ -149,7 +149,7 @@ char *SHA512Data(const u_int8_t *, size_t, char *)
 	__attribute__((__bounded__(__minbytes__,3,SHA512_DIGEST_STRING_LENGTH)));
 #endif /* HAVE_SHA512UPDATE */
 
-#if 0
+#nếu 0
 void SHA512_256Init(SHA2_CTX *);
 void SHA512_256Transform(u_int64_t state[8], const u_int8_t [SHA512_256_BLOCK_LENGTH]);
 void SHA512_256Update(SHA2_CTX *, const u_int8_t *, size_t)

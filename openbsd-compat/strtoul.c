@@ -45,12 +45,12 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long
-strtoul(const char *nptr, char **endptr, int base)
+strtoul(const char *nptr, char **endptr, số_nguyên base)
 {
 	const char *s;
 	unsigned long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	số_nguyên c;
+	số_nguyên neg, any, cutlim;
 
 	/*
 	 * See strtol for comments as to the logic used.
@@ -58,51 +58,51 @@ strtoul(const char *nptr, char **endptr, int base)
 	s = nptr;
 	do {
 		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	} trong_khi (isspace(c));
+	nếu (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} không_thì {
 		neg = 0;
-		if (c == '+')
+		nếu (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	nếu ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	nếu (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULONG_MAX / (unsigned long)base;
 	cutlim = ULONG_MAX % (unsigned long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	cho (acc = 0, any = 0;; c = (unsigned char) *s++) {
+		nếu (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		không_thì nếu (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
+		không_thì
 			break;
-		if (c >= base)
+		nếu (c >= base)
 			break;
-		if (any < 0)
+		nếu (any < 0)
 			continue;
-		if (acc > cutoff || acc == cutoff && c > cutlim) {
+		nếu (acc > cutoff || acc == cutoff && c > cutlim) {
 			any = -1;
 			acc = ULONG_MAX;
 			errno = ERANGE;
-		} else {
+		} không_thì {
 			any = 1;
 			acc *= (unsigned long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	nếu (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
+	nếu (endptr != 0)
 		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	trả_về (acc);
 }
 #endif /* !HAVE_STRTOUL */

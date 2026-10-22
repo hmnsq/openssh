@@ -85,125 +85,125 @@ attrib_to_stat(const Attrib *a, struct stat *st)
 {
 	memset(st, 0, sizeof(*st));
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
+	nếu (a->flags & SSH2_FILEXFER_ATTR_SIZE)
 		st->st_size = a->size;
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	nếu (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		st->st_uid = a->uid;
 		st->st_gid = a->gid;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+	nếu (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
 		st->st_mode = a->perm;
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+	nếu (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
 		st->st_atime = a->atime;
 		st->st_mtime = a->mtime;
 	}
 }
 
 /* Decode attributes in buffer */
-int
+số_nguyên
 decode_attrib(struct sshbuf *b, Attrib *a)
 {
-	int r;
+	số_nguyên r;
 
 	attrib_clear(a);
-	if ((r = sshbuf_get_u32(b, &a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_get_u64(b, &a->size)) != 0)
-			return r;
+	nếu ((r = sshbuf_get_u32(b, &a->flags)) != 0)
+		trả_về r;
+	nếu (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		nếu ((r = sshbuf_get_u64(b, &a->size)) != 0)
+			trả_về r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
+	nếu (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		nếu ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->gid)) != 0)
-			return r;
+			trả_về r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_get_u32(b, &a->perm)) != 0)
-			return r;
+	nếu (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		nếu ((r = sshbuf_get_u32(b, &a->perm)) != 0)
+			trả_về r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
+	nếu (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		nếu ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->mtime)) != 0)
-			return r;
+			trả_về r;
 	}
 	/* vendor-specific extensions */
-	if (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
+	nếu (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
 		char *type;
 		u_char *data;
 		size_t dlen;
 		u_int i, count;
 
-		if ((r = sshbuf_get_u32(b, &count)) != 0)
-			return r;
-		if (count > 0x100000)
-			return SSH_ERR_INVALID_FORMAT;
-		for (i = 0; i < count; i++) {
-			if ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
+		nếu ((r = sshbuf_get_u32(b, &count)) != 0)
+			trả_về r;
+		nếu (count > 0x100000)
+			trả_về SSH_ERR_INVALID_FORMAT;
+		cho (i = 0; i < count; i++) {
+			nếu ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
 			    (r = sshbuf_get_string(b, &data, &dlen)) != 0)
-				return r;
+				trả_về r;
 			debug3("Got file attribute \"%.100s\" len %zu",
 			    type, dlen);
 			free(type);
 			free(data);
 		}
 	}
-	return 0;
+	trả_về 0;
 }
 
 /* Encode attributes to buffer */
-int
+số_nguyên
 encode_attrib(struct sshbuf *b, const Attrib *a)
 {
-	int r;
+	số_nguyên r;
 
-	if ((r = sshbuf_put_u32(b, a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_put_u64(b, a->size)) != 0)
-			return r;
+	nếu ((r = sshbuf_put_u32(b, a->flags)) != 0)
+		trả_về r;
+	nếu (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		nếu ((r = sshbuf_put_u64(b, a->size)) != 0)
+			trả_về r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
+	nếu (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		nếu ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->gid)) != 0)
-			return r;
+			trả_về r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_put_u32(b, a->perm)) != 0)
-			return r;
+	nếu (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		nếu ((r = sshbuf_put_u32(b, a->perm)) != 0)
+			trả_về r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
+	nếu (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		nếu ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->mtime)) != 0)
-			return r;
+			trả_về r;
 	}
-	return 0;
+	trả_về 0;
 }
 
 /* Convert from SSH2_FX_ status to text error message */
 const char *
-fx2txt(int status)
+fx2txt(số_nguyên status)
 {
 	switch (status) {
 	case SSH2_FX_OK:
-		return("No error");
+		trả_về("No error");
 	case SSH2_FX_EOF:
-		return("End of file");
+		trả_về("End of file");
 	case SSH2_FX_NO_SUCH_FILE:
-		return("No such file or directory");
+		trả_về("No such file or directory");
 	case SSH2_FX_PERMISSION_DENIED:
-		return("Permission denied");
+		trả_về("Permission denied");
 	case SSH2_FX_FAILURE:
-		return("Failure");
+		trả_về("Failure");
 	case SSH2_FX_BAD_MESSAGE:
-		return("Bad message");
+		trả_về("Bad message");
 	case SSH2_FX_NO_CONNECTION:
-		return("No connection");
+		trả_về("No connection");
 	case SSH2_FX_CONNECTION_LOST:
-		return("Connection lost");
+		trả_về("Connection lost");
 	case SSH2_FX_OP_UNSUPPORTED:
-		return("Operation unsupported");
+		trả_về("Operation unsupported");
 	default:
-		return("Unknown status");
+		trả_về("Unknown status");
 	}
 	/* NOTREACHED */
 }
@@ -212,52 +212,52 @@ fx2txt(int status)
  * drwxr-xr-x    5 markus   markus       1024 Jan 13 18:39 .ssh
  */
 char *
-ls_file(const char *name, const struct stat *st, int remote, int si_units,
+ls_file(const char *name, const struct stat *st, số_nguyên remote, số_nguyên si_units,
     const char *user, const char *group)
 {
-	int ulen, glen, sz = 0;
+	số_nguyên ulen, glen, sz = 0;
 	struct tm *ltime = localtime(&st->st_mtime);
 	char buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
 	char sbuf[FMT_SCALED_STRSIZE];
 	time_t now;
 
 	strmode(st->st_mode, mode);
-	if (remote) {
-		if (user == NULL) {
+	nếu (remote) {
+		nếu (user == NULL) {
 			snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
 			user = ubuf;
 		}
-		if (group == NULL) {
+		nếu (group == NULL) {
 			snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
 			group = gbuf;
 		}
 		strlcpy(lc, "?", sizeof(lc));
-	} else {
+	} không_thì {
 		user = user_from_uid(st->st_uid, 0);
 		group = group_from_gid(st->st_gid, 0);
 		snprintf(lc, sizeof(lc), "%u", (u_int)st->st_nlink);
 	}
-	if (ltime != NULL) {
+	nếu (ltime != NULL) {
 		now = time(NULL);
-		if (now - (365*24*60*60)/2 < st->st_mtime &&
+		nếu (now - (365*24*60*60)/2 < st->st_mtime &&
 		    now >= st->st_mtime)
 			sz = strftime(tbuf, sizeof tbuf, "%b %e %H:%M", ltime);
-		else
+		không_thì
 			sz = strftime(tbuf, sizeof tbuf, "%b %e  %Y", ltime);
 	}
-	if (sz == 0)
+	nếu (sz == 0)
 		tbuf[0] = '\0';
 	ulen = MAXIMUM(strlen(user), 8);
 	glen = MAXIMUM(strlen(group), 8);
-	if (si_units) {
+	nếu (si_units) {
 		fmt_scaled((long long)st->st_size, sbuf);
 		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8s %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    sbuf, tbuf, name);
-	} else {
+	} không_thì {
 		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8llu %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    (unsigned long long)st->st_size, tbuf, name);
 	}
-	return xstrdup(buf);
+	trả_về xstrdup(buf);
 }

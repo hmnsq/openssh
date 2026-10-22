@@ -42,8 +42,8 @@
  * ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomicio6(ssize_t (*f) (số_nguyên, void *, size_t), số_nguyên fd, void *_s, size_t n,
+    số_nguyên (*cb)(void *, size_t), void *cb_arg)
 {
 	char *s = _s;
 	size_t pos = 0;
@@ -52,58 +52,58 @@ atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
 
 	pfd.fd = fd;
 	pfd.events = f == read ? POLLIN : POLLOUT;
-	while (n > pos) {
+	trong_khi (n > pos) {
 		res = (f) (fd, s + pos, n - pos);
 		switch (res) {
 		case -1:
-			if (errno == EINTR) {
+			nếu (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				nếu (cb != NULL && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					trả_về pos;
 				}
 				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			} không_thì nếu (errno == EAGAIN || errno == EWOULDBLOCK) {
 				(void)poll(&pfd, 1, -1);
 				continue;
 			}
-			return 0;
+			trả_về 0;
 		case 0:
 			errno = EPIPE;
-			return pos;
+			trả_về pos;
 		default:
 			pos += (size_t)res;
-			if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+			nếu (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
 				errno = EINTR;
-				return pos;
+				trả_về pos;
 			}
 		}
 	}
-	return pos;
+	trả_về pos;
 }
 
 size_t
-atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+atomicio(ssize_t (*f) (số_nguyên, void *, size_t), số_nguyên fd, void *_s, size_t n)
 {
-	return atomicio6(f, fd, _s, n, NULL, NULL);
+	trả_về atomicio6(f, fd, _s, n, NULL, NULL);
 }
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomiciov6(ssize_t (*f) (số_nguyên, const struct iovec *, số_nguyên), số_nguyên fd,
+    const struct iovec *_iov, số_nguyên iovcnt,
+    số_nguyên (*cb)(void *, size_t), void *cb_arg)
 {
 	size_t pos = 0, rem;
 	ssize_t res;
 	struct iovec iov_array[IOV_MAX], *iov = iov_array;
 	struct pollfd pfd;
 
-	if (iovcnt < 0 || iovcnt > IOV_MAX) {
+	nếu (iovcnt < 0 || iovcnt > IOV_MAX) {
 		errno = EINVAL;
-		return 0;
+		trả_về 0;
 	}
 	/* Make a copy of the iov array because we may modify it below */
 	memcpy(iov, _iov, (size_t)iovcnt * sizeof(*_iov));
@@ -111,59 +111,59 @@ atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
 	pfd.fd = fd;
 #ifndef BROKEN_READV_COMPARISON
 	pfd.events = f == readv ? POLLIN : POLLOUT;
-#else
+#không_thì
 	pfd.events = POLLIN|POLLOUT;
 #endif
-	for (; iovcnt > 0 && iov[0].iov_len > 0;) {
+	cho (; iovcnt > 0 && iov[0].iov_len > 0;) {
 		res = (f) (fd, iov, iovcnt);
 		switch (res) {
 		case -1:
-			if (errno == EINTR) {
+			nếu (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				nếu (cb != NULL && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					trả_về pos;
 				}
 				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			} không_thì nếu (errno == EAGAIN || errno == EWOULDBLOCK) {
 				(void)poll(&pfd, 1, -1);
 				continue;
 			}
-			return 0;
+			trả_về 0;
 		case 0:
 			errno = EPIPE;
-			return pos;
+			trả_về pos;
 		default:
 			rem = (size_t)res;
 			pos += rem;
 			/* skip completed iov entries */
-			while (iovcnt > 0 && rem >= iov[0].iov_len) {
+			trong_khi (iovcnt > 0 && rem >= iov[0].iov_len) {
 				rem -= iov[0].iov_len;
 				iov++;
 				iovcnt--;
 			}
 			/* This shouldn't happen... */
-			if (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
+			nếu (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
 				errno = EFAULT;
-				return 0;
+				trả_về 0;
 			}
-			if (iovcnt == 0)
+			nếu (iovcnt == 0)
 				break;
 			/* update pointer in partially complete iov */
 			iov[0].iov_base = ((char *)iov[0].iov_base) + rem;
 			iov[0].iov_len -= rem;
 		}
-		if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+		nếu (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
 			errno = EINTR;
-			return pos;
+			trả_về pos;
 		}
 	}
-	return pos;
+	trả_về pos;
 }
 
 size_t
-atomiciov(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt)
+atomiciov(ssize_t (*f) (số_nguyên, const struct iovec *, số_nguyên), số_nguyên fd,
+    const struct iovec *_iov, số_nguyên iovcnt)
 {
-	return atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
+	trả_về atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
 }

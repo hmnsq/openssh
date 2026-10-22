@@ -35,7 +35,7 @@
 /* OPENBSD ORIGINAL: include/vis.h */
 
 #include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#nếu !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #ifndef _VIS_H_
 #define	_VIS_H_
@@ -81,15 +81,15 @@
  */
 #define	UNVIS_END	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+char	*vis(char *, số_nguyên, số_nguyên, số_nguyên);
+số_nguyên	strvis(char *, const char *, số_nguyên);
+số_nguyên	stravis(char **, const char *, số_nguyên);
+số_nguyên	strnvis(char *, const char *, size_t, số_nguyên)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+số_nguyên	strvisx(char *, const char *, size_t, số_nguyên)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
+số_nguyên	strunvis(char *, const char *);
+số_nguyên	unvis(char *, char, số_nguyên *, số_nguyên);
 ssize_t strnunvis(char *, const char *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 

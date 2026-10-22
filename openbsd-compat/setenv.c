@@ -32,7 +32,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#nếu !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
 #include <errno.h>
 #include <stdlib.h>
@@ -55,71 +55,71 @@ static char **lastenv;				/* last value of environ */
  *	This routine *should* be a static; don't use it.
  */
 static char *
-__findenv(const char *name, int len, int *offset)
+__findenv(const char *name, số_nguyên len, số_nguyên *offset)
 {
 	extern char **environ;
-	int i;
+	số_nguyên i;
 	const char *np;
 	char **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
+	nếu (name == NULL || environ == NULL)
+		trả_về (NULL);
+	cho (p = environ + *offset; (cp = *p) != NULL; ++p) {
+		cho (np = name, i = len; i && *cp; i--)
+			nếu (*cp++ != *np++)
 				break;
-		if (i == 0 && *cp++ == '=') {
+		nếu (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			trả_về (cp);
 		}
 	}
-	return (NULL);
+	trả_về (NULL);
 }
 
-#if 0 /* nothing uses putenv */
+#nếu 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
+số_nguyên
 putenv(char *str)
 {
 	char **P, *cp;
 	size_t cnt;
-	int offset = 0;
+	số_nguyên offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	cho (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	nếu (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		trả_về (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	nếu (__findenv(str, (số_nguyên)(cp - str), &offset) != NULL) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
+		trong_khi (__findenv(str, (số_nguyên)(cp - str), &offset)) {
+			cho (P = &environ[offset];; ++P)
+				nếu (!(*P = *(P + 1)))
 					break;
 		}
-		return (0);
+		trả_về (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	cho (P = environ; *P != NULL; P++)
 		;
 	cnt = P - environ;
 	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
+	nếu (!P)
+		trả_về (-1);
+	nếu (lastenv != environ)
 		memcpy(P, environ, cnt * sizeof(char *));
 	lastenv = environ = P;
 	environ[cnt] = str;
 	environ[cnt + 1] = NULL;
-	return (0);
+	trả_về (0);
 }
 
 #endif
@@ -130,63 +130,63 @@ putenv(char *str)
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+số_nguyên
+setenv(const char *name, const char *value, số_nguyên rewrite)
 {
 	char *C, **P;
 	const char *np;
-	int l_value, offset = 0;
+	số_nguyên l_value, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	cho (np = name; *np && *np != '='; ++np)
 		;
 #ifdef notyet
-	if (*np) {
+	nếu (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		trả_về (-1);			/* has `=' in name */
 	}
 #endif
 
 	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	nếu ((C = __findenv(name, (số_nguyên)(np - name), &offset)) != NULL) {
+		số_nguyên tmpoff = offset + 1;
+		nếu (!rewrite)
+			trả_về (0);
+#nếu 0 /* XXX - existing entry may not be writable */
+		nếu (strlen(C) >= l_value) {	/* old larger; copy over */
+			trong_khi ((*C++ = *value++))
 				;
-			return (0);
+			trả_về (0);
 		}
 #endif
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
+		trong_khi (__findenv(name, (số_nguyên)(np - name), &tmpoff)) {
+			cho (P = &environ[tmpoff];; ++P)
+				nếu (!(*P = *(P + 1)))
 					break;
 		}
-	} else {					/* create new slot */
+	} không_thì {					/* create new slot */
 		size_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		cho (P = environ; *P != NULL; P++)
 			;
 		cnt = P - environ;
 		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
+		nếu (!P)
+			trả_về (-1);
+		nếu (lastenv != environ)
 			memcpy(P, environ, cnt * sizeof(char *));
 		lastenv = environ = P;
 		offset = cnt;
 		environ[cnt + 1] = NULL;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	nếu (!(environ[offset] =			/* name + `=' + value */
+	    malloc((size_t)((số_nguyên)(np - name) + l_value + 2))))
+		trả_về (-1);
+	cho (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	cho (*C++ = '='; (*C++ = *value++); )
 		;
-	return (0);
+	trả_về (0);
 }
 
 #endif /* HAVE_SETENV */
@@ -196,31 +196,31 @@ setenv(const char *name, const char *value, int rewrite)
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
+số_nguyên
 unsetenv(const char *name)
 {
 	char **P;
 	const char *np;
-	int offset = 0;
+	số_nguyên offset = 0;
 
-	if (!name || !*name) {
+	nếu (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		trả_về (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	cho (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	nếu (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		trả_về (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
+	trong_khi (__findenv(name, (số_nguyên)(np - name), &offset)) {
+		cho (P = &environ[offset];; ++P)
+			nếu (!(*P = *(P + 1)))
 				break;
 	}
-	return (0);
+	trả_về (0);
 }
 #endif /* HAVE_UNSETENV */
 

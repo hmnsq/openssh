@@ -62,7 +62,7 @@ void fuzz_arena_cleanup(void);
 #include "fixed-keys.h"
 
 static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
-static int initialized = 0;
+static số_nguyên initialized = 0;
 
 static struct sshkey *
 load_pubkey_or_die(const char *txt)
@@ -70,21 +70,21 @@ load_pubkey_or_die(const char *txt)
 	char *tmp, *cp;
 	struct sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	nếu ((k = sshkey_new(KEY_UNSPEC)) == NULL)
 		abort();
-	if ((tmp = cp = strdup(txt)) == NULL)
+	nếu ((tmp = cp = strdup(txt)) == NULL)
 		abort();
-	if (sshkey_read(k, &cp) != 0)
+	nếu (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	trả_về k;
 }
 
 static void
 setup(void)
 {
-	if (initialized)
-		return;
+	nếu (initialized)
+		trả_về;
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
@@ -102,12 +102,12 @@ enum {
 };
 
 static void
-run_one(int api, struct sshkey *k, int lock_arg,
+run_one(số_nguyên api, struct sshkey *k, số_nguyên lock_arg,
     const uint8_t *body, size_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	số_nguyên sv[2] = { -1, -1 };
+	nếu (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		trả_về;
 
 	uint32_t blen = (uint32_t)bsize;
 	uint8_t hdr[4] = {
@@ -115,7 +115,7 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	    (uint8_t)(blen >> 8), (uint8_t)(blen)
 	};
 	(void)write(sv[0], hdr, sizeof(hdr));
-	if (bsize > 0)
+	nếu (bsize > 0)
 		(void)write(sv[0], body, bsize);
 
 	fuzz_arena_begin();
@@ -141,9 +141,9 @@ run_one(int api, struct sshkey *k, int lock_arg,
 		break;
 	case API_QUERY_EXTENSIONS: {
 		char **exts = NULL;
-		int n = ssh_agent_query_extensions(sv[1], &exts);
-		if (n == 0 && exts != NULL) {
-			for (int i = 0; exts[i] != NULL; i++)
+		số_nguyên n = ssh_agent_query_extensions(sv[1], &exts);
+		nếu (n == 0 && exts != NULL) {
+			cho (số_nguyên i = 0; exts[i] != NULL; i++)
 				free(exts[i]);
 			free(exts);
 		}
@@ -160,13 +160,13 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	close(sv[1]);
 }
 
-extern "C" int
+extern "C" số_nguyên
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	setup();
 
-	if (size > 65536)
-		return 0;
+	nếu (size > 65536)
+		trả_về 0;
 
 	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
 	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
@@ -176,5 +176,5 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
 	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
 
-	return 0;
+	trả_về 0;
 }

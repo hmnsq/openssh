@@ -49,13 +49,13 @@
 /* import */
 extern ServerOptions options;
 
-static int auth2_challenge_start(struct ssh *);
-static int send_userauth_info_request(struct ssh *);
-static int input_userauth_info_response(int, uint32_t, struct ssh *);
+static số_nguyên auth2_challenge_start(struct ssh *);
+static số_nguyên send_userauth_info_request(struct ssh *);
+static số_nguyên input_userauth_info_response(số_nguyên, uint32_t, struct ssh *);
 
 #ifdef BSD_AUTH
 extern KbdintDevice mm_bsdauth_device;
-#else
+#không_thì
 #ifdef USE_PAM
 extern KbdintDevice mm_sshpam_device;
 #endif
@@ -64,7 +64,7 @@ extern KbdintDevice mm_sshpam_device;
 KbdintDevice *devices[] = {
 #ifdef BSD_AUTH
 	&mm_bsdauth_device,
-#else
+#không_thì
 #ifdef USE_PAM
 	&mm_sshpam_device,
 #endif
@@ -86,11 +86,11 @@ struct KbdintAuthctxt
 void
 remove_kbdint_device(const char *devname)
 {
-	int i, j;
+	số_nguyên i, j;
 
-	for (i = 0; devices[i] != NULL; i++)
-		if (strcmp(devices[i]->name, devname) == 0) {
-			for (j = i; devices[j] != NULL; j++)
+	cho (i = 0; devices[i] != NULL; i++)
+		nếu (strcmp(devices[i]->name, devname) == 0) {
+			cho (j = i; devices[j] != NULL; j++)
 				devices[j] = devices[j+1];
 			i--;
 		}
@@ -102,26 +102,26 @@ kbdint_alloc(const char *devs)
 {
 	KbdintAuthctxt *kbdintctxt;
 	struct sshbuf *b;
-	int i, r;
+	số_nguyên i, r;
 
 #ifdef USE_PAM
-	if (!options.use_pam)
+	nếu (!options.use_pam)
 		remove_kbdint_device("pam");
 #endif
 
 	kbdintctxt = xcalloc(1, sizeof(KbdintAuthctxt));
-	if (strcmp(devs, "") == 0) {
-		if ((b = sshbuf_new()) == NULL)
+	nếu (strcmp(devs, "") == 0) {
+		nếu ((b = sshbuf_new()) == NULL)
 			fatal_f("sshbuf_new failed");
-		for (i = 0; devices[i]; i++) {
-			if ((r = sshbuf_putf(b, "%s%s",
+		cho (i = 0; devices[i]; i++) {
+			nếu ((r = sshbuf_putf(b, "%s%s",
 			    sshbuf_len(b) ? "," : "", devices[i]->name)) != 0)
 				fatal_fr(r, "buffer error");
 		}
-		if ((kbdintctxt->devices = sshbuf_dup_string(b)) == NULL)
+		nếu ((kbdintctxt->devices = sshbuf_dup_string(b)) == NULL)
 			fatal_f("sshbuf_dup_string failed");
 		sshbuf_free(b);
-	} else {
+	} không_thì {
 		kbdintctxt->devices = xstrdup(devs);
 	}
 	debug("kbdint_alloc: devices '%s'", kbdintctxt->devices);
@@ -129,12 +129,12 @@ kbdint_alloc(const char *devs)
 	kbdintctxt->device = NULL;
 	kbdintctxt->nreq = 0;
 
-	return kbdintctxt;
+	trả_về kbdintctxt;
 }
 static void
 kbdint_reset_device(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->ctxt) {
+	nếu (kbdintctxt->ctxt) {
 		kbdintctxt->device->free_ctx(kbdintctxt->ctxt);
 		kbdintctxt->ctxt = NULL;
 	}
@@ -143,36 +143,36 @@ kbdint_reset_device(KbdintAuthctxt *kbdintctxt)
 static void
 kbdint_free(KbdintAuthctxt *kbdintctxt)
 {
-	if (kbdintctxt->device)
+	nếu (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
 	free(kbdintctxt->devices);
 	freezero(kbdintctxt, sizeof(*kbdintctxt));
 }
 /* get next device */
-static int
+static số_nguyên
 kbdint_next_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
 {
 	size_t len;
 	char *t;
 	size_t i;
 
-	if (kbdintctxt->device)
+	nếu (kbdintctxt->device)
 		kbdint_reset_device(kbdintctxt);
 	do {
 		len = kbdintctxt->devices ?
 		    strcspn(kbdintctxt->devices, ",") : 0;
 
-		if (len == 0)
+		nếu (len == 0)
 			break;
-		for (i = 0; devices[i]; i++) {
-			if (i >= sizeof(kbdintctxt->devices_done) * 8 ||
+		cho (i = 0; devices[i]; i++) {
+			nếu (i >= sizeof(kbdintctxt->devices_done) * 8 ||
 			    i >= sizeof(devices) / sizeof(devices[0]))
 				fatal_f("internal error: too many devices");
-			if ((kbdintctxt->devices_done & (1 << i)) != 0 ||
+			nếu ((kbdintctxt->devices_done & (1 << i)) != 0 ||
 			    !auth2_method_allowed(authctxt,
 			    "keyboard-interactive", devices[i]->name))
 				continue;
-			if (strlen(devices[i]->name) == len &&
+			nếu (strlen(devices[i]->name) == len &&
 			    memcmp(kbdintctxt->devices, devices[i]->name,
 			    len) == 0) {
 				kbdintctxt->device = devices[i];
@@ -184,16 +184,16 @@ kbdint_next_device(Authctxt *authctxt, KbdintAuthctxt *kbdintctxt)
 		free(t);
 		debug2("kbdint_next_device: devices %s", kbdintctxt->devices ?
 		    kbdintctxt->devices : "<empty>");
-	} while (kbdintctxt->devices && !kbdintctxt->device);
+	} trong_khi (kbdintctxt->devices && !kbdintctxt->device);
 
-	return kbdintctxt->device ? 1 : 0;
+	trả_về kbdintctxt->device ? 1 : 0;
 }
 
 /*
  * try challenge-response, set authctxt->postponed if we have to
  * wait for the response.
  */
-int
+số_nguyên
 auth2_challenge(struct ssh *ssh, char *devs)
 {
 	Authctxt *authctxt = ssh->authctxt;
@@ -201,11 +201,11 @@ auth2_challenge(struct ssh *ssh, char *devs)
 	    authctxt->user ? authctxt->user : "<nouser>",
 	    devs ? devs : "<no devs>");
 
-	if (authctxt->user == NULL || !devs)
-		return 0;
-	if (authctxt->kbdintctxt == NULL)
+	nếu (authctxt->user == NULL || !devs)
+		trả_về 0;
+	nếu (authctxt->kbdintctxt == NULL)
 		authctxt->kbdintctxt = kbdint_alloc(devs);
-	return auth2_challenge_start(ssh);
+	trả_về auth2_challenge_start(ssh);
 }
 
 /* unregister kbd-int callbacks and context */
@@ -215,14 +215,14 @@ auth2_challenge_stop(struct ssh *ssh)
 	Authctxt *authctxt = ssh->authctxt;
 	/* unregister callback */
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE, NULL);
-	if (authctxt->kbdintctxt != NULL) {
+	nếu (authctxt->kbdintctxt != NULL) {
 		kbdint_free(authctxt->kbdintctxt);
 		authctxt->kbdintctxt = NULL;
 	}
 }
 
 /* side effect: sets authctxt->postponed if a reply was sent*/
-static int
+static số_nguyên
 auth2_challenge_start(struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
@@ -231,29 +231,29 @@ auth2_challenge_start(struct ssh *ssh)
 	debug2("auth2_challenge_start: devices %s",
 	    kbdintctxt->devices ?  kbdintctxt->devices : "<empty>");
 
-	if (kbdint_next_device(authctxt, kbdintctxt) == 0) {
+	nếu (kbdint_next_device(authctxt, kbdintctxt) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		trả_về 0;
 	}
 	debug("auth2_challenge_start: trying authentication method '%s'",
 	    kbdintctxt->device->name);
 
-	if ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == NULL) {
+	nếu ((kbdintctxt->ctxt = kbdintctxt->device->init_ctx(authctxt)) == NULL) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		trả_về 0;
 	}
-	if (send_userauth_info_request(ssh) == 0) {
+	nếu (send_userauth_info_request(ssh) == 0) {
 		auth2_challenge_stop(ssh);
-		return 0;
+		trả_về 0;
 	}
 	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_RESPONSE,
 	    &input_userauth_info_response);
 
 	authctxt->postponed = 1;
-	return 0;
+	trả_về 0;
 }
 
-static int
+static số_nguyên
 send_userauth_info_request(struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
@@ -262,74 +262,74 @@ send_userauth_info_request(struct ssh *ssh)
 	u_int r, i, *echo_on;
 
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt->device->query(kbdintctxt->ctxt,
+	nếu (kbdintctxt->device->query(kbdintctxt->ctxt,
 	    &name, &instr, &kbdintctxt->nreq, &prompts, &echo_on))
-		return 0;
+		trả_về 0;
 
-	if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
+	nếu ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, name)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, instr)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "")) != 0 ||	/* language not used */
 	    (r = sshpkt_put_u32(ssh, kbdintctxt->nreq)) != 0)
 		fatal_fr(r, "start packet");
-	for (i = 0; i < kbdintctxt->nreq; i++) {
-		if ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
+	cho (i = 0; i < kbdintctxt->nreq; i++) {
+		nếu ((r = sshpkt_put_cstring(ssh, prompts[i])) != 0 ||
 		    (r = sshpkt_put_u8(ssh, echo_on[i])) != 0)
 			fatal_fr(r, "assemble packet");
 	}
-	if ((r = sshpkt_send(ssh)) != 0 ||
+	nếu ((r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
 		fatal_fr(r, "send packet");
 
-	for (i = 0; i < kbdintctxt->nreq; i++)
+	cho (i = 0; i < kbdintctxt->nreq; i++)
 		free(prompts[i]);
 	free(prompts);
 	free(echo_on);
 	free(name);
 	free(instr);
-	return 1;
+	trả_về 1;
 }
 
-static int
-input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
+static số_nguyên
+input_userauth_info_response(số_nguyên type, uint32_t seq, struct ssh *ssh)
 {
 	Authctxt *authctxt = ssh->authctxt;
 	KbdintAuthctxt *kbdintctxt;
-	int authenticated = 0, res;
-	int r;
+	số_nguyên authenticated = 0, res;
+	số_nguyên r;
 	u_int i, nresp;
 	const char *devicename = NULL;
 	char **response = NULL;
 	double tstart = monotime_double();
 
-	if (authctxt == NULL)
+	nếu (authctxt == NULL)
 		fatal_f("no authctxt");
 	kbdintctxt = authctxt->kbdintctxt;
-	if (kbdintctxt == NULL || kbdintctxt->ctxt == NULL)
+	nếu (kbdintctxt == NULL || kbdintctxt->ctxt == NULL)
 		fatal_f("no kbdintctxt");
-	if (kbdintctxt->device == NULL)
+	nếu (kbdintctxt->device == NULL)
 		fatal_f("no device");
 
 	authctxt->postponed = 0;	/* reset */
-	if ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
+	nếu ((r = sshpkt_get_u32(ssh, &nresp)) != 0)
 		fatal_fr(r, "parse packet");
-	if (nresp != kbdintctxt->nreq)
+	nếu (nresp != kbdintctxt->nreq)
 		fatal_f("wrong number of replies");
-	if (nresp > 100)
+	nếu (nresp > 100)
 		fatal_f("too many replies");
-	if (nresp > 0) {
+	nếu (nresp > 0) {
 		response = xcalloc(nresp, sizeof(char *));
-		for (i = 0; i < nresp; i++) {
-			if ((r = sshpkt_get_cstring(ssh, &response[i], NULL)) != 0)
+		cho (i = 0; i < nresp; i++) {
+			nếu ((r = sshpkt_get_cstring(ssh, &response[i], NULL)) != 0)
 				fatal_fr(r, "parse response");
 		}
 	}
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	nếu ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
 
 	res = kbdintctxt->device->respond(kbdintctxt->ctxt, nresp, response);
 
-	for (i = 0; i < nresp; i++) {
+	cho (i = 0; i < nresp; i++) {
 		explicit_bzero(response[i], strlen(response[i]));
 		free(response[i]);
 	}
@@ -342,7 +342,7 @@ input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
 		break;
 	case 1:
 		/* Authentication needs further interaction */
-		if (send_userauth_info_request(ssh) == 1)
+		nếu (send_userauth_info_request(ssh) == 1)
 			authctxt->postponed = 1;
 		break;
 	default:
@@ -350,19 +350,19 @@ input_userauth_info_response(int type, uint32_t seq, struct ssh *ssh)
 		break;
 	}
 	devicename = kbdintctxt->device->name;
-	if (!authctxt->postponed) {
-		if (authenticated) {
+	nếu (!authctxt->postponed) {
+		nếu (authenticated) {
 			auth2_challenge_stop(ssh);
-		} else {
+		} không_thì {
 			/* start next device */
 			/* may set authctxt->postponed */
 			auth2_challenge_start(ssh);
 		}
 	}
 
-	if (!authenticated)
+	nếu (!authenticated)
 		auth_failure_delay(authctxt, tstart);
 	userauth_finish(ssh, authenticated, "keyboard-interactive",
 	    devicename);
-	return 0;
+	trả_về 0;
 }

@@ -26,60 +26,60 @@
 #include <openssl/evp.h>
 
 #ifndef HAVE_EVP_CIPHER_CTX_GET_IV
-int
+số_nguyên
 EVP_CIPHER_CTX_get_iv(const EVP_CIPHER_CTX *ctx, unsigned char *iv, size_t len)
 {
-	if (ctx == NULL)
-		return 0;
-	if (EVP_CIPHER_CTX_iv_length(ctx) < 0)
-		return 0;
-	if (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
-		return 0;
-	if (len > EVP_MAX_IV_LENGTH)
-		return 0; /* sanity check; shouldn't happen */
+	nếu (ctx == NULL)
+		trả_về 0;
+	nếu (EVP_CIPHER_CTX_iv_length(ctx) < 0)
+		trả_về 0;
+	nếu (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
+		trả_về 0;
+	nếu (len > EVP_MAX_IV_LENGTH)
+		trả_về 0; /* sanity check; shouldn't happen */
 	/*
 	 * Skip the memcpy entirely when the requested IV length is zero,
 	 * since the iv pointer may be NULL or invalid.
 	 */
-	if (len != 0) {
-		if (iv == NULL)
-			return 0;
+	nếu (len != 0) {
+		nếu (iv == NULL)
+			trả_về 0;
 # ifdef HAVE_EVP_CIPHER_CTX_IV
 		memcpy(iv, EVP_CIPHER_CTX_iv(ctx), len);
-# else
+# không_thì
 		memcpy(iv, ctx->iv, len);
 # endif /* HAVE_EVP_CIPHER_CTX_IV */
 	}
-	return 1;
+	trả_về 1;
 }
 #endif /* HAVE_EVP_CIPHER_CTX_GET_IV */
 
 #ifndef HAVE_EVP_CIPHER_CTX_SET_IV
-int
+số_nguyên
 EVP_CIPHER_CTX_set_iv(EVP_CIPHER_CTX *ctx, const unsigned char *iv, size_t len)
 {
-	if (ctx == NULL)
-		return 0;
-	if (EVP_CIPHER_CTX_iv_length(ctx) < 0)
-		return 0;
-	if (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
-		return 0;
-	if (len > EVP_MAX_IV_LENGTH)
-		return 0; /* sanity check; shouldn't happen */
+	nếu (ctx == NULL)
+		trả_về 0;
+	nếu (EVP_CIPHER_CTX_iv_length(ctx) < 0)
+		trả_về 0;
+	nếu (len != (size_t)EVP_CIPHER_CTX_iv_length(ctx))
+		trả_về 0;
+	nếu (len > EVP_MAX_IV_LENGTH)
+		trả_về 0; /* sanity check; shouldn't happen */
 	/*
 	 * Skip the memcpy entirely when the requested IV length is zero,
 	 * since the iv pointer may be NULL or invalid.
 	 */
-	if (len != 0) {
-		if (iv == NULL)
-			return 0;
+	nếu (len != 0) {
+		nếu (iv == NULL)
+			trả_về 0;
 # ifdef HAVE_EVP_CIPHER_CTX_IV_NOCONST
 		memcpy(EVP_CIPHER_CTX_iv_noconst(ctx), iv, len);
-# else
+# không_thì
 		memcpy(ctx->iv, iv, len);
 # endif /* HAVE_EVP_CIPHER_CTX_IV_NOCONST */
 	}
-	return 1;
+	trả_về 1;
 }
 #endif /* HAVE_EVP_CIPHER_CTX_SET_IV */
 

@@ -12,17 +12,17 @@ extern "C" {
 #include "sshkey.h"
 #include "ssherr.h"
 
-static struct sshkey *generate_or_die(int type, unsigned bits) {
-  int r;
+static struct sshkey *generate_or_die(số_nguyên type, unsigned bits) {
+  số_nguyên r;
   struct sshkey *ret;
-  if ((r = sshkey_generate(type, bits, &ret)) != 0) {
+  nếu ((r = sshkey_generate(type, bits, &ret)) != 0) {
     fprintf(stderr, "generate(%d, %u): %s", type, bits, ssh_err(r));
     abort();
   }
-  return ret;
+  trả_về ret;
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+số_nguyên LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
 {
 #ifdef WITH_OPENSSL
   static struct sshkey *rsa = generate_or_die(KEY_RSA, 2048);
@@ -56,7 +56,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
 
   sshkey_verify(ed25519, sig, slen, (const u_char *)data, dlen, NULL, 0, &details);
   sshkey_sig_details_free(details);
-  return 0;
+  trả_về 0;
 }
 
 } // extern

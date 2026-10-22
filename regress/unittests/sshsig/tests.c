@@ -38,7 +38,7 @@ load_file(const char *name)
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
 	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	trả_về ret;
 }
 
 static struct sshkey *
@@ -47,7 +47,7 @@ load_key(const char *name)
 	struct sshkey *ret = NULL;
 	ASSERT_INT_EQ(sshkey_load_public(test_data_file(name), &ret, NULL), 0);
 	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	trả_về ret;
 }
 
 static void
@@ -80,7 +80,7 @@ tests(void)
 	struct sshbuf *msg;
 	char *namespace;
 
-#if 0
+#nếu 0
         log_init("test_sshsig", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 1);
 #endif
 
@@ -117,7 +117,7 @@ tests(void)
 	TEST_DONE();
 
 #ifdef ENABLE_SK
-#if defined(WITH_OPENSSL)
+#nếu defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK signature");
 	check_sig("ecdsa_sk.pub", "ecdsa_sk.sig", msg, namespace);
 	TEST_DONE();
@@ -127,7 +127,7 @@ tests(void)
 	check_sig("ed25519_sk.pub", "ed25519_sk.sig", msg, namespace);
 	TEST_DONE();
 
-#if defined(WITH_OPENSSL)
+#nếu defined(WITH_OPENSSL)
 	TEST_START("check ECDSA-SK webauthn signature");
 	check_sig("ecdsa_sk_webauthn.pub", "ecdsa_sk_webauthn.sig",
 	    msg, namespace);

@@ -26,7 +26,7 @@
  */
 
 #include "includes.h"
-#if defined(USE_LINUX_AUDIT)
+#nếu defined(USE_LINUX_AUDIT)
 #include <libaudit.h>
 #include <unistd.h>
 #include <string.h>
@@ -38,20 +38,20 @@
 
 const char *audit_username(void);
 
-int
-linux_audit_record_event(int uid, const char *username, const char *hostname,
-    const char *ip, const char *ttyn, int success)
+số_nguyên
+linux_audit_record_event(số_nguyên uid, const char *username, const char *hostname,
+    const char *ip, const char *ttyn, số_nguyên success)
 {
-	int audit_fd, rc, saved_errno;
+	số_nguyên audit_fd, rc, saved_errno;
 
-	if ((audit_fd = audit_open()) < 0) {
-		if (errno == EINVAL || errno == EPROTONOSUPPORT ||
+	nếu ((audit_fd = audit_open()) < 0) {
+		nếu (errno == EINVAL || errno == EPROTONOSUPPORT ||
 		    errno == EAFNOSUPPORT)
-			return 1; /* No audit support in kernel */
-		else
-			return 0; /* Must prevent login */
+			trả_về 1; /* No audit support in kernel */
+		không_thì
+			trả_về 0; /* Must prevent login */
 	}
-        if (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
+        nếu (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
                 hostname = NULL;
 	rc = audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
 	    NULL, "login", username ? username : "(unknown)",
@@ -63,17 +63,17 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	nếu ((rc == -EPERM) && (geteuid() != 0))
 		rc = 0;
 	errno = saved_errno;
 
-	return rc >= 0;
+	trả_về rc >= 0;
 }
 
 /* Below is the sshd audit API code */
 
 void
-audit_connection_from(const char *host, int port)
+audit_connection_from(const char *host, số_nguyên port)
 {
 	/* not implemented */
 }
@@ -87,7 +87,7 @@ audit_run_command(const char *command)
 void
 audit_session_open(struct logininfo *li)
 {
-	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
+	nếu (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
 	    li->line, 1) == 0)
 		fatal("linux_audit_write_entry failed: %s", strerror(errno));
 }

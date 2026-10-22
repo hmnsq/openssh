@@ -47,12 +47,12 @@
  * alphabets and digits are each contiguous.
  */
 long long
-strtoll(const char *nptr, char **endptr, int base)
+strtoll(const char *nptr, char **endptr, số_nguyên base)
 {
 	const char *s;
 	long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	số_nguyên c;
+	số_nguyên neg, any, cutlim;
 
 	/*
 	 * Skip white space and pick up leading +/- sign if any.
@@ -62,22 +62,22 @@ strtoll(const char *nptr, char **endptr, int base)
 	s = nptr;
 	do {
 		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+	} trong_khi (isspace(c));
+	nếu (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else {
+	} không_thì {
 		neg = 0;
-		if (c == '+')
+		nếu (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	nếu ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	nếu (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	/*
@@ -101,48 +101,48 @@ strtoll(const char *nptr, char **endptr, int base)
 	cutoff = neg ? LLONG_MIN : LLONG_MAX;
 	cutlim = cutoff % base;
 	cutoff /= base;
-	if (neg) {
-		if (cutlim > 0) {
+	nếu (neg) {
+		nếu (cutlim > 0) {
 			cutlim -= base;
 			cutoff += 1;
 		}
 		cutlim = -cutlim;
 	}
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	cho (acc = 0, any = 0;; c = (unsigned char) *s++) {
+		nếu (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		không_thì nếu (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
+		không_thì
 			break;
-		if (c >= base)
+		nếu (c >= base)
 			break;
-		if (any < 0)
+		nếu (any < 0)
 			continue;
-		if (neg) {
-			if (acc < cutoff || (acc == cutoff && c > cutlim)) {
+		nếu (neg) {
+			nếu (acc < cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MIN;
 				errno = ERANGE;
-			} else {
+			} không_thì {
 				any = 1;
 				acc *= base;
 				acc -= c;
 			}
-		} else {
-			if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		} không_thì {
+			nếu (acc > cutoff || (acc == cutoff && c > cutlim)) {
 				any = -1;
 				acc = LLONG_MAX;
 				errno = ERANGE;
-			} else {
+			} không_thì {
 				any = 1;
 				acc *= base;
 				acc += c;
 			}
 		}
 	}
-	if (endptr != 0)
+	nếu (endptr != 0)
 		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	trả_về (acc);
 }
 #endif /* HAVE_STRTOLL */

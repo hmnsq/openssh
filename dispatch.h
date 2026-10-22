@@ -36,14 +36,14 @@ enum {
 
 struct ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+typedef số_nguyên dispatch_fn(số_nguyên, uint32_t, struct ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
+số_nguyên	dispatch_protocol_error(số_nguyên, uint32_t, struct ssh *);
+số_nguyên	dispatch_protocol_ignore(số_nguyên, uint32_t, struct ssh *);
 void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
+void	ssh_dispatch_set(struct ssh *, số_nguyên, dispatch_fn *);
 void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+số_nguyên	ssh_dispatch_run(struct ssh *, số_nguyên, volatile sig_atomic_t *);
+void	ssh_dispatch_run_fatal(struct ssh *, số_nguyên, volatile sig_atomic_t *);
 
 #endif

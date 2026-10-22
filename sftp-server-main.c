@@ -29,24 +29,24 @@
 #include "xmalloc.h"
 
 void
-cleanup_exit(int i)
+cleanup_exit(số_nguyên i)
 {
 	sftp_server_cleanup_exit(i);
 }
 
-int
-main(int argc, char **argv)
+số_nguyên
+main(số_nguyên argc, char **argv)
 {
 	struct passwd *user_pw;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
-	if ((user_pw = getpwuid(getuid())) == NULL) {
+	nếu ((user_pw = getpwuid(getuid())) == NULL) {
 		fprintf(stderr, "No user found for uid %lu\n",
 		    (u_long)getuid());
-		return 1;
+		trả_về 1;
 	}
 
-	return (sftp_server_main(argc, argv, user_pw));
+	trả_về (sftp_server_main(argc, argv, user_pw));
 }

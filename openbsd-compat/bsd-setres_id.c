@@ -24,75 +24,75 @@
 
 #include "log.h"
 
-#if !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
-int
+#nếu !defined(HAVE_SETRESGID) || defined(BROKEN_SETRESGID)
+số_nguyên
 setresgid(gid_t rgid, gid_t egid, gid_t sgid)
 {
-	int ret = 0, saved_errno;
+	số_nguyên ret = 0, saved_errno;
 
-	if (rgid != sgid) {
+	nếu (rgid != sgid) {
 		errno = ENOSYS;
-		return -1;
+		trả_về -1;
 	}
-#if defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
-	if (setregid(rgid, egid) < 0) {
+#nếu defined(HAVE_SETREGID) && !defined(BROKEN_SETREGID)
+	nếu (setregid(rgid, egid) < 0) {
 		saved_errno = errno;
 		error("setregid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
-	if (setegid(egid) < 0) {
+#không_thì
+	nếu (setegid(egid) < 0) {
 		saved_errno = errno;
 		error("setegid %lu: %.100s", (u_long)egid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-	if (setgid(rgid) < 0) {
+	nếu (setgid(rgid) < 0) {
 		saved_errno = errno;
 		error("setgid %lu: %.100s", (u_long)rgid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 #endif
-	return ret;
+	trả_về ret;
 }
 #endif
 
-#if !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
-int
+#nếu !defined(HAVE_SETRESUID) || defined(BROKEN_SETRESUID)
+số_nguyên
 setresuid(uid_t ruid, uid_t euid, uid_t suid)
 {
-	int ret = 0, saved_errno;
+	số_nguyên ret = 0, saved_errno;
 
-	if (ruid != suid) {
+	nếu (ruid != suid) {
 		errno = ENOSYS;
-		return -1;
+		trả_về -1;
 	}
-#if defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
-	if (setreuid(ruid, euid) < 0) {
+#nếu defined(HAVE_SETREUID) && !defined(BROKEN_SETREUID)
+	nếu (setreuid(ruid, euid) < 0) {
 		saved_errno = errno;
 		error("setreuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
-#else
+#không_thì
 
 # ifndef SETEUID_BREAKS_SETUID
-	if (seteuid(euid) < 0) {
+	nếu (seteuid(euid) < 0) {
 		saved_errno = errno;
 		error("seteuid %lu: %.100s", (u_long)euid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 # endif
-	if (setuid(ruid) < 0) {
+	nếu (setuid(ruid) < 0) {
 		saved_errno = errno;
 		error("setuid %lu: %.100s", (u_long)ruid, strerror(errno));
 		errno = saved_errno;
 		ret = -1;
 	}
 #endif
-	return ret;
+	trả_về ret;
 }
 #endif

@@ -35,7 +35,7 @@
 
 #ifndef HAVE_STRUCT_POLLFD_FD
 typedef struct pollfd {
-	int	fd;
+	số_nguyên	fd;
 	short	events;
 	short	revents;
 } pollfd_t;
@@ -59,7 +59,7 @@ typedef struct pollfd {
 # define POLLNVAL	0x0020
 #endif
 
-#if 0
+#nếu 0
 /* the following are currently not implemented */
 #define	POLLRDNORM	0x0040
 #define POLLNORM	POLLRDNORM
@@ -74,17 +74,17 @@ typedef struct pollfd {
 #ifndef HAVE_NFDS_T
 # ifdef POLL_NFDS_T_ULONG
 typedef unsigned long	nfds_t;
-# else
-typedef unsigned int	nfds_t;
+# không_thì
+typedef unsigned số_nguyên	nfds_t;
 # endif
 #endif
 
 #ifndef HAVE_POLL
-int   poll(struct pollfd *, nfds_t, int);
+số_nguyên   poll(struct pollfd *, nfds_t, số_nguyên);
 #endif
 
 #ifndef HAVE_PPOLL
-int   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
+số_nguyên   ppoll(struct pollfd *, nfds_t, const struct timespec *, const sigset_t *);
 #endif
 
 #endif /* !_COMPAT_POLL_H_ */

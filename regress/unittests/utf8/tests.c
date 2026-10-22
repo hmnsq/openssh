@@ -21,7 +21,7 @@ static void
 badarg(void)
 {
 	char	 buf[16];
-	int	 len, width;
+	số_nguyên	 len, width;
 
 	width = 1;
 	TEST_START("utf8_badarg");
@@ -33,14 +33,14 @@ badarg(void)
 }
 
 static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+one(số_nguyên utf8, const char *name, const char *mbs, số_nguyên width,
+    số_nguyên wantwidth, số_nguyên wantlen, const char *wants)
 {
 	char	 buf[16];
-	int	*wp;
-	int	 len;
+	số_nguyên	*wp;
+	số_nguyên	 len;
 
-	if (wantlen == -2)
+	nếu (wantlen == -2)
 		wantlen = strlen(wants);
 	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
 	(void)strlcat(buf, name, sizeof(buf));

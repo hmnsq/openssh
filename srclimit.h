@@ -17,10 +17,10 @@ struct xaddr;
 
 struct per_source_penalty;
 
-void	srclimit_init(int, int, int, int,
+void	srclimit_init(số_nguyên, số_nguyên, số_nguyên, số_nguyên,
     struct per_source_penalty *, const char *);
-int	srclimit_check_allow(int, int);
-void	srclimit_done(int);
+số_nguyên	srclimit_check_allow(số_nguyên, số_nguyên);
+void	srclimit_done(số_nguyên);
 
 #define SRCLIMIT_PENALTY_NONE			0
 #define SRCLIMIT_PENALTY_CRASH			1
@@ -37,6 +37,6 @@ void	srclimit_done(int);
 #define EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
 #define EXIT_INVALID_USER	7	/* invalid user supplied */
 
-void	srclimit_penalise(struct xaddr *, int);
-int	srclimit_penalty_check_allow(int, const char **);
+void	srclimit_penalise(struct xaddr *, số_nguyên);
+số_nguyên	srclimit_penalty_check_allow(số_nguyên, const char **);
 void	srclimit_penalty_info(void);

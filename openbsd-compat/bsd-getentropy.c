@@ -38,43 +38,43 @@
 
 #include "log.h"
 
-int
+số_nguyên
 _ssh_compat_getentropy(void *s, size_t len)
 {
-#if defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
-	if (RAND_bytes(s, len) <= 0)
+#nếu defined(WITH_OPENSSL) && defined(OPENSSL_PRNG_ONLY)
+	nếu (RAND_bytes(s, len) <= 0)
 		fatal("Couldn't obtain random bytes (error 0x%lx)",
 		    (unsigned long)ERR_get_error());
-#else
-	int fd, save_errno;
+#không_thì
+	số_nguyên fd, save_errno;
 	ssize_t r;
 	size_t o = 0;
 
 #ifdef WITH_OPENSSL
-	if (RAND_bytes(s, len) == 1)
-		return 0;
+	nếu (RAND_bytes(s, len) == 1)
+		trả_về 0;
 #endif
 #ifdef HAVE_GETENTROPY
-	if ((r = getentropy(s, len)) == 0)
-		return 0;
+	nếu ((r = getentropy(s, len)) == 0)
+		trả_về 0;
 #endif /* HAVE_GETENTROPY */
 #ifdef HAVE_GETRANDOM
-	if ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
-		return 0;
+	nếu ((r = getrandom(s, len, 0)) > 0 && (size_t)r == len)
+		trả_về 0;
 #endif /* HAVE_GETRANDOM */
 
-	if ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
+	nếu ((fd = open(SSH_RANDOM_DEV, O_RDONLY)) == -1) {
 		save_errno = errno;
 		/* Try egd/prngd before giving up. */
-		if (seed_from_prngd(s, len) == 0)
-			return 0;
+		nếu (seed_from_prngd(s, len) == 0)
+			trả_về 0;
 		fatal("Couldn't open %s: %s", SSH_RANDOM_DEV,
 		    strerror(save_errno));
 	}
-	while (o < len) {
+	trong_khi (o < len) {
 		r = read(fd, (u_char *)s + o, len - o);
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR ||
+		nếu (r < 0) {
+			nếu (errno == EAGAIN || errno == EINTR ||
 			    errno == EWOULDBLOCK)
 				continue;
 			fatal("read %s: %s", SSH_RANDOM_DEV, strerror(errno));
@@ -83,5 +83,5 @@ _ssh_compat_getentropy(void *s, size_t len)
 	}
 	close(fd);
 #endif /* WITH_OPENSSL */
-	return 0;
+	trả_về 0;
 }
