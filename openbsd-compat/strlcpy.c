@@ -18,11 +18,11 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strlcpy.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 #ifndef HAVE_STRLCPY
 
-#include <sys/types.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <string.h>
 
 /*
  * Copy src to string dst of size siz.  At most siz-1 characters
@@ -30,29 +30,29 @@
  * Returns strlen(src); if retval >= siz, truncation occurred.
  */
 size_t
-strlcpy(char *dst, const char *src, size_t siz)
+strlcpy(حرف *dst, ثابت حرف *src, size_t siz)
 {
-	char *d = dst;
-	const char *s = src;
+	حرف *d = dst;
+	ثابت حرف *s = src;
 	size_t n = siz;
 
 	/* Copy as many bytes as will fit */
-	if (n != 0) {
-		while (--n != 0) {
-			if ((*d++ = *s++) == '\0')
-				break;
+	إذا (n != 0) {
+		طالما (--n != 0) {
+			إذا ((*d++ = *s++) == '\0')
+				اكسر;
 		}
 	}
 
 	/* Not enough room in dst, add NUL and traverse rest of src */
-	if (n == 0) {
-		if (siz != 0)
+	إذا (n == 0) {
+		إذا (siz != 0)
 			*d = '\0';		/* NUL-terminate dst */
-		while (*s++)
+		طالما (*s++)
 			;
 	}
 
-	return(s - src - 1);	/* count does not include NUL */
+	أرجع(s - src - 1);	/* count does not include NUL */
 }
 
 #endif /* !HAVE_STRLCPY */

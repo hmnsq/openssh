@@ -6,61 +6,61 @@
  * and placed in the public domain.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <locale.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
+#ضمن <locale.h>
+#ضمن <stdarg.h>
+#ضمن <string.h>
+#ضمن <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "utf8.h"
+#ضمن "utf8.h"
 
-static void
-badarg(void)
+ساكن فراغ
+badarg(فراغ)
 {
-	char	 buf[16];
-	int	 len, width;
+	حرف	 buf[16];
+	صحيح	 len, width;
 
 	width = 1;
 	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	len = snmprintf(buf, حجم(buf), &width, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
 	ASSERT_INT_EQ(width, 0);
 	TEST_DONE();
 }
 
-static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+ساكن فراغ
+one(صحيح utf8, ثابت حرف *name, ثابت حرف *mbs, صحيح width,
+    صحيح wantwidth, صحيح wantlen, ثابت حرف *wants)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	حرف	 buf[16];
+	صحيح	*wp;
+	صحيح	 len;
 
-	if (wantlen == -2)
+	إذا (wantlen == -2)
 		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
+	(فراغ)strlcpy(buf, utf8 ? "utf8_" : "c_", حجم(buf));
+	(فراغ)strlcat(buf, name, حجم(buf));
 	TEST_START(buf);
-	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	wp = wantwidth == -2 ? عدم : &width;
+	len = snmprintf(buf, حجم(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
 	ASSERT_STRING_EQ(buf, wants);
 	ASSERT_INT_EQ(width, wantwidth);
 	TEST_DONE();
 }
 
-void
-tests(void)
+فراغ
+tests(فراغ)
 {
-	char	*loc;
+	حرف	*loc;
 
 	TEST_START("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, عدم);
 	TEST_DONE();
 
 	badarg();
@@ -82,7 +82,7 @@ tests(void)
 
 	TEST_START("C_setlocale");
 	loc = setlocale(LC_CTYPE, "C");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, عدم);
 	TEST_DONE();
 
 	badarg();
@@ -103,8 +103,8 @@ tests(void)
 	one(0, "double_spc", "a\343\201\201", 13, 13, 13, "a\\343\\201\\201");
 }
 
-void
-benchmarks(void)
+فراغ
+benchmarks(فراغ)
 {
 	printf("no benchmarks\n");
 }

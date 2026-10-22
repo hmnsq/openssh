@@ -29,21 +29,21 @@
 
 #define DISPATCH_MAX	255
 
-enum {
+تعداد {
 	DISPATCH_BLOCK,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+بنية ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+تعريفنوع صحيح dispatch_fn(صحيح, uint32_t, بنية ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+صحيح	dispatch_protocol_error(صحيح, uint32_t, بنية ssh *);
+صحيح	dispatch_protocol_ignore(صحيح, uint32_t, بنية ssh *);
+فراغ	ssh_dispatch_init(بنية ssh *, dispatch_fn *);
+فراغ	ssh_dispatch_set(بنية ssh *, صحيح, dispatch_fn *);
+فراغ	ssh_dispatch_range(بنية ssh *, u_int, u_int, dispatch_fn *);
+صحيح	ssh_dispatch_run(بنية ssh *, صحيح, متطاير sig_atomic_t *);
+فراغ	ssh_dispatch_run_fatal(بنية ssh *, صحيح, متطاير sig_atomic_t *);
 
 #endif

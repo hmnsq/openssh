@@ -26,28 +26,28 @@
 #ifndef SSHMAC_H
 #define SSHMAC_H
 
-#include <sys/types.h>
+#ضمن <sys/types.h>
 
-struct sshmac {
-	char	*name;
-	int	enabled;
+بنية sshmac {
+	حرف	*name;
+	صحيح	enabled;
 	u_int	mac_len;
-	u_char	*key;
-	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
-	struct ssh_hmac_ctx	*hmac_ctx;
-	struct umac_ctx		*umac_ctx;
+	u_char	*کونچي;
+	u_int	کونچي_len;
+	صحيح	type;
+	صحيح	etm;		/* Encrypt-then-MAC */
+	بنية ssh_hmac_ctx	*hmac_ctx;
+	بنية umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
-char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
+صحيح	 mac_valid(ثابت حرف *);
+حرف	*mac_alg_list(حرف);
+صحيح	 mac_setup(بنية sshmac *, حرف *);
+صحيح	 mac_init(بنية sshmac *);
+صحيح	 mac_compute(بنية sshmac *, uint32_t, ثابت u_char *, صحيح,
     u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
-    const u_char *, size_t);
-void	 mac_clear(struct sshmac *);
+صحيح	 mac_check(بنية sshmac *, uint32_t, ثابت u_char *, size_t,
+    ثابت u_char *, size_t);
+فراغ	 mac_clear(بنية sshmac *);
 
 #endif /* SSHMAC_H */

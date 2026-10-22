@@ -22,27 +22,27 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+#ضمن <sys/types.h>
+#ضمن <sys/socket.h>
+#ضمن <sys/un.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#ضمن <netinet/in.h>
+#ضمن <arpa/inet.h>
 
-#include <errno.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <stddef.h> /* for offsetof */
+#ضمن <errno.h>
+#ضمن <signal.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن <unistd.h>
+#ضمن <stddef.h> /* for offsetof */
 
-#include "atomicio.h"
-#include "misc.h"
-#include "log.h"
+#ضمن "atomicio.h"
+#ضمن "misc.h"
+#ضمن "log.h"
 
-#if defined(PRNGD_PORT) || defined(PRNGD_SOCKET)
+#إذا defined(PRNGD_PORT) || defined(PRNGD_SOCKET)
 /*
  * EGD/PRNGD interface.
  *
@@ -53,38 +53,38 @@
  * supplied.
  * Returns 0 on success, -1 on error
  */
-static int
-get_random_bytes_prngd(unsigned char *buf, int len,
-    unsigned short tcp_port, char *socket_path)
+ساكن صحيح
+get_random_bytes_prngd(unsigned حرف *buf, صحيح len,
+    unsigned short tcp_port, حرف *socket_path)
 {
-	int fd, addr_len, rval, errors;
-	u_char msg[2];
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addr_in = (struct sockaddr_in *)&addr;
-	struct sockaddr_un *addr_un = (struct sockaddr_un *)&addr;
+	صحيح fd, addr_len, rval, errors;
+	u_char ڤسنن[2];
+	بنية sockaddr_storage addr;
+	بنية sockaddr_in *addr_in = (بنية sockaddr_in *)&addr;
+	بنية sockaddr_un *addr_un = (بنية sockaddr_un *)&addr;
 	sshsig_t old_sigpipe;
 
 	/* Sanity checks */
-	if (socket_path == NULL && tcp_port == 0)
+	إذا (socket_path == عدم && tcp_port == 0)
 		fatal("You must specify a port or a socket");
-	if (socket_path != NULL &&
-	    strlen(socket_path) >= sizeof(addr_un->sun_path))
+	إذا (socket_path != عدم &&
+	    strlen(socket_path) >= حجم(addr_un->sun_path))
 		fatal("Random pool path is too long");
-	if (len <= 0 || len > 255)
+	إذا (len <= 0 || len > 255)
 		fatal("Too many bytes (%d) to read from PRNGD", len);
 
-	memset(&addr, '\0', sizeof(addr));
+	memset(&addr, '\0', حجم(addr));
 
-	if (tcp_port != 0) {
+	إذا (tcp_port != 0) {
 		addr_in->sin_family = AF_INET;
 		addr_in->sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 		addr_in->sin_port = htons(tcp_port);
-		addr_len = sizeof(*addr_in);
-	} else {
+		addr_len = حجم(*addr_in);
+	} وإلا {
 		addr_un->sun_family = AF_UNIX;
 		strlcpy(addr_un->sun_path, socket_path,
-		    sizeof(addr_un->sun_path));
-		addr_len = offsetof(struct sockaddr_un, sun_path) +
+		    حجم(addr_un->sun_path));
+		addr_len = offsetof(بنية sockaddr_un, sun_path) +
 		    strlen(socket_path) + 1;
 	}
 
@@ -94,69 +94,69 @@ get_random_bytes_prngd(unsigned char *buf, int len,
 	rval = -1;
 reopen:
 	fd = socket(addr.ss_family, SOCK_STREAM, 0);
-	if (fd == -1) {
+	إذا (fd == -1) {
 		error("Couldn't create socket: %s", strerror(errno));
-		goto done;
+		اذهب done;
 	}
 
-	if (connect(fd, (struct sockaddr*)&addr, addr_len) == -1) {
-		if (tcp_port != 0) {
+	إذا (connect(fd, (بنية sockaddr*)&addr, addr_len) == -1) {
+		إذا (tcp_port != 0) {
 			error("Couldn't connect to PRNGD port %d: %s",
 			    tcp_port, strerror(errno));
-		} else {
+		} وإلا {
 			error("Couldn't connect to PRNGD socket \"%s\": %s",
 			    addr_un->sun_path, strerror(errno));
 		}
-		goto done;
+		اذهب done;
 	}
 
 	/* Send blocking read request to PRNGD */
-	msg[0] = 0x02;
-	msg[1] = len;
+	ڤسنن[0] = 0x02;
+	ڤسنن[1] = len;
 
-	if (atomicio(vwrite, fd, msg, sizeof(msg)) != sizeof(msg)) {
-		if (errno == EPIPE && errors < 10) {
+	إذا (atomicio(vwrite, fd, ڤسنن, حجم(ڤسنن)) != حجم(ڤسنن)) {
+		إذا (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
-			goto reopen;
+			اذهب reopen;
 		}
 		error("Couldn't write to PRNGD socket: %s",
 		    strerror(errno));
-		goto done;
+		اذهب done;
 	}
 
-	if (atomicio(read, fd, buf, len) != (size_t)len) {
-		if (errno == EPIPE && errors < 10) {
+	إذا (atomicio(اقرأ, fd, buf, len) != (size_t)len) {
+		إذا (errno == EPIPE && errors < 10) {
 			close(fd);
 			errors++;
-			goto reopen;
+			اذهب reopen;
 		}
 		error("Couldn't read from PRNGD socket: %s",
 		    strerror(errno));
-		goto done;
+		اذهب done;
 	}
 
 	rval = 0;
 done:
 	ssh_signal(SIGPIPE, old_sigpipe);
-	if (fd != -1)
+	إذا (fd != -1)
 		close(fd);
-	return rval;
+	أرجع rval;
 }
 #endif /* PRNGD_PORT || PRNGD_SOCKET */
 
-int
-seed_from_prngd(unsigned char *buf, size_t bytes)
+صحيح
+seed_from_prngd(unsigned حرف *buf, size_t bytes)
 {
 #ifdef PRNGD_PORT
 	debug("trying egd/prngd port %d", PRNGD_PORT);
-	if (get_random_bytes_prngd(buf, bytes, PRNGD_PORT, NULL) == 0)
-		return 0;
+	إذا (get_random_bytes_prngd(buf, bytes, PRNGD_PORT, عدم) == 0)
+		أرجع 0;
 #endif
 #ifdef PRNGD_SOCKET
 	debug("trying egd/prngd socket %s", PRNGD_SOCKET);
-	if (get_random_bytes_prngd(buf, bytes, 0, PRNGD_SOCKET) == 0)
-		return 0;
+	إذا (get_random_bytes_prngd(buf, bytes, 0, PRNGD_SOCKET) == 0)
+		أرجع 0;
 #endif
-	return -1;
+	أرجع -1;
 }

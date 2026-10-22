@@ -30,57 +30,57 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getcwd.c */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#if !defined(HAVE_GETCWD)
+#إذا !defined(HAVE_GETCWD)
 
-#include <sys/stat.h>
-#include <errno.h>
-#include <dirent.h>
-#include <sys/dir.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "includes.h"
+#ضمن <sys/stat.h>
+#ضمن <errno.h>
+#ضمن <dirent.h>
+#ضمن <sys/dir.h>
+#ضمن <stdio.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
+#ضمن "includes.h"
 
 #define	ISDOT(dp) \
 	(dp->d_name[0] == '.' && (dp->d_name[1] == '\0' || \
 	    (dp->d_name[1] == '.' && dp->d_name[2] == '\0')))
 
-char *
-getcwd(char *pt, size_t size)
+حرف *
+getcwd(حرف *pt, size_t size)
 {
-	struct dirent *dp;
-	DIR *dir = NULL;
+	بنية dirent *dp;
+	DIR *dir = عدم;
 	dev_t dev;
 	ino_t ino;
-	int first;
-	char *bpt, *bup;
-	struct stat s;
-	dev_t root_dev;
-	ino_t root_ino;
+	صحيح first;
+	حرف *bpt, *bup;
+	بنية stat s;
+	dev_t اکر_dev;
+	ino_t اکر_ino;
 	size_t ptsize, upsize;
-	int save_errno;
-	char *ept, *eup, *up;
+	صحيح save_errno;
+	حرف *ept, *eup, *up;
 
 	/*
 	 * If no buffer specified by the user, allocate one as necessary.
 	 * If a buffer is specified, the size has to be non-zero.  The path
 	 * is built from the end of the buffer backwards.
 	 */
-	if (pt) {
+	إذا (pt) {
 		ptsize = 0;
-		if (size == 0) {
+		إذا (size == 0) {
 			errno = EINVAL;
-			return (NULL);
-		} else if (size == 1) {
+			أرجع (عدم);
+		} وإلا إذا (size == 1) {
 			errno = ERANGE;
-			return (NULL);
+			أرجع (عدم);
 		}
 		ept = pt + size;
-	} else {
-		if ((pt = malloc(ptsize = MAXPATHLEN)) == NULL)
-			return (NULL);
+	} وإلا {
+		إذا ((pt = malloc(ptsize = MAXPATHLEN)) == عدم)
+			أرجع (عدم);
 		ept = pt + ptsize;
 	}
 	bpt = ept - 1;
@@ -91,32 +91,32 @@ getcwd(char *pt, size_t size)
 	 * Should always be enough (it's 340 levels).  If it's not, allocate
 	 * as necessary.  Special * case the first stat, it's ".", not "..".
 	 */
-	if ((up = malloc(upsize = MAXPATHLEN)) == NULL)
-		goto err;
+	إذا ((up = malloc(upsize = MAXPATHLEN)) == عدم)
+		اذهب err;
 	eup = up + upsize;
 	bup = up;
 	up[0] = '.';
 	up[1] = '\0';
 
 	/* Save root values, so know when to stop. */
-	if (stat("/", &s))
-		goto err;
-	root_dev = s.st_dev;
-	root_ino = s.st_ino;
+	إذا (stat("/", &s))
+		اذهب err;
+	اکر_dev = s.st_dev;
+	اکر_ino = s.st_ino;
 
 	errno = 0;			/* XXX readdir has no error return. */
 
-	for (first = 1;; first = 0) {
+	لكل (first = 1;; first = 0) {
 		/* Stat the current level. */
-		if (lstat(up, &s))
-			goto err;
+		إذا (lstat(up, &s))
+			اذهب err;
 
 		/* Save current node values. */
 		ino = s.st_ino;
 		dev = s.st_dev;
 
 		/* Check for reaching root. */
-		if (root_dev == dev && root_ino == ino) {
+		إذا (اکر_dev == dev && اکر_ino == ino) {
 			*--bpt = '/';
 			/*
 			 * It's unclear that it's a requirement to copy the
@@ -124,8 +124,8 @@ getcwd(char *pt, size_t size)
 			 * been that way and stuff would probably break.
 			 */
 			memmove(pt, bpt, ept - bpt);
-			free(up);
-			return (pt);
+			حرر(up);
+			أرجع (pt);
 		}
 
 		/*
@@ -133,11 +133,11 @@ getcwd(char *pt, size_t size)
 		 * as necessary.  Max length is 3 for "../", the largest
 		 * possible component name, plus a trailing NUL.
 		 */
-		if (bup + 3  + MAXNAMLEN + 1 >= eup) {
-			char *nup;
+		إذا (bup + 3  + MAXNAMLEN + 1 >= eup) {
+			حرف *nup;
 
-			if ((nup = realloc(up, upsize *= 2)) == NULL)
-				goto err;
+			إذا ((nup = realloc(up, upsize *= 2)) == عدم)
+				اذهب err;
 			bup = nup + (bup - up);
 			up = nup;
 			eup = up + upsize;
@@ -147,8 +147,8 @@ getcwd(char *pt, size_t size)
 		*bup = '\0';
 
 		/* Open and stat parent directory. */
-		if (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
-			goto err;
+		إذا (!(dir = opendir(up)) || fstat(dirfd(dir), &s))
+			اذهب err;
 
 		/* Add trailing slash for next directory. */
 		*bup++ = '/';
@@ -159,58 +159,58 @@ getcwd(char *pt, size_t size)
 		 * parent directory, not the inode number of the mounted file.
 		 */
 		save_errno = 0;
-		if (s.st_dev == dev) {
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (dp->d_fileno == ino)
-					break;
+		إذا (s.st_dev == dev) {
+			لكل (;;) {
+				إذا (!(dp = readdir(dir)))
+					اذهب notfound;
+				إذا (dp->d_fileno == ino)
+					اكسر;
 			}
-		} else
-			for (;;) {
-				if (!(dp = readdir(dir)))
-					goto notfound;
-				if (ISDOT(dp))
-					continue;
+		} وإلا
+			لكل (;;) {
+				إذا (!(dp = readdir(dir)))
+					اذهب notfound;
+				إذا (ISDOT(dp))
+					استمر;
 				memcpy(bup, dp->d_name, dp->d_namlen + 1);
 
 				/* Save the first error for later. */
-				if (lstat(up, &s)) {
-					if (!save_errno)
+				إذا (lstat(up, &s)) {
+					إذا (!save_errno)
 						save_errno = errno;
 					errno = 0;
-					continue;
+					استمر;
 				}
-				if (s.st_dev == dev && s.st_ino == ino)
-					break;
+				إذا (s.st_dev == dev && s.st_ino == ino)
+					اكسر;
 			}
 
 		/*
 		 * Check for length of the current name, preceding slash,
 		 * leading slash.
 		 */
-		if (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
+		إذا (bpt - pt < dp->d_namlen + (first ? 1 : 2)) {
 			size_t len;
-			char *npt;
+			حرف *npt;
 
-			if (!ptsize) {
+			إذا (!ptsize) {
 				errno = ERANGE;
-				goto err;
+				اذهب err;
 			}
 			len = ept - bpt;
-			if ((npt = realloc(pt, ptsize *= 2)) == NULL)
-				goto err;
+			إذا ((npt = realloc(pt, ptsize *= 2)) == عدم)
+				اذهب err;
 			bpt = npt + (bpt - pt);
 			pt = npt;
 			ept = pt + ptsize;
 			memmove(ept - len, bpt, len);
 			bpt = ept - len;
 		}
-		if (!first)
+		إذا (!first)
 			*--bpt = '/';
 		bpt -= dp->d_namlen;
 		memcpy(bpt, dp->d_name, dp->d_namlen);
-		(void)closedir(dir);
+		(فراغ)closedir(dir);
 
 		/* Truncate any file name. */
 		*bup = '\0';
@@ -222,21 +222,21 @@ notfound:
 	 * didn't find the current directory in its parent directory, set
 	 * errno to ENOENT.
 	 */
-	if (!errno)
+	إذا (!errno)
 		errno = save_errno ? save_errno : ENOENT;
 	/* FALLTHROUGH */
 err:
 	save_errno = errno;
 
-	if (ptsize)
-		free(pt);
-	free(up);
-	if (dir)
-		(void)closedir(dir);
+	إذا (ptsize)
+		حرر(pt);
+	حرر(up);
+	إذا (dir)
+		(فراغ)closedir(dir);
 
 	errno = save_errno;
 
-	return (NULL);
+	أرجع (عدم);
 }
 
 #endif /* !defined(HAVE_GETCWD) */

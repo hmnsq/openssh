@@ -4,190 +4,190 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#ضمن "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#ضمن <sys/types.h>
+#ضمن <stdio.h>
+#ضمن <stdint.h>
+#ضمن <stdlib.h>
+#ضمن <string.h>
 
-#include "../test_helper/test_helper.h"
+#ضمن "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#ضمن "log.h"
+#ضمن "misc.h"
+#ضمن "xmalloc.h"
 
-void test_misc(void);
+فراغ test_misc(فراغ);
 
-static void
-test_chop(void)
+ساكن فراغ
+test_chop(فراغ)
 {
-	char *s;
+	حرف *s;
 
 	TEST_START("chop newline");
 	s = xstrdup("hello\n");
 	ASSERT_STRING_EQ(chop(s), "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("chop carriage return");
 	s = xstrdup("hello\r");
 	ASSERT_STRING_EQ(chop(s), "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("chop CRLF");
 	s = xstrdup("hello\r\n");
 	ASSERT_STRING_EQ(chop(s), "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("chop newline in middle");
 	s = xstrdup("he\nllo");
 	ASSERT_STRING_EQ(chop(s), "he");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("chop no newline");
 	s = xstrdup("hello");
 	ASSERT_STRING_EQ(chop(s), "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("chop empty string");
 	s = xstrdup("");
 	ASSERT_STRING_EQ(chop(s), "");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("chop only newline");
 	s = xstrdup("\n");
 	ASSERT_STRING_EQ(chop(s), "");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("chop only CR");
 	s = xstrdup("\r");
 	ASSERT_STRING_EQ(chop(s), "");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("chop only CRLF");
 	s = xstrdup("\r\n");
 	ASSERT_STRING_EQ(chop(s), "");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 }
 
-static void
-test_rtrim(void)
+ساكن فراغ
+test_rtrim(فراغ)
 {
-	char *s;
+	حرف *s;
 
 	TEST_START("rtrim trailing space");
 	s = xstrdup("hello  ");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("rtrim trailing tab");
 	s = xstrdup("hello\t\t");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("rtrim trailing mixed whitespace");
 	s = xstrdup("hello \t ");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("rtrim no trailing whitespace");
 	s = xstrdup("hello");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("rtrim whitespace in middle");
 	s = xstrdup("he llo");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "he llo");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("rtrim empty string");
 	s = xstrdup("");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("rtrim only whitespace");
 	s = xstrdup("   \t");
 	rtrim(s);
 	ASSERT_STRING_EQ(s, "");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 }
 
-static void
-test_strprefix(void)
+ساكن فراغ
+test_strprefix(فراغ)
 {
-	const char *s;
+	ثابت حرف *s;
 
 	TEST_START("strprefix basic match");
 	s = strprefix("hello world", "hello", 0);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, عدم);
 	ASSERT_STRING_EQ(s, " world");
 	TEST_DONE();
 
 	TEST_START("strprefix no match");
 	s = strprefix("hello world", "world", 0);
-	ASSERT_PTR_EQ(s, NULL);
+	ASSERT_PTR_EQ(s, عدم);
 	TEST_DONE();
 
 	TEST_START("strprefix full match");
 	s = strprefix("hello", "hello", 0);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, عدم);
 	ASSERT_STRING_EQ(s, "");
 	TEST_DONE();
 
 	TEST_START("strprefix empty string");
 	s = strprefix("", "hello", 0);
-	ASSERT_PTR_EQ(s, NULL);
+	ASSERT_PTR_EQ(s, عدم);
 	TEST_DONE();
 
 	TEST_START("strprefix empty prefix");
 	s = strprefix("hello", "", 0);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, عدم);
 	ASSERT_STRING_EQ(s, "hello");
 	TEST_DONE();
 
 	TEST_START("strprefix case sensitive no match");
 	s = strprefix("Hello world", "hello", 0);
-	ASSERT_PTR_EQ(s, NULL);
+	ASSERT_PTR_EQ(s, عدم);
 	TEST_DONE();
 
 	TEST_START("strprefix case insensitive match");
 	s = strprefix("Hello world", "hello", 1);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, عدم);
 	ASSERT_STRING_EQ(s, " world");
 	TEST_DONE();
 
 	TEST_START("strprefix case insensitive full match");
 	s = strprefix("HELLO", "hello", 1);
-	ASSERT_PTR_NE(s, NULL);
+	ASSERT_PTR_NE(s, عدم);
 	ASSERT_STRING_EQ(s, "");
 	TEST_DONE();
 }
 
-static void
-test_fmt_timeframe(void)
+ساكن فراغ
+test_fmt_timeframe(فراغ)
 {
 	TEST_START("fmt_timeframe seconds");
 	ASSERT_STRING_EQ(fmt_timeframe(0), "00:00:00");
@@ -210,155 +210,155 @@ test_fmt_timeframe(void)
 	TEST_DONE();
 }
 
-static void
-test_arglist(void)
+ساكن فراغ
+test_arglist(فراغ)
 {
 	arglist args;
 	u_int i;
 
-	memset(&args, 0, sizeof(args));
+	memset(&args, 0, حجم(args));
 
 	TEST_START("addargs initial");
 	addargs(&args, "one");
-	ASSERT_U_INT_EQ(args.num, 1);
+	ASSERT_U_INT_EQ(args.اڠک, 1);
 	ASSERT_U_INT_EQ(args.nalloc, 32);
-	ASSERT_PTR_NE(args.list, NULL);
+	ASSERT_PTR_NE(args.list, عدم);
 	ASSERT_STRING_EQ(args.list[0], "one");
-	ASSERT_PTR_EQ(args.list[1], NULL);
+	ASSERT_PTR_EQ(args.list[1], عدم);
 	TEST_DONE();
 
 	TEST_START("addargs second");
 	addargs(&args, "two");
-	ASSERT_U_INT_EQ(args.num, 2);
+	ASSERT_U_INT_EQ(args.اڠک, 2);
 	ASSERT_U_INT_EQ(args.nalloc, 32);
-	ASSERT_PTR_NE(args.list, NULL);
+	ASSERT_PTR_NE(args.list, عدم);
 	ASSERT_STRING_EQ(args.list[0], "one");
 	ASSERT_STRING_EQ(args.list[1], "two");
-	ASSERT_PTR_EQ(args.list[2], NULL);
+	ASSERT_PTR_EQ(args.list[2], عدم);
 	TEST_DONE();
 
 	TEST_START("addargs with format");
 	addargs(&args, "three=%d", 3);
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.اڠک, 3);
 	ASSERT_U_INT_EQ(args.nalloc, 32);
-	ASSERT_PTR_NE(args.list, NULL);
+	ASSERT_PTR_NE(args.list, عدم);
 	ASSERT_STRING_EQ(args.list[0], "one");
 	ASSERT_STRING_EQ(args.list[1], "two");
 	ASSERT_STRING_EQ(args.list[2], "three=3");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], عدم);
 	TEST_DONE();
 
 	TEST_START("replacearg middle");
 	replacearg(&args, 1, "TWO!");
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.اڠک, 3);
 	ASSERT_STRING_EQ(args.list[0], "one");
 	ASSERT_STRING_EQ(args.list[1], "TWO!");
 	ASSERT_STRING_EQ(args.list[2], "three=3");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], عدم);
 	TEST_DONE();
 
 	TEST_START("replacearg first");
 	replacearg(&args, 0, "ONE!");
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.اڠک, 3);
 	ASSERT_STRING_EQ(args.list[0], "ONE!");
 	ASSERT_STRING_EQ(args.list[1], "TWO!");
 	ASSERT_STRING_EQ(args.list[2], "three=3");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], عدم);
 	TEST_DONE();
 
 	TEST_START("replacearg last");
 	replacearg(&args, 2, "THREE=3!");
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.اڠک, 3);
 	ASSERT_STRING_EQ(args.list[0], "ONE!");
 	ASSERT_STRING_EQ(args.list[1], "TWO!");
 	ASSERT_STRING_EQ(args.list[2], "THREE=3!");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], عدم);
 	TEST_DONE();
 
 	TEST_START("replacearg with format");
 	replacearg(&args, 1, "two=%d", 2);
-	ASSERT_U_INT_EQ(args.num, 3);
+	ASSERT_U_INT_EQ(args.اڠک, 3);
 	ASSERT_STRING_EQ(args.list[0], "ONE!");
 	ASSERT_STRING_EQ(args.list[1], "two=2");
 	ASSERT_STRING_EQ(args.list[2], "THREE=3!");
-	ASSERT_PTR_EQ(args.list[3], NULL);
+	ASSERT_PTR_EQ(args.list[3], عدم);
 	TEST_DONE();
 
 	TEST_START("addargs reallocation");
-	for (i = args.num; i < 33; i++)
+	لكل (i = args.اڠک; i < 33; i++)
 		addargs(&args, "pad-%d", i);
-	ASSERT_U_INT_EQ(args.num, 33);
+	ASSERT_U_INT_EQ(args.اڠک, 33);
 	ASSERT_U_INT_GE(args.nalloc, 33);
 	ASSERT_STRING_EQ(args.list[32], "pad-32");
-	ASSERT_PTR_EQ(args.list[33], NULL);
+	ASSERT_PTR_EQ(args.list[33], عدم);
 	TEST_DONE();
 
 	TEST_START("freeargs");
 	freeargs(&args);
-	ASSERT_U_INT_EQ(args.num, 0);
+	ASSERT_U_INT_EQ(args.اڠک, 0);
 	ASSERT_U_INT_EQ(args.nalloc, 0);
-	ASSERT_PTR_EQ(args.list, NULL);
+	ASSERT_PTR_EQ(args.list, عدم);
 	TEST_DONE();
 
 	TEST_START("freeargs on NULL");
-	freeargs(NULL);
+	freeargs(عدم);
 	TEST_DONE();
 
 	TEST_START("freeargs on empty");
-	memset(&args, 0, sizeof(args));
+	memset(&args, 0, حجم(args));
 	freeargs(&args);
-	ASSERT_U_INT_EQ(args.num, 0);
+	ASSERT_U_INT_EQ(args.اڠک, 0);
 	ASSERT_U_INT_EQ(args.nalloc, 0);
-	ASSERT_PTR_EQ(args.list, NULL);
+	ASSERT_PTR_EQ(args.list, عدم);
 	TEST_DONE();
 }
 
-static void
-test_tohex(void)
+ساكن فراغ
+test_tohex(فراغ)
 {
-	char *hex;
+	حرف *hex;
 
 	TEST_START("tohex simple");
 	hex = tohex("foo", 3);
 	ASSERT_STRING_EQ(hex, "666f6f");
-	free(hex);
+	حرر(hex);
 	TEST_DONE();
 
 	TEST_START("tohex with null");
 	hex = tohex("a\0b", 3);
 	ASSERT_STRING_EQ(hex, "610062");
-	free(hex);
+	حرر(hex);
 	TEST_DONE();
 
 	TEST_START("tohex empty");
 	hex = tohex("", 0);
 	ASSERT_STRING_EQ(hex, "");
-	free(hex);
+	حرر(hex);
 	TEST_DONE();
 }
 
-static void
-test_lowercase(void)
+ساكن فراغ
+test_lowercase(فراغ)
 {
-	char *s;
+	حرف *s;
 
 	TEST_START("lowercase mixed");
 	s = xstrdup("HeLlO WoRlD 123");
 	lowercase(s);
 	ASSERT_STRING_EQ(s, "hello world 123");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("lowercase empty");
 	s = xstrdup("");
 	lowercase(s);
 	ASSERT_STRING_EQ(s, "");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 }
 
-static void
-test_path_absolute(void)
+ساكن فراغ
+test_path_absolute(فراغ)
 {
 	TEST_START("path_absolute absolute");
 	ASSERT_INT_EQ(path_absolute("/foo/bar"), 1);
@@ -373,33 +373,33 @@ test_path_absolute(void)
 	TEST_DONE();
 }
 
-static void
-test_stringlist(void)
+ساكن فراغ
+test_stringlist(فراغ)
 {
-	char **list = NULL;
+	حرف **list = عدم;
 
 	TEST_START("stringlist_append initial");
 	stringlist_append(&list, "one");
-	ASSERT_PTR_NE(list, NULL);
+	ASSERT_PTR_NE(list, عدم);
 	ASSERT_STRING_EQ(list[0], "one");
-	ASSERT_PTR_EQ(list[1], NULL);
+	ASSERT_PTR_EQ(list[1], عدم);
 	TEST_DONE();
 
 	TEST_START("stringlist_append second");
 	stringlist_append(&list, "two");
-	ASSERT_PTR_NE(list, NULL);
+	ASSERT_PTR_NE(list, عدم);
 	ASSERT_STRING_EQ(list[0], "one");
 	ASSERT_STRING_EQ(list[1], "two");
-	ASSERT_PTR_EQ(list[2], NULL);
+	ASSERT_PTR_EQ(list[2], عدم);
 	TEST_DONE();
 
 	TEST_START("stringlist_append third");
 	stringlist_append(&list, "three");
-	ASSERT_PTR_NE(list, NULL);
+	ASSERT_PTR_NE(list, عدم);
 	ASSERT_STRING_EQ(list[0], "one");
 	ASSERT_STRING_EQ(list[1], "two");
 	ASSERT_STRING_EQ(list[2], "three");
-	ASSERT_PTR_EQ(list[3], NULL);
+	ASSERT_PTR_EQ(list[3], عدم);
 	TEST_DONE();
 
 	TEST_START("stringlist_free");
@@ -407,60 +407,60 @@ test_stringlist(void)
 	TEST_DONE();
 
 	TEST_START("stringlist_free NULL");
-	stringlist_free(NULL);
+	stringlist_free(عدم);
 	TEST_DONE();
 }
 
-static void
-test_skip_space(void)
+ساكن فراغ
+test_skip_space(فراغ)
 {
-	char *s, *p;
+	حرف *s, *p;
 
 	TEST_START("skip_space leading spaces");
 	s = p = xstrdup("  hello");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("skip_space leading tabs");
 	s = p = xstrdup("\t\thello");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("skip_space leading mixed whitespace");
 	s = p = xstrdup(" \t hello");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("skip_space no leading whitespace");
 	s = p = xstrdup("hello");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "hello");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("skip_space empty string");
 	s = p = xstrdup("");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 
 	TEST_START("skip_space only whitespace");
 	s = p = xstrdup(" \t ");
 	skip_space(&p);
 	ASSERT_STRING_EQ(p, "");
-	free(s);
+	حرر(s);
 	TEST_DONE();
 }
 
-void
-test_misc(void)
+فراغ
+test_misc(فراغ)
 {
 	test_chop();
 	test_rtrim();

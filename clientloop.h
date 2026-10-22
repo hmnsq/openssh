@@ -35,33 +35,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <termios.h>
+#ضمن <termios.h>
 
-struct ssh;
+بنية ssh;
 
 /* Client side main loop for the interactive session. */
-int	 client_loop(struct ssh *, int, int, int);
-int	 client_x11_get_proto(struct ssh *, const char *, const char *,
-	    u_int, u_int, char **, char **);
-void	 client_session2_setup(struct ssh *, int, int, int,
-	    const char *, struct termios *, int, struct sshbuf *, char **);
-char	 *client_request_tun_fwd(struct ssh *, int, int, int,
-    channel_open_fn *, void *);
-void	 client_stop_mux(void);
+صحيح	 client_loop(بنية ssh *, صحيح, صحيح, صحيح);
+صحيح	 client_x11_get_proto(بنية ssh *, ثابت حرف *, ثابت حرف *,
+	    u_int, u_int, حرف **, حرف **);
+فراغ	 client_session2_setup(بنية ssh *, صحيح, صحيح, صحيح,
+	    ثابت حرف *, بنية termios *, صحيح, بنية sshbuf *, حرف **);
+حرف	 *client_request_tun_fwd(بنية ssh *, صحيح, صحيح, صحيح,
+    channel_open_fn *, فراغ *);
+فراغ	 client_stop_mux(فراغ);
 
 /* Escape filter for protocol 2 sessions */
-void	*client_new_escape_filter_ctx(int);
-void	 client_filter_cleanup(struct ssh *, int, void *);
-int	 client_simple_escape_filter(struct ssh *, Channel *, char *, int);
+فراغ	*client_new_escape_filter_ctx(صحيح);
+فراغ	 client_filter_cleanup(بنية ssh *, صحيح, فراغ *);
+صحيح	 client_simple_escape_filter(بنية ssh *, Channel *, حرف *, صحيح);
 
 /* Global request confirmation callbacks */
-typedef void global_confirm_cb(struct ssh *, int, uint32_t, void *);
-void	 client_register_global_confirm(global_confirm_cb *, void *);
+تعريفنوع فراغ global_confirm_cb(بنية ssh *, صحيح, uint32_t, فراغ *);
+فراغ	 client_register_global_confirm(global_confirm_cb *, فراغ *);
 
 /* Channel request confirmation callbacks */
-enum confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
-void client_expect_confirm(struct ssh *, int, const char *,
-    enum confirm_action);
+تعداد confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
+فراغ client_expect_confirm(بنية ssh *, صحيح, ثابت حرف *,
+    تعداد confirm_action);
 
 /* Multiplexing protocol version */
 #define SSHMUX_VER			4
@@ -78,8 +78,8 @@ void client_expect_confirm(struct ssh *, int, const char *,
 #define SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
 #define SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
 
-void	muxserver_listen(struct ssh *);
-int	muxclient(const char *);
-void	mux_exit_message(struct ssh *, Channel *, int);
-void	mux_tty_alloc_failed(struct ssh *ssh, Channel *);
+فراغ	muxserver_listen(بنية ssh *);
+صحيح	muxclient(ثابت حرف *);
+فراغ	mux_exit_message(بنية ssh *, Channel *, صحيح);
+فراغ	mux_tty_alloc_failed(بنية ssh *ssh, Channel *);
 
