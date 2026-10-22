@@ -43,90 +43,90 @@
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#ถ้า !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+จำนวนเต็ม
+sigaction(จำนวนเต็ม sig, sa_nracanaa sigaction *sigact, sa_nracanaa sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
+	คืน sigvec(sig, sigact ? &sigact->sv : NULL,
 	    osigact ? &osigact->sv : NULL);
 }
 
-int
+จำนวนเต็ม
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	ถ้า (!mask) {
 		errno = EINVAL;
-		return -1;
+		คืน -1;
 	}
 	*mask = 0;
-	return 0;
+	คืน 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+จำนวนเต็ม
+sigprocmask (จำนวนเต็ม mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	ถ้า (!mask) {
 		errno = EINVAL;
-		return -1;
+		คืน -1;
 	}
 
-	if (omask)
+	ถ้า (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	ถ้า (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	มิฉะนั้น ถ้า (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	มิฉะนั้น ถ้า (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	คืน 0;
 }
 
-int
+จำนวนเต็ม
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	ถ้า (!mask) {
 		errno = EINVAL;
-		return -1;
+		คืน -1;
 	}
-	return sigpause(*mask);
+	คืน sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+จำนวนเต็ม
+sigdelset (sigset_t *mask, จำนวนเต็ม sig)
 {
-	if (!mask) {
+	ถ้า (!mask) {
 		errno = EINVAL;
-		return -1;
+		คืน -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	คืน 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+จำนวนเต็ม
+sigaddset (sigset_t *mask, จำนวนเต็ม sig)
 {
-	if (!mask) {
+	ถ้า (!mask) {
 		errno = EINVAL;
-		return -1;
+		คืน -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	คืน 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+จำนวนเต็ม
+sigismember (sigset_t *mask, จำนวนเต็ม sig)
 {
-	if (!mask) {
+	ถ้า (!mask) {
 		errno = EINVAL;
-		return -1;
+		คืน -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	คืน (*mask & sigmask(sig)) != 0;
 }
 
 #endif

@@ -31,7 +31,7 @@
 /* OPENBSD ORIGINAL: lib/libc/gen/vis.c */
 
 #include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#ถ้า !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #include <sys/types.h>
 #include <errno.h>
@@ -58,63 +58,63 @@
 /*
  * vis - visually encode characters
  */
-char *
-vis(char *dst, int c, int flag, int nextc)
+var_na *
+vis(var_na *dst, จำนวนเต็ม c, จำนวนเต็ม flag, จำนวนเต็ม nextc)
 {
-	if (isvisible(c, flag)) {
-		if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	ถ้า (isvisible(c, flag)) {
+		ถ้า ((c == '"' && (flag & VIS_DQ) != 0) ||
 		    (c == '\\' && (flag & VIS_NOSLASH) == 0))
 			*dst++ = '\\';
 		*dst++ = c;
 		*dst = '\0';
-		return (dst);
+		คืน (dst);
 	}
 
-	if (flag & VIS_CSTYLE) {
+	ถ้า (flag & VIS_CSTYLE) {
 		switch(c) {
-		case '\n':
+		pak_sa '\n':
 			*dst++ = '\\';
 			*dst++ = 'n';
 			goto done;
-		case '\r':
+		pak_sa '\r':
 			*dst++ = '\\';
 			*dst++ = 'r';
 			goto done;
-		case '\b':
+		pak_sa '\b':
 			*dst++ = '\\';
 			*dst++ = 'b';
 			goto done;
-		case '\a':
+		pak_sa '\a':
 			*dst++ = '\\';
 			*dst++ = 'a';
 			goto done;
-		case '\v':
+		pak_sa '\v':
 			*dst++ = '\\';
 			*dst++ = 'v';
 			goto done;
-		case '\t':
+		pak_sa '\t':
 			*dst++ = '\\';
 			*dst++ = 't';
 			goto done;
-		case '\f':
+		pak_sa '\f':
 			*dst++ = '\\';
 			*dst++ = 'f';
 			goto done;
-		case ' ':
+		pak_sa ' ':
 			*dst++ = '\\';
 			*dst++ = 's';
 			goto done;
-		case '\0':
+		pak_sa '\0':
 			*dst++ = '\\';
 			*dst++ = '0';
-			if (isoctal(nextc)) {
+			ถ้า (isoctal(nextc)) {
 				*dst++ = '0';
 				*dst++ = '0';
 			}
 			goto done;
 		}
 	}
-	if (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
+	ถ้า (((c & 0177) == ' ') || (flag & VIS_OCTAL) ||
 	    ((flag & VIS_GLOB) && (c == '*' || c == '?' || c == '[' || c == '#'))) {
 		*dst++ = '\\';
 		*dst++ = ((u_char)c >> 6 & 07) + '0';
@@ -122,25 +122,25 @@ vis(char *dst, int c, int flag, int nextc)
 		*dst++ = ((u_char)c & 07) + '0';
 		goto done;
 	}
-	if ((flag & VIS_NOSLASH) == 0)
+	ถ้า ((flag & VIS_NOSLASH) == 0)
 		*dst++ = '\\';
-	if (c & 0200) {
+	ถ้า (c & 0200) {
 		c &= 0177;
 		*dst++ = 'M';
 	}
-	if (iscntrl((u_char)c)) {
+	ถ้า (iscntrl((u_char)c)) {
 		*dst++ = '^';
-		if (c == 0177)
+		ถ้า (c == 0177)
 			*dst++ = '?';
-		else
+		มิฉะนั้น
 			*dst++ = c + '@';
-	} else {
+	} มิฉะนั้น {
 		*dst++ = '-';
 		*dst++ = c;
 	}
 done:
 	*dst = '\0';
-	return (dst);
+	คืน (dst);
 }
 DEF_WEAK(vis);
 
@@ -157,96 +157,96 @@ DEF_WEAK(vis);
  *	Strvisx encodes exactly len bytes from src into dst.
  *	This is useful for encoding a block of data.
  */
-int
-strvis(char *dst, const char *src, int flag)
+จำนวนเต็ม
+strvis(var_na *dst, const var_na *src, จำนวนเต็ม flag)
 {
-	char c;
-	char *start;
+	var_na c;
+	var_na *start;
 
-	for (start = dst; (c = *src);)
+	สำหรับ (start = dst; (c = *src);)
 		dst = vis(dst, c, flag, *++src);
 	*dst = '\0';
-	return (dst - start);
+	คืน (dst - start);
 }
 DEF_WEAK(strvis);
 
-int
-strnvis(char *dst, const char *src, size_t siz, int flag)
+จำนวนเต็ม
+strnvis(var_na *dst, const var_na *src, size_t siz, จำนวนเต็ม flag)
 {
-	char *start, *end;
-	char tbuf[5];
-	int c, i;
+	var_na *start, *end;
+	var_na tbuf[5];
+	จำนวนเต็ม c, i;
 
 	i = 0;
-	for (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
-		if (isvisible(c, flag)) {
-			if ((c == '"' && (flag & VIS_DQ) != 0) ||
+	สำหรับ (start = dst, end = start + siz - 1; (c = *src) && dst < end; ) {
+		ถ้า (isvisible(c, flag)) {
+			ถ้า ((c == '"' && (flag & VIS_DQ) != 0) ||
 			    (c == '\\' && (flag & VIS_NOSLASH) == 0)) {
 				/* need space for the extra '\\' */
-				if (dst + 1 >= end) {
+				ถ้า (dst + 1 >= end) {
 					i = 2;
-					break;
+					bha_nga;
 				}
 				*dst++ = '\\';
 			}
 			i = 1;
 			*dst++ = c;
 			src++;
-		} else {
+		} มิฉะนั้น {
 			i = vis(tbuf, c, flag, *++src) - tbuf;
-			if (dst + i <= end) {
+			ถ้า (dst + i <= end) {
 				memcpy(dst, tbuf, i);
 				dst += i;
-			} else {
+			} มิฉะนั้น {
 				src--;
-				break;
+				bha_nga;
 			}
 		}
 	}
-	if (siz > 0)
+	ถ้า (siz > 0)
 		*dst = '\0';
-	if (dst + i > end) {
+	ถ้า (dst + i > end) {
 		/* adjust return value for truncation */
-		while ((c = *src))
+		ขณะ ((c = *src))
 			dst += vis(tbuf, c, flag, *++src) - tbuf;
 	}
-	return (dst - start);
+	คืน (dst - start);
 }
 
-#if 0 /* unused in OpenSSH */
-int
-stravis(char **outp, const char *src, int flag)
+#ถ้า 0 /* unused in OpenSSH */
+จำนวนเต็ม
+stravis(var_na **outp, const var_na *src, จำนวนเต็ม flag)
 {
-	char *buf;
-	int len, serrno;
+	var_na *buf;
+	จำนวนเต็ม len, serrno;
 
 	buf = reallocarray(NULL, 4, strlen(src) + 1);
-	if (buf == NULL)
-		return -1;
+	ถ้า (buf == NULL)
+		คืน -1;
 	len = strvis(buf, src, flag);
 	serrno = errno;
 	*outp = realloc(buf, len + 1);
-	if (*outp == NULL) {
+	ถ้า (*outp == NULL) {
 		*outp = buf;
 		errno = serrno;
 	}
-	return (len);
+	คืน (len);
 }
 
-int
-strvisx(char *dst, const char *src, size_t len, int flag)
+จำนวนเต็ม
+strvisx(var_na *dst, const var_na *src, size_t len, จำนวนเต็ม flag)
 {
-	char c;
-	char *start;
+	var_na c;
+	var_na *start;
 
-	for (start = dst; len > 1; len--) {
+	สำหรับ (start = dst; len > 1; len--) {
 		c = *src;
 		dst = vis(dst, c, flag, *++src);
 	}
-	if (len)
+	ถ้า (len)
 		dst = vis(dst, *src, flag, '\0');
 	*dst = '\0';
-	return (dst - start);
+	คืน (dst - start);
 }
 #endif /* unused */
 

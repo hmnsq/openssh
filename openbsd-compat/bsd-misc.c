@@ -33,87 +33,87 @@
 #include <unistd.h>
 
 #ifndef HAVE___PROGNAME
-char *__progname;
+var_na *__progname;
 #endif
 
 /*
  * NB. duplicate __progname in case it is an alias for argv[0]
  * Otherwise it may get clobbered by setproctitle()
  */
-char *ssh_get_progname(char *argv0)
+var_na *ssh_get_progname(var_na *argv0)
 {
-	char *p, *q;
+	var_na *p, *q;
 #ifdef HAVE___PROGNAME
-	extern char *__progname;
+	extern var_na *__progname;
 
 	p = __progname;
-#else
-	if (argv0 == NULL)
-		return ("unknown");	/* XXX */
+#มิฉะนั้น
+	ถ้า (argv0 == NULL)
+		คืน ("unknown");	/* XXX */
 	p = strrchr(argv0, '/');
-	if (p == NULL)
+	ถ้า (p == NULL)
 		p = argv0;
-	else
+	มิฉะนั้น
 		p++;
 #endif
-	if ((q = strdup(p)) == NULL) {
+	ถ้า ((q = strdup(p)) == NULL) {
 		perror("strdup");
 		exit(1);
 	}
-	return q;
+	คืน q;
 }
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *name)
+จำนวนเต็ม setlogin(const var_na *name)
 {
-	return (0);
+	คืน (0);
 }
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *netgroup, const char *host,
-	    const char *user, const char *domain)
+จำนวนเต็ม innetgr(const var_na *netgroup, const var_na *host,
+	    const var_na *user, const var_na *domain)
 {
-	return (0);
+	คืน (0);
 }
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t euid)
+#ถ้า !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+จำนวนเต็ม seteuid(uid_t euid)
 {
-	return (setreuid(-1, euid));
+	คืน (setreuid(-1, euid));
 }
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t egid)
+#ถ้า !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+จำนวนเต็ม setegid(uid_t egid)
 {
-	return(setresgid(-1, egid, -1));
+	คืน(setresgid(-1, egid, -1));
 }
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int e)
+#ถ้า !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+const var_na *strerror(จำนวนเต็ม e)
 {
-	extern int sys_nerr;
-	extern char *sys_errlist[];
+	extern จำนวนเต็ม sys_nerr;
+	extern var_na *sys_errlist[];
 
-	if ((e >= 0) && (e < sys_nerr))
-		return (sys_errlist[e]);
+	ถ้า ((e >= 0) && (e < sys_nerr))
+		คืน (sys_errlist[e]);
 
-	return ("unlisted error");
+	คืน ("unlisted error");
 }
 #endif
 
 #ifndef HAVE_UTIMES
-int utimes(const char *filename, struct timeval *tvp)
+จำนวนเต็ม utimes(const var_na *filename, sa_nracanaa timeval *tvp)
 {
-	struct utimbuf ub;
+	sa_nracanaa utimbuf ub;
 
 	ub.actime = tvp[0].tv_sec;
 	ub.modtime = tvp[1].tv_sec;
 
-	return (utime(filename, &ub));
+	คืน (utime(filename, &ub));
 }
 #endif
 
@@ -123,13 +123,13 @@ int utimes(const char *filename, struct timeval *tvp)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-utimensat(int fd, const char *path, const struct timespec times[2],
-    int flag)
+จำนวนเต็ม
+utimensat(จำนวนเต็ม fd, const var_na *path, const sa_nracanaa timespec times[2],
+    จำนวนเต็ม flag)
 {
-	struct timeval tv[2];
+	sa_nracanaa timeval tv[2];
 # ifdef HAVE_FUTIMES
-	int ret, oflags = O_WRONLY;
+	จำนวนเต็ม ret, oflags = O_WRONLY;
 # endif
 
 	tv[0].tv_sec = times[0].tv_sec;
@@ -137,32 +137,32 @@ utimensat(int fd, const char *path, const struct timespec times[2],
 	tv[1].tv_sec = times[1].tv_sec;
 	tv[1].tv_usec = times[1].tv_nsec / 1000;
 
-	if (fd != AT_FDCWD) {
+	ถ้า (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		คืน -1;
 	}
 # ifndef HAVE_FUTIMES
-	return utimes(path, tv);
-# else
+	คืน utimes(path, tv);
+# มิฉะนั้น
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ถ้า (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ถ้า ((fd = open(path, oflags)) == -1)
+		คืน -1;
 	ret = futimes(fd, tv);
 	close(fd);
-	return ret;
+	คืน ret;
 # endif
 }
 #endif
 
 #ifndef HAVE_DIRFD
-int
+จำนวนเต็ม
 dirfd(void *dir)
 {
 	errno = ENOSYS;
-	return -1;
+	คืน -1;
 }
 #endif
 
@@ -172,27 +172,27 @@ dirfd(void *dir)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
+จำนวนเต็ม
+fchownat(จำนวนเต็ม fd, const var_na *path, uid_t owner, gid_t group, จำนวนเต็ม flag)
 {
-	int ret, oflags = O_WRONLY;
+	จำนวนเต็ม ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	ถ้า (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		คืน -1;
 	}
 # ifndef HAVE_FCHOWN
-	return chown(path, owner, group);
-# else
+	คืน chown(path, owner, group);
+# มิฉะนั้น
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ถ้า (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ถ้า ((fd = open(path, oflags)) == -1)
+		คืน -1;
 	ret = fchown(fd, owner, group);
 	close(fd);
-	return ret;
+	คืน ret;
 # endif
 }
 #endif
@@ -203,27 +203,27 @@ fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchmodat(int fd, const char *path, mode_t mode, int flag)
+จำนวนเต็ม
+fchmodat(จำนวนเต็ม fd, const var_na *path, mode_t mode, จำนวนเต็ม flag)
 {
-	int ret, oflags = O_WRONLY;
+	จำนวนเต็ม ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	ถ้า (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		คืน -1;
 	}
 # ifndef HAVE_FCHMOD
-	return chmod(path, mode);
-# else
+	คืน chmod(path, mode);
+# มิฉะนั้น
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	ถ้า (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	ถ้า ((fd = open(path, oflags)) == -1)
+		คืน -1;
 	ret = fchmod(fd, mode);
 	close(fd);
-	return ret;
+	คืน ret;
 # endif
 }
 #endif
@@ -233,19 +233,19 @@ fchmodat(int fd, const char *path, mode_t mode, int flag)
  * A limited implementation of fstatat that just has what OpenSSH uses:
  * cwd-relative and absolute paths, with or without following symlinks.
  */
-int
-fstatat(int dirfd, const char *path, struct stat *sb, int flag)
+จำนวนเต็ม
+fstatat(จำนวนเต็ม dirfd, const var_na *path, sa_nracanaa stat *sb, จำนวนเต็ม flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	ถ้า (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		คืน -1;
 	}
-	if (flag == 0)
-		return stat(path, sb);
-	else if (flag == AT_SYMLINK_NOFOLLOW)
-		return lstat(path, sb);
+	ถ้า (flag == 0)
+		คืน stat(path, sb);
+	มิฉะนั้น ถ้า (flag == AT_SYMLINK_NOFOLLOW)
+		คืน lstat(path, sb);
 	errno = ENOSYS;
-	return -1;
+	คืน -1;
 }
 #endif
 
@@ -254,50 +254,50 @@ fstatat(int dirfd, const char *path, struct stat *sb, int flag)
  * A limited implementation of unlinkat that just has what OpenSSH uses:
  * cwd-relative and absolute paths.
  */
-int
-unlinkat(int dirfd, const char *path, int flag)
+จำนวนเต็ม
+unlinkat(จำนวนเต็ม dirfd, const var_na *path, จำนวนเต็ม flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	ถ้า (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		คืน -1;
 	}
-	if (flag == 0)
-		return unlink(path);
+	ถ้า (flag == 0)
+		คืน unlink(path);
 	errno = ENOSYS;
-	return -1;
+	คืน -1;
 }
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate(const char *path, off_t length)
+จำนวนเต็ม truncate(const var_na *path, off_t length)
 {
-	int fd, ret, saverrno;
+	จำนวนเต็ม fd, ret, saverrno;
 
 	fd = open(path, O_WRONLY);
-	if (fd < 0)
-		return (-1);
+	ถ้า (fd < 0)
+		คืน (-1);
 
 	ret = ftruncate(fd, length);
 	saverrno = errno;
 	close(fd);
-	if (ret == -1)
+	ถ้า (ret == -1)
 		errno = saverrno;
 
-	return(ret);
+	คืน(ret);
 }
 #endif /* HAVE_TRUNCATE */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
-int nanosleep(const struct timespec *req, struct timespec *rem)
+#ถ้า !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+จำนวนเต็ม nanosleep(const sa_nracanaa timespec *req, sa_nracanaa timespec *rem)
 {
-	int rc, saverrno;
-	extern int errno;
-	struct timeval tstart, tstop, tremain, time2wait;
+	จำนวนเต็ม rc, saverrno;
+	extern จำนวนเต็ม errno;
+	sa_nracanaa timeval tstart, tstop, tremain, time2wait;
 
 	TIMESPEC_TO_TIMEVAL(&time2wait, req)
 	(void) gettimeofday(&tstart, NULL);
 	rc = select(0, NULL, NULL, NULL, &time2wait);
-	if (rc == -1) {
+	ถ้า (rc == -1) {
 		saverrno = errno;
 		(void) gettimeofday (&tstop, NULL);
 		errno = saverrno;
@@ -307,82 +307,82 @@ int nanosleep(const struct timespec *req, struct timespec *rem)
 			(tstop.tv_usec - tstart.tv_usec);
 		tremain.tv_sec += tremain.tv_usec / 1000000L;
 		tremain.tv_usec %= 1000000L;
-	} else {
+	} มิฉะนั้น {
 		tremain.tv_sec = 0;
 		tremain.tv_usec = 0;
 	}
-	if (rem != NULL)
+	ถ้า (rem != NULL)
 		TIMEVAL_TO_TIMESPEC(&tremain, rem)
 
-	return(rc);
+	คืน(rc);
 }
 #endif
 
-#if !defined(HAVE_USLEEP)
-int usleep(unsigned int useconds)
+#ถ้า !defined(HAVE_USLEEP)
+จำนวนเต็ม usleep(unsigned จำนวนเต็ม useconds)
 {
-	struct timespec ts;
+	sa_nracanaa timespec ts;
 
 	ts.tv_sec = useconds / 1000000;
 	ts.tv_nsec = (useconds % 1000000) * 1000;
-	return nanosleep(&ts, NULL);
+	คืน nanosleep(&ts, NULL);
 }
 #endif
 
 #ifndef HAVE_TCGETPGRP
 pid_t
-tcgetpgrp(int fd)
+tcgetpgrp(จำนวนเต็ม fd)
 {
-	int ctty_pgrp;
+	จำนวนเต็ม ctty_pgrp;
 
-	if (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
-		return(-1);
-	else
-		return(ctty_pgrp);
+	ถ้า (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
+		คืน(-1);
+	มิฉะนั้น
+		คืน(ctty_pgrp);
 }
 #endif /* HAVE_TCGETPGRP */
 
 #ifndef HAVE_TCSENDBREAK
-int
-tcsendbreak(int fd, int duration)
+จำนวนเต็ม
+tcsendbreak(จำนวนเต็ม fd, จำนวนเต็ม duration)
 {
-# if defined(TIOCSBRK) && defined(TIOCCBRK)
-	struct timeval sleepytime;
+# ถ้า defined(TIOCSBRK) && defined(TIOCCBRK)
+	sa_nracanaa timeval sleepytime;
 
 	sleepytime.tv_sec = 0;
 	sleepytime.tv_usec = 400000;
-	if (ioctl(fd, TIOCSBRK, 0) == -1)
-		return (-1);
+	ถ้า (ioctl(fd, TIOCSBRK, 0) == -1)
+		คืน (-1);
 	(void)select(0, 0, 0, 0, &sleepytime);
-	if (ioctl(fd, TIOCCBRK, 0) == -1)
-		return (-1);
-	return (0);
-# else
-	return -1;
+	ถ้า (ioctl(fd, TIOCCBRK, 0) == -1)
+		คืน (-1);
+	คืน (0);
+# มิฉะนั้น
+	คืน -1;
 # endif
 }
 #endif /* HAVE_TCSENDBREAK */
 
 #ifndef HAVE_STRDUP
-char *
-strdup(const char *str)
+var_na *
+strdup(const var_na *str)
 {
 	size_t len;
-	char *cp;
+	var_na *cp;
 
 	len = strlen(str) + 1;
 	cp = malloc(len);
-	if (cp != NULL)
-		return(memcpy(cp, str, len));
-	return NULL;
+	ถ้า (cp != NULL)
+		คืน(memcpy(cp, str, len));
+	คืน NULL;
 }
 #endif
 
 #ifndef HAVE_ISBLANK
-int
-isblank(int c)
+จำนวนเต็ม
+isblank(จำนวนเต็ม c)
 {
-	return (c == ' ' || c == '\t');
+	คืน (c == ' ' || c == '\t');
 }
 #endif
 
@@ -390,48 +390,48 @@ isblank(int c)
 pid_t
 getpgid(pid_t pid)
 {
-#if defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
-	return getpgrp(pid);
+#ถ้า defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
+	คืน getpgrp(pid);
 #elif defined(HAVE_GETPGRP)
-	if (pid == 0)
-		return getpgrp();
+	ถ้า (pid == 0)
+		คืน getpgrp();
 #endif
 
 	errno = ESRCH;
-	return -1;
+	คืน -1;
 }
 #endif
 
 #ifndef HAVE_PLEDGE
-int
-pledge(const char *promises, const char *execpromises)
+จำนวนเต็ม
+pledge(const var_na *promises, const var_na *execpromises)
 {
-	return 0;
+	คืน 0;
 }
 #endif
 
 #ifndef HAVE_UNVEIL
-int
-unveil(const char *path, const char *permissions)
+จำนวนเต็ม
+unveil(const var_na *path, const var_na *permissions)
 {
-	return 0;
+	คืน 0;
 }
 #endif
 
 #ifndef HAVE_MBTOWC
 /* a mbtowc that only supports ASCII */
-int
-mbtowc(wchar_t *pwc, const char *s, size_t n)
+จำนวนเต็ม
+mbtowc(wchar_t *pwc, const var_na *s, size_t n)
 {
-	if (s == NULL || *s == '\0')
-		return 0;	/* ASCII is not state-dependent */
-	if (*s < 0 || *s > 0x7f || n < 1) {
+	ถ้า (s == NULL || *s == '\0')
+		คืน 0;	/* ASCII is not state-dependent */
+	ถ้า (*s < 0 || *s > 0x7f || n < 1) {
 		errno = EOPNOTSUPP;
-		return -1;
+		คืน -1;
 	}
-	if (pwc != NULL)
+	ถ้า (pwc != NULL)
 		*pwc = *s;
-	return 1;
+	คืน 1;
 }
 #endif
 
@@ -439,7 +439,7 @@ mbtowc(wchar_t *pwc, const char *s, size_t n)
 long long
 llabs(long long j)
 {
-	return (j < 0 ? -j : j);
+	คืน (j < 0 ? -j : j);
 }
 #endif
 
@@ -452,10 +452,10 @@ bzero(void *b, size_t n)
 #endif
 
 #ifndef HAVE_RAISE
-int
-raise(int sig)
+จำนวนเต็ม
+raise(จำนวนเต็ม sig)
 {
-	return kill(getpid(), sig);
+	คืน kill(getpid(), sig);
 }
 #endif
 
@@ -464,77 +464,77 @@ pid_t
 getsid(pid_t pid)
 {
 	errno = ENOSYS;
-	return -1;
+	คืน -1;
 }
 #endif
 
 #ifndef HAVE_KILLPG
-int
-killpg(pid_t pgrp, int sig)
+จำนวนเต็ม
+killpg(pid_t pgrp, จำนวนเต็ม sig)
 {
-	return kill(pgrp, sig);
+	คืน kill(pgrp, sig);
 }
 #endif
 
 #ifdef FFLUSH_NULL_BUG
 #undef fflush
-int _ssh_compat_fflush(FILE *f)
+จำนวนเต็ม _ssh_compat_fflush(FILE *f)
 {
-	int r1, r2;
+	จำนวนเต็ม r1, r2;
 
-	if (f == NULL) {
+	ถ้า (f == NULL) {
 		r1 = fflush(stdout);
 		r2 = fflush(stderr);
-		if (r1 == -1 || r2 == -1)
-			return -1;
-		return 0;
+		ถ้า (r1 == -1 || r2 == -1)
+			คืน -1;
+		คืน 0;
 	}
-	return fflush(f);
+	คืน fflush(f);
 }
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *
-localtime_r(const time_t *timep, struct tm *result)
+sa_nracanaa tm *
+localtime_r(const time_t *timep, sa_nracanaa tm *result)
 {
-	struct tm *tm = localtime(timep);
+	sa_nracanaa tm *tm = localtime(timep);
 	*result = *tm;
-	return result;
+	คืน result;
 }
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-int
-clock_gettime(clockid_t clockid, struct timespec *ts)
+จำนวนเต็ม
+clock_gettime(clockid_t clockid, sa_nracanaa timespec *ts)
 {
-	struct timeval tv;
+	sa_nracanaa timeval tv;
 
-	if (clockid != CLOCK_REALTIME) {
+	ถ้า (clockid != CLOCK_REALTIME) {
 		errno = ENOSYS;
-		return -1;
+		คืน -1;
 	}
-	if (ts == NULL) {
+	ถ้า (ts == NULL) {
 		errno = EFAULT;
-		return -1;
+		คืน -1;
 	}
 
-	if (gettimeofday(&tv, NULL) == -1)
-		return -1;
+	ถ้า (gettimeofday(&tv, NULL) == -1)
+		คืน -1;
 
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
-	return 0;
+	คืน 0;
 }
 #endif
 
 #ifdef ASAN_OPTIONS
-const char *__asan_default_options(void) {
-	return ASAN_OPTIONS;
+const var_na *__asan_default_options(void) {
+	คืน ASAN_OPTIONS;
 }
 #endif
 
 #ifdef MSAN_OPTIONS
-const char *__msan_default_options(void) {
-	return MSAN_OPTIONS;
+const var_na *__msan_default_options(void) {
+	คืน MSAN_OPTIONS;
 }
 #endif

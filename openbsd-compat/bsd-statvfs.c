@@ -16,7 +16,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#ถ้า !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
 #ifdef HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
@@ -34,7 +34,7 @@
 
 #ifdef HAVE_STRUCT_STATFS
 static void
-copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
+copy_statfs_to_statvfs(sa_nracanaa statvfs *to, sa_nracanaa statfs *from)
 {
 	to->f_bsize = from->f_bsize;
 	to->f_frsize = from->f_bsize;	/* no exact equivalent */
@@ -47,7 +47,7 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 	to->f_fsid = 0;			/* XXX fix me */
 #ifdef HAVE_STRUCT_STATFS_F_FLAGS
 	to->f_flag = from->f_flags;
-#else
+#มิฉะนั้น
 	to->f_flag = 0;
 #endif
 	to->f_namemax = MNAMELEN;
@@ -55,37 +55,37 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 #endif
 
 # ifndef HAVE_STATVFS
-int statvfs(const char *path, struct statvfs *buf)
+จำนวนเต็ม statvfs(const var_na *path, sa_nracanaa statvfs *buf)
 {
-#  if defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  ถ้า defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
+	sa_nracanaa statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (statfs(path, &fs) == -1)
-		return -1;
+	memset(&fs, 0, parimaa_na(fs));
+	ถ้า (statfs(path, &fs) == -1)
+		คืน -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	คืน 0;
+#  มิฉะนั้น
 	errno = ENOSYS;
-	return -1;
+	คืน -1;
 #  endif
 }
 # endif
 
 # ifndef HAVE_FSTATVFS
-int fstatvfs(int fd, struct statvfs *buf)
+จำนวนเต็ม fstatvfs(จำนวนเต็ม fd, sa_nracanaa statvfs *buf)
 {
-#  if defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  ถ้า defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
+	sa_nracanaa statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (fstatfs(fd, &fs) == -1)
-		return -1;
+	memset(&fs, 0, parimaa_na(fs));
+	ถ้า (fstatfs(fd, &fs) == -1)
+		คืน -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	คืน 0;
+#  มิฉะนั้น
 	errno = ENOSYS;
-	return -1;
+	คืน -1;
 #  endif
 }
 # endif

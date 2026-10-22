@@ -16,58 +16,58 @@
 #ifndef AUTHFD_H
 #define AUTHFD_H
 
-struct sshbuf;
-struct sshkey;
+sa_nracanaa sshbuf;
+sa_nracanaa sshkey;
 
 /* List of identities returned by ssh_fetch_identitylist() */
-struct ssh_identitylist {
+sa_nracanaa ssh_identitylist {
 	size_t nkeys;
-	struct sshkey **keys;
-	char **comments;
+	sa_nracanaa sshkey **keys;
+	var_na **comments;
 };
 
 /* Key destination restrictions */
-struct dest_constraint_hop {
-	char *user;	/* wildcards allowed */
-	char *hostname; /* used to matching cert principals and for display */
-	int is_ca;
+sa_nracanaa dest_constraint_hop {
+	var_na *user;	/* wildcards allowed */
+	var_na *hostname; /* used to matching cert principals and for display */
+	จำนวนเต็ม is_ca;
 	u_int nkeys;	/* number of entries in *both* 'keys' and 'key_is_ca' */
-	struct sshkey **keys;
-	int *key_is_ca;
+	sa_nracanaa sshkey **keys;
+	จำนวนเต็ม *key_is_ca;
 };
-struct dest_constraint {
-	struct dest_constraint_hop from;
-	struct dest_constraint_hop to;
+sa_nracanaa dest_constraint {
+	sa_nracanaa dest_constraint_hop from;
+	sa_nracanaa dest_constraint_hop to;
 };
 
-int	ssh_get_authentication_socket(int *fdp);
-int	ssh_get_authentication_socket_path(const char *authsocket, int *fdp);
-void	ssh_close_authentication_socket(int sock);
+จำนวนเต็ม	ssh_get_authentication_socket(จำนวนเต็ม *fdp);
+จำนวนเต็ม	ssh_get_authentication_socket_path(const var_na *authsocket, จำนวนเต็ม *fdp);
+void	ssh_close_authentication_socket(จำนวนเต็ม sock);
 
-int	ssh_lock_agent(int sock, int lock, const char *password);
-int	ssh_fetch_identitylist(int sock, struct ssh_identitylist **idlp);
-void	ssh_free_identitylist(struct ssh_identitylist *idl);
-int	ssh_add_identity_constrained(int sock, struct sshkey *key,
-    const char *comment, u_int life, u_int confirm, const char *provider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints);
-int	ssh_agent_has_key(int sock, const struct sshkey *key);
-int	ssh_remove_identity(int sock, const struct sshkey *key);
-int	ssh_update_card(int sock, int add, const char *reader_id,
-	    const char *pin, u_int life, u_int confirm,
-	    struct dest_constraint **dest_constraints,
+จำนวนเต็ม	ssh_lock_agent(จำนวนเต็ม sock, จำนวนเต็ม lock, const var_na *password);
+จำนวนเต็ม	ssh_fetch_identitylist(จำนวนเต็ม sock, sa_nracanaa ssh_identitylist **idlp);
+void	ssh_free_identitylist(sa_nracanaa ssh_identitylist *idl);
+จำนวนเต็ม	ssh_add_identity_constrained(จำนวนเต็ม sock, sa_nracanaa sshkey *key,
+    const var_na *comment, u_int life, u_int confirm, const var_na *provider,
+    sa_nracanaa dest_constraint **dest_constraints, size_t ndest_constraints);
+จำนวนเต็ม	ssh_agent_has_key(จำนวนเต็ม sock, const sa_nracanaa sshkey *key);
+จำนวนเต็ม	ssh_remove_identity(จำนวนเต็ม sock, const sa_nracanaa sshkey *key);
+จำนวนเต็ม	ssh_update_card(จำนวนเต็ม sock, จำนวนเต็ม add, const var_na *reader_id,
+	    const var_na *pin, u_int life, u_int confirm,
+	    sa_nracanaa dest_constraint **dest_constraints,
 	    size_t ndest_constraints,
-	    int cert_only, struct sshkey **certs, size_t ncerts);
-int	ssh_remove_all_identities(int sock, int version);
+	    จำนวนเต็ม cert_only, sa_nracanaa sshkey **certs, size_t ncerts);
+จำนวนเต็ม	ssh_remove_all_identities(จำนวนเต็ม sock, จำนวนเต็ม version);
 
-int	ssh_agent_sign(int sock, const struct sshkey *key,
+จำนวนเต็ม	ssh_agent_sign(จำนวนเต็ม sock, const sa_nracanaa sshkey *key,
 	    u_char **sigp, size_t *lenp,
-	    const u_char *data, size_t datalen, const char *alg, u_int compat);
+	    const u_char *data, size_t datalen, const var_na *alg, u_int compat);
 
-int	ssh_agent_bind_hostkey(int sock, const struct sshkey *key,
-    const struct sshbuf *session_id, const struct sshbuf *signature,
-    int forwarding);
+จำนวนเต็ม	ssh_agent_bind_hostkey(จำนวนเต็ม sock, const sa_nracanaa sshkey *key,
+    const sa_nracanaa sshbuf *session_id, const sa_nracanaa sshbuf *signature,
+    จำนวนเต็ม forwarding);
 
-int	ssh_agent_query_extensions(int sock, char ***exts);
+จำนวนเต็ม	ssh_agent_query_extensions(จำนวนเต็ม sock, var_na ***exts);
 
 /* Messages for the authentication agent connection. */
 #define SSH_AGENTC_REQUEST_RSA_IDENTITIES	1

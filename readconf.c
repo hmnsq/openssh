@@ -39,7 +39,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <util.h>
-#if defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
+#ถ้า defined(HAVE_STRNVIS) && defined(HAVE_VIS_H) && !defined(BROKEN_STRNVIS)
 # include <vis.h>
 #endif
 
@@ -119,17 +119,17 @@
 
 */
 
-static int read_config_file_depth(const char *filename, struct passwd *pw,
-    const char *host, const char *original_host, const char *remote_command,
-    Options *options, int flags, int *activep, int *want_final_pass, int depth);
-static int process_config_line_depth(Options *options, struct passwd *pw,
-    const char *host, const char *original_host, const char *remote_command,
-    char *line, const char *filename, int linenum, int *activep, int flags,
-    int *want_final_pass, int depth);
+static จำนวนเต็ม read_config_file_depth(const var_na *filename, sa_nracanaa passwd *pw,
+    const var_na *host, const var_na *original_host, const var_na *remote_command,
+    Options *options, จำนวนเต็ม flags, จำนวนเต็ม *activep, จำนวนเต็ม *want_final_pass, จำนวนเต็ม depth);
+static จำนวนเต็ม process_config_line_depth(Options *options, sa_nracanaa passwd *pw,
+    const var_na *host, const var_na *original_host, const var_na *remote_command,
+    var_na *line, const var_na *filename, จำนวนเต็ม linenum, จำนวนเต็ม *activep, จำนวนเต็ม flags,
+    จำนวนเต็ม *want_final_pass, จำนวนเต็ม depth);
 
 /* Keyword tokens. */
 
-typedef enum {
+typedef ga_nanaa {
 	oBadOption,
 	oHost, oMatch, oInclude, oTag,
 	oForwardAgent, oForwardX11, oForwardX11Trusted, oForwardX11Timeout,
@@ -172,8 +172,8 @@ typedef enum {
 
 /* Textual representations of the tokens. */
 
-static struct {
-	const char *name;
+static sa_nracanaa {
+	const var_na *name;
 	OpCodes opcode;
 } keywords[] = {
 	/* Deprecated options */
@@ -196,17 +196,17 @@ static struct {
 	{ "compressionlevel", oUnsupported },
 
 	/* Sometimes-unsupported options */
-#if defined(GSSAPI)
+#ถ้า defined(GSSAPI)
 	{ "gssapiauthentication", oGssAuthentication },
 	{ "gssapidelegatecredentials", oGssDelegateCreds },
-# else
+# มิฉะนั้น
 	{ "gssapiauthentication", oUnsupported },
 	{ "gssapidelegatecredentials", oUnsupported },
 #endif
 #ifdef ENABLE_PKCS11
 	{ "pkcs11provider", oPKCS11Provider },
 	{ "smartcarddevice", oPKCS11Provider },
-# else
+# มิฉะนั้น
 	{ "smartcarddevice", oUnsupported },
 	{ "pkcs11provider", oUnsupported },
 #endif
@@ -324,40 +324,40 @@ static struct {
 	{ NULL, oBadOption }
 };
 
-static const char *lookup_opcode_name(OpCodes code);
+static const var_na *lookup_opcode_name(OpCodes code);
 
-const char *
+const var_na *
 kex_default_pk_alg(void)
 {
-	static char *pkalgs;
+	static var_na *pkalgs;
 
-	if (pkalgs == NULL) {
-		char *all_key;
+	ถ้า (pkalgs == NULL) {
+		var_na *all_key;
 
 		all_key = sshkey_alg_list(0, 0, 1, ',');
 		pkalgs = match_filter_allowlist(KEX_DEFAULT_PK_ALG, all_key);
 		free(all_key);
 	}
-	return pkalgs;
+	คืน pkalgs;
 }
 
-char *
-ssh_connection_hash(const char *thishost, const char *host, const char *portstr,
-    const char *user, const char *jumphost)
+var_na *
+ssh_connection_hash(const var_na *thishost, const var_na *host, const var_na *portstr,
+    const var_na *user, const var_na *jumphost)
 {
-	struct ssh_digest_ctx *md;
+	sa_nracanaa ssh_digest_ctx *md;
 	u_char conn_hash[SSH_DIGEST_MAX_LENGTH];
 
-	if ((md = ssh_digest_start(SSH_DIGEST_SHA1)) == NULL ||
+	ถ้า ((md = ssh_digest_start(SSH_DIGEST_SHA1)) == NULL ||
 	    ssh_digest_update(md, thishost, strlen(thishost)) < 0 ||
 	    ssh_digest_update(md, host, strlen(host)) < 0 ||
 	    ssh_digest_update(md, portstr, strlen(portstr)) < 0 ||
 	    ssh_digest_update(md, user, strlen(user)) < 0 ||
 	    ssh_digest_update(md, jumphost, strlen(jumphost)) < 0 ||
-	    ssh_digest_final(md, conn_hash, sizeof(conn_hash)) < 0)
+	    ssh_digest_final(md, conn_hash, parimaa_na(conn_hash)) < 0)
 		fatal_f("mux digest failed");
 	ssh_digest_free(md);
-	return tohex(conn_hash, ssh_digest_bytes(SSH_DIGEST_SHA1));
+	คืน tohex(conn_hash, ssh_digest_bytes(SSH_DIGEST_SHA1));
 }
 
 /*
@@ -366,19 +366,19 @@ ssh_connection_hash(const char *thishost, const char *host, const char *portstr,
  */
 
 void
-add_local_forward(Options *options, const struct Forward *newfwd)
+add_local_forward(Options *options, const sa_nracanaa Forward *newfwd)
 {
-	struct Forward *fwd;
-	int i;
+	sa_nracanaa Forward *fwd;
+	จำนวนเต็ม i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_local_forwards; i++) {
-		if (forward_equals(newfwd, options->local_forwards + i))
-			return;
+	สำหรับ (i = 0; i < options->num_local_forwards; i++) {
+		ถ้า (forward_equals(newfwd, options->local_forwards + i))
+			คืน;
 	}
 	options->local_forwards = xreallocarray(options->local_forwards,
 	    options->num_local_forwards + 1,
-	    sizeof(*options->local_forwards));
+	    parimaa_na(*options->local_forwards));
 	fwd = &options->local_forwards[options->num_local_forwards++];
 
 	fwd->listen_host = newfwd->listen_host;
@@ -395,19 +395,19 @@ add_local_forward(Options *options, const struct Forward *newfwd)
  */
 
 void
-add_remote_forward(Options *options, const struct Forward *newfwd)
+add_remote_forward(Options *options, const sa_nracanaa Forward *newfwd)
 {
-	struct Forward *fwd;
-	int i;
+	sa_nracanaa Forward *fwd;
+	จำนวนเต็ม i;
 
 	/* Don't add duplicates */
-	for (i = 0; i < options->num_remote_forwards; i++) {
-		if (forward_equals(newfwd, options->remote_forwards + i))
-			return;
+	สำหรับ (i = 0; i < options->num_remote_forwards; i++) {
+		ถ้า (forward_equals(newfwd, options->remote_forwards + i))
+			คืน;
 	}
 	options->remote_forwards = xreallocarray(options->remote_forwards,
 	    options->num_remote_forwards + 1,
-	    sizeof(*options->remote_forwards));
+	    parimaa_na(*options->remote_forwards));
 	fwd = &options->remote_forwards[options->num_remote_forwards++];
 
 	fwd->listen_host = newfwd->listen_host;
@@ -423,26 +423,26 @@ add_remote_forward(Options *options, const struct Forward *newfwd)
 static void
 clear_forwardings(Options *options)
 {
-	int i;
+	จำนวนเต็ม i;
 
-	for (i = 0; i < options->num_local_forwards; i++) {
+	สำหรับ (i = 0; i < options->num_local_forwards; i++) {
 		free(options->local_forwards[i].listen_host);
 		free(options->local_forwards[i].listen_path);
 		free(options->local_forwards[i].connect_host);
 		free(options->local_forwards[i].connect_path);
 	}
-	if (options->num_local_forwards > 0) {
+	ถ้า (options->num_local_forwards > 0) {
 		free(options->local_forwards);
 		options->local_forwards = NULL;
 	}
 	options->num_local_forwards = 0;
-	for (i = 0; i < options->num_remote_forwards; i++) {
+	สำหรับ (i = 0; i < options->num_remote_forwards; i++) {
 		free(options->remote_forwards[i].listen_host);
 		free(options->remote_forwards[i].listen_path);
 		free(options->remote_forwards[i].connect_host);
 		free(options->remote_forwards[i].connect_path);
 	}
-	if (options->num_remote_forwards > 0) {
+	ถ้า (options->num_remote_forwards > 0) {
 		free(options->remote_forwards);
 		options->remote_forwards = NULL;
 	}
@@ -451,20 +451,20 @@ clear_forwardings(Options *options)
 }
 
 void
-add_certificate_file(Options *options, const char *path, int userprovided)
+add_certificate_file(Options *options, const var_na *path, จำนวนเต็ม userprovided)
 {
-	int i;
+	จำนวนเต็ม i;
 
-	if (options->num_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
+	ถ้า (options->num_certificate_files >= SSH_MAX_CERTIFICATE_FILES)
 		fatal("Too many certificate files specified (max %d)",
 		    SSH_MAX_CERTIFICATE_FILES);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_certificate_files; i++) {
-		if (options->certificate_file_userprovided[i] == userprovided &&
+	สำหรับ (i = 0; i < options->num_certificate_files; i++) {
+		ถ้า (options->certificate_file_userprovided[i] == userprovided &&
 		    strcmp(options->certificate_files[i], path) == 0) {
 			debug2_f("ignoring duplicate key %s", path);
-			return;
+			คืน;
 		}
 	}
 
@@ -475,28 +475,28 @@ add_certificate_file(Options *options, const char *path, int userprovided)
 }
 
 void
-add_identity_file(Options *options, const char *dir, const char *filename,
-    int userprovided)
+add_identity_file(Options *options, const var_na *dir, const var_na *filename,
+    จำนวนเต็ม userprovided)
 {
-	char *path;
-	int i;
+	var_na *path;
+	จำนวนเต็ม i;
 
-	if (options->num_identity_files >= SSH_MAX_IDENTITY_FILES)
+	ถ้า (options->num_identity_files >= SSH_MAX_IDENTITY_FILES)
 		fatal("Too many identity files specified (max %d)",
 		    SSH_MAX_IDENTITY_FILES);
 
-	if (dir == NULL) /* no dir, filename is absolute */
+	ถ้า (dir == NULL) /* no dir, filename is absolute */
 		path = xstrdup(filename);
-	else if (xasprintf(&path, "%s%s", dir, filename) >= PATH_MAX)
+	มิฉะนั้น ถ้า (xasprintf(&path, "%s%s", dir, filename) >= PATH_MAX)
 		fatal("Identity file path %s too long", path);
 
 	/* Avoid registering duplicates */
-	for (i = 0; i < options->num_identity_files; i++) {
-		if (options->identity_file_userprovided[i] == userprovided &&
+	สำหรับ (i = 0; i < options->num_identity_files; i++) {
+		ถ้า (options->identity_file_userprovided[i] == userprovided &&
 		    strcmp(options->identity_files[i], path) == 0) {
 			debug2_f("ignoring duplicate key %s", path);
 			free(path);
-			return;
+			คืน;
 		}
 	}
 
@@ -505,34 +505,34 @@ add_identity_file(Options *options, const char *dir, const char *filename,
 	options->identity_files[options->num_identity_files++] = path;
 }
 
-int
+จำนวนเต็ม
 default_ssh_port(void)
 {
-	static int port;
-	struct servent *sp;
+	static จำนวนเต็ม port;
+	sa_nracanaa servent *sp;
 
-	if (port == 0) {
+	ถ้า (port == 0) {
 		sp = getservbyname(SSH_SERVICE_NAME, "tcp");
 		port = sp ? ntohs(sp->s_port) : SSH_DEFAULT_PORT;
 	}
-	return port;
+	คืน port;
 }
 
 /*
  * Execute a command in a shell.
  * Return its exit status or -1 on abnormal exit.
  */
-static int
-execute_in_shell(const char *cmd)
+static จำนวนเต็ม
+execute_in_shell(const var_na *cmd)
 {
-	char *shell;
+	var_na *shell;
 	pid_t pid;
-	int status;
+	จำนวนเต็ม status;
 
-	if ((shell = getenv("SHELL")) == NULL)
+	ถ้า ((shell = getenv("SHELL")) == NULL)
 		shell = _PATH_BSHELL;
 
-	if (access(shell, X_OK) == -1) {
+	ถ้า (access(shell, X_OK) == -1) {
 		fatal("Shell \"%s\" is not executable: %s",
 		    shell, strerror(errno));
 	}
@@ -540,10 +540,10 @@ execute_in_shell(const char *cmd)
 	debug("Executing command: '%.500s'", cmd);
 
 	/* Fork and execute the command. */
-	if ((pid = fork()) == 0) {
-		char *argv[4];
+	ถ้า ((pid = fork()) == 0) {
+		var_na *argv[4];
 
-		if (stdfd_devnull(1, 1, 0) == -1)
+		ถ้า (stdfd_devnull(1, 1, 0) == -1)
 			fatal_f("stdfd_devnull failed");
 		closefrom(STDERR_FILENO + 1);
 
@@ -560,52 +560,52 @@ execute_in_shell(const char *cmd)
 		_exit(1);
 	}
 	/* Parent. */
-	if (pid == -1)
+	ถ้า (pid == -1)
 		fatal_f("fork: %.100s", strerror(errno));
 
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR && errno != EAGAIN)
+	ขณะ (waitpid(pid, &status, 0) == -1) {
+		ถ้า (errno != EINTR && errno != EAGAIN)
 			fatal_f("waitpid: %s", strerror(errno));
 	}
-	if (!WIFEXITED(status)) {
+	ถ้า (!WIFEXITED(status)) {
 		error("command '%.100s' exited abnormally", cmd);
-		return -1;
+		คืน -1;
 	}
 	debug3("command returned status %d", WEXITSTATUS(status));
-	return WEXITSTATUS(status);
+	คืน WEXITSTATUS(status);
 }
 
 /*
  * Check whether a local network interface address appears in CIDR pattern-
  * list 'addrlist'. Returns 1 if matched or 0 otherwise.
  */
-static int
-check_match_ifaddrs(const char *addrlist)
+static จำนวนเต็ม
+check_match_ifaddrs(const var_na *addrlist)
 {
 #ifdef HAVE_IFADDRS_H
-	struct ifaddrs *ifa, *ifaddrs = NULL;
-	int r, found = 0;
-	char addr[NI_MAXHOST];
+	sa_nracanaa ifaddrs *ifa, *ifaddrs = NULL;
+	จำนวนเต็ม r, found = 0;
+	var_na addr[NI_MAXHOST];
 	socklen_t salen;
 
-	if (getifaddrs(&ifaddrs) != 0) {
+	ถ้า (getifaddrs(&ifaddrs) != 0) {
 		error("match localnetwork: getifaddrs failed: %s",
 		    strerror(errno));
-		return 0;
+		คืน 0;
 	}
-	for (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
-		if (ifa->ifa_addr == NULL || ifa->ifa_name == NULL ||
+	สำหรับ (ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
+		ถ้า (ifa->ifa_addr == NULL || ifa->ifa_name == NULL ||
 		    (ifa->ifa_flags & IFF_UP) == 0)
 			continue;
 		switch (ifa->ifa_addr->sa_family) {
-		case AF_INET:
-			salen = sizeof(struct sockaddr_in);
-			break;
-		case AF_INET6:
-			salen = sizeof(struct sockaddr_in6);
-			break;
+		pak_sa AF_INET:
+			salen = parimaa_na(sa_nracanaa sockaddr_in);
+			bha_nga;
+		pak_sa AF_INET6:
+			salen = parimaa_na(sa_nracanaa sockaddr_in6);
+			bha_nga;
 #ifdef AF_LINK
-		case AF_LINK:
+		pak_sa AF_LINK:
 			/* ignore */
 			continue;
 #endif /* AF_LINK */
@@ -614,25 +614,25 @@ check_match_ifaddrs(const char *addrlist)
 			    ifa->ifa_name, ifa->ifa_addr->sa_family);
 			continue;
 		}
-		if ((r = getnameinfo(ifa->ifa_addr, salen, addr, sizeof(addr),
+		ถ้า ((r = getnameinfo(ifa->ifa_addr, salen, addr, parimaa_na(addr),
 		    NULL, 0, NI_NUMERICHOST)) != 0) {
 			debug2_f("interface %s getnameinfo failed: %s",
 			    ifa->ifa_name, gai_strerror(r));
 			continue;
 		}
 		debug3_f("interface %s addr %s", ifa->ifa_name, addr);
-		if (addr_match_cidr_list(addr, addrlist) == 1) {
+		ถ้า (addr_match_cidr_list(addr, addrlist) == 1) {
 			debug3_f("matched interface %s: address %s in %s",
 			    ifa->ifa_name, addr, addrlist);
 			found = 1;
-			break;
+			bha_nga;
 		}
 	}
 	freeifaddrs(ifaddrs);
-	return found;
-#else /* HAVE_IFADDRS_H */
+	คืน found;
+#มิฉะนั้น /* HAVE_IFADDRS_H */
 	error("match localnetwork: not supported on this platform");
-	return 0;
+	คืน 0;
 #endif /* HAVE_IFADDRS_H */
 }
 
@@ -640,35 +640,35 @@ check_match_ifaddrs(const char *addrlist)
  * Expand a "match exec" command or an Include path, caller must free returned
  * value.
  */
-static char *
-expand_match_exec_or_include_path(const char *path, Options *options,
-    struct passwd *pw, const char *host_arg, const char *original_host,
-    int final_pass, int is_include_path)
+static var_na *
+expand_match_exec_or_include_path(const var_na *path, Options *options,
+    sa_nracanaa passwd *pw, const var_na *host_arg, const var_na *original_host,
+    จำนวนเต็ม final_pass, จำนวนเต็ม is_include_path)
 {
-	char thishost[NI_MAXHOST], shorthost[NI_MAXHOST], portstr[NI_MAXSERV];
-	char uidstr[32], *conn_hash_hex, *keyalias, *jmphost, *ruser;
-	char *host, *ret;
-	int port;
+	var_na thishost[NI_MAXHOST], shorthost[NI_MAXHOST], portstr[NI_MAXSERV];
+	var_na uidstr[32], *conn_hash_hex, *keyalias, *jmphost, *ruser;
+	var_na *host, *ret;
+	จำนวนเต็ม port;
 
 	port = options->port <= 0 ? default_ssh_port() : options->port;
 	ruser = options->user == NULL ? pw->pw_name : options->user;
-	if (final_pass) {
+	ถ้า (final_pass) {
 		host = xstrdup(options->hostname);
-	} else if (options->hostname != NULL) {
+	} มิฉะนั้น ถ้า (options->hostname != NULL) {
 		/* NB. Please keep in sync with ssh.c:main() */
 		host = percent_expand(options->hostname,
-		    "h", host_arg, (char *)NULL);
-	} else {
+		    "h", host_arg, (var_na *)NULL);
+	} มิฉะนั้น {
 		host = xstrdup(host_arg);
 	}
-	if (gethostname(thishost, sizeof(thishost)) == -1)
+	ถ้า (gethostname(thishost, parimaa_na(thishost)) == -1)
 		fatal("gethostname: %s", strerror(errno));
 	jmphost = option_clear_or_none(options->jump_host) ?
 	    "" : options->jump_host;
-	strlcpy(shorthost, thishost, sizeof(shorthost));
+	strlcpy(shorthost, thishost, parimaa_na(shorthost));
 	shorthost[strcspn(thishost, ".")] = '\0';
-	snprintf(portstr, sizeof(portstr), "%d", port);
-	snprintf(uidstr, sizeof(uidstr), "%llu",
+	snprintf(portstr, parimaa_na(portstr), "%d", port);
+	snprintf(uidstr, parimaa_na(uidstr), "%llu",
 	    (unsigned long long)pw->pw_uid);
 	conn_hash_hex = ssh_connection_hash(thishost, host,
 	    portstr, ruser, jmphost);
@@ -687,56 +687,56 @@ expand_match_exec_or_include_path(const char *path, Options *options,
 	    "u", pw->pw_name,
 	    "i", uidstr,
 	    "j", jmphost,
-	    (char *)NULL);
+	    (var_na *)NULL);
 	free(host);
 	free(conn_hash_hex);
-	return ret;
+	คืน ret;
 }
 
 /*
  * Parse and execute a Match directive.
  */
-static int
-match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
-    struct passwd *pw, const char *host_arg, const char *original_host,
-    const char *remote_command, int final_pass, int *want_final_pass,
-    const char *filename, int linenum)
+static จำนวนเต็ม
+match_cfg_line(Options *options, const var_na *full_line, จำนวนเต็ม *acp, var_na ***avp,
+    sa_nracanaa passwd *pw, const var_na *host_arg, const var_na *original_host,
+    const var_na *remote_command, จำนวนเต็ม final_pass, จำนวนเต็ม *want_final_pass,
+    const var_na *filename, จำนวนเต็ม linenum)
 {
-	char *arg, *oattrib = NULL, *attrib = NULL, *cmd, *host, *criteria;
-	const char *ruser;
-	int r, this_result, result = 1, attributes = 0, negate;
+	var_na *arg, *oattrib = NULL, *attrib = NULL, *cmd, *host, *criteria;
+	const var_na *ruser;
+	จำนวนเต็ม r, this_result, result = 1, attributes = 0, negate;
 
 	/*
 	 * Configuration is likely to be incomplete at this point so we
 	 * must be prepared to use default values.
 	 */
 	ruser = options->user == NULL ? pw->pw_name : options->user;
-	if (final_pass) {
+	ถ้า (final_pass) {
 		host = xstrdup(options->hostname);
-	} else if (options->hostname != NULL) {
+	} มิฉะนั้น ถ้า (options->hostname != NULL) {
 		/* NB. Please keep in sync with ssh.c:main() */
 		host = percent_expand(options->hostname,
-		    "h", host_arg, (char *)NULL);
-	} else {
+		    "h", host_arg, (var_na *)NULL);
+	} มิฉะนั้น {
 		host = xstrdup(host_arg);
 	}
 
 	debug2("checking match for '%s' host %s originally %s",
 	    full_line, host, original_host);
-	while ((attrib = argv_next(acp, avp)) != NULL) {
+	ขณะ ((attrib = argv_next(acp, avp)) != NULL) {
 		/* Terminate on comment */
-		if (*attrib == '#') {
+		ถ้า (*attrib == '#') {
 			argv_consume(acp);
-			break;
+			bha_nga;
 		}
 		attrib = oattrib = xstrdup(attrib);
 		arg = criteria = NULL;
 		this_result = 1;
-		if ((negate = (attrib[0] == '!')))
+		ถ้า ((negate = (attrib[0] == '!')))
 			attrib++;
 		/* Criterion "all" has no argument and must appear alone */
-		if (strcasecmp(attrib, "all") == 0) {
-			if (attributes > 1 ||
+		ถ้า (strcasecmp(attrib, "all") == 0) {
+			ถ้า (attributes > 1 ||
 			    ((arg = argv_next(acp, avp)) != NULL &&
 			    *arg != '\0' && *arg != '#')) {
 				error("%.200s line %d: '%s' cannot be combined "
@@ -745,26 +745,26 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 				result = -1;
 				goto out;
 			}
-			if (arg != NULL && *arg == '#')
+			ถ้า (arg != NULL && *arg == '#')
 				argv_consume(acp); /* consume remaining args */
-			if (result)
+			ถ้า (result)
 				result = negate ? 0 : 1;
 			goto out;
 		}
 		attributes++;
 		/* criteria "final" and "canonical" have no argument */
-		if (strcasecmp(attrib, "canonical") == 0 ||
+		ถ้า (strcasecmp(attrib, "canonical") == 0 ||
 		    strcasecmp(attrib, "final") == 0) {
 			/*
 			 * If the config requests "Match final" without
 			 * negation then remember this so we can perform a
 			 * second pass later.
 			 */
-			if (strcasecmp(attrib, "final") == 0 &&
+			ถ้า (strcasecmp(attrib, "final") == 0 &&
 			    want_final_pass != NULL)
 				*want_final_pass |= !negate;
 			r = !!final_pass;  /* force bitmask member to boolean */
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
 			debug3("%.200s line %d: %smatched '%s'",
 			    filename, linenum,
@@ -773,7 +773,7 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		}
 
 		/* Keep this list in sync with below */
-		if (strprefix(attrib, "host=", 1)  != NULL ||
+		ถ้า (strprefix(attrib, "host=", 1)  != NULL ||
 		    strprefix(attrib, "originalhost=", 1) != NULL ||
 		    strprefix(attrib, "user=", 1) != NULL ||
 		    strprefix(attrib, "localuser=", 1) != NULL ||
@@ -784,7 +784,7 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		    strprefix(attrib, "exec=", 1) != NULL) {
 			arg = strchr(attrib, '=');
 			*(arg++) = '\0';
-		} else if ((arg = argv_next(acp, avp)) == NULL) {
+		} มิฉะนั้น ถ้า ((arg = argv_next(acp, avp)) == NULL) {
 			error("%.200s line %d: missing argument for Match '%s'",
 			    filename, linenum, oattrib);
 			result = -1;
@@ -796,86 +796,86 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		 * be the empty string for the "tagged" and "command"
 		 * options.
 		 */
-		if (*arg == '\0' &&
+		ถ้า (*arg == '\0' &&
 		    strcasecmp(attrib, "tagged") != 0 &&
 		    strcasecmp(attrib, "command") != 0)
 			arg = NULL;
-		if (arg == NULL || *arg == '#') {
+		ถ้า (arg == NULL || *arg == '#') {
 			error("Missing Match criteria for %s", attrib);
 			result = -1;
 			goto out;
 		}
-		if (strcasecmp(attrib, "host") == 0) {
+		ถ้า (strcasecmp(attrib, "host") == 0) {
 			criteria = xstrdup(host);
 			r = match_hostname(host, arg) == 1;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "originalhost") == 0) {
+		} มิฉะนั้น ถ้า (strcasecmp(attrib, "originalhost") == 0) {
 			criteria = xstrdup(original_host);
 			r = match_hostname(original_host, arg) == 1;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "user") == 0) {
+		} มิฉะนั้น ถ้า (strcasecmp(attrib, "user") == 0) {
 			criteria = xstrdup(ruser);
 			r = match_pattern_list(ruser, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "localuser") == 0) {
+		} มิฉะนั้น ถ้า (strcasecmp(attrib, "localuser") == 0) {
 			criteria = xstrdup(pw->pw_name);
 			r = match_pattern_list(pw->pw_name, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "localnetwork") == 0) {
-			if (addr_match_cidr_list(NULL, arg) == -1) {
+		} มิฉะนั้น ถ้า (strcasecmp(attrib, "localnetwork") == 0) {
+			ถ้า (addr_match_cidr_list(NULL, arg) == -1) {
 				/* Error already printed */
 				result = -1;
 				goto out;
 			}
 			r = check_match_ifaddrs(arg) == 1;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "version") == 0) {
+		} มิฉะนั้น ถ้า (strcasecmp(attrib, "version") == 0) {
 			criteria = xstrdup(SSH_RELEASE);
 			r = match_pattern_list(SSH_RELEASE, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "tagged") == 0) {
+		} มิฉะนั้น ถ้า (strcasecmp(attrib, "tagged") == 0) {
 			criteria = xstrdup(options->tag == NULL ? "" :
 			    options->tag);
 			/* Special case: empty criteria matches empty arg */
 			r = (*criteria == '\0') ? *arg == '\0' :
 			    match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "command") == 0) {
+		} มิฉะนั้น ถ้า (strcasecmp(attrib, "command") == 0) {
 			criteria = xstrdup(remote_command == NULL ?
 			    "" : remote_command);
 			/* Special case: empty criteria matches empty arg */
 			r = (*criteria == '\0') ? *arg == '\0' :
 			    match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "sessiontype") == 0) {
-			if (options->session_type == SESSION_TYPE_SUBSYSTEM)
+		} มิฉะนั้น ถ้า (strcasecmp(attrib, "sessiontype") == 0) {
+			ถ้า (options->session_type == SESSION_TYPE_SUBSYSTEM)
 				criteria = xstrdup("subsystem");
-			else if (options->session_type == SESSION_TYPE_NONE)
+			มิฉะนั้น ถ้า (options->session_type == SESSION_TYPE_NONE)
 				criteria = xstrdup("none");
-			else if (remote_command != NULL &&
+			มิฉะนั้น ถ้า (remote_command != NULL &&
 			    *remote_command != '\0')
 				criteria = xstrdup("exec");
-			else
+			มิฉะนั้น
 				criteria = xstrdup("shell");
 			r = match_pattern_list(criteria, arg, 0) == 1;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else if (strcasecmp(attrib, "exec") == 0) {
-			if ((cmd = expand_match_exec_or_include_path(arg,
+		} มิฉะนั้น ถ้า (strcasecmp(attrib, "exec") == 0) {
+			ถ้า ((cmd = expand_match_exec_or_include_path(arg,
 			    options, pw, host_arg, original_host,
 			    final_pass, 0)) == NULL) {
 				fatal("%.200s line %d: failed to expand match "
 				    "exec '%.100s'", filename, linenum, arg);
 			}
-			if (result != 1) {
+			ถ้า (result != 1) {
 				/* skip execution if prior predicate failed */
 				debug3("%.200s line %d: skipped exec "
 				    "\"%.100s\"", filename, linenum, cmd);
@@ -883,7 +883,7 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 				goto next;
 			}
 			r = execute_in_shell(cmd);
-			if (r == -1) {
+			ถ้า (r == -1) {
 				fatal("%.200s line %d: match exec "
 				    "'%.100s' error", filename,
 				    linenum, cmd);
@@ -892,9 +892,9 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 			free(cmd);
 			/* Force exit status to boolean */
 			r = r == 0;
-			if (r == (negate ? 1 : 0))
+			ถ้า (r == (negate ? 1 : 0))
 				this_result = result = 0;
-		} else {
+		} มิฉะนั้น {
 			error("Unsupported Match attribute %s", attrib);
 			result = -1;
 			goto out;
@@ -909,28 +909,28 @@ match_cfg_line(Options *options, const char *full_line, int *acp, char ***avp,
 		free(oattrib);
 		oattrib = attrib = NULL;
 	}
-	if (attributes == 0) {
+	ถ้า (attributes == 0) {
 		error("One or more attributes required for Match");
 		result = -1;
 		goto out;
 	}
  out:
-	if (result != -1)
+	ถ้า (result != -1)
 		debug2("match %sfound", result ? "" : "not ");
 	free(oattrib);
 	free(host);
-	return result;
+	คืน result;
 }
 
 /* Remove environment variable by pattern */
 static void
-rm_env(Options *options, const char *arg, const char *filename, int linenum)
+rm_env(Options *options, const var_na *arg, const var_na *filename, จำนวนเต็ม linenum)
 {
 	u_int i, j, onum_send_env = options->num_send_env;
 
 	/* Remove an environment variable */
-	for (i = 0; i < options->num_send_env; ) {
-		if (!match_pattern(options->send_env[i], arg + 1)) {
+	สำหรับ (i = 0; i < options->num_send_env; ) {
+		ถ้า (!match_pattern(options->send_env[i], arg + 1)) {
 			i++;
 			continue;
 		}
@@ -938,17 +938,17 @@ rm_env(Options *options, const char *arg, const char *filename, int linenum)
 		    filename, linenum, options->send_env[i]);
 		free(options->send_env[i]);
 		options->send_env[i] = NULL;
-		for (j = i; j < options->num_send_env - 1; j++) {
+		สำหรับ (j = i; j < options->num_send_env - 1; j++) {
 			options->send_env[j] = options->send_env[j + 1];
 			options->send_env[j + 1] = NULL;
 		}
 		options->num_send_env--;
 		/* NB. don't increment i */
 	}
-	if (onum_send_env != options->num_send_env) {
+	ถ้า (onum_send_env != options->num_send_env) {
 		options->send_env = xrecallocarray(options->send_env,
 		    onum_send_env, options->num_send_env,
-		    sizeof(*options->send_env));
+		    parimaa_na(*options->send_env));
 	}
 }
 
@@ -956,30 +956,30 @@ rm_env(Options *options, const char *arg, const char *filename, int linenum)
  * Returns the number of the token pointed to by cp or oBadOption.
  */
 static OpCodes
-parse_token(const char *cp, const char *filename, int linenum,
-    const char *ignored_unknown)
+parse_token(const var_na *cp, const var_na *filename, จำนวนเต็ม linenum,
+    const var_na *ignored_unknown)
 {
-	int i;
+	จำนวนเต็ม i;
 
-	for (i = 0; keywords[i].name; i++)
-		if (strcmp(cp, keywords[i].name) == 0)
-			return keywords[i].opcode;
-	if (ignored_unknown != NULL &&
+	สำหรับ (i = 0; keywords[i].name; i++)
+		ถ้า (strcmp(cp, keywords[i].name) == 0)
+			คืน keywords[i].opcode;
+	ถ้า (ignored_unknown != NULL &&
 	    match_pattern_list(cp, ignored_unknown, 1) == 1)
-		return oIgnoredUnknownOption;
+		คืน oIgnoredUnknownOption;
 	error("%s: line %d: Bad configuration option: %s",
 	    filename, linenum, cp);
-	return oBadOption;
+	คืน oBadOption;
 }
 
 static void
-free_canon_cnames(struct allowed_cname *cnames, u_int n)
+free_canon_cnames(sa_nracanaa allowed_cname *cnames, u_int n)
 {
 	u_int i;
 
-	if (cnames == NULL || n == 0)
-		return;
-	for (i = 0; i < n; i++) {
+	ถ้า (cnames == NULL || n == 0)
+		คืน;
+	สำหรับ (i = 0; i < n; i++) {
 		free(cnames[i].source_list);
 		free(cnames[i].target_list);
 	}
@@ -987,18 +987,18 @@ free_canon_cnames(struct allowed_cname *cnames, u_int n)
 }
 
 /* Multistate option parsing */
-struct multistate {
-	char *key;
-	int value;
+sa_nracanaa multistate {
+	var_na *key;
+	จำนวนเต็ม value;
 };
-static const struct multistate multistate_flag[] = {
+static const sa_nracanaa multistate multistate_flag[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
 	{ "no",				0 },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_yesnoask[] = {
+static const sa_nracanaa multistate multistate_yesnoask[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
@@ -1006,7 +1006,7 @@ static const struct multistate multistate_yesnoask[] = {
 	{ "ask",			2 },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_strict_hostkey[] = {
+static const sa_nracanaa multistate multistate_strict_hostkey[] = {
 	{ "true",			SSH_STRICT_HOSTKEY_YES },
 	{ "false",			SSH_STRICT_HOSTKEY_OFF },
 	{ "yes",			SSH_STRICT_HOSTKEY_YES },
@@ -1016,7 +1016,7 @@ static const struct multistate multistate_strict_hostkey[] = {
 	{ "accept-new",			SSH_STRICT_HOSTKEY_NEW },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_yesnoaskconfirm[] = {
+static const sa_nracanaa multistate multistate_yesnoaskconfirm[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
@@ -1025,13 +1025,13 @@ static const struct multistate multistate_yesnoaskconfirm[] = {
 	{ "confirm",			3 },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_addressfamily[] = {
+static const sa_nracanaa multistate multistate_addressfamily[] = {
 	{ "inet",			AF_INET },
 	{ "inet6",			AF_INET6 },
 	{ "any",			AF_UNSPEC },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_controlmaster[] = {
+static const sa_nracanaa multistate multistate_controlmaster[] = {
 	{ "true",			SSHCTL_MASTER_YES },
 	{ "yes",			SSHCTL_MASTER_YES },
 	{ "false",			SSHCTL_MASTER_NO },
@@ -1041,7 +1041,7 @@ static const struct multistate multistate_controlmaster[] = {
 	{ "autoask",			SSHCTL_MASTER_AUTO_ASK },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_tunnel[] = {
+static const sa_nracanaa multistate multistate_tunnel[] = {
 	{ "ethernet",			SSH_TUNMODE_ETHERNET },
 	{ "point-to-point",		SSH_TUNMODE_POINTOPOINT },
 	{ "true",			SSH_TUNMODE_DEFAULT },
@@ -1050,7 +1050,7 @@ static const struct multistate multistate_tunnel[] = {
 	{ "no",				SSH_TUNMODE_NO },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_requesttty[] = {
+static const sa_nracanaa multistate multistate_requesttty[] = {
 	{ "true",			REQUEST_TTY_YES },
 	{ "yes",			REQUEST_TTY_YES },
 	{ "false",			REQUEST_TTY_NO },
@@ -1059,13 +1059,13 @@ static const struct multistate multistate_requesttty[] = {
 	{ "auto",			REQUEST_TTY_AUTO },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_sessiontype[] = {
+static const sa_nracanaa multistate multistate_sessiontype[] = {
 	{ "none",			SESSION_TYPE_NONE },
 	{ "subsystem",			SESSION_TYPE_SUBSYSTEM },
 	{ "default",			SESSION_TYPE_DEFAULT },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_canonicalizehostname[] = {
+static const sa_nracanaa multistate multistate_canonicalizehostname[] = {
 	{ "true",			SSH_CANONICALISE_YES },
 	{ "false",			SSH_CANONICALISE_NO },
 	{ "yes",			SSH_CANONICALISE_YES },
@@ -1073,7 +1073,7 @@ static const struct multistate multistate_canonicalizehostname[] = {
 	{ "always",			SSH_CANONICALISE_ALWAYS },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_pubkey_auth[] = {
+static const sa_nracanaa multistate multistate_pubkey_auth[] = {
 	{ "true",			SSH_PUBKEY_AUTH_ALL },
 	{ "false",			SSH_PUBKEY_AUTH_NO },
 	{ "yes",			SSH_PUBKEY_AUTH_ALL },
@@ -1082,14 +1082,14 @@ static const struct multistate multistate_pubkey_auth[] = {
 	{ "host-bound",			SSH_PUBKEY_AUTH_HBOUND },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_compression[] = {
+static const sa_nracanaa multistate multistate_compression[] = {
 #ifdef WITH_ZLIB
 	{ "yes",			COMP_DELAYED },
 #endif
 	{ "no",				COMP_NONE },
 	{ NULL, -1 }
 };
-static const struct multistate multistate_keepalives[] = {
+static const sa_nracanaa multistate multistate_keepalives[] = {
 	{ "true",			SSH_KEEPALIVES_TRANSPORT },
 	{ "false",			SSH_KEEPALIVES_OFF },
 	{ "yes",			SSH_KEEPALIVES_TRANSPORT },
@@ -1099,7 +1099,7 @@ static const struct multistate multistate_keepalives[] = {
 	{ NULL, -1 }
 };
 /* XXX this will need to be replaced with a bitmask if we add more flags */
-static const struct multistate multistate_warnweakcrypto[] = {
+static const sa_nracanaa multistate multistate_warnweakcrypto[] = {
 	{ "true",			1 },
 	{ "false",			0 },
 	{ "yes",			1 },
@@ -1108,144 +1108,144 @@ static const struct multistate multistate_warnweakcrypto[] = {
 	{ NULL, -1 }
 };
 
-static int
-parse_multistate_value(const char *arg, const char *filename, int linenum,
-    const struct multistate *multistate_ptr)
+static จำนวนเต็ม
+parse_multistate_value(const var_na *arg, const var_na *filename, จำนวนเต็ม linenum,
+    const sa_nracanaa multistate *multistate_ptr)
 {
-	int i;
+	จำนวนเต็ม i;
 
-	if (!arg || *arg == '\0') {
+	ถ้า (!arg || *arg == '\0') {
 		error("%s line %d: missing argument.", filename, linenum);
-		return -1;
+		คืน -1;
 	}
-	for (i = 0; multistate_ptr[i].key != NULL; i++) {
-		if (strcasecmp(arg, multistate_ptr[i].key) == 0)
-			return multistate_ptr[i].value;
+	สำหรับ (i = 0; multistate_ptr[i].key != NULL; i++) {
+		ถ้า (strcasecmp(arg, multistate_ptr[i].key) == 0)
+			คืน multistate_ptr[i].value;
 	}
-	return -1;
+	คืน -1;
 }
 
 /*
  * Processes a single option line as used in the configuration files. This
  * only sets those values that have not already been set.
  */
-int
-process_config_line(Options *options, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, char *line,
-    const char *filename, int linenum, int *activep, int flags)
+จำนวนเต็ม
+process_config_line(Options *options, sa_nracanaa passwd *pw, const var_na *host,
+    const var_na *original_host, const var_na *remote_command, var_na *line,
+    const var_na *filename, จำนวนเต็ม linenum, จำนวนเต็ม *activep, จำนวนเต็ม flags)
 {
-	return process_config_line_depth(options, pw, host, original_host,
+	คืน process_config_line_depth(options, pw, host, original_host,
 	    remote_command, line, filename, linenum, activep, flags, NULL, 0);
 }
 
 #define WHITESPACE " \t\r\n"
-static int
-process_config_line_depth(Options *options, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, char *line,
-    const char *filename, int linenum, int *activep, int flags,
-    int *want_final_pass, int depth)
+static จำนวนเต็ม
+process_config_line_depth(Options *options, sa_nracanaa passwd *pw, const var_na *host,
+    const var_na *original_host, const var_na *remote_command, var_na *line,
+    const var_na *filename, จำนวนเต็ม linenum, จำนวนเต็ม *activep, จำนวนเต็ม flags,
+    จำนวนเต็ม *want_final_pass, จำนวนเต็ม depth)
 {
-	char *str, **charptr, *endofnumber, *keyword, *arg, *arg2, *p;
-	char **cpptr, ***cppptr, fwdarg[256];
+	var_na *str, **charptr, *endofnumber, *keyword, *arg, *arg2, *p;
+	var_na **cpptr, ***cppptr, fwdarg[256];
 	u_int i, *uintptr, max_entries = 0;
-	int r, oactive, negated, opcode, *intptr, value, value2, cmdline = 0;
-	int remotefwd, dynamicfwd, ca_only = 0, found = 0;
+	จำนวนเต็ม r, oactive, negated, opcode, *intptr, value, value2, cmdline = 0;
+	จำนวนเต็ม remotefwd, dynamicfwd, ca_only = 0, found = 0;
 	LogLevel *log_level_ptr;
 	SyslogFacility *log_facility_ptr;
 	long long val64;
 	size_t len;
-	struct Forward fwd;
-	const struct multistate *multistate_ptr;
+	sa_nracanaa Forward fwd;
+	const sa_nracanaa multistate *multistate_ptr;
 	glob_t gl;
-	const char *errstr;
-	char **oav = NULL, **av;
-	int oac = 0, ac;
-	int ret = -1;
-	struct allowed_cname *cnames = NULL;
+	const var_na *errstr;
+	var_na **oav = NULL, **av;
+	จำนวนเต็ม oac = 0, ac;
+	จำนวนเต็ม ret = -1;
+	sa_nracanaa allowed_cname *cnames = NULL;
 	u_int ncnames = 0;
-	char **strs = NULL; /* string array arguments; freed implicitly */
+	var_na **strs = NULL; /* string array arguments; freed implicitly */
 	u_int nstrs = 0;
 
-	if (activep == NULL) { /* We are processing a command line directive */
+	ถ้า (activep == NULL) { /* We are processing a command line directive */
 		cmdline = 1;
 		activep = &cmdline;
 	}
 
 	/* Strip trailing whitespace. Allow \f (form feed) at EOL only */
-	if ((len = strlen(line)) == 0)
-		return 0;
-	for (len--; len > 0; len--) {
-		if (strchr(WHITESPACE "\f", line[len]) == NULL)
-			break;
+	ถ้า ((len = strlen(line)) == 0)
+		คืน 0;
+	สำหรับ (len--; len > 0; len--) {
+		ถ้า (strchr(WHITESPACE "\f", line[len]) == NULL)
+			bha_nga;
 		line[len] = '\0';
 	}
 
 	str = line;
 	/* Get the keyword. (Each line is supposed to begin with a keyword). */
-	if ((keyword = strdelim(&str)) == NULL)
-		return 0;
+	ถ้า ((keyword = strdelim(&str)) == NULL)
+		คืน 0;
 	/* Ignore leading whitespace. */
-	if (*keyword == '\0')
+	ถ้า (*keyword == '\0')
 		keyword = strdelim(&str);
-	if (keyword == NULL || !*keyword || *keyword == '\n' || *keyword == '#')
-		return 0;
+	ถ้า (keyword == NULL || !*keyword || *keyword == '\n' || *keyword == '#')
+		คืน 0;
 	/* Match lowercase keyword */
 	lowercase(keyword);
 
 	/* Prepare to parse remainder of line */
-	if (str != NULL)
+	ถ้า (str != NULL)
 		str += strspn(str, WHITESPACE);
-	if (str == NULL || *str == '\0') {
+	ถ้า (str == NULL || *str == '\0') {
 		error("%s line %d: no argument after keyword \"%s\"",
 		    filename, linenum, keyword);
-		return -1;
+		คืน -1;
 	}
 	opcode = parse_token(keyword, filename, linenum,
 	    options->ignored_unknown);
-	if (argv_split(str, &oac, &oav, 1) != 0) {
+	ถ้า (argv_split(str, &oac, &oav, 1) != 0) {
 		error("%s line %d: invalid quotes", filename, linenum);
-		return -1;
+		คืน -1;
 	}
 	ac = oac;
 	av = oav;
 
 	switch (opcode) {
-	case oBadOption:
+	pak_sa oBadOption:
 		/* don't panic, but count bad options */
 		goto out;
-	case oIgnore:
+	pak_sa oIgnore:
 		argv_consume(&ac);
-		break;
-	case oIgnoredUnknownOption:
+		bha_nga;
+	pak_sa oIgnoredUnknownOption:
 		debug("%s line %d: Ignored unknown option \"%s\"",
 		    filename, linenum, keyword);
 		argv_consume(&ac);
-		break;
-	case oConnectTimeout:
+		bha_nga;
+	pak_sa oConnectTimeout:
 		intptr = &options->connection_timeout;
 parse_time:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%s line %d: missing time value.",
 			    filename, linenum);
 			goto out;
 		}
-		if (strcmp(arg, "none") == 0)
+		ถ้า (strcmp(arg, "none") == 0)
 			value = -1;
-		else if ((value = convtime(arg)) == -1) {
+		มิฉะนั้น ถ้า ((value = convtime(arg)) == -1) {
 			error("%s line %d: invalid time value.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		ถ้า (*activep && *intptr == -1)
 			*intptr = value;
-		break;
+		bha_nga;
 
-	case oForwardAgent:
+	pak_sa oForwardAgent:
 		intptr = &options->forward_agent;
 
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%s line %d: missing argument.",
 			    filename, linenum);
 			goto out;
@@ -1253,164 +1253,164 @@ parse_time:
 
 		value = -1;
 		multistate_ptr = multistate_flag;
-		for (i = 0; multistate_ptr[i].key != NULL; i++) {
-			if (strcasecmp(arg, multistate_ptr[i].key) == 0) {
+		สำหรับ (i = 0; multistate_ptr[i].key != NULL; i++) {
+			ถ้า (strcasecmp(arg, multistate_ptr[i].key) == 0) {
 				value = multistate_ptr[i].value;
-				break;
+				bha_nga;
 			}
 		}
-		if (value != -1) {
-			if (*activep && *intptr == -1)
+		ถ้า (value != -1) {
+			ถ้า (*activep && *intptr == -1)
 				*intptr = value;
-			break;
+			bha_nga;
 		}
 		/* ForwardAgent wasn't 'yes' or 'no', assume a path */
-		if (*activep && *intptr == -1)
+		ถ้า (*activep && *intptr == -1)
 			*intptr = 1;
 
 		charptr = &options->forward_agent_sock_path;
 		goto parse_agent_path;
 
-	case oForwardX11:
+	pak_sa oForwardX11:
 		intptr = &options->forward_x11;
  parse_flag:
 		multistate_ptr = multistate_flag;
  parse_multistate:
 		arg = argv_next(&ac, &av);
-		if ((value = parse_multistate_value(arg, filename, linenum,
+		ถ้า ((value = parse_multistate_value(arg, filename, linenum,
 		    multistate_ptr)) == -1) {
 			error("%s line %d: unsupported option \"%s\".",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		ถ้า (*activep && *intptr == -1)
 			*intptr = value;
-		break;
+		bha_nga;
 
-	case oForwardX11Trusted:
+	pak_sa oForwardX11Trusted:
 		intptr = &options->forward_x11_trusted;
 		goto parse_flag;
 
-	case oForwardX11Timeout:
+	pak_sa oForwardX11Timeout:
 		intptr = &options->forward_x11_timeout;
 		goto parse_time;
 
-	case oGatewayPorts:
+	pak_sa oGatewayPorts:
 		intptr = &options->fwd_opts.gateway_ports;
 		goto parse_flag;
 
-	case oExitOnForwardFailure:
+	pak_sa oExitOnForwardFailure:
 		intptr = &options->exit_on_forward_failure;
 		goto parse_flag;
 
-	case oPasswordAuthentication:
+	pak_sa oPasswordAuthentication:
 		intptr = &options->password_authentication;
 		goto parse_flag;
 
-	case oKbdInteractiveAuthentication:
+	pak_sa oKbdInteractiveAuthentication:
 		intptr = &options->kbd_interactive_authentication;
 		goto parse_flag;
 
-	case oKbdInteractiveDevices:
+	pak_sa oKbdInteractiveDevices:
 		charptr = &options->kbd_interactive_devices;
 		goto parse_string;
 
-	case oPubkeyAuthentication:
+	pak_sa oPubkeyAuthentication:
 		multistate_ptr = multistate_pubkey_auth;
 		intptr = &options->pubkey_authentication;
 		goto parse_multistate;
 
-	case oHostbasedAuthentication:
+	pak_sa oHostbasedAuthentication:
 		intptr = &options->hostbased_authentication;
 		goto parse_flag;
 
-	case oGssAuthentication:
+	pak_sa oGssAuthentication:
 		intptr = &options->gss_authentication;
 		goto parse_flag;
 
-	case oGssDelegateCreds:
+	pak_sa oGssDelegateCreds:
 		intptr = &options->gss_deleg_creds;
 		goto parse_flag;
 
-	case oBatchMode:
+	pak_sa oBatchMode:
 		intptr = &options->batch_mode;
 		goto parse_flag;
 
-	case oCheckHostIP:
+	pak_sa oCheckHostIP:
 		intptr = &options->check_host_ip;
 		goto parse_flag;
 
-	case oVerifyHostKeyDNS:
+	pak_sa oVerifyHostKeyDNS:
 		intptr = &options->verify_host_key_dns;
 		multistate_ptr = multistate_yesnoask;
 		goto parse_multistate;
 
-	case oStrictHostKeyChecking:
+	pak_sa oStrictHostKeyChecking:
 		intptr = &options->strict_host_key_checking;
 		multistate_ptr = multistate_strict_hostkey;
 		goto parse_multistate;
 
-	case oCompression:
+	pak_sa oCompression:
 		intptr = &options->compression;
 		multistate_ptr = multistate_compression;
 		goto parse_multistate;
 
-	case oTCPKeepAlive:
+	pak_sa oTCPKeepAlive:
 		intptr = &options->tcp_keep_alive;
 		multistate_ptr = multistate_keepalives;
 		goto parse_multistate;
 
-	case oNoHostAuthenticationForLocalhost:
+	pak_sa oNoHostAuthenticationForLocalhost:
 		intptr = &options->no_host_authentication_for_localhost;
 		goto parse_flag;
 
-	case oNumberOfPasswordPrompts:
+	pak_sa oNumberOfPasswordPrompts:
 		intptr = &options->number_of_password_prompts;
 		goto parse_int;
 
-	case oRekeyLimit:
+	pak_sa oRekeyLimit:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.", filename,
 			    linenum);
 			goto out;
 		}
-		if (strcmp(arg, "default") == 0) {
+		ถ้า (strcmp(arg, "default") == 0) {
 			val64 = 0;
-		} else {
-			if (scan_scaled(arg, &val64) == -1) {
+		} มิฉะนั้น {
+			ถ้า (scan_scaled(arg, &val64) == -1) {
 				error("%.200s line %d: Bad number '%s': %s",
 				    filename, linenum, arg, strerror(errno));
 				goto out;
 			}
-			if (val64 != 0 && val64 < 16) {
+			ถ้า (val64 != 0 && val64 < 16) {
 				error("%.200s line %d: RekeyLimit too small",
 				    filename, linenum);
 				goto out;
 			}
 		}
-		if (*activep && options->rekey_limit == -1)
+		ถ้า (*activep && options->rekey_limit == -1)
 			options->rekey_limit = val64;
-		if (ac != 0) { /* optional rekey interval present */
-			if (strcmp(av[0], "none") == 0) {
+		ถ้า (ac != 0) { /* optional rekey interval present */
+			ถ้า (strcmp(av[0], "none") == 0) {
 				(void)argv_next(&ac, &av);	/* discard */
-				break;
+				bha_nga;
 			}
 			intptr = &options->rekey_interval;
 			goto parse_time;
 		}
-		break;
+		bha_nga;
 
-	case oIdentityFile:
+	pak_sa oIdentityFile:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep) {
+		ถ้า (*activep) {
 			intptr = &options->num_identity_files;
-			if (*intptr >= SSH_MAX_IDENTITY_FILES) {
+			ถ้า (*intptr >= SSH_MAX_IDENTITY_FILES) {
 				error("%.200s line %d: Too many identity files "
 				    "specified (max %d).", filename, linenum,
 				    SSH_MAX_IDENTITY_FILES);
@@ -1419,18 +1419,18 @@ parse_time:
 			add_identity_file(options, NULL,
 			    arg, flags & SSHCONF_USERCONF);
 		}
-		break;
+		bha_nga;
 
-	case oCertificateFile:
+	pak_sa oCertificateFile:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep) {
+		ถ้า (*activep) {
 			intptr = &options->num_certificate_files;
-			if (*intptr >= SSH_MAX_CERTIFICATE_FILES) {
+			ถ้า (*intptr >= SSH_MAX_CERTIFICATE_FILES) {
 				error("%.200s line %d: Too many certificate "
 				    "files specified (max %d).",
 				    filename, linenum,
@@ -1440,41 +1440,41 @@ parse_time:
 			add_certificate_file(options, arg,
 			    flags & SSHCONF_USERCONF);
 		}
-		break;
+		bha_nga;
 
-	case oXAuthLocation:
+	pak_sa oXAuthLocation:
 		charptr=&options->xauth_location;
 		goto parse_string;
 
-	case oUser:
+	pak_sa oUser:
 		charptr = &options->user;
 parse_string:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && *charptr == NULL)
+		ถ้า (*activep && *charptr == NULL)
 			*charptr = xstrdup(arg);
-		break;
+		bha_nga;
 
-	case oGlobalKnownHostsFile:
-		cpptr = (char **)&options->system_hostfiles;
+	pak_sa oGlobalKnownHostsFile:
+		cpptr = (var_na **)&options->system_hostfiles;
 		uintptr = &options->num_system_hostfiles;
 		max_entries = SSH_MAX_HOSTS_FILES;
 parse_char_array:
 		i = 0;
 		value = *uintptr == 0; /* was array empty when we started? */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
+			ถ้า (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (i > 0 || ac > 0) {
+			ถ้า (strcasecmp(arg, "none") == 0) {
+				ถ้า (i > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
@@ -1482,8 +1482,8 @@ parse_char_array:
 				}
 			}
 			i++;
-			if (*activep && value) {
-				if ((*uintptr) >= max_entries) {
+			ถ้า (*activep && value) {
+				ถ้า ((*uintptr) >= max_entries) {
 					error("%s line %d: too many %s "
 					    "entries.", filename, linenum,
 					    keyword);
@@ -1492,227 +1492,227 @@ parse_char_array:
 				cpptr[(*uintptr)++] = xstrdup(arg);
 			}
 		}
-		break;
+		bha_nga;
 
-	case oUserKnownHostsFile:
-		cpptr = (char **)&options->user_hostfiles;
+	pak_sa oUserKnownHostsFile:
+		cpptr = (var_na **)&options->user_hostfiles;
 		uintptr = &options->num_user_hostfiles;
 		max_entries = SSH_MAX_HOSTS_FILES;
 		goto parse_char_array;
 
-	case oHostname:
+	pak_sa oHostname:
 		charptr = &options->hostname;
 		goto parse_string;
 
-	case oTag:
+	pak_sa oTag:
 		charptr = &options->tag;
 		goto parse_string;
 
-	case oHostKeyAlias:
+	pak_sa oHostKeyAlias:
 		charptr = &options->host_key_alias;
 		goto parse_string;
 
-	case oPreferredAuthentications:
+	pak_sa oPreferredAuthentications:
 		charptr = &options->preferred_authentications;
 		goto parse_string;
 
-	case oBindAddress:
+	pak_sa oBindAddress:
 		charptr = &options->bind_address;
 		goto parse_string;
 
-	case oBindInterface:
+	pak_sa oBindInterface:
 		charptr = &options->bind_interface;
 		goto parse_string;
 
-	case oPKCS11Provider:
+	pak_sa oPKCS11Provider:
 		charptr = &options->pkcs11_provider;
 		goto parse_string;
 
-	case oSecurityKeyProvider:
+	pak_sa oSecurityKeyProvider:
 		charptr = &options->sk_provider;
 		goto parse_string;
 
-	case oKnownHostsCommand:
+	pak_sa oKnownHostsCommand:
 		charptr = &options->known_hosts_command;
 		goto parse_command;
 
-	case oProxyCommand:
+	pak_sa oProxyCommand:
 		charptr = &options->proxy_command;
 parse_command:
-		if (str == NULL) {
+		ถ้า (str == NULL) {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
 		len = strspn(str, WHITESPACE "=");
-		if (*activep && *charptr == NULL)
+		ถ้า (*activep && *charptr == NULL)
 			*charptr = xstrdup(str + len);
 		argv_consume(&ac);
-		break;
+		bha_nga;
 
-	case oProxyJump:
-		if (str == NULL) {
+	pak_sa oProxyJump:
+		ถ้า (str == NULL) {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
 		len = strspn(str, WHITESPACE "=");
 		/* XXX use argv? */
-		if (parse_jump(str + len, options, cmdline, *activep) == -1) {
+		ถ้า (parse_jump(str + len, options, cmdline, *activep) == -1) {
 			error("%.200s line %d: Invalid ProxyJump \"%s\"",
 			    filename, linenum, str + len);
 			goto out;
 		}
 		argv_consume(&ac);
-		break;
+		bha_nga;
 
-	case oPort:
+	pak_sa oPort:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
 		value = a2port(arg);
-		if (value <= 0) {
+		ถ้า (value <= 0) {
 			error("%.200s line %d: Bad port '%s'.",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (*activep && options->port == -1)
+		ถ้า (*activep && options->port == -1)
 			options->port = value;
-		break;
+		bha_nga;
 
-	case oConnectionAttempts:
+	pak_sa oConnectionAttempts:
 		intptr = &options->connection_attempts;
 parse_int:
 		arg = argv_next(&ac, &av);
-		if ((errstr = atoi_err(arg, &value)) != NULL) {
+		ถ้า ((errstr = atoi_err(arg, &value)) != NULL) {
 			error("%s line %d: integer value %s.",
 			    filename, linenum, errstr);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		ถ้า (*activep && *intptr == -1)
 			*intptr = value;
-		break;
+		bha_nga;
 
-	case oCiphers:
+	pak_sa oCiphers:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*arg != '-' &&
+		ถ้า (*arg != '-' &&
 		    !ciphers_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg)){
 			error("%.200s line %d: Bad SSH2 cipher spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && options->ciphers == NULL)
+		ถ้า (*activep && options->ciphers == NULL)
 			options->ciphers = xstrdup(arg);
-		break;
+		bha_nga;
 
-	case oMacs:
+	pak_sa oMacs:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*arg != '-' &&
+		ถ้า (*arg != '-' &&
 		    !mac_valid(*arg == '+' || *arg == '^' ? arg + 1 : arg)) {
 			error("%.200s line %d: Bad SSH2 MAC spec '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && options->macs == NULL)
+		ถ้า (*activep && options->macs == NULL)
 			options->macs = xstrdup(arg);
-		break;
+		bha_nga;
 
-	case oKexAlgorithms:
+	pak_sa oKexAlgorithms:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*arg != '-' &&
+		ถ้า (*arg != '-' &&
 		    !kex_names_valid(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg)) {
 			error("%.200s line %d: Bad SSH2 KexAlgorithms '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && options->kex_algorithms == NULL)
+		ถ้า (*activep && options->kex_algorithms == NULL)
 			options->kex_algorithms = xstrdup(arg);
-		break;
+		bha_nga;
 
-	case oHostKeyAlgorithms:
+	pak_sa oHostKeyAlgorithms:
 		charptr = &options->hostkeyalgorithms;
 		ca_only = 0;
 parse_pubkey_algos:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*arg != '-' &&
+		ถ้า (*arg != '-' &&
 		    !sshkey_names_valid2(*arg == '+' || *arg == '^' ?
 		    arg + 1 : arg, 1, ca_only)) {
 			error("%s line %d: Bad key types '%s'.",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && *charptr == NULL)
+		ถ้า (*activep && *charptr == NULL)
 			*charptr = xstrdup(arg);
-		break;
+		bha_nga;
 
-	case oCASignatureAlgorithms:
+	pak_sa oCASignatureAlgorithms:
 		charptr = &options->ca_sign_algorithms;
 		ca_only = 1;
 		goto parse_pubkey_algos;
 
-	case oLogLevel:
+	pak_sa oLogLevel:
 		log_level_ptr = &options->log_level;
 		arg = argv_next(&ac, &av);
 		value = log_level_number(arg);
-		if (value == SYSLOG_LEVEL_NOT_SET) {
+		ถ้า (value == SYSLOG_LEVEL_NOT_SET) {
 			error("%.200s line %d: unsupported log level '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*activep && *log_level_ptr == SYSLOG_LEVEL_NOT_SET)
+		ถ้า (*activep && *log_level_ptr == SYSLOG_LEVEL_NOT_SET)
 			*log_level_ptr = (LogLevel) value;
-		break;
+		bha_nga;
 
-	case oLogFacility:
+	pak_sa oLogFacility:
 		log_facility_ptr = &options->log_facility;
 		arg = argv_next(&ac, &av);
 		value = log_facility_number(arg);
-		if (value == SYSLOG_FACILITY_NOT_SET) {
+		ถ้า (value == SYSLOG_FACILITY_NOT_SET) {
 			error("%.200s line %d: unsupported log facility '%s'",
 			    filename, linenum, arg ? arg : "<NONE>");
 			goto out;
 		}
-		if (*log_facility_ptr == -1)
+		ถ้า (*log_facility_ptr == -1)
 			*log_facility_ptr = (SyslogFacility) value;
-		break;
+		bha_nga;
 
-	case oLogVerbose:
+	pak_sa oLogVerbose:
 		cppptr = &options->log_verbose;
 		uintptr = &options->num_log_verbose;
 		i = 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
+			ถ้า (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (i > 0 || ac > 0) {
+			ถ้า (strcasecmp(arg, "none") == 0) {
+				ถ้า (i > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
@@ -1720,19 +1720,19 @@ parse_pubkey_algos:
 				}
 			}
 			i++;
-			if (*activep && *uintptr == 0) {
+			ถ้า (*activep && *uintptr == 0) {
 				*cppptr = xrecallocarray(*cppptr, *uintptr,
-				    *uintptr + 1, sizeof(**cppptr));
+				    *uintptr + 1, parimaa_na(**cppptr));
 				(*cppptr)[(*uintptr)++] = xstrdup(arg);
 			}
 		}
-		break;
+		bha_nga;
 
-	case oLocalForward:
-	case oRemoteForward:
-	case oDynamicForward:
+	pak_sa oLocalForward:
+	pak_sa oRemoteForward:
+	pak_sa oDynamicForward:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
@@ -1741,59 +1741,59 @@ parse_pubkey_algos:
 		remotefwd = (opcode == oRemoteForward);
 		dynamicfwd = (opcode == oDynamicForward);
 
-		if (!dynamicfwd) {
+		ถ้า (!dynamicfwd) {
 			arg2 = argv_next(&ac, &av);
-			if (arg2 == NULL || *arg2 == '\0') {
-				if (remotefwd)
+			ถ้า (arg2 == NULL || *arg2 == '\0') {
+				ถ้า (remotefwd)
 					dynamicfwd = 1;
-				else {
+				มิฉะนั้น {
 					error("%.200s line %d: Missing target "
 					    "argument.", filename, linenum);
 					goto out;
 				}
-			} else {
+			} มิฉะนั้น {
 				/* construct a string for parse_forward */
-				snprintf(fwdarg, sizeof(fwdarg), "%s:%s", arg,
+				snprintf(fwdarg, parimaa_na(fwdarg), "%s:%s", arg,
 				    arg2);
 			}
 		}
-		if (dynamicfwd)
-			strlcpy(fwdarg, arg, sizeof(fwdarg));
+		ถ้า (dynamicfwd)
+			strlcpy(fwdarg, arg, parimaa_na(fwdarg));
 
-		if (parse_forward(&fwd, fwdarg, dynamicfwd, remotefwd) == 0) {
+		ถ้า (parse_forward(&fwd, fwdarg, dynamicfwd, remotefwd) == 0) {
 			error("%.200s line %d: Bad forwarding specification.",
 			    filename, linenum);
 			goto out;
 		}
 
-		if (*activep) {
-			if (remotefwd) {
+		ถ้า (*activep) {
+			ถ้า (remotefwd) {
 				add_remote_forward(options, &fwd);
-			} else {
+			} มิฉะนั้น {
 				add_local_forward(options, &fwd);
 			}
 		}
-		break;
+		bha_nga;
 
-	case oPermitRemoteOpen:
+	pak_sa oPermitRemoteOpen:
 		uintptr = &options->num_permitted_remote_opens;
 		cppptr = &options->permitted_remote_opens;
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
 			arg2 = xstrdup(arg);
 			/* Allow any/none only in first position */
-			if (strcasecmp(arg, "none") == 0 ||
+			ถ้า (strcasecmp(arg, "none") == 0 ||
 			    strcasecmp(arg, "any") == 0) {
-				if (nstrs > 0 || ac > 0) {
+				ถ้า (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"%s\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword, arg);
 					free(arg2);
 					goto out;
 				}
-			} else {
+			} มิฉะนั้น {
 				p = hpdelim(&arg);
-				if (p == NULL) {
+				ถ้า (p == NULL) {
 					fatal("%s line %d: missing host in %s",
 					    filename, linenum,
 					    lookup_opcode_name(opcode));
@@ -1803,7 +1803,7 @@ parse_pubkey_algos:
 				 * don't want to use permitopen_port to avoid
 				 * dependency on channels.[ch] here.
 				 */
-				if (arg == NULL || (strcmp(arg, "*") != 0 &&
+				ถ้า (arg == NULL || (strcmp(arg, "*") != 0 &&
 				    a2port(arg) <= 0)) {
 					fatal("%s line %d: bad port number "
 					    "in %s", filename, linenum,
@@ -1815,64 +1815,64 @@ parse_pubkey_algos:
 			    &strs, &nstrs, arg2);
 			free(arg2);
 		}
-		if (nstrs == 0)
+		ถ้า (nstrs == 0)
 			fatal("%s line %d: missing %s specification",
 			    filename, linenum, lookup_opcode_name(opcode));
-		if (found && *activep) {
+		ถ้า (found && *activep) {
 			*cppptr = strs;
 			*uintptr = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		bha_nga;
 
-	case oClearAllForwardings:
+	pak_sa oClearAllForwardings:
 		intptr = &options->clear_forwardings;
 		goto parse_flag;
 
-	case oHost:
-		if (cmdline) {
+	pak_sa oHost:
+		ถ้า (cmdline) {
 			error("Host directive not supported as a command-line "
 			    "option");
 			goto out;
 		}
 		*activep = 0;
 		arg2 = NULL;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
+			ถ้า (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
-			if ((flags & SSHCONF_NEVERMATCH) != 0) {
+			ถ้า ((flags & SSHCONF_NEVERMATCH) != 0) {
 				argv_consume(&ac);
-				break;
+				bha_nga;
 			}
 			negated = *arg == '!';
-			if (negated)
+			ถ้า (negated)
 				arg++;
-			if (match_pattern(host, arg)) {
-				if (negated) {
+			ถ้า (match_pattern(host, arg)) {
+				ถ้า (negated) {
 					debug("%.200s line %d: Skipping Host "
 					    "block because of negated match "
 					    "for %.100s", filename, linenum,
 					    arg);
 					*activep = 0;
 					argv_consume(&ac);
-					break;
+					bha_nga;
 				}
-				if (!*activep)
+				ถ้า (!*activep)
 					arg2 = arg; /* logged below */
 				*activep = 1;
 			}
 		}
-		if (*activep)
+		ถ้า (*activep)
 			debug("%.200s line %d: Applying options for %.100s",
 			    filename, linenum, arg2);
-		break;
+		bha_nga;
 
-	case oMatch:
-		if (cmdline) {
+	pak_sa oMatch:
+		ถ้า (cmdline) {
 			error("Match directive not supported as a command-line "
 			    "option");
 			goto out;
@@ -1880,71 +1880,71 @@ parse_pubkey_algos:
 		value = match_cfg_line(options, str, &ac, &av, pw, host,
 		    original_host, remote_command, flags & SSHCONF_FINAL,
 		    want_final_pass, filename, linenum);
-		if (value < 0) {
+		ถ้า (value < 0) {
 			error("%.200s line %d: Bad Match condition", filename,
 			    linenum);
 			goto out;
 		}
 		*activep = (flags & SSHCONF_NEVERMATCH) ? 0 : value;
-		break;
+		bha_nga;
 
-	case oEscapeChar:
+	pak_sa oEscapeChar:
 		intptr = &options->escape_char;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (strcmp(arg, "none") == 0)
+		ถ้า (strcmp(arg, "none") == 0)
 			value = SSH_ESCAPECHAR_NONE;
-		else if (arg[1] == '\0')
+		มิฉะนั้น ถ้า (arg[1] == '\0')
 			value = (u_char) arg[0];
-		else if (arg[0] == '^' && arg[2] == 0 &&
+		มิฉะนั้น ถ้า (arg[0] == '^' && arg[2] == 0 &&
 		    (u_char) arg[1] >= 64 && (u_char) arg[1] < 128)
 			value = (u_char) arg[1] & 31;
-		else {
+		มิฉะนั้น {
 			error("%.200s line %d: Bad escape character.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		ถ้า (*activep && *intptr == -1)
 			*intptr = value;
-		break;
+		bha_nga;
 
-	case oAddressFamily:
+	pak_sa oAddressFamily:
 		intptr = &options->address_family;
 		multistate_ptr = multistate_addressfamily;
 		goto parse_multistate;
 
-	case oEnableSSHKeysign:
+	pak_sa oEnableSSHKeysign:
 		intptr = &options->enable_ssh_keysign;
 		goto parse_flag;
 
-	case oIdentitiesOnly:
+	pak_sa oIdentitiesOnly:
 		intptr = &options->identities_only;
 		goto parse_flag;
 
-	case oServerAliveInterval:
+	pak_sa oServerAliveInterval:
 		intptr = &options->server_alive_interval;
 		goto parse_time;
 
-	case oServerAliveCountMax:
+	pak_sa oServerAliveCountMax:
 		intptr = &options->server_alive_count_max;
 		goto parse_int;
 
-	case oSendEnv:
+	pak_sa oSendEnv:
 		/* XXX appends to list; doesn't respect first-match-wins */
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0' || strchr(arg, '=') != NULL) {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
+			ถ้า (*arg == '\0' || strchr(arg, '=') != NULL) {
 				error("%s line %d: Invalid environment name.",
 				    filename, linenum);
 				goto out;
 			}
 			found = 1;
-			if (!*activep)
+			ถ้า (!*activep)
 				continue;
-			if (*arg == '-') {
+			ถ้า (*arg == '-') {
 				/* Removing an env var */
 				rm_env(options, arg, filename, linenum);
 				continue;
@@ -1953,21 +1953,21 @@ parse_pubkey_algos:
 			    lookup_opcode_name(opcode),
 			    &options->send_env, &options->num_send_env, arg);
 		}
-		if (!found) {
+		ถ้า (!found) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		break;
+		bha_nga;
 
-	case oSetEnv:
+	pak_sa oSetEnv:
 		found = options->num_setenv == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (strchr(arg, '=') == NULL) {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
+			ถ้า (strchr(arg, '=') == NULL) {
 				error("%s line %d: Invalid SetEnv.",
 				    filename, linenum);
 				goto out;
 			}
-			if (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
+			ถ้า (lookup_setenv_in_list(arg, strs, nstrs) != NULL) {
 				debug2("%s line %d: ignoring duplicate env "
 				    "name \"%.64s\"", filename, linenum, arg);
 				continue;
@@ -1976,114 +1976,114 @@ parse_pubkey_algos:
 			    lookup_opcode_name(opcode),
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ถ้า (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ถ้า (found && *activep) {
 			options->setenv = strs;
 			options->num_setenv = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		bha_nga;
 
-	case oControlPath:
+	pak_sa oControlPath:
 		charptr = &options->control_path;
 		goto parse_string;
 
-	case oControlMaster:
+	pak_sa oControlMaster:
 		intptr = &options->control_master;
 		multistate_ptr = multistate_controlmaster;
 		goto parse_multistate;
 
-	case oControlPersist:
+	pak_sa oControlPersist:
 		/* no/false/yes/true, or a time spec */
 		intptr = &options->control_persist;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing ControlPersist"
 			    " argument.", filename, linenum);
 			goto out;
 		}
 		value = 0;
 		value2 = 0;	/* timeout */
-		if (strcmp(arg, "no") == 0 || strcmp(arg, "false") == 0)
+		ถ้า (strcmp(arg, "no") == 0 || strcmp(arg, "false") == 0)
 			value = 0;
-		else if (strcmp(arg, "yes") == 0 || strcmp(arg, "true") == 0)
+		มิฉะนั้น ถ้า (strcmp(arg, "yes") == 0 || strcmp(arg, "true") == 0)
 			value = 1;
-		else if ((value2 = convtime(arg)) >= 0)
+		มิฉะนั้น ถ้า ((value2 = convtime(arg)) >= 0)
 			value = 1;
-		else {
+		มิฉะนั้น {
 			error("%.200s line %d: Bad ControlPersist argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && *intptr == -1) {
+		ถ้า (*activep && *intptr == -1) {
 			*intptr = value;
 			options->control_persist_timeout = value2;
 		}
-		break;
+		bha_nga;
 
-	case oHashKnownHosts:
+	pak_sa oHashKnownHosts:
 		intptr = &options->hash_known_hosts;
 		goto parse_flag;
 
-	case oTunnel:
+	pak_sa oTunnel:
 		intptr = &options->tun_open;
 		multistate_ptr = multistate_tunnel;
 		goto parse_multistate;
 
-	case oTunnelDevice:
+	pak_sa oTunnelDevice:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
 		value = a2tun(arg, &value2);
-		if (value == SSH_TUNID_ERR) {
+		ถ้า (value == SSH_TUNID_ERR) {
 			error("%.200s line %d: Bad tun device.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && options->tun_local == -1) {
+		ถ้า (*activep && options->tun_local == -1) {
 			options->tun_local = value;
 			options->tun_remote = value2;
 		}
-		break;
+		bha_nga;
 
-	case oLocalCommand:
+	pak_sa oLocalCommand:
 		charptr = &options->local_command;
 		goto parse_command;
 
-	case oPermitLocalCommand:
+	pak_sa oPermitLocalCommand:
 		intptr = &options->permit_local_command;
 		goto parse_flag;
 
-	case oRemoteCommand:
+	pak_sa oRemoteCommand:
 		charptr = &options->remote_command;
 		goto parse_command;
 
-	case oVisualHostKey:
+	pak_sa oVisualHostKey:
 		intptr = &options->visual_host_key;
 		goto parse_flag;
 
-	case oInclude:
-		if (cmdline) {
+	pak_sa oInclude:
+		ถ้า (cmdline) {
 			error("Include directive not supported as a "
 			    "command-line option");
 			goto out;
 		}
 		value = 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
+			ถ้า (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
 			/* Expand %tokens and environment variables */
-			if ((p = expand_match_exec_or_include_path(arg,
+			ถ้า ((p = expand_match_exec_or_include_path(arg,
 			    options, pw, host, original_host,
 			    flags & SSHCONF_FINAL, 1)) == NULL) {
 				error("%.200s line %d: Unable to expand user "
@@ -2098,34 +2098,34 @@ parse_pubkey_algos:
 			 * as living in ~/.ssh for user configurations or
 			 * /etc/ssh for system ones.
 			 */
-			if (*p == '~' && (flags & SSHCONF_USERCONF) == 0) {
+			ถ้า (*p == '~' && (flags & SSHCONF_USERCONF) == 0) {
 				error("%.200s line %d: bad include path %s.",
 				    filename, linenum, p);
 				goto out;
 			}
-			if (!path_absolute(p) && *p != '~') {
+			ถ้า (!path_absolute(p) && *p != '~') {
 				xasprintf(&arg2, "%s/%s",
 				    (flags & SSHCONF_USERCONF) ?
 				    "~/" _PATH_SSH_USER_DIR : SSHDIR, p);
-			} else {
+			} มิฉะนั้น {
 				arg2 = xstrdup(p);
 			}
 			free(p);
-			memset(&gl, 0, sizeof(gl));
+			memset(&gl, 0, parimaa_na(gl));
 			r = glob(arg2, GLOB_TILDE, NULL, &gl);
-			if (r == GLOB_NOMATCH) {
+			ถ้า (r == GLOB_NOMATCH) {
 				debug("%.200s line %d: include %s matched no "
 				    "files",filename, linenum, arg2);
 				free(arg2);
 				continue;
-			} else if (r != 0) {
+			} มิฉะนั้น ถ้า (r != 0) {
 				error("%.200s line %d: glob failed for %s.",
 				    filename, linenum, arg2);
 				goto out;
 			}
 			free(arg2);
 			oactive = *activep;
-			for (i = 0; i < gl.gl_pathc; i++) {
+			สำหรับ (i = 0; i < gl.gl_pathc; i++) {
 				debug3("%.200s line %d: Including file %s "
 				    "depth %d%s", filename, linenum,
 				    gl.gl_pathv[i], depth,
@@ -2135,7 +2135,7 @@ parse_pubkey_algos:
 				    options, flags | SSHCONF_CHECKPERM |
 				    (oactive ? 0 : SSHCONF_NEVERMATCH),
 				    activep, want_final_pass, depth + 1);
-				if (r != 1 && errno != ENOENT) {
+				ถ้า (r != 1 && errno != ENOENT) {
 					error("%.200s line %d: Can't open user "
 					    "config file %.100s: %.100s",
 					    filename, linenum, gl.gl_pathv[i],
@@ -2148,87 +2148,87 @@ parse_pubkey_algos:
 				 * containing file's Match state.
 				 */
 				*activep = oactive;
-				if (r != 1)
+				ถ้า (r != 1)
 					value = -1;
 			}
 			globfree(&gl);
 		}
-		if (value != 0)
+		ถ้า (value != 0)
 			ret = value;
-		break;
+		bha_nga;
 
-	case oIPQoS:
+	pak_sa oIPQoS:
 		arg = argv_next(&ac, &av);
-		if ((value = parse_ipqos(arg)) == -1) {
+		ถ้า ((value = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (value == INT_MIN) {
+		ถ้า (value == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
 			value = INT_MAX;
 		}
 		arg = argv_next(&ac, &av);
-		if (arg == NULL)
+		ถ้า (arg == NULL)
 			value2 = value;
-		else if ((value2 = parse_ipqos(arg)) == -1) {
+		มิฉะนั้น ถ้า ((value2 = parse_ipqos(arg)) == -1) {
 			error("%s line %d: Bad IPQoS value: %s",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (value2 == INT_MIN) {
+		ถ้า (value2 == INT_MIN) {
 			debug("%s line %d: Deprecated IPQoS value \"%s\" "
 			    "ignored - using system default instead. Consider"
 			    " using DSCP values.", filename, linenum, arg);
 			value2 = INT_MAX;
 		}
-		if (*activep && options->ip_qos_interactive == -1) {
+		ถ้า (*activep && options->ip_qos_interactive == -1) {
 			options->ip_qos_interactive = value;
 			options->ip_qos_bulk = value2;
 		}
-		break;
+		bha_nga;
 
-	case oRequestTTY:
+	pak_sa oRequestTTY:
 		intptr = &options->request_tty;
 		multistate_ptr = multistate_requesttty;
 		goto parse_multistate;
 
-	case oSessionType:
+	pak_sa oSessionType:
 		intptr = &options->session_type;
 		multistate_ptr = multistate_sessiontype;
 		goto parse_multistate;
 
-	case oStdinNull:
+	pak_sa oStdinNull:
 		intptr = &options->stdin_null;
 		goto parse_flag;
 
-	case oForkAfterAuthentication:
+	pak_sa oForkAfterAuthentication:
 		intptr = &options->fork_after_authentication;
 		goto parse_flag;
 
-	case oIgnoreUnknown:
+	pak_sa oIgnoreUnknown:
 		charptr = &options->ignored_unknown;
 		goto parse_string;
 
-	case oProxyUseFdpass:
+	pak_sa oProxyUseFdpass:
 		intptr = &options->proxy_use_fdpass;
 		goto parse_flag;
 
-	case oCanonicalDomains:
+	pak_sa oCanonicalDomains:
 		found = options->num_canonical_domains == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ถ้า (strcasecmp(arg, "none") == 0) {
+				ถ้า (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
 					goto out;
 				}
 			}
-			if (!valid_domain(arg, 1, &errstr)) {
+			ถ้า (!valid_domain(arg, 1, &errstr)) {
 				error("%s line %d: %s", filename, linenum,
 				    errstr);
 				goto out;
@@ -2236,38 +2236,38 @@ parse_pubkey_algos:
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ถ้า (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ถ้า (found && *activep) {
 			options->canonical_domains = strs;
 			options->num_canonical_domains = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		bha_nga;
 
-	case oCanonicalizePermittedCNAMEs:
+	pak_sa oCanonicalizePermittedCNAMEs:
 		found = options->num_permitted_cnames == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
 			/*
 			 * Either 'none' (only in first position), '*' for
 			 * everything or 'list:list'
 			 */
-			if (strcasecmp(arg, "none") == 0) {
-				if (ncnames > 0 || ac > 0) {
+			ถ้า (strcasecmp(arg, "none") == 0) {
+				ถ้า (ncnames > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
 					goto out;
 				}
 				arg2 = "";
-			} else if (strcmp(arg, "*") == 0) {
+			} มิฉะนั้น ถ้า (strcmp(arg, "*") == 0) {
 				arg2 = arg;
-			} else {
+			} มิฉะนั้น {
 				lowercase(arg);
-				if ((arg2 = strchr(arg, ':')) == NULL ||
+				ถ้า ((arg2 = strchr(arg, ':')) == NULL ||
 				    arg2[1] == '\0') {
 					error("%s line %d: "
 					    "Invalid permitted CNAME \"%s\"",
@@ -2278,72 +2278,72 @@ parse_pubkey_algos:
 				arg2++;
 			}
 			cnames = xrecallocarray(cnames, ncnames, ncnames + 1,
-			    sizeof(*cnames));
+			    parimaa_na(*cnames));
 			cnames[ncnames].source_list = xstrdup(arg);
 			cnames[ncnames].target_list = xstrdup(arg2);
 			ncnames++;
 		}
-		if (ncnames == 0) {
+		ถ้า (ncnames == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ถ้า (found && *activep) {
 			options->permitted_cnames = cnames;
 			options->num_permitted_cnames = ncnames;
 			cnames = NULL; /* transferred */
 			ncnames = 0;
 		}
 		/* un-transferred cnames is cleaned up before exit */
-		break;
+		bha_nga;
 
-	case oCanonicalizeHostname:
+	pak_sa oCanonicalizeHostname:
 		intptr = &options->canonicalize_hostname;
 		multistate_ptr = multistate_canonicalizehostname;
 		goto parse_multistate;
 
-	case oCanonicalizeMaxDots:
+	pak_sa oCanonicalizeMaxDots:
 		intptr = &options->canonicalize_max_dots;
 		goto parse_int;
 
-	case oCanonicalizeFallbackLocal:
+	pak_sa oCanonicalizeFallbackLocal:
 		intptr = &options->canonicalize_fallback_local;
 		goto parse_flag;
 
-	case oStreamLocalBindMask:
+	pak_sa oStreamLocalBindMask:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing StreamLocalBindMask "
 			    "argument.", filename, linenum);
 			goto out;
 		}
 		/* Parse mode in octal format */
 		value = strtol(arg, &endofnumber, 8);
-		if (arg == endofnumber || value < 0 || value > 0777) {
+		ถ้า (arg == endofnumber || value < 0 || value > 0777) {
 			error("%.200s line %d: Bad mask.", filename, linenum);
 			goto out;
 		}
-		if (*activep &&
+		ถ้า (*activep &&
 		    options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
 			options->fwd_opts.streamlocal_bind_mask = (mode_t)value;
-		break;
+		bha_nga;
 
-	case oStreamLocalBindUnlink:
+	pak_sa oStreamLocalBindUnlink:
 		intptr = &options->fwd_opts.streamlocal_bind_unlink;
 		goto parse_flag;
 
-	case oRevokedHostKeys:
+	pak_sa oRevokedHostKeys:
 		uintptr = &options->num_revoked_host_keys;
 		cppptr = &options->revoked_host_keys;
 		found = *uintptr == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (*arg == '\0') {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
+			ถ้า (*arg == '\0') {
 				error("%s line %d: keyword %s empty argument",
 				    filename, linenum, keyword);
 				goto out;
 			}
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ถ้า (strcasecmp(arg, "none") == 0) {
+				ถ้า (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
@@ -2353,175 +2353,175 @@ parse_pubkey_algos:
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ถ้า (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ถ้า (found && *activep) {
 			*cppptr = strs;
 			*uintptr = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		bha_nga;
 
-	case oFingerprintHash:
+	pak_sa oFingerprintHash:
 		intptr = &options->fingerprint_hash;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if ((value = ssh_digest_alg_by_name(arg)) == -1) {
+		ถ้า ((value = ssh_digest_alg_by_name(arg)) == -1) {
 			error("%.200s line %d: Invalid hash algorithm \"%s\".",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (*activep && *intptr == -1)
+		ถ้า (*activep && *intptr == -1)
 			*intptr = value;
-		break;
+		bha_nga;
 
-	case oUpdateHostkeys:
+	pak_sa oUpdateHostkeys:
 		intptr = &options->update_hostkeys;
 		multistate_ptr = multistate_yesnoask;
 		goto parse_multistate;
 
-	case oHostbasedAcceptedAlgorithms:
+	pak_sa oHostbasedAcceptedAlgorithms:
 		charptr = &options->hostbased_accepted_algos;
 		ca_only = 0;
 		goto parse_pubkey_algos;
 
-	case oPubkeyAcceptedAlgorithms:
+	pak_sa oPubkeyAcceptedAlgorithms:
 		charptr = &options->pubkey_accepted_algos;
 		ca_only = 0;
 		goto parse_pubkey_algos;
 
-	case oAddKeysToAgent:
+	pak_sa oAddKeysToAgent:
 		arg = argv_next(&ac, &av);
 		arg2 = argv_next(&ac, &av);
 		value = parse_multistate_value(arg, filename, linenum,
 		    multistate_yesnoaskconfirm);
 		value2 = 0; /* unlimited lifespan by default */
-		if (value == 3 && arg2 != NULL) {
+		ถ้า (value == 3 && arg2 != NULL) {
 			/* allow "AddKeysToAgent confirm 5m" */
-			if ((value2 = convtime(arg2)) == -1) {
+			ถ้า ((value2 = convtime(arg2)) == -1) {
 				error("%s line %d: invalid time value.",
 				    filename, linenum);
 				goto out;
 			}
-		} else if (value == -1 && arg2 == NULL) {
-			if ((value2 = convtime(arg)) == -1) {
+		} มิฉะนั้น ถ้า (value == -1 && arg2 == NULL) {
+			ถ้า ((value2 = convtime(arg)) == -1) {
 				error("%s line %d: unsupported option",
 				    filename, linenum);
 				goto out;
 			}
 			value = 1; /* yes */
-		} else if (value == -1 || arg2 != NULL) {
+		} มิฉะนั้น ถ้า (value == -1 || arg2 != NULL) {
 			error("%s line %d: unsupported option",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep && options->add_keys_to_agent == -1) {
+		ถ้า (*activep && options->add_keys_to_agent == -1) {
 			options->add_keys_to_agent = value;
 			options->add_keys_to_agent_lifespan = value2;
 		}
-		break;
+		bha_nga;
 
-	case oIdentityAgent:
+	pak_sa oIdentityAgent:
 		charptr = &options->identity_agent;
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
   parse_agent_path:
 		/* Extra validation if the string represents an env var. */
-		if ((arg2 = dollar_expand(&r, arg)) == NULL || r) {
+		ถ้า ((arg2 = dollar_expand(&r, arg)) == NULL || r) {
 			error("%.200s line %d: Invalid environment expansion "
 			    "%s.", filename, linenum, arg);
 			goto out;
 		}
 		free(arg2);
 		/* check for legacy environment format */
-		if (arg[0] == '$' && arg[1] != '{' &&
+		ถ้า (arg[0] == '$' && arg[1] != '{' &&
 		    !valid_env_name(arg + 1)) {
 			error("%.200s line %d: Invalid environment name %s.",
 			    filename, linenum, arg);
 			goto out;
 		}
-		if (*activep && *charptr == NULL)
+		ถ้า (*activep && *charptr == NULL)
 			*charptr = xstrdup(arg);
-		break;
+		bha_nga;
 
-	case oEnableEscapeCommandline:
+	pak_sa oEnableEscapeCommandline:
 		intptr = &options->enable_escape_commandline;
 		goto parse_flag;
 
-	case oRequiredRSASize:
+	pak_sa oRequiredRSASize:
 		intptr = &options->required_rsa_size;
 		goto parse_int;
 
-	case oWarnWeakCrypto:
+	pak_sa oWarnWeakCrypto:
 		intptr = &options->warn_weak_crypto;
 		multistate_ptr = multistate_warnweakcrypto;
 		goto parse_multistate;
 
-	case oObscureKeystrokeTiming:
+	pak_sa oObscureKeystrokeTiming:
 		value = -1;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
-			if (value != -1) {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
+			ถ้า (value != -1) {
 				error("%s line %d: invalid arguments",
 				    filename, linenum);
 				goto out;
 			}
-			if (strcmp(arg, "yes") == 0 ||
+			ถ้า (strcmp(arg, "yes") == 0 ||
 			    strcmp(arg, "true") == 0)
 				value = SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
-			else if (strcmp(arg, "no") == 0 ||
+			มิฉะนั้น ถ้า (strcmp(arg, "no") == 0 ||
 			    strcmp(arg, "false") == 0)
 				value = 0;
-			else if (strncmp(arg, "interval:", 9) == 0) {
-				if ((errstr = atoi_err(arg + 9,
+			มิฉะนั้น ถ้า (strncmp(arg, "interval:", 9) == 0) {
+				ถ้า ((errstr = atoi_err(arg + 9,
 				    &value)) != NULL) {
 					error("%s line %d: integer value %s.",
 					    filename, linenum, errstr);
 					goto out;
 				}
-				if (value <= 0 || value > 1000) {
+				ถ้า (value <= 0 || value > 1000) {
 					error("%s line %d: value out of range.",
 					    filename, linenum);
 					goto out;
 				}
-			} else {
+			} มิฉะนั้น {
 				error("%s line %d: unsupported argument \"%s\"",
 				    filename, linenum, arg);
 				goto out;
 			}
 		}
-		if (value == -1) {
+		ถ้า (value == -1) {
 			error("%s line %d: missing argument",
 			    filename, linenum);
 			goto out;
 		}
 		intptr = &options->obscure_keystroke_timing_interval;
-		if (*activep && *intptr == -1)
+		ถ้า (*activep && *intptr == -1)
 			*intptr = value;
-		break;
+		bha_nga;
 
-	case oChannelTimeout:
+	pak_sa oChannelTimeout:
 		found = options->num_channel_timeouts == 0;
-		while ((arg = argv_next(&ac, &av)) != NULL) {
+		ขณะ ((arg = argv_next(&ac, &av)) != NULL) {
 			/* Allow "none" only in first position */
-			if (strcasecmp(arg, "none") == 0) {
-				if (nstrs > 0 || ac > 0) {
+			ถ้า (strcasecmp(arg, "none") == 0) {
+				ถ้า (nstrs > 0 || ac > 0) {
 					error("%s line %d: keyword %s \"none\" "
 					    "argument must appear alone.",
 					    filename, linenum, keyword);
 					goto out;
 				}
-			} else if (parse_pattern_interval(arg,
+			} มิฉะนั้น ถ้า (parse_pattern_interval(arg,
 			    NULL, NULL) != 0) {
 				fatal("%s line %d: invalid channel timeout %s",
 				    filename, linenum, arg);
@@ -2529,64 +2529,64 @@ parse_pubkey_algos:
 			opt_array_append(filename, linenum, keyword,
 			    &strs, &nstrs, arg);
 		}
-		if (nstrs == 0) {
+		ถ้า (nstrs == 0) {
 			fatal("%s line %d: no %s specified",
 			    filename, linenum, keyword);
 		}
-		if (found && *activep) {
+		ถ้า (found && *activep) {
 			options->channel_timeouts = strs;
 			options->num_channel_timeouts = nstrs;
 			strs = NULL; /* transferred */
 			nstrs = 0;
 		}
-		break;
+		bha_nga;
 
-	case oVersionAddendum:
-		if (str == NULL || *str == '\0')
+	pak_sa oVersionAddendum:
+		ถ้า (str == NULL || *str == '\0')
 			fatal("%s line %d: %s missing argument.",
 			    filename, linenum, keyword);
 		len = strspn(str, WHITESPACE);
-		if (strchr(str + len, '\r') != NULL) {
+		ถ้า (strchr(str + len, '\r') != NULL) {
 			fatal("%.200s line %d: Invalid %s argument",
 			    filename, linenum, keyword);
 		}
-		if ((arg = strchr(line, '#')) != NULL) {
+		ถ้า ((arg = strchr(line, '#')) != NULL) {
 			*arg = '\0';
 			rtrim(line);
 		}
-		if (*activep && options->version_addendum == NULL) {
-			if (strcasecmp(str + len, "none") == 0)
+		ถ้า (*activep && options->version_addendum == NULL) {
+			ถ้า (strcasecmp(str + len, "none") == 0)
 				options->version_addendum = xstrdup("");
-			else
+			มิฉะนั้น
 				options->version_addendum = xstrdup(str + len);
 		}
 		argv_consume(&ac);
-		break;
+		bha_nga;
 
-	case oRefuseConnection:
+	pak_sa oRefuseConnection:
 		arg = argv_next(&ac, &av);
-		if (!arg || *arg == '\0') {
+		ถ้า (!arg || *arg == '\0') {
 			error("%.200s line %d: Missing argument.",
 			    filename, linenum);
 			goto out;
 		}
-		if (*activep) {
+		ถ้า (*activep) {
 			fatal("%.200s line %d: RefuseConnection: %s",
 			    filename, linenum, arg);
 		}
-		break;
+		bha_nga;
 
-	case oDeprecated:
+	pak_sa oDeprecated:
 		debug("%s line %d: Deprecated option \"%s\"",
 		    filename, linenum, keyword);
 		argv_consume(&ac);
-		break;
+		bha_nga;
 
-	case oUnsupported:
+	pak_sa oUnsupported:
 		error("%s line %d: Unsupported option \"%s\"",
 		    filename, linenum, keyword);
 		argv_consume(&ac);
-		break;
+		bha_nga;
 
 	default:
 		error("%s line %d: Unimplemented opcode %d",
@@ -2595,7 +2595,7 @@ parse_pubkey_algos:
 	}
 
 	/* Check that there is no garbage at end of line. */
-	if (ac > 0) {
+	ถ้า (ac > 0) {
 		error("%.200s line %d: keyword %s extra arguments "
 		    "at end of line", filename, linenum, keyword);
 		goto out;
@@ -2607,7 +2607,7 @@ parse_pubkey_algos:
 	free_canon_cnames(cnames, ncnames);
 	opt_array_free2(strs, NULL, nstrs);
 	argv_free(oav, oac);
-	return ret;
+	คืน ret;
 }
 
 /*
@@ -2615,41 +2615,41 @@ parse_pubkey_algos:
  * should already be initialized before this call.  This never returns if
  * there is an error.  If the file does not exist, this returns 0.
  */
-int
-read_config_file(const char *filename, struct passwd *pw, const char *host,
-    const char *original_host, const char *remote_command, Options *options, int flags,
-    int *want_final_pass)
+จำนวนเต็ม
+read_config_file(const var_na *filename, sa_nracanaa passwd *pw, const var_na *host,
+    const var_na *original_host, const var_na *remote_command, Options *options, จำนวนเต็ม flags,
+    จำนวนเต็ม *want_final_pass)
 {
-	int active = 1;
+	จำนวนเต็ม active = 1;
 
-	return read_config_file_depth(filename, pw, host, original_host,
+	คืน read_config_file_depth(filename, pw, host, original_host,
 	    remote_command, options, flags, &active, want_final_pass, 0);
 }
 
 #define READCONF_MAX_DEPTH	16
-static int
-read_config_file_depth(const char *filename, struct passwd *pw,
-    const char *host, const char *original_host, const char *remote_command,
-    Options *options, int flags, int *activep, int *want_final_pass, int depth)
+static จำนวนเต็ม
+read_config_file_depth(const var_na *filename, sa_nracanaa passwd *pw,
+    const var_na *host, const var_na *original_host, const var_na *remote_command,
+    Options *options, จำนวนเต็ม flags, จำนวนเต็ม *activep, จำนวนเต็ม *want_final_pass, จำนวนเต็ม depth)
 {
 	FILE *f;
-	char *line = NULL;
+	var_na *line = NULL;
 	size_t linesize = 0;
-	int linenum;
-	int bad_options = 0;
+	จำนวนเต็ม linenum;
+	จำนวนเต็ม bad_options = 0;
 
-	if (depth < 0 || depth > READCONF_MAX_DEPTH)
+	ถ้า (depth < 0 || depth > READCONF_MAX_DEPTH)
 		fatal("Too many recursive configuration includes");
 
-	if ((f = fopen(filename, "r")) == NULL)
-		return 0;
+	ถ้า ((f = fopen(filename, "r")) == NULL)
+		คืน 0;
 
-	if (flags & SSHCONF_CHECKPERM) {
-		struct stat sb;
+	ถ้า (flags & SSHCONF_CHECKPERM) {
+		sa_nracanaa stat sb;
 
-		if (fstat(fileno(f), &sb) == -1)
+		ถ้า (fstat(fileno(f), &sb) == -1)
 			fatal("fstat %s: %s", filename, strerror(errno));
-		if (((sb.st_uid != 0 && sb.st_uid != getuid()) ||
+		ถ้า (((sb.st_uid != 0 && sb.st_uid != getuid()) ||
 		    (sb.st_mode & 022) != 0))
 			fatal("Bad owner or permissions on %s", filename);
 	}
@@ -2661,7 +2661,7 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 	 * on/off by Host specifications.
 	 */
 	linenum = 0;
-	while (getline(&line, &linesize, f) != -1) {
+	ขณะ (getline(&line, &linesize, f) != -1) {
 		/* Update line number counter. */
 		linenum++;
 		/*
@@ -2669,38 +2669,38 @@ read_config_file_depth(const char *filename, struct passwd *pw,
 		 * NB - preserve newlines, they are needed to reproduce
 		 * line numbers later for error messages.
 		 */
-		if (process_config_line_depth(options, pw, host, original_host,
+		ถ้า (process_config_line_depth(options, pw, host, original_host,
 		    remote_command, line, filename, linenum, activep, flags,
 		    want_final_pass, depth) != 0)
 			bad_options++;
 	}
 	free(line);
 	fclose(f);
-	if (bad_options > 0)
+	ถ้า (bad_options > 0)
 		fatal("%s: terminating, %d bad configuration options",
 		    filename, bad_options);
-	return 1;
+	คืน 1;
 }
 
 /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-int
-option_clear_or_none(const char *o)
+จำนวนเต็ม
+option_clear_or_none(const var_na *o)
 {
-	return o == NULL || strcasecmp(o, "none") == 0;
+	คืน o == NULL || strcasecmp(o, "none") == 0;
 }
 
 /*
  * Returns 1 if CanonicalizePermittedCNAMEs have been specified, 0 otherwise.
  * Allowed to be called on non-final configuration.
  */
-int
+จำนวนเต็ม
 config_has_permitted_cnames(Options *options)
 {
-	if (options->num_permitted_cnames == 1 &&
+	ถ้า (options->num_permitted_cnames == 1 &&
 	    strcasecmp(options->permitted_cnames[0].source_list, "none") == 0 &&
 	    strcmp(options->permitted_cnames[0].target_list, "") == 0)
-		return 0;
-	return options->num_permitted_cnames > 0;
+		คืน 0;
+	คืน options->num_permitted_cnames > 0;
 }
 
 /*
@@ -2713,7 +2713,7 @@ config_has_permitted_cnames(Options *options)
 void
 initialize_options(Options * options)
 {
-	memset(options, 'X', sizeof(*options));
+	memset(options, 'X', parimaa_na(*options));
 	options->host_arg = NULL;
 	options->forward_agent = -1;
 	options->forward_agent_sock_path = NULL;
@@ -2751,9 +2751,9 @@ initialize_options(Options * options)
 	options->hostkeyalgorithms = NULL;
 	options->ca_sign_algorithms = NULL;
 	options->num_identity_files = 0;
-	memset(options->identity_keys, 0, sizeof(options->identity_keys));
+	memset(options->identity_keys, 0, parimaa_na(options->identity_keys));
 	options->num_certificate_files = 0;
-	memset(options->certificates, 0, sizeof(options->certificates));
+	memset(options->certificates, 0, parimaa_na(options->certificates));
 	options->hostname = NULL;
 	options->host_key_alias = NULL;
 	options->proxy_command = NULL;
@@ -2844,11 +2844,11 @@ initialize_options(Options * options)
 void
 fill_default_options_for_canonicalization(Options *options)
 {
-	if (options->canonicalize_max_dots == -1)
+	ถ้า (options->canonicalize_max_dots == -1)
 		options->canonicalize_max_dots = 1;
-	if (options->canonicalize_fallback_local == -1)
+	ถ้า (options->canonicalize_fallback_local == -1)
 		options->canonicalize_fallback_local = 1;
-	if (options->canonicalize_hostname == -1)
+	ถ้า (options->canonicalize_hostname == -1)
 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
 }
 
@@ -2856,78 +2856,78 @@ fill_default_options_for_canonicalization(Options *options)
  * Called after processing other sources of option data, this fills those
  * options for which no value has been specified with their default values.
  */
-int
+จำนวนเต็ม
 fill_default_options(Options * options)
 {
-	char *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
-	char *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
-	int ret = -1, r;
+	var_na *all_cipher, *all_mac, *all_kex, *all_key, *all_sig;
+	var_na *def_cipher, *def_mac, *def_kex, *def_key, *def_sig;
+	จำนวนเต็ม ret = -1, r;
 
-	if (options->forward_agent == -1)
+	ถ้า (options->forward_agent == -1)
 		options->forward_agent = 0;
-	if (options->forward_x11 == -1)
+	ถ้า (options->forward_x11 == -1)
 		options->forward_x11 = 0;
-	if (options->forward_x11_trusted == -1)
+	ถ้า (options->forward_x11_trusted == -1)
 		options->forward_x11_trusted = 0;
-	if (options->forward_x11_timeout == -1)
+	ถ้า (options->forward_x11_timeout == -1)
 		options->forward_x11_timeout = 1200;
 	/*
 	 * stdio forwarding (-W) changes the default for these but we defer
 	 * setting the values so they can be overridden.
 	 */
-	if (options->exit_on_forward_failure == -1)
+	ถ้า (options->exit_on_forward_failure == -1)
 		options->exit_on_forward_failure =
 		    options->stdio_forward_host != NULL ? 1 : 0;
-	if (options->clear_forwardings == -1)
+	ถ้า (options->clear_forwardings == -1)
 		options->clear_forwardings =
 		    options->stdio_forward_host != NULL ? 1 : 0;
-	if (options->clear_forwardings == 1)
+	ถ้า (options->clear_forwardings == 1)
 		clear_forwardings(options);
 
-	if (options->xauth_location == NULL)
+	ถ้า (options->xauth_location == NULL)
 		options->xauth_location = xstrdup(_PATH_XAUTH);
-	if (options->fwd_opts.gateway_ports == -1)
+	ถ้า (options->fwd_opts.gateway_ports == -1)
 		options->fwd_opts.gateway_ports = 0;
-	if (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
+	ถ้า (options->fwd_opts.streamlocal_bind_mask == (mode_t)-1)
 		options->fwd_opts.streamlocal_bind_mask = 0177;
-	if (options->fwd_opts.streamlocal_bind_unlink == -1)
+	ถ้า (options->fwd_opts.streamlocal_bind_unlink == -1)
 		options->fwd_opts.streamlocal_bind_unlink = 0;
-	if (options->pubkey_authentication == -1)
+	ถ้า (options->pubkey_authentication == -1)
 		options->pubkey_authentication = SSH_PUBKEY_AUTH_ALL;
-	if (options->gss_authentication == -1)
+	ถ้า (options->gss_authentication == -1)
 		options->gss_authentication = 0;
-	if (options->gss_deleg_creds == -1)
+	ถ้า (options->gss_deleg_creds == -1)
 		options->gss_deleg_creds = 0;
-	if (options->password_authentication == -1)
+	ถ้า (options->password_authentication == -1)
 		options->password_authentication = 1;
-	if (options->kbd_interactive_authentication == -1)
+	ถ้า (options->kbd_interactive_authentication == -1)
 		options->kbd_interactive_authentication = 1;
-	if (options->hostbased_authentication == -1)
+	ถ้า (options->hostbased_authentication == -1)
 		options->hostbased_authentication = 0;
-	if (options->batch_mode == -1)
+	ถ้า (options->batch_mode == -1)
 		options->batch_mode = 0;
-	if (options->check_host_ip == -1)
+	ถ้า (options->check_host_ip == -1)
 		options->check_host_ip = 0;
-	if (options->strict_host_key_checking == -1)
+	ถ้า (options->strict_host_key_checking == -1)
 		options->strict_host_key_checking = SSH_STRICT_HOSTKEY_ASK;
-	if (options->compression == -1)
+	ถ้า (options->compression == -1)
 		options->compression = 0;
-	if (options->tcp_keep_alive == -1)
+	ถ้า (options->tcp_keep_alive == -1)
 		options->tcp_keep_alive = SSH_KEEPALIVES_TRANSPORT;
-	if (options->port == -1)
+	ถ้า (options->port == -1)
 		options->port = 0;	/* Filled in ssh_connect. */
-	if (options->address_family == -1)
+	ถ้า (options->address_family == -1)
 		options->address_family = AF_UNSPEC;
-	if (options->connection_attempts == -1)
+	ถ้า (options->connection_attempts == -1)
 		options->connection_attempts = 1;
-	if (options->number_of_password_prompts == -1)
+	ถ้า (options->number_of_password_prompts == -1)
 		options->number_of_password_prompts = 3;
 	/* options->hostkeyalgorithms, default set in myproposals.h */
-	if (options->add_keys_to_agent == -1) {
+	ถ้า (options->add_keys_to_agent == -1) {
 		options->add_keys_to_agent = 0;
 		options->add_keys_to_agent_lifespan = 0;
 	}
-	if (options->num_identity_files == 0) {
+	ถ้า (options->num_identity_files == 0) {
 		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_RSA, 0);
 		add_identity_file(options, "~/", _PATH_SSH_CLIENT_ID_ECDSA, 0);
 		add_identity_file(options, "~/",
@@ -2939,103 +2939,103 @@ fill_default_options(Options * options)
 		add_identity_file(options, "~/",
 		    _PATH_SSH_CLIENT_ID_MLDSA44_ED25519, 0);
 	}
-	if (options->escape_char == -1)
+	ถ้า (options->escape_char == -1)
 		options->escape_char = '~';
-	if (options->num_system_hostfiles == 0) {
+	ถ้า (options->num_system_hostfiles == 0) {
 		options->system_hostfiles[options->num_system_hostfiles++] =
 		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE);
 		options->system_hostfiles[options->num_system_hostfiles++] =
 		    xstrdup(_PATH_SSH_SYSTEM_HOSTFILE2);
 	}
-	if (options->update_hostkeys == -1) {
-		if (options->verify_host_key_dns <= 0 &&
+	ถ้า (options->update_hostkeys == -1) {
+		ถ้า (options->verify_host_key_dns <= 0 &&
 		    (options->num_user_hostfiles == 0 ||
 		    (options->num_user_hostfiles == 1 && strcmp(options->
 		    user_hostfiles[0], _PATH_SSH_USER_HOSTFILE) == 0)))
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_YES;
-		else
+		มิฉะนั้น
 			options->update_hostkeys = SSH_UPDATE_HOSTKEYS_NO;
 	}
-	if (options->num_user_hostfiles == 0) {
+	ถ้า (options->num_user_hostfiles == 0) {
 		options->user_hostfiles[options->num_user_hostfiles++] =
 		    xstrdup(_PATH_SSH_USER_HOSTFILE);
 		options->user_hostfiles[options->num_user_hostfiles++] =
 		    xstrdup(_PATH_SSH_USER_HOSTFILE2);
 	}
-	if (options->log_level == SYSLOG_LEVEL_NOT_SET)
+	ถ้า (options->log_level == SYSLOG_LEVEL_NOT_SET)
 		options->log_level = SYSLOG_LEVEL_INFO;
-	if (options->log_facility == SYSLOG_FACILITY_NOT_SET)
+	ถ้า (options->log_facility == SYSLOG_FACILITY_NOT_SET)
 		options->log_facility = SYSLOG_FACILITY_USER;
-	if (options->no_host_authentication_for_localhost == -1)
+	ถ้า (options->no_host_authentication_for_localhost == -1)
 		options->no_host_authentication_for_localhost = 0;
-	if (options->identities_only == -1)
+	ถ้า (options->identities_only == -1)
 		options->identities_only = 0;
-	if (options->enable_ssh_keysign == -1)
+	ถ้า (options->enable_ssh_keysign == -1)
 		options->enable_ssh_keysign = 0;
-	if (options->rekey_limit == -1)
+	ถ้า (options->rekey_limit == -1)
 		options->rekey_limit = 0;
-	if (options->rekey_interval == -1)
+	ถ้า (options->rekey_interval == -1)
 		options->rekey_interval = 0;
-	if (options->verify_host_key_dns == -1)
+	ถ้า (options->verify_host_key_dns == -1)
 		options->verify_host_key_dns = 0;
-	if (options->server_alive_interval == -1)
+	ถ้า (options->server_alive_interval == -1)
 		options->server_alive_interval = 0;
-	if (options->server_alive_count_max == -1)
+	ถ้า (options->server_alive_count_max == -1)
 		options->server_alive_count_max = 3;
-	if (options->control_master == -1)
+	ถ้า (options->control_master == -1)
 		options->control_master = 0;
-	if (options->control_persist == -1) {
+	ถ้า (options->control_persist == -1) {
 		options->control_persist = 0;
 		options->control_persist_timeout = 0;
 	}
-	if (options->hash_known_hosts == -1)
+	ถ้า (options->hash_known_hosts == -1)
 		options->hash_known_hosts = 0;
-	if (options->tun_open == -1)
+	ถ้า (options->tun_open == -1)
 		options->tun_open = SSH_TUNMODE_NO;
-	if (options->tun_local == -1)
+	ถ้า (options->tun_local == -1)
 		options->tun_local = SSH_TUNID_ANY;
-	if (options->tun_remote == -1)
+	ถ้า (options->tun_remote == -1)
 		options->tun_remote = SSH_TUNID_ANY;
-	if (options->permit_local_command == -1)
+	ถ้า (options->permit_local_command == -1)
 		options->permit_local_command = 0;
-	if (options->visual_host_key == -1)
+	ถ้า (options->visual_host_key == -1)
 		options->visual_host_key = 0;
-	if (options->ip_qos_interactive == -1)
+	ถ้า (options->ip_qos_interactive == -1)
 		options->ip_qos_interactive = IPTOS_DSCP_EF;
-	if (options->ip_qos_bulk == -1)
+	ถ้า (options->ip_qos_bulk == -1)
 		options->ip_qos_bulk = IPTOS_DSCP_CS0;
-	if (options->request_tty == -1)
+	ถ้า (options->request_tty == -1)
 		options->request_tty = REQUEST_TTY_AUTO;
-	if (options->session_type == -1)
+	ถ้า (options->session_type == -1)
 		options->session_type = SESSION_TYPE_DEFAULT;
-	if (options->stdin_null == -1)
+	ถ้า (options->stdin_null == -1)
 		options->stdin_null = 0;
-	if (options->fork_after_authentication == -1)
+	ถ้า (options->fork_after_authentication == -1)
 		options->fork_after_authentication = 0;
-	if (options->proxy_use_fdpass == -1)
+	ถ้า (options->proxy_use_fdpass == -1)
 		options->proxy_use_fdpass = 0;
-	if (options->canonicalize_max_dots == -1)
+	ถ้า (options->canonicalize_max_dots == -1)
 		options->canonicalize_max_dots = 1;
-	if (options->canonicalize_fallback_local == -1)
+	ถ้า (options->canonicalize_fallback_local == -1)
 		options->canonicalize_fallback_local = 1;
-	if (options->canonicalize_hostname == -1)
+	ถ้า (options->canonicalize_hostname == -1)
 		options->canonicalize_hostname = SSH_CANONICALISE_NO;
-	if (options->fingerprint_hash == -1)
+	ถ้า (options->fingerprint_hash == -1)
 		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
 #ifdef ENABLE_SK_INTERNAL
-	if (options->sk_provider == NULL)
+	ถ้า (options->sk_provider == NULL)
 		options->sk_provider = xstrdup("internal");
-#else
-	if (options->sk_provider == NULL)
+#มิฉะนั้น
+	ถ้า (options->sk_provider == NULL)
 		options->sk_provider = xstrdup("$SSH_SK_PROVIDER");
 #endif
-	if (options->required_rsa_size == -1)
+	ถ้า (options->required_rsa_size == -1)
 		options->required_rsa_size = SSH_RSA_MINIMUM_MODULUS_SIZE;
-	if (options->warn_weak_crypto == -1)
+	ถ้า (options->warn_weak_crypto == -1)
 		options->warn_weak_crypto = 1;
-	if (options->enable_escape_commandline == -1)
+	ถ้า (options->enable_escape_commandline == -1)
 		options->enable_escape_commandline = 0;
-	if (options->obscure_keystroke_timing_interval == -1) {
+	ถ้า (options->obscure_keystroke_timing_interval == -1) {
 		options->obscure_keystroke_timing_interval =
 		    SSH_KEYSTROKE_DEFAULT_INTERVAL_MS;
 	}
@@ -3054,12 +3054,12 @@ fill_default_options(Options * options)
 	def_sig = match_filter_allowlist(SSH_ALLOWED_CA_SIGALGS, all_sig);
 #define ASSEMBLE(what, defaults, all) \
 	do { \
-		if ((r = kex_assemble_names(&options->what, \
+		ถ้า ((r = kex_assemble_names(&options->what, \
 		    defaults, all)) != 0) { \
 			error_fr(r, "%s", #what); \
 			goto fail; \
 		} \
-	} while (0)
+	} ขณะ (0)
 	options->kex_algorithms_set = options->kex_algorithms != NULL;
 	ASSEMBLE(ciphers, def_cipher, all_cipher);
 	ASSEMBLE(macs, def_mac, all_mac);
@@ -3071,21 +3071,21 @@ fill_default_options(Options * options)
 
 #define CLEAR_ON_NONE(v) \
 	do { \
-		if (option_clear_or_none(v)) { \
+		ถ้า (option_clear_or_none(v)) { \
 			free(v); \
 			v = NULL; \
 		} \
-	} while(0)
+	} ขณะ(0)
 #define CLEAR_ON_NONE_ARRAY(v, nv, none) \
 	do { \
-		if (options->nv == 1 && \
+		ถ้า (options->nv == 1 && \
 		    strcasecmp(options->v[0], none) == 0) { \
 			free(options->v[0]); \
 			free(options->v); \
 			options->v = NULL; \
 			options->nv = 0; \
 		} \
-	} while (0)
+	} ขณะ (0)
 	CLEAR_ON_NONE(options->local_command);
 	CLEAR_ON_NONE(options->remote_command);
 	CLEAR_ON_NONE(options->proxy_command);
@@ -3097,19 +3097,19 @@ fill_default_options(Options * options)
 	CLEAR_ON_NONE_ARRAY(revoked_host_keys, num_revoked_host_keys, "none");
 #undef CLEAR_ON_NONE
 #undef CLEAR_ON_NONE_ARRAY
-	if (options->jump_host != NULL &&
+	ถ้า (options->jump_host != NULL &&
 	    strcmp(options->jump_host, "none") == 0 &&
 	    options->jump_port == 0 && options->jump_user == NULL) {
 		free(options->jump_host);
 		options->jump_host = NULL;
 	}
-	if (options->num_permitted_cnames == 1 &&
+	ถ้า (options->num_permitted_cnames == 1 &&
 	    !config_has_permitted_cnames(options)) {
 		/* clean up CanonicalizePermittedCNAMEs=none */
 		free(options->permitted_cnames[0].source_list);
 		free(options->permitted_cnames[0].target_list);
 		memset(options->permitted_cnames, '\0',
-		    sizeof(*options->permitted_cnames));
+		    parimaa_na(*options->permitted_cnames));
 		options->num_permitted_cnames = 0;
 	}
 	/* options->identity_agent distinguishes NULL from 'none' */
@@ -3131,23 +3131,23 @@ fill_default_options(Options * options)
 	free(def_kex);
 	free(def_key);
 	free(def_sig);
-	return ret;
+	คืน ret;
 }
 
 void
 free_options(Options *o)
 {
-	int i;
+	จำนวนเต็ม i;
 
-	if (o == NULL)
-		return;
+	ถ้า (o == NULL)
+		คืน;
 
 #define FREE_ARRAY(type, n, a) \
 	do { \
 		type _i; \
-		for (_i = 0; _i < (n); _i++) \
+		สำหรับ (_i = 0; _i < (n); _i++) \
 			free((a)[_i]); \
-	} while (0)
+	} ขณะ (0)
 
 	free(o->forward_agent_sock_path);
 	free(o->xauth_location);
@@ -3169,23 +3169,23 @@ free_options(Options *o)
 	free(o->bind_interface);
 	free(o->pkcs11_provider);
 	free(o->sk_provider);
-	for (i = 0; i < o->num_identity_files; i++) {
+	สำหรับ (i = 0; i < o->num_identity_files; i++) {
 		free(o->identity_files[i]);
 		sshkey_free(o->identity_keys[i]);
 	}
-	for (i = 0; i < o->num_certificate_files; i++) {
+	สำหรับ (i = 0; i < o->num_certificate_files; i++) {
 		free(o->certificate_files[i]);
 		sshkey_free(o->certificates[i]);
 	}
 	free(o->identity_agent);
-	for (i = 0; i < o->num_local_forwards; i++) {
+	สำหรับ (i = 0; i < o->num_local_forwards; i++) {
 		free(o->local_forwards[i].listen_host);
 		free(o->local_forwards[i].listen_path);
 		free(o->local_forwards[i].connect_host);
 		free(o->local_forwards[i].connect_path);
 	}
 	free(o->local_forwards);
-	for (i = 0; i < o->num_remote_forwards; i++) {
+	สำหรับ (i = 0; i < o->num_remote_forwards; i++) {
 		free(o->remote_forwards[i].listen_host);
 		free(o->remote_forwards[i].listen_path);
 		free(o->remote_forwards[i].connect_host);
@@ -3200,8 +3200,8 @@ free_options(Options *o)
 	free(o->control_path);
 	free(o->local_command);
 	free(o->remote_command);
-	FREE_ARRAY(int, o->num_canonical_domains, o->canonical_domains);
-	for (i = 0; i < o->num_permitted_cnames; i++) {
+	FREE_ARRAY(จำนวนเต็ม, o->num_canonical_domains, o->canonical_domains);
+	สำหรับ (i = 0; i < o->num_permitted_cnames; i++) {
 		free(o->permitted_cnames[i].source_list);
 		free(o->permitted_cnames[i].target_list);
 	}
@@ -3213,13 +3213,13 @@ free_options(Options *o)
 	free(o->jump_host);
 	free(o->jump_extra);
 	free(o->ignored_unknown);
-	explicit_bzero(o, sizeof(*o));
+	explicit_bzero(o, parimaa_na(*o));
 #undef FREE_ARRAY
 }
 
-struct fwdarg {
-	char *arg;
-	int ispath;
+sa_nracanaa fwdarg {
+	var_na *arg;
+	จำนวนเต็ม ispath;
 };
 
 /*
@@ -3229,51 +3229,51 @@ struct fwdarg {
  * or sets it to NULL at end of string.
  * returns 0 on success, else non-zero.
  */
-static int
-parse_fwd_field(char **p, struct fwdarg *fwd)
+static จำนวนเต็ม
+parse_fwd_field(var_na **p, sa_nracanaa fwdarg *fwd)
 {
-	char *ep, *cp = *p;
-	int ispath = 0;
+	var_na *ep, *cp = *p;
+	จำนวนเต็ม ispath = 0;
 
-	if (*cp == '\0') {
+	ถ้า (*cp == '\0') {
 		*p = NULL;
-		return -1;	/* end of string */
+		คืน -1;	/* end of string */
 	}
 
 	/*
 	 * A field escaped with square brackets is used literally.
 	 * XXX - allow ']' to be escaped via backslash?
 	 */
-	if (*cp == '[') {
+	ถ้า (*cp == '[') {
 		/* find matching ']' */
-		for (ep = cp + 1; *ep != ']' && *ep != '\0'; ep++) {
-			if (*ep == '/')
+		สำหรับ (ep = cp + 1; *ep != ']' && *ep != '\0'; ep++) {
+			ถ้า (*ep == '/')
 				ispath = 1;
 		}
 		/* no matching ']' or not at end of field. */
-		if (ep[0] != ']' || (ep[1] != ':' && ep[1] != '\0'))
-			return -1;
+		ถ้า (ep[0] != ']' || (ep[1] != ':' && ep[1] != '\0'))
+			คืน -1;
 		/* NUL terminate the field and advance p past the colon */
 		*ep++ = '\0';
-		if (*ep != '\0')
+		ถ้า (*ep != '\0')
 			*ep++ = '\0';
 		fwd->arg = cp + 1;
 		fwd->ispath = ispath;
 		*p = ep;
-		return 0;
+		คืน 0;
 	}
 
-	for (cp = *p; *cp != '\0'; cp++) {
+	สำหรับ (cp = *p; *cp != '\0'; cp++) {
 		switch (*cp) {
-		case '\\':
+		pak_sa '\\':
 			memmove(cp, cp + 1, strlen(cp + 1) + 1);
-			if (*cp == '\0')
-				return -1;
-			break;
-		case '/':
+			ถ้า (*cp == '\0')
+				คืน -1;
+			bha_nga;
+		pak_sa '/':
 			ispath = 1;
-			break;
-		case ':':
+			bha_nga;
+		pak_sa ':':
 			*cp++ = '\0';
 			goto done;
 		}
@@ -3282,7 +3282,7 @@ done:
 	fwd->arg = *p;
 	fwd->ispath = ispath;
 	*p = cp;
-	return 0;
+	คืน 0;
 }
 
 /*
@@ -3295,15 +3295,15 @@ done:
  *	[listenhost:]listenport
  * returns number of arguments parsed or zero on error
  */
-int
-parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remotefwd)
+จำนวนเต็ม
+parse_forward(sa_nracanaa Forward *fwd, const var_na *fwdspec, จำนวนเต็ม dynamicfwd, จำนวนเต็ม remotefwd)
 {
-	struct fwdarg fwdargs[4];
-	char *p, *cp;
-	int i, err;
+	sa_nracanaa fwdarg fwdargs[4];
+	var_na *p, *cp;
+	จำนวนเต็ม i, err;
 
-	memset(fwd, 0, sizeof(*fwd));
-	memset(fwdargs, 0, sizeof(fwdargs));
+	memset(fwd, 0, parimaa_na(*fwd));
+	memset(fwdargs, 0, parimaa_na(fwdargs));
 
 	/*
 	 * We expand environment variables before checking if we think they're
@@ -3311,118 +3311,118 @@ parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remo
 	 * treated as a path.
 	 */
 	cp = p = dollar_expand(&err, fwdspec);
-	if (p == NULL || err)
-		return 0;
+	ถ้า (p == NULL || err)
+		คืน 0;
 
 	/* skip leading spaces */
-	while (isspace((u_char)*cp))
+	ขณะ (isspace((u_char)*cp))
 		cp++;
 
-	for (i = 0; i < 4; ++i) {
-		if (parse_fwd_field(&cp, &fwdargs[i]) != 0)
-			break;
+	สำหรับ (i = 0; i < 4; ++i) {
+		ถ้า (parse_fwd_field(&cp, &fwdargs[i]) != 0)
+			bha_nga;
 	}
 
 	/* Check for trailing garbage */
-	if (cp != NULL && *cp != '\0') {
+	ถ้า (cp != NULL && *cp != '\0') {
 		i = 0;	/* failure */
 	}
 
 	switch (i) {
-	case 1:
-		if (fwdargs[0].ispath) {
+	pak_sa 1:
+		ถ้า (fwdargs[0].ispath) {
 			fwd->listen_path = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = PORT_STREAMLOCAL;
-		} else {
+		} มิฉะนั้น {
 			fwd->listen_host = NULL;
 			fwd->listen_port = a2port(fwdargs[0].arg);
 		}
 		fwd->connect_host = xstrdup("socks");
-		break;
+		bha_nga;
 
-	case 2:
-		if (fwdargs[0].ispath && fwdargs[1].ispath) {
+	pak_sa 2:
+		ถ้า (fwdargs[0].ispath && fwdargs[1].ispath) {
 			fwd->listen_path = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = PORT_STREAMLOCAL;
 			fwd->connect_path = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = PORT_STREAMLOCAL;
-		} else if (fwdargs[1].ispath) {
+		} มิฉะนั้น ถ้า (fwdargs[1].ispath) {
 			fwd->listen_host = NULL;
 			fwd->listen_port = a2port(fwdargs[0].arg);
 			fwd->connect_path = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = PORT_STREAMLOCAL;
-		} else {
+		} มิฉะนั้น {
 			fwd->listen_host = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = a2port(fwdargs[1].arg);
 			fwd->connect_host = xstrdup("socks");
 		}
-		break;
+		bha_nga;
 
-	case 3:
-		if (fwdargs[0].ispath) {
+	pak_sa 3:
+		ถ้า (fwdargs[0].ispath) {
 			fwd->listen_path = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = PORT_STREAMLOCAL;
 			fwd->connect_host = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = a2port(fwdargs[2].arg);
-		} else if (fwdargs[2].ispath) {
+		} มิฉะนั้น ถ้า (fwdargs[2].ispath) {
 			fwd->listen_host = xstrdup(fwdargs[0].arg);
 			fwd->listen_port = a2port(fwdargs[1].arg);
 			fwd->connect_path = xstrdup(fwdargs[2].arg);
 			fwd->connect_port = PORT_STREAMLOCAL;
-		} else {
+		} มิฉะนั้น {
 			fwd->listen_host = NULL;
 			fwd->listen_port = a2port(fwdargs[0].arg);
 			fwd->connect_host = xstrdup(fwdargs[1].arg);
 			fwd->connect_port = a2port(fwdargs[2].arg);
 		}
-		break;
+		bha_nga;
 
-	case 4:
+	pak_sa 4:
 		fwd->listen_host = xstrdup(fwdargs[0].arg);
 		fwd->listen_port = a2port(fwdargs[1].arg);
 		fwd->connect_host = xstrdup(fwdargs[2].arg);
 		fwd->connect_port = a2port(fwdargs[3].arg);
-		break;
+		bha_nga;
 	default:
 		i = 0; /* failure */
 	}
 
 	free(p);
 
-	if (dynamicfwd) {
-		if (!(i == 1 || i == 2))
+	ถ้า (dynamicfwd) {
+		ถ้า (!(i == 1 || i == 2))
 			goto fail_free;
-	} else {
-		if (!(i == 3 || i == 4)) {
-			if (fwd->connect_path == NULL &&
+	} มิฉะนั้น {
+		ถ้า (!(i == 3 || i == 4)) {
+			ถ้า (fwd->connect_path == NULL &&
 			    fwd->listen_path == NULL)
 				goto fail_free;
 		}
-		if (fwd->connect_port <= 0 && fwd->connect_path == NULL)
+		ถ้า (fwd->connect_port <= 0 && fwd->connect_path == NULL)
 			goto fail_free;
 	}
 
-	if ((fwd->listen_port < 0 && fwd->listen_path == NULL) ||
+	ถ้า ((fwd->listen_port < 0 && fwd->listen_path == NULL) ||
 	    (!remotefwd && fwd->listen_port == 0))
 		goto fail_free;
-	if (fwd->connect_host != NULL &&
+	ถ้า (fwd->connect_host != NULL &&
 	    strlen(fwd->connect_host) >= NI_MAXHOST)
 		goto fail_free;
 	/*
 	 * XXX - if connecting to a remote socket, max sun len may not
 	 * match this host
 	 */
-	if (fwd->connect_path != NULL &&
+	ถ้า (fwd->connect_path != NULL &&
 	    strlen(fwd->connect_path) >= PATH_MAX_SUN)
 		goto fail_free;
-	if (fwd->listen_host != NULL &&
+	ถ้า (fwd->listen_host != NULL &&
 	    strlen(fwd->listen_host) >= NI_MAXHOST)
 		goto fail_free;
-	if (fwd->listen_path != NULL &&
+	ถ้า (fwd->listen_path != NULL &&
 	    strlen(fwd->listen_path) >= PATH_MAX_SUN)
 		goto fail_free;
 
-	return (i);
+	คืน (i);
 
  fail_free:
 	free(fwd->connect_host);
@@ -3433,60 +3433,60 @@ parse_forward(struct Forward *fwd, const char *fwdspec, int dynamicfwd, int remo
 	fwd->listen_host = NULL;
 	free(fwd->listen_path);
 	fwd->listen_path = NULL;
-	return (0);
+	คืน (0);
 }
 
-int
-ssh_valid_hostname(const char *s)
+จำนวนเต็ม
+ssh_valid_hostname(const var_na *s)
 {
 	size_t i;
 
-	if (*s == '-')
-		return 0;
-	for (i = 0; s[i] != 0; i++) {
-		if (strchr("'`\"$\\;&<>|(){},", s[i]) != NULL ||
+	ถ้า (*s == '-')
+		คืน 0;
+	สำหรับ (i = 0; s[i] != 0; i++) {
+		ถ้า (strchr("'`\"$\\;&<>|(){},", s[i]) != NULL ||
 		    isspace((u_char)s[i]) || iscntrl((u_char)s[i]))
-			return 0;
+			คืน 0;
 	}
-	return 1;
+	คืน 1;
 }
 
-int
-ssh_valid_ruser(const char *s)
+จำนวนเต็ม
+ssh_valid_ruser(const var_na *s)
 {
 	size_t i;
 
-	if (*s == '-')
-		return 0;
-	for (i = 0; s[i] != 0; i++) {
-		if (iscntrl((u_char)s[i]))
-			return 0;
-		if (strchr("'`\";&<>|(){}$\\", s[i]) != NULL)
-			return 0;
+	ถ้า (*s == '-')
+		คืน 0;
+	สำหรับ (i = 0; s[i] != 0; i++) {
+		ถ้า (iscntrl((u_char)s[i]))
+			คืน 0;
+		ถ้า (strchr("'`\";&<>|(){}$\\", s[i]) != NULL)
+			คืน 0;
 		/* Disallow '-' after whitespace */
-		if (isspace((u_char)s[i]) && s[i + 1] == '-')
-			return 0;
+		ถ้า (isspace((u_char)s[i]) && s[i + 1] == '-')
+			คืน 0;
 	}
-	return 1;
+	คืน 1;
 }
 
-int
-parse_jump(const char *s, Options *o, int strict, int active)
+จำนวนเต็ม
+parse_jump(const var_na *s, Options *o, จำนวนเต็ม strict, จำนวนเต็ม active)
 {
-	char *orig = NULL, *sdup = NULL, *cp;
-	char *tmp_user = NULL, *tmp_host = NULL, *host = NULL, *user = NULL;
-	int r, ret = -1, tmp_port = -1, port = -1, first = 1;
+	var_na *orig = NULL, *sdup = NULL, *cp;
+	var_na *tmp_user = NULL, *tmp_host = NULL, *host = NULL, *user = NULL;
+	จำนวนเต็ม r, ret = -1, tmp_port = -1, port = -1, first = 1;
 
-	if (strcasecmp(s, "none") == 0) {
-		if (active && o->jump_host == NULL) {
+	ถ้า (strcasecmp(s, "none") == 0) {
+		ถ้า (active && o->jump_host == NULL) {
 			o->jump_host = xstrdup("none");
 			o->jump_port = 0;
 		}
-		return 0;
+		คืน 0;
 	}
 
 	orig = xstrdup(s);
-	if ((cp = strchr(orig, '#')) != NULL)
+	ถ้า ((cp = strchr(orig, '#')) != NULL)
 		*cp = '\0';
 	rtrim(orig);
 
@@ -3494,26 +3494,26 @@ parse_jump(const char *s, Options *o, int strict, int active)
 	sdup = xstrdup(orig);
 	do {
 		/* Work backwards through string */
-		if ((cp = strrchr(sdup, ',')) == NULL)
+		ถ้า ((cp = strrchr(sdup, ',')) == NULL)
 			cp = sdup; /* last */
-		else
+		มิฉะนั้น
 			*cp++ = '\0';
 
 		r = parse_ssh_uri(cp, &tmp_user, &tmp_host, &tmp_port);
-		if (r == -1 || (r == 1 && parse_user_host_port(cp,
+		ถ้า (r == -1 || (r == 1 && parse_user_host_port(cp,
 		    &tmp_user, &tmp_host, &tmp_port) != 0))
 			goto out; /* error already logged */
-		if (strict) {
-			if (!ssh_valid_hostname(tmp_host)) {
+		ถ้า (strict) {
+			ถ้า (!ssh_valid_hostname(tmp_host)) {
 				error_f("invalid hostname \"%s\"", tmp_host);
 				goto out;
 			}
-			if (tmp_user != NULL && !ssh_valid_ruser(tmp_user)) {
+			ถ้า (tmp_user != NULL && !ssh_valid_ruser(tmp_user)) {
 				error_f("invalid username \"%s\"", tmp_user);
 				goto out;
 			}
 		}
-		if (first) {
+		ถ้า (first) {
 			user = tmp_user;
 			host = tmp_host;
 			port = tmp_port;
@@ -3524,16 +3524,16 @@ parse_jump(const char *s, Options *o, int strict, int active)
 		free(tmp_host);
 		tmp_user = tmp_host = NULL;
 		tmp_port = -1;
-	} while (cp != sdup);
+	} ขณะ (cp != sdup);
 
 	/* success */
-	if (active) {
+	ถ้า (active) {
 		o->jump_user = user;
 		o->jump_host = host;
 		o->jump_port = port;
 		o->proxy_command = xstrdup("none");
 		user = host = NULL; /* transferred */
-		if (orig != NULL && (cp = strrchr(orig, ',')) != NULL) {
+		ถ้า (orig != NULL && (cp = strrchr(orig, ',')) != NULL) {
 			o->jump_extra = xstrdup(orig);
 			o->jump_extra[cp - orig] = '\0';
 		}
@@ -3546,115 +3546,115 @@ parse_jump(const char *s, Options *o, int strict, int active)
 	free(tmp_host);
 	free(user);
 	free(host);
-	return ret;
+	คืน ret;
 }
 
-int
-parse_ssh_uri(const char *uri, char **userp, char **hostp, int *portp)
+จำนวนเต็ม
+parse_ssh_uri(const var_na *uri, var_na **userp, var_na **hostp, จำนวนเต็ม *portp)
 {
-	char *user = NULL, *host = NULL, *path = NULL;
-	int r, port;
+	var_na *user = NULL, *host = NULL, *path = NULL;
+	จำนวนเต็ม r, port;
 
 	r = parse_uri("ssh", uri, &user, &host, &port, &path);
-	if (r == 0 && path != NULL)
+	ถ้า (r == 0 && path != NULL)
 		r = -1;		/* path not allowed */
-	if (r == 0) {
-		if (userp != NULL) {
+	ถ้า (r == 0) {
+		ถ้า (userp != NULL) {
 			*userp = user;
 			user = NULL;
 		}
-		if (hostp != NULL) {
+		ถ้า (hostp != NULL) {
 			*hostp = host;
 			host = NULL;
 		}
-		if (portp != NULL)
+		ถ้า (portp != NULL)
 			*portp = port;
 	}
 	free(user);
 	free(host);
 	free(path);
-	return r;
+	คืน r;
 }
 
 /* XXX the following is a near-verbatim copy from servconf.c; refactor */
-static const char *
-fmt_multistate_int(int val, const struct multistate *m)
+static const var_na *
+fmt_multistate_int(จำนวนเต็ม val, const sa_nracanaa multistate *m)
 {
 	u_int i;
 
-	for (i = 0; m[i].key != NULL; i++) {
-		if (m[i].value == val)
-			return m[i].key;
+	สำหรับ (i = 0; m[i].key != NULL; i++) {
+		ถ้า (m[i].value == val)
+			คืน m[i].key;
 	}
-	return "UNKNOWN";
+	คืน "UNKNOWN";
 }
 
-static const char *
-fmt_intarg(OpCodes code, int val)
+static const var_na *
+fmt_intarg(OpCodes code, จำนวนเต็ม val)
 {
-	if (val == -1)
-		return "unset";
+	ถ้า (val == -1)
+		คืน "unset";
 	switch (code) {
-	case oAddressFamily:
-		return fmt_multistate_int(val, multistate_addressfamily);
-	case oCompression:
-		return fmt_multistate_int(val, multistate_compression);
-	case oVerifyHostKeyDNS:
-	case oUpdateHostkeys:
-		return fmt_multistate_int(val, multistate_yesnoask);
-	case oStrictHostKeyChecking:
-		return fmt_multistate_int(val, multistate_strict_hostkey);
-	case oControlMaster:
-		return fmt_multistate_int(val, multistate_controlmaster);
-	case oTunnel:
-		return fmt_multistate_int(val, multistate_tunnel);
-	case oRequestTTY:
-		return fmt_multistate_int(val, multistate_requesttty);
-	case oSessionType:
-		return fmt_multistate_int(val, multistate_sessiontype);
-	case oCanonicalizeHostname:
-		return fmt_multistate_int(val, multistate_canonicalizehostname);
-	case oAddKeysToAgent:
-		return fmt_multistate_int(val, multistate_yesnoaskconfirm);
-	case oPubkeyAuthentication:
-		return fmt_multistate_int(val, multistate_pubkey_auth);
-	case oTCPKeepAlive:
-		return fmt_multistate_int(val, multistate_keepalives);
-	case oFingerprintHash:
-		return ssh_digest_alg_name(val);
+	pak_sa oAddressFamily:
+		คืน fmt_multistate_int(val, multistate_addressfamily);
+	pak_sa oCompression:
+		คืน fmt_multistate_int(val, multistate_compression);
+	pak_sa oVerifyHostKeyDNS:
+	pak_sa oUpdateHostkeys:
+		คืน fmt_multistate_int(val, multistate_yesnoask);
+	pak_sa oStrictHostKeyChecking:
+		คืน fmt_multistate_int(val, multistate_strict_hostkey);
+	pak_sa oControlMaster:
+		คืน fmt_multistate_int(val, multistate_controlmaster);
+	pak_sa oTunnel:
+		คืน fmt_multistate_int(val, multistate_tunnel);
+	pak_sa oRequestTTY:
+		คืน fmt_multistate_int(val, multistate_requesttty);
+	pak_sa oSessionType:
+		คืน fmt_multistate_int(val, multistate_sessiontype);
+	pak_sa oCanonicalizeHostname:
+		คืน fmt_multistate_int(val, multistate_canonicalizehostname);
+	pak_sa oAddKeysToAgent:
+		คืน fmt_multistate_int(val, multistate_yesnoaskconfirm);
+	pak_sa oPubkeyAuthentication:
+		คืน fmt_multistate_int(val, multistate_pubkey_auth);
+	pak_sa oTCPKeepAlive:
+		คืน fmt_multistate_int(val, multistate_keepalives);
+	pak_sa oFingerprintHash:
+		คืน ssh_digest_alg_name(val);
 	default:
 		switch (val) {
-		case 0:
-			return "no";
-		case 1:
-			return "yes";
+		pak_sa 0:
+			คืน "no";
+		pak_sa 1:
+			คืน "yes";
 		default:
-			return "UNKNOWN";
+			คืน "UNKNOWN";
 		}
 	}
 }
 
-static const char *
+static const var_na *
 lookup_opcode_name(OpCodes code)
 {
 	u_int i;
 
-	for (i = 0; keywords[i].name != NULL; i++)
-		if (keywords[i].opcode == code)
-			return(keywords[i].name);
-	return "UNKNOWN";
+	สำหรับ (i = 0; keywords[i].name != NULL; i++)
+		ถ้า (keywords[i].opcode == code)
+			คืน(keywords[i].name);
+	คืน "UNKNOWN";
 }
 
 static void
-dump_cfg_int(OpCodes code, int val)
+dump_cfg_int(OpCodes code, จำนวนเต็ม val)
 {
-	if (code == oObscureKeystrokeTiming) {
-		if (val == 0) {
+	ถ้า (code == oObscureKeystrokeTiming) {
+		ถ้า (val == 0) {
 			printf("%s no\n", lookup_opcode_name(code));
-			return;
-		} else if (val == SSH_KEYSTROKE_DEFAULT_INTERVAL_MS) {
+			คืน;
+		} มิฉะนั้น ถ้า (val == SSH_KEYSTROKE_DEFAULT_INTERVAL_MS) {
 			printf("%s yes\n", lookup_opcode_name(code));
-			return;
+			คืน;
 		}
 		/* FALLTHROUGH */
 	}
@@ -3662,71 +3662,71 @@ dump_cfg_int(OpCodes code, int val)
 }
 
 static void
-dump_cfg_fmtint(OpCodes code, int val)
+dump_cfg_fmtint(OpCodes code, จำนวนเต็ม val)
 {
 	printf("%s %s\n", lookup_opcode_name(code), fmt_intarg(code, val));
 }
 
 static void
-dump_cfg_string(OpCodes code, const char *val)
+dump_cfg_string(OpCodes code, const var_na *val)
 {
-	if (val == NULL)
-		return;
+	ถ้า (val == NULL)
+		คืน;
 	printf("%s %s\n", lookup_opcode_name(code), val);
 }
 
 static void
-dump_cfg_strarray(OpCodes code, u_int count, char **vals)
+dump_cfg_strarray(OpCodes code, u_int count, var_na **vals)
 {
 	u_int i;
 
-	for (i = 0; i < count; i++)
+	สำหรับ (i = 0; i < count; i++)
 		printf("%s %s\n", lookup_opcode_name(code), vals[i]);
 }
 
 static void
-dump_cfg_strarray_oneline(OpCodes code, u_int count, char **vals)
+dump_cfg_strarray_oneline(OpCodes code, u_int count, var_na **vals)
 {
 	u_int i;
 
 	printf("%s", lookup_opcode_name(code));
-	if (count == 0)
+	ถ้า (count == 0)
 		printf(" none");
-	for (i = 0; i < count; i++)
+	สำหรับ (i = 0; i < count; i++)
 		printf(" %s",  vals[i]);
 	printf("\n");
 }
 
 static void
-dump_cfg_forwards(OpCodes code, u_int count, const struct Forward *fwds)
+dump_cfg_forwards(OpCodes code, u_int count, const sa_nracanaa Forward *fwds)
 {
-	const struct Forward *fwd;
+	const sa_nracanaa Forward *fwd;
 	u_int i;
 
 	/* oDynamicForward */
-	for (i = 0; i < count; i++) {
+	สำหรับ (i = 0; i < count; i++) {
 		fwd = &fwds[i];
-		if (code == oDynamicForward && fwd->connect_host != NULL &&
+		ถ้า (code == oDynamicForward && fwd->connect_host != NULL &&
 		    strcmp(fwd->connect_host, "socks") != 0)
 			continue;
-		if (code == oLocalForward && fwd->connect_host != NULL &&
+		ถ้า (code == oLocalForward && fwd->connect_host != NULL &&
 		    strcmp(fwd->connect_host, "socks") == 0)
 			continue;
 		printf("%s", lookup_opcode_name(code));
-		if (fwd->listen_port == PORT_STREAMLOCAL)
+		ถ้า (fwd->listen_port == PORT_STREAMLOCAL)
 			printf(" %s", fwd->listen_path);
-		else if (fwd->listen_host == NULL)
+		มิฉะนั้น ถ้า (fwd->listen_host == NULL)
 			printf(" %d", fwd->listen_port);
-		else {
+		มิฉะนั้น {
 			printf(" [%s]:%d",
 			    fwd->listen_host, fwd->listen_port);
 		}
-		if (code != oDynamicForward) {
-			if (fwd->connect_port == PORT_STREAMLOCAL)
+		ถ้า (code != oDynamicForward) {
+			ถ้า (fwd->connect_port == PORT_STREAMLOCAL)
 				printf(" %s", fwd->connect_path);
-			else if (fwd->connect_host == NULL)
+			มิฉะนั้น ถ้า (fwd->connect_host == NULL)
 				printf(" %d", fwd->connect_port);
-			else {
+			มิฉะนั้น {
 				printf(" [%s]:%d",
 				    fwd->connect_host, fwd->connect_port);
 			}
@@ -3736,10 +3736,10 @@ dump_cfg_forwards(OpCodes code, u_int count, const struct Forward *fwds)
 }
 
 void
-dump_client_config(Options *o, const char *host)
+dump_client_config(Options *o, const var_na *host)
 {
-	int i, r;
-	char buf[8], *all_key;
+	จำนวนเต็ม i, r;
+	var_na buf[8], *all_key;
 
 	/*
 	 * Expand HostKeyAlgorithms name lists. This isn't handled in
@@ -3748,7 +3748,7 @@ dump_client_config(Options *o, const char *host)
 	 * on the host's keys found in known_hosts.
 	 */
 	all_key = sshkey_alg_list(0, 0, 1, ',');
-	if ((r = kex_assemble_names(&o->hostkeyalgorithms, kex_default_pk_alg(),
+	ถ้า ((r = kex_assemble_names(&o->hostkeyalgorithms, kex_default_pk_alg(),
 	    all_key)) != 0)
 		fatal_fr(r, "expand HostKeyAlgorithms");
 	free(all_key);
@@ -3862,65 +3862,65 @@ dump_client_config(Options *o, const char *host)
 	/* Special cases */
 
 	/* PermitRemoteOpen */
-	if (o->num_permitted_remote_opens == 0)
+	ถ้า (o->num_permitted_remote_opens == 0)
 		printf("%s any\n", lookup_opcode_name(oPermitRemoteOpen));
-	else
+	มิฉะนั้น
 		dump_cfg_strarray_oneline(oPermitRemoteOpen,
 		    o->num_permitted_remote_opens, o->permitted_remote_opens);
 
 	/* AddKeysToAgent */
-	if (o->add_keys_to_agent_lifespan <= 0)
+	ถ้า (o->add_keys_to_agent_lifespan <= 0)
 		dump_cfg_fmtint(oAddKeysToAgent, o->add_keys_to_agent);
-	else {
+	มิฉะนั้น {
 		printf("addkeystoagent%s %d\n",
 		    o->add_keys_to_agent == 3 ? " confirm" : "",
 		    o->add_keys_to_agent_lifespan);
 	}
 
 	/* oForwardAgent */
-	if (o->forward_agent_sock_path == NULL)
+	ถ้า (o->forward_agent_sock_path == NULL)
 		dump_cfg_fmtint(oForwardAgent, o->forward_agent);
-	else
+	มิฉะนั้น
 		dump_cfg_string(oForwardAgent, o->forward_agent_sock_path);
 
 	/* oConnectTimeout */
-	if (o->connection_timeout == -1)
+	ถ้า (o->connection_timeout == -1)
 		printf("connecttimeout none\n");
-	else
+	มิฉะนั้น
 		dump_cfg_int(oConnectTimeout, o->connection_timeout);
 
 	/* oTunnelDevice */
 	printf("tunneldevice");
-	if (o->tun_local == SSH_TUNID_ANY)
+	ถ้า (o->tun_local == SSH_TUNID_ANY)
 		printf(" any");
-	else
+	มิฉะนั้น
 		printf(" %d", o->tun_local);
-	if (o->tun_remote == SSH_TUNID_ANY)
+	ถ้า (o->tun_remote == SSH_TUNID_ANY)
 		printf(":any");
-	else
+	มิฉะนั้น
 		printf(":%d", o->tun_remote);
 	printf("\n");
 
 	/* oCanonicalizePermittedCNAMEs */
 	printf("canonicalizepermittedcnames");
-	if (o->num_permitted_cnames == 0)
+	ถ้า (o->num_permitted_cnames == 0)
 		printf(" none");
-	for (i = 0; i < o->num_permitted_cnames; i++) {
+	สำหรับ (i = 0; i < o->num_permitted_cnames; i++) {
 		printf(" %s:%s", o->permitted_cnames[i].source_list,
 		    o->permitted_cnames[i].target_list);
 	}
 	printf("\n");
 
 	/* oControlPersist */
-	if (o->control_persist == 0 || o->control_persist_timeout == 0)
+	ถ้า (o->control_persist == 0 || o->control_persist_timeout == 0)
 		dump_cfg_fmtint(oControlPersist, o->control_persist);
-	else
+	มิฉะนั้น
 		dump_cfg_int(oControlPersist, o->control_persist_timeout);
 
 	/* oEscapeChar */
-	if (o->escape_char == SSH_ESCAPECHAR_NONE)
+	ถ้า (o->escape_char == SSH_ESCAPECHAR_NONE)
 		printf("escapechar none\n");
-	else {
+	มิฉะนั้น {
 		vis(buf, o->escape_char, VIS_WHITE, 0);
 		printf("escapechar %s\n", buf);
 	}
@@ -3941,13 +3941,13 @@ dump_client_config(Options *o, const char *host)
 	printf("syslogfacility %s\n", log_facility_name(o->log_facility));
 
 	/* oProxyCommand / oProxyJump */
-	if (o->jump_host == NULL)
+	ถ้า (o->jump_host == NULL)
 		dump_cfg_string(oProxyCommand, o->proxy_command);
-	else {
+	มิฉะนั้น {
 		/* Check for numeric addresses */
 		i = strchr(o->jump_host, ':') != NULL ||
 		    strspn(o->jump_host, "1234567890.") == strlen(o->jump_host);
-		snprintf(buf, sizeof(buf), "%d", o->jump_port);
+		snprintf(buf, parimaa_na(buf), "%d", o->jump_port);
 		printf("proxyjump %s%s%s%s%s%s%s%s%s\n",
 		    /* optional additional jump spec */
 		    o->jump_extra == NULL ? "" : o->jump_extra,

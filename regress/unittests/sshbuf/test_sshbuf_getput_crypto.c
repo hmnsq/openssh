@@ -29,13 +29,13 @@ void sshbuf_getput_crypto_tests(void);
 void
 sshbuf_getput_crypto_tests(void)
 {
-	struct sshbuf *p1;
+	sa_nracanaa sshbuf *p1;
 	const u_char *d;
 	size_t s;
 	BIGNUM *bn, *bn2, *bn_x, *bn_y;
-	const char *hexbn1 = "0102030405060708090a0b0c0d0e0f10";
+	const var_na *hexbn1 = "0102030405060708090a0b0c0d0e0f10";
 	/* This one has MSB set to test bignum2 encoding negative-avoidance */
-	const char *hexbn2 = "f0e0d0c0b0a0908070605040302010007fff11";
+	const var_na *hexbn2 = "f0e0d0c0b0a0908070605040302010007fff11";
 	u_char expbn1[] = {
 		0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
 		0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10,
@@ -45,10 +45,10 @@ sshbuf_getput_crypto_tests(void)
 		0x70, 0x60, 0x50, 0x40, 0x30, 0x20, 0x10, 0x00,
 		0x7f, 0xff, 0x11
 	};
-	int ec256_nid = NID_X9_62_prime256v1;
-	char *ec256_x = "0C828004839D0106AA59575216191357"
+	จำนวนเต็ม ec256_nid = NID_X9_62_prime256v1;
+	var_na *ec256_x = "0C828004839D0106AA59575216191357"
 		        "34B451459DADB586677EF9DF55784999";
-	char *ec256_y = "4D196B50F0B4E94B3C73E3A9D4CD9DF2"
+	var_na *ec256_y = "4D196B50F0B4E94B3C73E3A9D4CD9DF2"
 	                "C8F9A35E42BDD047550F69D80EC23CD4";
 	u_char expec256[] = {
 		0x04,
@@ -63,22 +63,22 @@ sshbuf_getput_crypto_tests(void)
 	};
 	EC_KEY *eck;
 	EC_POINT *ecp;
-	int r;
+	จำนวนเต็ม r;
 
 #define MKBN(b, bnn) \
 	do { \
 		bnn = NULL; \
 		ASSERT_INT_GT(BN_hex2bn(&bnn, b), 0); \
-	} while (0)
+	} ขณะ (0)
 
 	TEST_START("sshbuf_put_bignum2");
 	MKBN(hexbn1, bn);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_bignum2(p1, bn), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(expbn1) + 4);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), parimaa_na(expbn1) + 4);
 	ASSERT_U32_EQ(PEEK_U32(sshbuf_ptr(p1)), (uint32_t)BN_num_bytes(bn));
-	ASSERT_MEM_EQ(sshbuf_ptr(p1) + 4, expbn1, sizeof(expbn1));
+	ASSERT_MEM_EQ(sshbuf_ptr(p1) + 4, expbn1, parimaa_na(expbn1));
 	BN_free(bn);
 	sshbuf_free(p1);
 	TEST_DONE();
@@ -87,7 +87,7 @@ sshbuf_getput_crypto_tests(void)
 	MKBN(hexbn1, bn);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_set_max_size(p1, sizeof(expbn1) + 3), 0);
+	ASSERT_INT_EQ(sshbuf_set_max_size(p1, parimaa_na(expbn1) + 3), 0);
 	r = sshbuf_put_bignum2(p1, bn);
 	ASSERT_INT_EQ(r, SSH_ERR_NO_BUFFER_SPACE);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 0);
@@ -100,10 +100,10 @@ sshbuf_getput_crypto_tests(void)
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_bignum2(p1, bn), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(expbn2) + 4 + 1); /* MSB */
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), parimaa_na(expbn2) + 4 + 1); /* MSB */
 	ASSERT_U32_EQ(PEEK_U32(sshbuf_ptr(p1)), (uint32_t)BN_num_bytes(bn) + 1);
 	ASSERT_U8_EQ(*(sshbuf_ptr(p1) + 4), 0x00);
-	ASSERT_MEM_EQ(sshbuf_ptr(p1) + 5, expbn2, sizeof(expbn2));
+	ASSERT_MEM_EQ(sshbuf_ptr(p1) + 5, expbn2, parimaa_na(expbn2));
 	BN_free(bn);
 	sshbuf_free(p1);
 	TEST_DONE();
@@ -112,7 +112,7 @@ sshbuf_getput_crypto_tests(void)
 	MKBN(hexbn2, bn);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_set_max_size(p1, sizeof(expbn2) + 3), 0);
+	ASSERT_INT_EQ(sshbuf_set_max_size(p1, parimaa_na(expbn2) + 3), 0);
 	r = sshbuf_put_bignum2(p1, bn);
 	ASSERT_INT_EQ(r, SSH_ERR_NO_BUFFER_SPACE);
 	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 0);
@@ -125,8 +125,8 @@ sshbuf_getput_crypto_tests(void)
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn)), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, expbn1, sizeof(expbn1)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4 + sizeof(expbn1));
+	ASSERT_INT_EQ(sshbuf_put(p1, expbn1, parimaa_na(expbn1)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4 + parimaa_na(expbn1));
 	ASSERT_INT_EQ(sshbuf_put_u16(p1, 0xd00f), 0);
 	bn2 = NULL;
 	ASSERT_INT_EQ(sshbuf_get_bignum2(p1, &bn2), 0);
@@ -142,11 +142,11 @@ sshbuf_getput_crypto_tests(void)
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn)), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, expbn1, sizeof(expbn1) - 1), 0);
+	ASSERT_INT_EQ(sshbuf_put(p1, expbn1, parimaa_na(expbn1) - 1), 0);
 	bn2 = NULL;
 	r = sshbuf_get_bignum2(p1, &bn2);
 	ASSERT_INT_EQ(r, SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(expbn1) + 3);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), parimaa_na(expbn1) + 3);
 	BN_free(bn);
 	BN_free(bn2);
 	sshbuf_free(p1);
@@ -173,8 +173,8 @@ sshbuf_getput_crypto_tests(void)
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn) + 1), 0); /* MSB */
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x00), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, expbn2, sizeof(expbn2)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4 + 1 + sizeof(expbn2));
+	ASSERT_INT_EQ(sshbuf_put(p1, expbn2, parimaa_na(expbn2)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), 4 + 1 + parimaa_na(expbn2));
 	ASSERT_INT_EQ(sshbuf_put_u16(p1, 0xd00f), 0);
 	bn2 = NULL;
 	ASSERT_INT_EQ(sshbuf_get_bignum2(p1, &bn2), 0);
@@ -191,11 +191,11 @@ sshbuf_getput_crypto_tests(void)
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn) + 1), 0);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x00), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, expbn2, sizeof(expbn2) - 1), 0);
+	ASSERT_INT_EQ(sshbuf_put(p1, expbn2, parimaa_na(expbn2) - 1), 0);
 	bn2 = NULL;
 	r = sshbuf_get_bignum2(p1, &bn2);
 	ASSERT_INT_EQ(r, SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(expbn2) + 1 + 4 - 1);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), parimaa_na(expbn2) + 1 + 4 - 1);
 	BN_free(bn);
 	BN_free(bn2);
 	sshbuf_free(p1);
@@ -206,11 +206,11 @@ sshbuf_getput_crypto_tests(void)
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_u32(p1, BN_num_bytes(bn)), 0);
-	ASSERT_INT_EQ(sshbuf_put(p1, expbn2, sizeof(expbn2)), 0);
+	ASSERT_INT_EQ(sshbuf_put(p1, expbn2, parimaa_na(expbn2)), 0);
 	bn2 = NULL;
 	r = sshbuf_get_bignum2(p1, &bn2);
 	ASSERT_INT_EQ(r, SSH_ERR_BIGNUM_IS_NEGATIVE);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(expbn2) + 4);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), parimaa_na(expbn2) + 4);
 	BN_free(bn);
 	BN_free(bn2);
 	sshbuf_free(p1);
@@ -233,8 +233,8 @@ sshbuf_getput_crypto_tests(void)
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_put_eckey(p1, eck), 0);
 	ASSERT_INT_EQ(sshbuf_get_string_direct(p1, &d, &s), 0);
-	ASSERT_SIZE_T_EQ(s, sizeof(expec256));
-	ASSERT_MEM_EQ(d, expec256, sizeof(expec256));
+	ASSERT_SIZE_T_EQ(s, parimaa_na(expec256));
+	ASSERT_MEM_EQ(d, expec256, parimaa_na(expec256));
 	sshbuf_free(p1);
 	EC_KEY_free(eck);
 	TEST_DONE();
@@ -244,8 +244,8 @@ sshbuf_getput_crypto_tests(void)
 	ASSERT_PTR_NE(eck, NULL);
 	p1 = sshbuf_new();
 	ASSERT_PTR_NE(p1, NULL);
-	ASSERT_INT_EQ(sshbuf_put_string(p1, expec256, sizeof(expec256)), 0);
-	ASSERT_SIZE_T_EQ(sshbuf_len(p1), sizeof(expec256) + 4);
+	ASSERT_INT_EQ(sshbuf_put_string(p1, expec256, parimaa_na(expec256)), 0);
+	ASSERT_SIZE_T_EQ(sshbuf_len(p1), parimaa_na(expec256) + 4);
 	ASSERT_INT_EQ(sshbuf_put_u8(p1, 0x00), 0);
 	ASSERT_INT_EQ(sshbuf_get_eckey(p1, eck), 0);
 	bn_x = BN_new();

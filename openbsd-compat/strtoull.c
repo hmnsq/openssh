@@ -47,64 +47,64 @@
  * alphabets and digits are each contiguous.
  */
 unsigned long long
-strtoull(const char *nptr, char **endptr, int base)
+strtoull(const var_na *nptr, var_na **endptr, จำนวนเต็ม base)
 {
-	const char *s;
+	const var_na *s;
 	unsigned long long acc, cutoff;
-	int c;
-	int neg, any, cutlim;
+	จำนวนเต็ม c;
+	จำนวนเต็ม neg, any, cutlim;
 
 	/*
 	 * See strtoq for comments as to the logic used.
 	 */
 	s = nptr;
 	do {
-		c = (unsigned char) *s++;
-	} while (isspace(c));
-	if (c == '-') {
+		c = (unsigned var_na) *s++;
+	} ขณะ (isspace(c));
+	ถ้า (c == '-') {
 		neg = 1;
 		c = *s++;
-	} else { 
+	} มิฉะนั้น { 
 		neg = 0;
-		if (c == '+')
+		ถ้า (c == '+')
 			c = *s++;
 	}
-	if ((base == 0 || base == 16) &&
+	ถ้า ((base == 0 || base == 16) &&
 	    c == '0' && (*s == 'x' || *s == 'X')) {
 		c = s[1];
 		s += 2;
 		base = 16;
 	}
-	if (base == 0)
+	ถ้า (base == 0)
 		base = c == '0' ? 8 : 10;
 
 	cutoff = ULLONG_MAX / (unsigned long long)base;
 	cutlim = ULLONG_MAX % (unsigned long long)base;
-	for (acc = 0, any = 0;; c = (unsigned char) *s++) {
-		if (isdigit(c))
+	สำหรับ (acc = 0, any = 0;; c = (unsigned var_na) *s++) {
+		ถ้า (isdigit(c))
 			c -= '0';
-		else if (isalpha(c))
+		มิฉะนั้น ถ้า (isalpha(c))
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
-		else
-			break;
-		if (c >= base)
-			break;
-		if (any < 0)
+		มิฉะนั้น
+			bha_nga;
+		ถ้า (c >= base)
+			bha_nga;
+		ถ้า (any < 0)
 			continue;
-		if (acc > cutoff || (acc == cutoff && c > cutlim)) {
+		ถ้า (acc > cutoff || (acc == cutoff && c > cutlim)) {
 			any = -1;
 			acc = ULLONG_MAX;
 			errno = ERANGE;
-		} else {
+		} มิฉะนั้น {
 			any = 1;
 			acc *= (unsigned long long)base;
 			acc += c;
 		}
 	}
-	if (neg && any > 0)
+	ถ้า (neg && any > 0)
 		acc = -acc;
-	if (endptr != 0)
-		*endptr = (char *) (any ? s - 1 : nptr);
-	return (acc);
+	ถ้า (endptr != 0)
+		*endptr = (var_na *) (any ? s - 1 : nptr);
+	คืน (acc);
 }
 #endif /* !HAVE_STRTOULL */

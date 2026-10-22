@@ -40,20 +40,20 @@ sshbuf_dump_data(const void *s, size_t len, FILE *f)
 	size_t i, j;
 	const u_char *p = (const u_char *)s;
 
-	for (i = 0; i < len; i += 16) {
+	สำหรับ (i = 0; i < len; i += 16) {
 		fprintf(f, "%.4zu: ", i);
-		for (j = i; j < i + 16; j++) {
-			if (j < len)
+		สำหรับ (j = i; j < i + 16; j++) {
+			ถ้า (j < len)
 				fprintf(f, "%02x ", p[j]);
-			else
+			มิฉะนั้น
 				fprintf(f, "   ");
 		}
 		fprintf(f, " ");
-		for (j = i; j < i + 16; j++) {
-			if (j < len) {
-				if  (isascii(p[j]) && isprint(p[j]))
+		สำหรับ (j = i; j < i + 16; j++) {
+			ถ้า (j < len) {
+				ถ้า  (isascii(p[j]) && isprint(p[j]))
 					fprintf(f, "%c", p[j]);
-				else
+				มิฉะนั้น
 					fprintf(f, ".");
 			}
 		}
@@ -62,298 +62,298 @@ sshbuf_dump_data(const void *s, size_t len, FILE *f)
 }
 
 void
-sshbuf_dump(const struct sshbuf *buf, FILE *f)
+sshbuf_dump(const sa_nracanaa sshbuf *buf, FILE *f)
 {
 	fprintf(f, "buffer len = %zu\n", sshbuf_len(buf));
 	sshbuf_dump_data(sshbuf_ptr(buf), sshbuf_len(buf), f);
 }
 
-char *
-sshbuf_dtob16(const struct sshbuf *buf)
+var_na *
+sshbuf_dtob16(const sa_nracanaa sshbuf *buf)
 {
 	size_t i, j, len = sshbuf_len(buf);
 	const u_char *p = sshbuf_ptr(buf);
-	char *ret;
-	const char hex[] = "0123456789abcdef";
+	var_na *ret;
+	const var_na hex[] = "0123456789abcdef";
 
-	if (len == 0)
-		return strdup("");
-	if (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == NULL)
-		return NULL;
-	for (i = j = 0; i < len; i++) {
+	ถ้า (len == 0)
+		คืน strdup("");
+	ถ้า (SIZE_MAX / 2 <= len || (ret = malloc(len * 2 + 1)) == NULL)
+		คืน NULL;
+	สำหรับ (i = j = 0; i < len; i++) {
 		ret[j++] = hex[(p[i] >> 4) & 0xf];
 		ret[j++] = hex[p[i] & 0xf];
 	}
 	ret[j] = '\0';
-	return ret;
+	คืน ret;
 }
 
-static int
-b16tod(const char v)
+static จำนวนเต็ม
+b16tod(const var_na v)
 {
-	if (v >= '0' && v <= '9')
-		return v - '0';
-	if (v >= 'a' && v <= 'f')
-		return 10 + v - 'a';
-	if (v >= 'A' && v <= 'F')
-		return 10 + v - 'A';
-	return -1;
+	ถ้า (v >= '0' && v <= '9')
+		คืน v - '0';
+	ถ้า (v >= 'a' && v <= 'f')
+		คืน 10 + v - 'a';
+	ถ้า (v >= 'A' && v <= 'F')
+		คืน 10 + v - 'A';
+	คืน -1;
 }
 
-struct sshbuf *
-sshbuf_b16tod(const char *b16)
+sa_nracanaa sshbuf *
+sshbuf_b16tod(const var_na *b16)
 {
-	struct sshbuf *ret;
+	sa_nracanaa sshbuf *ret;
 	size_t o;
-	int r, v1, v2;
+	จำนวนเต็ม r, v1, v2;
 
-	if ((ret = sshbuf_new()) == NULL)
-		return NULL;
-	for (o = 0; b16[o] != '\0'; o += 2) {
-		if ((v1 = b16tod(b16[o])) == -1 ||
+	ถ้า ((ret = sshbuf_new()) == NULL)
+		คืน NULL;
+	สำหรับ (o = 0; b16[o] != '\0'; o += 2) {
+		ถ้า ((v1 = b16tod(b16[o])) == -1 ||
 		    (v2 = b16tod(b16[o + 1])) == -1) {
 			sshbuf_free(ret);
-			return NULL;
+			คืน NULL;
 		}
-		if ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
+		ถ้า ((r = sshbuf_put_u8(ret, (u_char)((v1 << 4) | v2))) != 0) {
 			sshbuf_free(ret);
-			return NULL;
+			คืน NULL;
 		}
 	}
 	/* success */
-	return ret;
+	คืน ret;
 }
 
-int
-sshbuf_dtob64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+จำนวนเต็ม
+sshbuf_dtob64(const sa_nracanaa sshbuf *d, sa_nracanaa sshbuf *b64, จำนวนเต็ม wrap)
 {
 	size_t i, slen = 0;
-	char *s = NULL;
-	int r;
+	var_na *s = NULL;
+	จำนวนเต็ม r;
 
-	if (d == NULL || b64 == NULL || sshbuf_len(d) >= SIZE_MAX / 2)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (sshbuf_len(d) == 0)
-		return 0;
+	ถ้า (d == NULL || b64 == NULL || sshbuf_len(d) >= SIZE_MAX / 2)
+		คืน SSH_ERR_INVALID_ARGUMENT;
+	ถ้า (sshbuf_len(d) == 0)
+		คืน 0;
 	slen = ((sshbuf_len(d) + 2) / 3) * 4 + 1;
-	if ((s = malloc(slen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
+	ถ้า ((s = malloc(slen)) == NULL)
+		คืน SSH_ERR_ALLOC_FAIL;
+	ถ้า (b64_ntop(sshbuf_ptr(d), sshbuf_len(d), s, slen) == -1) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto fail;
 	}
-	if (wrap) {
-		for (i = 0; s[i] != '\0'; i++) {
-			if ((r = sshbuf_put_u8(b64, s[i])) != 0)
+	ถ้า (wrap) {
+		สำหรับ (i = 0; s[i] != '\0'; i++) {
+			ถ้า ((r = sshbuf_put_u8(b64, s[i])) != 0)
 				goto fail;
-			if (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+			ถ้า (i % 70 == 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
 				goto fail;
 		}
-		if ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
+		ถ้า ((i - 1) % 70 != 69 && (r = sshbuf_put_u8(b64, '\n')) != 0)
 			goto fail;
-	} else {
-		if ((r = sshbuf_put(b64, s, strlen(s))) != 0)
+	} มิฉะนั้น {
+		ถ้า ((r = sshbuf_put(b64, s, strlen(s))) != 0)
 			goto fail;
 	}
 	/* Success */
 	r = 0;
  fail:
 	freezero(s, slen);
-	return r;
+	คืน r;
 }
 
-char *
-sshbuf_dtob64_string(const struct sshbuf *buf, int wrap)
+var_na *
+sshbuf_dtob64_string(const sa_nracanaa sshbuf *buf, จำนวนเต็ม wrap)
 {
-	struct sshbuf *tmp;
-	char *ret;
+	sa_nracanaa sshbuf *tmp;
+	var_na *ret;
 
-	if ((tmp = sshbuf_new()) == NULL)
-		return NULL;
-	if (sshbuf_dtob64(buf, tmp, wrap) != 0) {
+	ถ้า ((tmp = sshbuf_new()) == NULL)
+		คืน NULL;
+	ถ้า (sshbuf_dtob64(buf, tmp, wrap) != 0) {
 		sshbuf_free(tmp);
-		return NULL;
+		คืน NULL;
 	}
 	ret = sshbuf_dup_string(tmp);
 	sshbuf_free(tmp);
-	return ret;
+	คืน ret;
 }
 
-int
-sshbuf_b64tod(struct sshbuf *buf, const char *b64)
+จำนวนเต็ม
+sshbuf_b64tod(sa_nracanaa sshbuf *buf, const var_na *b64)
 {
 	size_t plen = strlen(b64);
-	int nlen, r;
+	จำนวนเต็ม nlen, r;
 	u_char *p;
 
-	if (plen == 0)
-		return 0;
-	if ((p = malloc(plen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((nlen = b64_pton(b64, p, plen)) < 0) {
+	ถ้า (plen == 0)
+		คืน 0;
+	ถ้า ((p = malloc(plen)) == NULL)
+		คืน SSH_ERR_ALLOC_FAIL;
+	ถ้า ((nlen = b64_pton(b64, p, plen)) < 0) {
 		freezero(p, plen);
-		return SSH_ERR_INVALID_FORMAT;
+		คืน SSH_ERR_INVALID_FORMAT;
 	}
-	if ((r = sshbuf_put(buf, p, nlen)) < 0) {
+	ถ้า ((r = sshbuf_put(buf, p, nlen)) < 0) {
 		freezero(p, plen);
-		return r;
+		คืน r;
 	}
 	freezero(p, plen);
-	return 0;
+	คืน 0;
 }
 
-int
-sshbuf_dtourlb64(const struct sshbuf *d, struct sshbuf *b64, int wrap)
+จำนวนเต็ม
+sshbuf_dtourlb64(const sa_nracanaa sshbuf *d, sa_nracanaa sshbuf *b64, จำนวนเต็ม wrap)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
+	จำนวนเต็ม r = SSH_ERR_INTERNAL_ERROR;
 	u_char *p;
-	struct sshbuf *b = NULL;
+	sa_nracanaa sshbuf *b = NULL;
 	size_t i, l;
 
-	if (sshbuf_len(d) == 0)
-		return 0;
+	ถ้า (sshbuf_len(d) == 0)
+		คืน 0;
 
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	ถ้า ((b = sshbuf_new()) == NULL)
+		คืน SSH_ERR_ALLOC_FAIL;
 	/* Encode using regular base64; we'll transform it once done */
-	if ((r = sshbuf_dtob64(d, b, wrap)) != 0)
+	ถ้า ((r = sshbuf_dtob64(d, b, wrap)) != 0)
 		goto out;
 	/* remove padding from end of encoded string*/
-	for (;;) {
+	สำหรับ (;;) {
 		l = sshbuf_len(b);
-		if (l <= 1 || sshbuf_ptr(b) == NULL) {
+		ถ้า (l <= 1 || sshbuf_ptr(b) == NULL) {
 			r = SSH_ERR_INTERNAL_ERROR;
 			goto out;
 		}
-		if (sshbuf_ptr(b)[l - 1] != '=')
-			break;
-		if ((r = sshbuf_consume_end(b, 1)) != 0)
+		ถ้า (sshbuf_ptr(b)[l - 1] != '=')
+			bha_nga;
+		ถ้า ((r = sshbuf_consume_end(b, 1)) != 0)
 			goto out;
 	}
 	/* Replace characters with rfc4648 equivalents */
 	l = sshbuf_len(b);
-	if ((p = sshbuf_mutable_ptr(b)) == NULL) {
+	ถ้า ((p = sshbuf_mutable_ptr(b)) == NULL) {
 		r = SSH_ERR_INTERNAL_ERROR;
 		goto out;
 	}
-	for (i = 0; i < l; i++) {
-		if (p[i] == '+')
+	สำหรับ (i = 0; i < l; i++) {
+		ถ้า (p[i] == '+')
 			p[i] = '-';
-		else if (p[i] == '/')
+		มิฉะนั้น ถ้า (p[i] == '/')
 			p[i] = '_';
 	}
 	r = sshbuf_putb(b64, b);
  out:
 	sshbuf_free(b);
-	return r;
+	คืน r;
 }
 
-char *
-sshbuf_dup_string(struct sshbuf *buf)
+var_na *
+sshbuf_dup_string(sa_nracanaa sshbuf *buf)
 {
 	const u_char *p = NULL, *s = sshbuf_ptr(buf);
 	size_t l = sshbuf_len(buf);
-	char *r;
+	var_na *r;
 
-	if (s == NULL || l >= SIZE_MAX)
-		return NULL;
+	ถ้า (s == NULL || l >= SIZE_MAX)
+		คืน NULL;
 	/* accept a nul only as the last character in the buffer */
-	if (l > 0 && (p = memchr(s, '\0', l)) != NULL) {
-		if (p != s + l - 1)
-			return NULL;
+	ถ้า (l > 0 && (p = memchr(s, '\0', l)) != NULL) {
+		ถ้า (p != s + l - 1)
+			คืน NULL;
 		l--; /* the nul is put back below */
 	}
-	if ((r = malloc(l + 1)) == NULL)
-		return NULL;
-	if (l > 0)
+	ถ้า ((r = malloc(l + 1)) == NULL)
+		คืน NULL;
+	ถ้า (l > 0)
 		memcpy(r, s, l);
 	r[l] = '\0';
-	return r;
+	คืน r;
 }
 
-int
-sshbuf_cmp(const struct sshbuf *b, size_t offset,
+จำนวนเต็ม
+sshbuf_cmp(const sa_nracanaa sshbuf *b, size_t offset,
     const void *s, size_t len)
 {
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ถ้า (sshbuf_ptr(b) == NULL)
+		คืน SSH_ERR_INTERNAL_ERROR;
+	ถ้า (offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		คืน SSH_ERR_INVALID_ARGUMENT;
+	ถ้า (offset + len > sshbuf_len(b))
+		คืน SSH_ERR_MESSAGE_INCOMPLETE;
+	ถ้า (timingsafe_bcmp(sshbuf_ptr(b) + offset, s, len) != 0)
+		คืน SSH_ERR_INVALID_FORMAT;
+	คืน 0;
 }
 
-int
-sshbuf_equals(const struct sshbuf *a, const struct sshbuf *b)
+จำนวนเต็ม
+sshbuf_equals(const sa_nracanaa sshbuf *a, const sa_nracanaa sshbuf *b)
 {
-	if (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (sshbuf_len(a) != sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if (sshbuf_len(a) == 0)
-		return 0;
-	if (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	ถ้า (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
+		คืน SSH_ERR_INTERNAL_ERROR;
+	ถ้า (sshbuf_len(a) != sshbuf_len(b))
+		คืน SSH_ERR_MESSAGE_INCOMPLETE;
+	ถ้า (sshbuf_len(a) == 0)
+		คืน 0;
+	ถ้า (memcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
+		คืน SSH_ERR_INVALID_FORMAT;
+	คืน 0;
 }
 
-int
-sshbuf_find(const struct sshbuf *b, size_t start_offset,
+จำนวนเต็ม
+sshbuf_find(const sa_nracanaa sshbuf *b, size_t start_offset,
     const void *s, size_t len, size_t *offsetp)
 {
 	void *p;
 
-	if (offsetp != NULL)
+	ถ้า (offsetp != NULL)
 		*offsetp = 0;
-	if (sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INTERNAL_ERROR;
-	if (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
-	if ((p = memmem(sshbuf_ptr(b) + start_offset,
+	ถ้า (sshbuf_ptr(b) == NULL)
+		คืน SSH_ERR_INTERNAL_ERROR;
+	ถ้า (start_offset > SSHBUF_SIZE_MAX || len > SSHBUF_SIZE_MAX || len == 0)
+		คืน SSH_ERR_INVALID_ARGUMENT;
+	ถ้า (start_offset > sshbuf_len(b) || start_offset + len > sshbuf_len(b))
+		คืน SSH_ERR_MESSAGE_INCOMPLETE;
+	ถ้า ((p = memmem(sshbuf_ptr(b) + start_offset,
 	    sshbuf_len(b) - start_offset, s, len)) == NULL)
-		return SSH_ERR_INVALID_FORMAT;
-	if (offsetp != NULL)
+		คืน SSH_ERR_INVALID_FORMAT;
+	ถ้า (offsetp != NULL)
 		*offsetp = (const u_char *)p - sshbuf_ptr(b);
-	return 0;
+	คืน 0;
 }
 
-int
-sshbuf_read(int fd, struct sshbuf *buf, size_t maxlen, size_t *rlen)
+จำนวนเต็ม
+sshbuf_read(จำนวนเต็ม fd, sa_nracanaa sshbuf *buf, size_t maxlen, size_t *rlen)
 {
-	int r, oerrno;
+	จำนวนเต็ม r, oerrno;
 	size_t adjust;
 	ssize_t rr;
 	u_char *d;
 
-	if (rlen != NULL)
+	ถ้า (rlen != NULL)
 		*rlen = 0;
-	if ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
-		return r;
+	ถ้า ((r = sshbuf_reserve(buf, maxlen, &d)) != 0)
+		คืน r;
 	rr = read(fd, d, maxlen);
 	oerrno = errno;
 
 	/* Adjust the buffer to include only what was actually read */
-	if ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
-		if ((r = sshbuf_consume_end(buf, adjust)) != 0) {
+	ถ้า ((adjust = maxlen - (rr > 0 ? rr : 0)) != 0) {
+		ถ้า ((r = sshbuf_consume_end(buf, adjust)) != 0) {
 			/* avoid returning uninitialised data to caller */
 			memset(d + rr, '\0', adjust);
-			return SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
+			คืน SSH_ERR_INTERNAL_ERROR; /* shouldn't happen */
 		}
 	}
-	if (rr < 0) {
+	ถ้า (rr < 0) {
 		errno = oerrno;
-		return SSH_ERR_SYSTEM_ERROR;
-	} else if (rr == 0) {
+		คืน SSH_ERR_SYSTEM_ERROR;
+	} มิฉะนั้น ถ้า (rr == 0) {
 		errno = EPIPE;
-		return SSH_ERR_SYSTEM_ERROR;
+		คืน SSH_ERR_SYSTEM_ERROR;
 	}
 	/* success */
-	if (rlen != NULL)
+	ถ้า (rlen != NULL)
 		*rlen = (size_t)rr;
-	return 0;
+	คืน 0;
 }

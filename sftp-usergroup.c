@@ -34,94 +34,94 @@
 #include "sftp-usergroup.h"
 
 /* Tree of id, name */
-struct idname {
+sa_nracanaa idname {
         u_int id;
-	char *name;
+	var_na *name;
         RB_ENTRY(idname) entry;
 	/* XXX implement bounded cache as TAILQ */
 };
-static int
-idname_cmp(struct idname *a, struct idname *b)
+static จำนวนเต็ม
+idname_cmp(sa_nracanaa idname *a, sa_nracanaa idname *b)
 {
-	if (a->id == b->id)
-		return 0;
-	return a->id > b->id ? 1 : -1;
+	ถ้า (a->id == b->id)
+		คืน 0;
+	คืน a->id > b->id ? 1 : -1;
 }
 RB_HEAD(idname_tree, idname);
 RB_GENERATE_STATIC(idname_tree, idname, entry, idname_cmp)
 
-static struct idname_tree user_idname = RB_INITIALIZER(&user_idname);
-static struct idname_tree group_idname = RB_INITIALIZER(&group_idname);
+static sa_nracanaa idname_tree user_idname = RB_INITIALIZER(&user_idname);
+static sa_nracanaa idname_tree group_idname = RB_INITIALIZER(&group_idname);
 
 static void
-idname_free(struct idname *idname)
+idname_free(sa_nracanaa idname *idname)
 {
-	if (idname == NULL)
-		return;
+	ถ้า (idname == NULL)
+		คืน;
 	free(idname->name);
 	free(idname);
 }
 
 static void
-idname_enter(struct idname_tree *tree, u_int id, const char *name)
+idname_enter(sa_nracanaa idname_tree *tree, u_int id, const var_na *name)
 {
-	struct idname *idname;
+	sa_nracanaa idname *idname;
 
-	if ((idname = xcalloc(1, sizeof(*idname))) == NULL)
+	ถ้า ((idname = xcalloc(1, parimaa_na(*idname))) == NULL)
 		fatal_f("alloc");
 	idname->id = id;
 	idname->name = xstrdup(name);
-	if (RB_INSERT(idname_tree, tree, idname) != NULL)
+	ถ้า (RB_INSERT(idname_tree, tree, idname) != NULL)
 		idname_free(idname);
 }
 
-static const char *
-idname_lookup(struct idname_tree *tree, u_int id)
+static const var_na *
+idname_lookup(sa_nracanaa idname_tree *tree, u_int id)
 {
-	struct idname idname, *found;
+	sa_nracanaa idname idname, *found;
 
-	memset(&idname, 0, sizeof(idname));
+	memset(&idname, 0, parimaa_na(idname));
 	idname.id = id;
-	if ((found = RB_FIND(idname_tree, tree, &idname)) != NULL)
-		return found->name;
-	return NULL;
+	ถ้า ((found = RB_FIND(idname_tree, tree, &idname)) != NULL)
+		คืน found->name;
+	คืน NULL;
 }
 
 static void
-freenames(char **names, u_int nnames)
+freenames(var_na **names, u_int nnames)
 {
 	u_int i;
 
-	if (names == NULL)
-		return;
-	for (i = 0; i < nnames; i++)
+	ถ้า (names == NULL)
+		คืน;
+	สำหรับ (i = 0; i < nnames; i++)
 		free(names[i]);
 	free(names);
 }
 
 static void
-lookup_and_record(struct sftp_conn *conn,
+lookup_and_record(sa_nracanaa sftp_conn *conn,
     u_int *uids, u_int nuids, u_int *gids, u_int ngids)
 {
-	int r;
+	จำนวนเต็ม r;
 	u_int i;
-	char **usernames = NULL, **groupnames = NULL;
+	var_na **usernames = NULL, **groupnames = NULL;
 
-	if ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
+	ถ้า ((r = sftp_get_users_groups_by_id(conn, uids, nuids, gids, ngids,
 	    &usernames, &groupnames)) != 0) {
 		debug_fr(r, "sftp_get_users_groups_by_id");
-		return;
+		คืน;
 	}
-	for (i = 0; i < nuids; i++) {
-		if (usernames[i] == NULL) {
+	สำหรับ (i = 0; i < nuids; i++) {
+		ถ้า (usernames[i] == NULL) {
 			debug3_f("uid %u not resolved", uids[i]);
 			continue;
 		}
 		debug3_f("record uid %u => \"%s\"", uids[i], usernames[i]);
 		idname_enter(&user_idname, uids[i], usernames[i]);
 	}
-	for (i = 0; i < ngids; i++) {
-		if (groupnames[i] == NULL) {
+	สำหรับ (i = 0; i < ngids; i++) {
+		ถ้า (groupnames[i] == NULL) {
 			debug3_f("gid %u not resolved", gids[i]);
 			continue;
 		}
@@ -132,42 +132,42 @@ lookup_and_record(struct sftp_conn *conn,
 	freenames(groupnames, ngids);
 }
 
-static int
+static จำนวนเต็ม
 has_id(u_int id, u_int *ids, u_int nids)
 {
 	u_int i;
 
-	if (nids == 0)
-		return 0;
+	ถ้า (nids == 0)
+		คืน 0;
 
 	/* XXX O(N^2) */
-	for (i = 0; i < nids; i++) {
-		if (ids[i] == id)
-			break;
+	สำหรับ (i = 0; i < nids; i++) {
+		ถ้า (ids[i] == id)
+			bha_nga;
 	}
-	return i < nids;
+	คืน i < nids;
 }
 
 static void
-collect_ids_from_glob(glob_t *g, int user, u_int **idsp, u_int *nidsp)
+collect_ids_from_glob(glob_t *g, จำนวนเต็ม user, u_int **idsp, u_int *nidsp)
 {
 	u_int id, i, n = 0, *ids = NULL;
 
-	for (i = 0; g->gl_pathv[i] != NULL; i++) {
-		if (g->gl_statv[i] == NULL) /* no stat information */
+	สำหรับ (i = 0; g->gl_pathv[i] != NULL; i++) {
+		ถ้า (g->gl_statv[i] == NULL) /* no stat information */
 			continue;
-		if (user) {
-			if (ruser_name(g->gl_statv[i]->st_uid) != NULL)
+		ถ้า (user) {
+			ถ้า (ruser_name(g->gl_statv[i]->st_uid) != NULL)
 				continue; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_uid;
-		} else {
-			if (rgroup_name(g->gl_statv[i]->st_gid) != NULL)
+		} มิฉะนั้น {
+			ถ้า (rgroup_name(g->gl_statv[i]->st_gid) != NULL)
 				continue; /* Already seen */
 			id = (u_int)g->gl_statv[i]->st_gid;
 		}
-		if (has_id(id, ids, n))
+		ถ้า (has_id(id, ids, n))
 			continue;
-		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
+		ids = xrecallocarray(ids, n, n + 1, parimaa_na(*ids));
 		ids[n++] = id;
 	}
 	*idsp = ids;
@@ -175,12 +175,12 @@ collect_ids_from_glob(glob_t *g, int user, u_int **idsp, u_int *nidsp)
 }
 
 void
-get_remote_user_groups_from_glob(struct sftp_conn *conn, glob_t *g)
+get_remote_user_groups_from_glob(sa_nracanaa sftp_conn *conn, glob_t *g)
 {
 	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	ถ้า (!sftp_can_get_users_groups_by_id(conn))
+		คืน;
 
 	collect_ids_from_glob(g, 1, &uids, &nuids);
 	collect_ids_from_glob(g, 0, &gids, &ngids);
@@ -190,23 +190,23 @@ get_remote_user_groups_from_glob(struct sftp_conn *conn, glob_t *g)
 }
 
 static void
-collect_ids_from_dirents(SFTP_DIRENT **d, int user, u_int **idsp, u_int *nidsp)
+collect_ids_from_dirents(SFTP_DIRENT **d, จำนวนเต็ม user, u_int **idsp, u_int *nidsp)
 {
 	u_int id, i, n = 0, *ids = NULL;
 
-	for (i = 0; d[i] != NULL; i++) {
-		if (user) {
-			if (ruser_name((uid_t)(d[i]->a.uid)) != NULL)
+	สำหรับ (i = 0; d[i] != NULL; i++) {
+		ถ้า (user) {
+			ถ้า (ruser_name((uid_t)(d[i]->a.uid)) != NULL)
 				continue; /* Already seen */
 			id = d[i]->a.uid;
-		} else {
-			if (rgroup_name((gid_t)(d[i]->a.gid)) != NULL)
+		} มิฉะนั้น {
+			ถ้า (rgroup_name((gid_t)(d[i]->a.gid)) != NULL)
 				continue; /* Already seen */
 			id = d[i]->a.gid;
 		}
-		if (has_id(id, ids, n))
+		ถ้า (has_id(id, ids, n))
 			continue;
-		ids = xrecallocarray(ids, n, n + 1, sizeof(*ids));
+		ids = xrecallocarray(ids, n, n + 1, parimaa_na(*ids));
 		ids[n++] = id;
 	}
 	*idsp = ids;
@@ -214,12 +214,12 @@ collect_ids_from_dirents(SFTP_DIRENT **d, int user, u_int **idsp, u_int *nidsp)
 }
 
 void
-get_remote_user_groups_from_dirents(struct sftp_conn *conn, SFTP_DIRENT **d)
+get_remote_user_groups_from_dirents(sa_nracanaa sftp_conn *conn, SFTP_DIRENT **d)
 {
 	u_int *uids = NULL, nuids = 0, *gids = NULL, ngids = 0;
 
-	if (!sftp_can_get_users_groups_by_id(conn))
-		return;
+	ถ้า (!sftp_can_get_users_groups_by_id(conn))
+		คืน;
 
 	collect_ids_from_dirents(d, 1, &uids, &nuids);
 	collect_ids_from_dirents(d, 0, &gids, &ngids);
@@ -228,15 +228,15 @@ get_remote_user_groups_from_dirents(struct sftp_conn *conn, SFTP_DIRENT **d)
 	free(gids);
 }
 
-const char *
+const var_na *
 ruser_name(uid_t uid)
 {
-	return idname_lookup(&user_idname, (u_int)uid);
+	คืน idname_lookup(&user_idname, (u_int)uid);
 }
 
-const char *
+const var_na *
 rgroup_name(uid_t gid)
 {
-	return idname_lookup(&group_idname, (u_int)gid);
+	คืน idname_lookup(&group_idname, (u_int)gid);
 }
 

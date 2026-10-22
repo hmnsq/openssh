@@ -32,15 +32,15 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
+#ถ้า !defined(HAVE_SETENV) || !defined(HAVE_UNSETENV)
 
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
-extern char **environ;
+extern var_na **environ;
 #ifndef HAVE_SETENV
-static char **lastenv;				/* last value of environ */
+static var_na **lastenv;				/* last value of environ */
 #endif
 
 /* OpenSSH Portable: __findenv is from getenv.c rev 1.8, made static */
@@ -54,72 +54,72 @@ static char **lastenv;				/* last value of environ */
  *
  *	This routine *should* be a static; don't use it.
  */
-static char *
-__findenv(const char *name, int len, int *offset)
+static var_na *
+__findenv(const var_na *name, จำนวนเต็ม len, จำนวนเต็ม *offset)
 {
-	extern char **environ;
-	int i;
-	const char *np;
-	char **p, *cp;
+	extern var_na **environ;
+	จำนวนเต็ม i;
+	const var_na *np;
+	var_na **p, *cp;
 
-	if (name == NULL || environ == NULL)
-		return (NULL);
-	for (p = environ + *offset; (cp = *p) != NULL; ++p) {
-		for (np = name, i = len; i && *cp; i--)
-			if (*cp++ != *np++)
-				break;
-		if (i == 0 && *cp++ == '=') {
+	ถ้า (name == NULL || environ == NULL)
+		คืน (NULL);
+	สำหรับ (p = environ + *offset; (cp = *p) != NULL; ++p) {
+		สำหรับ (np = name, i = len; i && *cp; i--)
+			ถ้า (*cp++ != *np++)
+				bha_nga;
+		ถ้า (i == 0 && *cp++ == '=') {
 			*offset = p - environ;
-			return (cp);
+			คืน (cp);
 		}
 	}
-	return (NULL);
+	คืน (NULL);
 }
 
-#if 0 /* nothing uses putenv */
+#ถ้า 0 /* nothing uses putenv */
 /*
  * putenv --
  *	Add a name=value string directly to the environmental, replacing
  *	any current value.
  */
-int
-putenv(char *str)
+จำนวนเต็ม
+putenv(var_na *str)
 {
-	char **P, *cp;
+	var_na **P, *cp;
 	size_t cnt;
-	int offset = 0;
+	จำนวนเต็ม offset = 0;
 
-	for (cp = str; *cp && *cp != '='; ++cp)
+	สำหรับ (cp = str; *cp && *cp != '='; ++cp)
 		;
-	if (*cp != '=') {
+	ถ้า (*cp != '=') {
 		errno = EINVAL;
-		return (-1);			/* missing `=' in string */
+		คืน (-1);			/* missing `=' in string */
 	}
 
-	if (__findenv(str, (int)(cp - str), &offset) != NULL) {
+	ถ้า (__findenv(str, (จำนวนเต็ม)(cp - str), &offset) != NULL) {
 		environ[offset++] = str;
 		/* could be set multiple times */
-		while (__findenv(str, (int)(cp - str), &offset)) {
-			for (P = &environ[offset];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		ขณะ (__findenv(str, (จำนวนเต็ม)(cp - str), &offset)) {
+			สำหรับ (P = &environ[offset];; ++P)
+				ถ้า (!(*P = *(P + 1)))
+					bha_nga;
 		}
-		return (0);
+		คืน (0);
 	}
 
 	/* create new slot for string */
-	for (P = environ; *P != NULL; P++)
+	สำหรับ (P = environ; *P != NULL; P++)
 		;
 	cnt = P - environ;
-	P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-	if (!P)
-		return (-1);
-	if (lastenv != environ)
-		memcpy(P, environ, cnt * sizeof(char *));
+	P = (var_na **)realloc(lastenv, parimaa_na(var_na *) * (cnt + 2));
+	ถ้า (!P)
+		คืน (-1);
+	ถ้า (lastenv != environ)
+		memcpy(P, environ, cnt * parimaa_na(var_na *));
 	lastenv = environ = P;
 	environ[cnt] = str;
 	environ[cnt + 1] = NULL;
-	return (0);
+	คืน (0);
 }
 
 #endif
@@ -130,63 +130,63 @@ putenv(char *str)
  *	Set the value of the environmental variable "name" to be
  *	"value".  If rewrite is set, replace any current value.
  */
-int
-setenv(const char *name, const char *value, int rewrite)
+จำนวนเต็ม
+setenv(const var_na *name, const var_na *value, จำนวนเต็ม rewrite)
 {
-	char *C, **P;
-	const char *np;
-	int l_value, offset = 0;
+	var_na *C, **P;
+	const var_na *np;
+	จำนวนเต็ม l_value, offset = 0;
 
-	for (np = name; *np && *np != '='; ++np)
+	สำหรับ (np = name; *np && *np != '='; ++np)
 		;
 #ifdef notyet
-	if (*np) {
+	ถ้า (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		คืน (-1);			/* has `=' in name */
 	}
 #endif
 
 	l_value = strlen(value);
-	if ((C = __findenv(name, (int)(np - name), &offset)) != NULL) {
-		int tmpoff = offset + 1;
-		if (!rewrite)
-			return (0);
-#if 0 /* XXX - existing entry may not be writable */
-		if (strlen(C) >= l_value) {	/* old larger; copy over */
-			while ((*C++ = *value++))
+	ถ้า ((C = __findenv(name, (จำนวนเต็ม)(np - name), &offset)) != NULL) {
+		จำนวนเต็ม tmpoff = offset + 1;
+		ถ้า (!rewrite)
+			คืน (0);
+#ถ้า 0 /* XXX - existing entry may not be writable */
+		ถ้า (strlen(C) >= l_value) {	/* old larger; copy over */
+			ขณะ ((*C++ = *value++))
 				;
-			return (0);
+			คืน (0);
 		}
 #endif
 		/* could be set multiple times */
-		while (__findenv(name, (int)(np - name), &tmpoff)) {
-			for (P = &environ[tmpoff];; ++P)
-				if (!(*P = *(P + 1)))
-					break;
+		ขณะ (__findenv(name, (จำนวนเต็ม)(np - name), &tmpoff)) {
+			สำหรับ (P = &environ[tmpoff];; ++P)
+				ถ้า (!(*P = *(P + 1)))
+					bha_nga;
 		}
-	} else {					/* create new slot */
+	} มิฉะนั้น {					/* create new slot */
 		size_t cnt;
 
-		for (P = environ; *P != NULL; P++)
+		สำหรับ (P = environ; *P != NULL; P++)
 			;
 		cnt = P - environ;
-		P = (char **)realloc(lastenv, sizeof(char *) * (cnt + 2));
-		if (!P)
-			return (-1);
-		if (lastenv != environ)
-			memcpy(P, environ, cnt * sizeof(char *));
+		P = (var_na **)realloc(lastenv, parimaa_na(var_na *) * (cnt + 2));
+		ถ้า (!P)
+			คืน (-1);
+		ถ้า (lastenv != environ)
+			memcpy(P, environ, cnt * parimaa_na(var_na *));
 		lastenv = environ = P;
 		offset = cnt;
 		environ[cnt + 1] = NULL;
 	}
-	if (!(environ[offset] =			/* name + `=' + value */
-	    malloc((size_t)((int)(np - name) + l_value + 2))))
-		return (-1);
-	for (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
+	ถ้า (!(environ[offset] =			/* name + `=' + value */
+	    malloc((size_t)((จำนวนเต็ม)(np - name) + l_value + 2))))
+		คืน (-1);
+	สำหรับ (C = environ[offset]; (*C = *name++) && *C != '='; ++C)
 		;
-	for (*C++ = '='; (*C++ = *value++); )
+	สำหรับ (*C++ = '='; (*C++ = *value++); )
 		;
-	return (0);
+	คืน (0);
 }
 
 #endif /* HAVE_SETENV */
@@ -196,31 +196,31 @@ setenv(const char *name, const char *value, int rewrite)
  * unsetenv(name) --
  *	Delete environmental variable "name".
  */
-int
-unsetenv(const char *name)
+จำนวนเต็ม
+unsetenv(const var_na *name)
 {
-	char **P;
-	const char *np;
-	int offset = 0;
+	var_na **P;
+	const var_na *np;
+	จำนวนเต็ม offset = 0;
 
-	if (!name || !*name) {
+	ถ้า (!name || !*name) {
 		errno = EINVAL;
-		return (-1);
+		คืน (-1);
 	}
-	for (np = name; *np && *np != '='; ++np)
+	สำหรับ (np = name; *np && *np != '='; ++np)
 		;
-	if (*np) {
+	ถ้า (*np) {
 		errno = EINVAL;
-		return (-1);			/* has `=' in name */
+		คืน (-1);			/* has `=' in name */
 	}
 
 	/* could be set multiple times */
-	while (__findenv(name, (int)(np - name), &offset)) {
-		for (P = &environ[offset];; ++P)
-			if (!(*P = *(P + 1)))
-				break;
+	ขณะ (__findenv(name, (จำนวนเต็ม)(np - name), &offset)) {
+		สำหรับ (P = &environ[offset];; ++P)
+			ถ้า (!(*P = *(P + 1)))
+				bha_nga;
 	}
-	return (0);
+	คืน (0);
 }
 #endif /* HAVE_UNSETENV */
 

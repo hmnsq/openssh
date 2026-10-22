@@ -35,7 +35,7 @@
 /* OPENBSD ORIGINAL: include/vis.h */
 
 #include "includes.h"
-#if !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
+#ถ้า !defined(HAVE_STRNVIS) || defined(BROKEN_STRNVIS)
 
 #ifndef _VIS_H_
 #define	_VIS_H_
@@ -81,16 +81,16 @@
  */
 #define	UNVIS_END	1	/* no more characters */
 
-char	*vis(char *, int, int, int);
-int	strvis(char *, const char *, int);
-int	stravis(char **, const char *, int);
-int	strnvis(char *, const char *, size_t, int)
+var_na	*vis(var_na *, จำนวนเต็ม, จำนวนเต็ม, จำนวนเต็ม);
+จำนวนเต็ม	strvis(var_na *, const var_na *, จำนวนเต็ม);
+จำนวนเต็ม	stravis(var_na **, const var_na *, จำนวนเต็ม);
+จำนวนเต็ม	strnvis(var_na *, const var_na *, size_t, จำนวนเต็ม)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strvisx(char *, const char *, size_t, int)
+จำนวนเต็ม	strvisx(var_na *, const var_na *, size_t, จำนวนเต็ม)
 		__attribute__ ((__bounded__(__string__,1,3)));
-int	strunvis(char *, const char *);
-int	unvis(char *, char, int *, int);
-ssize_t strnunvis(char *, const char *, size_t)
+จำนวนเต็ม	strunvis(var_na *, const var_na *);
+จำนวนเต็ม	unvis(var_na *, var_na, จำนวนเต็ม *, จำนวนเต็ม);
+ssize_t strnunvis(var_na *, const var_na *, size_t)
 		__attribute__ ((__bounded__(__string__,1,3)));
 
 #endif /* !_VIS_H_ */

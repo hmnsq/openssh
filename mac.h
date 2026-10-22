@@ -28,26 +28,26 @@
 
 #include <sys/types.h>
 
-struct sshmac {
-	char	*name;
-	int	enabled;
+sa_nracanaa sshmac {
+	var_na	*name;
+	จำนวนเต็ม	enabled;
 	u_int	mac_len;
 	u_char	*key;
 	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
-	struct ssh_hmac_ctx	*hmac_ctx;
-	struct umac_ctx		*umac_ctx;
+	จำนวนเต็ม	type;
+	จำนวนเต็ม	etm;		/* Encrypt-then-MAC */
+	sa_nracanaa ssh_hmac_ctx	*hmac_ctx;
+	sa_nracanaa umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
-char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
+จำนวนเต็ม	 mac_valid(const var_na *);
+var_na	*mac_alg_list(var_na);
+จำนวนเต็ม	 mac_setup(sa_nracanaa sshmac *, var_na *);
+จำนวนเต็ม	 mac_init(sa_nracanaa sshmac *);
+จำนวนเต็ม	 mac_compute(sa_nracanaa sshmac *, uint32_t, const u_char *, จำนวนเต็ม,
     u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
+จำนวนเต็ม	 mac_check(sa_nracanaa sshmac *, uint32_t, const u_char *, size_t,
     const u_char *, size_t);
-void	 mac_clear(struct sshmac *);
+void	 mac_clear(sa_nracanaa sshmac *);
 
 #endif /* SSHMAC_H */

@@ -42,13 +42,13 @@
 #include <unistd.h>
 #include <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+จำนวนเต็ม
+getgrouplist(const var_na *uname, gid_t agroup, gid_t *groups, จำนวนเต็ม *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	sa_nracanaa group *grp;
+	จำนวนเต็ม i, ngroups;
+	จำนวนเต็ม ret, maxgroups;
+	จำนวนเต็ม bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	ถ้า (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		คืน (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
+	ขณะ ((grp = getgrent())) {
+		ถ้า (grp->gr_gid == agroup)
 			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+		สำหรับ (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			ถ้า (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
+		ถ้า (bail)
 			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		สำหรับ (i = 0; grp->gr_mem[i]; i++) {
+			ถ้า (!strcmp(grp->gr_mem[i], uname)) {
+				ถ้า (ngroups >= maxgroups) {
 					ret = -1;
 					goto out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				bha_nga;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	คืน (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

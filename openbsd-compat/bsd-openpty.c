@@ -33,7 +33,7 @@
  */
 
 #include "includes.h"
-#if !defined(HAVE_OPENPTY)
+#ถ้า !defined(HAVE_OPENPTY)
 
 #include <sys/types.h>
 
@@ -54,7 +54,7 @@
 #ifdef HAVE_PTY_H
 # include <pty.h>
 #endif
-#if defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
+#ถ้า defined(HAVE_DEV_PTMX) && defined(HAVE_SYS_STROPTS_H)
 # include <sys/stropts.h>
 #endif
 
@@ -69,47 +69,47 @@
 #define O_NOCTTY 0
 #endif
 
-#if defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
-static int
-openpty_streams(int *amaster, int *aslave)
+#ถ้า defined(HAVE_DEV_PTMX) && !defined(HAVE__GETPTY)
+static จำนวนเต็ม
+openpty_streams(จำนวนเต็ม *amaster, จำนวนเต็ม *aslave)
 {
 	/*
 	 * This code is used e.g. on Solaris 2.x.  (Note that Solaris 2.3
 	 * also has bsd-style ptys, but they simply do not work.)
 	 */
-	int ptm;
-	char *pts;
+	จำนวนเต็ม ptm;
+	var_na *pts;
 	sshsig_t old_signal;
 
-	if ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
+	ถ้า ((ptm = open("/dev/ptmx", O_RDWR | O_NOCTTY)) == -1)
+		คืน (-1);
 
 	/* XXX: need to close ptm on error? */
 	old_signal = ssh_signal(SIGCHLD, SIG_DFL);
-	if (grantpt(ptm) < 0)
-		return (-1);
+	ถ้า (grantpt(ptm) < 0)
+		คืน (-1);
 	ssh_signal(SIGCHLD, old_signal);
 
-	if (unlockpt(ptm) < 0)
-		return (-1);
+	ถ้า (unlockpt(ptm) < 0)
+		คืน (-1);
 
-	if ((pts = ptsname(ptm)) == NULL)
-		return (-1);
+	ถ้า ((pts = ptsname(ptm)) == NULL)
+		คืน (-1);
 	*amaster = ptm;
 
 	/* Open the slave side. */
-	if ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
+	ถ้า ((*aslave = open(pts, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		คืน (-1);
 	}
 
-# if defined(I_FIND) && defined(__SVR4)
+# ถ้า defined(I_FIND) && defined(__SVR4)
 	/*
 	 * If the streams modules have already been pushed then there
 	 * is no more work to do here.
 	 */
-	if (ioctl(*aslave, I_FIND, "ptem") != 0)
-		return 0;
+	ถ้า (ioctl(*aslave, I_FIND, "ptem") != 0)
+		คืน 0;
 # endif
 
 	/*
@@ -121,30 +121,30 @@ openpty_streams(int *amaster, int *aslave)
 # ifndef __hpux
 	ioctl(*aslave, I_PUSH, "ttcompat");
 # endif /* __hpux */
-	return (0);
+	คืน (0);
 }
 #endif
 
-int
-openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
-   const struct winsize *winp)
+จำนวนเต็ม
+openpty(จำนวนเต็ม *amaster, จำนวนเต็ม *aslave, var_na *name, const sa_nracanaa termios *termp,
+   const sa_nracanaa winsize *winp)
 {
-#if defined(HAVE__GETPTY)
+#ถ้า defined(HAVE__GETPTY)
 	/*
 	 * _getpty(3) exists in SGI Irix 4.x, 5.x & 6.x -- it generates more
 	 * pty's automagically when needed
 	 */
-	char *slave;
+	var_na *slave;
 
-	if ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == NULL)
-		return (-1);
+	ถ้า ((slave = _getpty(amaster, O_RDWR, 0622, 0)) == NULL)
+		คืน (-1);
 
 	/* Open the slave side. */
-	if ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
+	ถ้า ((*aslave = open(slave, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		คืน (-1);
 	}
-	return (0);
+	คืน (0);
 
 #elif defined(HAVE_DEV_PTMX)
 
@@ -159,79 +159,79 @@ openpty(int *amaster, int *aslave, char *name, const struct termios *termp,
 	 * different session and is available to become controlling terminal
 	 * for the client's subprocess.  See bugzilla #245 for details.
 	 */
-	int r, fd;
-	static int junk_ptyfd = -1, junk_ttyfd;
-	char *junk_name;
+	จำนวนเต็ม r, fd;
+	static จำนวนเต็ม junk_ptyfd = -1, junk_ttyfd;
+	var_na *junk_name;
 
 	r = openpty_streams(amaster, aslave);
-	if (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
+	ถ้า (junk_ptyfd == -1 && (fd = open(_PATH_TTY, O_RDWR|O_NOCTTY)) >= 0) {
 		close(fd);
 		junk_ptyfd = *amaster;
 		junk_ttyfd = *aslave;
 		junk_name = ttyname(junk_ttyfd);
 		debug("STREAMS bug workaround pty %d tty %d name %s",
 		    junk_ptyfd, junk_ttyfd, junk_name ? junk_name : "<none>");
-	} else
-		return r;
+	} มิฉะนั้น
+		คืน r;
 #endif
 
-	return openpty_streams(amaster, aslave);
+	คืน openpty_streams(amaster, aslave);
 
 #elif defined(HAVE_DEV_PTS_AND_PTC)
 	/* AIX-style pty code. */
-	const char *ttname;
+	const var_na *ttname;
 
-	if ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
-		return (-1);
-	if ((ttname = ttyname(*amaster)) == NULL)
-		return (-1);
-	if ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
+	ถ้า ((*amaster = open("/dev/ptc", O_RDWR | O_NOCTTY)) == -1)
+		คืน (-1);
+	ถ้า ((ttname = ttyname(*amaster)) == NULL)
+		คืน (-1);
+	ถ้า ((*aslave = open(ttname, O_RDWR | O_NOCTTY)) == -1) {
 		close(*amaster);
-		return (-1);
+		คืน (-1);
 	}
-	return (0);
+	คืน (0);
 
-#else
+#มิฉะนั้น
 	/* BSD-style pty code. */
-	char ptbuf[64], ttbuf[64];
-	int i;
-	const char *ptymajors = "pqrstuvwxyzabcdefghijklmno"
+	var_na ptbuf[64], ttbuf[64];
+	จำนวนเต็ม i;
+	const var_na *ptymajors = "pqrstuvwxyzabcdefghijklmno"
 	    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	const char *ptyminors = "0123456789abcdef";
-	int num_minors = strlen(ptyminors);
-	int num_ptys = strlen(ptymajors) * num_minors;
-	struct termios tio;
+	const var_na *ptyminors = "0123456789abcdef";
+	จำนวนเต็ม num_minors = strlen(ptyminors);
+	จำนวนเต็ม num_ptys = strlen(ptymajors) * num_minors;
+	sa_nracanaa termios tio;
 
-	for (i = 0; i < num_ptys; i++) {
-		snprintf(ptbuf, sizeof(ptbuf), "/dev/pty%c%c",
+	สำหรับ (i = 0; i < num_ptys; i++) {
+		snprintf(ptbuf, parimaa_na(ptbuf), "/dev/pty%c%c",
 		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
-		snprintf(ttbuf, sizeof(ttbuf), "/dev/tty%c%c",
+		snprintf(ttbuf, parimaa_na(ttbuf), "/dev/tty%c%c",
 		    ptymajors[i / num_minors], ptyminors[i % num_minors]);
 
-		if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
+		ถ้า ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1) {
 			/* Try SCO style naming */
-			snprintf(ptbuf, sizeof(ptbuf), "/dev/ptyp%d", i);
-			snprintf(ttbuf, sizeof(ttbuf), "/dev/ttyp%d", i);
-			if ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
+			snprintf(ptbuf, parimaa_na(ptbuf), "/dev/ptyp%d", i);
+			snprintf(ttbuf, parimaa_na(ttbuf), "/dev/ttyp%d", i);
+			ถ้า ((*amaster = open(ptbuf, O_RDWR | O_NOCTTY)) == -1)
 				continue;
 		}
 
 		/* Open the slave side. */
-		if ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
+		ถ้า ((*aslave = open(ttbuf, O_RDWR | O_NOCTTY)) == -1) {
 			close(*amaster);
-			return (-1);
+			คืน (-1);
 		}
 		/* set tty modes to a sane state for broken clients */
-		if (tcgetattr(*amaster, &tio) != -1) {
+		ถ้า (tcgetattr(*amaster, &tio) != -1) {
 			tio.c_lflag |= (ECHO | ISIG | ICANON);
 			tio.c_oflag |= (OPOST | ONLCR);
 			tio.c_iflag |= ICRNL;
 			tcsetattr(*amaster, TCSANOW, &tio);
 		}
 
-		return (0);
+		คืน (0);
 	}
-	return (-1);
+	คืน (-1);
 #endif
 }
 

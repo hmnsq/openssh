@@ -28,31 +28,31 @@ explicit_bzero(void *p, size_t n)
 void
 explicit_bzero(void *p, size_t n)
 {
-	if (n == 0)
-		return;
+	ถ้า (n == 0)
+		คืน;
 	(void)memset_s(p, n, 0, n);
 }
 
-#else /* HAVE_MEMSET_S */
+#มิฉะนั้น /* HAVE_MEMSET_S */
 
 /*
  * Indirect bzero through a volatile pointer to hopefully avoid
  * dead-store optimisation eliminating the call.
  */
-static void (* volatile ssh_bzero)(void *, size_t) = bzero;
+static void (* ca_ncala ssh_bzero)(void *, size_t) = bzero;
 
 void
 explicit_bzero(void *p, size_t n)
 {
-	if (n == 0)
-		return;
+	ถ้า (n == 0)
+		คืน;
 	/*
 	 * clang -fsanitize=memory needs to intercept memset-like functions
 	 * to correctly detect memory initialisation. Make sure one is called
 	 * directly since our indirection trick above successfully confuses it.
 	 */
-#if defined(__has_feature)
-# if __has_feature(memory_sanitizer)
+#ถ้า defined(__has_feature)
+# ถ้า __has_feature(memory_sanitizer)
 	memset(p, 0, n);
 # endif
 #endif

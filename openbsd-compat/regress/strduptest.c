@@ -19,29 +19,29 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fail = 0;
+static จำนวนเต็ม fail = 0;
 
 void
-test(const char *a)
+test(const var_na *a)
 {
-	char *b;
+	var_na *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	ถ้า (b == 0) {
 		fail = 1;
-		return;
+		คืน;
 	}
-	if (strcmp(a, b) != 0)
+	ถ้า (strcmp(a, b) != 0)
 		fail = 1;
 	free(b);
 }
 
-int
-main(void)
+จำนวนเต็ม
+หลัก(void)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	คืน fail;
 }

@@ -46,7 +46,7 @@
  * will call a native getentropy if available then fall back as required.
  * We use a different name so that OpenSSL cannot call the wrong getentropy.
  */
-int _ssh_compat_getentropy(void *, size_t);
+จำนวนเต็ม _ssh_compat_getentropy(void *, size_t);
 #ifdef getentropy
 # undef getentropy
 #endif
@@ -59,10 +59,10 @@ int _ssh_compat_getentropy(void *, size_t);
 
 #define minimum(a, b) ((a) < (b) ? (a) : (b))
 
-#if defined(__GNUC__) || defined(_MSC_VER)
-#define inline __inline
-#else				/* __GNUC__ || _MSC_VER */
-#define inline
+#ถ้า defined(__GNUC__) || defined(_MSC_VER)
+#define anta_hstha __inline
+#มิฉะนั้น				/* __GNUC__ || _MSC_VER */
+#define anta_hstha
 #endif				/* !__GNUC__ && !_MSC_VER */
 
 #define KEYSZ	32
@@ -73,31 +73,31 @@ int _ssh_compat_getentropy(void *, size_t);
 #define REKEY_BASE	(1024*1024) /* NB. should be a power of 2 */
 
 /* Marked MAP_INHERIT_ZERO, so zero'd out in fork children. */
-static struct _rs {
+static sa_nracanaa _rs {
 	size_t		rs_have;	/* valid bytes at end of rs_buf */
 	size_t		rs_count;	/* bytes till reseed */
 } *rs;
 
 /* Maybe be preserved in fork children, if _rs_allocate() decides. */
-static struct _rsx {
+static sa_nracanaa _rsx {
 	chacha_ctx	rs_chacha;	/* chacha context for random keystream */
 	u_char		rs_buf[RSBUFSZ];	/* keystream blocks */
 } *rsx;
 
-static inline int _rs_allocate(struct _rs **, struct _rsx **);
-static inline void _rs_forkdetect(void);
+static anta_hstha จำนวนเต็ม _rs_allocate(sa_nracanaa _rs **, sa_nracanaa _rsx **);
+static anta_hstha void _rs_forkdetect(void);
 #include "arc4random.h"
 
-static inline void _rs_rekey(u_char *dat, size_t datlen);
+static anta_hstha void _rs_rekey(u_char *dat, size_t datlen);
 
-static inline void
+static anta_hstha void
 _rs_init(u_char *buf, size_t n)
 {
-	if (n < KEYSZ + IVSZ)
-		return;
+	ถ้า (n < KEYSZ + IVSZ)
+		คืน;
 
-	if (rs == NULL) {
-		if (_rs_allocate(&rs, &rsx) == -1)
+	ถ้า (rs == NULL) {
+		ถ้า (_rs_allocate(&rs, &rsx) == -1)
 			_exit(1);
 	}
 
@@ -111,61 +111,61 @@ _rs_stir(void)
 	u_char rnd[KEYSZ + IVSZ];
 	uint32_t rekey_fuzz = 0;
 
-	if (getentropy(rnd, sizeof rnd) == -1)
+	ถ้า (getentropy(rnd, parimaa_na rnd) == -1)
 		_getentropy_fail();
 
-	if (!rs)
-		_rs_init(rnd, sizeof(rnd));
-	else
-		_rs_rekey(rnd, sizeof(rnd));
-	explicit_bzero(rnd, sizeof(rnd));	/* discard source seed */
+	ถ้า (!rs)
+		_rs_init(rnd, parimaa_na(rnd));
+	มิฉะนั้น
+		_rs_rekey(rnd, parimaa_na(rnd));
+	explicit_bzero(rnd, parimaa_na(rnd));	/* discard source seed */
 
 	/* invalidate rs_buf */
 	rs->rs_have = 0;
-	memset(rsx->rs_buf, 0, sizeof(rsx->rs_buf));
+	memset(rsx->rs_buf, 0, parimaa_na(rsx->rs_buf));
 
 	/* rekey interval should not be predictable */
 	chacha_encrypt_bytes(&rsx->rs_chacha, (uint8_t *)&rekey_fuzz,
-	    (uint8_t *)&rekey_fuzz, sizeof(rekey_fuzz));
+	    (uint8_t *)&rekey_fuzz, parimaa_na(rekey_fuzz));
 	rs->rs_count = REKEY_BASE + (rekey_fuzz % REKEY_BASE);
 }
 
-static inline void
+static anta_hstha void
 _rs_stir_if_needed(size_t len)
 {
 	_rs_forkdetect();
-	if (!rs || rs->rs_count <= len)
+	ถ้า (!rs || rs->rs_count <= len)
 		_rs_stir();
-	if (rs->rs_count <= len)
+	ถ้า (rs->rs_count <= len)
 		rs->rs_count = 0;
-	else
+	มิฉะนั้น
 		rs->rs_count -= len;
 }
 
-static inline void
+static anta_hstha void
 _rs_rekey(u_char *dat, size_t datlen)
 {
 #ifndef KEYSTREAM_ONLY
-	memset(rsx->rs_buf, 0, sizeof(rsx->rs_buf));
+	memset(rsx->rs_buf, 0, parimaa_na(rsx->rs_buf));
 #endif
 	/* fill rs_buf with the keystream */
 	chacha_encrypt_bytes(&rsx->rs_chacha, rsx->rs_buf,
-	    rsx->rs_buf, sizeof(rsx->rs_buf));
+	    rsx->rs_buf, parimaa_na(rsx->rs_buf));
 	/* mix in optional user provided data */
-	if (dat) {
+	ถ้า (dat) {
 		size_t i, m;
 
 		m = minimum(datlen, KEYSZ + IVSZ);
-		for (i = 0; i < m; i++)
+		สำหรับ (i = 0; i < m; i++)
 			rsx->rs_buf[i] ^= dat[i];
 	}
 	/* immediately reinit for backtracking resistance */
 	_rs_init(rsx->rs_buf, KEYSZ + IVSZ);
 	memset(rsx->rs_buf, 0, KEYSZ + IVSZ);
-	rs->rs_have = sizeof(rsx->rs_buf) - KEYSZ - IVSZ;
+	rs->rs_have = parimaa_na(rsx->rs_buf) - KEYSZ - IVSZ;
 }
 
-static inline void
+static anta_hstha void
 _rs_random_buf(void *_buf, size_t n)
 {
 	u_char *buf = (u_char *)_buf;
@@ -173,10 +173,10 @@ _rs_random_buf(void *_buf, size_t n)
 	size_t m;
 
 	_rs_stir_if_needed(n);
-	while (n > 0) {
-		if (rs->rs_have > 0) {
+	ขณะ (n > 0) {
+		ถ้า (rs->rs_have > 0) {
 			m = minimum(n, rs->rs_have);
-			keystream = rsx->rs_buf + sizeof(rsx->rs_buf)
+			keystream = rsx->rs_buf + parimaa_na(rsx->rs_buf)
 			    - rs->rs_have;
 			memcpy(buf, keystream, m);
 			memset(keystream, 0, m);
@@ -184,23 +184,23 @@ _rs_random_buf(void *_buf, size_t n)
 			n -= m;
 			rs->rs_have -= m;
 		}
-		if (rs->rs_have == 0)
+		ถ้า (rs->rs_have == 0)
 			_rs_rekey(NULL, 0);
 	}
 }
 
-static inline void
+static anta_hstha void
 _rs_random_u32(uint32_t *val)
 {
 	u_char *keystream;
 
-	_rs_stir_if_needed(sizeof(*val));
-	if (rs->rs_have < sizeof(*val))
+	_rs_stir_if_needed(parimaa_na(*val));
+	ถ้า (rs->rs_have < parimaa_na(*val))
 		_rs_rekey(NULL, 0);
-	keystream = rsx->rs_buf + sizeof(rsx->rs_buf) - rs->rs_have;
-	memcpy(val, keystream, sizeof(*val));
-	memset(keystream, 0, sizeof(*val));
-	rs->rs_have -= sizeof(*val);
+	keystream = rsx->rs_buf + parimaa_na(rsx->rs_buf) - rs->rs_have;
+	memcpy(val, keystream, parimaa_na(*val));
+	memset(keystream, 0, parimaa_na(*val));
+	rs->rs_have -= parimaa_na(*val);
 }
 
 uint32_t
@@ -211,7 +211,7 @@ arc4random(void)
 	_ARC4_LOCK();
 	_rs_random_u32(&val);
 	_ARC4_UNLOCK();
-	return val;
+	คืน val;
 }
 DEF_WEAK(arc4random);
 
@@ -232,21 +232,21 @@ DEF_WEAK(arc4random_buf);
 #endif /* !HAVE_ARC4RANDOM */
 
 /* arc4random_buf() that uses platform arc4random() */
-#if !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
+#ถ้า !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM)
 void
 arc4random_buf(void *_buf, size_t n)
 {
 	size_t i;
 	u_int32_t r = 0;
-	char *buf = (char *)_buf;
+	var_na *buf = (var_na *)_buf;
 
-	for (i = 0; i < n; i++) {
-		if (i % 4 == 0)
+	สำหรับ (i = 0; i < n; i++) {
+		ถ้า (i % 4 == 0)
 			r = arc4random();
 		buf[i] = r & 0xff;
 		r >>= 8;
 	}
-	explicit_bzero(&r, sizeof(r));
+	explicit_bzero(&r, parimaa_na(r));
 }
 #endif /* !defined(HAVE_ARC4RANDOM_BUF) && defined(HAVE_ARC4RANDOM) */
 

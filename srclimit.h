@@ -13,14 +13,14 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-struct xaddr;
+sa_nracanaa xaddr;
 
-struct per_source_penalty;
+sa_nracanaa per_source_penalty;
 
-void	srclimit_init(int, int, int, int,
-    struct per_source_penalty *, const char *);
-int	srclimit_check_allow(int, int);
-void	srclimit_done(int);
+void	srclimit_init(จำนวนเต็ม, จำนวนเต็ม, จำนวนเต็ม, จำนวนเต็ม,
+    sa_nracanaa per_source_penalty *, const var_na *);
+จำนวนเต็ม	srclimit_check_allow(จำนวนเต็ม, จำนวนเต็ม);
+void	srclimit_done(จำนวนเต็ม);
 
 #define SRCLIMIT_PENALTY_NONE			0
 #define SRCLIMIT_PENALTY_CRASH			1
@@ -37,6 +37,6 @@ void	srclimit_done(int);
 #define EXIT_CONFIG_REFUSED	6	/* sshd_config RefuseConnection */
 #define EXIT_INVALID_USER	7	/* invalid user supplied */
 
-void	srclimit_penalise(struct xaddr *, int);
-int	srclimit_penalty_check_allow(int, const char **);
+void	srclimit_penalise(sa_nracanaa xaddr *, จำนวนเต็ม);
+จำนวนเต็ม	srclimit_penalty_check_allow(จำนวนเต็ม, const var_na **);
 void	srclimit_penalty_info(void);

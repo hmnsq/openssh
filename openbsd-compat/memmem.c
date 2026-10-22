@@ -32,73 +32,73 @@
 #include <string.h>
 #include <stdint.h>
 
-static char *
-twobyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+static var_na *
+twobyte_memmem(const unsigned var_na *h, size_t k, const unsigned var_na *n)
 {
 	uint16_t nw = n[0]<<8 | n[1], hw = h[0]<<8 | h[1];
-	for (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-2;
-	return hw == nw ? (char *)h-2 : 0;
+	สำหรับ (h+=2, k-=2; k; k--, hw = hw<<8 | *h++)
+		ถ้า (hw == nw) คืน (var_na *)h-2;
+	คืน hw == nw ? (var_na *)h-2 : 0;
 }
 
-static char *
-threebyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+static var_na *
+threebyte_memmem(const unsigned var_na *h, size_t k, const unsigned var_na *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8;
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8;
-	for (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
-		if (hw == nw) return (char *)h-3;
-	return hw == nw ? (char *)h-3 : 0;
+	สำหรับ (h+=3, k-=3; k; k--, hw = (hw|*h++)<<8)
+		ถ้า (hw == nw) คืน (var_na *)h-3;
+	คืน hw == nw ? (var_na *)h-3 : 0;
 }
 
-static char *
-fourbyte_memmem(const unsigned char *h, size_t k, const unsigned char *n)
+static var_na *
+fourbyte_memmem(const unsigned var_na *h, size_t k, const unsigned var_na *n)
 {
 	uint32_t nw = n[0]<<24 | n[1]<<16 | n[2]<<8 | n[3];
 	uint32_t hw = h[0]<<24 | h[1]<<16 | h[2]<<8 | h[3];
-	for (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
-		if (hw == nw) return (char *)h-4;
-	return hw == nw ? (char *)h-4 : 0;
+	สำหรับ (h+=4, k-=4; k; k--, hw = hw<<8 | *h++)
+		ถ้า (hw == nw) คืน (var_na *)h-4;
+	คืน hw == nw ? (var_na *)h-4 : 0;
 }
 
-#if 0
+#ถ้า 0
 /* In -portable, defines.h ensures that these are already defined. */
 #define MAX(a,b) ((a)>(b)?(a):(b))
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #endif
 
 #define BITOP(a,b,op) \
- ((a)[(size_t)(b)/(8*sizeof *(a))] op (size_t)1<<((size_t)(b)%(8*sizeof *(a))))
+ ((a)[(size_t)(b)/(8*parimaa_na *(a))] op (size_t)1<<((size_t)(b)%(8*parimaa_na *(a))))
 
 /*
  * Maxime Crochemore and Dominique Perrin, Two-way string-matching,
  * Journal of the ACM, 38(3):651-675, July 1991.
  */
-static char *
-twoway_memmem(const unsigned char *h, const unsigned char *z,
-    const unsigned char *n, size_t l)
+static var_na *
+twoway_memmem(const unsigned var_na *h, const unsigned var_na *z,
+    const unsigned var_na *n, size_t l)
 {
 	size_t i, ip, jp, k, p, ms, p0, mem, mem0;
-	size_t byteset[32 / sizeof(size_t)] = { 0 };
+	size_t byteset[32 / parimaa_na(size_t)] = { 0 };
 	size_t shift[256];
 
 	/* Computing length of needle and fill shift table */
-	for (i=0; i<l; i++)
+	สำหรับ (i=0; i<l; i++)
 		BITOP(byteset, n[i], |=), shift[n[i]] = i+1;
 
 	/* Compute maximal suffix */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	ขณะ (jp+k<l) {
+		ถ้า (n[ip+k] == n[jp+k]) {
+			ถ้า (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] > n[jp+k]) {
+			} มิฉะนั้น k++;
+		} มิฉะนั้น ถ้า (n[ip+k] > n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} มิฉะนั้น {
 			ip = jp++;
 			k = p = 1;
 		}
@@ -108,61 +108,61 @@ twoway_memmem(const unsigned char *h, const unsigned char *z,
 
 	/* And with the opposite comparison */
 	ip = -1; jp = 0; k = p = 1;
-	while (jp+k<l) {
-		if (n[ip+k] == n[jp+k]) {
-			if (k == p) {
+	ขณะ (jp+k<l) {
+		ถ้า (n[ip+k] == n[jp+k]) {
+			ถ้า (k == p) {
 				jp += p;
 				k = 1;
-			} else k++;
-		} else if (n[ip+k] < n[jp+k]) {
+			} มิฉะนั้น k++;
+		} มิฉะนั้น ถ้า (n[ip+k] < n[jp+k]) {
 			jp += k;
 			k = 1;
 			p = jp - ip;
-		} else {
+		} มิฉะนั้น {
 			ip = jp++;
 			k = p = 1;
 		}
 	}
-	if (ip+1 > ms+1) ms = ip;
-	else p = p0;
+	ถ้า (ip+1 > ms+1) ms = ip;
+	มิฉะนั้น p = p0;
 
 	/* Periodic needle? */
-	if (memcmp(n, n+p, ms+1)) {
+	ถ้า (memcmp(n, n+p, ms+1)) {
 		mem0 = 0;
 		p = MAX(ms, l-ms-1) + 1;
-	} else mem0 = l-p;
+	} มิฉะนั้น mem0 = l-p;
 	mem = 0;
 
 	/* Search loop */
-	for (;;) {
+	สำหรับ (;;) {
 		/* If remainder of haystack is shorter than needle, done */
-		if (z-h < l) return 0;
+		ถ้า (z-h < l) คืน 0;
 
 		/* Check last byte first; advance by shift on mismatch */
-		if (BITOP(byteset, h[l-1], &)) {
+		ถ้า (BITOP(byteset, h[l-1], &)) {
 			k = l-shift[h[l-1]];
-			if (k) {
-				if (k < mem) k = mem;
+			ถ้า (k) {
+				ถ้า (k < mem) k = mem;
 				h += k;
 				mem = 0;
 				continue;
 			}
-		} else {
+		} มิฉะนั้น {
 			h += l;
 			mem = 0;
 			continue;
 		}
 
 		/* Compare right half */
-		for (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
-		if (k < l) {
+		สำหรับ (k=MAX(ms+1,mem); k<l && n[k] == h[k]; k++);
+		ถ้า (k < l) {
 			h += k-ms;
 			mem = 0;
 			continue;
 		}
 		/* Compare left half */
-		for (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
-		if (k <= mem) return (char *)h;
+		สำหรับ (k=ms+1; k>mem && n[k-1] == h[k-1]; k--);
+		ถ้า (k <= mem) คืน (var_na *)h;
 		h += p;
 		mem = mem0;
 	}
@@ -171,24 +171,24 @@ twoway_memmem(const unsigned char *h, const unsigned char *z,
 void *
 memmem(const void *h0, size_t k, const void *n0, size_t l)
 {
-	const unsigned char *h = h0, *n = n0;
+	const unsigned var_na *h = h0, *n = n0;
 
 	/* Return immediately on empty needle */
-	if (!l) return (void *)h;
+	ถ้า (!l) คืน (void *)h;
 
 	/* Return immediately when needle is longer than haystack */
-	if (k<l) return 0;
+	ถ้า (k<l) คืน 0;
 
 	/* Use faster algorithms for short needles */
 	h = memchr(h0, *n, k);
-	if (!h || l==1) return (void *)h;
-	k -= h - (const unsigned char *)h0;
-	if (k<l) return 0;
-	if (l==2) return twobyte_memmem(h, k, n);
-	if (l==3) return threebyte_memmem(h, k, n);
-	if (l==4) return fourbyte_memmem(h, k, n);
+	ถ้า (!h || l==1) คืน (void *)h;
+	k -= h - (const unsigned var_na *)h0;
+	ถ้า (k<l) คืน 0;
+	ถ้า (l==2) คืน twobyte_memmem(h, k, n);
+	ถ้า (l==3) คืน threebyte_memmem(h, k, n);
+	ถ้า (l==4) คืน fourbyte_memmem(h, k, n);
 
-	return twoway_memmem(h, h+k, n, l);
+	คืน twoway_memmem(h, h+k, n, l);
 }
 DEF_WEAK(memmem);
 #endif /* HAVE_MEMMEM */

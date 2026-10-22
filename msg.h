@@ -25,8 +25,8 @@
 #ifndef SSH_MSG_H
 #define SSH_MSG_H
 
-struct sshbuf;
-int	 ssh_msg_send(int, u_char, struct sshbuf *);
-int	 ssh_msg_recv(int, struct sshbuf *);
+sa_nracanaa sshbuf;
+จำนวนเต็ม	 ssh_msg_send(จำนวนเต็ม, u_char, sa_nracanaa sshbuf *);
+จำนวนเต็ม	 ssh_msg_recv(จำนวนเต็ม, sa_nracanaa sshbuf *);
 
 #endif

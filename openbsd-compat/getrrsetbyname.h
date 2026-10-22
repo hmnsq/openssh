@@ -85,25 +85,25 @@
 # define ERRSET_NODATA		5
 #endif
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+sa_nracanaa rdatainfo {
+	unsigned จำนวนเต็ม		rdi_length;	/* length of data */
+	unsigned var_na		*rdi_data;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+sa_nracanaa rrsetinfo {
+	unsigned จำนวนเต็ม		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned จำนวนเต็ม		rri_rdclass;	/* class number */
+	unsigned จำนวนเต็ม		rri_rdtype;	/* RR type number */
+	unsigned จำนวนเต็ม		rri_ttl;	/* time to live */
+	unsigned จำนวนเต็ม		rri_nrdatas;	/* size of rdatas array */
+	unsigned จำนวนเต็ม		rri_nsigs;	/* size of sigs array */
+	var_na			*rri_name;	/* canonical name */
+	sa_nracanaa rdatainfo	*rri_rdatas;	/* individual records */
+	sa_nracanaa rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+จำนวนเต็ม		getrrsetbyname(const var_na *, unsigned จำนวนเต็ม, unsigned จำนวนเต็ม, unsigned จำนวนเต็ม, sa_nracanaa rrsetinfo **);
+void		freerrset(sa_nracanaa rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */
 

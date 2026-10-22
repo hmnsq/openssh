@@ -54,20 +54,20 @@
 
 /* import */
 extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_hostbased;
+extern sa_nracanaa authmethod_cfg methodcfg_hostbased;
 
-static int
-userauth_hostbased(struct ssh *ssh, const char *method)
+static จำนวนเต็ม
+userauth_hostbased(sa_nracanaa ssh *ssh, const var_na *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct sshbuf *keyblob = NULL, *b = NULL;
-	struct sshkey *key = NULL;
-	char *pkalg, *cuser, *chost;
+	sa_nracanaa sshbuf *keyblob = NULL, *b = NULL;
+	sa_nracanaa sshkey *key = NULL;
+	var_na *pkalg, *cuser, *chost;
 	u_char *sig;
 	size_t alen, slen;
-	int r, pktype, authenticated = 0;
+	จำนวนเต็ม r, pktype, authenticated = 0;
 
-	if ((r = sshpkt_get_cstring(ssh, &pkalg, &alen)) != 0 ||
+	ถ้า ((r = sshpkt_get_cstring(ssh, &pkalg, &alen)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &chost, NULL)) != 0 ||
 	    (r = sshpkt_get_cstring(ssh, &cuser, NULL)) != 0 ||
@@ -81,31 +81,31 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	sshbuf_dump_data(sig, slen, stderr);
 #endif
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC) {
+	ถ้า (pktype == KEY_UNSPEC) {
 		/* this is perfectly legal */
 		logit_f("unsupported public key algorithm: %s",
 		    pkalg);
 		goto done;
 	}
-	if (match_pattern_list(pkalg,
+	ถ้า (match_pattern_list(pkalg,
 	    options.hostbased_accepted_algos, 0) != 1) {
 		logit_f("signature algorithm %s not in "
 		    "HostbasedAcceptedAlgorithms", pkalg);
 		goto done;
 	}
-	if ((b = sshbuf_fromb(keyblob)) == NULL)
+	ถ้า ((b = sshbuf_fromb(keyblob)) == NULL)
 		fatal_f("sshbuf_fromb failed");
 	switch ((r = sshkey_fromb_allowlist(b, &key,
 	    options.hostbased_accepted_algos, options.ca_sign_algorithms))) {
-	case 0:
+	pak_sa 0:
 		/* ok */
-		break;
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
+		bha_nga;
+	pak_sa SSH_ERR_KEY_ALG_UNSUPPORTED:
 		/* This shouldn't happen unless the client is being weird */
 		logit_f("key algorithm differs from signature algorithm %s and "
 		    "is not in HostbasedAcceptedAlgorithms", pkalg);
 		goto done;
-	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
+	pak_sa SSH_ERR_SIGN_ALG_UNSUPPORTED:
 		logit_fr(r, "certificate signature algorithm not in "
 		    "CASignatureAlgorithms");
 		goto done;
@@ -116,27 +116,27 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 	sshbuf_free(b);
 	b = NULL;
 
-	if (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
+	ถ้า (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
 	    sshkey_ecdsa_nid_from_name(pkalg) != key->ecdsa_nid)) {
 		error_f("key type mismatch for decoded key "
 		    "(received %s, expected %s)", sshkey_ssh_name(key), pkalg);
 		goto done;
 	}
-	if ((r = sshkey_check_rsa_length(key,
+	ถ้า ((r = sshkey_check_rsa_length(key,
 	    options.required_rsa_size)) != 0) {
 		logit_r(r, "refusing %s key", sshkey_type(key));
 		goto done;
 	}
 
-	if (!authctxt->valid || authctxt->user == NULL) {
+	ถ้า (!authctxt->valid || authctxt->user == NULL) {
 		debug2_f("disabled because of invalid user");
 		goto done;
 	}
 
-	if ((b = sshbuf_new()) == NULL)
+	ถ้า ((b = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	/* reconstruct packet */
-	if ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
+	ถ้า ((r = sshbuf_put_stringb(b, ssh->kex->session_id)) != 0 ||
 	    (r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->user)) != 0 ||
 	    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
@@ -155,7 +155,7 @@ userauth_hostbased(struct ssh *ssh, const char *method)
 
 	/* test for allowed key and correct signature */
 	authenticated = 0;
-	if (mm_hostbased_key_allowed(ssh, authctxt->pw, cuser,
+	ถ้า (mm_hostbased_key_allowed(ssh, authctxt->pw, cuser,
 	    chost, key) &&
 	    mm_sshkey_verify(key, sig, slen,
 	    sshbuf_ptr(b), sshbuf_len(b), pkalg, ssh->compat, NULL) == 0)
@@ -171,21 +171,21 @@ done:
 	free(cuser);
 	free(chost);
 	free(sig);
-	return authenticated;
+	คืน authenticated;
 }
 
 /* return 1 if given hostkey is allowed */
-int
-hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
-    const char *cuser, char *chost, struct sshkey *key)
+จำนวนเต็ม
+hostbased_key_allowed(sa_nracanaa ssh *ssh, sa_nracanaa passwd *pw,
+    const var_na *cuser, var_na *chost, sa_nracanaa sshkey *key)
 {
-	const char *resolvedname, *ipaddr, *lookup, *reason;
+	const var_na *resolvedname, *ipaddr, *lookup, *reason;
 	HostStatus host_status;
-	int len;
-	char *fp;
+	จำนวนเต็ม len;
+	var_na *fp;
 
-	if (auth_key_is_revoked(key))
-		return 0;
+	ถ้า (auth_key_is_revoked(key))
+		คืน 0;
 
 	resolvedname = auth_get_canonical_hostname(ssh, options.use_dns);
 	ipaddr = ssh_remote_ipaddr(ssh);
@@ -193,36 +193,36 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 	debug2_f("chost %s resolvedname %s ipaddr %s",
 	    chost, resolvedname, ipaddr);
 
-	if (((len = strlen(chost)) > 0) && chost[len - 1] == '.') {
+	ถ้า (((len = strlen(chost)) > 0) && chost[len - 1] == '.') {
 		debug2("stripping trailing dot from chost %s", chost);
 		chost[len - 1] = '\0';
 	}
 
-	if (options.hostbased_uses_name_from_packet_only) {
-		if (auth_rhosts2(pw, cuser, chost, chost) == 0) {
+	ถ้า (options.hostbased_uses_name_from_packet_only) {
+		ถ้า (auth_rhosts2(pw, cuser, chost, chost) == 0) {
 			debug2_f("auth_rhosts2 refused user \"%.100s\" "
 			    "host \"%.100s\" (from packet)", cuser, chost);
-			return 0;
+			คืน 0;
 		}
 		lookup = chost;
-	} else {
-		if (strcasecmp(resolvedname, chost) != 0)
+	} มิฉะนั้น {
+		ถ้า (strcasecmp(resolvedname, chost) != 0)
 			logit("userauth_hostbased mismatch: "
 			    "client sends %s, but we resolve %s to %s",
 			    chost, ipaddr, resolvedname);
-		if (auth_rhosts2(pw, cuser, resolvedname, ipaddr) == 0) {
+		ถ้า (auth_rhosts2(pw, cuser, resolvedname, ipaddr) == 0) {
 			debug2_f("auth_rhosts2 refused "
 			    "user \"%.100s\" host \"%.100s\" addr \"%.100s\"",
 			    cuser, resolvedname, ipaddr);
-			return 0;
+			คืน 0;
 		}
 		lookup = resolvedname;
 	}
 	debug2_f("access allowed by auth_rhosts2");
 
-	if (sshkey_is_cert(key) && sshkey_cert_check_host(key, lookup,
+	ถ้า (sshkey_is_cert(key) && sshkey_cert_check_host(key, lookup,
 	     options.ca_sign_algorithms, &reason) != 0) {
-		if ((fp = sshkey_fingerprint(key->cert->signature_key,
+		ถ้า ((fp = sshkey_fingerprint(key->cert->signature_key,
 		    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 			fatal_f("sshkey_fingerprint fail");
 		error("Refusing certificate ID \"%s\" serial=%llu signed by "
@@ -233,7 +233,7 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 		    key->cert->key_id, (unsigned long long)key->cert->serial,
 		    reason);
 		free(fp);
-		return 0;
+		คืน 0;
 	}
 
 	host_status = check_key_in_hostfiles(pw, key, lookup,
@@ -241,24 +241,24 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 	    options.ignore_user_known_hosts ? NULL : _PATH_SSH_USER_HOSTFILE);
 
 	/* backward compat if no key has been found. */
-	if (host_status == HOST_NEW) {
+	ถ้า (host_status == HOST_NEW) {
 		host_status = check_key_in_hostfiles(pw, key, lookup,
 		    _PATH_SSH_SYSTEM_HOSTFILE2,
 		    options.ignore_user_known_hosts ? NULL :
 		    _PATH_SSH_USER_HOSTFILE2);
 	}
 
-	if (host_status == HOST_OK) {
-		if (sshkey_is_cert(key)) {
-			if ((fp = sshkey_fingerprint(key->cert->signature_key,
+	ถ้า (host_status == HOST_OK) {
+		ถ้า (sshkey_is_cert(key)) {
+			ถ้า ((fp = sshkey_fingerprint(key->cert->signature_key,
 			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted certificate ID \"%s\" signed by "
 			    "%s CA %s from %s@%s", key->cert->key_id,
 			    sshkey_type(key->cert->signature_key), fp,
 			    cuser, lookup);
-		} else {
-			if ((fp = sshkey_fingerprint(key,
+		} มิฉะนั้น {
+			ถ้า ((fp = sshkey_fingerprint(key,
 			    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
 				fatal_f("sshkey_fingerprint fail");
 			verbose("Accepted %s public key %s from %s@%s",
@@ -267,7 +267,7 @@ hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
 		free(fp);
 	}
 
-	return (host_status == HOST_OK);
+	คืน (host_status == HOST_OK);
 }
 
 Authmethod method_hostbased = {

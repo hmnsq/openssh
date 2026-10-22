@@ -33,29 +33,29 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+จำนวนเต็ม
+หลัก(จำนวนเต็ม argc, var_na **argv)
 {
-	const char *base;
-	const char *tmpdir;
-	char template[PATH_MAX];
-	int r;
-	char *dir;
+	const var_na *base;
+	const var_na *tmpdir;
+	var_na template[PATH_MAX];
+	จำนวนเต็ม r;
+	var_na *dir;
 
-	if (argc != 2)
+	ถ้า (argc != 2)
 		usage();
 	base = argv[1];
 
-	if ((tmpdir = getenv("TMPDIR")) == NULL)
+	ถ้า ((tmpdir = getenv("TMPDIR")) == NULL)
 		tmpdir = "/tmp";
-	r = snprintf(template, sizeof(template), "%s/%s", tmpdir, base);
-	if (r < 0 || (size_t)r >= sizeof(template))
+	r = snprintf(template, parimaa_na(template), "%s/%s", tmpdir, base);
+	ถ้า (r < 0 || (size_t)r >= parimaa_na(template))
 		fatal("template string too long");
 	dir = mkdtemp(template);
-	if (dir == NULL) {
+	ถ้า (dir == NULL) {
 		perror("mkdtemp");
 		exit(1);
 	}
 	puts(dir);
-	return 0;
+	คืน 0;
 }

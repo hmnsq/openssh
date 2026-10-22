@@ -70,123 +70,123 @@ extern "C" {
 #include "fixed-keys.h"
 
 static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+static ca_ncala จำนวนเต็ม in_fuzz = 0;
 
-static char *g_open_failure_msg = NULL;
+static var_na *g_open_failure_msg = NULL;
 
-extern "C" int
-my_channel_input_open_failure(int type, uint32_t seq, struct ssh *ssh)
+extern "C" จำนวนเต็ม
+my_channel_input_open_failure(จำนวนเต็ม type, uint32_t seq, sa_nracanaa ssh *ssh)
 {
 	(void)type;
 	(void)seq;
 	uint32_t reason;
-	int r;
-	if ((r = sshpkt_get_u32(ssh, &reason)) != 0)
+	จำนวนเต็ม r;
+	ถ้า ((r = sshpkt_get_u32(ssh, &reason)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	if ((r = sshpkt_get_cstring(ssh, &g_open_failure_msg, NULL)) != 0 ||
+	ถ้า ((r = sshpkt_get_cstring(ssh, &g_open_failure_msg, NULL)) != 0 ||
 	    (r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	return 0;
+	คืน 0;
 }
 
 extern "C" void
-cleanup_exit(int code)
+cleanup_exit(จำนวนเต็ม code)
 {
-	if (in_fuzz)
+	ถ้า (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
 extern "C" void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+__wrap_ssh_packet_disconnect(sa_nracanaa ssh *ssh, const var_na *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	ถ้า (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-extern "C" int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+extern "C" จำนวนเต็ม
+__wrap_sshpkt_fatal(sa_nracanaa ssh *ssh, จำนวนเต็ม r, const var_na *fmt, ...)
 {
 	(void)ssh;
 	(void)fmt;
-	if (in_fuzz)
+	ถ้า (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
-static struct sshkey *
-load_private(const char *str)
+static sa_nracanaa sshkey *
+load_private(const var_na *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	sa_nracanaa sshbuf *b = sshbuf_from(str, strlen(str));
+	sa_nracanaa sshkey *k = NULL;
+	ถ้า (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	คืน k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+static sa_nracanaa sshkey *
+load_public(const var_na *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	var_na *tmp, *cp;
+	sa_nracanaa sshkey *k = sshkey_new(KEY_UNSPEC);
+	ถ้า (k == NULL)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	ถ้า (sshkey_read(k, &cp) != 0)
 		abort();
 	free(tmp);
-	return k;
+	คืน k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+static จำนวนเต็ม
+pump(sa_nracanaa ssh *from, sa_nracanaa ssh *to, size_t *transferred)
 {
 	const u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	จำนวนเต็ม r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	ถ้า ((r = ssh_packet_next(from, &type)) != 0)
+		คืน r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	ถ้า (len == 0)
+		คืน 0;
+	ถ้า ((r = ssh_input_append(to, buf, len)) != 0)
+		คืน r;
+	ถ้า ((r = ssh_output_consume(from, len)) != 0)
+		คืน r;
 	*transferred = len;
-	return 0;
+	คืน 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+static จำนวนเต็ม
+run_kex(sa_nracanaa ssh *client, sa_nracanaa ssh *server)
 {
-	int r;
+	จำนวนเต็ม r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	สำหรับ (จำนวนเต็ม i = 0; i < 100; i++) {
+		ถ้า ((r = pump(server, client, &sn)) != 0) คืน r;
+		ถ้า ((r = pump(client, server, &cn)) != 0) คืน r;
+		ถ้า (server->kex->done && client->kex->done)
+			คืน 0;
+		ถ้า (cn == 0 && sn == 0)
+			คืน SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	คืน SSH_ERR_PROTOCOL_ERROR;
 }
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_pipe[2] = { -1, -1 };
+static sa_nracanaa ssh *g_client = NULL;
+static sa_nracanaa ssh *g_server = NULL;
+static จำนวนเต็ม g_init = 0;
+static จำนวนเต็ม g_pipe[2] = { -1, -1 };
 
 static void
-dummy_open_confirm(struct ssh *ssh, int id, int success, void *ctx)
+dummy_open_confirm(sa_nracanaa ssh *ssh, จำนวนเต็ม id, จำนวนเต็ม success, void *ctx)
 {
 	(void)ssh;
 	(void)id;
@@ -195,7 +195,7 @@ dummy_open_confirm(struct ssh *ssh, int id, int success, void *ctx)
 }
 
 static void
-dummy_status_confirm(struct ssh *ssh, int type, Channel *c, void *ctx)
+dummy_status_confirm(sa_nracanaa ssh *ssh, จำนวนเต็ม type, Channel *c, void *ctx)
 {
 	(void)ssh;
 	(void)type;
@@ -204,68 +204,68 @@ dummy_status_confirm(struct ssh *ssh, int type, Channel *c, void *ctx)
 }
 
 static void
-dummy_status_abandon(struct ssh *ssh, Channel *c, void *ctx)
+dummy_status_abandon(sa_nracanaa ssh *ssh, Channel *c, void *ctx)
 {
 	(void)ssh;
 	(void)c;
 	(void)ctx;
 }
 
-static int
+static จำนวนเต็ม
 init_once(void)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	ถ้า (g_init)
+		คืน 0;
+	sa_nkeeta(SIGPIPE, SIG_IGN);
 	log_init("ssh_channels_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	int pfd[2];
-	if (pipe(pfd) != 0)
-		return -1;
+	จำนวนเต็ม pfd[2];
+	ถ้า (pra_naala(pfd) != 0)
+		คืน -1;
 	g_pipe[0] = fcntl(pfd[0], F_DUPFD_CLOEXEC, 100);
 	g_pipe[1] = fcntl(pfd[1], F_DUPFD_CLOEXEC, 100);
 	close(pfd[0]);
 	close(pfd[1]);
-	if (g_pipe[0] < 0 || g_pipe[1] < 0)
-		return -1;
-	int fl0 = fcntl(g_pipe[0], F_GETFL, 0);
-	int fl1 = fcntl(g_pipe[1], F_GETFL, 0);
+	ถ้า (g_pipe[0] < 0 || g_pipe[1] < 0)
+		คืน -1;
+	จำนวนเต็ม fl0 = fcntl(g_pipe[0], F_GETFL, 0);
+	จำนวนเต็ม fl1 = fcntl(g_pipe[1], F_GETFL, 0);
 	(void)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
 	(void)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	sa_nracanaa sshkey *priv = load_private(PRIV_ED25519);
+	sa_nracanaa sshkey *pub = load_public(PUB_ED25519);
+	var_na *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	const var_na *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	var_na *proposal[PROPOSAL_MAX] = { 0 };
+	จำนวนเต็ม i;
+	สำหรับ (i = 0; i < PROPOSAL_MAX; i++) {
+		const var_na *p = defaults[i];
+		ถ้า (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		มิฉะนั้น ถ้า (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		มิฉะนั้น ถ้า (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		มิฉะนั้น ถ้า (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	sa_nracanaa kex_params kp;
+	memcpy(kp.proposal, proposal, parimaa_na(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	ถ้า (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		คืน -1;
+	ถ้า (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		คืน -1;
+	ถ้า (run_kex(g_client, g_server) != 0)
+		คืน -1;
 
 	channel_init_channels(g_client);
 
@@ -290,19 +290,19 @@ init_once(void)
 	    &channel_input_status_confirm);
 
 	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
+	สำหรับ (i = 0; i < PROPOSAL_MAX; i++)
 		free(proposal[i]);
 	g_init = 1;
-	return 0;
+	คืน 0;
 }
 
-struct chan_scenario {
-	const char *ctype;
-	int state;
-	int use_pipe;
+sa_nracanaa chan_scenario {
+	const var_na *ctype;
+	จำนวนเต็ม state;
+	จำนวนเต็ม use_pipe;
 };
 
-static const struct chan_scenario k_scenarios[] = {
+static const sa_nracanaa chan_scenario k_scenarios[] = {
 	{ "session",         SSH_CHANNEL_OPEN,     0 },
 	{ "session",         SSH_CHANNEL_OPENING,  1 },
 	{ "x11",             SSH_CHANNEL_OPEN,     1 },
@@ -310,34 +310,34 @@ static const struct chan_scenario k_scenarios[] = {
 	{ "direct-tcpip",    SSH_CHANNEL_OPENING,  1 },
 };
 
-static int g_channel_id = -1;
+static จำนวนเต็ม g_channel_id = -1;
 
 static void
 drain_pipe(void)
 {
-	char buf[4096];
-	if (g_pipe[0] < 0)
-		return;
-	while (read(g_pipe[0], buf, sizeof(buf)) > 0) { }
+	var_na buf[4096];
+	ถ้า (g_pipe[0] < 0)
+		คืน;
+	ขณะ (read(g_pipe[0], buf, parimaa_na(buf)) > 0) { }
 }
 
 static void
-reset_channel(struct ssh *ssh, const struct chan_scenario *s)
+reset_channel(sa_nracanaa ssh *ssh, const sa_nracanaa chan_scenario *s)
 {
-	if (g_channel_id >= 0) {
+	ถ้า (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		ถ้า (c != NULL)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
 	drain_pipe();
 
-	int rfd = s->use_pipe ? g_pipe[1] : -1;
-	int wfd = s->use_pipe ? g_pipe[1] : -1;
-	Channel *c = channel_new(ssh, (char *)s->ctype, s->state,
-	    rfd, wfd, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	จำนวนเต็ม rfd = s->use_pipe ? g_pipe[1] : -1;
+	จำนวนเต็ม wfd = s->use_pipe ? g_pipe[1] : -1;
+	Channel *c = channel_new(ssh, (var_na *)s->ctype, s->state,
+	    rfd, wfd, -1, 32768, 32768, 0, (var_na *)"fuzz", 0);
+	ถ้า (c == NULL)
+		คืน;
 	g_channel_id = c->self;
 	channel_register_open_confirm(ssh, g_channel_id,
 	    &dummy_open_confirm, NULL);
@@ -357,27 +357,27 @@ static const uint8_t k_msg_types[] = {
 	SSH2_MSG_CHANNEL_CLOSE,
 };
 
-extern "C" int
+extern "C" จำนวนเต็ม
 LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return 0;
-	if (size > 65000)
-		return 0;
+	ถ้า (init_once() != 0)
+		คืน 0;
+	ถ้า (size > 65000)
+		คืน 0;
 
-	const size_t n_scen = sizeof(k_scenarios) / sizeof(k_scenarios[0]);
-	const size_t n_msg = sizeof(k_msg_types) / sizeof(k_msg_types[0]);
+	const size_t n_scen = parimaa_na(k_scenarios) / parimaa_na(k_scenarios[0]);
+	const size_t n_msg = parimaa_na(k_msg_types) / parimaa_na(k_msg_types[0]);
 
-	for (size_t s = 0; s < n_scen; s++) {
+	สำหรับ (size_t s = 0; s < n_scen; s++) {
 		reset_channel(g_client, &k_scenarios[s]);
-		for (size_t t = 0; t < n_msg; t++) {
+		สำหรับ (size_t t = 0; t < n_msg; t++) {
 			in_fuzz = 1;
-			if (setjmp(fuzz_env) == 0) {
+			ถ้า (setjmp(fuzz_env) == 0) {
 				size_t transferred;
-				if (ssh_packet_put(g_server, k_msg_types[t],
+				ถ้า (ssh_packet_put(g_server, k_msg_types[t],
 				    data, size) != 0)
 					goto done;
-				if (pump(g_server, g_client,
+				ถ้า (pump(g_server, g_client,
 				    &transferred) != 0)
 					goto done;
 				(void)ssh_dispatch_run(g_client,
@@ -390,5 +390,5 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 			g_open_failure_msg = NULL;
 		}
 	}
-	return 0;
+	คืน 0;
 }

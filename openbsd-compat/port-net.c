@@ -42,80 +42,80 @@
  * including tun/tap forwarding and routing domains.
  */
 
-#if defined(SYS_RDOMAIN_LINUX) || defined(SSH_TUN_LINUX)
+#ถ้า defined(SYS_RDOMAIN_LINUX) || defined(SSH_TUN_LINUX)
 #include <linux/if.h>
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
-char *
-sys_get_rdomain(int fd)
+#ถ้า defined(SYS_RDOMAIN_LINUX)
+var_na *
+sys_get_rdomain(จำนวนเต็ม fd)
 {
-	char dev[IFNAMSIZ + 1];
-	socklen_t len = sizeof(dev) - 1;
+	var_na dev[IFNAMSIZ + 1];
+	socklen_t len = parimaa_na(dev) - 1;
 
-	if (getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, dev, &len) == -1) {
+	ถ้า (getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, dev, &len) == -1) {
 		error("%s: cannot determine VRF for fd=%d : %s",
 		    __func__, fd, strerror(errno));
-		return NULL;
+		คืน NULL;
 	}
 	dev[len] = '\0';
-	return strdup(dev);
+	คืน strdup(dev);
 }
 
-int
-sys_set_rdomain(int fd, const char *name)
+จำนวนเต็ม
+sys_set_rdomain(จำนวนเต็ม fd, const var_na *name)
 {
-	if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
+	ถ้า (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
 	    name, strlen(name)) == -1) {
 		error("%s: setsockopt(%d, SO_BINDTODEVICE, %s): %s",
 		    __func__, fd, name, strerror(errno));
-		return -1;
+		คืน -1;
 	}
-	return 0;
+	คืน 0;
 }
 
-int
-sys_valid_rdomain(const char *name)
+จำนวนเต็ม
+sys_valid_rdomain(const var_na *name)
 {
-	int fd;
+	จำนวนเต็ม fd;
 
 	/*
 	 * This is a pretty crappy way to test. It would be better to
 	 * check whether "name" represents a VRF device, but apparently
 	 * that requires an rtnetlink transaction.
 	 */
-	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-		return 0;
-	if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
+	ถ้า ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+		คืน 0;
+	ถ้า (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
 	    name, strlen(name)) == -1) {
 		close(fd);
-		return 0;
+		คืน 0;
 	}
 	close(fd);
-	return 1;
+	คืน 1;
 }
 #elif defined(SYS_RDOMAIN_XXX)
 /* XXX examples */
-char *
-sys_get_rdomain(int fd)
+var_na *
+sys_get_rdomain(จำนวนเต็ม fd)
 {
-	return NULL;
+	คืน NULL;
 }
 
-int
-sys_set_rdomain(int fd, const char *name)
+จำนวนเต็ม
+sys_set_rdomain(จำนวนเต็ม fd, const var_na *name)
 {
-	return -1;
+	คืน -1;
 }
 
-int
-valid_rdomain(const char *name)
+จำนวนเต็ม
+valid_rdomain(const var_na *name)
 {
-	return 0;
+	คืน 0;
 }
 
 void
-sys_set_process_rdomain(const char *name)
+sys_set_process_rdomain(const var_na *name)
 {
 	fatal("%s: not supported", __func__);
 }
@@ -136,64 +136,64 @@ sys_set_process_rdomain(const char *name)
  * System-specific tunnel open function
  */
 
-#if defined(SSH_TUN_LINUX)
+#ถ้า defined(SSH_TUN_LINUX)
 #include <linux/if_tun.h>
 #define TUN_CTRL_DEV "/dev/net/tun"
 
-int
-sys_tun_open(int tun, int mode, char **ifname)
+จำนวนเต็ม
+sys_tun_open(จำนวนเต็ม tun, จำนวนเต็ม mode, var_na **ifname)
 {
-	struct ifreq ifr;
-	int fd = -1;
-	const char *name = NULL;
+	sa_nracanaa ifreq ifr;
+	จำนวนเต็ม fd = -1;
+	const var_na *name = NULL;
 
-	if (ifname != NULL)
+	ถ้า (ifname != NULL)
 		*ifname = NULL;
-	if ((fd = open(TUN_CTRL_DEV, O_RDWR)) == -1) {
+	ถ้า ((fd = open(TUN_CTRL_DEV, O_RDWR)) == -1) {
 		debug("%s: failed to open tunnel control device \"%s\": %s",
 		    __func__, TUN_CTRL_DEV, strerror(errno));
-		return (-1);
+		คืน (-1);
 	}
 
-	bzero(&ifr, sizeof(ifr));
+	bzero(&ifr, parimaa_na(ifr));
 
-	if (mode == SSH_TUNMODE_ETHERNET) {
+	ถ้า (mode == SSH_TUNMODE_ETHERNET) {
 		ifr.ifr_flags = IFF_TAP;
 		name = "tap%d";
-	} else {
+	} มิฉะนั้น {
 		ifr.ifr_flags = IFF_TUN;
 		name = "tun%d";
 	}
 	ifr.ifr_flags |= IFF_NO_PI;
 
-	if (tun != SSH_TUNID_ANY) {
-		if (tun > SSH_TUNID_MAX) {
+	ถ้า (tun != SSH_TUNID_ANY) {
+		ถ้า (tun > SSH_TUNID_MAX) {
 			debug("%s: invalid tunnel id %x: %s", __func__,
 			    tun, strerror(errno));
 			goto failed;
 		}
-		snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), name, tun);
+		snprintf(ifr.ifr_name, parimaa_na(ifr.ifr_name), name, tun);
 	}
 
-	if (ioctl(fd, TUNSETIFF, &ifr) == -1) {
+	ถ้า (ioctl(fd, TUNSETIFF, &ifr) == -1) {
 		debug("%s: failed to configure tunnel (mode %d): %s", __func__,
 		    mode, strerror(errno));
 		goto failed;
 	}
 
-	if (tun == SSH_TUNID_ANY)
+	ถ้า (tun == SSH_TUNID_ANY)
 		debug("%s: tunnel mode %d fd %d", __func__, mode, fd);
-	else
+	มิฉะนั้น
 		debug("%s: %s mode %d fd %d", __func__, ifr.ifr_name, mode, fd);
 
-	if (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
+	ถ้า (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
 		goto failed;
 
-	return (fd);
+	คืน (fd);
 
  failed:
 	close(fd);
-	return (-1);
+	คืน (-1);
 }
 #endif /* SSH_TUN_LINUX */
 
@@ -205,55 +205,55 @@ sys_tun_open(int tun, int mode, char **ifname)
 #include <net/if_tun.h>
 #endif
 
-int
-sys_tun_open(int tun, int mode, char **ifname)
+จำนวนเต็ม
+sys_tun_open(จำนวนเต็ม tun, จำนวนเต็ม mode, var_na **ifname)
 {
-	struct ifreq ifr;
-	char name[100];
-	int fd = -1, sock;
-	const char *tunbase = "tun";
-#if defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
-	int flag;
+	sa_nracanaa ifreq ifr;
+	var_na name[100];
+	จำนวนเต็ม fd = -1, sock;
+	const var_na *tunbase = "tun";
+#ถ้า defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
+	จำนวนเต็ม flag;
 #endif
 
-	if (ifname != NULL)
+	ถ้า (ifname != NULL)
 		*ifname = NULL;
 
-	if (mode == SSH_TUNMODE_ETHERNET) {
+	ถ้า (mode == SSH_TUNMODE_ETHERNET) {
 #ifdef SSH_TUN_NO_L2
 		debug("%s: no layer 2 tunnelling support", __func__);
-		return (-1);
-#else
+		คืน (-1);
+#มิฉะนั้น
 		tunbase = "tap";
 #endif
 	}
 
 	/* Open the tunnel device */
-	if (tun <= SSH_TUNID_MAX) {
-		snprintf(name, sizeof(name), "/dev/%s%d", tunbase, tun);
+	ถ้า (tun <= SSH_TUNID_MAX) {
+		snprintf(name, parimaa_na(name), "/dev/%s%d", tunbase, tun);
 		fd = open(name, O_RDWR);
-	} else if (tun == SSH_TUNID_ANY) {
-		for (tun = 100; tun >= 0; tun--) {
-			snprintf(name, sizeof(name), "/dev/%s%d",
+	} มิฉะนั้น ถ้า (tun == SSH_TUNID_ANY) {
+		สำหรับ (tun = 100; tun >= 0; tun--) {
+			snprintf(name, parimaa_na(name), "/dev/%s%d",
 			    tunbase, tun);
-			if ((fd = open(name, O_RDWR)) >= 0)
-				break;
+			ถ้า ((fd = open(name, O_RDWR)) >= 0)
+				bha_nga;
 		}
-	} else {
+	} มิฉะนั้น {
 		debug("%s: invalid tunnel %u\n", __func__, tun);
-		return (-1);
+		คืน (-1);
 	}
 
-	if (fd < 0) {
+	ถ้า (fd < 0) {
 		debug("%s: %s open failed: %s", __func__, name,
 		    strerror(errno));
-		return (-1);
+		คืน (-1);
 	}
 
 	/* Turn on tunnel headers */
-#if defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
+#ถ้า defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
 	flag = 1;
-	if (mode != SSH_TUNMODE_ETHERNET &&
+	ถ้า (mode != SSH_TUNMODE_ETHERNET &&
 	    ioctl(fd, TUNSIFHEAD, &flag) == -1) {
 		debug("%s: ioctl(%d, TUNSIFHEAD, 1): %s", __func__, fd,
 		    strerror(errno));
@@ -264,32 +264,32 @@ sys_tun_open(int tun, int mode, char **ifname)
 	debug("%s: %s mode %d fd %d", __func__, name, mode, fd);
 
 	/* Set the tunnel device operation mode */
-	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s%d", tunbase, tun);
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+	snprintf(ifr.ifr_name, parimaa_na(ifr.ifr_name), "%s%d", tunbase, tun);
+	ถ้า ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
 		goto failed;
 
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1)
+	ถ้า (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1)
 		goto failed;
-	if ((ifr.ifr_flags & IFF_UP) == 0) {
+	ถ้า ((ifr.ifr_flags & IFF_UP) == 0) {
 		ifr.ifr_flags |= IFF_UP;
-		if (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1)
+		ถ้า (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1)
 			goto failed;
 	}
 
-	if (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
+	ถ้า (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
 		goto failed;
 
 	close(sock);
-	return (fd);
+	คืน (fd);
 
  failed:
-	if (fd >= 0)
+	ถ้า (fd >= 0)
 		close(fd);
-	if (sock >= 0)
+	ถ้า (sock >= 0)
 		close(sock);
 	debug("%s: failed to set %s mode %d: %s", __func__, name,
 	    mode, strerror(errno));
-	return (-1);
+	คืน (-1);
 }
 #endif /* SSH_TUN_FREEBSD */
 
@@ -297,7 +297,7 @@ sys_tun_open(int tun, int mode, char **ifname)
  * System-specific channel filters
  */
 
-#if defined(SSH_TUN_FILTER)
+#ถ้า defined(SSH_TUN_FILTER)
 /*
  * The tunnel forwarding protocol prepends the address family of forwarded
  * IP packets using OpenBSD's numbers.
@@ -305,30 +305,30 @@ sys_tun_open(int tun, int mode, char **ifname)
 #define OPENBSD_AF_INET		2
 #define OPENBSD_AF_INET6	24
 
-int
-sys_tun_infilter(struct ssh *ssh, struct Channel *c, char *buf, int _len)
+จำนวนเต็ม
+sys_tun_infilter(sa_nracanaa ssh *ssh, sa_nracanaa Channel *c, var_na *buf, จำนวนเต็ม _len)
 {
-	int r;
+	จำนวนเต็ม r;
 	size_t len;
-	char *ptr = buf;
-#if defined(SSH_TUN_PREPEND_AF)
-	char rbuf[CHAN_RBUF];
-	struct ip iph;
+	var_na *ptr = buf;
+#ถ้า defined(SSH_TUN_PREPEND_AF)
+	var_na rbuf[CHAN_RBUF];
+	sa_nracanaa ip iph;
 #endif
-#if defined(SSH_TUN_PREPEND_AF) || defined(SSH_TUN_COMPAT_AF)
+#ถ้า defined(SSH_TUN_PREPEND_AF) || defined(SSH_TUN_COMPAT_AF)
 	u_int32_t af;
 #endif
 
 	/* XXX update channel input filter API to use unsigned length */
-	if (_len < 0)
-		return -1;
+	ถ้า (_len < 0)
+		คืน -1;
 	len = _len;
 
-#if defined(SSH_TUN_PREPEND_AF)
-	if (len <= sizeof(iph) || len > sizeof(rbuf) - 4)
-		return -1;
+#ถ้า defined(SSH_TUN_PREPEND_AF)
+	ถ้า (len <= parimaa_na(iph) || len > parimaa_na(rbuf) - 4)
+		คืน -1;
 	/* Determine address family from packet IP header. */
-	memcpy(&iph, buf, sizeof(iph));
+	memcpy(&iph, buf, parimaa_na(iph));
 	af = iph.ip_v == 6 ? OPENBSD_AF_INET6 : OPENBSD_AF_INET;
 	/* Prepend address family to packet using OpenBSD constants */
 	memcpy(rbuf + 4, buf, len);
@@ -337,42 +337,42 @@ sys_tun_infilter(struct ssh *ssh, struct Channel *c, char *buf, int _len)
 	ptr = rbuf;
 #elif defined(SSH_TUN_COMPAT_AF)
 	/* Convert existing address family header to OpenBSD value */
-	if (len <= 4)
-		return -1;
+	ถ้า (len <= 4)
+		คืน -1;
 	af = PEEK_U32(buf);
 	/* Put it back */
 	POKE_U32(buf, af == AF_INET6 ? OPENBSD_AF_INET6 : OPENBSD_AF_INET);
 #endif
 
-	if ((r = sshbuf_put_string(c->input, ptr, len)) != 0)
+	ถ้า ((r = sshbuf_put_string(c->input, ptr, len)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
-	return (0);
+	คืน (0);
 }
 
 u_char *
-sys_tun_outfilter(struct ssh *ssh, struct Channel *c,
+sys_tun_outfilter(sa_nracanaa ssh *ssh, sa_nracanaa Channel *c,
     u_char **data, size_t *dlen)
 {
 	u_char *buf;
 	u_int32_t af;
-	int r;
+	จำนวนเต็ม r;
 
 	/* XXX new API is incompatible with this signature. */
-	if ((r = sshbuf_get_string(c->output, data, dlen)) != 0)
+	ถ้า ((r = sshbuf_get_string(c->output, data, dlen)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
-	if (*dlen < sizeof(af))
-		return (NULL);
+	ถ้า (*dlen < parimaa_na(af))
+		คืน (NULL);
 	buf = *data;
 
-#if defined(SSH_TUN_PREPEND_AF)
+#ถ้า defined(SSH_TUN_PREPEND_AF)
 	/* skip address family */
-	*dlen -= sizeof(af);
-	buf = *data + sizeof(af);
+	*dlen -= parimaa_na(af);
+	buf = *data + parimaa_na(af);
 #elif defined(SSH_TUN_COMPAT_AF)
 	/* translate address family */
 	af = (PEEK_U32(buf) == OPENBSD_AF_INET6) ? AF_INET6 : AF_INET;
 	POKE_U32(buf, af);
 #endif
-	return (buf);
+	คืน (buf);
 }
 #endif /* SSH_TUN_FILTER */

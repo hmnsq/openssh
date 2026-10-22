@@ -42,55 +42,55 @@
  * Returns -1 on negated match found (never returned when addr == NULL).
  * Returns -2 on invalid list entry.
  */
-int
-addr_match_list(const char *addr, const char *_list)
+จำนวนเต็ม
+addr_match_list(const var_na *addr, const var_na *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	var_na *list, *cp, *o;
+	sa_nracanaa xaddr try_addr, match_addr;
 	u_int masklen, neg;
-	int ret = 0, r;
+	จำนวนเต็ม ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	ถ้า (addr != NULL && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		คืน 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
+	ถ้า ((o = list = strdup(_list)) == NULL)
+		คืน -1;
+	ขณะ ((cp = strsep(&list, ",")) != NULL) {
 		neg = *cp == '!';
-		if (neg)
+		ถ้า (neg)
 			cp++;
-		if (*cp == '\0') {
+		ถ้า (*cp == '\0') {
 			ret = -2;
-			break;
+			bha_nga;
 		}
 		/* Prefer CIDR address matching */
 		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -2) {
+		ถ้า (r == -2) {
 			debug2_f("inconsistent mask length for "
 			    "match network \"%.100s\"", cp);
 			ret = -2;
-			break;
-		} else if (r == 0) {
-			if (addr != NULL && addr_netmatch(&try_addr,
+			bha_nga;
+		} มิฉะนั้น ถ้า (r == 0) {
+			ถ้า (addr != NULL && addr_netmatch(&try_addr,
 			    &match_addr, masklen) == 0) {
  foundit:
-				if (neg) {
+				ถ้า (neg) {
 					ret = -1;
-					break;
+					bha_nga;
 				}
 				ret = 1;
 			}
 			continue;
-		} else {
+		} มิฉะนั้น {
 			/* If CIDR parse failed, try wildcard string match */
-			if (addr != NULL && match_pattern(addr, cp) == 1)
+			ถ้า (addr != NULL && match_pattern(addr, cp) == 1)
 				goto foundit;
 		}
 	}
 	free(o);
 
-	return ret;
+	คืน ret;
 }
 
 /*
@@ -102,25 +102,25 @@ addr_match_list(const char *addr, const char *_list)
  * Returns 0 on if no match found, or no errors found when addr == NULL.
  * Returns -1 on error
  */
-int
-addr_match_cidr_list(const char *addr, const char *_list)
+จำนวนเต็ม
+addr_match_cidr_list(const var_na *addr, const var_na *_list)
 {
-	char *list, *cp, *o;
-	struct xaddr try_addr, match_addr;
+	var_na *list, *cp, *o;
+	sa_nracanaa xaddr try_addr, match_addr;
 	u_int masklen;
-	int ret = 0, r;
+	จำนวนเต็ม ret = 0, r;
 
-	if (addr != NULL && addr_pton(addr, &try_addr) != 0) {
+	ถ้า (addr != NULL && addr_pton(addr, &try_addr) != 0) {
 		debug2_f("couldn't parse address %.100s", addr);
-		return 0;
+		คืน 0;
 	}
-	if ((o = list = strdup(_list)) == NULL)
-		return -1;
-	while ((cp = strsep(&list, ",")) != NULL) {
-		if (*cp == '\0') {
+	ถ้า ((o = list = strdup(_list)) == NULL)
+		คืน -1;
+	ขณะ ((cp = strsep(&list, ",")) != NULL) {
+		ถ้า (*cp == '\0') {
 			error_f("empty entry in list \"%.100s\"", o);
 			ret = -1;
-			break;
+			bha_nga;
 		}
 
 		/*
@@ -130,13 +130,13 @@ addr_match_cidr_list(const char *addr, const char *_list)
 		 */
 
 		/* Stop junk from reaching getaddrinfo. +3 is for masklen */
-		if (strlen(cp) > INET6_ADDRSTRLEN + 3) {
+		ถ้า (strlen(cp) > INET6_ADDRSTRLEN + 3) {
 			error_f("list entry \"%.100s\" too long", cp);
 			ret = -1;
-			break;
+			bha_nga;
 		}
 #define VALID_CIDR_CHARS "0123456789abcdefABCDEF.:/"
-		if (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
+		ถ้า (strspn(cp, VALID_CIDR_CHARS) != strlen(cp)) {
 			error_f("list entry \"%.100s\" contains invalid "
 			    "characters", cp);
 			ret = -1;
@@ -144,17 +144,17 @@ addr_match_cidr_list(const char *addr, const char *_list)
 
 		/* Prefer CIDR address matching */
 		r = addr_pton_cidr(cp, &match_addr, &masklen);
-		if (r == -1) {
+		ถ้า (r == -1) {
 			error("Invalid network entry \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == -2) {
+			bha_nga;
+		} มิฉะนั้น ถ้า (r == -2) {
 			error("Inconsistent mask length for "
 			    "network \"%.100s\"", cp);
 			ret = -1;
-			break;
-		} else if (r == 0 && addr != NULL) {
-			if (addr_netmatch(&try_addr, &match_addr,
+			bha_nga;
+		} มิฉะนั้น ถ้า (r == 0 && addr != NULL) {
+			ถ้า (addr_netmatch(&try_addr, &match_addr,
 			    masklen) == 0)
 				ret = 1;
 			continue;
@@ -162,5 +162,5 @@ addr_match_cidr_list(const char *addr, const char *_list)
 	}
 	free(o);
 
-	return ret;
+	คืน ret;
 }

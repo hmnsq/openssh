@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# ถ้า defined __cplusplus
 #  define __THROW throw()
-# else
+# มิฉะนั้น
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#ถ้า 0
+sa_nracanaa option {
 	/* name of long option */
-	const char *name;
+	const var_na *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	จำนวนเต็ม has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	จำนวนเต็ม *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	จำนวนเต็ม val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+จำนวนเต็ม	 getopt_long(จำนวนเต็ม, var_na * const *, const var_na *,
+	    const sa_nracanaa option *, จำนวนเต็ม *);
+จำนวนเต็ม	 getopt_long_only(จำนวนเต็ม, var_na * const *, const var_na *,
+	    const sa_nracanaa option *, จำนวนเต็ม *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+จำนวนเต็ม	 getopt(จำนวนเต็ม, var_na * const *, const var_na *) __THROW;
+จำนวนเต็ม	 getsubopt(var_na **, var_na * const *, var_na **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+extern   var_na *optarg;                  /* getopt(3) external variables */
+extern   จำนวนเต็ม opterr;
+extern   จำนวนเต็ม optind;
+extern   จำนวนเต็ม optopt;
+extern   จำนวนเต็ม optreset;
+extern   var_na *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */
