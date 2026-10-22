@@ -14,47 +14,47 @@
 #ifndef HOSTFILE_H
 #define HOSTFILE_H
 
-typedef enum {
+تعریفنوع شمارش {
 	HOST_OK, HOST_NEW, HOST_CHANGED, HOST_REVOKED, HOST_FOUND
 }       HostStatus;
 
-typedef enum {
+تعریفنوع شمارش {
 	MRK_ERROR, MRK_NONE, MRK_REVOKE, MRK_CA
 }	HostkeyMarker;
 
-struct hostkey_entry {
-	char *host;
-	char *file;
-	u_long line;
-	struct sshkey *key;
+ساختار hostkey_entry {
+	نویسه *host;
+	نویسه *file;
+	u_long سطر;
+	ساختار sshkey *کلید;
 	HostkeyMarker marker;
 	u_int note; /* caller-specific note/flag */
 };
-struct hostkeys {
-	struct hostkey_entry *entries;
-	u_int num_entries;
+ساختار hostkeys {
+	ساختار hostkey_entry *entries;
+	u_int رقم_entries;
 };
 
-struct hostkeys *init_hostkeys(void);
-void	 load_hostkeys(struct hostkeys *, const char *,
-    const char *, u_int);
-void	 load_hostkeys_file(struct hostkeys *, const char *,
-    const char *, FILE *, u_int note);
-void	 free_hostkeys(struct hostkeys *);
+ساختار hostkeys *init_hostkeys(تهی);
+تهی	 load_hostkeys(ساختار hostkeys *, ثابت نویسه *,
+    ثابت نویسه *, u_int);
+تهی	 load_hostkeys_file(ساختار hostkeys *, ثابت نویسه *,
+    ثابت نویسه *, FILE *, u_int note);
+تهی	 free_hostkeys(ساختار hostkeys *);
 
-HostStatus check_key_in_hostkeys(struct hostkeys *, struct sshkey *,
-    const struct hostkey_entry **);
-int	 lookup_key_in_hostkeys_by_type(struct hostkeys *, int, int,
-    const struct hostkey_entry **);
-int	 lookup_marker_in_hostkeys(struct hostkeys *, int);
+HostStatus check_کلید_in_hostkeys(ساختار hostkeys *, ساختار sshkey *,
+    ثابت ساختار hostkey_entry **);
+صحیح	 lookup_کلید_in_hostkeys_by_type(ساختار hostkeys *, صحیح, صحیح,
+    ثابت ساختار hostkey_entry **);
+صحیح	 lookup_marker_in_hostkeys(ساختار hostkeys *, صحیح);
 
-int	 hostfile_read_key(char **, u_int *, struct sshkey *);
-int	 add_host_to_hostfile(const char *, const char *,
-    const struct sshkey *, int);
+صحیح	 hostfile_read_کلید(نویسه **, u_int *, ساختار sshkey *);
+صحیح	 add_host_to_hostfile(ثابت نویسه *, ثابت نویسه *,
+    ثابت ساختار sshkey *, صحیح);
 
-int	 hostfile_replace_entries(const char *filename,
-    const char *host, const char *ip, struct sshkey **keys, size_t nkeys,
-    int store_hash, int quiet, int hash_alg);
+صحیح	 hostfile_replace_entries(ثابت نویسه *filename,
+    ثابت نویسه *host, ثابت نویسه *ip, ساختار sshkey **کلیدها, size_t nkeys,
+    صحیح store_hash, صحیح quiet, صحیح hash_alg);
 
 #define HASH_MAGIC	"|1|"
 #define HASH_DELIM	'|'
@@ -62,7 +62,7 @@ int	 hostfile_replace_entries(const char *filename,
 #define CA_MARKER	"@cert-authority"
 #define REVOKE_MARKER	"@revoked"
 
-char	*host_hash(const char *, const char *, u_int);
+نویسه	*host_hash(ثابت نویسه *, ثابت نویسه *, u_int);
 
 /*
  * Iterate through a hostkeys file, optionally parsing keys and matching
@@ -70,7 +70,7 @@ char	*host_hash(const char *, const char *, u_int);
  * streaming edits to the file to take place.
  */
 #define HKF_WANT_MATCH		(1)	/* return only matching hosts/addrs */
-#define HKF_WANT_PARSE_KEY	(1<<1)	/* need key parsed */
+#define HKF_WANT_PARSE_کلید	(1<<1)	/* need key parsed */
 
 #define HKF_STATUS_OK		0	/* Line parsed, didn't match host */
 #define HKF_STATUS_INVALID	1	/* line had parse error */
@@ -88,18 +88,18 @@ char	*host_hash(const char *, const char *, u_int);
  * hostkey line. The callback may "steal" the 'key' field by setting it to NULL.
  * If a parse error occurred, then "hosts" and subsequent options may be NULL.
  */
-struct hostkey_foreach_line {
-	const char *path; /* Path of file */
+ساختار hostkey_foreach_سطر {
+	ثابت نویسه *path; /* Path of file */
 	u_long linenum;	/* Line number */
 	u_int status;	/* One of HKF_STATUS_* */
 	u_int match;	/* Zero or more of HKF_MATCH_* OR'd together */
-	char *line;	/* Entire key line; mutable by callback */
-	int marker;	/* CA/revocation markers; indicated by MRK_* value */
-	const char *hosts; /* Raw hosts text, may be hashed or list multiple */
-	const char *rawkey; /* Text of key and any comment following it */
-	int keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
-	struct sshkey *key; /* Key, if parsed ok and HKF_WANT_MATCH_HOST set */
-	const char *comment; /* Any comment following the key */
+	نویسه *سطر;	/* Entire key line; mutable by callback */
+	صحیح marker;	/* CA/revocation markers; indicated by MRK_* value */
+	ثابت نویسه *hosts; /* Raw hosts text, may be hashed or list multiple */
+	ثابت نویسه *rawkey; /* Text of key and any comment following it */
+	صحیح keytype;	/* Type of key; KEY_UNSPEC for invalid/comment lines */
+	ساختار sshkey *کلید; /* Key, if parsed ok and HKF_WANT_MATCH_HOST set */
+	ثابت نویسه *comment; /* Any comment following the key */
 	u_int note;	/* caller-specified note copied from arguments */
 };
 
@@ -108,16 +108,16 @@ struct hostkey_foreach_line {
  * is set). The foreach loop will terminate if the callback returns a non-
  * zero exit status.
  */
-typedef int hostkeys_foreach_fn(struct hostkey_foreach_line *l, void *ctx);
+تعریفنوع صحیح hostkeys_foreach_fn(ساختار hostkey_foreach_سطر *l, تهی *ctx);
 
 /* Iterate over a hostkeys file */
-int hostkeys_foreach(const char *path,
-    hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note);
-int hostkeys_foreach_file(const char *path, FILE *f,
-    hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note);
+صحیح hostkeys_foreach(ثابت نویسه *path,
+    hostkeys_foreach_fn *callback, تهی *ctx,
+    ثابت نویسه *host, ثابت نویسه *ip, u_int options, u_int note);
+صحیح hostkeys_foreach_file(ثابت نویسه *path, FILE *f,
+    hostkeys_foreach_fn *callback, تهی *ctx,
+    ثابت نویسه *host, ثابت نویسه *ip, u_int options, u_int note);
 
-void hostfile_create_user_ssh_dir(const char *, int);
+تهی hostfile_create_user_ssh_dir(ثابت نویسه *, صحیح);
 
 #endif

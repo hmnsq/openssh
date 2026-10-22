@@ -23,49 +23,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#if defined(HAVE_LIBIAF)  &&  !defined(HAVE_SECUREWARE)
-#include <sys/types.h>
+#اگر defined(HAVE_LIBIAF)  &&  !defined(HAVE_SECUREWARE)
+#شامل <sys/types.h>
 #ifdef HAVE_CRYPT_H
 # include <crypt.h>
 #endif
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#شامل <pwd.h>
+#شامل <stdarg.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <string.h>
 
-#include "xmalloc.h"
-#include "packet.h"
-#include "auth-options.h"
-#include "log.h"
-#include "misc.h"	/* servconf.h needs misc.h for struct ForwardOptions */
-#include "servconf.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "ssh.h"
-#include "ssh_api.h"
+#شامل "xmalloc.h"
+#شامل "packet.h"
+#شامل "auth-options.h"
+#شامل "log.h"
+#شامل "misc.h"	/* servconf.h needs misc.h for struct ForwardOptions */
+#شامل "servconf.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "ssh.h"
+#شامل "ssh_api.h"
 
-int nischeck(char *);
+صحیح nischeck(نویسه *);
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+صحیح
+sys_auth_passwd(ساختار ssh *ssh, ثابت نویسه *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	char *salt;
-	int result;
+	ساختار passwd *pw = authctxt->pw;
+	نویسه *salt;
+	صحیح result;
 
 	/* Just use the supplied fake password if authctxt is invalid */
-	char *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
+	نویسه *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
 
-	if (pw_password == NULL)
-		return 0;
+	اگر (pw_password == پوچ)
+		بازگشت 0;
 
 	/* Check for users with no password. */
-	if (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
-		return (1);
+	اگر (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
+		بازگشت (1);
 
 	/* Encrypt the candidate password using the proper salt. */
 	salt = (pw_password[0] && pw_password[1]) ? pw_password : "xx";
@@ -75,53 +75,53 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 	 * are identical.
 	 */
 #ifdef UNIXWARE_LONG_PASSWORDS
-	if (!nischeck(pw->pw_name)) {
+	اگر (!nischeck(pw->pw_name)) {
 		result = ((strcmp(bigcrypt(password, salt), pw_password) == 0)
 		||  (strcmp(osr5bigcrypt(password, salt), pw_password) == 0));
 	}
-	else
+	وگرنه
 #endif /* UNIXWARE_LONG_PASSWORDS */
 		result = (strcmp(xcrypt(password, salt), pw_password) == 0);
 
 #ifdef USE_LIBIAF
-	if (authctxt->valid)
-		free(pw_password);
+	اگر (authctxt->valid)
+		آزاد(pw_password);
 #endif
-	return(result);
+	بازگشت(result);
 }
 
 #ifdef UNIXWARE_LONG_PASSWORDS
-int
-nischeck(char *namep)
+صحیح
+nischeck(نویسه *namep)
 {
-	char password_file[] = "/etc/passwd";
+	نویسه password_file[] = "/etc/passwd";
 	FILE *fd;
-	struct passwd *ent = NULL;
+	ساختار passwd *ent = پوچ;
 
-	if ((fd = fopen (password_file, "r")) == NULL) {
+	اگر ((fd = fopen (password_file, "r")) == پوچ) {
 		/*
 		 * If the passwd file has disappeared we are in a bad state.
 		 * However, returning 0 will send us back through the
 		 * authentication scheme that has checked the ia database for
 		 * passwords earlier.
 		 */
-		return(0);
+		بازگشت(0);
 	}
 
 	/*
 	 * fgetpwent() only reads from password file, so we know for certain
 	 * that the user is local.
 	 */
-	while (ent = fgetpwent(fd)) {
-		if (strcmp (ent->pw_name, namep) == 0) {
+	وقتی (ent = fgetpwent(fd)) {
+		اگر (strcmp (ent->pw_name, namep) == 0) {
 			/* Local user */
 			fclose (fd);
-			return(0);
+			بازگشت(0);
 		}
 	}
 
 	fclose (fd);
-	return (1);
+	بازگشت (1);
 }
 
 #endif /* UNIXWARE_LONG_PASSWORDS */
@@ -132,20 +132,20 @@ nischeck(char *namep)
  */
 
 #ifdef USE_LIBIAF
-char *
-get_iaf_password(struct passwd *pw)
+نویسه *
+get_iaf_password(ساختار passwd *pw)
 {
-	char *pw_password = NULL;
+	نویسه *pw_password = پوچ;
 
 	uinfo_t uinfo;
-	if (!ia_openinfo(pw->pw_name,&uinfo)) {
+	اگر (!ia_openinfo(pw->pw_name,&uinfo)) {
 		ia_get_logpwd(uinfo, &pw_password);
-		if (pw_password == NULL)
+		اگر (pw_password == پوچ)
 			fatal("ia_get_logpwd: Unable to get the shadow passwd");
 		ia_closeinfo(uinfo);
-		return pw_password;
+		بازگشت pw_password;
 	}
-	else
+	وگرنه
 		fatal("ia_openinfo: Unable to open the shadow passwd file");
 }
 #endif /* USE_LIBIAF */

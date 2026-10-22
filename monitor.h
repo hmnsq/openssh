@@ -29,7 +29,7 @@
 #define _MONITOR_H_
 
 /* Please keep *_REQ_* values on even numbers and *_ANS_* on odd numbers */
-enum monitor_reqtype {
+شمارش monitor_reqtype {
 	MONITOR_REQ_MODULI = 0, MONITOR_ANS_MODULI = 1,
 	MONITOR_REQ_FREE = 2,
 	MONITOR_REQ_AUTHSERV = 4,
@@ -67,40 +67,40 @@ enum monitor_reqtype {
 
 };
 
-struct ssh;
-struct sshbuf;
+ساختار ssh;
+ساختار sshbuf;
 
-struct monitor {
-	int			 m_recvfd;
-	int			 m_sendfd;
-	int			 m_log_recvfd;
-	int			 m_log_sendfd;
-	struct kex		**m_pkex;
+ساختار monitor {
+	صحیح			 m_recvfd;
+	صحیح			 m_sendfd;
+	صحیح			 m_log_recvfd;
+	صحیح			 m_log_sendfd;
+	ساختار kex		**m_pkex;
 	pid_t			 m_pid;
 };
 
-struct monitor *monitor_init(void);
-void monitor_reinit(struct monitor *);
+ساختار monitor *monitor_init(تهی);
+تهی monitor_reinit(ساختار monitor *);
 
-struct Authctxt;
-void monitor_child_preauth(struct ssh *, struct monitor *);
-void monitor_child_postauth(struct ssh *, struct monitor *);
+ساختار Authctxt;
+تهی monitor_child_preauth(ساختار ssh *, ساختار monitor *);
+تهی monitor_child_postauth(ساختار ssh *, ساختار monitor *);
 
-void monitor_clear_keystate(struct ssh *, struct monitor *);
-void monitor_apply_keystate(struct ssh *, struct monitor *);
+تهی monitor_clear_keystate(ساختار ssh *, ساختار monitor *);
+تهی monitor_apply_keystate(ساختار ssh *, ساختار monitor *);
 
-int  monitor_auth_attempted(void);
-int  monitor_invalid_user(void);
+صحیح  monitor_auth_attempted(تهی);
+صحیح  monitor_invalid_user(تهی);
 
 /* Prototypes for request sending and receiving */
-void mm_request_send(int, enum monitor_reqtype, struct sshbuf *);
-void mm_request_receive(int, struct sshbuf *);
-void mm_request_receive_expect(int, enum monitor_reqtype, struct sshbuf *);
-void mm_get_keystate(struct ssh *, struct monitor *);
+تهی mm_request_send(صحیح, شمارش monitor_reqtype, ساختار sshbuf *);
+تهی mm_request_receive(صحیح, ساختار sshbuf *);
+تهی mm_request_receive_expect(صحیح, شمارش monitor_reqtype, ساختار sshbuf *);
+تهی mm_get_keystate(ساختار ssh *, ساختار monitor *);
 
 /* XXX: should be returned via a monitor call rather than config_fd */
-void mm_encode_server_options(struct sshbuf *);
+تهی mm_encode_server_options(ساختار sshbuf *);
 
-struct sshbuf *pack_hostkeys(void);
+ساختار sshbuf *pack_hostkeys(تهی);
 
 #endif /* _MONITOR_H_ */

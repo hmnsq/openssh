@@ -1,148 +1,148 @@
 // libfuzzer driver for key exchange fuzzing.
 
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-extern "C" {
+بیرونی "C" {
 
-#include "includes.h"
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "log.h"
+#شامل "includes.h"
+#شامل "ssherr.h"
+#شامل "ssh_api.h"
+#شامل "sshbuf.h"
+#شامل "packet.h"
+#شامل "myproposal.h"
+#شامل "xmalloc.h"
+#شامل "authfile.h"
+#شامل "log.h"
 
-#include "fixed-keys.h"
+#شامل "fixed-keys.h"
 
 // Define if you want to generate traces.
 /* #define STANDALONE 1 */
 
-static int prepare_key(struct shared_state *st, int keytype, int bits);
+ایستا صحیح prepare_کلید(ساختار shared_state *st, صحیح keytype, صحیح bits);
 
-struct shared_state {
+ساختار shared_state {
 	size_t nkeys;
-	struct sshkey **privkeys, **pubkeys;
+	ساختار sshkey **privkeys, **pubkeys;
 };
 
-struct test_state {
-	struct sshbuf *smsgs, *cmsgs; /* output, for standalone mode */
-	struct sshbuf *sin, *cin; /* input; setup per-test in do_kex_with_key */
-	struct sshbuf *s_template, *c_template; /* main copy of input */
+ساختار test_state {
+	ساختار sshbuf *smsgs, *cmsgs; /* output, for standalone mode */
+	ساختار sshbuf *sin, *cin; /* input; setup per-test in do_kex_with_key */
+	ساختار sshbuf *s_template, *c_template; /* main copy of input */
 };
 
 /*
  * Optional proposal overrides applied to both sides. Each field
  * replaces one KEXINIT slot when non-NULL.
  */
-struct kex_overrides {
-	const char *cipher;
-	const char *mac;
-	const char *comp;
+ساختار kex_overrides {
+	ثابت نویسه *cipher;
+	ثابت نویسه *mac;
+	ثابت نویسه *comp;
 };
 
-static int
-do_send_and_receive(struct ssh *from, struct ssh *to,
-    struct sshbuf *store, int clobber, size_t *n)
+ایستا صحیح
+do_send_and_receive(ساختار ssh *from, ساختار ssh *to,
+    ساختار sshbuf *store, صحیح clobber, size_t *n)
 {
 	u_char type;
 	size_t len;
-	const u_char *buf;
-	int r;
+	ثابت u_char *buf;
+	صحیح r;
 
-	for (*n = 0;; (*n)++) {
-		if ((r = ssh_packet_next(from, &type)) != 0) {
+	برای (*n = 0;; (*n)++) {
+		اگر ((r = ssh_packet_next(from, &type)) != 0) {
 			debug_fr(r, "ssh_packet_next");
-			return r;
+			بازگشت r;
 		}
-		if (type != 0)
-			return 0;
+		اگر (type != 0)
+			بازگشت 0;
 		buf = ssh_output_ptr(from, &len);
 		debug_f("%zu%s", len, clobber ? " ignore" : "");
-		if (len == 0)
-			return 0;
-		if ((r = ssh_output_consume(from, len)) != 0) {
+		اگر (len == 0)
+			بازگشت 0;
+		اگر ((r = ssh_output_consume(from, len)) != 0) {
 			debug_fr(r, "ssh_output_consume");
-			return r;
+			بازگشت r;
 		}
-		if (store != NULL && (r = sshbuf_put(store, buf, len)) != 0) {
+		اگر (store != پوچ && (r = sshbuf_put(store, buf, len)) != 0) {
 			debug_fr(r, "sshbuf_put");
-			return r;
+			بازگشت r;
 		}
-		if (!clobber && (r = ssh_input_append(to, buf, len)) != 0) {
+		اگر (!clobber && (r = ssh_درون_داد_append(to, buf, len)) != 0) {
 			debug_fr(r, "ssh_input_append");
-			return r;
+			بازگشت r;
 		}
 	}
 }
 
-static int
-run_kex(struct test_state *ts, struct ssh *client, struct ssh *server)
+ایستا صحیح
+run_kex(ساختار test_state *ts, ساختار ssh *client, ساختار ssh *server)
 {
-	int r = 0;
+	صحیح r = 0;
 	size_t cn, sn;
 
 	/* If fuzzing, replace server/client input */
-	if (ts->sin != NULL) {
-		if ((r = ssh_input_append(server, sshbuf_ptr(ts->sin),
+	اگر (ts->sin != پوچ) {
+		اگر ((r = ssh_درون_داد_append(server, sshbuf_ptr(ts->sin),
 		    sshbuf_len(ts->sin))) != 0) {
 			error_fr(r, "ssh_input_append");
-			return r;
+			بازگشت r;
 		}
 		sshbuf_reset(ts->sin);
 	}
-	if (ts->cin != NULL) {
-		if ((r = ssh_input_append(client, sshbuf_ptr(ts->cin),
+	اگر (ts->cin != پوچ) {
+		اگر ((r = ssh_درون_داد_append(client, sshbuf_ptr(ts->cin),
 		    sshbuf_len(ts->cin))) != 0) {
 			error_fr(r, "ssh_input_append");
-			return r;
+			بازگشت r;
 		}
 		sshbuf_reset(ts->cin);
 	}
-	while (!server->kex->done || !client->kex->done) {
+	وقتی (!server->kex->done || !client->kex->done) {
 		cn = sn = 0;
 		debug_f("S:");
-		if ((r = do_send_and_receive(server, client,
-		    ts->smsgs, ts->cin != NULL, &sn)) != 0) {
+		اگر ((r = do_send_and_receive(server, client,
+		    ts->smsgs, ts->cin != پوچ, &sn)) != 0) {
 			debug_fr(r, "S->C");
-			break;
+			بشکن;
 		}
 		debug_f("C:");
-		if ((r = do_send_and_receive(client, server,
-		    ts->cmsgs, ts->sin != NULL, &cn)) != 0) {
+		اگر ((r = do_send_and_receive(client, server,
+		    ts->cmsgs, ts->sin != پوچ, &cn)) != 0) {
 			debug_fr(r, "C->S");
-			break;
+			بشکن;
 		}
-		if (cn == 0 && sn == 0) {
+		اگر (cn == 0 && sn == 0) {
 			debug_f("kex stalled");
 			r = SSH_ERR_PROTOCOL_ERROR;
-			break;
+			بشکن;
 		}
 	}
 	debug_fr(r, "done");
-	return r;
+	بازگشت r;
 }
 
-static void
-store_key(struct shared_state *st, struct sshkey *pubkey,
-    struct sshkey *privkey)
+ایستا تهی
+store_کلید(ساختار shared_state *st, ساختار sshkey *pubkey,
+    ساختار sshkey *privkey)
 {
-	if (st == NULL || pubkey->type < 0 || pubkey->type > INT_MAX ||
+	اگر (st == پوچ || pubkey->type < 0 || pubkey->type > INT_MAX ||
 	    privkey->type != pubkey->type ||
 	    ((size_t)pubkey->type < st->nkeys &&
-	     st->pubkeys[pubkey->type] != NULL))
+	     st->pubkeys[pubkey->type] != پوچ))
 		abort();
-	if ((size_t)pubkey->type >= st->nkeys) {
-		st->pubkeys = (struct sshkey **)xrecallocarray(st->pubkeys,
-		    st->nkeys, pubkey->type + 1, sizeof(*st->pubkeys));
-		st->privkeys = (struct sshkey **)xrecallocarray(st->privkeys,
-		    st->nkeys, privkey->type + 1, sizeof(*st->privkeys));
+	اگر ((size_t)pubkey->type >= st->nkeys) {
+		st->pubkeys = (ساختار sshkey **)xrecallocarray(st->pubkeys,
+		    st->nkeys, pubkey->type + 1, اندازه(*st->pubkeys));
+		st->privkeys = (ساختار sshkey **)xrecallocarray(st->privkeys,
+		    st->nkeys, privkey->type + 1, اندازه(*st->privkeys));
 		st->nkeys = privkey->type + 1;
 	}
 	debug_f("store %s at %d", sshkey_ssh_name(pubkey), pubkey->type);
@@ -150,289 +150,289 @@ store_key(struct shared_state *st, struct sshkey *pubkey,
 	st->privkeys[privkey->type] = privkey;
 }
 
-static int
-prepare_keys(struct shared_state *st)
+ایستا صحیح
+prepare_کلیدها(ساختار shared_state *st)
 {
-	if (prepare_key(st, KEY_RSA, 2048) != 0 ||
-	    prepare_key(st, KEY_ECDSA, 256) != 0 ||
-	    prepare_key(st, KEY_ED25519, 256) != 0) {
+	اگر (prepare_کلید(st, کلید_RSA, 2048) != 0 ||
+	    prepare_کلید(st, کلید_ECDSA, 256) != 0 ||
+	    prepare_کلید(st, کلید_ED25519, 256) != 0) {
 		error_f("key prepare failed");
-		return -1;
+		بازگشت -1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
-static struct sshkey *
-get_pubkey(struct shared_state *st, int keytype)
+ایستا ساختار sshkey *
+get_pubkey(ساختار shared_state *st, صحیح keytype)
 {
-	if (st == NULL || keytype < 0 || (size_t)keytype >= st->nkeys ||
-	    st->pubkeys == NULL || st->pubkeys[keytype] == NULL)
+	اگر (st == پوچ || keytype < 0 || (size_t)keytype >= st->nkeys ||
+	    st->pubkeys == پوچ || st->pubkeys[keytype] == پوچ)
 		abort();
-	return st->pubkeys[keytype];
+	بازگشت st->pubkeys[keytype];
 }
 
-static struct sshkey *
-get_privkey(struct shared_state *st, int keytype)
+ایستا ساختار sshkey *
+get_privkey(ساختار shared_state *st, صحیح keytype)
 {
-	if (st == NULL || keytype < 0 || (size_t)keytype >= st->nkeys ||
-	    st->privkeys == NULL || st->privkeys[keytype] == NULL)
+	اگر (st == پوچ || keytype < 0 || (size_t)keytype >= st->nkeys ||
+	    st->privkeys == پوچ || st->privkeys[keytype] == پوچ)
 		abort();
-	return st->privkeys[keytype];
+	بازگشت st->privkeys[keytype];
 }
 
-static int
-build_proposal_side(char **out, const char *defaults[PROPOSAL_MAX],
-    const char *kex, const char *keyname,
-    const char *cipher, const char *mac, const char *comp)
+ایستا صحیح
+build_proposal_side(نویسه **out, ثابت نویسه *defaults[PROPOSAL_MAX],
+    ثابت نویسه *kex, ثابت نویسه *keyname,
+    ثابت نویسه *cipher, ثابت نویسه *mac, ثابت نویسه *comp)
 {
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *ccp = defaults[i];
+	صحیح i;
+	برای (i = 0; i < PROPOSAL_MAX; i++) {
+		ثابت نویسه *ccp = defaults[i];
 #ifdef CIPHER_NONE_AVAIL
-		if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		اگر (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			ccp = "none";
 #endif
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+		اگر (i == PROPOSAL_SERVER_HOST_کلید_ALGS)
 			ccp = keyname;
-		else if (i == PROPOSAL_KEX_ALGS && kex != NULL)
+		وگرنه اگر (i == PROPOSAL_KEX_ALGS && kex != پوچ)
 			ccp = kex;
-		else if ((i == PROPOSAL_ENC_ALGS_CTOS ||
-		    i == PROPOSAL_ENC_ALGS_STOC) && cipher != NULL)
+		وگرنه اگر ((i == PROPOSAL_ENC_ALGS_CTOS ||
+		    i == PROPOSAL_ENC_ALGS_STOC) && cipher != پوچ)
 			ccp = cipher;
-		else if ((i == PROPOSAL_MAC_ALGS_CTOS ||
-		    i == PROPOSAL_MAC_ALGS_STOC) && mac != NULL)
+		وگرنه اگر ((i == PROPOSAL_MAC_ALGS_CTOS ||
+		    i == PROPOSAL_MAC_ALGS_STOC) && mac != پوچ)
 			ccp = mac;
-		else if ((i == PROPOSAL_COMP_ALGS_CTOS ||
-		    i == PROPOSAL_COMP_ALGS_STOC) && comp != NULL)
+		وگرنه اگر ((i == PROPOSAL_COMP_ALGS_CTOS ||
+		    i == PROPOSAL_COMP_ALGS_STOC) && comp != پوچ)
 			ccp = comp;
-		if ((out[i] = strdup(ccp)) == NULL)
-			return -1;
+		اگر ((out[i] = strdup(ccp)) == پوچ)
+			بازگشت -1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
-static int
-do_kex_with_key(struct shared_state *st, struct test_state *ts,
-    const char *kex, int keytype, const struct kex_overrides *ov)
+ایستا صحیح
+do_kex_with_کلید(ساختار shared_state *st, ساختار test_state *ts,
+    ثابت نویسه *kex, صحیح keytype, ثابت ساختار kex_overrides *ov)
 {
-	struct ssh *client = NULL, *server = NULL;
-	struct sshkey *privkey = NULL, *pubkey = NULL;
-	struct sshbuf *state = NULL;
-	struct kex_params kex_params;
-	const char *proposal[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *myproposal[PROPOSAL_MAX] = {0};
-	char *keyname = NULL;
-	int i, r;
+	ساختار ssh *client = پوچ, *server = پوچ;
+	ساختار sshkey *privkey = پوچ, *pubkey = پوچ;
+	ساختار sshbuf *state = پوچ;
+	ساختار kex_params kex_params;
+	ثابت نویسه *proposal[PROPOSAL_MAX] = { KEX_CLIENT };
+	نویسه *myproposal[PROPOSAL_MAX] = {0};
+	نویسه *keyname = پوچ;
+	صحیح i, r;
 
-	ts->cin = ts->sin = NULL;
-	if (ts->c_template != NULL &&
-	    (ts->cin = sshbuf_fromb(ts->c_template)) == NULL)
+	ts->cin = ts->sin = پوچ;
+	اگر (ts->c_template != پوچ &&
+	    (ts->cin = sshbuf_fromb(ts->c_template)) == پوچ)
 		abort();
-	if (ts->s_template != NULL &&
-	    (ts->sin = sshbuf_fromb(ts->s_template)) == NULL)
+	اگر (ts->s_template != پوچ &&
+	    (ts->sin = sshbuf_fromb(ts->s_template)) == پوچ)
 		abort();
 
 	pubkey = get_pubkey(st, keytype);
 	privkey = get_privkey(st, keytype);
 	keyname = xstrdup(sshkey_ssh_name(privkey));
-	if (ts->cin != NULL) {
+	اگر (ts->cin != پوچ) {
 		debug_f("%s %s clobber client %zu", kex, keyname,
 		    sshbuf_len(ts->cin));
-	} else if (ts->sin != NULL) {
+	} وگرنه اگر (ts->sin != پوچ) {
 		debug_f("%s %s clobber server %zu", kex, keyname,
 		    sshbuf_len(ts->sin));
-	} else
+	} وگرنه
 		debug_f("%s %s noclobber", kex, keyname);
 
-	if (build_proposal_side(myproposal, proposal, kex, keyname,
-	    ov ? ov->cipher : NULL,
-	    ov ? ov->mac : NULL,
-	    ov ? ov->comp : NULL) != 0) {
+	اگر (build_proposal_side(myproposal, proposal, kex, keyname,
+	    ov ? ov->cipher : پوچ,
+	    ov ? ov->mac : پوچ,
+	    ov ? ov->comp : پوچ) != 0) {
 		error_f("build proposal");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto fail;
+		برو fail;
 	}
-	memcpy(kex_params.proposal, myproposal, sizeof(myproposal));
-	if ((r = ssh_init(&client, 0, &kex_params)) != 0) {
+	memcpy(kex_params.proposal, myproposal, اندازه(myproposal));
+	اگر ((r = ssh_init(&client, 0, &kex_params)) != 0) {
 		error_fr(r, "init client");
-		goto fail;
+		برو fail;
 	}
-	if ((r = ssh_init(&server, 1, &kex_params)) != 0) {
+	اگر ((r = ssh_init(&server, 1, &kex_params)) != 0) {
 		error_fr(r, "init server");
-		goto fail;
+		برو fail;
 	}
-	if ((r = ssh_add_hostkey(server, privkey)) != 0 ||
+	اگر ((r = ssh_add_hostkey(server, privkey)) != 0 ||
 	    (r = ssh_add_hostkey(client, pubkey)) != 0) {
 		error_fr(r, "add hostkeys");
-		goto fail;
+		برو fail;
 	}
-	if ((r = run_kex(ts, client, server)) != 0) {
+	اگر ((r = run_kex(ts, client, server)) != 0) {
 		error_fr(r, "kex");
-		goto fail;
+		برو fail;
 	}
 	/* XXX rekex, set_state, etc */
  fail:
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(myproposal[i]);
+	برای (i = 0; i < PROPOSAL_MAX; i++)
+		آزاد(myproposal[i]);
 	sshbuf_free(ts->sin);
 	sshbuf_free(ts->cin);
 	sshbuf_free(state);
 	ssh_free(client);
 	ssh_free(server);
-	free(keyname);
-	return r;
+	آزاد(keyname);
+	بازگشت r;
 }
 
-static int
-prepare_key(struct shared_state *st, int kt, int bits)
+ایستا صحیح
+prepare_کلید(ساختار shared_state *st, صحیح kt, صحیح bits)
 {
-	const char *pubstr = NULL;
-	const char *privstr = NULL;
-	char *tmp, *cp;
-	struct sshkey *privkey = NULL, *pubkey = NULL;
-	struct sshbuf *b = NULL;
-	int r;
+	ثابت نویسه *pubstr = پوچ;
+	ثابت نویسه *privstr = پوچ;
+	نویسه *tmp, *cp;
+	ساختار sshkey *privkey = پوچ, *pubkey = پوچ;
+	ساختار sshbuf *b = پوچ;
+	صحیح r;
 
-	switch (kt) {
-	case KEY_RSA:
+	انتخاب (kt) {
+	حالت کلید_RSA:
 		pubstr = PUB_RSA;
 		privstr = PRIV_RSA;
-		break;
-	case KEY_ECDSA:
+		بشکن;
+	حالت کلید_ECDSA:
 		pubstr = PUB_ECDSA;
 		privstr = PRIV_ECDSA;
-		break;
-	case KEY_ED25519:
+		بشکن;
+	حالت کلید_ED25519:
 		pubstr = PUB_ED25519;
 		privstr = PRIV_ED25519;
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		abort();
 	}
-	if ((b = sshbuf_from(privstr, strlen(privstr))) == NULL)
+	اگر ((b = sshbuf_from(privstr, strlen(privstr))) == پوچ)
 		abort();
-	if ((r = sshkey_parse_private_fileblob(b, "", &privkey, NULL)) != 0) {
+	اگر ((r = sshkey_parse_private_fileblob(b, "", &privkey, پوچ)) != 0) {
 		error_fr(r, "priv %d", kt);
 		abort();
 	}
 	sshbuf_free(b);
 	tmp = cp = xstrdup(pubstr);
-	if ((pubkey = sshkey_new(KEY_UNSPEC)) == NULL)
+	اگر ((pubkey = sshkey_new(کلید_UNSPEC)) == پوچ)
 		abort();
-	if ((r = sshkey_read(pubkey, &cp)) != 0) {
+	اگر ((r = sshkey_read(pubkey, &cp)) != 0) {
 		error_fr(r, "pub %d", kt);
 		abort();
 	}
-	free(tmp);
+	آزاد(tmp);
 
-	store_key(st, pubkey, privkey);
-	return 0;
+	store_کلید(st, pubkey, privkey);
+	بازگشت 0;
 }
 
-#if defined(STANDALONE)
+#اگر defined(STANDALONE)
 
-#if 0 /* use this if generating new keys to embed above */
-static int
-prepare_key(struct shared_state *st, int keytype, int bits)
+#اگر 0 /* use this if generating new keys to embed above */
+ایستا صحیح
+prepare_کلید(ساختار shared_state *st, صحیح keytype, صحیح bits)
 {
-	struct sshkey *privkey = NULL, *pubkey = NULL;
-	int r;
+	ساختار sshkey *privkey = پوچ, *pubkey = پوچ;
+	صحیح r;
 
-	if ((r = sshkey_generate(keytype, bits, &privkey)) != 0) {
+	اگر ((r = sshkey_generate(keytype, bits, &privkey)) != 0) {
 		error_fr(r, "generate");
 		abort();
 	}
-	if ((r = sshkey_from_private(privkey, &pubkey)) != 0) {
+	اگر ((r = sshkey_from_private(privkey, &pubkey)) != 0) {
 		error_fr(r, "make pubkey");
 		abort();
 	}
-	store_key(st, pubkey, privkey);
-	return 0;
+	store_کلید(st, pubkey, privkey);
+	بازگشت 0;
 }
 #endif
 
-int main(void)
+صحیح اصلی(تهی)
 {
-	static struct shared_state *st;
-	struct test_state *ts;
-	const int keytypes[] = { KEY_RSA, KEY_ECDSA, KEY_ED25519, -1 };
-	static const char * const kextypes[] = {
+	ایستا ساختار shared_state *st;
+	ساختار test_state *ts;
+	ثابت صحیح keytypes[] = { کلید_RSA, کلید_ECDSA, کلید_ED25519, -1 };
+	ایستا ثابت نویسه * ثابت kextypes[] = {
 		"mlkem768x25519-sha256",
 		"sntrup761x25519-sha512@openssh.com",
 		"curve25519-sha256@libssh.org",
 		"ecdh-sha2-nistp256",
 		"diffie-hellman-group1-sha1",
 		"diffie-hellman-group-exchange-sha1",
-		NULL,
+		پوچ,
 	};
-	int i, j;
-	char *path;
+	صحیح i, j;
+	نویسه *path;
 	FILE *f;
 
 	log_init("kex_fuzz", SYSLOG_LEVEL_DEBUG3, SYSLOG_FACILITY_AUTH, 1);
 
-	if (st == NULL) {
-		st = (struct shared_state *)xcalloc(1, sizeof(*st));
-		prepare_keys(st);
+	اگر (st == پوچ) {
+		st = (ساختار shared_state *)xcalloc(1, اندازه(*st));
+		prepare_کلیدها(st);
 	}
 	/* Run each kex method for each key and save client/server packets */
-	for (i = 0; keytypes[i] != -1; i++) {
-		for (j = 0; kextypes[j] != NULL; j++) {
-			ts = (struct test_state *)xcalloc(1, sizeof(*ts));
+	برای (i = 0; keytypes[i] != -1; i++) {
+		برای (j = 0; kextypes[j] != پوچ; j++) {
+			ts = (ساختار test_state *)xcalloc(1, اندازه(*ts));
 			ts->smsgs = sshbuf_new();
 			ts->cmsgs = sshbuf_new();
-			do_kex_with_key(st, ts, kextypes[j], keytypes[i], NULL);
+			do_kex_with_کلید(st, ts, kextypes[j], keytypes[i], پوچ);
 			xasprintf(&path, "S2C-%s-%s",
 			    kextypes[j], sshkey_type(st->pubkeys[keytypes[i]]));
 			debug_f("%s", path);
-			if ((f = fopen(path, "wb+")) == NULL)
+			اگر ((f = fopen(path, "wb+")) == پوچ)
 				abort();
-			if (fwrite(sshbuf_ptr(ts->smsgs), 1,
+			اگر (fwrite(sshbuf_ptr(ts->smsgs), 1,
 			    sshbuf_len(ts->smsgs), f) != sshbuf_len(ts->smsgs))
 				abort();
 			fclose(f);
-			free(path);
+			آزاد(path);
 			//sshbuf_dump(ts->smsgs, stderr);
 			xasprintf(&path, "C2S-%s-%s",
 			    kextypes[j], sshkey_type(st->pubkeys[keytypes[i]]));
 			debug_f("%s", path);
-			if ((f = fopen(path, "wb+")) == NULL)
+			اگر ((f = fopen(path, "wb+")) == پوچ)
 				abort();
-			if (fwrite(sshbuf_ptr(ts->cmsgs), 1,
+			اگر (fwrite(sshbuf_ptr(ts->cmsgs), 1,
 			    sshbuf_len(ts->cmsgs), f) != sshbuf_len(ts->cmsgs))
 				abort();
 			fclose(f);
-			free(path);
+			آزاد(path);
 			//sshbuf_dump(ts->cmsgs, stderr);
 			sshbuf_free(ts->smsgs);
 			sshbuf_free(ts->cmsgs);
-			free(ts);
+			آزاد(ts);
 		}
 	}
-	for (i = 0; keytypes[i] != -1; i++) {
+	برای (i = 0; keytypes[i] != -1; i++) {
 		xasprintf(&path, "%s.priv",
 		    sshkey_type(st->privkeys[keytypes[i]]));
 		debug_f("%s", path);
-		if (sshkey_save_private(st->privkeys[keytypes[i]], path,
-		    "", "", SSHKEY_PRIVATE_OPENSSH, NULL, 0) != 0)
+		اگر (sshkey_save_private(st->privkeys[keytypes[i]], path,
+		    "", "", SSHKEY_PRIVATE_OPENSSH, پوچ, 0) != 0)
 			abort();
-		free(path);
+		آزاد(path);
 		xasprintf(&path, "%s.pub",
 		    sshkey_type(st->pubkeys[keytypes[i]]));
 		debug_f("%s", path);
-		if (sshkey_save_public(st->pubkeys[keytypes[i]], path, "") != 0)
+		اگر (sshkey_save_public(st->pubkeys[keytypes[i]], path, "") != 0)
 			abort();
-		free(path);
+		آزاد(path);
 	}
 }
-#else /* !STANDALONE */
-static void
-do_kex(struct shared_state *st, struct test_state *ts, const char *kex)
+#وگرنه /* !STANDALONE */
+ایستا تهی
+do_kex(ساختار shared_state *st, ساختار test_state *ts, ثابت نویسه *kex)
 {
-	do_kex_with_key(st, ts, kex, KEY_RSA, NULL);
-	do_kex_with_key(st, ts, kex, KEY_ECDSA, NULL);
-	do_kex_with_key(st, ts, kex, KEY_ED25519, NULL);
+	do_kex_with_کلید(st, ts, kex, کلید_RSA, پوچ);
+	do_kex_with_کلید(st, ts, kex, کلید_ECDSA, پوچ);
+	do_kex_with_کلید(st, ts, kex, کلید_ED25519, پوچ);
 }
 
 /*
@@ -440,50 +440,50 @@ do_kex(struct shared_state *st, struct test_state *ts, const char *kex)
  * (curve25519 + ed25519) so cipher/MAC/compression/mismatch paths get
  * exercised once per fuzz input without multiplying total attempts.
  */
-static void
-kex_extras(struct shared_state *st, struct test_state *ts)
+ایستا تهی
+kex_extras(ساختار shared_state *st, ساختار test_state *ts)
 {
-	static const char * const ciphers[] = {
+	ایستا ثابت نویسه * ثابت ciphers[] = {
 		"chacha20-poly1305@openssh.com",
 		"aes256-gcm@openssh.com",
 		"aes128-ctr",
 		"aes256-ctr",
-		NULL,
+		پوچ,
 	};
-	static const char * const macs[] = {
+	ایستا ثابت نویسه * ثابت macs[] = {
 		"hmac-sha2-256-etm@openssh.com",
 		"hmac-sha2-512-etm@openssh.com",
 		"umac-128-etm@openssh.com",
-		NULL,
+		پوچ,
 	};
-	static const char * const comps[] = {
+	ایستا ثابت نویسه * ثابت comps[] = {
 		"zlib@openssh.com",
 		"zlib",
-		NULL,
+		پوچ,
 	};
-	const char *kex = "curve25519-sha256@libssh.org";
-	int i;
+	ثابت نویسه *kex = "curve25519-sha256@libssh.org";
+	صحیح i;
 
-	for (i = 0; ciphers[i] != NULL; i++) {
-		struct kex_overrides ov = { 0 };
+	برای (i = 0; ciphers[i] != پوچ; i++) {
+		ساختار kex_overrides ov = { 0 };
 		ov.cipher = ciphers[i];
-		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
+		do_kex_with_کلید(st, ts, kex, کلید_ED25519, &ov);
 	}
-	for (i = 0; macs[i] != NULL; i++) {
-		struct kex_overrides ov = { 0 };
+	برای (i = 0; macs[i] != پوچ; i++) {
+		ساختار kex_overrides ov = { 0 };
 		ov.cipher = "aes128-ctr";
 		ov.mac = macs[i];
-		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
+		do_kex_with_کلید(st, ts, kex, کلید_ED25519, &ov);
 	}
-	for (i = 0; comps[i] != NULL; i++) {
-		struct kex_overrides ov = { 0 };
+	برای (i = 0; comps[i] != پوچ; i++) {
+		ساختار kex_overrides ov = { 0 };
 		ov.comp = comps[i];
-		do_kex_with_key(st, ts, kex, KEY_ED25519, &ov);
+		do_kex_with_کلید(st, ts, kex, کلید_ED25519, &ov);
 	}
 }
 
-static void
-kex_tests(struct shared_state *st, struct test_state *ts)
+ایستا تهی
+kex_tests(ساختار shared_state *st, ساختار test_state *ts)
 {
 	do_kex(st, ts, "mlkem768x25519-sha256");
 	do_kex(st, ts, "sntrup761x25519-sha512@openssh.com");
@@ -494,47 +494,47 @@ kex_tests(struct shared_state *st, struct test_state *ts)
 	kex_extras(st, ts);
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+صحیح LLVMFuzzer_Test_One_درون_داد(ثابت uint8_t* data, size_t size)
 {
-	static struct shared_state *st;
-	struct test_state *ts;
-	u_char crbuf[SSH_MAX_PRE_BANNER_LINES * 4];
+	ایستا ساختار shared_state *st;
+	ساختار test_state *ts;
+	u_char crbuf[SSH_MAX_PRE_BANNER_سطرها * 4];
 	u_char zbuf[4096] = {0};
-	static LogLevel loglevel = SYSLOG_LEVEL_INFO;
+	ایستا LogLevel loglevel = SYSLOG_LEVEL_INFO;
 
-	if (st == NULL) {
-		if (getenv("DEBUG") != NULL || getenv("KEX_FUZZ_DEBUG") != NULL)
+	اگر (st == پوچ) {
+		اگر (getenv("DEBUG") != پوچ || getenv("KEX_FUZZ_DEBUG") != پوچ)
 			loglevel = SYSLOG_LEVEL_DEBUG3;
 		log_init("kex_fuzz",
 		    loglevel, SYSLOG_FACILITY_AUTH, 1);
-		st = (struct shared_state *)xcalloc(1, sizeof(*st));
-		prepare_keys(st);
+		st = (ساختار shared_state *)xcalloc(1, اندازه(*st));
+		prepare_کلیدها(st);
 	}
 
 	/* Ensure that we can complete (fail) banner exchange at least */
-	memset(crbuf, '\n', sizeof(crbuf));
+	memset(crbuf, '\n', اندازه(crbuf));
 
-	ts = (struct test_state *)xcalloc(1, sizeof(*ts));
-	if ((ts->s_template = sshbuf_new()) == NULL ||
+	ts = (ساختار test_state *)xcalloc(1, اندازه(*ts));
+	اگر ((ts->s_template = sshbuf_new()) == پوچ ||
 	    sshbuf_put(ts->s_template, data, size) != 0 ||
-	    sshbuf_put(ts->s_template, crbuf, sizeof(crbuf)) != 0 ||
-	    sshbuf_put(ts->s_template, zbuf, sizeof(zbuf)) != 0)
+	    sshbuf_put(ts->s_template, crbuf, اندازه(crbuf)) != 0 ||
+	    sshbuf_put(ts->s_template, zbuf, اندازه(zbuf)) != 0)
 		abort();
 	kex_tests(st, ts);
 	sshbuf_free(ts->s_template);
-	free(ts);
+	آزاد(ts);
 
-	ts = (struct test_state *)xcalloc(1, sizeof(*ts));
-	if ((ts->c_template = sshbuf_new()) == NULL ||
+	ts = (ساختار test_state *)xcalloc(1, اندازه(*ts));
+	اگر ((ts->c_template = sshbuf_new()) == پوچ ||
 	    sshbuf_put(ts->c_template, data, size) != 0 ||
-	    sshbuf_put(ts->c_template, crbuf, sizeof(crbuf)) != 0 ||
-	    sshbuf_put(ts->c_template, zbuf, sizeof(zbuf)) != 0)
+	    sshbuf_put(ts->c_template, crbuf, اندازه(crbuf)) != 0 ||
+	    sshbuf_put(ts->c_template, zbuf, اندازه(zbuf)) != 0)
 		abort();
 	kex_tests(st, ts);
 	sshbuf_free(ts->c_template);
-	free(ts);
+	آزاد(ts);
 
-	return 0;
+	بازگشت 0;
 }
 #endif /* STANDALONE */
 } /* extern "C" */

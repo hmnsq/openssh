@@ -18,11 +18,11 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strlcat.c */
 
-#include "includes.h"
+#شامل "includes.h"
 #ifndef HAVE_STRLCAT
 
-#include <sys/types.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <string.h>
 
 /*
  * Appends src to string dst of size siz (unlike strncat, siz is the
@@ -32,23 +32,23 @@
  * If retval >= siz, truncation occurred.
  */
 size_t
-strlcat(char *dst, const char *src, size_t siz)
+strlcat(نویسه *dst, ثابت نویسه *src, size_t siz)
 {
-	char *d = dst;
-	const char *s = src;
+	نویسه *d = dst;
+	ثابت نویسه *s = src;
 	size_t n = siz;
 	size_t dlen;
 
 	/* Find the end of dst and adjust bytes left but don't go past end */
-	while (n-- != 0 && *d != '\0')
+	وقتی (n-- != 0 && *d != '\0')
 		d++;
 	dlen = d - dst;
 	n = siz - dlen;
 
-	if (n == 0)
-		return(dlen + strlen(s));
-	while (*s != '\0') {
-		if (n != 1) {
+	اگر (n == 0)
+		بازگشت(dlen + strlen(s));
+	وقتی (*s != '\0') {
+		اگر (n != 1) {
 			*d++ = *s;
 			n--;
 		}
@@ -56,7 +56,7 @@ strlcat(char *dst, const char *src, size_t siz)
 	}
 	*d = '\0';
 
-	return(dlen + (s - src));	/* count does not include NUL */
+	بازگشت(dlen + (s - src));	/* count does not include NUL */
 }
 
 #endif /* !HAVE_STRLCAT */

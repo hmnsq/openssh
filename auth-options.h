@@ -19,8 +19,8 @@
 #ifndef AUTH_OPTIONS_H
 #define AUTH_OPTIONS_H
 
-struct passwd;
-struct sshkey;
+ساختار passwd;
+ساختار sshkey;
 
 /* Maximum number of permitopen/permitlisten directives to accept */
 #define SSH_AUTHOPT_PERMIT_MAX	4096
@@ -32,75 +32,75 @@ struct sshkey;
  * sshauthopt represents key options parsed from authorized_keys or
  * from certificate extensions/options.
  */
-struct sshauthopt {
+ساختار sshauthopt {
 	/* Feature flags */
-	int permit_port_forwarding_flag;
-	int permit_agent_forwarding_flag;
-	int permit_x11_forwarding_flag;
-	int permit_pty_flag;
-	int permit_user_rc;
+	صحیح permit_port_forwarding_flag;
+	صحیح permit_agent_forwarding_flag;
+	صحیح permit_x11_forwarding_flag;
+	صحیح permit_pty_flag;
+	صحیح permit_user_rc;
 
 	/* "restrict" keyword was invoked */
-	int restricted;
+	صحیح restricted;
 
 	/* key/principal expiry date */
 	uint64_t valid_before;
 
 	/* Certificate-related options */
-	int cert_authority;
-	char *cert_principals;
+	صحیح cert_authority;
+	نویسه *cert_principals;
 
-	int force_tun_device;
-	char *force_command;
+	صحیح force_tun_device;
+	نویسه *force_command;
 
 	/* Custom environment */
 	size_t nenv;
-	char **env;
+	نویسه **env;
 
 	/* Permitted port forwardings */
 	size_t npermitopen;
-	char **permitopen;
+	نویسه **permitopen;
 
 	/* Permitted listens (remote forwarding) */
 	size_t npermitlisten;
-	char **permitlisten;
+	نویسه **permitlisten;
 
 	/*
 	 * Permitted host/addresses (comma-separated)
 	 * Caller must check source address matches both lists (if present).
 	 */
-	char *required_from_host_cert;
-	char *required_from_host_keys;
+	نویسه *required_from_host_cert;
+	نویسه *required_from_host_کلیدها;
 
 	/* Key requires user presence asserted */
-	int no_require_user_presence;
+	صحیح no_require_user_presence;
 	/* Key requires user verification (e.g. PIN) */
-	int require_verify;
+	صحیح require_verify;
 };
 
-struct sshauthopt *sshauthopt_new(void);
-struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
-void sshauthopt_free(struct sshauthopt *opts);
-struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
-int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);
-int sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
+ساختار sshauthopt *sshauthopt_new(تهی);
+ساختار sshauthopt *sshauthopt_new_with_کلیدها_defaults(تهی);
+تهی sshauthopt_free(ساختار sshauthopt *opts);
+ساختار sshauthopt *sshauthopt_copy(ثابت ساختار sshauthopt *orig);
+صحیح sshauthopt_serialise(ثابت ساختار sshauthopt *opts, ساختار sshbuf *m, صحیح);
+صحیح sshauthopt_deserialise(ساختار sshbuf *m, ساختار sshauthopt **opts);
 
 /*
  * Parse authorized_keys options. Returns an options structure on success
  * or NULL on failure. Will set errstr on failure.
  */
-struct sshauthopt *sshauthopt_parse(const char *s, const char **errstr);
+ساختار sshauthopt *sshauthopt_parse(ثابت نویسه *s, ثابت نویسه **errstr);
 
 /*
  * Parse certification options to a struct sshauthopt.
  * Returns options on success or NULL on failure.
  */
-struct sshauthopt *sshauthopt_from_cert(struct sshkey *k);
+ساختار sshauthopt *sshauthopt_from_cert(ساختار sshkey *k);
 
 /*
  * Merge key options.
  */
-struct sshauthopt *sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp);
+ساختار sshauthopt *sshauthopt_merge(ثابت ساختار sshauthopt *primary,
+    ثابت ساختار sshauthopt *additional, ثابت نویسه **errstrp);
 
 #endif

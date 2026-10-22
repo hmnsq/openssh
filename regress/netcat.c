@@ -31,31 +31,31 @@
  * *Hobbit* <hobbit@avian.org>.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/uio.h>
-#include <sys/un.h>
+#شامل <sys/types.h>
+#شامل <sys/socket.h>
+#شامل <sys/time.h>
+#شامل <sys/uio.h>
+#شامل <sys/un.h>
 
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <netinet/ip.h>
+#شامل <netinet/in.h>
+#شامل <netinet/tcp.h>
+#شامل <netinet/ip.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <netdb.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include "atomicio.h"
+#شامل <errno.h>
+#شامل <fcntl.h>
+#شامل <limits.h>
+#شامل <netdb.h>
+#شامل <signal.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل "atomicio.h"
 
-#include <poll.h>
+#شامل <poll.h>
 #ifdef HAVE_ERR_H
 # include <err.h>
 #endif
@@ -75,7 +75,7 @@
 
 #ifndef SUN_LEN
 #define SUN_LEN(su) \
-	(sizeof(*(su)) - sizeof((su)->sun_path) + strlen((su)->sun_path))
+	(اندازه(*(su)) - اندازه((su)->sun_path) + strlen((su)->sun_path))
 #endif
 
 #define PORT_MAX	65535
@@ -89,205 +89,205 @@
 #define BUFSIZE 16384
 
 /* Command Line Options */
-int	dflag;					/* detached, no stdin */
-int	Fflag;					/* fdpass sock to stdout */
-unsigned int iflag;				/* Interval Flag */
-int	kflag;					/* More than one connect */
-int	lflag;					/* Bind to local port */
-int	Nflag;					/* shutdown() network socket */
-int	nflag;					/* Don't do name look up */
-char   *Pflag;					/* Proxy username */
-char   *pflag;					/* Localport flag */
-int	rflag;					/* Random ports flag */
-char   *sflag;					/* Source Address */
-int	tflag;					/* Telnet Emulation */
-int	uflag;					/* UDP - Default to TCP */
-int	vflag;					/* Verbosity */
-int	xflag;					/* Socks proxy */
-int	zflag;					/* Port Scan Flag */
-int	Dflag;					/* sodebug */
-int	Iflag;					/* TCP receive buffer size */
-int	Oflag;					/* TCP send buffer size */
-int	Sflag;					/* TCP MD5 signature option */
-int	Tflag = -1;				/* IP Type of Service */
-int	rtableid = -1;
+صحیح	dflag;					/* detached, no stdin */
+صحیح	Fflag;					/* fdpass sock to stdout */
+unsigned صحیح iflag;				/* Interval Flag */
+صحیح	kflag;					/* More than one connect */
+صحیح	lflag;					/* Bind to local port */
+صحیح	Nflag;					/* shutdown() network socket */
+صحیح	nflag;					/* Don't do name look up */
+نویسه   *Pflag;					/* Proxy username */
+نویسه   *pflag;					/* Localport flag */
+صحیح	rflag;					/* Random ports flag */
+نویسه   *sflag;					/* Source Address */
+صحیح	tflag;					/* Telnet Emulation */
+صحیح	uflag;					/* UDP - Default to TCP */
+صحیح	vflag;					/* Verbosity */
+صحیح	xflag;					/* Socks proxy */
+صحیح	zflag;					/* Port Scan Flag */
+صحیح	Dflag;					/* sodebug */
+صحیح	Iflag;					/* TCP receive buffer size */
+صحیح	Oflag;					/* TCP send buffer size */
+صحیح	Sflag;					/* TCP MD5 signature option */
+صحیح	Tflag = -1;				/* IP Type of Service */
+صحیح	rtableid = -1;
 
-int timeout = -1;
-int family = AF_UNSPEC;
-char *portlist[PORT_MAX+1];
-char *unix_dg_tmp_socket;
+صحیح timeout = -1;
+صحیح family = AF_UNSPEC;
+نویسه *portlist[PORT_MAX+1];
+نویسه *unix_dg_tmp_socket;
 
-void	atelnet(int, unsigned char *, unsigned int);
-void	build_ports(char *);
-void	help(void);
-int	local_listen(char *, char *, struct addrinfo);
-void	readwrite(int);
-void	fdpass(int nfd) __attribute__((noreturn));
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	timeout_connect(int, const struct sockaddr *, socklen_t);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int, const char *);
-int	udptest(int);
-int	unix_bind(char *);
-int	unix_connect(char *);
-int	unix_listen(char *);
-void	set_common_sockopts(int, int);
-int	map_tos(char *, int *);
-void	report_connect(const struct sockaddr *, socklen_t);
-void	usage(int);
-ssize_t drainbuf(int, unsigned char *, size_t *);
-ssize_t fillbuf(int, unsigned char *, size_t *);
+تهی	atelnet(صحیح, unsigned نویسه *, unsigned صحیح);
+تهی	build_ports(نویسه *);
+تهی	help(تهی);
+صحیح	local_listen(نویسه *, نویسه *, ساختار addrinfo);
+تهی	readwrite(صحیح);
+تهی	fdpass(صحیح nfd) __attribute__((noreturn));
+صحیح	remote_connect(ثابت نویسه *, ثابت نویسه *, ساختار addrinfo);
+صحیح	timeout_connect(صحیح, ثابت ساختار sockaddr *, socklen_t);
+صحیح	socks_connect(ثابت نویسه *, ثابت نویسه *, ساختار addrinfo,
+	    ثابت نویسه *, ثابت نویسه *, ساختار addrinfo, صحیح, ثابت نویسه *);
+صحیح	udptest(صحیح);
+صحیح	unix_bind(نویسه *);
+صحیح	unix_connect(نویسه *);
+صحیح	unix_listen(نویسه *);
+تهی	set_common_sockopts(صحیح, صحیح);
+صحیح	map_tos(نویسه *, صحیح *);
+تهی	report_connect(ثابت ساختار sockaddr *, socklen_t);
+تهی	usage(صحیح);
+ssize_t drainbuf(صحیح, unsigned نویسه *, size_t *);
+ssize_t fillbuf(صحیح, unsigned نویسه *, size_t *);
 
 
-int
-main(int argc, char *argv[])
+صحیح
+اصلی(صحیح argc, نویسه *argv[])
 {
-	int ch, s, ret, socksv;
-	char *host, *uport;
-	struct addrinfo hints;
-	struct servent *sv;
+	صحیح ch, s, ret, socksv;
+	نویسه *host, *uport;
+	ساختار addrinfo hints;
+	ساختار servent *sv;
 	socklen_t len;
-	struct sockaddr_storage cliaddr;
-	char *proxy = NULL;
-	const char *errstr, *proxyhost = "", *proxyport = NULL;
-	struct addrinfo proxyhints;
-	char unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_SIZE];
+	ساختار sockaddr_storage cliaddr;
+	نویسه *proxy = پوچ;
+	ثابت نویسه *errstr, *proxyhost = "", *proxyport = پوچ;
+	ساختار addrinfo proxyhints;
+	نویسه unix_dg_tmp_socket_buf[UNIX_DG_TMP_SOCKET_SIZE];
 
 	ret = 1;
 	s = 0;
 	socksv = 5;
-	host = NULL;
-	uport = NULL;
-	sv = NULL;
+	host = پوچ;
+	uport = پوچ;
+	sv = پوچ;
 
-	signal(SIGPIPE, SIG_IGN);
+	سیگنال(SIGPIPE, SIG_IGN);
 
-	while ((ch = getopt(argc, argv,
+	وقتی ((ch = getopt(argc, argv,
 	    "46DdFhI:i:klNnO:P:p:rSs:tT:UuV:vw:X:x:z")) != -1) {
-		switch (ch) {
-		case '4':
+		انتخاب (ch) {
+		حالت '4':
 			family = AF_INET;
-			break;
-		case '6':
+			بشکن;
+		حالت '6':
 			family = AF_INET6;
-			break;
-		case 'U':
+			بشکن;
+		حالت 'U':
 			family = AF_UNIX;
-			break;
-		case 'X':
-			if (strcasecmp(optarg, "connect") == 0)
+			بشکن;
+		حالت 'X':
+			اگر (strcasecmp(optarg, "connect") == 0)
 				socksv = -1; /* HTTP proxy CONNECT */
-			else if (strcmp(optarg, "4") == 0)
+			وگرنه اگر (strcmp(optarg, "4") == 0)
 				socksv = 4; /* SOCKS v.4 */
-			else if (strcasecmp(optarg, "4A") == 0)
+			وگرنه اگر (strcasecmp(optarg, "4A") == 0)
 				socksv = 44; /* SOCKS v.4A */
-			else if (strcmp(optarg, "5") == 0)
+			وگرنه اگر (strcmp(optarg, "5") == 0)
 				socksv = 5; /* SOCKS v.5 */
-			else
+			وگرنه
 				errx(1, "unsupported proxy protocol");
-			break;
-		case 'd':
+			بشکن;
+		حالت 'd':
 			dflag = 1;
-			break;
-		case 'F':
+			بشکن;
+		حالت 'F':
 			Fflag = 1;
-			break;
-		case 'h':
+			بشکن;
+		حالت 'h':
 			help();
-			break;
-		case 'i':
+			بشکن;
+		حالت 'i':
 			iflag = strtonum(optarg, 0, UINT_MAX, &errstr);
-			if (errstr)
+			اگر (errstr)
 				errx(1, "interval %s: %s", errstr, optarg);
-			break;
-		case 'k':
+			بشکن;
+		حالت 'k':
 			kflag = 1;
-			break;
-		case 'l':
+			بشکن;
+		حالت 'l':
 			lflag = 1;
-			break;
-		case 'N':
+			بشکن;
+		حالت 'N':
 			Nflag = 1;
-			break;
-		case 'n':
+			بشکن;
+		حالت 'n':
 			nflag = 1;
-			break;
-		case 'P':
+			بشکن;
+		حالت 'P':
 			Pflag = optarg;
-			break;
-		case 'p':
+			بشکن;
+		حالت 'p':
 			pflag = optarg;
-			break;
-		case 'r':
+			بشکن;
+		حالت 'r':
 			rflag = 1;
-			break;
-		case 's':
+			بشکن;
+		حالت 's':
 			sflag = optarg;
-			break;
-		case 't':
+			بشکن;
+		حالت 't':
 			tflag = 1;
-			break;
-		case 'u':
+			بشکن;
+		حالت 'u':
 			uflag = 1;
-			break;
+			بشکن;
 #ifdef SO_RTABLE
-		case 'V':
-			rtableid = (int)strtonum(optarg, 0,
+		حالت 'V':
+			rtableid = (صحیح)strtonum(optarg, 0,
 			    RT_TABLEID_MAX, &errstr);
-			if (errstr)
+			اگر (errstr)
 				errx(1, "rtable %s: %s", errstr, optarg);
-			break;
+			بشکن;
 #endif
-		case 'v':
+		حالت 'v':
 			vflag = 1;
-			break;
-		case 'w':
+			بشکن;
+		حالت 'w':
 			timeout = strtonum(optarg, 0, INT_MAX / 1000, &errstr);
-			if (errstr)
+			اگر (errstr)
 				errx(1, "timeout %s: %s", errstr, optarg);
 			timeout *= 1000;
-			break;
-		case 'x':
+			بشکن;
+		حالت 'x':
 			xflag = 1;
-			if ((proxy = strdup(optarg)) == NULL)
+			اگر ((proxy = strdup(optarg)) == پوچ)
 				errx(1, "strdup");
-			break;
-		case 'z':
+			بشکن;
+		حالت 'z':
 			zflag = 1;
-			break;
-		case 'D':
+			بشکن;
+		حالت 'D':
 			Dflag = 1;
-			break;
-		case 'I':
+			بشکن;
+		حالت 'I':
 			Iflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			اگر (errstr != پوچ)
 				errx(1, "TCP receive window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'O':
+			بشکن;
+		حالت 'O':
 			Oflag = strtonum(optarg, 1, 65536 << 14, &errstr);
-			if (errstr != NULL)
+			اگر (errstr != پوچ)
 				errx(1, "TCP send window %s: %s",
 				    errstr, optarg);
-			break;
-		case 'S':
+			بشکن;
+		حالت 'S':
 			Sflag = 1;
-			break;
-		case 'T':
-			errstr = NULL;
+			بشکن;
+		حالت 'T':
+			errstr = پوچ;
 			errno = 0;
-			if (map_tos(optarg, &Tflag))
-				break;
-			if (strlen(optarg) > 1 && optarg[0] == '0' &&
+			اگر (map_tos(optarg, &Tflag))
+				بشکن;
+			اگر (strlen(optarg) > 1 && optarg[0] == '0' &&
 			    optarg[1] == 'x')
-				Tflag = (int)strtol(optarg, NULL, 16);
-			else
-				Tflag = (int)strtonum(optarg, 0, 255,
+				Tflag = (صحیح)strtol(optarg, پوچ, 16);
+			وگرنه
+				Tflag = (صحیح)strtonum(optarg, 0, 255,
 				    &errstr);
-			if (Tflag < 0 || Tflag > 255 || errstr || errno)
+			اگر (Tflag < 0 || Tflag > 255 || errstr || errno)
 				errx(1, "illegal tos value %s", optarg);
-			break;
-		default:
+			بشکن;
+		پیشفرض:
 			usage(1);
 		}
 	}
@@ -295,201 +295,201 @@ main(int argc, char *argv[])
 	argv += optind;
 
 	/* Cruft to make sure options are clean, and used properly. */
-	if (argv[0] && !argv[1] && family == AF_UNIX) {
+	اگر (argv[0] && !argv[1] && family == AF_UNIX) {
 		host = argv[0];
-		uport = NULL;
-	} else if (argv[0] && !argv[1]) {
-		if  (!lflag)
+		uport = پوچ;
+	} وگرنه اگر (argv[0] && !argv[1]) {
+		اگر  (!lflag)
 			usage(1);
 		uport = argv[0];
-		host = NULL;
-	} else if (argv[0] && argv[1]) {
+		host = پوچ;
+	} وگرنه اگر (argv[0] && argv[1]) {
 		host = argv[0];
 		uport = argv[1];
-	} else
+	} وگرنه
 		usage(1);
 
-	if (lflag && sflag)
+	اگر (lflag && sflag)
 		errx(1, "cannot use -s and -l");
-	if (lflag && pflag)
+	اگر (lflag && pflag)
 		errx(1, "cannot use -p and -l");
-	if (lflag && zflag)
+	اگر (lflag && zflag)
 		errx(1, "cannot use -z and -l");
-	if (!lflag && kflag)
+	اگر (!lflag && kflag)
 		errx(1, "must use -l with -k");
 
 	/* Get name of temporary socket for unix datagram client */
-	if ((family == AF_UNIX) && uflag && !lflag) {
-		if (sflag) {
+	اگر ((family == AF_UNIX) && uflag && !lflag) {
+		اگر (sflag) {
 			unix_dg_tmp_socket = sflag;
-		} else {
+		} وگرنه {
 			strlcpy(unix_dg_tmp_socket_buf, "/tmp/nc.XXXXXXXXXX",
 				UNIX_DG_TMP_SOCKET_SIZE);
-			if (mktemp(unix_dg_tmp_socket_buf) == NULL)
+			اگر (mktemp(unix_dg_tmp_socket_buf) == پوچ)
 				err(1, "mktemp");
 			unix_dg_tmp_socket = unix_dg_tmp_socket_buf;
 		}
 	}
 
 	/* Initialize addrinfo structure. */
-	if (family != AF_UNIX) {
-		memset(&hints, 0, sizeof(struct addrinfo));
+	اگر (family != AF_UNIX) {
+		memset(&hints, 0, اندازه(ساختار addrinfo));
 		hints.ai_family = family;
 		hints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 		hints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
-		if (nflag)
+		اگر (nflag)
 			hints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (xflag) {
-		if (uflag)
+	اگر (xflag) {
+		اگر (uflag)
 			errx(1, "no proxy support for UDP mode");
 
-		if (lflag)
+		اگر (lflag)
 			errx(1, "no proxy support for listen");
 
-		if (family == AF_UNIX)
+		اگر (family == AF_UNIX)
 			errx(1, "no proxy support for unix sockets");
 
 		/* XXX IPv6 transport to proxy would probably work */
-		if (family == AF_INET6)
+		اگر (family == AF_INET6)
 			errx(1, "no proxy support for IPv6");
 
-		if (sflag)
+		اگر (sflag)
 			errx(1, "no proxy support for local source address");
 
 		proxyhost = strsep(&proxy, ":");
 		proxyport = proxy;
 
-		memset(&proxyhints, 0, sizeof(struct addrinfo));
+		memset(&proxyhints, 0, اندازه(ساختار addrinfo));
 		proxyhints.ai_family = family;
 		proxyhints.ai_socktype = SOCK_STREAM;
 		proxyhints.ai_protocol = IPPROTO_TCP;
-		if (nflag)
+		اگر (nflag)
 			proxyhints.ai_flags |= AI_NUMERICHOST;
 	}
 
-	if (lflag) {
-		int connfd;
+	اگر (lflag) {
+		صحیح connfd;
 		ret = 0;
 
-		if (family == AF_UNIX) {
-			if (uflag)
+		اگر (family == AF_UNIX) {
+			اگر (uflag)
 				s = unix_bind(host);
-			else
+			وگرنه
 				s = unix_listen(host);
 		}
 
 		/* Allow only one connection at a time, but stay alive. */
-		for (;;) {
-			if (family != AF_UNIX)
+		برای (;;) {
+			اگر (family != AF_UNIX)
 				s = local_listen(host, uport, hints);
-			if (s < 0)
+			اگر (s < 0)
 				err(1, "local_listen");
 			/*
 			 * For UDP and -k, don't connect the socket, let it
 			 * receive datagrams from multiple socket pairs.
 			 */
-			if (uflag && kflag)
+			اگر (uflag && kflag)
 				readwrite(s);
 			/*
 			 * For UDP and not -k, we will use recvfrom() initially
 			 * to wait for a caller, then use the regular functions
 			 * to talk to the caller.
 			 */
-			else if (uflag && !kflag) {
-				int rv, plen;
-				char buf[16384];
-				struct sockaddr_storage z;
+			وگرنه اگر (uflag && !kflag) {
+				صحیح rv, plen;
+				نویسه buf[16384];
+				ساختار sockaddr_storage z;
 
-				len = sizeof(z);
+				len = اندازه(z);
 				plen = 2048;
 				rv = recvfrom(s, buf, plen, MSG_PEEK,
-				    (struct sockaddr *)&z, &len);
-				if (rv < 0)
+				    (ساختار sockaddr *)&z, &len);
+				اگر (rv < 0)
 					err(1, "recvfrom");
 
-				rv = connect(s, (struct sockaddr *)&z, len);
-				if (rv < 0)
+				rv = connect(s, (ساختار sockaddr *)&z, len);
+				اگر (rv < 0)
 					err(1, "connect");
 
-				if (vflag)
-					report_connect((struct sockaddr *)&z, len);
+				اگر (vflag)
+					report_connect((ساختار sockaddr *)&z, len);
 
 				readwrite(s);
-			} else {
-				len = sizeof(cliaddr);
-				connfd = accept(s, (struct sockaddr *)&cliaddr,
+			} وگرنه {
+				len = اندازه(cliaddr);
+				connfd = accept(s, (ساختار sockaddr *)&cliaddr,
 				    &len);
-				if (connfd == -1) {
+				اگر (connfd == -1) {
 					/* For now, all errnos are fatal */
 					err(1, "accept");
 				}
-				if (vflag)
-					report_connect((struct sockaddr *)&cliaddr, len);
+				اگر (vflag)
+					report_connect((ساختار sockaddr *)&cliaddr, len);
 
 				readwrite(connfd);
 				close(connfd);
 			}
 
-			if (family != AF_UNIX)
+			اگر (family != AF_UNIX)
 				close(s);
-			else if (uflag) {
-				if (connect(s, NULL, 0) < 0)
+			وگرنه اگر (uflag) {
+				اگر (connect(s, پوچ, 0) < 0)
 					err(1, "connect");
 			}
 
-			if (!kflag)
-				break;
+			اگر (!kflag)
+				بشکن;
 		}
-	} else if (family == AF_UNIX) {
+	} وگرنه اگر (family == AF_UNIX) {
 		ret = 0;
 
-		if ((s = unix_connect(host)) > 0 && !zflag) {
+		اگر ((s = unix_connect(host)) > 0 && !zflag) {
 			readwrite(s);
 			close(s);
-		} else
+		} وگرنه
 			ret = 1;
 
-		if (uflag)
+		اگر (uflag)
 			unlink(unix_dg_tmp_socket);
 		exit(ret);
 
-	} else {
-		int i = 0;
+	} وگرنه {
+		صحیح i = 0;
 
 		/* Construct the portlist[] array. */
 		build_ports(uport);
 
 		/* Cycle through portlist, connecting to each port. */
-		for (i = 0; portlist[i] != NULL; i++) {
-			if (s)
+		برای (i = 0; portlist[i] != پوچ; i++) {
+			اگر (s)
 				close(s);
 
-			if (xflag)
+			اگر (xflag)
 				s = socks_connect(host, portlist[i], hints,
 				    proxyhost, proxyport, proxyhints, socksv,
 				    Pflag);
-			else
+			وگرنه
 				s = remote_connect(host, portlist[i], hints);
 
-			if (s < 0)
-				continue;
+			اگر (s < 0)
+				ادامه;
 
 			ret = 0;
-			if (vflag || zflag) {
+			اگر (vflag || zflag) {
 				/* For UDP, make sure we are connected. */
-				if (uflag) {
-					if (udptest(s) == -1) {
+				اگر (uflag) {
+					اگر (udptest(s) == -1) {
 						ret = 1;
-						continue;
+						ادامه;
 					}
 				}
 
 				/* Don't look up port if -n. */
-				if (nflag)
-					sv = NULL;
-				else {
+				اگر (nflag)
+					sv = پوچ;
+				وگرنه {
 					sv = getservbyport(
 					    ntohs(atoi(portlist[i])),
 					    uflag ? "udp" : "tcp");
@@ -501,14 +501,14 @@ main(int argc, char *argv[])
 				    uflag ? "udp" : "tcp",
 				    sv ? sv->s_name : "*");
 			}
-			if (Fflag)
+			اگر (Fflag)
 				fdpass(s);
-			else if (!zflag)
+			وگرنه اگر (!zflag)
 				readwrite(s);
 		}
 	}
 
-	if (s)
+	اگر (s)
 		close(s);
 
 	exit(ret);
@@ -518,67 +518,67 @@ main(int argc, char *argv[])
  * unix_bind()
  * Returns a unix socket bound to the given path
  */
-int
-unix_bind(char *path)
+صحیح
+unix_bind(نویسه *path)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	ساختار sockaddr_un sun_sa;
+	صحیح s;
 
 	/* Create unix domain socket. */
-	if ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
+	اگر ((s = socket(AF_UNIX, uflag ? SOCK_DGRAM : SOCK_STREAM,
 	     0)) < 0)
-		return (-1);
+		بازگشت (-1);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, اندازه(ساختار sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	اگر (strlcpy(sun_sa.sun_path, path, اندازه(sun_sa.sun_path)) >=
+	    اندازه(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		بازگشت (-1);
 	}
 
-	if (bind(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	اگر (bind(s, (ساختار sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		بازگشت (-1);
 	}
-	return (s);
+	بازگشت (s);
 }
 
 /*
  * unix_connect()
  * Returns a socket connected to a local unix socket. Returns -1 on failure.
  */
-int
-unix_connect(char *path)
+صحیح
+unix_connect(نویسه *path)
 {
-	struct sockaddr_un sun_sa;
-	int s;
+	ساختار sockaddr_un sun_sa;
+	صحیح s;
 
-	if (uflag) {
-		if ((s = unix_bind(unix_dg_tmp_socket)) < 0)
-			return (-1);
-	} else {
-		if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-			return (-1);
+	اگر (uflag) {
+		اگر ((s = unix_bind(unix_dg_tmp_socket)) < 0)
+			بازگشت (-1);
+	} وگرنه {
+		اگر ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+			بازگشت (-1);
 	}
-	(void)fcntl(s, F_SETFD, FD_CLOEXEC);
+	(تهی)fcntl(s, F_SETFD, FD_CLOEXEC);
 
-	memset(&sun_sa, 0, sizeof(struct sockaddr_un));
+	memset(&sun_sa, 0, اندازه(ساختار sockaddr_un));
 	sun_sa.sun_family = AF_UNIX;
 
-	if (strlcpy(sun_sa.sun_path, path, sizeof(sun_sa.sun_path)) >=
-	    sizeof(sun_sa.sun_path)) {
+	اگر (strlcpy(sun_sa.sun_path, path, اندازه(sun_sa.sun_path)) >=
+	    اندازه(sun_sa.sun_path)) {
 		close(s);
 		errno = ENAMETOOLONG;
-		return (-1);
+		بازگشت (-1);
 	}
-	if (connect(s, (struct sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
+	اگر (connect(s, (ساختار sockaddr *)&sun_sa, SUN_LEN(&sun_sa)) < 0) {
 		close(s);
-		return (-1);
+		بازگشت (-1);
 	}
-	return (s);
+	بازگشت (s);
 
 }
 
@@ -586,18 +586,18 @@ unix_connect(char *path)
  * unix_listen()
  * Create a unix domain socket, and listen on it.
  */
-int
-unix_listen(char *path)
+صحیح
+unix_listen(نویسه *path)
 {
-	int s;
-	if ((s = unix_bind(path)) < 0)
-		return (-1);
+	صحیح s;
+	اگر ((s = unix_bind(path)) < 0)
+		بازگشت (-1);
 
-	if (listen(s, 5) < 0) {
+	اگر (listen(s, 5) < 0) {
 		close(s);
-		return (-1);
+		بازگشت (-1);
 	}
-	return (s);
+	بازگشت (s);
 }
 
 /*
@@ -605,46 +605,46 @@ unix_listen(char *path)
  * Returns a socket connected to a remote host. Properly binds to a local
  * port or source address if needed. Returns -1 on failure.
  */
-int
-remote_connect(const char *host, const char *port, struct addrinfo hints)
+صحیح
+remote_connect(ثابت نویسه *host, ثابت نویسه *port, ساختار addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, error;
-#if defined(SO_RTABLE) || defined(SO_BINDANY)
-	int on = 1;
+	ساختار addrinfo *res, *res0;
+	صحیح s, error;
+#اگر defined(SO_RTABLE) || defined(SO_BINDANY)
+	صحیح on = 1;
 #endif
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	اگر ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
-	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+	انجامبده {
+		اگر ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
-			continue;
+			ادامه;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+		اگر (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, اندازه(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 		/* Bind to a local port or source address if specified. */
-		if (sflag || pflag) {
-			struct addrinfo ahints, *ares;
+		اگر (sflag || pflag) {
+			ساختار addrinfo ahints, *ares;
 
 #ifdef SO_BINDANY
 			/* try SO_BINDANY, but don't insist */
-			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, sizeof(on));
+			setsockopt(s, SOL_SOCKET, SO_BINDANY, &on, اندازه(on));
 #endif
-			memset(&ahints, 0, sizeof(struct addrinfo));
+			memset(&ahints, 0, اندازه(ساختار addrinfo));
 			ahints.ai_family = res0->ai_family;
 			ahints.ai_socktype = uflag ? SOCK_DGRAM : SOCK_STREAM;
 			ahints.ai_protocol = uflag ? IPPROTO_UDP : IPPROTO_TCP;
 			ahints.ai_flags = AI_PASSIVE;
-			if ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
+			اگر ((error = getaddrinfo(sflag, pflag, &ahints, &ares)))
 				errx(1, "getaddrinfo: %s", gai_strerror(error));
 
-			if (bind(s, (struct sockaddr *)ares->ai_addr,
+			اگر (bind(s, (ساختار sockaddr *)ares->ai_addr,
 			    ares->ai_addrlen) < 0)
 				err(1, "bind failed");
 			freeaddrinfo(ares);
@@ -652,56 +652,56 @@ remote_connect(const char *host, const char *port, struct addrinfo hints)
 
 		set_common_sockopts(s, res0->ai_family);
 
-		if (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
-			break;
-		else if (vflag)
+		اگر (timeout_connect(s, res0->ai_addr, res0->ai_addrlen) == 0)
+			بشکن;
+		وگرنه اگر (vflag)
 			warn("connect to %s port %s (%s) failed", host, port,
 			    uflag ? "udp" : "tcp");
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} وقتی ((res0 = res0->ai_next) != پوچ);
 
 	freeaddrinfo(res);
 
-	return (s);
+	بازگشت (s);
 }
 
-int
-timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
+صحیح
+timeout_connect(صحیح s, ثابت ساختار sockaddr *name, socklen_t namelen)
 {
-	struct pollfd pfd;
+	ساختار pollfd pfd;
 	socklen_t optlen;
-	int flags = 0, optval;
-	int ret;
+	صحیح flags = 0, optval;
+	صحیح ret;
 
-	if (timeout != -1) {
+	اگر (timeout != -1) {
 		flags = fcntl(s, F_GETFL, 0);
-		if (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
+		اگر (fcntl(s, F_SETFL, flags | O_NONBLOCK) == -1)
 			err(1, "set non-blocking mode");
 	}
 
-	if ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
+	اگر ((ret = connect(s, name, namelen)) != 0 && errno == EINPROGRESS) {
 		pfd.fd = s;
 		pfd.events = POLLOUT;
-		if ((ret = poll(&pfd, 1, timeout)) == 1) {
-			optlen = sizeof(optval);
-			if ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
+		اگر ((ret = poll(&pfd, 1, timeout)) == 1) {
+			optlen = اندازه(optval);
+			اگر ((ret = getsockopt(s, SOL_SOCKET, SO_ERROR,
 			    &optval, &optlen)) == 0) {
 				errno = optval;
 				ret = optval == 0 ? 0 : -1;
 			}
-		} else if (ret == 0) {
+		} وگرنه اگر (ret == 0) {
 			errno = ETIMEDOUT;
 			ret = -1;
-		} else
+		} وگرنه
 			err(1, "poll failed");
 	}
 
-	if (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
+	اگر (timeout != -1 && fcntl(s, F_SETFL, flags) == -1)
 		err(1, "restoring flags");
 
-	return (ret);
+	بازگشت (ret);
 }
 
 /*
@@ -709,12 +709,12 @@ timeout_connect(int s, const struct sockaddr *name, socklen_t namelen)
  * Returns a socket listening on a local port, binds to specified source
  * address. Returns -1 on failure.
  */
-int
-local_listen(char *host, char *port, struct addrinfo hints)
+صحیح
+local_listen(نویسه *host, نویسه *port, ساختار addrinfo hints)
 {
-	struct addrinfo *res, *res0;
-	int s, ret, x = 1;
-	int error;
+	ساختار addrinfo *res, *res0;
+	صحیح s, ret, x = 1;
+	صحیح error;
 
 	/* Allow nodename to be null. */
 	hints.ai_flags |= AI_PASSIVE;
@@ -723,72 +723,72 @@ local_listen(char *host, char *port, struct addrinfo hints)
 	 * In the case of binding to a wildcard address
 	 * default to binding to an ipv4 address.
 	 */
-	if (host == NULL && hints.ai_family == AF_UNSPEC)
+	اگر (host == پوچ && hints.ai_family == AF_UNSPEC)
 		hints.ai_family = AF_INET;
 
-	if ((error = getaddrinfo(host, port, &hints, &res)))
+	اگر ((error = getaddrinfo(host, port, &hints, &res)))
 		errx(1, "getaddrinfo: %s", gai_strerror(error));
 
 	res0 = res;
-	do {
-		if ((s = socket(res0->ai_family, res0->ai_socktype,
+	انجامبده {
+		اگر ((s = socket(res0->ai_family, res0->ai_socktype,
 		    res0->ai_protocol)) < 0)
-			continue;
+			ادامه;
 
 #ifdef SO_RTABLE
-		if (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
-		    &rtableid, sizeof(rtableid)) == -1))
+		اگر (rtableid >= 0 && (setsockopt(s, SOL_SOCKET, SO_RTABLE,
+		    &rtableid, اندازه(rtableid)) == -1))
 			err(1, "setsockopt SO_RTABLE");
 #endif
 #ifdef SO_REUSEPORT
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, sizeof(x));
-		if (ret == -1)
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &x, اندازه(x));
+		اگر (ret == -1)
 			err(1, "setsockopt SO_REUSEPORT");
 #endif
 #ifdef SO_REUSEADDR
-		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, sizeof(x));
-		if (ret == -1)
+		ret = setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &x, اندازه(x));
+		اگر (ret == -1)
 			err(1, "setsockopt SO_REUSEADDR");
 #endif
 		set_common_sockopts(s, res0->ai_family);
 
-		if (bind(s, (struct sockaddr *)res0->ai_addr,
+		اگر (bind(s, (ساختار sockaddr *)res0->ai_addr,
 		    res0->ai_addrlen) == 0)
-			break;
+			بشکن;
 
 		close(s);
 		s = -1;
-	} while ((res0 = res0->ai_next) != NULL);
+	} وقتی ((res0 = res0->ai_next) != پوچ);
 
-	if (!uflag && s != -1) {
-		if (listen(s, 1) < 0)
+	اگر (!uflag && s != -1) {
+		اگر (listen(s, 1) < 0)
 			err(1, "listen");
 	}
 
 	freeaddrinfo(res);
 
-	return (s);
+	بازگشت (s);
 }
 
 /*
  * readwrite()
  * Loop that polls on the network file descriptor and stdin.
  */
-void
-readwrite(int net_fd)
+تهی
+readwrite(صحیح net_fd)
 {
-	struct pollfd pfd[4];
-	int stdin_fd = STDIN_FILENO;
-	int stdout_fd = STDOUT_FILENO;
-	unsigned char netinbuf[BUFSIZE];
+	ساختار pollfd pfd[4];
+	صحیح stdin_fd = STDIN_FILENO;
+	صحیح stdout_fd = STDOUT_FILENO;
+	unsigned نویسه netinbuf[BUFSIZE];
 	size_t netinbufpos = 0;
-	unsigned char stdinbuf[BUFSIZE];
+	unsigned نویسه stdinbuf[BUFSIZE];
 	size_t stdinbufpos = 0;
-	int n, num_fds;
+	صحیح n, رقم_fds;
 	ssize_t ret;
 
 	/* don't read from stdin if requested */
-	if (dflag)
+	اگر (dflag)
 		stdin_fd = -1;
 
 	/* stdin */
@@ -807,283 +807,283 @@ readwrite(int net_fd)
 	pfd[POLL_STDOUT].fd = stdout_fd;
 	pfd[POLL_STDOUT].events = 0;
 
-	while (1) {
+	وقتی (1) {
 		/* both inputs are gone, buffers are empty, we are done */
-		if (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
+		اگر (pfd[POLL_STDIN].fd == -1 && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			بازگشت;
 		}
 		/* both outputs are gone, we can't continue */
-		if (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
+		اگر (pfd[POLL_NETOUT].fd == -1 && pfd[POLL_STDOUT].fd == -1) {
 			close(net_fd);
-			return;
+			بازگشت;
 		}
 		/* listen and net in gone, queues empty, done */
-		if (lflag && pfd[POLL_NETIN].fd == -1
+		اگر (lflag && pfd[POLL_NETIN].fd == -1
 		    && stdinbufpos == 0 && netinbufpos == 0) {
 			close(net_fd);
-			return;
+			بازگشت;
 		}
 
 		/* help says -i is for "wait between lines sent". We read and
 		 * write arbitrary amounts of data, and we don't want to start
 		 * scanning for newlines, so this is as good as it gets */
-		if (iflag)
+		اگر (iflag)
 			sleep(iflag);
 
 		/* poll */
-		num_fds = poll(pfd, 4, timeout);
+		رقم_fds = poll(pfd, 4, timeout);
 
 		/* treat poll errors */
-		if (num_fds == -1) {
+		اگر (رقم_fds == -1) {
 			close(net_fd);
 			err(1, "polling error");
 		}
 
 		/* timeout happened */
-		if (num_fds == 0)
-			return;
+		اگر (رقم_fds == 0)
+			بازگشت;
 
 		/* treat socket error conditions */
-		for (n = 0; n < 4; n++) {
-			if (pfd[n].revents & (POLLERR|POLLNVAL)) {
+		برای (n = 0; n < 4; n++) {
+			اگر (pfd[n].revents & (POLLERR|POLLNVAL)) {
 				pfd[n].fd = -1;
 			}
 		}
 		/* reading is possible after HUP */
-		if (pfd[POLL_STDIN].events & POLLIN &&
+		اگر (pfd[POLL_STDIN].events & POLLIN &&
 		    pfd[POLL_STDIN].revents & POLLHUP &&
 		    ! (pfd[POLL_STDIN].revents & POLLIN))
 				pfd[POLL_STDIN].fd = -1;
 
-		if (pfd[POLL_NETIN].events & POLLIN &&
+		اگر (pfd[POLL_NETIN].events & POLLIN &&
 		    pfd[POLL_NETIN].revents & POLLHUP &&
 		    ! (pfd[POLL_NETIN].revents & POLLIN))
 				pfd[POLL_NETIN].fd = -1;
 
-		if (pfd[POLL_NETOUT].revents & POLLHUP) {
-			if (Nflag)
+		اگر (pfd[POLL_NETOUT].revents & POLLHUP) {
+			اگر (Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* if HUP, stop watching stdout */
-		if (pfd[POLL_STDOUT].revents & POLLHUP)
+		اگر (pfd[POLL_STDOUT].revents & POLLHUP)
 			pfd[POLL_STDOUT].fd = -1;
 		/* if no net out, stop watching stdin */
-		if (pfd[POLL_NETOUT].fd == -1)
+		اگر (pfd[POLL_NETOUT].fd == -1)
 			pfd[POLL_STDIN].fd = -1;
 		/* if no stdout, stop watching net in */
-		if (pfd[POLL_STDOUT].fd == -1) {
-			if (pfd[POLL_NETIN].fd != -1)
+		اگر (pfd[POLL_STDOUT].fd == -1) {
+			اگر (pfd[POLL_NETIN].fd != -1)
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 			pfd[POLL_NETIN].fd = -1;
 		}
 
 		/* try to read from stdin */
-		if (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
+		اگر (pfd[POLL_STDIN].revents & POLLIN && stdinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_STDIN].fd, stdinbuf,
 			    &stdinbufpos);
 			/* error or eof on stdin - remove from pfd */
-			if (ret == 0 || ret == -1)
+			اگر (ret == 0 || ret == -1)
 				pfd[POLL_STDIN].fd = -1;
 			/* read something - poll net out */
-			if (stdinbufpos > 0)
+			اگر (stdinbufpos > 0)
 				pfd[POLL_NETOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (stdinbufpos == BUFSIZE)
+			اگر (stdinbufpos == BUFSIZE)
 				pfd[POLL_STDIN].events = 0;
 		}
 		/* try to write to network */
-		if (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
+		اگر (pfd[POLL_NETOUT].revents & POLLOUT && stdinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_NETOUT].fd, stdinbuf,
 			    &stdinbufpos);
-			if (ret == -1)
+			اگر (ret == -1)
 				pfd[POLL_NETOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (stdinbufpos == 0)
+			اگر (stdinbufpos == 0)
 				pfd[POLL_NETOUT].events = 0;
 			/* buffer no longer full - poll stdin again */
-			if (stdinbufpos < BUFSIZE)
+			اگر (stdinbufpos < BUFSIZE)
 				pfd[POLL_STDIN].events = POLLIN;
 		}
 		/* try to read from network */
-		if (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
+		اگر (pfd[POLL_NETIN].revents & POLLIN && netinbufpos < BUFSIZE) {
 			ret = fillbuf(pfd[POLL_NETIN].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			اگر (ret == -1)
 				pfd[POLL_NETIN].fd = -1;
 			/* eof on net in - remove from pfd */
-			if (ret == 0) {
+			اگر (ret == 0) {
 				shutdown(pfd[POLL_NETIN].fd, SHUT_RD);
 				pfd[POLL_NETIN].fd = -1;
 			}
 			/* read something - poll stdout */
-			if (netinbufpos > 0)
+			اگر (netinbufpos > 0)
 				pfd[POLL_STDOUT].events = POLLOUT;
 			/* filled buffer - remove self from polling */
-			if (netinbufpos == BUFSIZE)
+			اگر (netinbufpos == BUFSIZE)
 				pfd[POLL_NETIN].events = 0;
 			/* handle telnet */
-			if (tflag)
+			اگر (tflag)
 				atelnet(pfd[POLL_NETIN].fd, netinbuf,
 				    netinbufpos);
 		}
 		/* try to write to stdout */
-		if (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
+		اگر (pfd[POLL_STDOUT].revents & POLLOUT && netinbufpos > 0) {
 			ret = drainbuf(pfd[POLL_STDOUT].fd, netinbuf,
 			    &netinbufpos);
-			if (ret == -1)
+			اگر (ret == -1)
 				pfd[POLL_STDOUT].fd = -1;
 			/* buffer empty - remove self from polling */
-			if (netinbufpos == 0)
+			اگر (netinbufpos == 0)
 				pfd[POLL_STDOUT].events = 0;
 			/* buffer no longer full - poll net in again */
-			if (netinbufpos < BUFSIZE)
+			اگر (netinbufpos < BUFSIZE)
 				pfd[POLL_NETIN].events = POLLIN;
 		}
 
 		/* stdin gone and queue empty? */
-		if (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
-			if (pfd[POLL_NETOUT].fd != -1 && Nflag)
+		اگر (pfd[POLL_STDIN].fd == -1 && stdinbufpos == 0) {
+			اگر (pfd[POLL_NETOUT].fd != -1 && Nflag)
 				shutdown(pfd[POLL_NETOUT].fd, SHUT_WR);
 			pfd[POLL_NETOUT].fd = -1;
 		}
 		/* net in gone and queue empty? */
-		if (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
+		اگر (pfd[POLL_NETIN].fd == -1 && netinbufpos == 0) {
 			pfd[POLL_STDOUT].fd = -1;
 		}
 	}
 }
 
 ssize_t
-drainbuf(int fd, unsigned char *buf, size_t *bufpos)
+drainbuf(صحیح fd, unsigned نویسه *buf, size_t *bufpos)
 {
 	ssize_t n;
 	ssize_t adjust;
 
-	n = write(fd, buf, *bufpos);
+	n = اكتب(fd, buf, *bufpos);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	اگر (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	اگر (n <= 0)
+		بازگشت n;
 	/* adjust buffer */
 	adjust = *bufpos - n;
-	if (adjust > 0)
+	اگر (adjust > 0)
 		memmove(buf, buf + n, adjust);
 	*bufpos -= n;
-	return n;
+	بازگشت n;
 }
 
 
 ssize_t
-fillbuf(int fd, unsigned char *buf, size_t *bufpos)
+fillbuf(صحیح fd, unsigned نویسه *buf, size_t *bufpos)
 {
-	size_t num = BUFSIZE - *bufpos;
+	size_t رقم = BUFSIZE - *bufpos;
 	ssize_t n;
 
-	n = read(fd, buf + *bufpos, num);
+	n = اقرأ(fd, buf + *bufpos, رقم);
 	/* don't treat EAGAIN, EINTR as error */
-	if (n == -1 && (errno == EAGAIN || errno == EINTR))
+	اگر (n == -1 && (errno == EAGAIN || errno == EINTR))
 		n = -2;
-	if (n <= 0)
-		return n;
+	اگر (n <= 0)
+		بازگشت n;
 	*bufpos += n;
-	return n;
+	بازگشت n;
 }
 
 /*
  * fdpass()
  * Pass the connected file descriptor to stdout and exit.
  */
-void
-fdpass(int nfd)
+تهی
+fdpass(صحیح nfd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+#اگر defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	ساختار msghdr پیام;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+	اجتماع {
+		ساختار cmsghdr hdr;
+		نویسه buf[CMSG_SPACE(اندازه(صحیح))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
+	ساختار cmsghdr *cmsg;
 #endif
-	struct iovec vec;
-	char ch = '\0';
-	struct pollfd pfd;
+	ساختار iovec vec;
+	نویسه ch = '\0';
+	ساختار pollfd pfd;
 	ssize_t r;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&پیام, 0, اندازه(پیام));
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	msg.msg_accrights = (caddr_t)&nfd;
-	msg.msg_accrightslen = sizeof(nfd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
-	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
-	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	پیام.پیام_accrights = (caddr_t)&nfd;
+	پیام.پیام_accrightslen = اندازه(nfd);
+#وگرنه
+	memset(&cmsgbuf, 0, اندازه(cmsgbuf));
+	پیام.msg_control = (caddr_t)&cmsgbuf.buf;
+	پیام.msg_controllen = اندازه(cmsgbuf.buf);
+	cmsg = CMSG_FIRSTHDR(&پیام);
+	cmsg->cmsg_len = CMSG_LEN(اندازه(صحیح));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = nfd;
+	*(صحیح *)CMSG_DATA(cmsg) = nfd;
 #endif
 
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
-	msg.msg_iov = &vec;
-	msg.msg_iovlen = 1;
+	پیام.msg_iov = &vec;
+	پیام.msg_iovlen = 1;
 
-	bzero(&pfd, sizeof(pfd));
+	bzero(&pfd, اندازه(pfd));
 	pfd.fd = STDOUT_FILENO;
 	pfd.events = POLLOUT;
-	for (;;) {
-		r = sendmsg(STDOUT_FILENO, &msg, 0);
-		if (r == -1) {
-			if (errno == EAGAIN || errno == EINTR) {
-				if (poll(&pfd, 1, -1) == -1)
+	برای (;;) {
+		r = sendmsg(STDOUT_FILENO, &پیام, 0);
+		اگر (r == -1) {
+			اگر (errno == EAGAIN || errno == EINTR) {
+				اگر (poll(&pfd, 1, -1) == -1)
 					err(1, "poll");
-				continue;
+				ادامه;
 			}
 			err(1, "sendmsg");
-		} else if (r != 1)
+		} وگرنه اگر (r != 1)
 			errx(1, "sendmsg: unexpected return value %zd", r);
-		else
-			break;
+		وگرنه
+			بشکن;
 	}
 	exit(0);
-#else
+#وگرنه
 	errx(1, "%s: file descriptor passing not supported", __func__);
 #endif
 }
 
 /* Deal with RFC 854 WILL/WONT DO/DONT negotiation. */
-void
-atelnet(int nfd, unsigned char *buf, unsigned int size)
+تهی
+atelnet(صحیح nfd, unsigned نویسه *buf, unsigned صحیح size)
 {
-	unsigned char *p, *end;
-	unsigned char obuf[4];
+	unsigned نویسه *p, *end;
+	unsigned نویسه obuf[4];
 
-	if (size < 3)
-		return;
+	اگر (size < 3)
+		بازگشت;
 	end = buf + size - 2;
 
-	for (p = buf; p < end; p++) {
-		if (*p != IAC)
-			continue;
+	برای (p = buf; p < end; p++) {
+		اگر (*p != IAC)
+			ادامه;
 
 		obuf[0] = IAC;
 		p++;
-		if ((*p == WILL) || (*p == WONT))
+		اگر ((*p == WILL) || (*p == WONT))
 			obuf[1] = DONT;
-		else if ((*p == DO) || (*p == DONT))
+		وگرنه اگر ((*p == DO) || (*p == DONT))
 			obuf[1] = WONT;
-		else
-			continue;
+		وگرنه
+			ادامه;
 
 		p++;
 		obuf[2] = *p;
-		if (atomicio(vwrite, nfd, obuf, 3) != 3)
+		اگر (atomicio(vwrite, nfd, obuf, 3) != 3)
 			warn("Write Error!");
 	}
 }
@@ -1093,59 +1093,59 @@ atelnet(int nfd, unsigned char *buf, unsigned int size)
  * Build an array of ports in portlist[], listing each port
  * that we should try to connect to.
  */
-void
-build_ports(char *p)
+تهی
+build_ports(نویسه *p)
 {
-	const char *errstr;
-	char *n;
-	int hi, lo, cp;
-	int x = 0;
+	ثابت نویسه *errstr;
+	نویسه *n;
+	صحیح hi, lo, cp;
+	صحیح x = 0;
 
-	if ((n = strchr(p, '-')) != NULL) {
+	اگر ((n = strchr(p, '-')) != پوچ) {
 		*n = '\0';
 		n++;
 
 		/* Make sure the ports are in order: lowest->highest. */
 		hi = strtonum(n, 1, PORT_MAX, &errstr);
-		if (errstr)
+		اگر (errstr)
 			errx(1, "port number %s: %s", errstr, n);
 		lo = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		اگر (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 
-		if (lo > hi) {
+		اگر (lo > hi) {
 			cp = hi;
 			hi = lo;
 			lo = cp;
 		}
 
 		/* Load ports sequentially. */
-		for (cp = lo; cp <= hi; cp++) {
+		برای (cp = lo; cp <= hi; cp++) {
 			portlist[x] = calloc(1, PORT_MAX_LEN);
-			if (portlist[x] == NULL)
+			اگر (portlist[x] == پوچ)
 				errx(1, "calloc");
 			snprintf(portlist[x], PORT_MAX_LEN, "%d", cp);
 			x++;
 		}
 
 		/* Randomly swap ports. */
-		if (rflag) {
-			int y;
-			char *c;
+		اگر (rflag) {
+			صحیح y;
+			نویسه *c;
 
-			for (x = 0; x <= (hi - lo); x++) {
+			برای (x = 0; x <= (hi - lo); x++) {
 				y = arc4random_uniform(hi - lo);
 				c = portlist[x];
 				portlist[x] = portlist[y];
 				portlist[y] = c;
 			}
 		}
-	} else {
+	} وگرنه {
 		hi = strtonum(p, 1, PORT_MAX, &errstr);
-		if (errstr)
+		اگر (errstr)
 			errx(1, "port number %s: %s", errstr, p);
 		portlist[0] = strdup(p);
-		if (portlist[0] == NULL)
+		اگر (portlist[0] == پوچ)
 			errx(1, "strdup");
 	}
 }
@@ -1155,73 +1155,73 @@ build_ports(char *p)
  * Do a few writes to see if the UDP port is there.
  * Fails once PF state table is full.
  */
-int
-udptest(int s)
+صحیح
+udptest(صحیح s)
 {
-	int i, ret;
+	صحیح i, ret;
 
-	for (i = 0; i <= 3; i++) {
-		if (write(s, "X", 1) == 1)
+	برای (i = 0; i <= 3; i++) {
+		اگر (اكتب(s, "X", 1) == 1)
 			ret = 1;
-		else
+		وگرنه
 			ret = -1;
 	}
-	return (ret);
+	بازگشت (ret);
 }
 
-void
-set_common_sockopts(int s, int af)
+تهی
+set_common_sockopts(صحیح s, صحیح af)
 {
-	int x = 1;
+	صحیح x = 1;
 
 #ifdef TCP_MD5SIG
-	if (Sflag) {
-		if (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
-			&x, sizeof(x)) == -1)
+	اگر (Sflag) {
+		اگر (setsockopt(s, IPPROTO_TCP, TCP_MD5SIG,
+			&x, اندازه(x)) == -1)
 			err(1, "setsockopt");
 	}
 #endif
-	if (Dflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_DEBUG,
-			&x, sizeof(x)) == -1)
+	اگر (Dflag) {
+		اگر (setsockopt(s, SOL_SOCKET, SO_DEBUG,
+			&x, اندازه(x)) == -1)
 			err(1, "setsockopt");
 	}
-#if defined(IP_TOS) && defined(IPV6_TCLASS)
-	if (Tflag != -1) {
-		int proto, option;
+#اگر defined(IP_TOS) && defined(IPV6_TCLASS)
+	اگر (Tflag != -1) {
+		صحیح proto, option;
 
-		if (af == AF_INET6) {
+		اگر (af == AF_INET6) {
 			proto = IPPROTO_IPV6;
 			option = IPV6_TCLASS;
-		} else {
+		} وگرنه {
 			proto = IPPROTO_IP;
 			option = IP_TOS;
 		}
 
-		if (setsockopt(s, proto, option, &Tflag, sizeof(Tflag)) == -1)
+		اگر (setsockopt(s, proto, option, &Tflag, اندازه(Tflag)) == -1)
 			err(1, "set IP ToS");
 	}
 #endif
-	if (Iflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
-		    &Iflag, sizeof(Iflag)) == -1)
+	اگر (Iflag) {
+		اگر (setsockopt(s, SOL_SOCKET, SO_RCVBUF,
+		    &Iflag, اندازه(Iflag)) == -1)
 			err(1, "set TCP receive buffer size");
 	}
-	if (Oflag) {
-		if (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
-		    &Oflag, sizeof(Oflag)) == -1)
+	اگر (Oflag) {
+		اگر (setsockopt(s, SOL_SOCKET, SO_SNDBUF,
+		    &Oflag, اندازه(Oflag)) == -1)
 			err(1, "set TCP send buffer size");
 	}
 }
 
-int
-map_tos(char *s, int *val)
+صحیح
+map_tos(نویسه *s, صحیح *val)
 {
 #ifdef IP_TOS
 	/* DiffServ Codepoints and other TOS mappings */
-	const struct toskeywords {
-		const char	*keyword;
-		int		 val;
+	ثابت ساختار toskeywords {
+		ثابت نویسه	*keyword;
+		صحیح		 val;
 	} *t, toskeywords[] = {
 		{ "af11",		IPTOS_DSCP_AF11 },
 		{ "af12",		IPTOS_DSCP_AF12 },
@@ -1250,38 +1250,38 @@ map_tos(char *s, int *val)
 		{ "netcontrol",		IPTOS_PREC_NETCONTROL },
 		{ "reliability",	IPTOS_RELIABILITY },
 		{ "throughput",		IPTOS_THROUGHPUT },
-		{ NULL, 		-1 },
+		{ پوچ, 		-1 },
 	};
 
-	for (t = toskeywords; t->keyword != NULL; t++) {
-		if (strcmp(s, t->keyword) == 0) {
+	برای (t = toskeywords; t->keyword != پوچ; t++) {
+		اگر (strcmp(s, t->keyword) == 0) {
 			*val = t->val;
-			return (1);
+			بازگشت (1);
 		}
 	}
 #endif
 
-	return (0);
+	بازگشت (0);
 }
 
-void
-report_connect(const struct sockaddr *sa, socklen_t salen)
+تهی
+report_connect(ثابت ساختار sockaddr *sa, socklen_t salen)
 {
-	char remote_host[NI_MAXHOST];
-	char remote_port[NI_MAXSERV];
-	int herr;
-	int flags = NI_NUMERICSERV;
+	نویسه remote_host[NI_MAXHOST];
+	نویسه remote_port[NI_MAXSERV];
+	صحیح herr;
+	صحیح flags = NI_NUMERICSERV;
 	
-	if (nflag)
+	اگر (nflag)
 		flags |= NI_NUMERICHOST;
 	
-	if ((herr = getnameinfo(sa, salen,
-	    remote_host, sizeof(remote_host),
-	    remote_port, sizeof(remote_port),
+	اگر ((herr = getnameinfo(sa, salen,
+	    remote_host, اندازه(remote_host),
+	    remote_port, اندازه(remote_port),
 	    flags)) != 0) {
-		if (herr == EAI_SYSTEM)
+		اگر (herr == EAI_SYSTEM)
 			err(1, "getnameinfo");
-		else
+		وگرنه
 			errx(1, "getnameinfo: %s", gai_strerror(herr));
 	}
 	
@@ -1290,8 +1290,8 @@ report_connect(const struct sockaddr *sa, socklen_t salen)
 	    "received!\n", remote_host, remote_port);
 }
 
-void
-help(void)
+تهی
+help(تهی)
 {
 	usage(0);
 	fprintf(stderr, "\tCommand Summary:\n\
@@ -1302,14 +1302,14 @@ help(void)
 	\t-F		Pass socket fd\n\
 	\t-h		This help text\n\
 	\t-I length	TCP receive buffer length\n\
-	\t-i secs\t	Delay interval for lines sent, ports scanned\n\
-	\t-k		Keep inbound sockets open for multiple connects\n\
-	\t-l		Listen mode, for inbound connects\n\
+	\t-i secs\t	Delay interval برای سطرها sent, ports scanned\n\
+	\t-k		Keep inbound sockets open برای multiple connects\n\
+	\t-l		Listen mode, برای inbound connects\n\
 	\t-N		Shutdown the network socket after EOF on stdin\n\
 	\t-n		Suppress name/port resolutions\n\
 	\t-O length	TCP send buffer length\n\
-	\t-P proxyuser\tUsername for proxy authentication\n\
-	\t-p port\t	Specify local port for remote connects\n\
+	\t-P proxyuser\tUsername برای proxy authentication\n\
+	\t-p port\t	Specify local port برای remote connects\n\
 	\t-r		Randomize remote ports\n\
 	\t-S		Enable the TCP MD5 signature option\n\
 	\t-s addr\t	Local source address\n\
@@ -1319,23 +1319,23 @@ help(void)
 	\t-u		UDP mode\n\
 	\t-V rtable	Specify alternate routing table\n\
 	\t-v		Verbose\n\
-	\t-w secs\t	Timeout for connects and final net reads\n\
+	\t-w secs\t	Timeout برای connects and final net reads\n\
 	\t-X proto	Proxy protocol: \"4\", \"5\" (SOCKS) or \"connect\"\n\
 	\t-x addr[:port]\tSpecify proxy address and port\n\
-	\t-z		Zero-I/O mode [used for scanning]\n\
+	\t-z		Zero-I/O mode [used برای scanning]\n\
 	Port numbers can be individual or ranges: lo-hi [inclusive]\n");
 	exit(1);
 }
 
-void
-usage(int ret)
+تهی
+usage(صحیح ret)
 {
 	fprintf(stderr,
 	    "usage: nc [-46DdFhklNnrStUuvz] [-I length] [-i interval] [-O length]\n"
 	    "\t  [-P proxy_username] [-p source_port] [-s source] [-T toskeyword]\n"
 	    "\t  [-V rtable] [-w timeout] [-X proxy_protocol]\n"
 	    "\t  [-x proxy_address[:port]] [destination] [port]\n");
-	if (ret)
+	اگر (ret)
 		exit(1);
 }
 
@@ -1369,18 +1369,18 @@ usage(int ret)
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#شامل <sys/types.h>
+#شامل <sys/socket.h>
+#شامل <netinet/in.h>
+#شامل <arpa/inet.h>
 
-#include <errno.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <resolv.h>
+#شامل <errno.h>
+#شامل <netdb.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <resolv.h>
 
 #define SOCKS_PORT	"1080"
 #define HTTP_PROXY_PORT	"3128"
@@ -1394,112 +1394,112 @@ usage(int ret)
 #define SOCKS_DOMAIN	3
 #define SOCKS_IPV6	4
 
-int	remote_connect(const char *, const char *, struct addrinfo);
-int	socks_connect(const char *, const char *, struct addrinfo,
-	    const char *, const char *, struct addrinfo, int,
-	    const char *);
+صحیح	remote_connect(ثابت نویسه *, ثابت نویسه *, ساختار addrinfo);
+صحیح	socks_connect(ثابت نویسه *, ثابت نویسه *, ساختار addrinfo,
+	    ثابت نویسه *, ثابت نویسه *, ساختار addrinfo, صحیح,
+	    ثابت نویسه *);
 
-static int
-decode_addrport(const char *h, const char *p, struct sockaddr *addr,
-    socklen_t addrlen, int v4only, int numeric)
+ایستا صحیح
+decode_addrport(ثابت نویسه *h, ثابت نویسه *p, ساختار sockaddr *addr,
+    socklen_t addrlen, صحیح v4only, صحیح numeric)
 {
-	int r;
-	struct addrinfo hints, *res;
+	صحیح r;
+	ساختار addrinfo hints, *res;
 
-	bzero(&hints, sizeof(hints));
+	bzero(&hints, اندازه(hints));
 	hints.ai_family = v4only ? PF_INET : PF_UNSPEC;
 	hints.ai_flags = numeric ? AI_NUMERICHOST : 0;
 	hints.ai_socktype = SOCK_STREAM;
 	r = getaddrinfo(h, p, &hints, &res);
 	/* Don't fatal when attempting to convert a numeric address */
-	if (r != 0) {
-		if (!numeric) {
+	اگر (r != 0) {
+		اگر (!numeric) {
 			errx(1, "getaddrinfo(\"%.64s\", \"%.64s\"): %s", h, p,
 			    gai_strerror(r));
 		}
-		return (-1);
+		بازگشت (-1);
 	}
-	if (addrlen < res->ai_addrlen) {
+	اگر (addrlen < res->ai_addrlen) {
 		freeaddrinfo(res);
 		errx(1, "internal error: addrlen < res->ai_addrlen");
 	}
 	memcpy(addr, res->ai_addr, res->ai_addrlen);
 	freeaddrinfo(res);
-	return (0);
+	بازگشت (0);
 }
 
-static int
-proxy_read_line(int fd, char *buf, size_t bufsz)
+ایستا صحیح
+proxy_read_سطر(صحیح fd, نویسه *buf, size_t bufsz)
 {
 	size_t off;
 
-	for(off = 0;;) {
-		if (off >= bufsz)
+	برای(off = 0;;) {
+		اگر (off >= bufsz)
 			errx(1, "proxy read too long");
-		if (atomicio(read, fd, buf + off, 1) != 1)
+		اگر (atomicio(اقرأ, fd, buf + off, 1) != 1)
 			err(1, "proxy read");
 		/* Skip CR */
-		if (buf[off] == '\r')
-			continue;
-		if (buf[off] == '\n') {
+		اگر (buf[off] == '\r')
+			ادامه;
+		اگر (buf[off] == '\n') {
 			buf[off] = '\0';
-			break;
+			بشکن;
 		}
 		off++;
 	}
-	return (off);
+	بازگشت (off);
 }
 
-static const char *
-getproxypass(const char *proxyuser, const char *proxyhost)
+ایستا ثابت نویسه *
+getproxypass(ثابت نویسه *proxyuser, ثابت نویسه *proxyhost)
 {
-	char prompt[512];
-	static char pw[256];
+	نویسه prompt[512];
+	ایستا نویسه pw[256];
 
-	snprintf(prompt, sizeof(prompt), "Proxy password for %s@%s: ",
+	snprintf(prompt, اندازه(prompt), "Proxy password for %s@%s: ",
 	   proxyuser, proxyhost);
-	if (readpassphrase(prompt, pw, sizeof(pw), RPP_REQUIRE_TTY) == NULL)
+	اگر (readpassphrase(prompt, pw, اندازه(pw), RPP_REQUIRE_TTY) == پوچ)
 		errx(1, "Unable to read proxy passphrase");
-	return (pw);
+	بازگشت (pw);
 }
 
-int
-socks_connect(const char *host, const char *port,
-    struct addrinfo hints __attribute__ ((__unused__)),
-    const char *proxyhost, const char *proxyport, struct addrinfo proxyhints,
-    int socksv, const char *proxyuser)
+صحیح
+socks_connect(ثابت نویسه *host, ثابت نویسه *port,
+    ساختار addrinfo hints __attribute__ ((__unused__)),
+    ثابت نویسه *proxyhost, ثابت نویسه *proxyport, ساختار addrinfo proxyhints,
+    صحیح socksv, ثابت نویسه *proxyuser)
 {
-	int proxyfd, r, authretry = 0;
+	صحیح proxyfd, r, authretry = 0;
 	size_t hlen, wlen = 0;
-	unsigned char buf[1024];
+	unsigned نویسه buf[1024];
 	size_t cnt;
-	struct sockaddr_storage addr;
-	struct sockaddr_in *in4 = (struct sockaddr_in *)&addr;
-	struct sockaddr_in6 *in6 = (struct sockaddr_in6 *)&addr;
+	ساختار sockaddr_storage addr;
+	ساختار sockaddr_in *in4 = (ساختار sockaddr_in *)&addr;
+	ساختار sockaddr_in6 *in6 = (ساختار sockaddr_in6 *)&addr;
 	in_port_t serverport;
-	const char *proxypass = NULL;
+	ثابت نویسه *proxypass = پوچ;
 
-	if (proxyport == NULL)
+	اگر (proxyport == پوچ)
 		proxyport = (socksv == -1) ? HTTP_PROXY_PORT : SOCKS_PORT;
 
 	/* Abuse API to lookup port */
-	if (decode_addrport("0.0.0.0", port, (struct sockaddr *)&addr,
-	    sizeof(addr), 1, 1) == -1)
+	اگر (decode_addrport("0.0.0.0", port, (ساختار sockaddr *)&addr,
+	    اندازه(addr), 1, 1) == -1)
 		errx(1, "unknown port \"%.64s\"", port);
 	serverport = in4->sin_port;
 
  again:
-	if (authretry++ > 3)
+	اگر (authretry++ > 3)
 		errx(1, "Too many authentication failures");
 
 	proxyfd = remote_connect(proxyhost, proxyport, proxyhints);
 
-	if (proxyfd < 0)
-		return (-1);
+	اگر (proxyfd < 0)
+		بازگشت (-1);
 
-	if (socksv == 5) {
-		if (decode_addrport(host, port, (struct sockaddr *)&addr,
-		    sizeof(addr), 0, 1) == -1)
+	اگر (socksv == 5) {
+		اگر (decode_addrport(host, port, (ساختار sockaddr *)&addr,
+		    اندازه(addr), 0, 1) == -1)
 			addr.ss_family = 0; /* used in switch below */
 
 		/* Version 5, one method: no authentication */
@@ -1507,23 +1507,23 @@ socks_connect(const char *host, const char *port,
 		buf[1] = 1;
 		buf[2] = SOCKS_NOAUTH;
 		cnt = atomicio(vwrite, proxyfd, buf, 3);
-		if (cnt != 3)
+		اگر (cnt != 3)
 			err(1, "write failed (%zu/3)", cnt);
 
-		cnt = atomicio(read, proxyfd, buf, 2);
-		if (cnt != 2)
+		cnt = atomicio(اقرأ, proxyfd, buf, 2);
+		اگر (cnt != 2)
 			err(1, "read failed (%zu/3)", cnt);
 
-		if (buf[1] == SOCKS_NOMETHOD)
+		اگر (buf[1] == SOCKS_NOMETHOD)
 			errx(1, "authentication method negotiation failed");
 
-		switch (addr.ss_family) {
-		case 0:
+		انتخاب (addr.ss_family) {
+		حالت 0:
 			/* Version 5, connect: domain name */
 
 			/* Max domain name length is 255 bytes */
 			hlen = strlen(host);
-			if (hlen > 255)
+			اگر (hlen > 255)
 				errx(1, "host name too long for SOCKS5");
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
@@ -1531,166 +1531,166 @@ socks_connect(const char *host, const char *port,
 			buf[3] = SOCKS_DOMAIN;
 			buf[4] = hlen;
 			memcpy(buf + 5, host, hlen);			
-			memcpy(buf + 5 + hlen, &serverport, sizeof serverport);
+			memcpy(buf + 5 + hlen, &serverport, اندازه serverport);
 			wlen = 7 + hlen;
-			break;
-		case AF_INET:
+			بشکن;
+		حالت AF_INET:
 			/* Version 5, connect: IPv4 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV4;
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-			memcpy(buf + 8, &in4->sin_port, sizeof in4->sin_port);
+			memcpy(buf + 4, &in4->sin_addr, اندازه in4->sin_addr);
+			memcpy(buf + 8, &in4->sin_port, اندازه in4->sin_port);
 			wlen = 10;
-			break;
-		case AF_INET6:
+			بشکن;
+		حالت AF_INET6:
 			/* Version 5, connect: IPv6 address */
 			buf[0] = SOCKS_V5;
 			buf[1] = SOCKS_CONNECT;
 			buf[2] = 0;
 			buf[3] = SOCKS_IPV6;
-			memcpy(buf + 4, &in6->sin6_addr, sizeof in6->sin6_addr);
+			memcpy(buf + 4, &in6->sin6_addr, اندازه in6->sin6_addr);
 			memcpy(buf + 20, &in6->sin6_port,
-			    sizeof in6->sin6_port);
+			    اندازه in6->sin6_port);
 			wlen = 22;
-			break;
-		default:
+			بشکن;
+		پیشفرض:
 			errx(1, "internal error: silly AF");
 		}
 
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		اگر (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
-		cnt = atomicio(read, proxyfd, buf, 4);
-		if (cnt != 4)
+		cnt = atomicio(اقرأ, proxyfd, buf, 4);
+		اگر (cnt != 4)
 			err(1, "read failed (%zu/4)", cnt);
-		if (buf[1] != 0)
+		اگر (buf[1] != 0)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-		switch (buf[3]) {
-		case SOCKS_IPV4:
-			cnt = atomicio(read, proxyfd, buf + 4, 6);
-			if (cnt != 6)
+		انتخاب (buf[3]) {
+		حالت SOCKS_IPV4:
+			cnt = atomicio(اقرأ, proxyfd, buf + 4, 6);
+			اگر (cnt != 6)
 				err(1, "read failed (%zu/6)", cnt);
-			break;
-		case SOCKS_IPV6:
-			cnt = atomicio(read, proxyfd, buf + 4, 18);
-			if (cnt != 18)
+			بشکن;
+		حالت SOCKS_IPV6:
+			cnt = atomicio(اقرأ, proxyfd, buf + 4, 18);
+			اگر (cnt != 18)
 				err(1, "read failed (%zu/18)", cnt);
-			break;
-		default:
+			بشکن;
+		پیشفرض:
 			errx(1, "connection failed, unsupported address type");
 		}
-	} else if (socksv == 4 || socksv == 44) {
-		if (socksv == 4) {
+	} وگرنه اگر (socksv == 4 || socksv == 44) {
+		اگر (socksv == 4) {
 			/* This will exit on lookup failure */
-			decode_addrport(host, port, (struct sockaddr *)&addr,
-			    sizeof(addr), 1, 0);
+			decode_addrport(host, port, (ساختار sockaddr *)&addr,
+			    اندازه(addr), 1, 0);
 		}
 
 		/* Version 4 */
 		buf[0] = SOCKS_V4;
 		buf[1] = SOCKS_CONNECT;	/* connect */
-		memcpy(buf + 2, &in4->sin_port, sizeof in4->sin_port);
-		if (socksv == 4) {
-			memcpy(buf + 4, &in4->sin_addr, sizeof in4->sin_addr);
-		} else {
+		memcpy(buf + 2, &in4->sin_port, اندازه in4->sin_port);
+		اگر (socksv == 4) {
+			memcpy(buf + 4, &in4->sin_addr, اندازه in4->sin_addr);
+		} وگرنه {
 			/* SOCKS4A uses addr of 0.0.0.x, and hostname later */
 			buf[4] = buf[5] = buf[6] = 0;
 			buf[7] = 1;
 		}
 		buf[8] = 0;	/* empty username */
 		wlen = 9;
-		if (socksv == 44) {
+		اگر (socksv == 44) {
 			/* SOCKS4A has nul-terminated hostname after user */
-			if (strlcpy(buf + 9, host,
-			    sizeof(buf) - 9) >= sizeof(buf) - 9)
+			اگر (strlcpy(buf + 9, host,
+			    اندازه(buf) - 9) >= اندازه(buf) - 9)
 				errx(1, "hostname too big");
 			wlen = 9 + strlen(host) + 1;
 		}
 		cnt = atomicio(vwrite, proxyfd, buf, wlen);
-		if (cnt != wlen)
+		اگر (cnt != wlen)
 			err(1, "write failed (%zu/%zu)", cnt, wlen);
 
-		cnt = atomicio(read, proxyfd, buf, 8);
-		if (cnt != 8)
+		cnt = atomicio(اقرأ, proxyfd, buf, 8);
+		اگر (cnt != 8)
 			err(1, "read failed (%zu/8)", cnt);
-		if (buf[1] != 90)
+		اگر (buf[1] != 90)
 			errx(1, "connection failed, SOCKS error %d", buf[1]);
-	} else if (socksv == -1) {
+	} وگرنه اگر (socksv == -1) {
 		/* HTTP proxy CONNECT */
 
 		/* Disallow bad chars in hostname */
-		if (strcspn(host, "\r\n\t []:") != strlen(host))
+		اگر (strcspn(host, "\r\n\t []:") != strlen(host))
 			errx(1, "Invalid hostname");
 
 		/* Try to be sane about numeric IPv6 addresses */
-		if (strchr(host, ':') != NULL) {
-			r = snprintf(buf, sizeof(buf),
+		اگر (strchr(host, ':') != پوچ) {
+			r = snprintf(buf, اندازه(buf),
 			    "CONNECT [%s]:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
-		} else {
-			r = snprintf(buf, sizeof(buf),
+		} وگرنه {
+			r = snprintf(buf, اندازه(buf),
 			    "CONNECT %s:%d HTTP/1.0\r\n",
 			    host, ntohs(serverport));
 		}
-		if (r == -1 || (size_t)r >= sizeof(buf))
+		اگر (r == -1 || (size_t)r >= اندازه(buf))
 			errx(1, "hostname too long");
 		r = strlen(buf);
 
 		cnt = atomicio(vwrite, proxyfd, buf, r);
-		if (cnt != (size_t)r)
+		اگر (cnt != (size_t)r)
 			err(1, "write failed (%zu/%d)", cnt, r);
 
-		if (authretry > 1) {
-			char resp[1024];
+		اگر (authretry > 1) {
+			نویسه resp[1024];
 
 			proxypass = getproxypass(proxyuser, proxyhost);
-			r = snprintf(buf, sizeof(buf), "%s:%s",
+			r = snprintf(buf, اندازه(buf), "%s:%s",
 			    proxyuser, proxypass);
-			if (r == -1 || (size_t)r >= sizeof(buf) ||
+			اگر (r == -1 || (size_t)r >= اندازه(buf) ||
 			    b64_ntop(buf, strlen(buf), resp,
-			    sizeof(resp)) == -1)
+			    اندازه(resp)) == -1)
 				errx(1, "Proxy username/password too long");
-			r = snprintf(buf, sizeof(buf), "Proxy-Authorization: "
+			r = snprintf(buf, اندازه(buf), "Proxy-Authorization: "
 			    "Basic %s\r\n", resp);
-			if (r == -1 || (size_t)r >= sizeof(buf))
+			اگر (r == -1 || (size_t)r >= اندازه(buf))
 				errx(1, "Proxy auth response too long");
 			r = strlen(buf);
-			if ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
+			اگر ((cnt = atomicio(vwrite, proxyfd, buf, r)) != (size_t)r)
 				err(1, "write failed (%zu/%d)", cnt, r);
 		}
 
 		/* Terminate headers */
-		if ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
+		اگر ((r = atomicio(vwrite, proxyfd, "\r\n", 2)) != 2)
 			err(1, "write failed (2/%d)", r);
 
 		/* Read status reply */
-		proxy_read_line(proxyfd, buf, sizeof(buf));
-		if (proxyuser != NULL &&
+		proxy_read_سطر(proxyfd, buf, اندازه(buf));
+		اگر (proxyuser != پوچ &&
 		    strncmp(buf, "HTTP/1.0 407 ", 12) == 0) {
-			if (authretry > 1) {
+			اگر (authretry > 1) {
 				fprintf(stderr, "Proxy authentication "
 				    "failed\n");
 			}
 			close(proxyfd);
-			goto again;
-		} else if (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
+			برو again;
+		} وگرنه اگر (strncmp(buf, "HTTP/1.0 200 ", 12) != 0 &&
 		    strncmp(buf, "HTTP/1.1 200 ", 12) != 0)
 			errx(1, "Proxy error: \"%s\"", buf);
 
 		/* Headers continue until we hit an empty line */
-		for (r = 0; r < HTTP_MAXHDRS; r++) {
-			proxy_read_line(proxyfd, buf, sizeof(buf));
-			if (*buf == '\0')
-				break;
+		برای (r = 0; r < HTTP_MAXHDRS; r++) {
+			proxy_read_سطر(proxyfd, buf, اندازه(buf));
+			اگر (*buf == '\0')
+				بشکن;
 		}
-		if (*buf != '\0')
+		اگر (*buf != '\0')
 			errx(1, "Too many proxy headers received");
-	} else
+	} وگرنه
 		errx(1, "Unknown proxy protocol %d", socksv);
 
-	return (proxyfd);
+	بازگشت (proxyfd);
 }
 

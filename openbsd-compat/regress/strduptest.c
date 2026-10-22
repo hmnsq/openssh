@@ -14,34 +14,34 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-static int fail = 0;
+ایستا صحیح fail = 0;
 
-void
-test(const char *a)
+تهی
+test(ثابت نویسه *a)
 {
-	char *b;
+	نویسه *b;
 
 	b = strdup(a);
-	if (b == 0) {
+	اگر (b == 0) {
 		fail = 1;
-		return;
+		بازگشت;
 	}
-	if (strcmp(a, b) != 0)
+	اگر (strcmp(a, b) != 0)
 		fail = 1;
-	free(b);
+	آزاد(b);
 }
 
-int
-main(void)
+صحیح
+اصلی(تهی)
 {
 	test("");
 	test("a");
 	test("\0");
 	test("abcdefghijklmnopqrstuvwxyz");
-	return fail;
+	بازگشت fail;
 }

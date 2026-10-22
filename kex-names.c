@@ -23,34 +23,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <signal.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/crypto.h>
-#include <openssl/evp.h>
+#شامل <openssl/crypto.h>
+#شامل <openssl/evp.h>
 #endif
 
-#include "kex.h"
-#include "log.h"
-#include "match.h"
-#include "digest.h"
-#include "misc.h"
+#شامل "kex.h"
+#شامل "log.h"
+#شامل "match.h"
+#شامل "digest.h"
+#شامل "misc.h"
 
-#include "ssherr.h"
+#شامل "ssherr.h"
 
-struct kexalg {
-	char *name;
+ساختار kexalg {
+	نویسه *name;
 	u_int type;
-	int ec_nid;
-	int hash_alg;
-	int pq_alg;
+	صحیح ec_nid;
+	صحیح hash_alg;
+	صحیح pq_alg;
 };
-static const struct kexalg kexalgs[] = {
+ایستا ثابت ساختار kexalg kexalgs[] = {
 #ifdef WITH_OPENSSL
 	{ KEX_DH1, KEX_DH_GRP1_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
 	{ KEX_DH14_SHA1, KEX_DH_GRP14_SHA1, 0, SSH_DIGEST_SHA1, KEX_NOT_PQ },
@@ -70,7 +70,7 @@ static const struct kexalg kexalgs[] = {
 	{ KEX_MLKEM768NISTP256_SHA256, KEX_KEM_MLKEM768ECDH_SHA256,
 	    NID_X9_62_prime256v1, SSH_DIGEST_SHA256, KEX_IS_PQ },
 #endif /* WITH_OPENSSL */
-#if defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
+#اگر defined(HAVE_EVP_SHA256) || !defined(WITH_OPENSSL)
 	{ KEX_CURVE25519_SHA256, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 	{ KEX_CURVE25519_SHA256_OLD, KEX_C25519_SHA256, 0, SSH_DIGEST_SHA256, KEX_NOT_PQ },
 #ifdef USE_SNTRUP761X25519
@@ -84,150 +84,150 @@ static const struct kexalg kexalgs[] = {
 	    SSH_DIGEST_SHA256, KEX_IS_PQ },
 #endif
 #endif /* HAVE_EVP_SHA256 || !WITH_OPENSSL */
-	{ NULL, 0, -1, -1, 0 },
+	{ پوچ, 0, -1, -1, 0 },
 };
 
-char *
-kex_alg_list(char sep)
+نویسه *
+kex_alg_list(نویسه sep)
 {
-	char *ret = NULL;
-	const struct kexalg *k;
-	char sep_str[2] = {sep, '\0'};
+	نویسه *ret = پوچ;
+	ثابت ساختار kexalg *k;
+	نویسه sep_str[2] = {sep, '\0'};
 
-	for (k = kexalgs; k->name != NULL; k++)
+	برای (k = kexalgs; k->name != پوچ; k++)
 		xextendf(&ret, sep_str, "%s", k->name);
 
-	return ret;
+	بازگشت ret;
 }
 
-static const struct kexalg *
-kex_alg_by_name(const char *name)
+ایستا ثابت ساختار kexalg *
+kex_alg_by_name(ثابت نویسه *name)
 {
-	const struct kexalg *k;
+	ثابت ساختار kexalg *k;
 
-	for (k = kexalgs; k->name != NULL; k++) {
-		if (strcmp(k->name, name) == 0)
-			return k;
+	برای (k = kexalgs; k->name != پوچ; k++) {
+		اگر (strcmp(k->name, name) == 0)
+			بازگشت k;
 	}
-	return NULL;
+	بازگشت پوچ;
 }
 
-int
-kex_name_valid(const char *name)
+صحیح
+kex_name_valid(ثابت نویسه *name)
 {
-	return kex_alg_by_name(name) != NULL;
+	بازگشت kex_alg_by_name(name) != پوچ;
 }
 
-int
-kex_is_pq_from_name(const char *name)
+صحیح
+kex_is_pq_from_name(ثابت نویسه *name)
 {
-	const struct kexalg *k;
+	ثابت ساختار kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->pq_alg == KEX_IS_PQ;
+	اگر ((k = kex_alg_by_name(name)) == پوچ)
+		بازگشت 0;
+	بازگشت k->pq_alg == KEX_IS_PQ;
 }
 
 u_int
-kex_type_from_name(const char *name)
+kex_type_from_name(ثابت نویسه *name)
 {
-	const struct kexalg *k;
+	ثابت ساختار kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return 0;
-	return k->type;
+	اگر ((k = kex_alg_by_name(name)) == پوچ)
+		بازگشت 0;
+	بازگشت k->type;
 }
 
-int
-kex_hash_from_name(const char *name)
+صحیح
+kex_hash_from_name(ثابت نویسه *name)
 {
-	const struct kexalg *k;
+	ثابت ساختار kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->hash_alg;
+	اگر ((k = kex_alg_by_name(name)) == پوچ)
+		بازگشت -1;
+	بازگشت k->hash_alg;
 }
 
-int
-kex_nid_from_name(const char *name)
+صحیح
+kex_nid_from_name(ثابت نویسه *name)
 {
-	const struct kexalg *k;
+	ثابت ساختار kexalg *k;
 
-	if ((k = kex_alg_by_name(name)) == NULL)
-		return -1;
-	return k->ec_nid;
+	اگر ((k = kex_alg_by_name(name)) == پوچ)
+		بازگشت -1;
+	بازگشت k->ec_nid;
 }
 
 /* Validate KEX method name list */
-int
-kex_names_valid(const char *names)
+صحیح
+kex_names_valid(ثابت نویسه *names)
 {
-	char *s, *cp, *p;
+	نویسه *s, *cp, *p;
 
-	if (names == NULL || strcmp(names, "") == 0)
-		return 0;
-	if ((s = cp = strdup(names)) == NULL)
-		return 0;
-	for ((p = strsep(&cp, ",")); p && *p != '\0';
+	اگر (names == پوچ || strcmp(names, "") == 0)
+		بازگشت 0;
+	اگر ((s = cp = strdup(names)) == پوچ)
+		بازگشت 0;
+	برای ((p = strsep(&cp, ",")); p && *p != '\0';
 	    (p = strsep(&cp, ","))) {
-		if (kex_alg_by_name(p) == NULL) {
+		اگر (kex_alg_by_name(p) == پوچ) {
 			error("Unsupported KEX algorithm \"%.100s\"", p);
-			free(s);
-			return 0;
+			آزاد(s);
+			بازگشت 0;
 		}
 	}
 	debug3("kex names ok: [%s]", names);
-	free(s);
-	return 1;
+	آزاد(s);
+	بازگشت 1;
 }
 
 /* returns non-zero if proposal contains any algorithm from algs */
-int
-kex_has_any_alg(const char *proposal, const char *algs)
+صحیح
+kex_has_any_alg(ثابت نویسه *proposal, ثابت نویسه *algs)
 {
-	char *cp;
+	نویسه *cp;
 
-	if ((cp = match_list(proposal, algs, NULL)) == NULL)
-		return 0;
-	free(cp);
-	return 1;
+	اگر ((cp = match_list(proposal, algs, پوچ)) == پوچ)
+		بازگشت 0;
+	آزاد(cp);
+	بازگشت 1;
 }
 
 /*
  * Concatenate algorithm names, avoiding duplicates in the process.
  * Caller must free returned string.
  */
-char *
-kex_names_cat(const char *a, const char *b)
+نویسه *
+kex_names_cat(ثابت نویسه *a, ثابت نویسه *b)
 {
-	char *ret = NULL, *tmp = NULL, *cp, *p;
+	نویسه *ret = پوچ, *tmp = پوچ, *cp, *p;
 	size_t len;
 
-	if (a == NULL || *a == '\0')
-		return strdup(b);
-	if (b == NULL || *b == '\0')
-		return strdup(a);
-	if (strlen(b) > 1024*1024)
-		return NULL;
+	اگر (a == پوچ || *a == '\0')
+		بازگشت strdup(b);
+	اگر (b == پوچ || *b == '\0')
+		بازگشت strdup(a);
+	اگر (strlen(b) > 1024*1024)
+		بازگشت پوچ;
 	len = strlen(a) + strlen(b) + 2;
-	if ((tmp = cp = strdup(b)) == NULL ||
-	    (ret = calloc(1, len)) == NULL) {
-		free(tmp);
-		return NULL;
+	اگر ((tmp = cp = strdup(b)) == پوچ ||
+	    (ret = calloc(1, len)) == پوچ) {
+		آزاد(tmp);
+		بازگشت پوچ;
 	}
 	strlcpy(ret, a, len);
-	for ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
-		if (kex_has_any_alg(ret, p))
-			continue; /* Algorithm already present */
-		if (strlcat(ret, ",", len) >= len ||
+	برای ((p = strsep(&cp, ",")); p && *p != '\0'; (p = strsep(&cp, ","))) {
+		اگر (kex_has_any_alg(ret, p))
+			ادامه; /* Algorithm already present */
+		اگر (strlcat(ret, ",", len) >= len ||
 		    strlcat(ret, p, len) >= len) {
-			free(tmp);
-			free(ret);
-			return NULL; /* Shouldn't happen */
+			آزاد(tmp);
+			آزاد(ret);
+			بازگشت پوچ; /* Shouldn't happen */
 		}
 	}
-	free(tmp);
-	return ret;
+	آزاد(tmp);
+	بازگشت ret;
 }
 
 /*
@@ -237,50 +237,50 @@ kex_names_cat(const char *a, const char *b)
  * specified names should be removed, or '^' that they should be placed
  * at the head.
  */
-int
-kex_assemble_names(char **listp, const char *def, const char *all)
+صحیح
+kex_assemble_names(نویسه **listp, ثابت نویسه *def, ثابت نویسه *all)
 {
-	char *cp, *tmp, *patterns;
-	char *list = NULL, *ret = NULL, *matching = NULL, *opatterns = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	نویسه *cp, *tmp, *patterns;
+	نویسه *list = پوچ, *ret = پوچ, *matching = پوچ, *opatterns = پوچ;
+	صحیح r = SSH_ERR_INTERNAL_ERROR;
 
-	if (listp == NULL || def == NULL || all == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (listp == پوچ || def == پوچ || all == پوچ)
+		بازگشت SSH_ERR_INVALID_ARGUMENT;
 
-	if (*listp == NULL || **listp == '\0') {
-		if ((*listp = strdup(def)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
-		return 0;
+	اگر (*listp == پوچ || **listp == '\0') {
+		اگر ((*listp = strdup(def)) == پوچ)
+			بازگشت SSH_ERR_ALLOC_FAIL;
+		بازگشت 0;
 	}
 
 	list = *listp;
-	*listp = NULL;
-	if (*list == '+') {
+	*listp = پوچ;
+	اگر (*list == '+') {
 		/* Append names to default list */
-		if ((tmp = kex_names_cat(def, list + 1)) == NULL) {
+		اگر ((tmp = kex_names_cat(def, list + 1)) == پوچ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			برو fail;
 		}
-		free(list);
+		آزاد(list);
 		list = tmp;
-	} else if (*list == '-') {
+	} وگرنه اگر (*list == '-') {
 		/* Remove names from default list */
-		if ((*listp = match_filter_denylist(def, list + 1)) == NULL) {
+		اگر ((*listp = match_filter_denylist(def, list + 1)) == پوچ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			برو fail;
 		}
-		free(list);
+		آزاد(list);
 		/* filtering has already been done */
-		return 0;
-	} else if (*list == '^') {
+		بازگشت 0;
+	} وگرنه اگر (*list == '^') {
 		/* Place names at head of default list */
-		if ((tmp = kex_names_cat(list + 1, def)) == NULL) {
+		اگر ((tmp = kex_names_cat(list + 1, def)) == پوچ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			برو fail;
 		}
-		free(list);
+		آزاد(list);
 		list = tmp;
-	} else {
+	} وگرنه {
 		/* Explicit list, overrides default - just use "list" as is */
 	}
 
@@ -289,46 +289,46 @@ kex_assemble_names(char **listp, const char *def, const char *all)
 	 * the patterns are applied above. For the +list and explicit list
 	 * cases we need to do it now.
 	 */
-	ret = NULL;
-	if ((patterns = opatterns = strdup(list)) == NULL) {
+	ret = پوچ;
+	اگر ((patterns = opatterns = strdup(list)) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto fail;
+		برو fail;
 	}
 	/* Apply positive (i.e. non-negated) patterns from the list */
-	while ((cp = strsep(&patterns, ",")) != NULL) {
-		if (*cp == '!') {
+	وقتی ((cp = strsep(&patterns, ",")) != پوچ) {
+		اگر (*cp == '!') {
 			/* negated matches are not supported here */
 			r = SSH_ERR_INVALID_ARGUMENT;
-			goto fail;
+			برو fail;
 		}
-		free(matching);
-		if ((matching = match_filter_allowlist(all, cp)) == NULL) {
+		آزاد(matching);
+		اگر ((matching = match_filter_allowlist(all, cp)) == پوچ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			برو fail;
 		}
-		if ((tmp = kex_names_cat(ret, matching)) == NULL) {
+		اگر ((tmp = kex_names_cat(ret, matching)) == پوچ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			برو fail;
 		}
-		free(ret);
+		آزاد(ret);
 		ret = tmp;
 	}
-	if (ret == NULL || *ret == '\0') {
+	اگر (ret == پوچ || *ret == '\0') {
 		/* An empty name-list is an error */
 		/* XXX better error code? */
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto fail;
+		برو fail;
 	}
 
 	/* success */
 	*listp = ret;
-	ret = NULL;
+	ret = پوچ;
 	r = 0;
 
  fail:
-	free(matching);
-	free(opatterns);
-	free(list);
-	free(ret);
-	return r;
+	آزاد(matching);
+	آزاد(opatterns);
+	آزاد(list);
+	آزاد(ret);
+	بازگشت r;
 }

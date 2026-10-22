@@ -48,15 +48,15 @@
 #ifndef _GETRRSETBYNAME_H
 #define _GETRRSETBYNAME_H
 
-#include "includes.h"
+#شامل "includes.h"
 
 #ifndef HAVE_GETRRSETBYNAME
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <netdb.h>
-#include <resolv.h>
+#شامل <sys/types.h>
+#شامل <netinet/in.h>
+#شامل <arpa/nameser.h>
+#شامل <netdb.h>
+#شامل <resolv.h>
 
 #ifndef HFIXEDSZ
 #define HFIXEDSZ 12
@@ -85,25 +85,25 @@
 # define ERRSET_NODATA		5
 #endif
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+ساختار rdatainfo {
+	unsigned صحیح		rdi_length;	/* length of data */
+	unsigned نویسه		*rdi_data;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+ساختار rrsetinfo {
+	unsigned صحیح		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned صحیح		rri_rdclass;	/* class number */
+	unsigned صحیح		rri_rdtype;	/* RR type number */
+	unsigned صحیح		rri_ttl;	/* time to live */
+	unsigned صحیح		rri_nrdatas;	/* size of rdatas array */
+	unsigned صحیح		rri_nsigs;	/* size of sigs array */
+	نویسه			*rri_name;	/* canonical name */
+	ساختار rdatainfo	*rri_rdatas;	/* individual records */
+	ساختار rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+صحیح		getrrsetbyname(ثابت نویسه *, unsigned صحیح, unsigned صحیح, unsigned صحیح, ساختار rrsetinfo **);
+تهی		freerrset(ساختار rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */
 

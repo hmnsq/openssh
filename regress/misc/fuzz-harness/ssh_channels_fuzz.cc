@@ -41,268 +41,268 @@ limitations under the License.
  * so per-iteration state survives.
  */
 
-#include <fcntl.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <fcntl.h>
+#شامل <setjmp.h>
+#شامل <signal.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-extern "C" {
-#include "includes.h"
-#include "ssherr.h"
-#include "ssh_api.h"
-#include "sshbuf.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "log.h"
-#include "ssh2.h"
-#include "channels.h"
+بیرونی "C" {
+#شامل "includes.h"
+#شامل "ssherr.h"
+#شامل "ssh_api.h"
+#شامل "sshbuf.h"
+#شامل "packet.h"
+#شامل "myproposal.h"
+#شامل "kex.h"
+#شامل "xmalloc.h"
+#شامل "authfile.h"
+#شامل "sshkey.h"
+#شامل "log.h"
+#شامل "ssh2.h"
+#شامل "channels.h"
 }
 
 
-#include "fixed-keys.h"
+#شامل "fixed-keys.h"
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ایستا jmp_buf fuzz_env;
+ایستا فرار صحیح in_fuzz = 0;
 
-static char *g_open_failure_msg = NULL;
+ایستا نویسه *g_open_failure_پیام = پوچ;
 
-extern "C" int
-my_channel_input_open_failure(int type, uint32_t seq, struct ssh *ssh)
+بیرونی "C" صحیح
+my_channel_درون_داد_open_failure(صحیح type, uint32_t seq, ساختار ssh *ssh)
 {
-	(void)type;
-	(void)seq;
+	(تهی)type;
+	(تهی)seq;
 	uint32_t reason;
-	int r;
-	if ((r = sshpkt_get_u32(ssh, &reason)) != 0)
+	صحیح r;
+	اگر ((r = sshpkt_get_u32(ssh, &reason)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	if ((r = sshpkt_get_cstring(ssh, &g_open_failure_msg, NULL)) != 0 ||
-	    (r = sshpkt_get_string_direct(ssh, NULL, NULL)) != 0 ||
+	اگر ((r = sshpkt_get_cstring(ssh, &g_open_failure_پیام, پوچ)) != 0 ||
+	    (r = sshpkt_get_string_direct(ssh, پوچ, پوچ)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
 		ssh_packet_disconnect(ssh, "Invalid open failure message");
-	return 0;
+	بازگشت 0;
 }
 
-extern "C" void
-cleanup_exit(int code)
+بیرونی "C" تهی
+cleanup_exit(صحیح code)
 {
-	if (in_fuzz)
+	اگر (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-extern "C" void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+بیرونی "C" تهی
+__wrap_ssh_packet_disconnect(ساختار ssh *ssh, ثابت نویسه *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(تهی)ssh;
+	(تهی)fmt;
+	اگر (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-extern "C" int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+بیرونی "C" صحیح
+__wrap_sshpkt_fatal(ساختار ssh *ssh, صحیح r, ثابت نویسه *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(تهی)ssh;
+	(تهی)fmt;
+	اگر (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
-static struct sshkey *
-load_private(const char *str)
+ایستا ساختار sshkey *
+load_private(ثابت نویسه *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	ساختار sshbuf *b = sshbuf_from(str, strlen(str));
+	ساختار sshkey *k = پوچ;
+	اگر (b == پوچ || sshkey_parse_private_fileblob(b, "", &k, پوچ) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	بازگشت k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+ایستا ساختار sshkey *
+load_public(ثابت نویسه *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	نویسه *tmp, *cp;
+	ساختار sshkey *k = sshkey_new(کلید_UNSPEC);
+	اگر (k == پوچ)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	اگر (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	آزاد(tmp);
+	بازگشت k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+ایستا صحیح
+pump(ساختار ssh *from, ساختار ssh *to, size_t *transferred)
 {
-	const u_char *buf;
+	ثابت u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	صحیح r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	اگر ((r = ssh_packet_next(from, &type)) != 0)
+		بازگشت r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	اگر (len == 0)
+		بازگشت 0;
+	اگر ((r = ssh_درون_داد_append(to, buf, len)) != 0)
+		بازگشت r;
+	اگر ((r = ssh_output_consume(from, len)) != 0)
+		بازگشت r;
 	*transferred = len;
-	return 0;
+	بازگشت 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+ایستا صحیح
+run_kex(ساختار ssh *client, ساختار ssh *server)
 {
-	int r;
+	صحیح r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	برای (صحیح i = 0; i < 100; i++) {
+		اگر ((r = pump(server, client, &sn)) != 0) بازگشت r;
+		اگر ((r = pump(client, server, &cn)) != 0) بازگشت r;
+		اگر (server->kex->done && client->kex->done)
+			بازگشت 0;
+		اگر (cn == 0 && sn == 0)
+			بازگشت SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	بازگشت SSH_ERR_PROTOCOL_ERROR;
 }
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_pipe[2] = { -1, -1 };
+ایستا ساختار ssh *g_client = پوچ;
+ایستا ساختار ssh *g_server = پوچ;
+ایستا صحیح g_init = 0;
+ایستا صحیح g_pipe[2] = { -1, -1 };
 
-static void
-dummy_open_confirm(struct ssh *ssh, int id, int success, void *ctx)
+ایستا تهی
+dummy_open_confirm(ساختار ssh *ssh, صحیح id, صحیح success, تهی *ctx)
 {
-	(void)ssh;
-	(void)id;
-	(void)success;
-	(void)ctx;
+	(تهی)ssh;
+	(تهی)id;
+	(تهی)success;
+	(تهی)ctx;
 }
 
-static void
-dummy_status_confirm(struct ssh *ssh, int type, Channel *c, void *ctx)
+ایستا تهی
+dummy_status_confirm(ساختار ssh *ssh, صحیح type, Channel *c, تهی *ctx)
 {
-	(void)ssh;
-	(void)type;
-	(void)c;
-	(void)ctx;
+	(تهی)ssh;
+	(تهی)type;
+	(تهی)c;
+	(تهی)ctx;
 }
 
-static void
-dummy_status_abandon(struct ssh *ssh, Channel *c, void *ctx)
+ایستا تهی
+dummy_status_abandon(ساختار ssh *ssh, Channel *c, تهی *ctx)
 {
-	(void)ssh;
-	(void)c;
-	(void)ctx;
+	(تهی)ssh;
+	(تهی)c;
+	(تهی)ctx;
 }
 
-static int
-init_once(void)
+ایستا صحیح
+init_once(تهی)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	اگر (g_init)
+		بازگشت 0;
+	سیگنال(SIGPIPE, SIG_IGN);
 	log_init("ssh_channels_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	int pfd[2];
-	if (pipe(pfd) != 0)
-		return -1;
+	صحیح pfd[2];
+	اگر (أنبوب(pfd) != 0)
+		بازگشت -1;
 	g_pipe[0] = fcntl(pfd[0], F_DUPFD_CLOEXEC, 100);
 	g_pipe[1] = fcntl(pfd[1], F_DUPFD_CLOEXEC, 100);
 	close(pfd[0]);
 	close(pfd[1]);
-	if (g_pipe[0] < 0 || g_pipe[1] < 0)
-		return -1;
-	int fl0 = fcntl(g_pipe[0], F_GETFL, 0);
-	int fl1 = fcntl(g_pipe[1], F_GETFL, 0);
-	(void)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
-	(void)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
+	اگر (g_pipe[0] < 0 || g_pipe[1] < 0)
+		بازگشت -1;
+	صحیح fl0 = fcntl(g_pipe[0], F_GETFL, 0);
+	صحیح fl1 = fcntl(g_pipe[1], F_GETFL, 0);
+	(تهی)fcntl(g_pipe[0], F_SETFL, fl0 | O_NONBLOCK);
+	(تهی)fcntl(g_pipe[1], F_SETFL, fl1 | O_NONBLOCK);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	ساختار sshkey *priv = load_private(PRIV_ED25519);
+	ساختار sshkey *pub = load_public(PUB_ED25519);
+	نویسه *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	ثابت نویسه *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	نویسه *proposal[PROPOSAL_MAX] = { 0 };
+	صحیح i;
+	برای (i = 0; i < PROPOSAL_MAX; i++) {
+		ثابت نویسه *p = defaults[i];
+		اگر (i == PROPOSAL_SERVER_HOST_کلید_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		وگرنه اگر (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		وگرنه اگر (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		وگرنه اگر (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	ساختار kex_params kp;
+	memcpy(kp.proposal, proposal, اندازه(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	اگر (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		بازگشت -1;
+	اگر (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		بازگشت -1;
+	اگر (run_kex(g_client, g_server) != 0)
+		بازگشت -1;
 
 	channel_init_channels(g_client);
 
 	ssh_dispatch_init(g_client, &dispatch_protocol_ignore);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_DATA,
-	    &channel_input_data);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_EXTENDED_DATA,
-	    &channel_input_extended_data);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_EOF,
-	    &channel_input_ieof);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_CLOSE,
-	    &channel_input_oclose);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_OPEN_CONFIRMATION,
-	    &channel_input_open_confirmation);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_OPEN_FAILURE,
-	    &my_channel_input_open_failure);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_WINDOW_ADJUST,
-	    &channel_input_window_adjust);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_SUCCESS,
-	    &channel_input_status_confirm);
-	ssh_dispatch_set(g_client, SSH2_MSG_CHANNEL_FAILURE,
-	    &channel_input_status_confirm);
+	ssh_dispatch_set(g_client, SSH2_پیام_CHANNEL_DATA,
+	    &channel_درون_داد_data);
+	ssh_dispatch_set(g_client, SSH2_پیام_CHANNEL_EXTENDED_DATA,
+	    &channel_درون_داد_extended_data);
+	ssh_dispatch_set(g_client, SSH2_پیام_CHANNEL_EOF,
+	    &channel_درون_داد_ieof);
+	ssh_dispatch_set(g_client, SSH2_پیام_CHANNEL_CLOSE,
+	    &channel_درون_داد_oclose);
+	ssh_dispatch_set(g_client, SSH2_پیام_CHANNEL_OPEN_CONFIRMATION,
+	    &channel_درون_داد_open_confirmation);
+	ssh_dispatch_set(g_client, SSH2_پیام_CHANNEL_OPEN_FAILURE,
+	    &my_channel_درون_داد_open_failure);
+	ssh_dispatch_set(g_client, SSH2_پیام_CHANNEL_WINDOW_ADJUST,
+	    &channel_درون_داد_window_adjust);
+	ssh_dispatch_set(g_client, SSH2_پیام_CHANNEL_SUCCESS,
+	    &channel_درون_داد_status_confirm);
+	ssh_dispatch_set(g_client, SSH2_پیام_CHANNEL_FAILURE,
+	    &channel_درون_داد_status_confirm);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	آزاد(keyname);
+	برای (i = 0; i < PROPOSAL_MAX; i++)
+		آزاد(proposal[i]);
 	g_init = 1;
-	return 0;
+	بازگشت 0;
 }
 
-struct chan_scenario {
-	const char *ctype;
-	int state;
-	int use_pipe;
+ساختار chan_scenario {
+	ثابت نویسه *ctype;
+	صحیح state;
+	صحیح use_pipe;
 };
 
-static const struct chan_scenario k_scenarios[] = {
+ایستا ثابت ساختار chan_scenario k_scenarios[] = {
 	{ "session",         SSH_CHANNEL_OPEN,     0 },
 	{ "session",         SSH_CHANNEL_OPENING,  1 },
 	{ "x11",             SSH_CHANNEL_OPEN,     1 },
@@ -310,85 +310,85 @@ static const struct chan_scenario k_scenarios[] = {
 	{ "direct-tcpip",    SSH_CHANNEL_OPENING,  1 },
 };
 
-static int g_channel_id = -1;
+ایستا صحیح g_channel_id = -1;
 
-static void
-drain_pipe(void)
+ایستا تهی
+drain_pipe(تهی)
 {
-	char buf[4096];
-	if (g_pipe[0] < 0)
-		return;
-	while (read(g_pipe[0], buf, sizeof(buf)) > 0) { }
+	نویسه buf[4096];
+	اگر (g_pipe[0] < 0)
+		بازگشت;
+	وقتی (اقرأ(g_pipe[0], buf, اندازه(buf)) > 0) { }
 }
 
-static void
-reset_channel(struct ssh *ssh, const struct chan_scenario *s)
+ایستا تهی
+reset_channel(ساختار ssh *ssh, ثابت ساختار chan_scenario *s)
 {
-	if (g_channel_id >= 0) {
+	اگر (g_channel_id >= 0) {
 		Channel *c = channel_lookup(ssh, g_channel_id);
-		if (c != NULL)
+		اگر (c != پوچ)
 			channel_free(ssh, c);
 		g_channel_id = -1;
 	}
 	drain_pipe();
 
-	int rfd = s->use_pipe ? g_pipe[1] : -1;
-	int wfd = s->use_pipe ? g_pipe[1] : -1;
-	Channel *c = channel_new(ssh, (char *)s->ctype, s->state,
-	    rfd, wfd, -1, 32768, 32768, 0, (char *)"fuzz", 0);
-	if (c == NULL)
-		return;
+	صحیح rfd = s->use_pipe ? g_pipe[1] : -1;
+	صحیح wfd = s->use_pipe ? g_pipe[1] : -1;
+	Channel *c = channel_new(ssh, (نویسه *)s->ctype, s->state,
+	    rfd, wfd, -1, 32768, 32768, 0, (نویسه *)"fuzz", 0);
+	اگر (c == پوچ)
+		بازگشت;
 	g_channel_id = c->self;
 	channel_register_open_confirm(ssh, g_channel_id,
-	    &dummy_open_confirm, NULL);
+	    &dummy_open_confirm, پوچ);
 	channel_register_status_confirm(ssh, g_channel_id,
-	    &dummy_status_confirm, &dummy_status_abandon, NULL);
+	    &dummy_status_confirm, &dummy_status_abandon, پوچ);
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_CHANNEL_OPEN_CONFIRMATION,
-	SSH2_MSG_CHANNEL_OPEN_FAILURE,
-	SSH2_MSG_CHANNEL_WINDOW_ADJUST,
-	SSH2_MSG_CHANNEL_DATA,
-	SSH2_MSG_CHANNEL_EXTENDED_DATA,
-	SSH2_MSG_CHANNEL_SUCCESS,
-	SSH2_MSG_CHANNEL_FAILURE,
-	SSH2_MSG_CHANNEL_EOF,
-	SSH2_MSG_CHANNEL_CLOSE,
+ایستا ثابت uint8_t k_پیام_types[] = {
+	SSH2_پیام_CHANNEL_OPEN_CONFIRMATION,
+	SSH2_پیام_CHANNEL_OPEN_FAILURE,
+	SSH2_پیام_CHANNEL_WINDOW_ADJUST,
+	SSH2_پیام_CHANNEL_DATA,
+	SSH2_پیام_CHANNEL_EXTENDED_DATA,
+	SSH2_پیام_CHANNEL_SUCCESS,
+	SSH2_پیام_CHANNEL_FAILURE,
+	SSH2_پیام_CHANNEL_EOF,
+	SSH2_پیام_CHANNEL_CLOSE,
 };
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+بیرونی "C" صحیح
+LLVMFuzzer_Test_One_درون_داد(ثابت uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return 0;
-	if (size > 65000)
-		return 0;
+	اگر (init_once() != 0)
+		بازگشت 0;
+	اگر (size > 65000)
+		بازگشت 0;
 
-	const size_t n_scen = sizeof(k_scenarios) / sizeof(k_scenarios[0]);
-	const size_t n_msg = sizeof(k_msg_types) / sizeof(k_msg_types[0]);
+	ثابت size_t n_scen = اندازه(k_scenarios) / اندازه(k_scenarios[0]);
+	ثابت size_t n_پیام = اندازه(k_پیام_types) / اندازه(k_پیام_types[0]);
 
-	for (size_t s = 0; s < n_scen; s++) {
+	برای (size_t s = 0; s < n_scen; s++) {
 		reset_channel(g_client, &k_scenarios[s]);
-		for (size_t t = 0; t < n_msg; t++) {
+		برای (size_t t = 0; t < n_پیام; t++) {
 			in_fuzz = 1;
-			if (setjmp(fuzz_env) == 0) {
+			اگر (setjmp(fuzz_env) == 0) {
 				size_t transferred;
-				if (ssh_packet_put(g_server, k_msg_types[t],
+				اگر (ssh_packet_put(g_server, k_پیام_types[t],
 				    data, size) != 0)
-					goto done;
-				if (pump(g_server, g_client,
+					برو done;
+				اگر (pump(g_server, g_client,
 				    &transferred) != 0)
-					goto done;
-				(void)ssh_dispatch_run(g_client,
-				    DISPATCH_NONBLOCK, NULL);
+					برو done;
+				(تهی)ssh_dispatch_run(g_client,
+				    DISPATCH_NONBLOCK, پوچ);
 			done:
 				;
 			}
 			in_fuzz = 0;
-			free(g_open_failure_msg);
-			g_open_failure_msg = NULL;
+			آزاد(g_open_failure_پیام);
+			g_open_failure_پیام = پوچ;
 		}
 	}
-	return 0;
+	بازگشت 0;
 }

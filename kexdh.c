@@ -23,81 +23,81 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
 #ifdef WITH_OPENSSL
-#include "openbsd-compat/openssl-compat.h"
+#شامل "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#شامل <stdio.h>
+#شامل <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/dh.h>
+#شامل <openssl/bn.h>
+#شامل <openssl/dh.h>
 
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "dh.h"
-#include "log.h"
+#شامل "kex.h"
+#شامل "sshbuf.h"
+#شامل "ssherr.h"
+#شامل "dh.h"
+#شامل "log.h"
 
-int
-kex_dh_keygen(struct kex *kex)
+صحیح
+kex_dh_keygen(ساختار kex *kex)
 {
-	switch (kex->kex_type) {
-	case KEX_DH_GRP1_SHA1:
+	انتخاب (kex->kex_type) {
+	حالت KEX_DH_GRP1_SHA1:
 		kex->dh = dh_new_group1();
-		break;
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
+		بشکن;
+	حالت KEX_DH_GRP14_SHA1:
+	حالت KEX_DH_GRP14_SHA256:
 		kex->dh = dh_new_group14();
-		break;
-	case KEX_DH_GRP16_SHA512:
+		بشکن;
+	حالت KEX_DH_GRP16_SHA512:
 		kex->dh = dh_new_group16();
-		break;
-	case KEX_DH_GRP18_SHA512:
+		بشکن;
+	حالت KEX_DH_GRP18_SHA512:
 		kex->dh = dh_new_group18();
-		break;
-	default:
-		return SSH_ERR_INVALID_ARGUMENT;
+		بشکن;
+	پیشفرض:
+		بازگشت SSH_ERR_INVALID_ARGUMENT;
 	}
-	if (kex->dh == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	return (dh_gen_key(kex->dh, kex->we_need * 8));
+	اگر (kex->dh == پوچ)
+		بازگشت SSH_ERR_ALLOC_FAIL;
+	بازگشت (dh_gen_کلید(kex->dh, kex->we_need * 8));
 }
 
-int
-kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
+صحیح
+kex_dh_compute_کلید(ساختار kex *kex, BIGNUM *dh_pub, ساختار sshbuf *out)
 {
-	BIGNUM *shared_secret = NULL;
-	u_char *kbuf = NULL;
+	BIGNUM *shared_secret = پوچ;
+	u_char *kbuf = پوچ;
 	size_t klen = 0;
-	int kout, r;
+	صحیح kout, r;
 
 #ifdef DEBUG_KEXDH
 	fprintf(stderr, "dh_pub= ");
 	BN_print_fp(stderr, dh_pub);
 	fprintf(stderr, "\n");
-	debug("bits %d", BN_num_bits(dh_pub));
+	debug("bits %d", BN_رقم_bits(dh_pub));
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "\n");
 #endif
 
-	if (!dh_pub_is_valid(kex->dh, dh_pub)) {
+	اگر (!dh_pub_is_valid(kex->dh, dh_pub)) {
 		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+		برو out;
 	}
 	klen = DH_size(kex->dh);
-	if ((kbuf = malloc(klen)) == NULL ||
-	    (shared_secret = BN_new()) == NULL) {
+	اگر ((kbuf = malloc(klen)) == پوچ ||
+	    (shared_secret = BN_new()) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((kout = DH_compute_key(kbuf, dh_pub, kex->dh)) < 0 ||
-	    BN_bin2bn(kbuf, kout, shared_secret) == NULL) {
+	اگر ((kout = DH_compute_کلید(kbuf, dh_pub, kex->dh)) < 0 ||
+	    BN_bin2bn(kbuf, kout, shared_secret) == پوچ) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		برو out;
 	}
 #ifdef DEBUG_KEXDH
 	dump_digest("shared secret", kbuf, kout);
@@ -106,96 +106,96 @@ kex_dh_compute_key(struct kex *kex, BIGNUM *dh_pub, struct sshbuf *out)
  out:
 	freezero(kbuf, klen);
 	BN_clear_free(shared_secret);
-	return r;
+	بازگشت r;
 }
 
-int
-kex_dh_keypair(struct kex *kex)
+صحیح
+kex_dh_keypair(ساختار kex *kex)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	ثابت BIGNUM *pub_کلید;
+	ساختار sshbuf *buf = پوچ;
+	صحیح r;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		return r;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((buf = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_bignum2(buf, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
+	اگر ((r = kex_dh_keygen(kex)) != 0)
+		بازگشت r;
+	DH_get0_کلید(kex->dh, &pub_کلید, پوچ);
+	اگر ((buf = sshbuf_new()) == پوچ)
+		بازگشت SSH_ERR_ALLOC_FAIL;
+	اگر ((r = sshbuf_put_bignum2(buf, pub_کلید)) != 0 ||
+	    (r = sshbuf_get_u32(buf, پوچ)) != 0)
+		برو out;
 #ifdef DEBUG_KEXDH
 	DHparams_print_fp(stderr, kex->dh);
 	fprintf(stderr, "pub= ");
-	BN_print_fp(stderr, pub_key);
+	BN_print_fp(stderr, pub_کلید);
 	fprintf(stderr, "\n");
 #endif
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = پوچ;
  out:
 	sshbuf_free(buf);
-	return r;
+	بازگشت r;
 }
 
-int
-kex_dh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+صحیح
+kex_dh_enc(ساختار kex *kex, ثابت ساختار sshbuf *client_blob,
+    ساختار sshbuf **server_blobp, ساختار sshbuf **shared_secretp)
 {
-	const BIGNUM *pub_key;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	ثابت BIGNUM *pub_کلید;
+	ساختار sshbuf *server_blob = پوچ;
+	صحیح r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = پوچ;
+	*shared_secretp = پوچ;
 
-	if ((r = kex_dh_keygen(kex)) != 0)
-		goto out;
-	DH_get0_key(kex->dh, &pub_key, NULL);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	اگر ((r = kex_dh_keygen(kex)) != 0)
+		برو out;
+	DH_get0_کلید(kex->dh, &pub_کلید, پوچ);
+	اگر ((server_blob = sshbuf_new()) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((r = sshbuf_put_bignum2(server_blob, pub_key)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
-		goto out;
+	اگر ((r = sshbuf_put_bignum2(server_blob, pub_کلید)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, پوچ)) != 0)
+		برو out;
+	اگر ((r = kex_dh_dec(kex, client_blob, shared_secretp)) != 0)
+		برو out;
 	*server_blobp = server_blob;
-	server_blob = NULL;
+	server_blob = پوچ;
  out:
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = پوچ;
 	sshbuf_free(server_blob);
-	return r;
+	بازگشت r;
 }
 
-int
-kex_dh_dec(struct kex *kex, const struct sshbuf *dh_blob,
-    struct sshbuf **shared_secretp)
+صحیح
+kex_dh_dec(ساختار kex *kex, ثابت ساختار sshbuf *dh_blob,
+    ساختار sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *dh_pub = NULL;
-	int r;
+	ساختار sshbuf *buf = پوچ;
+	BIGNUM *dh_pub = پوچ;
+	صحیح r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = پوچ;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	اگر ((buf = sshbuf_new()) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
+	اگر ((r = sshbuf_put_stringb(buf, dh_blob)) != 0 ||
 	    (r = sshbuf_get_bignum2(buf, &dh_pub)) != 0)
-		goto out;
+		برو out;
 	sshbuf_reset(buf);
-	if ((r = kex_dh_compute_key(kex, dh_pub, buf)) != 0)
-		goto out;
+	اگر ((r = kex_dh_compute_کلید(kex, dh_pub, buf)) != 0)
+		برو out;
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = پوچ;
  out:
 	BN_free(dh_pub);
 	DH_free(kex->dh);
-	kex->dh = NULL;
+	kex->dh = پوچ;
 	sshbuf_free(buf);
-	return r;
+	بازگشت r;
 }
 #endif /* WITH_OPENSSL */

@@ -15,33 +15,33 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
 #ifndef WITH_OPENSSL
 
-#include <sys/types.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <string.h>
 
-#include "cipher-aesctr.h"
+#شامل "cipher-aesctr.h"
 
 /*
  * increment counter 'ctr',
  * the counter is of size 'len' bytes and stored in network-byte-order.
  * (LSB at ctr[len-1], MSB at ctr[0])
  */
-static inline void
+ایستا درونخطی تهی
 aesctr_inc(u8 *ctr, u32 len)
 {
 	ssize_t i;
 
 #ifndef CONSTANT_TIME_INCREMENT
-	for (i = len - 1; i >= 0; i--)
-		if (++ctr[i])	/* continue on overflow */
-			return;
-#else
+	برای (i = len - 1; i >= 0; i--)
+		اگر (++ctr[i])	/* continue on overflow */
+			بازگشت;
+#وگرنه
 	u8 x, add = 1;
 
-	for (i = len - 1; i >= 0; i--) {
+	برای (i = len - 1; i >= 0; i--) {
 		ctr[i] += add;
 		/* constant time for: x = ctr[i] ? 1 : 0 */
 		x = ctr[i];
@@ -53,26 +53,26 @@ aesctr_inc(u8 *ctr, u32 len)
 #endif
 }
 
-void
-aesctr_keysetup(aesctr_ctx *x,const u8 *k,u32 kbits,u32 ivbits)
+تهی
+aesctr_keysetup(aesctr_ctx *x,ثابت u8 *k,u32 kbits,u32 ivbits)
 {
-	x->rounds = rijndaelKeySetupEnc(x->ek, k, kbits);
+	x->rounds = rijndael_کلید_Setup_Enc(x->ek, k, kbits);
 }
 
-void
-aesctr_ivsetup(aesctr_ctx *x,const u8 *iv)
+تهی
+aesctr_ivsetup(aesctr_ctx *x,ثابت u8 *iv)
 {
 	memcpy(x->ctr, iv, AES_BLOCK_SIZE);
 }
 
-void
-aesctr_encrypt_bytes(aesctr_ctx *x,const u8 *m,u8 *c,u32 bytes)
+تهی
+aesctr_encrypt_bytes(aesctr_ctx *x,ثابت u8 *m,u8 *c,u32 bytes)
 {
 	u32 n = 0;
 	u8 buf[AES_BLOCK_SIZE];
 
-	while ((bytes--) > 0) {
-		if (n == 0) {
+	وقتی ((bytes--) > 0) {
+		اگر (n == 0) {
 			rijndaelEncrypt(x->ek, x->rounds, x->ctr, buf);
 			aesctr_inc(x->ctr, AES_BLOCK_SIZE);
 		}

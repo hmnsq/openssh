@@ -35,49 +35,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
 
 #ifdef WITH_OPENSSL
 # include <openssl/evp.h>
 # include "openbsd-compat/openssl-compat.h"
 #endif
 
-#include <errno.h>
-#include <fcntl.h>
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
-#include <time.h>
+#شامل <errno.h>
+#شامل <fcntl.h>
+#شامل <pwd.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <limits.h>
+#شامل <time.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "log.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "authfd.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "misc.h"
-#include "ssherr.h"
-#include "digest.h"
-#include "ssh-sk.h"
-#include "sk-api.h"
-#include "hostfile.h"
+#شامل "xmalloc.h"
+#شامل "ssh.h"
+#شامل "log.h"
+#شامل "sshkey.h"
+#شامل "sshbuf.h"
+#شامل "authfd.h"
+#شامل "authfile.h"
+#شامل "pathnames.h"
+#شامل "misc.h"
+#شامل "ssherr.h"
+#شامل "digest.h"
+#شامل "ssh-sk.h"
+#شامل "sk-api.h"
+#شامل "hostfile.h"
 
 #define CERT_EXPIRY_GRACE	(5*60)
 
 /* argv0 */
-extern char *__progname;
+بیرونی نویسه *__progname;
 
 /* Default files to add */
-static char *default_files[] = {
+ایستا نویسه *default_files[] = {
 #ifdef WITH_OPENSSL
 	_PATH_SSH_CLIENT_ID_RSA,
 	_PATH_SSH_CLIENT_ID_ECDSA,
@@ -86,703 +86,703 @@ static char *default_files[] = {
 	_PATH_SSH_CLIENT_ID_ED25519,
 	_PATH_SSH_CLIENT_ID_ED25519_SK,
 	_PATH_SSH_CLIENT_ID_MLDSA44_ED25519,
-	NULL
+	پوچ
 };
 
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+ایستا صحیح fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* Default lifetime (0 == forever) */
-static int lifetime = 0;
+ایستا صحیح lifetime = 0;
 
 /* User has to confirm key use */
-static int confirm = 0;
+ایستا صحیح confirm = 0;
 
 /* we keep a cache of one passphrase */
-static char *pass = NULL;
-static void
-clear_pass(void)
+ایستا نویسه *pass = پوچ;
+ایستا تهی
+clear_pass(تهی)
 {
-	if (pass) {
+	اگر (pass) {
 		freezero(pass, strlen(pass));
-		pass = NULL;
+		pass = پوچ;
 	}
 }
 
-static int
-delete_one(int agent_fd, const struct sshkey *key, const char *comment,
-    const char *path, int qflag)
+ایستا صحیح
+delete_one(صحیح agent_fd, ثابت ساختار sshkey *کلید, ثابت نویسه *comment,
+    ثابت نویسه *path, صحیح qflag)
 {
-	int r;
+	صحیح r;
 
-	if ((r = ssh_remove_identity(agent_fd, key)) != 0) {
+	اگر ((r = ssh_remove_identity(agent_fd, کلید)) != 0) {
 		fprintf(stderr, "Could not remove identity \"%s\": %s\n",
 		    path, ssh_err(r));
-		return r;
+		بازگشت r;
 	}
-	if (!qflag) {
+	اگر (!qflag) {
 		fprintf(stderr, "Identity removed: %s %s (%s)\n", path,
-		    sshkey_type(key), comment ? comment : "no comment");
+		    sshkey_type(کلید), comment ? comment : "no comment");
 	}
-	return 0;
+	بازگشت 0;
 }
 
-static int
-delete_stdin(int agent_fd, int qflag, int key_only, int cert_only)
+ایستا صحیح
+delete_stdin(صحیح agent_fd, صحیح qflag, صحیح کلید_only, صحیح cert_only)
 {
-	char *line = NULL, *cp;
+	نویسه *سطر = پوچ, *cp;
 	size_t linesize = 0;
-	struct sshkey *key = NULL;
-	int lnum = 0, r, ret = -1;
+	ساختار sshkey *کلید = پوچ;
+	صحیح lnum = 0, r, ret = -1;
 
-	while (getline(&line, &linesize, stdin) != -1) {
+	وقتی (getline(&سطر, &linesize, stdin) != -1) {
 		lnum++;
-		sshkey_free(key);
-		key = NULL;
-		line[strcspn(line, "\n")] = '\0';
-		cp = line + strspn(line, " \t");
-		if (*cp == '#' || *cp == '\0')
-			continue;
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL)
+		sshkey_free(کلید);
+		کلید = پوچ;
+		سطر[strcspn(سطر, "\n")] = '\0';
+		cp = سطر + strspn(سطر, " \t");
+		اگر (*cp == '#' || *cp == '\0')
+			ادامه;
+		اگر ((کلید = sshkey_new(کلید_UNSPEC)) == پوچ)
 			fatal_f("sshkey_new");
-		if ((r = sshkey_read(key, &cp)) != 0) {
+		اگر ((r = sshkey_read(کلید, &cp)) != 0) {
 			error_r(r, "(stdin):%d: invalid key", lnum);
-			continue;
+			ادامه;
 		}
-		if ((!key_only && !cert_only) ||
-		    (key_only && !sshkey_is_cert(key)) ||
-		    (cert_only && sshkey_is_cert(key))) {
-			if (delete_one(agent_fd, key, cp,
+		اگر ((!کلید_only && !cert_only) ||
+		    (کلید_only && !sshkey_is_cert(کلید)) ||
+		    (cert_only && sshkey_is_cert(کلید))) {
+			اگر (delete_one(agent_fd, کلید, cp,
 			    "(stdin)", qflag) == 0)
 				ret = 0;
 		}
 	}
-	sshkey_free(key);
-	free(line);
-	return ret;
+	sshkey_free(کلید);
+	آزاد(سطر);
+	بازگشت ret;
 }
 
-static int
-delete_file(int agent_fd, const char *filename, int key_only,
-    int cert_only, int qflag)
+ایستا صحیح
+delete_file(صحیح agent_fd, ثابت نویسه *filename, صحیح کلید_only,
+    صحیح cert_only, صحیح qflag)
 {
-	struct sshkey *public, *cert = NULL;
-	char *certpath = NULL, *comment = NULL;
-	int r, ret = -1;
+	ساختار sshkey *عمومی, *cert = پوچ;
+	نویسه *certpath = پوچ, *comment = پوچ;
+	صحیح r, ret = -1;
 
-	if (strcmp(filename, "-") == 0)
-		return delete_stdin(agent_fd, qflag, key_only, cert_only);
+	اگر (strcmp(filename, "-") == 0)
+		بازگشت delete_stdin(agent_fd, qflag, کلید_only, cert_only);
 
-	if ((r = sshkey_load_public(filename, &public,  &comment)) != 0) {
+	اگر ((r = sshkey_load_public(filename, &عمومی,  &comment)) != 0) {
 		printf("Bad key file %s: %s\n", filename, ssh_err(r));
-		return -1;
+		بازگشت -1;
 	}
-	if ((!key_only && !cert_only) ||
-	    (key_only && !sshkey_is_cert(public)) ||
-	    (cert_only && sshkey_is_cert(public))) {
-		if (delete_one(agent_fd, public, comment, filename, qflag) == 0)
+	اگر ((!کلید_only && !cert_only) ||
+	    (کلید_only && !sshkey_is_cert(عمومی)) ||
+	    (cert_only && sshkey_is_cert(عمومی))) {
+		اگر (delete_one(agent_fd, عمومی, comment, filename, qflag) == 0)
 			ret = 0;
 	}
 
-	if (key_only)
-		goto out;
+	اگر (کلید_only)
+		برو out;
 
 	/* Now try to delete the corresponding certificate too */
-	free(comment);
-	comment = NULL;
+	آزاد(comment);
+	comment = پوچ;
 	xasprintf(&certpath, "%s-cert.pub", filename);
-	if ((r = sshkey_load_public(certpath, &cert, &comment)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
+	اگر ((r = sshkey_load_public(certpath, &cert, &comment)) != 0) {
+		اگر (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
 			error_r(r, "Failed to load certificate \"%s\"", certpath);
-		goto out;
+		برو out;
 	}
 
-	if (!sshkey_equal_public(cert, public))
+	اگر (!sshkey_equal_public(cert, عمومی))
 		fatal("Certificate %s does not match private key %s",
 		    certpath, filename);
 
-	if (delete_one(agent_fd, cert, comment, certpath, qflag) == 0)
+	اگر (delete_one(agent_fd, cert, comment, certpath, qflag) == 0)
 		ret = 0;
 
  out:
 	sshkey_free(cert);
-	sshkey_free(public);
-	free(certpath);
-	free(comment);
+	sshkey_free(عمومی);
+	آزاد(certpath);
+	آزاد(comment);
 
-	return ret;
+	بازگشت ret;
 }
 
 /* Send a request to remove all identities. */
-static int
-delete_all(int agent_fd, int qflag)
+ایستا صحیح
+delete_all(صحیح agent_fd, صحیح qflag)
 {
-	int ret = -1;
+	صحیح ret = -1;
 
 	/*
 	 * Since the agent might be forwarded, old or non-OpenSSH, when asked
 	 * to remove all keys, attempt to remove both protocol v.1 and v.2
 	 * keys.
 	 */
-	if (ssh_remove_all_identities(agent_fd, 2) == 0)
+	اگر (ssh_remove_all_identities(agent_fd, 2) == 0)
 		ret = 0;
 	/* ignore error-code for ssh1 */
 	ssh_remove_all_identities(agent_fd, 1);
 
-	if (ret != 0)
+	اگر (ret != 0)
 		fprintf(stderr, "Failed to remove all identities.\n");
-	else if (!qflag)
+	وگرنه اگر (!qflag)
 		fprintf(stderr, "All identities removed.\n");
 
-	return ret;
+	بازگشت ret;
 }
 
-static int
-query_exts(int agent_fd)
+ایستا صحیح
+query_exts(صحیح agent_fd)
 {
-	int r;
-	char **exts = NULL;
+	صحیح r;
+	نویسه **exts = پوچ;
 	size_t i;
 
-	if ((r = ssh_agent_query_extensions(agent_fd, &exts)) != 0)
+	اگر ((r = ssh_agent_query_extensions(agent_fd, &exts)) != 0)
 		fatal_r(r, "unable to query supported extensions");
-	for (i = 0; exts != NULL && exts[i] != NULL; i++)
+	برای (i = 0; exts != پوچ && exts[i] != پوچ; i++)
 		puts(exts[i]);
 	stringlist_free(exts);
-	return 0;
+	بازگشت 0;
 }
 
-static int
-check_cert_lifetime(const struct sshkey *cert, int cert_lifetime)
+ایستا صحیح
+check_cert_lifetime(ثابت ساختار sshkey *cert, صحیح cert_lifetime)
 {
 	time_t now;
 	uint64_t n;
 
-	if (cert == NULL || cert->cert == NULL || !sshkey_is_cert(cert) ||
+	اگر (cert == پوچ || cert->cert == پوچ || !sshkey_is_cert(cert) ||
 	    cert->cert->valid_before == 0xFFFFFFFFFFFFFFFFULL)
-		return cert_lifetime;
-	if ((now = time(NULL)) <= 0)
+		بازگشت cert_lifetime;
+	اگر ((now = time(پوچ)) <= 0)
 		fatal_f("system time is at/before epoch");
-	if ((uint64_t)now > (cert->cert->valid_before + CERT_EXPIRY_GRACE))
-		return -1; /* certificate already expired */
+	اگر ((uint64_t)now > (cert->cert->valid_before + CERT_EXPIRY_GRACE))
+		بازگشت -1; /* certificate already expired */
 	n = (CERT_EXPIRY_GRACE + cert->cert->valid_before) - (uint64_t)now;
 	n = MINIMUM(n, INT_MAX);
-	if (cert_lifetime <= 0)
-		return (int)n;
-	return MINIMUM(cert_lifetime, (int)n);
+	اگر (cert_lifetime <= 0)
+		بازگشت (صحیح)n;
+	بازگشت MINIMUM(cert_lifetime, (صحیح)n);
 }
 
-static int
-add_file(int agent_fd, const char *filename, int key_only, int cert_only,
-    int qflag, int Nflag, const char *skprovider,
-    struct dest_constraint **dest_constraints,
+ایستا صحیح
+add_file(صحیح agent_fd, ثابت نویسه *filename, صحیح کلید_only, صحیح cert_only,
+    صحیح qflag, صحیح Nflag, ثابت نویسه *skprovider,
+    ساختار dest_constraint **dest_constraints,
     size_t ndest_constraints)
 {
-	struct sshkey *private = NULL, *cert = NULL;
-	char *comment = NULL;
-	char msg[1024], *certpath = NULL;
-	int cert_lifetime, r, fd, ret = -1;
-	struct sshbuf *keyblob;
+	ساختار sshkey *خصوصی = پوچ, *cert = پوچ;
+	نویسه *comment = پوچ;
+	نویسه پیام[1024], *certpath = پوچ;
+	صحیح cert_lifetime, r, fd, ret = -1;
+	ساختار sshbuf *keyblob;
 
-	if (strcmp(filename, "-") == 0) {
+	اگر (strcmp(filename, "-") == 0) {
 		fd = STDIN_FILENO;
 		filename = "(stdin)";
-	} else if ((fd = open(filename, O_RDONLY)) == -1) {
+	} وگرنه اگر ((fd = open(filename, O_RDONLY)) == -1) {
 		perror(filename);
-		return -1;
+		بازگشت -1;
 	}
 
 	/*
 	 * Since we'll try to load a keyfile multiple times, permission errors
 	 * will occur multiple times, so check perms first and bail if wrong.
 	 */
-	if (fd != STDIN_FILENO) {
-		if (sshkey_perm_ok(fd, filename) != 0) {
+	اگر (fd != STDIN_FILENO) {
+		اگر (sshkey_perm_ok(fd, filename) != 0) {
 			close(fd);
-			return -1;
+			بازگشت -1;
 		}
 	}
-	if ((r = sshbuf_load_fd(fd, &keyblob)) != 0) {
+	اگر ((r = sshbuf_load_fd(fd, &keyblob)) != 0) {
 		fprintf(stderr, "Error loading key \"%s\": %s\n",
 		    filename, ssh_err(r));
 		sshbuf_free(keyblob);
 		close(fd);
-		return -1;
+		بازگشت -1;
 	}
 	close(fd);
 
 	/* At first, try empty passphrase */
-	if ((r = sshkey_parse_private_fileblob(keyblob, "", &private,
-	    &comment)) != 0 && r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
+	اگر ((r = sshkey_parse_private_fileblob(keyblob, "", &خصوصی,
+	    &comment)) != 0 && r != SSH_ERR_کلید_WRONG_PASSPHRASE) {
 		fprintf(stderr, "Error loading key \"%s\": %s\n",
 		    filename, ssh_err(r));
-		goto fail_load;
+		برو fail_load;
 	}
 	/* try last */
-	if (private == NULL && pass != NULL) {
-		if ((r = sshkey_parse_private_fileblob(keyblob, pass, &private,
-		    &comment)) != 0 && r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
+	اگر (خصوصی == پوچ && pass != پوچ) {
+		اگر ((r = sshkey_parse_private_fileblob(keyblob, pass, &خصوصی,
+		    &comment)) != 0 && r != SSH_ERR_کلید_WRONG_PASSPHRASE) {
 			fprintf(stderr, "Error loading key \"%s\": %s\n",
 			    filename, ssh_err(r));
-			goto fail_load;
+			برو fail_load;
 		}
 	}
-	if (private == NULL) {
+	اگر (خصوصی == پوچ) {
 		/* clear passphrase since it did not work */
 		clear_pass();
-		snprintf(msg, sizeof msg, "Enter passphrase for %s%s: ",
+		snprintf(پیام, اندازه پیام, "Enter passphrase for %s%s: ",
 		    filename, confirm ? " (will confirm each use)" : "");
-		for (;;) {
-			pass = read_passphrase(msg, RP_ALLOW_STDIN);
-			if (strcmp(pass, "") == 0)
-				goto fail_load;
-			if ((r = sshkey_parse_private_fileblob(keyblob, pass,
-			    &private, &comment)) == 0)
-				break;
-			else if (r != SSH_ERR_KEY_WRONG_PASSPHRASE) {
+		برای (;;) {
+			pass = read_passphrase(پیام, RP_ALLOW_STDIN);
+			اگر (strcmp(pass, "") == 0)
+				برو fail_load;
+			اگر ((r = sshkey_parse_private_fileblob(keyblob, pass,
+			    &خصوصی, &comment)) == 0)
+				بشکن;
+			وگرنه اگر (r != SSH_ERR_کلید_WRONG_PASSPHRASE) {
 				fprintf(stderr,
 				    "Error loading key \"%s\": %s\n",
 				    filename, ssh_err(r));
  fail_load:
 				clear_pass();
 				sshbuf_free(keyblob);
-				return -1;
+				بازگشت -1;
 			}
 			clear_pass();
-			snprintf(msg, sizeof msg,
+			snprintf(پیام, اندازه پیام,
 			    "Bad passphrase, try again for %s%s: ", filename,
 			    confirm ? " (will confirm each use)" : "");
 		}
 	}
-	if (comment == NULL || *comment == '\0')
+	اگر (comment == پوچ || *comment == '\0')
 		comment = xstrdup(filename);
 	sshbuf_free(keyblob);
 
-	if (sshkey_is_sk(private)) {
-		if (skprovider == NULL) {
+	اگر (sshkey_is_sk(خصوصی)) {
+		اگر (skprovider == پوچ) {
 			fprintf(stderr, "Cannot load FIDO key %s "
 			    "without provider\n", filename);
-			goto out;
+			برو out;
 		}
-	} else {
+	} وگرنه {
 		/* Don't send provider constraint for other keys */
-		skprovider = NULL;
+		skprovider = پوچ;
 	}
 
-	if (!cert_only) {
-		if ((r = ssh_add_identity_constrained(agent_fd, private,
+	اگر (!cert_only) {
+		اگر ((r = ssh_add_identity_constrained(agent_fd, خصوصی,
 		    comment, lifetime, confirm, skprovider,
 		    dest_constraints, ndest_constraints)) == 0) {
 			ret = 0;
-			if (!qflag) {
+			اگر (!qflag) {
 				fprintf(stderr, "Identity added: %s (%s)\n",
 				    filename, comment);
-				if (lifetime != 0) {
+				اگر (lifetime != 0) {
 					fprintf(stderr, "Lifetime set to %s\n",
 					    fmt_timeframe((time_t)lifetime));
 				}
-				if (confirm != 0) {
+				اگر (confirm != 0) {
 					fprintf(stderr, "The user must confirm "
 					    "each use of the key\n");
 				}
 			}
-		} else {
+		} وگرنه {
 			fprintf(stderr, "Could not add identity \"%s\": %s\n",
 			    filename, ssh_err(r));
 		}
 	}
 
 	/* Skip trying to load the cert if requested */
-	if (key_only)
-		goto out;
+	اگر (کلید_only)
+		برو out;
 
 	/* Now try to add the certificate flavour too */
 	xasprintf(&certpath, "%s-cert.pub", filename);
-	if ((r = sshkey_load_public(certpath, &cert, NULL)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
+	اگر ((r = sshkey_load_public(certpath, &cert, پوچ)) != 0) {
+		اگر (r != SSH_ERR_SYSTEM_ERROR || errno != ENOENT)
 			error_r(r, "Failed to load certificate \"%s\"",
 			    certpath);
-		goto out;
+		برو out;
 	}
 
-	if (!sshkey_equal_public(cert, private)) {
+	اگر (!sshkey_equal_public(cert, خصوصی)) {
 		error("Certificate %s does not match private key %s",
 		    certpath, filename);
-		goto out;
+		برو out;
 	}
 
 	cert_lifetime = lifetime;
-	if (!Nflag &&
+	اگر (!Nflag &&
 	    (cert_lifetime = check_cert_lifetime(cert, cert_lifetime)) == -1) {
 		logit("Certificate %s has already expired; ignored", certpath);
-		goto out;
+		برو out;
 	}
 
 	/* Graft with private bits */
-	if ((r = sshkey_to_certified(private)) != 0) {
+	اگر ((r = sshkey_to_certified(خصوصی)) != 0) {
 		error_fr(r, "sshkey_to_certified");
-		goto out;
+		برو out;
 	}
-	if ((r = sshkey_cert_copy(cert, private)) != 0) {
+	اگر ((r = sshkey_cert_copy(cert, خصوصی)) != 0) {
 		error_fr(r, "sshkey_cert_copy");
-		goto out;
+		برو out;
 	}
 	/* send to agent */
-	if ((r = ssh_add_identity_constrained(agent_fd, private, comment,
+	اگر ((r = ssh_add_identity_constrained(agent_fd, خصوصی, comment,
 	    cert_lifetime, confirm, skprovider,
 	    dest_constraints, ndest_constraints)) != 0) {
 		error_r(r, "Certificate %s (%s) add failed", certpath,
-		    private->cert->key_id);
-		goto out;
+		    خصوصی->cert->کلید_id);
+		برو out;
 	}
 	/* success */
-	if (!qflag) {
+	اگر (!qflag) {
 		fprintf(stderr, "Certificate added: %s (%s)\n", certpath,
-		    private->cert->key_id);
-		if (cert_lifetime != 0) {
+		    خصوصی->cert->کلید_id);
+		اگر (cert_lifetime != 0) {
 			fprintf(stderr, "Lifetime set to %s\n",
 			    fmt_timeframe((time_t)cert_lifetime));
 		}
-		if (confirm != 0) {
+		اگر (confirm != 0) {
 			fprintf(stderr, "The user must confirm each use "
 			    "of the key\n");
 		}
 	}
 
  out:
-	free(certpath);
-	free(comment);
+	آزاد(certpath);
+	آزاد(comment);
 	sshkey_free(cert);
-	sshkey_free(private);
+	sshkey_free(خصوصی);
 
-	return ret;
+	بازگشت ret;
 }
 
-static int
-update_card(int agent_fd, int add, const char *id, int qflag, int no_pin,
-    int key_only, int cert_only,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints,
-    struct sshkey **certs, size_t ncerts)
+ایستا صحیح
+update_card(صحیح agent_fd, صحیح add, ثابت نویسه *id, صحیح qflag, صحیح no_pin,
+    صحیح کلید_only, صحیح cert_only,
+    ساختار dest_constraint **dest_constraints, size_t ndest_constraints,
+    ساختار sshkey **certs, size_t ncerts)
 {
-	char *pin = NULL;
-	int r, ret = -1;
+	نویسه *pin = پوچ;
+	صحیح r, ret = -1;
 
-	if (key_only)
+	اگر (کلید_only)
 		ncerts = 0;
 
-	if (add && !no_pin) {
-		if ((pin = read_passphrase("Enter passphrase for PKCS#11: ",
-		    RP_ALLOW_STDIN)) == NULL)
-			return -1;
+	اگر (add && !no_pin) {
+		اگر ((pin = read_passphrase("Enter passphrase for PKCS#11: ",
+		    RP_ALLOW_STDIN)) == پوچ)
+			بازگشت -1;
 	}
 
-	if ((r = ssh_update_card(agent_fd, add, id, pin == NULL ? "" : pin,
+	اگر ((r = ssh_update_card(agent_fd, add, id, pin == پوچ ? "" : pin,
 	    lifetime, confirm, dest_constraints, ndest_constraints,
 	    cert_only, certs, ncerts)) == 0) {
 		ret = 0;
-		if (!qflag) {
+		اگر (!qflag) {
 			fprintf(stderr, "Card %s: %s\n",
 			    add ? "added" : "removed", id);
 		}
-	} else {
+	} وگرنه {
 		fprintf(stderr, "Could not %s card \"%s\": %s\n",
 		    add ? "add" : "remove", id, ssh_err(r));
 		ret = -1;
 	}
-	free(pin);
-	return ret;
+	آزاد(pin);
+	بازگشت ret;
 }
 
-static int
-test_key(int agent_fd, const char *filename)
+ایستا صحیح
+test_کلید(صحیح agent_fd, ثابت نویسه *filename)
 {
-	struct sshkey *key = NULL;
-	u_char *sig = NULL;
-	const char *alg = NULL;
+	ساختار sshkey *کلید = پوچ;
+	u_char *sig = پوچ;
+	ثابت نویسه *alg = پوچ;
 	size_t slen = 0;
-	int r, ret = -1;
-	char data[1024];
+	صحیح r, ret = -1;
+	نویسه data[1024];
 
-	if ((r = sshkey_load_public(filename, &key, NULL)) != 0) {
+	اگر ((r = sshkey_load_public(filename, &کلید, پوچ)) != 0) {
 		error_r(r, "Couldn't read public key %s", filename);
-		return -1;
+		بازگشت -1;
 	}
-	if (sshkey_type_plain(key->type) == KEY_RSA)
+	اگر (sshkey_type_plain(کلید->type) == کلید_RSA)
 		alg = "rsa-sha2-256";
-	arc4random_buf(data, sizeof(data));
-	if ((r = ssh_agent_sign(agent_fd, key, &sig, &slen, data, sizeof(data),
+	arc4random_buf(data, اندازه(data));
+	اگر ((r = ssh_agent_sign(agent_fd, کلید, &sig, &slen, data, اندازه(data),
 	    alg, 0)) != 0) {
 		error_r(r, "Agent signature failed for %s", filename);
-		goto done;
+		برو done;
 	}
-	if ((r = sshkey_verify(key, sig, slen, data, sizeof(data),
-	    alg, 0, NULL)) != 0) {
+	اگر ((r = sshkey_verify(کلید, sig, slen, data, اندازه(data),
+	    alg, 0, پوچ)) != 0) {
 		error_r(r, "Signature verification failed for %s", filename);
-		goto done;
+		برو done;
 	}
 	/* success */
 	ret = 0;
  done:
-	free(sig);
-	sshkey_free(key);
-	return ret;
+	آزاد(sig);
+	sshkey_free(کلید);
+	بازگشت ret;
 }
 
-static int
-list_identities(int agent_fd, int do_fp)
+ایستا صحیح
+list_identities(صحیح agent_fd, صحیح do_fp)
 {
-	char *fp;
-	int r;
-	struct ssh_identitylist *idlist;
+	نویسه *fp;
+	صحیح r;
+	ساختار ssh_identitylist *idlist;
 	size_t i;
 
-	if ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
-		if (r != SSH_ERR_AGENT_NO_IDENTITIES)
+	اگر ((r = ssh_fetch_identitylist(agent_fd, &idlist)) != 0) {
+		اگر (r != SSH_ERR_AGENT_NO_IDENTITIES)
 			fprintf(stderr, "error fetching identities: %s\n",
 			    ssh_err(r));
-		else
+		وگرنه
 			printf("The agent has no identities.\n");
-		return -1;
+		بازگشت -1;
 	}
-	for (i = 0; i < idlist->nkeys; i++) {
-		if (do_fp) {
-			fp = sshkey_fingerprint(idlist->keys[i],
+	برای (i = 0; i < idlist->nkeys; i++) {
+		اگر (do_fp) {
+			fp = sshkey_fingerprint(idlist->کلیدها[i],
 			    fingerprint_hash, SSH_FP_DEFAULT);
-			printf("%u %s %s (%s)\n", sshkey_size(idlist->keys[i]),
-			    fp == NULL ? "(null)" : fp, idlist->comments[i],
-			    sshkey_type(idlist->keys[i]));
-			free(fp);
-		} else {
-			if ((r = sshkey_write(idlist->keys[i], stdout)) != 0) {
+			printf("%u %s %s (%s)\n", sshkey_size(idlist->کلیدها[i]),
+			    fp == پوچ ? "(null)" : fp, idlist->comments[i],
+			    sshkey_type(idlist->کلیدها[i]));
+			آزاد(fp);
+		} وگرنه {
+			اگر ((r = sshkey_write(idlist->کلیدها[i], stdout)) != 0) {
 				fprintf(stderr, "sshkey_write: %s\n",
 				    ssh_err(r));
-				continue;
+				ادامه;
 			}
 			fprintf(stdout, " %s\n", idlist->comments[i]);
 		}
 	}
 	ssh_free_identitylist(idlist);
-	return 0;
+	بازگشت 0;
 }
 
-static int
-lock_agent(int agent_fd, int lock)
+ایستا صحیح
+lock_agent(صحیح agent_fd, صحیح lock)
 {
-	char prompt[100], *p1, *p2;
-	int r, passok = 1, ret = -1;
+	نویسه prompt[100], *p1, *p2;
+	صحیح r, passok = 1, ret = -1;
 
-	strlcpy(prompt, "Enter lock password: ", sizeof(prompt));
+	strlcpy(prompt, "Enter lock password: ", اندازه(prompt));
 	p1 = read_passphrase(prompt, RP_ALLOW_STDIN);
-	if (lock) {
-		strlcpy(prompt, "Again: ", sizeof prompt);
+	اگر (lock) {
+		strlcpy(prompt, "Again: ", اندازه prompt);
 		p2 = read_passphrase(prompt, RP_ALLOW_STDIN);
-		if (strcmp(p1, p2) != 0) {
+		اگر (strcmp(p1, p2) != 0) {
 			fprintf(stderr, "Passwords do not match.\n");
 			passok = 0;
 		}
 		freezero(p2, strlen(p2));
 	}
-	if (passok) {
-		if ((r = ssh_lock_agent(agent_fd, lock, p1)) == 0) {
+	اگر (passok) {
+		اگر ((r = ssh_lock_agent(agent_fd, lock, p1)) == 0) {
 			fprintf(stderr, "Agent %slocked.\n", lock ? "" : "un");
 			ret = 0;
-		} else {
+		} وگرنه {
 			fprintf(stderr, "Failed to %slock agent: %s\n",
 			    lock ? "" : "un", ssh_err(r));
 		}
 	}
 	freezero(p1, strlen(p1));
-	return (ret);
+	بازگشت (ret);
 }
 
-static int
-load_resident_keys(int agent_fd, const char *skprovider, int qflag, int no_pin,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints)
+ایستا صحیح
+load_resident_کلیدها(صحیح agent_fd, ثابت نویسه *skprovider, صحیح qflag, صحیح no_pin,
+    ساختار dest_constraint **dest_constraints, size_t ndest_constraints)
 {
-	struct sshsk_resident_key **srks;
+	ساختار sshsk_resident_کلید **srks;
 	size_t nsrks, i;
-	struct sshkey *key;
-	int r, ok = 0;
-	char *fp, *pin = NULL;
+	ساختار sshkey *کلید;
+	صحیح r, ok = 0;
+	نویسه *fp, *pin = پوچ;
 
-	if (!no_pin) {
+	اگر (!no_pin) {
 		pin = read_passphrase("Enter PIN for authenticator: ",
 		    RP_ALLOW_STDIN);
 	}
-	if ((r = sshsk_load_resident(skprovider, NULL, pin == NULL ? "" : pin,
+	اگر ((r = sshsk_load_resident(skprovider, پوچ, pin == پوچ ? "" : pin,
 	    0, &srks, &nsrks)) != 0) {
 		error_r(r, "Unable to load resident keys");
-		free(pin);
-		return r;
+		آزاد(pin);
+		بازگشت r;
 	}
-	free(pin);
-	for (i = 0; i < nsrks; i++) {
-		key = srks[i]->key;
-		if ((fp = sshkey_fingerprint(key,
-		    fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
+	آزاد(pin);
+	برای (i = 0; i < nsrks; i++) {
+		کلید = srks[i]->کلید;
+		اگر ((fp = sshkey_fingerprint(کلید,
+		    fingerprint_hash, SSH_FP_DEFAULT)) == پوچ)
 			fatal_f("sshkey_fingerprint failed");
-		if ((r = ssh_add_identity_constrained(agent_fd, key,
-		    key->sk_application, lifetime, confirm, skprovider,
+		اگر ((r = ssh_add_identity_constrained(agent_fd, کلید,
+		    کلید->sk_application, lifetime, confirm, skprovider,
 		    dest_constraints, ndest_constraints)) != 0) {
 			error("Unable to add key %s %s",
-			    sshkey_type(key), fp);
-			free(fp);
+			    sshkey_type(کلید), fp);
+			آزاد(fp);
 			ok = r;
-			continue;
+			ادامه;
 		}
-		if (ok == 0)
+		اگر (ok == 0)
 			ok = 1;
-		if (!qflag) {
+		اگر (!qflag) {
 			fprintf(stderr, "Resident identity added: %s %s\n",
-			    sshkey_type(key), fp);
-			if (lifetime != 0) {
+			    sshkey_type(کلید), fp);
+			اگر (lifetime != 0) {
 				fprintf(stderr,
 				    "Lifetime set to %d seconds\n", lifetime);
 			}
-			if (confirm != 0) {
+			اگر (confirm != 0) {
 				fprintf(stderr, "The user must confirm "
 				    "each use of the key\n");
 			}
 		}
-		free(fp);
+		آزاد(fp);
 	}
-	sshsk_free_resident_keys(srks, nsrks);
-	if (nsrks == 0)
-		return SSH_ERR_KEY_NOT_FOUND;
-	return ok == 1 ? 0 : ok;
+	sshsk_free_resident_کلیدها(srks, nsrks);
+	اگر (nsrks == 0)
+		بازگشت SSH_ERR_کلید_NOT_FOUND;
+	بازگشت ok == 1 ? 0 : ok;
 }
 
-static int
-do_file(int agent_fd, int deleting, int key_only, int cert_only,
-    char *file, int qflag, int Nflag, const char *skprovider,
-    struct dest_constraint **dest_constraints, size_t ndest_constraints)
+ایستا صحیح
+do_file(صحیح agent_fd, صحیح deleting, صحیح کلید_only, صحیح cert_only,
+    نویسه *file, صحیح qflag, صحیح Nflag, ثابت نویسه *skprovider,
+    ساختار dest_constraint **dest_constraints, size_t ndest_constraints)
 {
-	if (deleting) {
-		if (delete_file(agent_fd, file, key_only,
+	اگر (deleting) {
+		اگر (delete_file(agent_fd, file, کلید_only,
 		    cert_only, qflag) == -1)
-			return -1;
-	} else {
-		if (add_file(agent_fd, file, key_only, cert_only, qflag, Nflag,
+			بازگشت -1;
+	} وگرنه {
+		اگر (add_file(agent_fd, file, کلید_only, cert_only, qflag, Nflag,
 		    skprovider, dest_constraints, ndest_constraints) == -1)
-			return -1;
+			بازگشت -1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
-static void
-free_dest_constraint_hop(struct dest_constraint_hop *dch)
+ایستا تهی
+free_dest_constraint_hop(ساختار dest_constraint_hop *dch)
 {
 	u_int i;
 
-	if (dch == NULL)
-		return;
-	free(dch->user);
-	free(dch->hostname);
-	for (i = 0; i < dch->nkeys; i++)
-		sshkey_free(dch->keys[i]);
-	free(dch->keys);
-	free(dch->key_is_ca);
+	اگر (dch == پوچ)
+		بازگشت;
+	آزاد(dch->user);
+	آزاد(dch->hostname);
+	برای (i = 0; i < dch->nkeys; i++)
+		sshkey_free(dch->کلیدها[i]);
+	آزاد(dch->کلیدها);
+	آزاد(dch->کلید_is_ca);
 }
 
-static void
-free_dest_constraints(struct dest_constraint **dcs, size_t ndcs)
+ایستا تهی
+free_dest_constraints(ساختار dest_constraint **dcs, size_t ndcs)
 {
 	size_t i;
 
-	for (i = 0; i < ndcs; i++) {
+	برای (i = 0; i < ndcs; i++) {
 		free_dest_constraint_hop(&dcs[i]->from);
 		free_dest_constraint_hop(&dcs[i]->to);
-		free(dcs[i]);
+		آزاد(dcs[i]);
 	}
-	free(dcs);
+	آزاد(dcs);
 }
 
 
-static void
-parse_dest_constraint_hop(const char *s, struct dest_constraint_hop *dch,
-    char **hostkey_files)
+ایستا تهی
+parse_dest_constraint_hop(ثابت نویسه *s, ساختار dest_constraint_hop *dch,
+    نویسه **hostkey_files)
 {
-	char *user = NULL, *host, *os, *path;
+	نویسه *user = پوچ, *host, *os, *path;
 	size_t i;
-	struct hostkeys *hostkeys;
-	const struct hostkey_entry *hke;
-	int r, want_ca;
+	ساختار hostkeys *hostkeys;
+	ثابت ساختار hostkey_entry *hke;
+	صحیح r, want_ca;
 
-	memset(dch, '\0', sizeof(*dch));
+	memset(dch, '\0', اندازه(*dch));
 	os = xstrdup(s);
-	if ((host = strrchr(os, '@')) == NULL)
+	اگر ((host = strrchr(os, '@')) == پوچ)
 		host = os;
-	else {
+	وگرنه {
 		*host++ = '\0';
 		user = os;
 	}
 	cleanhostname(host);
 	/* Trivial case: username@ (all hosts) */
-	if (*host == '\0') {
-		if (user == NULL) {
+	اگر (*host == '\0') {
+		اگر (user == پوچ) {
 			fatal("Invalid key destination constraint \"%s\": "
 			    "does not specify user or host", s);
 		}
 		dch->user = xstrdup(user);
 		/* other fields left blank */
-		free(os);
-		return;
+		آزاد(os);
+		بازگشت;
 	}
-	if (hostkey_files == NULL)
+	اگر (hostkey_files == پوچ)
 		fatal_f("no hostkey files");
 	/* Otherwise we need to look up the keys for this hostname */
 	hostkeys = init_hostkeys();
-	for (i = 0; hostkey_files[i]; i++) {
+	برای (i = 0; hostkey_files[i]; i++) {
 		path = tilde_expand_filename(hostkey_files[i], getuid());
 		debug2_f("looking up host keys for \"%s\" in %s", host, path);
                 load_hostkeys(hostkeys, host, path, 0);
-		free(path);
+		آزاد(path);
 	}
-	dch->user = user == NULL ? NULL : xstrdup(user);
+	dch->user = user == پوچ ? پوچ : xstrdup(user);
 	dch->hostname = xstrdup(host);
-	for (i = 0; i < hostkeys->num_entries; i++) {
+	برای (i = 0; i < hostkeys->رقم_entries; i++) {
 		hke = hostkeys->entries + i;
 		want_ca = hke->marker == MRK_CA;
-		if (hke->marker != MRK_NONE && !want_ca)
-			continue;
+		اگر (hke->marker != MRK_NONE && !want_ca)
+			ادامه;
 		debug3_f("%s%s%s: adding %s %skey from %s:%lu as key %u",
-		    user == NULL ? "": user, user == NULL ? "" : "@",
-		    host, sshkey_type(hke->key), want_ca ? "CA " : "",
-		    hke->file, hke->line, dch->nkeys);
-		dch->keys = xrecallocarray(dch->keys, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->keys));
-		dch->key_is_ca = xrecallocarray(dch->key_is_ca, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->key_is_ca));
-		if ((r = sshkey_from_private(hke->key,
-		    &(dch->keys[dch->nkeys]))) != 0)
+		    user == پوچ ? "": user, user == پوچ ? "" : "@",
+		    host, sshkey_type(hke->کلید), want_ca ? "CA " : "",
+		    hke->file, hke->سطر, dch->nkeys);
+		dch->کلیدها = xrecallocarray(dch->کلیدها, dch->nkeys,
+		    dch->nkeys + 1, اندازه(*dch->کلیدها));
+		dch->کلید_is_ca = xrecallocarray(dch->کلید_is_ca, dch->nkeys,
+		    dch->nkeys + 1, اندازه(*dch->کلید_is_ca));
+		اگر ((r = sshkey_from_private(hke->کلید,
+		    &(dch->کلیدها[dch->nkeys]))) != 0)
 			fatal_fr(r, "sshkey_from_private");
-		dch->key_is_ca[dch->nkeys] = want_ca;
+		dch->کلید_is_ca[dch->nkeys] = want_ca;
 		dch->nkeys++;
 	}
-	if (dch->nkeys == 0)
+	اگر (dch->nkeys == 0)
 		fatal("No host keys found for destination \"%s\"", host);
 	free_hostkeys(hostkeys);
-	free(os);
-	return;
+	آزاد(os);
+	بازگشت;
 }
 
-static void
-parse_dest_constraint(const char *s, struct dest_constraint ***dcp,
-    size_t *ndcp, char **hostkey_files)
+ایستا تهی
+parse_dest_constraint(ثابت نویسه *s, ساختار dest_constraint ***dcp,
+    size_t *ndcp, نویسه **hostkey_files)
 {
-	struct dest_constraint *dc;
-	char *os, *cp;
+	ساختار dest_constraint *dc;
+	نویسه *os, *cp;
 
-	dc = xcalloc(1, sizeof(*dc));
+	dc = xcalloc(1, اندازه(*dc));
 	os = xstrdup(s);
-	if ((cp = strchr(os, '>')) == NULL) {
+	اگر ((cp = strchr(os, '>')) == پوچ) {
 		/* initial hop; no 'from' hop specified */
 		parse_dest_constraint_hop(os, &dc->to, hostkey_files);
-	} else {
+	} وگرنه {
 		/* two hops specified */
 		*(cp++) = '\0';
 		parse_dest_constraint_hop(os, &dc->from, hostkey_files);
 		parse_dest_constraint_hop(cp, &dc->to, hostkey_files);
-		if (dc->from.user != NULL) {
+		اگر (dc->from.user != پوچ) {
 			fatal("Invalid key constraint %s: cannot specify "
 			    "user on 'from' host", os);
 		}
@@ -793,14 +793,14 @@ parse_dest_constraint(const char *s, struct dest_constraint ***dcp,
 	    dc->from.hostname ? dc->from.hostname : "(ORIGIN)", dc->from.nkeys,
 	    dc->to.user ? dc->to.user : "", dc->to.user ? "@" : "",
 	    dc->to.hostname ? dc->to.hostname : "(ANY)", dc->to.nkeys);
-	*dcp = xrecallocarray(*dcp, *ndcp, *ndcp + 1, sizeof(**dcp));
+	*dcp = xrecallocarray(*dcp, *ndcp, *ndcp + 1, اندازه(**dcp));
 	(*dcp)[(*ndcp)++] = dc;
-	free(os);
+	آزاد(os);
 }
 
 
-static void
-usage(void)
+ایستا تهی
+usage(تهی)
 {
 	fprintf(stderr,
 "usage: ssh-add [-CcDdKkLlqvXx] [-E fingerprint_hash] [-H hostkey_file]\n"
@@ -812,21 +812,21 @@ usage(void)
 	);
 }
 
-int
-main(int argc, char **argv)
+صحیح
+اصلی(صحیح argc, نویسه **argv)
 {
-	extern char *optarg;
-	extern int optind;
-	int agent_fd = -1;
-	char *pkcs11provider = NULL, *skprovider = NULL;
-	char **dest_constraint_strings = NULL, **hostkey_files = NULL;
-	int r, i, ch, deleting = 0, ret = 0, key_only = 0, cert_only = 0;
-	int do_download = 0, xflag = 0, lflag = 0, Dflag = 0;
-	int Qflag = 0, qflag = 0, Tflag = 0, Nflag = 0, no_pin = 0;
+	بیرونی نویسه *optarg;
+	بیرونی صحیح optind;
+	صحیح agent_fd = -1;
+	نویسه *pkcs11provider = پوچ, *skprovider = پوچ;
+	نویسه **dest_constraint_strings = پوچ, **hostkey_files = پوچ;
+	صحیح r, i, ch, deleting = 0, ret = 0, کلید_only = 0, cert_only = 0;
+	صحیح do_download = 0, xflag = 0, lflag = 0, Dflag = 0;
+	صحیح Qflag = 0, qflag = 0, Tflag = 0, Nflag = 0, no_pin = 0;
 	SyslogFacility log_facility = SYSLOG_FACILITY_AUTH;
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
-	struct sshkey *k, **certs = NULL;
-	struct dest_constraint **dest_constraints = NULL;
+	ساختار sshkey *k, **certs = پوچ;
+	ساختار dest_constraint **dest_constraints = پوچ;
 	size_t n, ndest_constraints = 0, ncerts = 0;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -837,152 +837,152 @@ main(int argc, char **argv)
 
 	log_init(__progname, log_level, log_facility, 1);
 
-	setvbuf(stdout, NULL, _IOLBF, 0);
+	setvbuf(stdout, پوچ, _IOLBF, 0);
 
 	skprovider = getenv("SSH_SK_PROVIDER");
 
-	while ((ch = getopt(argc, argv, "vkKlLNPCcdDTxXE:e:h:H:M:m:Qqs:S:t:")) != -1) {
-		switch (ch) {
-		case 'v':
-			if (log_level == SYSLOG_LEVEL_INFO)
+	وقتی ((ch = getopt(argc, argv, "vkKlLNPCcdDTxXE:e:h:H:M:m:Qqs:S:t:")) != -1) {
+		انتخاب (ch) {
+		حالت 'v':
+			اگر (log_level == SYSLOG_LEVEL_INFO)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			وگرنه اگر (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		case 'N':
+			بشکن;
+		حالت 'N':
 			Nflag = 1;
-			break;
-		case 'E':
+			بشکن;
+		حالت 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			اگر (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
-			break;
-		case 'H':
+			بشکن;
+		حالت 'H':
 			stringlist_append(&hostkey_files, optarg);
-			break;
-		case 'h':
+			بشکن;
+		حالت 'h':
 			stringlist_append(&dest_constraint_strings, optarg);
-			break;
-		case 'k':
-			key_only = 1;
-			break;
-		case 'C':
+			بشکن;
+		حالت 'k':
+			کلید_only = 1;
+			بشکن;
+		حالت 'C':
 			cert_only = 1;
-			break;
-		case 'K':
+			بشکن;
+		حالت 'K':
 			do_download = 1;
-			break;
-		case 'l':
-		case 'L':
-			if (lflag != 0)
+			بشکن;
+		حالت 'l':
+		حالت 'L':
+			اگر (lflag != 0)
 				fatal("-%c flag already specified", lflag);
 			lflag = ch;
-			break;
-		case 'x':
-		case 'X':
-			if (xflag != 0)
+			بشکن;
+		حالت 'x':
+		حالت 'X':
+			اگر (xflag != 0)
 				fatal("-%c flag already specified", xflag);
 			xflag = ch;
-			break;
-		case 'c':
+			بشکن;
+		حالت 'c':
 			confirm = 1;
-			break;
-		case 'm':
-		case 'M':
+			بشکن;
+		حالت 'm':
+		حالت 'M':
 			/* deprecated */
-			break;
-		case 'd':
+			بشکن;
+		حالت 'd':
 			deleting = 1;
-			break;
-		case 'P':
+			بشکن;
+		حالت 'P':
 			no_pin = 1;
-			break;
-		case 'D':
+			بشکن;
+		حالت 'D':
 			Dflag = 1;
-			break;
-		case 's':
+			بشکن;
+		حالت 's':
 			pkcs11provider = optarg;
-			break;
-		case 'S':
+			بشکن;
+		حالت 'S':
 			skprovider = optarg;
-			break;
-		case 'e':
+			بشکن;
+		حالت 'e':
 			deleting = 1;
 			pkcs11provider = optarg;
-			break;
-		case 't':
-			if ((lifetime = convtime(optarg)) == -1 ||
+			بشکن;
+		حالت 't':
+			اگر ((lifetime = convtime(optarg)) == -1 ||
 			    lifetime < 0 || (u_long)lifetime > UINT32_MAX) {
 				fprintf(stderr, "Invalid lifetime\n");
 				ret = 1;
-				goto done;
+				برو done;
 			}
-			break;
-		case 'q':
+			بشکن;
+		حالت 'q':
 			qflag = 1;
-			break;
-		case 'Q':
+			بشکن;
+		حالت 'Q':
 			Qflag = 1;
-			break;
-		case 'T':
+			بشکن;
+		حالت 'T':
 			Tflag = 1;
-			break;
-		default:
+			بشکن;
+		پیشفرض:
 			usage();
 			ret = 1;
-			goto done;
+			برو done;
 		}
 	}
 	log_init(__progname, log_level, log_facility, 1);
 
-	if ((xflag != 0) + (lflag != 0) + (Dflag != 0) + (Qflag != 0) > 1)
+	اگر ((xflag != 0) + (lflag != 0) + (Dflag != 0) + (Qflag != 0) > 1)
 		fatal("Invalid combination of actions");
 
 	/* First, get a connection to the authentication agent. */
-	switch (r = ssh_get_authentication_socket(&agent_fd)) {
-	case 0:
-		break;
-	case SSH_ERR_AGENT_NOT_PRESENT:
+	انتخاب (r = ssh_get_authentication_socket(&agent_fd)) {
+	حالت 0:
+		بشکن;
+	حالت SSH_ERR_AGENT_NOT_PRESENT:
 		fprintf(stderr, "Could not open a connection to your "
 		    "authentication agent.\n");
 		exit(2);
-	default:
+	پیشفرض:
 		fprintf(stderr, "Error connecting to agent: %s\n", ssh_err(r));
 		exit(2);
 	}
 
-	if (xflag) {
-		if (lock_agent(agent_fd, xflag == 'x' ? 1 : 0) == -1)
+	اگر (xflag) {
+		اگر (lock_agent(agent_fd, xflag == 'x' ? 1 : 0) == -1)
 			ret = 1;
-		goto done;
-	} else if (lflag) {
-		if (list_identities(agent_fd, lflag == 'l' ? 1 : 0) == -1)
+		برو done;
+	} وگرنه اگر (lflag) {
+		اگر (list_identities(agent_fd, lflag == 'l' ? 1 : 0) == -1)
 			ret = 1;
-		goto done;
-	} else if (Dflag) {
-		if (delete_all(agent_fd, qflag) == -1)
+		برو done;
+	} وگرنه اگر (Dflag) {
+		اگر (delete_all(agent_fd, qflag) == -1)
 			ret = 1;
-		goto done;
-	} else if (Qflag) {
-		if (query_exts(agent_fd) == -1)
+		برو done;
+	} وگرنه اگر (Qflag) {
+		اگر (query_exts(agent_fd) == -1)
 			ret = 1;
-		goto done;
+		برو done;
 	}
 
 #ifdef ENABLE_SK_INTERNAL
-	if (skprovider == NULL)
+	اگر (skprovider == پوچ)
 		skprovider = "internal";
 #endif
 
-	if (hostkey_files == NULL) {
+	اگر (hostkey_files == پوچ) {
 		/* use defaults from readconf.c */
 		stringlist_append(&hostkey_files, _PATH_SSH_USER_HOSTFILE);
 		stringlist_append(&hostkey_files, _PATH_SSH_USER_HOSTFILE2);
 		stringlist_append(&hostkey_files, _PATH_SSH_SYSTEM_HOSTFILE);
 		stringlist_append(&hostkey_files, _PATH_SSH_SYSTEM_HOSTFILE2);
 	}
-	if (dest_constraint_strings != NULL) {
-		for (i = 0; dest_constraint_strings[i] != NULL; i++) {
+	اگر (dest_constraint_strings != پوچ) {
+		برای (i = 0; dest_constraint_strings[i] != پوچ; i++) {
 			parse_dest_constraint(dest_constraint_strings[i],
 			  &dest_constraints, &ndest_constraints, hostkey_files);
 		}
@@ -990,72 +990,72 @@ main(int argc, char **argv)
 
 	argc -= optind;
 	argv += optind;
-	if (Tflag) {
-		if (argc <= 0)
+	اگر (Tflag) {
+		اگر (argc <= 0)
 			fatal("no keys to test");
-		for (r = i = 0; i < argc; i++)
-			r |= test_key(agent_fd, argv[i]);
+		برای (r = i = 0; i < argc; i++)
+			r |= test_کلید(agent_fd, argv[i]);
 		ret = r == 0 ? 0 : 1;
-		goto done;
+		برو done;
 	}
-	if (pkcs11provider != NULL) {
-		for (i = 0; i < argc; i++) {
-			if ((r = sshkey_load_public(argv[i], &k, NULL)) != 0)
+	اگر (pkcs11provider != پوچ) {
+		برای (i = 0; i < argc; i++) {
+			اگر ((r = sshkey_load_public(argv[i], &k, پوچ)) != 0)
 				fatal_fr(r, "load certificate %s", argv[i]);
 			certs = xrecallocarray(certs, ncerts, ncerts + 1,
-			    sizeof(*certs));
+			    اندازه(*certs));
 			debug2("%s: %s", argv[i], sshkey_ssh_name(k));
 			certs[ncerts++] = k;
 		}
 		debug2_f("loaded %zu certificates", ncerts);
-		if (update_card(agent_fd, !deleting, pkcs11provider,
-		    qflag, no_pin, key_only, cert_only,
+		اگر (update_card(agent_fd, !deleting, pkcs11provider,
+		    qflag, no_pin, کلید_only, cert_only,
 		    dest_constraints, ndest_constraints,
 		    certs, ncerts) == -1)
 			ret = 1;
-		for (n = 0; n < ncerts; n++)
+		برای (n = 0; n < ncerts; n++)
 			sshkey_free(certs[n]);
-		free(certs);
-		goto done;
+		آزاد(certs);
+		برو done;
 	}
-	if (do_download) {
-		if (skprovider == NULL)
+	اگر (do_download) {
+		اگر (skprovider == پوچ)
 			fatal("Cannot download keys without provider");
-		if (load_resident_keys(agent_fd, skprovider, qflag, no_pin,
+		اگر (load_resident_کلیدها(agent_fd, skprovider, qflag, no_pin,
 		    dest_constraints, ndest_constraints) != 0)
 			ret = 1;
-		goto done;
+		برو done;
 	}
-	if (argc == 0) {
-		char buf[PATH_MAX];
-		struct passwd *pw;
-		struct stat st;
-		int count = 0;
+	اگر (argc == 0) {
+		نویسه buf[PATH_MAX];
+		ساختار passwd *pw;
+		ساختار stat st;
+		صحیح شمار = 0;
 
-		if ((pw = getpwuid(getuid())) == NULL) {
+		اگر ((pw = getpwuid(getuid())) == پوچ) {
 			fprintf(stderr, "No user found with uid %u\n",
 			    (u_int)getuid());
 			ret = 1;
-			goto done;
+			برو done;
 		}
 
-		for (i = 0; default_files[i]; i++) {
-			snprintf(buf, sizeof(buf), "%s/%s", pw->pw_dir,
+		برای (i = 0; default_files[i]; i++) {
+			snprintf(buf, اندازه(buf), "%s/%s", pw->pw_dir,
 			    default_files[i]);
-			if (stat(buf, &st) == -1)
-				continue;
-			if (do_file(agent_fd, deleting, key_only, cert_only,
+			اگر (stat(buf, &st) == -1)
+				ادامه;
+			اگر (do_file(agent_fd, deleting, کلید_only, cert_only,
 			    buf, qflag, Nflag, skprovider,
 			    dest_constraints, ndest_constraints) == -1)
 				ret = 1;
-			else
-				count++;
+			وگرنه
+				شمار++;
 		}
-		if (count == 0)
+		اگر (شمار == 0)
 			ret = 1;
-	} else {
-		for (i = 0; i < argc; i++) {
-			if (do_file(agent_fd, deleting, key_only, cert_only,
+	} وگرنه {
+		برای (i = 0; i < argc; i++) {
+			اگر (do_file(agent_fd, deleting, کلید_only, cert_only,
 			    argv[i], qflag, Nflag, skprovider,
 			    dest_constraints, ndest_constraints) == -1)
 				ret = 1;
@@ -1067,5 +1067,5 @@ done:
 	stringlist_free(dest_constraint_strings);
 	free_dest_constraints(dest_constraints, ndest_constraints);
 	ssh_close_authentication_socket(agent_fd);
-	return ret;
+	بازگشت ret;
 }

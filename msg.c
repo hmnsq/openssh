@@ -23,70 +23,70 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
+#شامل <errno.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <stdarg.h>
 
-#include "sshbuf.h"
-#include "log.h"
-#include "atomicio.h"
-#include "msg.h"
-#include "misc.h"
+#شامل "sshbuf.h"
+#شامل "log.h"
+#شامل "atomicio.h"
+#شامل "msg.h"
+#شامل "misc.h"
 
-int
-ssh_msg_send(int fd, u_char type, struct sshbuf *m)
+صحیح
+ssh_پیام_send(صحیح fd, u_char type, ساختار sshbuf *m)
 {
 	u_char buf[5];
 	u_int mlen = sshbuf_len(m);
 
-	debug3_f("type %u len %zu", (unsigned int)type & 0xff, sshbuf_len(m));
+	debug3_f("type %u len %zu", (unsigned صحیح)type & 0xff, sshbuf_len(m));
 
 	put_u32(buf, mlen + 1);
 	buf[4] = type;		/* 1st byte of payload is mesg-type */
-	if (atomicio(vwrite, fd, buf, sizeof(buf)) != sizeof(buf)) {
+	اگر (atomicio(vwrite, fd, buf, اندازه(buf)) != اندازه(buf)) {
 		error_f("write: %s", strerror(errno));
-		return (-1);
+		بازگشت (-1);
 	}
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(m), mlen) != mlen) {
+	اگر (atomicio(vwrite, fd, sshbuf_mutable_ptr(m), mlen) != mlen) {
 		error_f("write: %s", strerror(errno));
-		return (-1);
+		بازگشت (-1);
 	}
 	debug3_f("done");
-	return (0);
+	بازگشت (0);
 }
 
-int
-ssh_msg_recv(int fd, struct sshbuf *m)
+صحیح
+ssh_پیام_recv(صحیح fd, ساختار sshbuf *m)
 {
 	u_char buf[4], *p;
-	u_int msg_len;
-	int r;
+	u_int پیام_len;
+	صحیح r;
 
 	debug3("ssh_msg_recv entering");
 
-	if (atomicio(read, fd, buf, sizeof(buf)) != sizeof(buf)) {
-		if (errno != EPIPE)
+	اگر (atomicio(اقرأ, fd, buf, اندازه(buf)) != اندازه(buf)) {
+		اگر (errno != EPIPE)
 			error_f("read header: %s", strerror(errno));
-		return (-1);
+		بازگشت (-1);
 	}
-	msg_len = get_u32(buf);
-	if (msg_len > sshbuf_max_size(m)) {
-		error_f("read: bad msg_len %u", msg_len);
-		return (-1);
+	پیام_len = get_u32(buf);
+	اگر (پیام_len > sshbuf_max_size(m)) {
+		error_f("read: bad msg_len %u", پیام_len);
+		بازگشت (-1);
 	}
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0) {
+	اگر ((r = sshbuf_reserve(m, پیام_len, &p)) != 0) {
 		error_fr(r, "reserve");
-		return -1;
+		بازگشت -1;
 	}
-	if (atomicio(read, fd, p, msg_len) != msg_len) {
+	اگر (atomicio(اقرأ, fd, p, پیام_len) != پیام_len) {
 		error_f("read: %s", strerror(errno));
-		return (-1);
+		بازگشت (-1);
 	}
-	return (0);
+	بازگشت (0);
 }

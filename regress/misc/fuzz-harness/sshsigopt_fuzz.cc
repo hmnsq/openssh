@@ -1,29 +1,29 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#شامل <stddef.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <string.h>
+#شامل <stdlib.h>
 
-extern "C" {
+بیرونی "C" {
 
-#include "sshsig.h"
+#شامل "sshsig.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+صحیح LLVMFuzzer_Test_One_درون_داد(ثابت uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshsigopt *opts = NULL;
+	نویسه *cp = (نویسه *)malloc(size + 1);
+	ساختار sshsigopt *opts = پوچ;
 
-	if (cp == NULL)
-		goto out;
+	اگر (cp == پوچ)
+		برو out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshsigopt_parse(cp, "libfuzzer", 0, NULL)) == NULL)
-		goto out;
+	اگر ((opts = sshsigopt_parse(cp, "libfuzzer", 0, پوچ)) == پوچ)
+		برو out;
 
  out:
-	free(cp);
+	آزاد(cp);
 	sshsigopt_free(opts);
-	return 0;
+	بازگشت 0;
 }
 
 } // extern "C"

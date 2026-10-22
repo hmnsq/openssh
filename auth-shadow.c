@@ -22,26 +22,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-#include <shadow.h>
-#include <stdarg.h>
-#include <string.h>
-#include <time.h>
+#اگر defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+#شامل <shadow.h>
+#شامل <stdarg.h>
+#شامل <string.h>
+#شامل <time.h>
 
-#include "hostfile.h"
-#include "auth.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "log.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "sshbuf.h"
+#شامل "ssherr.h"
+#شامل "log.h"
 
 #ifdef DAY
 # undef DAY
 #endif
 #define DAY	(24L * 60 * 60) /* 1 day in seconds */
 
-extern struct sshbuf *loginmsg;
+بیرونی ساختار sshbuf *loginmsg;
 
 /*
  * For the account and password expiration functions, we assume the expiry
@@ -52,63 +52,63 @@ extern struct sshbuf *loginmsg;
  * Check if specified account is expired.  Returns 1 if account is expired,
  * 0 otherwise.
  */
-int
-auth_shadow_acctexpired(struct spwd *spw)
+صحیح
+auth_shadow_acctexpired(ساختار spwd *spw)
 {
 	time_t today;
 	long long daysleft;
-	int r;
+	صحیح r;
 
-	today = time(NULL) / DAY;
+	today = time(پوچ) / DAY;
 	daysleft = spw->sp_expire - today;
 	debug3("%s: today %lld sp_expire %lld days left %lld", __func__,
 	    (long long)today, (long long)spw->sp_expire, daysleft);
 
-	if (spw->sp_expire == -1) {
+	اگر (spw->sp_expire == -1) {
 		debug3("account expiration disabled");
-	} else if (daysleft < 0) {
+	} وگرنه اگر (daysleft < 0) {
 		logit("Account %.100s has expired", spw->sp_namp);
-		return 1;
-	} else if (daysleft <= spw->sp_warn) {
+		بازگشت 1;
+	} وگرنه اگر (daysleft <= spw->sp_warn) {
 		debug3("account will expire in %lld days", daysleft);
-		if ((r = sshbuf_putf(loginmsg, 
+		اگر ((r = sshbuf_putf(loginmsg, 
 		    "Your account will expire in %lld day%s.\n", daysleft,
 		    daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
 
-	return 0;
+	بازگشت 0;
 }
 
 /*
  * Checks password expiry for platforms that use shadow passwd files.
  * Returns: 1 = password expired, 0 = password not expired
  */
-int
+صحیح
 auth_shadow_pwexpired(Authctxt *ctxt)
 {
-	struct spwd *spw = NULL;
-	const char *user = ctxt->pw->pw_name;
+	ساختار spwd *spw = پوچ;
+	ثابت نویسه *user = ctxt->pw->pw_name;
 	time_t today;
-	int r, daysleft, disabled = 0;
+	صحیح r, daysleft, disabled = 0;
 
-	if ((spw = getspnam((char *)user)) == NULL) {
+	اگر ((spw = getspnam((نویسه *)user)) == پوچ) {
 		error("Could not get shadow information for %.100s", user);
-		return 0;
+		بازگشت 0;
 	}
 
-	today = time(NULL) / DAY;
+	today = time(پوچ) / DAY;
 	debug3_f("today %lld sp_lstchg %lld sp_max %lld", (long long)today,
 	    (long long)spw->sp_lstchg, (long long)spw->sp_max);
 
-#if defined(__hpux) && !defined(HAVE_SECUREWARE)
-	if (iscomsec()) {
-		struct pr_passwd *pr;
+#اگر defined(__hpux) && !defined(HAVE_SECUREWARE)
+	اگر (iscomsec()) {
+		ساختار pr_passwd *pr;
 
-		pr = getprpwnam((char *)user);
+		pr = getprpwnam((نویسه *)user);
 
 		/* Test for Trusted Mode expiry disabled */
-		if (pr != NULL && pr->ufld.fd_min == 0 &&
+		اگر (pr != پوچ && pr->ufld.fd_min == 0 &&
 		    pr->ufld.fd_lifetime == 0 && pr->ufld.fd_expire == 0 &&
 		    pr->ufld.fd_pw_expire_warning == 0 &&
 		    pr->ufld.fd_schange != 0)
@@ -118,24 +118,24 @@ auth_shadow_pwexpired(Authctxt *ctxt)
 
 	/* TODO: check sp_inact */
 	daysleft = spw->sp_lstchg + spw->sp_max - today;
-	if (disabled) {
+	اگر (disabled) {
 		debug3("password expiration disabled");
-	} else if (spw->sp_lstchg == 0) {
+	} وگرنه اگر (spw->sp_lstchg == 0) {
 		logit("User %.100s password has expired (root forced)", user);
-		return 1;
-	} else if (spw->sp_max == -1) {
+		بازگشت 1;
+	} وگرنه اگر (spw->sp_max == -1) {
 		debug3("password expiration disabled");
-	} else if (daysleft < 0) {
+	} وگرنه اگر (daysleft < 0) {
 		logit("User %.100s password has expired (password aged)", user);
-		return 1;
-	} else if (daysleft <= spw->sp_warn) {
+		بازگشت 1;
+	} وگرنه اگر (daysleft <= spw->sp_warn) {
 		debug3("password will expire in %d days", daysleft);
-		if ((r = sshbuf_putf(loginmsg, 
+		اگر ((r = sshbuf_putf(loginmsg, 
 		    "Your password will expire in %d day%s.\n", daysleft,
 		    daysleft == 1 ? "" : "s")) != 0)
 			fatal_fr(r, "buffer error");
 	}
 
-	return 0;
+	بازگشت 0;
 }
 #endif	/* USE_SHADOW && HAS_SHADOW_EXPIRE */

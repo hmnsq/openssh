@@ -5,85 +5,85 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "xmalloc.h"
 
-void test_xextendf(void);
+تهی test_xextendf(تهی);
 
-void
-test_xextendf(void)
+تهی
+test_xextendf(تهی)
 {
-	char *s = NULL;
+	نویسه *s = پوچ;
 
 	TEST_START("xextendf NULL string");
 	xextendf(&s, ",", "hello");
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
-	s = NULL;
+	آزاد(s);
+	s = پوچ;
 	TEST_DONE();
 
 	TEST_START("xextendf empty string");
 	s = xstrdup("");
 	xextendf(&s, ",", "world");
 	ASSERT_STRING_EQ(s, "world");
-	free(s);
-	s = NULL;
+	آزاد(s);
+	s = پوچ;
 	TEST_DONE();
 
 	TEST_START("xextendf append to string");
 	s = xstrdup("foo");
 	xextendf(&s, ",", "bar");
 	ASSERT_STRING_EQ(s, "foo,bar");
-	free(s);
-	s = NULL;
+	آزاد(s);
+	s = پوچ;
 	TEST_DONE();
 
 	TEST_START("xextendf append with NULL separator");
 	s = xstrdup("foo");
-	xextendf(&s, NULL, "bar");
+	xextendf(&s, پوچ, "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
+	آزاد(s);
+	s = پوچ;
 	TEST_DONE();
 
 	TEST_START("xextendf append with empty separator");
 	s = xstrdup("foo");
 	xextendf(&s, "", "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
+	آزاد(s);
+	s = پوچ;
 	TEST_DONE();
 
 	TEST_START("xextendf with format string");
 	s = xstrdup("start");
 	xextendf(&s, ":", "s=%s,d=%d", "string", 123);
 	ASSERT_STRING_EQ(s, "start:s=string,d=123");
-	free(s);
-	s = NULL;
+	آزاد(s);
+	s = پوچ;
 	TEST_DONE();
 
 	TEST_START("xextendf multiple appends");
-	s = NULL;
+	s = پوچ;
 	xextendf(&s, ",", "one");
 	ASSERT_STRING_EQ(s, "one");
 	xextendf(&s, ",", "two");
 	ASSERT_STRING_EQ(s, "one,two");
 	xextendf(&s, ":", "three=%d", 3);
 	ASSERT_STRING_EQ(s, "one,two:three=3");
-	xextendf(&s, NULL, "four");
+	xextendf(&s, پوچ, "four");
 	ASSERT_STRING_EQ(s, "one,two:three=3four");
-	free(s);
-	s = NULL;
+	آزاد(s);
+	s = پوچ;
 	TEST_DONE();
 }

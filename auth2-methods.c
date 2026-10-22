@@ -14,21 +14,21 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <stdlib.h>
-#include <string.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "xmalloc.h"
-#include "hostfile.h"
-#include "auth.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "servconf.h"
+#شامل "xmalloc.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
 
-extern ServerOptions options;
+بیرونی ServerOptions options;
 
 /*
  * Configuration of enabled authentication methods. Separate from the rest of
@@ -38,41 +38,41 @@ extern ServerOptions options;
  */
 
 /* "none" is allowed only one time and it is cleared by userauth_none() later */
-int none_enabled = 1;
-struct authmethod_cfg methodcfg_none = {
+صحیح none_enabled = 1;
+ساختار authmethod_cfg methodcfg_none = {
 	"none",
-	NULL,
+	پوچ,
 	&none_enabled
 };
-struct authmethod_cfg methodcfg_pubkey = {
+ساختار authmethod_cfg methodcfg_pubkey = {
 	"publickey",
 	"publickey-hostbound-v00@openssh.com",
 	&options.pubkey_authentication
 };
 #ifdef GSSAPI
-struct authmethod_cfg methodcfg_gssapi = {
+ساختار authmethod_cfg methodcfg_gssapi = {
 	"gssapi-with-mic",
-	NULL,
+	پوچ,
 	&options.gss_authentication
 };
 #endif
-struct authmethod_cfg methodcfg_passwd = {
+ساختار authmethod_cfg methodcfg_passwd = {
 	"password",
-	NULL,
+	پوچ,
 	&options.password_authentication
 };
-struct authmethod_cfg methodcfg_kbdint = {
+ساختار authmethod_cfg methodcfg_kbdint = {
 	"keyboard-interactive",
-	NULL,
+	پوچ,
 	&options.kbd_interactive_authentication
 };
-struct authmethod_cfg methodcfg_hostbased = {
+ساختار authmethod_cfg methodcfg_hostbased = {
 	"hostbased",
-	NULL,
+	پوچ,
 	&options.hostbased_authentication
 };
 
-static struct authmethod_cfg *authmethod_cfgs[] = {
+ایستا ساختار authmethod_cfg *authmethod_cfgs[] = {
 	&methodcfg_none,
 	&methodcfg_pubkey,
 #ifdef GSSAPI
@@ -81,7 +81,7 @@ static struct authmethod_cfg *authmethod_cfgs[] = {
 	&methodcfg_passwd,
 	&methodcfg_kbdint,
 	&methodcfg_hostbased,
-	NULL
+	پوچ
 };
 
 /*
@@ -89,46 +89,46 @@ static struct authmethod_cfg *authmethod_cfgs[] = {
  * non-zero, then also require that the methods are enabled.
  * Returns 0 on success or -1 if the methods list is invalid.
  */
-int
-auth2_methods_valid(const char *_methods, int need_enable)
+صحیح
+auth2_methods_valid(ثابت نویسه *_methods, صحیح need_enable)
 {
-	char *methods, *omethods, *method, *p;
+	نویسه *methods, *omethods, *method, *p;
 	u_int i, found;
-	int ret = -1;
-	const struct authmethod_cfg *cfg;
+	صحیح ret = -1;
+	ثابت ساختار authmethod_cfg *cfg;
 
-	if (*_methods == '\0') {
+	اگر (*_methods == '\0') {
 		error("empty authentication method list");
-		return -1;
+		بازگشت -1;
 	}
 	omethods = methods = xstrdup(_methods);
-	while ((method = strsep(&methods, ",")) != NULL) {
-		for (found = i = 0; !found && authmethod_cfgs[i] != NULL; i++) {
+	وقتی ((method = strsep(&methods, ",")) != پوچ) {
+		برای (found = i = 0; !found && authmethod_cfgs[i] != پوچ; i++) {
 			cfg = authmethod_cfgs[i];
-			if ((p = strchr(method, ':')) != NULL)
+			اگر ((p = strchr(method, ':')) != پوچ)
 				*p = '\0';
-			if (strcmp(method, cfg->name) != 0)
-				continue;
-			if (need_enable) {
-				if (cfg->enabled == NULL ||
+			اگر (strcmp(method, cfg->name) != 0)
+				ادامه;
+			اگر (need_enable) {
+				اگر (cfg->enabled == پوچ ||
 				    *(cfg->enabled) == 0) {
 					error("Disabled method \"%s\" in "
 					    "AuthenticationMethods list \"%s\"",
 					    method, _methods);
-					goto out;
+					برو out;
 				}
 			}
 			found = 1;
-			break;
+			بشکن;
 		}
-		if (!found) {
+		اگر (!found) {
 			error("Unknown authentication method \"%s\" in list",
 			    method);
-			goto out;
+			برو out;
 		}
 	}
 	ret = 0;
  out:
-	free(omethods);
-	return ret;
+	آزاد(omethods);
+	بازگشت ret;
 }

@@ -23,374 +23,374 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <signal.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <signal.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "log.h"
-#include "packet.h"
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "digest.h"
-#include "ssherr.h"
+#شامل "sshkey.h"
+#شامل "kex.h"
+#شامل "log.h"
+#شامل "packet.h"
+#شامل "ssh2.h"
+#شامل "sshbuf.h"
+#شامل "digest.h"
+#شامل "ssherr.h"
 
-static int input_kex_gen_init(int, uint32_t, struct ssh *);
-static int input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh);
+ایستا صحیح درون_داد_kex_gen_init(صحیح, uint32_t, ساختار ssh *);
+ایستا صحیح درون_داد_kex_gen_reply(صحیح type, uint32_t seq, ساختار ssh *ssh);
 
-static int
+ایستا صحیح
 kex_gen_hash(
-    int hash_alg,
-    const struct sshbuf *client_version,
-    const struct sshbuf *server_version,
-    const struct sshbuf *client_kexinit,
-    const struct sshbuf *server_kexinit,
-    const struct sshbuf *server_host_key_blob,
-    const struct sshbuf *client_pub,
-    const struct sshbuf *server_pub,
-    const struct sshbuf *shared_secret,
+    صحیح hash_alg,
+    ثابت ساختار sshbuf *client_version,
+    ثابت ساختار sshbuf *server_version,
+    ثابت ساختار sshbuf *client_kexinit,
+    ثابت ساختار sshbuf *server_kexinit,
+    ثابت ساختار sshbuf *server_host_کلید_blob,
+    ثابت ساختار sshbuf *client_pub,
+    ثابت ساختار sshbuf *server_pub,
+    ثابت ساختار sshbuf *shared_secret,
     u_char *hash, size_t *hashlen)
 {
-	struct sshbuf *b;
-	int r;
+	ساختار sshbuf *b;
+	صحیح r;
 
-	if (*hashlen < ssh_digest_bytes(hash_alg))
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((b = sshbuf_new()) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if ((r = sshbuf_put_stringb(b, client_version)) != 0 ||
+	اگر (*hashlen < ssh_digest_bytes(hash_alg))
+		بازگشت SSH_ERR_INVALID_ARGUMENT;
+	اگر ((b = sshbuf_new()) == پوچ)
+		بازگشت SSH_ERR_ALLOC_FAIL;
+	اگر ((r = sshbuf_put_stringb(b, client_version)) != 0 ||
 	    (r = sshbuf_put_stringb(b, server_version)) != 0 ||
 	    /* kexinit messages: fake header: len+SSH2_MSG_KEXINIT */
 	    (r = sshbuf_put_u32(b, sshbuf_len(client_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_پیام_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, client_kexinit)) != 0 ||
 	    (r = sshbuf_put_u32(b, sshbuf_len(server_kexinit) + 1)) != 0 ||
-	    (r = sshbuf_put_u8(b, SSH2_MSG_KEXINIT)) != 0 ||
+	    (r = sshbuf_put_u8(b, SSH2_پیام_KEXINIT)) != 0 ||
 	    (r = sshbuf_putb(b, server_kexinit)) != 0 ||
-	    (r = sshbuf_put_stringb(b, server_host_key_blob)) != 0 ||
+	    (r = sshbuf_put_stringb(b, server_host_کلید_blob)) != 0 ||
 	    (r = sshbuf_put_stringb(b, client_pub)) != 0 ||
 	    (r = sshbuf_put_stringb(b, server_pub)) != 0 ||
 	    (r = sshbuf_putb(b, shared_secret)) != 0) {
 		sshbuf_free(b);
-		return r;
+		بازگشت r;
 	}
 #ifdef DEBUG_KEX
 	sshbuf_dump(b, stderr);
 #endif
-	if (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
+	اگر (ssh_digest_buffer(hash_alg, b, hash, *hashlen) != 0) {
 		sshbuf_free(b);
-		return SSH_ERR_LIBCRYPTO_ERROR;
+		بازگشت SSH_ERR_LIBCRYPTO_ERROR;
 	}
 	sshbuf_free(b);
 	*hashlen = ssh_digest_bytes(hash_alg);
 #ifdef DEBUG_KEX
 	dump_digest("hash", hash, *hashlen);
 #endif
-	return 0;
+	بازگشت 0;
 }
 
-int
-kex_gen_client(struct ssh *ssh)
+صحیح
+kex_gen_client(ساختار ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	int r;
+	ساختار kex *kex = ssh->kex;
+	صحیح r;
 
-	switch (kex->kex_type) {
+	انتخاب (kex->kex_type) {
 #ifdef WITH_OPENSSL
-	case KEX_DH_GRP1_SHA1:
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
-	case KEX_DH_GRP16_SHA512:
-	case KEX_DH_GRP18_SHA512:
+	حالت KEX_DH_GRP1_SHA1:
+	حالت KEX_DH_GRP14_SHA1:
+	حالت KEX_DH_GRP14_SHA256:
+	حالت KEX_DH_GRP16_SHA512:
+	حالت KEX_DH_GRP18_SHA512:
 		r = kex_dh_keypair(kex);
-		break;
-	case KEX_ECDH_SHA2:
+		بشکن;
+	حالت KEX_ECDH_SHA2:
 		r = kex_ecdh_keypair(kex);
-		break;
-	case KEX_KEM_MLKEM768ECDH_SHA256:
+		بشکن;
+	حالت KEX_KEM_MLKEM768ECDH_SHA256:
 		r = kex_kem_mlkem768ecdh_keypair(kex);
-		break;
+		بشکن;
 #endif /* WITH_OPENSSL */
-	case KEX_C25519_SHA256:
+	حالت KEX_C25519_SHA256:
 		r = kex_c25519_keypair(kex);
-		break;
-	case KEX_KEM_SNTRUP761X25519_SHA512:
+		بشکن;
+	حالت KEX_KEM_SNTRUP761X25519_SHA512:
 		r = kex_kem_sntrup761x25519_keypair(kex);
-		break;
-	case KEX_KEM_MLKEM768X25519_SHA256:
+		بشکن;
+	حالت KEX_KEM_MLKEM768X25519_SHA256:
 		r = kex_kem_mlkem768x25519_keypair(kex);
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		r = SSH_ERR_INVALID_ARGUMENT;
-		break;
+		بشکن;
 	}
-	if (r != 0)
-		return r;
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_INIT)) != 0 ||
+	اگر (r != 0)
+		بازگشت r;
+	اگر ((r = sshpkt_start(ssh, SSH2_پیام_KEX_ECDH_INIT)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, kex->client_pub)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		return r;
+		بازگشت r;
 	debug("expecting SSH2_MSG_KEX_ECDH_REPLY");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_REPLY, &input_kex_gen_reply);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_پیام_KEX_ECDH_REPLY, &درون_داد_kex_gen_reply);
+	بازگشت 0;
 }
 
-static int
-input_kex_gen_reply(int type, uint32_t seq, struct ssh *ssh)
+ایستا صحیح
+درون_داد_kex_gen_reply(صحیح type, uint32_t seq, ساختار ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	struct sshkey *server_host_key = NULL;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *server_blob = NULL;
-	struct sshbuf *tmp = NULL, *server_host_key_blob = NULL;
-	u_char *signature = NULL;
+	ساختار kex *kex = ssh->kex;
+	ساختار sshkey *server_host_کلید = پوچ;
+	ساختار sshbuf *shared_secret = پوچ;
+	ساختار sshbuf *server_blob = پوچ;
+	ساختار sshbuf *tmp = پوچ, *server_host_کلید_blob = پوچ;
+	u_char *signature = پوچ;
 	u_char hash[SSH_DIGEST_MAX_LENGTH];
 	size_t slen, hashlen;
-	int r;
+	صحیح r;
 
 	debug("SSH2_MSG_KEX_ECDH_REPLY received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_REPLY, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_پیام_KEX_ECDH_REPLY, &kex_protocol_error);
 
 	/* hostkey */
-	if ((r = sshpkt_getb_froms(ssh, &server_host_key_blob)) != 0)
-		goto out;
+	اگر ((r = sshpkt_getb_froms(ssh, &server_host_کلید_blob)) != 0)
+		برو out;
 	/* sshkey_fromb() consumes its buffer, so make a copy */
-	if ((tmp = sshbuf_fromb(server_host_key_blob)) == NULL) {
+	اگر ((tmp = sshbuf_fromb(server_host_کلید_blob)) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((r = sshkey_fromb_allowlist(tmp, &server_host_key,
-	    kex->hostkey_alg, NULL)) != 0)
-		goto out;
-	if ((r = kex_verify_host_key(ssh, server_host_key)) != 0)
-		goto out;
+	اگر ((r = sshkey_fromb_allowlist(tmp, &server_host_کلید,
+	    kex->hostkey_alg, پوچ)) != 0)
+		برو out;
+	اگر ((r = kex_verify_host_کلید(ssh, server_host_کلید)) != 0)
+		برو out;
 
 	/* Q_S, server public key */
 	/* signed H */
-	if ((r = sshpkt_getb_froms(ssh, &server_blob)) != 0 ||
+	اگر ((r = sshpkt_getb_froms(ssh, &server_blob)) != 0 ||
 	    (r = sshpkt_get_string(ssh, &signature, &slen)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+		برو out;
 
 	/* compute shared secret */
-	switch (kex->kex_type) {
+	انتخاب (kex->kex_type) {
 #ifdef WITH_OPENSSL
-	case KEX_DH_GRP1_SHA1:
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
-	case KEX_DH_GRP16_SHA512:
-	case KEX_DH_GRP18_SHA512:
+	حالت KEX_DH_GRP1_SHA1:
+	حالت KEX_DH_GRP14_SHA1:
+	حالت KEX_DH_GRP14_SHA256:
+	حالت KEX_DH_GRP16_SHA512:
+	حالت KEX_DH_GRP18_SHA512:
 		r = kex_dh_dec(kex, server_blob, &shared_secret);
-		break;
-	case KEX_ECDH_SHA2:
+		بشکن;
+	حالت KEX_ECDH_SHA2:
 		r = kex_ecdh_dec(kex, server_blob, &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768ECDH_SHA256:
+		بشکن;
+	حالت KEX_KEM_MLKEM768ECDH_SHA256:
 		r = kex_kem_mlkem768ecdh_dec(kex, server_blob,
 		    &shared_secret);
-		break;
+		بشکن;
 #endif /* WITH_OPENSSL */
-	case KEX_C25519_SHA256:
+	حالت KEX_C25519_SHA256:
 		r = kex_c25519_dec(kex, server_blob, &shared_secret);
-		break;
-	case KEX_KEM_SNTRUP761X25519_SHA512:
+		بشکن;
+	حالت KEX_KEM_SNTRUP761X25519_SHA512:
 		r = kex_kem_sntrup761x25519_dec(kex, server_blob,
 		    &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768X25519_SHA256:
+		بشکن;
+	حالت KEX_KEM_MLKEM768X25519_SHA256:
 		r = kex_kem_mlkem768x25519_dec(kex, server_blob,
 		    &shared_secret);
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		r = SSH_ERR_INVALID_ARGUMENT;
-		break;
+		بشکن;
 	}
-	if (r !=0 )
-		goto out;
+	اگر (r !=0 )
+		برو out;
 
 	/* calc and verify H */
-	hashlen = sizeof(hash);
-	if ((r = kex_gen_hash(
+	hashlen = اندازه(hash);
+	اگر ((r = kex_gen_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
 	    kex->my,
 	    kex->peer,
-	    server_host_key_blob,
+	    server_host_کلید_blob,
 	    kex->client_pub,
 	    server_blob,
 	    shared_secret,
 	    hash, &hashlen)) != 0)
-		goto out;
+		برو out;
 
-	if ((r = sshkey_verify(server_host_key, signature, slen, hash, hashlen,
-	    kex->hostkey_alg, ssh->compat, NULL)) != 0)
-		goto out;
+	اگر ((r = sshkey_verify(server_host_کلید, signature, slen, hash, hashlen,
+	    kex->hostkey_alg, ssh->compat, پوچ)) != 0)
+		برو out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	اگر ((r = kex_derive_کلیدها(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		برو out;
 
 	/* save initial signature and hostkey */
-	if ((kex->flags & KEX_INITIAL) != 0) {
-		if (kex->initial_hostkey != NULL || kex->initial_sig != NULL) {
+	اگر ((kex->flags & KEX_INITIAL) != 0) {
+		اگر (kex->initial_hostkey != پوچ || kex->initial_sig != پوچ) {
 			r = SSH_ERR_INTERNAL_ERROR;
-			goto out;
+			برو out;
 		}
-		if ((kex->initial_sig = sshbuf_new()) == NULL) {
+		اگر ((kex->initial_sig = sshbuf_new()) == پوچ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			برو out;
 		}
-		if ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
-			goto out;
-		kex->initial_hostkey = server_host_key;
-		server_host_key = NULL;
+		اگر ((r = sshbuf_put(kex->initial_sig, signature, slen)) != 0)
+			برو out;
+		kex->initial_hostkey = server_host_کلید;
+		server_host_کلید = پوچ;
 	}
 	/* success */
 out:
-	explicit_bzero(hash, sizeof(hash));
-	explicit_bzero(kex->c25519_client_key, sizeof(kex->c25519_client_key));
-	explicit_bzero(kex->sntrup761_client_key,
-	    sizeof(kex->sntrup761_client_key));
-	explicit_bzero(kex->mlkem768_client_key,
-	    sizeof(kex->mlkem768_client_key));
-	sshbuf_free(server_host_key_blob);
-	free(signature);
+	explicit_bzero(hash, اندازه(hash));
+	explicit_bzero(kex->c25519_client_کلید, اندازه(kex->c25519_client_کلید));
+	explicit_bzero(kex->sntrup761_client_کلید,
+	    اندازه(kex->sntrup761_client_کلید));
+	explicit_bzero(kex->mlkem768_client_کلید,
+	    اندازه(kex->mlkem768_client_کلید));
+	sshbuf_free(server_host_کلید_blob);
+	آزاد(signature);
 	sshbuf_free(tmp);
-	sshkey_free(server_host_key);
+	sshkey_free(server_host_کلید);
 	sshbuf_free(server_blob);
 	sshbuf_free(shared_secret);
 	sshbuf_free(kex->client_pub);
-	kex->client_pub = NULL;
-	return r;
+	kex->client_pub = پوچ;
+	بازگشت r;
 }
 
-int
-kex_gen_server(struct ssh *ssh)
+صحیح
+kex_gen_server(ساختار ssh *ssh)
 {
 	debug("expecting SSH2_MSG_KEX_ECDH_INIT");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_INIT, &input_kex_gen_init);
-	return 0;
+	ssh_dispatch_set(ssh, SSH2_پیام_KEX_ECDH_INIT, &درون_داد_kex_gen_init);
+	بازگشت 0;
 }
 
-static int
-input_kex_gen_init(int type, uint32_t seq, struct ssh *ssh)
+ایستا صحیح
+درون_داد_kex_gen_init(صحیح type, uint32_t seq, ساختار ssh *ssh)
 {
-	struct kex *kex = ssh->kex;
-	struct sshkey *server_host_private, *server_host_public;
-	struct sshbuf *shared_secret = NULL;
-	struct sshbuf *server_pubkey = NULL;
-	struct sshbuf *client_pubkey = NULL;
-	struct sshbuf *server_host_key_blob = NULL;
-	u_char *signature = NULL, hash[SSH_DIGEST_MAX_LENGTH];
+	ساختار kex *kex = ssh->kex;
+	ساختار sshkey *server_host_private, *server_host_public;
+	ساختار sshbuf *shared_secret = پوچ;
+	ساختار sshbuf *server_pubkey = پوچ;
+	ساختار sshbuf *client_pubkey = پوچ;
+	ساختار sshbuf *server_host_کلید_blob = پوچ;
+	u_char *signature = پوچ, hash[SSH_DIGEST_MAX_LENGTH];
 	size_t slen, hashlen;
-	int r;
+	صحیح r;
 
 	debug("SSH2_MSG_KEX_ECDH_INIT received");
-	ssh_dispatch_set(ssh, SSH2_MSG_KEX_ECDH_INIT, &kex_protocol_error);
+	ssh_dispatch_set(ssh, SSH2_پیام_KEX_ECDH_INIT, &kex_protocol_error);
 
-	if ((r = kex_load_hostkey(ssh, &server_host_private,
+	اگر ((r = kex_load_hostkey(ssh, &server_host_private,
 	    &server_host_public)) != 0)
-		goto out;
+		برو out;
 
-	if ((r = sshpkt_getb_froms(ssh, &client_pubkey)) != 0 ||
+	اگر ((r = sshpkt_getb_froms(ssh, &client_pubkey)) != 0 ||
 	    (r = sshpkt_get_end(ssh)) != 0)
-		goto out;
+		برو out;
 
 	/* compute shared secret */
-	switch (kex->kex_type) {
+	انتخاب (kex->kex_type) {
 #ifdef WITH_OPENSSL
-	case KEX_DH_GRP1_SHA1:
-	case KEX_DH_GRP14_SHA1:
-	case KEX_DH_GRP14_SHA256:
-	case KEX_DH_GRP16_SHA512:
-	case KEX_DH_GRP18_SHA512:
+	حالت KEX_DH_GRP1_SHA1:
+	حالت KEX_DH_GRP14_SHA1:
+	حالت KEX_DH_GRP14_SHA256:
+	حالت KEX_DH_GRP16_SHA512:
+	حالت KEX_DH_GRP18_SHA512:
 		r = kex_dh_enc(kex, client_pubkey, &server_pubkey,
 		    &shared_secret);
-		break;
-	case KEX_ECDH_SHA2:
+		بشکن;
+	حالت KEX_ECDH_SHA2:
 		r = kex_ecdh_enc(kex, client_pubkey, &server_pubkey,
 		    &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768ECDH_SHA256:
+		بشکن;
+	حالت KEX_KEM_MLKEM768ECDH_SHA256:
 		r = kex_kem_mlkem768ecdh_enc(kex, client_pubkey,
 		    &server_pubkey, &shared_secret);
-		break;
+		بشکن;
 #endif /* WITH_OPENSSL */
-	case KEX_C25519_SHA256:
+	حالت KEX_C25519_SHA256:
 		r = kex_c25519_enc(kex, client_pubkey, &server_pubkey,
 		    &shared_secret);
-		break;
-	case KEX_KEM_SNTRUP761X25519_SHA512:
+		بشکن;
+	حالت KEX_KEM_SNTRUP761X25519_SHA512:
 		r = kex_kem_sntrup761x25519_enc(kex, client_pubkey,
 		    &server_pubkey, &shared_secret);
-		break;
-	case KEX_KEM_MLKEM768X25519_SHA256:
+		بشکن;
+	حالت KEX_KEM_MLKEM768X25519_SHA256:
 		r = kex_kem_mlkem768x25519_enc(kex, client_pubkey,
 		    &server_pubkey, &shared_secret);
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		r = SSH_ERR_INVALID_ARGUMENT;
-		break;
+		بشکن;
 	}
-	if (r !=0 )
-		goto out;
+	اگر (r !=0 )
+		برو out;
 
 	/* calc H */
-	if ((server_host_key_blob = sshbuf_new()) == NULL) {
+	اگر ((server_host_کلید_blob = sshbuf_new()) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((r = sshkey_putb(server_host_public, server_host_key_blob)) != 0)
-		goto out;
-	hashlen = sizeof(hash);
-	if ((r = kex_gen_hash(
+	اگر ((r = sshkey_putb(server_host_public, server_host_کلید_blob)) != 0)
+		برو out;
+	hashlen = اندازه(hash);
+	اگر ((r = kex_gen_hash(
 	    kex->hash_alg,
 	    kex->client_version,
 	    kex->server_version,
 	    kex->peer,
 	    kex->my,
-	    server_host_key_blob,
+	    server_host_کلید_blob,
 	    client_pubkey,
 	    server_pubkey,
 	    shared_secret,
 	    hash, &hashlen)) != 0)
-		goto out;
+		برو out;
 
 	/* sign H */
-	if ((r = kex->sign(ssh, server_host_private, server_host_public,
+	اگر ((r = kex->sign(ssh, server_host_private, server_host_public,
 	    &signature, &slen, hash, hashlen, kex->hostkey_alg)) != 0)
-		goto out;
+		برو out;
 
 	/* send server hostkey, ECDH pubkey 'Q_S' and signed H */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_KEX_ECDH_REPLY)) != 0 ||
-	    (r = sshpkt_put_stringb(ssh, server_host_key_blob)) != 0 ||
+	اگر ((r = sshpkt_start(ssh, SSH2_پیام_KEX_ECDH_REPLY)) != 0 ||
+	    (r = sshpkt_put_stringb(ssh, server_host_کلید_blob)) != 0 ||
 	    (r = sshpkt_put_stringb(ssh, server_pubkey)) != 0 ||
 	    (r = sshpkt_put_string(ssh, signature, slen)) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0)
-		goto out;
+		برو out;
 
-	if ((r = kex_derive_keys(ssh, hash, hashlen, shared_secret)) != 0 ||
+	اگر ((r = kex_derive_کلیدها(ssh, hash, hashlen, shared_secret)) != 0 ||
 	    (r = kex_send_newkeys(ssh)) != 0)
-		goto out;
+		برو out;
 	/* retain copy of hostkey used at initial KEX */
-	if (kex->initial_hostkey == NULL &&
+	اگر (kex->initial_hostkey == پوچ &&
 	    (r = sshkey_from_private(server_host_public,
 	    &kex->initial_hostkey)) != 0)
-		goto out;
+		برو out;
 	/* success */
 out:
-	explicit_bzero(hash, sizeof(hash));
-	sshbuf_free(server_host_key_blob);
-	free(signature);
+	explicit_bzero(hash, اندازه(hash));
+	sshbuf_free(server_host_کلید_blob);
+	آزاد(signature);
 	sshbuf_free(shared_secret);
 	sshbuf_free(client_pubkey);
 	sshbuf_free(server_pubkey);
-	return r;
+	بازگشت r;
 }

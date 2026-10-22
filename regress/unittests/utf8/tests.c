@@ -6,61 +6,61 @@
  * and placed in the public domain.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <locale.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
+#شامل <locale.h>
+#شامل <stdarg.h>
+#شامل <string.h>
+#شامل <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-#include "utf8.h"
+#شامل "utf8.h"
 
-static void
-badarg(void)
+ایستا تهی
+badarg(تهی)
 {
-	char	 buf[16];
-	int	 len, width;
+	نویسه	 buf[16];
+	صحیح	 len, width;
 
 	width = 1;
 	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	len = snmprintf(buf, اندازه(buf), &width, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
 	ASSERT_INT_EQ(width, 0);
 	TEST_DONE();
 }
 
-static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+ایستا تهی
+one(صحیح utf8, ثابت نویسه *name, ثابت نویسه *mbs, صحیح width,
+    صحیح wantwidth, صحیح wantlen, ثابت نویسه *wants)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	نویسه	 buf[16];
+	صحیح	*wp;
+	صحیح	 len;
 
-	if (wantlen == -2)
+	اگر (wantlen == -2)
 		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
+	(تهی)strlcpy(buf, utf8 ? "utf8_" : "c_", اندازه(buf));
+	(تهی)strlcat(buf, name, اندازه(buf));
 	TEST_START(buf);
-	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	wp = wantwidth == -2 ? پوچ : &width;
+	len = snmprintf(buf, اندازه(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
 	ASSERT_STRING_EQ(buf, wants);
 	ASSERT_INT_EQ(width, wantwidth);
 	TEST_DONE();
 }
 
-void
-tests(void)
+تهی
+tests(تهی)
 {
-	char	*loc;
+	نویسه	*loc;
 
 	TEST_START("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, پوچ);
 	TEST_DONE();
 
 	badarg();
@@ -82,7 +82,7 @@ tests(void)
 
 	TEST_START("C_setlocale");
 	loc = setlocale(LC_CTYPE, "C");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, پوچ);
 	TEST_DONE();
 
 	badarg();
@@ -103,8 +103,8 @@ tests(void)
 	one(0, "double_spc", "a\343\201\201", 13, 13, 13, "a\\343\\201\\201");
 }
 
-void
-benchmarks(void)
+تهی
+benchmarks(تهی)
 {
 	printf("no benchmarks\n");
 }

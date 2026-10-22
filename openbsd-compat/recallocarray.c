@@ -17,41 +17,41 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdlib/recallocarray.c */
 
-#include "includes.h"
+#شامل "includes.h"
 #ifndef HAVE_RECALLOCARRAY
 
-#include <errno.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <errno.h>
+#شامل <stdlib.h>
+#شامل <stdint.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
 /*
  * This is sqrt(SIZE_MAX+1), as s1*s2 <= SIZE_MAX
  * if both s1 < MUL_NO_OVERFLOW and s2 < MUL_NO_OVERFLOW
  */
-#define MUL_NO_OVERFLOW ((size_t)1 << (sizeof(size_t) * 4))
+#define MUL_NO_OVERFLOW ((size_t)1 << (اندازه(size_t) * 4))
 
-void *
-recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
+تهی *
+recallocarray(تهی *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
 {
 	size_t oldsize, newsize;
-	void *newptr;
+	تهی *newptr;
 
-	if (ptr == NULL)
-		return calloc(newnmemb, size);
+	اگر (ptr == پوچ)
+		بازگشت calloc(newnmemb, size);
 
-	if ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+	اگر ((newnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    newnmemb > 0 && SIZE_MAX / newnmemb < size) {
 		errno = ENOMEM;
-		return NULL;
+		بازگشت پوچ;
 	}
 	newsize = newnmemb * size;
 
-	if ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
+	اگر ((oldnmemb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
 	    oldnmemb > 0 && SIZE_MAX / oldnmemb < size) {
 		errno = EINVAL;
-		return NULL;
+		بازگشت پوچ;
 	}
 	oldsize = oldnmemb * size;
 	
@@ -59,29 +59,29 @@ recallocarray(void *ptr, size_t oldnmemb, size_t newnmemb, size_t size)
 	 * Don't bother too much if we're shrinking just a bit,
 	 * we do not shrink for series of small steps, oh well.
 	 */
-	if (newsize <= oldsize) {
+	اگر (newsize <= oldsize) {
 		size_t d = oldsize - newsize;
 
-		if (d < oldsize / 2 && d < (size_t)getpagesize()) {
-			memset((char *)ptr + newsize, 0, d);
-			return ptr;
+		اگر (d < oldsize / 2 && d < (size_t)getpagesize()) {
+			memset((نویسه *)ptr + newsize, 0, d);
+			بازگشت ptr;
 		}
 	}
 
 	newptr = malloc(newsize);
-	if (newptr == NULL)
-		return NULL;
+	اگر (newptr == پوچ)
+		بازگشت پوچ;
 
-	if (newsize > oldsize) {
+	اگر (newsize > oldsize) {
 		memcpy(newptr, ptr, oldsize);
-		memset((char *)newptr + oldsize, 0, newsize - oldsize);
-	} else
+		memset((نویسه *)newptr + oldsize, 0, newsize - oldsize);
+	} وگرنه
 		memcpy(newptr, ptr, newsize);
 
 	explicit_bzero(ptr, oldsize);
-	free(ptr);
+	آزاد(ptr);
 
-	return newptr;
+	بازگشت newptr;
 }
 /* DEF_WEAK(recallocarray); */
 

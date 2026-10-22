@@ -25,37 +25,37 @@
  * Red Hat author: Jan F. Chadima <jchadima@redhat.com>
  */
 
-#include "includes.h"
-#if defined(USE_LINUX_AUDIT)
-#include <libaudit.h>
-#include <unistd.h>
-#include <string.h>
+#شامل "includes.h"
+#اگر defined(USE_LINUX_AUDIT)
+#شامل <libaudit.h>
+#شامل <unistd.h>
+#شامل <string.h>
 
-#include "log.h"
-#include "audit.h"
-#include "canohost.h"
-#include "packet.h"
+#شامل "log.h"
+#شامل "audit.h"
+#شامل "canohost.h"
+#شامل "packet.h"
 
-const char *audit_username(void);
+ثابت نویسه *audit_username(تهی);
 
-int
-linux_audit_record_event(int uid, const char *username, const char *hostname,
-    const char *ip, const char *ttyn, int success)
+صحیح
+linux_audit_record_event(صحیح uid, ثابت نویسه *username, ثابت نویسه *hostname,
+    ثابت نویسه *ip, ثابت نویسه *ttyn, صحیح success)
 {
-	int audit_fd, rc, saved_errno;
+	صحیح audit_fd, rc, saved_errno;
 
-	if ((audit_fd = audit_open()) < 0) {
-		if (errno == EINVAL || errno == EPROTONOSUPPORT ||
+	اگر ((audit_fd = audit_open()) < 0) {
+		اگر (errno == EINVAL || errno == EPROTONOSUPPORT ||
 		    errno == EAFNOSUPPORT)
-			return 1; /* No audit support in kernel */
-		else
-			return 0; /* Must prevent login */
+			بازگشت 1; /* No audit support in kernel */
+		وگرنه
+			بازگشت 0; /* Must prevent login */
 	}
-        if (hostname != NULL && strcmp(hostname, "UNKNOWN") == 0)
-                hostname = NULL;
+        اگر (hostname != پوچ && strcmp(hostname, "UNKNOWN") == 0)
+                hostname = پوچ;
 	rc = audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
-	    NULL, "login", username ? username : "(unknown)",
-	    username == NULL ? uid : -1, hostname, ip, ttyn, success);
+	    پوچ, "login", username ? username : "(unknown)",
+	    username == پوچ ? uid : -1, hostname, ip, ttyn, success);
 	saved_errno = errno;
 	close(audit_fd);
 
@@ -63,64 +63,64 @@ linux_audit_record_event(int uid, const char *username, const char *hostname,
 	 * Do not report error if the error is EPERM and sshd is run as non
 	 * root user.
 	 */
-	if ((rc == -EPERM) && (geteuid() != 0))
+	اگر ((rc == -EPERM) && (geteuid() != 0))
 		rc = 0;
 	errno = saved_errno;
 
-	return rc >= 0;
+	بازگشت rc >= 0;
 }
 
 /* Below is the sshd audit API code */
 
-void
-audit_connection_from(const char *host, int port)
+تهی
+audit_connection_from(ثابت نویسه *host, صحیح port)
 {
 	/* not implemented */
 }
 
-void
-audit_run_command(const char *command)
+تهی
+audit_run_command(ثابت نویسه *command)
 {
 	/* not implemented */
 }
 
-void
-audit_session_open(struct logininfo *li)
+تهی
+audit_session_open(ساختار logininfo *li)
 {
-	if (linux_audit_record_event(li->uid, NULL, li->hostname, NULL,
-	    li->line, 1) == 0)
+	اگر (linux_audit_record_event(li->uid, پوچ, li->hostname, پوچ,
+	    li->سطر, 1) == 0)
 		fatal("linux_audit_write_entry failed: %s", strerror(errno));
 }
 
-void
-audit_session_close(struct logininfo *li)
+تهی
+audit_session_close(ساختار logininfo *li)
 {
 	/* not implemented */
 }
 
-void
-audit_event(struct ssh *ssh, ssh_audit_event_t event)
+تهی
+audit_event(ساختار ssh *ssh, ssh_audit_event_t event)
 {
-	switch(event) {
-	case SSH_AUTH_SUCCESS:
-	case SSH_CONNECTION_CLOSE:
-	case SSH_NOLOGIN:
-	case SSH_LOGIN_EXCEED_MAXTRIES:
-	case SSH_LOGIN_ROOT_DENIED:
-		break;
-	case SSH_AUTH_FAIL_NONE:
-	case SSH_AUTH_FAIL_PASSWD:
-	case SSH_AUTH_FAIL_KBDINT:
-	case SSH_AUTH_FAIL_PUBKEY:
-	case SSH_AUTH_FAIL_HOSTBASED:
-	case SSH_AUTH_FAIL_GSSAPI:
-	case SSH_INVALID_USER:
-		linux_audit_record_event(-1, audit_username(), NULL,
+	انتخاب(event) {
+	حالت SSH_AUTH_SUCCESS:
+	حالت SSH_CONNECTION_CLOSE:
+	حالت SSH_NOLOGIN:
+	حالت SSH_LOGIN_EXCEED_MAXTRIES:
+	حالت SSH_LOGIN_ریشه_DENIED:
+		بشکن;
+	حالت SSH_AUTH_FAIL_NONE:
+	حالت SSH_AUTH_FAIL_PASSWD:
+	حالت SSH_AUTH_FAIL_KBDINT:
+	حالت SSH_AUTH_FAIL_PUBKEY:
+	حالت SSH_AUTH_FAIL_HOSTBASED:
+	حالت SSH_AUTH_FAIL_GSSAPI:
+	حالت SSH_INVALID_USER:
+		linux_audit_record_event(-1, audit_username(), پوچ,
 		    ssh_remote_ipaddr(ssh), "sshd", 0);
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		debug_f("unhandled event %d", event);
-		break;
+		بشکن;
 	}
 }
 #endif /* USE_LINUX_AUDIT */

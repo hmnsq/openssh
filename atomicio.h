@@ -29,25 +29,25 @@
 #ifndef _ATOMICIO_H
 #define _ATOMICIO_H
 
-struct iovec;
+ساختار iovec;
 
 /*
  * Ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *);
-size_t	atomicio(ssize_t (*)(int, void *, size_t), int, void *, size_t);
+atomicio6(ssize_t (*f) (صحیح, تهی *, size_t), صحیح fd, تهی *_s, size_t n,
+    صحیح (*cb)(تهی *, size_t), تهی *);
+size_t	atomicio(ssize_t (*)(صحیح, تهی *, size_t), صحیح, تهی *, size_t);
 
-#define vwrite (ssize_t (*)(int, void *, size_t))write
+#define vwrite (ssize_t (*)(صحیح, تهی *, size_t))اكتب
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt, int (*cb)(void *, size_t), void *);
-size_t	atomiciov(ssize_t (*)(int, const struct iovec *, int),
-    int, const struct iovec *, int);
+atomiciov6(ssize_t (*f) (صحیح, ثابت ساختار iovec *, صحیح), صحیح fd,
+    ثابت ساختار iovec *_iov, صحیح iovcnt, صحیح (*cb)(تهی *, size_t), تهی *);
+size_t	atomiciov(ssize_t (*)(صحیح, ثابت ساختار iovec *, صحیح),
+    صحیح, ثابت ساختار iovec *, صحیح);
 
 #endif /* _ATOMICIO_H */

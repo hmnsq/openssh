@@ -20,90 +20,90 @@
 #ifndef _TEST_HELPER_H
 #define _TEST_HELPER_H
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdint.h>
+#شامل <sys/types.h>
+#شامل <stdint.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/err.h>
+#شامل <openssl/bn.h>
+#شامل <openssl/err.h>
 #endif
 
-enum test_predicate {
+شمارش test_predicate {
 	TEST_EQ, TEST_NE, TEST_LT, TEST_LE, TEST_GT, TEST_GE
 };
-typedef void (test_onerror_func_t)(void *);
+تعریفنوع تهی (test_onerror_func_t)(تهی *);
 
 /* Supplied by test suite */
-void tests(void);
-void benchmarks(void);
+تهی tests(تهی);
+تهی benchmarks(تهی);
 
-void hex2bin(uint8_t *, const char *, size_t);
+تهی hex2bin(uint8_t *, ثابت نویسه *, size_t);
 
-const char *test_data_file(const char *name);
-void test_start(const char *n);
-void test_info(char *s, size_t len);
-void set_onerror_func(test_onerror_func_t *f, void *ctx);
-void test_done(void);
-int test_is_verbose(void);
-int test_is_quiet(void);
-int test_is_fast(void);
-int test_is_slow(void);
-int test_is_benchmark(void);
-void test_subtest_info(const char *fmt, ...)
+ثابت نویسه *test_data_file(ثابت نویسه *name);
+تهی test_start(ثابت نویسه *n);
+تهی test_info(نویسه *s, size_t len);
+تهی set_onerror_func(test_onerror_func_t *f, تهی *ctx);
+تهی test_done(تهی);
+صحیح test_is_verbose(تهی);
+صحیح test_is_quiet(تهی);
+صحیح test_is_fast(تهی);
+صحیح test_is_slow(تهی);
+صحیح test_is_benchmark(تهی);
+تهی test_subtest_info(ثابت نویسه *fmt, ...)
     __attribute__((format(printf, 1, 2)));
-void ssl_err_check(const char *file, int line);
+تهی ssl_err_check(ثابت نویسه *file, صحیح سطر);
 #ifdef WITH_OPENSSL
-void assert_bignum(const char *file, int line,
-    const char *a1, const char *a2,
-    const BIGNUM *aa1, const BIGNUM *aa2, enum test_predicate pred);
+تهی assert_bignum(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    ثابت BIGNUM *aa1, ثابت BIGNUM *aa2, شمارش test_predicate pred);
 #endif
-void assert_string(const char *file, int line,
-    const char *a1, const char *a2,
-    const char *aa1, const char *aa2, enum test_predicate pred);
-void assert_mem(const char *file, int line,
-    const char *a1, const char *a2,
-    const void *aa1, const void *aa2, size_t l, enum test_predicate pred);
-void assert_mem_filled(const char *file, int line,
-    const char *a1,
-    const void *aa1, u_char v, size_t l, enum test_predicate pred);
-void assert_int(const char *file, int line,
-    const char *a1, const char *a2,
-    int aa1, int aa2, enum test_predicate pred);
-void assert_size_t(const char *file, int line,
-    const char *a1, const char *a2,
-    size_t aa1, size_t aa2, enum test_predicate pred);
-void assert_u_int(const char *file, int line,
-    const char *a1, const char *a2,
-    u_int aa1, u_int aa2, enum test_predicate pred);
-void assert_long(const char *file, int line,
-    const char *a1, const char *a2,
-    long aa1, long aa2, enum test_predicate pred);
-void assert_long_long(const char *file, int line,
-    const char *a1, const char *a2,
-    long long aa1, long long aa2, enum test_predicate pred);
-void assert_char(const char *file, int line,
-    const char *a1, const char *a2,
-    char aa1, char aa2, enum test_predicate pred);
-void assert_ptr(const char *file, int line,
-    const char *a1, const char *a2,
-    const void *aa1, const void *aa2, enum test_predicate pred);
-void assert_u8(const char *file, int line,
-    const char *a1, const char *a2,
-    uint8_t aa1, uint8_t aa2, enum test_predicate pred);
-void assert_u16(const char *file, int line,
-    const char *a1, const char *a2,
-    uint16_t aa1, uint16_t aa2, enum test_predicate pred);
-void assert_u32(const char *file, int line,
-    const char *a1, const char *a2,
-    uint32_t aa1, uint32_t aa2, enum test_predicate pred);
-void assert_u64(const char *file, int line,
-    const char *a1, const char *a2,
-    uint64_t aa1, uint64_t aa2, enum test_predicate pred);
-void assert_double(const char *file, int line,
-    const char *a1, const char *a2,
-    double aa1, double aa2, enum test_predicate pred);
+تهی assert_string(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    ثابت نویسه *aa1, ثابت نویسه *aa2, شمارش test_predicate pred);
+تهی assert_mem(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    ثابت تهی *aa1, ثابت تهی *aa2, size_t l, شمارش test_predicate pred);
+تهی assert_mem_filled(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1,
+    ثابت تهی *aa1, u_char v, size_t l, شمارش test_predicate pred);
+تهی assert_int(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    صحیح aa1, صحیح aa2, شمارش test_predicate pred);
+تهی assert_size_t(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    size_t aa1, size_t aa2, شمارش test_predicate pred);
+تهی assert_u_int(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    u_int aa1, u_int aa2, شمارش test_predicate pred);
+تهی assert_long(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    long aa1, long aa2, شمارش test_predicate pred);
+تهی assert_long_long(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    long long aa1, long long aa2, شمارش test_predicate pred);
+تهی assert_char(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    نویسه aa1, نویسه aa2, شمارش test_predicate pred);
+تهی assert_ptr(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    ثابت تهی *aa1, ثابت تهی *aa2, شمارش test_predicate pred);
+تهی assert_u8(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    uint8_t aa1, uint8_t aa2, شمارش test_predicate pred);
+تهی assert_u16(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    uint16_t aa1, uint16_t aa2, شمارش test_predicate pred);
+تهی assert_u32(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    uint32_t aa1, uint32_t aa2, شمارش test_predicate pred);
+تهی assert_u64(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    uint64_t aa1, uint64_t aa2, شمارش test_predicate pred);
+تهی assert_double(ثابت نویسه *file, صحیح سطر,
+    ثابت نویسه *a1, ثابت نویسه *a2,
+    دوگانه aa1, دوگانه aa2, شمارش test_predicate pred);
 
 #define TEST_START(n)			test_start(n)
 #define TEST_DONE()			test_done()
@@ -305,27 +305,27 @@ void assert_double(const char *file, int line,
 
 /* Benchmarking support */
 #define BENCH_START(name)	\
-	do { \
+	انجامبده { \
 		bench_start(__FILE__, __LINE__, name); \
-		while (!bench_done()) { \
+		وقتی (!bench_done()) { \
 			bench_case_start(__FILE__, __LINE__); \
-			do {
+			انجامبده {
 #define BENCH_FINISH(unit) \
-			} while (0); \
+			} وقتی (0); \
 			bench_case_finish(__FILE__, __LINE__); \
 		} \
 		bench_finish(__FILE__, __LINE__, unit); \
-	} while (0)
+	} وقتی (0)
 
-void bench_start(const char *file, int line, const char *name);
-void bench_case_start(const char *file, int line);
-void bench_case_finish(const char *file, int line);
-void bench_finish(const char *file, int line, const char *unit);
-int bench_done(void);
+تهی bench_start(ثابت نویسه *file, صحیح سطر, ثابت نویسه *name);
+تهی bench_case_start(ثابت نویسه *file, صحیح سطر);
+تهی bench_case_finish(ثابت نویسه *file, صحیح سطر);
+تهی bench_finish(ثابت نویسه *file, صحیح سطر, ثابت نویسه *unit);
+صحیح bench_done(تهی);
 
 /* Fuzzing support */
 
-struct fuzz;
+ساختار fuzz;
 #define FUZZ_1_BIT_FLIP		0x00000001	/* Flip one bit at a time */
 #define FUZZ_2_BIT_FLIP		0x00000002	/* Flip two bits at a time */
 #define FUZZ_1_BYTE_FLIP	0x00000004	/* Flip one byte at a time */
@@ -336,29 +336,29 @@ struct fuzz;
 #define FUZZ_MAX		FUZZ_BASE64
 
 /* Start fuzzing a blob of data with selected strategies (bitmask) */
-struct fuzz *fuzz_begin(u_int strategies, const void *p, size_t l);
+ساختار fuzz *fuzz_begin(u_int strategies, ثابت تهی *p, size_t l);
 
 /* Free a fuzz context */
-void fuzz_cleanup(struct fuzz *fuzz);
+تهی fuzz_cleanup(ساختار fuzz *fuzz);
 
 /* Prepare the next fuzz case in the series */
-void fuzz_next(struct fuzz *fuzz);
+تهی fuzz_next(ساختار fuzz *fuzz);
 
 /*
  * Check whether this fuzz case is identical to the original
  * This is slow, but useful if the caller needs to ensure that all tests
  * generated change the input (e.g. when fuzzing signatures).
  */
-int fuzz_matches_original(struct fuzz *fuzz);
+صحیح fuzz_matches_original(ساختار fuzz *fuzz);
 
 /* Determine whether the current fuzz sequence is exhausted (nonzero = yes) */
-int fuzz_done(struct fuzz *fuzz);
+صحیح fuzz_done(ساختار fuzz *fuzz);
 
 /* Return the length and a pointer to the current fuzzed case */
-size_t fuzz_len(struct fuzz *fuzz);
-u_char *fuzz_ptr(struct fuzz *fuzz);
+size_t fuzz_len(ساختار fuzz *fuzz);
+u_char *fuzz_ptr(ساختار fuzz *fuzz);
 
 /* Dump the current fuzz case to stderr */
-void fuzz_dump(struct fuzz *fuzz);
+تهی fuzz_dump(ساختار fuzz *fuzz);
 
 #endif /* _TEST_HELPER_H */

@@ -29,42 +29,42 @@
 #define SSH_DIGEST_SHA512	4
 #define SSH_DIGEST_MAX		5
 
-struct sshbuf;
-struct ssh_digest_ctx;
+ساختار sshbuf;
+ساختار ssh_digest_ctx;
 
 /* Looks up a digest algorithm by name */
-int ssh_digest_alg_by_name(const char *name);
+صحیح ssh_digest_alg_by_name(ثابت نویسه *name);
 
 /* Returns the algorithm name for a digest identifier */
-const char *ssh_digest_alg_name(int alg);
+ثابت نویسه *ssh_digest_alg_name(صحیح alg);
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_digest_bytes(int alg);
+size_t ssh_digest_bytes(صحیح alg);
 
 /* Returns the block size of the digest, e.g. for implementing HMAC */
-size_t ssh_digest_blocksize(struct ssh_digest_ctx *ctx);
+size_t ssh_digest_blocksize(ساختار ssh_digest_ctx *ctx);
 
 /* Copies internal state of digest of 'from' to 'to' */
-int ssh_digest_copy_state(struct ssh_digest_ctx *from,
-    struct ssh_digest_ctx *to);
+صحیح ssh_digest_copy_state(ساختار ssh_digest_ctx *from,
+    ساختار ssh_digest_ctx *to);
 
 /* One-shot API */
-int ssh_digest_memory(int alg, const void *m, size_t mlen,
+صحیح ssh_digest_memory(صحیح alg, ثابت تهی *m, size_t mlen,
     u_char *d, size_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)))
 	__attribute__((__bounded__(__buffer__, 4, 5)));
-int ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+صحیح ssh_digest_buffer(صحیح alg, ثابت ساختار sshbuf *b, u_char *d, size_t dlen)
 	__attribute__((__bounded__(__buffer__, 3, 4)));
 
 /* Update API */
-struct ssh_digest_ctx *ssh_digest_start(int alg);
-int ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+ساختار ssh_digest_ctx *ssh_digest_start(صحیح alg);
+صحیح ssh_digest_update(ساختار ssh_digest_ctx *ctx, ثابت تهی *m, size_t mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_digest_update_buffer(struct ssh_digest_ctx *ctx,
-    const struct sshbuf *b);
-int ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+صحیح ssh_digest_update_buffer(ساختار ssh_digest_ctx *ctx,
+    ثابت ساختار sshbuf *b);
+صحیح ssh_digest_final(ساختار ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_digest_free(struct ssh_digest_ctx *ctx);
+تهی ssh_digest_free(ساختار ssh_digest_ctx *ctx);
 
 #endif /* _DIGEST_H */
 

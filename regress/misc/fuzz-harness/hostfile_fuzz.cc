@@ -10,60 +10,60 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stdio.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <stdio.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-extern "C" {
+بیرونی "C" {
 
-#include "hostfile.h"
-#include "sshkey.h"
-#include "log.h"
+#شامل "hostfile.h"
+#شامل "sshkey.h"
+#شامل "log.h"
 
-static int log_initialized = 0;
+ایستا صحیح log_initialized = 0;
 
-static int
-noop_cb(struct hostkey_foreach_line *l, void *ctx)
+ایستا صحیح
+noop_cb(ساختار hostkey_foreach_سطر *l, تهی *ctx)
 {
-	(void)l; (void)ctx;
-	return 0;
+	(تهی)l; (تهی)ctx;
+	بازگشت 0;
 }
 
-int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+صحیح
+LLVMFuzzer_Test_One_درون_داد(ثابت uint8_t *data, size_t size)
 {
-	if (!log_initialized) {
+	اگر (!log_initialized) {
 		log_init("hostfile_fuzz", SYSLOG_LEVEL_QUIET,
 		    SYSLOG_FACILITY_AUTH, 0);
 		log_initialized = 1;
 	}
 
 	/* Drive every HKF_WANT_* combination on each input. */
-	static const u_int flag_combos[] = {
+	ایستا ثابت u_int flag_combos[] = {
 		0,
 		HKF_WANT_MATCH,
-		HKF_WANT_PARSE_KEY,
-		HKF_WANT_MATCH | HKF_WANT_PARSE_KEY,
+		HKF_WANT_PARSE_کلید,
+		HKF_WANT_MATCH | HKF_WANT_PARSE_کلید,
 	};
-	for (size_t i = 0; i < sizeof(flag_combos)/sizeof(flag_combos[0]); i++) {
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f == NULL)
-			continue;
-		const char *host = (flag_combos[i] & HKF_WANT_MATCH) ?
-		    "example.com" : NULL;
-		(void)hostkeys_foreach_file("/fuzz", f, noop_cb, NULL,
+	برای (size_t i = 0; i < اندازه(flag_combos)/اندازه(flag_combos[0]); i++) {
+		FILE *f = fmemopen((تهی *)data, size, "r");
+		اگر (f == پوچ)
+			ادامه;
+		ثابت نویسه *host = (flag_combos[i] & HKF_WANT_MATCH) ?
+		    "example.com" : پوچ;
+		(تهی)hostkeys_foreach_file("/fuzz", f, noop_cb, پوچ,
 		    host, "127.0.0.1", flag_combos[i], 0);
 		fclose(f);
 	}
 
 	/* Higher-level wrapper that adds record_hostkey on top of foreach. */
 	{
-		FILE *f = fmemopen((void *)data, size, "r");
-		if (f != NULL) {
-			struct hostkeys *hk = init_hostkeys();
-			if (hk != NULL) {
+		FILE *f = fmemopen((تهی *)data, size, "r");
+		اگر (f != پوچ) {
+			ساختار hostkeys *hk = init_hostkeys();
+			اگر (hk != پوچ) {
 				load_hostkeys_file(hk, "example.com",
 				    "/fuzz", f, 0);
 				free_hostkeys(hk);
@@ -73,19 +73,19 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	}
 
 	/* Drive host_hash + extract_salt on a bounded hostname-shaped slice. */
-	if (size > 0) {
+	اگر (size > 0) {
 		size_t n = size < 256 ? size : 256;
-		char *hb = (char *)malloc(n + 1);
-		if (hb != NULL) {
+		نویسه *hb = (نویسه *)malloc(n + 1);
+		اگر (hb != پوچ) {
 			memcpy(hb, data, n);
 			hb[n] = '\0';
-			char *h = host_hash("example.com", hb, 0);
-			free(h);
-			free(hb);
+			نویسه *h = host_hash("example.com", hb, 0);
+			آزاد(h);
+			آزاد(hb);
 		}
 	}
 
-	return 0;
+	بازگشت 0;
 }
 
 } // extern "C"

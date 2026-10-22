@@ -14,24 +14,24 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#if !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
+#اگر !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
+#شامل <sys/types.h>
+#شامل <unistd.h>
+#شامل <stdio.h>
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
 #endif
-#include <limits.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <string.h>
+#شامل <limits.h>
+#شامل <stdlib.h>
+#شامل <stddef.h>
+#شامل <string.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
 # define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
+#وگرنه
 # define dirent direct
 # define NAMLEN(dirent) (dirent)->d_namlen
 # ifdef HAVE_SYS_NDIR_H
@@ -44,7 +44,7 @@
 #  include <ndir.h>
 # endif
 #endif
-#if defined(HAVE_LIBPROC_H)
+#اگر defined(HAVE_LIBPROC_H)
 # include <libproc.h>
 #endif
 
@@ -52,16 +52,16 @@
 # define OPEN_MAX	256
 #endif
 
-#if 0
-__unused static const char rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26:54 millert Exp $";
+#اگر 0
+__unused ایستا ثابت نویسه rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26:54 millert Exp $";
 #endif /* lint */
 
 #ifndef HAVE_FCNTL_CLOSEM
 /*
  * Close all file descriptors greater than or equal to lowfd.
  */
-static void
-closefrom_fallback(int lowfd)
+ایستا تهی
+closefrom_fallback(صحیح lowfd)
 {
 	long fd, maxfd;
 
@@ -72,85 +72,85 @@ closefrom_fallback(int lowfd)
 	 */
 #ifdef HAVE_SYSCONF
 	maxfd = sysconf(_SC_OPEN_MAX);
-#else
+#وگرنه
 	maxfd = getdtablesize();
 #endif /* HAVE_SYSCONF */
-	if (maxfd < 0)
+	اگر (maxfd < 0)
 		maxfd = OPEN_MAX;
 
-	for (fd = lowfd; fd < maxfd; fd++)
-		(void) close((int) fd);
+	برای (fd = lowfd; fd < maxfd; fd++)
+		(تهی) close((صحیح) fd);
 }
 #endif /* HAVE_FCNTL_CLOSEM */
 
 #ifdef HAVE_FCNTL_CLOSEM
-void
-closefrom(int lowfd)
+تهی
+closefrom(صحیح lowfd)
 {
-    (void) fcntl(lowfd, F_CLOSEM, 0);
+    (تهی) fcntl(lowfd, F_CLOSEM, 0);
 }
-#elif defined(HAVE_LIBPROC_H) && defined(HAVE_PROC_PIDINFO)
-void
-closefrom(int lowfd)
+#وگرنهاگر defined(HAVE_LIBPROC_H) && defined(HAVE_PROC_PIDINFO)
+تهی
+closefrom(صحیح lowfd)
 {
-	int i, r, sz;
+	صحیح i, r, sz;
 	pid_t pid = getpid();
-	struct proc_fdinfo *fdinfo_buf = NULL;
+	ساختار proc_fdinfo *fdinfo_buf = پوچ;
 
-	sz = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, NULL, 0);
-	if (sz == 0)
-		return; /* no fds, really? */
-	else if (sz == -1)
-		goto fallback;
-	if ((fdinfo_buf = malloc(sz)) == NULL)
-		goto fallback;
+	sz = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, پوچ, 0);
+	اگر (sz == 0)
+		بازگشت; /* no fds, really? */
+	وگرنه اگر (sz == -1)
+		برو fallback;
+	اگر ((fdinfo_buf = malloc(sz)) == پوچ)
+		برو fallback;
 	r = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, fdinfo_buf, sz);
-	if (r < 0 || r > sz)
-		goto fallback;
-	for (i = 0; i < r / (int)PROC_PIDLISTFD_SIZE; i++) {
-		if (fdinfo_buf[i].proc_fd >= lowfd)
+	اگر (r < 0 || r > sz)
+		برو fallback;
+	برای (i = 0; i < r / (صحیح)PROC_PIDLISTFD_SIZE; i++) {
+		اگر (fdinfo_buf[i].proc_fd >= lowfd)
 			close(fdinfo_buf[i].proc_fd);
 	}
-	free(fdinfo_buf);
-	return;
+	آزاد(fdinfo_buf);
+	بازگشت;
  fallback:
-	free(fdinfo_buf);
+	آزاد(fdinfo_buf);
 	closefrom_fallback(lowfd);
-	return;
+	بازگشت;
 }
-#elif defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
-void
-closefrom(int lowfd)
+#وگرنهاگر defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
+تهی
+closefrom(صحیح lowfd)
 {
     long fd;
-    char fdpath[PATH_MAX], *endp;
-    struct dirent *dent;
+    نویسه fdpath[PATH_MAX], *endp;
+    ساختار dirent *dent;
     DIR *dirp;
-    int len;
+    صحیح len;
 
 #ifdef HAVE_CLOSE_RANGE
-	if (close_range(lowfd, INT_MAX, 0) == 0)
-		return;
+	اگر (close_range(lowfd, INT_MAX, 0) == 0)
+		بازگشت;
 #endif
 
     /* Check for a /proc/$$/fd directory. */
-    len = snprintf(fdpath, sizeof(fdpath), "/proc/%ld/fd", (long)getpid());
-    if (len > 0 && (size_t)len < sizeof(fdpath) && (dirp = opendir(fdpath))) {
-	while ((dent = readdir(dirp)) != NULL) {
+    len = snprintf(fdpath, اندازه(fdpath), "/proc/%ld/fd", (long)getpid());
+    اگر (len > 0 && (size_t)len < اندازه(fdpath) && (dirp = opendir(fdpath))) {
+	وقتی ((dent = readdir(dirp)) != پوچ) {
 	    fd = strtol(dent->d_name, &endp, 10);
-	    if (dent->d_name != endp && *endp == '\0' &&
+	    اگر (dent->d_name != endp && *endp == '\0' &&
 		fd >= 0 && fd < INT_MAX && fd >= lowfd && fd != dirfd(dirp))
-		(void) close((int) fd);
+		(تهی) close((صحیح) fd);
 	}
-	(void) closedir(dirp);
-	return;
+	(تهی) closedir(dirp);
+	بازگشت;
     }
     /* /proc/$$/fd strategy failed, fall back to brute force closure */
     closefrom_fallback(lowfd);
 }
-#else
-void
-closefrom(int lowfd)
+#وگرنه
+تهی
+closefrom(صحیح lowfd)
 {
 	closefrom_fallback(lowfd);
 }

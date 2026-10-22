@@ -36,117 +36,117 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
 
-#include <netinet/in.h>
+#شامل <netinet/in.h>
 
-#include <errno.h>
-#include <resolv.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <errno.h>
+#شامل <resolv.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#include "xmalloc.h"
-#include "match.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "log.h"
-#include "misc.h"
-#include "pathnames.h"
-#include "ssherr.h"
-#include "digest.h"
-#include "hmac.h"
-#include "sshbuf.h"
+#شامل "xmalloc.h"
+#شامل "match.h"
+#شامل "sshkey.h"
+#شامل "hostfile.h"
+#شامل "log.h"
+#شامل "misc.h"
+#شامل "pathnames.h"
+#شامل "ssherr.h"
+#شامل "digest.h"
+#شامل "hmac.h"
+#شامل "sshbuf.h"
 
 /* XXX hmac is too easy to dictionary attack; use bcrypt? */
 
-static int
-extract_salt(const char *s, u_int l, u_char *salt, size_t salt_len)
+ایستا صحیح
+extract_salt(ثابت نویسه *s, u_int l, u_char *salt, size_t salt_len)
 {
-	char *p, *b64salt;
+	نویسه *p, *b64salt;
 	u_int b64len;
-	int ret;
+	صحیح ret;
 
-	if (l < sizeof(HASH_MAGIC) - 1) {
+	اگر (l < اندازه(HASH_MAGIC) - 1) {
 		debug2("extract_salt: string too short");
-		return (-1);
+		بازگشت (-1);
 	}
-	if (strncmp(s, HASH_MAGIC, sizeof(HASH_MAGIC) - 1) != 0) {
+	اگر (strncmp(s, HASH_MAGIC, اندازه(HASH_MAGIC) - 1) != 0) {
 		debug2("extract_salt: invalid magic identifier");
-		return (-1);
+		بازگشت (-1);
 	}
-	s += sizeof(HASH_MAGIC) - 1;
-	l -= sizeof(HASH_MAGIC) - 1;
-	if ((p = memchr(s, HASH_DELIM, l)) == NULL) {
+	s += اندازه(HASH_MAGIC) - 1;
+	l -= اندازه(HASH_MAGIC) - 1;
+	اگر ((p = memchr(s, HASH_DELIM, l)) == پوچ) {
 		debug2("extract_salt: missing salt termination character");
-		return (-1);
+		بازگشت (-1);
 	}
 
 	b64len = p - s;
 	/* Sanity check */
-	if (b64len == 0 || b64len > 1024) {
+	اگر (b64len == 0 || b64len > 1024) {
 		debug2("extract_salt: bad encoded salt length %u", b64len);
-		return (-1);
+		بازگشت (-1);
 	}
 	b64salt = xmalloc(1 + b64len);
 	memcpy(b64salt, s, b64len);
 	b64salt[b64len] = '\0';
 
 	ret = __b64_pton(b64salt, salt, salt_len);
-	free(b64salt);
-	if (ret == -1) {
+	آزاد(b64salt);
+	اگر (ret == -1) {
 		debug2("extract_salt: salt decode error");
-		return (-1);
+		بازگشت (-1);
 	}
-	if (ret != (int)ssh_hmac_bytes(SSH_DIGEST_SHA1)) {
+	اگر (ret != (صحیح)ssh_hmac_bytes(SSH_DIGEST_SHA1)) {
 		debug2("extract_salt: expected salt len %zd, got %d",
 		    ssh_hmac_bytes(SSH_DIGEST_SHA1), ret);
-		return (-1);
+		بازگشت (-1);
 	}
 
-	return (0);
+	بازگشت (0);
 }
 
-char *
-host_hash(const char *host, const char *name_from_hostfile, u_int src_len)
+نویسه *
+host_hash(ثابت نویسه *host, ثابت نویسه *name_from_hostfile, u_int src_len)
 {
-	struct ssh_hmac_ctx *ctx;
+	ساختار ssh_hmac_ctx *ctx;
 	u_char salt[256], result[256];
-	char uu_salt[512], uu_result[512];
-	char *encoded = NULL;
+	نویسه uu_salt[512], uu_result[512];
+	نویسه *encoded = پوچ;
 	u_int len;
 
 	len = ssh_digest_bytes(SSH_DIGEST_SHA1);
 
-	if (name_from_hostfile == NULL) {
+	اگر (name_from_hostfile == پوچ) {
 		/* Create new salt */
 		arc4random_buf(salt, len);
-	} else {
+	} وگرنه {
 		/* Extract salt from known host entry */
-		if (extract_salt(name_from_hostfile, src_len, salt,
-		    sizeof(salt)) == -1)
-			return (NULL);
+		اگر (extract_salt(name_from_hostfile, src_len, salt,
+		    اندازه(salt)) == -1)
+			بازگشت (پوچ);
 	}
 
-	if ((ctx = ssh_hmac_start(SSH_DIGEST_SHA1)) == NULL ||
+	اگر ((ctx = ssh_hmac_start(SSH_DIGEST_SHA1)) == پوچ ||
 	    ssh_hmac_init(ctx, salt, len) < 0 ||
 	    ssh_hmac_update(ctx, host, strlen(host)) < 0 ||
-	    ssh_hmac_final(ctx, result, sizeof(result)))
+	    ssh_hmac_final(ctx, result, اندازه(result)))
 		fatal_f("ssh_hmac failed");
 	ssh_hmac_free(ctx);
 
-	if (__b64_ntop(salt, len, uu_salt, sizeof(uu_salt)) == -1 ||
-	    __b64_ntop(result, len, uu_result, sizeof(uu_result)) == -1)
+	اگر (__b64_ntop(salt, len, uu_salt, اندازه(uu_salt)) == -1 ||
+	    __b64_ntop(result, len, uu_result, اندازه(uu_result)) == -1)
 		fatal_f("__b64_ntop failed");
 	xasprintf(&encoded, "%s%s%c%s", HASH_MAGIC, uu_salt, HASH_DELIM,
 	    uu_result);
 
-	return (encoded);
+	بازگشت (encoded);
 }
 
 /*
@@ -154,181 +154,181 @@ host_hash(const char *host, const char *name_from_hostfile, u_int src_len)
  * Skips any whitespace at the beginning and at end.
  */
 
-int
-hostfile_read_key(char **cpp, u_int *bitsp, struct sshkey *ret)
+صحیح
+hostfile_read_کلید(نویسه **cpp, u_int *bitsp, ساختار sshkey *ret)
 {
-	char *cp;
+	نویسه *cp;
 
 	/* Skip leading whitespace. */
-	for (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
+	برای (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
 		;
 
-	if (sshkey_read(ret, &cp) != 0)
-		return 0;
+	اگر (sshkey_read(ret, &cp) != 0)
+		بازگشت 0;
 
 	/* Skip trailing whitespace. */
-	for (; *cp == ' ' || *cp == '\t'; cp++)
+	برای (; *cp == ' ' || *cp == '\t'; cp++)
 		;
 
 	/* Return results. */
 	*cpp = cp;
-	if (bitsp != NULL)
+	اگر (bitsp != پوچ)
 		*bitsp = sshkey_size(ret);
-	return 1;
+	بازگشت 1;
 }
 
-static HostkeyMarker
-check_markers(char **cpp)
+ایستا HostkeyMarker
+check_markers(نویسه **cpp)
 {
-	char marker[32], *sp, *cp = *cpp;
-	int ret = MRK_NONE;
+	نویسه marker[32], *sp, *cp = *cpp;
+	صحیح ret = MRK_NONE;
 
-	while (*cp == '@') {
+	وقتی (*cp == '@') {
 		/* Only one marker is allowed */
-		if (ret != MRK_NONE)
-			return MRK_ERROR;
+		اگر (ret != MRK_NONE)
+			بازگشت MRK_ERROR;
 		/* Markers are terminated by whitespace */
-		if ((sp = strchr(cp, ' ')) == NULL &&
-		    (sp = strchr(cp, '\t')) == NULL)
-			return MRK_ERROR;
+		اگر ((sp = strchr(cp, ' ')) == پوچ &&
+		    (sp = strchr(cp, '\t')) == پوچ)
+			بازگشت MRK_ERROR;
 		/* Extract marker for comparison */
-		if (sp <= cp + 1 || sp >= cp + sizeof(marker))
-			return MRK_ERROR;
+		اگر (sp <= cp + 1 || sp >= cp + اندازه(marker))
+			بازگشت MRK_ERROR;
 		memcpy(marker, cp, sp - cp);
 		marker[sp - cp] = '\0';
-		if (strcmp(marker, CA_MARKER) == 0)
+		اگر (strcmp(marker, CA_MARKER) == 0)
 			ret = MRK_CA;
-		else if (strcmp(marker, REVOKE_MARKER) == 0)
+		وگرنه اگر (strcmp(marker, REVOKE_MARKER) == 0)
 			ret = MRK_REVOKE;
-		else
-			return MRK_ERROR;
+		وگرنه
+			بازگشت MRK_ERROR;
 
 		/* Skip past marker and any whitespace that follows it */
 		cp = sp;
-		for (; *cp == ' ' || *cp == '\t'; cp++)
+		برای (; *cp == ' ' || *cp == '\t'; cp++)
 			;
 	}
 	*cpp = cp;
-	return ret;
+	بازگشت ret;
 }
 
-struct hostkeys *
-init_hostkeys(void)
+ساختار hostkeys *
+init_hostkeys(تهی)
 {
-	struct hostkeys *ret = xcalloc(1, sizeof(*ret));
+	ساختار hostkeys *ret = xcalloc(1, اندازه(*ret));
 
-	ret->entries = NULL;
-	return ret;
+	ret->entries = پوچ;
+	بازگشت ret;
 }
 
-struct load_callback_ctx {
-	const char *host;
-	u_long num_loaded;
-	struct hostkeys *hostkeys;
+ساختار load_callback_ctx {
+	ثابت نویسه *host;
+	u_long رقم_loaded;
+	ساختار hostkeys *hostkeys;
 };
 
-static int
-record_hostkey(struct hostkey_foreach_line *l, void *_ctx)
+ایستا صحیح
+record_hostkey(ساختار hostkey_foreach_سطر *l, تهی *_ctx)
 {
-	struct load_callback_ctx *ctx = (struct load_callback_ctx *)_ctx;
-	struct hostkeys *hostkeys = ctx->hostkeys;
-	struct hostkey_entry *tmp;
+	ساختار load_callback_ctx *ctx = (ساختار load_callback_ctx *)_ctx;
+	ساختار hostkeys *hostkeys = ctx->hostkeys;
+	ساختار hostkey_entry *tmp;
 
-	if (l->status == HKF_STATUS_INVALID) {
+	اگر (l->status == HKF_STATUS_INVALID) {
 		/* XXX make this verbose() in the future */
 		debug("%s:%ld: parse error in hostkeys file",
 		    l->path, l->linenum);
-		return 0;
+		بازگشت 0;
 	}
 
 	debug3_f("found %skey type %s in file %s:%lu",
 	    l->marker == MRK_NONE ? "" :
 	    (l->marker == MRK_CA ? "ca " : "revoked "),
-	    sshkey_type(l->key), l->path, l->linenum);
-	if ((tmp = recallocarray(hostkeys->entries, hostkeys->num_entries,
-	    hostkeys->num_entries + 1, sizeof(*hostkeys->entries))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	    sshkey_type(l->کلید), l->path, l->linenum);
+	اگر ((tmp = recallocarray(hostkeys->entries, hostkeys->رقم_entries,
+	    hostkeys->رقم_entries + 1, اندازه(*hostkeys->entries))) == پوچ)
+		بازگشت SSH_ERR_ALLOC_FAIL;
 	hostkeys->entries = tmp;
-	hostkeys->entries[hostkeys->num_entries].host = xstrdup(ctx->host);
-	hostkeys->entries[hostkeys->num_entries].file = xstrdup(l->path);
-	hostkeys->entries[hostkeys->num_entries].line = l->linenum;
-	hostkeys->entries[hostkeys->num_entries].key = l->key;
-	l->key = NULL; /* steal it */
-	hostkeys->entries[hostkeys->num_entries].marker = l->marker;
-	hostkeys->entries[hostkeys->num_entries].note = l->note;
-	hostkeys->num_entries++;
-	ctx->num_loaded++;
+	hostkeys->entries[hostkeys->رقم_entries].host = xstrdup(ctx->host);
+	hostkeys->entries[hostkeys->رقم_entries].file = xstrdup(l->path);
+	hostkeys->entries[hostkeys->رقم_entries].سطر = l->linenum;
+	hostkeys->entries[hostkeys->رقم_entries].کلید = l->کلید;
+	l->کلید = پوچ; /* steal it */
+	hostkeys->entries[hostkeys->رقم_entries].marker = l->marker;
+	hostkeys->entries[hostkeys->رقم_entries].note = l->note;
+	hostkeys->رقم_entries++;
+	ctx->رقم_loaded++;
 
-	return 0;
+	بازگشت 0;
 }
 
-void
-load_hostkeys_file(struct hostkeys *hostkeys, const char *host,
-    const char *path, FILE *f, u_int note)
+تهی
+load_hostkeys_file(ساختار hostkeys *hostkeys, ثابت نویسه *host,
+    ثابت نویسه *path, FILE *f, u_int note)
 {
-	int r;
-	struct load_callback_ctx ctx;
+	صحیح r;
+	ساختار load_callback_ctx ctx;
 
 	ctx.host = host;
-	ctx.num_loaded = 0;
+	ctx.رقم_loaded = 0;
 	ctx.hostkeys = hostkeys;
 
-	if ((r = hostkeys_foreach_file(path, f, record_hostkey, &ctx, host,
-	    NULL, HKF_WANT_MATCH|HKF_WANT_PARSE_KEY, note)) != 0) {
-		if (r != SSH_ERR_SYSTEM_ERROR && errno != ENOENT)
+	اگر ((r = hostkeys_foreach_file(path, f, record_hostkey, &ctx, host,
+	    پوچ, HKF_WANT_MATCH|HKF_WANT_PARSE_کلید, note)) != 0) {
+		اگر (r != SSH_ERR_SYSTEM_ERROR && errno != ENOENT)
 			debug_fr(r, "hostkeys_foreach failed for %s", path);
 	}
-	if (ctx.num_loaded != 0)
-		debug3_f("loaded %lu keys from %s", ctx.num_loaded, host);
+	اگر (ctx.رقم_loaded != 0)
+		debug3_f("loaded %lu keys from %s", ctx.رقم_loaded, host);
 }
 
-void
-load_hostkeys(struct hostkeys *hostkeys, const char *host, const char *path,
+تهی
+load_hostkeys(ساختار hostkeys *hostkeys, ثابت نویسه *host, ثابت نویسه *path,
     u_int note)
 {
 	FILE *f;
 
-	if ((f = fopen(path, "r")) == NULL) {
+	اگر ((f = fopen(path, "r")) == پوچ) {
 		debug_f("fopen %s: %s", path, strerror(errno));
-		return;
+		بازگشت;
 	}
 
 	load_hostkeys_file(hostkeys, host, path, f, note);
 	fclose(f);
 }
 
-void
-free_hostkeys(struct hostkeys *hostkeys)
+تهی
+free_hostkeys(ساختار hostkeys *hostkeys)
 {
 	u_int i;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
-		free(hostkeys->entries[i].host);
-		free(hostkeys->entries[i].file);
-		sshkey_free(hostkeys->entries[i].key);
-		explicit_bzero(hostkeys->entries + i, sizeof(*hostkeys->entries));
+	برای (i = 0; i < hostkeys->رقم_entries; i++) {
+		آزاد(hostkeys->entries[i].host);
+		آزاد(hostkeys->entries[i].file);
+		sshkey_free(hostkeys->entries[i].کلید);
+		explicit_bzero(hostkeys->entries + i, اندازه(*hostkeys->entries));
 	}
-	free(hostkeys->entries);
-	freezero(hostkeys, sizeof(*hostkeys));
+	آزاد(hostkeys->entries);
+	freezero(hostkeys, اندازه(*hostkeys));
 }
 
-static int
-check_key_not_revoked(struct hostkeys *hostkeys, struct sshkey *k)
+ایستا صحیح
+check_کلید_not_revoked(ساختار hostkeys *hostkeys, ساختار sshkey *k)
 {
-	int is_cert = sshkey_is_cert(k);
+	صحیح is_cert = sshkey_is_cert(k);
 	u_int i;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
-		if (hostkeys->entries[i].marker != MRK_REVOKE)
-			continue;
-		if (sshkey_equal_public(k, hostkeys->entries[i].key))
-			return -1;
-		if (is_cert && k != NULL &&
-		    sshkey_equal_public(k->cert->signature_key,
-		    hostkeys->entries[i].key))
-			return -1;
+	برای (i = 0; i < hostkeys->رقم_entries; i++) {
+		اگر (hostkeys->entries[i].marker != MRK_REVOKE)
+			ادامه;
+		اگر (sshkey_equal_public(k, hostkeys->entries[i].کلید))
+			بازگشت -1;
+		اگر (is_cert && k != پوچ &&
+		    sshkey_equal_public(k->cert->signature_کلید,
+		    hostkeys->entries[i].کلید))
+			بازگشت -1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
 /*
@@ -346,257 +346,257 @@ check_key_not_revoked(struct hostkeys *hostkeys, struct sshkey *k)
  *
  * Finally, check any found key is not revoked.
  */
-static HostStatus
-check_hostkeys_by_key_or_type(struct hostkeys *hostkeys,
-    struct sshkey *k, int keytype, int nid, const struct hostkey_entry **found)
+ایستا HostStatus
+check_hostkeys_by_کلید_or_type(ساختار hostkeys *hostkeys,
+    ساختار sshkey *k, صحیح keytype, صحیح nid, ثابت ساختار hostkey_entry **found)
 {
 	u_int i;
 	HostStatus end_return = HOST_NEW;
-	int want_cert = sshkey_is_cert(k);
+	صحیح want_cert = sshkey_is_cert(k);
 	HostkeyMarker want_marker = want_cert ? MRK_CA : MRK_NONE;
 
-	if (found != NULL)
-		*found = NULL;
+	اگر (found != پوچ)
+		*found = پوچ;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
-		if (hostkeys->entries[i].marker != want_marker)
-			continue;
-		if (k == NULL) {
-			if (hostkeys->entries[i].key->type != keytype)
-				continue;
-			if (nid != -1 &&
-			    sshkey_type_plain(keytype) == KEY_ECDSA &&
-			    hostkeys->entries[i].key->ecdsa_nid != nid)
-				continue;
+	برای (i = 0; i < hostkeys->رقم_entries; i++) {
+		اگر (hostkeys->entries[i].marker != want_marker)
+			ادامه;
+		اگر (k == پوچ) {
+			اگر (hostkeys->entries[i].کلید->type != keytype)
+				ادامه;
+			اگر (nid != -1 &&
+			    sshkey_type_plain(keytype) == کلید_ECDSA &&
+			    hostkeys->entries[i].کلید->ecdsa_nid != nid)
+				ادامه;
 			end_return = HOST_FOUND;
-			if (found != NULL)
+			اگر (found != پوچ)
 				*found = hostkeys->entries + i;
-			k = hostkeys->entries[i].key;
-			break;
+			k = hostkeys->entries[i].کلید;
+			بشکن;
 		}
-		if (want_cert) {
-			if (sshkey_equal_public(k->cert->signature_key,
-			    hostkeys->entries[i].key)) {
+		اگر (want_cert) {
+			اگر (sshkey_equal_public(k->cert->signature_کلید,
+			    hostkeys->entries[i].کلید)) {
 				/* A matching CA exists */
 				end_return = HOST_OK;
-				if (found != NULL)
+				اگر (found != پوچ)
 					*found = hostkeys->entries + i;
-				break;
+				بشکن;
 			}
-		} else {
-			if (sshkey_equal(k, hostkeys->entries[i].key)) {
+		} وگرنه {
+			اگر (sshkey_equal(k, hostkeys->entries[i].کلید)) {
 				end_return = HOST_OK;
-				if (found != NULL)
+				اگر (found != پوچ)
 					*found = hostkeys->entries + i;
-				break;
+				بشکن;
 			}
 			/* A non-matching key exists */
 			end_return = HOST_CHANGED;
-			if (found != NULL)
+			اگر (found != پوچ)
 				*found = hostkeys->entries + i;
 		}
 	}
-	if (check_key_not_revoked(hostkeys, k) != 0) {
+	اگر (check_کلید_not_revoked(hostkeys, k) != 0) {
 		end_return = HOST_REVOKED;
-		if (found != NULL)
-			*found = NULL;
+		اگر (found != پوچ)
+			*found = پوچ;
 	}
-	return end_return;
+	بازگشت end_return;
 }
 
 HostStatus
-check_key_in_hostkeys(struct hostkeys *hostkeys, struct sshkey *key,
-    const struct hostkey_entry **found)
+check_کلید_in_hostkeys(ساختار hostkeys *hostkeys, ساختار sshkey *کلید,
+    ثابت ساختار hostkey_entry **found)
 {
-	if (key == NULL)
+	اگر (کلید == پوچ)
 		fatal("no key to look up");
-	return check_hostkeys_by_key_or_type(hostkeys, key, 0, -1, found);
+	بازگشت check_hostkeys_by_کلید_or_type(hostkeys, کلید, 0, -1, found);
 }
 
-int
-lookup_key_in_hostkeys_by_type(struct hostkeys *hostkeys, int keytype, int nid,
-    const struct hostkey_entry **found)
+صحیح
+lookup_کلید_in_hostkeys_by_type(ساختار hostkeys *hostkeys, صحیح keytype, صحیح nid,
+    ثابت ساختار hostkey_entry **found)
 {
-	return (check_hostkeys_by_key_or_type(hostkeys, NULL, keytype, nid,
+	بازگشت (check_hostkeys_by_کلید_or_type(hostkeys, پوچ, keytype, nid,
 	    found) == HOST_FOUND);
 }
 
-int
-lookup_marker_in_hostkeys(struct hostkeys *hostkeys, int want_marker)
+صحیح
+lookup_marker_in_hostkeys(ساختار hostkeys *hostkeys, صحیح want_marker)
 {
 	u_int i;
 
-	for (i = 0; i < hostkeys->num_entries; i++) {
-		if (hostkeys->entries[i].marker == (HostkeyMarker)want_marker)
-			return 1;
+	برای (i = 0; i < hostkeys->رقم_entries; i++) {
+		اگر (hostkeys->entries[i].marker == (HostkeyMarker)want_marker)
+			بازگشت 1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
-static int
-format_host_entry(struct sshbuf *entry, const char *host, const char *ip,
-    const struct sshkey *key, int store_hash)
+ایستا صحیح
+format_host_entry(ساختار sshbuf *entry, ثابت نویسه *host, ثابت نویسه *ip,
+    ثابت ساختار sshkey *کلید, صحیح store_hash)
 {
-	int r, success = 0;
-	char *hashed_host = NULL, *lhost;
+	صحیح r, success = 0;
+	نویسه *hashed_host = پوچ, *lhost;
 
 	lhost = xstrdup(host);
 	lowercase(lhost);
 
-	if (store_hash) {
-		if ((hashed_host = host_hash(lhost, NULL, 0)) == NULL) {
+	اگر (store_hash) {
+		اگر ((hashed_host = host_hash(lhost, پوچ, 0)) == پوچ) {
 			error_f("host_hash failed");
-			free(lhost);
-			return 0;
+			آزاد(lhost);
+			بازگشت 0;
 		}
-		if ((r = sshbuf_putf(entry, "%s ", hashed_host)) != 0)
+		اگر ((r = sshbuf_putf(entry, "%s ", hashed_host)) != 0)
 			fatal_fr(r, "sshbuf_putf");
-	} else if (ip != NULL) {
-		if ((r = sshbuf_putf(entry, "%s,%s ", lhost, ip)) != 0)
+	} وگرنه اگر (ip != پوچ) {
+		اگر ((r = sshbuf_putf(entry, "%s,%s ", lhost, ip)) != 0)
 			fatal_fr(r, "sshbuf_putf");
-	} else {
-		if ((r = sshbuf_putf(entry, "%s ", lhost)) != 0)
+	} وگرنه {
+		اگر ((r = sshbuf_putf(entry, "%s ", lhost)) != 0)
 			fatal_fr(r, "sshbuf_putf");
 	}
-	free(hashed_host);
-	free(lhost);
-	if ((r = sshkey_format_text(key, entry)) == 0)
+	آزاد(hashed_host);
+	آزاد(lhost);
+	اگر ((r = sshkey_format_text(کلید, entry)) == 0)
 		success = 1;
-	else
+	وگرنه
 		error_fr(r, "sshkey_write");
-	if ((r = sshbuf_putf(entry, "\n")) != 0)
+	اگر ((r = sshbuf_putf(entry, "\n")) != 0)
 		fatal_fr(r, "sshbuf_putf");
 
 	/* If hashing is enabled, the IP address needs to go on its own line */
-	if (success && store_hash && ip != NULL)
-		success = format_host_entry(entry, ip, NULL, key, 1);
-	return success;
+	اگر (success && store_hash && ip != پوچ)
+		success = format_host_entry(entry, ip, پوچ, کلید, 1);
+	بازگشت success;
 }
 
-static int
-write_host_entry(FILE *f, const char *host, const char *ip,
-    const struct sshkey *key, int store_hash)
+ایستا صحیح
+write_host_entry(FILE *f, ثابت نویسه *host, ثابت نویسه *ip,
+    ثابت ساختار sshkey *کلید, صحیح store_hash)
 {
-	int r, success = 0;
-	struct sshbuf *entry = NULL;
+	صحیح r, success = 0;
+	ساختار sshbuf *entry = پوچ;
 
-	if ((entry = sshbuf_new()) == NULL)
+	اگر ((entry = sshbuf_new()) == پوچ)
 		fatal_f("allocation failed");
-	if ((r = format_host_entry(entry, host, ip, key, store_hash)) != 1) {
+	اگر ((r = format_host_entry(entry, host, ip, کلید, store_hash)) != 1) {
 		debug_f("failed to format host entry");
-		goto out;
+		برو out;
 	}
-	if ((r = fwrite(sshbuf_ptr(entry), sshbuf_len(entry), 1, f)) != 1) {
+	اگر ((r = fwrite(sshbuf_ptr(entry), sshbuf_len(entry), 1, f)) != 1) {
 		error_f("fwrite: %s", strerror(errno));
-		goto out;
+		برو out;
 	}
 	success = 1;
  out:
 	sshbuf_free(entry);
-	return success;
+	بازگشت success;
 }
 
 /*
  * Create user ~/.ssh directory if it doesn't exist and we want to write to it.
  * If notify is set, a message will be emitted if the directory is created.
  */
-void
-hostfile_create_user_ssh_dir(const char *filename, int notify)
+تهی
+hostfile_create_user_ssh_dir(ثابت نویسه *filename, صحیح notify)
 {
-	char *dotsshdir = NULL, *p;
+	نویسه *dotsshdir = پوچ, *p;
 	size_t len;
-	struct stat st;
+	ساختار stat st;
 
-	if ((p = strrchr(filename, '/')) == NULL)
-		return;
+	اگر ((p = strrchr(filename, '/')) == پوچ)
+		بازگشت;
 	len = p - filename;
 	dotsshdir = tilde_expand_filename("~/" _PATH_SSH_USER_DIR, getuid());
-	if (strlen(dotsshdir) > len || strncmp(filename, dotsshdir, len) != 0)
-		goto out; /* not ~/.ssh prefixed */
-	if (stat(dotsshdir, &st) == 0)
-		goto out; /* dir already exists */
-	else if (errno != ENOENT)
+	اگر (strlen(dotsshdir) > len || strncmp(filename, dotsshdir, len) != 0)
+		برو out; /* not ~/.ssh prefixed */
+	اگر (stat(dotsshdir, &st) == 0)
+		برو out; /* dir already exists */
+	وگرنه اگر (errno != ENOENT)
 		error("Could not stat %s: %s", dotsshdir, strerror(errno));
-	else {
+	وگرنه {
 #ifdef WITH_SELINUX
 		ssh_selinux_setfscreatecon(dotsshdir);
 #endif
-		if (mkdir(dotsshdir, 0700) == -1)
+		اگر (mkdir(dotsshdir, 0700) == -1)
 			error("Could not create directory '%.200s' (%s).",
 			    dotsshdir, strerror(errno));
-		else if (notify)
+		وگرنه اگر (notify)
 			logit("Created directory '%s'.", dotsshdir);
 #ifdef WITH_SELINUX
-		ssh_selinux_setfscreatecon(NULL);
+		ssh_selinux_setfscreatecon(پوچ);
 #endif
 	}
  out:
-	free(dotsshdir);
+	آزاد(dotsshdir);
 }
 
 /*
  * Appends an entry to the host file.  Returns false if the entry could not
  * be appended.
  */
-int
-add_host_to_hostfile(const char *filename, const char *host,
-    const struct sshkey *key, int store_hash)
+صحیح
+add_host_to_hostfile(ثابت نویسه *filename, ثابت نویسه *host,
+    ثابت ساختار sshkey *کلید, صحیح store_hash)
 {
 	FILE *f;
-	int success, addnl = 0;
+	صحیح success, addnl = 0;
 
-	if (key == NULL)
-		return 1;	/* XXX ? */
+	اگر (کلید == پوچ)
+		بازگشت 1;	/* XXX ? */
 	hostfile_create_user_ssh_dir(filename, 0);
-	if ((f = fopen(filename, "a+")) == NULL)
-		return 0;
-	setvbuf(f, NULL, _IONBF, 0);
+	اگر ((f = fopen(filename, "a+")) == پوچ)
+		بازگشت 0;
+	setvbuf(f, پوچ, _IONBF, 0);
 	/* Make sure we have a terminating newline. */
-	if (fseek(f, -1L, SEEK_END) == 0 && fgetc(f) != '\n')
+	اگر (fseek(f, -1L, SEEK_END) == 0 && fgetc(f) != '\n')
 		addnl = 1;
-	if (fseek(f, 0L, SEEK_END) != 0 || (addnl && fputc('\n', f) != '\n')) {
+	اگر (fseek(f, 0L, SEEK_END) != 0 || (addnl && fputc('\n', f) != '\n')) {
 		error("Failed to add terminating newline to %s: %s",
 		   filename, strerror(errno));
 		fclose(f);
-		return 0;
+		بازگشت 0;
 	}
-	success = write_host_entry(f, host, NULL, key, store_hash);
+	success = write_host_entry(f, host, پوچ, کلید, store_hash);
 	fclose(f);
-	return success;
+	بازگشت success;
 }
 
-struct host_delete_ctx {
+ساختار host_delete_ctx {
 	FILE *out;
-	int quiet;
-	const char *host, *ip;
-	u_int *match_keys;	/* mask of HKF_MATCH_* for this key */
-	struct sshkey * const *keys;
+	صحیح quiet;
+	ثابت نویسه *host, *ip;
+	u_int *match_کلیدها;	/* mask of HKF_MATCH_* for this key */
+	ساختار sshkey * ثابت *کلیدها;
 	size_t nkeys;
-	int modified;
+	صحیح modified;
 };
 
-static int
-host_delete(struct hostkey_foreach_line *l, void *_ctx)
+ایستا صحیح
+host_delete(ساختار hostkey_foreach_سطر *l, تهی *_ctx)
 {
-	struct host_delete_ctx *ctx = (struct host_delete_ctx *)_ctx;
-	int loglevel = ctx->quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
+	ساختار host_delete_ctx *ctx = (ساختار host_delete_ctx *)_ctx;
+	صحیح loglevel = ctx->quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
 	size_t i;
 
 	/* Don't remove CA and revocation lines */
-	if (l->status == HKF_STATUS_MATCHED && l->marker == MRK_NONE) {
+	اگر (l->status == HKF_STATUS_MATCHED && l->marker == MRK_NONE) {
 		/*
 		 * If this line contains one of the keys that we will be
 		 * adding later, then don't change it and mark the key for
 		 * skipping.
 		 */
-		for (i = 0; i < ctx->nkeys; i++) {
-			if (!sshkey_equal(ctx->keys[i], l->key))
-				continue;
-			ctx->match_keys[i] |= l->match;
-			fprintf(ctx->out, "%s\n", l->line);
+		برای (i = 0; i < ctx->nkeys; i++) {
+			اگر (!sshkey_equal(ctx->کلیدها[i], l->کلید))
+				ادامه;
+			ctx->match_کلیدها[i] |= l->match;
+			fprintf(ctx->out, "%s\n", l->سطر);
 			debug3_f("%s key already at %s:%ld",
-			    sshkey_type(l->key), l->path, l->linenum);
-			return 0;
+			    sshkey_type(l->کلید), l->path, l->linenum);
+			بازگشت 0;
 		}
 
 		/*
@@ -605,273 +605,273 @@ host_delete(struct hostkey_foreach_line *l, void *_ctx)
 		 */
 		do_log2(loglevel, "%s%s%s:%ld: Removed %s key for host %s",
 		    ctx->quiet ? __func__ : "", ctx->quiet ? ": " : "",
-		    l->path, l->linenum, sshkey_type(l->key), ctx->host);
+		    l->path, l->linenum, sshkey_type(l->کلید), ctx->host);
 		ctx->modified = 1;
-		return 0;
+		بازگشت 0;
 	}
 	/* Retain non-matching hosts and invalid lines when deleting */
-	if (l->status == HKF_STATUS_INVALID) {
+	اگر (l->status == HKF_STATUS_INVALID) {
 		do_log2(loglevel, "%s%s%s:%ld: invalid known_hosts entry",
 		    ctx->quiet ? __func__ : "", ctx->quiet ? ": " : "",
 		    l->path, l->linenum);
 	}
-	fprintf(ctx->out, "%s\n", l->line);
-	return 0;
+	fprintf(ctx->out, "%s\n", l->سطر);
+	بازگشت 0;
 }
 
-int
-hostfile_replace_entries(const char *filename, const char *host, const char *ip,
-    struct sshkey **keys, size_t nkeys, int store_hash, int quiet, int hash_alg)
+صحیح
+hostfile_replace_entries(ثابت نویسه *filename, ثابت نویسه *host, ثابت نویسه *ip,
+    ساختار sshkey **کلیدها, size_t nkeys, صحیح store_hash, صحیح quiet, صحیح hash_alg)
 {
-	int r, fd, oerrno = 0;
-	int loglevel = quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
-	struct host_delete_ctx ctx;
-	char *fp = NULL, *temp = NULL, *back = NULL;
-	const char *what;
+	صحیح r, fd, oerrno = 0;
+	صحیح loglevel = quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_VERBOSE;
+	ساختار host_delete_ctx ctx;
+	نویسه *fp = پوچ, *temp = پوچ, *back = پوچ;
+	ثابت نویسه *what;
 	mode_t omask;
 	size_t i;
 	u_int want;
 
 	omask = umask(077);
 
-	memset(&ctx, 0, sizeof(ctx));
+	memset(&ctx, 0, اندازه(ctx));
 	ctx.host = host;
 	ctx.ip = ip;
 	ctx.quiet = quiet;
 
-	if ((ctx.match_keys = calloc(nkeys, sizeof(*ctx.match_keys))) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	ctx.keys = keys;
+	اگر ((ctx.match_کلیدها = calloc(nkeys, اندازه(*ctx.match_کلیدها))) == پوچ)
+		بازگشت SSH_ERR_ALLOC_FAIL;
+	ctx.کلیدها = کلیدها;
 	ctx.nkeys = nkeys;
 	ctx.modified = 0;
 
 	/*
 	 * Prepare temporary file for in-place deletion.
 	 */
-	if ((r = asprintf(&temp, "%s.XXXXXXXXXXX", filename)) == -1 ||
+	اگر ((r = asprintf(&temp, "%s.XXXXXXXXXXX", filename)) == -1 ||
 	    (r = asprintf(&back, "%s.old", filename)) == -1) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto fail;
+		برو fail;
 	}
 
-	if ((fd = mkstemp(temp)) == -1) {
+	اگر ((fd = mkstemp(temp)) == -1) {
 		oerrno = errno;
 		error_f("mkstemp: %s", strerror(oerrno));
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto fail;
+		برو fail;
 	}
-	if ((ctx.out = fdopen(fd, "w")) == NULL) {
+	اگر ((ctx.out = fdopen(fd, "w")) == پوچ) {
 		oerrno = errno;
 		close(fd);
 		error_f("fdopen: %s", strerror(oerrno));
 		r = SSH_ERR_SYSTEM_ERROR;
-		goto fail;
+		برو fail;
 	}
 
 	/* Remove stale/mismatching entries for the specified host */
-	if ((r = hostkeys_foreach(filename, host_delete, &ctx, host, ip,
-	    HKF_WANT_PARSE_KEY, 0)) != 0) {
+	اگر ((r = hostkeys_foreach(filename, host_delete, &ctx, host, ip,
+	    HKF_WANT_PARSE_کلید, 0)) != 0) {
 		oerrno = errno;
 		error_fr(r, "hostkeys_foreach");
-		goto fail;
+		برو fail;
 	}
 
 	/* Re-add the requested keys */
-	want = HKF_MATCH_HOST | (ip == NULL ? 0 : HKF_MATCH_IP);
-	for (i = 0; i < nkeys; i++) {
-		if (keys[i] == NULL || (want & ctx.match_keys[i]) == want)
-			continue;
-		if ((fp = sshkey_fingerprint(keys[i], hash_alg,
-		    SSH_FP_DEFAULT)) == NULL) {
+	want = HKF_MATCH_HOST | (ip == پوچ ? 0 : HKF_MATCH_IP);
+	برای (i = 0; i < nkeys; i++) {
+		اگر (کلیدها[i] == پوچ || (want & ctx.match_کلیدها[i]) == want)
+			ادامه;
+		اگر ((fp = sshkey_fingerprint(کلیدها[i], hash_alg,
+		    SSH_FP_DEFAULT)) == پوچ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto fail;
+			برو fail;
 		}
 		/* write host/ip */
 		what = "";
-		if (ctx.match_keys[i] == 0) {
+		اگر (ctx.match_کلیدها[i] == 0) {
 			what = "Adding new key";
-			if (!write_host_entry(ctx.out, host, ip,
-			    keys[i], store_hash)) {
+			اگر (!write_host_entry(ctx.out, host, ip,
+			    کلیدها[i], store_hash)) {
 				r = SSH_ERR_INTERNAL_ERROR;
-				goto fail;
+				برو fail;
 			}
-		} else if ((want & ~ctx.match_keys[i]) == HKF_MATCH_HOST) {
+		} وگرنه اگر ((want & ~ctx.match_کلیدها[i]) == HKF_MATCH_HOST) {
 			what = "Fixing match (hostname)";
-			if (!write_host_entry(ctx.out, host, NULL,
-			    keys[i], store_hash)) {
+			اگر (!write_host_entry(ctx.out, host, پوچ,
+			    کلیدها[i], store_hash)) {
 				r = SSH_ERR_INTERNAL_ERROR;
-				goto fail;
+				برو fail;
 			}
-		} else if ((want & ~ctx.match_keys[i]) == HKF_MATCH_IP) {
+		} وگرنه اگر ((want & ~ctx.match_کلیدها[i]) == HKF_MATCH_IP) {
 			what = "Fixing match (address)";
-			if (!write_host_entry(ctx.out, ip, NULL,
-			    keys[i], store_hash)) {
+			اگر (!write_host_entry(ctx.out, ip, پوچ,
+			    کلیدها[i], store_hash)) {
 				r = SSH_ERR_INTERNAL_ERROR;
-				goto fail;
+				برو fail;
 			}
 		}
 		do_log2(loglevel, "%s%s%s for %s%s%s to %s: %s %s",
 		    quiet ? __func__ : "", quiet ? ": " : "", what,
-		    host, ip == NULL ? "" : ",", ip == NULL ? "" : ip, filename,
-		    sshkey_ssh_name(keys[i]), fp);
-		free(fp);
-		fp = NULL;
+		    host, ip == پوچ ? "" : ",", ip == پوچ ? "" : ip, filename,
+		    sshkey_ssh_name(کلیدها[i]), fp);
+		آزاد(fp);
+		fp = پوچ;
 		ctx.modified = 1;
 	}
 	fclose(ctx.out);
-	ctx.out = NULL;
+	ctx.out = پوچ;
 
-	if (ctx.modified) {
+	اگر (ctx.modified) {
 		/* Backup the original file and replace it with the temporary */
-		if (unlink(back) == -1 && errno != ENOENT) {
+		اگر (unlink(back) == -1 && errno != ENOENT) {
 			oerrno = errno;
 			error_f("unlink %.100s: %s", back, strerror(errno));
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto fail;
+			برو fail;
 		}
-		if (link(filename, back) == -1) {
+		اگر (link(filename, back) == -1) {
 			oerrno = errno;
 			error_f("link %.100s to %.100s: %s", filename,
 			    back, strerror(errno));
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto fail;
+			برو fail;
 		}
-		if (rename(temp, filename) == -1) {
+		اگر (rename(temp, filename) == -1) {
 			oerrno = errno;
 			error_f("rename \"%s\" to \"%s\": %s", temp,
 			    filename, strerror(errno));
 			r = SSH_ERR_SYSTEM_ERROR;
-			goto fail;
+			برو fail;
 		}
-	} else {
+	} وگرنه {
 		/* No changes made; just delete the temporary file */
-		if (unlink(temp) != 0)
+		اگر (unlink(temp) != 0)
 			error_f("unlink \"%s\": %s", temp, strerror(errno));
 	}
 
 	/* success */
 	r = 0;
  fail:
-	if (temp != NULL && r != 0)
+	اگر (temp != پوچ && r != 0)
 		unlink(temp);
-	free(temp);
-	free(back);
-	free(fp);
-	if (ctx.out != NULL)
+	آزاد(temp);
+	آزاد(back);
+	آزاد(fp);
+	اگر (ctx.out != پوچ)
 		fclose(ctx.out);
-	free(ctx.match_keys);
+	آزاد(ctx.match_کلیدها);
 	umask(omask);
-	if (r == SSH_ERR_SYSTEM_ERROR)
+	اگر (r == SSH_ERR_SYSTEM_ERROR)
 		errno = oerrno;
-	return r;
+	بازگشت r;
 }
 
-static int
-match_maybe_hashed(const char *host, const char *names, int *was_hashed)
+ایستا صحیح
+match_maybe_hashed(ثابت نویسه *host, ثابت نویسه *names, صحیح *was_hashed)
 {
-	int hashed = *names == HASH_DELIM, ret;
-	char *hashed_host = NULL;
+	صحیح hashed = *names == HASH_DELIM, ret;
+	نویسه *hashed_host = پوچ;
 	size_t nlen = strlen(names);
 
-	if (was_hashed != NULL)
+	اگر (was_hashed != پوچ)
 		*was_hashed = hashed;
-	if (hashed) {
-		if ((hashed_host = host_hash(host, names, nlen)) == NULL)
-			return -1;
+	اگر (hashed) {
+		اگر ((hashed_host = host_hash(host, names, nlen)) == پوچ)
+			بازگشت -1;
 		ret = (nlen == strlen(hashed_host) &&
 		    strncmp(hashed_host, names, nlen) == 0);
-		free(hashed_host);
-		return ret;
+		آزاد(hashed_host);
+		بازگشت ret;
 	}
-	return match_hostname(host, names) == 1;
+	بازگشت match_hostname(host, names) == 1;
 }
 
-int
-hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
-    void *ctx, const char *host, const char *ip, u_int options, u_int note)
+صحیح
+hostkeys_foreach_file(ثابت نویسه *path, FILE *f, hostkeys_foreach_fn *callback,
+    تهی *ctx, ثابت نویسه *host, ثابت نویسه *ip, u_int options, u_int note)
 {
-	char *line = NULL, ktype[128];
+	نویسه *سطر = پوچ, ktype[128];
 	u_long linenum = 0;
-	char *cp, *cp2;
+	نویسه *cp, *cp2;
 	u_int kbits;
-	int hashed;
-	int s, r = 0;
-	struct hostkey_foreach_line lineinfo;
+	صحیح hashed;
+	صحیح s, r = 0;
+	ساختار hostkey_foreach_سطر lineinfo;
 	size_t linesize = 0, l;
 
-	memset(&lineinfo, 0, sizeof(lineinfo));
-	if (host == NULL && (options & HKF_WANT_MATCH) != 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	memset(&lineinfo, 0, اندازه(lineinfo));
+	اگر (host == پوچ && (options & HKF_WANT_MATCH) != 0)
+		بازگشت SSH_ERR_INVALID_ARGUMENT;
 
-	while (getline(&line, &linesize, f) != -1) {
+	وقتی (getline(&سطر, &linesize, f) != -1) {
 		linenum++;
-		line[strcspn(line, "\n")] = '\0';
+		سطر[strcspn(سطر, "\n")] = '\0';
 
-		free(lineinfo.line);
-		sshkey_free(lineinfo.key);
-		memset(&lineinfo, 0, sizeof(lineinfo));
+		آزاد(lineinfo.سطر);
+		sshkey_free(lineinfo.کلید);
+		memset(&lineinfo, 0, اندازه(lineinfo));
 		lineinfo.path = path;
 		lineinfo.linenum = linenum;
-		lineinfo.line = xstrdup(line);
+		lineinfo.سطر = xstrdup(سطر);
 		lineinfo.marker = MRK_NONE;
 		lineinfo.status = HKF_STATUS_OK;
-		lineinfo.keytype = KEY_UNSPEC;
+		lineinfo.keytype = کلید_UNSPEC;
 		lineinfo.note = note;
 
 		/* Skip any leading whitespace, comments and empty lines. */
-		for (cp = line; *cp == ' ' || *cp == '\t'; cp++)
+		برای (cp = سطر; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (!*cp || *cp == '#' || *cp == '\n') {
-			if ((options & HKF_WANT_MATCH) == 0) {
+		اگر (!*cp || *cp == '#' || *cp == '\n') {
+			اگر ((options & HKF_WANT_MATCH) == 0) {
 				lineinfo.status = HKF_STATUS_COMMENT;
-				if ((r = callback(&lineinfo, ctx)) != 0)
-					break;
+				اگر ((r = callback(&lineinfo, ctx)) != 0)
+					بشکن;
 			}
-			continue;
+			ادامه;
 		}
 
-		if ((lineinfo.marker = check_markers(&cp)) == MRK_ERROR) {
+		اگر ((lineinfo.marker = check_markers(&cp)) == MRK_ERROR) {
 			verbose_f("invalid marker at %s:%lu", path, linenum);
-			if ((options & HKF_WANT_MATCH) == 0)
-				goto bad;
-			continue;
+			اگر ((options & HKF_WANT_MATCH) == 0)
+				برو bad;
+			ادامه;
 		}
 
 		/* Find the end of the host name portion. */
-		for (cp2 = cp; *cp2 && *cp2 != ' ' && *cp2 != '\t'; cp2++)
+		برای (cp2 = cp; *cp2 && *cp2 != ' ' && *cp2 != '\t'; cp2++)
 			;
-		if (*cp2 == '\0') {
+		اگر (*cp2 == '\0') {
 			verbose_f("truncated line at %s:%lu", path, linenum);
-			if ((options & HKF_WANT_MATCH) == 0)
-				goto bad;
-			continue;
+			اگر ((options & HKF_WANT_MATCH) == 0)
+				برو bad;
+			ادامه;
 		}
 		lineinfo.hosts = cp;
 		*cp2++ = '\0';
 
 		/* Check if the host name matches. */
-		if (host != NULL) {
-			if ((s = match_maybe_hashed(host, lineinfo.hosts,
+		اگر (host != پوچ) {
+			اگر ((s = match_maybe_hashed(host, lineinfo.hosts,
 			    &hashed)) == -1) {
 				debug2_f("%s:%ld: bad host hash \"%.32s\"",
 				    path, linenum, lineinfo.hosts);
-				goto bad;
+				برو bad;
 			}
-			if (s == 1) {
+			اگر (s == 1) {
 				lineinfo.status = HKF_STATUS_MATCHED;
 				lineinfo.match |= HKF_MATCH_HOST |
 				    (hashed ? HKF_MATCH_HOST_HASHED : 0);
 			}
 			/* Try matching IP address if supplied */
-			if (ip != NULL) {
-				if ((s = match_maybe_hashed(ip, lineinfo.hosts,
+			اگر (ip != پوچ) {
+				اگر ((s = match_maybe_hashed(ip, lineinfo.hosts,
 				    &hashed)) == -1) {
 					debug2_f("%s:%ld: bad ip hash "
 					    "\"%.32s\"", path, linenum,
 					    lineinfo.hosts);
-					goto bad;
+					برو bad;
 				}
-				if (s == 1) {
+				اگر (s == 1) {
 					lineinfo.status = HKF_STATUS_MATCHED;
 					lineinfo.match |= HKF_MATCH_IP |
 					    (hashed ? HKF_MATCH_IP_HASHED : 0);
@@ -881,43 +881,43 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 			 * Skip this line if host matching requested and
 			 * neither host nor address matched.
 			 */
-			if ((options & HKF_WANT_MATCH) != 0 &&
+			اگر ((options & HKF_WANT_MATCH) != 0 &&
 			    lineinfo.status != HKF_STATUS_MATCHED)
-				continue;
+				ادامه;
 		}
 
 		/* Got a match.  Skip host name and any following whitespace */
-		for (; *cp2 == ' ' || *cp2 == '\t'; cp2++)
+		برای (; *cp2 == ' ' || *cp2 == '\t'; cp2++)
 			;
-		if (*cp2 == '\0' || *cp2 == '#') {
+		اگر (*cp2 == '\0' || *cp2 == '#') {
 			debug2("%s:%ld: truncated before key type",
 			    path, linenum);
-			goto bad;
+			برو bad;
 		}
 		lineinfo.rawkey = cp = cp2;
 
-		if ((options & HKF_WANT_PARSE_KEY) != 0) {
+		اگر ((options & HKF_WANT_PARSE_کلید) != 0) {
 			/*
 			 * Extract the key from the line.  This will skip
 			 * any leading whitespace.  Ignore badly formatted
 			 * lines.
 			 */
-			if ((lineinfo.key = sshkey_new(KEY_UNSPEC)) == NULL) {
+			اگر ((lineinfo.کلید = sshkey_new(کلید_UNSPEC)) == پوچ) {
 				error_f("sshkey_new failed");
 				r = SSH_ERR_ALLOC_FAIL;
-				break;
+				بشکن;
 			}
-			if (!hostfile_read_key(&cp, &kbits, lineinfo.key)) {
-				goto bad;
+			اگر (!hostfile_read_کلید(&cp, &kbits, lineinfo.کلید)) {
+				برو bad;
 			}
-			lineinfo.keytype = lineinfo.key->type;
+			lineinfo.keytype = lineinfo.کلید->type;
 			lineinfo.comment = cp;
-		} else {
+		} وگرنه {
 			/* Extract and parse key type */
 			l = strcspn(lineinfo.rawkey, " \t");
-			if (l <= 1 || l >= sizeof(ktype) ||
+			اگر (l <= 1 || l >= اندازه(ktype) ||
 			    lineinfo.rawkey[l] == '\0')
-				goto bad;
+				برو bad;
 			memcpy(ktype, lineinfo.rawkey, l);
 			ktype[l] = '\0';
 			lineinfo.keytype = sshkey_type_from_name(ktype);
@@ -926,9 +926,9 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 			 * Assume legacy RSA1 if the first component is a short
 			 * decimal number.
 			 */
-			if (lineinfo.keytype == KEY_UNSPEC && l < 8 &&
+			اگر (lineinfo.keytype == کلید_UNSPEC && l < 8 &&
 			    strspn(ktype, "0123456789") == l)
-				goto bad;
+				برو bad;
 
 			/*
 			 * Check that something other than whitespace follows
@@ -936,41 +936,41 @@ hostkeys_foreach_file(const char *path, FILE *f, hostkeys_foreach_fn *callback,
 			 * it does catch trivial truncation.
 			 */
 			cp2 += l; /* Skip past key type */
-			for (; *cp2 == ' ' || *cp2 == '\t'; cp2++)
+			برای (; *cp2 == ' ' || *cp2 == '\t'; cp2++)
 				;
-			if (*cp2 == '\0' || *cp2 == '#') {
+			اگر (*cp2 == '\0' || *cp2 == '#') {
 				debug2("%s:%ld: truncated after key type",
 				    path, linenum);
-				lineinfo.keytype = KEY_UNSPEC;
+				lineinfo.keytype = کلید_UNSPEC;
 			}
-			if (lineinfo.keytype == KEY_UNSPEC) {
+			اگر (lineinfo.keytype == کلید_UNSPEC) {
  bad:
-				sshkey_free(lineinfo.key);
-				lineinfo.key = NULL;
+				sshkey_free(lineinfo.کلید);
+				lineinfo.کلید = پوچ;
 				lineinfo.status = HKF_STATUS_INVALID;
-				if ((r = callback(&lineinfo, ctx)) != 0)
-					break;
-				continue;
+				اگر ((r = callback(&lineinfo, ctx)) != 0)
+					بشکن;
+				ادامه;
 			}
 		}
-		if ((r = callback(&lineinfo, ctx)) != 0)
-			break;
+		اگر ((r = callback(&lineinfo, ctx)) != 0)
+			بشکن;
 	}
-	sshkey_free(lineinfo.key);
-	free(lineinfo.line);
-	free(line);
-	return r;
+	sshkey_free(lineinfo.کلید);
+	آزاد(lineinfo.سطر);
+	آزاد(سطر);
+	بازگشت r;
 }
 
-int
-hostkeys_foreach(const char *path, hostkeys_foreach_fn *callback, void *ctx,
-    const char *host, const char *ip, u_int options, u_int note)
+صحیح
+hostkeys_foreach(ثابت نویسه *path, hostkeys_foreach_fn *callback, تهی *ctx,
+    ثابت نویسه *host, ثابت نویسه *ip, u_int options, u_int note)
 {
 	FILE *f;
-	int r, oerrno;
+	صحیح r, oerrno;
 
-	if ((f = fopen(path, "r")) == NULL)
-		return SSH_ERR_SYSTEM_ERROR;
+	اگر ((f = fopen(path, "r")) == پوچ)
+		بازگشت SSH_ERR_SYSTEM_ERROR;
 
 	debug3_f("reading file \"%s\"", path);
 	r = hostkeys_foreach_file(path, f, callback, ctx, host, ip,
@@ -978,5 +978,5 @@ hostkeys_foreach(const char *path, hostkeys_foreach_fn *callback, void *ctx,
 	oerrno = errno;
 	fclose(f);
 	errno = oerrno;
-	return r;
+	بازگشت r;
 }

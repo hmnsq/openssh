@@ -15,105 +15,105 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
+#شامل <sys/types.h>
+#شامل <sys/ioctl.h>
 #ifdef HAVE_SYS_SELECT_H
 # include <sys/select.h>
 #endif
-#include <sys/time.h>
+#شامل <sys/time.h>
 
-#include <fcntl.h>
-#include <string.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <unistd.h>
+#شامل <fcntl.h>
+#شامل <string.h>
+#شامل <signal.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <time.h>
+#شامل <unistd.h>
 
 #ifndef HAVE___PROGNAME
-char *__progname;
+نویسه *__progname;
 #endif
 
 /*
  * NB. duplicate __progname in case it is an alias for argv[0]
  * Otherwise it may get clobbered by setproctitle()
  */
-char *ssh_get_progname(char *argv0)
+نویسه *ssh_get_progname(نویسه *argv0)
 {
-	char *p, *q;
+	نویسه *p, *q;
 #ifdef HAVE___PROGNAME
-	extern char *__progname;
+	بیرونی نویسه *__progname;
 
 	p = __progname;
-#else
-	if (argv0 == NULL)
-		return ("unknown");	/* XXX */
+#وگرنه
+	اگر (argv0 == پوچ)
+		بازگشت ("unknown");	/* XXX */
 	p = strrchr(argv0, '/');
-	if (p == NULL)
+	اگر (p == پوچ)
 		p = argv0;
-	else
+	وگرنه
 		p++;
 #endif
-	if ((q = strdup(p)) == NULL) {
+	اگر ((q = strdup(p)) == پوچ) {
 		perror("strdup");
 		exit(1);
 	}
-	return q;
+	بازگشت q;
 }
 
 #ifndef HAVE_SETLOGIN
-int setlogin(const char *name)
+صحیح setlogin(ثابت نویسه *name)
 {
-	return (0);
+	بازگشت (0);
 }
 #endif /* !HAVE_SETLOGIN */
 
 #ifndef HAVE_INNETGR
-int innetgr(const char *netgroup, const char *host,
-	    const char *user, const char *domain)
+صحیح innetgr(ثابت نویسه *netgroup, ثابت نویسه *host,
+	    ثابت نویسه *user, ثابت نویسه *domain)
 {
-	return (0);
+	بازگشت (0);
 }
 #endif /* HAVE_INNETGR */
 
-#if !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
-int seteuid(uid_t euid)
+#اگر !defined(HAVE_SETEUID) && defined(HAVE_SETREUID)
+صحیح seteuid(uid_t euid)
 {
-	return (setreuid(-1, euid));
+	بازگشت (setreuid(-1, euid));
 }
 #endif /* !defined(HAVE_SETEUID) && defined(HAVE_SETREUID) */
 
-#if !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
-int setegid(uid_t egid)
+#اگر !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID)
+صحیح setegid(uid_t egid)
 {
-	return(setresgid(-1, egid, -1));
+	بازگشت(setresgid(-1, egid, -1));
 }
 #endif /* !defined(HAVE_SETEGID) && defined(HAVE_SETRESGID) */
 
-#if !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
-const char *strerror(int e)
+#اگر !defined(HAVE_STRERROR) && defined(HAVE_SYS_ERRLIST) && defined(HAVE_SYS_NERR)
+ثابت نویسه *strerror(صحیح e)
 {
-	extern int sys_nerr;
-	extern char *sys_errlist[];
+	بیرونی صحیح sys_nerr;
+	بیرونی نویسه *sys_errlist[];
 
-	if ((e >= 0) && (e < sys_nerr))
-		return (sys_errlist[e]);
+	اگر ((e >= 0) && (e < sys_nerr))
+		بازگشت (sys_errlist[e]);
 
-	return ("unlisted error");
+	بازگشت ("unlisted error");
 }
 #endif
 
 #ifndef HAVE_UTIMES
-int utimes(const char *filename, struct timeval *tvp)
+صحیح utimes(ثابت نویسه *filename, ساختار timeval *tvp)
 {
-	struct utimbuf ub;
+	ساختار utimbuf ub;
 
 	ub.actime = tvp[0].tv_sec;
 	ub.modtime = tvp[1].tv_sec;
 
-	return (utime(filename, &ub));
+	بازگشت (utime(filename, &ub));
 }
 #endif
 
@@ -123,13 +123,13 @@ int utimes(const char *filename, struct timeval *tvp)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-utimensat(int fd, const char *path, const struct timespec times[2],
-    int flag)
+صحیح
+utimensat(صحیح fd, ثابت نویسه *path, ثابت ساختار timespec times[2],
+    صحیح flag)
 {
-	struct timeval tv[2];
+	ساختار timeval tv[2];
 # ifdef HAVE_FUTIMES
-	int ret, oflags = O_WRONLY;
+	صحیح ret, oflags = O_WRONLY;
 # endif
 
 	tv[0].tv_sec = times[0].tv_sec;
@@ -137,32 +137,32 @@ utimensat(int fd, const char *path, const struct timespec times[2],
 	tv[1].tv_sec = times[1].tv_sec;
 	tv[1].tv_usec = times[1].tv_nsec / 1000;
 
-	if (fd != AT_FDCWD) {
+	اگر (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		بازگشت -1;
 	}
 # ifndef HAVE_FUTIMES
-	return utimes(path, tv);
-# else
+	بازگشت utimes(path, tv);
+# وگرنه
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	اگر (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	اگر ((fd = open(path, oflags)) == -1)
+		بازگشت -1;
 	ret = futimes(fd, tv);
 	close(fd);
-	return ret;
+	بازگشت ret;
 # endif
 }
 #endif
 
 #ifndef HAVE_DIRFD
-int
-dirfd(void *dir)
+صحیح
+dirfd(تهی *dir)
 {
 	errno = ENOSYS;
-	return -1;
+	بازگشت -1;
 }
 #endif
 
@@ -172,27 +172,27 @@ dirfd(void *dir)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
+صحیح
+fchownat(صحیح fd, ثابت نویسه *path, uid_t owner, gid_t group, صحیح flag)
 {
-	int ret, oflags = O_WRONLY;
+	صحیح ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	اگر (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		بازگشت -1;
 	}
 # ifndef HAVE_FCHOWN
-	return chown(path, owner, group);
-# else
+	بازگشت chown(path, owner, group);
+# وگرنه
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	اگر (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	اگر ((fd = open(path, oflags)) == -1)
+		بازگشت -1;
 	ret = fchown(fd, owner, group);
 	close(fd);
-	return ret;
+	بازگشت ret;
 # endif
 }
 #endif
@@ -203,27 +203,27 @@ fchownat(int fd, const char *path, uid_t owner, gid_t group, int flag)
  * functionality used by OpenSSH, currently only AT_FDCWD and
  * AT_SYMLINK_NOFOLLOW.
  */
-int
-fchmodat(int fd, const char *path, mode_t mode, int flag)
+صحیح
+fchmodat(صحیح fd, ثابت نویسه *path, mode_t mode, صحیح flag)
 {
-	int ret, oflags = O_WRONLY;
+	صحیح ret, oflags = O_WRONLY;
 
-	if (fd != AT_FDCWD) {
+	اگر (fd != AT_FDCWD) {
 		errno = ENOSYS;
-		return -1;
+		بازگشت -1;
 	}
 # ifndef HAVE_FCHMOD
-	return chmod(path, mode);
-# else
+	بازگشت chmod(path, mode);
+# وگرنه
 #  ifdef O_NOFOLLOW
-	if (flag & AT_SYMLINK_NOFOLLOW)
+	اگر (flag & AT_SYMLINK_NOFOLLOW)
 		oflags |= O_NOFOLLOW;
 #  endif /* O_NOFOLLOW */
-	if ((fd = open(path, oflags)) == -1)
-		return -1;
+	اگر ((fd = open(path, oflags)) == -1)
+		بازگشت -1;
 	ret = fchmod(fd, mode);
 	close(fd);
-	return ret;
+	بازگشت ret;
 # endif
 }
 #endif
@@ -233,19 +233,19 @@ fchmodat(int fd, const char *path, mode_t mode, int flag)
  * A limited implementation of fstatat that just has what OpenSSH uses:
  * cwd-relative and absolute paths, with or without following symlinks.
  */
-int
-fstatat(int dirfd, const char *path, struct stat *sb, int flag)
+صحیح
+fstatat(صحیح dirfd, ثابت نویسه *path, ساختار stat *sb, صحیح flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	اگر (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		بازگشت -1;
 	}
-	if (flag == 0)
-		return stat(path, sb);
-	else if (flag == AT_SYMLINK_NOFOLLOW)
-		return lstat(path, sb);
+	اگر (flag == 0)
+		بازگشت stat(path, sb);
+	وگرنه اگر (flag == AT_SYMLINK_NOFOLLOW)
+		بازگشت lstat(path, sb);
 	errno = ENOSYS;
-	return -1;
+	بازگشت -1;
 }
 #endif
 
@@ -254,52 +254,52 @@ fstatat(int dirfd, const char *path, struct stat *sb, int flag)
  * A limited implementation of unlinkat that just has what OpenSSH uses:
  * cwd-relative and absolute paths.
  */
-int
-unlinkat(int dirfd, const char *path, int flag)
+صحیح
+unlinkat(صحیح dirfd, ثابت نویسه *path, صحیح flag)
 {
-	if (dirfd != AT_FDCWD && path && path[0] != '/') {
+	اگر (dirfd != AT_FDCWD && path && path[0] != '/') {
 		errno = ENOSYS;
-		return -1;
+		بازگشت -1;
 	}
-	if (flag == 0)
-		return unlink(path);
+	اگر (flag == 0)
+		بازگشت unlink(path);
 	errno = ENOSYS;
-	return -1;
+	بازگشت -1;
 }
 #endif
 
 #ifndef HAVE_TRUNCATE
-int truncate(const char *path, off_t length)
+صحیح truncate(ثابت نویسه *path, off_t length)
 {
-	int fd, ret, saverrno;
+	صحیح fd, ret, saverrno;
 
 	fd = open(path, O_WRONLY);
-	if (fd < 0)
-		return (-1);
+	اگر (fd < 0)
+		بازگشت (-1);
 
 	ret = ftruncate(fd, length);
 	saverrno = errno;
 	close(fd);
-	if (ret == -1)
+	اگر (ret == -1)
 		errno = saverrno;
 
-	return(ret);
+	بازگشت(ret);
 }
 #endif /* HAVE_TRUNCATE */
 
-#if !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
-int nanosleep(const struct timespec *req, struct timespec *rem)
+#اگر !defined(HAVE_NANOSLEEP) && !defined(HAVE_NSLEEP)
+صحیح nanosleep(ثابت ساختار timespec *req, ساختار timespec *rem)
 {
-	int rc, saverrno;
-	extern int errno;
-	struct timeval tstart, tstop, tremain, time2wait;
+	صحیح rc, saverrno;
+	بیرونی صحیح errno;
+	ساختار timeval tstart, tstop, tremain, time2wait;
 
 	TIMESPEC_TO_TIMEVAL(&time2wait, req)
-	(void) gettimeofday(&tstart, NULL);
-	rc = select(0, NULL, NULL, NULL, &time2wait);
-	if (rc == -1) {
+	(تهی) gettimeofday(&tstart, پوچ);
+	rc = select(0, پوچ, پوچ, پوچ, &time2wait);
+	اگر (rc == -1) {
 		saverrno = errno;
-		(void) gettimeofday (&tstop, NULL);
+		(تهی) gettimeofday (&tstop, پوچ);
 		errno = saverrno;
 		tremain.tv_sec = time2wait.tv_sec -
 			(tstop.tv_sec - tstart.tv_sec);
@@ -307,82 +307,82 @@ int nanosleep(const struct timespec *req, struct timespec *rem)
 			(tstop.tv_usec - tstart.tv_usec);
 		tremain.tv_sec += tremain.tv_usec / 1000000L;
 		tremain.tv_usec %= 1000000L;
-	} else {
+	} وگرنه {
 		tremain.tv_sec = 0;
 		tremain.tv_usec = 0;
 	}
-	if (rem != NULL)
+	اگر (rem != پوچ)
 		TIMEVAL_TO_TIMESPEC(&tremain, rem)
 
-	return(rc);
+	بازگشت(rc);
 }
 #endif
 
-#if !defined(HAVE_USLEEP)
-int usleep(unsigned int useconds)
+#اگر !defined(HAVE_USLEEP)
+صحیح usleep(unsigned صحیح useconds)
 {
-	struct timespec ts;
+	ساختار timespec ts;
 
 	ts.tv_sec = useconds / 1000000;
 	ts.tv_nsec = (useconds % 1000000) * 1000;
-	return nanosleep(&ts, NULL);
+	بازگشت nanosleep(&ts, پوچ);
 }
 #endif
 
 #ifndef HAVE_TCGETPGRP
 pid_t
-tcgetpgrp(int fd)
+tcgetpgrp(صحیح fd)
 {
-	int ctty_pgrp;
+	صحیح ctty_pgrp;
 
-	if (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
-		return(-1);
-	else
-		return(ctty_pgrp);
+	اگر (ioctl(fd, TIOCGPGRP, &ctty_pgrp) == -1)
+		بازگشت(-1);
+	وگرنه
+		بازگشت(ctty_pgrp);
 }
 #endif /* HAVE_TCGETPGRP */
 
 #ifndef HAVE_TCSENDBREAK
-int
-tcsendbreak(int fd, int duration)
+صحیح
+tcsendbreak(صحیح fd, صحیح duration)
 {
-# if defined(TIOCSBRK) && defined(TIOCCBRK)
-	struct timeval sleepytime;
+# اگر defined(TIOCSBRK) && defined(TIOCCBRK)
+	ساختار timeval sleepytime;
 
 	sleepytime.tv_sec = 0;
 	sleepytime.tv_usec = 400000;
-	if (ioctl(fd, TIOCSBRK, 0) == -1)
-		return (-1);
-	(void)select(0, 0, 0, 0, &sleepytime);
-	if (ioctl(fd, TIOCCBRK, 0) == -1)
-		return (-1);
-	return (0);
-# else
-	return -1;
+	اگر (ioctl(fd, TIOCSBRK, 0) == -1)
+		بازگشت (-1);
+	(تهی)select(0, 0, 0, 0, &sleepytime);
+	اگر (ioctl(fd, TIOCCBRK, 0) == -1)
+		بازگشت (-1);
+	بازگشت (0);
+# وگرنه
+	بازگشت -1;
 # endif
 }
 #endif /* HAVE_TCSENDBREAK */
 
 #ifndef HAVE_STRDUP
-char *
-strdup(const char *str)
+نویسه *
+strdup(ثابت نویسه *str)
 {
 	size_t len;
-	char *cp;
+	نویسه *cp;
 
 	len = strlen(str) + 1;
 	cp = malloc(len);
-	if (cp != NULL)
-		return(memcpy(cp, str, len));
-	return NULL;
+	اگر (cp != پوچ)
+		بازگشت(memcpy(cp, str, len));
+	بازگشت پوچ;
 }
 #endif
 
 #ifndef HAVE_ISBLANK
-int
-isblank(int c)
+صحیح
+isblank(صحیح c)
 {
-	return (c == ' ' || c == '\t');
+	بازگشت (c == ' ' || c == '\t');
 }
 #endif
 
@@ -390,48 +390,48 @@ isblank(int c)
 pid_t
 getpgid(pid_t pid)
 {
-#if defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
-	return getpgrp(pid);
-#elif defined(HAVE_GETPGRP)
-	if (pid == 0)
-		return getpgrp();
+#اگر defined(HAVE_GETPGRP) && !defined(GETPGRP_VOID) && GETPGRP_VOID == 0
+	بازگشت getpgrp(pid);
+#وگرنهاگر defined(HAVE_GETPGRP)
+	اگر (pid == 0)
+		بازگشت getpgrp();
 #endif
 
 	errno = ESRCH;
-	return -1;
+	بازگشت -1;
 }
 #endif
 
 #ifndef HAVE_PLEDGE
-int
-pledge(const char *promises, const char *execpromises)
+صحیح
+pledge(ثابت نویسه *promises, ثابت نویسه *execpromises)
 {
-	return 0;
+	بازگشت 0;
 }
 #endif
 
 #ifndef HAVE_UNVEIL
-int
-unveil(const char *path, const char *permissions)
+صحیح
+unveil(ثابت نویسه *path, ثابت نویسه *permissions)
 {
-	return 0;
+	بازگشت 0;
 }
 #endif
 
 #ifndef HAVE_MBTOWC
 /* a mbtowc that only supports ASCII */
-int
-mbtowc(wchar_t *pwc, const char *s, size_t n)
+صحیح
+mbtowc(wchar_t *pwc, ثابت نویسه *s, size_t n)
 {
-	if (s == NULL || *s == '\0')
-		return 0;	/* ASCII is not state-dependent */
-	if (*s < 0 || *s > 0x7f || n < 1) {
+	اگر (s == پوچ || *s == '\0')
+		بازگشت 0;	/* ASCII is not state-dependent */
+	اگر (*s < 0 || *s > 0x7f || n < 1) {
 		errno = EOPNOTSUPP;
-		return -1;
+		بازگشت -1;
 	}
-	if (pwc != NULL)
+	اگر (pwc != پوچ)
 		*pwc = *s;
-	return 1;
+	بازگشت 1;
 }
 #endif
 
@@ -439,23 +439,23 @@ mbtowc(wchar_t *pwc, const char *s, size_t n)
 long long
 llabs(long long j)
 {
-	return (j < 0 ? -j : j);
+	بازگشت (j < 0 ? -j : j);
 }
 #endif
 
 #ifndef HAVE_BZERO
-void
-bzero(void *b, size_t n)
+تهی
+bzero(تهی *b, size_t n)
 {
-	(void)memset(b, 0, n);
+	(تهی)memset(b, 0, n);
 }
 #endif
 
 #ifndef HAVE_RAISE
-int
-raise(int sig)
+صحیح
+بالاببر(صحیح sig)
 {
-	return kill(getpid(), sig);
+	بازگشت kill(getpid(), sig);
 }
 #endif
 
@@ -464,77 +464,77 @@ pid_t
 getsid(pid_t pid)
 {
 	errno = ENOSYS;
-	return -1;
+	بازگشت -1;
 }
 #endif
 
 #ifndef HAVE_KILLPG
-int
-killpg(pid_t pgrp, int sig)
+صحیح
+killpg(pid_t pgrp, صحیح sig)
 {
-	return kill(pgrp, sig);
+	بازگشت kill(pgrp, sig);
 }
 #endif
 
 #ifdef FFLUSH_NULL_BUG
 #undef fflush
-int _ssh_compat_fflush(FILE *f)
+صحیح _ssh_compat_fflush(FILE *f)
 {
-	int r1, r2;
+	صحیح r1, r2;
 
-	if (f == NULL) {
+	اگر (f == پوچ) {
 		r1 = fflush(stdout);
 		r2 = fflush(stderr);
-		if (r1 == -1 || r2 == -1)
-			return -1;
-		return 0;
+		اگر (r1 == -1 || r2 == -1)
+			بازگشت -1;
+		بازگشت 0;
 	}
-	return fflush(f);
+	بازگشت fflush(f);
 }
 #endif
 
 #ifndef HAVE_LOCALTIME_R
-struct tm *
-localtime_r(const time_t *timep, struct tm *result)
+ساختار tm *
+localtime_r(ثابت time_t *timep, ساختار tm *result)
 {
-	struct tm *tm = localtime(timep);
+	ساختار tm *tm = localtime(timep);
 	*result = *tm;
-	return result;
+	بازگشت result;
 }
 #endif
 
 #ifndef HAVE_CLOCK_GETTIME
-int
-clock_gettime(clockid_t clockid, struct timespec *ts)
+صحیح
+clock_gettime(clockid_t clockid, ساختار timespec *ts)
 {
-	struct timeval tv;
+	ساختار timeval tv;
 
-	if (clockid != CLOCK_REALTIME) {
+	اگر (clockid != CLOCK_REALTIME) {
 		errno = ENOSYS;
-		return -1;
+		بازگشت -1;
 	}
-	if (ts == NULL) {
+	اگر (ts == پوچ) {
 		errno = EFAULT;
-		return -1;
+		بازگشت -1;
 	}
 
-	if (gettimeofday(&tv, NULL) == -1)
-		return -1;
+	اگر (gettimeofday(&tv, پوچ) == -1)
+		بازگشت -1;
 
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
-	return 0;
+	بازگشت 0;
 }
 #endif
 
 #ifdef ASAN_OPTIONS
-const char *__asan_default_options(void) {
-	return ASAN_OPTIONS;
+ثابت نویسه *__asan_default_options(تهی) {
+	بازگشت ASAN_OPTIONS;
 }
 #endif
 
 #ifdef MSAN_OPTIONS
-const char *__msan_default_options(void) {
-	return MSAN_OPTIONS;
+ثابت نویسه *__msan_default_options(تهی) {
+	بازگشت MSAN_OPTIONS;
 }
 #endif

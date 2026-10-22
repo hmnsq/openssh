@@ -26,19 +26,19 @@
 #ifndef KEX_H
 #define KEX_H
 
-#include "mac.h"
-#include "crypto_api.h"
+#شامل "mac.h"
+#شامل "crypto_api.h"
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/dh.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#else /* OPENSSL */
-#define BIGNUM		void
-#define DH		void
-#define EC_KEY		void
-#define EC_GROUP	void
+#شامل <openssl/bn.h>
+#شامل <openssl/dh.h>
+#شامل <openssl/ec.h>
+#شامل <openssl/ecdsa.h>
+#وگرنه /* OPENSSL */
+#define BIGNUM		تهی
+#define DH		تهی
+#define EC_کلید		تهی
+#define EC_GROUP	تهی
 #endif /* WITH_OPENSSL */
 
 #define KEX_COOKIE_LEN	16
@@ -65,9 +65,9 @@
 
 #define CURVE25519_SIZE 32
 
-enum kex_init_proposals {
+شمارش kex_init_proposals {
 	PROPOSAL_KEX_ALGS,
-	PROPOSAL_SERVER_HOST_KEY_ALGS,
+	PROPOSAL_SERVER_HOST_کلید_ALGS,
 	PROPOSAL_ENC_ALGS_CTOS,
 	PROPOSAL_ENC_ALGS_STOC,
 	PROPOSAL_MAC_ALGS_CTOS,
@@ -79,13 +79,13 @@ enum kex_init_proposals {
 	PROPOSAL_MAX
 };
 
-enum kex_modes {
+شمارش kex_modes {
 	MODE_IN,
 	MODE_OUT,
 	MODE_MAX
 };
 
-enum kex_exchange {
+شمارش kex_exchange {
 	KEX_DH_GRP1_SHA1 = 1,
 	KEX_DH_GRP14_SHA1,
 	KEX_DH_GRP14_SHA256,
@@ -116,184 +116,184 @@ enum kex_exchange {
 #define KEX_NOT_PQ			0
 #define KEX_IS_PQ			1
 
-struct sshenc {
-	char	*name;
-	const struct sshcipher *cipher;
-	int	enabled;
-	u_int	key_len;
+ساختار sshenc {
+	نویسه	*name;
+	ثابت ساختار sshcipher *cipher;
+	صحیح	enabled;
+	u_int	کلید_len;
 	u_int	iv_len;
 	u_int	block_size;
-	u_char	*key;
+	u_char	*کلید;
 	u_char	*iv;
 };
-struct sshcomp {
+ساختار sshcomp {
 	u_int	type;
-	int	enabled;
-	char	*name;
+	صحیح	enabled;
+	نویسه	*name;
 };
-struct newkeys {
-	struct sshenc	enc;
-	struct sshmac	mac;
-	struct sshcomp  comp;
+ساختار newkeys {
+	ساختار sshenc	enc;
+	ساختار sshmac	mac;
+	ساختار sshcomp  comp;
 };
 
-struct ssh;
-struct sshbuf;
+ساختار ssh;
+ساختار sshbuf;
 
-struct kex {
-	struct newkeys	*newkeys[MODE_MAX];
+ساختار kex {
+	ساختار newkeys	*newkeys[MODE_MAX];
 	u_int	we_need;
 	u_int	dh_need;
-	int	server;
-	char	*name;
-	char	*hostkey_alg;
-	int	hostkey_type;
-	int	hostkey_nid;
+	صحیح	server;
+	نویسه	*name;
+	نویسه	*hostkey_alg;
+	صحیح	hostkey_type;
+	صحیح	hostkey_nid;
 	u_int	kex_type;
-	char	*server_sig_algs;
-	int	ext_info_c;
-	int	ext_info_s;
-	int	kex_strict;
-	int	ext_info_received;
-	struct sshbuf *my;
-	struct sshbuf *peer;
-	struct sshbuf *client_version;
-	struct sshbuf *server_version;
-	struct sshbuf *session_id;
-	struct sshbuf *initial_sig;
-	struct sshkey *initial_hostkey;
+	نویسه	*server_sig_algs;
+	صحیح	ext_info_c;
+	صحیح	ext_info_s;
+	صحیح	kex_strict;
+	صحیح	ext_info_received;
+	ساختار sshbuf *my;
+	ساختار sshbuf *peer;
+	ساختار sshbuf *client_version;
+	ساختار sshbuf *server_version;
+	ساختار sshbuf *session_id;
+	ساختار sshbuf *initial_sig;
+	ساختار sshkey *initial_hostkey;
 	sig_atomic_t done;
 	u_int	flags;
 	u_int	warn_weak_crypto;
 	u_int	pq_kex_negotiated;
 	u_int	non_pq_kex_warned;
-	int	hash_alg;
-	int	ec_nid;
-	char	*failed_choice;
-	int	(*verify_host_key)(struct sshkey *, struct ssh *);
-	struct sshkey *(*load_host_public_key)(int, int, struct ssh *);
-	struct sshkey *(*load_host_private_key)(int, int, struct ssh *);
-	int	(*host_key_index)(struct sshkey *, int, struct ssh *);
-	int	(*sign)(struct ssh *, struct sshkey *, struct sshkey *,
-	    u_char **, size_t *, const u_char *, size_t, const char *);
-	int	(*kex[KEX_MAX])(struct ssh *);
+	صحیح	hash_alg;
+	صحیح	ec_nid;
+	نویسه	*failed_choice;
+	صحیح	(*verify_host_کلید)(ساختار sshkey *, ساختار ssh *);
+	ساختار sshkey *(*load_host_public_کلید)(صحیح, صحیح, ساختار ssh *);
+	ساختار sshkey *(*load_host_private_کلید)(صحیح, صحیح, ساختار ssh *);
+	صحیح	(*host_کلید_index)(ساختار sshkey *, صحیح, ساختار ssh *);
+	صحیح	(*sign)(ساختار ssh *, ساختار sshkey *, ساختار sshkey *,
+	    u_char **, size_t *, ثابت u_char *, size_t, ثابت نویسه *);
+	صحیح	(*kex[KEX_MAX])(ساختار ssh *);
 	/* kex specific state */
 	DH	*dh;			/* DH */
 	u_int	min, max, nbits;	/* GEX */
-	EC_KEY	*ec_client_key;		/* ECDH */
-	const EC_GROUP *ec_group;	/* ECDH */
-	u_char c25519_client_key[CURVE25519_SIZE]; /* 25519 + KEM */
+	EC_کلید	*ec_client_کلید;		/* ECDH */
+	ثابت EC_GROUP *ec_group;	/* ECDH */
+	u_char c25519_client_کلید[CURVE25519_SIZE]; /* 25519 + KEM */
 	u_char c25519_client_pubkey[CURVE25519_SIZE]; /* 25519 */
-	u_char sntrup761_client_key[crypto_kem_sntrup761_SECRETKEYBYTES]; /* KEM */
-	u_char mlkem768_client_key[crypto_kem_mlkem768_SECRETKEYBYTES]; /* KEM */
-	struct sshbuf *client_pub;
+	u_char sntrup761_client_کلید[crypto_kem_sntrup761_SECRETKEYBYTES]; /* KEM */
+	u_char mlkem768_client_کلید[crypto_kem_mlkem768_SECRETKEYBYTES]; /* KEM */
+	ساختار sshbuf *client_pub;
 };
 
-int	 kex_name_valid(const char *);
-u_int	 kex_type_from_name(const char *);
-int	 kex_hash_from_name(const char *);
-int	 kex_nid_from_name(const char *);
-int	 kex_is_pq_from_name(const char *);
-int	 kex_names_valid(const char *);
-char	*kex_alg_list(char);
-char	*kex_names_cat(const char *, const char *);
-int	 kex_has_any_alg(const char *, const char *);
-int	 kex_assemble_names(char **, const char *, const char *);
-void	 kex_proposal_populate_entries(struct ssh *, char *prop[PROPOSAL_MAX],
-    const char *, const char *, const char *, const char *, const char *);
-void	 kex_proposal_free_entries(char *prop[PROPOSAL_MAX]);
+صحیح	 kex_name_valid(ثابت نویسه *);
+u_int	 kex_type_from_name(ثابت نویسه *);
+صحیح	 kex_hash_from_name(ثابت نویسه *);
+صحیح	 kex_nid_from_name(ثابت نویسه *);
+صحیح	 kex_is_pq_from_name(ثابت نویسه *);
+صحیح	 kex_names_valid(ثابت نویسه *);
+نویسه	*kex_alg_list(نویسه);
+نویسه	*kex_names_cat(ثابت نویسه *, ثابت نویسه *);
+صحیح	 kex_has_any_alg(ثابت نویسه *, ثابت نویسه *);
+صحیح	 kex_assemble_names(نویسه **, ثابت نویسه *, ثابت نویسه *);
+تهی	 kex_proposal_populate_entries(ساختار ssh *, نویسه *prop[PROPOSAL_MAX],
+    ثابت نویسه *, ثابت نویسه *, ثابت نویسه *, ثابت نویسه *, ثابت نویسه *);
+تهی	 kex_proposal_free_entries(نویسه *prop[PROPOSAL_MAX]);
 
-int	 kex_exchange_identification(struct ssh *, int, const char *);
+صحیح	 kex_exchange_identification(ساختار ssh *, صحیح, ثابت نویسه *);
 
-struct kex *kex_new(void);
-int	 kex_ready(struct ssh *, char *[PROPOSAL_MAX]);
-int	 kex_setup(struct ssh *, char *[PROPOSAL_MAX]);
-void	 kex_free_newkeys(struct newkeys *);
-void	 kex_free(struct kex *);
+ساختار kex *kex_new(تهی);
+صحیح	 kex_ready(ساختار ssh *, نویسه *[PROPOSAL_MAX]);
+صحیح	 kex_setup(ساختار ssh *, نویسه *[PROPOSAL_MAX]);
+تهی	 kex_free_newkeys(ساختار newkeys *);
+تهی	 kex_free(ساختار kex *);
 
-int	 kex_buf2prop(struct sshbuf *, int *, char ***);
-int	 kex_prop2buf(struct sshbuf *, char *proposal[PROPOSAL_MAX]);
-void	 kex_prop_free(char **);
-int	 kex_load_hostkey(struct ssh *, struct sshkey **, struct sshkey **);
-int	 kex_verify_host_key(struct ssh *, struct sshkey *);
+صحیح	 kex_buf2prop(ساختار sshbuf *, صحیح *, نویسه ***);
+صحیح	 kex_prop2buf(ساختار sshbuf *, نویسه *proposal[PROPOSAL_MAX]);
+تهی	 kex_prop_free(نویسه **);
+صحیح	 kex_load_hostkey(ساختار ssh *, ساختار sshkey **, ساختار sshkey **);
+صحیح	 kex_verify_host_کلید(ساختار ssh *, ساختار sshkey *);
 
-int	 kex_send_kexinit(struct ssh *);
-int	 kex_input_kexinit(int, uint32_t, struct ssh *);
-int	 kex_input_ext_info(int, uint32_t, struct ssh *);
-int	 kex_protocol_error(int, uint32_t, struct ssh *);
-int	 kex_derive_keys(struct ssh *, u_char *, u_int, const struct sshbuf *);
-int	 kex_send_newkeys(struct ssh *);
-int	 kex_start_rekex(struct ssh *);
-int	 kex_server_update_ext_info(struct ssh *);
-void	 kex_set_server_sig_algs(struct ssh *, const char *);
-void	 kex_set_warn_weak_crypto(struct ssh *, int);
-void	 kex_check_warn_weak_crypto(struct ssh *);
+صحیح	 kex_send_kexinit(ساختار ssh *);
+صحیح	 kex_درون_داد_kexinit(صحیح, uint32_t, ساختار ssh *);
+صحیح	 kex_درون_داد_ext_info(صحیح, uint32_t, ساختار ssh *);
+صحیح	 kex_protocol_error(صحیح, uint32_t, ساختار ssh *);
+صحیح	 kex_derive_کلیدها(ساختار ssh *, u_char *, u_int, ثابت ساختار sshbuf *);
+صحیح	 kex_send_newkeys(ساختار ssh *);
+صحیح	 kex_start_rekex(ساختار ssh *);
+صحیح	 kex_server_update_ext_info(ساختار ssh *);
+تهی	 kex_set_server_sig_algs(ساختار ssh *, ثابت نویسه *);
+تهی	 kex_set_warn_weak_crypto(ساختار ssh *, صحیح);
+تهی	 kex_check_warn_weak_crypto(ساختار ssh *);
 
-int	 kexgex_client(struct ssh *);
-int	 kexgex_server(struct ssh *);
-int	 kex_gen_client(struct ssh *);
-int	 kex_gen_server(struct ssh *);
+صحیح	 kexgex_client(ساختار ssh *);
+صحیح	 kexgex_server(ساختار ssh *);
+صحیح	 kex_gen_client(ساختار ssh *);
+صحیح	 kex_gen_server(ساختار ssh *);
 
-int	 kex_dh_keypair(struct kex *);
-int	 kex_dh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_dh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+صحیح	 kex_dh_keypair(ساختار kex *);
+صحیح	 kex_dh_enc(ساختار kex *, ثابت ساختار sshbuf *, ساختار sshbuf **,
+    ساختار sshbuf **);
+صحیح	 kex_dh_dec(ساختار kex *, ثابت ساختار sshbuf *, ساختار sshbuf **);
 
-int	 kex_ecdh_dec_key_group(struct kex *, const struct sshbuf *, EC_KEY *key,
-	    const EC_GROUP *, int, struct sshbuf **);
+صحیح	 kex_ecdh_dec_کلید_group(ساختار kex *, ثابت ساختار sshbuf *, EC_کلید *کلید,
+	    ثابت EC_GROUP *, صحیح, ساختار sshbuf **);
 
-int	 kex_ecdh_keypair(struct kex *);
-int	 kex_ecdh_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_ecdh_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+صحیح	 kex_ecdh_keypair(ساختار kex *);
+صحیح	 kex_ecdh_enc(ساختار kex *, ثابت ساختار sshbuf *, ساختار sshbuf **,
+    ساختار sshbuf **);
+صحیح	 kex_ecdh_dec(ساختار kex *, ثابت ساختار sshbuf *, ساختار sshbuf **);
 
-int	 kex_c25519_keypair(struct kex *);
-int	 kex_c25519_enc(struct kex *, const struct sshbuf *, struct sshbuf **,
-    struct sshbuf **);
-int	 kex_c25519_dec(struct kex *, const struct sshbuf *, struct sshbuf **);
+صحیح	 kex_c25519_keypair(ساختار kex *);
+صحیح	 kex_c25519_enc(ساختار kex *, ثابت ساختار sshbuf *, ساختار sshbuf **,
+    ساختار sshbuf **);
+صحیح	 kex_c25519_dec(ساختار kex *, ثابت ساختار sshbuf *, ساختار sshbuf **);
 
-int	 kex_kem_sntrup761x25519_keypair(struct kex *);
-int	 kex_kem_sntrup761x25519_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_sntrup761x25519_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+صحیح	 kex_kem_sntrup761x25519_keypair(ساختار kex *);
+صحیح	 kex_kem_sntrup761x25519_enc(ساختار kex *, ثابت ساختار sshbuf *,
+    ساختار sshbuf **, ساختار sshbuf **);
+صحیح	 kex_kem_sntrup761x25519_dec(ساختار kex *, ثابت ساختار sshbuf *,
+    ساختار sshbuf **);
 
-int	 kex_kem_mlkem768x25519_keypair(struct kex *);
-int	 kex_kem_mlkem768x25519_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768x25519_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+صحیح	 kex_kem_mlkem768x25519_keypair(ساختار kex *);
+صحیح	 kex_kem_mlkem768x25519_enc(ساختار kex *, ثابت ساختار sshbuf *,
+    ساختار sshbuf **, ساختار sshbuf **);
+صحیح	 kex_kem_mlkem768x25519_dec(ساختار kex *, ثابت ساختار sshbuf *,
+    ساختار sshbuf **);
 
-int	 kex_kem_mlkem768ecdh_keypair(struct kex *);
-int	 kex_kem_mlkem768ecdh_enc(struct kex *, const struct sshbuf *,
-    struct sshbuf **, struct sshbuf **);
-int	 kex_kem_mlkem768ecdh_dec(struct kex *, const struct sshbuf *,
-    struct sshbuf **);
+صحیح	 kex_kem_mlkem768ecdh_keypair(ساختار kex *);
+صحیح	 kex_kem_mlkem768ecdh_enc(ساختار kex *, ثابت ساختار sshbuf *,
+    ساختار sshbuf **, ساختار sshbuf **);
+صحیح	 kex_kem_mlkem768ecdh_dec(ساختار kex *, ثابت ساختار sshbuf *,
+    ساختار sshbuf **);
 
-int	 kex_dh_keygen(struct kex *);
-int	 kex_dh_compute_key(struct kex *, BIGNUM *, struct sshbuf *);
+صحیح	 kex_dh_keygen(ساختار kex *);
+صحیح	 kex_dh_compute_کلید(ساختار kex *, BIGNUM *, ساختار sshbuf *);
 
-int	 kexgex_hash(int, const struct sshbuf *, const struct sshbuf *,
-    const struct sshbuf *, const struct sshbuf *, const struct sshbuf *,
-    int, int, int,
-    const BIGNUM *, const BIGNUM *, const BIGNUM *,
-    const BIGNUM *, const u_char *, size_t,
+صحیح	 kexgex_hash(صحیح, ثابت ساختار sshbuf *, ثابت ساختار sshbuf *,
+    ثابت ساختار sshbuf *, ثابت ساختار sshbuf *, ثابت ساختار sshbuf *,
+    صحیح, صحیح, صحیح,
+    ثابت BIGNUM *, ثابت BIGNUM *, ثابت BIGNUM *,
+    ثابت BIGNUM *, ثابت u_char *, size_t,
     u_char *, size_t *);
 
-void	kexc25519_keygen(u_char key[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
+تهی	kexc25519_keygen(u_char کلید[CURVE25519_SIZE], u_char pub[CURVE25519_SIZE])
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out)
+صحیح	kexc25519_shared_کلید(ثابت u_char کلید[CURVE25519_SIZE],
+    ثابت u_char pub[CURVE25519_SIZE], ساختار sshbuf *out)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
-int	kexc25519_shared_key_ext(const u_char key[CURVE25519_SIZE],
-    const u_char pub[CURVE25519_SIZE], struct sshbuf *out, int)
+صحیح	kexc25519_shared_کلید_ext(ثابت u_char کلید[CURVE25519_SIZE],
+    ثابت u_char pub[CURVE25519_SIZE], ساختار sshbuf *out, صحیح)
 	__attribute__((__bounded__(__minbytes__, 1, CURVE25519_SIZE)))
 	__attribute__((__bounded__(__minbytes__, 2, CURVE25519_SIZE)));
 
-#if defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
-void	dump_digest(const char *, const u_char *, int);
+#اگر defined(DEBUG_KEX) || defined(DEBUG_KEXDH) || defined(DEBUG_KEXECDH)
+تهی	dump_digest(ثابت نویسه *, ثابت u_char *, صحیح);
 #endif
 
 #endif

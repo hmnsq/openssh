@@ -15,51 +15,51 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#شامل <sys/types.h>
+#شامل <signal.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <string.h>
 
-#include "ssherr.h"
+#شامل "ssherr.h"
 #define SSHBUF_INTERNAL
-#include "sshbuf.h"
-#include "misc.h"
+#شامل "sshbuf.h"
+#شامل "misc.h"
 
 #ifdef SSHBUF_DEBUG
-# define SSHBUF_TELL(what) do { \
+# define SSHBUF_TELL(what) انجامبده { \
 		printf("%s:%d %s: %s size %zu alloc %zu off %zu max %zu\n", \
 		    __FILE__, __LINE__, __func__, what, \
 		    buf->size, buf->alloc, buf->off, buf->max_size); \
 		fflush(stdout); \
-	} while (0)
-#else
+	} وقتی (0)
+#وگرنه
 # define SSHBUF_TELL(what)
 #endif
 
-struct sshbuf {
+ساختار sshbuf {
 	u_char *d;		/* Data */
-	const u_char *cd;	/* Const data */
+	ثابت u_char *cd;	/* Const data */
 	size_t off;		/* First available byte is buf->d + buf->off */
 	size_t size;		/* Last byte is buf->d + buf->size - 1 */
 	size_t max_size;	/* Maximum size of buffer */
 	size_t alloc;		/* Total bytes allocated to buf->d */
-	int readonly;		/* Refers to external, const data */
+	صحیح readonly;		/* Refers to external, const data */
 	u_int refcount;		/* Tracks self and number of child buffers */
-	struct sshbuf *parent;	/* If child, pointer to parent */
+	ساختار sshbuf *parent;	/* If child, pointer to parent */
 };
 
-static inline int
-sshbuf_check_sanity(const struct sshbuf *buf)
+ایستا درونخطی صحیح
+sshbuf_check_sanity(ثابت ساختار sshbuf *buf)
 {
 	SSHBUF_TELL("sanity");
-	if (__predict_false(buf == NULL ||
+	اگر (__predict_false(buf == پوچ ||
 	    (!buf->readonly && buf->d != buf->cd) ||
 	    buf->parent == buf ||
 	    buf->refcount < 1 || buf->refcount > SSHBUF_REFS_MAX ||
-	    buf->cd == NULL ||
+	    buf->cd == پوچ ||
 	    buf->max_size > SSHBUF_SIZE_MAX ||
 	    buf->alloc > buf->max_size ||
 	    buf->size > buf->alloc ||
@@ -67,20 +67,20 @@ sshbuf_check_sanity(const struct sshbuf *buf)
 		/* Do not try to recover from corrupted buffer internals */
 		SSHBUF_DBG(("SSH_ERR_INTERNAL_ERROR"));
 		ssh_signal(SIGSEGV, SIG_DFL);
-		raise(SIGSEGV);
-		return SSH_ERR_INTERNAL_ERROR;
+		بالاببر(SIGSEGV);
+		بازگشت SSH_ERR_INTERNAL_ERROR;
 	}
-	return 0;
+	بازگشت 0;
 }
 
-static void
-sshbuf_maybe_pack(struct sshbuf *buf, int force)
+ایستا تهی
+sshbuf_maybe_pack(ساختار sshbuf *buf, صحیح force)
 {
 	SSHBUF_DBG(("force %d", force));
 	SSHBUF_TELL("pre-pack");
-	if (buf->off == 0 || buf->readonly || buf->refcount > 1)
-		return;
-	if (force ||
+	اگر (buf->off == 0 || buf->readonly || buf->refcount > 1)
+		بازگشت;
+	اگر (force ||
 	    (buf->off >= SSHBUF_PACK_MIN && buf->off >= buf->size / 2)) {
 		memmove(buf->d, buf->d + buf->off, buf->size - buf->off);
 		buf->size -= buf->off;
@@ -89,87 +89,87 @@ sshbuf_maybe_pack(struct sshbuf *buf, int force)
 	}
 }
 
-struct sshbuf *
-sshbuf_new(void)
+ساختار sshbuf *
+sshbuf_new(تهی)
 {
-	struct sshbuf *ret;
+	ساختار sshbuf *ret;
 
-	if ((ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	اگر ((ret = calloc(1, اندازه(*ret))) == پوچ)
+		بازگشت پوچ;
 	ret->alloc = SSHBUF_SIZE_INIT;
 	ret->max_size = SSHBUF_SIZE_MAX;
 	ret->readonly = 0;
 	ret->refcount = 1;
-	ret->parent = NULL;
-	if ((ret->cd = ret->d = calloc(1, ret->alloc)) == NULL) {
-		free(ret);
-		return NULL;
+	ret->parent = پوچ;
+	اگر ((ret->cd = ret->d = calloc(1, ret->alloc)) == پوچ) {
+		آزاد(ret);
+		بازگشت پوچ;
 	}
-	return ret;
+	بازگشت ret;
 }
 
-struct sshbuf *
-sshbuf_from(const void *blob, size_t len)
+ساختار sshbuf *
+sshbuf_from(ثابت تهی *blob, size_t len)
 {
-	struct sshbuf *ret;
+	ساختار sshbuf *ret;
 
-	if (blob == NULL || len > SSHBUF_SIZE_MAX ||
-	    (ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
+	اگر (blob == پوچ || len > SSHBUF_SIZE_MAX ||
+	    (ret = calloc(1, اندازه(*ret))) == پوچ)
+		بازگشت پوچ;
 	ret->alloc = ret->size = ret->max_size = len;
 	ret->readonly = 1;
 	ret->refcount = 1;
-	ret->parent = NULL;
+	ret->parent = پوچ;
 	ret->cd = blob;
-	ret->d = NULL;
-	return ret;
+	ret->d = پوچ;
+	بازگشت ret;
 }
 
-int
-sshbuf_set_parent(struct sshbuf *child, struct sshbuf *parent)
+صحیح
+sshbuf_set_parent(ساختار sshbuf *child, ساختار sshbuf *parent)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_check_sanity(child)) != 0 ||
+	اگر ((r = sshbuf_check_sanity(child)) != 0 ||
 	    (r = sshbuf_check_sanity(parent)) != 0)
-		return r;
-	if ((child->parent != NULL && child->parent != parent) ||
+		بازگشت r;
+	اگر ((child->parent != پوچ && child->parent != parent) ||
 	    child == parent)
-		return SSH_ERR_INTERNAL_ERROR;
+		بازگشت SSH_ERR_INTERNAL_ERROR;
 	child->parent = parent;
 	child->parent->refcount++;
-	return 0;
+	بازگشت 0;
 }
 
-struct sshbuf *
-sshbuf_fromb(struct sshbuf *buf)
+ساختار sshbuf *
+sshbuf_fromb(ساختار sshbuf *buf)
 {
-	struct sshbuf *ret;
+	ساختار sshbuf *ret;
 
-	if (sshbuf_check_sanity(buf) != 0)
-		return NULL;
-	if ((ret = sshbuf_from(sshbuf_ptr(buf), sshbuf_len(buf))) == NULL)
-		return NULL;
-	if (sshbuf_set_parent(ret, buf) != 0) {
+	اگر (sshbuf_check_sanity(buf) != 0)
+		بازگشت پوچ;
+	اگر ((ret = sshbuf_from(sshbuf_ptr(buf), sshbuf_len(buf))) == پوچ)
+		بازگشت پوچ;
+	اگر (sshbuf_set_parent(ret, buf) != 0) {
 		sshbuf_free(ret);
-		return NULL;
+		بازگشت پوچ;
 	}
-	return ret;
+	بازگشت ret;
 }
 
-void
-sshbuf_free(struct sshbuf *buf)
+تهی
+sshbuf_free(ساختار sshbuf *buf)
 {
-	if (buf == NULL)
-		return;
+	اگر (buf == پوچ)
+		بازگشت;
 	/*
 	 * The following will leak on insane buffers, but this is the safest
 	 * course of action - an invalid pointer or already-freed pointer may
 	 * have been passed to us and continuing to scribble over memory would
 	 * be bad.
 	 */
-	if (sshbuf_check_sanity(buf) != 0)
-		return;
+	اگر (sshbuf_check_sanity(buf) != 0)
+		بازگشت;
 
 	/*
 	 * If we are a parent with still-extant children, then don't free just
@@ -177,37 +177,37 @@ sshbuf_free(struct sshbuf *buf)
 	 * refcount to 0 and trigger the actual free.
 	 */
 	buf->refcount--;
-	if (buf->refcount > 0)
-		return;
+	اگر (buf->refcount > 0)
+		بازگشت;
 
 	/*
 	 * If we are a child, then free our parent to decrement its reference
 	 * count and possibly free it.
 	 */
 	sshbuf_free(buf->parent);
-	buf->parent = NULL;
+	buf->parent = پوچ;
 
-	if (!buf->readonly)
+	اگر (!buf->readonly)
 		freezero(buf->d, buf->alloc);
-	freezero(buf, sizeof(*buf));
+	freezero(buf, اندازه(*buf));
 }
 
-void
-sshbuf_reset(struct sshbuf *buf)
+تهی
+sshbuf_reset(ساختار sshbuf *buf)
 {
 	u_char *d;
 
-	if (buf->readonly || buf->refcount > 1) {
+	اگر (buf->readonly || buf->refcount > 1) {
 		/* Nonsensical. Just make buffer appear empty */
 		buf->off = buf->size;
-		return;
+		بازگشت;
 	}
-	if (sshbuf_check_sanity(buf) != 0)
-		return;
+	اگر (sshbuf_check_sanity(buf) != 0)
+		بازگشت;
 	buf->off = buf->size = 0;
-	if (buf->alloc != SSHBUF_SIZE_INIT) {
-		if ((d = recallocarray(buf->d, buf->alloc, SSHBUF_SIZE_INIT,
-		    1)) != NULL) {
+	اگر (buf->alloc != SSHBUF_SIZE_INIT) {
+		اگر ((d = recallocarray(buf->d, buf->alloc, SSHBUF_SIZE_INIT,
+		    1)) != پوچ) {
 			buf->cd = buf->d = d;
 			buf->alloc = SSHBUF_SIZE_INIT;
 		}
@@ -216,133 +216,133 @@ sshbuf_reset(struct sshbuf *buf)
 }
 
 size_t
-sshbuf_max_size(const struct sshbuf *buf)
+sshbuf_max_size(ثابت ساختار sshbuf *buf)
 {
-	return buf->max_size;
+	بازگشت buf->max_size;
 }
 
 size_t
-sshbuf_alloc(const struct sshbuf *buf)
+sshbuf_alloc(ثابت ساختار sshbuf *buf)
 {
-	return buf->alloc;
+	بازگشت buf->alloc;
 }
 
-const struct sshbuf *
-sshbuf_parent(const struct sshbuf *buf)
+ثابت ساختار sshbuf *
+sshbuf_parent(ثابت ساختار sshbuf *buf)
 {
-	return buf->parent;
+	بازگشت buf->parent;
 }
 
 u_int
-sshbuf_refcount(const struct sshbuf *buf)
+sshbuf_refcount(ثابت ساختار sshbuf *buf)
 {
-	return buf->refcount;
+	بازگشت buf->refcount;
 }
 
-int
-sshbuf_set_max_size(struct sshbuf *buf, size_t max_size)
+صحیح
+sshbuf_set_max_size(ساختار sshbuf *buf, size_t max_size)
 {
 	size_t rlen;
 	u_char *dp;
-	int r;
+	صحیح r;
 
 	SSHBUF_DBG(("set max buf = %p len = %zu", buf, max_size));
-	if ((r = sshbuf_check_sanity(buf)) != 0)
-		return r;
-	if (max_size == buf->max_size)
-		return 0;
-	if (buf->readonly || buf->refcount > 1)
-		return SSH_ERR_BUFFER_READ_ONLY;
-	if (max_size > SSHBUF_SIZE_MAX)
-		return SSH_ERR_NO_BUFFER_SPACE;
+	اگر ((r = sshbuf_check_sanity(buf)) != 0)
+		بازگشت r;
+	اگر (max_size == buf->max_size)
+		بازگشت 0;
+	اگر (buf->readonly || buf->refcount > 1)
+		بازگشت SSH_ERR_BUFFER_READ_ONLY;
+	اگر (max_size > SSHBUF_SIZE_MAX)
+		بازگشت SSH_ERR_NO_BUFFER_SPACE;
 	/* pack and realloc if necessary */
 	sshbuf_maybe_pack(buf, max_size < buf->size);
-	if (max_size < buf->alloc && max_size > buf->size) {
-		if (buf->size < SSHBUF_SIZE_INIT)
+	اگر (max_size < buf->alloc && max_size > buf->size) {
+		اگر (buf->size < SSHBUF_SIZE_INIT)
 			rlen = SSHBUF_SIZE_INIT;
-		else
+		وگرنه
 			rlen = ROUNDUP(buf->size, SSHBUF_SIZE_INC);
-		if (rlen > max_size)
+		اگر (rlen > max_size)
 			rlen = max_size;
 		SSHBUF_DBG(("new alloc = %zu", rlen));
-		if ((dp = recallocarray(buf->d, buf->alloc, rlen, 1)) == NULL)
-			return SSH_ERR_ALLOC_FAIL;
+		اگر ((dp = recallocarray(buf->d, buf->alloc, rlen, 1)) == پوچ)
+			بازگشت SSH_ERR_ALLOC_FAIL;
 		buf->cd = buf->d = dp;
 		buf->alloc = rlen;
 	}
 	SSHBUF_TELL("new-max");
-	if (max_size < buf->alloc)
-		return SSH_ERR_NO_BUFFER_SPACE;
+	اگر (max_size < buf->alloc)
+		بازگشت SSH_ERR_NO_BUFFER_SPACE;
 	buf->max_size = max_size;
-	return 0;
+	بازگشت 0;
 }
 
 size_t
-sshbuf_len(const struct sshbuf *buf)
+sshbuf_len(ثابت ساختار sshbuf *buf)
 {
-	if (sshbuf_check_sanity(buf) != 0)
-		return 0;
-	return buf->size - buf->off;
+	اگر (sshbuf_check_sanity(buf) != 0)
+		بازگشت 0;
+	بازگشت buf->size - buf->off;
 }
 
 size_t
-sshbuf_avail(const struct sshbuf *buf)
+sshbuf_avail(ثابت ساختار sshbuf *buf)
 {
-	if (sshbuf_check_sanity(buf) != 0 || buf->readonly || buf->refcount > 1)
-		return 0;
-	return buf->max_size - (buf->size - buf->off);
+	اگر (sshbuf_check_sanity(buf) != 0 || buf->readonly || buf->refcount > 1)
+		بازگشت 0;
+	بازگشت buf->max_size - (buf->size - buf->off);
 }
 
-const u_char *
-sshbuf_ptr(const struct sshbuf *buf)
+ثابت u_char *
+sshbuf_ptr(ثابت ساختار sshbuf *buf)
 {
-	if (sshbuf_check_sanity(buf) != 0)
-		return NULL;
-	return buf->cd + buf->off;
+	اگر (sshbuf_check_sanity(buf) != 0)
+		بازگشت پوچ;
+	بازگشت buf->cd + buf->off;
 }
 
 u_char *
-sshbuf_mutable_ptr(const struct sshbuf *buf)
+sshbuf_mutable_ptr(ثابت ساختار sshbuf *buf)
 {
-	if (sshbuf_check_sanity(buf) != 0 || buf->readonly || buf->refcount > 1)
-		return NULL;
-	return buf->d + buf->off;
+	اگر (sshbuf_check_sanity(buf) != 0 || buf->readonly || buf->refcount > 1)
+		بازگشت پوچ;
+	بازگشت buf->d + buf->off;
 }
 
-int
-sshbuf_check_reserve(const struct sshbuf *buf, size_t len)
+صحیح
+sshbuf_check_reserve(ثابت ساختار sshbuf *buf, size_t len)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_check_sanity(buf)) != 0)
-		return r;
-	if (buf->readonly || buf->refcount > 1)
-		return SSH_ERR_BUFFER_READ_ONLY;
+	اگر ((r = sshbuf_check_sanity(buf)) != 0)
+		بازگشت r;
+	اگر (buf->readonly || buf->refcount > 1)
+		بازگشت SSH_ERR_BUFFER_READ_ONLY;
 	SSHBUF_TELL("check");
 	/* Check that len is reasonable and that max_size + available < len */
-	if (len > buf->max_size || buf->max_size - len < buf->size - buf->off)
-		return SSH_ERR_NO_BUFFER_SPACE;
-	return 0;
+	اگر (len > buf->max_size || buf->max_size - len < buf->size - buf->off)
+		بازگشت SSH_ERR_NO_BUFFER_SPACE;
+	بازگشت 0;
 }
 
-int
-sshbuf_allocate(struct sshbuf *buf, size_t len)
+صحیح
+sshbuf_allocate(ساختار sshbuf *buf, size_t len)
 {
 	size_t rlen, need;
 	u_char *dp;
-	int r;
+	صحیح r;
 
 	SSHBUF_DBG(("allocate buf = %p len = %zu", buf, len));
-	if ((r = sshbuf_check_reserve(buf, len)) != 0)
-		return r;
+	اگر ((r = sshbuf_check_reserve(buf, len)) != 0)
+		بازگشت r;
 	/*
 	 * If the requested allocation appended would push us past max_size
 	 * then pack the buffer, zeroing buf->off.
 	 */
 	sshbuf_maybe_pack(buf, buf->size + len > buf->max_size);
 	SSHBUF_TELL("allocate");
-	if (len + buf->size <= buf->alloc)
-		return 0; /* already have it. */
+	اگر (len + buf->size <= buf->alloc)
+		بازگشت 0; /* already have it. */
 
 	/*
 	 * Prefer to alloc in SSHBUF_SIZE_INC units, but
@@ -351,97 +351,97 @@ sshbuf_allocate(struct sshbuf *buf, size_t len)
 	need = len + buf->size - buf->alloc;
 	rlen = ROUNDUP(buf->alloc + need, SSHBUF_SIZE_INC);
 	SSHBUF_DBG(("need %zu initial rlen %zu", need, rlen));
-	if (rlen > buf->max_size)
+	اگر (rlen > buf->max_size)
 		rlen = buf->alloc + need;
 	SSHBUF_DBG(("adjusted rlen %zu", rlen));
-	if ((dp = recallocarray(buf->d, buf->alloc, rlen, 1)) == NULL) {
+	اگر ((dp = recallocarray(buf->d, buf->alloc, rlen, 1)) == پوچ) {
 		SSHBUF_DBG(("realloc fail"));
-		return SSH_ERR_ALLOC_FAIL;
+		بازگشت SSH_ERR_ALLOC_FAIL;
 	}
 	buf->alloc = rlen;
 	buf->cd = buf->d = dp;
-	if ((r = sshbuf_check_reserve(buf, len)) < 0) {
+	اگر ((r = sshbuf_check_reserve(buf, len)) < 0) {
 		/* shouldn't fail */
-		return r;
+		بازگشت r;
 	}
 	SSHBUF_TELL("done");
-	return 0;
+	بازگشت 0;
 }
 
-int
-sshbuf_reserve(struct sshbuf *buf, size_t len, u_char **dpp)
+صحیح
+sshbuf_reserve(ساختار sshbuf *buf, size_t len, u_char **dpp)
 {
 	u_char *dp;
-	int r;
+	صحیح r;
 
-	if (dpp != NULL)
-		*dpp = NULL;
+	اگر (dpp != پوچ)
+		*dpp = پوچ;
 
 	SSHBUF_DBG(("reserve buf = %p len = %zu", buf, len));
-	if ((r = sshbuf_allocate(buf, len)) != 0)
-		return r;
+	اگر ((r = sshbuf_allocate(buf, len)) != 0)
+		بازگشت r;
 
 	dp = buf->d + buf->size;
 	buf->size += len;
-	if (dpp != NULL)
+	اگر (dpp != پوچ)
 		*dpp = dp;
-	return 0;
+	بازگشت 0;
 }
 
-int
-sshbuf_consume(struct sshbuf *buf, size_t len)
+صحیح
+sshbuf_consume(ساختار sshbuf *buf, size_t len)
 {
-	int r;
+	صحیح r;
 
 	SSHBUF_DBG(("len = %zu", len));
-	if ((r = sshbuf_check_sanity(buf)) != 0)
-		return r;
-	if (len == 0)
-		return 0;
-	if (len > sshbuf_len(buf))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	اگر ((r = sshbuf_check_sanity(buf)) != 0)
+		بازگشت r;
+	اگر (len == 0)
+		بازگشت 0;
+	اگر (len > sshbuf_len(buf))
+		بازگشت SSH_ERR_MESSAGE_INCOMPLETE;
 	buf->off += len;
 	/* deal with empty buffer */
-	if (buf->off == buf->size)
+	اگر (buf->off == buf->size)
 		buf->off = buf->size = 0;
 	SSHBUF_TELL("done");
-	return 0;
+	بازگشت 0;
 }
 
-int
-sshbuf_consume_end(struct sshbuf *buf, size_t len)
+صحیح
+sshbuf_consume_end(ساختار sshbuf *buf, size_t len)
 {
-	int r;
+	صحیح r;
 
 	SSHBUF_DBG(("len = %zu", len));
-	if ((r = sshbuf_check_sanity(buf)) != 0)
-		return r;
-	if (len == 0)
-		return 0;
-	if (len > sshbuf_len(buf))
-		return SSH_ERR_MESSAGE_INCOMPLETE;
+	اگر ((r = sshbuf_check_sanity(buf)) != 0)
+		بازگشت r;
+	اگر (len == 0)
+		بازگشت 0;
+	اگر (len > sshbuf_len(buf))
+		بازگشت SSH_ERR_MESSAGE_INCOMPLETE;
 	buf->size -= len;
 	SSHBUF_TELL("done");
-	return 0;
+	بازگشت 0;
 }
 
-int
-sshbuf_consume_upto_child(struct sshbuf *buf, const struct sshbuf *child)
+صحیح
+sshbuf_consume_upto_child(ساختار sshbuf *buf, ثابت ساختار sshbuf *child)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_check_sanity(buf)) != 0 ||
+	اگر ((r = sshbuf_check_sanity(buf)) != 0 ||
 	    (r = sshbuf_check_sanity(child)) != 0)
-		return r;
+		بازگشت r;
 	/* This function is only used for parent/child buffers */
-	if (child->parent != buf)
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (child->parent != buf)
+		بازگشت SSH_ERR_INVALID_ARGUMENT;
 	/* Nonsensical if the parent has advanced past the child */
-	if (sshbuf_len(child) > sshbuf_len(buf))
-		return SSH_ERR_INVALID_ARGUMENT;
+	اگر (sshbuf_len(child) > sshbuf_len(buf))
+		بازگشت SSH_ERR_INVALID_ARGUMENT;
 	/* More paranoia, shouldn't happen */
-	if (child->cd < buf->cd)
-		return SSH_ERR_INTERNAL_ERROR;
+	اگر (child->cd < buf->cd)
+		بازگشت SSH_ERR_INTERNAL_ERROR;
 	/* Advance */
-	return sshbuf_consume(buf, sshbuf_len(buf) - sshbuf_len(child));
+	بازگشت sshbuf_consume(buf, sshbuf_len(buf) - sshbuf_len(child));
 }

@@ -1,29 +1,29 @@
 // cc_fuzz_target test for sshsig verification.
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <stddef.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-extern "C" {
+بیرونی "C" {
 
-#include "includes.h"
-#include "sshkey.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshsig.h"
-#include "log.h"
+#شامل "includes.h"
+#شامل "sshkey.h"
+#شامل "ssherr.h"
+#شامل "sshbuf.h"
+#شامل "sshsig.h"
+#شامل "log.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
+صحیح LLVMFuzzer_Test_One_درون_داد(ثابت uint8_t* sig, size_t slen)
 {
-  static const char *data = "If everyone started announcing his nose had "
+  ایستا ثابت نویسه *data = "If everyone started announcing his nose had "
       "run away, I don’t know how it would all end";
-  struct sshbuf *signature = sshbuf_from(sig, slen);
-  struct sshbuf *message = sshbuf_from(data, strlen(data));
-  struct sshkey *k = NULL;
-  struct sshkey_sig_details *details = NULL;
-  extern char *__progname;
+  ساختار sshbuf *signature = sshbuf_from(sig, slen);
+  ساختار sshbuf *message = sshbuf_from(data, strlen(data));
+  ساختار sshkey *k = پوچ;
+  ساختار sshkey_sig_details *details = پوچ;
+  بیرونی نویسه *__progname;
 
   log_init(__progname, SYSLOG_LEVEL_QUIET, SYSLOG_FACILITY_USER, 1);
   sshsig_verifyb(signature, message, "castle", &k, &details);
@@ -31,7 +31,7 @@ int LLVMFuzzerTestOneInput(const uint8_t* sig, size_t slen)
   sshkey_free(k);
   sshbuf_free(signature);
   sshbuf_free(message);
-  return 0;
+  بازگشت 0;
 }
 
 } // extern

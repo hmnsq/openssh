@@ -35,45 +35,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <termios.h>
-#include <pwd.h>
+#شامل <sys/types.h>
+#شامل <stdio.h>
+#شامل <termios.h>
+#شامل <pwd.h>
 
-#include "sshpty.h"
+#شامل "sshpty.h"
 
-static struct termios _saved_tio;
-static int _in_raw_mode = 0;
+ایستا ساختار termios _saved_tio;
+ایستا صحیح _in_raw_mode = 0;
 
-struct termios *
-get_saved_tio(void)
+ساختار termios *
+get_saved_tio(تهی)
 {
-	return _in_raw_mode ? &_saved_tio : NULL;
+	بازگشت _in_raw_mode ? &_saved_tio : پوچ;
 }
 
-void
-leave_raw_mode(int quiet)
+تهی
+leave_raw_mode(صحیح quiet)
 {
-	if (!_in_raw_mode)
-		return;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
-		if (!quiet)
+	اگر (!_in_raw_mode)
+		بازگشت;
+	اگر (tcsetattr(fileno(stdin), TCSADRAIN, &_saved_tio) == -1) {
+		اگر (!quiet)
 			perror("tcsetattr");
-	} else
+	} وگرنه
 		_in_raw_mode = 0;
 }
 
-void
-enter_raw_mode(int quiet)
+تهی
+enter_raw_mode(صحیح quiet)
 {
-	struct termios tio;
+	ساختار termios tio;
 
-	if (tcgetattr(fileno(stdin), &tio) == -1) {
-		if (!quiet)
+	اگر (tcgetattr(fileno(stdin), &tio) == -1) {
+		اگر (!quiet)
 			perror("tcgetattr");
-		return;
+		بازگشت;
 	}
 	_saved_tio = tio;
 	tio.c_iflag |= IGNPAR;
@@ -88,9 +88,9 @@ enter_raw_mode(int quiet)
 	tio.c_oflag &= ~OPOST;
 	tio.c_cc[VMIN] = 1;
 	tio.c_cc[VTIME] = 0;
-	if (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
-		if (!quiet)
+	اگر (tcsetattr(fileno(stdin), TCSADRAIN, &tio) == -1) {
+		اگر (!quiet)
 			perror("tcsetattr");
-	} else
+	} وگرنه
 		_in_raw_mode = 1;
 }

@@ -18,349 +18,349 @@
  */
 
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <sys/un.h>
+#شامل <sys/types.h>
+#شامل <sys/ioctl.h>
+#شامل <sys/mman.h>
+#شامل <sys/socket.h>
+#شامل <sys/stat.h>
+#شامل <sys/time.h>
+#شامل <sys/wait.h>
+#شامل <sys/un.h>
 
-#include <limits.h>
-#include <libgen.h>
-#include <poll.h>
-#include <nlist.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
+#شامل <limits.h>
+#شامل <libgen.h>
+#شامل <poll.h>
+#شامل <nlist.h>
+#شامل <signal.h>
+#شامل <stdarg.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <time.h>
+#شامل <unistd.h>
 
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
+#شامل <netinet/in.h>
+#شامل <netinet/ip.h>
+#شامل <netinet/tcp.h>
+#شامل <arpa/inet.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <grp.h>
+#شامل <ctype.h>
+#شامل <errno.h>
+#شامل <fcntl.h>
+#شامل <netdb.h>
+#شامل <paths.h>
+#شامل <pwd.h>
+#شامل <grp.h>
 #ifdef SSH_TUN_OPENBSD
-#include <net/if.h>
+#شامل <net/if.h>
 #endif
 
-#include "xmalloc.h"
-#include "misc.h"
-#include "log.h"
-#include "ssh.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "platform.h"
+#شامل "xmalloc.h"
+#شامل "misc.h"
+#شامل "log.h"
+#شامل "ssh.h"
+#شامل "sshbuf.h"
+#شامل "ssherr.h"
+#شامل "platform.h"
 
 /* remove newline at end of string */
-char *
-chop(char *s)
+نویسه *
+chop(نویسه *s)
 {
-	char *t = s;
-	while (*t) {
-		if (*t == '\n' || *t == '\r') {
+	نویسه *t = s;
+	وقتی (*t) {
+		اگر (*t == '\n' || *t == '\r') {
 			*t = '\0';
-			return s;
+			بازگشت s;
 		}
 		t++;
 	}
-	return s;
+	بازگشت s;
 
 }
 
 /* remove whitespace from end of string */
-void
-rtrim(char *s)
+تهی
+rtrim(نویسه *s)
 {
 	size_t i;
 
-	if ((i = strlen(s)) == 0)
-		return;
-	do {
+	اگر ((i = strlen(s)) == 0)
+		بازگشت;
+	انجامبده {
 		i--;
-		if (isspace((unsigned char)s[i]))
+		اگر (isspace((unsigned نویسه)s[i]))
 			s[i] = '\0';
-		else
-			break;
-	} while (i > 0);
+		وگرنه
+			بشکن;
+	} وقتی (i > 0);
 }
 
 /*
  * returns pointer to character after 'prefix' in 's' or otherwise NULL
  * if the prefix is not present.
  */
-const char *
-strprefix(const char *s, const char *prefix, int ignorecase)
+ثابت نویسه *
+strprefix(ثابت نویسه *s, ثابت نویسه *prefix, صحیح ignorecase)
 {
 	size_t prefixlen;
 
-	if ((prefixlen = strlen(prefix)) == 0)
-		return s;
-	if (ignorecase) {
-		if (strncasecmp(s, prefix, prefixlen) != 0)
-			return NULL;
-	} else {
-		if (strncmp(s, prefix, prefixlen) != 0)
-			return NULL;
+	اگر ((prefixlen = strlen(prefix)) == 0)
+		بازگشت s;
+	اگر (ignorecase) {
+		اگر (strncasecmp(s, prefix, prefixlen) != 0)
+			بازگشت پوچ;
+	} وگرنه {
+		اگر (strncmp(s, prefix, prefixlen) != 0)
+			بازگشت پوچ;
 	}
-	return s + prefixlen;
+	بازگشت s + prefixlen;
 }
 
 /* Append string 's' to a NULL-terminated array of strings */
-void
-stringlist_append(char ***listp, const char *s)
+تهی
+stringlist_append(نویسه ***listp, ثابت نویسه *s)
 {
 	size_t i = 0;
 
-	if (*listp == NULL)
-		*listp = xcalloc(2, sizeof(**listp));
-	else {
-		for (i = 0; (*listp)[i] != NULL; i++)
+	اگر (*listp == پوچ)
+		*listp = xcalloc(2, اندازه(**listp));
+	وگرنه {
+		برای (i = 0; (*listp)[i] != پوچ; i++)
 			; /* count */
-		*listp = xrecallocarray(*listp, i + 1, i + 2, sizeof(**listp));
+		*listp = xrecallocarray(*listp, i + 1, i + 2, اندازه(**listp));
 	}
 	(*listp)[i] = xstrdup(s);
 }
 
-void
-stringlist_free(char **list)
+تهی
+stringlist_free(نویسه **list)
 {
 	size_t i = 0;
 
-	if (list == NULL)
-		return;
-	for (i = 0; list[i] != NULL; i++)
-		free(list[i]);
-	free(list);
+	اگر (list == پوچ)
+		بازگشت;
+	برای (i = 0; list[i] != پوچ; i++)
+		آزاد(list[i]);
+	آزاد(list);
 }
 
 /* set/unset filedescriptor to non-blocking */
-int
-set_nonblock(int fd)
+صحیح
+set_nonblock(صحیح fd)
 {
-	int val;
+	صحیح val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
+	اگر (val == -1) {
 		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+		بازگشت (-1);
 	}
-	if (val & O_NONBLOCK) {
+	اگر (val & O_NONBLOCK) {
 		debug3("fd %d is O_NONBLOCK", fd);
-		return (0);
+		بازگشت (0);
 	}
 	debug2("fd %d setting O_NONBLOCK", fd);
 	val |= O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	اگر (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, O_NONBLOCK): %s", fd,
 		    strerror(errno));
-		return (-1);
+		بازگشت (-1);
 	}
-	return (0);
+	بازگشت (0);
 }
 
-int
-unset_nonblock(int fd)
+صحیح
+unset_nonblock(صحیح fd)
 {
-	int val;
+	صحیح val;
 
 	val = fcntl(fd, F_GETFL);
-	if (val == -1) {
+	اگر (val == -1) {
 		error("fcntl(%d, F_GETFL): %s", fd, strerror(errno));
-		return (-1);
+		بازگشت (-1);
 	}
-	if (!(val & O_NONBLOCK)) {
+	اگر (!(val & O_NONBLOCK)) {
 		debug3("fd %d is not O_NONBLOCK", fd);
-		return (0);
+		بازگشت (0);
 	}
 	debug("fd %d clearing O_NONBLOCK", fd);
 	val &= ~O_NONBLOCK;
-	if (fcntl(fd, F_SETFL, val) == -1) {
+	اگر (fcntl(fd, F_SETFL, val) == -1) {
 		debug("fcntl(%d, F_SETFL, ~O_NONBLOCK): %s",
 		    fd, strerror(errno));
-		return (-1);
+		بازگشت (-1);
 	}
-	return (0);
+	بازگشت (0);
 }
 
-const char *
-ssh_gai_strerror(int gaierr)
+ثابت نویسه *
+ssh_gai_strerror(صحیح gaierr)
 {
-	if (gaierr == EAI_SYSTEM && errno != 0)
-		return strerror(errno);
-	return gai_strerror(gaierr);
+	اگر (gaierr == EAI_SYSTEM && errno != 0)
+		بازگشت strerror(errno);
+	بازگشت gai_strerror(gaierr);
 }
 
 /* disable nagle on socket */
-void
-set_nodelay(int fd)
+تهی
+set_nodelay(صحیح fd)
 {
-	int opt;
+	صحیح opt;
 	socklen_t optlen;
 
-	optlen = sizeof opt;
-	if (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
+	optlen = اندازه opt;
+	اگر (getsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, &optlen) == -1) {
 		debug("getsockopt TCP_NODELAY: %.100s", strerror(errno));
-		return;
+		بازگشت;
 	}
-	if (opt == 1) {
+	اگر (opt == 1) {
 		debug2("fd %d is TCP_NODELAY", fd);
-		return;
+		بازگشت;
 	}
 	opt = 1;
 	debug2("fd %d setting TCP_NODELAY", fd);
-	if (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof opt) == -1)
+	اگر (setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, &opt, اندازه opt) == -1)
 		error("setsockopt TCP_NODELAY: %.100s", strerror(errno));
 }
 
 /* Allow local port reuse in TIME_WAIT */
-int
-set_reuseaddr(int fd)
+صحیح
+set_reuseaddr(صحیح fd)
 {
-	int on = 1;
+	صحیح on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) == -1) {
+	اگر (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &on, اندازه(on)) == -1) {
 		error("setsockopt SO_REUSEADDR fd %d: %s", fd, strerror(errno));
-		return -1;
+		بازگشت -1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
 /* Set TCP keepalives */
-int
-set_keepalive(int fd)
+صحیح
+set_keepalive(صحیح fd)
 {
-	int on = 1;
+	صحیح on = 1;
 
-	if (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on)) == -1) {
+	اگر (setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, &on, اندازه(on)) == -1) {
 		error("setsockopt SO_KEEPALIVE fd %d: %s", fd, strerror(errno));
-		return -1;
+		بازگشت -1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
 /* Get/set routing domain */
-char *
-get_rdomain(int fd)
+نویسه *
+get_rdomain(صحیح fd)
 {
-#if defined(HAVE_SYS_GET_RDOMAIN)
-	return sys_get_rdomain(fd);
-#elif defined(__OpenBSD__)
-	int rtable;
-	char *ret;
-	socklen_t len = sizeof(rtable);
+#اگر defined(HAVE_SYS_GET_RDOMAIN)
+	بازگشت sys_get_rdomain(fd);
+#وگرنهاگر defined(__OpenBSD__)
+	صحیح rtable;
+	نویسه *ret;
+	socklen_t len = اندازه(rtable);
 
-	if (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
+	اگر (getsockopt(fd, SOL_SOCKET, SO_RTABLE, &rtable, &len) == -1) {
 		error("Failed to get routing domain for fd %d: %s",
 		    fd, strerror(errno));
-		return NULL;
+		بازگشت پوچ;
 	}
 	xasprintf(&ret, "%d", rtable);
-	return ret;
-#else /* defined(__OpenBSD__) */
-	return NULL;
+	بازگشت ret;
+#وگرنه /* defined(__OpenBSD__) */
+	بازگشت پوچ;
 #endif
 }
 
-int
-set_rdomain(int fd, const char *name)
+صحیح
+set_rdomain(صحیح fd, ثابت نویسه *name)
 {
-#if defined(HAVE_SYS_SET_RDOMAIN)
-	return sys_set_rdomain(fd, name);
-#elif defined(__OpenBSD__)
-	int rtable;
-	const char *errstr;
+#اگر defined(HAVE_SYS_SET_RDOMAIN)
+	بازگشت sys_set_rdomain(fd, name);
+#وگرنهاگر defined(__OpenBSD__)
+	صحیح rtable;
+	ثابت نویسه *errstr;
 
-	if (name == NULL)
-		return 0; /* default table */
+	اگر (name == پوچ)
+		بازگشت 0; /* default table */
 
-	rtable = (int)strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL) {
+	rtable = (صحیح)strtonum(name, 0, 255, &errstr);
+	اگر (errstr != پوچ) {
 		/* Shouldn't happen */
 		error("Invalid routing domain \"%s\": %s", name, errstr);
-		return -1;
+		بازگشت -1;
 	}
-	if (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
-	    &rtable, sizeof(rtable)) == -1) {
+	اگر (setsockopt(fd, SOL_SOCKET, SO_RTABLE,
+	    &rtable, اندازه(rtable)) == -1) {
 		error("Failed to set routing domain %d on fd %d: %s",
 		    rtable, fd, strerror(errno));
-		return -1;
+		بازگشت -1;
 	}
-	return 0;
-#else /* defined(__OpenBSD__) */
+	بازگشت 0;
+#وگرنه /* defined(__OpenBSD__) */
 	error("Setting routing domain is not supported on this platform");
-	return -1;
+	بازگشت -1;
 #endif
 }
 
-int
-get_sock_af(int fd)
+صحیح
+get_sock_af(صحیح fd)
 {
-	struct sockaddr_storage to;
-	socklen_t tolen = sizeof(to);
+	ساختار sockaddr_storage to;
+	socklen_t tolen = اندازه(to);
 
-	memset(&to, 0, sizeof(to));
-	if (getsockname(fd, (struct sockaddr *)&to, &tolen) == -1)
-		return -1;
+	memset(&to, 0, اندازه(to));
+	اگر (getsockname(fd, (ساختار sockaddr *)&to, &tolen) == -1)
+		بازگشت -1;
 #ifdef IPV4_IN_IPV6
-	if (to.ss_family == AF_INET6 &&
-	    IN6_IS_ADDR_V4MAPPED(&((struct sockaddr_in6 *)&to)->sin6_addr))
-		return AF_INET;
+	اگر (to.ss_family == AF_INET6 &&
+	    IN6_IS_ADDR_V4MAPPED(&((ساختار sockaddr_in6 *)&to)->sin6_addr))
+		بازگشت AF_INET;
 #endif
-	return to.ss_family;
+	بازگشت to.ss_family;
 }
 
-void
-set_sock_tos(int fd, int tos)
+تهی
+set_sock_tos(صحیح fd, صحیح tos)
 {
 #ifndef IP_TOS_IS_BROKEN
-	int af;
+	صحیح af;
 
-	if (tos < 0 || tos == INT_MAX) {
+	اگر (tos < 0 || tos == INT_MAX) {
 		debug_f("invalid TOS %d", tos);
-		return;
+		بازگشت;
 	}
-	switch ((af = get_sock_af(fd))) {
-	case -1:
+	انتخاب ((af = get_sock_af(fd))) {
+	حالت -1:
 		/* assume not a socket */
-		break;
-	case AF_INET:
+		بشکن;
+	حالت AF_INET:
 # ifdef IP_TOS
 		debug3_f("set socket %d IP_TOS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IP, IP_TOS,
-		    &tos, sizeof(tos)) == -1) {
+		اگر (setsockopt(fd, IPPROTO_IP, IP_TOS,
+		    &tos, اندازه(tos)) == -1) {
 			error("setsockopt socket %d IP_TOS %d: %s",
 			    fd, tos, strerror(errno));
 		}
 # endif /* IP_TOS */
-		break;
-	case AF_INET6:
+		بشکن;
+	حالت AF_INET6:
 # ifdef IPV6_TCLASS
 		debug3_f("set socket %d IPV6_TCLASS 0x%02x", fd, tos);
-		if (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
-		    &tos, sizeof(tos)) == -1) {
+		اگر (setsockopt(fd, IPPROTO_IPV6, IPV6_TCLASS,
+		    &tos, اندازه(tos)) == -1) {
 			error("setsockopt socket %d IPV6_TCLASS %d: %s",
 			    fd, tos, strerror(errno));
 		}
 # endif /* IPV6_TCLASS */
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		debug2_f("unsupported socket family %d", af);
-		break;
+		بشکن;
 	}
 #endif /* IP_TOS_IS_BROKEN */
 }
@@ -370,50 +370,50 @@ set_sock_tos(int fd, int tos)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-static int
-waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
+ایستا صحیح
+waitfd(صحیح fd, صحیح *timeoutp, short events, فرار sig_atomic_t *stop)
 {
-	struct pollfd pfd;
-	struct timespec timeout;
-	int oerrno, r;
+	ساختار pollfd pfd;
+	ساختار timespec timeout;
+	صحیح oerrno, r;
 	sigset_t nsigset, osigset;
 
-	if (timeoutp && *timeoutp == -1)
-		timeoutp = NULL;
+	اگر (timeoutp && *timeoutp == -1)
+		timeoutp = پوچ;
 	pfd.fd = fd;
 	pfd.events = events;
 	ptimeout_init(&timeout);
-	if (timeoutp != NULL)
+	اگر (timeoutp != پوچ)
 		ptimeout_deadline_ms(&timeout, *timeoutp);
-	if (stop != NULL)
+	اگر (stop != پوچ)
 		sigfillset(&nsigset);
-	for (; timeoutp == NULL || *timeoutp >= 0;) {
-		if (stop != NULL) {
+	برای (; timeoutp == پوچ || *timeoutp >= 0;) {
+		اگر (stop != پوچ) {
 			sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-			if (*stop) {
-				sigprocmask(SIG_SETMASK, &osigset, NULL);
+			اگر (*stop) {
+				sigprocmask(SIG_SETMASK, &osigset, پوچ);
 				errno = EINTR;
-				return -1;
+				بازگشت -1;
 			}
 		}
 		r = ppoll(&pfd, 1, ptimeout_get_tsp(&timeout),
-		    stop != NULL ? &osigset : NULL);
+		    stop != پوچ ? &osigset : پوچ);
 		oerrno = errno;
-		if (stop != NULL)
-			sigprocmask(SIG_SETMASK, &osigset, NULL);
-		if (timeoutp)
+		اگر (stop != پوچ)
+			sigprocmask(SIG_SETMASK, &osigset, پوچ);
+		اگر (timeoutp)
 			*timeoutp = ptimeout_get_ms(&timeout);
 		errno = oerrno;
-		if (r > 0)
-			return 0;
-		else if (r == -1 && errno != EAGAIN && errno != EINTR)
-			return -1;
-		else if (r == 0)
-			break;
+		اگر (r > 0)
+			بازگشت 0;
+		وگرنه اگر (r == -1 && errno != EAGAIN && errno != EINTR)
+			بازگشت -1;
+		وگرنه اگر (r == 0)
+			بشکن;
 	}
 	/* timeout */
 	errno = ETIMEDOUT;
-	return -1;
+	بازگشت -1;
 }
 
 /*
@@ -421,9 +421,9 @@ waitfd(int fd, int *timeoutp, short events, volatile sig_atomic_t *stop)
  * *timeoutp with time remaining.
  * Returns 0 if fd ready or -1 on timeout or error (see errno).
  */
-int
-waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
-	return waitfd(fd, timeoutp, POLLIN, stop);
+صحیح
+waitrfd(صحیح fd, صحیح *timeoutp, فرار sig_atomic_t *stop) {
+	بازگشت waitfd(fd, timeoutp, POLLIN, stop);
 }
 
 /*
@@ -433,44 +433,44 @@ waitrfd(int fd, int *timeoutp, volatile sig_atomic_t *stop) {
  *
  * Returns 0 on success or -1 on failure.
  */
-int
-timeout_connect(int sockfd, const struct sockaddr *serv_addr,
-    socklen_t addrlen, int *timeoutp)
+صحیح
+timeout_connect(صحیح sockfd, ثابت ساختار sockaddr *serv_addr,
+    socklen_t addrlen, صحیح *timeoutp)
 {
-	int optval = 0;
-	socklen_t optlen = sizeof(optval);
+	صحیح optval = 0;
+	socklen_t optlen = اندازه(optval);
 
 	/* No timeout: just do a blocking connect() */
-	if (timeoutp == NULL || *timeoutp <= 0)
-		return connect(sockfd, serv_addr, addrlen);
+	اگر (timeoutp == پوچ || *timeoutp <= 0)
+		بازگشت connect(sockfd, serv_addr, addrlen);
 
 	set_nonblock(sockfd);
-	for (;;) {
-		if (connect(sockfd, serv_addr, addrlen) == 0) {
+	برای (;;) {
+		اگر (connect(sockfd, serv_addr, addrlen) == 0) {
 			/* Succeeded already? */
 			unset_nonblock(sockfd);
-			return 0;
-		} else if (errno == EINTR)
-			continue;
-		else if (errno != EINPROGRESS)
-			return -1;
-		break;
+			بازگشت 0;
+		} وگرنه اگر (errno == EINTR)
+			ادامه;
+		وگرنه اگر (errno != EINPROGRESS)
+			بازگشت -1;
+		بشکن;
 	}
 
-	if (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, NULL) == -1)
-		return -1;
+	اگر (waitfd(sockfd, timeoutp, POLLIN | POLLOUT, پوچ) == -1)
+		بازگشت -1;
 
 	/* Completed or failed */
-	if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
+	اگر (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen) == -1) {
 		debug("getsockopt: %s", strerror(errno));
-		return -1;
+		بازگشت -1;
 	}
-	if (optval != 0) {
+	اگر (optval != 0) {
 		errno = optval;
-		return -1;
+		بازگشت -1;
 	}
 	unset_nonblock(sockfd);
-	return 0;
+	بازگشت 0;
 }
 
 /* Characters considered whitespace in strsep calls. */
@@ -478,75 +478,75 @@ timeout_connect(int sockfd, const struct sockaddr *serv_addr,
 #define QUOTE	"\""
 
 /* return next token in configuration line */
-static char *
-strdelim_internal(char **s, int split_equals)
+ایستا نویسه *
+strdelim_internal(نویسه **s, صحیح split_equals)
 {
-	char *old;
-	int wspace = 0;
+	نویسه *old;
+	صحیح wspace = 0;
 
-	if (*s == NULL)
-		return NULL;
+	اگر (*s == پوچ)
+		بازگشت پوچ;
 
 	old = *s;
 
 	*s = strpbrk(*s,
 	    split_equals ? WHITESPACE QUOTE "=" : WHITESPACE QUOTE);
-	if (*s == NULL)
-		return (old);
+	اگر (*s == پوچ)
+		بازگشت (old);
 
-	if (*s[0] == '\"') {
+	اگر (*s[0] == '\"') {
 		memmove(*s, *s + 1, strlen(*s)); /* move nul too */
 		/* Find matching quote */
-		if ((*s = strpbrk(*s, QUOTE)) == NULL) {
-			return (NULL);		/* no matching quote */
-		} else {
+		اگر ((*s = strpbrk(*s, QUOTE)) == پوچ) {
+			بازگشت (پوچ);		/* no matching quote */
+		} وگرنه {
 			*s[0] = '\0';
 			*s += strspn(*s + 1, WHITESPACE) + 1;
-			return (old);
+			بازگشت (old);
 		}
 	}
 
 	/* Allow only one '=' to be skipped */
-	if (split_equals && *s[0] == '=')
+	اگر (split_equals && *s[0] == '=')
 		wspace = 1;
 	*s[0] = '\0';
 
 	/* Skip any extra whitespace after first token */
 	*s += strspn(*s + 1, WHITESPACE) + 1;
-	if (split_equals && *s[0] == '=' && !wspace)
+	اگر (split_equals && *s[0] == '=' && !wspace)
 		*s += strspn(*s + 1, WHITESPACE) + 1;
 
-	return (old);
+	بازگشت (old);
 }
 
 /*
  * Return next token in configuration line; splits on whitespace or a
  * single '=' character.
  */
-char *
-strdelim(char **s)
+نویسه *
+strdelim(نویسه **s)
 {
-	return strdelim_internal(s, 1);
+	بازگشت strdelim_internal(s, 1);
 }
 
 /*
  * Return next token in configuration line; splits on whitespace only.
  */
-char *
-strdelimw(char **s)
+نویسه *
+strdelimw(نویسه **s)
 {
-	return strdelim_internal(s, 0);
+	بازگشت strdelim_internal(s, 0);
 }
 
-struct passwd *
-pwcopy(struct passwd *pw)
+ساختار passwd *
+pwcopy(ساختار passwd *pw)
 {
-	struct passwd *copy = xcalloc(1, sizeof(*copy));
+	ساختار passwd *copy = xcalloc(1, اندازه(*copy));
 
 	copy->pw_name = xstrdup(pw->pw_name);
-	copy->pw_passwd = xstrdup(pw->pw_passwd == NULL ? "*" : pw->pw_passwd);
+	copy->pw_passwd = xstrdup(pw->pw_passwd == پوچ ? "*" : pw->pw_passwd);
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	copy->pw_gecos = xstrdup(pw->pw_gecos == NULL ? "" : pw->pw_gecos);
+	copy->pw_gecos = xstrdup(pw->pw_gecos == پوچ ? "" : pw->pw_gecos);
 #endif
 	copy->pw_uid = pw->pw_uid;
 	copy->pw_gid = pw->pw_gid;
@@ -557,30 +557,30 @@ pwcopy(struct passwd *pw)
 	copy->pw_change = pw->pw_change;
 #endif
 #ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	copy->pw_class = xstrdup(pw->pw_class == NULL ? "" : pw->pw_class);
+	copy->pw_class = xstrdup(pw->pw_class == پوچ ? "" : pw->pw_class);
 #endif
-	copy->pw_dir = xstrdup(pw->pw_dir == NULL ? "" : pw->pw_dir);
-	copy->pw_shell = xstrdup(pw->pw_shell == NULL ? "" : pw->pw_shell);
-	return copy;
+	copy->pw_dir = xstrdup(pw->pw_dir == پوچ ? "" : pw->pw_dir);
+	copy->pw_shell = xstrdup(pw->pw_shell == پوچ ? "" : pw->pw_shell);
+	بازگشت copy;
 }
 
-void
-pwfree(struct passwd *pw)
+تهی
+pwfree(ساختار passwd *pw)
 {
-	if (pw == NULL)
-		return;
-	free(pw->pw_name);
+	اگر (pw == پوچ)
+		بازگشت;
+	آزاد(pw->pw_name);
 	freezero(pw->pw_passwd,
-	    pw->pw_passwd == NULL ? 0 : strlen(pw->pw_passwd));
+	    pw->pw_passwd == پوچ ? 0 : strlen(pw->pw_passwd));
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
-	free(pw->pw_gecos);
+	آزاد(pw->pw_gecos);
 #endif
 #ifdef HAVE_STRUCT_PASSWD_PW_CLASS
-	free(pw->pw_class);
+	آزاد(pw->pw_class);
 #endif
-	free(pw->pw_dir);
-	free(pw->pw_shell);
-	freezero(pw, sizeof(*pw));
+	آزاد(pw->pw_dir);
+	آزاد(pw->pw_shell);
+	freezero(pw, اندازه(*pw));
 }
 
 /*
@@ -588,50 +588,50 @@ pwfree(struct passwd *pw)
  * Port must be >=0 and <=65535.
  * Return -1 if invalid.
  */
-int
-a2port(const char *s)
+صحیح
+a2port(ثابت نویسه *s)
 {
-	struct servent *se;
+	ساختار servent *se;
 	long long port;
-	const char *errstr;
+	ثابت نویسه *errstr;
 
 	port = strtonum(s, 0, 65535, &errstr);
-	if (errstr == NULL)
-		return (int)port;
-	if ((se = getservbyname(s, "tcp")) != NULL)
-		return ntohs(se->s_port);
-	return -1;
+	اگر (errstr == پوچ)
+		بازگشت (صحیح)port;
+	اگر ((se = getservbyname(s, "tcp")) != پوچ)
+		بازگشت ntohs(se->s_port);
+	بازگشت -1;
 }
 
-int
-a2tun(const char *s, int *remote)
+صحیح
+a2tun(ثابت نویسه *s, صحیح *remote)
 {
-	const char *errstr = NULL;
-	char *sp, *ep;
-	int tun;
+	ثابت نویسه *errstr = پوچ;
+	نویسه *sp, *ep;
+	صحیح tun;
 
-	if (remote != NULL) {
+	اگر (remote != پوچ) {
 		*remote = SSH_TUNID_ANY;
 		sp = xstrdup(s);
-		if ((ep = strchr(sp, ':')) == NULL) {
-			free(sp);
-			return (a2tun(s, NULL));
+		اگر ((ep = strchr(sp, ':')) == پوچ) {
+			آزاد(sp);
+			بازگشت (a2tun(s, پوچ));
 		}
 		ep[0] = '\0'; ep++;
-		*remote = a2tun(ep, NULL);
-		tun = a2tun(sp, NULL);
-		free(sp);
-		return (*remote == SSH_TUNID_ERR ? *remote : tun);
+		*remote = a2tun(ep, پوچ);
+		tun = a2tun(sp, پوچ);
+		آزاد(sp);
+		بازگشت (*remote == SSH_TUNID_ERR ? *remote : tun);
 	}
 
-	if (strcasecmp(s, "any") == 0)
-		return (SSH_TUNID_ANY);
+	اگر (strcasecmp(s, "any") == 0)
+		بازگشت (SSH_TUNID_ANY);
 
 	tun = strtonum(s, 0, SSH_TUNID_MAX, &errstr);
-	if (errstr != NULL)
-		return (SSH_TUNID_ERR);
+	اگر (errstr != پوچ)
+		بازگشت (SSH_TUNID_ERR);
 
-	return (tun);
+	بازگشت (tun);
 }
 
 #define SECONDS		1.0
@@ -667,110 +667,110 @@ a2tun(const char *s, int *remote)
  *
  * Returns <0.0 if the time string is invalid.
  */
-double
-convtime_double(const char *s)
+دوگانه
+convtime_double(ثابت نویسه *s)
 {
-	double val, total_sec = 0.0, multiplier;
-	const char *p, *start_p;
-	char *endp;
-	int seen_seconds = 0;
+	دوگانه val, total_sec = 0.0, multiplier;
+	ثابت نویسه *p, *start_p;
+	نویسه *endp;
+	صحیح seen_seconds = 0;
 
-	if (s == NULL || *s == '\0')
-		return -1.0;
+	اگر (s == پوچ || *s == '\0')
+		بازگشت -1.0;
 
-	for (p = s; *p != '\0';) {
-		if (!isdigit((unsigned char)*p) && *p != '.')
-			return -1.0;
+	برای (p = s; *p != '\0';) {
+		اگر (!isdigit((unsigned نویسه)*p) && *p != '.')
+			بازگشت -1.0;
 
 		errno = 0;
-		if ((val = strtod(p, &endp)) < 0 || errno != 0 || p == endp)
-			return -1.0;
+		اگر ((val = strtod(p, &endp)) < 0 || errno != 0 || p == endp)
+			بازگشت -1.0;
 		/* Allow only decimal forms */
-		if (p + strspn(p, "0123456789.") != endp)
-			return -1.0;
+		اگر (p + strspn(p, "0123456789.") != endp)
+			بازگشت -1.0;
 		start_p = p;
 		p = endp;
 
-		switch (*p) {
-		case '\0':
+		انتخاب (*p) {
+		حالت '\0':
 			/* FALLTHROUGH */
-		case 's':
-		case 'S':
-			if (seen_seconds++)
-				return -1.0;
+		حالت 's':
+		حالت 'S':
+			اگر (seen_seconds++)
+				بازگشت -1.0;
 			multiplier = SECONDS;
-			break;
-		case 'm':
-		case 'M':
+			بشکن;
+		حالت 'm':
+		حالت 'M':
 			multiplier = MINUTES;
-			break;
-		case 'h':
-		case 'H':
+			بشکن;
+		حالت 'h':
+		حالت 'H':
 			multiplier = HOURS;
-			break;
-		case 'd':
-		case 'D':
+			بشکن;
+		حالت 'd':
+		حالت 'D':
 			multiplier = DAYS;
-			break;
-		case 'w':
-		case 'W':
+			بشکن;
+		حالت 'w':
+		حالت 'W':
 			multiplier = WEEKS;
-			break;
-		default:
-			return -1.0;
+			بشکن;
+		پیشفرض:
+			بازگشت -1.0;
 		}
 
 		/* Special handling if this was a decimal */
-		if (memchr(start_p, '.', endp - start_p) != NULL) {
+		اگر (memchr(start_p, '.', endp - start_p) != پوچ) {
 			/* Decimal point present */
-			if (multiplier > 1.0)
-				return -1.0; /* No fractionals for non-seconds */
+			اگر (multiplier > 1.0)
+				بازگشت -1.0; /* No fractionals for non-seconds */
 			/* For seconds, ensure digits follow */
-			if (!isdigit((unsigned char)*(endp - 1)))
-				return -1.0;
+			اگر (!isdigit((unsigned نویسه)*(endp - 1)))
+				بازگشت -1.0;
 		}
 
 		total_sec += val * multiplier;
 
-		if (*p != '\0')
+		اگر (*p != '\0')
 			p++;
 	}
-	return total_sec;
+	بازگشت total_sec;
 }
 
 /*
  * Same as convtime_double() above but fractional seconds are ignored.
  * Return -1 if time string is invalid.
  */
-int
-convtime(const char *s)
+صحیح
+convtime(ثابت نویسه *s)
 {
-	double sec_val;
+	دوگانه sec_val;
 
-	if ((sec_val = convtime_double(s)) < 0.0)
-		return -1;
+	اگر ((sec_val = convtime_double(s)) < 0.0)
+		بازگشت -1;
 
 	/* Check for overflow into int */
-	if (sec_val < 0 || sec_val > INT_MAX)
-		return -1;
+	اگر (sec_val < 0 || sec_val > INT_MAX)
+		بازگشت -1;
 
-	return (int)sec_val;
+	بازگشت (صحیح)sec_val;
 }
 
 #define TF_BUFS	8
 #define TF_LEN	9
 
-const char *
+ثابت نویسه *
 fmt_timeframe(time_t t)
 {
-	char		*buf;
-	static char	 tfbuf[TF_BUFS][TF_LEN];	/* ring buffer */
-	static int	 idx = 0;
-	unsigned int	 sec, min, hrs, day;
+	نویسه		*buf;
+	ایستا نویسه	 tfbuf[TF_BUFS][TF_LEN];	/* ring buffer */
+	ایستا صحیح	 idx = 0;
+	unsigned صحیح	 sec, min, hrs, day;
 	unsigned long long	week;
 
 	buf = tfbuf[idx++];
-	if (idx == TF_BUFS)
+	اگر (idx == TF_BUFS)
 		idx = 0;
 
 	week = t;
@@ -784,31 +784,31 @@ fmt_timeframe(time_t t)
 	day = week % 7;
 	week /= 7;
 
-	if (week > 0)
+	اگر (week > 0)
 		snprintf(buf, TF_LEN, "%02lluw%01ud%02uh", week, day, hrs);
-	else if (day > 0)
+	وگرنه اگر (day > 0)
 		snprintf(buf, TF_LEN, "%01ud%02uh%02um", day, hrs, min);
-	else
+	وگرنه
 		snprintf(buf, TF_LEN, "%02u:%02u:%02u", hrs, min, sec);
 
-	return (buf);
+	بازگشت (buf);
 }
 
 /*
  * Returns a standardized host+port identifier string.
  * Caller must free returned string.
  */
-char *
-put_host_port(const char *host, u_short port)
+نویسه *
+put_host_port(ثابت نویسه *host, u_short port)
 {
-	char *hoststr;
+	نویسه *hoststr;
 
-	if (port == 0 || port == SSH_DEFAULT_PORT)
-		return(xstrdup(host));
-	if (asprintf(&hoststr, "[%s]:%d", host, (int)port) == -1)
+	اگر (port == 0 || port == SSH_DEFAULT_PORT)
+		بازگشت(xstrdup(host));
+	اگر (asprintf(&hoststr, "[%s]:%d", host, (صحیح)port) == -1)
 		fatal("put_host_port: asprintf: %s", strerror(errno));
 	debug3("put_host_port: %s", hoststr);
-	return hoststr;
+	بازگشت hoststr;
 }
 
 /*
@@ -819,86 +819,86 @@ put_host_port(const char *host, u_short port)
  * The delimiter char, if present, is stored in delim.
  * If this is the last field, *cp is set to NULL.
  */
-char *
-hpdelim2(char **cp, char *delim)
+نویسه *
+hpdelim2(نویسه **cp, نویسه *delim)
 {
-	char *s, *old;
+	نویسه *s, *old;
 
-	if (cp == NULL || *cp == NULL)
-		return NULL;
+	اگر (cp == پوچ || *cp == پوچ)
+		بازگشت پوچ;
 
 	old = s = *cp;
-	if (*s == '[') {
-		if ((s = strchr(s, ']')) == NULL)
-			return NULL;
-		else
+	اگر (*s == '[') {
+		اگر ((s = strchr(s, ']')) == پوچ)
+			بازگشت پوچ;
+		وگرنه
 			s++;
-	} else if ((s = strpbrk(s, ":/")) == NULL)
+	} وگرنه اگر ((s = strpbrk(s, ":/")) == پوچ)
 		s = *cp + strlen(*cp); /* skip to end (see first case below) */
 
-	switch (*s) {
-	case '\0':
-		*cp = NULL;	/* no more fields*/
-		break;
+	انتخاب (*s) {
+	حالت '\0':
+		*cp = پوچ;	/* no more fields*/
+		بشکن;
 
-	case ':':
-	case '/':
-		if (delim != NULL)
+	حالت ':':
+	حالت '/':
+		اگر (delim != پوچ)
 			*delim = *s;
 		*s = '\0';	/* terminate */
 		*cp = s + 1;
-		break;
+		بشکن;
 
-	default:
-		return NULL;
+	پیشفرض:
+		بازگشت پوچ;
 	}
 
-	return old;
+	بازگشت old;
 }
 
 /* The common case: only accept colon as delimiter. */
-char *
-hpdelim(char **cp)
+نویسه *
+hpdelim(نویسه **cp)
 {
-	char *r, delim = '\0';
+	نویسه *r, delim = '\0';
 
 	r =  hpdelim2(cp, &delim);
-	if (delim == '/')
-		return NULL;
-	return r;
+	اگر (delim == '/')
+		بازگشت پوچ;
+	بازگشت r;
 }
 
-char *
-cleanhostname(char *host)
+نویسه *
+cleanhostname(نویسه *host)
 {
-	if (*host == '[' && host[strlen(host) - 1] == ']') {
+	اگر (*host == '[' && host[strlen(host) - 1] == ']') {
 		host[strlen(host) - 1] = '\0';
-		return (host + 1);
-	} else
-		return host;
+		بازگشت (host + 1);
+	} وگرنه
+		بازگشت host;
 }
 
-char *
-colon(char *cp)
+نویسه *
+colon(نویسه *cp)
 {
-	int flag = 0;
+	صحیح flag = 0;
 
-	if (*cp == ':')		/* Leading colon is part of file name. */
-		return NULL;
-	if (*cp == '[')
+	اگر (*cp == ':')		/* Leading colon is part of file name. */
+		بازگشت پوچ;
+	اگر (*cp == '[')
 		flag = 1;
 
-	for (; *cp; ++cp) {
-		if (*cp == '@' && *(cp+1) == '[')
+	برای (; *cp; ++cp) {
+		اگر (*cp == '@' && *(cp+1) == '[')
 			flag = 1;
-		if (*cp == ']' && *(cp+1) == ':' && flag)
-			return (cp+1);
-		if (*cp == ':' && !flag)
-			return (cp);
-		if (*cp == '/')
-			return NULL;
+		اگر (*cp == ']' && *(cp+1) == ':' && flag)
+			بازگشت (cp+1);
+		اگر (*cp == ':' && !flag)
+			بازگشت (cp);
+		اگر (*cp == '/')
+			بازگشت پوچ;
 	}
-	return NULL;
+	بازگشت پوچ;
 }
 
 /*
@@ -910,64 +910,64 @@ colon(char *cp)
  * If path was not specified then *pathp will be set to ".".
  * Returns 0 on success, -1 on failure.
  */
-int
-parse_user_host_path(const char *s, char **userp, char **hostp, char **pathp)
+صحیح
+parse_user_host_path(ثابت نویسه *s, نویسه **userp, نویسه **hostp, نویسه **pathp)
 {
-	char *user = NULL, *host = NULL, *path = NULL;
-	char *sdup, *tmp;
-	int ret = -1;
+	نویسه *user = پوچ, *host = پوچ, *path = پوچ;
+	نویسه *sdup, *tmp;
+	صحیح ret = -1;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (pathp != NULL)
-		*pathp = NULL;
+	اگر (userp != پوچ)
+		*userp = پوچ;
+	اگر (hostp != پوچ)
+		*hostp = پوچ;
+	اگر (pathp != پوچ)
+		*pathp = پوچ;
 
 	sdup = xstrdup(s);
 
 	/* Check for remote syntax: [user@]host:[path] */
-	if ((tmp = colon(sdup)) == NULL)
-		goto out;
+	اگر ((tmp = colon(sdup)) == پوچ)
+		برو out;
 
 	/* Extract optional path */
 	*tmp++ = '\0';
-	if (*tmp == '\0')
+	اگر (*tmp == '\0')
 		tmp = ".";
 	path = xstrdup(tmp);
 
 	/* Extract optional user and mandatory host */
 	tmp = strrchr(sdup, '@');
-	if (tmp != NULL) {
+	اگر (tmp != پوچ) {
 		*tmp++ = '\0';
 		host = xstrdup(cleanhostname(tmp));
-		if (*sdup != '\0')
+		اگر (*sdup != '\0')
 			user = xstrdup(sdup);
-	} else {
+	} وگرنه {
 		host = xstrdup(cleanhostname(sdup));
-		user = NULL;
+		user = پوچ;
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	اگر (userp != پوچ) {
 		*userp = user;
-		user = NULL;
+		user = پوچ;
 	}
-	if (hostp != NULL) {
+	اگر (hostp != پوچ) {
 		*hostp = host;
-		host = NULL;
+		host = پوچ;
 	}
-	if (pathp != NULL) {
+	اگر (pathp != پوچ) {
 		*pathp = path;
-		path = NULL;
+		path = پوچ;
 	}
 	ret = 0;
 out:
-	free(sdup);
-	free(user);
-	free(host);
-	free(path);
-	return ret;
+	آزاد(sdup);
+	آزاد(user);
+	آزاد(host);
+	آزاد(path);
+	بازگشت ret;
 }
 
 /*
@@ -978,120 +978,120 @@ out:
  * If port was not specified then *portp will be -1.
  * Returns 0 on success, -1 on failure.
  */
-int
-parse_user_host_port(const char *s, char **userp, char **hostp, int *portp)
+صحیح
+parse_user_host_port(ثابت نویسه *s, نویسه **userp, نویسه **hostp, صحیح *portp)
 {
-	char *sdup, *cp, *tmp;
-	char *user = NULL, *host = NULL;
-	int port = -1, ret = -1;
+	نویسه *sdup, *cp, *tmp;
+	نویسه *user = پوچ, *host = پوچ;
+	صحیح port = -1, ret = -1;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (portp != NULL)
+	اگر (userp != پوچ)
+		*userp = پوچ;
+	اگر (hostp != پوچ)
+		*hostp = پوچ;
+	اگر (portp != پوچ)
 		*portp = -1;
 
-	if ((sdup = tmp = strdup(s)) == NULL)
-		return -1;
+	اگر ((sdup = tmp = strdup(s)) == پوچ)
+		بازگشت -1;
 	/* Extract optional username */
-	if ((cp = strrchr(tmp, '@')) != NULL) {
+	اگر ((cp = strrchr(tmp, '@')) != پوچ) {
 		*cp = '\0';
-		if (*tmp == '\0')
-			goto out;
-		if ((user = strdup(tmp)) == NULL)
-			goto out;
+		اگر (*tmp == '\0')
+			برو out;
+		اگر ((user = strdup(tmp)) == پوچ)
+			برو out;
 		tmp = cp + 1;
 	}
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim(&tmp)) == NULL || *cp == '\0')
-		goto out;
+	اگر ((cp = hpdelim(&tmp)) == پوچ || *cp == '\0')
+		برو out;
 	host = xstrdup(cleanhostname(cp));
 	/* Convert and verify optional port */
-	if (tmp != NULL && *tmp != '\0') {
-		if ((port = a2port(tmp)) <= 0)
-			goto out;
+	اگر (tmp != پوچ && *tmp != '\0') {
+		اگر ((port = a2port(tmp)) <= 0)
+			برو out;
 	}
 	/* Success */
-	if (userp != NULL) {
+	اگر (userp != پوچ) {
 		*userp = user;
-		user = NULL;
+		user = پوچ;
 	}
-	if (hostp != NULL) {
+	اگر (hostp != پوچ) {
 		*hostp = host;
-		host = NULL;
+		host = پوچ;
 	}
-	if (portp != NULL)
+	اگر (portp != پوچ)
 		*portp = port;
 	ret = 0;
  out:
-	free(sdup);
-	free(user);
-	free(host);
-	return ret;
+	آزاد(sdup);
+	آزاد(user);
+	آزاد(host);
+	بازگشت ret;
 }
 
 /*
  * Converts a two-byte hex string to decimal.
  * Returns the decimal value or -1 for invalid input.
  */
-static int
-hexchar(const char *s)
+ایستا صحیح
+hexchar(ثابت نویسه *s)
 {
-	unsigned char result[2];
-	int i;
+	unsigned نویسه result[2];
+	صحیح i;
 
-	for (i = 0; i < 2; i++) {
-		if (s[i] >= '0' && s[i] <= '9')
-			result[i] = (unsigned char)(s[i] - '0');
-		else if (s[i] >= 'a' && s[i] <= 'f')
-			result[i] = (unsigned char)(s[i] - 'a') + 10;
-		else if (s[i] >= 'A' && s[i] <= 'F')
-			result[i] = (unsigned char)(s[i] - 'A') + 10;
-		else
-			return -1;
+	برای (i = 0; i < 2; i++) {
+		اگر (s[i] >= '0' && s[i] <= '9')
+			result[i] = (unsigned نویسه)(s[i] - '0');
+		وگرنه اگر (s[i] >= 'a' && s[i] <= 'f')
+			result[i] = (unsigned نویسه)(s[i] - 'a') + 10;
+		وگرنه اگر (s[i] >= 'A' && s[i] <= 'F')
+			result[i] = (unsigned نویسه)(s[i] - 'A') + 10;
+		وگرنه
+			بازگشت -1;
 	}
-	return (result[0] << 4) | result[1];
+	بازگشت (result[0] << 4) | result[1];
 }
 
 /*
  * Decode an url-encoded string.
  * Returns a newly allocated string on success or NULL on failure.
  */
-static char *
-urldecode(const char *src)
+ایستا نویسه *
+urldecode(ثابت نویسه *src)
 {
-	char *ret, *dst;
-	int ch;
+	نویسه *ret, *dst;
+	صحیح ch;
 	size_t srclen;
 
-	if ((srclen = strlen(src)) >= SIZE_MAX)
-		return NULL;
+	اگر ((srclen = strlen(src)) >= SIZE_MAX)
+		بازگشت پوچ;
 	ret = xmalloc(srclen + 1);
-	for (dst = ret; *src != '\0'; src++) {
-		switch (*src) {
-		case '+':
+	برای (dst = ret; *src != '\0'; src++) {
+		انتخاب (*src) {
+		حالت '+':
 			*dst++ = ' ';
-			break;
-		case '%':
+			بشکن;
+		حالت '%':
 			/* note: don't allow \0 characters */
-			if (!isxdigit((unsigned char)src[1]) ||
-			    !isxdigit((unsigned char)src[2]) ||
+			اگر (!isxdigit((unsigned نویسه)src[1]) ||
+			    !isxdigit((unsigned نویسه)src[2]) ||
 			    (ch = hexchar(src + 1)) == -1 || ch == 0) {
-				free(ret);
-				return NULL;
+				آزاد(ret);
+				بازگشت پوچ;
 			}
 			*dst++ = ch;
 			src += 2;
-			break;
-		default:
+			بشکن;
+		پیشفرض:
 			*dst++ = *src;
-			break;
+			بشکن;
 		}
 	}
 	*dst = '\0';
 
-	return ret;
+	بازگشت ret;
 }
 
 /*
@@ -1106,248 +1106,248 @@ urldecode(const char *src)
  * If path was not specified then *pathp will be set to NULL.
  * Returns 0 on success, 1 if non-uri/wrong scheme, -1 on error/invalid uri.
  */
-int
-parse_uri(const char *scheme, const char *uri, char **userp, char **hostp,
-    int *portp, char **pathp)
+صحیح
+parse_uri(ثابت نویسه *scheme, ثابت نویسه *uri, نویسه **userp, نویسه **hostp,
+    صحیح *portp, نویسه **pathp)
 {
-	char *uridup, *cp, *tmp, ch;
-	char *user = NULL, *host = NULL, *path = NULL;
-	int port = -1, ret = -1;
+	نویسه *uridup, *cp, *tmp, ch;
+	نویسه *user = پوچ, *host = پوچ, *path = پوچ;
+	صحیح port = -1, ret = -1;
 	size_t len;
 
 	len = strlen(scheme);
-	if (strncmp(uri, scheme, len) != 0 || strncmp(uri + len, "://", 3) != 0)
-		return 1;
+	اگر (strncmp(uri, scheme, len) != 0 || strncmp(uri + len, "://", 3) != 0)
+		بازگشت 1;
 	uri += len + 3;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (hostp != NULL)
-		*hostp = NULL;
-	if (portp != NULL)
+	اگر (userp != پوچ)
+		*userp = پوچ;
+	اگر (hostp != پوچ)
+		*hostp = پوچ;
+	اگر (portp != پوچ)
 		*portp = -1;
-	if (pathp != NULL)
-		*pathp = NULL;
+	اگر (pathp != پوچ)
+		*pathp = پوچ;
 
 	uridup = tmp = xstrdup(uri);
 
 	/* Extract optional ssh-info (username + connection params) */
-	if ((cp = strchr(tmp, '@')) != NULL) {
-		char *delim;
+	اگر ((cp = strchr(tmp, '@')) != پوچ) {
+		نویسه *delim;
 
 		*cp = '\0';
 		/* Extract username and connection params */
-		if ((delim = strchr(tmp, ';')) != NULL) {
+		اگر ((delim = strchr(tmp, ';')) != پوچ) {
 			/* Just ignore connection params for now */
 			*delim = '\0';
 		}
-		if (*tmp == '\0') {
+		اگر (*tmp == '\0') {
 			/* Empty username */
-			goto out;
+			برو out;
 		}
-		if ((user = urldecode(tmp)) == NULL)
-			goto out;
+		اگر ((user = urldecode(tmp)) == پوچ)
+			برو out;
 		tmp = cp + 1;
 	}
 
 	/* Extract mandatory hostname */
-	if ((cp = hpdelim2(&tmp, &ch)) == NULL || *cp == '\0')
-		goto out;
+	اگر ((cp = hpdelim2(&tmp, &ch)) == پوچ || *cp == '\0')
+		برو out;
 	host = xstrdup(cleanhostname(cp));
-	if (!valid_domain(host, 0, NULL))
-		goto out;
+	اگر (!valid_domain(host, 0, پوچ))
+		برو out;
 
-	if (tmp != NULL && *tmp != '\0') {
-		if (ch == ':') {
+	اگر (tmp != پوچ && *tmp != '\0') {
+		اگر (ch == ':') {
 			/* Convert and verify port. */
-			if ((cp = strchr(tmp, '/')) != NULL)
+			اگر ((cp = strchr(tmp, '/')) != پوچ)
 				*cp = '\0';
-			if ((port = a2port(tmp)) <= 0)
-				goto out;
-			tmp = cp ? cp + 1 : NULL;
+			اگر ((port = a2port(tmp)) <= 0)
+				برو out;
+			tmp = cp ? cp + 1 : پوچ;
 		}
-		if (tmp != NULL && *tmp != '\0') {
+		اگر (tmp != پوچ && *tmp != '\0') {
 			/* Extract optional path */
-			if ((path = urldecode(tmp)) == NULL)
-				goto out;
+			اگر ((path = urldecode(tmp)) == پوچ)
+				برو out;
 		}
 	}
 
 	/* Success */
-	if (userp != NULL) {
+	اگر (userp != پوچ) {
 		*userp = user;
-		user = NULL;
+		user = پوچ;
 	}
-	if (hostp != NULL) {
+	اگر (hostp != پوچ) {
 		*hostp = host;
-		host = NULL;
+		host = پوچ;
 	}
-	if (portp != NULL)
+	اگر (portp != پوچ)
 		*portp = port;
-	if (pathp != NULL) {
+	اگر (pathp != پوچ) {
 		*pathp = path;
-		path = NULL;
+		path = پوچ;
 	}
 	ret = 0;
  out:
-	free(uridup);
-	free(user);
-	free(host);
-	free(path);
-	return ret;
+	آزاد(uridup);
+	آزاد(user);
+	آزاد(host);
+	آزاد(path);
+	بازگشت ret;
 }
 
 /* function to assist building execv() arguments */
-void
-addargs(arglist *args, char *fmt, ...)
+تهی
+addargs(arglist *args, نویسه *fmt, ...)
 {
 	va_list ap;
-	char *cp;
+	نویسه *cp;
 	u_int nalloc;
-	int r;
+	صحیح r;
 
 	va_start(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
 	va_end(ap);
-	if (r == -1)
+	اگر (r == -1)
 		fatal_f("argument too long");
 
 	nalloc = args->nalloc;
-	if (args->list == NULL) {
+	اگر (args->list == پوچ) {
 		nalloc = 32;
-		args->num = 0;
-	} else if (args->num > (256 * 1024))
+		args->رقم = 0;
+	} وگرنه اگر (args->رقم > (256 * 1024))
 		fatal_f("too many arguments");
-	else if (args->num >= args->nalloc)
+	وگرنه اگر (args->رقم >= args->nalloc)
 		fatal_f("arglist corrupt");
-	else if (args->num+2 >= nalloc)
+	وگرنه اگر (args->رقم+2 >= nalloc)
 		nalloc *= 2;
 
 	args->list = xrecallocarray(args->list, args->nalloc,
-	    nalloc, sizeof(char *));
+	    nalloc, اندازه(نویسه *));
 	args->nalloc = nalloc;
-	args->list[args->num++] = cp;
-	args->list[args->num] = NULL;
+	args->list[args->رقم++] = cp;
+	args->list[args->رقم] = پوچ;
 }
 
-void
-replacearg(arglist *args, u_int which, char *fmt, ...)
+تهی
+replacearg(arglist *args, u_int which, نویسه *fmt, ...)
 {
 	va_list ap;
-	char *cp;
-	int r;
+	نویسه *cp;
+	صحیح r;
 
 	va_start(ap, fmt);
 	r = vasprintf(&cp, fmt, ap);
 	va_end(ap);
-	if (r == -1)
+	اگر (r == -1)
 		fatal_f("argument too long");
-	if (args->list == NULL || args->num >= args->nalloc)
+	اگر (args->list == پوچ || args->رقم >= args->nalloc)
 		fatal_f("arglist corrupt");
 
-	if (which >= args->num)
+	اگر (which >= args->رقم)
 		fatal_f("tried to replace invalid arg %d >= %d",
-		    which, args->num);
-	free(args->list[which]);
+		    which, args->رقم);
+	آزاد(args->list[which]);
 	args->list[which] = cp;
 }
 
-void
+تهی
 freeargs(arglist *args)
 {
 	u_int i;
 
-	if (args == NULL)
-		return;
-	if (args->list != NULL && args->num < args->nalloc) {
-		for (i = 0; i < args->num; i++)
-			free(args->list[i]);
-		free(args->list);
+	اگر (args == پوچ)
+		بازگشت;
+	اگر (args->list != پوچ && args->رقم < args->nalloc) {
+		برای (i = 0; i < args->رقم; i++)
+			آزاد(args->list[i]);
+		آزاد(args->list);
 	}
-	args->nalloc = args->num = 0;
-	args->list = NULL;
+	args->nalloc = args->رقم = 0;
+	args->list = پوچ;
 }
 
 /*
  * Expands tildes in the file name.  Returns data allocated by xmalloc.
  * Warning: this calls getpw*.
  */
-int
-tilde_expand(const char *filename, uid_t uid, char **retp)
+صحیح
+tilde_expand(ثابت نویسه *filename, uid_t uid, نویسه **retp)
 {
-	char *ocopy = NULL, *copy, *s = NULL;
-	const char *path = NULL, *user = NULL;
-	struct passwd *pw;
+	نویسه *ocopy = پوچ, *copy, *s = پوچ;
+	ثابت نویسه *path = پوچ, *user = پوچ;
+	ساختار passwd *pw;
 	size_t len;
-	int ret = -1, r, slash;
+	صحیح ret = -1, r, slash;
 
-	*retp = NULL;
-	if (*filename != '~') {
+	*retp = پوچ;
+	اگر (*filename != '~') {
 		*retp = xstrdup(filename);
-		return 0;
+		بازگشت 0;
 	}
 	ocopy = copy = xstrdup(filename + 1);
 
-	if (*copy == '\0')				/* ~ */
-		path = NULL;
-	else if (*copy == '/') {
+	اگر (*copy == '\0')				/* ~ */
+		path = پوچ;
+	وگرنه اگر (*copy == '/') {
 		copy += strspn(copy, "/");
-		if (*copy == '\0')
-			path = NULL;			/* ~/ */
-		else
+		اگر (*copy == '\0')
+			path = پوچ;			/* ~/ */
+		وگرنه
 			path = copy;			/* ~/path */
-	} else {
+	} وگرنه {
 		user = copy;
-		if ((path = strchr(copy, '/')) != NULL) {
+		اگر ((path = strchr(copy, '/')) != پوچ) {
 			copy[path - copy] = '\0';
 			path++;
 			path += strspn(path, "/");
-			if (*path == '\0')		/* ~user/ */
-				path = NULL;
+			اگر (*path == '\0')		/* ~user/ */
+				path = پوچ;
 			/* else				 ~user/path */
 		}
 		/* else					~user */
 	}
-	if (user != NULL) {
-		if ((pw = getpwnam(user)) == NULL) {
+	اگر (user != پوچ) {
+		اگر ((pw = getpwnam(user)) == پوچ) {
 			error_f("No such user %s", user);
-			goto out;
+			برو out;
 		}
-	} else if ((pw = getpwuid(uid)) == NULL) {
+	} وگرنه اگر ((pw = getpwuid(uid)) == پوچ) {
 		error_f("No such uid %ld", (long)uid);
-		goto out;
+		برو out;
 	}
 
 	/* Make sure directory has a trailing '/' */
 	slash = (len = strlen(pw->pw_dir)) == 0 || pw->pw_dir[len - 1] != '/';
 
-	if ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
-	    slash ? "/" : "", path != NULL ? path : "")) <= 0) {
+	اگر ((r = xasprintf(&s, "%s%s%s", pw->pw_dir,
+	    slash ? "/" : "", path != پوچ ? path : "")) <= 0) {
 		error_f("xasprintf failed");
-		goto out;
+		برو out;
 	}
-	if (r >= PATH_MAX) {
+	اگر (r >= PATH_MAX) {
 		error_f("Path too long");
-		goto out;
+		برو out;
 	}
 	/* success */
 	ret = 0;
 	*retp = s;
-	s = NULL;
+	s = پوچ;
  out:
-	free(s);
-	free(ocopy);
-	return ret;
+	آزاد(s);
+	آزاد(ocopy);
+	بازگشت ret;
 }
 
-char *
-tilde_expand_filename(const char *filename, uid_t uid)
+نویسه *
+tilde_expand_filename(ثابت نویسه *filename, uid_t uid)
 {
-	char *ret;
+	نویسه *ret;
 
-	if (tilde_expand(filename, uid, &ret) != 0)
+	اگر (tilde_expand(filename, uid, &ret) != 0)
 		cleanup_exit(255);
-	return ret;
+	بازگشت ret;
 }
 
 /*
@@ -1357,73 +1357,73 @@ tilde_expand_filename(const char *filename, uid_t uid)
  * by a NULL escape_char. Returns replaced string in memory allocated by
  * xmalloc which the caller must free.
  */
-static char *
-vdollar_percent_expand(int *parseerror, int dollar, int percent,
-    const char *string, va_list ap)
+ایستا نویسه *
+vdollar_percent_expand(صحیح *parseerror, صحیح dollar, صحیح percent,
+    ثابت نویسه *string, va_list ap)
 {
-#define EXPAND_MAX_KEYS	64
-	u_int num_keys = 0, i;
-	struct {
-		const char *key;
-		const char *repl;
-	} keys[EXPAND_MAX_KEYS];
-	struct sshbuf *buf;
-	int r, missingvar = 0;
-	char *ret = NULL, *var, *varend, *val;
+#define EXPAND_MAX_کلیدها	64
+	u_int رقم_کلیدها = 0, i;
+	ساختار {
+		ثابت نویسه *کلید;
+		ثابت نویسه *repl;
+	} کلیدها[EXPAND_MAX_کلیدها];
+	ساختار sshbuf *buf;
+	صحیح r, missingvar = 0;
+	نویسه *ret = پوچ, *var, *varend, *val;
 	size_t len;
 
-	if ((buf = sshbuf_new()) == NULL)
+	اگر ((buf = sshbuf_new()) == پوچ)
 		fatal_f("sshbuf_new failed");
-	if (parseerror == NULL)
+	اگر (parseerror == پوچ)
 		fatal_f("null parseerror arg");
 	*parseerror = 1;
 
 	/* Gather keys if we're doing percent expansion. */
-	if (percent) {
-		for (num_keys = 0; num_keys < EXPAND_MAX_KEYS; num_keys++) {
-			keys[num_keys].key = va_arg(ap, char *);
-			if (keys[num_keys].key == NULL)
-				break;
-			keys[num_keys].repl = va_arg(ap, char *);
-			if (keys[num_keys].repl == NULL) {
+	اگر (percent) {
+		برای (رقم_کلیدها = 0; رقم_کلیدها < EXPAND_MAX_کلیدها; رقم_کلیدها++) {
+			کلیدها[رقم_کلیدها].کلید = va_arg(ap, نویسه *);
+			اگر (کلیدها[رقم_کلیدها].کلید == پوچ)
+				بشکن;
+			کلیدها[رقم_کلیدها].repl = va_arg(ap, نویسه *);
+			اگر (کلیدها[رقم_کلیدها].repl == پوچ) {
 				fatal_f("NULL replacement for token %s",
-				    keys[num_keys].key);
+				    کلیدها[رقم_کلیدها].کلید);
 			}
 		}
-		if (num_keys == EXPAND_MAX_KEYS && va_arg(ap, char *) != NULL)
+		اگر (رقم_کلیدها == EXPAND_MAX_کلیدها && va_arg(ap, نویسه *) != پوچ)
 			fatal_f("too many keys");
-		if (num_keys == 0)
+		اگر (رقم_کلیدها == 0)
 			fatal_f("percent expansion without token list");
 	}
 
 	/* Expand string */
-	for (i = 0; *string != '\0'; string++) {
+	برای (i = 0; *string != '\0'; string++) {
 		/* Optionally process ${ENVIRONMENT} expansions. */
-		if (dollar && string[0] == '$' && string[1] == '{') {
+		اگر (dollar && string[0] == '$' && string[1] == '{') {
 			string += 2;  /* skip over '${' */
-			if ((varend = strchr(string, '}')) == NULL) {
+			اگر ((varend = strchr(string, '}')) == پوچ) {
 				error_f("environment variable '%s' missing "
 				    "closing '}'", string);
-				goto out;
+				برو out;
 			}
 			len = varend - string;
-			if (len == 0) {
+			اگر (len == 0) {
 				error_f("zero-length environment variable");
-				goto out;
+				برو out;
 			}
 			var = xmalloc(len + 1);
-			(void)strlcpy(var, string, len + 1);
-			if ((val = getenv(var)) == NULL) {
+			(تهی)strlcpy(var, string, len + 1);
+			اگر ((val = getenv(var)) == پوچ) {
 				error_f("env var ${%s} has no value", var);
 				missingvar = 1;
-			} else {
+			} وگرنه {
 				debug3_f("expand ${%s} -> '%s'", var, val);
-				if ((r = sshbuf_put(buf, val, strlen(val))) !=0)
+				اگر ((r = sshbuf_put(buf, val, strlen(val))) !=0)
 					fatal_fr(r, "sshbuf_put ${}");
 			}
-			free(var);
+			آزاد(var);
 			string += len;
-			continue;
+			ادامه;
 		}
 
 		/*
@@ -1431,40 +1431,40 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
 		 * If we're not doing percent expansion everything just gets
 		 * appended here.
 		 */
-		if (*string != '%' || !percent) {
+		اگر (*string != '%' || !percent) {
  append:
-			if ((r = sshbuf_put_u8(buf, *string)) != 0)
+			اگر ((r = sshbuf_put_u8(buf, *string)) != 0)
 				fatal_fr(r, "sshbuf_put_u8 %%");
-			continue;
+			ادامه;
 		}
 		string++;
 		/* %% case */
-		if (*string == '%')
-			goto append;
-		if (*string == '\0') {
+		اگر (*string == '%')
+			برو append;
+		اگر (*string == '\0') {
 			error_f("invalid format");
-			goto out;
+			برو out;
 		}
-		for (i = 0; i < num_keys; i++) {
-			if (strchr(keys[i].key, *string) != NULL) {
-				if ((r = sshbuf_put(buf, keys[i].repl,
-				    strlen(keys[i].repl))) != 0)
+		برای (i = 0; i < رقم_کلیدها; i++) {
+			اگر (strchr(کلیدها[i].کلید, *string) != پوچ) {
+				اگر ((r = sshbuf_put(buf, کلیدها[i].repl,
+				    strlen(کلیدها[i].repl))) != 0)
 					fatal_fr(r, "sshbuf_put %%-repl");
-				break;
+				بشکن;
 			}
 		}
-		if (i >= num_keys) {
+		اگر (i >= رقم_کلیدها) {
 			error_f("unknown key %%%c", *string);
-			goto out;
+			برو out;
 		}
 	}
-	if (!missingvar && (ret = sshbuf_dup_string(buf)) == NULL)
+	اگر (!missingvar && (ret = sshbuf_dup_string(buf)) == پوچ)
 		fatal_f("sshbuf_dup_string failed");
 	*parseerror = 0;
  out:
 	sshbuf_free(buf);
-	return *parseerror ? NULL : ret;
-#undef EXPAND_MAX_KEYS
+	بازگشت *parseerror ? پوچ : ret;
+#undef EXPAND_MAX_کلیدها
 }
 
 /*
@@ -1473,177 +1473,177 @@ vdollar_percent_expand(int *parseerror, int dollar, int percent,
  * functions, any such arguments will be unused.
  */
 
-char *
-dollar_expand(int *parseerr, const char *string, ...)
+نویسه *
+dollar_expand(صحیح *parseerr, ثابت نویسه *string, ...)
 {
-	char *ret;
-	int err;
+	نویسه *ret;
+	صحیح err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 0, string, ap);
 	va_end(ap);
-	if (parseerr != NULL)
+	اگر (parseerr != پوچ)
 		*parseerr = err;
-	return ret;
+	بازگشت ret;
 }
 
 /*
  * Returns expanded string or NULL if a specified environment variable is
  * not defined, or calls fatal if the string is invalid.
  */
-char *
-percent_expand(const char *string, ...)
+نویسه *
+percent_expand(ثابت نویسه *string, ...)
 {
-	char *ret;
-	int err;
+	نویسه *ret;
+	صحیح err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 0, 1, string, ap);
 	va_end(ap);
-	if (err)
+	اگر (err)
 		fatal_f("failed");
-	return ret;
+	بازگشت ret;
 }
 
 /*
  * Returns expanded string or NULL if a specified environment variable is
  * not defined, or calls fatal if the string is invalid.
  */
-char *
-percent_dollar_expand(const char *string, ...)
+نویسه *
+percent_dollar_expand(ثابت نویسه *string, ...)
 {
-	char *ret;
-	int err;
+	نویسه *ret;
+	صحیح err;
 	va_list ap;
 
 	va_start(ap, string);
 	ret = vdollar_percent_expand(&err, 1, 1, string, ap);
 	va_end(ap);
-	if (err)
+	اگر (err)
 		fatal_f("failed");
-	return ret;
+	بازگشت ret;
 }
 
-int
-tun_open(int tun, int mode, char **ifname)
+صحیح
+tun_open(صحیح tun, صحیح mode, نویسه **ifname)
 {
-#if defined(CUSTOM_SYS_TUN_OPEN)
-	return (sys_tun_open(tun, mode, ifname));
-#elif defined(SSH_TUN_OPENBSD)
-	struct ifreq ifr;
-	char name[100];
-	int fd = -1, sock;
-	const char *tunbase = "tun";
+#اگر defined(CUSTOM_SYS_TUN_OPEN)
+	بازگشت (sys_tun_open(tun, mode, ifname));
+#وگرنهاگر defined(SSH_TUN_OPENBSD)
+	ساختار ifreq ifr;
+	نویسه name[100];
+	صحیح fd = -1, sock;
+	ثابت نویسه *tunbase = "tun";
 
-	if (ifname != NULL)
-		*ifname = NULL;
+	اگر (ifname != پوچ)
+		*ifname = پوچ;
 
-	if (mode == SSH_TUNMODE_ETHERNET)
+	اگر (mode == SSH_TUNMODE_ETHERNET)
 		tunbase = "tap";
 
 	/* Open the tunnel device */
-	if (tun <= SSH_TUNID_MAX) {
-		snprintf(name, sizeof(name), "/dev/%s%d", tunbase, tun);
+	اگر (tun <= SSH_TUNID_MAX) {
+		snprintf(name, اندازه(name), "/dev/%s%d", tunbase, tun);
 		fd = open(name, O_RDWR);
-	} else if (tun == SSH_TUNID_ANY) {
-		for (tun = 100; tun >= 0; tun--) {
-			snprintf(name, sizeof(name), "/dev/%s%d",
+	} وگرنه اگر (tun == SSH_TUNID_ANY) {
+		برای (tun = 100; tun >= 0; tun--) {
+			snprintf(name, اندازه(name), "/dev/%s%d",
 			    tunbase, tun);
-			if ((fd = open(name, O_RDWR)) >= 0)
-				break;
+			اگر ((fd = open(name, O_RDWR)) >= 0)
+				بشکن;
 		}
-	} else {
+	} وگرنه {
 		debug_f("invalid tunnel %u", tun);
-		return -1;
+		بازگشت -1;
 	}
 
-	if (fd == -1) {
+	اگر (fd == -1) {
 		debug_f("%s open: %s", name, strerror(errno));
-		return -1;
+		بازگشت -1;
 	}
 
 	debug_f("%s mode %d fd %d", name, mode, fd);
 
 	/* Bring interface up if it is not already */
-	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s%d", tunbase, tun);
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
-		goto failed;
+	snprintf(ifr.ifr_name, اندازه(ifr.ifr_name), "%s%d", tunbase, tun);
+	اگر ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+		برو failed;
 
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
+	اگر (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1) {
 		debug_f("get interface %s flags: %s", ifr.ifr_name,
 		    strerror(errno));
-		goto failed;
+		برو failed;
 	}
 
-	if (!(ifr.ifr_flags & IFF_UP)) {
+	اگر (!(ifr.ifr_flags & IFF_UP)) {
 		ifr.ifr_flags |= IFF_UP;
-		if (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
+		اگر (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1) {
 			debug_f("activate interface %s: %s", ifr.ifr_name,
 			    strerror(errno));
-			goto failed;
+			برو failed;
 		}
 	}
 
-	if (ifname != NULL)
+	اگر (ifname != پوچ)
 		*ifname = xstrdup(ifr.ifr_name);
 
 	close(sock);
-	return fd;
+	بازگشت fd;
 
  failed:
-	if (fd >= 0)
+	اگر (fd >= 0)
 		close(fd);
-	if (sock >= 0)
+	اگر (sock >= 0)
 		close(sock);
-	return -1;
-#else
+	بازگشت -1;
+#وگرنه
 	error("Tunnel interfaces are not supported on this platform");
-	return (-1);
+	بازگشت (-1);
 #endif
 }
 
-void
-sanitise_stdfd(void)
+تهی
+sanitise_stdfd(تهی)
 {
-	int nullfd, dupfd;
+	صحیح nullfd, dupfd;
 
-	if ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	اگر ((nullfd = dupfd = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 		fprintf(stderr, "Couldn't open /dev/null: %s\n",
 		    strerror(errno));
 		exit(1);
 	}
-	while (++dupfd <= STDERR_FILENO) {
+	وقتی (++dupfd <= STDERR_FILENO) {
 		/* Only populate closed fds. */
-		if (fcntl(dupfd, F_GETFL) == -1 && errno == EBADF) {
-			if (dup2(nullfd, dupfd) == -1) {
+		اگر (fcntl(dupfd, F_GETFL) == -1 && errno == EBADF) {
+			اگر (dup2(nullfd, dupfd) == -1) {
 				fprintf(stderr, "dup2: %s\n", strerror(errno));
 				exit(1);
 			}
 		}
 	}
-	if (nullfd > STDERR_FILENO)
+	اگر (nullfd > STDERR_FILENO)
 		close(nullfd);
 }
 
-char *
-tohex(const void *vp, size_t l)
+نویسه *
+tohex(ثابت تهی *vp, size_t l)
 {
-	const u_char *p = (const u_char *)vp;
-	char b[3], *r;
+	ثابت u_char *p = (ثابت u_char *)vp;
+	نویسه b[3], *r;
 	size_t i, hl;
 
-	if (l > 65536)
-		return xstrdup("tohex: length > 65536");
+	اگر (l > 65536)
+		بازگشت xstrdup("tohex: length > 65536");
 
 	hl = l * 2 + 1;
 	r = xcalloc(1, hl);
-	for (i = 0; i < l; i++) {
-		snprintf(b, sizeof(b), "%02x", p[i]);
+	برای (i = 0; i < l; i++) {
+		snprintf(b, اندازه(b), "%02x", p[i]);
 		strlcat(r, b, hl);
 	}
-	return (r);
+	بازگشت (r);
 }
 
 /*
@@ -1651,32 +1651,32 @@ tohex(const void *vp, size_t l)
  * then the separator 'sep' will be prepended before the formatted arguments.
  * Extended strings are heap allocated.
  */
-void
-xextendf(char **sp, const char *sep, const char *fmt, ...)
+تهی
+xextendf(نویسه **sp, ثابت نویسه *sep, ثابت نویسه *fmt, ...)
 {
 	va_list ap;
-	char *tmp1, *tmp2;
+	نویسه *tmp1, *tmp2;
 
 	va_start(ap, fmt);
 	xvasprintf(&tmp1, fmt, ap);
 	va_end(ap);
 
-	if (*sp == NULL || **sp == '\0') {
-		free(*sp);
+	اگر (*sp == پوچ || **sp == '\0') {
+		آزاد(*sp);
 		*sp = tmp1;
-		return;
+		بازگشت;
 	}
-	xasprintf(&tmp2, "%s%s%s", *sp, sep == NULL ? "" : sep, tmp1);
-	free(tmp1);
-	free(*sp);
+	xasprintf(&tmp2, "%s%s%s", *sp, sep == پوچ ? "" : sep, tmp1);
+	آزاد(tmp1);
+	آزاد(*sp);
 	*sp = tmp2;
 }
 
 
 uint64_t
-get_u64(const void *vp)
+get_u64(ثابت تهی *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	ثابت u_char *p = (ثابت u_char *)vp;
 	uint64_t v;
 
 	v  = (uint64_t)p[0] << 56;
@@ -1688,13 +1688,13 @@ get_u64(const void *vp)
 	v |= (uint64_t)p[6] << 8;
 	v |= (uint64_t)p[7];
 
-	return (v);
+	بازگشت (v);
 }
 
 uint32_t
-get_u32(const void *vp)
+get_u32(ثابت تهی *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	ثابت u_char *p = (ثابت u_char *)vp;
 	uint32_t v;
 
 	v  = (uint32_t)p[0] << 24;
@@ -1702,13 +1702,13 @@ get_u32(const void *vp)
 	v |= (uint32_t)p[2] << 8;
 	v |= (uint32_t)p[3];
 
-	return (v);
+	بازگشت (v);
 }
 
 uint32_t
-get_u32_le(const void *vp)
+get_u32_le(ثابت تهی *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	ثابت u_char *p = (ثابت u_char *)vp;
 	uint32_t v;
 
 	v  = (uint32_t)p[0];
@@ -1716,23 +1716,23 @@ get_u32_le(const void *vp)
 	v |= (uint32_t)p[2] << 16;
 	v |= (uint32_t)p[3] << 24;
 
-	return (v);
+	بازگشت (v);
 }
 
 uint16_t
-get_u16(const void *vp)
+get_u16(ثابت تهی *vp)
 {
-	const u_char *p = (const u_char *)vp;
+	ثابت u_char *p = (ثابت u_char *)vp;
 	uint16_t v;
 
 	v  = (uint16_t)p[0] << 8;
 	v |= (uint16_t)p[1];
 
-	return (v);
+	بازگشت (v);
 }
 
-void
-put_u64(void *vp, uint64_t v)
+تهی
+put_u64(تهی *vp, uint64_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1746,8 +1746,8 @@ put_u64(void *vp, uint64_t v)
 	p[7] = (u_char)v & 0xff;
 }
 
-void
-put_u32(void *vp, uint32_t v)
+تهی
+put_u32(تهی *vp, uint32_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1757,8 +1757,8 @@ put_u32(void *vp, uint32_t v)
 	p[3] = (u_char)v & 0xff;
 }
 
-void
-put_u32_le(void *vp, uint32_t v)
+تهی
+put_u32_le(تهی *vp, uint32_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1768,8 +1768,8 @@ put_u32_le(void *vp, uint32_t v)
 	p[3] = (u_char)(v >> 24) & 0xff;
 }
 
-void
-put_u16(void *vp, uint16_t v)
+تهی
+put_u16(تهی *vp, uint16_t v)
 {
 	u_char *p = (u_char *)vp;
 
@@ -1777,60 +1777,60 @@ put_u16(void *vp, uint16_t v)
 	p[1] = (u_char)v & 0xff;
 }
 
-void
-ms_subtract_diff(struct timeval *start, int *ms)
+تهی
+ms_subtract_diff(ساختار timeval *start, صحیح *ms)
 {
-	struct timeval diff, finish;
+	ساختار timeval diff, finish;
 
 	monotime_tv(&finish);
 	timersub(&finish, start, &diff);
 	*ms -= (diff.tv_sec * 1000) + (diff.tv_usec / 1000);
 }
 
-void
-ms_to_timespec(struct timespec *ts, int ms)
+تهی
+ms_to_timespec(ساختار timespec *ts, صحیح ms)
 {
-	if (ms < 0)
+	اگر (ms < 0)
 		ms = 0;
 	ts->tv_sec = ms / 1000;
 	ts->tv_nsec = (ms % 1000) * 1000 * 1000;
 }
 
-void
-monotime_ts(struct timespec *ts)
+تهی
+monotime_ts(ساختار timespec *ts)
 {
-	struct timeval tv;
-#if defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
+	ساختار timeval tv;
+#اگر defined(HAVE_CLOCK_GETTIME) && (defined(CLOCK_BOOTTIME) || \
     defined(CLOCK_MONOTONIC) || defined(CLOCK_REALTIME))
-	static int gettime_failed = 0;
+	ایستا صحیح gettime_failed = 0;
 
-	if (!gettime_failed) {
+	اگر (!gettime_failed) {
 # ifdef CLOCK_BOOTTIME
-		if (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
-			return;
+		اگر (clock_gettime(CLOCK_BOOTTIME, ts) == 0)
+			بازگشت;
 # endif /* CLOCK_BOOTTIME */
 # ifdef CLOCK_MONOTONIC
-		if (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
-			return;
+		اگر (clock_gettime(CLOCK_MONOTONIC, ts) == 0)
+			بازگشت;
 # endif /* CLOCK_MONOTONIC */
 # ifdef CLOCK_REALTIME
 		/* Not monotonic, but we're almost out of options here. */
-		if (clock_gettime(CLOCK_REALTIME, ts) == 0)
-			return;
+		اگر (clock_gettime(CLOCK_REALTIME, ts) == 0)
+			بازگشت;
 # endif /* CLOCK_REALTIME */
 		debug3("clock_gettime: %s", strerror(errno));
 		gettime_failed = 1;
 	}
 #endif /* HAVE_CLOCK_GETTIME && (BOOTTIME || MONOTONIC || REALTIME) */
-	gettimeofday(&tv, NULL);
+	gettimeofday(&tv, پوچ);
 	ts->tv_sec = tv.tv_sec;
 	ts->tv_nsec = (long)tv.tv_usec * 1000;
 }
 
-void
-monotime_tv(struct timeval *tv)
+تهی
+monotime_tv(ساختار timeval *tv)
 {
-	struct timespec ts;
+	ساختار timespec ts;
 
 	monotime_ts(&ts);
 	tv->tv_sec = ts.tv_sec;
@@ -1838,25 +1838,25 @@ monotime_tv(struct timeval *tv)
 }
 
 time_t
-monotime(void)
+monotime(تهی)
 {
-	struct timespec ts;
+	ساختار timespec ts;
 
 	monotime_ts(&ts);
-	return (ts.tv_sec);
+	بازگشت (ts.tv_sec);
 }
 
-double
-monotime_double(void)
+دوگانه
+monotime_double(تهی)
 {
-	struct timespec ts;
+	ساختار timespec ts;
 
 	monotime_ts(&ts);
-	return (double)ts.tv_sec + (double)ts.tv_nsec / 1000000000.0;
+	بازگشت (دوگانه)ts.tv_sec + (دوگانه)ts.tv_nsec / 1000000000.0;
 }
 
-void
-bandwidth_limit_init(struct bwlimit *bw, uint64_t kbps, size_t buflen)
+تهی
+bandwidth_limit_init(ساختار bwlimit *bw, uint64_t kbps, size_t buflen)
 {
 	bw->buflen = buflen;
 	bw->rate = kbps;
@@ -1867,49 +1867,49 @@ bandwidth_limit_init(struct bwlimit *bw, uint64_t kbps, size_t buflen)
 }
 
 /* Callback from read/write loop to insert bandwidth-limiting delays */
-void
-bandwidth_limit(struct bwlimit *bw, size_t read_len)
+تهی
+bandwidth_limit(ساختار bwlimit *bw, size_t read_len)
 {
 	uint64_t waitlen;
-	struct timespec ts, rm;
+	ساختار timespec ts, rm;
 
 	bw->lamt += read_len;
-	if (!timerisset(&bw->bwstart)) {
+	اگر (!timerisset(&bw->bwstart)) {
 		monotime_tv(&bw->bwstart);
-		return;
+		بازگشت;
 	}
-	if (bw->lamt < bw->thresh)
-		return;
+	اگر (bw->lamt < bw->thresh)
+		بازگشت;
 
 	monotime_tv(&bw->bwend);
 	timersub(&bw->bwend, &bw->bwstart, &bw->bwend);
-	if (!timerisset(&bw->bwend))
-		return;
+	اگر (!timerisset(&bw->bwend))
+		بازگشت;
 
 	bw->lamt *= 8;
-	waitlen = (double)1000000L * bw->lamt / bw->rate;
+	waitlen = (دوگانه)1000000L * bw->lamt / bw->rate;
 
 	bw->bwstart.tv_sec = waitlen / 1000000L;
 	bw->bwstart.tv_usec = waitlen % 1000000L;
 
-	if (timercmp(&bw->bwstart, &bw->bwend, >)) {
+	اگر (timercmp(&bw->bwstart, &bw->bwend, >)) {
 		timersub(&bw->bwstart, &bw->bwend, &bw->bwend);
 
 		/* Adjust the wait time */
-		if (bw->bwend.tv_sec) {
+		اگر (bw->bwend.tv_sec) {
 			bw->thresh /= 2;
-			if (bw->thresh < bw->buflen / 4)
+			اگر (bw->thresh < bw->buflen / 4)
 				bw->thresh = bw->buflen / 4;
-		} else if (bw->bwend.tv_usec < 10000) {
+		} وگرنه اگر (bw->bwend.tv_usec < 10000) {
 			bw->thresh *= 2;
-			if (bw->thresh > bw->buflen * 8)
+			اگر (bw->thresh > bw->buflen * 8)
 				bw->thresh = bw->buflen * 8;
 		}
 
 		TIMEVAL_TO_TIMESPEC(&bw->bwend, &ts);
-		while (nanosleep(&ts, &rm) == -1) {
-			if (errno != EINTR)
-				break;
+		وقتی (nanosleep(&ts, &rm) == -1) {
+			اگر (errno != EINTR)
+				بشکن;
 			ts = rm;
 		}
 	}
@@ -1919,25 +1919,25 @@ bandwidth_limit(struct bwlimit *bw, size_t read_len)
 }
 
 /* Make a template filename for mk[sd]temp() */
-void
-mktemp_proto(char *s, size_t len)
+تهی
+mktemp_proto(نویسه *s, size_t len)
 {
-	const char *tmpdir;
-	int r;
+	ثابت نویسه *tmpdir;
+	صحیح r;
 
-	if ((tmpdir = getenv("TMPDIR")) != NULL) {
+	اگر ((tmpdir = getenv("TMPDIR")) != پوچ) {
 		r = snprintf(s, len, "%s/ssh-XXXXXXXXXXXX", tmpdir);
-		if (r > 0 && (size_t)r < len)
-			return;
+		اگر (r > 0 && (size_t)r < len)
+			بازگشت;
 	}
 	r = snprintf(s, len, "/tmp/ssh-XXXXXXXXXXXX");
-	if (r < 0 || (size_t)r >= len)
+	اگر (r < 0 || (size_t)r >= len)
 		fatal_f("template string too short");
 }
 
-static const struct {
-	const char *name;
-	int value;
+ایستا ثابت ساختار {
+	ثابت نویسه *name;
+	صحیح مقدار;
 } ipqos[] = {
 	{ "none", INT_MAX },		/* can't use 0 here; that's CS0 */
 	{ "af11", IPTOS_DSCP_AF11 },
@@ -1966,102 +1966,102 @@ static const struct {
 	{ "lowdelay", INT_MIN },	/* deprecated */
 	{ "throughput", INT_MIN },	/* deprecated */
 	{ "reliability", INT_MIN },	/* deprecated */
-	{ NULL, -1 }
+	{ پوچ, -1 }
 };
 
-int
-parse_ipqos(const char *cp)
+صحیح
+parse_ipqos(ثابت نویسه *cp)
 {
-	const char *errstr;
+	ثابت نویسه *errstr;
 	u_int i;
-	int val;
+	صحیح val;
 
-	if (cp == NULL)
-		return -1;
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (strcasecmp(cp, ipqos[i].name) == 0)
-			return ipqos[i].value;
+	اگر (cp == پوچ)
+		بازگشت -1;
+	برای (i = 0; ipqos[i].name != پوچ; i++) {
+		اگر (strcasecmp(cp, ipqos[i].name) == 0)
+			بازگشت ipqos[i].مقدار;
 	}
 	/* Try parsing as an integer */
-	val = (int)strtonum(cp, 0, 255, &errstr);
-	if (errstr)
-		return -1;
-	return val;
+	val = (صحیح)strtonum(cp, 0, 255, &errstr);
+	اگر (errstr)
+		بازگشت -1;
+	بازگشت val;
 }
 
-const char *
-iptos2str(int iptos)
+ثابت نویسه *
+iptos2str(صحیح iptos)
 {
-	int i;
-	static char iptos_str[sizeof "0xff"];
+	صحیح i;
+	ایستا نویسه iptos_str[اندازه "0xff"];
 
-	for (i = 0; ipqos[i].name != NULL; i++) {
-		if (ipqos[i].value == iptos)
-			return ipqos[i].name;
+	برای (i = 0; ipqos[i].name != پوچ; i++) {
+		اگر (ipqos[i].مقدار == iptos)
+			بازگشت ipqos[i].name;
 	}
-	snprintf(iptos_str, sizeof iptos_str, "0x%02x", iptos);
-	return iptos_str;
+	snprintf(iptos_str, اندازه iptos_str, "0x%02x", iptos);
+	بازگشت iptos_str;
 }
 
-void
-lowercase(char *s)
+تهی
+lowercase(نویسه *s)
 {
-	for (; *s; s++)
+	برای (; *s; s++)
 		*s = tolower((u_char)*s);
 }
 
-int
-unix_listener(const char *path, int backlog, int unlink_first)
+صحیح
+unix_listener(ثابت نویسه *path, صحیح backlog, صحیح unlink_first)
 {
-	struct sockaddr_un sunaddr;
-	int saved_errno, sock;
+	ساختار sockaddr_un sunaddr;
+	صحیح saved_errno, sock;
 
-	memset(&sunaddr, 0, sizeof(sunaddr));
+	memset(&sunaddr, 0, اندازه(sunaddr));
 	sunaddr.sun_family = AF_UNIX;
-	if (strlcpy(sunaddr.sun_path, path,
-	    sizeof(sunaddr.sun_path)) >= sizeof(sunaddr.sun_path)) {
+	اگر (strlcpy(sunaddr.sun_path, path,
+	    اندازه(sunaddr.sun_path)) >= اندازه(sunaddr.sun_path)) {
 		error_f("path \"%s\" too long for Unix domain socket", path);
 		errno = ENAMETOOLONG;
-		return -1;
+		بازگشت -1;
 	}
 
 	sock = socket(PF_UNIX, SOCK_STREAM, 0);
-	if (sock == -1) {
+	اگر (sock == -1) {
 		saved_errno = errno;
 		error_f("socket: %.100s", strerror(errno));
 		errno = saved_errno;
-		return -1;
+		بازگشت -1;
 	}
-	if (unlink_first == 1) {
-		if (unlink(path) != 0 && errno != ENOENT)
+	اگر (unlink_first == 1) {
+		اگر (unlink(path) != 0 && errno != ENOENT)
 			error("unlink(%s): %.100s", path, strerror(errno));
 	}
-	if (bind(sock, (struct sockaddr *)&sunaddr, sizeof(sunaddr)) == -1) {
+	اگر (bind(sock, (ساختار sockaddr *)&sunaddr, اندازه(sunaddr)) == -1) {
 		saved_errno = errno;
 		error_f("cannot bind to path %s: %s", path, strerror(errno));
 		close(sock);
 		errno = saved_errno;
-		return -1;
+		بازگشت -1;
 	}
-	if (listen(sock, backlog) == -1) {
+	اگر (listen(sock, backlog) == -1) {
 		saved_errno = errno;
 		error_f("cannot listen on path %s: %s", path, strerror(errno));
 		close(sock);
 		unlink(path);
 		errno = saved_errno;
-		return -1;
+		بازگشت -1;
 	}
-	return sock;
+	بازگشت sock;
 }
 
-void
-sock_set_v6only(int s)
+تهی
+sock_set_v6only(صحیح s)
 {
-#if defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
-	int on = 1;
+#اگر defined(IPV6_V6ONLY) && !defined(__OpenBSD__)
+	صحیح on = 1;
 
 	debug3_f("set socket %d IPV6_V6ONLY", s);
-	if (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, sizeof(on)) == -1)
+	اگر (setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &on, اندازه(on)) == -1)
 		error("setsockopt IPV6_V6ONLY: %s", strerror(errno));
 #endif
 }
@@ -2070,68 +2070,68 @@ sock_set_v6only(int s)
  * Compares two strings that maybe be NULL. Returns non-zero if strings
  * are both NULL or are identical, returns zero otherwise.
  */
-static int
-strcmp_maybe_null(const char *a, const char *b)
+ایستا صحیح
+strcmp_maybe_null(ثابت نویسه *a, ثابت نویسه *b)
 {
-	if ((a == NULL && b != NULL) || (a != NULL && b == NULL))
-		return 0;
-	if (a != NULL && strcmp(a, b) != 0)
-		return 0;
-	return 1;
+	اگر ((a == پوچ && b != پوچ) || (a != پوچ && b == پوچ))
+		بازگشت 0;
+	اگر (a != پوچ && strcmp(a, b) != 0)
+		بازگشت 0;
+	بازگشت 1;
 }
 
 /*
  * Compare two forwards, returning non-zero if they are identical or
  * zero otherwise.
  */
-int
-forward_equals(const struct Forward *a, const struct Forward *b)
+صحیح
+forward_equals(ثابت ساختار Forward *a, ثابت ساختار Forward *b)
 {
-	if (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
-		return 0;
-	if (a->listen_port != b->listen_port)
-		return 0;
-	if (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
-		return 0;
-	if (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
-		return 0;
-	if (a->connect_port != b->connect_port)
-		return 0;
-	if (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
-		return 0;
+	اگر (strcmp_maybe_null(a->listen_host, b->listen_host) == 0)
+		بازگشت 0;
+	اگر (a->listen_port != b->listen_port)
+		بازگشت 0;
+	اگر (strcmp_maybe_null(a->listen_path, b->listen_path) == 0)
+		بازگشت 0;
+	اگر (strcmp_maybe_null(a->connect_host, b->connect_host) == 0)
+		بازگشت 0;
+	اگر (a->connect_port != b->connect_port)
+		بازگشت 0;
+	اگر (strcmp_maybe_null(a->connect_path, b->connect_path) == 0)
+		بازگشت 0;
 	/* allocated_port and handle are not checked */
-	return 1;
+	بازگشت 1;
 }
 
 /* returns port number, FWD_PERMIT_ANY_PORT or -1 on error */
-int
-permitopen_port(const char *p)
+صحیح
+permitopen_port(ثابت نویسه *p)
 {
-	int port;
+	صحیح port;
 
-	if (strcmp(p, "*") == 0)
-		return FWD_PERMIT_ANY_PORT;
-	if ((port = a2port(p)) > 0)
-		return port;
-	return -1;
+	اگر (strcmp(p, "*") == 0)
+		بازگشت FWD_PERMIT_ANY_PORT;
+	اگر ((port = a2port(p)) > 0)
+		بازگشت port;
+	بازگشت -1;
 }
 
 /* returns 1 if process is already daemonized, 0 otherwise */
-int
-daemonized(void)
+صحیح
+daemonized(تهی)
 {
-	int fd;
+	صحیح fd;
 
-	if ((fd = open(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
+	اگر ((fd = open(_PATH_TTY, O_RDONLY | O_NOCTTY)) >= 0) {
 		close(fd);
-		return 0;	/* have controlling terminal */
+		بازگشت 0;	/* have controlling terminal */
 	}
-	if (getppid() != 1)
-		return 0;	/* parent is not init */
-	if (getsid(0) != getpid())
-		return 0;	/* not session leader */
+	اگر (getppid() != 1)
+		بازگشت 0;	/* parent is not init */
+	اگر (getsid(0) != getpid())
+		بازگشت 0;	/* not session leader */
 	debug3("already daemonized");
-	return 1;
+	بازگشت 1;
 }
 
 /*
@@ -2139,180 +2139,180 @@ daemonized(void)
  * escape characters (\\, \", \'). Caller must free the argument vector
  * and its members.
  */
-int
-argv_split(const char *s, int *argcp, char ***argvp, int terminate_on_comment)
+صحیح
+argv_split(ثابت نویسه *s, صحیح *argcp, نویسه ***argvp, صحیح terminate_on_comment)
 {
-	int r = SSH_ERR_INTERNAL_ERROR;
-	int argc = 0, quote, i, j;
-	char *arg, **argv = xcalloc(1, sizeof(*argv));
+	صحیح r = SSH_ERR_INTERNAL_ERROR;
+	صحیح argc = 0, quote, i, j;
+	نویسه *arg, **argv = xcalloc(1, اندازه(*argv));
 
-	*argvp = NULL;
+	*argvp = پوچ;
 	*argcp = 0;
 
-	for (i = 0; s[i] != '\0'; i++) {
+	برای (i = 0; s[i] != '\0'; i++) {
 		/* Skip leading whitespace */
-		if (s[i] == ' ' || s[i] == '\t')
-			continue;
-		if (terminate_on_comment && s[i] == '#')
-			break;
+		اگر (s[i] == ' ' || s[i] == '\t')
+			ادامه;
+		اگر (terminate_on_comment && s[i] == '#')
+			بشکن;
 		/* Start of a token */
 		quote = 0;
 
-		argv = xreallocarray(argv, (argc + 2), sizeof(*argv));
+		argv = xreallocarray(argv, (argc + 2), اندازه(*argv));
 		arg = argv[argc++] = xcalloc(1, strlen(s + i) + 1);
-		argv[argc] = NULL;
+		argv[argc] = پوچ;
 
 		/* Copy the token in, removing escapes */
-		for (j = 0; s[i] != '\0'; i++) {
-			if (s[i] == '\\') {
-				if (s[i + 1] == '\'' ||
+		برای (j = 0; s[i] != '\0'; i++) {
+			اگر (s[i] == '\\') {
+				اگر (s[i + 1] == '\'' ||
 				    s[i + 1] == '\"' ||
 				    s[i + 1] == '\\' ||
 				    (quote == 0 && s[i + 1] == ' ')) {
 					i++; /* Skip '\' */
 					arg[j++] = s[i];
-				} else {
+				} وگرنه {
 					/* Unrecognised escape */
 					arg[j++] = s[i];
 				}
-			} else if (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
-				break; /* done */
-			else if (quote == 0 && (s[i] == '\"' || s[i] == '\''))
+			} وگرنه اگر (quote == 0 && (s[i] == ' ' || s[i] == '\t'))
+				بشکن; /* done */
+			وگرنه اگر (quote == 0 && (s[i] == '\"' || s[i] == '\''))
 				quote = s[i]; /* quote start */
-			else if (quote != 0 && s[i] == quote)
+			وگرنه اگر (quote != 0 && s[i] == quote)
 				quote = 0; /* quote end */
-			else
+			وگرنه
 				arg[j++] = s[i];
 		}
-		if (s[i] == '\0') {
-			if (quote != 0) {
+		اگر (s[i] == '\0') {
+			اگر (quote != 0) {
 				/* Ran out of string looking for close quote */
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				برو out;
 			}
-			break;
+			بشکن;
 		}
 	}
 	/* Success */
 	*argcp = argc;
 	*argvp = argv;
 	argc = 0;
-	argv = NULL;
+	argv = پوچ;
 	r = 0;
  out:
-	if (argc != 0 && argv != NULL) {
-		for (i = 0; i < argc; i++)
-			free(argv[i]);
-		free(argv);
+	اگر (argc != 0 && argv != پوچ) {
+		برای (i = 0; i < argc; i++)
+			آزاد(argv[i]);
+		آزاد(argv);
 	}
-	return r;
+	بازگشت r;
 }
 
 /*
  * Reassemble an argument vector into a string, quoting and escaping as
  * necessary. Caller must free returned string.
  */
-char *
-argv_assemble(int argc, char **argv)
+نویسه *
+argv_assemble(صحیح argc, نویسه **argv)
 {
-	int i, j, ws, r;
-	char c, *ret;
-	struct sshbuf *buf, *arg;
+	صحیح i, j, ws, r;
+	نویسه c, *ret;
+	ساختار sshbuf *buf, *arg;
 
-	if ((buf = sshbuf_new()) == NULL || (arg = sshbuf_new()) == NULL)
+	اگر ((buf = sshbuf_new()) == پوچ || (arg = sshbuf_new()) == پوچ)
 		fatal_f("sshbuf_new failed");
 
-	for (i = 0; i < argc; i++) {
+	برای (i = 0; i < argc; i++) {
 		ws = 0;
 		sshbuf_reset(arg);
-		for (j = 0; argv[i][j] != '\0'; j++) {
+		برای (j = 0; argv[i][j] != '\0'; j++) {
 			r = 0;
 			c = argv[i][j];
-			switch (c) {
-			case ' ':
-			case '\t':
+			انتخاب (c) {
+			حالت ' ':
+			حالت '\t':
 				ws = 1;
 				r = sshbuf_put_u8(arg, c);
-				break;
-			case '\\':
-			case '\'':
-			case '"':
-				if ((r = sshbuf_put_u8(arg, '\\')) != 0)
-					break;
+				بشکن;
+			حالت '\\':
+			حالت '\'':
+			حالت '"':
+				اگر ((r = sshbuf_put_u8(arg, '\\')) != 0)
+					بشکن;
 				/* FALLTHROUGH */
-			default:
+			پیشفرض:
 				r = sshbuf_put_u8(arg, c);
-				break;
+				بشکن;
 			}
-			if (r != 0)
+			اگر (r != 0)
 				fatal_fr(r, "sshbuf_put_u8");
 		}
-		if ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
+		اگر ((i != 0 && (r = sshbuf_put_u8(buf, ' ')) != 0) ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0) ||
 		    (r = sshbuf_putb(buf, arg)) != 0 ||
 		    (ws != 0 && (r = sshbuf_put_u8(buf, '"')) != 0))
 			fatal_fr(r, "assemble");
 	}
-	if ((ret = malloc(sshbuf_len(buf) + 1)) == NULL)
+	اگر ((ret = malloc(sshbuf_len(buf) + 1)) == پوچ)
 		fatal_f("malloc failed");
 	memcpy(ret, sshbuf_ptr(buf), sshbuf_len(buf));
 	ret[sshbuf_len(buf)] = '\0';
 	sshbuf_free(buf);
 	sshbuf_free(arg);
-	return ret;
+	بازگشت ret;
 }
 
-char *
-argv_next(int *argcp, char ***argvp)
+نویسه *
+argv_next(صحیح *argcp, نویسه ***argvp)
 {
-	char *ret = (*argvp)[0];
+	نویسه *ret = (*argvp)[0];
 
-	if (*argcp > 0 && ret != NULL) {
+	اگر (*argcp > 0 && ret != پوچ) {
 		(*argcp)--;
 		(*argvp)++;
 	}
-	return ret;
+	بازگشت ret;
 }
 
-void
-argv_consume(int *argcp)
+تهی
+argv_consume(صحیح *argcp)
 {
 	*argcp = 0;
 }
 
-void
-argv_free(char **av, int ac)
+تهی
+argv_free(نویسه **av, صحیح ac)
 {
-	int i;
+	صحیح i;
 
-	if (av == NULL)
-		return;
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
+	اگر (av == پوچ)
+		بازگشت;
+	برای (i = 0; i < ac; i++)
+		آزاد(av[i]);
+	آزاد(av);
 }
 
 /* Returns 0 if pid exited cleanly, non-zero otherwise */
-int
-exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
+صحیح
+exited_cleanly(pid_t pid, ثابت نویسه *tag, ثابت نویسه *cmd, صحیح quiet)
 {
-	int status;
+	صحیح status;
 
-	while (waitpid(pid, &status, 0) == -1) {
-		if (errno != EINTR) {
+	وقتی (waitpid(pid, &status, 0) == -1) {
+		اگر (errno != EINTR) {
 			error("%s waitpid: %s", tag, strerror(errno));
-			return -1;
+			بازگشت -1;
 		}
 	}
-	if (WIFSIGNALED(status)) {
+	اگر (WIFSIGNALED(status)) {
 		error("%s %s exited on signal %d", tag, cmd, WTERMSIG(status));
-		return -1;
-	} else if (WEXITSTATUS(status) != 0) {
+		بازگشت -1;
+	} وگرنه اگر (WEXITSTATUS(status) != 0) {
 		do_log2(quiet ? SYSLOG_LEVEL_DEBUG1 : SYSLOG_LEVEL_INFO,
 		    "%s %s failed, status %d", tag, cmd, WEXITSTATUS(status));
-		return -1;
+		بازگشت -1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
 /*
@@ -2328,67 +2328,67 @@ exited_cleanly(pid_t pid, const char *tag, const char *cmd, int quiet)
  *
  * Returns 0 on success and -1 on failure
  */
-int
-safe_path(const char *name, struct stat *stp, const char *pw_dir,
-    uid_t uid, char *err, size_t errlen)
+صحیح
+safe_path(ثابت نویسه *name, ساختار stat *stp, ثابت نویسه *pw_dir,
+    uid_t uid, نویسه *err, size_t errlen)
 {
-	char buf[PATH_MAX], buf2[PATH_MAX], homedir[PATH_MAX];
-	char *cp;
-	int comparehome = 0;
-	struct stat st;
+	نویسه buf[PATH_MAX], buf2[PATH_MAX], homedir[PATH_MAX];
+	نویسه *cp;
+	صحیح comparehome = 0;
+	ساختار stat st;
 
-	if (realpath(name, buf) == NULL) {
+	اگر (realpath(name, buf) == پوچ) {
 		snprintf(err, errlen, "realpath %s failed: %s", name,
 		    strerror(errno));
-		return -1;
+		بازگشت -1;
 	}
-	if (pw_dir != NULL && realpath(pw_dir, homedir) != NULL)
+	اگر (pw_dir != پوچ && realpath(pw_dir, homedir) != پوچ)
 		comparehome = 1;
 
-	if (!S_ISREG(stp->st_mode)) {
+	اگر (!S_ISREG(stp->st_mode)) {
 		snprintf(err, errlen, "%s is not a regular file", buf);
-		return -1;
+		بازگشت -1;
 	}
-	if ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
+	اگر ((!platform_sys_dir_uid(stp->st_uid) && stp->st_uid != uid) ||
 	    (stp->st_mode & 022) != 0) {
 		snprintf(err, errlen, "bad ownership or modes for file %s",
 		    buf);
-		return -1;
+		بازگشت -1;
 	}
 
 	/* for each component of the canonical path, walking upwards */
-	for (;;) {
+	برای (;;) {
 		/*
 		 * POSIX allows dirname to modify its argument and return a
 		 * pointer into it, so make a copy to avoid overlapping strlcpy.
 		 */
-		strlcpy(buf2, buf, sizeof(buf2));
-		if ((cp = dirname(buf2)) == NULL) {
+		strlcpy(buf2, buf, اندازه(buf2));
+		اگر ((cp = dirname(buf2)) == پوچ) {
 			snprintf(err, errlen, "dirname() failed");
-			return -1;
+			بازگشت -1;
 		}
-		strlcpy(buf, cp, sizeof(buf));
+		strlcpy(buf, cp, اندازه(buf));
 
-		if (stat(buf, &st) == -1 ||
+		اگر (stat(buf, &st) == -1 ||
 		    (!platform_sys_dir_uid(st.st_uid) && st.st_uid != uid) ||
 		    (st.st_mode & 022) != 0) {
 			snprintf(err, errlen,
 			    "bad ownership or modes for directory %s", buf);
-			return -1;
+			بازگشت -1;
 		}
 
 		/* If are past the homedir then we can stop */
-		if (comparehome && strcmp(homedir, buf) == 0)
-			break;
+		اگر (comparehome && strcmp(homedir, buf) == 0)
+			بشکن;
 
 		/*
 		 * dirname should always complete with a "/" path,
 		 * but we can be paranoid and check for "." too
 		 */
-		if ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
-			break;
+		اگر ((strcmp("/", buf) == 0) || (strcmp(".", buf) == 0))
+			بشکن;
 	}
-	return 0;
+	بازگشت 0;
 }
 
 /*
@@ -2397,47 +2397,47 @@ safe_path(const char *name, struct stat *stp, const char *pw_dir,
  *
  * Returns 0 on success and -1 on failure
  */
-int
-safe_path_fd(int fd, const char *file, struct passwd *pw,
-    char *err, size_t errlen)
+صحیح
+safe_path_fd(صحیح fd, ثابت نویسه *file, ساختار passwd *pw,
+    نویسه *err, size_t errlen)
 {
-	struct stat st;
+	ساختار stat st;
 
 	/* check the open file to avoid races */
-	if (fstat(fd, &st) == -1) {
+	اگر (fstat(fd, &st) == -1) {
 		snprintf(err, errlen, "cannot stat file %s: %s",
 		    file, strerror(errno));
-		return -1;
+		بازگشت -1;
 	}
-	return safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
+	بازگشت safe_path(file, &st, pw->pw_dir, pw->pw_uid, err, errlen);
 }
 
 /*
  * Sets the value of the given variable in the environment.  If the variable
  * already exists, its value is overridden.
  */
-void
-child_set_env(char ***envp, u_int *envsizep, const char *name,
-	const char *value)
+تهی
+child_set_env(نویسه ***envp, u_int *envsizep, ثابت نویسه *name,
+	ثابت نویسه *مقدار)
 {
-	char **env;
+	نویسه **env;
 	u_int envsize;
 	u_int i, namelen;
 
-	if (strchr(name, '=') != NULL) {
+	اگر (strchr(name, '=') != پوچ) {
 		error("Invalid environment variable \"%.100s\"", name);
-		return;
+		بازگشت;
 	}
 
 	/*
 	 * If we're passed an uninitialized list, allocate a single null
 	 * entry before continuing.
 	 */
-	if ((*envp == NULL) != (*envsizep == 0))
+	اگر ((*envp == پوچ) != (*envsizep == 0))
 		fatal_f("environment size mismatch");
-	if (*envp == NULL && *envsizep == 0) {
-		*envp = xmalloc(sizeof(char *));
-		*envp[0] = NULL;
+	اگر (*envp == پوچ && *envsizep == 0) {
+		*envp = xmalloc(اندازه(نویسه *));
+		*envp[0] = پوچ;
 		*envsizep = 1;
 	}
 
@@ -2448,79 +2448,79 @@ child_set_env(char ***envp, u_int *envsizep, const char *name,
 	 */
 	env = *envp;
 	namelen = strlen(name);
-	for (i = 0; env[i]; i++)
-		if (strncmp(env[i], name, namelen) == 0 && env[i][namelen] == '=')
-			break;
-	if (env[i]) {
+	برای (i = 0; env[i]; i++)
+		اگر (strncmp(env[i], name, namelen) == 0 && env[i][namelen] == '=')
+			بشکن;
+	اگر (env[i]) {
 		/* Reuse the slot. */
-		free(env[i]);
-	} else {
+		آزاد(env[i]);
+	} وگرنه {
 		/* New variable.  Expand if necessary. */
 		envsize = *envsizep;
-		if (i >= envsize - 1) {
-			if (envsize >= 1000)
+		اگر (i >= envsize - 1) {
+			اگر (envsize >= 1000)
 				fatal("child_set_env: too many env vars");
 			envsize += 50;
-			env = (*envp) = xreallocarray(env, envsize, sizeof(char *));
+			env = (*envp) = xreallocarray(env, envsize, اندازه(نویسه *));
 			*envsizep = envsize;
 		}
 		/* Need to set the NULL pointer at end of array beyond the new slot. */
-		env[i + 1] = NULL;
+		env[i + 1] = پوچ;
 	}
 
 	/* Allocate space and format the variable in the appropriate slot. */
 	/* XXX xasprintf */
-	env[i] = xmalloc(strlen(name) + 1 + strlen(value) + 1);
-	snprintf(env[i], strlen(name) + 1 + strlen(value) + 1, "%s=%s", name, value);
+	env[i] = xmalloc(strlen(name) + 1 + strlen(مقدار) + 1);
+	snprintf(env[i], strlen(name) + 1 + strlen(مقدار) + 1, "%s=%s", name, مقدار);
 }
 
 /*
  * Check and optionally lowercase a domain name, also removes trailing '.'
  * Returns 1 on success and 0 on failure, storing an error message in errstr.
  */
-int
-valid_domain(char *name, int makelower, const char **errstr)
+صحیح
+valid_domain(نویسه *name, صحیح makelower, ثابت نویسه **errstr)
 {
 	size_t i, l = strlen(name);
 	u_char c, last = '\0';
-	static char errbuf[256];
+	ایستا نویسه errbuf[256];
 
-	if (l == 0) {
-		strlcpy(errbuf, "empty domain name", sizeof(errbuf));
-		goto bad;
+	اگر (l == 0) {
+		strlcpy(errbuf, "empty domain name", اندازه(errbuf));
+		برو bad;
 	}
-	if (!isalpha((u_char)name[0]) && !isdigit((u_char)name[0]) &&
+	اگر (!isalpha((u_char)name[0]) && !isdigit((u_char)name[0]) &&
 	   name[0] != '_' /* technically invalid, but common */) {
-		snprintf(errbuf, sizeof(errbuf), "domain name \"%.100s\" "
+		snprintf(errbuf, اندازه(errbuf), "domain name \"%.100s\" "
 		    "starts with invalid character", name);
-		goto bad;
+		برو bad;
 	}
-	for (i = 0; i < l; i++) {
+	برای (i = 0; i < l; i++) {
 		c = tolower((u_char)name[i]);
-		if (makelower)
-			name[i] = (char)c;
-		if (last == '.' && c == '.') {
-			snprintf(errbuf, sizeof(errbuf), "domain name "
+		اگر (makelower)
+			name[i] = (نویسه)c;
+		اگر (last == '.' && c == '.') {
+			snprintf(errbuf, اندازه(errbuf), "domain name "
 			    "\"%.100s\" contains consecutive separators", name);
-			goto bad;
+			برو bad;
 		}
-		if (c != '.' && c != '-' && !isalnum(c) &&
+		اگر (c != '.' && c != '-' && !isalnum(c) &&
 		    c != '_') /* technically invalid, but common */ {
-			snprintf(errbuf, sizeof(errbuf), "domain name "
+			snprintf(errbuf, اندازه(errbuf), "domain name "
 			    "\"%.100s\" contains invalid characters", name);
-			goto bad;
+			برو bad;
 		}
 		last = c;
 	}
-	if (name[l - 1] == '.')
+	اگر (name[l - 1] == '.')
 		name[l - 1] = '\0';
-	if (errstr != NULL)
-		*errstr = NULL;
-	return 1;
+	اگر (errstr != پوچ)
+		*errstr = پوچ;
+	بازگشت 1;
 bad:
-	if (errstr != NULL)
+	اگر (errstr != پوچ)
 		*errstr = errbuf;
-	return 0;
+	بازگشت 0;
 }
 
 /*
@@ -2528,48 +2528,48 @@ bad:
  * valid; consisting of one or more alphanumeric or underscore characters only.
  * Returns 1 on valid, 0 otherwise.
  */
-int
-valid_env_name(const char *name)
+صحیح
+valid_env_name(ثابت نویسه *name)
 {
-	const char *cp;
+	ثابت نویسه *cp;
 
-	if (name[0] == '\0')
-		return 0;
-	for (cp = name; *cp != '\0'; cp++) {
-		if (!isalnum((u_char)*cp) && *cp != '_')
-			return 0;
+	اگر (name[0] == '\0')
+		بازگشت 0;
+	برای (cp = name; *cp != '\0'; cp++) {
+		اگر (!isalnum((u_char)*cp) && *cp != '_')
+			بازگشت 0;
 	}
-	return 1;
+	بازگشت 1;
 }
 
-const char *
-atoi_err(const char *nptr, int *val)
+ثابت نویسه *
+atoi_err(ثابت نویسه *nptr, صحیح *val)
 {
-	const char *errstr = NULL;
+	ثابت نویسه *errstr = پوچ;
 
-	if (nptr == NULL || *nptr == '\0')
-		return "missing";
+	اگر (nptr == پوچ || *nptr == '\0')
+		بازگشت "missing";
 	*val = strtonum(nptr, 0, INT_MAX, &errstr);
-	return errstr;
+	بازگشت errstr;
 }
 
-int
-parse_absolute_time(const char *s, uint64_t *tp)
+صحیح
+parse_absolute_time(ثابت نویسه *s, uint64_t *tp)
 {
-	struct tm tm;
+	ساختار tm tm;
 	time_t tt;
-	char buf[32], *fmt;
-	const char *cp;
+	نویسه buf[32], *fmt;
+	ثابت نویسه *cp;
 	size_t l;
-	int is_utc = 0;
+	صحیح is_utc = 0;
 
 	*tp = 0;
 
 	l = strlen(s);
-	if (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
+	اگر (l > 1 && strcasecmp(s + l - 1, "Z") == 0) {
 		is_utc = 1;
 		l--;
-	} else if (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
+	} وگرنه اگر (l > 3 && strcasecmp(s + l - 3, "UTC") == 0) {
 		is_utc = 1;
 		l -= 3;
 	}
@@ -2578,52 +2578,52 @@ parse_absolute_time(const char *s, uint64_t *tp)
 	 * is white-space or other non-alphanumeric characters between
 	 * any two conversion specifications" so arrange things this way.
 	 */
-	switch (l) {
-	case 8: /* YYYYMMDD */
+	انتخاب (l) {
+	حالت 8: /* YYYYMMDD */
 		fmt = "%Y-%m-%d";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2s", s, s + 4, s + 6);
-		break;
-	case 12: /* YYYYMMDDHHMM */
+		snprintf(buf, اندازه(buf), "%.4s-%.2s-%.2s", s, s + 4, s + 6);
+		بشکن;
+	حالت 12: /* YYYYMMDDHHMM */
 		fmt = "%Y-%m-%dT%H:%M";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2sT%.2s:%.2s",
+		snprintf(buf, اندازه(buf), "%.4s-%.2s-%.2sT%.2s:%.2s",
 		    s, s + 4, s + 6, s + 8, s + 10);
-		break;
-	case 14: /* YYYYMMDDHHMMSS */
+		بشکن;
+	حالت 14: /* YYYYMMDDHHMMSS */
 		fmt = "%Y-%m-%dT%H:%M:%S";
-		snprintf(buf, sizeof(buf), "%.4s-%.2s-%.2sT%.2s:%.2s:%.2s",
+		snprintf(buf, اندازه(buf), "%.4s-%.2s-%.2sT%.2s:%.2s:%.2s",
 		    s, s + 4, s + 6, s + 8, s + 10, s + 12);
-		break;
-	default:
-		return SSH_ERR_INVALID_FORMAT;
+		بشکن;
+	پیشفرض:
+		بازگشت SSH_ERR_INVALID_FORMAT;
 	}
 
-	memset(&tm, 0, sizeof(tm));
-	if ((cp = strptime(buf, fmt, &tm)) == NULL || *cp != '\0')
-		return SSH_ERR_INVALID_FORMAT;
-	if (is_utc) {
+	memset(&tm, 0, اندازه(tm));
+	اگر ((cp = strptime(buf, fmt, &tm)) == پوچ || *cp != '\0')
+		بازگشت SSH_ERR_INVALID_FORMAT;
+	اگر (is_utc) {
 		tm.tm_wday = -1;	/* sentinel for error */
-		if ((tt = timegm(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
-	} else {
+		اگر ((tt = timegm(&tm)) == -1 && tm.tm_wday == -1)
+			بازگشت SSH_ERR_INVALID_FORMAT;
+	} وگرنه {
 		tm.tm_wday = -1;	/* sentinel for error */
 		tm.tm_isdst = -1;	/* mktime decides DST */
-		if ((tt = mktime(&tm)) == -1 && tm.tm_wday == -1)
-			return SSH_ERR_INVALID_FORMAT;
+		اگر ((tt = mktime(&tm)) == -1 && tm.tm_wday == -1)
+			بازگشت SSH_ERR_INVALID_FORMAT;
 	}
 	/* success */
 	*tp = (uint64_t)tt;
-	return 0;
+	بازگشت 0;
 }
 
-void
-format_absolute_time(uint64_t t, char *buf, size_t len)
+تهی
+format_absolute_time(uint64_t t, نویسه *buf, size_t len)
 {
 	time_t tt = t > SSH_TIME_T_MAX ? SSH_TIME_T_MAX : t;
-	struct tm tm;
+	ساختار tm tm;
 
-	if (localtime_r(&tt, &tm) == NULL)
+	اگر (localtime_r(&tt, &tm) == پوچ)
 		strlcpy(buf, "UNKNOWN-TIME", len);
-	else
+	وگرنه
 		strftime(buf, len, "%Y-%m-%dT%H:%M:%S", &tm);
 }
 
@@ -2632,51 +2632,51 @@ format_absolute_time(uint64_t t, char *buf, size_t len)
  * Returns 0 on success or non-zero on failure.
  * Caller must free *typep.
  */
-int
-parse_pattern_interval(const char *s, char **typep, double *secsp)
+صحیح
+parse_pattern_interval(ثابت نویسه *s, نویسه **typep, دوگانه *secsp)
 {
-	char *cp, *sdup;
-	double secs;
+	نویسه *cp, *sdup;
+	دوگانه secs;
 
-	if (typep != NULL)
-		*typep = NULL;
-	if (secsp != NULL)
+	اگر (typep != پوچ)
+		*typep = پوچ;
+	اگر (secsp != پوچ)
 		*secsp = 0;
-	if (s == NULL)
-		return -1;
+	اگر (s == پوچ)
+		بازگشت -1;
 	sdup = xstrdup(s);
 
-	if ((cp = strchr(sdup, '=')) == NULL || cp == sdup) {
-		free(sdup);
-		return -1;
+	اگر ((cp = strchr(sdup, '=')) == پوچ || cp == sdup) {
+		آزاد(sdup);
+		بازگشت -1;
 	}
 	*cp++ = '\0';
-	if ((secs = convtime_double(cp)) < 0.0) {
-		free(sdup);
-		return -1;
+	اگر ((secs = convtime_double(cp)) < 0.0) {
+		آزاد(sdup);
+		بازگشت -1;
 	}
 	/* success */
-	if (typep != NULL)
+	اگر (typep != پوچ)
 		*typep = xstrdup(sdup);
-	if (secsp != NULL)
+	اگر (secsp != پوچ)
 		*secsp = secs;
-	free(sdup);
-	return 0;
+	آزاد(sdup);
+	بازگشت 0;
 }
 
 /* check if path is absolute */
-int
-path_absolute(const char *path)
+صحیح
+path_absolute(ثابت نویسه *path)
 {
-	return (*path == '/') ? 1 : 0;
+	بازگشت (*path == '/') ? 1 : 0;
 }
 
-void
-skip_space(char **cpp)
+تهی
+skip_space(نویسه **cpp)
 {
-	char *cp;
+	نویسه *cp;
 
-	for (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
+	برای (cp = *cpp; *cp == ' ' || *cp == '\t'; cp++)
 		;
 	*cpp = cp;
 }
@@ -2690,146 +2690,146 @@ skip_space(char **cpp)
  * If the option or negated option matches, then *optsp is updated to
  * point to the first character after the option.
  */
-int
-opt_flag(const char *opt, int allow_negate, const char **optsp)
+صحیح
+opt_flag(ثابت نویسه *opt, صحیح allow_negate, ثابت نویسه **optsp)
 {
 	size_t opt_len = strlen(opt);
-	const char *opts = *optsp;
-	int negate = 0;
+	ثابت نویسه *opts = *optsp;
+	صحیح negate = 0;
 
-	if (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
+	اگر (allow_negate && strncasecmp(opts, "no-", 3) == 0) {
 		opts += 3;
 		negate = 1;
 	}
-	if (strncasecmp(opts, opt, opt_len) == 0) {
+	اگر (strncasecmp(opts, opt, opt_len) == 0) {
 		*optsp = opts + opt_len;
-		return negate ? 0 : 1;
+		بازگشت negate ? 0 : 1;
 	}
-	return -1;
+	بازگشت -1;
 }
 
-char *
-opt_dequote(const char **sp, const char **errstrp)
+نویسه *
+opt_dequote(ثابت نویسه **sp, ثابت نویسه **errstrp)
 {
-	const char *s = *sp;
-	char *ret;
+	ثابت نویسه *s = *sp;
+	نویسه *ret;
 	size_t i;
 
-	*errstrp = NULL;
-	if (*s != '"') {
+	*errstrp = پوچ;
+	اگر (*s != '"') {
 		*errstrp = "missing start quote";
-		return NULL;
+		بازگشت پوچ;
 	}
 	s++;
-	if ((ret = malloc(strlen((s)) + 1)) == NULL) {
+	اگر ((ret = malloc(strlen((s)) + 1)) == پوچ) {
 		*errstrp = "memory allocation failed";
-		return NULL;
+		بازگشت پوچ;
 	}
-	for (i = 0; *s != '\0' && *s != '"';) {
-		if (s[0] == '\\' && s[1] == '"')
+	برای (i = 0; *s != '\0' && *s != '"';) {
+		اگر (s[0] == '\\' && s[1] == '"')
 			s++;
 		ret[i++] = *s++;
 	}
-	if (*s == '\0') {
+	اگر (*s == '\0') {
 		*errstrp = "missing end quote";
-		free(ret);
-		return NULL;
+		آزاد(ret);
+		بازگشت پوچ;
 	}
 	ret[i] = '\0';
 	s++;
 	*sp = s;
-	return ret;
+	بازگشت ret;
 }
 
-int
-opt_match(const char **opts, const char *term)
+صحیح
+opt_match(ثابت نویسه **opts, ثابت نویسه *term)
 {
-	if (strncasecmp((*opts), term, strlen(term)) == 0 &&
+	اگر (strncasecmp((*opts), term, strlen(term)) == 0 &&
 	    (*opts)[strlen(term)] == '=') {
 		*opts += strlen(term) + 1;
-		return 1;
+		بازگشت 1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
-void
-opt_array_append2(const char *file, const int line, const char *directive,
-    char ***array, int **iarray, u_int *lp, const char *s, int i)
+تهی
+opt_array_append2(ثابت نویسه *file, ثابت صحیح سطر, ثابت نویسه *directive,
+    نویسه ***array, صحیح **iarray, u_int *lp, ثابت نویسه *s, صحیح i)
 {
 
-	if (*lp >= INT_MAX)
-		fatal("%s line %d: Too many %s entries", file, line, directive);
+	اگر (*lp >= INT_MAX)
+		fatal("%s line %d: Too many %s entries", file, سطر, directive);
 
-	if (iarray != NULL) {
+	اگر (iarray != پوچ) {
 		*iarray = xrecallocarray(*iarray, *lp, *lp + 1,
-		    sizeof(**iarray));
+		    اندازه(**iarray));
 		(*iarray)[*lp] = i;
 	}
 
-	*array = xrecallocarray(*array, *lp, *lp + 1, sizeof(**array));
+	*array = xrecallocarray(*array, *lp, *lp + 1, اندازه(**array));
 	(*array)[*lp] = xstrdup(s);
 	(*lp)++;
 }
 
-void
-opt_array_append(const char *file, const int line, const char *directive,
-    char ***array, u_int *lp, const char *s)
+تهی
+opt_array_append(ثابت نویسه *file, ثابت صحیح سطر, ثابت نویسه *directive,
+    نویسه ***array, u_int *lp, ثابت نویسه *s)
 {
-	opt_array_append2(file, line, directive, array, NULL, lp, s, 0);
+	opt_array_append2(file, سطر, directive, array, پوچ, lp, s, 0);
 }
 
-void
-opt_array_free2(char **array, int **iarray, u_int l)
+تهی
+opt_array_free2(نویسه **array, صحیح **iarray, u_int l)
 {
 	u_int i;
 
-	if (array == NULL || l == 0)
-		return;
-	for (i = 0; i < l; i++)
-		free(array[i]);
-	free(array);
-	free(iarray);
+	اگر (array == پوچ || l == 0)
+		بازگشت;
+	برای (i = 0; i < l; i++)
+		آزاد(array[i]);
+	آزاد(array);
+	آزاد(iarray);
 }
 
 sshsig_t
-ssh_signal(int signum, sshsig_t handler)
+ssh_signal(صحیح signum, sshsig_t handler)
 {
-	struct sigaction sa, osa;
+	ساختار sigaction sa, osa;
 
 	/* mask all other signals while in handler */
-	memset(&sa, 0, sizeof(sa));
+	memset(&sa, 0, اندازه(sa));
 	sa.sa_handler = handler;
 	sigfillset(&sa.sa_mask);
-#if defined(SA_RESTART) && !defined(NO_SA_RESTART)
-	if (signum != SIGALRM)
+#اگر defined(SA_RESTART) && !defined(NO_SA_RESTART)
+	اگر (signum != SIGALRM)
 		sa.sa_flags = SA_RESTART;
 #endif
-	if (sigaction(signum, &sa, &osa) == -1) {
+	اگر (sigaction(signum, &sa, &osa) == -1) {
 		debug3("sigaction(%s): %s", strsignal(signum), strerror(errno));
-		return SIG_ERR;
+		بازگشت SIG_ERR;
 	}
-	return osa.sa_handler;
+	بازگشت osa.sa_handler;
 }
 
-int
-stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
+صحیح
+stdfd_devnull(صحیح do_stdin, صحیح do_stdout, صحیح do_stderr)
 {
-	int devnull, ret = 0;
+	صحیح devnull, ret = 0;
 
-	if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+	اگر ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 		error_f("open %s: %s", _PATH_DEVNULL,
 		    strerror(errno));
-		return -1;
+		بازگشت -1;
 	}
-	if ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
+	اگر ((do_stdin && dup2(devnull, STDIN_FILENO) == -1) ||
 	    (do_stdout && dup2(devnull, STDOUT_FILENO) == -1) ||
 	    (do_stderr && dup2(devnull, STDERR_FILENO) == -1)) {
 		error_f("dup2: %s", strerror(errno));
 		ret = -1;
 	}
-	if (devnull > STDERR_FILENO)
+	اگر (devnull > STDERR_FILENO)
 		close(devnull);
-	return ret;
+	بازگشت ret;
 }
 
 /*
@@ -2842,201 +2842,201 @@ stdfd_devnull(int do_stdin, int do_stdout, int do_stderr)
  * av[0].
  */
 pid_t
-subprocess(const char *tag, const char *command,
-    int ac, char **av, FILE **child, u_int flags,
-    struct passwd *pw, privdrop_fn *drop_privs, privrestore_fn *restore_privs)
+subprocess(ثابت نویسه *tag, ثابت نویسه *command,
+    صحیح ac, نویسه **av, FILE **child, u_int flags,
+    ساختار passwd *pw, privdrop_fn *drop_privs, privrestore_fn *restore_privs)
 {
-	FILE *f = NULL;
-	struct stat st;
-	int fd, devnull, p[2], i;
+	FILE *f = پوچ;
+	ساختار stat st;
+	صحیح fd, devnull, p[2], i;
 	pid_t pid;
-	char *cp, errmsg[512];
+	نویسه *cp, errmsg[512];
 	u_int nenv = 0;
-	char **env = NULL;
+	نویسه **env = پوچ;
 
 	/* If dropping privs, then must specify user and restore function */
-	if (drop_privs != NULL && (pw == NULL || restore_privs == NULL)) {
+	اگر (drop_privs != پوچ && (pw == پوچ || restore_privs == پوچ)) {
 		error("%s: inconsistent arguments", tag); /* XXX fatal? */
-		return 0;
+		بازگشت 0;
 	}
-	if (pw == NULL && (pw = getpwuid(getuid())) == NULL) {
+	اگر (pw == پوچ && (pw = getpwuid(getuid())) == پوچ) {
 		error("%s: no user for current uid", tag);
-		return 0;
+		بازگشت 0;
 	}
-	if (child != NULL)
-		*child = NULL;
+	اگر (child != پوچ)
+		*child = پوچ;
 
 	debug3_f("%s command \"%s\" running as %s (flags 0x%x)",
 	    tag, command, pw->pw_name, flags);
 
 	/* Check consistency */
-	if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+	اگر ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 	    (flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0) {
 		error_f("inconsistent flags");
-		return 0;
+		بازگشت 0;
 	}
-	if (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == NULL)) {
+	اگر (((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0) != (child == پوچ)) {
 		error_f("inconsistent flags/output");
-		return 0;
+		بازگشت 0;
 	}
 
 	/*
 	 * If executing an explicit binary, then verify the it exists
 	 * and appears safe-ish to execute
 	 */
-	if (!path_absolute(av[0])) {
+	اگر (!path_absolute(av[0])) {
 		error("%s path is not absolute", tag);
-		return 0;
+		بازگشت 0;
 	}
-	if (drop_privs != NULL)
+	اگر (drop_privs != پوچ)
 		drop_privs(pw);
-	if (stat(av[0], &st) == -1) {
+	اگر (stat(av[0], &st) == -1) {
 		error("Could not stat %s \"%s\": %s", tag,
 		    av[0], strerror(errno));
-		goto restore_return;
+		برو restore_return;
 	}
-	if ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
-	    safe_path(av[0], &st, NULL, 0, errmsg, sizeof(errmsg)) != 0) {
+	اگر ((flags & SSH_SUBPROCESS_UNSAFE_PATH) == 0 &&
+	    safe_path(av[0], &st, پوچ, 0, errmsg, اندازه(errmsg)) != 0) {
 		error("Unsafe %s \"%s\": %s", tag, av[0], errmsg);
-		goto restore_return;
+		برو restore_return;
 	}
 	/* Prepare to keep the child's stdout if requested */
-	if (pipe(p) == -1) {
+	اگر (pipe(p) == -1) {
 		error("%s: pipe: %s", tag, strerror(errno));
  restore_return:
-		if (restore_privs != NULL)
+		اگر (restore_privs != پوچ)
 			restore_privs();
-		return 0;
+		بازگشت 0;
 	}
-	if (restore_privs != NULL)
+	اگر (restore_privs != پوچ)
 		restore_privs();
 
-	switch ((pid = fork())) {
-	case -1: /* error */
+	انتخاب ((pid = fork())) {
+	حالت -1: /* error */
 		error("%s: fork: %s", tag, strerror(errno));
 		close(p[0]);
 		close(p[1]);
-		return 0;
-	case 0: /* child */
+		بازگشت 0;
+	حالت 0: /* child */
 		/* Prepare a minimal environment for the child. */
-		if ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
+		اگر ((flags & SSH_SUBPROCESS_PRESERVE_ENV) == 0) {
 			nenv = 5;
-			env = xcalloc(sizeof(*env), nenv);
+			env = xcalloc(اندازه(*env), nenv);
 			child_set_env(&env, &nenv, "PATH", _PATH_STDPATH);
 			child_set_env(&env, &nenv, "USER", pw->pw_name);
 			child_set_env(&env, &nenv, "LOGNAME", pw->pw_name);
 			child_set_env(&env, &nenv, "HOME", pw->pw_dir);
-			if ((cp = getenv("LANG")) != NULL)
+			اگر ((cp = getenv("LANG")) != پوچ)
 				child_set_env(&env, &nenv, "LANG", cp);
 		}
 
-		for (i = 1; i < NSIG; i++)
+		برای (i = 1; i < NSIG; i++)
 			ssh_signal(i, SIG_DFL);
 
-		if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
+		اگر ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1) {
 			error("%s: open %s: %s", tag, _PATH_DEVNULL,
 			    strerror(errno));
 			_exit(1);
 		}
-		if (dup2(devnull, STDIN_FILENO) == -1) {
+		اگر (dup2(devnull, STDIN_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
 
 		/* Set up stdout as requested; leave stderr in place for now. */
 		fd = -1;
-		if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
+		اگر ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) != 0)
 			fd = p[1];
-		else if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
+		وگرنه اگر ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0)
 			fd = devnull;
-		if (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
+		اگر (fd != -1 && dup2(fd, STDOUT_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
 		closefrom(STDERR_FILENO + 1);
 
-		if (geteuid() == 0 &&
+		اگر (geteuid() == 0 &&
 		    initgroups(pw->pw_name, pw->pw_gid) == -1) {
 			error("%s: initgroups(%s, %u): %s", tag,
 			    pw->pw_name, (u_int)pw->pw_gid, strerror(errno));
 			_exit(1);
 		}
-		if (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
+		اگر (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) == -1) {
 			error("%s: setresgid %u: %s", tag, (u_int)pw->pw_gid,
 			    strerror(errno));
 			_exit(1);
 		}
-		if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
+		اگر (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) == -1) {
 			error("%s: setresuid %u: %s", tag, (u_int)pw->pw_uid,
 			    strerror(errno));
 			_exit(1);
 		}
 		/* stdin is pointed to /dev/null at this point */
-		if ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
+		اگر ((flags & SSH_SUBPROCESS_STDOUT_DISCARD) != 0 &&
 		    dup2(STDIN_FILENO, STDERR_FILENO) == -1) {
 			error("%s: dup2: %s", tag, strerror(errno));
 			_exit(1);
 		}
-		if (env != NULL)
+		اگر (env != پوچ)
 			execve(av[0], av, env);
-		else
+		وگرنه
 			execv(av[0], av);
-		error("%s %s \"%s\": %s", tag, env == NULL ? "execv" : "execve",
+		error("%s %s \"%s\": %s", tag, env == پوچ ? "execv" : "execve",
 		    command, strerror(errno));
 		_exit(127);
-	default: /* parent */
-		break;
+	پیشفرض: /* parent */
+		بشکن;
 	}
 
 	close(p[1]);
-	if ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
+	اگر ((flags & SSH_SUBPROCESS_STDOUT_CAPTURE) == 0)
 		close(p[0]);
-	else if ((f = fdopen(p[0], "r")) == NULL) {
+	وگرنه اگر ((f = fdopen(p[0], "r")) == پوچ) {
 		error("%s: fdopen: %s", tag, strerror(errno));
 		close(p[0]);
 		/* Don't leave zombie child */
 		kill(pid, SIGTERM);
-		while (waitpid(pid, NULL, 0) == -1 && errno == EINTR)
+		وقتی (waitpid(pid, پوچ, 0) == -1 && errno == EINTR)
 			;
-		return 0;
+		بازگشت 0;
 	}
 	/* Success */
 	debug3_f("%s pid %ld", tag, (long)pid);
-	if (child != NULL)
+	اگر (child != پوچ)
 		*child = f;
-	return pid;
+	بازگشت pid;
 }
 
-const char *
-lookup_env_in_list(const char *env, char * const *envs, size_t nenvs)
+ثابت نویسه *
+lookup_env_in_list(ثابت نویسه *env, نویسه * ثابت *envs, size_t nenvs)
 {
 	size_t i, envlen;
 
 	envlen = strlen(env);
-	for (i = 0; i < nenvs; i++) {
-		if (strncmp(envs[i], env, envlen) == 0 &&
+	برای (i = 0; i < nenvs; i++) {
+		اگر (strncmp(envs[i], env, envlen) == 0 &&
 		    envs[i][envlen] == '=') {
-			return envs[i] + envlen + 1;
+			بازگشت envs[i] + envlen + 1;
 		}
 	}
-	return NULL;
+	بازگشت پوچ;
 }
 
-const char *
-lookup_setenv_in_list(const char *env, char * const *envs, size_t nenvs)
+ثابت نویسه *
+lookup_setenv_in_list(ثابت نویسه *env, نویسه * ثابت *envs, size_t nenvs)
 {
-	char *name, *cp;
-	const char *ret;
+	نویسه *name, *cp;
+	ثابت نویسه *ret;
 
 	name = xstrdup(env);
-	if ((cp = strchr(name, '=')) == NULL) {
-		free(name);
-		return NULL; /* not env=val */
+	اگر ((cp = strchr(name, '=')) == پوچ) {
+		آزاد(name);
+		بازگشت پوچ; /* not env=val */
 	}
 	*cp = '\0';
 	ret = lookup_env_in_list(name, envs, nenvs);
-	free(name);
-	return ret;
+	آزاد(name);
+	بازگشت ret;
 }
 
 /*
@@ -3045,8 +3045,8 @@ lookup_setenv_in_list(const char *env, char * const *envs, size_t nenvs)
  */
 
 /* Initialise a poll/ppoll timeout with an indefinite deadline */
-void
-ptimeout_init(struct timespec *pt)
+تهی
+ptimeout_init(ساختار timespec *pt)
 {
 	/*
 	 * Deliberately invalid for ppoll(2).
@@ -3057,28 +3057,28 @@ ptimeout_init(struct timespec *pt)
 }
 
 /* Specify a poll/ppoll deadline of at most 'sec' seconds */
-void
-ptimeout_deadline_sec(struct timespec *pt, long sec)
+تهی
+ptimeout_deadline_sec(ساختار timespec *pt, long sec)
 {
-	if (pt->tv_sec == -1 || pt->tv_sec >= sec) {
+	اگر (pt->tv_sec == -1 || pt->tv_sec >= sec) {
 		pt->tv_sec = sec;
 		pt->tv_nsec = 0;
 	}
 }
 
 /* Specify a poll/ppoll deadline of at most 'p' (timespec) */
-static void
-ptimeout_deadline_tsp(struct timespec *pt, struct timespec *p)
+ایستا تهی
+ptimeout_deadline_tsp(ساختار timespec *pt, ساختار timespec *p)
 {
-	if (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
+	اگر (pt->tv_sec == -1 || timespeccmp(pt, p, >=))
 		*pt = *p;
 }
 
 /* Specify a poll/ppoll deadline of at most 'ms' milliseconds */
-void
-ptimeout_deadline_ms(struct timespec *pt, long ms)
+تهی
+ptimeout_deadline_ms(ساختار timespec *pt, long ms)
 {
-	struct timespec p;
+	ساختار timespec p;
 
 	p.tv_sec = ms / 1000;
 	p.tv_nsec = (ms % 1000) * 1000000;
@@ -3086,51 +3086,51 @@ ptimeout_deadline_ms(struct timespec *pt, long ms)
 }
 
 /* Specify a poll/ppoll deadline of at most 'sec' seconds (double) */
-void
-ptimeout_deadline_sec_double(struct timespec *pt, double sec)
+تهی
+ptimeout_deadline_sec_double(ساختار timespec *pt, دوگانه sec)
 {
-	struct timespec t;
+	ساختار timespec t;
 
-	memset(&t, 0, sizeof(t));
-	if ((int64_t)sec >= SSH_TIME_T_MAX)
+	memset(&t, 0, اندازه(t));
+	اگر ((int64_t)sec >= SSH_TIME_T_MAX)
 		t.tv_sec = SSH_TIME_T_MAX;
-	else if (sec > 0) {
+	وگرنه اگر (sec > 0) {
 		t.tv_sec = sec;
-		t.tv_nsec = (sec - (double)t.tv_sec) * 1000000000.0;
+		t.tv_nsec = (sec - (دوگانه)t.tv_sec) * 1000000000.0;
 	}
 	ptimeout_deadline_tsp(pt, &t);
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' (timespec) */
-void
-ptimeout_deadline_monotime_tsp(struct timespec *pt, struct timespec *when)
+تهی
+ptimeout_deadline_monotime_tsp(ساختار timespec *pt, ساختار timespec *when)
 {
-	struct timespec now, t;
+	ساختار timespec now, t;
 
 	monotime_ts(&now);
 
-	if (timespeccmp(&now, when, >=)) {
+	اگر (timespeccmp(&now, when, >=)) {
 		/* 'when' is now or in the past. Timeout ASAP */
 		pt->tv_sec = 0;
 		pt->tv_nsec = 0;
-	} else {
+	} وگرنه {
 		timespecsub(when, &now, &t);
 		ptimeout_deadline_tsp(pt, &t);
 	}
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' (double) */
-void
-ptimeout_deadline_monotime_double(struct timespec *pt, double when)
+تهی
+ptimeout_deadline_monotime_double(ساختار timespec *pt, دوگانه when)
 {
 	ptimeout_deadline_sec_double(pt, when - monotime_double());
 }
 
 /* Specify a poll/ppoll deadline at wall clock monotime 'when' */
-void
-ptimeout_deadline_monotime(struct timespec *pt, time_t when)
+تهی
+ptimeout_deadline_monotime(ساختار timespec *pt, time_t when)
 {
-	struct timespec t;
+	ساختار timespec t;
 
 	t.tv_sec = when;
 	t.tv_nsec = 0;
@@ -3138,215 +3138,215 @@ ptimeout_deadline_monotime(struct timespec *pt, time_t when)
 }
 
 /* Get a poll(2) timeout value in milliseconds */
-int
-ptimeout_get_ms(struct timespec *pt)
+صحیح
+ptimeout_get_ms(ساختار timespec *pt)
 {
-	if (pt->tv_sec == -1)
-		return -1;
-	if (pt->tv_sec >= (INT_MAX - (pt->tv_nsec / 1000000)) / 1000)
-		return INT_MAX;
-	return (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
+	اگر (pt->tv_sec == -1)
+		بازگشت -1;
+	اگر (pt->tv_sec >= (INT_MAX - (pt->tv_nsec / 1000000)) / 1000)
+		بازگشت INT_MAX;
+	بازگشت (pt->tv_sec * 1000) + (pt->tv_nsec / 1000000);
 }
 
 /* Get a ppoll(2) timeout value as a timespec pointer */
-struct timespec *
-ptimeout_get_tsp(struct timespec *pt)
+ساختار timespec *
+ptimeout_get_tsp(ساختار timespec *pt)
 {
-	return pt->tv_sec == -1 ? NULL : pt;
+	بازگشت pt->tv_sec == -1 ? پوچ : pt;
 }
 
 /* Returns non-zero if a timeout has been set (i.e. is not indefinite) */
-int
-ptimeout_isset(struct timespec *pt)
+صحیح
+ptimeout_isset(ساختار timespec *pt)
 {
-	return pt->tv_sec != -1;
+	بازگشت pt->tv_sec != -1;
 }
 
 /*
  * Returns zero if the library at 'path' contains symbol 's', nonzero
  * otherwise.
  */
-int
-lib_contains_symbol(const char *path, const char *s)
+صحیح
+lib_contains_نماد(ثابت نویسه *path, ثابت نویسه *s)
 {
 #ifdef HAVE_NLIST
-	struct nlist nl[2];
-	int ret = -1, r;
+	ساختار nlist nl[2];
+	صحیح ret = -1, r;
 
-	memset(nl, 0, sizeof(nl));
+	memset(nl, 0, اندازه(nl));
 	nl[0].n_name = xstrdup(s);
-	nl[1].n_name = NULL;
-	if ((r = nlist(path, nl)) == -1) {
+	nl[1].n_name = پوچ;
+	اگر ((r = nlist(path, nl)) == -1) {
 		error_f("nlist failed for %s", path);
-		goto out;
+		برو out;
 	}
-	if (r != 0 || nl[0].n_value == 0 || nl[0].n_type == 0) {
+	اگر (r != 0 || nl[0].n_مقدار == 0 || nl[0].n_type == 0) {
 		error_f("library %s does not contain symbol %s", path, s);
-		goto out;
+		برو out;
 	}
 	/* success */
 	ret = 0;
  out:
-	free(nl[0].n_name);
-	return ret;
-#else /* HAVE_NLIST */
-	int fd, ret = -1;
-	struct stat st;
-	void *m = NULL;
+	آزاد(nl[0].n_name);
+	بازگشت ret;
+#وگرنه /* HAVE_NLIST */
+	صحیح fd, ret = -1;
+	ساختار stat st;
+	تهی *m = پوچ;
 	size_t sz = 0;
 
-	memset(&st, 0, sizeof(st));
-	if ((fd = open(path, O_RDONLY)) < 0) {
+	memset(&st, 0, اندازه(st));
+	اگر ((fd = open(path, O_RDONLY)) < 0) {
 		error_f("open %s: %s", path, strerror(errno));
-		return -1;
+		بازگشت -1;
 	}
-	if (fstat(fd, &st) != 0) {
+	اگر (fstat(fd, &st) != 0) {
 		error_f("fstat %s: %s", path, strerror(errno));
-		goto out;
+		برو out;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	اگر (!S_ISREG(st.st_mode)) {
 		error_f("%s is not a regular file", path);
-		goto out;
+		برو out;
 	}
-	if (st.st_size < 0 ||
+	اگر (st.st_size < 0 ||
 	    (size_t)st.st_size < strlen(s) ||
 	    st.st_size >= INT_MAX/2) {
 		error_f("%s bad size %lld", path, (long long)st.st_size);
-		goto out;
+		برو out;
 	}
 	sz = (size_t)st.st_size;
-	if ((m = mmap(NULL, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
-	    m == NULL) {
+	اگر ((m = mmap(پوچ, sz, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED ||
+	    m == پوچ) {
 		error_f("mmap %s: %s", path, strerror(errno));
-		goto out;
+		برو out;
 	}
-	if (memmem(m, sz, s, strlen(s)) == NULL) {
+	اگر (memmem(m, sz, s, strlen(s)) == پوچ) {
 		error_f("%s does not contain expected string %s", path, s);
-		goto out;
+		برو out;
 	}
 	/* success */
 	ret = 0;
  out:
-	if (m != NULL && m != MAP_FAILED)
+	اگر (m != پوچ && m != MAP_FAILED)
 		munmap(m, sz);
 	close(fd);
-	return ret;
+	بازگشت ret;
 #endif /* HAVE_NLIST */
 }
 
-int
-signal_is_crash(int sig)
+صحیح
+signal_is_crash(صحیح sig)
 {
-	switch (sig) {
-	case SIGSEGV:
-	case SIGBUS:
-	case SIGTRAP:
-	case SIGSYS:
-	case SIGFPE:
-	case SIGILL:
-	case SIGABRT:
-		return 1;
+	انتخاب (sig) {
+	حالت SIGSEGV:
+	حالت SIGBUS:
+	حالت SIGTRAP:
+	حالت SIGSYS:
+	حالت SIGFPE:
+	حالت SIGILL:
+	حالت SIGABRT:
+		بازگشت 1;
 	}
-	return 0;
+	بازگشت 0;
 }
 
-char *
-get_homedir(void)
+نویسه *
+get_homedir(تهی)
 {
-	char *cp;
-	struct passwd *pw;
+	نویسه *cp;
+	ساختار passwd *pw;
 
-	if ((cp = getenv("HOME")) != NULL && *cp != '\0')
-		return xstrdup(cp);
+	اگر ((cp = getenv("HOME")) != پوچ && *cp != '\0')
+		بازگشت xstrdup(cp);
 
-	if ((pw = getpwuid(getuid())) != NULL && *pw->pw_dir != '\0')
-		return xstrdup(pw->pw_dir);
+	اگر ((pw = getpwuid(getuid())) != پوچ && *pw->pw_dir != '\0')
+		بازگشت xstrdup(pw->pw_dir);
 
-	return NULL;
+	بازگشت پوچ;
 }
 
-int
-mkdir_path(const char *target, mode_t mode)
+صحیح
+mkdir_path(ثابت نویسه *target, mode_t mode)
 {
-#if defined(HAVE_OPENAT) && defined(O_DIRECTORY)
-	char *dir, *odir = NULL, *next;
-	int fd = AT_FDCWD, fd2, subpath_len, ret = -1;
+#اگر defined(HAVE_OPENAT) && defined(O_DIRECTORY)
+	نویسه *dir, *odir = پوچ, *next;
+	صحیح fd = AT_FDCWD, fd2, subpath_len, ret = -1;
 
 	dir = odir = xstrdup(target);
 
-	if (*dir == '/' &&
+	اگر (*dir == '/' &&
 	    (fd = open("/", O_RDONLY|O_DIRECTORY)) == -1) {
 		error_f("open(\"/\"): %s", strerror(errno));
-		free(odir);
-		return -1;
+		آزاد(odir);
+		بازگشت -1;
 	}
 	/* Work through the path, component-wise */
-	for (; dir != NULL && *dir != '\0'; dir = next) {
-		if ((next = strchr(dir, '/')) != NULL)
+	برای (; dir != پوچ && *dir != '\0'; dir = next) {
+		اگر ((next = strchr(dir, '/')) != پوچ)
 			*(next++) = '\0';
-		if (*dir == '\0')
-			continue;
-		subpath_len = (next == NULL) ? INT_MAX : next - odir - 1;
-		if (mkdirat(fd, dir, mode) == 0)
+		اگر (*dir == '\0')
+			ادامه;
+		subpath_len = (next == پوچ) ? INT_MAX : next - odir - 1;
+		اگر (mkdirat(fd, dir, mode) == 0)
 			debug_f("created directory %.*s", subpath_len, target);
-		else if (errno != EEXIST) {
+		وگرنه اگر (errno != EEXIST) {
 			error_f("mkdir(\"%.*s\"): %s",
 			    subpath_len, target, strerror(errno));
-			goto out;
+			برو out;
 		}
 
 		/* descend */
-		if ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
+		اگر ((fd2 = openat(fd, dir, O_RDONLY|O_DIRECTORY)) == -1) {
 			error_f("open(\"%.*s\"): %s",
 			    subpath_len, target, strerror(errno));
-			goto out;
+			برو out;
 		}
-		if (fd != AT_FDCWD)
+		اگر (fd != AT_FDCWD)
 			close(fd);
 		fd = fd2;
 	}
 	/* success */
 	ret = 0;
  out:
-	free(odir);
-	if (fd != AT_FDCWD)
+	آزاد(odir);
+	اگر (fd != AT_FDCWD)
 		close(fd);
-	return ret;
-#else
+	بازگشت ret;
+#وگرنه
 	/*
 	 * If we don't have openat (which was added in POSIX.1-2008), fall back
 	 * to the possibly racy way.
 	 */
-	char *dir, *odir, *p, path[PATH_MAX] = "";
-	int ret = -1;
-	size_t plen = sizeof(path);
+	نویسه *dir, *odir, *p, path[PATH_MAX] = "";
+	صحیح ret = -1;
+	size_t plen = اندازه(path);
 
 	dir = odir = xstrdup(target);
 
 	/* If the dir is relative, start with cwd. */
-	if (*dir != '/' && getcwd(path, plen) == NULL) {
+	اگر (*dir != '/' && getcwd(path, plen) == پوچ) {
 		error_f("getcwd: %s", strerror(errno));
-		goto out;
+		برو out;
 	}
 
 	/* Work through the path, component-wise */
-	while ((p = strsep(&dir, "/"))) {
-		if (*p == '\0')
-			continue;
-		if (strlcat(path, "/", plen) >= plen ||
+	وقتی ((p = strsep(&dir, "/"))) {
+		اگر (*p == '\0')
+			ادامه;
+		اگر (strlcat(path, "/", plen) >= plen ||
 		    strlcat(path, p, plen) >= plen)
-			goto out;
-		if (mkdir(path, mode) == 0)
+			برو out;
+		اگر (mkdir(path, mode) == 0)
 			debug_f("created directory %s", path);
-		else if (errno != EEXIST && errno != EISDIR) {
+		وگرنه اگر (errno != EEXIST && errno != EISDIR) {
 			error_f("mkdir(\"%s\"): %s", path, strerror(errno));
-			goto out;
+			برو out;
 		}
 	}
 	/* success */
 	ret = 0;
  out:
-	free(odir);
-	return ret;
+	آزاد(odir);
+	بازگشت ret;
 #endif
 }

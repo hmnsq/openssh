@@ -1,57 +1,57 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#include <pwd.h>
-#include <unistd.h>
+#شامل <stddef.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <string.h>
+#شامل <stdlib.h>
+#شامل <pwd.h>
+#شامل <unistd.h>
 
-extern "C" {
+بیرونی "C" {
 
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "sshkey.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "auth-options.h"
+#شامل "sshkey.h"
 
 // testdata/id_ed25519.pub and testdata/id_ed25519-cert.pub
-const char *pubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPQXmEVMVLmeFRyafKMVWgPDkv8/uRBTwmcEDatZzMD"; 
-const char *certtext = "ssh-ed25519-cert-v01@openssh.com AAAAIHNzaC1lZDI1NTE5LWNlcnQtdjAxQG9wZW5zc2guY29tAAAAIMDQjYH6XRzH3j3MW1DdjCoAfvrHfgjnVGF+sLK0pBfqAAAAIDPQXmEVMVLmeFRyafKMVWgPDkv8/uRBTwmcEDatZzMDAAAAAAAAA+sAAAABAAAAB3VseXNzZXMAAAAXAAAAB3VseXNzZXMAAAAIb2R5c3NldXMAAAAAAAAAAP//////////AAAAAAAAAIIAAAAVcGVybWl0LVgxMS1mb3J3YXJkaW5nAAAAAAAAABdwZXJtaXQtYWdlbnQtZm9yd2FyZGluZwAAAAAAAAAWcGVybWl0LXBvcnQtZm9yd2FyZGluZwAAAAAAAAAKcGVybWl0LXB0eQAAAAAAAAAOcGVybWl0LXVzZXItcmMAAAAAAAAAAAAAADMAAAALc3NoLWVkMjU1MTkAAAAgM9BeYRUxUuZ4VHJp8oxVaA8OS/z+5EFPCZwQNq1nMwMAAABTAAAAC3NzaC1lZDI1NTE5AAAAQBj0og+s09/HpwdHZbzN0twooKPDWWrxGfnP1Joy6cDnY2BCSQ7zg9vbq11kLF8H/sKOTZWAQrUZ7LlChOu9Ogw= id_ed25519.pub";
+ثابت نویسه *pubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPQXmEVMVLmeFRyafKMVWgPDkv8/uRBTwmcEDatZzMD"; 
+ثابت نویسه *certtext = "ssh-ed25519-cert-v01@openssh.com AAAAIHNzaC1lZDI1NTE5LWNlcnQtdjAxQG9wZW5zc2guY29tAAAAIMDQjYH6XRzH3j3MW1DdjCoAfvrHfgjnVGF+sLK0pBfqAAAAIDPQXmEVMVLmeFRyafKMVWgPDkv8/uRBTwmcEDatZzMDAAAAAAAAA+sAAAABAAAAB3VseXNzZXMAAAAXAAAAB3VseXNzZXMAAAAIb2R5c3NldXMAAAAAAAAAAP//////////AAAAAAAAAIIAAAAVcGVybWl0LVgxMS1mb3J3YXJkaW5nAAAAAAAAABdwZXJtaXQtYWdlbnQtZm9yd2FyZGluZwAAAAAAAAAWcGVybWl0LXBvcnQtZm9yd2FyZGluZwAAAAAAAAAKcGVybWl0LXB0eQAAAAAAAAAOcGVybWl0LXVzZXItcmMAAAAAAAAAAAAAADMAAAALc3NoLWVkMjU1MTkAAAAgM9BeYRUxUuZ4VHJp8oxVaA8OS/z+5EFPCZwQNq1nMwMAAABTAAAAC3NzaC1lZDI1NTE5AAAAQBj0og+s09/HpwdHZbzN0twooKPDWWrxGfnP1Joy6cDnY2BCSQ7zg9vbq11kLF8H/sKOTZWAQrUZ7LlChOu9Ogw= id_ed25519.pub";
 
 // stubs
-void auth_debug_add(const char *fmt,...)
+تهی auth_debug_add(ثابت نویسه *fmt,...)
 {
 }
 
-void
-auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
+تهی
+auth_log_authopts(ثابت نویسه *loc, ثابت ساختار sshauthopt *opts, صحیح do_remote)
 {
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+صحیح LLVMFuzzer_Test_One_درون_داد(ثابت uint8_t* data, size_t size)
 {
-	char *tmp, *o, *cp = (char *)malloc(size + 1 + strlen(pubkey) + 1);
-	struct sshauthopt *opts = NULL;
-	struct passwd *pw = getpwuid(getuid());
-	static struct sshkey *key, *cert;
+	نویسه *tmp, *o, *cp = (نویسه *)malloc(size + 1 + strlen(pubkey) + 1);
+	ساختار sshauthopt *opts = پوچ;
+	ساختار passwd *pw = getpwuid(getuid());
+	ایستا ساختار sshkey *کلید, *cert;
 
-	if (key == NULL) {
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL ||
-		    (cert = sshkey_new(KEY_UNSPEC)) == NULL)
+	اگر (کلید == پوچ) {
+		اگر ((کلید = sshkey_new(کلید_UNSPEC)) == پوچ ||
+		    (cert = sshkey_new(کلید_UNSPEC)) == پوچ)
 			abort();
-		if ((o = tmp = strdup(pubkey)) == NULL ||
-		    sshkey_read(key, &tmp) != 0)
+		اگر ((o = tmp = strdup(pubkey)) == پوچ ||
+		    sshkey_read(کلید, &tmp) != 0)
 			abort();
-		free(o);
-		if ((o = tmp = strdup(certtext)) == NULL ||
+		آزاد(o);
+		اگر ((o = tmp = strdup(certtext)) == پوچ ||
 		    sshkey_read(cert, &tmp) != 0)
 			abort();
-		free(o);
+		آزاد(o);
 	}
-	if (cp == NULL || pw == NULL || key == NULL || cert == NULL)
+	اگر (cp == پوچ || pw == پوچ || کلید == پوچ || cert == پوچ)
 		abort();
 
 	// Cleanup whitespace at input EOL.
-	for (; size > 0 && strchr(" \t\r\n", data[size - 1]) != NULL; size--) ;
+	برای (; size > 0 && strchr(" \t\r\n", data[size - 1]) != پوچ; size--) ;
 
 	// Append a pubkey that will match.
 	memcpy(cp, data, size);
@@ -59,23 +59,23 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	memcpy(cp + size + 1, pubkey, strlen(pubkey) + 1);
 
 	// Try key.
-	if ((tmp = strdup(cp)) == NULL)
+	اگر ((tmp = strdup(cp)) == پوچ)
 		abort();
-	(void) auth_check_authkey_line(pw, key, tmp, "127.0.0.1", "localhost",
+	(تهی) auth_check_authkey_سطر(pw, کلید, tmp, "127.0.0.1", "localhost",
 	    "fuzz", &opts);
-	free(tmp);
+	آزاد(tmp);
 	sshauthopt_free(opts);
 
 	// Try cert.
-	if ((tmp = strdup(cp)) == NULL)
+	اگر ((tmp = strdup(cp)) == پوچ)
 		abort();
-	(void) auth_check_authkey_line(pw, cert, tmp, "127.0.0.1", "localhost",
+	(تهی) auth_check_authkey_سطر(pw, cert, tmp, "127.0.0.1", "localhost",
 	    "fuzz", &opts);
-	free(tmp);
+	آزاد(tmp);
 	sshauthopt_free(opts);
 
-	free(cp);
-	return 0;
+	آزاد(cp);
+	بازگشت 0;
 }
 
 } // extern "C"

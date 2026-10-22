@@ -10,382 +10,382 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
+#شامل <setjmp.h>
+#شامل <signal.h>
+#شامل <stdint.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <sys/types.h>
 
-#include "log.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "misc.h"
-#include "channels.h"
-#include "readconf.h"
+#شامل "log.h"
+#شامل "ssh.h"
+#شامل "ssh2.h"
+#شامل "ssh_api.h"
+#شامل "ssherr.h"
+#شامل "sshbuf.h"
+#شامل "sshkey.h"
+#شامل "packet.h"
+#شامل "myproposal.h"
+#شامل "kex.h"
+#شامل "xmalloc.h"
+#شامل "authfile.h"
+#شامل "misc.h"
+#شامل "channels.h"
+#شامل "readconf.h"
 
 /* Externs that mux.c declares. */
-int tty_flag = 0;
+صحیح tty_flag = 0;
 Options options;
-char *host = NULL;
-struct sshbuf *command = NULL;
-volatile sig_atomic_t quit_pending = 0;
+نویسه *host = پوچ;
+ساختار sshbuf *command = پوچ;
+فرار sig_atomic_t quit_pending = 0;
 
 /* Temporary: LSan off while upstream mux.c parse-chain leaks remain. */
-int
-__lsan_is_turned_off(void)
+صحیح
+__lsan_is_turned_off(تهی)
 {
-	return 1;
+	بازگشت 1;
 }
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+ایستا jmp_buf fuzz_env;
+ایستا فرار صحیح in_fuzz = 0;
 
-void
-cleanup_exit(int code)
+تهی
+cleanup_exit(صحیح code)
 {
-	if (in_fuzz)
+	اگر (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-void
-__wrap_ssh_packet_disconnect(struct ssh *ssh, const char *fmt, ...)
+تهی
+__wrap_ssh_packet_disconnect(ساختار ssh *ssh, ثابت نویسه *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(تهی)ssh;
+	(تهی)fmt;
+	اگر (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(1);
 }
 
-int
-__wrap_sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+صحیح
+__wrap_sshpkt_fatal(ساختار ssh *ssh, صحیح r, ثابت نویسه *fmt, ...)
 {
-	(void)ssh;
-	(void)fmt;
-	if (in_fuzz)
+	(تهی)ssh;
+	(تهی)fmt;
+	اگر (in_fuzz)
 		longjmp(fuzz_env, 1);
 	_exit(r ? r : 1);
 }
 
 /* Block the only interactive prompt by always granting permission. */
-int
-__wrap_ask_permission(const char *fmt, ...)
+صحیح
+__wrap_ask_permission(ثابت نویسه *fmt, ...)
 {
-	(void)fmt;
-	return 1;
+	(تهی)fmt;
+	بازگشت 1;
 }
 
 /* Socket-opening side effects we must neutralise. */
-int
-__wrap_channel_setup_local_fwd_listener(struct ssh *ssh,
-    struct Forward *fwd, struct ForwardOptions *fwd_opts)
+صحیح
+__wrap_channel_setup_local_fwd_listener(ساختار ssh *ssh,
+    ساختار Forward *fwd, ساختار ForwardOptions *fwd_opts)
 {
-	(void)ssh; (void)fwd; (void)fwd_opts;
-	return 1;
+	(تهی)ssh; (تهی)fwd; (تهی)fwd_opts;
+	بازگشت 1;
 }
 
-int
-__wrap_channel_connect_stdio_fwd(struct ssh *ssh, const char *host_arg,
-    int port, int in_fd, int out_fd, int nonblock)
+صحیح
+__wrap_channel_connect_stdio_fwd(ساختار ssh *ssh, ثابت نویسه *host_arg,
+    صحیح port, صحیح in_fd, صحیح out_fd, صحیح nonblock)
 {
-	(void)ssh; (void)host_arg; (void)port;
-	(void)in_fd; (void)out_fd; (void)nonblock;
-	return -1;
+	(تهی)ssh; (تهی)host_arg; (تهی)port;
+	(تهی)in_fd; (تهی)out_fd; (تهی)nonblock;
+	بازگشت -1;
 }
 
-int
-__wrap_channel_request_remote_forwarding(struct ssh *ssh, struct Forward *fwd)
+صحیح
+__wrap_channel_request_remote_forwarding(ساختار ssh *ssh, ساختار Forward *fwd)
 {
-	(void)ssh; (void)fwd;
-	return 0;
+	(تهی)ssh; (تهی)fwd;
+	بازگشت 0;
 }
 
-int
-__wrap_channel_request_rforward_cancel(struct ssh *ssh, struct Forward *fwd)
+صحیح
+__wrap_channel_request_rforward_cancel(ساختار ssh *ssh, ساختار Forward *fwd)
 {
-	(void)ssh; (void)fwd;
-	return 0;
+	(تهی)ssh; (تهی)fwd;
+	بازگشت 0;
 }
 
-int
-__wrap_channel_cancel_lport_listener(struct ssh *ssh, struct Forward *fwd,
-    int cport, struct ForwardOptions *fwd_opts)
+صحیح
+__wrap_channel_cancel_lport_listener(ساختار ssh *ssh, ساختار Forward *fwd,
+    صحیح cport, ساختار ForwardOptions *fwd_opts)
 {
-	(void)ssh; (void)fwd; (void)cport; (void)fwd_opts;
-	return 0;
+	(تهی)ssh; (تهی)fwd; (تهی)cport; (تهی)fwd_opts;
+	بازگشت 0;
 }
 
-static struct sshkey *
-load_private(const char *str)
+ایستا ساختار sshkey *
+load_private(ثابت نویسه *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	ساختار sshbuf *b = sshbuf_from(str, strlen(str));
+	ساختار sshkey *k = پوچ;
+	اگر (b == پوچ || sshkey_parse_private_fileblob(b, "", &k, پوچ) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	بازگشت k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+ایستا ساختار sshkey *
+load_public(ثابت نویسه *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	نویسه *tmp, *cp;
+	ساختار sshkey *k = sshkey_new(کلید_UNSPEC);
+	اگر (k == پوچ)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	اگر (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	آزاد(tmp);
+	بازگشت k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+ایستا صحیح
+pump(ساختار ssh *from, ساختار ssh *to, size_t *transferred)
 {
-	const u_char *buf;
+	ثابت u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	صحیح r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	اگر ((r = ssh_packet_next(from, &type)) != 0)
+		بازگشت r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	اگر (len == 0)
+		بازگشت 0;
+	اگر ((r = ssh_درون_داد_append(to, buf, len)) != 0)
+		بازگشت r;
+	اگر ((r = ssh_output_consume(from, len)) != 0)
+		بازگشت r;
 	*transferred = len;
-	return 0;
+	بازگشت 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+ایستا صحیح
+run_kex(ساختار ssh *client, ساختار ssh *server)
 {
-	int r;
+	صحیح r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	برای (صحیح i = 0; i < 100; i++) {
+		اگر ((r = pump(server, client, &sn)) != 0) بازگشت r;
+		اگر ((r = pump(client, server, &cn)) != 0) بازگشت r;
+		اگر (server->kex->done && client->kex->done)
+			بازگشت 0;
+		اگر (cn == 0 && sn == 0)
+			بازگشت SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	بازگشت SSH_ERR_PROTOCOL_ERROR;
 }
 
-#include "fixed-keys.h"
+#شامل "fixed-keys.h"
 
 /* Forward decl of the static handler we drive; defined when mux.c is included. */
-static int mux_master_read_cb(struct ssh *ssh, Channel *c);
+ایستا صحیح mux_master_read_cb(ساختار ssh *ssh, Channel *c);
 
-#include "../../../mux.c"
+#شامل "../../../mux.c"
 
 /* Stubs for clientloop.c / channels.h symbols mux.o references but we don't link. */
-void *
-client_new_escape_filter_ctx(int escape_char)
+تهی *
+client_new_escape_filter_ctx(صحیح escape_char)
 {
-	(void)escape_char;
-	return NULL;
+	(تهی)escape_char;
+	بازگشت پوچ;
 }
 
-void
-client_register_global_confirm(global_confirm_cb *cb, void *ctx)
+تهی
+client_register_global_confirm(global_confirm_cb *cb, تهی *ctx)
 {
-	(void)cb; (void)ctx;
+	(تهی)cb; (تهی)ctx;
 }
 
-void
-client_expect_confirm(struct ssh *ssh, int id, const char *reason,
-    enum confirm_action action)
+تهی
+client_expect_confirm(ساختار ssh *ssh, صحیح id, ثابت نویسه *reason,
+    شمارش confirm_action action)
 {
-	(void)ssh; (void)id; (void)reason; (void)action;
+	(تهی)ssh; (تهی)id; (تهی)reason; (تهی)action;
 }
 
-void
-client_channel_request_agent_forwarding(struct ssh *ssh, int chanid)
+تهی
+client_channel_request_agent_forwarding(ساختار ssh *ssh, صحیح chanid)
 {
-	(void)ssh; (void)chanid;
+	(تهی)ssh; (تهی)chanid;
 }
 
-void
-client_stop_mux(void)
+تهی
+client_stop_mux(تهی)
 {
 }
 
-int
-client_simple_escape_filter(struct ssh *ssh, Channel *c, char *buf, int len)
+صحیح
+client_simple_escape_filter(ساختار ssh *ssh, Channel *c, نویسه *buf, صحیح len)
 {
-	(void)ssh; (void)c; (void)buf; (void)len;
-	return 0;
+	(تهی)ssh; (تهی)c; (تهی)buf; (تهی)len;
+	بازگشت 0;
 }
 
-void
-client_filter_cleanup(struct ssh *ssh, int cid, void *ctx)
+تهی
+client_filter_cleanup(ساختار ssh *ssh, صحیح cid, تهی *ctx)
 {
-	(void)ssh; (void)cid; (void)ctx;
+	(تهی)ssh; (تهی)cid; (تهی)ctx;
 }
 
-int
-client_x11_get_proto(struct ssh *ssh, const char *display,
-    const char *xauth_path, u_int trusted, u_int timeout,
-    char **_proto, char **_data)
+صحیح
+client_x11_get_proto(ساختار ssh *ssh, ثابت نویسه *display,
+    ثابت نویسه *xauth_path, u_int trusted, u_int timeout,
+    نویسه **_proto, نویسه **_data)
 {
-	(void)ssh; (void)display; (void)xauth_path;
-	(void)trusted; (void)timeout;
-	if (_proto != NULL)
-		*_proto = NULL;
-	if (_data != NULL)
-		*_data = NULL;
-	return 0;
+	(تهی)ssh; (تهی)display; (تهی)xauth_path;
+	(تهی)trusted; (تهی)timeout;
+	اگر (_proto != پوچ)
+		*_proto = پوچ;
+	اگر (_data != پوچ)
+		*_data = پوچ;
+	بازگشت 0;
 }
 
-void
-client_session2_setup(struct ssh *ssh, int id, int want_tty, int want_subsys,
-    const char *term, struct termios *tiop, int in_fd, struct sshbuf *cmd,
-    char **env)
+تهی
+client_session2_setup(ساختار ssh *ssh, صحیح id, صحیح want_tty, صحیح want_subsys,
+    ثابت نویسه *term, ساختار termios *tiop, صحیح in_fd, ساختار sshbuf *cmd,
+    نویسه **env)
 {
-	(void)ssh; (void)id; (void)want_tty; (void)want_subsys;
-	(void)term; (void)tiop; (void)in_fd; (void)cmd; (void)env;
+	(تهی)ssh; (تهی)id; (تهی)want_tty; (تهی)want_subsys;
+	(تهی)term; (تهی)tiop; (تهی)in_fd; (تهی)cmd; (تهی)env;
 }
 
-void
-enter_raw_mode(int quiet)
+تهی
+enter_raw_mode(صحیح quiet)
 {
-	(void)quiet;
+	(تهی)quiet;
 }
 
-void
-leave_raw_mode(int quiet)
+تهی
+leave_raw_mode(صحیح quiet)
 {
-	(void)quiet;
+	(تهی)quiet;
 }
 
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
-static int g_mux_channel_id = -1;
-static struct sshbuf *g_mux_in = NULL;
-static struct sshbuf *g_mux_out = NULL;
+ایستا ساختار ssh *g_client = پوچ;
+ایستا ساختار ssh *g_server = پوچ;
+ایستا صحیح g_init = 0;
+ایستا صحیح g_mux_channel_id = -1;
+ایستا ساختار sshbuf *g_mux_in = پوچ;
+ایستا ساختار sshbuf *g_mux_out = پوچ;
 
 /* Mirror of mux_master_read_cb's dispatch loop using file-static in/out */
-static void
-fuzz_drive_mux(struct ssh *ssh, Channel *c)
+ایستا تهی
+fuzz_drive_mux(ساختار ssh *ssh, Channel *c)
 {
 	u_int type, rid, i;
-	int r;
-	const u_char *body;
+	صحیح r;
+	ثابت u_char *body;
 	size_t blen;
-	struct mux_master_state *state;
+	ساختار mux_master_state *state;
 
-	state = (struct mux_master_state *)c->mux_ctx;
-	if (state == NULL)
-		return;
+	state = (ساختار mux_master_state *)c->mux_ctx;
+	اگر (state == پوچ)
+		بازگشت;
 
 	sshbuf_reset(g_mux_in);
 	sshbuf_reset(g_mux_out);
 
-	if ((r = sshbuf_get_string_direct(c->input, &body, &blen)) != 0)
-		return;
-	if (sshbuf_put(g_mux_in, body, blen) != 0)
-		return;
-	if ((r = sshbuf_get_u32(g_mux_in, &type)) != 0)
-		return;
+	اگر ((r = sshbuf_get_string_direct(c->درون_داد, &body, &blen)) != 0)
+		بازگشت;
+	اگر (sshbuf_put(g_mux_in, body, blen) != 0)
+		بازگشت;
+	اگر ((r = sshbuf_get_u32(g_mux_in, &type)) != 0)
+		بازگشت;
 
-	if (type == MUX_MSG_HELLO) {
+	اگر (type == MUX_پیام_HELLO) {
 		rid = 0;
-	} else {
-		if (!state->hello_rcvd)
-			return;
-		if ((r = sshbuf_get_u32(g_mux_in, &rid)) != 0)
-			return;
+	} وگرنه {
+		اگر (!state->hello_rcvd)
+			بازگشت;
+		اگر ((r = sshbuf_get_u32(g_mux_in, &rid)) != 0)
+			بازگشت;
 	}
 
-	for (i = 0; mux_master_handlers[i].handler != NULL; i++) {
-		if (type == mux_master_handlers[i].type) {
-			(void)mux_master_handlers[i].handler(ssh, rid, c,
+	برای (i = 0; mux_master_handlers[i].handler != پوچ; i++) {
+		اگر (type == mux_master_handlers[i].type) {
+			(تهی)mux_master_handlers[i].handler(ssh, rid, c,
 			    g_mux_in, g_mux_out);
-			break;
+			بشکن;
 		}
 	}
 }
 
-static int
-init_once(void)
+ایستا صحیح
+init_once(تهی)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	اگر (g_init)
+		بازگشت 0;
+	سیگنال(SIGPIPE, SIG_IGN);
 	log_init("mux_fuzz", SYSLOG_LEVEL_ERROR, SYSLOG_FACILITY_AUTH, 0);
 
 	/* Minimal Options for control-master flow. SSHCTL_MASTER_AUTO avoids
 	 * the interactive ASK paths that would gate on ask_permission. */
-	memset(&options, 0, sizeof(options));
+	memset(&options, 0, اندازه(options));
 	options.control_master = SSHCTL_MASTER_AUTO;
-	options.control_path = (char *)"/fuzz";
+	options.control_path = (نویسه *)"/fuzz";
 	options.escape_char = 0;
 	options.log_level = SYSLOG_LEVEL_ERROR;
 	options.fwd_opts.gateway_ports = 0;
 	options.fwd_opts.streamlocal_bind_mask = 0177;
 	options.fwd_opts.streamlocal_bind_unlink = 0;
-	host = (char *)"fuzz";
+	host = (نویسه *)"fuzz";
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	ساختار sshkey *priv = load_private(PRIV_ED25519);
+	ساختار sshkey *pub = load_public(PUB_ED25519);
+	نویسه *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	ثابت نویسه *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	نویسه *proposal[PROPOSAL_MAX] = { 0 };
+	صحیح i;
+	برای (i = 0; i < PROPOSAL_MAX; i++) {
+		ثابت نویسه *p = defaults[i];
+		اگر (i == PROPOSAL_SERVER_HOST_کلید_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		وگرنه اگر (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		وگرنه اگر (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		وگرنه اگر (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	ساختار kex_params kp;
+	memcpy(kp.proposal, proposal, اندازه(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	اگر (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		بازگشت -1;
+	اگر (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		بازگشت -1;
+	اگر (run_kex(g_client, g_server) != 0)
+		بازگشت -1;
 
 	channel_init_channels(g_client);
 
 	Channel *c = channel_new(g_client, "mux-control",
 	    SSH_CHANNEL_MUX_CLIENT, -1, -1, -1, 65536, 65536, 0,
 	    "mux-control", 1);
-	if (c == NULL)
-		return -1;
+	اگر (c == پوچ)
+		بازگشت -1;
 	c->mux_rcb = mux_master_read_cb;
 	c->flags |= CHAN_LOCAL;
 	g_mux_channel_id = c->self;
@@ -394,52 +394,52 @@ init_once(void)
 	c->mux_rcb(g_client, c);
 
 	/* Skip the hello handshake so every iter goes straight to dispatch. */
-	struct mux_master_state *st = (struct mux_master_state *)c->mux_ctx;
-	if (st != NULL)
+	ساختار mux_master_state *st = (ساختار mux_master_state *)c->mux_ctx;
+	اگر (st != پوچ)
 		st->hello_rcvd = 1;
 
-	if ((g_mux_in = sshbuf_new()) == NULL ||
-	    (g_mux_out = sshbuf_new()) == NULL)
-		return -1;
+	اگر ((g_mux_in = sshbuf_new()) == پوچ ||
+	    (g_mux_out = sshbuf_new()) == پوچ)
+		بازگشت -1;
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	آزاد(keyname);
+	برای (i = 0; i < PROPOSAL_MAX; i++)
+		آزاد(proposal[i]);
 	g_init = 1;
-	return 0;
+	بازگشت 0;
 }
 
-void
-fuzz_mux_one(const uint8_t *data, size_t size)
+تهی
+fuzz_mux_one(ثابت uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	اگر (init_once() != 0)
+		بازگشت;
+	اگر (size > 65000)
+		بازگشت;
 
 	Channel *c = channel_by_id(g_client, g_mux_channel_id);
-	if (c == NULL || c->mux_ctx == NULL || c->input == NULL)
-		return;
+	اگر (c == پوچ || c->mux_ctx == پوچ || c->درون_داد == پوچ)
+		بازگشت;
 
 	/* mux protocol: outer length-prefixed string containing the body. */
-	sshbuf_reset(c->input);
+	sshbuf_reset(c->درون_داد);
 	u_char hdr[4];
 	hdr[0] = (u_char)(size >> 24);
 	hdr[1] = (u_char)(size >> 16);
 	hdr[2] = (u_char)(size >> 8);
 	hdr[3] = (u_char)size;
-	if (sshbuf_put(c->input, hdr, 4) != 0)
-		return;
-	if (size > 0 && sshbuf_put(c->input, data, size) != 0)
-		return;
+	اگر (sshbuf_put(c->درون_داد, hdr, 4) != 0)
+		بازگشت;
+	اگر (size > 0 && sshbuf_put(c->درون_داد, data, size) != 0)
+		بازگشت;
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	اگر (setjmp(fuzz_env) == 0) {
 		fuzz_drive_mux(g_client, c);
 	}
 	in_fuzz = 0;
 
 	/* Drain anything the handler enqueued. */
-	if (c->output != NULL)
+	اگر (c->output != پوچ)
 		sshbuf_reset(c->output);
 }

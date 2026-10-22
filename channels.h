@@ -87,31 +87,31 @@
 #define CHANNEL_BULK_NOTTY	"direct-*,forwarded-*,dynamic-*," \
 				"tun-*,x11-*,session*,stdio-forward"
 
-struct ssh;
-struct Channel;
-typedef struct Channel Channel;
-struct channel_connect;
+ساختار ssh;
+ساختار Channel;
+تعریفنوع ساختار Channel Channel;
+ساختار channel_connect;
 
-typedef void channel_open_fn(struct ssh *, int, int, void *);
-typedef void channel_callback_fn(struct ssh *, int, int, void *);
-typedef int channel_infilter_fn(struct ssh *, struct Channel *, char *, int);
-typedef void channel_filter_cleanup_fn(struct ssh *, int, void *);
-typedef u_char *channel_outfilter_fn(struct ssh *, struct Channel *,
+تعریفنوع تهی channel_open_fn(ساختار ssh *, صحیح, صحیح, تهی *);
+تعریفنوع تهی channel_callback_fn(ساختار ssh *, صحیح, صحیح, تهی *);
+تعریفنوع صحیح channel_infilter_fn(ساختار ssh *, ساختار Channel *, نویسه *, صحیح);
+تعریفنوع تهی channel_filter_cleanup_fn(ساختار ssh *, صحیح, تهی *);
+تعریفنوع u_char *channel_outfilter_fn(ساختار ssh *, ساختار Channel *,
     u_char **, size_t *);
 
 /* Channel success/failure callbacks */
-typedef void channel_confirm_cb(struct ssh *, int, struct Channel *, void *);
-typedef void channel_confirm_abandon_cb(struct ssh *, struct Channel *, void *);
-struct channel_confirm {
+تعریفنوع تهی channel_confirm_cb(ساختار ssh *, صحیح, ساختار Channel *, تهی *);
+تعریفنوع تهی channel_confirm_abandon_cb(ساختار ssh *, ساختار Channel *, تهی *);
+ساختار channel_confirm {
 	TAILQ_ENTRY(channel_confirm) entry;
 	channel_confirm_cb *cb;
 	channel_confirm_abandon_cb *abandon_cb;
-	void *ctx;
+	تهی *ctx;
 };
 TAILQ_HEAD(channel_confirms, channel_confirm);
 
 /* Callbacks for mux channels back into client-specific code */
-typedef int mux_callback_fn(struct ssh *, struct Channel *);
+تعریفنوع صحیح mux_callback_fn(ساختار ssh *, ساختار Channel *);
 
 /*
  * NB. channel IDs on the wire and in c->remote_id are uint32, but local
@@ -120,53 +120,53 @@ typedef int mux_callback_fn(struct ssh *, struct Channel *);
  * a dedicated "have_remote_id" flag to indicate their validity.
  */
 
-struct Channel {
-	int     type;		/* channel type/state */
+ساختار Channel {
+	صحیح     type;		/* channel type/state */
 
-	int     self;		/* my own channel identifier */
+	صحیح     self;		/* my own channel identifier */
 	uint32_t remote_id;	/* channel identifier for remote peer */
-	int	have_remote_id;	/* non-zero if remote_id is valid */
+	صحیح	have_remote_id;	/* non-zero if remote_id is valid */
 
 	u_int   istate;		/* input from channel (state of receive half) */
 	u_int   ostate;		/* output to channel  (state of transmit half) */
-	int     flags;		/* close sent/rcvd */
-	int     rfd;		/* read fd */
-	int     wfd;		/* write fd */
-	int     efd;		/* extended fd */
-	int     sock;		/* sock fd */
+	صحیح     flags;		/* close sent/rcvd */
+	صحیح     rfd;		/* read fd */
+	صحیح     wfd;		/* write fd */
+	صحیح     efd;		/* extended fd */
+	صحیح     sock;		/* sock fd */
 	u_int	io_want;	/* bitmask of SSH_CHAN_IO_* */
 	u_int	io_ready;	/* bitmask of SSH_CHAN_IO_* */
-	int	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
-	int     ctl_chan;	/* control channel (multiplexed connections) */
+	صحیح	pfds[4];	/* pollfd entries for rfd/wfd/efd/sock */
+	صحیح     ctl_chan;	/* control channel (multiplexed connections) */
 	uint32_t ctl_child_id;	/* child session for mux controllers */
-	int	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
-	int     remote_has_tty;	/* remote side has a tty */
-	int     isatty;		/* rfd is a tty */
+	صحیح	have_ctl_child_id;/* non-zero if ctl_child_id is valid */
+	صحیح     remote_has_tty;	/* remote side has a tty */
+	صحیح     isatty;		/* rfd is a tty */
 #ifdef _AIX
-	int     wfd_isatty;	/* wfd is a tty */
+	صحیح     wfd_isatty;	/* wfd is a tty */
 #endif
-	int	client_tty;	/* (client) TTY has been requested */
-	int     force_drain;	/* force close on iEOF */
-	double	notbefore;	/* Pause IO until deadline (time_t) */
-	int     delayed;	/* post-IO handlers for newly created
+	صحیح	client_tty;	/* (client) TTY has been requested */
+	صحیح     force_drain;	/* force close on iEOF */
+	دوگانه	notbefore;	/* Pause IO until deadline (time_t) */
+	صحیح     delayed;	/* post-IO handlers for newly created
 				 * channels are delayed until the first call
 				 * to a matching pre-IO handler.
 				 * this way post-IO handlers are not
 				 * accidentally called if a FD gets reused */
-	int	restore_block;	/* fd mask to restore blocking status */
-	int	restore_flags[3];/* flags to restore */
-	struct sshbuf *input;	/* data read from socket, to be sent over
+	صحیح	restore_block;	/* fd mask to restore blocking status */
+	صحیح	restore_flags[3];/* flags to restore */
+	ساختار sshbuf *درون_داد;	/* data read from socket, to be sent over
 				 * encrypted connection */
-	struct sshbuf *output;	/* data received over encrypted connection for
+	ساختار sshbuf *output;	/* data received over encrypted connection for
 				 * send on socket */
-	struct sshbuf *extended;
+	ساختار sshbuf *extended;
 
-	char    *path;
+	نویسه    *path;
 		/* path for unix domain sockets, or host name for forwards */
-	int     listening_port;	/* port being listened for forwards */
-	char   *listening_addr;	/* addr being listened for forwards */
-	int     host_port;	/* remote port to connect for forwards */
-	char   *remote_name;	/* remote hostname */
+	صحیح     listening_port;	/* port being listened for forwards */
+	نویسه   *listening_addr;	/* addr being listened for forwards */
+	صحیح     host_port;	/* remote port to connect for forwards */
+	نویسه   *remote_name;	/* remote hostname */
 
 	u_int	remote_window;
 	u_int	remote_maxpacket;
@@ -175,45 +175,45 @@ struct Channel {
 	u_int	local_window_max;
 	u_int	local_consumed;
 	u_int	local_maxpacket;
-	int     extended_usage;
-	int	agent_new;	/* For agent listeners, use RFC 9987 requests */
-	int	single_connection;
+	صحیح     extended_usage;
+	صحیح	agent_new;	/* For agent listeners, use RFC 9987 requests */
+	صحیح	single_connection;
 
-	char   *ctype;		/* const type - NB. not freed on channel_free */
-	char   *xctype;		/* extended type */
-	int	bulk;		/* channel is non-interactive */
+	نویسه   *ctype;		/* const type - NB. not freed on channel_free */
+	نویسه   *xctype;		/* extended type */
+	صحیح	bulk;		/* channel is non-interactive */
 
 	/* callback */
 	channel_open_fn		*open_confirm;
-	void			*open_confirm_ctx;
+	تهی			*open_confirm_ctx;
 	channel_callback_fn	*detach_user;
-	int			detach_close;
-	struct channel_confirms	status_confirms;
+	صحیح			detach_close;
+	ساختار channel_confirms	status_confirms;
 
 	/* filter */
-	channel_infilter_fn	*input_filter;
+	channel_infilter_fn	*درون_داد_filter;
 	channel_outfilter_fn	*output_filter;
-	void			*filter_ctx;
+	تهی			*filter_ctx;
 	channel_filter_cleanup_fn *filter_cleanup;
 
 	/* keep boundaries */
-	int			datagram;
+	صحیح			datagram;
 
 	/* non-blocking connect */
-	struct channel_connect	*connect_ctx;
+	ساختار channel_connect	*connect_ctx;
 
 	/* multiplexing protocol hook, called for each packet received */
 	mux_callback_fn		*mux_rcb;
-	void			*mux_ctx;
-	int			mux_pause;
-	int			mux_downstream_id;
+	تهی			*mux_ctx;
+	صحیح			mux_pause;
+	صحیح			mux_downstream_id;
 
 	/* Inactivity timeouts */
 
 	/* Last traffic seen for OPEN channels */
-	double			lastused;
+	دوگانه			lastused;
 	/* Inactivity timeout deadline in seconds (0 = no timeout) */
-	double			inactive_deadline;
+	دوگانه			inactive_deadline;
 };
 
 #define CHAN_EXTENDED_IGNORE		0
@@ -229,10 +229,10 @@ struct Channel {
 #define CHAN_X11_WINDOW_DEFAULT	(4*CHAN_X11_PACKET_DEFAULT)
 
 /* possible input states */
-#define CHAN_INPUT_OPEN			0
-#define CHAN_INPUT_WAIT_DRAIN		1
-#define CHAN_INPUT_WAIT_OCLOSE		2
-#define CHAN_INPUT_CLOSED		3
+#define CHAN_درون_داد_OPEN			0
+#define CHAN_درون_داد_WAIT_DRAIN		1
+#define CHAN_درون_داد_WAIT_OCLOSE		2
+#define CHAN_درون_داد_CLOSED		3
 
 /* possible output states */
 #define CHAN_OUTPUT_OPEN		0
@@ -263,13 +263,13 @@ struct Channel {
 #define CHANNEL_MAX_READ	CHAN_SES_PACKET_DEFAULT
 
 /* Maximum channel input buffer size */
-#define CHAN_INPUT_MAX	(16*1024*1024)
+#define CHAN_درون_داد_MAX	(16*1024*1024)
 
 /* Hard limit on number of channels */
 #define CHANNELS_MAX_CHANNELS	(16*1024)
 
 /* check whether 'efd' is still in use */
-#define CHANNEL_EFD_INPUT_ACTIVE(c) \
+#define CHANNEL_EFD_درون_داد_ACTIVE(c) \
 	(c->extended_usage == CHAN_EXTENDED_READ && \
 	(c->efd != -1 || \
 	sshbuf_len(c->extended) > 0))
@@ -279,133 +279,133 @@ struct Channel {
 	sshbuf_len(c->extended) > 0))
 
 /* Add/remove channel management structures to/from SSH transport instance */
-void channel_init_channels(struct ssh *ssh);
-void channel_free_channels(struct ssh *ssh);
+تهی channel_init_channels(ساختار ssh *ssh);
+تهی channel_free_channels(ساختار ssh *ssh);
 
 /* channel management */
 
-Channel	*channel_by_id(struct ssh *, int);
-Channel	*channel_by_remote_id(struct ssh *, u_int);
-Channel	*channel_lookup(struct ssh *, int);
-Channel *channel_new(struct ssh *, char *, int, int, int, int,
-	    u_int, u_int, int, const char *, int);
-void	 channel_set_fds(struct ssh *, int, int, int, int, int,
-	    int, int, u_int);
-void	 channel_set_tty(struct ssh *, Channel *);
-void	 channel_free(struct ssh *, Channel *);
-void	 channel_free_all(struct ssh *);
-void	 channel_stop_listening(struct ssh *);
-void	 channel_force_close(struct ssh *, Channel *, int);
-void	 channel_set_xtype(struct ssh *, int, const char *);
+Channel	*channel_by_id(ساختار ssh *, صحیح);
+Channel	*channel_by_remote_id(ساختار ssh *, u_int);
+Channel	*channel_lookup(ساختار ssh *, صحیح);
+Channel *channel_new(ساختار ssh *, نویسه *, صحیح, صحیح, صحیح, صحیح,
+	    u_int, u_int, صحیح, ثابت نویسه *, صحیح);
+تهی	 channel_set_fds(ساختار ssh *, صحیح, صحیح, صحیح, صحیح, صحیح,
+	    صحیح, صحیح, u_int);
+تهی	 channel_set_tty(ساختار ssh *, Channel *);
+تهی	 channel_free(ساختار ssh *, Channel *);
+تهی	 channel_free_all(ساختار ssh *);
+تهی	 channel_stop_listening(ساختار ssh *);
+تهی	 channel_force_close(ساختار ssh *, Channel *, صحیح);
+تهی	 channel_set_xtype(ساختار ssh *, صحیح, ثابت نویسه *);
 
-void	 channel_send_open(struct ssh *, int);
-void	 channel_request_start(struct ssh *, int, const char *, int);
-void	 channel_register_cleanup(struct ssh *, int,
-	    channel_callback_fn *, int);
-void	 channel_register_open_confirm(struct ssh *, int,
-	    channel_open_fn *, void *);
-void	 channel_register_filter(struct ssh *, int, channel_infilter_fn *,
-	    channel_outfilter_fn *, channel_filter_cleanup_fn *, void *);
-void	 channel_register_status_confirm(struct ssh *, int,
-	    channel_confirm_cb *, channel_confirm_abandon_cb *, void *);
-void	 channel_cancel_cleanup(struct ssh *, int);
-int	 channel_close_fd(struct ssh *, Channel *, int *);
-void	 channel_send_window_changes(struct ssh *);
-int	 channel_has_bulk(struct ssh *);
-void	 channel_set_tcp_keepalives(struct ssh *, int);
+تهی	 channel_send_open(ساختار ssh *, صحیح);
+تهی	 channel_request_start(ساختار ssh *, صحیح, ثابت نویسه *, صحیح);
+تهی	 channel_register_cleanup(ساختار ssh *, صحیح,
+	    channel_callback_fn *, صحیح);
+تهی	 channel_register_open_confirm(ساختار ssh *, صحیح,
+	    channel_open_fn *, تهی *);
+تهی	 channel_register_filter(ساختار ssh *, صحیح, channel_infilter_fn *,
+	    channel_outfilter_fn *, channel_filter_cleanup_fn *, تهی *);
+تهی	 channel_register_status_confirm(ساختار ssh *, صحیح,
+	    channel_confirm_cb *, channel_confirm_abandon_cb *, تهی *);
+تهی	 channel_cancel_cleanup(ساختار ssh *, صحیح);
+صحیح	 channel_close_fd(ساختار ssh *, Channel *, صحیح *);
+تهی	 channel_send_window_changes(ساختار ssh *);
+صحیح	 channel_has_bulk(ساختار ssh *);
+تهی	 channel_set_tcp_keepalives(ساختار ssh *, صحیح);
 
 /* channel inactivity timeouts */
-void channel_add_timeout(struct ssh *, const char *, double);
-void channel_clear_timeouts(struct ssh *);
+تهی channel_add_timeout(ساختار ssh *, ثابت نویسه *, دوگانه);
+تهی channel_clear_timeouts(ساختار ssh *);
 
 /* mux proxy support */
 
-int	 channel_proxy_downstream(struct ssh *, Channel *mc);
-int	 channel_proxy_upstream(Channel *, int, uint32_t, struct ssh *);
+صحیح	 channel_proxy_downstream(ساختار ssh *, Channel *mc);
+صحیح	 channel_proxy_upstream(Channel *, صحیح, uint32_t, ساختار ssh *);
 
 /* protocol handler */
 
-int	 channel_input_data(int, uint32_t, struct ssh *);
-int	 channel_input_extended_data(int, uint32_t, struct ssh *);
-int	 channel_input_ieof(int, uint32_t, struct ssh *);
-int	 channel_input_oclose(int, uint32_t, struct ssh *);
-int	 channel_input_open_confirmation(int, uint32_t, struct ssh *);
-int	 channel_input_open_failure(int, uint32_t, struct ssh *);
-int	 channel_input_window_adjust(int, uint32_t, struct ssh *);
-int	 channel_input_status_confirm(int, uint32_t, struct ssh *);
+صحیح	 channel_درون_داد_data(صحیح, uint32_t, ساختار ssh *);
+صحیح	 channel_درون_داد_extended_data(صحیح, uint32_t, ساختار ssh *);
+صحیح	 channel_درون_داد_ieof(صحیح, uint32_t, ساختار ssh *);
+صحیح	 channel_درون_داد_oclose(صحیح, uint32_t, ساختار ssh *);
+صحیح	 channel_درون_داد_open_confirmation(صحیح, uint32_t, ساختار ssh *);
+صحیح	 channel_درون_داد_open_failure(صحیح, uint32_t, ساختار ssh *);
+صحیح	 channel_درون_داد_window_adjust(صحیح, uint32_t, ساختار ssh *);
+صحیح	 channel_درون_داد_status_confirm(صحیح, uint32_t, ساختار ssh *);
 
 /* file descriptor handling (read/write) */
-struct pollfd;
-struct timespec;
+ساختار pollfd;
+ساختار timespec;
 
-void	 channel_prepare_poll(struct ssh *, struct pollfd **,
-	    u_int *, u_int *, u_int, struct timespec *);
-void	 channel_after_poll(struct ssh *, struct pollfd *, u_int);
-int	 channel_output_poll(struct ssh *);
+تهی	 channel_prepare_poll(ساختار ssh *, ساختار pollfd **,
+	    u_int *, u_int *, u_int, ساختار timespec *);
+تهی	 channel_after_poll(ساختار ssh *, ساختار pollfd *, u_int);
+صحیح	 channel_output_poll(ساختار ssh *);
 
-int      channel_not_very_much_buffered_data(struct ssh *);
-void     channel_close_all(struct ssh *);
-int      channel_still_open(struct ssh *);
-int	 channel_tty_open(struct ssh *);
-const char *channel_format_extended_usage(const Channel *);
-char	*channel_open_message(struct ssh *);
-void	 channel_report_open(struct ssh *, int);
-int	 channel_find_open(struct ssh *);
+صحیح      channel_not_very_much_buffered_data(ساختار ssh *);
+تهی     channel_close_all(ساختار ssh *);
+صحیح      channel_still_open(ساختار ssh *);
+صحیح	 channel_tty_open(ساختار ssh *);
+ثابت نویسه *channel_format_extended_usage(ثابت Channel *);
+نویسه	*channel_open_message(ساختار ssh *);
+تهی	 channel_report_open(ساختار ssh *, صحیح);
+صحیح	 channel_find_open(ساختار ssh *);
 
 /* tcp forwarding */
-struct Forward;
-struct ForwardOptions;
-void	 channel_set_af(struct ssh *, int af);
-void     channel_permit_all(struct ssh *, int);
-void	 channel_add_permission(struct ssh *, int, int, char *, int);
-void	 channel_clear_permission(struct ssh *, int, int);
-void	 channel_disable_admin(struct ssh *, int);
-void	 channel_update_permission(struct ssh *, int, int);
-Channel	*channel_connect_to_port(struct ssh *, const char *, u_short,
-	    char *, char *, int *, const char **);
-Channel *channel_connect_to_path(struct ssh *, const char *, char *, char *);
-Channel	*channel_connect_stdio_fwd(struct ssh *, const char*,
-	    int, int, int, int);
-Channel	*channel_connect_by_listen_address(struct ssh *, const char *,
-	    u_short, char *, char *);
-Channel	*channel_connect_by_listen_path(struct ssh *, const char *,
-	    char *, char *);
-int	 channel_request_remote_forwarding(struct ssh *, struct Forward *);
-int	 channel_setup_local_fwd_listener(struct ssh *, struct Forward *,
-	    struct ForwardOptions *);
-int	 channel_request_rforward_cancel(struct ssh *, struct Forward *);
-int	 channel_setup_remote_fwd_listener(struct ssh *, struct Forward *,
-	    int *, struct ForwardOptions *);
-int	 channel_cancel_rport_listener(struct ssh *, struct Forward *);
-int	 channel_cancel_lport_listener(struct ssh *, struct Forward *,
-	    int, struct ForwardOptions *);
-int	 permitopen_port(const char *);
+ساختار Forward;
+ساختار ForwardOptions;
+تهی	 channel_set_af(ساختار ssh *, صحیح af);
+تهی     channel_permit_all(ساختار ssh *, صحیح);
+تهی	 channel_add_permission(ساختار ssh *, صحیح, صحیح, نویسه *, صحیح);
+تهی	 channel_clear_permission(ساختار ssh *, صحیح, صحیح);
+تهی	 channel_disable_admin(ساختار ssh *, صحیح);
+تهی	 channel_update_permission(ساختار ssh *, صحیح, صحیح);
+Channel	*channel_connect_to_port(ساختار ssh *, ثابت نویسه *, u_short,
+	    نویسه *, نویسه *, صحیح *, ثابت نویسه **);
+Channel *channel_connect_to_path(ساختار ssh *, ثابت نویسه *, نویسه *, نویسه *);
+Channel	*channel_connect_stdio_fwd(ساختار ssh *, ثابت نویسه*,
+	    صحیح, صحیح, صحیح, صحیح);
+Channel	*channel_connect_by_listen_address(ساختار ssh *, ثابت نویسه *,
+	    u_short, نویسه *, نویسه *);
+Channel	*channel_connect_by_listen_path(ساختار ssh *, ثابت نویسه *,
+	    نویسه *, نویسه *);
+صحیح	 channel_request_remote_forwarding(ساختار ssh *, ساختار Forward *);
+صحیح	 channel_setup_local_fwd_listener(ساختار ssh *, ساختار Forward *,
+	    ساختار ForwardOptions *);
+صحیح	 channel_request_rforward_cancel(ساختار ssh *, ساختار Forward *);
+صحیح	 channel_setup_remote_fwd_listener(ساختار ssh *, ساختار Forward *,
+	    صحیح *, ساختار ForwardOptions *);
+صحیح	 channel_cancel_rport_listener(ساختار ssh *, ساختار Forward *);
+صحیح	 channel_cancel_lport_listener(ساختار ssh *, ساختار Forward *,
+	    صحیح, ساختار ForwardOptions *);
+صحیح	 permitopen_port(ثابت نویسه *);
 
 /* x11 forwarding */
 
-void	 channel_set_x11_refuse_time(struct ssh *, double);
-int	 x11_connect_display(struct ssh *);
-int	 x11_create_display_inet(struct ssh *, int, int, int, u_int *, int **);
-void	 x11_request_forwarding_with_spoofing(struct ssh *, int,
-	    const char *, const char *, const char *, int);
-int      x11_channel_used_recently(struct ssh *ssh);
+تهی	 channel_set_x11_refuse_time(ساختار ssh *, دوگانه);
+صحیح	 x11_connect_display(ساختار ssh *);
+صحیح	 x11_create_display_inet(ساختار ssh *, صحیح, صحیح, صحیح, u_int *, صحیح **);
+تهی	 x11_request_forwarding_with_spoofing(ساختار ssh *, صحیح,
+	    ثابت نویسه *, ثابت نویسه *, ثابت نویسه *, صحیح);
+صحیح      x11_channel_used_recently(ساختار ssh *ssh);
 
 /* channel close */
 
-int	 chan_is_dead(struct ssh *, Channel *, int);
-void	 chan_mark_dead(struct ssh *, Channel *);
+صحیح	 chan_is_dead(ساختار ssh *, Channel *, صحیح);
+تهی	 chan_mark_dead(ساختار ssh *, Channel *);
 
 /* agent forwarding */
-void	 client_channel_request_agent_forwarding(struct ssh *, int);
+تهی	 client_channel_request_agent_forwarding(ساختار ssh *, صحیح);
 
 /* channel events */
 
-void	 chan_rcvd_oclose(struct ssh *, Channel *);
-void	 chan_rcvd_eow(struct ssh *, Channel *);
-void	 chan_read_failed(struct ssh *, Channel *);
-void	 chan_ibuf_empty(struct ssh *, Channel *);
-void	 chan_rcvd_ieof(struct ssh *, Channel *);
-void	 chan_write_failed(struct ssh *, Channel *);
-void	 chan_obuf_empty(struct ssh *, Channel *);
+تهی	 chan_rcvd_oclose(ساختار ssh *, Channel *);
+تهی	 chan_rcvd_eow(ساختار ssh *, Channel *);
+تهی	 chan_read_failed(ساختار ssh *, Channel *);
+تهی	 chan_ibuf_empty(ساختار ssh *, Channel *);
+تهی	 chan_rcvd_ieof(ساختار ssh *, Channel *);
+تهی	 chan_write_failed(ساختار ssh *, Channel *);
+تهی	 chan_obuf_empty(ساختار ssh *, Channel *);
 
 #endif

@@ -45,66 +45,66 @@
  * working.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <stdint.h>
-#include <inttypes.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdarg.h>
+#شامل <stdint.h>
+#شامل <inttypes.h>
+#شامل <stdlib.h>
+#شامل <stdio.h>
+#شامل <unistd.h>
+#شامل <stdarg.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfile.h"
-#include "ssherr.h"
-#include "misc.h"
-#include "digest.h"
-#include "crypto_api.h"
+#شامل "xmalloc.h"
+#شامل "log.h"
+#شامل "sshbuf.h"
+#شامل "sshkey.h"
+#شامل "authfile.h"
+#شامل "ssherr.h"
+#شامل "misc.h"
+#شامل "digest.h"
+#شامل "crypto_api.h"
 
-#include <fido.h>
-#include <openssl/x509.h>
-#include <openssl/x509v3.h>
-#include <openssl/bio.h>
-#include <openssl/err.h>
-#include <openssl/pem.h>
-#include "openbsd-compat/openssl-compat.h"
+#شامل <fido.h>
+#شامل <openssl/x509.h>
+#شامل <openssl/x509v3.h>
+#شامل <openssl/bio.h>
+#شامل <openssl/err.h>
+#شامل <openssl/pem.h>
+#شامل "openbsd-compat/openssl-compat.h"
 
-extern char *__progname;
+بیرونی نویسه *__progname;
 
 #define ATTEST_MAGIC	"ssh-sk-attest-v01"
 
-static int
-prepare_fido_cred(fido_cred_t *cred, int credtype, const char *attfmt,
-    const char *rp_id, struct sshbuf *b, const struct sshbuf *challenge,
-    struct sshbuf **attestation_certp)
+ایستا صحیح
+prepare_fido_cred(fido_cred_t *cred, صحیح credtype, ثابت نویسه *attfmt,
+    ثابت نویسه *rp_id, ساختار sshbuf *b, ثابت ساختار sshbuf *challenge,
+    ساختار sshbuf **attestation_certp)
 {
-	struct sshbuf *attestation_cert = NULL, *sig = NULL, *authdata = NULL;
-	char *magic = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	ساختار sshbuf *attestation_cert = پوچ, *sig = پوچ, *authdata = پوچ;
+	نویسه *magic = پوچ;
+	صحیح r = SSH_ERR_INTERNAL_ERROR;
 
-	*attestation_certp = NULL;
+	*attestation_certp = پوچ;
 
 	/* Make sure it's the format we're expecting */
-	if ((r = sshbuf_get_cstring(b, &magic, NULL)) != 0) {
+	اگر ((r = sshbuf_get_cstring(b, &magic, پوچ)) != 0) {
 		error_fr(r, "parse header");
-		goto out;
+		برو out;
 	}
-	if (strcmp(magic, ATTEST_MAGIC) != 0) {
+	اگر (strcmp(magic, ATTEST_MAGIC) != 0) {
 		error_f("unsupported format");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		برو out;
 	}
 	/* Parse the remaining fields */
-	if ((r = sshbuf_froms(b, &attestation_cert)) != 0 ||
+	اگر ((r = sshbuf_froms(b, &attestation_cert)) != 0 ||
 	    (r = sshbuf_froms(b, &sig)) != 0 ||
 	    (r = sshbuf_froms(b, &authdata)) != 0 ||
-	    (r = sshbuf_get_u32(b, NULL)) != 0 || /* reserved flags */
-	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0) { /* reserved */
+	    (r = sshbuf_get_u32(b, پوچ)) != 0 || /* reserved flags */
+	    (r = sshbuf_get_string_direct(b, پوچ, پوچ)) != 0) { /* reserved */
 		error_fr(r, "parse body");
-		goto out;
+		برو out;
 	}
 	debug3_f("attestation cert len=%zu, sig len=%zu, "
 	    "authdata len=%zu challenge len=%zu", sshbuf_len(attestation_cert),
@@ -114,7 +114,7 @@ prepare_fido_cred(fido_cred_t *cred, int credtype, const char *attfmt,
 	fido_cred_set_fmt(cred, attfmt);
 	fido_cred_set_clientdata(cred, sshbuf_ptr(challenge),
 	    sshbuf_len(challenge));
-	fido_cred_set_rp(cred, rp_id, NULL);
+	fido_cred_set_rp(cred, rp_id, پوچ);
 	fido_cred_set_authdata(cred, sshbuf_ptr(authdata),
 	    sshbuf_len(authdata));
 	/* XXX set_extensions, set_rk, set_uv */
@@ -124,311 +124,311 @@ prepare_fido_cred(fido_cred_t *cred, int credtype, const char *attfmt,
 
 	/* success */
 	*attestation_certp = attestation_cert;
-	attestation_cert = NULL;
+	attestation_cert = پوچ;
 	r = 0;
  out:
-	free(magic);
+	آزاد(magic);
 	sshbuf_free(attestation_cert);
 	sshbuf_free(sig);
 	sshbuf_free(authdata);
-	return r;
+	بازگشت r;
 }
 
-static uint8_t *
-get_pubkey_from_cred_ecdsa(const fido_cred_t *cred, size_t *pubkey_len)
+ایستا uint8_t *
+get_pubkey_from_cred_ecdsa(ثابت fido_cred_t *cred, size_t *pubkey_len)
 {
-	const uint8_t *ptr;
-	uint8_t *pubkey = NULL, *ret = NULL;
-	BIGNUM *x = NULL, *y = NULL;
-	EC_POINT *q = NULL;
-	EC_GROUP *g = NULL;
+	ثابت uint8_t *ptr;
+	uint8_t *pubkey = پوچ, *ret = پوچ;
+	BIGNUM *x = پوچ, *y = پوچ;
+	EC_POINT *q = پوچ;
+	EC_GROUP *g = پوچ;
 
-	if ((x = BN_new()) == NULL ||
-	    (y = BN_new()) == NULL ||
-	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == NULL ||
-	    (q = EC_POINT_new(g)) == NULL) {
+	اگر ((x = BN_new()) == پوچ ||
+	    (y = BN_new()) == پوچ ||
+	    (g = EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1)) == پوچ ||
+	    (q = EC_POINT_new(g)) == پوچ) {
 		error_f("libcrypto setup failed");
-		goto out;
+		برو out;
 	}
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	اگر ((ptr = fido_cred_pubkey_ptr(cred)) == پوچ) {
 		error_f("fido_cred_pubkey_ptr failed");
-		goto out;
+		برو out;
 	}
-	if (fido_cred_pubkey_len(cred) != 64) {
+	اگر (fido_cred_pubkey_len(cred) != 64) {
 		error_f("bad fido_cred_pubkey_len %zu",
 		    fido_cred_pubkey_len(cred));
-		goto out;
+		برو out;
 	}
 
-	if (BN_bin2bn(ptr, 32, x) == NULL ||
-	    BN_bin2bn(ptr + 32, 32, y) == NULL) {
+	اگر (BN_bin2bn(ptr, 32, x) == پوچ ||
+	    BN_bin2bn(ptr + 32, 32, y) == پوچ) {
 		error_f("BN_bin2bn failed");
-		goto out;
+		برو out;
 	}
-	if (EC_POINT_set_affine_coordinates(g, q, x, y, NULL) != 1) {
+	اگر (EC_POINT_set_affine_coordinates(g, q, x, y, پوچ) != 1) {
 		error_f("EC_POINT_set_affine_coordinates failed");
-		goto out;
+		برو out;
 	}
 	*pubkey_len = EC_POINT_point2oct(g, q,
-	    POINT_CONVERSION_UNCOMPRESSED, NULL, 0, NULL);
-	if (*pubkey_len == 0 || *pubkey_len > 2048) {
+	    POINT_CONVERSION_UNCOMPRESSED, پوچ, 0, پوچ);
+	اگر (*pubkey_len == 0 || *pubkey_len > 2048) {
 		error_f("bad pubkey length %zu", *pubkey_len);
-		goto out;
+		برو out;
 	}
-	if ((pubkey = malloc(*pubkey_len)) == NULL) {
+	اگر ((pubkey = malloc(*pubkey_len)) == پوچ) {
 		error_f("malloc pubkey failed");
-		goto out;
+		برو out;
 	}
-	if (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
-	    pubkey, *pubkey_len, NULL) == 0) {
+	اگر (EC_POINT_point2oct(g, q, POINT_CONVERSION_UNCOMPRESSED,
+	    pubkey, *pubkey_len, پوچ) == 0) {
 		error_f("EC_POINT_point2oct failed");
-		goto out;
+		برو out;
 	}
 	/* success */
 	ret = pubkey;
-	pubkey = NULL;
+	pubkey = پوچ;
  out:
-	free(pubkey);
+	آزاد(pubkey);
 	EC_POINT_free(q);
 	EC_GROUP_free(g);
 	BN_clear_free(x);
 	BN_clear_free(y);
-	return ret;
+	بازگشت ret;
 }
 
 /* copied from sshsk_ecdsa_assemble() */
-static int
-cred_matches_key_ecdsa(const fido_cred_t *cred, const struct sshkey *k)
+ایستا صحیح
+cred_matches_کلید_ecdsa(ثابت fido_cred_t *cred, ثابت ساختار sshkey *k)
 {
-	struct sshkey *key = NULL;
-	struct sshbuf *b = NULL;
-	EC_KEY *ec = NULL;
-	uint8_t *pubkey = NULL;
+	ساختار sshkey *کلید = پوچ;
+	ساختار sshbuf *b = پوچ;
+	EC_کلید *ec = پوچ;
+	uint8_t *pubkey = پوچ;
 	size_t pubkey_len;
-	int r;
+	صحیح r;
 
-	if ((key = sshkey_new(KEY_ECDSA_SK)) == NULL) {
+	اگر ((کلید = sshkey_new(کلید_ECDSA_SK)) == پوچ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	key->ecdsa_nid = NID_X9_62_prime256v1;
-	if ((key->pkey = EVP_PKEY_new()) == NULL ||
-	    (ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL ||
-	    (b = sshbuf_new()) == NULL) {
+	کلید->ecdsa_nid = NID_X9_62_prime256v1;
+	اگر ((کلید->pkey = EVP_PKEY_new()) == پوچ ||
+	    (ec = EC_کلید_new_by_curve_name(کلید->ecdsa_nid)) == پوچ ||
+	    (b = sshbuf_new()) == پوچ) {
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((pubkey = get_pubkey_from_cred_ecdsa(cred, &pubkey_len)) == NULL) {
+	اگر ((pubkey = get_pubkey_from_cred_ecdsa(cred, &pubkey_len)) == پوچ) {
 		error_f("get_pubkey_from_cred_ecdsa failed");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		برو out;
 	}
-	if ((r = sshbuf_put_string(b, pubkey, pubkey_len)) != 0) {
+	اگر ((r = sshbuf_put_string(b, pubkey, pubkey_len)) != 0) {
 		error_fr(r, "sshbuf_put_string");
-		goto out;
+		برو out;
 	}
-	if ((r = sshbuf_get_eckey(b, ec)) != 0) {
+	اگر ((r = sshbuf_get_eckey(b, ec)) != 0) {
 		error_fr(r, "parse");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		برو out;
 	}
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec)) != 0) {
+	اگر (sshkey_ec_validate_public(EC_کلید_get0_group(ec),
+	    EC_کلید_get0_public_کلید(ec)) != 0) {
 		error("Authenticator returned invalid ECDSA key");
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+		r = SSH_ERR_کلید_INVALID_EC_مقدار;
+		برو out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	اگر (EVP_PKEY_set1_EC_کلید(کلید->pkey, ec) != 1) {
 		/* XXX assume it is a allocation error */
 		error_f("allocation failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	key->sk_application = xstrdup(k->sk_application); /* XXX */
-	if (!sshkey_equal_public(key, k)) {
+	کلید->sk_application = xstrdup(k->sk_application); /* XXX */
+	اگر (!sshkey_equal_public(کلید, k)) {
 		error("sshkey_equal_public failed");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		برو out;
 	}
 	r = 0; /* success */
  out:
-	EC_KEY_free(ec);
-	free(pubkey);
-	sshkey_free(key);
+	EC_کلید_free(ec);
+	آزاد(pubkey);
+	sshkey_free(کلید);
 	sshbuf_free(b);
-	return r;
+	بازگشت r;
 }
 
 
 /* copied from sshsk_ed25519_assemble() */
-static int
-cred_matches_key_ed25519(const fido_cred_t *cred, const struct sshkey *k)
+ایستا صحیح
+cred_matches_کلید_ed25519(ثابت fido_cred_t *cred, ثابت ساختار sshkey *k)
 {
-	struct sshkey *key = NULL;
-	const uint8_t *ptr;
-	int r = -1;
+	ساختار sshkey *کلید = پوچ;
+	ثابت uint8_t *ptr;
+	صحیح r = -1;
 
-	if ((ptr = fido_cred_pubkey_ptr(cred)) == NULL) {
+	اگر ((ptr = fido_cred_pubkey_ptr(cred)) == پوچ) {
 		error_f("fido_cred_pubkey_ptr failed");
-		goto out;
+		برو out;
 	}
-	if (fido_cred_pubkey_len(cred) != ED25519_PK_SZ) {
+	اگر (fido_cred_pubkey_len(cred) != ED25519_PK_SZ) {
 		error_f("bad fido_cred_pubkey_len %zu",
 		    fido_cred_pubkey_len(cred));
-		goto out;
+		برو out;
 	}
 
-	if ((key = sshkey_new(KEY_ED25519_SK)) == NULL) {
+	اگر ((کلید = sshkey_new(کلید_ED25519_SK)) == پوچ) {
 		error_f("sshkey_new failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((key->ed25519_pk = malloc(ED25519_PK_SZ)) == NULL) {
+	اگر ((کلید->ed25519_pk = malloc(ED25519_PK_SZ)) == پوچ) {
 		error_f("malloc failed");
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	memcpy(key->ed25519_pk, ptr, ED25519_PK_SZ);
-	key->sk_application = xstrdup(k->sk_application); /* XXX */
-	if (!sshkey_equal_public(key, k)) {
+	memcpy(کلید->ed25519_pk, ptr, ED25519_PK_SZ);
+	کلید->sk_application = xstrdup(k->sk_application); /* XXX */
+	اگر (!sshkey_equal_public(کلید, k)) {
 		error("sshkey_equal_public failed");
 		r = SSH_ERR_INVALID_ARGUMENT;
-		goto out;
+		برو out;
 	}
 	r = 0; /* success */
  out:
-	sshkey_free(key);
-	return r;
+	sshkey_free(کلید);
+	بازگشت r;
 }
 
-static int
-cred_matches_key(const fido_cred_t *cred, const struct sshkey *k)
+ایستا صحیح
+cred_matches_کلید(ثابت fido_cred_t *cred, ثابت ساختار sshkey *k)
 {
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
-		switch (k->ecdsa_nid) {
-		case NID_X9_62_prime256v1:
-			return cred_matches_key_ecdsa(cred, k);
-			break;
-		default:
+	انتخاب (sshkey_type_plain(k->type)) {
+	حالت کلید_ECDSA_SK:
+		انتخاب (k->ecdsa_nid) {
+		حالت NID_X9_62_prime256v1:
+			بازگشت cred_matches_کلید_ecdsa(cred, k);
+			بشکن;
+		پیشفرض:
 			fatal("Unsupported ECDSA key size");
 		}
-		break;
-	case KEY_ED25519_SK:
-		return cred_matches_key_ed25519(cred, k);
-	default:
+		بشکن;
+	حالت کلید_ED25519_SK:
+		بازگشت cred_matches_کلید_ed25519(cred, k);
+	پیشفرض:
 		error_f("key type %s not supported", sshkey_type(k));
-		return -1;
+		بازگشت -1;
 	}
 }
 
-int
-main(int argc, char **argv)
+صحیح
+اصلی(صحیح argc, نویسه **argv)
 {
 	LogLevel log_level = SYSLOG_LEVEL_INFO;
-	int r, ch, credtype = -1;
-	struct sshkey *k = NULL;
-	struct sshbuf *attestation = NULL, *challenge = NULL;
-	struct sshbuf *attestation_cert = NULL;
-	char *fp;
-	const char *attfmt = "packed", *style = NULL;
-	fido_cred_t *cred = NULL;
-	int write_attestation_cert = 0;
-	extern int optind;
+	صحیح r, ch, credtype = -1;
+	ساختار sshkey *k = پوچ;
+	ساختار sshbuf *attestation = پوچ, *challenge = پوچ;
+	ساختار sshbuf *attestation_cert = پوچ;
+	نویسه *fp;
+	ثابت نویسه *attfmt = "packed", *style = پوچ;
+	fido_cred_t *cred = پوچ;
+	صحیح write_attestation_cert = 0;
+	بیرونی صحیح optind;
 	/* extern char *optarg; */
 
-	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
+	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, پوچ);
 
 	sanitise_stdfd();
 	log_init(__progname, log_level, SYSLOG_FACILITY_AUTH, 1);
 
-	while ((ch = getopt(argc, argv, "UAv")) != -1) {
-		switch (ch) {
-		case 'U':
+	وقتی ((ch = getopt(argc, argv, "UAv")) != -1) {
+		انتخاب (ch) {
+		حالت 'U':
 			attfmt = "fido-u2f";
-			break;
-		case 'A':
+			بشکن;
+		حالت 'A':
 			write_attestation_cert = 1;
-			break;
-		case 'v':
-			if (log_level == SYSLOG_LEVEL_ERROR)
+			بشکن;
+		حالت 'v':
+			اگر (log_level == SYSLOG_LEVEL_ERROR)
 				log_level = SYSLOG_LEVEL_DEBUG1;
-			else if (log_level < SYSLOG_LEVEL_DEBUG3)
+			وگرنه اگر (log_level < SYSLOG_LEVEL_DEBUG3)
 				log_level++;
-			break;
-		default:
-			goto usage;
+			بشکن;
+		پیشفرض:
+			برو usage;
 		}
 	}
 	log_init(__progname, log_level, SYSLOG_FACILITY_AUTH, 1);
 	argv += optind;
 	argc -= optind;
 
-	if (argc < 3) {
+	اگر (argc < 3) {
  usage:
 		fprintf(stderr, "usage: %s [-vAU] "
 		   "pubkey challenge attestation-blob\n", __progname);
 		exit(1);
 	}
-	if ((r = sshkey_load_public(argv[0], &k, NULL)) != 0)
+	اگر ((r = sshkey_load_public(argv[0], &k, پوچ)) != 0)
 		fatal_r(r, "load key %s", argv[0]);
-	if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	اگر ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == پوچ)
 		fatal("sshkey_fingerprint failed");
 	debug2("key %s: %s %s", argv[2], sshkey_type(k), fp);
-	free(fp);
-	if ((r = sshbuf_load_file(argv[1], &challenge)) != 0)
+	آزاد(fp);
+	اگر ((r = sshbuf_load_file(argv[1], &challenge)) != 0)
 		fatal_r(r, "load challenge %s", argv[1]);
-	if ((r = sshbuf_load_file(argv[2], &attestation)) != 0)
+	اگر ((r = sshbuf_load_file(argv[2], &attestation)) != 0)
 		fatal_r(r, "load attestation %s", argv[2]);
-	if ((cred = fido_cred_new()) == NULL)
+	اگر ((cred = fido_cred_new()) == پوچ)
 		fatal("fido_cred_new failed");
 
-	switch (sshkey_type_plain(k->type)) {
-	case KEY_ECDSA_SK:
-		switch (k->ecdsa_nid) {
-		case NID_X9_62_prime256v1:
+	انتخاب (sshkey_type_plain(k->type)) {
+	حالت کلید_ECDSA_SK:
+		انتخاب (k->ecdsa_nid) {
+		حالت NID_X9_62_prime256v1:
 			credtype = COSE_ES256;
-			break;
-		default:
+			بشکن;
+		پیشفرض:
 			fatal("Unsupported ECDSA key size");
 		}
-		break;
-	case KEY_ED25519_SK:
+		بشکن;
+	حالت کلید_ED25519_SK:
 		credtype = COSE_EDDSA;
-		break;
-	default:
+		بشکن;
+	پیشفرض:
 		fatal("unsupported key type %s", sshkey_type(k));
 	}
 
-	if ((r = prepare_fido_cred(cred, credtype, attfmt, k->sk_application,
+	اگر ((r = prepare_fido_cred(cred, credtype, attfmt, k->sk_application,
 	    attestation, challenge, &attestation_cert)) != 0)
 		fatal_r(r, "prepare_fido_cred %s", argv[2]);
-	if (fido_cred_x5c_ptr(cred) != NULL) {
+	اگر (fido_cred_x5c_ptr(cred) != پوچ) {
 		debug("basic attestation");
-		if ((r = fido_cred_verify(cred)) != FIDO_OK)
+		اگر ((r = fido_cred_verify(cred)) != FIDO_OK)
 			fatal("basic attestation failed");
 		style = "basic";
-	} else {
+	} وگرنه {
 		debug("self attestation");
-		if ((r = fido_cred_verify_self(cred)) != FIDO_OK)
+		اگر ((r = fido_cred_verify_self(cred)) != FIDO_OK)
 			fatal("self attestation failed");
 		style = "self";
 	}
-	if (cred_matches_key(cred, k) != 0)
+	اگر (cred_matches_کلید(cred, k) != 0)
 		fatal("cred authdata does not match key");
 
 	fido_cred_free(&cred);
 
-	if (write_attestation_cert) {
-		PEM_write(stdout, "CERTIFICATE", NULL,
+	اگر (write_attestation_cert) {
+		PEM_write(stdout, "CERTIFICATE", پوچ,
 		    sshbuf_ptr(attestation_cert), sshbuf_len(attestation_cert));
 	}
 	sshbuf_free(attestation_cert);
 
 	logit("%s: verified %s attestation", argv[2], style);
 
-	return (0);
+	بازگشت (0);
 }

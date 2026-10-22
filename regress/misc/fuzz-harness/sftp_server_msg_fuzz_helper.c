@@ -38,127 +38,127 @@ limitations under the License.
  * recovery so LSan sees zero per-iteration leaks.
  */
 
-#include <setjmp.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
+#شامل <setjmp.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <pwd.h>
+#شامل <sys/types.h>
 
-#include "log.h"
+#شامل "log.h"
 
-extern void fuzz_arena_begin(void);
-extern void fuzz_arena_release(void);
-extern void fuzz_arena_cleanup(void);
+بیرونی تهی fuzz_arena_begin(تهی);
+بیرونی تهی fuzz_arena_release(تهی);
+بیرونی تهی fuzz_arena_cleanup(تهی);
 
-static jmp_buf fuzz_server_env;
-static volatile int in_fuzz_server = 0;
+ایستا jmp_buf fuzz_server_env;
+ایستا فرار صحیح in_fuzz_server = 0;
 
-void
-cleanup_exit(int code)
+تهی
+cleanup_exit(صحیح code)
 {
-	if (in_fuzz_server)
+	اگر (in_fuzz_server)
 		longjmp(fuzz_server_env, code ? code : 1);
 	_exit(code);
 }
 
 #define sftp_server_cleanup_exit __orig_sftp_server_cleanup_exit
-#include "../../../sftp-server.c"
+#شامل "../../../sftp-server.c"
 #undef sftp_server_cleanup_exit
 
-void
-sftp_server_cleanup_exit(int code)
+تهی
+sftp_server_cleanup_exit(صحیح code)
 {
-	if (in_fuzz_server)
+	اگر (in_fuzz_server)
 		longjmp(fuzz_server_env, code ? code : 1);
 	_exit(code);
 }
 
-static void (* const __force_use_renamed)(int) =
+ایستا تهی (* ثابت __force_use_renamed)(صحیح) =
     __orig_sftp_server_cleanup_exit;
 
-static struct passwd fuzz_pw;
-static int log_initialized = 0;
+ایستا ساختار passwd fuzz_pw;
+ایستا صحیح log_initialized = 0;
 
-static void
-cleanup_handles(void)
+ایستا تهی
+cleanup_handles(تهی)
 {
 	u_int i;
-	if (handles == NULL)
-		return;
-	for (i = 0; i < num_handles; i++) {
-		if (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
+	اگر (handles == پوچ)
+		بازگشت;
+	برای (i = 0; i < رقم_handles; i++) {
+		اگر (handles[i].use == HANDLE_FILE && handles[i].fd >= 0)
 			close(handles[i].fd);
-		else if (handles[i].use == HANDLE_DIR && handles[i].dirp != NULL)
+		وگرنه اگر (handles[i].use == HANDLE_DIR && handles[i].dirp != پوچ)
 			closedir(handles[i].dirp);
-		free(handles[i].name);
+		آزاد(handles[i].name);
 	}
-	free(handles);
-	handles = NULL;
-	num_handles = 0;
+	آزاد(handles);
+	handles = پوچ;
+	رقم_handles = 0;
 	first_unused_handle = -1;
 }
 
-static void
-reset_module_globals(void)
+ایستا تهی
+reset_module_globals(تهی)
 {
 	pw = &fuzz_pw;
-	client_addr = NULL;
+	client_addr = پوچ;
 	version = 0;
 	init_done = 0;
 	readonly = 0;
-	request_allowlist = NULL;
-	request_denylist = NULL;
-	handles = NULL;
-	num_handles = 0;
+	request_allowlist = پوچ;
+	request_denylist = پوچ;
+	handles = پوچ;
+	رقم_handles = 0;
 	first_unused_handle = -1;
-	iqueue = NULL;
-	oqueue = NULL;
+	iqueue = پوچ;
+	oqueue = پوچ;
 }
 
-void
-fuzz_server_one(const uint8_t *data, size_t size)
+تهی
+fuzz_server_one(ثابت uint8_t *data, size_t size)
 {
-	if (!log_initialized) {
+	اگر (!log_initialized) {
 		log_initialized = 1;
 		log_init("sftp_server_msg_fuzz", SYSLOG_LEVEL_ERROR,
 		    SYSLOG_FACILITY_AUTH, 0);
 
 		/* Confine filesystem syscalls (process_open/mkdir/symlink) to a fresh tmpdir. */
-		char tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
-		if (mkdtemp(tmpdir) != NULL && chdir(tmpdir) != 0)
+		نویسه tmpdir[] = "/tmp/sftp_fuzz_XXXXXX";
+		اگر (mkdtemp(tmpdir) != پوچ && chdir(tmpdir) != 0)
 			_exit(1);
 
-		memset(&fuzz_pw, 0, sizeof(fuzz_pw));
-		fuzz_pw.pw_name = (char *)"fuzz";
+		memset(&fuzz_pw, 0, اندازه(fuzz_pw));
+		fuzz_pw.pw_name = (نویسه *)"fuzz";
 		fuzz_pw.pw_uid = getuid();
 		fuzz_pw.pw_gid = getgid();
-		fuzz_pw.pw_dir = (char *)"/tmp";
-		fuzz_pw.pw_shell = (char *)"/bin/sh";
+		fuzz_pw.pw_dir = (نویسه *)"/tmp";
+		fuzz_pw.pw_shell = (نویسه *)"/bin/sh";
 	}
 
-	if (size == 0 || size > 65000)
-		return;
+	اگر (size == 0 || size > 65000)
+		بازگشت;
 
 	reset_module_globals();
 
 	fuzz_arena_begin();
 	in_fuzz_server = 1;
-	if (setjmp(fuzz_server_env) == 0) {
+	اگر (setjmp(fuzz_server_env) == 0) {
 		client_addr = strdup("127.0.0.1");
 		iqueue = sshbuf_new();
 		oqueue = sshbuf_new();
-		if (iqueue == NULL || oqueue == NULL)
-			goto out;
+		اگر (iqueue == پوچ || oqueue == پوچ)
+			برو out;
 
-		const uint8_t init_msg[] = {
+		ثابت uint8_t init_پیام[] = {
 		    0x00, 0x00, 0x00, 0x05,
 		    SSH2_FXP_INIT,
 		    0x00, 0x00, 0x00, 0x03,
 		};
-		if (sshbuf_put(iqueue, init_msg, sizeof(init_msg)) != 0)
-			goto out;
+		اگر (sshbuf_put(iqueue, init_پیام, اندازه(init_پیام)) != 0)
+			برو out;
 		process();
 
 		sshbuf_reset(iqueue);
@@ -170,24 +170,24 @@ fuzz_server_one(const uint8_t *data, size_t size)
 		    (uint8_t)((size >> 8) & 0xff),
 		    (uint8_t)(size & 0xff),
 		};
-		if (sshbuf_put(iqueue, hdr, 4) != 0 ||
+		اگر (sshbuf_put(iqueue, hdr, 4) != 0 ||
 		    sshbuf_put(iqueue, data, size) != 0)
-			goto out;
+			برو out;
 		process();
 	out:
 		cleanup_handles();
 		sshbuf_free(iqueue);
 		sshbuf_free(oqueue);
-		free(client_addr);
-		iqueue = oqueue = NULL;
-		client_addr = NULL;
+		آزاد(client_addr);
+		iqueue = oqueue = پوچ;
+		client_addr = پوچ;
 		in_fuzz_server = 0;
 		fuzz_arena_release();
-		return;
+		بازگشت;
 	}
 	cleanup_handles();
 	in_fuzz_server = 0;
 	fuzz_arena_cleanup();
-	iqueue = oqueue = NULL;
-	client_addr = NULL;
+	iqueue = oqueue = پوچ;
+	client_addr = پوچ;
 }

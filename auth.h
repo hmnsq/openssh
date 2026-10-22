@@ -28,53 +28,53 @@
 #ifndef AUTH_H
 #define AUTH_H
 
-#include <signal.h>
-#include <stdio.h>
+#شامل <signal.h>
+#شامل <stdio.h>
 
 #ifdef HAVE_LOGIN_CAP
-#include <login_cap.h>
+#شامل <login_cap.h>
 #endif
 #ifdef BSD_AUTH
-#include <bsd_auth.h>
+#شامل <bsd_auth.h>
 #endif
 #ifdef KRB5
-#include <krb5.h>
+#شامل <krb5.h>
 #endif
 
-struct passwd;
-struct ssh;
-struct sshbuf;
-struct sshkey;
-struct sshkey_cert;
-struct sshauthopt;
+ساختار passwd;
+ساختار ssh;
+ساختار sshbuf;
+ساختار sshkey;
+ساختار sshkey_cert;
+ساختار sshauthopt;
 
-typedef struct Authctxt Authctxt;
-typedef struct Authmethod Authmethod;
-typedef struct KbdintDevice KbdintDevice;
+تعریفنوع ساختار Authctxt Authctxt;
+تعریفنوع ساختار Authmethod Authmethod;
+تعریفنوع ساختار KbdintDevice KbdintDevice;
 
-struct Authctxt {
+ساختار Authctxt {
 	sig_atomic_t	 success;
-	int		 authenticated;	/* authenticated and alarms cancelled */
-	int		 postponed;	/* authentication needs another step */
-	int		 valid;		/* user exists and is allowed to login */
-	int		 attempt;
-	int		 failures;
-	int		 pk_ok_failures;
-	int		 auth_failure_already_counted;
-	int		 server_caused_failure;
-	int		 force_pwchange;
-	char		*user;		/* username sent by the client */
-	char		*service;
-	struct passwd	*pw;		/* set if 'valid' */
-	char		*style;
+	صحیح		 authenticated;	/* authenticated and alarms cancelled */
+	صحیح		 postponed;	/* authentication needs another step */
+	صحیح		 valid;		/* user exists and is allowed to login */
+	صحیح		 attempt;
+	صحیح		 failures;
+	صحیح		 pk_ok_failures;
+	صحیح		 auth_failure_already_counted;
+	صحیح		 server_caused_failure;
+	صحیح		 force_pwchange;
+	نویسه		*user;		/* username sent by the client */
+	نویسه		*service;
+	ساختار passwd	*pw;		/* set if 'valid' */
+	نویسه		*style;
 
 	/* Method lists for multiple authentication */
-	char		**auth_methods;	/* modified from server config */
-	u_int		 num_auth_methods;
+	نویسه		**auth_methods;	/* modified from server config */
+	u_int		 رقم_auth_methods;
 
 	/* Authentication method-specific data */
-	void		*methoddata;
-	void		*kbdintctxt;
+	تهی		*methoddata;
+	تهی		*kbdintctxt;
 #ifdef BSD_AUTH
 	auth_session_t	*as;
 #endif
@@ -82,21 +82,21 @@ struct Authctxt {
 	krb5_context	 krb5_ctx;
 	krb5_ccache	 krb5_fwd_ccache;
 	krb5_principal	 krb5_user;
-	char		*krb5_ticket_file;
-	char		*krb5_ccname;
+	نویسه		*krb5_ticket_file;
+	نویسه		*krb5_ccname;
 #endif
-	struct sshbuf	*loginmsg;
+	ساختار sshbuf	*loginmsg;
 
 	/* Authentication keys already used; these will be refused henceforth */
-	struct sshkey	**prev_keys;
-	u_int		 nprev_keys;
+	ساختار sshkey	**prev_کلیدها;
+	u_int		 nprev_کلیدها;
 
 	/* Last used key and ancillary information from active auth method */
-	struct sshkey	*auth_method_key;
-	char		*auth_method_info;
+	ساختار sshkey	*auth_method_کلید;
+	نویسه		*auth_method_info;
 
 	/* Information exposed to session */
-	struct sshbuf	*session_info;	/* Auth info for environment */
+	ساختار sshbuf	*session_info;	/* Auth info for environment */
 };
 
 /*
@@ -106,15 +106,15 @@ struct Authctxt {
  * the client.
  */
 
-struct authmethod_cfg {
-	const char *name;
-	const char *synonym;
-	int *enabled;
+ساختار authmethod_cfg {
+	ثابت نویسه *name;
+	ثابت نویسه *synonym;
+	صحیح *enabled;
 };
 
-struct Authmethod {
-	struct authmethod_cfg *cfg;
-	int	(*userauth)(struct ssh *, const char *);
+ساختار Authmethod {
+	ساختار authmethod_cfg *cfg;
+	صحیح	(*userauth)(ساختار ssh *, ثابت نویسه *);
 };
 
 /*
@@ -124,125 +124,125 @@ struct Authmethod {
  * respond	returns: 0 - success, 1 - need further interaction,
  *		otherwise - failure
  */
-struct KbdintDevice
+ساختار KbdintDevice
 {
-	const char *name;
-	void*	(*init_ctx)(Authctxt*);
-	int	(*query)(void *ctx, char **name, char **infotxt,
-		    u_int *numprompts, char ***prompts, u_int **echo_on);
-	int	(*respond)(void *ctx, u_int numresp, char **responses);
-	void	(*free_ctx)(void *ctx);
+	ثابت نویسه *name;
+	تهی*	(*init_ctx)(Authctxt*);
+	صحیح	(*query)(تهی *ctx, نویسه **name, نویسه **infotxt,
+		    u_int *numprompts, نویسه ***prompts, u_int **echo_on);
+	صحیح	(*respond)(تهی *ctx, u_int numresp, نویسه **responses);
+	تهی	(*free_ctx)(تهی *ctx);
 };
 
-int
-auth_rhosts2(struct passwd *, const char *, const char *, const char *);
+صحیح
+auth_rhosts2(ساختار passwd *, ثابت نویسه *, ثابت نویسه *, ثابت نویسه *);
 
-int      auth_password(struct ssh *, const char *);
+صحیح      auth_password(ساختار ssh *, ثابت نویسه *);
 
-int	 hostbased_key_allowed(struct ssh *, struct passwd *,
-	    const char *, char *, struct sshkey *);
-int	 user_key_allowed(struct ssh *ssh, struct passwd *, struct sshkey *,
-    int, struct sshauthopt **);
-int	 auth2_key_already_used(Authctxt *, const struct sshkey *);
+صحیح	 hostbased_کلید_allowed(ساختار ssh *, ساختار passwd *,
+	    ثابت نویسه *, نویسه *, ساختار sshkey *);
+صحیح	 user_کلید_allowed(ساختار ssh *ssh, ساختار passwd *, ساختار sshkey *,
+    صحیح, ساختار sshauthopt **);
+صحیح	 auth2_کلید_already_used(Authctxt *, ثابت ساختار sshkey *);
 
 /*
  * Handling auth method-specific information for logging and prevention
  * of key reuse during multiple authentication.
  */
-void	 auth2_authctxt_reset_info(Authctxt *);
-void	 auth2_record_key(Authctxt *, int, const struct sshkey *);
-void	 auth2_record_info(Authctxt *authctxt, const char *, ...)
+تهی	 auth2_authctxt_reset_info(Authctxt *);
+تهی	 auth2_record_کلید(Authctxt *, صحیح, ثابت ساختار sshkey *);
+تهی	 auth2_record_info(Authctxt *authctxt, ثابت نویسه *, ...)
 	    __attribute__((__format__ (printf, 2, 3)))
 	    __attribute__((__nonnull__ (2)));
-void	 auth2_update_session_info(Authctxt *, const char *, const char *);
+تهی	 auth2_update_session_info(Authctxt *, ثابت نویسه *, ثابت نویسه *);
 
 #ifdef KRB5
-int	auth_krb5_password(Authctxt *authctxt, const char *password);
-void	krb5_cleanup_proc(Authctxt *authctxt);
+صحیح	auth_krb5_password(Authctxt *authctxt, ثابت نویسه *password);
+تهی	krb5_cleanup_proc(Authctxt *authctxt);
 #endif /* KRB5 */
 
-#if defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
-#include <shadow.h>
-int auth_shadow_acctexpired(struct spwd *);
-int auth_shadow_pwexpired(Authctxt *);
+#اگر defined(USE_SHADOW) && defined(HAS_SHADOW_EXPIRE)
+#شامل <shadow.h>
+صحیح auth_shadow_acctexpired(ساختار spwd *);
+صحیح auth_shadow_pwexpired(Authctxt *);
 #endif
 
-#include "auth-pam.h"
-#include "audit.h"
-void remove_kbdint_device(const char *);
+#شامل "auth-pam.h"
+#شامل "audit.h"
+تهی remove_kbdint_device(ثابت نویسه *);
 
-void	do_authentication2(struct ssh *);
+تهی	do_authentication2(ساختار ssh *);
 
-void	auth_log(struct ssh *, int, int, const char *, const char *);
-void	auth_maxtries_exceeded(struct ssh *) __attribute__((noreturn));
-void	userauth_finish(struct ssh *, int, const char *, const char *);
-int	auth_root_allowed(struct ssh *, const char *);
-void	auth_failure_delay(Authctxt *, double);
+تهی	auth_log(ساختار ssh *, صحیح, صحیح, ثابت نویسه *, ثابت نویسه *);
+تهی	auth_maxtries_exceeded(ساختار ssh *) __attribute__((noreturn));
+تهی	userauth_finish(ساختار ssh *, صحیح, ثابت نویسه *, ثابت نویسه *);
+صحیح	auth_ریشه_allowed(ساختار ssh *, ثابت نویسه *);
+تهی	auth_failure_delay(Authctxt *, دوگانه);
 
-char	*auth2_read_banner(void);
-int	 auth2_methods_valid(const char *, int);
-int	 auth2_update_methods_lists(Authctxt *, const char *, const char *);
-int	 auth2_setup_methods_lists(Authctxt *);
-int	 auth2_method_allowed(Authctxt *, const char *, const char *);
+نویسه	*auth2_read_banner(تهی);
+صحیح	 auth2_methods_valid(ثابت نویسه *, صحیح);
+صحیح	 auth2_update_methods_lists(Authctxt *, ثابت نویسه *, ثابت نویسه *);
+صحیح	 auth2_setup_methods_lists(Authctxt *);
+صحیح	 auth2_method_allowed(Authctxt *, ثابت نویسه *, ثابت نویسه *);
 
-int	auth2_challenge(struct ssh *, char *);
-void	auth2_challenge_stop(struct ssh *);
-int	bsdauth_query(void *, char **, char **, u_int *, char ***, u_int **);
-int	bsdauth_respond(void *, u_int, char **);
+صحیح	auth2_challenge(ساختار ssh *, نویسه *);
+تهی	auth2_challenge_stop(ساختار ssh *);
+صحیح	bsdauth_query(تهی *, نویسه **, نویسه **, u_int *, نویسه ***, u_int **);
+صحیح	bsdauth_respond(تهی *, u_int, نویسه **);
 
-int	allowed_user(struct ssh *, struct passwd *);
-struct passwd * getpwnamallow(struct ssh *, const char *user);
+صحیح	allowed_user(ساختار ssh *, ساختار passwd *);
+ساختار passwd * getpwnamallow(ساختار ssh *, ثابت نویسه *user);
 
-char	*expand_authorized_keys(const char *, struct passwd *pw);
-char	*authorized_principals_file(struct passwd *);
+نویسه	*expand_authorized_کلیدها(ثابت نویسه *, ساختار passwd *pw);
+نویسه	*authorized_principals_file(ساختار passwd *);
 
-int	 auth_key_is_revoked(struct sshkey *);
+صحیح	 auth_کلید_is_revoked(ساختار sshkey *);
 
-const char	*auth_get_canonical_hostname(struct ssh *, int);
+ثابت نویسه	*auth_get_canonical_hostname(ساختار ssh *, صحیح);
 
 HostStatus
-check_key_in_hostfiles(struct passwd *, struct sshkey *, const char *,
-    const char *, const char *);
+check_کلید_in_hostfiles(ساختار passwd *, ساختار sshkey *, ثابت نویسه *,
+    ثابت نویسه *, ثابت نویسه *);
 
 /* hostkey handling */
-struct sshkey	*get_hostkey_by_index(int);
-struct sshkey	*get_hostkey_public_by_index(int, struct ssh *);
-struct sshkey	*get_hostkey_public_by_type(int, int, struct ssh *);
-struct sshkey	*get_hostkey_private_by_type(int, int, struct ssh *);
-int	 get_hostkey_index(struct sshkey *, int, struct ssh *);
-int	 sshd_hostkey_sign(struct ssh *, struct sshkey *, struct sshkey *,
-    u_char **, size_t *, const u_char *, size_t, const char *);
+ساختار sshkey	*get_hostkey_by_index(صحیح);
+ساختار sshkey	*get_hostkey_public_by_index(صحیح, ساختار ssh *);
+ساختار sshkey	*get_hostkey_public_by_type(صحیح, صحیح, ساختار ssh *);
+ساختار sshkey	*get_hostkey_private_by_type(صحیح, صحیح, ساختار ssh *);
+صحیح	 get_hostkey_index(ساختار sshkey *, صحیح, ساختار ssh *);
+صحیح	 sshd_hostkey_sign(ساختار ssh *, ساختار sshkey *, ساختار sshkey *,
+    u_char **, size_t *, ثابت u_char *, size_t, ثابت نویسه *);
 
 /* Key / cert options linkage to auth layer */
-int	 auth_activate_options(struct ssh *, struct sshauthopt *);
-void	 auth_restrict_session(struct ssh *);
-void	 auth_log_authopts(const char *, const struct sshauthopt *, int);
+صحیح	 auth_activate_options(ساختار ssh *, ساختار sshauthopt *);
+تهی	 auth_restrict_session(ساختار ssh *);
+تهی	 auth_log_authopts(ثابت نویسه *, ثابت ساختار sshauthopt *, صحیح);
 
 /* debug messages during authentication */
-void	 auth_debug_add(const char *fmt,...)
+تهی	 auth_debug_add(ثابت نویسه *fmt,...)
     __attribute__((format(printf, 1, 2)));
-void	 auth_debug_send(struct ssh *);
-void	 auth_debug_reset(void);
+تهی	 auth_debug_send(ساختار ssh *);
+تهی	 auth_debug_reset(تهی);
 
-struct passwd *fakepw(void);
+ساختار passwd *fakepw(تهی);
 
 /* auth2-pubkeyfile.c */
-int	 auth_authorise_keyopts(struct passwd *, struct sshauthopt *, int,
-    const char *, const char *, const char *);
-int	 auth_check_principals_line(char *, const struct sshkey_cert *,
-    const char *, struct sshauthopt **);
-int	 auth_process_principals(FILE *, const char *,
-    const struct sshkey_cert *, struct sshauthopt **);
-int	 auth_check_authkey_line(struct passwd *, struct sshkey *,
-    char *, const char *, const char *, const char *, struct sshauthopt **);
-int	 auth_check_authkeys_file(struct passwd *, FILE *, char *,
-    struct sshkey *, const char *, const char *, struct sshauthopt **);
-FILE	*auth_openkeyfile(const char *, struct passwd *, int);
-FILE	*auth_openprincipals(const char *, struct passwd *, int);
+صحیح	 auth_authorise_keyopts(ساختار passwd *, ساختار sshauthopt *, صحیح,
+    ثابت نویسه *, ثابت نویسه *, ثابت نویسه *);
+صحیح	 auth_check_principals_سطر(نویسه *, ثابت ساختار sshkey_cert *,
+    ثابت نویسه *, ساختار sshauthopt **);
+صحیح	 auth_process_principals(FILE *, ثابت نویسه *,
+    ثابت ساختار sshkey_cert *, ساختار sshauthopt **);
+صحیح	 auth_check_authkey_سطر(ساختار passwd *, ساختار sshkey *,
+    نویسه *, ثابت نویسه *, ثابت نویسه *, ثابت نویسه *, ساختار sshauthopt **);
+صحیح	 auth_check_authkeys_file(ساختار passwd *, FILE *, نویسه *,
+    ساختار sshkey *, ثابت نویسه *, ثابت نویسه *, ساختار sshauthopt **);
+FILE	*auth_openkeyfile(ثابت نویسه *, ساختار passwd *, صحیح);
+FILE	*auth_openprincipals(ثابت نویسه *, ساختار passwd *, صحیح);
 
-int	 sys_auth_passwd(struct ssh *, const char *);
+صحیح	 sys_auth_passwd(ساختار ssh *, ثابت نویسه *);
 
-#if defined(KRB5) && !defined(HEIMDAL)
+#اگر defined(KRB5) && !defined(HEIMDAL)
 krb5_error_code ssh_krb5_cc_gen(krb5_context, krb5_ccache *);
 #endif
 

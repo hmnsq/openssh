@@ -30,13 +30,13 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/daemon.c */
 
-#include "includes.h"
+#شامل "includes.h"
 
 #ifndef HAVE_DAEMON
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <sys/stat.h>
+#شامل <sys/stat.h>
 
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
@@ -46,34 +46,34 @@
 # include <unistd.h>
 #endif
 
-int
-daemon(int nochdir, int noclose)
+صحیح
+daemon(صحیح nochdir, صحیح noclose)
 {
-	int fd;
+	صحیح fd;
 
-	switch (fork()) {
-	case -1:
-		return (-1);
-	case 0:
-		break;
-	default:
+	انتخاب (fork()) {
+	حالت -1:
+		بازگشت (-1);
+	حالت 0:
+		بشکن;
+	پیشفرض:
 		_exit(0);
 	}
 
-	if (setsid() == -1)
-		return (-1);
+	اگر (setsid() == -1)
+		بازگشت (-1);
 
-	if (!nochdir)
-		(void)chdir("/");
+	اگر (!nochdir)
+		(تهی)chdir("/");
 
-	if (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
-		(void)dup2(fd, STDIN_FILENO);
-		(void)dup2(fd, STDOUT_FILENO);
-		(void)dup2(fd, STDERR_FILENO);
-		if (fd > 2)
-			(void)close (fd);
+	اگر (!noclose && (fd = open(_PATH_DEVNULL, O_RDWR, 0)) != -1) {
+		(تهی)dup2(fd, STDIN_FILENO);
+		(تهی)dup2(fd, STDOUT_FILENO);
+		(تهی)dup2(fd, STDERR_FILENO);
+		اگر (fd > 2)
+			(تهی)close (fd);
 	}
-	return (0);
+	بازگشت (0);
 }
 
 #endif /* !HAVE_DAEMON */

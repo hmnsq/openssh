@@ -14,50 +14,50 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#شامل <fcntl.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <unistd.h>
 
-#define NUM_OPENS 10
+#define رقم_OPENS 10
 
-void
-fail(char *msg)
+تهی
+fail(نویسه *پیام)
 {
-	fprintf(stderr, "closefrom: %s\n", msg);
+	fprintf(stderr, "closefrom: %s\n", پیام);
 	exit(1);
 }
 
-int
-main(void)
+صحیح
+اصلی(تهی)
 {
-	int i, max, fds[NUM_OPENS];
-	char buf[512];
+	صحیح i, max, fds[رقم_OPENS];
+	نویسه buf[512];
 
-	for (i = 0; i < NUM_OPENS; i++)
-		if ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
+	برای (i = 0; i < رقم_OPENS; i++)
+		اگر ((fds[i] = open("/dev/null", O_RDONLY)) == -1)
 			exit(0);	/* can't test */
 	max = i - 1;
 
 	/* should close last fd only */
 	closefrom(fds[max]);
-	if (close(fds[max]) != -1)
+	اگر (close(fds[max]) != -1)
 		fail("failed to close highest fd");
 
 	/* make sure we can still use remaining descriptors */
-	for (i = 0; i < max; i++)
-		if (read(fds[i], buf, sizeof(buf)) == -1)
+	برای (i = 0; i < max; i++)
+		اگر (اقرأ(fds[i], buf, اندازه(buf)) == -1)
 			fail("closed descriptors it should not have");
 
 	/* should close all fds */
 	closefrom(fds[0]);
-	for (i = 0; i < NUM_OPENS; i++)
-		if (close(fds[i]) != -1)
+	برای (i = 0; i < رقم_OPENS; i++)
+		اگر (close(fds[i]) != -1)
 			fail("failed to close from lowest fd");
-	return 0;
+	بازگشت 0;
 }

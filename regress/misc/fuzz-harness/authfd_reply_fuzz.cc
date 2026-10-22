@@ -38,120 +38,120 @@ limitations under the License.
  * reclaimed before the next call.
  */
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
+#شامل <stddef.h>
+#شامل <stdint.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
+#شامل <sys/socket.h>
+#شامل <sys/types.h>
 
-extern "C" {
-#include "includes.h"
-#include "sshkey.h"
-#include "sshbuf.h"
-#include "ssherr.h"
-#include "authfd.h"
-#include "log.h"
+بیرونی "C" {
+#شامل "includes.h"
+#شامل "sshkey.h"
+#شامل "sshbuf.h"
+#شامل "ssherr.h"
+#شامل "authfd.h"
+#شامل "log.h"
 
-void fuzz_arena_begin(void);
-void fuzz_arena_cleanup(void);
+تهی fuzz_arena_begin(تهی);
+تهی fuzz_arena_cleanup(تهی);
 }
 
-#include "fixed-keys.h"
+#شامل "fixed-keys.h"
 
-static struct sshkey *test_keys[3] = { NULL, NULL, NULL };
-static int initialized = 0;
+ایستا ساختار sshkey *test_کلیدها[3] = { پوچ, پوچ, پوچ };
+ایستا صحیح initialized = 0;
 
-static struct sshkey *
-load_pubkey_or_die(const char *txt)
+ایستا ساختار sshkey *
+load_pubkey_or_die(ثابت نویسه *txt)
 {
-	char *tmp, *cp;
-	struct sshkey *k;
+	نویسه *tmp, *cp;
+	ساختار sshkey *k;
 
-	if ((k = sshkey_new(KEY_UNSPEC)) == NULL)
+	اگر ((k = sshkey_new(کلید_UNSPEC)) == پوچ)
 		abort();
-	if ((tmp = cp = strdup(txt)) == NULL)
+	اگر ((tmp = cp = strdup(txt)) == پوچ)
 		abort();
-	if (sshkey_read(k, &cp) != 0)
+	اگر (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	آزاد(tmp);
+	بازگشت k;
 }
 
-static void
-setup(void)
+ایستا تهی
+setup(تهی)
 {
-	if (initialized)
-		return;
+	اگر (initialized)
+		بازگشت;
 	initialized = 1;
 	log_init("authfd_reply_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
-	test_keys[0] = load_pubkey_or_die(PUB_RSA);
-	test_keys[1] = load_pubkey_or_die(PUB_ECDSA);
-	test_keys[2] = load_pubkey_or_die(PUB_ED25519);
+	test_کلیدها[0] = load_pubkey_or_die(PUB_RSA);
+	test_کلیدها[1] = load_pubkey_or_die(PUB_ECDSA);
+	test_کلیدها[2] = load_pubkey_or_die(PUB_ED25519);
 }
 
-enum {
+شمارش {
 	API_FETCH_IDENTITYLIST,
 	API_AGENT_SIGN,
-	API_AGENT_HAS_KEY,
+	API_AGENT_HAS_کلید,
 	API_QUERY_EXTENSIONS,
 	API_LOCK_AGENT,
 };
 
-static void
-run_one(int api, struct sshkey *k, int lock_arg,
-    const uint8_t *body, size_t bsize)
+ایستا تهی
+run_one(صحیح api, ساختار sshkey *k, صحیح lock_arg,
+    ثابت uint8_t *body, size_t bsize)
 {
-	int sv[2] = { -1, -1 };
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
-		return;
+	صحیح sv[2] = { -1, -1 };
+	اگر (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) != 0)
+		بازگشت;
 
 	uint32_t blen = (uint32_t)bsize;
 	uint8_t hdr[4] = {
 	    (uint8_t)(blen >> 24), (uint8_t)(blen >> 16),
 	    (uint8_t)(blen >> 8), (uint8_t)(blen)
 	};
-	(void)write(sv[0], hdr, sizeof(hdr));
-	if (bsize > 0)
-		(void)write(sv[0], body, bsize);
+	(تهی)اكتب(sv[0], hdr, اندازه(hdr));
+	اگر (bsize > 0)
+		(تهی)اكتب(sv[0], body, bsize);
 
 	fuzz_arena_begin();
 
-	switch (api) {
-	case API_FETCH_IDENTITYLIST: {
-		struct ssh_identitylist *idl = NULL;
-		(void)ssh_fetch_identitylist(sv[1], &idl);
+	انتخاب (api) {
+	حالت API_FETCH_IDENTITYLIST: {
+		ساختار ssh_identitylist *idl = پوچ;
+		(تهی)ssh_fetch_identitylist(sv[1], &idl);
 		ssh_free_identitylist(idl);
-		break;
+		بشکن;
 	}
-	case API_AGENT_SIGN: {
-		const u_char msg[16] = { 0 };
-		u_char *sig = NULL;
+	حالت API_AGENT_SIGN: {
+		ثابت u_char پیام[16] = { 0 };
+		u_char *sig = پوچ;
 		size_t siglen = 0;
-		(void)ssh_agent_sign(sv[1], k, &sig, &siglen,
-		    msg, sizeof(msg), NULL, 0);
-		free(sig);
-		break;
+		(تهی)ssh_agent_sign(sv[1], k, &sig, &siglen,
+		    پیام, اندازه(پیام), پوچ, 0);
+		آزاد(sig);
+		بشکن;
 	}
-	case API_AGENT_HAS_KEY:
-		(void)ssh_agent_has_key(sv[1], k);
-		break;
-	case API_QUERY_EXTENSIONS: {
-		char **exts = NULL;
-		int n = ssh_agent_query_extensions(sv[1], &exts);
-		if (n == 0 && exts != NULL) {
-			for (int i = 0; exts[i] != NULL; i++)
-				free(exts[i]);
-			free(exts);
+	حالت API_AGENT_HAS_کلید:
+		(تهی)ssh_agent_has_کلید(sv[1], k);
+		بشکن;
+	حالت API_QUERY_EXTENSIONS: {
+		نویسه **exts = پوچ;
+		صحیح n = ssh_agent_query_extensions(sv[1], &exts);
+		اگر (n == 0 && exts != پوچ) {
+			برای (صحیح i = 0; exts[i] != پوچ; i++)
+				آزاد(exts[i]);
+			آزاد(exts);
 		}
-		break;
+		بشکن;
 	}
-	case API_LOCK_AGENT:
-		(void)ssh_lock_agent(sv[1], lock_arg, "fuzz");
-		break;
+	حالت API_LOCK_AGENT:
+		(تهی)ssh_lock_agent(sv[1], lock_arg, "fuzz");
+		بشکن;
 	}
 
 	fuzz_arena_cleanup();
@@ -160,21 +160,21 @@ run_one(int api, struct sshkey *k, int lock_arg,
 	close(sv[1]);
 }
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+بیرونی "C" صحیح
+LLVMFuzzer_Test_One_درون_داد(ثابت uint8_t *data, size_t size)
 {
 	setup();
 
-	if (size > 65536)
-		return 0;
+	اگر (size > 65536)
+		بازگشت 0;
 
-	run_one(API_FETCH_IDENTITYLIST, NULL,           0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[0],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[1],   0, data, size);
-	run_one(API_AGENT_SIGN,         test_keys[2],   0, data, size);
-	run_one(API_AGENT_HAS_KEY,      test_keys[2],   0, data, size);
-	run_one(API_QUERY_EXTENSIONS,   NULL,           0, data, size);
-	run_one(API_LOCK_AGENT,         NULL,           1, data, size);
+	run_one(API_FETCH_IDENTITYLIST, پوچ,           0, data, size);
+	run_one(API_AGENT_SIGN,         test_کلیدها[0],   0, data, size);
+	run_one(API_AGENT_SIGN,         test_کلیدها[1],   0, data, size);
+	run_one(API_AGENT_SIGN,         test_کلیدها[2],   0, data, size);
+	run_one(API_AGENT_HAS_کلید,      test_کلیدها[2],   0, data, size);
+	run_one(API_QUERY_EXTENSIONS,   پوچ,           0, data, size);
+	run_one(API_LOCK_AGENT,         پوچ,           1, data, size);
 
-	return 0;
+	بازگشت 0;
 }

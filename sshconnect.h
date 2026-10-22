@@ -24,32 +24,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+ساختار sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+تعریفنوع ساختار Sensitive Sensitive;
+ساختار Sensitive {
+	ساختار sshkey	**کلیدها;
+	صحیح		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+ساختار ssh_conn_info {
+	نویسه *conn_hash_hex;
+	نویسه *shorthost;
+	نویسه *uidstr;
+	نویسه *keyalias;
+	نویسه *thishost;
+	نویسه *host_arg;
+	نویسه *portstr;
+	نویسه *remhost;
+	نویسه *remuser;
+	نویسه *homedir;
+	نویسه *locuser;
+	نویسه *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+ساختار addrinfo;
+ساختار ssh;
+ساختار hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
 #define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
@@ -70,39 +70,39 @@ struct hostkeys;
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
-void	 ssh_kill_proxy_command(void);
+صحیح	 ssh_connect(ساختار ssh *, ثابت نویسه *, ثابت نویسه *,
+	    ساختار addrinfo *, ساختار sockaddr_storage *, u_short,
+	    صحیح, صحیح *, صحیح);
+تهی	 ssh_kill_proxy_command(تهی);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+تهی	 ssh_login(ساختار ssh *, Sensitive *, ثابت نویسه *,
+    ساختار sockaddr_storage *, u_short, ساختار passwd *, صحیح,
+    ثابت ساختار ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+صحیح	 verify_host_کلید(نویسه *, ساختار sockaddr *, ساختار sshkey *,
+    ثابت ساختار ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+تهی	 get_hostfile_hostname_ipaddr(نویسه *, ساختار sockaddr *, u_short,
+    نویسه **, نویسه **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+تهی	 ssh_kex2(ساختار ssh *ssh, نویسه *, ساختار sockaddr_storage *, u_short,
+    ثابت ساختار ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+تهی	 ssh_userauth2(ساختار ssh *ssh, ثابت نویسه *, ثابت نویسه *,
+    نویسه *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+تهی	 pubkey_dump(ساختار ssh *);
 
-int	 ssh_local_cmd(const char *);
+صحیح	 ssh_local_cmd(ثابت نویسه *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+تهی	 maybe_add_کلید_to_agent(ثابت نویسه *, ساختار sshkey *,
+    ثابت نویسه *, ثابت نویسه *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+تهی	 load_hostkeys_command(ساختار hostkeys *, ثابت نویسه *,
+    ثابت نویسه *, ثابت ساختار ssh_conn_info *,
+    ثابت ساختار sshkey *, ثابت نویسه *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+صحیح hostkey_accepted_by_hostkeyalgs(ثابت ساختار sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+تهی ssh_conn_info_free(ساختار ssh_conn_info *);
+ساختار ssh_conn_info *ssh_conn_info_dup(ثابت ساختار ssh_conn_info *);

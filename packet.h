@@ -16,196 +16,196 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-#include <sys/queue.h>
+#شامل <sys/queue.h>
 
-#include <stdint.h>
-#include <signal.h>
-#include <termios.h>
+#شامل <stdint.h>
+#شامل <signal.h>
+#شامل <termios.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
-#else /* OPENSSL */
-#define BIGNUM		void
-#define EC_GROUP	void
-#define EC_POINT	void
-#define EVP_PKEY	void
+#شامل <openssl/bn.h>
+#شامل <openssl/ec.h>
+#شامل <openssl/ecdsa.h>
+#شامل <openssl/evp.h>
+#وگرنه /* OPENSSL */
+#define BIGNUM		تهی
+#define EC_GROUP	تهی
+#define EC_POINT	تهی
+#define EVP_PKEY	تهی
 #endif /* WITH_OPENSSL */
 
-struct kex;
-struct sshkey;
-struct sshbuf;
-struct session_state;	/* private session data */
+ساختار kex;
+ساختار sshkey;
+ساختار sshbuf;
+ساختار session_state;	/* private session data */
 
-#include "dispatch.h"	/* typedef, DISPATCH_MAX */
+#شامل "dispatch.h"	/* typedef, DISPATCH_MAX */
 
-struct key_entry {
-	TAILQ_ENTRY(key_entry) next;
-	struct sshkey *key;
+ساختار کلید_entry {
+	TAILQ_ENTRY(کلید_entry) next;
+	ساختار sshkey *کلید;
 };
 
-struct ssh {
+ساختار ssh {
 	/* Session state */
-	struct session_state *state;
+	ساختار session_state *state;
 
 	/* Key exchange */
-	struct kex *kex;
+	ساختار kex *kex;
 
 	/* cached local and remote ip addresses and ports */
-	char *remote_ipaddr;
-	int remote_port;
-	char *local_ipaddr;
-	int local_port;
-	char *rdomain_in;
+	نویسه *remote_ipaddr;
+	صحیح remote_port;
+	نویسه *local_ipaddr;
+	صحیح local_port;
+	نویسه *rdomain_in;
 
 	/* Optional preamble for log messages (e.g. username) */
-	char *log_preamble;
+	نویسه *log_preamble;
 
 	/* Dispatcher table */
 	dispatch_fn *dispatch[DISPATCH_MAX];
 	/* number of packets to ignore in the dispatcher */
-	int dispatch_skip_packets;
+	صحیح dispatch_skip_packets;
 
 	/* datafellows */
 	uint32_t compat;
-	char *remote_version;
+	نویسه *remote_version;
 
 	/* Lists for private and public keys */
-	TAILQ_HEAD(, key_entry) private_keys;
-	TAILQ_HEAD(, key_entry) public_keys;
+	TAILQ_HEAD(, کلید_entry) private_کلیدها;
+	TAILQ_HEAD(, کلید_entry) public_کلیدها;
 
 	/* Client/Server authentication context */
-	void *authctxt;
+	تهی *authctxt;
 
 	/* Channels context */
-	struct ssh_channels *chanctxt;
+	ساختار ssh_channels *chanctxt;
 
 	/* APP data */
-	void *app_data;
+	تهی *app_data;
 };
 
-typedef int (ssh_packet_hook_fn)(struct ssh *, struct sshbuf *,
-    u_char *, void *);
+تعریفنوع صحیح (ssh_packet_hook_fn)(ساختار ssh *, ساختار sshbuf *,
+    u_char *, تهی *);
 
-struct ssh *ssh_alloc_session_state(void);
-struct ssh *ssh_packet_set_connection(struct ssh *, int, int);
-void     ssh_packet_set_timeout(struct ssh *, int, int);
-int	 ssh_packet_stop_discard(struct ssh *);
-int	 ssh_packet_connection_af(struct ssh *);
-void     ssh_packet_set_nonblocking(struct ssh *);
-int      ssh_packet_get_connection_in(struct ssh *);
-int      ssh_packet_get_connection_out(struct ssh *);
-void	 ssh_packet_free(struct ssh *);
-void     ssh_packet_close(struct ssh *);
-void	 ssh_packet_set_input_hook(struct ssh *, ssh_packet_hook_fn *, void *);
-void	 ssh_packet_clear_keys(struct ssh *);
-void	 ssh_clear_newkeys(struct ssh *, int);
+ساختار ssh *ssh_alloc_session_state(تهی);
+ساختار ssh *ssh_packet_set_connection(ساختار ssh *, صحیح, صحیح);
+تهی     ssh_packet_set_timeout(ساختار ssh *, صحیح, صحیح);
+صحیح	 ssh_packet_stop_discard(ساختار ssh *);
+صحیح	 ssh_packet_connection_af(ساختار ssh *);
+تهی     ssh_packet_set_nonblocking(ساختار ssh *);
+صحیح      ssh_packet_get_connection_in(ساختار ssh *);
+صحیح      ssh_packet_get_connection_out(ساختار ssh *);
+تهی	 ssh_packet_free(ساختار ssh *);
+تهی     ssh_packet_close(ساختار ssh *);
+تهی	 ssh_packet_set_درون_داد_hook(ساختار ssh *, ssh_packet_hook_fn *, تهی *);
+تهی	 ssh_packet_clear_کلیدها(ساختار ssh *);
+تهی	 ssh_clear_newkeys(ساختار ssh *, صحیح);
 
-int	 ssh_packet_is_rekeying(struct ssh *);
-int	 ssh_packet_check_rekey(struct ssh *);
-void     ssh_packet_set_protocol_flags(struct ssh *, u_int);
-u_int	 ssh_packet_get_protocol_flags(struct ssh *);
-void	 ssh_packet_set_interactive(struct ssh *, int);
-void	 ssh_packet_set_qos(struct ssh *, int, int);
-void     ssh_packet_set_server(struct ssh *);
-void     ssh_packet_set_authenticated(struct ssh *);
-void     ssh_packet_set_mux(struct ssh *);
-int	 ssh_packet_get_mux(struct ssh *);
-int	 ssh_packet_set_log_preamble(struct ssh *, const char *, ...)
+صحیح	 ssh_packet_is_rekeying(ساختار ssh *);
+صحیح	 ssh_packet_check_rekey(ساختار ssh *);
+تهی     ssh_packet_set_protocol_flags(ساختار ssh *, u_int);
+u_int	 ssh_packet_get_protocol_flags(ساختار ssh *);
+تهی	 ssh_packet_set_interactive(ساختار ssh *, صحیح);
+تهی	 ssh_packet_set_qos(ساختار ssh *, صحیح, صحیح);
+تهی     ssh_packet_set_server(ساختار ssh *);
+تهی     ssh_packet_set_authenticated(ساختار ssh *);
+تهی     ssh_packet_set_mux(ساختار ssh *);
+صحیح	 ssh_packet_get_mux(ساختار ssh *);
+صحیح	 ssh_packet_set_log_preamble(ساختار ssh *, ثابت نویسه *, ...)
     __attribute__((format(printf, 2, 3)));
 
-int	 ssh_packet_log_type(u_char);
+صحیح	 ssh_packet_log_type(u_char);
 
-int	 ssh_packet_send2_wrapped(struct ssh *);
-int	 ssh_packet_send2(struct ssh *);
+صحیح	 ssh_packet_send2_wrapped(ساختار ssh *);
+صحیح	 ssh_packet_send2(ساختار ssh *);
 
-int      ssh_packet_read(struct ssh *);
-int ssh_packet_read_poll2(struct ssh *, u_char *, uint32_t *seqnr_p);
-int	 ssh_packet_process_incoming(struct ssh *, const char *buf, u_int len);
-int	 ssh_packet_process_read(struct ssh *, int);
-int      ssh_packet_read_seqnr(struct ssh *, u_char *, uint32_t *seqnr_p);
-int      ssh_packet_read_poll_seqnr(struct ssh *, u_char *, uint32_t *seqnr_p);
+صحیح      ssh_packet_read(ساختار ssh *);
+صحیح ssh_packet_read_poll2(ساختار ssh *, u_char *, uint32_t *seqnr_p);
+صحیح	 ssh_packet_process_incoming(ساختار ssh *, ثابت نویسه *buf, u_int len);
+صحیح	 ssh_packet_process_read(ساختار ssh *, صحیح);
+صحیح      ssh_packet_read_seqnr(ساختار ssh *, u_char *, uint32_t *seqnr_p);
+صحیح      ssh_packet_read_poll_seqnr(ساختار ssh *, u_char *, uint32_t *seqnr_p);
 
-void     ssh_packet_disconnect(struct ssh *, const char *fmt, ...)
+تهی     ssh_packet_disconnect(ساختار ssh *, ثابت نویسه *fmt, ...)
 	__attribute__((format(printf, 2, 3)))
 	__attribute__((noreturn));
-void     ssh_packet_send_debug(struct ssh *, const char *fmt, ...) __attribute__((format(printf, 2, 3)));
+تهی     ssh_packet_send_debug(ساختار ssh *, ثابت نویسه *fmt, ...) __attribute__((format(printf, 2, 3)));
 
-int	 ssh_set_newkeys(struct ssh *, int mode);
-void	 ssh_packet_get_bytes(struct ssh *, uint64_t *, uint64_t *);
+صحیح	 ssh_set_newkeys(ساختار ssh *, صحیح mode);
+تهی	 ssh_packet_get_bytes(ساختار ssh *, uint64_t *, uint64_t *);
 
-int	 ssh_packet_write_poll(struct ssh *);
-int	 ssh_packet_write_wait(struct ssh *);
-int      ssh_packet_have_data_to_write(struct ssh *);
-int      ssh_packet_not_very_much_data_to_write(struct ssh *);
-int	 ssh_packet_interactive_data_to_write(struct ssh *);
+صحیح	 ssh_packet_write_poll(ساختار ssh *);
+صحیح	 ssh_packet_write_wait(ساختار ssh *);
+صحیح      ssh_packet_have_data_to_write(ساختار ssh *);
+صحیح      ssh_packet_not_very_much_data_to_write(ساختار ssh *);
+صحیح	 ssh_packet_interactive_data_to_write(ساختار ssh *);
 
-int	 ssh_packet_connection_is_on_socket(struct ssh *);
-int	 ssh_packet_remaining(struct ssh *);
+صحیح	 ssh_packet_connection_is_on_socket(ساختار ssh *);
+صحیح	 ssh_packet_remaining(ساختار ssh *);
 
-void	 ssh_tty_make_modes(struct ssh *, int, struct termios *);
-void	 ssh_tty_parse_modes(struct ssh *, int);
+تهی	 ssh_tty_make_modes(ساختار ssh *, صحیح, ساختار termios *);
+تهی	 ssh_tty_parse_modes(ساختار ssh *, صحیح);
 
-void	 ssh_packet_set_alive_timeouts(struct ssh *, int);
-int	 ssh_packet_inc_alive_timeouts(struct ssh *);
-int	 ssh_packet_set_maxsize(struct ssh *, u_int);
-u_int	 ssh_packet_get_maxsize(struct ssh *);
+تهی	 ssh_packet_set_alive_timeouts(ساختار ssh *, صحیح);
+صحیح	 ssh_packet_inc_alive_timeouts(ساختار ssh *);
+صحیح	 ssh_packet_set_maxsize(ساختار ssh *, u_int);
+u_int	 ssh_packet_get_maxsize(ساختار ssh *);
 
-int	 ssh_packet_get_state(struct ssh *, struct sshbuf *);
-int	 ssh_packet_set_state(struct ssh *, struct sshbuf *);
+صحیح	 ssh_packet_get_state(ساختار ssh *, ساختار sshbuf *);
+صحیح	 ssh_packet_set_state(ساختار ssh *, ساختار sshbuf *);
 
-const char *ssh_remote_ipaddr(struct ssh *);
-int	 ssh_remote_port(struct ssh *);
-const char *ssh_local_ipaddr(struct ssh *);
-int	 ssh_local_port(struct ssh *);
-const char *ssh_packet_rdomain_in(struct ssh *);
-char	*ssh_remote_hostname(struct ssh *);
+ثابت نویسه *ssh_remote_ipaddr(ساختار ssh *);
+صحیح	 ssh_remote_port(ساختار ssh *);
+ثابت نویسه *ssh_local_ipaddr(ساختار ssh *);
+صحیح	 ssh_local_port(ساختار ssh *);
+ثابت نویسه *ssh_packet_rdomain_in(ساختار ssh *);
+نویسه	*ssh_remote_hostname(ساختار ssh *);
 
-void	 ssh_packet_set_rekey_limits(struct ssh *, uint64_t, uint32_t);
-time_t	 ssh_packet_get_rekey_timeout(struct ssh *);
+تهی	 ssh_packet_set_rekey_limits(ساختار ssh *, uint64_t, uint32_t);
+time_t	 ssh_packet_get_rekey_timeout(ساختار ssh *);
 
-void	*ssh_packet_get_input(struct ssh *);
-void	*ssh_packet_get_output(struct ssh *);
+تهی	*ssh_packet_get_درون_داد(ساختار ssh *);
+تهی	*ssh_packet_get_output(ساختار ssh *);
 
 /* new API */
-int	sshpkt_start(struct ssh *ssh, u_char type);
-int	sshpkt_send(struct ssh *ssh);
-int     sshpkt_disconnect(struct ssh *, const char *fmt, ...)
+صحیح	sshpkt_start(ساختار ssh *ssh, u_char type);
+صحیح	sshpkt_send(ساختار ssh *ssh);
+صحیح     sshpkt_disconnect(ساختار ssh *, ثابت نویسه *fmt, ...)
 	    __attribute__((format(printf, 2, 3)));
-int	sshpkt_add_padding(struct ssh *, u_char);
-void	sshpkt_fatal(struct ssh *ssh, int r, const char *fmt, ...)
+صحیح	sshpkt_add_padding(ساختار ssh *, u_char);
+تهی	sshpkt_fatal(ساختار ssh *ssh, صحیح r, ثابت نویسه *fmt, ...)
 	    __attribute__((format(printf, 3, 4)))
 	    __attribute__((noreturn));
-int	sshpkt_msg_ignore(struct ssh *, u_int);
+صحیح	sshpkt_پیام_ignore(ساختار ssh *, u_int);
 
-int	sshpkt_put(struct ssh *ssh, const void *v, size_t len);
-int	sshpkt_putb(struct ssh *ssh, const struct sshbuf *b);
-int	sshpkt_put_u8(struct ssh *ssh, u_char val);
-int	sshpkt_put_u32(struct ssh *ssh, uint32_t val);
-int	sshpkt_put_u64(struct ssh *ssh, uint64_t val);
-int	sshpkt_put_string(struct ssh *ssh, const void *v, size_t len);
-int	sshpkt_put_cstring(struct ssh *ssh, const void *v);
-int	sshpkt_put_stringb(struct ssh *ssh, const struct sshbuf *v);
-int	sshpkt_put_ec(struct ssh *ssh, const EC_POINT *v, const EC_GROUP *g);
-int	sshpkt_put_ec_pkey(struct ssh *ssh, EVP_PKEY *pkey);
-int	sshpkt_put_bignum2(struct ssh *ssh, const BIGNUM *v);
+صحیح	sshpkt_put(ساختار ssh *ssh, ثابت تهی *v, size_t len);
+صحیح	sshpkt_putb(ساختار ssh *ssh, ثابت ساختار sshbuf *b);
+صحیح	sshpkt_put_u8(ساختار ssh *ssh, u_char val);
+صحیح	sshpkt_put_u32(ساختار ssh *ssh, uint32_t val);
+صحیح	sshpkt_put_u64(ساختار ssh *ssh, uint64_t val);
+صحیح	sshpkt_put_string(ساختار ssh *ssh, ثابت تهی *v, size_t len);
+صحیح	sshpkt_put_cstring(ساختار ssh *ssh, ثابت تهی *v);
+صحیح	sshpkt_put_stringb(ساختار ssh *ssh, ثابت ساختار sshbuf *v);
+صحیح	sshpkt_put_ec(ساختار ssh *ssh, ثابت EC_POINT *v, ثابت EC_GROUP *g);
+صحیح	sshpkt_put_ec_pkey(ساختار ssh *ssh, EVP_PKEY *pkey);
+صحیح	sshpkt_put_bignum2(ساختار ssh *ssh, ثابت BIGNUM *v);
 
-int	sshpkt_get(struct ssh *ssh, void *valp, size_t len);
-int	sshpkt_get_u8(struct ssh *ssh, u_char *valp);
-int	sshpkt_get_u32(struct ssh *ssh, uint32_t *valp);
-int	sshpkt_get_u64(struct ssh *ssh, uint64_t *valp);
-int	sshpkt_get_string(struct ssh *ssh, u_char **valp, size_t *lenp);
-int	sshpkt_get_string_direct(struct ssh *ssh, const u_char **valp, size_t *lenp);
-int	sshpkt_peek_string_direct(struct ssh *ssh, const u_char **valp, size_t *lenp);
-int	sshpkt_get_cstring(struct ssh *ssh, char **valp, size_t *lenp);
-int	sshpkt_getb_froms(struct ssh *ssh, struct sshbuf **valp);
-int	sshpkt_get_ec(struct ssh *ssh, EC_POINT *v, const EC_GROUP *g);
-int	sshpkt_get_bignum2(struct ssh *ssh, BIGNUM **valp);
-int	sshpkt_get_end(struct ssh *ssh);
-void	sshpkt_fmt_connection_id(struct ssh *ssh, char *s, size_t l);
-const u_char	*sshpkt_ptr(struct ssh *, size_t *lenp);
-char	*connection_info_message(struct ssh *ssh);
+صحیح	sshpkt_get(ساختار ssh *ssh, تهی *valp, size_t len);
+صحیح	sshpkt_get_u8(ساختار ssh *ssh, u_char *valp);
+صحیح	sshpkt_get_u32(ساختار ssh *ssh, uint32_t *valp);
+صحیح	sshpkt_get_u64(ساختار ssh *ssh, uint64_t *valp);
+صحیح	sshpkt_get_string(ساختار ssh *ssh, u_char **valp, size_t *lenp);
+صحیح	sshpkt_get_string_direct(ساختار ssh *ssh, ثابت u_char **valp, size_t *lenp);
+صحیح	sshpkt_peek_string_direct(ساختار ssh *ssh, ثابت u_char **valp, size_t *lenp);
+صحیح	sshpkt_get_cstring(ساختار ssh *ssh, نویسه **valp, size_t *lenp);
+صحیح	sshpkt_getb_froms(ساختار ssh *ssh, ساختار sshbuf **valp);
+صحیح	sshpkt_get_ec(ساختار ssh *ssh, EC_POINT *v, ثابت EC_GROUP *g);
+صحیح	sshpkt_get_bignum2(ساختار ssh *ssh, BIGNUM **valp);
+صحیح	sshpkt_get_end(ساختار ssh *ssh);
+تهی	sshpkt_fmt_connection_id(ساختار ssh *ssh, نویسه *s, size_t l);
+ثابت u_char	*sshpkt_ptr(ساختار ssh *, size_t *lenp);
+نویسه	*connection_info_message(ساختار ssh *ssh);
 
 #endif				/* PACKET_H */

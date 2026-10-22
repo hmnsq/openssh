@@ -18,40 +18,40 @@
 #ifndef _BITMAP_H
 #define _BITMAP_H
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
 /* Simple bit vector routines */
 
-struct bitmap;
+ساختار bitmap;
 
 /* Allocate a new bitmap. Returns NULL on allocation failure. */
-struct bitmap *bitmap_new(void);
+ساختار bitmap *bitmap_new(تهی);
 
 /* Free a bitmap */
-void bitmap_free(struct bitmap *b);
+تهی bitmap_free(ساختار bitmap *b);
 
 /* Zero an existing bitmap */
-void bitmap_zero(struct bitmap *b);
+تهی bitmap_zero(ساختار bitmap *b);
 
 /* Test whether a bit is set in a bitmap. */
-int bitmap_test_bit(struct bitmap *b, u_int n);
+صحیح bitmap_test_bit(ساختار bitmap *b, u_int n);
 
 /* Set a bit in a bitmap. Returns 0 on success or -1 on error */
-int bitmap_set_bit(struct bitmap *b, u_int n);
+صحیح bitmap_set_bit(ساختار bitmap *b, u_int n);
 
 /* Clear a bit in a bitmap */
-void bitmap_clear_bit(struct bitmap *b, u_int n);
+تهی bitmap_clear_bit(ساختار bitmap *b, u_int n);
 
 /* Return the number of bits in a bitmap (i.e. the position of the MSB) */
-size_t bitmap_nbits(struct bitmap *b);
+size_t bitmap_nbits(ساختار bitmap *b);
 
 /* Return the number of bytes needed to represent a bitmap */
-size_t bitmap_nbytes(struct bitmap *b);
+size_t bitmap_nbytes(ساختار bitmap *b);
 
 /* Convert a bitmap to a big endian byte string */
-int bitmap_to_string(struct bitmap *b, void *p, size_t l);
+صحیح bitmap_to_string(ساختار bitmap *b, تهی *p, size_t l);
 
 /* Convert a big endian byte string to a bitmap */
-int bitmap_from_string(struct bitmap *b, const void *p, size_t l);
+صحیح bitmap_from_string(ساختار bitmap *b, ثابت تهی *p, size_t l);
 
 #endif /* _BITMAP_H */

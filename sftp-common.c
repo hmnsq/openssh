@@ -24,32 +24,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-#include <util.h>
+#شامل <grp.h>
+#شامل <pwd.h>
+#شامل <stdio.h>
+#شامل <string.h>
+#شامل <stdarg.h>
+#شامل <stdlib.h>
+#شامل <time.h>
+#شامل <unistd.h>
+#شامل <util.h>
 
-#include "xmalloc.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
+#شامل "xmalloc.h"
+#شامل "ssherr.h"
+#شامل "sshbuf.h"
+#شامل "log.h"
+#شامل "misc.h"
 
-#include "sftp.h"
-#include "sftp-common.h"
+#شامل "sftp.h"
+#شامل "sftp-common.h"
 
 /* Clear contents of attributes structure */
-void
+تهی
 attrib_clear(Attrib *a)
 {
 	a->flags = 0;
@@ -62,8 +62,8 @@ attrib_clear(Attrib *a)
 }
 
 /* Convert from struct stat to filexfer attribs */
-void
-stat_to_attrib(const struct stat *st, Attrib *a)
+تهی
+stat_to_attrib(ثابت ساختار stat *st, Attrib *a)
 {
 	attrib_clear(a);
 	a->flags = 0;
@@ -80,130 +80,130 @@ stat_to_attrib(const struct stat *st, Attrib *a)
 }
 
 /* Convert from filexfer attribs to struct stat */
-void
-attrib_to_stat(const Attrib *a, struct stat *st)
+تهی
+attrib_to_stat(ثابت Attrib *a, ساختار stat *st)
 {
-	memset(st, 0, sizeof(*st));
+	memset(st, 0, اندازه(*st));
 
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE)
+	اگر (a->flags & SSH2_FILEXFER_ATTR_SIZE)
 		st->st_size = a->size;
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+	اگر (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
 		st->st_uid = a->uid;
 		st->st_gid = a->gid;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
+	اگر (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS)
 		st->st_mode = a->perm;
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+	اگر (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
 		st->st_atime = a->atime;
 		st->st_mtime = a->mtime;
 	}
 }
 
 /* Decode attributes in buffer */
-int
-decode_attrib(struct sshbuf *b, Attrib *a)
+صحیح
+decode_attrib(ساختار sshbuf *b, Attrib *a)
 {
-	int r;
+	صحیح r;
 
 	attrib_clear(a);
-	if ((r = sshbuf_get_u32(b, &a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_get_u64(b, &a->size)) != 0)
-			return r;
+	اگر ((r = sshbuf_get_u32(b, &a->flags)) != 0)
+		بازگشت r;
+	اگر (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		اگر ((r = sshbuf_get_u64(b, &a->size)) != 0)
+			بازگشت r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
+	اگر (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		اگر ((r = sshbuf_get_u32(b, &a->uid)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->gid)) != 0)
-			return r;
+			بازگشت r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_get_u32(b, &a->perm)) != 0)
-			return r;
+	اگر (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		اگر ((r = sshbuf_get_u32(b, &a->perm)) != 0)
+			بازگشت r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
+	اگر (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		اگر ((r = sshbuf_get_u32(b, &a->atime)) != 0 ||
 		    (r = sshbuf_get_u32(b, &a->mtime)) != 0)
-			return r;
+			بازگشت r;
 	}
 	/* vendor-specific extensions */
-	if (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
-		char *type;
+	اگر (a->flags & SSH2_FILEXFER_ATTR_EXTENDED) {
+		نویسه *type;
 		u_char *data;
 		size_t dlen;
-		u_int i, count;
+		u_int i, شمار;
 
-		if ((r = sshbuf_get_u32(b, &count)) != 0)
-			return r;
-		if (count > 0x100000)
-			return SSH_ERR_INVALID_FORMAT;
-		for (i = 0; i < count; i++) {
-			if ((r = sshbuf_get_cstring(b, &type, NULL)) != 0 ||
+		اگر ((r = sshbuf_get_u32(b, &شمار)) != 0)
+			بازگشت r;
+		اگر (شمار > 0x100000)
+			بازگشت SSH_ERR_INVALID_FORMAT;
+		برای (i = 0; i < شمار; i++) {
+			اگر ((r = sshbuf_get_cstring(b, &type, پوچ)) != 0 ||
 			    (r = sshbuf_get_string(b, &data, &dlen)) != 0)
-				return r;
+				بازگشت r;
 			debug3("Got file attribute \"%.100s\" len %zu",
 			    type, dlen);
-			free(type);
-			free(data);
+			آزاد(type);
+			آزاد(data);
 		}
 	}
-	return 0;
+	بازگشت 0;
 }
 
 /* Encode attributes to buffer */
-int
-encode_attrib(struct sshbuf *b, const Attrib *a)
+صحیح
+encode_attrib(ساختار sshbuf *b, ثابت Attrib *a)
 {
-	int r;
+	صحیح r;
 
-	if ((r = sshbuf_put_u32(b, a->flags)) != 0)
-		return r;
-	if (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
-		if ((r = sshbuf_put_u64(b, a->size)) != 0)
-			return r;
+	اگر ((r = sshbuf_put_u32(b, a->flags)) != 0)
+		بازگشت r;
+	اگر (a->flags & SSH2_FILEXFER_ATTR_SIZE) {
+		اگر ((r = sshbuf_put_u64(b, a->size)) != 0)
+			بازگشت r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
-		if ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
+	اگر (a->flags & SSH2_FILEXFER_ATTR_UIDGID) {
+		اگر ((r = sshbuf_put_u32(b, a->uid)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->gid)) != 0)
-			return r;
+			بازگشت r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
-		if ((r = sshbuf_put_u32(b, a->perm)) != 0)
-			return r;
+	اگر (a->flags & SSH2_FILEXFER_ATTR_PERMISSIONS) {
+		اگر ((r = sshbuf_put_u32(b, a->perm)) != 0)
+			بازگشت r;
 	}
-	if (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
-		if ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
+	اگر (a->flags & SSH2_FILEXFER_ATTR_ACMODTIME) {
+		اگر ((r = sshbuf_put_u32(b, a->atime)) != 0 ||
 		    (r = sshbuf_put_u32(b, a->mtime)) != 0)
-			return r;
+			بازگشت r;
 	}
-	return 0;
+	بازگشت 0;
 }
 
 /* Convert from SSH2_FX_ status to text error message */
-const char *
-fx2txt(int status)
+ثابت نویسه *
+fx2txt(صحیح status)
 {
-	switch (status) {
-	case SSH2_FX_OK:
-		return("No error");
-	case SSH2_FX_EOF:
-		return("End of file");
-	case SSH2_FX_NO_SUCH_FILE:
-		return("No such file or directory");
-	case SSH2_FX_PERMISSION_DENIED:
-		return("Permission denied");
-	case SSH2_FX_FAILURE:
-		return("Failure");
-	case SSH2_FX_BAD_MESSAGE:
-		return("Bad message");
-	case SSH2_FX_NO_CONNECTION:
-		return("No connection");
-	case SSH2_FX_CONNECTION_LOST:
-		return("Connection lost");
-	case SSH2_FX_OP_UNSUPPORTED:
-		return("Operation unsupported");
-	default:
-		return("Unknown status");
+	انتخاب (status) {
+	حالت SSH2_FX_OK:
+		بازگشت("No error");
+	حالت SSH2_FX_EOF:
+		بازگشت("End of file");
+	حالت SSH2_FX_NO_SUCH_FILE:
+		بازگشت("No such file or directory");
+	حالت SSH2_FX_PERMISSION_DENIED:
+		بازگشت("Permission denied");
+	حالت SSH2_FX_FAILURE:
+		بازگشت("Failure");
+	حالت SSH2_FX_BAD_MESSAGE:
+		بازگشت("Bad message");
+	حالت SSH2_FX_NO_CONNECTION:
+		بازگشت("No connection");
+	حالت SSH2_FX_CONNECTION_LOST:
+		بازگشت("Connection lost");
+	حالت SSH2_FX_OP_UNSUPPORTED:
+		بازگشت("Operation unsupported");
+	پیشفرض:
+		بازگشت("Unknown status");
 	}
 	/* NOTREACHED */
 }
@@ -211,53 +211,53 @@ fx2txt(int status)
 /*
  * drwxr-xr-x    5 markus   markus       1024 Jan 13 18:39 .ssh
  */
-char *
-ls_file(const char *name, const struct stat *st, int remote, int si_units,
-    const char *user, const char *group)
+نویسه *
+ls_file(ثابت نویسه *name, ثابت ساختار stat *st, صحیح remote, صحیح si_units,
+    ثابت نویسه *user, ثابت نویسه *group)
 {
-	int ulen, glen, sz = 0;
-	struct tm *ltime = localtime(&st->st_mtime);
-	char buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
-	char sbuf[FMT_SCALED_STRSIZE];
+	صحیح ulen, glen, sz = 0;
+	ساختار tm *ltime = localtime(&st->st_mtime);
+	نویسه buf[1024], lc[8], mode[11+1], tbuf[12+1], ubuf[11+1], gbuf[11+1];
+	نویسه sbuf[FMT_SCALED_STRSIZE];
 	time_t now;
 
 	strmode(st->st_mode, mode);
-	if (remote) {
-		if (user == NULL) {
-			snprintf(ubuf, sizeof ubuf, "%u", (u_int)st->st_uid);
+	اگر (remote) {
+		اگر (user == پوچ) {
+			snprintf(ubuf, اندازه ubuf, "%u", (u_int)st->st_uid);
 			user = ubuf;
 		}
-		if (group == NULL) {
-			snprintf(gbuf, sizeof gbuf, "%u", (u_int)st->st_gid);
+		اگر (group == پوچ) {
+			snprintf(gbuf, اندازه gbuf, "%u", (u_int)st->st_gid);
 			group = gbuf;
 		}
-		strlcpy(lc, "?", sizeof(lc));
-	} else {
+		strlcpy(lc, "?", اندازه(lc));
+	} وگرنه {
 		user = user_from_uid(st->st_uid, 0);
 		group = group_from_gid(st->st_gid, 0);
-		snprintf(lc, sizeof(lc), "%u", (u_int)st->st_nlink);
+		snprintf(lc, اندازه(lc), "%u", (u_int)st->st_nlink);
 	}
-	if (ltime != NULL) {
-		now = time(NULL);
-		if (now - (365*24*60*60)/2 < st->st_mtime &&
+	اگر (ltime != پوچ) {
+		now = time(پوچ);
+		اگر (now - (365*24*60*60)/2 < st->st_mtime &&
 		    now >= st->st_mtime)
-			sz = strftime(tbuf, sizeof tbuf, "%b %e %H:%M", ltime);
-		else
-			sz = strftime(tbuf, sizeof tbuf, "%b %e  %Y", ltime);
+			sz = strftime(tbuf, اندازه tbuf, "%b %e %H:%M", ltime);
+		وگرنه
+			sz = strftime(tbuf, اندازه tbuf, "%b %e  %Y", ltime);
 	}
-	if (sz == 0)
+	اگر (sz == 0)
 		tbuf[0] = '\0';
 	ulen = MAXIMUM(strlen(user), 8);
 	glen = MAXIMUM(strlen(group), 8);
-	if (si_units) {
+	اگر (si_units) {
 		fmt_scaled((long long)st->st_size, sbuf);
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8s %s %s",
+		snprintf(buf, اندازه buf, "%s %3s %-*s %-*s %8s %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    sbuf, tbuf, name);
-	} else {
-		snprintf(buf, sizeof buf, "%s %3s %-*s %-*s %8llu %s %s",
+	} وگرنه {
+		snprintf(buf, اندازه buf, "%s %3s %-*s %-*s %8llu %s %s",
 		    mode, lc, ulen, user, glen, group,
 		    (unsigned long long)st->st_size, tbuf, name);
 	}
-	return xstrdup(buf);
+	بازگشت xstrdup(buf);
 }

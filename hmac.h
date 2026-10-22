@@ -19,20 +19,20 @@
 #define _HMAC_H
 
 /* Returns the algorithm's digest length in bytes or 0 for invalid algorithm */
-size_t ssh_hmac_bytes(int alg);
+size_t ssh_hmac_bytes(صحیح alg);
 
-struct sshbuf;
-struct ssh_hmac_ctx;
-struct ssh_hmac_ctx *ssh_hmac_start(int alg);
+ساختار sshbuf;
+ساختار ssh_hmac_ctx;
+ساختار ssh_hmac_ctx *ssh_hmac_start(صحیح alg);
 
 /* Sets the state of the HMAC or resets the state if key == NULL */
-int ssh_hmac_init(struct ssh_hmac_ctx *ctx, const void *key, size_t klen)
+صحیح ssh_hmac_init(ساختار ssh_hmac_ctx *ctx, ثابت تهی *کلید, size_t klen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update(struct ssh_hmac_ctx *ctx, const void *m, size_t mlen)
+صحیح ssh_hmac_update(ساختار ssh_hmac_ctx *ctx, ثابت تهی *m, size_t mlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-int ssh_hmac_update_buffer(struct ssh_hmac_ctx *ctx, const struct sshbuf *b);
-int ssh_hmac_final(struct ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
+صحیح ssh_hmac_update_buffer(ساختار ssh_hmac_ctx *ctx, ثابت ساختار sshbuf *b);
+صحیح ssh_hmac_final(ساختار ssh_hmac_ctx *ctx, u_char *d, size_t dlen)
 	__attribute__((__bounded__(__buffer__, 2, 3)));
-void ssh_hmac_free(struct ssh_hmac_ctx *ctx);
+تهی ssh_hmac_free(ساختار ssh_hmac_ctx *ctx);
 
 #endif /* _HMAC_H */

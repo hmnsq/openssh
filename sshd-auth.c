@@ -27,88 +27,88 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/wait.h>
-#include <sys/tree.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <sys/queue.h>
+#شامل <sys/types.h>
+#شامل <sys/ioctl.h>
+#شامل <sys/wait.h>
+#شامل <sys/tree.h>
+#شامل <sys/stat.h>
+#شامل <sys/socket.h>
+#شامل <sys/time.h>
+#شامل <sys/queue.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <paths.h>
-#include <pwd.h>
-#include <grp.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <limits.h>
+#شامل <errno.h>
+#شامل <fcntl.h>
+#شامل <netdb.h>
+#شامل <paths.h>
+#شامل <pwd.h>
+#شامل <grp.h>
+#شامل <signal.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <stdarg.h>
+#شامل <unistd.h>
+#شامل <limits.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/evp.h>
+#شامل <openssl/bn.h>
+#شامل <openssl/evp.h>
 #endif
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshpty.h"
-#include "packet.h"
-#include "log.h"
-#include "sshbuf.h"
-#include "misc.h"
-#include "match.h"
-#include "servconf.h"
-#include "uidswap.h"
-#include "compat.h"
-#include "cipher.h"
-#include "digest.h"
-#include "sshkey.h"
-#include "kex.h"
-#include "authfile.h"
-#include "pathnames.h"
-#include "atomicio.h"
-#include "canohost.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "authfd.h"
-#include "msg.h"
-#include "dispatch.h"
-#include "channels.h"
-#include "session.h"
-#include "monitor.h"
+#شامل "xmalloc.h"
+#شامل "ssh.h"
+#شامل "ssh2.h"
+#شامل "sshpty.h"
+#شامل "packet.h"
+#شامل "log.h"
+#شامل "sshbuf.h"
+#شامل "misc.h"
+#شامل "match.h"
+#شامل "servconf.h"
+#شامل "uidswap.h"
+#شامل "compat.h"
+#شامل "cipher.h"
+#شامل "digest.h"
+#شامل "sshkey.h"
+#شامل "kex.h"
+#شامل "authfile.h"
+#شامل "pathnames.h"
+#شامل "atomicio.h"
+#شامل "canohost.h"
+#شامل "hostfile.h"
+#شامل "auth.h"
+#شامل "authfd.h"
+#شامل "msg.h"
+#شامل "dispatch.h"
+#شامل "channels.h"
+#شامل "session.h"
+#شامل "monitor.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#شامل "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "auth-options.h"
-#include "version.h"
-#include "ssherr.h"
-#include "sk-api.h"
-#include "srclimit.h"
-#include "ssh-sandbox.h"
-#include "dh.h"
+#شامل "monitor_wrap.h"
+#شامل "auth-options.h"
+#شامل "version.h"
+#شامل "ssherr.h"
+#شامل "sk-api.h"
+#شامل "srclimit.h"
+#شامل "ssh-sandbox.h"
+#شامل "dh.h"
 
 /* Privsep fds */
 #define PRIVSEP_MONITOR_FD		(STDERR_FILENO + 1)
 #define PRIVSEP_LOG_FD			(STDERR_FILENO + 2)
 #define PRIVSEP_MIN_FREE_FD		(STDERR_FILENO + 3)
 
-extern char *__progname;
+بیرونی نویسه *__progname;
 
 /* Server configuration options. */
 ServerOptions options;
 
 /* Name of the server configuration file. */
-char *config_file_name = _PATH_SERVER_CONFIG_FILE;
+نویسه *config_file_name = _PATH_SERVER_CONFIG_FILE;
 
 /*
  * Debug mode flag.  This can be set on the command line.  If debug
@@ -116,81 +116,81 @@ char *config_file_name = _PATH_SERVER_CONFIG_FILE;
  * log, the daemon will not go to background, and will exit after processing
  * the first connection.
  */
-int debug_flag = 0;
+صحیح debug_flag = 0;
 
 /* Flag indicating that the daemon is being started from inetd. */
-static int inetd_flag = 0;
+ایستا صحیح inetd_flag = 0;
 
 /* Saved arguments to main(). */
-static char **saved_argv;
-static int saved_argc;
+ایستا نویسه **saved_argv;
+ایستا صحیح saved_argc;
 
 
 /* Daemon's agent connection */
-int auth_sock = -1;
-static int have_agent = 0;
+صحیح auth_sock = -1;
+ایستا صحیح have_agent = 0;
 
-u_int		num_hostkeys;
-struct sshkey	**host_pubkeys;		/* all public host keys */
-struct sshkey	**host_certificates;	/* all public host certificates */
+u_int		رقم_hostkeys;
+ساختار sshkey	**host_pubkeys;		/* all public host keys */
+ساختار sshkey	**host_certificates;	/* all public host certificates */
 
 /* record remote hostname or ip */
 u_int utmp_len = HOST_NAME_MAX+1;
 
 /* variables used for privilege separation */
-struct monitor *pmonitor = NULL;
-int privsep_is_preauth = 1;
-static int privsep_chroot = 1;
+ساختار monitor *pmonitor = پوچ;
+صحیح privsep_is_preauth = 1;
+ایستا صحیح privsep_chroot = 1;
 
 /* global connection state and authentication contexts */
-Authctxt *the_authctxt = NULL;
-struct ssh *the_active_state;
+Authctxt *the_authctxt = پوچ;
+ساختار ssh *the_active_state;
 
 /* global key/cert auth options. XXX move to permanent ssh->authctxt? */
-struct sshauthopt *auth_opts = NULL;
+ساختار sshauthopt *auth_opts = پوچ;
 
 /* sshd_config buffer */
-struct sshbuf *cfg;
+ساختار sshbuf *cfg;
 
 /* Included files from the configuration file */
-struct include_list includes = TAILQ_HEAD_INITIALIZER(includes);
+ساختار include_list includes = TAILQ_HEAD_INITIALIZER(includes);
 
 /* message to be displayed after login */
-struct sshbuf *loginmsg;
+ساختار sshbuf *loginmsg;
 
 /* Prototypes for various functions defined later in this file. */
-static void do_ssh2_kex(struct ssh *);
+ایستا تهی do_ssh2_kex(ساختار ssh *);
 
 /* Unprivileged user */
-struct passwd *privsep_pw = NULL;
+ساختار passwd *privsep_pw = پوچ;
 
 #ifndef HAVE_PLEDGE
-static struct ssh_sandbox *box;
+ایستا ساختار ssh_sandbox *box;
 #endif
 
 /* XXX stub */
-int
-mm_is_monitor(void)
+صحیح
+mm_is_monitor(تهی)
 {
-	return 0;
+	بازگشت 0;
 }
 
-static void
-privsep_child_demote(void)
+ایستا تهی
+privsep_child_demote(تهی)
 {
 	gid_t gidset[1];
 
 #ifndef HAVE_PLEDGE
-	if ((box = ssh_sandbox_init(pmonitor)) == NULL)
+	اگر ((box = ssh_sandbox_init(pmonitor)) == پوچ)
 		fatal_f("ssh_sandbox_init failed");
 #endif
 	/* Demote the child */
-	if (privsep_chroot) {
+	اگر (privsep_chroot) {
 		/* Change our root directory */
-		if (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
+		اگر (chroot(_PATH_PRIVSEP_CHROOT_DIR) == -1)
 			fatal("chroot(\"%s\"): %s", _PATH_PRIVSEP_CHROOT_DIR,
 			    strerror(errno));
-		if (chdir("/") == -1)
+		اگر (chdir("/") == -1)
 			fatal("chdir(\"/\"): %s", strerror(errno));
 
 		/*
@@ -200,171 +200,171 @@ privsep_child_demote(void)
 		debug3("privsep user:group %u:%u", (u_int)privsep_pw->pw_uid,
 		    (u_int)privsep_pw->pw_gid);
 		gidset[0] = privsep_pw->pw_gid;
-		if (setgroups(1, gidset) == -1)
+		اگر (setgroups(1, gidset) == -1)
 			fatal("setgroups: %.100s", strerror(errno));
 		permanently_set_uid(privsep_pw);
 	}
 
 	/* sandbox ourselves */
 #ifdef HAVE_PLEDGE
-	if (pledge("stdio", NULL) == -1)
+	اگر (pledge("stdio", پوچ) == -1)
 		fatal_f("pledge()");
-#else
+#وگرنه
 	ssh_sandbox_child(box);
 #endif
 }
 
-static void
-append_hostkey_type(struct sshbuf *b, const char *s)
+ایستا تهی
+append_hostkey_type(ساختار sshbuf *b, ثابت نویسه *s)
 {
-	int r;
+	صحیح r;
 
-	if (match_pattern_list(s, options.hostkeyalgorithms, 0) != 1) {
+	اگر (match_pattern_list(s, options.hostkeyalgorithms, 0) != 1) {
 		debug3_f("%s key not permitted by HostkeyAlgorithms", s);
-		return;
+		بازگشت;
 	}
-	if ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
+	اگر ((r = sshbuf_putf(b, "%s%s", sshbuf_len(b) > 0 ? "," : "", s)) != 0)
 		fatal_fr(r, "sshbuf_putf");
 }
 
-static char *
-list_hostkey_types(void)
+ایستا نویسه *
+list_hostkey_types(تهی)
 {
-	struct sshbuf *b;
-	struct sshkey *key;
-	char *ret;
+	ساختار sshbuf *b;
+	ساختار sshkey *کلید;
+	نویسه *ret;
 	u_int i;
 
-	if ((b = sshbuf_new()) == NULL)
+	اگر ((b = sshbuf_new()) == پوچ)
 		fatal_f("sshbuf_new failed");
-	for (i = 0; i < options.num_host_key_files; i++) {
-		key = host_pubkeys[i];
-		if (key == NULL)
-			continue;
-		switch (key->type) {
-		case KEY_RSA:
+	برای (i = 0; i < options.رقم_host_کلید_files; i++) {
+		کلید = host_pubkeys[i];
+		اگر (کلید == پوچ)
+			ادامه;
+		انتخاب (کلید->type) {
+		حالت کلید_RSA:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b, "rsa-sha2-512");
 			append_hostkey_type(b, "rsa-sha2-256");
 			/* FALLTHROUGH */
-		case KEY_ECDSA:
-		case KEY_ED25519:
-		case KEY_MLDSA44_ED25519:
-		case KEY_ECDSA_SK:
-		case KEY_ED25519_SK:
-			append_hostkey_type(b, sshkey_ssh_name(key));
-			break;
+		حالت کلید_ECDSA:
+		حالت کلید_ED25519:
+		حالت کلید_MLDSA44_ED25519:
+		حالت کلید_ECDSA_SK:
+		حالت کلید_ED25519_SK:
+			append_hostkey_type(b, sshkey_ssh_name(کلید));
+			بشکن;
 		}
 		/* If the private key has a cert peer, then list that too */
-		key = host_certificates[i];
-		if (key == NULL)
-			continue;
-		switch (key->type) {
-		case KEY_RSA_CERT:
+		کلید = host_certificates[i];
+		اگر (کلید == پوچ)
+			ادامه;
+		انتخاب (کلید->type) {
+		حالت کلید_RSA_CERT:
 			/* for RSA we also support SHA2 signatures */
 			append_hostkey_type(b,
 			    "rsa-sha2-512-cert-v01@openssh.com");
 			append_hostkey_type(b,
 			    "rsa-sha2-256-cert-v01@openssh.com");
 			/* FALLTHROUGH */
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-			append_hostkey_type(b, sshkey_ssh_name(key));
-			break;
+		حالت کلید_ECDSA_CERT:
+		حالت کلید_ED25519_CERT:
+		حالت کلید_MLDSA44_ED25519_CERT:
+		حالت کلید_ECDSA_SK_CERT:
+		حالت کلید_ED25519_SK_CERT:
+			append_hostkey_type(b, sshkey_ssh_name(کلید));
+			بشکن;
 		}
 	}
-	if ((ret = sshbuf_dup_string(b)) == NULL)
+	اگر ((ret = sshbuf_dup_string(b)) == پوچ)
 		fatal_f("sshbuf_dup_string failed");
 	sshbuf_free(b);
 	debug_f("%s", ret);
-	return ret;
+	بازگشت ret;
 }
 
-struct sshkey *
-get_hostkey_public_by_type(int type, int nid, struct ssh *ssh)
+ساختار sshkey *
+get_hostkey_public_by_type(صحیح type, صحیح nid, ساختار ssh *ssh)
 {
 	u_int i;
-	struct sshkey *key;
+	ساختار sshkey *کلید;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		switch (type) {
-		case KEY_RSA_CERT:
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-			key = host_certificates[i];
-			break;
-		default:
-			key = host_pubkeys[i];
-			break;
+	برای (i = 0; i < options.رقم_host_کلید_files; i++) {
+		انتخاب (type) {
+		حالت کلید_RSA_CERT:
+		حالت کلید_ECDSA_CERT:
+		حالت کلید_ED25519_CERT:
+		حالت کلید_MLDSA44_ED25519_CERT:
+		حالت کلید_ECDSA_SK_CERT:
+		حالت کلید_ED25519_SK_CERT:
+			کلید = host_certificates[i];
+			بشکن;
+		پیشفرض:
+			کلید = host_pubkeys[i];
+			بشکن;
 		}
-		if (key == NULL || key->type != type)
-			continue;
-		switch (type) {
-		case KEY_ECDSA:
-		case KEY_ECDSA_SK:
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA_SK_CERT:
-			if (key->ecdsa_nid != nid)
-				continue;
+		اگر (کلید == پوچ || کلید->type != type)
+			ادامه;
+		انتخاب (type) {
+		حالت کلید_ECDSA:
+		حالت کلید_ECDSA_SK:
+		حالت کلید_ECDSA_CERT:
+		حالت کلید_ECDSA_SK_CERT:
+			اگر (کلید->ecdsa_nid != nid)
+				ادامه;
 			/* FALLTHROUGH */
-		default:
-			return key;
+		پیشفرض:
+			بازگشت کلید;
 		}
 	}
-	return NULL;
+	بازگشت پوچ;
 }
 
 /* XXX remove */
-struct sshkey *
-get_hostkey_private_by_type(int type, int nid, struct ssh *ssh)
+ساختار sshkey *
+get_hostkey_private_by_type(صحیح type, صحیح nid, ساختار ssh *ssh)
 {
-	return NULL;
+	بازگشت پوچ;
 }
 
 /* XXX remove */
-struct sshkey *
-get_hostkey_by_index(int ind)
+ساختار sshkey *
+get_hostkey_by_index(صحیح ind)
 {
-	return NULL;
+	بازگشت پوچ;
 }
 
-struct sshkey *
-get_hostkey_public_by_index(int ind, struct ssh *ssh)
+ساختار sshkey *
+get_hostkey_public_by_index(صحیح ind, ساختار ssh *ssh)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
-		return (NULL);
-	return host_pubkeys[ind];
+	اگر (ind < 0 || (u_int)ind >= options.رقم_host_کلید_files)
+		بازگشت (پوچ);
+	بازگشت host_pubkeys[ind];
 }
 
-int
-get_hostkey_index(struct sshkey *key, int compare, struct ssh *ssh)
+صحیح
+get_hostkey_index(ساختار sshkey *کلید, صحیح compare, ساختار ssh *ssh)
 {
 	u_int i;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sshkey_is_cert(key)) {
-			if (key == host_certificates[i] ||
+	برای (i = 0; i < options.رقم_host_کلید_files; i++) {
+		اگر (sshkey_is_cert(کلید)) {
+			اگر (کلید == host_certificates[i] ||
 			    (compare && host_certificates[i] &&
-			    sshkey_equal(key, host_certificates[i])))
-				return (i);
-		} else {
-			if (key == host_pubkeys[i] ||
+			    sshkey_equal(کلید, host_certificates[i])))
+				بازگشت (i);
+		} وگرنه {
+			اگر (کلید == host_pubkeys[i] ||
 			    (compare && host_pubkeys[i] &&
-			    sshkey_equal(key, host_pubkeys[i])))
-				return (i);
+			    sshkey_equal(کلید, host_pubkeys[i])))
+				بازگشت (i);
 		}
 	}
-	return (-1);
+	بازگشت (-1);
 }
 
-static void
-usage(void)
+ایستا تهی
+usage(تهی)
 {
 	fprintf(stderr, "%s, %s\n", SSH_VERSION, SSH_OPENSSL_VERSION);
 	fprintf(stderr,
@@ -375,54 +375,54 @@ usage(void)
 	exit(1);
 }
 
-static void
-parse_hostkeys(struct sshbuf *hostkeys)
+ایستا تهی
+parse_hostkeys(ساختار sshbuf *hostkeys)
 {
-	int r;
-	u_int num_keys = 0;
-	struct sshkey *k;
-	const u_char *cp;
+	صحیح r;
+	u_int رقم_کلیدها = 0;
+	ساختار sshkey *k;
+	ثابت u_char *cp;
 	size_t len;
 
-	while (sshbuf_len(hostkeys) != 0) {
-		if (num_keys > 2048)
+	وقتی (sshbuf_len(hostkeys) != 0) {
+		اگر (رقم_کلیدها > 2048)
 			fatal_f("too many hostkeys");
 		host_pubkeys = xrecallocarray(host_pubkeys,
-		    num_keys, num_keys + 1, sizeof(*host_pubkeys));
+		    رقم_کلیدها, رقم_کلیدها + 1, اندازه(*host_pubkeys));
 		host_certificates = xrecallocarray(host_certificates,
-		    num_keys, num_keys + 1, sizeof(*host_certificates));
+		    رقم_کلیدها, رقم_کلیدها + 1, اندازه(*host_certificates));
 		/* public key */
-		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		k = پوچ;
+		اگر ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		اگر (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		host_pubkeys[num_keys] = k;
-		if (k)
-			debug2_f("key %u: %s", num_keys, sshkey_ssh_name(k));
+		host_pubkeys[رقم_کلیدها] = k;
+		اگر (k)
+			debug2_f("key %u: %s", رقم_کلیدها, sshkey_ssh_name(k));
 		/* certificate */
-		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		k = پوچ;
+		اگر ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		اگر (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
-		host_certificates[num_keys] = k;
-		if (k)
-			debug2_f("cert %u: %s", num_keys, sshkey_ssh_name(k));
-		num_keys++;
+		host_certificates[رقم_کلیدها] = k;
+		اگر (k)
+			debug2_f("cert %u: %s", رقم_کلیدها, sshkey_ssh_name(k));
+		رقم_کلیدها++;
 	}
-	num_hostkeys = num_keys;
+	رقم_hostkeys = رقم_کلیدها;
 }
 
-static void
-recv_privsep_state(struct ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
+ایستا تهی
+recv_privsep_state(ساختار ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
 {
-	struct sshbuf *hostkeys;
+	ساختار sshbuf *hostkeys;
 
 	debug3_f("begin");
 
-	mm_get_state(ssh, o, NULL, timing_secretp,
-	    &hostkeys, NULL, NULL, NULL, NULL);
+	mm_get_state(ssh, o, پوچ, timing_secretp,
+	    &hostkeys, پوچ, پوچ, پوچ, پوچ);
 	parse_hostkeys(hostkeys);
 
 	sshbuf_free(hostkeys);
@@ -433,14 +433,14 @@ recv_privsep_state(struct ssh *ssh, ServerOptions *o, uint64_t *timing_secretp)
 /*
  * Main program for the daemon.
  */
-int
-main(int ac, char **av)
+صحیح
+اصلی(صحیح ac, نویسه **av)
 {
-	struct ssh *ssh = NULL;
-	extern char *optarg;
-	extern int optind;
-	int r, opt, have_key = 0;
-	int sock_in = -1, sock_out = -1, rexeced_flag = 0;
+	ساختار ssh *ssh = پوچ;
+	بیرونی نویسه *optarg;
+	بیرونی صحیح optind;
+	صحیح r, opt, have_کلید = 0;
+	صحیح sock_in = -1, sock_out = -1, rexeced_flag = 0;
 	u_int i;
 	mode_t new_umask;
 	Authctxt *authctxt;
@@ -449,19 +449,19 @@ main(int ac, char **av)
 
 	closefrom(PRIVSEP_MIN_FREE_FD);
 	sigemptyset(&sigmask);
-	sigprocmask(SIG_SETMASK, &sigmask, NULL);
+	sigprocmask(SIG_SETMASK, &sigmask, پوچ);
 
 #ifdef HAVE_SECUREWARE
-	(void)set_auth_parameters(ac, av);
+	(تهی)set_auth_parameters(ac, av);
 #endif
 	__progname = ssh_get_progname(av[0]);
 
 	/* Save argv. Duplicate so setproctitle emulation doesn't clobber it */
 	saved_argc = ac;
-	saved_argv = xcalloc(ac + 1, sizeof(*saved_argv));
-	for (i = 0; (int)i < ac; i++)
+	saved_argv = xcalloc(ac + 1, اندازه(*saved_argv));
+	برای (i = 0; (صحیح)i < ac; i++)
 		saved_argv[i] = xstrdup(av[i]);
-	saved_argv[i] = NULL;
+	saved_argv[i] = پوچ;
 
 	seed_rng();
 
@@ -478,90 +478,90 @@ main(int ac, char **av)
 	initialize_server_options(&options);
 
 	/* Parse command-line arguments. */
-	while ((opt = getopt(ac, av,
+	وقتی ((opt = getopt(ac, av,
 	    "C:E:b:c:f:g:h:k:o:p:u:46DGQRTdeiqrtV")) != -1) {
-		switch (opt) {
-		case '4':
+		انتخاب (opt) {
+		حالت '4':
 			/* ignore */
-			break;
-		case '6':
+			بشکن;
+		حالت '6':
 			/* ignore */
-			break;
-		case 'f':
+			بشکن;
+		حالت 'f':
 			/* ignore */
-			break;
-		case 'c':
+			بشکن;
+		حالت 'c':
 			/* ignore */
-			break;
-		case 'd':
-			if (debug_flag == 0) {
+			بشکن;
+		حالت 'd':
+			اگر (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else if (options.log_level < SYSLOG_LEVEL_DEBUG3)
+			} وگرنه اگر (options.log_level < SYSLOG_LEVEL_DEBUG3)
 				options.log_level++;
-			break;
-		case 'D':
-		case 'E':
-		case 'e':
+			بشکن;
+		حالت 'D':
+		حالت 'E':
+		حالت 'e':
 			/* ignore */
-			break;
-		case 'i':
+			بشکن;
+		حالت 'i':
 			inetd_flag = 1;
-			break;
-		case 'r':
+			بشکن;
+		حالت 'r':
 			/* ignore */
-			break;
-		case 'R':
+			بشکن;
+		حالت 'R':
 			rexeced_flag = 1;
-			break;
-		case 'Q':
+			بشکن;
+		حالت 'Q':
 			/* ignored */
-			break;
-		case 'q':
+			بشکن;
+		حالت 'q':
 			/* ignored */
-			break;
-		case 'b':
+			بشکن;
+		حالت 'b':
 			/* protocol 1, ignored */
-			break;
-		case 'p':
+			بشکن;
+		حالت 'p':
 			/* ignored */
-			break;
-		case 'g':
+			بشکن;
+		حالت 'g':
 			/* ignored */
-			break;
-		case 'k':
+			بشکن;
+		حالت 'k':
 			/* protocol 1, ignored */
-			break;
-		case 'h':
+			بشکن;
+		حالت 'h':
 			/* ignored */
-			break;
-		case 't':
-		case 'T':
-		case 'G':
-		case 'C':
+			بشکن;
+		حالت 't':
+		حالت 'T':
+		حالت 'G':
+		حالت 'C':
 			fatal("test/dump modes not supported");
-			break;
-		case 'u':
-			utmp_len = (u_int)strtonum(optarg, 0, HOST_NAME_MAX+1+1, NULL);
-			if (utmp_len > HOST_NAME_MAX+1) {
+			بشکن;
+		حالت 'u':
+			utmp_len = (u_int)strtonum(optarg, 0, HOST_NAME_MAX+1+1, پوچ);
+			اگر (utmp_len > HOST_NAME_MAX+1) {
 				fprintf(stderr, "Invalid utmp length.\n");
 				exit(1);
 			}
-			break;
-		case 'o':
+			بشکن;
+		حالت 'o':
 			/* ignored */
-			break;
-		case 'V':
+			بشکن;
+		حالت 'V':
 			fprintf(stderr, "%s, %s\n",
 			    SSH_VERSION, SSH_OPENSSL_VERSION);
 			exit(0);
-		default:
+		پیشفرض:
 			usage();
-			break;
+			بشکن;
 		}
 	}
 
-	if (!rexeced_flag)
+	اگر (!rexeced_flag)
 		fatal("sshd-auth should not be executed directly");
 
 	log_init(__progname,
@@ -571,32 +571,32 @@ main(int ac, char **av)
 	    SYSLOG_FACILITY_AUTH : options.log_facility, 1);
 
 	/* XXX can't use monitor_init(); it makes fds */
-	pmonitor = xcalloc(1, sizeof(*pmonitor));
+	pmonitor = xcalloc(1, اندازه(*pmonitor));
 	pmonitor->m_sendfd = pmonitor->m_log_recvfd = -1;
 	pmonitor->m_recvfd = PRIVSEP_MONITOR_FD;
 	pmonitor->m_log_sendfd = PRIVSEP_LOG_FD;
 	set_log_handler(mm_log_handler, pmonitor);
 
 	/* Check that there are no remaining arguments. */
-	if (optind < ac) {
+	اگر (optind < ac) {
 		fprintf(stderr, "Extra argument %s.\n", av[optind]);
 		exit(1);
 	}
 
 	/* Connection passed by stdin/out */
-	if (inetd_flag) {
+	اگر (inetd_flag) {
 		/*
 		 * NB. must be different fd numbers for the !socket case,
 		 * as packet_connection_is_on_socket() depends on this.
 		 */
 		sock_in = dup(STDIN_FILENO);
 		sock_out = dup(STDOUT_FILENO);
-	} else {
+	} وگرنه {
 		/* rexec case; accept()ed socket in ancestor listener */
 		sock_in = sock_out = dup(STDIN_FILENO);
 	}
 
-	if (stdfd_devnull(1, 1, 0) == -1)
+	اگر (stdfd_devnull(1, 1, 0) == -1)
 		error("stdfd_devnull failed");
 	debug("network sockets: %d, %d", sock_in, sock_out);
 
@@ -604,14 +604,14 @@ main(int ac, char **av)
 	 * Register our connection.  This turns encryption off because we do
 	 * not have a key.
 	 */
-	if ((ssh = ssh_packet_set_connection(NULL, sock_in, sock_out)) == NULL)
+	اگر ((ssh = ssh_packet_set_connection(پوچ, sock_in, sock_out)) == پوچ)
 		fatal("Unable to create connection");
 	the_active_state = ssh;
 	ssh_packet_set_server(ssh);
 	pmonitor->m_pkex = &ssh->kex;
 
 	/* Fetch our configuration */
-	if ((cfg = sshbuf_new()) == NULL)
+	اگر ((cfg = sshbuf_new()) == پوچ)
 		fatal("sshbuf_new config buf failed");
 	setproctitle("%s", "[session-auth early]");
 	recv_privsep_state(ssh, &options, &timing_secret);
@@ -627,11 +627,11 @@ main(int ac, char **av)
 
 	/* Store privilege separation user for later use if required. */
 	privsep_chroot = (getuid() == 0 || geteuid() == 0);
-	if ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
-		if (privsep_chroot || options.kerberos_authentication)
+	اگر ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == پوچ) {
+		اگر (privsep_chroot || options.kerberos_authentication)
 			fatal("Privilege separation user %s does not exist",
 			    SSH_PRIVSEP_USER);
-	} else {
+	} وگرنه {
 		privsep_pw = pwcopy(privsep_pw);
 		freezero(privsep_pw->pw_passwd, strlen(privsep_pw->pw_passwd));
 		privsep_pw->pw_passwd = xstrdup("*");
@@ -639,50 +639,50 @@ main(int ac, char **av)
 	endpwent();
 
 #ifdef WITH_OPENSSL
-	if (options.moduli_file != NULL)
+	اگر (options.moduli_file != پوچ)
 		dh_set_moduli_file(options.moduli_file);
 #endif
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	اگر (options.host_کلید_agent) {
+		اگر (strcmp(options.host_کلید_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
-			    options.host_key_agent, 1);
-		if ((r = ssh_get_authentication_socket(NULL)) == 0)
+			    options.host_کلید_agent, 1);
+		اگر ((r = ssh_get_authentication_socket(پوچ)) == 0)
 			have_agent = 1;
-		else
+		وگرنه
 			error_r(r, "Could not connect to agent \"%s\"",
-			    options.host_key_agent);
+			    options.host_کلید_agent);
 	}
 
-	if (options.num_host_key_files != num_hostkeys) {
+	اگر (options.رقم_host_کلید_files != رقم_hostkeys) {
 		fatal("internal error: hostkeys confused (config %u recvd %u)",
-		    options.num_host_key_files, num_hostkeys);
+		    options.رقم_host_کلید_files, رقم_hostkeys);
 	}
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (host_pubkeys[i] != NULL) {
-			have_key = 1;
-			break;
+	برای (i = 0; i < options.رقم_host_کلید_files; i++) {
+		اگر (host_pubkeys[i] != پوچ) {
+			have_کلید = 1;
+			بشکن;
 		}
 	}
-	if (!have_key)
+	اگر (!have_کلید)
 		fatal("internal error: received no hostkeys");
 
 	/* Ensure that umask disallows at least group and world write */
 	new_umask = umask(0077) | 0022;
-	(void) umask(new_umask);
+	(تهی) umask(new_umask);
 
 	/* Initialize the log (it is reinitialized below in case we forked). */
 	log_init(__progname, options.log_level, options.log_facility, 1);
 	set_log_handler(mm_log_handler, pmonitor);
-	for (i = 0; i < options.num_log_verbose; i++)
+	برای (i = 0; i < options.رقم_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 
 	/*
 	 * Chdir to the root directory so that the current disk can be
 	 * unmounted if desired.
 	 */
-	if (chdir("/") == -1)
+	اگر (chdir("/") == -1)
 		error("chdir(\"/\"): %s", strerror(errno));
 
 	/* This is the child authenticating a new connection. */
@@ -710,18 +710,18 @@ main(int ac, char **av)
 	ssh_packet_set_nonblocking(ssh);
 
 	/* allocate authentication context */
-	authctxt = xcalloc(1, sizeof(*authctxt));
+	authctxt = xcalloc(1, اندازه(*authctxt));
 	ssh->authctxt = authctxt;
 
 	/* XXX global for cleanup, access from other modules */
 	the_authctxt = authctxt;
 
 	/* Set default key authentication options */
-	if ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
+	اگر ((auth_opts = sshauthopt_new_with_کلیدها_defaults()) == پوچ)
 		fatal("allocation failed");
 
 	/* prepare buffer to collect messages to display to user after login */
-	if ((loginmsg = sshbuf_new()) == NULL)
+	اگر ((loginmsg = sshbuf_new()) == پوچ)
 		fatal("sshbuf_new loginmsg failed");
 	auth_debug_reset();
 
@@ -742,60 +742,60 @@ main(int ac, char **av)
 	 */
 	mm_send_keystate(ssh, pmonitor);
 	sshauthopt_free(auth_opts);
-	ssh_packet_clear_keys(ssh);
+	ssh_packet_clear_کلیدها(ssh);
 	exit(0);
 }
 
-int
-sshd_hostkey_sign(struct ssh *ssh, struct sshkey *privkey,
-    struct sshkey *pubkey, u_char **signature, size_t *slenp,
-    const u_char *data, size_t dlen, const char *alg)
+صحیح
+sshd_hostkey_sign(ساختار ssh *ssh, ساختار sshkey *privkey,
+    ساختار sshkey *pubkey, u_char **signature, size_t *slenp,
+    ثابت u_char *data, size_t dlen, ثابت نویسه *alg)
 {
-	if (privkey) {
-		if (mm_sshkey_sign(ssh, privkey, signature, slenp,
-		    data, dlen, alg, options.sk_provider, NULL,
+	اگر (privkey) {
+		اگر (mm_sshkey_sign(ssh, privkey, signature, slenp,
+		    data, dlen, alg, options.sk_provider, پوچ,
 		    ssh->compat) < 0)
 			fatal_f("privkey sign failed");
-	} else {
-		if (mm_sshkey_sign(ssh, pubkey, signature, slenp,
-		    data, dlen, alg, options.sk_provider, NULL,
+	} وگرنه {
+		اگر (mm_sshkey_sign(ssh, pubkey, signature, slenp,
+		    data, dlen, alg, options.sk_provider, پوچ,
 		    ssh->compat) < 0)
 			fatal_f("pubkey sign failed");
 	}
-	return 0;
+	بازگشت 0;
 }
 
 /* SSH2 key exchange */
-static void
-do_ssh2_kex(struct ssh *ssh)
+ایستا تهی
+do_ssh2_kex(ساختار ssh *ssh)
 {
-	char *hkalgs = NULL, *myproposal[PROPOSAL_MAX];
-	const char *compression = NULL;
-	struct kex *kex;
-	int r;
+	نویسه *hkalgs = پوچ, *myproposal[PROPOSAL_MAX];
+	ثابت نویسه *compression = پوچ;
+	ساختار kex *kex;
+	صحیح r;
 
 	ssh_packet_set_rekey_limits(ssh, options.rekey_limit,
 	    options.rekey_interval);
 
-	if (options.compression == COMP_NONE)
+	اگر (options.compression == COMP_NONE)
 		compression = "none";
 	hkalgs = list_hostkey_types();
 
 	kex_proposal_populate_entries(ssh, myproposal, options.kex_algorithms,
 	    options.ciphers, options.macs, compression, hkalgs);
 
-	free(hkalgs);
+	آزاد(hkalgs);
 
-	if ((r = kex_exchange_identification(ssh, -1,
+	اگر ((r = kex_exchange_identification(ssh, -1,
 	    options.version_addendum)) != 0)
 		sshpkt_fatal(ssh, r, "banner exchange");
 	mm_sshkey_setcompat(ssh); /* tell monitor */
 
-	if ((ssh->compat & SSH_BUG_NOREKEY))
+	اگر ((ssh->compat & SSH_BUG_NOREKEY))
 		debug("client does not support rekeying");
 
 	/* start key exchange */
-	if ((r = kex_setup(ssh, myproposal)) != 0)
+	اگر ((r = kex_setup(ssh, myproposal)) != 0)
 		fatal_r(r, "kex_setup");
 	kex_set_server_sig_algs(ssh, options.pubkey_accepted_algos);
 	kex_set_warn_weak_crypto(ssh, options.warn_weak_crypto);
@@ -815,9 +815,9 @@ do_ssh2_kex(struct ssh *ssh)
 	kex->kex[KEX_C25519_SHA256] = kex_gen_server;
 	kex->kex[KEX_KEM_SNTRUP761X25519_SHA512] = kex_gen_server;
 	kex->kex[KEX_KEM_MLKEM768X25519_SHA256] = kex_gen_server;
-	kex->load_host_public_key=&get_hostkey_public_by_type;
-	kex->load_host_private_key=&get_hostkey_private_by_type;
-	kex->host_key_index=&get_hostkey_index;
+	kex->load_host_public_کلید=&get_hostkey_public_by_type;
+	kex->load_host_private_کلید=&get_hostkey_private_by_type;
+	kex->host_کلید_index=&get_hostkey_index;
 	kex->sign = sshd_hostkey_sign;
 
 	ssh_dispatch_run_fatal(ssh, DISPATCH_BLOCK, &kex->done);
@@ -825,7 +825,7 @@ do_ssh2_kex(struct ssh *ssh)
 
 #ifdef DEBUG_KEXDH
 	/* send 1st encrypted/maced/compressed message */
-	if ((r = sshpkt_start(ssh, SSH2_MSG_IGNORE)) != 0 ||
+	اگر ((r = sshpkt_start(ssh, SSH2_پیام_IGNORE)) != 0 ||
 	    (r = sshpkt_put_cstring(ssh, "markus")) != 0 ||
 	    (r = sshpkt_send(ssh)) != 0 ||
 	    (r = ssh_packet_write_wait(ssh)) != 0)
@@ -835,8 +835,8 @@ do_ssh2_kex(struct ssh *ssh)
 }
 
 /* server specific fatal cleanup */
-void
-cleanup_exit(int i)
+تهی
+cleanup_exit(صحیح i)
 {
 	_exit(i);
 }

@@ -1,33 +1,33 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#شامل <stddef.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <string.h>
+#شامل <stdlib.h>
 
-extern "C" {
+بیرونی "C" {
 
-#include "auth-options.h"
+#شامل "auth-options.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+صحیح LLVMFuzzer_Test_One_درون_داد(ثابت uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshauthopt *opts = NULL, *merge = NULL, *add = sshauthopt_new();
+	نویسه *cp = (نویسه *)malloc(size + 1);
+	ساختار sshauthopt *opts = پوچ, *merge = پوچ, *add = sshauthopt_new();
 
-	if (cp == NULL || add == NULL)
-		goto out;
+	اگر (cp == پوچ || add == پوچ)
+		برو out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshauthopt_parse(cp, NULL)) == NULL)
-		goto out;
-	if ((merge = sshauthopt_merge(opts, add, NULL)) == NULL)
-		goto out;
+	اگر ((opts = sshauthopt_parse(cp, پوچ)) == پوچ)
+		برو out;
+	اگر ((merge = sshauthopt_merge(opts, add, پوچ)) == پوچ)
+		برو out;
 
  out:
-	free(cp);
+	آزاد(cp);
 	sshauthopt_free(add);
 	sshauthopt_free(opts);
 	sshauthopt_free(merge);
-	return 0;
+	بازگشت 0;
 }
 
 } // extern "C"

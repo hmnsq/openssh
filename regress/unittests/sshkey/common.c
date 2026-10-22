@@ -5,120 +5,120 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <sys/types.h>
+#شامل <sys/stat.h>
+#شامل <fcntl.h>
+#شامل <stdio.h>
+#شامل <stdint.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/rsa.h>
-#include <openssl/objects.h>
+#شامل <openssl/bn.h>
+#شامل <openssl/ec.h>
+#شامل <openssl/rsa.h>
+#شامل <openssl/objects.h>
 #endif /* WITH_OPENSSL */
 
-#include "openbsd-compat/openssl-compat.h"
+#شامل "openbsd-compat/openssl-compat.h"
 
-#include "../test_helper/test_helper.h"
+#شامل "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
+#شامل "ssherr.h"
+#شامل "authfile.h"
+#شامل "sshkey.h"
+#شامل "sshbuf.h"
 
-#include "common.h"
+#شامل "common.h"
 
-struct sshbuf *
-load_file(const char *name)
+ساختار sshbuf *
+load_file(ثابت نویسه *name)
 {
-	struct sshbuf *ret = NULL;
+	ساختار sshbuf *ret = پوچ;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_PTR_NE(ret, پوچ);
+	بازگشت ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+ساختار sshbuf *
+load_text_file(ثابت نویسه *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
+	ساختار sshbuf *ret = load_file(name);
+	ثابت u_char *p;
 	size_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	برای (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		اگر (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
 			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+		وگرنه
+			بشکن;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	بازگشت ret;
 }
 
 #ifdef WITH_OPENSSL
 BIGNUM *
-load_bignum(const char *name)
+load_bignum(ثابت نویسه *name)
 {
-	BIGNUM *ret = NULL;
-	struct sshbuf *buf;
+	BIGNUM *ret = پوچ;
+	ساختار sshbuf *buf;
 
 	buf = load_text_file(name);
-	ASSERT_INT_NE(BN_hex2bn(&ret, (const char *)sshbuf_ptr(buf)), 0);
+	ASSERT_INT_NE(BN_hex2bn(&ret, (ثابت نویسه *)sshbuf_ptr(buf)), 0);
 	sshbuf_free(buf);
-	return ret;
+	بازگشت ret;
 }
 
-const BIGNUM *
-rsa_n(struct sshkey *k)
+ثابت BIGNUM *
+rsa_n(ساختار sshkey *k)
 {
-	const BIGNUM *n = NULL;
+	ثابت BIGNUM *n = پوچ;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), &n, NULL, NULL);
-	return n;
+	ASSERT_PTR_NE(k, پوچ);
+	ASSERT_PTR_NE(k->pkey, پوچ);
+	RSA_get0_کلید(EVP_PKEY_get0_RSA(k->pkey), &n, پوچ, پوچ);
+	بازگشت n;
 }
 
-const BIGNUM *
-rsa_e(struct sshkey *k)
+ثابت BIGNUM *
+rsa_e(ساختار sshkey *k)
 {
-	const BIGNUM *e = NULL;
+	ثابت BIGNUM *e = پوچ;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), NULL, &e, NULL);
-	return e;
+	ASSERT_PTR_NE(k, پوچ);
+	ASSERT_PTR_NE(k->pkey, پوچ);
+	RSA_get0_کلید(EVP_PKEY_get0_RSA(k->pkey), پوچ, &e, پوچ);
+	بازگشت e;
 }
 
-const BIGNUM *
-rsa_p(struct sshkey *k)
+ثابت BIGNUM *
+rsa_p(ساختار sshkey *k)
 {
-	const BIGNUM *p = NULL;
+	ثابت BIGNUM *p = پوچ;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
-	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), &p, NULL);
-	return p;
+	ASSERT_PTR_NE(k, پوچ);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), پوچ);
+	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), &p, پوچ);
+	بازگشت p;
 }
 
-const BIGNUM *
-rsa_q(struct sshkey *k)
+ثابت BIGNUM *
+rsa_q(ساختار sshkey *k)
 {
-	const BIGNUM *q = NULL;
+	ثابت BIGNUM *q = پوچ;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
-	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), NULL, &q);
-	return q;
+	ASSERT_PTR_NE(k, پوچ);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), پوچ);
+	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), پوچ, &q);
+	بازگشت q;
 }
 #endif /* WITH_OPENSSL */

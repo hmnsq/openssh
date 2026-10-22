@@ -24,136 +24,136 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#if defined(WITH_OPENSSL)
+#اگر defined(WITH_OPENSSL)
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <stdio.h>
-#include <signal.h>
+#شامل <stdio.h>
+#شامل <signal.h>
 
-#include <openssl/bn.h>
-#include <openssl/ecdh.h>
+#شامل <openssl/bn.h>
+#شامل <openssl/ecdh.h>
 
-#include "sshkey.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "ssherr.h"
+#شامل "sshkey.h"
+#شامل "kex.h"
+#شامل "sshbuf.h"
+#شامل "ssherr.h"
 
-int
-kex_ecdh_keypair(struct kex *kex)
+صحیح
+kex_ecdh_keypair(ساختار kex *kex)
 {
-	EC_KEY *client_key = NULL;
-	const EC_GROUP *group;
-	const EC_POINT *public_key;
-	struct sshbuf *buf = NULL;
-	int r;
+	EC_کلید *client_کلید = پوچ;
+	ثابت EC_GROUP *group;
+	ثابت EC_POINT *public_کلید;
+	ساختار sshbuf *buf = پوچ;
+	صحیح r;
 
-	if ((client_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	اگر ((client_کلید = EC_کلید_new_by_curve_name(kex->ec_nid)) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if (EC_KEY_generate_key(client_key) != 1) {
+	اگر (EC_کلید_generate_کلید(client_کلید) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		برو out;
 	}
-	group = EC_KEY_get0_group(client_key);
-	public_key = EC_KEY_get0_public_key(client_key);
+	group = EC_کلید_get0_group(client_کلید);
+	public_کلید = EC_کلید_get0_public_کلید(client_کلید);
 
-	if ((buf = sshbuf_new()) == NULL) {
+	اگر ((buf = sshbuf_new()) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((r = sshbuf_put_ec(buf, public_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(buf, NULL)) != 0)
-		goto out;
+	اگر ((r = sshbuf_put_ec(buf, public_کلید, group)) != 0 ||
+	    (r = sshbuf_get_u32(buf, پوچ)) != 0)
+		برو out;
 #ifdef DEBUG_KEXECDH
 	fputs("client private key:\n", stderr);
-	sshkey_dump_ec_key(client_key);
+	sshkey_dump_ec_کلید(client_کلید);
 #endif
-	kex->ec_client_key = client_key;
+	kex->ec_client_کلید = client_کلید;
 	kex->ec_group = group;
-	client_key = NULL;	/* owned by the kex */
+	client_کلید = پوچ;	/* owned by the kex */
 	kex->client_pub = buf;
-	buf = NULL;
+	buf = پوچ;
  out:
-	EC_KEY_free(client_key);
+	EC_کلید_free(client_کلید);
 	sshbuf_free(buf);
-	return r;
+	بازگشت r;
 }
 
-int
-kex_ecdh_enc(struct kex *kex, const struct sshbuf *client_blob,
-    struct sshbuf **server_blobp, struct sshbuf **shared_secretp)
+صحیح
+kex_ecdh_enc(ساختار kex *kex, ثابت ساختار sshbuf *client_blob,
+    ساختار sshbuf **server_blobp, ساختار sshbuf **shared_secretp)
 {
-	const EC_GROUP *group;
-	const EC_POINT *pub_key;
-	EC_KEY *server_key = NULL;
-	struct sshbuf *server_blob = NULL;
-	int r;
+	ثابت EC_GROUP *group;
+	ثابت EC_POINT *pub_کلید;
+	EC_کلید *server_کلید = پوچ;
+	ساختار sshbuf *server_blob = پوچ;
+	صحیح r;
 
-	*server_blobp = NULL;
-	*shared_secretp = NULL;
+	*server_blobp = پوچ;
+	*shared_secretp = پوچ;
 
-	if ((server_key = EC_KEY_new_by_curve_name(kex->ec_nid)) == NULL) {
+	اگر ((server_کلید = EC_کلید_new_by_curve_name(kex->ec_nid)) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if (EC_KEY_generate_key(server_key) != 1) {
+	اگر (EC_کلید_generate_کلید(server_کلید) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		برو out;
 	}
-	group = EC_KEY_get0_group(server_key);
+	group = EC_کلید_get0_group(server_کلید);
 
 #ifdef DEBUG_KEXECDH
 	fputs("server private key:\n", stderr);
-	sshkey_dump_ec_key(server_key);
+	sshkey_dump_ec_کلید(server_کلید);
 #endif
-	pub_key = EC_KEY_get0_public_key(server_key);
-	if ((server_blob = sshbuf_new()) == NULL) {
+	pub_کلید = EC_کلید_get0_public_کلید(server_کلید);
+	اگر ((server_blob = sshbuf_new()) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((r = sshbuf_put_ec(server_blob, pub_key, group)) != 0 ||
-	    (r = sshbuf_get_u32(server_blob, NULL)) != 0)
-		goto out;
-	if ((r = kex_ecdh_dec_key_group(kex, client_blob, server_key, group,
+	اگر ((r = sshbuf_put_ec(server_blob, pub_کلید, group)) != 0 ||
+	    (r = sshbuf_get_u32(server_blob, پوچ)) != 0)
+		برو out;
+	اگر ((r = kex_ecdh_dec_کلید_group(kex, client_blob, server_کلید, group,
 	    0, shared_secretp)) != 0)
-		goto out;
+		برو out;
 	*server_blobp = server_blob;
-	server_blob = NULL;
+	server_blob = پوچ;
  out:
-	EC_KEY_free(server_key);
+	EC_کلید_free(server_کلید);
 	sshbuf_free(server_blob);
-	return r;
+	بازگشت r;
 }
 
-int
-kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
-    EC_KEY *key, const EC_GROUP *group, int raw, struct sshbuf **shared_secretp)
+صحیح
+kex_ecdh_dec_کلید_group(ساختار kex *kex, ثابت ساختار sshbuf *ec_blob,
+    EC_کلید *کلید, ثابت EC_GROUP *group, صحیح raw, ساختار sshbuf **shared_secretp)
 {
-	struct sshbuf *buf = NULL;
-	BIGNUM *shared_secret = NULL;
-	EC_POINT *dh_pub = NULL;
-	u_char *kbuf = NULL;
+	ساختار sshbuf *buf = پوچ;
+	BIGNUM *shared_secret = پوچ;
+	EC_POINT *dh_pub = پوچ;
+	u_char *kbuf = پوچ;
 	size_t klen = 0;
-	int r;
+	صحیح r;
 
-	*shared_secretp = NULL;
+	*shared_secretp = پوچ;
 
-	if ((buf = sshbuf_new()) == NULL) {
+	اگر ((buf = sshbuf_new()) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
-		goto out;
-	if ((dh_pub = EC_POINT_new(group)) == NULL) {
+	اگر ((r = sshbuf_put_stringb(buf, ec_blob)) != 0)
+		برو out;
+	اگر ((dh_pub = EC_POINT_new(group)) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if ((r = sshbuf_get_ec(buf, dh_pub, group)) != 0) {
-		goto out;
+	اگر ((r = sshbuf_get_ec(buf, dh_pub, group)) != 0) {
+		برو out;
 	}
 	sshbuf_reset(buf);
 
@@ -161,58 +161,58 @@ kex_ecdh_dec_key_group(struct kex *kex, const struct sshbuf *ec_blob,
 	fputs("public key:\n", stderr);
 	sshkey_dump_ec_point(group, dh_pub);
 #endif
-	if (sshkey_ec_validate_public(group, dh_pub) != 0) {
+	اگر (sshkey_ec_validate_public(group, dh_pub) != 0) {
 		r = SSH_ERR_MESSAGE_INCOMPLETE;
-		goto out;
+		برو out;
 	}
 	klen = (EC_GROUP_get_degree(group) + 7) / 8;
-	if ((kbuf = malloc(klen)) == NULL) {
+	اگر ((kbuf = malloc(klen)) == پوچ) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		برو out;
 	}
-	if (ECDH_compute_key(kbuf, klen, dh_pub, key, NULL) != (int)klen) {
+	اگر (ECDH_compute_کلید(kbuf, klen, dh_pub, کلید, پوچ) != (صحیح)klen) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		برو out;
 	}
 #ifdef DEBUG_KEXECDH
 	dump_digest("shared secret", kbuf, klen);
 #endif
-	if (raw) {
-		if ((r = sshbuf_put(buf, kbuf, klen)) != 0)
-			goto out;
-	} else {
-		if ((shared_secret = BN_new()) == NULL) {
+	اگر (raw) {
+		اگر ((r = sshbuf_put(buf, kbuf, klen)) != 0)
+			برو out;
+	} وگرنه {
+		اگر ((shared_secret = BN_new()) == پوچ) {
 			r = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			برو out;
 		}
-		if (BN_bin2bn(kbuf, klen, shared_secret) == NULL) {
+		اگر (BN_bin2bn(kbuf, klen, shared_secret) == پوچ) {
 			r = SSH_ERR_LIBCRYPTO_ERROR;
-			goto out;
+			برو out;
 		}
-		if ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
-			goto out;
+		اگر ((r = sshbuf_put_bignum2(buf, shared_secret)) != 0)
+			برو out;
 	}
 	*shared_secretp = buf;
-	buf = NULL;
+	buf = پوچ;
  out:
 	EC_POINT_clear_free(dh_pub);
 	BN_clear_free(shared_secret);
 	freezero(kbuf, klen);
 	sshbuf_free(buf);
-	return r;
+	بازگشت r;
 }
 
-int
-kex_ecdh_dec(struct kex *kex, const struct sshbuf *server_blob,
-    struct sshbuf **shared_secretp)
+صحیح
+kex_ecdh_dec(ساختار kex *kex, ثابت ساختار sshbuf *server_blob,
+    ساختار sshbuf **shared_secretp)
 {
-	int r;
+	صحیح r;
 
-	r = kex_ecdh_dec_key_group(kex, server_blob, kex->ec_client_key,
+	r = kex_ecdh_dec_کلید_group(kex, server_blob, kex->ec_client_کلید,
 	    kex->ec_group, 0, shared_secretp);
-	EC_KEY_free(kex->ec_client_key);
-	kex->ec_client_key = NULL;
-	return r;
+	EC_کلید_free(kex->ec_client_کلید);
+	kex->ec_client_کلید = پوچ;
+	بازگشت r;
 }
 
 #endif /* WITH_OPENSSL */

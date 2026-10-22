@@ -43,63 +43,63 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#if !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
+#اگر !defined (HAVE_GETRRSETBYNAME) && defined (HAVE_LDNS)
 
-#include <stdlib.h>
-#include <string.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
-#include <ldns/ldns.h>
+#شامل <ldns/ldns.h>
 
-#include "getrrsetbyname.h"
-#include "log.h"
-#include "xmalloc.h"
+#شامل "getrrsetbyname.h"
+#شامل "log.h"
+#شامل "xmalloc.h"
 
 #define malloc(x)	(xmalloc(x))
 #define calloc(x, y)	(xcalloc((x),(y)))
 
-int
-getrrsetbyname(const char *hostname, unsigned int rdclass,
-	       unsigned int rdtype, unsigned int flags,
-	       struct rrsetinfo **res)
+صحیح
+getrrsetbyname(ثابت نویسه *hostname, unsigned صحیح rdclass,
+	       unsigned صحیح rdtype, unsigned صحیح flags,
+	       ساختار rrsetinfo **res)
 {
-	int result;
-	unsigned int i, j, index_ans, index_sig;
-	struct rrsetinfo *rrset = NULL;
-	struct rdatainfo *rdata;
+	صحیح result;
+	unsigned صحیح i, j, index_ans, index_sig;
+	ساختار rrsetinfo *rrset = پوچ;
+	ساختار rdatainfo *rdata;
 	size_t len;
-	ldns_resolver *ldns_res = NULL;
-	ldns_rdf *domain = NULL;
-	ldns_pkt *pkt = NULL;
-	ldns_rr_list *rrsigs = NULL, *rrdata = NULL;
+	ldns_resolver *ldns_res = پوچ;
+	ldns_rdf *domain = پوچ;
+	ldns_pkt *pkt = پوچ;
+	ldns_rr_list *rrsigs = پوچ, *rrdata = پوچ;
 	ldns_status err;
 	ldns_rr *rr;
 
 	/* check for invalid class and type */
-	if (rdclass > 0xffff || rdtype > 0xffff) {
+	اگر (rdclass > 0xffff || rdtype > 0xffff) {
 		result = ERRSET_INVAL;
-		goto fail;
+		برو fail;
 	}
 
 	/* don't allow queries of class or type ANY */
-	if (rdclass == 0xff || rdtype == 0xff) {
+	اگر (rdclass == 0xff || rdtype == 0xff) {
 		result = ERRSET_INVAL;
-		goto fail;
+		برو fail;
 	}
 
 	/* don't allow flags yet, unimplemented */
-	if (flags) {
+	اگر (flags) {
 		result = ERRSET_INVAL;
-		goto fail;
+		برو fail;
 	}
 
 	/* Initialize resolver from resolv.conf */
 	domain = ldns_dname_new_frm_str(hostname);
-	if ((err = ldns_resolver_new_frm_file(&ldns_res, NULL)) != \
+	اگر ((err = ldns_resolver_new_frm_file(&ldns_res, پوچ)) != \
 	    LDNS_STATUS_OK) {
 		result = ERRSET_FAIL;
-		goto fail;
+		برو fail;
 	}
 
 #ifdef LDNS_DEBUG
@@ -112,30 +112,30 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	pkt = ldns_resolver_query(ldns_res, domain, rdtype, rdclass, LDNS_RD);
 
 	/*** TODO: finer errcodes -- see original **/
-	if (!pkt || ldns_pkt_ancount(pkt) < 1) {
+	اگر (!pkt || ldns_pkt_ancount(pkt) < 1) {
 		result = ERRSET_FAIL;
-		goto fail;
+		برو fail;
 	}
 
 	/* initialize rrset */
-	rrset = calloc(1, sizeof(struct rrsetinfo));
-	if (rrset == NULL) {
+	rrset = calloc(1, اندازه(ساختار rrsetinfo));
+	اگر (rrset == پوچ) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		برو fail;
 	}
 
 	rrdata = ldns_pkt_rr_list_by_type(pkt, rdtype, LDNS_SECTION_ANSWER);
-	rrset->rri_nrdatas = ldns_rr_list_rr_count(rrdata);
-	if (!rrset->rri_nrdatas) {
+	rrset->rri_nrdatas = ldns_rr_list_rr_شمار(rrdata);
+	اگر (!rrset->rri_nrdatas) {
 		result = ERRSET_NODATA;
-		goto fail;
+		برو fail;
 	}
 
 	/* copy name from answer section */
 	len = ldns_rdf_size(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0)));
-	if ((rrset->rri_name = malloc(len)) == NULL) {
+	اگر ((rrset->rri_name = malloc(len)) == پوچ) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		برو fail;
 	}
 	memcpy(rrset->rri_name,
 	    ldns_rdf_data(ldns_rr_owner(ldns_rr_list_rr(rrdata, 0))), len);
@@ -147,85 +147,85 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	debug2("ldns: got %u answers from DNS", rrset->rri_nrdatas);
 
 	/* Check for authenticated data */
-	if (ldns_pkt_ad(pkt)) {
+	اگر (ldns_pkt_ad(pkt)) {
 		rrset->rri_flags |= RRSET_VALIDATED;
-	} else { /* AD is not set, try autonomous validation */
-		ldns_rr_list * trusted_keys = ldns_rr_list_new();
+	} وگرنه { /* AD is not set, try autonomous validation */
+		ldns_rr_list * trusted_کلیدها = ldns_rr_list_new();
 
 		debug2("ldns: trying to validate RRset");
 		/* Get eventual sigs */
 		rrsigs = ldns_pkt_rr_list_by_type(pkt, LDNS_RR_TYPE_RRSIG,
 		    LDNS_SECTION_ANSWER);
 
-		rrset->rri_nsigs = ldns_rr_list_rr_count(rrsigs);
+		rrset->rri_nsigs = ldns_rr_list_rr_شمار(rrsigs);
 		debug2("ldns: got %u signature(s) (RRTYPE %u) from DNS",
 		       rrset->rri_nsigs, LDNS_RR_TYPE_RRSIG);
 
-		if ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
-		     trusted_keys)) == LDNS_STATUS_OK) {
+		اگر ((err = ldns_verify_trusted(ldns_res, rrdata, rrsigs,
+		     trusted_کلیدها)) == LDNS_STATUS_OK) {
 			rrset->rri_flags |= RRSET_VALIDATED;
 			debug2("ldns: RRset is signed with a valid key");
-		} else {
+		} وگرنه {
 			debug2("ldns: RRset validation failed: %s",
 			    ldns_get_errorstr_by_id(err));
 		}
 
-		ldns_rr_list_deep_free(trusted_keys);
+		ldns_rr_list_deep_free(trusted_کلیدها);
 	}
 
 	/* allocate memory for answers */
 	rrset->rri_rdatas = calloc(rrset->rri_nrdatas,
-	   sizeof(struct rdatainfo));
+	   اندازه(ساختار rdatainfo));
 
-	if (rrset->rri_rdatas == NULL) {
+	اگر (rrset->rri_rdatas == پوچ) {
 		result = ERRSET_NOMEMORY;
-		goto fail;
+		برو fail;
 	}
 
 	/* allocate memory for signatures */
-	if (rrset->rri_nsigs > 0) {
+	اگر (rrset->rri_nsigs > 0) {
 		rrset->rri_sigs = calloc(rrset->rri_nsigs,
-		    sizeof(struct rdatainfo));
+		    اندازه(ساختار rdatainfo));
 
-		if (rrset->rri_sigs == NULL) {
+		اگر (rrset->rri_sigs == پوچ) {
 			result = ERRSET_NOMEMORY;
-			goto fail;
+			برو fail;
 		}
 	}
 
 	/* copy answers & signatures */
-	for (i=0, index_ans=0, index_sig=0; i< pkt->_header->_ancount; i++) {
-		rdata = NULL;
+	برای (i=0, index_ans=0, index_sig=0; i< pkt->_header->_ancount; i++) {
+		rdata = پوچ;
 		rr = ldns_rr_list_rr(ldns_pkt_answer(pkt), i);
 
-		if (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
+		اگر (ldns_rr_get_class(rr) == rrset->rri_rdclass &&
 		    ldns_rr_get_type(rr) == rrset->rri_rdtype) {
 			rdata = &rrset->rri_rdatas[index_ans++];
 		}
 
-		if (rr->_rr_class == rrset->rri_rdclass &&
+		اگر (rr->_rr_class == rrset->rri_rdclass &&
 		    rr->_rr_type == LDNS_RR_TYPE_RRSIG &&
 		    rrset->rri_sigs) {
 			rdata = &rrset->rri_sigs[index_sig++];
 		}
 
-		if (rdata) {
+		اگر (rdata) {
 			size_t rdata_offset = 0;
 
 			rdata->rdi_length = 0;
-			for (j=0; j< rr->_rd_count; j++) {
+			برای (j=0; j< rr->rd_شمار; j++) {
 				rdata->rdi_length +=
 				    ldns_rdf_size(ldns_rr_rdf(rr, j));
 			}
 
 			rdata->rdi_data = malloc(rdata->rdi_length);
-			if (rdata->rdi_data == NULL) {
+			اگر (rdata->rdi_data == پوچ) {
 				result = ERRSET_NOMEMORY;
-				goto fail;
+				برو fail;
 			}
 
 			/* Re-create the raw DNS RDATA */
-			for (j=0; j< rr->_rd_count; j++) {
+			برای (j=0; j< rr->rd_شمار; j++) {
 				len = ldns_rdf_size(ldns_rr_rdf(rr, j));
 				memcpy(rdata->rdi_data + rdata_offset,
 				       ldns_rdf_data(ldns_rr_rdf(rr, j)), len);
@@ -235,7 +235,7 @@ getrrsetbyname(const char *hostname, unsigned int rdclass,
 	}
 
 	*res = rrset;
-	rrset = NULL; /* transferred */
+	rrset = پوچ; /* transferred */
 	result = ERRSET_SUCCESS;
 
 fail:
@@ -246,39 +246,39 @@ fail:
 	ldns_rr_list_deep_free(rrdata);
 	ldns_resolver_deep_free(ldns_res);
 
-	return result;
+	بازگشت result;
 }
 
 
-void
-freerrset(struct rrsetinfo *rrset)
+تهی
+freerrset(ساختار rrsetinfo *rrset)
 {
 	u_int16_t i;
 
-	if (rrset == NULL)
-		return;
+	اگر (rrset == پوچ)
+		بازگشت;
 
-	if (rrset->rri_rdatas) {
-		for (i = 0; i < rrset->rri_nrdatas; i++) {
-			if (rrset->rri_rdatas[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_rdatas[i].rdi_data);
+	اگر (rrset->rri_rdatas) {
+		برای (i = 0; i < rrset->rri_nrdatas; i++) {
+			اگر (rrset->rri_rdatas[i].rdi_data == پوچ)
+				بشکن;
+			آزاد(rrset->rri_rdatas[i].rdi_data);
 		}
-		free(rrset->rri_rdatas);
+		آزاد(rrset->rri_rdatas);
 	}
 
-	if (rrset->rri_sigs) {
-		for (i = 0; i < rrset->rri_nsigs; i++) {
-			if (rrset->rri_sigs[i].rdi_data == NULL)
-				break;
-			free(rrset->rri_sigs[i].rdi_data);
+	اگر (rrset->rri_sigs) {
+		برای (i = 0; i < rrset->rri_nsigs; i++) {
+			اگر (rrset->rri_sigs[i].rdi_data == پوچ)
+				بشکن;
+			آزاد(rrset->rri_sigs[i].rdi_data);
 		}
-		free(rrset->rri_sigs);
+		آزاد(rrset->rri_sigs);
 	}
 
-	if (rrset->rri_name)
-		free(rrset->rri_name);
-	free(rrset);
+	اگر (rrset->rri_name)
+		آزاد(rrset->rri_name);
+	آزاد(rrset);
 }
 
 

@@ -14,15 +14,15 @@
  * OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#if !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
+#اگر !defined(HAVE_STATVFS) || !defined(HAVE_FSTATVFS)
 
 #ifdef HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
 #endif
 
-#include <errno.h>
+#شامل <errno.h>
 
 #ifndef MNAMELEN
 # define MNAMELEN 32
@@ -33,8 +33,8 @@
 #endif
 
 #ifdef HAVE_STRUCT_STATFS
-static void
-copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
+ایستا تهی
+copy_statfs_to_statvfs(ساختار statvfs *to, ساختار statfs *from)
 {
 	to->f_bsize = from->f_bsize;
 	to->f_frsize = from->f_bsize;	/* no exact equivalent */
@@ -47,7 +47,7 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 	to->f_fsid = 0;			/* XXX fix me */
 #ifdef HAVE_STRUCT_STATFS_F_FLAGS
 	to->f_flag = from->f_flags;
-#else
+#وگرنه
 	to->f_flag = 0;
 #endif
 	to->f_namemax = MNAMELEN;
@@ -55,37 +55,37 @@ copy_statfs_to_statvfs(struct statvfs *to, struct statfs *from)
 #endif
 
 # ifndef HAVE_STATVFS
-int statvfs(const char *path, struct statvfs *buf)
+صحیح statvfs(ثابت نویسه *path, ساختار statvfs *buf)
 {
-#  if defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  اگر defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS)
+	ساختار statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (statfs(path, &fs) == -1)
-		return -1;
+	memset(&fs, 0, اندازه(fs));
+	اگر (statfs(path, &fs) == -1)
+		بازگشت -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	بازگشت 0;
+#  وگرنه
 	errno = ENOSYS;
-	return -1;
+	بازگشت -1;
 #  endif
 }
 # endif
 
 # ifndef HAVE_FSTATVFS
-int fstatvfs(int fd, struct statvfs *buf)
+صحیح fstatvfs(صحیح fd, ساختار statvfs *buf)
 {
-#  if defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
-	struct statfs fs;
+#  اگر defined(HAVE_FSTATFS) && defined(HAVE_STRUCT_STATFS)
+	ساختار statfs fs;
 
-	memset(&fs, 0, sizeof(fs));
-	if (fstatfs(fd, &fs) == -1)
-		return -1;
+	memset(&fs, 0, اندازه(fs));
+	اگر (fstatfs(fd, &fs) == -1)
+		بازگشت -1;
 	copy_statfs_to_statvfs(buf, &fs);
-	return 0;
-#  else
+	بازگشت 0;
+#  وگرنه
 	errno = ENOSYS;
-	return -1;
+	بازگشت -1;
 #  endif
 }
 # endif

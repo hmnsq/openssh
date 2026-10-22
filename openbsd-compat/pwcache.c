@@ -30,85 +30,85 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/pwcache.c */
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <sys/types.h>
+#شامل <sys/types.h>
 
-#include <grp.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#شامل <grp.h>
+#شامل <pwd.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <string.h>
 
 #define	NCACHE	64			/* power of 2 */
 #define	MASK	(NCACHE - 1)		/* bits to store with */
 
 #ifndef HAVE_USER_FROM_UID
-char *
-user_from_uid(uid_t uid, int nouser)
+نویسه *
+user_from_uid(uid_t uid, صحیح nouser)
 {
-	static struct ncache {
+	ایستا ساختار ncache {
 		uid_t	uid;
-		char	*name;
+		نویسه	*name;
 	} c_uid[NCACHE];
-	static int pwopen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct passwd *pw;
-	struct ncache *cp;
+	ایستا صحیح pwopen;
+	ایستا نویسه nbuf[15];		/* 32 bits == 10 digits */
+	ساختار passwd *pw;
+	ساختار ncache *cp;
 
 	cp = c_uid + (uid & MASK);
-	if (cp->uid != uid || cp->name == NULL) {
-		if (pwopen == 0) {
+	اگر (cp->uid != uid || cp->name == پوچ) {
+		اگر (pwopen == 0) {
 #ifdef HAVE_SETPASSENT
 			setpassent(1);
 #endif
 			pwopen = 1;
 		}
-		if ((pw = getpwuid(uid)) == NULL) {
-			if (nouser)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)uid);
+		اگر ((pw = getpwuid(uid)) == پوچ) {
+			اگر (nouser)
+				بازگشت (پوچ);
+			(تهی)snprintf(nbuf, اندازه(nbuf), "%lu", (u_long)uid);
 		}
 		cp->uid = uid;
-		if (cp->name != NULL)
-			free(cp->name);
+		اگر (cp->name != پوچ)
+			آزاد(cp->name);
 		cp->name = strdup(pw ? pw->pw_name : nbuf);
 	}
-	return (cp->name);
+	بازگشت (cp->name);
 }
 #endif
 
 #ifndef HAVE_GROUP_FROM_GID
-char *
-group_from_gid(gid_t gid, int nogroup)
+نویسه *
+group_from_gid(gid_t gid, صحیح nogroup)
 {
-	static struct ncache {
+	ایستا ساختار ncache {
 		gid_t	gid;
-		char	*name;
+		نویسه	*name;
 	} c_gid[NCACHE];
-	static int gropen;
-	static char nbuf[15];		/* 32 bits == 10 digits */
-	struct group *gr;
-	struct ncache *cp;
+	ایستا صحیح gropen;
+	ایستا نویسه nbuf[15];		/* 32 bits == 10 digits */
+	ساختار group *gr;
+	ساختار ncache *cp;
 
 	cp = c_gid + (gid & MASK);
-	if (cp->gid != gid || cp->name == NULL) {
-		if (gropen == 0) {
+	اگر (cp->gid != gid || cp->name == پوچ) {
+		اگر (gropen == 0) {
 #ifdef HAVE_SETGROUPENT
 			setgroupent(1);
 #endif
 			gropen = 1;
 		}
-		if ((gr = getgrgid(gid)) == NULL) {
-			if (nogroup)
-				return (NULL);
-			(void)snprintf(nbuf, sizeof(nbuf), "%lu", (u_long)gid);
+		اگر ((gr = getgrgid(gid)) == پوچ) {
+			اگر (nogroup)
+				بازگشت (پوچ);
+			(تهی)snprintf(nbuf, اندازه(nbuf), "%lu", (u_long)gid);
 		}
 		cp->gid = gid;
-		if (cp->name != NULL)
-			free(cp->name);
+		اگر (cp->name != پوچ)
+			آزاد(cp->name);
 		cp->name = strdup(gr ? gr->gr_name : nbuf);
 	}
-	return (cp->name);
+	بازگشت (cp->name);
 }
 #endif

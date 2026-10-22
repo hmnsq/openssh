@@ -15,8 +15,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-struct monitor;
-struct ssh_sandbox;
+ساختار monitor;
+ساختار ssh_sandbox;
 
-struct ssh_sandbox *ssh_sandbox_init(struct monitor *);
-void ssh_sandbox_child(struct ssh_sandbox *);
+ساختار ssh_sandbox *ssh_sandbox_init(ساختار monitor *);
+تهی ssh_sandbox_child(ساختار ssh_sandbox *);

@@ -17,20 +17,20 @@
 #ifndef _BSD_SIGNAL_H
 #define _BSD_SIGNAL_H
 
-#include "includes.h"
+#شامل "includes.h"
 
-#include <signal.h>
+#شامل <signal.h>
 
 #ifndef _NSIG
 # ifdef NSIG
 #  define _NSIG NSIG
-# else
+# وگرنه
 #  define _NSIG 128
 # endif
 #endif
 
-#if !defined(HAVE_STRSIGNAL)
-char *strsignal(int);
+#اگر !defined(HAVE_STRSIGNAL)
+نویسه *strsignal(صحیح);
 #endif
 
 #endif /* _BSD_SIGNAL_H */

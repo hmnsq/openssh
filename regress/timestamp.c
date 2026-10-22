@@ -22,25 +22,25 @@
  * so that they'll sort into chronological order.
  */
 
-#include <sys/time.h>
+#شامل <sys/time.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#شامل <stdio.h>
+#شامل <stdlib.h>
+#شامل <time.h>
 
-int
-main(void)
+صحیح
+اصلی(تهی)
 {
-	struct timeval tv;
-	struct tm *tm;
-	char buf[1024];
+	ساختار timeval tv;
+	ساختار tm *tm;
+	نویسه buf[1024];
 
-	if (gettimeofday(&tv, NULL) != 0)
+	اگر (gettimeofday(&tv, پوچ) != 0)
 		exit(1);
-	if ((tm = localtime(&tv.tv_sec)) == NULL)
+	اگر ((tm = localtime(&tv.tv_sec)) == پوچ)
 		exit(2);
-	if (strftime(buf, sizeof buf, "%Y%m%dT%H%M%S", tm) <= 0)
+	اگر (strftime(buf, اندازه buf, "%Y%m%dT%H%M%S", tm) <= 0)
 		exit(3);
-	printf("%s.%06d\n", buf, (int)tv.tv_usec);
+	printf("%s.%06d\n", buf, (صحیح)tv.tv_usec);
 	exit(0);
 }

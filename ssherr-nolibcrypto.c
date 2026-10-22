@@ -15,12 +15,12 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stddef.h>
+#شامل <stddef.h>
 
-#include "ssherr.h"
+#شامل "ssherr.h"
 
-const char *
-ssherr_libcrypto(void)
+ثابت نویسه *
+ssherr_libcrypto(تهی)
 {
-	return NULL;
+	بازگشت پوچ;
 }

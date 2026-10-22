@@ -24,26 +24,26 @@
 #define	SSH_PKCS11_ERR_PIN_REQUIRED		4
 #define	SSH_PKCS11_ERR_PIN_LOCKED		5
 
-struct sshkey;
+ساختار sshkey;
 
-int	pkcs11_init(int);
-void	pkcs11_terminate(void);
-int	pkcs11_add_provider(char *, char *, struct sshkey ***, char ***);
-int	pkcs11_del_provider(char *);
-int	pkcs11_sign(struct sshkey *, u_char **, size_t *,
-	    const u_char *, size_t, const char *, const char *,
-	    const char *, u_int);
-void	pkcs11_key_free(struct sshkey *);
+صحیح	pkcs11_init(صحیح);
+تهی	pkcs11_terminate(تهی);
+صحیح	pkcs11_add_provider(نویسه *, نویسه *, ساختار sshkey ***, نویسه ***);
+صحیح	pkcs11_del_provider(نویسه *);
+صحیح	pkcs11_sign(ساختار sshkey *, u_char **, size_t *,
+	    ثابت u_char *, size_t, ثابت نویسه *, ثابت نویسه *,
+	    ثابت نویسه *, u_int);
+تهی	pkcs11_کلید_free(ساختار sshkey *);
 
 #ifdef WITH_PKCS11_KEYGEN
-struct sshkey *
-	pkcs11_gakp(char *, char *, unsigned int, char *, unsigned int,
-	    unsigned int, unsigned char, uint32_t *);
-struct sshkey *
-	pkcs11_destroy_keypair(char *, char *, unsigned long, unsigned char,
+ساختار sshkey *
+	pkcs11_gakp(نویسه *, نویسه *, unsigned صحیح, نویسه *, unsigned صحیح,
+	    unsigned صحیح, unsigned نویسه, uint32_t *);
+ساختار sshkey *
+	pkcs11_destroy_keypair(نویسه *, نویسه *, unsigned long, unsigned نویسه,
 	    uint32_t *);
 #endif
 
 /* Only available in ssh-pkcs11-client.c */
-int pkcs11_make_cert(const struct sshkey *,
-    const struct sshkey *, struct sshkey **);
+صحیح pkcs11_make_cert(ثابت ساختار sshkey *,
+    ثابت ساختار sshkey *, ساختار sshkey **);

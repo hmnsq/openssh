@@ -35,30 +35,30 @@
 #undef ERROR
 
 /* Avoid including windows headers. */
-typedef void *HANDLE;
-#define INVALID_HANDLE_VALUE ((HANDLE) -1)
+تعریفنوع تهی *HANDLE;
+#define INVALID_HANDLE_مقدار ((HANDLE) -1)
 #define DNLEN 16
 #define UNLEN 256
 
 /* Cygwin functions for which declarations are only available when including
    windows headers, so we have to define them here explicitly. */
-extern HANDLE cygwin_logon_user (const struct passwd *, const char *);
-extern void cygwin_set_impersonation_token (const HANDLE);
+بیرونی HANDLE cygwin_logon_user (ثابت ساختار passwd *, ثابت نویسه *);
+بیرونی تهی cygwin_set_impersonation_token (ثابت HANDLE);
 
-#include <sys/cygwin.h>
-#include <io.h>
+#شامل <sys/cygwin.h>
+#شامل <io.h>
 
 #define CYGWIN_SSH_PRIVSEP_USER (cygwin_ssh_privsep_user())
-const char *cygwin_ssh_privsep_user();
+ثابت نویسه *cygwin_ssh_privsep_user();
 
-int binary_open(const char *, int , ...);
-int check_ntsec(const char *);
-char **fetch_windows_environment(void);
-void free_windows_environment(char **);
-int cygwin_ug_match_pattern_list(const char *, const char *);
+صحیح دودویی_open(ثابت نویسه *, صحیح , ...);
+صحیح check_ntsec(ثابت نویسه *);
+نویسه **fetch_windows_environment(تهی);
+تهی free_windows_environment(نویسه **);
+صحیح cygwin_ug_match_pattern_list(ثابت نویسه *, ثابت نویسه *);
 
-#ifndef NO_BINARY_OPEN
-#define open binary_open
+#ifndef NO_دودویی_OPEN
+#define open دودویی_open
 #endif
 
 #endif /* HAVE_CYGWIN */

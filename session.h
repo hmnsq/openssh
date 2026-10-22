@@ -27,58 +27,58 @@
 #define SESSION_H
 
 #define TTYSZ 64
-typedef struct Session Session;
-struct Session {
-	int	used;
-	int	self;
-	int	next_unused;
-	struct passwd *pw;
+تعریفنوع ساختار Session Session;
+ساختار Session {
+	صحیح	used;
+	صحیح	self;
+	صحیح	next_unused;
+	ساختار passwd *pw;
 	Authctxt *authctxt;
 	pid_t	pid;
-	int	forced;
+	صحیح	forced;
 
 	/* tty */
-	char	*term;
-	int	ptyfd, ttyfd, ptymaster;
+	نویسه	*term;
+	صحیح	ptyfd, ttyfd, ptymaster;
 	u_int	row, col, xpixel, ypixel;
-	char	tty[TTYSZ];
+	نویسه	tty[TTYSZ];
 
 	/* X11 */
-	u_int	display_number;
-	char	*display;
+	u_int	display_عدد;
+	نویسه	*display;
 	u_int	screen;
-	char	*auth_display;
-	char	*auth_proto;
-	char	*auth_data;
-	int	single_connection;
+	نویسه	*auth_display;
+	نویسه	*auth_proto;
+	نویسه	*auth_data;
+	صحیح	single_connection;
 
-	int	chanid;
-	int	*x11_chanids;
-	int	is_subsystem;
-	char	*subsys;
-	u_int	num_env;
-	struct {
-		char	*name;
-		char	*val;
+	صحیح	chanid;
+	صحیح	*x11_chanids;
+	صحیح	is_subsystem;
+	نویسه	*subsys;
+	u_int	رقم_env;
+	ساختار {
+		نویسه	*name;
+		نویسه	*val;
 	} *env;
 };
 
-void	 do_authenticated(struct ssh *, Authctxt *);
-void	 do_cleanup(struct ssh *, Authctxt *);
+تهی	 do_authenticated(ساختار ssh *, Authctxt *);
+تهی	 do_cleanup(ساختار ssh *, Authctxt *);
 
-int	 session_open(Authctxt *, int);
-void	 session_unused(int);
-int	 session_input_channel_req(struct ssh *, Channel *, const char *);
-void	 session_close_by_pid(struct ssh *ssh, pid_t, int);
-void	 session_close_by_channel(struct ssh *, int, int, void *);
-void	 session_destroy_all(struct ssh *, void (*)(Session *));
-void	 session_pty_cleanup2(Session *);
+صحیح	 session_open(Authctxt *, صحیح);
+تهی	 session_unused(صحیح);
+صحیح	 session_درون_داد_channel_req(ساختار ssh *, Channel *, ثابت نویسه *);
+تهی	 session_close_by_pid(ساختار ssh *ssh, pid_t, صحیح);
+تهی	 session_close_by_channel(ساختار ssh *, صحیح, صحیح, تهی *);
+تهی	 session_destroy_all(ساختار ssh *, تهی (*)(Session *));
+تهی	 session_pty_cleanup2(Session *);
 
-Session	*session_new(void);
-Session	*session_by_tty(char *);
-void	 session_close(struct ssh *, Session *);
-void	 do_setusercontext(struct passwd *);
+Session	*session_new(تهی);
+Session	*session_by_tty(نویسه *);
+تهی	 session_close(ساختار ssh *, Session *);
+تهی	 do_setusercontext(ساختار passwd *);
 
-const char	*session_get_remote_name_or_ip(struct ssh *, u_int, int);
+ثابت نویسه	*session_get_remote_name_or_ip(ساختار ssh *, u_int, صحیح);
 
 #endif

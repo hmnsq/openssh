@@ -23,6 +23,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-void	start_progress_meter(const char *, off_t, off_t *);
-void	refresh_progress_meter(int);
-void	stop_progress_meter(void);
+تهی	start_progress_meter(ثابت نویسه *, off_t, off_t *);
+تهی	refresh_progress_meter(صحیح);
+تهی	stop_progress_meter(تهی);

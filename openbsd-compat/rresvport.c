@@ -31,78 +31,78 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/rresvport.c */
 
-#include "includes.h"
+#شامل "includes.h"
 
 #ifndef HAVE_RRESVPORT_AF
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#شامل <sys/types.h>
+#شامل <sys/socket.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#شامل <netinet/in.h>
+#شامل <arpa/inet.h>
 
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#شامل <errno.h>
+#شامل <stdlib.h>
+#شامل <string.h>
+#شامل <unistd.h>
 
-#if 0
-int
-rresvport(int *alport)
+#اگر 0
+صحیح
+rresvport(صحیح *alport)
 {
-	return rresvport_af(alport, AF_INET);
+	بازگشت rresvport_af(alport, AF_INET);
 }
 #endif
 
-int
-rresvport_af(int *alport, sa_family_t af)
+صحیح
+rresvport_af(صحیح *alport, sa_family_t af)
 {
-	struct sockaddr_storage ss;
-	struct sockaddr *sa;
+	ساختار sockaddr_storage ss;
+	ساختار sockaddr *sa;
 	u_int16_t *portp;
-	int s;
+	صحیح s;
 	socklen_t salen;
 
-	memset(&ss, '\0', sizeof ss);
-	sa = (struct sockaddr *)&ss;
+	memset(&ss, '\0', اندازه ss);
+	sa = (ساختار sockaddr *)&ss;
 
-	switch (af) {
-	case AF_INET:
-		salen = sizeof(struct sockaddr_in);
-		portp = &((struct sockaddr_in *)sa)->sin_port;
-		break;
-	case AF_INET6:
-		salen = sizeof(struct sockaddr_in6);
-		portp = &((struct sockaddr_in6 *)sa)->sin6_port;
-		break;
-	default:
+	انتخاب (af) {
+	حالت AF_INET:
+		salen = اندازه(ساختار sockaddr_in);
+		portp = &((ساختار sockaddr_in *)sa)->sin_port;
+		بشکن;
+	حالت AF_INET6:
+		salen = اندازه(ساختار sockaddr_in6);
+		portp = &((ساختار sockaddr_in6 *)sa)->sin6_port;
+		بشکن;
+	پیشفرض:
 		errno = EPFNOSUPPORT;
-		return (-1);
+		بازگشت (-1);
 	}
 	sa->sa_family = af;
 	
 	s = socket(af, SOCK_STREAM, 0);
-	if (s < 0)
-		return (-1);
+	اگر (s < 0)
+		بازگشت (-1);
 
 	*portp = htons(*alport);
-	if (*alport < IPPORT_RESERVED - 1) {
-		if (bind(s, sa, salen) >= 0)
-			return (s);
-		if (errno != EADDRINUSE) {
-			(void)close(s);
-			return (-1);
+	اگر (*alport < IPPORT_RESERVED - 1) {
+		اگر (bind(s, sa, salen) >= 0)
+			بازگشت (s);
+		اگر (errno != EADDRINUSE) {
+			(تهی)close(s);
+			بازگشت (-1);
 		}
 	}
 
 	*portp = 0;
 	sa->sa_family = af;
-	if (bindresvport_sa(s, sa) == -1) {
-		(void)close(s);
-		return (-1);
+	اگر (bindresvport_sa(s, sa) == -1) {
+		(تهی)close(s);
+		بازگشت (-1);
 	}
 	*alport = ntohs(*portp);
-	return (s);
+	بازگشت (s);
 }
 
 #endif /* HAVE_RRESVPORT_AF */
