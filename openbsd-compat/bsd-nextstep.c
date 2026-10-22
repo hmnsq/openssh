@@ -30,74 +30,74 @@
 #include "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(ចំនួនគត់ *status)
 {
-	union wait statusp;
+	sa_ngha wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	ប្រសិនបើ (status)
+		*status = (ចំនួនគត់) statusp.w_status;
 
-	return (wait_pid);
+	ត្រឡប់ (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+ចំនួនគត់
+tcgetattr(ចំនួនគត់ fd, sa_nracanaa termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	ត្រឡប់ (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+ចំនួនគត់
+tcsetattr(ចំនួនគត់ fd, ចំនួនគត់ opt, const sa_nracanaa termios *t)
 {
-	struct termios localterm;
+	sa_nracanaa termios localterm;
 
-	if (opt & TCSASOFT) {
+	ប្រសិនបើ (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
 	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
+	pak_sa TCSANOW:
+		ត្រឡប់ (ioctl(fd, TIOCSETA, t));
+	pak_sa TCSADRAIN:
+		ត្រឡប់ (ioctl(fd, TIOCSETAW, t));
+	pak_sa TCSAFLUSH:
+		ត្រឡប់ (ioctl(fd, TIOCSETAF, t));
 	default:
 		errno = EINVAL;
-		return (-1);
+		ត្រឡប់ (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+ចំនួនគត់ tcsetpgrp(ចំនួនគត់ fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	ត្រឡប់ (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ospeed);
+	ត្រឡប់ (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(const sa_nracanaa termios *t)
 {
-	return (t->c_ispeed);
+	ត្រឡប់ (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+ចំនួនគត់
+cfsetospeed(sa_nracanaa termios *t,ចំនួនគត់ speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	ត្រឡប់ (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+ចំនួនគត់
+cfsetispeed(sa_nracanaa termios *t, ចំនួនគត់ speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	ត្រឡប់ (0);
 }
 #endif /* HAVE_NEXT */

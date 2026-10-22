@@ -24,32 +24,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-struct sshkey;
+sa_nracanaa sshkey;
 
-typedef struct Sensitive Sensitive;
-struct Sensitive {
-	struct sshkey	**keys;
-	int		nkeys;
+typedef sa_nracanaa Sensitive Sensitive;
+sa_nracanaa Sensitive {
+	sa_nracanaa sshkey	**keys;
+	ចំនួនគត់		nkeys;
 };
 
-struct ssh_conn_info {
-	char *conn_hash_hex;
-	char *shorthost;
-	char *uidstr;
-	char *keyalias;
-	char *thishost;
-	char *host_arg;
-	char *portstr;
-	char *remhost;
-	char *remuser;
-	char *homedir;
-	char *locuser;
-	char *jmphost;
+sa_nracanaa ssh_conn_info {
+	var_na *conn_hash_hex;
+	var_na *shorthost;
+	var_na *uidstr;
+	var_na *keyalias;
+	var_na *thishost;
+	var_na *host_arg;
+	var_na *portstr;
+	var_na *remhost;
+	var_na *remuser;
+	var_na *homedir;
+	var_na *locuser;
+	var_na *jmphost;
 };
 
-struct addrinfo;
-struct ssh;
-struct hostkeys;
+sa_nracanaa addrinfo;
+sa_nracanaa ssh;
+sa_nracanaa hostkeys;
 
 /* default argument for client percent expansions, minus remote user */
 #define DEFAULT_CLIENT_PERCENT_EXPAND_ARGS_NOUSER(conn_info) \
@@ -70,39 +70,39 @@ struct hostkeys;
 	"C", conn_info->conn_hash_hex, \
 	"r", conn_info->remuser
 
-int	 ssh_connect(struct ssh *, const char *, const char *,
-	    struct addrinfo *, struct sockaddr_storage *, u_short,
-	    int, int *, int);
+ចំនួនគត់	 ssh_connect(sa_nracanaa ssh *, const var_na *, const var_na *,
+	    sa_nracanaa addrinfo *, sa_nracanaa sockaddr_storage *, u_short,
+	    ចំនួនគត់, ចំនួនគត់ *, ចំនួនគត់);
 void	 ssh_kill_proxy_command(void);
 
-void	 ssh_login(struct ssh *, Sensitive *, const char *,
-    struct sockaddr_storage *, u_short, struct passwd *, int,
-    const struct ssh_conn_info *);
+void	 ssh_login(sa_nracanaa ssh *, Sensitive *, const var_na *,
+    sa_nracanaa sockaddr_storage *, u_short, sa_nracanaa passwd *, ចំនួនគត់,
+    const sa_nracanaa ssh_conn_info *);
 
-int	 verify_host_key(char *, struct sockaddr *, struct sshkey *,
-    const struct ssh_conn_info *);
+ចំនួនគត់	 verify_host_key(var_na *, sa_nracanaa sockaddr *, sa_nracanaa sshkey *,
+    const sa_nracanaa ssh_conn_info *);
 
-void	 get_hostfile_hostname_ipaddr(char *, struct sockaddr *, u_short,
-    char **, char **);
+void	 get_hostfile_hostname_ipaddr(var_na *, sa_nracanaa sockaddr *, u_short,
+    var_na **, var_na **);
 
-void	 ssh_kex2(struct ssh *ssh, char *, struct sockaddr_storage *, u_short,
-    const struct ssh_conn_info *);
+void	 ssh_kex2(sa_nracanaa ssh *ssh, var_na *, sa_nracanaa sockaddr_storage *, u_short,
+    const sa_nracanaa ssh_conn_info *);
 
-void	 ssh_userauth2(struct ssh *ssh, const char *, const char *,
-    char *, Sensitive *);
+void	 ssh_userauth2(sa_nracanaa ssh *ssh, const var_na *, const var_na *,
+    var_na *, Sensitive *);
 
-void	 pubkey_dump(struct ssh *);
+void	 pubkey_dump(sa_nracanaa ssh *);
 
-int	 ssh_local_cmd(const char *);
+ចំនួនគត់	 ssh_local_cmd(const var_na *);
 
-void	 maybe_add_key_to_agent(const char *, struct sshkey *,
-    const char *, const char *);
+void	 maybe_add_key_to_agent(const var_na *, sa_nracanaa sshkey *,
+    const var_na *, const var_na *);
 
-void	 load_hostkeys_command(struct hostkeys *, const char *,
-    const char *, const struct ssh_conn_info *,
-    const struct sshkey *, const char *);
+void	 load_hostkeys_command(sa_nracanaa hostkeys *, const var_na *,
+    const var_na *, const sa_nracanaa ssh_conn_info *,
+    const sa_nracanaa sshkey *, const var_na *);
 
-int hostkey_accepted_by_hostkeyalgs(const struct sshkey *);
+ចំនួនគត់ hostkey_accepted_by_hostkeyalgs(const sa_nracanaa sshkey *);
 
-void ssh_conn_info_free(struct ssh_conn_info *);
-struct ssh_conn_info *ssh_conn_info_dup(const struct ssh_conn_info *);
+void ssh_conn_info_free(sa_nracanaa ssh_conn_info *);
+sa_nracanaa ssh_conn_info *ssh_conn_info_dup(const sa_nracanaa ssh_conn_info *);

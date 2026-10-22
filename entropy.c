@@ -61,37 +61,37 @@
 void
 seed_rng(void)
 {
-	unsigned char buf[RANDOM_SEED_SIZE];
+	unsigned var_na buf[RANDOM_SEED_SIZE];
 
 	/* Initialise libcrypto */
-	if (ssh_libcrypto_init() != 1)
+	ប្រសិនបើ (ssh_libcrypto_init() != 1)
 		fatal("libcrypto failed to initialize.");
 
-	if (!ssh_compatible_openssl(OPENSSL_VERSION_NUMBER,
+	ប្រសិនបើ (!ssh_compatible_openssl(OPENSSL_VERSION_NUMBER,
 	    OpenSSL_version_num()))
 		fatal("OpenSSL version mismatch. Built against %lx, you "
 		    "have %lx", (u_long)OPENSSL_VERSION_NUMBER,
 		    OpenSSL_version_num());
 
 #ifndef OPENSSL_PRNG_ONLY
-	if (RAND_status() == 1)
+	ប្រសិនបើ (RAND_status() == 1)
 		debug3("RNG is ready, skipping seeding");
-	else {
-		if (seed_from_prngd(buf, sizeof(buf)) == -1)
+	បើមិនដូច្នេះ {
+		ប្រសិនបើ (seed_from_prngd(buf, parimaa_na(buf)) == -1)
 			fatal("Could not obtain seed from PRNGd");
-		RAND_add(buf, sizeof(buf), sizeof(buf));
+		RAND_add(buf, parimaa_na(buf), parimaa_na(buf));
 	}
 #endif /* OPENSSL_PRNG_ONLY */
 
-	if (RAND_status() != 1)
+	ប្រសិនបើ (RAND_status() != 1)
 		fatal("PRNG is not seeded");
 
 	/* Ensure arc4random() is primed */
-	arc4random_buf(buf, sizeof(buf));
-	explicit_bzero(buf, sizeof(buf));
+	arc4random_buf(buf, parimaa_na(buf));
+	explicit_bzero(buf, parimaa_na(buf));
 }
 
-#else /* WITH_OPENSSL */
+#បើមិនដូច្នេះ /* WITH_OPENSSL */
 
 #include <stdlib.h>
 #include <string.h>
@@ -100,11 +100,11 @@ seed_rng(void)
 void
 seed_rng(void)
 {
-	unsigned char buf[RANDOM_SEED_SIZE];
+	unsigned var_na buf[RANDOM_SEED_SIZE];
 
 	/* Ensure arc4random() is primed */
-	arc4random_buf(buf, sizeof(buf));
-	explicit_bzero(buf, sizeof(buf));
+	arc4random_buf(buf, parimaa_na(buf));
+	explicit_bzero(buf, parimaa_na(buf));
 }
 
 #endif /* WITH_OPENSSL */
@@ -118,14 +118,14 @@ reseed_prngs(void)
 	RAND_poll();
 #endif
 	arc4random_stir(); /* noop on recent arc4random() implementations */
-	arc4random_buf(rnd, sizeof(rnd)); /* let arc4random notice PID change */
+	arc4random_buf(rnd, parimaa_na(rnd)); /* let arc4random notice PID change */
 
 #ifdef WITH_OPENSSL
-	RAND_seed(rnd, sizeof(rnd));
+	RAND_seed(rnd, parimaa_na(rnd));
 	/* give libcrypto a chance to notice the PID change */
-	if ((RAND_bytes((u_char *)rnd, 1)) != 1)
+	ប្រសិនបើ ((RAND_bytes((u_char *)rnd, 1)) != 1)
 		fatal_f("RAND_bytes failed");
 #endif
 
-	explicit_bzero(rnd, sizeof(rnd));
+	explicit_bzero(rnd, parimaa_na(rnd));
 }

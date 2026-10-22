@@ -37,31 +37,31 @@
 
 #include <termios.h>
 
-struct ssh;
+sa_nracanaa ssh;
 
 /* Client side main loop for the interactive session. */
-int	 client_loop(struct ssh *, int, int, int);
-int	 client_x11_get_proto(struct ssh *, const char *, const char *,
-	    u_int, u_int, char **, char **);
-void	 client_session2_setup(struct ssh *, int, int, int,
-	    const char *, struct termios *, int, struct sshbuf *, char **);
-char	 *client_request_tun_fwd(struct ssh *, int, int, int,
+ចំនួនគត់	 client_loop(sa_nracanaa ssh *, ចំនួនគត់, ចំនួនគត់, ចំនួនគត់);
+ចំនួនគត់	 client_x11_get_proto(sa_nracanaa ssh *, const var_na *, const var_na *,
+	    u_int, u_int, var_na **, var_na **);
+void	 client_session2_setup(sa_nracanaa ssh *, ចំនួនគត់, ចំនួនគត់, ចំនួនគត់,
+	    const var_na *, sa_nracanaa termios *, ចំនួនគត់, sa_nracanaa sshbuf *, var_na **);
+var_na	 *client_request_tun_fwd(sa_nracanaa ssh *, ចំនួនគត់, ចំនួនគត់, ចំនួនគត់,
     channel_open_fn *, void *);
 void	 client_stop_mux(void);
 
 /* Escape filter for protocol 2 sessions */
-void	*client_new_escape_filter_ctx(int);
-void	 client_filter_cleanup(struct ssh *, int, void *);
-int	 client_simple_escape_filter(struct ssh *, Channel *, char *, int);
+void	*client_new_escape_filter_ctx(ចំនួនគត់);
+void	 client_filter_cleanup(sa_nracanaa ssh *, ចំនួនគត់, void *);
+ចំនួនគត់	 client_simple_escape_filter(sa_nracanaa ssh *, Channel *, var_na *, ចំនួនគត់);
 
 /* Global request confirmation callbacks */
-typedef void global_confirm_cb(struct ssh *, int, uint32_t, void *);
+typedef void global_confirm_cb(sa_nracanaa ssh *, ចំនួនគត់, uint32_t, void *);
 void	 client_register_global_confirm(global_confirm_cb *, void *);
 
 /* Channel request confirmation callbacks */
-enum confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
-void client_expect_confirm(struct ssh *, int, const char *,
-    enum confirm_action);
+ga_nanaa confirm_action { CONFIRM_WARN = 0, CONFIRM_CLOSE, CONFIRM_TTY };
+void client_expect_confirm(sa_nracanaa ssh *, ចំនួនគត់, const var_na *,
+    ga_nanaa confirm_action);
 
 /* Multiplexing protocol version */
 #define SSHMUX_VER			4
@@ -78,8 +78,8 @@ void client_expect_confirm(struct ssh *, int, const char *,
 #define SSHMUX_COMMAND_CONNINFO		9	/* Show connection information */
 #define SSHMUX_COMMAND_CHANINFO		10	/* Show channels information */
 
-void	muxserver_listen(struct ssh *);
-int	muxclient(const char *);
-void	mux_exit_message(struct ssh *, Channel *, int);
-void	mux_tty_alloc_failed(struct ssh *ssh, Channel *);
+void	muxserver_listen(sa_nracanaa ssh *);
+ចំនួនគត់	muxclient(const var_na *);
+void	mux_exit_message(sa_nracanaa ssh *, Channel *, ចំនួនគត់);
+void	mux_tty_alloc_failed(sa_nracanaa ssh *ssh, Channel *);
 

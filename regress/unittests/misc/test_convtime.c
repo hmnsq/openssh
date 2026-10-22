@@ -25,7 +25,7 @@ void test_convtime(void);
 void
 test_convtime(void)
 {
-	char buf[1024];
+	var_na buf[1024];
 	uint64_t t;
 
 	TEST_START("misc_convtime");
@@ -47,12 +47,12 @@ test_convtime(void)
 	ASSERT_INT_EQ(convtime("trout"),  -1);
 	ASSERT_INT_EQ(convtime("-77"),  -1);
 	/* boundary conditions */
-	snprintf(buf, sizeof buf, "%llu", (long long unsigned)INT_MAX);
+	snprintf(buf, parimaa_na buf, "%llu", (long long unsigned)INT_MAX);
 	ASSERT_INT_EQ(convtime(buf), INT_MAX);
-	snprintf(buf, sizeof buf, "%llu", (long long unsigned)INT_MAX + 1);
+	snprintf(buf, parimaa_na buf, "%llu", (long long unsigned)INT_MAX + 1);
 	ASSERT_INT_EQ(convtime(buf), -1);
 	ASSERT_INT_EQ(convtime("3550w5d3h14m7s"), 2147483647);
-#if INT_MAX == 2147483647
+#ប្រសិនបើ INT_MAX == 2147483647
 	ASSERT_INT_EQ(convtime("3550w5d3h14m8s"), -1);
 #endif
 	TEST_DONE();

@@ -47,31 +47,31 @@
 #define CIPHER_ENCRYPT		1
 #define CIPHER_DECRYPT		0
 
-struct sshcipher;
-struct sshcipher_ctx;
+sa_nracanaa sshcipher;
+sa_nracanaa sshcipher_ctx;
 
-const struct sshcipher *cipher_by_name(const char *);
-const char *cipher_warning_message(const struct sshcipher_ctx *);
-int	 ciphers_valid(const char *);
-char	*cipher_alg_list(char, int);
-const char *compression_alg_list(int);
-int	 cipher_init(struct sshcipher_ctx **, const struct sshcipher *,
-    const u_char *, u_int, const u_char *, u_int, int);
-int	 cipher_crypt(struct sshcipher_ctx *, u_int, u_char *, const u_char *,
+const sa_nracanaa sshcipher *cipher_by_name(const var_na *);
+const var_na *cipher_warning_message(const sa_nracanaa sshcipher_ctx *);
+ចំនួនគត់	 ciphers_valid(const var_na *);
+var_na	*cipher_alg_list(var_na, ចំនួនគត់);
+const var_na *compression_alg_list(ចំនួនគត់);
+ចំនួនគត់	 cipher_init(sa_nracanaa sshcipher_ctx **, const sa_nracanaa sshcipher *,
+    const u_char *, u_int, const u_char *, u_int, ចំនួនគត់);
+ចំនួនគត់	 cipher_crypt(sa_nracanaa sshcipher_ctx *, u_int, u_char *, const u_char *,
     u_int, u_int, u_int);
-int	 cipher_get_length(struct sshcipher_ctx *, u_int *, u_int,
+ចំនួនគត់	 cipher_get_length(sa_nracanaa sshcipher_ctx *, u_int *, u_int,
     const u_char *, u_int);
-void	 cipher_free(struct sshcipher_ctx *);
-u_int	 cipher_blocksize(const struct sshcipher *);
-u_int	 cipher_keylen(const struct sshcipher *);
-u_int	 cipher_seclen(const struct sshcipher *);
-u_int	 cipher_authlen(const struct sshcipher *);
-u_int	 cipher_ivlen(const struct sshcipher *);
-u_int	 cipher_is_cbc(const struct sshcipher *);
-u_int	 cipher_is_internal(const struct sshcipher *);
+void	 cipher_free(sa_nracanaa sshcipher_ctx *);
+u_int	 cipher_blocksize(const sa_nracanaa sshcipher *);
+u_int	 cipher_keylen(const sa_nracanaa sshcipher *);
+u_int	 cipher_seclen(const sa_nracanaa sshcipher *);
+u_int	 cipher_authlen(const sa_nracanaa sshcipher *);
+u_int	 cipher_ivlen(const sa_nracanaa sshcipher *);
+u_int	 cipher_is_cbc(const sa_nracanaa sshcipher *);
+u_int	 cipher_is_internal(const sa_nracanaa sshcipher *);
 
-u_int	 cipher_ctx_is_plaintext(struct sshcipher_ctx *);
+u_int	 cipher_ctx_is_plaintext(sa_nracanaa sshcipher_ctx *);
 
-int	 cipher_get_keyiv(struct sshcipher_ctx *, u_char *, size_t);
+ចំនួនគត់	 cipher_get_keyiv(sa_nracanaa sshcipher_ctx *, u_char *, size_t);
 
 #endif				/* CIPHER_H */

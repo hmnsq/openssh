@@ -79,35 +79,35 @@
 #include "ssherr.h"
 
 /* Imports */
-extern struct monitor *pmonitor;
-extern struct sshbuf *loginmsg;
+extern sa_nracanaa monitor *pmonitor;
+extern sa_nracanaa sshbuf *loginmsg;
 extern ServerOptions options;
 
 void
-mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx)
+mm_log_handler(LogLevel level, ចំនួនគត់ forced, const var_na *msg, void *ctx)
 {
-	struct sshbuf *log_msg;
-	struct monitor *mon = (struct monitor *)ctx;
-	int r;
+	sa_nracanaa sshbuf *log_msg;
+	sa_nracanaa monitor *mon = (sa_nracanaa monitor *)ctx;
+	ចំនួនគត់ r;
 	size_t len;
 
-	if (mon->m_log_sendfd == -1)
+	ប្រសិនបើ (mon->m_log_sendfd == -1)
 		fatal_f("no log channel");
 
-	if ((log_msg = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((log_msg = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
-	if ((r = sshbuf_put_u32(log_msg, 0)) != 0 || /* length; filled below */
+	ប្រសិនបើ ((r = sshbuf_put_u32(log_msg, 0)) != 0 || /* length; filled below */
 	    (r = sshbuf_put_u32(log_msg, level)) != 0 ||
 	    (r = sshbuf_put_u32(log_msg, forced)) != 0 ||
 	    (r = sshbuf_put_cstring(log_msg, msg)) != 0)
 		fatal_fr(r, "assemble");
-	if ((len = sshbuf_len(log_msg)) < 4 || len > 0xffffffff)
+	ប្រសិនបើ ((len = sshbuf_len(log_msg)) < 4 || len > 0xffffffff)
 		fatal_f("bad length %zu", len);
 	POKE_U32(sshbuf_mutable_ptr(log_msg), len - 4);
-	if (atomicio(vwrite, mon->m_log_sendfd,
+	ប្រសិនបើ (atomicio(vwrite, mon->m_log_sendfd,
 	    sshbuf_mutable_ptr(log_msg), len) != len) {
-		if (errno == EPIPE) {
+		ប្រសិនបើ (errno == EPIPE) {
 			debug_f("write: %s", strerror(errno));
 			cleanup_exit(255);
 		}
@@ -119,28 +119,28 @@ mm_log_handler(LogLevel level, int forced, const char *msg, void *ctx)
 static void
 mm_reap(void)
 {
-	int status = -1;
+	ចំនួនគត់ status = -1;
 
-	if (!mm_is_monitor())
-		return;
-	while (waitpid(pmonitor->m_pid, &status, 0) == -1) {
-		if (errno == EINTR)
+	ប្រសិនបើ (!mm_is_monitor())
+		ត្រឡប់;
+	ខណៈពេល (waitpid(pmonitor->m_pid, &status, 0) == -1) {
+		ប្រសិនបើ (errno == EINTR)
 			continue;
 		pmonitor->m_pid = -1;
 		fatal_f("waitpid: %s", strerror(errno));
 	}
-	if (WIFEXITED(status)) {
-		if (WEXITSTATUS(status) != 0) {
+	ប្រសិនបើ (WIFEXITED(status)) {
+		ប្រសិនបើ (WEXITSTATUS(status) != 0) {
 			debug_f("child exited with status %d",
 			    WEXITSTATUS(status));
 			cleanup_exit(255);
 		}
-	} else if (WIFSIGNALED(status)) {
+	} បើមិនដូច្នេះ ប្រសិនបើ (WIFSIGNALED(status)) {
 		error_f("child terminated by signal %d",
 		    WTERMSIG(status));
 		cleanup_exit(signal_is_crash(WTERMSIG(status)) ?
 		    EXIT_CHILD_CRASH : 255);
-	} else {
+	} បើមិនដូច្នេះ {
 		error_f("child terminated abnormally (status=0x%x)",
 		    status);
 		cleanup_exit(EXIT_CHILD_CRASH);
@@ -148,20 +148,20 @@ mm_reap(void)
 }
 
 void
-mm_request_send(int sock, enum monitor_reqtype type, struct sshbuf *m)
+mm_request_send(ចំនួនគត់ sock, ga_nanaa monitor_reqtype type, sa_nracanaa sshbuf *m)
 {
 	size_t mlen = sshbuf_len(m);
 	u_char buf[5];
 
 	debug3_f("entering, type %d", type);
 
-	if (mlen >= MONITOR_MAX_MSGLEN)
+	ប្រសិនបើ (mlen >= MONITOR_MAX_MSGLEN)
 		fatal_f("bad length %zu", mlen);
 	POKE_U32(buf, mlen + 1);
 	buf[4] = (u_char) type;		/* 1st byte of payload is mesg-type */
-	if (atomicio(vwrite, sock, buf, sizeof(buf)) != sizeof(buf) ||
+	ប្រសិនបើ (atomicio(vwrite, sock, buf, parimaa_na(buf)) != parimaa_na(buf) ||
 	    atomicio(vwrite, sock, sshbuf_mutable_ptr(m), mlen) != mlen) {
-		if (errno == EPIPE) {
+		ប្រសិនបើ (errno == EPIPE) {
 			debug3_f("monitor fd closed");
 			mm_reap();
 			cleanup_exit(255);
@@ -171,16 +171,16 @@ mm_request_send(int sock, enum monitor_reqtype type, struct sshbuf *m)
 }
 
 void
-mm_request_receive(int sock, struct sshbuf *m)
+mm_request_receive(ចំនួនគត់ sock, sa_nracanaa sshbuf *m)
 {
 	u_char buf[4], *p = NULL;
 	u_int msg_len;
-	int oerrno, r;
+	ចំនួនគត់ oerrno, r;
 
 	debug3_f("entering");
 
-	if (atomicio(read, sock, buf, sizeof(buf)) != sizeof(buf)) {
-		if (errno == EPIPE) {
+	ប្រសិនបើ (atomicio(read, sock, buf, parimaa_na(buf)) != parimaa_na(buf)) {
+		ប្រសិនបើ (errno == EPIPE) {
 			debug3_f("monitor fd closed");
 			mm_reap();
 			cleanup_exit(255);
@@ -188,47 +188,47 @@ mm_request_receive(int sock, struct sshbuf *m)
 		fatal_f("read: %s", strerror(errno));
 	}
 	msg_len = PEEK_U32(buf);
-	if (msg_len > MONITOR_MAX_MSGLEN)
+	ប្រសិនបើ (msg_len > MONITOR_MAX_MSGLEN)
 		fatal_f("read: bad msg_len %d", msg_len);
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
+	ប្រសិនបើ ((r = sshbuf_reserve(m, msg_len, &p)) != 0)
 		fatal_fr(r, "reserve");
-	if (atomicio(read, sock, p, msg_len) != msg_len) {
+	ប្រសិនបើ (atomicio(read, sock, p, msg_len) != msg_len) {
 		oerrno = errno;
 		error_f("read: %s", strerror(errno));
-		if (oerrno == EPIPE)
+		ប្រសិនបើ (oerrno == EPIPE)
 			mm_reap();
 		cleanup_exit(255);
 	}
 }
 
 void
-mm_request_receive_expect(int sock, enum monitor_reqtype type, struct sshbuf *m)
+mm_request_receive_expect(ចំនួនគត់ sock, ga_nanaa monitor_reqtype type, sa_nracanaa sshbuf *m)
 {
 	u_char rtype;
-	int r;
+	ចំនួនគត់ r;
 
 	debug3_f("entering, type %d", type);
 
 	mm_request_receive(sock, m);
-	if ((r = sshbuf_get_u8(m, &rtype)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u8(m, &rtype)) != 0)
 		fatal_fr(r, "parse");
-	if (rtype != type)
+	ប្រសិនបើ (rtype != type)
 		fatal_f("read: rtype %d != type %d", rtype, type);
 }
 
 #ifdef WITH_OPENSSL
 DH *
-mm_choose_dh(int min, int nbits, int max)
+mm_choose_dh(ចំនួនគត់ min, ចំនួនគត់ nbits, ចំនួនគត់ max)
 {
 	BIGNUM *p, *g;
-	int r;
+	ចំនួនគត់ r;
 	u_char success = 0;
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, min)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_put_u32(m, min)) != 0 ||
 	    (r = sshbuf_put_u32(m, nbits)) != 0 ||
 	    (r = sshbuf_put_u32(m, max)) != 0)
 		fatal_fr(r, "assemble");
@@ -238,49 +238,49 @@ mm_choose_dh(int min, int nbits, int max)
 	debug3_f("waiting for MONITOR_ANS_MODULI");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_MODULI, m);
 
-	if ((r = sshbuf_get_u8(m, &success)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u8(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0)
+	ប្រសិនបើ (success == 0)
 		fatal_f("MONITOR_ANS_MODULI failed");
 
-	if ((r = sshbuf_get_bignum2(m, &p)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_get_bignum2(m, &p)) != 0 ||
 	    (r = sshbuf_get_bignum2(m, &g)) != 0)
 		fatal_fr(r, "parse group");
 
 	debug3_f("remaining %zu", sshbuf_len(m));
 	sshbuf_free(m);
 
-	return (dh_new_group(g, p));
+	ត្រឡប់ (dh_new_group(g, p));
 }
 #endif
 
 void
-mm_sshkey_setcompat(struct ssh *ssh)
+mm_sshkey_setcompat(sa_nracanaa ssh *ssh)
 {
-	struct sshbuf *m;
-	int r;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, ssh->compat)) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_u32(m, ssh->compat)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_SETCOMPAT, m);
 }
 
-int
-mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
-    const u_char *data, size_t datalen, const char *hostkey_alg,
-    const char *sk_provider, const char *sk_pin, u_int compat)
+ចំនួនគត់
+mm_sshkey_sign(sa_nracanaa ssh *ssh, sa_nracanaa sshkey *key, u_char **sigp, size_t *lenp,
+    const u_char *data, size_t datalen, const var_na *hostkey_alg,
+    const var_na *sk_provider, const var_na *sk_pin, u_int compat)
 {
-	struct sshbuf *m;
-	int r;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	ប្រសិនបើ ((r = sshkey_puts(key, m)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
 	    (r = sshbuf_put_cstring(m, hostkey_alg)) != 0 ||
 	    (r = sshbuf_put_u32(m, compat)) != 0)
@@ -290,58 +290,58 @@ mm_sshkey_sign(struct ssh *ssh, struct sshkey *key, u_char **sigp, size_t *lenp,
 
 	debug3_f("waiting for MONITOR_ANS_SIGN");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_SIGN, m);
-	if ((r = sshbuf_get_string(m, sigp, lenp)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_string(m, sigp, lenp)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 	debug3_f("%s signature len=%zu", hostkey_alg ? hostkey_alg : "(null)",
 	    *lenp);
 
-	return (0);
+	ត្រឡប់ (0);
 }
 
 void
-mm_decode_activate_server_options(struct ssh *ssh, struct sshbuf *m)
+mm_decode_activate_server_options(sa_nracanaa ssh *ssh, sa_nracanaa sshbuf *m)
 {
-	struct sshbuf *config;
-	int r;
+	sa_nracanaa sshbuf *config;
+	ចំនួនគត់ r;
 	u_int i;
 
-	if ((r = sshbuf_froms(m, &config)) != 0)
+	ប្រសិនបើ ((r = sshbuf_froms(m, &config)) != 0)
 		fatal_fr(r, "parse opts");
-	if ((r = deserialise_server_options(config, &options)) != 0)
+	ប្រសិនបើ ((r = deserialise_server_options(config, &options)) != 0)
 		fatal_fr(r, "deserialise_server_options");
 	sshbuf_free(config);
 
 	log_change_level(options.log_level);
 	log_verbose_reset();
-	for (i = 0; i < options.num_log_verbose; i++)
+	សម្រាប់ (i = 0; i < options.num_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 }
 
 #define GETPW(b, id) \
 	do { \
-		if ((r = sshbuf_get_string_direct(b, &p, &len)) != 0) \
+		ប្រសិនបើ ((r = sshbuf_get_string_direct(b, &p, &len)) != 0) \
 			fatal_fr(r, "parse pw %s", #id); \
-		if (len != sizeof(pw->id)) \
+		ប្រសិនបើ (len != parimaa_na(pw->id)) \
 			fatal_fr(r, "bad length for %s", #id); \
 		memcpy(&pw->id, p, len); \
-	} while (0)
+	} ខណៈពេល (0)
 
-struct passwd *
-mm_getpwnamallow(struct ssh *ssh, const char *username)
+sa_nracanaa passwd *
+mm_getpwnamallow(sa_nracanaa ssh *ssh, const var_na *username)
 {
-	struct sshbuf *m;
-	struct passwd *pw;
+	sa_nracanaa sshbuf *m;
+	sa_nracanaa passwd *pw;
 	size_t len;
-	int r;
+	ចំនួនគត់ r;
 	u_char ok;
 	const u_char *p;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, username)) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_cstring(m, username)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PWNAM, m);
@@ -349,15 +349,15 @@ mm_getpwnamallow(struct ssh *ssh, const char *username)
 	debug3_f("waiting for MONITOR_ANS_PWNAM");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PWNAM, m);
 
-	if ((r = sshbuf_get_u8(m, &ok)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u8(m, &ok)) != 0)
 		fatal_fr(r, "parse success");
-	if (ok == 0) {
+	ប្រសិនបើ (ok == 0) {
 		pw = NULL;
 		goto out;
 	}
 
 	/* XXX don't like passing struct passwd like this */
-	pw = xcalloc(sizeof(*pw), 1);
+	pw = xcalloc(parimaa_na(*pw), 1);
 	GETPW(m, pw_uid);
 	GETPW(m, pw_gid);
 #ifdef HAVE_STRUCT_PASSWD_PW_CHANGE
@@ -366,7 +366,7 @@ mm_getpwnamallow(struct ssh *ssh, const char *username)
 #ifdef HAVE_STRUCT_PASSWD_PW_EXPIRE
 	GETPW(m, pw_expire);
 #endif
-	if ((r = sshbuf_get_cstring(m, &pw->pw_name, NULL)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_get_cstring(m, &pw->pw_name, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &pw->pw_passwd, NULL)) != 0 ||
 #ifdef HAVE_STRUCT_PASSWD_PW_GECOS
 	    (r = sshbuf_get_cstring(m, &pw->pw_gecos, NULL)) != 0 ||
@@ -391,50 +391,50 @@ out:
 	    options.rekey_interval);
 	sshbuf_free(m);
 
-	return (pw);
+	ត្រឡប់ (pw);
 }
 
-char *
+var_na *
 mm_auth2_read_banner(void)
 {
-	struct sshbuf *m;
-	char *banner;
-	int r;
+	sa_nracanaa sshbuf *m;
+	var_na *banner;
+	ចំនួនគត់ r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUTH2_READ_BANNER, m);
 	sshbuf_reset(m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_AUTH2_READ_BANNER, m);
-	if ((r = sshbuf_get_cstring(m, &banner, NULL)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_cstring(m, &banner, NULL)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
 	/* treat empty banner as missing banner */
-	if (strlen(banner) == 0) {
+	ប្រសិនបើ (strlen(banner) == 0) {
 		free(banner);
 		banner = NULL;
 	}
-	return (banner);
+	ត្រឡប់ (banner);
 }
 
 /* Inform the privileged process about service and style */
 
 void
-mm_inform_authserv(char *service, char *style)
+mm_inform_authserv(var_na *service, var_na *style)
 {
-	struct sshbuf *m;
-	int r;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, service)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_put_cstring(m, service)) != 0 ||
 	    (r = sshbuf_put_cstring(m, style ? style : "")) != 0)
 		fatal_fr(r, "assemble");
 
@@ -444,20 +444,20 @@ mm_inform_authserv(char *service, char *style)
 }
 
 /* Do the password authentication */
-int
-mm_auth_password(struct ssh *ssh, char *password)
+ចំនួនគត់
+mm_auth_password(sa_nracanaa ssh *ssh, var_na *password)
 {
-	struct sshbuf *m;
-	int r, authenticated = 0;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r, authenticated = 0;
 #ifdef USE_PAM
 	u_int maxtries = 0;
 #endif
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, password)) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_cstring(m, password)) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUTHPASSWORD, m);
 
@@ -465,12 +465,12 @@ mm_auth_password(struct ssh *ssh, char *password)
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_AUTHPASSWORD, m);
 
-	if ((r = sshbuf_get_u32(m, &authenticated)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &authenticated)) != 0)
 		fatal_fr(r, "parse");
 #ifdef USE_PAM
-	if ((r = sshbuf_get_u32(m, &maxtries)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &maxtries)) != 0)
 		fatal_fr(r, "parse PAM");
-	if (maxtries > INT_MAX)
+	ប្រសិនបើ (maxtries > INT_MAX)
 		fatal_fr(r, "bad maxtries");
 	sshpam_set_maxtries_reached(maxtries);
 #endif
@@ -478,40 +478,40 @@ mm_auth_password(struct ssh *ssh, char *password)
 	sshbuf_free(m);
 
 	debug3_f("user %sauthenticated", authenticated ? "" : "not ");
-	return (authenticated);
+	ត្រឡប់ (authenticated);
 }
 
-int
-mm_user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int pubkey_auth_attempt, struct sshauthopt **authoptp)
+ចំនួនគត់
+mm_user_key_allowed(sa_nracanaa ssh *ssh, sa_nracanaa passwd *pw, sa_nracanaa sshkey *key,
+    ចំនួនគត់ pubkey_auth_attempt, sa_nracanaa sshauthopt **authoptp)
 {
-	return (mm_key_allowed(MM_USERKEY, NULL, NULL, key,
+	ត្រឡប់ (mm_key_allowed(MM_USERKEY, NULL, NULL, key,
 	    pubkey_auth_attempt, authoptp));
 }
 
-int
-mm_hostbased_key_allowed(struct ssh *ssh, struct passwd *pw,
-    const char *user, const char *host, struct sshkey *key)
+ចំនួនគត់
+mm_hostbased_key_allowed(sa_nracanaa ssh *ssh, sa_nracanaa passwd *pw,
+    const var_na *user, const var_na *host, sa_nracanaa sshkey *key)
 {
-	return (mm_key_allowed(MM_HOSTKEY, user, host, key, 0, NULL));
+	ត្រឡប់ (mm_key_allowed(MM_HOSTKEY, user, host, key, 0, NULL));
 }
 
-int
-mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
-    struct sshkey *key, int pubkey_auth_attempt, struct sshauthopt **authoptp)
+ចំនួនគត់
+mm_key_allowed(ga_nanaa mm_keytype type, const var_na *user, const var_na *host,
+    sa_nracanaa sshkey *key, ចំនួនគត់ pubkey_auth_attempt, sa_nracanaa sshauthopt **authoptp)
 {
-	struct sshbuf *m;
-	int r, allowed = 0;
-	struct sshauthopt *opts = NULL;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r, allowed = 0;
+	sa_nracanaa sshauthopt *opts = NULL;
 
 	debug3_f("entering");
 
-	if (authoptp != NULL)
+	ប្រសិនបើ (authoptp != NULL)
 		*authoptp = NULL;
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, type)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_put_u32(m, type)) != 0 ||
 	    (r = sshbuf_put_cstring(m, user ? user : "")) != 0 ||
 	    (r = sshbuf_put_cstring(m, host ? host : "")) != 0 ||
 	    (r = sshkey_puts(key, m)) != 0 ||
@@ -524,20 +524,20 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_KEYALLOWED, m);
 
-	if ((r = sshbuf_get_u32(m, &allowed)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &allowed)) != 0)
 		fatal_fr(r, "parse");
-	if (allowed && type == MM_USERKEY &&
+	ប្រសិនបើ (allowed && type == MM_USERKEY &&
 	    (r = sshauthopt_deserialise(m, &opts)) != 0)
 		fatal_fr(r, "sshauthopt_deserialise");
 	sshbuf_free(m);
 
-	if (authoptp != NULL) {
+	ប្រសិនបើ (authoptp != NULL) {
 		*authoptp = opts;
 		opts = NULL;
 	}
 	sshauthopt_free(opts);
 
-	return allowed;
+	ត្រឡប់ allowed;
 }
 
 /*
@@ -546,24 +546,24 @@ mm_key_allowed(enum mm_keytype type, const char *user, const char *host,
  * for authentication.
  */
 
-int
-mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
-    const u_char *data, size_t datalen, const char *sigalg, u_int compat,
-    struct sshkey_sig_details **sig_detailsp)
+ចំនួនគត់
+mm_sshkey_verify(const sa_nracanaa sshkey *key, const u_char *sig, size_t siglen,
+    const u_char *data, size_t datalen, const var_na *sigalg, u_int compat,
+    sa_nracanaa sshkey_sig_details **sig_detailsp)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 	u_int encoded_ret = 0;
-	int r;
+	ចំនួនគត់ r;
 	u_char sig_details_present, flags;
 	u_int counter;
 
 	debug3_f("entering");
 
-	if (sig_detailsp != NULL)
+	ប្រសិនបើ (sig_detailsp != NULL)
 		*sig_detailsp = NULL;
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_puts(key, m)) != 0 ||
+	ប្រសិនបើ ((r = sshkey_puts(key, m)) != 0 ||
 	    (r = sshbuf_put_string(m, sig, siglen)) != 0 ||
 	    (r = sshbuf_put_string(m, data, datalen)) != 0 ||
 	    (r = sshbuf_put_cstring(m, sigalg == NULL ? "" : sigalg)) != 0)
@@ -575,15 +575,15 @@ mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_KEYVERIFY, m);
 
-	if ((r = sshbuf_get_u32(m, &encoded_ret)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &encoded_ret)) != 0 ||
 	    (r = sshbuf_get_u8(m, &sig_details_present)) != 0)
 		fatal_fr(r, "parse");
-	if (sig_details_present && encoded_ret == 0) {
-		if ((r = sshbuf_get_u32(m, &counter)) != 0 ||
+	ប្រសិនបើ (sig_details_present && encoded_ret == 0) {
+		ប្រសិនបើ ((r = sshbuf_get_u32(m, &counter)) != 0 ||
 		    (r = sshbuf_get_u8(m, &flags)) != 0)
 			fatal_fr(r, "parse sig_details");
-		if (sig_detailsp != NULL) {
-			*sig_detailsp = xcalloc(1, sizeof(**sig_detailsp));
+		ប្រសិនបើ (sig_detailsp != NULL) {
+			*sig_detailsp = xcalloc(1, parimaa_na(**sig_detailsp));
 			(*sig_detailsp)->sk_counter = counter;
 			(*sig_detailsp)->sk_flags = flags;
 		}
@@ -591,59 +591,59 @@ mm_sshkey_verify(const struct sshkey *key, const u_char *sig, size_t siglen,
 
 	sshbuf_free(m);
 
-	if (encoded_ret != 0)
-		return SSH_ERR_SIGNATURE_INVALID;
-	return 0;
+	ប្រសិនបើ (encoded_ret != 0)
+		ត្រឡប់ SSH_ERR_SIGNATURE_INVALID;
+	ត្រឡប់ 0;
 }
 
 void
-mm_send_keystate(struct ssh *ssh, struct monitor *monitor)
+mm_send_keystate(sa_nracanaa ssh *ssh, sa_nracanaa monitor *monitor)
 {
-	struct sshbuf *m;
-	int r;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r;
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = ssh_packet_get_state(ssh, m)) != 0)
+	ប្រសិនបើ ((r = ssh_packet_get_state(ssh, m)) != 0)
 		fatal_fr(r, "ssh_packet_get_state");
 	mm_request_send(monitor->m_recvfd, MONITOR_REQ_KEYEXPORT, m);
 	debug3_f("Finished sending state");
 	sshbuf_free(m);
 }
 
-int
-mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
+ចំនួនគត់
+mm_pty_allocate(ចំនួនគត់ *ptyfd, ចំនួនគត់ *ttyfd, var_na *namebuf, size_t namebuflen)
 {
-	struct sshbuf *m;
-	char *p, *msg;
-	int success = 0, tmp1 = -1, tmp2 = -1, r;
+	sa_nracanaa sshbuf *m;
+	var_na *p, *msg;
+	ចំនួនគត់ success = 0, tmp1 = -1, tmp2 = -1, r;
 
 	/* Kludge: ensure there are fds free to receive the pty/tty */
-	if ((tmp1 = dup(pmonitor->m_recvfd)) == -1 ||
+	ប្រសិនបើ ((tmp1 = dup(pmonitor->m_recvfd)) == -1 ||
 	    (tmp2 = dup(pmonitor->m_recvfd)) == -1) {
 		error_f("cannot allocate fds for pty");
-		if (tmp1 >= 0)
+		ប្រសិនបើ (tmp1 >= 0)
 			close(tmp1);
-		return 0;
+		ត្រឡប់ 0;
 	}
 	close(tmp1);
 	close(tmp2);
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PTY, m);
 
 	debug3_f("waiting for MONITOR_ANS_PTY");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PTY, m);
 
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0) {
+	ប្រសិនបើ (success == 0) {
 		debug3_f("pty alloc failed");
 		sshbuf_free(m);
-		return (0);
+		ត្រឡប់ (0);
 	}
-	if ((r = sshbuf_get_cstring(m, &p, NULL)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_get_cstring(m, &p, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &msg, NULL)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
@@ -651,35 +651,35 @@ mm_pty_allocate(int *ptyfd, int *ttyfd, char *namebuf, size_t namebuflen)
 	strlcpy(namebuf, p, namebuflen); /* Possible truncation */
 	free(p);
 
-	if ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
+	ប្រសិនបើ ((r = sshbuf_put(loginmsg, msg, strlen(msg))) != 0)
 		fatal_fr(r, "put loginmsg");
 	free(msg);
 
-	if ((*ptyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1 ||
+	ប្រសិនបើ ((*ptyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1 ||
 	    (*ttyfd = mm_receive_fd(pmonitor->m_recvfd)) == -1)
 		fatal_f("receive fds failed");
 
 	/* Success */
-	return (1);
+	ត្រឡប់ (1);
 }
 
 void
 mm_session_pty_cleanup2(Session *s)
 {
-	struct sshbuf *m;
-	int r;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r;
 
-	if (s->ttyfd == -1)
-		return;
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ (s->ttyfd == -1)
+		ត្រឡប់;
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, s->tty)) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_cstring(m, s->tty)) != 0)
 		fatal_fr(r, "assmble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PTYCLEANUP, m);
 	sshbuf_free(m);
 
 	/* closed dup'ed master */
-	if (s->ptymaster != -1 && close(s->ptymaster) == -1)
+	ប្រសិនបើ (s->ptymaster != -1 && close(s->ptymaster) == -1)
 		error("close(s->ptymaster/%d): %s",
 		    s->ptymaster, strerror(errno));
 
@@ -689,14 +689,14 @@ mm_session_pty_cleanup2(Session *s)
 
 #ifdef USE_PAM
 void
-mm_start_pam(struct ssh *ssh)
+mm_start_pam(sa_nracanaa ssh *ssh)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 
 	debug3_f("entering");
-	if (!options.use_pam)
+	ប្រសិនបើ (!options.use_pam)
 		fatal_f("UsePAM=no, but ended up in %s anyway", __func__);
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_START, m);
 
@@ -706,23 +706,23 @@ mm_start_pam(struct ssh *ssh)
 u_int
 mm_do_pam_account(void)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 	u_int ret;
-	char *msg;
+	var_na *msg;
 	size_t msglen;
-	int r;
+	ចំនួនគត់ r;
 
 	debug3_f("entering");
-	if (!options.use_pam)
+	ប្រសិនបើ (!options.use_pam)
 		fatal_f("UsePAM=no, but ended up in %s anyway", __func__);
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_ACCOUNT, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_ACCOUNT, m);
-	if ((r = sshbuf_get_u32(m, &ret)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &ret)) != 0 ||
 	    (r = sshbuf_get_cstring(m, &msg, &msglen)) != 0 ||
 	    (r = sshbuf_put(loginmsg, msg, msglen)) != 0)
 		fatal_fr(r, "buffer error");
@@ -732,48 +732,48 @@ mm_do_pam_account(void)
 
 	debug3_f("returning %d", ret);
 
-	return (ret);
+	ត្រឡប់ (ret);
 }
 
 void *
 mm_sshpam_init_ctx(Authctxt *authctxt)
 {
-	struct sshbuf *m;
-	int r, success;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r, success;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_INIT_CTX, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_INIT_CTX");
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_INIT_CTX, m);
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "buffer error");
-	if (success == 0) {
+	ប្រសិនបើ (success == 0) {
 		debug3_f("pam_init_ctx failed");
 		sshbuf_free(m);
-		return (NULL);
+		ត្រឡប់ (NULL);
 	}
 	sshbuf_free(m);
-	return (authctxt);
+	ត្រឡប់ (authctxt);
 }
 
-int
-mm_sshpam_query(void *ctx, char **name, char **info,
-    u_int *num, char ***prompts, u_int **echo_on)
+ចំនួនគត់
+mm_sshpam_query(void *ctx, var_na **name, var_na **info,
+    u_int *num, var_na ***prompts, u_int **echo_on)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 	u_int i, n;
-	int r, ret;
+	ចំនួនគត់ r, ret;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_QUERY, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_QUERY");
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_PAM_QUERY, m);
-	if ((r = sshbuf_get_u32(m, &ret)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &ret)) != 0 ||
 	    (r = sshbuf_get_cstring(m, name, NULL)) != 0 ||
 	    (r = sshbuf_get_cstring(m, info, NULL)) != 0 ||
 	    (r = sshbuf_get_u32(m, &n)) != 0 ||
@@ -781,55 +781,55 @@ mm_sshpam_query(void *ctx, char **name, char **info,
 		fatal_fr(r, "buffer error");
 	debug3_f("pam_query returned %d", ret);
 	sshpam_set_maxtries_reached(n);
-	if (*num > PAM_MAX_NUM_MSG)
+	ប្រសិនបើ (*num > PAM_MAX_NUM_MSG)
 		fatal("%s: received %u PAM messages, expected <= %u",
 		    __func__, *num, PAM_MAX_NUM_MSG);
-	*prompts = xcalloc((*num + 1), sizeof(char *));
-	*echo_on = xcalloc((*num + 1), sizeof(u_int));
-	for (i = 0; i < *num; ++i) {
-		if ((r = sshbuf_get_cstring(m, &((*prompts)[i]), NULL)) != 0 ||
+	*prompts = xcalloc((*num + 1), parimaa_na(var_na *));
+	*echo_on = xcalloc((*num + 1), parimaa_na(u_int));
+	សម្រាប់ (i = 0; i < *num; ++i) {
+		ប្រសិនបើ ((r = sshbuf_get_cstring(m, &((*prompts)[i]), NULL)) != 0 ||
 		    (r = sshbuf_get_u32(m, &((*echo_on)[i]))) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	sshbuf_free(m);
-	return (ret);
+	ត្រឡប់ (ret);
 }
 
-int
-mm_sshpam_respond(void *ctx, u_int num, char **resp)
+ចំនួនគត់
+mm_sshpam_respond(void *ctx, u_int num, var_na **resp)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 	u_int n, i;
-	int r, ret;
+	ចំនួនគត់ r, ret;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, num)) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_u32(m, num)) != 0)
 		fatal_fr(r, "buffer error");
-	for (i = 0; i < num; ++i) {
-		if ((r = sshbuf_put_cstring(m, resp[i])) != 0)
+	សម្រាប់ (i = 0; i < num; ++i) {
+		ប្រសិនបើ ((r = sshbuf_put_cstring(m, resp[i])) != 0)
 			fatal_fr(r, "buffer error");
 	}
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_RESPOND, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_RESPOND");
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_PAM_RESPOND, m);
-	if ((r = sshbuf_get_u32(m, &n)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &n)) != 0)
 		fatal_fr(r, "buffer error");
-	ret = (int)n; /* XXX */
+	ret = (ចំនួនគត់)n; /* XXX */
 	debug3_f("pam_respond returned %d", ret);
 	sshbuf_free(m);
-	return (ret);
+	ត្រឡប់ (ret);
 }
 
 void
 mm_sshpam_free_ctx(void *ctxtp)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 
 	debug3_f("entering");
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_PAM_FREE_CTX, m);
 	debug3_f("waiting for MONITOR_ANS_PAM_FREE_CTX");
@@ -844,9 +844,9 @@ mm_sshpam_free_ctx(void *ctxtp)
 void
 mm_terminate(void)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_TERM, m);
 	sshbuf_free(m);
@@ -855,19 +855,19 @@ mm_terminate(void)
 /* Request state information */
 
 void
-mm_get_state(struct ssh *ssh,
-    ServerOptions *opts, struct sshbuf **confdatap,
+mm_get_state(sa_nracanaa ssh *ssh,
+    ServerOptions *opts, sa_nracanaa sshbuf **confdatap,
     uint64_t *timing_secretp,
-    struct sshbuf **hostkeysp, struct sshbuf **keystatep,
+    sa_nracanaa sshbuf **hostkeysp, sa_nracanaa sshbuf **keystatep,
     u_char **pw_namep,
-    struct sshbuf **authinfop, struct sshbuf **auth_optsp)
+    sa_nracanaa sshbuf **authinfop, sa_nracanaa sshbuf **auth_optsp)
 {
-	struct sshbuf *m, *config;
-	int r;
+	sa_nracanaa sshbuf *m, *config;
+	ចំនួនគត់ r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL || (config = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL || (config = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_STATE, m);
@@ -876,7 +876,7 @@ mm_get_state(struct ssh *ssh,
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_STATE, m);
 
-	if ((r = sshbuf_froms(m, &config)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_froms(m, &config)) != 0 ||
 	    (r = sshbuf_get_u64(m, timing_secretp)) != 0 ||
 	    (r = sshbuf_froms(m, hostkeysp)) != 0 ||
 	    (r = sshbuf_get_stringb(m, ssh->kex->server_version)) != 0 ||
@@ -884,15 +884,15 @@ mm_get_state(struct ssh *ssh,
 		fatal_fr(r, "parse config");
 
 	/* postauth */
-	if (confdatap) {
-		if ((r = sshbuf_froms(m, confdatap)) != 0 ||
+	ប្រសិនបើ (confdatap) {
+		ប្រសិនបើ ((r = sshbuf_froms(m, confdatap)) != 0 ||
 		    (r = sshbuf_froms(m, keystatep)) != 0 ||
 		    (r = sshbuf_get_string(m, pw_namep, NULL)) != 0 ||
 		    (r = sshbuf_froms(m, authinfop)) != 0 ||
 		    (r = sshbuf_froms(m, auth_optsp)) != 0)
 			fatal_fr(r, "parse config postauth");
 	}
-	if ((r = deserialise_server_options(config, opts)) != 0)
+	ប្រសិនបើ ((r = deserialise_server_options(config, opts)) != 0)
 		fatal_fr(r, "deserialise_server_options");
 
 	sshbuf_free(m);
@@ -902,44 +902,44 @@ mm_get_state(struct ssh *ssh,
 }
 
 static void
-mm_chall_setup(char **name, char **infotxt, u_int *numprompts,
-    char ***prompts, u_int **echo_on)
+mm_chall_setup(var_na **name, var_na **infotxt, u_int *numprompts,
+    var_na ***prompts, u_int **echo_on)
 {
 	*name = xstrdup("");
 	*infotxt = xstrdup("");
 	*numprompts = 1;
-	*prompts = xcalloc(*numprompts, sizeof(char *));
-	*echo_on = xcalloc(*numprompts, sizeof(u_int));
+	*prompts = xcalloc(*numprompts, parimaa_na(var_na *));
+	*echo_on = xcalloc(*numprompts, parimaa_na(u_int));
 	(*echo_on)[0] = 0;
 }
 
-int
-mm_bsdauth_query(void *ctx, char **name, char **infotxt,
-   u_int *numprompts, char ***prompts, u_int **echo_on)
+ចំនួនគត់
+mm_bsdauth_query(void *ctx, var_na **name, var_na **infotxt,
+   u_int *numprompts, var_na ***prompts, u_int **echo_on)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 	u_int success;
-	char *challenge;
-	int r;
+	var_na *challenge;
+	ចំនួនគត់ r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_BSDAUTHQUERY, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_BSDAUTHQUERY, m);
-	if ((r = sshbuf_get_u32(m, &success)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &success)) != 0)
 		fatal_fr(r, "parse success");
-	if (success == 0) {
+	ប្រសិនបើ (success == 0) {
 		debug3_f("no challenge");
 		sshbuf_free(m);
-		return (-1);
+		ត្រឡប់ (-1);
 	}
 
 	/* Get the challenge, and format the response */
-	if ((r = sshbuf_get_cstring(m, &challenge, NULL)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_cstring(m, &challenge, NULL)) != 0)
 		fatal_fr(r, "parse challenge");
 	sshbuf_free(m);
 
@@ -948,47 +948,47 @@ mm_bsdauth_query(void *ctx, char **name, char **infotxt,
 
 	debug3_f("received challenge: %s", challenge);
 
-	return (0);
+	ត្រឡប់ (0);
 }
 
-int
-mm_bsdauth_respond(void *ctx, u_int numresponses, char **responses)
+ចំនួនគត់
+mm_bsdauth_respond(void *ctx, u_int numresponses, var_na **responses)
 {
-	struct sshbuf *m;
-	int r, authok;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r, authok;
 
 	debug3_f("entering");
-	if (numresponses != 1)
-		return (-1);
+	ប្រសិនបើ (numresponses != 1)
+		ត្រឡប់ (-1);
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, responses[0])) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_cstring(m, responses[0])) != 0)
 		fatal_fr(r, "assemble");
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_BSDAUTHRESPOND, m);
 
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_BSDAUTHRESPOND, m);
 
-	if ((r = sshbuf_get_u32(m, &authok)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &authok)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
 
-	return ((authok == 0) ? -1 : 0);
+	ត្រឡប់ ((authok == 0) ? -1 : 0);
 }
 
 #ifdef SSH_AUDIT_EVENTS
 void
-mm_audit_event(struct ssh *ssh, ssh_audit_event_t event)
+mm_audit_event(sa_nracanaa ssh *ssh, ssh_audit_event_t event)
 {
-	struct sshbuf *m;
-	int r;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r;
 
 	debug3_f("entering");
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u32(m, event)) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_u32(m, event)) != 0)
 		fatal_fr(r, "buffer error");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUDIT_EVENT, m);
@@ -996,16 +996,16 @@ mm_audit_event(struct ssh *ssh, ssh_audit_event_t event)
 }
 
 void
-mm_audit_run_command(const char *command)
+mm_audit_run_command(const var_na *command)
 {
-	struct sshbuf *m;
-	int r;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r;
 
 	debug3_f("entering command %s", command);
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_cstring(m, command)) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_cstring(m, command)) != 0)
 		fatal_fr(r, "buffer error");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_AUDIT_COMMAND, m);
@@ -1017,69 +1017,69 @@ mm_audit_run_command(const char *command)
 OM_uint32
 mm_ssh_gssapi_server_ctx(Gssctxt **ctx, gss_OID goid)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 	OM_uint32 major;
-	int r;
+	ចំនួនគត់ r;
 
 	/* Client doesn't get to see the context */
 	*ctx = NULL;
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, goid->elements, goid->length)) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_string(m, goid->elements, goid->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSSETUP, m);
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_GSSSETUP, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &major)) != 0)
 		fatal_fr(r, "parse");
 
 	sshbuf_free(m);
-	return (major);
+	ត្រឡប់ (major);
 }
 
 OM_uint32
 mm_ssh_gssapi_accept_ctx(Gssctxt *ctx, gss_buffer_desc *in,
     gss_buffer_desc *out, OM_uint32 *flagsp)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 	OM_uint32 major;
 	u_int flags;
-	int r;
+	ចំនួនគត់ r;
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, in->value, in->length)) != 0)
+	ប្រសិនបើ ((r = sshbuf_put_string(m, in->value, in->length)) != 0)
 		fatal_fr(r, "assemble");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSSTEP, m);
 	mm_request_receive_expect(pmonitor->m_recvfd, MONITOR_ANS_GSSSTEP, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &major)) != 0 ||
 	    (r = ssh_gssapi_get_buffer_desc(m, out)) != 0)
 		fatal_fr(r, "parse");
-	if (flagsp != NULL) {
-		if ((r = sshbuf_get_u32(m, &flags)) != 0)
+	ប្រសិនបើ (flagsp != NULL) {
+		ប្រសិនបើ ((r = sshbuf_get_u32(m, &flags)) != 0)
 			fatal_fr(r, "parse flags");
 		*flagsp = flags;
 	}
 
 	sshbuf_free(m);
 
-	return (major);
+	ត្រឡប់ (major);
 }
 
 OM_uint32
 mm_ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 {
-	struct sshbuf *m;
+	sa_nracanaa sshbuf *m;
 	OM_uint32 major;
-	int r;
+	ចំនួនគត់ r;
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_string(m, gssbuf->value, gssbuf->length)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_put_string(m, gssbuf->value, gssbuf->length)) != 0 ||
 	    (r = sshbuf_put_string(m, gssmic->value, gssmic->length)) != 0)
 		fatal_fr(r, "assemble");
 
@@ -1087,31 +1087,31 @@ mm_ssh_gssapi_checkmic(Gssctxt *ctx, gss_buffer_t gssbuf, gss_buffer_t gssmic)
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_GSSCHECKMIC, m);
 
-	if ((r = sshbuf_get_u32(m, &major)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &major)) != 0)
 		fatal_fr(r, "parse");
 	sshbuf_free(m);
-	return(major);
+	ត្រឡប់(major);
 }
 
-int
-mm_ssh_gssapi_userok(char *user)
+ចំនួនគត់
+mm_ssh_gssapi_userok(var_na *user)
 {
-	struct sshbuf *m;
-	int r, authenticated = 0;
+	sa_nracanaa sshbuf *m;
+	ចំនួនគត់ r, authenticated = 0;
 
-	if ((m = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
 	mm_request_send(pmonitor->m_recvfd, MONITOR_REQ_GSSUSEROK, m);
 	mm_request_receive_expect(pmonitor->m_recvfd,
 	    MONITOR_ANS_GSSUSEROK, m);
 
-	if ((r = sshbuf_get_u32(m, &authenticated)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u32(m, &authenticated)) != 0)
 		fatal_fr(r, "parse");
 
 	sshbuf_free(m);
 	debug3_f("user %sauthenticated", authenticated ? "" : "not ");
-	return (authenticated);
+	ត្រឡប់ (authenticated);
 }
 #endif /* GSSAPI */
 
@@ -1120,34 +1120,34 @@ mm_ssh_gssapi_userok(char *user)
  * direction (local/remote).
  */
 static void
-server_process_permitopen_list(struct ssh *ssh, int listen,
-    char **opens, u_int num_opens)
+server_process_permitopen_list(sa_nracanaa ssh *ssh, ចំនួនគត់ listen,
+    var_na **opens, u_int num_opens)
 {
 	u_int i;
-	int port;
-	char *host, *arg, *oarg;
-	int where = listen ? FORWARD_REMOTE : FORWARD_LOCAL;
-	const char *what = listen ? "permitlisten" : "permitopen";
+	ចំនួនគត់ port;
+	var_na *host, *arg, *oarg;
+	ចំនួនគត់ where = listen ? FORWARD_REMOTE : FORWARD_LOCAL;
+	const var_na *what = listen ? "permitlisten" : "permitopen";
 
 	channel_clear_permission(ssh, FORWARD_ADM, where);
-	if (num_opens == 0)
-		return; /* permit any */
+	ប្រសិនបើ (num_opens == 0)
+		ត្រឡប់; /* permit any */
 
 	/* handle keywords: "any" / "none" */
-	if (num_opens == 1 && strcmp(opens[0], "any") == 0)
-		return;
-	if (num_opens == 1 && strcmp(opens[0], "none") == 0) {
+	ប្រសិនបើ (num_opens == 1 && strcmp(opens[0], "any") == 0)
+		ត្រឡប់;
+	ប្រសិនបើ (num_opens == 1 && strcmp(opens[0], "none") == 0) {
 		channel_disable_admin(ssh, where);
-		return;
+		ត្រឡប់;
 	}
 	/* Otherwise treat it as a list of permitted host:port */
-	for (i = 0; i < num_opens; i++) {
+	សម្រាប់ (i = 0; i < num_opens; i++) {
 		oarg = arg = xstrdup(opens[i]);
 		host = hpdelim(&arg);
-		if (host == NULL)
+		ប្រសិនបើ (host == NULL)
 			fatal_f("missing host in %s", what);
 		host = cleanhostname(host);
-		if (arg == NULL || ((port = permitopen_port(arg)) < 0))
+		ប្រសិនបើ (arg == NULL || ((port = permitopen_port(arg)) < 0))
 			fatal_f("bad port number in %s", what);
 		/* Send it to channels layer */
 		channel_add_permission(ssh, FORWARD_ADM,
@@ -1160,7 +1160,7 @@ server_process_permitopen_list(struct ssh *ssh, int listen,
  * Inform channels layer of permitopen options from configuration.
  */
 void
-server_process_permitopen(struct ssh *ssh)
+server_process_permitopen(sa_nracanaa ssh *ssh)
 {
 	server_process_permitopen_list(ssh, 0,
 	    options.permitted_opens, options.num_permitted_opens);
@@ -1169,16 +1169,16 @@ server_process_permitopen(struct ssh *ssh)
 }
 
 void
-server_process_channel_timeouts(struct ssh *ssh)
+server_process_channel_timeouts(sa_nracanaa ssh *ssh)
 {
 	u_int i;
-	double secs;
-	char *type;
+	dviguu_na secs;
+	var_na *type;
 
 	debug3_f("setting %u timeouts", options.num_channel_timeouts);
 	channel_clear_timeouts(ssh);
-	for (i = 0; i < options.num_channel_timeouts; i++) {
-		if (parse_pattern_interval(options.channel_timeouts[i],
+	សម្រាប់ (i = 0; i < options.num_channel_timeouts; i++) {
+		ប្រសិនបើ (parse_pattern_interval(options.channel_timeouts[i],
 		    &type, &secs) != 0) {
 			fatal_f("internal error: bad timeout %s",
 			    options.channel_timeouts[i]);
@@ -1188,18 +1188,18 @@ server_process_channel_timeouts(struct ssh *ssh)
 	}
 }
 
-struct connection_info *
-server_get_connection_info(struct ssh *ssh, int populate, int use_dns)
+sa_nracanaa connection_info *
+server_get_connection_info(sa_nracanaa ssh *ssh, ចំនួនគត់ populate, ចំនួនគត់ use_dns)
 {
-	static struct connection_info ci;
+	static sa_nracanaa connection_info ci;
 
-	if (ssh == NULL || !populate)
-		return &ci;
+	ប្រសិនបើ (ssh == NULL || !populate)
+		ត្រឡប់ &ci;
 	ci.host = use_dns ? ssh_remote_hostname(ssh) : ssh_remote_ipaddr(ssh);
 	ci.address = ssh_remote_ipaddr(ssh);
 	ci.laddress = ssh_local_ipaddr(ssh);
 	ci.lport = ssh_local_port(ssh);
 	ci.rdomain = ssh_packet_rdomain_in(ssh);
-	return &ci;
+	ត្រឡប់ &ci;
 }
 

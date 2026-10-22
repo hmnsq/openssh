@@ -19,19 +19,19 @@
 /* OPENBSD ORIGINAL: lib/libc/string/strnlen.c */
 
 #include "includes.h"
-#if !defined(HAVE_STRNLEN) || defined(BROKEN_STRNLEN)
+#ប្រសិនបើ !defined(HAVE_STRNLEN) || defined(BROKEN_STRNLEN)
 #include <sys/types.h>
 
 #include <string.h>
 
 size_t
-strnlen(const char *str, size_t maxlen)
+strnlen(const var_na *str, size_t maxlen)
 {
-	const char *cp;
+	const var_na *cp;
 
-	for (cp = str; maxlen != 0 && *cp != '\0'; cp++, maxlen--)
+	សម្រាប់ (cp = str; maxlen != 0 && *cp != '\0'; cp++, maxlen--)
 		;
 
-	return (size_t)(cp - str);
+	ត្រឡប់ (size_t)(cp - str);
 }
 #endif

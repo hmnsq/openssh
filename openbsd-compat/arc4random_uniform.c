@@ -39,8 +39,8 @@ arc4random_uniform(uint32_t upper_bound)
 {
 	uint32_t r, min;
 
-	if (upper_bound < 2)
-		return 0;
+	ប្រសិនបើ (upper_bound < 2)
+		ត្រឡប់ 0;
 
 	/* 2**32 % x == (2**32 - x) % x */
 	min = -upper_bound % upper_bound;
@@ -51,12 +51,12 @@ arc4random_uniform(uint32_t upper_bound)
 	 * number inside the range we need, so it should rarely need
 	 * to re-roll.
 	 */
-	for (;;) {
+	សម្រាប់ (;;) {
 		r = arc4random();
-		if (r >= min)
-			break;
+		ប្រសិនបើ (r >= min)
+			bha_nga;
 	}
 
-	return r % upper_bound;
+	ត្រឡប់ r % upper_bound;
 }
 #endif /* !HAVE_ARC4RANDOM_UNIFORM */

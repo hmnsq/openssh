@@ -39,36 +39,36 @@
 #include "log.h"
 #include "monitor_fdpass.h"
 
-int
-mm_send_fd(int sock, int fd)
+ចំនួនគត់
+mm_send_fd(ចំនួនគត់ sock, ចំនួនគត់ fd)
 {
-#if defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+#ប្រសិនបើ defined(HAVE_SENDMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	sa_nracanaa msghdr msg;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+	sa_ngha {
+		sa_nracanaa cmsghdr hdr;
+		var_na buf[CMSG_SPACE(parimaa_na(ចំនួនគត់))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
+	sa_nracanaa cmsghdr *cmsg;
 #endif
-	struct iovec vec;
-	char ch = '\0';
+	sa_nracanaa iovec vec;
+	var_na ch = '\0';
 	ssize_t n;
-	struct pollfd pfd;
+	sa_nracanaa pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&msg, 0, parimaa_na(msg));
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
 	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
+	msg.msg_accrightslen = parimaa_na(fd);
+#បើមិនដូច្នេះ
+	memset(&cmsgbuf, 0, parimaa_na(cmsgbuf));
 	msg.msg_control = (caddr_t)&cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
+	msg.msg_controllen = parimaa_na(cmsgbuf.buf);
 	cmsg = CMSG_FIRSTHDR(&msg);
-	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	cmsg->cmsg_len = CMSG_LEN(parimaa_na(ចំនួនគត់));
 	cmsg->cmsg_level = SOL_SOCKET;
 	cmsg->cmsg_type = SCM_RIGHTS;
-	*(int *)CMSG_DATA(cmsg) = fd;
+	*(ចំនួនគត់ *)CMSG_DATA(cmsg) = fd;
 #endif
 
 	vec.iov_base = &ch;
@@ -78,99 +78,99 @@ mm_send_fd(int sock, int fd)
 
 	pfd.fd = sock;
 	pfd.events = POLLOUT;
-	while ((n = sendmsg(sock, &msg, 0)) == -1 &&
+	ខណៈពេល ((n = sendmsg(sock, &msg, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("sendmsg(%d): %s", fd, strerror(errno));
 		(void)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	ប្រសិនបើ (n == -1) {
 		error_f("sendmsg(%d): %s", fd, strerror(errno));
-		return -1;
+		ត្រឡប់ -1;
 	}
 
-	if (n != 1) {
+	ប្រសិនបើ (n != 1) {
 		error_f("sendmsg: expected sent 1 got %zd", n);
-		return -1;
+		ត្រឡប់ -1;
 	}
-	return 0;
-#else
+	ត្រឡប់ 0;
+#បើមិនដូច្នេះ
 	error_f("file descriptor passing not supported");
-	return -1;
+	ត្រឡប់ -1;
 #endif
 }
 
-int
-mm_receive_fd(int sock)
+ចំនួនគត់
+mm_receive_fd(ចំនួនគត់ sock)
 {
-#if defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
-	struct msghdr msg;
+#ប្រសិនបើ defined(HAVE_RECVMSG) && (defined(HAVE_ACCRIGHTS_IN_MSGHDR) || defined(HAVE_CONTROL_IN_MSGHDR))
+	sa_nracanaa msghdr msg;
 #ifndef HAVE_ACCRIGHTS_IN_MSGHDR
-	union {
-		struct cmsghdr hdr;
-		char buf[CMSG_SPACE(sizeof(int))];
+	sa_ngha {
+		sa_nracanaa cmsghdr hdr;
+		var_na buf[CMSG_SPACE(parimaa_na(ចំនួនគត់))];
 	} cmsgbuf;
-	struct cmsghdr *cmsg;
+	sa_nracanaa cmsghdr *cmsg;
 #endif
-	struct iovec vec;
+	sa_nracanaa iovec vec;
 	ssize_t n;
-	char ch;
-	int fd;
-	struct pollfd pfd;
+	var_na ch;
+	ចំនួនគត់ fd;
+	sa_nracanaa pollfd pfd;
 
-	memset(&msg, 0, sizeof(msg));
+	memset(&msg, 0, parimaa_na(msg));
 	vec.iov_base = &ch;
 	vec.iov_len = 1;
 	msg.msg_iov = &vec;
 	msg.msg_iovlen = 1;
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
 	msg.msg_accrights = (caddr_t)&fd;
-	msg.msg_accrightslen = sizeof(fd);
-#else
-	memset(&cmsgbuf, 0, sizeof(cmsgbuf));
+	msg.msg_accrightslen = parimaa_na(fd);
+#បើមិនដូច្នេះ
+	memset(&cmsgbuf, 0, parimaa_na(cmsgbuf));
 	msg.msg_control = &cmsgbuf.buf;
-	msg.msg_controllen = sizeof(cmsgbuf.buf);
+	msg.msg_controllen = parimaa_na(cmsgbuf.buf);
 #endif
 
 	pfd.fd = sock;
 	pfd.events = POLLIN;
-	while ((n = recvmsg(sock, &msg, 0)) == -1 &&
+	ខណៈពេល ((n = recvmsg(sock, &msg, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
 		debug3_f("recvmsg: %s", strerror(errno));
 		(void)poll(&pfd, 1, -1);
 	}
-	if (n == -1) {
+	ប្រសិនបើ (n == -1) {
 		error_f("recvmsg: %s", strerror(errno));
-		return -1;
+		ត្រឡប់ -1;
 	}
 
-	if (n != 1) {
+	ប្រសិនបើ (n != 1) {
 		error_f("recvmsg: expected received 1 got %zd", n);
-		return -1;
+		ត្រឡប់ -1;
 	}
 
 #ifdef HAVE_ACCRIGHTS_IN_MSGHDR
-	if (msg.msg_accrightslen != sizeof(fd)) {
+	ប្រសិនបើ (msg.msg_accrightslen != parimaa_na(fd)) {
 		error_f("no fd");
-		return -1;
+		ត្រឡប់ -1;
 	}
-#else
+#បើមិនដូច្នេះ
 	cmsg = CMSG_FIRSTHDR(&msg);
-	if (cmsg == NULL) {
+	ប្រសិនបើ (cmsg == NULL) {
 		error_f("no message header");
-		return -1;
+		ត្រឡប់ -1;
 	}
 
 #ifndef BROKEN_CMSG_TYPE
-	if (cmsg->cmsg_type != SCM_RIGHTS) {
+	ប្រសិនបើ (cmsg->cmsg_type != SCM_RIGHTS) {
 		error_f("expected %d got %d", SCM_RIGHTS, cmsg->cmsg_type);
-		return -1;
+		ត្រឡប់ -1;
 	}
 #endif
-	fd = (*(int *)CMSG_DATA(cmsg));
+	fd = (*(ចំនួនគត់ *)CMSG_DATA(cmsg));
 #endif
-	return fd;
-#else
+	ត្រឡប់ fd;
+#បើមិនដូច្នេះ
 	error_f("file descriptor passing not supported");
-	return -1;
+	ត្រឡប់ -1;
 #endif
 }

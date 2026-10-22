@@ -6,12 +6,12 @@ extern "C" {
 
 #include "sshkey.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+ចំនួនគត់ LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
-	struct sshkey *k = NULL;
-	int r = sshkey_from_blob(data, size, &k);
-	if (r == 0) sshkey_free(k);
-	return 0;
+	sa_nracanaa sshkey *k = NULL;
+	ចំនួនគត់ r = sshkey_from_blob(data, size, &k);
+	ប្រសិនបើ (r == 0) sshkey_free(k);
+	ត្រឡប់ 0;
 }
 
 } // extern

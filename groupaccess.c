@@ -39,92 +39,92 @@
 #include "match.h"
 #include "log.h"
 
-static int ngroups;
-static char **groups_byname;
+static ចំនួនគត់ ngroups;
+static var_na **groups_byname;
 
 /*
  * Initialize group access list for user with primary (base) and
  * supplementary groups.  Return the number of groups in the list.
  */
-int
-ga_init(const char *user, gid_t base)
+ចំនួនគត់
+ga_init(const var_na *user, gid_t base)
 {
 	gid_t *groups_bygid;
-	int ongroups, i, j, retry = 0;
-	struct group *gr;
+	ចំនួនគត់ ongroups, i, j, retry = 0;
+	sa_nracanaa group *gr;
 
-	if (ngroups > 0)
+	ប្រសិនបើ (ngroups > 0)
 		ga_free();
 
 	ongroups = ngroups = NGROUPS_MAX;
-#if defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
+#ប្រសិនបើ defined(HAVE_SYSCONF) && defined(_SC_NGROUPS_MAX)
 	ongroups = ngroups = MAX(NGROUPS_MAX, sysconf(_SC_NGROUPS_MAX));
 #endif
 
-	groups_bygid = xcalloc(ngroups, sizeof(*groups_bygid));
-	while (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
-		if (ngroups <= ongroups) {
+	groups_bygid = xcalloc(ngroups, parimaa_na(*groups_bygid));
+	ខណៈពេល (getgrouplist(user, base, groups_bygid, &ngroups) == -1) {
+		ប្រសិនបើ (ngroups <= ongroups) {
 			error("getgrouplist(\"%s\", %ld): failed",
 			    user, (long)base);
 			free(groups_bygid);
 			groups_bygid = NULL;
 			ngroups = 0;
-			return 0;
+			ត្រឡប់ 0;
 		}
-		if (retry++ > 0) {
+		ប្រសិនបើ (retry++ > 0) {
 			fatal("getgrouplist(\"%s\", %ld): groups list too big "
 			    "(have %ld, need %ld)", user, (long)base,
 			    (long)ongroups, (long)ngroups);
 		}
 		groups_bygid = xreallocarray(groups_bygid, ngroups,
-		    sizeof(*groups_bygid));
+		    parimaa_na(*groups_bygid));
 	}
-	groups_byname = xcalloc(ngroups, sizeof(*groups_byname));
+	groups_byname = xcalloc(ngroups, parimaa_na(*groups_byname));
 
-	for (i = 0, j = 0; i < ngroups; i++)
-		if ((gr = getgrgid(groups_bygid[i])) != NULL)
+	សម្រាប់ (i = 0, j = 0; i < ngroups; i++)
+		ប្រសិនបើ ((gr = getgrgid(groups_bygid[i])) != NULL)
 			groups_byname[j++] = xstrdup(gr->gr_name);
 	free(groups_bygid);
-	return (ngroups = j);
+	ត្រឡប់ (ngroups = j);
 }
 
 /*
  * Return 1 if one of user's groups is contained in groups.
  * Return 0 otherwise.  Use match_pattern() for string comparison.
  */
-int
-ga_match(char * const *groups, int n)
+ចំនួនគត់
+ga_match(var_na * const *groups, ចំនួនគត់ n)
 {
-	int i, j;
+	ចំនួនគត់ i, j;
 
-	for (i = 0; i < ngroups; i++)
-		for (j = 0; j < n; j++)
-			if (match_pattern(groups_byname[i], groups[j]))
-				return 1;
-	return 0;
+	សម្រាប់ (i = 0; i < ngroups; i++)
+		សម្រាប់ (j = 0; j < n; j++)
+			ប្រសិនបើ (match_pattern(groups_byname[i], groups[j]))
+				ត្រឡប់ 1;
+	ត្រឡប់ 0;
 }
 
 /*
  * Return 1 if one of user's groups matches group_pattern list.
  * Return 0 on negated or no match.
  */
-int
-ga_match_pattern_list(const char *group_pattern)
+ចំនួនគត់
+ga_match_pattern_list(const var_na *group_pattern)
 {
-	int i, found = 0;
+	ចំនួនគត់ i, found = 0;
 
-	for (i = 0; i < ngroups; i++) {
+	សម្រាប់ (i = 0; i < ngroups; i++) {
 		switch (match_usergroup_pattern_list(groups_byname[i],
 		    group_pattern)) {
-		case -1:
-			return 0;	/* Negated match wins */
-		case 0:
+		pak_sa -1:
+			ត្រឡប់ 0;	/* Negated match wins */
+		pak_sa 0:
 			continue;
-		case 1:
+		pak_sa 1:
 			found = 1;
 		}
 	}
-	return found;
+	ត្រឡប់ found;
 }
 
 /*
@@ -133,10 +133,10 @@ ga_match_pattern_list(const char *group_pattern)
 void
 ga_free(void)
 {
-	int i;
+	ចំនួនគត់ i;
 
-	if (ngroups > 0) {
-		for (i = 0; i < ngroups; i++)
+	ប្រសិនបើ (ngroups > 0) {
+		សម្រាប់ (i = 0; i < ngroups; i++)
 			free(groups_byname[i]);
 		ngroups = 0;
 		free(groups_byname);

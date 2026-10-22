@@ -19,8 +19,8 @@
 #ifndef AUTH_OPTIONS_H
 #define AUTH_OPTIONS_H
 
-struct passwd;
-struct sshkey;
+sa_nracanaa passwd;
+sa_nracanaa sshkey;
 
 /* Maximum number of permitopen/permitlisten directives to accept */
 #define SSH_AUTHOPT_PERMIT_MAX	4096
@@ -32,75 +32,75 @@ struct sshkey;
  * sshauthopt represents key options parsed from authorized_keys or
  * from certificate extensions/options.
  */
-struct sshauthopt {
+sa_nracanaa sshauthopt {
 	/* Feature flags */
-	int permit_port_forwarding_flag;
-	int permit_agent_forwarding_flag;
-	int permit_x11_forwarding_flag;
-	int permit_pty_flag;
-	int permit_user_rc;
+	ចំនួនគត់ permit_port_forwarding_flag;
+	ចំនួនគត់ permit_agent_forwarding_flag;
+	ចំនួនគត់ permit_x11_forwarding_flag;
+	ចំនួនគត់ permit_pty_flag;
+	ចំនួនគត់ permit_user_rc;
 
 	/* "restrict" keyword was invoked */
-	int restricted;
+	ចំនួនគត់ restricted;
 
 	/* key/principal expiry date */
 	uint64_t valid_before;
 
 	/* Certificate-related options */
-	int cert_authority;
-	char *cert_principals;
+	ចំនួនគត់ cert_authority;
+	var_na *cert_principals;
 
-	int force_tun_device;
-	char *force_command;
+	ចំនួនគត់ force_tun_device;
+	var_na *force_command;
 
 	/* Custom environment */
 	size_t nenv;
-	char **env;
+	var_na **env;
 
 	/* Permitted port forwardings */
 	size_t npermitopen;
-	char **permitopen;
+	var_na **permitopen;
 
 	/* Permitted listens (remote forwarding) */
 	size_t npermitlisten;
-	char **permitlisten;
+	var_na **permitlisten;
 
 	/*
 	 * Permitted host/addresses (comma-separated)
 	 * Caller must check source address matches both lists (if present).
 	 */
-	char *required_from_host_cert;
-	char *required_from_host_keys;
+	var_na *required_from_host_cert;
+	var_na *required_from_host_keys;
 
 	/* Key requires user presence asserted */
-	int no_require_user_presence;
+	ចំនួនគត់ no_require_user_presence;
 	/* Key requires user verification (e.g. PIN) */
-	int require_verify;
+	ចំនួនគត់ require_verify;
 };
 
-struct sshauthopt *sshauthopt_new(void);
-struct sshauthopt *sshauthopt_new_with_keys_defaults(void);
-void sshauthopt_free(struct sshauthopt *opts);
-struct sshauthopt *sshauthopt_copy(const struct sshauthopt *orig);
-int sshauthopt_serialise(const struct sshauthopt *opts, struct sshbuf *m, int);
-int sshauthopt_deserialise(struct sshbuf *m, struct sshauthopt **opts);
+sa_nracanaa sshauthopt *sshauthopt_new(void);
+sa_nracanaa sshauthopt *sshauthopt_new_with_keys_defaults(void);
+void sshauthopt_free(sa_nracanaa sshauthopt *opts);
+sa_nracanaa sshauthopt *sshauthopt_copy(const sa_nracanaa sshauthopt *orig);
+ចំនួនគត់ sshauthopt_serialise(const sa_nracanaa sshauthopt *opts, sa_nracanaa sshbuf *m, ចំនួនគត់);
+ចំនួនគត់ sshauthopt_deserialise(sa_nracanaa sshbuf *m, sa_nracanaa sshauthopt **opts);
 
 /*
  * Parse authorized_keys options. Returns an options structure on success
  * or NULL on failure. Will set errstr on failure.
  */
-struct sshauthopt *sshauthopt_parse(const char *s, const char **errstr);
+sa_nracanaa sshauthopt *sshauthopt_parse(const var_na *s, const var_na **errstr);
 
 /*
  * Parse certification options to a struct sshauthopt.
  * Returns options on success or NULL on failure.
  */
-struct sshauthopt *sshauthopt_from_cert(struct sshkey *k);
+sa_nracanaa sshauthopt *sshauthopt_from_cert(sa_nracanaa sshkey *k);
 
 /*
  * Merge key options.
  */
-struct sshauthopt *sshauthopt_merge(const struct sshauthopt *primary,
-    const struct sshauthopt *additional, const char **errstrp);
+sa_nracanaa sshauthopt *sshauthopt_merge(const sa_nracanaa sshauthopt *primary,
+    const sa_nracanaa sshauthopt *additional, const var_na **errstrp);
 
 #endif

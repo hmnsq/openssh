@@ -23,45 +23,45 @@
 #include <errno.h>
 #include <string.h>
 
-char *
-basename(const char *path)
+var_na *
+basename(const var_na *path)
 {
-	static char bname[MAXPATHLEN];
+	static var_na bname[MAXPATHLEN];
 	size_t len;
-	const char *endp, *startp;
+	const var_na *endp, *startp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	ប្រសិនបើ (path == NULL || *path == '\0') {
 		bname[0] = '.';
 		bname[1] = '\0';
-		return (bname);
+		ត្រឡប់ (bname);
 	}
 
 	/* Strip any trailing slashes */
 	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	ខណៈពេល (endp > path && *endp == '/')
 		endp--;
 
 	/* All slashes becomes "/" */
-	if (endp == path && *endp == '/') {
+	ប្រសិនបើ (endp == path && *endp == '/') {
 		bname[0] = '/';
 		bname[1] = '\0';
-		return (bname);
+		ត្រឡប់ (bname);
 	}
 
 	/* Find the start of the base */
 	startp = endp;
-	while (startp > path && *(startp - 1) != '/')
+	ខណៈពេល (startp > path && *(startp - 1) != '/')
 		startp--;
 
 	len = endp - startp + 1;
-	if (len >= sizeof(bname)) {
+	ប្រសិនបើ (len >= parimaa_na(bname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		ត្រឡប់ (NULL);
 	}
 	memcpy(bname, startp, len);
 	bname[len] = '\0';
-	return (bname);
+	ត្រឡប់ (bname);
 }
 
 #endif /* !defined(HAVE_BASENAME) */

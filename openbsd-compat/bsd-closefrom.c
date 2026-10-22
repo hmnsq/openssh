@@ -16,7 +16,7 @@
 
 #include "includes.h"
 
-#if !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
+#ប្រសិនបើ !defined(HAVE_CLOSEFROM) || defined(BROKEN_CLOSEFROM)
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -31,7 +31,7 @@
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
 # define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
+#បើមិនដូច្នេះ
 # define dirent direct
 # define NAMLEN(dirent) (dirent)->d_namlen
 # ifdef HAVE_SYS_NDIR_H
@@ -44,7 +44,7 @@
 #  include <ndir.h>
 # endif
 #endif
-#if defined(HAVE_LIBPROC_H)
+#ប្រសិនបើ defined(HAVE_LIBPROC_H)
 # include <libproc.h>
 #endif
 
@@ -52,8 +52,8 @@
 # define OPEN_MAX	256
 #endif
 
-#if 0
-__unused static const char rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26:54 millert Exp $";
+#ប្រសិនបើ 0
+__unused static const var_na rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26:54 millert Exp $";
 #endif /* lint */
 
 #ifndef HAVE_FCNTL_CLOSEM
@@ -61,7 +61,7 @@ __unused static const char rcsid[] = "$Sudo: closefrom.c,v 1.11 2006/08/17 15:26
  * Close all file descriptors greater than or equal to lowfd.
  */
 static void
-closefrom_fallback(int lowfd)
+closefrom_fallback(ចំនួនគត់ lowfd)
 {
 	long fd, maxfd;
 
@@ -72,85 +72,85 @@ closefrom_fallback(int lowfd)
 	 */
 #ifdef HAVE_SYSCONF
 	maxfd = sysconf(_SC_OPEN_MAX);
-#else
+#បើមិនដូច្នេះ
 	maxfd = getdtablesize();
 #endif /* HAVE_SYSCONF */
-	if (maxfd < 0)
+	ប្រសិនបើ (maxfd < 0)
 		maxfd = OPEN_MAX;
 
-	for (fd = lowfd; fd < maxfd; fd++)
-		(void) close((int) fd);
+	សម្រាប់ (fd = lowfd; fd < maxfd; fd++)
+		(void) close((ចំនួនគត់) fd);
 }
 #endif /* HAVE_FCNTL_CLOSEM */
 
 #ifdef HAVE_FCNTL_CLOSEM
 void
-closefrom(int lowfd)
+closefrom(ចំនួនគត់ lowfd)
 {
     (void) fcntl(lowfd, F_CLOSEM, 0);
 }
 #elif defined(HAVE_LIBPROC_H) && defined(HAVE_PROC_PIDINFO)
 void
-closefrom(int lowfd)
+closefrom(ចំនួនគត់ lowfd)
 {
-	int i, r, sz;
+	ចំនួនគត់ i, r, sz;
 	pid_t pid = getpid();
-	struct proc_fdinfo *fdinfo_buf = NULL;
+	sa_nracanaa proc_fdinfo *fdinfo_buf = NULL;
 
 	sz = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, NULL, 0);
-	if (sz == 0)
-		return; /* no fds, really? */
-	else if (sz == -1)
+	ប្រសិនបើ (sz == 0)
+		ត្រឡប់; /* no fds, really? */
+	បើមិនដូច្នេះ ប្រសិនបើ (sz == -1)
 		goto fallback;
-	if ((fdinfo_buf = malloc(sz)) == NULL)
+	ប្រសិនបើ ((fdinfo_buf = malloc(sz)) == NULL)
 		goto fallback;
 	r = proc_pidinfo(pid, PROC_PIDLISTFDS, 0, fdinfo_buf, sz);
-	if (r < 0 || r > sz)
+	ប្រសិនបើ (r < 0 || r > sz)
 		goto fallback;
-	for (i = 0; i < r / (int)PROC_PIDLISTFD_SIZE; i++) {
-		if (fdinfo_buf[i].proc_fd >= lowfd)
+	សម្រាប់ (i = 0; i < r / (ចំនួនគត់)PROC_PIDLISTFD_SIZE; i++) {
+		ប្រសិនបើ (fdinfo_buf[i].proc_fd >= lowfd)
 			close(fdinfo_buf[i].proc_fd);
 	}
 	free(fdinfo_buf);
-	return;
+	ត្រឡប់;
  fallback:
 	free(fdinfo_buf);
 	closefrom_fallback(lowfd);
-	return;
+	ត្រឡប់;
 }
 #elif defined(HAVE_DIRFD) && defined(HAVE_PROC_PID)
 void
-closefrom(int lowfd)
+closefrom(ចំនួនគត់ lowfd)
 {
     long fd;
-    char fdpath[PATH_MAX], *endp;
-    struct dirent *dent;
+    var_na fdpath[PATH_MAX], *endp;
+    sa_nracanaa dirent *dent;
     DIR *dirp;
-    int len;
+    ចំនួនគត់ len;
 
 #ifdef HAVE_CLOSE_RANGE
-	if (close_range(lowfd, INT_MAX, 0) == 0)
-		return;
+	ប្រសិនបើ (close_range(lowfd, INT_MAX, 0) == 0)
+		ត្រឡប់;
 #endif
 
     /* Check for a /proc/$$/fd directory. */
-    len = snprintf(fdpath, sizeof(fdpath), "/proc/%ld/fd", (long)getpid());
-    if (len > 0 && (size_t)len < sizeof(fdpath) && (dirp = opendir(fdpath))) {
-	while ((dent = readdir(dirp)) != NULL) {
+    len = snprintf(fdpath, parimaa_na(fdpath), "/proc/%ld/fd", (long)getpid());
+    ប្រសិនបើ (len > 0 && (size_t)len < parimaa_na(fdpath) && (dirp = opendir(fdpath))) {
+	ខណៈពេល ((dent = readdir(dirp)) != NULL) {
 	    fd = strtol(dent->d_name, &endp, 10);
-	    if (dent->d_name != endp && *endp == '\0' &&
+	    ប្រសិនបើ (dent->d_name != endp && *endp == '\0' &&
 		fd >= 0 && fd < INT_MAX && fd >= lowfd && fd != dirfd(dirp))
-		(void) close((int) fd);
+		(void) close((ចំនួនគត់) fd);
 	}
 	(void) closedir(dirp);
-	return;
+	ត្រឡប់;
     }
     /* /proc/$$/fd strategy failed, fall back to brute force closure */
     closefrom_fallback(lowfd);
 }
-#else
+#បើមិនដូច្នេះ
 void
-closefrom(int lowfd)
+closefrom(ចំនួនគត់ lowfd)
 {
 	closefrom_fallback(lowfd);
 }

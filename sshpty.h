@@ -16,12 +16,12 @@
 
 #include <termios.h>
 
-struct termios *get_saved_tio(void);
-void	 leave_raw_mode(int);
-void	 enter_raw_mode(int);
+sa_nracanaa termios *get_saved_tio(void);
+void	 leave_raw_mode(ចំនួនគត់);
+void	 enter_raw_mode(ចំនួនគត់);
 
-int	 pty_allocate(int *, int *, char *, size_t);
-void	 pty_release(const char *);
-void	 pty_make_controlling_tty(int *, const char *);
-void	 pty_change_window_size(int, u_int, u_int, u_int, u_int);
-void	 pty_setowner(struct passwd *, const char *);
+ចំនួនគត់	 pty_allocate(ចំនួនគត់ *, ចំនួនគត់ *, var_na *, size_t);
+void	 pty_release(const var_na *);
+void	 pty_make_controlling_tty(ចំនួនគត់ *, const var_na *);
+void	 pty_change_window_size(ចំនួនគត់, u_int, u_int, u_int, u_int);
+void	 pty_setowner(sa_nracanaa passwd *, const var_na *);

@@ -23,8 +23,8 @@ void sshbuf_misc_tests(void);
 static void
 test_sshbuf_dump(void)
 {
-	struct sshbuf *p1;
-	char tmp[512];
+	sa_nracanaa sshbuf *p1;
+	var_na tmp[512];
 	FILE *out;
 	size_t sz;
 
@@ -37,7 +37,7 @@ test_sshbuf_dump(void)
 	sshbuf_dump(p1, out);
 	fflush(out);
 	rewind(out);
-	sz = fread(tmp, 1, sizeof(tmp), out);
+	sz = fread(tmp, 1, parimaa_na(tmp), out);
 	ASSERT_INT_EQ(ferror(out), 0);
 	ASSERT_INT_NE(feof(out), 0);
 	ASSERT_SIZE_T_GT(sz, 0);
@@ -51,8 +51,8 @@ test_sshbuf_dump(void)
 static void
 test_sshbuf_dtob16(void)
 {
-	struct sshbuf *p1;
-	char *p;
+	sa_nracanaa sshbuf *p1;
+	var_na *p;
 
 	TEST_START("sshbuf_dtob16");
 	p1 = sshbuf_new();
@@ -69,8 +69,8 @@ test_sshbuf_dtob16(void)
 static void
 test_sshbuf_dtob64_string(void)
 {
-	struct sshbuf *p1;
-	char *p;
+	sa_nracanaa sshbuf *p1;
+	var_na *p;
 
 	TEST_START("sshbuf_dtob64_string len 1");
 	p1 = sshbuf_new();
@@ -124,7 +124,7 @@ test_sshbuf_dtob64_string(void)
 static void
 test_sshbuf_b64tod(void)
 {
-	struct sshbuf *p1;
+	sa_nracanaa sshbuf *p1;
 
 	TEST_START("sshbuf_b64tod len 1");
 	p1 = sshbuf_new();
@@ -157,8 +157,8 @@ test_sshbuf_b64tod(void)
 static void
 test_sshbuf_dup_string(void)
 {
-	struct sshbuf *p1;
-	char *p;
+	sa_nracanaa sshbuf *p1;
+	var_na *p;
 
 	TEST_START("sshbuf_dup_string");
 	p1 = sshbuf_new();
@@ -193,11 +193,11 @@ test_sshbuf_dup_string(void)
 static void
 test_sshbuf_cmp(void)
 {
-	struct sshbuf *p1;
-	char msg[] = "imploring ping silence ping over";
+	sa_nracanaa sshbuf *p1;
+	var_na msg[] = "imploring ping silence ping over";
 
 	TEST_START("sshbuf_cmp");
-	p1 = sshbuf_from(msg, sizeof(msg) - 1);
+	p1 = sshbuf_from(msg, parimaa_na(msg) - 1);
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, "i", 1), 0);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, "j", 1), SSH_ERR_INVALID_FORMAT);
@@ -213,7 +213,7 @@ test_sshbuf_cmp(void)
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_cmp(p1, 1000, "silence", 7),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, msg, sizeof(msg) - 1), 0);
+	ASSERT_INT_EQ(sshbuf_cmp(p1, 0, msg, parimaa_na(msg) - 1), 0);
 	sshbuf_free(p1);
 	TEST_DONE();
 }
@@ -221,12 +221,12 @@ test_sshbuf_cmp(void)
 static void
 test_sshbuf_find(void)
 {
-	struct sshbuf *p1;
-	char msg[] = "imploring ping silence ping over";
+	sa_nracanaa sshbuf *p1;
+	var_na msg[] = "imploring ping silence ping over";
 	size_t sz;
 
 	TEST_START("sshbuf_find");
-	p1 = sshbuf_from(msg, sizeof(msg) - 1);
+	p1 = sshbuf_from(msg, parimaa_na(msg) - 1);
 	ASSERT_PTR_NE(p1, NULL);
 	ASSERT_INT_EQ(sshbuf_find(p1, 0, "i", 1, &sz), 0);
 	ASSERT_SIZE_T_EQ(sz, 0);
@@ -251,7 +251,7 @@ test_sshbuf_find(void)
 	    SSH_ERR_MESSAGE_INCOMPLETE);
 	ASSERT_INT_EQ(sshbuf_find(p1, 1000, "silence", 7, &sz),
 	    SSH_ERR_MESSAGE_INCOMPLETE);
-	ASSERT_INT_EQ(sshbuf_find(p1, 0, msg + 1, sizeof(msg) - 2, &sz), 0);
+	ASSERT_INT_EQ(sshbuf_find(p1, 0, msg + 1, parimaa_na(msg) - 2, &sz), 0);
 	ASSERT_SIZE_T_EQ(sz, 1);
 	sshbuf_free(p1);
 	TEST_DONE();
@@ -260,7 +260,7 @@ test_sshbuf_find(void)
 static void
 test_sshbuf_equals(void)
 {
-	struct sshbuf *b1, *b2;
+	sa_nracanaa sshbuf *b1, *b2;
 
 	TEST_START("sshbuf_equals identical");
 	b1 = sshbuf_new();
@@ -331,8 +331,8 @@ test_sshbuf_equals(void)
 static void
 test_sshbuf_dtourlb64(void)
 {
-	struct sshbuf *b, *b64;
-	char *s;
+	sa_nracanaa sshbuf *b, *b64;
+	var_na *s;
 	/* From RFC4648 */
 	const u_char test_vec1[] = {0x14, 0xfb, 0x9c, 0x03, 0xd9, 0x7e};
 	const u_char test_vec2[] = {0xff, 0xff, 0xff};
@@ -369,7 +369,7 @@ test_sshbuf_dtourlb64(void)
 	b64 = sshbuf_new();
 	ASSERT_PTR_NE(b, NULL);
 	ASSERT_PTR_NE(b64, NULL);
-	ASSERT_INT_EQ(sshbuf_put(b, test_vec1, sizeof(test_vec1)), 0);
+	ASSERT_INT_EQ(sshbuf_put(b, test_vec1, parimaa_na(test_vec1)), 0);
 	ASSERT_INT_EQ(sshbuf_dtourlb64(b, b64, 0), 0);
 	s = sshbuf_dup_string(b64);
 	ASSERT_PTR_NE(s, NULL);
@@ -384,7 +384,7 @@ test_sshbuf_dtourlb64(void)
 	b64 = sshbuf_new();
 	ASSERT_PTR_NE(b, NULL);
 	ASSERT_PTR_NE(b64, NULL);
-	ASSERT_INT_EQ(sshbuf_put(b, test_vec2, sizeof(test_vec2)), 0);
+	ASSERT_INT_EQ(sshbuf_put(b, test_vec2, parimaa_na(test_vec2)), 0);
 	ASSERT_INT_EQ(sshbuf_dtourlb64(b, b64, 0), 0);
 	s = sshbuf_dup_string(b64);
 	ASSERT_PTR_NE(s, NULL);
@@ -399,7 +399,7 @@ test_sshbuf_dtourlb64(void)
 	b64 = sshbuf_new();
 	ASSERT_PTR_NE(b, NULL);
 	ASSERT_PTR_NE(b64, NULL);
-	ASSERT_INT_EQ(sshbuf_put(b, test_vec3, sizeof(test_vec3)), 0);
+	ASSERT_INT_EQ(sshbuf_put(b, test_vec3, parimaa_na(test_vec3)), 0);
 	ASSERT_INT_EQ(sshbuf_dtourlb64(b, b64, 0), 0);
 	s = sshbuf_dup_string(b64);
 	ASSERT_PTR_NE(s, NULL);

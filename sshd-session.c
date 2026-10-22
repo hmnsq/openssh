@@ -106,13 +106,13 @@
 #define PRIVSEP_LOG_FD			(STDERR_FILENO + 2)
 #define PRIVSEP_MIN_FREE_FD		(STDERR_FILENO + 3)
 
-extern char *__progname;
+extern var_na *__progname;
 
 /* Server configuration options. */
 ServerOptions options;
 
 /* Name of the server configuration file. */
-char *config_file_name = _PATH_SERVER_CONFIG_FILE;
+var_na *config_file_name = _PATH_SERVER_CONFIG_FILE;
 
 /*
  * Debug mode flag.  This can be set on the command line.  If debug
@@ -120,21 +120,21 @@ char *config_file_name = _PATH_SERVER_CONFIG_FILE;
  * log, the daemon will not go to background, and will exit after processing
  * the first connection.
  */
-int debug_flag = 0;
+ចំនួនគត់ debug_flag = 0;
 
 /* Flag indicating that the daemon is being started from inetd. */
-static int inetd_flag = 0;
+static ចំនួនគត់ inetd_flag = 0;
 
 /* debug goes to stderr unless inetd_flag is set */
-static int log_stderr = 0;
+static ចំនួនគត់ log_stderr = 0;
 
 /* Saved arguments to main(). */
-static char **saved_argv;
-static int saved_argc;
+static var_na **saved_argv;
+static ចំនួនគត់ saved_argc;
 
 /* Daemon's agent connection */
-int auth_sock = -1;
-static int have_agent = 0;
+ចំនួនគត់ auth_sock = -1;
+static ចំនួនគត់ have_agent = 0;
 
 /*
  * Any really sensitive data in the application is contained in this
@@ -144,55 +144,55 @@ static int have_agent = 0;
  * have access to the internals of them, and locking just the structure is
  * not very useful.  Currently, memory locking is not implemented.
  */
-struct {
+sa_nracanaa {
 	u_int		num_hostkeys;
-	struct sshkey	**host_keys;		/* all private host keys */
-	struct sshkey	**host_pubkeys;		/* all public host keys */
-	struct sshkey	**host_certificates;	/* all public host certificates */
+	sa_nracanaa sshkey	**host_keys;		/* all private host keys */
+	sa_nracanaa sshkey	**host_pubkeys;		/* all public host keys */
+	sa_nracanaa sshkey	**host_certificates;	/* all public host certificates */
 } sensitive_data;
 
 /* record remote hostname or ip */
 u_int utmp_len = HOST_NAME_MAX+1;
 
-static int startup_pipe = -1;		/* in child */
+static ចំនួនគត់ startup_pipe = -1;		/* in child */
 
 /* variables used for privilege separation */
-struct monitor *pmonitor = NULL;
-int privsep_is_preauth = 1;
-static int privsep_chroot = 1;
+sa_nracanaa monitor *pmonitor = NULL;
+ចំនួនគត់ privsep_is_preauth = 1;
+static ចំនួនគត់ privsep_chroot = 1;
 
 /* Unprivileged user */
-struct passwd *privsep_pw = NULL;
+sa_nracanaa passwd *privsep_pw = NULL;
 
 /* global connection state and authentication contexts */
 Authctxt *the_authctxt = NULL;
-struct ssh *the_active_state;
+sa_nracanaa ssh *the_active_state;
 
 /* global key/cert auth options. XXX move to permanent ssh->authctxt? */
-struct sshauthopt *auth_opts = NULL;
+sa_nracanaa sshauthopt *auth_opts = NULL;
 
 /* sshd_config buffer */
-struct sshbuf *cfg;
+sa_nracanaa sshbuf *cfg;
 
 /* Included files from the configuration file */
-struct include_list includes = TAILQ_HEAD_INITIALIZER(includes);
+sa_nracanaa include_list includes = TAILQ_HEAD_INITIALIZER(includes);
 
 /* message to be displayed after login */
-struct sshbuf *loginmsg;
+sa_nracanaa sshbuf *loginmsg;
 
 /* Prototypes for various functions defined later in this file. */
 void destroy_sensitive_data(void);
 void demote_sensitive_data(void);
 
 /* XXX reduce to stub once postauth split */
-int
+ចំនួនគត់
 mm_is_monitor(void)
 {
 	/*
 	 * m_pid is only set in the privileged part, and
 	 * points to the unprivileged child.
 	 */
-	return (pmonitor && pmonitor->m_pid > 0);
+	ត្រឡប់ (pmonitor && pmonitor->m_pid > 0);
 }
 
 /*
@@ -201,20 +201,20 @@ mm_is_monitor(void)
  * terminal.
  */
 static void
-grace_alarm_handler(int sig)
+grace_alarm_handler(ចំនួនគត់ sig)
 {
 	/*
 	 * Try to kill any processes that we have spawned, E.g. authorized
 	 * keys command helpers or privsep children.
 	 */
-	if (getpgid(0) == getpid()) {
-		struct sigaction sa;
+	ប្រសិនបើ (getpgid(0) == getpid()) {
+		sa_nracanaa sigaction sa;
 
 		/* mask all other signals while in handler */
-		memset(&sa, 0, sizeof(sa));
+		memset(&sa, 0, parimaa_na(sa));
 		sa.sa_handler = SIG_IGN;
 		sigfillset(&sa.sa_mask);
-#if defined(SA_RESTART)
+#ប្រសិនបើ defined(SA_RESTART)
 		sa.sa_flags = SA_RESTART;
 #endif
 		(void)sigaction(SIGTERM, &sa, NULL);
@@ -229,12 +229,12 @@ destroy_sensitive_data(void)
 {
 	u_int i;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sensitive_data.host_keys[i]) {
+	សម្រាប់ (i = 0; i < options.num_host_key_files; i++) {
+		ប្រសិនបើ (sensitive_data.host_keys[i]) {
 			sshkey_free(sensitive_data.host_keys[i]);
 			sensitive_data.host_keys[i] = NULL;
 		}
-		if (sensitive_data.host_certificates[i]) {
+		ប្រសិនបើ (sensitive_data.host_certificates[i]) {
 			sshkey_free(sensitive_data.host_certificates[i]);
 			sensitive_data.host_certificates[i] = NULL;
 		}
@@ -245,13 +245,13 @@ destroy_sensitive_data(void)
 void
 demote_sensitive_data(void)
 {
-	struct sshkey *tmp;
+	sa_nracanaa sshkey *tmp;
 	u_int i;
-	int r;
+	ចំនួនគត់ r;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sensitive_data.host_keys[i]) {
-			if ((r = sshkey_from_private(
+	សម្រាប់ (i = 0; i < options.num_host_key_files; i++) {
+		ប្រសិនបើ (sensitive_data.host_keys[i]) {
+			ប្រសិនបើ ((r = sshkey_from_private(
 			    sensitive_data.host_keys[i], &tmp)) != 0)
 				fatal_r(r, "could not demote host %s key",
 				    sshkey_type(sensitive_data.host_keys[i]));
@@ -262,47 +262,47 @@ demote_sensitive_data(void)
 	}
 }
 
-struct sshbuf *
+sa_nracanaa sshbuf *
 pack_hostkeys(void)
 {
-	struct sshbuf *keybuf = NULL, *hostkeys = NULL;
-	int r;
+	sa_nracanaa sshbuf *keybuf = NULL, *hostkeys = NULL;
+	ចំនួនគត់ r;
 	u_int i;
 
-	if ((hostkeys = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((hostkeys = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
 	/* pack hostkeys into a string. Empty key slots get empty strings */
-	for (i = 0; i < options.num_host_key_files; i++) {
+	សម្រាប់ (i = 0; i < options.num_host_key_files; i++) {
 		/* public key */
-		if (sensitive_data.host_pubkeys[i] != NULL) {
-			if ((r = sshkey_puts(sensitive_data.host_pubkeys[i],
+		ប្រសិនបើ (sensitive_data.host_pubkeys[i] != NULL) {
+			ប្រសិនបើ ((r = sshkey_puts(sensitive_data.host_pubkeys[i],
 			    hostkeys)) != 0)
 				fatal_fr(r, "compose hostkey public");
-		} else {
-			if ((r = sshbuf_put_string(hostkeys, NULL, 0)) != 0)
+		} បើមិនដូច្នេះ {
+			ប្រសិនបើ ((r = sshbuf_put_string(hostkeys, NULL, 0)) != 0)
 				fatal_fr(r, "compose hostkey empty public");
 		}
 		/* cert */
-		if (sensitive_data.host_certificates[i] != NULL) {
-			if ((r = sshkey_puts(
+		ប្រសិនបើ (sensitive_data.host_certificates[i] != NULL) {
+			ប្រសិនបើ ((r = sshkey_puts(
 			    sensitive_data.host_certificates[i],
 			    hostkeys)) != 0)
 				fatal_fr(r, "compose host cert");
-		} else {
-			if ((r = sshbuf_put_string(hostkeys, NULL, 0)) != 0)
+		} បើមិនដូច្នេះ {
+			ប្រសិនបើ ((r = sshbuf_put_string(hostkeys, NULL, 0)) != 0)
 				fatal_fr(r, "compose host cert empty");
 		}
 	}
 
 	sshbuf_free(keybuf);
-	return hostkeys;
+	ត្រឡប់ hostkeys;
 }
 
-static int
-privsep_preauth(struct ssh *ssh)
+static ចំនួនគត់
+privsep_preauth(sa_nracanaa ssh *ssh)
 {
-	int r;
+	ចំនួនគត់ r;
 	pid_t pid;
 
 	/* Set up unprivileged child process to deal with network data */
@@ -310,23 +310,23 @@ privsep_preauth(struct ssh *ssh)
 	/* Store a pointer to the kex for later rekeying */
 	pmonitor->m_pkex = &ssh->kex;
 
-	if ((pid = fork()) == -1)
+	ប្រសិនបើ ((pid = fork()) == -1)
 		fatal("fork of unprivileged child failed");
-	else if (pid != 0) {
+	បើមិនដូច្នេះ ប្រសិនបើ (pid != 0) {
 		debug2("Network child is on pid %ld", (long)pid);
 
 		pmonitor->m_pid = pid;
-		if (have_agent) {
+		ប្រសិនបើ (have_agent) {
 			r = ssh_get_authentication_socket(&auth_sock);
-			if (r != 0) {
+			ប្រសិនបើ (r != 0) {
 				error_r(r, "Could not get agent socket");
 				have_agent = 0;
 			}
 		}
 		monitor_child_preauth(ssh, pmonitor);
 		privsep_is_preauth = 0;
-		return 1;
-	} else {
+		ត្រឡប់ 1;
+	} បើមិនដូច្នេះ {
 		/* child */
 		close(pmonitor->m_sendfd);
 		close(pmonitor->m_log_recvfd);
@@ -343,19 +343,19 @@ privsep_preauth(struct ssh *ssh)
 		 * of the reserved fds in main()
 		 */
 
-		if (ssh_packet_get_connection_in(ssh) != STDIN_FILENO &&
+		ប្រសិនបើ (ssh_packet_get_connection_in(ssh) != STDIN_FILENO &&
 		    dup2(ssh_packet_get_connection_in(ssh), STDIN_FILENO) == -1)
 			fatal("dup2 stdin failed: %s", strerror(errno));
-		if (ssh_packet_get_connection_out(ssh) != STDOUT_FILENO &&
+		ប្រសិនបើ (ssh_packet_get_connection_out(ssh) != STDOUT_FILENO &&
 		    dup2(ssh_packet_get_connection_out(ssh),
 		    STDOUT_FILENO) == -1)
 			fatal("dup2 stdout failed: %s", strerror(errno));
 		/* leave stderr as-is */
 		log_redirect_stderr_to(NULL); /* dup can clobber log fd */
-		if (pmonitor->m_recvfd != PRIVSEP_MONITOR_FD &&
+		ប្រសិនបើ (pmonitor->m_recvfd != PRIVSEP_MONITOR_FD &&
 		    dup2(pmonitor->m_recvfd, PRIVSEP_MONITOR_FD) == -1)
 			fatal("dup2 monitor fd: %s", strerror(errno));
-		if (pmonitor->m_log_sendfd != PRIVSEP_LOG_FD &&
+		ប្រសិនបើ (pmonitor->m_log_sendfd != PRIVSEP_LOG_FD &&
 		    dup2(pmonitor->m_log_sendfd, PRIVSEP_LOG_FD) == -1)
 			fatal("dup2 log fd: %s", strerror(errno));
 		closefrom(PRIVSEP_MIN_FREE_FD);
@@ -369,15 +369,15 @@ privsep_preauth(struct ssh *ssh)
 }
 
 static void
-privsep_postauth(struct ssh *ssh, Authctxt *authctxt)
+privsep_postauth(sa_nracanaa ssh *ssh, Authctxt *authctxt)
 {
 	/* New socket pair */
 	monitor_reinit(pmonitor);
 
 	pmonitor->m_pid = fork();
-	if (pmonitor->m_pid == -1)
+	ប្រសិនបើ (pmonitor->m_pid == -1)
 		fatal("fork of unprivileged child failed");
-	else if (pmonitor->m_pid != 0) {
+	បើមិនដូច្នេះ ប្រសិនបើ (pmonitor->m_pid != 0) {
 		verbose("User child is on pid %ld", (long)pmonitor->m_pid);
 		sshbuf_reset(loginmsg);
 		monitor_clear_keystate(ssh, pmonitor);
@@ -412,147 +412,147 @@ privsep_postauth(struct ssh *ssh, Authctxt *authctxt)
 	ssh_packet_set_authenticated(ssh);
 }
 
-static struct sshkey *
-get_hostkey_by_type(int type, int nid, int need_private, struct ssh *ssh)
+static sa_nracanaa sshkey *
+get_hostkey_by_type(ចំនួនគត់ type, ចំនួនគត់ nid, ចំនួនគត់ need_private, sa_nracanaa ssh *ssh)
 {
 	u_int i;
-	struct sshkey *key;
+	sa_nracanaa sshkey *key;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
+	សម្រាប់ (i = 0; i < options.num_host_key_files; i++) {
 		switch (type) {
-		case KEY_RSA_CERT:
-		case KEY_ECDSA_CERT:
-		case KEY_ED25519_CERT:
-		case KEY_ECDSA_SK_CERT:
-		case KEY_ED25519_SK_CERT:
-		case KEY_MLDSA44_ED25519_CERT:
+		pak_sa KEY_RSA_CERT:
+		pak_sa KEY_ECDSA_CERT:
+		pak_sa KEY_ED25519_CERT:
+		pak_sa KEY_ECDSA_SK_CERT:
+		pak_sa KEY_ED25519_SK_CERT:
+		pak_sa KEY_MLDSA44_ED25519_CERT:
 			key = sensitive_data.host_certificates[i];
-			break;
+			bha_nga;
 		default:
 			key = sensitive_data.host_keys[i];
-			if (key == NULL && !need_private)
+			ប្រសិនបើ (key == NULL && !need_private)
 				key = sensitive_data.host_pubkeys[i];
-			break;
+			bha_nga;
 		}
-		if (key == NULL || key->type != type)
+		ប្រសិនបើ (key == NULL || key->type != type)
 			continue;
 		switch (type) {
-		case KEY_ECDSA:
-		case KEY_ECDSA_SK:
-		case KEY_ECDSA_CERT:
-		case KEY_ECDSA_SK_CERT:
-			if (key->ecdsa_nid != nid)
+		pak_sa KEY_ECDSA:
+		pak_sa KEY_ECDSA_SK:
+		pak_sa KEY_ECDSA_CERT:
+		pak_sa KEY_ECDSA_SK_CERT:
+			ប្រសិនបើ (key->ecdsa_nid != nid)
 				continue;
 			/* FALLTHROUGH */
 		default:
-			return need_private ?
+			ត្រឡប់ need_private ?
 			    sensitive_data.host_keys[i] : key;
 		}
 	}
-	return NULL;
+	ត្រឡប់ NULL;
 }
 
-struct sshkey *
-get_hostkey_public_by_type(int type, int nid, struct ssh *ssh)
+sa_nracanaa sshkey *
+get_hostkey_public_by_type(ចំនួនគត់ type, ចំនួនគត់ nid, sa_nracanaa ssh *ssh)
 {
-	return get_hostkey_by_type(type, nid, 0, ssh);
+	ត្រឡប់ get_hostkey_by_type(type, nid, 0, ssh);
 }
 
-struct sshkey *
-get_hostkey_private_by_type(int type, int nid, struct ssh *ssh)
+sa_nracanaa sshkey *
+get_hostkey_private_by_type(ចំនួនគត់ type, ចំនួនគត់ nid, sa_nracanaa ssh *ssh)
 {
-	return get_hostkey_by_type(type, nid, 1, ssh);
+	ត្រឡប់ get_hostkey_by_type(type, nid, 1, ssh);
 }
 
-struct sshkey *
-get_hostkey_by_index(int ind)
+sa_nracanaa sshkey *
+get_hostkey_by_index(ចំនួនគត់ ind)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
-		return (NULL);
-	return (sensitive_data.host_keys[ind]);
+	ប្រសិនបើ (ind < 0 || (u_int)ind >= options.num_host_key_files)
+		ត្រឡប់ (NULL);
+	ត្រឡប់ (sensitive_data.host_keys[ind]);
 }
 
-struct sshkey *
-get_hostkey_public_by_index(int ind, struct ssh *ssh)
+sa_nracanaa sshkey *
+get_hostkey_public_by_index(ចំនួនគត់ ind, sa_nracanaa ssh *ssh)
 {
-	if (ind < 0 || (u_int)ind >= options.num_host_key_files)
-		return (NULL);
-	return (sensitive_data.host_pubkeys[ind]);
+	ប្រសិនបើ (ind < 0 || (u_int)ind >= options.num_host_key_files)
+		ត្រឡប់ (NULL);
+	ត្រឡប់ (sensitive_data.host_pubkeys[ind]);
 }
 
-int
-get_hostkey_index(struct sshkey *key, int compare, struct ssh *ssh)
+ចំនួនគត់
+get_hostkey_index(sa_nracanaa sshkey *key, ចំនួនគត់ compare, sa_nracanaa ssh *ssh)
 {
 	u_int i;
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sshkey_is_cert(key)) {
-			if (key == sensitive_data.host_certificates[i] ||
+	សម្រាប់ (i = 0; i < options.num_host_key_files; i++) {
+		ប្រសិនបើ (sshkey_is_cert(key)) {
+			ប្រសិនបើ (key == sensitive_data.host_certificates[i] ||
 			    (compare && sensitive_data.host_certificates[i] &&
 			    sshkey_equal(key,
 			    sensitive_data.host_certificates[i])))
-				return (i);
-		} else {
-			if (key == sensitive_data.host_keys[i] ||
+				ត្រឡប់ (i);
+		} បើមិនដូច្នេះ {
+			ប្រសិនបើ (key == sensitive_data.host_keys[i] ||
 			    (compare && sensitive_data.host_keys[i] &&
 			    sshkey_equal(key, sensitive_data.host_keys[i])))
-				return (i);
-			if (key == sensitive_data.host_pubkeys[i] ||
+				ត្រឡប់ (i);
+			ប្រសិនបើ (key == sensitive_data.host_pubkeys[i] ||
 			    (compare && sensitive_data.host_pubkeys[i] &&
 			    sshkey_equal(key, sensitive_data.host_pubkeys[i])))
-				return (i);
+				ត្រឡប់ (i);
 		}
 	}
-	return (-1);
+	ត្រឡប់ (-1);
 }
 
 /* Inform the client of all hostkeys */
 static void
-notify_hostkeys(struct ssh *ssh)
+notify_hostkeys(sa_nracanaa ssh *ssh)
 {
-	struct sshbuf *buf;
-	struct sshkey *key;
+	sa_nracanaa sshbuf *buf;
+	sa_nracanaa sshkey *key;
 	u_int i, nkeys;
-	int r;
-	char *fp;
+	ចំនួនគត់ r;
+	var_na *fp;
 
 	/* Some clients cannot cope with the hostkeys message, skip those. */
-	if (ssh->compat & SSH_BUG_HOSTKEYS)
-		return;
+	ប្រសិនបើ (ssh->compat & SSH_BUG_HOSTKEYS)
+		ត្រឡប់;
 
-	if ((buf = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((buf = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new");
-	for (i = nkeys = 0; i < options.num_host_key_files; i++) {
+	សម្រាប់ (i = nkeys = 0; i < options.num_host_key_files; i++) {
 		key = get_hostkey_public_by_index(i, ssh);
-		if (key == NULL || key->type == KEY_UNSPEC ||
+		ប្រសិនបើ (key == NULL || key->type == KEY_UNSPEC ||
 		    sshkey_is_cert(key))
 			continue;
 		fp = sshkey_fingerprint(key, options.fingerprint_hash,
 		    SSH_FP_DEFAULT);
 		debug3_f("key %d: %s %s", i, sshkey_ssh_name(key), fp);
 		free(fp);
-		if (nkeys == 0) {
+		ប្រសិនបើ (nkeys == 0) {
 			/*
 			 * Start building the request when we find the
 			 * first usable key.
 			 */
-			if ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
+			ប្រសិនបើ ((r = sshpkt_start(ssh, SSH2_MSG_GLOBAL_REQUEST)) != 0 ||
 			    (r = sshpkt_put_cstring(ssh, "hostkeys-00@openssh.com")) != 0 ||
 			    (r = sshpkt_put_u8(ssh, 0)) != 0) /* want reply */
 				sshpkt_fatal(ssh, r, "%s: start request", __func__);
 		}
 		/* Append the key to the request */
 		sshbuf_reset(buf);
-		if ((r = sshkey_putb(key, buf)) != 0)
+		ប្រសិនបើ ((r = sshkey_putb(key, buf)) != 0)
 			fatal_fr(r, "couldn't put hostkey %d", i);
-		if ((r = sshpkt_put_stringb(ssh, buf)) != 0)
+		ប្រសិនបើ ((r = sshpkt_put_stringb(ssh, buf)) != 0)
 			sshpkt_fatal(ssh, r, "%s: append key", __func__);
 		nkeys++;
 	}
 	debug3_f("sent %u hostkeys", nkeys);
-	if (nkeys == 0)
+	ប្រសិនបើ (nkeys == 0)
 		fatal_f("no hostkeys");
-	if ((r = sshpkt_send(ssh)) != 0)
+	ប្រសិនបើ ((r = sshpkt_send(ssh)) != 0)
 		sshpkt_fatal(ssh, r, "%s: send", __func__);
 	sshbuf_free(buf);
 }
@@ -570,55 +570,55 @@ usage(void)
 }
 
 static void
-parse_hostkeys(struct sshbuf *hostkeys)
+parse_hostkeys(sa_nracanaa sshbuf *hostkeys)
 {
-	int r;
+	ចំនួនគត់ r;
 	u_int num_keys = 0;
-	struct sshkey *k;
-	struct sshbuf *kbuf;
+	sa_nracanaa sshkey *k;
+	sa_nracanaa sshbuf *kbuf;
 	const u_char *cp;
 	size_t len;
 
-	while (sshbuf_len(hostkeys) != 0) {
-		if (num_keys > 2048)
+	ខណៈពេល (sshbuf_len(hostkeys) != 0) {
+		ប្រសិនបើ (num_keys > 2048)
 			fatal_f("too many hostkeys");
 		sensitive_data.host_keys = xrecallocarray(
 		    sensitive_data.host_keys, num_keys, num_keys + 1,
-		    sizeof(*sensitive_data.host_pubkeys));
+		    parimaa_na(*sensitive_data.host_pubkeys));
 		sensitive_data.host_pubkeys = xrecallocarray(
 		    sensitive_data.host_pubkeys, num_keys, num_keys + 1,
-		    sizeof(*sensitive_data.host_pubkeys));
+		    parimaa_na(*sensitive_data.host_pubkeys));
 		sensitive_data.host_certificates = xrecallocarray(
 		    sensitive_data.host_certificates, num_keys, num_keys + 1,
-		    sizeof(*sensitive_data.host_certificates));
+		    parimaa_na(*sensitive_data.host_certificates));
 		/* private key */
 		k = NULL;
-		if ((r = sshbuf_froms(hostkeys, &kbuf)) != 0)
+		ប្រសិនបើ ((r = sshbuf_froms(hostkeys, &kbuf)) != 0)
 			fatal_fr(r, "extract privkey");
-		if (sshbuf_len(kbuf) != 0 &&
+		ប្រសិនបើ (sshbuf_len(kbuf) != 0 &&
 		    (r = sshkey_private_deserialize(kbuf, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
 		sensitive_data.host_keys[num_keys] = k;
 		sshbuf_free(kbuf);
-		if (k)
+		ប្រសិនបើ (k)
 			debug2_f("privkey %u: %s", num_keys, sshkey_ssh_name(k));
 		/* public key */
 		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		ប្រសិនបើ ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		ប្រសិនបើ (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
 		sensitive_data.host_pubkeys[num_keys] = k;
-		if (k)
+		ប្រសិនបើ (k)
 			debug2_f("pubkey %u: %s", num_keys, sshkey_ssh_name(k));
 		/* certificate */
 		k = NULL;
-		if ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
+		ប្រសិនបើ ((r = sshbuf_get_string_direct(hostkeys, &cp, &len)) != 0)
 			fatal_fr(r, "extract pubkey");
-		if (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
+		ប្រសិនបើ (len != 0 && (r = sshkey_from_blob(cp, len, &k)) != 0)
 			fatal_fr(r, "parse pubkey");
 		sensitive_data.host_certificates[num_keys] = k;
-		if (k)
+		ប្រសិនបើ (k)
 			debug2_f("cert %u: %s", num_keys, sshkey_ssh_name(k));
 		num_keys++;
 	}
@@ -626,39 +626,39 @@ parse_hostkeys(struct sshbuf *hostkeys)
 }
 
 static void
-recv_rexec_state(int fd, struct sshbuf *conf, uint64_t *timing_secretp)
+recv_rexec_state(ចំនួនគត់ fd, sa_nracanaa sshbuf *conf, uint64_t *timing_secretp)
 {
-	struct sshbuf *m, *inc, *hostkeys;
+	sa_nracanaa sshbuf *m, *inc, *hostkeys;
 	u_char *cp, ver;
 	size_t len;
-	int r;
-	struct include_item *item;
+	ចំនួនគត់ r;
+	sa_nracanaa include_item *item;
 
 	debug3_f("entering fd = %d", fd);
 
-	if ((m = sshbuf_new()) == NULL || (inc = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((m = sshbuf_new()) == NULL || (inc = sshbuf_new()) == NULL)
 		fatal_f("sshbuf_new failed");
 
 	/* receive config */
-	if (ssh_msg_recv(fd, m) == -1)
+	ប្រសិនបើ (ssh_msg_recv(fd, m) == -1)
 		fatal_f("ssh_msg_recv failed");
-	if ((r = sshbuf_get_u8(m, &ver)) != 0)
+	ប្រសិនបើ ((r = sshbuf_get_u8(m, &ver)) != 0)
 		fatal_fr(r, "parse version");
-	if (ver != 0)
+	ប្រសិនបើ (ver != 0)
 		fatal_f("rexec version mismatch");
-	if ((r = sshbuf_get_string(m, &cp, &len)) != 0 || /* XXX _direct */
+	ប្រសិនបើ ((r = sshbuf_get_string(m, &cp, &len)) != 0 || /* XXX _direct */
 	    (r = sshbuf_get_u64(m, timing_secretp)) != 0 ||
 	    (r = sshbuf_get_stringb(m, inc)) != 0)
 		fatal_fr(r, "parse config");
 
-	if (conf != NULL && (r = sshbuf_put(conf, cp, len)))
+	ប្រសិនបើ (conf != NULL && (r = sshbuf_put(conf, cp, len)))
 		fatal_fr(r, "sshbuf_put");
 
-	while (sshbuf_len(inc) != 0) {
-		item = xcalloc(1, sizeof(*item));
-		if ((item->contents = sshbuf_new()) == NULL)
+	ខណៈពេល (sshbuf_len(inc) != 0) {
+		item = xcalloc(1, parimaa_na(*item));
+		ប្រសិនបើ ((item->contents = sshbuf_new()) == NULL)
 			fatal_f("sshbuf_new failed");
-		if ((r = sshbuf_get_cstring(inc, &item->selector, NULL)) != 0 ||
+		ប្រសិនបើ ((r = sshbuf_get_cstring(inc, &item->selector, NULL)) != 0 ||
 		    (r = sshbuf_get_cstring(inc, &item->filename, NULL)) != 0 ||
 		    (r = sshbuf_get_stringb(inc, item->contents)) != 0)
 			fatal_fr(r, "parse includes");
@@ -667,9 +667,9 @@ recv_rexec_state(int fd, struct sshbuf *conf, uint64_t *timing_secretp)
 
 	/* receive hostkeys */
 	sshbuf_reset(m);
-	if (ssh_msg_recv(fd, m) == -1)
+	ប្រសិនបើ (ssh_msg_recv(fd, m) == -1)
 		fatal_f("ssh_msg_recv failed");
-	if ((r = sshbuf_get_u8(m, NULL)) != 0 ||
+	ប្រសិនបើ ((r = sshbuf_get_u8(m, NULL)) != 0 ||
 	    (r = sshbuf_froms(m, &hostkeys)) != 0)
 		fatal_fr(r, "parse config");
 	parse_hostkeys(hostkeys);
@@ -694,28 +694,28 @@ recv_rexec_state(int fd, struct sshbuf *conf, uint64_t *timing_secretp)
  * exit here if we detect any IP options.
  */
 static void
-check_ip_options(struct ssh *ssh)
+check_ip_options(sa_nracanaa ssh *ssh)
 {
 #ifdef IP_OPTIONS
-	int sock_in = ssh_packet_get_connection_in(ssh);
-	struct sockaddr_storage from;
+	ចំនួនគត់ sock_in = ssh_packet_get_connection_in(ssh);
+	sa_nracanaa sockaddr_storage from;
 	u_char opts[200];
-	socklen_t i, option_size = sizeof(opts), fromlen = sizeof(from);
-	char text[sizeof(opts) * 3 + 1];
+	socklen_t i, option_size = parimaa_na(opts), fromlen = parimaa_na(from);
+	var_na text[parimaa_na(opts) * 3 + 1];
 
-	memset(&from, 0, sizeof(from));
-	if (getpeername(sock_in, (struct sockaddr *)&from,
+	memset(&from, 0, parimaa_na(from));
+	ប្រសិនបើ (getpeername(sock_in, (sa_nracanaa sockaddr *)&from,
 	    &fromlen) == -1)
-		return;
-	if (from.ss_family != AF_INET)
-		return;
+		ត្រឡប់;
+	ប្រសិនបើ (from.ss_family != AF_INET)
+		ត្រឡប់;
 	/* XXX IPv6 options? */
 
-	if (getsockopt(sock_in, IPPROTO_IP, IP_OPTIONS, opts,
+	ប្រសិនបើ (getsockopt(sock_in, IPPROTO_IP, IP_OPTIONS, opts,
 	    &option_size) >= 0 && option_size != 0) {
 		text[0] = '\0';
-		for (i = 0; i < option_size; i++)
-			snprintf(text + i*3, sizeof(text) - i*3,
+		សម្រាប់ (i = 0; i < option_size; i++)
+			snprintf(text + i*3, parimaa_na(text) - i*3,
 			    " %2.2x", opts[i]);
 		fatal("Connection from %.100s port %d with IP opts: %.800s",
 		    ssh_remote_ipaddr(ssh), ssh_remote_port(ssh), text);
@@ -725,40 +725,40 @@ check_ip_options(struct ssh *ssh)
 
 /* Set the routing domain for this process */
 static void
-set_process_rdomain(struct ssh *ssh, const char *name)
+set_process_rdomain(sa_nracanaa ssh *ssh, const var_na *name)
 {
-#if defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
-	if (name == NULL)
-		return; /* default */
+#ប្រសិនបើ defined(HAVE_SYS_SET_PROCESS_RDOMAIN)
+	ប្រសិនបើ (name == NULL)
+		ត្រឡប់; /* default */
 
-	if (strcmp(name, "%D") == 0) {
+	ប្រសិនបើ (strcmp(name, "%D") == 0) {
 		/* "expands" to routing domain of connection */
-		if ((name = ssh_packet_rdomain_in(ssh)) == NULL)
-			return;
+		ប្រសិនបើ ((name = ssh_packet_rdomain_in(ssh)) == NULL)
+			ត្រឡប់;
 	}
 	/* NB. We don't pass 'ssh' to sys_set_process_rdomain() */
-	return sys_set_process_rdomain(name);
+	ត្រឡប់ sys_set_process_rdomain(name);
 #elif defined(__OpenBSD__)
-	int rtable, ortable = getrtable();
-	const char *errstr;
+	ចំនួនគត់ rtable, ortable = getrtable();
+	const var_na *errstr;
 
-	if (name == NULL)
-		return; /* default */
+	ប្រសិនបើ (name == NULL)
+		ត្រឡប់; /* default */
 
-	if (strcmp(name, "%D") == 0) {
+	ប្រសិនបើ (strcmp(name, "%D") == 0) {
 		/* "expands" to routing domain of connection */
-		if ((name = ssh_packet_rdomain_in(ssh)) == NULL)
-			return;
+		ប្រសិនបើ ((name = ssh_packet_rdomain_in(ssh)) == NULL)
+			ត្រឡប់;
 	}
 
-	rtable = (int)strtonum(name, 0, 255, &errstr);
-	if (errstr != NULL) /* Shouldn't happen */
+	rtable = (ចំនួនគត់)strtonum(name, 0, 255, &errstr);
+	ប្រសិនបើ (errstr != NULL) /* Shouldn't happen */
 		fatal("Invalid routing domain \"%s\": %s", name, errstr);
-	if (rtable != ortable && setrtable(rtable) != 0)
+	ប្រសិនបើ (rtable != ortable && setrtable(rtable) != 0)
 		fatal("Unable to set routing domain %d: %s",
 		    rtable, strerror(errno));
 	debug_f("set routing domain %d (was %d)", rtable, ortable);
-#else /* defined(__OpenBSD__) */
+#បើមិនដូច្នេះ /* defined(__OpenBSD__) */
 	fatal("Unable to set routing domain: not supported in this platform");
 #endif
 }
@@ -766,24 +766,24 @@ set_process_rdomain(struct ssh *ssh, const char *name)
 /*
  * Main program for the daemon.
  */
-int
-main(int ac, char **av)
+ចំនួនគត់
+main(ចំនួនគត់ ac, var_na **av)
 {
-	struct ssh *ssh = NULL;
-	extern char *optarg;
-	extern int optind;
-	int devnull, r, opt, remote_port;
-	int sock_in = -1, sock_out = -1, rexeced_flag = 0, have_key = 0;
-	const char *remote_ip, *rdomain;
-	char *line, *laddr, *logfile = NULL;
+	sa_nracanaa ssh *ssh = NULL;
+	extern var_na *optarg;
+	extern ចំនួនគត់ optind;
+	ចំនួនគត់ devnull, r, opt, remote_port;
+	ចំនួនគត់ sock_in = -1, sock_out = -1, rexeced_flag = 0, have_key = 0;
+	const var_na *remote_ip, *rdomain;
+	var_na *line, *laddr, *logfile = NULL;
 	u_int i;
 	uint64_t ibytes, obytes;
 	mode_t new_umask;
 	Authctxt *authctxt;
-	struct connection_info *connection_info = NULL;
+	sa_nracanaa connection_info *connection_info = NULL;
 	sigset_t sigmask;
 	uint64_t timing_secret = 0;
-	struct itimerval itv;
+	sa_nracanaa itimerval itv;
 
 	sigemptyset(&sigmask);
 	sigprocmask(SIG_SETMASK, &sigmask, NULL);
@@ -795,8 +795,8 @@ main(int ac, char **av)
 
 	/* Save argv. Duplicate so setproctitle emulation doesn't clobber it */
 	saved_argc = ac;
-	saved_argv = xcalloc(ac + 1, sizeof(*saved_argv));
-	for (i = 0; (int)i < ac; i++)
+	saved_argv = xcalloc(ac + 1, parimaa_na(*saved_argv));
+	សម្រាប់ (i = 0; (ចំនួនគត់)i < ac; i++)
 		saved_argv[i] = xstrdup(av[i]);
 	saved_argv[i] = NULL;
 
@@ -813,123 +813,123 @@ main(int ac, char **av)
 	initialize_server_options(&options);
 
 	/* Parse command-line arguments. */
-	while ((opt = getopt(ac, av,
+	ខណៈពេល ((opt = getopt(ac, av,
 	    "C:E:b:c:f:g:h:k:o:p:u:46DGQRTdeiqrtV")) != -1) {
 		switch (opt) {
-		case '4':
+		pak_sa '4':
 			options.address_family = AF_INET;
-			break;
-		case '6':
+			bha_nga;
+		pak_sa '6':
 			options.address_family = AF_INET6;
-			break;
-		case 'f':
+			bha_nga;
+		pak_sa 'f':
 			config_file_name = optarg;
-			break;
-		case 'c':
+			bha_nga;
+		pak_sa 'c':
 			servconf_add_hostcert("[command-line]", 0,
 			    &options, optarg);
-			break;
-		case 'd':
-			if (debug_flag == 0) {
+			bha_nga;
+		pak_sa 'd':
+			ប្រសិនបើ (debug_flag == 0) {
 				debug_flag = 1;
 				options.log_level = SYSLOG_LEVEL_DEBUG1;
-			} else if (options.log_level < SYSLOG_LEVEL_DEBUG3)
+			} បើមិនដូច្នេះ ប្រសិនបើ (options.log_level < SYSLOG_LEVEL_DEBUG3)
 				options.log_level++;
-			break;
-		case 'D':
+			bha_nga;
+		pak_sa 'D':
 			/* ignore */
-			break;
-		case 'E':
+			bha_nga;
+		pak_sa 'E':
 			logfile = optarg;
 			/* FALLTHROUGH */
-		case 'e':
+		pak_sa 'e':
 			log_stderr = 1;
-			break;
-		case 'i':
+			bha_nga;
+		pak_sa 'i':
 			inetd_flag = 1;
-			break;
-		case 'r':
+			bha_nga;
+		pak_sa 'r':
 			/* ignore */
-			break;
-		case 'R':
+			bha_nga;
+		pak_sa 'R':
 			rexeced_flag = 1;
-			break;
-		case 'Q':
+			bha_nga;
+		pak_sa 'Q':
 			/* ignored */
-			break;
-		case 'q':
+			bha_nga;
+		pak_sa 'q':
 			options.log_level = SYSLOG_LEVEL_QUIET;
-			break;
-		case 'b':
+			bha_nga;
+		pak_sa 'b':
 			/* protocol 1, ignored */
-			break;
-		case 'p':
+			bha_nga;
+		pak_sa 'p':
 			options.ports_from_cmdline = 1;
-			if (options.num_ports >= MAX_PORTS) {
+			ប្រសិនបើ (options.num_ports >= MAX_PORTS) {
 				fprintf(stderr, "too many ports.\n");
 				exit(1);
 			}
 			options.ports[options.num_ports++] = a2port(optarg);
-			if (options.ports[options.num_ports-1] <= 0) {
+			ប្រសិនបើ (options.ports[options.num_ports-1] <= 0) {
 				fprintf(stderr, "Bad port number.\n");
 				exit(1);
 			}
-			break;
-		case 'g':
-			if ((options.login_grace_time = convtime(optarg)) == -1) {
+			bha_nga;
+		pak_sa 'g':
+			ប្រសិនបើ ((options.login_grace_time = convtime(optarg)) == -1) {
 				fprintf(stderr, "Invalid login grace time.\n");
 				exit(1);
 			}
-			break;
-		case 'k':
+			bha_nga;
+		pak_sa 'k':
 			/* protocol 1, ignored */
-			break;
-		case 'h':
+			bha_nga;
+		pak_sa 'h':
 			servconf_add_hostkey("[command-line]", 0,
 			    &options, optarg, 1);
-			break;
-		case 't':
-		case 'T':
-		case 'G':
+			bha_nga;
+		pak_sa 't':
+		pak_sa 'T':
+		pak_sa 'G':
 			fatal("test/dump modes not supported");
-			break;
-		case 'C':
+			bha_nga;
+		pak_sa 'C':
 			connection_info = server_get_connection_info(ssh, 0, 0);
-			if (parse_server_match_testspec(connection_info,
+			ប្រសិនបើ (parse_server_match_testspec(connection_info,
 			    optarg) == -1)
 				exit(1);
-			break;
-		case 'u':
+			bha_nga;
+		pak_sa 'u':
 			utmp_len = (u_int)strtonum(optarg, 0, HOST_NAME_MAX+1+1, NULL);
-			if (utmp_len > HOST_NAME_MAX+1) {
+			ប្រសិនបើ (utmp_len > HOST_NAME_MAX+1) {
 				fprintf(stderr, "Invalid utmp length.\n");
 				exit(1);
 			}
-			break;
-		case 'o':
+			bha_nga;
+		pak_sa 'o':
 			line = xstrdup(optarg);
-			if (process_server_config_line(&options, line,
+			ប្រសិនបើ (process_server_config_line(&options, line,
 			    "command-line", 0, NULL, NULL, &includes) != 0)
 				exit(1);
 			free(line);
-			break;
-		case 'V':
+			bha_nga;
+		pak_sa 'V':
 			fprintf(stderr, "%s, %s\n",
 			    SSH_RELEASE, SSH_OPENSSL_VERSION);
 			exit(0);
 		default:
 			usage();
-			break;
+			bha_nga;
 		}
 	}
 
 	/* Check that there are no remaining arguments. */
-	if (optind < ac) {
+	ប្រសិនបើ (optind < ac) {
 		fprintf(stderr, "Extra argument %s.\n", av[optind]);
 		exit(1);
 	}
 
-	if (!rexeced_flag)
+	ប្រសិនបើ (!rexeced_flag)
 		fatal("sshd-session should not be executed directly");
 
 	closefrom(REEXEC_MIN_FREE_FD);
@@ -937,24 +937,24 @@ main(int ac, char **av)
 	platform_pre_session_start();
 
 	/* Reserve fds we'll need later for reexec things */
-	if ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1)
+	ប្រសិនបើ ((devnull = open(_PATH_DEVNULL, O_RDWR)) == -1)
 		fatal("open %s: %s", _PATH_DEVNULL, strerror(errno));
-	while (devnull < PRIVSEP_MIN_FREE_FD) {
-		if ((devnull = dup(devnull)) == -1)
+	ខណៈពេល (devnull < PRIVSEP_MIN_FREE_FD) {
+		ប្រសិនបើ ((devnull = dup(devnull)) == -1)
 			fatal("dup %s: %s", _PATH_DEVNULL, strerror(errno));
 	}
 
 	seed_rng();
 
 	/* If requested, redirect the logs to the specified logfile. */
-	if (logfile != NULL) {
-		char *cp, pid_s[32];
+	ប្រសិនបើ (logfile != NULL) {
+		var_na *cp, pid_s[32];
 
-		snprintf(pid_s, sizeof(pid_s), "%ld", (unsigned long)getpid());
+		snprintf(pid_s, parimaa_na(pid_s), "%ld", (unsigned long)getpid());
 		cp = percent_expand(logfile,
 		    "p", pid_s,
 		    "P", "sshd-session",
-		    (char *)NULL);
+		    (var_na *)NULL);
 		log_redirect_stderr_to(cp);
 		free(cp);
 	}
@@ -971,7 +971,7 @@ main(int ac, char **av)
 	    log_stderr || !inetd_flag || debug_flag);
 
 	/* Fetch our configuration */
-	if ((cfg = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((cfg = sshbuf_new()) == NULL)
 		fatal("sshbuf_new config buf failed");
 	setproctitle("%s", "[rexeced]");
 	recv_rexec_state(REEXEC_CONFIG_PASS_FD, cfg, &timing_secret);
@@ -988,19 +988,19 @@ main(int ac, char **av)
 
 	/* Store privilege separation user for later use if required. */
 	privsep_chroot = (getuid() == 0 || geteuid() == 0);
-	if ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
-		if (privsep_chroot || options.kerberos_authentication)
+	ប្រសិនបើ ((privsep_pw = getpwnam(SSH_PRIVSEP_USER)) == NULL) {
+		ប្រសិនបើ (privsep_chroot || options.kerberos_authentication)
 			fatal("Privilege separation user %s does not exist",
 			    SSH_PRIVSEP_USER);
-	} else {
+	} បើមិនដូច្នេះ {
 		privsep_pw = pwcopy(privsep_pw);
 		freezero(privsep_pw->pw_passwd, strlen(privsep_pw->pw_passwd));
 		privsep_pw->pw_passwd = xstrdup("*");
 	}
 	endpwent();
 
-	if (!debug_flag && !inetd_flag) {
-		if ((startup_pipe = dup(REEXEC_CONFIG_PASS_FD)) == -1)
+	ប្រសិនបើ (!debug_flag && !inetd_flag) {
+		ប្រសិនបើ ((startup_pipe = dup(REEXEC_CONFIG_PASS_FD)) == -1)
 			fatal("internal error: no startup pipe");
 
 		/*
@@ -1010,16 +1010,16 @@ main(int ac, char **av)
 		(void)atomicio(vwrite, startup_pipe, "\0", 1);
 	}
 	/* close the fd, but keep the slot reserved */
-	if (dup2(devnull, REEXEC_CONFIG_PASS_FD) == -1)
+	ប្រសិនបើ (dup2(devnull, REEXEC_CONFIG_PASS_FD) == -1)
 		fatal("dup2 devnull->config fd: %s", strerror(errno));
 
 	/* Check that options are sensible */
-	if (options.authorized_keys_command_user == NULL &&
+	ប្រសិនបើ (options.authorized_keys_command_user == NULL &&
 	    (options.authorized_keys_command != NULL &&
 	    strcasecmp(options.authorized_keys_command, "none") != 0))
 		fatal("AuthorizedKeysCommand set without "
 		    "AuthorizedKeysCommandUser");
-	if (options.authorized_principals_command_user == NULL &&
+	ប្រសិនបើ (options.authorized_principals_command_user == NULL &&
 	    (options.authorized_principals_command != NULL &&
 	    strcasecmp(options.authorized_principals_command, "none") != 0))
 		fatal("AuthorizedPrincipalsCommand set without "
@@ -1031,46 +1031,46 @@ main(int ac, char **av)
 	 * daemonisation in the presence of Match block, but this catches
 	 * and warns for trivial misconfigurations that could break login.
 	 */
-	if (options.num_auth_methods != 0) {
-		for (i = 0; i < options.num_auth_methods; i++) {
-			if (auth2_methods_valid(options.auth_methods[i],
+	ប្រសិនបើ (options.num_auth_methods != 0) {
+		សម្រាប់ (i = 0; i < options.num_auth_methods; i++) {
+			ប្រសិនបើ (auth2_methods_valid(options.auth_methods[i],
 			    1) == 0)
-				break;
+				bha_nga;
 		}
-		if (i >= options.num_auth_methods)
+		ប្រសិនបើ (i >= options.num_auth_methods)
 			fatal("AuthenticationMethods cannot be satisfied by "
 			    "enabled authentication methods");
 	}
 
 #ifdef WITH_OPENSSL
-	if (options.moduli_file != NULL)
+	ប្រសិនបើ (options.moduli_file != NULL)
 		dh_set_moduli_file(options.moduli_file);
 #endif
 
-	if (options.host_key_agent) {
-		if (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
+	ប្រសិនបើ (options.host_key_agent) {
+		ប្រសិនបើ (strcmp(options.host_key_agent, SSH_AUTHSOCKET_ENV_NAME))
 			setenv(SSH_AUTHSOCKET_ENV_NAME,
 			    options.host_key_agent, 1);
-		if ((r = ssh_get_authentication_socket(NULL)) == 0)
+		ប្រសិនបើ ((r = ssh_get_authentication_socket(NULL)) == 0)
 			have_agent = 1;
-		else
+		បើមិនដូច្នេះ
 			error_r(r, "Could not connect to agent \"%s\"",
 			    options.host_key_agent);
 	}
 
-	if (options.num_host_key_files != sensitive_data.num_hostkeys) {
+	ប្រសិនបើ (options.num_host_key_files != sensitive_data.num_hostkeys) {
 		fatal("internal error: hostkeys confused (config %u recvd %u)",
 		    options.num_host_key_files, sensitive_data.num_hostkeys);
 	}
 
-	for (i = 0; i < options.num_host_key_files; i++) {
-		if (sensitive_data.host_keys[i] != NULL ||
+	សម្រាប់ (i = 0; i < options.num_host_key_files; i++) {
+		ប្រសិនបើ (sensitive_data.host_keys[i] != NULL ||
 		    (have_agent && sensitive_data.host_pubkeys[i] != NULL)) {
 			have_key = 1;
-			break;
+			bha_nga;
 		}
 	}
-	if (!have_key)
+	ប្រសិនបើ (!have_key)
 		fatal("internal error: monitor received no hostkeys");
 
 	/* Ensure that umask disallows at least group and world write */
@@ -1078,11 +1078,11 @@ main(int ac, char **av)
 	(void) umask(new_umask);
 
 	/* Initialize the log (it is reinitialized below in case we forked). */
-	if (debug_flag)
+	ប្រសិនបើ (debug_flag)
 		log_stderr = 1;
 	log_init(__progname, options.log_level,
 	    options.log_facility, log_stderr);
-	for (i = 0; i < options.num_log_verbose; i++)
+	សម្រាប់ (i = 0; i < options.num_log_verbose; i++)
 		log_verbose_add(options.log_verbose[i]);
 
 	/* Reinitialize the log (because of the fork above). */
@@ -1092,21 +1092,21 @@ main(int ac, char **av)
 	 * Chdir to the root directory so that the current disk can be
 	 * unmounted if desired.
 	 */
-	if (chdir("/") == -1)
+	ប្រសិនបើ (chdir("/") == -1)
 		error("chdir(\"/\"): %s", strerror(errno));
 
 	/* ignore SIGPIPE */
 	ssh_signal(SIGPIPE, SIG_IGN);
 
 	/* Get a connection, either from inetd or rexec */
-	if (inetd_flag) {
+	ប្រសិនបើ (inetd_flag) {
 		/*
 		 * NB. must be different fd numbers for the !socket case,
 		 * as packet_connection_is_on_socket() depends on this.
 		 */
 		sock_in = dup(STDIN_FILENO);
 		sock_out = dup(STDOUT_FILENO);
-	} else {
+	} បើមិនដូច្នេះ {
 		/* rexec case; accept()ed socket in ancestor listener */
 		sock_in = sock_out = dup(STDIN_FILENO);
 	}
@@ -1116,7 +1116,7 @@ main(int ac, char **av)
 	 * as our code for setting the descriptors won't work if
 	 * ttyfd happens to be one of those.
 	 */
-	if (stdfd_devnull(1, 1, !log_stderr) == -1)
+	ប្រសិនបើ (stdfd_devnull(1, 1, !log_stderr) == -1)
 		error("stdfd_devnull failed");
 	debug("network sockets: %d, %d", sock_in, sock_out);
 
@@ -1139,7 +1139,7 @@ main(int ac, char **av)
 	 * Register our connection.  This turns encryption off because we do
 	 * not have a key.
 	 */
-	if ((ssh = ssh_packet_set_connection(NULL, sock_in, sock_out)) == NULL)
+	ប្រសិនបើ ((ssh = ssh_packet_set_connection(NULL, sock_in, sock_out)) == NULL)
 		fatal("Unable to create connection");
 	the_active_state = ssh;
 	ssh_packet_set_server(ssh);
@@ -1157,10 +1157,10 @@ main(int ac, char **av)
 	server_process_permitopen(ssh);
 
 	/* Set SO_KEEPALIVE if requested. */
-	if (options.tcp_keep_alive && ssh_packet_connection_is_on_socket(ssh))
+	ប្រសិនបើ (options.tcp_keep_alive && ssh_packet_connection_is_on_socket(ssh))
 		set_keepalive(sock_in); /* logs errors */
 
-	if ((remote_port = ssh_remote_port(ssh)) < 0) {
+	ប្រសិនបើ ((remote_port = ssh_remote_port(ssh)) < 0) {
 		debug("ssh_remote_port failed");
 		cleanup_exit(255);
 	}
@@ -1196,37 +1196,37 @@ main(int ac, char **av)
 	 * are about to discover the bug.
 	 */
 	ssh_signal(SIGALRM, grace_alarm_handler);
-	if (!debug_flag && options.login_grace_time > 0) {
-		int ujitter = arc4random_uniform(4 * 1000000);
+	ប្រសិនបើ (!debug_flag && options.login_grace_time > 0) {
+		ចំនួនគត់ ujitter = arc4random_uniform(4 * 1000000);
 
 		timerclear(&itv.it_interval);
 		itv.it_value.tv_sec = options.login_grace_time;
 		itv.it_value.tv_sec += ujitter / 1000000;
 		itv.it_value.tv_usec = ujitter % 1000000; 
 
-		if (setitimer(ITIMER_REAL, &itv, NULL) == -1)
+		ប្រសិនបើ (setitimer(ITIMER_REAL, &itv, NULL) == -1)
 			fatal("login grace time setitimer failed");
 	}
 
 	ssh_packet_set_nonblocking(ssh);
 
 	/* allocate authentication context */
-	authctxt = xcalloc(1, sizeof(*authctxt));
+	authctxt = xcalloc(1, parimaa_na(*authctxt));
 	ssh->authctxt = authctxt;
 
 	/* XXX global for cleanup, access from other modules */
 	the_authctxt = authctxt;
 
 	/* Set default key authentication options */
-	if ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
+	ប្រសិនបើ ((auth_opts = sshauthopt_new_with_keys_defaults()) == NULL)
 		fatal("allocation failed");
 
 	/* prepare buffer to collect messages to display to user after login */
-	if ((loginmsg = sshbuf_new()) == NULL)
+	ប្រសិនបើ ((loginmsg = sshbuf_new()) == NULL)
 		fatal("sshbuf_new loginmsg failed");
 	auth_debug_reset();
 
-	if (privsep_preauth(ssh) != 1)
+	ប្រសិនបើ (privsep_preauth(ssh) != 1)
 		fatal("privsep_preauth failed");
 
 	/* Now user is authenticated */
@@ -1239,18 +1239,18 @@ main(int ac, char **av)
 	 */
 	timerclear(&itv.it_interval);
 	timerclear(&itv.it_value);
-	if (setitimer(ITIMER_REAL, &itv, NULL) == -1)
+	ប្រសិនបើ (setitimer(ITIMER_REAL, &itv, NULL) == -1)
 		fatal("login grace time clear failed");
 	ssh_signal(SIGALRM, SIG_DFL);
 	authctxt->authenticated = 1;
-	if (startup_pipe != -1) {
+	ប្រសិនបើ (startup_pipe != -1) {
 		/* signal listener that authentication completed successfully */
 		(void)atomicio(vwrite, startup_pipe, "\001", 1);
 		close(startup_pipe);
 		startup_pipe = -1;
 	}
 
-	if (options.routing_domain != NULL)
+	ប្រសិនបើ (options.routing_domain != NULL)
 		set_process_rdomain(ssh, options.routing_domain);
 
 #ifdef SSH_AUDIT_EVENTS
@@ -1258,14 +1258,14 @@ main(int ac, char **av)
 #endif
 
 #ifdef GSSAPI
-	if (options.gss_authentication) {
+	ប្រសិនបើ (options.gss_authentication) {
 		temporarily_use_uid(authctxt->pw);
 		ssh_gssapi_storecreds();
 		restore_uid();
 	}
 #endif
 #ifdef USE_PAM
-	if (options.use_pam) {
+	ប្រសិនបើ (options.use_pam) {
 		do_pam_setcred();
 		do_pam_session(ssh);
 	}
@@ -1295,7 +1295,7 @@ main(int ac, char **av)
 	verbose("Closing connection to %.500s port %d", remote_ip, remote_port);
 
 #ifdef USE_PAM
-	if (options.use_pam)
+	ប្រសិនបើ (options.use_pam)
 		finish_pam();
 #endif /* USE_PAM */
 
@@ -1310,35 +1310,35 @@ main(int ac, char **av)
 	exit(0);
 }
 
-int
-sshd_hostkey_sign(struct ssh *ssh, struct sshkey *privkey,
-    struct sshkey *pubkey, u_char **signature, size_t *slenp,
-    const u_char *data, size_t dlen, const char *alg)
+ចំនួនគត់
+sshd_hostkey_sign(sa_nracanaa ssh *ssh, sa_nracanaa sshkey *privkey,
+    sa_nracanaa sshkey *pubkey, u_char **signature, size_t *slenp,
+    const u_char *data, size_t dlen, const var_na *alg)
 {
-	if (privkey) {
-		if (mm_sshkey_sign(ssh, privkey, signature, slenp,
+	ប្រសិនបើ (privkey) {
+		ប្រសិនបើ (mm_sshkey_sign(ssh, privkey, signature, slenp,
 		    data, dlen, alg, options.sk_provider, NULL,
 		    ssh->compat) < 0)
 			fatal_f("privkey sign failed");
-	} else {
-		if (mm_sshkey_sign(ssh, pubkey, signature, slenp,
+	} បើមិនដូច្នេះ {
+		ប្រសិនបើ (mm_sshkey_sign(ssh, pubkey, signature, slenp,
 		    data, dlen, alg, options.sk_provider, NULL,
 		    ssh->compat) < 0)
 			fatal_f("pubkey sign failed");
 	}
-	return 0;
+	ត្រឡប់ 0;
 }
 
 /* server specific fatal cleanup */
 void
-cleanup_exit(int i)
+cleanup_exit(ចំនួនគត់ i)
 {
-	if (the_active_state != NULL && the_authctxt != NULL) {
+	ប្រសិនបើ (the_active_state != NULL && the_authctxt != NULL) {
 		do_cleanup(the_active_state, the_authctxt);
-		if (privsep_is_preauth &&
+		ប្រសិនបើ (privsep_is_preauth &&
 		    pmonitor != NULL && pmonitor->m_pid > 1) {
 			debug("Killing privsep child %d", pmonitor->m_pid);
-			if (kill(pmonitor->m_pid, SIGKILL) != 0 &&
+			ប្រសិនបើ (kill(pmonitor->m_pid, SIGKILL) != 0 &&
 			    errno != ESRCH) {
 				error_f("kill(%d): %s", pmonitor->m_pid,
 				    strerror(errno));
@@ -1347,13 +1347,13 @@ cleanup_exit(int i)
 	}
 #ifdef SSH_AUDIT_EVENTS
 	/* done after do_cleanup so it can cancel the PAM auth 'thread' */
-	if (the_active_state != NULL && mm_is_monitor())
+	ប្រសិនបើ (the_active_state != NULL && mm_is_monitor())
 		audit_event(the_active_state, SSH_CONNECTION_ABANDON);
 #endif
 	/* Override default fatal exit value when auth was attempted */
-	if (i == 255 && monitor_auth_attempted())
+	ប្រសិនបើ (i == 255 && monitor_auth_attempted())
 		_exit(EXIT_AUTH_ATTEMPTED);
-	if (i == 255 && monitor_invalid_user())
+	ប្រសិនបើ (i == 255 && monitor_invalid_user())
 		_exit(EXIT_INVALID_USER);
 	_exit(i);
 }

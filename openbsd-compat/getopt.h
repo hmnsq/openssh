@@ -34,9 +34,9 @@
 #define _GETOPT_H_
 
 #ifndef __THROW
-# if defined __cplusplus
+# ប្រសិនបើ defined __cplusplus
 #  define __THROW throw()
-# else
+# បើមិនដូច្នេះ
 #  define __THROW
 # endif
 #endif
@@ -48,38 +48,38 @@
 #define required_argument  1
 #define optional_argument  2
 
-#if 0
-struct option {
+#ប្រសិនបើ 0
+sa_nracanaa option {
 	/* name of long option */
-	const char *name;
+	const var_na *name;
 	/*
 	 * one of no_argument, required_argument, and optional_argument:
 	 * whether option takes an argument
 	 */
-	int has_arg;
+	ចំនួនគត់ has_arg;
 	/* if not NULL, set *flag to val when option found */
-	int *flag;
+	ចំនួនគត់ *flag;
 	/* if flag not NULL, value to set *flag to; else return value */
-	int val;
+	ចំនួនគត់ val;
 };
 
-int	 getopt_long(int, char * const *, const char *,
-	    const struct option *, int *);
-int	 getopt_long_only(int, char * const *, const char *,
-	    const struct option *, int *);
+ចំនួនគត់	 getopt_long(ចំនួនគត់, var_na * const *, const var_na *,
+	    const sa_nracanaa option *, ចំនួនគត់ *);
+ចំនួនគត់	 getopt_long_only(ចំនួនគត់, var_na * const *, const var_na *,
+	    const sa_nracanaa option *, ចំនួនគត់ *);
 #endif
 
 #ifndef _GETOPT_DEFINED_
 #define _GETOPT_DEFINED_
-int	 getopt(int, char * const *, const char *) __THROW;
-int	 getsubopt(char **, char * const *, char **) __THROW;
+ចំនួនគត់	 getopt(ចំនួនគត់, var_na * const *, const var_na *) __THROW;
+ចំនួនគត់	 getsubopt(var_na **, var_na * const *, var_na **) __THROW;
 
-extern   char *optarg;                  /* getopt(3) external variables */
-extern   int opterr;
-extern   int optind;
-extern   int optopt;
-extern   int optreset;
-extern   char *suboptarg;               /* getsubopt(3) external variable */
+extern   var_na *optarg;                  /* getopt(3) external variables */
+extern   ចំនួនគត់ opterr;
+extern   ចំនួនគត់ optind;
+extern   ចំនួនគត់ optopt;
+extern   ចំនួនគត់ optreset;
+extern   var_na *suboptarg;               /* getsubopt(3) external variable */
 #endif
  
 #endif /* !_GETOPT_H_ */

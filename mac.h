@@ -28,26 +28,26 @@
 
 #include <sys/types.h>
 
-struct sshmac {
-	char	*name;
-	int	enabled;
+sa_nracanaa sshmac {
+	var_na	*name;
+	ចំនួនគត់	enabled;
 	u_int	mac_len;
 	u_char	*key;
 	u_int	key_len;
-	int	type;
-	int	etm;		/* Encrypt-then-MAC */
-	struct ssh_hmac_ctx	*hmac_ctx;
-	struct umac_ctx		*umac_ctx;
+	ចំនួនគត់	type;
+	ចំនួនគត់	etm;		/* Encrypt-then-MAC */
+	sa_nracanaa ssh_hmac_ctx	*hmac_ctx;
+	sa_nracanaa umac_ctx		*umac_ctx;
 };
 
-int	 mac_valid(const char *);
-char	*mac_alg_list(char);
-int	 mac_setup(struct sshmac *, char *);
-int	 mac_init(struct sshmac *);
-int	 mac_compute(struct sshmac *, uint32_t, const u_char *, int,
+ចំនួនគត់	 mac_valid(const var_na *);
+var_na	*mac_alg_list(var_na);
+ចំនួនគត់	 mac_setup(sa_nracanaa sshmac *, var_na *);
+ចំនួនគត់	 mac_init(sa_nracanaa sshmac *);
+ចំនួនគត់	 mac_compute(sa_nracanaa sshmac *, uint32_t, const u_char *, ចំនួនគត់,
     u_char *, size_t);
-int	 mac_check(struct sshmac *, uint32_t, const u_char *, size_t,
+ចំនួនគត់	 mac_check(sa_nracanaa sshmac *, uint32_t, const u_char *, size_t,
     const u_char *, size_t);
-void	 mac_clear(struct sshmac *);
+void	 mac_clear(sa_nracanaa sshmac *);
 
 #endif /* SSHMAC_H */

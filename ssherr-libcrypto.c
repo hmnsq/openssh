@@ -27,33 +27,33 @@
 #ifdef WITH_OPENSSL
 #include <openssl/err.h>
 
-const char *
+const var_na *
 ssherr_libcrypto(void)
 {
 	unsigned long e;
-	static char buf[512];
-	char msg[4096];
-	const char *reason = NULL, *file, *data;
-	int ln, fl;
+	static var_na buf[512];
+	var_na msg[4096];
+	const var_na *reason = NULL, *file, *data;
+	ចំនួនគត់ ln, fl;
 
 	OPENSSL_init_crypto(OPENSSL_INIT_LOAD_CRYPTO_STRINGS, NULL);
-	while ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
-		ERR_error_string_n(e, buf, sizeof(buf));
-		snprintf(msg, sizeof(msg), "%s:%s:%d:%s", buf, file, ln,
+	ខណៈពេល ((e = ERR_get_error_line_data(&file, &ln, &data, &fl)) != 0) {
+		ERR_error_string_n(e, buf, parimaa_na(buf));
+		snprintf(msg, parimaa_na(msg), "%s:%s:%d:%s", buf, file, ln,
 		    (fl & ERR_TXT_STRING) ? data : "");
 		debug("libcrypto: '%s'", msg);
-		if ((reason = ERR_reason_error_string(e)) != NULL)
-			snprintf(buf, sizeof(buf), "error in libcrypto: %s",
+		ប្រសិនបើ ((reason = ERR_reason_error_string(e)) != NULL)
+			snprintf(buf, parimaa_na(buf), "error in libcrypto: %s",
 			    reason);
 	}
-	if (reason == NULL)
-		return NULL;
-	return buf;
+	ប្រសិនបើ (reason == NULL)
+		ត្រឡប់ NULL;
+	ត្រឡប់ buf;
 }
-#else
-const char *
+#បើមិនដូច្នេះ
+const var_na *
 ssherr_libcrypto(void)
 {
-	return NULL;
+	ត្រឡប់ NULL;
 }
 #endif
