@@ -15,18 +15,18 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
+#અન્તર્ભાવ <sys/types.h>
 
-#include <unistd.h>
-#include <stdarg.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <stdarg.h>
 
-#include "log.h"
+#અન્તર્ભાવ "log.h"
 
 /* default implementation */
-void
-cleanup_exit(int i)
+શૂન્ય
+cleanup_exit(પૂર્ણાંક i)
 {
 	_exit(i);
 }

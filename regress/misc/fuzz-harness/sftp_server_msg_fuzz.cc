@@ -10,14 +10,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#include <stddef.h>
-#include <stdint.h>
+#અન્તર્ભાવ <stddef.h>
+#અન્તર્ભાવ <stdint.h>
 
-extern "C" void fuzz_server_one(const uint8_t *data, size_t size);
+બાહ્ય "C" શૂન્ય fuzz_server_one(અચલ uint8_t *data, size_t size);
 
-extern "C" int
-LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+બાહ્ય "C" પૂર્ણાંક
+LLVMFuzzer_Test_One_આગત(અચલ uint8_t *data, size_t size)
 {
 	fuzz_server_one(data, size);
-	return 0;
+	પાછા 0;
 }

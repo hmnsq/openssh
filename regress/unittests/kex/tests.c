@@ -3,26 +3,26 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <stdio.h>
+#અન્તર્ભાવ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#અન્તર્ભાવ "../test_helper/test_helper.h"
 
-void kex_tests(void);
-void kex_proposal_tests(void);
-void kex_proposal_populate_tests(void);
+શૂન્ય kex_tests(શૂન્ય);
+શૂન્ય kex_proposal_tests(શૂન્ય);
+શૂન્ય kex_proposal_populate_tests(શૂન્ય);
 
-void
-tests(void)
+શૂન્ય
+tests(શૂન્ય)
 {
 	kex_tests();
 	kex_proposal_tests();
 	kex_proposal_populate_tests();
 }
 
-void
-benchmarks(void)
+શૂન્ય
+benchmarks(શૂન્ય)
 {
 	printf("\n");
 	kex_tests();

@@ -15,95 +15,95 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/socket.h>
-#include <sys/statvfs.h>
-#include <sys/wait.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <sys/ioctl.h>
+#અન્તર્ભાવ <sys/stat.h>
+#અન્તર્ભાવ <sys/socket.h>
+#અન્તર્ભાવ <sys/statvfs.h>
+#અન્તર્ભાવ <sys/wait.h>
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <glob.h>
-#include <paths.h>
-#include <libgen.h>
+#અન્તર્ભાવ <ctype.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <fcntl.h>
+#અન્તર્ભાવ <glob.h>
+#અન્તર્ભાવ <paths.h>
+#અન્તર્ભાવ <libgen.h>
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
 #endif
 #ifdef USE_LIBEDIT
-#include <histedit.h>
-#else
-typedef void EditLine;
+#અન્તર્ભાવ <histedit.h>
+#નહીંતર
+પ્રકારવ્યાખ્યા શૂન્ય Edit_લીટી;
 #endif
-#include <limits.h>
-#include <signal.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <util.h>
+#અન્તર્ભાવ <limits.h>
+#અન્તર્ભાવ <signal.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <util.h>
 
-#include "xmalloc.h"
-#include "log.h"
-#include "pathnames.h"
-#include "misc.h"
-#include "utf8.h"
+#અન્તર્ભાવ "xmalloc.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "pathnames.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "utf8.h"
 
-#include "sftp.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sftp-common.h"
-#include "sftp-client.h"
-#include "sftp-usergroup.h"
+#અન્તર્ભાવ "sftp.h"
+#અન્તર્ભાવ "ssherr.h"
+#અન્તર્ભાવ "sshbuf.h"
+#અન્તર્ભાવ "sftp-common.h"
+#અન્તર્ભાવ "sftp-client.h"
+#અન્તર્ભાવ "sftp-usergroup.h"
 
 /* File to read commands from */
 FILE* infile;
 
 /* Are we in batchfile mode? */
-int batchmode = 0;
+પૂર્ણાંક batchmode = 0;
 
 /* PID of ssh transport process */
-static volatile pid_t sshpid = -1;
+સ્થિર અસ્થિર pid_t sshpid = -1;
 
 /* Suppress diagnostic messages */
-int quiet = 0;
+પૂર્ણાંક quiet = 0;
 
 /* This is set to 0 if the progressmeter is not desired. */
-int showprogress = 1;
+પૂર્ણાંક showprogress = 1;
 
 /* When this option is set, we always recursively download/upload directories */
-int global_rflag = 0;
+પૂર્ણાંક global_rflag = 0;
 
 /* When this option is set, we resume download or upload if possible */
-int global_aflag = 0;
+પૂર્ણાંક global_aflag = 0;
 
 /* When this option is set, the file transfers will always preserve times */
-int global_pflag = 0;
+પૂર્ણાંક global_pflag = 0;
 
 /* When this option is set, transfers will have fsync() called on each file */
-int global_fflag = 0;
+પૂર્ણાંક global_fflag = 0;
 
 /* SIGINT received during command processing */
-volatile sig_atomic_t interrupted = 0;
+અસ્થિર sig_atomic_t interrupted = 0;
 
 /* I wish qsort() took a separate ctx for the comparison function...*/
-int sort_flag;
+પૂર્ણાંક sort_flag;
 glob_t *sort_glob;
 
 /* Context used for commandline completion */
-struct complete_ctx {
-	struct sftp_conn *conn;
-	char **remote_pathp;
+સંરચના complete_ctx {
+	સંરચના sftp_conn *conn;
+	અક્ષર **remote_pathp;
 };
 
-int sftp_glob(struct sftp_conn *, const char *, int,
-    int (*)(const char *, int), glob_t *); /* proto for sftp-glob.c */
+પૂર્ણાંક sftp_glob(સંરચના sftp_conn *, અચલ અક્ષર *, પૂર્ણાંક,
+    પૂર્ણાંક (*)(અચલ અક્ષર *, પૂર્ણાંક), glob_t *); /* proto for sftp-glob.c */
 
-extern char *__progname;
+બાહ્ય અક્ષર *__progname;
 
 /* Separators for interactive commands */
 #define WHITESPACE " \t\r\n"
@@ -123,7 +123,7 @@ extern char *__progname;
 #define SORT_FLAGS	(LS_NAME_SORT|LS_TIME_SORT|LS_SIZE_SORT)
 
 /* Commands for interactive mode */
-enum sftp_command {
+ગણના sftp_command {
 	I_CHDIR = 1,
 	I_CHGRP,
 	I_CHMOD,
@@ -154,11 +154,11 @@ enum sftp_command {
 	I_PROGRESS,
 };
 
-struct CMD {
-	const char *c;
-	const int n;
-	const int t;	/* Completion type for the first argument */
-	const int t2;	/* completion type for the optional second argument */
+સંરચના CMD {
+	અચલ અક્ષર *c;
+	અચલ પૂર્ણાંક n;
+	અચલ પૂર્ણાંક t;	/* Completion type for the first argument */
+	અચલ પૂર્ણાંક t2;	/* completion type for the optional second argument */
 };
 
 /* Type of completion */
@@ -166,7 +166,7 @@ struct CMD {
 #define REMOTE	1
 #define LOCAL	2
 
-static const struct CMD cmds[] = {
+સ્થિર અચલ સંરચના CMD cmds[] = {
 	{ "bye",	I_QUIT,		NOARGS,		NOARGS	},
 	{ "cd",		I_CHDIR,	REMOTE,		NOARGS	},
 	{ "chdir",	I_CHDIR,	REMOTE,		NOARGS	},
@@ -204,74 +204,74 @@ static const struct CMD cmds[] = {
 	{ "version",	I_VERSION,	NOARGS,		NOARGS	},
 	{ "!",		I_SHELL,	NOARGS,		NOARGS	},
 	{ "?",		I_HELP,		NOARGS,		NOARGS	},
-	{ NULL,		-1,		-1,		-1	}
+	{ ખાલી,		-1,		-1,		-1	}
 };
 
-static void
-killchild(int signo)
+સ્થિર શૂન્ય
+killchild(પૂર્ણાંક signo)
 {
 	pid_t pid;
 
 	pid = sshpid;
-	if (pid > 1) {
+	જો (pid > 1) {
 		kill(pid, SIGTERM);
-		(void)waitpid(pid, NULL, 0);
+		(શૂન્ય)waitpid(pid, ખાલી, 0);
 	}
 
 	_exit(1);
 }
 
-static void
-suspchild(int signo)
+સ્થિર શૂન્ય
+suspchild(પૂર્ણાંક signo)
 {
-	int save_errno = errno;
-	if (sshpid > 1) {
+	પૂર્ણાંક save_errno = errno;
+	જો (sshpid > 1) {
 		kill(sshpid, signo);
-		while (waitpid(sshpid, NULL, WUNTRACED) == -1 && errno == EINTR)
-			continue;
+		જ્યારે (waitpid(sshpid, ખાલી, WUNTRACED) == -1 && errno == EINTR)
+			ચાલુ;
 	}
 	kill(getpid(), SIGSTOP);
 	errno = save_errno;
 }
 
-static void
-cmd_interrupt(int signo)
+સ્થિર શૂન્ય
+cmd_interrupt(પૂર્ણાંક signo)
 {
-	const char msg[] = "\rInterrupt  \n";
-	int olderrno = errno;
+	અચલ અક્ષર સંદેશ[] = "\rInterrupt  \n";
+	પૂર્ણાંક olderrno = errno;
 
-	(void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
+	(શૂન્ય)લિખ(STDERR_FILENO, સંદેશ, કદ(સંદેશ) - 1);
 	interrupted = 1;
 	errno = olderrno;
 }
 
-static void
-read_interrupt(int signo)
+સ્થિર શૂન્ય
+read_interrupt(પૂર્ણાંક signo)
 {
 	interrupted = 1;
 }
 
-static void
-sigchld_handler(int sig)
+સ્થિર શૂન્ય
+sigchld_handler(પૂર્ણાંક sig)
 {
-	int save_errno = errno;
+	પૂર્ણાંક save_errno = errno;
 	pid_t pid;
-	const char msg[] = "\rConnection closed.  \n";
+	અચલ અક્ષર સંદેશ[] = "\rConnection closed.  \n";
 
 	/* Report if ssh transport process dies. */
-	while ((pid = waitpid(sshpid, NULL, WNOHANG)) == -1 && errno == EINTR)
-		continue;
-	if (pid == sshpid) {
-		if (!quiet)
-		    (void)write(STDERR_FILENO, msg, sizeof(msg) - 1);
+	જ્યારે ((pid = waitpid(sshpid, ખાલી, WNOHANG)) == -1 && errno == EINTR)
+		ચાલુ;
+	જો (pid == sshpid) {
+		જો (!quiet)
+		    (શૂન્ય)લિખ(STDERR_FILENO, સંદેશ, કદ(સંદેશ) - 1);
 		sshpid = -1;
 	}
 
 	errno = save_errno;
 }
 
-static void
-help(void)
+સ્થિર શૂન્ય
+help(શૂન્ય)
 {
 	printf("Available commands:\n"
 	    "bye                                Quit sftp\n"
@@ -310,393 +310,393 @@ help(void)
 	    "?                                  Synonym for help\n");
 }
 
-static void
-local_do_shell(const char *args)
+સ્થિર શૂન્ય
+local_do_shell(અચલ અક્ષર *args)
 {
-	int status;
-	char *shell;
+	પૂર્ણાંક status;
+	અક્ષર *shell;
 	pid_t pid;
 
-	if (!*args)
-		args = NULL;
+	જો (!*args)
+		args = ખાલી;
 
-	if ((shell = getenv("SHELL")) == NULL || *shell == '\0')
+	જો ((shell = getenv("SHELL")) == ખાલી || *shell == '\0')
 		shell = _PATH_BSHELL;
 
-	if ((pid = fork()) == -1)
+	જો ((pid = fork()) == -1)
 		fatal("Couldn't fork: %s", strerror(errno));
 
-	if (pid == 0) {
-		if (args) {
+	જો (pid == 0) {
+		જો (args) {
 			debug3("Executing %s -c \"%s\"", shell, args);
-			execl(shell, shell, "-c", args, (char *)NULL);
-		} else {
+			execl(shell, shell, "-c", args, (અક્ષર *)ખાલી);
+		} નહીંતર {
 			debug3("Executing %s", shell);
-			execl(shell, shell, (char *)NULL);
+			execl(shell, shell, (અક્ષર *)ખાલી);
 		}
 		fprintf(stderr, "Couldn't execute \"%s\": %s\n", shell,
 		    strerror(errno));
 		_exit(1);
 	}
-	while (waitpid(pid, &status, 0) == -1)
-		if (errno != EINTR)
+	જ્યારે (waitpid(pid, &status, 0) == -1)
+		જો (errno != EINTR)
 			fatal("Couldn't wait for child: %s", strerror(errno));
-	if (!WIFEXITED(status))
+	જો (!WIFEXITED(status))
 		error("Shell exited abnormally");
-	else if (WEXITSTATUS(status))
+	નહીંતર જો (WEXITSTATUS(status))
 		error("Shell exited with status %d", WEXITSTATUS(status));
 }
 
-static void
-local_do_ls(const char *args)
+સ્થિર શૂન્ય
+local_do_ls(અચલ અક્ષર *args)
 {
-	if (!args || !*args)
+	જો (!args || !*args)
 		local_do_shell(_PATH_LS);
-	else {
-		int len = strlen(_PATH_LS " ") + strlen(args) + 1;
-		char *buf = xmalloc(len);
+	નહીંતર {
+		પૂર્ણાંક len = strlen(_PATH_LS " ") + strlen(args) + 1;
+		અક્ષર *buf = xmalloc(len);
 
 		/* XXX: quoting - rip quoting code from ftp? */
 		snprintf(buf, len, _PATH_LS " %s", args);
 		local_do_shell(buf);
-		free(buf);
+		મુક્ત(buf);
 	}
 }
 
 /* Strip one path (usually the pwd) from the start of another */
-static char *
-path_strip(const char *path, const char *strip)
+સ્થિર અક્ષર *
+path_strip(અચલ અક્ષર *path, અચલ અક્ષર *strip)
 {
 	size_t len;
 
-	if (strip == NULL || (len = strlen(strip)) == 0)
-		return (xstrdup(path));
+	જો (strip == ખાલી || (len = strlen(strip)) == 0)
+		પાછા (xstrdup(path));
 
-	if (strncmp(path, strip, len) == 0) {
-		if (strip[len - 1] != '/' && path[len] == '/')
+	જો (strncmp(path, strip, len) == 0) {
+		જો (strip[len - 1] != '/' && path[len] == '/')
 			len++;
-		return (xstrdup(path + len));
+		પાછા (xstrdup(path + len));
 	}
 
-	return (xstrdup(path));
+	પાછા (xstrdup(path));
 }
 
-static int
-parse_getput_flags(const char *cmd, char **argv, int argc,
-    int *aflag, int *fflag, int *pflag, int *rflag)
+સ્થિર પૂર્ણાંક
+parse_getput_flags(અચલ અક્ષર *cmd, અક્ષર **argv, પૂર્ણાંક argc,
+    પૂર્ણાંક *aflag, પૂર્ણાંક *fflag, પૂર્ણાંક *pflag, પૂર્ણાંક *rflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	બાહ્ય પૂર્ણાંક opterr, optind, optopt, optreset;
+	પૂર્ણાંક ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*aflag = *fflag = *rflag = *pflag = 0;
-	while ((ch = getopt(argc, argv, "afPpRr")) != -1) {
-		switch (ch) {
-		case 'a':
+	જ્યારે ((ch = getopt(argc, argv, "afPpRr")) != -1) {
+		પસંદગી (ch) {
+		સ્થિતિ 'a':
 			*aflag = 1;
-			break;
-		case 'f':
+			તોડો;
+		સ્થિતિ 'f':
 			*fflag = 1;
-			break;
-		case 'p':
-		case 'P':
+			તોડો;
+		સ્થિતિ 'p':
+		સ્થિતિ 'P':
 			*pflag = 1;
-			break;
-		case 'r':
-		case 'R':
+			તોડો;
+		સ્થિતિ 'r':
+		સ્થિતિ 'R':
 			*rflag = 1;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			પાછા -1;
 		}
 	}
 
-	return optind;
+	પાછા optind;
 }
 
-static int
-parse_mkdir_flags(const char *cmd, char **argv, int argc, int *pflag)
+સ્થિર પૂર્ણાંક
+parse_mkdir_flags(અચલ અક્ષર *cmd, અક્ષર **argv, પૂર્ણાંક argc, પૂર્ણાંક *pflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	બાહ્ય પૂર્ણાંક opterr, optind, optopt, optreset;
+	પૂર્ણાંક ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*pflag = 0;
-	while ((ch = getopt(argc, argv, "p")) != -1) {
-		switch (ch) {
-		case 'p':
+	જ્યારે ((ch = getopt(argc, argv, "p")) != -1) {
+		પસંદગી (ch) {
+		સ્થિતિ 'p':
 			*pflag = 1;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			પાછા -1;
 		}
 	}
 
-	return optind;
+	પાછા optind;
 }
 
-static int
-parse_link_flags(const char *cmd, char **argv, int argc, int *sflag)
+સ્થિર પૂર્ણાંક
+parse_link_flags(અચલ અક્ષર *cmd, અક્ષર **argv, પૂર્ણાંક argc, પૂર્ણાંક *sflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	બાહ્ય પૂર્ણાંક opterr, optind, optopt, optreset;
+	પૂર્ણાંક ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*sflag = 0;
-	while ((ch = getopt(argc, argv, "s")) != -1) {
-		switch (ch) {
-		case 's':
+	જ્યારે ((ch = getopt(argc, argv, "s")) != -1) {
+		પસંદગી (ch) {
+		સ્થિતિ 's':
 			*sflag = 1;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			પાછા -1;
 		}
 	}
 
-	return optind;
+	પાછા optind;
 }
 
-static int
-parse_rename_flags(const char *cmd, char **argv, int argc, int *lflag)
+સ્થિર પૂર્ણાંક
+parse_rename_flags(અચલ અક્ષર *cmd, અક્ષર **argv, પૂર્ણાંક argc, પૂર્ણાંક *lflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	બાહ્ય પૂર્ણાંક opterr, optind, optopt, optreset;
+	પૂર્ણાંક ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*lflag = 0;
-	while ((ch = getopt(argc, argv, "l")) != -1) {
-		switch (ch) {
-		case 'l':
+	જ્યારે ((ch = getopt(argc, argv, "l")) != -1) {
+		પસંદગી (ch) {
+		સ્થિતિ 'l':
 			*lflag = 1;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			પાછા -1;
 		}
 	}
 
-	return optind;
+	પાછા optind;
 }
 
-static int
-parse_ls_flags(char **argv, int argc, int *lflag)
+સ્થિર પૂર્ણાંક
+parse_ls_flags(અક્ષર **argv, પૂર્ણાંક argc, પૂર્ણાંક *lflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	બાહ્ય પૂર્ણાંક opterr, optind, optopt, optreset;
+	પૂર્ણાંક ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*lflag = LS_NAME_SORT;
-	while ((ch = getopt(argc, argv, "1Safhlnrt")) != -1) {
-		switch (ch) {
-		case '1':
+	જ્યારે ((ch = getopt(argc, argv, "1Safhlnrt")) != -1) {
+		પસંદગી (ch) {
+		સ્થિતિ '1':
 			*lflag &= ~VIEW_FLAGS;
 			*lflag |= LS_SHORT_VIEW;
-			break;
-		case 'S':
+			તોડો;
+		સ્થિતિ 'S':
 			*lflag &= ~SORT_FLAGS;
 			*lflag |= LS_SIZE_SORT;
-			break;
-		case 'a':
+			તોડો;
+		સ્થિતિ 'a':
 			*lflag |= LS_SHOW_ALL;
-			break;
-		case 'f':
+			તોડો;
+		સ્થિતિ 'f':
 			*lflag &= ~SORT_FLAGS;
-			break;
-		case 'h':
+			તોડો;
+		સ્થિતિ 'h':
 			*lflag |= LS_SI_UNITS;
-			break;
-		case 'l':
+			તોડો;
+		સ્થિતિ 'l':
 			*lflag &= ~LS_SHORT_VIEW;
 			*lflag |= LS_LONG_VIEW;
-			break;
-		case 'n':
+			તોડો;
+		સ્થિતિ 'n':
 			*lflag &= ~LS_SHORT_VIEW;
 			*lflag |= LS_NUMERIC_VIEW|LS_LONG_VIEW;
-			break;
-		case 'r':
+			તોડો;
+		સ્થિતિ 'r':
 			*lflag |= LS_REVERSE_SORT;
-			break;
-		case 't':
+			તોડો;
+		સ્થિતિ 't':
 			*lflag &= ~SORT_FLAGS;
 			*lflag |= LS_TIME_SORT;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			error("ls: Invalid flag -%c", optopt);
-			return -1;
+			પાછા -1;
 		}
 	}
 
-	return optind;
+	પાછા optind;
 }
 
-static int
-parse_df_flags(const char *cmd, char **argv, int argc, int *hflag, int *iflag)
+સ્થિર પૂર્ણાંક
+parse_df_flags(અચલ અક્ષર *cmd, અક્ષર **argv, પૂર્ણાંક argc, પૂર્ણાંક *hflag, પૂર્ણાંક *iflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	બાહ્ય પૂર્ણાંક opterr, optind, optopt, optreset;
+	પૂર્ણાંક ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*hflag = *iflag = 0;
-	while ((ch = getopt(argc, argv, "hi")) != -1) {
-		switch (ch) {
-		case 'h':
+	જ્યારે ((ch = getopt(argc, argv, "hi")) != -1) {
+		પસંદગી (ch) {
+		સ્થિતિ 'h':
 			*hflag = 1;
-			break;
-		case 'i':
+			તોડો;
+		સ્થિતિ 'i':
 			*iflag = 1;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			પાછા -1;
 		}
 	}
 
-	return optind;
+	પાછા optind;
 }
 
-static int
-parse_ch_flags(const char *cmd, char **argv, int argc, int *hflag)
+સ્થિર પૂર્ણાંક
+parse_ch_flags(અચલ અક્ષર *cmd, અક્ષર **argv, પૂર્ણાંક argc, પૂર્ણાંક *hflag)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	બાહ્ય પૂર્ણાંક opterr, optind, optopt, optreset;
+	પૂર્ણાંક ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
 	*hflag = 0;
-	while ((ch = getopt(argc, argv, "h")) != -1) {
-		switch (ch) {
-		case 'h':
+	જ્યારે ((ch = getopt(argc, argv, "h")) != -1) {
+		પસંદગી (ch) {
+		સ્થિતિ 'h':
 			*hflag = 1;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			પાછા -1;
 		}
 	}
 
-	return optind;
+	પાછા optind;
 }
 
-static int
-parse_no_flags(const char *cmd, char **argv, int argc)
+સ્થિર પૂર્ણાંક
+parse_no_flags(અચલ અક્ષર *cmd, અક્ષર **argv, પૂર્ણાંક argc)
 {
-	extern int opterr, optind, optopt, optreset;
-	int ch;
+	બાહ્ય પૂર્ણાંક opterr, optind, optopt, optreset;
+	પૂર્ણાંક ch;
 
 	optind = optreset = 1;
 	opterr = 0;
 
-	while ((ch = getopt(argc, argv, "")) != -1) {
-		switch (ch) {
-		default:
+	જ્યારે ((ch = getopt(argc, argv, "")) != -1) {
+		પસંદગી (ch) {
+		મૂળભૂત:
 			error("%s: Invalid flag -%c", cmd, optopt);
-			return -1;
+			પાછા -1;
 		}
 	}
 
-	return optind;
+	પાછા optind;
 }
 
-static char *
-escape_glob(const char *s)
+સ્થિર અક્ષર *
+escape_glob(અચલ અક્ષર *s)
 {
 	size_t i, o, len;
-	char *ret;
+	અક્ષર *ret;
 
 	len = strlen(s);
 	ret = xcalloc(2, len + 1);
-	for (i = o = 0; i < len; i++) {
-		if (strchr("[]?*\\", s[i]) != NULL)
+	માટે (i = o = 0; i < len; i++) {
+		જો (strchr("[]?*\\", s[i]) != ખાલી)
 			ret[o++] = '\\';
 		ret[o++] = s[i];
 	}
 	ret[o++] = '\0';
-	return ret;
+	પાછા ret;
 }
 
 /*
  * Arg p must be dynamically allocated.  make_absolute will either return it
  * or free it and allocate a new one.  Caller must free returned string.
  */
-static char *
-make_absolute_pwd_glob(char *p, const char *pwd)
+સ્થિર અક્ષર *
+make_absolute_pwd_glob(અક્ષર *p, અચલ અક્ષર *pwd)
 {
-	char *ret, *escpwd;
+	અક્ષર *ret, *escpwd;
 
 	escpwd = escape_glob(pwd);
-	if (p == NULL)
-		return escpwd;
+	જો (p == ખાલી)
+		પાછા escpwd;
 	ret = sftp_make_absolute(p, escpwd);
-	free(escpwd);
-	return ret;
+	મુક્ત(escpwd);
+	પાછા ret;
 }
 
-static int
-local_is_dir(const char *path)
+સ્થિર પૂર્ણાંક
+local_is_dir(અચલ અક્ષર *path)
 {
-	struct stat sb;
+	સંરચના stat sb;
 
-	if (stat(path, &sb) == -1)
-		return 0;
-	return S_ISDIR(sb.st_mode);
+	જો (stat(path, &sb) == -1)
+		પાછા 0;
+	પાછા S_ISDIR(sb.st_mode);
 }
 
-static int
-process_get(struct sftp_conn *conn, const char *src, const char *dst,
-    const char *pwd, int pflag, int rflag, int resume, int fflag)
+સ્થિર પૂર્ણાંક
+process_get(સંરચના sftp_conn *conn, અચલ અક્ષર *src, અચલ અક્ષર *dst,
+    અચલ અક્ષર *pwd, પૂર્ણાંક pflag, પૂર્ણાંક rflag, પૂર્ણાંક resume, પૂર્ણાંક fflag)
 {
-	char *filename, *abs_src = NULL, *abs_dst = NULL, *tmp = NULL;
+	અક્ષર *filename, *abs_src = ખાલી, *abs_dst = ખાલી, *tmp = ખાલી;
 	glob_t g;
-	int i, r, err = 0;
+	પૂર્ણાંક i, r, err = 0;
 
 	abs_src = make_absolute_pwd_glob(xstrdup(src), pwd);
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, કદ(g));
 
 	debug3("Looking up %s", abs_src);
-	if ((r = sftp_glob(conn, abs_src, GLOB_MARK, NULL, &g)) != 0) {
-		if (r == GLOB_NOSPACE) {
+	જો ((r = sftp_glob(conn, abs_src, GLOB_MARK, ખાલી, &g)) != 0) {
+		જો (r == GLOB_NOSPACE) {
 			error("Too many matches for \"%s\".", abs_src);
-		} else {
+		} નહીંતર {
 			error("File \"%s\" not found.", abs_src);
 		}
 		err = -1;
-		goto out;
+		જાઓ out;
 	}
 
 	/*
 	 * If multiple matches then dst must be a directory or
 	 * unspecified.
 	 */
-	if (g.gl_matchc > 1 && dst != NULL && !local_is_dir(dst)) {
+	જો (g.gl_matchc > 1 && dst != ખાલી && !local_is_dir(dst)) {
 		error("Multiple source paths, but destination "
 		    "\"%s\" is not a directory", dst);
 		err = -1;
-		goto out;
+		જાઓ out;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+	માટે (i = 0; g.gl_pathv[i] && !interrupted; i++) {
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		જો ((filename = basename(tmp)) == ખાલી) {
 			error("basename %s: %s", tmp, strerror(errno));
-			free(tmp);
+			મુક્ત(tmp);
 			err = -1;
-			goto out;
+			જાઓ out;
 		}
 
 		/*
@@ -704,140 +704,140 @@ process_get(struct sftp_conn *conn, const char *src, const char *dst,
 		 * In particular, never select the local root as an implicit
 		 * destination for a remote root.
 		 */
-		if (strcmp(filename, "..") == 0 ||
+		જો (strcmp(filename, "..") == 0 ||
 		    (filename[0] != '\0' &&
 		    filename[strspn(filename, "/")] == '\0'))
 			filename = ".";
 
-		if (g.gl_matchc == 1 && dst) {
-			if (local_is_dir(dst)) {
+		જો (g.gl_matchc == 1 && dst) {
+			જો (local_is_dir(dst)) {
 				abs_dst = sftp_path_append(dst, filename);
-			} else {
+			} નહીંતર {
 				abs_dst = xstrdup(dst);
 			}
-		} else if (dst) {
+		} નહીંતર જો (dst) {
 			abs_dst = sftp_path_append(dst, filename);
-		} else {
+		} નહીંતર {
 			abs_dst = xstrdup(filename);
 		}
-		free(tmp);
+		મુક્ત(tmp);
 
 		resume |= global_aflag;
-		if (!quiet && resume)
+		જો (!quiet && resume)
 			mprintf("Resuming %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
-		else if (!quiet && !resume)
+		નહીંતર જો (!quiet && !resume)
 			mprintf("Fetching %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
 		/* XXX follow link flag */
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) &&
+		જો (sftp_globpath_is_dir(g.gl_pathv[i]) &&
 		    (rflag || global_rflag)) {
-			if (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
-			    NULL, pflag || global_pflag, 1, resume,
+			જો (sftp_download_dir(conn, g.gl_pathv[i], abs_dst,
+			    ખાલી, pflag || global_pflag, 1, resume,
 			    fflag || global_fflag, 0, 0) == -1)
 				err = -1;
-		} else {
-			if (sftp_download(conn, g.gl_pathv[i], abs_dst, NULL,
+		} નહીંતર {
+			જો (sftp_download(conn, g.gl_pathv[i], abs_dst, ખાલી,
 			    pflag || global_pflag, resume,
 			    fflag || global_fflag, 0) == -1)
 				err = -1;
 		}
-		free(abs_dst);
-		abs_dst = NULL;
+		મુક્ત(abs_dst);
+		abs_dst = ખાલી;
 	}
 
 out:
-	free(abs_src);
+	મુક્ત(abs_src);
 	globfree(&g);
-	return(err);
+	પાછા(err);
 }
 
-static int
-process_put(struct sftp_conn *conn, const char *src, const char *dst,
-    const char *pwd, int pflag, int rflag, int resume, int fflag)
+સ્થિર પૂર્ણાંક
+process_put(સંરચના sftp_conn *conn, અચલ અક્ષર *src, અચલ અક્ષર *dst,
+    અચલ અક્ષર *pwd, પૂર્ણાંક pflag, પૂર્ણાંક rflag, પૂર્ણાંક resume, પૂર્ણાંક fflag)
 {
-	char *tmp_dst = NULL;
-	char *abs_dst = NULL;
-	char *tmp = NULL, *filename = NULL;
+	અક્ષર *tmp_dst = ખાલી;
+	અક્ષર *abs_dst = ખાલી;
+	અક્ષર *tmp = ખાલી, *filename = ખાલી;
 	glob_t g;
-	int err = 0;
-	int i, dst_is_dir = 1;
-	struct stat sb;
+	પૂર્ણાંક err = 0;
+	પૂર્ણાંક i, dst_is_dir = 1;
+	સંરચના stat sb;
 
-	if (dst) {
+	જો (dst) {
 		tmp_dst = xstrdup(dst);
 		tmp_dst = sftp_make_absolute(tmp_dst, pwd);
 	}
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, કદ(g));
 	debug3("Looking up %s", src);
-	if (glob(src, GLOB_NOCHECK | GLOB_MARK, NULL, &g)) {
+	જો (glob(src, GLOB_NOCHECK | GLOB_MARK, ખાલી, &g)) {
 		error("File \"%s\" not found.", src);
 		err = -1;
-		goto out;
+		જાઓ out;
 	}
 
 	/* If we aren't fetching to pwd then stash this status for later */
-	if (tmp_dst != NULL)
+	જો (tmp_dst != ખાલી)
 		dst_is_dir = sftp_remote_is_dir(conn, tmp_dst);
 
 	/* If multiple matches, dst may be directory or unspecified */
-	if (g.gl_matchc > 1 && tmp_dst && !dst_is_dir) {
+	જો (g.gl_matchc > 1 && tmp_dst && !dst_is_dir) {
 		error("Multiple paths match, but destination "
 		    "\"%s\" is not a directory", tmp_dst);
 		err = -1;
-		goto out;
+		જાઓ out;
 	}
 
-	for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-		if (stat(g.gl_pathv[i], &sb) == -1) {
+	માટે (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+		જો (stat(g.gl_pathv[i], &sb) == -1) {
 			err = -1;
 			error("stat %s: %s", g.gl_pathv[i], strerror(errno));
-			continue;
+			ચાલુ;
 		}
 
 		tmp = xstrdup(g.gl_pathv[i]);
-		if ((filename = basename(tmp)) == NULL) {
+		જો ((filename = basename(tmp)) == ખાલી) {
 			error("basename %s: %s", tmp, strerror(errno));
-			free(tmp);
+			મુક્ત(tmp);
 			err = -1;
-			goto out;
+			જાઓ out;
 		}
 		/* Special handling for source of '..' */
-		if (strcmp(filename, "..") == 0)
+		જો (strcmp(filename, "..") == 0)
 			filename = "."; /* Upload to dest, not dest/.. */
 
-		free(abs_dst);
-		abs_dst = NULL;
-		if (g.gl_matchc == 1 && tmp_dst) {
+		મુક્ત(abs_dst);
+		abs_dst = ખાલી;
+		જો (g.gl_matchc == 1 && tmp_dst) {
 			/* If directory specified, append filename */
-			if (dst_is_dir)
+			જો (dst_is_dir)
 				abs_dst = sftp_path_append(tmp_dst, filename);
-			else
+			નહીંતર
 				abs_dst = xstrdup(tmp_dst);
-		} else if (tmp_dst) {
+		} નહીંતર જો (tmp_dst) {
 			abs_dst = sftp_path_append(tmp_dst, filename);
-		} else {
+		} નહીંતર {
 			abs_dst = sftp_make_absolute(xstrdup(filename), pwd);
 		}
-		free(tmp);
+		મુક્ત(tmp);
 
 		resume |= global_aflag;
-		if (!quiet && resume)
+		જો (!quiet && resume)
 			mprintf("Resuming upload of %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
-		else if (!quiet && !resume)
+		નહીંતર જો (!quiet && !resume)
 			mprintf("Uploading %s to %s\n",
 			    g.gl_pathv[i], abs_dst);
 		/* XXX follow_link_flag */
-		if (sftp_globpath_is_dir(g.gl_pathv[i]) &&
+		જો (sftp_globpath_is_dir(g.gl_pathv[i]) &&
 		    (rflag || global_rflag)) {
-			if (sftp_upload_dir(conn, g.gl_pathv[i], abs_dst,
+			જો (sftp_upload_dir(conn, g.gl_pathv[i], abs_dst,
 			    pflag || global_pflag, 1, resume,
 			    fflag || global_fflag, 0, 0) == -1)
 				err = -1;
-		} else {
-			if (sftp_upload(conn, g.gl_pathv[i], abs_dst,
+		} નહીંતર {
+			જો (sftp_upload(conn, g.gl_pathv[i], abs_dst,
 			    pflag || global_pflag, resume,
 			    fflag || global_fflag, 0) == -1)
 				err = -1;
@@ -845,59 +845,59 @@ process_put(struct sftp_conn *conn, const char *src, const char *dst,
 	}
 
 out:
-	free(abs_dst);
-	free(tmp_dst);
+	મુક્ત(abs_dst);
+	મુક્ત(tmp_dst);
 	globfree(&g);
-	return(err);
+	પાછા(err);
 }
 
-static int
-sdirent_comp(const void *aa, const void *bb)
+સ્થિર પૂર્ણાંક
+sdirent_comp(અચલ શૂન્ય *aa, અચલ શૂન્ય *bb)
 {
 	SFTP_DIRENT *a = *(SFTP_DIRENT **)aa;
 	SFTP_DIRENT *b = *(SFTP_DIRENT **)bb;
-	int rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
+	પૂર્ણાંક rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
 
 #define NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
-	if (sort_flag & LS_NAME_SORT)
-		return (rmul * strcmp(a->filename, b->filename));
-	else if (sort_flag & LS_TIME_SORT)
-		return (rmul * NCMP(a->a.mtime, b->a.mtime));
-	else if (sort_flag & LS_SIZE_SORT)
-		return (rmul * NCMP(a->a.size, b->a.size));
+	જો (sort_flag & LS_NAME_SORT)
+		પાછા (rmul * strcmp(a->filename, b->filename));
+	નહીંતર જો (sort_flag & LS_TIME_SORT)
+		પાછા (rmul * NCMP(a->a.mtime, b->a.mtime));
+	નહીંતર જો (sort_flag & LS_SIZE_SORT)
+		પાછા (rmul * NCMP(a->a.size, b->a.size));
 
 	fatal("Unknown ls sort type");
 }
 
 /* sftp ls.1 replacement for directories */
-static int
-do_ls_dir(struct sftp_conn *conn, const char *path,
-    const char *strip_path, int lflag)
+સ્થિર પૂર્ણાંક
+do_ls_dir(સંરચના sftp_conn *conn, અચલ અક્ષર *path,
+    અચલ અક્ષર *strip_path, પૂર્ણાંક lflag)
 {
-	int n;
+	પૂર્ણાંક n;
 	u_int c = 1, colspace = 0, columns = 1;
 	SFTP_DIRENT **d;
 
-	if ((n = sftp_readdir(conn, path, &d)) != 0)
-		return (n);
+	જો ((n = sftp_readdir(conn, path, &d)) != 0)
+		પાછા (n);
 
-	if (!(lflag & LS_SHORT_VIEW)) {
+	જો (!(lflag & LS_SHORT_VIEW)) {
 		u_int m = 0, width = 80;
-		struct winsize ws;
-		char *tmp;
+		સંરચના winsize ws;
+		અક્ષર *tmp;
 
 		/* Count entries for sort and find longest filename */
-		for (n = 0; d[n] != NULL; n++) {
-			if (d[n]->filename[0] != '.' || (lflag & LS_SHOW_ALL))
+		માટે (n = 0; d[n] != ખાલી; n++) {
+			જો (d[n]->filename[0] != '.' || (lflag & LS_SHOW_ALL))
 				m = MAXIMUM(m, strlen(d[n]->filename));
 		}
 
 		/* Add any subpath that also needs to be counted */
 		tmp = path_strip(path, strip_path);
 		m += strlen(tmp);
-		free(tmp);
+		મુક્ત(tmp);
 
-		if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+		જો (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
 			width = ws.ws_col;
 
 		columns = width / (m + 2);
@@ -906,144 +906,144 @@ do_ls_dir(struct sftp_conn *conn, const char *path,
 		colspace = MINIMUM(colspace, width);
 	}
 
-	if (lflag & SORT_FLAGS) {
-		for (n = 0; d[n] != NULL; n++)
+	જો (lflag & SORT_FLAGS) {
+		માટે (n = 0; d[n] != ખાલી; n++)
 			;	/* count entries */
 		sort_flag = lflag & (SORT_FLAGS|LS_REVERSE_SORT);
-		qsort(d, n, sizeof(*d), sdirent_comp);
+		qsort(d, n, કદ(*d), sdirent_comp);
 	}
 
 	get_remote_user_groups_from_dirents(conn, d);
-	for (n = 0; d[n] != NULL && !interrupted; n++) {
-		char *tmp, *fname;
+	માટે (n = 0; d[n] != ખાલી && !interrupted; n++) {
+		અક્ષર *tmp, *fname;
 
-		if (d[n]->filename[0] == '.' && !(lflag & LS_SHOW_ALL))
-			continue;
+		જો (d[n]->filename[0] == '.' && !(lflag & LS_SHOW_ALL))
+			ચાલુ;
 
 		tmp = sftp_path_append(path, d[n]->filename);
 		fname = path_strip(tmp, strip_path);
-		free(tmp);
+		મુક્ત(tmp);
 
-		if (lflag & LS_LONG_VIEW) {
-			if ((lflag & (LS_NUMERIC_VIEW|LS_SI_UNITS)) != 0 ||
+		જો (lflag & LS_LONG_VIEW) {
+			જો ((lflag & (LS_NUMERIC_VIEW|LS_SI_UNITS)) != 0 ||
 			    sftp_can_get_users_groups_by_id(conn)) {
-				char *lname;
-				struct stat sb;
-				const char *user = NULL, *group = NULL;
+				અક્ષર *lname;
+				સંરચના stat sb;
+				અચલ અક્ષર *user = ખાલી, *group = ખાલી;
 
-				memset(&sb, 0, sizeof(sb));
+				memset(&sb, 0, કદ(sb));
 				attrib_to_stat(&d[n]->a, &sb);
-				if ((lflag & LS_NUMERIC_VIEW) == 0) {
+				જો ((lflag & LS_NUMERIC_VIEW) == 0) {
 					user = ruser_name(sb.st_uid);
 					group = rgroup_name(sb.st_gid);
 				}
 				lname = ls_file(fname, &sb, 1,
 				    (lflag & LS_SI_UNITS), user, group);
 				mprintf("%s\n", lname);
-				free(lname);
-			} else
+				મુક્ત(lname);
+			} નહીંતર
 				mprintf("%s\n", d[n]->longname);
-		} else {
+		} નહીંતર {
 			mprintf("%-*s", colspace, fname);
-			if (c >= columns) {
+			જો (c >= columns) {
 				printf("\n");
 				c = 1;
-			} else
+			} નહીંતર
 				c++;
 		}
 
-		free(fname);
+		મુક્ત(fname);
 	}
 
-	if (!(lflag & LS_LONG_VIEW) && (c != 1))
+	જો (!(lflag & LS_LONG_VIEW) && (c != 1))
 		printf("\n");
 
 	sftp_free_dirents(d);
-	return (0);
+	પાછા (0);
 }
 
-static int
-sglob_comp(const void *aa, const void *bb)
+સ્થિર પૂર્ણાંક
+sglob_comp(અચલ શૂન્ય *aa, અચલ શૂન્ય *bb)
 {
-	u_int a = *(const u_int *)aa;
-	u_int b = *(const u_int *)bb;
-	const char *ap = sort_glob->gl_pathv[a];
-	const char *bp = sort_glob->gl_pathv[b];
-	const struct stat *as = sort_glob->gl_statv[a];
-	const struct stat *bs = sort_glob->gl_statv[b];
-	int rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
+	u_int a = *(અચલ u_int *)aa;
+	u_int b = *(અચલ u_int *)bb;
+	અચલ અક્ષર *ap = sort_glob->gl_pathv[a];
+	અચલ અક્ષર *bp = sort_glob->gl_pathv[b];
+	અચલ સંરચના stat *as = sort_glob->gl_statv[a];
+	અચલ સંરચના stat *bs = sort_glob->gl_statv[b];
+	પૂર્ણાંક rmul = sort_flag & LS_REVERSE_SORT ? -1 : 1;
 
 #define NCMP(a,b) (a == b ? 0 : (a < b ? 1 : -1))
 	/* order entries without stat information last */
-	if (as == NULL || bs == NULL)
-		return (as == bs) ? 0 : (as == NULL ? rmul : -rmul);
-	if (sort_flag & LS_NAME_SORT)
-		return (rmul * strcmp(ap, bp));
-	else if (sort_flag & LS_TIME_SORT) {
-#if defined(HAVE_STRUCT_STAT_ST_MTIM)
-		if (timespeccmp(&as->st_mtim, &bs->st_mtim, ==))
-			return 0;
-		return timespeccmp(&as->st_mtim, &bs->st_mtim, <) ?
+	જો (as == ખાલી || bs == ખાલી)
+		પાછા (as == bs) ? 0 : (as == ખાલી ? rmul : -rmul);
+	જો (sort_flag & LS_NAME_SORT)
+		પાછા (rmul * strcmp(ap, bp));
+	નહીંતર જો (sort_flag & LS_TIME_SORT) {
+#જો defined(HAVE_STRUCT_STAT_ST_MTIM)
+		જો (timespeccmp(&as->st_mtim, &bs->st_mtim, ==))
+			પાછા 0;
+		પાછા timespeccmp(&as->st_mtim, &bs->st_mtim, <) ?
 		    rmul : -rmul;
-#elif defined(HAVE_STRUCT_STAT_ST_MTIME)
-		return (rmul * NCMP(as->st_mtime, bs->st_mtime));
-#else
-	return rmul * 1;
+#અથવાજો defined(HAVE_STRUCT_STAT_ST_MTIME)
+		પાછા (rmul * NCMP(as->st_mtime, bs->st_mtime));
+#નહીંતર
+	પાછા rmul * 1;
 #endif
-	} else if (sort_flag & LS_SIZE_SORT)
-		return (rmul * NCMP(as->st_size, bs->st_size));
+	} નહીંતર જો (sort_flag & LS_SIZE_SORT)
+		પાછા (rmul * NCMP(as->st_size, bs->st_size));
 
 	fatal("Unknown ls sort type");
 }
 
 /* sftp ls.1 replacement which handles path globs */
-static int
-do_globbed_ls(struct sftp_conn *conn, const char *path,
-    const char *strip_path, int lflag)
+સ્થિર પૂર્ણાંક
+do_globbed_ls(સંરચના sftp_conn *conn, અચલ અક્ષર *path,
+    અચલ અક્ષર *strip_path, પૂર્ણાંક lflag)
 {
-	char *fname, *lname;
+	અક્ષર *fname, *lname;
 	glob_t g;
-	int err, r;
-	struct winsize ws;
-	u_int i, j, nentries, *indices = NULL, c = 1;
+	પૂર્ણાંક err, r;
+	સંરચના winsize ws;
+	u_int i, j, nentries, *indices = ખાલી, c = 1;
 	u_int colspace = 0, columns = 1, m = 0, width = 80;
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, કદ(g));
 
-	if ((r = sftp_glob(conn, path,
+	જો ((r = sftp_glob(conn, path,
 	    GLOB_MARK|GLOB_NOCHECK|GLOB_BRACE|GLOB_KEEPSTAT|GLOB_NOSORT,
-	    NULL, &g)) != 0 ||
+	    ખાલી, &g)) != 0 ||
 	    (g.gl_pathc && !g.gl_matchc)) {
-		if (g.gl_pathc)
+		જો (g.gl_pathc)
 			globfree(&g);
-		if (r == GLOB_NOSPACE) {
+		જો (r == GLOB_NOSPACE) {
 			error("Can't ls: Too many matches for \"%s\"", path);
-		} else {
+		} નહીંતર {
 			error("Can't ls: \"%s\" not found", path);
 		}
-		return -1;
+		પાછા -1;
 	}
 
-	if (interrupted)
-		goto out;
+	જો (interrupted)
+		જાઓ out;
 
 	/*
 	 * If the glob returns a single match and it is a directory,
 	 * then just list its contents.
 	 */
-	if (g.gl_matchc == 1 && g.gl_statv[0] != NULL &&
+	જો (g.gl_matchc == 1 && g.gl_statv[0] != ખાલી &&
 	    S_ISDIR(g.gl_statv[0]->st_mode)) {
 		err = do_ls_dir(conn, g.gl_pathv[0], strip_path, lflag);
 		globfree(&g);
-		return err;
+		પાછા err;
 	}
 
-	if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+	જો (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
 		width = ws.ws_col;
 
-	if (!(lflag & LS_SHORT_VIEW)) {
+	જો (!(lflag & LS_SHORT_VIEW)) {
 		/* Count entries for sort and find longest filename */
-		for (i = 0; g.gl_pathv[i]; i++)
+		માટે (i = 0; g.gl_pathv[i]; i++)
 			m = MAXIMUM(m, strlen(g.gl_pathv[i]));
 
 		columns = width / (m + 2);
@@ -1056,86 +1056,86 @@ do_globbed_ls(struct sftp_conn *conn, const char *path,
 	 * an array of indices into it and sort that. For the usual
 	 * unsorted case, the indices are just the identity 1=1, 2=2, etc.
 	 */
-	for (nentries = 0; g.gl_pathv[nentries] != NULL; nentries++)
+	માટે (nentries = 0; g.gl_pathv[nentries] != ખાલી; nentries++)
 		;	/* count entries */
-	indices = xcalloc(nentries, sizeof(*indices));
-	for (i = 0; i < nentries; i++)
+	indices = xcalloc(nentries, કદ(*indices));
+	માટે (i = 0; i < nentries; i++)
 		indices[i] = i;
 
-	if (lflag & SORT_FLAGS) {
+	જો (lflag & SORT_FLAGS) {
 		sort_glob = &g;
 		sort_flag = lflag & (SORT_FLAGS|LS_REVERSE_SORT);
-		qsort(indices, nentries, sizeof(*indices), sglob_comp);
-		sort_glob = NULL;
+		qsort(indices, nentries, કદ(*indices), sglob_comp);
+		sort_glob = ખાલી;
 	}
 
 	get_remote_user_groups_from_glob(conn, &g);
-	for (j = 0; j < nentries && !interrupted; j++) {
+	માટે (j = 0; j < nentries && !interrupted; j++) {
 		i = indices[j];
 		fname = path_strip(g.gl_pathv[i], strip_path);
-		if (lflag & LS_LONG_VIEW) {
-			const char *user = NULL, *group = NULL;
+		જો (lflag & LS_LONG_VIEW) {
+			અચલ અક્ષર *user = ખાલી, *group = ખાલી;
 
-			if (g.gl_statv[i] == NULL) {
+			જો (g.gl_statv[i] == ખાલી) {
 				error("no stat information for %s", fname);
-				free(fname);
-				continue;
+				મુક્ત(fname);
+				ચાલુ;
 			}
-			if ((lflag & LS_NUMERIC_VIEW) == 0) {
+			જો ((lflag & LS_NUMERIC_VIEW) == 0) {
 				user = ruser_name(g.gl_statv[i]->st_uid);
 				group = rgroup_name(g.gl_statv[i]->st_gid);
 			}
 			lname = ls_file(fname, g.gl_statv[i], 1,
 			    (lflag & LS_SI_UNITS), user, group);
 			mprintf("%s\n", lname);
-			free(lname);
-		} else {
+			મુક્ત(lname);
+		} નહીંતર {
 			mprintf("%-*s", colspace, fname);
-			if (c >= columns) {
+			જો (c >= columns) {
 				printf("\n");
 				c = 1;
-			} else
+			} નહીંતર
 				c++;
 		}
-		free(fname);
+		મુક્ત(fname);
 	}
 
-	if (!(lflag & LS_LONG_VIEW) && (c != 1))
+	જો (!(lflag & LS_LONG_VIEW) && (c != 1))
 		printf("\n");
 
  out:
-	if (g.gl_pathc)
+	જો (g.gl_pathc)
 		globfree(&g);
-	free(indices);
+	મુક્ત(indices);
 
-	return 0;
+	પાછા 0;
 }
 
-static int
-do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
+સ્થિર પૂર્ણાંક
+do_df(સંરચના sftp_conn *conn, અચલ અક્ષર *path, પૂર્ણાંક hflag, પૂર્ણાંક iflag)
 {
-	struct sftp_statvfs st;
-	char s_used[FMT_SCALED_STRSIZE], s_avail[FMT_SCALED_STRSIZE];
-	char s_root[FMT_SCALED_STRSIZE], s_total[FMT_SCALED_STRSIZE];
-	char s_icapacity[16], s_dcapacity[16];
+	સંરચના sftp_statvfs st;
+	અક્ષર s_used[FMT_SCALED_STRSIZE], s_avail[FMT_SCALED_STRSIZE];
+	અક્ષર s_મૂળ[FMT_SCALED_STRSIZE], s_total[FMT_SCALED_STRSIZE];
+	અક્ષર s_icapacity[16], s_dcapacity[16];
 
-	if (sftp_statvfs(conn, path, &st, 1) == -1)
-		return -1;
-	if (st.f_files == 0)
-		strlcpy(s_icapacity, "ERR", sizeof(s_icapacity));
-	else {
-		snprintf(s_icapacity, sizeof(s_icapacity), "%3llu%%",
+	જો (sftp_statvfs(conn, path, &st, 1) == -1)
+		પાછા -1;
+	જો (st.f_files == 0)
+		strlcpy(s_icapacity, "ERR", કદ(s_icapacity));
+	નહીંતર {
+		snprintf(s_icapacity, કદ(s_icapacity), "%3llu%%",
 		    (unsigned long long)(100 * (st.f_files - st.f_ffree) /
 		    st.f_files));
 	}
-	if (st.f_blocks == 0)
-		strlcpy(s_dcapacity, "ERR", sizeof(s_dcapacity));
-	else {
-		snprintf(s_dcapacity, sizeof(s_dcapacity), "%3llu%%",
+	જો (st.f_blocks == 0)
+		strlcpy(s_dcapacity, "ERR", કદ(s_dcapacity));
+	નહીંતર {
+		snprintf(s_dcapacity, કદ(s_dcapacity), "%3llu%%",
 		    (unsigned long long)(100 * (st.f_blocks - st.f_bfree) /
 		    st.f_blocks));
 	}
-	if (iflag) {
+	જો (iflag) {
 		printf("     Inodes        Used       Avail      "
 		    "(root)    %%Capacity\n");
 		printf("%11llu %11llu %11llu %11llu         %s\n",
@@ -1143,19 +1143,19 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
 		    (unsigned long long)(st.f_files - st.f_ffree),
 		    (unsigned long long)st.f_favail,
 		    (unsigned long long)st.f_ffree, s_icapacity);
-	} else if (hflag) {
-		strlcpy(s_used, "error", sizeof(s_used));
-		strlcpy(s_avail, "error", sizeof(s_avail));
-		strlcpy(s_root, "error", sizeof(s_root));
-		strlcpy(s_total, "error", sizeof(s_total));
+	} નહીંતર જો (hflag) {
+		strlcpy(s_used, "error", કદ(s_used));
+		strlcpy(s_avail, "error", કદ(s_avail));
+		strlcpy(s_મૂળ, "error", કદ(s_મૂળ));
+		strlcpy(s_total, "error", કદ(s_total));
 		fmt_scaled((st.f_blocks - st.f_bfree) * st.f_frsize, s_used);
 		fmt_scaled(st.f_bavail * st.f_frsize, s_avail);
-		fmt_scaled(st.f_bfree * st.f_frsize, s_root);
+		fmt_scaled(st.f_bfree * st.f_frsize, s_મૂળ);
 		fmt_scaled(st.f_blocks * st.f_frsize, s_total);
 		printf("    Size     Used    Avail   (root)    %%Capacity\n");
 		printf("%7sB %7sB %7sB %7sB         %s\n",
-		    s_total, s_used, s_avail, s_root, s_dcapacity);
-	} else {
+		    s_total, s_used, s_avail, s_મૂળ, s_dcapacity);
+	} નહીંતર {
 		printf("        Size         Used        Avail       "
 		    "(root)    %%Capacity\n");
 		printf("%12llu %12llu %12llu %12llu         %s\n",
@@ -1166,7 +1166,7 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
 		    (unsigned long long)(st.f_frsize * st.f_bfree / 1024),
 		    s_dcapacity);
 	}
-	return 0;
+	પાછા 0;
 }
 
 /*
@@ -1174,37 +1174,37 @@ do_df(struct sftp_conn *conn, const char *path, int hflag, int iflag)
  * applied in makeargv() when the string is destined for a function that
  * does not glob it.
  */
-static void
-undo_glob_escape(char *s)
+સ્થિર શૂન્ય
+undo_glob_escape(અક્ષર *s)
 {
 	size_t i, j;
 
-	for (i = j = 0;;) {
-		if (s[i] == '\0') {
+	માટે (i = j = 0;;) {
+		જો (s[i] == '\0') {
 			s[j] = '\0';
-			return;
+			પાછા;
 		}
-		if (s[i] != '\\') {
+		જો (s[i] != '\\') {
 			s[j++] = s[i++];
-			continue;
+			ચાલુ;
 		}
 		/* s[i] == '\\' */
 		++i;
-		switch (s[i]) {
-		case '?':
-		case '[':
-		case '*':
-		case '\\':
+		પસંદગી (s[i]) {
+		સ્થિતિ '?':
+		સ્થિતિ '[':
+		સ્થિતિ '*':
+		સ્થિતિ '\\':
 			s[j++] = s[i++];
-			break;
-		case '\0':
+			તોડો;
+		સ્થિતિ '\0':
 			s[j++] = '\\';
 			s[j] = '\0';
-			return;
-		default:
+			પાછા;
+		મૂળભૂત:
 			s[j++] = '\\';
 			s[j++] = s[i++];
-			break;
+			તોડો;
 		}
 	}
 }
@@ -1227,63 +1227,63 @@ undo_glob_escape(char *s)
  */
 #define MAXARGS		128
 #define MAXARGLEN	8192
-static char **
-makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
+સ્થિર અક્ષર **
+makeargv(અચલ અક્ષર *arg, પૂર્ણાંક *argcp, પૂર્ણાંક sloppy, અક્ષર *lastquote,
     u_int *terminated)
 {
-	int argc, quot;
+	પૂર્ણાંક argc, quot;
 	size_t i, j;
-	static char argvs[MAXARGLEN];
-	static char *argv[MAXARGS + 1];
-	enum { MA_START, MA_SQUOTE, MA_DQUOTE, MA_UNQUOTED } state, q;
+	સ્થિર અક્ષર argvs[MAXARGLEN];
+	સ્થિર અક્ષર *argv[MAXARGS + 1];
+	ગણના { MA_START, MA_SQUOTE, MA_DQUOTE, MA_UNQUOTED } state, q;
 
 	*argcp = argc = 0;
-	if (strlen(arg) > sizeof(argvs) - 1) {
+	જો (strlen(arg) > કદ(argvs) - 1) {
  args_too_longs:
 		error("string too long");
-		return NULL;
+		પાછા ખાલી;
 	}
-	if (terminated != NULL)
+	જો (terminated != ખાલી)
 		*terminated = 1;
-	if (lastquote != NULL)
+	જો (lastquote != ખાલી)
 		*lastquote = '\0';
 	state = MA_START;
 	i = j = 0;
-	for (;;) {
-		if ((size_t)argc >= sizeof(argv) / sizeof(*argv)){
+	માટે (;;) {
+		જો ((size_t)argc >= કદ(argv) / કદ(*argv)){
 			error("Too many arguments.");
-			return NULL;
+			પાછા ખાલી;
 		}
-		if (isspace((unsigned char)arg[i])) {
-			if (state == MA_UNQUOTED) {
+		જો (isspace((unsigned અક્ષર)arg[i])) {
+			જો (state == MA_UNQUOTED) {
 				/* Terminate current argument */
 				argvs[j++] = '\0';
 				argc++;
 				state = MA_START;
-			} else if (state != MA_START)
+			} નહીંતર જો (state != MA_START)
 				argvs[j++] = arg[i];
-		} else if (arg[i] == '"' || arg[i] == '\'') {
+		} નહીંતર જો (arg[i] == '"' || arg[i] == '\'') {
 			q = arg[i] == '"' ? MA_DQUOTE : MA_SQUOTE;
-			if (state == MA_START) {
+			જો (state == MA_START) {
 				argv[argc] = argvs + j;
 				state = q;
-				if (lastquote != NULL)
+				જો (lastquote != ખાલી)
 					*lastquote = arg[i];
-			} else if (state == MA_UNQUOTED)
+			} નહીંતર જો (state == MA_UNQUOTED)
 				state = q;
-			else if (state == q)
+			નહીંતર જો (state == q)
 				state = MA_UNQUOTED;
-			else
+			નહીંતર
 				argvs[j++] = arg[i];
-		} else if (arg[i] == '\\') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE) {
+		} નહીંતર જો (arg[i] == '\\') {
+			જો (state == MA_SQUOTE || state == MA_DQUOTE) {
 				quot = state == MA_SQUOTE ? '\'' : '"';
 				/* Unescape quote we are in */
 				/* XXX support \n and friends? */
-				if (arg[i + 1] == quot) {
+				જો (arg[i + 1] == quot) {
 					i++;
 					argvs[j++] = arg[i];
-				} else if (arg[i + 1] == '?' ||
+				} નહીંતર જો (arg[i + 1] == '?' ||
 				    arg[i + 1] == '[' || arg[i + 1] == '*') {
 					/*
 					 * Special case for sftp: append
@@ -1291,24 +1291,24 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 					 * glob will undo one level of
 					 * escaping. NB. string can grow here.
 					 */
-					if (j >= sizeof(argvs) - 5)
-						goto args_too_longs;
+					જો (j >= કદ(argvs) - 5)
+						જાઓ args_too_longs;
 					argvs[j++] = '\\';
 					argvs[j++] = arg[i++];
 					argvs[j++] = '\\';
 					argvs[j++] = arg[i];
-				} else {
+				} નહીંતર {
 					argvs[j++] = arg[i++];
 					argvs[j++] = arg[i];
 				}
-			} else {
-				if (state == MA_START) {
+			} નહીંતર {
+				જો (state == MA_START) {
 					argv[argc] = argvs + j;
 					state = MA_UNQUOTED;
-					if (lastquote != NULL)
+					જો (lastquote != ખાલી)
 						*lastquote = '\0';
 				}
-				if (arg[i + 1] == '?' || arg[i + 1] == '[' ||
+				જો (arg[i + 1] == '?' || arg[i + 1] == '[' ||
 				    arg[i + 1] == '*' || arg[i + 1] == '\\') {
 					/*
 					 * Special case for sftp: append
@@ -1318,76 +1318,76 @@ makeargv(const char *arg, int *argcp, int sloppy, char *lastquote,
 					 */
 					argvs[j++] = arg[i++];
 					argvs[j++] = arg[i];
-				} else {
+				} નહીંતર {
 					/* Unescape everything */
 					/* XXX support \n and friends? */
 					i++;
-					if (arg[i] == '\0')
-						goto early_nul;
+					જો (arg[i] == '\0')
+						જાઓ early_nul;
 					argvs[j++] = arg[i];
 				}
 			}
-		} else if (arg[i] == '#') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE)
+		} નહીંતર જો (arg[i] == '#') {
+			જો (state == MA_SQUOTE || state == MA_DQUOTE)
 				argvs[j++] = arg[i];
-			else
-				goto string_done;
-		} else if (arg[i] == '\0') {
-			if (state == MA_SQUOTE || state == MA_DQUOTE) {
+			નહીંતર
+				જાઓ string_done;
+		} નહીંતર જો (arg[i] == '\0') {
+			જો (state == MA_SQUOTE || state == MA_DQUOTE) {
  early_nul:
-				if (sloppy) {
+				જો (sloppy) {
 					state = MA_UNQUOTED;
-					if (terminated != NULL)
+					જો (terminated != ખાલી)
 						*terminated = 0;
-					goto string_done;
+					જાઓ string_done;
 				}
 				error("Unterminated quoted argument");
-				return NULL;
+				પાછા ખાલી;
 			}
  string_done:
-			if (state == MA_UNQUOTED) {
+			જો (state == MA_UNQUOTED) {
 				argvs[j++] = '\0';
 				argc++;
 			}
-			break;
-		} else {
-			if (state == MA_START) {
+			તોડો;
+		} નહીંતર {
+			જો (state == MA_START) {
 				argv[argc] = argvs + j;
 				state = MA_UNQUOTED;
-				if (lastquote != NULL)
+				જો (lastquote != ખાલી)
 					*lastquote = '\0';
 			}
-			if ((state == MA_SQUOTE || state == MA_DQUOTE) &&
+			જો ((state == MA_SQUOTE || state == MA_DQUOTE) &&
 			    (arg[i] == '?' || arg[i] == '[' || arg[i] == '*')) {
 				/*
 				 * Special case for sftp: escape quoted
 				 * glob(3) wildcards. NB. string can grow
 				 * here.
 				 */
-				if (j >= sizeof(argvs) - 3)
-					goto args_too_longs;
+				જો (j >= કદ(argvs) - 3)
+					જાઓ args_too_longs;
 				argvs[j++] = '\\';
 				argvs[j++] = arg[i];
-			} else
+			} નહીંતર
 				argvs[j++] = arg[i];
 		}
 		i++;
 	}
 	*argcp = argc;
-	return argv;
+	પાછા argv;
 }
 
-static int
-parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
-	  int *fflag, int *hflag, int *iflag, int *lflag, int *pflag,
-	  int *rflag, int *sflag,
-    unsigned long *n_arg, char **path1, char **path2)
+સ્થિર પૂર્ણાંક
+parse_args(અચલ અક્ષર **cpp, પૂર્ણાંક *ignore_errors, પૂર્ણાંક *disable_echo, પૂર્ણાંક *aflag,
+	  પૂર્ણાંક *fflag, પૂર્ણાંક *hflag, પૂર્ણાંક *iflag, પૂર્ણાંક *lflag, પૂર્ણાંક *pflag,
+	  પૂર્ણાંક *rflag, પૂર્ણાંક *sflag,
+    unsigned long *n_arg, અક્ષર **path1, અક્ષર **path2)
 {
-	const char *cmd, *cp = *cpp;
-	char *cp2, **argv;
-	int base = 0;
+	અચલ અક્ષર *cmd, *cp = *cpp;
+	અક્ષર *cp2, **argv;
+	પૂર્ણાંક base = 0;
 	long long ll;
-	int path1_mandatory = 0, i, cmdnum, optidx, argc;
+	પૂર્ણાંક path1_mandatory = 0, i, cmdnum, optidx, argc;
 
 	/* Skip leading whitespace */
 	cp = cp + strspn(cp, WHITESPACE);
@@ -1398,499 +1398,499 @@ parse_args(const char **cpp, int *ignore_errors, int *disable_echo, int *aflag,
 	 */
 	*ignore_errors = 0;
 	*disable_echo = 0;
-	for (;*cp != '\0'; cp++) {
-		if (*cp == '-') {
+	માટે (;*cp != '\0'; cp++) {
+		જો (*cp == '-') {
 			*ignore_errors = 1;
-		} else if (*cp == '@') {
+		} નહીંતર જો (*cp == '@') {
 			*disable_echo = 1;
-		} else {
+		} નહીંતર {
 			/* all other characters terminate prefix processing */
-			break;
+			તોડો;
 		}
 	}
 	cp = cp + strspn(cp, WHITESPACE);
 
 	/* Ignore blank lines and lines which begin with comment '#' char */
-	if (*cp == '\0' || *cp == '#')
-		return (0);
+	જો (*cp == '\0' || *cp == '#')
+		પાછા (0);
 
-	if ((argv = makeargv(cp, &argc, 0, NULL, NULL)) == NULL)
-		return -1;
+	જો ((argv = makeargv(cp, &argc, 0, ખાલી, ખાલી)) == ખાલી)
+		પાછા -1;
 
 	/* Figure out which command we have */
-	for (i = 0; cmds[i].c != NULL; i++) {
-		if (argv[0] != NULL && strcasecmp(cmds[i].c, argv[0]) == 0)
-			break;
+	માટે (i = 0; cmds[i].c != ખાલી; i++) {
+		જો (argv[0] != ખાલી && strcasecmp(cmds[i].c, argv[0]) == 0)
+			તોડો;
 	}
 	cmdnum = cmds[i].n;
 	cmd = cmds[i].c;
 
 	/* Special case */
-	if (*cp == '!') {
+	જો (*cp == '!') {
 		cp++;
 		cmdnum = I_SHELL;
-	} else if (cmdnum == -1) {
+	} નહીંતર જો (cmdnum == -1) {
 		error("Invalid command.");
-		return -1;
+		પાછા -1;
 	}
 
 	/* Get arguments and parse flags */
 	*aflag = *fflag = *hflag = *iflag = *lflag = *pflag = 0;
 	*rflag = *sflag = 0;
-	*path1 = *path2 = NULL;
+	*path1 = *path2 = ખાલી;
 	optidx = 1;
-	switch (cmdnum) {
-	case I_GET:
-	case I_REGET:
-	case I_REPUT:
-	case I_PUT:
-		if ((optidx = parse_getput_flags(cmd, argv, argc,
+	પસંદગી (cmdnum) {
+	સ્થિતિ I_GET:
+	સ્થિતિ I_REGET:
+	સ્થિતિ I_REPUT:
+	સ્થિતિ I_PUT:
+		જો ((optidx = parse_getput_flags(cmd, argv, argc,
 		    aflag, fflag, pflag, rflag)) == -1)
-			return -1;
+			પાછા -1;
 		/* Get first pathname (mandatory) */
-		if (argc - optidx < 1) {
+		જો (argc - optidx < 1) {
 			error("You must specify at least one path after a "
 			    "%s command.", cmd);
-			return -1;
+			પાછા -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		/* Get second pathname (optional) */
-		if (argc - optidx > 1) {
+		જો (argc - optidx > 1) {
 			*path2 = xstrdup(argv[optidx + 1]);
 			/* Destination is not globbed */
 			undo_glob_escape(*path2);
 		}
-		break;
-	case I_LINK:
-		if ((optidx = parse_link_flags(cmd, argv, argc, sflag)) == -1)
-			return -1;
-		goto parse_two_paths;
-	case I_COPY:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
-		goto parse_two_paths;
-	case I_RENAME:
-		if ((optidx = parse_rename_flags(cmd, argv, argc, lflag)) == -1)
-			return -1;
-		goto parse_two_paths;
-	case I_SYMLINK:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
+		તોડો;
+	સ્થિતિ I_LINK:
+		જો ((optidx = parse_link_flags(cmd, argv, argc, sflag)) == -1)
+			પાછા -1;
+		જાઓ parse_two_paths;
+	સ્થિતિ I_COPY:
+		જો ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			પાછા -1;
+		જાઓ parse_two_paths;
+	સ્થિતિ I_RENAME:
+		જો ((optidx = parse_rename_flags(cmd, argv, argc, lflag)) == -1)
+			પાછા -1;
+		જાઓ parse_two_paths;
+	સ્થિતિ I_SYMLINK:
+		જો ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			પાછા -1;
  parse_two_paths:
-		if (argc - optidx < 2) {
+		જો (argc - optidx < 2) {
 			error("You must specify two paths after a %s "
 			    "command.", cmd);
-			return -1;
+			પાછા -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		*path2 = xstrdup(argv[optidx + 1]);
 		/* Paths are not globbed */
 		undo_glob_escape(*path1);
 		undo_glob_escape(*path2);
-		break;
-	case I_MKDIR:
-	case I_LMKDIR:
-		if ((optidx = parse_mkdir_flags(cmd, argv, argc, pflag)) == -1)
-			return -1;
+		તોડો;
+	સ્થિતિ I_MKDIR:
+	સ્થિતિ I_LMKDIR:
+		જો ((optidx = parse_mkdir_flags(cmd, argv, argc, pflag)) == -1)
+			પાછા -1;
 		path1_mandatory = 1;
-		goto parse_one_path;
-	case I_RM:
-	case I_RMDIR:
+		જાઓ parse_one_path;
+	સ્થિતિ I_RM:
+	સ્થિતિ I_RMDIR:
 		path1_mandatory = 1;
 		/* FALLTHROUGH */
-	case I_CHDIR:
-	case I_LCHDIR:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
+	સ્થિતિ I_CHDIR:
+	સ્થિતિ I_LCHDIR:
+		જો ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			પાછા -1;
  parse_one_path:
 		/* Get pathname (mandatory) */
-		if (argc - optidx < 1) {
-			if (!path1_mandatory)
-				break; /* return a NULL path1 */
+		જો (argc - optidx < 1) {
+			જો (!path1_mandatory)
+				તોડો; /* return a NULL path1 */
 			error("You must specify a path after a %s command.",
 			    cmd);
-			return -1;
+			પાછા -1;
 		}
 		*path1 = xstrdup(argv[optidx]);
 		/* Only "rm" globs */
-		if (cmdnum != I_RM)
+		જો (cmdnum != I_RM)
 			undo_glob_escape(*path1);
-		break;
-	case I_DF:
-		if ((optidx = parse_df_flags(cmd, argv, argc, hflag,
+		તોડો;
+	સ્થિતિ I_DF:
+		જો ((optidx = parse_df_flags(cmd, argv, argc, hflag,
 		    iflag)) == -1)
-			return -1;
+			પાછા -1;
 		/* Default to current directory if no path specified */
-		if (argc - optidx < 1)
-			*path1 = NULL;
-		else {
+		જો (argc - optidx < 1)
+			*path1 = ખાલી;
+		નહીંતર {
 			*path1 = xstrdup(argv[optidx]);
 			undo_glob_escape(*path1);
 		}
-		break;
-	case I_LS:
-		if ((optidx = parse_ls_flags(argv, argc, lflag)) == -1)
-			return(-1);
+		તોડો;
+	સ્થિતિ I_LS:
+		જો ((optidx = parse_ls_flags(argv, argc, lflag)) == -1)
+			પાછા(-1);
 		/* Path is optional */
-		if (argc - optidx > 0)
+		જો (argc - optidx > 0)
 			*path1 = xstrdup(argv[optidx]);
-		break;
-	case I_LLS:
+		તોડો;
+	સ્થિતિ I_LLS:
 		/* Skip ls command and following whitespace */
 		cp = cp + strlen(cmd) + strspn(cp, WHITESPACE);
-	case I_SHELL:
+	સ્થિતિ I_SHELL:
 		/* Uses the rest of the line */
-		break;
-	case I_LUMASK:
-	case I_CHMOD:
+		તોડો;
+	સ્થિતિ I_LUMASK:
+	સ્થિતિ I_CHMOD:
 		base = 8;
 		/* FALLTHROUGH */
-	case I_CHOWN:
-	case I_CHGRP:
-		if ((optidx = parse_ch_flags(cmd, argv, argc, hflag)) == -1)
-			return -1;
+	સ્થિતિ I_CHOWN:
+	સ્થિતિ I_CHGRP:
+		જો ((optidx = parse_ch_flags(cmd, argv, argc, hflag)) == -1)
+			પાછા -1;
 		/* Get numeric arg (mandatory) */
-		if (argc - optidx < 1)
-			goto need_num_arg;
+		જો (argc - optidx < 1)
+			જાઓ need_અંક_arg;
 		errno = 0;
 		ll = strtoll(argv[optidx], &cp2, base);
-		if (cp2 == argv[optidx] || *cp2 != '\0' ||
+		જો (cp2 == argv[optidx] || *cp2 != '\0' ||
 		    ((ll == LLONG_MIN || ll == LLONG_MAX) && errno == ERANGE) ||
 		    ll < 0 || ll > UINT32_MAX) {
- need_num_arg:
+ need_અંક_arg:
 			error("You must supply a numeric argument "
 			    "to the %s command.", cmd);
-			return -1;
+			પાછા -1;
 		}
 		*n_arg = ll;
-		if (cmdnum == I_LUMASK)
-			break;
+		જો (cmdnum == I_LUMASK)
+			તોડો;
 		/* Get pathname (mandatory) */
-		if (argc - optidx < 2) {
+		જો (argc - optidx < 2) {
 			error("You must specify a path after a %s command.",
 			    cmd);
-			return -1;
+			પાછા -1;
 		}
 		*path1 = xstrdup(argv[optidx + 1]);
-		break;
-	case I_QUIT:
-	case I_PWD:
-	case I_LPWD:
-	case I_HELP:
-	case I_VERSION:
-	case I_PROGRESS:
-		if ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
-			return -1;
-		break;
-	default:
+		તોડો;
+	સ્થિતિ I_QUIT:
+	સ્થિતિ I_PWD:
+	સ્થિતિ I_LPWD:
+	સ્થિતિ I_HELP:
+	સ્થિતિ I_VERSION:
+	સ્થિતિ I_PROGRESS:
+		જો ((optidx = parse_no_flags(cmd, argv, argc)) == -1)
+			પાછા -1;
+		તોડો;
+	મૂળભૂત:
 		fatal("Command not implemented");
 	}
 
 	*cpp = cp;
-	return(cmdnum);
+	પાછા(cmdnum);
 }
 
-static int
-parse_dispatch_command(struct sftp_conn *conn, const char *cmd, char **pwd,
-    const char *startdir, int err_abort, int echo_command)
+સ્થિર પૂર્ણાંક
+parse_dispatch_command(સંરચના sftp_conn *conn, અચલ અક્ષર *cmd, અક્ષર **pwd,
+    અચલ અક્ષર *startdir, પૂર્ણાંક err_abort, પૂર્ણાંક echo_command)
 {
-	const char *ocmd = cmd;
-	char *path1, *path2, *tmp;
-	int ignore_errors = 0, disable_echo = 1;
-	int aflag = 0, fflag = 0, hflag = 0, iflag = 0;
-	int lflag = 0, pflag = 0, rflag = 0, sflag = 0;
-	int cmdnum, i;
+	અચલ અક્ષર *ocmd = cmd;
+	અક્ષર *path1, *path2, *tmp;
+	પૂર્ણાંક ignore_errors = 0, disable_echo = 1;
+	પૂર્ણાંક aflag = 0, fflag = 0, hflag = 0, iflag = 0;
+	પૂર્ણાંક lflag = 0, pflag = 0, rflag = 0, sflag = 0;
+	પૂર્ણાંક cmdnum, i;
 	unsigned long n_arg = 0;
 	Attrib a, aa;
-	char path_buf[PATH_MAX];
-	int err = 0;
+	અક્ષર path_buf[PATH_MAX];
+	પૂર્ણાંક err = 0;
 	glob_t g;
 
-	path1 = path2 = NULL;
+	path1 = path2 = ખાલી;
 	cmdnum = parse_args(&cmd, &ignore_errors, &disable_echo, &aflag, &fflag,
 	    &hflag, &iflag, &lflag, &pflag, &rflag, &sflag, &n_arg,
 	    &path1, &path2);
-	if (ignore_errors != 0)
+	જો (ignore_errors != 0)
 		err_abort = 0;
 
-	if (echo_command && !disable_echo)
+	જો (echo_command && !disable_echo)
 		mprintf("sftp> %s\n", ocmd);
 
-	memset(&g, 0, sizeof(g));
+	memset(&g, 0, કદ(g));
 
 	/* Perform command */
-	switch (cmdnum) {
-	case 0:
+	પસંદગી (cmdnum) {
+	સ્થિતિ 0:
 		/* Blank line */
-		break;
-	case -1:
+		તોડો;
+	સ્થિતિ -1:
 		/* Unrecognized command */
 		err = -1;
-		break;
-	case I_REGET:
+		તોડો;
+	સ્થિતિ I_REGET:
 		aflag = 1;
 		/* FALLTHROUGH */
-	case I_GET:
+	સ્થિતિ I_GET:
 		err = process_get(conn, path1, path2, *pwd, pflag,
 		    rflag, aflag, fflag);
-		break;
-	case I_REPUT:
+		તોડો;
+	સ્થિતિ I_REPUT:
 		aflag = 1;
 		/* FALLTHROUGH */
-	case I_PUT:
+	સ્થિતિ I_PUT:
 		err = process_put(conn, path1, path2, *pwd, pflag,
 		    rflag, aflag, fflag);
-		break;
-	case I_COPY:
+		તોડો;
+	સ્થિતિ I_COPY:
 		path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = sftp_copy(conn, path1, path2);
-		break;
-	case I_RENAME:
+		તોડો;
+	સ્થિતિ I_RENAME:
 		path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = sftp_rename(conn, path1, path2, lflag);
-		break;
-	case I_SYMLINK:
+		તોડો;
+	સ્થિતિ I_SYMLINK:
 		sflag = 1;
 		/* FALLTHROUGH */
-	case I_LINK:
-		if (!sflag)
+	સ્થિતિ I_LINK:
+		જો (!sflag)
 			path1 = sftp_make_absolute(path1, *pwd);
 		path2 = sftp_make_absolute(path2, *pwd);
 		err = (sflag ? sftp_symlink : sftp_hardlink)(conn,
 		    path1, path2);
-		break;
-	case I_RM:
+		તોડો;
+	સ્થિતિ I_RM:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
-		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if (!quiet)
+		sftp_glob(conn, path1, GLOB_NOCHECK, ખાલી, &g);
+		માટે (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			જો (!quiet)
 				mprintf("Removing %s\n", g.gl_pathv[i]);
 			err = sftp_rm(conn, g.gl_pathv[i]);
-			if (err != 0 && err_abort)
-				break;
+			જો (err != 0 && err_abort)
+				તોડો;
 		}
-		break;
-	case I_MKDIR:
+		તોડો;
+	સ્થિતિ I_MKDIR:
 		path1 = sftp_make_absolute(path1, *pwd);
 		attrib_clear(&a);
 		a.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = 0777;
-		if (pflag)
+		જો (pflag)
 			err = sftp_mkpath(conn, path1, &a, 1);
-		else
+		નહીંતર
 			err = sftp_mkdir(conn, path1, &a, 1);
-		break;
-	case I_RMDIR:
+		તોડો;
+	સ્થિતિ I_RMDIR:
 		path1 = sftp_make_absolute(path1, *pwd);
 		err = sftp_rmdir(conn, path1);
-		break;
-	case I_CHDIR:
-		if (path1 == NULL || *path1 == '\0')
+		તોડો;
+	સ્થિતિ I_CHDIR:
+		જો (path1 == ખાલી || *path1 == '\0')
 			path1 = xstrdup(startdir);
 		path1 = sftp_make_absolute(path1, *pwd);
-		if ((tmp = sftp_realpath(conn, path1)) == NULL) {
+		જો ((tmp = sftp_realpath(conn, path1)) == ખાલી) {
 			err = 1;
-			break;
+			તોડો;
 		}
-		if (sftp_stat(conn, tmp, 0, &aa) != 0) {
-			free(tmp);
+		જો (sftp_stat(conn, tmp, 0, &aa) != 0) {
+			મુક્ત(tmp);
 			err = 1;
-			break;
+			તોડો;
 		}
-		if (!(aa.flags & SSH2_FILEXFER_ATTR_PERMISSIONS)) {
+		જો (!(aa.flags & SSH2_FILEXFER_ATTR_PERMISSIONS)) {
 			error("Can't change directory: Can't check target");
-			free(tmp);
+			મુક્ત(tmp);
 			err = 1;
-			break;
+			તોડો;
 		}
-		if (!S_ISDIR(aa.perm)) {
+		જો (!S_ISDIR(aa.perm)) {
 			error("Can't change directory: \"%s\" is not "
 			    "a directory", tmp);
-			free(tmp);
+			મુક્ત(tmp);
 			err = 1;
-			break;
+			તોડો;
 		}
-		free(*pwd);
+		મુક્ત(*pwd);
 		*pwd = tmp;
-		break;
-	case I_LS:
-		if (!path1) {
+		તોડો;
+	સ્થિતિ I_LS:
+		જો (!path1) {
 			do_ls_dir(conn, *pwd, *pwd, lflag);
-			break;
+			તોડો;
 		}
 
 		/* Strip pwd off beginning of non-absolute paths */
-		tmp = NULL;
-		if (!path_absolute(path1))
+		tmp = ખાલી;
+		જો (!path_absolute(path1))
 			tmp = *pwd;
 
 		path1 = make_absolute_pwd_glob(path1, *pwd);
 		err = do_globbed_ls(conn, path1, tmp, lflag);
-		break;
-	case I_DF:
+		તોડો;
+	સ્થિતિ I_DF:
 		/* Default to current directory if no path specified */
-		if (path1 == NULL)
+		જો (path1 == ખાલી)
 			path1 = xstrdup(*pwd);
 		path1 = sftp_make_absolute(path1, *pwd);
 		err = do_df(conn, path1, hflag, iflag);
-		break;
-	case I_LCHDIR:
-		if (path1 == NULL || *path1 == '\0')
+		તોડો;
+	સ્થિતિ I_LCHDIR:
+		જો (path1 == ખાલી || *path1 == '\0')
 			path1 = xstrdup("~");
 		tmp = tilde_expand_filename(path1, getuid());
-		free(path1);
+		મુક્ત(path1);
 		path1 = tmp;
-		if (chdir(path1) == -1) {
+		જો (chdir(path1) == -1) {
 			error("Couldn't change local directory to "
 			    "\"%s\": %s", path1, strerror(errno));
 			err = 1;
 		}
-		break;
-	case I_LMKDIR:
-		if (pflag) {
-			if (mkdir_path(path1, 0777) != 0)
+		તોડો;
+	સ્થિતિ I_LMKDIR:
+		જો (pflag) {
+			જો (mkdir_path(path1, 0777) != 0)
 				err = 1;
-			break;
+			તોડો;
 		}
-		if (mkdir(path1, 0777) == -1) {
+		જો (mkdir(path1, 0777) == -1) {
 			error("Couldn't create local directory "
 			    "\"%s\": %s", path1, strerror(errno));
 			err = 1;
 		}
-		break;
-	case I_LLS:
+		તોડો;
+	સ્થિતિ I_LLS:
 		local_do_ls(cmd);
-		break;
-	case I_SHELL:
+		તોડો;
+	સ્થિતિ I_SHELL:
 		local_do_shell(cmd);
-		break;
-	case I_LUMASK:
+		તોડો;
+	સ્થિતિ I_LUMASK:
 		umask(n_arg);
 		printf("Local umask: %03lo\n", n_arg);
-		break;
-	case I_CHMOD:
+		તોડો;
+	સ્થિતિ I_CHMOD:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
 		attrib_clear(&a);
 		a.flags |= SSH2_FILEXFER_ATTR_PERMISSIONS;
 		a.perm = n_arg;
-		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if (!quiet)
+		sftp_glob(conn, path1, GLOB_NOCHECK, ખાલી, &g);
+		માટે (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			જો (!quiet)
 				mprintf("Changing mode on %s\n",
 				    g.gl_pathv[i]);
 			err = (hflag ? sftp_lsetstat : sftp_setstat)(conn,
 			    g.gl_pathv[i], &a);
-			if (err != 0 && err_abort)
-				break;
+			જો (err != 0 && err_abort)
+				તોડો;
 		}
-		break;
-	case I_CHOWN:
-	case I_CHGRP:
+		તોડો;
+	સ્થિતિ I_CHOWN:
+	સ્થિતિ I_CHGRP:
 		path1 = make_absolute_pwd_glob(path1, *pwd);
-		sftp_glob(conn, path1, GLOB_NOCHECK, NULL, &g);
-		for (i = 0; g.gl_pathv[i] && !interrupted; i++) {
-			if ((hflag ? sftp_lstat : sftp_stat)(conn,
+		sftp_glob(conn, path1, GLOB_NOCHECK, ખાલી, &g);
+		માટે (i = 0; g.gl_pathv[i] && !interrupted; i++) {
+			જો ((hflag ? sftp_lstat : sftp_stat)(conn,
 			    g.gl_pathv[i], 0, &aa) != 0) {
-				if (err_abort) {
+				જો (err_abort) {
 					err = -1;
-					break;
-				} else
-					continue;
+					તોડો;
+				} નહીંતર
+					ચાલુ;
 			}
-			if (!(aa.flags & SSH2_FILEXFER_ATTR_UIDGID)) {
+			જો (!(aa.flags & SSH2_FILEXFER_ATTR_UIDGID)) {
 				error("Can't get current ownership of "
 				    "remote file \"%s\"", g.gl_pathv[i]);
-				if (err_abort) {
+				જો (err_abort) {
 					err = -1;
-					break;
-				} else
-					continue;
+					તોડો;
+				} નહીંતર
+					ચાલુ;
 			}
 			aa.flags &= SSH2_FILEXFER_ATTR_UIDGID;
-			if (cmdnum == I_CHOWN) {
-				if (!quiet)
+			જો (cmdnum == I_CHOWN) {
+				જો (!quiet)
 					mprintf("Changing owner on %s\n",
 					    g.gl_pathv[i]);
 				aa.uid = n_arg;
-			} else {
-				if (!quiet)
+			} નહીંતર {
+				જો (!quiet)
 					mprintf("Changing group on %s\n",
 					    g.gl_pathv[i]);
 				aa.gid = n_arg;
 			}
 			err = (hflag ? sftp_lsetstat : sftp_setstat)(conn,
 			    g.gl_pathv[i], &aa);
-			if (err != 0 && err_abort)
-				break;
+			જો (err != 0 && err_abort)
+				તોડો;
 		}
-		break;
-	case I_PWD:
+		તોડો;
+	સ્થિતિ I_PWD:
 		mprintf("Remote working directory: %s\n", *pwd);
-		break;
-	case I_LPWD:
-		if (!getcwd(path_buf, sizeof(path_buf))) {
+		તોડો;
+	સ્થિતિ I_LPWD:
+		જો (!getcwd(path_buf, કદ(path_buf))) {
 			error("Couldn't get local cwd: %s", strerror(errno));
 			err = -1;
-			break;
+			તોડો;
 		}
 		mprintf("Local working directory: %s\n", path_buf);
-		break;
-	case I_QUIT:
+		તોડો;
+	સ્થિતિ I_QUIT:
 		/* Processed below */
-		break;
-	case I_HELP:
+		તોડો;
+	સ્થિતિ I_HELP:
 		help();
-		break;
-	case I_VERSION:
+		તોડો;
+	સ્થિતિ I_VERSION:
 		printf("SFTP protocol version %u\n", sftp_proto_version(conn));
-		break;
-	case I_PROGRESS:
+		તોડો;
+	સ્થિતિ I_PROGRESS:
 		showprogress = !showprogress;
-		if (showprogress)
+		જો (showprogress)
 			printf("Progress meter enabled\n");
-		else
+		નહીંતર
 			printf("Progress meter disabled\n");
-		break;
-	default:
+		તોડો;
+	મૂળભૂત:
 		fatal("%d is not implemented", cmdnum);
 	}
 
-	if (g.gl_pathc)
+	જો (g.gl_pathc)
 		globfree(&g);
-	free(path1);
-	free(path2);
+	મુક્ત(path1);
+	મુક્ત(path2);
 
 	/* If an unignored error occurs in batch mode we should abort. */
-	if (err_abort && err != 0)
-		return (-1);
-	else if (cmdnum == I_QUIT)
-		return (1);
+	જો (err_abort && err != 0)
+		પાછા (-1);
+	નહીંતર જો (cmdnum == I_QUIT)
+		પાછા (1);
 
-	return (0);
+	પાછા (0);
 }
 
 #ifdef USE_LIBEDIT
-static char *
-prompt(EditLine *el)
+સ્થિર અક્ષર *
+prompt(Edit_લીટી *el)
 {
-	return ("sftp> ");
+	પાછા ("sftp> ");
 }
 
 /* Display entries in 'list' after skipping the first 'len' chars */
-static void
-complete_display(char **list, u_int len)
+સ્થિર શૂન્ય
+complete_display(અક્ષર **list, u_int len)
 {
 	u_int y, m = 0, width = 80, columns = 1, colspace = 0, llen;
-	struct winsize ws;
-	char *tmp;
+	સંરચના winsize ws;
+	અક્ષર *tmp;
 
 	/* Count entries for sort and find longest */
-	for (y = 0; list[y]; y++)
+	માટે (y = 0; list[y]; y++)
 		m = MAXIMUM(m, strlen(list[y]));
 
-	if (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
+	જો (ioctl(fileno(stdin), TIOCGWINSZ, &ws) != -1)
 		width = ws.ws_col;
 
 	m = m > len ? m - len : 0;
@@ -1901,14 +1901,14 @@ complete_display(char **list, u_int len)
 
 	printf("\n");
 	m = 1;
-	for (y = 0; list[y]; y++) {
+	માટે (y = 0; list[y]; y++) {
 		llen = strlen(list[y]);
 		tmp = llen > len ? list[y] + len : "";
 		mprintf("%-*s", colspace, tmp);
-		if (m >= columns) {
+		જો (m >= columns) {
 			printf("\n");
 			m = 1;
-		} else
+		} નહીંતર
 			m++;
 	}
 	printf("\n");
@@ -1919,25 +1919,25 @@ complete_display(char **list, u_int len)
  * attempt to find an autocompletion that extends "word" by the next
  * characters common to all entries in "list".
  */
-static char *
-complete_ambiguous(const char *word, char **list, size_t count)
+સ્થિર અક્ષર *
+complete_ambiguous(અચલ અક્ષર *word, અક્ષર **list, size_t ગણતરી)
 {
 	size_t i, j, matchlen;
-	char *tmp;
-	int len;
+	અક્ષર *tmp;
+	પૂર્ણાંક len;
 
-	if (word == NULL)
-		return NULL;
+	જો (word == ખાલી)
+		પાછા ખાલી;
 
-	if (count == 0)
-		return xstrdup(word); /* no options to complete */
+	જો (ગણતરી == 0)
+		પાછા xstrdup(word); /* no options to complete */
 
 	/* Find length of common stem across list */
 	matchlen = strlen(list[0]);
-	for (i = 1; i < count && list[i] != NULL; i++) {
-		for (j = 0; j < matchlen; j++)
-			if (list[0][j] != list[i][j])
-				break;
+	માટે (i = 1; i < ગણતરી && list[i] != ખાલી; i++) {
+		માટે (j = 0; j < matchlen; j++)
+			જો (list[0][j] != list[i][j])
+				તોડો;
 		matchlen = j;
 	}
 
@@ -1945,96 +1945,96 @@ complete_ambiguous(const char *word, char **list, size_t count)
 	 * Now check that the common stem doesn't finish in the middle of
 	 * a multibyte character.
 	 */
-	mblen(NULL, 0);
-	for (i = 0; i < matchlen;) {
+	mblen(ખાલી, 0);
+	માટે (i = 0; i < matchlen;) {
 		len = mblen(list[0] + i, matchlen - i);
-		if (len <= 0 || i + (size_t)len > matchlen)
-			break;
+		જો (len <= 0 || i + (size_t)len > matchlen)
+			તોડો;
 		i += (size_t)len;
 	}
 	/* If so, truncate */
-	if (i < matchlen)
+	જો (i < matchlen)
 		matchlen = i;
 
-	if (matchlen > strlen(word)) {
+	જો (matchlen > strlen(word)) {
 		tmp = xstrdup(list[0]);
 		tmp[matchlen] = '\0';
-		return tmp;
+		પાછા tmp;
 	}
 
-	return xstrdup(word);
+	પાછા xstrdup(word);
 }
 
 /* Autocomplete a sftp command */
-static int
-complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
-    int terminated)
+સ્થિર પૂર્ણાંક
+complete_cmd_parse(Edit_લીટી *el, અક્ષર *cmd, પૂર્ણાંક lastarg, અક્ષર quote,
+    પૂર્ણાંક terminated)
 {
-	u_int y, count = 0, cmdlen, tmplen;
-	char *tmp, **list, argterm[3];
-	const LineInfo *lf;
+	u_int y, ગણતરી = 0, cmdlen, tmplen;
+	અક્ષર *tmp, **list, argterm[3];
+	અચલ લીટી_Info *lf;
 
-	list = xcalloc((sizeof(cmds) / sizeof(*cmds)) + 1, sizeof(char *));
+	list = xcalloc((કદ(cmds) / કદ(*cmds)) + 1, કદ(અક્ષર *));
 
 	/* No command specified: display all available commands */
-	if (cmd == NULL) {
-		for (y = 0; cmds[y].c; y++)
-			list[count++] = xstrdup(cmds[y].c);
+	જો (cmd == ખાલી) {
+		માટે (y = 0; cmds[y].c; y++)
+			list[ગણતરી++] = xstrdup(cmds[y].c);
 
-		list[count] = NULL;
+		list[ગણતરી] = ખાલી;
 		complete_display(list, 0);
 
-		for (y = 0; list[y] != NULL; y++)
-			free(list[y]);
-		free(list);
-		return count;
+		માટે (y = 0; list[y] != ખાલી; y++)
+			મુક્ત(list[y]);
+		મુક્ત(list);
+		પાછા ગણતરી;
 	}
 
 	/* Prepare subset of commands that start with "cmd" */
 	cmdlen = strlen(cmd);
-	for (y = 0; cmds[y].c; y++)  {
-		if (!strncasecmp(cmd, cmds[y].c, cmdlen))
-			list[count++] = xstrdup(cmds[y].c);
+	માટે (y = 0; cmds[y].c; y++)  {
+		જો (!strncasecmp(cmd, cmds[y].c, cmdlen))
+			list[ગણતરી++] = xstrdup(cmds[y].c);
 	}
-	list[count] = NULL;
+	list[ગણતરી] = ખાલી;
 
-	if (count == 0) {
-		free(list);
-		return 0;
+	જો (ગણતરી == 0) {
+		મુક્ત(list);
+		પાછા 0;
 	}
 
 	/* Complete ambiguous command */
-	tmp = complete_ambiguous(cmd, list, count);
-	if (count > 1)
+	tmp = complete_ambiguous(cmd, list, ગણતરી);
+	જો (ગણતરી > 1)
 		complete_display(list, 0);
 
-	for (y = 0; list[y]; y++)
-		free(list[y]);
-	free(list);
+	માટે (y = 0; list[y]; y++)
+		મુક્ત(list[y]);
+	મુક્ત(list);
 
-	if (tmp != NULL) {
+	જો (tmp != ખાલી) {
 		tmplen = strlen(tmp);
 		cmdlen = strlen(cmd);
 		/* If cmd may be extended then do so */
-		if (tmplen > cmdlen)
-			if (el_insertstr(el, tmp + cmdlen) == -1)
+		જો (tmplen > cmdlen)
+			જો (el_insertstr(el, tmp + cmdlen) == -1)
 				fatal("el_insertstr failed.");
-		lf = el_line(el);
+		lf = el_લીટી(el);
 		/* Terminate argument cleanly */
-		if (count == 1) {
+		જો (ગણતરી == 1) {
 			y = 0;
-			if (!terminated)
+			જો (!terminated)
 				argterm[y++] = quote;
-			if (lastarg || *(lf->cursor) != ' ')
+			જો (lastarg || *(lf->cursor) != ' ')
 				argterm[y++] = ' ';
 			argterm[y] = '\0';
-			if (y > 0 && el_insertstr(el, argterm) == -1)
+			જો (y > 0 && el_insertstr(el, argterm) == -1)
 				fatal("el_insertstr failed.");
 		}
-		free(tmp);
+		મુક્ત(tmp);
 	}
 
-	return count;
+	પાછા ગણતરી;
 }
 
 /*
@@ -2042,211 +2042,211 @@ complete_cmd_parse(EditLine *el, char *cmd, int lastarg, char quote,
  * local or remote files. The "cmdarg" argument specifies the actual argument
  * and accepts values 1 or 2.
  */
-static int
-complete_is_remote(char *cmd, int cmdarg) {
-	int i;
+સ્થિર પૂર્ણાંક
+complete_is_remote(અક્ષર *cmd, પૂર્ણાંક cmdarg) {
+	પૂર્ણાંક i;
 
-	if (cmd == NULL)
-		return -1;
+	જો (cmd == ખાલી)
+		પાછા -1;
 
-	for (i = 0; cmds[i].c; i++) {
-		if (!strncasecmp(cmd, cmds[i].c, strlen(cmds[i].c))) {
-			if (cmdarg == 1)
-				return cmds[i].t;
-			else if (cmdarg == 2)
-				return cmds[i].t2;
-			break;
+	માટે (i = 0; cmds[i].c; i++) {
+		જો (!strncasecmp(cmd, cmds[i].c, strlen(cmds[i].c))) {
+			જો (cmdarg == 1)
+				પાછા cmds[i].t;
+			નહીંતર જો (cmdarg == 2)
+				પાછા cmds[i].t2;
+			તોડો;
 		}
 	}
 
-	return -1;
+	પાછા -1;
 }
 
 /* Autocomplete a filename "file" */
-static int
-complete_match(EditLine *el, struct sftp_conn *conn, char *remote_path,
-    char *file, int remote, int lastarg, char quote, int terminated)
+સ્થિર પૂર્ણાંક
+complete_match(Edit_લીટી *el, સંરચના sftp_conn *conn, અક્ષર *remote_path,
+    અક્ષર *file, પૂર્ણાંક remote, પૂર્ણાંક lastarg, અક્ષર quote, પૂર્ણાંક terminated)
 {
 	glob_t g;
-	char *tmp, *tmp2, ins[8];
+	અક્ષર *tmp, *tmp2, ins[8];
 	u_int i, hadglob, pwdlen, len, tmplen, filelen, cesc, isesc, isabs;
-	int clen;
-	const LineInfo *lf;
+	પૂર્ણાંક clen;
+	અચલ લીટી_Info *lf;
 
 	/* Glob from "file" location */
-	if (file == NULL)
+	જો (file == ખાલી)
 		tmp = xstrdup("*");
-	else
+	નહીંતર
 		xasprintf(&tmp, "%s*", file);
 
 	/* Check if the path is absolute. */
 	isabs = path_absolute(tmp);
 
-	memset(&g, 0, sizeof(g));
-	if (remote != LOCAL) {
+	memset(&g, 0, કદ(g));
+	જો (remote != LOCAL) {
 		tmp = make_absolute_pwd_glob(tmp, remote_path);
-		sftp_glob(conn, tmp, GLOB_DOOFFS|GLOB_MARK, NULL, &g);
-	} else
-		(void)glob(tmp, GLOB_DOOFFS|GLOB_MARK, NULL, &g);
+		sftp_glob(conn, tmp, GLOB_DOOFFS|GLOB_MARK, ખાલી, &g);
+	} નહીંતર
+		(શૂન્ય)glob(tmp, GLOB_DOOFFS|GLOB_MARK, ખાલી, &g);
 
 	/* Determine length of pwd so we can trim completion display */
-	for (hadglob = tmplen = pwdlen = 0; tmp[tmplen] != 0; tmplen++) {
+	માટે (hadglob = tmplen = pwdlen = 0; tmp[tmplen] != 0; tmplen++) {
 		/* Terminate counting on first unescaped glob metacharacter */
-		if (tmp[tmplen] == '*' || tmp[tmplen] == '?') {
-			if (tmp[tmplen] != '*' || tmp[tmplen + 1] != '\0')
+		જો (tmp[tmplen] == '*' || tmp[tmplen] == '?') {
+			જો (tmp[tmplen] != '*' || tmp[tmplen + 1] != '\0')
 				hadglob = 1;
-			break;
+			તોડો;
 		}
-		if (tmp[tmplen] == '\\' && tmp[tmplen + 1] != '\0')
+		જો (tmp[tmplen] == '\\' && tmp[tmplen + 1] != '\0')
 			tmplen++;
-		if (tmp[tmplen] == '/')
+		જો (tmp[tmplen] == '/')
 			pwdlen = tmplen + 1;	/* track last seen '/' */
 	}
-	free(tmp);
-	tmp = NULL;
+	મુક્ત(tmp);
+	tmp = ખાલી;
 
-	if (g.gl_matchc == 0)
-		goto out;
+	જો (g.gl_matchc == 0)
+		જાઓ out;
 
-	if (g.gl_matchc > 1)
+	જો (g.gl_matchc > 1)
 		complete_display(g.gl_pathv, pwdlen);
 
 	/* Don't try to extend globs */
-	if (file == NULL || hadglob)
-		goto out;
+	જો (file == ખાલી || hadglob)
+		જાઓ out;
 
 	tmp2 = complete_ambiguous(file, g.gl_pathv, g.gl_matchc);
-	tmp = path_strip(tmp2, isabs ? NULL : remote_path);
-	free(tmp2);
+	tmp = path_strip(tmp2, isabs ? ખાલી : remote_path);
+	મુક્ત(tmp2);
 
-	if (tmp == NULL)
-		goto out;
+	જો (tmp == ખાલી)
+		જાઓ out;
 
 	tmplen = strlen(tmp);
 	filelen = strlen(file);
 
 	/* Count the number of escaped characters in the input string. */
 	cesc = isesc = 0;
-	for (i = 0; i < filelen; i++) {
-		if (!isesc && file[i] == '\\' && i + 1 < filelen){
+	માટે (i = 0; i < filelen; i++) {
+		જો (!isesc && file[i] == '\\' && i + 1 < filelen){
 			isesc = 1;
 			cesc++;
-		} else
+		} નહીંતર
 			isesc = 0;
 	}
 
-	if (tmplen > (filelen - cesc)) {
+	જો (tmplen > (filelen - cesc)) {
 		tmp2 = tmp + filelen - cesc;
 		len = strlen(tmp2);
 		/* quote argument on way out */
-		mblen(NULL, 0);
-		for (i = 0; i < len; i += clen) {
-			if ((clen = mblen(tmp2 + i, len - i)) < 0 ||
-			    (size_t)clen > sizeof(ins) - 2)
+		mblen(ખાલી, 0);
+		માટે (i = 0; i < len; i += clen) {
+			જો ((clen = mblen(tmp2 + i, len - i)) < 0 ||
+			    (size_t)clen > કદ(ins) - 2)
 				fatal("invalid multibyte character");
 			ins[0] = '\\';
 			memcpy(ins + 1, tmp2 + i, clen);
 			ins[clen + 1] = '\0';
-			switch (tmp2[i]) {
-			case '\'':
-			case '"':
-			case '\\':
-			case '\t':
-			case '[':
-			case ' ':
-			case '#':
-			case '*':
-				if (quote == '\0' || tmp2[i] == quote) {
-					if (el_insertstr(el, ins) == -1)
+			પસંદગી (tmp2[i]) {
+			સ્થિતિ '\'':
+			સ્થિતિ '"':
+			સ્થિતિ '\\':
+			સ્થિતિ '\t':
+			સ્થિતિ '[':
+			સ્થિતિ ' ':
+			સ્થિતિ '#':
+			સ્થિતિ '*':
+				જો (quote == '\0' || tmp2[i] == quote) {
+					જો (el_insertstr(el, ins) == -1)
 						fatal("el_insertstr "
 						    "failed.");
-					break;
+					તોડો;
 				}
 				/* FALLTHROUGH */
-			default:
-				if (el_insertstr(el, ins + 1) == -1)
+			મૂળભૂત:
+				જો (el_insertstr(el, ins + 1) == -1)
 					fatal("el_insertstr failed.");
-				break;
+				તોડો;
 			}
 		}
 	}
 
-	lf = el_line(el);
-	if (g.gl_matchc == 1) {
+	lf = el_લીટી(el);
+	જો (g.gl_matchc == 1) {
 		i = 0;
-		if (!terminated && quote != '\0')
+		જો (!terminated && quote != '\0')
 			ins[i++] = quote;
-		if (*(lf->cursor - 1) != '/' &&
+		જો (*(lf->cursor - 1) != '/' &&
 		    (lastarg || *(lf->cursor) != ' '))
 			ins[i++] = ' ';
 		ins[i] = '\0';
-		if (i > 0 && el_insertstr(el, ins) == -1)
+		જો (i > 0 && el_insertstr(el, ins) == -1)
 			fatal("el_insertstr failed.");
 	}
-	free(tmp);
+	મુક્ત(tmp);
 
  out:
 	globfree(&g);
-	return g.gl_matchc;
+	પાછા g.gl_matchc;
 }
 
 /* tab-completion hook function, called via libedit */
-static unsigned char
-complete(EditLine *el, int ch)
+સ્થિર unsigned અક્ષર
+complete(Edit_લીટી *el, પૂર્ણાંક ch)
 {
-	char **argv, *line, quote;
-	int argc, carg;
+	અક્ષર **argv, *લીટી, quote;
+	પૂર્ણાંક argc, carg;
 	u_int cursor, len, terminated, ret = CC_ERROR;
-	const LineInfo *lf;
-	struct complete_ctx *complete_ctx;
+	અચલ લીટી_Info *lf;
+	સંરચના complete_ctx *complete_ctx;
 
-	lf = el_line(el);
-	if (el_get(el, EL_CLIENTDATA, (void**)&complete_ctx) != 0)
+	lf = el_લીટી(el);
+	જો (el_get(el, EL_CLIENTDATA, (શૂન્ય**)&complete_ctx) != 0)
 		fatal_f("el_get failed");
 
 	/* Figure out which argument the cursor points to */
 	cursor = lf->cursor - lf->buffer;
-	line = xmalloc(cursor + 1);
-	memcpy(line, lf->buffer, cursor);
-	line[cursor] = '\0';
-	argv = makeargv(line, &carg, 1, &quote, &terminated);
-	free(line);
+	લીટી = xmalloc(cursor + 1);
+	memcpy(લીટી, lf->buffer, cursor);
+	લીટી[cursor] = '\0';
+	argv = makeargv(લીટી, &carg, 1, &quote, &terminated);
+	મુક્ત(લીટી);
 
 	/* Get all the arguments on the line */
 	len = lf->lastchar - lf->buffer;
-	line = xmalloc(len + 1);
-	memcpy(line, lf->buffer, len);
-	line[len] = '\0';
-	argv = makeargv(line, &argc, 1, NULL, NULL);
+	લીટી = xmalloc(len + 1);
+	memcpy(લીટી, lf->buffer, len);
+	લીટી[len] = '\0';
+	argv = makeargv(લીટી, &argc, 1, ખાલી, ખાલી);
 
 	/* Ensure cursor is at EOL or a argument boundary */
-	if (line[cursor] != ' ' && line[cursor] != '\0' &&
-	    line[cursor] != '\n') {
-		free(line);
-		return ret;
+	જો (લીટી[cursor] != ' ' && લીટી[cursor] != '\0' &&
+	    લીટી[cursor] != '\n') {
+		મુક્ત(લીટી);
+		પાછા ret;
 	}
 
-	if (carg == 0) {
+	જો (carg == 0) {
 		/* Show all available commands */
-		complete_cmd_parse(el, NULL, argc == carg, '\0', 1);
+		complete_cmd_parse(el, ખાલી, argc == carg, '\0', 1);
 		ret = CC_REDISPLAY;
-	} else if (carg == 1 && cursor > 0 && line[cursor - 1] != ' ')  {
+	} નહીંતર જો (carg == 1 && cursor > 0 && લીટી[cursor - 1] != ' ')  {
 		/* Handle the command parsing */
-		if (complete_cmd_parse(el, argv[0], argc == carg,
+		જો (complete_cmd_parse(el, argv[0], argc == carg,
 		    quote, terminated) != 0)
 			ret = CC_REDISPLAY;
-	} else if (carg >= 1) {
+	} નહીંતર જો (carg >= 1) {
 		/* Handle file parsing */
-		int remote = 0;
-		int i = 0, cmdarg = 0;
-		char *filematch = NULL;
+		પૂર્ણાંક remote = 0;
+		પૂર્ણાંક i = 0, cmdarg = 0;
+		અક્ષર *filematch = ખાલી;
 
-		if (carg > 1 && line[cursor-1] != ' ')
+		જો (carg > 1 && લીટી[cursor-1] != ' ')
 			filematch = argv[carg - 1];
 
-		for (i = 1; i < carg; i++) {
+		માટે (i = 1; i < carg; i++) {
 			/* Skip flags */
-			if (argv[i][0] != '-')
+			જો (argv[i][0] != '-')
 				cmdarg++;
 		}
 
@@ -2254,149 +2254,149 @@ complete(EditLine *el, int ch)
 		 * If previous argument is complete, then offer completion
 		 * on the next one.
 		 */
-		if (line[cursor - 1] == ' ')
+		જો (લીટી[cursor - 1] == ' ')
 			cmdarg++;
 
 		remote = complete_is_remote(argv[0], cmdarg);
 
-		if ((remote == REMOTE || remote == LOCAL) &&
+		જો ((remote == REMOTE || remote == LOCAL) &&
 		    complete_match(el, complete_ctx->conn,
 		    *complete_ctx->remote_pathp, filematch,
 		    remote, carg == argc, quote, terminated) != 0)
 			ret = CC_REDISPLAY;
 	}
 
-	free(line);
-	return ret;
+	મુક્ત(લીટી);
+	પાછા ret;
 }
 #endif /* USE_LIBEDIT */
 
-static int
-interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
+સ્થિર પૂર્ણાંક
+interactive_loop(સંરચના sftp_conn *conn, અક્ષર *file1, અક્ષર *file2)
 {
-	char *remote_path;
-	char *dir = NULL, *startdir = NULL;
-	char cmd[2048];
-	int err, interactive;
-	EditLine *el = NULL;
+	અક્ષર *remote_path;
+	અક્ષર *dir = ખાલી, *startdir = ખાલી;
+	અક્ષર cmd[2048];
+	પૂર્ણાંક err, interactive;
+	Edit_લીટી *el = ખાલી;
 #ifdef USE_LIBEDIT
-	const char *editor;
-	History *hl = NULL;
+	અચલ અક્ષર *editor;
+	History *hl = ખાલી;
 	HistEvent hev;
-	extern char *__progname;
-	struct complete_ctx complete_ctx;
+	બાહ્ય અક્ષર *__progname;
+	સંરચના complete_ctx complete_ctx;
 
-	if (!batchmode && isatty(STDIN_FILENO)) {
-		if ((el = el_init(__progname, stdin, stdout, stderr)) == NULL)
+	જો (!batchmode && isatty(STDIN_FILENO)) {
+		જો ((el = el_init(__progname, stdin, stdout, stderr)) == ખાલી)
 			fatal("Couldn't initialise editline");
-		if ((hl = history_init()) == NULL)
+		જો ((hl = history_init()) == ખાલી)
 			fatal("Couldn't initialise editline history");
 		history(hl, &hev, H_SETSIZE, 100);
 		el_set(el, EL_HIST, history, hl);
 
 		el_set(el, EL_PROMPT, prompt);
 		el_set(el, EL_EDITOR, "emacs");
-		el_set(el, EL_TERMINAL, NULL);
+		el_set(el, EL_TERMINAL, ખાલી);
 		el_set(el, EL_SIGNAL, 1);
-		el_source(el, NULL);
+		el_source(el, ખાલી);
 
 		/* Tab Completion */
 		el_set(el, EL_ADDFN, "ftp-complete",
 		    "Context sensitive argument completion", complete);
 		complete_ctx.conn = conn;
 		complete_ctx.remote_pathp = &remote_path;
-		el_set(el, EL_CLIENTDATA, (void*)&complete_ctx);
-		el_set(el, EL_BIND, "^I", "ftp-complete", NULL);
+		el_set(el, EL_CLIENTDATA, (શૂન્ય*)&complete_ctx);
+		el_set(el, EL_BIND, "^I", "ftp-complete", ખાલી);
 		/* enable ctrl-left-arrow and ctrl-right-arrow */
-		el_set(el, EL_BIND, "\\e[1;5C", "em-next-word", NULL);
-		el_set(el, EL_BIND, "\\e\\e[C", "em-next-word", NULL);
-		el_set(el, EL_BIND, "\\e[1;5D", "ed-prev-word", NULL);
-		el_set(el, EL_BIND, "\\e\\e[D", "ed-prev-word", NULL);
+		el_set(el, EL_BIND, "\\e[1;5C", "em-next-word", ખાલી);
+		el_set(el, EL_BIND, "\\e\\e[C", "em-next-word", ખાલી);
+		el_set(el, EL_BIND, "\\e[1;5D", "ed-prev-word", ખાલી);
+		el_set(el, EL_BIND, "\\e\\e[D", "ed-prev-word", ખાલી);
 		/* make ^w match ksh behaviour */
-		el_set(el, EL_BIND, "^w", "ed-delete-prev-word", NULL);
+		el_set(el, EL_BIND, "^w", "ed-delete-prev-word", ખાલી);
 
 		/* el_source() may have changed EL_EDITOR to vi */
-		if (el_get(el, EL_EDITOR, &editor) == 0 && editor[0] == 'v')
-			el_set(el, EL_BIND, "^[", "vi-command-mode", NULL);
+		જો (el_get(el, EL_EDITOR, &editor) == 0 && editor[0] == 'v')
+			el_set(el, EL_BIND, "^[", "vi-command-mode", ખાલી);
 	}
 #endif /* USE_LIBEDIT */
 
-	if ((remote_path = sftp_realpath(conn, ".")) == NULL)
+	જો ((remote_path = sftp_realpath(conn, ".")) == ખાલી)
 		fatal("Need cwd");
 	startdir = xstrdup(remote_path);
 
-	if (file1 != NULL) {
+	જો (file1 != ખાલી) {
 		dir = xstrdup(file1);
 		dir = sftp_make_absolute(dir, remote_path);
 
-		if (sftp_remote_is_dir(conn, dir) && file2 == NULL) {
-			if (!quiet)
+		જો (sftp_remote_is_dir(conn, dir) && file2 == ખાલી) {
+			જો (!quiet)
 				mprintf("Changing to: %s\n", dir);
-			snprintf(cmd, sizeof cmd, "cd \"%s\"", dir);
-			if (parse_dispatch_command(conn, cmd,
+			snprintf(cmd, કદ cmd, "cd \"%s\"", dir);
+			જો (parse_dispatch_command(conn, cmd,
 			    &remote_path, startdir, 1, 0) != 0) {
-				free(dir);
-				free(startdir);
-				free(remote_path);
-				free(conn);
-				return (-1);
+				મુક્ત(dir);
+				મુક્ત(startdir);
+				મુક્ત(remote_path);
+				મુક્ત(conn);
+				પાછા (-1);
 			}
-		} else {
+		} નહીંતર {
 			err = process_get(conn, dir, file2, remote_path, 0, 0,
 			    global_aflag, 0);
-			free(dir);
-			free(startdir);
-			free(remote_path);
-			free(conn);
-			return (err);
+			મુક્ત(dir);
+			મુક્ત(startdir);
+			મુક્ત(remote_path);
+			મુક્ત(conn);
+			પાછા (err);
 		}
-		free(dir);
+		મુક્ત(dir);
 	}
 
-	setvbuf(stdout, NULL, _IOLBF, 0);
-	setvbuf(infile, NULL, _IOLBF, 0);
+	setvbuf(stdout, ખાલી, _IOLBF, 0);
+	setvbuf(infile, ખાલી, _IOLBF, 0);
 
 	interactive = !batchmode && isatty(STDIN_FILENO);
 	err = 0;
-	for (;;) {
-		struct sigaction sa;
+	માટે (;;) {
+		સંરચના sigaction sa;
 
 		interrupted = 0;
-		memset(&sa, 0, sizeof(sa));
+		memset(&sa, 0, કદ(sa));
 		sa.sa_handler = interactive ? read_interrupt : killchild;
-		if (sigaction(SIGINT, &sa, NULL) == -1) {
+		જો (sigaction(SIGINT, &sa, ખાલી) == -1) {
 			debug3("sigaction(%s): %s", strsignal(SIGINT),
 			    strerror(errno));
-			break;
+			તોડો;
 		}
-		if (el == NULL) {
-			if (interactive) {
+		જો (el == ખાલી) {
+			જો (interactive) {
 				printf("sftp> ");
 				fflush(stdout);
 			}
-			if (fgets(cmd, sizeof(cmd), infile) == NULL) {
-				if (interactive)
+			જો (fgets(cmd, કદ(cmd), infile) == ખાલી) {
+				જો (interactive)
 					printf("\n");
-				if (interrupted)
-					continue;
-				break;
+				જો (interrupted)
+					ચાલુ;
+				તોડો;
 			}
-		} else {
+		} નહીંતર {
 #ifdef USE_LIBEDIT
-			const char *line;
-			int count = 0;
+			અચલ અક્ષર *લીટી;
+			પૂર્ણાંક ગણતરી = 0;
 
-			if ((line = el_gets(el, &count)) == NULL ||
-			    count <= 0) {
+			જો ((લીટી = el_gets(el, &ગણતરી)) == ખાલી ||
+			    ગણતરી <= 0) {
 				printf("\n");
-				if (interrupted)
-					continue;
-				break;
+				જો (interrupted)
+					ચાલુ;
+				તોડો;
 			}
-			history(hl, &hev, H_ENTER, line);
-			if (strlcpy(cmd, line, sizeof(cmd)) >= sizeof(cmd)) {
+			history(hl, &hev, H_ENTER, લીટી);
+			જો (strlcpy(cmd, લીટી, કદ(cmd)) >= કદ(cmd)) {
 				fprintf(stderr, "Error: input line too long\n");
-				continue;
+				ચાલુ;
 			}
 #endif /* USE_LIBEDIT */
 		}
@@ -2408,43 +2408,43 @@ interactive_loop(struct sftp_conn *conn, char *file1, char *file2)
 		ssh_signal(SIGINT, cmd_interrupt);
 
 		err = parse_dispatch_command(conn, cmd, &remote_path,
-		    startdir, batchmode, !interactive && el == NULL);
-		if (err != 0)
-			break;
+		    startdir, batchmode, !interactive && el == ખાલી);
+		જો (err != 0)
+			તોડો;
 	}
 	ssh_signal(SIGCHLD, SIG_DFL);
-	free(remote_path);
-	free(startdir);
-	free(conn);
+	મુક્ત(remote_path);
+	મુક્ત(startdir);
+	મુક્ત(conn);
 
 #ifdef USE_LIBEDIT
-	if (hl != NULL)
+	જો (hl != ખાલી)
 		history_end(hl);
-	if (el != NULL)
+	જો (el != ખાલી)
 		el_end(el);
 #endif /* USE_LIBEDIT */
 
 	/* err == 1 signifies normal "quit" exit */
-	return (err >= 0 ? 0 : -1);
+	પાછા (err >= 0 ? 0 : -1);
 }
 
-static void
-connect_to_server(char *path, char **args, int *in, int *out)
+સ્થિર શૂન્ય
+connect_to_server(અક્ષર *path, અક્ષર **args, પૂર્ણાંક *in, પૂર્ણાંક *out)
 {
-	int c_in, c_out;
+	પૂર્ણાંક c_in, c_out;
 #ifdef USE_PIPES
-	int pin[2], pout[2];
+	પૂર્ણાંક pin[2], pout[2];
 
-	if ((pipe(pin) == -1) || (pipe(pout) == -1))
+	જો ((pipe(pin) == -1) || (pipe(pout) == -1))
 		fatal("pipe: %s", strerror(errno));
 	*in = pin[0];
 	*out = pout[1];
 	c_in = pout[0];
 	c_out = pin[1];
-#else /* USE_PIPES */
-	int inout[2];
+#નહીંતર /* USE_PIPES */
+	પૂર્ણાંક inout[2];
 
-	if (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1)
+	જો (socketpair(AF_UNIX, SOCK_STREAM, 0, inout) == -1)
 		fatal("socketpair: %s", strerror(errno));
 	*in = *out = inout[0];
 	c_in = c_out = inout[1];
@@ -2452,10 +2452,10 @@ connect_to_server(char *path, char **args, int *in, int *out)
 	FD_CLOSEONEXEC(*in);
 	FD_CLOSEONEXEC(*out);
 
-	if ((sshpid = fork()) == -1)
+	જો ((sshpid = fork()) == -1)
 		fatal("fork: %s", strerror(errno));
-	else if (sshpid == 0) {
-		if ((dup2(c_in, STDIN_FILENO) == -1) ||
+	નહીંતર જો (sshpid == 0) {
+		જો ((dup2(c_in, STDIN_FILENO) == -1) ||
 		    (dup2(c_out, STDOUT_FILENO) == -1)) {
 			fprintf(stderr, "dup2: %s\n", strerror(errno));
 			_exit(1);
@@ -2490,10 +2490,10 @@ connect_to_server(char *path, char **args, int *in, int *out)
 	close(c_out);
 }
 
-static void
-usage(void)
+સ્થિર શૂન્ય
+usage(શૂન્ય)
 {
-	extern char *__progname;
+	બાહ્ય અક્ષર *__progname;
 
 	fprintf(stderr,
 	    "usage: %s [-46AaCfNpqrv] [-B buffer_size] [-b batchfile] [-c cipher]\n"
@@ -2505,22 +2505,22 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int argc, char **argv)
+પૂર્ણાંક
+મુખ્ય(પૂર્ણાંક argc, અક્ષર **argv)
 {
-	int r, in, out, ch, err, tmp, port = -1, noisy = 0;
-	char *host = NULL, *user, *cp, **cpp, *file2 = NULL;
-	int debug_level = 0;
-	char *file1 = NULL, *sftp_server = NULL;
-	char *ssh_program = _PATH_SSH_PROGRAM, *sftp_direct = NULL;
-	const char *errstr;
+	પૂર્ણાંક r, in, out, ch, err, tmp, port = -1, noisy = 0;
+	અક્ષર *host = ખાલી, *user, *cp, **cpp, *file2 = ખાલી;
+	પૂર્ણાંક debug_level = 0;
+	અક્ષર *file1 = ખાલી, *sftp_server = ખાલી;
+	અક્ષર *ssh_program = _PATH_SSH_PROGRAM, *sftp_direct = ખાલી;
+	અચલ અક્ષર *errstr;
 	LogLevel ll = SYSLOG_LEVEL_INFO;
 	arglist args;
-	extern int optind;
-	extern char *optarg;
-	struct sftp_conn *conn;
+	બાહ્ય પૂર્ણાંક optind;
+	બાહ્ય અક્ષર *optarg;
+	સંરચના sftp_conn *conn;
 	size_t copy_buffer_len = 0;
-	size_t num_requests = 0;
+	size_t અંક_requests = 0;
 	long long llv, limit_kbps = 0;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
@@ -2528,8 +2528,8 @@ main(int argc, char **argv)
 	msetlocale();
 
 	__progname = ssh_get_progname(argv[0]);
-	memset(&args, '\0', sizeof(args));
-	args.list = NULL;
+	memset(&args, '\0', કદ(args));
+	args.list = ખાલી;
 	addargs(&args, "%s", ssh_program);
 	addargs(&args, "-oForwardX11 no");
 	addargs(&args, "-oPermitLocalCommand no");
@@ -2539,131 +2539,131 @@ main(int argc, char **argv)
 	ll = SYSLOG_LEVEL_INFO;
 	infile = stdin;
 
-	while ((ch = getopt(argc, argv,
+	જ્યારે ((ch = getopt(argc, argv,
 	    "1246AafhNpqrvCc:D:i:l:o:s:S:b:B:F:J:P:R:X:")) != -1) {
-		switch (ch) {
+		પસંદગી (ch) {
 		/* Passed through to ssh(1) */
-		case 'A':
-		case '4':
-		case '6':
-		case 'C':
+		સ્થિતિ 'A':
+		સ્થિતિ '4':
+		સ્થિતિ '6':
+		સ્થિતિ 'C':
 			addargs(&args, "-%c", ch);
-			break;
+			તોડો;
 		/* Passed through to ssh(1) with argument */
-		case 'F':
-		case 'J':
-		case 'c':
-		case 'i':
-		case 'o':
+		સ્થિતિ 'F':
+		સ્થિતિ 'J':
+		સ્થિતિ 'c':
+		સ્થિતિ 'i':
+		સ્થિતિ 'o':
 			addargs(&args, "-%c", ch);
 			addargs(&args, "%s", optarg);
-			break;
-		case 'q':
+			તોડો;
+		સ્થિતિ 'q':
 			ll = SYSLOG_LEVEL_ERROR;
 			quiet = 1;
 			showprogress = 0;
 			addargs(&args, "-%c", ch);
-			break;
-		case 'P':
+			તોડો;
+		સ્થિતિ 'P':
 			port = a2port(optarg);
-			if (port <= 0)
+			જો (port <= 0)
 				fatal("Bad port \"%s\"\n", optarg);
-			break;
-		case 'v':
-			if (debug_level < 3) {
+			તોડો;
+		સ્થિતિ 'v':
+			જો (debug_level < 3) {
 				addargs(&args, "-v");
 				ll = SYSLOG_LEVEL_DEBUG1 + debug_level;
 			}
 			debug_level++;
-			break;
-		case '1':
+			તોડો;
+		સ્થિતિ '1':
 			fatal("SSH protocol v.1 is no longer supported");
-			break;
-		case '2':
+			તોડો;
+		સ્થિતિ '2':
 			/* accept silently */
-			break;
-		case 'a':
+			તોડો;
+		સ્થિતિ 'a':
 			global_aflag = 1;
-			break;
-		case 'B':
+			તોડો;
+		સ્થિતિ 'B':
 			copy_buffer_len = strtol(optarg, &cp, 10);
-			if (copy_buffer_len == 0 || *cp != '\0')
+			જો (copy_buffer_len == 0 || *cp != '\0')
 				fatal("Invalid buffer size \"%s\"", optarg);
-			break;
-		case 'b':
-			if (batchmode)
+			તોડો;
+		સ્થિતિ 'b':
+			જો (batchmode)
 				fatal("Batch file already specified.");
 
 			/* Allow "-" as stdin */
-			if (strcmp(optarg, "-") != 0 &&
-			    (infile = fopen(optarg, "r")) == NULL)
+			જો (strcmp(optarg, "-") != 0 &&
+			    (infile = fopen(optarg, "r")) == ખાલી)
 				fatal("%s (%s).", strerror(errno), optarg);
 			showprogress = 0;
 			quiet = batchmode = 1;
 			addargs(&args, "-obatchmode yes");
-			break;
-		case 'f':
+			તોડો;
+		સ્થિતિ 'f':
 			global_fflag = 1;
-			break;
-		case 'N':
+			તોડો;
+		સ્થિતિ 'N':
 			noisy = 1; /* Used to clear quiet mode after getopt */
-			break;
-		case 'p':
+			તોડો;
+		સ્થિતિ 'p':
 			global_pflag = 1;
-			break;
-		case 'D':
+			તોડો;
+		સ્થિતિ 'D':
 			sftp_direct = optarg;
-			break;
-		case 'l':
+			તોડો;
+		સ્થિતિ 'l':
 			limit_kbps = strtonum(optarg, 1, 100 * 1024 * 1024,
 			    &errstr);
-			if (errstr != NULL)
+			જો (errstr != ખાલી)
 				usage();
 			limit_kbps *= 1024; /* kbps */
-			break;
-		case 'r':
+			તોડો;
+		સ્થિતિ 'r':
 			global_rflag = 1;
-			break;
-		case 'R':
-			num_requests = strtol(optarg, &cp, 10);
-			if (num_requests == 0 || *cp != '\0')
+			તોડો;
+		સ્થિતિ 'R':
+			અંક_requests = strtol(optarg, &cp, 10);
+			જો (અંક_requests == 0 || *cp != '\0')
 				fatal("Invalid number of requests \"%s\"",
 				    optarg);
-			break;
-		case 's':
+			તોડો;
+		સ્થિતિ 's':
 			sftp_server = optarg;
-			break;
-		case 'S':
+			તોડો;
+		સ્થિતિ 'S':
 			ssh_program = optarg;
 			replacearg(&args, 0, "%s", ssh_program);
-			break;
-		case 'X':
+			તોડો;
+		સ્થિતિ 'X':
 			/* Please keep in sync with ssh.c -X */
-			if (strncmp(optarg, "buffer=", 7) == 0) {
+			જો (strncmp(optarg, "buffer=", 7) == 0) {
 				r = scan_scaled(optarg + 7, &llv);
-				if (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
+				જો (r == 0 && (llv <= 0 || llv > 256 * 1024)) {
 					r = -1;
 					errno = EINVAL;
 				}
-				if (r == -1) {
+				જો (r == -1) {
 					fatal("Invalid buffer size \"%s\": %s",
 					     optarg + 7, strerror(errno));
 				}
 				copy_buffer_len = (size_t)llv;
-			} else if (strncmp(optarg, "nrequests=", 10) == 0) {
+			} નહીંતર જો (strncmp(optarg, "nrequests=", 10) == 0) {
 				llv = strtonum(optarg + 10, 1, 256 * 1024,
 				    &errstr);
-				if (errstr != NULL) {
+				જો (errstr != ખાલી) {
 					fatal("Invalid number of requests "
 					    "\"%s\": %s", optarg + 10, errstr);
 				}
-				num_requests = (size_t)llv;
-			} else {
+				અંક_requests = (size_t)llv;
+			} નહીંતર {
 				fatal("Invalid -X option");
 			}
-			break;
-		case 'h':
-		default:
+			તોડો;
+		સ્થિતિ 'h':
+		મૂળભૂત:
 			usage();
 		}
 	}
@@ -2671,100 +2671,100 @@ main(int argc, char **argv)
 	/* Do this last because we want the user to be able to override it */
 	addargs(&args, "-oForwardAgent no");
 
-	if (!isatty(STDERR_FILENO))
+	જો (!isatty(STDERR_FILENO))
 		showprogress = 0;
 
-	if (noisy)
+	જો (noisy)
 		quiet = 0;
 
 	log_init(argv[0], ll, SYSLOG_FACILITY_USER, 1);
 
-	if (sftp_direct == NULL) {
-		if (optind == argc || argc > (optind + 2))
+	જો (sftp_direct == ખાલી) {
+		જો (optind == argc || argc > (optind + 2))
 			usage();
 		argv += optind;
 
-		switch (parse_uri("sftp", *argv, &user, &host, &tmp, &file1)) {
-		case -1:
+		પસંદગી (parse_uri("sftp", *argv, &user, &host, &tmp, &file1)) {
+		સ્થિતિ -1:
 			usage();
-			break;
-		case 0:
-			if (tmp != -1)
+			તોડો;
+		સ્થિતિ 0:
+			જો (tmp != -1)
 				port = tmp;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			/* Try with user, host and path. */
-			if (parse_user_host_path(*argv, &user, &host,
+			જો (parse_user_host_path(*argv, &user, &host,
 			    &file1) == 0)
-				break;
+				તોડો;
 			/* Try with user and host. */
-			if (parse_user_host_port(*argv, &user, &host, NULL)
+			જો (parse_user_host_port(*argv, &user, &host, ખાલી)
 			    == 0)
-				break;
+				તોડો;
 			/* Treat as a plain hostname. */
 			host = xstrdup(*argv);
 			host = cleanhostname(host);
-			break;
+			તોડો;
 		}
 		file2 = *(argv + 1);
 
-		if (!*host) {
+		જો (!*host) {
 			fprintf(stderr, "Missing hostname\n");
 			usage();
 		}
 
-		if (port != -1)
+		જો (port != -1)
 			addargs(&args, "-oPort %d", port);
-		if (user != NULL) {
+		જો (user != ખાલી) {
 			addargs(&args, "-l");
 			addargs(&args, "%s", user);
 		}
 
 		/* no subsystem if the server-spec contains a '/' */
-		if (sftp_server == NULL || strchr(sftp_server, '/') == NULL)
+		જો (sftp_server == ખાલી || strchr(sftp_server, '/') == ખાલી)
 			addargs(&args, "-s");
 
 		addargs(&args, "--");
 		addargs(&args, "%s", host);
-		addargs(&args, "%s", (sftp_server != NULL ?
+		addargs(&args, "%s", (sftp_server != ખાલી ?
 		    sftp_server : "sftp"));
 
 		connect_to_server(ssh_program, args.list, &in, &out);
-	} else {
-		if ((r = argv_split(sftp_direct, &tmp, &cpp, 1)) != 0)
+	} નહીંતર {
+		જો ((r = argv_split(sftp_direct, &tmp, &cpp, 1)) != 0)
 			fatal_r(r, "Parse -D arguments");
-		if (cpp[0] == NULL)
+		જો (cpp[0] == ખાલી)
 			fatal("No sftp server specified via -D");
 		connect_to_server(cpp[0], cpp, &in, &out);
 		argv_free(cpp, tmp);
 	}
 	freeargs(&args);
 
-	conn = sftp_init(in, out, copy_buffer_len, num_requests, limit_kbps);
-	if (conn == NULL)
+	conn = sftp_init(in, out, copy_buffer_len, અંક_requests, limit_kbps);
+	જો (conn == ખાલી)
 		fatal("Couldn't initialise connection to server");
 
-	if (!quiet) {
-		if (sftp_direct == NULL)
+	જો (!quiet) {
+		જો (sftp_direct == ખાલી)
 			fprintf(stderr, "Connected to %s.\n", host);
-		else
+		નહીંતર
 			fprintf(stderr, "Attached to %s.\n", sftp_direct);
 	}
 
 	err = interactive_loop(conn, file1, file2);
 
-#if !defined(USE_PIPES)
+#જો !defined(USE_PIPES)
 	shutdown(in, SHUT_RDWR);
 	shutdown(out, SHUT_RDWR);
 #endif
 
 	close(in);
 	close(out);
-	if (batchmode)
+	જો (batchmode)
 		fclose(infile);
 
-	while (waitpid(sshpid, NULL, 0) == -1 && sshpid > 1)
-		if (errno != EINTR)
+	જ્યારે (waitpid(sshpid, ખાલી, 0) == -1 && sshpid > 1)
+		જો (errno != EINTR)
 			fatal("Couldn't wait for ssh process: %s",
 			    strerror(errno));
 

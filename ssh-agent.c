@@ -34,54 +34,54 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/queue.h>
-#include <sys/resource.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/un.h>
-#include <sys/wait.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <sys/time.h>
+#અન્તર્ભાવ <sys/queue.h>
+#અન્તર્ભાવ <sys/resource.h>
+#અન્તર્ભાવ <sys/socket.h>
+#અન્તર્ભાવ <sys/stat.h>
+#અન્તર્ભાવ <sys/un.h>
+#અન્તર્ભાવ <sys/wait.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/evp.h>
-#include "openbsd-compat/openssl-compat.h"
+#અન્તર્ભાવ <openssl/evp.h>
+#અન્તર્ભાવ "openbsd-compat/openssl-compat.h"
 #endif
 
-#include <errno.h>
-#include <fcntl.h>
-#include <paths.h>
-#include <poll.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <limits.h>
-#include <time.h>
-#include <unistd.h>
-#include <util.h>
-#include <pwd.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <fcntl.h>
+#અન્તર્ભાવ <paths.h>
+#અન્તર્ભાવ <poll.h>
+#અન્તર્ભાવ <signal.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <limits.h>
+#અન્તર્ભાવ <time.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <util.h>
+#અન્તર્ભાવ <pwd.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "authfd.h"
-#include "log.h"
-#include "misc.h"
-#include "digest.h"
-#include "ssherr.h"
-#include "match.h"
-#include "msg.h"
-#include "pathnames.h"
-#include "ssh-pkcs11.h"
-#include "sk-api.h"
-#include "myproposal.h"
-#include "version.h"
+#અન્તર્ભાવ "xmalloc.h"
+#અન્તર્ભાવ "ssh.h"
+#અન્તર્ભાવ "ssh2.h"
+#અન્તર્ભાવ "sshbuf.h"
+#અન્તર્ભાવ "sshkey.h"
+#અન્તર્ભાવ "authfd.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "digest.h"
+#અન્તર્ભાવ "ssherr.h"
+#અન્તર્ભાવ "match.h"
+#અન્તર્ભાવ "msg.h"
+#અન્તર્ભાવ "pathnames.h"
+#અન્તર્ભાવ "ssh-pkcs11.h"
+#અન્તર્ભાવ "sk-api.h"
+#અન્તર્ભાવ "myproposal.h"
+#અન્તર્ભાવ "version.h"
 
 #ifndef DEFAULT_ALLOWED_PROVIDERS
 # define DEFAULT_ALLOWED_PROVIDERS "/usr/lib*/*,/usr/local/lib*/*"
@@ -107,229 +107,229 @@
 
 /* XXX store hostkey_sid in a refcounted tree */
 
-typedef enum {
+પ્રકારવ્યાખ્યા ગણના {
 	AUTH_UNUSED = 0,
 	AUTH_SOCKET = 1,
 	AUTH_CONNECTION = 2,
 } sock_type;
 
-struct hostkey_sid {
-	struct sshkey *key;
-	struct sshbuf *sid;
-	int forwarded;
+સંરચના hostkey_sid {
+	સંરચના sshkey *ચાવી;
+	સંરચના sshbuf *sid;
+	પૂર્ણાંક forwarded;
 };
 
-typedef struct socket_entry {
-	int fd;
+પ્રકારવ્યાખ્યા સંરચના socket_entry {
+	પૂર્ણાંક fd;
 	sock_type type;
-	struct sshbuf *input;
-	struct sshbuf *output;
-	struct sshbuf *request;
+	સંરચના sshbuf *આગત;
+	સંરચના sshbuf *output;
+	સંરચના sshbuf *request;
 	size_t nsession_ids;
-	struct hostkey_sid *session_ids;
-	int session_bind_attempted;
+	સંરચના hostkey_sid *session_ids;
+	પૂર્ણાંક session_bind_attempted;
 } SocketEntry;
 
 u_int sockets_alloc = 0;
-SocketEntry *sockets = NULL;
+SocketEntry *sockets = ખાલી;
 
-typedef struct identity {
+પ્રકારવ્યાખ્યા સંરચના identity {
 	TAILQ_ENTRY(identity) next;
-	struct sshkey *key;
-	char *comment;
-	char *provider;
+	સંરચના sshkey *ચાવી;
+	અક્ષર *comment;
+	અક્ષર *provider;
 	time_t death;
 	u_int confirm;
-	char *sk_provider;
-	struct dest_constraint *dest_constraints;
+	અક્ષર *sk_provider;
+	સંરચના dest_constraint *dest_constraints;
 	size_t ndest_constraints;
 } Identity;
 
-struct idtable {
-	int nentries;
+સંરચના idtable {
+	પૂર્ણાંક nentries;
 	TAILQ_HEAD(idqueue, identity) idlist;
 };
 
 /* private key table */
-struct idtable *idtab;
+સંરચના idtable *idtab;
 
-int max_fd = 0;
+પૂર્ણાંક max_fd = 0;
 
 /* pid of shell == parent of agent */
 pid_t parent_pid = -1;
 time_t parent_alive_interval = 0;
 
-static sig_atomic_t signalled_exit;
-static sig_atomic_t signalled_keydrop;
+સ્થિર sig_atomic_t signalled_exit;
+સ્થિર sig_atomic_t signalled_keydrop;
 
 /* pid of process for which cleanup_socket is applicable */
 pid_t cleanup_pid = 0;
 
 /* pathname and directory for AUTH_SOCKET */
-static char *socket_name;
-static char *socket_dir;
-static char *socket_dirspec;
+સ્થિર અક્ષર *socket_name;
+સ્થિર અક્ષર *socket_dir;
+સ્થિર અક્ષર *socket_dirspec;
 
 /* Pattern-list of allowed PKCS#11/Security key paths */
-static char *allowed_providers;
+સ્થિર અક્ષર *allowed_providers;
 
 /*
  * Allows PKCS11 providers or SK keys that use non-internal providers to
  * be added over a remote connection (identified by session-bind@openssh.com).
  */
-static int remote_add_provider;
+સ્થિર પૂર્ણાંક remote_add_provider;
 
 /* locking */
 #define LOCK_SIZE	32
 #define LOCK_SALT_SIZE	16
 #define LOCK_ROUNDS	1
-int locked = 0;
+પૂર્ણાંક locked = 0;
 u_char lock_pwhash[LOCK_SIZE];
 u_char lock_salt[LOCK_SALT_SIZE];
 
-extern char *__progname;
+બાહ્ય અક્ષર *__progname;
 
 /* Default lifetime in seconds (0 == forever) */
-static int lifetime = 0;
+સ્થિર પૂર્ણાંક lifetime = 0;
 
-static int fingerprint_hash = SSH_FP_HASH_DEFAULT;
+સ્થિર પૂર્ણાંક fingerprint_hash = SSH_FP_HASH_DEFAULT;
 
 /* Refuse signing of non-SSH messages for web-origin FIDO keys */
-static int restrict_websafe = 1;
-static char *websafe_allowlist;
+સ્થિર પૂર્ણાંક restrict_websafe = 1;
+સ્થિર અક્ષર *websafe_allowlist;
 
-static void
+સ્થિર શૂન્ય
 close_socket(SocketEntry *e)
 {
 	size_t i;
 
 	close(e->fd);
-	sshbuf_free(e->input);
+	sshbuf_free(e->આગત);
 	sshbuf_free(e->output);
 	sshbuf_free(e->request);
-	for (i = 0; i < e->nsession_ids; i++) {
-		sshkey_free(e->session_ids[i].key);
+	માટે (i = 0; i < e->nsession_ids; i++) {
+		sshkey_free(e->session_ids[i].ચાવી);
 		sshbuf_free(e->session_ids[i].sid);
 	}
-	free(e->session_ids);
-	memset(e, '\0', sizeof(*e));
+	મુક્ત(e->session_ids);
+	memset(e, '\0', કદ(*e));
 	e->fd = -1;
 	e->type = AUTH_UNUSED;
 }
 
-static void
-idtab_init(void)
+સ્થિર શૂન્ય
+idtab_init(શૂન્ય)
 {
-	idtab = xcalloc(1, sizeof(*idtab));
+	idtab = xcalloc(1, કદ(*idtab));
 	TAILQ_INIT(&idtab->idlist);
 	idtab->nentries = 0;
 }
 
-static void
-free_dest_constraint_hop(struct dest_constraint_hop *dch)
+સ્થિર શૂન્ય
+free_dest_constraint_hop(સંરચના dest_constraint_hop *dch)
 {
 	u_int i;
 
-	if (dch == NULL)
-		return;
-	free(dch->user);
-	free(dch->hostname);
-	for (i = 0; i < dch->nkeys; i++)
-		sshkey_free(dch->keys[i]);
-	free(dch->keys);
-	free(dch->key_is_ca);
+	જો (dch == ખાલી)
+		પાછા;
+	મુક્ત(dch->user);
+	મુક્ત(dch->hostname);
+	માટે (i = 0; i < dch->nkeys; i++)
+		sshkey_free(dch->ચાવીઓ[i]);
+	મુક્ત(dch->ચાવીઓ);
+	મુક્ત(dch->ચાવી_is_ca);
 }
 
-static void
-free_dest_constraints(struct dest_constraint *dcs, size_t ndcs)
+સ્થિર શૂન્ય
+free_dest_constraints(સંરચના dest_constraint *dcs, size_t ndcs)
 {
 	size_t i;
 
-	for (i = 0; i < ndcs; i++) {
+	માટે (i = 0; i < ndcs; i++) {
 		free_dest_constraint_hop(&dcs[i].from);
 		free_dest_constraint_hop(&dcs[i].to);
 	}
-	free(dcs);
+	મુક્ત(dcs);
 }
 
 #ifdef ENABLE_PKCS11
-static void
-dup_dest_constraint_hop(const struct dest_constraint_hop *dch,
-    struct dest_constraint_hop *out)
+સ્થિર શૂન્ય
+dup_dest_constraint_hop(અચલ સંરચના dest_constraint_hop *dch,
+    સંરચના dest_constraint_hop *out)
 {
 	u_int i;
-	int r;
+	પૂર્ણાંક r;
 
-	out->user = dch->user == NULL ? NULL : xstrdup(dch->user);
-	out->hostname = dch->hostname == NULL ? NULL : xstrdup(dch->hostname);
+	out->user = dch->user == ખાલી ? ખાલી : xstrdup(dch->user);
+	out->hostname = dch->hostname == ખાલી ? ખાલી : xstrdup(dch->hostname);
 	out->is_ca = dch->is_ca;
 	out->nkeys = dch->nkeys;
-	out->keys = out->nkeys == 0 ? NULL :
-	    xcalloc(out->nkeys, sizeof(*out->keys));
-	out->key_is_ca = out->nkeys == 0 ? NULL :
-	    xcalloc(out->nkeys, sizeof(*out->key_is_ca));
-	for (i = 0; i < dch->nkeys; i++) {
-		if (dch->keys[i] != NULL &&
-		    (r = sshkey_from_private(dch->keys[i],
-		    &(out->keys[i]))) != 0)
+	out->ચાવીઓ = out->nkeys == 0 ? ખાલી :
+	    xcalloc(out->nkeys, કદ(*out->ચાવીઓ));
+	out->ચાવી_is_ca = out->nkeys == 0 ? ખાલી :
+	    xcalloc(out->nkeys, કદ(*out->ચાવી_is_ca));
+	માટે (i = 0; i < dch->nkeys; i++) {
+		જો (dch->ચાવીઓ[i] != ખાલી &&
+		    (r = sshkey_from_private(dch->ચાવીઓ[i],
+		    &(out->ચાવીઓ[i]))) != 0)
 			fatal_fr(r, "copy key");
-		out->key_is_ca[i] = dch->key_is_ca[i];
+		out->ચાવી_is_ca[i] = dch->ચાવી_is_ca[i];
 	}
 }
 
-static struct dest_constraint *
-dup_dest_constraints(const struct dest_constraint *dcs, size_t ndcs)
+સ્થિર સંરચના dest_constraint *
+dup_dest_constraints(અચલ સંરચના dest_constraint *dcs, size_t ndcs)
 {
 	size_t i;
-	struct dest_constraint *ret;
+	સંરચના dest_constraint *ret;
 
-	if (ndcs == 0)
-		return NULL;
-	ret = xcalloc(ndcs, sizeof(*ret));
-	for (i = 0; i < ndcs; i++) {
+	જો (ndcs == 0)
+		પાછા ખાલી;
+	ret = xcalloc(ndcs, કદ(*ret));
+	માટે (i = 0; i < ndcs; i++) {
 		dup_dest_constraint_hop(&dcs[i].from, &ret[i].from);
 		dup_dest_constraint_hop(&dcs[i].to, &ret[i].to);
 	}
-	return ret;
+	પાછા ret;
 }
 #endif /* ENABLE_PKCS11 */
 
 #ifdef DEBUG_CONSTRAINTS
-static void
-dump_dest_constraint_hop(const struct dest_constraint_hop *dch)
+સ્થિર શૂન્ય
+dump_dest_constraint_hop(અચલ સંરચના dest_constraint_hop *dch)
 {
 	u_int i;
-	char *fp;
+	અક્ષર *fp;
 
 	debug_f("user %s hostname %s is_ca %d nkeys %u",
-	    dch->user == NULL ? "(null)" : dch->user,
-	    dch->hostname == NULL ? "(null)" : dch->hostname,
+	    dch->user == ખાલી ? "(null)" : dch->user,
+	    dch->hostname == ખાલી ? "(null)" : dch->hostname,
 	    dch->is_ca, dch->nkeys);
-	for (i = 0; i < dch->nkeys; i++) {
-		fp = NULL;
-		if (dch->keys[i] != NULL &&
-		    (fp = sshkey_fingerprint(dch->keys[i],
-		    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == NULL)
+	માટે (i = 0; i < dch->nkeys; i++) {
+		fp = ખાલી;
+		જો (dch->ચાવીઓ[i] != ખાલી &&
+		    (fp = sshkey_fingerprint(dch->ચાવીઓ[i],
+		    SSH_FP_HASH_DEFAULT, SSH_FP_DEFAULT)) == ખાલી)
 			fatal_f("fingerprint failed");
 		debug_f("key %u/%u: %s%s%s key_is_ca %d", i, dch->nkeys,
-		    dch->keys[i] == NULL ? "" : sshkey_ssh_name(dch->keys[i]),
-		    dch->keys[i] == NULL ? "" : " ",
-		    dch->keys[i] == NULL ? "none" : fp,
-		    dch->key_is_ca[i]);
-		free(fp);
+		    dch->ચાવીઓ[i] == ખાલી ? "" : sshkey_ssh_name(dch->ચાવીઓ[i]),
+		    dch->ચાવીઓ[i] == ખાલી ? "" : " ",
+		    dch->ચાવીઓ[i] == ખાલી ? "none" : fp,
+		    dch->ચાવી_is_ca[i]);
+		મુક્ત(fp);
 	}
 }
 #endif /* DEBUG_CONSTRAINTS */
 
-static void
-dump_dest_constraints(const char *context,
-    const struct dest_constraint *dcs, size_t ndcs)
+સ્થિર શૂન્ય
+dump_dest_constraints(અચલ અક્ષર *context,
+    અચલ સંરચના dest_constraint *dcs, size_t ndcs)
 {
 #ifdef DEBUG_CONSTRAINTS
 	size_t i;
 
 	debug_f("%s: %zu constraints", context, ndcs);
-	for (i = 0; i < ndcs; i++) {
+	માટે (i = 0; i < ndcs; i++) {
 		debug_f("constraint %zu / %zu: from: ", i, ndcs);
 		dump_dest_constraint_hop(&dcs[i].from);
 		debug_f("constraint %zu / %zu: to: ", i, ndcs);
@@ -339,87 +339,87 @@ dump_dest_constraints(const char *context,
 #endif /* DEBUG_CONSTRAINTS */
 }
 
-static void
+સ્થિર શૂન્ય
 free_identity(Identity *id)
 {
-	sshkey_free(id->key);
-	free(id->provider);
-	free(id->comment);
-	free(id->sk_provider);
+	sshkey_free(id->ચાવી);
+	મુક્ત(id->provider);
+	મુક્ત(id->comment);
+	મુક્ત(id->sk_provider);
 	free_dest_constraints(id->dest_constraints, id->ndest_constraints);
-	free(id);
+	મુક્ત(id);
 }
 
 /*
  * Match 'key' against the key/CA list in a destination constraint hop
  * Returns 0 on success or -1 otherwise.
  */
-static int
-match_key_hop(const char *tag, const struct sshkey *key,
-    const struct dest_constraint_hop *dch)
+સ્થિર પૂર્ણાંક
+match_ચાવી_hop(અચલ અક્ષર *tag, અચલ સંરચના sshkey *ચાવી,
+    અચલ સંરચના dest_constraint_hop *dch)
 {
-	const char *reason = NULL;
-	const char *hostname = dch->hostname ? dch->hostname : "(ORIGIN)";
+	અચલ અક્ષર *reason = ખાલી;
+	અચલ અક્ષર *hostname = dch->hostname ? dch->hostname : "(ORIGIN)";
 	u_int i;
-	char *fp;
+	અક્ષર *fp;
 
-	if (key == NULL)
-		return -1;
+	જો (ચાવી == ખાલી)
+		પાછા -1;
 	/* XXX logspam */
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	જો ((fp = sshkey_fingerprint(ચાવી, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == ખાલી)
 		fatal_f("fingerprint failed");
 	debug3_f("%s: entering hostname %s, requested key %s %s, %u keys avail",
-	    tag, hostname, sshkey_type(key), fp, dch->nkeys);
-	free(fp);
-	for (i = 0; i < dch->nkeys; i++) {
-		if (dch->keys[i] == NULL)
-			return -1;
+	    tag, hostname, sshkey_type(ચાવી), fp, dch->nkeys);
+	મુક્ત(fp);
+	માટે (i = 0; i < dch->nkeys; i++) {
+		જો (dch->ચાવીઓ[i] == ખાલી)
+			પાછા -1;
 		/* XXX logspam */
-		if ((fp = sshkey_fingerprint(dch->keys[i], SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		જો ((fp = sshkey_fingerprint(dch->ચાવીઓ[i], SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == ખાલી)
 			fatal_f("fingerprint failed");
 		debug3_f("%s: key %u: %s%s %s", tag, i,
-		    dch->key_is_ca[i] ? "CA " : "",
-		    sshkey_type(dch->keys[i]), fp);
-		free(fp);
-		if (!sshkey_is_cert(key)) {
+		    dch->ચાવી_is_ca[i] ? "CA " : "",
+		    sshkey_type(dch->ચાવીઓ[i]), fp);
+		મુક્ત(fp);
+		જો (!sshkey_is_cert(ચાવી)) {
 			/* plain key */
-			if (dch->key_is_ca[i] ||
-			    !sshkey_equal(key, dch->keys[i]))
-				continue;
-			return 0;
+			જો (dch->ચાવી_is_ca[i] ||
+			    !sshkey_equal(ચાવી, dch->ચાવીઓ[i]))
+				ચાલુ;
+			પાછા 0;
 		}
 		/* certificate */
-		if (!dch->key_is_ca[i])
-			continue;
-		if (key->cert == NULL || key->cert->signature_key == NULL)
-			return -1; /* shouldn't happen */
-		if (!sshkey_equal(key->cert->signature_key, dch->keys[i]))
-			continue;
-		if (sshkey_cert_check_host(key, hostname,
+		જો (!dch->ચાવી_is_ca[i])
+			ચાલુ;
+		જો (ચાવી->cert == ખાલી || ચાવી->cert->signature_ચાવી == ખાલી)
+			પાછા -1; /* shouldn't happen */
+		જો (!sshkey_equal(ચાવી->cert->signature_ચાવી, dch->ચાવીઓ[i]))
+			ચાલુ;
+		જો (sshkey_cert_check_host(ચાવી, hostname,
 		    SSH_ALLOWED_CA_SIGALGS, &reason) != 0) {
 			debug_f("cert %s / hostname %s rejected: %s",
-			    key->cert->key_id, hostname, reason);
-			continue;
+			    ચાવી->cert->ચાવી_id, hostname, reason);
+			ચાલુ;
 		}
-		return 0;
+		પાછા 0;
 	}
-	return -1;
+	પાછા -1;
 }
 
 /* Check destination constraints on an identity against the hostkey/user */
-static int
-permitted_by_dest_constraints(const struct sshkey *fromkey,
-    const struct sshkey *tokey, Identity *id, const char *user,
-    const char **hostnamep)
+સ્થિર પૂર્ણાંક
+permitted_by_dest_constraints(અચલ સંરચના sshkey *fromkey,
+    અચલ સંરચના sshkey *tokey, Identity *id, અચલ અક્ષર *user,
+    અચલ અક્ષર **hostnamep)
 {
 	size_t i;
-	struct dest_constraint *d;
+	સંરચના dest_constraint *d;
 
-	if (hostnamep != NULL)
-		*hostnamep = NULL;
-	for (i = 0; i < id->ndest_constraints; i++) {
+	જો (hostnamep != ખાલી)
+		*hostnamep = ખાલી;
+	માટે (i = 0; i < id->ndest_constraints; i++) {
 		d = id->dest_constraints + i;
 		/* XXX remove logspam */
 		debug2_f("constraint %zu %s%s%s (%u keys) > %s%s%s (%u keys)",
@@ -431,33 +431,33 @@ permitted_by_dest_constraints(const struct sshkey *fromkey,
 		    d->to.hostname ? d->to.hostname : "(ANY)", d->to.nkeys);
 
 		/* Match 'from' key */
-		if (fromkey == NULL) {
+		જો (fromkey == ખાલી) {
 			/* We are matching the first hop */
-			if (d->from.hostname != NULL || d->from.nkeys != 0)
-				continue;
-		} else if (match_key_hop("from", fromkey, &d->from) != 0)
-			continue;
+			જો (d->from.hostname != ખાલી || d->from.nkeys != 0)
+				ચાલુ;
+		} નહીંતર જો (match_ચાવી_hop("from", fromkey, &d->from) != 0)
+			ચાલુ;
 
 		/* Match 'to' key */
-		if (tokey != NULL && match_key_hop("to", tokey, &d->to) != 0)
-			continue;
+		જો (tokey != ખાલી && match_ચાવી_hop("to", tokey, &d->to) != 0)
+			ચાલુ;
 
 		/* Match user if specified */
-		if (d->to.user != NULL && user != NULL &&
+		જો (d->to.user != ખાલી && user != ખાલી &&
 		    !match_pattern(user, d->to.user))
-			continue;
+			ચાલુ;
 
 		/* successfully matched this constraint */
-		if (hostnamep != NULL)
+		જો (hostnamep != ખાલી)
 			*hostnamep = d->to.hostname;
 		debug2_f("allowed for hostname %s",
-		    d->to.hostname == NULL ? "*" : d->to.hostname);
-		return 0;
+		    d->to.hostname == ખાલી ? "*" : d->to.hostname);
+		પાછા 0;
 	}
 	/* no match */
 	debug2_f("%s identity \"%s\" not permitted for this destination",
-	    sshkey_type(id->key), id->comment);
-	return -1;
+	    sshkey_type(id->ચાવી), id->comment);
+	પાછા -1;
 }
 
 /*
@@ -465,66 +465,66 @@ permitted_by_dest_constraints(const struct sshkey *fromkey,
  * are permitted by the destination constraints on the Identity.
  * Returns 0 on success or -1 otherwise.
  */
-static int
-identity_permitted(Identity *id, SocketEntry *e, char *user,
-    const char **forward_hostnamep, const char **last_hostnamep)
+સ્થિર પૂર્ણાંક
+identity_permitted(Identity *id, SocketEntry *e, અક્ષર *user,
+    અચલ અક્ષર **forward_hostnamep, અચલ અક્ષર **last_hostnamep)
 {
 	size_t i;
-	const char **hp;
-	struct hostkey_sid *hks;
-	const struct sshkey *fromkey = NULL;
-	const char *test_user;
-	char *fp1, *fp2;
+	અચલ અક્ષર **hp;
+	સંરચના hostkey_sid *hks;
+	અચલ સંરચના sshkey *fromkey = ખાલી;
+	અચલ અક્ષર *test_user;
+	અક્ષર *fp1, *fp2;
 
 	/* XXX remove logspam */
 	debug3_f("entering: key %s comment \"%s\", %zu socket bindings, "
-	    "%zu constraints", sshkey_type(id->key), id->comment,
+	    "%zu constraints", sshkey_type(id->ચાવી), id->comment,
 	    e->nsession_ids, id->ndest_constraints);
-	if (id->ndest_constraints == 0)
-		return 0; /* unconstrained */
-	if (e->session_bind_attempted && e->nsession_ids == 0) {
+	જો (id->ndest_constraints == 0)
+		પાછા 0; /* unconstrained */
+	જો (e->session_bind_attempted && e->nsession_ids == 0) {
 		error_f("previous session bind failed on socket");
-		return -1;
+		પાછા -1;
 	}
-	if (e->nsession_ids == 0)
-		return 0; /* local use */
+	જો (e->nsession_ids == 0)
+		પાછા 0; /* local use */
 	/*
 	 * Walk through the hops recorded by session_id and try to find a
 	 * constraint that satisfies each.
 	 */
-	for (i = 0; i < e->nsession_ids; i++) {
+	માટે (i = 0; i < e->nsession_ids; i++) {
 		hks = e->session_ids + i;
-		if (hks->key == NULL)
+		જો (hks->ચાવી == ખાલી)
 			fatal_f("internal error: no bound key");
 		/* XXX remove logspam */
-		fp1 = fp2 = NULL;
-		if (fromkey != NULL &&
+		fp1 = fp2 = ખાલી;
+		જો (fromkey != ખાલી &&
 		    (fp1 = sshkey_fingerprint(fromkey, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		    SSH_FP_DEFAULT)) == ખાલી)
 			fatal_f("fingerprint failed");
-		if ((fp2 = sshkey_fingerprint(hks->key, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		જો ((fp2 = sshkey_fingerprint(hks->ચાવી, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == ખાલી)
 			fatal_f("fingerprint failed");
 		debug3_f("socketentry fd=%d, entry %zu %s, "
 		    "from hostkey %s %s to user %s hostkey %s %s",
 		    e->fd, i, hks->forwarded ? "FORWARD" : "AUTH",
 		    fromkey ? sshkey_type(fromkey) : "(ORIGIN)",
 		    fromkey ? fp1 : "", user ? user : "(ANY)",
-		    sshkey_type(hks->key), fp2);
-		free(fp1);
-		free(fp2);
+		    sshkey_type(hks->ચાવી), fp2);
+		મુક્ત(fp1);
+		મુક્ત(fp2);
 		/*
 		 * Record the hostnames for the initial forwarding and
 		 * the final destination.
 		 */
-		hp = NULL;
-		if (i == e->nsession_ids - 1)
+		hp = ખાલી;
+		જો (i == e->nsession_ids - 1)
 			hp = last_hostnamep;
-		else if (i == 0)
+		નહીંતર જો (i == 0)
 			hp = forward_hostnamep;
 		/* Special handling for final recorded binding */
-		test_user = NULL;
-		if (i == e->nsession_ids - 1) {
+		test_user = ખાલી;
+		જો (i == e->nsession_ids - 1) {
 			/* Can only check user at final hop */
 			test_user = user;
 			/*
@@ -532,18 +532,18 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 			 * If this is the case, make sure last binding is not
 			 * for a forwarding.
 			 */
-			if (hks->forwarded && user != NULL) {
+			જો (hks->forwarded && user != ખાલી) {
 				error_f("tried to sign on forwarding hop");
-				return -1;
+				પાછા -1;
 			}
-		} else if (!hks->forwarded) {
+		} નહીંતર જો (!hks->forwarded) {
 			error_f("tried to forward though signing bind");
-			return -1;
+			પાછા -1;
 		}
-		if (permitted_by_dest_constraints(fromkey, hks->key, id,
+		જો (permitted_by_dest_constraints(fromkey, hks->ચાવી, id,
 		    test_user, hp) != 0)
-			return -1;
-		fromkey = hks->key;
+			પાછા -1;
+		fromkey = hks->ચાવી;
 	}
 	/*
 	 * Another special case: if the last bound session ID was for a
@@ -554,132 +554,132 @@ identity_permitted(Identity *id, SocketEntry *e, char *user,
 	 * authenticate *to* a host but not permitted for *use* beyond it.
 	 */
 	hks = &e->session_ids[e->nsession_ids - 1];
-	if (hks->forwarded && user == NULL &&
-	    permitted_by_dest_constraints(hks->key, NULL, id,
-	    NULL, NULL) != 0) {
+	જો (hks->forwarded && user == ખાલી &&
+	    permitted_by_dest_constraints(hks->ચાવી, ખાલી, id,
+	    ખાલી, ખાલી) != 0) {
 		debug3_f("key permitted at host but not after");
-		return -1;
+		પાછા -1;
 	}
 
 	/* success */
-	return 0;
+	પાછા 0;
 }
 
-static int
+સ્થિર પૂર્ણાંક
 socket_is_remote(SocketEntry *e)
 {
-	return e->session_bind_attempted || (e->nsession_ids != 0);
+	પાછા e->session_bind_attempted || (e->nsession_ids != 0);
 }
 
 /* return matching private key for given public key */
-static Identity *
-lookup_identity(struct sshkey *key)
+સ્થિર Identity *
+lookup_identity(સંરચના sshkey *ચાવી)
 {
 	Identity *id;
 
 	TAILQ_FOREACH(id, &idtab->idlist, next) {
-		if (sshkey_equal(key, id->key))
-			return (id);
+		જો (sshkey_equal(ચાવી, id->ચાવી))
+			પાછા (id);
 	}
-	return (NULL);
+	પાછા (ખાલી);
 }
 
 /* Check confirmation of keysign request */
-static int
-confirm_key(Identity *id, const char *extra)
+સ્થિર પૂર્ણાંક
+confirm_ચાવી(Identity *id, અચલ અક્ષર *extra)
 {
-	char *p;
-	int ret = -1;
+	અક્ષર *p;
+	પૂર્ણાંક ret = -1;
 
-	p = sshkey_fingerprint(id->key, fingerprint_hash, SSH_FP_DEFAULT);
-	if (p != NULL &&
+	p = sshkey_fingerprint(id->ચાવી, fingerprint_hash, SSH_FP_DEFAULT);
+	જો (p != ખાલી &&
 	    ask_permission("Allow use of key %s?\nKey fingerprint %s.%s%s",
 	    id->comment, p,
-	    extra == NULL ? "" : "\n", extra == NULL ? "" : extra))
+	    extra == ખાલી ? "" : "\n", extra == ખાલી ? "" : extra))
 		ret = 0;
-	free(p);
+	મુક્ત(p);
 
-	return (ret);
+	પાછા (ret);
 }
 
-static void
+સ્થિર શૂન્ય
 send_status_generic(SocketEntry *e, u_int code)
 {
-	int r;
+	પૂર્ણાંક r;
 
-	if ((r = sshbuf_put_u32(e->output, 1)) != 0 ||
+	જો ((r = sshbuf_put_u32(e->output, 1)) != 0 ||
 	    (r = sshbuf_put_u8(e->output, code)) != 0)
 		fatal_fr(r, "compose");
 }
 
-static void
-send_status(SocketEntry *e, int success)
+સ્થિર શૂન્ય
+send_status(SocketEntry *e, પૂર્ણાંક success)
 {
 	send_status_generic(e,
 	    success ? SSH_AGENT_SUCCESS : SSH_AGENT_FAILURE);
 }
 
 /* send list of supported public keys to 'client' */
-static void
+સ્થિર શૂન્ય
 process_request_identities(SocketEntry *e)
 {
 	Identity *id;
-	struct sshbuf *msg, *keys;
-	int r;
+	સંરચના sshbuf *સંદેશ, *ચાવીઓ;
+	પૂર્ણાંક r;
 	u_int i = 0, nentries = 0;
-	char *fp;
+	અક્ષર *fp;
 
 	debug2_f("entering");
 
-	if ((msg = sshbuf_new()) == NULL || (keys = sshbuf_new()) == NULL)
+	જો ((સંદેશ = sshbuf_new()) == ખાલી || (ચાવીઓ = sshbuf_new()) == ખાલી)
 		fatal_f("sshbuf_new failed");
 	TAILQ_FOREACH(id, &idtab->idlist, next) {
-		if ((fp = sshkey_fingerprint(id->key, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+		જો ((fp = sshkey_fingerprint(id->ચાવી, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == ખાલી)
 			fatal_f("fingerprint failed");
 		debug_f("key %u / %u: %s %s", i++, idtab->nentries,
-		    sshkey_ssh_name(id->key), fp);
+		    sshkey_ssh_name(id->ચાવી), fp);
 		dump_dest_constraints(__func__,
 		    id->dest_constraints, id->ndest_constraints);
-		free(fp);
+		મુક્ત(fp);
 		/* identity not visible, don't include in response */
-		if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
-			continue;
-		if ((r = sshkey_puts(id->key, keys)) != 0 ||
-		    (r = sshbuf_put_cstring(keys, id->comment)) != 0) {
+		જો (identity_permitted(id, e, ખાલી, ખાલી, ખાલી) != 0)
+			ચાલુ;
+		જો ((r = sshkey_puts(id->ચાવી, ચાવીઓ)) != 0 ||
+		    (r = sshbuf_put_cstring(ચાવીઓ, id->comment)) != 0) {
 			error_fr(r, "compose key/comment");
-			continue;
+			ચાલુ;
 		}
 		nentries++;
 	}
 	debug2_f("replying with %u allowed of %u available keys",
 	    nentries, idtab->nentries);
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-	    (r = sshbuf_put_u32(msg, nentries)) != 0 ||
-	    (r = sshbuf_putb(msg, keys)) != 0)
+	જો ((r = sshbuf_put_u8(સંદેશ, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
+	    (r = sshbuf_put_u32(સંદેશ, nentries)) != 0 ||
+	    (r = sshbuf_putb(સંદેશ, ચાવીઓ)) != 0)
 		fatal_fr(r, "compose");
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	જો ((r = sshbuf_put_stringb(e->output, સંદેશ)) != 0)
 		fatal_fr(r, "enqueue");
-	sshbuf_free(msg);
-	sshbuf_free(keys);
+	sshbuf_free(સંદેશ);
+	sshbuf_free(ચાવીઓ);
 }
 
 
-static char *
-agent_decode_alg(struct sshkey *key, u_int flags)
+સ્થિર અક્ષર *
+agent_decode_alg(સંરચના sshkey *ચાવી, u_int flags)
 {
-	if (key->type == KEY_RSA) {
-		if (flags & SSH_AGENT_RSA_SHA2_256)
-			return "rsa-sha2-256";
-		else if (flags & SSH_AGENT_RSA_SHA2_512)
-			return "rsa-sha2-512";
-	} else if (key->type == KEY_RSA_CERT) {
-		if (flags & SSH_AGENT_RSA_SHA2_256)
-			return "rsa-sha2-256-cert-v01@openssh.com";
-		else if (flags & SSH_AGENT_RSA_SHA2_512)
-			return "rsa-sha2-512-cert-v01@openssh.com";
+	જો (ચાવી->type == ચાવી_RSA) {
+		જો (flags & SSH_AGENT_RSA_SHA2_256)
+			પાછા "rsa-sha2-256";
+		નહીંતર જો (flags & SSH_AGENT_RSA_SHA2_512)
+			પાછા "rsa-sha2-512";
+	} નહીંતર જો (ચાવી->type == ચાવી_RSA_CERT) {
+		જો (flags & SSH_AGENT_RSA_SHA2_256)
+			પાછા "rsa-sha2-256-cert-v01@openssh.com";
+		નહીંતર જો (flags & SSH_AGENT_RSA_SHA2_512)
+			પાછા "rsa-sha2-512-cert-v01@openssh.com";
 	}
-	return NULL;
+	પાછા ખાલી;
 }
 
 /*
@@ -689,115 +689,115 @@ agent_decode_alg(struct sshkey *key, u_int flags)
  * Note: does not modify msg buffer.
  * Optionally extract the username, session ID and/or hostkey from the request.
  */
-static int
-parse_userauth_request(struct sshbuf *msg, const struct sshkey *expected_key,
-    char **userp, struct sshbuf **sess_idp, struct sshkey **hostkeyp)
+સ્થિર પૂર્ણાંક
+parse_userauth_request(સંરચના sshbuf *સંદેશ, અચલ સંરચના sshkey *expected_ચાવી,
+    અક્ષર **userp, સંરચના sshbuf **sess_idp, સંરચના sshkey **hostkeyp)
 {
-	struct sshbuf *b = NULL, *sess_id = NULL;
-	char *user = NULL, *service = NULL, *method = NULL, *pkalg = NULL;
-	int r;
+	સંરચના sshbuf *b = ખાલી, *sess_id = ખાલી;
+	અક્ષર *user = ખાલી, *service = ખાલી, *method = ખાલી, *pkalg = ખાલી;
+	પૂર્ણાંક r;
 	u_char t, sig_follows;
-	struct sshkey *mkey = NULL, *hostkey = NULL;
+	સંરચના sshkey *mkey = ખાલી, *hostkey = ખાલી;
 
-	if (userp != NULL)
-		*userp = NULL;
-	if (sess_idp != NULL)
-		*sess_idp = NULL;
-	if (hostkeyp != NULL)
-		*hostkeyp = NULL;
-	if ((b = sshbuf_fromb(msg)) == NULL)
+	જો (userp != ખાલી)
+		*userp = ખાલી;
+	જો (sess_idp != ખાલી)
+		*sess_idp = ખાલી;
+	જો (hostkeyp != ખાલી)
+		*hostkeyp = ખાલી;
+	જો ((b = sshbuf_fromb(સંદેશ)) == ખાલી)
 		fatal_f("sshbuf_fromb");
 
 	/* SSH userauth request */
-	if ((r = sshbuf_froms(b, &sess_id)) != 0)
-		goto out;
-	if (sshbuf_len(sess_id) == 0) {
+	જો ((r = sshbuf_froms(b, &sess_id)) != 0)
+		જાઓ out;
+	જો (sshbuf_len(sess_id) == 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
-	if ((r = sshbuf_get_u8(b, &t)) != 0 || /* SSH2_MSG_USERAUTH_REQUEST */
-	    (r = sshbuf_get_cstring(b, &user, NULL)) != 0 || /* server user */
-	    (r = sshbuf_get_cstring(b, &service, NULL)) != 0 || /* service */
-	    (r = sshbuf_get_cstring(b, &method, NULL)) != 0 || /* method */
+	જો ((r = sshbuf_get_u8(b, &t)) != 0 || /* SSH2_MSG_USERAUTH_REQUEST */
+	    (r = sshbuf_get_cstring(b, &user, ખાલી)) != 0 || /* server user */
+	    (r = sshbuf_get_cstring(b, &service, ખાલી)) != 0 || /* service */
+	    (r = sshbuf_get_cstring(b, &method, ખાલી)) != 0 || /* method */
 	    (r = sshbuf_get_u8(b, &sig_follows)) != 0 || /* sig-follows */
-	    (r = sshbuf_get_cstring(b, &pkalg, NULL)) != 0 || /* alg */
-	    (r = sshkey_froms(b, &mkey)) != 0) /* key */
-		goto out;
-	if (t != SSH2_MSG_USERAUTH_REQUEST ||
+	    (r = sshbuf_get_cstring(b, &pkalg, ખાલી)) != 0 || /* alg */
+	    (r = sshkey_froms(b, &mkey)) != 0) /*ચાવી*/
+		જાઓ out;
+	જો (t != SSH2_સંદેશ_USERAUTH_REQUEST ||
 	    sig_follows != 1 ||
 	    strcmp(service, "ssh-connection") != 0 ||
-	    !sshkey_equal(expected_key, mkey) ||
-	    sshkey_type_from_name(pkalg) != expected_key->type) {
+	    !sshkey_equal(expected_ચાવી, mkey) ||
+	    sshkey_type_from_name(pkalg) != expected_ચાવી->type) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
-	if (strcmp(method, "publickey-hostbound-v00@openssh.com") == 0) {
-		if ((r = sshkey_froms(b, &hostkey)) != 0)
-			goto out;
-	} else if (strcmp(method, "publickey") != 0) {
+	જો (strcmp(method, "publickey-hostbound-v00@openssh.com") == 0) {
+		જો ((r = sshkey_froms(b, &hostkey)) != 0)
+			જાઓ out;
+	} નહીંતર જો (strcmp(method, "publickey") != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
-	if (sshbuf_len(b) != 0) {
+	જો (sshbuf_len(b) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
 	/* success */
 	r = 0;
 	debug3_f("well formed userauth");
-	if (userp != NULL) {
+	જો (userp != ખાલી) {
 		*userp = user;
-		user = NULL;
+		user = ખાલી;
 	}
-	if (sess_idp != NULL) {
+	જો (sess_idp != ખાલી) {
 		*sess_idp = sess_id;
-		sess_id = NULL;
+		sess_id = ખાલી;
 	}
-	if (hostkeyp != NULL) {
+	જો (hostkeyp != ખાલી) {
 		*hostkeyp = hostkey;
-		hostkey = NULL;
+		hostkey = ખાલી;
 	}
  out:
 	sshbuf_free(b);
 	sshbuf_free(sess_id);
-	free(user);
-	free(service);
-	free(method);
-	free(pkalg);
+	મુક્ત(user);
+	મુક્ત(service);
+	મુક્ત(method);
+	મુક્ત(pkalg);
 	sshkey_free(mkey);
 	sshkey_free(hostkey);
-	return r;
+	પાછા r;
 }
 
 /*
  * Attempt to parse the contents of a buffer as a SSHSIG signature request.
  * Note: does not modify buffer.
  */
-static int
-parse_sshsig_request(struct sshbuf *msg)
+સ્થિર પૂર્ણાંક
+parse_sshsig_request(સંરચના sshbuf *સંદેશ)
 {
-	int r;
-	struct sshbuf *b;
+	પૂર્ણાંક r;
+	સંરચના sshbuf *b;
 
-	if ((b = sshbuf_fromb(msg)) == NULL)
+	જો ((b = sshbuf_fromb(સંદેશ)) == ખાલી)
 		fatal_f("sshbuf_fromb");
 
-	if ((r = sshbuf_cmp(b, 0, "SSHSIG", 6)) != 0 ||
+	જો ((r = sshbuf_cmp(b, 0, "SSHSIG", 6)) != 0 ||
 	    (r = sshbuf_consume(b, 6)) != 0 ||
-	    (r = sshbuf_get_cstring(b, NULL, NULL)) != 0 || /* namespace */
-	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0 || /* reserved */
-	    (r = sshbuf_get_cstring(b, NULL, NULL)) != 0 || /* hashalg */
-	    (r = sshbuf_get_string_direct(b, NULL, NULL)) != 0) /* H(msg) */
-		goto out;
-	if (sshbuf_len(b) != 0) {
+	    (r = sshbuf_get_cstring(b, ખાલી, ખાલી)) != 0 || /* namespace */
+	    (r = sshbuf_get_string_direct(b, ખાલી, ખાલી)) != 0 || /* reserved */
+	    (r = sshbuf_get_cstring(b, ખાલી, ખાલી)) != 0 || /* hashalg */
+	    (r = sshbuf_get_string_direct(b, ખાલી, ખાલી)) != 0) /* H(msg) */
+		જાઓ out;
+	જો (sshbuf_len(b) != 0) {
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
 	/* success */
 	r = 0;
  out:
 	sshbuf_free(b);
-	return r;
+	પાછા r;
 }
 
 /*
@@ -807,162 +807,162 @@ parse_sshsig_request(struct sshbuf *msg)
  * (pubkey userauth, sshsig, CA key signing) to exclude signing challenges
  * for the web.
  */
-static int
-check_websafe_message_contents(struct sshkey *key, struct sshbuf *data)
+સ્થિર પૂર્ણાંક
+check_websafe_message_contents(સંરચના sshkey *ચાવી, સંરચના sshbuf *data)
 {
-	if (parse_userauth_request(data, key, NULL, NULL, NULL) == 0) {
+	જો (parse_userauth_request(data, ચાવી, ખાલી, ખાલી, ખાલી) == 0) {
 		debug_f("signed data matches public key userauth request");
-		return 1;
+		પાછા 1;
 	}
-	if (parse_sshsig_request(data) == 0) {
+	જો (parse_sshsig_request(data) == 0) {
 		debug_f("signed data matches SSHSIG signature request");
-		return 1;
+		પાછા 1;
 	}
 
 	/* XXX check CA signature operation */
 
 	error("web-origin key attempting to sign non-SSH message");
-	return 0;
+	પાછા 0;
 }
 
-static int
-buf_equal(const struct sshbuf *a, const struct sshbuf *b)
+સ્થિર પૂર્ણાંક
+buf_equal(અચલ સંરચના sshbuf *a, અચલ સંરચના sshbuf *b)
 {
-	if (sshbuf_ptr(a) == NULL || sshbuf_ptr(b) == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (sshbuf_len(a) != sshbuf_len(b))
-		return SSH_ERR_INVALID_FORMAT;
-	if (timingsafe_bcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
-		return SSH_ERR_INVALID_FORMAT;
-	return 0;
+	જો (sshbuf_ptr(a) == ખાલી || sshbuf_ptr(b) == ખાલી)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
+	જો (sshbuf_len(a) != sshbuf_len(b))
+		પાછા SSH_ERR_INVALID_FORMAT;
+	જો (timingsafe_bcmp(sshbuf_ptr(a), sshbuf_ptr(b), sshbuf_len(a)) != 0)
+		પાછા SSH_ERR_INVALID_FORMAT;
+	પાછા 0;
 }
 
 /* ssh2 only */
-static void
+સ્થિર શૂન્ય
 process_sign_request2(SocketEntry *e)
 {
-	u_char *signature = NULL;
+	u_char *signature = ખાલી;
 	size_t slen = 0;
 	u_int compat = 0, flags;
-	int r, ok = -1, retried = 0;
-	char *fp = NULL, *pin = NULL, *prompt = NULL;
-	char *user = NULL, *sig_dest = NULL;
-	const char *fwd_host = NULL, *dest_host = NULL;
-	struct sshbuf *msg = NULL, *data = NULL, *sid = NULL;
-	struct sshkey *key = NULL, *hostkey = NULL;
-	struct identity *id;
-	struct notifier_ctx *notifier = NULL;
+	પૂર્ણાંક r, ok = -1, retried = 0;
+	અક્ષર *fp = ખાલી, *pin = ખાલી, *prompt = ખાલી;
+	અક્ષર *user = ખાલી, *sig_dest = ખાલી;
+	અચલ અક્ષર *fwd_host = ખાલી, *dest_host = ખાલી;
+	સંરચના sshbuf *સંદેશ = ખાલી, *data = ખાલી, *sid = ખાલી;
+	સંરચના sshkey *ચાવી = ખાલી, *hostkey = ખાલી;
+	સંરચના identity *id;
+	સંરચના notifier_ctx *notifier = ખાલી;
 
 	debug_f("entering");
 
-	if ((msg = sshbuf_new()) == NULL || (data = sshbuf_new()) == NULL)
+	જો ((સંદેશ = sshbuf_new()) == ખાલી || (data = sshbuf_new()) == ખાલી)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshkey_froms(e->request, &key)) != 0 ||
+	જો ((r = sshkey_froms(e->request, &ચાવી)) != 0 ||
 	    (r = sshbuf_get_stringb(e->request, data)) != 0 ||
 	    (r = sshbuf_get_u32(e->request, &flags)) != 0) {
 		error_fr(r, "parse");
-		goto send;
+		જાઓ send;
 	}
 
-	if ((id = lookup_identity(key)) == NULL) {
-		verbose_f("%s key not found", sshkey_type(key));
-		goto send;
+	જો ((id = lookup_identity(ચાવી)) == ખાલી) {
+		verbose_f("%s key not found", sshkey_type(ચાવી));
+		જાઓ send;
 	}
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	જો ((fp = sshkey_fingerprint(ચાવી, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == ખાલી)
 		fatal_f("fingerprint failed");
 
-	if (id->ndest_constraints != 0) {
-		if (e->nsession_ids == 0) {
+	જો (id->ndest_constraints != 0) {
+		જો (e->nsession_ids == 0) {
 			logit_f("refusing use of destination-constrained key "
 			    "to sign on unbound connection");
-			goto send;
+			જાઓ send;
 		}
-		if (parse_userauth_request(data, key, &user, &sid,
+		જો (parse_userauth_request(data, ચાવી, &user, &sid,
 		    &hostkey) != 0) {
 			logit_f("refusing use of destination-constrained key "
 			   "to sign an unidentified signature");
-			goto send;
+			જાઓ send;
 		}
 		/* XXX logspam */
 		debug_f("user=%s", user);
-		if (identity_permitted(id, e, user, &fwd_host, &dest_host) != 0)
-			goto send;
+		જો (identity_permitted(id, e, user, &fwd_host, &dest_host) != 0)
+			જાઓ send;
 		/* XXX display fwd_host/dest_host in askpass UI */
 		/*
 		 * Ensure that the session ID is the most recent one
 		 * registered on the socket - it should have been bound by
 		 * ssh immediately before userauth.
 		 */
-		if (buf_equal(sid,
+		જો (buf_equal(sid,
 		    e->session_ids[e->nsession_ids - 1].sid) != 0) {
 			error_f("unexpected session ID (%zu listed) on "
 			    "signature request for target user %s with "
 			    "key %s %s", e->nsession_ids, user,
-			    sshkey_type(id->key), fp);
-			goto send;
+			    sshkey_type(id->ચાવી), fp);
+			જાઓ send;
 		}
 		/*
 		 * Ensure that the hostkey embedded in the signature matches
 		 * the one most recently bound to the socket. An exception is
 		 * made for the initial forwarding hop.
 		 */
-		if (e->nsession_ids > 1 && hostkey == NULL) {
+		જો (e->nsession_ids > 1 && hostkey == ખાલી) {
 			error_f("refusing use of destination-constrained key: "
 			    "no hostkey recorded in signature for forwarded "
 			    "connection");
-			goto send;
+			જાઓ send;
 		}
-		if (hostkey != NULL && !sshkey_equal(hostkey,
-		    e->session_ids[e->nsession_ids - 1].key)) {
+		જો (hostkey != ખાલી && !sshkey_equal(hostkey,
+		    e->session_ids[e->nsession_ids - 1].ચાવી)) {
 			error_f("refusing use of destination-constrained key: "
 			    "mismatch between hostkey in request and most "
 			    "recently bound session");
-			goto send;
+			જાઓ send;
 		}
 		xasprintf(&sig_dest, "public key authentication request for "
 		    "user \"%s\" to listed host", user);
 	}
-	if (id->confirm && confirm_key(id, sig_dest) != 0) {
+	જો (id->confirm && confirm_ચાવી(id, sig_dest) != 0) {
 		verbose_f("user refused key");
-		goto send;
+		જાઓ send;
 	}
-	if (sshkey_is_sk(id->key)) {
-		if (restrict_websafe &&
-		    match_pattern_list(id->key->sk_application,
+	જો (sshkey_is_sk(id->ચાવી)) {
+		જો (restrict_websafe &&
+		    match_pattern_list(id->ચાવી->sk_application,
 		    websafe_allowlist, 0) != 1 &&
-		    !check_websafe_message_contents(key, data)) {
+		    !check_websafe_message_contents(ચાવી, data)) {
 			/* error already logged */
-			goto send;
+			જાઓ send;
 		}
-		if (id->key->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
+		જો (id->ચાવી->sk_flags & SSH_SK_USER_PRESENCE_REQD) {
 			notifier = notify_start(0,
 			    "Confirm user presence for key %s %s%s%s",
-			    sshkey_type(id->key), fp,
-			    sig_dest == NULL ? "" : "\n",
-			    sig_dest == NULL ? "" : sig_dest);
+			    sshkey_type(id->ચાવી), fp,
+			    sig_dest == ખાલી ? "" : "\n",
+			    sig_dest == ખાલી ? "" : sig_dest);
 		}
 	}
  retry_pin:
-	if ((r = sshkey_sign(id->key, &signature, &slen,
-	    sshbuf_ptr(data), sshbuf_len(data), agent_decode_alg(key, flags),
+	જો ((r = sshkey_sign(id->ચાવી, &signature, &slen,
+	    sshbuf_ptr(data), sshbuf_len(data), agent_decode_alg(ચાવી, flags),
 	    id->sk_provider, pin, compat)) != 0) {
 		debug_fr(r, "sshkey_sign");
-		if (pin == NULL && !retried && sshkey_is_sk(id->key) &&
-		    r == SSH_ERR_KEY_WRONG_PASSPHRASE) {
-			notify_complete(notifier, NULL);
-			notifier = NULL;
+		જો (pin == ખાલી && !retried && sshkey_is_sk(id->ચાવી) &&
+		    r == SSH_ERR_ચાવી_WRONG_PASSPHRASE) {
+			notify_complete(notifier, ખાલી);
+			notifier = ખાલી;
 			/* XXX include sig_dest */
 			xasprintf(&prompt, "Enter PIN%sfor %s key %s: ",
-			    (id->key->sk_flags & SSH_SK_USER_PRESENCE_REQD) ?
+			    (id->ચાવી->sk_flags & SSH_SK_USER_PRESENCE_REQD) ?
 			    " and confirm user presence " : " ",
-			    sshkey_type(id->key), fp);
+			    sshkey_type(id->ચાવી), fp);
 			pin = read_passphrase(prompt, RP_USE_ASKPASS);
 			retried = 1;
-			goto retry_pin;
+			જાઓ retry_pin;
 		}
 		error_fr(r, "sshkey_sign");
-		goto send;
+		જાઓ send;
 	}
 	/* Success */
 	ok = 0;
@@ -970,70 +970,70 @@ process_sign_request2(SocketEntry *e)
  send:
 	notify_complete(notifier, "User presence confirmed");
 
-	if (ok == 0) {
-		if ((r = sshbuf_put_u8(msg, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
-		    (r = sshbuf_put_string(msg, signature, slen)) != 0)
+	જો (ok == 0) {
+		જો ((r = sshbuf_put_u8(સંદેશ, SSH2_AGENT_SIGN_RESPONSE)) != 0 ||
+		    (r = sshbuf_put_string(સંદેશ, signature, slen)) != 0)
 			fatal_fr(r, "compose");
-	} else if ((r = sshbuf_put_u8(msg, SSH_AGENT_FAILURE)) != 0)
+	} નહીંતર જો ((r = sshbuf_put_u8(સંદેશ, SSH_AGENT_FAILURE)) != 0)
 		fatal_fr(r, "compose failure");
 
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	જો ((r = sshbuf_put_stringb(e->output, સંદેશ)) != 0)
 		fatal_fr(r, "enqueue");
 
 	sshbuf_free(sid);
 	sshbuf_free(data);
-	sshbuf_free(msg);
-	sshkey_free(key);
+	sshbuf_free(સંદેશ);
+	sshkey_free(ચાવી);
 	sshkey_free(hostkey);
-	free(fp);
-	free(signature);
-	free(sig_dest);
-	free(user);
-	free(prompt);
-	if (pin != NULL)
+	મુક્ત(fp);
+	મુક્ત(signature);
+	મુક્ત(sig_dest);
+	મુક્ત(user);
+	મુક્ત(prompt);
+	જો (pin != ખાલી)
 		freezero(pin, strlen(pin));
 }
 
 /* shared */
-static void
+સ્થિર શૂન્ય
 process_remove_identity(SocketEntry *e)
 {
-	int r, success = 0;
-	struct sshkey *key = NULL;
+	પૂર્ણાંક r, success = 0;
+	સંરચના sshkey *ચાવી = ખાલી;
 	Identity *id;
 
 	debug2_f("entering");
-	if ((r = sshkey_froms(e->request, &key)) != 0) {
+	જો ((r = sshkey_froms(e->request, &ચાવી)) != 0) {
 		error_fr(r, "parse key");
-		goto done;
+		જાઓ done;
 	}
-	if ((id = lookup_identity(key)) == NULL) {
+	જો ((id = lookup_identity(ચાવી)) == ખાલી) {
 		debug_f("key not found");
-		goto done;
+		જાઓ done;
 	}
 	/* identity not visible, cannot be removed */
-	if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
-		goto done; /* error already logged */
+	જો (identity_permitted(id, e, ખાલી, ખાલી, ખાલી) != 0)
+		જાઓ done; /* error already logged */
 	/* We have this key, free it. */
-	if (idtab->nentries < 1)
+	જો (idtab->nentries < 1)
 		fatal_f("internal error: nentries %d", idtab->nentries);
 	TAILQ_REMOVE(&idtab->idlist, id, next);
 	free_identity(id);
 	idtab->nentries--;
 	success = 1;
  done:
-	sshkey_free(key);
+	sshkey_free(ચાવી);
 	send_status(e, success);
 }
 
-static void
-remove_all_identities(void)
+સ્થિર શૂન્ય
+remove_all_identities(શૂન્ય)
 {
 	Identity *id;
 
 	debug2_f("entering");
 	/* Loop over all identities and clear the keys. */
-	for (id = TAILQ_FIRST(&idtab->idlist); id;
+	માટે (id = TAILQ_FIRST(&idtab->idlist); id;
 	    id = TAILQ_FIRST(&idtab->idlist)) {
 		TAILQ_REMOVE(&idtab->idlist, id, next);
 		free_identity(id);
@@ -1043,7 +1043,7 @@ remove_all_identities(void)
 	idtab->nentries = 0;
 }
 
-static void
+સ્થિર શૂન્ય
 process_remove_all_identities(SocketEntry *e)
 {
 	remove_all_identities();
@@ -1053,132 +1053,132 @@ process_remove_all_identities(SocketEntry *e)
 }
 
 /* removes expired keys and returns number of seconds until the next expiry */
-static time_t
-reaper(void)
+સ્થિર time_t
+reaper(શૂન્ય)
 {
 	time_t deadline = 0, now = monotime();
 	Identity *id, *nxt;
 
-	for (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
+	માટે (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
 		nxt = TAILQ_NEXT(id, next);
-		if (id->death == 0)
-			continue;
-		if (now >= id->death) {
+		જો (id->death == 0)
+			ચાલુ;
+		જો (now >= id->death) {
 			debug("expiring key '%s'", id->comment);
 			TAILQ_REMOVE(&idtab->idlist, id, next);
 			free_identity(id);
 			idtab->nentries--;
-		} else
+		} નહીંતર
 			deadline = (deadline == 0) ? id->death :
 			    MINIMUM(deadline, id->death);
 	}
-	if (deadline == 0 || deadline <= now)
-		return 0;
-	else
-		return (deadline - now);
+	જો (deadline == 0 || deadline <= now)
+		પાછા 0;
+	નહીંતર
+		પાછા (deadline - now);
 }
 
-static int
-parse_dest_constraint_hop(struct sshbuf *b, struct dest_constraint_hop *dch)
+સ્થિર પૂર્ણાંક
+parse_dest_constraint_hop(સંરચના sshbuf *b, સંરચના dest_constraint_hop *dch)
 {
-	u_char key_is_ca;
+	u_char ચાવી_is_ca;
 	size_t elen = 0, userlen = 0;
-	int r;
-	struct sshkey *k = NULL;
-	char *fp;
+	પૂર્ણાંક r;
+	સંરચના sshkey *k = ખાલી;
+	અક્ષર *fp;
 
-	memset(dch, '\0', sizeof(*dch));
-	if ((r = sshbuf_get_cstring(b, &dch->user, &userlen)) != 0 ||
-	    (r = sshbuf_get_cstring(b, &dch->hostname, NULL)) != 0 ||
-	    (r = sshbuf_get_string_direct(b, NULL, &elen)) != 0) {
+	memset(dch, '\0', કદ(*dch));
+	જો ((r = sshbuf_get_cstring(b, &dch->user, &userlen)) != 0 ||
+	    (r = sshbuf_get_cstring(b, &dch->hostname, ખાલી)) != 0 ||
+	    (r = sshbuf_get_string_direct(b, ખાલી, &elen)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		જાઓ out;
 	}
-	if (elen != 0) {
+	જો (elen != 0) {
 		error_f("unsupported extensions (len %zu)", elen);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		જાઓ out;
 	}
-	if (*dch->hostname == '\0') {
-		free(dch->hostname);
-		dch->hostname = NULL;
+	જો (*dch->hostname == '\0') {
+		મુક્ત(dch->hostname);
+		dch->hostname = ખાલી;
 	}
-	if (*dch->user == '\0') {
-		free(dch->user);
-		dch->user = NULL;
-	} else if (userlen > AGENT_USER_CONSTRAINT_MAX_LEN) {
+	જો (*dch->user == '\0') {
+		મુક્ત(dch->user);
+		dch->user = ખાલી;
+	} નહીંતર જો (userlen > AGENT_USER_CONSTRAINT_MAX_LEN) {
 		error_f("user match pattern too long");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
-	while (sshbuf_len(b) != 0) {
-		dch->keys = xrecallocarray(dch->keys, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->keys));
-		dch->key_is_ca = xrecallocarray(dch->key_is_ca, dch->nkeys,
-		    dch->nkeys + 1, sizeof(*dch->key_is_ca));
-		if ((r = sshkey_froms(b, &k)) != 0 ||
-		    (r = sshbuf_get_u8(b, &key_is_ca)) != 0)
-			goto out;
-		if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
-		    SSH_FP_DEFAULT)) == NULL)
+	જ્યારે (sshbuf_len(b) != 0) {
+		dch->ચાવીઓ = xrecallocarray(dch->ચાવીઓ, dch->nkeys,
+		    dch->nkeys + 1, કદ(*dch->ચાવીઓ));
+		dch->ચાવી_is_ca = xrecallocarray(dch->ચાવી_is_ca, dch->nkeys,
+		    dch->nkeys + 1, કદ(*dch->ચાવી_is_ca));
+		જો ((r = sshkey_froms(b, &k)) != 0 ||
+		    (r = sshbuf_get_u8(b, &ચાવી_is_ca)) != 0)
+			જાઓ out;
+		જો ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+		    SSH_FP_DEFAULT)) == ખાલી)
 			fatal_f("fingerprint failed");
 		debug3_f("%s%s%s: adding %skey %s %s",
-		    dch->user == NULL ? "" : dch->user,
-		    dch->user == NULL ? "" : "@",
-		    dch->hostname, key_is_ca ? "CA " : "", sshkey_type(k), fp);
-		free(fp);
-		dch->keys[dch->nkeys] = k;
-		dch->key_is_ca[dch->nkeys] = key_is_ca != 0;
+		    dch->user == ખાલી ? "" : dch->user,
+		    dch->user == ખાલી ? "" : "@",
+		    dch->hostname, ચાવી_is_ca ? "CA " : "", sshkey_type(k), fp);
+		મુક્ત(fp);
+		dch->ચાવીઓ[dch->nkeys] = k;
+		dch->ચાવી_is_ca[dch->nkeys] = ચાવી_is_ca != 0;
 		dch->nkeys++;
-		k = NULL; /* transferred */
+		k = ખાલી; /* transferred */
 	}
 	/* success */
 	r = 0;
  out:
 	sshkey_free(k);
-	return r;
+	પાછા r;
 }
 
-static int
-parse_dest_constraint(struct sshbuf *m, struct dest_constraint *dc)
+સ્થિર પૂર્ણાંક
+parse_dest_constraint(સંરચના sshbuf *m, સંરચના dest_constraint *dc)
 {
-	struct sshbuf *b = NULL, *frombuf = NULL, *tobuf = NULL;
-	int r;
+	સંરચના sshbuf *b = ખાલી, *frombuf = ખાલી, *tobuf = ખાલી;
+	પૂર્ણાંક r;
 	size_t elen = 0;
 
 	debug3_f("entering");
 
-	memset(dc, '\0', sizeof(*dc));
-	if ((r = sshbuf_froms(m, &b)) != 0 ||
+	memset(dc, '\0', કદ(*dc));
+	જો ((r = sshbuf_froms(m, &b)) != 0 ||
 	    (r = sshbuf_froms(b, &frombuf)) != 0 ||
 	    (r = sshbuf_froms(b, &tobuf)) != 0 ||
-	    (r = sshbuf_get_string_direct(b, NULL, &elen)) != 0) {
+	    (r = sshbuf_get_string_direct(b, ખાલી, &elen)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		જાઓ out;
 	}
-	if ((r = parse_dest_constraint_hop(frombuf, &dc->from)) != 0 ||
+	જો ((r = parse_dest_constraint_hop(frombuf, &dc->from)) != 0 ||
 	    (r = parse_dest_constraint_hop(tobuf, &dc->to)) != 0)
-		goto out; /* already logged */
-	if (elen != 0) {
+		જાઓ out; /* already logged */
+	જો (elen != 0) {
 		error_f("unsupported extensions (len %zu)", elen);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		જાઓ out;
 	}
 	debug2_f("parsed %s (%u keys) > %s%s%s (%u keys)",
 	    dc->from.hostname ? dc->from.hostname : "(ORIGIN)", dc->from.nkeys,
 	    dc->to.user ? dc->to.user : "", dc->to.user ? "@" : "",
 	    dc->to.hostname ? dc->to.hostname : "(ANY)", dc->to.nkeys);
 	/* check consistency */
-	if ((dc->from.hostname == NULL) != (dc->from.nkeys == 0) ||
-	    dc->from.user != NULL) {
+	જો ((dc->from.hostname == ખાલી) != (dc->from.nkeys == 0) ||
+	    dc->from.user != ખાલી) {
 		error_f("inconsistent \"from\" specification");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
-	if (dc->to.hostname == NULL || dc->to.nkeys == 0) {
+	જો (dc->to.hostname == ખાલી || dc->to.nkeys == 0) {
 		error_f("incomplete \"to\" specification");
 		r = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
 	/* success */
 	r = 0;
@@ -1186,248 +1186,248 @@ parse_dest_constraint(struct sshbuf *m, struct dest_constraint *dc)
 	sshbuf_free(b);
 	sshbuf_free(frombuf);
 	sshbuf_free(tobuf);
-	return r;
+	પાછા r;
 }
 
-static int
-parse_key_constraint_extension(struct sshbuf *m, char **sk_providerp,
-    struct dest_constraint **dcsp, size_t *ndcsp, int *cert_onlyp,
-    struct sshkey ***certs, size_t *ncerts)
+સ્થિર પૂર્ણાંક
+parse_ચાવી_constraint_extension(સંરચના sshbuf *m, અક્ષર **sk_providerp,
+    સંરચના dest_constraint **dcsp, size_t *ndcsp, પૂર્ણાંક *cert_onlyp,
+    સંરચના sshkey ***certs, size_t *ncerts)
 {
-	char *ext_name = NULL;
-	int r;
-	struct sshbuf *b = NULL;
+	અક્ષર *ext_name = ખાલી;
+	પૂર્ણાંક r;
+	સંરચના sshbuf *b = ખાલી;
 	u_char v;
-	struct sshkey *k;
+	સંરચના sshkey *k;
 
-	if ((r = sshbuf_get_cstring(m, &ext_name, NULL)) != 0) {
+	જો ((r = sshbuf_get_cstring(m, &ext_name, ખાલી)) != 0) {
 		error_fr(r, "parse constraint extension");
-		goto out;
+		જાઓ out;
 	}
 	debug_f("constraint ext %s", ext_name);
-	if (strcmp(ext_name, "sk-provider@openssh.com") == 0) {
-		if (sk_providerp == NULL) {
+	જો (strcmp(ext_name, "sk-provider@openssh.com") == 0) {
+		જો (sk_providerp == ખાલી) {
 			error_f("%s not valid here", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			જાઓ out;
 		}
-		if (*sk_providerp != NULL) {
+		જો (*sk_providerp != ખાલી) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			જાઓ out;
 		}
-		if ((r = sshbuf_get_cstring(m, sk_providerp, NULL)) != 0) {
+		જો ((r = sshbuf_get_cstring(m, sk_providerp, ખાલી)) != 0) {
 			error_fr(r, "parse %s", ext_name);
-			goto out;
+			જાઓ out;
 		}
-	} else if (strcmp(ext_name,
+	} નહીંતર જો (strcmp(ext_name,
 	    "restrict-destination-v00@openssh.com") == 0) {
-		if (*dcsp != NULL) {
+		જો (*dcsp != ખાલી) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			જાઓ out;
 		}
-		if ((r = sshbuf_froms(m, &b)) != 0) {
+		જો ((r = sshbuf_froms(m, &b)) != 0) {
 			error_fr(r, "parse %s outer", ext_name);
-			goto out;
+			જાઓ out;
 		}
-		while (sshbuf_len(b) != 0) {
-			if (*ndcsp >= AGENT_MAX_DEST_CONSTRAINTS) {
+		જ્યારે (sshbuf_len(b) != 0) {
+			જો (*ndcsp >= AGENT_MAX_DEST_CONSTRAINTS) {
 				error_f("too many %s constraints", ext_name);
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				જાઓ out;
 			}
 			*dcsp = xrecallocarray(*dcsp, *ndcsp, *ndcsp + 1,
-			    sizeof(**dcsp));
-			if ((r = parse_dest_constraint(b,
+			    કદ(**dcsp));
+			જો ((r = parse_dest_constraint(b,
 			    *dcsp + (*ndcsp)++)) != 0)
-				goto out; /* error already logged */
+				જાઓ out; /* error already logged */
 		}
-	} else if (strcmp(ext_name,
+	} નહીંતર જો (strcmp(ext_name,
 	    "associated-certs-v00@openssh.com") == 0) {
-		if (certs == NULL || ncerts == NULL || cert_onlyp == NULL) {
+		જો (certs == ખાલી || ncerts == ખાલી || cert_onlyp == ખાલી) {
 			error_f("%s not valid here", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			જાઓ out;
 		}
-		if (*certs != NULL) {
+		જો (*certs != ખાલી) {
 			error_f("%s already set", ext_name);
 			r = SSH_ERR_INVALID_FORMAT;
-			goto out;
+			જાઓ out;
 		}
-		if ((r = sshbuf_get_u8(m, &v)) != 0 ||
+		જો ((r = sshbuf_get_u8(m, &v)) != 0 ||
 		    (r = sshbuf_froms(m, &b)) != 0) {
 			error_fr(r, "parse %s", ext_name);
-			goto out;
+			જાઓ out;
 		}
 		*cert_onlyp = v != 0;
-		while (sshbuf_len(b) != 0) {
-			if (*ncerts >= AGENT_MAX_EXT_CERTS) {
+		જ્યારે (sshbuf_len(b) != 0) {
+			જો (*ncerts >= AGENT_MAX_EXT_CERTS) {
 				error_f("too many %s constraints", ext_name);
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				જાઓ out;
 			}
 			*certs = xrecallocarray(*certs, *ncerts, *ncerts + 1,
-			    sizeof(**certs));
-			if ((r = sshkey_froms(b, &k)) != 0) {
+			    કદ(**certs));
+			જો ((r = sshkey_froms(b, &k)) != 0) {
 				error_fr(r, "parse key");
-				goto out;
+				જાઓ out;
 			}
 			(*certs)[(*ncerts)++] = k;
 		}
-	} else {
+	} નહીંતર {
 		error_f("unsupported constraint \"%s\"", ext_name);
 		r = SSH_ERR_FEATURE_UNSUPPORTED;
-		goto out;
+		જાઓ out;
 	}
 	/* success */
 	r = 0;
  out:
-	free(ext_name);
+	મુક્ત(ext_name);
 	sshbuf_free(b);
-	return r;
+	પાછા r;
 }
 
-static int
-parse_key_constraints(struct sshbuf *m, struct sshkey *k, time_t *deathp,
-    u_int *secondsp, int *confirmp, char **sk_providerp,
-    struct dest_constraint **dcsp, size_t *ndcsp,
-    int *cert_onlyp, size_t *ncerts, struct sshkey ***certs)
+સ્થિર પૂર્ણાંક
+parse_ચાવી_constraints(સંરચના sshbuf *m, સંરચના sshkey *k, time_t *deathp,
+    u_int *secondsp, પૂર્ણાંક *confirmp, અક્ષર **sk_providerp,
+    સંરચના dest_constraint **dcsp, size_t *ndcsp,
+    પૂર્ણાંક *cert_onlyp, size_t *ncerts, સંરચના sshkey ***certs)
 {
 	u_char ctype;
-	int r;
+	પૂર્ણાંક r;
 	u_int seconds;
 
-	while (sshbuf_len(m)) {
-		if ((r = sshbuf_get_u8(m, &ctype)) != 0) {
+	જ્યારે (sshbuf_len(m)) {
+		જો ((r = sshbuf_get_u8(m, &ctype)) != 0) {
 			error_fr(r, "parse constraint type");
-			goto out;
+			જાઓ out;
 		}
-		switch (ctype) {
-		case SSH_AGENT_CONSTRAIN_LIFETIME:
-			if (*deathp != 0) {
+		પસંદગી (ctype) {
+		સ્થિતિ SSH_AGENT_CONSTRAIN_LIFETIME:
+			જો (*deathp != 0) {
 				error_f("lifetime already set");
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				જાઓ out;
 			}
-			if ((r = sshbuf_get_u32(m, &seconds)) != 0) {
+			જો ((r = sshbuf_get_u32(m, &seconds)) != 0) {
 				error_fr(r, "parse lifetime constraint");
-				goto out;
+				જાઓ out;
 			}
 			*deathp = monotime() + seconds;
 			*secondsp = seconds;
-			break;
-		case SSH_AGENT_CONSTRAIN_CONFIRM:
-			if (*confirmp != 0) {
+			તોડો;
+		સ્થિતિ SSH_AGENT_CONSTRAIN_CONFIRM:
+			જો (*confirmp != 0) {
 				error_f("confirm already set");
 				r = SSH_ERR_INVALID_FORMAT;
-				goto out;
+				જાઓ out;
 			}
 			*confirmp = 1;
-			break;
-		case SSH_AGENT_CONSTRAIN_EXTENSION:
-			if ((r = parse_key_constraint_extension(m,
+			તોડો;
+		સ્થિતિ SSH_AGENT_CONSTRAIN_EXTENSION:
+			જો ((r = parse_ચાવી_constraint_extension(m,
 			    sk_providerp, dcsp, ndcsp,
 			    cert_onlyp, certs, ncerts)) != 0)
-				goto out; /* error already logged */
-			break;
-		default:
+				જાઓ out; /* error already logged */
+			તોડો;
+		મૂળભૂત:
 			error_f("Unknown constraint %d", ctype);
 			r = SSH_ERR_FEATURE_UNSUPPORTED;
-			goto out;
+			જાઓ out;
 		}
 	}
 	/* success */
 	r = 0;
  out:
-	return r;
+	પાછા r;
 }
 
-static void
+સ્થિર શૂન્ય
 process_add_identity(SocketEntry *e)
 {
 	Identity *id;
-	int success = 0, confirm = 0;
-	char *fp, *comment = NULL, *sk_provider = NULL;
-	char canonical_provider[PATH_MAX];
+	પૂર્ણાંક success = 0, confirm = 0;
+	અક્ષર *fp, *comment = ખાલી, *sk_provider = ખાલી;
+	અક્ષર canonical_provider[PATH_MAX];
 	time_t death = 0;
 	u_int seconds = 0;
-	struct dest_constraint *dest_constraints = NULL;
+	સંરચના dest_constraint *dest_constraints = ખાલી;
 	size_t ndest_constraints = 0;
-	struct sshkey *k = NULL;
-	int r = SSH_ERR_INTERNAL_ERROR;
+	સંરચના sshkey *k = ખાલી;
+	પૂર્ણાંક r = SSH_ERR_INTERNAL_ERROR;
 
 	debug2_f("entering");
-	if ((r = sshkey_private_deserialize(e->request, &k)) != 0 ||
-	    k == NULL ||
-	    (r = sshbuf_get_cstring(e->request, &comment, NULL)) != 0) {
+	જો ((r = sshkey_private_deserialize(e->request, &k)) != 0 ||
+	    k == ખાલી ||
+	    (r = sshbuf_get_cstring(e->request, &comment, ખાલી)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		જાઓ out;
 	}
-	if (parse_key_constraints(e->request, k, &death, &seconds, &confirm,
+	જો (parse_ચાવી_constraints(e->request, k, &death, &seconds, &confirm,
 	    &sk_provider, &dest_constraints, &ndest_constraints,
-	    NULL, NULL, NULL) != 0) {
+	    ખાલી, ખાલી, ખાલી) != 0) {
 		error_f("failed to parse constraints");
 		sshbuf_reset(e->request);
-		goto out;
+		જાઓ out;
 	}
 	dump_dest_constraints(__func__, dest_constraints, ndest_constraints);
 
-	if (sk_provider != NULL) {
-		if (!sshkey_is_sk(k)) {
+	જો (sk_provider != ખાલી) {
+		જો (!sshkey_is_sk(k)) {
 			error("Cannot add provider: %s is not an "
 			    "authenticator-hosted key", sshkey_type(k));
-			goto out;
+			જાઓ out;
 		}
-		if (strcasecmp(sk_provider, "internal") == 0) {
+		જો (strcasecmp(sk_provider, "internal") == 0) {
 			debug_f("internal provider");
-		} else {
-			if (socket_is_remote(e) && !remote_add_provider) {
+		} નહીંતર {
+			જો (socket_is_remote(e) && !remote_add_provider) {
 				verbose("failed add of SK provider \"%.100s\": "
 				    "remote addition of providers is disabled",
 				    sk_provider);
-				goto out;
+				જાઓ out;
 			}
-			if (realpath(sk_provider, canonical_provider) == NULL) {
+			જો (realpath(sk_provider, canonical_provider) == ખાલી) {
 				verbose("failed provider \"%.100s\": "
 				    "realpath: %s", sk_provider,
 				    strerror(errno));
-				goto out;
+				જાઓ out;
 			}
-			free(sk_provider);
+			મુક્ત(sk_provider);
 			sk_provider = xstrdup(canonical_provider);
-			if (match_pattern_list(sk_provider,
+			જો (match_pattern_list(sk_provider,
 			    allowed_providers, 0) != 1) {
 				error("Refusing add key: "
 				    "provider %s not allowed", sk_provider);
-				goto out;
+				જાઓ out;
 			}
 		}
 	}
-	if ((r = sshkey_shield_private(k)) != 0) {
+	જો ((r = sshkey_shield_private(k)) != 0) {
 		error_fr(r, "shield private");
-		goto out;
+		જાઓ out;
 	}
-	if (lifetime && !death)
+	જો (lifetime && !death)
 		death = monotime() + lifetime;
-	if ((id = lookup_identity(k)) == NULL) {
-		id = xcalloc(1, sizeof(Identity));
+	જો ((id = lookup_identity(k)) == ખાલી) {
+		id = xcalloc(1, કદ(Identity));
 		TAILQ_INSERT_TAIL(&idtab->idlist, id, next);
 		/* Increment the number of identities. */
 		idtab->nentries++;
-	} else {
+	} નહીંતર {
 		/* identity not visible, do not update */
-		if (identity_permitted(id, e, NULL, NULL, NULL) != 0)
-			goto out; /* error already logged */
+		જો (identity_permitted(id, e, ખાલી, ખાલી, ખાલી) != 0)
+			જાઓ out; /* error already logged */
 		/* key state might have been updated */
-		sshkey_free(id->key);
-		free(id->comment);
-		free(id->sk_provider);
+		sshkey_free(id->ચાવી);
+		મુક્ત(id->comment);
+		મુક્ત(id->sk_provider);
 		free_dest_constraints(id->dest_constraints,
 		    id->ndest_constraints);
 	}
 	/* success */
-	id->key = k;
+	id->ચાવી = k;
 	id->comment = comment;
 	id->death = death;
 	id->confirm = confirm;
@@ -1435,37 +1435,37 @@ process_add_identity(SocketEntry *e)
 	id->dest_constraints = dest_constraints;
 	id->ndest_constraints = ndest_constraints;
 
-	if ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	જો ((fp = sshkey_fingerprint(k, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == ખાલી)
 		fatal_f("sshkey_fingerprint failed");
 	debug_f("add %s %s \"%.100s\" (life: %u) (confirm: %u) "
 	    "(provider: %s) (destination constraints: %zu)",
 	    sshkey_ssh_name(k), fp, comment, seconds, confirm,
-	    sk_provider == NULL ? "none" : sk_provider, ndest_constraints);
-	free(fp);
+	    sk_provider == ખાલી ? "none" : sk_provider, ndest_constraints);
+	મુક્ત(fp);
 	/* transferred */
-	k = NULL;
-	comment = NULL;
-	sk_provider = NULL;
-	dest_constraints = NULL;
+	k = ખાલી;
+	comment = ખાલી;
+	sk_provider = ખાલી;
+	dest_constraints = ખાલી;
 	ndest_constraints = 0;
 	success = 1;
  out:
-	free(sk_provider);
-	free(comment);
+	મુક્ત(sk_provider);
+	મુક્ત(comment);
 	sshkey_free(k);
 	free_dest_constraints(dest_constraints, ndest_constraints);
 	send_status(e, success);
 }
 
 /* XXX todo: encrypt sensitive data with passphrase */
-static void
-process_lock_agent(SocketEntry *e, int lock)
+સ્થિર શૂન્ય
+process_lock_agent(SocketEntry *e, પૂર્ણાંક lock)
 {
-	int r, success = 0, delay;
-	char *passwd;
+	પૂર્ણાંક r, success = 0, delay;
+	અક્ષર *passwd;
 	u_char passwdhash[LOCK_SIZE];
-	static u_int fail_count = 0;
+	સ્થિર u_int fail_ગણતરી = 0;
 	size_t pwlen;
 
 	debug2_f("entering");
@@ -1474,36 +1474,36 @@ process_lock_agent(SocketEntry *e, int lock)
 	 * but we can't parse their request properly. The only safe thing to
 	 * do is abort.
 	 */
-	if ((r = sshbuf_get_cstring(e->request, &passwd, &pwlen)) != 0)
+	જો ((r = sshbuf_get_cstring(e->request, &passwd, &pwlen)) != 0)
 		fatal_fr(r, "parse");
-	if (pwlen == 0) {
+	જો (pwlen == 0) {
 		debug("empty password not supported");
-	} else if (locked && !lock) {
-		if (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
-		    passwdhash, sizeof(passwdhash), LOCK_ROUNDS) < 0)
+	} નહીંતર જો (locked && !lock) {
+		જો (bcrypt_pbkdf(passwd, pwlen, lock_salt, કદ(lock_salt),
+		    passwdhash, કદ(passwdhash), LOCK_ROUNDS) < 0)
 			fatal("bcrypt_pbkdf");
-		if (timingsafe_bcmp(passwdhash, lock_pwhash, LOCK_SIZE) == 0) {
+		જો (timingsafe_bcmp(passwdhash, lock_pwhash, LOCK_SIZE) == 0) {
 			debug("agent unlocked");
 			locked = 0;
-			fail_count = 0;
-			explicit_bzero(lock_pwhash, sizeof(lock_pwhash));
+			fail_ગણતરી = 0;
+			explicit_bzero(lock_pwhash, કદ(lock_pwhash));
 			success = 1;
-		} else {
+		} નહીંતર {
 			/* delay in 0.1s increments up to 10s */
-			if (fail_count < 100)
-				fail_count++;
-			delay = 100000 * fail_count;
+			જો (fail_ગણતરી < 100)
+				fail_ગણતરી++;
+			delay = 100000 * fail_ગણતરી;
 			debug("unlock failed, delaying %0.1lf seconds",
-			    (double)delay/1000000);
+			    (દ્વિગુણ)delay/1000000);
 			usleep(delay);
 		}
-		explicit_bzero(passwdhash, sizeof(passwdhash));
-	} else if (!locked && lock) {
+		explicit_bzero(passwdhash, કદ(passwdhash));
+	} નહીંતર જો (!locked && lock) {
 		debug("agent locked");
 		locked = 1;
-		arc4random_buf(lock_salt, sizeof(lock_salt));
-		if (bcrypt_pbkdf(passwd, pwlen, lock_salt, sizeof(lock_salt),
-		    lock_pwhash, sizeof(lock_pwhash), LOCK_ROUNDS) < 0)
+		arc4random_buf(lock_salt, કદ(lock_salt));
+		જો (bcrypt_pbkdf(passwd, pwlen, lock_salt, કદ(lock_salt),
+		    lock_pwhash, કદ(lock_pwhash), LOCK_ROUNDS) < 0)
 			fatal("bcrypt_pbkdf");
 		success = 1;
 	}
@@ -1511,37 +1511,37 @@ process_lock_agent(SocketEntry *e, int lock)
 	send_status(e, success);
 }
 
-static void
+સ્થિર શૂન્ય
 no_identities(SocketEntry *e)
 {
-	struct sshbuf *msg;
-	int r;
+	સંરચના sshbuf *સંદેશ;
+	પૂર્ણાંક r;
 
-	if ((msg = sshbuf_new()) == NULL)
+	જો ((સંદેશ = sshbuf_new()) == ખાલી)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
-	    (r = sshbuf_put_u32(msg, 0)) != 0 ||
-	    (r = sshbuf_put_stringb(e->output, msg)) != 0)
+	જો ((r = sshbuf_put_u8(સંદેશ, SSH2_AGENT_IDENTITIES_ANSWER)) != 0 ||
+	    (r = sshbuf_put_u32(સંદેશ, 0)) != 0 ||
+	    (r = sshbuf_put_stringb(e->output, સંદેશ)) != 0)
 		fatal_fr(r, "compose");
-	sshbuf_free(msg);
+	sshbuf_free(સંદેશ);
 }
 
 #ifdef ENABLE_PKCS11
 /* Add an identity to idlist; takes ownership of 'key' and 'comment' */
-static void
-add_p11_identity(struct sshkey *key, char *comment, const char *provider,
-    time_t death, u_int confirm, struct dest_constraint *dest_constraints,
+સ્થિર શૂન્ય
+add_p11_identity(સંરચના sshkey *ચાવી, અક્ષર *comment, અચલ અક્ષર *provider,
+    time_t death, u_int confirm, સંરચના dest_constraint *dest_constraints,
     size_t ndest_constraints)
 {
 	Identity *id;
 
-	if (lookup_identity(key) != NULL) {
-		sshkey_free(key);
-		free(comment);
-		return;
+	જો (lookup_identity(ચાવી) != ખાલી) {
+		sshkey_free(ચાવી);
+		મુક્ત(comment);
+		પાછા;
 	}
-	id = xcalloc(1, sizeof(Identity));
-	id->key = key;
+	id = xcalloc(1, કદ(Identity));
+	id->ચાવી = ચાવી;
 	id->comment = comment;
 	id->provider = xstrdup(provider);
 	id->death = death;
@@ -1553,189 +1553,189 @@ add_p11_identity(struct sshkey *key, char *comment, const char *provider,
 	idtab->nentries++;
 }
 
-static void
-process_add_smartcard_key(SocketEntry *e)
+સ્થિર શૂન્ય
+process_add_smartcard_ચાવી(SocketEntry *e)
 {
-	char *provider = NULL, *pin = NULL, canonical_provider[PATH_MAX];
-	char **comments = NULL;
-	int r, i, count = 0, success = 0, confirm = 0;
+	અક્ષર *provider = ખાલી, *pin = ખાલી, canonical_provider[PATH_MAX];
+	અક્ષર **comments = ખાલી;
+	પૂર્ણાંક r, i, ગણતરી = 0, success = 0, confirm = 0;
 	u_int seconds = 0;
 	time_t death = 0;
-	struct sshkey **keys = NULL, *k;
-	struct dest_constraint *dest_constraints = NULL;
+	સંરચના sshkey **ચાવીઓ = ખાલી, *k;
+	સંરચના dest_constraint *dest_constraints = ખાલી;
 	size_t j, ndest_constraints = 0, ncerts = 0;
-	struct sshkey **certs = NULL;
-	int cert_only = 0;
+	સંરચના sshkey **certs = ખાલી;
+	પૂર્ણાંક cert_only = 0;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(e->request, &pin, NULL)) != 0) {
+	જો ((r = sshbuf_get_cstring(e->request, &provider, ખાલી)) != 0 ||
+	    (r = sshbuf_get_cstring(e->request, &pin, ખાલી)) != 0) {
 		error_fr(r, "parse");
-		goto send;
+		જાઓ send;
 	}
-	if (parse_key_constraints(e->request, NULL, &death, &seconds, &confirm,
-	    NULL, &dest_constraints, &ndest_constraints, &cert_only,
+	જો (parse_ચાવી_constraints(e->request, ખાલી, &death, &seconds, &confirm,
+	    ખાલી, &dest_constraints, &ndest_constraints, &cert_only,
 	    &ncerts, &certs) != 0) {
 		error_f("failed to parse constraints");
-		goto send;
+		જાઓ send;
 	}
 	dump_dest_constraints(__func__, dest_constraints, ndest_constraints);
-	if (socket_is_remote(e) && !remote_add_provider) {
+	જો (socket_is_remote(e) && !remote_add_provider) {
 		verbose("failed PKCS#11 add of \"%.100s\": remote addition of "
 		    "providers is disabled", provider);
-		goto send;
+		જાઓ send;
 	}
-	if (realpath(provider, canonical_provider) == NULL) {
+	જો (realpath(provider, canonical_provider) == ખાલી) {
 		verbose("failed PKCS#11 add of \"%.100s\": realpath: %s",
 		    provider, strerror(errno));
-		goto send;
+		જાઓ send;
 	}
-	if (match_pattern_list(canonical_provider, allowed_providers, 0) != 1) {
+	જો (match_pattern_list(canonical_provider, allowed_providers, 0) != 1) {
 		verbose("refusing PKCS#11 add of \"%.100s\": "
 		    "provider not allowed", canonical_provider);
-		goto send;
+		જાઓ send;
 	}
 	debug_f("add %.100s", canonical_provider);
-	if (lifetime && !death)
+	જો (lifetime && !death)
 		death = monotime() + lifetime;
 
-	count = pkcs11_add_provider(canonical_provider, pin, &keys, &comments);
-	for (i = 0; i < count; i++) {
-		if (comments[i] == NULL || comments[i][0] == '\0') {
-			free(comments[i]);
+	ગણતરી = pkcs11_add_provider(canonical_provider, pin, &ચાવીઓ, &comments);
+	માટે (i = 0; i < ગણતરી; i++) {
+		જો (comments[i] == ખાલી || comments[i][0] == '\0') {
+			મુક્ત(comments[i]);
 			comments[i] = xstrdup(canonical_provider);
 		}
-		for (j = 0; j < ncerts; j++) {
-			if (!sshkey_is_cert(certs[j]))
-				continue;
-			if (!sshkey_equal_public(keys[i], certs[j]))
-				continue;
-			if (pkcs11_make_cert(keys[i], certs[j], &k) != 0)
-				continue;
+		માટે (j = 0; j < ncerts; j++) {
+			જો (!sshkey_is_cert(certs[j]))
+				ચાલુ;
+			જો (!sshkey_equal_public(ચાવીઓ[i], certs[j]))
+				ચાલુ;
+			જો (pkcs11_make_cert(ચાવીઓ[i], certs[j], &k) != 0)
+				ચાલુ;
 			add_p11_identity(k, xstrdup(comments[i]),
 			    canonical_provider, death, confirm,
 			    dest_constraints, ndest_constraints);
 			success = 1;
 		}
-		if (!cert_only && lookup_identity(keys[i]) == NULL) {
-			add_p11_identity(keys[i], comments[i],
+		જો (!cert_only && lookup_identity(ચાવીઓ[i]) == ખાલી) {
+			add_p11_identity(ચાવીઓ[i], comments[i],
 			    canonical_provider, death, confirm,
 			    dest_constraints, ndest_constraints);
-			keys[i] = NULL;		/* transferred */
-			comments[i] = NULL;	/* transferred */
+			ચાવીઓ[i] = ખાલી;		/* transferred */
+			comments[i] = ખાલી;	/* transferred */
 			success = 1;
 		}
 		/* XXX update constraints for existing keys */
-		sshkey_free(keys[i]);
-		free(comments[i]);
+		sshkey_free(ચાવીઓ[i]);
+		મુક્ત(comments[i]);
 	}
 send:
-	free(pin);
-	free(provider);
-	free(keys);
-	free(comments);
+	મુક્ત(pin);
+	મુક્ત(provider);
+	મુક્ત(ચાવીઓ);
+	મુક્ત(comments);
 	free_dest_constraints(dest_constraints, ndest_constraints);
-	for (j = 0; j < ncerts; j++)
+	માટે (j = 0; j < ncerts; j++)
 		sshkey_free(certs[j]);
-	free(certs);
+	મુક્ત(certs);
 	send_status(e, success);
 }
 
-static void
-process_remove_smartcard_key(SocketEntry *e)
+સ્થિર શૂન્ય
+process_remove_smartcard_ચાવી(SocketEntry *e)
 {
-	char *provider = NULL, *pin = NULL, canonical_provider[PATH_MAX];
-	int r, success = 0;
+	અક્ષર *provider = ખાલી, *pin = ખાલી, canonical_provider[PATH_MAX];
+	પૂર્ણાંક r, success = 0;
 	Identity *id, *nxt;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &provider, NULL)) != 0 ||
-	    (r = sshbuf_get_cstring(e->request, &pin, NULL)) != 0) {
+	જો ((r = sshbuf_get_cstring(e->request, &provider, ખાલી)) != 0 ||
+	    (r = sshbuf_get_cstring(e->request, &pin, ખાલી)) != 0) {
 		error_fr(r, "parse");
-		goto send;
+		જાઓ send;
 	}
-	free(pin);
+	મુક્ત(pin);
 
-	if (realpath(provider, canonical_provider) == NULL) {
+	જો (realpath(provider, canonical_provider) == ખાલી) {
 		verbose("failed PKCS#11 add of \"%.100s\": realpath: %s",
 		    provider, strerror(errno));
-		goto send;
+		જાઓ send;
 	}
 
 	debug_f("remove %.100s", canonical_provider);
-	for (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
+	માટે (id = TAILQ_FIRST(&idtab->idlist); id; id = nxt) {
 		nxt = TAILQ_NEXT(id, next);
 		/* Skip file--based keys */
-		if (id->provider == NULL)
-			continue;
-		if (!strcmp(canonical_provider, id->provider)) {
+		જો (id->provider == ખાલી)
+			ચાલુ;
+		જો (!strcmp(canonical_provider, id->provider)) {
 			TAILQ_REMOVE(&idtab->idlist, id, next);
 			free_identity(id);
 			idtab->nentries--;
 		}
 	}
-	if (pkcs11_del_provider(canonical_provider) == 0)
+	જો (pkcs11_del_provider(canonical_provider) == 0)
 		success = 1;
-	else
+	નહીંતર
 		error_f("pkcs11_del_provider failed");
 send:
-	free(provider);
+	મુક્ત(provider);
 	send_status(e, success);
 }
 #endif /* ENABLE_PKCS11 */
 
-static int
+સ્થિર પૂર્ણાંક
 process_ext_session_bind(SocketEntry *e)
 {
-	int r, sid_match, key_match;
-	struct sshkey *key = NULL;
-	struct sshbuf *sid = NULL, *sig = NULL;
-	char *fp = NULL;
+	પૂર્ણાંક r, sid_match, ચાવી_match;
+	સંરચના sshkey *ચાવી = ખાલી;
+	સંરચના sshbuf *sid = ખાલી, *sig = ખાલી;
+	અક્ષર *fp = ખાલી;
 	size_t i;
 	u_char fwd = 0;
 
 	debug2_f("entering");
 	e->session_bind_attempted = 1;
-	if ((r = sshkey_froms(e->request, &key)) != 0 ||
+	જો ((r = sshkey_froms(e->request, &ચાવી)) != 0 ||
 	    (r = sshbuf_froms(e->request, &sid)) != 0 ||
 	    (r = sshbuf_froms(e->request, &sig)) != 0 ||
 	    (r = sshbuf_get_u8(e->request, &fwd)) != 0) {
 		error_fr(r, "parse");
-		goto out;
+		જાઓ out;
 	}
-	if (sshbuf_len(sid) > AGENT_MAX_SID_LEN) {
+	જો (sshbuf_len(sid) > AGENT_MAX_SID_LEN) {
 		error_f("session ID too long");
-		goto out;
+		જાઓ out;
 	}
-	if ((fp = sshkey_fingerprint(key, SSH_FP_HASH_DEFAULT,
-	    SSH_FP_DEFAULT)) == NULL)
+	જો ((fp = sshkey_fingerprint(ચાવી, SSH_FP_HASH_DEFAULT,
+	    SSH_FP_DEFAULT)) == ખાલી)
 		fatal_f("fingerprint failed");
 	/* check signature with hostkey on session ID */
-	if ((r = sshkey_verify(key, sshbuf_ptr(sig), sshbuf_len(sig),
-	    sshbuf_ptr(sid), sshbuf_len(sid), NULL, 0, NULL)) != 0) {
-		error_fr(r, "sshkey_verify for %s %s", sshkey_type(key), fp);
-		goto out;
+	જો ((r = sshkey_verify(ચાવી, sshbuf_ptr(sig), sshbuf_len(sig),
+	    sshbuf_ptr(sid), sshbuf_len(sid), ખાલી, 0, ખાલી)) != 0) {
+		error_fr(r, "sshkey_verify for %s %s", sshkey_type(ચાવી), fp);
+		જાઓ out;
 	}
 	/* check whether sid/key already recorded */
-	for (i = 0; i < e->nsession_ids; i++) {
-		if (!e->session_ids[i].forwarded) {
+	માટે (i = 0; i < e->nsession_ids; i++) {
+		જો (!e->session_ids[i].forwarded) {
 			error_f("attempt to bind session ID to socket "
 			    "previously bound for authentication attempt");
 			r = -1;
-			goto out;
+			જાઓ out;
 		}
 		sid_match = buf_equal(sid, e->session_ids[i].sid) == 0;
-		key_match = sshkey_equal(key, e->session_ids[i].key);
-		if (sid_match && key_match) {
+		ચાવી_match = sshkey_equal(ચાવી, e->session_ids[i].ચાવી);
+		જો (sid_match && ચાવી_match) {
 			debug_f("session ID already recorded for %s %s",
-			    sshkey_type(key), fp);
+			    sshkey_type(ચાવી), fp);
 			r = 0;
-			goto out;
-		} else if (sid_match) {
+			જાઓ out;
+		} નહીંતર જો (sid_match) {
 			error_f("session ID recorded against different key "
-			    "for %s %s", sshkey_type(key), fp);
+			    "for %s %s", sshkey_type(ચાવી), fp);
 			r = -1;
-			goto out;
+			જાઓ out;
 		}
 		/*
 		 * new sid with previously-seen key can happen, e.g. multiple
@@ -1743,65 +1743,65 @@ process_ext_session_bind(SocketEntry *e)
 		 */
 	}
 	/* record new key/sid */
-	if (e->nsession_ids >= AGENT_MAX_SESSION_IDS) {
+	જો (e->nsession_ids >= AGENT_MAX_SESSION_IDS) {
 		error_f("too many session IDs recorded");
 		r = -1;
-		goto out;
+		જાઓ out;
 	}
 	e->session_ids = xrecallocarray(e->session_ids, e->nsession_ids,
-	    e->nsession_ids + 1, sizeof(*e->session_ids));
+	    e->nsession_ids + 1, કદ(*e->session_ids));
 	i = e->nsession_ids++;
-	debug_f("recorded %s %s (slot %zu of %d)", sshkey_type(key), fp, i,
+	debug_f("recorded %s %s (slot %zu of %d)", sshkey_type(ચાવી), fp, i,
 	    AGENT_MAX_SESSION_IDS);
-	e->session_ids[i].key = key;
+	e->session_ids[i].ચાવી = ચાવી;
 	e->session_ids[i].forwarded = fwd != 0;
-	key = NULL; /* transferred */
+	ચાવી = ખાલી; /* transferred */
 	/* can't transfer sid; it's refcounted and scoped to request's life */
-	if ((e->session_ids[i].sid = sshbuf_new()) == NULL)
+	જો ((e->session_ids[i].sid = sshbuf_new()) == ખાલી)
 		fatal_f("sshbuf_new");
-	if ((r = sshbuf_putb(e->session_ids[i].sid, sid)) != 0)
+	જો ((r = sshbuf_putb(e->session_ids[i].sid, sid)) != 0)
 		fatal_fr(r, "sshbuf_putb session ID");
 	/* success */
 	r = 0;
  out:
-	free(fp);
-	sshkey_free(key);
+	મુક્ત(fp);
+	sshkey_free(ચાવી);
 	sshbuf_free(sid);
 	sshbuf_free(sig);
-	return r == 0 ? 1 : 0;
+	પાછા r == 0 ? 1 : 0;
 }
 
-static int
+સ્થિર પૂર્ણાંક
 process_ext_query(SocketEntry *e)
 {
-	int r;
-	struct sshbuf *msg = NULL;
+	પૂર્ણાંક r;
+	સંરચના sshbuf *સંદેશ = ખાલી;
 
 	debug2_f("entering");
-	if ((msg = sshbuf_new()) == NULL)
+	જો ((સંદેશ = sshbuf_new()) == ખાલી)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshbuf_put_u8(msg, SSH_AGENT_EXTENSION_RESPONSE)) != 0 ||
-	    (r = sshbuf_put_cstring(msg, "query")) != 0 ||
+	જો ((r = sshbuf_put_u8(સંદેશ, SSH_AGENT_EXTENSION_RESPONSE)) != 0 ||
+	    (r = sshbuf_put_cstring(સંદેશ, "query")) != 0 ||
 	    /* string[]     supported extension types */
-	    (r = sshbuf_put_cstring(msg, "session-bind@openssh.com")) != 0)
+	    (r = sshbuf_put_cstring(સંદેશ, "session-bind@openssh.com")) != 0)
 		fatal_fr(r, "compose");
-	if ((r = sshbuf_put_stringb(e->output, msg)) != 0)
+	જો ((r = sshbuf_put_stringb(e->output, સંદેશ)) != 0)
 		fatal_fr(r, "enqueue");
-	sshbuf_free(msg);
-	return 1;
+	sshbuf_free(સંદેશ);
+	પાછા 1;
 }
 
-static void
+સ્થિર શૂન્ય
 process_extension(SocketEntry *e)
 {
-	int r, replied = 0, success = 0;
-	char *name;
+	પૂર્ણાંક r, replied = 0, success = 0;
+	અક્ષર *name;
 
 	debug2_f("entering");
-	if ((r = sshbuf_get_cstring(e->request, &name, NULL)) != 0) {
+	જો ((r = sshbuf_get_cstring(e->request, &name, ખાલી)) != 0) {
 		error_fr(r, "parse");
 		send_status(e, 0);
-		return;
+		પાછા;
 	}
 
 	/*
@@ -1810,23 +1810,23 @@ process_extension(SocketEntry *e)
 	 * Other operations should be refused when locked.
 	 */
 
-	if (strcmp(name, "session-bind@openssh.com") == 0) {
+	જો (strcmp(name, "session-bind@openssh.com") == 0) {
 		success = process_ext_session_bind(e);
-	} else if (locked) {
+	} નહીંતર જો (locked) {
 		debug_f("attempt to use extension \"%s\" while locked", name);
-		goto generic_fail;
-	} else if (strcmp(name, "query") == 0) {
+		જાઓ generic_fail;
+	} નહીંતર જો (strcmp(name, "query") == 0) {
 		replied = success = process_ext_query(e);
-	} else {
+	} નહીંતર {
 		debug_f("unsupported extension \"%s\"", name);
  generic_fail:
-		free(name);
+		મુક્ત(name);
 		send_status(e, 0);
-		return;
+		પાછા;
 	}
-	free(name);
+	મુક્ત(name);
 	/* Agent failures are signalled with a different error code */
-	if (!replied) {
+	જો (!replied) {
 		send_status_generic(e,
 		    success ? SSH_AGENT_SUCCESS : SSH_AGENT_EXTENSION_FAILURE);
 	}
@@ -1836,39 +1836,39 @@ process_extension(SocketEntry *e)
  * dispatch incoming message.
  * returns 1 on success, 0 for incomplete messages or -1 on error.
  */
-static int
+સ્થિર પૂર્ણાંક
 process_message(u_int socknum)
 {
-	u_int msg_len;
+	u_int સંદેશ_len;
 	u_char type;
-	const u_char *cp;
-	int r;
+	અચલ u_char *cp;
+	પૂર્ણાંક r;
 	SocketEntry *e;
 
-	if (socknum >= sockets_alloc)
+	જો (socknum >= sockets_alloc)
 		fatal_f("sock %u >= allocated %u", socknum, sockets_alloc);
 	e = &sockets[socknum];
 
-	if (sshbuf_len(e->input) < 5)
-		return 0;		/* Incomplete message header. */
-	cp = sshbuf_ptr(e->input);
-	msg_len = PEEK_U32(cp);
-	if (msg_len > AGENT_MAX_LEN) {
+	જો (sshbuf_len(e->આગત) < 5)
+		પાછા 0;		/* Incomplete message header. */
+	cp = sshbuf_ptr(e->આગત);
+	સંદેશ_len = PEEK_U32(cp);
+	જો (સંદેશ_len > AGENT_MAX_LEN) {
 		debug_f("socket %u (fd=%d) message too long %u > %u",
-		    socknum, e->fd, msg_len, AGENT_MAX_LEN);
-		return -1;
+		    socknum, e->fd, સંદેશ_len, AGENT_MAX_LEN);
+		પાછા -1;
 	}
-	if (sshbuf_len(e->input) < msg_len + 4)
-		return 0;		/* Incomplete message body. */
+	જો (sshbuf_len(e->આગત) < સંદેશ_len + 4)
+		પાછા 0;		/* Incomplete message body. */
 
 	/* move the current input to e->request */
 	sshbuf_reset(e->request);
-	if ((r = sshbuf_get_stringb(e->input, e->request)) != 0 ||
+	જો ((r = sshbuf_get_stringb(e->આગત, e->request)) != 0 ||
 	    (r = sshbuf_get_u8(e->request, &type)) != 0) {
-		if (r == SSH_ERR_MESSAGE_INCOMPLETE ||
+		જો (r == SSH_ERR_MESSAGE_INCOMPLETE ||
 		    r == SSH_ERR_STRING_TOO_LARGE) {
 			error_fr(r, "parse");
-			return -1;
+			પાછા -1;
 		}
 		fatal_fr(r, "parse");
 	}
@@ -1876,72 +1876,72 @@ process_message(u_int socknum)
 	debug_f("socket %u (fd=%d) type %d", socknum, e->fd, type);
 
 	/* check whether agent is locked */
-	if (locked && type != SSH_AGENTC_UNLOCK) {
-		switch (type) {
-		case SSH2_AGENTC_REQUEST_IDENTITIES:
+	જો (locked && type != SSH_AGENTC_UNLOCK) {
+		પસંદગી (type) {
+		સ્થિતિ SSH2_AGENTC_REQUEST_IDENTITIES:
 			/* send empty lists */
 			no_identities(e);
-			break;
-		case SSH_AGENTC_EXTENSION:
+			તોડો;
+		સ્થિતિ SSH_AGENTC_EXTENSION:
 			process_extension(e);
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			/* send a fail message for all other request types */
 			send_status(e, 0);
 		}
 		sshbuf_reset(e->request);
-		return 1;
+		પાછા 1;
 	}
 
-	switch (type) {
-	case SSH_AGENTC_LOCK:
-	case SSH_AGENTC_UNLOCK:
+	પસંદગી (type) {
+	સ્થિતિ SSH_AGENTC_LOCK:
+	સ્થિતિ SSH_AGENTC_UNLOCK:
 		process_lock_agent(e, type == SSH_AGENTC_LOCK);
-		break;
-	case SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES:
+		તોડો;
+	સ્થિતિ SSH_AGENTC_REMOVE_ALL_RSA_IDENTITIES:
 		process_remove_all_identities(e); /* safe for !WITH_SSH1 */
-		break;
+		તોડો;
 	/* ssh2 */
-	case SSH2_AGENTC_SIGN_REQUEST:
+	સ્થિતિ SSH2_AGENTC_SIGN_REQUEST:
 		process_sign_request2(e);
-		break;
-	case SSH2_AGENTC_REQUEST_IDENTITIES:
+		તોડો;
+	સ્થિતિ SSH2_AGENTC_REQUEST_IDENTITIES:
 		process_request_identities(e);
-		break;
-	case SSH2_AGENTC_ADD_IDENTITY:
-	case SSH2_AGENTC_ADD_ID_CONSTRAINED:
+		તોડો;
+	સ્થિતિ SSH2_AGENTC_ADD_IDENTITY:
+	સ્થિતિ SSH2_AGENTC_ADD_ID_CONSTRAINED:
 		process_add_identity(e);
-		break;
-	case SSH2_AGENTC_REMOVE_IDENTITY:
+		તોડો;
+	સ્થિતિ SSH2_AGENTC_REMOVE_IDENTITY:
 		process_remove_identity(e);
-		break;
-	case SSH2_AGENTC_REMOVE_ALL_IDENTITIES:
+		તોડો;
+	સ્થિતિ SSH2_AGENTC_REMOVE_ALL_IDENTITIES:
 		process_remove_all_identities(e);
-		break;
+		તોડો;
 #ifdef ENABLE_PKCS11
-	case SSH_AGENTC_ADD_SMARTCARD_KEY:
-	case SSH_AGENTC_ADD_SMARTCARD_KEY_CONSTRAINED:
-		process_add_smartcard_key(e);
-		break;
-	case SSH_AGENTC_REMOVE_SMARTCARD_KEY:
-		process_remove_smartcard_key(e);
-		break;
+	સ્થિતિ SSH_AGENTC_ADD_SMARTCARD_ચાવી:
+	સ્થિતિ SSH_AGENTC_ADD_SMARTCARD_ચાવી_CONSTRAINED:
+		process_add_smartcard_ચાવી(e);
+		તોડો;
+	સ્થિતિ SSH_AGENTC_REMOVE_SMARTCARD_ચાવી:
+		process_remove_smartcard_ચાવી(e);
+		તોડો;
 #endif /* ENABLE_PKCS11 */
-	case SSH_AGENTC_EXTENSION:
+	સ્થિતિ SSH_AGENTC_EXTENSION:
 		process_extension(e);
-		break;
-	default:
+		તોડો;
+	મૂળભૂત:
 		/* Unknown message.  Respond with failure. */
 		error("Unknown message %d", type);
 		sshbuf_reset(e->request);
 		send_status(e, 0);
-		break;
+		તોડો;
 	}
-	return 1;
+	પાછા 1;
 }
 
-static void
-new_socket(sock_type type, int fd)
+સ્થિર શૂન્ય
+new_socket(sock_type type, પૂર્ણાંક fd)
 {
 	u_int i, old_alloc, new_alloc;
 
@@ -1949,259 +1949,259 @@ new_socket(sock_type type, int fd)
 	    (type == AUTH_SOCKET ? "SOCKET" : "UNKNOWN"));
 	set_nonblock(fd);
 
-	if (fd > max_fd)
+	જો (fd > max_fd)
 		max_fd = fd;
 
-	for (i = 0; i < sockets_alloc; i++)
-		if (sockets[i].type == AUTH_UNUSED) {
+	માટે (i = 0; i < sockets_alloc; i++)
+		જો (sockets[i].type == AUTH_UNUSED) {
 			sockets[i].fd = fd;
-			if ((sockets[i].input = sshbuf_new()) == NULL ||
-			    (sockets[i].output = sshbuf_new()) == NULL ||
-			    (sockets[i].request = sshbuf_new()) == NULL)
+			જો ((sockets[i].આગત = sshbuf_new()) == ખાલી ||
+			    (sockets[i].output = sshbuf_new()) == ખાલી ||
+			    (sockets[i].request = sshbuf_new()) == ખાલી)
 				fatal_f("sshbuf_new failed");
 			sockets[i].type = type;
-			return;
+			પાછા;
 		}
 	old_alloc = sockets_alloc;
 	new_alloc = sockets_alloc + 10;
 	sockets = xrecallocarray(sockets, old_alloc, new_alloc,
-	    sizeof(sockets[0]));
-	for (i = old_alloc; i < new_alloc; i++)
+	    કદ(sockets[0]));
+	માટે (i = old_alloc; i < new_alloc; i++)
 		sockets[i].type = AUTH_UNUSED;
 	sockets_alloc = new_alloc;
 	sockets[old_alloc].fd = fd;
-	if ((sockets[old_alloc].input = sshbuf_new()) == NULL ||
-	    (sockets[old_alloc].output = sshbuf_new()) == NULL ||
-	    (sockets[old_alloc].request = sshbuf_new()) == NULL)
+	જો ((sockets[old_alloc].આગત = sshbuf_new()) == ખાલી ||
+	    (sockets[old_alloc].output = sshbuf_new()) == ખાલી ||
+	    (sockets[old_alloc].request = sshbuf_new()) == ખાલી)
 		fatal_f("sshbuf_new failed");
 	sockets[old_alloc].type = type;
 }
 
-static int
+સ્થિર પૂર્ણાંક
 handle_socket_read(u_int socknum)
 {
-	struct sockaddr_un sunaddr;
+	સંરચના sockaddr_un sunaddr;
 	socklen_t slen;
 	uid_t euid;
 	gid_t egid;
-	int fd;
+	પૂર્ણાંક fd;
 
-	slen = sizeof(sunaddr);
-	fd = accept(sockets[socknum].fd, (struct sockaddr *)&sunaddr, &slen);
-	if (fd == -1) {
+	slen = કદ(sunaddr);
+	fd = accept(sockets[socknum].fd, (સંરચના sockaddr *)&sunaddr, &slen);
+	જો (fd == -1) {
 		error("accept from AUTH_SOCKET: %s", strerror(errno));
-		return -1;
+		પાછા -1;
 	}
-	if (getpeereid(fd, &euid, &egid) == -1) {
+	જો (getpeereid(fd, &euid, &egid) == -1) {
 		error("getpeereid %d failed: %s", fd, strerror(errno));
 		close(fd);
-		return -1;
+		પાછા -1;
 	}
-	if ((euid != 0) && (getuid() != euid)) {
+	જો ((euid != 0) && (getuid() != euid)) {
 		error("uid mismatch: peer euid %u != uid %u",
 		    (u_int) euid, (u_int) getuid());
 		close(fd);
-		return -1;
+		પાછા -1;
 	}
 	new_socket(AUTH_CONNECTION, fd);
-	return 0;
+	પાછા 0;
 }
 
-static int
+સ્થિર પૂર્ણાંક
 handle_conn_read(u_int socknum)
 {
-	char buf[AGENT_RBUF_LEN];
+	અક્ષર buf[AGENT_RBUF_LEN];
 	ssize_t len;
-	int r;
+	પૂર્ણાંક r;
 
-	if ((len = read(sockets[socknum].fd, buf, sizeof(buf))) <= 0) {
-		if (len == -1) {
-			if (errno == EAGAIN || errno == EINTR)
-				return 0;
+	જો ((len = પઠ(sockets[socknum].fd, buf, કદ(buf))) <= 0) {
+		જો (len == -1) {
+			જો (errno == EAGAIN || errno == EINTR)
+				પાછા 0;
 			error_f("read error on socket %u (fd %d): %s",
 			    socknum, sockets[socknum].fd, strerror(errno));
 		}
-		return -1;
+		પાછા -1;
 	}
-	if ((r = sshbuf_put(sockets[socknum].input, buf, len)) != 0)
+	જો ((r = sshbuf_put(sockets[socknum].આગત, buf, len)) != 0)
 		fatal_fr(r, "compose");
-	explicit_bzero(buf, sizeof(buf));
-	for (;;) {
-		if ((r = process_message(socknum)) == -1)
-			return -1;
-		else if (r == 0)
-			break;
+	explicit_bzero(buf, કદ(buf));
+	માટે (;;) {
+		જો ((r = process_message(socknum)) == -1)
+			પાછા -1;
+		નહીંતર જો (r == 0)
+			તોડો;
 	}
-	return 0;
+	પાછા 0;
 }
 
-static int
+સ્થિર પૂર્ણાંક
 handle_conn_write(u_int socknum)
 {
 	ssize_t len;
-	int r;
+	પૂર્ણાંક r;
 
-	if (sshbuf_len(sockets[socknum].output) == 0)
-		return 0; /* shouldn't happen */
-	if ((len = write(sockets[socknum].fd,
+	જો (sshbuf_len(sockets[socknum].output) == 0)
+		પાછા 0; /* shouldn't happen */
+	જો ((len = લિખ(sockets[socknum].fd,
 	    sshbuf_ptr(sockets[socknum].output),
 	    sshbuf_len(sockets[socknum].output))) <= 0) {
-		if (len == -1) {
-			if (errno == EAGAIN || errno == EINTR)
-				return 0;
+		જો (len == -1) {
+			જો (errno == EAGAIN || errno == EINTR)
+				પાછા 0;
 			error_f("read error on socket %u (fd %d): %s",
 			    socknum, sockets[socknum].fd, strerror(errno));
 		}
-		return -1;
+		પાછા -1;
 	}
-	if ((r = sshbuf_consume(sockets[socknum].output, len)) != 0)
+	જો ((r = sshbuf_consume(sockets[socknum].output, len)) != 0)
 		fatal_fr(r, "consume");
-	return 0;
+	પાછા 0;
 }
 
-static void
-after_poll(struct pollfd *pfd, size_t npfd, u_int maxfds)
+સ્થિર શૂન્ય
+after_poll(સંરચના pollfd *pfd, size_t npfd, u_int maxfds)
 {
 	size_t i;
 	u_int socknum, activefds = npfd;
 
-	for (i = 0; i < npfd; i++) {
-		if (pfd[i].revents == 0)
-			continue;
+	માટે (i = 0; i < npfd; i++) {
+		જો (pfd[i].revents == 0)
+			ચાલુ;
 		/* Find sockets entry */
-		for (socknum = 0; socknum < sockets_alloc; socknum++) {
-			if (sockets[socknum].type != AUTH_SOCKET &&
+		માટે (socknum = 0; socknum < sockets_alloc; socknum++) {
+			જો (sockets[socknum].type != AUTH_SOCKET &&
 			    sockets[socknum].type != AUTH_CONNECTION)
-				continue;
-			if (pfd[i].fd == sockets[socknum].fd)
-				break;
+				ચાલુ;
+			જો (pfd[i].fd == sockets[socknum].fd)
+				તોડો;
 		}
-		if (socknum >= sockets_alloc) {
+		જો (socknum >= sockets_alloc) {
 			error_f("no socket for fd %d", pfd[i].fd);
-			continue;
+			ચાલુ;
 		}
 		/* Process events */
-		switch (sockets[socknum].type) {
-		case AUTH_SOCKET:
-			if ((pfd[i].revents & (POLLIN|POLLERR)) == 0)
-				break;
-			if (npfd > maxfds) {
+		પસંદગી (sockets[socknum].type) {
+		સ્થિતિ AUTH_SOCKET:
+			જો ((pfd[i].revents & (POLLIN|POLLERR)) == 0)
+				તોડો;
+			જો (npfd > maxfds) {
 				debug3("out of fds (active %u >= limit %u); "
 				    "skipping accept", activefds, maxfds);
-				break;
+				તોડો;
 			}
-			if (handle_socket_read(socknum) == 0)
+			જો (handle_socket_read(socknum) == 0)
 				activefds++;
-			break;
-		case AUTH_CONNECTION:
-			if ((pfd[i].revents & (POLLIN|POLLHUP|POLLERR)) != 0 &&
+			તોડો;
+		સ્થિતિ AUTH_CONNECTION:
+			જો ((pfd[i].revents & (POLLIN|POLLHUP|POLLERR)) != 0 &&
 			    handle_conn_read(socknum) != 0)
-				goto close_sock;
-			if ((pfd[i].revents & (POLLOUT|POLLHUP)) != 0 &&
+				જાઓ close_sock;
+			જો ((pfd[i].revents & (POLLOUT|POLLHUP)) != 0 &&
 			    handle_conn_write(socknum) != 0) {
  close_sock:
-				if (activefds == 0)
+				જો (activefds == 0)
 					fatal("activefds == 0 at close_sock");
 				close_socket(&sockets[socknum]);
 				activefds--;
-				break;
+				તોડો;
 			}
-			break;
-		default:
-			break;
+			તોડો;
+		મૂળભૂત:
+			તોડો;
 		}
 	}
 }
 
-static int
-prepare_poll(struct pollfd **pfdp, size_t *npfdp, struct timespec *timeoutp, u_int maxfds)
+સ્થિર પૂર્ણાંક
+prepare_poll(સંરચના pollfd **pfdp, size_t *npfdp, સંરચના timespec *timeoutp, u_int maxfds)
 {
-	struct pollfd *pfd = *pfdp;
+	સંરચના pollfd *pfd = *pfdp;
 	size_t i, j, npfd = 0;
 	time_t deadline;
-	int r;
+	પૂર્ણાંક r;
 
 	/* Count active sockets */
-	for (i = 0; i < sockets_alloc; i++) {
-		switch (sockets[i].type) {
-		case AUTH_SOCKET:
-		case AUTH_CONNECTION:
+	માટે (i = 0; i < sockets_alloc; i++) {
+		પસંદગી (sockets[i].type) {
+		સ્થિતિ AUTH_SOCKET:
+		સ્થિતિ AUTH_CONNECTION:
 			npfd++;
-			break;
-		case AUTH_UNUSED:
-			break;
-		default:
+			તોડો;
+		સ્થિતિ AUTH_UNUSED:
+			તોડો;
+		મૂળભૂત:
 			fatal("Unknown socket type %d", sockets[i].type);
-			break;
+			તોડો;
 		}
 	}
-	if (npfd != *npfdp &&
-	    (pfd = recallocarray(pfd, *npfdp, npfd, sizeof(*pfd))) == NULL)
+	જો (npfd != *npfdp &&
+	    (pfd = recallocarray(pfd, *npfdp, npfd, કદ(*pfd))) == ખાલી)
 		fatal_f("recallocarray failed");
 	*pfdp = pfd;
 	*npfdp = npfd;
 
-	for (i = j = 0; i < sockets_alloc; i++) {
-		switch (sockets[i].type) {
-		case AUTH_SOCKET:
-			if (npfd > maxfds) {
+	માટે (i = j = 0; i < sockets_alloc; i++) {
+		પસંદગી (sockets[i].type) {
+		સ્થિતિ AUTH_SOCKET:
+			જો (npfd > maxfds) {
 				debug3("out of fds (active %zu >= limit %u); "
 				    "skipping arming listener", npfd, maxfds);
-				break;
+				તોડો;
 			}
 			pfd[j].fd = sockets[i].fd;
 			pfd[j].revents = 0;
 			pfd[j].events = POLLIN;
 			j++;
-			break;
-		case AUTH_CONNECTION:
+			તોડો;
+		સ્થિતિ AUTH_CONNECTION:
 			pfd[j].fd = sockets[i].fd;
 			pfd[j].revents = 0;
 			/*
 			 * Only prepare to read if we can handle a full-size
 			 * input read buffer and enqueue a max size reply..
 			 */
-			if ((r = sshbuf_check_reserve(sockets[i].input,
+			જો ((r = sshbuf_check_reserve(sockets[i].આગત,
 			    AGENT_RBUF_LEN)) == 0 &&
 			    (r = sshbuf_check_reserve(sockets[i].output,
 			    AGENT_MAX_LEN)) == 0)
 				pfd[j].events = POLLIN;
-			else if (r != SSH_ERR_NO_BUFFER_SPACE)
+			નહીંતર જો (r != SSH_ERR_NO_BUFFER_SPACE)
 				fatal_fr(r, "reserve");
-			if (sshbuf_len(sockets[i].output) > 0)
+			જો (sshbuf_len(sockets[i].output) > 0)
 				pfd[j].events |= POLLOUT;
 			j++;
-			break;
-		default:
-			break;
+			તોડો;
+		મૂળભૂત:
+			તોડો;
 		}
 	}
 	deadline = reaper();
-	if (parent_alive_interval != 0)
+	જો (parent_alive_interval != 0)
 		deadline = (deadline == 0) ? parent_alive_interval :
 		    MINIMUM(deadline, parent_alive_interval);
-	if (deadline != 0)
+	જો (deadline != 0)
 		ptimeout_deadline_sec(timeoutp, deadline);
-	return (1);
+	પાછા (1);
 }
 
-static void
-cleanup_socket(void)
+સ્થિર શૂન્ય
+cleanup_socket(શૂન્ય)
 {
-	if (cleanup_pid != 0 && getpid() != cleanup_pid)
-		return;
+	જો (cleanup_pid != 0 && getpid() != cleanup_pid)
+		પાછા;
 	debug_f("cleanup");
-	if (socket_name != NULL) {
+	જો (socket_name != ખાલી) {
 		agent_listener_cleanup(socket_dirspec, socket_name, socket_dir);
-		free(socket_name);
-		socket_name = NULL;
-		free(socket_dir);
-		socket_dir = NULL;
+		મુક્ત(socket_name);
+		socket_name = ખાલી;
+		મુક્ત(socket_dir);
+		socket_dir = ખાલી;
 	}
 }
 
-void
-cleanup_exit(int i)
+શૂન્ય
+cleanup_exit(પૂર્ણાંક i)
 {
 	cleanup_socket();
 #ifdef ENABLE_PKCS11
@@ -2210,34 +2210,34 @@ cleanup_exit(int i)
 	_exit(i);
 }
 
-static void
-cleanup_handler(int sig)
+સ્થિર શૂન્ય
+cleanup_handler(પૂર્ણાંક sig)
 {
 	signalled_exit = sig;
 }
 
-static void
-keydrop_handler(int sig)
+સ્થિર શૂન્ય
+keydrop_handler(પૂર્ણાંક sig)
 {
 	signalled_keydrop = sig;
 }
 
-static void
-check_parent_exists(void)
+સ્થિર શૂન્ય
+check_parent_exists(શૂન્ય)
 {
 	/*
 	 * If our parent has exited then getppid() will return (pid_t)1,
 	 * so testing for that should be safe.
 	 */
-	if (parent_pid != -1 && getppid() != parent_pid) {
+	જો (parent_pid != -1 && getppid() != parent_pid) {
 		/* printf("Parent has died - Authentication agent exiting.\n"); */
 		cleanup_socket();
 		_exit(2);
 	}
 }
 
-static void
-usage(void)
+સ્થિર શૂન્ય
+usage(શૂન્ય)
 {
 	fprintf(stderr,
 	    "usage: ssh-agent [-c | -s] [-DdU] [-T | -A directory | -a bind_address]\n"
@@ -2252,176 +2252,176 @@ usage(void)
 	exit(1);
 }
 
-int
-main(int ac, char **av)
+પૂર્ણાંક
+મુખ્ય(પૂર્ણાંક ac, અક્ષર **av)
 {
-	int c_flag = 0, d_flag = 0, D_flag = 0, k_flag = 0;
-	int s_flag = 0, T_flag = 0, u_flag = 0, U_flag = 0;
-	int sock = -1, ch, result, saved_errno;
+	પૂર્ણાંક c_flag = 0, d_flag = 0, D_flag = 0, k_flag = 0;
+	પૂર્ણાંક s_flag = 0, T_flag = 0, u_flag = 0, U_flag = 0;
+	પૂર્ણાંક sock = -1, ch, result, saved_errno;
 	pid_t pid;
- 	char *homedir = NULL, *shell, *format, *pidstr, *agentsocket = NULL;
-	char *cp, pidstrbuf[1 + 3 * sizeof pid];
-	char *fdstr;
-	const char *errstr = NULL;
-	const char *ccp;
+ 	અક્ષર *homedir = ખાલી, *shell, *format, *pidstr, *agentsocket = ખાલી;
+	અક્ષર *cp, pidstrbuf[1 + 3 * કદ pid];
+	અક્ષર *fdstr;
+	અચલ અક્ષર *errstr = ખાલી;
+	અચલ અક્ષર *ccp;
 #ifdef HAVE_SETRLIMIT
-	struct rlimit rlim;
+	સંરચના rlimit rlim;
 #endif
-	extern int optind;
-	extern char *optarg;
+	બાહ્ય પૂર્ણાંક optind;
+	બાહ્ય અક્ષર *optarg;
 	size_t len;
 	mode_t prev_mask;
-	struct timespec timeout;
-	struct pollfd *pfd = NULL;
+	સંરચના timespec timeout;
+	સંરચના pollfd *pfd = ખાલી;
 	size_t npfd = 0;
 	u_int maxfds;
 	sigset_t nsigset, osigset;
-	int socket_activated = 0;
-	struct passwd *pw;
+	પૂર્ણાંક socket_activated = 0;
+	સંરચના passwd *pw;
 
 	/* Ensure that fds 0, 1 and 2 are open or directed to /dev/null */
 	sanitise_stdfd();
 
 	/* drop */
-	(void)setegid(getgid());
-	(void)setgid(getgid());
+	(શૂન્ય)setegid(getgid());
+	(શૂન્ય)setgid(getgid());
 
 	platform_disable_tracing(0);	/* strict=no */
 
-	if ((pw = getpwuid(getuid())) == NULL)
+	જો ((pw = getpwuid(getuid())) == ખાલી)
 		fatal("No user exists for uid %lu", (u_long)getuid());
 	pw = pwcopy(pw);
 
 #ifdef RLIMIT_NOFILE
-	if (getrlimit(RLIMIT_NOFILE, &rlim) == -1)
+	જો (getrlimit(RLIMIT_NOFILE, &rlim) == -1)
 		fatal("%s: getrlimit: %s", __progname, strerror(errno));
 #endif
 
 	__progname = ssh_get_progname(av[0]);
 	seed_rng();
 
-	while ((ch = getopt(ac, av, "cDdksTuUVA:E:a:O:P:t:")) != -1) {
-		switch (ch) {
-		case 'E':
+	જ્યારે ((ch = getopt(ac, av, "cDdksTuUVA:E:a:O:P:t:")) != -1) {
+		પસંદગી (ch) {
+		સ્થિતિ 'E':
 			fingerprint_hash = ssh_digest_alg_by_name(optarg);
-			if (fingerprint_hash == -1)
+			જો (fingerprint_hash == -1)
 				fatal("Invalid hash algorithm \"%s\"", optarg);
-			break;
-		case 'c':
-			if (s_flag)
+			તોડો;
+		સ્થિતિ 'c':
+			જો (s_flag)
 				usage();
 			c_flag++;
-			break;
-		case 'k':
+			તોડો;
+		સ્થિતિ 'k':
 			k_flag++;
-			break;
-		case 'O':
-			if (strcmp(optarg, "no-restrict-websafe") == 0)
+			તોડો;
+		સ્થિતિ 'O':
+			જો (strcmp(optarg, "no-restrict-websafe") == 0)
 				restrict_websafe = 0;
-			else if (strcmp(optarg, "allow-remote-pkcs11") == 0)
+			નહીંતર જો (strcmp(optarg, "allow-remote-pkcs11") == 0)
 				remote_add_provider = 1;
-			else if ((ccp = strprefix(optarg,
-			    "websafe-allow=", 0)) != NULL) {
-				if (websafe_allowlist != NULL)
+			નહીંતર જો ((ccp = strprefix(optarg,
+			    "websafe-allow=", 0)) != ખાલી) {
+				જો (websafe_allowlist != ખાલી)
 					fatal("websafe-allow already set");
 				websafe_allowlist = xstrdup(ccp);
-			} else
+			} નહીંતર
 				fatal("Unknown -O option");
-			break;
-		case 'P':
-			if (allowed_providers != NULL)
+			તોડો;
+		સ્થિતિ 'P':
+			જો (allowed_providers != ખાલી)
 				fatal("-P option already specified");
 			allowed_providers = xstrdup(optarg);
-			break;
-		case 's':
-			if (c_flag)
+			તોડો;
+		સ્થિતિ 's':
+			જો (c_flag)
 				usage();
 			s_flag++;
-			break;
-		case 'd':
-			if (d_flag || D_flag)
+			તોડો;
+		સ્થિતિ 'd':
+			જો (d_flag || D_flag)
 				usage();
 			d_flag++;
-			break;
-		case 'D':
-			if (d_flag || D_flag)
+			તોડો;
+		સ્થિતિ 'D':
+			જો (d_flag || D_flag)
 				usage();
 			D_flag++;
-			break;
-		case 'a':
+			તોડો;
+		સ્થિતિ 'a':
 			agentsocket = optarg;
-			break;
-		case 'A':
+			તોડો;
+		સ્થિતિ 'A':
 			socket_dirspec = xstrdup(optarg);
-			break;
-		case 't':
-			if ((lifetime = convtime(optarg)) == -1) {
+			તોડો;
+		સ્થિતિ 't':
+			જો ((lifetime = convtime(optarg)) == -1) {
 				fprintf(stderr, "Invalid lifetime\n");
 				usage();
 			}
-			break;
-		case 'T':
+			તોડો;
+		સ્થિતિ 'T':
 			T_flag++;
-			break;
-		case 'u':
+			તોડો;
+		સ્થિતિ 'u':
 			u_flag++;
-			break;
-		case 'U':
+			તોડો;
+		સ્થિતિ 'U':
 			U_flag++;
-			break;
-		case 'V':
+			તોડો;
+		સ્થિતિ 'V':
 			fprintf(stderr, "%s, %s\n",
 			    SSH_VERSION, SSH_OPENSSL_VERSION);
 			exit(0);
-		default:
+		મૂળભૂત:
 			usage();
 		}
 	}
 	ac -= optind;
 	av += optind;
 
-	if (ac > 0 &&
+	જો (ac > 0 &&
 	    (c_flag || k_flag || s_flag || d_flag || D_flag || u_flag))
 		usage();
 	/* only one of -a, -A and -T allowed */
-	if (((socket_dirspec != NULL) + (agentsocket != NULL) + T_flag) > 1)
+	જો (((socket_dirspec != ખાલી) + (agentsocket != ખાલી) + T_flag) > 1)
 		usage();
 
 	log_init(__progname,
 	    d_flag ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 	    SYSLOG_FACILITY_AUTH, 1);
 
-	if (allowed_providers == NULL)
+	જો (allowed_providers == ખાલી)
 		allowed_providers = xstrdup(DEFAULT_ALLOWED_PROVIDERS);
-	if (websafe_allowlist == NULL)
+	જો (websafe_allowlist == ખાલી)
 		websafe_allowlist = xstrdup(DEFAULT_WEBSAFE_ALLOWLIST);
 
-	if (T_flag)
+	જો (T_flag)
 		socket_dirspec = xstrdup(_PATH_SSH_AGENT_SOCKET_TMPDIR);
-	else if (socket_dirspec == NULL && agentsocket == NULL)
+	નહીંતર જો (socket_dirspec == ખાલી && agentsocket == ખાલી)
 		socket_dirspec = xstrdup(_PATH_SSH_AGENT_SOCKET_DIR);
 
-	if (ac == 0 && !c_flag && !s_flag) {
+	જો (ac == 0 && !c_flag && !s_flag) {
 		shell = getenv("SHELL");
-		if (shell != NULL && (len = strlen(shell)) > 2 &&
+		જો (shell != ખાલી && (len = strlen(shell)) > 2 &&
 		    strncmp(shell + len - 3, "csh", 3) == 0)
 			c_flag = 1;
 	}
-	if (k_flag) {
+	જો (k_flag) {
 		pidstr = getenv(SSH_AGENTPID_ENV_NAME);
-		if (pidstr == NULL) {
+		જો (pidstr == ખાલી) {
 			fprintf(stderr, "%s not set, cannot kill agent\n",
 			    SSH_AGENTPID_ENV_NAME);
 			exit(1);
 		}
-		pid = (int)strtonum(pidstr, 2, INT_MAX, &errstr);
-		if (errstr) {
+		pid = (પૂર્ણાંક)strtonum(pidstr, 2, INT_MAX, &errstr);
+		જો (errstr) {
 			fprintf(stderr,
 			    "%s=\"%s\", which is not a good PID: %s\n",
 			    SSH_AGENTPID_ENV_NAME, pidstr, errstr);
 			exit(1);
 		}
-		if (kill(pid, SIGTERM) == -1) {
+		જો (kill(pid, SIGTERM) == -1) {
 			perror("kill");
 			exit(1);
 		}
@@ -2431,8 +2431,8 @@ main(int ac, char **av)
 		printf("echo Agent pid %ld killed;\n", (long)pid);
 		exit(0);
 	}
-	if (u_flag) {
-		if ((homedir = get_homedir()) == NULL)
+	જો (u_flag) {
+		જો ((homedir = get_homedir()) == ખાલી)
 			fatal("Couldn't determine home directory");
 		agent_cleanup_stale(socket_dirspec,
 		    pw->pw_name, pw->pw_uid, homedir, u_flag > 1);
@@ -2447,7 +2447,7 @@ main(int ac, char **av)
 	 * a few spare for libc / stack protectors / sanitisers, etc.
 	 */
 #define SSH_AGENT_MIN_FDS (3+1+1+1+4)
-	if (rlim.rlim_cur < SSH_AGENT_MIN_FDS)
+	જો (rlim.rlim_cur < SSH_AGENT_MIN_FDS)
 		fatal("%s: file descriptor rlimit %lld too low (minimum %u)",
 		    __progname, (long long)rlim.rlim_cur, SSH_AGENT_MIN_FDS);
 	maxfds = rlim.rlim_cur - SSH_AGENT_MIN_FDS;
@@ -2455,46 +2455,46 @@ main(int ac, char **av)
 	parent_pid = getpid();
 
 	/* Has the socket been provided via socket activation? */
-	if (agentsocket == NULL && ac == 0 && (d_flag || D_flag) &&
-	    (pidstr = getenv("LISTEN_PID")) != NULL &&
-	    (fdstr = getenv("LISTEN_FDS")) != NULL) {
-		if (strcmp(fdstr, "1") != 0) {
+	જો (agentsocket == ખાલી && ac == 0 && (d_flag || D_flag) &&
+	    (pidstr = getenv("LISTEN_PID")) != ખાલી &&
+	    (fdstr = getenv("LISTEN_FDS")) != ખાલી) {
+		જો (strcmp(fdstr, "1") != 0) {
 			fatal("unexpected LISTEN_FDS contents "
 			    "(want: \"1\" got\"%s\"", fdstr);
 		}
-		if (fcntl(3, F_GETFL) == -1)
+		જો (fcntl(3, F_GETFL) == -1)
 			fatal("LISTEN_FDS set but fd 3 unavailable");
-		pid = (int)strtonum(pidstr, 1, INT_MAX, &errstr);
-		if (errstr != NULL)
+		pid = (પૂર્ણાંક)strtonum(pidstr, 1, INT_MAX, &errstr);
+		જો (errstr != ખાલી)
 			fatal("invalid LISTEN_PID: %s", errstr);
-		if (pid != getpid())
+		જો (pid != getpid())
 			fatal("bad LISTEN_PID: %d vs pid %d", pid, getpid());
 		debug("using socket activation on fd=3");
 		sock = 3;
 		socket_activated = 1;
 	}
 
-	if (sock == -1 && agentsocket == NULL) {
+	જો (sock == -1 && agentsocket == ખાલી) {
 		/* Listen on a socket in/under a given directory */
-		if ((homedir = get_homedir()) == NULL)
+		જો ((homedir = get_homedir()) == ખાલી)
 			fatal("Couldn't determine home directory");
-		if (!U_flag) {
+		જો (!U_flag) {
 			agent_cleanup_stale(socket_dirspec,
 			    pw->pw_name, pw->pw_uid, homedir, 0);
 		}
-		if (agent_listener(socket_dirspec, pw->pw_name, pw->pw_uid,
+		જો (agent_listener(socket_dirspec, pw->pw_name, pw->pw_uid,
 		    homedir, getpid(), "local", &sock, &socket_name,
 		    &socket_dir) != 0)
 			fatal_f("Couldn't prepare agent socket");
-		free(homedir);
-	} else if (sock == -1) {
+		મુક્ત(homedir);
+	} નહીંતર જો (sock == -1) {
 		/* Listen on explicit socket path */
 		prev_mask = umask(0177);
 		socket_name = xstrdup(agentsocket);
-		if ((sock = unix_listener(socket_name,
+		જો ((sock = unix_listener(socket_name,
 		    SSH_LISTEN_BACKLOG, 0)) < 0) {
-			free(socket_name);
-			socket_name = NULL; /* Don't unlink existing file */
+			મુક્ત(socket_name);
+			socket_name = ખાલી; /* Don't unlink existing file */
 			cleanup_exit(1);
 		}
 		umask(prev_mask);
@@ -2506,10 +2506,10 @@ main(int ac, char **av)
 	 * Create socket early so it will exist before command gets run from
 	 * the parent.
 	 */
-	if (sock == -1) {
+	જો (sock == -1) {
 		prev_mask = umask(0177);
 		sock = unix_listener(socket_name, SSH_LISTEN_BACKLOG, 0);
-		if (sock < 0) {
+		જો (sock < 0) {
 			/* XXX - unix_listener() calls error() not perror() */
 			*socket_name = '\0'; /* Don't unlink existing file */
 			cleanup_exit(1);
@@ -2521,42 +2521,42 @@ main(int ac, char **av)
 	 * Fork, and have the parent execute the command, if any, or present
 	 * the socket data.  The child continues as the authentication agent.
 	 */
-	if (D_flag || d_flag) {
+	જો (D_flag || d_flag) {
 		log_init(__progname,
 		    d_flag ? SYSLOG_LEVEL_DEBUG3 : SYSLOG_LEVEL_INFO,
 		    SYSLOG_FACILITY_AUTH, 1);
-		if (socket_name != NULL) {
+		જો (socket_name != ખાલી) {
 			cp = argv_assemble(1, &socket_name);
 			format = c_flag ?
 			    "setenv %s %s;\n" : "%s=%s; export %s;\n";
 			printf(format, SSH_AUTHSOCKET_ENV_NAME, cp,
 			    SSH_AUTHSOCKET_ENV_NAME);
-			free(cp);
+			મુક્ત(cp);
 			printf("echo Agent pid %ld;\n", (long)parent_pid);
 			fflush(stdout);
 		}
-		goto skip;
+		જાઓ skip;
 	}
 	pid = fork();
-	if (pid == -1) {
+	જો (pid == -1) {
 		perror("fork");
 		cleanup_exit(1);
 	}
-	if (pid != 0) {		/* Parent - execute the given command. */
+	જો (pid != 0) {		/* Parent - execute the given command. */
 		close(sock);
-		snprintf(pidstrbuf, sizeof pidstrbuf, "%ld", (long)pid);
-		if (ac == 0) {
+		snprintf(pidstrbuf, કદ pidstrbuf, "%ld", (long)pid);
+		જો (ac == 0) {
 			format = c_flag ? "setenv %s %s;\n" : "%s=%s; export %s;\n";
 			cp = argv_assemble(1, &socket_name);
 			printf(format, SSH_AUTHSOCKET_ENV_NAME, cp,
 			    SSH_AUTHSOCKET_ENV_NAME);
 			printf(format, SSH_AGENTPID_ENV_NAME, pidstrbuf,
 			    SSH_AGENTPID_ENV_NAME);
-			free(cp);
+			મુક્ત(cp);
 			printf("echo Agent pid %ld;\n", (long)pid);
 			exit(0);
 		}
-		if (setenv(SSH_AUTHSOCKET_ENV_NAME, socket_name, 1) == -1 ||
+		જો (setenv(SSH_AUTHSOCKET_ENV_NAME, socket_name, 1) == -1 ||
 		    setenv(SSH_AGENTPID_ENV_NAME, pidstrbuf, 1) == -1) {
 			perror("setenv");
 			exit(1);
@@ -2568,19 +2568,19 @@ main(int ac, char **av)
 	/* child */
 	log_init(__progname, SYSLOG_LEVEL_INFO, SYSLOG_FACILITY_AUTH, 0);
 
-	if (setsid() == -1) {
+	જો (setsid() == -1) {
 		error("setsid: %s", strerror(errno));
 		cleanup_exit(1);
 	}
 
-	(void)chdir("/");
-	if (stdfd_devnull(1, 1, 1) == -1)
+	(શૂન્ય)chdir("/");
+	જો (stdfd_devnull(1, 1, 1) == -1)
 		error_f("stdfd_devnull failed");
 
 #ifdef HAVE_SETRLIMIT
 	/* deny core dumps, since memory contains unencrypted private keys */
 	rlim.rlim_cur = rlim.rlim_max = 0;
-	if (setrlimit(RLIMIT_CORE, &rlim) == -1) {
+	જો (setrlimit(RLIMIT_CORE, &rlim) == -1) {
 		error("setrlimit RLIMIT_CORE: %s", strerror(errno));
 		cleanup_exit(1);
 	}
@@ -2594,7 +2594,7 @@ skip:
 	pkcs11_init(0);
 #endif
 	new_socket(AUTH_SOCKET, sock);
-	if (ac > 0)
+	જો (ac > 0)
 		parent_alive_interval = 10;
 	idtab_init();
 	ssh_signal(SIGPIPE, SIG_IGN);
@@ -2609,60 +2609,60 @@ skip:
 	sigaddset(&nsigset, SIGTERM);
 	sigaddset(&nsigset, SIGUSR1);
 
-	if (socket_name != NULL && unveil(socket_name, "c") == -1) {
+	જો (socket_name != ખાલી && unveil(socket_name, "c") == -1) {
 		fatal("%s: unveil %s %s", __progname, socket_name,
 		    strerror(errno));
 	}
-	if (socket_dir != NULL && unveil(socket_dir, "c") == -1) {
+	જો (socket_dir != ખાલી && unveil(socket_dir, "c") == -1) {
 		fatal("%s: unveil %s %s", __progname, socket_dir,
 		    strerror(errno));
 	}
-	if (unveil("/", "r") == -1)
+	જો (unveil("/", "r") == -1)
 		fatal("%s: unveil /: %s", __progname, strerror(errno));
-	if ((ccp = getenv("SSH_SK_HELPER")) == NULL || *ccp == '\0')
+	જો ((ccp = getenv("SSH_SK_HELPER")) == ખાલી || *ccp == '\0')
 		ccp = _PATH_SSH_SK_HELPER;
-	if (unveil(ccp, "x") == -1)
+	જો (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if ((ccp = getenv("SSH_PKCS11_HELPER")) == NULL || *ccp == '\0')
+	જો ((ccp = getenv("SSH_PKCS11_HELPER")) == ખાલી || *ccp == '\0')
 		ccp = _PATH_SSH_PKCS11_HELPER;
-	if (unveil(ccp, "x") == -1)
+	જો (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if ((ccp = getenv("SSH_ASKPASS")) == NULL || *ccp == '\0')
+	જો ((ccp = getenv("SSH_ASKPASS")) == ખાલી || *ccp == '\0')
 		ccp = _PATH_SSH_ASKPASS_DEFAULT;
-	if (unveil(ccp, "x") == -1)
+	જો (unveil(ccp, "x") == -1)
 		fatal("%s: unveil %s: %s", __progname, ccp, strerror(errno));
-	if (unveil("/dev/null", "rw") == -1)
+	જો (unveil("/dev/null", "rw") == -1)
 		fatal("%s: unveil /dev/null: %s", __progname, strerror(errno));
-	if (pledge("stdio rpath cpath wpath unix id proc exec", NULL) == -1)
+	જો (pledge("stdio rpath cpath wpath unix id proc exec", ખાલી) == -1)
 		fatal("%s: pledge: %s", __progname, strerror(errno));
 	platform_pledge_agent();
 
-	while (1) {
+	જ્યારે (1) {
 		sigprocmask(SIG_BLOCK, &nsigset, &osigset);
-		if (signalled_exit != 0) {
-			logit("exiting on signal %d", (int)signalled_exit);
+		જો (signalled_exit != 0) {
+			logit("exiting on signal %d", (પૂર્ણાંક)signalled_exit);
 			cleanup_exit((signalled_exit == SIGTERM &&
 			    socket_activated) ? 0 : 2);
 		}
-		if (signalled_keydrop) {
+		જો (signalled_keydrop) {
 			logit("signal %d received; removing all keys",
-			    (int)signalled_keydrop);
+			    (પૂર્ણાંક)signalled_keydrop);
 			remove_all_identities();
 			signalled_keydrop = 0;
 		}
 		ptimeout_init(&timeout);
 		prepare_poll(&pfd, &npfd, &timeout, maxfds);
 		result = ppoll(pfd, npfd, ptimeout_get_tsp(&timeout), &osigset);
-		sigprocmask(SIG_SETMASK, &osigset, NULL);
+		sigprocmask(SIG_SETMASK, &osigset, ખાલી);
 		saved_errno = errno;
-		if (parent_alive_interval != 0)
+		જો (parent_alive_interval != 0)
 			check_parent_exists();
-		(void) reaper();	/* remove expired keys */
-		if (result == -1) {
-			if (saved_errno == EINTR)
-				continue;
+		(શૂન્ય) reaper();	/* remove expired keys */
+		જો (result == -1) {
+			જો (saved_errno == EINTR)
+				ચાલુ;
 			fatal("poll: %s", strerror(saved_errno));
-		} else if (result > 0)
+		} નહીંતર જો (result > 0)
 			after_poll(pfd, npfd, maxfds);
 	}
 	/* NOTREACHED */

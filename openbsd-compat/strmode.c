@@ -30,117 +30,117 @@
 
 /* OPENBSD ORIGINAL: lib/libc/string/strmode.c */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 #ifndef HAVE_STRMODE
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <sys/stat.h>
+#અન્તર્ભાવ <string.h>
 
 /* XXX mode should be mode_t */
 
-void
-strmode(int mode, char *p)
+શૂન્ય
+strmode(પૂર્ણાંક mode, અક્ષર *p)
 {
 	 /* print type */
-	switch (mode & S_IFMT) {
-	case S_IFDIR:			/* directory */
+	પસંદગી (mode & S_IFMT) {
+	સ્થિતિ S_IFDIR:			/* directory */
 		*p++ = 'd';
-		break;
-	case S_IFCHR:			/* character special */
+		તોડો;
+	સ્થિતિ S_IFCHR:			/* character special */
 		*p++ = 'c';
-		break;
-	case S_IFBLK:			/* block special */
+		તોડો;
+	સ્થિતિ S_IFBLK:			/* block special */
 		*p++ = 'b';
-		break;
-	case S_IFREG:			/* regular */
+		તોડો;
+	સ્થિતિ S_IFREG:			/* regular */
 		*p++ = '-';
-		break;
-	case S_IFLNK:			/* symbolic link */
+		તોડો;
+	સ્થિતિ S_IFLNK:			/* symbolic link */
 		*p++ = 'l';
-		break;
+		તોડો;
 #ifdef S_IFSOCK
-	case S_IFSOCK:			/* socket */
+	સ્થિતિ S_IFSOCK:			/* socket */
 		*p++ = 's';
-		break;
+		તોડો;
 #endif
 #ifdef S_IFIFO
-	case S_IFIFO:			/* fifo */
+	સ્થિતિ S_IFIFO:			/* fifo */
 		*p++ = 'p';
-		break;
+		તોડો;
 #endif
-	default:			/* unknown */
+	મૂળભૂત:			/* unknown */
 		*p++ = '?';
-		break;
+		તોડો;
 	}
 	/* usr */
-	if (mode & S_IRUSR)
+	જો (mode & S_IRUSR)
 		*p++ = 'r';
-	else
+	નહીંતર
 		*p++ = '-';
-	if (mode & S_IWUSR)
+	જો (mode & S_IWUSR)
 		*p++ = 'w';
-	else
+	નહીંતર
 		*p++ = '-';
-	switch (mode & (S_IXUSR | S_ISUID)) {
-	case 0:
+	પસંદગી (mode & (S_IXUSR | S_ISUID)) {
+	સ્થિતિ 0:
 		*p++ = '-';
-		break;
-	case S_IXUSR:
+		તોડો;
+	સ્થિતિ S_IXUSR:
 		*p++ = 'x';
-		break;
-	case S_ISUID:
+		તોડો;
+	સ્થિતિ S_ISUID:
 		*p++ = 'S';
-		break;
-	case S_IXUSR | S_ISUID:
+		તોડો;
+	સ્થિતિ S_IXUSR | S_ISUID:
 		*p++ = 's';
-		break;
+		તોડો;
 	}
 	/* group */
-	if (mode & S_IRGRP)
+	જો (mode & S_IRGRP)
 		*p++ = 'r';
-	else
+	નહીંતર
 		*p++ = '-';
-	if (mode & S_IWGRP)
+	જો (mode & S_IWGRP)
 		*p++ = 'w';
-	else
+	નહીંતર
 		*p++ = '-';
-	switch (mode & (S_IXGRP | S_ISGID)) {
-	case 0:
+	પસંદગી (mode & (S_IXGRP | S_ISGID)) {
+	સ્થિતિ 0:
 		*p++ = '-';
-		break;
-	case S_IXGRP:
+		તોડો;
+	સ્થિતિ S_IXGRP:
 		*p++ = 'x';
-		break;
-	case S_ISGID:
+		તોડો;
+	સ્થિતિ S_ISGID:
 		*p++ = 'S';
-		break;
-	case S_IXGRP | S_ISGID:
+		તોડો;
+	સ્થિતિ S_IXGRP | S_ISGID:
 		*p++ = 's';
-		break;
+		તોડો;
 	}
 	/* other */
-	if (mode & S_IROTH)
+	જો (mode & S_IROTH)
 		*p++ = 'r';
-	else
+	નહીંતર
 		*p++ = '-';
-	if (mode & S_IWOTH)
+	જો (mode & S_IWOTH)
 		*p++ = 'w';
-	else
+	નહીંતર
 		*p++ = '-';
-	switch (mode & (S_IXOTH | S_ISVTX)) {
-	case 0:
+	પસંદગી (mode & (S_IXOTH | S_ISVTX)) {
+	સ્થિતિ 0:
 		*p++ = '-';
-		break;
-	case S_IXOTH:
+		તોડો;
+	સ્થિતિ S_IXOTH:
 		*p++ = 'x';
-		break;
-	case S_ISVTX:
+		તોડો;
+	સ્થિતિ S_ISVTX:
 		*p++ = 'T';
-		break;
-	case S_IXOTH | S_ISVTX:
+		તોડો;
+	સ્થિતિ S_IXOTH | S_ISVTX:
 		*p++ = 't';
-		break;
+		તોડો;
 	}
 	*p++ = ' ';		/* will be a '+' if ACL's implemented */
 	*p = '\0';

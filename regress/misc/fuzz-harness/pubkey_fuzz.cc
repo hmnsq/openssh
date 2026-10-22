@@ -1,17 +1,17 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
+#અન્તર્ભાવ <stddef.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdint.h>
 
-extern "C" {
+બાહ્ય "C" {
 
-#include "sshkey.h"
+#અન્તર્ભાવ "sshkey.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+પૂર્ણાંક LLVMFuzzer_Test_One_આગત(અચલ uint8_t* data, size_t size)
 {
-	struct sshkey *k = NULL;
-	int r = sshkey_from_blob(data, size, &k);
-	if (r == 0) sshkey_free(k);
-	return 0;
+	સંરચના sshkey *k = ખાલી;
+	પૂર્ણાંક r = sshkey_from_blob(data, size, &k);
+	જો (r == 0) sshkey_free(k);
+	પાછા 0;
 }
 
 } // extern

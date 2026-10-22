@@ -36,10 +36,10 @@
  */
 #define _PATH_SERVER_CONFIG_FILE	SSHDIR "/sshd_config"
 #define _PATH_HOST_CONFIG_FILE		SSHDIR "/ssh_config"
-#define _PATH_HOST_ECDSA_KEY_FILE	SSHDIR "/ssh_host_ecdsa_key"
-#define _PATH_HOST_RSA_KEY_FILE		SSHDIR "/ssh_host_rsa_key"
-#define _PATH_HOST_ED25519_KEY_FILE	SSHDIR "/ssh_host_ed25519_key"
-#define _PATH_HOST_MLDSA44_ED25519_KEY_FILE SSHDIR "/ssh_host_mldsa44_ed25519_key"
+#define PATH_HOST_ECDSA_ચાવી_FILE	SSHDIR "/ssh_host_ecdsa_key"
+#define PATH_HOST_RSA_ચાવી_FILE		SSHDIR "/ssh_host_rsa_key"
+#define PATH_HOST_ED25519_ચાવી_FILE	SSHDIR "/ssh_host_ed25519_key"
+#define PATH_HOST_MLDSA44_ED25519_ચાવી_FILE SSHDIR "/ssh_host_mldsa44_ed25519_key"
 #define _PATH_DH_MODULI			SSHDIR "/moduli"
 
 #ifndef _PATH_SSH_PROGRAM
@@ -112,7 +112,7 @@
  * may need to be world-readable.  (This file is read by the daemon which is
  * running as root.)
  */
-#define _PATH_SSH_USER_PERMITTED_KEYS	_PATH_SSH_USER_DIR "/authorized_keys"
+#define PATH_SSH_USER_PERMITTED_ચાવીઓ	_PATH_SSH_USER_DIR "/authorized_keys"
 
 /* backward compat for protocol v2 */
 #define _PATH_SSH_USER_PERMITTED_KEYS2	_PATH_SSH_USER_DIR "/authorized_keys2"
@@ -141,8 +141,8 @@
 #endif
 
 /* Location of ssh-keysign for hostbased authentication */
-#ifndef _PATH_SSH_KEY_SIGN
-#define _PATH_SSH_KEY_SIGN		"/usr/libexec/ssh-keysign"
+#ifndef PATH_SSH_ચાવી_SIGN
+#define PATH_SSH_ચાવી_SIGN		"/usr/libexec/ssh-keysign"
 #endif
 
 /* Location of ssh-pkcs11-helper to support keys in tokens */

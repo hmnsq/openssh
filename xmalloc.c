@@ -13,104 +13,104 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
 
-#include "xmalloc.h"
-#include "log.h"
+#અન્તર્ભાવ "xmalloc.h"
+#અન્તર્ભાવ "log.h"
 
-#if defined(__OpenBSD__)
-const char * const malloc_options = "S";
+#જો defined(__OpenBSD__)
+અચલ અક્ષર * અચલ malloc_options = "S";
 #endif /* __OpenBSD__ */
 
-void *
+શૂન્ય *
 xmalloc(size_t size)
 {
-	void *ptr;
+	શૂન્ય *ptr;
 
-	if (size == 0)
+	જો (size == 0)
 		fatal("xmalloc: zero size");
 	ptr = malloc(size);
-	if (ptr == NULL)
+	જો (ptr == ખાલી)
 		fatal("xmalloc: out of memory (allocating %zu bytes)", size);
-	return ptr;
+	પાછા ptr;
 }
 
-void *
+શૂન્ય *
 xcalloc(size_t nmemb, size_t size)
 {
-	void *ptr;
+	શૂન્ય *ptr;
 
-	if (size == 0 || nmemb == 0)
+	જો (size == 0 || nmemb == 0)
 		fatal("xcalloc: zero size");
-	if (SIZE_MAX / nmemb < size)
+	જો (SIZE_MAX / nmemb < size)
 		fatal("xcalloc: nmemb * size > SIZE_MAX");
 	ptr = calloc(nmemb, size);
-	if (ptr == NULL)
+	જો (ptr == ખાલી)
 		fatal("xcalloc: out of memory (allocating %zu bytes)",
 		    size * nmemb);
-	return ptr;
+	પાછા ptr;
 }
 
-void *
-xreallocarray(void *ptr, size_t nmemb, size_t size)
+શૂન્ય *
+xreallocarray(શૂન્ય *ptr, size_t nmemb, size_t size)
 {
-	void *new_ptr;
+	શૂન્ય *new_ptr;
 
 	new_ptr = reallocarray(ptr, nmemb, size);
-	if (new_ptr == NULL)
+	જો (new_ptr == ખાલી)
 		fatal("xreallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	પાછા new_ptr;
 }
 
-void *
-xrecallocarray(void *ptr, size_t onmemb, size_t nmemb, size_t size)
+શૂન્ય *
+xrecallocarray(શૂન્ય *ptr, size_t onmemb, size_t nmemb, size_t size)
 {
-	void *new_ptr;
+	શૂન્ય *new_ptr;
 
 	new_ptr = recallocarray(ptr, onmemb, nmemb, size);
-	if (new_ptr == NULL)
+	જો (new_ptr == ખાલી)
 		fatal("xrecallocarray: out of memory (%zu elements of %zu bytes)",
 		    nmemb, size);
-	return new_ptr;
+	પાછા new_ptr;
 }
 
-char *
-xstrdup(const char *str)
+અક્ષર *
+xstrdup(અચલ અક્ષર *str)
 {
 	size_t len;
-	char *cp;
+	અક્ષર *cp;
 
 	len = strlen(str) + 1;
 	cp = xmalloc(len);
-	return memcpy(cp, str, len);
+	પાછા memcpy(cp, str, len);
 }
 
-int
-xvasprintf(char **ret, const char *fmt, va_list ap)
+પૂર્ણાંક
+xvasprintf(અક્ષર **ret, અચલ અક્ષર *fmt, va_list ap)
 {
-	int i;
+	પૂર્ણાંક i;
 
 	i = vasprintf(ret, fmt, ap);
-	if (i < 0 || *ret == NULL)
+	જો (i < 0 || *ret == ખાલી)
 		fatal("xvasprintf: could not allocate memory");
-	return i;
+	પાછા i;
 }
 
-int
-xasprintf(char **ret, const char *fmt, ...)
+પૂર્ણાંક
+xasprintf(અક્ષર **ret, અચલ અક્ષર *fmt, ...)
 {
 	va_list ap;
-	int i;
+	પૂર્ણાંક i;
 
 	va_start(ap, fmt);
 	i = xvasprintf(ret, fmt, ap);
 	va_end(ap);
-	return i;
+	પાછા i;
 }

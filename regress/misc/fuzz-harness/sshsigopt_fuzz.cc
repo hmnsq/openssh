@@ -1,29 +1,29 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#અન્તર્ભાવ <stddef.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdlib.h>
 
-extern "C" {
+બાહ્ય "C" {
 
-#include "sshsig.h"
+#અન્તર્ભાવ "sshsig.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+પૂર્ણાંક LLVMFuzzer_Test_One_આગત(અચલ uint8_t* data, size_t size)
 {
-	char *cp = (char *)malloc(size + 1);
-	struct sshsigopt *opts = NULL;
+	અક્ષર *cp = (અક્ષર *)malloc(size + 1);
+	સંરચના sshsigopt *opts = ખાલી;
 
-	if (cp == NULL)
-		goto out;
+	જો (cp == ખાલી)
+		જાઓ out;
 	memcpy(cp, data, size);
 	cp[size] = '\0';
-	if ((opts = sshsigopt_parse(cp, "libfuzzer", 0, NULL)) == NULL)
-		goto out;
+	જો ((opts = sshsigopt_parse(cp, "libfuzzer", 0, ખાલી)) == ખાલી)
+		જાઓ out;
 
  out:
-	free(cp);
+	મુક્ત(cp);
 	sshsigopt_free(opts);
-	return 0;
+	પાછા 0;
 }
 
 } // extern "C"

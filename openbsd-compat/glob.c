@@ -58,28 +58,28 @@
  *	Number of matches in the current invocation of glob.
  */
 
-#include "includes.h"
-#include "glob.h"
+#અન્તર્ભાવ "includes.h"
+#અન્તર્ભાવ "glob.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <sys/stat.h>
 
-#include <dirent.h>
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <pwd.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <unistd.h>
+#અન્તર્ભાવ <dirent.h>
+#અન્તર્ભાવ <ctype.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <limits.h>
+#અન્તર્ભાવ <pwd.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
 
-#if !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
+#જો !defined(HAVE_GLOB) || !defined(GLOB_HAS_ALTDIRFUNC) || \
     !defined(GLOB_HAS_GL_MATCHC) || !defined(GLOB_HAS_GL_STATV) || \
     !defined(HAVE_DECL_GLOB_NOMATCH) || HAVE_DECL_GLOB_NOMATCH == 0 || \
     defined(BROKEN_GLOB)
 
-#include "charclass.h"
+#અન્તર્ભાવ "charclass.h"
 
 #ifdef TILDE
 # undef TILDE
@@ -110,16 +110,16 @@
 #define	M_MASK		0xffff
 #define	M_ASCII		0x00ff
 
-typedef u_short Char;
+પ્રકારવ્યાખ્યા u_short Char;
 
-#else
+#નહીંતર
 
 #define	M_QUOTE		0x80
 #define	M_PROTECT	0x40
 #define	M_MASK		0xff
 #define	M_ASCII		0x7f
 
-typedef char Char;
+પ્રકારવ્યાખ્યા અક્ષર Char;
 
 #endif
 
@@ -139,94 +139,94 @@ typedef char Char;
 #define	GLOB_LIMIT_STAT		2048
 #define	GLOB_LIMIT_READDIR	16384
 
-struct glob_lim {
+સંરચના glob_lim {
 	size_t	glim_malloc;
 	size_t	glim_stat;
 	size_t	glim_readdir;
 };
 
-struct glob_path_stat {
-	char		*gps_path;
-	struct stat	*gps_stat;
+સંરચના glob_path_stat {
+	અક્ષર		*gps_path;
+	સંરચના stat	*gps_stat;
 };
 
-static int	 compare(const void *, const void *);
-static int	 compare_gps(const void *, const void *);
-static int	 g_Ctoc(const Char *, char *, size_t);
-static int	 g_lstat(Char *, struct stat *, glob_t *);
-static DIR	*g_opendir(Char *, glob_t *);
-static Char	*g_strchr(const Char *, int);
-static int	 g_strncmp(const Char *, const char *, size_t);
-static int	 g_stat(Char *, struct stat *, glob_t *);
-static int	 glob0(const Char *, glob_t *, struct glob_lim *);
-static int	 glob1(Char *, Char *, glob_t *, struct glob_lim *);
-static int	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
-		    glob_t *, struct glob_lim *);
-static int	 glob3(Char *, Char *, Char *, Char *, Char *,
-		    Char *, Char *, glob_t *, struct glob_lim *);
-static int	 globextend(const Char *, glob_t *, struct glob_lim *,
-		    struct stat *);
-static const Char *
-		 globtilde(const Char *, Char *, size_t, glob_t *);
-static int	 globexp1(const Char *, glob_t *, struct glob_lim *);
-static int	 globexp2(const Char *, const Char *, glob_t *,
-		    struct glob_lim *);
-static int	 match(Char *, Char *, Char *);
+સ્થિર પૂર્ણાંક	 compare(અચલ શૂન્ય *, અચલ શૂન્ય *);
+સ્થિર પૂર્ણાંક	 compare_gps(અચલ શૂન્ય *, અચલ શૂન્ય *);
+સ્થિર પૂર્ણાંક	 g_Ctoc(અચલ Char *, અક્ષર *, size_t);
+સ્થિર પૂર્ણાંક	 g_lstat(Char *, સંરચના stat *, glob_t *);
+સ્થિર DIR	*g_opendir(Char *, glob_t *);
+સ્થિર Char	*g_strchr(અચલ Char *, પૂર્ણાંક);
+સ્થિર પૂર્ણાંક	 g_strncmp(અચલ Char *, અચલ અક્ષર *, size_t);
+સ્થિર પૂર્ણાંક	 g_stat(Char *, સંરચના stat *, glob_t *);
+સ્થિર પૂર્ણાંક	 glob0(અચલ Char *, glob_t *, સંરચના glob_lim *);
+સ્થિર પૂર્ણાંક	 glob1(Char *, Char *, glob_t *, સંરચના glob_lim *);
+સ્થિર પૂર્ણાંક	 glob2(Char *, Char *, Char *, Char *, Char *, Char *,
+		    glob_t *, સંરચના glob_lim *);
+સ્થિર પૂર્ણાંક	 glob3(Char *, Char *, Char *, Char *, Char *,
+		    Char *, Char *, glob_t *, સંરચના glob_lim *);
+સ્થિર પૂર્ણાંક	 globextend(અચલ Char *, glob_t *, સંરચના glob_lim *,
+		    સંરચના stat *);
+સ્થિર અચલ Char *
+		 globtilde(અચલ Char *, Char *, size_t, glob_t *);
+સ્થિર પૂર્ણાંક	 globexp1(અચલ Char *, glob_t *, સંરચના glob_lim *);
+સ્થિર પૂર્ણાંક	 globexp2(અચલ Char *, અચલ Char *, glob_t *,
+		    સંરચના glob_lim *);
+સ્થિર પૂર્ણાંક	 match(Char *, Char *, Char *);
 #ifdef DEBUG
-static void	 qprintf(const char *, Char *);
+સ્થિર શૂન્ય	 qprintf(અચલ અક્ષર *, Char *);
 #endif
 
-int
-glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
+પૂર્ણાંક
+glob(અચલ અક્ષર *pattern, પૂર્ણાંક flags, પૂર્ણાંક (*errfunc)(અચલ અક્ષર *, પૂર્ણાંક),
     glob_t *pglob)
 {
-	const u_char *patnext;
-	int c;
+	અચલ u_char *patnext;
+	પૂર્ણાંક c;
 	Char *bufnext, *bufend, patbuf[PATH_MAX];
-	struct glob_lim limit = { 0, 0, 0 };
+	સંરચના glob_lim limit = { 0, 0, 0 };
 
 	patnext = (u_char *) pattern;
-	if (!(flags & GLOB_APPEND)) {
+	જો (!(flags & GLOB_APPEND)) {
 		pglob->gl_pathc = 0;
-		pglob->gl_pathv = NULL;
-		pglob->gl_statv = NULL;
-		if (!(flags & GLOB_DOOFFS))
+		pglob->gl_pathv = ખાલી;
+		pglob->gl_statv = ખાલી;
+		જો (!(flags & GLOB_DOOFFS))
 			pglob->gl_offs = 0;
 	}
 	pglob->gl_flags = flags & ~GLOB_MAGCHAR;
 	pglob->gl_errfunc = errfunc;
 	pglob->gl_matchc = 0;
 
-	if (strnlen(pattern, PATH_MAX) == PATH_MAX)
-		return(GLOB_NOMATCH);
+	જો (strnlen(pattern, PATH_MAX) == PATH_MAX)
+		પાછા(GLOB_NOMATCH);
 
-	if (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
+	જો (pglob->gl_offs >= SSIZE_MAX || pglob->gl_pathc >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX - pglob->gl_offs - 1)
-		return GLOB_NOSPACE;
+		પાછા GLOB_NOSPACE;
 
 	bufnext = patbuf;
 	bufend = bufnext + PATH_MAX - 1;
-	if (flags & GLOB_NOESCAPE)
-		while (bufnext < bufend && (c = *patnext++) != EOS)
+	જો (flags & GLOB_NOESCAPE)
+		જ્યારે (bufnext < bufend && (c = *patnext++) != EOS)
 			*bufnext++ = c;
-	else {
+	નહીંતર {
 		/* Protect the quoted characters. */
-		while (bufnext < bufend && (c = *patnext++) != EOS)
-			if (c == QUOTE) {
-				if ((c = *patnext++) == EOS) {
+		જ્યારે (bufnext < bufend && (c = *patnext++) != EOS)
+			જો (c == QUOTE) {
+				જો ((c = *patnext++) == EOS) {
 					c = QUOTE;
 					--patnext;
 				}
 				*bufnext++ = c | M_PROTECT;
-			} else
+			} નહીંતર
 				*bufnext++ = c;
 	}
 	*bufnext = EOS;
 
-	if (flags & GLOB_BRACE)
-		return globexp1(patbuf, pglob, &limit);
-	else
-		return glob0(patbuf, pglob, &limit);
+	જો (flags & GLOB_BRACE)
+		પાછા globexp1(patbuf, pglob, &limit);
+	નહીંતર
+		પાછા glob0(patbuf, pglob, &limit);
 }
 
 /*
@@ -234,19 +234,19 @@ glob(const char *pattern, int flags, int (*errfunc)(const char *, int),
  * invoke the standard globbing routine to glob the rest of the magic
  * characters
  */
-static int
-globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+સ્થિર પૂર્ણાંક
+globexp1(અચલ Char *pattern, glob_t *pglob, સંરચના glob_lim *limitp)
 {
-	const Char* ptr = pattern;
+	અચલ Char* ptr = pattern;
 
 	/* Protect a single {}, for find(1), like csh */
-	if (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
-		return glob0(pattern, pglob, limitp);
+	જો (pattern[0] == LBRACE && pattern[1] == RBRACE && pattern[2] == EOS)
+		પાછા glob0(pattern, pglob, limitp);
 
-	if ((ptr = (const Char *) g_strchr(ptr, LBRACE)) != NULL)
-		return globexp2(ptr, pattern, pglob, limitp);
+	જો ((ptr = (અચલ Char *) g_strchr(ptr, LBRACE)) != ખાલી)
+		પાછા globexp2(ptr, pattern, pglob, limitp);
 
-	return glob0(pattern, pglob, limitp);
+	પાછા glob0(pattern, pglob, limitp);
 }
 
 
@@ -255,84 +255,84 @@ globexp1(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
  * If it succeeds then it invokes globexp1 with the new pattern.
  * If it fails then it tries to glob the rest of the pattern and returns.
  */
-static int
-globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
-    struct glob_lim *limitp)
+સ્થિર પૂર્ણાંક
+globexp2(અચલ Char *ptr, અચલ Char *pattern, glob_t *pglob,
+    સંરચના glob_lim *limitp)
 {
-	int     i, rv;
+	પૂર્ણાંક     i, rv;
 	Char   *lm, *ls;
-	const Char *pe, *pm, *pl;
+	અચલ Char *pe, *pm, *pl;
 	Char    patbuf[PATH_MAX];
 
 	/* copy part up to the brace */
-	for (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
+	માટે (lm = patbuf, pm = pattern; pm != ptr; *lm++ = *pm++)
 		;
 	*lm = EOS;
 	ls = lm;
 
 	/* Find the balanced brace */
-	for (i = 0, pe = ++ptr; *pe; pe++)
-		if (*pe == LBRACKET) {
+	માટે (i = 0, pe = ++ptr; *pe; pe++)
+		જો (*pe == LBRACKET) {
 			/* Ignore everything between [] */
-			for (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
+			માટે (pm = pe++; *pe != RBRACKET && *pe != EOS; pe++)
 				;
-			if (*pe == EOS) {
+			જો (*pe == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pe = pm;
 			}
-		} else if (*pe == LBRACE)
+		} નહીંતર જો (*pe == LBRACE)
 			i++;
-		else if (*pe == RBRACE) {
-			if (i == 0)
-				break;
+		નહીંતર જો (*pe == RBRACE) {
+			જો (i == 0)
+				તોડો;
 			i--;
 		}
 
 	/* Non matching braces; just glob the pattern */
-	if (i != 0 || *pe == EOS)
-		return glob0(patbuf, pglob, limitp);
+	જો (i != 0 || *pe == EOS)
+		પાછા glob0(patbuf, pglob, limitp);
 
-	for (i = 0, pl = pm = ptr; pm <= pe; pm++) {
-		switch (*pm) {
-		case LBRACKET:
+	માટે (i = 0, pl = pm = ptr; pm <= pe; pm++) {
+		પસંદગી (*pm) {
+		સ્થિતિ LBRACKET:
 			/* Ignore everything between [] */
-			for (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
+			માટે (pl = pm++; *pm != RBRACKET && *pm != EOS; pm++)
 				;
-			if (*pm == EOS) {
+			જો (*pm == EOS) {
 				/*
 				 * We could not find a matching RBRACKET.
 				 * Ignore and just look for RBRACE
 				 */
 				pm = pl;
 			}
-			break;
+			તોડો;
 
-		case LBRACE:
+		સ્થિતિ LBRACE:
 			i++;
-			break;
+			તોડો;
 
-		case RBRACE:
-			if (i) {
+		સ્થિતિ RBRACE:
+			જો (i) {
 				i--;
-				break;
+				તોડો;
 			}
 			/* FALLTHROUGH */
-		case COMMA:
-			if (i && *pm == COMMA)
-				break;
-			else {
+		સ્થિતિ COMMA:
+			જો (i && *pm == COMMA)
+				તોડો;
+			નહીંતર {
 				/* Append the current string */
-				for (lm = ls; (pl < pm); *lm++ = *pl++)
+				માટે (lm = ls; (pl < pm); *lm++ = *pl++)
 					;
 
 				/*
 				 * Append the rest of the pattern after the
 				 * closing brace
 				 */
-				for (pl = pe + 1; (*lm++ = *pl++) != EOS; )
+				માટે (pl = pe + 1; (*lm++ = *pl++) != EOS; )
 					;
 
 				/* Expand the current pattern */
@@ -340,19 +340,19 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 				qprintf("globexp2:", patbuf);
 #endif
 				rv = globexp1(patbuf, pglob, limitp);
-				if (rv && rv != GLOB_NOMATCH)
-					return rv;
+				જો (rv && rv != GLOB_NOMATCH)
+					પાછા rv;
 
 				/* move after the comma, to the next string */
 				pl = pm + 1;
 			}
-			break;
+			તોડો;
 
-		default:
-			break;
+		મૂળભૂત:
+			તોડો;
 		}
 	}
-	return 0;
+	પાછા 0;
 }
 
 
@@ -360,106 +360,106 @@ globexp2(const Char *ptr, const Char *pattern, glob_t *pglob,
 /*
  * expand tilde from the passwd file.
  */
-static const Char *
-globtilde(const Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
+સ્થિર અચલ Char *
+globtilde(અચલ Char *pattern, Char *patbuf, size_t patbuf_len, glob_t *pglob)
 {
-	struct passwd *pwd;
-	char *h;
-	const Char *p;
+	સંરચના passwd *pwd;
+	અક્ષર *h;
+	અચલ Char *p;
 	Char *b, *eb;
 
-	if (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
-		return pattern;
+	જો (*pattern != TILDE || !(pglob->gl_flags & GLOB_TILDE))
+		પાછા pattern;
 
 	/* Copy up to the end of the string or / */
 	eb = &patbuf[patbuf_len - 1];
-	for (p = pattern + 1, h = (char *) patbuf;
-	    h < (char *)eb && *p && *p != SLASH; *h++ = *p++)
+	માટે (p = pattern + 1, h = (અક્ષર *) patbuf;
+	    h < (અક્ષર *)eb && *p && *p != SLASH; *h++ = *p++)
 		;
 
 	*h = EOS;
 
-#if 0
-	if (h == (char *)eb)
-		return what;
+#જો 0
+	જો (h == (અક્ષર *)eb)
+		પાછા what;
 #endif
 
-	if (((char *) patbuf)[0] == EOS) {
+	જો (((અક્ષર *) patbuf)[0] == EOS) {
 		/*
 		 * handle a plain ~ or ~/ by expanding $HOME
 		 * first and then trying the password file
 		 */
-#if 0
-		if (issetugid() != 0 || (h = getenv("HOME")) == NULL) {
+#જો 0
+		જો (issetugid() != 0 || (h = getenv("HOME")) == ખાલી) {
 #endif
-		if ((getuid() != geteuid()) || (h = getenv("HOME")) == NULL) {
-			if ((pwd = getpwuid(getuid())) == NULL)
-				return pattern;
-			else
+		જો ((getuid() != geteuid()) || (h = getenv("HOME")) == ખાલી) {
+			જો ((pwd = getpwuid(getuid())) == ખાલી)
+				પાછા pattern;
+			નહીંતર
 				h = pwd->pw_dir;
 		}
-	} else {
+	} નહીંતર {
 		/*
 		 * Expand a ~user
 		 */
-		if ((pwd = getpwnam((char*) patbuf)) == NULL)
-			return pattern;
-		else
+		જો ((pwd = getpwnam((અક્ષર*) patbuf)) == ખાલી)
+			પાછા pattern;
+		નહીંતર
 			h = pwd->pw_dir;
 	}
 
 	/* Copy the home directory */
-	for (b = patbuf; b < eb && *h; *b++ = *h++)
+	માટે (b = patbuf; b < eb && *h; *b++ = *h++)
 		;
 
 	/* Append the rest of the pattern */
-	while (b < eb && (*b++ = *p++) != EOS)
+	જ્યારે (b < eb && (*b++ = *p++) != EOS)
 		;
 	*b = EOS;
 
-	return patbuf;
+	પાછા patbuf;
 }
 
-static int
-g_strncmp(const Char *s1, const char *s2, size_t n)
+સ્થિર પૂર્ણાંક
+g_strncmp(અચલ Char *s1, અચલ અક્ષર *s2, size_t n)
 {
-	int rv = 0;
+	પૂર્ણાંક rv = 0;
 
-	while (n--) {
-		rv = *(Char *)s1 - *(const unsigned char *)s2++;
-		if (rv)
-			break;
-		if (*s1++ == '\0')
-			break;
+	જ્યારે (n--) {
+		rv = *(Char *)s1 - *(અચલ unsigned અક્ષર *)s2++;
+		જો (rv)
+			તોડો;
+		જો (*s1++ == '\0')
+			તોડો;
 	}
-	return rv;
+	પાછા rv;
 }
 
-static int
-g_charclass(const Char **patternp, Char **bufnextp)
+સ્થિર પૂર્ણાંક
+g_charclass(અચલ Char **patternp, Char **bufnextp)
 {
-	const Char *pattern = *patternp + 1;
+	અચલ Char *pattern = *patternp + 1;
 	Char *bufnext = *bufnextp;
-	const Char *colon;
-	struct cclass *cc;
+	અચલ Char *colon;
+	સંરચના cclass *cc;
 	size_t len;
 
-	if ((colon = g_strchr(pattern, ':')) == NULL || colon[1] != ']')
-		return 1;	/* not a character class */
+	જો ((colon = g_strchr(pattern, ':')) == ખાલી || colon[1] != ']')
+		પાછા 1;	/* not a character class */
 
 	len = (size_t)(colon - pattern);
-	for (cc = cclasses; cc->name != NULL; cc++) {
-		if (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
-			break;
+	માટે (cc = cclasses; cc->name != ખાલી; cc++) {
+		જો (!g_strncmp(pattern, cc->name, len) && cc->name[len] == '\0')
+			તોડો;
 	}
-	if (cc->name == NULL)
-		return -1;	/* invalid character class */
+	જો (cc->name == ખાલી)
+		પાછા -1;	/* invalid character class */
 	*bufnext++ = M_CLASS;
 	*bufnext++ = (Char)(cc - &cclasses[0]);
 	*bufnextp = bufnext;
 	*patternp += len + 3;
 
-	return 0;
+	પાછા 0;
 }
 
 /*
@@ -469,11 +469,11 @@ g_charclass(const Char **patternp, Char **bufnextp)
  * if things went well, nonzero if errors occurred.  It is not an error
  * to find no matches.
  */
-static int
-glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
+સ્થિર પૂર્ણાંક
+glob0(અચલ Char *pattern, glob_t *pglob, સંરચના glob_lim *limitp)
 {
-	const Char *qpatnext;
-	int c, err;
+	અચલ Char *qpatnext;
+	પૂર્ણાંક c, err;
 	size_t oldpathc;
 	Char *bufnext, patbuf[PATH_MAX];
 
@@ -482,64 +482,64 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	bufnext = patbuf;
 
 	/* We don't need to check for buffer overflow any more. */
-	while ((c = *qpatnext++) != EOS) {
-		switch (c) {
-		case LBRACKET:
+	જ્યારે ((c = *qpatnext++) != EOS) {
+		પસંદગી (c) {
+		સ્થિતિ LBRACKET:
 			c = *qpatnext;
-			if (c == NOT)
+			જો (c == NOT)
 				++qpatnext;
-			if (*qpatnext == EOS ||
-			    g_strchr(qpatnext+1, RBRACKET) == NULL) {
+			જો (*qpatnext == EOS ||
+			    g_strchr(qpatnext+1, RBRACKET) == ખાલી) {
 				*bufnext++ = LBRACKET;
-				if (c == NOT)
+				જો (c == NOT)
 					--qpatnext;
-				break;
+				તોડો;
 			}
 			*bufnext++ = M_SET;
-			if (c == NOT)
+			જો (c == NOT)
 				*bufnext++ = M_NOT;
 			c = *qpatnext++;
-			do {
-				if (c == LBRACKET && *qpatnext == ':') {
-					do {
+			કરો {
+				જો (c == LBRACKET && *qpatnext == ':') {
+					કરો {
 						err = g_charclass(&qpatnext,
 						    &bufnext);
-						if (err)
-							break;
+						જો (err)
+							તોડો;
 						c = *qpatnext++;
-					} while (c == LBRACKET && *qpatnext == ':');
-					if (err == -1 &&
+					} જ્યારે (c == LBRACKET && *qpatnext == ':');
+					જો (err == -1 &&
 					    !(pglob->gl_flags & GLOB_NOCHECK))
-						return GLOB_NOMATCH;
-					if (c == RBRACKET)
-						break;
+						પાછા GLOB_NOMATCH;
+					જો (c == RBRACKET)
+						તોડો;
 				}
 				*bufnext++ = CHAR(c);
-				if (*qpatnext == RANGE &&
+				જો (*qpatnext == RANGE &&
 				    (c = qpatnext[1]) != RBRACKET) {
 					*bufnext++ = M_RNG;
 					*bufnext++ = CHAR(c);
 					qpatnext += 2;
 				}
-			} while ((c = *qpatnext++) != RBRACKET);
+			} જ્યારે ((c = *qpatnext++) != RBRACKET);
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_END;
-			break;
-		case QUESTION:
+			તોડો;
+		સ્થિતિ QUESTION:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			*bufnext++ = M_ONE;
-			break;
-		case STAR:
+			તોડો;
+		સ્થિતિ STAR:
 			pglob->gl_flags |= GLOB_MAGCHAR;
 			/* collapse adjacent stars to one,
 			 * to avoid exponential behavior
 			 */
-			if (bufnext == patbuf || bufnext[-1] != M_ALL)
+			જો (bufnext == patbuf || bufnext[-1] != M_ALL)
 				*bufnext++ = M_ALL;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			*bufnext++ = CHAR(c);
-			break;
+			તોડો;
 		}
 	}
 	*bufnext = EOS;
@@ -547,8 +547,8 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	qprintf("glob0:", patbuf);
 #endif
 
-	if ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
-		return(err);
+	જો ((err = glob1(patbuf, patbuf+PATH_MAX-1, pglob, limitp)) != 0)
+		પાછા(err);
 
 	/*
 	 * If there was no match we are going to append the pattern
@@ -556,67 +556,67 @@ glob0(const Char *pattern, glob_t *pglob, struct glob_lim *limitp)
 	 * and the pattern did not contain any magic characters
 	 * GLOB_NOMAGIC is there just for compatibility with csh.
 	 */
-	if (pglob->gl_pathc == oldpathc) {
-		if ((pglob->gl_flags & GLOB_NOCHECK) ||
+	જો (pglob->gl_pathc == oldpathc) {
+		જો ((pglob->gl_flags & GLOB_NOCHECK) ||
 		    ((pglob->gl_flags & GLOB_NOMAGIC) &&
 		    !(pglob->gl_flags & GLOB_MAGCHAR)))
-			return(globextend(pattern, pglob, limitp, NULL));
-		else
-			return(GLOB_NOMATCH);
+			પાછા(globextend(pattern, pglob, limitp, ખાલી));
+		નહીંતર
+			પાછા(GLOB_NOMATCH);
 	}
-	if (!(pglob->gl_flags & GLOB_NOSORT)) {
-		if ((pglob->gl_flags & GLOB_KEEPSTAT)) {
+	જો (!(pglob->gl_flags & GLOB_NOSORT)) {
+		જો ((pglob->gl_flags & GLOB_KEEPSTAT)) {
 			/* Keep the paths and stat info synced during sort */
-			struct glob_path_stat *path_stat;
+			સંરચના glob_path_stat *path_stat;
 			size_t i;
 			size_t n = pglob->gl_pathc - oldpathc;
 			size_t o = pglob->gl_offs + oldpathc;
 
-			if ((path_stat = calloc(n, sizeof(*path_stat))) == NULL)
-				return GLOB_NOSPACE;
-			for (i = 0; i < n; i++) {
+			જો ((path_stat = calloc(n, કદ(*path_stat))) == ખાલી)
+				પાછા GLOB_NOSPACE;
+			માટે (i = 0; i < n; i++) {
 				path_stat[i].gps_path = pglob->gl_pathv[o + i];
 				path_stat[i].gps_stat = pglob->gl_statv[o + i];
 			}
-			qsort(path_stat, n, sizeof(*path_stat), compare_gps);
-			for (i = 0; i < n; i++) {
+			qsort(path_stat, n, કદ(*path_stat), compare_gps);
+			માટે (i = 0; i < n; i++) {
 				pglob->gl_pathv[o + i] = path_stat[i].gps_path;
 				pglob->gl_statv[o + i] = path_stat[i].gps_stat;
 			}
-			free(path_stat);
-		} else {
+			મુક્ત(path_stat);
+		} નહીંતર {
 			qsort(pglob->gl_pathv + pglob->gl_offs + oldpathc,
-			    pglob->gl_pathc - oldpathc, sizeof(char *),
+			    pglob->gl_pathc - oldpathc, કદ(અક્ષર *),
 			    compare);
 		}
 	}
-	return(0);
+	પાછા(0);
 }
 
-static int
-compare(const void *p, const void *q)
+સ્થિર પૂર્ણાંક
+compare(અચલ શૂન્ય *p, અચલ શૂન્ય *q)
 {
-	return(strcmp(*(char **)p, *(char **)q));
+	પાછા(strcmp(*(અક્ષર **)p, *(અક્ષર **)q));
 }
 
-static int
-compare_gps(const void *_p, const void *_q)
+સ્થિર પૂર્ણાંક
+compare_gps(અચલ શૂન્ય *_p, અચલ શૂન્ય *_q)
 {
-	const struct glob_path_stat *p = (const struct glob_path_stat *)_p;
-	const struct glob_path_stat *q = (const struct glob_path_stat *)_q;
+	અચલ સંરચના glob_path_stat *p = (અચલ સંરચના glob_path_stat *)_p;
+	અચલ સંરચના glob_path_stat *q = (અચલ સંરચના glob_path_stat *)_q;
 
-	return(strcmp(p->gps_path, q->gps_path));
+	પાછા(strcmp(p->gps_path, q->gps_path));
 }
 
-static int
-glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+સ્થિર પૂર્ણાંક
+glob1(Char *pattern, Char *pattern_last, glob_t *pglob, સંરચના glob_lim *limitp)
 {
 	Char pathbuf[PATH_MAX];
 
 	/* A null pathname is invalid -- POSIX 1003.1 sect. 2.4. */
-	if (*pattern == EOS)
-		return(0);
-	return(glob2(pathbuf, pathbuf+PATH_MAX-1,
+	જો (*pattern == EOS)
+		પાછા(0);
+	પાછા(glob2(pathbuf, pathbuf+PATH_MAX-1,
 	    pathbuf, pathbuf+PATH_MAX-1,
 	    pattern, pattern_last, pglob, limitp));
 }
@@ -626,83 +626,83 @@ glob1(Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
  * of recursion for each segment in the pattern that contains one or more
  * meta characters.
  */
-static int
+સ્થિર પૂર્ણાંક
 glob2(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
-    Char *pattern, Char *pattern_last, glob_t *pglob, struct glob_lim *limitp)
+    Char *pattern, Char *pattern_last, glob_t *pglob, સંરચના glob_lim *limitp)
 {
-	struct stat sb;
+	સંરચના stat sb;
 	Char *p, *q;
-	int anymeta;
+	પૂર્ણાંક anymeta;
 
 	/*
 	 * Loop over pattern segments until end of pattern or until
 	 * segment with meta character found.
 	 */
-	for (anymeta = 0;;) {
-		if (*pattern == EOS) {		/* End of pattern? */
+	માટે (anymeta = 0;;) {
+		જો (*pattern == EOS) {		/* End of pattern? */
 			*pathend = EOS;
 
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+			જો ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_stat++ >= GLOB_LIMIT_STAT) {
 				errno = 0;
 				*pathend++ = SEP;
 				*pathend = EOS;
-				return(GLOB_NOSPACE);
+				પાછા(GLOB_NOSPACE);
 			}
-			if (g_lstat(pathbuf, &sb, pglob))
-				return(0);
+			જો (g_lstat(pathbuf, &sb, pglob))
+				પાછા(0);
 
-			if (((pglob->gl_flags & GLOB_MARK) &&
+			જો (((pglob->gl_flags & GLOB_MARK) &&
 			    pathend[-1] != SEP) && (S_ISDIR(sb.st_mode) ||
 			    (S_ISLNK(sb.st_mode) &&
 			    (g_stat(pathbuf, &sb, pglob) == 0) &&
 			    S_ISDIR(sb.st_mode)))) {
-				if (pathend+1 > pathend_last)
-					return (1);
+				જો (pathend+1 > pathend_last)
+					પાછા (1);
 				*pathend++ = SEP;
 				*pathend = EOS;
 			}
 			++pglob->gl_matchc;
-			return(globextend(pathbuf, pglob, limitp, &sb));
+			પાછા(globextend(pathbuf, pglob, limitp, &sb));
 		}
 
 		/* Find end of next segment, copy tentatively to pathend. */
 		q = pathend;
 		p = pattern;
-		while (*p != EOS && *p != SEP) {
-			if (ismeta(*p))
+		જ્યારે (*p != EOS && *p != SEP) {
+			જો (ismeta(*p))
 				anymeta = 1;
-			if (q+1 > pathend_last)
-				return (1);
+			જો (q+1 > pathend_last)
+				પાછા (1);
 			*q++ = *p++;
 		}
 
-		if (!anymeta) {		/* No expansion, do next segment. */
+		જો (!anymeta) {		/* No expansion, do next segment. */
 			pathend = q;
 			pattern = p;
-			while (*pattern == SEP) {
-				if (pathend+1 > pathend_last)
-					return (1);
+			જ્યારે (*pattern == SEP) {
+				જો (pathend+1 > pathend_last)
+					પાછા (1);
 				*pathend++ = *pattern++;
 			}
-		} else
+		} નહીંતર
 			/* Need expansion, recurse. */
-			return(glob3(pathbuf, pathbuf_last, pathend,
+			પાછા(glob3(pathbuf, pathbuf_last, pathend,
 			    pathend_last, pattern, p, pattern_last,
 			    pglob, limitp));
 	}
 	/* NOTREACHED */
 }
 
-static int
+સ્થિર પૂર્ણાંક
 glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
     Char *pattern, Char *restpattern, Char *restpattern_last, glob_t *pglob,
-    struct glob_lim *limitp)
+    સંરચના glob_lim *limitp)
 {
-	struct dirent *dp;
+	સંરચના dirent *dp;
 	DIR *dirp;
-	int err;
-	char buf[PATH_MAX];
+	પૂર્ણાંક err;
+	અક્ષર buf[PATH_MAX];
 
 	/*
 	 * The readdirfunc declaration can't be prototyped, because it is
@@ -710,73 +710,73 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
 	 * and dirent.h as taking pointers to differently typed opaque
 	 * structures.
 	 */
-	struct dirent *(*readdirfunc)(void *);
+	સંરચના dirent *(*readdirfunc)(શૂન્ય *);
 
-	if (pathend > pathend_last)
-		return (1);
+	જો (pathend > pathend_last)
+		પાછા (1);
 	*pathend = EOS;
 	errno = 0;
 
-	if ((dirp = g_opendir(pathbuf, pglob)) == NULL) {
+	જો ((dirp = g_opendir(pathbuf, pglob)) == ખાલી) {
 		/* TODO: don't call for ENOENT or ENOTDIR? */
-		if (pglob->gl_errfunc) {
-			if (g_Ctoc(pathbuf, buf, sizeof(buf)))
-				return(GLOB_ABORTED);
-			if (pglob->gl_errfunc(buf, errno) ||
+		જો (pglob->gl_errfunc) {
+			જો (g_Ctoc(pathbuf, buf, કદ(buf)))
+				પાછા(GLOB_ABORTED);
+			જો (pglob->gl_errfunc(buf, errno) ||
 			    pglob->gl_flags & GLOB_ERR)
-				return(GLOB_ABORTED);
+				પાછા(GLOB_ABORTED);
 		}
-		return(0);
+		પાછા(0);
 	}
 
 	err = 0;
 
 	/* Search directory for matching names. */
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	જો (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		readdirfunc = pglob->gl_readdir;
-	else
-		readdirfunc = (struct dirent *(*)(void *))readdir;
-	while ((dp = (*readdirfunc)(dirp))) {
+	નહીંતર
+		readdirfunc = (સંરચના dirent *(*)(શૂન્ય *))readdir;
+	જ્યારે ((dp = (*readdirfunc)(dirp))) {
 		u_char *sc;
 		Char *dc;
 
-		if ((pglob->gl_flags & GLOB_LIMIT) &&
+		જો ((pglob->gl_flags & GLOB_LIMIT) &&
 		    limitp->glim_readdir++ >= GLOB_LIMIT_READDIR) {
 			errno = 0;
 			*pathend++ = SEP;
 			*pathend = EOS;
 			err = GLOB_NOSPACE;
-			break;
+			તોડો;
 		}
 
 		/* Initial DOT must be matched literally. */
-		if (dp->d_name[0] == DOT && *pattern != DOT)
-			continue;
+		જો (dp->d_name[0] == DOT && *pattern != DOT)
+			ચાલુ;
 		dc = pathend;
 		sc = (u_char *) dp->d_name;
-		while (dc < pathend_last && (*dc++ = *sc++) != EOS)
+		જ્યારે (dc < pathend_last && (*dc++ = *sc++) != EOS)
 			;
-		if (dc >= pathend_last) {
+		જો (dc >= pathend_last) {
 			*dc = EOS;
 			err = 1;
-			break;
+			તોડો;
 		}
 
-		if (!match(pathend, pattern, restpattern)) {
+		જો (!match(pathend, pattern, restpattern)) {
 			*pathend = EOS;
-			continue;
+			ચાલુ;
 		}
 		err = glob2(pathbuf, pathbuf_last, --dc, pathend_last,
 		    restpattern, restpattern_last, pglob, limitp);
-		if (err)
-			break;
+		જો (err)
+			તોડો;
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
+	જો (pglob->gl_flags & GLOB_ALTDIRFUNC)
 		(*pglob->gl_closedir)(dirp);
-	else
+	નહીંતર
 		closedir(dirp);
-	return(err);
+	પાછા(err);
 }
 
 
@@ -794,98 +794,98 @@ glob3(Char *pathbuf, Char *pathbuf_last, Char *pathend, Char *pathend_last,
  *	Either gl_pathc is zero and gl_pathv is NULL; or gl_pathc > 0 and
  *	gl_pathv points to (gl_offs + gl_pathc + 1) items.
  */
-static int
-globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
-    struct stat *sb)
+સ્થિર પૂર્ણાંક
+globextend(અચલ Char *path, glob_t *pglob, સંરચના glob_lim *limitp,
+    સંરચના stat *sb)
 {
-	char **pathv;
+	અક્ષર **pathv;
 	size_t i, newn, len;
-	char *copy = NULL;
-	const Char *p;
-	struct stat **statv;
+	અક્ષર *copy = ખાલી;
+	અચલ Char *p;
+	સંરચના stat **statv;
 
 	newn = 2 + pglob->gl_pathc + pglob->gl_offs;
-	if (pglob->gl_offs >= SSIZE_MAX ||
+	જો (pglob->gl_offs >= SSIZE_MAX ||
 	    pglob->gl_pathc >= SSIZE_MAX ||
 	    newn >= SSIZE_MAX ||
-	    SIZE_MAX / sizeof(*pathv) <= newn ||
-	    SIZE_MAX / sizeof(*statv) <= newn) {
+	    SIZE_MAX / કદ(*pathv) <= newn ||
+	    SIZE_MAX / કદ(*statv) <= newn) {
  nospace:
-		for (i = pglob->gl_offs; i < newn - 2; i++) {
-			if (pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_pathv[i]);
-			if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
+		માટે (i = pglob->gl_offs; i < newn - 2; i++) {
+			જો (pglob->gl_pathv && pglob->gl_pathv[i])
+				મુક્ત(pglob->gl_pathv[i]);
+			જો ((pglob->gl_flags & GLOB_KEEPSTAT) != 0 &&
 			    pglob->gl_pathv && pglob->gl_pathv[i])
-				free(pglob->gl_statv[i]);
+				મુક્ત(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
-		return(GLOB_NOSPACE);
+		મુક્ત(pglob->gl_pathv);
+		pglob->gl_pathv = ખાલી;
+		મુક્ત(pglob->gl_statv);
+		pglob->gl_statv = ખાલી;
+		પાછા(GLOB_NOSPACE);
 	}
 
-	pathv = reallocarray(pglob->gl_pathv, newn, sizeof(*pathv));
-	if (pathv == NULL)
-		goto nospace;
-	if (pglob->gl_pathv == NULL && pglob->gl_offs > 0) {
+	pathv = reallocarray(pglob->gl_pathv, newn, કદ(*pathv));
+	જો (pathv == ખાલી)
+		જાઓ nospace;
+	જો (pglob->gl_pathv == ખાલી && pglob->gl_offs > 0) {
 		/* first time around -- clear initial gl_offs items */
 		pathv += pglob->gl_offs;
-		for (i = pglob->gl_offs; i > 0; i--)
-			*--pathv = NULL;
+		માટે (i = pglob->gl_offs; i > 0; i--)
+			*--pathv = ખાલી;
 	}
 	pglob->gl_pathv = pathv;
 
-	if ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
-		statv = reallocarray(pglob->gl_statv, newn, sizeof(*statv));
-		if (statv == NULL)
-			goto nospace;
-		if (pglob->gl_statv == NULL && pglob->gl_offs > 0) {
+	જો ((pglob->gl_flags & GLOB_KEEPSTAT) != 0) {
+		statv = reallocarray(pglob->gl_statv, newn, કદ(*statv));
+		જો (statv == ખાલી)
+			જાઓ nospace;
+		જો (pglob->gl_statv == ખાલી && pglob->gl_offs > 0) {
 			/* first time around -- clear initial gl_offs items */
 			statv += pglob->gl_offs;
-			for (i = pglob->gl_offs; i > 0; i--)
-				*--statv = NULL;
+			માટે (i = pglob->gl_offs; i > 0; i--)
+				*--statv = ખાલી;
 		}
 		pglob->gl_statv = statv;
-		if (sb == NULL)
-			statv[pglob->gl_offs + pglob->gl_pathc] = NULL;
-		else {
-			limitp->glim_malloc += sizeof(**statv);
-			if ((pglob->gl_flags & GLOB_LIMIT) &&
+		જો (sb == ખાલી)
+			statv[pglob->gl_offs + pglob->gl_pathc] = ખાલી;
+		નહીંતર {
+			limitp->glim_malloc += કદ(**statv);
+			જો ((pglob->gl_flags & GLOB_LIMIT) &&
 			    limitp->glim_malloc >= GLOB_LIMIT_MALLOC) {
 				errno = 0;
-				return(GLOB_NOSPACE);
+				પાછા(GLOB_NOSPACE);
 			}
-			if ((statv[pglob->gl_offs + pglob->gl_pathc] =
-			    malloc(sizeof(**statv))) == NULL)
-				goto copy_error;
+			જો ((statv[pglob->gl_offs + pglob->gl_pathc] =
+			    malloc(કદ(**statv))) == ખાલી)
+				જાઓ copy_error;
 			memcpy(statv[pglob->gl_offs + pglob->gl_pathc], sb,
-			    sizeof(*sb));
+			    કદ(*sb));
 		}
-		statv[pglob->gl_offs + pglob->gl_pathc + 1] = NULL;
+		statv[pglob->gl_offs + pglob->gl_pathc + 1] = ખાલી;
 	}
 
-	for (p = path; *p++;)
+	માટે (p = path; *p++;)
 		;
 	len = (size_t)(p - path);
 	limitp->glim_malloc += len;
-	if ((copy = malloc(len)) != NULL) {
-		if (g_Ctoc(path, copy, len)) {
-			free(copy);
-			return(GLOB_NOSPACE);
+	જો ((copy = malloc(len)) != ખાલી) {
+		જો (g_Ctoc(path, copy, len)) {
+			મુક્ત(copy);
+			પાછા(GLOB_NOSPACE);
 		}
 		pathv[pglob->gl_offs + pglob->gl_pathc++] = copy;
 	}
-	pathv[pglob->gl_offs + pglob->gl_pathc] = NULL;
+	pathv[pglob->gl_offs + pglob->gl_pathc] = ખાલી;
 
-	if ((pglob->gl_flags & GLOB_LIMIT) &&
-	    (newn * sizeof(*pathv)) + limitp->glim_malloc >
+	જો ((pglob->gl_flags & GLOB_LIMIT) &&
+	    (newn * કદ(*pathv)) + limitp->glim_malloc >
 	    GLOB_LIMIT_MALLOC) {
 		errno = 0;
-		return(GLOB_NOSPACE);
+		પાછા(GLOB_NOSPACE);
 	}
  copy_error:
-	return(copy == NULL ? GLOB_NOSPACE : 0);
+	પાછા(copy == ખાલી ? GLOB_NOSPACE : 0);
 }
 
 
@@ -900,176 +900,176 @@ globextend(const Char *path, glob_t *pglob, struct glob_lim *limitp,
  * from Russ Cox to not go quadratic on cases like a file called
  * ("a" x 100) . "x" matched against a pattern like "a*a*a*a*a*a*a*y".
  */
-static int
+સ્થિર પૂર્ણાંક
 match(Char *name, Char *pat, Char *patend)
 {
-	int ok, negate_range;
+	પૂર્ણાંક ok, negate_range;
 	Char c, k;
-	Char *nextp = NULL;
-	Char *nextn = NULL;
+	Char *nextp = ખાલી;
+	Char *nextn = ખાલી;
 
 loop:
-	while (pat < patend) {
+	જ્યારે (pat < patend) {
 		c = *pat++;
-		switch (c & M_MASK) {
-		case M_ALL:
-			while (pat < patend && (*pat & M_MASK) == M_ALL)
+		પસંદગી (c & M_MASK) {
+		સ્થિતિ M_ALL:
+			જ્યારે (pat < patend && (*pat & M_MASK) == M_ALL)
 				pat++;	/* eat consecutive '*' */
-			if (pat == patend)
-				return(1);
-			if (*name == EOS)
-				return(0);
+			જો (pat == patend)
+				પાછા(1);
+			જો (*name == EOS)
+				પાછા(0);
 			nextn = name + 1;
 			nextp = pat - 1;
-			break;
-		case M_ONE:
-			if (*name++ == EOS)
-				goto fail;
-			break;
-		case M_SET:
+			તોડો;
+		સ્થિતિ M_ONE:
+			જો (*name++ == EOS)
+				જાઓ fail;
+			તોડો;
+		સ્થિતિ M_SET:
 			ok = 0;
-			if ((k = *name++) == EOS)
-				goto fail;
-			if ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
+			જો ((k = *name++) == EOS)
+				જાઓ fail;
+			જો ((negate_range = ((*pat & M_MASK) == M_NOT)) != EOS)
 				++pat;
-			while (((c = *pat++) & M_MASK) != M_END) {
-				if ((c & M_MASK) == M_CLASS) {
+			જ્યારે (((c = *pat++) & M_MASK) != M_END) {
+				જો ((c & M_MASK) == M_CLASS) {
 					Char idx = *pat & M_MASK;
-					if (idx < NCCLASSES &&
+					જો (idx < NCCLASSES &&
 					    cclasses[idx].isctype(k))
 						ok = 1;
 					++pat;
 				}
-				if ((*pat & M_MASK) == M_RNG) {
-					if (c <= k && k <= pat[1])
+				જો ((*pat & M_MASK) == M_RNG) {
+					જો (c <= k && k <= pat[1])
 						ok = 1;
 					pat += 2;
-				} else if (c == k)
+				} નહીંતર જો (c == k)
 					ok = 1;
 			}
-			if (ok == negate_range)
-				goto fail;
-			break;
-		default:
-			if (*name++ != c)
-				goto fail;
-			break;
+			જો (ok == negate_range)
+				જાઓ fail;
+			તોડો;
+		મૂળભૂત:
+			જો (*name++ != c)
+				જાઓ fail;
+			તોડો;
 		}
 	}
-	if (*name == EOS)
-		return(1);
+	જો (*name == EOS)
+		પાછા(1);
 
 fail:
-	if (nextn) {
+	જો (nextn) {
 		pat = nextp;
 		name = nextn;
-		goto loop;
+		જાઓ loop;
 	}
-	return(0);
+	પાછા(0);
 }
 
 /* Free allocated data belonging to a glob_t structure. */
-void
+શૂન્ય
 globfree(glob_t *pglob)
 {
 	size_t i;
-	char **pp;
+	અક્ષર **pp;
 
-	if (pglob->gl_pathv != NULL) {
+	જો (pglob->gl_pathv != ખાલી) {
 		pp = pglob->gl_pathv + pglob->gl_offs;
-		for (i = pglob->gl_pathc; i--; ++pp)
-			free(*pp);
-		free(pglob->gl_pathv);
-		pglob->gl_pathv = NULL;
+		માટે (i = pglob->gl_pathc; i--; ++pp)
+			મુક્ત(*pp);
+		મુક્ત(pglob->gl_pathv);
+		pglob->gl_pathv = ખાલી;
 	}
-	if (pglob->gl_statv != NULL) {
-		for (i = 0; i < pglob->gl_pathc; i++) {
-			free(pglob->gl_statv[i]);
+	જો (pglob->gl_statv != ખાલી) {
+		માટે (i = 0; i < pglob->gl_pathc; i++) {
+			મુક્ત(pglob->gl_statv[i]);
 		}
-		free(pglob->gl_statv);
-		pglob->gl_statv = NULL;
+		મુક્ત(pglob->gl_statv);
+		pglob->gl_statv = ખાલી;
 	}
 }
 
-static DIR *
+સ્થિર DIR *
 g_opendir(Char *str, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	અક્ષર buf[PATH_MAX];
 
-	if (!*str)
-		strlcpy(buf, ".", sizeof buf);
-	else {
-		if (g_Ctoc(str, buf, sizeof(buf)))
-			return(NULL);
+	જો (!*str)
+		strlcpy(buf, ".", કદ buf);
+	નહીંતર {
+		જો (g_Ctoc(str, buf, કદ(buf)))
+			પાછા(ખાલી);
 	}
 
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_opendir)(buf));
+	જો (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		પાછા((*pglob->gl_opendir)(buf));
 
-	return(opendir(buf));
+	પાછા(opendir(buf));
 }
 
-static int
-g_lstat(Char *fn, struct stat *sb, glob_t *pglob)
+સ્થિર પૂર્ણાંક
+g_lstat(Char *fn, સંરચના stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	અક્ષર buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_lstat)(buf, sb));
-	return(lstat(buf, sb));
+	જો (g_Ctoc(fn, buf, કદ(buf)))
+		પાછા(-1);
+	જો (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		પાછા((*pglob->gl_lstat)(buf, sb));
+	પાછા(lstat(buf, sb));
 }
 
-static int
-g_stat(Char *fn, struct stat *sb, glob_t *pglob)
+સ્થિર પૂર્ણાંક
+g_stat(Char *fn, સંરચના stat *sb, glob_t *pglob)
 {
-	char buf[PATH_MAX];
+	અક્ષર buf[PATH_MAX];
 
-	if (g_Ctoc(fn, buf, sizeof(buf)))
-		return(-1);
-	if (pglob->gl_flags & GLOB_ALTDIRFUNC)
-		return((*pglob->gl_stat)(buf, sb));
-	return(stat(buf, sb));
+	જો (g_Ctoc(fn, buf, કદ(buf)))
+		પાછા(-1);
+	જો (pglob->gl_flags & GLOB_ALTDIRFUNC)
+		પાછા((*pglob->gl_stat)(buf, sb));
+	પાછા(stat(buf, sb));
 }
 
-static Char *
-g_strchr(const Char *str, int ch)
+સ્થિર Char *
+g_strchr(અચલ Char *str, પૂર્ણાંક ch)
 {
-	do {
-		if (*str == ch)
-			return ((Char *)str);
-	} while (*str++);
-	return (NULL);
+	કરો {
+		જો (*str == ch)
+			પાછા ((Char *)str);
+	} જ્યારે (*str++);
+	પાછા (ખાલી);
 }
 
-static int
-g_Ctoc(const Char *str, char *buf, size_t len)
+સ્થિર પૂર્ણાંક
+g_Ctoc(અચલ Char *str, અક્ષર *buf, size_t len)
 {
 
-	while (len--) {
-		if ((*buf++ = *str++) == EOS)
-			return (0);
+	જ્યારે (len--) {
+		જો ((*buf++ = *str++) == EOS)
+			પાછા (0);
 	}
-	return (1);
+	પાછા (1);
 }
 
 #ifdef DEBUG
-static void
-qprintf(const char *str, Char *s)
+સ્થિર શૂન્ય
+qprintf(અચલ અક્ષર *str, Char *s)
 {
 	Char *p;
 
-	(void)printf("%s:\n", str);
-	for (p = s; *p; p++)
-		(void)printf("%c", CHAR(*p));
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", *p & M_PROTECT ? '"' : ' ');
-	(void)printf("\n");
-	for (p = s; *p; p++)
-		(void)printf("%c", ismeta(*p) ? '_' : ' ');
-	(void)printf("\n");
+	(શૂન્ય)printf("%s:\n", str);
+	માટે (p = s; *p; p++)
+		(શૂન્ય)printf("%c", CHAR(*p));
+	(શૂન્ય)printf("\n");
+	માટે (p = s; *p; p++)
+		(શૂન્ય)printf("%c", *p & M_PROTECT ? '"' : ' ');
+	(શૂન્ય)printf("\n");
+	માટે (p = s; *p; p++)
+		(શૂન્ય)printf("%c", ismeta(*p) ? '_' : ' ');
+	(શૂન્ય)printf("\n");
 }
 #endif
 

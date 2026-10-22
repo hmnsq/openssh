@@ -24,43 +24,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#if defined(WITH_OPENSSL)
-#include "openbsd-compat/openssl-compat.h"
+#જો defined(WITH_OPENSSL)
+#અન્તર્ભાવ "openbsd-compat/openssl-compat.h"
 
-#include <sys/types.h>
+#અન્તર્ભાવ <sys/types.h>
 
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
+#અન્તર્ભાવ <openssl/bn.h>
+#અન્તર્ભાવ <openssl/ec.h>
+#અન્તર્ભાવ <openssl/ecdsa.h>
+#અન્તર્ભાવ <openssl/evp.h>
 
-#include <string.h>
+#અન્તર્ભાવ <string.h>
 
-#include "sshbuf.h"
-#include "ssherr.h"
+#અન્તર્ભાવ "sshbuf.h"
+#અન્તર્ભાવ "ssherr.h"
 #define SSHKEY_INTERNAL
-#include "sshkey.h"
+#અન્તર્ભાવ "sshkey.h"
 
-int
+પૂર્ણાંક
 sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 {
-	int nids[] = {
+	પૂર્ણાંક nids[] = {
 		NID_X9_62_prime256v1,
 		NID_secp384r1,
 		NID_secp521r1,
 		-1
 	};
-	int nid = -1;
+	પૂર્ણાંક nid = -1;
 	u_int i;
-	const EC_GROUP *g;
-	EC_KEY *ec = NULL;
-	EC_GROUP *eg = NULL;
+	અચલ EC_GROUP *g;
+	EC_ચાવી *ec = ખાલી;
+	EC_GROUP *eg = ખાલી;
 
-	if ((ec = EVP_PKEY_get1_EC_KEY(k)) == NULL ||
-	    (g = EC_KEY_get0_group(ec)) == NULL)
-		goto out;
+	જો ((ec = EVP_PKEY_get1_EC_ચાવી(k)) == ખાલી ||
+	    (g = EC_ચાવી_get0_group(ec)) == ખાલી)
+		જાઓ out;
 	/*
 	 * The group may be stored in a ASN.1 encoded private key in one of two
 	 * ways: as a "named group", which is reconstituted by ASN.1 object ID
@@ -69,413 +69,413 @@ sshkey_ecdsa_fixup_group(EVP_PKEY *k)
 	 * it out for the other case by comparing against all the groups that
 	 * are supported.
 	 */
-	if ((nid = EC_GROUP_get_curve_name(g)) > 0)
-		goto out;
+	જો ((nid = EC_GROUP_get_curve_name(g)) > 0)
+		જાઓ out;
 	nid = -1;
-	for (i = 0; nids[i] != -1; i++) {
-		if ((eg = EC_GROUP_new_by_curve_name(nids[i])) == NULL)
-			goto out;
-		if (EC_GROUP_cmp(g, eg, NULL) == 0)
-			break;
+	માટે (i = 0; nids[i] != -1; i++) {
+		જો ((eg = EC_GROUP_new_by_curve_name(nids[i])) == ખાલી)
+			જાઓ out;
+		જો (EC_GROUP_cmp(g, eg, ખાલી) == 0)
+			તોડો;
 		EC_GROUP_free(eg);
-		eg = NULL;
+		eg = ખાલી;
 	}
-	if (nids[i] == -1)
-		goto out;
+	જો (nids[i] == -1)
+		જાઓ out;
 
 	/* Use the group with the NID attached */
 	EC_GROUP_set_asn1_flag(eg, OPENSSL_EC_NAMED_CURVE);
-	if (EC_KEY_set_group(ec, eg) != 1 ||
-	    EVP_PKEY_set1_EC_KEY(k, ec) != 1)
-		goto out;
+	જો (EC_ચાવી_set_group(ec, eg) != 1 ||
+	    EVP_PKEY_set1_EC_ચાવી(k, ec) != 1)
+		જાઓ out;
 	/* success */
 	nid = nids[i];
  out:
-	EC_KEY_free(ec);
+	EC_ચાવી_free(ec);
 	EC_GROUP_free(eg);
-	return nid;
+	પાછા nid;
 }
 
-static u_int
-ssh_ecdsa_size(const struct sshkey *key)
+સ્થિર u_int
+ssh_ecdsa_size(અચલ સંરચના sshkey *ચાવી)
 {
-	switch (key->ecdsa_nid) {
-	case NID_X9_62_prime256v1:
-		return 256;
-	case NID_secp384r1:
-		return 384;
-	case NID_secp521r1:
-		return 521;
-	default:
-		return 0;
+	પસંદગી (ચાવી->ecdsa_nid) {
+	સ્થિતિ NID_X9_62_prime256v1:
+		પાછા 256;
+	સ્થિતિ NID_secp384r1:
+		પાછા 384;
+	સ્થિતિ NID_secp521r1:
+		પાછા 521;
+	મૂળભૂત:
+		પાછા 0;
 	}
 }
 
-static void
-ssh_ecdsa_cleanup(struct sshkey *k)
+સ્થિર શૂન્ય
+ssh_ecdsa_cleanup(સંરચના sshkey *k)
 {
 	EVP_PKEY_free(k->pkey);
-	k->pkey = NULL;
+	k->pkey = ખાલી;
 }
 
-static int
-ssh_ecdsa_equal(const struct sshkey *a, const struct sshkey *b)
+સ્થિર પૂર્ણાંક
+ssh_ecdsa_equal(અચલ સંરચના sshkey *a, અચલ સંરચના sshkey *b)
 {
-	if (a->pkey == NULL || b->pkey == NULL)
-		return 0;
-	return EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
+	જો (a->pkey == ખાલી || b->pkey == ખાલી)
+		પાછા 0;
+	પાછા EVP_PKEY_cmp(a->pkey, b->pkey) == 1;
 }
 
-static int
-ssh_ecdsa_serialize_public(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+સ્થિર પૂર્ણાંક
+ssh_ecdsa_serialize_public(અચલ સંરચના sshkey *ચાવી, સંરચના sshbuf *b,
+    ગણના sshkey_serialize_rep opts)
 {
-	int r;
+	પૂર્ણાંક r;
 
-	if (key->pkey == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_put_cstring(b,
-	    sshkey_curve_nid_to_name(key->ecdsa_nid))) != 0 ||
-	    (r = sshbuf_put_ec_pkey(b, key->pkey)) != 0)
-		return r;
+	જો (ચાવી->pkey == ખાલી)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
+	જો ((r = sshbuf_put_cstring(b,
+	    sshkey_curve_nid_to_name(ચાવી->ecdsa_nid))) != 0 ||
+	    (r = sshbuf_put_ec_pkey(b, ચાવી->pkey)) != 0)
+		પાછા r;
 
-	return 0;
+	પાછા 0;
 }
 
-static int
-ssh_ecdsa_serialize_private(const struct sshkey *key, struct sshbuf *b,
-    enum sshkey_serialize_rep opts)
+સ્થિર પૂર્ણાંક
+ssh_ecdsa_serialize_private(અચલ સંરચના sshkey *ચાવી, સંરચના sshbuf *b,
+    ગણના sshkey_serialize_rep opts)
 {
-	int r;
+	પૂર્ણાંક r;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_serialize_public(key, b, opts)) != 0)
-			return r;
+	જો (!sshkey_is_cert(ચાવી)) {
+		જો ((r = ssh_ecdsa_serialize_public(ચાવી, b, opts)) != 0)
+			પાછા r;
 	}
-	if ((r = sshbuf_put_bignum2(b,
-	    EC_KEY_get0_private_key(EVP_PKEY_get0_EC_KEY(key->pkey)))) != 0)
-		return r;
-	return 0;
+	જો ((r = sshbuf_put_bignum2(b,
+	    EC_ચાવી_get0_private_ચાવી(EVP_PKEY_get0_EC_ચાવી(ચાવી->pkey)))) != 0)
+		પાછા r;
+	પાછા 0;
 }
 
-static int
-ssh_ecdsa_generate(struct sshkey *k, int bits)
+સ્થિર પૂર્ણાંક
+ssh_ecdsa_generate(સંરચના sshkey *k, પૂર્ણાંક bits)
 {
-	EVP_PKEY *res = NULL;
-	EVP_PKEY_CTX *ctx = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	EVP_PKEY *res = ખાલી;
+	EVP_PKEY_CTX *ctx = ખાલી;
+	પૂર્ણાંક ret = SSH_ERR_INTERNAL_ERROR;
 
-	if ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
-		return SSH_ERR_KEY_LENGTH;
+	જો ((k->ecdsa_nid = sshkey_ecdsa_bits_to_nid(bits)) == -1)
+		પાછા SSH_ERR_ચાવી_LENGTH;
 
-	if ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
+	જો ((ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, ખાલી)) == ખાલી)
+		પાછા SSH_ERR_ALLOC_FAIL;
 
-	if (EVP_PKEY_keygen_init(ctx) <= 0 ||
+	જો (EVP_PKEY_keygen_init(ctx) <= 0 ||
 	    EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, k->ecdsa_nid) <= 0 ||
 	    EVP_PKEY_keygen(ctx, &res) <= 0) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
 	/* success */
 	k->pkey = res;
-	res = NULL;
+	res = ખાલી;
 	ret = 0;
  out:
 	EVP_PKEY_free(res);
 	EVP_PKEY_CTX_free(ctx);
-	return ret;
+	પાછા ret;
 }
 
-static int
-ssh_ecdsa_copy_public(const struct sshkey *from, struct sshkey *to)
+સ્થિર પૂર્ણાંક
+ssh_ecdsa_copy_public(અચલ સંરચના sshkey *from, સંરચના sshkey *to)
 {
-	const EC_KEY *ec_from;
-	EC_KEY *ec_to = NULL;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	અચલ EC_ચાવી *ec_from;
+	EC_ચાવી *ec_to = ખાલી;
+	પૂર્ણાંક ret = SSH_ERR_INTERNAL_ERROR;
 
-	ec_from = EVP_PKEY_get0_EC_KEY(from->pkey);
-	if (ec_from == NULL)
-		return SSH_ERR_LIBCRYPTO_ERROR;
+	ec_from = EVP_PKEY_get0_EC_ચાવી(from->pkey);
+	જો (ec_from == ખાલી)
+		પાછા SSH_ERR_LIBCRYPTO_ERROR;
 
 	to->ecdsa_nid = from->ecdsa_nid;
-	if ((ec_to = EC_KEY_new_by_curve_name(from->ecdsa_nid)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (EC_KEY_set_public_key(ec_to,
-	    EC_KEY_get0_public_key(ec_from)) != 1) {
+	જો ((ec_to = EC_ચાવી_new_by_curve_name(from->ecdsa_nid)) == ખાલી)
+		પાછા SSH_ERR_ALLOC_FAIL;
+	જો (EC_ચાવી_set_public_ચાવી(ec_to,
+	    EC_ચાવી_get0_public_ચાવી(ec_from)) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
 	EVP_PKEY_free(to->pkey);
-	if ((to->pkey = EVP_PKEY_new()) == NULL) {
+	જો ((to->pkey = EVP_PKEY_new()) == ખાલી) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		જાઓ out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(to->pkey, ec_to) != 1) {
+	જો (EVP_PKEY_set1_EC_ચાવી(to->pkey, ec_to) != 1) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
 	ret = 0;
  out:
-	EC_KEY_free(ec_to);
-	return ret;
+	EC_ચાવી_free(ec_to);
+	પાછા ret;
 }
 
-static int
-ssh_ecdsa_deserialize_public(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+સ્થિર પૂર્ણાંક
+ssh_ecdsa_deserialize_public(અચલ અક્ષર *ktype, સંરચના sshbuf *b,
+    સંરચના sshkey *ચાવી)
 {
-	int r;
-	char *curve = NULL;
-	EVP_PKEY *pkey = NULL;
-	EC_KEY *ec = NULL;
+	પૂર્ણાંક r;
+	અક્ષર *curve = ખાલી;
+	EVP_PKEY *pkey = ખાલી;
+	EC_ચાવી *ec = ખાલી;
 
-	if ((key->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if ((r = sshbuf_get_cstring(b, &curve, NULL)) != 0)
-		goto out;
-	if (key->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
+	જો ((ચાવી->ecdsa_nid = sshkey_ecdsa_nid_from_name(ktype)) == -1)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
+	જો ((r = sshbuf_get_cstring(b, &curve, ખાલી)) != 0)
+		જાઓ out;
+	જો (ચાવી->ecdsa_nid != sshkey_curve_name_to_nid(curve)) {
 		r = SSH_ERR_EC_CURVE_MISMATCH;
-		goto out;
+		જાઓ out;
 	}
-	if ((ec = EC_KEY_new_by_curve_name(key->ecdsa_nid)) == NULL) {
+	જો ((ec = EC_ચાવી_new_by_curve_name(ચાવી->ecdsa_nid)) == ખાલી) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
-	if ((r = sshbuf_get_eckey(b, ec)) != 0)
-		goto out;
-	if (sshkey_ec_validate_public(EC_KEY_get0_group(ec),
-	    EC_KEY_get0_public_key(ec)) != 0) {
-		r = SSH_ERR_KEY_INVALID_EC_VALUE;
-		goto out;
+	જો ((r = sshbuf_get_eckey(b, ec)) != 0)
+		જાઓ out;
+	જો (sshkey_ec_validate_public(EC_ચાવી_get0_group(ec),
+	    EC_ચાવી_get0_public_ચાવી(ec)) != 0) {
+		r = SSH_ERR_ચાવી_INVALID_EC_કિંમત;
+		જાઓ out;
 	}
-	if ((pkey = EVP_PKEY_new()) == NULL) {
+	જો ((pkey = EVP_PKEY_new()) == ખાલી) {
 		r = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		જાઓ out;
 	}
-	if (EVP_PKEY_set1_EC_KEY(pkey, ec) != 1) {
+	જો (EVP_PKEY_set1_EC_ચાવી(pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
-	EVP_PKEY_free(key->pkey);
-	key->pkey = pkey;
-	pkey = NULL;
+	EVP_PKEY_free(ચાવી->pkey);
+	ચાવી->pkey = pkey;
+	pkey = ખાલી;
 	/* success */
 	r = 0;
 #ifdef DEBUG_PK
 	sshkey_dump_ec_point(
-	    EC_KEY_get0_group(EVP_PKEY_get0_EC_KEY(key->pkey)),
-	    EC_KEY_get0_public_key(EVP_PKEY_get0_EC_KEY(key->pkey)));
+	    EC_ચાવી_get0_group(EVP_PKEY_get0_EC_ચાવી(ચાવી->pkey)),
+	    EC_ચાવી_get0_public_ચાવી(EVP_PKEY_get0_EC_ચાવી(ચાવી->pkey)));
 #endif
  out:
-	EC_KEY_free(ec);
+	EC_ચાવી_free(ec);
 	EVP_PKEY_free(pkey);
-	free(curve);
-	return r;
+	મુક્ત(curve);
+	પાછા r;
 }
 
-static int
-ssh_ecdsa_deserialize_private(const char *ktype, struct sshbuf *b,
-    struct sshkey *key)
+સ્થિર પૂર્ણાંક
+ssh_ecdsa_deserialize_private(અચલ અક્ષર *ktype, સંરચના sshbuf *b,
+    સંરચના sshkey *ચાવી)
 {
-	int r;
-	BIGNUM *exponent = NULL;
-	EC_KEY *ec = NULL;
+	પૂર્ણાંક r;
+	BIGNUM *exponent = ખાલી;
+	EC_ચાવી *ec = ખાલી;
 
-	if (!sshkey_is_cert(key)) {
-		if ((r = ssh_ecdsa_deserialize_public(ktype, b, key)) != 0)
-			return r;
+	જો (!sshkey_is_cert(ચાવી)) {
+		જો ((r = ssh_ecdsa_deserialize_public(ktype, b, ચાવી)) != 0)
+			પાછા r;
 	}
-	if ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
-		goto out;
-	if ((ec = EVP_PKEY_get1_EC_KEY(key->pkey)) == NULL) {
+	જો ((r = sshbuf_get_bignum2(b, &exponent)) != 0)
+		જાઓ out;
+	જો ((ec = EVP_PKEY_get1_EC_ચાવી(ચાવી->pkey)) == ખાલી) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
-	if (EC_KEY_set_private_key(ec, exponent) != 1) {
+	જો (EC_ચાવી_set_private_ચાવી(ec, exponent) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
-	if ((r = sshkey_ec_validate_private(ec)) != 0)
-		goto out;
-	if (EVP_PKEY_set1_EC_KEY(key->pkey, ec) != 1) {
+	જો ((r = sshkey_ec_validate_private(ec)) != 0)
+		જાઓ out;
+	જો (EVP_PKEY_set1_EC_ચાવી(ચાવી->pkey, ec) != 1) {
 		r = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
 	/* success */
 	r = 0;
  out:
 	BN_clear_free(exponent);
-	EC_KEY_free(ec);
-	return r;
+	EC_ચાવી_free(ec);
+	પાછા r;
 }
 
-static int
-ssh_ecdsa_sign(struct sshkey *key,
+સ્થિર પૂર્ણાંક
+ssh_ecdsa_sign(સંરચના sshkey *ચાવી,
     u_char **sigp, size_t *lenp,
-    const u_char *data, size_t dlen,
-    const char *alg, const char *sk_provider, const char *sk_pin, u_int compat)
+    અચલ u_char *data, size_t dlen,
+    અચલ અક્ષર *alg, અચલ અક્ષર *sk_provider, અચલ અક્ષર *sk_pin, u_int compat)
 {
-	ECDSA_SIG *esig = NULL;
-	unsigned char *sigb = NULL;
-	const unsigned char *psig;
-	const BIGNUM *sig_r, *sig_s;
-	int hash_alg;
+	ECDSA_SIG *esig = ખાલી;
+	unsigned અક્ષર *sigb = ખાલી;
+	અચલ unsigned અક્ષર *psig;
+	અચલ BIGNUM *sig_r, *sig_s;
+	પૂર્ણાંક hash_alg;
 	size_t slen = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
+	પૂર્ણાંક ret = SSH_ERR_INTERNAL_ERROR;
 
-	if (lenp != NULL)
+	જો (lenp != ખાલી)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	જો (sigp != ખાલી)
+		*sigp = ખાલી;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA)
-		return SSH_ERR_INVALID_ARGUMENT;
+	જો (ચાવી == ખાલી || ચાવી->pkey == ખાલી ||
+	    sshkey_type_plain(ચાવી->type) != ચાવી_ECDSA)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	જો ((hash_alg = sshkey_ec_nid_to_hash_alg(ચાવી->ecdsa_nid)) == -1)
+		પાછા SSH_ERR_INTERNAL_ERROR;
 
-	if ((ret = sshkey_pkey_digest_sign(key->pkey, hash_alg, &sigb, &slen,
+	જો ((ret = sshkey_pkey_digest_sign(ચાવી->pkey, hash_alg, &sigb, &slen,
 	    data, dlen)) != 0)
-		goto out;
+		જાઓ out;
 
 	psig = sigb;
-	if ((esig = d2i_ECDSA_SIG(NULL, &psig, slen)) == NULL) {
+	જો ((esig = d2i_ECDSA_SIG(ખાલી, &psig, slen)) == ખાલી) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
 	ECDSA_SIG_get0(esig, &sig_r, &sig_s);
 
-	if ((ret = ssh_ecdsa_encode_store_sig(key, sig_r, sig_s,
+	જો ((ret = ssh_ecdsa_encode_store_sig(ચાવી, sig_r, sig_s,
 	    sigp, lenp)) != 0)
-		goto out;
+		જાઓ out;
 	/* success */
 	ret = 0;
  out:
 	freezero(sigb, slen);
 	ECDSA_SIG_free(esig);
-	return ret;
+	પાછા ret;
 }
 
-int
-ssh_ecdsa_encode_store_sig(const struct sshkey *key,
-    const BIGNUM *sig_r, const BIGNUM *sig_s,
+પૂર્ણાંક
+ssh_ecdsa_encode_store_sig(અચલ સંરચના sshkey *ચાવી,
+    અચલ BIGNUM *sig_r, અચલ BIGNUM *sig_s,
     u_char **sigp, size_t *lenp)
 {
-	struct sshbuf *b = NULL, *bb = NULL;
-	int ret;
+	સંરચના sshbuf *b = ખાલી, *bb = ખાલી;
+	પૂર્ણાંક ret;
 	size_t len;
 
-	if (lenp != NULL)
+	જો (lenp != ખાલી)
 		*lenp = 0;
-	if (sigp != NULL)
-		*sigp = NULL;
+	જો (sigp != ખાલી)
+		*sigp = ખાલી;
 
-	if ((bb = sshbuf_new()) == NULL || (b = sshbuf_new()) == NULL) {
+	જો ((bb = sshbuf_new()) == ખાલી || (b = sshbuf_new()) == ખાલી) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		જાઓ out;
 	}
-	if ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
+	જો ((ret = sshbuf_put_bignum2(bb, sig_r)) != 0 ||
 	    (ret = sshbuf_put_bignum2(bb, sig_s)) != 0)
-		goto out;
-	if ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(key))) != 0 ||
+		જાઓ out;
+	જો ((ret = sshbuf_put_cstring(b, sshkey_ssh_name_plain(ચાવી))) != 0 ||
 	    (ret = sshbuf_put_stringb(b, bb)) != 0)
-		goto out;
+		જાઓ out;
 	len = sshbuf_len(b);
-	if (sigp != NULL) {
-		if ((*sigp = malloc(len)) == NULL) {
+	જો (sigp != ખાલી) {
+		જો ((*sigp = malloc(len)) == ખાલી) {
 			ret = SSH_ERR_ALLOC_FAIL;
-			goto out;
+			જાઓ out;
 		}
 		memcpy(*sigp, sshbuf_ptr(b), len);
 	}
-	if (lenp != NULL)
+	જો (lenp != ખાલી)
 		*lenp = len;
 	ret = 0;
  out:
 	sshbuf_free(b);
 	sshbuf_free(bb);
-	return ret;
+	પાછા ret;
 }
 
-static int
-ssh_ecdsa_verify(const struct sshkey *key,
-    const u_char *sig, size_t siglen,
-    const u_char *data, size_t dlen, const char *alg, u_int compat,
-    struct sshkey_sig_details **detailsp)
+સ્થિર પૂર્ણાંક
+ssh_ecdsa_verify(અચલ સંરચના sshkey *ચાવી,
+    અચલ u_char *sig, size_t siglen,
+    અચલ u_char *data, size_t dlen, અચલ અક્ષર *alg, u_int compat,
+    સંરચના sshkey_sig_details **detailsp)
 {
-	ECDSA_SIG *esig = NULL;
-	BIGNUM *sig_r = NULL, *sig_s = NULL;
-	int hash_alg, len = 0;
-	int ret = SSH_ERR_INTERNAL_ERROR;
-	struct sshbuf *b = NULL, *sigbuf = NULL;
-	char *ktype = NULL;
-	unsigned char *sigb = NULL, *cp;
+	ECDSA_SIG *esig = ખાલી;
+	BIGNUM *sig_r = ખાલી, *sig_s = ખાલી;
+	પૂર્ણાંક hash_alg, len = 0;
+	પૂર્ણાંક ret = SSH_ERR_INTERNAL_ERROR;
+	સંરચના sshbuf *b = ખાલી, *sigbuf = ખાલી;
+	અક્ષર *ktype = ખાલી;
+	unsigned અક્ષર *sigb = ખાલી, *cp;
 
-	if (key == NULL || key->pkey == NULL ||
-	    sshkey_type_plain(key->type) != KEY_ECDSA ||
-	    sig == NULL || siglen == 0)
-		return SSH_ERR_INVALID_ARGUMENT;
+	જો (ચાવી == ખાલી || ચાવી->pkey == ખાલી ||
+	    sshkey_type_plain(ચાવી->type) != ચાવી_ECDSA ||
+	    sig == ખાલી || siglen == 0)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
 
-	if ((hash_alg = sshkey_ec_nid_to_hash_alg(key->ecdsa_nid)) == -1)
-		return SSH_ERR_INTERNAL_ERROR;
+	જો ((hash_alg = sshkey_ec_nid_to_hash_alg(ચાવી->ecdsa_nid)) == -1)
+		પાછા SSH_ERR_INTERNAL_ERROR;
 
 	/* fetch signature */
-	if ((b = sshbuf_from(sig, siglen)) == NULL)
-		return SSH_ERR_ALLOC_FAIL;
-	if (sshbuf_get_cstring(b, &ktype, NULL) != 0 ||
+	જો ((b = sshbuf_from(sig, siglen)) == ખાલી)
+		પાછા SSH_ERR_ALLOC_FAIL;
+	જો (sshbuf_get_cstring(b, &ktype, ખાલી) != 0 ||
 	    sshbuf_froms(b, &sigbuf) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
-	if (strcmp(sshkey_ssh_name_plain(key), ktype) != 0) {
-		ret = SSH_ERR_KEY_TYPE_MISMATCH;
-		goto out;
+	જો (strcmp(sshkey_ssh_name_plain(ચાવી), ktype) != 0) {
+		ret = SSH_ERR_ચાવી_TYPE_MISMATCH;
+		જાઓ out;
 	}
-	if (sshbuf_len(b) != 0) {
+	જો (sshbuf_len(b) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		જાઓ out;
 	}
 
 	/* parse signature */
-	if (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
+	જો (sshbuf_get_bignum2(sigbuf, &sig_r) != 0 ||
 	    sshbuf_get_bignum2(sigbuf, &sig_s) != 0) {
 		ret = SSH_ERR_INVALID_FORMAT;
-		goto out;
+		જાઓ out;
 	}
-	if (sshbuf_len(sigbuf) != 0) {
+	જો (sshbuf_len(sigbuf) != 0) {
 		ret = SSH_ERR_UNEXPECTED_TRAILING_DATA;
-		goto out;
+		જાઓ out;
 	}
 
-	if ((esig = ECDSA_SIG_new()) == NULL) {
+	જો ((esig = ECDSA_SIG_new()) == ખાલી) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		જાઓ out;
 	}
-	if (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
+	જો (!ECDSA_SIG_set0(esig, sig_r, sig_s)) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
-	sig_r = sig_s = NULL; /* transferred */
+	sig_r = sig_s = ખાલી; /* transferred */
 
-	if ((len = i2d_ECDSA_SIG(esig, NULL)) <= 0) {
+	જો ((len = i2d_ECDSA_SIG(esig, ખાલી)) <= 0) {
 		len = 0;
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
-	if ((sigb = calloc(1, len)) == NULL) {
+	જો ((sigb = calloc(1, len)) == ખાલી) {
 		ret = SSH_ERR_ALLOC_FAIL;
-		goto out;
+		જાઓ out;
 	}
 	cp = sigb; /* ASN1_item_i2d increments the pointer past the object */
-	if (i2d_ECDSA_SIG(esig, &cp) != len) {
+	જો (i2d_ECDSA_SIG(esig, &cp) != len) {
 		ret = SSH_ERR_LIBCRYPTO_ERROR;
-		goto out;
+		જાઓ out;
 	}
-	if ((ret = sshkey_pkey_digest_verify(key->pkey, hash_alg,
+	જો ((ret = sshkey_pkey_digest_verify(ચાવી->pkey, hash_alg,
 	    data, dlen, sigb, len)) != 0)
-		goto out;
+		જાઓ out;
 	/* success */
  out:
 	freezero(sigb, len);
@@ -484,14 +484,14 @@ ssh_ecdsa_verify(const struct sshkey *key,
 	ECDSA_SIG_free(esig);
 	BN_clear_free(sig_r);
 	BN_clear_free(sig_s);
-	free(ktype);
-	return ret;
+	મુક્ત(ktype);
+	પાછા ret;
 }
 
 /* NB. not static; used by ECDSA-SK */
-const struct sshkey_impl_funcs sshkey_ecdsa_funcs = {
+અચલ સંરચના sshkey_impl_funcs sshkey_ecdsa_funcs = {
 	/* .size = */		ssh_ecdsa_size,
-	/* .alloc = */		NULL,
+	/* .alloc = */		ખાલી,
 	/* .cleanup = */	ssh_ecdsa_cleanup,
 	/* .equal = */		ssh_ecdsa_equal,
 	/* .ssh_serialize_public = */ ssh_ecdsa_serialize_public,
@@ -504,11 +504,11 @@ const struct sshkey_impl_funcs sshkey_ecdsa_funcs = {
 	/* .verify = */		ssh_ecdsa_verify,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp256_impl = {
+અચલ સંરચના sshkey_impl sshkey_ecdsa_nistp256_impl = {
 	/* .name = */		"ecdsa-sha2-nistp256",
 	/* .shortname = */	"ECDSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .sigalg = */		ખાલી,
+	/* .type = */		ચાવી_ECDSA,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -516,11 +516,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp256_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
+અચલ સંરચના sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp256-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .sigalg = */		ખાલી,
+	/* .type = */		ચાવી_ECDSA_CERT,
 	/* .nid = */		NID_X9_62_prime256v1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -528,11 +528,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp256_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp384_impl = {
+અચલ સંરચના sshkey_impl sshkey_ecdsa_nistp384_impl = {
 	/* .name = */		"ecdsa-sha2-nistp384",
 	/* .shortname = */	"ECDSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .sigalg = */		ખાલી,
+	/* .type = */		ચાવી_ECDSA,
 	/* .nid = */		NID_secp384r1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -540,11 +540,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp384_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
+અચલ સંરચના sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp384-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .sigalg = */		ખાલી,
+	/* .type = */		ચાવી_ECDSA_CERT,
 	/* .nid = */		NID_secp384r1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,
@@ -552,11 +552,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp384_cert_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp521_impl = {
+અચલ સંરચના sshkey_impl sshkey_ecdsa_nistp521_impl = {
 	/* .name = */		"ecdsa-sha2-nistp521",
 	/* .shortname = */	"ECDSA",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA,
+	/* .sigalg = */		ખાલી,
+	/* .type = */		ચાવી_ECDSA,
 	/* .nid = */		NID_secp521r1,
 	/* .cert = */		0,
 	/* .sigonly = */	0,
@@ -564,11 +564,11 @@ const struct sshkey_impl sshkey_ecdsa_nistp521_impl = {
 	/* .funcs = */		&sshkey_ecdsa_funcs,
 };
 
-const struct sshkey_impl sshkey_ecdsa_nistp521_cert_impl = {
+અચલ સંરચના sshkey_impl sshkey_ecdsa_nistp521_cert_impl = {
 	/* .name = */		"ecdsa-sha2-nistp521-cert-v01@openssh.com",
 	/* .shortname = */	"ECDSA-CERT",
-	/* .sigalg = */		NULL,
-	/* .type = */		KEY_ECDSA_CERT,
+	/* .sigalg = */		ખાલી,
+	/* .type = */		ચાવી_ECDSA_CERT,
 	/* .nid = */		NID_secp521r1,
 	/* .cert = */		1,
 	/* .sigonly = */	0,

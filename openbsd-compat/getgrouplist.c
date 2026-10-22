@@ -30,25 +30,25 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/getgrouplist.c */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
 #ifndef HAVE_GETGROUPLIST
 
 /*
  * get credential
  */
-#include <sys/types.h>
-#include <string.h>
-#include <unistd.h>
-#include <grp.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <grp.h>
 
-int
-getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
+પૂર્ણાંક
+getgrouplist(અચલ અક્ષર *uname, gid_t agroup, gid_t *groups, પૂર્ણાંક *grpcnt)
 {
-	struct group *grp;
-	int i, ngroups;
-	int ret, maxgroups;
-	int bail;
+	સંરચના group *grp;
+	પૂર્ણાંક i, ngroups;
+	પૂર્ણાંક ret, maxgroups;
+	પૂર્ણાંક bail;
 
 	ret = 0;
 	ngroups = 0;
@@ -57,9 +57,9 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	/*
 	 * install primary group
 	 */
-	if (ngroups >= maxgroups) {
+	જો (ngroups >= maxgroups) {
 		*grpcnt = ngroups;
-		return (-1);
+		પાછા (-1);
 	}
 	groups[ngroups++] = agroup;
 
@@ -67,29 +67,29 @@ getgrouplist(const char *uname, gid_t agroup, gid_t *groups, int *grpcnt)
 	 * Scan the group file to find additional groups.
 	 */
 	setgrent();
-	while ((grp = getgrent())) {
-		if (grp->gr_gid == agroup)
-			continue;
-		for (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
-			if (groups[i] == grp->gr_gid)
+	જ્યારે ((grp = getgrent())) {
+		જો (grp->gr_gid == agroup)
+			ચાલુ;
+		માટે (bail = 0, i = 0; bail == 0 && i < ngroups; i++)
+			જો (groups[i] == grp->gr_gid)
 				bail = 1;
-		if (bail)
-			continue;
-		for (i = 0; grp->gr_mem[i]; i++) {
-			if (!strcmp(grp->gr_mem[i], uname)) {
-				if (ngroups >= maxgroups) {
+		જો (bail)
+			ચાલુ;
+		માટે (i = 0; grp->gr_mem[i]; i++) {
+			જો (!strcmp(grp->gr_mem[i], uname)) {
+				જો (ngroups >= maxgroups) {
 					ret = -1;
-					goto out;
+					જાઓ out;
 				}
 				groups[ngroups++] = grp->gr_gid;
-				break;
+				તોડો;
 			}
 		}
 	}
 out:
 	endgrent();
 	*grpcnt = ngroups;
-	return (ret);
+	પાછા (ret);
 }
 
 #endif /* HAVE_GETGROUPLIST */

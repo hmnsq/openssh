@@ -26,144 +26,144 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/uio.h>
+#અન્તર્ભાવ <sys/uio.h>
 
-#include <errno.h>
-#include <poll.h>
-#include <string.h>
-#include <unistd.h>
-#include <limits.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <poll.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <limits.h>
 
-#include "atomicio.h"
+#અન્તર્ભાવ "atomicio.h"
 
 /*
  * ensure all of data on socket comes through. f==read || f==vwrite
  */
 size_t
-atomicio6(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomicio6(ssize_t (*f) (પૂર્ણાંક, શૂન્ય *, size_t), પૂર્ણાંક fd, શૂન્ય *_s, size_t n,
+    પૂર્ણાંક (*cb)(શૂન્ય *, size_t), શૂન્ય *cb_arg)
 {
-	char *s = _s;
+	અક્ષર *s = _s;
 	size_t pos = 0;
 	ssize_t res;
-	struct pollfd pfd;
+	સંરચના pollfd pfd;
 
 	pfd.fd = fd;
-	pfd.events = f == read ? POLLIN : POLLOUT;
-	while (n > pos) {
+	pfd.events = f == પઠ ? POLLIN : POLLOUT;
+	જ્યારે (n > pos) {
 		res = (f) (fd, s + pos, n - pos);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		પસંદગી (res) {
+		સ્થિતિ -1:
+			જો (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				જો (cb != ખાલી && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					પાછા pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				ચાલુ;
+			} નહીંતર જો (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(શૂન્ય)poll(&pfd, 1, -1);
+				ચાલુ;
 			}
-			return 0;
-		case 0:
+			પાછા 0;
+		સ્થિતિ 0:
 			errno = EPIPE;
-			return pos;
-		default:
+			પાછા pos;
+		મૂળભૂત:
 			pos += (size_t)res;
-			if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+			જો (cb != ખાલી && cb(cb_arg, (size_t)res) == -1) {
 				errno = EINTR;
-				return pos;
+				પાછા pos;
 			}
 		}
 	}
-	return pos;
+	પાછા pos;
 }
 
 size_t
-atomicio(ssize_t (*f) (int, void *, size_t), int fd, void *_s, size_t n)
+atomicio(ssize_t (*f) (પૂર્ણાંક, શૂન્ય *, size_t), પૂર્ણાંક fd, શૂન્ય *_s, size_t n)
 {
-	return atomicio6(f, fd, _s, n, NULL, NULL);
+	પાછા atomicio6(f, fd, _s, n, ખાલી, ખાલી);
 }
 
 /*
  * ensure all of data on socket comes through. f==readv || f==writev
  */
 size_t
-atomiciov6(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt,
-    int (*cb)(void *, size_t), void *cb_arg)
+atomiciov6(ssize_t (*f) (પૂર્ણાંક, અચલ સંરચના iovec *, પૂર્ણાંક), પૂર્ણાંક fd,
+    અચલ સંરચના iovec *_iov, પૂર્ણાંક iovcnt,
+    પૂર્ણાંક (*cb)(શૂન્ય *, size_t), શૂન્ય *cb_arg)
 {
 	size_t pos = 0, rem;
 	ssize_t res;
-	struct iovec iov_array[IOV_MAX], *iov = iov_array;
-	struct pollfd pfd;
+	સંરચના iovec iov_array[IOV_MAX], *iov = iov_array;
+	સંરચના pollfd pfd;
 
-	if (iovcnt < 0 || iovcnt > IOV_MAX) {
+	જો (iovcnt < 0 || iovcnt > IOV_MAX) {
 		errno = EINVAL;
-		return 0;
+		પાછા 0;
 	}
 	/* Make a copy of the iov array because we may modify it below */
-	memcpy(iov, _iov, (size_t)iovcnt * sizeof(*_iov));
+	memcpy(iov, _iov, (size_t)iovcnt * કદ(*_iov));
 
 	pfd.fd = fd;
 #ifndef BROKEN_READV_COMPARISON
 	pfd.events = f == readv ? POLLIN : POLLOUT;
-#else
+#નહીંતર
 	pfd.events = POLLIN|POLLOUT;
 #endif
-	for (; iovcnt > 0 && iov[0].iov_len > 0;) {
+	માટે (; iovcnt > 0 && iov[0].iov_len > 0;) {
 		res = (f) (fd, iov, iovcnt);
-		switch (res) {
-		case -1:
-			if (errno == EINTR) {
+		પસંદગી (res) {
+		સ્થિતિ -1:
+			જો (errno == EINTR) {
 				/* possible SIGALARM, update callback */
-				if (cb != NULL && cb(cb_arg, 0) == -1) {
+				જો (cb != ખાલી && cb(cb_arg, 0) == -1) {
 					errno = EINTR;
-					return pos;
+					પાછા pos;
 				}
-				continue;
-			} else if (errno == EAGAIN || errno == EWOULDBLOCK) {
-				(void)poll(&pfd, 1, -1);
-				continue;
+				ચાલુ;
+			} નહીંતર જો (errno == EAGAIN || errno == EWOULDBLOCK) {
+				(શૂન્ય)poll(&pfd, 1, -1);
+				ચાલુ;
 			}
-			return 0;
-		case 0:
+			પાછા 0;
+		સ્થિતિ 0:
 			errno = EPIPE;
-			return pos;
-		default:
+			પાછા pos;
+		મૂળભૂત:
 			rem = (size_t)res;
 			pos += rem;
 			/* skip completed iov entries */
-			while (iovcnt > 0 && rem >= iov[0].iov_len) {
+			જ્યારે (iovcnt > 0 && rem >= iov[0].iov_len) {
 				rem -= iov[0].iov_len;
 				iov++;
 				iovcnt--;
 			}
 			/* This shouldn't happen... */
-			if (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
+			જો (rem > 0 && (iovcnt <= 0 || rem > iov[0].iov_len)) {
 				errno = EFAULT;
-				return 0;
+				પાછા 0;
 			}
-			if (iovcnt == 0)
-				break;
+			જો (iovcnt == 0)
+				તોડો;
 			/* update pointer in partially complete iov */
-			iov[0].iov_base = ((char *)iov[0].iov_base) + rem;
+			iov[0].iov_base = ((અક્ષર *)iov[0].iov_base) + rem;
 			iov[0].iov_len -= rem;
 		}
-		if (cb != NULL && cb(cb_arg, (size_t)res) == -1) {
+		જો (cb != ખાલી && cb(cb_arg, (size_t)res) == -1) {
 			errno = EINTR;
-			return pos;
+			પાછા pos;
 		}
 	}
-	return pos;
+	પાછા pos;
 }
 
 size_t
-atomiciov(ssize_t (*f) (int, const struct iovec *, int), int fd,
-    const struct iovec *_iov, int iovcnt)
+atomiciov(ssize_t (*f) (પૂર્ણાંક, અચલ સંરચના iovec *, પૂર્ણાંક), પૂર્ણાંક fd,
+    અચલ સંરચના iovec *_iov, પૂર્ણાંક iovcnt)
 {
-	return atomiciov6(f, fd, _iov, iovcnt, NULL, NULL);
+	પાછા atomiciov6(f, fd, _iov, iovcnt, ખાલી, ખાલી);
 }

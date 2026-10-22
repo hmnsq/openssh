@@ -24,204 +24,204 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
+#અન્તર્ભાવ <sys/types.h>
 
-#include <stdlib.h>
-#include <errno.h>
-#include <paths.h>
-#include <pwd.h>
-#include <glob.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
-#include <time.h>
-#include <unistd.h>
-#include <limits.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <paths.h>
+#અન્તર્ભાવ <pwd.h>
+#અન્તર્ભાવ <glob.h>
+#અન્તર્ભાવ <signal.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <time.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <limits.h>
 
-#include "xmalloc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "packet.h"
-#include "kex.h"
-#include "sshbuf.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "compat.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "pathnames.h"
-#include "uidswap.h"
-#include "auth-options.h"
-#include "canohost.h"
+#અન્તર્ભાવ "xmalloc.h"
+#અન્તર્ભાવ "ssh.h"
+#અન્તર્ભાવ "ssh2.h"
+#અન્તર્ભાવ "packet.h"
+#અન્તર્ભાવ "kex.h"
+#અન્તર્ભાવ "sshbuf.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "servconf.h"
+#અન્તર્ભાવ "compat.h"
+#અન્તર્ભાવ "sshkey.h"
+#અન્તર્ભાવ "hostfile.h"
+#અન્તર્ભાવ "auth.h"
+#અન્તર્ભાવ "pathnames.h"
+#અન્તર્ભાવ "uidswap.h"
+#અન્તર્ભાવ "auth-options.h"
+#અન્તર્ભાવ "canohost.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#અન્તર્ભાવ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
-#include "authfile.h"
-#include "match.h"
-#include "ssherr.h"
-#include "channels.h" /* XXX for session.h */
-#include "session.h" /* XXX for child_set_env(); refactor? */
-#include "sk-api.h"
+#અન્તર્ભાવ "monitor_wrap.h"
+#અન્તર્ભાવ "authfile.h"
+#અન્તર્ભાવ "match.h"
+#અન્તર્ભાવ "ssherr.h"
+#અન્તર્ભાવ "channels.h" /* XXX for session.h */
+#અન્તર્ભાવ "session.h" /* XXX for child_set_env(); refactor? */
+#અન્તર્ભાવ "sk-api.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_pubkey;
+બાહ્ય ServerOptions options;
+બાહ્ય સંરચના authmethod_cfg methodcfg_pubkey;
 
-static char *
-format_key(const struct sshkey *key)
+સ્થિર અક્ષર *
+format_ચાવી(અચલ સંરચના sshkey *ચાવી)
 {
-	char *ret, *fp = sshkey_fingerprint(key,
+	અક્ષર *ret, *fp = sshkey_fingerprint(ચાવી,
 	    options.fingerprint_hash, SSH_FP_DEFAULT);
 
-	xasprintf(&ret, "%s %s", sshkey_type(key), fp);
-	free(fp);
-	return ret;
+	xasprintf(&ret, "%s %s", sshkey_type(ચાવી), fp);
+	મુક્ત(fp);
+	પાછા ret;
 }
 
 /*
  * Verify that the hostkey in a publickey-hostbound-v00@openssh.com userauth
  * request matches the hostkey that was negotiated during initial KEX.
  */
-static void
-check_hostbound_hostkey(struct ssh *ssh)
+સ્થિર શૂન્ય
+check_hostbound_hostkey(સંરચના ssh *ssh)
 {
-	int r;
-	struct sshbuf *our_hostkey_blob, *their_hostkey_blob;
+	પૂર્ણાંક r;
+	સંરચના sshbuf *our_hostkey_blob, *their_hostkey_blob;
 
-	if (ssh->kex->initial_hostkey == NULL)
+	જો (ssh->kex->initial_hostkey == ખાલી)
 		fatal_f("internal error: initial hostkey not recorded");
-	if ((our_hostkey_blob = sshbuf_new()) == NULL)
+	જો ((our_hostkey_blob = sshbuf_new()) == ખાલી)
 		fatal_f("sshbuf_new failed");
-	if ((r = sshpkt_getb_froms(ssh, &their_hostkey_blob)) != 0)
+	જો ((r = sshpkt_getb_froms(ssh, &their_hostkey_blob)) != 0)
 		fatal_fr(r, "parse hostkey");
-	if ((r = sshkey_putb(ssh->kex->initial_hostkey, our_hostkey_blob)) != 0)
+	જો ((r = sshkey_putb(ssh->kex->initial_hostkey, our_hostkey_blob)) != 0)
 		fatal_fr(r, "serialise hostkey");
-	if ((r = sshbuf_equals(our_hostkey_blob, their_hostkey_blob)) != 0)
+	જો ((r = sshbuf_equals(our_hostkey_blob, their_hostkey_blob)) != 0)
 		fatal_f("packet contained wrong host key");
 	sshbuf_free(our_hostkey_blob);
 	sshbuf_free(their_hostkey_blob);
 }
 
-static int
-userauth_pubkey(struct ssh *ssh, const char *method)
+સ્થિર પૂર્ણાંક
+userauth_pubkey(સંરચના ssh *ssh, અચલ અક્ષર *method)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	struct sshbuf *keyblob = NULL, *b = NULL;
-	struct sshkey *key = NULL, *hostkey = NULL;
-	char *pkalg = NULL, *userstyle = NULL, *key_s = NULL, *ca_s = NULL;
-	char *keystring = NULL;
-	u_char *sig = NULL, have_sig;
+	સંરચના passwd *pw = authctxt->pw;
+	સંરચના sshbuf *keyblob = ખાલી, *b = ખાલી;
+	સંરચના sshkey *ચાવી = ખાલી, *hostkey = ખાલી;
+	અક્ષર *pkalg = ખાલી, *userstyle = ખાલી, *ચાવી_s = ખાલી, *ca_s = ખાલી;
+	અક્ષર *keystring = ખાલી;
+	u_char *sig = ખાલી, have_sig;
 	size_t slen;
-	int hostbound, r, pktype;
-	int req_presence = 0, req_verify = 0, authenticated = 0;
-	struct sshauthopt *authopts = NULL;
-	struct sshkey_sig_details *sig_details = NULL;
+	પૂર્ણાંક hostbound, r, pktype;
+	પૂર્ણાંક req_presence = 0, req_verify = 0, authenticated = 0;
+	સંરચના sshauthopt *authopts = ખાલી;
+	સંરચના sshkey_sig_details *sig_details = ખાલી;
 
 	hostbound = strcmp(method, "publickey-hostbound-v00@openssh.com") == 0;
 
-	if ((r = sshpkt_get_u8(ssh, &have_sig)) != 0 ||
-	    (r = sshpkt_get_cstring(ssh, &pkalg, NULL)) != 0 ||
+	જો ((r = sshpkt_get_u8(ssh, &have_sig)) != 0 ||
+	    (r = sshpkt_get_cstring(ssh, &pkalg, ખાલી)) != 0 ||
 	    (r = sshpkt_getb_froms(ssh, &keyblob)) != 0)
 		fatal_fr(r, "parse %s packet", method);
 
 	/* hostbound auth includes the hostkey offered at initial KEX */
-	if (hostbound)
+	જો (hostbound)
 		check_hostbound_hostkey(ssh); /* fatals on error */
 
-	if (log_level_get() >= SYSLOG_LEVEL_DEBUG2) {
-		if ((b = sshbuf_fromb(keyblob)) == NULL)
+	જો (log_level_get() >= SYSLOG_LEVEL_DEBUG2) {
+		જો ((b = sshbuf_fromb(keyblob)) == ખાલી)
 			fatal_f("sshbuf_fromb failed");
-		if ((keystring = sshbuf_dtob64_string(b, 0)) == NULL)
+		જો ((keystring = sshbuf_dtob64_string(b, 0)) == ખાલી)
 			fatal_f("sshbuf_dtob64 failed");
 		debug2_f("%s user %s %s public key %s %s",
 		    authctxt->valid ? "valid" : "invalid", authctxt->user,
 		    have_sig ? "attempting" : "querying", pkalg, keystring);
 		sshbuf_free(b);
-		b = NULL;
+		b = ખાલી;
 	}
 
 	pktype = sshkey_type_from_name(pkalg);
-	if (pktype == KEY_UNSPEC) {
+	જો (pktype == ચાવી_UNSPEC) {
 		/* this is perfectly legal */
 		verbose_f("unsupported public key algorithm: %s", pkalg);
-		goto done;
+		જાઓ done;
 	}
-	if (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
+	જો (match_pattern_list(pkalg, options.pubkey_accepted_algos, 0) != 1) {
 		logit_f("signature algorithm %s not in "
 		    "PubkeyAcceptedAlgorithms", pkalg);
-		goto done;
+		જાઓ done;
 	}
-	if ((b = sshbuf_fromb(keyblob)) == NULL)
+	જો ((b = sshbuf_fromb(keyblob)) == ખાલી)
 		fatal_f("sshbuf_fromb failed");
-	switch ((r = sshkey_fromb_allowlist(b, &key,
+	પસંદગી ((r = sshkey_fromb_allowlist(b, &ચાવી,
 	    options.pubkey_accepted_algos, options.ca_sign_algorithms))) {
-	case 0:
+	સ્થિતિ 0:
 		/* ok */
-		break;
-	case SSH_ERR_KEY_ALG_UNSUPPORTED:
+		તોડો;
+	સ્થિતિ SSH_ERR_ચાવી_ALG_UNSUPPORTED:
 		/* This shouldn't happen unless the client is being weird */
 		logit_f("key algorithm differs from signature algorithm %s and "
 		    "is not in PubkeyAcceptedAlgorithms", pkalg);
-		goto done;
-	case SSH_ERR_SIGN_ALG_UNSUPPORTED:
+		જાઓ done;
+	સ્થિતિ SSH_ERR_SIGN_ALG_UNSUPPORTED:
 		logit_fr(r, "certificate signature algorithm not in "
 		    "CASignatureAlgorithm");
-		goto done;
-	default:
+		જાઓ done;
+	મૂળભૂત:
 		error_fr(r, "parse key");
-		goto done;
+		જાઓ done;
 	}
 	sshbuf_free(b);
-	b = NULL;
+	b = ખાલી;
 
 	/* USERAUTH_REQUEST signature type should match key's type */
-	if (key->type != pktype || (sshkey_type_plain(pktype) == KEY_ECDSA &&
-	    sshkey_ecdsa_nid_from_name(pkalg) != key->ecdsa_nid)) {
+	જો (ચાવી->type != pktype || (sshkey_type_plain(pktype) == ચાવી_ECDSA &&
+	    sshkey_ecdsa_nid_from_name(pkalg) != ચાવી->ecdsa_nid)) {
 		error_f("key type mismatch for decoded key "
-		    "(received %s, expected %s)", sshkey_ssh_name(key), pkalg);
-		goto done;
+		    "(received %s, expected %s)", sshkey_ssh_name(ચાવી), pkalg);
+		જાઓ done;
 	}
-	if (auth2_key_already_used(authctxt, key)) {
-		logit("refusing previously-used %s key", sshkey_type(key));
-		goto done;
+	જો (auth2_ચાવી_already_used(authctxt, ચાવી)) {
+		logit("refusing previously-used %s key", sshkey_type(ચાવી));
+		જાઓ done;
 	}
-	if ((r = sshkey_check_rsa_length(key,
+	જો ((r = sshkey_check_rsa_length(ચાવી,
 	    options.required_rsa_size)) != 0) {
-		logit_r(r, "refusing %s key", sshkey_type(key));
-		goto done;
+		logit_r(r, "refusing %s key", sshkey_type(ચાવી));
+		જાઓ done;
 	}
-	key_s = format_key(key);
-	if (sshkey_is_cert(key))
-		ca_s = format_key(key->cert->signature_key);
+	ચાવી_s = format_ચાવી(ચાવી);
+	જો (sshkey_is_cert(ચાવી))
+		ca_s = format_ચાવી(ચાવી->cert->signature_ચાવી);
 
-	if (have_sig) {
+	જો (have_sig) {
 		debug3_f("%s have %s signature for %s%s%s",
-		    method, pkalg, key_s,
-		    ca_s == NULL ? "" : " CA ", ca_s == NULL ? "" : ca_s);
-		if ((r = sshpkt_get_string(ssh, &sig, &slen)) != 0 ||
+		    method, pkalg, ચાવી_s,
+		    ca_s == ખાલી ? "" : " CA ", ca_s == ખાલી ? "" : ca_s);
+		જો ((r = sshpkt_get_string(ssh, &sig, &slen)) != 0 ||
 		    (r = sshpkt_get_end(ssh)) != 0)
 			fatal_fr(r, "parse signature packet");
-		if ((b = sshbuf_new()) == NULL)
+		જો ((b = sshbuf_new()) == ખાલી)
 			fatal_f("sshbuf_new failed");
-		if ((r = sshbuf_put_stringb(b,
+		જો ((r = sshbuf_put_stringb(b,
 		    ssh->kex->session_id)) != 0)
 			fatal_fr(r, "put session id");
-		if (!authctxt->valid || authctxt->user == NULL) {
+		જો (!authctxt->valid || authctxt->user == ખાલી) {
 			debug2_f("disabled because of invalid user");
-			goto done;
+			જાઓ done;
 		}
 		/* reconstruct packet */
 		xasprintf(&userstyle, "%s%s%s", authctxt->user,
 		    authctxt->style ? ":" : "",
 		    authctxt->style ? authctxt->style : "");
-		if ((r = sshbuf_put_u8(b, SSH2_MSG_USERAUTH_REQUEST)) != 0 ||
+		જો ((r = sshbuf_put_u8(b, SSH2_સંદેશ_USERAUTH_REQUEST)) != 0 ||
 		    (r = sshbuf_put_cstring(b, userstyle)) != 0 ||
 		    (r = sshbuf_put_cstring(b, authctxt->service)) != 0 ||
 		    (r = sshbuf_put_cstring(b, method)) != 0 ||
@@ -229,7 +229,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 		    (r = sshbuf_put_cstring(b, pkalg)) != 0 ||
 		    (r = sshbuf_put_stringb(b, keyblob)) != 0)
 			fatal_fr(r, "reconstruct %s packet", method);
-		if (hostbound &&
+		જો (hostbound &&
 		    (r = sshkey_puts(ssh->kex->initial_hostkey, b)) != 0)
 			fatal_fr(r, "reconstruct %s packet", method);
 #ifdef DEBUG_PK
@@ -237,14 +237,14 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 #endif
 		/* test for correct signature */
 		authenticated = 0;
-		if (mm_user_key_allowed(ssh, pw, key, 1, &authopts) &&
-		    mm_sshkey_verify(key, sig, slen,
+		જો (mm_user_ચાવી_allowed(ssh, pw, ચાવી, 1, &authopts) &&
+		    mm_sshkey_verify(ચાવી, sig, slen,
 		    sshbuf_ptr(b), sshbuf_len(b),
-		    (ssh->compat & SSH_BUG_SIGTYPE) == 0 ? pkalg : NULL,
+		    (ssh->compat & SSH_BUG_SIGTYPE) == 0 ? pkalg : ખાલી,
 		    ssh->compat, &sig_details) == 0) {
 			authenticated = 1;
 		}
-		if (authenticated == 1 && sig_details != NULL) {
+		જો (authenticated == 1 && sig_details != ખાલી) {
 			auth2_record_info(authctxt, "signature count = %u",
 			    sig_details->sk_counter);
 			debug_f("sk_counter = %u, sk_flags = 0x%02x",
@@ -252,39 +252,39 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 			req_presence = (options.pubkey_auth_options &
 			    PUBKEYAUTH_TOUCH_REQUIRED) ||
 			    !authopts->no_require_user_presence;
-			if (req_presence && (sig_details->sk_flags &
+			જો (req_presence && (sig_details->sk_flags &
 			    SSH_SK_USER_PRESENCE_REQD) == 0) {
 				error("public key %s signature for %s%s from "
 				    "%.128s port %d rejected: user presence "
 				    "(authenticator touch) requirement "
-				    "not met ", key_s,
+				    "not met ", ચાવી_s,
 				    authctxt->valid ? "" : "invalid user ",
 				    authctxt->user, ssh_remote_ipaddr(ssh),
 				    ssh_remote_port(ssh));
 				authenticated = 0;
-				goto done;
+				જાઓ done;
 			}
 			req_verify = (options.pubkey_auth_options &
 			    PUBKEYAUTH_VERIFY_REQUIRED) ||
 			    authopts->require_verify;
-			if (req_verify && (sig_details->sk_flags &
+			જો (req_verify && (sig_details->sk_flags &
 			    SSH_SK_USER_VERIFICATION_REQD) == 0) {
 				error("public key %s signature for %s%s from "
 				    "%.128s port %d rejected: user "
-				    "verification requirement not met ", key_s,
+				    "verification requirement not met ", ચાવી_s,
 				    authctxt->valid ? "" : "invalid user ",
 				    authctxt->user, ssh_remote_ipaddr(ssh),
 				    ssh_remote_port(ssh));
 				authenticated = 0;
-				goto done;
+				જાઓ done;
 			}
 		}
-		auth2_record_key(authctxt, authenticated, key);
-	} else {
-		debug_f("%s test pkalg %s pkblob %s%s%s", method, pkalg, key_s,
-		    ca_s == NULL ? "" : " CA ", ca_s == NULL ? "" : ca_s);
+		auth2_record_ચાવી(authctxt, authenticated, ચાવી);
+	} નહીંતર {
+		debug_f("%s test pkalg %s pkblob %s%s%s", method, pkalg, ચાવી_s,
+		    ca_s == ખાલી ? "" : " CA ", ca_s == ખાલી ? "" : ca_s);
 
-		if ((r = sshpkt_get_end(ssh)) != 0)
+		જો ((r = sshpkt_get_end(ssh)) != 0)
 			fatal_fr(r, "parse packet");
 
 		/* XXX fake reply and always send PK_OK ? */
@@ -295,9 +295,9 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 		 * if a user is not allowed to login. is this an
 		 * issue? -markus
 		 */
-		if (authctxt->valid && authctxt->user != NULL &&
-		    mm_user_key_allowed(ssh, pw, key, 0, NULL)) {
-			if ((r = sshpkt_start(ssh, SSH2_MSG_USERAUTH_PK_OK))
+		જો (authctxt->valid && authctxt->user != ખાલી &&
+		    mm_user_ચાવી_allowed(ssh, pw, ચાવી, 0, ખાલી)) {
+			જો ((r = sshpkt_start(ssh, SSH2_સંદેશ_USERAUTH_PK_OK))
 			    != 0 ||
 			    (r = sshpkt_put_cstring(ssh, pkalg)) != 0 ||
 			    (r = sshpkt_put_stringb(ssh, keyblob)) != 0 ||
@@ -305,7 +305,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 			    (r = ssh_packet_write_wait(ssh)) != 0)
 				fatal_fr(r, "send packet");
 			authctxt->postponed = 1;
-		} else {
+		} નહીંતર {
 			/*
 			 * NB. invalid users must be accounted for in exactly
 			 * the same way as valid users whose key was refused,
@@ -316,7 +316,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 			 * unless we have already used up the separate
 			 * max-pk-ok budget (if any).
 			 */
-			if (authctxt->pk_ok_failures++ < options.max_pubkey_ok)
+			જો (authctxt->pk_ok_failures++ < options.max_pubkey_ok)
 				authctxt->auth_failure_already_counted = 1;
 			debug3_f("pubkey test %d of %d%s",
 			    authctxt->pk_ok_failures, options.max_pubkey_ok,
@@ -325,7 +325,7 @@ userauth_pubkey(struct ssh *ssh, const char *method)
 		 }
 	}
 done:
-	if (authenticated == 1 && auth_activate_options(ssh, authopts) != 0) {
+	જો (authenticated == 1 && auth_activate_options(ssh, authopts) != 0) {
 		debug_f("key options inconsistent with existing");
 		authenticated = 0;
 	}
@@ -334,98 +334,98 @@ done:
 	sshbuf_free(b);
 	sshbuf_free(keyblob);
 	sshauthopt_free(authopts);
-	sshkey_free(key);
+	sshkey_free(ચાવી);
 	sshkey_free(hostkey);
-	free(keystring);
-	free(userstyle);
-	free(pkalg);
-	free(key_s);
-	free(ca_s);
-	free(sig);
+	મુક્ત(keystring);
+	મુક્ત(userstyle);
+	મુક્ત(pkalg);
+	મુક્ત(ચાવી_s);
+	મુક્ત(ca_s);
+	મુક્ત(sig);
 	sshkey_sig_details_free(sig_details);
-	return authenticated;
+	પાછા authenticated;
 }
 
-static int
-match_principals_file(struct passwd *pw, char *file,
-    struct sshkey_cert *cert, struct sshauthopt **authoptsp)
+સ્થિર પૂર્ણાંક
+match_principals_file(સંરચના passwd *pw, અક્ષર *file,
+    સંરચના sshkey_cert *cert, સંરચના sshauthopt **authoptsp)
 {
 	FILE *f;
-	int r, success = 0;
+	પૂર્ણાંક r, success = 0;
 	size_t i;
 	glob_t gl;
-	struct sshauthopt *opts = NULL;
+	સંરચના sshauthopt *opts = ખાલી;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	જો (authoptsp != ખાલી)
+		*authoptsp = ખાલી;
 
 	temporarily_use_uid(pw);
-	r = glob(file, 0, NULL, &gl);
+	r = glob(file, 0, ખાલી, &gl);
 	restore_uid();
-	if (r != 0) {
-		if (r != GLOB_NOMATCH) {
+	જો (r != 0) {
+		જો (r != GLOB_NOMATCH) {
 			logit_f("glob \"%s\" failed", file);
 		}
-		return 0;
-	} else if (gl.gl_pathc > INT_MAX) {
+		પાછા 0;
+	} નહીંતર જો (gl.gl_pathc > INT_MAX) {
 		fatal_f("too many glob results for \"%s\"", file);
-	} else if (gl.gl_pathc > 1) {
+	} નહીંતર જો (gl.gl_pathc > 1) {
 		debug2_f("glob \"%s\" returned %zu matches", file,
 		    gl.gl_pathc);
 	}
-	for (i = 0; !success && i < gl.gl_pathc; i++) {
+	માટે (i = 0; !success && i < gl.gl_pathc; i++) {
 		temporarily_use_uid(pw);
 		debug("trying authorized principals file %s", file);
-		if ((f = auth_openprincipals(gl.gl_pathv[i], pw,
-		    options.strict_modes)) == NULL) {
+		જો ((f = auth_openprincipals(gl.gl_pathv[i], pw,
+		    options.strict_modes)) == ખાલી) {
 			restore_uid();
-			continue;
+			ચાલુ;
 		}
 		success = auth_process_principals(f, gl.gl_pathv[i],
 		    cert, &opts);
 		fclose(f);
 		restore_uid();
-		if (!success) {
+		જો (!success) {
 			sshauthopt_free(opts);
-			opts = NULL;
+			opts = ખાલી;
 		}
 	}
 	globfree(&gl);
-	if (success && authoptsp != NULL) {
+	જો (success && authoptsp != ખાલી) {
 		*authoptsp = opts;
-		opts = NULL;
+		opts = ખાલી;
 	}
 	sshauthopt_free(opts);
-	return success;
+	પાછા success;
 }
 
 /*
  * Checks whether principal is allowed in output of command.
  * returns 1 if the principal is allowed or 0 otherwise.
  */
-static int
-match_principals_command(struct passwd *user_pw, const struct sshkey *key,
-    const char *conn_id, const char *rdomain, struct sshauthopt **authoptsp)
+સ્થિર પૂર્ણાંક
+match_principals_command(સંરચના passwd *user_pw, અચલ સંરચના sshkey *ચાવી,
+    અચલ અક્ષર *conn_id, અચલ અક્ષર *rdomain, સંરચના sshauthopt **authoptsp)
 {
-	struct passwd *runas_pw = NULL;
-	const struct sshkey_cert *cert = key->cert;
-	FILE *f = NULL;
-	int r, ok, found_principal = 0;
-	int i, ac = 0, uid_swapped = 0;
+	સંરચના passwd *runas_pw = ખાલી;
+	અચલ સંરચના sshkey_cert *cert = ચાવી->cert;
+	FILE *f = ખાલી;
+	પૂર્ણાંક r, ok, found_principal = 0;
+	પૂર્ણાંક i, ac = 0, uid_swapped = 0;
 	pid_t pid;
-	char *tmp, *username = NULL, *command = NULL, **av = NULL;
-	char *ca_fp = NULL, *key_fp = NULL, *catext = NULL, *keytext = NULL;
-	char serial_s[32], uidstr[32];
-	void (*osigchld)(int);
+	અક્ષર *tmp, *username = ખાલી, *command = ખાલી, **av = ખાલી;
+	અક્ષર *ca_fp = ખાલી, *ચાવી_fp = ખાલી, *catext = ખાલી, *keytext = ખાલી;
+	અક્ષર serial_s[32], uidstr[32];
+	શૂન્ય (*osigchld)(પૂર્ણાંક);
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
-	if (options.authorized_principals_command == NULL)
-		return 0;
-	if (options.authorized_principals_command_user == NULL) {
+	જો (authoptsp != ખાલી)
+		*authoptsp = ખાલી;
+	જો (options.authorized_principals_command == ખાલી)
+		પાછા 0;
+	જો (options.authorized_principals_command_user == ખાલી) {
 		error("No user for AuthorizedPrincipalsCommand specified, "
 		    "skipping");
-		return 0;
+		પાછા 0;
 	}
 
 	/*
@@ -436,77 +436,77 @@ match_principals_command(struct passwd *user_pw, const struct sshkey *key,
 
 	/* Prepare and verify the user for the command */
 	username = percent_expand(options.authorized_principals_command_user,
-	    "u", user_pw->pw_name, (char *)NULL);
+	    "u", user_pw->pw_name, (અક્ષર *)ખાલી);
 	runas_pw = getpwnam(username);
-	if (runas_pw == NULL) {
+	જો (runas_pw == ખાલી) {
 		error("AuthorizedPrincipalsCommandUser \"%s\" not found: %s",
 		    username, strerror(errno));
-		goto out;
+		જાઓ out;
 	}
 
 	/* Turn the command into an argument vector */
-	if (argv_split(options.authorized_principals_command,
+	જો (argv_split(options.authorized_principals_command,
 	    &ac, &av, 0) != 0) {
 		error("AuthorizedPrincipalsCommand \"%s\" contains "
 		    "invalid quotes", options.authorized_principals_command);
-		goto out;
+		જાઓ out;
 	}
-	if (ac == 0) {
+	જો (ac == 0) {
 		error("AuthorizedPrincipalsCommand \"%s\" yielded no arguments",
 		    options.authorized_principals_command);
-		goto out;
+		જાઓ out;
 	}
-	if ((ca_fp = sshkey_fingerprint(cert->signature_key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	જો ((ca_fp = sshkey_fingerprint(cert->signature_ચાવી,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ખાલી) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		જાઓ out;
 	}
-	if ((key_fp = sshkey_fingerprint(key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL) {
+	જો ((ચાવી_fp = sshkey_fingerprint(ચાવી,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ખાલી) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		જાઓ out;
 	}
-	if ((r = sshkey_to_base64(cert->signature_key, &catext)) != 0) {
+	જો ((r = sshkey_to_base64(cert->signature_ચાવી, &catext)) != 0) {
 		error_fr(r, "sshkey_to_base64 failed");
-		goto out;
+		જાઓ out;
 	}
-	if ((r = sshkey_to_base64(key, &keytext)) != 0) {
+	જો ((r = sshkey_to_base64(ચાવી, &keytext)) != 0) {
 		error_fr(r, "sshkey_to_base64 failed");
-		goto out;
+		જાઓ out;
 	}
-	snprintf(serial_s, sizeof(serial_s), "%llu",
+	snprintf(serial_s, કદ(serial_s), "%llu",
 	    (unsigned long long)cert->serial);
-	snprintf(uidstr, sizeof(uidstr), "%llu",
+	snprintf(uidstr, કદ(uidstr), "%llu",
 	    (unsigned long long)user_pw->pw_uid);
-	for (i = 1; i < ac; i++) {
+	માટે (i = 1; i < ac; i++) {
 		tmp = percent_expand(av[i],
 		    "C", conn_id,
 		    "D", rdomain,
 		    "U", uidstr,
 		    "u", user_pw->pw_name,
 		    "h", user_pw->pw_dir,
-		    "t", sshkey_ssh_name(key),
-		    "T", sshkey_ssh_name(cert->signature_key),
-		    "f", key_fp,
+		    "t", sshkey_ssh_name(ચાવી),
+		    "T", sshkey_ssh_name(cert->signature_ચાવી),
+		    "f", ચાવી_fp,
 		    "F", ca_fp,
 		    "k", keytext,
 		    "K", catext,
-		    "i", cert->key_id,
+		    "i", cert->ચાવી_id,
 		    "s", serial_s,
-		    (char *)NULL);
-		if (tmp == NULL)
+		    (અક્ષર *)ખાલી);
+		જો (tmp == ખાલી)
 			fatal_f("percent_expand failed");
-		free(av[i]);
+		મુક્ત(av[i]);
 		av[i] = tmp;
 	}
 	/* Prepare a printable command for logs, etc. */
 	command = argv_assemble(ac, av);
 
-	if ((pid = subprocess("AuthorizedPrincipalsCommand", command,
+	જો ((pid = subprocess("AuthorizedPrincipalsCommand", command,
 	    ac, av, &f,
 	    SSH_SUBPROCESS_STDOUT_CAPTURE|SSH_SUBPROCESS_STDERR_DISCARD,
 	    runas_pw, temporarily_use_uid, restore_uid)) == 0)
-		goto out;
+		જાઓ out;
 
 	uid_swapped = 1;
 	temporarily_use_uid(runas_pw);
@@ -514,195 +514,195 @@ match_principals_command(struct passwd *user_pw, const struct sshkey *key,
 	ok = auth_process_principals(f, "(command)", cert, authoptsp);
 
 	fclose(f);
-	f = NULL;
+	f = ખાલી;
 
-	if (exited_cleanly(pid, "AuthorizedPrincipalsCommand", command, 0) != 0)
-		goto out;
+	જો (exited_cleanly(pid, "AuthorizedPrincipalsCommand", command, 0) != 0)
+		જાઓ out;
 
 	/* Read completed successfully */
 	found_principal = ok;
  out:
-	if (f != NULL)
+	જો (f != ખાલી)
 		fclose(f);
 	ssh_signal(SIGCHLD, osigchld);
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
-	if (uid_swapped)
+	માટે (i = 0; i < ac; i++)
+		મુક્ત(av[i]);
+	મુક્ત(av);
+	જો (uid_swapped)
 		restore_uid();
-	free(command);
-	free(username);
-	free(ca_fp);
-	free(key_fp);
-	free(catext);
-	free(keytext);
-	return found_principal;
+	મુક્ત(command);
+	મુક્ત(username);
+	મુક્ત(ca_fp);
+	મુક્ત(ચાવી_fp);
+	મુક્ત(catext);
+	મુક્ત(keytext);
+	પાછા found_principal;
 }
 
 /* Authenticate a certificate key against TrustedUserCAKeys */
-static int
-user_cert_trusted_ca(struct passwd *pw, struct sshkey *key,
-    const char *remote_ip, const char *remote_host,
-    const char *conn_id, const char *rdomain, struct sshauthopt **authoptsp)
+સ્થિર પૂર્ણાંક
+user_cert_trusted_ca(સંરચના passwd *pw, સંરચના sshkey *ચાવી,
+    અચલ અક્ષર *remote_ip, અચલ અક્ષર *remote_host,
+    અચલ અક્ષર *conn_id, અચલ અક્ષર *rdomain, સંરચના sshauthopt **authoptsp)
 {
-	char *ca_fp, *principals_file = NULL;
-	const char *reason;
-	struct sshauthopt *principals_opts = NULL, *cert_opts = NULL;
-	struct sshauthopt *final_opts = NULL;
-	int r, ret = 0, found_principal = 0, use_authorized_principals;
+	અક્ષર *ca_fp, *principals_file = ખાલી;
+	અચલ અક્ષર *reason;
+	સંરચના sshauthopt *principals_opts = ખાલી, *cert_opts = ખાલી;
+	સંરચના sshauthopt *final_opts = ખાલી;
+	પૂર્ણાંક r, ret = 0, found_principal = 0, use_authorized_principals;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	જો (authoptsp != ખાલી)
+		*authoptsp = ખાલી;
 
-	if (!sshkey_is_cert(key) || options.trusted_user_ca_keys == NULL)
-		return 0;
+	જો (!sshkey_is_cert(ચાવી) || options.trusted_user_ca_ચાવીઓ == ખાલી)
+		પાછા 0;
 
-	if ((ca_fp = sshkey_fingerprint(key->cert->signature_key,
-	    options.fingerprint_hash, SSH_FP_DEFAULT)) == NULL)
-		return 0;
+	જો ((ca_fp = sshkey_fingerprint(ચાવી->cert->signature_ચાવી,
+	    options.fingerprint_hash, SSH_FP_DEFAULT)) == ખાલી)
+		પાછા 0;
 
-	if ((r = sshkey_in_file(key->cert->signature_key,
-	    options.trusted_user_ca_keys, 1, 0)) != 0) {
+	જો ((r = sshkey_in_file(ચાવી->cert->signature_ચાવી,
+	    options.trusted_user_ca_ચાવીઓ, 1, 0)) != 0) {
 		debug2_fr(r, "CA %s %s is not listed in %s",
-		    sshkey_type(key->cert->signature_key), ca_fp,
-		    options.trusted_user_ca_keys);
-		goto out;
+		    sshkey_type(ચાવી->cert->signature_ચાવી), ca_fp,
+		    options.trusted_user_ca_ચાવીઓ);
+		જાઓ out;
 	}
 	/*
 	 * If AuthorizedPrincipals is in use, then compare the certificate
 	 * principals against the names in that file rather than matching
 	 * against the username.
 	 */
-	if ((principals_file = authorized_principals_file(pw)) != NULL) {
-		if (match_principals_file(pw, principals_file,
-		    key->cert, &principals_opts))
+	જો ((principals_file = authorized_principals_file(pw)) != ખાલી) {
+		જો (match_principals_file(pw, principals_file,
+		    ચાવી->cert, &principals_opts))
 			found_principal = 1;
 	}
 	/* Try querying command if specified */
-	if (!found_principal && match_principals_command(pw, key,
+	જો (!found_principal && match_principals_command(pw, ચાવી,
 	    conn_id, rdomain, &principals_opts))
 		found_principal = 1;
 	/* If principals file or command is specified, then require a match */
-	use_authorized_principals = principals_file != NULL ||
-	    options.authorized_principals_command != NULL;
-	if (!found_principal && use_authorized_principals) {
+	use_authorized_principals = principals_file != ખાલી ||
+	    options.authorized_principals_command != ખાલી;
+	જો (!found_principal && use_authorized_principals) {
 		reason = "Certificate does not contain an authorized principal";
-		goto fail_reason;
+		જાઓ fail_reason;
 	}
-	if (use_authorized_principals && principals_opts == NULL)
+	જો (use_authorized_principals && principals_opts == ખાલી)
 		fatal_f("internal error: missing principals_opts");
-	if (sshkey_cert_check_authority_now(key, 0, 0,
-	    use_authorized_principals ? NULL : pw->pw_name, &reason) != 0)
-		goto fail_reason;
+	જો (sshkey_cert_check_authority_now(ચાવી, 0, 0,
+	    use_authorized_principals ? ખાલી : pw->pw_name, &reason) != 0)
+		જાઓ fail_reason;
 
 	/* Check authority from options in key and from principals file/cmd */
-	if ((cert_opts = sshauthopt_from_cert(key)) == NULL) {
+	જો ((cert_opts = sshauthopt_from_cert(ચાવી)) == ખાલી) {
 		reason = "Invalid certificate options";
-		goto fail_reason;
+		જાઓ fail_reason;
 	}
-	if (auth_authorise_keyopts(pw, cert_opts, 0,
+	જો (auth_authorise_keyopts(pw, cert_opts, 0,
 	    remote_ip, remote_host, "cert") != 0) {
 		reason = "Refused by certificate options";
-		goto fail_reason;
+		જાઓ fail_reason;
 	}
-	if (principals_opts == NULL) {
+	જો (principals_opts == ખાલી) {
 		final_opts = cert_opts;
-		cert_opts = NULL;
-	} else {
-		if (auth_authorise_keyopts(pw, principals_opts, 0,
+		cert_opts = ખાલી;
+	} નહીંતર {
+		જો (auth_authorise_keyopts(pw, principals_opts, 0,
 		    remote_ip, remote_host, "principals") != 0) {
 			reason = "Refused by certificate principals options";
-			goto fail_reason;
+			જાઓ fail_reason;
 		}
-		if ((final_opts = sshauthopt_merge(principals_opts,
-		    cert_opts, &reason)) == NULL) {
+		જો ((final_opts = sshauthopt_merge(principals_opts,
+		    cert_opts, &reason)) == ખાલી) {
  fail_reason:
 			error("Refusing certificate ID \"%s\" serial=%llu "
-			    "signed by %s CA %s: %s", key->cert->key_id,
-			    (unsigned long long)key->cert->serial,
-			    sshkey_type(key->cert->signature_key), ca_fp,
+			    "signed by %s CA %s: %s", ચાવી->cert->ચાવી_id,
+			    (unsigned long long)ચાવી->cert->serial,
+			    sshkey_type(ચાવી->cert->signature_ચાવી), ca_fp,
 			    reason);
 			auth_debug_add("Refused Certificate ID \"%s\" "
-			    "serial=%llu: %s", key->cert->key_id,
-			    (unsigned long long)key->cert->serial, reason);
-			goto out;
+			    "serial=%llu: %s", ચાવી->cert->ચાવી_id,
+			    (unsigned long long)ચાવી->cert->serial, reason);
+			જાઓ out;
 		}
 	}
 
 	/* Success */
 	verbose("Accepted certificate ID \"%s\" (serial %llu) signed by "
-	    "%s CA %s via %s", key->cert->key_id,
-	    (unsigned long long)key->cert->serial,
-	    sshkey_type(key->cert->signature_key), ca_fp,
-	    options.trusted_user_ca_keys);
-	if (authoptsp != NULL) {
+	    "%s CA %s via %s", ચાવી->cert->ચાવી_id,
+	    (unsigned long long)ચાવી->cert->serial,
+	    sshkey_type(ચાવી->cert->signature_ચાવી), ca_fp,
+	    options.trusted_user_ca_ચાવીઓ);
+	જો (authoptsp != ખાલી) {
 		*authoptsp = final_opts;
-		final_opts = NULL;
+		final_opts = ખાલી;
 	}
 	ret = 1;
  out:
 	sshauthopt_free(principals_opts);
 	sshauthopt_free(cert_opts);
 	sshauthopt_free(final_opts);
-	free(principals_file);
-	free(ca_fp);
-	return ret;
+	મુક્ત(principals_file);
+	મુક્ત(ca_fp);
+	પાછા ret;
 }
 
 /*
  * Checks whether key is allowed in file.
  * returns 1 if the key is allowed or 0 otherwise.
  */
-static int
-user_key_allowed2(struct passwd *pw, struct sshkey *key,
-    char *file, const char *remote_ip, const char *remote_host,
-    struct sshauthopt **authoptsp)
+સ્થિર પૂર્ણાંક
+user_ચાવી_allowed2(સંરચના passwd *pw, સંરચના sshkey *ચાવી,
+    અક્ષર *file, અચલ અક્ષર *remote_ip, અચલ અક્ષર *remote_host,
+    સંરચના sshauthopt **authoptsp)
 {
 	FILE *f;
-	int found_key = 0;
+	પૂર્ણાંક found_ચાવી = 0;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	જો (authoptsp != ખાલી)
+		*authoptsp = ખાલી;
 
 	/* Temporarily use the user's uid. */
 	temporarily_use_uid(pw);
 
 	debug("trying public key file %s", file);
-	if ((f = auth_openkeyfile(file, pw, options.strict_modes)) != NULL) {
-		found_key = auth_check_authkeys_file(pw, f, file,
-		    key, remote_ip, remote_host, authoptsp);
+	જો ((f = auth_openkeyfile(file, pw, options.strict_modes)) != ખાલી) {
+		found_ચાવી = auth_check_authkeys_file(pw, f, file,
+		    ચાવી, remote_ip, remote_host, authoptsp);
 		fclose(f);
 	}
 
 	restore_uid();
-	return found_key;
+	પાછા found_ચાવી;
 }
 
 /*
  * Checks whether key is allowed in output of command.
  * returns 1 if the key is allowed or 0 otherwise.
  */
-static int
-user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
-    const char *remote_ip, const char *remote_host,
-    const char *conn_id, const char *rdomain, struct sshauthopt **authoptsp)
+સ્થિર પૂર્ણાંક
+user_ચાવી_command_allowed2(સંરચના passwd *user_pw, સંરચના sshkey *ચાવી,
+    અચલ અક્ષર *remote_ip, અચલ અક્ષર *remote_host,
+    અચલ અક્ષર *conn_id, અચલ અક્ષર *rdomain, સંરચના sshauthopt **authoptsp)
 {
-	struct passwd *runas_pw = NULL;
-	FILE *f = NULL;
-	int r, ok, found_key = 0;
-	int i, uid_swapped = 0, ac = 0;
+	સંરચના passwd *runas_pw = ખાલી;
+	FILE *f = ખાલી;
+	પૂર્ણાંક r, ok, found_ચાવી = 0;
+	પૂર્ણાંક i, uid_swapped = 0, ac = 0;
 	pid_t pid;
-	char *username = NULL, *key_fp = NULL, *keytext = NULL;
-	char uidstr[32], *tmp, *command = NULL, **av = NULL;
-	void (*osigchld)(int);
+	અક્ષર *username = ખાલી, *ચાવી_fp = ખાલી, *keytext = ખાલી;
+	અક્ષર uidstr[32], *tmp, *command = ખાલી, **av = ખાલી;
+	શૂન્ય (*osigchld)(પૂર્ણાંક);
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
-	if (options.authorized_keys_command == NULL)
-		return 0;
-	if (options.authorized_keys_command_user == NULL) {
+	જો (authoptsp != ખાલી)
+		*authoptsp = ખાલી;
+	જો (options.authorized_ચાવીઓ_command == ખાલી)
+		પાછા 0;
+	જો (options.authorized_ચાવીઓ_command_user == ખાલી) {
 		error("No user for AuthorizedKeysCommand specified, skipping");
-		return 0;
+		પાછા 0;
 	}
 
 	/*
@@ -712,53 +712,53 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
 	osigchld = ssh_signal(SIGCHLD, SIG_DFL);
 
 	/* Prepare and verify the user for the command */
-	username = percent_expand(options.authorized_keys_command_user,
-	    "u", user_pw->pw_name, (char *)NULL);
+	username = percent_expand(options.authorized_ચાવીઓ_command_user,
+	    "u", user_pw->pw_name, (અક્ષર *)ખાલી);
 	runas_pw = getpwnam(username);
-	if (runas_pw == NULL) {
+	જો (runas_pw == ખાલી) {
 		error("AuthorizedKeysCommandUser \"%s\" not found: %s",
 		    username, strerror(errno));
-		goto out;
+		જાઓ out;
 	}
 
 	/* Prepare AuthorizedKeysCommand */
-	if ((key_fp = sshkey_fingerprint(key, options.fingerprint_hash,
-	    SSH_FP_DEFAULT)) == NULL) {
+	જો ((ચાવી_fp = sshkey_fingerprint(ચાવી, options.fingerprint_hash,
+	    SSH_FP_DEFAULT)) == ખાલી) {
 		error_f("sshkey_fingerprint failed");
-		goto out;
+		જાઓ out;
 	}
-	if ((r = sshkey_to_base64(key, &keytext)) != 0) {
+	જો ((r = sshkey_to_base64(ચાવી, &keytext)) != 0) {
 		error_fr(r, "sshkey_to_base64 failed");
-		goto out;
+		જાઓ out;
 	}
 
 	/* Turn the command into an argument vector */
-	if (argv_split(options.authorized_keys_command, &ac, &av, 0) != 0) {
+	જો (argv_split(options.authorized_ચાવીઓ_command, &ac, &av, 0) != 0) {
 		error("AuthorizedKeysCommand \"%s\" contains invalid quotes",
-		    options.authorized_keys_command);
-		goto out;
+		    options.authorized_ચાવીઓ_command);
+		જાઓ out;
 	}
-	if (ac == 0) {
+	જો (ac == 0) {
 		error("AuthorizedKeysCommand \"%s\" yielded no arguments",
-		    options.authorized_keys_command);
-		goto out;
+		    options.authorized_ચાવીઓ_command);
+		જાઓ out;
 	}
-	snprintf(uidstr, sizeof(uidstr), "%llu",
+	snprintf(uidstr, કદ(uidstr), "%llu",
 	    (unsigned long long)user_pw->pw_uid);
-	for (i = 1; i < ac; i++) {
+	માટે (i = 1; i < ac; i++) {
 		tmp = percent_expand(av[i],
 		    "C", conn_id,
 		    "D", rdomain,
 		    "U", uidstr,
 		    "u", user_pw->pw_name,
 		    "h", user_pw->pw_dir,
-		    "t", sshkey_ssh_name(key),
-		    "f", key_fp,
+		    "t", sshkey_ssh_name(ચાવી),
+		    "f", ચાવી_fp,
 		    "k", keytext,
-		    (char *)NULL);
-		if (tmp == NULL)
+		    (અક્ષર *)ખાલી);
+		જો (tmp == ખાલી)
 			fatal_f("percent_expand failed");
-		free(av[i]);
+		મુક્ત(av[i]);
 		av[i] = tmp;
 	}
 	/* Prepare a printable command for logs, etc. */
@@ -769,74 +769,74 @@ user_key_command_allowed2(struct passwd *user_pw, struct sshkey *key,
 	 * then fall back to the old behaviour of passing the
 	 * target username as a single argument.
 	 */
-	if (ac == 1) {
-		av = xreallocarray(av, ac + 2, sizeof(*av));
+	જો (ac == 1) {
+		av = xreallocarray(av, ac + 2, કદ(*av));
 		av[1] = xstrdup(user_pw->pw_name);
-		av[2] = NULL;
+		av[2] = ખાલી;
 		/* Fix up command too, since it is used in log messages */
-		free(command);
+		મુક્ત(command);
 		xasprintf(&command, "%s %s", av[0], av[1]);
 	}
 
-	if ((pid = subprocess("AuthorizedKeysCommand", command,
+	જો ((pid = subprocess("AuthorizedKeysCommand", command,
 	    ac, av, &f,
 	    SSH_SUBPROCESS_STDOUT_CAPTURE|SSH_SUBPROCESS_STDERR_DISCARD,
 	    runas_pw, temporarily_use_uid, restore_uid)) == 0)
-		goto out;
+		જાઓ out;
 
 	uid_swapped = 1;
 	temporarily_use_uid(runas_pw);
 
 	ok = auth_check_authkeys_file(user_pw, f,
-	    options.authorized_keys_command, key, remote_ip,
+	    options.authorized_ચાવીઓ_command, ચાવી, remote_ip,
 	    remote_host, authoptsp);
 
 	fclose(f);
-	f = NULL;
+	f = ખાલી;
 
-	if (exited_cleanly(pid, "AuthorizedKeysCommand", command, 0) != 0)
-		goto out;
+	જો (exited_cleanly(pid, "AuthorizedKeysCommand", command, 0) != 0)
+		જાઓ out;
 
 	/* Read completed successfully */
-	found_key = ok;
+	found_ચાવી = ok;
  out:
-	if (f != NULL)
+	જો (f != ખાલી)
 		fclose(f);
 	ssh_signal(SIGCHLD, osigchld);
-	for (i = 0; i < ac; i++)
-		free(av[i]);
-	free(av);
-	if (uid_swapped)
+	માટે (i = 0; i < ac; i++)
+		મુક્ત(av[i]);
+	મુક્ત(av);
+	જો (uid_swapped)
 		restore_uid();
-	free(command);
-	free(username);
-	free(key_fp);
-	free(keytext);
-	return found_key;
+	મુક્ત(command);
+	મુક્ત(username);
+	મુક્ત(ચાવી_fp);
+	મુક્ત(keytext);
+	પાછા found_ચાવી;
 }
 
 /*
  * Check whether key authenticates and authorises the user.
  */
-int
-user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
-    int auth_attempt, struct sshauthopt **authoptsp)
+પૂર્ણાંક
+user_ચાવી_allowed(સંરચના ssh *ssh, સંરચના passwd *pw, સંરચના sshkey *ચાવી,
+    પૂર્ણાંક auth_attempt, સંરચના sshauthopt **authoptsp)
 {
 	u_int success = 0, i, j;
-	char *file = NULL, *conn_id;
-	struct sshauthopt *opts = NULL;
-	const char *rdomain, *remote_ip, *remote_host;
+	અક્ષર *file = ખાલી, *conn_id;
+	સંરચના sshauthopt *opts = ખાલી;
+	અચલ અક્ષર *rdomain, *remote_ip, *remote_host;
 
-	if (authoptsp != NULL)
-		*authoptsp = NULL;
+	જો (authoptsp != ખાલી)
+		*authoptsp = ખાલી;
 
-	if (auth_key_is_revoked(key))
-		return 0;
-	if (sshkey_is_cert(key) &&
-	    auth_key_is_revoked(key->cert->signature_key))
-		return 0;
+	જો (auth_ચાવી_is_revoked(ચાવી))
+		પાછા 0;
+	જો (sshkey_is_cert(ચાવી) &&
+	    auth_ચાવી_is_revoked(ચાવી->cert->signature_ચાવી))
+		પાછા 0;
 
-	if ((rdomain = ssh_packet_rdomain_in(ssh)) == NULL)
+	જો ((rdomain = ssh_packet_rdomain_in(ssh)) == ખાલી)
 		rdomain = "";
 	remote_ip = ssh_remote_ipaddr(ssh);
 	remote_host = auth_get_canonical_hostname(ssh, options.use_dns);
@@ -844,65 +844,65 @@ user_key_allowed(struct ssh *ssh, struct passwd *pw, struct sshkey *key,
 	    ssh_local_ipaddr(ssh), ssh_local_port(ssh),
 	    remote_ip, ssh_remote_port(ssh));
 
-	for (i = 0; !success && i < options.num_authkeys_files; i++) {
-		int r;
+	માટે (i = 0; !success && i < options.અંક_authkeys_files; i++) {
+		પૂર્ણાંક r;
 		glob_t gl;
 
-		if (strcasecmp(options.authorized_keys_files[i], "none") == 0)
-			continue;
-		file = expand_authorized_keys(
-		    options.authorized_keys_files[i], pw);
+		જો (strcasecmp(options.authorized_ચાવીઓ_files[i], "none") == 0)
+			ચાલુ;
+		file = expand_authorized_ચાવીઓ(
+		    options.authorized_ચાવીઓ_files[i], pw);
 		temporarily_use_uid(pw);
-		r = glob(file, 0, NULL, &gl);
+		r = glob(file, 0, ખાલી, &gl);
 		restore_uid();
-		if (r != 0) {
-			if (r != GLOB_NOMATCH) {
+		જો (r != 0) {
+			જો (r != GLOB_NOMATCH) {
 				logit_f("glob \"%s\" failed", file);
 			}
-			free(file);
-			file = NULL;
-			continue;
-		} else if (gl.gl_pathc > INT_MAX) {
+			મુક્ત(file);
+			file = ખાલી;
+			ચાલુ;
+		} નહીંતર જો (gl.gl_pathc > INT_MAX) {
 			fatal_f("too many glob results for \"%s\"", file);
-		} else if (gl.gl_pathc > 1) {
+		} નહીંતર જો (gl.gl_pathc > 1) {
 			debug2_f("glob \"%s\" returned %zu matches", file,
 			    gl.gl_pathc);
 		}
-		for (j = 0; !success && j < gl.gl_pathc; j++) {
-			success = user_key_allowed2(pw, key, gl.gl_pathv[j],
+		માટે (j = 0; !success && j < gl.gl_pathc; j++) {
+			success = user_ચાવી_allowed2(pw, ચાવી, gl.gl_pathv[j],
 			    remote_ip, remote_host, &opts);
-			if (!success) {
+			જો (!success) {
 				sshauthopt_free(opts);
-				opts = NULL;
+				opts = ખાલી;
 			}
 		}
-		free(file);
-		file = NULL;
+		મુક્ત(file);
+		file = ખાલી;
 		globfree(&gl);
 	}
-	if (success)
-		goto out;
+	જો (success)
+		જાઓ out;
 
-	if ((success = user_cert_trusted_ca(pw, key, remote_ip, remote_host,
+	જો ((success = user_cert_trusted_ca(pw, ચાવી, remote_ip, remote_host,
 	    conn_id, rdomain, &opts)) != 0)
-		goto out;
+		જાઓ out;
 	sshauthopt_free(opts);
-	opts = NULL;
+	opts = ખાલી;
 
-	if ((success = user_key_command_allowed2(pw, key, remote_ip,
+	જો ((success = user_ચાવી_command_allowed2(pw, ચાવી, remote_ip,
 	    remote_host, conn_id, rdomain, &opts)) != 0)
-		goto out;
+		જાઓ out;
 	sshauthopt_free(opts);
-	opts = NULL;
+	opts = ખાલી;
 
  out:
-	free(conn_id);
-	if (success && authoptsp != NULL) {
+	મુક્ત(conn_id);
+	જો (success && authoptsp != ખાલી) {
 		*authoptsp = opts;
-		opts = NULL;
+		opts = ખાલી;
 	}
 	sshauthopt_free(opts);
-	return success;
+	પાછા success;
 }
 
 Authmethod method_pubkey = {

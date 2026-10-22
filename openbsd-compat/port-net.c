@@ -14,108 +14,108 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <sys/ioctl.h>
 
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netinet/ip.h>
+#અન્તર્ભાવ <netinet/in.h>
+#અન્તર્ભાવ <arpa/inet.h>
+#અન્તર્ભાવ <netinet/ip.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <fcntl.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
 
-#include "openbsd-compat/sys-queue.h"
-#include "log.h"
-#include "misc.h"
-#include "sshbuf.h"
-#include "channels.h"
-#include "ssherr.h"
+#અન્તર્ભાવ "openbsd-compat/sys-queue.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "sshbuf.h"
+#અન્તર્ભાવ "channels.h"
+#અન્તર્ભાવ "ssherr.h"
 
 /*
  * This file contains various portability code for network support,
  * including tun/tap forwarding and routing domains.
  */
 
-#if defined(SYS_RDOMAIN_LINUX) || defined(SSH_TUN_LINUX)
-#include <linux/if.h>
+#જો defined(SYS_RDOMAIN_LINUX) || defined(SSH_TUN_LINUX)
+#અન્તર્ભાવ <linux/if.h>
 #endif
 
-#if defined(SYS_RDOMAIN_LINUX)
-char *
-sys_get_rdomain(int fd)
+#જો defined(SYS_RDOMAIN_LINUX)
+અક્ષર *
+sys_get_rdomain(પૂર્ણાંક fd)
 {
-	char dev[IFNAMSIZ + 1];
-	socklen_t len = sizeof(dev) - 1;
+	અક્ષર dev[IFNAMSIZ + 1];
+	socklen_t len = કદ(dev) - 1;
 
-	if (getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, dev, &len) == -1) {
+	જો (getsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, dev, &len) == -1) {
 		error("%s: cannot determine VRF for fd=%d : %s",
 		    __func__, fd, strerror(errno));
-		return NULL;
+		પાછા ખાલી;
 	}
 	dev[len] = '\0';
-	return strdup(dev);
+	પાછા strdup(dev);
 }
 
-int
-sys_set_rdomain(int fd, const char *name)
+પૂર્ણાંક
+sys_set_rdomain(પૂર્ણાંક fd, અચલ અક્ષર *name)
 {
-	if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
+	જો (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
 	    name, strlen(name)) == -1) {
 		error("%s: setsockopt(%d, SO_BINDTODEVICE, %s): %s",
 		    __func__, fd, name, strerror(errno));
-		return -1;
+		પાછા -1;
 	}
-	return 0;
+	પાછા 0;
 }
 
-int
-sys_valid_rdomain(const char *name)
+પૂર્ણાંક
+sys_valid_rdomain(અચલ અક્ષર *name)
 {
-	int fd;
+	પૂર્ણાંક fd;
 
 	/*
 	 * This is a pretty crappy way to test. It would be better to
 	 * check whether "name" represents a VRF device, but apparently
 	 * that requires an rtnetlink transaction.
 	 */
-	if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
-		return 0;
-	if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
+	જો ((fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+		પાછા 0;
+	જો (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,
 	    name, strlen(name)) == -1) {
 		close(fd);
-		return 0;
+		પાછા 0;
 	}
 	close(fd);
-	return 1;
+	પાછા 1;
 }
-#elif defined(SYS_RDOMAIN_XXX)
+#અથવાજો defined(SYS_RDOMAIN_XXX)
 /* XXX examples */
-char *
-sys_get_rdomain(int fd)
+અક્ષર *
+sys_get_rdomain(પૂર્ણાંક fd)
 {
-	return NULL;
+	પાછા ખાલી;
 }
 
-int
-sys_set_rdomain(int fd, const char *name)
+પૂર્ણાંક
+sys_set_rdomain(પૂર્ણાંક fd, અચલ અક્ષર *name)
 {
-	return -1;
+	પાછા -1;
 }
 
-int
-valid_rdomain(const char *name)
+પૂર્ણાંક
+valid_rdomain(અચલ અક્ષર *name)
 {
-	return 0;
+	પાછા 0;
 }
 
-void
-sys_set_process_rdomain(const char *name)
+શૂન્ય
+sys_set_process_rdomain(અચલ અક્ષર *name)
 {
 	fatal("%s: not supported", __func__);
 }
@@ -136,124 +136,124 @@ sys_set_process_rdomain(const char *name)
  * System-specific tunnel open function
  */
 
-#if defined(SSH_TUN_LINUX)
-#include <linux/if_tun.h>
+#જો defined(SSH_TUN_LINUX)
+#અન્તર્ભાવ <linux/if_tun.h>
 #define TUN_CTRL_DEV "/dev/net/tun"
 
-int
-sys_tun_open(int tun, int mode, char **ifname)
+પૂર્ણાંક
+sys_tun_open(પૂર્ણાંક tun, પૂર્ણાંક mode, અક્ષર **ifname)
 {
-	struct ifreq ifr;
-	int fd = -1;
-	const char *name = NULL;
+	સંરચના ifreq ifr;
+	પૂર્ણાંક fd = -1;
+	અચલ અક્ષર *name = ખાલી;
 
-	if (ifname != NULL)
-		*ifname = NULL;
-	if ((fd = open(TUN_CTRL_DEV, O_RDWR)) == -1) {
+	જો (ifname != ખાલી)
+		*ifname = ખાલી;
+	જો ((fd = open(TUN_CTRL_DEV, O_RDWR)) == -1) {
 		debug("%s: failed to open tunnel control device \"%s\": %s",
 		    __func__, TUN_CTRL_DEV, strerror(errno));
-		return (-1);
+		પાછા (-1);
 	}
 
-	bzero(&ifr, sizeof(ifr));
+	bzero(&ifr, કદ(ifr));
 
-	if (mode == SSH_TUNMODE_ETHERNET) {
+	જો (mode == SSH_TUNMODE_ETHERNET) {
 		ifr.ifr_flags = IFF_TAP;
 		name = "tap%d";
-	} else {
+	} નહીંતર {
 		ifr.ifr_flags = IFF_TUN;
 		name = "tun%d";
 	}
 	ifr.ifr_flags |= IFF_NO_PI;
 
-	if (tun != SSH_TUNID_ANY) {
-		if (tun > SSH_TUNID_MAX) {
+	જો (tun != SSH_TUNID_ANY) {
+		જો (tun > SSH_TUNID_MAX) {
 			debug("%s: invalid tunnel id %x: %s", __func__,
 			    tun, strerror(errno));
-			goto failed;
+			જાઓ failed;
 		}
-		snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), name, tun);
+		snprintf(ifr.ifr_name, કદ(ifr.ifr_name), name, tun);
 	}
 
-	if (ioctl(fd, TUNSETIFF, &ifr) == -1) {
+	જો (ioctl(fd, TUNSETIFF, &ifr) == -1) {
 		debug("%s: failed to configure tunnel (mode %d): %s", __func__,
 		    mode, strerror(errno));
-		goto failed;
+		જાઓ failed;
 	}
 
-	if (tun == SSH_TUNID_ANY)
+	જો (tun == SSH_TUNID_ANY)
 		debug("%s: tunnel mode %d fd %d", __func__, mode, fd);
-	else
+	નહીંતર
 		debug("%s: %s mode %d fd %d", __func__, ifr.ifr_name, mode, fd);
 
-	if (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
-		goto failed;
+	જો (ifname != ખાલી && (*ifname = strdup(ifr.ifr_name)) == ખાલી)
+		જાઓ failed;
 
-	return (fd);
+	પાછા (fd);
 
  failed:
 	close(fd);
-	return (-1);
+	પાછા (-1);
 }
 #endif /* SSH_TUN_LINUX */
 
 #ifdef SSH_TUN_FREEBSD
-#include <sys/socket.h>
-#include <net/if.h>
+#અન્તર્ભાવ <sys/socket.h>
+#અન્તર્ભાવ <net/if.h>
 
 #ifdef HAVE_NET_IF_TUN_H
-#include <net/if_tun.h>
+#અન્તર્ભાવ <net/if_tun.h>
 #endif
 
-int
-sys_tun_open(int tun, int mode, char **ifname)
+પૂર્ણાંક
+sys_tun_open(પૂર્ણાંક tun, પૂર્ણાંક mode, અક્ષર **ifname)
 {
-	struct ifreq ifr;
-	char name[100];
-	int fd = -1, sock;
-	const char *tunbase = "tun";
-#if defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
-	int flag;
+	સંરચના ifreq ifr;
+	અક્ષર name[100];
+	પૂર્ણાંક fd = -1, sock;
+	અચલ અક્ષર *tunbase = "tun";
+#જો defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
+	પૂર્ણાંક flag;
 #endif
 
-	if (ifname != NULL)
-		*ifname = NULL;
+	જો (ifname != ખાલી)
+		*ifname = ખાલી;
 
-	if (mode == SSH_TUNMODE_ETHERNET) {
+	જો (mode == SSH_TUNMODE_ETHERNET) {
 #ifdef SSH_TUN_NO_L2
 		debug("%s: no layer 2 tunnelling support", __func__);
-		return (-1);
-#else
+		પાછા (-1);
+#નહીંતર
 		tunbase = "tap";
 #endif
 	}
 
 	/* Open the tunnel device */
-	if (tun <= SSH_TUNID_MAX) {
-		snprintf(name, sizeof(name), "/dev/%s%d", tunbase, tun);
+	જો (tun <= SSH_TUNID_MAX) {
+		snprintf(name, કદ(name), "/dev/%s%d", tunbase, tun);
 		fd = open(name, O_RDWR);
-	} else if (tun == SSH_TUNID_ANY) {
-		for (tun = 100; tun >= 0; tun--) {
-			snprintf(name, sizeof(name), "/dev/%s%d",
+	} નહીંતર જો (tun == SSH_TUNID_ANY) {
+		માટે (tun = 100; tun >= 0; tun--) {
+			snprintf(name, કદ(name), "/dev/%s%d",
 			    tunbase, tun);
-			if ((fd = open(name, O_RDWR)) >= 0)
-				break;
+			જો ((fd = open(name, O_RDWR)) >= 0)
+				તોડો;
 		}
-	} else {
+	} નહીંતર {
 		debug("%s: invalid tunnel %u\n", __func__, tun);
-		return (-1);
+		પાછા (-1);
 	}
 
-	if (fd < 0) {
+	જો (fd < 0) {
 		debug("%s: %s open failed: %s", __func__, name,
 		    strerror(errno));
-		return (-1);
+		પાછા (-1);
 	}
 
 	/* Turn on tunnel headers */
-#if defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
+#જો defined(TUNSIFHEAD) && !defined(SSH_TUN_PREPEND_AF)
 	flag = 1;
-	if (mode != SSH_TUNMODE_ETHERNET &&
+	જો (mode != SSH_TUNMODE_ETHERNET &&
 	    ioctl(fd, TUNSIFHEAD, &flag) == -1) {
 		debug("%s: ioctl(%d, TUNSIFHEAD, 1): %s", __func__, fd,
 		    strerror(errno));
@@ -264,32 +264,32 @@ sys_tun_open(int tun, int mode, char **ifname)
 	debug("%s: %s mode %d fd %d", __func__, name, mode, fd);
 
 	/* Set the tunnel device operation mode */
-	snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s%d", tunbase, tun);
-	if ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
-		goto failed;
+	snprintf(ifr.ifr_name, કદ(ifr.ifr_name), "%s%d", tunbase, tun);
+	જો ((sock = socket(PF_UNIX, SOCK_STREAM, 0)) == -1)
+		જાઓ failed;
 
-	if (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1)
-		goto failed;
-	if ((ifr.ifr_flags & IFF_UP) == 0) {
+	જો (ioctl(sock, SIOCGIFFLAGS, &ifr) == -1)
+		જાઓ failed;
+	જો ((ifr.ifr_flags & IFF_UP) == 0) {
 		ifr.ifr_flags |= IFF_UP;
-		if (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1)
-			goto failed;
+		જો (ioctl(sock, SIOCSIFFLAGS, &ifr) == -1)
+			જાઓ failed;
 	}
 
-	if (ifname != NULL && (*ifname = strdup(ifr.ifr_name)) == NULL)
-		goto failed;
+	જો (ifname != ખાલી && (*ifname = strdup(ifr.ifr_name)) == ખાલી)
+		જાઓ failed;
 
 	close(sock);
-	return (fd);
+	પાછા (fd);
 
  failed:
-	if (fd >= 0)
+	જો (fd >= 0)
 		close(fd);
-	if (sock >= 0)
+	જો (sock >= 0)
 		close(sock);
 	debug("%s: failed to set %s mode %d: %s", __func__, name,
 	    mode, strerror(errno));
-	return (-1);
+	પાછા (-1);
 }
 #endif /* SSH_TUN_FREEBSD */
 
@@ -297,7 +297,7 @@ sys_tun_open(int tun, int mode, char **ifname)
  * System-specific channel filters
  */
 
-#if defined(SSH_TUN_FILTER)
+#જો defined(SSH_TUN_FILTER)
 /*
  * The tunnel forwarding protocol prepends the address family of forwarded
  * IP packets using OpenBSD's numbers.
@@ -305,74 +305,74 @@ sys_tun_open(int tun, int mode, char **ifname)
 #define OPENBSD_AF_INET		2
 #define OPENBSD_AF_INET6	24
 
-int
-sys_tun_infilter(struct ssh *ssh, struct Channel *c, char *buf, int _len)
+પૂર્ણાંક
+sys_tun_infilter(સંરચના ssh *ssh, સંરચના Channel *c, અક્ષર *buf, પૂર્ણાંક _len)
 {
-	int r;
+	પૂર્ણાંક r;
 	size_t len;
-	char *ptr = buf;
-#if defined(SSH_TUN_PREPEND_AF)
-	char rbuf[CHAN_RBUF];
-	struct ip iph;
+	અક્ષર *ptr = buf;
+#જો defined(SSH_TUN_PREPEND_AF)
+	અક્ષર rbuf[CHAN_RBUF];
+	સંરચના ip iph;
 #endif
-#if defined(SSH_TUN_PREPEND_AF) || defined(SSH_TUN_COMPAT_AF)
+#જો defined(SSH_TUN_PREPEND_AF) || defined(SSH_TUN_COMPAT_AF)
 	u_int32_t af;
 #endif
 
 	/* XXX update channel input filter API to use unsigned length */
-	if (_len < 0)
-		return -1;
+	જો (_len < 0)
+		પાછા -1;
 	len = _len;
 
-#if defined(SSH_TUN_PREPEND_AF)
-	if (len <= sizeof(iph) || len > sizeof(rbuf) - 4)
-		return -1;
+#જો defined(SSH_TUN_PREPEND_AF)
+	જો (len <= કદ(iph) || len > કદ(rbuf) - 4)
+		પાછા -1;
 	/* Determine address family from packet IP header. */
-	memcpy(&iph, buf, sizeof(iph));
+	memcpy(&iph, buf, કદ(iph));
 	af = iph.ip_v == 6 ? OPENBSD_AF_INET6 : OPENBSD_AF_INET;
 	/* Prepend address family to packet using OpenBSD constants */
 	memcpy(rbuf + 4, buf, len);
 	len += 4;
 	POKE_U32(rbuf, af);
 	ptr = rbuf;
-#elif defined(SSH_TUN_COMPAT_AF)
+#અથવાજો defined(SSH_TUN_COMPAT_AF)
 	/* Convert existing address family header to OpenBSD value */
-	if (len <= 4)
-		return -1;
+	જો (len <= 4)
+		પાછા -1;
 	af = PEEK_U32(buf);
 	/* Put it back */
 	POKE_U32(buf, af == AF_INET6 ? OPENBSD_AF_INET6 : OPENBSD_AF_INET);
 #endif
 
-	if ((r = sshbuf_put_string(c->input, ptr, len)) != 0)
+	જો ((r = sshbuf_put_string(c->આગત, ptr, len)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
-	return (0);
+	પાછા (0);
 }
 
 u_char *
-sys_tun_outfilter(struct ssh *ssh, struct Channel *c,
+sys_tun_outfilter(સંરચના ssh *ssh, સંરચના Channel *c,
     u_char **data, size_t *dlen)
 {
 	u_char *buf;
 	u_int32_t af;
-	int r;
+	પૂર્ણાંક r;
 
 	/* XXX new API is incompatible with this signature. */
-	if ((r = sshbuf_get_string(c->output, data, dlen)) != 0)
+	જો ((r = sshbuf_get_string(c->output, data, dlen)) != 0)
 		fatal("%s: buffer error: %s", __func__, ssh_err(r));
-	if (*dlen < sizeof(af))
-		return (NULL);
+	જો (*dlen < કદ(af))
+		પાછા (ખાલી);
 	buf = *data;
 
-#if defined(SSH_TUN_PREPEND_AF)
+#જો defined(SSH_TUN_PREPEND_AF)
 	/* skip address family */
-	*dlen -= sizeof(af);
-	buf = *data + sizeof(af);
-#elif defined(SSH_TUN_COMPAT_AF)
+	*dlen -= કદ(af);
+	buf = *data + કદ(af);
+#અથવાજો defined(SSH_TUN_COMPAT_AF)
 	/* translate address family */
 	af = (PEEK_U32(buf) == OPENBSD_AF_INET6) ? AF_INET6 : AF_INET;
 	POKE_U32(buf, af);
 #endif
-	return (buf);
+	પાછા (buf);
 }
 #endif /* SSH_TUN_FILTER */

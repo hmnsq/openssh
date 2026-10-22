@@ -23,49 +23,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#if defined(HAVE_LIBIAF)  &&  !defined(HAVE_SECUREWARE)
-#include <sys/types.h>
+#જો defined(HAVE_LIBIAF)  &&  !defined(HAVE_SECUREWARE)
+#અન્તર્ભાવ <sys/types.h>
 #ifdef HAVE_CRYPT_H
 # include <crypt.h>
 #endif
-#include <pwd.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#અન્તર્ભાવ <pwd.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
 
-#include "xmalloc.h"
-#include "packet.h"
-#include "auth-options.h"
-#include "log.h"
-#include "misc.h"	/* servconf.h needs misc.h for struct ForwardOptions */
-#include "servconf.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "ssh.h"
-#include "ssh_api.h"
+#અન્તર્ભાવ "xmalloc.h"
+#અન્તર્ભાવ "packet.h"
+#અન્તર્ભાવ "auth-options.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "misc.h"	/* servconf.h needs misc.h for struct ForwardOptions */
+#અન્તર્ભાવ "servconf.h"
+#અન્તર્ભાવ "hostfile.h"
+#અન્તર્ભાવ "auth.h"
+#અન્તર્ભાવ "ssh.h"
+#અન્તર્ભાવ "ssh_api.h"
 
-int nischeck(char *);
+પૂર્ણાંક nischeck(અક્ષર *);
 
-int
-sys_auth_passwd(struct ssh *ssh, const char *password)
+પૂર્ણાંક
+sys_auth_passwd(સંરચના ssh *ssh, અચલ અક્ષર *password)
 {
 	Authctxt *authctxt = ssh->authctxt;
-	struct passwd *pw = authctxt->pw;
-	char *salt;
-	int result;
+	સંરચના passwd *pw = authctxt->pw;
+	અક્ષર *salt;
+	પૂર્ણાંક result;
 
 	/* Just use the supplied fake password if authctxt is invalid */
-	char *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
+	અક્ષર *pw_password = authctxt->valid ? shadow_pw(pw) : pw->pw_passwd;
 
-	if (pw_password == NULL)
-		return 0;
+	જો (pw_password == ખાલી)
+		પાછા 0;
 
 	/* Check for users with no password. */
-	if (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
-		return (1);
+	જો (strcmp(pw_password, "") == 0 && strcmp(password, "") == 0)
+		પાછા (1);
 
 	/* Encrypt the candidate password using the proper salt. */
 	salt = (pw_password[0] && pw_password[1]) ? pw_password : "xx";
@@ -75,53 +75,53 @@ sys_auth_passwd(struct ssh *ssh, const char *password)
 	 * are identical.
 	 */
 #ifdef UNIXWARE_LONG_PASSWORDS
-	if (!nischeck(pw->pw_name)) {
+	જો (!nischeck(pw->pw_name)) {
 		result = ((strcmp(bigcrypt(password, salt), pw_password) == 0)
 		||  (strcmp(osr5bigcrypt(password, salt), pw_password) == 0));
 	}
-	else
+	નહીંતર
 #endif /* UNIXWARE_LONG_PASSWORDS */
 		result = (strcmp(xcrypt(password, salt), pw_password) == 0);
 
 #ifdef USE_LIBIAF
-	if (authctxt->valid)
-		free(pw_password);
+	જો (authctxt->valid)
+		મુક્ત(pw_password);
 #endif
-	return(result);
+	પાછા(result);
 }
 
 #ifdef UNIXWARE_LONG_PASSWORDS
-int
-nischeck(char *namep)
+પૂર્ણાંક
+nischeck(અક્ષર *namep)
 {
-	char password_file[] = "/etc/passwd";
+	અક્ષર password_file[] = "/etc/passwd";
 	FILE *fd;
-	struct passwd *ent = NULL;
+	સંરચના passwd *ent = ખાલી;
 
-	if ((fd = fopen (password_file, "r")) == NULL) {
+	જો ((fd = fopen (password_file, "r")) == ખાલી) {
 		/*
 		 * If the passwd file has disappeared we are in a bad state.
 		 * However, returning 0 will send us back through the
 		 * authentication scheme that has checked the ia database for
 		 * passwords earlier.
 		 */
-		return(0);
+		પાછા(0);
 	}
 
 	/*
 	 * fgetpwent() only reads from password file, so we know for certain
 	 * that the user is local.
 	 */
-	while (ent = fgetpwent(fd)) {
-		if (strcmp (ent->pw_name, namep) == 0) {
+	જ્યારે (ent = fgetpwent(fd)) {
+		જો (strcmp (ent->pw_name, namep) == 0) {
 			/* Local user */
 			fclose (fd);
-			return(0);
+			પાછા(0);
 		}
 	}
 
 	fclose (fd);
-	return (1);
+	પાછા (1);
 }
 
 #endif /* UNIXWARE_LONG_PASSWORDS */
@@ -132,20 +132,20 @@ nischeck(char *namep)
  */
 
 #ifdef USE_LIBIAF
-char *
-get_iaf_password(struct passwd *pw)
+અક્ષર *
+get_iaf_password(સંરચના passwd *pw)
 {
-	char *pw_password = NULL;
+	અક્ષર *pw_password = ખાલી;
 
 	uinfo_t uinfo;
-	if (!ia_openinfo(pw->pw_name,&uinfo)) {
+	જો (!ia_openinfo(pw->pw_name,&uinfo)) {
 		ia_get_logpwd(uinfo, &pw_password);
-		if (pw_password == NULL)
+		જો (pw_password == ખાલી)
 			fatal("ia_get_logpwd: Unable to get the shadow passwd");
 		ia_closeinfo(uinfo);
-		return pw_password;
+		પાછા pw_password;
 	}
-	else
+	નહીંતર
 		fatal("ia_openinfo: Unable to open the shadow passwd file");
 }
 #endif /* USE_LIBIAF */

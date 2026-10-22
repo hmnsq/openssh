@@ -14,36 +14,36 @@
  * called by a name other than "ssh" or "Secure Shell".
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <sys/stat.h>
 
-#include <errno.h>
-#include <fcntl.h>
-#include <netgroup.h>
-#include <pwd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <unistd.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <fcntl.h>
+#અન્તર્ભાવ <netgroup.h>
+#અન્તર્ભાવ <pwd.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <unistd.h>
 
-#include "packet.h"
-#include "uidswap.h"
-#include "pathnames.h"
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "servconf.h"
-#include "canohost.h"
-#include "hostfile.h"
-#include "auth.h"
+#અન્તર્ભાવ "packet.h"
+#અન્તર્ભાવ "uidswap.h"
+#અન્તર્ભાવ "pathnames.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "xmalloc.h"
+#અન્તર્ભાવ "sshbuf.h"
+#અન્તર્ભાવ "sshkey.h"
+#અન્તર્ભાવ "servconf.h"
+#અન્તર્ભાવ "canohost.h"
+#અન્તર્ભાવ "hostfile.h"
+#અન્તર્ભાવ "auth.h"
 
 /* import */
-extern ServerOptions options;
+બાહ્ય ServerOptions options;
 
 /*
  * This function processes an rhosts-style file (.rhosts, .shosts, or
@@ -51,75 +51,75 @@ extern ServerOptions options;
  * based on the file, and returns zero otherwise.
  */
 
-static int
-check_rhosts_file(const char *filename, const char *hostname,
-		  const char *ipaddr, const char *client_user,
-		  const char *server_user)
+સ્થિર પૂર્ણાંક
+check_rhosts_file(અચલ અક્ષર *filename, અચલ અક્ષર *hostname,
+		  અચલ અક્ષર *ipaddr, અચલ અક્ષર *client_user,
+		  અચલ અક્ષર *server_user)
 {
 	FILE *f;
 #define RBUFLN 1024
-	char buf[RBUFLN];/* Must not be larger than host, user, dummy below. */
-	int fd;
-	struct stat st;
+	અક્ષર buf[RBUFLN];/* Must not be larger than host, user, dummy below. */
+	પૂર્ણાંક fd;
+	સંરચના stat st;
 
 	/* Open the .rhosts file, deny if unreadable */
-	if ((fd = open(filename, O_RDONLY|O_NONBLOCK)) == -1)
-		return 0;
-	if (fstat(fd, &st) == -1) {
+	જો ((fd = open(filename, O_RDONLY|O_NONBLOCK)) == -1)
+		પાછા 0;
+	જો (fstat(fd, &st) == -1) {
 		close(fd);
-		return 0;
+		પાછા 0;
 	}
-	if (!S_ISREG(st.st_mode)) {
+	જો (!S_ISREG(st.st_mode)) {
 		logit("User %s hosts file %s is not a regular file",
 		    server_user, filename);
 		close(fd);
-		return 0;
+		પાછા 0;
 	}
 	unset_nonblock(fd);
-	if ((f = fdopen(fd, "r")) == NULL) {
+	જો ((f = fdopen(fd, "r")) == ખાલી) {
 		close(fd);
-		return 0;
+		પાછા 0;
 	}
-	while (fgets(buf, sizeof(buf), f)) {
+	જ્યારે (fgets(buf, કદ(buf), f)) {
 		/* All three must have length >= buf to avoid overflows. */
-		char hostbuf[RBUFLN], userbuf[RBUFLN], dummy[RBUFLN];
-		char *host, *user, *cp;
-		int negated;
+		અક્ષર hostbuf[RBUFLN], userbuf[RBUFLN], dummy[RBUFLN];
+		અક્ષર *host, *user, *cp;
+		પૂર્ણાંક negated;
 
-		for (cp = buf; *cp == ' ' || *cp == '\t'; cp++)
+		માટે (cp = buf; *cp == ' ' || *cp == '\t'; cp++)
 			;
-		if (*cp == '#' || *cp == '\n' || !*cp)
-			continue;
+		જો (*cp == '#' || *cp == '\n' || !*cp)
+			ચાલુ;
 
 		/*
 		 * NO_PLUS is supported at least on OSF/1.  We skip it (we
 		 * don't ever support the plus syntax).
 		 */
-		if (strncmp(cp, "NO_PLUS", 7) == 0)
-			continue;
+		જો (strncmp(cp, "NO_PLUS", 7) == 0)
+			ચાલુ;
 
 		/*
 		 * This should be safe because each buffer is as big as the
 		 * whole string, and thus cannot be overwritten.
 		 */
-		switch (sscanf(buf, "%1023s %1023s %1023s", hostbuf, userbuf,
+		પસંદગી (sscanf(buf, "%1023s %1023s %1023s", hostbuf, userbuf,
 		    dummy)) {
-		case 0:
+		સ્થિતિ 0:
 			auth_debug_add("Found empty line in %.100s.", filename);
-			continue;
-		case 1:
+			ચાલુ;
+		સ્થિતિ 1:
 			/* Host name only. */
-			strlcpy(userbuf, server_user, sizeof(userbuf));
-			break;
-		case 2:
+			strlcpy(userbuf, server_user, કદ(userbuf));
+			તોડો;
+		સ્થિતિ 2:
 			/* Got both host and user name. */
-			break;
-		case 3:
+			તોડો;
+		સ્થિતિ 3:
 			auth_debug_add("Found garbage in %.100s.", filename);
-			continue;
-		default:
+			ચાલુ;
+		મૂળભૂત:
 			/* Weird... */
-			continue;
+			ચાલુ;
 		}
 
 		host = hostbuf;
@@ -127,57 +127,57 @@ check_rhosts_file(const char *filename, const char *hostname,
 		negated = 0;
 
 		/* Process negated host names, or positive netgroups. */
-		if (host[0] == '-') {
+		જો (host[0] == '-') {
 			negated = 1;
 			host++;
-		} else if (host[0] == '+')
+		} નહીંતર જો (host[0] == '+')
 			host++;
 
-		if (user[0] == '-') {
+		જો (user[0] == '-') {
 			negated = 1;
 			user++;
-		} else if (user[0] == '+')
+		} નહીંતર જો (user[0] == '+')
 			user++;
 
 		/* Check for empty host/user names (particularly '+'). */
-		if (!host[0] || !user[0]) {
+		જો (!host[0] || !user[0]) {
 			/* We come here if either was '+' or '-'. */
 			auth_debug_add("Ignoring wild host/user names "
 			    "in %.100s.", filename);
-			continue;
+			ચાલુ;
 		}
 		/* Verify that host name matches. */
-		if (host[0] == '@') {
-			if (!innetgr(host + 1, hostname, NULL, NULL) &&
-			    !innetgr(host + 1, ipaddr, NULL, NULL))
-				continue;
-		} else if (strcasecmp(host, hostname) &&
+		જો (host[0] == '@') {
+			જો (!innetgr(host + 1, hostname, ખાલી, ખાલી) &&
+			    !innetgr(host + 1, ipaddr, ખાલી, ખાલી))
+				ચાલુ;
+		} નહીંતર જો (strcasecmp(host, hostname) &&
 		    strcmp(host, ipaddr) != 0)
-			continue;	/* Different hostname. */
+			ચાલુ;	/* Different hostname. */
 
 		/* Verify that user name matches. */
-		if (user[0] == '@') {
-			if (!innetgr(user + 1, NULL, client_user, NULL))
-				continue;
-		} else if (strcmp(user, client_user) != 0)
-			continue;	/* Different username. */
+		જો (user[0] == '@') {
+			જો (!innetgr(user + 1, ખાલી, client_user, ખાલી))
+				ચાલુ;
+		} નહીંતર જો (strcmp(user, client_user) != 0)
+			ચાલુ;	/* Different username. */
 
 		/* Found the user and host. */
 		fclose(f);
 
 		/* If the entry was negated, deny access. */
-		if (negated) {
+		જો (negated) {
 			auth_debug_add("Matched negative entry in %.100s.",
 			    filename);
-			return 0;
+			પાછા 0;
 		}
 		/* Accept authentication. */
-		return 1;
+		પાછા 1;
 	}
 
 	/* Authentication using this file denied. */
 	fclose(f);
-	return 0;
+	પાછા 0;
 }
 
 /*
@@ -185,15 +185,15 @@ check_rhosts_file(const char *filename, const char *hostname,
  * true if authentication succeeds.  If ignore_rhosts is true, only
  * /etc/hosts.equiv will be considered (.rhosts and .shosts are ignored).
  */
-int
-auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
-    const char *ipaddr)
+પૂર્ણાંક
+auth_rhosts2(સંરચના passwd *pw, અચલ અક્ષર *client_user, અચલ અક્ષર *hostname,
+    અચલ અક્ષર *ipaddr)
 {
-	char *path = NULL;
-	struct stat st;
-	static const char * const rhosts_files[] = {".shosts", ".rhosts", NULL};
+	અક્ષર *path = ખાલી;
+	સંરચના stat st;
+	સ્થિર અચલ અક્ષર * અચલ rhosts_files[] = {".shosts", ".rhosts", ખાલી};
 	u_int rhosts_file_index;
-	int r;
+	પૂર્ણાંક r;
 
 	debug2_f("clientuser %s hostname %s ipaddr %s",
 	    client_user, hostname, ipaddr);
@@ -206,15 +206,15 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	 * failure immediately without doing costly lookups from name
 	 * servers.
 	 */
-	for (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
+	માટે (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
 	    rhosts_file_index++) {
 		/* Check users .rhosts or .shosts. */
 		xasprintf(&path, "%s/%s",
 		    pw->pw_dir, rhosts_files[rhosts_file_index]);
 		r = stat(path, &st);
-		free(path);
-		if (r >= 0)
-			break;
+		મુક્ત(path);
+		જો (r >= 0)
+			તોડો;
 	}
 	/* Switch back to privileged uid. */
 	restore_uid();
@@ -223,31 +223,31 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	 * Deny if The user has no .shosts or .rhosts file and there
 	 * are no system-wide files.
 	 */
-	if (!rhosts_files[rhosts_file_index] &&
+	જો (!rhosts_files[rhosts_file_index] &&
 	    stat(_PATH_RHOSTS_EQUIV, &st) == -1 &&
 	    stat(_PATH_SSH_HOSTS_EQUIV, &st) == -1) {
 		debug3_f("no hosts access files exist");
-		return 0;
+		પાછા 0;
 	}
 
 	/*
 	 * If not logging in as superuser, try /etc/hosts.equiv and
 	 * shosts.equiv.
 	 */
-	if (pw->pw_uid == 0)
+	જો (pw->pw_uid == 0)
 		debug3_f("root user, ignoring system hosts files");
-	else {
-		if (check_rhosts_file(_PATH_RHOSTS_EQUIV, hostname, ipaddr,
+	નહીંતર {
+		જો (check_rhosts_file(_PATH_RHOSTS_EQUIV, hostname, ipaddr,
 		    client_user, pw->pw_name)) {
 			auth_debug_add("Accepted for %.100s [%.100s] by "
 			    "/etc/hosts.equiv.", hostname, ipaddr);
-			return 1;
+			પાછા 1;
 		}
-		if (check_rhosts_file(_PATH_SSH_HOSTS_EQUIV, hostname, ipaddr,
+		જો (check_rhosts_file(_PATH_SSH_HOSTS_EQUIV, hostname, ipaddr,
 		    client_user, pw->pw_name)) {
 			auth_debug_add("Accepted for %.100s [%.100s] by "
 			    "%.100s.", hostname, ipaddr, _PATH_SSH_HOSTS_EQUIV);
-			return 1;
+			પાછા 1;
 		}
 	}
 
@@ -255,35 +255,35 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 	 * Check that the home directory is owned by root or the user, and is
 	 * not group or world writable.
 	 */
-	if (stat(pw->pw_dir, &st) == -1) {
+	જો (stat(pw->pw_dir, &st) == -1) {
 		logit("Rhosts authentication refused for %.100s: "
 		    "no home directory %.200s", pw->pw_name, pw->pw_dir);
 		auth_debug_add("Rhosts authentication refused for %.100s: "
 		    "no home directory %.200s", pw->pw_name, pw->pw_dir);
-		return 0;
+		પાછા 0;
 	}
-	if (options.strict_modes &&
+	જો (options.strict_modes &&
 	    ((st.st_uid != 0 && st.st_uid != pw->pw_uid) ||
 	    (st.st_mode & 022) != 0)) {
 		logit("Rhosts authentication refused for %.100s: "
 		    "bad ownership or modes for home directory.", pw->pw_name);
 		auth_debug_add("Rhosts authentication refused for %.100s: "
 		    "bad ownership or modes for home directory.", pw->pw_name);
-		return 0;
+		પાછા 0;
 	}
 	/* Temporarily use the user's uid. */
 	temporarily_use_uid(pw);
 
 	/* Check all .rhosts files (currently .shosts and .rhosts). */
-	for (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
+	માટે (rhosts_file_index = 0; rhosts_files[rhosts_file_index];
 	    rhosts_file_index++) {
 		/* Check users .rhosts or .shosts. */
 		xasprintf(&path, "%s/%s",
 		    pw->pw_dir, rhosts_files[rhosts_file_index]);
-		if (stat(path, &st) == -1) {
+		જો (stat(path, &st) == -1) {
 			debug3_f("stat %s: %s", path, strerror(errno));
-			free(path);
-			continue;
+			મુક્ત(path);
+			ચાલુ;
 		}
 
 		/*
@@ -292,29 +292,29 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 		 * owner.  This is to help avoid novices accidentally
 		 * allowing access to their account by anyone.
 		 */
-		if (options.strict_modes &&
+		જો (options.strict_modes &&
 		    ((st.st_uid != 0 && st.st_uid != pw->pw_uid) ||
 		    (st.st_mode & 022) != 0)) {
 			logit("Rhosts authentication refused for %.100s: "
 			    "bad modes for %.200s", pw->pw_name, path);
 			auth_debug_add("Bad file modes for %.200s", path);
-			free(path);
-			continue;
+			મુક્ત(path);
+			ચાલુ;
 		}
 		/*
 		 * Check if we have been configured to ignore .rhosts
 		 * and .shosts files.
 		 */
-		if (options.ignore_rhosts == IGNORE_RHOSTS_YES ||
+		જો (options.ignore_rhosts == IGNORE_RHOSTS_YES ||
 		    (options.ignore_rhosts == IGNORE_RHOSTS_SHOSTS &&
 		    strcmp(rhosts_files[rhosts_file_index], ".shosts") != 0)) {
 			auth_debug_add("Server has been configured to "
 			    "ignore %.100s.", rhosts_files[rhosts_file_index]);
-			free(path);
-			continue;
+			મુક્ત(path);
+			ચાલુ;
 		}
 		/* Check if authentication is permitted by the file. */
-		if (check_rhosts_file(path, hostname, ipaddr,
+		જો (check_rhosts_file(path, hostname, ipaddr,
 		    client_user, pw->pw_name)) {
 			auth_debug_add("Accepted by %.100s.",
 			    rhosts_files[rhosts_file_index]);
@@ -323,13 +323,13 @@ auth_rhosts2(struct passwd *pw, const char *client_user, const char *hostname,
 			auth_debug_add("Accepted host %s ip %s client_user "
 			    "%s server_user %s", hostname, ipaddr,
 			    client_user, pw->pw_name);
-			free(path);
-			return 1;
+			મુક્ત(path);
+			પાછા 1;
 		}
-		free(path);
+		મુક્ત(path);
 	}
 
 	/* Restore the privileged uid. */
 	restore_uid();
-	return 0;
+	પાછા 0;
 }

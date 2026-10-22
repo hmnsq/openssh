@@ -23,70 +23,70 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
+#અન્તર્ભાવ <sys/types.h>
 
-#include <errno.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdarg.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <stdarg.h>
 
-#include "sshbuf.h"
-#include "log.h"
-#include "atomicio.h"
-#include "msg.h"
-#include "misc.h"
+#અન્તર્ભાવ "sshbuf.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "atomicio.h"
+#અન્તર્ભાવ "msg.h"
+#અન્તર્ભાવ "misc.h"
 
-int
-ssh_msg_send(int fd, u_char type, struct sshbuf *m)
+પૂર્ણાંક
+ssh_સંદેશ_send(પૂર્ણાંક fd, u_char type, સંરચના sshbuf *m)
 {
 	u_char buf[5];
 	u_int mlen = sshbuf_len(m);
 
-	debug3_f("type %u len %zu", (unsigned int)type & 0xff, sshbuf_len(m));
+	debug3_f("type %u len %zu", (unsigned પૂર્ણાંક)type & 0xff, sshbuf_len(m));
 
 	put_u32(buf, mlen + 1);
 	buf[4] = type;		/* 1st byte of payload is mesg-type */
-	if (atomicio(vwrite, fd, buf, sizeof(buf)) != sizeof(buf)) {
+	જો (atomicio(vwrite, fd, buf, કદ(buf)) != કદ(buf)) {
 		error_f("write: %s", strerror(errno));
-		return (-1);
+		પાછા (-1);
 	}
-	if (atomicio(vwrite, fd, sshbuf_mutable_ptr(m), mlen) != mlen) {
+	જો (atomicio(vwrite, fd, sshbuf_mutable_ptr(m), mlen) != mlen) {
 		error_f("write: %s", strerror(errno));
-		return (-1);
+		પાછા (-1);
 	}
 	debug3_f("done");
-	return (0);
+	પાછા (0);
 }
 
-int
-ssh_msg_recv(int fd, struct sshbuf *m)
+પૂર્ણાંક
+ssh_સંદેશ_recv(પૂર્ણાંક fd, સંરચના sshbuf *m)
 {
 	u_char buf[4], *p;
-	u_int msg_len;
-	int r;
+	u_int સંદેશ_len;
+	પૂર્ણાંક r;
 
 	debug3("ssh_msg_recv entering");
 
-	if (atomicio(read, fd, buf, sizeof(buf)) != sizeof(buf)) {
-		if (errno != EPIPE)
+	જો (atomicio(પઠ, fd, buf, કદ(buf)) != કદ(buf)) {
+		જો (errno != EPIPE)
 			error_f("read header: %s", strerror(errno));
-		return (-1);
+		પાછા (-1);
 	}
-	msg_len = get_u32(buf);
-	if (msg_len > sshbuf_max_size(m)) {
-		error_f("read: bad msg_len %u", msg_len);
-		return (-1);
+	સંદેશ_len = get_u32(buf);
+	જો (સંદેશ_len > sshbuf_max_size(m)) {
+		error_f("read: bad msg_len %u", સંદેશ_len);
+		પાછા (-1);
 	}
 	sshbuf_reset(m);
-	if ((r = sshbuf_reserve(m, msg_len, &p)) != 0) {
+	જો ((r = sshbuf_reserve(m, સંદેશ_len, &p)) != 0) {
 		error_fr(r, "reserve");
-		return -1;
+		પાછા -1;
 	}
-	if (atomicio(read, fd, p, msg_len) != msg_len) {
+	જો (atomicio(પઠ, fd, p, સંદેશ_len) != સંદેશ_len) {
 		error_f("read: %s", strerror(errno));
-		return (-1);
+		પાછા (-1);
 	}
-	return (0);
+	પાછા (0);
 }

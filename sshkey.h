@@ -26,51 +26,51 @@
 #ifndef SSHKEY_H
 #define SSHKEY_H
 
-#include <sys/types.h>
+#અન્તર્ભાવ <sys/types.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/rsa.h>
-#include <openssl/ec.h>
-#include <openssl/ecdsa.h>
-#include <openssl/evp.h>
+#અન્તર્ભાવ <openssl/rsa.h>
+#અન્તર્ભાવ <openssl/ec.h>
+#અન્તર્ભાવ <openssl/ecdsa.h>
+#અન્તર્ભાવ <openssl/evp.h>
 #define SSH_OPENSSL_VERSION OpenSSL_version(OPENSSL_VERSION)
-#else /* OPENSSL */
-#define BIGNUM		void
-#define RSA		void
-#define EC_KEY		void
-#define EC_GROUP	void
-#define EC_POINT	void
-#define EVP_PKEY	void
+#નહીંતર /* OPENSSL */
+#define BIGNUM		શૂન્ય
+#define RSA		શૂન્ય
+#define EC_ચાવી		શૂન્ય
+#define EC_GROUP	શૂન્ય
+#define EC_POINT	શૂન્ય
+#define EVP_PKEY	શૂન્ય
 #define SSH_OPENSSL_VERSION "without OpenSSL"
 #endif /* WITH_OPENSSL */
 
 #define SSH_RSA_MINIMUM_MODULUS_SIZE	1024
-#define SSH_KEY_MAX_SIGN_DATA_SIZE	(1 << 20)
+#define SSH_ચાવી_MAX_SIGN_DATA_SIZE	(1 << 20)
 
-struct sshbuf;
+સંરચના sshbuf;
 
 /* Key types */
-enum sshkey_types {
-	KEY_RSA,
-	KEY_ECDSA,
-	KEY_ED25519,
-	KEY_RSA_CERT,
-	KEY_ECDSA_CERT,
-	KEY_ED25519_CERT,
-	KEY_ECDSA_SK,
-	KEY_ECDSA_SK_CERT,
-	KEY_ED25519_SK,
-	KEY_ED25519_SK_CERT,
-	KEY_MLDSA44_ED25519,
-	KEY_MLDSA44_ED25519_CERT,
-	KEY_UNSPEC
+ગણના sshkey_types {
+	ચાવી_RSA,
+	ચાવી_ECDSA,
+	ચાવી_ED25519,
+	ચાવી_RSA_CERT,
+	ચાવી_ECDSA_CERT,
+	ચાવી_ED25519_CERT,
+	ચાવી_ECDSA_SK,
+	ચાવી_ECDSA_SK_CERT,
+	ચાવી_ED25519_SK,
+	ચાવી_ED25519_SK_CERT,
+	ચાવી_MLDSA44_ED25519,
+	ચાવી_MLDSA44_ED25519_CERT,
+	ચાવી_UNSPEC
 };
 
 /* Default fingerprint hash */
 #define SSH_FP_HASH_DEFAULT	SSH_DIGEST_SHA256
 
 /* Fingerprint representation formats */
-enum sshkey_fp_rep {
+ગણના sshkey_fp_rep {
 	SSH_FP_DEFAULT = 0,
 	SSH_FP_HEX,
 	SSH_FP_BASE64,
@@ -79,12 +79,12 @@ enum sshkey_fp_rep {
 };
 
 /* Private key serialisation formats, used on the wire */
-enum sshkey_serialize_rep {
+ગણના sshkey_serialize_rep {
 	SSHKEY_SERIALIZE_DEFAULT = 0,
 };
 
 /* Private key disk formats */
-enum sshkey_private_format {
+ગણના sshkey_private_format {
 	SSHKEY_PRIVATE_OPENSSH = 0,
 	SSHKEY_PRIVATE_PEM = 1,
 	SSHKEY_PRIVATE_PKCS8 = 2,
@@ -95,26 +95,26 @@ enum sshkey_private_format {
 
 #define SSHKEY_CERT_MAX_PRINCIPALS	256
 /* XXX opacify? */
-struct sshkey_cert {
-	struct sshbuf	*certblob; /* Kept around for use on wire */
+સંરચના sshkey_cert {
+	સંરચના sshbuf	*certblob; /* Kept around for use on wire */
 	u_int		 type; /* SSH2_CERT_TYPE_USER or SSH2_CERT_TYPE_HOST */
 	uint64_t	 serial;
-	char		*key_id;
+	અક્ષર		*ચાવી_id;
 	u_int		 nprincipals;
-	char		**principals;
+	અક્ષર		**principals;
 	uint64_t	 valid_after, valid_before;
-	struct sshbuf	*critical;
-	struct sshbuf	*extensions;
-	struct sshkey	*signature_key;
-	char		*signature_type;
+	સંરચના sshbuf	*critical;
+	સંરચના sshbuf	*extensions;
+	સંરચના sshkey	*signature_ચાવી;
+	અક્ષર		*signature_type;
 };
 
 /* XXX opacify? */
-struct sshkey {
-	int	 type;
-	int	 flags;
+સંરચના sshkey {
+	પૂર્ણાંક	 type;
+	પૂર્ણાંક	 flags;
 	/* KEY_ECDSA and KEY_ECDSA_SK */
-	int	 ecdsa_nid;	/* NID of curve */
+	પૂર્ણાંક	 ecdsa_nid;	/* NID of curve */
 	/* libcrypto-backed keys */
 	EVP_PKEY *pkey;
 	/* KEY_ED25519 and KEY_ED25519_SK */
@@ -124,12 +124,12 @@ struct sshkey {
 	u_char	*mldsa_ed25519_sk;
 	u_char	*mldsa_ed25519_pk;
 	/* KEY_ECDSA_SK and KEY_ED25519_SK */
-	char	*sk_application;
+	અક્ષર	*sk_application;
 	uint8_t	sk_flags;
-	struct sshbuf *sk_key_handle;
-	struct sshbuf *sk_reserved;
+	સંરચના sshbuf *sk_ચાવી_handle;
+	સંરચના sshbuf *sk_reserved;
 	/* Certificates */
-	struct sshkey_cert *cert;
+	સંરચના sshkey_cert *cert;
 	/* Private key shielding */
 	u_char	*shielded_private;
 	size_t	shielded_len;
@@ -141,198 +141,198 @@ struct sshkey {
 #define	ED25519_PK_SZ	crypto_sign_ed25519_PUBLICKEYBYTES
 
 /* Additional fields contained in signature */
-struct sshkey_sig_details {
+સંરચના sshkey_sig_details {
 	uint32_t sk_counter;	/* U2F signature counter */
 	uint8_t sk_flags;	/* U2F signature flags; see ssh-sk.h */
 };
 
-struct sshkey_impl_funcs {
-	u_int (*size)(const struct sshkey *);	/* optional */
-	int (*alloc)(struct sshkey *);		/* optional */
-	void (*cleanup)(struct sshkey *);	/* optional */
-	int (*equal)(const struct sshkey *, const struct sshkey *);
-	int (*serialize_public)(const struct sshkey *, struct sshbuf *,
-	    enum sshkey_serialize_rep);
-	int (*deserialize_public)(const char *, struct sshbuf *,
-	    struct sshkey *);
-	int (*serialize_private)(const struct sshkey *, struct sshbuf *,
-	    enum sshkey_serialize_rep);
-	int (*deserialize_private)(const char *, struct sshbuf *,
-	    struct sshkey *);
-	int (*generate)(struct sshkey *, int);	/* optional */
-	int (*copy_public)(const struct sshkey *, struct sshkey *);
-	int (*sign)(struct sshkey *, u_char **, size_t *,
-	    const u_char *, size_t, const char *,
-	    const char *, const char *, u_int); /* optional */
-	int (*verify)(const struct sshkey *, const u_char *, size_t,
-	    const u_char *, size_t, const char *, u_int,
-	    struct sshkey_sig_details **);
+સંરચના sshkey_impl_funcs {
+	u_int (*size)(અચલ સંરચના sshkey *);	/* optional */
+	પૂર્ણાંક (*alloc)(સંરચના sshkey *);		/* optional */
+	શૂન્ય (*cleanup)(સંરચના sshkey *);	/* optional */
+	પૂર્ણાંક (*equal)(અચલ સંરચના sshkey *, અચલ સંરચના sshkey *);
+	પૂર્ણાંક (*serialize_public)(અચલ સંરચના sshkey *, સંરચના sshbuf *,
+	    ગણના sshkey_serialize_rep);
+	પૂર્ણાંક (*deserialize_public)(અચલ અક્ષર *, સંરચના sshbuf *,
+	    સંરચના sshkey *);
+	પૂર્ણાંક (*serialize_private)(અચલ સંરચના sshkey *, સંરચના sshbuf *,
+	    ગણના sshkey_serialize_rep);
+	પૂર્ણાંક (*deserialize_private)(અચલ અક્ષર *, સંરચના sshbuf *,
+	    સંરચના sshkey *);
+	પૂર્ણાંક (*generate)(સંરચના sshkey *, પૂર્ણાંક);	/* optional */
+	પૂર્ણાંક (*copy_public)(અચલ સંરચના sshkey *, સંરચના sshkey *);
+	પૂર્ણાંક (*sign)(સંરચના sshkey *, u_char **, size_t *,
+	    અચલ u_char *, size_t, અચલ અક્ષર *,
+	    અચલ અક્ષર *, અચલ અક્ષર *, u_int); /* optional */
+	પૂર્ણાંક (*verify)(અચલ સંરચના sshkey *, અચલ u_char *, size_t,
+	    અચલ u_char *, size_t, અચલ અક્ષર *, u_int,
+	    સંરચના sshkey_sig_details **);
 };
 
-struct sshkey_impl {
-	const char *name;
-	const char *shortname;
-	const char *sigalg;
-	int type;
-	int nid;
-	int cert;
-	int sigonly;
-	int keybits;
-	const struct sshkey_impl_funcs *funcs;
+સંરચના sshkey_impl {
+	અચલ અક્ષર *name;
+	અચલ અક્ષર *shortname;
+	અચલ અક્ષર *sigalg;
+	પૂર્ણાંક type;
+	પૂર્ણાંક nid;
+	પૂર્ણાંક cert;
+	પૂર્ણાંક sigonly;
+	પૂર્ણાંક keybits;
+	અચલ સંરચના sshkey_impl_funcs *funcs;
 };
 
-struct sshkey	*sshkey_new(int);
-void		 sshkey_free(struct sshkey *);
-int		 sshkey_equal_public(const struct sshkey *,
-    const struct sshkey *);
-int		 sshkey_equal(const struct sshkey *, const struct sshkey *);
-char		*sshkey_fingerprint(const struct sshkey *,
-    int, enum sshkey_fp_rep);
-int		 sshkey_fingerprint_raw(const struct sshkey *k,
-    int, u_char **retp, size_t *lenp);
-const char	*sshkey_type(const struct sshkey *);
-const char	*sshkey_cert_type(const struct sshkey *);
-int		 sshkey_format_text(const struct sshkey *, struct sshbuf *);
-int		 sshkey_write(const struct sshkey *, FILE *);
-int		 sshkey_read(struct sshkey *, char **);
-u_int		 sshkey_size(const struct sshkey *);
+સંરચના sshkey	*sshkey_new(પૂર્ણાંક);
+શૂન્ય		 sshkey_free(સંરચના sshkey *);
+પૂર્ણાંક		 sshkey_equal_public(અચલ સંરચના sshkey *,
+    અચલ સંરચના sshkey *);
+પૂર્ણાંક		 sshkey_equal(અચલ સંરચના sshkey *, અચલ સંરચના sshkey *);
+અક્ષર		*sshkey_fingerprint(અચલ સંરચના sshkey *,
+    પૂર્ણાંક, ગણના sshkey_fp_rep);
+પૂર્ણાંક		 sshkey_fingerprint_raw(અચલ સંરચના sshkey *k,
+    પૂર્ણાંક, u_char **retp, size_t *lenp);
+અચલ અક્ષર	*sshkey_type(અચલ સંરચના sshkey *);
+અચલ અક્ષર	*sshkey_cert_type(અચલ સંરચના sshkey *);
+પૂર્ણાંક		 sshkey_format_text(અચલ સંરચના sshkey *, સંરચના sshbuf *);
+પૂર્ણાંક		 sshkey_write(અચલ સંરચના sshkey *, FILE *);
+પૂર્ણાંક		 sshkey_read(સંરચના sshkey *, અક્ષર **);
+u_int		 sshkey_size(અચલ સંરચના sshkey *);
 
-int		 sshkey_generate(int type, u_int bits, struct sshkey **keyp);
-int		 sshkey_from_private(const struct sshkey *, struct sshkey **);
+પૂર્ણાંક		 sshkey_generate(પૂર્ણાંક type, u_int bits, સંરચના sshkey **keyp);
+પૂર્ણાંક		 sshkey_from_private(અચલ સંરચના sshkey *, સંરચના sshkey **);
 
-int		 sshkey_is_shielded(struct sshkey *);
-int		 sshkey_shield_private(struct sshkey *);
-int		 sshkey_unshield_private(struct sshkey *);
+પૂર્ણાંક		 sshkey_is_shielded(સંરચના sshkey *);
+પૂર્ણાંક		 sshkey_shield_private(સંરચના sshkey *);
+પૂર્ણાંક		 sshkey_unshield_private(સંરચના sshkey *);
 
-int	 sshkey_type_from_name(const char *);
-int	 sshkey_type_from_shortname(const char *);
-int	 sshkey_is_cert(const struct sshkey *);
-int	 sshkey_is_sk(const struct sshkey *);
-int	 sshkey_type_is_cert(int);
-int	 sshkey_type_plain(int);
+પૂર્ણાંક	 sshkey_type_from_name(અચલ અક્ષર *);
+પૂર્ણાંક	 sshkey_type_from_shortname(અચલ અક્ષર *);
+પૂર્ણાંક	 sshkey_is_cert(અચલ સંરચના sshkey *);
+પૂર્ણાંક	 sshkey_is_sk(અચલ સંરચના sshkey *);
+પૂર્ણાંક	 sshkey_type_is_cert(પૂર્ણાંક);
+પૂર્ણાંક	 sshkey_type_plain(પૂર્ણાંક);
 
 /* Returns non-zero if key name match sigalgs pattern list. (handles RSA) */
-int	 sshkey_match_keyname_to_sigalgs(const char *, const char *);
+પૂર્ણાંક	 sshkey_match_keyname_to_sigalgs(અચલ અક્ષર *, અચલ અક્ષર *);
 
-int	 sshkey_to_certified(struct sshkey *);
-int	 sshkey_drop_cert(struct sshkey *);
-int	 sshkey_cert_copy(const struct sshkey *, struct sshkey *);
-int	 sshkey_cert_check_authority(const struct sshkey *, int, int,
-    uint64_t, const char *, const char **);
-int	 sshkey_cert_check_authority_now(const struct sshkey *, int, int,
-    const char *, const char **);
-int	 sshkey_cert_check_host(const struct sshkey *, const char *,
-    const char *, const char **);
-size_t	 sshkey_format_cert_validity(const struct sshkey_cert *,
-    char *, size_t) __attribute__((__bounded__(__string__, 2, 3)));
-int	 sshkey_check_cert_sigtype(const struct sshkey *, const char *);
+પૂર્ણાંક	 sshkey_to_certified(સંરચના sshkey *);
+પૂર્ણાંક	 sshkey_drop_cert(સંરચના sshkey *);
+પૂર્ણાંક	 sshkey_cert_copy(અચલ સંરચના sshkey *, સંરચના sshkey *);
+પૂર્ણાંક	 sshkey_cert_check_authority(અચલ સંરચના sshkey *, પૂર્ણાંક, પૂર્ણાંક,
+    uint64_t, અચલ અક્ષર *, અચલ અક્ષર **);
+પૂર્ણાંક	 sshkey_cert_check_authority_now(અચલ સંરચના sshkey *, પૂર્ણાંક, પૂર્ણાંક,
+    અચલ અક્ષર *, અચલ અક્ષર **);
+પૂર્ણાંક	 sshkey_cert_check_host(અચલ સંરચના sshkey *, અચલ અક્ષર *,
+    અચલ અક્ષર *, અચલ અક્ષર **);
+size_t	 sshkey_format_cert_validity(અચલ સંરચના sshkey_cert *,
+    અક્ષર *, size_t) __attribute__((__bounded__(__string__, 2, 3)));
+પૂર્ણાંક	 sshkey_check_cert_sigtype(અચલ સંરચના sshkey *, અચલ અક્ષર *);
 
-int	 sshkey_certify(struct sshkey *, struct sshkey *,
-    const char *, const char *, const char *);
+પૂર્ણાંક	 sshkey_certify(સંરચના sshkey *, સંરચના sshkey *,
+    અચલ અક્ષર *, અચલ અક્ષર *, અચલ અક્ષર *);
 /* Variant allowing use of a custom signature function (e.g. for ssh-agent) */
-typedef int sshkey_certify_signer(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *,
-    u_int, void *);
-int	 sshkey_certify_custom(struct sshkey *, struct sshkey *, const char *,
-    const char *, const char *, sshkey_certify_signer *, void *);
+પ્રકારવ્યાખ્યા પૂર્ણાંક sshkey_certify_signer(સંરચના sshkey *, u_char **, size_t *,
+    અચલ u_char *, size_t, અચલ અક્ષર *, અચલ અક્ષર *, અચલ અક્ષર *,
+    u_int, શૂન્ય *);
+પૂર્ણાંક	 sshkey_certify_custom(સંરચના sshkey *, સંરચના sshkey *, અચલ અક્ષર *,
+    અચલ અક્ષર *, અચલ અક્ષર *, sshkey_certify_signer *, શૂન્ય *);
 
-int		 sshkey_ecdsa_nid_from_name(const char *);
-int		 sshkey_curve_name_to_nid(const char *);
-const char *	 sshkey_curve_nid_to_name(int);
-u_int		 sshkey_curve_nid_to_bits(int);
-int		 sshkey_ecdsa_bits_to_nid(int);
-int		 sshkey_ecdsa_key_to_nid(const EC_KEY *);
-int		 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *);
-int		 sshkey_ec_nid_to_hash_alg(int nid);
-int		 sshkey_ec_validate_public(const EC_GROUP *, const EC_POINT *);
-int		 sshkey_ec_validate_private(const EC_KEY *);
-const char	*sshkey_ssh_name(const struct sshkey *);
-const char	*sshkey_ssh_name_plain(const struct sshkey *);
-int		 sshkey_names_valid2(const char *, int, int);
-char		*sshkey_alg_list(int, int, int, char);
+પૂર્ણાંક		 sshkey_ecdsa_nid_from_name(અચલ અક્ષર *);
+પૂર્ણાંક		 sshkey_curve_name_to_nid(અચલ અક્ષર *);
+અચલ અક્ષર *	 sshkey_curve_nid_to_name(પૂર્ણાંક);
+u_int		 sshkey_curve_nid_to_bits(પૂર્ણાંક);
+પૂર્ણાંક		 sshkey_ecdsa_bits_to_nid(પૂર્ણાંક);
+પૂર્ણાંક		 sshkey_ecdsa_ચાવી_to_nid(અચલ EC_ચાવી *);
+પૂર્ણાંક		 sshkey_ecdsa_pkey_to_nid(EVP_PKEY *);
+પૂર્ણાંક		 sshkey_ec_nid_to_hash_alg(પૂર્ણાંક nid);
+પૂર્ણાંક		 sshkey_ec_validate_public(અચલ EC_GROUP *, અચલ EC_POINT *);
+પૂર્ણાંક		 sshkey_ec_validate_private(અચલ EC_ચાવી *);
+અચલ અક્ષર	*sshkey_ssh_name(અચલ સંરચના sshkey *);
+અચલ અક્ષર	*sshkey_ssh_name_plain(અચલ સંરચના sshkey *);
+પૂર્ણાંક		 sshkey_names_valid2(અચલ અક્ષર *, પૂર્ણાંક, પૂર્ણાંક);
+અક્ષર		*sshkey_alg_list(પૂર્ણાંક, પૂર્ણાંક, પૂર્ણાંક, અક્ષર);
 
-int	 sshkey_from_blob(const u_char *, size_t, struct sshkey **);
-int	 sshkey_fromb(struct sshbuf *, struct sshkey **);
-int	 sshkey_fromb_allowlist(struct sshbuf *, struct sshkey **,
-    const char *, const char *);
-int	 sshkey_froms(struct sshbuf *, struct sshkey **);
-int	 sshkey_to_blob(const struct sshkey *, u_char **, size_t *);
-int	 sshkey_to_base64(const struct sshkey *, char **);
-int	 sshkey_putb(const struct sshkey *, struct sshbuf *);
-int	 sshkey_puts(const struct sshkey *, struct sshbuf *);
-int	 sshkey_plain_to_blob(const struct sshkey *, u_char **, size_t *);
-int	 sshkey_putb_plain(const struct sshkey *, struct sshbuf *);
-int	 sshkey_puts_plain(const struct sshkey *, struct sshbuf *);
+પૂર્ણાંક	 sshkey_from_blob(અચલ u_char *, size_t, સંરચના sshkey **);
+પૂર્ણાંક	 sshkey_fromb(સંરચના sshbuf *, સંરચના sshkey **);
+પૂર્ણાંક	 sshkey_fromb_allowlist(સંરચના sshbuf *, સંરચના sshkey **,
+    અચલ અક્ષર *, અચલ અક્ષર *);
+પૂર્ણાંક	 sshkey_froms(સંરચના sshbuf *, સંરચના sshkey **);
+પૂર્ણાંક	 sshkey_to_blob(અચલ સંરચના sshkey *, u_char **, size_t *);
+પૂર્ણાંક	 sshkey_to_base64(અચલ સંરચના sshkey *, અક્ષર **);
+પૂર્ણાંક	 sshkey_putb(અચલ સંરચના sshkey *, સંરચના sshbuf *);
+પૂર્ણાંક	 sshkey_puts(અચલ સંરચના sshkey *, સંરચના sshbuf *);
+પૂર્ણાંક	 sshkey_plain_to_blob(અચલ સંરચના sshkey *, u_char **, size_t *);
+પૂર્ણાંક	 sshkey_putb_plain(અચલ સંરચના sshkey *, સંરચના sshbuf *);
+પૂર્ણાંક	 sshkey_puts_plain(અચલ સંરચના sshkey *, સંરચના sshbuf *);
 
-int	 sshkey_sign(struct sshkey *, u_char **, size_t *,
-    const u_char *, size_t, const char *, const char *, const char *, u_int);
-int	 sshkey_verify(const struct sshkey *, const u_char *, size_t,
-    const u_char *, size_t, const char *, u_int, struct sshkey_sig_details **);
-int	 sshkey_check_sigtype(const u_char *, size_t, const char *);
-const char *sshkey_sigalg_by_name(const char *);
-int	 sshkey_get_sigtype(const u_char *, size_t, char **);
+પૂર્ણાંક	 sshkey_sign(સંરચના sshkey *, u_char **, size_t *,
+    અચલ u_char *, size_t, અચલ અક્ષર *, અચલ અક્ષર *, અચલ અક્ષર *, u_int);
+પૂર્ણાંક	 sshkey_verify(અચલ સંરચના sshkey *, અચલ u_char *, size_t,
+    અચલ u_char *, size_t, અચલ અક્ષર *, u_int, સંરચના sshkey_sig_details **);
+પૂર્ણાંક	 sshkey_check_sigtype(અચલ u_char *, size_t, અચલ અક્ષર *);
+અચલ અક્ષર *sshkey_sigalg_by_name(અચલ અક્ષર *);
+પૂર્ણાંક	 sshkey_get_sigtype(અચલ u_char *, size_t, અક્ષર **);
 
 /* Signing and verification backend for libcrypto-backed keys */
-int	sshkey_pkey_digest_sign(EVP_PKEY*, int, u_char **,
-    size_t *, const u_char *, size_t);
-int	sshkey_pkey_digest_verify(EVP_PKEY *, int, const u_char *,
+પૂર્ણાંક	sshkey_pkey_digest_sign(EVP_PKEY*, પૂર્ણાંક, u_char **,
+    size_t *, અચલ u_char *, size_t);
+પૂર્ણાંક	sshkey_pkey_digest_verify(EVP_PKEY *, પૂર્ણાંક, અચલ u_char *,
     size_t, u_char *, size_t);
 
 /* for debug */
-void	sshkey_dump_ec_point(const EC_GROUP *, const EC_POINT *);
-void	sshkey_dump_ec_key(const EC_KEY *);
+શૂન્ય	sshkey_dump_ec_point(અચલ EC_GROUP *, અચલ EC_POINT *);
+શૂન્ય	sshkey_dump_ec_ચાવી(અચલ EC_ચાવી *);
 
 /* private key parsing and serialisation */
-int	sshkey_private_serialize(struct sshkey *key, struct sshbuf *buf);
-int	sshkey_private_deserialize(struct sshbuf *buf,  struct sshkey **keyp);
+પૂર્ણાંક	sshkey_private_serialize(સંરચના sshkey *ચાવી, સંરચના sshbuf *buf);
+પૂર્ણાંક	sshkey_private_deserialize(સંરચના sshbuf *buf,  સંરચના sshkey **keyp);
 
 /* private key file format parsing and serialisation */
-int	sshkey_private_to_fileblob(struct sshkey *key, struct sshbuf *blob,
-    const char *passphrase, const char *comment,
-    int format, const char *openssh_format_cipher, int openssh_format_rounds);
-int	sshkey_parse_private_fileblob(struct sshbuf *buffer,
-    const char *passphrase, struct sshkey **keyp, char **commentp);
-int	sshkey_parse_private_fileblob_type(struct sshbuf *blob, int type,
-    const char *passphrase, struct sshkey **keyp, char **commentp);
-int	sshkey_parse_pubkey_from_private_fileblob_type(struct sshbuf *blob,
-    int type, struct sshkey **pubkeyp);
+પૂર્ણાંક	sshkey_private_to_fileblob(સંરચના sshkey *ચાવી, સંરચના sshbuf *blob,
+    અચલ અક્ષર *passphrase, અચલ અક્ષર *comment,
+    પૂર્ણાંક format, અચલ અક્ષર *openssh_format_cipher, પૂર્ણાંક openssh_format_rounds);
+પૂર્ણાંક	sshkey_parse_private_fileblob(સંરચના sshbuf *buffer,
+    અચલ અક્ષર *passphrase, સંરચના sshkey **keyp, અક્ષર **commentp);
+પૂર્ણાંક	sshkey_parse_private_fileblob_type(સંરચના sshbuf *blob, પૂર્ણાંક type,
+    અચલ અક્ષર *passphrase, સંરચના sshkey **keyp, અક્ષર **commentp);
+પૂર્ણાંક	sshkey_parse_pubkey_from_private_fileblob_type(સંરચના sshbuf *blob,
+    પૂર્ણાંક type, સંરચના sshkey **pubkeyp);
 
-int sshkey_check_rsa_length(const struct sshkey *, int);
-int	ssh_rsa_hash_id_from_keyname(const char *);
-const char *ssh_rsa_hash_alg_ident(int);
-int	ssh_rsa_encode_store_sig(int, const u_char *, size_t,
+પૂર્ણાંક sshkey_check_rsa_length(અચલ સંરચના sshkey *, પૂર્ણાંક);
+પૂર્ણાંક	ssh_rsa_hash_id_from_keyname(અચલ અક્ષર *);
+અચલ અક્ષર *ssh_rsa_hash_alg_ident(પૂર્ણાંક);
+પૂર્ણાંક	ssh_rsa_encode_store_sig(પૂર્ણાંક, અચલ u_char *, size_t,
 	    u_char **, size_t *);
-int	ssh_ecdsa_encode_store_sig(const struct sshkey *,
-	    const BIGNUM *, const BIGNUM *, u_char **, size_t *);
-int	ssh_ed25519_encode_store_sig(const u_char *, size_t,
+પૂર્ણાંક	ssh_ecdsa_encode_store_sig(અચલ સંરચના sshkey *,
+	    અચલ BIGNUM *, અચલ BIGNUM *, u_char **, size_t *);
+પૂર્ણાંક	ssh_ed25519_encode_store_sig(અચલ u_char *, size_t,
 	    u_char **, size_t *);
 /* XXX should be internal, but used by ssh-keygen */
-int ssh_rsa_complete_crt_parameters(const BIGNUM *, const BIGNUM *,
-    const BIGNUM *, const BIGNUM *, BIGNUM **, BIGNUM **);
+પૂર્ણાંક ssh_rsa_complete_crt_parameters(અચલ BIGNUM *, અચલ BIGNUM *,
+    અચલ BIGNUM *, અચલ BIGNUM *, BIGNUM **, BIGNUM **);
 
-void	 sshkey_sig_details_free(struct sshkey_sig_details *);
+શૂન્ય	 sshkey_sig_details_free(સંરચના sshkey_sig_details *);
 
 #ifdef WITH_OPENSSL
-int	sshkey_ecdsa_fixup_group(EVP_PKEY *k); /* ssh-ecdsa.c */
+પૂર્ણાંક	sshkey_ecdsa_fixup_group(EVP_PKEY *k); /* ssh-ecdsa.c */
 #endif
 
 #ifdef SSHKEY_INTERNAL
-int	sshkey_sk_fields_equal(const struct sshkey *a, const struct sshkey *b);
-void	sshkey_sk_cleanup(struct sshkey *k);
-int	sshkey_serialize_sk(const struct sshkey *key, struct sshbuf *b);
-int	sshkey_copy_public_sk(const struct sshkey *from, struct sshkey *to);
-int	sshkey_deserialize_sk(struct sshbuf *b, struct sshkey *key);
-int	sshkey_serialize_private_sk(const struct sshkey *key,
-    struct sshbuf *buf);
-int	sshkey_private_deserialize_sk(struct sshbuf *buf, struct sshkey *k);
+પૂર્ણાંક	sshkey_sk_fields_equal(અચલ સંરચના sshkey *a, અચલ સંરચના sshkey *b);
+શૂન્ય	sshkey_sk_cleanup(સંરચના sshkey *k);
+પૂર્ણાંક	sshkey_serialize_sk(અચલ સંરચના sshkey *ચાવી, સંરચના sshbuf *b);
+પૂર્ણાંક	sshkey_copy_public_sk(અચલ સંરચના sshkey *from, સંરચના sshkey *to);
+પૂર્ણાંક	sshkey_deserialize_sk(સંરચના sshbuf *b, સંરચના sshkey *ચાવી);
+પૂર્ણાંક	sshkey_serialize_private_sk(અચલ સંરચના sshkey *ચાવી,
+    સંરચના sshbuf *buf);
+પૂર્ણાંક	sshkey_private_deserialize_sk(સંરચના sshbuf *buf, સંરચના sshkey *k);
 #ifdef WITH_OPENSSL
-int	check_rsa_length(const RSA *rsa); /* XXX remove */
+પૂર્ણાંક	check_rsa_length(અચલ RSA *rsa); /* XXX remove */
 #endif
 #endif
 
 #ifndef WITH_OPENSSL
 #undef RSA
-#undef EC_KEY
+#undef EC_ચાવી
 #undef EC_GROUP
 #undef EC_POINT
 #undef EVP_PKEY

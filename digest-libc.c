@@ -16,51 +16,51 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
 #ifndef WITH_OPENSSL
 
-#include <sys/types.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <limits.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
 
-#if 0
-#include <md5.h>
+#જો 0
+#અન્તર્ભાવ <md5.h>
 #endif
 #ifdef HAVE_SHA1_H
-#include <sha1.h>
+#અન્તર્ભાવ <sha1.h>
 #endif
 #ifdef HAVE_SHA2_H
-#include <sha2.h>
+#અન્તર્ભાવ <sha2.h>
 #endif
 
-#if !defined(SHA256_BLOCK_LENGTH) && defined(SHA256_HMAC_BLOCK_SIZE)
+#જો !defined(SHA256_BLOCK_LENGTH) && defined(SHA256_HMAC_BLOCK_SIZE)
 #define SHA256_BLOCK_LENGTH SHA256_HMAC_BLOCK_SIZE
 #endif
-#if !defined(SHA384_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
+#જો !defined(SHA384_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
 #define SHA384_BLOCK_LENGTH SHA512_HMAC_BLOCK_SIZE
 #endif
-#if !defined(SHA512_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
+#જો !defined(SHA512_BLOCK_LENGTH) && defined(SHA512_HMAC_BLOCK_SIZE)
 #define SHA512_BLOCK_LENGTH SHA512_HMAC_BLOCK_SIZE
 #endif
 
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "digest.h"
+#અન્તર્ભાવ "ssherr.h"
+#અન્તર્ભાવ "sshbuf.h"
+#અન્તર્ભાવ "digest.h"
 
-typedef void md_init_fn(void *mdctx);
-typedef void md_update_fn(void *mdctx, const uint8_t *m, size_t mlen);
-typedef void md_final_fn(uint8_t[], void *mdctx);
+પ્રકારવ્યાખ્યા શૂન્ય md_init_fn(શૂન્ય *mdctx);
+પ્રકારવ્યાખ્યા શૂન્ય md_update_fn(શૂન્ય *mdctx, અચલ uint8_t *m, size_t mlen);
+પ્રકારવ્યાખ્યા શૂન્ય md_final_fn(uint8_t[], શૂન્ય *mdctx);
 
-struct ssh_digest_ctx {
-	int alg;
-	void *mdctx;
+સંરચના ssh_digest_ctx {
+	પૂર્ણાંક alg;
+	શૂન્ય *mdctx;
 };
 
-struct ssh_digest {
-	int id;
-	const char *name;
+સંરચના ssh_digest {
+	પૂર્ણાંક id;
+	અચલ અક્ષર *name;
 	size_t block_len;
 	size_t digest_len;
 	size_t ctx_len;
@@ -70,13 +70,13 @@ struct ssh_digest {
 };
 
 /* NB. Indexed directly by algorithm number */
-const struct ssh_digest digests[SSH_DIGEST_MAX] = {
+અચલ સંરચના ssh_digest digests[SSH_DIGEST_MAX] = {
 	{
 		SSH_DIGEST_MD5,
 		"MD5",
 		MD5_BLOCK_LENGTH,
 		MD5_DIGEST_LENGTH,
-		sizeof(MD5_CTX),
+		કદ(MD5_CTX),
 		(md_init_fn *) MD5Init,
 		(md_update_fn *) MD5Update,
 		(md_final_fn *) MD5Final
@@ -86,7 +86,7 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA1",
 		SHA1_BLOCK_LENGTH,
 		SHA1_DIGEST_LENGTH,
-		sizeof(SHA1_CTX),
+		કદ(SHA1_CTX),
 		(md_init_fn *) SHA1Init,
 		(md_update_fn *) SHA1Update,
 		(md_final_fn *) SHA1Final
@@ -96,7 +96,7 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA256",
 		SHA256_BLOCK_LENGTH,
 		SHA256_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		કદ(SHA2_CTX),
 		(md_init_fn *) SHA256Init,
 		(md_update_fn *) SHA256Update,
 		(md_final_fn *) SHA256Final
@@ -106,7 +106,7 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA384",
 		SHA384_BLOCK_LENGTH,
 		SHA384_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		કદ(SHA2_CTX),
 		(md_init_fn *) SHA384Init,
 		(md_update_fn *) SHA384Update,
 		(md_final_fn *) SHA384Final
@@ -116,152 +116,152 @@ const struct ssh_digest digests[SSH_DIGEST_MAX] = {
 		"SHA512",
 		SHA512_BLOCK_LENGTH,
 		SHA512_DIGEST_LENGTH,
-		sizeof(SHA2_CTX),
+		કદ(SHA2_CTX),
 		(md_init_fn *) SHA512Init,
 		(md_update_fn *) SHA512Update,
 		(md_final_fn *) SHA512Final
 	}
 };
 
-static const struct ssh_digest *
-ssh_digest_by_alg(int alg)
+સ્થિર અચલ સંરચના ssh_digest *
+ssh_digest_by_alg(પૂર્ણાંક alg)
 {
-	if (alg < 0 || alg >= SSH_DIGEST_MAX)
-		return NULL;
-	if (digests[alg].id != alg) /* sanity */
-		return NULL;
-	return &(digests[alg]);
+	જો (alg < 0 || alg >= SSH_DIGEST_MAX)
+		પાછા ખાલી;
+	જો (digests[alg].id != alg) /* sanity */
+		પાછા ખાલી;
+	પાછા &(digests[alg]);
 }
 
-int
-ssh_digest_alg_by_name(const char *name)
+પૂર્ણાંક
+ssh_digest_alg_by_name(અચલ અક્ષર *name)
 {
-	int alg;
+	પૂર્ણાંક alg;
 
-	for (alg = 0; alg < SSH_DIGEST_MAX; alg++) {
-		if (strcasecmp(name, digests[alg].name) == 0)
-			return digests[alg].id;
+	માટે (alg = 0; alg < SSH_DIGEST_MAX; alg++) {
+		જો (strcasecmp(name, digests[alg].name) == 0)
+			પાછા digests[alg].id;
 	}
-	return -1;
+	પાછા -1;
 }
 
-const char *
-ssh_digest_alg_name(int alg)
+અચલ અક્ષર *
+ssh_digest_alg_name(પૂર્ણાંક alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
+	અચલ સંરચના ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? NULL : digest->name;
-}
-
-size_t
-ssh_digest_bytes(int alg)
-{
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-
-	return digest == NULL ? 0 : digest->digest_len;
+	પાછા digest == ખાલી ? ખાલી : digest->name;
 }
 
 size_t
-ssh_digest_blocksize(struct ssh_digest_ctx *ctx)
+ssh_digest_bytes(પૂર્ણાંક alg)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	અચલ સંરચના ssh_digest *digest = ssh_digest_by_alg(alg);
 
-	return digest == NULL ? 0 : digest->block_len;
+	પાછા digest == ખાલી ? 0 : digest->digest_len;
 }
 
-struct ssh_digest_ctx *
-ssh_digest_start(int alg)
+size_t
+ssh_digest_blocksize(સંરચના ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(alg);
-	struct ssh_digest_ctx *ret;
+	અચલ સંરચના ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL || (ret = calloc(1, sizeof(*ret))) == NULL)
-		return NULL;
-	if ((ret->mdctx = calloc(1, digest->ctx_len)) == NULL) {
-		free(ret);
-		return NULL;
+	પાછા digest == ખાલી ? 0 : digest->block_len;
+}
+
+સંરચના ssh_digest_ctx *
+ssh_digest_start(પૂર્ણાંક alg)
+{
+	અચલ સંરચના ssh_digest *digest = ssh_digest_by_alg(alg);
+	સંરચના ssh_digest_ctx *ret;
+
+	જો (digest == ખાલી || (ret = calloc(1, કદ(*ret))) == ખાલી)
+		પાછા ખાલી;
+	જો ((ret->mdctx = calloc(1, digest->ctx_len)) == ખાલી) {
+		મુક્ત(ret);
+		પાછા ખાલી;
 	}
 	ret->alg = alg;
 	digest->md_init(ret->mdctx);
-	return ret;
+	પાછા ret;
 }
 
-int
-ssh_digest_copy_state(struct ssh_digest_ctx *from, struct ssh_digest_ctx *to)
+પૂર્ણાંક
+ssh_digest_copy_state(સંરચના ssh_digest_ctx *from, સંરચના ssh_digest_ctx *to)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(from->alg);
+	અચલ સંરચના ssh_digest *digest = ssh_digest_by_alg(from->alg);
 
-	if (digest == NULL || from->alg != to->alg)
-		return SSH_ERR_INVALID_ARGUMENT;
+	જો (digest == ખાલી || from->alg != to->alg)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
 	memcpy(to->mdctx, from->mdctx, digest->ctx_len);
-	return 0;
+	પાછા 0;
 }
 
-int
-ssh_digest_update(struct ssh_digest_ctx *ctx, const void *m, size_t mlen)
+પૂર્ણાંક
+ssh_digest_update(સંરચના ssh_digest_ctx *ctx, અચલ શૂન્ય *m, size_t mlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	અચલ સંરચના ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
+	જો (digest == ખાલી)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
 	digest->md_update(ctx->mdctx, m, mlen);
-	return 0;
+	પાછા 0;
 }
 
-int
-ssh_digest_update_buffer(struct ssh_digest_ctx *ctx, const struct sshbuf *b)
+પૂર્ણાંક
+ssh_digest_update_buffer(સંરચના ssh_digest_ctx *ctx, અચલ સંરચના sshbuf *b)
 {
-	return ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
+	પાછા ssh_digest_update(ctx, sshbuf_ptr(b), sshbuf_len(b));
 }
 
-int
-ssh_digest_final(struct ssh_digest_ctx *ctx, u_char *d, size_t dlen)
+પૂર્ણાંક
+ssh_digest_final(સંરચના ssh_digest_ctx *ctx, u_char *d, size_t dlen)
 {
-	const struct ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
+	અચલ સંરચના ssh_digest *digest = ssh_digest_by_alg(ctx->alg);
 
-	if (digest == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen > UINT_MAX)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (dlen < digest->digest_len) /* No truncation allowed */
-		return SSH_ERR_INVALID_ARGUMENT;
+	જો (digest == ખાલી)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
+	જો (dlen > UINT_MAX)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
+	જો (dlen < digest->digest_len) /* No truncation allowed */
+		પાછા SSH_ERR_INVALID_ARGUMENT;
 	digest->md_final(d, ctx->mdctx);
-	return 0;
+	પાછા 0;
 }
 
-void
-ssh_digest_free(struct ssh_digest_ctx *ctx)
+શૂન્ય
+ssh_digest_free(સંરચના ssh_digest_ctx *ctx)
 {
-	const struct ssh_digest *digest;
+	અચલ સંરચના ssh_digest *digest;
 
-	if (ctx != NULL) {
+	જો (ctx != ખાલી) {
 		digest = ssh_digest_by_alg(ctx->alg);
-		if (digest) {
+		જો (digest) {
 			explicit_bzero(ctx->mdctx, digest->ctx_len);
-			free(ctx->mdctx);
-			freezero(ctx, sizeof(*ctx));
+			મુક્ત(ctx->mdctx);
+			freezero(ctx, કદ(*ctx));
 		}
 	}
 }
 
-int
-ssh_digest_memory(int alg, const void *m, size_t mlen, u_char *d, size_t dlen)
+પૂર્ણાંક
+ssh_digest_memory(પૂર્ણાંક alg, અચલ શૂન્ય *m, size_t mlen, u_char *d, size_t dlen)
 {
-	struct ssh_digest_ctx *ctx = ssh_digest_start(alg);
-	int ret = 0;
+	સંરચના ssh_digest_ctx *ctx = ssh_digest_start(alg);
+	પૂર્ણાંક ret = 0;
 
-	if (ctx == NULL)
-		return SSH_ERR_INVALID_ARGUMENT;
-	if (ssh_digest_update(ctx, m, mlen) != 0 ||
+	જો (ctx == ખાલી)
+		પાછા SSH_ERR_INVALID_ARGUMENT;
+	જો (ssh_digest_update(ctx, m, mlen) != 0 ||
 	    ssh_digest_final(ctx, d, dlen) != 0)
 		ret = SSH_ERR_INVALID_ARGUMENT;
 	ssh_digest_free(ctx);
-	return ret;
+	પાછા ret;
 }
 
-int
-ssh_digest_buffer(int alg, const struct sshbuf *b, u_char *d, size_t dlen)
+પૂર્ણાંક
+ssh_digest_buffer(પૂર્ણાંક alg, અચલ સંરચના sshbuf *b, u_char *d, size_t dlen)
 {
-	return ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
+	પાછા ssh_digest_memory(alg, sshbuf_ptr(b), sshbuf_len(b), d, dlen);
 }
 #endif /* !WITH_OPENSSL */

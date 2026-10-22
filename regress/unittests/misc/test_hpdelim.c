@@ -5,35 +5,35 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
 
-#include "../test_helper/test_helper.h"
+#અન્તર્ભાવ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "xmalloc.h"
 
-void test_hpdelim(void);
+શૂન્ય test_hpdelim(શૂન્ય);
 
-void
-test_hpdelim(void)
+શૂન્ય
+test_hpdelim(શૂન્ય)
 {
-	char *orig, *str, *cp, *port;
+	અક્ષર *orig, *str, *cp, *port;
 
 #define START_STRING(x)	orig = str = xstrdup(x)
-#define DONE_STRING()	free(orig)
+#define DONE_STRING()	મુક્ત(orig)
 
 	TEST_START("hpdelim host only");
 	START_STRING("host");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "host");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -41,10 +41,10 @@ test_hpdelim(void)
 	START_STRING(":1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "");
-	ASSERT_PTR_NE(str, NULL);
+	ASSERT_PTR_NE(str, ખાલી);
 	port = hpdelim(&str);
 	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -52,10 +52,10 @@ test_hpdelim(void)
 	START_STRING("host:1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "host");
-	ASSERT_PTR_NE(str, NULL);
+	ASSERT_PTR_NE(str, ખાલી);
 	port = hpdelim(&str);
 	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -63,17 +63,17 @@ test_hpdelim(void)
 	START_STRING("[::1]:1234");
 	cp = hpdelim(&str);
 	ASSERT_STRING_EQ(cp, "[::1]");
-	ASSERT_PTR_NE(str, NULL);
+	ASSERT_PTR_NE(str, ખાલી);
 	port = hpdelim(&str);
 	ASSERT_STRING_EQ(port, "1234");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
 	TEST_START("hpdelim missing ] error");
 	START_STRING("[::1:1234");
 	cp = hpdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 

@@ -6,61 +6,61 @@
  * and placed in the public domain.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <locale.h>
-#include <stdarg.h>
-#include <string.h>
-#include <stdio.h>
+#અન્તર્ભાવ <locale.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdio.h>
 
-#include "../test_helper/test_helper.h"
+#અન્તર્ભાવ "../test_helper/test_helper.h"
 
-#include "utf8.h"
+#અન્તર્ભાવ "utf8.h"
 
-static void
-badarg(void)
+સ્થિર શૂન્ય
+badarg(શૂન્ય)
 {
-	char	 buf[16];
-	int	 len, width;
+	અક્ષર	 buf[16];
+	પૂર્ણાંક	 len, width;
 
 	width = 1;
 	TEST_START("utf8_badarg");
-	len = snmprintf(buf, sizeof(buf), &width, "\377");
+	len = snmprintf(buf, કદ(buf), &width, "\377");
 	ASSERT_INT_EQ(len, -1);
 	ASSERT_STRING_EQ(buf, "");
 	ASSERT_INT_EQ(width, 0);
 	TEST_DONE();
 }
 
-static void
-one(int utf8, const char *name, const char *mbs, int width,
-    int wantwidth, int wantlen, const char *wants)
+સ્થિર શૂન્ય
+one(પૂર્ણાંક utf8, અચલ અક્ષર *name, અચલ અક્ષર *mbs, પૂર્ણાંક width,
+    પૂર્ણાંક wantwidth, પૂર્ણાંક wantlen, અચલ અક્ષર *wants)
 {
-	char	 buf[16];
-	int	*wp;
-	int	 len;
+	અક્ષર	 buf[16];
+	પૂર્ણાંક	*wp;
+	પૂર્ણાંક	 len;
 
-	if (wantlen == -2)
+	જો (wantlen == -2)
 		wantlen = strlen(wants);
-	(void)strlcpy(buf, utf8 ? "utf8_" : "c_", sizeof(buf));
-	(void)strlcat(buf, name, sizeof(buf));
+	(શૂન્ય)strlcpy(buf, utf8 ? "utf8_" : "c_", કદ(buf));
+	(શૂન્ય)strlcat(buf, name, કદ(buf));
 	TEST_START(buf);
-	wp = wantwidth == -2 ? NULL : &width;
-	len = snmprintf(buf, sizeof(buf), wp, "%s", mbs);
+	wp = wantwidth == -2 ? ખાલી : &width;
+	len = snmprintf(buf, કદ(buf), wp, "%s", mbs);
 	ASSERT_INT_EQ(len, wantlen);
 	ASSERT_STRING_EQ(buf, wants);
 	ASSERT_INT_EQ(width, wantwidth);
 	TEST_DONE();
 }
 
-void
-tests(void)
+શૂન્ય
+tests(શૂન્ય)
 {
-	char	*loc;
+	અક્ષર	*loc;
 
 	TEST_START("utf8_setlocale");
 	loc = setlocale(LC_CTYPE, "en_US.UTF-8");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, ખાલી);
 	TEST_DONE();
 
 	badarg();
@@ -82,7 +82,7 @@ tests(void)
 
 	TEST_START("C_setlocale");
 	loc = setlocale(LC_CTYPE, "C");
-	ASSERT_PTR_NE(loc, NULL);
+	ASSERT_PTR_NE(loc, ખાલી);
 	TEST_DONE();
 
 	badarg();
@@ -103,8 +103,8 @@ tests(void)
 	one(0, "double_spc", "a\343\201\201", 13, 13, 13, "a\\343\\201\\201");
 }
 
-void
-benchmarks(void)
+શૂન્ય
+benchmarks(શૂન્ય)
 {
 	printf("no benchmarks\n");
 }

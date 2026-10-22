@@ -35,98 +35,98 @@
 
 /* OPENBSD ORIGINAL: lib/libcurses/base/sigaction.c */
 
-#include "includes.h"
-#include <errno.h>
-#include <signal.h>
-#include "sigact.h"
+#અન્તર્ભાવ "includes.h"
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <signal.h>
+#અન્તર્ભાવ "sigact.h"
 
 /* This file provides sigaction() emulation using sigvec() */
 /* Use only if this is non POSIX system */
 
-#if !HAVE_SIGACTION && HAVE_SIGVEC
+#જો !HAVE_SIGACTION && HAVE_SIGVEC
 
-int
-sigaction(int sig, struct sigaction *sigact, struct sigaction *osigact)
+પૂર્ણાંક
+sigaction(પૂર્ણાંક sig, સંરચના sigaction *sigact, સંરચના sigaction *osigact)
 {
-	return sigvec(sig, sigact ? &sigact->sv : NULL,
-	    osigact ? &osigact->sv : NULL);
+	પાછા sigvec(sig, sigact ? &sigact->sv : ખાલી,
+	    osigact ? &osigact->sv : ખાલી);
 }
 
-int
+પૂર્ણાંક
 sigemptyset (sigset_t *mask)
 {
-	if (!mask) {
+	જો (!mask) {
 		errno = EINVAL;
-		return -1;
+		પાછા -1;
 	}
 	*mask = 0;
-	return 0;
+	પાછા 0;
 }
 
-int
-sigprocmask (int mode, sigset_t *mask, sigset_t *omask)
+પૂર્ણાંક
+sigprocmask (પૂર્ણાંક mode, sigset_t *mask, sigset_t *omask)
 {
 	sigset_t current = sigsetmask(0);
 
-	if (!mask) {
+	જો (!mask) {
 		errno = EINVAL;
-		return -1;
+		પાછા -1;
 	}
 
-	if (omask)
+	જો (omask)
 		*omask = current;
 
-	if (mode == SIG_BLOCK)
+	જો (mode == SIG_BLOCK)
 		current |= *mask;
-	else if (mode == SIG_UNBLOCK)
+	નહીંતર જો (mode == SIG_UNBLOCK)
 		current &= ~*mask;
-	else if (mode == SIG_SETMASK)
+	નહીંતર જો (mode == SIG_SETMASK)
 	current = *mask;
 
 	sigsetmask(current);
-	return 0;
+	પાછા 0;
 }
 
-int
+પૂર્ણાંક
 sigsuspend (sigset_t *mask)
 {
-	if (!mask) {
+	જો (!mask) {
 		errno = EINVAL;
-		return -1;
+		પાછા -1;
 	}
-	return sigpause(*mask);
+	પાછા sigpause(*mask);
 }
 
-int
-sigdelset (sigset_t *mask, int sig)
+પૂર્ણાંક
+sigdelset (sigset_t *mask, પૂર્ણાંક sig)
 {
-	if (!mask) {
+	જો (!mask) {
 		errno = EINVAL;
-		return -1;
+		પાછા -1;
 	}
 	*mask &= ~sigmask(sig);
-	return 0;
+	પાછા 0;
 }
 
-int
-sigaddset (sigset_t *mask, int sig)
+પૂર્ણાંક
+sigaddset (sigset_t *mask, પૂર્ણાંક sig)
 {
-	if (!mask) {
+	જો (!mask) {
 		errno = EINVAL;
-		return -1;
+		પાછા -1;
 	}
 	*mask |= sigmask(sig);
-	return 0;
+	પાછા 0;
 }
 
-int
-sigismember (sigset_t *mask, int sig)
+પૂર્ણાંક
+sigismember (sigset_t *mask, પૂર્ણાંક sig)
 {
-	if (!mask) {
+	જો (!mask) {
 		errno = EINVAL;
-		return -1;
+		પાછા -1;
 	}
-	return (*mask & sigmask(sig)) != 0;
+	પાછા (*mask & sigmask(sig)) != 0;
 }
 
 #endif

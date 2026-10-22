@@ -14,63 +14,63 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
+#અન્તર્ભાવ <sys/types.h>
 #ifdef HAVE_SYS_PROCCTL_H
-#include <sys/procctl.h>
+#અન્તર્ભાવ <sys/procctl.h>
 #endif
-#if defined(HAVE_SYS_PRCTL_H)
-#include <sys/prctl.h>	/* For prctl() and PR_SET_DUMPABLE */
+#જો defined(HAVE_SYS_PRCTL_H)
+#અન્તર્ભાવ <sys/prctl.h>	/* For prctl() and PR_SET_DUMPABLE */
 #endif
 #ifdef HAVE_SYS_PTRACE_H
-#include <sys/ptrace.h>
+#અન્તર્ભાવ <sys/ptrace.h>
 #endif
 #ifdef HAVE_PRIV_H
-#include <priv.h> /* For setpflags() and __PROC_PROTECT  */
+#અન્તર્ભાવ <priv.h> /* For setpflags() and __PROC_PROTECT  */
 #endif
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
 
-#include "log.h"
+#અન્તર્ભાવ "log.h"
 
-void
-platform_disable_tracing(int strict)
+શૂન્ય
+platform_disable_tracing(પૂર્ણાંક strict)
 {
-#if defined(HAVE_PROCCTL) && defined(PROC_TRACE_CTL)
+#જો defined(HAVE_PROCCTL) && defined(PROC_TRACE_CTL)
 	/* On FreeBSD, we should make this process untraceable */
-	int disable_trace = PROC_TRACE_CTL_DISABLE;
+	પૂર્ણાંક disable_trace = PROC_TRACE_CTL_DISABLE;
 
 	/*
 	 * On FreeBSD, we should make this process untraceable.
 	 * pid=0 means "this process" but some older kernels do not
 	 * understand that so retry with our own pid before failing.
 	 */
-	if (procctl(P_PID, 0, PROC_TRACE_CTL, &disable_trace) == 0)
-		return;
-	if (procctl(P_PID, getpid(), PROC_TRACE_CTL, &disable_trace) == 0)
-		return;
-	if (strict)
+	જો (procctl(P_PID, 0, PROC_TRACE_CTL, &disable_trace) == 0)
+		પાછા;
+	જો (procctl(P_PID, getpid(), PROC_TRACE_CTL, &disable_trace) == 0)
+		પાછા;
+	જો (strict)
 		fatal("unable to make the process untraceable: %s",
 		    strerror(errno));
 #endif
-#if defined(HAVE_PRCTL) && defined(PR_SET_DUMPABLE)
+#જો defined(HAVE_PRCTL) && defined(PR_SET_DUMPABLE)
 	/* Disable ptrace on Linux without sgid bit */
-	if (prctl(PR_SET_DUMPABLE, 0) != 0 && strict)
+	જો (prctl(PR_SET_DUMPABLE, 0) != 0 && strict)
 		fatal("unable to make the process undumpable: %s",
 		    strerror(errno));
 #endif
-#if defined(HAVE_SETPFLAGS) && defined(__PROC_PROTECT)
+#જો defined(HAVE_SETPFLAGS) && defined(__PROC_PROTECT)
 	/* On Solaris, we should make this process untraceable */
-	if (setpflags(__PROC_PROTECT, 1) != 0 && strict)
+	જો (setpflags(__PROC_PROTECT, 1) != 0 && strict)
 		fatal("unable to make the process untraceable: %s",
 		    strerror(errno));
 #endif
 #ifdef PT_DENY_ATTACH
 	/* Mac OS X */
-	if (ptrace(PT_DENY_ATTACH, 0, 0, 0) == -1 && strict)
+	જો (ptrace(PT_DENY_ATTACH, 0, 0, 0) == -1 && strict)
 		fatal("unable to set PT_DENY_ATTACH: %s", strerror(errno));
 #endif
 }

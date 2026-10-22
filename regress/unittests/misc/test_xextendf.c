@@ -5,85 +5,85 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
 
-#include "../test_helper/test_helper.h"
+#અન્તર્ભાવ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "xmalloc.h"
 
-void test_xextendf(void);
+શૂન્ય test_xextendf(શૂન્ય);
 
-void
-test_xextendf(void)
+શૂન્ય
+test_xextendf(શૂન્ય)
 {
-	char *s = NULL;
+	અક્ષર *s = ખાલી;
 
 	TEST_START("xextendf NULL string");
 	xextendf(&s, ",", "hello");
 	ASSERT_STRING_EQ(s, "hello");
-	free(s);
-	s = NULL;
+	મુક્ત(s);
+	s = ખાલી;
 	TEST_DONE();
 
 	TEST_START("xextendf empty string");
 	s = xstrdup("");
 	xextendf(&s, ",", "world");
 	ASSERT_STRING_EQ(s, "world");
-	free(s);
-	s = NULL;
+	મુક્ત(s);
+	s = ખાલી;
 	TEST_DONE();
 
 	TEST_START("xextendf append to string");
 	s = xstrdup("foo");
 	xextendf(&s, ",", "bar");
 	ASSERT_STRING_EQ(s, "foo,bar");
-	free(s);
-	s = NULL;
+	મુક્ત(s);
+	s = ખાલી;
 	TEST_DONE();
 
 	TEST_START("xextendf append with NULL separator");
 	s = xstrdup("foo");
-	xextendf(&s, NULL, "bar");
+	xextendf(&s, ખાલી, "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
+	મુક્ત(s);
+	s = ખાલી;
 	TEST_DONE();
 
 	TEST_START("xextendf append with empty separator");
 	s = xstrdup("foo");
 	xextendf(&s, "", "bar");
 	ASSERT_STRING_EQ(s, "foobar");
-	free(s);
-	s = NULL;
+	મુક્ત(s);
+	s = ખાલી;
 	TEST_DONE();
 
 	TEST_START("xextendf with format string");
 	s = xstrdup("start");
 	xextendf(&s, ":", "s=%s,d=%d", "string", 123);
 	ASSERT_STRING_EQ(s, "start:s=string,d=123");
-	free(s);
-	s = NULL;
+	મુક્ત(s);
+	s = ખાલી;
 	TEST_DONE();
 
 	TEST_START("xextendf multiple appends");
-	s = NULL;
+	s = ખાલી;
 	xextendf(&s, ",", "one");
 	ASSERT_STRING_EQ(s, "one");
 	xextendf(&s, ",", "two");
 	ASSERT_STRING_EQ(s, "one,two");
 	xextendf(&s, ":", "three=%d", 3);
 	ASSERT_STRING_EQ(s, "one,two:three=3");
-	xextendf(&s, NULL, "four");
+	xextendf(&s, ખાલી, "four");
 	ASSERT_STRING_EQ(s, "one,two:three=3four");
-	free(s);
-	s = NULL;
+	મુક્ત(s);
+	s = ખાલી;
 	TEST_DONE();
 }

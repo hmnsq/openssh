@@ -48,15 +48,15 @@
 #ifndef _GETRRSETBYNAME_H
 #define _GETRRSETBYNAME_H
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
 #ifndef HAVE_GETRRSETBYNAME
 
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <netdb.h>
-#include <resolv.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <netinet/in.h>
+#અન્તર્ભાવ <arpa/nameser.h>
+#અન્તર્ભાવ <netdb.h>
+#અન્તર્ભાવ <resolv.h>
 
 #ifndef HFIXEDSZ
 #define HFIXEDSZ 12
@@ -85,25 +85,25 @@
 # define ERRSET_NODATA		5
 #endif
 
-struct rdatainfo {
-	unsigned int		rdi_length;	/* length of data */
-	unsigned char		*rdi_data;	/* record data */
+સંરચના rdatainfo {
+	unsigned પૂર્ણાંક		rdi_length;	/* length of data */
+	unsigned અક્ષર		*rdi_data;	/* record data */
 };
 
-struct rrsetinfo {
-	unsigned int		rri_flags;	/* RRSET_VALIDATED ... */
-	unsigned int		rri_rdclass;	/* class number */
-	unsigned int		rri_rdtype;	/* RR type number */
-	unsigned int		rri_ttl;	/* time to live */
-	unsigned int		rri_nrdatas;	/* size of rdatas array */
-	unsigned int		rri_nsigs;	/* size of sigs array */
-	char			*rri_name;	/* canonical name */
-	struct rdatainfo	*rri_rdatas;	/* individual records */
-	struct rdatainfo	*rri_sigs;	/* individual signatures */
+સંરચના rrsetinfo {
+	unsigned પૂર્ણાંક		rri_flags;	/* RRSET_VALIDATED ... */
+	unsigned પૂર્ણાંક		rri_rdclass;	/* class number */
+	unsigned પૂર્ણાંક		rri_rdtype;	/* RR type number */
+	unsigned પૂર્ણાંક		rri_ttl;	/* time to live */
+	unsigned પૂર્ણાંક		rri_nrdatas;	/* size of rdatas array */
+	unsigned પૂર્ણાંક		rri_nsigs;	/* size of sigs array */
+	અક્ષર			*rri_name;	/* canonical name */
+	સંરચના rdatainfo	*rri_rdatas;	/* individual records */
+	સંરચના rdatainfo	*rri_sigs;	/* individual signatures */
 };
 
-int		getrrsetbyname(const char *, unsigned int, unsigned int, unsigned int, struct rrsetinfo **);
-void		freerrset(struct rrsetinfo *);
+પૂર્ણાંક		getrrsetbyname(અચલ અક્ષર *, unsigned પૂર્ણાંક, unsigned પૂર્ણાંક, unsigned પૂર્ણાંક, સંરચના rrsetinfo **);
+શૂન્ય		freerrset(સંરચના rrsetinfo *);
 
 #endif /* !defined(HAVE_GETRRSETBYNAME) */
 

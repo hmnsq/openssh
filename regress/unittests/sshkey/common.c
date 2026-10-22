@@ -5,120 +5,120 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <sys/stat.h>
+#અન્તર્ભાવ <fcntl.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
 
 #ifdef WITH_OPENSSL
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/rsa.h>
-#include <openssl/objects.h>
+#અન્તર્ભાવ <openssl/bn.h>
+#અન્તર્ભાવ <openssl/ec.h>
+#અન્તર્ભાવ <openssl/rsa.h>
+#અન્તર્ભાવ <openssl/objects.h>
 #endif /* WITH_OPENSSL */
 
-#include "openbsd-compat/openssl-compat.h"
+#અન્તર્ભાવ "openbsd-compat/openssl-compat.h"
 
-#include "../test_helper/test_helper.h"
+#અન્તર્ભાવ "../test_helper/test_helper.h"
 
-#include "ssherr.h"
-#include "authfile.h"
-#include "sshkey.h"
-#include "sshbuf.h"
+#અન્તર્ભાવ "ssherr.h"
+#અન્તર્ભાવ "authfile.h"
+#અન્તર્ભાવ "sshkey.h"
+#અન્તર્ભાવ "sshbuf.h"
 
-#include "common.h"
+#અન્તર્ભાવ "common.h"
 
-struct sshbuf *
-load_file(const char *name)
+સંરચના sshbuf *
+load_file(અચલ અક્ષર *name)
 {
-	struct sshbuf *ret = NULL;
+	સંરચના sshbuf *ret = ખાલી;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_PTR_NE(ret, ખાલી);
+	પાછા ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+સંરચના sshbuf *
+load_text_file(અચલ અક્ષર *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
+	સંરચના sshbuf *ret = load_file(name);
+	અચલ u_char *p;
 	size_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	માટે (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		જો (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
 			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+		નહીંતર
+			તોડો;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	પાછા ret;
 }
 
 #ifdef WITH_OPENSSL
 BIGNUM *
-load_bignum(const char *name)
+load_bignum(અચલ અક્ષર *name)
 {
-	BIGNUM *ret = NULL;
-	struct sshbuf *buf;
+	BIGNUM *ret = ખાલી;
+	સંરચના sshbuf *buf;
 
 	buf = load_text_file(name);
-	ASSERT_INT_NE(BN_hex2bn(&ret, (const char *)sshbuf_ptr(buf)), 0);
+	ASSERT_INT_NE(BN_hex2bn(&ret, (અચલ અક્ષર *)sshbuf_ptr(buf)), 0);
 	sshbuf_free(buf);
-	return ret;
+	પાછા ret;
 }
 
-const BIGNUM *
-rsa_n(struct sshkey *k)
+અચલ BIGNUM *
+rsa_n(સંરચના sshkey *k)
 {
-	const BIGNUM *n = NULL;
+	અચલ BIGNUM *n = ખાલી;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), &n, NULL, NULL);
-	return n;
+	ASSERT_PTR_NE(k, ખાલી);
+	ASSERT_PTR_NE(k->pkey, ખાલી);
+	RSA_get0_ચાવી(EVP_PKEY_get0_RSA(k->pkey), &n, ખાલી, ખાલી);
+	પાછા n;
 }
 
-const BIGNUM *
-rsa_e(struct sshkey *k)
+અચલ BIGNUM *
+rsa_e(સંરચના sshkey *k)
 {
-	const BIGNUM *e = NULL;
+	અચલ BIGNUM *e = ખાલી;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(k->pkey, NULL);
-	RSA_get0_key(EVP_PKEY_get0_RSA(k->pkey), NULL, &e, NULL);
-	return e;
+	ASSERT_PTR_NE(k, ખાલી);
+	ASSERT_PTR_NE(k->pkey, ખાલી);
+	RSA_get0_ચાવી(EVP_PKEY_get0_RSA(k->pkey), ખાલી, &e, ખાલી);
+	પાછા e;
 }
 
-const BIGNUM *
-rsa_p(struct sshkey *k)
+અચલ BIGNUM *
+rsa_p(સંરચના sshkey *k)
 {
-	const BIGNUM *p = NULL;
+	અચલ BIGNUM *p = ખાલી;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
-	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), &p, NULL);
-	return p;
+	ASSERT_PTR_NE(k, ખાલી);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), ખાલી);
+	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), &p, ખાલી);
+	પાછા p;
 }
 
-const BIGNUM *
-rsa_q(struct sshkey *k)
+અચલ BIGNUM *
+rsa_q(સંરચના sshkey *k)
 {
-	const BIGNUM *q = NULL;
+	અચલ BIGNUM *q = ખાલી;
 
-	ASSERT_PTR_NE(k, NULL);
-	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), NULL);
-	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), NULL, &q);
-	return q;
+	ASSERT_PTR_NE(k, ખાલી);
+	ASSERT_PTR_NE(EVP_PKEY_get0_RSA(k->pkey), ખાલી);
+	RSA_get0_factors(EVP_PKEY_get0_RSA(k->pkey), ખાલી, &q);
+	પાછા q;
 }
 #endif /* WITH_OPENSSL */

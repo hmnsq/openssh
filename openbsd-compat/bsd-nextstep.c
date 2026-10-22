@@ -22,82 +22,82 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
 #ifdef HAVE_NEXT
-#include <errno.h>
-#include <sys/wait.h>
-#include "bsd-nextstep.h"
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <sys/wait.h>
+#અન્તર્ભાવ "bsd-nextstep.h"
 
 pid_t
-posix_wait(int *status)
+posix_wait(પૂર્ણાંક *status)
 {
-	union wait statusp;
+	સંઘ wait statusp;
 	pid_t wait_pid;
 
 	#undef wait			/* Use NeXT's wait() function */
 	wait_pid = wait(&statusp);
-	if (status)
-		*status = (int) statusp.w_status;
+	જો (status)
+		*status = (પૂર્ણાંક) statusp.w_status;
 
-	return (wait_pid);
+	પાછા (wait_pid);
 }
 
-int
-tcgetattr(int fd, struct termios *t)
+પૂર્ણાંક
+tcgetattr(પૂર્ણાંક fd, સંરચના termios *t)
 {
-	return (ioctl(fd, TIOCGETA, t));
+	પાછા (ioctl(fd, TIOCGETA, t));
 }
 
-int
-tcsetattr(int fd, int opt, const struct termios *t)
+પૂર્ણાંક
+tcsetattr(પૂર્ણાંક fd, પૂર્ણાંક opt, અચલ સંરચના termios *t)
 {
-	struct termios localterm;
+	સંરચના termios localterm;
 
-	if (opt & TCSASOFT) {
+	જો (opt & TCSASOFT) {
 		localterm = *t;
 		localterm.c_cflag |= CIGNORE;
 		t = &localterm;
 	}
-	switch (opt & ~TCSASOFT) {
-	case TCSANOW:
-		return (ioctl(fd, TIOCSETA, t));
-	case TCSADRAIN:
-		return (ioctl(fd, TIOCSETAW, t));
-	case TCSAFLUSH:
-		return (ioctl(fd, TIOCSETAF, t));
-	default:
+	પસંદગી (opt & ~TCSASOFT) {
+	સ્થિતિ TCSANOW:
+		પાછા (ioctl(fd, TIOCSETA, t));
+	સ્થિતિ TCSADRAIN:
+		પાછા (ioctl(fd, TIOCSETAW, t));
+	સ્થિતિ TCSAFLUSH:
+		પાછા (ioctl(fd, TIOCSETAF, t));
+	મૂળભૂત:
 		errno = EINVAL;
-		return (-1);
+		પાછા (-1);
 	}
 }
 
-int tcsetpgrp(int fd, pid_t pgrp)
+પૂર્ણાંક tcsetpgrp(પૂર્ણાંક fd, pid_t pgrp)
 {
-	return (ioctl(fd, TIOCSPGRP, &pgrp));
+	પાછા (ioctl(fd, TIOCSPGRP, &pgrp));
 }
 
-speed_t cfgetospeed(const struct termios *t)
+speed_t cfgetospeed(અચલ સંરચના termios *t)
 {
-	return (t->c_ospeed);
+	પાછા (t->c_ospeed);
 }
 
-speed_t cfgetispeed(const struct termios *t)
+speed_t cfgetispeed(અચલ સંરચના termios *t)
 {
-	return (t->c_ispeed);
+	પાછા (t->c_ispeed);
 }
 
-int
-cfsetospeed(struct termios *t,int speed)
+પૂર્ણાંક
+cfsetospeed(સંરચના termios *t,પૂર્ણાંક speed)
 {
 	t->c_ospeed = speed;
-	return (0);
+	પાછા (0);
 }
 
-int
-cfsetispeed(struct termios *t, int speed)
+પૂર્ણાંક
+cfsetispeed(સંરચના termios *t, પૂર્ણાંક speed)
 {
 	t->c_ispeed = speed;
-	return (0);
+	પાછા (0);
 }
 #endif /* HAVE_NEXT */

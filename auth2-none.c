@@ -23,44 +23,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdio.h>
 
-#include "xmalloc.h"
-#include "sshkey.h"
-#include "hostfile.h"
-#include "auth.h"
-#include "packet.h"
-#include "log.h"
-#include "misc.h"
-#include "servconf.h"
-#include "ssh2.h"
-#include "ssherr.h"
+#અન્તર્ભાવ "xmalloc.h"
+#અન્તર્ભાવ "sshkey.h"
+#અન્તર્ભાવ "hostfile.h"
+#અન્તર્ભાવ "auth.h"
+#અન્તર્ભાવ "packet.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "servconf.h"
+#અન્તર્ભાવ "ssh2.h"
+#અન્તર્ભાવ "ssherr.h"
 #ifdef GSSAPI
-#include "ssh-gss.h"
+#અન્તર્ભાવ "ssh-gss.h"
 #endif
-#include "monitor_wrap.h"
+#અન્તર્ભાવ "monitor_wrap.h"
 
 /* import */
-extern ServerOptions options;
-extern struct authmethod_cfg methodcfg_none;
+બાહ્ય ServerOptions options;
+બાહ્ય સંરચના authmethod_cfg methodcfg_none;
 
-extern int none_enabled;
+બાહ્ય પૂર્ણાંક none_enabled;
 
-static int
-userauth_none(struct ssh *ssh, const char *method)
+સ્થિર પૂર્ણાંક
+userauth_none(સંરચના ssh *ssh, અચલ અક્ષર *method)
 {
-	int r;
+	પૂર્ણાંક r;
 
 	none_enabled = 0;
-	if ((r = sshpkt_get_end(ssh)) != 0)
+	જો ((r = sshpkt_get_end(ssh)) != 0)
 		fatal_fr(r, "parse packet");
-	if (options.permit_empty_passwd && options.password_authentication)
-		return mm_auth_password(ssh, "");
-	return (0);
+	જો (options.permit_empty_passwd && options.password_authentication)
+		પાછા mm_auth_password(ssh, "");
+	પાછા (0);
 }
 
 Authmethod method_none = {

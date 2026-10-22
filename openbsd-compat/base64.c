@@ -44,26 +44,26 @@
 
 /* OPENBSD ORIGINAL: lib/libc/net/base64.c */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#if (!defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP)) || (!defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON))
+#જો (!defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP)) || (!defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON))
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <sys/socket.h>
+#અન્તર્ભાવ <netinet/in.h>
+#અન્તર્ભાવ <arpa/inet.h>
 
-#include <ctype.h>
-#include <stdio.h>
+#અન્તર્ભાવ <ctype.h>
+#અન્તર્ભાવ <stdio.h>
 
-#include <stdlib.h>
-#include <string.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
 
-#include "base64.h"
+#અન્તર્ભાવ "base64.h"
 
-static const char Base64[] =
+સ્થિર અચલ અક્ષર Base64[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static const char Pad64 = '=';
+સ્થિર અચલ અક્ષર Pad64 = '=';
 
 /* (From RFC1521 and draft-ietf-dnssec-secext-03.txt)
    The following encoding technique is taken from RFC 1521 by Borenstein
@@ -128,28 +128,28 @@ static const char Pad64 = '=';
 	   characters followed by one "=" padding character.
    */
 
-#if !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) 
-int
-b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
+#જો !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) 
+પૂર્ણાંક
+b64_ntop(u_char અચલ *src, size_t srclength, અક્ષર *target, size_t targsize)
 {
 	size_t datalength = 0;
-	u_char input[3];
+	u_char આગત[3];
 	u_char output[4];
 	u_int i;
 
-	while (2 < srclength) {
-		input[0] = *src++;
-		input[1] = *src++;
-		input[2] = *src++;
+	જ્યારે (2 < srclength) {
+		આગત[0] = *src++;
+		આગત[1] = *src++;
+		આગત[2] = *src++;
 		srclength -= 3;
 
-		output[0] = input[0] >> 2;
-		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
-		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
-		output[3] = input[2] & 0x3f;
+		output[0] = આગત[0] >> 2;
+		output[1] = ((આગત[0] & 0x03) << 4) + (આગત[1] >> 4);
+		output[2] = ((આગત[1] & 0x0f) << 2) + (આગત[2] >> 6);
+		output[3] = આગત[2] & 0x3f;
 
-		if (datalength + 4 > targsize)
-			return (-1);
+		જો (datalength + 4 > targsize)
+			પાછા (-1);
 		target[datalength++] = Base64[output[0]];
 		target[datalength++] = Base64[output[1]];
 		target[datalength++] = Base64[output[2]];
@@ -157,34 +157,34 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
 	}
     
 	/* Now we worry about padding. */
-	if (0 != srclength) {
+	જો (0 != srclength) {
 		/* Get what's left. */
-		input[0] = input[1] = input[2] = '\0';
-		for (i = 0; i < srclength; i++)
-			input[i] = *src++;
+		આગત[0] = આગત[1] = આગત[2] = '\0';
+		માટે (i = 0; i < srclength; i++)
+			આગત[i] = *src++;
 	
-		output[0] = input[0] >> 2;
-		output[1] = ((input[0] & 0x03) << 4) + (input[1] >> 4);
-		output[2] = ((input[1] & 0x0f) << 2) + (input[2] >> 6);
+		output[0] = આગત[0] >> 2;
+		output[1] = ((આગત[0] & 0x03) << 4) + (આગત[1] >> 4);
+		output[2] = ((આગત[1] & 0x0f) << 2) + (આગત[2] >> 6);
 
-		if (datalength + 4 > targsize)
-			return (-1);
+		જો (datalength + 4 > targsize)
+			પાછા (-1);
 		target[datalength++] = Base64[output[0]];
 		target[datalength++] = Base64[output[1]];
-		if (srclength == 1)
+		જો (srclength == 1)
 			target[datalength++] = Pad64;
-		else
+		નહીંતર
 			target[datalength++] = Base64[output[2]];
 		target[datalength++] = Pad64;
 	}
-	if (datalength >= targsize)
-		return (-1);
+	જો (datalength >= targsize)
+		પાછા (-1);
 	target[datalength] = '\0';	/* Returned value doesn't count \0. */
-	return (datalength);
+	પાછા (datalength);
 }
 #endif /* !defined(HAVE_B64_NTOP) && !defined(HAVE___B64_NTOP) */
 
-#if !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON)
+#જો !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON)
 
 /* skips all whitespace anywhere.
    converts characters, four at a time, starting at (or after)
@@ -192,67 +192,67 @@ b64_ntop(u_char const *src, size_t srclength, char *target, size_t targsize)
    it returns the number of data bytes stored at the target, or -1 on error.
  */
 
-int
-b64_pton(char const *src, u_char *target, size_t targsize)
+પૂર્ણાંક
+b64_pton(અક્ષર અચલ *src, u_char *target, size_t targsize)
 {
 	u_int tarindex, state;
-	int ch;
-	char *pos;
+	પૂર્ણાંક ch;
+	અક્ષર *pos;
 
 	state = 0;
 	tarindex = 0;
 
-	while ((ch = *src++) != '\0') {
-		if (isspace(ch))	/* Skip whitespace anywhere. */
-			continue;
+	જ્યારે ((ch = *src++) != '\0') {
+		જો (isspace(ch))	/* Skip whitespace anywhere. */
+			ચાલુ;
 
-		if (ch == Pad64)
-			break;
+		જો (ch == Pad64)
+			તોડો;
 
 		pos = strchr(Base64, ch);
-		if (pos == 0)		/* A non-base64 character. */
-			return (-1);
+		જો (pos == 0)		/* A non-base64 character. */
+			પાછા (-1);
 
-		switch (state) {
-		case 0:
-			if (target) {
-				if (tarindex >= targsize)
-					return (-1);
+		પસંદગી (state) {
+		સ્થિતિ 0:
+			જો (target) {
+				જો (tarindex >= targsize)
+					પાછા (-1);
 				target[tarindex] = (pos - Base64) << 2;
 			}
 			state = 1;
-			break;
-		case 1:
-			if (target) {
-				if (tarindex + 1 >= targsize)
-					return (-1);
+			તોડો;
+		સ્થિતિ 1:
+			જો (target) {
+				જો (tarindex + 1 >= targsize)
+					પાછા (-1);
 				target[tarindex]   |=  (pos - Base64) >> 4;
 				target[tarindex+1]  = ((pos - Base64) & 0x0f)
 							<< 4 ;
 			}
 			tarindex++;
 			state = 2;
-			break;
-		case 2:
-			if (target) {
-				if (tarindex + 1 >= targsize)
-					return (-1);
+			તોડો;
+		સ્થિતિ 2:
+			જો (target) {
+				જો (tarindex + 1 >= targsize)
+					પાછા (-1);
 				target[tarindex]   |=  (pos - Base64) >> 2;
 				target[tarindex+1]  = ((pos - Base64) & 0x03)
 							<< 6;
 			}
 			tarindex++;
 			state = 3;
-			break;
-		case 3:
-			if (target) {
-				if (tarindex >= targsize)
-					return (-1);
+			તોડો;
+		સ્થિતિ 3:
+			જો (target) {
+				જો (tarindex >= targsize)
+					પાછા (-1);
 				target[tarindex] |= (pos - Base64);
 			}
 			tarindex++;
 			state = 0;
-			break;
+			તોડો;
 		}
 	}
 
@@ -261,33 +261,33 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 	 * on a byte boundary, and/or with erroneous trailing characters.
 	 */
 
-	if (ch == Pad64) {		/* We got a pad char. */
+	જો (ch == Pad64) {		/* We got a pad char. */
 		ch = *src++;		/* Skip it, get next. */
-		switch (state) {
-		case 0:		/* Invalid = in first position */
-		case 1:		/* Invalid = in second position */
-			return (-1);
+		પસંદગી (state) {
+		સ્થિતિ 0:		/* Invalid = in first position */
+		સ્થિતિ 1:		/* Invalid = in second position */
+			પાછા (-1);
 
-		case 2:		/* Valid, means one byte of info */
+		સ્થિતિ 2:		/* Valid, means one byte of info */
 			/* Skip any number of spaces. */
-			for (; ch != '\0'; ch = *src++)
-				if (!isspace(ch))
-					break;
+			માટે (; ch != '\0'; ch = *src++)
+				જો (!isspace(ch))
+					તોડો;
 			/* Make sure there is another trailing = sign. */
-			if (ch != Pad64)
-				return (-1);
+			જો (ch != Pad64)
+				પાછા (-1);
 			ch = *src++;		/* Skip the = */
 			/* Fall through to "single trailing =" case. */
 			/* FALLTHROUGH */
 
-		case 3:		/* Valid, means two bytes of info */
+		સ્થિતિ 3:		/* Valid, means two bytes of info */
 			/*
 			 * We know this char is an =.  Is there anything but
 			 * whitespace after it?
 			 */
-			for (; ch != '\0'; ch = *src++)
-				if (!isspace(ch))
-					return (-1);
+			માટે (; ch != '\0'; ch = *src++)
+				જો (!isspace(ch))
+					પાછા (-1);
 
 			/*
 			 * Now make sure for cases 2 and 3 that the "extra"
@@ -295,19 +295,19 @@ b64_pton(char const *src, u_char *target, size_t targsize)
 			 * zeros.  If we don't check them, they become a
 			 * subliminal channel.
 			 */
-			if (target && target[tarindex] != 0)
-				return (-1);
+			જો (target && target[tarindex] != 0)
+				પાછા (-1);
 		}
-	} else {
+	} નહીંતર {
 		/*
 		 * We ended by seeing the end of the string.  Make sure we
 		 * have no partial bytes lying around.
 		 */
-		if (state != 0)
-			return (-1);
+		જો (state != 0)
+			પાછા (-1);
 	}
 
-	return (tarindex);
+	પાછા (tarindex);
 }
 
 #endif /* !defined(HAVE_B64_PTON) && !defined(HAVE___B64_PTON) */

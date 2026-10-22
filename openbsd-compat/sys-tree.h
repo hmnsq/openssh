@@ -26,13 +26,13 @@
 
 /* OPENBSD ORIGINAL: sys/sys/tree.h */
 
-#include "config.h"
+#અન્તર્ભાવ "config.h"
 #ifdef NO_ATTRIBUTE_ON_RETURN_TYPE
 # define __attribute__(x)
 #endif
 
-#ifndef	_SYS_TREE_H_
-#define	_SYS_TREE_H_
+#ifndef	SYS_વૃક્ષ_H
+#define	SYS_વૃક્ષ_H
 
 /*
  * This file defines data structures for different types of trees:
@@ -62,178 +62,178 @@
  */
 
 #define SPLAY_HEAD(name, type)						\
-struct name {								\
-	struct type *sph_root; /* root of the tree */			\
+સંરચના name {								\
+	સંરચના type *sph_મૂળ; /* root of the tree */			\
 }
 
-#define SPLAY_INITIALIZER(root)						\
-	{ NULL }
+#define SPLAY_INITIALIZER(મૂળ)						\
+	{ ખાલી }
 
-#define SPLAY_INIT(root) do {						\
-	(root)->sph_root = NULL;					\
-} while (0)
+#define SPLAY_INIT(મૂળ) કરો {						\
+	(મૂળ)->sph_મૂળ = ખાલી;					\
+} જ્યારે (0)
 
 #define SPLAY_ENTRY(type)						\
-struct {								\
-	struct type *spe_left; /* left element */			\
-	struct type *spe_right; /* right element */			\
+સંરચના {								\
+	સંરચના type *spe_ડાબું; /* left element */			\
+	સંરચના type *spe_જમણું; /* right element */			\
 }
 
-#define SPLAY_LEFT(elm, field)		(elm)->field.spe_left
-#define SPLAY_RIGHT(elm, field)		(elm)->field.spe_right
-#define SPLAY_ROOT(head)		(head)->sph_root
-#define SPLAY_EMPTY(head)		(SPLAY_ROOT(head) == NULL)
+#define SPLAY_ડાબું(elm, field)		(elm)->field.spe_ડાબું
+#define SPLAY_જમણું(elm, field)		(elm)->field.spe_જમણું
+#define SPLAY_મૂળ(head)		(head)->sph_મૂળ
+#define SPLAY_EMPTY(head)		(SPLAY_મૂળ(head) == ખાલી)
 
 /* SPLAY_ROTATE_{LEFT,RIGHT} expect that tmp hold SPLAY_{RIGHT,LEFT} */
-#define SPLAY_ROTATE_RIGHT(head, tmp, field) do {			\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(tmp, field);	\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#define SPLAY_ROTATE_જમણું(head, tmp, field) કરો {			\
+	SPLAY_ડાબું((head)->sph_મૂળ, field) = SPLAY_જમણું(tmp, field);	\
+	SPLAY_જમણું(tmp, field) = (head)->sph_મૂળ;			\
+	(head)->sph_મૂળ = tmp;						\
+} જ્યારે (0)
 	
-#define SPLAY_ROTATE_LEFT(head, tmp, field) do {			\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(tmp, field);	\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	(head)->sph_root = tmp;						\
-} while (0)
+#define SPLAY_ROTATE_ડાબું(head, tmp, field) કરો {			\
+	SPLAY_જમણું((head)->sph_મૂળ, field) = SPLAY_ડાબું(tmp, field);	\
+	SPLAY_ડાબું(tmp, field) = (head)->sph_મૂળ;			\
+	(head)->sph_મૂળ = tmp;						\
+} જ્યારે (0)
 
-#define SPLAY_LINKLEFT(head, tmp, field) do {				\
-	SPLAY_LEFT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);		\
-} while (0)
+#define SPLAY_LINKLEFT(head, tmp, field) કરો {				\
+	SPLAY_ડાબું(tmp, field) = (head)->sph_મૂળ;			\
+	tmp = (head)->sph_મૂળ;						\
+	(head)->sph_મૂળ = SPLAY_ડાબું((head)->sph_મૂળ, field);		\
+} જ્યારે (0)
 
-#define SPLAY_LINKRIGHT(head, tmp, field) do {				\
-	SPLAY_RIGHT(tmp, field) = (head)->sph_root;			\
-	tmp = (head)->sph_root;						\
-	(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);	\
-} while (0)
+#define SPLAY_LINKRIGHT(head, tmp, field) કરો {				\
+	SPLAY_જમણું(tmp, field) = (head)->sph_મૂળ;			\
+	tmp = (head)->sph_મૂળ;						\
+	(head)->sph_મૂળ = SPLAY_જમણું((head)->sph_મૂળ, field);	\
+} જ્યારે (0)
 
-#define SPLAY_ASSEMBLE(head, node, left, right, field) do {		\
-	SPLAY_RIGHT(left, field) = SPLAY_LEFT((head)->sph_root, field);	\
-	SPLAY_LEFT(right, field) = SPLAY_RIGHT((head)->sph_root, field);\
-	SPLAY_LEFT((head)->sph_root, field) = SPLAY_RIGHT(node, field);	\
-	SPLAY_RIGHT((head)->sph_root, field) = SPLAY_LEFT(node, field);	\
-} while (0)
+#define SPLAY_ASSEMBLE(head, ગાંઠ, ડાબું, જમણું, field) કરો {		\
+	SPLAY_જમણું(ડાબું, field) = SPLAY_ડાબું((head)->sph_મૂળ, field);	\
+	SPLAY_ડાબું(જમણું, field) = SPLAY_જમણું((head)->sph_મૂળ, field);\
+	SPLAY_ડાબું((head)->sph_મૂળ, field) = SPLAY_જમણું(ગાંઠ, field);	\
+	SPLAY_જમણું((head)->sph_મૂળ, field) = SPLAY_ડાબું(ગાંઠ, field);	\
+} જ્યારે (0)
 
 /* Generates prototypes and inline functions */
 
 #define SPLAY_PROTOTYPE(name, type, field, cmp)				\
-void name##_SPLAY(struct name *, struct type *);			\
-void name##_SPLAY_MINMAX(struct name *, int);				\
-struct type *name##_SPLAY_INSERT(struct name *, struct type *);		\
-struct type *name##_SPLAY_REMOVE(struct name *, struct type *);		\
+શૂન્ય name##_SPLAY(સંરચના name *, સંરચના type *);			\
+શૂન્ય name##_SPLAY_MINMAX(સંરચના name *, પૂર્ણાંક);				\
+સંરચના type *name##_SPLAY_INSERT(સંરચના name *, સંરચના type *);		\
+સંરચના type *name##_SPLAY_REMOVE(સંરચના name *, સંરચના type *);		\
 									\
 /* Finds the node with the same key as elm */				\
-static __inline struct type *						\
-name##_SPLAY_FIND(struct name *head, struct type *elm)			\
+સ્થિર __inline સંરચના type *						\
+name##_SPLAY_FIND(સંરચના name *head, સંરચના type *elm)			\
 {									\
-	if (SPLAY_EMPTY(head))						\
-		return(NULL);						\
+	જો (SPLAY_EMPTY(head))						\
+		પાછા(ખાલી);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0)				\
-		return (head->sph_root);				\
-	return (NULL);							\
+	જો ((cmp)(elm, (head)->sph_મૂળ) == 0)				\
+		પાછા (head->sph_મૂળ);				\
+	પાછા (ખાલી);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_NEXT(struct name *head, struct type *elm)			\
+સ્થિર __inline સંરચના type *						\
+name##_SPLAY_NEXT(સંરચના name *head, સંરચના type *elm)			\
 {									\
 	name##_SPLAY(head, elm);					\
-	if (SPLAY_RIGHT(elm, field) != NULL) {				\
-		elm = SPLAY_RIGHT(elm, field);				\
-		while (SPLAY_LEFT(elm, field) != NULL) {		\
-			elm = SPLAY_LEFT(elm, field);			\
+	જો (SPLAY_જમણું(elm, field) != ખાલી) {				\
+		elm = SPLAY_જમણું(elm, field);				\
+		જ્યારે (SPLAY_ડાબું(elm, field) != ખાલી) {		\
+			elm = SPLAY_ડાબું(elm, field);			\
 		}							\
-	} else								\
-		elm = NULL;						\
-	return (elm);							\
+	} નહીંતર								\
+		elm = ખાલી;						\
+	પાછા (elm);							\
 }									\
 									\
-static __inline struct type *						\
-name##_SPLAY_MIN_MAX(struct name *head, int val)			\
+સ્થિર __inline સંરચના type *						\
+name##_SPLAY_MIN_MAX(સંરચના name *head, પૂર્ણાંક val)			\
 {									\
 	name##_SPLAY_MINMAX(head, val);					\
-        return (SPLAY_ROOT(head));					\
+        પાછા (SPLAY_મૂળ(head));					\
 }
 
 /* Main splay operation.
  * Moves node close to the key of elm to top
  */
 #define SPLAY_GENERATE(name, type, field, cmp)				\
-struct type *								\
-name##_SPLAY_INSERT(struct name *head, struct type *elm)		\
+સંરચના type *								\
+name##_SPLAY_INSERT(સંરચના name *head, સંરચના type *elm)		\
 {									\
-    if (SPLAY_EMPTY(head)) {						\
-	    SPLAY_LEFT(elm, field) = SPLAY_RIGHT(elm, field) = NULL;	\
-    } else {								\
-	    int __comp;							\
+    જો (SPLAY_EMPTY(head)) {						\
+	    SPLAY_ડાબું(elm, field) = SPLAY_જમણું(elm, field) = ખાલી;	\
+    } નહીંતર {								\
+	    પૂર્ણાંક __comp;							\
 	    name##_SPLAY(head, elm);					\
-	    __comp = (cmp)(elm, (head)->sph_root);			\
-	    if(__comp < 0) {						\
-		    SPLAY_LEFT(elm, field) = SPLAY_LEFT((head)->sph_root, field);\
-		    SPLAY_RIGHT(elm, field) = (head)->sph_root;		\
-		    SPLAY_LEFT((head)->sph_root, field) = NULL;		\
-	    } else if (__comp > 0) {					\
-		    SPLAY_RIGHT(elm, field) = SPLAY_RIGHT((head)->sph_root, field);\
-		    SPLAY_LEFT(elm, field) = (head)->sph_root;		\
-		    SPLAY_RIGHT((head)->sph_root, field) = NULL;	\
-	    } else							\
-		    return ((head)->sph_root);				\
+	    __comp = (cmp)(elm, (head)->sph_મૂળ);			\
+	    જો(__comp < 0) {						\
+		    SPLAY_ડાબું(elm, field) = SPLAY_ડાબું((head)->sph_મૂળ, field);\
+		    SPLAY_જમણું(elm, field) = (head)->sph_મૂળ;		\
+		    SPLAY_ડાબું((head)->sph_મૂળ, field) = ખાલી;		\
+	    } નહીંતર જો (__comp > 0) {					\
+		    SPLAY_જમણું(elm, field) = SPLAY_જમણું((head)->sph_મૂળ, field);\
+		    SPLAY_ડાબું(elm, field) = (head)->sph_મૂળ;		\
+		    SPLAY_જમણું((head)->sph_મૂળ, field) = ખાલી;	\
+	    } નહીંતર							\
+		    પાછા ((head)->sph_મૂળ);				\
     }									\
-    (head)->sph_root = (elm);						\
-    return (NULL);							\
+    (head)->sph_મૂળ = (elm);						\
+    પાછા (ખાલી);							\
 }									\
 									\
-struct type *								\
-name##_SPLAY_REMOVE(struct name *head, struct type *elm)		\
+સંરચના type *								\
+name##_SPLAY_REMOVE(સંરચના name *head, સંરચના type *elm)		\
 {									\
-	struct type *__tmp;						\
-	if (SPLAY_EMPTY(head))						\
-		return (NULL);						\
+	સંરચના type *__tmp;						\
+	જો (SPLAY_EMPTY(head))						\
+		પાછા (ખાલી);						\
 	name##_SPLAY(head, elm);					\
-	if ((cmp)(elm, (head)->sph_root) == 0) {			\
-		if (SPLAY_LEFT((head)->sph_root, field) == NULL) {	\
-			(head)->sph_root = SPLAY_RIGHT((head)->sph_root, field);\
-		} else {						\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			(head)->sph_root = SPLAY_LEFT((head)->sph_root, field);\
+	જો ((cmp)(elm, (head)->sph_મૂળ) == 0) {			\
+		જો (SPLAY_ડાબું((head)->sph_મૂળ, field) == ખાલી) {	\
+			(head)->sph_મૂળ = SPLAY_જમણું((head)->sph_મૂળ, field);\
+		} નહીંતર {						\
+			__tmp = SPLAY_જમણું((head)->sph_મૂળ, field);	\
+			(head)->sph_મૂળ = SPLAY_ડાબું((head)->sph_મૂળ, field);\
 			name##_SPLAY(head, elm);			\
-			SPLAY_RIGHT((head)->sph_root, field) = __tmp;	\
+			SPLAY_જમણું((head)->sph_મૂળ, field) = __tmp;	\
 		}							\
-		return (elm);						\
+		પાછા (elm);						\
 	}								\
-	return (NULL);							\
+	પાછા (ખાલી);							\
 }									\
 									\
-void									\
-name##_SPLAY(struct name *head, struct type *elm)			\
+શૂન્ય									\
+name##_SPLAY(સંરચના name *head, સંરચના type *elm)			\
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
-	int __comp;							\
+	સંરચના type __node, *__left, *__right, *__tmp;			\
+	પૂર્ણાંક __comp;							\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ડાબું(&__node, field) = SPLAY_જમણું(&__node, field) = ખાલી;\
 	__left = __right = &__node;					\
 \
-	while ((__comp = (cmp)(elm, (head)->sph_root))) {		\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) < 0){			\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	જ્યારે ((__comp = (cmp)(elm, (head)->sph_મૂળ))) {		\
+		જો (__comp < 0) {					\
+			__tmp = SPLAY_ડાબું((head)->sph_મૂળ, field);	\
+			જો (__tmp == ખાલી)				\
+				તોડો;					\
+			જો ((cmp)(elm, __tmp) < 0){			\
+				SPLAY_ROTATE_જમણું(head, __tmp, field);	\
+				જો (SPLAY_ડાબું((head)->sph_મૂળ, field) == ખાલી)\
+					તોડો;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if ((cmp)(elm, __tmp) > 0){			\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+		} નહીંતર જો (__comp > 0) {				\
+			__tmp = SPLAY_જમણું((head)->sph_મૂળ, field);	\
+			જો (__tmp == ખાલી)				\
+				તોડો;					\
+			જો ((cmp)(elm, __tmp) > 0){			\
+				SPLAY_ROTATE_ડાબું(head, __tmp, field);	\
+				જો (SPLAY_જમણું((head)->sph_મૂળ, field) == ખાલી)\
+					તોડો;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
 		}							\
@@ -244,32 +244,32 @@ name##_SPLAY(struct name *head, struct type *elm)			\
 /* Splay with either the minimum or the maximum element			\
  * Used to find minimum or maximum element in tree.			\
  */									\
-void name##_SPLAY_MINMAX(struct name *head, int __comp) \
+શૂન્ય name##_SPLAY_MINMAX(સંરચના name *head, પૂર્ણાંક __comp) \
 {									\
-	struct type __node, *__left, *__right, *__tmp;			\
+	સંરચના type __node, *__left, *__right, *__tmp;			\
 \
-	SPLAY_LEFT(&__node, field) = SPLAY_RIGHT(&__node, field) = NULL;\
+	SPLAY_ડાબું(&__node, field) = SPLAY_જમણું(&__node, field) = ખાલી;\
 	__left = __right = &__node;					\
 \
-	while (1) {							\
-		if (__comp < 0) {					\
-			__tmp = SPLAY_LEFT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp < 0){				\
-				SPLAY_ROTATE_RIGHT(head, __tmp, field);	\
-				if (SPLAY_LEFT((head)->sph_root, field) == NULL)\
-					break;				\
+	જ્યારે (1) {							\
+		જો (__comp < 0) {					\
+			__tmp = SPLAY_ડાબું((head)->sph_મૂળ, field);	\
+			જો (__tmp == ખાલી)				\
+				તોડો;					\
+			જો (__comp < 0){				\
+				SPLAY_ROTATE_જમણું(head, __tmp, field);	\
+				જો (SPLAY_ડાબું((head)->sph_મૂળ, field) == ખાલી)\
+					તોડો;				\
 			}						\
 			SPLAY_LINKLEFT(head, __right, field);		\
-		} else if (__comp > 0) {				\
-			__tmp = SPLAY_RIGHT((head)->sph_root, field);	\
-			if (__tmp == NULL)				\
-				break;					\
-			if (__comp > 0) {				\
-				SPLAY_ROTATE_LEFT(head, __tmp, field);	\
-				if (SPLAY_RIGHT((head)->sph_root, field) == NULL)\
-					break;				\
+		} નહીંતર જો (__comp > 0) {				\
+			__tmp = SPLAY_જમણું((head)->sph_મૂળ, field);	\
+			જો (__tmp == ખાલી)				\
+				તોડો;					\
+			જો (__comp > 0) {				\
+				SPLAY_ROTATE_ડાબું(head, __tmp, field);	\
+				જો (SPLAY_જમણું((head)->sph_મૂળ, field) == ખાલી)\
+					તોડો;				\
 			}						\
 			SPLAY_LINKRIGHT(head, __left, field);		\
 		}							\
@@ -280,120 +280,120 @@ void name##_SPLAY_MINMAX(struct name *head, int __comp) \
 #define SPLAY_NEGINF	-1
 #define SPLAY_INF	1
 
-#define SPLAY_INSERT(name, x, y)	name##_SPLAY_INSERT(x, y)
+#define SPLAY_ઉમેરો(name, x, y)	name##_SPLAY_INSERT(x, y)
 #define SPLAY_REMOVE(name, x, y)	name##_SPLAY_REMOVE(x, y)
 #define SPLAY_FIND(name, x, y)		name##_SPLAY_FIND(x, y)
 #define SPLAY_NEXT(name, x, y)		name##_SPLAY_NEXT(x, y)
-#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#define SPLAY_MIN(name, x)		(SPLAY_EMPTY(x) ? ખાલી	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_NEGINF))
-#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? NULL	\
+#define SPLAY_MAX(name, x)		(SPLAY_EMPTY(x) ? ખાલી	\
 					: name##_SPLAY_MIN_MAX(x, SPLAY_INF))
 
 #define SPLAY_FOREACH(x, name, head)					\
-	for ((x) = SPLAY_MIN(name, head);				\
-	     (x) != NULL;						\
+	માટે ((x) = SPLAY_MIN(name, head);				\
+	     (x) != ખાલી;						\
 	     (x) = SPLAY_NEXT(name, head, x))
 
 /* Macros that define a red-black tree */
 #define RB_HEAD(name, type)						\
-struct name {								\
-	struct type *rbh_root; /* root of the tree */			\
+સંરચના name {								\
+	સંરચના type *rbh_મૂળ; /* root of the tree */			\
 }
 
-#define RB_INITIALIZER(root)						\
-	{ NULL }
+#define RB_INITIALIZER(મૂળ)						\
+	{ ખાલી }
 
-#define RB_INIT(root) do {						\
-	(root)->rbh_root = NULL;					\
-} while (0)
+#define RB_INIT(મૂળ) કરો {						\
+	(મૂળ)->rbh_મૂળ = ખાલી;					\
+} જ્યારે (0)
 
 #define RB_BLACK	0
 #define RB_RED		1
 #define RB_ENTRY(type)							\
-struct {								\
-	struct type *rbe_left;		/* left element */		\
-	struct type *rbe_right;		/* right element */		\
-	struct type *rbe_parent;	/* parent element */		\
-	int rbe_color;			/* node color */		\
+સંરચના {								\
+	સંરચના type *rbe_ડાબું;		/* left element */		\
+	સંરચના type *rbe_જમણું;		/* right element */		\
+	સંરચના type *rbe_parent;	/* parent element */		\
+	પૂર્ણાંક rbe_color;			/* node color */		\
 }
 
-#define RB_LEFT(elm, field)		(elm)->field.rbe_left
-#define RB_RIGHT(elm, field)		(elm)->field.rbe_right
+#define RB_ડાબું(elm, field)		(elm)->field.rbe_ડાબું
+#define RB_જમણું(elm, field)		(elm)->field.rbe_જમણું
 #define RB_PARENT(elm, field)		(elm)->field.rbe_parent
 #define RB_COLOR(elm, field)		(elm)->field.rbe_color
-#define RB_ROOT(head)			(head)->rbh_root
-#define RB_EMPTY(head)			(RB_ROOT(head) == NULL)
+#define RB_મૂળ(head)			(head)->rbh_મૂળ
+#define RB_EMPTY(head)			(RB_મૂળ(head) == ખાલી)
 
-#define RB_SET(elm, parent, field) do {					\
+#define RB_SET(elm, parent, field) કરો {					\
 	RB_PARENT(elm, field) = parent;					\
-	RB_LEFT(elm, field) = RB_RIGHT(elm, field) = NULL;		\
+	RB_ડાબું(elm, field) = RB_જમણું(elm, field) = ખાલી;		\
 	RB_COLOR(elm, field) = RB_RED;					\
-} while (0)
+} જ્યારે (0)
 
-#define RB_SET_BLACKRED(black, red, field) do {				\
+#define RB_SET_BLACKRED(black, red, field) કરો {				\
 	RB_COLOR(black, field) = RB_BLACK;				\
 	RB_COLOR(red, field) = RB_RED;					\
-} while (0)
+} જ્યારે (0)
 
 #ifndef RB_AUGMENT
-#define RB_AUGMENT(x)	do {} while (0)
+#define RB_AUGMENT(x)	કરો {} જ્યારે (0)
 #endif
 
-#define RB_ROTATE_LEFT(head, elm, tmp, field) do {			\
-	(tmp) = RB_RIGHT(elm, field);					\
-	if ((RB_RIGHT(elm, field) = RB_LEFT(tmp, field))) {		\
-		RB_PARENT(RB_LEFT(tmp, field), field) = (elm);		\
+#define RB_ROTATE_ડાબું(head, elm, tmp, field) કરો {			\
+	(tmp) = RB_જમણું(elm, field);					\
+	જો ((RB_જમણું(elm, field) = RB_ડાબું(tmp, field))) {		\
+		RB_PARENT(RB_ડાબું(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_LEFT(tmp, field) = (elm);					\
+	જો ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
+		જો ((elm) == RB_ડાબું(RB_PARENT(elm, field), field))	\
+			RB_ડાબું(RB_PARENT(elm, field), field) = (tmp);	\
+		નહીંતર							\
+			RB_જમણું(RB_PARENT(elm, field), field) = (tmp);	\
+	} નહીંતર								\
+		(head)->rbh_મૂળ = (tmp);				\
+	RB_ડાબું(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
+	જો ((RB_PARENT(tmp, field)))					\
 		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+} જ્યારે (0)
 
-#define RB_ROTATE_RIGHT(head, elm, tmp, field) do {			\
-	(tmp) = RB_LEFT(elm, field);					\
-	if ((RB_LEFT(elm, field) = RB_RIGHT(tmp, field))) {		\
-		RB_PARENT(RB_RIGHT(tmp, field), field) = (elm);		\
+#define RB_ROTATE_જમણું(head, elm, tmp, field) કરો {			\
+	(tmp) = RB_ડાબું(elm, field);					\
+	જો ((RB_ડાબું(elm, field) = RB_જમણું(tmp, field))) {		\
+		RB_PARENT(RB_જમણું(tmp, field), field) = (elm);		\
 	}								\
 	RB_AUGMENT(elm);						\
-	if ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
-		if ((elm) == RB_LEFT(RB_PARENT(elm, field), field))	\
-			RB_LEFT(RB_PARENT(elm, field), field) = (tmp);	\
-		else							\
-			RB_RIGHT(RB_PARENT(elm, field), field) = (tmp);	\
-	} else								\
-		(head)->rbh_root = (tmp);				\
-	RB_RIGHT(tmp, field) = (elm);					\
+	જો ((RB_PARENT(tmp, field) = RB_PARENT(elm, field))) {		\
+		જો ((elm) == RB_ડાબું(RB_PARENT(elm, field), field))	\
+			RB_ડાબું(RB_PARENT(elm, field), field) = (tmp);	\
+		નહીંતર							\
+			RB_જમણું(RB_PARENT(elm, field), field) = (tmp);	\
+	} નહીંતર								\
+		(head)->rbh_મૂળ = (tmp);				\
+	RB_જમણું(tmp, field) = (elm);					\
 	RB_PARENT(elm, field) = (tmp);					\
 	RB_AUGMENT(tmp);						\
-	if ((RB_PARENT(tmp, field)))					\
+	જો ((RB_PARENT(tmp, field)))					\
 		RB_AUGMENT(RB_PARENT(tmp, field));			\
-} while (0)
+} જ્યારે (0)
 
 /* Generates prototypes and inline functions */
 #define	RB_PROTOTYPE(name, type, field, cmp)				\
 	RB_PROTOTYPE_INTERNAL(name, type, field, cmp,)
 #define	RB_PROTOTYPE_STATIC(name, type, field, cmp)			\
-	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
+	RB_PROTOTYPE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) સ્થિર)
 #define RB_PROTOTYPE_INTERNAL(name, type, field, cmp, attr)		\
-attr void name##_RB_INSERT_COLOR(struct name *, struct type *);		\
-attr void name##_RB_REMOVE_COLOR(struct name *, struct type *, struct type *);\
-attr struct type *name##_RB_REMOVE(struct name *, struct type *);	\
-attr struct type *name##_RB_INSERT(struct name *, struct type *);	\
-attr struct type *name##_RB_FIND(struct name *, struct type *);		\
-attr struct type *name##_RB_NFIND(struct name *, struct type *);	\
-attr struct type *name##_RB_NEXT(struct type *);			\
-attr struct type *name##_RB_PREV(struct type *);			\
-attr struct type *name##_RB_MINMAX(struct name *, int);			\
+attr શૂન્ય name##_RB_INSERT_COLOR(સંરચના name *, સંરચના type *);		\
+attr શૂન્ય name##_RB_REMOVE_COLOR(સંરચના name *, સંરચના type *, સંરચના type *);\
+attr સંરચના type *name##_RB_REMOVE(સંરચના name *, સંરચના type *);	\
+attr સંરચના type *name##_RB_INSERT(સંરચના name *, સંરચના type *);	\
+attr સંરચના type *name##_RB_FIND(સંરચના name *, સંરચના type *);		\
+attr સંરચના type *name##_RB_NFIND(સંરચના name *, સંરચના type *);	\
+attr સંરચના type *name##_RB_NEXT(સંરચના type *);			\
+attr સંરચના type *name##_RB_PREV(સંરચના type *);			\
+attr સંરચના type *name##_RB_MINMAX(સંરચના name *, પૂર્ણાંક);			\
 									\
 
 /* Main rb operation.
@@ -402,328 +402,328 @@ attr struct type *name##_RB_MINMAX(struct name *, int);			\
 #define	RB_GENERATE(name, type, field, cmp)				\
 	RB_GENERATE_INTERNAL(name, type, field, cmp,)
 #define	RB_GENERATE_STATIC(name, type, field, cmp)			\
-	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) static)
+	RB_GENERATE_INTERNAL(name, type, field, cmp, __attribute__((__unused__)) સ્થિર)
 #define RB_GENERATE_INTERNAL(name, type, field, cmp, attr)		\
-attr void								\
-name##_RB_INSERT_COLOR(struct name *head, struct type *elm)		\
+attr શૂન્ય								\
+name##_RB_INSERT_COLOR(સંરચના name *head, સંરચના type *elm)		\
 {									\
-	struct type *parent, *gparent, *tmp;				\
-	while ((parent = RB_PARENT(elm, field)) &&			\
+	સંરચના type *parent, *gparent, *tmp;				\
+	જ્યારે ((parent = RB_PARENT(elm, field)) &&			\
 	    RB_COLOR(parent, field) == RB_RED) {			\
 		gparent = RB_PARENT(parent, field);			\
-		if (parent == RB_LEFT(gparent, field)) {		\
-			tmp = RB_RIGHT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
+		જો (parent == RB_ડાબું(gparent, field)) {		\
+			tmp = RB_જમણું(gparent, field);			\
+			જો (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
-				continue;				\
+				ચાલુ;				\
 			}						\
-			if (RB_RIGHT(parent, field) == elm) {		\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
+			જો (RB_જમણું(parent, field) == elm) {		\
+				RB_ROTATE_ડાબું(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
 			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_RIGHT(head, gparent, tmp, field);	\
-		} else {						\
-			tmp = RB_LEFT(gparent, field);			\
-			if (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
+			RB_ROTATE_જમણું(head, gparent, tmp, field);	\
+		} નહીંતર {						\
+			tmp = RB_ડાબું(gparent, field);			\
+			જો (tmp && RB_COLOR(tmp, field) == RB_RED) {	\
 				RB_COLOR(tmp, field) = RB_BLACK;	\
 				RB_SET_BLACKRED(parent, gparent, field);\
 				elm = gparent;				\
-				continue;				\
+				ચાલુ;				\
 			}						\
-			if (RB_LEFT(parent, field) == elm) {		\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
+			જો (RB_ડાબું(parent, field) == elm) {		\
+				RB_ROTATE_જમણું(head, parent, tmp, field);\
 				tmp = parent;				\
 				parent = elm;				\
 				elm = tmp;				\
 			}						\
 			RB_SET_BLACKRED(parent, gparent, field);	\
-			RB_ROTATE_LEFT(head, gparent, tmp, field);	\
+			RB_ROTATE_ડાબું(head, gparent, tmp, field);	\
 		}							\
 	}								\
-	RB_COLOR(head->rbh_root, field) = RB_BLACK;			\
+	RB_COLOR(head->rbh_મૂળ, field) = RB_BLACK;			\
 }									\
 									\
-attr void								\
-name##_RB_REMOVE_COLOR(struct name *head, struct type *parent, struct type *elm) \
+attr શૂન્ય								\
+name##_RB_REMOVE_COLOR(સંરચના name *head, સંરચના type *parent, સંરચના type *elm) \
 {									\
-	struct type *tmp;						\
-	while ((elm == NULL || RB_COLOR(elm, field) == RB_BLACK) &&	\
-	    elm != RB_ROOT(head)) {					\
-		if (RB_LEFT(parent, field) == elm) {			\
-			tmp = RB_RIGHT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
+	સંરચના type *tmp;						\
+	જ્યારે ((elm == ખાલી || RB_COLOR(elm, field) == RB_BLACK) &&	\
+	    elm != RB_મૂળ(head)) {					\
+		જો (RB_ડાબું(parent, field) == elm) {			\
+			tmp = RB_જમણું(parent, field);			\
+			જો (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				tmp = RB_RIGHT(parent, field);		\
+				RB_ROTATE_ડાબું(head, parent, tmp, field);\
+				tmp = RB_જમણું(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
+			જો ((RB_ડાબું(tmp, field) == ખાલી ||		\
+			    RB_COLOR(RB_ડાબું(tmp, field), field) == RB_BLACK) &&\
+			    (RB_જમણું(tmp, field) == ખાલી ||		\
+			    RB_COLOR(RB_જમણું(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_RIGHT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK) {\
-					struct type *oleft;		\
-					if ((oleft = RB_LEFT(tmp, field)))\
+			} નહીંતર {					\
+				જો (RB_જમણું(tmp, field) == ખાલી ||	\
+				    RB_COLOR(RB_જમણું(tmp, field), field) == RB_BLACK) {\
+					સંરચના type *oleft;		\
+					જો ((oleft = RB_ડાબું(tmp, field)))\
 						RB_COLOR(oleft, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_RIGHT(head, tmp, oleft, field);\
-					tmp = RB_RIGHT(parent, field);	\
+					RB_ROTATE_જમણું(head, tmp, oleft, field);\
+					tmp = RB_જમણું(parent, field);	\
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_RIGHT(tmp, field))		\
-					RB_COLOR(RB_RIGHT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_LEFT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				જો (RB_જમણું(tmp, field))		\
+					RB_COLOR(RB_જમણું(tmp, field), field) = RB_BLACK;\
+				RB_ROTATE_ડાબું(head, parent, tmp, field);\
+				elm = RB_મૂળ(head);			\
+				તોડો;					\
 			}						\
-		} else {						\
-			tmp = RB_LEFT(parent, field);			\
-			if (RB_COLOR(tmp, field) == RB_RED) {		\
+		} નહીંતર {						\
+			tmp = RB_ડાબું(parent, field);			\
+			જો (RB_COLOR(tmp, field) == RB_RED) {		\
 				RB_SET_BLACKRED(tmp, parent, field);	\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				tmp = RB_LEFT(parent, field);		\
+				RB_ROTATE_જમણું(head, parent, tmp, field);\
+				tmp = RB_ડાબું(parent, field);		\
 			}						\
-			if ((RB_LEFT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) &&\
-			    (RB_RIGHT(tmp, field) == NULL ||		\
-			    RB_COLOR(RB_RIGHT(tmp, field), field) == RB_BLACK)) {\
+			જો ((RB_ડાબું(tmp, field) == ખાલી ||		\
+			    RB_COLOR(RB_ડાબું(tmp, field), field) == RB_BLACK) &&\
+			    (RB_જમણું(tmp, field) == ખાલી ||		\
+			    RB_COLOR(RB_જમણું(tmp, field), field) == RB_BLACK)) {\
 				RB_COLOR(tmp, field) = RB_RED;		\
 				elm = parent;				\
 				parent = RB_PARENT(elm, field);		\
-			} else {					\
-				if (RB_LEFT(tmp, field) == NULL ||	\
-				    RB_COLOR(RB_LEFT(tmp, field), field) == RB_BLACK) {\
-					struct type *oright;		\
-					if ((oright = RB_RIGHT(tmp, field)))\
+			} નહીંતર {					\
+				જો (RB_ડાબું(tmp, field) == ખાલી ||	\
+				    RB_COLOR(RB_ડાબું(tmp, field), field) == RB_BLACK) {\
+					સંરચના type *oright;		\
+					જો ((oright = RB_જમણું(tmp, field)))\
 						RB_COLOR(oright, field) = RB_BLACK;\
 					RB_COLOR(tmp, field) = RB_RED;	\
-					RB_ROTATE_LEFT(head, tmp, oright, field);\
-					tmp = RB_LEFT(parent, field);	\
+					RB_ROTATE_ડાબું(head, tmp, oright, field);\
+					tmp = RB_ડાબું(parent, field);	\
 				}					\
 				RB_COLOR(tmp, field) = RB_COLOR(parent, field);\
 				RB_COLOR(parent, field) = RB_BLACK;	\
-				if (RB_LEFT(tmp, field))		\
-					RB_COLOR(RB_LEFT(tmp, field), field) = RB_BLACK;\
-				RB_ROTATE_RIGHT(head, parent, tmp, field);\
-				elm = RB_ROOT(head);			\
-				break;					\
+				જો (RB_ડાબું(tmp, field))		\
+					RB_COLOR(RB_ડાબું(tmp, field), field) = RB_BLACK;\
+				RB_ROTATE_જમણું(head, parent, tmp, field);\
+				elm = RB_મૂળ(head);			\
+				તોડો;					\
 			}						\
 		}							\
 	}								\
-	if (elm)							\
+	જો (elm)							\
 		RB_COLOR(elm, field) = RB_BLACK;			\
 }									\
 									\
-attr struct type *							\
-name##_RB_REMOVE(struct name *head, struct type *elm)			\
+attr સંરચના type *							\
+name##_RB_REMOVE(સંરચના name *head, સંરચના type *elm)			\
 {									\
-	struct type *child, *parent, *old = elm;			\
-	int color;							\
-	if (RB_LEFT(elm, field) == NULL)				\
-		child = RB_RIGHT(elm, field);				\
-	else if (RB_RIGHT(elm, field) == NULL)				\
-		child = RB_LEFT(elm, field);				\
-	else {								\
-		struct type *left;					\
-		elm = RB_RIGHT(elm, field);				\
-		while ((left = RB_LEFT(elm, field)))			\
-			elm = left;					\
-		child = RB_RIGHT(elm, field);				\
+	સંરચના type *child, *parent, *old = elm;			\
+	પૂર્ણાંક color;							\
+	જો (RB_ડાબું(elm, field) == ખાલી)				\
+		child = RB_જમણું(elm, field);				\
+	નહીંતર જો (RB_જમણું(elm, field) == ખાલી)				\
+		child = RB_ડાબું(elm, field);				\
+	નહીંતર {								\
+		સંરચના type *ડાબું;					\
+		elm = RB_જમણું(elm, field);				\
+		જ્યારે ((ડાબું = RB_ડાબું(elm, field)))			\
+			elm = ડાબું;					\
+		child = RB_જમણું(elm, field);				\
 		parent = RB_PARENT(elm, field);				\
 		color = RB_COLOR(elm, field);				\
-		if (child)						\
+		જો (child)						\
 			RB_PARENT(child, field) = parent;		\
-		if (parent) {						\
-			if (RB_LEFT(parent, field) == elm)		\
-				RB_LEFT(parent, field) = child;		\
-			else						\
-				RB_RIGHT(parent, field) = child;	\
+		જો (parent) {						\
+			જો (RB_ડાબું(parent, field) == elm)		\
+				RB_ડાબું(parent, field) = child;		\
+			નહીંતર						\
+				RB_જમણું(parent, field) = child;	\
 			RB_AUGMENT(parent);				\
-		} else							\
-			RB_ROOT(head) = child;				\
-		if (RB_PARENT(elm, field) == old)			\
+		} નહીંતર							\
+			RB_મૂળ(head) = child;				\
+		જો (RB_PARENT(elm, field) == old)			\
 			parent = elm;					\
 		(elm)->field = (old)->field;				\
-		if (RB_PARENT(old, field)) {				\
-			if (RB_LEFT(RB_PARENT(old, field), field) == old)\
-				RB_LEFT(RB_PARENT(old, field), field) = elm;\
-			else						\
-				RB_RIGHT(RB_PARENT(old, field), field) = elm;\
+		જો (RB_PARENT(old, field)) {				\
+			જો (RB_ડાબું(RB_PARENT(old, field), field) == old)\
+				RB_ડાબું(RB_PARENT(old, field), field) = elm;\
+			નહીંતર						\
+				RB_જમણું(RB_PARENT(old, field), field) = elm;\
 			RB_AUGMENT(RB_PARENT(old, field));		\
-		} else							\
-			RB_ROOT(head) = elm;				\
-		RB_PARENT(RB_LEFT(old, field), field) = elm;		\
-		if (RB_RIGHT(old, field))				\
-			RB_PARENT(RB_RIGHT(old, field), field) = elm;	\
-		if (parent) {						\
-			left = parent;					\
-			do {						\
-				RB_AUGMENT(left);			\
-			} while ((left = RB_PARENT(left, field)));	\
+		} નહીંતર							\
+			RB_મૂળ(head) = elm;				\
+		RB_PARENT(RB_ડાબું(old, field), field) = elm;		\
+		જો (RB_જમણું(old, field))				\
+			RB_PARENT(RB_જમણું(old, field), field) = elm;	\
+		જો (parent) {						\
+			ડાબું = parent;					\
+			કરો {						\
+				RB_AUGMENT(ડાબું);			\
+			} જ્યારે ((ડાબું = RB_PARENT(ડાબું, field)));	\
 		}							\
-		goto color;						\
+		જાઓ color;						\
 	}								\
 	parent = RB_PARENT(elm, field);					\
 	color = RB_COLOR(elm, field);					\
-	if (child)							\
+	જો (child)							\
 		RB_PARENT(child, field) = parent;			\
-	if (parent) {							\
-		if (RB_LEFT(parent, field) == elm)			\
-			RB_LEFT(parent, field) = child;			\
-		else							\
-			RB_RIGHT(parent, field) = child;		\
+	જો (parent) {							\
+		જો (RB_ડાબું(parent, field) == elm)			\
+			RB_ડાબું(parent, field) = child;			\
+		નહીંતર							\
+			RB_જમણું(parent, field) = child;		\
 		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = child;					\
+	} નહીંતર								\
+		RB_મૂળ(head) = child;					\
 color:									\
-	if (color == RB_BLACK)						\
+	જો (color == RB_BLACK)						\
 		name##_RB_REMOVE_COLOR(head, parent, child);		\
-	return (old);							\
+	પાછા (old);							\
 }									\
 									\
 /* Inserts a node into the RB tree */					\
-attr struct type *							\
-name##_RB_INSERT(struct name *head, struct type *elm)			\
+attr સંરચના type *							\
+name##_RB_INSERT(સંરચના name *head, સંરચના type *elm)			\
 {									\
-	struct type *tmp;						\
-	struct type *parent = NULL;					\
-	int comp = 0;							\
-	tmp = RB_ROOT(head);						\
-	while (tmp) {							\
+	સંરચના type *tmp;						\
+	સંરચના type *parent = ખાલી;					\
+	પૂર્ણાંક comp = 0;							\
+	tmp = RB_મૂળ(head);						\
+	જ્યારે (tmp) {							\
 		parent = tmp;						\
 		comp = (cmp)(elm, parent);				\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		જો (comp < 0)						\
+			tmp = RB_ડાબું(tmp, field);			\
+		નહીંતર જો (comp > 0)					\
+			tmp = RB_જમણું(tmp, field);			\
+		નહીંતર							\
+			પાછા (tmp);					\
 	}								\
 	RB_SET(elm, parent, field);					\
-	if (parent != NULL) {						\
-		if (comp < 0)						\
-			RB_LEFT(parent, field) = elm;			\
-		else							\
-			RB_RIGHT(parent, field) = elm;			\
+	જો (parent != ખાલી) {						\
+		જો (comp < 0)						\
+			RB_ડાબું(parent, field) = elm;			\
+		નહીંતર							\
+			RB_જમણું(parent, field) = elm;			\
 		RB_AUGMENT(parent);					\
-	} else								\
-		RB_ROOT(head) = elm;					\
+	} નહીંતર								\
+		RB_મૂળ(head) = elm;					\
 	name##_RB_INSERT_COLOR(head, elm);				\
-	return (NULL);							\
+	પાછા (ખાલી);							\
 }									\
 									\
 /* Finds the node with the same key as elm */				\
-attr struct type *							\
-name##_RB_FIND(struct name *head, struct type *elm)			\
+attr સંરચના type *							\
+name##_RB_FIND(સંરચના name *head, સંરચના type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	int comp;							\
-	while (tmp) {							\
+	સંરચના type *tmp = RB_મૂળ(head);				\
+	પૂર્ણાંક comp;							\
+	જ્યારે (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		જો (comp < 0)						\
+			tmp = RB_ડાબું(tmp, field);			\
+		નહીંતર જો (comp > 0)					\
+			tmp = RB_જમણું(tmp, field);			\
+		નહીંતર							\
+			પાછા (tmp);					\
 	}								\
-	return (NULL);							\
+	પાછા (ખાલી);							\
 }									\
 									\
 /* Finds the first node greater than or equal to the search key */	\
-attr struct type *							\
-name##_RB_NFIND(struct name *head, struct type *elm)			\
+attr સંરચના type *							\
+name##_RB_NFIND(સંરચના name *head, સંરચના type *elm)			\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *res = NULL;					\
-	int comp;							\
-	while (tmp) {							\
+	સંરચના type *tmp = RB_મૂળ(head);				\
+	સંરચના type *res = ખાલી;					\
+	પૂર્ણાંક comp;							\
+	જ્યારે (tmp) {							\
 		comp = cmp(elm, tmp);					\
-		if (comp < 0) {						\
+		જો (comp < 0) {						\
 			res = tmp;					\
-			tmp = RB_LEFT(tmp, field);			\
+			tmp = RB_ડાબું(tmp, field);			\
 		}							\
-		else if (comp > 0)					\
-			tmp = RB_RIGHT(tmp, field);			\
-		else							\
-			return (tmp);					\
+		નહીંતર જો (comp > 0)					\
+			tmp = RB_જમણું(tmp, field);			\
+		નહીંતર							\
+			પાછા (tmp);					\
 	}								\
-	return (res);							\
+	પાછા (res);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_NEXT(struct type *elm)					\
+attr સંરચના type *							\
+name##_RB_NEXT(સંરચના type *elm)					\
 {									\
-	if (RB_RIGHT(elm, field)) {					\
-		elm = RB_RIGHT(elm, field);				\
-		while (RB_LEFT(elm, field))				\
-			elm = RB_LEFT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_LEFT(RB_PARENT(elm, field), field)))	\
+	જો (RB_જમણું(elm, field)) {					\
+		elm = RB_જમણું(elm, field);				\
+		જ્યારે (RB_ડાબું(elm, field))				\
+			elm = RB_ડાબું(elm, field);			\
+	} નહીંતર {							\
+		જો (RB_PARENT(elm, field) &&				\
+		    (elm == RB_ડાબું(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))\
+		નહીંતર {							\
+			જ્યારે (RB_PARENT(elm, field) &&			\
+			    (elm == RB_જમણું(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
 	}								\
-	return (elm);							\
+	પાછા (elm);							\
 }									\
 									\
 /* ARGSUSED */								\
-attr struct type *							\
-name##_RB_PREV(struct type *elm)					\
+attr સંરચના type *							\
+name##_RB_PREV(સંરચના type *elm)					\
 {									\
-	if (RB_LEFT(elm, field)) {					\
-		elm = RB_LEFT(elm, field);				\
-		while (RB_RIGHT(elm, field))				\
-			elm = RB_RIGHT(elm, field);			\
-	} else {							\
-		if (RB_PARENT(elm, field) &&				\
-		    (elm == RB_RIGHT(RB_PARENT(elm, field), field)))	\
+	જો (RB_ડાબું(elm, field)) {					\
+		elm = RB_ડાબું(elm, field);				\
+		જ્યારે (RB_જમણું(elm, field))				\
+			elm = RB_જમણું(elm, field);			\
+	} નહીંતર {							\
+		જો (RB_PARENT(elm, field) &&				\
+		    (elm == RB_જમણું(RB_PARENT(elm, field), field)))	\
 			elm = RB_PARENT(elm, field);			\
-		else {							\
-			while (RB_PARENT(elm, field) &&			\
-			    (elm == RB_LEFT(RB_PARENT(elm, field), field)))\
+		નહીંતર {							\
+			જ્યારે (RB_PARENT(elm, field) &&			\
+			    (elm == RB_ડાબું(RB_PARENT(elm, field), field)))\
 				elm = RB_PARENT(elm, field);		\
 			elm = RB_PARENT(elm, field);			\
 		}							\
 	}								\
-	return (elm);							\
+	પાછા (elm);							\
 }									\
 									\
-attr struct type *							\
-name##_RB_MINMAX(struct name *head, int val)				\
+attr સંરચના type *							\
+name##_RB_MINMAX(સંરચના name *head, પૂર્ણાંક val)				\
 {									\
-	struct type *tmp = RB_ROOT(head);				\
-	struct type *parent = NULL;					\
-	while (tmp) {							\
+	સંરચના type *tmp = RB_મૂળ(head);				\
+	સંરચના type *parent = ખાલી;					\
+	જ્યારે (tmp) {							\
 		parent = tmp;						\
-		if (val < 0)						\
-			tmp = RB_LEFT(tmp, field);			\
-		else							\
-			tmp = RB_RIGHT(tmp, field);			\
+		જો (val < 0)						\
+			tmp = RB_ડાબું(tmp, field);			\
+		નહીંતર							\
+			tmp = RB_જમણું(tmp, field);			\
 	}								\
-	return (parent);						\
+	પાછા (parent);						\
 }
 
 #define RB_NEGINF	-1
 #define RB_INF	1
 
-#define RB_INSERT(name, x, y)	name##_RB_INSERT(x, y)
+#define RB_ઉમેરો(name, x, y)	name##_RB_INSERT(x, y)
 #define RB_REMOVE(name, x, y)	name##_RB_REMOVE(x, y)
 #define RB_FIND(name, x, y)	name##_RB_FIND(x, y)
 #define RB_NFIND(name, x, y)	name##_RB_NFIND(x, y)
@@ -733,23 +733,23 @@ name##_RB_MINMAX(struct name *head, int val)				\
 #define RB_MAX(name, x)		name##_RB_MINMAX(x, RB_INF)
 
 #define RB_FOREACH(x, name, head)					\
-	for ((x) = RB_MIN(name, head);					\
-	     (x) != NULL;						\
+	માટે ((x) = RB_MIN(name, head);					\
+	     (x) != ખાલી;						\
 	     (x) = name##_RB_NEXT(x))
 
 #define RB_FOREACH_SAFE(x, name, head, y)				\
-	for ((x) = RB_MIN(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_NEXT(x), 1);		\
+	માટે ((x) = RB_MIN(name, head);					\
+	    ((x) != ખાલી) && ((y) = name##_RB_NEXT(x), 1);		\
 	     (x) = (y))
 
 #define RB_FOREACH_REVERSE(x, name, head)				\
-	for ((x) = RB_MAX(name, head);					\
-	     (x) != NULL;						\
+	માટે ((x) = RB_MAX(name, head);					\
+	     (x) != ખાલી;						\
 	     (x) = name##_RB_PREV(x))
 
 #define RB_FOREACH_REVERSE_SAFE(x, name, head, y)			\
-	for ((x) = RB_MAX(name, head);					\
-	    ((x) != NULL) && ((y) = name##_RB_PREV(x), 1);		\
+	માટે ((x) = RB_MAX(name, head);					\
+	    ((x) != ખાલી) && ((y) = name##_RB_PREV(x), 1);		\
 	     (x) = (y))
 
 #endif	/* _SYS_TREE_H_ */

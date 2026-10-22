@@ -18,54 +18,54 @@
 
 /* OPENBSD ORIGINAL: lib/libc/gen/dirname.c */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 #ifndef HAVE_DIRNAME
 
-#include <errno.h>
-#include <string.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <string.h>
 
-char *
-dirname(const char *path)
+અક્ષર *
+dirname(અચલ અક્ષર *path)
 {
-	static char dname[MAXPATHLEN];
+	સ્થિર અક્ષર dname[MAXPATHLEN];
 	size_t len;
-	const char *endp;
+	અચલ અક્ષર *endp;
 
 	/* Empty or NULL string gets treated as "." */
-	if (path == NULL || *path == '\0') {
+	જો (path == ખાલી || *path == '\0') {
 		dname[0] = '.';
 		dname[1] = '\0';
-		return (dname);
+		પાછા (dname);
 	}
 
 	/* Strip any trailing slashes */
 	endp = path + strlen(path) - 1;
-	while (endp > path && *endp == '/')
+	જ્યારે (endp > path && *endp == '/')
 		endp--;
 
 	/* Find the start of the dir */
-	while (endp > path && *endp != '/')
+	જ્યારે (endp > path && *endp != '/')
 		endp--;
 
 	/* Either the dir is "/" or there are no slashes */
-	if (endp == path) {
+	જો (endp == path) {
 		dname[0] = *endp == '/' ? '/' : '.';
 		dname[1] = '\0';
-		return (dname);
-	} else {
+		પાછા (dname);
+	} નહીંતર {
 		/* Move forward past the separating slashes */
-		do {
+		કરો {
 			endp--;
-		} while (endp > path && *endp == '/');
+		} જ્યારે (endp > path && *endp == '/');
 	}
 
 	len = endp - path + 1;
-	if (len >= sizeof(dname)) {
+	જો (len >= કદ(dname)) {
 		errno = ENAMETOOLONG;
-		return (NULL);
+		પાછા (ખાલી);
 	}
 	memcpy(dname, path, len);
 	dname[len] = '\0';
-	return (dname);
+	પાછા (dname);
 }
 #endif

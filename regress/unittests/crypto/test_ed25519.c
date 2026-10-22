@@ -5,27 +5,27 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "crypto_api.h"
-#include "xmalloc.h"
+#અન્તર્ભાવ "../test_helper/test_helper.h"
+#અન્તર્ભાવ "crypto_api.h"
+#અન્તર્ભાવ "xmalloc.h"
 
-struct ed25519_kat {
-	const char *sk;
-	const char *pk;
-	const char *msg;
-	const char *sig;
+સંરચના ed25519_kat {
+	અચલ અક્ષર *sk;
+	અચલ અક્ષર *pk;
+	અચલ અક્ષર *સંદેશ;
+	અચલ અક્ષર *sig;
 };
 
-static const struct ed25519_kat ed25519_kats[] = {
+સ્થિર અચલ સંરચના ed25519_kat ed25519_kats[] = {
 	{
 		"9d61b19deffd5a60ba844af492ec2cc44449c569"
 		"7b326919703bac031cae7f60",
@@ -61,18 +61,18 @@ static const struct ed25519_kat ed25519_kats[] = {
 	}
 };
 
-void ed25519_tests(void);
+શૂન્ય ed25519_tests(શૂન્ય);
 
-void
-ed25519_tests(void)
+શૂન્ય
+ed25519_tests(શૂન્ય)
 {
 	uint8_t pk[32], sk[64], seed[32], sig[64];
 	uint8_t expected_pk[32], expected_sig[64];
-	uint8_t *msg;
+	uint8_t *સંદેશ;
 	size_t i, msglen;
 	unsigned long long smlen;
 
-	for (i = 0; i < sizeof(ed25519_kats)/sizeof(ed25519_kats[0]); i++) {
+	માટે (i = 0; i < કદ(ed25519_kats)/કદ(ed25519_kats[0]); i++) {
 		TEST_START("Ed25519 keypair from seed");
 		hex2bin(seed, ed25519_kats[i].sk, 32);
 		hex2bin(expected_pk, ed25519_kats[i].pk, 32);
@@ -81,19 +81,19 @@ ed25519_tests(void)
 		TEST_DONE();
 
 		TEST_START("Ed25519 sign/verify KAT");
-		msglen = strlen(ed25519_kats[i].msg) / 2;
-		ASSERT_PTR_NE(msg = malloc(msglen == 0 ? 1 : msglen), NULL);
-		hex2bin(msg, ed25519_kats[i].msg, msglen);
+		msglen = strlen(ed25519_kats[i].સંદેશ) / 2;
+		ASSERT_PTR_NE(સંદેશ = malloc(msglen == 0 ? 1 : msglen), ખાલી);
+		hex2bin(સંદેશ, ed25519_kats[i].સંદેશ, msglen);
 		hex2bin(expected_sig, ed25519_kats[i].sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_detached(sig, &smlen,
-		    msg, msglen, sk), 0);
+		    સંદેશ, msglen, sk), 0);
 		ASSERT_INT_EQ(smlen, 64);
 		ASSERT_MEM_EQ(sig, expected_sig, 64);
 
 		ASSERT_INT_EQ(crypto_sign_ed25519_verify_detached(sig,
-		    msg, msglen, pk), 0);
-		free(msg);
+		    સંદેશ, msglen, pk), 0);
+		મુક્ત(સંદેશ);
 		TEST_DONE();
 	}
 }

@@ -14,20 +14,20 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <stdlib.h>
-#include <string.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
 
 #ifndef HAVE_FREEZERO
 
-void
-freezero(void *ptr, size_t sz)
+શૂન્ય
+freezero(શૂન્ય *ptr, size_t sz)
 {
-	if (ptr == NULL)
-		return;
+	જો (ptr == ખાલી)
+		પાછા;
 	explicit_bzero(ptr, sz);
-	free(ptr);
+	મુક્ત(ptr);
 }
 
 #endif /* HAVE_FREEZERO */

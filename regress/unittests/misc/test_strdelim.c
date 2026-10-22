@@ -5,36 +5,36 @@
  * Placed in the public domain.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
 
-#include "../test_helper/test_helper.h"
+#અન્તર્ભાવ "../test_helper/test_helper.h"
 
-#include "log.h"
-#include "misc.h"
-#include "xmalloc.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "xmalloc.h"
 
-void test_strdelim(void);
+શૂન્ય test_strdelim(શૂન્ય);
 
-void
-test_strdelim(void)
+શૂન્ય
+test_strdelim(શૂન્ય)
 {
-	char *orig, *str, *cp;
+	અક્ષર *orig, *str, *cp;
 
 #define START_STRING(x)	orig = str = xstrdup(x)
-#define DONE_STRING()	free(orig)
+#define DONE_STRING()	મુક્ત(orig)
 
 	TEST_START("empty");
 	START_STRING("");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX arguable */
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -51,8 +51,8 @@ test_strdelim(void)
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(cp, ખાલી);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -63,7 +63,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -74,9 +74,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -89,7 +89,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(cp, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -100,9 +100,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -116,7 +116,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");	/* XXX should (but can't) reject */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -124,9 +124,9 @@ test_strdelim(void)
 	START_STRING("blob1=blob2");
 	cp = strdelimw(&str);
 	ASSERT_STRING_EQ(cp, "blob1=blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	cp = strdelimw(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -136,7 +136,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(cp, "blob");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -147,9 +147,9 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "blob2");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob2");
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -163,7 +163,7 @@ test_strdelim(void)
 	ASSERT_STRING_EQ(str, "");
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "");	/* XXX better as NULL */
-	ASSERT_PTR_EQ(str, NULL);
+	ASSERT_PTR_EQ(str, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
@@ -176,14 +176,14 @@ test_strdelim(void)
 	cp = strdelim(&str);
 	ASSERT_STRING_EQ(cp, "blob3");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 
 	TEST_START("badquote");
 	START_STRING("\"blob");
 	cp = strdelim(&str);
-	ASSERT_PTR_EQ(cp, NULL);
+	ASSERT_PTR_EQ(cp, ખાલી);
 	DONE_STRING();
 	TEST_DONE();
 

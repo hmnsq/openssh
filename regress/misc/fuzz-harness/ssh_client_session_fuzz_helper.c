@@ -34,163 +34,163 @@ limitations under the License.
  * - __wrap_read_passphrase (real one reads /dev/tty)
  */
 
-#include <setjmp.h>
-#include <signal.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
+#અન્તર્ભાવ <setjmp.h>
+#અન્તર્ભાવ <signal.h>
+#અન્તર્ભાવ <stddef.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <unistd.h>
 
-#include "log.h"
-#include "digest.h"
-#include "misc.h"
-#include "ssh.h"
-#include "ssh2.h"
-#include "ssh_api.h"
-#include "ssherr.h"
-#include "sshbuf.h"
-#include "sshkey.h"
-#include "packet.h"
-#include "myproposal.h"
-#include "kex.h"
-#include "xmalloc.h"
-#include "authfile.h"
-#include "readconf.h"
+#અન્તર્ભાવ "log.h"
+#અન્તર્ભાવ "digest.h"
+#અન્તર્ભાવ "misc.h"
+#અન્તર્ભાવ "ssh.h"
+#અન્તર્ભાવ "ssh2.h"
+#અન્તર્ભાવ "ssh_api.h"
+#અન્તર્ભાવ "ssherr.h"
+#અન્તર્ભાવ "sshbuf.h"
+#અન્તર્ભાવ "sshkey.h"
+#અન્તર્ભાવ "packet.h"
+#અન્તર્ભાવ "myproposal.h"
+#અન્તર્ભાવ "kex.h"
+#અન્તર્ભાવ "xmalloc.h"
+#અન્તર્ભાવ "authfile.h"
+#અન્તર્ભાવ "readconf.h"
 
 Options options;
-int debug_flag = 0;
+પૂર્ણાંક debug_flag = 0;
 
-struct ssh;
+સંરચના ssh;
 
-int
-__wrap_ssh_packet_write_wait(struct ssh *ssh)
+પૂર્ણાંક
+__wrap_ssh_packet_write_wait(સંરચના ssh *ssh)
 {
-	(void)ssh;
-	return 0;
+	(શૂન્ય)ssh;
+	પાછા 0;
 }
 
-char *
-__wrap_read_passphrase(const char *prompt, int flags)
+અક્ષર *
+__wrap_read_passphrase(અચલ અક્ષર *prompt, પૂર્ણાંક flags)
 {
-	(void)prompt;
-	(void)flags;
-	return strdup("fuzz");
+	(શૂન્ય)prompt;
+	(શૂન્ય)flags;
+	પાછા strdup("fuzz");
 }
 
-#include "../../../sshconnect2.c"
-#include "fixed-keys.h"
+#અન્તર્ભાવ "../../../sshconnect2.c"
+#અન્તર્ભાવ "fixed-keys.h"
 
-static jmp_buf fuzz_env;
-static volatile int in_fuzz = 0;
+સ્થિર jmp_buf fuzz_env;
+સ્થિર અસ્થિર પૂર્ણાંક in_fuzz = 0;
 
-void
-cleanup_exit(int code)
+શૂન્ય
+cleanup_exit(પૂર્ણાંક code)
 {
-	if (in_fuzz)
+	જો (in_fuzz)
 		longjmp(fuzz_env, code ? code : 1);
 	_exit(code);
 }
 
-static struct sshkey *
-load_private(const char *str)
+સ્થિર સંરચના sshkey *
+load_private(અચલ અક્ષર *str)
 {
-	struct sshbuf *b = sshbuf_from(str, strlen(str));
-	struct sshkey *k = NULL;
-	if (b == NULL || sshkey_parse_private_fileblob(b, "", &k, NULL) != 0)
+	સંરચના sshbuf *b = sshbuf_from(str, strlen(str));
+	સંરચના sshkey *k = ખાલી;
+	જો (b == ખાલી || sshkey_parse_private_fileblob(b, "", &k, ખાલી) != 0)
 		abort();
 	sshbuf_free(b);
-	return k;
+	પાછા k;
 }
 
-static struct sshkey *
-load_public(const char *str)
+સ્થિર સંરચના sshkey *
+load_public(અચલ અક્ષર *str)
 {
-	char *tmp, *cp;
-	struct sshkey *k = sshkey_new(KEY_UNSPEC);
-	if (k == NULL)
+	અક્ષર *tmp, *cp;
+	સંરચના sshkey *k = sshkey_new(ચાવી_UNSPEC);
+	જો (k == ખાલી)
 		abort();
 	tmp = cp = strdup(str);
-	if (sshkey_read(k, &cp) != 0)
+	જો (sshkey_read(k, &cp) != 0)
 		abort();
-	free(tmp);
-	return k;
+	મુક્ત(tmp);
+	પાછા k;
 }
 
-static int
-pump(struct ssh *from, struct ssh *to, size_t *transferred)
+સ્થિર પૂર્ણાંક
+pump(સંરચના ssh *from, સંરચના ssh *to, size_t *transferred)
 {
-	const u_char *buf;
+	અચલ u_char *buf;
 	size_t len;
 	u_char type;
-	int r;
+	પૂર્ણાંક r;
 	*transferred = 0;
-	if ((r = ssh_packet_next(from, &type)) != 0)
-		return r;
+	જો ((r = ssh_packet_next(from, &type)) != 0)
+		પાછા r;
 	buf = ssh_output_ptr(from, &len);
-	if (len == 0)
-		return 0;
-	if ((r = ssh_input_append(to, buf, len)) != 0)
-		return r;
-	if ((r = ssh_output_consume(from, len)) != 0)
-		return r;
+	જો (len == 0)
+		પાછા 0;
+	જો ((r = ssh_આગત_append(to, buf, len)) != 0)
+		પાછા r;
+	જો ((r = ssh_output_consume(from, len)) != 0)
+		પાછા r;
 	*transferred = len;
-	return 0;
+	પાછા 0;
 }
 
-static int
-run_kex(struct ssh *client, struct ssh *server)
+સ્થિર પૂર્ણાંક
+run_kex(સંરચના ssh *client, સંરચના ssh *server)
 {
-	int r;
+	પૂર્ણાંક r;
 	size_t cn, sn;
-	for (int i = 0; i < 100; i++) {
-		if ((r = pump(server, client, &sn)) != 0) return r;
-		if ((r = pump(client, server, &cn)) != 0) return r;
-		if (server->kex->done && client->kex->done)
-			return 0;
-		if (cn == 0 && sn == 0)
-			return SSH_ERR_PROTOCOL_ERROR;
+	માટે (પૂર્ણાંક i = 0; i < 100; i++) {
+		જો ((r = pump(server, client, &sn)) != 0) પાછા r;
+		જો ((r = pump(client, server, &cn)) != 0) પાછા r;
+		જો (server->kex->done && client->kex->done)
+			પાછા 0;
+		જો (cn == 0 && sn == 0)
+			પાછા SSH_ERR_PROTOCOL_ERROR;
 	}
-	return SSH_ERR_PROTOCOL_ERROR;
+	પાછા SSH_ERR_PROTOCOL_ERROR;
 }
 
-static Sensitive g_sensitive = { NULL, 0 };
-static Authctxt g_authctxt;
-static struct ssh *g_client = NULL;
-static struct ssh *g_server = NULL;
-static int g_init = 0;
+સ્થિર Sensitive g_sensitive = { ખાલી, 0 };
+સ્થિર Authctxt g_authctxt;
+સ્થિર સંરચના ssh *g_client = ખાલી;
+સ્થિર સંરચના ssh *g_server = ખાલી;
+સ્થિર પૂર્ણાંક g_init = 0;
 
-static void
-fuzz_reset_authctxt(struct ssh *ssh)
+સ્થિર શૂન્ય
+fuzz_reset_authctxt(સંરચના ssh *ssh)
 {
-	free(g_authctxt.authlist);
-	g_authctxt.authlist = NULL;
-	if (ssh->authctxt == &g_authctxt)
+	મુક્ત(g_authctxt.authlist);
+	g_authctxt.authlist = ખાલી;
+	જો (ssh->authctxt == &g_authctxt)
 		pubkey_cleanup(ssh);
 
-	memset(&g_authctxt, 0, sizeof(g_authctxt));
-	g_authctxt.server_user = (char *)"fuzz";
-	g_authctxt.local_user = (char *)"fuzz";
-	g_authctxt.host = (char *)"127.0.0.1";
-	g_authctxt.service = (char *)"ssh-connection";
+	memset(&g_authctxt, 0, કદ(g_authctxt));
+	g_authctxt.server_user = (અક્ષર *)"fuzz";
+	g_authctxt.local_user = (અક્ષર *)"fuzz";
+	g_authctxt.host = (અક્ષર *)"127.0.0.1";
+	g_authctxt.service = (અક્ષર *)"ssh-connection";
 	g_authctxt.success = 0;
 	g_authctxt.method = authmethod_lookup("none");
-	g_authctxt.authlist = NULL;
-	g_authctxt.methoddata = NULL;
+	g_authctxt.authlist = ખાલી;
+	g_authctxt.methoddata = ખાલી;
 	g_authctxt.sensitive = &g_sensitive;
-	g_authctxt.active_ktype = NULL;
-	g_authctxt.oktypes = NULL;
-	g_authctxt.ktypes = NULL;
+	g_authctxt.active_ktype = ખાલી;
+	g_authctxt.oktypes = ખાલી;
+	g_authctxt.ktypes = ખાલી;
 	g_authctxt.info_req_seen = 0;
 	g_authctxt.attempt_kbdint = 0;
 	g_authctxt.attempt_passwd = 0;
 	g_authctxt.agent_fd = -1;
-	TAILQ_INIT(&g_authctxt.keys);
+	TAILQ_INIT(&g_authctxt.ચાવીઓ);
 	ssh->authctxt = &g_authctxt;
 }
 
-static void
-fuzz_setup(struct ssh *ssh)
+સ્થિર શૂન્ય
+fuzz_setup(સંરચના ssh *ssh)
 {
 	initialize_options(&options);
 	options.batch_mode = 1;
@@ -201,109 +201,109 @@ fuzz_setup(struct ssh *ssh)
 	options.gss_authentication = 0;
 	options.preferred_authentications = strdup("none");
 	options.user = strdup("fuzz");
-	options.number_of_password_prompts = 0;
+	options.સંખ્યા_of_password_prompts = 0;
 	options.log_level = SYSLOG_LEVEL_ERROR;
 	options.fingerprint_hash = SSH_DIGEST_SHA256;
-	(void)fill_default_options(&options);
+	(શૂન્ય)fill_default_options(&options);
 
 	fuzz_reset_authctxt(ssh);
 
 	ssh_dispatch_init(ssh, &dispatch_protocol_ignore);
 
-	ssh_dispatch_set(ssh, SSH2_MSG_EXT_INFO, kex_input_ext_info);
-	ssh_dispatch_set(ssh, SSH2_MSG_SERVICE_ACCEPT, &input_userauth_service_accept);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_SUCCESS, &input_userauth_success);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_FAILURE, &input_userauth_failure);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_BANNER, &input_userauth_banner);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_INFO_REQUEST, &input_userauth_info_req);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PK_OK, &input_userauth_pk_ok);
-	ssh_dispatch_set(ssh, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ, &input_userauth_passwd_changereq);
+	ssh_dispatch_set(ssh, SSH2_સંદેશ_EXT_INFO, kex_આગત_ext_info);
+	ssh_dispatch_set(ssh, SSH2_સંદેશ_SERVICE_ACCEPT, &આગત_userauth_service_accept);
+	ssh_dispatch_set(ssh, SSH2_સંદેશ_USERAUTH_SUCCESS, &આગત_userauth_success);
+	ssh_dispatch_set(ssh, SSH2_સંદેશ_USERAUTH_FAILURE, &આગત_userauth_failure);
+	ssh_dispatch_set(ssh, SSH2_સંદેશ_USERAUTH_BANNER, &આગત_userauth_banner);
+	ssh_dispatch_set(ssh, SSH2_સંદેશ_USERAUTH_INFO_REQUEST, &આગત_userauth_info_req);
+	ssh_dispatch_set(ssh, SSH2_સંદેશ_USERAUTH_PK_OK, &આગત_userauth_pk_ok);
+	ssh_dispatch_set(ssh, SSH2_સંદેશ_USERAUTH_PASSWD_CHANGEREQ, &આગત_userauth_passwd_changereq);
 }
 
-static int
-init_once(void)
+સ્થિર પૂર્ણાંક
+init_once(શૂન્ય)
 {
-	if (g_init)
-		return 0;
-	signal(SIGPIPE, SIG_IGN);
+	જો (g_init)
+		પાછા 0;
+	સંકેત(SIGPIPE, SIG_IGN);
 	log_init("ssh_client_session_fuzz", SYSLOG_LEVEL_ERROR,
 	    SYSLOG_FACILITY_AUTH, 0);
 
-	struct sshkey *priv = load_private(PRIV_ED25519);
-	struct sshkey *pub = load_public(PUB_ED25519);
-	char *keyname = xstrdup(sshkey_ssh_name(priv));
+	સંરચના sshkey *priv = load_private(PRIV_ED25519);
+	સંરચના sshkey *pub = load_public(PUB_ED25519);
+	અક્ષર *keyname = xstrdup(sshkey_ssh_name(priv));
 
-	const char *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
-	char *proposal[PROPOSAL_MAX] = { 0 };
-	int i;
-	for (i = 0; i < PROPOSAL_MAX; i++) {
-		const char *p = defaults[i];
-		if (i == PROPOSAL_SERVER_HOST_KEY_ALGS)
+	અચલ અક્ષર *defaults[PROPOSAL_MAX] = { KEX_CLIENT };
+	અક્ષર *proposal[PROPOSAL_MAX] = { 0 };
+	પૂર્ણાંક i;
+	માટે (i = 0; i < PROPOSAL_MAX; i++) {
+		અચલ અક્ષર *p = defaults[i];
+		જો (i == PROPOSAL_SERVER_HOST_ચાવી_ALGS)
 			p = keyname;
-		else if (i == PROPOSAL_KEX_ALGS)
+		નહીંતર જો (i == PROPOSAL_KEX_ALGS)
 			p = "curve25519-sha256";
-		else if (i == PROPOSAL_ENC_ALGS_CTOS ||
+		નહીંતર જો (i == PROPOSAL_ENC_ALGS_CTOS ||
 		    i == PROPOSAL_ENC_ALGS_STOC)
 			p = "aes128-ctr";
-		else if (i == PROPOSAL_MAC_ALGS_CTOS ||
+		નહીંતર જો (i == PROPOSAL_MAC_ALGS_CTOS ||
 		    i == PROPOSAL_MAC_ALGS_STOC)
 			p = "hmac-sha2-256";
 		proposal[i] = strdup(p);
 	}
-	struct kex_params kp;
-	memcpy(kp.proposal, proposal, sizeof(proposal));
+	સંરચના kex_params kp;
+	memcpy(kp.proposal, proposal, કદ(proposal));
 
-	if (ssh_init(&g_client, 0, &kp) != 0 ||
+	જો (ssh_init(&g_client, 0, &kp) != 0 ||
 	    ssh_init(&g_server, 1, &kp) != 0)
-		return -1;
-	if (ssh_add_hostkey(g_server, priv) != 0 ||
+		પાછા -1;
+	જો (ssh_add_hostkey(g_server, priv) != 0 ||
 	    ssh_add_hostkey(g_client, pub) != 0)
-		return -1;
-	if (run_kex(g_client, g_server) != 0)
-		return -1;
+		પાછા -1;
+	જો (run_kex(g_client, g_server) != 0)
+		પાછા -1;
 
 	fuzz_setup(g_client);
 
-	free(keyname);
-	for (i = 0; i < PROPOSAL_MAX; i++)
-		free(proposal[i]);
+	મુક્ત(keyname);
+	માટે (i = 0; i < PROPOSAL_MAX; i++)
+		મુક્ત(proposal[i]);
 	g_init = 1;
-	return 0;
+	પાછા 0;
 }
 
-static const uint8_t k_msg_types[] = {
-	SSH2_MSG_DISCONNECT, SSH2_MSG_IGNORE, SSH2_MSG_UNIMPLEMENTED,
-	SSH2_MSG_DEBUG, SSH2_MSG_SERVICE_ACCEPT, SSH2_MSG_EXT_INFO,
-	SSH2_MSG_USERAUTH_FAILURE, SSH2_MSG_USERAUTH_SUCCESS,
-	SSH2_MSG_USERAUTH_BANNER, SSH2_MSG_USERAUTH_INFO_REQUEST,
-	SSH2_MSG_USERAUTH_PK_OK, SSH2_MSG_USERAUTH_PASSWD_CHANGEREQ,
+સ્થિર અચલ uint8_t k_સંદેશ_types[] = {
+	SSH2_સંદેશ_DISCONNECT, SSH2_સંદેશ_IGNORE, SSH2_સંદેશ_UNIMPLEMENTED,
+	SSH2_સંદેશ_DEBUG, SSH2_સંદેશ_SERVICE_ACCEPT, SSH2_સંદેશ_EXT_INFO,
+	SSH2_સંદેશ_USERAUTH_FAILURE, SSH2_સંદેશ_USERAUTH_SUCCESS,
+	SSH2_સંદેશ_USERAUTH_BANNER, SSH2_સંદેશ_USERAUTH_INFO_REQUEST,
+	SSH2_સંદેશ_USERAUTH_PK_OK, SSH2_સંદેશ_USERAUTH_PASSWD_CHANGEREQ,
 };
 
-void
-fuzz_one_message(const uint8_t *data, size_t size)
+શૂન્ય
+fuzz_one_message(અચલ uint8_t *data, size_t size)
 {
-	if (init_once() != 0)
-		return;
-	if (size > 65000)
-		return;
+	જો (init_once() != 0)
+		પાછા;
+	જો (size > 65000)
+		પાછા;
 
 	uint8_t selector = size > 0 ? data[0] : 0;
-	const uint8_t *payload = size > 0 ? data + 1 : NULL;
+	અચલ uint8_t *payload = size > 0 ? data + 1 : ખાલી;
 	size_t plen = size > 0 ? size - 1 : 0;
 
-	uint8_t msg_type = k_msg_types[selector %
-	    (sizeof(k_msg_types) / sizeof(k_msg_types[0]))];
+	uint8_t સંદેશ_type = k_સંદેશ_types[selector %
+	    (કદ(k_સંદેશ_types) / કદ(k_સંદેશ_types[0]))];
 
 	fuzz_reset_authctxt(g_client);
 
 	in_fuzz = 1;
-	if (setjmp(fuzz_env) == 0) {
+	જો (setjmp(fuzz_env) == 0) {
 		size_t transferred;
-		if (ssh_packet_put(g_server, msg_type, payload, plen) != 0)
-			goto done;
-		if (pump(g_server, g_client, &transferred) != 0)
-			goto done;
-		(void)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, NULL);
+		જો (ssh_packet_put(g_server, સંદેશ_type, payload, plen) != 0)
+			જાઓ done;
+		જો (pump(g_server, g_client, &transferred) != 0)
+			જાઓ done;
+		(શૂન્ય)ssh_dispatch_run(g_client, DISPATCH_NONBLOCK, ખાલી);
 	done:
 		;
 	}

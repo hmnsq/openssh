@@ -15,21 +15,21 @@
  */
 
 #define SSH_DONT_OVERLOAD_OPENSSL_FUNCS
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
 #ifdef WITH_OPENSSL
 
-#include <stdarg.h>
-#include <string.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <string.h>
 
 #ifdef USE_OPENSSL_ENGINE
 # include <openssl/engine.h>
 # include <openssl/conf.h>
 #endif
 
-#include "log.h"
+#અન્તર્ભાવ "log.h"
 
-#include "openssl-compat.h"
+#અન્તર્ભાવ "openssl-compat.h"
 
 /*
  * OpenSSL version numbers: MNNFFPPS: major minor fix patch status.
@@ -40,21 +40,21 @@
  * See https://www.openssl.org/policies/releasestrat.html
  */
 
-int
+પૂર્ણાંક
 ssh_compatible_openssl(long headerver, long libver)
 {
 	long mask, hfix, lfix;
 
 	/* exact match is always OK */
-	if (headerver == libver)
-		return 1;
+	જો (headerver == libver)
+		પાછા 1;
 
 	/*
 	 * For versions >= 3.0, only the major must match.
 	 */
-	if (headerver >= 0x30000000) {
+	જો (headerver >= 0x30000000) {
 		mask = 0xf0000000L; /* major only */
-		return (headerver & mask) == (libver & mask);
+		પાછા (headerver & mask) == (libver & mask);
 	}
 
 	/*
@@ -64,13 +64,13 @@ ssh_compatible_openssl(long headerver, long libver)
 	mask = 0xfff0000fL; /* major,minor,status */
 	hfix = (headerver & 0x000ff000) >> 12;
 	lfix = (libver & 0x000ff000) >> 12;
-	if ( (headerver & mask) == (libver & mask) && lfix >= hfix)
-		return 1;
-	return 0;
+	જો ( (headerver & mask) == (libver & mask) && lfix >= hfix)
+		પાછા 1;
+	પાછા 0;
 }
 
-int
-ssh_libcrypto_init(void)
+પૂર્ણાંક
+ssh_libcrypto_init(શૂન્ય)
 {
 	uint64_t opts = OPENSSL_INIT_ADD_ALL_CIPHERS |
 	    OPENSSL_INIT_ADD_ALL_DIGESTS;
@@ -84,32 +84,32 @@ ssh_libcrypto_init(void)
 	opts |= OPENSSL_INIT_LOAD_CONFIG;
 #endif /* USE_OPENSSL_ENGINE */
 
-	return OPENSSL_init_crypto(opts, NULL);
+	પાછા OPENSSL_init_crypto(opts, ખાલી);
 }
 
 #ifndef HAVE_EVP_DIGESTSIGN
-int
-EVP_DigestSign(EVP_MD_CTX *ctx, unsigned char *sigret, size_t *siglen,
-    const unsigned char *tbs, size_t tbslen)
+પૂર્ણાંક
+EVP_DigestSign(EVP_MD_CTX *ctx, unsigned અક્ષર *sigret, size_t *siglen,
+    અચલ unsigned અક્ષર *tbs, size_t tbslen)
 {
-	if (sigret != NULL) {
-		if (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
-			return 0;
+	જો (sigret != ખાલી) {
+		જો (EVP_DigestSignUpdate(ctx, tbs, tbslen) <= 0)
+			પાછા 0;
 	}
 
-	return EVP_DigestSignFinal(ctx, sigret, siglen);
+	પાછા EVP_DigestSignFinal(ctx, sigret, siglen);
 }
 #endif
 
 #ifndef HAVE_EVP_DIGESTVERIFY
-int
-EVP_DigestVerify(EVP_MD_CTX *ctx, const unsigned char *sigret, size_t siglen,
-    const unsigned char *tbs, size_t tbslen)
+પૂર્ણાંક
+EVP_DigestVerify(EVP_MD_CTX *ctx, અચલ unsigned અક્ષર *sigret, size_t siglen,
+    અચલ unsigned અક્ષર *tbs, size_t tbslen)
 {
-	if (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
-		return -1;
+	જો (EVP_DigestVerifyUpdate(ctx, tbs, tbslen) <= 0)
+		પાછા -1;
 
-	return EVP_DigestVerifyFinal(ctx, sigret, siglen);
+	પાછા EVP_DigestVerifyFinal(ctx, sigret, siglen);
 }
 #endif
 

@@ -29,21 +29,21 @@
 
 #define DISPATCH_MAX	255
 
-enum {
+ગણના {
 	DISPATCH_BLOCK,
 	DISPATCH_NONBLOCK
 };
 
-struct ssh;
+સંરચના ssh;
 
-typedef int dispatch_fn(int, uint32_t, struct ssh *);
+પ્રકારવ્યાખ્યા પૂર્ણાંક dispatch_fn(પૂર્ણાંક, uint32_t, સંરચના ssh *);
 
-int	dispatch_protocol_error(int, uint32_t, struct ssh *);
-int	dispatch_protocol_ignore(int, uint32_t, struct ssh *);
-void	ssh_dispatch_init(struct ssh *, dispatch_fn *);
-void	ssh_dispatch_set(struct ssh *, int, dispatch_fn *);
-void	ssh_dispatch_range(struct ssh *, u_int, u_int, dispatch_fn *);
-int	ssh_dispatch_run(struct ssh *, int, volatile sig_atomic_t *);
-void	ssh_dispatch_run_fatal(struct ssh *, int, volatile sig_atomic_t *);
+પૂર્ણાંક	dispatch_protocol_error(પૂર્ણાંક, uint32_t, સંરચના ssh *);
+પૂર્ણાંક	dispatch_protocol_ignore(પૂર્ણાંક, uint32_t, સંરચના ssh *);
+શૂન્ય	ssh_dispatch_init(સંરચના ssh *, dispatch_fn *);
+શૂન્ય	ssh_dispatch_set(સંરચના ssh *, પૂર્ણાંક, dispatch_fn *);
+શૂન્ય	ssh_dispatch_range(સંરચના ssh *, u_int, u_int, dispatch_fn *);
+પૂર્ણાંક	ssh_dispatch_run(સંરચના ssh *, પૂર્ણાંક, અસ્થિર sig_atomic_t *);
+શૂન્ય	ssh_dispatch_run_fatal(સંરચના ssh *, પૂર્ણાંક, અસ્થિર sig_atomic_t *);
 
 #endif

@@ -36,26 +36,26 @@
  * Bruce Schneier.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#if !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
+#જો !defined(HAVE_BCRYPT_PBKDF) && (!defined(HAVE_BLOWFISH_INITSTATE) || \
     !defined(HAVE_BLOWFISH_EXPAND0STATE) || !defined(HAVE_BLF_ENC))
 
-#if 0
-#include <stdio.h>		/* used for debugging */
-#include <string.h>
+#જો 0
+#અન્તર્ભાવ <stdio.h>		/* used for debugging */
+#અન્તર્ભાવ <string.h>
 #endif
 
-#include <sys/types.h>
+#અન્તર્ભાવ <sys/types.h>
 #ifdef HAVE_BLF_H
-#include <blf.h>
+#અન્તર્ભાવ <blf.h>
 #endif
 
-#undef inline
+#undef અંતઃરેખ
 #ifdef __GNUC__
-#define inline __inline
-#else				/* !__GNUC__ */
-#define inline
+#define અંતઃરેખ __inline
+#નહીંતર				/* !__GNUC__ */
+#define અંતઃરેખ
 #endif				/* !__GNUC__ */
 
 /* Function for Feistel Networks */
@@ -67,7 +67,7 @@
 
 #define BLFRND(s,p,i,j,n) (i ^= F(s,j) ^ (p)[n])
 
-void
+શૂન્ય
 Blowfish_encipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 {
 	u_int32_t Xl;
@@ -92,7 +92,7 @@ Blowfish_encipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 	*xr = Xl;
 }
 
-void
+શૂન્ય
 Blowfish_decipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 {
 	u_int32_t Xl;
@@ -117,12 +117,12 @@ Blowfish_decipher(blf_ctx *c, u_int32_t *xl, u_int32_t *xr)
 	*xr = Xl;
 }
 
-void
+શૂન્ય
 Blowfish_initstate(blf_ctx *c)
 {
 	/* P-box and S-box tables initialized with digits of Pi */
 
-	static const blf_ctx initstate =
+	સ્થિર અચલ blf_ctx initstate =
 	{ {
 		{
 			0xd1310ba6, 0x98dfb5ac, 0x2ffd72db, 0xd01adfb7,
@@ -397,7 +397,7 @@ Blowfish_initstate(blf_ctx *c)
 }
 
 u_int32_t
-Blowfish_stream2word(const u_int8_t *data, u_int16_t databytes,
+Blowfish_stream2word(અચલ u_int8_t *data, u_int16_t databytes,
     u_int16_t *current)
 {
 	u_int8_t i;
@@ -407,18 +407,18 @@ Blowfish_stream2word(const u_int8_t *data, u_int16_t databytes,
 	temp = 0x00000000;
 	j = *current;
 
-	for (i = 0; i < 4; i++, j++) {
-		if (j >= databytes)
+	માટે (i = 0; i < 4; i++, j++) {
+		જો (j >= databytes)
 			j = 0;
 		temp = (temp << 8) | data[j];
 	}
 
 	*current = j;
-	return temp;
+	પાછા temp;
 }
 
-void
-Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
+શૂન્ય
+Blowfish_expand0state(blf_ctx *c, અચલ u_int8_t *ચાવી, u_int16_t keybytes)
 {
 	u_int16_t i;
 	u_int16_t j;
@@ -428,24 +428,24 @@ Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
 	u_int32_t datar;
 
 	j = 0;
-	for (i = 0; i < BLF_N + 2; i++) {
+	માટે (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
-		temp = Blowfish_stream2word(key, keybytes, &j);
+		temp = Blowfish_stream2word(ચાવી, keybytes, &j);
 		c->P[i] = c->P[i] ^ temp;
 	}
 
 	j = 0;
 	datal = 0x00000000;
 	datar = 0x00000000;
-	for (i = 0; i < BLF_N + 2; i += 2) {
+	માટે (i = 0; i < BLF_N + 2; i += 2) {
 		Blowfish_encipher(c, &datal, &datar);
 
 		c->P[i] = datal;
 		c->P[i + 1] = datar;
 	}
 
-	for (i = 0; i < 4; i++) {
-		for (k = 0; k < 256; k += 2) {
+	માટે (i = 0; i < 4; i++) {
+		માટે (k = 0; k < 256; k += 2) {
 			Blowfish_encipher(c, &datal, &datar);
 
 			c->S[i][k] = datal;
@@ -455,9 +455,9 @@ Blowfish_expand0state(blf_ctx *c, const u_int8_t *key, u_int16_t keybytes)
 }
 
 
-void
-Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
-    const u_int8_t *key, u_int16_t keybytes)
+શૂન્ય
+Blowfish_expandstate(blf_ctx *c, અચલ u_int8_t *data, u_int16_t databytes,
+    અચલ u_int8_t *ચાવી, u_int16_t keybytes)
 {
 	u_int16_t i;
 	u_int16_t j;
@@ -467,16 +467,16 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 	u_int32_t datar;
 
 	j = 0;
-	for (i = 0; i < BLF_N + 2; i++) {
+	માટે (i = 0; i < BLF_N + 2; i++) {
 		/* Extract 4 int8 to 1 int32 from keystream */
-		temp = Blowfish_stream2word(key, keybytes, &j);
+		temp = Blowfish_stream2word(ચાવી, keybytes, &j);
 		c->P[i] = c->P[i] ^ temp;
 	}
 
 	j = 0;
 	datal = 0x00000000;
 	datar = 0x00000000;
-	for (i = 0; i < BLF_N + 2; i += 2) {
+	માટે (i = 0; i < BLF_N + 2; i += 2) {
 		datal ^= Blowfish_stream2word(data, databytes, &j);
 		datar ^= Blowfish_stream2word(data, databytes, &j);
 		Blowfish_encipher(c, &datal, &datar);
@@ -485,8 +485,8 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 		c->P[i + 1] = datar;
 	}
 
-	for (i = 0; i < 4; i++) {
-		for (k = 0; k < 256; k += 2) {
+	માટે (i = 0; i < 4; i++) {
+		માટે (k = 0; k < 256; k += 2) {
 			datal ^= Blowfish_stream2word(data, databytes, &j);
 			datar ^= Blowfish_stream2word(data, databytes, &j);
 			Blowfish_encipher(c, &datal, &datar);
@@ -498,8 +498,8 @@ Blowfish_expandstate(blf_ctx *c, const u_int8_t *data, u_int16_t databytes,
 
 }
 
-void
-blf_key(blf_ctx *c, const u_int8_t *k, u_int16_t len)
+શૂન્ય
+blf_ચાવી(blf_ctx *c, અચલ u_int8_t *k, u_int16_t len)
 {
 	/* Initialize S-boxes and subkeys with Pi */
 	Blowfish_initstate(c);
@@ -508,39 +508,39 @@ blf_key(blf_ctx *c, const u_int8_t *k, u_int16_t len)
 	Blowfish_expand0state(c, k, len);
 }
 
-void
+શૂન્ય
 blf_enc(blf_ctx *c, u_int32_t *data, u_int16_t blocks)
 {
 	u_int32_t *d;
 	u_int16_t i;
 
 	d = data;
-	for (i = 0; i < blocks; i++) {
+	માટે (i = 0; i < blocks; i++) {
 		Blowfish_encipher(c, d, d + 1);
 		d += 2;
 	}
 }
 
-void
+શૂન્ય
 blf_dec(blf_ctx *c, u_int32_t *data, u_int16_t blocks)
 {
 	u_int32_t *d;
 	u_int16_t i;
 
 	d = data;
-	for (i = 0; i < blocks; i++) {
+	માટે (i = 0; i < blocks; i++) {
 		Blowfish_decipher(c, d, d + 1);
 		d += 2;
 	}
 }
 
-void
+શૂન્ય
 blf_ecb_encrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int32_t i;
 
-	for (i = 0; i < len; i += 8) {
+	માટે (i = 0; i < len; i += 8) {
 		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
 		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
 		Blowfish_encipher(c, &l, &r);
@@ -556,13 +556,13 @@ blf_ecb_encrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
 	}
 }
 
-void
+શૂન્ય
 blf_ecb_decrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int32_t i;
 
-	for (i = 0; i < len; i += 8) {
+	માટે (i = 0; i < len; i += 8) {
 		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
 		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
 		Blowfish_decipher(c, &l, &r);
@@ -578,14 +578,14 @@ blf_ecb_decrypt(blf_ctx *c, u_int8_t *data, u_int32_t len)
 	}
 }
 
-void
+શૂન્ય
 blf_cbc_encrypt(blf_ctx *c, u_int8_t *iv, u_int8_t *data, u_int32_t len)
 {
 	u_int32_t l, r;
 	u_int32_t i, j;
 
-	for (i = 0; i < len; i += 8) {
-		for (j = 0; j < 8; j++)
+	માટે (i = 0; i < len; i += 8) {
+		માટે (j = 0; j < 8; j++)
 			data[j] ^= iv[j];
 		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
 		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
@@ -603,7 +603,7 @@ blf_cbc_encrypt(blf_ctx *c, u_int8_t *iv, u_int8_t *data, u_int32_t len)
 	}
 }
 
-void
+શૂન્ય
 blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
 {
 	u_int32_t l, r;
@@ -612,7 +612,7 @@ blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
 
 	iv = data + len - 16;
 	data = data + len - 8;
-	for (i = len - 8; i >= 8; i -= 8) {
+	માટે (i = len - 8; i >= 8; i -= 8) {
 		l = data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3];
 		r = data[4] << 24 | data[5] << 16 | data[6] << 8 | data[7];
 		Blowfish_decipher(c, &l, &r);
@@ -624,7 +624,7 @@ blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
 		data[5] = r >> 16 & 0xff;
 		data[6] = r >> 8 & 0xff;
 		data[7] = r & 0xff;
-		for (j = 0; j < 8; j++)
+		માટે (j = 0; j < 8; j++)
 			data[j] ^= iv[j];
 		iv -= 8;
 		data -= 8;
@@ -640,26 +640,26 @@ blf_cbc_decrypt(blf_ctx *c, u_int8_t *iva, u_int8_t *data, u_int32_t len)
 	data[5] = r >> 16 & 0xff;
 	data[6] = r >> 8 & 0xff;
 	data[7] = r & 0xff;
-	for (j = 0; j < 8; j++)
+	માટે (j = 0; j < 8; j++)
 		data[j] ^= iva[j];
 }
 
-#if 0
-void
+#જો 0
+શૂન્ય
 report(u_int32_t data[], u_int16_t len)
 {
 	u_int16_t i;
-	for (i = 0; i < len; i += 2)
+	માટે (i = 0; i < len; i += 2)
 		printf("Block %0hd: %08lx %08lx.\n",
 		    i / 2, data[i], data[i + 1]);
 }
-void
-main(void)
+શૂન્ય
+મુખ્ય(શૂન્ય)
 {
 
 	blf_ctx c;
-	char    key[] = "AAAAA";
-	char    key2[] = "abcdefghijklmnopqrstuvwxyz";
+	અક્ષર    ચાવી[] = "AAAAA";
+	અક્ષર    key2[] = "abcdefghijklmnopqrstuvwxyz";
 
 	u_int32_t data[10];
 	u_int32_t data2[] =
@@ -668,10 +668,10 @@ main(void)
 	u_int16_t i;
 
 	/* First test */
-	for (i = 0; i < 10; i++)
+	માટે (i = 0; i < 10; i++)
 		data[i] = i;
 
-	blf_key(&c, (u_int8_t *) key, 5);
+	blf_ચાવી(&c, (u_int8_t *) ચાવી, 5);
 	blf_enc(&c, data, 5);
 	blf_dec(&c, data, 1);
 	blf_dec(&c, data + 2, 4);
@@ -679,7 +679,7 @@ main(void)
 	report(data, 10);
 
 	/* Second test */
-	blf_key(&c, (u_int8_t *) key2, strlen(key2));
+	blf_ચાવી(&c, (u_int8_t *) key2, strlen(key2));
 	blf_enc(&c, data2, 1);
 	printf("\nShould read as: 0x324ed0fe 0xf413a203.\n");
 	report(data2, 2);

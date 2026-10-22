@@ -26,7 +26,7 @@
 
 /* KRL section types */
 #define KRL_SECTION_CERTIFICATES	1
-#define KRL_SECTION_EXPLICIT_KEY	2
+#define KRL_SECTION_EXPLICIT_ચાવી	2
 #define KRL_SECTION_FINGERPRINT_SHA1	3
 #define KRL_SECTION_SIGNATURE		4
 #define KRL_SECTION_FINGERPRINT_SHA256	5
@@ -36,32 +36,32 @@
 #define KRL_SECTION_CERT_SERIAL_LIST	0x20
 #define KRL_SECTION_CERT_SERIAL_RANGE	0x21
 #define KRL_SECTION_CERT_SERIAL_BITMAP	0x22
-#define KRL_SECTION_CERT_KEY_ID		0x23
+#define KRL_SECTION_CERT_ચાવી_ID		0x23
 #define KRL_SECTION_CERT_EXTENSION	0x39
 
-struct sshkey;
-struct sshbuf;
-struct ssh_krl;
+સંરચના sshkey;
+સંરચના sshbuf;
+સંરચના ssh_krl;
 
-struct ssh_krl *ssh_krl_init(void);
-void ssh_krl_free(struct ssh_krl *krl);
-void ssh_krl_set_version(struct ssh_krl *krl, uint64_t version);
-int ssh_krl_set_comment(struct ssh_krl *krl, const char *comment);
-int ssh_krl_revoke_cert_by_serial(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t serial);
-int ssh_krl_revoke_cert_by_serial_range(struct ssh_krl *krl,
-    const struct sshkey *ca_key, uint64_t lo, uint64_t hi);
-int ssh_krl_revoke_cert_by_key_id(struct ssh_krl *krl,
-    const struct sshkey *ca_key, const char *key_id);
-int ssh_krl_revoke_key_explicit(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_revoke_key_sha1(struct ssh_krl *krl, const u_char *p, size_t len);
-int ssh_krl_revoke_key_sha256(struct ssh_krl *krl, const u_char *p, size_t len);
-int ssh_krl_revoke_key(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_to_blob(struct ssh_krl *krl, struct sshbuf *buf);
-int ssh_krl_from_blob(struct sshbuf *buf, struct ssh_krl **krlp);
-int ssh_krl_check_key(struct ssh_krl *krl, const struct sshkey *key);
-int ssh_krl_file_contains_key(const char *path, const struct sshkey *key);
-int krl_dump(struct ssh_krl *krl, FILE *f);
+સંરચના ssh_krl *ssh_krl_init(શૂન્ય);
+શૂન્ય ssh_krl_free(સંરચના ssh_krl *krl);
+શૂન્ય ssh_krl_set_version(સંરચના ssh_krl *krl, uint64_t version);
+પૂર્ણાંક ssh_krl_set_comment(સંરચના ssh_krl *krl, અચલ અક્ષર *comment);
+પૂર્ણાંક ssh_krl_revoke_cert_by_serial(સંરચના ssh_krl *krl,
+    અચલ સંરચના sshkey *ca_ચાવી, uint64_t serial);
+પૂર્ણાંક ssh_krl_revoke_cert_by_serial_range(સંરચના ssh_krl *krl,
+    અચલ સંરચના sshkey *ca_ચાવી, uint64_t lo, uint64_t hi);
+પૂર્ણાંક ssh_krl_revoke_cert_by_ચાવી_id(સંરચના ssh_krl *krl,
+    અચલ સંરચના sshkey *ca_ચાવી, અચલ અક્ષર *ચાવી_id);
+પૂર્ણાંક ssh_krl_revoke_ચાવી_explicit(સંરચના ssh_krl *krl, અચલ સંરચના sshkey *ચાવી);
+પૂર્ણાંક ssh_krl_revoke_ચાવી_sha1(સંરચના ssh_krl *krl, અચલ u_char *p, size_t len);
+પૂર્ણાંક ssh_krl_revoke_ચાવી_sha256(સંરચના ssh_krl *krl, અચલ u_char *p, size_t len);
+પૂર્ણાંક ssh_krl_revoke_ચાવી(સંરચના ssh_krl *krl, અચલ સંરચના sshkey *ચાવી);
+પૂર્ણાંક ssh_krl_to_blob(સંરચના ssh_krl *krl, સંરચના sshbuf *buf);
+પૂર્ણાંક ssh_krl_from_blob(સંરચના sshbuf *buf, સંરચના ssh_krl **krlp);
+પૂર્ણાંક ssh_krl_check_ચાવી(સંરચના ssh_krl *krl, અચલ સંરચના sshkey *ચાવી);
+પૂર્ણાંક ssh_krl_file_contains_ચાવી(અચલ અક્ષર *path, અચલ સંરચના sshkey *ચાવી);
+પૂર્ણાંક krl_dump(સંરચના ssh_krl *krl, FILE *f);
 
 #endif /* _KRL_H */
 

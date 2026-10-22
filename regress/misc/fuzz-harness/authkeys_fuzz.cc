@@ -1,57 +1,57 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
-#include <pwd.h>
-#include <unistd.h>
+#અન્તર્ભાવ <stddef.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdint.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <pwd.h>
+#અન્તર્ભાવ <unistd.h>
 
-extern "C" {
+બાહ્ય "C" {
 
-#include "hostfile.h"
-#include "auth.h"
-#include "auth-options.h"
-#include "sshkey.h"
+#અન્તર્ભાવ "hostfile.h"
+#અન્તર્ભાવ "auth.h"
+#અન્તર્ભાવ "auth-options.h"
+#અન્તર્ભાવ "sshkey.h"
 
 // testdata/id_ed25519.pub and testdata/id_ed25519-cert.pub
-const char *pubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPQXmEVMVLmeFRyafKMVWgPDkv8/uRBTwmcEDatZzMD"; 
-const char *certtext = "ssh-ed25519-cert-v01@openssh.com AAAAIHNzaC1lZDI1NTE5LWNlcnQtdjAxQG9wZW5zc2guY29tAAAAIMDQjYH6XRzH3j3MW1DdjCoAfvrHfgjnVGF+sLK0pBfqAAAAIDPQXmEVMVLmeFRyafKMVWgPDkv8/uRBTwmcEDatZzMDAAAAAAAAA+sAAAABAAAAB3VseXNzZXMAAAAXAAAAB3VseXNzZXMAAAAIb2R5c3NldXMAAAAAAAAAAP//////////AAAAAAAAAIIAAAAVcGVybWl0LVgxMS1mb3J3YXJkaW5nAAAAAAAAABdwZXJtaXQtYWdlbnQtZm9yd2FyZGluZwAAAAAAAAAWcGVybWl0LXBvcnQtZm9yd2FyZGluZwAAAAAAAAAKcGVybWl0LXB0eQAAAAAAAAAOcGVybWl0LXVzZXItcmMAAAAAAAAAAAAAADMAAAALc3NoLWVkMjU1MTkAAAAgM9BeYRUxUuZ4VHJp8oxVaA8OS/z+5EFPCZwQNq1nMwMAAABTAAAAC3NzaC1lZDI1NTE5AAAAQBj0og+s09/HpwdHZbzN0twooKPDWWrxGfnP1Joy6cDnY2BCSQ7zg9vbq11kLF8H/sKOTZWAQrUZ7LlChOu9Ogw= id_ed25519.pub";
+અચલ અક્ષર *pubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDPQXmEVMVLmeFRyafKMVWgPDkv8/uRBTwmcEDatZzMD"; 
+અચલ અક્ષર *certtext = "ssh-ed25519-cert-v01@openssh.com AAAAIHNzaC1lZDI1NTE5LWNlcnQtdjAxQG9wZW5zc2guY29tAAAAIMDQjYH6XRzH3j3MW1DdjCoAfvrHfgjnVGF+sLK0pBfqAAAAIDPQXmEVMVLmeFRyafKMVWgPDkv8/uRBTwmcEDatZzMDAAAAAAAAA+sAAAABAAAAB3VseXNzZXMAAAAXAAAAB3VseXNzZXMAAAAIb2R5c3NldXMAAAAAAAAAAP//////////AAAAAAAAAIIAAAAVcGVybWl0LVgxMS1mb3J3YXJkaW5nAAAAAAAAABdwZXJtaXQtYWdlbnQtZm9yd2FyZGluZwAAAAAAAAAWcGVybWl0LXBvcnQtZm9yd2FyZGluZwAAAAAAAAAKcGVybWl0LXB0eQAAAAAAAAAOcGVybWl0LXVzZXItcmMAAAAAAAAAAAAAADMAAAALc3NoLWVkMjU1MTkAAAAgM9BeYRUxUuZ4VHJp8oxVaA8OS/z+5EFPCZwQNq1nMwMAAABTAAAAC3NzaC1lZDI1NTE5AAAAQBj0og+s09/HpwdHZbzN0twooKPDWWrxGfnP1Joy6cDnY2BCSQ7zg9vbq11kLF8H/sKOTZWAQrUZ7LlChOu9Ogw= id_ed25519.pub";
 
 // stubs
-void auth_debug_add(const char *fmt,...)
+શૂન્ય auth_debug_add(અચલ અક્ષર *fmt,...)
 {
 }
 
-void
-auth_log_authopts(const char *loc, const struct sshauthopt *opts, int do_remote)
+શૂન્ય
+auth_log_authopts(અચલ અક્ષર *loc, અચલ સંરચના sshauthopt *opts, પૂર્ણાંક do_remote)
 {
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+પૂર્ણાંક LLVMFuzzer_Test_One_આગત(અચલ uint8_t* data, size_t size)
 {
-	char *tmp, *o, *cp = (char *)malloc(size + 1 + strlen(pubkey) + 1);
-	struct sshauthopt *opts = NULL;
-	struct passwd *pw = getpwuid(getuid());
-	static struct sshkey *key, *cert;
+	અક્ષર *tmp, *o, *cp = (અક્ષર *)malloc(size + 1 + strlen(pubkey) + 1);
+	સંરચના sshauthopt *opts = ખાલી;
+	સંરચના passwd *pw = getpwuid(getuid());
+	સ્થિર સંરચના sshkey *ચાવી, *cert;
 
-	if (key == NULL) {
-		if ((key = sshkey_new(KEY_UNSPEC)) == NULL ||
-		    (cert = sshkey_new(KEY_UNSPEC)) == NULL)
+	જો (ચાવી == ખાલી) {
+		જો ((ચાવી = sshkey_new(ચાવી_UNSPEC)) == ખાલી ||
+		    (cert = sshkey_new(ચાવી_UNSPEC)) == ખાલી)
 			abort();
-		if ((o = tmp = strdup(pubkey)) == NULL ||
-		    sshkey_read(key, &tmp) != 0)
+		જો ((o = tmp = strdup(pubkey)) == ખાલી ||
+		    sshkey_read(ચાવી, &tmp) != 0)
 			abort();
-		free(o);
-		if ((o = tmp = strdup(certtext)) == NULL ||
+		મુક્ત(o);
+		જો ((o = tmp = strdup(certtext)) == ખાલી ||
 		    sshkey_read(cert, &tmp) != 0)
 			abort();
-		free(o);
+		મુક્ત(o);
 	}
-	if (cp == NULL || pw == NULL || key == NULL || cert == NULL)
+	જો (cp == ખાલી || pw == ખાલી || ચાવી == ખાલી || cert == ખાલી)
 		abort();
 
 	// Cleanup whitespace at input EOL.
-	for (; size > 0 && strchr(" \t\r\n", data[size - 1]) != NULL; size--) ;
+	માટે (; size > 0 && strchr(" \t\r\n", data[size - 1]) != ખાલી; size--) ;
 
 	// Append a pubkey that will match.
 	memcpy(cp, data, size);
@@ -59,23 +59,23 @@ int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 	memcpy(cp + size + 1, pubkey, strlen(pubkey) + 1);
 
 	// Try key.
-	if ((tmp = strdup(cp)) == NULL)
+	જો ((tmp = strdup(cp)) == ખાલી)
 		abort();
-	(void) auth_check_authkey_line(pw, key, tmp, "127.0.0.1", "localhost",
+	(શૂન્ય) auth_check_authkey_લીટી(pw, ચાવી, tmp, "127.0.0.1", "localhost",
 	    "fuzz", &opts);
-	free(tmp);
+	મુક્ત(tmp);
 	sshauthopt_free(opts);
 
 	// Try cert.
-	if ((tmp = strdup(cp)) == NULL)
+	જો ((tmp = strdup(cp)) == ખાલી)
 		abort();
-	(void) auth_check_authkey_line(pw, cert, tmp, "127.0.0.1", "localhost",
+	(શૂન્ય) auth_check_authkey_લીટી(pw, cert, tmp, "127.0.0.1", "localhost",
 	    "fuzz", &opts);
-	free(tmp);
+	મુક્ત(tmp);
 	sshauthopt_free(opts);
 
-	free(cp);
-	return 0;
+	મુક્ત(cp);
+	પાછા 0;
 }
 
 } // extern "C"

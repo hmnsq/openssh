@@ -17,62 +17,62 @@
 
 #define BUFSZ 2048
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <string.h>
 
-static int failed = 0;
+સ્થિર પૂર્ણાંક failed = 0;
 
-static void
-fail(const char *m)
+સ્થિર શૂન્ય
+fail(અચલ અક્ષર *m)
 {
 	fprintf(stderr, "snprintftest: %s\n", m);
 	failed = 1;
 }
 
-int x_snprintf(char *str, size_t count, const char *fmt, ...)
+પૂર્ણાંક x_snprintf(અક્ષર *str, size_t ગણતરી, અચલ અક્ષર *fmt, ...)
 {
 	size_t ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(str, count, fmt, ap);
+	ret = vsnprintf(str, ગણતરી, fmt, ap);
 	va_end(ap);
-	return ret;
+	પાછા ret;
 }
 
-int
-main(void)
+પૂર્ણાંક
+મુખ્ય(શૂન્ય)
 {
-	char b[5];
-	char *src = NULL;
-	int ret;
+	અક્ષર b[5];
+	અક્ષર *src = ખાલી;
+	પૂર્ણાંક ret;
 
-	memset(b, 'X', sizeof(b));
+	memset(b, 'X', કદ(b));
 	ret = snprintf(b, 5, "123456789");
-	if (ret != 9 || b[4] != '\0')
+	જો (ret != 9 || b[4] != '\0')
 		fail("snprintf does not correctly terminate long strings");
 
 	/* check for read overrun on unterminated string */
-	if ((src = malloc(BUFSZ)) == NULL) {
+	જો ((src = malloc(BUFSZ)) == ખાલી) {
 		fail("malloc failed");
-	} else {
+	} નહીંતર {
 		memset(src, 'a', BUFSZ);
-		snprintf(b, sizeof(b), "%.*s", 1, src);
-		if (strcmp(b, "a") != 0)
+		snprintf(b, કદ(b), "%.*s", 1, src);
+		જો (strcmp(b, "a") != 0)
 			fail("failed with length limit '%%.s'");
 	}
 
 	/* check that snprintf and vsnprintf return sane values */
-	if (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	જો (snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("snprintf does not return required length");
-	if (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
+	જો (x_snprintf(b, 1, "%s %d", "hello", 12345) != 11)
 		fail("vsnprintf does not return required length");
 
-	free(src);
-	return failed;
+	મુક્ત(src);
+	પાછા failed;
 }

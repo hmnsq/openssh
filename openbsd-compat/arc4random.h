@@ -24,68 +24,68 @@
  */
 
 #ifdef HAVE_SYS_MMAN_H
-#include <sys/mman.h>
+#અન્તર્ભાવ <sys/mman.h>
 #endif
 
-#include <signal.h>
+#અન્તર્ભાવ <signal.h>
 
 /* OpenSSH isn't multithreaded */
 #define _ARC4_LOCK()
 #define _ARC4_UNLOCK()
 #define _ARC4_ATFORK(f)
 
-static inline void
-_getentropy_fail(void)
+સ્થિર અંતઃરેખ શૂન્ય
+_getentropy_fail(શૂન્ય)
 {
 	fatal("getentropy failed");
 }
 
-static volatile sig_atomic_t _rs_forked;
+સ્થિર અસ્થિર sig_atomic_t _rs_forked;
 
-static inline void
-_rs_forkhandler(void)
+સ્થિર અંતઃરેખ શૂન્ય
+_rs_forkhandler(શૂન્ય)
 {
 	_rs_forked = 1;
 }
 
-static inline void
-_rs_forkdetect(void)
+સ્થિર અંતઃરેખ શૂન્ય
+_rs_forkdetect(શૂન્ય)
 {
-	static pid_t _rs_pid = 0;
+	સ્થિર pid_t _rs_pid = 0;
 	pid_t pid = getpid();
 
-	if (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
+	જો (_rs_pid == 0 || _rs_pid == 1 || _rs_pid != pid || _rs_forked) {
 		_rs_pid = pid;
 		_rs_forked = 0;
-		if (rs)
-			memset(rs, 0, sizeof(*rs));
+		જો (rs)
+			memset(rs, 0, કદ(*rs));
 	}
 }
 
-static inline int
-_rs_allocate(struct _rs **rsp, struct _rsx **rsxp)
+સ્થિર અંતઃરેખ પૂર્ણાંક
+_rs_allocate(સંરચના _rs **rsp, સંરચના _rsx **rsxp)
 {
-#if defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
-	if ((*rsp = mmap(NULL, sizeof(**rsp), PROT_READ|PROT_WRITE,
+#જો defined(HAVE_MMAP) && defined(MAP_ANON) && defined(MAP_PRIVATE)
+	જો ((*rsp = mmap(ખાલી, કદ(**rsp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED)
-		return (-1);
+		પાછા (-1);
 
-	if ((*rsxp = mmap(NULL, sizeof(**rsxp), PROT_READ|PROT_WRITE,
+	જો ((*rsxp = mmap(ખાલી, કદ(**rsxp), PROT_READ|PROT_WRITE,
 	    MAP_ANON|MAP_PRIVATE, -1, 0)) == MAP_FAILED) {
-		munmap(*rsp, sizeof(**rsp));
-		*rsp = NULL;
-		return (-1);
+		munmap(*rsp, કદ(**rsp));
+		*rsp = ખાલી;
+		પાછા (-1);
 	}
-#else
-	if ((*rsp = calloc(1, sizeof(**rsp))) == NULL)
-		return (-1);
-	if ((*rsxp = calloc(1, sizeof(**rsxp))) == NULL) {
-		free(*rsp);
-		*rsp = NULL;
-		return (-1);
+#નહીંતર
+	જો ((*rsp = calloc(1, કદ(**rsp))) == ખાલી)
+		પાછા (-1);
+	જો ((*rsxp = calloc(1, કદ(**rsxp))) == ખાલી) {
+		મુક્ત(*rsp);
+		*rsp = ખાલી;
+		પાછા (-1);
 	}
 #endif /* HAVE_MMAP et al */
 
 	_ARC4_ATFORK(_rs_forkhandler);
-	return (0);
+	પાછા (0);
 }

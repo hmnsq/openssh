@@ -16,22 +16,22 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <errno.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <unistd.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <stdarg.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <errno.h>
 #ifdef HAVE_ERR_H
 # include <err.h>
 #endif
-#include "openbsd-compat/getopt_long.c"
+#અન્તર્ભાવ "openbsd-compat/getopt_long.c"
 
-static void
-usage(void)
+સ્થિર શૂન્ય
+usage(શૂન્ય)
 {
 	fprintf(stderr, "Usage: modpipe -w [-m modspec ...] < in > out\n");
 	fprintf(stderr, "modspec is one of:\n");
@@ -41,98 +41,98 @@ usage(void)
 }
 
 #define MAX_MODIFICATIONS 256
-struct modification {
-	enum { MOD_XOR, MOD_AND_OR } what;
+સંરચના modification {
+	ગણના { MOD_XOR, MOD_AND_OR } what;
 	unsigned long long offset;
 	uint8_t m1, m2;
 };
 
-static void
-parse_modification(const char *s, struct modification *m)
+સ્થિર શૂન્ય
+parse_modification(અચલ અક્ષર *s, સંરચના modification *m)
 {
-	char what[16+1];
-	int n, m1, m2;
+	અક્ષર what[16+1];
+	પૂર્ણાંક n, m1, m2;
 
-	bzero(m, sizeof(*m));
-	if ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
+	bzero(m, કદ(*m));
+	જો ((n = sscanf(s, "%16[^:]%*[:]%llu%*[:]%i%*[:]%i",
 	    what, &m->offset, &m1, &m2)) < 3)
 		errx(1, "Invalid modification spec \"%s\"", s);
-	if (strcasecmp(what, "xor") == 0) {
-		if (n > 3)
+	જો (strcasecmp(what, "xor") == 0) {
+		જો (n > 3)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		જો (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid XOR modification value");
 		m->what = MOD_XOR;
 		m->m1 = m1;
-	} else if (strcasecmp(what, "andor") == 0) {
-		if (n != 4)
+	} નહીંતર જો (strcasecmp(what, "andor") == 0) {
+		જો (n != 4)
 			errx(1, "Invalid modification spec \"%s\"", s);
-		if (m1 < 0 || m1 > 0xff)
+		જો (m1 < 0 || m1 > 0xff)
 			errx(1, "Invalid AND modification value");
-		if (m2 < 0 || m2 > 0xff)
+		જો (m2 < 0 || m2 > 0xff)
 			errx(1, "Invalid OR modification value");
 		m->what = MOD_AND_OR;
 		m->m1 = m1;
 		m->m2 = m2;
-	} else
+	} નહીંતર
 		errx(1, "Invalid modification type \"%s\"", what);
 }
 
-int
-main(int argc, char **argv)
+પૂર્ણાંક
+મુખ્ય(પૂર્ણાંક argc, અક્ષર **argv)
 {
-	int ch;
+	પૂર્ણાંક ch;
 	u_char buf[8192];
 	size_t total;
 	ssize_t r, s, o;
-	struct modification mods[MAX_MODIFICATIONS];
-	u_int i, wflag = 0, num_mods = 0;
+	સંરચના modification mods[MAX_MODIFICATIONS];
+	u_int i, wflag = 0, અંક_mods = 0;
 
-	while ((ch = getopt(argc, argv, "wm:")) != -1) {
-		switch (ch) {
-		case 'm':
-			if (num_mods >= MAX_MODIFICATIONS)
+	જ્યારે ((ch = getopt(argc, argv, "wm:")) != -1) {
+		પસંદગી (ch) {
+		સ્થિતિ 'm':
+			જો (અંક_mods >= MAX_MODIFICATIONS)
 				errx(1, "Too many modifications");
-			parse_modification(optarg, &(mods[num_mods++]));
-			break;
-		case 'w':
+			parse_modification(optarg, &(mods[અંક_mods++]));
+			તોડો;
+		સ્થિતિ 'w':
 			wflag = 1;
-			break;
-		default:
+			તોડો;
+		મૂળભૂત:
 			usage();
 			/* NOTREACHED */
 		}
 	}
-	for (total = 0;;) {
-		r = s = read(STDIN_FILENO, buf, sizeof(buf));
-		if (r == 0)
-			break;
-		if (r < 0) {
-			if (errno == EAGAIN || errno == EINTR)
-				continue;
+	માટે (total = 0;;) {
+		r = s = પઠ(STDIN_FILENO, buf, કદ(buf));
+		જો (r == 0)
+			તોડો;
+		જો (r < 0) {
+			જો (errno == EAGAIN || errno == EINTR)
+				ચાલુ;
 			err(1, "read");
 		}
-		for (i = 0; i < num_mods; i++) {
-			if (mods[i].offset < total ||
+		માટે (i = 0; i < અંક_mods; i++) {
+			જો (mods[i].offset < total ||
 			    mods[i].offset >= total + s)
-				continue;
-			switch (mods[i].what) {
-			case MOD_XOR:
+				ચાલુ;
+			પસંદગી (mods[i].what) {
+			સ્થિતિ MOD_XOR:
 				buf[mods[i].offset - total] ^= mods[i].m1;
-				break;
-			case MOD_AND_OR:
+				તોડો;
+			સ્થિતિ MOD_AND_OR:
 				buf[mods[i].offset - total] &= mods[i].m1;
 				buf[mods[i].offset - total] |= mods[i].m2;
-				break;
+				તોડો;
 			}
 		}
-		for (o = 0; o < s; o += r) {
-			r = write(STDOUT_FILENO, buf + o, s - o);
-			if (r == 0)
-				break;
-			if (r < 0) {
-				if (errno == EAGAIN || errno == EINTR)
-					continue;
+		માટે (o = 0; o < s; o += r) {
+			r = લિખ(STDOUT_FILENO, buf + o, s - o);
+			જો (r == 0)
+				તોડો;
+			જો (r < 0) {
+				જો (errno == EAGAIN || errno == EINTR)
+					ચાલુ;
 				err(1, "write");
 			}
 		}
@@ -140,11 +140,11 @@ main(int argc, char **argv)
 	}
 	/* Warn if modifications not reached in input stream */
 	r = 0;
-	for (i = 0; wflag && i < num_mods; i++) {
-		if (mods[i].offset < total)
-			continue;
+	માટે (i = 0; wflag && i < અંક_mods; i++) {
+		જો (mods[i].offset < total)
+			ચાલુ;
 		r = 1;
 		fprintf(stderr, "modpipe: warning - mod %u not reached\n", i);
 	}
-	return r;
+	પાછા r;
 }

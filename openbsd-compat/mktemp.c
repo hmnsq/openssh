@@ -21,23 +21,23 @@
 
 /* OPENBSD ORIGINAL: lib/libc/stdio/mktemp.c */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <unistd.h>
+#અન્તર્ભાવ <sys/types.h>
+#અન્તર્ભાવ <sys/stat.h>
+#અન્તર્ભાવ <errno.h>
+#અન્તર્ભાવ <fcntl.h>
+#અન્તર્ભાવ <limits.h>
+#અન્તર્ભાવ <stdio.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
+#અન્તર્ભાવ <ctype.h>
+#અન્તર્ભાવ <unistd.h>
 
 #ifdef mkstemp
 #undef mkstemp
 #endif
-int mkstemp(char *);
+પૂર્ણાંક mkstemp(અક્ષર *);
 
 /*
  * From glibc man page: 'In glibc versions 2.06 and earlier, the file is
@@ -45,120 +45,120 @@ int mkstemp(char *);
  * Provide a wrapper to make sure the mask is reasonable (POSIX requires
  * mode 0600, so mask off any other bits).
  */
-int
-_ssh_mkstemp(char *template)
+પૂર્ણાંક
+_ssh_mkstemp(અક્ષર *template)
 {
 	mode_t mask;
-	int ret;
+	પૂર્ણાંક ret;
 
 	mask = umask(0177);
 	ret = mkstemp(template);
-	(void)umask(mask);
-	return ret;
+	(શૂન્ય)umask(mask);
+	પાછા ret;
 }
 
-#if !defined(HAVE_MKDTEMP)
+#જો !defined(HAVE_MKDTEMP)
 
 #define MKTEMP_NAME	0
 #define MKTEMP_FILE	1
 #define MKTEMP_DIR	2
 
 #define TEMPCHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-#define NUM_CHARS	(sizeof(TEMPCHARS) - 1)
+#define અંક_CHARS	(કદ(TEMPCHARS) - 1)
 
-static int
-mktemp_internal(char *path, int slen, int mode)
+સ્થિર પૂર્ણાંક
+mktemp_internal(અક્ષર *path, પૂર્ણાંક slen, પૂર્ણાંક mode)
 {
-	char *start, *cp, *ep;
-	const char *tempchars = TEMPCHARS;
-	unsigned int r, tries;
-	struct stat sb;
+	અક્ષર *start, *cp, *ep;
+	અચલ અક્ષર *tempchars = TEMPCHARS;
+	unsigned પૂર્ણાંક r, tries;
+	સંરચના stat sb;
 	size_t len;
-	int fd;
+	પૂર્ણાંક fd;
 
 	len = strlen(path);
-	if (len == 0 || slen < 0 || (size_t)slen >= len) {
+	જો (len == 0 || slen < 0 || (size_t)slen >= len) {
 		errno = EINVAL;
-		return(-1);
+		પાછા(-1);
 	}
 	ep = path + len - slen;
 
 	tries = 1;
-	for (start = ep; start > path && start[-1] == 'X'; start--) {
-		if (tries < INT_MAX / NUM_CHARS)
-			tries *= NUM_CHARS;
+	માટે (start = ep; start > path && start[-1] == 'X'; start--) {
+		જો (tries < INT_MAX / અંક_CHARS)
+			tries *= અંક_CHARS;
 	}
 	tries *= 2;
 
-	do {
-		for (cp = start; cp != ep; cp++) {
-			r = arc4random_uniform(NUM_CHARS);
+	કરો {
+		માટે (cp = start; cp != ep; cp++) {
+			r = arc4random_uniform(અંક_CHARS);
 			*cp = tempchars[r];
 		}
 
-		switch (mode) {
-		case MKTEMP_NAME:
-			if (lstat(path, &sb) != 0)
-				return(errno == ENOENT ? 0 : -1);
-			break;
-		case MKTEMP_FILE:
+		પસંદગી (mode) {
+		સ્થિતિ MKTEMP_NAME:
+			જો (lstat(path, &sb) != 0)
+				પાછા(errno == ENOENT ? 0 : -1);
+			તોડો;
+		સ્થિતિ MKTEMP_FILE:
 			fd = open(path, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
-			if (fd != -1 || errno != EEXIST)
-				return(fd);
-			break;
-		case MKTEMP_DIR:
-			if (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
-				return(0);
-			if (errno != EEXIST)
-				return(-1);
-			break;
+			જો (fd != -1 || errno != EEXIST)
+				પાછા(fd);
+			તોડો;
+		સ્થિતિ MKTEMP_DIR:
+			જો (mkdir(path, S_IRUSR|S_IWUSR|S_IXUSR) == 0)
+				પાછા(0);
+			જો (errno != EEXIST)
+				પાછા(-1);
+			તોડો;
 		}
-	} while (--tries);
+	} જ્યારે (--tries);
 
 	errno = EEXIST;
-	return(-1);
+	પાછા(-1);
 }
 
-#if 0
-char *_mktemp(char *);
+#જો 0
+અક્ષર *_mktemp(અક્ષર *);
 
-char *
-_mktemp(char *path)
+અક્ષર *
+_mktemp(અક્ષર *path)
 {
-	if (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
-		return(NULL);
-	return(path);
+	જો (mktemp_internal(path, 0, MKTEMP_NAME) == -1)
+		પાછા(ખાલી);
+	પાછા(path);
 }
 
 __warn_references(mktemp,
     "warning: mktemp() possibly used unsafely; consider using mkstemp()");
 
-char *
-mktemp(char *path)
+અક્ષર *
+mktemp(અક્ષર *path)
 {
-	return(_mktemp(path));
+	પાછા(_mktemp(path));
 }
 #endif
 
-int
-mkstemp(char *path)
+પૂર્ણાંક
+mkstemp(અક્ષર *path)
 {
-	return(mktemp_internal(path, 0, MKTEMP_FILE));
+	પાછા(mktemp_internal(path, 0, MKTEMP_FILE));
 }
 
-int
-mkstemps(char *path, int slen)
+પૂર્ણાંક
+mkstemps(અક્ષર *path, પૂર્ણાંક slen)
 {
-	return(mktemp_internal(path, slen, MKTEMP_FILE));
+	પાછા(mktemp_internal(path, slen, MKTEMP_FILE));
 }
 
-char *
-mkdtemp(char *path)
+અક્ષર *
+mkdtemp(અક્ષર *path)
 {
-	int error;
+	પૂર્ણાંક error;
 
 	error = mktemp_internal(path, 0, MKTEMP_DIR);
-	return(error ? NULL : path);
+	પાછા(error ? ખાલી : path);
 }
 
 #endif /* !defined(HAVE_MKDTEMP) */

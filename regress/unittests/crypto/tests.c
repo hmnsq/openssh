@@ -5,52 +5,52 @@
  * Placed in the public domain
  */
 
-#include "includes.h"
+#અન્તર્ભાવ "includes.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
+#અન્તર્ભાવ <ctype.h>
+#અન્તર્ભાવ <stdlib.h>
+#અન્તર્ભાવ <string.h>
 
-#include "../test_helper/test_helper.h"
-#include "sshbuf.h"
+#અન્તર્ભાવ "../test_helper/test_helper.h"
+#અન્તર્ભાવ "sshbuf.h"
 
-void mldsa_tests(void);
-void mlkem_tests(void);
-void ed25519_tests(void);
-void mldsa_eddsa_tests(void);
+શૂન્ય mldsa_tests(શૂન્ય);
+શૂન્ય mlkem_tests(શૂન્ય);
+શૂન્ય ed25519_tests(શૂન્ય);
+શૂન્ય mldsa_eddsa_tests(શૂન્ય);
 
-struct sshbuf *load_text_file(const char *name);
-char *get_json_string(struct sshbuf *content, const char *key, int consume);
+સંરચના sshbuf *load_text_file(અચલ અક્ષર *name);
+અક્ષર *get_json_string(સંરચના sshbuf *content, અચલ અક્ષર *ચાવી, પૂર્ણાંક consume);
 
-static struct sshbuf *
-load_file(const char *name)
+સ્થિર સંરચના sshbuf *
+load_file(અચલ અક્ષર *name)
 {
-	struct sshbuf *ret = NULL;
+	સંરચના sshbuf *ret = ખાલી;
 
 	ASSERT_INT_EQ(sshbuf_load_file(test_data_file(name), &ret), 0);
-	ASSERT_PTR_NE(ret, NULL);
-	return ret;
+	ASSERT_PTR_NE(ret, ખાલી);
+	પાછા ret;
 }
 
-struct sshbuf *
-load_text_file(const char *name)
+સંરચના sshbuf *
+load_text_file(અચલ અક્ષર *name)
 {
-	struct sshbuf *ret = load_file(name);
-	const u_char *p;
+	સંરચના sshbuf *ret = load_file(name);
+	અચલ u_char *p;
 	size_t len;
 
 	/* Trim whitespace at EOL */
-	for (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
+	માટે (p = sshbuf_ptr(ret); (len = sshbuf_len(ret)) > 0;) {
 		len--;
-		if (p[len] == '\r' || p[len] == '\t' ||
+		જો (p[len] == '\r' || p[len] == '\t' ||
 		    p[len] == ' ' || p[len] == '\n')
 			ASSERT_INT_EQ(sshbuf_consume_end(ret, 1), 0);
-		else
-			break;
+		નહીંતર
+			તોડો;
 	}
 	/* \0 terminate */
 	ASSERT_INT_EQ(sshbuf_put_u8(ret, 0), 0);
-	return ret;
+	પાછા ret;
 }
 
 
@@ -59,50 +59,50 @@ load_text_file(const char *name)
  * Extracts the value for a given key.
  * Errors cause ASSERT_* failures.
  */
-char *
-get_json_string(struct sshbuf *content, const char *key, int consume)
+અક્ષર *
+get_json_string(સંરચના sshbuf *content, અચલ અક્ષર *ચાવી, પૂર્ણાંક consume)
 {
-	struct sshbuf *tmp;
-	char *k, *ret;
+	સંરચના sshbuf *tmp;
+	અક્ષર *k, *ret;
 	size_t off, end_off;
 	u_char c;
 
 	tmp = sshbuf_fromb(content);
-	ASSERT_PTR_NE(tmp, NULL);
-	ASSERT_INT_GT(asprintf(&k, "\"%s\"", key), 0);
-	if (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
+	ASSERT_PTR_NE(tmp, ખાલી);
+	ASSERT_INT_GT(asprintf(&k, "\"%s\"", ચાવી), 0);
+	જો (sshbuf_find(tmp, 0, k, strlen(k), &off) != 0) {
 		fprintf(stderr, "Key %s not found in JSON\n", k);
 		ASSERT_INT_EQ(1, 0);
 	}
 	ASSERT_INT_EQ(sshbuf_consume(tmp, off + strlen(k)), 0);
-	free(k);
+	મુક્ત(k);
 
 	/* Skip colon, spaces, commas */
-	while (sshbuf_len(tmp) > 0) {
+	જ્યારે (sshbuf_len(tmp) > 0) {
 		c = *sshbuf_ptr(tmp);
-		if (isspace(c) || c == ':' || c == ',')
+		જો (isspace(c) || c == ':' || c == ',')
 			ASSERT_INT_EQ(sshbuf_consume(tmp, 1), 0);
-		else
-			break;
+		નહીંતર
+			તોડો;
 	}
 	/* Expect opening quote */
 	ASSERT_INT_EQ(sshbuf_get_u8(tmp, &c), 0);
 	ASSERT_CHAR_EQ(c, '"');
 	/* Find closing quote */
 	ASSERT_INT_EQ(sshbuf_find(tmp, 0, "\"", 1, &end_off), 0);
-	ASSERT_PTR_NE(ret = malloc(end_off + 1), NULL);
+	ASSERT_PTR_NE(ret = malloc(end_off + 1), ખાલી);
 	memcpy(ret, sshbuf_ptr(tmp), end_off);
 	ret[end_off] = '\0';
-	if (consume) {
+	જો (consume) {
 		ASSERT_INT_EQ(sshbuf_consume(tmp, end_off), 0);
 		ASSERT_INT_EQ(sshbuf_consume_upto_child(content, tmp), 0);
 	}
 	sshbuf_free(tmp);
-	return ret;
+	પાછા ret;
 }
 
-void
-tests(void)
+શૂન્ય
+tests(શૂન્ય)
 {
 #ifdef USE_MLDSA
 	mldsa_tests();
@@ -116,8 +116,8 @@ tests(void)
 #endif
 }
 
-void
-benchmarks(void)
+શૂન્ય
+benchmarks(શૂન્ય)
 {
 	/* none */
 }
